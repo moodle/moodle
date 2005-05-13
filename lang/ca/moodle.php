@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
+      // moodle.php - created with Moodle 1.5 ALPHA (2005042400)
 
 
 $string['action'] = 'Acció';
@@ -220,6 +220,7 @@ $string['creatingblocks'] = 'S\'estan creant blocs';
 $string['creatingcategoriesandquestions'] = 'S\'estan creant categories i preguntes';
 $string['creatingcoursemodules'] = 'S\'estan creant els mòduls del curs';
 $string['creatingevents'] = 'S\'estan creant els esdeveniments';
+$string['creatinggradebook'] = 'S\'estan creant les qualificacions';
 $string['creatinggroups'] = 'S\'estan creant els grups';
 $string['creatinglogentries'] = 'S\'estan creant les entrades de registre';
 $string['creatingmessagesinfo'] = 'S\'està creant la informació dels missatges';
@@ -1012,6 +1013,9 @@ $string['topichide'] = 'Oculta aquest tema a $a';
 $string['topicoutline'] = 'Esquema per temes';
 $string['topicshow'] = 'Mostra aquest tema a $a';
 $string['total'] = 'Total';
+$string['trackforums'] = 'Seguiment dels fòrums';
+$string['trackforumsno'] = 'No: no facis el seguiment dels missatges que he vist';
+$string['trackforumsyes'] = 'Sí: destaca\'m els missatges nous';
 $string['trysearching'] = 'Podeu provar a cercar.';
 $string['turneditingoff'] = 'Desactiva edició';
 $string['turneditingon'] = 'Activa edició';
@@ -1121,6 +1125,7 @@ $string['writingcategoriesandquestions'] = 'S\'estan escrivint les categories i 
 $string['writingcoursedata'] = 'S\'estan escrivint les dades del curs';
 $string['writingeventsinfo'] = 'S\'està escrivint la informació dels esdeveniments';
 $string['writinggeneralinfo'] = 'S\'està escrivint la informació general';
+$string['writinggradebookinfo'] = 'S\'està escrivint la informació de qualificacions';
 $string['writinggroupsinfo'] = 'S\'està escrivint la informació dels grups';
 $string['writingheader'] = 'S\'està escrivint la capçalera';
 $string['writingloginfo'] = 'S\'està escrivint la informació dels registres';

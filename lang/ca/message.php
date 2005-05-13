@@ -1,8 +1,10 @@
 <?PHP // $Id$ 
-      // message.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
+      // message.php - created with Moodle 1.5 ALPHA (2005042400)
 
 
 $string['addcontact'] = 'Afegeix contacte';
+$string['addsomecontacts'] = 'Per a enviar un missatge a algú, o per a afegir una drecera a algú en aquesta pàgina, utilitzeu la <a href=\"$a\">pestanya cerca</a> de dalt.';
+$string['addsomecontactsincoming'] = 'Aquests missatges són de gent que no és a la vostra llista de contactes. Per afegir-los als vostres contactes, feu clic en la icona \"Afegeix contacte\" al costat del nom de cadascun.';
 $string['ago'] = 'Fa $a';
 $string['allmine'] = 'Tots els missatges escrits per mi o adreçats a mi';
 $string['allstudents'] = 'Tots els missatges entre estudiants del curs';
@@ -11,6 +13,8 @@ $string['backupmessageshelp'] = 'Si habiliteu aquesta opció, els missatges insta
 $string['beepnewmessage'] = 'Fes un bip quan arriba un nou missatge';
 $string['blockcontact'] = 'Bloca un contacte';
 $string['blockedmessages'] = '$a missatge/s de/a usuaris blocats';
+$string['blocknoncontacts'] = 'Bloca tots els nous missatges de gent que no és a la meva llista de contactes.';
+$string['contactlistempty'] = 'La vostra llista de contactes està actualment buida';
 $string['contacts'] = 'Contactes';
 $string['context'] = 'context';
 $string['deletemessagesdays'] = 'Nombre de dies abans que els missatges vells se suprimeixin automàticament';
@@ -58,6 +62,7 @@ $string['timesent'] = 'Hora d\'enviament';
 $string['unblockcontact'] = 'Desbloca contacte';
 $string['unreadmessages'] = '$a missatges no llegits';
 $string['userisblockingyou'] = 'Aquest usuari ha blocat els missatges enviats per vós';
+$string['userisblockingyounoncontact'] = 'Aquest usuari només accepta missatges de persones que siguin a la seva llista de contactes, i vos a hores d\'ara no hi sou.';
 $string['userssearchresults'] = 'Resultats de la cerca: $a usuaris';
 
 ?>

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
+      // admin.php - created with Moodle 1.5 ALPHA (2005042400)
 
 
 $string['adminseesallevents'] = 'Els administradors veuen tots els esdeveniments';
@@ -116,12 +116,15 @@ $string['therewereerrors'] = 'Hi ha errors en aquestes dades';
 $string['timezoneforced'] = 'Imposada per l\'administrador del lloc';
 $string['timezoneisforcedto'] = 'Imposa a tots els usuaris';
 $string['timezonenotforced'] = 'Els usuaris poden triar la seva zona horària';
+$string['upgradeforumread'] = 'S\'ha afegit una nova característica en Moodle 1.5 per fer el seguiment dels missatges llegits/no llegits dels fòrums.<br />Per utilitzar aquesta funcionalitat necessiteu <a href=\"$a\">actualitzar les taules</a>.';
+$string['upgradeforumreadinfo'] = 'S\'ha afegit una nova característica en Moodle 1.5 per fer el seguiment dels missatges llegits/no llegits dels fòrums. Per utilitzar aquesta funcionalitat necessiteu actualitzar les taules amb tota la informació de seguiment dels missatges actuals. Segons la mida del vostre lloc això pot durar una bona estona (hores) i pot carregar bastant la base de dades, així que és millor fer-ho durant un període tranquil. Tanmateix el vostre lloc continuarà funcionant durant l\'actualització i els els usuaris no es veuran afectats. Una vegada hàgiu engegat aquest procés haureu de deixar que acabi (mantenint oberta la finestra del navegador). Però si atureu el procés tancant la finestra, no cal que us amoïneu: podeu iniciar el procés una altra vegada.<br /><br />Voleu iniciar ara el procés d\'actualització?';
 $string['upgradelogs'] = 'Per a disposar de totes les funcionalitats, els vostres registres s\'han d\'actualitzar. <a href=\"$a\">Més informació</a>';
 $string['upgradelogsinfo'] = 'S\'han introduït alguns canvis en la manera d\'emmagatzemar els registres. Per tal de poder veure tots els vostres registres vells per activitat, els vostres registres vells s\'han d\'actualitzar. Depenent del vostre servidor això pot trigar una bona estona (unes quantes hores) i en una instal·lació gran pot carregar una mica la base de dades. Una vegada hàgeu engegat aquest procés haureu de deixar que acabi (mantenint la finestra del navegador oberta). No us amoïneu: el vostre lloc seguirà actiu per als usuaris mentre els registres s\'actualitzen. <br /><br />Voleu actualitzar els registres ara?';
 $string['upgradesure'] = 'Els vostres fitxers de Moodle han canviat i esteu a punt d\'actualitzar automàticament el servidor a aquesta versió:
 <p><b>$a</b></p>
 <p>Després de fer això no podreu tornar enrere.</p> 
 <p>Esteu segur que voleu actualitzar aquest servidor a aquesta versió?</p>';
+$string['upgradingdata'] = 'S\'estan actualitzant les dades';
 $string['upgradinglogs'] = 'S\'estan actualitzant els registres';
 
 ?>

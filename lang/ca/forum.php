@@ -1,9 +1,10 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
+      // forum.php - created with Moodle 1.5 ALPHA (2005042400)
 
 
 $string['addanewdiscussion'] = 'Afegeix un nou tema de debat';
 $string['addanewtopic'] = 'Afegeix un nou tema';
+$string['advancedsearch'] = 'Cerca avançada';
 $string['allforums'] = 'Tots els fòrums';
 $string['allowchoice'] = 'Permet triar a tothom';
 $string['allowdiscussions'] = 'Pot un $a enviar un missatge a aquest fòrum?';
@@ -30,7 +31,9 @@ $string['couldnotupdate'] = 'Un error desconegut ha impedit actualitzar el vostr
 $string['delete'] = 'Suprimeix';
 $string['deleteddiscussion'] = 'El tema de debat s\'ha suprimit';
 $string['deletedpost'] = 'El missatge s\'ha suprimit';
+$string['deletedposts'] = 'Aquests missatges s\'han suprimit';
 $string['deletesure'] = 'Segur que voleu suprimir aquest missatge?';
+$string['deletesureplural'] = 'Segur que voleu suprimir aquest missatges i totes les seves respostes? ($a missatges)';
 $string['digestmailheader'] = 'Aquest és el vostre resum diari de missatges enviats als fòrums de $a->sitename. Si voleu canviar les vostres preferències de correu dels fòrums, aneu a $a->userprefs.';
 $string['digestmailprefs'] = 'el vostre perfil d\'usuari';
 $string['digestmailsubject'] = 'Resum diari de missatges $a';
@@ -66,8 +69,12 @@ $string['introsocial'] = 'Un fòrum obert per xerrar sobre qualsevol cosa que es 
 $string['introteacher'] = 'Un fòrum per a notes i debats només del professorat';
 $string['lastpost'] = 'Darrer missatge';
 $string['learningforums'] = 'Fòrums d\'aprenentatge';
+$string['markalldread'] = 'Marca com a llegits tots els missatges d\'aquest debat.';
+$string['markallread'] = 'Marca com a llegits tots els missatges d\'aquest fòrum.';
 $string['markread'] = 'Marca com a llegit';
+$string['markreadbutton'] = 'Marca<br />llegit';
 $string['markunread'] = 'Marca com a no llegit';
+$string['markunreadbutton'] = 'Marca<br />no llegit';
 $string['maxattachmentsize'] = 'Mida màxima dels fitxers adjunts';
 $string['maxtimehaspassed'] = 'Ha passat el temps màxim per editar aquest missatge! ($a)';
 $string['message'] = 'Missatge';
@@ -87,14 +94,18 @@ $string['newforumposts'] = 'Nous missatges dels fòrums';
 $string['nodiscussions'] = 'Encara no hi ha cap tema de debat en aquest fòrum';
 $string['noguestpost'] = 'Els visitants no poden enviar missatges.';
 $string['noguestsubscribe'] = 'Els visitants no poden subscriure\'s per rebre els missatges del fòrum per correu electrònic.';
+$string['noguesttracking'] = 'Els visitants no poden definir opcions de seguiment.';
 $string['nomorepostscontaining'] = 'No s\'han trobat més missatges que continguin \'$a\'';
 $string['nonews'] = 'Encara no s\'han enviat notícies';
 $string['noposts'] = 'No hi ha missatges';
 $string['nopostscontaining'] = 'No s\'ha trobat cap missatge que contingui \'$a\'';
 $string['nosubscribers'] = 'Encara no hi ha subscriptors d\'aquest fòrum';
 $string['notingroup'] = 'Heu de ser part d\'un grup per veure aquest fòrum.';
+$string['notrackforum'] = 'No facis el seguiment de missatges no llegits';
 $string['nownotsubscribed'] = '$a->name NO rebrà còpies de \'$a->forum\' per correu electrònic.';
+$string['nownottracking'] = '$a->name ja no fa el seguiment del fòrum \'$a->forum\'.';
 $string['nowsubscribed'] = '$a->name rebrà còpies de \'$a->forum\' per correu electrònic.';
+$string['nowtracking'] = '$a->name fa el seguiment del fòrum \'$a->forum\'.';
 $string['numposts'] = '$a missatges';
 $string['olderdiscussions'] = 'Debats anteriors';
 $string['oldertopics'] = 'Temes anteriors';
@@ -170,6 +181,12 @@ $string['subscribestart'] = 'Envia\'m còpia dels missatges d\'aquest fòrum per c
 $string['subscribestop'] = 'No vull rebre còpies per correu dels missatges d\'aquest fòrum';
 $string['subscription'] = 'Subscripció';
 $string['subscriptions'] = 'Subscripcions';
+$string['trackforum'] = 'Fes el seguiments de missatges no llegits';
+$string['tracking'] = 'Seguiment';
+$string['trackingoff'] = 'Inactiu';
+$string['trackingon'] = 'Actiu';
+$string['trackingoptional'] = 'Opcional';
+$string['trackingtype'] = 'Voleu fer el seguiment de missatges llegits en aquest fòrum?';
 $string['unread'] = 'No llegit';
 $string['unreadposts'] = 'Missatges no llegits';
 $string['unreadpostsnumber'] = '$a missatges no llegits';
