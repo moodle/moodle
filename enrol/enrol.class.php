@@ -129,15 +129,15 @@ function print_entry($course) {
         if (isguest()) {
             add_to_log($course->id, "course", "guest", "view.php?id=$course->id", "$USER->id");
 
-        } else if (empty($_GET['confirm'])) {
+        } else if (empty($_GET['confirm']) && empty($_GET['cancel'])) {
 
             print_header($strloginto, $course->fullname, "<a href=\".\">$strcourses</a> -> $strloginto");
             echo "<br />";
-            notice_yesno(get_string("enrolmentconfirmation"), "enrol.php?id=$course->id&amp;confirm=1", $CFG->wwwroot);
+            notice_yesno(get_string("enrolmentconfirmation"), "enrol.php?id=$course->id&amp;confirm=1", "enrol.php?id=$course->id&amp;cancel=1");
             print_footer();
             exit;
 
-        } else {
+        } elseif (!empty($_GET['confirm'])) {
             if ($course->enrolperiod) {
                 $timestart = time();
                 $timeend = time() + $course->enrolperiod;
@@ -170,6 +170,9 @@ function print_entry($course) {
             }
 
             redirect($destination);
+        } elseif (!empty($_GET['cancel'])) {
+            unset($SESSION->wantsurl);
+            redirect($CFG->wwwroot);
         }
     }
 
