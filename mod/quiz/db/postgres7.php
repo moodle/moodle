@@ -638,7 +638,7 @@ function quiz_upgrade($oldversion) {
         execute_sql("UPDATE {$CFG->prefix}quiz_questions SET length = 0 WHERE qtype = ".DESCRIPTION);
     }
     
-    if ($oldversion < 2005050500) {
+    if ($oldversion < 2005050408) {
         table_column('quiz_questions', '', 'penalty', 'float', '', '', '0.1', 'not null', 'defaultgrade');
     }
     return true;
