@@ -97,7 +97,8 @@ You can use Shibboleth AND another authentication method (it was tested with
 manual login only). So if there are a few users that don't have a Shibboleth 
 login, you could create manual accounts for them and they could use the manual 
 login. For other authentication methods you first have to configure them and 
-then set Shibboleth as your authentication method. Users can log in only via one authentication method unless they have two accounts in Moodle.
+then set Shibboleth as your authentication method. Users can log in only via one 
+authentication method unless they have two accounts in Moodle.
 
 Shibboleth dual login with custom login page
 --------------------------------------------------------------------------------
@@ -109,6 +110,57 @@ basically need a link to the Shibboleth-protected page
 ('moodle/auth/shibboleth/shib-protected.php') for the Shibboleth login and a 
 form that sends 'username' and 'password' to moodle/login/index.php.
 Consult the Moodle documentation for further instructions and requirements.
+
+How to customize the way the Shibboleth user data is used in ILIAS
+--------------------------------------------------------------------------------
+Among the Shibboleth settings in Moodle there is a field that should contain a
+path to a php file that can be used as data manipulation API.
+You can use this if you want to further process the way your Shibboleth
+attributes are used in Moodle. 
+
+Example 1: Your Shibboleth federation uses an attribute that specifies the 
+           user's preferred language, but the content of this attribute is not
+           compatible with the Moodle data representation, e.g. the Shibboleth
+           attribute contains 'German' but Moodle needs a two letter value like 
+           'de'.
+Example 2: The country, city and street are provided in one Shibboleth attribute
+           and you want these values to be used in the Moodle user profile. So
+           You have to parse the corresponding attribute to fill the user fields.
+
+If you want to use this API you have to be a skilled PHP programmer. It is 
+strongly recommended that you take a look at the file 
+moodle/auth/shibboleth/lib.php, especially the function 'auth_get_userinfo' 
+where this API file is included. 
+The context of the API file is the same as within this login function. So you
+can directly edit the object $result.
+
+Example file:
+
+--
+<?PHP
+
+    // Set the zip code and the adress
+    if ($_SERVER[$CFG->auth_shib_user_address] != '')
+    {
+        // $address contains something like 'SWITCH$Limmatquai 138$CH-8021 Zurich'
+        // We want to split this up to get: 
+        // institution, street, zipcode, city and country
+        $address = $_SERVER[$CFG->auth_shib_user_address];
+        list($institution, $street, $zip_city) = split('\$', $address);
+        
+        ereg(' (.+)',$zip_city, $regs);
+        $city = $regs[1];
+        
+        ereg('(.+)-',$zip_city, $regs);
+        $country = $regs[1];
+        
+        $result["address"] = $street;
+        $result["city"] = $city;
+        $result["country"] = $country;
+        $result["department"] = $institution;
+    }
+?>
+--
 
 Bugs
 --------------------------------------------------------------------------------

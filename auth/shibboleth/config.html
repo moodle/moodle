@@ -101,8 +101,10 @@ if (!isset($config->auth_user_lang_editlock)) {
 
 ?>
 <tr>
-    <td colspan="3" align="center">
-        <?php  print_string("auth_shib_settings", "auth") ?>
+    <td colspan="3" align="left">
+      <p>
+        <?php  print_string("auth_shib_username_description", "auth") ?>
+      </p>
     </td>
 </tr>
 <!--
@@ -127,13 +129,13 @@ if (!isset($config->auth_user_lang_editlock)) {
     </td>
     <td></td>                                                                                                                                 </td>
 </tr>
--->  
+--> 
 <tr>
     <td align="right"><?php  print_string("username") ?>:</td>
     <td>
     <input name="shib_user_attribute" type="text" size="30" value="<?php echo $config->shib_user_attribute?>">
     </td>
-    <td><?php  print_string("auth_shib_username_description", "auth") ?></td>
+    <td></td>
     </td>
 </tr>
 
@@ -396,5 +398,13 @@ if (!isset($config->auth_user_lang_editlock)) {
     <td>
     <?php  print_string("auth_shib_instructions_help","auth", htmlspecialchars($CFG->wwwroot.'/auth/shibboleth')) ?>
     <?php  helpbutton("text", get_string("helptext")) ?>
+    </td>
+</tr>
+<tr>
+    <td align="right"><?php  print_string("auth_shib_convert_data", "auth") ?>:</td>
+    <td>
+    <input name="shib_convert_data" type="text" size="30" value="<?php echo $config->shib_convert_data?>">
+    </td>
+    <td><?php  print_string("auth_shib_convert_data_description", "auth") ?></td>
     </td>
 </tr>
