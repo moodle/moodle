@@ -1,0 +1,141 @@
+<h2>Uso avanzado de Markdown</h2>
+
+<div id="Main">
+
+<div class="article">
+<p>Esta sección amplía la información básica ofrecida en la sección titulada 'Mejora del texto con Markdown' para proporcionar a quienes lo requieran la información necesaria para sacar el máximo partido de Markdown. Si no es su caso, o no necesita los formatos que se muestran más abajo, puede pasar por alto esta sección y regresar en caso necesario.</p>
+
+<ul>
+
+<li><a href="#linebreaks">Saltos de línea</a></li>
+<li><a href="#hr">Reglas horizontales</a></li>
+<li><a href="#image_links">Imágenes enlazadas</a></li>
+<li><a href="#embedded">HTML anidado</a></li>
+<li><a href="#preformatted">Código pre-formateado</a></li>
+<li><a href="#special_char">Uso de caracteres especiales</a></li>
+<li><a href="#further">Lecturas adicionales</a></li>
+</ul>
+
+<h2><a id="linebreaks">Saltos de línea</a></h2>
+
+<p>En algunos textos, e.g. poesía, a menudo es preciso insertar saltos de línea. Hacerlo pulsando la tecla de retorno no producirá el efecto deseado toda vez que por defecto las líneas se juntan para crear un párrafo.</p>
+
+<p><strong><code>Si, como el Griego afirma en el Cratilo,<br />
+El nombre es arquetipo de la cosa,<br />
+En las letras de 'rosa' está la rosa,<br />
+Y todo el Nilo en la palabra 'Nilo'.</code></strong></p>
+
+<p>En las líneas anteriores, si se utiliza la tecla ENTER para insertar saltos de línea, se producirá el efecto que se ve a continuación, de suerte que los saltos de línea son pasados por alto:</p>
+
+<p>Si, como el Griego afirma en el Cratilo,
+El nombre es arquetipo de la cosa,
+En las letras de 'rosa' está la rosa,
+Y todo el Nilo en la palabra 'Nilo'.</p>
+
+<p>Pero si al final de cada línea pulsamos dos espacios, forzaremos un salto de línea como aparece a continuación:</p>
+
+<p>Si, como el Griego afirma en el Cratilo,<br />
+El nombre es arquetipo de la cosa,<br />
+En las letras de 'rosa' está la rosa,<br />
+Y todo el Nilo en la palabra 'Nilo'.  </p>
+
+<h2><a id="hr">Reglas horizontales</a></h2>
+
+<p>Podemos crear reglas horizontales escribiendo tres o más asteriscos (*), guiones (-) o guiones bajos (_) en una línea.</p>
+
+<p>Así funciona:</p>
+
+<p><strong><code>***</code></strong></p>
+
+<p>pero usted puede añadir espacios o caracteres adicionales para conseguir un salto de sección en la ventana de edición de texto, e.g.:</p>
+
+<p><strong><code>* * * * *</code></strong></p>
+
+<p><strong><code>-------------------------</code></strong></p>
+
+<p><strong><code>_ _ _ _ _</code></strong></p>
+
+<p>Todos estos métodos conducen al mismo resultado:</p>
+
+<hr />
+
+<h2><a id="image_links">Imágenes enlazadas</a></h2>
+
+<p>El documento "Mejora del texto con Markdown" proporciona instrucciones para crear enlaces web y para insertar imágenes. Puede no resultar obvio que es posible combinarlos para crear imágenes que son al mismo tiempo enlaces sobre los que se puede hacer clic.</p>
+
+<p><strong><code>[motor de búsqueda google][google]</code></strong></p>
+
+<p><strong><code>![logo de google][logo]</code></strong></p>
+
+<p>Sobre esta línea aparece un enlace web y una imagen estándar. Colocando la imagen en el lugar en que debería estar el texto de enlace, se consigue esto:</p>
+
+<p><strong><code>[![the google logo][logo]][google]</code></strong></p>
+<p><strong><code>[![logo de google][logo]][google]</code></strong></p>
+
+<p>La línea superior junto con las siguientes definiciones del enlace en cualquier lugar del documento</p>
+
+<p><strong><code>[logo]: http://www.google.com/images/logo.gif</code></strong><br />
+<strong><code>[google]: http://www.google.com/ "clic para visitar Google.com"</code></strong></p>
+
+<p>se combinan para producir el siguiente enlace a la imagen sobre el que se puede hacer clic (apareciendo una indicación cuando pasamos el ratón sobre él):</p>
+
+<p><a href="http://www.google.com/" title="pulse aquí para visitar Google.com"><img src="http://www.google.com/images/logo.gif" alt="el logo de google" /></a></p>
+
+<p>Esta técnica podría resultar útil, pongamos por caso, si utilizamos pequeñas imágenes en miniatura enlazadas para descargar desde ellas las correspondientes imágenes más grandes.</p>
+
+<h2><a id="embedded">HTML anidado</a></h2>
+
+<p>Si usted es hábil utilizando HTML, entonces puede haber ocasiones en que Markdown no le permitirá un contol tan exhaustivo como aquél al que está habituado. Por fortuna, Markdown está diseñado para esta eventualidad y le permite anidar HTML directamente dentro de un texto formateado en Markdown.</p>
+
+<p><strong><code>* &lt;small&gt;texto pequeño&lt;/small&gt;</code></strong><br />
+
+<strong><code>* &lt;big&gt;texto grande&lt;/big&gt;</code></strong> </p>
+
+<ul>
+<li><small>texto pequeño</small>  </li>
+<li><big>texto grande</big> </li>
+</ul>
+
+<p>Advierta que la marca HTML coexiste con el código Markdown en las listas con topos. Esto lo libera a usted de la enojosa tarea de escribir HTML complejo para conseguir características básicas de formateado tales como párrafos y listas, en tanto que le sigue permitiendo contar con toda la potencia de HTML en situaciones específicas.</p>
+
+<h2><a id="preformatted">Mostrar HTML o texto pre-formateado</a></h2>
+
+<p>Si, a diferencia de la sección anterior, usted desea que el HTML que introduce aparezca exactamente como lo ha escrito en lugar de ser procesado como HTML, entonces puede comenzar cada línea con cuatro espacios.</p>
+
+<pre><code>&lt;p&gt;Un párrafo en &lt;b&gt;HTML&lt;/b&gt; mostrado como código&lt;/p&gt;
+</code></pre>
+
+<p>Esto también funciona para mostrar el código del ordenador</p>
+
+<pre><code>imprimir "Argumentos de línea de comandos: (@ARGV)\n";
+</code></pre>
+
+<p>Dado que este formateado con frecuencia se usa para confeccionar listas de programas de ordenador y otro texto que previsiblemente puede contener los caracteres que Markdown utiliza para indicar distintos tipos de formateado, el formato Markdown queda deshabilitado en estas líneas:</p>
+
+<pre><code>Normalmente esta palabra sería **bold**.
+</code></pre>
+
+<p>Para incluir algunos caracteres dentro del texto normal, véase la sección siguiente.</p>
+
+<h2><a id="special_char">Uso de caracteres especiales</a></h2>
+
+<p>Si desea utilizar cualesquiera de los caracteres especiales que ponen en marcha el formateado Markdown sin que sean procesados, simplemente escriba antes una barra invertida (\). Esto se ha venido en llamar 'escape' del carácter. La barra invertida no es visible en el resultado, pero sí el carácter que le sigue, exactamenta como ha sido escrito.</p>
+
+<p><strong><code>\*asteriscos, sin énfasis\*</code></strong></p>
+
+<p>produce</p>
+
+<p>*asteriscos, sin énfasis*</p>
+
+<p>en lugar de</p>
+
+<p><strong><code>*énfasis, sin asteriscos*</code></strong></p>
+
+<p>lo que resulta en</p>
+
+<p><em>énfasis, sin asteriscos</em></p>
+
+<h2><a id="further">Lecturas adicionales</a></h2>
+
+<p>El sistema Markdown no es exclusivo de Moodle, sino que se utiliza en un número progresivamente creciente de herramientas de publicación web. Puede encontrar más información sobre él en <a href="http://daringfireball.net/projects/markdown/">http://daringfireball.net/projects/markdown/</a></p>
+</div></div>
