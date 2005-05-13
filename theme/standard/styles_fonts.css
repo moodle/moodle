@@ -14,6 +14,7 @@
   calendar
   course
   doc
+  grades
   login
   message
   tabs
@@ -337,6 +338,15 @@ body#doc-contents ul {
   font-size: 0.8em;
 }
 
+
+/***
+ *** Grades
+ ***/
+
+body#grade-index .grades .header {
+  font-weight: bold;
+  font-size: 0.7em;
+}
 
 
 /***
