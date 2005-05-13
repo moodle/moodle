@@ -29,6 +29,7 @@ $string['createanchor'] = 'Lumikha ng anchor';
 $string['createfolder'] = 'Lumikha ng folder';
 $string['createlink'] = 'Magsingit ng Web Link';
 $string['cut'] = 'Gupitin ang pinilì';
+$string['cutpastemozilla'] = 'Ikinalulungkot namin, nguni\'t hindi mo magagamit sa kasalukuyan ang mga normal na shortcut sa keyboard (ni ang buton na Paste) para sa Pagpaste ng teksto sa online na editor na ito.  Dahil ito sa isang katangiang panseguridad na bahagi ng ilang bersiyon ng Mozilla at Firefox na browser.<br /><br />May tatlong kilalang solusyon na maaari mong tangkaing gamitin:  <br /> (1) Sa halip na CTRL-v, gamitin ang SHIFT-Insert<br /> (2) Gamitin ang Edit->Paste na menu sa iyong browser <br /> (3) Palitan ang mga preference sa iyong browser sa pamamagitan ng pag-edit sa user.js na file.  <br /><br />Iklik ang OK na buton sa ibaba para sa karagdagang tulong, o Balewalain upang makabalik sa editor';
 $string['delete'] = 'Burahin';
 $string['filebrowser'] = 'Pantingin ng File';
 $string['findwhat'] = 'Hanapin';

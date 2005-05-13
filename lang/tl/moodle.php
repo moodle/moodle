@@ -601,6 +601,7 @@ $string['livelogs'] = 'Mga \"live\" na log mula sa nakaraang oras';
 $string['locale'] = 'tl';
 $string['location'] = 'Lokasyon';
 $string['loggedinas'] = 'Nakalog-in ka bilang si $a ';
+$string['loggedinasguest'] = 'Kasalukuyan kang gumagamit ng pambisitang pagpasok';
 $string['loggedinnot'] = 'Hindi ka nakalog-in.';
 $string['login'] = 'Maglog-in';
 $string['login_failure_logs'] = 'Log ng mga bigong log-in';
