@@ -91,11 +91,12 @@ $string['auth_pop3mailbox'] = 'Nom de la boîte aux lettres vers laquelle tenter 
 $string['auth_pop3port'] = 'Numéro de port du serveur POP3. Il s\'agit habituellement du port 110, et lors de l\'utilisation de SSL du port 995.';
 $string['auth_pop3title'] = 'Utiliser un serveur POP3';
 $string['auth_pop3type'] = 'Type de serveur. Si le serveur POP3 utilise « certificate security », choisir « pop3cert ».';
-$string['auth_shibbolethdescription'] = 'Cette méthode permet de créer et d\'authentifier des utilisateurs par l\'intermédiaire d\'un serveur <a href=\"http://shibboleth.internet2.edu/\" target=\"_blank\">Shibboleth</a>';
+$string['auth_shibbolethdescription'] = 'Cette méthode permet de créer et d\'authentifier des utilisateurs par l\'intermédiaire d\'un serveur <a href=\"http://shibboleth.internet2.edu/\" target=\"_blank\">Shibboleth</a>.<br />Veuillez lire attentivement le fichier <a href=\"../auth/shibboleth/README.txt\" target=\"_blank\">README</a> pour apprendre comment configurer Moodle pour authentification Shibboleth';
 $string['auth_shibbolethtitle'] = 'Shibboleth';
 $string['auth_shibboleth_login'] = 'Connexion Shibboleth';
 $string['auth_shibboleth_manual_login'] = 'Connexion manuelle';
-$string['auth_shib_settings'] = 'Veuillez lire attentivement le fichier <a href=\"../auth/shibboleth/README.txt\" target=\"_blank\">README</a> pour apprendre comment configurer Moodle pour authentification Shibboleth';
+$string['auth_shib_convert_data'] = 'API de modification de données';
+$string['auth_shib_convert_data_description'] = 'Vous pouvez utiliser cette API pour modifier les données fournies par Shibboleth. Lisez le fichier <a href=\"../auth/shibboleth/README.txt\" target=\"_blank\">README</a> pour d\'autres instructions.';
 $string['auth_shib_only'] = 'Seulement Shibboleth';
 $string['auth_shib_only_description'] = 'Cocher cette option pour imposer l\'authentiication Shibboleth';
 $string['auth_shib_username_description'] = 'Nom de la variable d\'environement du serveur web Shibboleth à utiliser comme nom d\'utilisateur Moodle';
