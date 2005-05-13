@@ -18,16 +18,24 @@
 <div id="page">
 
 <?php if ($home) {  // This is what gets printed on the home page only  
-      if (file_exists("$CFG->dirroot/logo.jpg")) {
-          $standardlogo = "$CFG->wwwroot/logo.jpg";
-      } else if (file_exists("$CFG->dataroot/1/logo.jpg")) {
+      if (file_exists($CFG->dirroot.'/logo.jpg')) {
+          $standardlogo = $CFG->wwwroot.'/logo.jpg';
+      } else if (file_exists($CFG->dirroot.'/logo.gif')) {
+          $standardlogo = $CFG->wwwroot.'/logo.gif';
+      } else if (file_exists($CFG->dataroot.'/1/logo.jpg')) {
           if (empty($CFG->slasharguments)) {
-              $standardlogo = "$CFG->wwwroot/file.php?file=/1/logo.jpg";
+              $standardlogo = $CFG->wwwroot.'/file.php?file=/1/logo.jpg';
           } else {
-              $standardlogo = "$CFG->wwwroot/file.php/1/logo.jpg";
+              $standardlogo = $CFG->wwwroot.'/file.php/1/logo.jpg';
+          }
+      } else if (file_exists($CFG->dataroot.'/1/logo.gif')) {
+          if (empty($CFG->slasharguments)) {
+              $standardlogo = $CFG->wwwroot.'/file.php?file=/1/logo.gif';
+          } else {
+              $standardlogo = $CFG->wwwroot.'/file.php/1/logo.gif';
           }
       } else {
-          $standardlogo = "$CFG->wwwroot/theme/$CFG->theme/logo.jpg";
+          $standardlogo = $CFG->wwwroot.'/theme/'.$CFG->theme.'/logo.gif';
       }
 ?>
     <div id="header-home">
