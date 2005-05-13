@@ -112,6 +112,7 @@ TABLE.loginbox {
 
 #footer {
   text-align:left;
+  margin-top: 5px;
 }
 
 
@@ -119,14 +120,6 @@ TABLE.loginbox {
  *** Blocks
  ***/
 
-
-.sideblock {
-  width: 100%;
-  margin-bottom:1em;
-  border-collapse:separate;
-  border-width:1px;
-  border-style:solid;
-}
 
 .sideblock .footer {
   border-top-width:1px;

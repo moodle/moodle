@@ -94,17 +94,30 @@ div.header {
 /***
  *** Blocks
  ***/
+ 
+.sideblock .header {
+  border-color: #C6BDA8;
+}
 
 .sideblock {
   border-color:#C6BDA8;
 }
 
 .sideblock .content {
+  border-color:#C6BDA8;
   background-color:#FEF9F6;
 }
 
 .sideblock .footer {
   border-top-color:#C6BDA8;
+}
+
+.sideblock .header .hide-show img.hide-show-image {
+  background: url('../../pix/t/switch_minus.gif') no-repeat bottom;
+}
+
+.sideblock.hidden .header .hide-show img.hide-show-image {
+  background: url('../../pix/t/switch_plus.gif') no-repeat bottom;
 }
 
 /***
