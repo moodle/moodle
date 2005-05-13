@@ -175,6 +175,10 @@ $CFG->admin = 'admin';
 // Seconds for files to remain in caches. Decrease this if you are worried
 // about students being served outdated versions of uploaded files.
 //      $CFG->filelifetime = 86400;
+//
+// This setting will prevent the 'My Courses' page being displayed when a student
+// logs in. The site front page will always show the same (logged-out) view.
+//	$CFG->disablemycourses = true;
 // 
 // If this setting is set to true, then Moodle will track the IP of the 
 // current user to make sure it hasn't changed during a session.  This 
