@@ -53,7 +53,7 @@ $string['auth_ldap_create_context'] = 'Lors de l\'utilisation de la création d\'
 $string['auth_ldap_creators'] = 'Liste des groupes dont les membres ont le droit de créer des cours. Les groupes (en général, de la forme « cn=teachers,ou=staff,o=myorg ») sont séparés par des points-virgules (;).';
 $string['auth_ldap_expiration_desc'] = 'Si vous voulez désactiver le contrôle d\'échéance des mots de passe, indiquez « Non ». Si vous indiquez LDAP, la durée sera reprise automatiquement de la variable passwordexpiration du serveur LDAP';
 $string['auth_ldap_expiration_warning_desc'] = 'Nombre de jours avant que l\'avertissement d\'échéance soit affiché.';
-$string['auth_ldap_expireattr_desc'] = 'Facultatif : ne pas tenir compte de l\'attribut ldap contenant la durée d\'échéance du mot de passe PasswordExpirationTime';
+$string['auth_ldap_expireattr_desc'] = 'Facultatif : ne pas tenir compte de l\'attribut ldap contenant la durée d\'échéance du mot de passe passwordExpirationTime';
 $string['auth_ldap_graceattr_desc'] = 'Facultatif : ne pas tenir compte de l\'attribut gracelogin';
 $string['auth_ldap_gracelogins_desc'] = 'Activer le support du gracelogin LDAP. Une fois le mot de passe échu, l\'utilisateur peut se connecter jusqu\'à ce que le paramètre gracelogin ait une valeur de 0. L\'activation de ce réglage affiche un message explicite lorsque le mot de passe est échu.';
 $string['auth_ldap_host_url'] = 'Indiquer le serveur LDAP sous forme d\'URL comme ceci :<br />« ldap://ldap.organisation.fr/ »<br />ou&nbsp;:<br />« ldaps://ldap.organisation.fr/ ». Si vous utilisez plusieurs serveurs LDAP par sécurité, séparez leurs adresses avec des points-virgules (;).';
