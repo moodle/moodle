@@ -28,6 +28,13 @@
     ?> <input type="text" name="ccexpireyyyy" size="4" maxlength="4" value="<?php p($form->ccexpireyyyy) ?>"  /></td>
 </tr>
 <tr>
+  <td align="right"><?php print_string("cctype", "enrol_authorize") ?>: </td>
+  <td align="left"><?php
+  choose_from_menu($CCTYPES, 'cctype', $form->cctype);
+  ?>
+</td>
+</tr>
+<tr>
   <td align="right"><?php print_string("ccvv", "enrol_authorize") ?>: </td>
   <td align="left"><input type="text" name="cvv" size="4" maxlength="4" value="<?php p($form->cvv) ?>" />
 		   <font size=1><?php print_string("ccvvhelp", "enrol_authorize") ?></font></td>

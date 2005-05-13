@@ -13,7 +13,7 @@
 <tr valign="top">
 	<td align="right">enrol_currency:</td>
 	<td>
-    <?php choose_from_menu ($paypalcurrencies, "enrol_currency", $frm->enrol_currency, "","", "") ?>
+    <?php choose_from_menu ($ancurrencies, "enrol_currency", $frm->enrol_currency, "","", "") ?>
     </td>
     <td>
     <?php  print_string("currency") ?>
@@ -54,6 +54,16 @@
 </tr>
 
 <tr valign="top">
+	<td align="right">an_referer:</td>
+	<td>
+        <input type="text" name="an_referer" value="<?php echo $frm->an_referer ?>" />
+    </td>
+    <td>
+    <?php  print_string("anreferer", "enrol_authorize") ?>
+    </td>
+</tr>
+
+<tr valign="top">
 	<td align="right">an_test:</td>
 	<td>
         <input type="checkbox" value=1 name="an_test" <?php if ($frm->an_test) echo "checked=\"true\"" ?> />
@@ -63,6 +73,7 @@
     </td>
 </tr>
 
+<tr valign="top"><td colspan="3"><hr noshade size="1"></td></tr>
 
 <tr valign="top">
 	<td align="right">enrol_mailstudents:</td>
