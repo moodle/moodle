@@ -1,20 +1,20 @@
 -- phpMyAdmin SQL Dump
 -- version 2.6.0-pl1
 -- http://www.phpmyadmin.net
--- 
+--
 -- Host: localhost
 -- Generation Time: May 04, 2005 at 06:27 PM
 -- Server version: 4.0.15
 -- PHP Version: 4.3.3
--- 
+--
 -- Database: `upgrading`
--- 
+--
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Table structure for table `prefix_quiz`
--- 
+--
 
 CREATE TABLE prefix_quiz (
   id int(10) unsigned NOT NULL auto_increment,
@@ -48,9 +48,9 @@ CREATE TABLE prefix_quiz (
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Table structure for table `prefix_quiz_answers`
--- 
+--
 
 CREATE TABLE prefix_quiz_answers (
   id int(10) unsigned NOT NULL auto_increment,
@@ -64,9 +64,9 @@ CREATE TABLE prefix_quiz_answers (
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Table structure for table `prefix_quiz_attemptonlast_datasets`
--- 
+--
 
 CREATE TABLE prefix_quiz_attemptonlast_datasets (
   id int(10) unsigned NOT NULL auto_increment,
@@ -79,9 +79,9 @@ CREATE TABLE prefix_quiz_attemptonlast_datasets (
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Table structure for table `prefix_quiz_attempts`
--- 
+--
 
 CREATE TABLE prefix_quiz_attempts (
   id int(10) unsigned NOT NULL auto_increment,
@@ -101,9 +101,9 @@ CREATE TABLE prefix_quiz_attempts (
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Table structure for table `prefix_quiz_calculated`
--- 
+--
 
 CREATE TABLE prefix_quiz_calculated (
   id int(10) unsigned NOT NULL auto_increment,
@@ -120,9 +120,9 @@ CREATE TABLE prefix_quiz_calculated (
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Table structure for table `prefix_quiz_categories`
--- 
+--
 
 CREATE TABLE prefix_quiz_categories (
   id int(10) unsigned NOT NULL auto_increment,
@@ -139,9 +139,9 @@ CREATE TABLE prefix_quiz_categories (
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Table structure for table `prefix_quiz_dataset_definitions`
--- 
+--
 
 CREATE TABLE prefix_quiz_dataset_definitions (
   id int(10) unsigned NOT NULL auto_increment,
@@ -156,9 +156,9 @@ CREATE TABLE prefix_quiz_dataset_definitions (
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Table structure for table `prefix_quiz_dataset_items`
--- 
+--
 
 CREATE TABLE prefix_quiz_dataset_items (
   id int(10) unsigned NOT NULL auto_increment,
@@ -171,9 +171,9 @@ CREATE TABLE prefix_quiz_dataset_items (
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Table structure for table `prefix_quiz_grades`
--- 
+--
 
 CREATE TABLE prefix_quiz_grades (
   id int(10) unsigned NOT NULL auto_increment,
@@ -188,9 +188,9 @@ CREATE TABLE prefix_quiz_grades (
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Table structure for table `prefix_quiz_match`
--- 
+--
 
 CREATE TABLE prefix_quiz_match (
   id int(10) unsigned NOT NULL auto_increment,
@@ -202,9 +202,9 @@ CREATE TABLE prefix_quiz_match (
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Table structure for table `prefix_quiz_match_sub`
--- 
+--
 
 CREATE TABLE prefix_quiz_match_sub (
   id int(10) unsigned NOT NULL auto_increment,
@@ -217,9 +217,9 @@ CREATE TABLE prefix_quiz_match_sub (
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Table structure for table `prefix_quiz_multianswers`
--- 
+--
 
 CREATE TABLE prefix_quiz_multianswers (
   id int(10) unsigned NOT NULL auto_increment,
@@ -231,9 +231,9 @@ CREATE TABLE prefix_quiz_multianswers (
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Table structure for table `prefix_quiz_multichoice`
--- 
+--
 
 CREATE TABLE prefix_quiz_multichoice (
   id int(10) unsigned NOT NULL auto_increment,
@@ -247,9 +247,9 @@ CREATE TABLE prefix_quiz_multichoice (
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Table structure for table `prefix_quiz_newest_states`
--- 
+--
 
 CREATE TABLE prefix_quiz_newest_states (
   id int(10) unsigned NOT NULL auto_increment,
@@ -264,24 +264,24 @@ CREATE TABLE prefix_quiz_newest_states (
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Table structure for table `prefix_quiz_numerical`
--- 
+--
 
 CREATE TABLE prefix_quiz_numerical (
   id int(10) unsigned NOT NULL auto_increment,
   question int(10) unsigned NOT NULL default '0',
+  answer int(10) unsigned NOT NULL default '0',
   tolerance varchar(255) NOT NULL default '0.0',
-  answers varchar(255) NOT NULL default '',
   PRIMARY KEY  (id),
   KEY question (question)
 ) TYPE=MyISAM COMMENT='Options for numerical questions';
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Table structure for table `prefix_quiz_numerical_units`
--- 
+--
 
 CREATE TABLE prefix_quiz_numerical_units (
   id int(10) unsigned NOT NULL auto_increment,
@@ -294,9 +294,9 @@ CREATE TABLE prefix_quiz_numerical_units (
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Table structure for table `prefix_quiz_question_datasets`
--- 
+--
 
 CREATE TABLE prefix_quiz_question_datasets (
   id int(10) unsigned NOT NULL auto_increment,
@@ -308,9 +308,9 @@ CREATE TABLE prefix_quiz_question_datasets (
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Table structure for table `prefix_quiz_question_instances`
--- 
+--
 
 CREATE TABLE prefix_quiz_question_instances (
   id int(10) unsigned NOT NULL auto_increment,
@@ -324,9 +324,9 @@ CREATE TABLE prefix_quiz_question_instances (
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Table structure for table `prefix_quiz_question_versions`
--- 
+--
 
 CREATE TABLE prefix_quiz_question_versions (
   id int(10) unsigned NOT NULL auto_increment,
@@ -340,9 +340,9 @@ CREATE TABLE prefix_quiz_question_versions (
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Table structure for table `prefix_quiz_questions`
--- 
+--
 
 CREATE TABLE prefix_quiz_questions (
   id int(10) NOT NULL auto_increment,
@@ -365,9 +365,9 @@ CREATE TABLE prefix_quiz_questions (
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Table structure for table `prefix_quiz_randomsamatch`
--- 
+--
 
 CREATE TABLE prefix_quiz_randomsamatch (
   id int(10) unsigned NOT NULL auto_increment,
@@ -379,9 +379,9 @@ CREATE TABLE prefix_quiz_randomsamatch (
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Table structure for table `prefix_quiz_rqp`
--- 
+--
 
 CREATE TABLE prefix_quiz_rqp (
   id int(10) unsigned NOT NULL auto_increment,
@@ -397,9 +397,9 @@ CREATE TABLE prefix_quiz_rqp (
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Table structure for table `prefix_quiz_rqp_states`
--- 
+--
 
 CREATE TABLE prefix_quiz_rqp_states (
   id int(10) unsigned NOT NULL auto_increment,
@@ -412,9 +412,9 @@ CREATE TABLE prefix_quiz_rqp_states (
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Table structure for table `prefix_quiz_rqp_type`
--- 
+--
 
 CREATE TABLE prefix_quiz_rqp_type (
   id int(10) unsigned NOT NULL auto_increment,
@@ -428,9 +428,9 @@ CREATE TABLE prefix_quiz_rqp_type (
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Table structure for table `prefix_quiz_shortanswer`
--- 
+--
 
 CREATE TABLE prefix_quiz_shortanswer (
   id int(10) unsigned NOT NULL auto_increment,
@@ -443,9 +443,9 @@ CREATE TABLE prefix_quiz_shortanswer (
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Table structure for table `prefix_quiz_states`
--- 
+--
 
 CREATE TABLE prefix_quiz_states (
   id int(10) unsigned NOT NULL auto_increment,
@@ -466,9 +466,9 @@ CREATE TABLE prefix_quiz_states (
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Table structure for table `prefix_quiz_truefalse`
--- 
+--
 
 CREATE TABLE prefix_quiz_truefalse (
   id int(10) unsigned NOT NULL auto_increment,
@@ -478,7 +478,7 @@ CREATE TABLE prefix_quiz_truefalse (
   PRIMARY KEY  (id),
   KEY question (question)
 ) TYPE=MyISAM COMMENT='Options for True-False questions';
-        
+
 INSERT INTO prefix_log_display VALUES ('quiz', 'add', 'quiz', 'name');
 INSERT INTO prefix_log_display VALUES ('quiz', 'update', 'quiz', 'name');
 INSERT INTO prefix_log_display VALUES ('quiz', 'view', 'quiz', 'name');

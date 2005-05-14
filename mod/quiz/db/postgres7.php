@@ -332,7 +332,7 @@ function quiz_upgrade($oldversion) {
     if ($oldversion < 2005041300) {
         modify_database('', "UPDATE prefix_quiz_questions SET hidden = '1' WHERE qtype ='".RANDOM."';");
     }
-    
+
     if ($oldversion < 2005042002) {
         table_column('quiz_answers', 'answer', 'answer', 'text', '', '', '', 'not null', '');
     }
@@ -340,36 +340,36 @@ function quiz_upgrade($oldversion) {
 
     if ($oldversion < 2005042400) {
         begin_sql();
-        
+
         // Changes to quiz table
-        
+
         // The bits of the optionflags field will hold various option flags
         table_column('quiz', '', 'optionflags', 'integer', '10', 'unsigned', '0', 'not null', 'timeclose');
-        
+
         // The penalty scheme
         table_column('quiz', '', 'penaltyscheme', 'integer', '4', 'unsigned', '0', 'not null', 'optionflags');
-        
+
         // The review options are now all stored in the bits of the review field
         table_column('quiz', 'review', 'review', 'integer', 10, 'unsigned', 0, 'not null', '');
-        
+
         /// Changes to quiz_attempts table
-        
+
         // The preview flag marks teacher previews
         table_column('quiz_attempts', '', 'preview', 'tinyint', '2', 'unsigned', '0', 'not null', 'timemodified');
-        
+
         // The layout is the list of questions with inserted page breaks.
         table_column('quiz_attempts', '', 'layout', 'text', '', '', '', 'not null', 'timemodified');
         // For old quiz attempts we will set this to the repaginated question list from $quiz->questions
-        
+
         /// The following updates of field values require a loop through all quizzes
         // This is because earlier versions of mysql don't allow joins in UPDATE
         if ($quizzes = get_records('quiz')) {
-            
+
             // turn reporting off temporarily to avoid one line output per set_field
             $olddebug = $db->debug;
             $db->debug = false;
             foreach ($quizzes as $quiz) {
-                
+
                 // repaginate
                 $quiz->questions = ($quiz->questionsperpage) ? quiz_repaginate($quiz->questions, $quiz->questionsperpage) : $quiz->questions;
                 if ($quiz->questionsperpage) {
@@ -377,13 +377,13 @@ function quiz_upgrade($oldversion) {
                     set_field('quiz', 'questions', $quiz->questions, 'id', $quiz->id);
                 }
                 set_field('quiz_attempts', 'layout', $quiz->questions, 'quiz', $quiz->id);
-                
+
                 // set preview flag
                 if ($teachers = get_course_teachers($quiz->course)) {
                     $teacherids = implode(',', array_keys($teachers));
                     execute_sql("UPDATE {$CFG->prefix}quiz_attempts SET preview = 1 WHERE userid IN ($teacherids)");
                 }
-                
+
                 // set review flags in quiz table
                 $review = (QUIZ_REVIEW_IMMEDIATELY & (QUIZ_REVIEW_RESPONSES + QUIZ_REVIEW_SCORES));
                 if ($quiz->feedback) {
@@ -402,13 +402,13 @@ function quiz_upgrade($oldversion) {
             }
             $db->debug = $olddebug;
         }
-        
+
         // We can now drop the fields whose data has been moved to the review field
         execute_sql(" ALTER TABLE {$CFG->prefix}quiz DROP COLUMN feedback");
         execute_sql(" ALTER TABLE {$CFG->prefix}quiz DROP COLUMN correctanswers");
-        
+
         /// Renaming tables
-        
+
         // rename the quiz_question_grades table to quiz_question_instances
         modify_database ('', 'ALTER TABLE prefix_quiz_question_grades RENAME TO prefix_quiz_question_instances;');
         modify_database ('', 'ALTER TABLE prefix_quiz_question_grades_id_seq RENAME TO prefix_quiz_question_instances_id_seq;');
@@ -417,7 +417,7 @@ function quiz_upgrade($oldversion) {
         modify_database ('', 'DROP INDEX prefix_quiz_question_grades_question_idx;');
         modify_database ('', 'CREATE INDEX prefix_quiz_question_instances_quiz_idx ON prefix_quiz_question_instances (quiz);');
         modify_database ('', 'CREATE INDEX prefix_quiz_question_instances_question_idx ON prefix_quiz_question_instances (question);');
-      
+
         // rename the quiz_responses table quiz_states
         modify_database ('', 'ALTER TABLE prefix_quiz_responses RENAME TO prefix_quiz_states;');
         modify_database ('', 'ALTER TABLE prefix_quiz_responses_id_seq RENAME TO prefix_quiz_states_id_seq;');
@@ -427,31 +427,31 @@ function quiz_upgrade($oldversion) {
         modify_database ('', 'CREATE INDEX prefix_quiz_states_attempt_idx ON prefix_quiz_states (attempt);');
         modify_database ('', 'CREATE INDEX prefix_quiz_states_question_idx ON prefix_quiz_states (question);');
 
-      
+
         /// add columns to quiz_states table
-      
+
         // The sequence number of the state.
         table_column('quiz_states', '', 'seq_number', 'integer', '6', 'unsigned', '0', 'not null', 'originalquestion');
         // For existing states we leave this at 0 because in the old quiz code there was only one response allowed
-      
+
         // The time the state was created.
         table_column('quiz_states', '', 'timestamp', 'integer', '10', 'unsigned', '0', 'not null', 'answer');
         // For existing states we will below set this to the timemodified field of the attempt
-      
+
         // The type of event that led to the creation of the state
         table_column('quiz_states', '', 'event', 'integer', '4', 'unsigned', '0', 'not null', 'timestamp');
-      
+
         // The raw grade
         table_column('quiz_states', '', 'raw_grade', 'varchar', '10', '', '', 'not null', 'grade');
         // For existing states (no penalties) this is equal to the grade
         execute_sql("UPDATE {$CFG->prefix}quiz_states SET raw_grade = grade");
-      
+
         // The penalty that the response attracted
         table_column('quiz_states', '', 'penalty', 'varchar', '10', '', '0.0', 'not null', 'raw_grade');
         // For existing states this can stay at 0 because penalties did not exist previously.
-      
+
         /// New table for pointers to newest and newest graded states
-      
+
         modify_database('', "CREATE TABLE prefix_quiz_newest_states (
                                id SERIAL PRIMARY KEY,
                                attemptid integer NOT NULL default '0',
@@ -461,7 +461,7 @@ function quiz_upgrade($oldversion) {
                                sumpenalty varchar(10) NOT NULL default '0.0'
                              );");
         modify_database('CREATE UNIQUE INDEX prefix_quiz_newest_states_attempt_idx ON prefix_quiz_newest_states (attemptid,questionid);');
-      
+
         /// Now upgrade some fields in states and newest_states tables where necessary
         // to save time on large sites only do this for attempts that have not yet been finished.
         if ($attempts = get_records_select('quiz_attempts', 'timefinish = 0')) {
@@ -473,13 +473,13 @@ function quiz_upgrade($oldversion) {
             }
             $db->debug = $olddebug;
         }
-      
+
         /// Entries for the log_display table
-      
+
         modify_database('', " INSERT INTO prefix_log_display VALUES ('quiz', 'preview', 'quiz', 'name');");
         modify_database('', " INSERT INTO prefix_log_display VALUES ('quiz', 'start attempt', 'quiz', 'name');");
         modify_database('', " INSERT INTO prefix_log_display VALUES ('quiz', 'close attempt', 'quiz', 'name');");
-      
+
         /// update the default settings in $CFG
         $review = (QUIZ_REVIEW_IMMEDIATELY & (QUIZ_REVIEW_RESPONSES + QUIZ_REVIEW_SCORES));
         if (!empty($CFG->quiz_feedback)) {
@@ -495,13 +495,13 @@ function quiz_upgrade($oldversion) {
             $review += QUIZ_REVIEW_OPEN;
         }
         set_config('quiz_review', $review);
-      
+
         /// Use tolerance instead of min and max in numerical question type
         table_column('quiz_numerical', '', 'tolerance', 'varchar', '255', '', '0.0', 'not null', 'question');
         execute_sql("UPDATE {$CFG->prefix}quiz_numerical SET tolerance = (max::text::real-min::text::real)/2");
         modify_database('', 'ALTER TABLE prefix_quiz_numerical DROP COLUMN min'); // Replaced by tolerance
         modify_database('', 'ALTER TABLE prefix_quiz_numerical DROP COLUMN max'); // Replaced by tolerance
-      
+
         /// Tables for Remote Questions
         modify_database ('', "CREATE TABLE prefix_quiz_rqp (
                                  id SERIAL PRIMARY KEY,
@@ -512,7 +512,7 @@ function quiz_upgrade($oldversion) {
                                  flags integer NOT NULL default '0',
                                  maxscore integer NOT NULL default '1'
                                );");
-        
+
         modify_database ('', "CREATE INDEX prefix_quiz_rqp_question_idx ON prefix_quiz_rqp (question);");
 
         modify_database ('', "CREATE TABLE prefix_quiz_rqp_states (
@@ -535,17 +535,17 @@ function quiz_upgrade($oldversion) {
 
         commit_sql();
     }
-    
-    if ($oldversion < 2005042900) {
-        
+
+    if ($oldversion < 2005042900 && false) { // We don't want this to be executed any more!!!
+
         begin_sql();
-        
+
         table_column('quiz_multianswers', '', 'sequence',  'varchar', '255', '', '', 'not null', 'question');
         table_column('quiz_numerical', '', 'answers', 'varchar', '255', '', '', 'not null', 'answer');
         modify_database('', 'UPDATE prefix_quiz_numerical SET answers = answer');
         table_column('quiz_questions', '', 'parent', 'integer', '10', 'unsigned', '0', 'not null', 'category');
         modify_database('', "UPDATE prefix_quiz_questions SET parent = id WHERE qtype ='".RANDOM."';");
-        
+
         // convert multianswer questions to the new model
         if ($multianswers = get_records_sql("SELECT m.id, q.category, q.id AS parent,
                                         q.name, q.questiontextformat, m.norm AS
@@ -561,14 +561,14 @@ function quiz_upgrade($oldversion) {
             $n        = count($multianswers);
             $parent   = $multianswers[0]->parent;
             $sequence = array();
-            
+
             // turn reporting off temporarily to avoid one line output per set_field
             $olddebug = $db->debug;
             $db->debug = false;
             for ($i = 0; $i < $n; $i++) {
                 $answers = $multianswers[$i]->answers; unset($multianswers[$i]->answers);
                 $pos = $multianswers[$i]->positionkey; unset($multianswers[$i]->positionkey);
-                
+
                 // create questions for all the multianswer victims
                 unset($multianswers[$i]->id);
                 $multianswers[$i]->length = 0;
@@ -576,7 +576,7 @@ function quiz_upgrade($oldversion) {
                 $multianswers[$i]->stamp = make_unique_id_code();
                 $id = insert_record('quiz_questions', $multianswers[$i]);
                 $sequence[$pos] = $id;
-                
+
                 // update the answers table to point to these new questions
                 modify_database('', "UPDATE prefix_quiz_answers SET question = '$id' WHERE id IN ($answers);");
                 // update the questiontype tables to point to these new questions
@@ -603,7 +603,7 @@ function quiz_upgrade($oldversion) {
                 } else if (MULTICHOICE == $multianswers[$i]->qtype) {
                     modify_database('', "UPDATE prefix_quiz_multichoice SET question = '$id' WHERE answers = '$answers';");
                 }
-                
+
                 if (!isset($multianswers[$i+1]) || $parent != $multianswers[$i+1]->parent) {
                     delete_records('quiz_multianswers', 'question', $parent);
                     $multi = new stdClass;
@@ -618,29 +618,160 @@ function quiz_upgrade($oldversion) {
             }
             $db->debug = $olddebug;
         }
-        
+
         // Remove redundant fields from quiz_multianswers
         modify_database('', 'ALTER TABLE prefix_quiz_multianswers DROP COLUMN answers');
         modify_database('', 'ALTER TABLE prefix_quiz_multianswers DROP COLUMN positionkey');
         modify_database('', 'ALTER TABLE prefix_quiz_multianswers DROP COLUMN answertype');
         modify_database('', 'ALTER TABLE prefix_quiz_multianswers DROP COLUMN norm');
-       
+
         // Change numerical from answer to answers
         modify_database('', 'ALTER TABLE prefix_quiz_numerical DROP COLUMN answer');
 
         commit_sql();
     }
-    
+
     if ($oldversion < 2005050300) {
         // length of question determines question numbering. Currently all questions require one
         // question number except for DESCRIPTION questions.
         table_column('quiz_questions', '', 'length', 'integer', '10', 'unsigned', '1', 'not null', 'qtype');
         execute_sql("UPDATE {$CFG->prefix}quiz_questions SET length = 0 WHERE qtype = ".DESCRIPTION);
     }
-    
+
     if ($oldversion < 2005050408) {
         table_column('quiz_questions', '', 'penalty', 'float', '', '', '0.1', 'not null', 'defaultgrade');
     }
+
+    if ($oldversion < 2005051401) {
+        // Some earlier changes are undone here, so we need another condition
+        if ($oldversion >= 2005042900) {
+            // Restore the answer field
+            table_column('quiz_numerical', '', 'answer', 'integer', '10', 'unsigned', '0', 'not null', 'answers');
+            $singleanswer = array();
+            if ($numericals = get_records('quiz_numerical')) {
+                $numericals = array_values($numericals);
+                $n = count($numericals);
+                for ($i = 0; $i < $n; $i++) {
+                    $numerical =& $numericals[$i];
+                    if (strpos($numerical->answers, ',')) { // comma separated list?
+                        // Back this up to delete the record after the new ones are created
+                        $id = $numerical->id;
+                        unset($numerical->id);
+                        // We need to create a record for each answer id
+                        $answers = explode(',', $numerical->answers);
+                        foreach ($answers as $answer) {
+                            $numerical->answer = $answer;
+                            insert_record('quiz_numerical', $numerical);
+                        }
+                        // ... and get rid of the old record
+                        delete_records('quiz_numerical', 'id', $id);
+                    } else {
+                        $singleanswer[] = $numerical->id;
+                    }
+                }
+            }
+
+            // Do all of these at once
+            if (!empty($singleanswer)) {
+                $singleanswer = implode(',', $singleanswer);
+                modify_database('', "UPDATE prefix_quiz_numerical SET answer = answers WHERE id IN ($singleanswer);");
+            }
+
+            // All answer fields are set, so we can delete the answers field
+            modify_database('', 'ALTER TABLE prefix_quiz_numerical DROP answers');
+
+        // If the earlier changes weren't made we can safely do only the
+        // bits here.
+        } else {
+            // Comma separated questionids will be stored as sequence
+            table_column('quiz_multianswers', '', 'sequence',  'varchar', '255', '', '', 'not null', 'question');
+            table_column('quiz_questions', '', 'parent', 'integer', '10', 'unsigned', '0', 'not null', 'category');
+            modify_database('', "UPDATE prefix_quiz_questions SET parent = id WHERE qtype ='".RANDOM."';");
+
+            // Each multianswer record is converted to a question object and then
+            // inserted as a new question into the quiz_questions table.
+            // After that the question fields in the quiz_answers table and the
+            // qtype specific tables are updated to point to the new question id.
+            // Note: The quiz_numerical table is different as it stores one record
+            //       per defined answer (to allow different tolerance values for
+            //       different possible answers. (Currently multiple answers are
+            //       not supported by the numerical editing interface, but all
+            //       all processing code does support that possibility.
+            if ($multianswers = get_records_sql("SELECT m.id, q.category, " .
+                                            "q.id AS parent, " . // question id (of multianswer question) as parent
+                                            "q.name, q.questiontextformat, " .
+                                            "m.norm AS defaultgrade, " . // norm is snow stored as defaultgrade
+                                            "m.answertype AS qtype, " .  // just rename this
+                                            "q.version, q.hidden, m.answers, " .
+                                            "m.positionkey " .
+                                            "FROM {$CFG->prefix}quiz_questions q, " .
+                                            "     {$CFG->prefix}quiz_multianswers m " .
+                                            "WHERE q.qtype = '".MULTIANSWER."' " .
+                                            "AND   q.id = m.question " .
+                                            "ORDER BY q.id ASC, m.positionkey ASC")) { // ordered by positionkey
+                $multianswers = array_values($multianswers);
+                $n        = count($multianswers);
+                $parent   = $multianswers[0]->parent;
+                $sequence = array();
+
+                // Turn reporting off temporarily to avoid one line output per set_field
+                global $db;
+                $olddebug = $db->debug;
+                // $db->debug = false;
+                for ($i = 0; $i < $n; $i++) {
+                    // Backup these two values before unsetting the object fields
+                    $answers = $multianswers[$i]->answers; unset($multianswers[$i]->answers);
+                    $pos = $multianswers[$i]->positionkey; unset($multianswers[$i]->positionkey);
+
+                // Create questions for all the multianswer victims
+                    unset($multianswers[$i]->id);
+                    $multianswers[$i]->length = 0;
+                    $multianswers[$i]->questiontext = '';
+                    $multianswers[$i]->stamp = make_unique_id_code();
+                    // $multianswers[$i]->parent is set in the query
+                    // $multianswers[$i]->defaultgrade is set in the query
+                    // $multianswers[$i]->qtype is set in the query
+                    $id = insert_record('quiz_questions', $multianswers[$i]);
+                    $sequence[$pos] = $id;
+
+                // Update the quiz_answers table to point to these new questions
+                    modify_database('', "UPDATE prefix_quiz_answers SET question = '$id' WHERE id IN ($answers);");
+                // Update the questiontype tables to point to these new questions
+                    if (SHORTANSWER == $multianswers[$i]->qtype) {
+                        modify_database('', "UPDATE prefix_quiz_shortanswer SET question = '$id' WHERE answers = '$answers';");
+                    } else if (MULTICHOICE == $multianswers[$i]->qtype) {
+                        modify_database('', "UPDATE prefix_quiz_multichoice SET question = '$id' WHERE answers = '$answers';");
+                    } else if (NUMERICAL == $multianswers[$i]->qtype) {
+                        modify_database('', "UPDATE prefix_quiz_numerical SET question = '$id' WHERE answer IN ($answers);");
+                    }
+
+                    // Whenever we're through with the subquestions of one multianswer
+                    // question we delete the old records in the multianswers table,
+                    // store a new record with the sequence in the multianswers table
+                    // and point $parent to the next multianswer question.
+                    if (!isset($multianswers[$i+1]) || $parent != $multianswers[$i+1]->parent) {
+                        delete_records('quiz_multianswers', 'question', $parent);
+                        $multi = new stdClass;
+                        $multi->question = $parent;
+                        $multi->sequence = implode(',', $sequence);
+                        insert_record('quiz_multianswers', $multi);
+                        if (isset($multianswers[$i+1])) {
+                            $parent   = $multianswers[$i+1]->parent;
+                            $sequence = array();
+                        }
+                    }
+                }
+                $db->debug = $olddebug;
+            }
+
+            // Remove redundant fields from quiz_multianswers
+            modify_database('', 'ALTER TABLE prefix_quiz_multianswers DROP answers');
+            modify_database('', 'ALTER TABLE prefix_quiz_multianswers DROP positionkey');
+            modify_database('', 'ALTER TABLE prefix_quiz_multianswers DROP answertype');
+            modify_database('', 'ALTER TABLE prefix_quiz_multianswers DROP norm');
+        }
+    }
+
     return true;
 }
 

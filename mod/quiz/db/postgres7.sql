@@ -268,8 +268,8 @@ CREATE UNIQUE INDEX prefix_quiz_newest_states_attempt_idx ON prefix_quiz_newest_
 CREATE TABLE prefix_quiz_numerical (
   id SERIAL PRIMARY KEY,
   question integer NOT NULL default '0',
-  tolerance varchar(255) NOT NULL default '0.0',
-  answers varchar(255) NOT NULL default ''
+  answer integer NOT NULL default '0',
+  tolerance varchar(255) NOT NULL default '0.0'
 );
 
 CREATE INDEX prefix_quiz_numerical_question_idx ON prefix_quiz_numerical (question);
@@ -303,9 +303,9 @@ CREATE INDEX prefix_quiz_question_datasets_question_datasetdefinition_idx  ON pr
 
 # --------------------------------------------------------
 
-# 
+#
 # Table structure for table prefix_quiz_question_instances
-# 
+#
 
 CREATE TABLE prefix_quiz_question_instances (
   id SERIAL PRIMARY KEY,
@@ -373,9 +373,9 @@ CREATE INDEX prefix_quiz_randomsamatch_question_idx ON prefix_quiz_randomsamatch
 
 # --------------------------------------------------------
 
-# 
+#
 # Table structure for table prefix_quiz_rqp
-# 
+#
 
 CREATE TABLE prefix_quiz_rqp (
   id SERIAL PRIMARY KEY,
@@ -392,9 +392,9 @@ CREATE INDEX prefix_quiz_rqp_question_idx ON prefix_quiz_rqp (question);
 
 # --------------------------------------------------------
 
-# 
+#
 # Table structure for table prefix_quiz_rqp_states
-# 
+#
 
 CREATE TABLE prefix_quiz_rqp_states (
   id SERIAL PRIMARY KEY,
@@ -406,9 +406,9 @@ CREATE TABLE prefix_quiz_rqp_states (
 
 # --------------------------------------------------------
 
-# 
+#
 # Table structure for table prefix_quiz_rqp_type
-# 
+#
 
 CREATE TABLE prefix_quiz_rqp_type (
   id SERIAL PRIMARY KEY,
@@ -438,9 +438,9 @@ CREATE INDEX prefix_quiz_shortanswer_question_idx ON prefix_quiz_shortanswer (qu
 
 # --------------------------------------------------------
 
-# 
+#
 # Table structure for table prefix_quiz_states
-# 
+#
 
 CREATE TABLE prefix_quiz_states (
   id SERIAL PRIMARY KEY,
@@ -473,7 +473,7 @@ CREATE TABLE prefix_quiz_truefalse (
 );
 CREATE INDEX prefix_quiz_truefalse_question_idx ON prefix_quiz_truefalse (question);
 
-        
+
 INSERT INTO prefix_log_display VALUES ('quiz', 'add', 'quiz', 'name');
 INSERT INTO prefix_log_display VALUES ('quiz', 'update', 'quiz', 'name');
 INSERT INTO prefix_log_display VALUES ('quiz', 'view', 'quiz', 'name');
