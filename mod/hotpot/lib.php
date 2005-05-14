@@ -1,4 +1,4 @@
-z<?PHP  // $Id$
+<?PHP  // $Id$
 
 /// Library of functions and constants for module hotpot
 
