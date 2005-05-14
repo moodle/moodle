@@ -89,8 +89,8 @@ class block_news_items extends block_base {
 
                 $text .= '<div class="post">'.
                          '<div class="head">'.
-                         '<span class="date">'.userdate($discussion->modified, $strftimerecent).'</span><br />'.
-                         '<span class="name">'.fullname($discussion).'</span></div>'.
+                         '<div class="date">'.userdate($discussion->modified, $strftimerecent).'</div>'.
+                         '<div class="name">'.fullname($discussion).'</div></div>'.
                          '<div class="info">'.$discussion->subject.' '.
                          '<a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$discussion->discussion.'">'.
                          $strmore.'...</a></div>'.
