@@ -14,6 +14,7 @@
   calendar
   course
   doc
+  grades
   login
   message
   tabs
@@ -383,6 +384,10 @@ body#admin-config .confighelp {
 .sideblock .header .icon.hide,
 .sideblock .header .icon.edit {
   margin-right: 6px;
+}
+
+.sideblock .content .head {
+  margin-top: 10px;
 }
 
 
@@ -763,6 +768,34 @@ body#doc-contents ul {
   padding: 0px;
   width: 90%;
 }
+
+
+/***
+ *** Grades
+ ***/
+
+body#grade-index .grades {
+  border-width:1px;
+  border-style:solid;
+  border-collapse: separate;
+}
+
+body#grade-index .grades td {
+  border-width:0px 1px 0px 1px;
+  border-style:solid;
+  border-collapse: collapse;
+}
+
+body#grade-index .grades .header {
+  vertical-align: top;
+}
+
+body#grade-index .grades .points,
+body#grade-index .grades .percent,
+body#grade-index .grades .weighted {
+  text-align: right;
+}
+
 
 
 /***
