@@ -551,6 +551,44 @@
         return $status;
     }
 
+   /**
+    * Returns the best quiz category (id) found to restore one
+    * quiz category from a backup file. Works by stamp (since Moodle 1.1)
+    * or by name (for older versions).
+    *
+    * @param object  $cat      the quiz_categories record to be searched
+    * @param integer $courseid the course where we are restoring
+    * @return integer the id of a existing quiz_category or 0 (not found)
+    */
+    function restore_get_best_quiz_category($cat, $courseid) {
+        
+        $found = 0;
+
+        //Decide how to work (by stamp or name)
+        if ($cat->stamp) {
+            $searchfield = 'stamp';
+            $searchvalue = $cat->stamp;
+        } else {
+            $searchfield = 'name';
+            $searchvalue = $cat->name;
+        }
+        
+        //First shot. Try to get the category from the course being restored
+        if ($fcat = get_record('quiz_categories','course',$courseid,$searchfield,$searchvalue)) {
+            $found = $fcat->id;
+        //Second shot. Try to obtain any concordant category and check its publish status and editing rights
+        } else if ($fcats = get_records('quiz_categories', $searchfield, $searchvalue, 'id', 'id, publish, course')) {
+            foreach ($fcats as $fcat) {
+                if ($fcat->publish == 1 && isteacheredit($fcat->course)) {
+                    $found = $fcat->id;
+                    break;
+                }
+            }
+        }
+
+        return $found;
+    }
+
     //This function creates all the block stuff when restoring courses
     //It calls selectively to  restore_create_block_instances() for 1.5 
     //and above backups. Upwards compatible with old blocks.
