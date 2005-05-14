@@ -384,6 +384,10 @@ body#admin-config .confighelp {
   margin-right: 6px;
 }
 
+.sideblock .content .head {
+  margin-top: 10px;
+}
+
 
 /***
  *** Calendar
