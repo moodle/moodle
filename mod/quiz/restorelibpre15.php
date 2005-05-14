@@ -121,37 +121,22 @@
             $quiz_cat->parent = backup_todb($info['QUESTION_CATEGORY']['#']['PARENT']['0']['#']);
             $quiz_cat->sortorder = backup_todb($info['QUESTION_CATEGORY']['#']['SORTORDER']['0']['#']);
 
-            //Decide if we have to create a new category or no. Works by stamp or name.
-            if ($quiz_cat->stamp) { //First, by stamp (standard since Moodle 1.1)
-
-                $cat = get_record('quiz_categories', 'stamp', $quiz_cat->stamp);
-                // Check that category exists and either belongs to this course or is published and belongs to
-                // a course in which the user has editing privileges
-                if ($cat and ($cat->course == $restore->course_id or ($cat->publish and isteacheredit($cat->course)))) {
-                    $newid = $cat->id;
-                } else { // need to create new category
-                    $newid = insert_record ("quiz_categories",$quiz_cat);
-                }
-
-            } else {  //Now, by name (for old pre 1.1 courses)
-
-                $cat = get_record('quiz_categories', 'name', $quiz_cat->name);
-                // Check that category exists and either belongs to this course or is published and belongs to
-                // a course in which the user has editing privileges
-                if ($cat and ($cat->course == $restore->course_id or ($cat->publish and isteacheredit($cat->course)))) {
-                    $newid = $cat->id;
-                } else { // need to create new category (adding to it the stamp)
+            if ($catfound = restore_get_best_category($quiz_cat, $restore->course)) {
+                $newid = $catfound;
+            } else {
+                if (!$quiz_cat->stamp) {
                     $quiz_cat->stamp = make_unique_id_code();   
-                    $newid = insert_record ("quiz_categories",$quiz_cat);
                 }
+                $newid = insert_record ("quiz_categories",$quiz_cat);
             }
 
             //Do some output
-            if ($status) {
+            if ($newid) {
                 echo "<li>".get_string('category', 'quiz')." \"".$quiz_cat->name."\"<br />";
             } else {
                 //We must never arrive here !!
                 echo "<li>".get_string('category', 'quiz')." \"".$quiz_cat->name."\" Error!<br />";
+                $status = false;
             }
             backup_flush(300);
 
