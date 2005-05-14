@@ -152,8 +152,8 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
 
     function restore_session_and_responses(&$question, &$state) {
         // The serialized format for multiple choice quetsions
-        // is (optionally) a comma separated list of answer ids
-        // followed by a colon, followed by another comma separated
+        // is an optional comma separated list of answer ids (the order of the
+        // answers) followed by a colon, followed by another comma separated
         // list of answer ids, which are the radio/checkboxes that were
         // ticked.
         // E.g. 1,3,2,4:2,4 means that the answers were shown in the order
@@ -168,6 +168,11 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
             $state->responses[''] = substr($state->responses[''], $pos + 1);
         }
         // Restore the responses
+        // This is done in different ways if only a single answer is allowed or
+        // if multiple answers are allowed. For single answers the answer id is
+        // saved in $state->responses[''], whereas for the multiple answers case
+        // the $state->responses array is indexed by the answer ids and the
+        // values are also the answer ids (i.e. key = value).
         if (empty($state->responses[''])) { // No previous responses
             if ($question->options->single) {
                 $state->responses = array('' => '');
@@ -179,7 +184,7 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
                 $state->responses = array('' => $state->responses['']);
             } else {
                 // Get array of answer ids
-                $state->responses = explode(',', $state->responses);
+                $state->responses = explode(',', $state->responses['']);
                 // Create an array indexed by these answer ids
                 $state->responses = array_flip($state->responses);
                 // Set the value of each element to be equal to the index
@@ -335,7 +340,7 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
         $teststate    = clone($state);
 
         foreach($answers as $answer) {
-            $teststate->responses[''] = $answer->id;
+            $teststate->responses = array('' => $answer->id);
             if($question->options->single) {
                 if($this->compare_responses($question, $testedstate,
                  $teststate)) {
