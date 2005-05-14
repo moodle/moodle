@@ -803,9 +803,11 @@ function forum_print_recent_activity($course, $isteacher, $timestart) {
 
             $subjectclass = ($log->action == 'add discussion') ? ' bold' : '';
 
-            echo '<div class="head'.$teacheronly.'"><div class="date">';
-            echo $date.'</div><div class="name">'.fullname($post, $isteacher);
-            echo '</div></div><div class="info'.$subjectclass.'">';
+            echo '<div class="head'.$teacheronly.'">'.
+                   '<div class="date">'.$date.'</div>'.
+                   '<div class="name">'.fullname($post, $isteacher).'</div>'.
+                 '</div>';
+            echo '<div class="info'.$subjectclass.'">';
             echo '"<a href="'.$CFG->wwwroot.'/mod/forum/'.str_replace('&', '&amp;', $log->url).'">';
             $post->subject = break_up_long_words(format_string($post->subject,true));
             echo $post->subject;
