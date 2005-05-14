@@ -95,11 +95,12 @@ $string['auth_pop3mailbox'] = '接続を試みるメールボックス名(通常
 $string['auth_pop3port'] = 'サーバーポート ( 110が一般的です )';
 $string['auth_pop3title'] = 'POP3サーバを使用';
 $string['auth_pop3type'] = 'サーバタイプです。もし認証が必要な場合はpop3certを選択してください。';
+$string['auth_shib_convert_data'] = 'データ修正API';
+$string['auth_shib_convert_data_description'] = 'Shibbolethから提供されるデータを修正したい場合にこのAPIを使うことができます。詳細は、<a href=\"../auth/shibboleth/README.txt\" target=\"_blank\">README</a> をご覧ください。';
 $string['auth_shib_instructions'] = 'あなたの機関がShibbolethをサポートしている場合、Shibboleth経由のアクセスには、<a href=\"$a\">Shibbolethログイン</a>を使用してください。 <br />Shibbolethをサポートしていない場合は、ここに表示される通常ログインを使用してください。';
 $string['auth_shib_instructions_help'] = 'Shibbolethに関してユーザに提示する説明文です。 これはログインページの説明セクションに表示されます。Shibbolethユーザが簡単にログインできるように \"<b>$a</b>\" のようなリンクを入れてください。空白にした場合、通常の説明文 ( Shibboleth限定では無く ) が使用されます。';
 $string['auth_shib_only'] = 'Shibbolethのみ';
 $string['auth_shib_only_description'] = '「Yes」を選択するとShibboleth認証が強制されます。';
-$string['auth_shib_settings'] = 'MoodleにShibbolethを設定する方法に関して<a href=\"../auth/shibboleth/README.txt\" target=\"_blank\">README</a>を必ずご覧ください。';
 $string['auth_shib_username_description'] = 'Moodleユーザ名として使用されるShibbolethウェブサーバ環境のユーザ名';
 $string['auth_shibboleth_login'] = 'Shibbolethログイン';
 $string['auth_shibboleth_manual_login'] = '手動ログイン';

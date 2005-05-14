@@ -4,10 +4,13 @@
 
 $string['anlogin'] = 'Authorize.net: ログイン名';
 $string['anpassword'] = 'Authorize.net: パスワード ( 不要 )';
+$string['anreferer'] = '必要な場合は、リファラURLを設定してください。リファラ ( ウェブリクエストのURLヘッダ情報 ) を送信します。';
 $string['antestmode'] = 'Authorize.net: テストトランザクション';
 $string['antrankey'] = 'Authorize.net: トランザクションキー';
 $string['ccexpire'] = '有効期限';
+$string['ccinvalid'] = 'クレジットカードが間違っています。';
 $string['ccno'] = 'クレジットカード番号';
+$string['cctype'] = 'クレジットカードタイプ';
 $string['ccvv'] = 'CV2';
 $string['ccvvhelp'] = 'カードの裏面 ( 3桁の数字 ) をご覧ください。';
 $string['description'] = 'Authorize.netモジュールでは、クレジットカード経由でコースの支払いを行うことができます。コースの受講料がゼロの場合、学生に対して受講登録に関する支払いは求められません。サイト全体の利用料をデフォルトとしてここで設定して、コースごとに受講料を設定することができます。コース受講料を設定した場合、コース受講料はサイト利用料に優先します。';
