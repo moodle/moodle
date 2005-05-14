@@ -99,19 +99,16 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
         /// Save units
         /// Make unit records
         $newunits = array();
-        unset($tmpunit);
-        $tmpunit->question = $question->id;
-        foreach ($question->multiplier as $key => $multiplier) {
-            if ($multiplier && is_numeric($multiplier)) {
-                $tmpunit->multiplier = $multiplier;
-                $tmpunit->unit = trim($question->unit[$key]);
-                $newunits[] = $tmpunit;
+        $n = count($question->multiplier);
+        for ($i = 0; $i < $n; $i++) {
+            if (!empty($question->unit[$i])) {
+                $newunits[$i] = new stdClass;
+                $newunits[$i]->question = $question->id;
+                $newunits[$i]->multiplier = trim($question->multiplier[$i]);
+                $newunits[$i]->unit = trim($question->unit[$i]);
             }
         }
-        if (1 == count($newunits) && !$newunits[0]->unit) {
-            /// Only default unit and it is empty, so drop it:
-            $newunits = array();
-        }
+
         if ($oldunits = get_records('quiz_numerical_units',
                                     'question', $question->id)) {
             foreach ($oldunits as $unit) {
@@ -144,7 +141,7 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
             return true;
         }
     }
-    
+
     function grade_response($question, $nameprefix, $addedanswercondition='') {
 
         $result->answers = array();
@@ -211,7 +208,7 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
                                                               $nameprefix);
 
         /////////////////////////////////////////////////
-        // For numerical answer we have the policy to 
+        // For numerical answer we have the policy to
         // set feedback for any response, even if the
         // response does not entitle the student to it.
         /////////////////////////////////////////////////
@@ -220,7 +217,7 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
             // Look for just any feedback:
             foreach ($result->correctanswers as $correctanswer) {
                 if ($correctanswer->feedback) {
-                    $result->answers[$nameprefix]->feedback = 
+                    $result->answers[$nameprefix]->feedback =
                             $correctanswer->feedback;
                     if (empty($result->answers[$nameprefix]->id)) {
                         // Better fake an answer as well:
