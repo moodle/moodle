@@ -170,7 +170,7 @@ class block_rss_client extends block_base {
             }
 
             if (empty($rss_record->preferredtitle)) {
-                $feedtitle =  stripslashes_safe(rss_unhtmlentities($rss->channel['title']));
+                $feedtitle = stripslashes_safe(rss_unhtmlentities($rss->channel['title']));
             } else {
                 $feedtitle = stripslashes_safe($rss_record->preferredtitle);
             }
@@ -194,6 +194,8 @@ class block_rss_client extends block_base {
                 if ($item['title'] == '') {
                     // no title present, use portion of description
                     $item['title'] = substr(strip_tags($item['description']), 0, 20) . '...';
+                } else {
+                    $item['title'] = break_up_long_words($item['title'], 30);
                 }
         
                 if ($item['link'] == '') {
@@ -206,6 +208,7 @@ class block_rss_client extends block_base {
 
                 
                 if ($display_description && !empty($item['description'])){
+                    $item['description'] = break_up_long_words($item['description'], 30);
                     $returnstring .= '<div class="description">'.
                                      format_text($item['description'], FORMAT_MOODLE, $formatoptions, $this->courseid) . 
                                      '</div>' ."\n";
