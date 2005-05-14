@@ -173,6 +173,7 @@ function print_entry($course) {
         } elseif (!empty($_GET['cancel'])) {
             unset($SESSION->wantsurl);
             redirect($CFG->wwwroot);
+        }
     }
 
     $teacher = get_teacher($course->id);
