@@ -116,7 +116,6 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
 
                 if ($oldanswer = array_shift($oldanswers)) {  // Existing answer, so reuse it
                     $answer->id = $oldanswer->id;
-                    dump($answer);
                     if (! update_record("quiz_answers", $answer)) {
                         $result->error = "Could not update quiz answer! (id=$answer->id)";
                         return $result;
