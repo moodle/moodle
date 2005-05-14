@@ -135,7 +135,7 @@
             $quiz_cat->parent = backup_todb($info['QUESTION_CATEGORY']['#']['PARENT']['0']['#']);
             $quiz_cat->sortorder = backup_todb($info['QUESTION_CATEGORY']['#']['SORTORDER']['0']['#']);
 
-            if ($catfound = restore_get_best_category($quiz_cat, $restore->course)) {            
+            if ($catfound = restore_get_best_quiz_category($quiz_cat, $restore->course)) {            
                 $newid = $catfound;
             } else {
                 if (!$quiz_cat->stamp) {
