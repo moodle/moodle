@@ -2828,8 +2828,8 @@ function print_recent_activity_note($time, $user, $isteacher, $text, $link) {
     $name = fullname($user, $isteacher);
 
     echo '<div class="head">';
-    echo '<span class="date">'.$date.'</span> - '.
-         '<span class="name">'.fullname($user, $isteacher).'</span>';
+    echo '<div class="date">'.$date.'</div> '.
+         '<div class="name">'.fullname($user, $isteacher).'</div>';
     echo '</div>';
     echo '<div class="info"><a href="'.$link.'">'.format_string($text,true).'</a></div>';
 }
