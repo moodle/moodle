@@ -12,7 +12,7 @@
         usort($units, create_function('$a, $b', // make sure the default unit is at index 0
          'if (1.0 === (float)$a->multiplier) { return -1; } else '.
          'if (1.0 === (float)$b->multiplier) { return 1; } else { return 0; }'));
-        $tolerance = $question->options->tolerance;
+        $tolerance = $answer->tolerance;
     } else {
         $answer   = new stdClass;
         $answer->answer   = '';

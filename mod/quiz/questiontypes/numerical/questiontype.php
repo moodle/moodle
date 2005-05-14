@@ -23,17 +23,35 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
     }
 
     function get_question_options(&$question) {
-        if (!$question->options->answers = get_records('quiz_answers',
-         'question', $question->id)) {
+        // Get the question answers and their respective tolerances
+        // Note: quiz_numerical is an extension of the answer table rather than
+        //       the quiz_questions table as is usually the case for qtype
+        //       specific tables.
+        global $CFG;
+        if (!$question->options->answers = get_records_sql(
+                                "SELECT a.*, n.tolerance " .
+                                "FROM {$CFG->prefix}quiz_answers a, " .
+                                "     {$CFG->prefix}quiz_numerical n " .
+                                "WHERE a.question = $question->id " .
+                                "AND   a.id = n.answer;")) {
             notify('Error: Missing question answer!');
             return false;
         }
-
-        if (false === ($question->options->tolerance = get_field('quiz_numerical',
-         'tolerance', 'question', $question->id))) {
-            $question->options->tolerance = 0;
-        }
         $this->get_numerical_units($question);
+
+        // If units are defined we strip off the defaultunit from the answer, if
+        // it is present. (Required for compatibility with the old code and DB).
+        if ($defaultunit = $this->get_default_numerical_unit($question)) {
+            foreach($question->options->answers as $key => $val) {
+                $answer = trim($val->answer);
+                $length = strlen($defaultunit->unit);
+                if (substr($answer, -$length) == $defaultunit->unit) {
+                    $question->options->answers[$key]->answer =
+                     substr($answer, 0, strlen($answer)-$length);
+                }
+            }
+        }
+
         return true;
     }
 
@@ -71,14 +89,13 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
         // for numerical questions. This is not currently used by the editing
         // interface, but the GIFT format supports it. The multianswer qtype,
         // for example can make use of this feature.
-
         // Get old versions of the objects
         if (!$oldanswers = get_records("quiz_answers", "question", $question->id)) {
             $oldanswers = array();
         }
 
-        if (!$oldoptions = get_record("quiz_numerical", "question", $question->id)) {
-            $oldoptions = new stdClass;
+        if (!$oldoptions = get_records("quiz_numerical", "question", $question->id)) {
+            $oldoptions = array();
         }
 
         $result = $this->save_numerical_units($question);
@@ -87,7 +104,7 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
         } else {
             $units = &$result->units;
         }
-        $answerids = array();
+
         // Insert all the new answers
         foreach ($question->answer as $key => $dataanswer) {
             if ($dataanswer != "") {
@@ -99,6 +116,7 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
 
                 if ($oldanswer = array_shift($oldanswers)) {  // Existing answer, so reuse it
                     $answer->id = $oldanswer->id;
+                    dump($answer);
                     if (! update_record("quiz_answers", $answer)) {
                         $result->error = "Could not update quiz answer! (id=$answer->id)";
                         return $result;
@@ -109,27 +127,27 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
                         return $result;
                     }
                 }
-                $answerids[] = $answer->id;
-            }
-        }
 
-        // Set up the options object
-        $options = clone($oldoptions);
-        $options->question  = $question->id;
-        $options->answers   = implode(',', $answerids);
-        $options->tolerance = $this->apply_unit($question->tolerance, $units);
+                // Set up the options object
+                if (!$options = array_shift($oldoptions)) {
+                    $options = new stdClass;
+                }
+                $options->question  = $question->id;
+                $options->answer    = $answer->id;
+                $options->tolerance = $this->apply_unit($question->tolerance, $units);
 
-        // Save options
-        if (isset($oldoptions->id)) { // options have changed
-            $options->id = $oldoptions->id;
-            if (! update_record('quiz_numerical', $options)) {
-                $result->error = "Could not update quiz numerical options! (id=$options->id)";
-                return $result;
-            }
-        } else { // new options
-            if (! insert_record('quiz_numerical', $options)) {
-                $result->error = "Could not insert quiz numerical options!";
-                return $result;
+                // Save options
+                if (isset($options->id)) { // reusing existing record
+                    if (! update_record('quiz_numerical', $options)) {
+                        $result->error = "Could not update quiz numerical options! (id=$options->id)";
+                        return $result;
+                    }
+                } else { // new options
+                    if (! insert_record('quiz_numerical', $options)) {
+                        $result->error = "Could not insert quiz numerical options!";
+                        return $result;
+                    }
+                }
             }
         }
     }
@@ -187,34 +205,51 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
     }
 
     function compare_responses(&$question, &$state, &$teststate) {
+        $response = isset($state->responses['']) ? $state->responses[''] : '';
+        $testresponse = isset($teststate->responses[''])
+         ? $teststate->responses[''] : '';
+        return ($response == $testresponse);
+    }
+
+    // Checks whether a response matches a given answer, taking the tolerance
+    // into account. Returns a true for if a response matches the answer, false
+    // if it doesn't.
+    function test_response(&$question, &$state, $answer) {
         if (isset($state->responses[''])) {
             $response = $this->apply_unit(stripslashes($state->responses['']),
              $question->options->units);
         } else {
             $response = '';
         }
-        if (isset($teststate->responses[''])) {
-            $testresponse =
-             $this->apply_unit(stripslashes($teststate->responses['']),
-             $question->options->units);
+
+        if (is_numeric($response) && is_numeric($answer->answer)) {
+            $this->get_tolerance_interval($answer);
+            return ($answer->min <= $response && $answer->max >= $response);
         } else {
-            $testresponse = '';
+            return ($response == $answer->answer);
         }
+    }
 
-        $this->get_tolerance_interval($question, $teststate);
-        // We need to add a tiny fraction (0.00000000000000001) to make the
-        // comparison work correctly. Otherwise seemingly equal values can yield
-        // false.
-        $tolerance = (float)$question->options->tolerance + 0.00000000000000001;
+    function grade_responses(&$question, &$state, $quiz) {
+        $answers     = &$question->options->answers;
 
-        if (is_numeric($response) && is_numeric($testresponse)) {
-            if ($teststate->options->min <= $response
-             && $teststate->options->max >= $response) {
-                return true;
+        foreach($answers as $answer) {
+            if($this->test_response($question, $state, $answer)) {
+                if (empty($state->raw_grade) && $state->raw_grade < $answer->fraction) {
+                    $state->raw_grade = $answer->fraction;
+                }
             }
-        } else {
-            return ($response == $testresponse);
         }
+        if (empty($state->raw_grade)) {
+            $state->raw_grade = 0;
+        }
+
+        // Make sure we don't assign negative or too high marks
+        $state->raw_grade = min(max((float) $state->raw_grade,
+                            0.0), 1.0) * $question->maxgrade;
+        $state->penalty = $question->penalty * $question->maxgrade;
+
+        return true;
     }
 
     function get_correct_responses(&$question, &$state) {
@@ -225,39 +260,44 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
         return $correct;
     }
 
-    function get_tolerance_interval(&$question, &$state) {
-        $answer = (float)$state->responses[''];
-        if (empty($question->options->tolerance)) {
-            $state->options->min = $state->options->max = $answer;
+    function get_tolerance_interval(&$answer) {
+        // No tolerance
+        if (empty($answer->tolerance)) {
+            $answer->min = $answer->max = $answer->answer;
             return true;
         }
 
-        if (!isset($question->options->tolerancetype)) {
-            $question->options->tolerancetype = 2; // nominal
+        // Calculate the interval of correct responses (min/max)
+        if (!isset($answer->tolerancetype)) {
+            $answer->tolerancetype = 2; // nominal
         }
-        $tolerance = (float)$question->options->tolerance;
-        switch ($question->options->tolerancetype) {
+
+        // We need to add a tiny fraction (0.00000000000000001) to make the
+        // comparison work correctly. Otherwise seemingly equal values can yield
+        // false. (fixes bug #3225)
+        $tolerance = (float)$answer->tolerance + 0.00000000000000001;
+        switch ($answer->tolerancetype) {
             case '1': case 'relative':
                 /// Recalculate the tolerance and fall through
                 /// to the nominal case:
-                $tolerance = $answer * $tolerance;
+                $tolerance = $answer->answer * $tolerance;
                 // Falls through to the nominal case -
             case '2': case 'nominal':
                 $tolerance = abs($tolerance); // important - otherwise min and max are swapped
-                $max = $answer + $tolerance;
-                $min = $answer - $tolerance;
+                $max = $answer->answer + $tolerance;
+                $min = $answer->answer - $tolerance;
                 break;
             case '3': case 'geometric':
                 $quotient = 1 + abs($tolerance);
-                $max = $answer * $quotient;
-                $min = $answer / $quotient;
+                $max = $answer->answer * $quotient;
+                $min = $answer->answer / $quotient;
                 break;
             default:
-                error("Unknown tolerance type $question->options->tolerancetype");
+                error("Unknown tolerance type $answer->tolerancetype");
         }
 
-        $state->options->min = $min;
-        $state->options->max = $max;
+        $answer->min = $min;
+        $answer->max = $max;
         return true;
     }
 
