@@ -13,8 +13,11 @@ function auth_user_login ($username, $password) {
     // the first database again, after having accessed the second.
     // The following hack will make the database explicit which keeps it happy
     // This seems to broke postgesql so ..
+
+    $prefix = $CFG->prefix.'';    // Remember it.  The '' is to prevent PHP5 reference.. see bug 3223
+
     if ($CFG->dbtype != 'postgres7') {
-        $CFG->prefix = "$CFG->dbname.$CFG->prefix";
+        $CFG->prefix = $CFG->dbname.$CFG->prefix;
     }
 
     // Connect to the external database
@@ -31,6 +34,8 @@ function auth_user_login ($username, $password) {
                             WHERE $CFG->auth_dbfielduser = '$username' 
                               AND $CFG->auth_dbfieldpass = '$password' ");
     $authdb->Close();
+
+    $CFG->prefix = $prefix;
 
     if (!$rs) {
         notify("Could not connect to the specified authentication database...");
