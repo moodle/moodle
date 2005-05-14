@@ -581,21 +581,23 @@ class quiz_default_questiontype {
                 echo '<div class="gradingdetails">';
                 // print grade for this submission
                 print_string('gradingdetails', 'quiz', $grade);
-                // print details of grade adjustment due to penalties
-                if ($state->last_graded->raw_grade > $state->last_graded->grade){
-                    print_string('gradingdetailsadjustment', 'quiz', $grade);
-                }
-                // print info about new penalty
-                // penalty is relevant only if the answer is not correct and further attempts are possible
-                if (($state->last_graded->raw_grade < $question->maxgrade) and (QUIZ_EVENTCLOSE !== $state->event)) {
-                    if ('' !== $state->last_graded->penalty && ((float)$state->last_graded->penalty) > 0.0) {
-                        // A penalty was applied so display it
-                        print_string('gradingdetailspenalty', 'quiz', $state->last_graded->penalty);
-                    } else {
-                        /* No penalty was applied even though the answer was
-                        not correct (eg. a syntax error) so tell the student
-                        that they were not penalised for the attempt */
-                        print_string('gradingdetailszeropenalty', 'quiz');
+                if ($quiz->penaltyscheme) {
+                    // print details of grade adjustment due to penalties
+                    if ($state->last_graded->raw_grade > $state->last_graded->grade){
+                        print_string('gradingdetailsadjustment', 'quiz', $grade);
+                    }
+                    // print info about new penalty
+                    // penalty is relevant only if the answer is not correct and further attempts are possible
+                    if (($state->last_graded->raw_grade < $question->maxgrade) and (QUIZ_EVENTCLOSE !== $state->event)) {
+                        if ('' !== $state->last_graded->penalty && ((float)$state->last_graded->penalty) > 0.0) {
+                            // A penalty was applied so display it
+                            print_string('gradingdetailspenalty', 'quiz', $state->last_graded->penalty);
+                        } else {
+                            /* No penalty was applied even though the answer was
+                            not correct (eg. a syntax error) so tell the student
+                            that they were not penalised for the attempt */
+                            print_string('gradingdetailszeropenalty', 'quiz');
+                        }
                     }
                 }
                 echo '</div>';
