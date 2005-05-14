@@ -27,6 +27,12 @@
     $qtype = optional_param('qtype');
     $category = optional_param('category');
 
+    // a qtype > 99 means a remote question
+    if ($qtype > 99) {
+	$typeid = $qtype - 100;
+	$qtype = RQP;
+    }
+
     $contextquiz = optional_param('contextquiz'); // the quiz from which this question is being edited
 
     if (isset($_REQUEST['cancel'])) {

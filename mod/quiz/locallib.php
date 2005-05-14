@@ -64,27 +64,6 @@ define("CALCULATED",   "10");
 define("RQP",          "11");
 /**#@-*/
 
-/**
-* Array of question types names translated to the user's language
-*
-* The $QUIZ_QUESTION_TYPE array holds the names of all the question types that the user should
-* be able to create directly. Some internal question types like random questions are excluded.
-* The complete list of question types can be found in {@link $QUIZ_QTYPES}.
-*/
-// Note: Commented-out questiontypes are disabled, because they have not been
-//       upgraded to the new code yet.
-$QUIZ_QUESTION_TYPE = array ( MULTICHOICE   => get_string("multichoice", "quiz"),
-                              TRUEFALSE     => get_string("truefalse", "quiz"),
-                              SHORTANSWER   => get_string("shortanswer", "quiz"),
-                              NUMERICAL     => get_string("numerical", "quiz"),
-                              CALCULATED    => get_string("calculated", "quiz"),
-                              MATCH         => get_string("match", "quiz"),
-                              DESCRIPTION   => get_string("description", "quiz"),
-                              RANDOMSAMATCH => get_string("randomsamatch", "quiz"),
-                              MULTIANSWER   => get_string("multianswer", "quiz"),
-                              RQP           => get_string("rqp", "quiz")
-                              );
-
 
 define("QUIZ_PICTURE_MAX_HEIGHT", "600");   // Not currently implemented
 define("QUIZ_PICTURE_MAX_WIDTH",  "600");   // Not currently implemented

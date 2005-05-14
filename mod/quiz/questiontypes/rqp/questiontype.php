@@ -37,7 +37,7 @@ class quiz_rqp_qtype extends quiz_default_questiontype {
         global $CFG;
 
         // Check source type
-        if (!$type = get_record('quiz_rqp_type', 'id', $form->type)) {
+        if (!$type = get_record('quiz_rqp_types', 'id', $form->type)) {
             $result->notice = get_string('invalidsourcetype', 'quiz');
             return $result;
         }
@@ -48,14 +48,17 @@ class quiz_rqp_qtype extends quiz_default_questiontype {
         $options->type = $form->type;
         $options->type_name = $type->name;
         $options->source = $form->source;
-        $options->format = $form->format;
-        $options->rendering_server = $type->rendering_server;
-        $options->cloning_server = $type->cloning_server;
+        $options->format = isset($form->format) ? $form->format : '';
 
         // Check source file
-        $item = remote_item_info($options);
-        if (false === $item || is_soap_fault($item)) {
-            $result->notice = get_string('invalidsource', 'quiz', $options);
+        if (!$item = remote_item_info($options)) {
+	    // We have not been able to obtain item information from any server
+	    $result->notice = get_string('noconnection', 'quiz', $options);
+	    return $result;
+	}
+        if (is_soap_fault($item)) {
+            $result->notice = get_string('invalidsource', 'quiz', $item);
+	    quiz_rqp_debug_soap($item);
             return $result;
         }
         if ($item->sourceErrors) {
@@ -78,11 +81,6 @@ class quiz_rqp_qtype extends quiz_default_questiontype {
         $options->flags |= $item->template ? REMOTE_TEMPLATE : 0;
         $options->flags |= $item->adaptive ? REMOTE_ADAPTIVE : 0;
 
-        // Check for cloning support if item is a template
-        if ($item->template && !($type->flags & REMOTE_TEMPLATES_SUPPORTED)) {
-            $result->notice = get_string('itemrequirescloning', 'quiz');
-            return $result;
-        }
         // Save the options
         if ($old = get_record('quiz_rqp', 'question', $form->id)) {
             $old->type   = $options->type;
@@ -117,12 +115,10 @@ class quiz_rqp_qtype extends quiz_default_questiontype {
         if (! ($options = get_record('quiz_rqp', 'question', $question->id))) {
             return false;
         }
-        if (!$type = get_record('quiz_rqp_type', 'id', $options->type)) {
+        if (!$type = get_record('quiz_rqp_types', 'id', $options->type)) {
             return false;
         }
         $options->type_name = $type->name;
-        $options->rendering_server = $type->rendering_server;
-        $options->cloning_server = $type->cloning_server;
         $options->flags &= $type->flags;
         return true;
     }
@@ -241,11 +237,15 @@ class quiz_rqp_qtype extends quiz_default_questiontype {
             $output =& $state->options->renderoutput;
         } else {
             // Otherwise perform a render operation
-            $output = remote_render($question, $state, false,
-             $options->readonly ? 'readonly' : 'normal');
-            if (false === $output || is_soap_fault($output)) {
+            if (!$output = remote_render($question, $state, false,
+	    $options->readonly ? 'readonly' : 'normal')) {
+		notify(get_string('noconnection', 'quiz'));
+		exit;
+	    }
+            if (is_soap_fault($output)) {
+                notify(get_string('errorrendering', 'quiz'));
+		quiz_rqp_debug_soap($output);
                 unset($output);
-                notify('Error: Rendering failed!');
                 exit;
             }
         }
@@ -334,37 +334,6 @@ class quiz_rqp_qtype extends quiz_default_questiontype {
     }
 
     /**
-    * Renders the question for printing and returns the LaTeX source produced
-    *
-    * This function calls the RQP_Render operation to render the question
-    * suitable for a printed problem or solution sheet in LaTeX and returns
-    * the rendered output. It does not advance the state of the question session.
-    * @return string          The LaTeX output.
-    * @param object $question The question to be rendered.
-    * @param object $state    The state to render the question in.
-    * @param object $quiz     The quiz to which the question belongs.
-    * @param string $type     Indicates if the question or the solution is to be
-    *                         rendered. Possible values are 'question' and
-    *                         'solution'.
-    */
-    /*function get_texsource(&$question, &$state, $quiz, $type) {
-        // Perform the RQP render operation requesting tex output
-        $output = remote_render($question, $state, 'print', RQP_URI_STATE .
-         ('solution' === $type ? 'solution' : 'normal'));
-        if (false === $output || is_soap_fault($output)) {
-            notify('Error: Rendering failed!');
-            exit;
-        }
-        if (isset($output->bodyParts[RQP_URI_FORMAT . 'text/latex2e-parts/body'])) {
-            $output = $output->bodyParts[RQP_URI_FORMAT . 'text/latex2e-parts/body']->content;
-        }
-        else {
-            $output = '';
-        }
-        return $output;
-    }*/
-
-    /**
     * Performs response processing and grading
     *
     * This function calls RQP_Render to perform response processing and grading
@@ -432,6 +401,11 @@ class quiz_rqp_qtype extends quiz_default_questiontype {
     */
     function get_config_options() {
         global $CFG;
+
+	// for the time being disable rqp unless we have php 5
+	if(!check_php_version('5.0.0')) {
+	    return false;
+	}
 
         $link->name = 'managetypes';
         $link->link = 'types.php';

@@ -2,19 +2,23 @@
 
     require_once($CFG->dirroot . '/mod/quiz/questiontypes/rqp/lib.php');
 
-    $types = quiz_rqp_get_types();
-    print_heading_with_help(get_string('editingrqp', 'quiz'), 'rqp', 'quiz');
     if (empty($question->id)) {
-        $question->options->type = '';
+	if (!isset($typeid)) {
+	    error('No remote question type specified');
+	}
+        $question->options->type = $typeid;
         $question->options->source = '';
         $question->options->format = '';
     }
     else if (!$QUIZ_QTYPES[$question->qtype]->get_question_options($question)) {
-        $question->options->type = '';
-        $question->options->source = '';
-        $question->options->format = '';
-        echo "<p align=\"center\">Error! Could not load the options for this question!</p>\n";
+        error("Could not load the options for this question");
     }
+
+    if (!$type = get_record('quiz_rqp_types', 'id', $question->options->type = $typeid)) {
+	error("Invalid remote question type");
+    }
+
+    print_heading_with_help(get_string('editingrqp', 'quiz', $type->name), 'rqp', 'quiz');
     require('rqp.html');
 
 ?>

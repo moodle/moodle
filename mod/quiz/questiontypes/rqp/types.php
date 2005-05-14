@@ -3,7 +3,13 @@
 // This page lists all the available RQP question types
 
     require_once('../../../../config.php');
+    require_once($CFG->libdir.'/tablelib.php');
     require_once('lib.php');
+    require_once('remote.php');
+    
+    $info = optional_param('info', 0, PARAM_INT); // id of server for which to show info
+    $delete = optional_param('delete', 0, PARAM_INT); // id of server to delete
+    $confirm = optional_param('confirm', false, PARAM_BOOL); // has the teacher confirmed the delete request?
 
     // Check user admin
     require_login();
@@ -15,59 +21,152 @@
         error('Site isn\'t defined!');
     }
 
-    $sesskey = required_param('sesskey', PARAM_RAW);
-    if (!confirm_sesskey($sesskey)) {
-        error(get_string('confirmsesskeybad', 'error'));
-    }
-
     // Print the header
-    $stradmin = get_string('admin');
-    $strconfiguration = get_string('configuration');
-    $strmanagemodules = get_string('managemodules');
     $strmodulename = get_string('modulename', 'quiz');
     $stritemtypes = get_string('itemtypes', 'quiz');
-    $navigation = '<a href="' . s($CFG->wwwroot) . '/' . s($CFG->admin) . '/index.php">' . $stradmin . '</a> -> ' .
-    '<a href="' . s($CFG->wwwroot) . '/' . s($CFG->admin) . '/configure.php">' . $strconfiguration . '</a> -> ' .
-    '<a href="' . s($CFG->wwwroot) . '/' . s($CFG->admin) . '/modules.php">' . $strmanagemodules . '</a> -> ' .
-    '<a href="' . s($CFG->wwwroot) . '/' . s($CFG->admin) . '/module.php?module=quiz&amp;sesskey=' . s(rawurlencode($sesskey)) . '">' . $strmodulename . '</a> -> ' .
-    $stritemtypes;
+    $navigation = '<a href="' . s($CFG->wwwroot) . '/' . s($CFG->admin) . '/index.php">' . get_string('admin') . '</a> -> ' .
+    '<a href="' . s($CFG->wwwroot) . '/' . s($CFG->admin) . '/configure.php">' . get_string('configuration') . '</a> -> ' .
+    '<a href="' . s($CFG->wwwroot) . '/' . s($CFG->admin) . '/modules.php">' . get_string('managemodules') . '</a> -> ' .
+    '<a href="' . s($CFG->wwwroot) . '/' . s($CFG->admin) . '/module.php?module=quiz&amp;sesskey=' . sesskey() . '">' .
+    get_string('modulename', 'quiz') . '</a> -> ' . $stritemtypes;
     print_header($site->shortname . ': ' . $strmodulename . ': ' . $stritemtypes, $site->fullname, $navigation, '', '', true, '', '');
 
-    // Get list of types
-    $types = quiz_rqp_get_types();
+    $straddtypeurl = 'http://';
+    $straddtypename = '';
 
-    // Setup the table
-    $strname = get_string('name');
-    $strservers = get_string('servers', 'quiz');
-    $strcapabilities = get_string('capabilities', 'quiz');
-    $straction = get_string('action');
-    $stredit = get_string('edit');
+/// Process submitted data
+    if ($form = data_submitted() and confirm_sesskey()) { 
+
+	while (isset($form->add)) { // using like if but with support for break
+	    // check name was given
+	    if (empty($form->name)) {
+		notify(get_string('missingitemtypename', 'quiz'));
+		break;
+	    }
+	    // check url was given
+	    if (empty($form->url)) {
+		notify(get_string('missingitemtypeurl', 'quiz'));
+		break;
+	    }
+	    // Check server exists and works
+	    if (!$serverinfo = remote_server_info($form->url)) {
+		notify(get_string('renderingserverconnectfailed', 'quiz', $form->url));
+		break;
+	    }
+	    // add new type to database unless it exists already
+	    if (!$type = get_record('quiz_rqp_types', 'name', $form->name)) {
+		$type->name = $form->name;
+		if (!$type->id = insert_record('quiz_rqp_types', $type)) {
+		    error("Could not save type $type");
+		}
+	    }
+	    // add new server to database unless it exists already
+	    if (!$server = get_record('quiz_rqp_servers', 'url', $form->url)) {
+		$server->typeid = $type->id;
+		$server->url = $form->url;
+		$server->can_render = $serverinfo->rendering ? 1 : 0;
+		if (!insert_record('quiz_rqp_servers', $server)) {
+		    error("Could not save server $form->url");
+		}
+	    }
+	    // print info about new server
+	    print_heading(get_string('serveradded', 'quiz'));
+	    quiz_rqp_print_serverinfo($serverinfo);
+    
+	    break;
+
+	}
+    }
+
+    if ($delete and confirm_sesskey()) { // delete server
+	if ($confirm) {
+	    delete_records('quiz_rqp_servers', 'id', $delete);
+	} else {
+	    if (!$server = get_record('quiz_rqp_servers', 'id', $delete)) {
+		error('Invalid server id');
+	    }
+	    if ((count_records('quiz_rqp_servers', 'typeid', $server->typeid) == 1) // this is the last server of its type
+		and record_exists('quiz_rqp', 'type', $server->typeid)) { // and there are questions using it
+		$type = get_record('quiz_rqp_types', 'id', $server->typeid);
+		notify(get_string('serverinuse', 'quiz', $type->name));
+	    }
+	    notice_yesno(get_string('confirmserverdelete', 'quiz', $server->url), 'types.php?delete='.$delete.'&amp;sesskey='.sesskey().'&amp;confirm=true', 'types.php');
+	}
+    }
+    
+    if ($info) { // show info for server
+	if (!$server = get_record('quiz_rqp_servers', 'id', $info)) {
+	    error('Invalid server id');
+	}
+	// Check server exists and works
+	if (!$serverinfo = remote_server_info($server->url)) {
+	    notify(get_string('renderingserverconnectfailed', 'quiz', $server->url));
+	} else {
+	    // print the info
+	    print_heading(get_string('serverinfo', 'quiz'));
+	    quiz_rqp_print_serverinfo($serverinfo);
+	}
+    }
+
+
+/// Set up the table
+
+    $table = new flexible_table('mod-quiz-questiontypes-rqp-types');
+
+    $table->define_columns(array('name', 'url', 'action'));
+    $table->define_headers(array(get_string('name'), get_string('serverurl', 'quiz'), get_string('action')));
+    $table->define_baseurl($CFG->wwwroot.'/mod/quiz/questiontypes/rqp/types.php');
+
+    //$table->sortable(true);
+
+    $table->column_suppress('name');
+
+    $table->set_attribute('cellspacing', '15');
+    $table->set_attribute('id', 'types');
+    $table->set_attribute('class', 'generaltable generalbox');
+
+    // Start working -- this is necessary as soon as the niceties are over
+    $table->setup();
+
+/// Create table rows
+    // Get list of types
+    $types = get_records('quiz_rqp_types', '', '', 'name ASC');
+
+    $strinfo = get_string('info');
     $strdelete = get_string('delete');
-    $table->head  = array($strname, $strservers, $strcapabilities, $straction);
-    $table->align = array('left', 'left', 'left', 'left');
-    $table->size  = array('*', '*', '*', '*');
+    $stradd = get_string('add');
 
     if ($types) {
         foreach ($types as $type) {
-            $link = '<a href="edittype.php?id=' . s(rawurlencode($type->id)) . '&amp;sesskey=' . s(rawurlencode($sesskey)) . '">' . s($type->name) . '</a>';
-            $servers = get_string('rendering', 'quiz') . ': ' . s($type->rendering_server);
-            if ($type->cloning_server) {
-                $servers .= "<br />\n" . get_string('cloning', 'quiz') . ': ' . s($type->cloning_server);
-            }
-            $capabilities = '';
-            $actions = '<a title="' . $stredit . '" href="edittype.php?id=' . s(rawurlencode($type->id)) . '&amp;sesskey=' . s(rawurlencode($sesskey)) . '"><img src="../../../../pix/t/edit.gif" border="0" alt="' . $stredit . '" /></a>&nbsp;<a title="' . $strdelete . '" href="edittype.php?delete=' . s(rawurlencode($type->id)) . '&amp;sesskey=' . s(rawurlencode($sesskey)) . '"><img src="../../../../pix/t/delete.gif" border="0" alt="' . $strdelete . '" /></a>';
-            $table->data[] = array($link, $servers, $capabilities, $actions);
+            if (!$servers = get_records('quiz_rqp_servers', 'typeid', $type->id)) {
+		delete_records('quiz_rqp_types', 'id', $type->id);
+	    } else {
+		foreach ($servers as $server) {
+		    $actions = '<a title="' . $strinfo . '" href="types.php?info='.$server->id.'&amp;sesskey='.sesskey().'"><img src="../../../../pix/i/info.gif" border="0" alt="'.$strinfo.'" align="absbottom" /></a>&nbsp;<a title="'.$strdelete.'" href="types.php?delete='.$server->id.'&amp;sesskey='.sesskey().'"><img src="../../../../pix/t/delete.gif" border="0" alt="'.$strdelete.'" /></a>';
+		    $serverurl = ($info == $server->id) ? '<b>'.$server->url.'</b>' : $server->url;
+		    $table->add_data(array($type->name, $serverurl, $actions));
+		}
+	        $table->add_data(array('','',''));
+	    }
         }
     }
 
-    // Print the table
+    // add input fields for adding new server
+    $typeinput = '<input type="text" size="15" maxlength="25" name="name" />';
+    $urlinput = '<input type="text" size="50" maxlength="255" name="url" value="http://" />';
+    $addbutton = '<input type="submit" value="'.get_string('add').'" name="add" />';
+    $table->data[] = array($typeinput, $urlinput, $addbutton);
+    
+/// Print the table
     print_heading($stritemtypes);
-    print_table($table);
+    echo '<form action="types.php" method="post">';
+    echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
+    echo '<center>';
+    $table->print_html();
+    echo '</center>';
+    echo '</form>';
 
-    // Print add link
-   echo '<p align="center"><a href="edittype.php?sesskey=' . s(rawurlencode($sesskey)) . '">' . get_string('additemtype', 'quiz') . "</a></p>\n";
-
-    // Finish the page
+/// Finish the page
     print_footer();
 
 ?>

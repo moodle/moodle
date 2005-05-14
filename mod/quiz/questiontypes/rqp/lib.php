@@ -10,15 +10,12 @@
 * @package quiz
 */
 
-function quiz_rqp_get_types() {
-    return get_records('quiz_rqp_type', '', '', 'name ASC');
-}
 
 function quiz_rqp_save_type($type) {
     if (empty($type->id)) {
-        return insert_record('quiz_rqp_type', $type, false);
+        return insert_record('quiz_rqp_types', $type, false);
     }
-    return update_record('quiz_rqp_type', $type);
+    return update_record('quiz_rqp_types', $type);
 }
 
 function quiz_rqp_delete_type($id) {
@@ -110,4 +107,22 @@ function quiz_rqp_explode($str, $multi=false) {
     return $return;
 }
 
+function quiz_rqp_print_serverinfo($serverinfo) {
+    $info->align = array('right', 'left');
+    $info->data = array(); // will hold the data for the info table
+    $info->data[] = array('<b>'.get_string('url', 'quiz').':</b>',$serverinfo->url);
+    $info->data[] = array('<b>'.get_string('name').':</b>',$serverinfo->name);
+    $info->data[] = array('<b>'.get_string('serveridentifier', 'quiz').':</b>',$serverinfo->identifier);
+    $info->data[] = array('<b>'.get_string('description').':</b>',$serverinfo->description);
+    print_table($info);
+}
+
+function quiz_rqp_debug_soap($item) {
+    global $CFG;
+    if ($CFG->debug) {
+	echo 'Here is the dump of the soap fault:<pre>';
+	var_dump($item);
+	echo '<pre>';
+    }
+}
 ?>

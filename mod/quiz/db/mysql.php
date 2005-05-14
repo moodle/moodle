@@ -640,6 +640,29 @@ function quiz_upgrade($oldversion) {
         table_column('quiz_newest_states', 'new', 'newest', 'integer', '10', 'unsigned', '0', 'not null');
     }
 
+    if ($oldversion < 2005051400) {
+        modify_database('', 'ALTER TABLE prefix_quiz_rqp_type RENAME prefix_quiz_rqp_types;');
+	modify_database('', "CREATE TABLE `prefix_quiz_rqp_servers` (
+			      id int(10) unsigned NOT NULL auto_increment,
+			      typeid int(10) unsigned NOT NULL default '0',
+			      url varchar(255) NOT NULL default '',
+			      can_render tinyint(2) unsigned NOT NULL default '0',
+			      can_author tinyint(2) unsigned NOT NULL default '0',
+			      PRIMARY KEY  (id)
+			    ) TYPE=MyISAM COMMENT='Information about RQP servers';");
+	if ($types = get_records('quiz_rqp_types')) {
+	    foreach($types as $type) {
+		$server->typeid = $type->id;
+		$server->url = $type->rendering_server;
+		$server->can_render = 1;
+		insert_record('quiz_rqp_servers', $server);
+	    }
+	}
+        modify_database('', 'ALTER TABLE prefix_quiz_rqp_types DROP rendering_server');
+        modify_database('', 'ALTER TABLE prefix_quiz_rqp_types DROP cloning_server');
+        modify_database('', 'ALTER TABLE prefix_quiz_rqp_types DROP flags');
+    }
+
     return true;
 }
 

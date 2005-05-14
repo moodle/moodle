@@ -13,6 +13,32 @@
 require_once("locallib.php");
 
 /**
+* Array of question types names translated to the user's language
+*
+* The $QUIZ_QUESTION_TYPE array holds the names of all the question types that the user should
+* be able to create directly. Some internal question types like random questions are excluded.
+* The complete list of question types can be found in {@link $QUIZ_QTYPES}.
+*/
+
+$QUIZ_QUESTION_TYPE = array ( MULTICHOICE   => get_string("multichoice", "quiz"),
+                              TRUEFALSE     => get_string("truefalse", "quiz"),
+                              SHORTANSWER   => get_string("shortanswer", "quiz"),
+                              NUMERICAL     => get_string("numerical", "quiz"),
+                              CALCULATED    => get_string("calculated", "quiz"),
+                              MATCH         => get_string("match", "quiz"),
+                              DESCRIPTION   => get_string("description", "quiz"),
+                              RANDOMSAMATCH => get_string("randomsamatch", "quiz"),
+                              MULTIANSWER   => get_string("multianswer", "quiz")
+                              );
+// add remote question types
+if ($rqp_types = get_records('quiz_rqp_types')) {
+    foreach($rqp_types as $type) {
+	$QUIZ_QUESTION_TYPE[100+$type->id] = $type->name;
+    }
+}
+
+
+/**
 * Delete a question from a quiz
 *
 * Deletes a question or a pagebreak from a quiz by updating $modform
