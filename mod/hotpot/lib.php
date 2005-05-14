@@ -236,7 +236,7 @@ function hotpot_print_recent_activity($course, $isteacher, $timestart) {
 
 			$names = array();
 			foreach ($records as $id => $record){
-				$href = "$CFG->wwwroot/mod/hotpot/view.php?id=$id";
+				$href = $CFG->wwwroot.'/mod/hotpot/view.php?id='.$id;
 				$name = "&nbsp;<a href=\"$href\">$record->name</a>";
 				if ($record->count_attempts > 1) {
 					$name >= " ($record->count_attempts)";
@@ -244,7 +244,9 @@ function hotpot_print_recent_activity($course, $isteacher, $timestart) {
 				$names[] = $name;
 			}
 
-			print '<BR><FONT size="1">Hot Potatoes Activity:<BR> '.implode('<BR>', $names).'</FONT>';
+            print_headline(get_string('modulename', 'hotpot').':');
+			echo '<div class="head"><div class="name">'.implode('<br />', $names).'</div></div>';
+
 			$result = true;
 		}
 	}
