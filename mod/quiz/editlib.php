@@ -33,7 +33,7 @@ $QUIZ_QUESTION_TYPE = array ( MULTICHOICE   => get_string("multichoice", "quiz")
 // add remote question types
 if ($rqp_types = get_records('quiz_rqp_types')) {
     foreach($rqp_types as $type) {
-	$QUIZ_QUESTION_TYPE[100+$type->id] = $type->name;
+        $QUIZ_QUESTION_TYPE[100+$type->id] = $type->name;
     }
 }
 

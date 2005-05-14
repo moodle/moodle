@@ -120,9 +120,9 @@ function quiz_rqp_print_serverinfo($serverinfo) {
 function quiz_rqp_debug_soap($item) {
     global $CFG;
     if ($CFG->debug) {
-	echo 'Here is the dump of the soap fault:<pre>';
-	var_dump($item);
-	echo '<pre>';
+        echo 'Here is the dump of the soap fault:<pre>';
+        var_dump($item);
+        echo '<pre>';
     }
 }
 ?>

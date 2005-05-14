@@ -58,7 +58,7 @@ class quiz_rqp_qtype extends quiz_default_questiontype {
 	}
         if (is_soap_fault($item)) {
             $result->notice = get_string('invalidsource', 'quiz', $item);
-	    quiz_rqp_debug_soap($item);
+            quiz_rqp_debug_soap($item);
             return $result;
         }
         if ($item->sourceErrors) {
@@ -238,13 +238,13 @@ class quiz_rqp_qtype extends quiz_default_questiontype {
         } else {
             // Otherwise perform a render operation
             if (!$output = remote_render($question, $state, false,
-	    $options->readonly ? 'readonly' : 'normal')) {
-		notify(get_string('noconnection', 'quiz'));
-		exit;
-	    }
+             $options->readonly ? 'readonly' : 'normal')) {
+                notify(get_string('noconnection', 'quiz'));
+                exit;
+            }
             if (is_soap_fault($output)) {
                 notify(get_string('errorrendering', 'quiz'));
-		quiz_rqp_debug_soap($output);
+                quiz_rqp_debug_soap($output);
                 unset($output);
                 exit;
             }
@@ -402,10 +402,10 @@ class quiz_rqp_qtype extends quiz_default_questiontype {
     function get_config_options() {
         global $CFG;
 
-	// for the time being disable rqp unless we have php 5
-	if(!check_php_version('5.0.0')) {
-	    return false;
-	}
+        // for the time being disable rqp unless we have php 5
+        if(!check_php_version('5.0.0')) {
+            return false;
+        }
 
         $link->name = 'managetypes';
         $link->link = 'types.php';

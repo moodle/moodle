@@ -37,21 +37,21 @@ function remote_connect($typeid) {
     global $remote_connections;
 
     if (!array_key_exists($typeid, $remote_connections)) {
-	// get the available servers
-	if (!$servers = get_records('quiz_rqp_servers', 'typeid', $typeid)) {
-	    // we don't have a server for this question type
-	    return false;
-	}
-	// put them in a random order
-	shuffle($servers);
-	// go through them and try to connect to each until we are successful
-        foreach ($servers as $server) {
-	    if ($remote_connections[$typeid] = rqp_connect($server->url)) {
-		break; // we have a connection
-	    } else {
-	        // We have a dead server here, should somehow flag that
-	    }
-	}
+        // get the available servers
+        if (!$servers = get_records('quiz_rqp_servers', 'typeid', $typeid)) {
+            // we don't have a server for this question type
+            return false;
+        }
+        // put them in a random order
+        shuffle($servers);
+        // go through them and try to connect to each until we are successful
+            foreach ($servers as $server) {
+            if ($remote_connections[$typeid] = rqp_connect($server->url)) {
+            break; // we have a connection
+            } else {
+                // We have a dead server here, should somehow flag that
+            }
+        }
     }
     // check that we did get a connection
     if (!$remote_connections[$typeid]) {
@@ -71,11 +71,11 @@ function remote_connect($typeid) {
 function remote_server_info($url) {
 
     if (!$connection = rqp_connect($url)) {
-	return false;
+        return false;
     }
     $return = rqp_server_info($connection);
     if (is_soap_fault($return)) {
-	$return = false;
+        $return = false;
     }
     $return->url = $url;
     return $return;
