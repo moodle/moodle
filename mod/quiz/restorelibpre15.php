@@ -198,7 +198,9 @@
             $question->questiontextformat = backup_todb($que_info['#']['QUESTIONTEXTFORMAT']['0']['#']);
             $question->image = backup_todb($que_info['#']['IMAGE']['0']['#']);
             $question->defaultgrade = backup_todb($que_info['#']['DEFAULTGRADE']['0']['#']);
-            $question->penalty = backup_todb($que_info['#']['PENALTY']['0']['#']);
+            if (isset($que_info['#']['PENALTY']['0']['#'])) { //Only if it's set, to apply DB default else.
+                $question->penalty = backup_todb($que_info['#']['PENALTY']['0']['#']);
+            }
             $question->qtype = backup_todb($que_info['#']['QTYPE']['0']['#']);
             $question->length = backup_todb($que_info['#']['LENGTH']['0']['#']);
             $question->stamp = backup_todb($que_info['#']['STAMP']['0']['#']);
@@ -444,7 +446,7 @@ echo "Cloze questions not working!!!";
         return $status;
     }
 
-    function quiz_restore_pre15_shortanswer ($old_question_id,$new_question_id,$info,$restore) {
+    function quiz_restore_pre15_shortanswer ($old_question_id,$new_question_id,$info,$restore,$restrictto = '') {
 
         global $CFG;
 
@@ -488,7 +490,10 @@ echo "Cloze questions not working!!!";
             $shortanswer->answers = $answers_field;
 
             //The structure is equal to the db, so insert the quiz_shortanswer
-            $newid = insert_record ("quiz_shortanswer",$shortanswer);
+            //Only if there aren't restrictions or there are restriction concordance
+            if (empty($restrictto) || (!empty($restrictto) && $shortanswer->answers == $restrictto)) {
+                $newid = insert_record ("quiz_shortanswer",$shortanswer);
+            } 
 
             //Do some output
             if (($i+1) % 50 == 0) {
@@ -499,7 +504,7 @@ echo "Cloze questions not working!!!";
                 backup_flush(300);
             }
 
-            if (!$newid) {
+            if (!$newid && !$restrictto) {
                 $status = false;
             }
         }
@@ -560,7 +565,7 @@ echo "Cloze questions not working!!!";
         return $status;
     }
 
-    function quiz_restore_pre15_multichoice ($old_question_id,$new_question_id,$info,$restore) {
+    function quiz_restore_pre15_multichoice ($old_question_id,$new_question_id,$info,$restore, $restrictto = '') {
 
         global $CFG;
 
@@ -605,7 +610,10 @@ echo "Cloze questions not working!!!";
             $multichoice->answers = $answers_field;
 
             //The structure is equal to the db, so insert the quiz_shortanswer
-            $newid = insert_record ("quiz_multichoice",$multichoice);
+            //Only if there aren't restrictions or there are restriction concordance
+            if (empty($restrictto) || (!empty($restrictto) && $multichoice->answers == $restrictto)) {
+                $newid = insert_record ("quiz_multichoice",$multichoice);
+            }
 
             //Do some output
             if (($i+1) % 50 == 0) {
@@ -616,7 +624,7 @@ echo "Cloze questions not working!!!";
                 backup_flush(300);
             }
 
-            if (!$newid) {
+            if (!$newid && !$restrictto) {
                 $status = false;
             }
         }
@@ -848,7 +856,7 @@ echo "Cloze questions not working!!!";
         return $status;
     }
 
-    function quiz_restore_pre15_numerical ($old_question_id,$new_question_id,$info,$restore) {
+    function quiz_restore_pre15_numerical ($old_question_id,$new_question_id,$info,$restore, $restrictto = '') {
 
         global $CFG;
 
@@ -877,13 +885,17 @@ echo "Cloze questions not working!!!";
             }
 
             //Answer goes to answers in 1.5 (although it continues being only one!)
-            $numerical->answers = $numerical->answer;
+            //Changed 12-05 (chating with Gustav and Julian this remains = pre15 = answer)
+            //$numerical->answers = $numerical->answer;
 
             //We have to calculate the tolerance field of the numerical question
             $numerical->tolerance = ($numerical->max - $numerical->min)/2;
 
             //The structure is equal to the db, so insert the quiz_numerical
-            $newid = insert_record ("quiz_numerical",$numerical);
+            //Only if there aren't restrictions or there are restriction concordance
+            if (empty($restrictto) || (!empty($restrictto) && in_array($numerical->answer,explode(",",$restrictto)))) {
+                $newid = insert_record ("quiz_numerical",$numerical);
+            }
 
             //Do some output
             if (($i+1) % 50 == 0) {
@@ -895,9 +907,11 @@ echo "Cloze questions not working!!!";
             }
 
             //Now restore numerical_units
-            $status = quiz_restore_pre15_numerical_units ($old_question_id,$new_question_id,$num_info,$restore);
+            if ($newid) {
+                $status = quiz_restore_pre15_numerical_units ($old_question_id,$new_question_id,$num_info,$restore);
+            }
 
-            if (!$newid) {
+            if (!$newid && !$restrictto) {
                 $status = false;
             }
         }
@@ -974,11 +988,22 @@ echo "Cloze questions not working!!!";
 
         $status = true;
 
+        //We need some question fields here so we get the full record from DB
+        $parentquestion = get_record('quiz_questions','id',$new_question_id);
+
+        //We need to store all the positions with their created questions
+        //to be able to calculate the sequence field
+        $createdquestions = array();
+
+        //Under 1.5, every multianswer record becomes a question itself
+        //with its parent set to the cloze question. And there is only
+        //ONE multianswer record with the sequence of questions used.
+
         //Get the multianswers array
-        $multianswers = $info['#']['MULTIANSWERS']['0']['#']['MULTIANSWER'];
-        //Iterate over multianswers
-        for($i = 0; $i < sizeof($multianswers); $i++) {
-            $mul_info = $multianswers[$i];
+        $multianswers_array = $info['#']['MULTIANSWERS']['0']['#']['MULTIANSWER'];
+        //Iterate over multianswers_array
+        for($i = 0; $i < sizeof($multianswers_array); $i++) {
+            $mul_info = $multianswers_array[$i];
             //traverse_xmlize($mul_info);                                                                 //Debug
             //print_object ($GLOBALS['traverse_array']);                                                  //Debug
             //$GLOBALS['traverse_array']="";                                                              //Debug
@@ -993,36 +1018,44 @@ echo "Cloze questions not working!!!";
             $multianswer->answertype = backup_todb($mul_info['#']['ANSWERTYPE']['0']['#']);
             $multianswer->norm = backup_todb($mul_info['#']['NORM']['0']['#']);
 
-            //We have to recode the answers field (a list of answers id)
-            //Extracts answer id from sequence
-            $answers_field = "";
-            $in_first = true;
-            $tok = strtok($multianswer->answers,",");
-            while ($tok) {
+            //We have to recode all the answers to their new ids
+            $ansarr = explode(",", $multianswer->answers);
+            foreach ($ansarr as $key => $value) {
                 //Get the answer from backup_ids
-                $answer = backup_getid($restore->backup_unique_code,"quiz_answers",$tok);
-                if ($answer) {
-                    if ($in_first) {
-                        $answers_field .= $answer->new_id;
-                        $in_first = false;
-                    } else {
-                        $answers_field .= ",".$answer->new_id;
-                    }
-                }
-                //check for next
-                $tok = strtok(",");
+                $answer = backup_getid($restore->backup_unique_code,'quiz_answers',$value);
+                $ansarr[$key] = $answer->new_id;
             }
-            //We have the answers field recoded to its new ids
-            $multianswer->answers = $answers_field;
+            $multianswer->answers = implode(",",$ansarr);
 
-            //The structure is equal to the db, so insert the quiz_multianswers
-            $newid = insert_record ("quiz_multianswers",$multianswer);
+            print_object($multianswer);
+
+            //Build the new question structure
+            $question = new object;
+            $question->category           = $parentquestion->category;
+            $question->parent             = $parentquestion->id;
+            $question->name               = $parentquestion->name;
+            $question->questiontextformat = $parentquestion->questiontextformat;
+            $question->defaultgrade       = $multianswer->norm;
+            $question->penalty            = $parentquestion->penalty;
+            $question->qtype              = $multianswer->answertype;
+            $question->version            = $parentquestion->version;
+            $question->hidden             = $parentquestion->hidden;
+            $question->length             = 0;
+            $question->questiontext       = '';
+            $question->stamp              = make_unique_id_code();
+
+            print_object($question);
+            //Save the new question to DB
+            $newid = insert_record('quiz_questions', $question);
 
             //Save ids in backup_ids
             if ($newid) {
-                backup_putid($restore->backup_unique_code,"quiz_multianswers",
+                backup_putid($restore->backup_unique_code,"quiz_questions",
                              $oldid, $newid);
+                // and copy useful information to createdquestions
+                $createdquestions[$multianswer->positionkey] = $newid;
             }
+
 
             //Do some output
             if (($i+1) % 50 == 0) {
@@ -1033,20 +1066,38 @@ echo "Cloze questions not working!!!";
                 backup_flush(300);
             }
 
-            //If we have created the quiz_multianswers record, now, depending of the
+            //If we have created the quiz_questions record, now, depending of the
             //answertype, delegate the restore to every qtype function
             if ($newid) {
                 if ($multianswer->answertype == "1") {
-                    $status = quiz_restore_shortanswer ($old_question_id,$new_question_id,$mul_info,$restore);
+                    $status = quiz_restore_pre15_shortanswer ($old_question_id,$newid,$mul_info,$restore,$multianswer->answers);
                 } else if ($multianswer->answertype == "3") {
-                    $status = quiz_restore_multichoice ($old_question_id,$new_question_id,$mul_info,$restore);
+                    $status = quiz_restore_pre15_multichoice ($old_question_id,$newid,$mul_info,$restore,$multianswer->answers);
                 } else if ($multianswer->answertype == "8") {
-                    $status = quiz_restore_numerical ($old_question_id,$new_question_id,$mul_info,$restore);
+                    $status = quiz_restore_pre15_numerical ($old_question_id,$newid,$mul_info,$restore,$multianswer->answers);
                 }
             } else {
                 $status = false;
             }
         }
+
+        //Everything is created, just going to create the multianswer record
+        if ($status) {
+            print_object ($createdquestions);
+            ksort($createdquestions);
+            print_object ($createdquestions);
+            echo implode(",",$createdquestions);
+           
+            $multianswerdb = new object;
+            $multianswerdb->question = $parentquestion->id;
+            $multianswerdb->sequence = implode(",",$createdquestions);
+            $mid = insert_record('quiz_multianswers', $multianswerdb);
+  
+            if (!$mid) {
+                $status = false;
+            }
+        }
+        
 
         return $status;
     }
@@ -1246,6 +1297,11 @@ echo "PRE15!!";
             $quiz->password = backup_todb($info['MOD']['#']['PASSWORD']['0']['#']);
             $quiz->subnet = backup_todb($info['MOD']['#']['SUBNET']['0']['#']);
             $quiz->popup = backup_todb($info['MOD']['#']['POPUP']['0']['#']);
+
+            //If decimalpoints aren't defined, default to 2
+            if (empty($quiz->decimalpoints)) {
+                $quiz->decimalpoints = 2;
+            }
 
             //We have to recode the questions field (a list of questions id)
             //Extracts question id from sequence
