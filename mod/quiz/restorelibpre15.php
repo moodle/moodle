@@ -1027,8 +1027,6 @@ echo "Cloze questions not working!!!";
             }
             $multianswer->answers = implode(",",$ansarr);
 
-            print_object($multianswer);
-
             //Build the new question structure
             $question = new object;
             $question->category           = $parentquestion->category;
@@ -1044,7 +1042,6 @@ echo "Cloze questions not working!!!";
             $question->questiontext       = '';
             $question->stamp              = make_unique_id_code();
 
-            print_object($question);
             //Save the new question to DB
             $newid = insert_record('quiz_questions', $question);
 
@@ -1066,6 +1063,15 @@ echo "Cloze questions not working!!!";
                 backup_flush(300);
             }
 
+            //Remap quiz_answers records from the original multianswer question
+            //to their newly created question
+            if ($newid) {
+                $answersdb = get_records_list('quiz_answers','id',$multianswer->answers);
+                foreach ($answersdb as $answerdb) {
+                    set_field('quiz_answers','question',$newid,'id',$answerdb->id);
+                }
+            }
+
             //If we have created the quiz_questions record, now, depending of the
             //answertype, delegate the restore to every qtype function
             if ($newid) {
@@ -1083,10 +1089,7 @@ echo "Cloze questions not working!!!";
 
         //Everything is created, just going to create the multianswer record
         if ($status) {
-            print_object ($createdquestions);
             ksort($createdquestions);
-            print_object ($createdquestions);
-            echo implode(",",$createdquestions);
            
             $multianswerdb = new object;
             $multianswerdb->question = $parentquestion->id;
@@ -1097,7 +1100,6 @@ echo "Cloze questions not working!!!";
                 $status = false;
             }
         }
-        
 
         return $status;
     }
