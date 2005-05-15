@@ -6051,7 +6051,7 @@ function get_performance_info() {
         list($server_load) = explode(' ', $loadavg[0]);
         unset($loadavg);
     } else if ( function_exists('is_executable') && is_executable('/usr/bin/uptime') && $loadavg = `/usr/bin/uptime` ) {
-        if (preg_match('/load averages?: (\d+:\d+)/', $loadavg, $matches)) {
+        if (preg_match('/load averages?: (\d+[\.:]\d+)/', $loadavg, $matches)) {
             $server_load = $matches[1];
         } else {
             trigger_error('Could not parse uptime output!');
@@ -6059,8 +6059,8 @@ function get_performance_info() {
     }
     if (!empty($server_load)) {
         $info['serverload'] = $server_load;
-        $info['html'] .= '<span class="serverload">Load average: '.$info['serverload'].'%</span> ';
-        $info['txt'] .= 'serverload: '.$info['serverload'].'% ';
+        $info['html'] .= '<span class="serverload">Load average: '.$info['serverload'].'</span> ';
+        $info['txt'] .= 'serverload: '.$info['serverload'];
     }
     
 
