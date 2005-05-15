@@ -1086,6 +1086,11 @@ function main_upgrade($oldversion=0) {
         table_column('user', '', 'trackforums', 'int', '4', 'unsigned', '0', 'not null', 'autosubscribe');
     }
 
+    if ($oldversion < 2005051500) {  // Add user tracking prefs field.
+        table_column('grade_category', 'weight', 'weight', 'numeric(5,2)', '', '', '0.00', '', '');
+    }
+
+
     return $result;
 }
 

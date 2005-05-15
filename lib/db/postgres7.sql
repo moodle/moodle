@@ -134,7 +134,7 @@ CREATE TABLE prefix_grade_category (
   drop_x_lowest integer NOT NULL default '0',
   bonus_points integer NOT NULL default '0',
   hidden integer NOT NULL default '0',
-  weight decimal(4,2) default '0.00'
+  weight decimal(5,2) default '0.00'
 );
 
 CREATE INDEX prefix_grade_category_courseid_idx ON prefix_grade_category (courseid);
