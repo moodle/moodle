@@ -40,7 +40,7 @@
 
     $courseid = optional_param('courseid');
     $quizid   = optional_param('quizid');
-    $page     = optional_param('page', 0);
+    $page     = optional_param('page', -1);
     $perpage  = optional_param('perpage', 20);
 
     $strquizzes = get_string('modulenameplural', 'quiz');
@@ -102,6 +102,12 @@
     {
         $modform->grades = quiz_get_all_question_grades($modform);
     }
+
+	if ($page > -1) {
+		$modform->page = $page;
+	} else {
+		$page = isset($modform->page) ? $modform->page : 0;
+	}
 
 /// Now, check for commands on this page and modify variables as necessary
 
