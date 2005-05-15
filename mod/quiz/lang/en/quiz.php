@@ -116,9 +116,9 @@ $string['withselected'] = 'With selected';
 $string['wronguse'] = 'You can not use this page like that';
 
 $string['analysisoptions'] = 'Analysis options';
-$string['attemptselection'] = 'Select which attempts to analyze per user ';
+$string['attemptselection'] = 'Select which attempts to analyze per user: ';
 $string['lowmarkslimit'] = "    Don't analyze if score is less than: ";
 $string['reportanalysis'] = 'Item analysis';
-$string['allattempts'] = 'all attempts';
+$string['allattempts'] = 'All attempts';
 $string['analysistitle'] = 'Item Analysis Table';
 ?>

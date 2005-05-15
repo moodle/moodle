@@ -429,7 +429,7 @@ class quiz_default_questiontype {
     }
 
     /**
-    * Return the actual response to the question in a given attempt
+    * Return the actual response to the question in a given state
     * for the question
     *
     * @return                 compond object fractiongrade & actual response .

@@ -2,7 +2,6 @@
 
 /// Item analysis displays a table of quiz questions and their performance 
 
-    require_once("locallib.php");
     require_once($CFG->libdir.'/tablelib.php');
 
 
@@ -31,10 +30,10 @@ class quiz_report extends quiz_default_report {
     function display($quiz, $cm, $course) {     /// This function just displays the report
 
         global $CFG, $SESSION, $db, $QUIZ_QTYPES;
-        define(QUIZ_ALLATTEMPTS, 0);
-        define(QUIZ_HIGHESTATTEMPT, 1);
-        define(QUIZ_FIRSTATTEMPT, 2);
-        define(QUIZ_LASTATTEMPT, 3);
+        define('QUIZ_ALLATTEMPTS', 0);
+        define('QUIZ_HIGHESTATTEMPT', 1);
+        define('QUIZ_FIRSTATTEMPT', 2);
+        define('QUIZ_LASTATTEMPT', 3);
 
         $strnoquiz = get_string('noquiz','quiz');
         $strnoattempts = get_string('noattempts','quiz');
@@ -54,20 +53,12 @@ class quiz_report extends quiz_default_report {
 
     /// Get all users: teachers and students
         if ($currentgroup) {
-            $users = get_group_users($currentgroup);
+            $users = get_group_students($currentgroup);
         }
         else {
-            $users = get_course_users($course->id);
+            $users = get_course_students($course->id);
         }
-        
-    /// Remove teachers 
-        $teachers = get_course_teachers($course->id);
-        if(!empty($teachers)) {
-            $keys = array_keys($teachers);
-        }
-        foreach($keys as $key) {
-            unset($users[$key]);
-        }
+
 
         if(empty($users)) {
             print_heading($strnoattempts);
