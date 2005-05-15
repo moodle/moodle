@@ -5,6 +5,7 @@
     require_once(MAGPIE_DIR .'rss_fetch.inc');
 
     require_login();
+    global $USER;
     
     //ensure that the logged in user is not using the guest account
     if (isset($_SERVER['HTTP_REFERER'])){
@@ -87,11 +88,10 @@
             error('There was an error trying to update rss feed with id:'. $rssid);
         }
 
-//        rss_display_feeds($rssid);
-        rss_display_feeds();
-        print '<strong>'. get_string('block_rss_feed_updated', 'block_rss_client') .'</strong>';                
+        redirect($referrer, get_string('block_rss_feed_updated', 'block_rss_client'));
+/*        rss_display_feeds();
         rss_get_form($act, $dataobject->url, $rssid, $dataobject->preferredtitle);
-
+*/
     } else if ($act == 'addfeed' ) {
 
         require_variable($url);            
@@ -115,7 +115,7 @@
         ob_end_clean();
         
         if ($rss === false) {
-            print 'There was an error loading this rss feed. You may want to verify the url you have specified before using it.'; //Daryl Hawes note: localize this line
+            $message = 'There was an error loading this rss feed. You may want to verify the url you have specified before using it.'; //Daryl Hawes note: localize this line
         } else {
 
             $dataobject->id = $rssid;
@@ -128,11 +128,13 @@
             if (!update_record('block_rss_client', $dataobject)) {
                 error('There was an error trying to update rss feed with id:'. $rssid);
             }
-            print '<strong>'. get_string('block_rss_feed_added', 'block_rss_client') .'</strong>';
+            $message = get_string('block_rss_feed_added', 'block_rss_client');
         }
+        redirect($referrer, $message);
+/*
         rss_display_feeds();
         rss_get_form($act, $dataobject->url, $dataobject->id, $dataobject->preferredtitle);
-
+*/
     } else if ( $act == 'rss_edit') {
         
         $rss_record = get_record('block_rss_client', 'id', $rssid);
@@ -141,7 +143,7 @@
             $preferredtitle = stripslashes_safe($rss_record->title);
         }
         $url = stripslashes_safe($rss_record->url);
-        rss_display_feeds($rssid);
+        rss_display_feeds('', $rssid);
         rss_get_form($act, $url, $rssid, $preferredtitle);
 
     } else if ($act == 'delfeed') {
@@ -156,10 +158,11 @@
         $sql = 'DELETE FROM '. $CFG->prefix .'block_rss_client WHERE id='. $rssid;
         $res= $db->Execute($sql);
 
-        rss_display_feeds();
-        print '<strong>'. get_string('block_rss_feed_deleted', 'block_rss_client') .'</strong>';
-        rss_get_form($act, $url, $rssid, $preferredtitle);
+        redirect($referrer, get_string('block_rss_feed_deleted', 'block_rss_client') );
 
+/*        rss_display_feeds();
+        rss_get_form($act, $url, $rssid, $preferredtitle);
+*/
     } else if ($act == 'view') {
         //              echo $sql; //debug
         //              print_object($res); //debug
@@ -217,66 +220,4 @@
     }
 
     print_footer();
-
-/**
- * @param string $act .
- * @param string $url .
- * @param int $rssid .
- * @param bool $printnow True if the generated form should be printed out, false if the string should be returned from this function quietly
- */
-function rss_get_form($act, $url, $rssid, $preferredtitle, $printnow=true) {
-    global $USER, $CFG, $_SERVER, $blockid, $blockaction;
-    global $blogid; //hackish, but if there is a blogid it would be good to preserve it
-    $stredit = get_string('edit');
-    $stradd = get_string('add');
-    $strupdatefeed = get_string('block_rss_update_feed', 'block_rss_client');
-    $straddfeed = get_string('block_rss_add_feed', 'block_rss_client');
-    
-    $returnstring = '<table align="center"><tbody><tr><td>'."\n";
-    
-    $returnstring .= '<form action="'. $_SERVER['PHP_SELF'] .'" method="POST" name="block_rss">'."\n";
-    if ($act == 'rss_edit') {
-        $returnstring .= $strupdatefeed; 
-    } else { 
-        $returnstring .= $straddfeed; 
-    }
-    $returnstring .= "\n".'<br /><input type="text" size="60" maxlength="256" name="url" value="';
-    if ($act == 'rss_edit') { 
-        $returnstring .= $url; 
-    }
-    $returnstring .= '" />'."\n";
-    $returnstring .= '<br />'. get_string('block_rss_custom_title_label', 'block_rss_client');
-    $returnstring .= '<br /><input type="text" size="60" maxlength="64" name="preferredtitle" value="';
-    if ($act == 'rss_edit') { 
-        $returnstring .= $preferredtitle; 
-    }
-    $returnstring .= '" />'."\n";
-
-    $returnstring .= '<input type="hidden" name="act" value="';
-    if ($act == 'rss_edit') {
-        $returnstring .= 'updfeed';
-    } else {
-        $returnstring .= 'addfeed';
-    }
-    $returnstring .= '" />'."\n";
-    if ($act == 'rss_edit') { 
-        $returnstring .= '<input type="hidden" name="rssid" value="'. $rssid .'" />'. "\n"; 
-    }
-    $returnstring .= '<input type="hidden" name="blogid" value="'. $blogid .'" />'."\n";
-    $returnstring .= '<input type="hidden" name="user" value="'. $USER->id .'" />'."\n";
-    $returnstring .= '<br /><input type="submit" value="';
-    $validatestring = "<a href=\"#\" onClick=\"window.open('http://feedvalidator.org/check.cgi?url='+document.block_rss.elements['url'].value,'validate','width=640,height=480,scrollbars=yes,status=yes,resizable=yes');return true;\">". get_string('validate_feed', 'block_rss_client')."</a>";
-    if ($act == 'rss_edit') {
-        $returnstring .= $stredit;
-    } else {
-        $returnstring .= $stradd;
-    }
-    $returnstring .= '" />&nbsp;'. $validatestring .'</form>'."\n";
-    $returnstring .= '</td></tr></tbody></table>'."\n";
-
-    if ($printnow){
-        print $returnstring;
-    }
-    return $returnstring;
-}
 ?>

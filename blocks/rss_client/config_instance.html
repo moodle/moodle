@@ -1,3 +1,20 @@
+<?php 
+require_once($CFG->libdir .'/rsslib.php');
+/// Print tabs at top
+global $currenttab;
+if (empty($currenttab) || $currenttab == 'configblock') {
+    $currenttab = 'configblock';
+    $inactive = 'configblock';
+    $activetab = 'managefeeds';
+} else {
+    $currenttab = 'managefeeds';
+    $inactive = 'managefeeds';
+    $activetab = 'configblock';
+}
+include('config_instance_tabs.php');
+
+if ($currenttab == 'configblock') {
+?>
 <table cellpadding="9" cellspacing="0">
 <tr valign="top">
     <td align="right">
@@ -138,3 +155,10 @@
     </td>
 </tr>
 </table>
+<?php
+} else {
+    global $act, $url, $rssid, $preferredtitle;
+    rss_display_feeds();
+    print '</form>';
+    rss_get_form($act, $url, $rssid, $preferredtitle); 
+} ?>
