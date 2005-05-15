@@ -36,4 +36,5 @@ $string['block_rss_edit_rss_block'] = 'Edit RSS Headline Block';
 $string['block_rss_add_new'] = 'Add New';
 $string['block_rss_managefeeds'] = 'Manage all my feeds';
 $string['block_rss_configblock'] = 'Configure this block';
+$string['block_rss_feeds_configure_new_instance'] = 'Before this block can display RSS feeds, you need to configure it by clicking here.';
 ?>
