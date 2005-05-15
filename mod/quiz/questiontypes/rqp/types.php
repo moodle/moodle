@@ -158,7 +158,7 @@
     $table->data[] = array($typeinput, $urlinput, $addbutton);
     
 /// Print the table
-    print_heading($stritemtypes);
+    print_heading_with_help($stritemtypes, 'rqp', 'quiz');
     echo '<form action="types.php" method="post">';
     echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
     echo '<center>';
