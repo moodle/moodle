@@ -13,7 +13,7 @@ $string['block_rss_client_num_entries'] = 'Nombre par défaut d\'articles RSS à a
 $string['block_rss_submitters'] = 'Qui aura l\'autorisation de définir de nouveaux fils RSS&nbsp;? Les fils RSS définis sont disponibles sur toutes les pages de votre site.';
 $string['block_rss_choose_feed_label'] = 'Choisir les fils RSS que vous désirez rendre disponibles dans ce bloc&nbsp;:';
 $string['block_rss_client_show_channel_link_label'] = 'Un lien vers le site original doit-il être  affiché&nbsp;? (Si aucun lien n\'est fourni dans le fil, aucun lien ne sera affiché)&nbsp;:';
-$string['block_rss_client_show_image_label'] = 'Afficher l\'image du site si disponible&nbsp;:';
+$string['block_rss_client_show_image_label'] = 'Afficher l\'image du fil si disponible&nbsp;:';
 $string['block_rss_client_channel_link'] = 'Site d\'origine...';
 $string['block_rss_custom_title_label'] = 'Title personnalisé (laisser vide pour utiliser le titre fourné par le fil)&nbsp;:';
 $string['validate_feed'] = 'Valider le fil';
@@ -38,5 +38,8 @@ $string['block_rss_see_all_feeds'] = 'Afficher tous les fils RSS';
 $string['block_rss_edit_rss_block'] = 'Modifier le bloc manchette RSS';
 
 $string['block_rss_add_new'] = 'Ajouter nouveau';
+$string['block_rss_managefeeds'] = 'Gérer tous mes fils RSS';
+$string['block_rss_configblock'] = 'Configurer ce bloc';
+$string['block_rss_feeds_configure_new_instance'] = 'Pour que ce bloc affiche des fils RSS, vous devez le configurer';
 
 ?>
