@@ -1,7 +1,7 @@
 $Id$
 
 Radik Kalakay, Projekt VECIT 9-2003 - ISO-8859-2
-Jura Chlebec (JCH), CIT FEM SPU
+Juraj Chlebec (JCH), CIT FEM SPU
 
 06-05-2005
 * hotove preklady verzie 1.4.4 a 1.5a poslane Martinovi Dougiamasovi (JCH) 
