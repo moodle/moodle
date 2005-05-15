@@ -527,6 +527,9 @@ function quiz_print_cat_question_list($course, $categoryid, $quizselected=true,
         return;
     }
 
+    print_paging_bar($totalnumber, $page, $perpage,
+                "edit.php?perpage=$perpage&amp;");
+
     $canedit = isteacheredit($category->course);
 
     echo '<form method="post" action="edit.php">';
@@ -575,7 +578,9 @@ function quiz_print_cat_question_list($course, $categoryid, $quizselected=true,
         echo "</td>\n";
         echo "</tr>\n";
     }
-    echo "</table>\n";
+	echo '<tr><td colspan="3">';
+	print_paging_bar($totalnumber, $page, $perpage, "edit.php?perpage=$perpage&amp;");
+    echo "</td></tr></table>\n";
     print_simple_box_end();
 
     echo '<table class="quiz-edit-selected"><tr><td colspan="2">';
@@ -590,9 +595,6 @@ function quiz_print_cat_question_list($course, $categoryid, $quizselected=true,
     echo '<input type="submit" name="move" value="'.get_string('moveto', 'quiz')."\" />\n";
     quiz_category_select_menu($course->id, false, true, $category->id);
     echo "</td></tr></table>";
-
-    print_paging_bar($totalnumber, $page, $perpage,
-                "edit.php?perpage=$perpage&amp;");
 
     if ($quizselected) {
         for ($i=1;$i<=10; $i++) {
