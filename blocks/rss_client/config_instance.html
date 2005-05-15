@@ -1,19 +1,15 @@
 <?php 
 require_once($CFG->libdir .'/rsslib.php');
 /// Print tabs at top
-global $currenttab;
-if (empty($currenttab) || $currenttab == 'configblock') {
-    $currenttab = 'configblock';
-    $inactive = 'configblock';
-    $activetab = 'managefeeds';
+global $currentaction;
+if (empty($currentaction) || $currentaction == 'configblock') {
+    $currentaction = 'configblock';
 } else {
-    $currenttab = 'managefeeds';
-    $inactive = 'managefeeds';
-    $activetab = 'configblock';
+    $currentaction = 'managefeeds';
 }
 include('config_instance_tabs.php');
 
-if ($currenttab == 'configblock') {
+if ($currentaction == 'configblock') {
 ?>
 <table cellpadding="9" cellspacing="0">
 <tr valign="top">

@@ -86,7 +86,17 @@ class block_rss_client extends block_base {
             $userisloggedin = true;
         }
         if ( $userisloggedin && (isadmin() ||  $submitters == SUBMITTERS_ALL_ACCOUNT_HOLDERS || ($submitters == SUBMITTERS_ADMIN_AND_TEACHER && $isteacher)) ) {
-            $output .= '<div align="center"><a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?courseid='. $this->courseid .'">'. get_string('block_rss_feeds_add_edit', 'block_rss_client') .'</a></div><br />';
+
+            $page   = page_create_object($this->instance->pagetype, $this->instance->pageid);
+            if (isset($this->config)) {
+                // this instance is configured - show Add/Edit feeds link
+                $script = $page->url_get_full(array('instanceid' => $this->instance->id, 'sesskey' => $USER->sesskey, 'blockaction' => 'config', 'currentaction' => 'managefeeds'));
+                $output .= '<div align="center"><a title="'. get_string('block_rss_feeds_add_edit', 'block_rss_client') .'" href="'. $script .'">'. get_string('block_rss_feeds_add_edit', 'block_rss_client') .'</a></div><br />';
+            } else {
+                // this instance has not been configured yet - show configure link
+                $script = $page->url_get_full(array('instanceid' => $this->instance->id, 'sesskey' => $USER->sesskey, 'blockaction' => 'config', 'currentaction' => 'configblock'));
+                $output .= '<div align="center"><a title="'. get_string('configuration') .'" href="'. $script.'">'. get_string('configuration') .'</a></div><br />';
+            }
         }
 
         // Daryl Hawes note: if count of rssidarray is greater than 1 
@@ -96,7 +106,7 @@ class block_rss_client extends block_base {
             $numids = count($rssidarray);
             $count = 0;
             foreach ($rssidarray as $rssid) {
-                $output =  $this->get_rss_by_id($rssid, $display_description, $shownumentries, ($numids > 1) ? true : false);
+                $output .=  $this->get_rss_by_id($rssid, $display_description, $shownumentries, ($numids > 1) ? true : false);
                 if ($numids > 1 && $count != $numids -1 && !empty($rssfeedstring)) {
                     $output .= '<hr width="80%" />';
                 }
