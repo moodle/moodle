@@ -21,6 +21,11 @@ Based on:   lang.php in 1.4.3+ release
 
     require_once("../config.php");
 
+    // 
+    // SECURITY NOTE
+    // Option PARAM_PATH prevents requesting langdoc.php with eg. currentfile=../../config.php
+    // which could give potential hacker direct access to the source of config.php
+    //
     $currentfile = optional_param('currentfile', 'docs/README.txt', PARAM_PATH); 
 
     require_login();
@@ -158,7 +163,10 @@ $langdir/$currentfile")."</font></p>";
 
         echo "<table align=\"center\"><tr valign=\"center\"><td align=\"center\">\n";
         echo "<textarea rows=\"$fileeditorrows\" cols=\"$fileeditorcols\" name=\"\">\n";
-        include("$enlangdir/$currentfile");
+        $currentsource = langdoc_read_file($enlangdir,$currentfile);
+        if ($currentsource) {
+            echo $currentsource;
+        }
         echo "</textarea>\n";
         link_to_popup_window("/lang/en/$currentfile", "popup", get_string("preview"));
         echo "</td>\n";
@@ -176,7 +184,10 @@ $langdir/$currentfile")."</font></p>";
         echo "<textarea rows=\"$fileeditorrows\" cols=\"$fileeditorcols\" name=\"filedata\">\n";
 
         if (file_exists("$langdir/$currentfile")) {
-            include("$langdir/$currentfile");
+            $currentsource = langdoc_read_file($langdir,$currentfile);
+            if ($currentsource) {
+                echo $currentsource;
+            }
         } else {
             echo ($filetemplate);
         }
@@ -196,6 +207,30 @@ $langdir/$currentfile")."</font></p>";
     print_footer();
 
 //////////////////////////////////////////////////////////////////////
+
+function langdoc_read_file($path, $file){
+//
+// reads the file without PHP parsing and returns its content as string
+// returns false if the file can't be open to read 
+//
+
+    global $CFG, $USER;
+
+    error_reporting(0);
+    
+    if (!$f = fopen("$path/$file","r")) {
+        error_reporting($CFG->debug);
+        return false;
+    }
+    
+    error_reporting($CFG->debug);
+
+    $content = fread($f,filesize ("$path/$file"));
+
+    fclose($f);
+
+    return $content;
+}
 
 function langdoc_save_file($path, $file, $content) {
 
