@@ -60,6 +60,15 @@ per response.</p>
 
 <h2>Where it is done in the code</h2>
 
+The function quiz_apply_penalty_and_timelimit() subtracts the penalty in
+$state->sumpenalty from the raw grade in $state->raw_grade to obtain
+$state->grade for the response. However it is ensured that the grade
+of a new attempt at the question never falls below the previously
+achieved grade. This function also increases $state->sumpenalty by
+the amount in $state->penalty. The assumption is that
+$state->penalty has just been set appropriately by the code calling
+this function, e.g., quiz_process_responses.
+
 <h2>About wrapped questions</h2>
 
 </BODY>

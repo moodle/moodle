@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC> <HTML>
+    <HEAD>
+        <TITLE>Time limit</TITLE>
+        <META http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
+    </HEAD>
+<BODY>
+
+<h1>Time limit</h1>
+
+<p>A quiz can have a time limit. This is stored in minutes in
+$quiz->timelimit. So before using this in time calculations it
+always has to be multiplied by 60 to turn it into seconds like all
+other timestamps in moodle and php. If $quiz->timelimit is zero it
+means there is no timelimit.</p>
+
+<p>If a student asks to start an attempt on view.php for a quiz with
+a timelimit then he is shown a javascript message alerting him to
+the timelimit and is asked to confirm.</p>
+
+<p>For quizzes with timelimit attempt.php shows a javascript timer
+that counts down and automatically submits and closes the attempt
+when the time is up.</p>
+
+<p>Confusingly there are two javascript timers in the quiz module.
+jsclock.php provides a countdown in the title bar that counts down
+to the quiz closing time if this is less than a day away. This has
+nothing to do with the timelimit. jstimer.php provides the countdown
+timer that implements the timelimit. It in turn uses timer.js.</p>
+
+<p>The time a response was submitted by the student is recorded by
+attempt.php right at the top of the page and is then passed on to
+quiz_process_responses in $action->timestamp. This puts it into
+$state->timestamp. Finally, after the responses have been graded,
+the function quiz_apply_penalty_and_timelimit() checks that the
+responses are within the timelimit to within 5% and if not it sets
+the grade to zero (or the previously obtained grade, if that is
+higher).</p>
+
+</BODY> </HTML>

@@ -22,6 +22,10 @@
     $timeup = optional_param('timeup', 0, PARAM_BOOL); // True if form was submitted by timer.
     $forcenew = optional_param('forcenew', false, PARAM_BOOL); // Teacher has requested new preview
 
+    // remember the current time as the time any responses were submitted
+    // (so as to make sure students don't get penalized for slow processing on this page)
+    $timestamp = time();
+
     // We treat automatically closed attempts just like normally closed attempts
     if ($timeup) {
         $finishattempt = 1;
@@ -104,15 +108,6 @@
         error(get_string('nomoreattempts', 'quiz'), "view.php?id={$cm->id}");
     }
 
-    $timenow = time();
-    if (($timenow < $quiz->timeopen || $timenow > $quiz->timeclose)) {
-        if ($isteacher) {
-            notify(get_string('notavailabletostudents', 'quiz'));
-        } else {
-            error(get_string('notavailable', 'quiz'), "view.php?id={$cm->id}");
-        }
-    }
-
 /// Check subnet access
     if ($quiz->subnet and !address_in_subnet(getremoteaddr(), $quiz->subnet)) {
         if ($isteacher) {
@@ -161,7 +156,7 @@
     if ($isteacher and $forcenew) { // teacher wants a new preview
         // so we set a finish time on the current attempt (if any).
         // It will then automatically be deleted below
-        set_field('quiz_attempts', 'timefinish', time(), 'quiz', $quiz->id, 'userid', $USER->id);
+        set_field('quiz_attempts', 'timefinish', $timestamp, 'quiz', $quiz->id, 'userid', $USER->id);
     }
 
     $attempt = get_record('quiz_attempts', 'quiz', $quiz->id,
@@ -204,13 +199,15 @@
         }
     } else {
         // log continuation of attempt only if some time has lapsed
-        if ((time() - $attempt->timemodified) > 600) { // 10 minutes have elapsed
+        if (($timestamp - $attempt->timemodified) > 600) { // 10 minutes have elapsed
              add_to_log($course->id, 'quiz', 'continue attempt',
                            "review.php?attempt=$attempt->id",
                            "$quiz->id", $cm->id);
         }
     }
-
+    if ($attempt->timestart) { // shouldn't really happen, just for robustness
+        $attempt->timestart = time();
+    }
 
 /// Load all the questions and states needed by this script
 
@@ -282,11 +279,12 @@
             if (!isset($actions[$i])) {
                 $actions[$i]->responses = array('' => '');
             }
+            $actions[$i]->timestamp = $timestamp;
             quiz_process_responses($questions[$i], $states[$i], $actions[$i], $quiz, $attempt);
             quiz_save_question_session($questions[$i], $states[$i]);
         }
 
-        $attempt->timemodified = time();
+        $attempt->timemodified = $timestamp;
 
     // We have now finished processing form data
     }
@@ -296,7 +294,7 @@
     if ($finishattempt) {
 
         // Set the attempt to be finished
-        $attempt->timefinish = time();
+        $attempt->timefinish = $timestamp;
 
         // Find all the questions for this attempt for which the newest
         // state is not also the newest graded state
@@ -327,6 +325,7 @@
             foreach($closequestions as $key => $question) {
                 $action->event = QUIZ_EVENTCLOSE;
                 $action->responses = $closestates[$key]->responses;
+                $action->timestamp = $colsestates[$key]->timestamp;
                 quiz_process_responses($question, $closestates[$key], $action, $quiz, $attempt);
                             quiz_save_question_session($question, $closestates[$key]);
             }
@@ -335,7 +334,6 @@
                            "review.php?attempt=$attempt->id",
                            "$quiz->id", $cm->id);
     }
-
 
 /// Update the quiz attempt and the overall grade for the quiz
     if ($responses || $finishattempt) {
@@ -347,30 +345,20 @@
         }
     }
 
+/// Check access to quiz page
+
+    // check the quiz times
+    if (($timestamp < $quiz->timeopen || $timestamp > $quiz->timeclose)) {
+        if ($isteacher) {
+            notify(get_string('notavailabletostudents', 'quiz'));
+        } else {
+            print_continue(get_string('notavailable', 'quiz'), "view.php?id={$cm->id}");
+        }
+    }
+
     if ($finishattempt) {
         redirect('review.php?attempt='.$attempt->id);
     }
-
-/// Get time limit if any.
-    $timelimit = $quiz->timelimit * 60;
-
-    if ($timelimit > 0) {
-        $timestart = $attempt->timestart;
-        if ($timestart) {
-            $timesincestart = $timenow - $timestart;
-            $timerstartvalue = $timelimit - $timesincestart;
-        } else {
-            $timerstartvalue = $timelimit;
-        }
-        if ($timerstartvalue <= 0) {
-            $timerstartvalue = 1;
-        }
-        if(($timelimit + 60) <= $timesincestart) {
-            // To pass it on to quiz_grade_responses
-            $quiz->timesincestart = $timesincestart;
-        }
-    }
-
 
 /// Print the quiz page ////////////////////////////////////////////////////////
 
@@ -385,12 +373,6 @@
         echo '</center>';
     } else {
         print_heading($strattemptnum);
-    }
-
-/// Add the javascript timer in the title bar if the closing time appears close
-    $secondsleft = $quiz->timeclose - time();
-    if ($secondsleft > 0 and $secondsleft < 24*3600) {  // less than a day remaining
-        include('jsclock.php');
     }
 
 /// Start the form
@@ -472,9 +454,23 @@
     // Finish the form
     echo "</form>\n";
 
+
+    $secondsleft = $quiz->timeclose - time();
     // If time limit is set include floating timer.
-    if ($timelimit > 0) {
+    if ($quiz->timelimit > 0) {
+
+        $timesincestart = time() - $attempt->timestart;
+        $timerstartvalue = min($quiz->timelimit*60 - $timesincestart, $secondsleft);
+        if ($timerstartvalue <= 0) {
+            $timerstartvalue = 1;
+        }
+
         require('jstimer.php');
+    } else {
+        // Add the javascript timer in the title bar if the closing time appears close
+        if ($secondsleft > 0 and $secondsleft < 24*3600) {  // less than a day remaining
+            include('jsclock.php');
+        }
     }
 
     if (!$isteacher) {

@@ -150,6 +150,7 @@
 
         $event = $finishattempt ? QUIZ_EVENTCLOSE : ($markall ? QUIZ_EVENTGRADE : QUIZ_EVENTSAVE);
         if ($actions = quiz_extract_responses($questions, $form, $event)) {
+            $actions[$id]->timestamp = 0; // We do not care about timelimits here
             quiz_process_responses($questions[$id], $states[$historylength][$id], $actions[$id], $quiz, $attempt);
             if (QUIZ_EVENTGRADE != $curstate->event && QUIZ_EVENTCLOSE != $curstate->event) {
                 // Update the current state rather than creating a new one

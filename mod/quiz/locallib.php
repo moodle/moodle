@@ -1233,8 +1233,7 @@ function quiz_restore_state(&$question, &$state) {
 
     // Set the changed field to false; any code which changes the
     // question session must set this to true and must increment
-    // ->seq_number; it can do this by calling
-    // quiz_mark_session_change. The quiz_save_question_session
+    // ->seq_number. The quiz_save_question_session
     // function will save the new state object database if the field is
     // set to true.
     $state->changed = false;
@@ -1484,8 +1483,10 @@ function quiz_regrade_question_in_quizzes($question, $quizlist) {
 * @param object $question Full question object, passed by reference
 * @param object $state    Full state object, passed by reference
 * @param object $action   object with the fields ->responses which
-*                         is an array holding the student responses and
-*                         ->action which specifies the action, e.g., QUIZ_EVENTGRADE
+*                         is an array holding the student responses,
+*                         ->action which specifies the action, e.g., QUIZ_EVENTGRADE,
+*                         and ->timestamp which is a timestamp from when the responses
+*                         were submitted by the student.
 * @param object $quiz     The quiz object
 * @param object $attempt  The attempt is passed by reference so that
 *                         during grading its ->sumgrades field can be updated
@@ -1510,7 +1511,7 @@ function quiz_process_responses(&$question, &$state, $action, $quiz, &$attempt) 
     }
     // Check if we are grading the question; compare against last graded
     // responses, not last given responses in this case
-    if (QUIZ_EVENTGRADE == $action->event || QUIZ_EVENTCLOSE == $action->event) {
+    if (quiz_isgradingevent($action->event)) {
         $state->responses = $state->last_graded->responses;
     }
     // Check for unchanged responses (exactly unchanged, not equivalent).
@@ -1518,7 +1519,7 @@ function quiz_process_responses(&$question, &$state, $action, $quiz, &$attempt) 
     $sameresponses = (($state->responses == $action->responses) or
      ($state->responses == array(''=>'') && array_keys(array_count_values($action->responses))===array('')));
 
-    if ($sameresponses && isset($action->event) and QUIZ_EVENTCLOSE != $action->event
+    if ($sameresponses and QUIZ_EVENTCLOSE != $action->event
      and QUIZ_EVENTVALIDATE != $action->event) {
         return true;
     }
@@ -1527,9 +1528,10 @@ function quiz_process_responses(&$question, &$state, $action, $quiz, &$attempt) 
     // responses
     $newstate = clone($state->last_graded);
     $newstate->responses = $action->responses;
-    $newstate->seq_number = $state->seq_number;
-    $newstate->changed = false;
+    $newstate->seq_number = $state->seq_number + 1;
+    $newstate->changed = true; // will assure that it gets saved to the database
     $newstate->last_graded = $state->last_graded;
+    $newstate->timestamp = $action->timestamp;
     $state = $newstate;
 
     // Set the event to the action we will perform. The question type specific
@@ -1537,7 +1539,7 @@ function quiz_process_responses(&$question, &$state, $action, $quiz, &$attempt) 
     // attempt at the question causes the session to close
     $state->event = $action->event;
 
-    if (QUIZ_EVENTSAVE == $action->event || QUIZ_EVENTVALIDATE == $action->event) {
+    if (!quiz_isgradingevent($action->event)) {
         // Grade the response but don't update the overall grade
         $QUIZ_QTYPES[$question->qtype]->grade_responses(
          $question, $state, $quiz);
@@ -1571,7 +1573,7 @@ function quiz_process_responses(&$question, &$state, $action, $quiz, &$attempt) 
                 $QUIZ_QTYPES[$question->qtype]->grade_responses(
                  $question, $state, $quiz);
                 // Calculate overall grade using correct penalty method
-                quiz_apply_penalty($question, $state, $quiz);
+                quiz_apply_penalty_and_timelimit($question, $state, $attempt, $quiz);
                 // Update the last graded state (don't simplify!)
                 unset($state->last_graded);
                 $state->last_graded = clone($state);
@@ -1589,7 +1591,7 @@ function quiz_process_responses(&$question, &$state, $action, $quiz, &$attempt) 
             $QUIZ_QTYPES[$question->qtype]->grade_responses(
              $question, $state, $quiz);
             // Calculate overall grade using correct penalty method
-            quiz_apply_penalty($question, $state, $quiz);
+            quiz_apply_penalty_and_timelimit($question, $state, $attempt, $quiz);
         }
         // Force the state to close (as the attempt is closing)
         $state->event = QUIZ_EVENTCLOSE;
@@ -1606,9 +1608,15 @@ function quiz_process_responses(&$question, &$state, $action, $quiz, &$attempt) 
 
         $attempt->sumgrades += (float)$state->last_graded->grade;
     }
-    quiz_mark_session_change($state);
-    $attempt->timemodified = time();
+    $attempt->timemodified = $action->timestamp;
     return true;
+}
+
+/**
+* Determine if event requires grading
+*/
+function quiz_isgradingevent($event) {
+    return (QUIZ_EVENTGRADE == $event || QUIZ_EVENTCLOSE == $event);
 }
 
 /**
@@ -1645,13 +1653,14 @@ function quiz_search_for_duplicate_responses(&$question, &$state) {
 }
 
 /**
-* Applies the penalty for the previous attempts to the raw grade for the current
+* Applies the penalty from the previous attempts to the raw grade for the current
 * attempt
 *
-* The grade for the question in the current state is computed by applying the
-* penalty accumulated over the previous marked attempts at the question to the
-* raw grade using the penalty scheme in use in the quiz. The ->grade field of
-* the state object is modified to reflect the new grade.
+* The grade for the question in the current state is computed by subtracting the
+* penalty accumulated over the previous marked attempts at the question from the
+* raw grade. If the timestamp is more than 1 minute beyond the start of the attempt
+* the grade is set to zero. The ->grade field of the state object is modified to
+* reflect the new grade but is never allowed to decrease.
 * @param object $question The question for which the penalty is to be applied.
 * @param object $state    The state for which the grade is to be set from the
 *                         raw grade and the cumulative penalty from the last
@@ -1661,13 +1670,28 @@ function quiz_search_for_duplicate_responses(&$question, &$state) {
 * @param object $quiz     The quiz to which the question belongs. The penalty
 *                         scheme to apply is given by the ->penaltyscheme field.
 */
-function quiz_apply_penalty(&$question, &$state, $quiz) {
+function quiz_apply_penalty_and_timelimit(&$question, &$state, $attempt, $quiz) {
+    // deal with penaly
     if ($quiz->penaltyscheme) {
             $state->grade = $state->raw_grade - $state->sumpenalty;
             $state->sumpenalty += (float) $state->penalty;
     } else {
         $state->grade = $state->raw_grade;
     }
+    
+    // deal with timeimit
+    if ($quiz->timelimit) {
+        // We allow for 5% uncertainty in the following test
+        if (($state->timestamp - $attempt->timestart) > ($quiz->timelimit * 63)) {
+            $state->grade = 0;
+        }
+    }
+    
+    // deal with quiz closing time
+    if ($state->timestamp > ($quiz->timeclose + 60)) { // allowing 1 minute lateness
+        $state->grade = 0;
+    }
+
     // Ensure that the grade does not go down
     $state->grade = max($state->grade, $state->last_graded->grade);
 }
