@@ -282,7 +282,6 @@
                 } else if ($question->qtype == "8") {
                     $status = quiz_restore_pre15_numerical($oldid,$newid,$que_info,$restore);
                 } else if ($question->qtype == "9") {
-echo "Cloze questions not working!!!";
                     $status = quiz_restore_pre15_multianswer($oldid,$newid,$que_info,$restore);
                 } else if ($question->qtype == "10") {
                     $status = quiz_restore_pre15_calculated($oldid,$newid,$que_info,$restore);
@@ -291,7 +290,7 @@ echo "Cloze questions not working!!!";
                 //We are NOT creating the question, but we need to know every quiz_answers
                 //map between the XML file and the database to be able to restore the responses
                 //in each attempt.
-                $status = quiz_restore_map_answers($oldid,$newid,$que_info,$restore);
+                $status = quiz_restore_pre15_map_answers($oldid,$newid,$que_info,$restore);
                 //Now, depending of the type of questions, invoke different functions
                 //to create the necessary mappings in backup_ids, because we are not
                 //creating the question, but need some records in backup table
@@ -304,7 +303,7 @@ echo "Cloze questions not working!!!";
                 } else if ($question->qtype == "4") {
                     //Random question. Nothing to remap
                 } else if ($question->qtype == "5") {
-                    $status = quiz_restore_map_match($oldid,$newid,$que_info,$restore);
+                    $status = quiz_restore_pre15_map_match($oldid,$newid,$que_info,$restore);
                 } else if ($question->qtype == "6") {
                     //Randomsamatch question. Nothing to remap
                 } else if ($question->qtype == "7") {
@@ -312,7 +311,7 @@ echo "Cloze questions not working!!!";
                 } else if ($question->qtype == "8") {
                     //Numerical question. Nothing to remap
                 } else if ($question->qtype == "9") {
-                    $status = quiz_restore_map_multianswer($oldid,$newid,$que_info,$restore);
+                    //Multianswer question. Nothing to remap
                 } else if ($question->qtype == "10") {
                     //Calculated question. Nothing to remap
                 }
@@ -406,9 +405,10 @@ echo "Cloze questions not working!!!";
             //Now, we are going to look for that answer in DB and to create the
             //mappings in backup_ids to use them later where restoring responses (user level).
 
-            //Get the answer from DB (by question and answer)
+            //Get the answer from DB (by question, answer and fraction)
             $db_answer = get_record ("quiz_answers","question",$new_question_id,
-                                                    "answer",$answer->answer);
+                                                    "answer",$answer->answer,
+                                                    "fraction",$answer->fraction);
 
             //Do some output
             if (($i+1) % 50 == 0) {
@@ -738,61 +738,6 @@ echo "Cloze questions not working!!!";
                 //We have the newid, update backup_ids
                 backup_putid($restore->backup_unique_code,"quiz_match_sub",$oldid,
                              $db_match_sub->id);
-            } else {
-                $status = false;
-            }
-        }
-
-        return $status;
-    }
-
-    function quiz_restore_pre15_map_multianswer ($old_question_id,$new_question_id,$info,$restore) {
-
-        global $CFG;
-
-        $status = true;
-
-        //Get the multianswers array
-        $multianswers = $info['#']['MULTIANSWERS']['0']['#']['MULTIANSWER'];
-        //Iterate over multianswers
-        for($i = 0; $i < sizeof($multianswers); $i++) {
-            $mul_info = $multianswers[$i];
-            //traverse_xmlize($mul_info);                                                                 //Debug
-            //print_object ($GLOBALS['traverse_array']);                                                  //Debug
-            //$GLOBALS['traverse_array']="";                                                              //Debug
-
-            //We need this later
-            $oldid = backup_todb($mul_info['#']['ID']['0']['#']);
-
-            //Now, build the QUIZ_MULTIANSWER record structure
-            $multianswer->question = $new_question_id;
-            $multianswer->answers = backup_todb($mul_info['#']['ANSWERS']['0']['#']);
-            $multianswer->positionkey = backup_todb($mul_info['#']['POSITIONKEY']['0']['#']);
-            $multianswer->answertype = backup_todb($mul_info['#']['ANSWERTYPE']['0']['#']);
-            $multianswer->norm = backup_todb($mul_info['#']['NORM']['0']['#']);
-
-            //If we are in this method is because the question exists in DB, so its
-            //multianswer must exist too.
-            //Now, we are going to look for that multianswer in DB and to create the
-            //mappings in backup_ids to use them later where restoring responses (user level).
-
-            //Get the multianswer from DB (by question and positionkey)
-            $db_multianswer = get_record ("quiz_multianswers","question",$new_question_id,
-                                                      "positionkey",$multianswer->positionkey);
-            //Do some output
-            if (($i+1) % 50 == 0) {
-                echo ".";
-                if (($i+1) % 1000 == 0) {
-                    echo "<br />";
-                }
-                backup_flush(300);
-            }
-
-            //We have the database multianswer, so update backup_ids
-            if ($db_multianswer) {
-                //We have the newid, update backup_ids
-                backup_putid($restore->backup_unique_code,"quiz_multianswers",$oldid,
-                             $db_multianswer->id);
             } else {
                 $status = false;
             }
