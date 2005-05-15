@@ -400,6 +400,71 @@ class quiz_default_questiontype {
     }
 
     /**
+    * Return an array of values with the texts for all possible responses stored 
+    * for the question
+    *
+    * All answers are found and their text values isolated
+    * @return array           An array of values giving the responses corresponding
+    *                         to all answers to the question. Answer ids are used as keys
+    * @param object $question The question for which the answers are to
+    *                         be retrieved. Question type specific information is
+    *                         available.
+    */
+    // ULPGC ecastro
+    function get_all_responses($question, $state) {
+        unset($answers);
+        if (is_array($question->options->answers)) {
+            foreach ($question->options->answers as $aid=>$answer) {
+                unset ($r);
+                $r->answer = $answer->answer;
+                $r->credit = $answer->fraction;
+                $answers[$aid] = $r;
+            }
+        } else {
+            $answers[]="error"; // just for debugging, eliminate
+        }
+        $result->id = $question->id;
+        $result->responses = $answers;
+        return $result;
+    }
+
+    /**
+    * Return the actual response to the question in a given attempt
+    * for the question
+    *
+    * @return                 compond object fractiongrade & actual response .
+    *
+    * @param object $question The question for which the correct answer is to
+    *                         be retrieved. Question type specific information is
+    *                         available.
+    * @param object $state    The state object that corresponds to the question,
+    *                         for which a correct answer is needed. Question
+    *                         type specific information is included.
+    */
+    // ULPGC ecastro
+    function get_actual_response($question, $state) {
+        /* The default implementation only returns the raw ->responses. 
+          may be overridden by each type*/
+        //unset($resp);
+        if (isset($state->responses)) {
+            return $state->responses;
+        } else {
+            return null;
+        }
+    }
+    
+    // ULPGC ecastro
+    function get_fractional_grade($question, $state) {
+        $maxgrade = $question->maxgrade;
+        $grade = $state->grade;
+        if ($maxgrade) {
+            return (float)($grade/$maxgrade);
+        } else {
+            return (float)$grade;
+        }
+    }
+
+    /**
     * Prints the question including the number, grading details, content,
     * feedback and interactions
     *
@@ -1711,24 +1776,43 @@ function quiz_print_correctanswer($text) {
 * @param object $question  The question object for which the icon is required
 * @param boolean $editlink If true then the icon is a link to the question
 *                          edit page.
+* @param boolean $return   If true the functions returns the link as a string
 */
-function quiz_print_question_icon($question, $editlink=true) {
-// Prints a question icon
+function quiz_print_question_icon($question, $editlink=true, $return = false) {
+// returns a question icon
 
     global $QUIZ_QUESTION_TYPE;
     global $QUIZ_QTYPES;
+    
+    $html = '<img border="0" height="16" width="16" src="questiontypes/'.
+            $QUIZ_QTYPES[$question->qtype]->name().'/icon.gif" alt="'.
+            get_string($QUIZ_QTYPES[$question->qtype]->name(), 'quiz').'" />';
 
     if ($editlink) {
-        echo "<a href=\"question.php?id=$question->id\" title=\""
-                .$QUIZ_QTYPES[$question->qtype]->name()."\">";
+        $html =  "<a href=\"question.php?id=$question->id\" title=\""
+                .$QUIZ_QTYPES[$question->qtype]->name()."\">".
+                $html."</a>\n";
     }
-    echo '<img border="0" height="16" width="16" src="questiontypes/';
-    echo $QUIZ_QTYPES[$question->qtype]->name().'/icon.gif" alt="';
-    echo get_string($QUIZ_QTYPES[$question->qtype]->name(), 'quiz').'" />';
-    if ($editlink) {
-        echo "</a>\n";
+    if ($return) {
+        return $html;
+    } else {
+        echo $html;
     }
 }
+
+// ULPGc ecastro
+function quiz_get_question_review($quiz, $question) {
+// returns a question icon
+    $qnum = $question->id;
+    $context = $quiz->id ? '&amp;contextquiz='.$quiz->id : '';
+    $quiz_id = $quiz->id ? '&amp;quizid=' . $quiz->id : '';
+    return "<a title=\"$strpreview\" href=\"javascript:void();\" onClick=\"openpopup('/mod/quiz/preview.php?id=$qnum$quiz_id','$strpreview','scrollbars=yes,resizable=yes,width=700,height=480', false)\">
+          <img src=\"../../pix/t/preview.gif\" border=\"0\" alt=\"$strpreview\" /></a>";
+    
+}    
+    
+
+
 
 /**
 * Print the question image if there is one
@@ -1890,6 +1974,46 @@ function quiz_print_quiz_question(&$question, &$state, $number, $quiz, $options=
     $QUIZ_QTYPES[$question->qtype]->print_question($question, $state, $number,
      $quiz, $options);
 }
+
+/**
+* Gets all teacher stored answers for a given question
+*
+* Simply calls the question type specific get_all_responses() method.
+*/
+// ULPGC ecastro
+function quiz_get_question_responses($question, $state) {
+    global $QUIZ_QTYPES;
+    $r = $QUIZ_QTYPES[$question->qtype]->get_all_responses($question, $state);
+    return $r;
+}
+
+
+/**
+* Gets the response given by the user in a particular attempt
+*
+* Simply calls the question type specific get_actual_response() method.
+*/
+// ULPGC ecastro
+function quiz_get_question_actual_response($question, $state) {
+    global $QUIZ_QTYPES;
+
+    $r = $QUIZ_QTYPES[$question->qtype]->get_actual_response($question, $state);
+    return $r;
+}
+
+/**
+* Gets the response given by the user in a particular attempt
+*
+* Simply calls the question type specific get_actual_response() method.
+*/
+// ULPGc ecastro
+function quiz_get_question_fraction_grade($question, $state) {
+    global $QUIZ_QTYPES;
+
+    $r = $QUIZ_QTYPES[$question->qtype]->get_fractional_grade($question, $state);
+    return $r;
+}
+
 
 /**
 * Gets the default category in a course

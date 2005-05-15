@@ -291,6 +291,41 @@ class quiz_match_qtype extends quiz_default_questiontype {
 
         return true;
     }
+    
+    // ULPGC ecastro for stats report
+    function get_all_responses($question, $state) {
+        unset($answers);
+        if (is_array($question->options->subquestions)) {
+            foreach ($question->options->subquestions as $aid=>$answer) {
+                unset ($r);
+                $r->answer = $answer->questiontext." : ".$answer->answertext;
+                $r->credit = 1;
+                $answers[$aid] = $r;
+            }
+        } else {
+            $answers[]="error"; // just for debugging, eliminate
+        }
+        $result->id = $question->id;
+        $result->responses = $answers;
+        return $result;
+    }    
+
+    // ULPGC ecastro
+    function get_actual_response($question, $state) {
+        unset($results);
+        if (isset($state->responses)) {
+            foreach($state->responses as $left=>$right){
+                $lpair = $question->options->subquestions[$left]->questiontext;
+                $rpair = $question->options->subquestions[$right]->answertext;
+                $results[$left] = $lpair." : ".$rpair;
+            }        
+            return $results;
+        } else {
+            return null;
+        }
+    }
+
+    
 }
 //// END OF CLASS ////
 

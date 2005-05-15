@@ -163,7 +163,24 @@ class quiz_random_qtype extends quiz_default_questiontype {
          ->get_correct_responses($wrappedquestion, $state);
     }
 
-    function print_question(&$question, &$state, $number, $quiz, $options) {
+    // ULPGC ecastro
+    function get_all_responses($question, $state){
+        global $QUIZ_QTYPES;
+        $wrappedquestion = &$state->options->question;
+        return $QUIZ_QTYPES[$wrappedquestion->qtype]
+         ->get_all_responses($wrappedquestion, $state); 
+    }
+
+    // ULPGC ecastro
+    function get_actual_response($question, $state){
+        global $QUIZ_QTYPES;
+        $wrappedquestion = &$state->options->question;
+        return $QUIZ_QTYPES[$wrappedquestion->qtype]
+         ->get_actual_response($wrappedquestion, $state); 
+    }
+
+
+    function print_question(&$question, &$state, &$number, $quiz, $options) {
         global $QUIZ_QTYPES;
         $wrappedquestion = &$state->options->question;
         $QUIZ_QTYPES[$wrappedquestion->qtype]

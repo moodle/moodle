@@ -77,6 +77,7 @@ $string['penaltyfactor'] = 'Penalty factor';
 $string['penaltyscheme'] = 'Apply penalties';
 $string['previewquiz'] = 'Preview quiz';
 $string['previous'] = 'Previous state';
+$string['questiontype'] = 'Question type $a';
 $string['readytosend'] = 'You are about to finalize this quiz attempt.  Are you sure you want to continue?';
 $string['rendering'] = 'Rendering';
 $string['renderingserver'] = 'Rendering Server';
@@ -115,4 +116,10 @@ $string['validate'] = 'Validate';
 $string['withselected'] = 'With selected';
 $string['wronguse'] = 'You can not use this page like that';
 
+$string['analysisoptions'] = 'Analysis options';
+$string['attemptselection'] = 'Select which attempts to analyze per user ';
+$string['lowmarkslimit'] = "    Don't analyze if score is less than: ";
+$string['reportanalysis'] = 'Item analysis';
+$string['allattempts'] = 'all attempts';
+$string['analysistitle'] = 'Item Analysis Table';
 ?>

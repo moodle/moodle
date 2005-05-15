@@ -3,8 +3,15 @@
   display:block;
 }
 
+.quiz-report-title {
+  text-align: center;
+  font-weight : bold;
+}
+
 body#mod-quiz-attempts table#attempts,
-body#mod-quiz-attempts table#commands
+body#mod-quiz-attempts table#commands,
+body#mod-quiz-report table#commands,
+body#mod-quiz-report table#itemanalysis
 {
   width: 80%;
   margin: auto;
@@ -63,6 +70,51 @@ body#mod-quiz-attempts table#attempts .r1 {
 
 
 
+body#mod-quiz-report table#itemanalysis {
+  margin: 20px auto;
+}
+body#mod-quiz-report table#itemanalysis .header,
+body#mod-quiz-report table#itemanalysis .cell
+{
+  padding: 4px;
+}
+body#mod-quiz-report table#itemanalysis .header .commands {
+  display: inline;
+}
+body#mod-quiz-report table#itemanalysis td {
+  border-width: 1px;
+  border-style: solid;
+}
+body#mod-quiz-report table#itemanalysis .header {
+  text-align: left;
+}
+body#mod-quiz-report table#itemanalysis .numcol {
+  text-align: center;
+  ! vertical-align : middle;
+}
+
+body#mod-quiz-report table#itemanalysis .uncorrect {
+  color: red;
+}
+
+body#mod-quiz-report table#itemanalysis .correct {
+  color: blue;
+  font-weight : bold;
+}
+
+body#mod-quiz-report table#itemanalysis .partialcorrect {
+  !color: green;
+}
+
+body#mod-quiz-report table#itemanalysis .qname {
+  !color: green;
+}
+
+
+
+body#mod-quiz-report .controls {
+  text-align: center;
+}
 
 .editorhelptext {
   font-size:0.7em;
