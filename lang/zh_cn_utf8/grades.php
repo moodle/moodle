@@ -49,6 +49,7 @@ $string['gradeletternote'] = '要删除一个分段，只需清空上面三项�
 $string['gradepreferenceshelp'] = '成绩使用偏好帮助';
 $string['grades'] = '成绩';
 $string['gradeweighthelp'] = '成绩加权帮助';
+$string['hideadvanced'] = '隐藏高级功能';
 $string['hidecategory'] = '隐藏';
 $string['highgradeascending'] = '最高分升序';
 $string['highgradedescending'] = '最高分降序';
