@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC>
+<HTML>
+    <HEAD>
+        <TITLE>Penalty mechanism</TITLE>
+        <META http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
+    </HEAD>
+<BODY>
+
+<h1>Penalty mechanism</h1>
+
+<h2>What it is for</h2>
+
+<p>When the quiz is run in adaptive mode the student can interact
+with a question repeatedly. So in particular the student can try
+again when he gets a wrong answer. Clearly the final mark for the
+question must reflect the fact that the student did not get it right
+originally. Therefore a penalty is subtracted from the final
+mark.</p>
+
+<h2>How the penalty is determined</h2>
+
+<p>First of all penalties are relevant only if a quiz is run in
+adaptive mode. Only in this case can a student have a second attempt
+and therefore only in this mode can there be any occasion to
+subtract a penalty.</p>
+
+<p>Even in adaptive mode the penalty mechanism is only used when it
+is selected in the quiz options. If "Apply penalties" is set to "No"
+then the final mark for the question is the mark for the last graded
+response.</p>
+
+<p>Each question has a 'penalty' field (which should really be
+called 'penaltyfactor') which is a number between 0 and 1. The
+penalty for a wrong response is calculated as the product
+($quiz->penalty * $quiz->grade), i.e., as the product of the
+penaltyfactor with the maximum achievable grade for the question.
+This product is stored in $state->penalty. So $quiz->penalty is the
+fraction of the maximum grade that is subtracted as a penalty for
+each wrong response.</p>
+
+<p>The $quiz->penalty field has a default value of 0.1, both in the
+database and in mod/quiz/defaults.php. This default can of course be
+overwritten by the admin on the quiz configuration page. This
+admin-selected default is (as usual for admin defaults) stored in
+$CFG->quiz_penalty. The teacher can choose a different penalty
+factor for each individual question when adding or editing a
+question.</p>
+
+<p>Now if a student makes repeated wrong attempts (or partially
+correct attempts) the penalties for all these attempts are added up
+in $state->sumpenalties. The mark for the question is then
+calculated as the mark for the last graded response minus the sum of
+the penalties.</p>
+
+<p>One curious fact about $state->sumpenalties is that, for
+efficiency reasons, it is not stored in the quiz_states table but
+instead in the 'sumpenalty' field of the quiz_newest_states table.
+That way it only has to be stored once per attempt rather than once
+per response.</p>
+
+<h2>Where it is done in the code</h2>
+
+<h2>About wrapped questions</h2>
+
+</BODY>
+</HTML>
