@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005042100)
+      // admin.php - created with Moodle 1.5 ALPHA (2005050600)
 
 
 $string['adminseesallevents'] = 'Správci vidí v¹echny události';
@@ -89,7 +89,7 @@ $string['configvariables'] = 'Promìnné';
 $string['configwarning'] = 'S úpravou tìchto hodnot buïte opatrní - nezvyklé hodnoty mohou zpùsobovat problémy.';
 $string['configzip'] = 'Zadejte umístìní programu zip (volitelné). Pokud je zadáno, bude Moodle pou¾ívat tento program k vytváøení zip archívù na serveru. Jinak bude pou¾ívat vlastní knihovny.';
 $string['confirmation'] = 'Potvrzení';
-$string['cronwarning'] = 'Skript <a href=\"cron.php\">cron.php</a>, který má na starosti bì¾nou údr¾bu serveru, nebyl bìhem posledních 24 hodin spu¹tìn.<br /><a href=\"../doc/?frame=install.html&amp;sub=cron\">Instalaèní pøíruèka</a> vysvìtluje, jak se dá nezbytná údr¾ba va¹eho serveru zautomatizovat.';
+$string['cronwarning'] = 'Skript <a href=\"cron.php\">cron.php</a>, který má na starosti bì¾nou údr¾bu serveru, nebyl bìhem posledních 24 hodin spu¹tìn.<br /><a href=\"../doc/?frame=install.html&sub=cron\">Instalaèní pøíruèka</a> vysvìtluje, jak se dá nezbytná údr¾ba va¹eho serveru zautomatizovat.';
 $string['edithelpdocs'] = 'Upravit nápovìdu a dokumentaci';
 $string['editstrings'] = 'Upravit textové øetìzce';
 $string['filterall'] = 'Filtrovat v¹echny øetìzce';
@@ -116,12 +116,15 @@ $string['therewereerrors'] = 'Va¹e data obsahovala chyby';
 $string['timezoneforced'] = 'Toto je vnuceno správcem stránek';
 $string['timezoneisforcedto'] = 'Vnutit pou¾ívání v¹em u¾ivatelùm';
 $string['timezonenotforced'] = 'U¾ivatelé si mohou vybrat vlastní èasové pásmo';
-$string['upgradelogs'] = 'Pro plnou funkènost musí být va¹e staré protokoly upgradovány. <a href=\"$a\">Více informací</a>';
+$string['upgradeforumread'] = 'Do Moodlu 1.5 byla pøidána nová funkce, která umo¾òuje zaznamenávat stav pøíspìvkù \"pøeèteno/nepøeèteno\".<br />Chcete-li tuto funcki pou¾ívat, musíte <a href=\"$a\">aktualizovat tabulky v databázi</a>.';
+$string['upgradeforumreadinfo'] = 'Do Moodlu 1.5 byla pøidána nová funkce, která umo¾òuje u ka¾dého u¾ivatele zaznamenávat stav pøíspìvkù \"pøeèteno/nepøeèteno\". Chcete-li tuto funcki pou¾ívat, je tøeba doplnit ke stávajícím pøíspìvkùm potøebné informace. Tento proces mù¾e v závislosti na velikosti va¹ich stránek trvat a¾ nìkolik hodin a na va¹em databázovém serveru bude celkem ru¹no, tak¾e doporuèujeme provést tuto èinnost ve vhodném èase (napø. o víkendu v noci). Va¹e stránky budou nicménì stále v provozu a práce u¾ivatelù by nemìla být výraznìji ovlivnìna. Jakmile proces spustíte, mìli byste jej nechat dokonèit (tj. nechat otevøené pøíslu¹né okno prohlí¾eèe). Ale nemìjte obavy, pokud okno zavøete a proces ukonèíte, mù¾ete bez obav zaèít znovu.<br /><br />Chcete nyní spustit aktualizaci va¹í databáze?';
+$string['upgradelogs'] = 'Va¹e staré protokoly musejí být aktualizovány. <a href=\"$a\">Více informací</a>';
 $string['upgradelogsinfo'] = 'Ve zpùsobu uchovávání protokolù do¹lo k nìjakým zmìnám. Chcete-li zobrazovat va¹e dosavadní protokoly na základì èinností, musí být v¹echny ulo¾ené protokoly upgradovány. V závislosti na jejich mno¾ství mù¾e toto trvat dlouhou dobu (i nìkolik hodin) a obzvlá¹tì na vìt¹ích stránkách to zatí¾í va¹i databázi. Jakmile jednou proces spustíte, mìli byste jej nechat dokonèit (nechte okno prohlí¾eèe otevøené). Nemusíte mít obavy - va¹e stránky budou v prùbìhu upgradu pro ostatní stále dostupné.<br /><br />Chcete teï upgradovat va¹e protokoly?';
 $string['upgradesure'] = 'Soubory Moodlu se zmìnily, tak¾e se pravdìpodobnì chystáte upgradovat vá¹ server na verzi:
 <p><b>$a</b></p>
 <p>Jakmile se toto jednou rozhodnete udìlat, nemù¾ete se ji¾ vrátit.</p>
 <p>Jste si jisti, ¾e chcete upgradovat server na tuto verzi?</p>';
-$string['upgradinglogs'] = 'Upgradovat protokoly';
+$string['upgradingdata'] = 'Aktualizace dat';
+$string['upgradinglogs'] = 'Aktualizace protokolù';
 
 ?>

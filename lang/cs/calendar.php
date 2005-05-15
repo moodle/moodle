@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004100800)
+      // calendar.php - created with Moodle 1.5 ALPHA (2005050600)
 
 
 $string['calendar'] = 'Kalendáø';
@@ -38,6 +38,7 @@ $string['eventview'] = 'Podrobnosti události';
 $string['expired'] = 'Vypr¹ela';
 $string['explain_lookahead'] = 'Tímto nastavujete poèet budoucích dnù, v nich¾ budou vyhledávány nadcházející události. Pokud událost zaèíná v nìkterém z tìchto dnù, bude zobrazena jako nadcházející. Události, které zaèínají pozdìji, nebudou zobrazeny jako nadcházející. Prosím, v¹imnìte si, ¾e <strong>není zaruèeno</strong> zobrazení v¹ech nadcházejících událostí: pokud je jich nalezeno pøíli¹ mnoho (tj. více ne¾ máte nastaveno v \"Maximum nadcházejících událostí\"), pak se ty nejvzdálenìj¹í nezobrazí.';
 $string['explain_maxevents'] = 'Tímto nastavujete nejvìt¹í mo¾ný poèet zobrazovaných nadcházejících událostí. Pokud zde vyberete velké èíslo, je mo¾né, ¾e seznam nadcházejících událostí bude velmi dlouhý a na obrazovce zabere spoustu místa.';
+$string['explain_persistflt'] = 'Je-li povoleno, bude si Moodle pamatovat va¹e poslední nastavení filtrování událostí a automaticky je obnoví pøi dal¹ím pøihlá¹ení';
 $string['explain_startwday'] = 'Vyberte den, od kterého má zaèínat zobrazovaný týden.';
 $string['explain_timeformat'] = 'Mù¾ete si zvolit, zda chcete èas zobrazovat ve 12-hodinovém formátu nebo 24-hodinovém formátu. Zvolíte-li \"výchozí\", bude formát vybrán na základì pou¾itého jazyka va¹ich stránek.';
 $string['fri'] = 'Pá';
@@ -55,10 +56,13 @@ $string['noupcomingevents'] = '®ádné nadcházející události';
 $string['oneevent'] = '1 událost';
 $string['pref_lookahead'] = 'Vyhlí¾ení nadcházejících událostí';
 $string['pref_maxevents'] = 'Maximum nadcházejících událostí';
+$string['pref_persistflt'] = 'Pamatovat si nastavení filtrování';
 $string['pref_startwday'] = 'První den v týdnu';
 $string['pref_timeformat'] = 'Formát zobrazení èasu';
 $string['preferences'] = 'Nastavení';
 $string['preferences_available'] = 'Va¹e osobní nastavení';
+$string['repeateditall'] = 'Pou¾ít zmìny na v¹echny (celkem $a) události v této opakující se sérii';
+$string['repeateditthis'] = 'Pou¾ít zmìny pouze na tuto událost';
 $string['repeatnone'] = 'Bez opakování';
 $string['repeatweeksl'] = 'Opakovat ka¾dý týden, vytvoøit celkem';
 $string['repeatweeksr'] = 'událostí';
@@ -95,5 +99,6 @@ $string['userevents'] = 'Osobní události';
 $string['wed'] = 'St';
 $string['wednesday'] = 'Støeda';
 $string['yesterday'] = 'Vèera';
+$string['youcandeleteallrepeats'] = 'Tato událost je souèástí série opakujících se událostí. Mù¾ete odstranit buï tuto událost nebo v¹echny (celkem $a) události v sérii najednou.';
 
 ?>

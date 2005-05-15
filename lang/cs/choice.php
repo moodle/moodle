@@ -1,15 +1,22 @@
 <?PHP // $Id$ 
-      // choice.php - created with Moodle 1.4 (2004083100)
+      // choice.php - created with Moodle 1.5 ALPHA (2005050600)
 
 
-$string['allowupdate'] = 'Umo¾nit aktualizaci ankety';
+$string['addmorechoices'] = 'Pøidat více anket';
+$string['allowupdate'] = 'Umo¾nit zmìnu hlasování';
 $string['answered'] = 'Zodpovìzeno';
-$string['choice'] = 'Anketa $a';
+$string['choice'] = 'Volba';
 $string['choiceclose'] = 'Do';
 $string['choicename'] = 'Název ankety';
 $string['choiceopen'] = 'Od';
 $string['choicetext'] = 'Text ankety';
+$string['displayhorizontal'] = 'Zobrazit horizontálnì';
+$string['displaymode'] = 'Re¾im zobrazení';
+$string['displayvertical'] = 'Zobrazit vertikálnì';
+$string['full'] = '(Obsazeno)';
 $string['havetologin'] = 'Pøed odesláním va¹í odpovìdi se musíte pøihlásit';
+$string['limit'] = 'Limit';
+$string['limitanswers'] = 'Limit poètu povolených výbìrù';
 $string['modulename'] = 'Anketa';
 $string['modulenameplural'] = 'Ankety';
 $string['mustchooseone'] = 'Pøed ulo¾ením musíte vybrat odpovìï. ®ádné zmìny nebyly ulo¾eny.';
@@ -27,7 +34,11 @@ $string['responses'] = 'Odpovìdí';
 $string['responsesto'] = 'Odpovìdi na $a';
 $string['savemychoice'] = 'Ulo¾it mou odpovìï';
 $string['showunanswered'] = 'Zobrazit sloupec \'Dosud nezodpovìzeno\'';
+$string['spaceleft'] = 'volné místo';
+$string['spacesleft'] = 'volná místa';
+$string['taken'] = 'Zabráno';
 $string['timerestrict'] = 'Omezit odpovídání na dobu';
 $string['viewallresponses'] = 'Zobrazit $a odpovìdí';
+$string['yourselection'] = 'Va¹e volba';
 
 ?>

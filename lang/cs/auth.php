@@ -1,7 +1,22 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
+      // auth.php - created with Moodle 1.5 ALPHA (2005050600)
 
 
+$string['alternatelogin'] = 'Pokud sem vlo¾íte nìjaké URL, bude pou¾ito jako pøihla¹ovací stránka k tomuto systému. Tato va¹e stránka by mìla obsahovat formuláø s vlastností \'action\' nastavenou na <strong>\'$a\'</strong>, který vrací pole <strong>username</strong> a <strong>password</strong>.<br />Dbejte na to, abyste vlo¾ili platné URL! V opaèném pøípadì byste mohli komukoliv vèetnì sebe zamezit pøístupu k tìmto stránkám.<br />Chcete-li pou¾ívat standardní pøihla¹ovací stránku, nechejte toto pole prázdné.';
+$string['alternateloginurl'] = 'URL vlastního pøihlá¹ení';
+$string['auth_cas_baseuri'] = 'URI serveru (nebo nic, pokud není baseUri)<br />Je-li napø. CAS server dostupný na  host.domena.cz/CAS/ pak nastavte<br />cas_baseuri = CAS/';
+$string['auth_cas_create_user'] = 'Zapnìte tuto volbu, chcete-li vkládat u¾ivatele ovìøené pomocí CAS do va¹í databáze u¾ivatelù Moodlu. V opaèném pøípadì se budou moci pøihlásit pouze u¾ivatelé, kteøí ji¾ mají záznam v databázi Moodlu.';
+$string['auth_cas_enabled'] = 'Zapnìte tuto volbu, chcete-li pou¾ívat CAS ovìøení.';
+$string['auth_cas_hostname'] = 'Název hostitele (hostname) serveru CAS<br />napø.: host.domena.cz';
+$string['auth_cas_invalidcaslogin'] = 'Je mi líto, ale va¹e pøihlá¹ení selhalo. Nebylo mo¾no vás ovìøit';
+$string['auth_cas_language'] = 'Vybraný jazyk';
+$string['auth_cas_logincas'] = 'Pøístup po za¹ifrovaném spojení';
+$string['auth_cas_port'] = 'Port CAS serveru';
+$string['auth_cas_server_settings'] = 'Konfigurace CAS serveru';
+$string['auth_cas_text'] = 'Za¹ifrované spojení';
+$string['auth_cas_version'] = 'Verze CAS';
+$string['auth_casdescription'] = 'Tato metoda pou¾ívá pro ovìøení u¾ivatelù server CAS (Central Authentication Service) v prostøedí Single Sign On (SSO). Mù¾ete rovnì¾ pou¾ít jednoduché LDAP ovìøování. Je-li zadané u¾ivatelské jméno a heslo platné na serveru CAS, Moodle si vytvoøí nový záznam pro pøíslu¹ného u¾ivatele a pøípadnì naète dal¹í atributy z LDAP serveru. Pøi dal¹ím pøihlá¹ení se ji¾ kontroluje pouze jméno a heslo.';
+$string['auth_castitle'] = 'Pou¾ívat CAS server (SSO)';
 $string['auth_common_settings'] = 'Spoleèné nastavení';
 $string['auth_data_mapping'] = 'Mapování dat';
 $string['auth_dbdescription'] = 'Tato metoda pou¾ívá tabulku v externí databázi ke kontrole, zda zadané u¾ivatelské jméno a heslo je platné.  Pøi vytváøení nového úètu mohou být informace z dal¹ích polí zkopírovány do databáze Moodle.';
