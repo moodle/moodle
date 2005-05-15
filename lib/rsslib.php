@@ -340,20 +340,29 @@ define('SUBMITTERS_ADMIN_ONLY', 1);
 define('SUBMITTERS_ADMIN_AND_TEACHER', 2);
 
 /**
- * @param int $rssid .
+ * @param int $userid If present only entries added by this userid will be displayed
+ * @param int $rssid If present the rss entry matching this id alone will be displayed
  */
-function rss_display_feeds($rssid='none') {
+function rss_display_feeds($userid='', $rssid='') {
     global $db, $USER, $CFG;
     global $blogid; //hackish, but if there is a blogid it would be good to preserve it
 
     $rsspix = $CFG->pixpath .'/i/rss.gif';
 
     $closeTable = false;
-    if ($rssid != 'none'){
-        $feeds = get_records('block_rss_client', 'id', $rssid);
-    } else {
-        $feeds = get_records('block_rss_client');
-    }
+    $select = '';
+
+   if (!isadmin()) {
+   	$userid = $USER->id;
+   }
+
+    if ($userid != '' && is_numeric($userid)) {
+	// if a user is specified and not an admin then only show their own feeds
+	$select = 'userid='. $userid;
+    } else if ($rssid != ''){
+        $select = 'id='. $rssid;
+    } 
+    $feeds = get_records_select('block_rss_client', $select);
     
     if ($feeds){
         $closeTable = true;
@@ -408,5 +417,69 @@ function rss_unhtmlentities($string) {
     $trans_tbl = get_html_translation_table (HTML_ENTITIES);
     $trans_tbl = array_flip ($trans_tbl);
     return strtr ($string, $trans_tbl);
+}
+
+/**
+ * Prints or returns a form for managing rss feed entries.
+ * @param string $act .
+ * @param string $url .
+ * @param int $rssid .
+ * @param bool $printnow True if the generated form should be printed out, false if the string should be returned from this function quietly
+ */
+function rss_get_form($act='none', $url='', $rssid='', $preferredtitle='', $printnow=true) {
+    global $USER, $CFG, $_SERVER, $blockid, $blockaction;
+    global $blogid; //hackish, but if there is a blogid it would be good to preserve it
+    $stredit = get_string('edit');
+    $stradd = get_string('add');
+    $strupdatefeed = get_string('block_rss_update_feed', 'block_rss_client');
+    $straddfeed = get_string('block_rss_add_feed', 'block_rss_client');
+    
+    $returnstring = '<table align="center"><tbody><tr><td>'."\n";
+    
+    $returnstring .= '<form action="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php" method="POST" name="block_rss">'."\n";
+    if ($act == 'rss_edit') {
+        $returnstring .= $strupdatefeed; 
+    } else { 
+        $returnstring .= $straddfeed; 
+    }
+    $returnstring .= "\n".'<br /><input type="text" size="60" maxlength="256" name="url" value="';
+    if ($act == 'rss_edit') { 
+        $returnstring .= $url; 
+    }
+    $returnstring .= '" />'."\n";
+    $returnstring .= '<br />'. get_string('block_rss_custom_title_label', 'block_rss_client');
+    $returnstring .= '<br /><input type="text" size="60" maxlength="64" name="preferredtitle" value="';
+    if ($act == 'rss_edit') { 
+        $returnstring .= $preferredtitle; 
+    }
+    $returnstring .= '" />'."\n";
+
+    $returnstring .= '<input type="hidden" name="act" value="';
+    if ($act == 'rss_edit') {
+        $returnstring .= 'updfeed';
+    } else {
+        $returnstring .= 'addfeed';
+    }
+    $returnstring .= '" />'."\n";
+    if ($act == 'rss_edit') { 
+        $returnstring .= '<input type="hidden" name="rssid" value="'. $rssid .'" />'. "\n"; 
+    }
+    $returnstring .= '<input type="hidden" name="blogid" value="'. $blogid .'" />'."\n";
+    $returnstring .= '<input type="hidden" name="user" value="'. $USER->id .'" />'."\n";
+    $returnstring .= '<br /><input type="submit" value="';
+    $validatestring = "<a href=\"#\" 
+onClick=\"window.open('http://feedvalidator.org/check.cgi?url='+document.block_rss.elements['url'].value,'validate','width=640,height=480,scrollbars=yes,status=yes,resizable=yes');return true;\">". get_string('validate_feed', 'block_rss_client')."</a>";
+    if ($act == 'rss_edit') {
+        $returnstring .= $stredit;
+    } else {
+        $returnstring .= $stradd;
+    }
+    $returnstring .= '" />&nbsp;'. $validatestring .'</form>'."\n";
+    $returnstring .= '</td></tr></tbody></table>'."\n";
+
+    if ($printnow){
+        print $returnstring;
+    }
+    return $returnstring;
 }
 ?>
