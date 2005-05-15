@@ -119,7 +119,6 @@ class quiz_rqp_qtype extends quiz_default_questiontype {
             return false;
         }
         $options->type_name = $type->name;
-        $options->flags &= $type->flags;
         return true;
     }
 
