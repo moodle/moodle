@@ -338,7 +338,7 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
         $answers      = $question->options->answers;
         $testedstate = clone($state);
         $teststate    = clone($state);
-
+        $state->raw_grade = 0;
         foreach($answers as $answer) {
             $teststate->responses = array('' => $answer->id);
             if($question->options->single) {

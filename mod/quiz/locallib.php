@@ -842,6 +842,7 @@ class quiz_default_questiontype {
         most simple question types. */
 
         $teststate = clone($state);
+	$teststate->raw_grade = 0;
         foreach($question->options->answers as $answer) {
             $teststate->responses[''] = $answer->answer;
 

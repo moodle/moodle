@@ -154,7 +154,7 @@ class quiz_shortanswer_qtype extends quiz_default_questiontype {
         $answers     = &$question->options->answers;
         $testedstate = clone($state);
         $teststate   = clone($state);
-
+        $state->raw_grade = 0;
         foreach($answers as $answer) {
             $teststate->responses[''] = trim($answer->answer);
             if($this->compare_responses($question, $testedstate, $teststate)) {
