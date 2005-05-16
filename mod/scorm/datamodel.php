@@ -33,31 +33,31 @@
     require_login($course->id, false, $cm);
     
     if (confirm_sesskey() && (isset($SESSION->scorm_scoid))) {
-	$scoid = $SESSION->scorm_scoid;
-	$result = true;
-	foreach ($_GET as $element => $value) {
-	    if (substr($element,0,3) == 'cmi') {
-	        $element = str_replace('__','.',$element);
-		$element = preg_replace('/_(\d+)/',".\$1",$element);
-		if ($track = get_record_select('scorm_scoes_track',"userid='$USER->id' AND scormid='$scorm->id' AND scoid='$scoid' AND element='$element'")) {
-		    $track->value = $value;
-		    $result = update_record('scorm_scoes_track',$track) && $result;
-		} else {
-		    $track->userid = $USER->id;
-		    $track->scormid = $scorm->id;
-		    $track->scoid = $scoid;
-		    $track->element = $element;
-		    $track->value = $value;
-		    $result = insert_record('scorm_scoes_track',$track) && $result;
-		}
-		//print_r($track);
-	    }
-	}
-	if ($result) {
-	    echo "true\n0";
-	} else {
-	    echo "false\n101";
-	}
+        $scoid = $SESSION->scorm_scoid;
+        $result = true;
+        foreach ($_GET as $element => $value) {
+            if (substr($element,0,3) == 'cmi') {
+                $element = str_replace('__','.',$element);
+                $element = preg_replace('/_(\d+)/',".\$1",$element);
+                if ($track = get_record_select('scorm_scoes_track',"userid='$USER->id' AND scormid='$scorm->id' AND scoid='$scoid' AND element='$element'")) {
+                    $track->value = $value;
+                    $result = update_record('scorm_scoes_track',$track) && $result;
+                } else {
+                    $track->userid = $USER->id;
+                    $track->scormid = $scorm->id;
+                    $track->scoid = $scoid;
+                    $track->element = $element;
+                    $track->value = $value;
+                    $result = insert_record('scorm_scoes_track',$track) && $result;
+                }
+                //print_r($track);
+            }
+        }
+        if ($result) {
+            echo "true\n0";
+        } else {
+            echo "false\n101";
+        }
     }
 ?>
 

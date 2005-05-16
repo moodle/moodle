@@ -36,44 +36,44 @@
     require_login($course->id, false, $cm);
     
     if ($usertrack=scorm_get_tracks($scoid,$USER->id)) {
-	$userdata = $usertrack;
+        $userdata = $usertrack;
     } else {
-	$userdata->status = '';
-	$userdata->scorre_raw = '';
+        $userdata->status = '';
+        $userdata->scorre_raw = '';
     }
     $userdata->student_id = $USER->username;
     $userdata->student_name = $USER->lastname .', '. $USER->firstname;
     $userdata->mode = 'normal';
     if (isset($mode)) {
-	$userdata->mode = $mode;
+        $userdata->mode = $mode;
     }
     if ($sco = get_record('scorm_scoes','id',$scoid)) {
-	$userdata->datafromlms = $sco->datafromlms;
-	$userdata->masteryscore = $sco->masteryscore;
-	$userdata->maxtimeallowed = $sco->maxtimeallowed;
-	$userdata->timelimitaction = $sco->timelimitaction;
+        $userdata->datafromlms = $sco->datafromlms;
+        $userdata->masteryscore = $sco->masteryscore;
+        $userdata->maxtimeallowed = $sco->maxtimeallowed;
+        $userdata->timelimitaction = $sco->timelimitaction;
         if (!empty($sco->masteryscore)) {
-	    $userdata->credit = 'credit';
-	} else {
-	    $userdata->credit = 'no-credit';
-	}    
+            $userdata->credit = 'credit';
+        } else {
+            $userdata->credit = 'no-credit';
+        }    
     } else {
-	error('Sco not found');
+        error('Sco not found');
     }
 
     switch ($scorm->version) {
-	case 'SCORM_1.2':
-	    include_once ('datamodels/scorm1_2.js.php');
-	break;
-	case 'SCORM_1.3':
+        case 'SCORM_1.2':
+            include_once ('datamodels/scorm1_2.js.php');
+            break;
+        case 'SCORM_1.3':
     	    include_once ('datamodels/scorm1_3.js.php');
-	break;
-	case 'AICC':
+            break;
+        case 'AICC':
     	    include_once ('datamodels/aicc.js.php');
-	break;
-	default:
-	    include_once ('datamodels/scorm1_2.js.php');
-	break;
+            break;
+        default:
+            include_once ('datamodels/scorm1_2.js.php');
+            break;
     }
 ?>
 

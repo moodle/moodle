@@ -23,8 +23,8 @@ function scorm_upgrade($oldversion) {
     	table_column("scorm_scoes", "", "organization", "VARCHAR", "255", "", "", "NOT NULL", "manifest");
     }
     if ($oldversion < 2004071900) {
-	table_column("scorm", "", "maxgrade", "FLOAT", "3", "", "0", "NOT NULL", "reference");
-	table_column("scorm", "", "grademethod", "TINYINT", "2", "", "0", "NOT NULL", "maxgrade");
+        table_column("scorm", "", "maxgrade", "FLOAT", "3", "", "0", "NOT NULL", "reference");
+        table_column("scorm", "", "grademethod", "TINYINT", "2", "", "0", "NOT NULL", "maxgrade");
     }
 
     if ($oldversion < 2004111200) {
@@ -42,57 +42,57 @@ function scorm_upgrade($oldversion) {
     }
     
     if ($oldversion < 2005031300) {
-	table_column("scorm_scoes", "", "prerequisites", "VARCHAR", "200", "", "", "NOT NULL", "title");
-	table_column("scorm_scoes", "", "maxtimeallowed", "VARCHAR", "13", "", "", "NOT NULL", "prerequisites");
-	modify_database('',"ALTER TABLE prefix_scorm_scoes ADD timelimitaction SET('exit,message','exit,no message','continue,message','continue,no message') DEFAULT '' AFTER `maxtimeallowed`");
-	table_column("scorm_scoes", "", "masteryscore", "VARCHAR", "200", "", "", "NOT NULL", "datafromlms");
-	
-	$oldscoes = get_records_select("scorm_scoes","1","id ASC");
-	modify_database('',"ALTER TABLE prefix_scorm_scoes CHANGE type scormtype SET('sco','asset') DEFAULT '' NOT NULL");
-	if(!empty($oldscoes)) {
-    	foreach ($oldscoes as $sco) {
-    	    $sco->scormtype = $sco->type;
-    	    unset($sco->type);
-    	    update_record("scorm_scoes",$sco);
-    	}
-    }
-	
-	execute_sql("CREATE TABLE {$CFG->prefix}scorm_scoes_track (
-			id int(10) unsigned NOT NULL auto_increment,
-			userid int(10) unsigned NOT NULL default '0',
-			scormid int(10) NOT NULL default '0',
-			scoid int(10) unsigned NOT NULL default '0',
-			element varchar(255) NOT NULL default '',
-			value longtext NOT NULL default '',
-			PRIMARY KEY  (userid, scormid, scoid, element),
-			UNIQUE (userid, scormid, scoid, element),
-			KEY userdata (userid, scormid, scoid),
-			KEY id (id)
-		     ) TYPE=MyISAM;",false); 
-		     
-	$oldtrackingdata = get_records_select("scorm_sco_users","1","id ASC");
-	$oldelements = array ('cmi_core_lesson_location','cmi_core_lesson_status','cmi_core_exit','cmi_core_total_time','cmi_core_score_raw','cmi_suspend_data');
+        table_column("scorm_scoes", "", "prerequisites", "VARCHAR", "200", "", "", "NOT NULL", "title");
+        table_column("scorm_scoes", "", "maxtimeallowed", "VARCHAR", "13", "", "", "NOT NULL", "prerequisites");
+        modify_database('',"ALTER TABLE prefix_scorm_scoes ADD timelimitaction SET('exit,message','exit,no message','continue,message','continue,no message') DEFAULT '' AFTER `maxtimeallowed`");
+        table_column("scorm_scoes", "", "masteryscore", "VARCHAR", "200", "", "", "NOT NULL", "datafromlms");
 
-    if(!empty($oldtrackingdata)) {
-    	foreach ($oldtrackingdata as $oldtrack) {
-    	    $newtrack = '';
-       	    $newtrack->userid = $oldtrack->userid;
-       	    $newtrack->scormid = $oldtrack->scormid;
-       	    $newtrack->scoid = $oldtrack->scoid;
-       	    
-       	    foreach ( $oldelements as $element) {
-       	    	$newtrack->element = $element;
-       	    	$newtrack->value = $oldtrack->$element;
-       	    	if ($newtrack->value == NULL) {
-       	    	    $newtrack->value = '';
-       	    	}
-       	    	insert_record("scorm_scoes_track",$newtrack,false);
-       	    }
-    	}
-    }
+        $oldscoes = get_records_select("scorm_scoes","1","id ASC");
+        modify_database('',"ALTER TABLE prefix_scorm_scoes CHANGE type scormtype SET('sco','asset') DEFAULT '' NOT NULL");
+        if(!empty($oldscoes)) {
+    	    foreach ($oldscoes as $sco) {
+    	        $sco->scormtype = $sco->type;
+    	        unset($sco->type);
+    	        update_record("scorm_scoes",$sco);
+    	    }
+        }
 
-	modify_database('',"DROP TABLE prefix_scorm_sco_users");
-	modify_database('',"INSERT INTO prefix_log_display VALUES ('scorm', 'review', 'resource', 'name')");
+        execute_sql("CREATE TABLE {$CFG->prefix}scorm_scoes_track (
+                        id int(10) unsigned NOT NULL auto_increment,
+                        userid int(10) unsigned NOT NULL default '0',
+                        scormid int(10) NOT NULL default '0',
+                        scoid int(10) unsigned NOT NULL default '0',
+                        element varchar(255) NOT NULL default '',
+                        value longtext NOT NULL default '',
+                        PRIMARY KEY  (userid, scormid, scoid, element),
+                        UNIQUE (userid, scormid, scoid, element),
+                        KEY userdata (userid, scormid, scoid),
+                        KEY id (id)
+                    ) TYPE=MyISAM;",false); 
+    
+        $oldtrackingdata = get_records_select("scorm_sco_users","1","id ASC");
+        $oldelements = array ('cmi_core_lesson_location','cmi_core_lesson_status','cmi_core_exit','cmi_core_total_time','cmi_core_score_raw','cmi_suspend_data');
+
+        if(!empty($oldtrackingdata)) {
+    	    foreach ($oldtrackingdata as $oldtrack) {
+    	        $newtrack = '';
+       	        $newtrack->userid = $oldtrack->userid;
+       	        $newtrack->scormid = $oldtrack->scormid;
+       	        $newtrack->scoid = $oldtrack->scoid;
+
+       	        foreach ( $oldelements as $element) {
+       	    	    $newtrack->element = $element;
+       	    	    $newtrack->value = $oldtrack->$element;
+       	    	    if ($newtrack->value == NULL) {
+       	    	        $newtrack->value = '';
+       	    	    }
+       	    	    insert_record("scorm_scoes_track",$newtrack,false);
+       	        }
+    	    }
+        }
+
+        modify_database('',"DROP TABLE prefix_scorm_sco_users");
+        modify_database('',"INSERT INTO prefix_log_display VALUES ('scorm', 'review', 'resource', 'name')");
     }
     
     if ($oldversion < 2005040200) {
@@ -109,7 +109,7 @@ function scorm_upgrade($oldversion) {
         execute_sql("ALTER TABLE {$CFG->prefix}scorm_scoes_track DROP INDEX userid");
         modify_database('','ALTER TABLE prefix_scorm_scoes_track ADD UNIQUE track (userid,scormid,scoid,element);');
         modify_database('','ALTER TABLE prefix_scorm_scoes_track ADD PRIMARY KEY id (id);');
-	modify_database('','ALTER TABLE prefix_scorm_scoes_track ADD INDEX scormid (scormid);');
+        modify_database('','ALTER TABLE prefix_scorm_scoes_track ADD INDEX scormid (scormid);');
         modify_database('','ALTER TABLE prefix_scorm_scoes_track ADD INDEX userid (userid);');
         modify_database('','ALTER TABLE prefix_scorm_scoes_track ADD INDEX scoid (scoid);');
         modify_database('','ALTER TABLE prefix_scorm_scoes_track ADD INDEX element (element);');
@@ -123,9 +123,9 @@ function scorm_upgrade($oldversion) {
     	    foreach ($scorms as $scorm) {
     	        if (strlen($scorm->datadir) == 14) {
     	    	    $basedir = $CFG->dataroot.'/'.$scorm->course;
-		    $scormdir = '/moddata/scorm';
-		    rename($basedir.$scormdir.$scorm->datadir,$basedir.$scormdir.'/'.$scorm->id);
-		}
+                    $scormdir = '/moddata/scorm';
+                    rename($basedir.$scormdir.$scorm->datadir,$basedir.$scormdir.'/'.$scorm->id);
+                }
     	    }
     	}
     	execute_sql('ALTER TABLE `'.$CFG->prefix.'scorm` DROP `datadir`');    // Old field
@@ -136,17 +136,17 @@ function scorm_upgrade($oldversion) {
     }
 
     if ($oldversion < 2005042700) {
-	$trackingdata = get_records_select("scorm_scoes_track","1","id ASC");
-	if (!empty($trackingdata)) {
-	    $oldelements = array ('cmi_core_lesson_location','cmi_core_lesson_status','cmi_core_exit','cmi_core_total_time','cmi_core_score_raw','cmi_suspend_data');
-	    $newelements = array ('cmi.core.lesson_location','cmi.core.lesson_status','cmi.core.exit','cmi.core.total_time','cmi.core.score.raw','cmi.suspend_data');
-	    foreach ($trackingdata as $track) {
-		if (($pos = array_search($track->element,$oldelements)) !== false) {
-		    $track->element = $newelements[$pos];
-		    update_record('scorm_scoes_track',$track);
-		}
-	    }
-	}
+        $trackingdata = get_records_select("scorm_scoes_track","1","id ASC");
+        if (!empty($trackingdata)) {
+            $oldelements = array ('cmi_core_lesson_location','cmi_core_lesson_status','cmi_core_exit','cmi_core_total_time','cmi_core_score_raw','cmi_suspend_data');
+            $newelements = array ('cmi.core.lesson_location','cmi.core.lesson_status','cmi.core.exit','cmi.core.total_time','cmi.core.score.raw','cmi.suspend_data');
+            foreach ($trackingdata as $track) {
+                if (($pos = array_search($track->element,$oldelements)) !== false) {
+                    $track->element = $newelements[$pos];
+                    update_record('scorm_scoes_track',$track);
+                }
+            }
+        }
     }
 
     if ($oldversion < 2005042800) {

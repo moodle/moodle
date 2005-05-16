@@ -4,18 +4,18 @@ function NewHttpReq() {
         httpReq = new XMLHttpRequest();
     } else {
         try {
-	    httpReq = new ActiveXObject("Msxml2.XMLHTTP.4.0");
+            httpReq = new ActiveXObject("Msxml2.XMLHTTP.4.0");
         } catch (e) {
-	    try {
-		httpReq = new ActiveXObject("Msxml2.XMLHTTP");
-	    } catch (ee) {
-		try {
-		    httpReq = new ActiveXObject("Microsoft.XMLHTTP");
-		} catch (eee) {
-		    httpReq = false;
-		}
-	    }
-	}
+            try {
+                httpReq = new ActiveXObject("Msxml2.XMLHTTP");
+            } catch (ee) {
+                try {
+                    httpReq = new ActiveXObject("Microsoft.XMLHTTP");
+                } catch (eee) {
+                    httpReq = false;
+                }
+            }
+        }
     }
     return httpReq;
 }

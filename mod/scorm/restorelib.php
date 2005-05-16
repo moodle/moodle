@@ -95,7 +95,7 @@
         for($i = 0; $i < sizeof($scoes); $i++) {
             $sub_info = $scoes[$i];
 
-	    //We'll need this later!!
+            //We'll need this later!!
             $oldid = backup_todb($sub_info['#']['ID']['0']['#']);
             
             //Now, build the scorm_scoes record structure

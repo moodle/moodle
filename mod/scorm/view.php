@@ -37,12 +37,12 @@
     require_login($course->id, false, $cm);
     
     if (isset($SESSION->scorm_scoid)) {
-	unset($SESSION->scorm_scoid);
+        unset($SESSION->scorm_scoid);
     }
     
     $strscorms = get_string("modulenameplural", "scorm");
     $strscorm  = get_string("modulename", "scorm");
-    	
+
     if ($course->category) {
         $navigation = "<a target=\"{$CFG->framename}\" href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->
                        <a target=\"{$CFG->framename}\" href=\"index.php?id=$course->id\">$strscorms</a> ->";
@@ -59,81 +59,81 @@
     //
     if (!$cm->visible and !isteacher($course->id)) {
         print_header($pagetitle, "$course->fullname", "$navigation ".format_string($scorm->name), "", "", true, 
-        	     update_module_button($cm->id, $course->id, $strscorm), navmenu($course, $cm));
+        update_module_button($cm->id, $course->id, $strscorm), navmenu($course, $cm));
         notice(get_string("activityiscurrentlyhidden"));
     } else {
-    	print_header($pagetitle, "$course->fullname","$navigation <a target=\"{$CFG->framename}\" href=\"view.php?id=$cm->id\">".format_string($scorm->name,true)."</a>",
-       	         "", "", true, update_module_button($cm->id, $course->id, $strscorm), navmenu($course, $cm));
+        print_header($pagetitle, "$course->fullname","$navigation <a target=\"{$CFG->framename}\" href=\"view.php?id=$cm->id\">".format_string($scorm->name,true)."</a>",
+                    "", "", true, update_module_button($cm->id, $course->id, $strscorm), navmenu($course, $cm));
         
-    	if (isteacher($course->id)) {
-    	    if ($trackedusers = get_record('scorm_scoes_track', 'scormid', $scorm->id, '', '', '', '', 'count(distinct(userid)) as c')) {
-        	echo "<div class=\"reportlink\"><a target=\"{$CFG->framename}\" href=\"report.php?id=$cm->id\">".get_string("viewallreports","scorm",$trackedusers->c)."</a></div>";
+        if (isteacher($course->id)) {
+            if ($trackedusers = get_record('scorm_scoes_track', 'scormid', $scorm->id, '', '', '', '', 'count(distinct(userid)) as c')) {
+            echo "<div class=\"reportlink\"><a target=\"{$CFG->framename}\" href=\"report.php?id=$cm->id\">".get_string("viewallreports","scorm",$trackedusers->c)."</a></div>";
             } else {
-           	echo "<div class=\"reportlink\">".get_string("noreports","scorm")."</div>";
+               echo "<div class=\"reportlink\">".get_string("noreports","scorm")."</div>";
             }
-    	}
-    	// Print the main part of the page
+        }
+        // Print the main part of the page
 
-    	print_heading(format_string($scorm->name));
+        print_heading(format_string($scorm->name));
 
-    	print_simple_box(format_text($scorm->summary), 'center', '70%', '', 5, 'generalbox', 'intro');
+        print_simple_box(format_text($scorm->summary), 'center', '70%', '', 5, 'generalbox', 'intro');
 
-    	if (isguest()) {
+        if (isguest()) {
             print_heading(get_string("guestsno", "scorm"));
             print_footer($course);
             exit;
-    	}
+        }
         echo "<br />";
         $liststyle = "style=\"list-style-type:none;\"";
         print_simple_box_start("center");
-    	echo "<table>\n";
-    	echo "  <tr><th>".get_string("coursestruct","scorm")."</th></tr>\n";
-	$organization = $scorm->launch;
-	if ($orgs = get_records_select_menu('scorm_scoes',"scorm='$scorm->id' AND organization='' AND launch=''",'id','id,title')) {
-	    if (count($orgs) > 1) {
-		if (isset($_POST['organization'])) {
-		    $organization = $_POST['organization'];
-		}
-		echo "<tr><td align='center'><form name='changeorg' method='post' action='view.php?id=$cm->id'>".get_string('organizations','scorm').": \n";
-		choose_from_menu($orgs, 'organization', "$organization", '','submit()');
-		echo "</form></td></tr>\n"; 
-	    }
-	}
-	$orgidentifier = '';
-	if ($org = get_record('scorm_scoes','id',$organization)) {
-	    if (($org->organization == '') && ($org->launch == '')) {
-	    	$orgidentifier = $org->identifier;
-	    } else {
-	    	$orgidentifier = $org->organization;
-	    }
-	}
-    	echo "  <tr><td nowrap=\"nowrap\">\n";
-    	$incomplete = scorm_display_structure($scorm,'scormlist',$orgidentifier);
-	echo "</td></tr>\n";
-    	echo "</table>\n";
-    	print_simple_box_end();
-    	echo "<form name=\"theform\" method=\"post\" action=\"playscorm.php?id=$cm->id\">\n";
-    	echo "<table align=\"center\">\n<tr>\n<td align=\"center\">";
-	if ($scorm->browsemode == 1) {
-	    print_string("mode","scorm");
-	    echo ": <input type=\"radio\" id=\"b\" name=\"mode\" value=\"browse\" /><label for=\"b\">".get_string("browse","scorm")."</label>\n";
-            if ($incomplete === true) {
-        	echo "<input type=\"radio\" id=\"n\" name=\"mode\" value=\"normal\" checked=\"checked\" /><label for=\"n\">".get_string("normal","scorm")."</label>\n";
-            } else {
-        	echo "<input type=\"radio\" id=\"r\" name=\"mode\" value=\"review\" checked=\"checked\" /><label for=\"r\">".get_string("review","scorm")."</label>\n";
-	    }
-	} else {
-            if ($incomplete === true) {
-		echo '<input type="hidden" name="mode" value="normal" />'."\n";
-	    } else {
-		echo '<input type="hidden" name="mode" value="review" />'."\n";
-	    }
-	}    
-	echo "</td>\n</tr>\n<tr><td align=\"center\">";
-	echo '<input type="hidden" name="scoid" />
-	<input type="hidden" name="currentorg" value="'.$orgidentifier.'" />
-	<input type="submit" value="'.get_string("entercourse","scorm").'" />';
-        echo "\n</td>\n</tr>\n</table>\n</form><br />";
+        echo "<table>\n";
+        echo "  <tr><th>".get_string("coursestruct","scorm")."</th></tr>\n";
+        $organization = $scorm->launch;
+        if ($orgs = get_records_select_menu('scorm_scoes',"scorm='$scorm->id' AND organization='' AND launch=''",'id','id,title')) {
+            if (count($orgs) > 1) {
+            if (isset($_POST['organization'])) {
+                $organization = $_POST['organization'];
+            }
+            echo "<tr><td align='center'><form name='changeorg' method='post' action='view.php?id=$cm->id'>".get_string('organizations','scorm').": \n";
+            choose_from_menu($orgs, 'organization', "$organization", '','submit()');
+            echo "</form></td></tr>\n"; 
+        }
+    }
+    $orgidentifier = '';
+    if ($org = get_record('scorm_scoes','id',$organization)) {
+        if (($org->organization == '') && ($org->launch == '')) {
+            $orgidentifier = $org->identifier;
+        } else {
+            $orgidentifier = $org->organization;
+        }
+    }
+    echo "  <tr><td nowrap=\"nowrap\">\n";
+    $incomplete = scorm_display_structure($scorm,'scormlist',$orgidentifier);
+    echo "</td></tr>\n";
+    echo "</table>\n";
+    print_simple_box_end();
+    echo "<form name=\"theform\" method=\"post\" action=\"playscorm.php?id=$cm->id\">\n";
+    echo "<table align=\"center\">\n<tr>\n<td align=\"center\">";
+    if ($scorm->browsemode == 1) {
+        print_string("mode","scorm");
+        echo ": <input type=\"radio\" id=\"b\" name=\"mode\" value=\"browse\" /><label for=\"b\">".get_string("browse","scorm")."</label>\n";
+        if ($incomplete === true) {
+            echo "<input type=\"radio\" id=\"n\" name=\"mode\" value=\"normal\" checked=\"checked\" /><label for=\"n\">".get_string("normal","scorm")."</label>\n";
+        } else {
+            echo "<input type=\"radio\" id=\"r\" name=\"mode\" value=\"review\" checked=\"checked\" /><label for=\"r\">".get_string("review","scorm")."</label>\n";
+        }
+    } else {
+        if ($incomplete === true) {
+            echo '<input type="hidden" name="mode" value="normal" />'."\n";
+        } else {
+            echo '<input type="hidden" name="mode" value="review" />'."\n";
+        }
+    }    
+    echo "</td>\n</tr>\n<tr><td align=\"center\">";
+    echo '<input type="hidden" name="scoid" />
+    <input type="hidden" name="currentorg" value="'.$orgidentifier.'" />
+    <input type="submit" value="'.get_string("entercourse","scorm").'" />';
+    echo "\n</td>\n</tr>\n</table>\n</form><br />";
 ?>
 <style type="text/css">
         .scormlist { 
@@ -143,27 +143,27 @@
 <script language="javascript" type="text/javascript">
 <!--
     function playSCO(scoid) {
-    	document.theform.scoid.value = scoid;
-    	document.theform.submit();
+        document.theform.scoid.value = scoid;
+        document.theform.submit();
     }
     
     function expandCollide(which,list) {
-    	var nn=document.ids?true:false
-	var w3c=document.getElementById?true:false
-	var beg=nn?"document.ids.":w3c?"document.getElementById(":"document.all.";
-	var mid=w3c?").style":".style";
-    	
-    	if (eval(beg+list+mid+".display") != "none") {
-    	    which.src = "pix/plus.gif";
-    	    eval(beg+list+mid+".display='none';");
-    	} else {
-    	    which.src = "pix/minus.gif";
-    	    eval(beg+list+mid+".display='block';");
-    	}	
+        var nn=document.ids?true:false
+    var w3c=document.getElementById?true:false
+    var beg=nn?"document.ids.":w3c?"document.getElementById(":"document.all.";
+    var mid=w3c?").style":".style";
+        
+        if (eval(beg+list+mid+".display") != "none") {
+            which.src = "pix/plus.gif";
+            eval(beg+list+mid+".display='none';");
+        } else {
+            which.src = "pix/minus.gif";
+            eval(beg+list+mid+".display='block';");
+        }    
     }
 -->
 </script>
 <?php
-    	print_footer($course);
+        print_footer($course);
     }
 ?>

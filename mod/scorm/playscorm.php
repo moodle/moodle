@@ -71,8 +71,8 @@
         $scoidstring = '&scoid='.$scoid;
     }
     if (!empty($_POST['currentorg'])) {
-	$currentorg = $_POST['currentorg'];
-	$currentorgstring = '&currentorg='.$currentorg;
+    $currentorg = $_POST['currentorg'];
+    $currentorgstring = '&currentorg='.$currentorg;
     }
     
     $strexpand = get_string('expcoll','scorm');
@@ -85,33 +85,33 @@
     //$bodyscripts = "onunload='SCOFinish();'";
     $bodyscripts = '';
     print_header($pagetitle, "$course->fullname",
-	"$navigation <a target='{$CFG->framename}' href='view.php?id=$cm->id'>".format_string($scorm->name,true)."</a>",
-	'', '', true, update_module_button($cm->id, $course->id, $strscorm),'',false,$bodyscripts);
+    "$navigation <a target='{$CFG->framename}' href='view.php?id=$cm->id'>".format_string($scorm->name,true)."</a>",
+    '', '', true, update_module_button($cm->id, $course->id, $strscorm),'',false,$bodyscripts);
 ?>
     
     <table width="100%">
     <tr><td valign="top">
     	<p><?php echo format_text($scorm->summary) ?></p>
     	<p><?php echo $mode == 'browse' ? get_string('browsemode','scorm') : '&nbsp;'; ?></p>
-	<table class='generalbox' cellpadding='5' cellspacing='0'>
-	    <tr>
-	        <th>
-	            <div style='float: left;'><?php print_string('coursestruct','scorm') ?></div>
-	    	    <!--<div style='float:right;'>
-	    	    	<a href='#' onClick='popup(main,popupimg);'><img id='popupimg' src="pix/popup.gif" alt="<?php echo $strpopup ?>" title="<?php echo $strpopup ?>"/></a>
-	    	    </div> -->
-	    	</th>
-	    </tr>
-	    <!-- <tr><td width="<?php echo $CFG->scorm_structurewidth ?>%">  -->
-	    <tr><td width="<?php echo $CFG->scorm_structurewidth ?>%">  
+    <table class='generalbox' cellpadding='5' cellspacing='0'>
+        <tr>
+            <th>
+                <div style='float: left;'><?php print_string('coursestruct','scorm') ?></div>
+        	    <!--<div style='float:right;'>
+        	    	<a href='#' onClick='popup(main,popupimg);'><img id='popupimg' src="pix/popup.gif" alt="<?php echo $strpopup ?>" title="<?php echo $strpopup ?>"/></a>
+        	    </div> -->
+        	</th>
+        </tr>
+        <!-- <tr><td width="<?php echo $CFG->scorm_structurewidth ?>%">  -->
+        <tr><td width="<?php echo $CFG->scorm_structurewidth ?>%">  
 <?php
     $sco = scorm_display_structure($scorm,'scormlist',$currentorg,$scoid,$mode,true);
     if ($mode == 'normal') {
-	if ($trackdata = scorm_get_tracks($USER->id,$sco->id)) {
-	    if (($trackdata->status == 'completed') || ($trackdata->status == 'passed') || ($trackdata->status == 'failed')) {
-		$mode = 'review';
-	    }
-	}
+    if ($trackdata = scorm_get_tracks($USER->id,$sco->id)) {
+        if (($trackdata->status == 'completed') || ($trackdata->status == 'passed') || ($trackdata->status == 'failed')) {
+    	$mode = 'review';
+        }
+    }
     }
     add_to_log($course->id, 'scorm', 'view', "playscorm.php?id=$cm->id&scoid=$sco->id", "$scorm->id");
     $scoidstring = '&scoid='.$sco->id;
@@ -119,18 +119,18 @@
 
     $SESSION->scorm_scoid = $sco->id;
 ?>
-	    </td></tr>
-	    <tr><td align="center">
-		<form name="navform" method="post" action="playscorm.php?id=<?php echo $cm->id ?>" target="_top">
-		    <input name="scoid" type="hidden" />
-		    <input name="currentorg" type="hidden" value="<?php echo $currentorg ?>" />
-		    <input name="mode" type="hidden" value="<?php echo $mode ?>" />
-		    <input name="prev" type="<?php if (($sco->prev == 0) || ($sco->showprev == 1)) { echo 'hidden'; } else { echo 'button'; } ?>" value="<?php print_string('prev','scorm') ?>" onClick="prevSCO();" />
-		    <input name="next" type="<?php if (($sco->next == 0) || ($sco->shownext == 1)) { echo 'hidden'; } else { echo 'button'; } ?>" value="<?php print_string('next','scorm') ?>" onClick="nextSCO();" /><br />
-		    <input name="exit" type="button" value="<?php print_string('exit','scorm') ?>" onClick="playSCO(0)" />
-		</form>
-	    </td></tr>
-	</table>
+        </td></tr>
+        <tr><td align="center">
+    	<form name="navform" method="post" action="playscorm.php?id=<?php echo $cm->id ?>" target="_top">
+    	    <input name="scoid" type="hidden" />
+    	    <input name="currentorg" type="hidden" value="<?php echo $currentorg ?>" />
+    	    <input name="mode" type="hidden" value="<?php echo $mode ?>" />
+    	    <input name="prev" type="<?php if (($sco->prev == 0) || ($sco->showprev == 1)) { echo 'hidden'; } else { echo 'button'; } ?>" value="<?php print_string('prev','scorm') ?>" onClick="prevSCO();" />
+    	    <input name="next" type="<?php if (($sco->next == 0) || ($sco->shownext == 1)) { echo 'hidden'; } else { echo 'button'; } ?>" value="<?php print_string('next','scorm') ?>" onClick="nextSCO();" /><br />
+    	    <input name="exit" type="button" value="<?php print_string('exit','scorm') ?>" onClick="playSCO(0)" />
+    	</form>
+        </td></tr>
+    </table>
     </td>
     <td valign="top" width="<?php print $scorm->width ?>"> 
     	<iframe  name="main" width="100%" height="<?php echo $scorm->height ?>" src="loadSCO.php?id=<?php echo $cm->id.$scoidstring.$modestring ?>"></iframe>
@@ -153,25 +153,25 @@
             }
         }
 
-	function popup(win,image) {
-	    win = window.open("loadSCO.php?id=<?php echo $cm->id.$scoidstring.$modestring ?>","","width=<?php echo $scorm->width ?>,height=<?php echo $scorm->height ?>,scrollbars=1");
+    function popup(win,image) {
+        win = window.open("loadSCO.php?id=<?php echo $cm->id.$scoidstring.$modestring ?>","","width=<?php echo $scorm->width ?>,height=<?php echo $scorm->height ?>,scrollbars=1");
     	    image.src = "pix/popdown.gif";
-	    return win;
-	}
+        return win;
+    }
 
-	function prevSCO() {
-	    playSCO(<?php echo $sco->prev ?>);
-	}
+    function prevSCO() {
+        playSCO(<?php echo $sco->prev ?>);
+    }
 
-	function nextSCO() {
-	    playSCO(<?php echo $sco->next ?>);
-	}
+    function nextSCO() {
+        playSCO(<?php echo $sco->next ?>);
+    }
 
         function expandCollide(which,list) {
     	    var nn=document.ids?true:false
-	    var w3c=document.getElementById?true:false
-	    var beg=nn?"document.ids.":w3c?"document.getElementById(":"document.all.";
-	    var mid=w3c?").style":".style";
+        var w3c=document.getElementById?true:false
+        var beg=nn?"document.ids.":w3c?"document.getElementById(":"document.all.";
+        var mid=w3c?").style":".style";
     	
     	    if (eval(beg+list+mid+".display") != "none") {
     		which.src = "pix/plus.gif";
