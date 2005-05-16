@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 ALPHA (2005050600)
+      // moodle.php - created with Moodle 1.5 ALPHA (2005051500)
 
 
 $string['action'] = 'Actie';
@@ -51,7 +51,7 @@ $string['adminhelplogs'] = 'Bekijk de statistieken van alle activiteiten op deze
 $string['adminhelpmanageblocks'] = 'Beheer de geïnstalleerde blokken en hun instellingen';
 $string['adminhelpmanagedatabase'] = 'Gebruik/beheer de database op directe wijze (voorzichtig!)';
 $string['adminhelpmanagefilters'] = 'Kies tekstfilters en daarmee samenhangende instellingen';
-$string['adminhelpmanagemodules'] = 'Beheer de geïnstalleerde modulen en hun instellingen';
+$string['adminhelpmanagemodules'] = 'Beheer de geïnstalleerde modules en hun instellingen';
 $string['adminhelpsitefiles'] = 'Voor het publiceren van algemene bestanden of het uploaden van externe backups';
 $string['adminhelpsitesettings'] = 'Definieer hoe de voorpagina van de site eruit ziet';
 $string['adminhelpthemes'] = 'Kies hoe de site eruit ziet (kleuren, lettertypen, etc.)';
@@ -435,6 +435,7 @@ $string['forceno'] = 'Verplicht niet';
 $string['forcepasswordchange'] = 'Verplicht het wijzigen van het wachtwoord';
 $string['forcepasswordchangehelp'] = 'Vraag de gebruiker om het te wijzigen bij de volgende aanmelding';
 $string['forcetheme'] = 'Leg dit thema op';
+$string['forgotaccount'] = 'Wachtwoord vergeten?';
 $string['forgotten'] = 'Heb je je gebruikersnaam of wachtwoord vergeten?';
 $string['format'] = 'Format';
 $string['formathtml'] = 'HTML-opmaak';
@@ -623,7 +624,7 @@ $string['managefilters'] = 'Filters';
 $string['managemeta'] = 'Is dit een koepelvak';
 $string['managemetadisabled'] = 'Deze optie is uitgeschakeld omdat dit vak al in een koepelvak zit';
 $string['managemetaexplan'] = '(Dit betekent dat aanmeldingen overgeërft worden van andere vakken)';
-$string['managemodules'] = 'Beheer de modules';
+$string['managemodules'] = 'Modules beheren';
 $string['markedthistopic'] = 'Dit onderwerp is geselecteerd als het huidige onderwerp';
 $string['markthistopic'] = 'Selecteer dit onderwerp als het huidige onderwerp';
 $string['maximumchars'] = 'Een maximum van $a characters';

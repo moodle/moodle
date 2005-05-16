@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.5 ALPHA (2005050600)
+      // quiz.php - created with Moodle 1.5 ALPHA (2005051500)
 
 
 $string['acceptederror'] = 'Geaccepteerde fout';
@@ -99,6 +99,7 @@ $string['downloadextra'] = '(dit bestand is ook bewaard bij de bestanden van het
 $string['eachattemptbuildsonthelast'] = 'Elke poging bouwt voort op de vorige';
 $string['editcategories'] = 'Bewerk de categorieën ';
 $string['editcategory'] = 'Bewerk categorie';
+$string['editcatquestions'] = 'Bewerk vragen van de categorie';
 $string['editdatasets'] = 'Bewerk de gegevensset';
 $string['editingcalculated'] = 'Bewerk een berekende vraag';
 $string['editingdescription'] = 'Een beschrijving bewerken';
@@ -114,6 +115,7 @@ $string['editingshortanswer'] = 'Een vraag met kort antwoord bewerken';
 $string['editingtruefalse'] = 'Een waar/onwaar vraag bewerken';
 $string['editquestions'] = 'Bewerk vragen';
 $string['errorsdetected'] = '$a fout(en) ontdekt';
+$string['examview'] = 'Examview';
 $string['existingcategory1'] = 'een jokerteken van een bestaande reeks jokertekens die ook door andere vragen in deze categorie gebruikt worden';
 $string['existingcategory2'] = 'een bestand van een bestaande set bestanden die ook door andere vragen in deze categorie gebruikt worden';
 $string['existingcategory3'] = 'een link van een bestaande set links die ook door andere vragen in deze categorie gebruikt worden';
@@ -232,6 +234,7 @@ $string['questionnametoolong'] = 'Vraagnaam te lang op lijn $a (maximum 255 teke
 $string['questions'] = 'Vragen';
 $string['questionsinuse'] = '(* Vragen, gemerkt met een sterretje, zijn al in gebruik in sommige testen. Deze vragen zullen niet uit die testen verwijderd worden, maar alleen uit de  lijst van de categorie.)';
 $string['questionsperpage'] = 'Maximum aantal vragen per pagina';
+$string['questiontype'] = 'Vraagtype $a';
 $string['questiontypesetupoptions'] = 'Instellingen voor vraagtypes';
 $string['quizavailable'] = 'De test is beschikbaar tot: $a';
 $string['quizclose'] = 'Sluit de test';
@@ -329,6 +332,7 @@ $string['withsummary'] = 'met samenvattende statistieken';
 $string['wronggrade'] = 'Verkeerd cijfer (na lijn $a):';
 $string['xhtml'] = 'XHTML-opmaak';
 $string['xml'] = 'Moodle XML-formaat';
+$string['xmltypeunsupported'] = 'Vraagtype $a wordt niet ondersteund door XML-import';
 $string['yourfinalgradeis'] = 'Je eindcijfer voor deze test is $a';
 $string['zerosignificantfiguresnotallowed'] = 'Het juiste antwoord kan geen nul beduidende cijfers hebben!';
 
