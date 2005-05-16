@@ -385,7 +385,6 @@ function quiz_upgrade($oldversion) {
             foreach ($quizzes as $quiz) {
 
                 // repaginate
-                $quiz->questions = ($quiz->questionsperpage) ? quiz_repaginate($quiz->questions, $quiz->questionsperpage) : $quiz->questions;
                 if ($quiz->questionsperpage) {
                     $quiz->questions = quiz_repaginate($quiz->questions, $quiz->questionsperpage);
                     set_field('quiz', 'questions', $quiz->questions, 'id', $quiz->id);
