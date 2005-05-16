@@ -7,6 +7,8 @@ define('AN_PATH', '/gateway/transact.dll');
 define('AN_APPROVED', '1');
 define('AN_DECLINED', '2');
 define('AN_ERROR', '3');
+define('AN_DELIM', '|');
+define('AN_ENCAP', '"');
 
 require_once("$CFG->dirroot/enrol/enrol.class.php");
 
@@ -24,12 +26,7 @@ function print_entry($course) {
 		parent::print_entry($course);
 	} else {
 		// check payment
-		if (isset($SESSION->ccpaid)) {
-			// security check: don't duplicate payment
-			unset($SESSION->ccpaid);
-			redirect("$CFG->wwwroot/login/logout.php");
-			exit;    	
-		}
+		$this->check_paid();
 
 		if ((!empty($CFG->loginhttps)) && (!isset($_SERVER['HTTPS']))) {
 			$wwwsroot = str_replace('http://','https://', $CFG->wwwroot);
@@ -62,20 +59,20 @@ function print_entry($course) {
 			'enr' => 'EnRoute'
 		);
 
-		$formvars = array('cc', 'ccexpiremm', 'ccexpireyyyy', 'cctype', 'cvv', 'cczip');
+		$formvars = array('ccfirstname','cclastname','cc','ccexpiremm','ccexpireyyyy','cctype','cvv','cczip');
 		foreach ($formvars as $var) {
 			if (!isset($form->$var)) {
 				$form->$var = '';
 			} 
 		}
 
-		include($CFG->dirroot.'/enrol/authorize/enrol.html');
+		include($CFG->dirroot . '/enrol/authorize/enrol.html');
 		print_simple_box_end();
 		print_footer();
 	}
 }
 
-/// Override: base check_entry()
+/// Override: check_entry()
 function check_entry($form, $course) {
 	if ($this->zero_cost($course)) {
 		parent::check_entry($form, $course);
@@ -87,38 +84,32 @@ function check_entry($form, $course) {
 function cc_submit($form, $course)
 {
 	global $CFG, $USER, $SESSION;
-	// check payment
-	if (isset($SESSION->ccpaid))
-	{
-		// security check: don't duplicate payment
-		unset($SESSION->ccpaid);
-		redirect("$CFG->wwwroot/login/logout.php");
-		exit;    	
-	}
-    
+	require_once($CFG->dirroot . '/enrol/authorize/ccval.php');
+
 	if (empty($form->ccfirstname) || empty($form->cclastname) ||
-		empty($form->cc) || empty($form->ccexpiremm) || empty($form->ccexpireyyyy) ||
-		empty($form->cvv) || empty($form->cctype)) {
+		empty($form->cc) || empty($form->cvv) || empty($form->cctype) ||
+		empty($form->ccexpiremm) || empty($form->ccexpireyyyy)) {
 			$this->errormsg = get_string("allfieldsrequired");
 			return;
 		}
 
-	require_once("$CFG->dirroot/enrol/authorize/ccval.php");
-	$ccvalresult = CCVal($form->cc, $form->cctype);
-	if (!$ccvalresult) {
+	if (! CCVal($form->cc, $form->cctype)) {
 		$this->errormsg = get_string("ccinvalid", "enrol_authorize");
     	return;
 	}
-
+	
+	$this->check_paid();
 	$order_number = 0; // can be get from db
 	$formdata = array (
 		'x_version'			=> '3.1',
 		'x_delim_data'		=> 'True',
-		'x_delim_char'		=> '|',
+		'x_delim_char'		=> AN_DELIM,
+		'x_encap_char'		=> AN_ENCAP,
 		'x_relay_response'	=> 'False',
 		'x_login'			=> $CFG->an_login,
 		'x_test_request'	=> (!empty($CFG->an_test)) ? 'True' : 'False',
 		'x_type'			=> 'AUTH_CAPTURE',
+		'x_method'			=> 'CC',
 		// user
 		'x_first_name'		=> (empty($form->ccfirstname) ? $USER->firstname : $form->ccfirstname),
 		'x_last_name'		=> (empty($form->cclastname) ? $USER->lastname : $form->cclastname),
@@ -129,7 +120,8 @@ function cc_submit($form, $course)
 		'x_country'			=> $USER->country,
 		'x_card_num'		=> $form->cc,
 		'x_card_code'		=> $form->cvv,
-		'x_amount'			=> $CFG->enrol_currency . " " . $this->get_cource_cost($course),
+		'x_currency_code'	=> $CFG->enrol_currency,
+		'x_amount'			=> $this->get_cource_cost($course),
 		'x_exp_date'		=> (($form->ccexpiremm<10) ? strval('0'.$form->ccexpiremm) : strval($form->ccexpiremm)) . ($form->ccexpireyyyy),
 		'x_email'			=> $USER->email,
 		'x_email_customer'	=> 'False',
@@ -141,31 +133,30 @@ function cc_submit($form, $course)
 		'x_description'		=> $course->shortname
 	);
 
-	if (!empty($CFG->an_tran_key)) {
-		$formdata['x_tran_key'] = $CFG->an_tran_key;
-	} else {
-		$formdata['x_password'] = (isset($CFG->an_password)) ? $CFG->an_password : '';
-	}
-	
 	//build the post string
 	$poststring = '';
-	foreach($formdata AS $key => $val) {
-		$poststring .= urlencode($key) . "=" . urlencode($val) . "&";
+	if (!empty($CFG->an_tran_key)) {
+		$poststring .= urlencode("x_tran_key") . "=" . urlencode($CFG->an_tran_key);
+	} else {
+		$an_pswd = (isset($CFG->an_password)) ? $CFG->an_password : '';
+		$poststring .= urlencode("x_password") . "=" . urlencode($an_pswd);
 	}
-	// strip off trailing ampersand
-	$poststring = substr($poststring, 0, -1);
+	foreach($formdata as $key => $val) {
+		$poststring .= "&" . urlencode($key) . "=" . urlencode($val);
+	}
+	//built
 
-	$fp = fsockopen("ssl://" . AN_HOST, AN_PORT, $errno, $errstr, $timeout = 60);
+	$response = array();
+	$anrefererheader = "";    	
+	if (isset($CFG->an_referer) && (!empty($CFG->an_referer)) &&
+	($CFG->an_referer != "http://") && ($CFG->an_referer != "https://")) {
+		$anrefererheader = "Referer: " . $CFG->an_referer . "\r\n";
+	}
+	$fp = fsockopen("ssl://" . AN_HOST, AN_PORT, $errno, $errstr, 60);
 	if(!$fp) {
 		$this->errormsg =  "$errstr ($errno)";
 		return;
 	} else {
-		$anrefererheader = "";    	
-		if (isset($CFG->an_referer) && (!empty($CFG->an_referer)) &&
-			($CFG->an_referer != "http://") && ($CFG->an_referer != "https://")) {
-				$anrefererheader = "Referer: " . $CFG->an_referer . "\r\n";
-			}
-		
 		//send the server request
 		fputs($fp,
 			"POST " . AN_PATH . " HTTP/1.1\r\n" .
@@ -194,7 +185,19 @@ function cc_submit($form, $course)
 		// Get real data
 		$data = fgets($fp, $length);
 		fclose($fp);
-		$response = explode("|", $data);
+		$response = explode(AN_ENCAP.AN_DELIM.AN_ENCAP, $data);
+		if ($response === false)
+		{
+			$this->errormsg = "response error";
+			return;
+		}
+		$rcount = count($response) - 1;
+		if ($response[0]{0} == AN_ENCAP) {
+			$response[0] = substr($response[0], 1);
+		}
+		if (substr($response[$rcount], -1) == AN_ENCAP) {
+			$response[$rcount] = substr($response[$rcount], 0, -1);
+		}
 	}
 
 	if ($response[0] != AN_APPROVED) {
@@ -219,14 +222,12 @@ function cc_submit($form, $course)
 				email_to_user($USER, $teacher, get_string("enrolmentnew", '', $course->shortname),
 				get_string('welcometocoursetext', '', $a));
 			}
-
 			if (!empty($CFG->enrol_mailteachers)) {
 				$a->course = "$course->fullname";
 				$a->user = fullname($USER);
 				email_to_user($teacher, $USER, get_string("enrolmentnew", '', $course->shortname),
 				get_string('enrolmentnewuser', '', $a));
 			}
-
 			if (!empty($CFG->enrol_mailadmins)) {
 				$a->course = "$course->fullname";
 				$a->user = fullname($USER);
@@ -248,11 +249,10 @@ function cc_submit($form, $course)
 			$datax->userid = $USER->id;
 			$datax->avscode = strval($response[5]);
 			$datax->transid = strval($response[6]);
-
 			if (!insert_record("enrol_authorize", $datax)) {	// Insert a transaction record
 				$this->email_cc_error_to_admin("Error while trying to insert valid transaction", $datax);
 			}
-		
+
 		} // end if (!enrol_student)
 
 		if ($SESSION->wantsurl) {
@@ -348,8 +348,9 @@ function check_openssl_loaded($die)
 {
 	if (!extension_loaded('openssl')) {
 		echo "<font color=red><center>PHP must be compiled --with-openssl</center></font>";
-		if ($die)
+		if ($die) {
 			die;
+		}
 	}
 }
 
@@ -434,6 +435,17 @@ function email_cc_error_to_admin($subject, $data) {
 		$message .= "$key => $value\n";
 	}
 	email_to_user($admin, $admin, "CC ERROR: ".$subject, $message);
+}
+
+function check_paid() {
+
+	global $CFG, $SESSION;
+
+	if (isset($SESSION->ccpaid)) {
+		unset($SESSION->ccpaid);
+		redirect($CFG->wwwroot . '/login/logout.php');
+		exit;    	
+	}
 }
 
 } // end of class definition
