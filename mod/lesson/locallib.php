@@ -1027,12 +1027,11 @@ function lesson_calculate_ongoing_score($lesson, $userid, $retries, $return=fals
             }
         }
         $nviewed = count($temp); // this counts number of Questions the user viewed
-		if ($nviewed != 0) {
-			$thegrade = intval(100 * $ncorrect / $nviewed);	
-		} else {
-			$thegrade = 0;
-		}
-        
+        if ($nviewed != 0) {
+            $thegrade = intval(100 * $ncorrect / $nviewed);
+        } else {
+            $thegrade = 0;
+        }
 
         if ($return) {
             return $thegrade;
@@ -1113,15 +1112,15 @@ function lesson_calculate_ongoing_score($lesson, $userid, $retries, $return=fals
 /*******************************************************************/
 function lesson_qtype_menu($qtypes, $selected="", $link="", $onclick="") {
 // prints the question types for when editing and adding a page
-	$tabs = array();
-	$tabrows = array();
-	
+    $tabs = array();
+    $tabrows = array();
+
     foreach ($qtypes as $qtype => $qtypename) {
-		$tabrows[] = new tabobject($qtype, "$link&amp;qtype=$qtype\" onClick=\"$onclick\"", $qtypename);
+        $tabrows[] = new tabobject($qtype, "$link&amp;qtype=$qtype\" onClick=\"$onclick\"", $qtypename);
     }
-	$tabs[] = $tabrows;
-	print_tabs($tabs, $selected);
-	echo "<input type=\"hidden\" name=\"qtype\" value=\"$selected\" /> \n";
+    $tabs[] = $tabrows;
+    print_tabs($tabs, $selected);
+    echo "<input type=\"hidden\" name=\"qtype\" value=\"$selected\" /> \n";
 
 }
 

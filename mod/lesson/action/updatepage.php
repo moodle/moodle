@@ -34,8 +34,8 @@
     /// CDC-FLAG ///        
     $page->title = clean_param($form->title, PARAM_CLEANHTML);
     $page->contents = clean_param(trim($form->contents), PARAM_CLEANHTML);
-	$page->title = addslashes($page->title);
-	$page->contents = addslashes($page->contents);
+    $page->title = addslashes($page->title);
+    $page->contents = addslashes($page->contents);
     if (!update_record("lesson_pages", $page)) {
         error("Update page: page not updated");
     }
@@ -80,10 +80,10 @@
                         clean_param($form->responseeditor[$i], PARAM_INT) * LESSON_RESPONSE_EDITOR;
                     $oldanswer->timemodified = $timenow;
                     $oldanswer->answer = clean_param(trim($form->answer[$i]), PARAM_CLEANHTML);
-					$oldanswer->answer = addslashes($oldanswer->answer);
+                    $oldanswer->answer = addslashes($oldanswer->answer);
                     if (isset($form->response[$i])) {
                         $oldanswer->response = clean_param(trim($form->response[$i]), PARAM_CLEANHTML);
-						$oldanswer->response = addslashes($oldanswer->response);
+                        $oldanswer->response = addslashes($oldanswer->response);
                     }
                     $oldanswer->jumpto = clean_param($form->jumpto[$i], PARAM_INT);
                     /// CDC-FLAG ///
@@ -103,10 +103,10 @@
                         clean_param($form->responseeditor[$i], PARAM_INT) * LESSON_RESPONSE_EDITOR;
                     $newanswer->timecreated = $timenow;
                     $newanswer->answer = clean_param(trim($form->answer[$i]), PARAM_CLEANHTML);
-					$newanswer->answer = addslashes($newanswer->answer);
+                    $newanswer->answer = addslashes($newanswer->answer);
                     if (isset($form->response[$i])) {
                         $newanswer->response = clean_param(trim($form->response[$i]), PARAM_CLEANHTML);
-						$newanswer->answer = addslashes($newanswer->answer);
+                        $newanswer->answer = addslashes($newanswer->answer);
                     }
                     $newanswer->jumpto = clean_param($form->jumpto[$i], PARAM_INT);
                     /// CDC-FLAG ///

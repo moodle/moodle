@@ -57,13 +57,13 @@
                  "$navigation <a href=index.php?id=$course->id>$strlessons</a> -> 
                   <a href=\"view.php?id=$cm->id\">".format_string($lesson->name,true)."</a>", "", "", true);
 
-	// include the appropriate action (check to make sure the file is there first)
-	if (file_exists($CFG->dirroot.'/mod/lesson/action/'.$action.'.php')) {
-		include($CFG->dirroot.'/mod/lesson/action/'.$action.'.php');    
-	} else {
-		error("Fatal Error: Unknown action\n");
-	}
-	
+    // include the appropriate action (check to make sure the file is there first)
+    if (file_exists($CFG->dirroot.'/mod/lesson/action/'.$action.'.php')) {
+        include($CFG->dirroot.'/mod/lesson/action/'.$action.'.php');    
+    } else {
+        error("Fatal Error: Unknown action\n");
+    }
+
     print_footer($course);
  
 ?>

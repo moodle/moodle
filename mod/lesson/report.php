@@ -163,8 +163,8 @@
                 $tries = $studentdata[$student->id];
                 $studentname = "{$student->lastname},&nbsp;$student->firstname";
                 foreach ($tries as $try) {
-					// start to build up the link
-					$temp = "<a href=\"report.php?id=$cm->id&amp;action=detail&amp;userid=".$try["userid"]."&amp;try=".$try["try"]."\">";
+                // start to build up the link
+                    $temp = "<a href=\"report.php?id=$cm->id&amp;action=detail&amp;userid=".$try["userid"]."&amp;try=".$try["try"]."\">";
                     if ($try["grade"] != NULL) { // if NULL then not done yet
                         // this is what the link does when the user has completed the try
                         $timetotake = $try["timeend"] - $try["timestart"];
@@ -210,7 +210,7 @@
                 $table->data[] = array($studentname, $attempts, $bestgrade."%");
             }
         }
-		// print it all out !
+        // print it all out !
         print_table($table);
 
         // some stat calculations
@@ -783,7 +783,7 @@
                 }
                 $answerpages[] = $answerpage;
             }
-			$pageid = $page->nextpageid;
+            $pageid = $page->nextpageid;
         }
 
         /// actually start printing something
@@ -798,18 +798,18 @@
             $table->align = array("right", "left");
             $table->size = array("*", "*");
 
-		    if (!$grades = get_records_select("lesson_grades", "lessonid = $lesson->id and userid = $userid", "completed", "*", $try, 1)) {
-    	        $grade = -1;
-	        } else {
-				$grade = current($grades);
-				$grade = $grade->grade;
-			}
-			if (!$times = get_records_select("lesson_timer", "lessonid = $lesson->id and userid = $userid", "starttime", "*", $try, 1)) {
-    	        $timetotake = -1;
-	        } else {
-            	$timetotake = current($times);
-				$timetotake = $timetotake->lessontime - $timetotake->starttime;
-			}
+            if (!$grades = get_records_select("lesson_grades", "lessonid = $lesson->id and userid = $userid", "completed", "*", $try, 1)) {
+                $grade = -1;
+            } else {
+                $grade = current($grades);
+                $grade = $grade->grade;
+            }
+            if (!$times = get_records_select("lesson_timer", "lessonid = $lesson->id and userid = $userid", "starttime", "*", $try, 1)) {
+                $timetotake = -1;
+            } else {
+                $timetotake = current($times);
+                $timetotake = $timetotake->lessontime - $timetotake->starttime;
+            }
 
             if ($timetotake == -1 || $completed == -1 || $grade == -1) {
                 $table->align = array("center");

@@ -26,7 +26,7 @@
     var my12_hour = 1;
     var stopclock = 0;
     var myclock = '';
-	var timeleft, hours, minutes, secs;
+    var timeleft, hours, minutes, secs;
     var javatimeDate = new Date();
     var javatime = javatimeDate.getTime();
     javatime = Math.floor(javatime/1000);
@@ -35,15 +35,15 @@
     starttime = starttime + difference;
 
     var dn = ""; 
-	var old = "";
+    var old = "";
 
     if (document.all||document.getElementById) { 
-		document.write('<span id="LiveClockIE" style="width:'+mywidth+'px;"></span>'); 
-	} else if (document.layers) { 
-		document.write('<ilayer id="ClockPosNS"><layer width="'+mywidth+'" id="LiveClockNS"></layer></ilayer>');
-	} else { 
-		old = "true"; show_clock();
-	}
+        document.write('<span id="LiveClockIE" style="width:'+mywidth+'px;"></span>'); 
+    } else if (document.layers) { 
+        document.write('<ilayer id="ClockPosNS"><layer width="'+mywidth+'" id="LiveClockNS"></layer></ilayer>');
+    } else { 
+        old = "true"; show_clock();
+    }
     
     /*function leave() {  // feable attempt to run a script when someone leaves a timed test early, failed so far
         window.onunload = window.open('http://www.google.com','','toolbar=no,menubar=no,location=no,height=500,width=500');
@@ -69,10 +69,10 @@
             stopclock = 1;
         } else {
             timeleft = starttime + testlength - current;
-			hours = Math.floor(timeleft/3600);
-			timeleft = timeleft - (hours * 3600);
-			minutes = Math.floor(timeleft/60);
-			secs = timeleft - (minutes * 60);           
+            hours = Math.floor(timeleft/3600);
+            timeleft = timeleft - (hours * 3600);
+            minutes = Math.floor(timeleft/60);
+            secs = timeleft - (minutes * 60);           
             
             if (secs < 10) {
                 secs = "0"+secs;

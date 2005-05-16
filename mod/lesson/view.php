@@ -182,31 +182,30 @@
                     }
                     break; // only look at the latest correct attempt 
                 }
-			} else {
-				$attempts = NULL;
-			}
+            } else {
+                $attempts = NULL;
+            }
 
-			if ($branchtables = get_records_select('lesson_branch', 
-								"lessonid = $lesson->id AND userid = $USER->id AND retry = $retries", 'timeseen DESC')) {
-				// in here, user has viewed a branch table
-				$lastbranchtable = current($branchtables);
-				if ($attempts != NULL) {
-					foreach($attempts as $attempt) {
-						if ($lastbranchtable->timeseen > $attempt->timeseen) {
-							// branch table was viewed later than the last attempt
-							$lastpageseen = $lastbranchtable->pageid;
-						}
-						break;
-					}
-				} else {
-					// hasnt answered any questions but has viewed a branch table
-					$lastpageseen = $lastbranchtable->pageid;
-				}
-				
-			}
+            if ($branchtables = get_records_select('lesson_branch', 
+                                "lessonid = $lesson->id AND userid = $USER->id AND retry = $retries", 'timeseen DESC')) {
+                // in here, user has viewed a branch table
+                $lastbranchtable = current($branchtables);
+                if ($attempts != NULL) {
+                    foreach($attempts as $attempt) {
+                        if ($lastbranchtable->timeseen > $attempt->timeseen) {
+                            // branch table was viewed later than the last attempt
+                            $lastpageseen = $lastbranchtable->pageid;
+                        }
+                        break;
+                    }
+                } else {
+                    // hasnt answered any questions but has viewed a branch table
+                    $lastpageseen = $lastbranchtable->pageid;
+                }
+            }
             //if ($lastpageseen != $firstpageid) {
             if (isset($lastpageseen) and count_records('lesson_attempts', 'lessonid', $lesson->id, 'userid', $USER->id, 'retry', $retries) > 0) {
-				// get the first page
+                // get the first page
                 if (!$firstpageid = get_field('lesson_pages', 'id', 'lessonid', $lesson->id,
                             'prevpageid', 0)) {
                     error('Navigation: first page not found');
@@ -223,7 +222,7 @@
                         echo '<p align="center"><input type="button" value="'. get_string('continue', 'lesson').
                             "\" onclick=\"document.queryform.pageid.value='$firstpageid';document.queryform.startlastseen.value='no';document.queryform.submit();\" /></p>\n";  /// CDC-FLAG added document.queryform.startlastseen.value='yes'
                         echo '</form>' . "\n"; 
-						echo '</div></div>';///CDC Chris Berri added close div tag
+                        echo '</div></div>';///CDC Chris Berri added close div tag
                     } else {
                         print_simple_box_start('center');
                         echo '<div align="center">';
@@ -247,7 +246,7 @@
                     echo "</form>\n"; echo "</div></div>";///CDC Chris Berri added close div tag
                 }
                 print_footer($course);
-				exit();
+                exit();
             }
             
             if ($grades) {
@@ -1065,7 +1064,7 @@
             // after all the grade processing, check to see if "Show Grades" is off for the course
             // if yes, redirect to the course page
             if (!$course->showgrades) {
-            	redirect($CFG->wwwroot.'/course/view.php?id='.$course->id);
+                redirect($CFG->wwwroot.'/course/view.php?id='.$course->id);
             }
 
             ///CDC-FLAG /// high scores code
@@ -1133,54 +1132,54 @@
     elseif ($action == 'teacherview') {
         /// CDC-FLAG /// link to grade essay questions and to report
         if ($userattempts = get_records("lesson_attempts", "lessonid", $lesson->id)) { // just check to see if anyone has answered any questions.
-			$usercount = array();
-			foreach ($userattempts as $userattempts) {
-				$usercount[$userattempts->userid] = 0;
-			}
-			$a = new stdClass;
-			$a->users = count($usercount);
-			$a->usersname = $course->students;
-			echo "<div align=\"right\"><a href=\"report.php?id=$cm->id\">".get_string("viewlessonstats", "lesson", $a)."</a></div>";
-       	}
+            $usercount = array();
+            foreach ($userattempts as $userattempts) {
+                $usercount[$userattempts->userid] = 0;
+            }
+            $a = new stdClass;
+            $a->users = count($usercount);
+            $a->usersname = $course->students;
+            echo "<div align=\"right\"><a href=\"report.php?id=$cm->id\">".get_string("viewlessonstats", "lesson", $a)."</a></div>";
+        }
         if ($essaypages = get_records_select("lesson_pages", "lessonid = $lesson->id AND qtype = ".LESSON_ESSAY)) { // get pages that are essay
-        	// get only the attempts that are in response to essay questions
-        	$essaypageids = implode(",", array_keys($essaypages)); // all the pageids in comma seperated list
-        	if ($essayattempts = get_records_select("lesson_attempts", "lessonid = $lesson->id AND pageid IN($essaypageids)")) {
-		        $studentessays = array();
-				// makes an array that organizes essayattempts by grouping userid, then pageid, then try count
-		        foreach ($essayattempts as $essayattempt) {
-		            $studentessays[$essayattempt->userid][$essayattempt->pageid][$essayattempt->retry][] = $essayattempt;            
-		        }
-				$a = new stdClass;
-				$a->notgradedcount = 0;
-				$a->notsentcount = 0;
-				foreach ($studentessays as $pages) {  // students
-					foreach ($pages as $tries) {  // pages
-	                	// go through each essay per page
-	                	foreach($tries as $try) {  // actual attempts
-		                    // make sure they didn't answer it more than the max number of attmepts
-		                    if (count($try) > $lesson->maxattempts) {
-		                        $essay = $try[$lesson->maxattempts-1];
-		                    } else {
-		                        $essay = end($try);
-		                    }
-							$essayinfo = unserialize($essay->useranswer);
-							if ($essayinfo->graded == 0) {
-								$a->notgradedcount++;
-							}
-							if ($essayinfo->sent == 0) {
-								$a->notsentcount++;	
-							}
-						}
-					}
-				}
-	           	echo "<div align=\"right\"><a href=\"view.php?id=$cm->id&amp;action=essayview\">".get_string("gradeessay", "lesson", $a)."</a></div><br />";
-           	}
-       	}
+            // get only the attempts that are in response to essay questions
+            $essaypageids = implode(",", array_keys($essaypages)); // all the pageids in comma seperated list
+            if ($essayattempts = get_records_select("lesson_attempts", "lessonid = $lesson->id AND pageid IN($essaypageids)")) {
+                $studentessays = array();
+                // makes an array that organizes essayattempts by grouping userid, then pageid, then try count
+                foreach ($essayattempts as $essayattempt) {
+                    $studentessays[$essayattempt->userid][$essayattempt->pageid][$essayattempt->retry][] = $essayattempt;            
+                }
+                $a = new stdClass;
+                $a->notgradedcount = 0;
+                $a->notsentcount = 0;
+                foreach ($studentessays as $pages) {  // students
+                    foreach ($pages as $tries) {  // pages
+                        // go through each essay per page
+                        foreach($tries as $try) {  // actual attempts
+                            // make sure they didn't answer it more than the max number of attmepts
+                            if (count($try) > $lesson->maxattempts) {
+                                $essay = $try[$lesson->maxattempts-1];
+                            } else {
+                                $essay = end($try);
+                            }
+                            $essayinfo = unserialize($essay->useranswer);
+                            if ($essayinfo->graded == 0) {
+                                $a->notgradedcount++;
+                            }
+                            if ($essayinfo->sent == 0) {
+                                $a->notsentcount++;
+                            }
+                        }
+                    }
+                }
+                echo "<div align=\"right\"><a href=\"view.php?id=$cm->id&amp;action=essayview\">".get_string("gradeessay", "lesson", $a)."</a></div><br />";
+            }
+        }
 
         print_heading_with_help(format_string($lesson->name,true), "overview", "lesson");   
 
-		// get number of pages
+        // get number of pages
         if ($page = get_record_select("lesson_pages", "lessonid = $lesson->id AND prevpageid = 0")) {
             $npages = 1;
             while (true) {

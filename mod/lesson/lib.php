@@ -35,10 +35,10 @@ function lesson_add_instance($lesson) {
         unset($lesson->password);
     }
     /// CDC-FLAG ///
-	if (!$lesson->id = insert_record("lesson", $lesson)) {
-		return false; // bad
-	}
-	
+    if (!$lesson->id = insert_record("lesson", $lesson)) {
+        return false; // bad
+    }
+
     if ($lesson->lessondefault) {
         $lessondefault = $lesson;
         unset($lessondefault->lessondefault);
@@ -130,8 +130,8 @@ function lesson_update_instance($lesson) {
         unset($lesson->lessondefault);
     }
     
-	// update the calendar events (credit goes to quiz module)
-	if ($events = get_records_select('event', "modulename = 'lesson' and instance = '$lesson->id'")) {
+    // update the calendar events (credit goes to quiz module)
+    if ($events = get_records_select('event', "modulename = 'lesson' and instance = '$lesson->id'")) {
         foreach($events as $event) {
             delete_event($event->id);
         }
@@ -249,13 +249,13 @@ function lesson_delete_instance($id) {
     if (! delete_records("lesson_high_scores", "lessonid", "$lesson->id")) {
             $result = false;
     }
-	if ($events = get_records_select('event', "modulename = 'lesson' and instance = '$lesson->id'")) {
+    if ($events = get_records_select('event', "modulename = 'lesson' and instance = '$lesson->id'")) {
         foreach($events as $event) {
             delete_event($event->id);
         }
-	}
+    }
     
-	return $result;
+    return $result;
 }
 
 /*******************************************************************/
