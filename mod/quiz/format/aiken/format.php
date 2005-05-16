@@ -58,6 +58,7 @@ class quiz_format_aiken extends quiz_default_format {
                     //trim off the label and space
                     $question->answer[] = substr($nowline,3);
                     $question->fraction[] = 0;
+		    $question->feedback[] = '';
                     continue;
                 }
                 if ($leader == "AN"){
