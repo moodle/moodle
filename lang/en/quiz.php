@@ -113,6 +113,7 @@ $string['editingtruefalse'] = 'Editing a True/False question';
 $string['editquestions'] = 'Edit questions';
 $string['editcatquestions'] = 'Edit category questions';
 $string['errorsdetected'] = '$a error(s) detected';
+$string['examview'] = 'Examview';
 $string['existingcategory1'] = 'a literal from an already existing set of literals that are also used by other questions in this category';
 $string['existingcategory2'] = 'a file from an already existing set of files that are also used by other questions in this category';
 $string['existingcategory3'] = 'a link from an already existing set of links that are also used by other questions in this category';
