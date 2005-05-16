@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // grades.php - created with Moodle 1.5 ALPHA (2005050600)
+      // grades.php - created with Moodle 1.5 ALPHA (2005051500)
 
 
 $string['addcategory'] = 'Voeg categorie toe';
@@ -13,15 +13,19 @@ $string['categories'] = 'Categorieën';
 $string['category'] = 'Categorie';
 $string['choosecategory'] = 'Kies categorie';
 $string['creatinggradebooksettings'] = 'Puntenboek instellingen maken';
+$string['curveto'] = 'Afbuigen naar';
 $string['deletecategory'] = 'Verwijder categorie';
 $string['displaylettergrade'] = 'Toon een beoordeling met letters';
+$string['displaypercent'] = 'Toon procent';
 $string['displaypoints'] = 'Toon punten';
 $string['displayweighted'] = 'Toon een gewogen cijfer';
 $string['dropped'] = 'Weggelaten';
 $string['dropxlowest'] = 'Laat de X laagste weg';
 $string['dropxlowestwarning'] = 'Opmerking: als je \'Laat de X laagste weg\' gebruikt, dan gaat het puntenboek er van uit dat alle items in de categorie dezelfde puntenwaarde hebben. Als de puntenwaarden verschillen, dan zullen de resultaten onvoorspelbaar zijn.';
+$string['errorgradevaluenonnumeric'] = 'Niet-numerieke waarde ontvangen voor laagste en hoogste cijfer voor';
 $string['errornocategorizedid'] = 'Kon geen id zonder categorie vinden!';
 $string['errornocourse'] = 'Kon geen informatie van het vak vinden';
+$string['errorreprintheadersnonnumeric'] = 'Niet-numerieke waarde ontvangen voor koppen herhalen';
 $string['exceptions'] = 'Uitzonderingen';
 $string['excluded'] = 'Uitgesloten';
 $string['extracredit'] = 'Extra krediet';
@@ -45,6 +49,7 @@ $string['gradeletternote'] = 'Om een letterbeoordeling te verwijderen, maak je<b
 $string['gradepreferenceshelp'] = 'Help bij voorkeursinstellingen';
 $string['grades'] = 'Cijfers';
 $string['gradeweighthelp'] = 'Help bij gewogen cijfers';
+$string['hideadvanced'] = 'Verberg geavanceerde mogelijkheden';
 $string['hidecategory'] = 'Verborgen';
 $string['highgradeascending'] = 'Sorteer cijfers oplopend';
 $string['highgradedescending'] = 'Sorteer cijfers aflopend';
@@ -53,6 +58,7 @@ $string['incorrectcourseid'] = 'Vak ID was fout';
 $string['item'] = 'Item';
 $string['items'] = 'Items';
 $string['lettergrade'] = 'Cijferbeoordeling';
+$string['lettergradenonnumber'] = 'Laagste en/of hoogste cijfer was geen cijfer';
 $string['letters'] = 'Letters';
 $string['lowest'] = 'Laagste';
 $string['lowgradeletter'] = 'Laag';
@@ -68,6 +74,7 @@ $string['nogradeletters'] = 'Geen cijferbeoordelingen ingesteld';
 $string['nogradesreturned'] = 'Geen cijfers';
 $string['nolettergrade'] = 'Geen letterbeoordeling voor';
 $string['nomode'] = 'NA';
+$string['nonnumericweight'] = 'Een niet-numerieke waarde ontvangen voor';
 $string['nonweightedpct'] = '%% zonder weging';
 $string['pctoftotalgrade'] = '%% van totaalcijfer';
 $string['percent'] = 'Procent';
@@ -79,6 +86,7 @@ $string['pointsascending'] = 'Sorteer punten oplopend';
 $string['pointsdescending'] = 'Sorteer punten aflopend';
 $string['preferences'] = 'Voorkeuren';
 $string['rawpct'] = 'Ruw %%';
+$string['reprintheaders'] = 'Koppen herhalen';
 $string['savechanges'] = 'Bewaar wijzigingen';
 $string['savepreferences'] = 'Bewaar instellingen';
 $string['scaledpct'] = 'Procentuele schaal';
