@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC> <HTML>
+    <HEAD>
+        <TITLE>Database tables</TITLE>
+        <META http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
+        <!--LINK rel="Stylesheet" type="text/css" href="doc.css"-->
+    </HEAD>
+<BODY>
+
+<h1>Database tables</h1>
+
+<h2>quiz_newest_states</h2>
+
+This table exists only for efficiency reasons:
+
+<ol>
+  <li>Via its 'newest' and 'newgraded' fields it gives attempt.php
+  a way to quickly find the newest state
+  and the newest graded state for an attempt. It allows the
+  construction of SQL to select all the states that need to be loaded
+  on attempt.php or review.php.</li>
+  <li>Via its 'sumpenalty' field it gives quiz_apply_penalty() a quick
+  way for getting at the accummulated penalty that needs to be applied.
+  Without this field the penalties from all previous graded states
+  would have to be added up each time. Not a big deal actually because
+  this could be achieved with a single SQL query (using SUM) but this
+  field was introduced when we still had the multiplicative penalty
+  scheme around which would have been more difficult to recompute.</li>
+</ol>
+
+This table was introduced in Moodle 1.5 and is not populated for all
+states during the upgrade because on sites with a lot of existing
+states that could take too long. Rather it is done whenever needed
+by quiz_upgrade_states().
+
+</BODY> </HTML>

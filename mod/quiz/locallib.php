@@ -2525,13 +2525,28 @@ function quiz_get_reviewoptions($quiz, $attempt, $isteacher=false) {
 /**
 * Upgrade states for an attempt to Moodle 1.5 model
 *
+* Any state that does not yet have its timestamp set to nonzero has not yet been upgraded from Moodle 1.4
+* The reason these are still around is that for large sites it would have taken too long to
+* upgrade all states at once. This function sets the timestamp field and creates an entry in the 
+* quiz_newest_states table.
 * @param object $attempt  The attempt whose states need upgrading
 */
 function quiz_upgrade_states($attempt) {
     global $CFG;
+    // The old quiz model only allowed a single response per quiz attempt so that there will be
+    // only one state record per question for this attempt.
+
+    // We set the timestamp of all states to the timemodified field of the attempt.
     execute_sql("UPDATE {$CFG->prefix}quiz_states SET timestamp = '$attempt->timemodified' WHERE attempt = '$attempt->id'", false);
+
+    // For each state we create an entry in the quiz_newest_states table, with both newest and
+    // newgraded pointing to this state.
+    // Actually we only do this for states whose question is actually listed in $attempt->layout.
+    // We do not do it for states associated to wrapped questions like for example the questions
+    // used by a RANDOM question
     $newest->attemptid = $attempt->id;
-    if ($states = get_records('quiz_states', 'attempt', $attempt->id)) {
+    $questionlist = quiz_questions_in_quiz($attempt->layout);
+    if ($states = get_records_select('quiz_states', "attempt = '$attempt->id' AND question IN ($questionlist)")) {
         foreach ($states as $state) {
             $newest->newgraded = $state->id;
             $newest->newest = $state->id;
