@@ -32,7 +32,7 @@ class WikiToMarkdown {
     if ($this->list_state != LIST_NONE) {
       $lclose = $this->do_list( " ",true );
     }
-    	
+
     $sclose = "";
     switch ($state) {
       case STATE_PARAGRAPH:
@@ -113,7 +113,7 @@ class WikiToMarkdown {
       $count = 0;
     }
     else {
-      $listchar = $line{0};	
+      $listchar = $line{0};
       $count = strspn( $line, $listchar );
       $line = eregi_replace( "^[".$listchar."]+ ", "", $line );
     }
@@ -185,7 +185,7 @@ class WikiToMarkdown {
     }
 
     return $newline;
-  }  	
+  } 
 
 
   function line_replace( $line ) {
@@ -199,8 +199,8 @@ class WikiToMarkdown {
 
     // is this a list line (starts with * # ; :)    
     if (eregi( "^([*]+|[#]+|[;]+|[:]+) ", $line )) {
-      $line = $this->do_list( $line );	        
-    }    	
+      $line = $this->do_list( $line );        
+    } 
 
    // typographic conventions
    // MARKDOWN: no equiv. so convert to entity as before
@@ -327,18 +327,18 @@ class WikiToMarkdown {
         else
         if (eregi( "^  ",$line) ) {
           // preformatted text
-	  // MARKDOWN: no real equiv. so just use <pre>
+          // MARKDOWN: no real equiv. so just use <pre>
           $buffer = $buffer . "<pre>\n";
           $buffer = $buffer . $this->line_replace($line) . "\n";
           $this->block_state = STATE_PREFORM;
         }
         else 
         if (eregi("^\% ",$line) ) {
-        	// preformatted text - no processing
-		// MARKDOWN: this is MD code form of a paragraph
-        	$buffer = $buffer . "    " . eregi_replace( "^\%","",$line) . "\n";
-        	$this->block_state = STATE_NOTIKI;
-        } 	
+                // preformatted text - no processing
+                // MARKDOWN: this is MD code form of a paragraph
+                $buffer = $buffer . "    " . eregi_replace( "^\%","",$line) . "\n";
+                $this->block_state = STATE_NOTIKI;
+        }
         else {
           // ordinary paragraph
           $buffer = $buffer . $this->line_replace($line) . "\n";
@@ -355,7 +355,7 @@ class WikiToMarkdown {
       }
       elseif ($this->block_state == STATE_NOTIKI) {
         $buffer = $buffer . "    " .$line . "\n";
-      }  	
+      }
     }
 
     // close off any block level tags
