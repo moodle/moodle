@@ -1,7 +1,8 @@
 <?PHP // $Id$ 
-      // choice.php - created with Moodle 1.5 unstable development (2004090600)
+      // choice.php - created with Moodle 1.5 ALPHA (2005042400)
 
 
+$string['addmorechoices'] = 'Afegeix més opcions';
 $string['allowupdate'] = 'Permet actualitzar la consulta';
 $string['answered'] = 'Contestades';
 $string['choice'] = 'Opció $a';
@@ -9,7 +10,13 @@ $string['choiceclose'] = 'Fins';
 $string['choicename'] = 'Títol de la consulta';
 $string['choiceopen'] = 'Oberta';
 $string['choicetext'] = 'Text de la consulta';
+$string['displayhorizontal'] = 'En horitzontal';
+$string['displaymode'] = 'Mode de visualització';
+$string['displayvertical'] = 'En vertical';
+$string['full'] = '(Complet)';
 $string['havetologin'] = 'Abans de trametre una resposta heu d\'entrar amb el vostre nom d\'usuari i contrasenya.';
+$string['limit'] = 'Límit';
+$string['limitanswers'] = 'Limita el nombre de respostes permeses';
 $string['modulename'] = 'Consulta';
 $string['modulenameplural'] = 'Consultes';
 $string['mustchooseone'] = 'Heu de triar una resposta abans de desar. No s\'ha desat res.';
@@ -27,7 +34,11 @@ $string['responses'] = 'Respostes';
 $string['responsesto'] = 'Respostes per a $a';
 $string['savemychoice'] = 'Desa la meva resposta';
 $string['showunanswered'] = 'Mostra columna de no contestades';
+$string['spaceleft'] = 'Espai disponible';
+$string['spacesleft'] = 'Espais disponibles';
+$string['taken'] = 'Ocupat';
 $string['timerestrict'] = 'Limita les respostes a aquest període de temps';
 $string['viewallresponses'] = 'Visualitza $a respostes';
+$string['yourselection'] = 'La vostra selecció';
 
 ?>
