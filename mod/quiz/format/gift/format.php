@@ -168,6 +168,7 @@ class quiz_format_gift extends quiz_default_format {
             $question->name = false;
         }
 
+
         // FIND ANSWER section
         $answerstart = strpos($text, "{");
         if ($answerstart === false) {
@@ -196,6 +197,20 @@ class quiz_format_gift extends quiz_default_format {
             // inserts blank line for missing word format
             $questiontext = substr_replace($text, "_____", $answerstart, $answerlength+1);
         }
+
+        // get questiontext format from questiontext
+        $oldquestiontext = $questiontext;
+        $questiontextformat = 0;
+        if (substr($questiontext,0,1)=='[') {
+          $questiontext = substr( $questiontext,1 );
+          $rh_brace = strpos( $questiontext, ']' );
+          $qtformat= substr( $questiontext, 0, $rh_brace );
+          $questiontext = substr( $questiontext, $rh_brace+1 );
+          if (!$questiontextformat = text_format_name( $qtformat )) {
+            $questiontext = $oldquestiontext;
+          }          
+        }
+        $question->questiontextformat = $questiontextformat;
         $question->questiontext = addslashes(trim($this->escapedchar_post($questiontext)));
 
         // set question name if not already set
@@ -492,6 +507,11 @@ function writequestion( $question ) {
 
     // get  question text format
     $textformat = $question->questiontextformat;
+    $tfname = "";
+    if ($textformat!=FORMAT_MOODLE) {
+      $tfname = text_format_name( (int)$textformat );
+      $tfname = "[$tfname]";
+    }
 
     // output depends on question type
     switch($question->qtype) {
@@ -507,7 +527,7 @@ function writequestion( $question ) {
             $wrong_feedback = $this->repchar( $answers['true']->feedback );
             $right_feedback = $this->repchar( $answers['false']->feedback );
         }
-        $expout .= "::".$question->name."::".$this->repchar( $question->questiontext,$textformat )."{".$this->repchar( $answertext );
+        $expout .= "::".$question->name."::".$tfname.$this->repchar( $question->questiontext,$textformat )."{".$this->repchar( $answertext );
         if ($wrong_feedback!="") {
             $expout .= "#".$wrong_feedback;
         }
@@ -517,7 +537,7 @@ function writequestion( $question ) {
         $expout .= "}\n";
         break;
     case MULTICHOICE:
-        $expout .= "::".$question->name."::".$this->repchar( $question->questiontext, $textformat )."{\n";
+        $expout .= "::".$question->name."::".$tfname.$this->repchar( $question->questiontext, $textformat )."{\n";
         foreach($question->options->answers as $answer) {
             if ($answer->fraction==1) {
                 $answertext = '=';
@@ -538,7 +558,7 @@ function writequestion( $question ) {
         $expout .= "}\n";
         break;
     case SHORTANSWER:
-        $expout .= "::".$question->name."::".$this->repchar( $question->questiontext, $textformat )."{\n";
+        $expout .= "::".$question->name."::".$tfname.$this->repchar( $question->questiontext, $textformat )."{\n";
         foreach($question->options->answers as $answer) {
             $weight = 100 * $answer->fraction;
             $expout .= "\t=%".$weight."%".$this->repchar( $answer->answer )."#".$this->repchar( $answer->feedback )."\n";
@@ -547,14 +567,15 @@ function writequestion( $question ) {
         break;
     case NUMERICAL:
         $answer = array_pop( $question->options->answers );
-        $min = $answer->answer - $question->options->tolerance;
-        $max = $answer->answer + $question->options->tolerance;
-        $expout .= "::".$question->name."::".$this->repchar( $question->questiontext, $textformat )."{\n";
+        $tolerance = $answer->tolerance;
+        $min = $answer->answer - $tolerance;
+        $max = $answer->answer + $tolerance;
+        $expout .= "::".$question->name."::".$tfname.$this->repchar( $question->questiontext, $textformat )."{\n";
         $expout .= "\t#".$min."..".$max."#".$this->repchar( $answer->feedback )."\n";
         $expout .= "}\n";
         break;
     case MATCH:
-        $expout .= "::".$question->name."::".$this->repchar( $question->questiontext, $textformat )."{\n";
+        $expout .= "::".$question->name."::".$tfname.$this->repchar( $question->questiontext, $textformat )."{\n";
         foreach($question->options->subquestions as $subquestion) {
             $expout .= "\t=".$this->repchar( $subquestion->questiontext )." -> ".$this->repchar( $subquestion->answertext )."\n";
         }
