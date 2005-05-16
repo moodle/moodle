@@ -705,6 +705,8 @@ function quiz_upgrade($oldversion) {
         } else {
             // Comma separated questionids will be stored as sequence
             table_column('quiz_multianswers', '', 'sequence',  'varchar', '255', '', '', 'not null', 'question');
+            // Change the type of positionkey to int, so that the sorting works!
+            table_column('quiz_multianswers', 'positionkey', 'positionkey',  'integer', '10', 'unsigned', '0', 'not null', '');
             table_column('quiz_questions', '', 'parent', 'integer', '10', 'unsigned', '0', 'not null', 'category');
             modify_database('', "UPDATE prefix_quiz_questions SET parent = id WHERE qtype ='".RANDOM."';");
 
@@ -733,6 +735,7 @@ function quiz_upgrade($oldversion) {
                 $n        = count($multianswers);
                 $parent   = $multianswers[0]->parent;
                 $sequence = array();
+                $positions = array();
 
                 // Turn reporting off temporarily to avoid one line output per set_field
                 global $db;
@@ -742,6 +745,9 @@ function quiz_upgrade($oldversion) {
                     // Backup these two values before unsetting the object fields
                     $answers = $multianswers[$i]->answers; unset($multianswers[$i]->answers);
                     $pos = $multianswers[$i]->positionkey; unset($multianswers[$i]->positionkey);
+
+                    // Needed for substituting multianswer ids with position keys in the $state->answer field
+                    $positions[$multianswers[$i]->id] = $pos;
 
                 // Create questions for all the multianswer victims
                     unset($multianswers[$i]->id);
@@ -757,6 +763,7 @@ function quiz_upgrade($oldversion) {
                 // Update the quiz_answers table to point to these new questions
                     modify_database('', "UPDATE prefix_quiz_answers SET question = '$id' WHERE id IN ($answers);");
                 // Update the questiontype tables to point to these new questions
+
                     if (SHORTANSWER == $multianswers[$i]->qtype) {
                         modify_database('', "UPDATE prefix_quiz_shortanswer SET question = '$id' WHERE answers = '$answers';");
                     } else if (MULTICHOICE == $multianswers[$i]->qtype) {
@@ -770,14 +777,37 @@ function quiz_upgrade($oldversion) {
                     // store a new record with the sequence in the multianswers table
                     // and point $parent to the next multianswer question.
                     if (!isset($multianswers[$i+1]) || $parent != $multianswers[$i+1]->parent) {
+
+                        // Substituting multianswer ids with position keys in the $state->answer field
+                        if ($states = get_records('quiz_states', 'question', $parent)) {
+                            foreach ($states as $state) {
+                                $reg = array();
+                                preg_match_all('/(?:^|,)([0-9]+)-([^,]*)/', $state->answer, $reg);
+                                $state->answer = '';
+                                $m = count($reg[1]);
+                                for ($j = 0; $j < $m; $j++) {
+                                    if (isset($positions[$reg[1][$j]])) {
+                                        $state->answer .= $positions[$reg[1][$j]] . '-' . $reg[2][$j] . ',';
+                                    } else {
+                                        notify("Undefined multianswer id ({$reg[1][$j]}) used in state #{$state->id}!");
+                                        $state->answer .= $j+1 . '-' . $reg[2][$j] . ',';
+                                    }
+                                }
+                                $state->answer = rtrim($state->answer, ','); // strip trailing comma
+                                update_record('quiz_states', $state);
+                            }
+                        }
+
                         delete_records('quiz_multianswers', 'question', $parent);
                         $multi = new stdClass;
                         $multi->question = $parent;
                         $multi->sequence = implode(',', $sequence);
                         insert_record('quiz_multianswers', $multi);
+
                         if (isset($multianswers[$i+1])) {
-                            $parent   = $multianswers[$i+1]->parent;
-                            $sequence = array();
+                            $parent    = $multianswers[$i+1]->parent;
+                            $sequence  = array();
+                            $positions = array();
                         }
                     }
                 }
@@ -791,7 +821,6 @@ function quiz_upgrade($oldversion) {
             modify_database('', 'ALTER TABLE `prefix_quiz_multianswers` DROP `norm`');
         }
     }
-
     return true;
 }
 
