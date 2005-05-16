@@ -6,7 +6,7 @@
 # Copyright (c) 2004 John Gruber  
 # <http://daringfireball.net/projects/markdown/>
 #
-# Copyright (c) 2004 Michel Fortin - PHP Port  
+# Copyright (c) 2004-2005 Michel Fortin - PHP Port  
 # <http://www.michelf.com/projects/php-markdown/>
 #
 
@@ -17,8 +17,8 @@ global	$MarkdownPHPVersion, $MarkdownSyntaxVersion,
 		$md_escape_table, $md_backslash_escape_table, 
 		$md_list_level;
 
-$MarkdownPHPVersion    = '1.0.1'; # Fri 17 Dec 2004
-$MarkdownSyntaxVersion = '1.0.1'; # Sun 12 Dec 2004
+$MarkdownPHPVersion    = '1.0.1a'; # Fri 15 Apr 2005
+$MarkdownSyntaxVersion = '1.0.1';  # Sun 12 Dec 2004
 
 
 #
@@ -33,19 +33,38 @@ $md_tab_width = 4;
 Plugin Name: Markdown
 Plugin URI: http://www.michelf.com/projects/php-markdown/
 Description: <a href="http://daringfireball.net/projects/markdown/syntax">Markdown syntax</a> allows you to write using an easy-to-read, easy-to-write plain text format. Based on the original Perl version by <a href="http://daringfireball.net/">John Gruber</a>. <a href="http://www.michelf.com/projects/php-markdown/">More...</a>
-Version: 1.0.1
+Version: 1.0.1a
 Author: Michel Fortin
 Author URI: http://www.michelf.com/
 */
 if (isset($wp_version)) {
 	# Remove default WordPress auto-paragraph filter.
-	remove_filter('the_content', 'wpautop');
-	remove_filter('the_excerpt', 'wpautop');
+	remove_filter('the_content',  'wpautop');
+	remove_filter('the_excerpt',  'wpautop');
 	remove_filter('comment_text', 'wpautop');
 	# Add Markdown filter with priority 6 (same as Textile).
-	add_filter('the_content', 'Markdown', 6);
-	add_filter('the_excerpt', 'Markdown', 6);
-	add_filter('comment_text', 'Markdown', 6);
+	add_filter('the_content',     'Markdown', 6);
+	add_filter('the_excerpt',     'Markdown', 6);
+	add_filter('the_excerpt_rss', 'Markdown', 6);
+	add_filter('comment_text',    'Markdown', 6);
+	add_filter('comment_excerpt', 'Markdown', 6);
+
+	# Postpone the not-allowed-tag-filter until Markdown has run. For comments,
+	# it would probably be better to filter with Markdown before they are 
+	# added in the database, but doing this would break older sites.
+	remove_filter('pre_comment_content', 'wp_filter_kses');
+	add_filter('comment_text', 'wp_filter_kses', 45);
+
+	# Make balenceTags work *after* Markdown. You can still disable 
+	# balanceTags from the admin interface (in Options > Writing).
+	remove_filter('content_save_pre', 'balanceTags', 50);
+	remove_filter('excerpt_save_pre', 'balanceTags', 50);
+	remove_filter('comment_save_pre', 'balanceTags', 50);
+	add_filter('the_content',     'balanceTags', 50);
+	add_filter('the_excerpt',     'balanceTags', 50);
+	add_filter('the_excerpt_rss', 'balanceTags', 50);
+	add_filter('comment_text',    'balanceTags', 50);
+	add_filter('comment_excerpt', 'balanceTags', 50);
 }
 
 
@@ -800,7 +819,7 @@ function _ProcessListItems_callback($matches) {
 	else {
 		# Recursion for sub-lists:
 		$item = _DoLists(_Outdent($item));
-		$item = rtrim($item, "\n");
+		$item = preg_replace('/\n+$/', '', $item);
 		$item = _RunSpanGamut($item);
 	}
 
@@ -1225,6 +1244,8 @@ Version History
 
 See the readme file for detailed release notes for this version.
 
+1.0.1a - 15 Apr 2005
+
 1.0.1 - 17 Dec 2004
 
 1.0 - 21 Aug 2004
@@ -1243,7 +1264,7 @@ PHP port and other contributions by Michel Fortin
 Copyright and License
 ---------------------
 
-Copyright (c) 2004 Michel Fortin  
+Copyright (c) 2004-2005 Michel Fortin  
 <http://www.michelf.com/>  
 All rights reserved.
 
