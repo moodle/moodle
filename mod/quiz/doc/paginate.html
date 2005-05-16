@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC> <HTML>
+    <HEAD>
+        <TITLE>Paging</TITLE>
+        <META http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
+    </HEAD>
+<BODY>
+
+<h1>Paging</h1>
+
+<p>Quiz attempts can be paged, i.e., spread over several pages. The
+student can naviagate between the pages using the standard Moodle
+paging bar. When the student navigates to a different quiz page the
+answers on the current page are automatically submitted for saving
+(bot not grading).</p>
+
+<p>To do this automatic submission the paging bar needs some
+javascript. It is therefore not produced with Moodle's standard
+print_paging_bar() function from weblib.php but with
+quiz_print_navigation_panel() which is defined in
+mod/quiz/locallib.php and produces something that looks the
+same.</p>
+
+<p>The teacher has complete control via the edit interface on
+edit.php over where the page breaks should occur. He can repaginate
+the quiz with any chosen number of questions per page. He can also
+move the page-breaks up and down using the arrows.</p>
+
+<p>Internally page breaks are stored in the $quiz->questions field
+(which now should really be called $quiz->layout). This field
+contains a comma separated list of questionids and pagebreaks where
+the pagebreaks are represented by the id 0. For example 23,12,0,11,
+0 means that the two questions with ids 23 and 12 are on the first
+page and the question with id 11 is on the second page. The last
+page break is invisible and Moodle sometimes puts it there itself
+for its own convenience.</p>
+
+<p>Because the quiz has an option $quiz->shufflequestions to shuffle
+questions the layout that the student sees in a particular attempt
+does not necessarily have to be the same as that stored in
+$quiz->questions. Therefore each attempt has its own $attemp->layout
+field. If $quiz->shufflequestions is false then this just contains a
+copy of $quiz->questions but if it is true then during the creation
+of a new attempt by quiz_create_attempt() the function
+quiz_repaginate() is used to produce a layout with
+$quiz->questionsperpage number of questions per page that are
+randomly ordered.</p>
+
+<p>Both attempt.php and review.php use the $attempt->layout field to
+determine what questions to show on a particular page. That way we
+can guarantee that the student will, for a particular attempt,
+always see the questions in the same order and with the same
+pagination, both while attempting and during review. Also a teacher
+when reviewing a student's attempt sees the pages the same way they
+were shown to the student. However the teacher is also given the
+option to see all questions on one page.</p>
+
+<p>There are some functions in locallib.php dedicated to handling
+the layout fields: quiz_questions_on_page(),
+quiz_questions_in_quiz(), quiz_number_of_pages(),
+quiz_first_questionnumber(), quiz_repaginate(). They are very short
+functions. The function quiz_first_questionnumber() that determines
+the number of the first question on a particular page makes use of
+the $question->length field. To allow this calculation to be fast is
+the main reason why that field is in the question table even though
+it could also be determined easily from the question type.</p>
+
+</BODY> </HTML>
