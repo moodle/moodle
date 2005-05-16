@@ -209,6 +209,15 @@ php_value post_max_size 2M
       <pre>cp lib/htaccess .htaccess</pre>
     </blockquote>
   </blockquote>
+  <blockquote>
+    <p>(Optional) To include the username of the current user in the Apache access log, add the following into your httpd.conf:</p>
+    <blockquote>
+      <pre>
+LogFormat "%h %l %{MOODLEUSER}n %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\"" moodle
+CustomLog "/your/path/to/log" moodle</pre>
+    </blockquote>
+    <p>And then replace the "/your/path/to/log" to your http access log or to a new one. If your Moodle copy runs in a virtual host, add the lines in the corresponding <VirtualHost> block. Please refer to the Apache documentation for more information.</p>
+  </blockquote>
 <p>&nbsp;</p>
 <h3 class="sectionheading"><a name="database"></a>4.2 Creating a database</h3>
 
