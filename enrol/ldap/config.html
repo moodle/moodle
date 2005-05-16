@@ -39,25 +39,25 @@ optional_variable($frm->enrol_ldap_template, '');
    </td>
 </tr>
 <tr valign="top">
-	<td align="right">enrol_ldap_host_url:</td>
-	<td>
+    <td align="right">enrol_ldap_host_url:</td>
+    <td>
         <input name="enrol_ldap_host_url" TYPE="text" SIZE="30" value="<?php echo $frm->enrol_ldap_host_url?>">
-	<?php  if (isset($err["enrol_ldap_host_url"])) formerr($err["enrol_ldap_host_url"]); ?>
-	</td>
+    <?php  if (isset($err["enrol_ldap_host_url"])) formerr($err["enrol_ldap_host_url"]); ?>
+    </td>
     <td>
     <?php  print_string("enrol_ldap_host_url","enrol_ldap") ?>
     </td>
 </tr>
 <tr valign="top">
-	<td align="right">enrol_ldap_version:</td>
-	<td>
+    <td align="right">enrol_ldap_version:</td>
+    <td>
     <?php
        $versions[2] = "2";
        $versions[3] = "3";
        choose_from_menu($versions, "enrol_ldap_version", $frm->enrol_ldap_version, "");
-	   if (isset($err["enrol_ldap_version"])) formerr($err["enrol_ldap_version"]); 
+        if (isset($err["enrol_ldap_version"])) formerr($err["enrol_ldap_version"]); 
     ?>
-	</td>
+    </td>
     <td>
     <?php  print_string("enrol_ldap_version","enrol_ldap") ?>
     </td>
@@ -89,8 +89,8 @@ optional_variable($frm->enrol_ldap_template, '');
    </td>
 </tr>
 <tr valign="top">
-	<td align="right">enrol_ldap_student_contexts:</td>
-	<td>
+    <td align="right">enrol_ldap_student_contexts:</td>
+    <td>
     <input name="enrol_ldap_student_contexts" TYPE="text" SIZE="30 "value="<?php echo $frm->enrol_ldap_student_contexts?>">
     <?php  if (isset($err["enrol_ldap_student_contexts"])) formerr($err["enrol_ldap_student_contexts"]); ?>
     </td>
@@ -114,8 +114,8 @@ optional_variable($frm->enrol_ldap_template, '');
    </td>
 </tr>
 <tr valign="top">
-	<td align="right">enrol_ldap_teacher_contexts:</td>
-	<td>
+    <td align="right">enrol_ldap_teacher_contexts:</td>
+    <td>
     <input name="enrol_ldap_teacher_contexts" TYPE="text" SIZE="30 "value="<?php echo $frm->enrol_ldap_teacher_contexts?>">
     <?php  if (isset($err["enrol_ldap_teacher_contexts"])) formerr($err["enrol_ldap_teacher_contexts"]); ?>
     </td>
@@ -253,13 +253,13 @@ optional_variable($frm->enrol_ldap_template, '');
    </td>
 </tr>
 <tr valign="top">
-	<td align="right">enrol_ldap_autocreate:</td>
-	<td>
+    <td align="right">enrol_ldap_autocreate:</td>
+    <td>
     <?php
        choose_from_menu(array('0'=>'no','1'=>'yes'), "enrol_ldap_autocreate", $frm->enrol_ldap_autocreate, "");
-	   if (isset($err["enrol_ldap_autocreate"])) formerr($err["enrol_ldap_autocreate"]); 
+           if (isset($err["enrol_ldap_autocreate"])) formerr($err["enrol_ldap_autocreate"]); 
     ?>
-	</td>
+    </td>
     <td>
     <?php  print_string("enrol_ldap_autocreate","enrol_ldap") ?>
     </td>

@@ -20,7 +20,7 @@ function glossary_show_entry_fullwithauthor($course, $cm, $glossary, $entry, $mo
 
         echo '<span class="concept">';
         glossary_print_entry_concept($entry);
-		echo '</span><br />';
+        echo '</span><br />';
 
         echo '<span class="author">'.$strby.' '.fullname($user, isteacher($course->id));
         echo '&nbsp;&nbsp;('.get_string('lastedited').': '.

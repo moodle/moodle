@@ -2,7 +2,7 @@
 <!-- Begin 
 
 <?php
-	// javascript objects for excluded students
+    // javascript objects for excluded students
     foreach ($listmembers as $grade_itemid => $listmember) {
         echo "grade_item$grade_itemid = new Object();\n";
         $useridstring = "grade_item$grade_itemid.userid = new Array(";
@@ -24,9 +24,9 @@
         echo $useridstring;
         echo $usernamestring;
     }
-	
-	// javascript objects for included students
-	foreach ($nonmembers as $grade_itemid => $listmember) {
+
+    // javascript objects for included students
+    foreach ($nonmembers as $grade_itemid => $listmember) {
         echo "grade_item_inc$grade_itemid = new Object();\n";
         $useridstring = "grade_item_inc$grade_itemid.userid = new Array(";
         $usernamestring = "grade_item_inc$grade_itemid.username = new Array(";
@@ -67,8 +67,8 @@ function updateMembers(selectgrade_item) {
         document.form3['members[]'].options[i].value = userid[i];
         document.form3['members[]'].options[i].text  = username[i];
     }
-	
-	eval('grade_item_inc=grade_item_inc'+selectgrade_item.value); 
+
+    eval('grade_item_inc=grade_item_inc'+selectgrade_item.value); 
 
     username = grade_item_inc.username;
     userid = grade_item_inc.userid;
@@ -79,7 +79,7 @@ function updateMembers(selectgrade_item) {
         document.form1['nonmembers[]'].options[i].value = userid[i];
         document.form1['nonmembers[]'].options[i].text  = username[i];
     }
-	
+
     updategrade_item();
 }
 
@@ -88,15 +88,15 @@ function updateMembers(selectgrade_item) {
 
 
 
-  <table border="0" cellspacing="2" cellpadding="5" align="center" class="generalbox">
-  	<tr>
-		<th colspan=3>
-		<?php 
-			print get_string('gradeexceptions','grades');
-			helpbutton('exceptions',get_string('gradeexceptionshelp','grades'), 'grade');
-		?>
-		</th>
-	</tr>
+<table border="0" cellspacing="2" cellpadding="5" align="center" class="generalbox">
+    <tr>
+        <th colspan=3>
+        <?php 
+            print get_string('gradeexceptions','grades');
+            helpbutton('exceptions',get_string('gradeexceptionshelp','grades'), 'grade');
+        ?>
+        </th>
+    </tr>
     <tr>
       <td width="33%" align="center" class="generaltableheader"><?php p($strgradeitemnonmembers) ?></td>
       <td width="33%" align="center" class="generaltableheader"><?php p($strgradeitems) ?></td>
@@ -107,8 +107,8 @@ function updateMembers(selectgrade_item) {
         <form name="form1" id="form1" method="post" action="exceptions.php">
           <input type="hidden" name="id" value="<?php p($course->id) ?>" />
           <input type="hidden" name="grade_itemid" value="<?php p($selectedgrade_item) ?>" />
-		  <input type="hidden" name="action" value="excepts" />
-		  <input type="hidden" name="sesskey" value="<?php p($USER->sesskey) ?>"/>
+          <input type="hidden" name="action" value="excepts" />
+          <input type="hidden" name="sesskey" value="<?php p($USER->sesskey) ?>"/>
           <select name="nonmembers[]" size="15" multiple="multiple">
             <?php 
                 if (!empty($nonmembers[$selectedgrade_item])) {
@@ -127,8 +127,8 @@ function updateMembers(selectgrade_item) {
       <td class="generalboxcontent">
         <form name="form2" id="form2" method="post" action="grade_items.php">
           <input type="hidden" name="id" value="<?php p($course->id) ?>" />
-		  <input type="hidden" name="action" value="excepts" />
-		  <input type="hidden" name="sesskey" value="<?php p($USER->sesskey) ?>"/>
+          <input type="hidden" name="action" value="excepts" />
+          <input type="hidden" name="sesskey" value="<?php p($USER->sesskey) ?>"/>
           <select name="grade_items" size="15" onchange="updateMembers(this)">
             <?php 
                 if (!empty($listgrade_items)) {
@@ -150,8 +150,8 @@ function updateMembers(selectgrade_item) {
         <form name="form3" id="form3" method="post" action="exceptions.php">
           <input type="hidden" name="id" value="<?php p($course->id) ?>" />
           <input type="hidden" name="grade_itemid" value="<?php p($selectedgrade_item) ?>" />
-		  <input type="hidden" name="sesskey" value="<?php p($USER->sesskey) ?>"/>
-		  <input type="hidden" name="action" value="excepts" />
+          <input type="hidden" name="sesskey" value="<?php p($USER->sesskey) ?>"/>
+          <input type="hidden" name="action" value="excepts" />
           <select name="members[]" size="15" multiple="multiple">
             <?php 
                 if (!empty($listmembers[$selectedgrade_item])) {

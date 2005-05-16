@@ -65,7 +65,7 @@ function glossary_upgrade($oldversion) {
                     "ADD `sourceglossaryid` INT(10) unsigned NOT NULL DEFAULT '0' AFTER `attachment` " );
 
     }
-	
+
     if ( $oldversion < 2003101500 ) {
         execute_sql( "ALTER TABLE `{$CFG->prefix}glossary` " .
                     "ADD `intro`  text NOT NULL DEFAULT '' AFTER `name` " );
@@ -94,7 +94,7 @@ function glossary_upgrade($oldversion) {
     if ( $oldversion < 2003101600 ) {
         execute_sql( "ALTER TABLE `{$CFG->prefix}glossary` " .
                     "ADD `usedynalink`  TINYINT(2) UNSIGNED NOT NULL DEFAULT '1' AFTER `allowcomments` " );
-					
+
         execute_sql( "ALTER TABLE `{$CFG->prefix}glossary_entries` " .
                     "ADD `usedynalink`  TINYINT(2) UNSIGNED NOT NULL DEFAULT '1' AFTER `sourceglossaryid`, ".
                     "ADD `casesensitive`  TINYINT(2) UNSIGNED NOT NULL DEFAULT '0' AFTER `usedynalink` ");
@@ -112,7 +112,7 @@ function glossary_upgrade($oldversion) {
     if ( $oldversion < 2003102000 ) {
         execute_sql( "ALTER TABLE `{$CFG->prefix}glossary`" .
                      " ADD `defaultapproval` TINYINT(2) UNSIGNED NOT NULL default '1' AFTER `usedynalink`");
-					
+
         execute_sql( "ALTER TABLE `{$CFG->prefix}glossary_entries`" .
                     " ADD `approved` TINYINT(2) UNSIGNED NOT NULL default '1' AFTER `fullmatch`");
 

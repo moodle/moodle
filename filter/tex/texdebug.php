@@ -121,17 +121,17 @@
                 break;
             }
             if (!$cmd) {
-	      if (is_executable("$CFG->dirroot/$CFG->texfilterdir/mimetex")) {   /// Use the custom binary
+              if (is_executable("$CFG->dirroot/$CFG->texfilterdir/mimetex")) {   /// Use the custom binary
                 $commandpath="$CFG->dirroot/$CFG->texfilterdir/mimetex";
                 $cmd = "$CFG->dirroot/$CFG->texfilterdir/mimetex -e $pathname ". escapeshellarg($texexp);
               } else {
                 error($error_message1);
-	      }
+              }
             }
             system($cmd, $status);
         }
-	if ($return) {
-	  return $image;
+        if ($return) {
+          return $image;
         }
         if ($texexp && file_exists($pathname)) {
             $lastmodified = filemtime($pathname);

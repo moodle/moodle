@@ -180,28 +180,28 @@ function algebra_filter ($courseid, $text) {
               $texexp = str_replace('\right}','}',$texexp);
               $texexp = str_replace('\fun',' ',$texexp);
               $texexp = str_replace('infty','\infty',$texexp);
-	      $texexp = str_replace('alpha','\alpha',$texexp);  
-	      $texexp = str_replace('gamma','\gamma',$texexp); 
-	      $texexp = str_replace('iota','\iota',$texexp);
-	      $texexp = str_replace('kappa','\kappa',$texexp);
-	      $texexp = str_replace('lambda','\lambda',$texexp);
-	      $texexp = str_replace('mu','\mu',$texexp);
-	      $texexp = str_replace('nu','\nu',$texexp);
-	      $texexp = str_replace('xi','\xi',$texexp);
-	      $texexp = str_replace('rho','\rho',$texexp);
-	      $texexp = str_replace('sigma','\sigma',$texexp);
-	      $texexp = str_replace('tau','\tau',$texexp);
-	      $texexp = str_replace('phi','\phi',$texexp);
-	      $texexp = str_replace('chi','\chi',$texexp);
-	      $texexp = str_replace('psi','\psi',$texexp);
-	      $texexp = str_replace('omega','\omega',$texexp);
-	      $texexp = str_replace('zdelta','\delta',$texexp);
-	      $texexp = str_replace('bita','\beta',$texexp);
-	      $texexp = str_replace('thita','\theta',$texexp);
-	      $texexp = str_replace('zita','\zeta',$texexp);
-	      $texexp = str_replace('xeta','\eta',$texexp);
-	      $texexp = str_replace('zepslon','\epsilon',$texexp);
-	      $texexp = str_replace('zupslon','\upsilon',$texexp);
+              $texexp = str_replace('alpha','\alpha',$texexp);  
+              $texexp = str_replace('gamma','\gamma',$texexp); 
+              $texexp = str_replace('iota','\iota',$texexp);
+              $texexp = str_replace('kappa','\kappa',$texexp);
+              $texexp = str_replace('lambda','\lambda',$texexp);
+              $texexp = str_replace('mu','\mu',$texexp);
+              $texexp = str_replace('nu','\nu',$texexp);
+              $texexp = str_replace('xi','\xi',$texexp);
+              $texexp = str_replace('rho','\rho',$texexp);
+              $texexp = str_replace('sigma','\sigma',$texexp);
+              $texexp = str_replace('tau','\tau',$texexp);
+              $texexp = str_replace('phi','\phi',$texexp);
+              $texexp = str_replace('chi','\chi',$texexp);
+              $texexp = str_replace('psi','\psi',$texexp);
+              $texexp = str_replace('omega','\omega',$texexp);
+              $texexp = str_replace('zdelta','\delta',$texexp);
+              $texexp = str_replace('bita','\beta',$texexp);
+              $texexp = str_replace('thita','\theta',$texexp);
+              $texexp = str_replace('zita','\zeta',$texexp);
+              $texexp = str_replace('xeta','\eta',$texexp);
+              $texexp = str_replace('zepslon','\epsilon',$texexp);
+              $texexp = str_replace('zupslon','\upsilon',$texexp);
               $texexp = str_replace('\mbox{logten}','\mbox{log}_{10}',$texexp);
               $texexp = str_replace('\mbox{acos}','\mbox{cos}^{-1}',$texexp);
               $texexp = str_replace('\mbox{asin}','\mbox{sin}^{-1}',$texexp);
@@ -216,26 +216,26 @@ function algebra_filter ($courseid, $text) {
               $texexp = str_replace('\mbox{acsch}','\mbox{csch}^{-1}',$texexp);
               $texexp = str_replace('\mbox{acoth}','\mbox{coth}^{-1}',$texexp);
               //$texexp = preg_replace('/\\\frac{(.+?)}{\\\left\((.+?)\\\right\)}/s','\frac{'."\$1}{\$2}",$texexp);
-	      $texexp = preg_replace('/\\\sqrt{(.+?),(.+?)}/s','\sqrt['. "\$2]{\$1}",$texexp);
-	      $texexp = preg_replace('/\\\mbox{abs}\\\left\((.+?)\\\right\)/s',"|\$1|",$texexp);
+              $texexp = preg_replace('/\\\sqrt{(.+?),(.+?)}/s','\sqrt['. "\$2]{\$1}",$texexp);
+              $texexp = preg_replace('/\\\mbox{abs}\\\left\((.+?)\\\right\)/s',"|\$1|",$texexp);
               $texexp = preg_replace('/\\\log\\\left\((.+?),(.+?)\\\right\)/s','\log_{'. "\$2}\\left(\$1\\right)",$texexp);
               $texexp = preg_replace('/(\\\cos|\\\sin|\\\tan|\\\sec|\\\csc|\\\cot)([h]*)\\\left\((.+?),(.+?)\\\right\)/s',"\$1\$2^{". "\$4}\\left(\$3\\right)",$texexp);
-	      $texexp = preg_replace('/\\\int\\\left\((.+?),(.+?),(.+?)\\\right\)/s','\int_'. "{\$2}^{\$3}\$1 ",$texexp);
+              $texexp = preg_replace('/\\\int\\\left\((.+?),(.+?),(.+?)\\\right\)/s','\int_'. "{\$2}^{\$3}\$1 ",$texexp);
               $texexp = preg_replace('/\\\int\\\left\((.+?d[a-z])\\\right\)/s','\int '. "\$1 ",$texexp);
-	      $texexp = preg_replace('/\\\lim\\\left\((.+?),(.+?),(.+?)\\\right\)/s','\lim_'. "{\$2\\to \$3}\$1 ",$texexp);
-	     $texcache->filter = 'algebra';
-	     $texcache->version = 1;
-	     $texcache->md5key = $md5;
-	     $texcache->rawtext = addslashes($texexp);
-	     $texcache->timemodified = time();
-	     insert_record("cache_filters",$texcache, false);
-             $text = str_replace( $matches[0][$i], string_file_picture_algebra($filename, $texexp, '', '', $align), $text);
-	   } else {
-	     $text = str_replace( $matches[0][$i],"<b>Undetermined error:</b> ",$text);
+              $texexp = preg_replace('/\\\lim\\\left\((.+?),(.+?),(.+?)\\\right\)/s','\lim_'. "{\$2\\to \$3}\$1 ",$texexp);
+              $texcache->filter = 'algebra';
+              $texcache->version = 1;
+              $texcache->md5key = $md5;
+              $texcache->rawtext = addslashes($texexp);
+              $texcache->timemodified = time();
+              insert_record("cache_filters",$texcache, false);
+              $text = str_replace( $matches[0][$i], string_file_picture_algebra($filename, $texexp, '', '', $align), $text);
+           } else {
+              $text = str_replace( $matches[0][$i],"<b>Undetermined error:</b> ",$text);
            }
-	} else {
-          $text = str_replace( $matches[0][$i], string_file_picture_algebra($filename, $texcache->rawtext), $text);
-	}
+        } else {
+           $text = str_replace( $matches[0][$i], string_file_picture_algebra($filename, $texcache->rawtext), $text);
+        }
     }
     return $text; 
 }

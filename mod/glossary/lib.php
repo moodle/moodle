@@ -121,7 +121,7 @@ global $CFG;
     }
 
     $return = update_record("glossary", $glossary);
-	if ($return and $glossary->defaultapproval) {
+    if ($return and $glossary->defaultapproval) {
         execute_sql("update {$CFG->prefix}glossary_entries SET approved = 1 where approved != 1 and glossaryid = " . $glossary->id,false);
     }
 
@@ -858,7 +858,7 @@ function glossary_print_entry_attachment($entry,$format=NULL,$align="right",$ins
 ///                        text  : Return the HTML link for tha attachment as text
 ///                        blank : Print the output to the screen
     if ($entry->attachment) {
-          $glossary = get_record("glossary","id",$entry->glossaryid);		  
+          $glossary = get_record("glossary","id",$entry->glossaryid);
           $entry->course = $glossary->course; //used inside print_attachment
           if ($insidetable) {
               echo "<table border=\"0\" width=\"100%\" align=\"$align\"><tr><td align=\"$align\" nowrap=\"nowrap\">\n";
@@ -1256,7 +1256,7 @@ function glossary_print_approval_menu($cm, $glossary,$mode, $hook, $sortkey = ''
     glossary_print_alphabet_links($cm, $glossary, $mode, $hook,$sortkey, $sortorder);
 
     glossary_print_all_links($cm, $glossary, $mode, $hook);
-	 
+
     glossary_print_sorting_links($cm, $mode, 'CREATION', 'asc');
 }
 
@@ -1757,7 +1757,7 @@ require_once "../../lib/xmlize.php";
            $line .= $char;
         }
         fclose($h);
-	}
+    }
     return xmlize($line, 0);
 }
 //Close the file

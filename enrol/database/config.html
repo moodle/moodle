@@ -1,7 +1,7 @@
 <table cellspacing="0" cellpadding="5" border="0" align="center">
 <tr valign="top">
-	<td align="right">enrol_dbtype:</td>
-	<td>
+    <td align="right">enrol_dbtype:</td>
+    <td>
     <?php  
        $dbtypes = array("access","ado_access", "ado", "ado_mssql", "borland_ibase", "csv", "db2", "fbsql", "firebird", "ibase", "informix72", "informix", "mssql", "mysql", "mysqlt", "oci805", "oci8", "oci8po", "odbc", "odbc_mssql", "odbc_oracle", "oracle", "postgres64", "postgres7", "postgres", "proxy", "sqlanywhere", "sybase", "vfp");
        foreach ($dbtypes as $dbtype) {
@@ -20,8 +20,8 @@
 </tr>
 
 <tr valign="top">
-	<td align="right">enrol_dbhost:</td>
-	<td>
+    <td align="right">enrol_dbhost:</td>
+    <td>
     <?php 
         if (!isset($frm->enrol_dbhost)) {
             $frm->enrol_dbhost = '';
@@ -35,8 +35,8 @@
 </tr>
 
 <tr valign="top">
-	<td align="right">enrol_dbuser:</td>
-	<td>
+    <td align="right">enrol_dbuser:</td>
+    <td>
         <input size="15" type="text" name="enrol_dbuser" value="<?php echo $frm->enrol_dbuser ?>" />
     </td>
     <td>
@@ -45,8 +45,8 @@
 </tr>
 
 <tr valign="top">
-	<td align="right">enrol_dbpass:</td>
-	<td>
+    <td align="right">enrol_dbpass:</td>
+    <td>
         <input size="15" type="text" name="enrol_dbpass" value="<?php echo $frm->enrol_dbpass ?>" />
     </td>
     <td>
@@ -55,8 +55,8 @@
 </tr>
 
 <tr valign="top">
-	<td align="right">enrol_dbname:</td>
-	<td>
+    <td align="right">enrol_dbname:</td>
+    <td>
         <input size="15" type="text" name="enrol_dbname" value="<?php echo $frm->enrol_dbname ?>" />
     </td>
     <td>
@@ -65,8 +65,8 @@
 </tr>
 
 <tr valign="top">
-	<td align="right">enrol_dbtable:</td>
-	<td>
+    <td align="right">enrol_dbtable:</td>
+    <td>
         <input size="15" type="text" name="enrol_dbtable" value="<?php echo $frm->enrol_dbtable ?>" />
     </td>
     <td>
@@ -75,8 +75,8 @@
 </tr>
 
 <tr valign="top">
-	<td align="right">enrol_localcoursefield:</td>
-	<td>
+    <td align="right">enrol_localcoursefield:</td>
+    <td>
         <input size="15" type="text" name="enrol_localcoursefield" value="<?php echo $frm->enrol_localcoursefield ?>" />
     </td>
     <td>
@@ -85,8 +85,8 @@
 </tr>
 
 <tr valign="top">
-	<td align="right">enrol_localuserfield:</td>
-	<td>
+    <td align="right">enrol_localuserfield:</td>
+    <td>
         <input size="15" type="text" name="enrol_localuserfield" value="<?php echo $frm->enrol_localuserfield ?>" />
     </td>
     <td>
@@ -95,8 +95,8 @@
 </tr>
 
 <tr valign="top">
-	<td align="right">enrol_remotecoursefield:</td>
-	<td>
+    <td align="right">enrol_remotecoursefield:</td>
+    <td>
         <input size="15" type="text" name="enrol_remotecoursefield" value="<?php echo $frm->enrol_remotecoursefield ?>" />
     </td>
     <td>
@@ -105,8 +105,8 @@
 </tr>
 
 <tr valign="top">
-	<td align="right">enrol_remoteuserfield:</td>
-	<td>
+    <td align="right">enrol_remoteuserfield:</td>
+    <td>
         <input size="15" type="text" name="enrol_remoteuserfield" value="<?php echo $frm->enrol_remoteuserfield ?>" />
     </td>
     <td>
@@ -115,8 +115,8 @@
 </tr>
 
 <tr valign="top">
-	<td align="right">enrol_allowinternal:</td>
-	<td>
+    <td align="right">enrol_allowinternal:</td>
+    <td>
         <input type="checkbox" name="enrol_allowinternal" <?php if ($frm->enrol_allowinternal) echo "checked=\"true\"" ?> />
     </td>
     <td>

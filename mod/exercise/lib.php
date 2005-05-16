@@ -62,10 +62,10 @@ function exercise_add_instance($exercise) {
 
     // encode password if necessary
     if (!empty($exercise->password)) {
-		$exercise->password = md5($exercise->password);
-	} else {
-		unset($exercise->password);
-	}
+        $exercise->password = md5($exercise->password);
+    } else {
+        unset($exercise->password);
+    }
 
     if ($returnid = insert_record("exercise", $exercise)) {
 
@@ -489,10 +489,10 @@ function exercise_update_instance($exercise) {
 
     // encode password if necessary
     if (!empty($exercise->password)) {
-		$exercise->password = md5($exercise->password);
-	} else {
-		unset($exercise->password);
-	}
+        $exercise->password = md5($exercise->password);
+    } else {
+        unset($exercise->password);
+    }
 
     $exercise->id = $exercise->instance;
 

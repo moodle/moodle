@@ -100,13 +100,13 @@
 // error_reporting(E_ALL);
  // if we're adding a new instance
 if (empty($form->id)) {
- 	if (isset($CFG->attendance_dynsection) && ($CFG->attendance_dynsection == "1")) { $form->dynsection = 1; }
- 	if (isset($CFG->attendance_autoattend) && ($CFG->attendance_autoattend == "1")) { $form->autoattend = 1; }
- 	if (isset($CFG->attendance_grade) && ($CFG->attendance_grade == "1")) { $form->grade = 1; }
- 	$form->maxgrade = isset($CFG->attendance_maxgrade)?$CFG->attendance_maxgrade:0;
- 	$form->hours = isset($CFG->attendance_default_hours)?$CFG->attendance_default_hours:1;
- 	$form->day = time();
- 	$form->notes = "";
+    if (isset($CFG->attendance_dynsection) && ($CFG->attendance_dynsection == "1")) { $form->dynsection = 1; }
+    if (isset($CFG->attendance_autoattend) && ($CFG->attendance_autoattend == "1")) { $form->autoattend = 1; }
+    if (isset($CFG->attendance_grade) && ($CFG->attendance_grade == "1")) { $form->grade = 1; }
+    $form->maxgrade = isset($CFG->attendance_maxgrade)?$CFG->attendance_maxgrade:0;
+    $form->hours = isset($CFG->attendance_default_hours)?$CFG->attendance_default_hours:1;
+    $form->day = time();
+    $form->notes = "";
 }
     ?>
 <form name="form" method="post" action="<?php echo "$CFG->wwwroot/course/mod.php"; ?>">
@@ -124,7 +124,7 @@ if (empty($form->id)) {
      foreach ($rolls as $roll) {
        $sroll[$roll->userid][$roll->hour]->status=$roll->status;
        $sroll[$roll->userid][$roll->hour]->notes=$roll->notes;
-	   }
+     }
    }
    // get the list of students along with student ID field
 // get back array of stdclass objects in sorted order, with members:
@@ -138,29 +138,29 @@ if (empty($form->id)) {
   // this is the main table
   echo "<table width=\"100%\" border=\"0\" valign=\"top\" align=\"center\" ".
          "cellpadding=\"5\" cellspacing=\"1\" class=\"generaltable\">";
-if ($form->hours >1) {
-	echo "<tr><th valign=\"top\" align=\"right\" colspan=\"3\" nowrap class=\"generaltableheader\">".
-	       "Hours:</th>\n";
-	for($i=1;$i<=$form->hours;$i++) {
-		echo "<th valign=\"top\" align=\"center\" colspan=\"3\" nowrap class=\"generaltableheader\">".
-	       "$i</th>\n";
-	}
-	echo "</tr>\n";
-} // if more than one hour for each day
-	echo "<tr><th valign=\"top\" align=\"left\" nowrap class=\"generaltableheader\">Last Name</th>\n";
-	echo "<th valign=\"top\" align=\"left\" nowrap class=\"generaltableheader\">First Name</th>\n";
-	echo "<th valign=\"top\" align=\"left\" nowrap class=\"generaltableheader\">ID</th>\n";
-    $P=get_string("presentshort","attendance");
-    $T=get_string("tardyshort","attendance");
-    $A=get_string("absentshort","attendance");
-    // generate the headers for the attendance hours
-	for($i=1;$i<=$form->hours;$i++) {
-  	  echo "<th valign=\"top\" align=\"center\" nowrap class=\"generaltableheader\">".$P."</th>\n";
-	  echo "<th valign=\"top\" align=\"center\" nowrap class=\"generaltableheader\">".$T."</th>\n";
-	  echo "<th valign=\"top\" align=\"center\" nowrap class=\"generaltableheader\">".$A."</th>\n";
-	}
-	echo "</tr>\n";
-  $table->head = array("Last Name","First Name","ID",
+  if ($form->hours >1) {
+    echo "<tr><th valign=\"top\" align=\"right\" colspan=\"3\" nowrap class=\"generaltableheader\">".
+         "Hours:</th>\n";
+    for($i=1;$i<=$form->hours;$i++) {
+      echo "<th valign=\"top\" align=\"center\" colspan=\"3\" nowrap class=\"generaltableheader\">".
+           "$i</th>\n";
+    }
+    echo "</tr>\n";
+  } // if more than one hour for each day
+  echo "<tr><th valign=\"top\" align=\"left\" nowrap class=\"generaltableheader\">Last Name</th>\n";
+  echo "<th valign=\"top\" align=\"left\" nowrap class=\"generaltableheader\">First Name</th>\n";
+  echo "<th valign=\"top\" align=\"left\" nowrap class=\"generaltableheader\">ID</th>\n";
+  $P=get_string("presentshort","attendance");
+  $T=get_string("tardyshort","attendance");
+  $A=get_string("absentshort","attendance");
+  // generate the headers for the attendance hours
+    for($i=1;$i<=$form->hours;$i++) {
+      echo "<th valign=\"top\" align=\"center\" nowrap class=\"generaltableheader\">".$P."</th>\n";
+      echo "<th valign=\"top\" align=\"center\" nowrap class=\"generaltableheader\">".$T."</th>\n";
+      echo "<th valign=\"top\" align=\"center\" nowrap class=\"generaltableheader\">".$A."</th>\n";
+    }
+    echo "</tr>\n";
+    $table->head = array("Last Name","First Name","ID",
     get_string("presentlong","attendance"),
     get_string("tardylong","attendance"),
     get_string("absentlong","attendance"));
@@ -174,27 +174,27 @@ if ($form->hours >1) {
     echo "<tr><td align=\"left\" nowrap class=\"generaltablecell\" style=\"border-top: 1px solid;\">".$student->lastname."</td>\n";
     echo "<td align=\"left\" nowrap class=\"generaltablecell\"  style=\"border-top: 1px solid;\">".$student->firstname."</td>\n";
     echo "<td align=\"left\" nowrap class=\"generaltablecell\" style=\"border-top: 1px solid;\">".$student->idnumber."</td>\n";
-	for($j=1;$j<=$form->hours;$j++) {
+      for($j=1;$j<=$form->hours;$j++) {
       // set the attendance defaults for each student
-	  $r1c=$r2c=$r3c=" ";
+        $r1c=$r2c=$r3c=" ";
     $rollstatus = (($form->edited==0)?$CFG->attendance_default_student_status:
       ((isset($sroll[$student->id][$j]->status)?$sroll[$student->id][$j]->status:0)));
     if ($rollstatus==1) {$r2c="checked";}
     elseif ($rollstatus==2) {$r3c="checked";}
     else {$r1c="checked";}
     $radio1="<input type=\"radio\" name=\"student_".$student->id."_".$j."\" value=\"0\" ".$r1c." />";
-	  $radio2="<input type=\"radio\" name=\"student_".$student->id."_".$j."\" value=\"1\" ".$r2c." />";
-    $radio3="<input type=\"radio\" name=\"student_".$student->id."_".$j."\" value=\"2\" ".$r3c." />";  	
+    $radio2="<input type=\"radio\" name=\"student_".$student->id."_".$j."\" value=\"1\" ".$r2c." />";
+    $radio3="<input type=\"radio\" name=\"student_".$student->id."_".$j."\" value=\"2\" ".$r3c." />";
     echo "<td align=\"left\" nowrap class=\"generaltablecell\" style=\"border-left: 1px dotted; border-top: 1px solid;\">".$radio1."</td>\n";
     echo "<td align=\"left\" nowrap class=\"generaltablecell\" style=\"border-top: 1px solid;\">".$radio2."</td>\n";
     echo "<td align=\"left\" nowrap class=\"generaltablecell\" style=\"border-top: 1px solid;\">".$radio3."</td>\n";
-	} // for loop
+  } // for loop
     echo "</tr>\n";
 //      $radio1="<input type=\"radio\" name=\"student_".$student->id."\" value=\"0\" checked>";
-//	    $radio2="<input type=\"radio\" name=\"student_".$student->id."\" value=\"1\">";
+//      $radio2="<input type=\"radio\" name=\"student_".$student->id."\" value=\"1\">";
 //      $radio3="<input type=\"radio\" name=\"student_".$student->id."\" value=\"2\">";
 //      $table->data[$i]=array($student->lastname, $student->firstname,
-//	      $student->idnumber, $radio1,$radio2,$radio3);
+//      $student->idnumber, $radio1,$radio2,$radio3);
 //      $i++;
   }
   // doing the table manually now

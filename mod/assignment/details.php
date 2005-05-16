@@ -2,10 +2,10 @@
       // This script prints the setup screen for any assignment
       // It does this by calling the setup method in the appropriate class
 
-	require_once("../../config.php");
-	require_once("lib.php");
+    require_once("../../config.php");
+    require_once("lib.php");
 
-	if (!$form = data_submitted($CFG->wwwroot.'/course/mod.php')) {
+    if (!$form = data_submitted($CFG->wwwroot.'/course/mod.php')) {
         error("This script was called wrongly");
     }
 
@@ -20,13 +20,13 @@
     }
 
 
-	require_once("$CFG->dirroot/mod/assignment/type/$form->assignmenttype/assignment.class.php");
+    require_once("$CFG->dirroot/mod/assignment/type/$form->assignmenttype/assignment.class.php");
 
-	$assignmentclass = "assignment_$form->assignmenttype";
+    $assignmentclass = "assignment_$form->assignmenttype";
 
-	$assignmentinstance = new $assignmentclass();
+    $assignmentinstance = new $assignmentclass();
 
-	echo $assignmentinstance->setup($form);     /// The actual form is all printed here
+    echo $assignmentinstance->setup($form);     /// The actual form is all printed here
 
 
 ?>

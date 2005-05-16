@@ -27,9 +27,9 @@
                     error("Could not set this user's first access date!");
                 }
                 if (isset($CFG->auth_user_create) and $CFG->auth_user_create==1 and function_exists('auth_user_activate') ) {
-				    if (!auth_user_activate($user->username)) {
-					  error("Could not activate this user!");
-					}
+                    if (!auth_user_activate($user->username)) {
+                         error("Could not activate this user!");
+                    }
                 }
 
                 // The user has confirmed successfully, let's log them in

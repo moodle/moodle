@@ -1,13 +1,13 @@
 <?php // $Id$
 
-	require_once("../config.php");
+    require_once("../config.php");
 
     optional_variable($p, "");
     optional_variable($s, "");
 
     if (!empty($p) and !empty($s)) {  // User trying to authenticate change password routine
 
-		update_login_count();
+        update_login_count();
 
         $user = get_complete_user_data("username", "$s");
 
@@ -20,13 +20,13 @@
 
                 $user->emailstop = 0;    // Send mail even if sending mail was forbidden
     
-			    if (! reset_password_and_mail($user)) {
+                if (! reset_password_and_mail($user)) {
                     error("Could not reset password and mail the new one to you");
                 }
     
-			    reset_login_count();
+                reset_login_count();
 
-	            print_header(get_string("passwordsent"), get_string("passwordsent"), get_string("passwordsent"));
+                print_header(get_string("passwordsent"), get_string("passwordsent"), get_string("passwordsent"));
 
                 $a->email = $user->email;
                 $a->link = "$CFG->wwwroot/login/change_password.php";
@@ -36,13 +36,13 @@
         error(get_string("error"));
     }
 
-	if ($frm = data_submitted()) {    // Initial request for new password
+    if ($frm = data_submitted()) {    // Initial request for new password
 
-		validate_form($frm, $err);
+        validate_form($frm, $err);
 
-		if (count((array)$err) == 0) {
+        if (count((array)$err) == 0) {
 
-			if (!$user = get_complete_user_data("email", $frm->email)) {
+            if (!$user = get_complete_user_data("email", $frm->email)) {
                 error("No such user with this address:  $frm->email");
             }
 
@@ -52,7 +52,7 @@
             
             $user->secret = random_string(15);
             
-			if (!set_field("user", "secret", $user->secret, "id", $user->id)) {
+            if (!set_field("user", "secret", $user->secret, "id", $user->id)) {
                 error("Could not set user secret string!");
             }
 
@@ -62,22 +62,22 @@
                 error("Could not send you an email to confirm the password change");
             }
 
-	        print_header(get_string("passwordconfirmchange"), get_string("passwordconfirmchange"));
+            print_header(get_string("passwordconfirmchange"), get_string("passwordconfirmchange"));
             
             notice(get_string('emailpasswordconfirmsent', '', $user->email), "$CFG->wwwroot/");
         }
-	}
+    }
 
-	if (empty($frm->email)) {
-		if ($username = get_moodle_cookie() ) {
-			$frm->email = get_field("user", "email", "username", "$username");
-		}
-	}
+    if (empty($frm->email)) {
+        if ($username = get_moodle_cookie() ) {
+            $frm->email = get_field("user", "email", "username", "$username");
+        }
+    }
 
-	print_header(get_string("senddetails"), get_string("senddetails"), 
+    print_header(get_string("senddetails"), get_string("senddetails"), 
                  "<a href=\"$CFG->wwwroot/login/index.php\">".get_string("login")."</a> -> ".get_string("senddetails"), 
                  "form.email");
-	include("forgot_password_form.html");
+    include("forgot_password_form.html");
     print_footer();
 
 

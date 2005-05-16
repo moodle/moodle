@@ -25,11 +25,11 @@
       $algebra = substr($query,8,$splitpos);
       $md5 = md5($algebra);
       if (strpos($query,'ShowDB') || strpos($query,'DeleteDB')) {
-	$texcache = get_record("cache_filters","filter","algebra", "md5key", $md5);
+        $texcache = get_record("cache_filters","filter","algebra", "md5key", $md5);
       }
       if (strpos($query,'ShowDB')) {
         if ($texcache) {
-	  $output = "DB cache_filters entry for $algebra\n";
+          $output = "DB cache_filters entry for $algebra\n";
           $output .= "id = $texcache->id\n";
           $output .= "filter = $texcache->filter\n";
           $output .= "version = $texcache->version\n";
@@ -45,7 +45,7 @@
           $output = "Deleting DB cache_filters entry for $algebra\n";
           $result =  delete_records("cache_filters","id",$texcache->id);
           if ($result) {
-	    $result = 1;
+            $result = 1;
           } else {
             $result = 0;
           }
@@ -55,17 +55,17 @@
         }
       }
       if (strpos($query,'TeXStage1')) {
-	$output = algebra2tex($algebra);
+        $output = algebra2tex($algebra);
       }
       if (strpos($query,'TeXStage2')) {
-	$output = algebra2tex($algebra);
+        $output = algebra2tex($algebra);
         $output = refineTeX($output);
       }
       if (strpos($query,'ShowImage')||strpos($query,'SlashArguments')) {
-	$output = algebra2tex($algebra);
+        $output = algebra2tex($algebra);
         $output = refineTeX($output);
         if (strpos($query,'ShowImage')) {
-	  tex2image($output, $md5);
+          tex2image($output, $md5);
         } else {
           slasharguments($output, $md5);
         }
@@ -103,7 +103,7 @@ function algebra2tex($algebra) {
       echo "The shell command<br>$cmd<br>returned status = $status<br>\n";
       $commandpath = "$CFG->dirroot\\$CFG->algebrafilterdirwin\\algebra2tex.pl";
       if (file_exists($commandpath)) {
-	echo "The file permissions of algebra2tex.pl are: " . decoct(fileperms($commandpath)) . "<br>";
+        echo "The file permissions of algebra2tex.pl are: " . decoct(fileperms($commandpath)) . "<br>";
       }
       die;
     }
@@ -222,7 +222,7 @@ function tex2image($texexp, $md5, $return=false) {
        }
        $pathname = "$CFG->dataroot/$CFG->algebraimagedir/$image";
        if (file_exists($pathname)) {
-	 unlink($pathname);
+         unlink($pathname);
        } 
        $commandpath = "";
        $cmd = "";
@@ -234,23 +234,23 @@ function tex2image($texexp, $md5, $return=false) {
        case "WINNT":
        case "WIN32":
        case "Windows":
-	 $commandpath="$CFG->dirroot/$CFG->texfilterdir/mimetex.exe";
-	 $texexp = str_replace('"','\"',$texexp);
-	 $cmd = str_replace(' ','^ ',$commandpath);
-	 $cmd .= " ++ -e  \"$pathname\" \"$texexp\"";
+         $commandpath="$CFG->dirroot/$CFG->texfilterdir/mimetex.exe";
+         $texexp = str_replace('"','\"',$texexp);
+         $cmd = str_replace(' ','^ ',$commandpath);
+         $cmd .= " ++ -e  \"$pathname\" \"$texexp\"";
        break;
        case "Darwin":
-	 $commandpath="$CFG->dirroot/$CFG->texfilterdir/mimetex.darwin";
+         $commandpath="$CFG->dirroot/$CFG->texfilterdir/mimetex.darwin";
          $cmd = "\"$CFG->dirroot/$CFG->texfilterdir/mimetex.darwin\" -e \"$pathname\" ". escapeshellarg($texexp);
        break;
        }
        if (!$cmd) {
-	 if (is_executable("$CFG->dirroot/$CFG->texfilterdir/mimetex")) {   /// Use the custom binary
+         if (is_executable("$CFG->dirroot/$CFG->texfilterdir/mimetex")) {   /// Use the custom binary
            $commandpath="$CFG->dirroot/$CFG->texfilterdir/mimetex";
-	   $cmd = "$CFG->dirroot/$CFG->texfilterdir/mimetex -e $pathname ". escapeshellarg($texexp);
-	 } else {
-	   error($error_message1);
-	 }
+           $cmd = "$CFG->dirroot/$CFG->texfilterdir/mimetex -e $pathname ". escapeshellarg($texexp);
+         } else {
+           error($error_message1);
+         }
        }
        system($cmd, $status);
   }
@@ -329,7 +329,7 @@ function slasharguments($texexp, $md5) {
            <ol>
            <li>First click on this button <input type="submit" name="ShowDB" value="Show DB Entry">
                to see the cache_filters database entry for this expression.</li>
-	   <li>If the database entry looks corrupt, click on this button to delete it:
+           <li>If the database entry looks corrupt, click on this button to delete it:
                <input type="submit" name="DeleteDB" value="Delete DB Entry"></li>
            <li>Now click on this button <input type="submit" name="TeXStage1" value="First Stage Tex Translation">.
                A preliminary translation into TeX will appear in the box below.</li>

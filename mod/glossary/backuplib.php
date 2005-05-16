@@ -47,7 +47,7 @@
                 fwrite ($bf,full_tag("INTRO",4,false,$glossary->intro));
                 fwrite ($bf,full_tag("STUDENTCANPOST",4,false,$glossary->studentcanpost));
                 fwrite ($bf,full_tag("ALLOWDUPLICATEDENTRIES",4,false,$glossary->allowduplicatedentries));
-                fwrite ($bf,full_tag("DISPLAYFORMAT",4,false,$glossary->displayformat));	
+                fwrite ($bf,full_tag("DISPLAYFORMAT",4,false,$glossary->displayformat));
                 fwrite ($bf,full_tag("MAINGLOSSARY",4,false,$glossary->mainglossary));
                 fwrite ($bf,full_tag("SHOWSPECIAL",4,false,$glossary->showspecial));
                 fwrite ($bf,full_tag("SHOWALPHABET",4,false,$glossary->showalphabet));
@@ -155,7 +155,7 @@
             foreach ($glossary_entries as $glo_ent) {
                 //Start entry
                 //Print submission contents
-	        if ($glo_ent->teacherentry or $userinfo) {
+               if ($glo_ent->teacherentry or $userinfo) {
                     $dumped_entries++;
                     if ($dumped_entries == 1) {
                         //Write start tag
@@ -194,8 +194,8 @@
                 }
             }
             if ( $dumped_entries > 0 ) {
-	        //Write end tag
-      	        $status =fwrite ($bf,end_tag("ENTRIES",4,true));
+                //Write end tag
+                $status =fwrite ($bf,end_tag("ENTRIES",4,true));
             }
         }
         return $status;

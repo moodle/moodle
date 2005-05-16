@@ -184,18 +184,18 @@
             //If it's a teacher entry or userinfo was selected, restore the entry
             if ($entry->teacherentry or $restore->mods['glossary']->userinfo) {
                 //The structure is equal to the db, so insert the glossary_entries
-      	        $newid = insert_record ("glossary_entries",$entry);
+                $newid = insert_record ("glossary_entries",$entry);
 
-            	//Do some output
-	        if (($i+1) % 50 == 0) {
-      	            echo ".";
-            	    if (($i+1) % 1000 == 0) {
+                //Do some output
+                if (($i+1) % 50 == 0) {
+                    echo ".";
+                    if (($i+1) % 1000 == 0) {
                         echo "<br />";
-	            }
-      	            backup_flush(300);
+                    }
+                    backup_flush(300);
                 }
                 if ($newid) {
-      	            //We have the newid, update backup_ids
+                    //We have the newid, update backup_ids
                     backup_putid($restore->backup_unique_code,"glossary_entries",$oldid,$newid);
                     //Restore glossary_alias
                     $status = glossary_alias_restore_mods($oldid,$newid,$ent_info,$restore);
@@ -209,8 +209,8 @@
                                                           $oldid, $newid, $restore);
                     }
                 } else {
-      	            $status = false;
-	        }
+                    $status = false;
+                }
             }
         }
 

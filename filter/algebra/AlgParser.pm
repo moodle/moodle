@@ -69,16 +69,16 @@ sub nexttoken {
   my($p1) = pos($self->{string}) || 0;
   if(scalar($self->{string} =~ m/\G$tokenregexp/gc)) {
         push @{$self->{posarray}}, [$p1, pos($self->{string})];
-	if (defined($1)) {return ['binop3',  $1];}
-	if (defined($2)) {return ['binop2',  $2];}
-	if (defined($3)) {return ['binop1',  $3];}
-	if (defined($4)) {return ['openp',   $4];}
-	if (defined($5)) {return ['closep',  $5];}
-	if (defined($6)) {return ['func1',   $6];}
-	if (defined($7)) {return ['special', $7];}
-	if (defined($8)) {return ['varname', $8];}
-	if (defined($9)) {return ['numberE', $9];}
-	if (defined($10)) {return ['number', $10];}
+        if (defined($1)) {return ['binop3',  $1];}
+        if (defined($2)) {return ['binop2',  $2];}
+        if (defined($3)) {return ['binop1',  $3];}
+        if (defined($4)) {return ['openp',   $4];}
+        if (defined($5)) {return ['closep',  $5];}
+        if (defined($6)) {return ['func1',   $6];}
+        if (defined($7)) {return ['special', $7];}
+        if (defined($8)) {return ['varname', $8];}
+        if (defined($9)) {return ['numberE', $9];}
+        if (defined($10)) {return ['number', $10];}
   }
   else {
     push @{$self->{posarray}}, [$p1, undef];
@@ -120,7 +120,7 @@ sub parse {
         while (${$currentref}->[0] !~ /^(openp|top)/) {
           $currentref = pop @backtrace;
         }
-	my $index = ((${$currentref}->[0] eq 'top')?1:3);
+        my $index = ((${$currentref}->[0] eq 'top')?1:3);
         ${$currentref}->[$index] = ['binop1', $currenttok->[1],
                                     ${$currentref}->[$index], undef];
         push @backtrace, $currentref;
@@ -550,12 +550,12 @@ sub tolatex {
     if ($args[1]->[0] =~ /binop1|numberE/)
       {($p1,$p2)=qw{ \left( \right) };}
  #   if ($args[2]->[0] =~ /binop[12]|numberE/)
-	if ($args[2]->[0] =~ /binop[12]|numberE|unop1/)
+        if ($args[2]->[0] =~ /binop[12]|numberE|unop1/)
       {($p3,$p4)=qw{ \left( \right) };}
     if ($args[0] eq '/'){
 #	return('\frac{' . $p1 . $args[1]->tolatex() . $p2 . '}'.
 #               '{' . $p3 . $args[2]->tolatex() . $p4 . '}' );
-	return('\frac{' . $args[1]->tolatex() . '}'.
+        return('\frac{' . $args[1]->tolatex() . '}'.
                '{' . $args[2]->tolatex() . '}' ); 
     }
     else{

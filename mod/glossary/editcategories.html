@@ -1,5 +1,5 @@
 <?php  // $Id$
-	global $CFG;
+    global $CFG;
     require_once("../../config.php");
 ?>
 <center>
@@ -30,15 +30,15 @@
     </td>
 </tr>
 <td colspan="2">
-	<p align="center">
-	<input type="hidden" name="id" value="<?php p($cm->id) ?>" />
-	<input type="hidden" name="action" value="<?php p($action) ?>" />
-	<input type="hidden" name="confirm" value="1" />
-	<input type="hidden" name="mode" value='cat' />
-	<input type="hidden" name="hook" value="<?php p($hook) ?>" />
-	<input type="submit" value="<?php print_string("savechanges") ?>" />
-	<input type="reset" value="<?php print_string("back","glossary") ?>"  onclick="javascript:history.go(-1);" />
-	</p>
+    <p align="center">
+    <input type="hidden" name="id" value="<?php p($cm->id) ?>" />
+    <input type="hidden" name="action" value="<?php p($action) ?>" />
+    <input type="hidden" name="confirm" value="1" />
+    <input type="hidden" name="mode" value='cat' />
+    <input type="hidden" name="hook" value="<?php p($hook) ?>" />
+    <input type="submit" value="<?php print_string("savechanges") ?>" />
+    <input type="reset" value="<?php print_string("back","glossary") ?>"  onclick="javascript:history.go(-1);" />
+    </p>
 </td>
 </tr>
 </table>

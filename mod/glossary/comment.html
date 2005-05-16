@@ -41,20 +41,20 @@
 </tr>
 <tr>
 <td colspan="2">
-	<center>
-	<?php 
-	    if (isset($comment->id)) {
-		    echo "<input type=\"hidden\" name=\"cid\" value=\"$comment->id\" />";
-   	    }
-	?>
-	<input type="hidden" name="id" value="<?php p($cm->id) ?>" />
-	<input type="hidden" name="eid" value="<?php p($entry->id) ?>" />
-	<input type="hidden" name="action" value="<?php p($action) ?>" />
-	<input type="hidden" name="confirm" value="1" />
+    <center>
+    <?php 
+        if (isset($comment->id)) {
+            echo "<input type=\"hidden\" name=\"cid\" value=\"$comment->id\" />";
+        }
+    ?>
+    <input type="hidden" name="id" value="<?php p($cm->id) ?>" />
+    <input type="hidden" name="eid" value="<?php p($entry->id) ?>" />
+    <input type="hidden" name="action" value="<?php p($action) ?>" />
+    <input type="hidden" name="confirm" value="1" />
 
-	<input type="submit" value="<?php print_string("savechanges") ?>" />
-	<input type="reset" value="<?php print_string("revert") ?>" />
-	</center>
+    <input type="submit" value="<?php print_string("savechanges") ?>" />
+    <input type="reset" value="<?php print_string("revert") ?>" />
+    </center>
 </td>
 </tr>
 </table>

@@ -7,27 +7,27 @@ function exercise_upgrade($oldversion) {
     global $CFG;
 
     if ($oldversion < 2003111400) {
-		execute_sql(" ALTER TABLE `{$CFG->prefix}exercise_submissions` ADD INDEX (`userid`)");
-		execute_sql(" ALTER TABLE `{$CFG->prefix}exercise_submissions` DROP INDEX `title`");
-		execute_sql(" ALTER TABLE `{$CFG->prefix}exercise_assessments` ADD INDEX (`submissionid`)");
-		execute_sql(" ALTER TABLE `{$CFG->prefix}exercise_assessments` ADD INDEX (`userid`)");
-		execute_sql(" ALTER TABLE `{$CFG->prefix}exercise_grades` ADD INDEX (`assessmentid`)");
-		}
+        execute_sql(" ALTER TABLE `{$CFG->prefix}exercise_submissions` ADD INDEX (`userid`)");
+        execute_sql(" ALTER TABLE `{$CFG->prefix}exercise_submissions` DROP INDEX `title`");
+        execute_sql(" ALTER TABLE `{$CFG->prefix}exercise_assessments` ADD INDEX (`submissionid`)");
+        execute_sql(" ALTER TABLE `{$CFG->prefix}exercise_assessments` ADD INDEX (`userid`)");
+        execute_sql(" ALTER TABLE `{$CFG->prefix}exercise_grades` ADD INDEX (`assessmentid`)");
+    }
     
     if ($oldversion < 2003121000) {
-		execute_sql(" ALTER TABLE `{$CFG->prefix}exercise_submissions` ADD `late` TINYINT(3) UNSIGNED NOT NULL DEFAULT '0'");
-		}
+        execute_sql(" ALTER TABLE `{$CFG->prefix}exercise_submissions` ADD `late` TINYINT(3) UNSIGNED NOT NULL DEFAULT '0'");
+    }
 
     if ($oldversion < 2004062300) {
-		table_column("exercise", "", "gradinggrade", "INTEGER", "4", "UNSIGNED", "0", "NOT NULL", "grade");
-		table_column("exercise", "", "assessmentcomps", "INTEGER", "4", "UNSIGNED", "2", "NOT NULL", "usemaximum");
+        table_column("exercise", "", "gradinggrade", "INTEGER", "4", "UNSIGNED", "0", "NOT NULL", "grade");
+        table_column("exercise", "", "assessmentcomps", "INTEGER", "4", "UNSIGNED", "2", "NOT NULL", "usemaximum");
         execute_sql("ALTER TABLE `{$CFG->prefix}exercise` DROP COLUMN `teacherweight`");
         execute_sql("ALTER TABLE `{$CFG->prefix}exercise` DROP COLUMN `gradingweight`");
     }
 
     if ($oldversion < 2004090200) {
-		table_column("exercise", "", "usepassword", "INTEGER", "4", "UNSIGNED", "0", "NOT NULL");
-		table_column("exercise", "", "password", "VARCHAR", "32", "", "", "NOT NULL");
+        table_column("exercise", "", "usepassword", "INTEGER", "4", "UNSIGNED", "0", "NOT NULL");
+        table_column("exercise", "", "password", "VARCHAR", "32", "", "", "NOT NULL");
     }
 
     if ($oldversion < 2004091000) {
