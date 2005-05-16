@@ -104,6 +104,11 @@ Who's buried in Grant's tomb?{
 =no one#excellent answer!
 =nobody#excellent answer!}
 
+// ===Specify text format===
+[markdown]Who's buried in **Grant's tomb**?{
+=no one#excellent answer!
+=nobody#excellent answer!}
+
 // ===Percentage Answer Weights===
 Grant is buried in Grant's tomb.{FALSE#No one is buried in Grant's tomb.}
 
