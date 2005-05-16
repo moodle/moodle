@@ -42,7 +42,7 @@
 	if ($sco = get_record("scorm_scoes","id",$scoid)) {
 	    if ($sco->launch == '') {
 		// Search for the next launchable sco 
-		if ($scoes = get_records_select("scorm_scoes","scorm=".$scorm->id." AND launch<>'' AND id>".$scoid,"id ASC")) {
+		if ($scoes = get_records_select("scorm_scoes","scorm=".$scorm->id." AND launch<>'' AND id>".$sco->id,"id ASC")) {
 		    $sco = current($scoes);
 		}
 	    }
