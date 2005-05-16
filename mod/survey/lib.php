@@ -354,19 +354,19 @@ function survey_print_multi($question) {
     $stripreferthat = get_string("ipreferthat", "survey");
     $strifoundthat = get_string("ifoundthat", "survey");
     echo "<br />\n";
-	echo "<font size=\"4\"><b>$question->text</b></font><br />";
+    echo "<font size=\"4\"><b>$question->text</b></font><br />";
 
-	echo "<table align=\"center\" width=\"90%\" cellpadding=\"4\" cellspacing=\"1\" border=\"0\">";
+    echo "<table align=\"center\" width=\"90%\" cellpadding=\"4\" cellspacing=\"1\" border=\"0\">";
 
     $options = explode( ",", $question->options);
     $numoptions = count($options);
 
     $oneanswer = ($question->type == 1 || $question->type == 2) ? true : false;
-	if ($question->type == 2) {
-		$P = "P";
-	} else {
-		$P = "";
-	}
+    if ($question->type == 2) {
+        $P = "P";
+    } else {
+        $P = "";
+    }
    
     if ($oneanswer) { 
         echo "<tr><td colspan=\"2\">$question->intro</td>";
