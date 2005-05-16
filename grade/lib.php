@@ -1814,10 +1814,10 @@ function grade_view_category_grades($view_by_student) {
                     }
 
                     if (isteacher($course->id)) {
-                        helpbutton('coursegradeteacher', get_string('gradehelp','grades'), 'gradebook');
+                        helpbutton('teacher', get_string('gradehelp','grades'), 'grade');
                     }
                     else {
-                        helpbutton('coursegradestudent', get_string('gradehelp','grades'), 'gradebook');
+                        helpbutton('student', get_string('gradehelp','grades'), 'grade');
                     }
                     echo  '</th></tr>';
                     echo  $header;
@@ -2067,10 +2067,10 @@ function grade_view_all_grades($view_by_student) {
                 
                 echo  '<tr><th colspan="'.$colcount.'"><font size="+1">'.get_string('allgrades','grades').'</font>';
                 if (isteacher($course->id)) {
-                    helpbutton('coursegradeteacher', get_string('gradehelp','grades'), 'gradebook');
+                    helpbutton('teacher', get_string('gradehelp','grades'), 'grade');
                 }
                 else {
-                    helpbutton('coursegradestudent', get_string('gradehelp','grades'), 'gradebook');
+                    helpbutton('student', get_string('gradehelp','grades'), 'grade');
                 }
                 echo  '</th></tr>';
                 
@@ -2202,7 +2202,7 @@ function grade_display_grade_weights() {
     $categories = get_records('grade_category', 'courseid', $course->id);
     if ($categories) {
         echo  '<table align=center><tr><th colspan="5">'.get_string('setweights','grades');
-        helpbutton('coursegradeweight', get_string('gradeweighthelp','grades'), 'gradebook');
+        helpbutton('weight', get_string('gradeweighthelp','grades'), 'grade');
         echo  '</th></tr>';
         echo  '<tr><th>'.get_string('category','grades').'</th><th>'.get_string('weight','grades').'</th><th>'.get_string('dropxlowest','grades').'</th><th>'.get_string('bonuspoints','grades').'</th><th>'.get_string('hidecategory','grades').'</th></tr>';
         echo  '<form name="grade_weights" action="./index.php" method="post">';
@@ -2257,7 +2257,7 @@ function grade_set_categories() {
     get_all_mods($course->id, $mods, $modnames, $modnamesplural, $modnamesused);
     
     echo  '<table align="center"><tr><th colspan="5">'.get_string('setcategories','grades');
-    helpbutton('coursegradecategory', get_string('gradecategoryhelp','grades'), 'gradebook');
+    helpbutton('category', get_string('gradecategoryhelp','grades'), 'grade');
     echo  '<tr><th>'.get_string('gradeitem','grades').'</th><th>'.get_string('category','grades').'</th><th>'.get_string('maxgrade','grades').'</th><th>'.get_string('curveto','grades').'</th><th>'.get_string('extracredit','grades').'</th></tr>';
     echo  '<form name="set_categories" method="post" action="./index.php" >';
     echo  '<input type="hidden" name="action" value="assign_categories" />';
@@ -2537,7 +2537,7 @@ function grade_display_grade_preferences($course, $preferences) {
                            'use_advanced' => $useadvanced);
                            
 
-    print_heading_with_help(get_string('setpreferences','grades'), 'coursegradepreferences', 'grades');
+    print_heading_with_help(get_string('setpreferences','grades'), 'preferences', 'grade');
     
     echo '<center>';
     print_single_button('index.php', $buttonoptions, $buttonlabel, 'post');
@@ -2693,7 +2693,7 @@ function grade_display_letter_grades() {
     }
     
     echo '<table align="center"><tr><th colspan="3">'.get_string('setgradeletters','grades');
-    helpbutton('coursegradeletter', get_string('gradeletterhelp','grades'), 'gradebook');
+    helpbutton('letter', get_string('gradeletterhelp','grades'), 'grade');
     echo '</th></tr><tr><th>'.get_string('gradeletter','grades').'</th><th>'.get_string('lowgradeletter','grades').'</th><th>'.get_string('highgradeletter','grades').'</th></tr>';
     echo '<form name="grade_letter"><input type="hidden" name="id" value="'.$course->id.'" />';
     echo '<input type="hidden" name="action" value="set_letter_grades" />';
