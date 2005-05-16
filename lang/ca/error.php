@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // error.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
+      // error.php - created with Moodle 1.5 ALPHA (2005042400)
 
 
 $string['adminprimarynoedit'] = 'L\'administrador primari no pot ser editat per altres usuaris';
@@ -17,10 +17,11 @@ $string['notavailable'] = 'Això no està disponible actualment';
 $string['onlyeditown'] = 'Només podeu editar la vostra pròpia informació';
 $string['processingstops'] = 'El processament acaba aquí. Els registres que resten s\'ignoraran.';
 $string['restricteduser'] = 'Al vostre compte \"$a\" no li és permès de fer això.';
+$string['sessionerroruser'] = 'Heu excedit el termini de la vostra sessió o s\'ha produït un error. Si us plau torneu a entrar-hi.';
 $string['sessionipnomatch'] = 'Sembla que el vostre número IP ha canviat des que heu entrat. Aquesta característica de seguretat impedeix que un <i>cracker</i> suplanti la vostra identitat després que heu entrat en Moodle. Els usuaris normals no haurien de veure aquest missatge: demaneu ajuda a l\'administrador del lloc.';
 $string['unknowncourse'] = 'El curs \"$a\" és desconegut';
-$string['usernotaddederror'] = 'No s\'ha afegit l\'usuari \"$a\" - error desconegut';
-$string['usernotaddedregistered'] = 'No s\'ha afegit l\'usuari \"$a\" - ja està registrat';
+$string['usernotaddederror'] = 'No s\'ha afegit l\'usuari \"$a\". Error desconegut';
+$string['usernotaddedregistered'] = 'No s\'ha afegit l\'usuari \"$a\". Ja està registrat';
 $string['usernotavailable'] = 'Els detalls d\'aquest usuari no estan disponibles per a vós.';
 
 ?>

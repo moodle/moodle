@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+      // scorm.php - created with Moodle 1.5 ALPHA (2005042400)
 
 
 $string['asset'] = 'Bé';
@@ -24,6 +24,8 @@ $string['datadir'] = 'Error del sistema de fitxers: no s\'ha pogut crear el dire
 $string['domxml'] = 'Biblioteca externa DOMXML';
 $string['entercourse'] = 'Entra al curs SCORM';
 $string['errorlogs'] = 'Registre d\'errors';
+$string['exit'] = 'Surt del curs SCORM';
+$string['expcoll'] = 'Expandeix/redueix';
 $string['failed'] = 'Fallat';
 $string['found'] = 'S\'ha trobat el manifest';
 $string['gradeaverage'] = 'Nota mitjana';

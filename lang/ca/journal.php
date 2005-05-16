@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // journal.php - created with Moodle 1.3 development (2004040500)
+      // journal.php - created with Moodle 1.5 ALPHA (2005042400)
 
 
 $string['alwaysopen'] = 'Obert sempre';
@@ -23,6 +23,7 @@ $string['journalquestion'] = 'Pregunta del diari';
 $string['journalrating1'] = 'Insatisfactori';
 $string['journalrating2'] = 'Satisfactori';
 $string['journalrating3'] = 'Excel·lent';
+$string['mailsubject'] = 'Retroacció del diari';
 $string['modulename'] = 'Diari';
 $string['modulenameplural'] = 'Diaris';
 $string['newjournalentries'] = 'Noves entrades dels diaris';

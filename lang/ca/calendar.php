@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020800)
+      // calendar.php - created with Moodle 1.5 ALPHA (2005042400)
 
 
 $string['calendar'] = 'Calendari';
@@ -8,7 +8,6 @@ $string['clickhide'] = 'feu clic per ocultar';
 $string['clickshow'] = 'feu clic per mostrar';
 $string['confirmeventdelete'] = 'Esteu segur que voleu suprimir aquest esdeveniment?';
 $string['courseevents'] = 'Esdeveniments del curs';
-$string['day'] = 'dia';
 $string['dayview'] = 'Visualització del dia';
 $string['daywithnoevents'] = 'Aquest dia no té esdeveniments.';
 $string['default'] = 'Per defecte';
@@ -42,14 +41,12 @@ $string['explain_maxevents'] = 'Aquesta preferència defineix el nombre màxim d\'
 $string['explain_persistflt'] = 'Si habiliteu aquesta opció, Moodle recordarà els darrers paràmetres de filtre i els tornarà a utilitzar automàticament la pròxima vegada que entreu.';
 $string['explain_startwday'] = 'Aquesta preferència configura el mode de visualització de tots els calendaris mensuals. Useu-la per visualitzar-los al vostre gust.';
 $string['explain_timeformat'] = 'Podeu triar de veure l\'hora en format de 12 o 24 hores. Si trieu \"per defecte\", aleshores el format es determinarà automàticament segons les convencions de l\'idioma del lloc.';
-$string['first'] = 'primer';
 $string['fri'] = 'dv';
 $string['friday'] = 'divendres';
 $string['globalevents'] = 'Esdeveniments globals';
 $string['gotocalendar'] = 'Vés al calendari';
 $string['groupevents'] = 'Esdeveniments de grup';
 $string['hidden'] = 'ocult';
-$string['last'] = 'darrer';
 $string['manyevents'] = '$a esdeveniments';
 $string['mon'] = 'dl';
 $string['monday'] = 'dilluns';
@@ -64,6 +61,8 @@ $string['pref_startwday'] = 'Primer dia de la setmana';
 $string['pref_timeformat'] = 'Format de visualització de l\'hora';
 $string['preferences'] = 'Preferències';
 $string['preferences_available'] = 'Preferències personals';
+$string['repeateditall'] = 'Aplica els canvis a tots els $a esdeveniments d\'aquesta sèrie';
+$string['repeateditthis'] = 'Aplica els canvis només a aquest esdeveniment';
 $string['repeatnone'] = 'No es repeteix';
 $string['repeatweeksl'] = 'Es repeteix cada setmana, crea ara';
 $string['repeatweeksr'] = 'esdeveniments';
@@ -77,8 +76,6 @@ $string['thu'] = 'dj';
 $string['thursday'] = 'dijous';
 $string['timeformat_12'] = '12 hores (am/pm)';
 $string['timeformat_24'] = '24 hores';
-$string['timeforward'] = 'endavant';
-$string['timerewind'] = 'enrrere';
 $string['today'] = 'Avui';
 $string['tomorrow'] = 'Demà';
 $string['tt_deleteevent'] = 'Suprimeix esdeveniment';
@@ -102,5 +99,6 @@ $string['userevents'] = 'Esdeveniments de l\'usuari';
 $string['wed'] = 'dc';
 $string['wednesday'] = 'dimecres';
 $string['yesterday'] = 'Ahir';
+$string['youcandeleteallrepeats'] = 'Aquest esdeveniment és part d\'una sèrie d\'esdeveniments que es repeteixen. Podeu suprimir només aquest esdeveniment, o tots els $a de la sèrie alhora.';
 
 ?>
