@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.5 ALPHA (2005043000)
+      // calendar.php - created with Moodle 1.5 ALPHA (2005051500)
 
 
 $string['calendar'] = 'Kalendár';
@@ -36,7 +36,7 @@ $string['eventstarttime'] = 'Èas zaèatia';
 $string['eventtime'] = 'Èas ';
 $string['eventview'] = 'Detaily udalosti';
 $string['expired'] = 'Èas u¾ vypr¹al';
-$string['explain_lookahead'] = 'Toto nastaví (maximálny) poèet dní, v ktorých sa v budúcnosti má zaèa» udalos», aby bola zobrazená ako nadchádzajúca udalos». Udalosti, ktoré presiahnu túto hranicu, nebudú nikdy zobrazované ako nadchádzajúce. Berte prosím na vedomie, ¾e <strong> neexistuje ¾iadna garancia </strong>, ¾e v¹etky udalosti zaèaté v tomto èasovom rozpätí budú zobrazené; ak sa ich v kalendári nachádza príli¹ veµa (viac ako preferencia maximálneho poètu nadchádzajúcich udalostí), potom tie s najneskor¹ím dátumom zaèatia nebudú zobrazené.';
+$string['explain_lookahead'] = 'Toto nastaví (maximálny) poèet dní, v ktorých sa v budúcnosti má zaèa» udalos», aby bola zobrazená ako nadchádzajúca udalos». Udalosti, ktoré presiahnu túto hranicu, nebudú nikdy zobrazované ako nadchádzajúce. Berte prosím na vedomie, ¾e <strong>neexistuje ¾iadna garancia</strong>, ¾e v¹etky udalosti zaèaté v tomto èasovom rozpätí budú zobrazené; ak sa ich v kalendári nachádza príli¹ veµa (viac ako preferencia maximálneho poètu nadchádzajúcich udalostí), potom tie s najneskor¹ím dátumom zaèatia nebudú zobrazené.';
 $string['explain_maxevents'] = 'Toto nastaví maximálny poèet nadchádzajúcich udalostí, ktoré mô¾u by» zobrazené. V prípade, ¾e si tu vyberiete mo¾nos» zobrazovania veµkého poètu udalostí, je pravdepodobné, ¾e Vám budú zabera» veµa miesta na monitore.';
 $string['explain_persistflt'] = 'Ak je táto mo¾nos» povolená, potom si Moodle zapamätá Va¹e posledné nastavenia filtra udalostí a automaticky ich obnoví zaka¾dým, keï sa prihlásite. ';
 $string['explain_startwday'] = 'Tý¾dne v kalendári budú zaèína» tým dòom, ktoré si tu vyberiete.';
@@ -61,6 +61,8 @@ $string['pref_startwday'] = 'Prvý deò v tý¾dni';
 $string['pref_timeformat'] = 'Formát zobrazovania èasu';
 $string['preferences'] = 'Preferencie';
 $string['preferences_available'] = 'Va¹e osobné preferencie';
+$string['repeateditall'] = 'Aplikuj zmeny na v¹etky $a udalosti v tejto opakujúcej sa sérii';
+$string['repeateditthis'] = 'Aplikuj zmeny len na túto udalos»';
 $string['repeatnone'] = '®iadne opakovania';
 $string['repeatweeksl'] = 'Opakova» tý¾denne, vytváranie dohromady';
 $string['repeatweeksr'] = 'udalosti';
@@ -97,5 +99,6 @@ $string['userevents'] = 'U¾ívateµské udalosti';
 $string['wed'] = 'Str';
 $string['wednesday'] = 'Streda';
 $string['yesterday'] = 'Vèera';
+$string['youcandeleteallrepeats'] = 'Táto udalos» je súèas»ou opakujúcej sa série udalostí. Mô¾e¹ zmaza» len túto udalos», alebo v¹etky $a udalosti v tejto sérii naraz.';
 
 ?>

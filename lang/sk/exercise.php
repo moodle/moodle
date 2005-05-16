@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // exercise.php - created with Moodle 1.5 ALPHA (2005043000)
+      // exercise.php - created with Moodle 1.5 ALPHA (2005051500)
 
 
 $string['absent'] = 'Chýba';
@@ -18,7 +18,10 @@ $string['assessmentform'] = 'Hodnotiaci formulár';
 $string['assessmentmadebythe'] = 'Hodnotenie vykonal(a) $a';
 $string['assessmentofthissubmission'] = 'Hodnotenie tohto odovzdaného zadania';
 $string['assessments'] = 'Hodnotenia';
-$string['atthisstageyou'] = 'V tomto ¹tádiu ste dokonèili hodnotenie.<br /> Na jeho základe mô¾ete chcie» svoju prácu prepracova».<br /> Ak tak urobíte, nezapomeòte taktie¾ upravi» svoje hodnotenie.<br /> To mô¾ete vykona» kliknutím na odkaz Prehodnoti» uvedený ni¾¹ie.';
+$string['atthisstageyou'] = 'V tomto ¹tádiu ste dokonèili hodnotenie.<br />
+Na jeho základe mô¾ete chcie» svoju prácu prepracova».<br />
+Ak tak urobíte, nezapomeòte taktie¾ upravi» svoje hodnotenie.<br />
+To mô¾ete vykona» kliknutím na odkaz Prehodnoti» uvedený ni¾¹ie.';
 $string['awaitingassessmentbythe'] = 'Èaká sa na hodnotenie od $a';
 $string['clearlateflag'] = 'Zmaza» oznaèenie Neskoro';
 $string['comment'] = 'Komentár';
@@ -30,7 +33,8 @@ $string['criterion'] = 'Kritérium';
 $string['deadline'] = 'Uzávierka';
 $string['deadlineis'] = 'Uzávierka je $a';
 $string['delete'] = 'Odstráni»';
-$string['deletesubmissionwarning'] = 'Upozornenie: táto úloha u¾ bola hodnotená ($a-krát).<br />Rozhodne Vám ju doporuèujeme NEODSTRAÒOVA«.';
+$string['deletesubmissionwarning'] = 'Upozornenie: táto úloha u¾ bola hodnotená ($a-krát).<br />
+Rozhodne Vám ju doporuèujeme NEODSTRAÒOVA«.';
 $string['deleting'] = 'Odstraòuje sa';
 $string['description'] = 'Popis';
 $string['descriptionofexercise'] = 'Polo¾ka Zadávanie úlohy obsahuje popis cvièenia alebo úlohy, ktoré majú $a splni», zadaných vo Wordovskom dokumente alebo HTML súbore. Tento súbor sa skopíruje do predo¹lých cvièení tak, ¾e  u¾ívatelia majú sprístupnených $a cvièení. Je tie¾ mo¾né vytvori» sadu variant toho istého cvièenia alebo úlohy, opät vo Worde alebo v HTML, a skopírova» ich do cvièení, predtým, ako ho budú ma» $a sprístupnené.';
@@ -85,7 +89,8 @@ $string['noexercisedescriptionssubmitted'] = 'Nebol zaslaný ¾iadny popis cvièeni
 $string['nosubmissions'] = ' ®iadne rie¹enia';
 $string['notassessedyet'] = 'Doposiaµ nehodnotené';
 $string['notavailable'] = 'Nie je k dispozícii';
-$string['noteonassessmentelements'] = 'V¹imnite si, ¾e bodovanie je rozdelené do niekoµkých \"polo¾iek hodnotenia\".<br />Týmto sa dosiahne to, ¾e bodovanie je µah¹ie a celistvej¹ie. Ako uèiteµ musíte prida» tieto <br />polo¾ky e¹te pred sprístupnením úlohy ¹tudentom. To urobíte tak,<br />¾e kliknete na úlohu v kurze - budete vyzvaní k pridaniu<br />týchto polo¾iek hodnotenie. Ich poèet mô¾ete meni» na obrazovke Upravi» úlohu,<br /> polo¾ky samé mô¾u by» upravené na stránke \"Správa úloh\".';
+$string['noteonassessmentelements'] = 'V¹imnite si, ¾e bodovanie je rozdelené do niekoµkých \"polo¾iek hodnotenia\".<br />
+Týmto sa dosiahne to, ¾e bodovanie je µah¹ie a celistvej¹ie. Ako uèiteµ musíte prida» tieto polo¾ky e¹te pred sprístupnením úlohy ¹tudentom. To urobíte tak, ¾e kliknete na úlohu v kurze - budete vyzvaní k pridaniu týchto polo¾iek hodnotenie. Ich poèet mô¾ete meni» na obrazovke Upravi» úlohu, polo¾ky samotné mô¾u by» upravené na stránke \"Správa úloh\".';
 $string['noteongradinggrade'] = 'Tieto body sú merítkom toho, ako dobre Va¹e hodnotenie súhlasí s hodnotením Va¹ej práce, ktoré vypracoval $a. Èím vy¹¹í je poèet bodov, tým sú si hodnotenia bli¾¹ie.';
 $string['noteonstudentassessments'] = '{Body od ¹tudenta/Body za bodovánie}';
 $string['notgraded'] = 'Nebodované';
@@ -107,17 +112,22 @@ $string['phase2short'] = 'Otvori»';
 $string['phase3'] = 'Ukáza» celkový poèet bodov v ligovej tabuµke';
 $string['phase3short'] = 'Zobrazi»';
 $string['pleasegradetheassessment'] = 'Prosím, obodujte hodnotenie tejto èasti práce - vypracoval $a';
-$string['pleasemakeyourownassessment'] = 'Prosím, vykonajte hodnotenie rie¹enia, ktoré vypracoval $a. <br />V¹imnite si, ¾e forma hodnotenia je spoèiatku zobrazovaná spolu s hodnotením ¹tudentov. <br />Mali by ste vlo¾i», podµa Vá¹ho uvá¾enia, nezbytné návrhy na zmeny a potom kliknú» na jedno z tlaèidiel v spodnej èasti stránky.';
-$string['pleasesubmityourwork'] = '	Prosím, odovzdajte Va¹u prácu za pou¾itia tohto formulára';
-$string['pleaseusethisform'] = 'Prosím, vyplòte tento formulár, ak ste<br /> dokonèili in¹trukcie v cvièení uvedenom ni¾¹ie.';
-$string['pleaseviewtheexercise'] = 'Prosím, zobrazte si cvièenie uvedené ni¾¹ie, kliknutím na jeho názov.<br /> Postupujte podµa in¹trukcií v tomto cvièení. Ak si myslíte,<br /> ¾e ste cvièenie úspe¹ne dokonèili, kliknite na odkaz Hodnoti» (alebo Prehodnoti») <br /> napravo od názvu. Ak vykonáte toto hodnotenie, dostanete in¹trukcie,<br /> ako ïalej postupova».';
-$string['poor'] = ' Slabý';
+$string['pleasemakeyourownassessment'] = 'Prosím, vykonajte hodnotenie rie¹enia, ktoré vypracoval $a.<br />
+V¹imnite si, ¾e forma hodnotenia je spoèiatku zobrazovaná spolu s hodnotením ¹tudentov.<br />
+Mali by ste vlo¾i», podµa Vá¹ho uvá¾enia, potrebné návrhy na zmeny a potom kliknú» na jedno z tlaèidiel v spodnej èasti stránky.';
+$string['pleasesubmityourwork'] = 'Prosím, odovzdajte Va¹u prácu s pou¾itím tohto formulára';
+$string['pleaseusethisform'] = 'Prosím, vyplòte tento formulár, ak ste dokonèili in¹trukcie v cvièení uvedenom ni¾¹ie.';
+$string['pleaseviewtheexercise'] = 'Prosím, zobrazte si cvièenie uvedené ni¾¹ie, kliknutím na jeho názov.<br />
+Postupujte podµa in¹trukcií v tomto cvièení. Ak si myslíte, ¾e ste cvièenie úspe¹ne dokonèili, kliknite na odkaz Hodnoti» (alebo Prehodnoti») napravo od názvu. Ak vykonáte toto hodnotenie, dostanete in¹trukcie, ako ïalej postupova».';
+$string['poor'] = 'Slabý';
 $string['present'] = 'Obsahuje';
 $string['reasonforadjustment'] = 'Dôvod úpravy';
 $string['reassess'] = 'Prehodnoti»';
 $string['regradestudentassessments'] = 'Prebodova» hodnotenie ¹tudentov';
 $string['resubmissionfor'] = 'Znovuodovzdanie - $a';
-$string['resubmitnote'] = '* znamená, ¾e $a má povolené opakované zaslanie rie¹enia úlohy.<br /> Toto oznaèenie mô¾e by» pridelené akejkoµvek odovzdanej úlohe jej prehodnotením a kliknutím na tlaèidlo <b>Povoli» pre $a znovuodovzdanie</b>. <br /> ©tudent mô¾e znovuodovzda» úlohu, ak je toto oznaèenie prítomné na <b>ktorejkoµvek</b> z jeho odovzdaných úloh.';
+$string['resubmitnote'] = '* znamená, ¾e $a má povolené opakované zaslanie rie¹enia úlohy.<br />
+Toto oznaèenie mô¾e by» pridelené akejkoµvek odovzdanej úlohe jej prehodnotením a kliknutím na tlaèidlo <b>Povoli» pre $a znovuodovzdanie</b>.<br />
+©tudent mô¾e znovuodovzda» úlohu, ak je toto oznaèenie prítomné na <b>ktorejkoµvek</b> z jeho odovzdaných úloh.';
 $string['rubric'] = 'Oddiel';
 $string['savedok'] = 'Ulo¾ené v poriadku';
 $string['saveentries'] = 'Ulo¾i» polo¾ky';
@@ -135,7 +145,7 @@ $string['scalepresent'] = '2 bodová stupnica Obsahuje/Chýba';
 $string['scaleyes'] = '2 bodová stupnica Áno/Nie';
 $string['specimenassessmentform'] = 'Vzorový formulár hodnotenia';
 $string['standarddeviation'] = 'Smerodajná odchýlka';
-$string['strict'] = ' Presný';
+$string['strict'] = 'Presný';
 $string['studentallowedtoresubmit'] = '$a mô¾e znovuodovzdáva»';
 $string['studentassessments'] = '$a - hodnotenie';
 $string['studentnotallowed'] = '$a nemô¾e znovuodovzdáva»';
@@ -155,7 +165,10 @@ $string['theexercise'] = 'Cvièenie';
 $string['theexerciseandthesubmissionby'] = 'Cvièenie a odovzdané úlohy, ktoré vypracoval $a';
 $string['thegradeis'] = 'Poèet bodov je $a';
 $string['thereisfeedbackfromthe'] = 'Pri¹lo vyjadrenie od: $a';
-$string['thisisaresubmission'] = 'Toto je znovuodovzdaná úloha, ktorú vypracoval(a) $a.<br /> Je zobrazené i Va¹e hodnotenie predchádzajúcich odovzdaní.<br /> Po prezretí novej odovzdanej úlohy, doplòte prosím, toto hodnotenie<br /> a kliknite na jedno z tlaèidiel na dolnom okraji stránky.';
+$string['thisisaresubmission'] = 'Toto je znovuodovzdaná úloha, ktorú vypracoval(a) $a.<br />
+Je zobrazené i Va¹e hodnotenie predchádzajúcich odovzdaní.<br />
+Po prezretí novej odovzdanej úlohy, doplòte prosím, toto hodnotenie<br />
+a kliknite na jedno z tlaèidiel na dolnom okraji stránky.';
 $string['title'] = 'Názov';
 $string['typeofscale'] = 'Typ ¹kály';
 $string['unassessed'] = '$a nehodnotených';
@@ -168,7 +181,8 @@ $string['verypoor'] = 'Veµmi slabý';
 $string['verystrict'] = 'Veµmi presný';
 $string['view'] = 'Zobrazi»';
 $string['viewteacherassessment'] = 'Zobrazi» $a hodnotenie';
-$string['warningonamendingelements'] = 'UPOZORNENIE: Na¹lo sa odovzdané hodnotenie<br />NEMEÒTE poèet polo¾iek hodnotenia, typ ¹kály alebo váhu jednotlivých polo¾iek.';
+$string['warningonamendingelements'] = 'UPOZORNENIE: Na¹lo sa odovzdané hodnotenie<br />
+NEMEÒTE poèet polo¾iek hodnotenia, typ ¹kály alebo váhu jednotlivých polo¾iek.';
 $string['weightederrorcount'] = 'Vá¾ený poèet chýb: $a';
 $string['weightforgradingofassessments'] = 'Váha pre bodovanie hodnotení';
 $string['weightforteacherassessments'] = 'Váha pre hodnotenie od $a';

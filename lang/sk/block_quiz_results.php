@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // block_quiz_results.php - created with Moodle 1.5 ALPHA (2005043000)
+      // block_quiz_results.php - created with Moodle 1.5 ALPHA (2005050600)
 
 
 $string['bestgrade'] = 'Najlep¹ia známka';

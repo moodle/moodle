@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.5 ALPHA (2005043000)
+      // glossary.php - created with Moodle 1.5 ALPHA (2005051500)
 
 
 $string['addcomment'] = 'Prida» komentár';
@@ -50,7 +50,7 @@ $string['commentson'] = 'Prida» komentár';
 $string['commentupdated'] = 'Aktualizácia komentára bola prevedená';
 $string['concept'] = 'Koncept';
 $string['concepts'] = 'Koncepty';
-$string['configenablerssfeeds'] = 'Toto umo¾ní RSS väzbu na v¹etky slovníky. Budete v¹ak musie» manuálne zapnú» väzbu v nastavení pre ka¾dý slovník.';
+$string['configenablerssfeeds'] = 'Toto umo¾ní funkciu RSS kanálov pre v¹etky slovníky. Budete v¹ak musie» manuálne zapnú» túto funkciu v nastaveniach pre ka¾dý slovník.';
 $string['currentglossary'] = 'Aktuálny slovník';
 $string['dateview'] = 'Prehµadáva» podµa dátumu';
 $string['defaultapproval'] = 'Implicitne schválené';
@@ -89,11 +89,14 @@ $string['entryleveldefaultsettings'] = 'Východiskové nastavenia úrovne záznamov'
 $string['entrysaved'] = 'Tento záznam bol ulo¾ený';
 $string['entryupdated'] = 'Tento záznam bol zaktualizovaný';
 $string['entryusedynalink'] = 'Tento záznam automaticky prelinkova»';
-$string['explainaddentry'] = 'Prida» nový záznam do aktuálneho slovníka.<br />Koncept a definícia sú povinné polia na vyplnenie';
+$string['explainaddentry'] = 'Prida» nový záznam do aktuálneho slovníka.<br />
+Koncept a definícia sú povinné polia na vyplnenie';
 $string['explainall'] = 'Ukáza» v¹etky záznamy na jednej strane';
 $string['explainalphabet'] = 'Prehµadáva» slovník s pou¾itím zoznamu';
-$string['explainexport'] = 'Vytvoril sa nový súbor.<br />Stiahnite si ho a bezpeène si ho ulo¾te. Mô¾ete si ho kedykoµvek importova» do tohto alebo iného kurzu.';
-$string['explainimport'] = 'Musíte ¹pecifikova» súbor, ktorý sa má importova» a definova» kritéria procesu.<br />Vlo¾te znovu Va¹u po¾iadavku.';
+$string['explainexport'] = 'Vytvoril sa nový súbor.<br />
+Stiahnite si ho a bezpeène si ho ulo¾te. Mô¾ete si ho kedykoµvek importova» do tohto alebo iného kurzu.';
+$string['explainimport'] = 'Musíte ¹pecifikova» súbor, ktorý sa má importova» a definova» kritéria procesu.
+<p>Vlo¾te znovu Va¹u po¾iadavku.</p>';
 $string['explainspecial'] = 'Ukáza» záznamy, ktoré nezaèínajú písmenom';
 $string['exportedentry'] = 'Exportovaný záznam';
 $string['exportedfile'] = 'Exportovaný súbor';
@@ -115,7 +118,7 @@ $string['importentries'] = 'Importova» záznamy';
 $string['isglobal'] = 'Je tento slovník v¹eobecný?';
 $string['linkcategory'] = 'Automaticky prelinkuj túto kategóriu';
 $string['mainglossary'] = 'Hlavný slovník';
-$string['maxtimehaspassed'] = '¥utujeme, ale èas urèený na úpravu tohto komentára ($a)u¾ vypr¹al!';
+$string['maxtimehaspassed'] = '¥utujeme, ale èas urèený na úpravu tohto komentára ($a) u¾ vypr¹al!';
 $string['modulename'] = 'Slovník';
 $string['modulenameplural'] = 'Slovníky';
 $string['newentries'] = 'Nové záznamy v slovníku';
@@ -144,7 +147,7 @@ $string['ratingsuse'] = 'Pou¾i» hodnotenia';
 $string['ratingtime'] = 'Obmedzi» hodnotenia záznamov v tomto èasovom rozpätí:';
 $string['rejectedentries'] = 'Odmietnuté záznamy';
 $string['rejectionrpt'] = 'Zamietnutie správy';
-$string['rsssubscriberss'] = 'Zobrazi» RSS väzbu pre \'$a\' koncepty';
+$string['rsssubscriberss'] = 'Zobrazi» RSS kanál pre \'$a\' koncepty';
 $string['searchindefinition'] = 'Plnotextové vyhµadávanie';
 $string['secondaryglossary'] = 'Vedµaj¹í slovník';
 $string['sendinratings'] = 'Zasla» najnov¹ie hodnotenia';
@@ -160,7 +163,7 @@ $string['standardview'] = 'Prehµadáva» podµa abecedy';
 $string['studentcanpost'] = '©tudenti mô¾u priáva» záznamy';
 $string['totalentries'] = 'Celkový poèet záznamov';
 $string['usedynalink'] = 'Automaticky prelinkuj záznamy v slovníku';
-$string['waitingapproval'] = 'Èakanie na schválenie';
+$string['waitingapproval'] = 'Èaká sa na schválenie';
 $string['warningstudentcapost'] = '(Má význam len vtedy, keï slovník nie je hlavný)';
 $string['withauthor'] = 'Koncepty uvedené s autorom';
 $string['withoutauthor'] = 'Koncepty uvedené bez autora';

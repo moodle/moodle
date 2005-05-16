@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // block_section_links.php - created with Moodle 1.5 ALPHA (2005043000)
+      // block_section_links.php - created with Moodle 1.5 ALPHA (2005051500)
 
 
 $string['blockname'] = 'Prepojenia sekcií';

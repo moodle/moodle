@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // dialogue.php - created with Moodle 1.5 ALPHA (2005043000)
+      // dialogue.php - created with Moodle 1.5 ALPHA (2005051500)
 
 
 $string['addmynewentries'] = 'Prida» moje nové príspevky';
@@ -9,11 +9,12 @@ $string['allowmultiple'] = 'Povoli» viacero dialógov s tou istou osobou';
 $string['allowstudentdialogues'] = 'Povoli» dialógy medzi ¹tudentmi navzájom';
 $string['close'] = 'Ukonèi»';
 $string['closed'] = 'Ukonèený';
-$string['confirmclosure'] = 'Práve sa chystáte ukonèi» dialóg s $a. Ak u¾ raz ukonèíte dialóg, nemô¾ete ho opätovne nadviaza». Ak ukonèíte tento dialóg, mô¾ete si ho prezera», ale nemô¾ete u¾ doòho prispieva». Ak chcete v dialógu s touto osobou \"talking\" pokraèova», budete musie» zaèa» nový dialóg <br /><br />. Ste si naozaj istý, ¾e chcete ukonèi» tento dialóg?';
+$string['confirmclosure'] = 'Práve sa chystáte ukonèi» dialóg s $a. Ak u¾ raz ukonèíte dialóg, nemô¾ete ho opätovne nadviaza». Ak ukonèíte tento dialóg, mô¾ete si ho prezera», ale nemô¾ete u¾ doòho prispieva». Ak chcete v &quot;rozhovore&quot; s touto osobou pokraèova», budete musie» zaèa» nový dialóg.<br /><br />
+Ste si naozaj istý, ¾e chcete ukonèi» tento dialóg?';
 $string['deleteafter'] = 'Vymaza» ukonèené dialógy po (dni)';
 $string['dialogueclosed'] = 'Dialóg je ukonèený';
 $string['dialogueintro'] = 'Nadviazanie dialógu';
-$string['dialoguemail'] = '	$a->userfrom  pridal nový príspevok do Vá¹ho dialógu \'$a->dialogue\'
+$string['dialoguemail'] = '$a->userfrom  pridal nový príspevok do Vá¹ho dialógu \'$a->dialogue\'
 
 Mô¾ete si ho pozrie» tu:
 

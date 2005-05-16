@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.5 ALPHA (2005043000)
+      // editor.php - created with Moodle 1.5 ALPHA (2005051500)
 
 
 $string['about'] = 'O tomto editore';
@@ -22,6 +22,7 @@ $string['cellspacing'] = 'Vzdialenos» medzi bunkami';
 $string['choosechar'] = 'Vyberte znak';
 $string['chooseicon'] = 'Vyberte si ikonu na vlo¾enie';
 $string['close'] = 'Zatvori»';
+$string['closeafterreplace'] = 'Zatvori» po nahradení';
 $string['cols'] = 'Ståpce';
 $string['copy'] = 'Kopírova» výber';
 $string['createanchor'] = 'Vytvori» návestie';
@@ -30,6 +31,7 @@ $string['createlink'] = 'Vlo¾i» odkaz ';
 $string['cut'] = 'Vybra» výber';
 $string['delete'] = 'Vymaza»';
 $string['filebrowser'] = 'Prehliadaè súborov';
+$string['findwhat'] = 'Hlada»';
 $string['fontname'] = 'Názov fontu';
 $string['fontsize'] = 'Veµkos» fontu';
 $string['forecolor'] = 'Farba fontu';
@@ -49,6 +51,7 @@ $string['insertlink'] = 'Vlo¾i» odkaz';
 $string['insertsmile'] = 'Vlo¾i» smajlíka';
 $string['inserttable'] = 'Vlo¾i» tabuµku';
 $string['italic'] = 'Kurzíva';
+$string['itemsreplaced'] = 'polo¾iek nahradených!';
 $string['justifycenter'] = 'Zarovna» na stred';
 $string['justifyfull'] = 'Zarovna» do bloku';
 $string['justifyleft'] = 'Zarovna» doµava';
@@ -65,6 +68,7 @@ $string['linktargetself'] = 'V tom istom rámci';
 $string['linktargettop'] = 'V tom istom okne';
 $string['linktitle'] = 'Nadpis';
 $string['linkurl'] = 'URL';
+$string['matchcase'] = 'Citlivé na velkos»';
 $string['middle'] = 'Uprostred (Middle)';
 $string['minimize'] = 'Minimalizova» editor';
 $string['move'] = 'Presunú»';
@@ -73,6 +77,7 @@ $string['normal'] = 'Normálny';
 $string['notimage'] = 'Vybraný súbor nie je obrázok. Prosím, vyberte si iný súbor!';
 $string['notset'] = 'Nenastavené';
 $string['ok'] = 'OK';
+$string['options'] = 'Mo¾nosti';
 $string['orderedlist'] = 'Èíslovaný zoznam';
 $string['outdent'] = 'Zmen¹i» odsadenie';
 $string['paste'] = 'Vlo¾i» zo schránky';
@@ -84,11 +89,16 @@ $string['preformatted'] = 'Predformátovaný';
 $string['preview'] = 'Náhµad';
 $string['properties'] = 'Vlastnosti';
 $string['redo'] = 'Opakova» poslednú akciu';
+$string['regularexpressions'] = 'Pou¾i» \'regular expression\'';
 $string['removelink'] = 'Odstráni» odkaz';
 $string['rename'] = 'Premenova»';
+$string['replaceall'] = 'Nahradi» v¹etko';
+$string['replacewith'] = 'Nahradi»';
 $string['right'] = 'Vpravo';
 $string['righttoleft'] = 'Sprava doµava';
 $string['rows'] = 'Riadkov';
+$string['searchandreplace'] = 'Vyhµadaj a nahraï';
+$string['searchnotfound'] = 'Hµadaný re»azec nebol nájdený!';
 $string['selectcolor'] = 'Výber farby';
 $string['selection'] = 'Výber';
 $string['showhelp'] = 'Nápoveda k pou¾ívaniu editora';

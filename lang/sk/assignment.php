@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.5 ALPHA (2005043000)
+      // assignment.php - created with Moodle 1.5 ALPHA (2005051500)
 
 
 $string['allowresubmit'] = 'Povoli» opätovné odovzdanie zadania';
@@ -13,7 +13,7 @@ $string['assignmentmailhtml'] = '$a->teacher poslal komentár k Vami vypracovaném
 
 Nájdete ho pripojený k Vá¹mu
 
-<a href=\"$a->url\">vypracovanému zadaniu</a>';
+<a href=\"$a->url\">vypracovanému zadaniu</a>.';
 $string['assignmentname'] = 'Názov zadania';
 $string['assignmenttype'] = 'Typ zadania';
 $string['configmaxbytes'] = 'Maximálna veµkos» zadania pre v¹etky vypracované zadania na stránke ( s ohµadom na obmedzenia kurzu a ostatné miestne nastavenia)';
@@ -27,7 +27,7 @@ $a->username aktualizoval zaslanie vypracovaného zadania pre \'$a->assignment\'
 Je to dostupné tu:
 
 $a->url';
-$string['emailteachermailhtml'] = '$a->username aktualizoval zaslanie vypracovaného zadania pre <i>\'$a->assignment\'</i><br /><br />. Je to <a href=\"$a->url\"> dostupné na www stránke </a>.';
+$string['emailteachermailhtml'] = '$a->username aktualizoval zaslanie vypracovaného zadania pre <i>\'$a->assignment\'</i><br /><br />. Je to <a href=\"$a->url\">dostupné na www stránke</a>.';
 $string['emailteachers'] = 'Oboznámi» uèiteµov o zaslaní vypracovaného zadania prostredníctvom emailu';
 $string['existingfiledeleted'] = 'Existujúci súbor bol vymazaný:$a';
 $string['failedupdatefeedback'] = 'Chyba pri aktualizácii odpovede pre u¾ívateµa $a';

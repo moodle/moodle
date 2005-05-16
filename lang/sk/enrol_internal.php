@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // enrol_internal.php - created with Moodle 1.5 ALPHA (2005043000)
+      // enrol_internal.php - created with Moodle 1.5 ALPHA (2005051500)
 
 
 $string['description'] = 'Toto je ¹tandardný formulár na zápis do kurzu. Existujú dva hlavné spôsoby, ako sa mô¾e ¹tudent zapísa» do kurzu.
