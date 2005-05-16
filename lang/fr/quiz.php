@@ -111,6 +111,7 @@ $string['editingshortanswer'] = 'Modifier une question à réponse courte';
 $string['editingtruefalse'] = 'Modifier une question Vrai/Faux';
 $string['editquestions'] = 'Modifier les questions';
 $string['errorsdetected'] = '$a erreur(s) détectée(s)';
+$string['examview'] = 'Examview';
 $string['existingcategory1'] = 'Une lettre d\'un jeu de données existant de lettres déjà utilisé dans d\'autres questions de cette catégorie';
 $string['existingcategory2'] = 'Un fichier d\'un jeu de données existant de fichiers déjà utilisé dans d\'autres questions de cette catégorie';
 $string['existingcategory3'] = 'Un lien d\'un jeu de données existant de liens déjà utilisé dans d\'autres questions de cette catégorie';
