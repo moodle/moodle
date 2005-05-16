@@ -191,7 +191,7 @@
 
             //Now, build the QUIZ_QUESTIONS record structure
             $question->category = $new_category_id;
-	    $question->parent = backup_todb($que_info['#']['PARENT']['0']['#']);
+            $question->parent = backup_todb($que_info['#']['PARENT']['0']['#']);
             $question->name = backup_todb($que_info['#']['NAME']['0']['#']);
             $question->questiontext = backup_todb($que_info['#']['QUESTIONTEXT']['0']['#']);
             $question->questiontextformat = backup_todb($que_info['#']['QUESTIONTEXTFORMAT']['0']['#']);
@@ -205,8 +205,8 @@
             $question->hidden = backup_todb($que_info['#']['HIDDEN']['0']['#']);
 
             ////We have to recode the parent field
-	    // This should work alright because we ordered the questions appropriately during backup so that
-	    // questions that can be parents are restored first
+            // This should work alright because we ordered the questions appropriately during backup so that
+        // questions that can be parents are restored first
             if ($question->parent and $parent = backup_getid($restore->backup_unique_code,"quiz_questions",$question->parent)) {
                 $question->parent = $parent->new_id;
             }
@@ -268,7 +268,7 @@
                     $status = quiz_restore_calculated($oldid,$newid,$que_info,$restore);
                 } else if ($question->qtype == "11") {
                     $status = quiz_restore_rqp($oldid,$newid,$que_info,$restore);
-		}
+        }
                 
             } else {
                 //We are NOT creating the question, but we need to know every quiz_answers
@@ -1461,7 +1461,7 @@
             }
 
             //We have to recode the layout field (a list of questions id and pagebreaks)
-	    $attempt->layout = quiz_recode_layout($attempt->layout, $restore);
+        $attempt->layout = quiz_recode_layout($attempt->layout, $restore);
 
             //The structure is equal to the db, so insert the quiz_attempts
             $newid = insert_record ("quiz_attempts",$attempt);
@@ -1787,7 +1787,7 @@
             $newid = insert_record ("quiz_rqp_states",$state);
         }
 
-	return $status;
+    return $status;
     }
 
     //This function restores the quiz_grades
@@ -2017,16 +2017,16 @@
     function quiz_recode_layout($layout, $restore) {
         //Recodes the quiz layout (a list of questions id and pagebreaks)
 
-	//Extracts question id from sequence
-	if ($questionids = explode(',', $layout)) {
-	    foreach ($questionids as $id => $questionid) {
-		if ($questionid) { // If it iss zero then this is a pagebreak, don't translate
-		    $newq = backup_getid($restore->backup_unique_code,"quiz_questions",$questionid);
-		    $questionids[$id] = $newq->new_id;
-		}
-	    }
-	}
-	return implode(',', $questionids);
+    //Extracts question id from sequence
+    if ($questionids = explode(',', $layout)) {
+        foreach ($questionids as $id => $questionid) {
+        if ($questionid) { // If it iss zero then this is a pagebreak, don't translate
+            $newq = backup_getid($restore->backup_unique_code,"quiz_questions",$questionid);
+            $questionids[$id] = $newq->new_id;
+        }
+        }
+    }
+    return implode(',', $questionids);
     }
 
 ?>

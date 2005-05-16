@@ -103,11 +103,11 @@
         $modform->grades = quiz_get_all_question_grades($modform);
     }
 
-	if ($page > -1) {
-		$modform->page = $page;
-	} else {
-		$page = isset($modform->page) ? $modform->page : 0;
-	}
+    if ($page > -1) {
+        $modform->page = $page;
+    } else {
+        $page = isset($modform->page) ? $modform->page : 0;
+    }
 
 /// Now, check for commands on this page and modify variables as necessary
 

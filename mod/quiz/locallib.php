@@ -842,7 +842,7 @@ class quiz_default_questiontype {
         most simple question types. */
 
         $teststate = clone($state);
-	$teststate->raw_grade = 0;
+        $teststate->raw_grade = 0;
         foreach($question->options->answers as $answer) {
             $teststate->responses[''] = $answer->answer;
 
@@ -1466,9 +1466,9 @@ function quiz_extract_responses($questions, $responses, $defaultevent) {
 */
 function quiz_regrade_question_in_quizzes($question, $quizlist) {
 
-	if (empty($quizlist)) {
-		return;
-	}
+    if (empty($quizlist)) {
+        return;
+    }
 
     if ($quizlist == 'all') { // assume that all quizzes are affected
         if (! $instances = get_records('quiz_question_instances',
@@ -1482,7 +1482,7 @@ function quiz_regrade_question_in_quizzes($question, $quizlist) {
     }
 
     // Get all affected quizzes
-	$quizlist = implode(',', $quizlist);
+    $quizlist = implode(',', $quizlist);
     if (! $quizzes = get_records_list('quiz', 'id', $quizlist)) {
         error('Couldn\'t get quizzes for regrading!');
     }

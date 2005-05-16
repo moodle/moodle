@@ -23,7 +23,7 @@
     /// Header:
     print_header_simple(get_string('editcategories', 'quiz'), '',
                  "<a href=\"index.php?id=$course->id\">".get_string('modulenameplural', 'quiz').'</a>'.
-		 '-> <a href="edit.php">'.get_string('editquestions', 'quiz').'</a>'.
+                 '-> <a href="edit.php">'.get_string('editquestions', 'quiz').'</a>'.
                  ' -> '.get_string('editcategories', 'quiz'));
 
     if (isset($SESSION->modform->instance) and $quiz = get_record('quiz', 'id', $SESSION->modform->instance)) {
@@ -735,7 +735,7 @@ class quiz_category_object {
     function add_category($newparent, $newcategory, $newinfo, $newpublish, $newcourse) {
 
         if ($newparent) {
-        	// first check that the parent category is in the correct course
+            // first check that the parent category is in the correct course
             if(!(get_field('quiz_categories', 'course', 'id', $newparent) == $newcourse)) {
                 return false;
             }

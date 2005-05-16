@@ -578,8 +578,8 @@ function quiz_print_cat_question_list($course, $categoryid, $quizselected=true,
         echo "</td>\n";
         echo "</tr>\n";
     }
-	echo '<tr><td colspan="3">';
-	print_paging_bar($totalnumber, $page, $perpage, "edit.php?perpage=$perpage&amp;");
+    echo '<tr><td colspan="3">';
+    print_paging_bar($totalnumber, $page, $perpage, "edit.php?perpage=$perpage&amp;");
     echo "</td></tr></table>\n";
     print_simple_box_end();
 

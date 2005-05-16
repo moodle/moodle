@@ -52,10 +52,10 @@ class quiz_rqp_qtype extends quiz_default_questiontype {
 
         // Check source file
         if (!$item = remote_item_info($options)) {
-	    // We have not been able to obtain item information from any server
-	    $result->notice = get_string('noconnection', 'quiz', $options);
-	    return $result;
-	}
+            // We have not been able to obtain item information from any server
+            $result->notice = get_string('noconnection', 'quiz', $options);
+            return $result;
+        }
         if (is_soap_fault($item)) {
             $result->notice = get_string('invalidsource', 'quiz', $item);
             quiz_rqp_debug_soap($item);

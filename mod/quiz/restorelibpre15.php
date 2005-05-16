@@ -237,7 +237,7 @@
                 $newid = insert_record ("quiz_questions",$question);
                 //If it is a random question, parent = id
                 if ($newid && $question->qtype == RANDOM) {
-                    set_field ('questions', 'parent', $newid, 'id', $newid);
+                    set_field ('quiz_questions', 'parent', $newid, 'id', $newid);
                 }
                 $creatingnewquestion = true;
             }
@@ -1179,7 +1179,6 @@
     //STEP 2. Restore quizzes and associated structures
     //    (course dependent)
     function quiz_restore_pre15_mods($mod,$restore) {
-echo "PRE15!!";
 
         global $CFG;
 
