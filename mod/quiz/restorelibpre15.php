@@ -121,7 +121,7 @@
             $quiz_cat->parent = backup_todb($info['QUESTION_CATEGORY']['#']['PARENT']['0']['#']);
             $quiz_cat->sortorder = backup_todb($info['QUESTION_CATEGORY']['#']['SORTORDER']['0']['#']);
 
-            if ($catfound = restore_get_best_quiz_category($quiz_cat, $restore->course)) {
+            if ($catfound = restore_get_best_quiz_category($quiz_cat, $restore->course_id)) {
                 $newid = $catfound;
             } else {
                 if (!$quiz_cat->stamp) {
@@ -187,9 +187,13 @@
                 $question->penalty = backup_todb($que_info['#']['PENALTY']['0']['#']);
             }
             $question->qtype = backup_todb($que_info['#']['QTYPE']['0']['#']);
-            $question->length = backup_todb($que_info['#']['LENGTH']['0']['#']);
+            if (isset($que_info['#']['LENGTH']['0']['#'])) { //Only if it's set, to apply DB default else.
+                $question->length = backup_todb($que_info['#']['LENGTH']['0']['#']);
+            }
             $question->stamp = backup_todb($que_info['#']['STAMP']['0']['#']);
-            $question->version = backup_todb($que_info['#']['VERSION']['0']['#']);
+            if (isset($que_info['#']['VERSION']['0']['#'])) { //Only if it's set, to apply DB default else.
+                $question->version = backup_todb($que_info['#']['VERSION']['0']['#']);
+            }
             $question->hidden = backup_todb($que_info['#']['HIDDEN']['0']['#']);
 
             //Although only a few backups can have questions with parent, we try to recode it
@@ -201,14 +205,6 @@
             // If it is a random question then hide it
             if ($question->qtype == RANDOM) {
                 $question->hidden = 1;
-            }
-
-            //If the question was formatted as Wiki, convert it to Markdown in 1.5
-            if ($question->questiontextformat == FORMAT_WIKI) {
-                include_once("$CFG->dirroot/lib/wiki_to_markdown.php");
-                $wtm = new WikiToMarkdown();
-                $question->questiontext = $wtm->convert($question->questiontext, $restore->course);
-                $question->questiontextformat = FORMAT_MARKDOWN;
             }
 
             //If it is a description question, length = 0
@@ -975,14 +971,9 @@
             //Save the new question to DB
             $newid = insert_record('quiz_questions', $question);
 
-            //Save ids in backup_ids
             if ($newid) {
-                backup_putid($restore->backup_unique_code,"quiz_questions",
-                             $oldid, $newid);
-                // and copy useful information to createdquestions
                 $createdquestions[$multianswer->positionkey] = $newid;
             }
-
 
             //Do some output
             if (($i+1) % 50 == 0) {
@@ -1215,7 +1206,9 @@ echo "PRE15!!";
             $quiz->feedback = backup_todb($info['MOD']['#']['FEEDBACK']['0']['#']);
             $quiz->correctanswers = backup_todb($info['MOD']['#']['CORRECTANSWERS']['0']['#']);
             $quiz->grademethod = backup_todb($info['MOD']['#']['GRADEMETHOD']['0']['#']);
-            $quiz->decimalpoints = backup_todb($info['MOD']['#']['DECIMALPOINTS']['0']['#']);
+            if (isset($info['MOD']['#']['DECIMALPOINTS']['0']['#'])) { //Only if it's set, to apply DB default else.
+                $quiz->decimalpoints = backup_todb($info['MOD']['#']['DECIMALPOINTS']['0']['#']);
+            }
             $quiz->review = backup_todb($info['MOD']['#']['REVIEW']['0']['#']);
             $quiz->questionsperpage = backup_todb($info['MOD']['#']['QUESTIONSPERPAGE']['0']['#']);
             $quiz->shufflequestions = backup_todb($info['MOD']['#']['SHUFFLEQUESTIONS']['0']['#']);
@@ -1230,38 +1223,35 @@ echo "PRE15!!";
             $quiz->subnet = backup_todb($info['MOD']['#']['SUBNET']['0']['#']);
             $quiz->popup = backup_todb($info['MOD']['#']['POPUP']['0']['#']);
 
-            //If decimalpoints aren't defined, default to 2
-            if (empty($quiz->decimalpoints)) {
-                $quiz->decimalpoints = 2;
-            }
-
             //We have to recode the questions field (a list of questions id)
-            //Extracts question id from sequence
-            $questions_field = "";
-            $in_first = true;
-            $tok = strtok($quiz->questions,",");
-            while ($tok) {
-                //Get the question from backup_ids
-                $question = backup_getid($restore->backup_unique_code,"quiz_questions",$tok);
-                if ($question) {
-                    if ($in_first) {
-                        $questions_field .= $question->new_id;
-                        $in_first = false;
-                    } else {
-                        $questions_field .= ",".$question->new_id;
+            $newquestions = array();
+            if ($questionsarr = explode (",",$quiz->questions)) {
+                foreach ($questionsarr as $key => $value) {
+                    if ($question = backup_getid($restore->backup_unique_code,"quiz_questions",$value)) {
+                        $newquestions[] = $question->new_id;
                     }
                 }
-                //check for next
-                $tok = strtok(",");
             }
-            //We have the questions field recoded to its new ids
-            $quiz->questions = $questions_field;
+            $quiz->questions = implode (",", $newquestions);
 
-            //Examine the decimalpoints field to detect pre 1.5 backups
-            if (!isset($info['MOD']['#']['DECIMALPOINTS']['0']['#'])) {
-                //Default value
-                $quiz->decimalpoints = 2;
+            //Recalculate the questions field to include page breaks if necessary
+            $quiz->questions = quiz_repaginate($quiz->questions, $quiz->questionsperpage);
+
+            //Calculate the new review field contents (logic extracted from upgrade)
+            $review = (QUIZ_REVIEW_IMMEDIATELY & (QUIZ_REVIEW_RESPONSES + QUIZ_REVIEW_SCORES));
+            if ($quiz->feedback) {
+                $review += (QUIZ_REVIEW_IMMEDIATELY & QUIZ_REVIEW_FEEDBACK);
             }
+            if ($quiz->correctanswers) {
+                $review += (QUIZ_REVIEW_IMMEDIATELY & QUIZ_REVIEW_ANSWERS);
+            }
+            if ($quiz->review & 1) {
+                $review += QUIZ_REVIEW_CLOSED;
+            }
+            if ($quiz->review & 2) {
+                $review += QUIZ_REVIEW_OPEN;
+            }
+            $quiz->review = $review;
 
             //The structure is equal to the db, so insert the quiz
             $newid = insert_record ("quiz",$quiz);
@@ -1274,17 +1264,17 @@ echo "PRE15!!";
                 //We have the newid, update backup_ids
                 backup_putid($restore->backup_unique_code,$mod->modtype,
                              $mod->id, $newid);
-                //We have to restore the question_grades now (course level table)
-                $status = quiz_question_grades_restore_mods($newid,$info,$restore);
+                //We have to restore the quiz_question_instances now (old quiz_question_grades, course level)
+                $status = quiz_question_instances_restore_pre15_mods($newid,$info,$restore);
                 //We have to restore the question_versions now (course level table)
-                $status = quiz_question_versions_restore_mods($newid,$info,$restore);
+                $status = quiz_question_versions_restore_pre15_mods($newid,$info,$restore);
                 //Now check if want to restore user data and do it.
                 if ($restore->mods['quiz']->userinfo) {
                     //Restore quiz_attempts
-                    $status = quiz_attempts_restore_mods ($newid,$info,$restore);
+                    $status = quiz_attempts_restore_pre15_mods ($newid,$info,$restore, $quiz->questions);
                     if ($status) {
                         //Restore quiz_grades
-                        $status = quiz_grades_restore_mods ($newid,$info,$restore);
+                        $status = quiz_grades_restore_pre15_mods ($newid,$info,$restore);
                     }
                 }
             } else {
@@ -1297,8 +1287,8 @@ echo "PRE15!!";
         return $status;
     }
 
-    //This function restores the quiz_question_grades
-    function quiz_question_grades_restore_pre15_mods($quiz_id,$info,$restore) {
+    //This function restores the quiz_question_instances (old quiz_question_grades)
+    function quiz_question_instances_restore_pre15_mods($quiz_id,$info,$restore) {
 
         global $CFG;
 
@@ -1329,7 +1319,7 @@ echo "PRE15!!";
             }
 
             //The structure is equal to the db, so insert the quiz_question_grades
-            $newid = insert_record ("quiz_question_grades",$grade);
+            $newid = insert_record ("quiz_question_instances",$grade);
 
             //Do some output
             if (($i+1) % 10 == 0) {
@@ -1342,7 +1332,7 @@ echo "PRE15!!";
 
             if ($newid) {
                 //We have the newid, update backup_ids
-                backup_putid($restore->backup_unique_code,"quiz_question_grades",$oldid,
+                backup_putid($restore->backup_unique_code,"quiz_question_instances",$oldid,
                              $newid);
             } else {
                 $status = false;
@@ -1424,7 +1414,7 @@ echo "PRE15!!";
     }
 
     //This function restores the quiz_attempts
-    function quiz_attempts_restore_pre15_mods($quiz_id,$info,$restore) {
+    function quiz_attempts_restore_pre15_mods($quiz_id,$info,$restore,$quizquestions) {
 
         global $CFG;
 
@@ -1459,6 +1449,15 @@ echo "PRE15!!";
                 $attempt->userid = $user->new_id;
             }
 
+            //Set the layout field (inherited from quiz by default)
+            $attempt->layout = $quizquestions;
+
+            //Set the preview field (code from upgrade)
+            if (isteacher($restore->course_id,$attempt->userid)) {
+                $attempt->preview = 1;
+            }
+            
+
             //The structure is equal to the db, so insert the quiz_attempts
             $newid = insert_record ("quiz_attempts",$attempt);
 
@@ -1475,8 +1474,8 @@ echo "PRE15!!";
                 //We have the newid, update backup_ids
                 backup_putid($restore->backup_unique_code,"quiz_attempts",$oldid,
                              $newid);
-                //Now process quiz_responses
-                $status = quiz_responses_restore_mods($newid,$att_info,$restore);
+                //Now process quiz_states (old quiz_responses table)
+                $status = quiz_states_restore_pre15_mods($newid,$att_info,$restore);
             } else {
                 $status = false;
             }
@@ -1485,8 +1484,8 @@ echo "PRE15!!";
         return $status;
     }
 
-    //This function restores the quiz_responses
-    function quiz_responses_restore_pre15_mods($attempt_id,$info,$restore) {
+    //This function restores the quiz_states (old quiz_responses)
+    function quiz_states_restore_pre15_mods($attempt_id,$info,$restore) {
 
         global $CFG;
 
@@ -1522,6 +1521,9 @@ echo "PRE15!!";
             if ($question) {
                 $response->originalquestion = $question->new_id;
             }
+
+            //Set the raw_grade field (default to the existing grade one, no penalty in pre15 backups)
+            $response->raw_grade = $response->grade;
 
             //We have to recode the answer field
             //It depends of the question type !!
@@ -1639,44 +1641,48 @@ echo "PRE15!!";
                         //Nothing to do. The response is a text.
                         break;
                     case 9:    //MULTIANSWER QTYPE
-                        //The answer is a comma separated list of hypen separated multianswer_id and answers. We must recode them.
+                        //The answer is a comma separated list of hypen separated sequence keys (from 1) and answers. We must recode them.
+                        //We need to have the sequence of questions here to be able to detect qtypes
+                        $multianswerdb = get_record('quiz_multianswers','question',$response->question);
+                        //Make an array of sequence to easy access
+                        $sequencearr = explode(",",$multianswerdb->sequence);
                         $answer_field = "";
                         $in_first = true;
                         $tok = strtok($response->answer,",");
+                        $counter = 1;
                         while ($tok) {
                             //Extract the multianswer_id and the answer
                             $exploded = explode("-",$tok);
                             $multianswer_id = $exploded[0];
                             $answer = $exploded[1];
-                            //Get the multianswer from backup_ids
-                            $mul = backup_getid($restore->backup_unique_code,"quiz_multianswers",$multianswer_id);
-                            if ($mul) {
-                                //Now, depending of the answertype field in quiz_multianswers
-                                //we do diferent things
-                                $mul_db = get_record ("quiz_multianswers","id",$mul->new_id);
-                                if ($mul_db->answertype == "1") {
-                                    //Shortanswer
-                                    //The answer is text, do nothing
-                                } else if ($mul_db->answertype == "3") {
-                                    //Multichoice
-                                    //The answer is an answer_id, look for it in backup_ids
-                                    $ans = backup_getid($restore->backup_unique_code,"quiz_answers",$answer);
-                                    $answer = $ans->new_id;
-                                } else if ($mul_db->answertype == "8") {
-                                    //Numeric
-                                    //The answer is text, do nothing
-                                }
+                            //Calculate question type
+                            $questiondb = get_record('quiz_questions','id',$sequencearr[$counter-1]);
+                            $questiontype = $questiondb->qtype;
+                            //Now, depending of the answertype field in quiz_multianswers
+                            //we do diferent things
+                            if ($questiontype == "1") {
+                                //Shortanswer
+                                //The answer is text, do nothing
+                            } else if ($questiontype == "3") {
+                                //Multichoice
+                                //The answer is an answer_id, look for it in backup_ids
+                                $ans = backup_getid($restore->backup_unique_code,"quiz_answers",$answer);
+                                $answer = $ans->new_id;
+                            } else if ($questiontype == "8") {
+                                //Numeric
+                                //The answer is text, do nothing
+                            }
 
-                                //Finaly, build the new answer field for each pair
-                                if ($in_first) {
-                                    $answer_field .= $mul->new_id."-".$answer;
-                                    $in_first = false;
-                                } else {
-                                    $answer_field .= ",".$mul->new_id."-".$answer;
-                                }
+                            //Finaly, build the new answer field for each pair
+                            if ($in_first) {
+                                $answer_field .= $counter."-".$answer;
+                                $in_first = false;
+                            } else {
+                                $answer_field .= ",".$counter."-".$answer;
                             }
                             //check for next
                             $tok = strtok(",");
+                            $counter++;
                         }
                         $response->answer = $answer_field;
                         break;
@@ -1692,8 +1698,8 @@ echo "PRE15!!";
                 $status = false;
             }
 
-            //The structure is equal to the db, so insert the quiz_attempts
-            $newid = insert_record ("quiz_responses",$response);
+            //The structure is equal to the db, so insert the quiz_states
+            $newid = insert_record ("quiz_states",$response);
 
             //Do some output
             if (($i+1) % 10 == 0) {
@@ -1706,7 +1712,7 @@ echo "PRE15!!";
 
             if ($newid) {
                 //We have the newid, update backup_ids
-                backup_putid($restore->backup_unique_code,"quiz_responses",$oldid,
+                backup_putid($restore->backup_unique_code,"quiz_states",$oldid,
                              $newid);
             } else {
                 $status = false;
