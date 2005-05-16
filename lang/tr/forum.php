@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.5 ALPHA (2005042400)
+      // forum.php - created with Moodle 1.5 ALPHA (2005043000)
 
 
 $string['addanewdiscussion'] = 'Yeni tartýþma konusu ekle';
@@ -175,6 +175,7 @@ $string['tracking'] = 'Ýzle';
 $string['trackingoff'] = 'Kapalý';
 $string['trackingon'] = 'Açýk';
 $string['trackingoptional'] = 'Ýsteðe baðlý';
+$string['trackingtype'] = 'Bu forum için izleme yap?';
 $string['unread'] = 'Okunmamýþ';
 $string['unreadposts'] = 'Okunmamýþ mesajlar';
 $string['unreadpostsnumber'] = '$a okunmamýþ mesaj';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.5 ALPHA (2005042300)
+      // quiz.php - created with Moodle 1.5 ALPHA (2005043000)
 
 
 $string['acceptederror'] = 'Kabul edilen hata';
@@ -95,6 +95,7 @@ $string['displayoptions'] = 'Görünüm seçenekleri';
 $string['eachattemptbuildsonthelast'] = 'Herbir uygulamada en son kaldýðý yerden devam edebilsin';
 $string['editcategories'] = 'Kategorileri düzenle';
 $string['editcategory'] = 'Kategoriyi düzenle';
+$string['editcatquestions'] = 'Kategori sorularýný düzenle';
 $string['editdatasets'] = 'Verikümelerini düzenle';
 $string['editingcalculated'] = 'Hesaplanmýþ soru düzenleme';
 $string['editingdescription'] = 'Açýklama düzenleme';
@@ -110,6 +111,7 @@ $string['editingshortanswer'] = 'Kýsa yanýtlý soru düzenleme';
 $string['editingtruefalse'] = 'Doðru/Yanlýþ sorusu düzenleme';
 $string['editquestions'] = 'Sorularý düzenle';
 $string['errorsdetected'] = '$a hata algýlandý';
+$string['examview'] = 'Sýnav görünümü';
 $string['exportfilename'] = 'sinav';
 $string['exportname'] = 'Dosya adý';
 $string['exportnameformat'] = '%%Y%%m%%d-%%H%%M';
@@ -137,9 +139,12 @@ $string['gradeaverage'] = 'Not ortalamasý';
 $string['gradehighest'] = 'En yüksek not';
 $string['grademethod'] = 'Not verme metodu';
 $string['guestsno'] = 'Konuklar sýnavlarý göremez ve uygulayamazlar';
+$string['hotpot'] = 'Hot Potatoes biçimi';
 $string['illegalformulasyntax'] = '$a ile baþlayan kuraldýþý formul';
 $string['imagedisplay'] = 'Gösterilecek resim';
 $string['imagemissing'] = '$a. satýrda resim gösterilemiyor. Dosya adý yok sayýlacak.';
+$string['importmax10error'] = 'Soruda bir hata var. 10 cevaptan fazlasý olamaz.';
+$string['importminerror'] = 'Soruda bir hata var. Bu soru tipi için yeterli cevap yok.';
 $string['importquestions'] = 'Dosyadan soru yükle';
 $string['indivresp'] = 'Her Bir Ögeye Bireylerin Cevabý';
 $string['introduction'] = 'Tanýtým';
@@ -194,12 +199,14 @@ $string['previewquestion'] = 'Soruyu önizleme';
 $string['publish'] = 'Yayýnla';
 $string['publishedit'] = 'Bu kategoriye soru eklemek veya deðiþtirmek için yayýnlama hakkýnýz olmalýdýr';
 $string['qti'] = 'IMS QTI biçimi';
+$string['qti2'] = 'IMS QTI 2.0 biçimi';
 $string['question'] = 'Soru';
 $string['questioninuse'] = 'Soru \'$a\' halihazýrda kullanýlmaktadýr:';
 $string['questionname'] = 'Soru adý';
 $string['questionnametoolong'] = '$a satýrýndaki soru adý çok uzun (max 255 karakter). Fazlasý atýldý.';
 $string['questions'] = 'Sorular';
 $string['questionsperpage'] = 'Her sayfadaki max soru sayýsý';
+$string['questiontype'] = 'Soru tipi $a';
 $string['questiontypesetupoptions'] = 'Soru tipleri için seçenekleri ayarla';
 $string['quizavailable'] = 'Sýnav þu tarihe kadar açýktýr: $a';
 $string['quizclose'] = 'Sýnavý kapat';
@@ -252,6 +259,7 @@ $string['score'] = 'Ham puan';
 $string['select'] = 'Seç';
 $string['selectall'] = 'Tümünü seç';
 $string['selectcategoryabove'] = 'Yukarýdaki bir kategoriyi seçiniz';
+$string['selectedattempts'] = 'Seçili uygulamalar...';
 $string['selectnone'] = 'Hiçbirini seçme';
 $string['shortanswer'] = 'Kýsa Yanýt';
 $string['show'] = 'Göster';

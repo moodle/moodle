@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.5 ALPHA (2005042300)
+      // scorm.php - created with Moodle 1.5 ALPHA (2005043000)
 
 
 $string['asset'] = 'Varlýk';
@@ -11,43 +11,34 @@ $string['browsed'] = 'Gözatýldý';
 $string['browsemode'] = 'Gezinme Modu';
 $string['chooseapacket'] = 'Seç veya SCORM paketi yükle';
 $string['completed'] = 'Tamamlandý';
-$string['configframesize'] = 'Bu deðer scorm paketini çalýþtýrdýðýnýzda gezinti için kullanýlan üst framenin pixel olarak boyutudur.';
-$string['configpopup'] = 'Yeni bir scorm paketi eklendiðinde açýlýr pencerede gösterilebilir. Bu seçenek varsayýlan olarak etkinleþtirilsin mi?';
-$string['configpopupheight'] = 'Açýlýr pencereler için varsayýlan yükseklik ne olsun?';
-$string['configpopupresizable'] = 'Açýlýr pencereler varsayýlan olarak yeniden boyutlandýrabilsin mi?';
-$string['configpopupscrollbars'] = 'Açýlýr pencereler varsayýlan olarak kaydýrma çubuklarýna sahip olsun mu?';
-$string['configpopupstatus'] = 'Açýlýr pencereler durum çubuðuna sahip olsun mu?';
-$string['configpopupwidth'] = 'Açýlýr pencereler için varsayýlan geniþlik ne olsun?';
 $string['coursepacket'] = 'Kurs paketi';
 $string['coursestruct'] = 'Ders Yapýsý';
 $string['datadir'] = 'Dosya sistemi hatasý: Kurs veri klasörü oluþturulamadý.';
+$string['details'] = 'Pylþ.Ýçr.Nesn. izleme detaylarý';
 $string['display'] = 'Görünüm';
 $string['domxml'] = 'DOMXML harici kütüphanesi';
+$string['enablebrowse'] = 'Önizleme modunu etkinleþtir';
 $string['entercourse'] = 'SCORM Paketine giriþ';
 $string['errorlogs'] = 'Hata logu';
 $string['exit'] = 'SCORM Paketinden Çýkýþ';
 $string['expcoll'] = 'Geniþlet/Daralt';
 $string['failed'] = 'Hata oluþtu';
 $string['found'] = 'Manifest bulundu';
+$string['frameheight'] = 'Bu seçenek SCO çerçevesinin varsayýlan geniþliðini ayarlar';
+$string['framewidth'] = 'Bu seçenek SCO çerçevesinin varsayýlan yüksekliðini ayarlar';
 $string['gradeaverage'] = 'Ortalama not';
 $string['gradehighest'] = 'En yüksek not';
 $string['grademethod'] = 'Not verme yöntemi';
 $string['gradescoes'] = 'Pylþ.Ýçr.Nesn durumu';
 $string['gradesum'] = 'Notlarý topla';
 $string['guestsno'] = 'Konuk kullanýcýlar SCORM derslerini göremezler';
+$string['height'] = 'Yükseklik';
 $string['incomplete'] = 'Tamamlanmadý';
 $string['missing_attribute'] = '$a->tag etiketi içinde hatalý $a->attr özelliði';
 $string['missing_tag'] = 'Hatalý tag $a->tag';
 $string['mode'] = 'Mod';
 $string['modulename'] = 'Scorm';
 $string['modulenameplural'] = 'Scormlar';
-$string['newheight'] = 'Varsayýlan pencere yüksekliði (pixel)';
-$string['newresizable'] = 'Pencere tekrar boyutlandýrýlabilsin';
-$string['newscrollbars'] = 'Pencerede kaydýrma çubuklarý kullanýlabilsin';
-$string['newstatus'] = 'Durum çubuðu görünsün';
-$string['newwidth'] = 'Varsayýlan pencere geniþliði (pixel)';
-$string['newwindow'] = 'Yeni pencere';
-$string['newwindowopen'] = 'Bu scorm paketini yeni bir açýlýr pencerede göster';
 $string['next'] = 'Sonraki';
 $string['no_attributes'] = '$a->tag etiketinin özellikleri olmalý';
 $string['no_children'] = '$a->tag etiketinin yavrularý olmalý';
@@ -60,6 +51,7 @@ $string['organizations'] = 'Düzenlemeler';
 $string['packagedir'] = 'Dosya sistemi hatasý: Klasör oluþturulamýyor';
 $string['passed'] = 'Geçti';
 $string['php5'] = 'PHP 5 (DOMXML doðal kütüphansesi)';
+$string['popup'] = 'Þu anki nesneyi yeni bir pencerede aç';
 $string['position_error'] = '$a->tag etiketi, $a->parent etiketinin yavrusu olamaz.';
 $string['prev'] = 'Önceki';
 $string['regular'] = 'Düzenli Manifest';
@@ -77,5 +69,6 @@ $string['validation'] = 'Doðrulama sonucu';
 $string['validationtype'] = 'Bu seçenek SCORM paketindeki manifest dosyasýnýnýn geçerliliðini doðrulamak için DOMXML kütüphanesinin kullanýmýný ayarlar. Ne yaptýðýnýzý bilmiyorsanýz seçili seçeneði býrakýn.';
 $string['versionwarning'] = 'Manifest sürümü 1.3 den daha eski, $a->tag etiketinde uyarý';
 $string['viewallreports'] = 'Toplam $a uygulama raporu var';
+$string['width'] = 'Geniþlik';
 
 ?>

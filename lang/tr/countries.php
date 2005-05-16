@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // countries.php - created with Moodle 1.5 ALPHA (2005042300)
+      // countries.php - created with Moodle 1.5 ALPHA (2005043000)
 
 
 $string['AD'] = 'Andorra';
@@ -216,7 +216,7 @@ $string['TM'] = 'Turkmenistan';
 $string['TN'] = 'Tunisia';
 $string['TO'] = 'Tonga';
 $string['TP'] = 'East Timor';
-$string['TR'] = 'Turkey';
+$string['TR'] = 'Türkiye';
 $string['TT'] = 'Trinidad and Tobago';
 $string['TV'] = 'Tuvalu';
 $string['TW'] = 'Taiwan';

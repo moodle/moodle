@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.5 ALPHA (2005042300)
+      // glossary.php - created with Moodle 1.5 ALPHA (2005043000)
 
 
 $string['addcomment'] = 'Yorum ekle';
@@ -101,8 +101,8 @@ $string['isglobal'] = 'Bu terim genel mi';
 $string['linkcategory'] = 'Bu kategoriyi otomatik linkle';
 $string['mainglossary'] = 'Ana kategori';
 $string['maxtimehaspassed'] = 'Üzgünüz, bu yorumu düzenlemek için ayarlanan maximum süre ($a) geçti!';
-$string['modulename'] = 'Terimler Sözlüðü';
-$string['modulenameplural'] = 'Terimler';
+$string['modulename'] = 'Sözlük';
+$string['modulenameplural'] = 'Sözlükler';
 $string['newentries'] = 'Yeni sözlük kayýtlarý';
 $string['newglossary'] = 'Yeni bir sözlük';
 $string['newglossarycreated'] = 'Yeni sözlük oluþturuldu.';
