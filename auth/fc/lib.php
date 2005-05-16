@@ -91,7 +91,7 @@ description           Get data from users resume. Pictures will be removed.
           $userinfo['email']       = strtok($fpp->getUserInfo($username,"1252"),',');
           $userinfo['phone1']      = $fpp->getUserInfo($username,"1206");
           $userinfo['phone2']      = $fpp->getUserInfo($username,"1207");
-	  $userinfo['description'] = $fpp->getResume($username);
+          $userinfo['description'] = $fpp->getResume($username);
 
        }
     }

@@ -84,7 +84,7 @@
 /// If data submitted, then process and store.
 
     if (!empty($options)) {
-	    if (($config = data_submitted()) && confirm_sesskey()) {  
+        if (($config = data_submitted()) && confirm_sesskey()) {  
             unset($config->options);
             unset($config->sesskey);
             foreach ($config as $name => $value) {

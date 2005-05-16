@@ -66,26 +66,26 @@
       //as a guest, and course setting allow unlimited guest access
       //Code cribbed from course/loginas.php
       if (isset($loginasguest) && ($course->guest==1)) {
-	$realuser = $USER->id;
-	$realname = fullname($USER, true);
-	$USER = guest_user();
-	$USER->loggedin = true;
-	$USER->site = $CFG->wwwroot;
-	$USER->realuser = $realuser;
-    $USER->sessionIP = md5(getremoteaddr());   // Store the current IP in the session
-    if (isset($SESSION->currentgroup)) {    // Remember current cache setting for later
-        $SESSION->oldcurrentgroup = $SESSION->currentgroup;
-        unset($SESSION->currentgroup);
-    }
-	$guest_name = fullname($USER, true);
-	add_to_log($course->id, "course", "loginas", "../user/view.php?id=$course->id&$USER->id$", "$realname -> $guest_name");
-	if ($SESSION->wantsurl) {
-	  $destination = $SESSION->wantsurl;
-	  unset($SESSION->wantsurl);
-	} else {
-	  $destination = "$CFG->wwwroot/course/view.php?id=$course->id";
-	}
-	redirect($destination);
+        $realuser = $USER->id;
+        $realname = fullname($USER, true);
+        $USER = guest_user();
+        $USER->loggedin = true;
+        $USER->site = $CFG->wwwroot;
+        $USER->realuser = $realuser;
+        $USER->sessionIP = md5(getremoteaddr());   // Store the current IP in the session
+        if (isset($SESSION->currentgroup)) {    // Remember current cache setting for later
+            $SESSION->oldcurrentgroup = $SESSION->currentgroup;
+            unset($SESSION->currentgroup);
+        }
+        $guest_name = fullname($USER, true);
+        add_to_log($course->id, "course", "loginas", "../user/view.php?id=$course->id&$USER->id$", "$realname -> $guest_name");
+        if ($SESSION->wantsurl) {
+            $destination = $SESSION->wantsurl;
+            unset($SESSION->wantsurl);
+        } else {
+            $destination = "$CFG->wwwroot/course/view.php?id=$course->id";
+        }
+        redirect($destination);
       }
       $enrol->check_entry($form, $course);
     }

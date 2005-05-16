@@ -1,102 +1,102 @@
 <?php
 // Set default values
 if (!isset($config->auth_instructions) or empty($config->shib_user_attribute)) {
-	$config->auth_instructions = get_string('auth_shib_instructions', 'auth', $CFG->wwwroot.'/auth/shibboleth/shib-protected.php');
+    $config->auth_instructions = get_string('auth_shib_instructions', 'auth', $CFG->wwwroot.'/auth/shibboleth/shib-protected.php');
 }
 
 if (!isset($config->auth_user_firstname_updatelocal)) {
-	$config->auth_user_firstname_updatelocal = 1;
+    $config->auth_user_firstname_updatelocal = 1;
 }
 
 if (!isset($config->auth_shib_only)) {
-	$config->auth_shib_only = 0;
+    $config->auth_shib_only = 0;
 }
 
 if (!isset($config->auth_user_firstname_updatelocal)) {
-	$config->auth_user_firstname_updatelocal = 1;
+    $config->auth_user_firstname_updatelocal = 1;
 }
 
 if (!isset($config->auth_user_firstname_editlock)) {
-	$config->auth_user_firstname_editlock = 0;
+    $config->auth_user_firstname_editlock = 0;
 }
 
 if (!isset($config->auth_user_lastname_updatelocal)) {
-	$config->auth_user_lastname_updatelocal = 1;
+    $config->auth_user_lastname_updatelocal = 1;
 }
 
 if (!isset($config->auth_user_lastname_editlock)) {
-	$config->auth_user_lastname_editlock = 0;
+    $config->auth_user_lastname_editlock = 0;
 }
 
 if (!isset($config->auth_user_email_updatelocal)) {
-	$config->auth_user_email_updatelocal = 1;
+    $config->auth_user_email_updatelocal = 1;
 }
 
 if (!isset($config->auth_user_email_editlock)) {
-	$config->auth_user_email_editlock = 0;
+    $config->auth_user_email_editlock = 0;
 }
 
 if (!isset($config->auth_user_phone1_updatelocal)) {
-	$config->auth_user_phone1_updatelocal = 1;
+    $config->auth_user_phone1_updatelocal = 1;
 }
 
 if (!isset($config->auth_user_phone1_editlock)) {
-	$config->auth_user_phone1_editlock = 0;
+    $config->auth_user_phone1_editlock = 0;
 }
 
 if (!isset($config->auth_user_department_updatelocal)) {
-	$config->auth_user_department_updatelocal = 1;
+    $config->auth_user_department_updatelocal = 1;
 }
 
 if (!isset($config->auth_user_department_editlock)) {
-	$config->auth_user_department_editlock = 0;
+    $config->auth_user_department_editlock = 0;
 }
 
 if (!isset($config->auth_user_address_updatelocal)) {
-	$config->auth_user_address_updatelocal = 1;
+    $config->auth_user_address_updatelocal = 1;
 }
 
 if (!isset($config->auth_user_address_editlock)) {
-	$config->auth_user_address_editlock = 0;
+    $config->auth_user_address_editlock = 0;
 }
 
 if (!isset($config->auth_user_city_updatelocal)) {
-	$config->auth_user_city_updatelocal = 1;
+    $config->auth_user_city_updatelocal = 1;
 }
 
 if (!isset($config->auth_user_city_editlock)) {
-	$config->auth_user_city_editlock = 0;
+    $config->auth_user_city_editlock = 0;
 }
 
 if (!isset($config->auth_user_country_updatelocal)) {
-	$config->auth_user_country_updatelocal = 1;
+    $config->auth_user_country_updatelocal = 1;
 }
 if (!isset($config->auth_user_country_editlock)) {
-	$config->auth_user_country_editlock = 0;
+    $config->auth_user_country_editlock = 0;
 }
 
 if (!isset($config->auth_user_description_updatelocal)) {
-	$config->auth_user_description_updatelocal = 1;
+    $config->auth_user_description_updatelocal = 1;
 }
 
 if (!isset($config->auth_user_description_editlock)) {
-	$config->auth_user_description_editlock = 0;
+    $config->auth_user_description_editlock = 0;
 }
 
 if (!isset($config->auth_user_idnumber_updatelocal)) {
-	$config->auth_user_idnumber_updatelocal = 1;
+    $config->auth_user_idnumber_updatelocal = 1;
 }
 
 if (!isset($config->auth_user_idnumber_editlock)) {
-	$config->auth_user_idnumber_editlock = 0;
+    $config->auth_user_idnumber_editlock = 0;
 }
 
 if (!isset($config->auth_user_lang_updatelocal)) {
-	$config->auth_user_lang_updatelocal = 1;
+    $config->auth_user_lang_updatelocal = 1;
 }
 
 if (!isset($config->auth_user_lang_editlock)) {
-	$config->auth_user_lang_editlock = 0;
+    $config->auth_user_lang_editlock = 0;
 }
 
 ?>
@@ -391,8 +391,8 @@ if (!isset($config->auth_user_lang_editlock)) {
 </tr>
 
 <tr valign="top">
-	<td align="right"><?php  print_string("instructions", "auth") ?>:</td>
-	<td>
+    <td align="right"><?php  print_string("instructions", "auth") ?>:</td>
+    <td>
     <textarea name="auth_instructions" cols="30" rows="10" wrap="virtual"><?php  p($config->auth_instructions) ?></textarea> 
     </td>
     <td>

@@ -16,7 +16,7 @@
 
 /// If data submitted, then process and store.
 
-	if ($form = data_submitted()) {
+    if ($form = data_submitted()) {
         print_header();
         foreach ($form as $preference => $value) {
             switch ($preference) {
@@ -79,7 +79,7 @@
     $prefs->lookahead  = get_user_preferences('calendar_lookahead', CALENDAR_UPCOMING_DAYS);
     $prefs->persistflt = get_user_preferences('calendar_persistflt', 0);
 
-	include('./preferences.html');
+    include('./preferences.html');
     print_simple_box_end();
 
     print_footer($course);

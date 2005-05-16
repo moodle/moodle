@@ -10,11 +10,11 @@
     }
 ?>
 <tr valign="top" class="required">
-	<td align="right">auth_imaphost:</td>
-	<td>
+    <td align="right">auth_imaphost:</td>
+    <td>
         <input name="auth_imaphost" type="text" size="30" value="<?php echo $config->auth_imaphost?>" />
-	<?php  if (isset($err["auth_imaphost"])) formerr($err["auth_imaphost"]); ?>
-	</td>
+    <?php  if (isset($err["auth_imaphost"])) formerr($err["auth_imaphost"]); ?>
+    </td>
     <td>
     <?php  print_string("auth_imaphost","auth") ?> 
     <?php  print_string("auth_multiplehosts","auth") ?>
@@ -22,8 +22,8 @@
 </tr>
 
 <tr valign="top" class="required">
-	<td align="right">auth_imaptype:</td>
-	<td>
+    <td align="right">auth_imaptype:</td>
+    <td>
     <?php  $imaptypes = array("imap","imapssl", "imapcert", "imaptls");
        foreach($imaptypes as $imaptype) {
            $imapoptions[$imaptype] = $imaptype;
@@ -37,8 +37,8 @@
 </tr>
 
 <tr valign="top" class="required">
-	<td align="right">auth_imapport:</td>
-	<td>
+    <td align="right">auth_imapport:</td>
+    <td>
     <input name="auth_imapport" type="text" size="6" value="<?php echo $config->auth_imapport?>" />
     <?php  if (isset($err["auth_imapport"])) formerr($err["auth_imapport"]); ?>
     </td>
@@ -48,8 +48,8 @@
 </tr>
 
 <tr valign="top">
-	<td align="right"><?php  print_string("instructions", "auth") ?>:</td>
-	<td>
+    <td align="right"><?php  print_string("instructions", "auth") ?>:</td>
+    <td>
     <textarea name="auth_instructions" cols="30" rows="10" wrap="virtual"><?php  p($config->auth_instructions) ?></textarea> 
     </td>
     <td>

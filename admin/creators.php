@@ -1,7 +1,7 @@
 <?PHP // $Id$
       // Admin only script to assign course creator rights to users
 
-	require_once("../config.php");
+    require_once("../config.php");
 
     define("MAX_USERS_PER_PAGE", 50);
 
@@ -42,7 +42,7 @@
         $$strstringtoload = get_string($stringtoload);
     }
 
-	print_header("$site->shortname: $strassigncreators", 
+    print_header("$site->shortname: $strassigncreators", 
                  "$site->fullname", 
                  "<a href=\"index.php\">$stradministration</a> -> <a href=\"users.php\">$strusers</a> ->
                   $strassigncreators", "creatorsform.searchtext");

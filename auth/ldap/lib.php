@@ -186,7 +186,7 @@ function auth_user_exists ($username) {
  * @param mixed $plainpass   Plaintext password
  */
 function auth_user_create ($userobject,$plainpass) {
-	global $CFG;
+    global $CFG;
     $ldapconnection = auth_ldap_connect();
     $attrmap = auth_ldap_attributes();
     
@@ -701,7 +701,7 @@ function auth_ldap_bulk_insert($users){
  * @return boolen result
  */
 function auth_user_activate ($username) {
-	global $CFG;
+    global $CFG;
 
     $ldapconnection = auth_ldap_connect();
     
@@ -726,7 +726,7 @@ function auth_user_activate ($username) {
  * @return boolean result
  */
 function auth_user_disable ($username) {
-	global $CFG;
+    global $CFG;
 
     $ldapconnection = auth_ldap_connect();
 
@@ -1310,7 +1310,7 @@ function auth_ldap_find_userdn ($ldapconnection, $username){
     $ldap_contexts = explode(";",$CFG->ldap_contexts);
     
     if (!empty($CFG->ldap_create_context)){
-	  array_push($ldap_contexts, $CFG->ldap_create_context);
+      array_push($ldap_contexts, $CFG->ldap_create_context);
     }
   
     foreach ($ldap_contexts as $context) {
@@ -1348,7 +1348,7 @@ function auth_ldap_find_userdn ($ldapconnection, $username){
 
 function auth_ldap_attributes (){
 
-	global $CFG;
+    global $CFG;
 
     $config = (array)$CFG;
     $fields = array("firstname", "lastname", "email", "phone1", "phone2", 
@@ -1365,7 +1365,7 @@ function auth_ldap_attributes (){
         }
     }
     $moodleattributes['username']=$config["ldap_user_attribute"];
-	return $moodleattributes;
+    return $moodleattributes;
 }
 
 /**

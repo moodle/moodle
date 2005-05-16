@@ -2,8 +2,8 @@
 
 <table class="formtable">
 <tr>
-	<th style="width: 30%;"><?php print_string('pref_timeformat', 'calendar')?>:</th>
-	<td>
+    <th style="width: 30%;"><?php print_string('pref_timeformat', 'calendar')?>:</th>
+    <td>
     <?php
         $options = array();
         $options['0']  = get_string('default', 'calendar');
@@ -16,8 +16,8 @@
 </tr>
 
 <tr>
-	<th><?php print_string('pref_startwday', 'calendar')?>:</th>
-	<td>
+    <th><?php print_string('pref_startwday', 'calendar')?>:</th>
+    <td>
     <?php
         $options = array();
         $options[0] = get_string('sunday', 'calendar');
@@ -34,8 +34,8 @@
 </tr>
 
 <tr>
-	<th><?php print_string('pref_maxevents', 'calendar')?>:</th>
-	<td>
+    <th><?php print_string('pref_maxevents', 'calendar')?>:</th>
+    <td>
     <?php
         $options = NULL;
         for ($i=1; $i<=20; $i++) {
@@ -48,8 +48,8 @@
 </tr>
 
 <tr>
-	<th><?php print_string('pref_lookahead', 'calendar')?>:</th>
-	<td>
+    <th><?php print_string('pref_lookahead', 'calendar')?>:</th>
+    <td>
     <?php
         $options = NULL;
         for ($i=1; $i<=200; $i++) {
@@ -62,8 +62,8 @@
 </tr>
 
 <tr>
-	<th><?php print_string('pref_persistflt', 'calendar')?>:</th>
-	<td>
+    <th><?php print_string('pref_persistflt', 'calendar')?>:</th>
+    <td>
     <?php choose_from_menu (array(0 => get_string('no'), 1 => get_string('yes')), 'persistflt', $prefs->persistflt, '', '', ''); ?>
     <p><?php print_string('explain_persistflt', 'calendar'); ?></p>
     </td>
@@ -71,7 +71,7 @@
 
 <tr>
     <td colspan="2" style="text-align: center;">
-	<input type="submit" value="<?php print_string("savechanges") ?>" /></td>
+    <input type="submit" value="<?php print_string("savechanges") ?>" /></td>
 </tr>
 </table>
 

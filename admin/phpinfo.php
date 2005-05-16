@@ -13,7 +13,7 @@
         $stradministration = get_string("administration");
         $site = get_site();
     
-	    print_header("$site->shortname: phpinfo", "$site->fullname", 
+        print_header("$site->shortname: phpinfo", "$site->fullname", 
                      "<a target=\"$CFG->framename\" href=\"index.php\">$stradministration</a> -> PHP info");
         exit;
     }

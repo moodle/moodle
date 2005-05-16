@@ -45,7 +45,7 @@ $modargs = substr($address,6,-16);
 $hash = substr($address,-16);
 
 if (substr(md5($prefix.$mod.$modargs.$CFG->siteidentifier),0,16) != $hash) {
-	die("HASH DIDN'T MATCH!\n");
+    die("HASH DIDN'T MATCH!\n");
 }
 list(,$modid) = unpack('C',base64_decode($mod.'=='));
 
@@ -59,7 +59,7 @@ else {
 $function = $modname.'_process_email';
 
 if (!function_exists($function)) {
-	die(); 
+    die(); 
 }
 $fd = fopen('php://stdin','r');
 if (!$fd) {

@@ -50,7 +50,7 @@
     $sectionname = get_string("name$course->format");
     $stredit = get_string("edit", "", " $sectionname $section->section");
 
-	print_header("$course->shortname: $stredit", "$course->fullname", 
+    print_header("$course->shortname: $stredit", "$course->fullname", 
                  "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> 
                   -> $stredit");
 

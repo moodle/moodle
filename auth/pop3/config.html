@@ -13,11 +13,11 @@
     }
 ?>
 <tr valign="top" class="required">
-	<td align="right">auth_pop3host:</td>
-	<td>
+    <td align="right">auth_pop3host:</td>
+    <td>
         <input name="auth_pop3host" type="text" size="30" value="<?php echo $config->auth_pop3host?>" />
-	<?php  if (isset($err["auth_pop3host"])) formerr($err["auth_pop3host"]); ?>
-	</td>
+    <?php  if (isset($err["auth_pop3host"])) formerr($err["auth_pop3host"]); ?>
+    </td>
     <td>
     <?php  print_string("auth_pop3host","auth") ?>
     <?php  print_string("auth_multiplehosts","auth") ?>
@@ -25,8 +25,8 @@
 </tr>
 
 <tr valign="top" class="required">
-	<td align="right">auth_pop3type:</td>
-	<td>
+    <td align="right">auth_pop3type:</td>
+    <td>
     <?php  $pop3types = array("pop3","pop3cert", "pop3notls");
        foreach($pop3types as $pop3type) {
            $pop3options[$pop3type] = $pop3type;
@@ -40,8 +40,8 @@
 </tr>
 
 <tr valign="top" class="required">
-	<td align="right">auth_pop3port:</td>
-	<td>
+    <td align="right">auth_pop3port:</td>
+    <td>
     <input name="auth_pop3port" type="text" size="6" value="<?php echo $config->auth_pop3port?>" />
     <?php  if (isset($err["auth_pop3port"])) formerr($err["auth_pop3port"]); ?>
     </td>
@@ -51,8 +51,8 @@
 </tr>
 
 <tr valign="top" class="required">
-	<td align="right">auth_pop3mailbox:</td>
-	<td>
+    <td align="right">auth_pop3mailbox:</td>
+    <td>
     <input name="auth_pop3mailbox" type="text" size="6" value="<?php echo $config->auth_pop3mailbox?>" />
     <?php  if (isset($err["auth_pop3mailbox"])) formerr($err["auth_pop3mailbox"]); ?>
     </td>
@@ -62,8 +62,8 @@
 </tr>
 
 <tr valign="top">
-	<td align="right"><?php  print_string("instructions", "auth") ?>:</td>
-	<td>
+    <td align="right"><?php  print_string("instructions", "auth") ?>:</td>
+    <td>
     <textarea name="auth_instructions" cols="30" rows="10" wrap="virtual"><?php  p($config->auth_instructions) ?></textarea> 
     </td>
     <td>

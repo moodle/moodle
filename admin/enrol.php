@@ -27,12 +27,12 @@
 
 /// If data submitted, then process and store.
 
-	if ($frm = data_submitted()) {
+    if ($frm = data_submitted()) {
         if ($enrolment->process_config($frm)) {
             set_config('enrol', $frm->enrol);
             redirect("enrol.php?sesskey=$USER->sesskey", get_string("changessaved"), 1);
         }
-	} else {
+    } else {
         $frm = $CFG;
     }
 
@@ -59,7 +59,7 @@
 
 /// Choose an enrolment method
     echo get_string('chooseenrolmethod').': ';
-	choose_from_menu ($options, "enrol", $enrol, "",
+    choose_from_menu ($options, "enrol", $enrol, "",
                       "document.location='enrol.php?sesskey=$USER->sesskey&enrol='+document.enrolmenu.enrol.options[document.enrolmenu.enrol.selectedIndex].value", "");
 
     echo "</b></p></div>";

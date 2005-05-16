@@ -35,7 +35,7 @@ global $CFG;
   				                lastcron INT8  NOT NULL default '0',
   				                visible int NOT NULL default '1'
                                 )
-			                    ") ;
+        ") ;
 
     }
 

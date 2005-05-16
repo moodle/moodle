@@ -12,7 +12,7 @@ function auth_user_login ($username, $password) {
     foreach ($hosts as $host) {                 // Try each host in turn
 
         $host = trim($host);
-	 
+
         // remove any trailing slash
         if (substr($host, -1) == '/') {
             $host = substr($host, 0, strlen($host) - 1);

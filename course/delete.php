@@ -1,7 +1,7 @@
 <?php // $Id$
       // Admin-only code to delete a course utterly
 
-	require_once("../config.php");
+    require_once("../config.php");
 
     require_variable($id);       // course id
     optional_variable($delete);   // delete confirmation
@@ -31,7 +31,7 @@
         $strdeletecoursecheck = get_string("deletecoursecheck");
 
         
-	    print_header("$site->shortname: $strdeletecheck", $site->fullname, 
+        print_header("$site->shortname: $strdeletecheck", $site->fullname, 
                      "<a href=\"../$CFG->admin/index.php\">$stradministration</a> -> ".
                      "<a href=\"index.php\">$strcategories</a> -> ".
                      "<a href=\"category.php?id=$course->category\">$category->name</a> -> ".
@@ -57,7 +57,7 @@
 
     $strdeletingcourse = get_string("deletingcourse", "", $course->shortname);
 
-	print_header("$site->shortname: $strdeletingcourse", $site->fullname, 
+    print_header("$site->shortname: $strdeletingcourse", $site->fullname, 
                  "<a href=\"../$CFG->admin/index.php\">$stradministration</a> -> ".
                  "<a href=\"index.php\">$strcategories</a> -> ".
                  "<a href=\"category.php?id=$course->category\">$category->name</a> -> ".

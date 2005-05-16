@@ -14,7 +14,7 @@
     $site = get_site();
 
     if (isset($topframe)) {
-	    print_header("$site->shortname: $strdatabaseperformance", "$site->fullname", 
+        print_header("$site->shortname: $strdatabaseperformance", "$site->fullname", 
                      "<a target=\"$CFG->framename\" href=\"index.php\">$stradministration</a> -> Database performance");
         exit;
     }

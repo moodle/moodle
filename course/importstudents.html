@@ -20,9 +20,9 @@
                            document.studentform.remove.disabled=false;
                            document.studentform.addselect.selectedIndex=-1;">
           <?php 
-	    foreach ($alreadycourses as $course) {
-                  echo "<option value=\"$course->id\">".course_format_name($course,60)."</option>\n";
-              }
+            foreach ($alreadycourses as $course) {
+                echo "<option value=\"$course->id\">".course_format_name($course,60)."</option>\n";
+            }
           ?>
           </select></td>
       <td valign="top">
@@ -38,11 +38,11 @@
                            document.studentform.remove.disabled=true;
                            document.studentform.removeselect.selectedIndex=-1;">
           <?php
-	    
+  
               if (!empty($searchcourses)) {
                   echo "<optgroup label=\"$strsearchresults (" . count($searchcourses) . ")\">\n";
                   foreach ($searchcourses as $course) {
-	               echo "<option value=\"$course->id\">".course_format_name($course,60)."</option>\n";
+                      echo "<option value=\"$course->id\">".course_format_name($course,60)."</option>\n";
                   }
                   echo "</optgroup>\n";
               }

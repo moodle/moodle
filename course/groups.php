@@ -2,8 +2,8 @@
 
 /// Editing interface to edit all the groups in a course
 
-	require_once('../config.php');
-	require_once('lib.php');
+    require_once('../config.php');
+    require_once('lib.php');
 
     $courseid      = required_param('id');           // Course id
     $selectedgroup = optional_param('group', NULL);  // Current group id

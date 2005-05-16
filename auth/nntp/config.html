@@ -8,11 +8,11 @@
 ?>
 
 <tr valign="top" class="required">
-	<td align="right">auth_nntphost:</td>
-	<td>
+    <td align="right">auth_nntphost:</td>
+    <td>
         <input name="auth_nntphost" type="text" size="30" value="<?php echo $config->auth_nntphost?>" />
-	<?php  if (isset($err["auth_nntphost"]))  formerr($err["auth_nntphost"]); ?>
-	</td>
+    <?php  if (isset($err["auth_nntphost"]))  formerr($err["auth_nntphost"]); ?>
+    </td>
     <td>
     <?php  print_string("auth_nntphost","auth") ?>
     <?php  print_string("auth_multiplehosts","auth") ?>
@@ -20,8 +20,8 @@
 </tr>
 
 <tr valign="top" class="required">
-	<td align="right">auth_nntpport:</td>
-	<td>
+    <td align="right">auth_nntpport:</td>
+    <td>
     <input name="auth_nntpport" type="text" size="6" value="<?php echo $config->auth_nntpport?>" />
     <?php  if (isset($err["auth_nntpport"])) formerr($err["auth_nntpport"]); ?>
     </td>
@@ -31,8 +31,8 @@
 </tr>
 
 <tr valign="top">
-	<td align="right"><?php  print_string("instructions", "auth") ?>:</td>
-	<td>
+    <td align="right"><?php  print_string("instructions", "auth") ?>:</td>
+    <td>
     <textarea name="auth_instructions" cols="30" rows="10" wrap="virtual"><?php  p($config->auth_instructions) ?></textarea> 
     </td>
     <td>

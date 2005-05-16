@@ -1,7 +1,7 @@
 <?PHP // $Id$
       // Admin-only script to assign administrative rights to users
 
-	require_once("../config.php");
+    require_once("../config.php");
     
     define("MAX_USERS_PER_PAGE", 50);
 
@@ -48,7 +48,7 @@
         $$strstringtoload = get_string($stringtoload);
     }
 
-	print_header("$site->shortname: $strassignadmins", 
+    print_header("$site->shortname: $strassignadmins", 
                  "$site->fullname", 
                  "<a href=\"index.php\">$stradministration</a> -> <a href=\"users.php\">$strusers</a> -> $strassignadmins", "adminform.searchtext");
 
