@@ -362,7 +362,7 @@ function rss_display_feeds($userid='', $rssid='') {
     } else if ($rssid != ''){
         $select = 'id='. $rssid;
     } 
-    $feeds = get_records_select('block_rss_client', $select);
+    $feeds = get_records_select('block_rss_client', $select, 'title');
     
     if ($feeds){
         $closeTable = true;
