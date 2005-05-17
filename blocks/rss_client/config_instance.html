@@ -11,12 +11,12 @@ include('config_instance_tabs.php');
 
 if ($currentaction == 'configblock') {
 ?>
-<table cellpadding="9" cellspacing="0">
+<table cellpadding="9" cellspacing="0" class="blockconfigtable">
 <tr valign="top">
-    <td align="right">
+    <td align="right" width="50%">
         <?php print_string('block_rss_display_description_label', 'block_rss_client') ?>
     </td>
-    <td>
+    <td width="50%">
             <?php 
                 if(! isset($CFG->block_rss_client_display_description) ) {
                     $CFG->block_rss_client_display_description = '0';
@@ -32,10 +32,10 @@ if ($currentaction == 'configblock') {
     </td>
 </tr>
 <tr valign="top">
-    <td align="right">
+    <td align="right" width="50%">
         <?php print_string('block_rss_shownumentries_label', 'block_rss_client') ?>
     </td>
-    <td>
+    <td width="50%">
         <input name="shownumentries" type="text" size="5" value="<?php
             if(! isset($CFG->block_rss_client_num_entries) ) {
                 $CFG->block_rss_client_num_entries = '5';
@@ -50,10 +50,10 @@ if ($currentaction == 'configblock') {
     </td>
 </tr>
 <tr valign="top">
-    <td align="right">
+    <td align="right" width="50%">
         <?php print_string('block_rss_choose_feed_label', 'block_rss_client') ?>
     </td>
-    <td>
+    <td width="50%">
         <?php 
             $selectedarray = array();
             if (isset($this->config) && isset($this->config->rssid)) {
@@ -103,19 +103,19 @@ if ($currentaction == 'configblock') {
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><?php print_string('uploadlabel'); ?></td>
+    <td align="right" width="50%"><?php print_string('uploadlabel'); ?></td>
     <?php 
         $title = '';
         if (!empty($this->config) && !empty($this->config->title)) {
             $title = $this->config->title;
         }
     ?>
-    <td><input type="text" name="title" size="30" value="<?php echo $title; ?>" />
+    <td width="50%"><input type="text" name="title" size="30" value="<?php echo $title; ?>" />
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><?php print_string('block_rss_client_show_channel_link_label', 'block_rss_client'); ?></td>
-    <td>
+    <td align="right" width="50%"><?php print_string('block_rss_client_show_channel_link_label', 'block_rss_client'); ?></td>
+    <td width="50%">
         <?php 
                 if (isset($this->config) && isset($this->config->block_rss_client_show_channel_link)) {
                         $selected = $this->config->block_rss_client_show_channel_link;
@@ -130,8 +130,8 @@ if ($currentaction == 'configblock') {
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><?php print_string('block_rss_client_show_image_label', 'block_rss_client'); ?></td>
-    <td>
+    <td align="right" width="50%"><?php print_string('block_rss_client_show_image_label', 'block_rss_client'); ?></td>
+    <td width="50%">
         <?php 
                 if (isset($this->config) && isset($this->config->block_rss_client_show_channel_image)) {
                         $selected = $this->config->block_rss_client_show_channel_image;

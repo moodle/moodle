@@ -17,3 +17,7 @@
 
 .block_rss_client .image {
 }
+
+.course.editing .tabs {
+  margin-bottom: 0px;
+}
