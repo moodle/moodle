@@ -512,13 +512,13 @@
     echo calendar_filter_controls('event', 'action='.$action.'&amp;type='.$eventtype.'&amp;id='.$eventid);
     echo '</div>';
     
-    echo '<div>';
+    echo '<div class="minicalendarblock">';
     echo calendar_top_controls('display', array('m' => $prevmon, 'y' => $prevyr));
     echo calendar_get_mini($courses, $groups, $users, $prevmon, $prevyr);
-    echo '</div><div>';
+    echo '</div><div class="minicalendarblock">';
     echo calendar_top_controls('display', array('m' => $mon, 'y' => $yr));
     echo calendar_get_mini($courses, $groups, $users, $mon, $yr);
-    echo '</div><div>';
+    echo '</div><div class="minicalendarblock">';
     echo calendar_top_controls('display', array('m' => $nextmon, 'y' => $nextyr));
     echo calendar_get_mini($courses, $groups, $users, $nextmon, $nextyr);
     echo '</div>';

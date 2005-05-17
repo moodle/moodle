@@ -499,9 +499,13 @@ table.minicalendar td {
   margin-top: 4px;
 }
 
+.minicalendarblock {
+  padding: 0px 4px;
+}
+
 table.minicalendar {
   width: 100%;
-  margin: 10px 4px;
+  margin: 10px auto;
   padding:2px;
   border-width:1px;
   border-style:solid;
