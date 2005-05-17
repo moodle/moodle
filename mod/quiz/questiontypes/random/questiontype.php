@@ -80,13 +80,19 @@ class quiz_random_qtype extends quiz_default_questiontype {
                 global $QUIZ_QTYPES;
                 $QUIZ_QTYPES[$wrappedquestion->qtype]
                  ->get_question_options($wrappedquestion);
+
+                // Backup the original state of the random question
+                // And change the $state to match the wrapped question. This
+                // is sensible, because so the wrapped question's state gets
+                // put through all the generic processing.
+                $state->options->state = clone($state);
+                $state->question = $wrappedquestion->id;
                 $QUIZ_QTYPES[$wrappedquestion->qtype]
-                 ->create_session_and_responses($wrappedquestion, $state, $quiz,
-                 $attempt);
+                 ->create_session_and_responses($wrappedquestion,
+                 $state, $quiz, $attempt);
                 $wrappedquestion->name_prefix = $question->name_prefix;
                 $wrappedquestion->maxgrade    = $question->maxgrade;
                 $quiz->questionsinuse .= ",$wrappedquestion->id";
-
                 $state->options->question = &$wrappedquestion;
                 return true;
             }
@@ -97,18 +103,16 @@ class quiz_random_qtype extends quiz_default_questiontype {
 
     function restore_session_and_responses(&$question, &$state) {
         global $QUIZ_QTYPES;
-        if (!ereg('^random([0-9]+)-(.*)$', $state->responses[''], $answerregs)) {
-            notify("The answer value '{$state->responses['']}' for the state with "
-                    ."id=$state->id to the random question "
-                    ."$question->id is malformated."
-                    ." - No response can be extracted!");
+        if(!$randomstate = get_record('quiz_states', 'question',
+         $question->id)) {
             return false;
         }
-        $state->responses[''] = $answerregs[2];
 
-        if (!$wrappedquestion = get_record('quiz_questions', 'id', $answerregs[1])) {
+        if (!$wrappedquestion = get_record('quiz_questions', 'id',
+         $randomstate->answer)) {
             return false;
         }
+        $state->question = $wrappedquestion->id;
 
         if (!$QUIZ_QTYPES[$wrappedquestion->qtype]
          ->get_question_options($wrappedquestion)) {
@@ -121,35 +125,28 @@ class quiz_random_qtype extends quiz_default_questiontype {
         }
         $wrappedquestion->name_prefix = $question->name_prefix;
         $wrappedquestion->maxgrade    = $question->maxgrade;
-
         $state->options->question = &$wrappedquestion;
+        $state->options->state = &$randomstate;
         return true;
     }
 
     function save_session_and_responses(&$question, &$state) {
         global $QUIZ_QTYPES;
         $wrappedquestion = &$state->options->question;
+        $randomstate     = &$state->options->state;
+
+        // We need to save the randomstate manually, because we can only process
+        // one response record automatically
+        if (empty($randomstate->id)) {
+            $randomstate->answer = $wrappedquestion->id;
+            $randomstate->id = insert_record('quiz_states', $randomstate);
+        }
 
         // Trick the wrapped question into pretending to be the random one.
         $realqid = $wrappedquestion->id;
         $wrappedquestion->id = $question->id;
         $QUIZ_QTYPES[$wrappedquestion->qtype]
          ->save_session_and_responses($wrappedquestion, $state);
-
-        // Read what the wrapped question has just set the answer field to
-        // (if anything)
-        $response = get_field('quiz_states', 'answer', 'id', $state->id);
-        if(false === $response) {
-            return false;
-        }
-
-        // Prefix the answer field...
-        $response = "random$realqid-$response";
-
-        // ... and save it again.
-        if (!set_field('quiz_states', 'answer', $response, 'id', $state->id)) {
-            return false;
-        }
 
         // Restore the real id
         $wrappedquestion->id = $realqid;
@@ -168,7 +165,7 @@ class quiz_random_qtype extends quiz_default_questiontype {
         global $QUIZ_QTYPES;
         $wrappedquestion = &$state->options->question;
         return $QUIZ_QTYPES[$wrappedquestion->qtype]
-         ->get_all_responses($wrappedquestion, $state); 
+         ->get_all_responses($wrappedquestion, $state);
     }
 
     // ULPGC ecastro
@@ -176,7 +173,7 @@ class quiz_random_qtype extends quiz_default_questiontype {
         global $QUIZ_QTYPES;
         $wrappedquestion = &$state->options->question;
         return $QUIZ_QTYPES[$wrappedquestion->qtype]
-         ->get_actual_response($wrappedquestion, $state); 
+         ->get_actual_response($wrappedquestion, $state);
     }
 
 
