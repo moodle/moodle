@@ -418,27 +418,21 @@ function journal_log_info($log) {
 
 
 function journal_print_user_entry($course, $user, $entry, $teachers, $grades) {
-    global $THEME, $USER;
-
-    if ($entry->timemarked < $entry->modified) {
-        $colour = $THEME->cellheading2;
-    } else {
-        $colour = $THEME->cellheading;
-    }
+    global $USER;
 
     echo "\n<table border=\"1\" cellspacing=\"0\" valign=\"top\" cellpadding=\"10\">";
         
     echo "\n<tr>";
-    echo "\n<td rowspan=\"2\" bgcolor=\"$THEME->body\" width=\"35\" valign=\"top\">";
+    echo "\n<td rowspan=\"2\" width=\"35\" valign=\"top\">";
     print_user_picture($user->id, $course->id, $user->picture);
     echo "</td>";
-    echo "<td nowrap=\"nowrap\" width=\"100%\" bgcolor=\"$colour\">".fullname($user);
+    echo "<td nowrap=\"nowrap\" width=\"100%\">".fullname($user);
     if ($entry) {
         echo "&nbsp;&nbsp;<font size=\"1\">".get_string("lastedited").": ".userdate($entry->modified)."</font>";
     }
     echo "</tr>";
 
-    echo "\n<tr><td width=\"100%\" bgcolor=\"$THEME->cellcontent\">";
+    echo "\n<tr><td width=\"100%\">";
     if ($entry) {
         echo format_text($entry->text, $entry->format);
     } else {
@@ -453,7 +447,7 @@ function journal_print_user_entry($course, $user, $entry, $teachers, $grades) {
             $entry->teacher = $USER->id;
         }
         print_user_picture($entry->teacher, $course->id, $teachers[$entry->teacher]->picture);
-        echo "<td bgcolor=\"$colour\">".get_string("feedback").":";
+        echo "<td>".get_string("feedback").":";
         choose_from_menu($grades, "r$entry->id", $entry->rating, get_string("nograde")."...");
         if ($entry->timemarked) {
             echo "&nbsp;&nbsp;<font size=\"1\">".userdate($entry->timemarked)."</font>";
@@ -516,7 +510,7 @@ function journal_delete_instance($id) {
 
 
 function journal_print_feedback($course, $entry, $grades) {
-    global $CFG, $THEME;
+    global $CFG;
 
     if (! $teacher = get_record('user', 'id', $entry->teacher)) {
         error('Weird journal error');
