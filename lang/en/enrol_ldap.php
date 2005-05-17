@@ -29,6 +29,7 @@ $string['enrol_ldap_bind_dn'] = 'If you want to use bind-user to search users,
                                  specify it here. Someting like 
                                  \'cn=ldapuser,ou=public,o=org\'';
 $string['enrol_ldap_bind_pw'] = 'Password for bind-user.';
+$string['enrol_ldap_search_sub'] = 'Search group memberships from subcontexts.';
 $string['enrol_ldap_student_settings'] = 'Student enrolment settings';
 $string['enrol_ldap_teacher_settings'] = 'Teacher enrolment settings';
 $string['enrol_ldap_course_settings'] = 'Course enrolment settings';
