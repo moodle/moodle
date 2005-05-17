@@ -248,6 +248,14 @@ $CFG->admin = 'admin';
 // entry in apache error log indicating the position of the error and the statement
 // called. This option will action disregarding error_reporting setting.
 //     $CFG->dblogerror = true;
+//
+// The following setting will turn on username logging into Apache log. For full details regarding setting
+// up of this function please refer to the install section of the document.
+//     $CFG->apacheloguser = 0; // Turn this feature off. Default value.
+//     $CFG->apacheloguser = 1; // Log user id.
+//     $CFG->apacheloguser = 2; // Log full name in cleaned format. ie, Darth Vader will be displayed as darth_vader.
+//     $CFG->apacheloguser = 3; // Log username. CAUTION: Use of this value will expose usernames in the Apache log,
+//                                 If you are going to publish your log in any cases, this will be a BIG security problem.
 
 //=========================================================================
 // ALL DONE!  To continue installation, visit your main page with a browser
