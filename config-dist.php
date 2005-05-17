@@ -254,8 +254,17 @@ $CFG->admin = 'admin';
 //     $CFG->apacheloguser = 0; // Turn this feature off. Default value.
 //     $CFG->apacheloguser = 1; // Log user id.
 //     $CFG->apacheloguser = 2; // Log full name in cleaned format. ie, Darth Vader will be displayed as darth_vader.
-//     $CFG->apacheloguser = 3; // Log username. CAUTION: Use of this value will expose usernames in the Apache log,
-//                                 If you are going to publish your log in any cases, this will be a BIG security problem.
+//     $CFG->apacheloguser = 3; // Log username. 
+// To get the values logged in Apache's log, add to your httpd.conf
+// the following statements. In the General part put:
+//     LogFormat "%h %l %{MOODLEUSER}n %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\"" moodleformat
+// And in the part specific to your Moodle install / virtualhost:
+//     CustomLog "/your/path/to/log" moodleformat
+// CAUTION: Use of this option will expose usernames in the Apache log,
+// If you are going to publish your log, or the output of your web stats analyzer
+// this will weaken the security of your website.
+// 
+
 
 //=========================================================================
 // ALL DONE!  To continue installation, visit your main page with a browser
