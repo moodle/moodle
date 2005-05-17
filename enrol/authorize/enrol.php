@@ -218,7 +218,7 @@ function cc_submit($form, $course)
     		$teacher = get_teacher($course->id);
     		if (!empty($CFG->enrol_mailstudents)) {
     			$a->coursename = "$course->fullname";
-    			$a->profileurl = "$CFG->wwwroot/user/view.php?id=$user->id";
+    			$a->profileurl = "$CFG->wwwroot/user/view.php?id=$USER->id";
     			email_to_user($USER, $teacher, get_string("enrolmentnew", '', $course->shortname),
     			get_string('welcometocoursetext', '', $a));
     		}
