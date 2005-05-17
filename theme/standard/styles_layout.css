@@ -417,6 +417,7 @@ body#admin-config .confighelp {
 {
   vertical-align: top;
   border: 1px solid;
+  padding: 0px;
 }
 
 #calendar .sidecalendar {
@@ -500,7 +501,7 @@ table.minicalendar td {
 
 table.minicalendar {
   width: 100%;
-  margin:10px auto;
+  margin: 10px 4px;
   padding:2px;
   border-width:1px;
   border-style:solid;
