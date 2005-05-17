@@ -16,11 +16,15 @@ Nájdete ho pripojený k Vá¹mu
 <a href=\"$a->url\">vypracovanému zadaniu</a>.';
 $string['assignmentname'] = 'Názov zadania';
 $string['assignmenttype'] = 'Typ zadania';
+$string['availabledate'] = 'Dostupné od';
+$string['comment'] = 'Komentár';
+$string['commentinline'] = 'Vlo¾ený komentár';
 $string['configmaxbytes'] = 'Maximálna veµkos» zadania pre v¹etky vypracované zadania na stránke ( s ohµadom na obmedzenia kurzu a ostatné miestne nastavenia)';
 $string['description'] = 'Popis';
 $string['duedate'] = 'Dátum, do ktorého treba zasla» vypracované zadanie';
 $string['duedateno'] = 'Bez èasového obmedzenia na zasielanie vypracovaných zadaní';
 $string['early'] = '$a vèas';
+$string['editmysubmission'] = 'Upravi» moje zadanie';
 $string['emailteachermail'] = '	
 $a->username aktualizoval zaslanie vypracovaného zadania pre \'$a->assignment\'
 
@@ -30,8 +34,9 @@ $a->url';
 $string['emailteachermailhtml'] = '$a->username aktualizoval zaslanie vypracovaného zadania pre <i>\'$a->assignment\'</i><br /><br />. Je to <a href=\"$a->url\">dostupné na www stránke</a>.';
 $string['emailteachers'] = 'Oboznámi» uèiteµov o zaslaní vypracovaného zadania prostredníctvom emailu';
 $string['existingfiledeleted'] = 'Existujúci súbor bol vymazaný:$a';
-$string['failedupdatefeedback'] = 'Chyba pri aktualizácii odpovede pre u¾ívateµa $a';
+$string['failedupdatefeedback'] = 'Nepodarilo sa aktualizova» odpoveï pre u¾ívateµa $a';
 $string['feedback'] = 'Odpoveï';
+$string['feedbackfromteacher'] = 'Odpoveï od $a';
 $string['feedbackupdated'] = 'Odpoveï aktualizovaná pre $a µudí';
 $string['late'] = '$a neskoro';
 $string['maximumgrade'] = 'Maximálna známka';
@@ -39,15 +44,19 @@ $string['maximumsize'] = 'Maximálna veµkos»';
 $string['modulename'] = 'Zadanie';
 $string['modulenameplural'] = 'Zadania';
 $string['newsubmissions'] = 'Zadania odovzdané';
+$string['noassignments'] = 'Nie sú ¾iadne zadania';
 $string['notgradedyet'] = 'E¹te neoznámkované';
 $string['notsubmittedyet'] = 'E¹te neodovzdané';
 $string['overwritewarning'] = 'Upozornenie: Opätovné predlo¾enie zadania NAHRADÍ predchádzajúcu verziu (pôvodné zadanie bude odstránené)';
 $string['saveallfeedback'] = 'Ulo¾i» v¹etky moje odpovede';
-$string['submissionfeedback'] = 'Odpoveï na zadanie';
+$string['submission'] = 'Odovzdanie';
+$string['submissionfeedback'] = 'Odpoveï na odovzdanú úlohu';
 $string['submissions'] = 'Odovzdané zadania';
+$string['submissionsaved'] = 'Va¹e zmeny boli ulo¾ené';
 $string['submitassignment'] = 'Odovzdajte Va¹e zadanie prostredníctvom tohto formulára';
 $string['submitted'] = 'Zadanie bolo odovzdané';
 $string['typeoffline'] = 'Èinnos» offline ';
+$string['typeonline'] = 'Online text';
 $string['typeuploadsingle'] = 'Prenies» jeden súbor';
 $string['uploadbadname'] = 'Tento názov súboru obsahuje zvlá¹tne znaky a nemô¾e by» prenesený';
 $string['uploadedfiles'] = 'prená¹ané súbory';

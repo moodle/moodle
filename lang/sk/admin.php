@@ -4,12 +4,13 @@
 
 $string['adminseesallevents'] = 'Administrátori mô¾u prezera» v¹etky udalosti';
 $string['adminseesownevents'] = 'Administrátori majú rovnaké práva ako ostatní u¾ívatelia';
-$string['blockinstances'] = 'Uká¾ky';
+$string['blockinstances'] = 'Výskyty';
 $string['blockmultiple'] = 'Viacnásobný';
 $string['cachetext'] = 'Doba existencie textovej vyrovnávacej pamäte';
 $string['calendarsettings'] = 'Kalendár';
 $string['change'] = 'zmeni»';
 $string['configallowcoursethemes'] = 'Keï zapnete túto voµbu, bude mo¾né nastavi» pre kurz vlastnú tému. Téma kurzu má najvy¹¹iu prioritu, zobrazí sa aj v prípade keï bude nastavenie témy hlavnej stránky, u¾ívateµa èi aktuálneho sedenia odli¹né.';
+$string['configallowemailaddresses'] = 'Ak chcete obmedzi» v¹etky nové e-mail adresy na urèité domény, vypí¹te ich tu, oddelené medzerami. V¹etky ostatné domény budú odmietnuté. Napr. <strong>vasaskola.sk inaskola.sk</strong>';
 $string['configallowunenroll'] = 'Ak je toto nastavené na \'Áno\', potom sa mô¾u ¹tudenti sami kedykoµvek odhlási» z kurzov. V opaènom prípade im to nie je dovolené a celý proces prihlasovania sa do kurzov bude kontrolovaný len uèiteµmi a administrátormi.';
 $string['configallowuserblockhiding'] = 'Chcete povoli» u¾ívateµom skry»/zobrazi» boèné bloky na v¹etkých web stránkach? Táto vlastnos» vyu¾íva Javasript a Cookies pre ulo¾enie aktuálneho stavu pre ka¾dý blok a ovplyvní iba u¾ívateµov pohµad.';
 $string['configallowuserthemes'] = 'Keï zapnete túto voµbu, u¾ívateµ si bude môc» nastavi» vlastnú tému. Téma u¾ívateµa má vy¹¹iu prioritu, zobrazí sa aj v prípade keï bude nastavenie témy hlavnej stránky iné (toto neplatí pre tému kurzu).';
@@ -23,6 +24,7 @@ $string['configcountry'] = 'Ak si tu vyberiete krajinu, tak bude táto krajina na
 $string['configdbsessions'] = 'Ak povolené, toto nastavenie bude pou¾íva» databázu na uchovanie informácií o aktuálnych sedeniach (lekciách). Toto je výhodné pou¾i» najmä pri obsahovo rozsiahlej¹ích stránkach zalo¾ených na zoskupení serverov. Pre väè¹inu stránok by táto voµba mala zosta» neaktívna, aby sa namiesto databázy pou¾íval disk servera. Prosím berte na vedomie, ¾e ak teraz zmeníte toto nastavenie, v¹etci u¾ívatelia (vrátane vás) budú zo systému odhlásení.';
 $string['configdebug'] = 'Ak toto zapnete, PHP zvý¹i oznamovanie chýb tak, ¾e bude uvádzaných viac varovaní. Toto je u¾itoèné len pre tvorcov-programátorov.';
 $string['configdeleteunconfirmed'] = 'Ak pou¾ívate emailovú autorizáciu, toto je èasové rozpätie, poèas ktorého bude odpoveï akceptovaná u¾ívateµmi. Po tomto období budú staré nepou¾ívané kontá vymazané.    ';
+$string['configdenyemailaddresses'] = 'Ak chcete zakáza» e-mail adresy z urèitých domén, vypí¹ ich tu, oddelené medzerami. V¹etky ostatné domény budú akceptované. Napr. <strong>atlas.sk szm.sk hotmail.com</strong>';
 $string['configdigestmailtime'] = '¥uïom, ktorí sa rozhodnú pre zasielanie emailov v ¹truktúrovanej forme, bude ka¾dý deò prichádza» email struène informujúci o najnov¹ích udalostiach v kurze. Toto nastavenie urèuje tú èas» dòa, kedy bude tento email zasielaný u¾ívateµom.  ';
 $string['configdisplayloginfailures'] = 'Toto zobrazí vybraným u¾ívateµom informácie o predchádzajúcich neúspe¹ných pokusoch o prihlásenie do kurzov. ';
 $string['configenablerssfeeds'] = 'Tento prepínaè umo¾ní RSS väzbu z iných stránok. Aby ste videli v¹etky aktuálne zmeny, musíte aktivova» RSS väzbu aj v jednotlivých moduloch - choïte do Nastavení Moodle na Konfiguráciu administrátora.';

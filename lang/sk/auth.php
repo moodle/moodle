@@ -2,6 +2,21 @@
       // auth.php - created with Moodle 1.5 ALPHA (2005051500)
 
 
+$string['alternatelogin'] = 'Pokiaµ sem vlo¾íte nejaké URL, bude pou¾ité ako prihlasovacia stránka k tomuto systému. Táto Va¹a stránka by mala obsahova» formulár s vlastnos»ou \'action\' nastavenou na <strong>\'$a\'</strong>, ktorý vracia pole <strong>username</strong> a <strong>password</strong>.<br />Dbajte na to, aby ste vlo¾ili platné URL! V opaènom prípade by ste mohli komukoµvek vrátane seba zamedzi» prístup k týmto stránkam.<br />Ak chcete pou¾íva» ¹tandardnú prihlasovaciu stránku, nechajte toto pole prázdne.';
+$string['alternateloginurl'] = 'Alternatívne URL pre prihlásenie';
+$string['auth_cas_baseuri'] = 'URI serveru (alebo niè, pokiaµ nie je baseUri)<br />Ak je napr. CAS server dostupný na  host.domena.sk/CAS/ potom nastavte<br />cas_baseuri = CAS/';
+$string['auth_cas_create_user'] = 'Pokiaµ chcete vlo¾i» CAS autentifikovaných pou¾ívateµov do Moodle databázy, musíte zapnú» túto voµbu. Pokiaµ ju nezapnete, budú sa môc» prihlási» len pou¾ívatelia ktorí u¾ existujú v databáze Moodle.';
+$string['auth_cas_enabled'] = 'Pokiaµ chcete pou¾íva» CAS autentifikáciu, musíte zapnú» túto voµbu';
+$string['auth_cas_hostname'] = 'Adresa CAS serveru<br />napr. server.domena.sk';
+$string['auth_cas_invalidcaslogin'] = 'Prepáète, nepodarilo sa Vám prihlási» - nemohli ste by» autorizovaný';
+$string['auth_cas_language'] = 'Vybraný jazyk';
+$string['auth_cas_logincas'] = 'Zabezpeè spojenie';
+$string['auth_cas_port'] = 'Port CAS serveru';
+$string['auth_cas_server_settings'] = 'Konfigurácia CAS serveru';
+$string['auth_cas_text'] = 'Zabezpeèené spojenie';
+$string['auth_cas_version'] = 'Verzia CAS';
+$string['auth_casdescription'] = 'Táto metóda pou¾íva CAS server (Central Authentication Service) pre autentifikáciu u¾ívateµov v prostredí jednotného systému prihlasovania (Single Sign On - SSO). Tie¾ mô¾ete pou¾i» jednoduchú LDAP autentifikáciu. Pokiaµ je zadané meno a heslo platné oproti CAS, Moodle vytvorí nového u¾ívateµa v databáze, prièom si potrebné u¾ívateµské údaje, vezme z databázy LDAP. Pri nasledujúcich prihláseniach sú u¾ kontrolované len prihlasovacie meno a heslo.';
+$string['auth_castitle'] = 'Pou¾i» CAS server (SSO)';
 $string['auth_common_settings'] = 'Be¾né nastavenia';
 $string['auth_data_mapping'] = 'Zobrazenie údajov';
 $string['auth_dbdescription'] = 'Táto metóda vyu¾íva externú databázovú tabuµku na kontrolu platnosti daného u¾ívateµského mena a hesla. Ak je to nové konto, mô¾u by» do prostredia Moodle prenesené informácie aj z iných políèok.';
@@ -87,6 +102,18 @@ $string['auth_pop3mailbox'] = 'Meno po¹tovej schránky, s ktorou by mohol by» nad
 $string['auth_pop3port'] = 'Server port (110 je najbe¾nej¹í)';
 $string['auth_pop3title'] = 'Pou¾íva» POP3 server';
 $string['auth_pop3type'] = 'Typ servera. Ak vá¹ server pou¾íva certifikované zabezpeèenie, vyberte si pop3cert.';
+$string['auth_shib_convert_data'] = 'API pre úpravu dát';
+$string['auth_shib_convert_data_description'] = 'Toto API (aplikaèné rozhranie) Vám umo¾òuje ïalej upravova» dáta, ktoré máte k dispozícii zo systému Shibboleth. Viac infomácií <a href=\"../auth/shibboleth/README.txt\" target=\"_blank\">nájdete tu</a>.';
+$string['auth_shib_instructions'] = 'Pou¾ite <a href=\"$a\">prihlásenie cez Shibboleth</a>, pokiaµ Va¹a in¹titúcia tento systém podporuje.<br />V opaènom prípade pou¾ite normálny formulár pre prihlásenie.';
+$string['auth_shib_instructions_help'] = 'Tu mô¾ete vlo¾i» vlastné informácie o Va¹om systéme Shibboleth. Budú se zobrazova» na prihlasovacej stránke. Vlo¾ené informácie by maly obsahova» odkaz na zdroj chránený systémom Shibboleth, ktorý presmeruje pou¾ívateµov na &quot;<b>$a</b>&quot;, tak¾e sa pou¾ívatelia systému Shibboleth budú môc» prihlási» do Moodle. Ak ponecháte toto pole prázdne, budú se na prihlasovacej stránke zobrazova» v¹eobecné pokyny.';
+$string['auth_shib_only'] = 'Len pre Shibboleth';
+$string['auth_shib_only_description'] = 'Za¹krtnite túto voµbu, pokiaµ si chcete vynúti» prihlásenie za pomoci systému Shibboleth';
+$string['auth_shib_username_description'] = 'Názov premennej prostredia webserveru Shibboleth, ktorá má by» pou¾itá ako u¾ívateµské meno Moodle ';
+$string['auth_shibboleth_login'] = 'Prihlásenie cez Shibboleth';
+$string['auth_shibboleth_manual_login'] = 'Ruèné prihlásenie';
+$string['auth_shibbolethdescription'] = 'Táto metóda umo¾òuje vytvára» a overova» pou¾ívatelov pomocou systému <a href=\"http://shibboleth.internet2.edu/\" target=\"_blank\">Shibboleth</a>.<br />
+Uistite sa, ¾e ste si preèítali súbor <a href=\"../auth/shibboleth/README.txt\" target=\"_blank\">README</a> obsahujúci informácie o tom, ako nastavi» vá¹ Moodle pre podporu systému Shibboleth.';
+$string['auth_shibbolethtitle'] = 'Shibboleth';
 $string['auth_updatelocal'] = 'Aktualizova» miestne údaje';
 $string['auth_updatelocal_expl'] = '<p><b>Aktualizova» miestne údaje:</b> Ak je táto voµba aktívna, políèko bude aktualizované (z externej autentifikácie) zaka¾dým, keï sa u¾ívateµ prihlási, alebo je tu synchronizácia u¾ívateµa. Políèka, ktoré by sa mali miestne aktualizova», by mali by» uzamknuté.</p>';
 $string['auth_updateremote'] = 'Aktualizova» externé údaje';
