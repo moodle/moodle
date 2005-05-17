@@ -9,6 +9,8 @@
         echo '<script language="JavaScript" type="text/javascript" src="'.$CFG->wwwroot.'/lib/speller/spellChecker.js"></script>'."\n";
     }
 ?>
+<style type="text/css">/*<![CDATA[*/ body{behavior:url(<?php echo $CFG->wwwroot ?>/lib/csshover.htc);} /*]]>*/</style>
+
 <script language="JavaScript" type="text/javascript" src="<?php echo $CFG->wwwroot ?>/lib/javascript-static.js"></script>
 <script language="JavaScript" type="text/javascript" src="<?php echo $CFG->wwwroot ?>/lib/javascript-mod.php"></script>
 <script language="JavaScript" type="text/javascript" src="<?php echo $CFG->wwwroot ?>/lib/overlib.js"></script>
