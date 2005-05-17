@@ -26,7 +26,7 @@ TO INSTALL OR UPDATE THIS MODULE
    (c) create a folder called "hotpot" on your Moodle site in the "moodle/mod" folder
    (d) upload the contents of the "hotpot" folder on your PC to the "moodle/mod/hotpot" folder on the Moodle site
 
-2. Install the module's messages and help file of the hotpot module
+2. Install the messages and help files of the hotpot module
 
    EITHER:
    (a) copy "moodle/mod/hotpot/lang/en/hotpot.php" on the Moodle site to "moodle/lang/en/hotpot.php"
