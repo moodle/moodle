@@ -104,7 +104,7 @@ class quiz_random_qtype extends quiz_default_questiontype {
     function restore_session_and_responses(&$question, &$state) {
         global $QUIZ_QTYPES;
         if(!$randomstate = get_record('quiz_states', 'question',
-         $question->id)) {
+         $question->id, 'attempt', $state->attempt)) {
             return false;
         }
 

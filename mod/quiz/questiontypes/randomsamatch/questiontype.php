@@ -82,9 +82,12 @@ class quiz_randomsamatch_qtype extends quiz_match_qtype {
         $wanted = $question->options->choose;
         if ($count < $wanted && isteacherinanycourse()) {
             notify("Error: could not get enough Short-Answer questions!
-             Got $count Short-Answer questions, but wanted $wanted.
-             Reducing number to choose from to $count!");
-            $question->options->choose = $count;
+             This can happen if all available Short-Answer questions are already
+             taken up by other Random questions or Random Short-Answer question.
+             Another possible cause for this error is that Short-Answer
+             questions were deleted after this Random Short-Answer question was
+             created.");
+            return false;
         }
 
         $saquestions =
