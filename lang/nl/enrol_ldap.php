@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // enrol_ldap.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112400)
+      // enrol_ldap.php - created with Moodle 1.5 ALPHA (2005051500)
 
 
 $string['description'] = '<p>Je kunt een LDAP-server gebruiken om je vakaanmeldingen te controleren. Er wordt vanuit gegaan dat je LDAP-structuur groepen bevat die verwijzen naar de vakken en dat elk van die groepen/vakken naar lidmaatschap van leerlingen verwijzen.</p>
@@ -22,6 +22,7 @@ $string['enrol_ldap_host_url'] = 'Specifier de LDAP-host als een URL, bijvoorbee
 \'ldap://ldap.myorg.com/\'
 of \'ldaps://ldap.myorg.com/\'';
 $string['enrol_ldap_objectclass'] = 'objectClass gebruikt om vakken te zoeken. Gewoonlijk  \'posixGroup\'. ';
+$string['enrol_ldap_search_sub'] = 'Zoek groeplidmaatschap in subcontexten.';
 $string['enrol_ldap_server_settings'] = 'LDAP-serverinstellingen';
 $string['enrol_ldap_student_contexts'] = 'Lijsten met de conteksten waar groepen met leerlingaanmeldingen geplaatst zijn. Scheidt de conteksten met \';\'. Bijvoorbeeld: \'ou=vakken, o=org; ou=overigen,o=org\'';
 $string['enrol_ldap_student_memberattribute'] = 'Lidmaatschapsattribuut, wanneer gebruikers behoren (=aangemeld zijn) in een groep. Gewoonlijk \'member\' of memberUid\'.';
@@ -33,8 +34,5 @@ $string['enrol_ldap_template'] = 'Optioneel: automatisch gecreëerde vakken kunne
 $string['enrol_ldap_updatelocal'] = 'Update de lokale gegevens';
 $string['enrol_ldap_version'] = 'De versie van het LDAP-protocol dat je server gebruikt.';
 $string['enrolname'] = 'LDAP';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Nederlands';
 
 ?>
