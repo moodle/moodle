@@ -198,20 +198,18 @@ function import_numerical( $question ) {
   // header parts particular to numerical
   $qo->qtype = NUMERICAL;
 
-  // work out answer and tolerance
-  $min = $question['#']['min'][0]['#'];
-  $max = $question['#']['max'][0]['#'];
-
-  $answer = round( ($min + $max) / 2 );
-  $tolerance = abs( $max - $answer );
-
-  // add to object 
-  $qo->answer = array( $answer );
-  $qo->tolerance = $tolerance;
-
-  // other info
-  $qo->feedback = array( $question['#']['feedback'][0]['#']['text'][0]['#'] );
-  $qo->fraction = array( $question['#']['fraction'][0]['#'] );
+  // get answers array
+  $answers = $question['#']['answer'];
+  $qo->answer = array();
+  $qo->feedback = array();
+  $qo->fraction = array();
+  $qo->tolerance = array();
+  foreach ($answers as $answer) {
+    $qo->answer[] = $answer['#'][0];
+    $qo->feedback[] = $answer['#']['feedback'][0]['#']['text'][0]['#'];
+    $qo->fraction[] = $answer['#']['fraction'][0]['#'];
+    $qo->tolerance[] = $answer['#']['tolerance'][0]['#'];
+  }
 
   // get units array
   $units = $question['#']['units'][0]['#']['unit'];
@@ -543,16 +541,16 @@ function writequestion( $question ) {
         }
         break;
     case NUMERICAL:
-        $answer = array_pop( $question->options->answers );
-        $tolerance = $question->options->tolerance;
-        $min = $answer->answer - $tolerance;
-        $max = $answer->answer + $tolerance;
-        $expout .= "<min>$min</min>\n";
-        $expout .= "<max>$max</max>\n";
-        $expout .= "<answer>{$answer->answer}</answer>\n";
-        $expout .= "<tolerance>$tolerance</tolerance>\n";
-        $expout .= "<feedback>".$this->writetext( $answer->feedback )."</feedback>\n";
-        $expout .= "<fraction>{$answer->fraction}</fraction>\n";
+        foreach ($question->options->answers as $answer) {
+            $tolerance = $answer->tolerance;
+            $expout .= "<answer>\n";
+            $expout .= "    {$answer->answer}\n";
+            $expout .= "    <tolerance>$tolerance</tolerance>\n";
+            $expout .= "    <feedback>".$this->writetext( $answer->feedback )."</feedback>\n";
+            $expout .= "    <fraction>{$answer->fraction}</fraction>\n";
+            $expout .= "</answer>\n";
+         }
+
         $units = $question->options->units;
         if (count($units)) {
           $expout .= "<units>\n";
