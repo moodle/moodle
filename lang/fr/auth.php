@@ -62,7 +62,7 @@ $string['auth_ldap_memberattribute'] = 'Indiquer l\'attribut d\'appartenance à u
 $string['auth_ldap_objectclass'] = 'Le filtre utilisé pour rechercher/renommer des utilisateurs. On y mettra d\'habitude quelque chose comme objectClass=posixAccount. La valeur par défaut est objectClass=*, ce qui retournera tous les objets du serveur LDAP.';
 $string['auth_ldap_opt_deref'] = 'Détermine le traitement des alias durant la recherche. Veuillez sélectionner une des valeurs suivantes&nbsp;: «&nbsp;Non&nbsp;» (LDAP_DEREF_NEVER) ou «&nbsp;Oui&nbsp;» (LDAP_DEREF_ALWAYS)';
 $string['auth_ldap_passwdexpire_settings'] = 'Réglages de l\'échéance du mot de passe LDAP.';
-$string['auth_ldap_search_sub'] = 'Mettre une valeur différente de 0 pour rechercher les enregistrements dans les sous-contextes.';
+$string['auth_ldap_search_sub'] = 'Rechercher les utilsateurs dans les sous-contextes.';
 $string['auth_ldap_server_settings'] = 'Configuration du serveur LDAP';
 $string['auth_ldap_update_userinfo'] = 'Mettre à jour les données des utilisateurs (prénom, nom, adresse, etc.) de Moodle depuis l\'annuaire LDAP. Lire « /auth/ldap/attr_mappings.php » pour avoir des informations sur la correspondance.';
 $string['auth_ldap_user_attribute'] = 'L\'attribut utilisé pour nommer et rechercher les utilisateurs. Habituellement « cn ».';
