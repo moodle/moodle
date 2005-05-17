@@ -46,10 +46,10 @@
 		}
 		if (obj && window.clipboardData) {
 			window.clipboardData.setData("Text", obj.innerText);
-			alert('The contents of this page have been copied to the clipboard');
+			alert('<? print_string('copiedtoclipboard', 'hotpot') ?>');
 		}
 	}
-	document.write('<FONT size="1"> &nbsp; <A href="javascript:copy_contents()">Copy to Clipboard</A></FONT>');
+	document.write('<span style="font-size:0.6em;"> &nbsp; <A href="javascript:copy_contents()"><? print_string('copytoclipboard', 'hotpot') ?></A></span>');
 -->
 </SCRIPT>
 <?php
