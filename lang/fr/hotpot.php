@@ -36,7 +36,11 @@ $string['showxmlsource'] = 'Afficher la source XML';
 $string['showxmltree'] = 'Afficher l\'arbre XML';
 $string['showhtmlsource'] = 'Afficher la source HTML';
 $string['enterafilename'] = 'Veuillez saisir un nom de fichier';
-  	 
+
+    // show.php (javascript messages, so must be double escaped. i.e. "it's" ==> 'it\\\'s' OR "it\\'s")
+$string['copytoclipboard'] = 'Copier dans le presse-papier';
+$string['copiedtoclipboard'] = 'Le contenu de cette page a été copié dans le presse-papier';
+  	   	 
   	 // lib.php
 $string['noactivity'] = 'Aucune activité';
 $string['inprogress'] = 'En cours';
