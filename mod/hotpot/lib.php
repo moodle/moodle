@@ -200,7 +200,7 @@ function hotpot_format_score($record) {
 		$score = $record->score;
 	} else {
 		$str = empty($record->timefinish) ? 'inprogress' : 'abandoned';
-		$score = '<I>'.get_string($str, 'hotpot').'</I>';
+		$score = '<i>'.get_string($str, 'hotpot').'</i>';
 	}
 	return $score;
 }
@@ -321,33 +321,33 @@ function hotpot_print_recent_mod_activity($activity, $course, $detail=false) {
 
 	global $CFG, $THEME, $USER;
 
-	print '<TABLE border="0" cellpadding="3" cellspacing="0">';
+	print '<table border="0" cellpadding="3" cellspacing="0">';
 
-	print '<TR><TD bgcolor="'.$THEME->cellcontent2.'" class="forumpostpicture" width="35" valign="top">';
+	print '<tr><td bgcolor="'.$THEME->cellcontent2.'" class="forumpostpicture" width="35" valign="top">';
 	print_user_picture($activity->user->userid, $course, $activity->user->picture);
-	print '</TD><TD width="100%"><font size=2>';
+	print '</td><td width="100%" style="font-size:0.8em;">';
 
 	if ($detail) {
 		// activity icon
 		$src = "$CFG->modpixpath/$activity->type/icon.gif";
-		print '<IMG src="'.$src.'" height="16" width="16" alt="'.$activity->type.'"> ';
+		print '<img src="'.$src.'" height="16" width="16" alt="'.$activity->type.'" /> ';
 
 		// link to activity
 		$href = "$CFG->wwwroot/mod/hotpot/view.php?id=$activity->instance";
-		print '<A href="'.$href.'">'.$activity->name.'</A> - ';
+		print '<a href="'.$href.'">'.$activity->name.'</a> - ';
 	}
 	if (isteacher($course)) {
 		// score (with link to attempt details)
 		$href = "$CFG->wwwroot/mod/hotpot/review.php?hp=$activity->instance&attempt=".$activity->content->attemptid;
-		print '<A href="'.$href.'">('.hotpot_format_score($activity->content).')</A> ';
+		print '<a href="'.$href.'">('.hotpot_format_score($activity->content).')</a> ';
 
 		// attempt number
-		print get_string('attempt', 'quiz').' - '.$activity->content->attempt.'<BR>';
+		print get_string('attempt', 'quiz').' - '.$activity->content->attempt.'<br />';
 	}
 
 	// link to user
 	$href = "$CFG->wwwroot/user/view.php?id=$activity->user->userid&course=$course";
-	print '<A href="'.$href.'">'.$activity->user->fullname.'</A> ';
+	print '<a href="'.$href.'">'.$activity->user->fullname.'</a> ';
 
 	// time and date
 	print ' - ' . userdate($activity->timestamp);
@@ -356,8 +356,8 @@ function hotpot_print_recent_mod_activity($activity, $course, $detail=false) {
 	$duration = format_time($activity->content->timestart - $activity->content->timefinish);
 	print " &nbsp; ($duration)";
 
-	print "</FONT></TD></TR>";
-	print "</TABLE>";
+	print "</td></tr>";
+	print "</table>";
 }
 
 function hotpot_cron () {
@@ -870,7 +870,7 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 				}
 			} else {
 				error('Could not expand template block &quot;'.$matches[4][$i].'&quot;', $this->course_homeurl);
-				//print 'Could not expand template block &quot;'.$blockname.'&quot; for '.$tag."<BR>\n";
+				//print 'Could not expand template block &quot;'.$blockname.'&quot; for '.$tag."<br />\n";
 			}
 		}
 	}
@@ -2205,7 +2205,7 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 		}
 	}
 	function insert_message($start_str, $message, $color="red", $align="center") {
-		$message = "<p align=\"$align\" style=\"text-align:$align\"><b><font color=\"$color\">$message</font></b></p>\n";
+		$message = '<p align="'.$align.'" style="color:'.$color.';text-align:'.$align.';"><b>'.$message."</b></p>\n";
 		if (is_int($start = strpos($this->html, $start_str))) {
 			$start += strlen($start_str);
 			$this->html = substr($this->html, 0, $start).$message.substr($this->html, $start);
@@ -2457,16 +2457,16 @@ function hotpot_print_show_links($course, $location, $reference, $actions='', $s
 END_OF_SCRIPT;
 	foreach ($actions as $action) {
 		$html .= $spacer
-		.	'<A href="'
+		.	'<a href="'
 		.			$CFG->wwwroot.'/mod/hotpot/show.php'
 		.			'?course='.$course.'&location='.$location.'&reference='.urlencode($reference).'&action='.$action
 		.		'"'
 		.		' onclick="return setLink(this);"'
 		.		($new_window ? ' target="_blank"' : '')
-		.	'>'.get_string($action, 'hotpot').'</A>'
+		.	'>'.get_string($action, 'hotpot').'</a>'
 		;
 	}
-	print '<FONT size="1">'.$html.'</FONT>';
+	print '<span style="font-size:0.6em;">'.$html.'</span>';
 }
 function hotpot_sort_keypad_chars($a, $b) {
 	$a =  hotpot_keypad_sort_value($a);
