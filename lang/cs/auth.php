@@ -62,8 +62,9 @@ $string['auth_ldap_host_url'] = 'Zadejte URL serveru LDAP. Napøíklad \'ldap://ld
 $string['auth_ldap_login_settings'] = 'Nastavení pøihlá¹ení';
 $string['auth_ldap_memberattribute'] = 'Volitelné: pøenastavuje název atributu èlena skupiny (user member attribute), pokud u¾ivatel patøí do skupiny. Vìt¹inou \'member\'';
 $string['auth_ldap_objectclass'] = 'Volitelné: parametr objectClass pou¾itý pøi pojmenovávání/vyhledávání u¾ivatelù. Vìt¹inou nemusíte mìnit.';
+$string['auth_ldap_opt_deref'] = 'Urèuje chování aliasù bìhem vyhledávání. Vyberte jednu z následujících hodnot: \"Ne\" (LDAP_DEREF_NEVER) nebo \"Ano\" (LDAP_DEREF_ALWAYS)';
 $string['auth_ldap_passwdexpire_settings'] = 'Nastavení vypr¹ení hesla LDAP';
-$string['auth_ldap_search_sub'] = 'Zadejte hodnotu <> 0, pokud chcete prohledávat u¾ivatele v subkontextech.';
+$string['auth_ldap_search_sub'] = 'Prohledávat u¾ivatele v subkontextech.';
 $string['auth_ldap_server_settings'] = 'Nastavení serveru LDAP';
 $string['auth_ldap_update_userinfo'] = 'Aktualizovat informace o u¾ivateli (pøíjmení, køestní jméno, adresa...) z LDAP serveru do Moodle. Dle potøeby definujte \'Mapování dat\'.';
 $string['auth_ldap_user_attribute'] = 'Volitelné: atribut pou¾itý pro pojmenování a vyhledávání u¾ivatelù. Vìt¹inou \'cn\'.';
@@ -92,6 +93,17 @@ $string['auth_pop3mailbox'] = 'Název po¹tovní slo¾ky (mailbox), se kterou se má 
 $string['auth_pop3port'] = 'Èíslo portu POP3 serveru (vìt¹inou 110)';
 $string['auth_pop3title'] = 'Pou¾ívat POP3 server';
 $string['auth_pop3type'] = 'Typ serveru. Pokud vá¹ server pou¾ívá zabezpeèení pomocí certifikátù, zvolte pop3cert.';
+$string['auth_shib_convert_data'] = 'API pro úpravu dat';
+$string['auth_shib_convert_data_description'] = 'Toto API (aplikaèní rozhraní) vám umo¾òuje dále upravovat data, která máte k dispozici ze systému Shibboleth. Více infomací <a href=\"../auth/shibboleth/README.txt\" target=\"_blank\">zde</a>.';
+$string['auth_shib_instructions'] = 'Pou¾ijte <a href=\"$a\">pøihlá¹ení se pøes Shibboleth</a>, pakli¾e va¹e instituce tento systém podporuje.<br />V opaèném pøípadì pou¾ijte normální formuláø pro pøihlá¹ení.';
+$string['auth_shib_instructions_help'] = 'Zde mù¾ete vlo¾it vlastní informace o va¹em systému Shibboleth. Budou se zobrazovat na pøihla¹ovací stránce. Vlo¾ené informace by mìly obsahovat odkaz na zdroj chránìný systémem Shibboleth, který pøesmìruje u¾ivatele na \"<b>$a</b>\", tak¾e se u¾ivatelé systému Shibboleth budou moci pøihlásit do Moodlu. Necháte-li toto pole prázdné, budou se na pøihla¹ovací stránce zobrazovat obecné pokyny.';
+$string['auth_shib_only'] = 'Pouze Shibboleth';
+$string['auth_shib_only_description'] = 'Za¹krtnìte tuto volbu, chcete-li si vynutit pøihlá¹ení pomocí systému Shibboleth';
+$string['auth_shib_username_description'] = 'Název promìnné prostøedí webserveru Shibboleth, která má být pou¾ita jako Moodlovské u¾ivatelské jméno';
+$string['auth_shibboleth_login'] = 'Pøihlá¹ení pøes Shibboleth';
+$string['auth_shibboleth_manual_login'] = 'Ruèní pøihlá¹ení';
+$string['auth_shibbolethdescription'] = 'Tato metoda umo¾òuje vytváøet a ovìøovat u¾ivatele pomocí systému <a href=\"http://shibboleth.internet2.edu/\" target=\"_blank\">Shibboleth</a>.<br>Ujistìte se, ¾e jste si pøeèetli soubor <a href=\"../auth/shibboleth/README.txt\" target=\"_blank\">README</a> obsahující informace o tom, jak nastavit vá¹ Moodle pro podporu systému Shibboleth.';
+$string['auth_shibbolethtitle'] = 'Shibboleth';
 $string['auth_updatelocal'] = 'Aktualizovat lokální data';
 $string['auth_updatelocal_expl'] = '<p><b>Aktualizovat lokální data:</b> Je-li povoleno, budou pole aktualizována (z externího autentizaèního zdroje) po ka¾dém pøihlá¹ení nebo pøi synchronizaci u¾ivatelù. Pole urèená k místní aktualizaci by mìla být uzamknuta.</p>';
 $string['auth_updateremote'] = 'Aktualizovat externí data';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004100800)
+      // glossary.php - created with Moodle 1.5 ALPHA (2005050600)
 
 
 $string['addcomment'] = 'Pøidat komentáø';
@@ -10,6 +10,7 @@ $string['allcategories'] = 'V¹echny kategorie';
 $string['allentries'] = 'V©E';
 $string['allowcomments'] = 'Povolit komentáøe k polo¾kám';
 $string['allowduplicatedentries'] = 'Duplicitní polo¾ky povoleny';
+$string['allowprintview'] = 'Povolit zobrazení pro tisk';
 $string['allowratings'] = 'Povolit hodnocení polo¾ek?';
 $string['answer'] = 'Odpovìï';
 $string['approve'] = 'Schválit';
@@ -130,6 +131,7 @@ $string['notcategorised'] = 'Nezaøazeno';
 $string['numberofentries'] = 'Poèet polo¾ek';
 $string['onebyline'] = '(jedna na øádku)';
 $string['printerfriendly'] = 'Verze pro tisk';
+$string['printviewnotallowed'] = 'Zobrazení pro tisk není povoleno';
 $string['question'] = 'Otázka';
 $string['rate'] = 'Hodnotit';
 $string['rating'] = 'Hodnocení';
