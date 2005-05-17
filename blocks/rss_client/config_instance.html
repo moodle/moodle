@@ -1,5 +1,9 @@
 <?php 
 require_once($CFG->libdir .'/rsslib.php');
+
+//create a page object for url_get_full()
+$page = page_create_object($this->instance->pagetype, $this->instance->pageid);
+
 /// Print tabs at top
 global $currentaction;
 if (empty($currentaction) || $currentaction == 'configblock') {
@@ -7,6 +11,7 @@ if (empty($currentaction) || $currentaction == 'configblock') {
 } else {
     $currentaction = 'managefeeds';
 }
+
 include('config_instance_tabs.php');
 
 if ($currentaction == 'configblock') {
@@ -66,7 +71,7 @@ if ($currentaction == 'configblock') {
                 }
             }
             if ($rssfeeds = get_records('block_rss_client')) {
-                foreach($rssfeeds as $rssfeed){
+                foreach($rssfeeds as $rssfeed) {
                     if (!empty($rssfeed->preferredtitle)) {
                         $feedtitle = stripslashes_safe($rssfeed->preferredtitle);
                     } else {
@@ -95,7 +100,7 @@ if ($currentaction == 'configblock') {
 
             } else {
                 print_string('block_rss_no_feeds', 'block_rss_client');
-                if ( isadmin() ){
+                if ( isadmin() ) {
                     print '&nbsp;<a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php"> '. get_string('block_rss_edit_news_feeds', 'block_rss_client') .'</a><br />';
                 }
             }
@@ -154,10 +159,10 @@ if ($currentaction == 'configblock') {
 <?php
 } else {
     global $act, $url, $rssid, $preferredtitle;
-    echo '<table cellpadding="9" cellspacing="0" class="blockconfigtable">';
-    echo '<tr valign="top"><td>';
+    print '<table cellpadding="9" cellspacing="0" class="blockconfigtable">';
+    print '<tr valign="top"><td>';
     rss_display_feeds();
-    echo '</form>';
+    print '</form>'; //not sure that this is needed
     rss_get_form($act, $url, $rssid, $preferredtitle); 
-    echo '</td></tr></table>';
+    print '</td></tr></table>';
 } ?>

@@ -87,7 +87,7 @@ class block_rss_client extends block_base {
         }
         if ( $userisloggedin && (isadmin() ||  $submitters == SUBMITTERS_ALL_ACCOUNT_HOLDERS || ($submitters == SUBMITTERS_ADMIN_AND_TEACHER && $isteacher)) ) {
 
-            $page   = page_create_object($this->instance->pagetype, $this->instance->pageid);
+            $page = page_create_object($this->instance->pagetype, $this->instance->pageid);
             if (isset($this->config)) {
                 // this instance is configured - show Add/Edit feeds link
                 $script = $page->url_get_full(array('instanceid' => $this->instance->id, 'sesskey' => $USER->sesskey, 'blockaction' => 'config', 'currentaction' => 'managefeeds'));
@@ -217,7 +217,7 @@ class block_rss_client extends block_base {
                 $returnstring .= '<div class="link"><a href="'. $item['link'] .'" target="_new">'. $item['title'] . '</a></div>' ."\n";
 
                 
-                if ($display_description && !empty($item['description'])){
+                if ($display_description && !empty($item['description'])) {
                     $item['description'] = break_up_long_words($item['description'], 30);
                     $returnstring .= '<div class="description">'.
                                      format_text($item['description'], FORMAT_MOODLE, $formatoptions, $this->courseid) . 

@@ -8,7 +8,7 @@
     global $USER;
     
     //ensure that the logged in user is not using the guest account
-    if (isset($_SERVER['HTTP_REFERER'])){
+    if (isset($_SERVER['HTTP_REFERER'])) {
         $referrer = $_SERVER['HTTP_REFERER'];
     } else {
         $referrer = $CFG->wwwroot;
@@ -47,7 +47,7 @@
     //check to make sure that the user is allowed to post new feeds
     $submitters = $CFG->block_rss_client_submitters;
     $isteacher = false;
-    if ($courseid != 'none'){
+    if ($courseid != 'none') {
         $isteacher = isteacher($courseid);
     }
     
@@ -102,7 +102,7 @@
         $dataobject->preferredtitle = addslashes($preferredtitle);
 
         $rssid = insert_record('block_rss_client', $dataobject);
-        if (!$rssid){
+        if (!$rssid) {
             error('There was an error trying to add a new rss feed:'. $url);
         }
 
@@ -167,7 +167,7 @@
         //              echo $sql; //debug
         //              print_object($res); //debug
         $rss_record = get_record('block_rss_client', 'id', $rssid);
-        if (!$rss_record->id){
+        if (!$rss_record->id) {
             print '<strong>'. get_string('block_rss_could_not_find_feed', 'block_rss_client') .': '. $rssid .'</strong>';
         } else {
             // By capturing the output from fetch_rss this way
