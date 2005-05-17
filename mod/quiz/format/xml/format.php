@@ -245,7 +245,8 @@ function readquestions($lines) {
   // iterate through questions
   foreach ($xml['quiz']['#']['question'] as $question) {
     $question_type = $question['@']['type'];
-    echo "<p>question type = $question_type</p>"; 
+    $questiontype = get_string( 'questiontype','quiz',$question_type );
+    echo "<p>$questiontype</p>"; 
 
     if ($question_type=='multichoice') {
       $qo = $this->import_multichoice( $question );
@@ -260,7 +261,8 @@ function readquestions($lines) {
       $qo = $this->import_numerical( $question );
     }
     else {
-      echo "<p>Question type $question_type not currently supported for xml import</p>";
+      $notsupported = get_string( 'xmlnotsupported','quiz',$question_type );
+      echo "<p>$notsupported</p>";
       $qo = null;
     }
 
