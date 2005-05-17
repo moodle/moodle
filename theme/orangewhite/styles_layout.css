@@ -75,7 +75,7 @@ h6.main {
  ***/
 
 #header-home {
-  padding:0.5em 0;
+  padding:0.7em 0;
   height:2em
 }
 #header,
@@ -96,7 +96,7 @@ h6.main {
   text-align:right
 }
 .headermenu .logininfo {
-  margin:5px 12px 10px 0
+  margin:0 12px 4px 0
 }
 .navbar {
   width:100%;
