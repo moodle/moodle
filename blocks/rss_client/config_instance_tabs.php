@@ -7,11 +7,11 @@
 
     $script = $page->url_get_full(array('instanceid' => $this->instance->id, 'sesskey' => $USER->sesskey, 'blockaction' => 'config', 'currentaction' => 'configblock'));
     $row[] = new tabobject('configblock', $script, 
-                get_string('block_rss_configblock', 'block_rss_client'));
+                get_string('configblock', 'block_rss_client'));
 
     $script = $page->url_get_full(array('instanceid' => $this->instance->id, 'sesskey' => $USER->sesskey, 'blockaction' => 'config', 'currentaction' => 'managefeeds'));
     $row[] = new tabobject('managefeeds', $script, 
-                get_string('block_rss_managefeeds', 'block_rss_client'));
+                get_string('managefeeds', 'block_rss_client'));
 
     $tabs[] = $row;
 

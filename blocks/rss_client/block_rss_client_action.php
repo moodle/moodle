@@ -28,7 +28,7 @@
         define('MAGPIE_OUTPUT_ENCODING', get_string('thischarset'));  // see bug 3107
     }
     
-    $straddedit = get_string('block_rss_feeds_add_edit', 'block_rss_client');
+    $straddedit = get_string('feedsaddedit', 'block_rss_client');
     if ( isadmin() ) {
         $stradmin = get_string('administration');
         $strconfiguration = get_string('configuration');
@@ -40,8 +40,8 @@
         $navigation = $straddedit;
     }
     
-    print_header(get_string('block_rss_feeds_add_edit', 'block_rss_client'), 
-                 get_string('block_rss_feeds_add_edit', 'block_rss_client'), 
+    print_header(get_string('feedsaddedit', 'block_rss_client'), 
+                 get_string('feedsaddedit', 'block_rss_client'), 
                  $navigation );
 
     //check to make sure that the user is allowed to post new feeds
@@ -88,7 +88,7 @@
             error('There was an error trying to update rss feed with id:'. $rssid);
         }
 
-        redirect($referrer, get_string('block_rss_feed_updated', 'block_rss_client'));
+        redirect($referrer, get_string('feedupdated', 'block_rss_client'));
 /*        rss_display_feeds();
         rss_get_form($act, $dataobject->url, $rssid, $dataobject->preferredtitle);
 */
@@ -128,7 +128,7 @@
             if (!update_record('block_rss_client', $dataobject)) {
                 error('There was an error trying to update rss feed with id:'. $rssid);
             }
-            $message = get_string('block_rss_feed_added', 'block_rss_client');
+            $message = get_string('feedadded', 'block_rss_client');
         }
         redirect($referrer, $message);
 /*
@@ -158,7 +158,7 @@
         $sql = 'DELETE FROM '. $CFG->prefix .'block_rss_client WHERE id='. $rssid;
         $res= $db->Execute($sql);
 
-        redirect($referrer, get_string('block_rss_feed_deleted', 'block_rss_client') );
+        redirect($referrer, get_string('feeddeleted', 'block_rss_client') );
 
 /*        rss_display_feeds();
         rss_get_form($act, $url, $rssid, $preferredtitle);
@@ -168,7 +168,7 @@
         //              print_object($res); //debug
         $rss_record = get_record('block_rss_client', 'id', $rssid);
         if (!$rss_record->id) {
-            print '<strong>'. get_string('block_rss_could_not_find_feed', 'block_rss_client') .': '. $rssid .'</strong>';
+            print '<strong>'. get_string('couldnotfindfeed', 'block_rss_client') .': '. $rssid .'</strong>';
         } else {
             // By capturing the output from fetch_rss this way
             // error messages do not display and clutter up the moodle interface
@@ -203,7 +203,7 @@
                 if (file_exists($CFG->dirroot .'/blog/lib.php')) {
                     //Blog module is installed - provide "blog this" link
                     print '<td align="right">'."\n";
-                    print '<img src="'. $CFG->pixpath .'/blog/blog.gif" alt="'. get_string('blog_blog_this', 'blog').'" title="'. get_string('blog_blog_this', 'blog') .'" border="0" align="middle" />'."\n";
+                    print '<img src="'. $CFG->pixpath .'/blog/blog.gif" alt="'. get_string('blogthis', 'blog').'" title="'. get_string('blogthis', 'blog') .'" border="0" align="middle" />'."\n";
                     print '<a href="'. $CFG->wwwroot .'/blog/blogthis.php?blogid='. $blogid .'&act=use&item='. $y .'&rssid='. $rssid .'"><small><strong>'. get_string('blog_blog_this', 'blog') .'</strong></small></a>'."\n";
                 } else {
                     print '<td>&nbsp;';

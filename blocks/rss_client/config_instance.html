@@ -19,7 +19,7 @@ if ($currentaction == 'configblock') {
 <table cellpadding="9" cellspacing="0" class="blockconfigtable">
 <tr valign="top">
     <td align="right" width="50%">
-        <?php print_string('block_rss_display_description_label', 'block_rss_client') ?>
+        <?php print_string('displaydescriptionlabel', 'block_rss_client') ?>
     </td>
     <td width="50%">
             <?php 
@@ -38,7 +38,7 @@ if ($currentaction == 'configblock') {
 </tr>
 <tr valign="top">
     <td align="right" width="50%">
-        <?php print_string('block_rss_shownumentries_label', 'block_rss_client') ?>
+        <?php print_string('shownumentrieslabel', 'block_rss_client') ?>
     </td>
     <td width="50%">
         <input name="shownumentries" type="text" size="5" value="<?php
@@ -56,7 +56,7 @@ if ($currentaction == 'configblock') {
 </tr>
 <tr valign="top">
     <td align="right" width="50%">
-        <?php print_string('block_rss_choose_feed_label', 'block_rss_client') ?>
+        <?php print_string('choosefeedlabel', 'block_rss_client') ?>
     </td>
     <td width="50%">
         <?php 
@@ -99,9 +99,9 @@ if ($currentaction == 'configblock') {
                 print $dropdownmenustring;
 
             } else {
-                print_string('block_rss_no_feeds', 'block_rss_client');
+                print_string('nofeeds', 'block_rss_client');
                 if ( isadmin() ) {
-                    print '&nbsp;<a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php"> '. get_string('block_rss_edit_news_feeds', 'block_rss_client') .'</a><br />';
+                    print '&nbsp;<a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php"> '. get_string('editnewsfeeds', 'block_rss_client') .'</a><br />';
                 }
             }
         ?>
@@ -119,7 +119,7 @@ if ($currentaction == 'configblock') {
     </td>
 </tr>
 <tr valign="top">
-    <td align="right" width="50%"><?php print_string('block_rss_client_show_channel_link_label', 'block_rss_client'); ?></td>
+    <td align="right" width="50%"><?php print_string('clientshowchannellinklabel', 'block_rss_client'); ?></td>
     <td width="50%">
         <?php 
                 if (isset($this->config) && isset($this->config->block_rss_client_show_channel_link)) {
@@ -135,7 +135,7 @@ if ($currentaction == 'configblock') {
     </td>
 </tr>
 <tr valign="top">
-    <td align="right" width="50%"><?php print_string('block_rss_client_show_image_label', 'block_rss_client'); ?></td>
+    <td align="right" width="50%"><?php print_string('clientshowimagelabel', 'block_rss_client'); ?></td>
     <td width="50%">
         <?php 
                 if (isset($this->config) && isset($this->config->block_rss_client_show_channel_image)) {

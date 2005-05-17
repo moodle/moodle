@@ -7,7 +7,7 @@ define('BLOCK_RSS_SECONDARY_CACHE_ENABLED', true);
 class block_rss_client extends block_base {
 
     function init() {
-        $this->title = get_string('block_rss_feeds_title', 'block_rss_client');
+        $this->title = get_string('feedstitle', 'block_rss_client');
         $this->version = 2004112000;
     }
 
@@ -22,7 +22,7 @@ class block_rss_client extends block_base {
             $this->title = $this->config->title;
         } else {
             // No customized block title, use localized remote news feed string
-            $this->title = get_string('block_rss_remote_news_feed', 'block_rss_client');
+            $this->title = get_string('remotenewsfeed', 'block_rss_client');
         }
     }
     
@@ -91,11 +91,11 @@ class block_rss_client extends block_base {
             if (isset($this->config)) {
                 // this instance is configured - show Add/Edit feeds link
                 $script = $page->url_get_full(array('instanceid' => $this->instance->id, 'sesskey' => $USER->sesskey, 'blockaction' => 'config', 'currentaction' => 'managefeeds'));
-                $output .= '<div align="center"><a title="'. get_string('block_rss_feeds_add_edit', 'block_rss_client') .'" href="'. $script .'">'. get_string('block_rss_feeds_add_edit', 'block_rss_client') .'</a></div><br />';
+                $output .= '<div align="center"><a title="'. get_string('feedsaddedit', 'block_rss_client') .'" href="'. $script .'">'. get_string('feedsaddedit', 'block_rss_client') .'</a></div><br />';
             } else {
                 // this instance has not been configured yet - show configure link
                 $script = $page->url_get_full(array('instanceid' => $this->instance->id, 'sesskey' => $USER->sesskey, 'blockaction' => 'config', 'currentaction' => 'configblock'));
-                $output .= '<div align="center"><a title="'. get_string('block_rss_feeds_configure_new_instance)', 'block_rss_client') .'" href="'. $script.'">'. get_string('block_rss_feeds_configure_new_instance)', 'block_rss_client') .'</a></div><br />';
+                $output .= '<div align="center"><a title="'. get_string('feedsconfigurenewinstance)', 'block_rss_client') .'" href="'. $script.'">'. get_string('feedsconfigurenewinstance)', 'block_rss_client') .'</a></div><br />';
             }
         }
 
@@ -227,7 +227,7 @@ class block_rss_client extends block_base {
 
             if (!empty($rss->channel['link'])) {
                 if (!empty($this->config) && isset($this->config->block_rss_client_show_channel_link) && $this->config->block_rss_client_show_channel_link) {
-                    $this->content->footer =  '<a href="'. $rss->channel['link'] .'">'. get_string('block_rss_client_channel_link', 'block_rss_client') .'</a>';
+                    $this->content->footer =  '<a href="'. $rss->channel['link'] .'">'. get_string('clientchannellink', 'block_rss_client') .'</a>';
                 } 
                 if (!empty($feedtitle) ) {
                     $feedtitle = '<a href="'. $rss->channel['link'] .'">'. $feedtitle .'</a>';
