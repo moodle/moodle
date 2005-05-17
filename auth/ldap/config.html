@@ -157,7 +157,12 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
 <tr valign="top" class="required">
     <td align="right">ldap_search_sub:</td>
     <td>
-    <input name="ldap_search_sub" type="text" size="1" value="<?php echo $config->ldap_search_sub?>">
+<?php
+    $choices = array();;
+    $choices["0"] = get_string("no");
+    $choices["1"] = get_string("yes");
+    choose_from_menu ($choices, "ldap_search_sub", $form->ldap_search_sub, "");
+?>
     <?php  if (isset($err["ldap_search_sub"])) formerr($err["ldap_search_sub"]); ?>
     </td>
     <td>
