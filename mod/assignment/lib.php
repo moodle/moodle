@@ -1594,9 +1594,9 @@ function assignment_upgrade_submodules() {
 
     $types = assignment_types();
 
-    include_once($CFG->dirroot.'/mod/assignment/version.php');  // defines $module with version etc
+    include($CFG->dirroot.'/mod/assignment/version.php');  // defines $module with version etc
 
-    foreach ($types as $type) {
+    foreach ($types as $type => $typename) {
 
         $fullpath = $CFG->dirroot.'/mod/assignment/type/'.$type;
 
@@ -1605,7 +1605,6 @@ function assignment_upgrade_submodules() {
         if (!is_readable($fullpath .'/version.php')) {
             continue;
         }
-        unset($module);
         include_once($fullpath .'/version.php');
 
     /// Check whether we need to upgrade
@@ -1616,7 +1615,7 @@ function assignment_upgrade_submodules() {
 
     /// Make sure this submodule will work with this assignment version
 
-        if (isset($submodule->requires) and ($submodules->requires > $module->version)) {
+        if (isset($submodule->requires) and ($submodule->requires > $module->version)) {
             notify("Assignment submodule '$type' is too new for your assignment");
             continue;
         }
