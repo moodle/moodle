@@ -40,8 +40,12 @@
                        $selected = '0';
                        $CFG->block_rss_client_submitters = 0;
                 }
-                $options = array ( SUBMITTERS_ALL_ACCOUNT_HOLDERS => get_string('everybody'),
-                      SUBMITTERS_ADMIN_ONLY => get_string('administrators'),
+                // SUBMITTERS_ALL_ACCOUNT_HOLDERS => get_string('everybody')
+                // removed everybody option for 1.5 beta
+                // things are not quite working yet to allow this - revisit later
+                // also 'everybody' should be 'site members' or something clearer since
+                // it does not include guests
+                $options = array ( SUBMITTERS_ADMIN_ONLY => get_string('administrators'),
                       SUBMITTERS_ADMIN_AND_TEACHER => get_string('administratorsandteachers') );
 
                 choose_from_menu ($options, 'block_rss_client_submitters', $selected);

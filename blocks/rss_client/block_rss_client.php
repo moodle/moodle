@@ -85,7 +85,7 @@ class block_rss_client extends block_base {
         if (isset($USER) && isset($USER->id) && $USER->id && !isguest()) {
             $userisloggedin = true;
         }
-        if ( $userisloggedin && (isadmin() ||  $submitters == SUBMITTERS_ALL_ACCOUNT_HOLDERS || ($submitters == SUBMITTERS_ADMIN_AND_TEACHER && $isteacher)) ) {
+        if ( $userisloggedin && ($submitters == SUBMITTERS_ALL_ACCOUNT_HOLDERS || ($submitters == SUBMITTERS_ADMIN_AND_TEACHER && $isteacher)) ) {
 
             $page = page_create_object($this->instance->pagetype, $this->instance->pageid);
             if (isset($this->config)) {
