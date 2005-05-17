@@ -13,6 +13,8 @@
 }
 
 .block_rss_client .title {
+  padding-top:10px;
+  font-size:1.0em;
 }
 
 .block_rss_client .image {

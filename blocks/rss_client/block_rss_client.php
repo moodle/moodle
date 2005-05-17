@@ -91,11 +91,11 @@ class block_rss_client extends block_base {
             if (isset($this->config)) {
                 // this instance is configured - show Add/Edit feeds link
                 $script = $page->url_get_full(array('instanceid' => $this->instance->id, 'sesskey' => $USER->sesskey, 'blockaction' => 'config', 'currentaction' => 'managefeeds'));
-                $output .= '<div align="center"><a title="'. get_string('feedsaddedit', 'block_rss_client') .'" href="'. $script .'">'. get_string('feedsaddedit', 'block_rss_client') .'</a></div><br />';
+                $output .= '<div align="center"><a title="'. get_string('feedsaddedit', 'block_rss_client') .'" href="'. $script .'">'. get_string('feedsaddedit', 'block_rss_client') .'</a></div>';
             } else {
                 // this instance has not been configured yet - show configure link
                 $script = $page->url_get_full(array('instanceid' => $this->instance->id, 'sesskey' => $USER->sesskey, 'blockaction' => 'config', 'currentaction' => 'configblock'));
-                $output .= '<div align="center"><a title="'. get_string('feedsconfigurenewinstance', 'block_rss_client') .'" href="'. $script.'">'. get_string('feedsconfigurenewinstance', 'block_rss_client') .'</a></div><br />';
+                $output .= '<div align="center"><a title="'. get_string('feedsconfigurenewinstance', 'block_rss_client') .'" href="'. $script.'">'. get_string('feedsconfigurenewinstance', 'block_rss_client') .'</a></div>';
             }
         }
 
@@ -189,11 +189,11 @@ class block_rss_client extends block_base {
                     isset($this->config->block_rss_client_show_channel_image) && 
                         $this->config->block_rss_client_show_channel_image &&
                             isset($rss->image) && isset($rss->image['link']) && isset($rss->image['title']) && isset($rss->image['url']) ) {
-                $returnstring .= '<div class="image"><a href="'. $rss->image['link'] .'"><img src="'. $rss->image['url'] .'" title="'. $rss->image['title'] .'" alt="'. $rss->image['title'] .'"/></a></div><br />';
+                $returnstring .= '<div class="image"><a href="'. $rss->image['link'] .'"><img src="'. $rss->image['url'] .'" title="'. $rss->image['title'] .'" alt="'. $rss->image['title'] .'"/></a></div>';
             }
 
             if ($showtitle) {
-                $returnstring .= '<div class="title">'. $feedtitle .'</div><br />';
+                $returnstring .= '<div class="title">'. $feedtitle .'</div>';
             } 
 
             $formatoptions->para = false;
