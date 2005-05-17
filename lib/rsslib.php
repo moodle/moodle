@@ -369,7 +369,7 @@ function rss_display_feeds($userid='', $rssid='') {
         ?>
             <table width="100%" cellpadding="8">
             <tr class="forumpostheadertopic">
-                <td><?php print_string('block_rss_feed', 'block_rss_client'); ?></td>
+                <td><?php print_string('feed', 'block_rss_client'); ?></td>
                 <td><?php print_string('edit'); ?></td>
                 <td><?php print_string('delete'); ?></td>
             </tr>
@@ -383,7 +383,7 @@ function rss_display_feeds($userid='', $rssid='') {
                 $editString .= '" title="'. get_string('edit') .'" align="absmiddle" height="16" width="16" border="0" /></a>';
 
                 $deleteString = '<a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?act=delfeed&rssid='. $feed->id;
-                $deleteString .= '&blogid='. $blogid .'" onClick="return confirm(\''. get_string('block_rss_delete_feed_confirm', 'block_rss_client') .'\');">';
+                $deleteString .= '&blogid='. $blogid .'" onClick="return confirm(\''. get_string('deletefeedconfirm', 'block_rss_client') .'\');">';
                 $deleteString .= '<img src="'. $CFG->pixpath .'/t/delete.gif" alt="'. get_string('delete');
                 $deleteString .= '" title="'. get_string('delete') .'" align="absmiddle" border="0" /></a>';
             }
@@ -431,8 +431,8 @@ function rss_get_form($act='none', $url='', $rssid='', $preferredtitle='', $prin
     global $blogid; //hackish, but if there is a blogid it would be good to preserve it
     $stredit = get_string('edit');
     $stradd = get_string('add');
-    $strupdatefeed = get_string('block_rss_update_feed', 'block_rss_client');
-    $straddfeed = get_string('block_rss_add_feed', 'block_rss_client');
+    $strupdatefeed = get_string('updatefeed', 'block_rss_client');
+    $straddfeed = get_string('addfeed', 'block_rss_client');
     
     $returnstring = '<table align="center"><tbody><tr><td>'."\n";
     
@@ -447,7 +447,7 @@ function rss_get_form($act='none', $url='', $rssid='', $preferredtitle='', $prin
         $returnstring .= $url; 
     }
     $returnstring .= '" />'."\n";
-    $returnstring .= '<br />'. get_string('block_rss_custom_title_label', 'block_rss_client');
+    $returnstring .= '<br />'. get_string('customtitlelabel', 'block_rss_client');
     $returnstring .= '<br /><input type="text" size="60" maxlength="64" name="preferredtitle" value="';
     if ($act == 'rss_edit') { 
         $returnstring .= $preferredtitle; 
@@ -468,7 +468,7 @@ function rss_get_form($act='none', $url='', $rssid='', $preferredtitle='', $prin
     $returnstring .= '<input type="hidden" name="user" value="'. $USER->id .'" />'."\n";
     $returnstring .= '<br /><input type="submit" value="';
     $validatestring = "<a href=\"#\" 
-onClick=\"window.open('http://feedvalidator.org/check.cgi?url='+document.block_rss.elements['url'].value,'validate','width=640,height=480,scrollbars=yes,status=yes,resizable=yes');return true;\">". get_string('validate_feed', 'block_rss_client')."</a>";
+onClick=\"window.open('http://feedvalidator.org/check.cgi?url='+document.block_rss.elements['url'].value,'validate','width=640,height=480,scrollbars=yes,status=yes,resizable=yes');return true;\">". get_string('validatefeed', 'block_rss_client')."</a>";
     if ($act == 'rss_edit') {
         $returnstring .= $stredit;
     } else {
