@@ -154,7 +154,10 @@ if ($currentaction == 'configblock') {
 <?php
 } else {
     global $act, $url, $rssid, $preferredtitle;
+    echo '<table cellpadding="9" cellspacing="0" class="blockconfigtable">';
+    echo '<tr valign="top"><td>';
     rss_display_feeds();
-    print '</form>';
+    echo '</form>';
     rss_get_form($act, $url, $rssid, $preferredtitle); 
+    echo '</td></tr></table>';
 } ?>
