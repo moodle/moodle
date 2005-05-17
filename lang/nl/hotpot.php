@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // hotpot.php - created with Moodle 1.5 ALPHA (2005050600)
+      // hotpot.php - created with Moodle 1.5 ALPHA (2005051500)
 
 
 $string['abandoned'] = 'verlaten';
@@ -9,6 +9,8 @@ $string['average'] = 'Gemiddelde';
 $string['bestattempt'] = 'beste poging';
 $string['checks'] = 'controles';
 $string['clues'] = 'Ideeën';
+$string['copiedtoclipboard'] = 'De inhoud van deze pagina is naar het klembord gekopieerd';
+$string['copytoclipboard'] = 'Kopieer naar klembord';
 $string['correct'] = 'juist';
 $string['deleteabandoned'] = 'Verwijder verlaten';
 $string['deleteabandonedcheck'] = 'Wil je echt alle $a verlaten pogingen verwijderen?';
