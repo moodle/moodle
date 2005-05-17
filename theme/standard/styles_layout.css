@@ -388,6 +388,10 @@ body#admin-config .confighelp {
   margin-top: 10px;
 }
 
+.blockconfigtable {
+  margin-top: 0;
+}
+
 
 /***
  *** Calendar
