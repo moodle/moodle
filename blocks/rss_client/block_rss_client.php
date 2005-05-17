@@ -95,7 +95,7 @@ class block_rss_client extends block_base {
             } else {
                 // this instance has not been configured yet - show configure link
                 $script = $page->url_get_full(array('instanceid' => $this->instance->id, 'sesskey' => $USER->sesskey, 'blockaction' => 'config', 'currentaction' => 'configblock'));
-                $output .= '<div align="center"><a title="'. get_string('feedsconfigurenewinstance)', 'block_rss_client') .'" href="'. $script.'">'. get_string('feedsconfigurenewinstance)', 'block_rss_client') .'</a></div><br />';
+                $output .= '<div align="center"><a title="'. get_string('feedsconfigurenewinstance', 'block_rss_client') .'" href="'. $script.'">'. get_string('feedsconfigurenewinstance', 'block_rss_client') .'</a></div><br />';
             }
         }
 
