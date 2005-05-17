@@ -1,21 +1,20 @@
 <attach event="ondocumentready" handler="parseStylesheets" />
 <script language="JScript">
 /**
- *	PSUEDOS - V1.21.041022 - hover & active
+ *	Pseudos - V1.30.050121 - hover & active
  *	---------------------------------------------
  *	Peterned - http://www.xs4all.nl/~peterned/
- *	(c) 2004 - Peter Nederlof
+ *	(c) 2005 - Peter Nederlof
  *
  *	Credits  - Arnoud Berendsen 
  *	         - Martin Reurings
- *	for inspiring me and finding really sick bugs
+ *           - Robert Hanson
  *
  *	howto: body { behavior:url("csshover.htc"); }
  *	---------------------------------------------
  */
 
-var currentSheet, doc = window.document;
-var activators = {
+var currentSheet, doc = window.document, activators = {
 	onhover:{on:'onmouseover', off:'onmouseout'},
 	onactive:{on:'onmousedown', off:'onmouseup'}
 }
@@ -26,15 +25,17 @@ function parseStylesheets() {
 		parseStylesheet(sheets[i]);
 }
 	function parseStylesheet(sheet) {
-		var l, rules, imports;
 		if(sheet.imports) {
-			imports = sheet.imports, l = imports.length;
-			for(var i=0; i<l; i++) 
-				parseStylesheet(sheet.imports[i]);
+			try {
+				var imports = sheet.imports, l = imports.length;
+				for(var i=0; i<l; i++) parseStylesheet(sheet.imports[i]);
+			} catch(securityException){}
 		}
 
-		rules = (currentSheet = sheet).rules, l = rules.length;
-		for(var j=0; j<l; j++) parseCSSRule(rules[j]);
+		try {
+			var rules = (currentSheet = sheet).rules, l = rules.length;
+			for(var j=0; j<l; j++) parseCSSRule(rules[j]);
+		} catch(securityException){}
 	}
 
 	function parseCSSRule(rule) {
@@ -74,9 +75,9 @@ function getElementsBySelect(rule) {
 		var result, node, nodes = [];
 		var classname = (/\.([a-z0-9_-]+)/i).exec(select);
 		var identify = (/\#([a-z0-9_-]+)/i).exec(select);
-		var tagName = (/^[a-z0-9]+/i).exec(select.toUpperCase()) || '*';
+		var tagName = select.replace(/(\.|\#|\:)[a-z0-9_-]+/i, '');
 		for(var i=0; i<elements.length; i++) {
-			result = elements[i].getElementsByTagName(tagName);
+			result = tagName? elements[i].all.tags(tagName):elements[i].all; 
 			for(var j=0; j<result.length; j++) {
 				node = result[j];
 				if((identify && node.id != identify[1]) || (classname && !(new RegExp('\\b' +
