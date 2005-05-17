@@ -51,7 +51,6 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
                 }
             }
         }
-
         return true;
     }
 
@@ -133,7 +132,7 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
                 }
                 $options->question  = $question->id;
                 $options->answer    = $answer->id;
-                $options->tolerance = $this->apply_unit($question->tolerance, $units);
+                $options->tolerance = $this->apply_unit($question->tolerance[$key], $units);
 
                 // Save options
                 if (isset($options->id)) { // reusing existing record
