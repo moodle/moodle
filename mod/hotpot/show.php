@@ -49,7 +49,7 @@
 			alert('<? print_string('copiedtoclipboard', 'hotpot') ?>');
 		}
 	}
-	document.write('<span style="font-size:0.6em;"> &nbsp; <A href="javascript:copy_contents()"><? print_string('copytoclipboard', 'hotpot') ?></A></span>');
+	document.write('<span class="helplink"> &nbsp; <A href="javascript:copy_contents()"><? print_string('copytoclipboard', 'hotpot') ?></A></span>');
 -->
 </SCRIPT>
 <?php
