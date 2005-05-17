@@ -1,10 +1,10 @@
 <?PHP // $Id$ 
-      // enrol_authorize.php - created with Moodle 1.5 ALPHA (2005050600)
+      // enrol_authorize.php - created with Moodle 1.5 ALPHA (2005051500)
 
 
 $string['anlogin'] = 'Authorize.net: ログイン名';
 $string['anpassword'] = 'Authorize.net: パスワード ( 不要 )';
-$string['anreferer'] = '必要な場合は、リファラURLを設定してください。リファラ ( ウェブリクエストのURLヘッダ情報 ) を送信します。';
+$string['anreferer'] = '必要な場合は、リファラURLを設定してください。これは、ウェブリクエストの「Referer: URL」ヘッダを送信します。';
 $string['antestmode'] = 'Authorize.net: テストトランザクション';
 $string['antrankey'] = 'Authorize.net: トランザクションキー';
 $string['ccexpire'] = '有効期限';

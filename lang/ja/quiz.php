@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.5 ALPHA (2005050600)
+      // quiz.php - created with Moodle 1.5 ALPHA (2005051500)
 
 
 $string['acceptederror'] = 'エラー範囲';
@@ -58,7 +58,9 @@ $string['checkanswer'] = 'チェック';
 $string['choice'] = '選択';
 $string['choices'] = '利用可能な選択';
 $string['choosedatasetproperties'] = 'データセット属性の選択';
-$string['close'] = 'プレビューを閉じる';
+$string['close'] = 'ウインドウを閉じる';
+$string['closepreview'] = 'プレビューを閉じる';
+$string['closereview'] = 'レビューを閉じる';
 $string['confirmstartattempt'] = 'この小テストには時間制限が設けられています。本当にスタートしてもよろしいですか?';
 $string['copyingfrom'] = '問題「 $a 」のコピーを作成';
 $string['copyingquestion'] = '問題のコピー';
@@ -194,13 +196,13 @@ $string['newlocal2'] = '新しいファイル群、この問題のみで使用';
 $string['newlocal3'] = '新しいリンク群、この問題のみで使用';
 $string['noanswers'] = '答えが選択されていません!';
 $string['noattempts'] = 'この小テストは解答されていません。';
-$string['noattemptsmatchingfilter'] = '$a に関する該当データはありません。';
 $string['nodataset'] = '無し - ワイルドカードではありません';
 $string['nominal'] = '名義尺度';
 $string['nomoreattempts'] = '解答回数が終了しました。';
 $string['nopossibledatasets'] = '利用可能なデータセットがありません。';
 $string['noquestionintext'] = '問題テキストが埋め込み問題を含んでいません。';
 $string['noquestions'] = '問題が追加されていません。';
+$string['noquestionsfound'] = '問題が見つかりませんでした。';
 $string['noresponse'] = '返答無し';
 $string['noreview'] = 'この小テストの復習を許可されていません。';
 $string['noreviewuntil'] = '$a までこの小テストの復習はできません。';
@@ -208,6 +210,7 @@ $string['noscript'] = '続けるにはJavaスクリプトを使用可にしてください!';
 $string['notenoughanswers'] = 'このタイプの質問には少なくとも $a の解答が必要です。';
 $string['notenoughsubquestions'] = '十分な副質問が定義されていません！<br />
 この質問を修正しますか？';
+$string['numberabbr'] = '#';
 $string['numerical'] = '数値問題';
 $string['optional'] = 'オプション';
 $string['overdue'] = '期限切れ';
@@ -265,6 +268,7 @@ $string['reportmulti_q_x_student'] = 'マルチ - 学生選択';
 $string['reportmulti_resp'] = '個別の返答';
 $string['reportoverview'] = '概要';
 $string['reportregrade'] = '受験の再評定';
+$string['reports'] = 'レポート';
 $string['reportsimplestat'] = '単純統計';
 $string['requirepassword'] = 'パスワード';
 $string['requirepasswordmessage'] = '小テストを行うためにパスワードを入力してください。';
@@ -281,6 +285,7 @@ $string['savegrades'] = '評点を保存';
 $string['savemyanswers'] = '答えを保存';
 $string['savequiz'] = '小テストを保存';
 $string['score'] = '得点状況';
+$string['scores'] = '得点';
 $string['select'] = '選択';
 $string['selectall'] = '全てを選択';
 $string['selectcategoryabove'] = '上記のカテゴリを選択';
@@ -318,6 +323,7 @@ $string['uniform'] = '一様分布';
 $string['unit'] = '単位';
 $string['unknowntype'] = '$a 行目の問題タイプはサポートされていません。問題は無視されます。';
 $string['unsupportedformulafunction'] = '関数 $a はサポートされていません。';
+$string['url'] = 'URL';
 $string['viewallanswers'] = '終了した $a 件の小テストを表示';
 $string['viewallreports'] = '$a 件の受験レポートを表示';
 $string['warningsdetected'] = '$a の警告が見つかりました。';

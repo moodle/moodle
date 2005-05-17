@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // hotpot.php - created with Moodle 1.5 ALPHA (2005043000)
+      // hotpot.php - created with Moodle 1.5 ALPHA (2005051500)
 
 
 $string['abandoned'] = '放棄';
@@ -9,6 +9,8 @@ $string['average'] = '平均';
 $string['bestattempt'] = '最高評点';
 $string['checks'] = 'チェック';
 $string['clues'] = 'クルー';
+$string['copiedtoclipboard'] = 'このページのコンテンツがクリップボードにコピーされました。';
+$string['copytoclipboard'] = 'クリップボードにコピーする';
 $string['correct'] = '正解';
 $string['deleteabandoned'] = '放棄を削除';
 $string['deleteabandonedcheck'] = '本当に全ての $a の放棄された受験を削除してもよろしいですか?';

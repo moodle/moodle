@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // enrol_ldap.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112900)
+      // enrol_ldap.php - created with Moodle 1.5 ALPHA (2005051500)
 
 
 $string['description'] = '<p>ユーザ登録をコントロールするために、LDAPサーバを使用することができます。LDAPの使用は、あなたのLDAPツリーがコースに登録されているグループを含んでいること、それぞれのグループ/コース内に学生に対応したメンバー登録があることを前提とします。</p>
@@ -23,6 +23,7 @@ $string['enrol_ldap_course_summary'] = 'オプション: 「概要」を取得するLDAPフィー
 $string['enrol_ldap_editlock'] = 'ロック値';
 $string['enrol_ldap_host_url'] = ' 「 ldap://ldap.myorg.com/ 」または「 ldaps://ldap.myorg.com/ 」のようにLDAPホストをURLの形式で指定してください。';
 $string['enrol_ldap_objectclass'] = 'コース検索に使用するオブジェクトクラス。通常は「 posixGroup 」';
+$string['enrol_ldap_search_sub'] = 'subcontextよりグループメンバーを検索する。';
 $string['enrol_ldap_server_settings'] = 'LDAPサーバ設定';
 $string['enrol_ldap_student_contexts'] = '学生の登録時に割り当てられるグループリストのコンテキストです。コンテキストは「 ; 」で区切ってください。例: 「  ou=courses,o=org; ou=others,o=org 」 ';
 $string['enrol_ldap_student_memberattribute'] = 'ユーザがグループに属して ( 登録されて ) いる場合のメンバー属性。通常、「 member 」または「 memberUid 」';
