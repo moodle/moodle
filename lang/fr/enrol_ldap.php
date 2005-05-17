@@ -9,9 +9,9 @@ $string['description'] = '<p>Vous pouvez utiliser un serveur LDAP pour contrôler
 $string['enrol_ldap_server_settings'] = 'Réglages du serveur LDAP';
 $string['enrol_ldap_host_url'] = 'Indiquez l\'hôte LDAP en format URL, par exemple «&nbsp;ldap://ldap.myorg.com/&nbsp;» ou «&nbsp;ldaps://ldap.myorg.com/&nbsp;»';
 $string['enrol_ldap_version'] = 'La version du protocole LDAP qu\'utilise votre serveur.';
-$string['enrol_ldap_bind_dn'] = 'Si vous voulez utiliser bind-user pour rechercher des utilisateurs,
-veuillez le spécifier ici, par exemple sous la forme «&nbsp;cn=ldapuser,ou=public,o=org&nbsp;»';
+$string['enrol_ldap_bind_dn'] = 'Si vous voulez utiliser bind-user pour rechercher des utilisateurs, veuillez le spécifier ici, par exemple sous la forme «&nbsp;cn=ldapuser,ou=public,o=org&nbsp;»';
 $string['enrol_ldap_bind_pw'] = 'Mot de passe pour bind-user.';
+$string['enrol_ldap_search_sub'] = 'Rechercher les affiliations aux groupes à partir des sous-contextes.';
 $string['enrol_ldap_student_settings'] = 'Réglages pour l\'inscription des étudiants';
 $string['enrol_ldap_teacher_settings'] = 'Réglages pour l\'inscription des enseignants';
 $string['enrol_ldap_course_settings'] = 'Réglages de l\'inscription aux cours';
