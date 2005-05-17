@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // survey.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005032600)
+      // survey.php - created with Moodle 1.4.4 + (2004083140)
 
 
 $string['actual'] = 'Tegelik';
@@ -58,10 +58,15 @@ $string['attlsm3'] = 'Eraldatud õppimine';
 $string['attlsmintro'] = 'Arutluses ...';
 $string['attlsname'] = 'ATTLS (20 item version)';
 $string['ciq1'] = 'Millisel õppetunni hetkel olid õppimisega kõige enam hõivatud?';
+$string['ciq1short'] = 'Kõige rohkem kaasa arvatud';
 $string['ciq2'] = 'Millisel õppetunni hetkel olid õppimisest kõige enam eemaldunud?';
+$string['ciq2short'] = 'Kõige kaugem';
 $string['ciq3'] = 'Millisest (ükskõik kelle)tegevusest koosolekutel leidsid kõige enam kinnitust ja abi?';
+$string['ciq3short'] = 'Abivalmis moment';
 $string['ciq4'] = 'Millised (ükskõik kelle)tegevused koosolekutel ajasid sind kõige enam segadusse?';
+$string['ciq4short'] = 'Segadusse ajav moment';
 $string['ciq5'] = 'Milline üritus üllatas sind kõige enam?';
+$string['ciq5short'] = 'Üllatav moment';
 $string['ciqintro'] = 'Vasta alljärgnevatele küsimustele, mõeldes hiljutistest üritustest klassis.';
 $string['ciqname'] = 'Kriitilised juhtumid';
 $string['clicktocontinue'] = 'Jätkamiseks kliki siia';
@@ -153,7 +158,7 @@ $string['collesm6short'] = 'Tõlgendus';
 $string['collesmintro'] = 'Selles online peatükis...';
 $string['collespintro'] = 'Selle küsitluse eesmärk on aidata meil mõista, kuidas te hindate online õppimiskogemust
 
-Kõik allpool esitatud 24 väidet paluvad võrrelda teie <b> eelistatud</b> (ideaalset) ja <b>tegelikku</b> kogemust käesolevas peatükis.
+Kõik allpool esitatud 24 väidet paluvad võrrelda teie <b> eelistatud</> (ideaalset) ja <b>tegelikku</b> kogemust käesolevas peatükis.
 
 Siin pole \"õigeid\" ja \"valesid\" vastuseid, meid huvitab üksnes teie arvamus
 Kinnitame, et teie vastused jäävad konfidentsiaalinfoks ja teie hinnet need ei mõjuta 

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // journal.php - created with Moodle 1.3.3 + (2004052503)
+      // journal.php - created with Moodle 1.4.4 + (2004083140)
 
 
 $string['alwaysopen'] = 'Alati avatud';

@@ -1,11 +1,104 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005032600)
+      // admin.php - created with Moodle 1.4.4 + (2004083140)
 
 
+$string['adminseesallevents'] = 'Administraator  näeb kõiki sündmusi';
+$string['adminseesownevents'] = 'Administraatorid on nagu kõik teised kasutajad';
+$string['blockinstances'] = 'eksemplar';
+$string['blockmultiple'] = 'Mitmekordne';
 $string['cachetext'] = 'Teksti vahemälu eluiga';
+$string['calendarsettings'] = 'Kalender';
+$string['change'] = 'Muutma';
+$string['configallowunenroll'] = 'Kui see on seatud \'Jah\' peale on õpilastel lubatud end õppeainest igal ajal välja registreeruda. Vastasel juhul on see protsess vaid õpetajate ja administraatorite kontrollida.';
+$string['configallusersaresitestudents'] = 'Kas kõiki kasutajaid loetakse õpilastena? Kui sa vastad jah siis iga kinnitatud kontot lubatakse osaleda kui õpilast. Kui sa vastad ei siis ainult kasutajad kes juba osalevad vähemalt ühes kursuses võivad osa võtta lehe tegudes. Ainult administraatorid ja spetsiaalsed õpetajad saavad tegutseda esikaane tegemistes';
+$string['configautologinguests'] = 'Kas peaks tundmatud kasutajad sisse logima külaliskasutajana?';
+$string['configcachetext'] = 'Suurematel lehtedel, mis kasutavad tekstifiltreid võib see seade asju kiirendada. Teksti koopiaid hoitakse töödeldavas vormis siin määratud aja jooksul. Seades aja liiga väikseks võib see asju isegi veidi aeglustada, kuid liiga suureks määrates võtab teksti uuendus liiga kaua aega (nt uute linkide puhul)';
+$string['configclamactlikevirus'] = 'Kohtle faili kui viiruseid';
+$string['configclamdonothing'] = 'Kohtle faili kui OK';
+$string['configclamfailureonupload'] = 'Kui sa oled konfigureerinud Clami failide ülesse laadimiseks aga oled valesti konfigureerinud või programm tõrgub mingil muul põhjusel siis kuidas sa peaksid käituma?  Kui sa valid kohelda faile kui viiruseid siis nad eemaldatakse karantii kataloogi või kustutatakse. Kui sa valid kohelda faili OK siis faili liigutatakse kataloogi sihtpunkti normaalselt. Ükskõik milline variant aga administraatorit teavitatakse kui tekib mingi viga. Kui sul on viiruse kohtlemise variant peal ja tekib mingi viga siis kõik sinu ülesse laetud failid liigutatakse garantii kataloogi. Ole selle valikuga ettevaatlik';
+$string['configcountry'] = 'Kui siia sisestada riik, siis saab seda riiki vaikimisi valida uutele kasutajakontodele. Et kasutajat sundida riiki valima, jäta see sisestamata.';
+$string['configdbsessions'] = 'Sisse lülituna kasutab see seade andmebaasi kuhu salvestatakse kogu informatsioon sessiooni kohta. See on eriti kasulik siis kui suured/hõvatud saidid on ehitatud klusteritele või serveritele. Suurem osa saitidel peaks see valik jaama välja lülitatuna. Selle seade vahetamine logb välja kõik kasutajad (kaasa arvatud sina)';
+$string['configdebug'] = 'Kui see sisse lülida, siis PHP veateadete hulk suureneb, nii et trükitakse rohkem hoiatusi. See on vajalik üksnes tarkvaraarendajale.';
+$string['configdeleteunconfirmed'] = 'Kui kasutusel on emaili kaudu autentimine siis siin määratud ajavahemiku jooksul aksepteeritakse kasutajate vastuseid. Peale seda aega vanad kinnitamata kontod kustutatakse';
+$string['configdigestmailtime'] = 'Inimesed kes valivad saada e-poste läbitöödetud formaadis hakkavad saama päevaseid läbitöödetuid postitusi. See seade kontrollib mis ajal paeval kiri ära saadetakse. ';
+$string['configdisplayloginfailures'] = 'See kuvab informatsiooni kasutajatest kelle sisselogimine on läbi kukkunud';
+$string['configenablerssfeeds'] = 'See lülitab sisse RSS toite saidil. Et näha muudatusi pead sa RSS toite sisse lülitama ka inviduaalsetel moodulitel. Mine mooduli seadistusse kasutates administraatori konfiguratsiooni ';
+$string['configenablerssfeedsdisabled'] = 'See ei ole kätte saadaval kuna RSS sellelt saidilt on välja lülitatud. Sisse lülitamiseks mine Muutlikusse seadistusse mis asub administraatori konfiguratsiooni all';
+$string['configerrorlevel'] = 'Vali PHP hoiatuste hulk, mida soovid kuvada. Parim valik on enamasti Normal.';
+$string['configextendedusernamechars'] = 'Lülita sead seadistus sisse kui soovid ,et õpilased näeksid sümboleid oma kasutajanimes. Vaikimisi on see \"false\" peal mis keelab kasutajanimesi sisaldama ainult tähestiku tähti';
+$string['configfilteruploadedfiles'] = 'Selle seade lubamisel laseb Moodle enne näitamist kõik üleslaetud HTML ja tekstifailid läbi filtrite';
+$string['configforcelogin'] = 'Tavaliselt on avaleht ja kursuste nimekirjad (mitte kurused ise) nähatavad ka sisselogimata. Kui tahad, et kasutajad enne ÜKSKÕIK mis tegevust sisse logiksid, luba see seade';
+$string['configforceloginforprofiles'] = 'Lülita see seadistus sisse kui soovid sundida inimesi logima sisse reaalse kontoga. Vaikimisi on see seadistus välja lülitatud. Seega saavad õpilased iga kursuse õpetaja kohta. see tähendab ka seda ,et neid on otsingu mootoris näha';
+$string['configframename'] = 'Kui sisestad Moodle\'i veebilehe freimis, siis pane selle freimi nimi siia. Vastasel juhul peaks selle väärtuseks jääma \'_top\'';
+$string['configfullnamedisplay'] = 'See määrab ära kuidas kuvatakse täielikud nimed. Enamustele üks-keelsetele lehtedele on parim valik vaikeväärtus \"Eesnimi + Perenimi\", kuid võid peita perenimed või jätta selle keelepaketi otsustada (mõnedel keeltel on erinevad viisid)';
+$string['configgdversion'] = 'Osuta installeeritud GD versioonile. Vaikimisi näha olev versioon on see, mis on  automaatselt tuvastatud. Ära seda muuda, kui pole kindlalt veendunud selles, mida teed.';
+$string['confightmleditor'] = 'Vali, kas lubada või mitte manustatud HTML tekstiredaktorit. Isegi kui seda lubad, ilmub see redaktor üksnes siis, kui kasutaja kasutab ühilduvat brauserit (IE 5.5 või uuemat). Kasutajatel on võimalus seda ka mitte kasutada.';
+$string['configidnumber'] = 'See seade määrab kas (a) Kasutajatelt ei küsita ID numbrit üldse,(b) Kasutajatelt küsitakse ID numbrit, kuid nad saavad selle tühjaks jätta või (c) Kasutajatelt küsitakse ID numbrit ja välja ei saa tühjaks jätta. Kasutajate ID numbrit näidatakse tema profiilis, kui nii on seadistatud.';
+$string['configintro'] = 'Sellel lehel võid täpsustada konfiguratsioonide muutujate hulka, mis panevad Moodle\'i sinu serveris korralikult tööle. Ära liialt pabista - vaikeseaded töötavad enamasti hästi sa võid alati sellele lehele tagasi tulla ja seadeid muuta.';
+$string['configintroadmin'] = 'Sellel lehel sa peaksid konfigureerima peamise administraatori konto, mis kontrollib kogu saiti. Veendu, et kasutajanimi ja salasõna on turvalised ning meiliaadress kehtib. Hiljem võid administraatori kontosid veel luua.';
+$string['configintrosite'] = 'See leht võimaldab konfigureerida selle uue saidi esilehte ja nime. Võid hiljem siia igal ajal tagasi tulla, et seadeid muuta, klikkides kodulehel lingile \"Saidi seaded\".';
+$string['configlang'] = 'Vali vaikeseade keel kogu saidi jaoks. Kasutajad võivad seda seadet hiljem oma äranägemise järgi muuta.';
+$string['configlangdir'] = 'Enamikes keeltes kirjutatakse vasakult paremale, kuid mõnedes, nagu araabia ja heebrea keeles kirjutatakse paremalt vasakule.';
+$string['configlanglist'] = 'Jäta see lünk tühjaks, et võimaldada kasutajal valida keelte hulgast, mis on sinu  Moodle\'i installatsioonis. Keelte menüüd võid siiski lühendada, sisestades komaga eraldatud nimekirja keelte koodidest, mida soovid kasutada. Näiteks:  en,es_es,fr,it';
+$string['configlangmenu'] = 'Vali, kas üldist keelte menüüd kodulehel, logimislehel jne kuvada või mitte. See valik ei mõjuta kasutajate võimalust valida eelistatud keelt nende oma profiilis.';
+$string['configlocale'] = 'Vali kogu saidi geograafiline asukoht - see mõjutab kuupäevade formaati ja keelt. Sul peab olema see lokaalandmestik installeeritud operatsioonisüsteemi. (nt en_US või es_ES). Kui sa ei tea, mida valida, jäta see tühjaks.';
+$string['configloginhttps'] = 'Selle sisse lülitamine paneb Moodlet kasutama turvalist http ühendust ainult logimis jaoks.  Peale seda põõrdutakse tagasi normaalse URL-i juurde. Hoiatus: See seade vajab https spetsiaalset sisse lülitamist veebi serverist. Kui see nii ei ole siis VÕID SA ENNAST ENDA LEHELT VÄLJA LUKUSTADA';
+$string['configloglifetime'] = 'See määrab ajavahemiku pikkuse, mille jooksul soovid säilitada logifaili kasutaja tegevuse kohta. Logimisandmed, mis on sellest varasemad, kustutatakse automaatselt. Parim lahendus on hoida logifaile nii kaua kui võimalik, juhuks, kui neid vaja läheb, kuid väga koormatud serveri ja toimimisprobleemide puhul võiks logifailide eluiga lühendada.';
+$string['configlongtimenosee'] = 'Kui õpilased pole pikka aega sisse loginud, siis nad kustutatakse automaatselt kursuste nimekirjast. See parameeter seab ajapiirangu.';
+$string['configmaxbytes'] = 'Määrab üleslaaditavate failide maksimaalse suuruse üle terve lehe. See seade on piiratud PHP seade upload_max_filesize ja Apache seade LimitRequestBody poolt. \'maxbytes\' omakorda piirab kursuse ja mooduli  juures valitavat suuruste vahemikku.';
+$string['configmaxeditingtime'] = 'Määrab aja, mille jooksul peavad inimesed redigeerima foorumi postitusi, päeviku tagasisidet jne. Enamasti on 30 minutit piisav väärtus.';
+$string['configmessaging'] = 'Kas sõnumi süsteem peaks saidi kasutajate vahel olema sisse lülitatud';
+$string['confignoreplyaddress'] = 'E-kirjad saadetakse vahepeal välja foorumi postitaja poolt. E-maili aadress mille täpsustad läheb kasutusse \"Saatja\" vormi. Seega kirja vastuvõtjad ei saa otseselt sulle vastata';
+$string['confignotifyloginfailures'] = 'Logimise läbikukkumised registreeritakse, e-maili meeldetuletused saadetakse välja. Kes neid meeldetuletusi nägema peaks?';
+$string['confignotifyloginthreshold'] = 'Kui läbikukkumiste meeldetuletused on aktiivsed siis kui palju sisselogimise katseid peaks ühe kasutaja IP aadressilt tulema enne kui sulle teatatakse';
+$string['configopentogoogle'] = 'Google\'l lubatakse leheküljele siseneda kui külaline. Lisaks logitakse kõik Google otsingu kaudu leheni jõudnud inimesed sisse külalistena. See pakub vaid ligipääsu juba külaliste juurdepääsuga kursustele';
+$string['configproxyhost'] = 'Kui sellel <B>serveril</B> on tarvis kasutada puhverarvutit (näiteks tulemüüri) internetti pääsemiseks, siis varusta see puhver-kasutajanime ja pordiga. Vastasel juhul jäta  tühjaks.';
+$string['configquarantinedir'] = 'Kui sa soovid ,et  Clam AV liigutaks nakatunud failid karantii kataloogi siis sisesta see siin. See peab olema kirjutatav veebiserveri poolt. Kui sa jätad selle tühjaks või kui sa sisestad kataloogi mis ei eksisteeri siis nakatunud failid kustutatakse. ';
+$string['configrunclamonupload'] = 'Käivita Clam AV fail ülesse laadimiseks. Sul on vaja õiget teekonda kui soovid seda tööle saada. ';
+$string['configsecureforms'] = 'Moodle saab kasutada lisaturvatasandit, võttes vastu andmeid erinevatelt veebiblankettidelt. Kui see on lubatud, siis brauseri HTTP_REFERER muutujat kontrollitakse praeguse blanketi aadressiga võrreldes. Mõnel üksikul juhul võib see põhjustada probleeme, kui kasutaja kasutab tulemüüri (näiteks Zonealarm) , mis on konfigureeritud HTTP_REFERER oma võrguliiklusest vöötima/maha võtma.  Sümptomiteks on vormi \"kinni kiilumine\". Kui sinu kasutajatel on selliseid probleeme (näiteks) logimislehega, siis võid sa tahta seda seadet ilmselt blokeeerida, ehkki see võib jätta sinu saidi kaitsetuks jõulistele salasõna-rünnakutele. Kui kahtled, jäta siia seadeks \"Jah\".';
+$string['configsessioncookie'] = 'See seade kohandab Moodle\'i sessiooni küpsiste nime. Valikuline ja kasulik vaid siis kui samal lehel jookseb mitu Moodle\'i koopiat ja küpsised võivad segamini minna.';
+$string['configsessiontimeout'] = 'Kui saidile sisse loginud inimesed on kauemat aega tegevuseta (lehti ei laadi), siis nad logitakse automaatselt välja (nende seanss lõpetatakse). See muutuja määrab, kui pika aja jooksul see peaks juhtuma ';
+$string['configshowsiteparticipantslist'] = 'Kõik saidi õpilased ja saidi õpetajad kuvatakse siin saidil kui osalejatena. Kelle on õigust näha osalejate listi';
+$string['configsitepolicy'] = 'Kui teil on saidi poliis siis kõik kasutajad peavad sellega nõustuma enne kui nad seda saiti kasutada saavad.';
+$string['configslasharguments'] = 'Failide (kujutistr, üleslaaditud materjali jne)hankimine toimub läbi skripti, mis kasutab slash arguments \"kärbitud väiteid\" (siin teine valik). See meetod võimaldab faile lihtsamalt veebibrauserite, puhverserverite jne vahemällu salvestada. Kahjuks mõned PHP serverid seda meetodit ei võimalda, nii et kui esineb probleeme üleslaetud failide või kujutiste (näiteks kasutaja piltide) vaatamisel, säti see muutuja esimeseks variandiks.';
+$string['configsmtphosts'] = 'Anna ühe või mitme kohaliku SMTP serveri täielik nimi, mida Moodle peaks kasutama, et saata meile (näit. \'mail.a.com\' või \'mail.a.com;mail.b.com\'). Kui jätad selle tühjaks, kasutab Moodle PHP vaikeseadet meilide saatmiseks.';
+$string['configsmtpuser'] = 'Kui oled täpsustanud ülalnimetatud SMPT serveri ja server nõuab autentsuse tõendamist, siis sisesta siia kasutajanimi ja salasõna.';
+$string['configteacherassignteachers'] = 'Kas tavalistel õpetajatel on õigus määrata õpetajaid oma kursusele? Kui \'Ei\', siis saavad õpetajaid määrata vaid kursuse looja ja administraatorid';
+$string['configtimezone'] = 'Määra vaikimisi seatud ajavöönd siin. See on vaid vaikeväärtus kuupäevade näitamiseks. Iga kasutaja saab määrata oma profiilis sobiva ajavööndi. \"Server time\" siin määrab Moodle\'i kella vastavalt operatsioonisüsteemi seadele, kuid \"Server time\" kasutaja profiilis seab kasutajale selle sama ajavööndi mis serveris';
+$string['configunzip'] = 'Osuta oma lahtipakkimisprogrammi asukoht (ainult  Unix). Seda läheb vaja serveris kokku pakitud arhiivide lahtipakkimisel..';
+$string['configuration'] = 'Konfiguratsioon';
+$string['configvariables'] = 'Konfigureeri muutujad';
+$string['configwarning'] = 'Ole ettevaatlik nende seadistuste muutmisel - valed väärtused võivad tekitada tõsiseid probleeme.';
+$string['configzip'] = 'Määratle oma pakkimisprogrammi asukoht (ainult Unix). Seda läheb vaja serverisse pakitud arhiivi tekitamiseks.';
+$string['confirmation'] = 'Kinnitus';
+$string['confirmdeletedst'] = 'Kustutates ettemääratuid nimesi <strong>$a</strong> lülitab automaatselt välja selle DST ettemääruse kasutajate jaoks. See võib muuta nende ajataju ilma hoitamata. Oled sa kindel ,et soovid jätkata?';
+$string['confirmdeletedstdefault'] = '<strong>Ettemäärus nimega $a kasutatakse kõikide saidi kasutajate poolt</strong> Selle kustutates muudab see automaatselt nende ajataju ilma hoiatamata. Oled sa kindel ,et soovid jätkata?';
+$string['cronwarning'] = '<a href=\"cron.php\">cron.php hooldus skript</a> on jooksnud vähemalt 24 tundi. <br />The <a href=\"../doc/?frame=install.html&mp;sub=cron\">installation documentation</a> seletab kuidas seda automatiseerida.';
+$string['dstisapreference'] = 'Iga kasutaja saab valida mis ettemäärust valida';
+$string['dstisforcedto'] = 'Sunni kõiki kasutajaid kasutama';
+$string['dstpresets'] = 'DST ettemäärus';
+$string['editingdstpreset'] = 'DST ettemääruse toimetamine';
+$string['emptydstlist'] = 'Hetkel ei ole DST ettemäärusi defineeritud. Sa võid ühe lisada klikkides \"lisa\" nuppu';
+$string['errordstpresetactivateearlier'] = 'Aktiveerimise kuu peab olema varajasem kui deaktiveerimise oma';
+$string['errordstpresetnameempty'] = 'Ettemääratud nimi ei saa olla tühi';
+$string['errordstpresetnameexists'] = 'Teine ettemäärus sellise nimega juba eksisteerib';
 $string['filteruploadedfiles'] = 'Filtreeri üleslaaditavaid faile';
+$string['helpadminseesall'] = 'Kas administraatorid näevad kõiki kalendri sündmusi või ainult neid mida nad ise soovivad';
+$string['helpcalendarsettings'] = 'Konfigureeri kalendri päeva/kuu aspekte Moodle-is';
+$string['helpdstforusers'] = 'Kas iga kastuaja saab valida oma DST seadeid?';
+$string['helpmanagedstpresets'] = 'Kliki sellele nupule ,et lisada, muuta või kustutada DST kättesaadavad ettemäärused sellelt lehelt';
+$string['helpstartofweek'] = 'Mis päevaga algab nädal kalendris?';
+$string['helpupcominglookahead'] = 'Mitu päeva ette peaks vaikimisi seadistatud  kalender otsima sündmusi? ';
+$string['helpupcomingmaxevents'] = 'Kui palju (maksimum) sündmusi näidatakse vaikimisi?';
+$string['helpweekenddays'] = 'Millised päevad nädalas koheldakse kui \"nädalavahetus\" ja on näidatakse punase värviga';
+$string['managedstpresets'] = 'Halda DST ettemäärusi';
+$string['nodstpresetsexist'] = 'DST tugi on välja lülitatud kõikide kasutajate jaoks kuna DST ettemäärusi ei ole defineeritud. Sa saad mõnesi ettemäärusi defineerida vajutates allolevat nuppu';
+$string['therewereerrors'] = 'Sinu andmetes ei olnu vigu';
 $string['upgradelogs'] = 'Täisfunktsionnalsuse saavutamiseks pead Sa vanad logid uuendama. <a href=\"$a\">Rohkem informatsiooni</a>';
 $string['upgradelogsinfo'] = 'Logide säilitamise seadetesse on tehtud muudatusi. Et vaadata kõiki vanu logisid tegevuste põhjal, peab  vanu logisid uuendama. Olenevalt leheküljest võib see kaua aega võtta (isegi tunde) ja võib olla suhteliselt koormav suurte andmebaasidega lehtedele. Kui see protsess on käivitatud, peaks laskma sellel lõpetada (hoides veebilehitseja akna lahti). Ära muretse - leht töötab korralikult teistele inimestele kui logisid uuendatakse.<br /><br />Kas soovid logisid uuendada?';
+$string['upgradesure'] = 'Sinu Moodle failid on muudetud ja sa automaatselt uuendad oma serveri <p><b>$a</b></p>
+<p>Once you do this you can not go back again.</p>
+<p>Are you sure you want to upgrade this server to this version?</p> versiooni';
 $string['upgradinglogs'] = 'Logide uuendamine';
 
 ?>

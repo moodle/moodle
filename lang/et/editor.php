@@ -1,13 +1,16 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.3.3 + (2004052503)
+      // editor.php - created with Moodle 1.4.4 + (2004083140)
 
 
 $string['about'] = 'Sellest redigeerijast';
 $string['absbottom'] = 'Täiesti all';
-$string['middle'] = 'Täiesti keskel';
 $string['address'] = 'Aadress';
+$string['alertnoselectedtext'] = 'sa pead enne teksti valima';
 $string['alignment'] = 'Joondus';
 $string['alternatetext'] = 'Alt tekst';
+$string['anchorhelp'] = 'See tekitab ainult ankru. Lingi pead sa ikkagi manuaalselt tegema';
+$string['anchorname'] = 'Ankru nimi ';
+$string['anchors'] = 'Ankrud';
 $string['baseline'] = 'Baasjoonel';
 $string['bold'] = 'Paks';
 $string['borderthickness'] = 'Raami paksus';
@@ -21,12 +24,16 @@ $string['chooseicon'] = 'Vali sisestamiseks ikoon';
 $string['close'] = 'Sulge';
 $string['cols'] = 'Veerud';
 $string['copy'] = 'Kopeeri valik';
+$string['createanchor'] = 'Loo ankur';
 $string['createfolder'] = 'Loo uus kaust';
 $string['createlink'] = 'Lisa veebilink';
 $string['cut'] = 'Lõika valik';
 $string['delete'] = 'Kustuta';
 $string['filebrowser'] = 'Failiotsing';
+$string['fontname'] = 'Fondi nimi';
+$string['fontsize'] = 'Fondi suurus';
 $string['forecolor'] = 'Tähe värv';
+$string['formatblock'] = 'Formaat';
 $string['fullscreen'] = 'Üleekraaniline toimeti';
 $string['heading'] = 'Pealkiri';
 $string['height'] = 'Kõrgus';
@@ -61,6 +68,7 @@ $string['linkurl'] = 'URL';
 $string['middle'] = 'Keskel';
 $string['minimize'] = 'Minimeeri toimeti';
 $string['move'] = 'Liiguta';
+$string['nolink'] = 'Väldi glossaar linki';
 $string['normal'] = 'Normaalne';
 $string['notimage'] = 'Valitud fail ei ole pilt. Vali õige fail!';
 $string['notset'] = 'Määramata';

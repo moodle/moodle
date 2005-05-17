@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // choice.php - created with Moodle 1.3.3 + (2004052503)
+      // choice.php - created with Moodle 1.4.4 + (2004083140)
 
 
 $string['allowupdate'] = 'Luba valiku uuendamist';
@@ -9,6 +9,7 @@ $string['choiceclose'] = 'Kuni';
 $string['choicename'] = 'Valiku nimi';
 $string['choiceopen'] = 'Avatud';
 $string['choicetext'] = 'Valiku tekst';
+$string['havetologin'] = 'Sa pead olema sisse logitud enne kui saad teha oma valiku';
 $string['modulename'] = 'Valik';
 $string['modulenameplural'] = 'Valikud';
 $string['mustchooseone'] = 'Enne salvestamist pead sa valima vastuse. Midagi ei salvestatud.';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005032600)
+      // assignment.php - created with Moodle 1.4.4 + (2004083140)
 
 
 $string['allowresubmit'] = 'Luba uuesti esitamist';
@@ -9,7 +9,7 @@ $string['assignmentmail'] = '$a->teacher on saatnud vastuse Sinu esitatud töö \'
 Seda on võimalik näha Sinu esitatud töö lisana:
 
 $a->url';
-$string['assignmentmailhtml'] = '$a->teacher on saatnud vastuse Sinu esitatud töö \'<i>$a->assignment</i>\' kohta<br /><b r/>
+$string['assignmentmailhtml'] = '$a->teacher on saatnud vastuse Sinu esitatud töö \'<i>$a->assignment</i>\' kohta<br /><br />
 Seda on võimalik näha Sinu <a href=\"$a->url\">esitatud töö</a> lisana.';
 $string['assignmentname'] = 'Ülesande nimi';
 $string['assignmenttype'] = 'Ülesande liik';
@@ -18,6 +18,15 @@ $string['description'] = 'Kirjeldus';
 $string['duedate'] = 'Tähtaeg';
 $string['duedateno'] = 'Tähtajatu';
 $string['early'] = '$a vara';
+$string['emailteachermail'] = '$a->username on esituse ülesande jaoks uuendatud 
+\'$a->assignment\' jaoks
+
+See on kättesaadaval siin 
+$a->url';
+$string['emailteachermailhtml'] = '$a->username on esituse ülesande jaoks uuendatud
+<i>\'$a->assignment\'</i><br /><br />
+It is <a href=\"$a->url\">Veebis saadaval</a>.';
+$string['emailteachers'] = 'E-maili hoiatused õpetajatele ';
 $string['existingfiledeleted'] = 'Olemasolev fail on kustutaud: $a';
 $string['failedupdatefeedback'] = 'Kasutajale saadetud vastuse värskendamine ebaõnnestus $a';
 $string['feedback'] = 'Tagasiside';

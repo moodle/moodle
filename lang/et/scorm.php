@@ -1,0 +1,79 @@
+<?PHP // $Id$ 
+      // scorm.php - created with Moodle 1.4.4 + (2004083140)
+
+
+$string['asset'] = 'Vara';
+$string['attr_error'] = 'Halb väärtus atribuudile ($a->attr) märgistuses $a->tag.';
+$string['autocontinue'] = 'Auto-jätka';
+$string['badmanifest'] = 'Mõned manifesti vead: vaata vigade logi';
+$string['browse'] = 'Sirvi';
+$string['browsed'] = 'Sirvitud';
+$string['browsemode'] = 'Sirvimise mood';
+$string['chooseapacket'] = 'Vali või uuenda SCORMI pakett';
+$string['completed'] = 'Lõpetatud';
+$string['configframesize'] = 'See väärtus on ülemise freimi pikselite suurus. 
+(see mis sisaldab navigatsiooni) ';
+$string['configpopup'] = 'Kui lisada uus scormi pakett mis võimaldab ennast näidata popup aknas, kas see seadistus peaks vaikimisi sisse lülitatud olema?';
+$string['configpopupheight'] = 'Mis peaks olema uue popupi vaikimisi kõrgus?';
+$string['configpopupresizable'] = 'Kas popup akna mõõtmeid saab vaikimisi muuta?';
+$string['configpopupscrollbars'] = 'Kas kerimisriba näidatakse vaikimisi hüpikaknas?';
+$string['configpopupstatus'] = 'Kas popupi akend peaks vaikimisi näitama staatuse ribal?';
+$string['configpopupwidth'] = 'Mis peaks olema uue popupi vaikimisi laius';
+$string['coursepacket'] = 'Kursuse pakett';
+$string['coursestruct'] = 'Kursuse struktuur';
+$string['datadir'] = 'Failisüüstemi viga: Ei saa luua kursuse andme kataloogi';
+$string['domxml'] = 'DOMXML väline teek';
+$string['entercourse'] = 'Sisene SCORMI kursusele';
+$string['errorlogs'] = 'Vigade logi';
+$string['failed'] = 'Läbi kukkunud';
+$string['found'] = 'Manifest leitud';
+$string['gradeaverage'] = 'Keskmine hinne';
+$string['gradehighest'] = 'Kõrgeim hinne';
+$string['grademethod'] = 'Hindamismetoodika';
+$string['gradescoes'] = 'Scoes-i situatsioon';
+$string['gradesum'] = 'Summa hinne';
+$string['guestsno'] = 'Ära luba külalisi';
+$string['incomplete'] = 'Lõpetamata';
+$string['missing_attribute'] = 'Atribuut puudu $a->attr märgistuses $a->tag';
+$string['missing_tag'] = 'Puudub märgistus $a->tag';
+$string['mode'] = 'Mood';
+$string['modulename'] = 'Scorm';
+$string['modulenameplural'] = 'Scorms';
+$string['newheight'] = 'Akna kõrgus vaikimisi (pikslites)';
+$string['newresizable'] = 'Akna suuruse muutmine lubatud';
+$string['newscrollbars'] = 'Akna kerimine lubatud';
+$string['newstatus'] = 'Kuva olekuriba';
+$string['newwidth'] = 'Aknalaius (pikslites)';
+$string['newwindow'] = 'Uus aken';
+$string['newwindowopen'] = 'Ava õppematerjal hüpikaknas';
+$string['next'] = 'Järgmine';
+$string['no_attributes'] = 'Mörgend $a->tag peab omama atribuute';
+$string['no_children'] = 'Märgend $a->tag peab omama järeltulijaid';
+$string['nomanifest'] = 'Manifesti ei leitud';
+$string['noreports'] = 'Aruanne kuvamiseks puudub';
+$string['normal'] = 'Normaalne';
+$string['not_corr_type'] = 'Trüki ebavõrdsus $a->tag märgendi jaoks';
+$string['notattempted'] = 'Pole proovitud';
+$string['organizations'] = 'Organisatsioonid';
+$string['packagedir'] = 'Failisüsteemi viga: Ei saa luua paketti kataloogi';
+$string['passed'] = 'Läbi läinud';
+$string['php5'] = 'PHP 5 (DOMXML sünnipärane teek)';
+$string['position_error'] = '$a->tag märgend ei saa olla $a->parent märgendi järeltulija';
+$string['prev'] = 'Eelmine';
+$string['regular'] = 'Regullaarne manifest';
+$string['report'] = 'Raportid';
+$string['review'] = 'Ülevaade';
+$string['scoes'] = 'Scoes';
+$string['score'] = 'Raw score Punktide algsumma';
+$string['syntax'] = 'Süntaksi viga';
+$string['tag_error'] = 'Tundmatu märgend ($a->tag) kooos selle sisuga: $a->value';
+$string['too_many_attributes'] = 'Märgend $a->tag omab liiga palju atribuute';
+$string['too_many_children'] = 'Märgend $a->tag omab liiga palju järeltulijaid';
+$string['trackingloose'] = 'HOIATUS: Selle SCORMI andmete pakett läheb kaduma!';
+$string['validateascorm'] = 'Valideeri SCORMI pakett';
+$string['validation'] = 'Valideerimise tulemus';
+$string['validationtype'] = 'See eelistus on pandud DOMXML teegi peale mis kasutab valideerimiseks SCORMI Manifesti. Kui sa ei tea siis jäta valitud valik puutumata';
+$string['versionwarning'] = 'Manifesti versioon on vanem kui 1.3, hoiatus $a->tag märgendil';
+$string['viewallreports'] = 'Vaata $a proovide kokkuvõtet';
+
+?>

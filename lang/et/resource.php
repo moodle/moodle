@@ -1,12 +1,14 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005032600)
+      // resource.php - created with Moodle 1.4.4 + (2004083140)
 
 
 $string['addresource'] = 'Lisa õppematerjal';
 $string['chooseafile'] = 'Vali üleslaaditav fail';
+$string['chooseparameter'] = 'Vali parameeter';
 $string['configdefaulturl'] = 'Selle väärtusega eeltäidetakse URL vorm uue URL-põhise õppematerjali loomisel';
 $string['configfilterexternalpages'] = 'Seade lubamisel filtreeritakse kõik välisressursid (veebilehed, üleslaetud HTML failid) leheküljel seatud filtritega (nt sõnastiku auto-lingid). Seade lubamine võib lehtede kiirust oluliselt vähendada - kasuta ettevaatlikult ja vaid siis kui tõesti vaja';
 $string['configframesize'] = 'Kui veebilehte või üleslaetud faili näidatakse freimi sees, siis see väärtus (pikselites) on pealmise freimi suurus';
+$string['configparametersettings'] = 'See paneb vaikimisi paani parameetri seadistused vormis kui lisatakse uusi ressursse. Peale esimest korda muutub see kasutaja inviduaalseks eelistuseks';
 $string['configpopup'] = 'Kui lisatakse uus ressurss, mida saaks näidata hüpikaknas, kas siis lubada see seade vaikeväärtusena?';
 $string['configpopupdirectories'] = 'Kas otseseid linke näidatakse vaikimisi hüpikaknas?';
 $string['configpopupheight'] = 'Mis kõrgusega peaks olema uus hüpikaken?';
@@ -17,16 +19,22 @@ $string['configpopupscrollbars'] = 'Kas kerimisriba näidatakse vaikimisi hüpikak
 $string['configpopupstatus'] = 'Kas olekuriba näidatakse vaikimisi hüpikaknas?';
 $string['configpopuptoolbar'] = 'Kas tööriistariba näidatakse vaikimisi hüpikaknas?';
 $string['configpopupwidth'] = 'Mis laiusega peaks olema uus hüpikaken?';
+$string['configsecretphrase'] = 'Salasõna kasutatakse krüptitud koodi loomiseks mida saab saata mõdedele ressurssidele parameetrina. Krüpteeridud koodi produtseerib md5. Kasutaja IP aadressi väärtus seotakse koos salasõnaga. ie code = md5(IP.secretphrase). See lubab kindlusada ühenduse turvalisust';
 $string['configwebsearch'] = 'Kui lisada URL veebilehe või -lingina, siis pakutakse seda lehte kasutaja poolt soovitud URL\'i leidmiseks';
+$string['configwindowsettings'] = 'See paneb paika vaikimisi windowsi paani parameetri seadistused vormis kui lisatakse uusi ressursse.Peale esimest korda muutub see kasutaja inviduaalseks eelistuseks';
 $string['directlink'] = 'Otsene link sellele failile';
 $string['directoryinfo'] = 'Valitud kataloogis näidatakse kõiki faile.';
+$string['display'] = 'Aken';
 $string['editingaresource'] = 'Õppematerjali redigeerimine';
+$string['encryptedcode'] = 'Krüptitud kood';
 $string['example'] = 'Näide';
 $string['exampleurl'] = 'http://www.example.com/somedirectory/somefile.html';
 $string['fetchclienterror'] = 'Veebilehe avamisel tekkis viga veebikliendis (arvatavasti vale URL)';
 $string['fetcherror'] = 'Veebilehe avamisel tekkis viga';
 $string['fetchservererror'] = 'Veebilehe avamisel tekkis viga serveris (arvatavasti programmi viga).';
 $string['filename'] = 'Faili nimi';
+$string['filtername'] = 'Ressursi nimed Auto-linkimine';
+$string['frameifpossible'] = 'Pane ressursid freimidesse ,et hoida saidi navigatsioon nähtaval';
 $string['fulltext'] = 'Kogu tekst';
 $string['htmlfragment'] = 'HTML fragment';
 $string['maindirectory'] = 'Failide peakataloog';
@@ -47,8 +55,12 @@ $string['newwindow'] = 'Uus aken';
 $string['newwindowopen'] = 'Ava õppematerjal hüpikaknas';
 $string['note'] = 'Märkus';
 $string['notefile'] = 'Kui soovid kursusele rohkem faile üles laadida (nagu nad listis esinevad), kasuta
-<a href=\"$a\" >File Manager</a>.';
+<a href="$a">File Manager</a>.';
 $string['notypechosen'] = 'Pead valima tüübi. Vajuta \"tagasi\" klahvile ja proovi uuesti.';
+$string['pagedisplay'] = 'Kuva resurssid jooksvas aknas';
+$string['pagewindow'] = 'Sama aken';
+$string['parameter'] = 'Parameeter';
+$string['parameters'] = 'Parameetrid';
 $string['popupresource'] = 'See õppematerjal avaneb hüpikaknas';
 $string['popupresourcelink'] = 'Kui ei saanud, kliki siia: $a';
 $string['resourcetype'] = 'Õppematerjali tüüp';
@@ -61,5 +73,12 @@ $string['resourcetype6'] = 'HTML tekst';
 $string['resourcetype7'] = 'Programm';
 $string['resourcetype8'] = 'Wiki tekst';
 $string['resourcetype9'] = 'Kataloog';
+$string['resourcetypedirectory'] = 'Kuva kataloog';
+$string['resourcetypefile'] = 'Viita fail veebi saidile';
+$string['resourcetypehtml'] = 'Komposeeri veebi saiti';
+$string['resourcetypelabel'] = 'Sisesta silt ';
+$string['resourcetypetext'] = 'Komposeeri teksti saiti';
+$string['searchweb'] = 'Otsi veebi saiti';
+$string['variablename'] = 'Muutlik nimi';
 
 ?>
