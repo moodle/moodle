@@ -40,6 +40,6 @@ $string['editrssblock'] = 'Modifier le bloc manchette RSS';
 $string['addnew'] = 'Ajouter nouveau';
 $string['managefeeds'] = 'Gérer tous mes fils RSS';
 $string['configblock'] = 'Configurer ce bloc';
-$string['feedsconfigurenewinstance'] = 'Pour que ce bloc affiche des fils RSS, vous devez le configurer';
+$string['feedsconfigurenewinstance'] = 'Cliquer ici pour afficher dans ce bloc des fils RSS';
 
 ?>
