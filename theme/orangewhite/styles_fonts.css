@@ -57,7 +57,7 @@ body {
 /*td, th, p, a {
     font-family:inherit;
     font-family:inherit;
-	font-size:inherit;
+    font-size:inherit;
 }*/
 
 th {
@@ -85,22 +85,22 @@ a.autolink:hover {
 }
 
 h2 {
-	font-size:150%;
-  font-weight:bold;
+    font-size:150%;
+    font-weight:bold;
 }
 
 h3 {
-	font-size:130%;
-  font-weight:bold;
+    font-size:130%;
+    font-weight:bold;
 }
 
 h4 {
-	font-size:110%;
-  font-weight:bold;
+    font-size:110%;
+    font-weight:bold;
 }
 
 h2.main {
-	font-size:110%;
+    font-size:110%;
 }
 
 
@@ -139,7 +139,7 @@ h2.main {
 }
 
 .logininfo {
-	font-size:90%;
+    font-size:90%;
 }
 
 
@@ -150,7 +150,7 @@ h2.main {
 }
 
 .homelink {
-	font-size:90%;
+    font-size:90%;
 }
 
 
@@ -223,7 +223,7 @@ h2.main {
 ***
 ******************************/
 #login-index .content {
-  text-align:left;
+    text-align:left;
 }
 
 
@@ -254,15 +254,15 @@ h2.main {
 }
 
 .outlineheadingblock {
-	font-weight:bold;
+    font-weight:bold;
 }
 
 .weeklydatetext {
-	font-weight:bold;
+    font-weight:bold;
 }
 
 .courseboxinfo {
-	font-weight:bold;
+    font-weight:bold;
 }
 
 
@@ -299,7 +299,7 @@ h2.main {
 }
 
 .glossaryintrobox {
-  text-align:left;
+    text-align:left;
 }
 
 /* wiki */
@@ -325,56 +325,56 @@ h2.main {
 ***
 ******************************/
 TABLE.minicalendar {
-  letter-spacing:0em;
+    letter-spacing:0em;
 }
 
 TABLE.minicalendar .day {
-  text-align:center;
+    text-align:center;
 }
 
 TABLE.minicalendar TBODY TD {
-  text-align:center;
+    text-align:center;
 }
 
 TABLE.calendarmonth TBODY TD TABLE {
-	line-height:1.2em;
+    line-height:1.2em;
 }
 
 TABLE.calendarmonth TBODY TD DIV {
-	line-height:1.2em;
+    line-height:1.2em;
 }
 
 TABLE.minicalendar THEAD TD,
 TABLE.calendarmonth THEAD TD {
-	font-weight:bold;
-  text-align:center;
+    font-weight:bold;
+    text-align:center;
 }
 
 TABLE.cal_controls td {
-	line-height:1.2em;
+    line-height:1.2em;
 }
 
 .mycalendar .event {
-	font-weight:bold;
+    font-weight:bold;
 }
 
 .mycalendar .event_date { }
 
 .mycalendar .event_table THEAD {
-	text-align:center;
-	font-weight:bold;
+    text-align:center;
+    font-weight:bold;
 }
 
 .calendarexpired {
-	font-weight:bold;
+    font-weight:bold;
 }
 
 .calendarreferer {
-	font-weight:bold;
+    font-weight:bold;
 }
 
 .cal_popup_caption {
-	font-weight:bold;
+    font-weight:bold;
 }
 
 .cal_popup_close {
@@ -391,15 +391,15 @@ TABLE.cal_controls td {
 ******************************/
 /* sideblock */
 .sideblock {
-	font-size:90%;
+    font-size:90%;
 }
 
 .sideblock.header {
-	font-weight:bold;
+    font-weight:bold;
 }
 
 .sideblock .links { }
 
 td.sideblock .content {
-  text-align:left;
+    text-align:left;
 }

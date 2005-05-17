@@ -57,7 +57,7 @@ body {
 /*td, th, p, a {
     font-family:inherit;
     font-family:inherit;
-	font-size:inherit;
+    font-size:inherit;
 }*/
 
 th {
@@ -85,17 +85,17 @@ a.autolink:hover {
 }
 
 h2 {
-	font-size:150%;
+    font-size:150%;
     font-weight:bold;
 }
 
 h3 {
-	font-size:130%;
+    font-size:130%;
     font-weight:bold;
 }
 
 h4 {
-	font-size:110%;
+    font-size:110%;
     font-weight:bold;
 }
 
@@ -138,7 +138,7 @@ h4 {
 }
 
 .logininfo {
-	font-size:90%;
+    font-size:90%;
 }
 
 
@@ -149,7 +149,7 @@ h4 {
 }
 
 .homelink {
-	font-size:90%;
+    font-size:90%;
 }
 
 
@@ -238,15 +238,15 @@ h4 {
 }
 
 .outlineheadingblock {
-	font-weight:bold;
+    font-weight:bold;
 }
 
 .weeklydatetext {
-	font-weight:bold;
+    font-weight:bold;
 }
 
 .courseboxinfo {
-	font-weight:bold;
+    font-weight:bold;
 }
 
 
@@ -318,44 +318,44 @@ TABLE.calendarmini TBODY TD {
 }
 
 TABLE.calendarmonth TBODY TD TABLE {
-	line-height:1.2em;
+    line-height:1.2em;
 }
 
 TABLE.calendarmonth TBODY TD DIV {
-	line-height:1.2em;
+    line-height:1.2em;
 }
 
 TABLE.calendarmini THEAD TD,
 TABLE.calendarmonth THEAD TD {
-	font-weight:bold;
+    font-weight:bold;
     text-align:center;
 }
 
 TABLE.cal_controls td {
-	line-height:1.2em;
+    line-height:1.2em;
 }
 
 .mycalendar .cal_event {
-	font-weight:bold;
+    font-weight:bold;
 }
 
 .mycalendar .cal_event_date { }
 
 .mycalendar .cal_event_table THEAD {
-	text-align:center;
-	font-weight:bold;
+    text-align:center;
+    font-weight:bold;
 }
 
 .calendarexpired {
-	font-weight:bold;
+    font-weight:bold;
 }
 
 .calendarreferer {
-	font-weight:bold;
+    font-weight:bold;
 }
 
 .cal_popup_caption {
-	font-weight:bold;
+    font-weight:bold;
 }
 
 .cal_popup_close {
@@ -372,11 +372,11 @@ TABLE.cal_controls td {
 ******************************/
 /* sideblock */
 .sideblock {
-	font-size:90%;
+    font-size:90%;
 }
 
 .sideblockheading {
-	font-weight:bold;
+    font-weight:bold;
 }
 
 .sideblocklist { }

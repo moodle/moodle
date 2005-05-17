@@ -38,24 +38,24 @@
 }
 
 a.autolink:link {
-	border-bottom:dashed 1px;
-	cursor:help;
+    border-bottom:dashed 1px;
+    cursor:help;
 }
 
 a.autolink:visited {
-	border-bottom:dashed 1px;
-	cursor:help;
+    border-bottom:dashed 1px;
+    cursor:help;
 }
 
 a.autolink:hover {
-	border-bottom:solid 1px;
-	cursor:help;
+    border-bottom:solid 1px;
+    cursor:help;
 }
 
 
 /* general styles */
 body {
-	behavior:url(/htc/csshover.htc);
+    behavior:url(/htc/csshover.htc);
     margin:10px;
 }
 
@@ -73,7 +73,7 @@ a img {
 }
 
 input {
-	background:transparent;
+    background:transparent;
 }
 
 
@@ -481,8 +481,8 @@ table.quiz input {
 }
 
 .wiki .title {
-	padding:3px;
-	border:1px solid;
+    padding:3px;
+    border:1px solid;
 }
 
 .wiki .upload {
@@ -519,7 +519,7 @@ table.quiz input {
 ***
 ******************************/
 TABLE.calendarmini {
-	width:100%;
+    width:100%;
     margin:0px;
     padding:0px;
     border-width:1px;
@@ -527,7 +527,7 @@ TABLE.calendarmini {
 }
 
 TABLE.calendarmonth {
-	width:100%;
+    width:100%;
     margin:0px;
     padding:0px;
     border-width:1px;
@@ -549,8 +549,8 @@ TABLE.calendarmonth TBODY TD {
 }
 
 TABLE.calendarmonth TBODY TD TABLE {
-	margin-top:0px;
-	margin-left:0px;
+    margin-top:0px;
+    margin-left:0px;
 }
 
 TABLE.calendarmonth TBODY TD TABLE TD {
@@ -559,8 +559,8 @@ TABLE.calendarmonth TBODY TD TABLE TD {
 }
 
 TABLE.calendarmonth TBODY TD DIV {
-	margin-top:0px;
-	margin-left:0px;
+    margin-top:0px;
+    margin-left:0px;
 }
 
 TABLE.calendarmini THEAD TD {
@@ -574,49 +574,49 @@ TABLE.calendarmonth THEAD TD {
 }
 
 .cal_event_global {
-	border:2px solid !important;
+    border:2px solid !important;
 }
 
 .cal_event_course {
-	border:2px solid !important;
+    border:2px solid !important;
 }
 
 .cal_event_group {
-	border:2px solid !important;
+    border:2px solid !important;
 }
 
 .cal_event_user {
-	border:2px solid !important;
+    border:2px solid !important;
 }
 
 .cal_duration_global {
-	border-top:2px solid !important;
-	border-bottom:2px solid !important;
+    border-top:2px solid !important;
+    border-bottom:2px solid !important;
 }
 
 .cal_duration_course {
-	border-top:2px solid !important;
-	border-bottom:2px solid !important;
+    border-top:2px solid !important;
+    border-bottom:2px solid !important;
 }
 
 .cal_duration_user {
-	border-top:2px solid !important;
-	border-bottom:2px solid !important;
+    border-top:2px solid !important;
+    border-bottom:2px solid !important;
 }
 
 .cal_duration_group {
-	border-top:2px solid !important;
-	border-bottom:2px solid !important;
+    border-top:2px solid !important;
+    border-bottom:2px solid !important;
 }
 
 .cal_today {
-	border:2px solid !important;
+    border:2px solid !important;
 }
 
 .mycalendar TABLE.cal_filters {
     margin:0px;
     padding:2px;
-	width:100%;
+    width:100%;
     border-width:1px;
     border-style:solid;
 }
@@ -624,43 +624,43 @@ TABLE.calendarmonth THEAD TD {
 .mycalendar .cal_filters THEAD TD {
     margin:0px;
     padding:2px;
-	border-bottom:2px solid;
+    border-bottom:2px solid;
 }
 
 .mycalendar .cal_event_table {
     margin:0px;
     padding:2px;
-	width:100%;
+    width:100%;
     border-width:1px;
     border-style:solid;
 }
 
 .mycalendar HR {
-	height:1px;
-	border:none;
-	border-top:1px solid;
-	margin-top:4px;
-	margin-bottom:4px;
+    height:1px;
+    border:none;
+    border-top:1px solid;
+    margin-top:4px;
+    margin-bottom:4px;
 }
 
 TD.cal_event_description {
-	width:80%;
-	border-left:2px solid;
-	vertical-align:top;
-	padding:5px;
+    width:80%;
+    border-left:2px solid;
+    vertical-align:top;
+    padding:5px;
 }
 
 .cal_popup_bg {
-	padding:0px;
-	margin:0px;
-	border-top:2px solid;
-	border-left:2px solid;
-	border-right:2px solid;
-	border-bottom:2px solid;
+    padding:0px;
+    margin:0px;
+    border-top:2px solid;
+    border-left:2px solid;
+    border-right:2px solid;
+    border-bottom:2px solid;
 }
 
 .cal_popup_close {
-	margin-right:5px;
+    margin-right:5px;
 }
 
 .eventfull {
@@ -702,11 +702,11 @@ TD.cal_event_description {
 }
 
 .sideblockmain HR {
-	height:1px;
-	border:none;
-	border-top:1px solid;
-	margin-top:4px;
-	margin-bottom:4px;
+    height:1px;
+    border:none;
+    border-top:1px solid;
+    margin-top:4px;
+    margin-bottom:4px;
 }
 
 #left-column .sideblock {

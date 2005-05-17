@@ -490,7 +490,7 @@ a.autolink:hover {
 }
 
 TABLE.calendarmini {
-	width: 100%;
+    width: 100%;
     border-width: 1px;
     border-color: <?PHP echo $THEME->borders?>;
     border-style: solid;
@@ -501,7 +501,7 @@ TABLE.calendarmini {
 }
 
 TABLE.calendarmonth {
-	width: 100%;
+    width: 100%;
     border-width: 1px;
     border-color: <?PHP echo $THEME->borders?>;
     border-style: solid;
@@ -525,43 +525,43 @@ TABLE.calendarmonth TBODY TD {
 }
 
 .cal_event_global {
-	background-color: #ff9966;
-	border: 2px #ff9966 solid !important;
+    background-color: #ff9966;
+    border: 2px #ff9966 solid !important;
 }
 
 .cal_event_course {
-	background-color: #4E98D0;
-	border: 2px solid #4E98D0 !important;
+    background-color: #4E98D0;
+    border: 2px solid #4E98D0 !important;
 }
 
 .cal_event_group {
-	background-color: #41C9DD;
-	border: 2px #41C9DD solid !important;
+    background-color: #41C9DD;
+    border: 2px #41C9DD solid !important;
 }
 
 .cal_event_user {
-	background-color: #B1AEE8;
-	border: 2px solid #B1AEE8 !important;
+    background-color: #B1AEE8;
+    border: 2px solid #B1AEE8 !important;
 }
 
 .cal_duration_global {
-	border-top: 2px #ff9966 solid !important;
-	border-bottom: 2px #ff9966 solid !important;
+    border-top: 2px #ff9966 solid !important;
+    border-bottom: 2px #ff9966 solid !important;
 }
 
 .cal_duration_course {
-	border-top: 2px #4E98D0 solid !important;
-	border-bottom: 2px #4E98D0 solid !important;
+    border-top: 2px #4E98D0 solid !important;
+    border-bottom: 2px #4E98D0 solid !important;
 }
 
 .cal_duration_user {
-	border-top: 2px #B1AEE8 solid !important;
-	border-bottom: 2px #B1AEE8 solid !important;
+    border-top: 2px #B1AEE8 solid !important;
+    border-bottom: 2px #B1AEE8 solid !important;
 }
 
 .cal_duration_group {
-	border-top: 2px orange solid !important;
-	border-bottom: 2px orange solid !important;
+    border-top: 2px orange solid !important;
+    border-bottom: 2px orange solid !important;
 }
 
 .cal_weekend {
@@ -569,14 +569,14 @@ TABLE.calendarmonth TBODY TD {
 }
 
 .cal_today {
-	border: 2px black solid !important;
+    border: 2px black solid !important;
 }
 
 TABLE.calendarmonth TBODY TD TABLE {
-	margin-top: 0px;
-	margin-left: 0px;
-	font-size: 0.75em;
-	line-height: 1.2em;
+    margin-top: 0px;
+    margin-left: 0px;
+    font-size: 0.75em;
+    line-height: 1.2em;
 }
 
 TABLE.calendarmonth TBODY TD TABLE TD {
@@ -584,10 +584,10 @@ TABLE.calendarmonth TBODY TD TABLE TD {
 }
 
 TABLE.calendarmonth TBODY TD DIV {
-	margin-top: 0px;
-	margin-left: 0px;
-	font-size: 0.75em;
-	line-height: 1.2em;
+    margin-top: 0px;
+    margin-left: 0px;
+    font-size: 0.75em;
+    line-height: 1.2em;
 }
 
 TABLE.calendarmini THEAD TD {
@@ -597,34 +597,34 @@ TABLE.calendarmini THEAD TD {
 }
 
 TABLE.calendarmonth THEAD TD {
-	text-align: center;
+    text-align: center;
     vertical-align: center;
     padding-bottom: 3px;
     border-bottom: 2px <?PHP echo $THEME->borders?> solid;
 }
 
 .sideblockmain .cal_event {
-	font-size: 0.8em;
-	font-weight: bold;
+    font-size: 0.8em;
+    font-weight: bold;
 }
 .sideblockmain .cal_event_date {
-	font-size: 0.6em;
+    font-size: 0.6em;
 }
 
 .mycalendar {
-	-moz-border-radius-bottomleft: 20px;
+    -moz-border-radius-bottomleft: 20px;
     -moz-border-radius-bottomright: 20px;
 }
 
 .mycalendar .cal_event {
-	font-weight: bold;
+    font-weight: bold;
 }
 .mycalendar .cal_event_date {
-	font-size: 0.8em;
+    font-size: 0.8em;
 }
 
 .mycalendar TABLE.cal_filters {
-	width: 100%;
+    width: 100%;
     border-width: 1px;
     border-color: <?PHP echo $THEME->borders?>;
     border-style: solid;
@@ -634,14 +634,14 @@ TABLE.calendarmonth THEAD TD {
 }
 
 .mycalendar .cal_filters THEAD TD {
-	border-bottom: 2px <?PHP echo $THEME->borders?> solid;
+    border-bottom: 2px <?PHP echo $THEME->borders?> solid;
     margin: 0px;
     padding: 2px;
 }
 
 
 .mycalendar .cal_event_table {
-	width: 100%;
+    width: 100%;
     border-width: 1px;
     border-color: <?PHP echo $THEME->borders?>;
     border-style: solid;
@@ -651,41 +651,41 @@ TABLE.calendarmonth THEAD TD {
 }
 
 .mycalendar .cal_event_table THEAD {
-	background-color: <?PHP echo $THEME->cellcontent?>;
-	text-align: center;
-	font-weight: bold;
+    background-color: <?PHP echo $THEME->cellcontent?>;
+    text-align: center;
+    font-weight: bold;
 }
 
 .sideblockmain HR {
-	height: 1px;
-	border: none;
-	border-top: 1px #999 solid;
-	margin-top: 4px;
-	margin-bottom: 4px;
+    height: 1px;
+    border: none;
+    border-top: 1px #999 solid;
+    margin-top: 4px;
+    margin-bottom: 4px;
 }
 
 .mycalendar HR {
-	height: 1px;
-	border: none;
-	border-top: 1px #999 solid;
-	margin-top: 4px;
-	margin-bottom: 4px;
+    height: 1px;
+    border: none;
+    border-top: 1px #999 solid;
+    margin-top: 4px;
+    margin-bottom: 4px;
 }
 
 .calendarexpired {
-	color: red;
-	font-weight: bold;
+    color: red;
+    font-weight: bold;
 }
 
 .calendarreferer {
-	font-weight: bold;
+    font-weight: bold;
 }
 
 TD.cal_event_description {
-	width: 80%;
-	border-left: 2px <?php echo $THEME->borders?> solid;
-	vertical-align: top;
-	padding: 5px;
+    width: 80%;
+    border-left: 2px <?php echo $THEME->borders?> solid;
+    vertical-align: top;
+    padding: 5px;
 }
 
 .cal_popup_fg {
@@ -709,23 +709,23 @@ TD.cal_event_description {
 }
 
 .cal_popup_close {
-	font-size: 75%;
-	font-weight: bold;
-	font-family: Tahoma, Helvetica, sans-serif;
-	margin-right: 5px;
+    font-size: 75%;
+    font-weight: bold;
+    font-family: Tahoma, Helvetica, sans-serif;
+    margin-right: 5px;
 }
 
 .sideblock .cal_controls {
-	text-align: center;
-	font-size: 9px;
+    text-align: center;
+    font-size: 9px;
 }
 
 A IMG {
-	border: none;
+    border: none;
 }
 
 TABLE.formtable TD {
-	padding: 9px;
+    padding: 9px;
 }
 
 .eventfull {

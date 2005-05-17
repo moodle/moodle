@@ -45,11 +45,11 @@ h3 {
 
 
 li {
-	margin-bottom: 10px;
+    margin-bottom: 10px;
 }
 
 ul {
-	margin-top: 10px;
+    margin-top: 10px;
 }
 
 .question {
@@ -67,9 +67,9 @@ ul {
 }
 
 .normaltext {
-	font-size: medium;
-	border: none;
-	margin-left: 30px;
+    font-size: medium;
+    border: none;
+    margin-left: 30px;
 }
 
 .answercode {
@@ -86,17 +86,17 @@ ul {
 }
 
 .examplecode {
-	font-family: "Courier New", Courier, mono;
-	font-size: small;
-	border: thin dashed #999999;
-	background-color: #FBFBFB;
-	margin: auto;
+    font-family: "Courier New", Courier, mono;
+    font-size: small;
+    border: thin dashed #999999;
+    background-color: #FBFBFB;
+    margin: auto;
     margin-top: 0.5em;
-	padding: 30px;
-	height: auto;
-	width: auto;
+    padding: 30px;
+    height: auto;
+    width: auto;
 }
 
 .spaced {
-	margin-bottom: 30px;
+    margin-bottom: 30px;
 }

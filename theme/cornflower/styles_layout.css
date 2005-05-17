@@ -299,13 +299,12 @@ body#admin-config .confighelp {
 .sideblock {
   width: 100%;
   margin-bottom:1em;
-  	
 }
 
 .sideblock .header {
-	background-image:url(images/sideblock.jpg);
-	text-align: left;
-  	padding:4px;
+    background-image:url(images/sideblock.jpg);
+    text-align: left;
+      padding:4px;
 }
 
 .sideblock .header .hide-show {
@@ -710,7 +709,7 @@ body#course-user .section h2 {
 .headingblock header{
 
 }
-	
+
 .headingblock .link {
   text-align:right;
 }

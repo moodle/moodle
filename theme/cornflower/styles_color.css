@@ -61,8 +61,7 @@ body {
 th.header,
 td.header,
 div.header {
-	background-color: #739FC4;
-	
+    background-color: #739FC4;
 }
 
 .navbar {
@@ -228,10 +227,10 @@ body#admin-index .c0 {
  ***/
 
 .sideblock {
-  	border-top: 1px solid #739FC4;
-	border-right: 1px solid #4A677F;
-	border-bottom: 2px groove #4A677F;
-	border-left: 1px solid #4A677F;
+    border-top: 1px solid #739FC4;
+    border-right: 1px solid #4A677F;
+    border-bottom: 2px groove #4A677F;
+    border-left: 1px solid #4A677F;
 }
 
 
@@ -393,7 +392,7 @@ table.minicalendar {
 }
 
 #course-view .section .content {
-	background-color:#FFFFFF;
+    background-color:#FFFFFF;
 }
 
 #course-view .section .side {
@@ -401,11 +400,11 @@ table.minicalendar {
 }
 
 #course-view .section .left {
-	background: #739FC4;
+    background: #739FC4;
 }
 
 #course-view .section .right {
-	
+    
 }
 
 #course-view .current .side{
@@ -427,14 +426,14 @@ table.minicalendar {
 
 .categoryboxcontent,
 .courseboxcontent {
- border-top: 1px solid #739FC4;
-	border-right: 1px solid #4A677F;
-	border-bottom: 2px groove #4A677F;
-	border-left: 1px solid #4A677F;
-  background: #FFFFFF;
+    border-top: 1px solid #739FC4;
+    border-right: 1px solid #4A677F;
+    border-bottom: 2px groove #4A677F;
+    border-left: 1px solid #4A677F;
+    background: #FFFFFF;
 }
 body#course-user .section {
-  border-color:#AAAAAA;
+    border-color:#AAAAAA;
 }
 
 
