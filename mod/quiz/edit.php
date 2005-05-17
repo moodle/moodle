@@ -81,8 +81,10 @@
 
     } else {
         // no quiz or course was specified so we need to use the stored modform
-        if (!isset($SESSION->modform)) {
-            error(get_string('wronguse', 'quiz'));
+        if (!isset($SESSION->modform)) { // we will get here after editing a question in
+            // a popup window. Because I don't know how to close a popup window I just print a message.
+            notify(get_string('pleaseclose', 'quiz'));
+            exit;
         }
         $modform = $SESSION->modform;
     }

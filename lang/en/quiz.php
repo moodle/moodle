@@ -296,6 +296,7 @@ $string['quizopen'] = 'Open the quiz';
 $string['quizopens'] = 'Quiz opens';
 $string['quiztimelimit'] = 'Time limit: $a';
 $string['quiztimer'] = 'Quiz Timer';
+$string['pleaseclose'] = 'Your request has been processed. You can now close this window';
 $string['random'] = 'Random Question';
 $string['randomcreate'] = 'Create Random Questions';
 $string['randomsamatch'] = 'Random Short-Answer Matching';
