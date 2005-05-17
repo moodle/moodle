@@ -39,6 +39,10 @@ $string['showxmltree'] = 'Show XML tree';
 $string['showhtmlsource'] = 'Show HTML source';
 $string['enterafilename'] = 'Please enter a file name';
 
+// show.php (javascript messages, so must be double escaped. i.e. "it's" ==> 'it\\\'s' OR "it\\'s")
+$string['copytoclipboard'] = 'Copy to Clipboard';
+$string['copiedtoclipboard'] = 'The contents of this page have been copied to the clipboard';
+
 // lib.php
 $string['noactivity'] = 'No activity';
 $string['inprogress'] = 'in progress';
