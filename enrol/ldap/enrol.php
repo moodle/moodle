@@ -457,7 +457,7 @@ function enrol_ldap_bind($ldap_connection){
 
     if ( ! empty($CFG->enrol_ldap_bind_dn) ){
         //bind with search-user
-        if (!ldap_bind($ldap_connection, $CFG->enrol_ldap_bind_dn,$CFG->enrol_ldap_bind_dn)){
+        if (!ldap_bind($ldap_connection, $CFG->enrol_ldap_bind_dn,$CFG->enrol_ldap_bind_pw)){
             error("Error: could not bind ldap with ldap_bind_dn/pw");
             return false;
         }
