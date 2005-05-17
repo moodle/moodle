@@ -30,9 +30,8 @@ Now I show the specific detailed status of every item in the process:
           teacher in the restored course. See bug 2381.
 19. DONE: Move blocks code to libraries and use it in a standard way. Now new
           blocks are supported by scheduled backup.
-20. PROG: Review the lesson module completely! Check the upgrade process to
-          mimic it. Pending to decide if the grade field must go to the score
-          one when restoring old files!! (sent to Michael, Mark and Martin).
+20. DONE: Review the lesson module completely! Check the upgrade process to
+          mimic it. 
 21. DONE: Review the workshop module completely! Check the upgrade process to
           mimic it.
 22. DONE: Review the wiki module fully. Now the wiki backup & restore seems to
@@ -46,7 +45,7 @@ Now I show the specific detailed status of every item in the process:
 24. DONE: Take out THEME from backup directory.
 25. DONE: Add support for forum_read table in backup and restore.
 26. DONE: chat_users->course and chat_users->lang. No changes required!
-27. PROG: Make the backup/restore/config/logs/index.php XHTML 1.0 Transitional.
+27. DONE: Make the backup/restore/config/logs/index.php XHTML 1.0 Transitional.
           Done in manual backups, config, logs and restore.
 28. DONE: Add course->theme, groups->them and user->theme. If no present,
           default blank.
@@ -70,9 +69,8 @@ Now I show the specific detailed status of every item in the process:
 42. DONE: Add user->trackforums (MD did).
 43. TODO: Add forum->trackingtype
 44. TODO: Review SCORM module.
-45. TODO: Modify QUIZ  module (Gustav's team will do 1.5 <==> 1.5 and I start
-          with pre1.5 restore).
-46. TODO: Orphan categories thing in quiz module need final solution.
+45. DONE: Modify QUIZ  module restore for pre1.5 courses.
+46. TODO: Modify QUIZ  module 1.5 <==> 1.5 backup & restore (Gustav's team)
+47. TODO: Orphan categories thing in quiz module need final solution.
          
-Eloy (stronk7)
-23-01-2004
+Maintained by Eloy (stronk7)
