@@ -129,6 +129,7 @@
     // ========================================
     // finally send the file
     // ========================================
+    session_write_close(); // unlock session during fileserving
     $filename = $args[count($args)-1];
     send_file($pathname, $filename, $lifetime, !empty($CFG->filteruploadedfiles));
 
