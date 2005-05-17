@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 ALPHA (2005043000)
+      // moodle.php - created with Moodle 1.5 ALPHA (2005051500)
 
 
 $string['action'] = 'Eylem';
@@ -111,7 +111,7 @@ $string['backupkeephelp'] = 'Herbir ders için son yedeklemelerden kaç tanesini g
 $string['backuplogdetailed'] = 'Ayrýntýlý çalýþtýrma kaydý';
 $string['backuploglaststatus'] = 'Son çalýþtýrma kaydý';
 $string['backuplogshelp'] = 'Etkinleþtirilirse kurs loglarý otomatik yedek içinde dahil edilecek';
-$string['backupmetacoursehelp'] = 'Etkinleþtirirse, metakurs bilgisi (miras kayýtlar) otomatik yedeklemelere dahil edilecek';
+$string['backupmetacoursehelp'] = 'Etkinleþtirirse, metakurs bilgisi (miras öðrenci kayýtlarý) otomatik yedeklemelere dahil edilecek';
 $string['backupnameformat'] = '%%Y%%m%%d-%%H%%M';
 $string['backuporiginalname'] = 'Yedek Adý';
 $string['backupsavetohelp'] = 'Yedeði kaydetmek istediðiniz klasörün tam adresi<br />(kurs dizinine varsayýlan olarak kaydedilsin istiyorsanýz boþ býrakýn)';
@@ -537,7 +537,7 @@ $string['importdata'] = 'Kurs verisi yükle';
 $string['importdataexported'] = '\'Kaynak\' kurstan veriler baþarýyla alýndý. <br /> \'Hedef\' kursa verileri aktarmak için devam edin.';
 $string['importdatafinished'] = 'Alma tamamlandý! Kursunuza devam edin';
 $string['importdatafrom'] = 'Kurs verisinin alýnacaðý kurs:';
-$string['importmetacoursenote'] = 'Meta kursunuza yeni kurslar eklemek için bu formu kullanýn (öðrenci kayýt iþlemleri de alýnacak)';
+$string['importmetacoursenote'] = 'Meta kursunuza yeni kurslar eklemek için bu formu kullanýn.<br />(Öðrenci kayýtlarý da bu kursa dahil edilecek)';
 $string['inactive'] = 'Etkin deðil';
 $string['include'] = 'Dahil et';
 $string['includeallusers'] = 'Tüm kullanýcýlarý dahil et';
@@ -622,7 +622,7 @@ $string['managedatabase'] = 'Veritabanýný yönet';
 $string['managefilters'] = 'Filtreler';
 $string['managemeta'] = 'Bu bir meta kurs mu?';
 $string['managemetadisabled'] = 'Bu kurs zaten bir meta kurs içinde olduðundan dolayý pasifleþtirildi';
-$string['managemetaexplan'] = '(Anlamý: Öðrenci kayýt iþlemleri, baþka kurslardan çekilmiþtir.)';
+$string['managemetaexplan'] = '(Anlamý: Bu kursa kayýtlý öðrenciler, diðer kurslardan devir alýnmýþtýr.)';
 $string['managemodules'] = 'Modüller';
 $string['markedthistopic'] = 'Bu konu güncel konu olarak belirlendi';
 $string['markthistopic'] = 'Bu konuyu güncel konu olarak belirle';
@@ -632,9 +632,13 @@ $string['maximumshort'] = 'Max';
 $string['maximumupload'] = 'En fazla yükleme boyutu';
 $string['maxsize'] = 'En çok: $a';
 $string['metaaddcourse'] = 'Bu kursu ekle';
+$string['metaalreadycourses'] = 'Atanmýþ kurs';
+$string['metaalreadyhascourses'] = 'Bu meta kursun bir alt kursu zaten var.';
 $string['metaalreadyhasenrolments'] = 'Bu kurs zaten normal kayýtlara sahip.';
 $string['metaalreadyinmeta'] = 'Bu kurs zaten meta kursun bir parçasý';
+$string['metaassigncourses'] = 'Kurslarý ata';
 $string['metacourse'] = 'Metakurs';
+$string['metanoalreadycourses'] = 'Atanan bir kurs yok';
 $string['metanopotentialcourses'] = 'Açýk kurs yok';
 $string['metapotentialcourses'] = 'Açýlan kurslar';
 $string['metaremovecourse'] = 'Bu kursu sil';
@@ -784,7 +788,7 @@ $string['outlinereport'] = 'Anahat raporu';
 $string['page'] = 'Sayfa';
 $string['pageheaderconfigablock'] = '%%fullname%% içindeki bir blok yapýlandýrýlýyor';
 $string['parentcoursenotfound'] = 'Ana kurs bulunamadý!';
-$string['parentcoursenotmetacourse'] = 'Ana kurs, bir metakurs deðildir!';
+$string['parentcoursenotmetacourse'] = 'Üstteki kurs, bir metakurs deðildir!';
 $string['parentfolder'] = 'Ana klasör';
 $string['participants'] = 'Katýlýmcýlar';
 $string['password'] = 'Þifre';
