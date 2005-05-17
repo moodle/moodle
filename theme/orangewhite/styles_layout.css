@@ -230,10 +230,7 @@ h6.main {
   border-bottom:1px solid
 }
 .course .section .content .summary {
-  display:none
-}
-.editing .section .content .summary {
-  display:block
+  margin:0 0 0 0.8em
 }
 #course-view .section .content .section .label img {
   margin-right:1em;

@@ -378,9 +378,9 @@ table.minicalendar {
 #course-view .section .weekdates {
   color:#AAA
 }
-.editing .section .content .summary {
-  background-color:#CCC
-}
+/*.editing .section .content .summary {
+  background-color:#FFF
+}*/
 .categoryboxcontent,
 .courseboxcontent {
   border-color:#DDD;
