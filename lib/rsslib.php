@@ -347,23 +347,68 @@ function rss_display_feeds($userid='', $rssid='') {
     global $db, $USER, $CFG;
     global $blogid; //hackish, but if there is a blogid it would be good to preserve it
 
+    require_once($CFG->libdir.'/tablelib.php');
+
     $rsspix = $CFG->pixpath .'/i/rss.gif';
 
-    $closeTable = false;
-    $select = '';
-
-   if (!isadmin()) {
-   	$userid = $USER->id;
-   }
+    if (!isadmin()) {
+     	$userid = $USER->id;
+    }
 
     if ($userid != '' && is_numeric($userid)) {
-	// if a user is specified and not an admin then only show their own feeds
-	$select = 'userid='. $userid;
+	    // if a user is specified and not an admin then only show their own feeds
+	    $select = 'userid='. $userid;
     } else if ($rssid != ''){
         $select = 'id='. $rssid;
     } 
-    $feeds = get_records_select('block_rss_client', $select, 'title');
-    
+
+    $table = new flexible_table('rss-display-feeds');
+
+    $table->define_columns(array('title', 'actions'));
+    $table->define_headers(array(get_string('feed', 'block_rss_client'), NULL));
+
+    $table->sortable(true);
+
+    $table->set_attribute('cellspacing', '0');
+    $table->set_attribute('id', 'rssfeeds');
+    $table->set_attribute('class', 'generaltable generalbox');
+
+    $table->setup();
+
+    $feeds = get_records_select('block_rss_client', $select, $table->get_sql_sort());
+
+    if(!empty($feeds)) {
+        foreach($feeds as $feed) {
+
+            if (!empty($feed->preferredtitle)) {
+                $feedtitle = stripslashes_safe($feed->preferredtitle);
+            } else {
+                $feedtitle =  stripslashes_safe($feed->title);
+            }
+
+            if ($feed->userid == $USER->id || isadmin()) {
+                
+                $feedicons = '<a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?act=rss_edit&amp;rssid='. $feed->id .'&blogid='. $blogid .'">'.
+                             '<img src="'. $CFG->pixpath .'/t/edit.gif" alt="'. get_string('edit').'" title="'. get_string('edit') .'" /></a>&nbsp;'.
+                             
+                             '<a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?act=delfeed&amp;rssid='. $feed->id.'&amp;blogid='. $blogid .'" onclick="return confirm(\''. get_string('deletefeedconfirm', 'block_rss_client') .'\');">'.
+                             '<img src="'. $CFG->pixpath .'/t/delete.gif" alt="'. get_string('delete').'" title="'. get_string('delete') .'" /></a>';
+            }
+            else {
+                $feedicons = '';
+            }
+
+            $feedinfo = '<div class="title"><a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?act=view&rssid='.$feed->id .'&blogid='. $blogid .'">'
+                        .$feedtitle .'</a></div><div class="url"><a href="'. $feed->url .'">'. $feed->url .'</a></div><div class="description">'.$feed->description.'</div>';
+            
+            $table->add_data(array($feedinfo, $feedicons));
+        }
+    }
+
+    $table->print_html();
+
+/*
+    $closeTable = false;
     if ($feeds){
         $closeTable = true;
         ?>
@@ -405,6 +450,7 @@ function rss_display_feeds($userid='', $rssid='') {
     if ($closeTable){
         print '</table>'."\n";
     }
+*/
 }
 
 /**
