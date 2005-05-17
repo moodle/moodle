@@ -239,12 +239,12 @@ function hotpot_print_recent_activity($course, $isteacher, $timestart) {
 				$href = $CFG->wwwroot.'/mod/hotpot/view.php?id='.$id;
 				$name = "&nbsp;<a href=\"$href\">$record->name</a>";
 				if ($record->count_attempts > 1) {
-					$name >= " ($record->count_attempts)";
+					$name .= " ($record->count_attempts)";
 				}
 				$names[] = $name;
 			}
 
-            print_headline(get_string('modulename', 'hotpot').':');
+            print_headline(get_string('modulenameplural', 'hotpot').':');
 			echo '<div class="head"><div class="name">'.implode('<br />', $names).'</div></div>';
 
 			$result = true;
@@ -288,6 +288,8 @@ function hotpot_get_recent_mod_activity(&$activities, &$index, $sincetime, $cour
 		foreach ($records as $record) {
 			if (empty($groupid) || ismember($groupid, $record->userid)) {
 
+				unset($activity);
+
 				$activity->type = "hotpot";
 				$activity->defaultindex = $index;
 				$activity->instance = $record->hotpot;
@@ -325,7 +327,7 @@ function hotpot_print_recent_mod_activity($activity, $course, $detail=false) {
 
 	print '<tr><td bgcolor="'.$THEME->cellcontent2.'" class="forumpostpicture" width="35" valign="top">';
 	print_user_picture($activity->user->userid, $course, $activity->user->picture);
-	print '</td><td width="100%" style="font-size:0.8em;">';
+	print '</td><td width="100%"><font size="2">';
 
 	if ($detail) {
 		// activity icon
@@ -356,7 +358,7 @@ function hotpot_print_recent_mod_activity($activity, $course, $detail=false) {
 	$duration = format_time($activity->content->timestart - $activity->content->timefinish);
 	print " &nbsp; ($duration)";
 
-	print "</td></tr>";
+	print "</font></td></tr>";
 	print "</table>";
 }
 
@@ -2466,7 +2468,7 @@ END_OF_SCRIPT;
 		.	'>'.get_string($action, 'hotpot').'</a>'
 		;
 	}
-	print '<span style="font-size:0.6em;">'.$html.'</span>';
+	print '<span class="helplink">'.$html.'</span>';
 }
 function hotpot_sort_keypad_chars($a, $b) {
 	$a =  hotpot_keypad_sort_value($a);
