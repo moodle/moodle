@@ -495,7 +495,7 @@ function upgrade_blocks_db($continueto) {
         }
 
     } else if ($blocks_version < $CFG->blocks_version) {
-        notify("WARNING!!!  The code you are using is OLDER than the version that made these databases!");
+        notify('WARNING!!!  The Blocks version you are using is OLDER than the version that made these databases!');
     }
 }
 
