@@ -432,37 +432,35 @@ class quiz_format_gift extends quiz_default_format {
 
                     //Calculate Answer and Min/Max values
                     if (strpos($answer,"..") > 0) { // optional [min]..[max] format
-                        $marker                 = strpos($answer,"..");
-                        $question->max[$key]    = trim(substr($answer, $marker+2));
-                        $question->min[$key]    = trim(substr($answer, 0, $marker));
-                        $question->answer[$key] = ($question->max[$key] + $question->min[$key])/2;
-
+                        $marker = strpos($answer,"..");
+                        $max = trim(substr($answer, $marker+2));
+                        $min = trim(substr($answer, 0, $marker));
+                        $ans = ($max + $min)/2;
+                        $tol = $max - $ans;
                     } elseif (strpos($answer,":") > 0){ // standard [answer]:[errormargin] format
-                        $marker                 = strpos($answer,":");
-                        $errormargin            = trim(substr($answer, $marker+1));
-                        $question->answer[$key] = trim(substr($answer, 0, $marker));
-                        $question->max[$key]    = $question->answer[$key] + $errormargin;
-                        $question->min[$key]    = $question->answer[$key] - $errormargin;
-
+                        $marker = strpos($answer,":");
+                        $tol = trim(substr($answer, $marker+1));
+                        $ans = trim(substr($answer, 0, $marker));
                     } else { // only one valid answer (zero errormargin)
-                        $errormargin = 0;
-                        $question->answer[$key] = trim($answer);
-                        $question->max[$key]    = $question->answer[$key] + $errormargin;
-                        $question->min[$key]    = $question->answer[$key] - $errormargin;
+                        $tol = 0;
+                        $ans = trim($answer);
                     }
     
-                    if (!is_numeric($question->answer[$key]) 
-                     OR !is_numeric($question->max[$key])
-                     OR !is_numeric($question->max[$key])) {
+                    if (!is_numeric($ans) 
+                     OR !is_numeric($tol)) {
                         if ($this->displayerrors) {
-                            echo "<p>$text<p>For numerical questions, answer must be numbers.
-                                <p>Answer: <u>$answer</u><p>ErrorMargin: <u>$errormargin</u> .";
+                            $err = get_string( 'errornotnumbers' );
+                            echo "<p>$text</p><p>$err</p>
+                                <p>Answer: <u>$answer</u></p><p>Tolerance: <u>$tol</u></p> ";
                         }
                         return false;
                         break;
                     }
-
-                }     // end foreach
+                    
+                    // store results
+                    $question->answer[$key] = $ans;
+                    $question->tolerance[$key] = $tol;
+                } // end foreach
 
                 $question->defaultgrade = 1;
                 $question->image = "";   // No images with this format
