@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.5 ALPHA (2005042300)
+      // assignment.php - created with Moodle 1.5 ALPHA (2005051500)
 
 
 $string['allowresubmit'] = 'Tekrar göndermeye izin ver';
@@ -32,6 +32,7 @@ isimli gönderesini güncelledi.
 
 <a href=\"$a->url\">Buradan</a> ulaþabilirsiniz.';
 $string['emailteachers'] = 'Eðitmenlere eposta uyarýsý';
+$string['emptysubmission'] = 'Henüz bir þey göndermediniz';
 $string['existingfiledeleted'] = 'Varolan dosya silindi: $a';
 $string['failedupdatefeedback'] = 'Bu kullanýcýnýn gönderdiði geribildirim güncellenemedi $a';
 $string['feedback'] = 'Geribildirim';
@@ -56,6 +57,7 @@ $string['noassignments'] = 'Henüz bir ödev yok';
 $string['notgradedyet'] = 'Henüz notlandýrýlmamýþ';
 $string['notsubmittedyet'] = 'Henüz gönderilmemiþ';
 $string['overwritewarning'] = 'Uyarý: Yüklediðiniz dosyayla DEÐÝÞTÝRÝLECEKTÝR';
+$string['preventlate'] = 'Geç kalan gönderileri engelle';
 $string['saveallfeedback'] = 'Tüm geribildirimlerimi kaydet';
 $string['submission'] = 'Gönderi';
 $string['submissionfeedback'] = 'Geribildirim Gönderimi';
