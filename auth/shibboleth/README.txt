@@ -168,15 +168,6 @@ The current implementation has not yet been extensively tested. So there may be
 bugs. Please send bug reports concerning the Shibboleth part to 
 Lukas Haemmerle <haemmerle@switch.ch>
 
-So far there is one bug known concerning Shibboleth although it's not a bug 
-caused by the Shibboleth authentication but a general bug.
-
-- If certain user profile fields are locked, users may not be able to update
-their user profile at all because Moodle complains that certain locked values
-were tried to change. This bug has to do with the disabling of the locked form
-fields and will hopefully somewhen get fixed. Therefore it is not yet 
-recommended to lock the user fields.
-
 --------------------------------------------------------------------------------
 In case of problems and questions with Shibboleth authentication, contact 
 Lukas Haemmerle <haemmerle@switch.ch> or Markus Hagman <hagman@hytti.uku.fi>
