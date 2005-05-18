@@ -340,13 +340,8 @@ table.minicalendar {
  *** Course
  ***/
 
-/* course, entry-page, login */
-.headingblock {
-  border-color:#DDD
-}
-/* course */
-.headingblock .outline {
-  border-color:#DDD
+#course-view .headingblock {
+  border-left-color:#FFC86C
 }
 #course-view .section td {
   border-color:#DDD

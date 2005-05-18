@@ -245,6 +245,9 @@ table.minicalendar {
 #calendar .maincalendar .calendar-controls .current {
   font-weight:bold
 }
+.block_calendar_month .filters {
+  font-size:0.9em
+}
 
 /***
  *** Course
@@ -374,6 +377,9 @@ body#doc-contents ul {
   font-size:1.2em
 }
 #course-user .logtable {
+  font-size:0.8em
+}
+#course-log .logtable {
   font-size:0.8em
 }
 

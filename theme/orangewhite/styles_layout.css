@@ -54,7 +54,8 @@ h6.main {
   padding:5px
 }
 #layout-table #middle-column {
-  width:auto;
+  /*width:auto;*/
+  width:50%;
   padding:5px
 }
 #layout-table #right-column {
@@ -132,8 +133,14 @@ h6.main {
 #footer hr {
   display:none
 }
+#footer .sitelink {
+  margin:0.5em 0
+}
 #footer .homelink {
   margin:0.5em
+}
+#footer .homelink a {
+  border-width:1px
 }
 
 /***
@@ -194,9 +201,6 @@ h6.main {
   padding-bottom:0.2em;
   border-bottom:1px solid
 }
-#middle-column .headingblock {
-  display:none
-}
 
 /***
  *** Calendar
@@ -209,10 +213,20 @@ h6.main {
 /***
  *** Course
  ***/
+#site-index .headingblock {
+  border:0 none
+}
+#course-view .headingblock {
+  margin-left:1em;
+  padding-left:0.7em;
+  border:0 none;
+  border-left:1.2em solid
+}
 #course-view .topics {
   margin:0 0.5em 0 1em
 }
-#course-view .section .left {
+#course-view .section .left,
+#course-view .section .right {
   width:0.8em
 }
 #course-view .section .left a {
@@ -230,7 +244,7 @@ h6.main {
   border-bottom:1px solid
 }
 .course .section .content .summary {
-  margin:0 0 0 0.8em
+  margin:0 0 0 0.7em
 }
 #course-view .section .content .section .label img {
   margin-right:1em;
