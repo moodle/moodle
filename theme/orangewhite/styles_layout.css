@@ -2,7 +2,7 @@
  styles_layout.css
   
  This CSS file contains all layout definitions like positioning,
- floats, margins, paddding, borders etc.
+ floats, margins, padding, borders etc.
 
  Styles are organised into the following sections:
   core
@@ -179,6 +179,9 @@ h6.main {
 #right-column .sideblock .content {
   border:0 none
 }
+#right-column .sideblock .content {
+  padding:0.2em 0.7em
+}
 #left-column .sideblock .header {
   border-bottom:1px solid
 }
@@ -249,6 +252,10 @@ h6.main {
 #course-view .section .content .section .label img {
   margin-right:1em;
   margin-bottom:1em
+}
+#course-user #content,
+#mod-forum-user #content {
+  padding-bottom:0.2em
 }
 
 /***

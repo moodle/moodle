@@ -57,7 +57,15 @@ h3.main,
 h4.main,
 h5.main,
 h6.main {
-  color:#666
+  color:#999
+}
+h1.main:first-letter,
+h2.main:first-letter,
+h3.main:first-letter,
+h4.main:first-letter,
+h5.main:first-letter,
+h6.main:first-letter {
+  color:#FFB63B
 }
 #layout-table #left-column {
   /*background-color:#F9FAFA*/
@@ -134,6 +142,9 @@ table.formtable tbody th {
   background-color:#FFDA9D;
   border-color:#FFB63B
 }
+.generaltable .r1 {
+  background-color:#D7D7D7
+}
 
 /* kept for backward compatibility with some non-standard modules
    which use these classes for various things */
@@ -197,6 +208,18 @@ table.formtable tbody th {
 body#admin-index .c0 {
   background-color:#FAFAFA
 }
+#admin-config .r0 {
+  background-color:#EEE
+}
+#admin-config .r0 .c0{
+  background-color:#FFEDCE
+}
+#admin-config .r1 {
+  color:#666
+}
+#admin-config h2.main {
+  background-color:#FFEDCE
+}
 
 
 /***
@@ -242,6 +265,14 @@ body#admin-index .c0 {
 }
 .sideblock .post {
   border-bottom-color:#FFF
+}
+.sideblock h1.main:first-letter,
+.sideblock h2.main:first-letter,
+.sideblock h3.main:first-letter,
+.sideblock h4.main:first-letter,
+.sideblock h5.main:first-letter,
+.sideblock h6.main:first-letter {
+  color:#999
 }
 
 
@@ -381,10 +412,21 @@ table.minicalendar {
   border-color:#DDD;
   background:#FFF
 }
-body#course-user .section {
+#course-user .section {
   border-color:#AAA
 }
-
+#course-user #content,
+#user-edit #content,
+#user-view #content,
+.admin #content,
+#course-index #content,
+#course-log #content,
+#files-index #content {
+  background-color:#EEE
+}
+#course-user .logtable .r1 {
+  background-color:#DFDFDF
+}
 
 /***
  *** Doc
@@ -469,7 +511,7 @@ table.message_search_results td {
   background-color:#F9FAFA
 }
 #mod-forum-user #content {
-  background-color:#FFF
+  background-color:#EEE
 }
 .forumheaderlist,
 .forumpost {
