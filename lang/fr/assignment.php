@@ -28,6 +28,7 @@ Ce travail est disponible ici :
 
 $a->url';
 $string['emailteachermailhtml'] = '$a->username a modifié son travail remis pour le devoir «&nbsp;<em>$a->assignment</em>&nbsp;»<br /><br />Le travail remis est <a href=\"$a->url\">disponible sur le site web</a>.';
+$string['emptysubmission'] = 'Vous n\'avez encore rien remis';
 $string['existingfiledeleted'] = 'Le fichier $a a été supprimé';
 $string['failedupdatefeedback'] = 'Impossible d\'enregistrer le feedback pour $a';
 $string['feedback'] = 'Feedback';
