@@ -130,7 +130,7 @@ if (!isset($config->auth_user_lang_editlock)) {
     <td></td>                                                                                                                                 </td>
 </tr>
 --> 
-<tr>
+<tr valign="top" class="required">
     <td align="right"><?php  print_string("username") ?>:</td>
     <td>
     <input name="shib_user_attribute" type="text" size="30" value="<?php echo $config->shib_user_attribute?>">
@@ -139,7 +139,7 @@ if (!isset($config->auth_user_lang_editlock)) {
     </td>
 </tr>
 
-<tr>
+<tr valign="top" class="required">
     <td align="right" valign="top"><?php  print_string("firstname") ?>:</td>
     <td>
     <input name="auth_shib_user_firstname" type="text" size="30" value="<?php echo $config->auth_shib_user_firstname?>">
@@ -161,7 +161,7 @@ if (!isset($config->auth_user_lang_editlock)) {
     </select><br>
     </td>
 </tr>
-<tr valign="top">
+<tr valign="top" class="required">
     <td align="right" valign="top"><?php  print_string("lastname") ?>:</td>
     <td>
     <input name="auth_shib_user_lastname" type="text" size="30" value="<?php echo $config->auth_shib_user_lastname?>">
@@ -183,8 +183,7 @@ if (!isset($config->auth_user_lang_editlock)) {
     </select><br>    
     </td>
 </tr>
-
-<tr valign="top">
+<tr valign="top" class="required">
     <td align="right" valign="top"><?php  print_string("email") ?>:</td>
     <td>
     <input name="auth_shib_user_email" type="text" size="30" value="<?php echo $config->auth_shib_user_email?>">
@@ -400,10 +399,17 @@ if (!isset($config->auth_user_lang_editlock)) {
     <?php  helpbutton("text", get_string("helptext")) ?>
     </td>
 </tr>
-<tr>
+<tr valign="top">
     <td align="right"><?php  print_string("auth_shib_convert_data", "auth") ?>:</td>
     <td>
-    <input name="shib_convert_data" type="text" size="30" value="<?php echo $config->shib_convert_data?>">
+    <input name="shib_convert_data" type="text" size="30" value="<?php echo $config->shib_convert_data?>"> 
+    <? 
+          if ($config->shib_convert_data && $config->shib_convert_data != '' && !is_readable($config->shib_convert_data)){
+              echo '<br><font color="red">';
+              print_string("auth_shib_convert_data_warning", "auth");
+              echo '</font>';
+          }
+    ?>
     </td>
     <td><?php  print_string("auth_shib_convert_data_description", "auth") ?></td>
     </td>

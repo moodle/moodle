@@ -49,7 +49,7 @@ function auth_get_userinfo($username) {
     if (   
           $config["shib_convert_data"] 
           && $config["shib_convert_data"] != ''
-          && file_exists($config["shib_convert_data"])
+          && is_readable($config["shib_convert_data"])
         ){
         
         // Include a custom file outside the Moodle dir to
@@ -62,7 +62,7 @@ function auth_get_userinfo($username) {
 
 function auth_shib_attributes (){
 //returns array containg attribute mappings between Moodle and shibboleth
-    global $CFG;
+	global $CFG;
 
     $config = (array)$CFG;
     $fields = array("firstname", "lastname", "email", "phone1", "phone2", 
@@ -77,6 +77,6 @@ function auth_shib_attributes (){
     }
     $moodleattributes['username']=$config["shib_user_attribute"];
     
-    return $moodleattributes;
+	return $moodleattributes;
 }
 ?>

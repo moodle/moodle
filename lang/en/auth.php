@@ -112,6 +112,7 @@ $string['auth_shib_instructions'] = 'Use the <a href=\"$a\">Shibboleth login</a>
 $string['auth_shib_convert_data'] = 'Data modification API';
 $string['auth_shib_convert_data_description'] = 'You can use this API to further modify the data provided by Shibboleth. Read the <a href=\"../auth/shibboleth/README.txt\" target=\"_blank\">README</a> for further instructions.';
 $string['auth_shib_instructions_help'] = 'Here you should provide custom instructions for your users to explain Shibboleth.  It will be shown on the login page in the instructions section.  It should include a link to a Shibboleth-protected resource that redirects users to \"<b>$a</b>\" so that Shibboleth users can login in Moodle.  If you leave it blank, then standard instructions will be used (not Shibboleth-specific)';
+$string['auth_shib_convert_data_warning'] = 'The file does not exist or is not readable by the webserver process!';
 $string['auth_updatelocal'] = 'Update local data';
 $string['auth_updatelocal_expl'] = '<p><b>Update local data:</b> If enabled, the field will be updated (from external auth) every time the user logs in or there is a user synchronization. Fields set to update locally should be locked.</p>';
 $string['auth_updateremote'] = 'Update external data';
