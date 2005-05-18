@@ -349,7 +349,7 @@ function rss_display_feeds($userid='', $rssid='') {
 
     require_once($CFG->libdir.'/tablelib.php');
 
-    $rsspix = $CFG->pixpath .'/i/rss.gif';
+    $select = '';
 
     if (!isadmin()) {
      	$userid = $USER->id;
@@ -360,22 +360,22 @@ function rss_display_feeds($userid='', $rssid='') {
 	    $select = 'userid='. $userid;
     } else if ($rssid != ''){
         $select = 'id='. $rssid;
-    } 
+    }
 
     $table = new flexible_table('rss-display-feeds');
 
-    $table->define_columns(array('title', 'actions'));
-    $table->define_headers(array(get_string('feed', 'block_rss_client'), NULL));
-
-    $table->sortable(true);
+    $table->define_columns(array('feed', 'actions'));
+    $table->define_headers(array(get_string('feed', 'block_rss_client'), get_string('actions', 'moodle')));
 
     $table->set_attribute('cellspacing', '0');
     $table->set_attribute('id', 'rssfeeds');
     $table->set_attribute('class', 'generaltable generalbox');
+    $table->column_class('feed', 'feed');
+    $table->column_class('actions', 'actions');
 
     $table->setup();
 
-    $feeds = get_records_select('block_rss_client', $select, $table->get_sql_sort());
+    $feeds = get_records_select('block_rss_client', $select, 'title');
 
     if(!empty($feeds)) {
         foreach($feeds as $feed) {
@@ -407,50 +407,6 @@ function rss_display_feeds($userid='', $rssid='') {
 
     $table->print_html();
 
-/*
-    $closeTable = false;
-    if ($feeds){
-        $closeTable = true;
-        ?>
-            <table width="100%" cellpadding="8">
-            <tr class="forumpostheadertopic">
-                <td><?php print_string('feed', 'block_rss_client'); ?></td>
-                <td><?php print_string('edit'); ?></td>
-                <td><?php print_string('delete'); ?></td>
-            </tr>
-        <?php
-        foreach ($feeds as $feed) {
-            $editString = '&nbsp;';
-            $deleteString = '&nbsp;';
-            if ($feed->userid == $USER->id || isadmin()) {
-                $editString = '<a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?act=rss_edit&rssid='. $feed->id .'&blogid='. $blogid .'">';
-                $editString .= '<img src="'. $CFG->pixpath .'/t/edit.gif" alt="'. get_string('edit');
-                $editString .= '" title="'. get_string('edit') .'" align="absmiddle" height="16" width="16" border="0" /></a>';
-
-                $deleteString = '<a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?act=delfeed&rssid='. $feed->id;
-                $deleteString .= '&blogid='. $blogid .'" onClick="return confirm(\''. get_string('deletefeedconfirm', 'block_rss_client') .'\');">';
-                $deleteString .= '<img src="'. $CFG->pixpath .'/t/delete.gif" alt="'. get_string('delete');
-                $deleteString .= '" title="'. get_string('delete') .'" align="absmiddle" border="0" /></a>';
-            }
-            if (!empty($feed->preferredtitle)) {
-                $feedtitle = stripslashes_safe($feed->preferredtitle);
-            } else {
-                $feedtitle =  stripslashes_safe($feed->title);
-            }            
-            print '<tr class="forumpostmessage"><td><strong><a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?act=view&rssid=';
-            print $feed->id .'&blogid='. $blogid .'">'. $feedtitle .'</a></strong><br />' ."\n";
-            print '<a href="'. $feed->url .'">'. $feed->url .'</a><br />'."\n";
-            print $feed->description .'<br />' ."\n";
-            print '</td>';
-            print '<td align="center">'. $editString .'</td>' ."\n";
-            print '<td align="center">'. $deleteString .'</td>' ."\n";
-            print '</tr>'."\n";
-        }
-    }
-    if ($closeTable){
-        print '</table>'."\n";
-    }
-*/
 }
 
 /**
