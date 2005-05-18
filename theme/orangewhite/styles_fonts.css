@@ -274,6 +274,9 @@ table.minicalendar {
 #course-view .section .left {
   font-weight:bold
 }
+.course .generalbox{
+  font-size:0.8em
+}
 .activitydate, .activityhead {
   font-size:0.8em
 }

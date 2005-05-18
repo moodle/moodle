@@ -220,6 +220,10 @@ body#admin-index .c0 {
 #admin-config h2.main {
   background-color:#FFEDCE
 }
+.logtable th.header {
+  background-color:#FFDA9D;
+  border-color:#FFB63B
+}
 
 
 /***
@@ -416,13 +420,20 @@ table.minicalendar {
   border-color:#AAA
 }
 #course-user #content,
-#user-edit #content,
 #user-view #content,
+#user-edit #content,
 .admin #content,
-#course-index #content,
-#course-log #content,
+.course #content,
 #files-index #content {
   background-color:#EEE
+}
+#user-edit #content .generalbox,
+#user-view .userinfobox tr {
+  background-color:#FFF
+}
+#site-index #content,
+#course-view #content {
+  background-color:#FFF
 }
 #course-user .logtable .r1 {
   background-color:#DFDFDF

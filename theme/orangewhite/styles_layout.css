@@ -157,6 +157,19 @@ h6.main {
 }
 
 /***
+ *** Admin
+ ***/
+ 
+.logtable th.header {
+  border-left:1px solid;
+  border-right:1px solid;
+}
+#user-edit #content .generalbox,
+#user-view .userinfobox tr {
+  border-top:0 none
+}
+
+/***
  *** Blocks
  ***/
  
