@@ -142,7 +142,7 @@
             text-indent:-4ex;
         } 
     </style>
-    <script language="Javascript">
+    <script language="javascript" type="text/javascript">
     <!--
         function playSCO(scoid) {
             if (scoid == 0) {

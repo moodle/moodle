@@ -413,10 +413,11 @@ function scorm_endElement($parser, $name) {
         $manifest = '';
     }
     if ($name == 'SCHEMAVERSION') {
-        if (preg_match("/(\d+)\.(\d+)$/",$datacontent,$matches)) {
-            $version = 'SCORM_'.$matches[1].'.'.$matches[2];
-        }
-        //$version = $datacontent;
+        if (preg_match("/^(1\.2)$|^(CAM )?(1\.3)$/",$datacontent,$matches)) {
+            $version = 'SCORM_'.$matches[count($matches)-1];
+        } else {
+	    $version = 'SCORM_1.2';
+	}
     }
 }
 

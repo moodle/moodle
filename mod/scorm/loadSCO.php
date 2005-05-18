@@ -101,7 +101,11 @@
 <html>
     <head>
         <title>LoadSCO</title>
-        <meta http-equiv="refresh" content="1;URL=<?php echo $result ?>" />
+	<script language="javascript" type="text/javascript">
+	<!--
+	    setTimeout('document.location = "<?php echo $result ?>";',1000);
+	-->
+	</script>
     </head>
     <body>
         &nbsp;
