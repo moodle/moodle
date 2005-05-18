@@ -97,7 +97,7 @@ $string['auth_shibboleth_login'] = 'Connexion Shibboleth';
 $string['auth_shibboleth_manual_login'] = 'Connexion manuelle';
 $string['auth_shib_convert_data'] = 'API de modification de données';
 $string['auth_shib_convert_data_description'] = 'Vous pouvez utiliser cette API pour modifier les données fournies par Shibboleth. Lisez le fichier <a href=\"../auth/shibboleth/README.txt\" target=\"_blank\">README</a> pour d\'autres instructions.';
-$string['auth_shib_convert_data_warning'] = 'Le fichier n\'existe pas ou n\'est pas accessible en lecture par le serveurweb&nbsp!';
+$string['auth_shib_convert_data_warning'] = 'Le fichier n\'existe pas ou n\'est pas accessible en lecture par le serveurweb&nbsp;!';
 $string['auth_shib_only'] = 'Seulement Shibboleth';
 $string['auth_shib_only_description'] = 'Cocher cette option pour imposer l\'authentiication Shibboleth';
 $string['auth_shib_username_description'] = 'Nom de la variable d\'environement du serveur web Shibboleth à utiliser comme nom d\'utilisateur Moodle';
