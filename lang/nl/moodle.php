@@ -3,6 +3,7 @@
 
 
 $string['action'] = 'Actie';
+$string['actions'] = 'Acties';
 $string['active'] = 'Actief';
 $string['activities'] = 'Activiteiten ';
 $string['activity'] = 'Activiteit';

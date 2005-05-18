@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.5 ALPHA (2005042300)
+      // assignment.php - created with Moodle 1.5 ALPHA (2005051500)
 
 
 $string['allowresubmit'] = 'Sta herhaald insturen toe';
@@ -29,6 +29,7 @@ $string['emailteachermailhtml'] = '$a->username heeft de inzending voor opdracht
 Je kunt ze hier vinden:
 Je kunt het <a href=\"$a->url\"> nakijken op de website</a>.';
 $string['emailteachers'] = 'Stuur een e-mail als waarschuwing naar de leraren';
+$string['emptysubmission'] = 'Je hebt nog niets ingestuurd';
 $string['existingfiledeleted'] = 'Het vorige bestand is verwijderd: $a';
 $string['failedupdatefeedback'] = 'Het updaten van de feedback op de ingestuurde opdracht van gebruiker $a is niet gelukt';
 $string['feedback'] = 'Feedback';
@@ -48,6 +49,7 @@ $string['noassignments'] = 'Er zijn nog geen opdrachten';
 $string['notgradedyet'] = 'Nog niet beoordeeld';
 $string['notsubmittedyet'] = 'Nog niet ingestuurd';
 $string['overwritewarning'] = 'Waarschuwing: als je opnieuw een opdracht instuurt OVERSCHRIJFT deze de huidige ingestuurde opdracht';
+$string['preventlate'] = 'Blokkeer te laat insturen';
 $string['saveallfeedback'] = 'Bewaar al mijn feedback';
 $string['submission'] = 'Ingestuurde opdracht';
 $string['submissionfeedback'] = 'Feedback op de ingestuurde opdracht';

@@ -96,6 +96,7 @@ $string['auth_pop3title'] = 'Gebruik een  POP3-server';
 $string['auth_pop3type'] = 'Het type van de server. Als jouw server gebruikt maakt van beveiliging door middel van een certificaat, kies pop3cert.';
 $string['auth_shib_convert_data'] = 'Data wijzigings-API';
 $string['auth_shib_convert_data_description'] = 'Je kunt deze API gebruiken om de gegevens die Shibboleth geeft verder aan te passen. Lees <a href=\"../auth/shibboleth/README.txt\" target=\"_blank\">README</a> voor verder instructies.';
+$string['auth_shib_convert_data_warning'] = 'Het bestand bestaat niet of is niet leesbaar voor het webserverproces!';
 $string['auth_shib_instructions'] = 'Gebruik de <a href=\"$a\">Shibboleth login</a> om toegang te krijgen via Shibboleth als je instituut dat ondersteund.<br />Gebruik anders het gewone loginformulier.';
 $string['auth_shib_instructions_help'] = 'Hier zou je aangepaste instructies moeten geven om je gebruikers Shibboleth uit te leggen. Die instructies zullen getoond worden op de login-pagina in het gedeelte voor instructies. Er zou een link naar \"<b>$a</b>\" moeten instaan, zodat gebruikers gemakkelijk kunnen inloggen. Als je dit blanco laat, dan zullen de standaardinstructies getoond worden (niet specifiek voor Shibboleth).';
 $string['auth_shib_only'] = 'Uitsluitend Shibboleth';
