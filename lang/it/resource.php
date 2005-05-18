@@ -1,23 +1,24 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.5 ALPHA (2005042400)
+      // resource.php - created with Moodle 1.5 ALPHA (2005051500)
 
 
 $string['addresource'] = 'Aggiungi risorsa';
 $string['chooseafile'] = 'Scegli o aggiorna un file';
 $string['chooseparameter'] = 'Scegli parametro';
+$string['configallowlocalfiles'] = 'Quando si crea una risorsa di tipo \"file\", questa impostazione consente di collegare file presenti sul lettore CD o sul disco fisso del computer dell\'utente. Può essere utile nelle classi dove gli studenti possono accedere ad un disco di rete condiviso oppure per accedere a file contenuti in un CD-ROM. L\'impiego di questa caratteristica potrebbe richiedere la modifica di impostazioni di sicurezza del browser.';
 $string['configdefaulturl'] = 'Questo valore è utilizzato come preimpostazione degli URL quando si crea una nuova risorsa con URL';
-$string['configfilterexternalpages'] = 'Abilitando questa impostazione tutti le risorse esterne (pagine web, file HTML inviati) saranno processati dai filtri definiti attualmente per il sito (come i collegamenti automatici del glossario, per esempio). Attivare questa opzione potrebbe rallentare il caricamento delle pagine del tuo corso in modo significativo - usalo con attenzione e solo se ti serve veramente.';
+$string['configfilterexternalpages'] = 'Abilitando questa impostazione tutti le risorse esterne (pagine web, file HTML inviati) saranno elaborati dai filtri attivati per il sito (come i collegamenti automatici del glossario, per esempio). Attivare questa opzione potrebbe rallentare il caricamento delle pagine del tuo corso in modo significativo - usalo con attenzione e solo se ti serve veramente.';
 $string['configframesize'] = 'Quando una pagina web  o un file é visualizzato in un frame, questa é la dimensione (in pixel) del frame superiore (che contiene la navigazione).';
-$string['configparametersettings'] = 'Questo imposta il valore standard per le impostazioni dei parametri nel modulo quando aggiungi una nuova risorsa. Dopo la prima volta, diventa una preferenza legata all\'utente.';
-$string['configpopup'] = 'Imposta automaticamente la visualizzazione della risorsa (se possibile) in una nuova finestra?';
+$string['configparametersettings'] = 'Questo stabilisce il valore standard per le impostazioni dei parametri nel modulo quando aggiungi una nuova risorsa. Dopo la prima volta, diventa una preferenza legata all\'utente.';
+$string['configpopup'] = 'Impostare automaticamente la visualizzazione della risorsa (se possibile) in una nuova finestra?';
 $string['configpopupdirectories'] = 'Le finestre di popup possono mostrare i collegamenti alla directory?';
 $string['configpopupheight'] = 'Altezza standard per le nuove finestre di popup';
-$string['configpopuplocation'] = 'Mostra la barra dell\'indirizzo delle finestre di popup ';
-$string['configpopupmenubar'] = 'Mostra la barra dei menu delle finestre di popup';
-$string['configpopupresizable'] = 'Le finestre di popup possono essere ridimensionate?';
-$string['configpopupscrollbars'] = 'Le finestre di popup possono avere la barra di scorrimento?';
-$string['configpopupstatus'] = 'Le finestre di popup possono mostrare la barra di stato?';
-$string['configpopuptoolbar'] = 'Le finestre di popup possono mostrare la barra strumenti?';
+$string['configpopuplocation'] = 'Mostrare la barra dell\'indirizzo nelle finestre popup?';
+$string['configpopupmenubar'] = 'Le finestre popup possono mostrare la barra dei menu?';
+$string['configpopupresizable'] = 'Le finestre popup possono essere ridimensionate?';
+$string['configpopupscrollbars'] = 'Le finestre popup possono avere la barra di scorrimento?';
+$string['configpopupstatus'] = 'Le finestre popup possono mostrare la barra di stato?';
+$string['configpopuptoolbar'] = 'Le finestre popup possono mostrare la barra strumenti?';
 $string['configpopupwidth'] = 'Larghezza standard per le nuove finestre di popup';
 $string['configsecretphrase'] = 'Questa frase segreta viene utilizzata per generare il codice criptato che viene spedito ad alcune risorse com parametro. Il codice criptato è generato da un valore md5 del indirizzo IP dell\'utente corrente concatenato con la frase segreta. es: code  = md5(IP.secretphrase). Questo permette al destinatario della risorsa di verificare la connessione per una maggiore sicurezza.';
 $string['configwebsearch'] = 'Quando aggiungi un URL come una Pagina web o un Collegamento web, questo collegamento è offerto come un sito per aiutare gli utenti a cercare l\'URL che vogliono';
@@ -31,15 +32,17 @@ $string['example'] = 'Esempio';
 $string['exampleurl'] = 'http://www.esempio.com/unadirectory/unfile.html';
 $string['fetchclienterror'] = 'E\' stato rilevato un errore con il tuo browser mentre provavo a recuperare la pagina web (potrebbe essere sbagliato l\'URL).';
 $string['fetcherror'] = 'E\' stato rilevato un errore mentre provavo a recuperare la pagina web.';
-$string['fetchservererror'] = 'E\' stato rilevato un errore con il server mentre provavo a recuperare la pagina web (potrebbe esserci un errore nel codice).<br />';
+$string['fetchservererror'] = 'E\' stato rilevato un errore sul server mentre provavo a recuperare la pagina web (potrebbe esserci un errore nel codice).<br />';
 $string['filename'] = 'Nome del file';
 $string['filtername'] = 'Auto-collegamento alla risorsa';
-$string['frameifpossible'] = 'Metti la risorsa in un frame per mantere la navigazione del sito visibile';
+$string['frameifpossible'] = 'Inserisci la risorsa in un frame per mantere la navigazione del sito visibile';
 $string['fulltext'] = 'Testo integrale';
 $string['htmlfragment'] = 'Codice HTML';
 $string['localfile'] = 'File locale';
 $string['localfilechoose'] = 'Scegliere un file locale (CD-ROM)';
 $string['localfilehelp'] = 'Aiuto per la visualizzazione di file locali';
+$string['localfileinfo'] = '<p>Scegli un file che risiede nel tuo computer. Il file non sarà caricato sul server: Moodle lo cercherà lo stesso file nel computer di coloro che visualizzeranno questa risorsa.</p><p>Questo è particolarmente utile quando si utilizzano media ingombranti memorizzati su CD-ROM distribuiti a tutti i partecipanti. Ogni partecipante potrà scegliere il proprio percorso per accedere questi file <a href=\"$a\" target=\"_blank\">modificando il profilo utente</a>.</p>';
+$string['localfilepath'] = 'Per impostare il tuo percorso locale per questa risorsa, scegli un file qualsiasi dal disco del tuo computer (in genere il CD-ROM) dove si trova il file utilzzato dalla risorsa. Il file non sarà caricato nel server, solo le informazioni relative alla posizione nel tuo computer verrà memorizzata per essere usata per tutte le risorse che fanno uso di file locali.';
 $string['localfileselect'] = 'Scegliere il percorso del file.';
 $string['maindirectory'] = 'Cartella principale';
 $string['modulename'] = 'Risorsa';
@@ -57,9 +60,9 @@ $string['newtoolbar'] = 'Mostra pulsanti';
 $string['newwidth'] = 'Larghezza standard della finestra (in pixel)';
 $string['newwindow'] = 'Nuova finestra';
 $string['newwindowopen'] = 'Visualizza questa risorsa in una nuova finestra';
-$string['notallowedlocalfileaccess'] = 'L\'accesso ai file locali è attualmente disabilitato, così questa risorsa non risulta disponibile.';
+$string['notallowedlocalfileaccess'] = 'L\'accesso ai file locali è attualmente disabilitato, pertanto questa risorsa non risulta disponibile.';
 $string['note'] = 'Nota';
-$string['notefile'] = 'Per trasferire altri files nell\'archivio del
+$string['notefile'] = 'Per trasferire altri file nell\'archivio del
 
 corso (come quelli che compaiono in questa lista) usa il <a href=\"$a\" >File Manager</a>.';
 $string['notypechosen'] = 'È necessario che tu scelga un tipo. Usa il
