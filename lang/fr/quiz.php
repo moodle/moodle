@@ -267,6 +267,7 @@ $string['penalty'] = 'Pénalité';
 $string['penaltyfactor'] = 'Facteur de pénalité';
 $string['penaltyscheme'] = 'Appliquer les pénalités';
 $string['percentcorrect'] = 'Pourcentage de réponses correctes';
+$string['pleaseclose'] = 'Votre requête a été traitée. Vous pouvez maintenant fermer cette fenêtre';
 $string['popup'] = 'Afficher le test dans une fenêtre «&nbsp;sécurisée&nbsp;»';
 $string['preview'] = 'Prévisualisation';
 $string['previewquestion'] = 'Prévisualiser la question';
