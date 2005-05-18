@@ -1,9 +1,0 @@
-*, body, p, td,
-h1, h2, h3, h4, h5, h6
-{
-    font-style:inherit;
-    font-family:inherit;
-    font-size:100%;
-    background-color:#FFFFFF;
-    color:#000000;
-}
