@@ -61,6 +61,7 @@ $string['noassignments'] = 'There are no assignments yet';
 $string['notgradedyet'] = 'Not graded yet';
 $string['notsubmittedyet'] = 'Not submitted yet';
 $string['overwritewarning'] = 'Warning: uploading again will REPLACE your current submission';
+$string['preventlate'] = 'Prevent late submissions';
 $string['saveallfeedback'] = 'Save all my feedback';
 $string['submission'] = 'Submission';
 $string['submissionfeedback'] = 'Submission feedback';
