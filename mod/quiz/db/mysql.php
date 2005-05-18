@@ -466,6 +466,7 @@ function quiz_upgrade($oldversion) {
     /// Now upgrade some fields in states and newest_states tables where necessary
         // to save time on large sites only do this for attempts that have not yet been finished.
         if ($attempts = get_records_select('quiz_attempts', 'timefinish = 0')) {
+            echo 'Update the states for the '.count($attempts).' open attempts';
             // turn reporting off temporarily to avoid one line output per set_field
             $olddebug = $db->debug;
             $db->debug = false;
@@ -534,97 +535,6 @@ function quiz_upgrade($oldversion) {
                               `template_vars` text NOT NULL default '',
                               PRIMARY KEY  (`id`)
                               ) TYPE=MyISAM COMMENT='RQP question type specific state information';");
-    }
-
-    if ($oldversion < 2005042900 && false) { // We don't want this to be executed any more!!!
-
-        table_column('quiz_multianswers', '', 'sequence',  'varchar', '255', '', '', 'not null', 'question');
-        table_column('quiz_numerical', '', 'answers', 'varchar', '255', '', '', 'not null', 'answer');
-        modify_database('', 'UPDATE prefix_quiz_numerical SET answers = answer');
-        table_column('quiz_questions', '', 'parent', 'integer', '10', 'unsigned', '0', 'not null', 'category');
-        modify_database('', "UPDATE prefix_quiz_questions SET parent = id WHERE qtype ='".RANDOM."';");
-
-        // convert multianswer questions to the new model
-        if ($multianswers = get_records_sql("SELECT m.id, q.category, q.id AS parent,
-                                        q.name, q.questiontextformat, m.norm AS
-                                        defaultgrade, m.answertype AS qtype,
-                                        q.version, q.hidden, m.answers,
-                                        m.positionkey
-                                        FROM {$CFG->prefix}quiz_questions q,
-                                             {$CFG->prefix}quiz_multianswers m
-                                        WHERE q.qtype = '".MULTIANSWER."'
-                                        AND   q.id = m.question
-                                        ORDER BY q.id ASC, m.positionkey ASC")) {
-            $multianswers = array_values($multianswers);
-            $n        = count($multianswers);
-            $parent   = $multianswers[0]->parent;
-            $sequence = array();
-
-            // turn reporting off temporarily to avoid one line output per set_field
-            $olddebug = $db->debug;
-            $db->debug = false;
-            for ($i = 0; $i < $n; $i++) {
-                $answers = $multianswers[$i]->answers; unset($multianswers[$i]->answers);
-                $pos = $multianswers[$i]->positionkey; unset($multianswers[$i]->positionkey);
-
-            // create questions for all the multianswer victims
-                unset($multianswers[$i]->id);
-                $multianswers[$i]->length = 0;
-                $multianswers[$i]->questiontext = '';
-                $multianswers[$i]->stamp = make_unique_id_code();
-                $id = insert_record('quiz_questions', $multianswers[$i]);
-                $sequence[$pos] = $id;
-
-            // update the answers table to point to these new questions
-                modify_database('', "UPDATE prefix_quiz_answers SET question = '$id' WHERE id IN ($answers);");
-            // update the questiontype tables to point to these new questions
-                if (SHORTANSWER == $multianswers[$i]->qtype) {
-                    modify_database('', "UPDATE prefix_quiz_shortanswer SET question = '$id' WHERE answers = '$answers';");
-                } else if (NUMERICAL == $multianswers[$i]->qtype) {
-                    if (strpos($answers, ',')) {
-                        $numerical = get_records_list('quiz_numerical', 'answer', $answers);
-                        // Get the biggest tolerance value
-                        $tolerance = 0;
-                        foreach ($numerical as $num) {
-                            $tolerance = ($tolerance < $num->tolerance ? $num->tolerance : $tolerance);
-                        }
-                        delete_records_select('quiz_numerical', "answer IN ($answers)");
-                        $new = new stdClass;
-                        $new->question  = $id;
-                        $new->tolerance = $tolerance;
-                        $new->answers   = $answers;
-                        insert_record('quiz_numerical', $new);
-                        unset($numerical, $new, $tolerance);
-                    } else {
-                        modify_database('', "UPDATE prefix_quiz_numerical SET question = '$id', answers = '$answers' WHERE answer IN ($answers);");
-                    }
-                } else if (MULTICHOICE == $multianswers[$i]->qtype) {
-                    modify_database('', "UPDATE prefix_quiz_multichoice SET question = '$id' WHERE answers = '$answers';");
-                }
-
-                if (!isset($multianswers[$i+1]) || $parent != $multianswers[$i+1]->parent) {
-                    delete_records('quiz_multianswers', 'question', $parent);
-                    $multi = new stdClass;
-                    $multi->question = $parent;
-                    $multi->sequence = implode(',', $sequence);
-                    insert_record('quiz_multianswers', $multi);
-                    if (isset($multianswers[$i+1])) {
-                        $parent   = $multianswers[$i+1]->parent;
-                        $sequence = array();
-                    }
-                }
-            }
-            $db->debug = $olddebug;
-        }
-
-        // Remove redundant fields from quiz_multianswers
-        modify_database('', 'ALTER TABLE `prefix_quiz_multianswers` DROP `answers`');
-        modify_database('', 'ALTER TABLE `prefix_quiz_multianswers` DROP `positionkey`');
-        modify_database('', 'ALTER TABLE `prefix_quiz_multianswers` DROP `answertype`');
-        modify_database('', 'ALTER TABLE `prefix_quiz_multianswers` DROP `norm`');
-
-        // Change numerical from answer to answers
-        modify_database('', 'ALTER TABLE `prefix_quiz_numerical` DROP `answer`');
     }
 
     if ($oldversion < 2005050300) {
@@ -717,7 +627,7 @@ function quiz_upgrade($oldversion) {
             // Note: The quiz_numerical table is different as it stores one record
             //       per defined answer (to allow different tolerance values for
             //       different possible answers. (Currently multiple answers are
-            //       not supported by the numerical editing interface, but all
+            //       not supported by the numerical editing interface, but
             //       all processing code does support that possibility.
             if ($multianswers = get_records_sql("SELECT m.id, q.category, " .
                                             "q.id AS parent, " . // question id (of multianswer question) as parent
@@ -740,7 +650,7 @@ function quiz_upgrade($oldversion) {
                 // Turn reporting off temporarily to avoid one line output per set_field
                 global $db;
                 $olddebug = $db->debug;
-                // $db->debug = false;
+                $db->debug = false;
                 for ($i = 0; $i < $n; $i++) {
                     // Backup these two values before unsetting the object fields
                     $answers = $multianswers[$i]->answers; unset($multianswers[$i]->answers);
