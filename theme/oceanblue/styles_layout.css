@@ -2,7 +2,7 @@
  styles_layout.css
   
  This CSS file contains all layout definitions like positioning,
- floats, margins, paddding, borders etc.
+ floats, margins, padding, borders etc.
 
  Styles are organised into the following sections:
   core
@@ -390,6 +390,13 @@ body#admin-config .confighelp {
   margin-top: 10px;
 }
 
+.blockconfigtable {
+  margin-top: 0;
+}
+
+.blockconfiginstancecontent .tabs {
+  margin-bottom: 0px;
+}
 
 /***
  *** Calendar
@@ -412,6 +419,7 @@ body#admin-config .confighelp {
 {
   vertical-align: top;
   border: 1px solid;
+  padding: 0px;
 }
 
 #calendar .sidecalendar {
@@ -493,9 +501,13 @@ table.minicalendar td {
   margin-top: 4px;
 }
 
+.minicalendarblock {
+  padding: 0px 4px;
+}
+
 table.minicalendar {
   width: 100%;
-  margin:10px auto;
+  margin: 10px auto;
   padding:2px;
   border-width:1px;
   border-style:solid;

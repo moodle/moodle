@@ -430,6 +430,27 @@ body#course-user .section {
  ***/
 
 /***
+ *** Grades
+ ***/
+
+body#grade-index .grades {
+  border-color:black;
+}
+
+body#grade-index .grades td {
+  border-color:#e0e0e0;
+}
+
+body#grade-index .grades .r0 {
+  background-color: #ffffff;
+}
+
+body#grade-index .grades .r1 {
+  background-color: #f0f0f0;
+}
+
+
+/***
  *** Login
  ***/
 
