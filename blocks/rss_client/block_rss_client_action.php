@@ -19,7 +19,7 @@
     
     optional_variable($act, 'none');
     optional_variable($rssid, 'none');
-    optional_variable($courseid, 'none');
+    optional_variable($courseid, '');
     optional_variable($url);
     optional_variable($preferredtitle, '');
     optional_variable($item);
@@ -34,8 +34,8 @@
         $strconfiguration = get_string('configuration');
         $navigation = "<a href=\"$CFG->wwwroot/$CFG->admin/index.php\">$stradmin</a> -> ".
         "<a href=\"$CFG->wwwroot/$CFG->admin/configure.php\">$strconfiguration</a> -> $straddedit";
-    } else if ($courseid != 'none' && $course = get_record('course', 'id', $courseid) ) {
-        $navigation = "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> -> $straddedit";
+    } else if (is_numeric($courseid) && $course = get_record('course', 'id', $courseid, '', '', '', '', 'shortname') ) {
+        $navigation = "<a href=\"$CFG->wwwroot/course/view.php?id=$courseid\">$course->shortname</a> -> $straddedit";
     } else {
         $navigation = $straddedit;
     }
@@ -47,7 +47,7 @@
     //check to make sure that the user is allowed to post new feeds
     $submitters = $CFG->block_rss_client_submitters;
     $isteacher = false;
-    if ($courseid != 'none') {
+    if (is_numeric($courseid)) {
         $isteacher = isteacher($courseid);
     }
     
@@ -204,7 +204,7 @@
                     //Blog module is installed - provide "blog this" link
                     print '<td align="right">'."\n";
                     print '<img src="'. $CFG->pixpath .'/blog/blog.gif" alt="'. get_string('blogthis', 'blog').'" title="'. get_string('blogthis', 'blog') .'" border="0" align="middle" />'."\n";
-                    print '<a href="'. $CFG->wwwroot .'/blog/blogthis.php?blogid='. $blogid .'&act=use&item='. $y .'&rssid='. $rssid .'"><small><strong>'. get_string('blog_blog_this', 'blog') .'</strong></small></a>'."\n";
+                    print '<a href="'. $CFG->wwwroot .'/blog/blogthis.php?blogid='. $blogid .'&act=use&item='. $y .'&rssid='. $rssid .'"><small><strong>'. get_string('blogthis', 'blog') .'</strong></small></a>'."\n";
                 } else {
                     print '<td>&nbsp;';
                 }
