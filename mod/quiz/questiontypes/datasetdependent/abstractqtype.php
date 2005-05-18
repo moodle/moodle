@@ -413,10 +413,7 @@ class quiz_dataset_dependent_questiontype extends quiz_default_questiontype {
         return $datasetnames;
     }
 
-/// The following functions are needed for database upgrade script only
-    // This is used by extract_responses, so it needs to stay
     function create_virtual_nameprefix($nameprefix, $datasetinput) {
-    // This default implementation is sometimes overridden
         if (!ereg('([0-9]+)' . $this->name() . '$', $nameprefix, $regs)) {
             error("Wrongly formatted nameprefix $nameprefix");
         }
@@ -424,21 +421,6 @@ class quiz_dataset_dependent_questiontype extends quiz_default_questiontype {
         return $nameprefix . $regs[1] . $virtualqtype->name();
     }
 
-    function extract_response($rawresponse, $nameprefix) {
-        if (!ereg('^dataset([;:0-9A-Za-z+/=]+)-(.*)$',
-                $rawresponse->answer, $regs)) {
-            error ("Wrongly formatted raw response answer $rawresponse->answer");
-        }
-
-        // Truncate raw response to fit the virtual qtype
-        $rawresponse->answer = $regs[2];
-
-        $virtualqtype = $this->get_virtual_qtype();
-        $response = $virtualqtype->extract_response($rawresponse,
-                $this->create_virtual_nameprefix($nameprefix, $regs[1]));
-        $response[$nameprefix] = $regs[1];
-        return $response;
-    }
 }
 //// END OF CLASS ////
 ?>

@@ -345,33 +345,6 @@ class quiz_default_questiontype {
     }
 
     /**
-    * This function is obsolete. It is only used during the database
-    * upgrade
-    */
-    function extract_response($rawresponse, $nameprefix) {
-    /// This function is obsolete. It is only used during the database
-    /// upgrade to version 2005030100 to extract the responses from the
-    /// legacy answers field. Question types written after this date do not
-    /// need to implement this member.
-
-        /// Returning a single value indicates that the value should remain
-        /// stored in the legacy answer field in the quiz_states table (was
-        /// quiz_responses).
-
-        /// Question types which implement their own response storage with
-        /// a question type specific table must return an associative array
-        /// of responses (without the name prefix) and in this case the update
-        /// script will call the save_session_and_responses member to save
-        /// the responses using the new mechanism.
-
-        /// Default behaviour that works for singleton response question types
-        /// like SHORTANSWER, NUMERICAL and TRUEFALSE and legacy question types
-        /// which have not changed their response storage model
-
-        return $rawresponse->answer;
-    }
-
-    /**
     * Returns an array of values which will give full marks if graded as
     * the $state->responses field
     *

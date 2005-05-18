@@ -187,22 +187,6 @@ class quiz_match_qtype extends quiz_default_questiontype {
         return empty($responses) ? null : $responses;
     }
 
-    function extract_response($rawresponse, $nameprefix) {
-        if (!($options = get_record("quiz_match",
-                                    "question", $rawresponse->question))) {
-            notify("Error: Missing question options!");
-            return array();
-        }
-        $subids = explode(',', $options->subquestions);
-        foreach ($subids as $subid) {
-            $response[$nameprefix.$subid] =
-                    ereg("(^|,)$subid-([^,]+)", $rawresponse->answer, $regs)
-                    ? $regs[2]
-                    : '';
-        }
-        return $response;
-    }
-
     function print_question_formulation_and_controls(&$question, &$state, $quiz, $options) {
         $subquestions   = $state->options->subquestions;
         $correctanswers = $this->get_correct_responses($question, $state);

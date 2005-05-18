@@ -159,24 +159,6 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
         return true;
     }
 
-    function extract_response($rawresponse, $nameprefix) {
-        /// A temporary fix for bug #647 has accidently been enforced here
-        /// because of the odd circumstances during the refactoring
-
-        $multianswers = get_records('quiz_multianswers',
-                                    'question', $rawresponse->question);
-        $response = array();
-        foreach ($multianswers as $maid => $multianswer) {
-            if (ereg("(^|,)$maid-(.*)", $rawresponse->answer, $regs)) {
-                $splits = split(',[0-9]+-', $regs[2], 2);
-                $response[$nameprefix.$maid] = $splits[0];
-            } else {
-                $response[$nameprefix.$maid] = '';
-            }
-        }
-        return $response;
-    }
-
     function get_correct_responses(&$question, &$state) {
         global $QUIZ_QTYPES;
         $responses = array();

@@ -216,29 +216,6 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
         return true;
     }
 
-    function extract_response($rawresponse, $nameprefix) {
-        // Fetch additional details from the database...
-        if (!$options = get_record("quiz_multichoice",
-                                   "question", $rawresponse->question)) {
-           notify("Error: Missing question options!");
-        }
-
-        if ($options->single) {
-            return array($nameprefix => $rawresponse->answer);
-
-        } else {
-            $response = array();
-            $answerids = explode(',', $options->answers);
-            foreach ($answerids as $answerid) {
-                $response[$nameprefix.$answerid] =
-                        ereg("(,|^)$answerid(,|$)", $rawresponse->answer)
-                        ? $answerid
-                        : '';
-            }
-            return $response;
-        }
-    }
-
     function get_correct_responses(&$question, &$state) {
         if ($question->options->single) {
             foreach ($question->options->answers as $answer) {
