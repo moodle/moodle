@@ -209,6 +209,8 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
         return ($response == $testresponse);
     }
 
+
+
     // Checks whether a response matches a given answer, taking the tolerance
     // into account. Returns a true for if a response matches the answer, false
     // if it doesn't.
@@ -225,6 +227,54 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
             return ($answer->min <= $response && $answer->max >= $response);
         } else {
             return ($response == $answer->answer);
+        }
+    }
+
+    function print_question_formulation_and_controls(&$question, &$state, $quiz, $options) {
+    /// This implementation is also used by question type NUMERICAL
+
+        $answers = &$question->options->answers;
+        $correctanswers = $this->get_correct_responses($question, $state);
+        $readonly = empty($options->readonly) ? '' : 'disabled="disabled"';
+        $nameprefix = $question->name_prefix;
+
+        /// Print question text and media
+
+        echo format_text($question->questiontext,
+                         $question->questiontextformat,
+                         NULL, $quiz->course);
+        quiz_print_possible_question_image($quiz->id, $question);
+
+        /// Print input controls
+
+        $stranswer = get_string("answer", "quiz");
+        if (isset($state->responses[''])) {
+            $value = ' value="'.htmlSpecialChars($state->responses['']).'" ';
+        } else {
+            $value = ' value="" ';
+        }
+        $inputname = ' name="'.$nameprefix.'" ';
+        echo "<p align=\"right\">$stranswer: <input type=\"text\" $readonly $inputname size=\"80\" $value /></p>";
+
+        if ($options->feedback) {
+            foreach($answers as $answer) {
+                if($this->test_response($question, $state, $answer)) {
+                    quiz_print_comment($answer->feedback);
+                    break;
+                }
+            }
+        }
+
+        if ($options->readonly && $options->correct_responses) {
+            $delimiter = '';
+            $correct = '';
+            if ($correctanswers) {
+                foreach ($correctanswers as $correctanswer) {
+                    $correct .= $delimiter.$correctanswer;
+                    $delimiter = ', ';
+                }
+            }
+            quiz_print_correctanswer($correct);
         }
     }
 
