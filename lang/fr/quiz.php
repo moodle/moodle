@@ -128,6 +128,7 @@ $string['editingshortanswer'] = 'Modifier une question à réponse courte';
 $string['editingtruefalse'] = 'Modifier une question Vrai/Faux';
 $string['editquestions'] = 'Modifier les questions';
 $string['editquiz'] = 'Modifier un test';
+$string['errornotnumbers'] = 'Erreur&nbsp;! Les réponses doivent être numériques';
 $string['errorsdetected'] = '$a erreur(s) détectée(s)';
 $string['event1'] = 'Autoenregistrer';
 $string['event2'] = 'Enregistrer';
