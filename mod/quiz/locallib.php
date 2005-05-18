@@ -1764,7 +1764,7 @@ function quiz_apply_penalty_and_timelimit(&$question, &$state, $attempt, $quiz) 
 
 
 function quiz_print_comment($text) {
-    echo "<span class=\"feedbacktext\">".format_text($text, true, false)."</span>";
+    echo "<span class=\"feedbacktext\">&nbsp;".format_text($text, true, false)."</span>";
 }
 
 function quiz_print_correctanswer($text) {

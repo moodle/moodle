@@ -323,7 +323,7 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
             // Print feedback by selected options if feedback is on
             if (($options->feedback || $options->correct_responses) &&
              $checked) {
-               echo '<td valign="top">&nbsp;';
+               echo '<td valign="top">';
                quiz_print_comment($answer->feedback);
                echo '</td>';
            }
