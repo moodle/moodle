@@ -235,8 +235,13 @@ class block_rss_client extends block_base {
             }
         }
 
-        if (!empty($feedtitle) and ($feedtitle != '<a href="'. $rss->channel['link'] .'"></a>')) {
-            $this->title = $feedtitle;
+        // if block has no custom title
+        if (empty($this->config) || (!empty($this->config) && empty($this->config->title))) {
+            // if the feed has a title
+            if (!empty($feedtitle) and ($feedtitle != '<a href="'. $rss->channel['link'] .'"></a>')) {
+                // set the block's title to the feed's title
+                $this->title = $feedtitle;
+            }
         }
         
         // store config setting for this rssid so we do not need to read from file each time

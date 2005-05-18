@@ -77,27 +77,13 @@ if ($currentaction == 'configblock') {
                     } else {
                         $feedtitle = stripslashes_safe($rssfeed->title);
                     } 
-                    $feedoptions[$rssfeed->id] = $feedtitle;
-                }
-                $dropdownmenustring = choose_from_menu($feedoptions, 'rssid[]', '', '', '', '0', true);
-
-                //Daryl Hawes note:
-                // moodle's choose_from_menu() function does not support
-                // the "multiple" or "size" options, so before printing out the
-                // calculated drop down menu we insert the keyword "multiple"
-                $dropdownmenustring = preg_replace("|\"rssid\[\]\" >*|","\"rssid[]\" multiple>", $dropdownmenustring);
-
-                // since there may be multiple rssids to select
-                // we need to check for each
-                if (!empty($selectedarray)) {
-                    foreach ($selectedarray as $selected) {
-                        $selected = intval($selected);
-                        $dropdownmenustring = preg_replace("|\"$selected\">*|","\"$selected\" selected>", $dropdownmenustring);
+                    $checked = '';
+                    if (in_array($rssfeed->id, $selectedarray)) {
+                        $checked = 'checked';
                     }
+                    $checkbox =  '<input type="checkbox" name="rssid[]" id="rssid[]" value="'. $rssfeed->id .'" '. $checked .' />';
+                    print $checkbox . $feedtitle .'<br />'."\n";
                 }
-
-                print $dropdownmenustring;
-
             } else {
                 print_string('nofeeds', 'block_rss_client');
                 if ( isadmin() ) {
