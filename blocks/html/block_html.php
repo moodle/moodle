@@ -25,7 +25,7 @@ class block_html extends block_base {
         }
 
         $this->content = new stdClass;
-        $this->content->text = isset($this->config->text) ? format_text($this->config->text) : '';
+        $this->content->text = isset($this->config->text) ? $this->config->text : '';
         $this->content->footer = '';
 
         return $this->content;
