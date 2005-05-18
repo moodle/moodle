@@ -231,7 +231,7 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
     }
 
     function print_question_formulation_and_controls(&$question, &$state, $quiz, $options) {
-    /// This implementation is also used by question type NUMERICAL
+    /// This implementation is very similar to the code used by question type SHORTANSWER
 
         $answers = &$question->options->answers;
         $correctanswers = $this->get_correct_responses($question, $state);
@@ -254,7 +254,7 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
             $value = ' value="" ';
         }
         $inputname = ' name="'.$nameprefix.'" ';
-        echo "<p align=\"right\">$stranswer: <input type=\"text\" $readonly $inputname size=\"80\" $value /></p>";
+        echo "<p align=\"right\">$stranswer: <input type=\"text\" $readonly $inputname size=\"20\" $value /></p>";
 
         if ($options->feedback) {
             foreach($answers as $answer) {
