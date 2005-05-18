@@ -167,6 +167,7 @@
 
         //Iterate over questions
         for($i = 0; $i < sizeof($questions); $i++) {
+            $question = new object;
             $que_info = $questions[$i];
             //traverse_xmlize($que_info);                                                                 //Debug
             //print_object ($GLOBALS['traverse_array']);                                                  //Debug
@@ -194,7 +195,9 @@
             if (isset($que_info['#']['VERSION']['0']['#'])) { //Only if it's set, to apply DB default else.
                 $question->version = backup_todb($que_info['#']['VERSION']['0']['#']);
             }
-            $question->hidden = backup_todb($que_info['#']['HIDDEN']['0']['#']);
+            if (isset($que_info['#']['HIDDEN']['0']['#'])) { //Only if it's set, to apply DB default else.
+                $question->hidden = backup_todb($que_info['#']['HIDDEN']['0']['#']);
+            }
 
             //Although only a few backups can have questions with parent, we try to recode it
             //if it contains something
