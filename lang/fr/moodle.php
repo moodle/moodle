@@ -1,6 +1,7 @@
 <?php // $Id$
 
 $string['action'] = 'Action';
+$string['actions'] = 'Actions';
 $string['active'] = 'Actif';
 $string['activities'] = 'Activités';
 $string['activity'] = 'Activité';
