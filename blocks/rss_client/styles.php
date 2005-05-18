@@ -19,3 +19,35 @@
 
 .block_rss_client .image {
 }
+
+.blockconfigtable #rssfeeds {
+    width: 100%;
+}
+
+.blockconfigtable #rssfeeds td.actions {
+    text-align: center;
+    vertical-align: middle;
+    padding: 10px;
+}
+
+.blockconfigtable #rssfeeds td.feed {
+    vertical-align: middle;
+    padding: 5px;
+}
+
+.blockconfigtable #rssfeeds .title {
+    font-weight: bold;
+    margin-bottom: 2px;
+}
+
+.blockconfigtable #rssfeeds .url, .blockconfigtable #rssfeeds .description {
+    font-size: 0.8em;
+}
+
+.blockconfigtable #rssfeeds tr.r0 {
+  background-color: #ffffff;
+}
+
+.blockconfigtable #rssfeeds tr.r1 {
+  background-color: #f0f0f0;
+}
