@@ -332,9 +332,31 @@ function olson_simple_rule_parser ($filename) {
                 
             $moodle_rules[$moodle_rule['name']][$moodle_rule['year']] = $moodle_rule;
             //print_object($moodle_rule);
-        }
 
-    }
+        } // end foreach year within a rule
+
+        // completed with all the entries for this rule
+        // if the last entry has a TO other than 'max'
+        // then we have to deal with closing the last rule
+        //trigger_error("Rule $name ending to $to");
+        if (!empty($to) && $to !== 'max') {
+            // We can handle two cases for TO: 
+            // a year, or "only"
+            $reset_rule = $moodle_rule;
+            $reset_rule['dstoff'] = '00';
+            if (preg_match('/^\d+$/', $to)){
+                $reset_rule['year'] = $to;
+                $moodle_rules[$reset_rule['name']][$reset_rule['year']] = $reset_rule;
+            } elseif ($to === 'only') {
+                $reset_rule['year'] = $reset_rule['year'] + 1;
+                $moodle_rules[$reset_rule['name']][$reset_rule['year']] = $reset_rule;
+            } else {
+                trigger_error("Strange value in TO $to rule field for rule $name");
+            }
+
+        } // end if $to is interesting
+
+    } // end foreach rule
 
     return $moodle_rules;
 }
