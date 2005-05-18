@@ -139,9 +139,6 @@
                 echo "<table cellpadding=\"20\" cellspacing=\"20\" align=\"center\"><tr>";
                 $aid = 0;
                 foreach ($choice->option as $optionid => $text) {
-                    if ($text) { 
-                    echo "<td align=\"center\" valign=\"top\">";
-                    echo "<input type=\"radio\" name=\"answer\" value=\"".$optionid."\" ".$answerchecked[$optionid]." alt=\"".strip_tags(format_text($text))."\" />";
                     $countanswers = (get_records("choice_answers", "optionid", $optionid));
                     if ($countanswers) {
                         $countanswers = count($countanswers);
@@ -149,12 +146,15 @@
                         $countanswers = 0;
                     }
                     $maxans = $choice->maxanswers[$optionid];
-                    if ($choice->limitanswers && ($countanswers >= $maxans) ) {
-                            if (!($answerchecked[$optionid])) {
-                                echo "<script type=\"text/javascript\">";
-                                echo "document.form.answer[".$aid."].disabled = true;";
-                                echo "</script>";
-                            }
+                    
+                    if ($text) { 
+                    echo "<td align=\"center\" valign=\"top\">";
+                    echo "<input type=\"radio\" name=\"answer\" value=\"".$optionid."\" ".$answerchecked[$optionid]." alt=\"".strip_tags(format_text($text))."\"";
+                    if ($choice->limitanswers && ($countanswers >= $maxans) && !($answerchecked[$optionid]) ) {
+                        echo "disabled";
+                    }                    
+                    echo " />";                    
+                    if ($choice->limitanswers && ($countanswers >= $maxans) ) {               
                             echo format_text($text."<br><strong>".get_string('full', 'choice')."</strong>");
                         } else {
                             echo format_text($text);
