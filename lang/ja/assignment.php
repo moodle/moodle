@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005042100)
+      // assignment.php - created with Moodle 1.5 ALPHA (2005051500)
 
 
 $string['allowresubmit'] = '再提出を許可する';
@@ -31,6 +31,7 @@ $a->url';
 $string['emailteachermailhtml'] = '$a->username が「 <i>$a->assignment</i> 」の提出課題を更新しました。<br /><br />
 <a href=\"$a->url\">ウェブサイトにて閲覧可能です</a>。';
 $string['emailteachers'] = '教師にメール通知を行う';
+$string['emptysubmission'] = 'あなたはまだ何も提出していません。';
 $string['existingfiledeleted'] = '登録済みファイルが削除されました: $a';
 $string['failedupdatefeedback'] = 'ユーザ $a のフィードバック更新に失敗しました ';
 $string['feedback'] = 'フィードバック';
@@ -51,6 +52,7 @@ $string['noassignments'] = '課題はまだありません。';
 $string['notgradedyet'] = '未評価';
 $string['notsubmittedyet'] = '未提出';
 $string['overwritewarning'] = '注意: 再度アップロードすることにより現在の提出物は置き換えられます。';
+$string['preventlate'] = '提出期限後の提出を許可しない';
 $string['saveallfeedback'] = 'フィードバックを保存する';
 $string['submission'] = '提出';
 $string['submissionfeedback'] = '提出のフィードバック';
