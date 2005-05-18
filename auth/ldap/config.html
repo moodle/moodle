@@ -161,7 +161,7 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
     $choices = array();;
     $choices["0"] = get_string("no");
     $choices["1"] = get_string("yes");
-    choose_from_menu ($choices, "ldap_search_sub", $form->ldap_search_sub, "");
+    choose_from_menu ($choices, "ldap_search_sub", $config->ldap_search_sub, "");
 ?>
     <?php  if (isset($err["ldap_search_sub"])) formerr($err["ldap_search_sub"]); ?>
     </td>
