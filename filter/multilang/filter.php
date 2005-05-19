@@ -39,44 +39,61 @@
 
 function multilang_filter($courseid, $text) {
 
-    global $CFG;
-
+/*
 /// Do a quick check using stripos to avoid unnecessary work
     if (stripos($text, '<lang') === false && stripos($text, '<span lang') === false) {
         return $text;
     }
+*/
 
-/// Flag this text as something not to cache
+    // [pj] I don't know about you but I find this new implementation funny :P
+
+    $search = '/(<(?:lang|span) lang="[a-zA-Z_-]*".*?>.+?<\/(?:lang|span)>\s*)+/is';
+    return preg_replace_callback($search, 'multilang_filter_impl', $text);
+}
+
+function multilang_filter_impl($langblock) {
+
+    global $CFG;
+
+    // This callbackis going to get called multiple times, so cache $preflangs
+    static $preflangs = NULL;
+
+    /// Flag this text as something not to cache
     $CFG->currenttextiscacheable = false;
 
-/// Get current language
-    $currentlang = current_language();
-
-/// Get parent language
-    $langfile = "$CFG->dirroot/lang/$currentlang/moodle.php";
-    if ($result = get_string_from_file("parentlanguage", "$langfile", "\$parentlang")) {
-        eval($result);
+    if(empty($preflangs)) {
+        /// Get current language
+        $currentlang = current_language();
+    
+        /// Get parent language
+        $langfile = "$CFG->dirroot/lang/$currentlang/moodle.php";
+        if ($result = get_string_from_file("parentlanguage", "$langfile", "\$parentlang")) {
+            eval($result);
+        }
+    
+        /// Fill in the array of preffered languages
+        $preflangs = array();
+        $preflangs[] = $currentlang;     /// First, the current lang
+        if (!empty($parentlang)) {
+            $preflangs[] = $parentlang; /// Then, if available, the parent lang
+        }
+        if ($currentlang != 'en') {
+            $preflangs[] = 'en';        /// Finally, if not used, add the en lang
+        }
     }
 
-/// Create an array of preffered languages
-    $preflangs = array();
-    $preflangs[] = $currentlang;     /// First, the current lang
-    if (!empty($parentlang)) {
-        $preflangs[] = $parentlang; /// Then, if available, the parent lang
-    }
-    if ($currentlang != 'en') {
-        $preflangs[] = 'en';        /// Finally, if not used, add the en lang
-    }
+    // Setup is done, now do multilang replacement on the match we 've been called for
 
-/// Break the text into lang sections
-    $search = '/<(?:lang|span) lang="([a-zA-Z_-]*)".*?>(.+?)<\/(?:lang|span)>/is';
-    preg_match_all($search,$text,$list_of_langs);
+    $searchtosplit = '/<(?:lang|span) lang="([a-zA-Z_-]*)".*?>(.+?)<\/(?:lang|span)>/is';
+    preg_match_all($searchtosplit, $langblock[0], $langlist);
 
-/// Get the existing sections langs
+    /// Get the existing sections langs
+    $lang      = '';
     $minpref   = count($preflangs);
     $bestkey   = 0;
     //Iterate
-    foreach ($list_of_langs[1] as $key => $lang) {
+    foreach ($langlist[1] as $key => $lang) {
         //Normalize: Moodle's langs are always lowercase and they use the underscore
         //Should we be stricter?
         $lang = strtolower(str_replace('-','_',$lang));
@@ -90,12 +107,7 @@ function multilang_filter($courseid, $text) {
         }
     }
 
-    //If we have found some lang
-    if (!empty($lang)) {
-        $text = trim($list_of_langs[2][$bestkey]);
-    }
-
-    return $text;
+    return trim($langlist[2][$bestkey]);
 }
 
 ?>
