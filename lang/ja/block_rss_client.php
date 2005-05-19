@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // client.php - created with Moodle 1.5 ALPHA (2005050600)
+      // block_rss_client.php - created with Moodle 1.5 ALPHA (2005051500)
 
 
 $string['addfeed'] = 'ニュースフィードURLを追加:';
@@ -21,11 +21,11 @@ $string['editrssblock'] = 'RSSヘッドラインブロックの編集';
 $string['feed'] = 'ニュースフィード';
 $string['feedadded'] = 'ニュースフィードが追加されました。';
 $string['feeddeleted'] = 'ニュースフィードが削除されました。';
-$string['feedupdated'] = 'ニュースフィードが更新されました。';
 $string['feeds'] = 'ニュースフィード';
 $string['feedsaddedit'] = 'フィードの追加/編集';
-$string['feedsconfigurenewinstance'] = 'このブロックがRSSフィードを表示する前に、ここをクリックして設定してください。';
+$string['feedsconfigurenewinstance'] = 'RSSフィードを表示設定をするには、ここをクリックしてください。';
 $string['feedstitle'] = 'リモートRSSフィード';
+$string['feedupdated'] = 'ニュースフィードが更新されました。';
 $string['findmorefeeds'] = 'さらにRSSフィードを探す';
 $string['managefeeds'] = '全てのフィードの管理';
 $string['nofeeds'] = 'このサイトで設定されたRSSフィードはありません。';
