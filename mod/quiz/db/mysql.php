@@ -382,6 +382,7 @@ function quiz_upgrade($oldversion) {
             // turn reporting off temporarily to avoid one line output per set_field
             $olddebug = $db->debug;
             $db->debug = false;
+            echo 'Now updating '.count($quizzes).' quizzes';
             foreach ($quizzes as $quiz) {
 
                 // repaginate
@@ -651,6 +652,7 @@ function quiz_upgrade($oldversion) {
                 global $db;
                 $olddebug = $db->debug;
                 $db->debug = false;
+                echo 'Now updating '.$n.' cloze questions.';
                 for ($i = 0; $i < $n; $i++) {
                     // Backup these two values before unsetting the object fields
                     $answers = $multianswers[$i]->answers; unset($multianswers[$i]->answers);
@@ -671,15 +673,15 @@ function quiz_upgrade($oldversion) {
                     $sequence[$pos] = $id;
 
                 // Update the quiz_answers table to point to these new questions
-                    modify_database('', "UPDATE prefix_quiz_answers SET question = '$id' WHERE id IN ($answers);");
+                execute_sql("UPDATE {$CFG->prefix}quiz_answers SET question = '$id' WHERE id IN ($answers)", false);
                 // Update the questiontype tables to point to these new questions
 
                     if (SHORTANSWER == $multianswers[$i]->qtype) {
-                        modify_database('', "UPDATE prefix_quiz_shortanswer SET question = '$id' WHERE answers = '$answers';");
+                        execute_sql("UPDATE {$CFG->prefix}quiz_shortanswer SET question = '$id' WHERE answers = '$answers'", false);
                     } else if (MULTICHOICE == $multianswers[$i]->qtype) {
-                        modify_database('', "UPDATE prefix_quiz_multichoice SET question = '$id' WHERE answers = '$answers';");
+                        execute_sql("UPDATE {$CFG->prefix}quiz_multichoice SET question = '$id' WHERE answers = '$answers'", false);
                     } else if (NUMERICAL == $multianswers[$i]->qtype) {
-                        modify_database('', "UPDATE prefix_quiz_numerical SET question = '$id' WHERE answer IN ($answers);");
+                        execute_sql("UPDATE {$CFG->prefix}quiz_numerical SET question = '$id' WHERE answer IN ($answers)", false);
                     }
 
                     // Whenever we're through with the subquestions of one multianswer
