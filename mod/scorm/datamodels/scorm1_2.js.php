@@ -16,22 +16,23 @@
 //
 function SCORMapi1_2() {
     // Standard Data Type Definition
-    CMIString255 = '^.{0,255}$';
-    CMIString4096 = '^[.|\\n|\\r]{0,4096}$';
+    CMIString256 = '^.{0,255}$';
+    //CMIString4096 = '^[.|\\n|\\r]{0,4095}$';
+    CMIString4096 = '^.{0,4095}$';
     CMITime = '^([0-9]{2}):([0-9]{2}):([0-9]{2})(\.[0-9]{1,2})?$';
     CMITimespan = '^([0-9]{2,4}):([0-9]{2}):([0-9]{2})(\.[0-9]{1,2})?$';
     CMIInteger = '^\\d+$';
     CMISInteger = '^-?([0-9]+)$';
-    CMIDecimal = '^([0-9]{0,3})(\.[0-9]{1,2})?$';
+    CMIDecimal = '^-?([0-9]{0,3})(\.[0-9]{1,2})?$';
     CMIIdentifier = '^\\w{0,255}$';
-    CMIFeedback = CMIString255; // This must be redefined
+    CMIFeedback = CMIString256; // This must be redefined
     CMIIndex = '[._](\\d+).';
     // Vocabulary Data Type Definition
-    CMIStatus = '^passed|completed|failed|incomplete|browsed|not attempted$';
-    CMIExit = '^time-out|suspend|logout|$';
-    CMIType = '^true-false|choice|fill-in|matching|performance|sequencing|likert|numeric$';
-    CMIResult = '^correct|wrong|unanticipated|neutral|[0-9]?(\.[0-9]{1,2})?$';
-    NAVEvent = '^previous|continue$';
+    CMIStatus = '^passed$|^completed$|^failed$|^incomplete$|^browsed$|^not attempted$';
+    CMIExit = '^time-out$|^suspend$|^logout$|^$';
+    CMIType = '^true-false$|^choice$|^fill-in$|^matching$|^performance$|^sequencing$|^likert$|^numeric$';
+    CMIResult = '^correct$|^wrong$|^unanticipated$|^neutral$|^[0-9]?(\.[0-9]{1,2})?$';
+    NAVEvent = '^previous$|^continue$';
     // Children lists
     cmi_children = 'core, suspend_data, launch_data, comments, objectives, student_data, student_preference, interactions';
     core_children = 'student_id, student_name, lesson_location, credit, lesson_status, entry, score, total_time, lesson_mode, exit, session_time';
@@ -44,6 +45,7 @@ function SCORMapi1_2() {
     score_range = '0#100';
     audio_range = '-1#100';
     speed_range = '-100#100';
+    weighting_range = '-100#100';
     text_range = '-1#1';
     // The SCORM 1.2 data model
     var datamodel =  {
@@ -52,7 +54,7 @@ function SCORMapi1_2() {
 	'cmi.core._children':{'defaultvalue':core_children, 'mod':'r', 'writeerror':'402'},
 	'cmi.core.student_id':{'defaultvalue':'<?php echo $userdata->student_id ?>', 'mod':'r', 'writeerror':'403'},
 	'cmi.core.student_name':{'defaultvalue':'<?php echo $userdata->student_name ?>', 'mod':'r', 'writeerror':'403'},
-	'cmi.core.lesson_location':{'defaultvalue':'<?php echo isset($userdata->{'cmi.core.lesson_location'})?$userdata->{'cmi.core.lesson_location'}:'' ?>', 'format':CMIString255, 'mod':'rw', 'writeerror':'405'},
+	'cmi.core.lesson_location':{'defaultvalue':'<?php echo isset($userdata->{'cmi.core.lesson_location'})?$userdata->{'cmi.core.lesson_location'}:'' ?>', 'format':CMIString256, 'mod':'rw', 'writeerror':'405'},
 	'cmi.core.credit':{'defaultvalue':'<?php echo $userdata->credit ?>', 'mod':'r', 'writeerror':'403'},
 	//'cmi.core.credit':{'defaultvalue':'credit', 'mod':'r', 'writeerror':'403'},  
 	'cmi.core.lesson_status':{'defaultvalue':'<?php echo isset($userdata->{'cmi.core.lesson_status'})?$userdata->{'cmi.core.lesson_status'}:'' ?>', 'format':CMIStatus, 'mod':'rw', 'writeerror':'405'},
@@ -69,7 +71,7 @@ function SCORMapi1_2() {
 	'cmi.launch_data':{'defaultvalue':'<?php echo $userdata->datafromlms ?>', 'mod':'r', 'writeerror':'403'},
 	'cmi.comments':{'defaultvalue':'<?php echo isset($userdata->{'cmi.comments'})?$userdata->{'cmi.comments'}:'' ?>', 'format':CMIString4096, 'mod':'rw', 'writeerror':'405'},
 	'cmi.comments_from_lms':{'mod':'r', 'writeerror':'403'},
-	'cmi.objectives._children':{'defaultvalue':objectives_children, 'mod':'r', 'writeerror':'403'},
+	'cmi.objectives._children':{'defaultvalue':objectives_children, 'mod':'r', 'writeerror':'402'},
 	'cmi.objectives._count':{'mod':'r', 'defaultvalue':'0', 'writeerror':'402'},
 	'cmi.objectives.n.id':{'pattern':CMIIndex, 'format':CMIIdentifier, 'mod':'rw', 'writeerror':'405'},
 	'cmi.objectives.n.score._children':{'pattern':CMIIndex, 'mod':'r', 'writeerror':'402'},
@@ -77,16 +79,16 @@ function SCORMapi1_2() {
 	'cmi.objectives.n.score.min':{'defaultvalue':'', 'pattern':CMIIndex, 'format':CMIDecimal, 'range':score_range, 'mod':'rw', 'writeerror':'405'},
 	'cmi.objectives.n.score.max':{'defaultvalue':'', 'pattern':CMIIndex, 'format':CMIDecimal, 'range':score_range, 'mod':'rw', 'writeerror':'405'},
 	'cmi.objectives.n.status':{'pattern':CMIIndex, 'format':CMIStatus, 'mod':'rw', 'writeerror':'405'},
-	'cmi.student_data._children':{'defaultvalue':student_data_children, 'mod':'r', 'writeerror':'403'},
+	'cmi.student_data._children':{'defaultvalue':student_data_children, 'mod':'r', 'writeerror':'402'},
 	'cmi.student_data.mastery_score':{'defaultvalue':'<?php echo $userdata->masteryscore ?>', 'mod':'r', 'writeerror':'403'},
 	'cmi.student_data.max_time_allowed':{'defaultvalue':'<?php echo $userdata->maxtimeallowed ?>', 'mod':'r', 'writeerror':'403'},
 	'cmi.student_data.time_limit_action':{'defaultvalue':'<?php echo $userdata->timelimitaction ?>', 'mod':'r', 'writeerror':'403'},
-	'cmi.student_preference._children':{'defaultvalue':student_preference_children, 'mod':'r', 'writeerror':'403'},
+	'cmi.student_preference._children':{'defaultvalue':student_preference_children, 'mod':'r', 'writeerror':'402'},
 	'cmi.student_preference.audio':{'defaultvalue':'0', 'format':CMISInteger, 'range':audio_range, 'mod':'rw', 'writeerror':'405'},
-	'cmi.student_preference.language':{'defaultvalue':'', 'format':CMIString255, 'mod':'rw', 'writeerror':'405'},
+	'cmi.student_preference.language':{'defaultvalue':'', 'format':CMIString256, 'mod':'rw', 'writeerror':'405'},
 	'cmi.student_preference.speed':{'defaultvalue':'0', 'format':CMISInteger, 'range':speed_range, 'mod':'rw', 'writeerror':'405'},
 	'cmi.student_preference.text':{'defaultvalue':'0', 'format':CMISInteger, 'range':text_range, 'mod':'rw', 'writeerror':'405'},
-	'cmi.interactions._children':{'defaultvalue':interactions_children, 'mod':'r', 'writeerror':'403'},
+	'cmi.interactions._children':{'defaultvalue':interactions_children, 'mod':'r', 'writeerror':'402'},
 	'cmi.interactions._count':{'mod':'r', 'defaultvalue':'0', 'writeerror':'402'},
 	'cmi.interactions.n.id':{'pattern':CMIIndex, 'format':CMIIdentifier, 'mod':'w', 'readerror':'404', 'writeerror':'405'},
 	'cmi.interactions.n.objectives._count':{'pattern':CMIIndex, 'mod':'r', 'defaultvalue':'0', 'writeerror':'402'},
@@ -95,7 +97,7 @@ function SCORMapi1_2() {
 	'cmi.interactions.n.type':{'pattern':CMIIndex, 'format':CMIType, 'mod':'w', 'readerror':'404', 'writeerror':'405'},
 	'cmi.interactions.n.correct_responses._count':{'pattern':CMIIndex, 'mod':'r', 'defaultvalue':'0', 'writeerror':'402'},
 	'cmi.interactions.n.correct_responses.n.pattern':{'pattern':CMIIndex, 'format':CMIFeedback, 'mod':'w', 'readerror':'404', 'writeerror':'405'},
-	'cmi.interactions.n.weighting':{'pattern':CMIIndex, 'format':CMIDecimal, 'mod':'w', 'readerror':'404', 'writeerror':'405'},
+	'cmi.interactions.n.weighting':{'pattern':CMIIndex, 'format':CMIDecimal, 'range':weighting_range, 'mod':'w', 'readerror':'404', 'writeerror':'405'},
 	'cmi.interactions.n.student_response':{'pattern':CMIIndex, 'format':CMIFeedback, 'mod':'w', 'readerror':'404', 'writeerror':'405'},
 	'cmi.interactions.n.result':{'pattern':CMIIndex, 'format':CMIResult, 'mod':'w', 'readerror':'404', 'writeerror':'405'},
 	'cmi.interactions.n.latency':{'pattern':CMIIndex, 'format':CMITimespan, 'mod':'w', 'readerror':'404', 'writeerror':'405'},
@@ -226,7 +228,7 @@ function SCORMapi1_2() {
 			errorCode = eval('datamodel["'+elementmodel+'"].readerror');
 		    }
 	        } else {
-		    errorCode = "401"
+		    errorCode = "201"
 		}
 	    } else {
 		errorCode = "201";
@@ -247,6 +249,7 @@ function SCORMapi1_2() {
 			expression = new RegExp(eval('datamodel["'+elementmodel+'"].format'));
 			value = value+'';
 			matches = value.match(expression);
+			//alert('Format: '+eval('datamodel["'+elementmodel+'"].format')+'\nMatches: '+matches);
 			if (matches != null) {
 			    //Create dynamic data model element
 			    if (element != elementmodel) {
@@ -263,7 +266,7 @@ function SCORMapi1_2() {
 					    eval(subelement+'.'+elementIndex+'._count++;');
 					} 
 					if (elementIndexes[i+1] > eval(subelement+'.'+elementIndex+'._count')) {
-					    errorCode = eval('datamodel["'+elementmodel+'"].writeerror');
+					    errorCode = "201";
 					}
 				    	subelement = subelement.concat('.'+elementIndex+'_'+elementIndexes[i+1]);
 					i++;
@@ -279,13 +282,22 @@ function SCORMapi1_2() {
 					    eval(subelement+'.score.min = "";');
 					    eval(subelement+'.score.max = "";');
 					}
+					if (subelement.substr(0,16) == 'cmi.interactions') {
+					    eval(subelement+'.objectives = new Object();');
+					    eval(subelement+'.objectives._count = 0;');
+					    eval(subelement+'.correct_responses = new Object();');
+					    eval(subelement+'.correct_responses._count = 0;');
+					}
 				    }
 				}
 				element = subelement.concat('.'+elementIndexes[elementIndexes.length-1]);
 			    }
+			    //alert('Error Code: '+errorCode+'\nElement: '+element+'\nValue: '+value);
 			    //Store data
 			    if (errorCode == "0") {
+				//alert('Value: '+value);
 			    	if ((typeof eval('datamodel["'+elementmodel+'"].range')) != "undefined") {
+				//alert('Ranged: '+value);
 				    range = eval('datamodel["'+elementmodel+'"].range');
 				    ranges = range.split('#');
 				    value = value*1.0;
@@ -297,6 +309,7 @@ function SCORMapi1_2() {
 		 			errorCode = eval('datamodel["'+elementmodel+'"].writeerror');
 				    }
 			    	} else {
+				//alert('Not Ranged: '+value);
 				    if (element == 'cmi.comments') {
 				    	eval(element+'+="'+value+'";');
 				    } else {
@@ -313,7 +326,7 @@ function SCORMapi1_2() {
 			errorCode = eval('datamodel["'+elementmodel+'"].writeerror');
 		    }
 	        } else {
-		    errorCode = "401"
+		    errorCode = "201"
 		}
 	    } else {
 		errorCode = "201";
@@ -366,6 +379,54 @@ function SCORMapi1_2() {
 	    param = errorCode;
 	}
 	return param;
+    }
+
+    function AddTime (first, second) {
+	var sFirst = first.split(":");
+	var sSecond = second.split(":");
+	var cFirst = sFirst[2].split(".");
+	var cSecond = sSecond[2].split(".");
+	var change = 0;
+
+	FirstCents = 0;  //Cents
+	if (cFirst.length > 1) {
+	    FirstCents = parseInt(cFirst[1],10);
+	}
+	SecondCents = 0;
+	if (cSecond.length > 1) {
+	    SecondCents = parseInt(cSecond[1],10);
+	}
+	var cents = FirstCents + SecondCents;
+	change = Math.floor(cents / 100);
+	cents = cents - (change * 100);
+	if (Math.floor(cents) < 10) {
+	    cents = "0" + cents.toString();
+	}
+
+	var secs = parseInt(cFirst[0],10)+parseInt(cSecond[0],10)+change;  //Seconds
+	change = Math.floor(secs / 60);
+	secs = secs - (change * 60);
+	if (Math.floor(secs) < 10) {
+	    secs = "0" + secs.toString();
+	}
+
+	mins = parseInt(sFirst[1],10)+parseInt(sSecond[1],10)+change;   //Minutes
+	change = Math.floor(mins / 60);
+	mins = mins - (change * 60);
+	if (mins < 10) {
+	    mins = "0" + mins.toString();
+	}
+
+	hours = parseInt(sFirst[0],10)+parseInt(sSecond[0],10)+change;  //Hours
+	if (hours < 10) {
+	    hours = "0" + hours.toString();
+	}
+
+	if (cents != '0') {
+	    return hours + ":" + mins + ":" + secs + '.' + cents;
+	} else {
+	    return hours + ":" + mins + ":" + secs;
+	}
     }
 
     function TotalTime() {

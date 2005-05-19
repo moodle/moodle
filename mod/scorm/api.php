@@ -82,35 +82,3 @@ var errorCode = "0";
 function underscore(str) {
     return str.replace(/\./g,"__");
 }
-
-function AddTime (first, second) {
-    var sFirst = first.split(":");
-    var sSecond = second.split(":");
-    var change = 0;
-
-    var secs = (Math.round((parseFloat(sFirst[2],10)+parseFloat(sSecond[2],10))*100))/100;  //Seconds
-    change = Math.floor(secs / 60);
-    secs = secs - (change * 60);
-    if (Math.floor(secs) < 10) secs = "0" + secs.toString();
-
-    mins = parseInt(sFirst[1],10)+parseInt(sSecond[1],10)+change;   //Minutes
-    change = Math.floor(mins / 60);
-    mins = mins - (change * 60);
-    if (mins < 10) mins = "0" + mins.toString();
-
-    hours = parseInt(sFirst[0],10)+parseInt(sSecond[0],10)+change;  //Hours
-    if (hours < 10) hours = "0" + hours.toString();
-
-    return hours + ":" + mins + ":" + secs;
-}
-
-/*
-function SCOFinish() {
-    // Workaround for Safari
-    if (typeof API != 'undefined') {
-    	result = API.LMSFinish('');
-    } else {
-    	result = API_1484_11.Terminate('');
-    }
-}
-*/
