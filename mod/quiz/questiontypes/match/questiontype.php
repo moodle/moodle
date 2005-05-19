@@ -192,6 +192,8 @@ class quiz_match_qtype extends quiz_default_questiontype {
         $correctanswers = $this->get_correct_responses($question, $state);
         $nameprefix     = $question->name_prefix;
         $answers        = array();
+        $responses      = &$state->responses;
+
         foreach ($subquestions as $subquestion) {
             foreach ($subquestion->options->answers as $sub) {
                 $answers[$sub->id] = $sub->answer;
@@ -211,7 +213,7 @@ class quiz_match_qtype extends quiz_default_questiontype {
 
         ///// Print the input controls //////
         echo '<table border="0" cellpadding="10" align="right">';
-        foreach ($subquestions as $subquestion) {
+        foreach ($subquestions as $key => $subquestion) {
 
             /// Subquestion text:
             echo '<tr><td align="left" valign="top">';
@@ -235,11 +237,16 @@ class quiz_match_qtype extends quiz_default_questiontype {
 
             choose_from_menu($answers, $menuname, $response, 'choose', '', 0,
              false, $options->readonly);
-            /* There is currently no feedback for this questiontype.
-            if ($quiz->feedback && isset($subquestion->feedback)) {
-                quiz_print_comment($subquestion->feedback);
+
+            // Neither the editing interface or the database allow to provide
+            // fedback for this question type.
+            // However (as was pointed out in bug bug 3294) the randomsamatch
+            // type which reuses this method can have feedback defined for
+            // the wrapped shortanswer questions.
+            if ($options->feedback
+             && !empty($subquestion->options->answers[$responses[$key]]->feedback)) {
+                quiz_print_comment($subquestion->options->answers[$responses[$key]]->feedback);
             }
-            */
             echo '</td></tr>';
         }
         echo '</table>';
@@ -275,7 +282,7 @@ class quiz_match_qtype extends quiz_default_questiontype {
 
         return true;
     }
-    
+
     // ULPGC ecastro for stats report
     function get_all_responses($question, $state) {
         unset($answers);
@@ -292,7 +299,7 @@ class quiz_match_qtype extends quiz_default_questiontype {
         $result->id = $question->id;
         $result->responses = $answers;
         return $result;
-    }    
+    }
 
     // ULPGC ecastro
     function get_actual_response($question, $state) {
@@ -302,14 +309,14 @@ class quiz_match_qtype extends quiz_default_questiontype {
                 $lpair = $question->options->subquestions[$left]->questiontext;
                 $rpair = $question->options->subquestions[$right]->answertext;
                 $results[$left] = $lpair." : ".$rpair;
-            }        
+            }
             return $results;
         } else {
             return null;
         }
     }
 
-    
+
 }
 //// END OF CLASS ////
 
