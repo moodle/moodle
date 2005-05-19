@@ -535,7 +535,7 @@
         return $status;
     }
    
-    function quiz_restore_shortanswer ($old_question_id,$new_question_id,$info,$restore) {
+    function quiz_restore_shortanswer ($old_question_id,$new_question_id,$info,$restore,$restrictto = '') {
 
         global $CFG;          
 
@@ -579,7 +579,11 @@
             $shortanswer->answers = $answers_field;
 
             //The structure is equal to the db, so insert the quiz_shortanswer
-            $newid = insert_record ("quiz_shortanswer",$shortanswer);
+            //Only if there aren't restrictions or there are restriction concordance
+            $newid = 0;
+            if (empty($restrictto) || (!empty($restrictto) && $shortanswer->answers == $restrictto)) {
+                $newid = insert_record ("quiz_shortanswer",$shortanswer);
+            }
 
             //Do some output
             if (($i+1) % 50 == 0) {
@@ -590,7 +594,7 @@
                 backup_flush(300);
             }
 
-            if (!$newid) {
+            if (!$newid && !$restrictto) {
                 $status = false;
             }
         }
@@ -651,7 +655,7 @@
         return $status;
     }
 
-    function quiz_restore_multichoice ($old_question_id,$new_question_id,$info,$restore) {
+    function quiz_restore_multichoice ($old_question_id,$new_question_id,$info,$restore, $restrictto = '') {
 
         global $CFG;
 
@@ -696,7 +700,11 @@
             $multichoice->answers = $answers_field;
 
             //The structure is equal to the db, so insert the quiz_shortanswer
-            $newid = insert_record ("quiz_multichoice",$multichoice);
+            //Only if there aren't restrictions or there are restriction concordance
+            $newid = 0;
+            if (empty($restrictto) || (!empty($restrictto) && $multichoice->answers == $restrictto)) {
+                $newid = insert_record ("quiz_multichoice",$multichoice);
+            }
 
             //Do some output
             if (($i+1) % 50 == 0) {
@@ -707,7 +715,7 @@
                 backup_flush(300);
             }
 
-            if (!$newid) {
+            if (!$newid && !$restrictto) {
                 $status = false;
             }
         }
@@ -939,7 +947,7 @@
         return $status;
     }
 
-    function quiz_restore_numerical ($old_question_id,$new_question_id,$info,$restore) {
+    function quiz_restore_numerical ($old_question_id,$new_question_id,$info,$restore, $restrictto = '') {
 
         global $CFG;
 
@@ -968,7 +976,11 @@
             }
 
             //The structure is equal to the db, so insert the quiz_numerical
-            $newid = insert_record ("quiz_numerical",$numerical);
+            //Only if there aren't restrictions or there are restriction concordance
+            $newid = 0;
+            if (empty($restrictto) || (!empty($restrictto) && in_array($numerical->answer,explode(",",$restrictto)))) {
+                $newid = insert_record ("quiz_numerical",$numerical);
+            }
 
             //Do some output
             if (($i+1) % 50 == 0) {
@@ -980,9 +992,11 @@
             }
 
             //Now restore numerical_units
-            $status = quiz_restore_numerical_units ($old_question_id,$new_question_id,$num_info,$restore);
+            if ($newid) {
+                $status = quiz_restore_numerical_units ($old_question_id,$new_question_id,$num_info,$restore);
+            }
 
-            if (!$newid) {
+            if (!$newid && !$restrictto) {
                 $status = false;
             }
         }
@@ -1073,26 +1087,13 @@
             $multianswer->norm = backup_todb($mul_info['#']['NORM']['0']['#']);
 
             //We have to recode the answers field (a list of answers id)
-            //Extracts answer id from sequence
-            $answers_field = "";
-            $in_first = true;
-            $tok = strtok($multianswer->answers,",");
-            while ($tok) {
+            $ansarr = explode(",", $multianswer->answers);
+            foreach ($ansarr as $key => $value) {
                 //Get the answer from backup_ids
-                $answer = backup_getid($restore->backup_unique_code,"quiz_answers",$tok);
-                if ($answer) {
-                    if ($in_first) {
-                        $answers_field .= $answer->new_id;
-                        $in_first = false;
-                    } else {
-                        $answers_field .= ",".$answer->new_id;
-                    }
-                }
-                //check for next
-                $tok = strtok(",");
+                $answer = backup_getid($restore->backup_unique_code,'quiz_answers',$value);
+                $ansarr[$key] = $answer->new_id;
             }
-            //We have the answers field recoded to its new ids
-            $multianswer->answers = $answers_field;
+            $multianswer->answers = implode(",",$ansarr);
 
             //The structure is equal to the db, so insert the quiz_multianswers
             $newid = insert_record ("quiz_multianswers",$multianswer);
@@ -1116,11 +1117,11 @@
             //answertype, delegate the restore to every qtype function
             if ($newid) {
                 if ($multianswer->answertype == "1") {
-                    $status = quiz_restore_shortanswer ($old_question_id,$new_question_id,$mul_info,$restore);
+                    $status = quiz_restore_shortanswer ($old_question_id,$new_question_id,$mul_info,$restore,$multianswer->answers);
                 } else if ($multianswer->answertype == "3") {
-                    $status = quiz_restore_multichoice ($old_question_id,$new_question_id,$mul_info,$restore);
+                    $status = quiz_restore_multichoice ($old_question_id,$new_question_id,$mul_info,$restore,$multianswer->answers);
                 } else if ($multianswer->answertype == "8") {
-                    $status = quiz_restore_numerical ($old_question_id,$new_question_id,$mul_info,$restore);
+                    $status = quiz_restore_numerical ($old_question_id,$new_question_id,$mul_info,$restore,$multianswer->answers);
                 }
             } else {
                 $status = false;
@@ -1652,7 +1653,11 @@
                             //Extract the multianswer_id and the answer
                             $exploded = explode("-",$tok);
                             $multianswer_id = $exploded[0];
-                            $answer = $exploded[1];
+                            if (isset($exploded[1])) {
+                                $answer = $exploded[1];
+                            } else {
+                                $answer = '';
+                            }
                             //Get the multianswer from backup_ids
                             $mul = backup_getid($restore->backup_unique_code,"quiz_multianswers",$multianswer_id);
                             if ($mul) {
@@ -1665,8 +1670,10 @@
                                 } else if ($mul_db->answertype == "3") {
                                     //Multichoice
                                     //The answer is an answer_id, look for it in backup_ids
-                                    $ans = backup_getid($restore->backup_unique_code,"quiz_answers",$answer);
-                                    $answer = $ans->new_id;
+                                    if ($answer) {
+                                        $ans = backup_getid($restore->backup_unique_code,"quiz_answers",$answer);
+                                        $answer = $ans->new_id;
+                                    }
                                 } else if ($mul_db->answertype == "8") {
                                     //Numeric
                                     //The answer is text, do nothing
