@@ -320,7 +320,7 @@ function table_column($table, $oldfield, $field, $type='integer', $size='10',
                 if($newtype == 'N' && $oldtype == 'C') {
                     $casting = 'CAST(CAST('.$oldfield.' AS TEXT) AS REAL)';
                 }
-                else if($newtype == 'I' && oldtype == 'C') {
+                else if($newtype == 'I' && $oldtype == 'C') {
                     $casting = 'CAST(CAST('.$oldfield.' AS TEXT) AS INTEGER)';
                 }
                 else {
