@@ -456,7 +456,7 @@
                                            "old_id", $old_id);
 
         //If info field = "infile", get file contents
-        if ($status->info == "infile") {
+        if ($status && $status->info == "infile") {
             $filename = $CFG->dataroot."/temp/backup/".$backup_unique_code."/".$backup_unique_code."_".$table."_".$old_id.".info";
             //Read data from file
             $status2 = backup_file2data($filename,$info);
