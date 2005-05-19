@@ -82,8 +82,19 @@
     } else {
         // no quiz or course was specified so we need to use the stored modform
         if (!isset($SESSION->modform)) { // we will get here after editing a question in
-            // a popup window. Because I don't know how to close a popup window I just print a message.
-            notify(get_string('pleaseclose', 'quiz'));
+            // a popup window. So close window automatically.
+?>
+<script type="text/javascript">
+<!--
+if (self.name == 'editquestion') {
+    self.close();
+}
+-->
+</script>
+<noscript>
+<?php notify(get_string('pleaseclose', 'quiz')); ?>
+</noscript>
+<?php
             exit;
         }
         $modform = $SESSION->modform;
