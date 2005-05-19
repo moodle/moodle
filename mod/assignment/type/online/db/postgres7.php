@@ -10,13 +10,13 @@ function assignment_online_upgrade($oldversion)  {
                                                                         // to Online Assignment
         if ($journals = get_records('journal')) {
 
-            $affectedcourses[$journal->course] = $journal->course;
-
             require_once($CFG->dirroot.'/course/lib.php');
 
             $assignmentmodule = get_record('modules', 'name', 'assignment');
 
             foreach ($journals as $journal) {
+
+                $affectedcourses[$journal->course] = $journal->course;
 
             /// First create the assignment instance
                 $assignment = new object();
