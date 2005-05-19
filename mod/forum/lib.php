@@ -571,21 +571,19 @@ function forum_cron () {
                     mtrace("success.");
                     $usermailcount++;
 
-                    /// Mark post as read if forum_usermarksread is set off
-                        if (!$CFG->forum_usermarksread && 
-                            forum_tp_can_track_forums($postinfo->forumid, $userto) && 
-                            forum_tp_is_tracked($postinfo->forumid, $userto->id)) {
-                            foreach ($markread as $postinfo) {
-                                if (!forum_tp_mark_post_read($userto->id, $postinfo->post, $postinfo->forumid)) {
-                                    mtrace("Error: mod/forum/cron.php: Could not mark post $postid read for user $userto->id".
-                                         " while sending digest email.");
-                                }
+                /// Mark post as read if forum_usermarksread is set off
+                    if (!$CFG->forum_usermarksread && 
+                        forum_tp_can_track_forums($forum->id, $userto) && 
+                        forum_tp_is_tracked($forum->id, $userto->id)) {
+                        foreach ($markread as $postinfo) {
+                            if (!forum_tp_mark_post_read($userto->id, $postinfo->post, $postinfo->forumid)) {
+                                mtrace("Error: mod/forum/cron.php: Could not mark post $postid read for user $userto->id".
+                                     " while sending digest email.");
                             }
                         }
+                    }
                 }
-
             }
-
         }
     }
 
@@ -3450,7 +3448,7 @@ function forum_tp_can_track_forums($forum=false, $user=false) {
     }
 
     return ($isauser && $CFG->forum_trackreadposts && 
-            ($forumforced || ($forumallows && $user->trackforums)));
+            ($forumforced || ($forumallows && !empty($user->trackforums))));
 }
 
 /**
