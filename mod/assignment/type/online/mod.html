@@ -2,10 +2,10 @@
     if (!isset($form->resubmit)) {
         $form->resubmit = 1;
     }
-    if (!isset($form->emailteachers)) {
+    if (empty($form->emailteachers)) {
         $form->emailteachers = 0;
     }
-    if (!isset($form->var1)) {
+    if (empty($form->var1)) {
         $form->var1 = 0;
     }
 ?>

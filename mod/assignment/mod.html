@@ -159,22 +159,17 @@
 </table>
 <br />
 <center>
-<!-- <input type="hidden" name=grade      value="<?php p($form->grade) ?>" /> -->
-<input type="hidden" name="resubmit"        value="<?php p($form->resubmit) ?>" />
-<input type="hidden" name="emailteachers"   value="<?php p($form->emailteachers) ?>" />
-<input type="hidden" name="maxbytes"        value="<?php p($form->maxbytes) ?>" />
-<input type="hidden" name="var1"        value="<?php p($form->var1) ?>" />
-<input type="hidden" name="var2"        value="<?php p($form->var2) ?>" />
-<input type="hidden" name="var3"        value="<?php p($form->var3) ?>" />
-<input type="hidden" name="var4"        value="<?php p($form->var4) ?>" />
-<input type="hidden" name="var5"        value="<?php p($form->var5) ?>" />
-<input type="hidden" name="course"       value="<?php p($form->course) ?>" />
-<input type="hidden" name="coursemodule" value="<?php p($form->coursemodule) ?>" />
-<input type="hidden" name="section"      value="<?php p($form->section) ?>" />
-<input type="hidden" name="module"     value="<?php p($form->module) ?>" />
-<input type="hidden" name="modulename" value="<?php p($form->modulename) ?>" />
-<input type="hidden" name="instance"   value="<?php p($form->instance) ?>" />
-<input type="hidden" name="mode"       value="<?php p($form->mode) ?>" />
+<?php
+   // Add hidden fields for all the ones not defined on this page
+   $assvars = array('course','coursemodule','section','module','modulename','instance','mode',
+                    'resubmit','emailteachers','maxbytes', 'var1','var2','var3','var4','var5');
+
+   foreach ($assvars as $assname) {
+       if (isset($form->$assname)) {
+           echo '<input type="hidden" name="'.$assname.'" value="'.s($form->$assname).'" />'."\n";
+       }
+   }
+?>
 <input type="submit" value="<?php print_string('next') ?> &raquo;" />
 <input type="submit" name="cancel" value="<?php print_string('cancel') ?>" />
 </center>
