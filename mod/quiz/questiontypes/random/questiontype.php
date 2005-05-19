@@ -119,6 +119,16 @@ class quiz_random_qtype extends quiz_default_questiontype {
             return false;
         }
 
+        // We need to set responses[''] to whatever was saved in the most recent
+        // state of the wrapped question.
+        if(!$wrappedstates = get_records_select('quiz_states',
+         "question = $wrappedquestion->id AND attempt = $state->attempt",
+         'seq_number DESC')) {
+            return false;
+        }
+        $wrappedstates = array_values($wrappedstates);
+        $state->responses = array('' => $wrappedstates[0]->answer);
+
         if (!$QUIZ_QTYPES[$wrappedquestion->qtype]
          ->restore_session_and_responses($wrappedquestion, $state)) {
             return false;
