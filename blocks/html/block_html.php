@@ -24,9 +24,14 @@ class block_html extends block_base {
             return $this->content;
         }
 
+        $filteropt = new stdClass;
+        $filteropt->noclean = true;
+
         $this->content = new stdClass;
-        $this->content->text = isset($this->config->text) ? $this->config->text : '';
+        $this->content->text = isset($this->config->text) ? format_text($this->config->text, FORMAT_HTML, $filteropt) : '';
         $this->content->footer = '';
+
+        unset($filteropt); // memory footprint
 
         return $this->content;
     }
