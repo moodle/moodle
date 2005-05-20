@@ -80,14 +80,32 @@ class quiz_randomsamatch_qtype extends quiz_match_qtype {
 
         $count  = count($saquestions);
         $wanted = $question->options->choose;
+        $errorstr = '';
         if ($count < $wanted && isteacherinanycourse()) {
-            notify("Error: could not get enough Short-Answer questions!
-             This can happen if all available Short-Answer questions are already
-             taken up by other Random questions or Random Short-Answer question.
-             Another possible cause for this error is that Short-Answer
-             questions were deleted after this Random Short-Answer question was
-             created.");
-            return false;
+            if ($count >= 2) {
+                $errorstr =  "Error: could not get enough Short-Answer questions!
+                 Got $count Short-Answer questions, but wanted $wanted.
+                 Reducing number to choose from to $count!";
+                $wanted = $question->options->choose = $count;
+            } else {
+                $errorstr = "Error: could not get enough Short-Answer questions!
+                 This can happen if all available Short-Answer questions are already
+                 taken up by other Random questions or Random Short-Answer question.
+                 Another possible cause for this error is that Short-Answer
+                 questions were deleted after this Random Short-Answer question was
+                 created.";
+            }
+            notify($errorstr);
+            $errorstr = '<span class="notifyproblem">' . $errorstr . '</span>';
+        }
+
+        if ($count < $wanted) {
+            $question->questiontext = "$errorstr<br /><br />Insufficient selection options are
+             available for this question, therefore it is not available in  this
+             quiz. Please inform your teacher.";
+            // Treat this as a description from this point on
+            $question->qtype = DESCRIPTION;
+            return true;
         }
 
         $saquestions =
@@ -139,35 +157,43 @@ class quiz_randomsamatch_qtype extends quiz_match_qtype {
 
     function restore_session_and_responses(&$question, &$state) {
         global $QUIZ_QTYPES;
-        $responses = explode(',', $state->responses['']);
-        $responses = array_map(create_function('$val',
-         'return explode("-", $val);'), $responses);
+        if (empty($state->responses[''])) {
+            $question->questiontext = "Insufficient selection options are
+             available for this question, therefore it is not available in  this
+             quiz. Please inform your teacher.";
+            // Treat this as a description from this point on
+            $question->qtype = DESCRIPTION;
+        } else {
+            $responses = explode(',', $state->responses['']);
+            $responses = array_map(create_function('$val',
+             'return explode("-", $val);'), $responses);
 
-        // Restore the previous responses
-        $state->responses = array();
-        foreach ($responses as $response) {
-            $state->responses[$response[0]] = $response[1];
-            $state->options->order[] = $response[0];
-            if (!$wrappedquestion = get_record('quiz_questions', 'id',
-             $response[0])) {
-                notify("Couldn't get question (id=$response[0])!");
-                return false;
-            }
-            if (!$QUIZ_QTYPES[$wrappedquestion->qtype]
-             ->get_question_options($wrappedquestion)) {
-                notify("Couldn't get question options (id=$response[0])!");
-                return false;
-            }
-            if (!$QUIZ_QTYPES[$wrappedquestion->qtype]
-             ->restore_session_and_responses($wrappedquestion, $state)) {
-                notify("Couldn't restore session of question (id=$response[0])!");
-                return false;
-            }
-            $wrappedquestion->name_prefix = $question->name_prefix;
-            $wrappedquestion->maxgrade    = $question->maxgrade;
+            // Restore the previous responses
+            $state->responses = array();
+            foreach ($responses as $response) {
+                $state->responses[$response[0]] = $response[1];
+                $state->options->order[] = $response[0];
+                if (!$wrappedquestion = get_record('quiz_questions', 'id',
+                 $response[0])) {
+                    notify("Couldn't get question (id=$response[0])!");
+                    return false;
+                }
+                if (!$QUIZ_QTYPES[$wrappedquestion->qtype]
+                 ->get_question_options($wrappedquestion)) {
+                    notify("Couldn't get question options (id=$response[0])!");
+                    return false;
+                }
+                if (!$QUIZ_QTYPES[$wrappedquestion->qtype]
+                 ->restore_session_and_responses($wrappedquestion, $state)) {
+                    notify("Couldn't restore session of question (id=$response[0])!");
+                    return false;
+                }
+                $wrappedquestion->name_prefix = $question->name_prefix;
+                $wrappedquestion->maxgrade    = $question->maxgrade;
 
-            $state->options->subquestions[$wrappedquestion->id] =
-             clone($wrappedquestion);
+                $state->options->subquestions[$wrappedquestion->id] =
+                 clone($wrappedquestion);
+            }
         }
         return true;
     }
