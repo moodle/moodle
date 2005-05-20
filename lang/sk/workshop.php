@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.4.5 (2004083150)
+      // workshop.php - created with Moodle 1.5 ALPHA (2005051500)
 
 
 $string['absent'] = 'Chýba';
@@ -171,6 +171,7 @@ $string['noteonstudentassessments'] = '{Body od ¹tudenta / Kvalita hodnotenia}';
 $string['notgraded'] = 'Neobodované';
 $string['notitle'] = 'Bez názvu';
 $string['notitlegiven'] = 'Nezadaný názov';
+$string['notsubmittedyet'] = 'Neboli odovzdané ¾iadne zadania';
 $string['nowork'] = 'Obdobia, poèas ktorého ste mohli odovzdáva» zadania, sa skonèilo.<br />Nezaslali ste ¾iadne vypracované zadanie.';
 $string['numberofassessmentelements'] = 'Poèet komentárov, polo¾iek hodnotenia, bodov, kritérií alebo kategorií v oddiele';
 $string['numberofassessments'] = 'Poèet hodnotení';
