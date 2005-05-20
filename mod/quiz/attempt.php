@@ -325,7 +325,7 @@
             foreach($closequestions as $key => $question) {
                 $action->event = QUIZ_EVENTCLOSE;
                 $action->responses = $closestates[$key]->responses;
-                $action->timestamp = $colsestates[$key]->timestamp;
+                $action->timestamp = $closestates[$key]->timestamp;
                 quiz_process_responses($question, $closestates[$key], $action, $quiz, $attempt);
                             quiz_save_question_session($question, $closestates[$key]);
             }
