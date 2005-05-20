@@ -58,6 +58,7 @@ $string['calculationoffinalgrades'] = 'Výpoèet koneèného poètu bodov';
 $string['clearlateflag'] = 'Odstráni» príznak oneskorenia';
 $string['closeassignment'] = 'Zavrie» úlohu';
 $string['comment'] = 'Komentár';
+$string['commentbank'] = 'Miesto pre komentáre';
 $string['commentby'] = 'Komentár od';
 $string['comparisonofassessments'] = 'Porovnávanie hodnotenia';
 $string['confirmdeletionofthisitem'] = 'Potvrdi» vymazanie $a';
