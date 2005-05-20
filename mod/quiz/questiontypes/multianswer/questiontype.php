@@ -173,7 +173,7 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
     function print_question_formulation_and_controls(&$question, &$state, $quiz,
      $options) {
         global $QUIZ_QTYPES;
-        $readonly = empty($options->readonly) ? '' : 'disabled="disabled"';
+        $readonly = empty($options->readonly) ? '' : 'readonly="readonly"';
         $nameprefix = $question->name_prefix;
 
         // For this question type, we better print the image on top:
@@ -239,7 +239,7 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
 
                 if (!empty($chosenanswer->feedback)) {
                     $feedback = str_replace("'", "\\'", $chosenanswer->feedback);
-                    $popup = " onmouseover=\"return overlib('$feedback', CAPTION, '$strfeedback', FGCOLOR);\" ".
+                    $popup = " onmouseover=\"return overlib('$feedback', CAPTION, '$strfeedback', FGCOLOR, '#FFFFFF');\" ".
                              " onmouseout=\"return nd();\" ";
                 }
 
