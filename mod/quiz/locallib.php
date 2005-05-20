@@ -373,7 +373,7 @@ class quiz_default_questiontype {
     }
 
     /**
-    * Return an array of values with the texts for all possible responses stored 
+    * Return an array of values with the texts for all possible responses stored
     * for the question
     *
     * All answers are found and their text values isolated
@@ -416,7 +416,7 @@ class quiz_default_questiontype {
     */
     // ULPGC ecastro
     function get_actual_response($question, $state) {
-        /* The default implementation only returns the raw ->responses. 
+        /* The default implementation only returns the raw ->responses.
           may be overridden by each type*/
         //unset($resp);
         if (isset($state->responses)) {
@@ -425,7 +425,7 @@ class quiz_default_questiontype {
             return null;
         }
     }
-    
+
     // ULPGC ecastro
     function get_fractional_grade($question, $state) {
         $maxgrade = $question->maxgrade;
@@ -1154,8 +1154,7 @@ function quiz_restore_question_sessions(&$questions, $quiz, $attempt) {
 
     // The question field must be listed first so that it is used as the
     // array index in the array returned by get_records_sql
-    $statefields = 'n.questionid as question, s.id, s.attempt, s.originalquestion, s.seq_number,'.
-                   ' s.answer, s.event, s.grade, s.raw_grade, s.penalty, n.sumpenalty';
+    $statefields = 'n.questionid as question, s.*, n.sumpenalty';
     // Load the newest states for the questions
     $sql = "SELECT $statefields".
            "  FROM {$CFG->prefix}quiz_states s,".
@@ -1247,7 +1246,6 @@ function quiz_restore_question_sessions(&$questions, $quiz, $attempt) {
             }
         }
     }
-
     return $states;
 }
 
@@ -1717,7 +1715,7 @@ function quiz_apply_penalty_and_timelimit(&$question, &$state, $attempt, $quiz) 
     } else {
         $state->grade = $state->raw_grade;
     }
-    
+
     // deal with timeimit
     if ($quiz->timelimit) {
         // We allow for 5% uncertainty in the following test
@@ -1725,7 +1723,7 @@ function quiz_apply_penalty_and_timelimit(&$question, &$state, $attempt, $quiz) 
             $state->grade = 0;
         }
     }
-    
+
     // deal with quiz closing time
     if ($state->timestamp > ($quiz->timeclose + 60)) { // allowing 1 minute lateness
         $state->grade = 0;
@@ -1757,7 +1755,7 @@ function quiz_print_question_icon($question, $editlink=true, $return = false) {
 
     global $QUIZ_QUESTION_TYPE;
     global $QUIZ_QTYPES;
-    
+
     $html = '<img border="0" height="16" width="16" src="questiontypes/'.
             $QUIZ_QTYPES[$question->qtype]->name().'/icon.gif" alt="'.
             get_string($QUIZ_QTYPES[$question->qtype]->name(), 'quiz').'" />';
@@ -1782,9 +1780,9 @@ function quiz_get_question_review($quiz, $question) {
     $quiz_id = $quiz->id ? '&amp;quizid=' . $quiz->id : '';
     return "<a title=\"$strpreview\" href=\"javascript:void();\" onClick=\"openpopup('/mod/quiz/preview.php?id=$qnum$quiz_id','$strpreview','scrollbars=yes,resizable=yes,width=700,height=480', false)\">
           <img src=\"../../pix/t/preview.gif\" border=\"0\" alt=\"$strpreview\" /></a>";
-    
-}    
-    
+
+}
+
 
 
 
@@ -2357,7 +2355,7 @@ function default_export_filename($course,$category) {
 * Function to read all questions for category into big array
 *
 * @param int $category category number
-* @param bool @noparent if true only questions with NO parent will be selected 
+* @param bool @noparent if true only questions with NO parent will be selected
 * @author added by Howard Miller June 2004
 */
 function get_questions_category( $category, $noparent=false ) {
@@ -2500,7 +2498,7 @@ function quiz_get_reviewoptions($quiz, $attempt, $isteacher=false) {
 *
 * Any state that does not yet have its timestamp set to nonzero has not yet been upgraded from Moodle 1.4
 * The reason these are still around is that for large sites it would have taken too long to
-* upgrade all states at once. This function sets the timestamp field and creates an entry in the 
+* upgrade all states at once. This function sets the timestamp field and creates an entry in the
 * quiz_newest_states table.
 * @param object $attempt  The attempt whose states need upgrading
 */
