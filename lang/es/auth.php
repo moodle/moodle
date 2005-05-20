@@ -95,11 +95,13 @@ $string['auth_pop3mailbox'] = 'Nombre de la bandeja de entrada con la que intent
 $string['auth_pop3port'] = 'Puerto del Servidor (110 es el más habitual)';
 $string['auth_pop3title'] = 'Usar un servidor POP3';
 $string['auth_pop3type'] = 'Tipo de servidor. Si su servidor utiliza certificado de seguridad, escoja pop3cert.';
+$string['auth_shib_convert_data'] = 'API de modificación de datos';
+$string['auth_shib_convert_data_description'] = 'Puede usar este API para modificar más adelante los datos proporcionados por Shibboleth. Lea <a href=\"../auth/shibboleth/README.txt\" target=\"_blank\">README</a> para ver instrucciones adicionales.';
+$string['auth_shib_convert_data_warning'] = 'El archivo no existe o no es legible por el proceso del servidor.';
 $string['auth_shib_instructions'] = 'Utilice el <a href=\"$a\">login Shibboleth</a> para acceder vía Shibboleth si su institución lo admite.<br />En caso contrario, utilice el formulario de entrada normal que aquí se muestra.';
 $string['auth_shib_instructions_help'] = 'Aquí debería proporcionar a sus usuarios instrucciones personalizadas para explicar Shibboleth. Deberían aparecer en la sección de instrucciones de la página de acceso, e incluir un enlace a \"<b>$a</b>\", de modo que los usuarios de Shibboleth pudieran acceder con facilidad. Si lo deja en blanco, se utilizarán las instrucciones estándar (no las específicas de Shibboleth)';
 $string['auth_shib_only'] = 'Sólo Shibboleth';
 $string['auth_shib_only_description'] = 'Marque esta opción si desea forzar la autenticación Shibboleth';
-$string['auth_shib_settings'] = 'Asegúrese de leer el archivo <a href=\"../auth/shibboleth/README.txt\" target=\"_blank\">README</a> acerca del modo de configurar Moodle con Shibboleth';
 $string['auth_shib_username_description'] = 'Nombre de la variable contextual del servidor Shibboleth que se utilizará como nombre de usuario en Moodle';
 $string['auth_shibboleth_login'] = 'Acceso Shibboleth';
 $string['auth_shibboleth_manual_login'] = 'Acceso manual';

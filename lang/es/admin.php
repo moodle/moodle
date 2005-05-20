@@ -117,12 +117,15 @@ $string['therewereerrors'] = 'Hay errores en sus datos';
 $string['timezoneforced'] = 'Esta opción está forzada por el administrador del sitio';
 $string['timezoneisforcedto'] = 'Forzar a todos los usuarios a utilizar';
 $string['timezonenotforced'] = 'Los usuarios pueden elegir su propia zona horaria';
+$string['upgradeforumread'] = 'Se ha incorporado a Moodle 1.5 una nueva característica para rastrear mensajes enviados al foro leídos y no leídos.<br />Para hacer uso de esta funcionalidad, necesita <a href=\"$a\">actualizar sus tablas</a>.';
+$string['upgradeforumreadinfo'] = 'Se ha incorporado a Moodle 1.5 una nueva funcionalidad para rastrear mensajes enviados al foro leídos y no leídos. Para hacer uso de ella, necesita actualizar sus tablas con toda la información concerniente a los mensajes existentes. Dependiendo del tamaño del sitio, esto puede llevar mucho tiempo (horas) y hacer un uso intensivo de la base de datos, de modo que es mejor llevar a cabo esta operación durante un período de tranquilidad. Sin embargo, el sitio continuará funcionando durante la actualización y los usuarios no se verán afectados. Una vez que comience este proceso, debería dejarlo terminar (i.e., mantenga abierta la ventana del navegador). En todo caso, si detiene el proceso cerrando la ventana, no se preocupe, siempre podrá recomenzar.<br /><br />¿Desea comenzar el proceso de actualización ahora?';
 $string['upgradelogs'] = 'Para conseguir una funcionalidad total, sus registros antiguos deben ser actualizados. <a href=\"$a\">Más información</a>';
 $string['upgradelogsinfo'] = 'Recientemente se han llevado a cabo algunos cambios en la forma en que se almacenan los registros. Para poder ver sus registros antiguos clasificados por actividad, esos registros se deben actualizar. Dependiendo del tamaño de su sitio este proceso puede tardar bastante tiempo (e.g., varias horas) puesto que habrá de consultar continuamente la base de datos. Una vez iniciado el proceso debe permitir que llegue a su fin (manteniendo la ventana de su navegador abierta). No se preocupe: durante este proceso su sitio funcionará correctamente para los otros usuarios.<br /><br /> ¿Desea actualizar sus registros ahora?';
 $string['upgradesure'] = 'Sus archivos Moodle han sido modificados, y usted está a punto de actualizar automáticamente su servidor a esta versión:
 <p><b>$a</b></p>
 <p>Una vez que haga esto, no podrá volver atrás.</p>
 <p>¿Está seguro de que quiere actualizar este servidor a esta versión?</p>';
+$string['upgradingdata'] = 'Actualizando los datos';
 $string['upgradinglogs'] = 'Actualizando los registros';
 
 ?>

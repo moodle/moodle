@@ -49,6 +49,7 @@ $string['gradeletternote'] = 'Para eliminar una letra de calificación, simplemen
 $string['gradepreferenceshelp'] = 'Ayuda sobre preferencias de calificación';
 $string['grades'] = 'Calificaciones';
 $string['gradeweighthelp'] = 'Ayuda sobre ponderación de calificaciones';
+$string['hideadvanced'] = 'Ocultar características avanzadas';
 $string['hidecategory'] = 'Ocultos';
 $string['highgradeascending'] = 'Clasificar por calificación ascendente';
 $string['highgradedescending'] = 'Clasificar por calificación descendente';

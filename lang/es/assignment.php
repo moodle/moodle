@@ -32,6 +32,7 @@ $string['emailteachermailhtml'] = '$a->username ha actualizado el envío de su ta
 para <i>\'$a->assignment\'</i><br /><br />
 Está <a href=\"$a->url\">disponible en el sitio web</a>.';
 $string['emailteachers'] = 'Alertas de email a los profesores';
+$string['emptysubmission'] = 'Usted aún no ha enviado nada';
 $string['existingfiledeleted'] = 'Se ha borrado el archivo: $a';
 $string['failedupdatefeedback'] = 'Fallo al actualizar el comentario dirigido a $a';
 $string['feedback'] = 'Comentario';
@@ -50,6 +51,7 @@ $string['noassignments'] = 'Aún no hay tareas';
 $string['notgradedyet'] = 'No calificado aún';
 $string['notsubmittedyet'] = 'Aún no ha enviado esta tarea';
 $string['overwritewarning'] = 'Advertencia: Si envía un nuevo archivo REEMPLAZARÁ al anterior';
+$string['preventlate'] = 'Impedir envíos retrasados';
 $string['saveallfeedback'] = 'Guardar todos mis comentarios';
 $string['submission'] = 'Envío';
 $string['submissionfeedback'] = 'Comentario sobre la tarea';

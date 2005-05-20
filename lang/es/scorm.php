@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+      // scorm.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005042100)
 
 
 $string['asset'] = 'Asset';
@@ -11,43 +11,34 @@ $string['browsed'] = 'Navegado';
 $string['browsemode'] = 'Modo Navegación';
 $string['chooseapacket'] = 'Elegir o actualizar un paquete SCORM';
 $string['completed'] = 'Completado';
-$string['configframesize'] = 'Este valor es el tamaño (en píxels) del marco superior (i.e., el que contiene la navegación) cuando se ejecuta un paquete scorm.';
-$string['configpopup'] = 'Cuando se añade un nuevo paquete scorm que es capaz de mostrarse en una ventana emergente, ¿debería esta opción estar habilitada por defecto?';
-$string['configpopupheight'] = '¿Cuál debería ser la altura por defecto de las nuevas ventanas emergentes?';
-$string['configpopupresizable'] = '¿Debería poderse modificar por defecto el tamaño de las ventanas emergentes?';
-$string['configpopupscrollbars'] = '¿Deberían las ventanas emergentes poderse desplazar por defecto?';
-$string['configpopupstatus'] = '¿Deberían las ventanas emergentes mostrar por defecto la barra de estado?';
-$string['configpopupwidth'] = '¿Cuál debería ser la anchura por defecto de las nuevas ventanas emergentes?';
 $string['coursepacket'] = 'Paquete de curso';
 $string['coursestruct'] = 'Estructura de curso';
 $string['datadir'] = 'Error del Sistema: No se puede crear un directorio de datos del curso';
+$string['details'] = 'Detalles del rastreo SCO';
 $string['display'] = 'Mostrar';
 $string['domxml'] = 'Librería externa DOMXML';
+$string['enablebrowse'] = 'Habilitar visión previa';
 $string['entercourse'] = 'Introducir el curso SCORM';
 $string['errorlogs'] = 'Registro de errores';
 $string['exit'] = 'Salir del curso SCORM';
 $string['expcoll'] = 'Expandir/Chocar';
 $string['failed'] = 'Error';
 $string['found'] = 'Encontrado manifiesto';
+$string['frameheight'] = 'Esta preferencia ajusta la altura por defecto del marco SCO';
+$string['framewidth'] = 'Esta preferencia ajusta la anchura por defecto del marco SCO';
 $string['gradeaverage'] = 'Calificación promedio';
 $string['gradehighest'] = 'Calificación más alta';
 $string['grademethod'] = 'Método de calificación';
 $string['gradescoes'] = 'Situación de scoes';
 $string['gradesum'] = 'Calificaciones sumadas';
 $string['guestsno'] = 'Los invitados no pueden ver cursos scorm';
+$string['height'] = 'Altura';
 $string['incomplete'] = 'Incompleto';
 $string['missing_attribute'] = 'Falta atributo ($a->attr) en marca $a->tag.';
 $string['missing_tag'] = 'Falta marca $a->tag.';
 $string['mode'] = 'Modo';
 $string['modulename'] = 'Scorm';
 $string['modulenameplural'] = 'Scorms';
-$string['newheight'] = 'Altura (en píxels) por defecto de la ventana';
-$string['newresizable'] = 'Permitir modificar el tamaño de la ventana';
-$string['newscrollbars'] = 'Permitir el desplazamiento de la ventana';
-$string['newstatus'] = 'Mostrar la barra de estado';
-$string['newwidth'] = 'Anchura (en píxels) por defecto de la ventana';
-$string['newwindow'] = 'Nueva ventana';
-$string['newwindowopen'] = 'Mostrar este paquete scorm en una nueva ventana emergente';
 $string['next'] = 'Continuar';
 $string['no_attributes'] = 'La marca $a->tag debe tener atributos';
 $string['no_children'] = 'La marca $a->tag debe tener hijos';
@@ -60,6 +51,7 @@ $string['organizations'] = 'Organizaciones';
 $string['packagedir'] = 'Error del Sistema: No se puede crear el directorio del paquete';
 $string['passed'] = 'Pasado';
 $string['php5'] = 'PHP 5 (librería nativa DOMXML)';
+$string['popup'] = 'Abrir el SCO actual en una ventana nueva';
 $string['position_error'] = 'La marca $a->tag no puede ser hija de $a->parent tag';
 $string['prev'] = 'Anterior';
 $string['regular'] = 'Manifiesto Regular';
@@ -77,5 +69,6 @@ $string['validation'] = 'Resultado de la validación';
 $string['validationtype'] = 'Esta preferencia ajusta la librería DOMXML usada para validar el Manifiesto SCORM. Si no sabe qué hacer, deje la opción seleccionada.';
 $string['versionwarning'] = 'La versión de manifiesto es anterior a la 1.3, cuidado con la marca $a->tag';
 $string['viewallreports'] = 'Ver informes de $a intentos';
+$string['width'] = 'Anchura';
 
 ?>

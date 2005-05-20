@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+      // editor.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005042100)
 
 
 $string['about'] = 'Acerca de este editor';
@@ -29,6 +29,7 @@ $string['createanchor'] = 'Crear ancla';
 $string['createfolder'] = 'Crear carpeta';
 $string['createlink'] = 'Insertar enlace';
 $string['cut'] = 'Cortar selección';
+$string['cutpastemozilla'] = 'Desafortunadamente, no puede usar los atajos normales del teclado (ni tampoco el botón Pegar) para pegar texto en este editor. Esto se debe a cierta característica de seguridad incorporada a algunas versiones de los navegadores Mozilla y Firefox.<br /><br />Puede intentar una de estas tres cosas: <br /> (1) En lugar de CTRL-v, use MAYÚSCULAS-Insert <br /> (2) Use el menú Edición->Pegar de su navegador <br /> (3) Modifique las preferencias en su navegador editando el archivo user.js. <br /><br />Haga clic en el botón OK de abajo si desea más ayuda, o en Cancelar para regresar al editor.';
 $string['delete'] = 'Eliminar';
 $string['filebrowser'] = 'Navegador de archivos';
 $string['findwhat'] = 'Encontrar';

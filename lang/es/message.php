@@ -13,6 +13,7 @@ $string['backupmessageshelp'] = 'Si se activa, los mensajes instantáneos serán i
 $string['beepnewmessage'] = '\'Beep\' cuando llegue un mensaje nuevo';
 $string['blockcontact'] = 'Bloquear contacto';
 $string['blockedmessages'] = '$a mensaje(s) hacia/de usuarios bloqueados';
+$string['blocknoncontacts'] = 'Bloquear todos los mensajes nuevos de las personas que no están en mi lista de contactos';
 $string['contactlistempty'] = 'Su lista de contactos está vacía';
 $string['contacts'] = 'Contactos';
 $string['context'] = 'contexto';
@@ -61,6 +62,7 @@ $string['timesent'] = 'Hora de envío';
 $string['unblockcontact'] = 'Desbloquear contacto';
 $string['unreadmessages'] = '$a mensajes sin leer';
 $string['userisblockingyou'] = 'Este usuario le ha bloqueado y no puede enviarle mensajes';
+$string['userisblockingyounoncontact'] = 'Este usuario sólo acepta mensajes de las personas que están en su lista de contactos, y usted no figura de momento en dicha lista.';
 $string['userssearchresults'] = 'Resultados de la búsqueda: $a usuarios encontrados';
 
 ?>
