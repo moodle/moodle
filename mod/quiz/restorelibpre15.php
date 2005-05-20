@@ -947,6 +947,9 @@
             $multianswer->answertype = backup_todb($mul_info['#']['ANSWERTYPE']['0']['#']);
             $multianswer->norm = backup_todb($mul_info['#']['NORM']['0']['#']);
 
+            //Saving multianswer and positionkey to use them later restoring states
+            backup_putid ($restore->backup_unique_code,'multianswer-pos',$oldid,$multianswer->positionkey);
+
             //We have to recode all the answers to their new ids
             $ansarr = explode(",", $multianswer->answers);
             foreach ($ansarr as $key => $value) {
@@ -1643,7 +1646,7 @@
                         //Nothing to do. The response is a text.
                         break;
                     case 9:    //MULTIANSWER QTYPE
-                        //The answer is a comma separated list of hypen separated sequence keys (from 1) and answers. We must recode them.
+                        //The answer is a comma separated list of hypen separated multianswer ids and answers. We must recode them.
                         //We need to have the sequence of questions here to be able to detect qtypes
                         $multianswerdb = get_record('quiz_multianswers','question',$response->question);
                         //Make an array of sequence to easy access
@@ -1657,6 +1660,14 @@
                             $exploded = explode("-",$tok);
                             $multianswer_id = $exploded[0];
                             $answer = $exploded[1];
+                            //Get position key (if it fails, next iteration)
+                            if ($oldposrec = backup_getid($restore->backup_unique_code,'multianswer-pos',$multianswer_id)) {
+                                $positionkey = $oldposrec->new_id;
+                            } else {
+                                //Next iteration
+                                $tok = strtok(",");
+                                continue;
+                            }
                             //Calculate question type
                             $questiondb = get_record('quiz_questions','id',$sequencearr[$counter-1]);
                             $questiontype = $questiondb->qtype;
@@ -1677,10 +1688,10 @@
 
                             //Finaly, build the new answer field for each pair
                             if ($in_first) {
-                                $answer_field .= $counter."-".$answer;
+                                $answer_field .= $positionkey."-".$answer;
                                 $in_first = false;
                             } else {
-                                $answer_field .= ",".$counter."-".$answer;
+                                $answer_field .= ",".$positionkey."-".$answer;
                             }
                             //check for next
                             $tok = strtok(",");
