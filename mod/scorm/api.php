@@ -47,16 +47,16 @@
     if (isset($mode)) {
         $userdata->mode = $mode;
     }
+    if ($userdata->mode == 'normal') {
+	$userdata->credit = 'credit';
+    } else {
+	$userdata->credit = 'no-credit';
+    }    
     if ($sco = get_record('scorm_scoes','id',$scoid)) {
         $userdata->datafromlms = $sco->datafromlms;
         $userdata->masteryscore = $sco->masteryscore;
         $userdata->maxtimeallowed = $sco->maxtimeallowed;
         $userdata->timelimitaction = $sco->timelimitaction;
-        if (!empty($sco->masteryscore)) {
-            $userdata->credit = 'credit';
-        } else {
-            $userdata->credit = 'no-credit';
-        }    
     } else {
         error('Sco not found');
     }
