@@ -18,20 +18,21 @@ function SCORMapi1_2() {
     // Standard Data Type Definition
     CMIString256 = '^.{0,255}$';
     //CMIString4096 = '^[.|\\n|\\r]{0,4095}$';
-    CMIString4096 = '^.{0,4095}$';
-    CMITime = '^([0-9]{2}):([0-9]{2}):([0-9]{2})(\.[0-9]{1,2})?$';
+    CMIString4096 = '^.{0,4096}$';
+    CMITime = '^([0-2]{1}[0-9]{1}):([0-5]{1}[0-9]{1}):([0-5]{1}[0-9]{1})(\.[0-9]{1,2})?$';
     CMITimespan = '^([0-9]{2,4}):([0-9]{2}):([0-9]{2})(\.[0-9]{1,2})?$';
     CMIInteger = '^\\d+$';
     CMISInteger = '^-?([0-9]+)$';
     CMIDecimal = '^-?([0-9]{0,3})(\.[0-9]{1,2})?$';
-    CMIIdentifier = '^\\w{0,255}$';
+    CMIIdentifier = '^\\w{1,255}$';
     CMIFeedback = CMIString256; // This must be redefined
     CMIIndex = '[._](\\d+).';
     // Vocabulary Data Type Definition
-    CMIStatus = '^passed$|^completed$|^failed$|^incomplete$|^browsed$|^not attempted$';
+    CMIStatus = '^passed$|^completed$|^failed$|^incomplete$|^browsed$';
+    CMIStatus2 = '^passed$|^completed$|^failed$|^incomplete$|^browsed$|^not attempted$';
     CMIExit = '^time-out$|^suspend$|^logout$|^$';
     CMIType = '^true-false$|^choice$|^fill-in$|^matching$|^performance$|^sequencing$|^likert$|^numeric$';
-    CMIResult = '^correct$|^wrong$|^unanticipated$|^neutral$|^[0-9]?(\.[0-9]{1,2})?$';
+    CMIResult = '^correct$|^wrong$|^unanticipated$|^neutral$|^([0-9]{0,3})?(\.[0-9]{1,2})?$';
     NAVEvent = '^previous$|^continue$';
     // Children lists
     cmi_children = 'core, suspend_data, launch_data, comments, objectives, student_data, student_preference, interactions';
@@ -64,7 +65,7 @@ function SCORMapi1_2() {
 	'cmi.core.score.max':{'defaultvalue':'<?php echo isset($userdata->{'cmi.core.score.max'})?$userdata->{'cmi.core.score.max'}:'' ?>', 'format':CMIDecimal, 'range':score_range, 'mod':'rw', 'writeerror':'405'},
 	'cmi.core.score.min':{'defaultvalue':'<?php echo isset($userdata->{'cmi.core.score.min'})?$userdata->{'cmi.core.score.min'}:'' ?>', 'format':CMIDecimal, 'range':score_range, 'mod':'rw', 'writeerror':'405'},
 	'cmi.core.total_time':{'defaultvalue':'<?php echo isset($userdata->{'cmi.core.total_time'})?$userdata->{'cmi.core.total_time'}:'00:00:00' ?>', 'mod':'r', 'writeerror':'403'},
-	'cmi.core.lesson_mode':{'defaultvalue':'<?php echo $userdata->mode ?>', 'mod':'r', 'writeerror':'405'},
+	'cmi.core.lesson_mode':{'defaultvalue':'<?php echo $userdata->mode ?>', 'mod':'r', 'writeerror':'403'},
 	'cmi.core.exit':{'defaultvalue':'<?php echo isset($userdata->{'cmi.core.exit'})?$userdata->{'cmi.core.exit'}:'' ?>', 'format':CMIExit, 'mod':'w', 'readerror':'404', 'writeerror':'405'},
 	'cmi.core.session_time':{'format':CMITimespan, 'mod':'w', 'defaultvalue':'00:00:00', 'readerror':'404', 'writeerror':'405'},
 	'cmi.suspend_data':{'defaultvalue':'<?php echo isset($userdata->{'cmi.suspend_data'})?$userdata->{'cmi.suspend_data'}:'' ?>', 'format':CMIString4096, 'mod':'rw', 'writeerror':'405'},
@@ -78,7 +79,7 @@ function SCORMapi1_2() {
 	'cmi.objectives.n.score.raw':{'defaultvalue':'', 'pattern':CMIIndex, 'format':CMIDecimal, 'range':score_range, 'mod':'rw', 'writeerror':'405'},
 	'cmi.objectives.n.score.min':{'defaultvalue':'', 'pattern':CMIIndex, 'format':CMIDecimal, 'range':score_range, 'mod':'rw', 'writeerror':'405'},
 	'cmi.objectives.n.score.max':{'defaultvalue':'', 'pattern':CMIIndex, 'format':CMIDecimal, 'range':score_range, 'mod':'rw', 'writeerror':'405'},
-	'cmi.objectives.n.status':{'pattern':CMIIndex, 'format':CMIStatus, 'mod':'rw', 'writeerror':'405'},
+	'cmi.objectives.n.status':{'pattern':CMIIndex, 'format':CMIStatus2, 'mod':'rw', 'writeerror':'405'},
 	'cmi.student_data._children':{'defaultvalue':student_data_children, 'mod':'r', 'writeerror':'402'},
 	'cmi.student_data.mastery_score':{'defaultvalue':'<?php echo $userdata->masteryscore ?>', 'mod':'r', 'writeerror':'403'},
 	'cmi.student_data.max_time_allowed':{'defaultvalue':'<?php echo $userdata->maxtimeallowed ?>', 'mod':'r', 'writeerror':'403'},
@@ -165,6 +166,7 @@ function SCORMapi1_2() {
     var Initialized = false;
 
     function LMSInitialize (param) {
+	errorCode = "0";
         if (param == "") {
             if (!Initialized) {
         	Initialized = true;
@@ -180,6 +182,7 @@ function SCORMapi1_2() {
     }
     
     function LMSFinish (param) {
+	errorCode = "0";
 	if (param == "") {
             if (Initialized) {
         	Initialized = false;
@@ -195,16 +198,18 @@ function SCORMapi1_2() {
 			setTimeout('top.nextSCO();',500);
 		    }
 		}    
-        	return result;
+        	return "true";
             } else {
         	errorCode = "301";
             }
         } else {
             errorCode = "201";
 	}
+	return "false";
     }
     
     function LMSGetValue (element) {
+	errorCode = "0";
 	if (Initialized) {
 	    if (element !="") {
 		expression = new RegExp(CMIIndex,'g');
@@ -222,7 +227,7 @@ function SCORMapi1_2() {
 			    errorCode = "0";
 			    return eval(element);
 			} else {
-			    errorCode = "401"; // Need to check if it is the right error code
+			    errorCode = "401"; // Need to check if it is the right errorCode
 			}
 	            } else {
 			errorCode = eval('datamodel["'+elementmodel+'"].readerror');
@@ -240,6 +245,7 @@ function SCORMapi1_2() {
     }
     
     function LMSSetValue (element,value) {
+	errorCode = "0";
 	if (Initialized) {
 	    if (element != "") {
 		expression = new RegExp(CMIIndex,'g');
@@ -338,9 +344,11 @@ function SCORMapi1_2() {
     }
     
     function LMSCommit (param) {
+	errorCode = "0";
 	if (param == "") {
             if (Initialized) {
-		return StoreData(cmi,false);
+		result = StoreData(cmi,false);
+		return "true";
             } else {
         	errorCode = "301";
 	    }
