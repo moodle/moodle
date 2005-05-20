@@ -4495,7 +4495,7 @@ function get_list_of_timezones() {
 
     $timezones = array();
 
-    if ($rawtimezones = get_records_sql('SELECT MAX(id), name FROM '.$CFG->prefix.'timezone GROUP BY name ORDER BY name ASC')) {
+    if ($rawtimezones = get_records_sql('SELECT MAX(id), name FROM '.$CFG->prefix.'timezone GROUP BY name')) {
         foreach($rawtimezones as $timezone) {
             if (!empty($timezone->name)) {
                 $timezones[$timezone->name] = get_string(strtolower($timezone->name), 'timezones');
@@ -4506,7 +4506,7 @@ function get_list_of_timezones() {
         }
     }
 
-    // asort($timezones);
+    asort($timezones);
 
     for ($i = -13; $i <= 13; $i += .5) {
         $tzstring = 'GMT';
