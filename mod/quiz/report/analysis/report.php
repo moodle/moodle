@@ -201,26 +201,46 @@ class quiz_report extends quiz_default_report {
         }
         unset($attemptscores);
         unset($statstable);
-
+        
     /// Now check if asked download of data
         if ($download = optional_param('download', NULL)) {
-            $dir = make_upload_directory($course->id."/quiz_reports");
+            //$dir = make_upload_directory($course->id."/quiz_reports");
             $filename = clean_filename("$course->shortname ".format_string($quiz->name,true));
             switch ($download) {
             case "Excel" :
                 $downloadfilename = $filename.".xls";
-                $this->Export_Excel($questions, $dir."/".$downloadfilename);
+                $this->Export_Excel($questions, $downloadfilename);
                 break;
             case "OOo": 
-                $downloadfilename = $filename;
-                $this->Export_OOo($questions, $dir."/".$downloadfilename);
+                $downloadfilename = $filename.".sxw";
+                $this->Export_OOo($questions, $downloadfilename);
                 break;
             case "CSV": 
                 $downloadfilename = $filename.".txt";
-                $this->Export_CSV($questions, $dir."/".$downloadfilename);
+                $this->Export_CSV($questions, $downloadfilename);
                 break;
             }
         }
+
+    /// Define some strings
+    
+        $strquizzes = get_string("modulenameplural", "quiz");
+        $strquiz  = get_string("modulename", "quiz");
+    
+    /// Print the page header
+    
+        print_header_simple(format_string($quiz->name), "",
+                     "<a href=\"index.php?id=$course->id\">$strquizzes</a>
+                      -> ".format_string($quiz->name),
+                     "", "", true, update_module_button($cm->id, $course->id, $strquiz), navmenu($course, $cm));
+    
+    /// Print the tabs
+    
+        $currenttab = 'reports';
+        $mode = 'anaylis';
+        include('tabs.php');
+        
+    /// Construct the table for this particular report
 
         $tablecolumns = array('id', 'qname',    'answers', 'credits', 'rcounts', 'rpercent', 'facility', 'sd','discrimination_index', 'discrimination_coeff');
         $tableheaders = array(get_string('qidtitle','quiz_analysis'), get_string('qtexttitle','quiz_analysis'), 
@@ -357,10 +377,12 @@ class quiz_report extends quiz_default_report {
 
         $this->print_options_form($quiz, $cm, $attemptselection, $lowmarklimit, $pagesize);
         
+/*        
         if ($download) {
         	echo "<script language='Javascript'> window.open('".$CFG->wwwroot."/files/index.php?id=".$course->id."&wdir=/".
                     get_string('quizreportdir', 'quiz_analysis')."', '".get_string('reportanalysis', 'quiz_analysis')."'); \n</script>";        
         }
+*/
         return true;
     }
 
@@ -470,7 +492,14 @@ class quiz_report extends quiz_default_report {
         global $CFG;
         require_once("$CFG->libdir/excel/Worksheet.php");
         require_once("$CFG->libdir/excel/Workbook.php");
-        
+
+        header("Content-Type: application/vnd.ms-excel");   
+        header("Content-Disposition: attachment; filename=\"$filename\"");
+        header("Expires: 0");
+        header("Cache-Control: must-revalidate,post-check=0,pre-check=0");
+        header("Pragma: public");
+        header("Content-Transfer-Encoding: binary");
+
         $workbook = new Workbook($filename);
         // Creating the first worksheet
         $sheettitle = get_string('reportanalysis','quiz_analysis');
@@ -542,7 +571,14 @@ class quiz_report extends quiz_default_report {
 
     function Export_OOo(&$questions, $filename) {
         global $CFG;
-        
+
+        header("Content-Type: application/download\n");   
+        header("Content-Disposition: attachment; filename=\"$filename\"");
+        header("Expires: 0");
+        header("Cache-Control: must-revalidate,post-check=0,pre-check=0");
+        header("Pragma: public");
+        header("Content-Transfer-Encoding: binary");
+
         require_once("$CFG->libdir/phpdocwriter/lib/include.php");
         import('phpdocwriter.pdw_document');
         $filename = substr($filename, 0, -4);    
@@ -578,12 +614,10 @@ class quiz_report extends quiz_default_report {
             }
         }
         $sxw->Table($headers,$data);
-        $sxw->Output("F");
+        $sxw->Output();
     }
 
     function Export_CSV(&$questions, $filename) {
-
-        $file = fopen($filename,"wb");
 
         $headers = array(get_string('qidtitle','quiz_analysis'), get_string('qtypetitle','quiz_analysis'), 
                         get_string('qnametitle','quiz_analysis'), get_string('qtexttitle','quiz_analysis'), 
@@ -592,19 +626,25 @@ class quiz_report extends quiz_default_report {
                         get_string('qcounttitle','quiz_analysis'), 
                         get_string('facilitytitle','quiz_analysis'), get_string('stddevtitle','quiz_analysis'), 
                         get_string('dicsindextitle','quiz_analysis'), get_string('disccoefftitle','quiz_analysis')); 
-        
-        $text = implode(", ", $headers)." \n";
-        //echo $text." \n";
-        fwrite($file, $text);
+
+        $text = implode("\t", $headers)." \n";
+
+        header("Content-Type: application/download\n");   
+        header("Content-Disposition: attachment; filename=\"$filename\"");
+        header("Expires: 0");
+        header("Cache-Control: must-revalidate,post-check=0,pre-check=0");
+        header("Pragma: public");
+
+        echo $text;
 
         foreach($questions as $q) {       
             $rows = $this->print_row_stats_data(&$q);
             foreach($rows as $row){
                 $text = implode("\t", $row);
-                fwrite($file,  $text." \n");
+                echo $text." \n";
             }
         }
-        fclose($file);
+        exit;
     }
 
     function print_row_stats_data(&$q) {

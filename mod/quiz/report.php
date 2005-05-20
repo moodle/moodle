@@ -48,6 +48,8 @@
 
     add_to_log($course->id, "quiz", "report", "report.php?id=$cm->id", "$quiz->id", "$cm->id");
 
+
+/* Code moved into each plugin report.php 
 /// Define some strings
 
     $strquizzes = get_string("modulenameplural", "quiz");
@@ -64,6 +66,7 @@
 
     $currenttab = 'reports';
     include('tabs.php');
+*/
 
 /// Open the selected quiz report and display it
 

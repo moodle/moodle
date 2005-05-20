@@ -9,14 +9,34 @@ class quiz_report extends quiz_default_report {
 
     function display($quiz, $cm, $course) {     /// This function just displays the report
     
-    print_heading('Not yet implemented');
-    return true;
+    /// These lines MUST be removed when putting this plugin into action
+    /// Define some strings
+    
+        $strquizzes = get_string("modulenameplural", "quiz");
+        $strquiz  = get_string("modulename", "quiz");
+    
+    /// Print the page header
+    
+        print_header_simple(format_string($quiz->name), "",
+                     "<a href=\"index.php?id=$course->id\">$strquizzes</a>
+                      -> ".format_string($quiz->name),
+                     "", "", true, update_module_button($cm->id, $course->id, $strquiz), navmenu($course, $cm));
+    
+    /// Print the tabs
+    
+        $currenttab = 'reports';
+        $mode = 'fullstat';
+        include('tabs.php');
+
+    /// end here while the plugin is not revised.
+        print_heading('Not yet implemented');
+        return true;
 
     global $CFG;
     global $download, $quests,$qtally,$table_colcount,$max_choices, $analysis,$qs_in_order,$total_user_count,$match_number, $thismin,$thismax,$myxls,$match_qs,$formatbc,$workbook,$strquestion,$showtext,$debug;
     optional_variable($download, "");
     optional_variable($debug, "");
-//$debug = 1;
+
 
 
     $strindivresp = get_string('indivresp', 'quiz');
@@ -659,6 +679,28 @@ class quiz_report extends quiz_default_report {
         exit;
         }
         ////////--------------------------- If it falls through both of the $download choices, print on screen
+        
+    /// Define some strings
+    
+        $strquizzes = get_string("modulenameplural", "quiz");
+        $strquiz  = get_string("modulename", "quiz");
+    
+    /// Print the page header
+    
+        print_header_simple(format_string($quiz->name), "",
+                     "<a href=\"index.php?id=$course->id\">$strquizzes</a>
+                      -> ".format_string($quiz->name),
+                     "", "", true, update_module_button($cm->id, $course->id, $strquiz), navmenu($course, $cm));
+    
+    /// Print the tabs
+    
+        $currenttab = 'reports';
+        $mode = 'fullstat';
+        include('tabs.php');
+
+    /// end here while the plugin is not revised.
+        print_heading('Not yet implemented');
+        
     //Print user responses
     print ("<table border=\"1\" align=\"center\" width=\"95%\" cellpadding=\"2\" cellspacing=\"0\">\n");
     $totcolcount = $table_colcount+2;

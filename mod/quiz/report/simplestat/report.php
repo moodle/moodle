@@ -448,6 +448,27 @@ class quiz_report extends quiz_default_report {
         global $CFG;
         global $download;
 
+
+    /// These lines MUST be removed when putting this plugin into action
+    /// Define some strings
+    
+        $strquizzes = get_string("modulenameplural", "quiz");
+        $strquiz  = get_string("modulename", "quiz");
+    
+    /// Print the page header
+    
+        print_header_simple(format_string($quiz->name), "",
+                     "<a href=\"index.php?id=$course->id\">$strquizzes</a>
+                      -> ".format_string($quiz->name),
+                     "", "", true, update_module_button($cm->id, $course->id, $strquiz), navmenu($course, $cm));
+    
+    /// Print the tabs
+    
+        $currenttab = 'reports';
+        $mode = 'simplestat';
+        include('tabs.php');
+
+    /// end here while the plugin is not revised.
         print_heading('Not yet implemented');
         return true;
 
@@ -646,11 +667,28 @@ class quiz_report extends quiz_default_report {
             exit;
         }
 
+    /// Otherwise, display the table 
 
+    /// First the page header and tabs
+    /// Define some strings
+    
+        $strquizzes = get_string("modulenameplural", "quiz");
+        $strquiz  = get_string("modulename", "quiz");
+    
+    /// Print the page header
+    
+        print_header_simple(format_string($quiz->name), "",
+                     "<a href=\"index.php?id=$course->id\">$strquizzes</a>
+                      -> ".format_string($quiz->name),
+                     "", "", true, update_module_button($cm->id, $course->id, $strquiz), navmenu($course, $cm));
+    
+    /// Print the tabs
+    
+        $currenttab = 'reports';
+        $mode = 'simplestat';
+        include('tabs.php');
 
-
-    /// Otherwise, display the table as HTML
-
+    /// Now we can display the table as HTML
         echo "<table border=\"1\" align=\"center\">";
         echo "<tr>";
         echo "<td>&nbsp;</td>";
