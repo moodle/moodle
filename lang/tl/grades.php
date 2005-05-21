@@ -49,6 +49,7 @@ $string['gradeletternote'] = 'Para mabura ang titik na marka, blangkuhin lamang 
 $string['gradepreferenceshelp'] = 'Tulong sa Mas-ibig para sa Marka';
 $string['grades'] = 'Mga Marka';
 $string['gradeweighthelp'] = 'Tulong sa May-timbang na Marka';
+$string['hideadvanced'] = 'Itago ang mga Abanteng Katangian';
 $string['hidecategory'] = 'Nakatagò';
 $string['highgradeascending'] = 'Pagsunud-sunurin ayon sa pinakamataas na marka pataas';
 $string['highgradedescending'] = 'Pagsunud-sunurin ayon sa pinakamataas na marka pababa';

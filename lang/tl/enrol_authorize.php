@@ -4,10 +4,13 @@
 
 $string['anlogin'] = 'Authorize.net: Pangalan na panglog-in';
 $string['anpassword'] = 'Authorize.net: Password (hindi lubos na kinakailangan)';
+$string['anreferer'] = 'Itype dito ang URL referer, kung isinaayos mo ito sa iyong authorize.net account.  Ipapadala nito ang heading na \"Referer: URL\" sa web request.';
 $string['antestmode'] = 'Authorize.net: Subukin ang mga transaksiyon';
 $string['antrankey'] = 'Authorize.net: Susi ng transaksiyon';
 $string['ccexpire'] = 'Petsa ng Pagkapasó';
+$string['ccinvalid'] = 'Ditanggap na bilang ng card';
 $string['ccno'] = 'Bilang ng Credit Card';
+$string['cctype'] = 'Uri ng Credit Card';
 $string['ccvv'] = 'CV2';
 $string['ccvvhelp'] = 'Tingnan ang likod ng card (huling 3 numero)';
 $string['description'] = 'Ang Authorize.net na modyul ay pinahihintulutan kang magsaayos ng may-bayad na kurso sa pamamagitan ng mga nagbibigay ng CC.  Kung ang halaga ng anumang kurso ay sero, ang mga mag-aaral ay hindi na sisingilin para makapasok.  May pangbuong site na halaga na itatakda mo rito bilang default para sa buong site at pagkatapos ay isang kaayusang pangkurso na itatakda mo para sa bawat kurso.  Nananaig ang halaga ng kurso sa halaga ng site.';

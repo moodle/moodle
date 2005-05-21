@@ -32,6 +32,7 @@ $a->url';
 $string['emailteachermailhtml'] = 'Binago ni $a->username ang kanyang ipinasang takdang-aralin para sa <i>\'$a->assignment\'</i><br /><br />
 Makukuha ito sa <a href=\"$a->url\">web site</a>.';
 $string['emailteachers'] = 'Hudyat na email para sa mga guro';
+$string['emptysubmission'] = 'Wala ka pang ipinapasang anuman';
 $string['existingfiledeleted'] = 'Ang kasalukuyang file ay binura na: $a';
 $string['failedupdatefeedback'] = 'Nabigong baguhin ang puna sa ipinasa ni user $a';
 $string['feedback'] = 'Puna';
@@ -50,6 +51,7 @@ $string['noassignments'] = 'Wala pang takdang-aralin';
 $string['notgradedyet'] = 'Hindi pa namamarkahan';
 $string['notsubmittedyet'] = 'Hindi pa naipapasa';
 $string['overwritewarning'] = 'Babala: kung mag-aaplowd kang mulî, MAPAPALITAN nito ang kasalukuyan mong ipinasa';
+$string['preventlate'] = 'Pigilan ang pagpapasa nang hulí';
 $string['saveallfeedback'] = 'Isave ang lahat ng aking puna';
 $string['submission'] = 'Ipinasa';
 $string['submissionfeedback'] = 'Puna sa ipinasa';

@@ -44,6 +44,7 @@ $string['enrol_ldap_host_url'] = 'Itakda ang  LDAP host sa anyong URL tulad ng
                                   o \'ldaps://ldap.myorg.com/\'';
 $string['enrol_ldap_objectclass'] = 'objectClass na ginagamit sa paghahanap ng mga kurso.  Karaniwan ay
                                      \'posixGroup\'.';
+$string['enrol_ldap_search_sub'] = 'Hanapin ang kinasasapiang pangkat mula sa subkonteksto.';
 $string['enrol_ldap_server_settings'] = 'Mga Kaayusan ng LDAP Server';
 $string['enrol_ldap_student_contexts'] = 'Listahan ng konteksto kung saan naroroon ang mga grupo na 
                                           may pag-eenrol ng mga mag-aaral.  Paghiwalayin ang magkakaibang 

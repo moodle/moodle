@@ -55,7 +55,7 @@ $string['auth_ldap_create_context'] = 'Kung bubuhayin mo ang paglikha ng user na
 $string['auth_ldap_creators'] = 'Listahan ng mga pangkat na ang mga miyembro ay pinapayagang lumikha ng bagong kurso.  Paghiwalayin ang maraming pangkat ng \';\'. Karaniwan ay tulad ng \'cn=teachers,ou=staff,o=myorg\'';
 $string['auth_ldap_expiration_desc'] = 'Piliin ang Hindi upang mapatay ang pagtsek ng pasó nang password o para basahin ng LDAP ang oras ng passwordexpiration nang direkta mula sa LDAP';
 $string['auth_ldap_expiration_warning_desc'] = 'Bilang ng araw bago ipakita ang babala sa pagkapasó ng password.';
-$string['auth_ldap_expireattr_desc'] = 'Opsiyonal: Nananaig sa ldap-attribute na nag-iimbak ng oras ng pagkapasó ng password asswordAxpirationTime';
+$string['auth_ldap_expireattr_desc'] = 'Opsiyonal: Nananaig sa ldap-attribute na nag-iimbak ng oras ng pagkapasó ng password passwordExpirationTime';
 $string['auth_ldap_graceattr_desc'] = 'Opsiyonal: Nananaig sa gracelogin attribute';
 $string['auth_ldap_gracelogins_desc'] = 'Buhayin ang may palugit na paglog-in (gracelogin) na suporta sa LDAP.  Matapos mapasó ang password, ang user ay makapaglalog-in pa hanggang maging 0 ang bilang ng palugit sa paglalog-in.  Ang pagpapagana ng kaayusang ito ay magpapakita ng mensahe ng may-palugit na log-in kapag ang password ay pasó na.';
 $string['auth_ldap_host_url'] = 'Itakda ang LDAP host sa anyong-URL tulad ng  \'ldap://ldap.myorg.com/\' o \'ldaps://ldap.myorg.com/\' Paghiwalayin ang maraming server ng \';\' upang makakuha ng suportang failover. ';
@@ -64,7 +64,7 @@ $string['auth_ldap_memberattribute'] = 'Opsiyonal: Nananaig sa user member attri
 $string['auth_ldap_objectclass'] = 'Opsiyonal: Nananaig sa objectClass na ginagamit sa pagpapangalan/paghahanap ng mga user sa ldap_user_type.  Kadalasan ay hindi mo na kailangang baguhin ito.';
 $string['auth_ldap_opt_deref'] = 'Itinatakda kung paano hinahandle ang mga alias kapag naghahanap.  Piliin ang isa sa mga sumusunod na halaga:  \"Hindi\" (LDAP_DEREF_NEVER) o \"Oo\" (LDAP_DEREF_ALWAYS) ';
 $string['auth_ldap_passwdexpire_settings'] = 'LDAP password expiration settings.';
-$string['auth_ldap_search_sub'] = 'Ilagay ang halagang <> 0 kung nais mong hanapin ang mga user mula sa subcontext.';
+$string['auth_ldap_search_sub'] = 'Hanapin ang mga user mula sa subcontext.';
 $string['auth_ldap_server_settings'] = 'Kaayusan ng LDAP server';
 $string['auth_ldap_update_userinfo'] = 'Baguhin ang impormasyon ng user (unang pangalan, apelyido, tirahan..) mula LDAP hanggang Moodle.  Itakda ang kaayusan ng \"Data mapping\" alinsunod sa pangangailangan mo.';
 $string['auth_ldap_user_attribute'] = 'Opsiyonal: Nananaig sa attribute na ginagamit sa pagpapangalan/paghahanap ng mga user.  Karaniwan ay \'cn\'.';
@@ -97,15 +97,18 @@ $string['auth_pop3mailbox'] = 'Pangalan ng mailbox na pagtatangkaang magkipagkon
 $string['auth_pop3port'] = 'Server port (110 ang pinakakaraniwan, 995 ay karaniwan sa SSL)';
 $string['auth_pop3title'] = 'Gumamit ng POP3 server';
 $string['auth_pop3type'] = 'Uri ng server.  Kung gumagamit ng certificate security ang server mo, piliin ang pop3cert.';
+$string['auth_shib_convert_data'] = 'API para sa pagbabago ng datos';
+$string['auth_shib_convert_data_description'] = 'Magagamit mo ang API na ito upang lalong mabago ang datos na ibinigay ng Shibboleth. Basahin ang <a href=\"../auth/shibboleth/README.txt\" target=\"_blank\">README</a> para sa iba pang instruksiyon.';
+$string['auth_shib_convert_data_warning'] = 'Walang ganitong file o hindi ito mabasa ng proseso na webserver!';
 $string['auth_shib_instructions'] = 'Gamitin ang <a href=\"$a\">Shibboleth log-in</a> upang makapasok sa pamamagitan ng Shibboleth, kung sinusuportahan ito ng isntitusyon mo. <br />Kung hindi, gamitin ang normal na form ng log-in na ipinapakita rito.';
 $string['auth_shib_instructions_help'] = 'Dito ay dapat kang magbigay ng pasadyang panuto para sa user mo na nagpapaliwanag ng Shibboleth.  Ipapakita ito sa pahinang panglog-in sa may seksiyon ng panuto.  Dapat itong magkaroon ng link na \"<b>$a</b>\" upang makapaglog-in ng madali ang mga user ng Shibboleth.  Kapag iniwan mo itong blangko, ang mga istandard na panuto ang gagamitin (hindi ang partikular sa Shibboleth)';
 $string['auth_shib_only'] = 'Shibboleth lamang';
 $string['auth_shib_only_description'] = 'Tsekan ang opsiyon na ito kung ipatutupad ang isang Shibboleth na pag-aauthenticate';
-$string['auth_shib_settings'] = 'Tiyakin na nabasa ninyo ang <a href=\"../auth/shibboleth/README.txt\" target=\"_blank\">README</a> file para sa Shibboleth.  Tinatalakay nito kung paano iayos ang Moodle mo na may Shibboleth.';
 $string['auth_shib_username_description'] = 'Pangalan ng webserver Shibboleth environment baryabol na gagamitin bilang Moodle username';
 $string['auth_shibboleth_login'] = 'Shibboleth Log-in';
 $string['auth_shibboleth_manual_login'] = 'Mano-manong Log-in';
-$string['auth_shibbolethdescription'] = 'Sa pamamagitan ng paraang ito, ang mga user ay lilikhain at iaauthenticate sa pamamagitan ng <a href=\"http://shibboleth.internet2.edu/\" target=\"_blank\">Shibboleth</a>';
+$string['auth_shibbolethdescription'] = 'Sa pamamagitan ng paraang ito, ang mga user ay lilikhain at iaauthenticate sa pamamagitan ng <a href=\"http://shibboleth.internet2.edu/\" target=\"_blank\">Shibboleth</a>. <br>Tiyakin ninyo na nabasa ninyo ang <a href=\"../auth/shibboleth/README.txt\" target=\"_blank\">README</a> ng Shibboleth, ito ay para sa kung paano iaayos ang Moodle mo na may Shibboleth
+';
 $string['auth_shibbolethtitle'] = 'Shibboleth';
 $string['auth_updatelocal'] = 'Baguhin ang lokal na datos';
 $string['auth_updatelocal_expl'] = '<p><b>Baguhin ang lokal na datos:</b> Kapag binuhay, ang field ay babaguhin (mula sa panlabas na auth) tuwing maglalog-in ang user o may user synchronization.  Dapat ikandado ang field na inayos na lokal ang pagbabago.</p>';

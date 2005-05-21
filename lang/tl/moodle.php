@@ -3,6 +3,7 @@
 
 
 $string['action'] = 'Aksiyon';
+$string['actions'] = 'Mga Aksiyon';
 $string['active'] = 'Aktibo';
 $string['activities'] = 'Mga Aktibidad';
 $string['activity'] = 'Aktibidad';
@@ -448,6 +449,7 @@ $string['forceno'] = 'Huwag ipilit';
 $string['forcepasswordchange'] = 'Ipilit ang pagpapalit ng password';
 $string['forcepasswordchangehelp'] = 'Hudyatan ang user para baguhin niya ito sa susunod na maglog-in siya';
 $string['forcetheme'] = 'Ipilit ang tema';
+$string['forgotaccount'] = 'Naiwala mo ba ang password mo?';
 $string['forgotten'] = 'Nakalimutan mo ba ang iyong username o password?';
 $string['format'] = 'Format';
 $string['formathtml'] = 'Format na HTML';
@@ -979,7 +981,7 @@ $string['someerrorswerefound'] = 'Nawawala o mali ang ilang impormasyon.  Tuming
 $string['sortby'] = 'Pagsunudsunurin alinsunod sa';
 $string['specifyname'] = 'Kailangan mong maglagay ng pangalan.';
 $string['startdate'] = 'Petsa ng umpisa ng kurso';
-$string['startsignup'] = 'Magsimula na ngayon sa pamamagitan ng paglikha ng bagong account!';
+$string['startsignup'] = 'Lumikha ng bagong account';
 $string['state'] = 'Probinsiya/Estado';
 $string['statistics'] = 'Mga Estadistika';
 $string['status'] = 'Katayuan';
