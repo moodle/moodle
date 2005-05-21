@@ -44,7 +44,7 @@ class filterobject {
  * param  ignoretagsopen   an array of opening tags that we should ignore while filtering
  * param  ignoretagsclose  an array of corresponding closing tags
  **/
-function filter_phrases ($text, $link_array, $ignoretagsopen=NULL, $ignoretagsclose=NULL) {
+function filter_phrases ($text, &$link_array, $ignoretagsopen=NULL, $ignoretagsclose=NULL) {
 
     global $CFG;
 
@@ -84,9 +84,10 @@ function filter_phrases ($text, $link_array, $ignoretagsopen=NULL, $ignoretagscl
 /// Remove tags from $text
     filter_save_tags($text,$tags);
 
-
 /// Time to cycle through each phrase to be linked
-    foreach ($link_array as $linkobject) {
+    $size = sizeof($link_array);
+    for ($n=0; $n < $size; $n++) {
+        $linkobject =& $link_array[$n];
 
     /// Set some defaults if certain properties are missing
     /// Properties may be missing if the filterobject class has not been used to construct the object
