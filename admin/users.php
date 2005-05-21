@@ -27,12 +27,10 @@
 
     $table->data[] = array("<b><a href=\"user.php\">".get_string("edituser")."</a></b>",
                            get_string("adminhelpedituser"));
-    if (is_internal_auth()) {
-        $table->data[] = array("<b><a href=\"$CFG->wwwroot/$CFG->admin/user.php?newuser=true&amp;sesskey=$USER->sesskey\">".get_string("addnewuser")."</a></b>",
+    $table->data[] = array("<b><a href=\"$CFG->wwwroot/$CFG->admin/user.php?newuser=true&amp;sesskey=$USER->sesskey\">".get_string("addnewuser")."</a></b>",
                                get_string("adminhelpaddnewuser"));
-        $table->data[] = array("<b><a href=\"$CFG->wwwroot/$CFG->admin/uploaduser.php?sesskey=$USER->sesskey\">".get_string("uploadusers")."</a></b>",
+    $table->data[] = array("<b><a href=\"$CFG->wwwroot/$CFG->admin/uploaduser.php?sesskey=$USER->sesskey\">".get_string("uploadusers")."</a></b>",
                                get_string("adminhelpuploadusers"));
-    }
     $table->data[] = array('', '<hr />');
     $table->data[] = array("<b><a href=\"enrol.php?sesskey=$USER->sesskey\">".get_string("enrolments")."</a></b>",
                            get_string("adminhelpenrolments"));
