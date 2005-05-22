@@ -661,7 +661,7 @@ class assignment_base {
         }
         
         if (empty($users)) {
-            print_heading($strnoattempts);
+            print_heading(get_string('noattempts','assignment'));
             return true;
         }
 
