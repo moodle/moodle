@@ -46,6 +46,7 @@ $string['modulename'] = 'Opdracht';
 $string['modulenameplural'] = 'Opdrachten';
 $string['newsubmissions'] = 'Ingestuurde opdrachten';
 $string['noassignments'] = 'Er zijn nog geen opdrachten';
+$string['noattempts'] = 'Er heeft nog niemand zijn opdracht ingestuurd';
 $string['notgradedyet'] = 'Nog niet beoordeeld';
 $string['notsubmittedyet'] = 'Nog niet ingestuurd';
 $string['overwritewarning'] = 'Waarschuwing: als je opnieuw een opdracht instuurt OVERSCHRIJFT deze de huidige ingestuurde opdracht';
