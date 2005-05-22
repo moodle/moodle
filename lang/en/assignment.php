@@ -59,6 +59,7 @@ $string['modulename'] = 'Assignment';
 $string['modulenameplural'] = 'Assignments';
 $string['newsubmissions'] = 'Assignments submitted';
 $string['noassignments'] = 'There are no assignments yet';
+$string['noattempts'] = 'No attempts have been made on this assignment';
 $string['notgradedyet'] = 'Not graded yet';
 $string['notsubmittedyet'] = 'Not submitted yet';
 $string['overwritewarning'] = 'Warning: uploading again will REPLACE your current submission';
