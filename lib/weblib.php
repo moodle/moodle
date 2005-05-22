@@ -75,7 +75,11 @@ define('FORMAT_MARKDOWN', '4');   // Markdown-formatted text http://daringfireba
  * @global string $ALLOWED_TAGS
  */
 $ALLOWED_TAGS =
-'<p><br><b><i><u><font><table><tbody><span><div><tr><td><th><ol><ul><dl><li><dt><dd><h1><h2><h3><h4><h5><h6><hr><img><a><strong><emphasis><em><sup><sub><address><cite><blockquote><pre><strike><embed><object><param><acronym><nolink><lang><tex><algebra><math><mi><mn><mo><mtext><mspace><ms><mrow><mfrac><msqrt><mroot><mstyle><merror><mpadded><mphantom><mfenced><msub><msup><msubsup><munder><mover><munderover><mmultiscripts><mtable><mtr><mtd><maligngroup><malignmark><maction><cn><ci><apply><reln><fn><interval><inverse><sep><condition><declare><lambda><compose><ident><quotient><exp><factorial><divide><max><min><minus><plus><power><rem><times><root><gcd><and><or><xor><not><implies><forall><exists><abs><conjugate><eq><neq><gt><lt><geq><leq><ln><log><int><diff><partialdiff><lowlimit><uplimit><bvar><degree><set><list><union><intersect><in><notin><subset><prsubset><notsubset><notprsubset><setdiff><sum><product><limit><tendsto><mean><sdev><variance><median><mode><moment><vector><matrix><matrixrow><determinant><transpose><selector><annotation><semantics><annotation-xml><tt><code>';
+'<p><br><b><i><u><font><table><tbody><span><div><tr><td><th><ol><ul><dl><li><dt><dd><h1><h2><h3><h4><h5><h6><hr><img><a><strong><emphasis><em><sup><sub><address><cite><blockquote><pre><strike><embed><object><param><acronym><nolink><lang><tex><algebra><mat
+h><mi><mn><mo><mtext><mspace><ms><mrow><mfrac><msqrt><mroot><mstyle><merror><mpadded><mphantom><mfenced><msub><msup><msubsup><munder><mover><munderover><mmultiscripts><mtable><mtr><mtd><maligngroup><malignmark><maction><cn><ci><apply><reln><fn><interval><
+inverse><sep><condition><declare><lambda><compose><ident><quotient><exp><factorial><divide><max><min><minus><plus><power><rem><times><root><gcd><and><or><xor><not><implies><forall><exists><abs><conjugate><eq><neq><gt><lt><geq><leq><ln><log><int><diff><par
+tialdiff><lowlimit><uplimit><bvar><degree><set><list><union><intersect><in><notin><subset><prsubset><notsubset><notprsubset><setdiff><sum><product><limit><tendsto><mean><sdev><variance><median><mode><moment><vector><matrix><matrixrow><determinant><transpo
+se><selector><annotation><semantics><annotation-xml><tt><code>';
 
 /**
  * Allowed protocols - array of protocols that are safe to use in links and so on
@@ -3856,27 +3860,28 @@ function obfuscate_mailto($email, $label='', $dimmed=false) {
 /**
  * Prints a single paging bar to provide access to other pages  (usually in a search)
  *
- * @param int $totalcount ?
- * @param int $page ?
- * @param int $perpage ?
- * @param string $baseurl ?
- * @todo Finish documenting this function
+ * @param int $totalcount Thetotal number of entries available to be paged through
+ * @param int $page The page you are currently viewing
+ * @param int $perpage The number of entries that should be shown per page
+ * @param string $baseurl The url which will be used to create page numbered links. Each page will consist of the base url appended by the page 
+var an equal sign, then the page number.
+ * @param string $pagevar This is the variable name that you use for the page number in your code (ie. 'tablepage', 'blogpage', etc)
  */
-function print_paging_bar($totalcount, $page, $perpage, $baseurl) {
+function print_paging_bar($totalcount, $page, $perpage, $baseurl, $pagevar='page') {
 
     $maxdisplay = 18;
 
     if ($totalcount > $perpage) {
         echo '<div class="paging">';
-        echo get_string('page').':';
+        echo get_string('page') .':';
         if ($page > 0) {
-            $pagenum=$page-1;
-            echo '&nbsp;(<a  href="'. $baseurl .'page='. $pagenum .'">'. get_string('previous') .'</a>)&nbsp;';
+            $pagenum = $page - 1;
+            echo '&nbsp;(<a  href="'. $baseurl . $pagevar .'='. $pagenum .'">'. get_string('previous') .'</a>)&nbsp;';
         }
         $lastpage = ceil($totalcount / $perpage);
         if ($page > 15) {
             $startpage = $page - 10;
-            echo '&nbsp<a href="'. $baseurl .'page=0">1</a>&nbsp;...';
+            echo '&nbsp<a href="'. $baseurl . $pagevar .'=0">1</a>&nbsp;...';
         } else {
             $startpage = 0;
         }
@@ -3887,18 +3892,18 @@ function print_paging_bar($totalcount, $page, $perpage, $baseurl) {
             if ($page == $currpage) {
                 echo '&nbsp;&nbsp;'. $displaypage;
             } else {
-                echo '&nbsp;&nbsp;<a href="'. $baseurl .'page='. $currpage .'">'. $displaypage .'</a>';
+                echo '&nbsp;&nbsp;<a href="'. $baseurl . $pagevar .'='. $currpage .'">'. $displaypage .'</a>';
             }
             $displaycount++;
             $currpage++;
         }
         if ($currpage < $lastpage) {
             $lastpageactual = $lastpage - 1;
-            echo '&nbsp;...<a href="'. $baseurl .'page='. $lastpageactual .'">'. $lastpage .'</a>&nbsp;';
+            echo '&nbsp;...<a href="'. $baseurl . $pagevar .'='. $lastpageactual .'">'. $lastpage .'</a>&nbsp;';
         }
         $pagenum = $page + 1;
         if ($pagenum != $displaypage) {
-            echo '&nbsp;&nbsp;(<a href="'. $baseurl .'page='. $pagenum .'">'. get_string('next') .'</a>)';
+            echo '&nbsp;&nbsp;(<a href="'. $baseurl . $pagevar .'='. $pagenum .'">'. get_string('next') .'</a>)';
         }
         echo '</div>';
     }
