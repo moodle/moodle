@@ -1729,11 +1729,6 @@
 
         global $CFG, $db;
 
-        if (empty($CFG->enablerestorequiz)) {
-            print_simple_box ('Restore of quizzes temporary disabled <br />(under development)','center', '', 'red');
-            return true;
-        }
-
         $status = true;
         //Check it exists
         if (!file_exists($xml_file)) {

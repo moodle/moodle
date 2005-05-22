@@ -1210,11 +1210,6 @@
 
         global $CFG;
 
-        if (empty($CFG->enablerestorequiz)) {
-            print_simple_box ('Restore of quizzes temporary disabled <br />(under development)','center', '', 'red');
-            return true;
-        }
-
         $status = true;
 
         //Hook to call Moodle < 1.5 Quiz Restore
