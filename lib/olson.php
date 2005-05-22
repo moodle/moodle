@@ -47,14 +47,14 @@ function olson_to_timezones ($filename) {
         //
         // Find the pre 1970 zone rule entries
         //
-        for ($y = 1970 ; $y > 0 ; $y--) {
+        for ($y = 1970 ; $y >= 0 ; $y--) {
             if (array_key_exists((string)$y, $zbyyear )) { // we have a zone entry for the year
                 $zone = $zbyyear[$y];
                 //print_object("Zone $zname pre1970 is in  $y\n");
                 break; // Perl's last -- get outta here
             }
         }
-        if (!empty($zone['rule'])) {
+        if (!empty($zone['rule']) && array_key_exists($zone['rule'], $rules)) {
             $rule = NULL;
             for ($y = 1970 ; $y > 0 ; $y--) {
                 if (array_key_exists((string)$y, $rules[$zone['rule']] )) { // we have a rule entry for the year                    
@@ -76,7 +76,7 @@ function olson_to_timezones ($filename) {
         }
         
         // Prepare to insert the base 1970 zone+rule        
-        if (!empty($rule)) {
+        if (!empty($rule) && array_key_exists($zone['rule'], $rules)) {
             // merge the two arrays into the moodle rule
             unset($rule['name']); // warning: $rule must NOT be a reference! 
             unset($rule['year']);
@@ -116,7 +116,7 @@ function olson_to_timezones ($filename) {
                 $changed = true;
                 $zone    = $zbyyear[(string)$y];
             }
-            if (!empty($zone['rule'])){                
+            if (!empty($zone['rule']) && array_key_exists($zone['rule'], $rules)) {                
                 if (array_key_exists((string)$y, $rules[$zone['rule']])) {
                     $changed = true;
                     $rule    = $rules[$zone['rule']][(string)$y];
