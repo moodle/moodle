@@ -49,6 +49,7 @@ $string['modulename'] = '課題';
 $string['modulenameplural'] = '課題';
 $string['newsubmissions'] = '課題が提出されました。';
 $string['noassignments'] = '課題はまだありません。';
+$string['noattempts'] = 'この課題には提出物がありません。';
 $string['notgradedyet'] = '未評価';
 $string['notsubmittedyet'] = '未提出';
 $string['overwritewarning'] = '注意: 再度アップロードすることにより現在の提出物は置き換えられます。';
