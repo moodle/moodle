@@ -669,8 +669,6 @@ class assignment_base {
     /// Construct the SQL
 
         if ($where = $table->get_sql_where()) {
-            $where = str_replace('firstname', 'u.firstname', $where);
-            $where = str_replace('lastname', 'u.lastname', $where);
             $where .= ' AND ';
         }
 
@@ -685,16 +683,12 @@ class assignment_base {
         }
 
 
-        $select = 'SELECT '.$db->Concat('u.id', '\'#\'', $db->IfNull('s.userid', '0')).' AS uvs, u.id, u.firstname, u.lastname, u.picture, s.id AS submissionid, s.grade, s.comment, s.timemodified, s.timemarked, ((s.timemarked > 0) && (s.timemarked >= s.timemodified)) AS status ';
-        $group  = 'GROUP BY uvs ';
+        $select = 'SELECT u.id, u.id, u.firstname, u.lastname, u.picture, s.id AS submissionid, s.grade, s.comment, s.timemodified, s.timemarked, ((s.timemarked > 0) && (s.timemarked >= s.timemodified)) AS status ';
         $sql = 'FROM '.$CFG->prefix.'user u '.
                'LEFT JOIN '.$CFG->prefix.'assignment_submissions s ON u.id = s.userid AND s.assignment = '.$this->assignment->id.' '.
                'WHERE '.$where.'u.id IN ('.implode(',', array_keys($users)).') ';
 
-
-        $total = count_records_sql('SELECT COUNT(DISTINCT('.$db->Concat('u.id', '\'#\'', $db->IfNull('s.userid', '0')).')) '.$sql);
-
-        $table->pagesize($perpage, $total);
+        $table->pagesize($perpage, count($users));
         
         if($table->get_page_start() !== '' && $table->get_page_size() !== '') {
             $limit = ' '.sql_paging_limit($table->get_page_start(), $table->get_page_size());     
@@ -707,7 +701,7 @@ class assignment_base {
         $strgrade  = get_string('grade');
         $grademenu = make_grades_menu($this->assignment->grade);
 
-        if (($ausers = get_records_sql($select.$sql.$group.$sort.$limit)) !== false) {
+        if (($ausers = get_records_sql($select.$sql.$sort.$limit)) !== false) {
             
             foreach ($ausers as $auser) {
                 $picture = print_user_picture($auser->id, $course->id, $auser->picture, false, true);
