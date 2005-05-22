@@ -220,43 +220,50 @@
     // Start working -- this is necessary as soon as the niceties are over
     $table->setup();
 
+    // Construct the SQL
 
-/// Construct the SQL
+    $select = 'SELECT qa.id AS attempt, u.id AS userid, u.firstname, u.lastname, u.picture, '.
+              'qa.sumgrades, qa.timefinish, qa.timestart, qa.timefinish - qa.timestart AS duration ';
+    $from   = 'FROM mdl_user u LEFT JOIN mdl_quiz_attempts qa ON u.id = qa.userid ';
+    $where  = 'WHERE u.id IN ('.implode(',', array_keys($users)).') AND ('.($noattempts ? sql_isnull('qa.quiz').' OR ' : '') . 'qa.quiz = '.$quiz->id.') ';
 
-    if($where = $table->get_sql_where()) {
-        $where .= ' AND ';
+    // Count the records NOW, before funky question grade sorting messes up $from
+    $total  = count_records_sql('SELECT COUNT(DISTINCT('.$db->Concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).')) '.$from);
+
+
+    // Add extra limits due to initials bar
+    if($table->get_sql_where()) {
+        $where .= ' AND '.$table->get_sql_where();
     }
 
+
+    // Add extra limits due to sorting by question grade
     if($sort = $table->get_sql_sort()) {
-        $sortparts = explode(',', $sort);
-        $newsort   = array();
-        $firsttime = true;
+        $sortparts    = explode(',', $sort);
+        $newsort      = array();
+        $questionsort = false;
         foreach($sortparts as $sortpart) {
             $sortpart = trim($sortpart);
             if(substr($sortpart, 0, 1) == '$') {
-                if($firsttime) {
-                    $qnum      = intval(substr($sortpart, 1));
-                    $where    .= '('.sql_isnull('qr.question').' OR qr.question = '.$qnum.') AND ';
-                    $newsort[] = 'grade '.(strpos($sortpart, 'ASC')? 'ASC' : 'DESC');
-                    $firsttime = false;
+                if(!$questionsort) {
+                    $qid          = intval(substr($sortpart, 1));
+                    $select .= ', grade ';
+                    $from        .= 'LEFT JOIN mdl_quiz_newest_states qns ON qns.attemptid = qa.id '.
+                                    'LEFT JOIN mdl_quiz_states qs ON qs.id = qns.newgraded ';
+                    $where       .= ' AND ('.sql_isnull('qns.questionid').' OR qns.questionid = '.$qid.')';
+                    $newsort[]    = 'grade '.(strpos($sortpart, 'ASC')? 'ASC' : 'DESC');
+                    $questionsort = true;
                 }
             }
             else {
                 $newsort[] = $sortpart;
             }
         }
+
+        // Reconstruct the sort string
         $sort = ' ORDER BY '.implode(', ', $newsort);
     }
 
-    $select = 'SELECT '.$db->Concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).' AS uvsa, u.id AS userid, u.firstname, u.lastname, u.picture, qa.id AS attempt, qa.sumgrades, qa.timefinish, qa.timestart, qa.timefinish - qa.timestart AS duration ';
-    $group  = 'GROUP BY uvsa';
-    $sql = 'FROM '.$CFG->prefix.'user u '.
-           'LEFT JOIN '.$CFG->prefix.'quiz_attempts qa ON u.id = qa.userid '.
-           'LEFT JOIN '.$CFG->prefix.'quiz_states qr ON qr.attempt = qa.id '.
-           'WHERE '.$where.'u.id IN ('.implode(',', array_keys($users)).') AND ('.($noattempts ? sql_isnull('qa.quiz').' OR ' : '') . 'qa.quiz = '.$quiz->id.') ';
-
-
-    $total = count_records_sql('SELECT COUNT(DISTINCT('.$db->Concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).')) '.$sql);
     $table->pagesize(10, $total);
 
     if($table->get_page_start() !== '' && $table->get_page_size() !== '') {
@@ -268,7 +275,7 @@
 
 /// Fetch the attempts
 
-    $attempts = get_records_sql($select.$sql.$group.$sort.$limit);
+    $attempts = get_records_sql($select.$from.$where.$sort.$limit);
 
 /// Build table rows
 
