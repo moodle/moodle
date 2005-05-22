@@ -27,6 +27,7 @@ $string['enrol_ldap_editlock'] = 'Érték zárolása';
 $string['enrol_ldap_host_url'] = 'Az LDAP-gazdagépet URL-formában adja meg: 
 \'ldap://ldap.myorg.com/\' vagy \'ldaps://ldap.myorg.com/\'';
 $string['enrol_ldap_objectclass'] = 'Kurzusok kjeresésére használt objektumosztály. Általában \'posixGroup\'.';
+$string['enrol_ldap_search_sub'] = 'Csoporttagság kikeresése résztartalom alapján';
 $string['enrol_ldap_server_settings'] = 'LDAP-szerver beállításai';
 $string['enrol_ldap_student_contexts'] = 'Azon környezetek felsorolása, ahol a tanulói beíratkozások csoportjai találhatók. A környezeteket válassza el \';\'-vel. Például: 
 \'ou=kurzusok,o=org; ou=egyebek,o=org\'';

@@ -5,7 +5,7 @@
 $string['addresource'] = 'Tananyag hozzáadása';
 $string['chooseafile'] = 'Állomány kiválasztása vagy feltöltése';
 $string['chooseparameter'] = 'Paraméter kiválasztása';
-$string['configallowlocalfiles'] = 'Új tananyag létrehozásakor ugrópontokat iktathat be egy helyi állományrendszerhez, pl. egy CD-meghajtóhoz vagy egy merevlemezhez. Ez hasznos lehet olyan kurzus esetén, ahol minden tanuló egy közös hálózati meghajtóhoz fér hozzá, illetve ahol CD-n lévõ állományokhoz kell hozzáférni. Ennek használata során elõfordulhat, hogy a böngészõ biztonsági beállításait módosítani kell.';
+$string['configallowlocalfiles'] = 'Új állományforrás létrehozása során hozzon létre ugrópontokat a helyi rendszeren, például CD-meghajtón vagy merevlemezen lévõ állományokhoz. Ez hasznosnak bizonyulhat olyankor, amikor minden tanuló azonos hálózati meghajtóhoz fér hozzá, vagy ha CD-n lévõ állományokat kell elérni. Ennek használatához esetleg módosítani kell a böngészõ biztonsági beállításain.';
 $string['configdefaulturl'] = 'Ez az érték új URL-alapú tananyag létrehozásakor az URL-ûrlap elõre kitöltésére szolgál.';
 $string['configfilterexternalpages'] = 'Ezzel a beállítással minden külsõ forrás (honlap, feltöltött HTML-fájl) a megadott honlapszûrõkkel (például automatikus fogalomtár-kapcsolással) lesz feldolgozva. Ha bekapcsolja, kurzusoldalai számottevõen lelassulhatnak - használja körültekintéssel és csak szükség esetén. ';
 $string['configframesize'] = 'Ha egy weboldal vagy egy feltöltött állomány keretben jelenik meg, ez az érték a felsõ (navigálást tartalmazó) keret (képpontban megadott) mérete.';
@@ -39,11 +39,11 @@ $string['frameifpossible'] = 'Helyezze a tananyagot keretbe, hogy a navigálás lá
 $string['fulltext'] = 'Szöveg';
 $string['htmlfragment'] = 'HTML részlet';
 $string['localfile'] = 'Helyi állomány';
-$string['localfilechoose'] = 'Helyi állomány választása (CD-ROM)';
-$string['localfilehelp'] = 'Helyi állományok jelzésének súgója';
-$string['localfileinfo'] = '<p>Helyi állomány kiválasztása a gépérõl. Az állományt a rendszer nem tölti fel a portálra, hanem az állományt a Moodle annak a gépén keresi, aki ezt az anyagot nézi.</p><p>Ez általában akkor hasznos, ha nagy médiaállományok vannak egy CD-ROM-on, melybõl minden résztvevõ megkap egyet. A résztvevõk az ilyen állományok útvonalát <a href=\"$a\" target=\"_blank\">felhasználói profiljuk szerkesztésével</a> adhatják meg.</p>';
-$string['localfilepath'] = 'Az anyag helyi útvonalának beállításához válasszon ki egy állományt arról a meghajtóról (ez általában egy CD-ROM), amelyen az anyag található. Az állomány feltöltése helyett a rendszer a meghajtórta vonatkozó információt tárolja el és használja a helyi anyagok eléréséhez.';
-$string['localfileselect'] = 'Adott útvonalat válassza.';
+$string['localfilechoose'] = 'Helyi állomány (CD-ROM) kiválasztása';
+$string['localfilehelp'] = 'Súgó helyi állományok megjelenítéséhez';
+$string['localfileinfo'] = '<p>Válasszon helyi állományt a számítógépérõl. Az állomány nem kerül fel a weboldalra, de a Moodle ezt fogja keresni a forrást tekintõk közül mindenkinek a gépén.</p><p>Ez fõleg akkor hasznos, ha nagy médiaállományokat tárol hagyományos CD-ROM-on, melyeket minden résztvevõ számára kioszt. A résztvevõk saját helyi útvonalat adhatnak meg ezekhez az állományokhoz a <a href=\"$a\" target=\"_blank\">felhasználói profiljuk szerkesztésével</a>.</p>';
+$string['localfilepath'] = 'Saját helyi útvonal megadásához válassza ki bármelyik állományt arról a számítógépén lévõ meghajtóról (rendszerint egy CD-ROM), ahol a forrást tárolja. Az állomány nem töltõdik fel, de a meghajtó adatait a rendszer eltárolja és minden helyi forráshoz ezt használja.';
+$string['localfileselect'] = 'Ezen útvonal kiválasztása.';
 $string['maindirectory'] = 'Fõ állományok könyvtára';
 $string['modulename'] = 'Tananyag';
 $string['modulenameplural'] = 'Tananyagok';
@@ -60,7 +60,7 @@ $string['newtoolbar'] = 'Eszköztár megmutatása';
 $string['newwidth'] = 'Alapértelmezett ablakszélesség (pixelben)';
 $string['newwindow'] = 'Új ablak';
 $string['newwindowopen'] = 'Ez a tananyag új ablakban jelenjen meg';
-$string['notallowedlocalfileaccess'] = 'Jelenleg a helyi állományok nem elérhetõk, így a tananyag sem.';
+$string['notallowedlocalfileaccess'] = 'A helyi állományok elérése jelenleg ki van kapcsolva, így a forrás nem elérhetõ.';
 $string['note'] = 'Megjegyzés';
 $string['notefile'] = 'Egy vagy több fájl kurzusba való feltöltéséhez (hogy a felsorolásban megjelenjenek) használja a 
 <a href=\"$a\">Fájlmenedzsert</a>.';

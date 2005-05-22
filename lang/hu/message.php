@@ -3,6 +3,8 @@
 
 
 $string['addcontact'] = 'Kapcsolat hozzáadása';
+$string['addsomecontacts'] = 'Üzenet küldéséhez vagy ezen az oldalon egy mutató létrehozásához használja a fenti <a href=\"$a\">keresés fület</a>.';
+$string['addsomecontactsincoming'] = 'Ezek az üzenetek olyan személyektõl érkeztek, akik nem szerepelnek kapcsolatainak jegyzékében. Hozzáadásukhoz kattintson a nevük mellett lévõ \"Kapcsolat hozzáadása\" ikonra';
 $string['ago'] = '$a óta';
 $string['allmine'] = 'Hozzám vagy tõlem jövõ üzenetek';
 $string['allstudents'] = 'A kurzus tanulói közötti összes üzenetváltás';
@@ -11,6 +13,8 @@ $string['backupmessageshelp'] = 'Bekapcsolásakor az azonnali üzenetek bekerülnek
 $string['beepnewmessage'] = 'Hangjelzés új üzenet érkezésekor';
 $string['blockcontact'] = 'Kapcsolat zárolása';
 $string['blockedmessages'] = 'Zárolt felhasználóktól/nak érkezõ $a üzenet';
+$string['blocknoncontacts'] = 'Minden új üzenet blokkolása az olyan személyektõl, akik nem szerepelnek kapcsolataim jegyzékében. ';
+$string['contactlistempty'] = 'Kapcsolatainak jegyzéke jelenleg üres. ';
 $string['contacts'] = 'Kapcsolatok';
 $string['context'] = 'környezet';
 $string['deletemessagesdays'] = 'Régi üzenetek automatikus törléséig eltelõ napok száma';
@@ -58,6 +62,7 @@ $string['timesent'] = 'Küldés idõpontja';
 $string['unblockcontact'] = 'Kapcsolat zárolásának feloldása';
 $string['unreadmessages'] = '$a olvasatlan üzenet';
 $string['userisblockingyou'] = 'Ez a felhasználó nem engedélyezte az Öntõl jövõ üzenetek fogadását';
+$string['userisblockingyounoncontact'] = 'Ez a felhasználó csak kapcsolatként nyilvántarott személyektõl fogad üzeneteket, Ön nincs ebben a jegyzékben.';
 $string['userssearchresults'] = 'Keresés eredménye: $a felhasználót találtam';
 
 ?>

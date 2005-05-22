@@ -1,39 +1,42 @@
 <?PHP // $Id$ 
-      // client.php - created with Moodle 1.4 (2004083100)
+      // block_rss_client.php - created with Moodle 1.4 (2004083100)
 
 
-$string['addfeed'] = 'Hírforrás URL-jének hozzáadása:';
-$string['addheadlineblock'] = 'RSS-fejlécblokk hozzáadása';
+$string['addfeed'] = 'Hírfórum URL-jének hozzáadása';
+$string['addheadlineblock'] = 'RSS-fejcímblokk hozzáadása';
 $string['addnew'] = 'Új hozzáadása';
-$string['choosefeedlabel'] = 'Válassza ki a blokkban elérhetõnek szánt hírforrásokat:';
-$string['clientchannellink'] = 'Forrás honlapja...';
-$string['clientnumentries'] = 'Forrásonként megjelenítendõ hírek száma.';
-$string['clientshowchannellinklabel'] = 'Az eredeti helyre mutasson ugrópont? (Ha nincs megadva forrásra mutató ugrópont, akkor az nem is jelenik meg)';
-$string['clientshowimagelabel'] = 'Ha van, mutassa meg a forrás képét:';
-$string['couldnotfindfeed'] = 'Nem találtam hírt ezzel az azonosítóval';
-$string['customtitlelabel'] = 'Testre szabott cím (hagyja üresen, ha a forrás címét kívánja használni)';
-$string['deletefeedconfirm'] = 'Biztosan törölni akarja ezt a hírforrást?';
-$string['displaydescriptionlabel'] = 'Megjelenjen minden ugrópont leírása?';
-$string['editfeeds'] = 'RSS/Atom hírforrás szerkesztése, fel- és leíratkozás';
-$string['editnewsfeeds'] = 'Hírforrás szerkesztés';
-$string['editrssblock'] = 'RSS-fejlécblokk szerkesztése';
-$string['feed'] = 'Hírforrás';
-$string['feedadded'] = 'Hírforrás hozzaádva';
-$string['feeddeleted'] = 'Hírforrás törölve';
-$string['feedupdated'] = 'Hírforrás frissítve';
-$string['feeds'] = 'Hírforrások';
-$string['feedsaddedit'] = 'Hírek szerkesztése/hozzáadása';
-$string['feedstitle'] = 'Távoli hírforrások';
-$string['findmorefeeds'] = 'További hírforrások keresése';
-$string['nofeeds'] = 'Ehhez a portálhoz nincs megadva hírforrás.';
-$string['pickfeed'] = 'Hír fogadása';
-$string['remotenewsfeed'] = 'Távoli hírforrások';
-$string['seeallfeeds'] = 'Minden hírforrás látszik';
-$string['shownumentrieslabel'] = 'Blokkonkénti maximális hírszám';
-$string['submitters'] = 'Ki jogosult új hírforrásokat meghatározni? A megadott hírek a portálján bárhol elérhetõk.';
+$string['choosefeedlabel'] = 'Válassza ki a blokkból elérni kívánt híreket:';
+$string['clientchannellink'] = 'Forrásportál...';
+$string['clientnumentries'] = 'Hírfórumonként megjelenítendõ hírek száma';
+$string['clientshowchannellinklabel'] = 'Látsszon az eredeti helyre (csatorna) mutató ugrópont? (Ha a hírek nem tartalmaznak ugrópontot a hírfórumokra, nem jelenik meg ugrópont): ';
+$string['clientshowimagelabel'] = 'Csatornakép megjelenítése, ha van:';
+$string['configblock'] = 'Blokk beállítása';
+$string['couldnotfindfeed'] = 'Az azonosítóval nem találtam hírt';
+$string['customtitlelabel'] = 'Testre szabott cím (üresen hagyva a hír címe jelenik meg):';
+$string['deletefeedconfirm'] = 'Biztosan tölöni akarja ezt a hírt?';
+$string['displaydescriptionlabel'] = 'Minden ugrópont leírása jelenjen meg?';
+$string['editfeeds'] = 'RSS/Atom fórumhírek szerkesztése, járatása vagy leíratkozás';
+$string['editnewsfeeds'] = 'Fórumhírek szerkesztése';
+$string['editrssblock'] = 'RSS-fejcímblokk szerkesztése';
+$string['feed'] = 'Hír';
+$string['feedadded'] = 'Fórumhír hozzáadva';
+$string['feeddeleted'] = 'Fórumhír törölve';
+$string['feeds'] = 'Fórumhírek';
+$string['feedsaddedit'] = 'Hír hozzáadása/szerkesztése';
+$string['feedsconfigurenewinstance'] = 'Ide kattintva a blokkot beállíthatja az RSS-hírek megjelenítésére';
+$string['feedstitle'] = 'Távoli  RSS-hírek';
+$string['feedupdated'] = 'Fórumhírek frissítve';
+$string['findmorefeeds'] = 'Más RSS-hírek keresése';
+$string['managefeeds'] = 'Minden hírem kezelése';
+$string['nofeeds'] = 'Ezen az oldalon nincsenek RSS-hírek';
+$string['pickfeed'] = 'Fórumhír választása';
+$string['remotenewsfeed'] = 'Távoli fórumhír';
+$string['seeallfeeds'] = 'Minden hír megtekintése';
+$string['shownumentrieslabel'] = 'Blokkonként kijelzendõ tételek max. száma';
+$string['submitters'] = 'Ki adhat meg új RSS-hírt? A megadott hírek a portálján bárhol elérhetõk.';
 $string['timeout'] = 'blockrsstimeout';
-$string['timeoutdesc'] = 'RSS-hír gyorsítótárban tartásának ideje percben';
-$string['updatefeed'] = 'Hírforrás URL-jének frissítése:';
+$string['timeoutdesc'] = 'Egy RSS-hír ennyi percig maradhat a gyorsítótárban.';
+$string['updatefeed'] = 'Fórumhír URL-jének frissítése:';
 $string['validatefeed'] = 'Hír ellenõrzése';
 
 ?>

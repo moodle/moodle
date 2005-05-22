@@ -45,6 +45,7 @@ $string['configintroadmin'] = 'Ezen az oldalon kell megadni a fõ adminisztrátort
 $string['configintrosite'] = 'Ezen az oldalon állíthatja be a címoldalt és az új portál nevét. Késõbb bármikor visszatérhet ide és módosíthatja a beállításokat a honlap \'Portál beállításai\' pontról.';
 $string['configintrotimezones'] = 'Ez az oldal új információkat keres a világ idõzónáiról (beleértve a nyári idõszámítással kapcsolatos szabályokat) és ezen információ alapján frissíti a helyi adatbázist. A helyek ellenõrzése $a alapján történik. Az eljárás biztonságosnak mondható és nem szakítja meg a szokásos telepítést. Most kívánja frissíteni az idõzónákat?';
 $string['configlang'] = 'Válasszon egy alapértelmezett nyelvet a teljes portál számára. A felhasználók ezt a beállítást a késõbbiekben felülírhatják.';
+$string['configlangcache'] = 'Nyelvi menü gyorsítótárba helyezése. Sok memóriát és erõforrást takaríthatunk meg vele. Bekapcsolásakor néhány percig eltart a nyelvek hozzáadása vagy eltávolítása után a frissítés.';
 $string['configlangdir'] = 'A legtöbb nyelv balról jobbra ír, de némelyek, például az arab és a héber írás, jobbról halad balra.';
 $string['configlanglist'] = 'Ha ezt üresen hagyja, a felhasználók a Moodle adott telepítésébõl elérhetõ bármely nyelvet választhatják. A nyelvi menüt lerövidítheti, ha vesszõvel elválasztva itt felsorolja a kívánt nyelvek kódjait. Például:  en,es_es,fr,it';
 $string['configlangmenu'] = 'Itt adja meg, hogy megjelenjen-e az általános nyelvi menü a honlapon, a bejelentkezési oldalon stb. Ez nem korlátozza a felhasználókat abban, hogy a nekik megfelelõ nyelvet saját profiljukban beállítsák.';
@@ -116,12 +117,15 @@ $string['therewereerrors'] = 'Adataiban hiba volt';
 $string['timezoneforced'] = 'Ezt a portál adminisztrátora követeli meg';
 $string['timezoneisforcedto'] = 'Minden felhasználó kényszerítése ';
 $string['timezonenotforced'] = 'A felhasználók kiválaszthatják saját idõzónájukat';
+$string['upgradeforumread'] = 'A Moodle 1.5 új elemmel bõvült az elolvasott/még nem olvasott fórumhozzászólások nyomon követésére.<br />Ennek használatához <a href=\"$a\">frissítenie kell táblázatait</a>.';
+$string['upgradeforumreadinfo'] = 'A Moodle 1.5 új elemmel bõvült az elolvasott/még nem olvasott fórumhozzászólások nyomon követésére. Ennek használatához frissítenie kell táblázatait az összes meglévõ hozzászólásra vonatkozó nyomon követési információval. A portál méretátõl függõen ez hosszú idõbe (akár órákba) telhet és igénybe veheti az adatbázis erõforrását, ezért ennek elvégzésére célszerû egy nyugodtabb idõszakot kiválasztani. Ugyanakkor a portál a frissítés alatt továbbra is üzemel, a felhasználókat ez nem érinti. Ha a folyamatot elindítja, hagyja, hogy véget érjen (a böngészõ ablakát tartsa nyitva). Ha mégis becsukná, semmi probléma, újrakezdheti.<br /><br />Most akarja elindítani a frissítést?';
 $string['upgradelogs'] = 'Az összes funkció mûködéséhez minden régi naplóállományt frissíteni kell. <a href=\"$a\">További tájékoztatás</a>';
 $string['upgradelogsinfo'] = 'A naplóállományok tárolásában nemrégiben változásokra került sor. Ha a régebbi naplóállományokat tevékenységek szerint kívánja megtekinteni, akkor a régi naplóállományokat frissítenie kell. Ez az adott portáltól függõen sok idõt (akár órákat) vehet igénybe és meglehetõsen megterhelheti a nagyobb portálok adatbázisait. Ha nekilát a folyamatnak, hagynia kell, hogy befejezõdjék (oly módon, hogy a böngészõ ablakát nyitva hagyja). A naplóállományok frissítése közben a portál mások számára minden gond nélkül üzemel.<br /><br />Most kívánja frissíteni a naplóállományait?';
 $string['upgradesure'] = 'Moodle-állományai módosultak, szerverét automatikusan erre a verzióra fogja frissíteni:
 <p><b>$a</b></p>
 <p>Ha így tesz, nem fog tudni visszalépni.</p> 
 <p>Ezt a szervert biztosan erre a verzióra kívánja frissíteni?</p>';
+$string['upgradingdata'] = 'Adatok frissítése';
 $string['upgradinglogs'] = 'Naplóállományok frissítése';
 
 ?>

@@ -17,11 +17,11 @@ $string['notyetglossary'] = 'Legalább egy választható fogalomtárral kell rendelk
 $string['random'] = 'Véletlen fogalom';
 $string['refresh'] = 'Új fogalom kiválasztása elõtti napok száma';
 $string['select_glossary'] = 'A fogalmakat ebbõl a fogalomtárból válassza';
-$string['showconcept'] = 'Az egyes fogalmak tartalmának (fejlécének) megjelenítése';
+$string['showconcept'] = 'Minden fogalom fejlécét mutatja';
 $string['title'] = 'Cím';
 $string['type'] = 'Új fogalom kiválasztásának módja';
 $string['typehelp'] = '<b>Az utolsó módosított fogalom</b> helyén mindig a legutoljára megváltoztatott fogalom jelenik meg, a <b>Véletlenszerû fogalom</b> mindig találomra választ ki egy új fogalmat. A <b>Következõ fogalom</b> egymás után jeleníti meg a fogalmakat. Ez az utóbbi lehetõség különösen akkor hasznos, amikor sor kerül néhány nap kiválasztására is, így megjelenhet az \"A hét idézete\" vagy a \"Napi ötlet\", melyet mindenki lát.';
 $string['viewglossary'] = 'További idézetek...';
-$string['whichfooter'] = 'Ugrópontokat jeleníthet meg azon fogalomtár eljárásaihoz, amellyel ez a blokk kapcsolatban áll. A blokk csak olyan eljárások ugrópontjait jeleníti meg, amelyek az adott fogalomtárban végrehajthatók.';
+$string['whichfooter'] = 'A blokkhoz tartozó fogalomtár tevékenységeihez ugrópontok jeleníthetõk meg. A blokk csak az adott fogalomtárral mûködõ ugrópontokat jeleníti meg.';
 
 ?>

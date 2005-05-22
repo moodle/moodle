@@ -171,6 +171,7 @@ $string['noteonstudentassessments'] = '{Tanuló pontja / Pontozás pontja értékelé
 $string['notgraded'] = 'Nincs pontozva';
 $string['notitle'] = 'Nincs cím';
 $string['notitlegiven'] = 'Nincs megadva cím';
+$string['notsubmittedyet'] = 'Nincs még leadott munka';
 $string['nowork'] = 'A leadás idõszaka lejárt.<br />Nem adott le munkát.';
 $string['numberofassessmentelements'] = 'Megjegyzések száma, Értékelési elemek, Hibapontozás, Kritériumok vagy kategóriák megadása egy rubrikán belül';
 $string['numberofassessments'] = 'Értékelések száma';

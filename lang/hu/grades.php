@@ -49,6 +49,7 @@ $string['gradeletternote'] = 'Betûvel megadott pont törléséhez a betûhöz tartozó
 $string['gradepreferenceshelp'] = 'Súgó a pontozási preferenciához';
 $string['grades'] = 'Pontok';
 $string['gradeweighthelp'] = 'Súgó a pontozás súlyozásához';
+$string['hideadvanced'] = 'Részletes funkciók elrejtése';
 $string['hidecategory'] = 'Rejtett';
 $string['highgradeascending'] = 'Növekvõ rendezés';
 $string['highgradedescending'] = 'Csökkenõ rendezés';
