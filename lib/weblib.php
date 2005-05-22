@@ -2078,7 +2078,7 @@ function theme_setup($theme = '', $params=NULL) {
     }
 
 /// Set up image paths
-    if (empty($CFG->custompix)) {    // Could be set in the above file
+    if (empty($THEME->custompix)) {    // Could be set in the above file
         $CFG->pixpath = $CFG->wwwroot .'/pix';
         $CFG->modpixpath = $CFG->wwwroot .'/mod';
     } else {
