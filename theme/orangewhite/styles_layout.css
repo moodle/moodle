@@ -70,6 +70,9 @@ h6.main {
   border-left:1px solid;
   border-right:1px solid;
 }
+.sitetopiccontent {
+  border:0 none
+}
 
 /***
  *** Header
