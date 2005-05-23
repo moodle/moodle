@@ -151,11 +151,11 @@
                     echo "<td align=\"center\" valign=\"top\">";
                     echo "<input type=\"radio\" name=\"answer\" value=\"".$optionid."\" ".$answerchecked[$optionid]." alt=\"".strip_tags(format_text($text))."\"";
                     if ($choice->limitanswers && ($countanswers >= $maxans) && !($answerchecked[$optionid]) ) {
-                        echo "disabled";
+                        echo ' disabled="disabled"';
                     }                    
                     echo " />";                    
                     if ($choice->limitanswers && ($countanswers >= $maxans) ) {               
-                            echo format_text($text."<br><strong>".get_string('full', 'choice')."</strong>");
+                            echo format_text($text."<br /><strong>".get_string('full', 'choice')."</strong>");
                         } else {
                             echo format_text($text);
 
