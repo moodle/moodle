@@ -12,6 +12,10 @@
   white-space: nowrap;
   font-size: small;
 }
+.orgtitle {
+  font-weight: bold;
+  font-size: small;
+}
 
 #mod-scorm-playscorm .structurehead {
   float: left;

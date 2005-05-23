@@ -136,19 +136,20 @@ function scorm_user_outline($course, $user, $mod, $scorm) {
         foreach ($scoes as $sco) {
             if ($sco->launch!='') {
 		$scores->count++;
-		$userdata = scorm_get_tracks($sco->id, $user->id);
-                if (!isset($scores->{$userdata->status})) {
-                    $scores->{$userdata->status} = 1;
-                } else {    
-                    $scores->{$userdata->status}++;
-                }
-                if (!empty($userdata->score_raw)) {
-                    $scores->values++;
-                    $scores->sum += $userdata->score_raw;
-                    $scores->max = ($userdata->score_raw > $scores->max)?$userdata->score_raw:$scores->max;
-                }
-                if (isset($userdata->timemodified) && ($userdata->timemodified > $scores->lastmodify)) {
-                    $scores->lastmodify = $userdata->timemodified;
+		if ($userdata = scorm_get_tracks($sco->id, $user->id)) {
+                    if (!isset($scores->{$userdata->status})) {
+                        $scores->{$userdata->status} = 1;
+                    } else {    
+                        $scores->{$userdata->status}++;
+                    }
+                    if (!empty($userdata->score_raw)) {
+                        $scores->values++;
+                        $scores->sum += $userdata->score_raw;
+                        $scores->max = ($userdata->score_raw > $scores->max)?$userdata->score_raw:$scores->max;
+                    }
+                    if (isset($userdata->timemodified) && ($userdata->timemodified > $scores->lastmodify)) {
+                        $scores->lastmodify = $userdata->timemodified;
+                    }
                 }
             }
         }
@@ -213,91 +214,126 @@ function scorm_user_complete($course, $user, $mod, $scorm) {
 
     $liststyle = 'structlist';
     $scormpixdir = $CFG->wwwroot.'/mod/scorm/pix/';
-
-    echo "<ul id='0' class='$liststyle'>";
-    $currentorg = '';
-    $organizationsql = '';
-    if (!empty($currentorg)) {
-        $organizationsql = "AND organization='$currentorg'";
-    }
-    if ($scoes = get_records_select('scorm_scoes',"scorm='$scorm->id' $organizationsql order by id ASC")){
-        $level=0;
-        $sublist=1;
-        $parents[$level]='/';
-        foreach ($scoes as $sco) {
-            if ($parents[$level]!=$sco->parent) {
-                if ($level>0 && $parents[$level-1]==$sco->parent) {
-                    echo "\t\t</ul></li>\n";
-                    $level--;
-                } else {
-                    $i = $level;
-                    $closelist = '';
-                    while (($i > 0) && ($parents[$level] != $sco->parent)) {
-                        $closelist .= "\t\t</ul></li>\n";
-                        $i--;
-                    }
-                    if (($i == 0) && ($sco->parent != $currentorg)) {
-                        echo "\t\t<li><ul id='$sublist' class='$liststyle'>\n";
-                        $level++;
-                    } else {
-                        echo $closelist;
-                        $level = $i;
-                    }
-                    $parents[$level]=$sco->parent;
-                }
+    $now = time();
+    $firstmodify = $now;
+    $lastmodify = 0;
+    $sometoreport = false;
+    $report = '';
+    
+    if ($orgs = get_records_select('scorm_scoes',"scorm='$scorm->id' AND organization='' AND launch=''",'id','id,identifier,title')) {
+        if (count($orgs) <= 1) {
+            unset($orgs);
+            $orgs[]->identifier = '';
+        }
+        foreach ($orgs as $org) {
+            $organizationsql = '';
+            $currentorg = '';
+            if (!empty($org->identifier)) {
+                $report .= '<div class="orgtitle">'.$org->title.'</div>';
+                $currentorg = $org->identifier;
+                $organizationsql = "AND organization='$currentorg'";
             }
-            echo "\t\t<li>";
-            $nextsco = next($scoes);
-            if (($nextsco !== false) && ($sco->parent != $nextsco->parent) && (($level==0) || (($level>0) && ($nextsco->parent == $sco->identifier)))) {
-                $sublist++;
-            } else {
-                echo '<img src="'.$scormpixdir.'spacer.gif" />';
-            }
-
-            if ($sco->launch) {
-                $score = '';
-                $totaltime = '';
-                if ($usertrack=scorm_get_tracks($sco->id,$user->id)) {
-                    if ($usertrack->status == '') {
-                        $usertrack->status = 'notattempted';
-                    }
-                    $strstatus = get_string($usertrack->status,'scorm');
-                    echo "<img src='".$scormpixdir.$usertrack->status.".gif' alt='$strstatus' title='$strstatus' />";
-                    if ($usertrack->score_raw != '') {
-                        $score = get_string('score','scorm').':&nbsp;'.$usertrack->score_raw;
-                    }
-                    if ($usertrack->total_time != '00:00:00') {
-                        $totaltime = get_string('totaltime','scorm').':&nbsp;'.$usertrack->total_time;
-                        if (!empty($score)) {
-                            $totaltime = ' - '.$totaltime;
+            $report .= "<ul id='0' class='$liststyle'>";
+            if ($scoes = get_records_select('scorm_scoes',"scorm='$scorm->id' $organizationsql order by id ASC")){
+                $level=0;
+                $sublist=1;
+                $parents[$level]='/';
+                foreach ($scoes as $sco) {
+                    if ($parents[$level]!=$sco->parent) {
+                        if ($level>0 && $parents[$level-1]==$sco->parent) {
+                            $report .= "\t\t</ul></li>\n";
+                            $level--;
+                        } else {
+                            $i = $level;
+                            $closelist = '';
+                            while (($i > 0) && ($parents[$level] != $sco->parent)) {
+                                $closelist .= "\t\t</ul></li>\n";
+                                $i--;
+                            }
+                            if (($i == 0) && ($sco->parent != $currentorg)) {
+                                $report .= "\t\t<li><ul id='$sublist' class='$liststyle'>\n";
+                                $level++;
+                            } else {
+                                $report .= $closelist;
+                                $level = $i;
+                            }
+                            $parents[$level]=$sco->parent;
                         }
                     }
-                } else {
-                    if ($sco->scormtype == 'sco') {
-                        echo '<img src="'.$scormpixdir.'notattempted.gif" alt="'.get_string('notattempted','scorm').'" title="'.get_string('notattempted','scorm').'" />';
+                    $report .= "\t\t<li>";
+                    $nextsco = next($scoes);
+                    if (($nextsco !== false) && ($sco->parent != $nextsco->parent) && (($level==0) || (($level>0) && ($nextsco->parent == $sco->identifier)))) {
+                        $sublist++;
                     } else {
-                        echo '<img src="'.$scormpixdir.'asset.gif" alt="'.get_string('asset','scorm').'" title="'.get_string('asset','scorm').'" />';
+                        $report .= '<img src="'.$scormpixdir.'spacer.gif" />';
+                    }
+
+                    if ($sco->launch) {
+                        $score = '';
+                        $totaltime = '';
+                        if ($usertrack=scorm_get_tracks($sco->id,$user->id)) {
+                            if ($usertrack->status == '') {
+                                $usertrack->status = 'notattempted';
+                            }
+                            $strstatus = get_string($usertrack->status,'scorm');
+                            $report .= "<img src='".$scormpixdir.$usertrack->status.".gif' alt='$strstatus' title='$strstatus' />";
+                            //if ($usertrack->score_raw != '') {
+                            //    $score = ' - ('.get_string('score','scorm').':&nbsp;'.$usertrack->score_raw.')';
+                            //}
+                            //if ($usertrack->total_time != '00:00:00') {
+                            //    $totaltime = ' - ('.get_string('totaltime','scorm').':&nbsp;'.$usertrack->total_time.')';
+                            //}
+                            if ($usertrack->timemodified != 0) {
+                                if ($usertrack->timemodified > $lastmodify) {
+                                    $lastmodify = $usertrack->timemodified;
+                                }
+                                if ($usertrack->timemodified < $firstmodify) {
+                                    $firstmodify = $usertrack->timemodified;
+                                }
+                            }
+                        } else {
+                            if ($sco->scormtype == 'sco') {
+                                $report .= '<img src="'.$scormpixdir.'notattempted.gif" alt="'.get_string('notattempted','scorm').'" title="'.get_string('notattempted','scorm').'" />';
+                            } else {
+                                $report .= '<img src="'.$scormpixdir.'asset.gif" alt="'.get_string('asset','scorm').'" title="'.get_string('asset','scorm').'" />';
+                            }
+                        }
+                        $report .= "&nbsp;$sco->title $score$totaltime</li>\n";
+                        if ($usertrack !== false) {
+                            $sometoreport = true;
+                            $report .= "\t\t\t<li><ul class='$liststyle'>\n";
+                            foreach($usertrack as $element => $value) {
+                                if (substr($element,0,3) == 'cmi') {
+                                    $report .= '<li>'.$element.' => '.$value.'</li>';
+                                }
+                            }
+                            $report .= "\t\t\t</ul></li>\n";
+                        } 
+                    } else {
+                        $report .= "&nbsp;$sco->title</li>\n";
                     }
                 }
-                echo "&nbsp;$sco->title</li>\n";
-                if ($usertrack !== false) {
-                    echo "\t\t\t<li><ul class='$liststyle'>\n";
-                    foreach($usertrack as $element => $value) {
-                        if (substr($element,0,3) == 'cmi') {
-                            echo '<li>'.$element.' => '.$value.'</li>';
-                        }
-                    }
-                    echo "\t\t\t</ul></li>\n";
-                } 
-            } else {
-                echo "&nbsp;$sco->title</li>\n";
+                for ($i=0;$i<$level;$i++) {
+                    $report .= "\t\t</ul></li>\n";
+                }
             }
-        }
-        for ($i=0;$i<$level;$i++) {
-            echo "\t\t</ul></li>\n";
+            $report .= "\t</ul><br />\n";
         }
     }
-    echo "\t</ul>\n";
+    if ($sometoreport) {
+        if ($firstmodify < $now) {
+            $timeago = format_time($now - $firstmodify);
+            echo get_string('firstaccess','scorm').': '.userdate($firstmodify).' ('.$timeago.")<br />\n";
+        }
+        if ($lastmodify > 0) {
+            $timeago = format_time($now - $lastmodify);
+            echo get_string('lastaccess','scorm').': '.userdate($lastmodify).' ('.$timeago.")<br />\n";
+        }
+        echo get_string('report','scorm').":<br />\n";
+        echo $report;
+    } else {
+    	print_string('noactivity','scorm');
+    }
 
     return true;
 }
