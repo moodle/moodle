@@ -1,8 +1,8 @@
 <?php // $Id$
 
 #------------------------------------------------------------
-$string['modulename'] = 'SCORM/AICC';
-$string['modulenameplural'] = 'SCORMs/AICCs';
+$string['modulename'] = 'SCORM';
+$string['modulenameplural'] = 'SCORMs';
 #------------------------------------------------------------
 
 $string['asset'] = 'Asset';
