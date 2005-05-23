@@ -1344,7 +1344,7 @@ function main_upgrade($oldversion=0) {
                                                '.$CFG->prefix.'dialogue_entries e
                                          WHERE e.conversationid = c.id')) {
             foreach ($entries as $entry) {
-                $message = NULL;
+                $message = new object;
                 $message->useridfrom    = $entry->userid;
                 $message->useridto      = $entry->recipientid;
                 $message->message       = addslashes($entry->text);
@@ -1369,6 +1369,8 @@ function main_upgrade($oldversion=0) {
     if ($oldversion < 2005042400) {  // Add user tracking prefs field.
         table_column('user', '', 'trackforums', 'int', '4', 'unsigned', '0', 'not null', 'autosubscribe');
     }
+
+
 
     return $result;
 }
