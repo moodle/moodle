@@ -33,13 +33,17 @@
   <li> Las p&aacute;ginas Web ahora cumplen las especificaciones XHTML Transitional 1.0</li>
 
   <li> <strong>Accesibilidad</strong> mejorada, acerImproved <b>Accessibility</b>, apuntando a la confirmidad con los criterios WAI (W3C), SENDA (UK) y Secci&oacute;n 508 (US).</li>
+
   <li> Nuevo <strong>Sistema de Temas</strong>, realmente potente, que permite temas en cascada, temas por usuario, temas por curso, con un control muy exacto de cada p&aacute;gina de Moodle utilizando CSS.</li>
 
   <li> Nueva funcionalidad de<strong> Mensajer&iacute;a Integrada</strong> para la comunicaci&oacute;n directa entre todos los usuarios de sition, incluyendo ventanas emergentes en tiempo real, notificaci&oacute;n, copias por correo electr&oacute;nico, bloqueo de usuarios, historia, editor WYSIWYG, etc.</li>
+
   <li><strong> Seguimiento de Mensajes</strong> le&iacute;dos/no le&iacute;dos en los Foros con resaltado que permite ver todos los mensajes nuevos r&aacute;pidamente y controlar c&oacute;mo son mostrados (por foro, por usuario o por sitio).</li>
+
   <li> Nuevo <strong>Sistema de Bloques</strong>, que permite m&uacute;ltiples copias de los mismos y una mejor configuraci&oacute;n.</li>
 
   <li> Completo soporte para los <strong>Cambios de Horario</strong> en cada localidad del mundo, de tal forma que, en todo momento, se visualice el tiempo local de forma correcta para todos los eventos.</li>
+
   <li> <strong>Libro de Calificaciones</strong> completamente renovado que permite ponderar el peso de las actividades, a&ntilde;adir calificaciones extra (o ignorar otras) con una cisualizaci&oacute;n mejorada.</li>
 
   <li> Se puede exigir a los usuarios que acepten una <strong>Pol&iacute;tica del Sitio</strong> antes de acceder a &eacute;l. </li>
@@ -50,7 +54,8 @@
   <ul type="circle">
   <li> Nuevo &quot;modo de mantenimiento&quot; que permite a los administradores desactivar temporalmente un sitio (durante actualizaciones, por ejemplo).</li>
 
-  <li> Moodle puede descargar autom&aacute;ticamente una nueva lista de conas horarias desde moodle.org o de otros sitios e instalarla en la base de datos.</li>
+  <li> Moodle puede descargar autom&aacute;ticamente una nueva lista de conas horarias desde moodle.org o de otros sitios e instalarla en la base de datos (ficheros con formato Olson también son solportados).</li>
+
   <li> Nueva versi&oacute;n del m&oacute;dulo &quot;MySQL Admin&quot; (disponible de forma separada).</li>
 
   <li> Nueva p&aacute;gina de opciones del calendario que proporciona la posibilidad de configurar el comportamiento del calendario.</li>
@@ -100,7 +105,8 @@
   <li> Los temas pueden  invalidar estilos de otros temas.</li>
 
   <li> Los usuarios y los cursos pueden elegir sus propios temas si el administrador lo permite.</li>
-  <li>Implementaci&oacute;n de lenguetas en muchas p&aacute;ginas. </li>
+  <li> Implementaci&oacute;n de lenguetas en muchas p&aacute;ginas. </li>
+  <li> Los Módulos, Bloques e Idiomas pueden definir sus propios estilos estándar.</li>
   </ul>
 
 <h4> Editor HTML </h4>
@@ -180,8 +186,16 @@
   </ul>
 
 <h4>Diario</h4>
+  <ul type="circle">
+  <li>El módulo Diario no ha sido modificado desde la versión 1.4 y actualmente
+    está en v&iacute;as de desaparecer. El proceso
+  de actualización convertirá las actividades de tipo Diario en Tareas Online
+  y ocultará todas las
+  actividades de tipo Diario antiguas. Si no deseas que esto suceda, define la
+  siguiente variable en el fichero config.php (antes de actualizar):
+  $CFG->noconvertjournals = true;</li>
+  </ul>
 <h4>Lecci&oacute;n</h4>
-
   <ul type="circle">
   <li> Ahora se soportan lecciones con control de tiempo.</li>
   <li> Se pueden crear lecciones de pr&aacute;ctica (cuyas calificaciones no son almacenadas).</li>
@@ -253,15 +267,18 @@
 
 <h4>Scorm </h4>
   <ul type="circle">
-  <li> Mejoras en el almacenamiento de resultados de los estudiantes y en la visualizaci&oacute;n de resultados.</li>
-  <li>El m&oacute;dulo soporta el est&aacute;ndar AICC.</li>
+  <li> El módulo completamente compatible con el estándar SCORM 1.2.</li>
+  <li> El almacenamiento de información del usuario y los informes han sido mejorados.</li>
+  <li> Admite la importación de paquetes AICC.</li>
   </ul>
 
 <h4>Encuesta</h4>
+  <ul type="circle">
+  <li>La generación de gráficos ha sido mejorada (las etiquetas son más legibles).</li>
 <h4>Wiki </h4>
   <ul type="circle">
   <li> Los cambios en p&aacute;ginas Wiki son controlados y visualizados en el bloque de actividad reciente.</li>
-  <li>Varias mejoras internas en el m&oacute;dulo de copia de seguridad y restauraci&oacute;n y en otras rutinas que mejoran el funcionamiento general del m&oacute;dulo.</li>
+  <li> Varias mejoras internas en el m&oacute;dulo de copia de seguridad y restauraci&oacute;n y en otras rutinas que mejoran el funcionamiento general del m&oacute;dulo.</li>
 </ul>
 
 
