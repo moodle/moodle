@@ -45,6 +45,16 @@
         redirect('edit.php?quizid='.$quiz->id);
     }
 
+    // Upgrade any attempts that have not yet been upgraded to the 
+    // Moodle 1.5 model (they will not yet have the timestamp set)
+    if ($attempts = get_records_sql("SELECT a.*".
+           "  FROM {$CFG->prefix}quiz_attempts a, {$CFG->prefix}quiz_states s".
+           " WHERE a.quiz = '$quiz->id' AND s.attempt = a.id AND s.timestamp = 0")) {
+        foreach ($attempts as $attempt) {
+            quiz_upgrade_states($attempt);
+        }
+    }
+
     add_to_log($course->id, "quiz", "attempts", "attempts.php?id=$cm->id", "$quiz->id", "$cm->id");
 
 /// Define some strings
