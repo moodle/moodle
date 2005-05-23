@@ -48,9 +48,9 @@
         $userdata->mode = $mode;
     }
     if ($userdata->mode == 'normal') {
-	$userdata->credit = 'credit';
+        $userdata->credit = 'credit';
     } else {
-	$userdata->credit = 'no-credit';
+        $userdata->credit = 'no-credit';
     }    
     if ($sco = get_record('scorm_scoes','id',$scoid)) {
         $userdata->datafromlms = $sco->datafromlms;
@@ -64,16 +64,16 @@
     switch ($scorm->version) {
         case 'SCORM_1.2':
             include_once ('datamodels/scorm1_2.js.php');
-            break;
+        break;
         case 'SCORM_1.3':
-    	    include_once ('datamodels/scorm1_3.js.php');
-            break;
+            include_once ('datamodels/scorm1_3.js.php');
+        break;
         case 'AICC':
-    	    include_once ('datamodels/aicc.js.php');
-            break;
+            include_once ('datamodels/aicc.js.php');
+        break;
         default:
             include_once ('datamodels/scorm1_2.js.php');
-            break;
+        break;
     }
 ?>
 

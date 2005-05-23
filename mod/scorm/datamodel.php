@@ -9,15 +9,12 @@
         if (! $cm = get_record('course_modules', 'id', $id)) {
             error('Course Module ID was incorrect');
         }
-    
         if (! $course = get_record('course', 'id', $cm->course)) {
             error('Course is misconfigured');
         }
-    
         if (! $scorm = get_record('scorm', 'id', $cm->instance)) {
             error('Course module is incorrect');
         }
-
     } else {
         if (! $scorm = get_record('scorm', 'id', $a)) {
             error('Course module is incorrect');
@@ -35,12 +32,13 @@
     if (confirm_sesskey() && (isset($SESSION->scorm_scoid))) {
         $scoid = $SESSION->scorm_scoid;
         $result = true;
-        foreach ($_GET as $element => $value) {
+        foreach ($_POST as $element => $value) {
             if (substr($element,0,3) == 'cmi') {
                 $element = str_replace('__','.',$element);
                 $element = preg_replace('/_(\d+)/',".\$1",$element);
                 if ($track = get_record_select('scorm_scoes_track',"userid='$USER->id' AND scormid='$scorm->id' AND scoid='$scoid' AND element='$element'")) {
                     $track->value = $value;
+		    $track->timemodified = time();
                     $result = update_record('scorm_scoes_track',$track) && $result;
                 } else {
                     $track->userid = $USER->id;
@@ -48,9 +46,9 @@
                     $track->scoid = $scoid;
                     $track->element = $element;
                     $track->value = $value;
+		    $track->timemodified = time();
                     $result = insert_record('scorm_scoes_track',$track) && $result;
                 }
-                //print_r($track);
             }
         }
         if ($result) {

@@ -6,16 +6,16 @@
     //
     //                      scorm                                      
     //                   (CL,pk->id)---------------------
-    //                        |				|
-    //                        |				|
-    //                        |				|
-    //                   scorm_scoes 			|	
-    //             (UL,pk->id, fk->scorm)		|
-    //                        |				|
-    //                        |				|
-    //                        |				|
-    //                scorm_scoes_track			|
-    //  (UL,k->id, fk->scormid, fk->scoid, k->element)---	
+    //                        |                         |
+    //                        |                         |
+    //                        |                         |
+    //                   scorm_scoes                    |
+    //             (UL,pk->id, fk->scorm)               |
+    //                        |                         |
+    //                        |                         |
+    //                        |                         |
+    //                scorm_scoes_track                 |
+    //  (UL,k->id, fk->scormid, fk->scoid, k->element)---
     //
     // Meaning: pk->primary key field of the table
     //          fk->foreign key to link with parent
@@ -50,6 +50,8 @@
                 fwrite ($bf,full_tag("SUMMARY",4,false,$scorm->summary));
                 fwrite ($bf,full_tag("BROWSEMODE",4,false,$scorm->browsemode));
                 fwrite ($bf,full_tag("AUTO",4,false,$scorm->auto));
+                fwrite ($bf,full_tag("WIDTH",4,false,$scorm->width));
+                fwrite ($bf,full_tag("HEIGHT",4,false,$scorm->height));
                 fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$scorm->timemodified));
                 $status = backup_scorm_scoes($bf,$preferences,$scorm->id);
  
