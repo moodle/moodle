@@ -115,8 +115,10 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
     }
 
     // Get the events matching our criteria. Don't forget to offset the timestamps for the user's TZ!
-    // TODO: usertime() doesn't compensate for DST. Thus the line below is wrong.
-    $whereclause = calendar_sql_where(usertime($display->tstart), usertime($display->tend), $users, $groups, $courses);
+    $whereclause = calendar_sql_where(
+        usertime($display->tstart) - dst_offset_on($display->tstart),
+        usertime($display->tend) - dst_offset_on($display->tend),
+        $users, $groups, $courses);
 
     if($whereclause === false) {
         $events = array();
