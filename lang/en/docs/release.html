@@ -40,6 +40,7 @@
   <li> New <b>Blocks</b> system, allowing multiple copies of blocks and better block configuration</li>
 
   <li> Full support for <b>Daylight Savings Time</b> in every locality around the globe, so everyone always see the correct local time for all events.</li>
+
   <li> New <b>extended gradebook</b> allowing custom weighting of different activities, setting extra grades (or taking out others) and improved display and sorting options </li>
 
   <li> Users can be required to agree to a <b>Site Policy</b>  </li>
@@ -50,7 +51,7 @@
   <ul type="circle">
   <li> New "maintenance mode" allows the admin to temporarily disable a site (during upgrades, for example).</li>
 
-  <li> Moodle can automatically download a new list of timezones from moodle.org or elsewhere and install it to the database</li>
+  <li> Moodle can automatically download a new list of timezones from moodle.org or elsewhere and install it to the database (Olson files are supported too)</li>
   <li> New version of Moodle MySQL Admin module (available separately)</li>
 
   <li> New calendar options page provides user interface to configure the behavior of the calendar  </li>
@@ -101,6 +102,7 @@
 
   <li> Users and courses can choose their own themes if the admin allows it</li>
   <li> Implementation of tabs interface on many pages  </li>
+  <li> Modules, Blocks and Languages can define their own standard styles </li>
   </ul>
 
 <h4> HTML Editor</h4>
@@ -180,6 +182,12 @@
   </ul>
 
 <h4>Journal</h4>
+  <ul type="circle">
+  <li> The Journal module has not changed since 1.4, and is now deprecated.  The upgrade procedure 
+       will convert all your Journal activities into Online Assignments, and hide all the old Journal
+       activities.  If you don't want this to happen, then define this in your config.php:  $CFG->noconvertjournals = true;</li>
+  </ul>
+
 <h4>Lesson</h4>
 
   <ul type="circle">
@@ -253,10 +261,16 @@
 
 <h4>Scorm </h4>
   <ul type="circle">
-  <li> Improvements to user result data storage and reporting. Now Moodle SCORM module supports AICC standard  </li>
+  <li> The module is now fully conformant with the SCORM 1.2 standard.</li>
+  <li> User result data storage and reporting was improved. </li>
+  <li> AICC packages can now be imported. </li>
   </ul>
 
 <h4>Survey</h4>
+  <ul type="circle">
+  <li> Graph formatting has been improved (labels are more readable)</li>
+  </ul>
+
 <h4>Wiki </h4>
   <ul type="circle">
   <li> Changes to wiki pages are now monitored and displayed in Recent Activity block</li>
