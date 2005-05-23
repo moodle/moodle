@@ -103,13 +103,20 @@
 
     // load the questions needed by page
     $pagelist = $showall ? quiz_questions_in_quiz($attempt->layout) : quiz_questions_on_page($attempt->layout, $page);
-    $sql = "SELECT q.*, i.grade AS maxgrade, i.id AS instance".
-           "  FROM {$CFG->prefix}quiz_questions q,".
-           "       {$CFG->prefix}quiz_question_instances i".
-           " WHERE i.quiz = '$quiz->id' AND q.id = i.question".
-           "   AND q.id IN ($pagelist)";
-    if (!$questions = get_records_sql($sql)) {
+    if (!$questions = get_records_list('quiz_questions', 'id', $pagelist)) {
         error('No questions found');
+    }
+
+    // Get instance information for versioned and unversioned questions (fixes bug 3311)
+    foreach ($questions as $question) {
+        $qid = $question->id;
+        while (!$instance = get_record('quiz_question_instances', 'quiz', $quiz->id, 'question', $qid)) {
+            if (!$qid = get_field('quiz_question_versions', 'newquestion', 'oldquestion', $qid)) {
+                error("No instance of question #$question->id could be found!");
+            }
+        }
+        $question->maxgrade = $instance->grade;
+        $question->instance = $instance->id;
     }
 
     // Load the question type specific information
