@@ -92,6 +92,11 @@
 
     if (!empty($playbeep)) {
         echo '<embed src="bell.wav" autostart="true" hidden="true" name="bell" />';
+        echo '<script type="text/javascript">'."\n";
+        echo '<!--'."\n";
+        echo 'parent.send.focus();'."\n";
+        echo '-->'."\n";
+        echo '</script>'."\n";
     }
 
     // Javascript for Mozilla to cope with the redirect bug from editor being on in this page
@@ -99,6 +104,7 @@
 
 <script type="text/javascript">
 <!--
+
   function redirect() {
     document.location.replace('refresh.php?id=<?php echo $userid ?>&name=<?php echo urlencode($userfullname) ?>&wait=<?php echo $wait ?>');
   }
