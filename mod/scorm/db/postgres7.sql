@@ -49,6 +49,7 @@ CREATE TABLE prefix_scorm_scoes_track (
   scoid integer NOT NULL default '0',
   element varchar(255) NOT NULL default '',
   value text NOT NULL default '',
+  timemodified integer NOT NULL default '0'
   UNIQUE (userid, scormid, scoid, element)
 );
 
