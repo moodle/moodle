@@ -28,9 +28,6 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
         }
 
         global $QUIZ_QTYPES;
-        // Temporary solution to be replaced with commented out version after
-        // redundant wrapped questions are deleted when necessary.
-        // $wrappedquestions = get_records('quiz_questions', 'parent', $question->id);
         $wrappedquestions = get_records_list('quiz_questions', 'id', $sequence);
 
         // We want an array with question ids as index and the positions as values
@@ -211,6 +208,19 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
                 $chosenanswer = null;
                 switch ($wrapped->qtype) {
                     case NUMERICAL:
+                        $testedstate = clone($state);
+                        $testedstate->responses[''] = $response;
+                        $raw_grade   = 0;
+                        foreach ($answers as $answer) {
+                            if($QUIZ_QTYPES[$wrapped->qtype]
+                             ->test_response($wrapped, $testedstate, $answer)) {
+                                if (empty($raw_grade) || $raw_grade < $answer->fraction) {
+                                    $chosenanswer = clone($answer);
+                                    $raw_grade = $answer->fraction;
+                                }
+                            }
+                        }
+                        break;
                     case SHORTANSWER:
                         $testedstate = clone($state);
                         $testedstate->responses[''] = $response;
@@ -221,9 +231,8 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
                             if($QUIZ_QTYPES[$wrapped->qtype]
                              ->compare_responses($wrapped, $testedstate, $teststate)) {
                                 if (empty($raw_grade) || $raw_grade < $answer->fraction) {
-                                //var_dump($teststate->responses['']);
-                                //var_dump($testedstate->responses['']);
                                     $chosenanswer = clone($answer);
+                                    $raw_grade = $answer->fraction;
                                 }
                             }
                         }
@@ -235,6 +244,13 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
                         break;
                     default:
                         break;
+                }
+
+                // Set up a default chosenanswer so that all non-empty wrong
+                // answers are highlighted red
+                if (empty($chosenanswer) && !empty($response)) {
+                    $chosenanswer = new stdClass;
+                    $chosenanswer->fraction = 0.0;
                 }
 
                 if (!empty($chosenanswer->feedback)) {
