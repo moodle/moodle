@@ -29,6 +29,7 @@ $string['normal'] = 'Normal';
 $string['notattempted'] = 'Not attempted';
 $string['mode'] = 'Mode';
 $string['organizations'] = 'Organizations';
+$string['organization'] = 'Organization';
 $string['passed'] = 'Passed';
 $string['prev'] = 'Previous';
 $string['report'] = 'Report';
@@ -47,7 +48,10 @@ $string['width'] = 'Width';
 $string['height'] = 'Height';
 $string['trackingloose'] = 'WARNING: The tracking data of this package will be lost!';
 $string['popup'] = 'Open current SCO in a new window';
-
+$string['totaltime'] = 'Time';
+$string['noactivity'] = 'Nothing to report';
+$string['firstaccess'] = 'First access';
+$string['lastaccess'] = 'Last access';
 
 // Validation
 $string['attr_error'] = 'Bad value for attribute ($a->attr) in tag $a->tag.';
