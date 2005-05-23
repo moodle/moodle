@@ -212,6 +212,10 @@ h6.main {
 .sideblock .head {
   margin-top:0.5em
 }
+.sideblock .link {
+  margin:0.3em 0;
+  border-bottom:1px solid
+}
 .sideblock .post {
   margin-top:0.5em;
   padding-bottom:0.2em;

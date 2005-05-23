@@ -267,6 +267,9 @@ body#admin-index .c0 {
 #right-column .sideblock .content {
   background-color:#F9FAFA
 }
+.sideblock .link {
+  border-bottom-color:#FFF
+}
 .sideblock .post {
   border-bottom-color:#FFF
 }
