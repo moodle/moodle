@@ -1,39 +1,42 @@
 <?PHP // $Id$ 
-      // client.php - created with Moodle 1.4.4 + (2004083140)
+      // block_rss_client.php - created with Moodle 1.5 ALPHA (2005051500)
 
 
-$string['addfeed'] = 'URL für neuen Feed  hinzufügen:';
-$string['addheadlineblock'] = 'RSS Überschriften Block hinzufügen';
-$string['addnew'] = 'Neu hinzufügen';
-$string['choosefeedlabel'] = 'Wählen Sie die Feeds aus, die in diesem Block gezeigt werden sollen';
-$string['clientchannellink'] = 'Herkunftsseite';
-$string['clientnumentries'] = 'Zahl der angezeigten RSS-Links pro Block';
-$string['clientshowchannellinklabel'] = 'Sollen ein Link zur Herkunftsseite angezeigt werden? ';
-$string['clientshowimagelabel'] = 'Bild anzeigen wenn verfügbar:';
-$string['couldnotfindfeed'] = 'Feed mit id konnte nicht gefunden werden';
-$string['customtitlelabel'] = 'Titel (wenn Sie das Feld leer lassen wird der Originaltitel des Feed angezeigt):';
-$string['deletefeedconfirm'] = 'Sind Sie sicher, dass Sie diesen Feed löschen wollen?';
-$string['displaydescriptionlabel'] = 'Beschreibung für jeden Link anzeigen?';
-$string['editfeeds'] = 'Eintragen, löschen oder bearbeiten von RSS/Atom Newsfeed';
-$string['editnewsfeeds'] = 'Newsfeed bearbeiten';
-$string['editrssblock'] = 'RSS Überschriftenblock bearbeiten';
-$string['feed'] = 'Newsfeed';
+$string['addfeed'] = 'URL für Newsfeed hinzufügen ';
+$string['addheadlineblock'] = 'RSS-Überschriftenblock hinzufügen';
+$string['addnew'] = 'Neue hinzufügen';
+$string['choosefeedlabel'] = 'Wählen Sie die Feeds, die in diesem Block zur Verfügung stehen sollen:';
+$string['clientchannellink'] = 'Quellseite ...';
+$string['clientnumentries'] = 'Standardzahl der Einträge,die pro Feed angezeigt werden';
+$string['clientshowchannellinklabel'] = 'Soll ein Link zur Originalseite angezeigt werden? Hinweis: Kann nur genutzt werden, wenn der Newsfeed einen Link verwendet.';
+$string['clientshowimagelabel'] = 'Grafik des Channels anzeigen, wenn vorhanden:';
+$string['configblock'] = 'Block konfigurieren';
+$string['couldnotfindfeed'] = 'Feed konnte mit id nicht gefunden werden';
+$string['customtitlelabel'] = 'Titel (wenn das Feld leer ist, wird der Titel der Quelle verwandt)';
+$string['deletefeedconfirm'] = 'Sind Sie sicher, das Sie den Feed löschen wollen?';
+$string['displaydescriptionlabel'] = 'Anzeige der Beschreibung für jeden Link?';
+$string['editfeeds'] = 'Bearbeiten, eintragen oder austragen von RSS/Atom Newsfeeds';
+$string['editnewsfeeds'] = 'Neue Feeds bearbeiten';
+$string['editrssblock'] = 'RSS-Überschriftenblock bearbeiten';
+$string['feed'] = 'Feed';
 $string['feedadded'] = 'Newsfeed hinzugefügt';
 $string['feeddeleted'] = 'Newsfeed gelöscht';
-$string['feedupdated'] = 'Newsfeed aktualisiert';
 $string['feeds'] = 'Newsfeeds';
-$string['feedsaddedit'] = 'Hinzufügen/Bearbeiten der Feeds';
-$string['feedstitle'] = 'Remote RSS Feeds';
-$string['findmorefeeds'] = 'Weitere RSS Feeds finden';
-$string['nofeeds'] = 'Es sind keine RSS Feeds für diese Seite festgelegt.';
-$string['pickfeed'] = 'Neuen Newsfeed auswählen';
-$string['remotenewsfeed'] = 'Remote Newsfeed';
-$string['seeallfeeds'] = 'Alle Feeds ansehen';
-$string['shownumentrieslabel'] = 'Höchstzahl der im Block gezeigten Einträge';
-$string['submitters'] = 'Wer kann neue RSS Feeds festlegen? Feeds stehen allen Nutzern der Seite zur Verfügung und können von Ihnen für ihre eigenen Seiten genutzt werden.';
+$string['feedsaddedit'] = 'Hinzugen/bearbeiten von Feeds';
+$string['feedsconfigurenewinstance'] = 'Klicken Sie hier um den Block zur Anzeige von RSS Feeds zu konfigurieren';
+$string['feedstitle'] = 'Zugriff auf RSS-Feeds';
+$string['feedupdated'] = 'Newsfeed aktualisiert';
+$string['findmorefeeds'] = 'Weitere RSS-Feeds suchen';
+$string['managefeeds'] = 'Alle meine Feeds bearbeiten';
+$string['nofeeds'] = 'Es sind keine Feeds für diese Seite definiert.';
+$string['pickfeed'] = 'Newsfeed auswählen';
+$string['remotenewsfeed'] = 'Zugriff aus Newsfeed';
+$string['seeallfeeds'] = 'Alle Feeds anzeigen';
+$string['shownumentrieslabel'] = 'Höchstzahl der gezeigten Einträge pro Block';
+$string['submitters'] = 'Wer hat die Berechtigung  zur Definition von Newsfeeds? Definierte Feeds können in allen Kursräumen genutzt werden.';
 $string['timeout'] = 'blockrsstimeout';
-$string['timeoutdesc'] = 'Zeit (Minuten), die ein RSS Feed im Cache verbleibt';
-$string['updatefeed'] = 'Update der Newsfeed URL:';
+$string['timeoutdesc'] = 'Speicherdauer für RSS-Feeds im Cache';
+$string['updatefeed'] = 'URL zum Update des Newsfeed';
 $string['validatefeed'] = 'Feed prüfen';
 
 ?>

@@ -1,8 +1,10 @@
 <?PHP // $Id$ 
-      // message.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
+      // message.php - created with Moodle 1.5 ALPHA (2005043000)
 
 
 $string['addcontact'] = 'Kontakt hinzufügen';
+$string['addsomecontacts'] = 'Verwenden Sie die <a href=\"$a\">Suchoption </a> oben, um eine Mitteilungen an jemenanden zu versenden oder einen Eintrag im Verzeichnis zu erstellen.';
+$string['addsomecontactsincoming'] = 'Diese Mitteilungen stammen von Personen, die nicht in Ihrer Kontaktliste aufgeführt sind. Um sie in Ihrer Kontaktliste einzufügen, klicken Sie auf den Button \"Kontakt hinzufügen\" neben dem Namen.';
 $string['ago'] = '$a beendet';
 $string['allmine'] = 'Alle Mitteilungen an mich oder von mir';
 $string['allstudents'] = 'Alle Mitteilungen unter den Teilnehmer/innen';
@@ -11,6 +13,8 @@ $string['backupmessageshelp'] = 'Wenn die Option aktiviert ist, werden die Mitte
 $string['beepnewmessage'] = 'Akustisches Signal beim Eingang neuer Nachrichten';
 $string['blockcontact'] = 'Kontakt sperren';
 $string['blockedmessages'] = '$a Mitteilung(en) an/von gesperrten Nutzer/innen';
+$string['blocknoncontacts'] = 'Alle Nachrichten von Personen, die nicht in meiner Kontaktliste aufgeführt sind, sollen blockiert werden.';
+$string['contactlistempty'] = 'Ihre Kontaktliste ist zur Zeit noch leer';
 $string['contacts'] = 'Kontakte';
 $string['context'] = 'Kontext';
 $string['deletemessagesdays'] = 'Dauer (in Tagen) bis alte Mitteilungen automatisch gelöscht werden';
@@ -58,6 +62,7 @@ $string['timesent'] = 'Sendezeitpunkt';
 $string['unblockcontact'] = 'Kontakt aktivieren';
 $string['unreadmessages'] = '$a ungelesene Mitteilungen';
 $string['userisblockingyou'] = 'Diese/r Teilnehmer/innen hat Mitteilungen von Ihnen gesperrt';
+$string['userisblockingyounoncontact'] = 'Der/die Empfänger/in nimmt derzeit nur Nachrichten vo Personen an, die in der Kontkatliste eingetragen sind. Sie sind derzeit dort nicht aufgeführt.';
 $string['userssearchresults'] = 'Suchergebniss(e): $a Nutzer/innen gefunden';
 
 ?>

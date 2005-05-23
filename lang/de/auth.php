@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
+      // auth.php - created with Moodle 1.5 ALPHA (2005051500)
 
 
 $string['alternatelogin'] = 'Wenn Sie hier eine URL eingeben, wird diese als alternative Login-Seite  verwandt. Die Seite sollte ein Aktionsfeld (Button)auf <strong>\'$a\'</strong> enthalten und Eingabefelder für den <strong>Anmeldenamen</strong> und das <strong>Passwort</strong>.<br />Seien Sie sorgfältig bei der Eingabe der URL. Mit einer falschen URL schließen Sie sich selber vom Zugriff zur Seite aus.<br />Lassen Sie das Feld leer, um die Standardanmeldeseite zu verwenden.';
@@ -94,6 +94,16 @@ $string['auth_pop3mailbox'] = 'Name der Mailbox mit der eine Verbindung hergeste
 $string['auth_pop3port'] = 'POP3 Serverport-Nummer. Normalerweise ist das 110, für SSL 995.';
 $string['auth_pop3title'] = 'Einen POP3-Server verwenden';
 $string['auth_pop3type'] = 'Servertyp. Wenn Ihr Server Sicherheitszertifikate verwendet, wählen Sie pop3cert.';
+$string['auth_shib_convert_data'] = 'Datenmodifikation APU';
+$string['auth_shib_convert_data_description'] = 'Sie können diese API nutzen, um Daten von Shibboleth zu bearbeiten. <a href=\"../auth/shibboleth/README.txt\" target=\"_blank\">Hier</a> finden Sie weitere Hinweise.';
+$string['auth_shib_convert_data_warning'] = 'Die Datei existiert nicht oder ist vom Server nicht lesbar.';
+$string['auth_shib_instructions'] = 'Nutzen Sie den <a href=\"$a\">Shibboleth Login</a>, um Zugangüber Shibboleth zu erhalten, wenn Ihr Unternehmen dies unterstützt. <br />Sonst verwenden Sie das normale hier angezeigte Loginformular.';
+$string['auth_shib_instructions_help'] = 'Tragen Sie hier Informationen für Ihre Nutzer/innen ein, die ihnen den Zugang mit Hilfe von Shibboleth erklären. Diese werden auf der Loginseite angzeigt. Der Text sollte einen Link \"<b>$a</b>\" enthalten, damit ein einfachere Login möglich ist. Wenn Sie das Feld leer lassen, werden die Standard-Texte angezeigt und keine Hinweise auf den Shibboleth Login.';
+$string['auth_shib_only'] = 'nur Shibboleth ';
+$string['auth_shib_only_description'] = 'Checken Sie diese Option, wenn eine Shibboleth-Authentifizierung bevorzugt wird.';
+$string['auth_shib_username_description'] = 'Name der Shibboleth Umgebungsvariable, die als moodle Nutzername verwandt werden soll';
+$string['auth_shibboleth_login'] = 'Shibboleth Login';
+$string['auth_shibboleth_manual_login'] = 'Manueller Login';
 $string['auth_shibbolethdescription'] = 'Mit diesem Verfahren können Sie die Verbindung zu einem bestehenden Shibboleth Server herstellen, um  Zugänge zu prüfen und anzulegen.';
 $string['auth_shibbolethtitle'] = 'Shibboleth';
 $string['auth_updatelocal'] = 'Update lokaler Daten';

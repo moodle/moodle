@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
+      // editor.php - created with Moodle 1.5 ALPHA (2005051500)
 
 
 $string['about'] = 'Über diesen Editor';
@@ -29,6 +29,7 @@ $string['createanchor'] = 'Anker erstellen';
 $string['createfolder'] = 'Ordner erstellen';
 $string['createlink'] = 'Einen Link einfügen';
 $string['cut'] = 'Markierung ausschneiden';
+$string['cutpastemozilla'] = 'Leider können Sie mit diesem Editor	die gewohnten Tastatur-Shortcuts zum Einfügen von Texten nicht nutzen. Hintergrund ist eine Sicherheitsfunktion in einigen Versionen von Mozilla und Firefox.U<br /><br />Sie haben drei Möglichkeiten, die Sie probieren können: <br /> (1) An Stelle von Strg-v, verwenden Sie SHIFT-Einfg <br /> (2) Nutzen Sie das Menu mit Bearbeiten -> Einfügen <br /> (3) Verändern Sie die Einstellungen des Browsers in der Datei user.js. <br /><br />Mit dem  \'OK\' Button finden Sie weitere Informationen, oder \'Abbrechen\', um zum Browser zurückzugehen.';
 $string['delete'] = 'Löschen';
 $string['filebrowser'] = 'Dateibrowser';
 $string['findwhat'] = 'Finden';

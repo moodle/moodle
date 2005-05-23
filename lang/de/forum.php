@@ -1,9 +1,10 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
+      // forum.php - created with Moodle 1.5 ALPHA (2005043000)
 
 
 $string['addanewdiscussion'] = 'Ein neues Diskussionsthema hinzufügen';
 $string['addanewtopic'] = 'Ein neues Thema hinzufügen';
+$string['advancedsearch'] = 'Expertensuche';
 $string['allforums'] = 'Alle Foren';
 $string['allowchoice'] = 'Jede/r darf auswählen';
 $string['allowdiscussions'] = 'Rechte der Teilnehmer/innen im Forum';
@@ -30,7 +31,9 @@ $string['couldnotupdate'] = 'Der Eintrags konnte aufgrund eines unbekannten Fehl
 $string['delete'] = 'Löschen';
 $string['deleteddiscussion'] = 'Das Thema ist gelöscht worden ';
 $string['deletedpost'] = 'Der Eintrag wurde gelöscht';
+$string['deletedposts'] = 'Diese Beiträge wurden gelöscht.';
 $string['deletesure'] = 'Möchten Sie diesen Eintrag wirklich löschen?';
+$string['deletesureplural'] = 'Sind Siesicher, dass Sie diese Beiträge und alle dazu gehörigen Antworten löschen wollen? ($a Beiträge)';
 $string['digestmailheader'] = 'Dies ist die tägliche Zusammenfassung (Digest) der Beiträge von $a->sitename. Sie können Ihre E-Mail-Einstellungen unter $a->userprefs abändern.';
 $string['digestmailprefs'] = 'Ihr Profil';
 $string['digestmailsubject'] = '$a: Zusammenfassung der Foren';
@@ -66,8 +69,12 @@ $string['introsocial'] = 'Ein offenes Forum ohne Themeneinschränkung';
 $string['introteacher'] = 'Ein Forum ausschliesslich für Anmerkungen und Diskussionen der Trainer/innen';
 $string['lastpost'] = 'Letzter Beitrag';
 $string['learningforums'] = 'Lernforum';
+$string['markalldread'] = 'Alle Beiträge dieser Diskussion als gelesen markieren.';
+$string['markallread'] = 'Alle Beiträge in diesem Forum als gelesen markieren.';
 $string['markread'] = 'Gelesene markieren';
+$string['markreadbutton'] = 'Gelesen<br/>markieren';
 $string['markunread'] = 'Ungelesene markieren';
+$string['markunreadbutton'] = 'Ungelesen<br/> markieren';
 $string['maxattachmentsize'] = 'Maximale Größe für ein Upload zu diesem Beitrag';
 $string['maxtimehaspassed'] = 'Die Höchstdauer für die Bearbeitung dieses Eintrags ($a) ist überschritten!';
 $string['message'] = 'Mitteilung';
@@ -87,14 +94,18 @@ $string['newforumposts'] = 'Neue Foren-Beiträge';
 $string['nodiscussions'] = 'Es befindet sich noch kein Diskussionsthema in diesem Forum';
 $string['noguestpost'] = 'Gäste dürfen hier nicht mitdiskutieren. Bitte melden Sie sich an.';
 $string['noguestsubscribe'] = 'Sorry, Gäste können sich nicht für den E-Mail-Versand von Forenbeiträgen eintragen.';
+$string['noguesttracking'] = 'Gäste können Markierungsoptionen nicht bearbeiten.';
 $string['nomorepostscontaining'] = 'Es wurden keine weiteren Beiträge mit \'$a\' gefunden';
 $string['nonews'] = 'Es wurden bisher keine Neuigkeiten gepostet';
 $string['noposts'] = 'Keine Beiträge';
 $string['nopostscontaining'] = 'Es wurden keine in \'$a\' enthaltenen Beiträge gefunden';
 $string['nosubscribers'] = 'Derzeit gibt es keine Teilnehmer/in in diesem Forum';
 $string['notingroup'] = 'Dieses Forum steht nur den Mitgliedern der Gruppe zur Verfügung.';
+$string['notrackforum'] = 'Ungelesene Beiträge nicht markieren';
 $string['nownotsubscribed'] = '$a->name wird künftig KEINE Kopien von \'$a->forum\' per E-Mail erhalten';
+$string['nownottracking'] = '$a->name will \'$a->forum\' nicht weiter verfolgen.';
 $string['nowsubscribed'] = '$a->name wird künftig Kopien von \'$a->forum\'  per E-Mail erhalten';
+$string['nowtracking'] = '$a->name verfolgt nun das \'$a->forum\'.';
 $string['numposts'] = '$a Beiträge';
 $string['olderdiscussions'] = 'Ältere Diskussionen';
 $string['oldertopics'] = 'Ältere Beiträge';
@@ -170,6 +181,12 @@ $string['subscribestart'] = 'Senden Sie mir Kopien via E-Mail von den Beiträgen 
 $string['subscribestop'] = 'Ich möchte keine Kopien via E-Mail von den Beiträgen zu diesem Forum';
 $string['subscription'] = 'Anmeldung';
 $string['subscriptions'] = 'Anmeldungen';
+$string['trackforum'] = 'Ungelesene Mitteilungen verfolgen/markieren';
+$string['tracking'] = 'Verfolgen/markieren';
+$string['trackingoff'] = 'Aus';
+$string['trackingon'] = 'An';
+$string['trackingoptional'] = 'Optional';
+$string['trackingtype'] = 'Markierung ob Beiträge des Forums gelesen wurden?';
 $string['unread'] = 'Ungelesen';
 $string['unreadposts'] = 'Ungelesene Nachrichten';
 $string['unreadpostsnumber'] = '$a ungelesene Nachrichten';

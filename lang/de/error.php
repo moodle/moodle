@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // error.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
+      // error.php - created with Moodle 1.5 ALPHA (2005043000)
 
 
 $string['adminprimarynoedit'] = 'Der Hauptadmin kann nicht von anderen bearbeitet werden';
@@ -17,6 +17,7 @@ $string['notavailable'] = 'Dies ist zur Zeit nicht verfügbar.';
 $string['onlyeditown'] = 'Sie können nur eigene Informationen bearbeiten';
 $string['processingstops'] = 'Der Prozess wurde an dieser Stelle gestoppt. Verbleibende Schritte wurden nicht mehr durchgeführt.';
 $string['restricteduser'] = 'Sorry, Sie sind gegenwärtig nicht zu dieser Aktion berechtigt.';
+$string['sessionerroruser'] = 'Die Zeitdauer für Ihre Sitzung wurde überschritten oder ein anderer Fehler ist eingetreten. Loggen Sie sich bitte neu ein.';
 $string['sessionipnomatch'] = 'Sorry, Ihre IP-Adresse scheint sich seit Ihrem letzten Login geändert zu haben. Dieses Sicherheitsfeature schützt Sie vor dem Diebstahl Ihrer Identität durch Hacker während Sie auf der Seite arbeiten. Normale Nutzer sehen diese Mitteilung nicht - bitten Sie den Administrator um Hilfe.';
 $string['unknowncourse'] = 'Unbekannter Kursname \"$a\"';
 $string['usernotaddederror'] = 'Nutzer \"$a\" wurde nicht hinzugefügt - unbekannter Fehler';

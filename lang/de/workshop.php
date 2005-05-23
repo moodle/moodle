@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
+      // workshop.php - created with Moodle 1.5 ALPHA (2005043000)
 
 
 $string['absent'] = 'Abwesend';
@@ -169,6 +169,7 @@ $string['noteonstudentassessments'] = '{Teilnehmer/innen Beurteilung/ Grading Gr
 $string['notgraded'] = 'Nicht bewertet';
 $string['notitle'] = 'Kein Titel';
 $string['notitlegiven'] = 'Kein Titel angegeben';
+$string['notsubmittedyet'] = 'Es ist noch kein Beitrag abgegeben worden.';
 $string['nowork'] = 'Die Einreichungsfrist ist beendet.<br />Sie haben keinen Beitrag eingereicht.';
 $string['numberofassessmentelements'] = 'Anzahl der Bewertungskriterien';
 $string['numberofassessments'] = 'Anzahl der Assessments';

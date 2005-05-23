@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // choice.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
+      // choice.php - created with Moodle 1.5 ALPHA (2005043000)
 
 
 $string['addmorechoices'] = 'Weitere Abstimmungen hinzufügen';
@@ -34,6 +34,9 @@ $string['responses'] = 'Antworten ';
 $string['responsesto'] = 'Antworten zu  $a';
 $string['savemychoice'] = 'Meine Abstimmung speichern';
 $string['showunanswered'] = 'Zeige Spalte mit TN, die noch nicht geantwortet haben';
+$string['spaceleft'] = 'Platz verfügbar';
+$string['spacesleft'] = 'Plätze verfügbar';
+$string['taken'] = 'Eingetragen';
 $string['timerestrict'] = 'Antworten nur in dieser Periode anzeigen';
 $string['viewallresponses'] = 'Zeige $a Antworten';
 $string['yourselection'] = 'Ihre Auswahl';

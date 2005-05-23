@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // enrol_ldap.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
+      // enrol_ldap.php - created with Moodle 1.5 ALPHA (2005051500)
 
 
 $string['description'] = '<p>Sie können LDAP Server nutzen, um automatisch Eintragungen zu kontrollieren. Es wird angenommen, dass der LDAP tree Gruppen enthält, die zu Kursen gehören und dass jede der Gruppen/Kurse Einträge von Teilnehmern hat.</p>
@@ -27,6 +27,7 @@ $string['enrol_ldap_host_url'] = 'LDAP host in URL-form definieren, z.B.
 \'ldap://ldap.myorg.com/\'
 or \'ldaps://ldap.myorg.com/\'';
 $string['enrol_ldap_objectclass'] = 'objectClass für Kurssuche. Normalerweise \'posixGroup\'.';
+$string['enrol_ldap_search_sub'] = 'Suche Gruppenmitgliedschaften aus Subcontexts';
 $string['enrol_ldap_server_settings'] = 'LDAP Server Einstellungen';
 $string['enrol_ldap_student_contexts'] = 'Fundstelle für Liste der Verbindung von Gruppen und Teilnehmerereintragung. Verschiedene Einträge werden durch ein Semikolon getrennt: \'ou=courses,o=org; ou=others,o=org\'';
 $string['enrol_ldap_student_memberattribute'] = 'Mitgliedseigenschaften, wenn Nutzer zu einer Gruppe gehört/eingetragen wird. Normalerweise \'member\' oder memberUid\'.';
