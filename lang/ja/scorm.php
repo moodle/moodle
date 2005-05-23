@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.5 ALPHA (2005050600)
+      // scorm.php - created with Moodle 1.5 Beta (2005052300)
 
 
 $string['asset'] = 'アセット';
@@ -23,6 +23,7 @@ $string['errorlogs'] = 'エラーログ';
 $string['exit'] = 'SCORMコースから抜ける';
 $string['expcoll'] = '展開する/折りたたむ';
 $string['failed'] = '失敗';
+$string['firstaccess'] = '最初のアクセス';
 $string['found'] = 'マニフェストファイルが見つかりました';
 $string['frameheight'] = 'SCOフレームの高さ';
 $string['framewidth'] = 'SCOフレームの幅';
@@ -34,6 +35,7 @@ $string['gradesum'] = '評点の合計';
 $string['guestsno'] = 'ゲストはscormのコースを閲覧できません';
 $string['height'] = '高さ';
 $string['incomplete'] = '不完全';
+$string['lastaccess'] = '最後のアクセス';
 $string['missing_attribute'] = 'タグ $a->tag に属性 $a->attr がありません';
 $string['missing_tag'] = 'タグ無し $a->tag';
 $string['mode'] = 'モード';
@@ -42,11 +44,13 @@ $string['modulenameplural'] = 'Scorm';
 $string['next'] = '続ける';
 $string['no_attributes'] = 'タグ $a->tag にアトリビュートがありません';
 $string['no_children'] = 'タグ $a->tag に子タグがありません';
+$string['noactivity'] = '報告内容はありません。';
 $string['nomanifest'] = 'マニフェストファイルが見つかりませんでした';
 $string['noreports'] = '表示するレポートがありません';
 $string['normal'] = 'ノーマル';
 $string['not_corr_type'] = 'タグ $a->tag のタイプが合致しません';
 $string['notattempted'] = '未実行';
+$string['organization'] = '組織';
 $string['organizations'] = '組織';
 $string['packagedir'] = 'ファイルシステムエラー: パッケージディレクトリを作成できません。';
 $string['passed'] = 'パス';
@@ -63,6 +67,7 @@ $string['syntax'] = 'シンタックスエラー';
 $string['tag_error'] = 'コンテンツに不明なタグ($a->tag) があります:  $a->value';
 $string['too_many_attributes'] = 'タグ $a->tag のアトリビュートが多過ぎます';
 $string['too_many_children'] = 'タグ $a->tag の子タグが多過ぎます';
+$string['totaltime'] = '時間';
 $string['trackingloose'] = '警告: SCORMデータのトラッキングデータは消滅します!';
 $string['validateascorm'] = 'SCORMパッケージの確認';
 $string['validation'] = '確認結果';
