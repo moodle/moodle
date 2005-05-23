@@ -351,22 +351,13 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
     // ULPGC ecastro
     function get_actual_response($question, $state) {
         $answers = $question->options->answers;
-        /*
-        if (!$question->options->single) {
-            echo "Objeto State-responses: <br>tamaño= ".count($state->responses)."<br>   ";
-            print_object($state->responses);
-            foreach ($state->responses as $resp){
-                echo "esto es response id= ".$rid." <br>"; 
-                print_object($resp);
-                echo " Tamaño interno=".count($resp);
-                foreach ($resp as $r){
-                    print_object($r);
-                }
-            }         
-        }*/
-        foreach ($state->responses as $rid){
-            $answer = $answers[$rid]->answer;
-            $responses[] = $answer;
+        if (!empty($state->responses)) {
+            foreach ($state->responses as $aid =>$rid){
+                $answer = $answers[$rid]->answer;
+                $responses[] = $answer;
+            }
+        } else {
+            $responses[] = '';
         }
         return $responses;
     }

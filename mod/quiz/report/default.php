@@ -21,6 +21,20 @@ class quiz_default_report {
         return true;
     }
 
+    function print_header_and_tabs($cm, $course, $quiz, $reportmode="simplestat"){
+    /// Define some strings
+        $strquizzes = get_string("modulenameplural", "quiz");
+        $strquiz  = get_string("modulename", "quiz");
+    /// Print the page header
+        print_header_simple(format_string($quiz->name), "",
+                     "<a href=\"index.php?id=$course->id\">$strquizzes</a>
+                      -> ".format_string($quiz->name),
+                     "", "", true, update_module_button($cm->id, $course->id, $strquiz), navmenu($course, $cm));
+    /// Print the tabs    
+        $currenttab = 'reports';
+        $mode = $reportmode;
+        include('tabs.php');
+    }
 }
 
 ?>

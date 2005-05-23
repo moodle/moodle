@@ -113,6 +113,20 @@ class quiz_dataset_dependent_questiontype extends quiz_default_questiontype {
         $virtualqtype = $this->get_virtual_qtype();
         return $virtualqtype->grade_responses($question, $state, $quiz) ;
     }
+    
+    // ULPGC ecastro
+    function check_response(&$question, &$state) {
+        // Forward the checking to the virtual qtype
+        foreach ($question->options->answers as $answer) {
+            $answer->answer = $this->substitute_variables($answer->answer,
+             $state->options->dataset);
+        }
+        $virtualqtype = $this->get_virtual_qtype();
+        return $virtualqtype->check_response($question, $state) ;
+    }
+
+
+
 
     function substitute_variables($str, $dataset) {
         foreach ($dataset as $name => $value) {

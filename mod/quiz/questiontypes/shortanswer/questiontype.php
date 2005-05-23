@@ -150,6 +150,20 @@ class quiz_shortanswer_qtype extends quiz_default_questiontype {
         }
     }
 
+    // ULPGC ecastro
+    function check_response(&$question, &$state) {
+        $answers = &$question->options->answers;
+        $testedstate = clone($state);
+        $teststate   = clone($state);
+        foreach($answers as $aid => $answer) {
+            $teststate->responses[''] = trim($answer->answer);
+            if($this->compare_responses($question, $testedstate, $teststate)) {
+                return $aid;
+            }
+        }
+        return false;
+    }
+
     function grade_responses(&$question, &$state, $quiz) {
         $answers     = &$question->options->answers;
         $testedstate = clone($state);

@@ -229,6 +229,17 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
             return ($response == $answer->answer);
         }
     }
+    
+    // ULPGC ecastro
+    function check_response(&$question, &$state){
+        $answers = &$question->options->answers;
+        foreach($answers as $aid => $answer) {
+            if($this->test_response($question, $state, $answer)) {
+                return $aid;
+            }
+        }
+        return false;
+    }
 
     function print_question_formulation_and_controls(&$question, &$state, $quiz, $options) {
     /// This implementation is very similar to the code used by question type SHORTANSWER
@@ -306,6 +317,34 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
             $correct[''] .= ' '.$unit->unit;
         }
         return $correct;
+    }
+
+    // ULPGC ecastro
+    function get_all_responses(&$question, &$state) {
+        unset($answers);
+        $unit = $this->get_default_numerical_unit($question);
+        if (is_array($question->options->answers)) {
+            foreach ($question->options->answers as $aid=>$answer) {
+                unset ($r); 
+                $r->answer = $answer->answer;
+                $r->credit = $answer->fraction;
+                $this->get_tolerance_interval($answer);
+                if ($unit) {
+                    $r->answer .= ' '.$unit->unit;
+                }
+                if ($answer->max != $answer->min) {
+                    $max = "$answer->max"; //format_float($answer->max, 2);
+                    $min = "$answer->min"; //format_float($answer->max, 2);
+                    $r->answer .= ' ('.$min.'..'.$max.')';
+                }
+                $answers[$aid] = $r;
+            }
+        } else {
+            $answers[]="error"; // just for debugging, eliminate
+        }
+        $result->id = $question->id;
+        $result->responses = $answers;
+        return $result;        
     }
 
     function get_tolerance_interval(&$answer) {

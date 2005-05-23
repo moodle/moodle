@@ -377,14 +377,18 @@ class quiz_default_questiontype {
     * for the question
     *
     * All answers are found and their text values isolated
-    * @return array           An array of values giving the responses corresponding
-    *                         to all answers to the question. Answer ids are used as keys
+    * @return object          A mixed object
+    *             ->id        question id. Needed to manage random questions: 
+    *                         it's the id of the actual question presented to user in a given attempt
+    *             ->responses An array of values giving the responses corresponding
+    *                         to all answers to the question. Answer ids are used as keys. 
+    *                         The text and partial credit are the object components
     * @param object $question The question for which the answers are to
     *                         be retrieved. Question type specific information is
     *                         available.
     */
     // ULPGC ecastro
-    function get_all_responses($question, $state) {
+    function get_all_responses(&$question, &$state) {
         unset($answers);
         if (is_array($question->options->answers)) {
             foreach ($question->options->answers as $aid=>$answer) {
@@ -405,8 +409,8 @@ class quiz_default_questiontype {
     * Return the actual response to the question in a given state
     * for the question
     *
-    * @return                 compond object fractiongrade & actual response .
-    *
+    * @return mixed           An array containing the response or reponses (multiple answer, match)
+    *                         given by the user in a particular attempt.
     * @param object $question The question for which the correct answer is to
     *                         be retrieved. Question type specific information is
     *                         available.
@@ -415,7 +419,7 @@ class quiz_default_questiontype {
     *                         type specific information is included.
     */
     // ULPGC ecastro
-    function get_actual_response($question, $state) {
+    function get_actual_response(&$question, &$state) {
         /* The default implementation only returns the raw ->responses.
           may be overridden by each type*/
         //unset($resp);
@@ -427,7 +431,7 @@ class quiz_default_questiontype {
     }
 
     // ULPGC ecastro
-    function get_fractional_grade($question, $state) {
+    function get_fractional_grade(&$question, &$state) {
         $maxgrade = $question->maxgrade;
         $grade = $state->grade;
         if ($maxgrade) {
@@ -435,6 +439,24 @@ class quiz_default_questiontype {
         } else {
             return (float)$grade;
         }
+    }
+
+
+    /**
+    * Checks if the response given is correct and returns the id 
+    *
+    * @return int             The ide number for the stored answer that matches the response
+    *                         given by the user in a particular attempt.
+    * @param object $question The question for which the correct answer is to
+    *                         be retrieved. Question type specific information is
+    *                         available.
+    * @param object $state    The state object that corresponds to the question,
+    *                         for which a correct answer is needed. Question
+    *                         type specific information is included.
+    */
+    // ULPGC ecastro
+    function check_response(&$question, &$state){
+        return false;
     }
 
     /**
@@ -1776,6 +1798,7 @@ function quiz_print_question_icon($question, $editlink=true, $return = false) {
 function quiz_get_question_review($quiz, $question) {
 // returns a question icon
     $qnum = $question->id;
+    $strpreview = get_string('previewquestion', 'quiz');
     $context = $quiz->id ? '&amp;contextquiz='.$quiz->id : '';
     $quiz_id = $quiz->id ? '&amp;quizid=' . $quiz->id : '';
     return "<a title=\"$strpreview\" href=\"javascript:void();\" onClick=\"openpopup('/mod/quiz/preview.php?id=$qnum$quiz_id','$strpreview','scrollbars=yes,resizable=yes,width=700,height=480', false)\">

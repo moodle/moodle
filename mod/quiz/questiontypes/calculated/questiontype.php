@@ -7,6 +7,7 @@
 /// QUESTION TYPE CLASS //////////////////
 
 require_once("$CFG->dirroot/mod/quiz/questiontypes/datasetdependent/abstractqtype.php");
+
 class quiz_calculated_qtype extends quiz_dataset_dependent_questiontype {
 
     // Used by the function custom_generator_tools:
@@ -153,6 +154,49 @@ class quiz_calculated_qtype extends quiz_dataset_dependent_questiontype {
         }
         return parent::grade_responses($question, $state, $quiz);
     }
+    
+    // ULPGC ecastro
+    function check_response(&$question, &$state) {
+        // Forward the checking to the virtual qtype
+        foreach ($question->options->answers as $key => $answer) {
+            $answer = &$question->options->answers[$key]; // for PHP 4.x
+            $answer->answer = $this->substitute_variables($answer->answer,
+             $state->options->dataset);
+        }
+        //return false;
+        return parent::check_response($question, $state);
+    }
+
+    // ULPGC ecastro
+    function get_actual_response(&$question, &$state) {
+        // Substitute variables in questiontext before giving the data to the
+        // virtual type 
+        $virtualqtype = $this->get_virtual_qtype();
+        $unit = $virtualqtype->get_default_numerical_unit($question);
+        foreach ($question->options->answers as $key => $answer) {
+            $answer = &$question->options->answers[$key]; // for PHP 4.x
+            $answer->answer = $this->substitute_variables($answer->answer,
+             $state->options->dataset);
+            // apply_unit
+        }
+        $question->questiontext = parent::substitute_variables(
+                                  $question->questiontext, $state->options->dataset);
+        $responses = $virtualqtype->get_all_responses($question, $state);
+        $response = reset($responses->responses);
+        $correct = $response->answer.' : ';         
+        
+        $responses = $virtualqtype->get_actual_response($question, $state);
+        
+        foreach ($responses as $key=>$response){
+            $responses[$key] = $correct.$response;
+        }
+
+        return $responses;        
+    }
+
+
+
+
 
     function create_virtual_qtype() {
         global $CFG;
@@ -418,6 +462,10 @@ class quiz_calculated_qtype extends quiz_dataset_dependent_questiontype {
         }
         return null;
     }
+
+
+
+
 
     function substitute_variables($str, $dataset) {
         $formula = parent::substitute_variables($str, $dataset);

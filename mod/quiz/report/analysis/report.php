@@ -1,27 +1,7 @@
 <?php  // $Id$
-
 /// Item analysis displays a table of quiz questions and their performance 
 
     require_once($CFG->libdir.'/tablelib.php');
-
-
-function stats_sumx($sum, $data){
-    $sum[0] += $data[0];
-    $sum[1] += $data[1];
-    return $sum;
-}       
-
-function stats_sumx2($sum, $data){
-    $sum[0] += $data[0]*$data[0];
-    $sum[1] += $data[1]*$data[1];
-    return $sum;
-}    
-
-function stats_sumxy($sum, $data){
-    $sum[0] += $data[0]*$data[1];
-    return $sum;
-}    
-
 
 /// Item analysis displays a table of quiz questions and their performance 
 
@@ -80,7 +60,7 @@ class quiz_report extends quiz_default_report {
       
         $scorelimit = $quiz->grade * $lowmarklimit/ 100;
         
-        // ULPGC ecastro DEBUG this is here to allow for differnt SQL to select attempts
+        // ULPGC ecastro DEBUG this is here to allow for different SQL to select attempts
         switch ($attemptselection) {
         case QUIZ_ALLATTEMPTS : 
             $limit = '';
@@ -103,33 +83,40 @@ class quiz_report extends quiz_default_report {
         $select = 'SELECT  qa.* '.$limit;
         $sql = 'FROM '.$CFG->prefix.'user u '.
                'LEFT JOIN '.$CFG->prefix.'quiz_attempts qa ON u.id = qa.userid '.
-               'LEFT JOIN '.$CFG->prefix.'quiz_states qr ON qr.attempt = qa.id '.   // es posible 
                'WHERE u.id IN ('.implode(',', array_keys($users)).') AND ( qa.quiz = '.$quiz->id.') '. // ULPGC ecastro
                ' AND ( qa.sumgrades >= '.$scorelimit.' ) ';
                                                                                    // ^^^^^^ es posible seleccionar aquí TODOS los quizzes, como quiere Jussi,
                                                                                    // pero habría que llevar la cuenta ed cada quiz para restaura las preguntas (quizquestions, states)
         /// Fetch the attempts
         $attempts = get_records_sql($select.$sql.$group);
-        
+
         if(empty($attempts)) {
+            $this->print_header_and_tabs($cm, $course, $quiz, $reportmode="analysis");
             print_heading($strnoattempts);
             $this->print_options_form($quiz, $cm, $attemptselection, $lowmarklimit, $pagesize);
             return true;
         }
 
     /// Here we rewiew all attempts and record data to construct the table
-        unset($questions);
-        unset($statstable);
+        $questions = array();
+        $statstable = array();
+        $questionarray = array(); 
         foreach ($attempts as $attempt) {
-            //print_object($attempt);  // ULPGC ecastro debug eliminar
-            // print "<br/>Layout= ".$attempt->layout."  <br/>";
-            $questionlist = quiz_questions_in_quiz($attempt->layout);
+            $questionarray[] = quiz_questions_in_quiz($attempt->layout);
+        }
+        $questionlist = quiz_questions_in_quiz(implode(",", $questionarray));
+        $questionarray = array_unique(explode(",",$questionlist));
+        $questionlist = implode(",", $questionarray);
+        unset($questionarray);
+        $accepted_qtypes = array(SHORTANSWER, TRUEFALSE, MULTICHOICE, MATCH, NUMERICAL, CALCULATED);        
+
+        foreach ($attempts as $attempt) {
             $sql = "SELECT q.*, i.grade AS maxgrade, i.id AS instance".
                    "  FROM {$CFG->prefix}quiz_questions q,".
                    "       {$CFG->prefix}quiz_question_instances i".
                    " WHERE i.quiz = '$quiz->id' AND q.id = i.question".
                    "   AND q.id IN ($questionlist)";
-                   
+
             if (!$quizquestions = get_records_sql($sql)) {
                 error('No questions found');
             }
@@ -145,13 +132,12 @@ class quiz_report extends quiz_default_report {
                 error('Could not restore question sessions');
             }
             $numbers = explode(',', $questionlist);
-            unset($statsrow);
             $statsrow = array();
-            foreach ($numbers as $i) {
-                $accepted = array(SHORTANSWER, TRUEFALSE, MULTICHOICE, RANDOM, MATCH, NUMERICAL, CALCULATED);
-                if (!in_array ($quizquestions[$i]->qtype, $accepted)){
+            foreach ($numbers as $i) {  
+                $qtype = ($quizquestions[$i]->qtype==4) ? $states[$i]->options->question->qtype : $quizquestions[$i]->qtype;
+                if (!in_array ($qtype, $accepted_qtypes)){
                     continue;
-                }
+                }                
                 $q = quiz_get_question_responses($quizquestions[$i], $states[$i]);
                 $qid = $q->id;
                 if (!isset($questions[$qid])) {
@@ -167,16 +153,18 @@ class quiz_report extends quiz_default_report {
                 }
                 $responses = quiz_get_question_actual_response($quizquestions[$i], $states[$i]);
                 foreach ($responses as $resp){
-                    if ($key = array_search($resp, $questions[$qid]['responses'])) {                 
-                        $questions[$qid]['rcounts'][$key]++;
-                    } else {
-                        $questions[$qid]['responses'][] = $resp;
-                        $questions[$qid]['rcounts'][] = 1;
-                        $test->responses[''] = $resp;
-                        if ($QUIZ_QTYPES[$quizquestions[$i]->qtype]->compare_responses($quizquestions[$i], $states[$i], $test)) {
-                            $questions[$qid]['credits'][] = 1;
+                    if ($resp) {
+                        if ($key = array_search($resp, $questions[$qid]['responses'])) {                 
+                            $questions[$qid]['rcounts'][$key]++;
                         } else {
-                            $questions[$qid]['credits'][] = 0;
+                            $test->responses = $QUIZ_QTYPES[$quizquestions[$i]->qtype]->get_correct_responses($quizquestions[$i], $states[$i]);
+                            if ($key = $QUIZ_QTYPES[$quizquestions[$i]->qtype]->check_response($quizquestions[$i], $states[$i], $test)) {
+                                $questions[$qid]['rcounts'][$key]++;
+                            } else {
+                                $questions[$qid]['responses'][] = $resp;
+                                $questions[$qid]['rcounts'][] = 1;
+                                $questions[$qid]['credits'][] = 0;
+                            }
                         }
                     }
                 }
@@ -204,42 +192,21 @@ class quiz_report extends quiz_default_report {
         
     /// Now check if asked download of data
         if ($download = optional_param('download', NULL)) {
-            //$dir = make_upload_directory($course->id."/quiz_reports");
             $filename = clean_filename("$course->shortname ".format_string($quiz->name,true));
             switch ($download) {
             case "Excel" :
-                $downloadfilename = $filename.".xls";
-                $this->Export_Excel($questions, $downloadfilename);
+                $this->Export_Excel($questions, $filename);
                 break;
             case "OOo": 
-                $downloadfilename = $filename.".sxw";
-                $this->Export_OOo($questions, $downloadfilename);
+                $this->Export_OOo($questions, $filename);
                 break;
             case "CSV": 
-                $downloadfilename = $filename.".txt";
-                $this->Export_CSV($questions, $downloadfilename);
+                $this->Export_CSV($questions, $filename);
                 break;
             }
         }
-
-    /// Define some strings
-    
-        $strquizzes = get_string("modulenameplural", "quiz");
-        $strquiz  = get_string("modulename", "quiz");
-    
-    /// Print the page header
-    
-        print_header_simple(format_string($quiz->name), "",
-                     "<a href=\"index.php?id=$course->id\">$strquizzes</a>
-                      -> ".format_string($quiz->name),
-                     "", "", true, update_module_button($cm->id, $course->id, $strquiz), navmenu($course, $cm));
-    
-    /// Print the tabs
-    
-        $currenttab = 'reports';
-        $mode = 'anaylis';
-        include('tabs.php');
         
+        $this->print_header_and_tabs($cm, $course, $quiz, $reportmode="analysis");
     /// Construct the table for this particular report
 
         $tablecolumns = array('id', 'qname',    'answers', 'credits', 'rcounts', 'rpercent', 'facility', 'sd','discrimination_index', 'discrimination_coeff');
@@ -285,8 +252,8 @@ class quiz_report extends quiz_default_report {
         $tablesort = $table->get_sql_sort();
         $sorts = explode(",",trim($tablesort));  
         if ($tablesort and is_array($sorts)) {
-            unset($sortindex);
-            unset($sortorder);
+            $sortindex = array();
+            $sortorder = array ();
             foreach ($sorts as $sort) {
                 $data = explode(" ",trim($sort));
                 $sortindex[] = trim($data[0]);
@@ -363,8 +330,6 @@ class quiz_report extends quiz_default_report {
                     $table->data[$i][$col] = "";
                 }
             }
-            
-            
         }
         
         echo '<div id="titlecontainer" class="quiz-report-title">';
@@ -376,13 +341,6 @@ class quiz_report extends quiz_default_report {
         $table->print_html();
 
         $this->print_options_form($quiz, $cm, $attemptselection, $lowmarklimit, $pagesize);
-        
-/*        
-        if ($download) {
-        	echo "<script language='Javascript'> window.open('".$CFG->wwwroot."/files/index.php?id=".$course->id."&wdir=/".
-                    get_string('quizreportdir', 'quiz_analysis')."', '".get_string('reportanalysis', 'quiz_analysis')."'); \n</script>";        
-        }
-*/
         return true;
     }
 
@@ -427,9 +385,12 @@ class quiz_report extends quiz_default_report {
         print_single_button("report.php", $options, get_string("downloadexcel"));
         echo "</td>\n";
         echo '<td>';        
-        $options["download"] = "OOo";
-        print_single_button("report.php", $options, get_string("downloadooo", "quiz_analysis"));
-        echo "</td>\n";
+        
+        if (file_exists("$CFG->libdir/phpdocwriter/lib/include.php")) {
+            $options["download"] = "OOo";
+            print_single_button("report.php", $options, get_string("downloadooo", "quiz_analysis"));
+            echo "</td>\n";
+        }
         echo '<td>';
         $options["download"] = "CSV";
         print_single_button('report.php', $options, get_string("downloadtext"));
@@ -441,7 +402,7 @@ class quiz_report extends quiz_default_report {
 }
 
     function report_question_stats(&$q, &$attemptscores, &$questionscores, $top, $bottom) {
-        unset($qstats);
+        $qstats = array();
         $qid = $q['id'];
         $top_scores = $top_count = 0;
         $bottom_scores = $bottom_count = 0;
@@ -458,6 +419,9 @@ class quiz_report extends quiz_default_report {
                 }               
             }
         }
+        
+        //$sumx = array_reduce($qscores, "sumx");
+        
         
         $n = count($qstats);
         $sumx = array_reduce($qstats, "stats_sumx");
@@ -492,7 +456,8 @@ class quiz_report extends quiz_default_report {
         global $CFG;
         require_once("$CFG->libdir/excel/Worksheet.php");
         require_once("$CFG->libdir/excel/Workbook.php");
-
+        
+        $filename .= ".xls";
         header("Content-Type: application/vnd.ms-excel");   
         header("Content-Disposition: attachment; filename=\"$filename\"");
         header("Expires: 0");
@@ -571,6 +536,10 @@ class quiz_report extends quiz_default_report {
 
     function Export_OOo(&$questions, $filename) {
         global $CFG;
+        require_once("$CFG->libdir/phpdocwriter/lib/include.php");
+        import('phpdocwriter.pdw_document');
+        
+        $filename .= ".sxw";
 
         header("Content-Type: application/download\n");   
         header("Content-Disposition: attachment; filename=\"$filename\"");
@@ -579,8 +548,6 @@ class quiz_report extends quiz_default_report {
         header("Pragma: public");
         header("Content-Transfer-Encoding: binary");
 
-        require_once("$CFG->libdir/phpdocwriter/lib/include.php");
-        import('phpdocwriter.pdw_document');
         $filename = substr($filename, 0, -4);    
 
         $sxw = new pdw_document;
@@ -628,6 +595,8 @@ class quiz_report extends quiz_default_report {
                         get_string('dicsindextitle','quiz_analysis'), get_string('disccoefftitle','quiz_analysis')); 
 
         $text = implode("\t", $headers)." \n";
+        
+        $filename .= ".txt";
 
         header("Content-Type: application/download\n");   
         header("Content-Disposition: attachment; filename=\"$filename\"");
@@ -690,13 +659,25 @@ class quiz_report extends quiz_default_report {
         }
         return $result;
     }
-    
-    
-    
-    
-    
-    
-    
-    
+
+
+}    
+
+function stats_sumx($sum, $data){
+    $sum[0] += $data[0];
+    $sum[1] += $data[1];
+    return $sum;
+}       
+
+function stats_sumx2($sum, $data){
+    $sum[0] += $data[0]*$data[0];
+    $sum[1] += $data[1]*$data[1];
+    return $sum;
+}    
+
+function stats_sumxy($sum, $data){
+    $sum[0] += $data[0]*$data[1];
+    return $sum;
 }
+
 ?>
