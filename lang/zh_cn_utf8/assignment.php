@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.5 ALPHA (2005042300)
+      // assignment.php - created with Moodle 1.5 ALPHA (2005051500)
 
 
 $string['allowresubmit'] = '允许重交';
@@ -13,21 +13,20 @@ $string['assignmentmailhtml'] = '{$a->teacher}已经在<i>“{$a->assignment}”
 $string['assignmentname'] = '作业名称';
 $string['assignmenttype'] = '作业类型';
 $string['availabledate'] = '开始日期';
-$string['comment'] = '点评';
-$string['commentinline'] = '内嵌点评';
-$string['availabledate'] = '开始日期';
 $string['comment'] = '评论';
+$string['commentinline'] = '内嵌点评';
 $string['configmaxbytes'] = '缺省情况下站点中作业的最大尺寸(同时受课程和其它本地设置的限制)';
 $string['description'] = '描述';
 $string['duedate'] = '截止日期';
-$string['editmysubmission'] = '修改已提交的作业';
 $string['duedateno'] = '无截止日期';
 $string['early'] = '$a 之前';
+$string['editmysubmission'] = '修改已提交的作业';
 $string['emailteachermail'] = '{$a->username}更新了他为作业“{$a->assignment}”提交的内容。新内容位于:
 
 $a->url';
-$string['emailteachermailhtml'] = '{$a->username}更新了他为作业<i>“{$a->assignment}”</i>提交的内容。<br /><br />它位于<a href=\"$a->url\">Web服务器</a>上。';
+$string['emailteachermailhtml'] = '{$a->username}更新了其作业<i>“{$a->assignment}”</i>。<br /><br />新的内容位于<a href=\"$a->url\">Web服务器</a>上。';
 $string['emailteachers'] = '用E-mail提醒教师';
+$string['emptysubmission'] = '您尚未提交任何内容';
 $string['existingfiledeleted'] = '文件“{$a}”已被删除';
 $string['failedupdatefeedback'] = '为用户{$a}更新反馈失败';
 $string['feedback'] = '反馈';
@@ -44,9 +43,11 @@ $string['modulename'] = '作业';
 $string['modulenameplural'] = '作业';
 $string['newsubmissions'] = '已交的作业';
 $string['noassignments'] = '尚无作业';
+$string['noattempts'] = '尚无人尝试做此作业';
 $string['notgradedyet'] = '没有评分';
 $string['notsubmittedyet'] = '未交';
 $string['overwritewarning'] = '警告: 重新上载将覆盖你已交的作业';
+$string['preventlate'] = '不允许迟交';
 $string['saveallfeedback'] = '保存我的所有反馈';
 $string['submission'] = '提交';
 $string['submissionfeedback'] = '对提交信息的反馈';
@@ -55,7 +56,6 @@ $string['submissionsaved'] = '已经保存了你的修改';
 $string['submitassignment'] = '用此表单上交作业';
 $string['submitted'] = '已交';
 $string['typeoffline'] = '离线活动项目';
-$string['typeonline'] = '在线文本';
 $string['typeonline'] = '在线文本';
 $string['typeuploadsingle'] = '上载单个文件';
 $string['uploadbadname'] = '该文件名含有怪异字符，无法上载';

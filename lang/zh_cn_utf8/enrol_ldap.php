@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // enrol_ldap.php - created with Moodle 1.5 ALPHA (2005042300)
+      // enrol_ldap.php - created with Moodle 1.5 ALPHA (2005051500)
 
 
 $string['description'] = '<p>您可以是用LDAP服务器来控制选课方面的信息。在这种情况下，您的LDAP树上的组会被映射为课程，而在这些组中应该包含的成员应该可以映射到学生。</p>
@@ -24,6 +24,7 @@ $string['enrol_ldap_course_summary'] = '可选：从哪个LDAP字段中获取概
 $string['enrol_ldap_editlock'] = '上锁';
 $string['enrol_ldap_host_url'] = '以链接形式指定LDAP主机，如“ldap://ldap.myorg.com/”或“ldaps://ldap.myorg.com/”。';
 $string['enrol_ldap_objectclass'] = '用于搜索课程的objectClass，通常是“posixGroup”。';
+$string['enrol_ldap_search_sub'] = '在下属目录中搜索组的归属信息。';
 $string['enrol_ldap_server_settings'] = 'LDAP服务器设置';
 $string['enrol_ldap_student_contexts'] = '在哪里可以找到包含着选课信息的组。不同的位置之间应当以分号“;”分割。例如：“ou=courses,o=org; ou=others,o=org”。';
 $string['enrol_ldap_student_memberattribute'] = '当用户属于一个组时使用的成员属性。通常是“member”或“memberUid”。';

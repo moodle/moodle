@@ -3,6 +3,7 @@
 
 
 $string['action'] = '动作';
+$string['actions'] = '动作';
 $string['active'] = '活跃的';
 $string['activities'] = '活动项目';
 $string['activity'] = '活动报告';
