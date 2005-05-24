@@ -1203,6 +1203,8 @@
                 print_simple_box( "<table cellpadding=\"5\" border=\"0\">\n<tr><th>".get_string("whatdofirst", "lesson")."</th></tr><tr><td>".
                     "<a href=\"import.php?id=$cm->id&amp;pageid=0\">".
                     get_string("importquestions", "lesson")."</a></td></tr><tr><td>".
+                    "<a href=\"importppt.php?id=$cm->id&amp;pageid=0\">".
+                    get_string("importppt", "lesson")."</a></td></tr><tr><td>".
                     "<a href=\"lesson.php?id=$cm->id&amp;action=addbranchtable&amp;pageid=0&amp;firstpage=1\">".
                     get_string("addabranchtable", "lesson")."</a></td></tr><tr><td>".
                     "<a href=\"lesson.php?id=$cm->id&amp;action=addpage&amp;pageid=0&amp;firstpage=1\">".
