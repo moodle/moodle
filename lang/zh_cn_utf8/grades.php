@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // grades.php - created with Moodle 1.5 ALPHA (2005050600)
+      // grades.php - created with Moodle 1.5 ALPHA (2005051500)
 
 
 $string['addcategory'] = '添加类别';
@@ -66,6 +66,7 @@ $string['max'] = '最高';
 $string['maxgrade'] = '满分';
 $string['median'] = '中等';
 $string['min'] = '最低';
+$string['mode'] = '模式';
 $string['no'] = '否';
 $string['nocategories'] = '此课程的分数分类无法添加或找不到';
 $string['nocategoryview'] = '无分类可以看';
@@ -79,6 +80,7 @@ $string['pctoftotalgrade'] = '%%的总分';
 $string['percent'] = '百分比';
 $string['percentascending'] = '百分比升序';
 $string['percentdescending'] = '百分比降序';
+$string['percentshort'] = '%%';
 $string['points'] = '分数';
 $string['pointsascending'] = '分数升序';
 $string['pointsdescending'] = '分数降序';
