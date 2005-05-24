@@ -77,6 +77,8 @@ class block_admin extends block_list {
 
         $course = get_record('course', 'id', $this->instance->pageid);
 
+
+
         if (isteacher($this->instance->pageid)) {
 
             $isteacheredit = isteacheredit($this->instance->pageid);
@@ -92,6 +94,17 @@ class block_admin extends block_list {
                 $this->content->items[]='<a href="edit.php?id='.$this->instance->pageid.'">'.get_string('settings').'</a>';
                 $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/settings.gif" height="16" width="16" alt="" />';
 
+
+            $fullname = fullname($USER, true);
+            $editmyprofile = '<a title="'.$fullname.'" href="'.$CFG->wwwroot.'/user/edit.php?id='.$USER->id.'&amp;course='.$this->instance->pageid.'">'.get_string('editmyprofile').'</a>';
+            if (empty($USER->description)) {
+                $this->content->items[]= $editmyprofile." <blink>*</blink>";
+            } else {
+                $this->content->items[]= $editmyprofile;
+            }
+            $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/user.gif" height="16" width="16" alt="" />';
+
+
                 if (iscreator() || !empty($CFG->teacherassignteachers)) {
                     if (!$course->teachers) {
                         $course->teachers = get_string('defaultcourseteachers');
@@ -106,11 +119,16 @@ class block_admin extends block_list {
                 if (!$course->metacourse) {
                     $this->content->items[]='<a href="student.php?id='.$this->instance->pageid.'">'.$course->students.'</a>';
                     $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/users.gif" height="16" width="16" alt="" />';
-                }
-                else {
+                } else {
                     $this->content->items[]='<a href="importstudents.php?id='.$this->instance->pageid.'">'.$course->students.'</a>';
                     $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/users.gif" height="16" width="16" alt="">';
                 }
+                if ($course->groupmode || !$course->groupmodeforce) {
+                    $strgroups = get_string('groups');
+                    $this->content->items[]='<a title="'.$strgroups.'" href="'.$CFG->wwwroot.'/course/groups.php?id='.$this->instance->pageid.'">'.$strgroups.'</a>';
+                    $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/group.gif" height="16" width="16" alt="" />';
+                }
+
                 $this->content->items[]='<a href="'.$CFG->wwwroot.'/backup/backup.php?id='.$this->instance->pageid.'">'.get_string('backup').'</a>';
                 $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/backup.gif" height="16" width="16" alt="" />';
 
@@ -153,6 +171,17 @@ class block_admin extends block_list {
                 $this->content->items[]='<a href="user.php?id='.$this->instance->pageid.'&amp;user='.$USER->id.'">'.get_string('activityreport').'</a>';
                 $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/report.gif" height="16" width="16" alt="" />';
             }
+
+            $fullname = fullname($USER, true);
+            $editmyprofile = '<a title="'.$fullname.'" href="'.$CFG->wwwroot.'/user/edit.php?id='.
+                             $USER->id.'&amp;course='.$this->instance->pageid.'">'.get_string('editmyprofile').'</a>';
+            if (empty($USER->description)) {
+                $this->content->items[]= $editmyprofile." <blink>*</blink>";
+            } else {
+                $this->content->items[]= $editmyprofile;
+            }
+            $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/user.gif" height="16" width="16" alt="" />';
+
             if (is_internal_auth()) {
                 $this->content->items[]='<a href="'.$CFG->wwwroot.'/login/change_password.php?id='.$this->instance->pageid.'">'.get_string('changepassword').'</a>';
                 $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/user.gif" height="16" width="16" alt="" />';
