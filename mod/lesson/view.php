@@ -1209,7 +1209,7 @@
                     get_string("addabranchtable", "lesson")."</a></td></tr><tr><td>".
                     "<a href=\"lesson.php?id=$cm->id&amp;action=addpage&amp;pageid=0&amp;firstpage=1\">".
                     get_string("addaquestionpage", "lesson")." ".get_string("here","lesson").
-                    "</a></td></tr></table\n");
+                    "</a></td></tr></table>\n");
             }
             print_simple_box_end();
             echo "</div>"; //CDC Chris Berri added.
