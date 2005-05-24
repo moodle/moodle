@@ -1,0 +1,93 @@
+<!DOCTYPE HTML PUBLIC>
+<html>
+    <head>
+        <title>Question versioning</title>
+        <meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
+        <!--link rel="stylesheet" type="text/css" href="doc.css"-->
+    </head>
+<body>
+
+<h1>Question versioning</h1>
+
+<h2>Contents</h2>
+<ul>
+    <li><a href='#description'>Purpose and Description</a></li>
+    <li><a href='#database'>Database</a></li>
+</ul>
+
+<a name='description'><h2>Purpose and Description</h2></a>
+<p>
+
+When questions that were already attempted by a student are edited, it can be
+important to keep a copy of the question as it was before editing in order to
+reconstruct the quiz as it was seen by the student. To provide this
+functionality a question versioning mechanism was implemented.
+
+</p><p>
+
+The first goal, namely keeping around old questions, is easily achieved. They
+are just not deleted any more. However, this is not enough; it is also necessary
+to store which questions are versions of others. To achieve this goal, there is
+an additional table, which stores the versioning information:
+<code>quiz_question_versions</code>. Finally, there is a cosmetic issue. If all
+old versions of questions are kept around this would horribly clutter the
+editing interface. Therefore a field called <code>hidden</code> was added to the
+<code>quiz_questions</code> table and all old versions of edited questions are
+automatically hidden. When this flag is set to 1 the question is not displayed
+in the list of available questions, unless the user choses to show them.
+
+</p><p>
+
+While the mechanism above should work as described, there is some additional
+complexity in order to minimise the number of versions created. If a question is
+created and has not been attempted by a student yet (this excludes teacher
+previews of the individual question and the quiz!), the database record will be
+reused (i.e. overwritten) and no new version will be created. This is especially
+important when the question is created and the first 2 or 3 mistakes are only
+noticed during preview.
+
+</p><p>
+
+On the editing screen for questions an additional set of options was introduced
+(see image).<br />
+<img src='replacement-options.gif' alt='Replacement Options' /><br />
+It shows which quizzes use the edited question and how many students have
+attempted it in a particluar quiz. Based on this information it is then possible
+to choose in which quizzes the new version of the question should be used and in
+which ones the old one should remain.
+
+</p><p>
+
+By default the 'replace' checkbox for all quizzes that don't have any students'
+attempts are checked and in addition, if the question is edited out of a quiz
+context (i.e. not in the category question list), the 'replace' option is
+checked for that quiz as well.
+
+</p>
+
+<a name='database'><h2>Database</h2></a>
+<p>
+
+The changes to the database structure are limited to an added field
+(<code>hidden</code>) in the <code>quiz_questions</code> table and an additional
+table called <code>quiz_question_versions. However, dealing with the
+<code>quiz_questions</code> table has become slightly more complicated.
+
+</p><p>
+
+The <code>hidden</code> field in the <code>quiz_questions</code> table has no
+implications for the core functionality. It is only used to determine, as the
+name implies, whether the question is shown in the category list or not.
+
+</p><p>
+
+The table <code>quiz_question_versions</code> stores information about the
+actual change. This information includes the ids of the old question and the new
+question, the id of the user who did the change and a timestamp. The id of the
+quiz, in which the question was replaced is also stored for reference. This
+information is sufficient to recreate a quiz as it was at any point in time.
+
+</p>
+
+
+</body> </html>
