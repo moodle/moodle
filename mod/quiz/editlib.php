@@ -197,8 +197,6 @@ function quiz_print_question_list($quiz, $allowdelete=true, $showbreaks=true) {
         return;
     }
 
-    $order = explode(",", $quiz->questions);
-
     if (!$questions = get_records_sql("SELECT q.*,c.course
                               FROM {$CFG->prefix}quiz_questions q,
                                    {$CFG->prefix}quiz_categories c
@@ -213,7 +211,13 @@ function quiz_print_question_list($quiz, $allowdelete=true, $showbreaks=true) {
     $count = 0;
     $qno = 1;
     $sumgrade = 0;
-    $total = count($order);
+    $order = explode(",", $quiz->questions);
+    $lastindex = count($order)-1;
+    // If the list does not end with a pagebreak then add it on.
+    if ($order[$lastindex] != 0) {
+        $order[] = 0;
+        $lastindex++;
+    }
     echo "<form method=\"post\" action=\"edit.php\">";
     echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
 
@@ -229,12 +233,12 @@ function quiz_print_question_list($quiz, $allowdelete=true, $showbreaks=true) {
                 echo '<td><hr noshade="noshade" /></td>';
                 echo '<td width="50">Page break</td>';
                 echo '<td><hr noshade="noshade" /></td><td width="45">';
-                if ($count != 1) {
+                if ($count > 1) {
                     echo "<a title=\"$strmoveup\" href=\"edit.php?up=$count&amp;sesskey=$USER->sesskey\"><img
                          src=\"../../pix/t/up.gif\" border=\"0\" alt=\"$strmoveup\" /></a>";
                 }
                 echo '&nbsp;';
-                if ($count < $total-1) {
+                if ($count < $lastindex) {
                     echo "<a title=\"$strmovedown\" href=\"edit.php?down=$count&amp;sesskey=$USER->sesskey\"><img
                          src=\"../../pix/t/down.gif\" border=\"0\" alt=\"$strmovedown\" /></a>";
 
@@ -261,7 +265,7 @@ function quiz_print_question_list($quiz, $allowdelete=true, $showbreaks=true) {
         }
         echo "</td>";
         echo "<td>";
-        if ($count != $total-2) {
+        if ($count < $lastindex-1) {
             echo "<a title=\"$strmovedown\" href=\"edit.php?down=$count&amp;sesskey=$USER->sesskey\"><img
                  src=\"../../pix/t/down.gif\" border=\"0\" alt=\"$strmovedown\" /></a>";
         }
