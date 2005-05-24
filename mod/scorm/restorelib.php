@@ -47,14 +47,15 @@
             $scorm->course = $restore->course_id;
             $scorm->name = backup_todb($info['MOD']['#']['NAME']['0']['#']);
             $scorm->reference = backup_todb($info['MOD']['#']['REFERENCE']['0']['#']);
-            $scorm->reference = backup_todb($info['MOD']['#']['MAXGRADE']['0']['#']);
-            $scorm->reference = backup_todb($info['MOD']['#']['GRADEMETHOD']['0']['#']);
+            $scorm->version = backup_todb($info['MOD']['#']['VERSION']['0']['#']);
+            $scorm->maxgrade = backup_todb($info['MOD']['#']['MAXGRADE']['0']['#']);
+            $scorm->grademethod = backup_todb($info['MOD']['#']['GRADEMETHOD']['0']['#']);
             $scorm->launch = backup_todb($info['MOD']['#']['LAUNCH']['0']['#']);
             $scorm->summary = backup_todb($info['MOD']['#']['SUMMARY']['0']['#']);
             $scorm->auto = backup_todb($info['MOD']['#']['AUTO']['0']['#']);
             $scorm->width = backup_todb($info['MOD']['#']['WIDTH']['0']['#']);
             $scorm->height = backup_todb($info['MOD']['#']['HEIGHT']['0']['#']);
-            $scorm->timemodified = backup_todb($info['MOD']['#']['TIMEMODIFIED']['0']['#']);
+            $scorm->timemodified = time();
 
             //The structure is equal to the db, so insert the scorm
             $newid = insert_record ("scorm",$scorm);
@@ -85,7 +86,7 @@
 
     //This function restores the scorm_scoes
     function scorm_scoes_restore_mods($scorm_id,$info,$restore) {
-
+    
         global $CFG;
 
         $status = true;
@@ -107,26 +108,84 @@
             $sco->parent = backup_todb($sub_info['#']['PARENT']['0']['#']);
             $sco->identifier = backup_todb($sub_info['#']['IDENTIFIER']['0']['#']);
             $sco->launch = backup_todb($sub_info['#']['LAUNCH']['0']['#']);
-            $sco->scormtype = backup_todb($sub_info['#']['SCORMTYPE']['0']['#']);
+            if ($restore->backup_version < 2005031300) {
+                $sco->scormtype = backup_todb($sub_info['#']['TYPE']['0']['#']);
+            } else {
+                $sco->scormtype = backup_todb($sub_info['#']['SCORMTYPE']['0']['#']);
+            }
             $sco->title = backup_todb($sub_info['#']['TITLE']['0']['#']);
-            $sco->title = backup_todb($sub_info['#']['PREREQUISITES']['0']['#']);
-            $sco->title = backup_todb($sub_info['#']['MAXTIMEALLOWED']['0']['#']);
-            $sco->title = backup_todb($sub_info['#']['TIMELIMITACTION']['0']['#']);
+            $sco->prerequisites = backup_todb($sub_info['#']['PREREQUISITES']['0']['#']);
+            $sco->maxtimeallowed = backup_todb($sub_info['#']['MAXTIMEALLOWED']['0']['#']);
+            $sco->timelimitaction = backup_todb($sub_info['#']['TIMELIMITACTION']['0']['#']);
             $sco->datafromlms = backup_todb($sub_info['#']['DATAFROMLMS']['0']['#']);
-            $sco->title = backup_todb($sub_info['#']['MASTERYSCORE']['0']['#']);
+            $sco->masteryscore = backup_todb($sub_info['#']['MASTERYSCORE']['0']['#']);
             $sco->next = backup_todb($sub_info['#']['NEXT']['0']['#']);
             $sco->previous = backup_todb($sub_info['#']['PREVIOUS']['0']['#']);
 
             //The structure is equal to the db, so insert the scorm_scoes
             $newid = insert_record ("scorm_scoes",$sco);
+            
+            if ($newid) {
+                //We have the newid, update backup_ids
+                backup_putid($restore->backup_unique_code,"scorm_scoes", $oldid, $newid);
+            } else {
+                $status = false;
+            }
+        }
 
-            //Now check if want to restore user data and do it.
-            if ($restore->mods['scorm']->userinfo) {
-                //Restore scorm_scoes
-                if ($status) {
+        //Now check if want to restore user data and do it.
+        if ($restore->mods['scorm']->userinfo) {
+            //Restore scorm_scoes
+            if ($status) {
+                if ($restore->backup_version < 2005031300) {
+                    $status = scorm_scoes_tracks_restore_mods_pre15 ($scorm_id,$info,$restore);
+                } else {
                     $status = scorm_scoes_tracks_restore_mods ($scorm_id,$info,$restore);
                 }
             }
+        }    
+        
+        return $status;
+    }
+
+    //This function restores the scorm_scoes_track
+    function scorm_scoes_tracks_restore_mods($scorm_id,$info,$restore) {
+
+        global $CFG;
+
+        $status = true;
+        $scotracks = NULL;
+
+        //Get the sco array
+        if (!empty($info['MOD']['#']['SCO_TRACKS']['0']['#']['SCO_TRACK']))
+            $scotracks = $info['MOD']['#']['SCO_TRACKS']['0']['#']['SCO_TRACK'];
+
+        //Iterate over sco_users
+        for($i = 0; $i < sizeof($scotracks); $i++) {
+            $sub_info = $scotracks[$i];
+            unset($scotrack);
+
+            //Now, build the scorm_scoes_track record structure
+            $scotrack->scormid = $scorm_id;
+            $scotrack->userid = backup_todb($sub_info['#']['USERID']['0']['#']);
+            $scotrack->scoid = backup_todb($sub_info['#']['SCOID']['0']['#']);
+            $scotrack->element = backup_todb($sub_info['#']['ELEMENT']['0']['#']);
+            $scotrack->value = backup_todb($sub_info['#']['VALUE']['0']['#']);
+
+            //We have to recode the userid field
+            $user = backup_getid($restore->backup_unique_code,"user",$scotrack->userid);
+            if (!empty($user)) {
+                $scotrack->userid = $user->new_id;
+            }
+
+            //We have to recode the scoid field
+            $sco = backup_getid($restore->backup_unique_code,"scorm_scoes",$scotrack->scoid);
+            if ($sco != NULL) {
+                $scotrack->scoid = $sco->new_id;
+            }
+
+            //The structure is equal to the db, so insert the scorm_scoes_track
+            $newid = insert_record ("scorm_scoes_track",$scotrack);
 
             //Do some output
             if (($i+1) % 50 == 0) {
@@ -137,32 +196,41 @@
                 backup_flush(300);
             }
 
-            if ($newid) {
-                //We have the newid, update backup_ids
-                backup_putid($restore->backup_unique_code,"scorm_scoes", $oldid, $newid);
-            } else {
-                $status = false;
-            }
         }
 
         return $status;
     }
-
-    //This function restores the scorm_scoes_track
-    function scorm_scoes_tracks_restore_mods($scorm_id,$info,$restore) {
+    
+    //This function restores the scorm_scoes_track from Moodle 1.4
+    function scorm_scoes_tracks_restore_mods_pre15 ($scorm_id,$info,$restore) {
 
         global $CFG;
 
         $status = true;
-        $sco_tracks = NULL;
+        $scousers = NULL;
 
         //Get the sco array
-        if (!empty($info['MOD']['#']['SCO_TRACKS']['0']['#']['SCO_TRACK']))
-            $sco_tracks = $info['MOD']['#']['SCO_TRACKS']['0']['#']['SCO_TRACK'];
+        if (!empty($info['MOD']['#']['SCO_USERS']['0']['#']['SCO_USER'])) {
+            $scousers = $info['MOD']['#']['SCO_USERS']['0']['#']['SCO_USER'];
+        }
+        
+        $oldelements = array ('CMI_CORE_LESSON_LOCATION',
+                              'CMI_CORE_LESSON_STATUS',
+                              'CMI_CORE_EXIT',
+                              'CMI_CORE_TOTAL_TIME',
+                              'CMI_CORE_SCORE_RAW',
+                              'CMI_SUSPEND_DATA');
+        $newelements = array ('cmi.core.lesson_location',
+                              'cmi.core.lesson_status',
+                              'cmi.core.exit',
+                              'cmi.core.total_time',
+                              'cmi.core.score.raw',
+                              'cmi.suspend_data');
 
         //Iterate over sco_users
-        for($i = 0; $i < sizeof($sco_tracks); $i++) {
-            $sco_track = $sco_tracks[$i];
+        for ($i = 0; $i < sizeof($scousers); $i++) {
+            $sub_info = $scousers[$i];
+            unset($scotrack);
 
             //We'll need this later!!
             $oldid = backup_todb($sub_info['#']['ID']['0']['#']);
@@ -170,26 +238,33 @@
             $olduserid = backup_todb($sub_info['#']['USERID']['0']['#']);
 
             //Now, build the scorm_scoes_track record structure
-            $sco_user->scormid = $scorm_id;
-            $sco_user->userid = backup_todb($sub_info['#']['USERID']['0']['#']);
-            $sco_user->scoid = backup_todb($sub_info['#']['SCOID']['0']['#']);
-            $sco_user->element = backup_todb($sub_info['#']['ELEMENT']['0']['#']);
-            $sco_user->value = backup_todb($sub_info['#']['VALUE']['0']['#']);
+            $scotrack->scormid = $scorm_id;
+            $scotrack->userid = backup_todb($sub_info['#']['USERID']['0']['#']);
+            $scotrack->scoid = backup_todb($sub_info['#']['SCOID']['0']['#']);
+            $pos = 0;
+            foreach ($oldelements as $oldelement) {
+                $elementvalue = backup_todb($sub_info['#'][$oldelement]['0']['#']);
+                if (!empty($elementvalue)) {
+                    $scotrack->element = $newelements[$pos];
+                    $scotrack->value = backup_todb($sub_info['#'][strtoupper($oldelement)]['0']['#']);
 
-            //We have to recode the userid field
-            $user = backup_getid($restore->backup_unique_code,"user",$sco_track->userid);
-            if ($user) {
-                $sco_track->userid = $user->new_id;
+                    //We have to recode the userid field
+                    $user = backup_getid($restore->backup_unique_code,"user",$scotrack->userid);
+                    if (!empty($user)) {
+                        $scotrack->userid = $user->new_id;
+                    }
+
+                    //We have to recode the scoid field
+                    $sco = backup_getid($restore->backup_unique_code,"scorm_scoes",$scotrack->scoid);
+                    if (!empty($sco)) {
+                        $scotrack->scoid = $sco->new_id;
+                    }
+
+                    //The structure is equal to the db, so insert the scorm_scoes_track
+                    $newid = insert_record ("scorm_scoes_track",$scotrack);
+                }
+                $pos++;
             }
-
-            //We have to recode the scoid field
-            $sco = backup_getid($restore->backup_unique_code,"scorm_scoes",$sco_track->scoid);
-            if ($sco) {
-                $sco_track->scoid = $sco->new_id;
-            }
-
-            //The structure is equal to the db, so insert the scorm_scoes_track
-            $newid = insert_record ("scorm_scoes_track",$sco_track);
 
             //Do some output
             if (($i+1) % 50 == 0) {
