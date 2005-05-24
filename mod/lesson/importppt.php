@@ -8,7 +8,7 @@
     // supports book and lesson
 
     require_once("../../config.php");
-    require_once("lib.php");
+    require_once("locallib.php");
 
     $id     = required_param('id', PARAM_INT);         // Course Module ID
     $pageid = optional_param('pageid', '', PARAM_INT); // Page ID
@@ -369,7 +369,7 @@ function lesson_create_objects($pageobjects, $lessonid) {
     $page->lessonid = $lessonid;
     $page->prevpageid = 0;
     $page->nextpageid = 0;
-    $page->qtype = 20;
+    $page->qtype = LESSON_BRANCHTABLE;
     $page->qoption = 0;
     $page->layout = 1;
     $page->display = 1;
@@ -378,7 +378,7 @@ function lesson_create_objects($pageobjects, $lessonid) {
     
     // all answers are the same
     $answer->lessonid = $lessonid;
-    $answer->jumpto = -1;
+    $answer->jumpto = LESSON_NEXTPAGE;
     $answer->grade = 0;
     $answer->score = 0;
     $answer->flags = 0;
@@ -389,7 +389,7 @@ function lesson_create_objects($pageobjects, $lessonid) {
 
     $answers[] = $answer;
 
-    $answer->jumpto = -40;
+    $answer->jumpto = LESSON_PREVIOUSPAGE;
     $answer->answer = "Previous";
     
     $answers[] = $answer;
