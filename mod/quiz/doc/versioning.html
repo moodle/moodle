@@ -1,93 +1,206 @@
 <!DOCTYPE HTML PUBLIC>
 <html>
-    <head>
-        <title>Question versioning</title>
-        <meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-        <!--link rel="stylesheet" type="text/css" href="doc.css"-->
-    </head>
+<head>
+    <title>Question versioning</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
+    <!--link rel="stylesheet" type="text/css" href="doc.css"-->
+</head>
 <body>
 
 <h1>Question versioning</h1>
 
 <h2>Contents</h2>
 <ul>
-    <li><a href='#description'>Purpose and Description</a></li>
-    <li><a href='#database'>Database</a></li>
+    <a href='#description'><li>Purpose and Description</li></a>
+    <a href='#database'><li>Database</li></a>
+    <a href='#adjustments'><li>Adjustments to the Data</li></a>
+    <a href='#issues'><li>Affected Code and Functionality</li></a>
 </ul>
 
-<a name='description'><h2>Purpose and Description</h2></a>
+<a name='description'></a><h2>Purpose and Description</h2>
 <p>
 
-When questions that were already attempted by a student are edited, it can be
-important to keep a copy of the question as it was before editing in order to
-reconstruct the quiz as it was seen by the student. To provide this
+When questions that were  already attempted by a  student are edited, it  can be
+important to keep a copy  of the question as it  was before editing in order  to
+reconstruct  the  quiz  as  it  was  seen  by  the  student.  To  provide   this
 functionality a question versioning mechanism was implemented.
 
 </p><p>
 
-The first goal, namely keeping around old questions, is easily achieved. They
+The first goal,  namely keeping around  old questions, is  easily achieved. They
 are just not deleted any more. However, this is not enough; it is also necessary
-to store which questions are versions of others. To achieve this goal, there is
-an additional table, which stores the versioning information:
-<code>quiz_question_versions</code>. Finally, there is a cosmetic issue. If all
-old versions of questions are kept around this would horribly clutter the
+to store which questions are versions of others. To achieve this goal, there  is
+an    additional    table,   which    stores    the   versioning    information:
+<code>quiz_question_versions</code>. Finally, there is a cosmetic issue. If  all
+old  versions of  questions are  kept around  this would  horribly clutter  the
 editing interface. Therefore a field called <code>hidden</code> was added to the
-<code>quiz_questions</code> table and all old versions of edited questions are
-automatically hidden. When this flag is set to 1 the question is not displayed
+<code>quiz_questions</code> table and all  old versions of edited  questions are
+automatically hidden. When this flag is  set to 1 the question is  not displayed
 in the list of available questions, unless the user choses to show them.
 
 </p><p>
 
-While the mechanism above should work as described, there is some additional
+While the  mechanism above  should work  as described,  there is some additional
 complexity in order to minimise the number of versions created. If a question is
-created and has not been attempted by a student yet (this excludes teacher
-previews of the individual question and the quiz!), the database record will be
+created and  has not  been attempted  by a  student yet  (this excludes  teacher
+previews of the individual question and the quiz!), the database record will  be
 reused (i.e. overwritten) and no new version will be created. This is especially
-important when the question is created and the first 2 or 3 mistakes are only
+important when the question  is created and the  first 2 or 3  mistakes are only
 noticed during preview.
 
 </p><p>
 
-On the editing screen for questions an additional set of options was introduced
+On the editing screen for questions an additional set of options was  introduced
 (see image).<br />
-<img src='replacement-options.gif' alt='Replacement Options' /><br />
-It shows which quizzes use the edited question and how many students have
-attempted it in a particluar quiz. Based on this information it is then possible
-to choose in which quizzes the new version of the question should be used and in
-which ones the old one should remain.
+<img src='replacement-options.gif' alt='Replacement  Options'
+/><br />
+It shows  which  quizzes use the   edited question and  how  many students  have
+attempted it   in a  particluar  quiz.  Based on   this information  it  is then
+possible to choose in  which quizzes the new  version of the question  should be
+used and in which ones the old one should remain.
 
 </p><p>
 
-By default the 'replace' checkbox for all quizzes that don't have any students'
-attempts are checked and in addition, if the question is edited out of a quiz
-context (i.e. not in the category question list), the 'replace' option is
+By default the 'replace' checkbox for all quizzes that don't have any  students'
+attempts are checked and  in addition, if the  question is edited out  of a quiz
+context  (i.e. not  in the  category question  list), the  'replace' option  is
 checked for that quiz as well.
 
 </p>
 
-<a name='database'><h2>Database</h2></a>
+<a name='database'></a><h2>Database</h2>
 <p>
 
-The changes to the database structure are limited to an added field
+The  changes  to  the  database   structure  are  limited  to  an   added  field
 (<code>hidden</code>) in the <code>quiz_questions</code> table and an additional
-table called <code>quiz_question_versions. However, dealing with the
+table   called   <code>quiz_question_versions.   However,   dealing   with   the
 <code>quiz_questions</code> table has become slightly more complicated.
 
 </p><p>
 
-The <code>hidden</code> field in the <code>quiz_questions</code> table has no
-implications for the core functionality. It is only used to determine, as the
+The <code>hidden</code>  field in  the <code>quiz_questions</code>  table has no
+implications for the core  functionality. It is only  used to determine, as  the
 name implies, whether the question is shown in the category list or not.
 
 </p><p>
 
-The table <code>quiz_question_versions</code> stores information about the
+The  table  <code>quiz_question_versions</code>  stores  information  about  the
 actual change. This information includes the ids of the old question and the new
-question, the id of the user who did the change and a timestamp. The id of the
-quiz, in which the question was replaced is also stored for reference. This
-information is sufficient to recreate a quiz as it was at any point in time.
+question,  the  id  of the  user  who  did the  change  and  a timestamp.  Quite
+importantly, the  id of  the quiz,  in which  the question  was replaced is also
+stored. This means that the versions  table provides a history of the  different
+states the quiz went through until it was edited to be at the current state. The
+information allows to recreate a quiz as it was at any point in time (from a
+data perspective - this possibility is not used extensivly by the code).
 
 </p>
 
+<a name='adjustments'></a><h2>Adjustments to the Data</h2>
+<p>
 
-</body> </html>
+When a question is replaced by a newer version, database records are updated in
+the order shown below (compare with <strong>question.php</strong>):
+
+<ul>
+    <li>
+
+    First a  new record  is inserted  into the <code>quiz_question_states</code>
+    table  for each  affected quiz  (i.e. each  quiz in  which the  questin was
+    replaced).
+
+    </li><li>
+
+    Then, for each affected quiz, the <code>question</code> field is updated
+    with a comma separated list of question ids, where the old question id is
+    replaced with the new one.
+
+    </li><li>
+
+    In the <code>quiz_question_instances</code> table the record that links the
+    old question to the quiz is also updated to point to the new question.
+
+    </li><li>
+
+    Finally, if a question  has been versioned for  the first time after  a quiz
+    has  been   attempted,  the   <code>originalquestion</code>  field   in  the
+    <code>quiz_states</code>    table    (this    is    determined    by     the
+    <code>originalquestion</code> field  beeing set to '0').
+
+    </li><li>
+
+    <p style="color:red;">
+    Question for Gustav:<br />
+    Should we also update the attempt->layout field at this point? Or do we  use
+    that to determine how the  student's attempt actually looked when  they took
+    the quiz?
+    <br />
+    That's what is causing bug #3311: the attempts->layout field is not updated,
+    so there are question ids in <code>attempts->layout</code>, which don't have
+    instances  associated  with  them. However,  we  need  information from  the
+    <code>quiz_question_instances</code>   table   (<code>grade</code>,    which
+    becomes <code>question->maxgrade</code> and  less importantly, I  think, the
+    instance id, which becomes <code>question->instance</code>).
+    <br />
+    In the remaining text I assume that we don't change
+    <code>attempt->layout</code>.
+    </p>
+
+    </li>
+</ul>
+
+<a name='issues'></a><h2>Affected Code and Functionality</h2>
+<p>
+
+Note: This section should still be considered under construction until the
+questionmark behind bug #3311 is taken off.
+
+</p><p>
+
+In the file <strong>review.php</strong> and potentially also in the file
+<strong>attempt.php</strong>, if a question is edited during a student's
+attempt, the data from <code>quiz_question_versions</code> needs to be taken
+into account. If a student has attempted a quiz and a question was changed
+afterwards (i.e. a new version  of that question was  created), the question id
+of the old version remains in the comma separated list inside the
+<code>attempt->layout</code> field. However, since the records in the
+<code>quiz_question_instances</code> table get updated, we need to go forward in
+the question history, by looping through entries from the
+<code>quiz_question_versions</code>  table, to  find out the id of  the question
+version that is currently used in the quiz.
+
+</p><p>
+
+Suggestion: With a fairly simple change to the convention of what is stored in
+the <code>quiz_question_versions</code> table we could get rid of the
+requirement of looping through all the versions. If in the newquestion field we
+store the id of the question that is currently used in the quiz, it would be
+possible to get the complete history for a question quite simply by selecting by
+quiz id and <code>newquestion</code>.
+
+</p><p>
+
+It should be fairly simple to write an upgrade script for this change.
+Additionally, another <code>set_field</code> would need to be added to
+<strong>question.php</strong> to change the <code>newquestion</code> field to
+the new question id. The benefits would be a much simpler handling of the
+question history, resulting in more efficient code than the current fix for bug
+#3311 in review.php.
+
+</p><p>
+
+The place where all the versioning actually takes place is
+<strong>question.php</strong>. Here the changes described in
+<a href='#adjustments'>Adjustments to the Data</a> are carried out.
+
+</p><p>
+
+Obviously the backup and restore scripts also take
+<code>quiz_question_versions</code> into account, however, they don't need to be
+concerned with the ways the data is used.
+
+</p>
+
+</p>
+
+</body>
+</html>
