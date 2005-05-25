@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005040800)
+      // lesson.php - created with Moodle 1.6 development (2005052400)
 
 
 $string['accesscontrol'] = 'Toegangscontrole';
@@ -97,6 +97,7 @@ $string['havenotgradedyet'] = 'Nog geen cijfer gegeven';
 $string['here'] = 'hier';
 $string['highscore'] = 'Hoogste score';
 $string['hightime'] = 'Langste duur';
+$string['importppt'] = 'Importeer Powerpoint';
 $string['importquestions'] = 'Importeer vragen';
 $string['insertedpage'] = 'Pagina ingevoegd';
 $string['jump'] = 'Spring';

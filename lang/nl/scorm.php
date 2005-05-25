@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.5 ALPHA (2005051500)
+      // scorm.php - created with Moodle 1.6 development (2005052400)
 
 
 $string['asset'] = 'Bezit';
@@ -23,6 +23,7 @@ $string['errorlogs'] = 'Foutenlogboek';
 $string['exit'] = 'Verlaat de SCORM-cursus';
 $string['expcoll'] = 'Maximaliseer/Minimaliseer';
 $string['failed'] = 'Mislukt';
+$string['firstaccess'] = 'Eerste toegang';
 $string['found'] = 'Manifest gevonden';
 $string['frameheight'] = 'Met deze instelling kies je de hoogte van het SCO frame';
 $string['framewidth'] = 'Deze voorkeurinstelling is de standaardbreedte van het SCO-frame';
@@ -34,6 +35,7 @@ $string['gradesum'] = 'Totaalcijfer';
 $string['guestsno'] = 'Gasten kunnen SCORM-lessen niet bekijken';
 $string['height'] = 'Hoogte';
 $string['incomplete'] = 'Onvolledig';
+$string['lastaccess'] = 'Laatste toegang';
 $string['missing_attribute'] = 'Attribuut ontbreekt $a->attr in tag $a->tag';
 $string['missing_tag'] = 'Ontbrekende tag $a->tag';
 $string['mode'] = 'Modus';
@@ -42,11 +44,13 @@ $string['modulenameplural'] = 'SCORMS';
 $string['next'] = 'Ga verder';
 $string['no_attributes'] = 'Tag $a->tag moet attributen hebben';
 $string['no_children'] = 'Tag $a->tag moet children hebben';
+$string['noactivity'] = 'Niets te melden';
 $string['nomanifest'] = 'Manifest niet gevonden';
 $string['noreports'] = 'Er is geen rapport om te tonen';
 $string['normal'] = 'Normaal';
 $string['not_corr_type'] = 'Typfout voor tag $a->tag';
 $string['notattempted'] = 'Niet geprobeerd';
+$string['organization'] = 'Organisatie';
 $string['organizations'] = 'Organisaties';
 $string['packagedir'] = 'Fout van het bestandssysteem: kan geen map voor het pakket maken';
 $string['passed'] = 'Geslaagd';
@@ -63,6 +67,7 @@ $string['syntax'] = 'Syntaxfout';
 $string['tag_error'] = 'Onbekende tag ($a->tag) met deze inhoud: $a->value';
 $string['too_many_attributes'] = 'Tag $a->tag heeft te veel attributen';
 $string['too_many_children'] = 'Tag $a->tag heeft teveel children';
+$string['totaltime'] = 'Tijd';
 $string['trackingloose'] = 'WAARSCHUWING: de gegevens voor opvolging van dit SCORM-pakket zullen verloren gaan';
 $string['validateascorm'] = 'Bevestig een SCORM-pakket';
 $string['validation'] = 'Bevestigingsresultaat';
