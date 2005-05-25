@@ -45,7 +45,7 @@ function print_entry($course) {
         $userlastname	= $USER->lastname;
         $useraddress	= $USER->address;
         $usercity		= $USER->city;
-        $cost			= $this->get_cource_cost($course);
+        $cost			= $this->get_course_cost($course);
 
         $CCTYPES = array(
             'mcd' => 'Master Card',
@@ -121,7 +121,7 @@ function cc_submit($form, $course)
     	'x_card_num'		=> $form->cc,
     	'x_card_code'		=> $form->cvv,
     	'x_currency_code'	=> $CFG->enrol_currency,
-    	'x_amount'			=> $this->get_cource_cost($course),
+    	'x_amount'			=> $this->get_course_cost($course),
     	'x_exp_date'		=> (($form->ccexpiremm<10) ? strval('0'.$form->ccexpiremm) : strval($form->ccexpiremm)) . ($form->ccexpireyyyy),
     	'x_email'			=> $USER->email,
     	'x_email_customer'	=> 'False',
@@ -267,14 +267,14 @@ function cc_submit($form, $course)
 
 function zero_cost($course) {
 
-    $cost = $this->get_cource_cost($course);
+    $cost = $this->get_course_cost($course);
     if (abs($cost) < 0.01) { // no cost
     	return true;
     }
     return false;
 }
 
-function get_cource_cost($course) {
+function get_course_cost($course) {
     global $CFG;
     $cost = (float)0;
 
@@ -294,7 +294,7 @@ function get_access_icons($course) {
     global $CFG;
 
     $str = '';
-    $cost = $this->get_cource_cost($course);
+    $cost = $this->get_course_cost($course);
 
     if (abs($cost) < 0.01) {
     	$str = parent::get_access_icons($course);
@@ -334,29 +334,36 @@ function config_form($frm) {
 
     $vars = array('enrol_cost', 'enrol_currency', 'an_login', 'an_tran_key', 'an_password', 'an_referer', 'an_test',
     			  'enrol_mailstudents', 'enrol_mailteachers', 'enrol_mailadmins', 'enrol_allowinternal');
+
     foreach ($vars as $var) {
     	if (!isset($frm->$var)) {
     		$frm->$var = '';
     	}
     }
 
-    $this->check_openssl_loaded(false);
+    if (!$this->check_openssl_loaded()) {
+    	notify('PHP must be compiled with SSL support (--with-openssl)');
+    }
+    if (data_submitted()) {  // something POSTed
+        // Some required fields
+        if (empty($frm->an_login)) {
+    	    notify("an_login required");
+        }
+        if (empty($frm->an_tran_key) && empty($frm->an_password)) {
+    	    notify("an_tran_key or an_password required");
+        }
+    }
     include("$CFG->dirroot/enrol/authorize/config.html");
 }
 
-function check_openssl_loaded($die)
-{
-    if (!extension_loaded('openssl')) {
-    	echo "<font color=red><center>PHP must be compiled --with-openssl</center></font>";
-    	if ($die) {
-    		die;
-    	}
-    }
+function check_openssl_loaded() {
+    return extension_loaded('openssl');
 }
 
 function process_config($config) {
 
-    $this->check_openssl_loaded(true);
+    $return = $this->check_openssl_loaded();
+
     if (!isset($config->an_login)) {
     	$config->an_login = '';
     }
@@ -374,12 +381,10 @@ function process_config($config) {
 
     // Some required fields
     if (empty($config->an_login)) {
-    	echo "an_login required";
-    	die;   	
+    	$return = false;   	
     }
     if (empty($config->an_tran_key) && empty($config->an_password)) {
-    	echo "an_tran_key or an_password required";
-    	die;   	
+    	$return = false;   	
     }
 
     if (empty($config->an_referer)) {
@@ -423,7 +428,7 @@ function process_config($config) {
     }
     set_config('enrol_allowinternal', $config->enrol_allowinternal);
 
-    return true;
+    return $return;
 }
 
 function email_cc_error_to_admin($subject, $data) {
