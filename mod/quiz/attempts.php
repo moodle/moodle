@@ -232,20 +232,18 @@
 
     // Construct the SQL
 
-    $select = 'SELECT qa.id AS attempt, u.id AS userid, u.firstname, u.lastname, u.picture, '.
+    $select = 'SELECT '.$db->Concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).' AS uniqueid, qa.id AS attempt, u.id AS userid, u.firstname, u.lastname, u.picture, '.
               'qa.sumgrades, qa.timefinish, qa.timestart, qa.timefinish - qa.timestart AS duration ';
     $from   = 'FROM mdl_user u LEFT JOIN mdl_quiz_attempts qa ON u.id = qa.userid ';
     $where  = 'WHERE u.id IN ('.implode(',', array_keys($users)).') AND ('.($noattempts ? sql_isnull('qa.quiz').' OR ' : '') . 'qa.quiz = '.$quiz->id.') ';
-
-    // Count the records NOW, before funky question grade sorting messes up $from
-    $total  = count_records_sql('SELECT COUNT(DISTINCT('.$db->Concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).')) '.$from);
-
 
     // Add extra limits due to initials bar
     if($table->get_sql_where()) {
         $where .= ' AND '.$table->get_sql_where();
     }
 
+    // Count the records NOW, before funky question grade sorting messes up $from
+    $total  = count_records_sql('SELECT COUNT(DISTINCT('.$db->Concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).')) '.$from.$where);
 
     // Add extra limits due to sorting by question grade
     if($sort = $table->get_sql_sort()) {
@@ -360,7 +358,7 @@
         echo '</form></div>';
     }
     else {
-        print_heading(get_string('noattemptstoshow', 'quiz'));
+        $table->print_html();
     }
 
 
