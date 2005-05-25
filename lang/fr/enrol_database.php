@@ -10,7 +10,7 @@ $string['dbpass'] = 'Mot de passe pour accéder à la base de données';
 $string['dbname'] = 'Nom de la base de données';
 $string['dbtable'] = 'Nom de la table de cette base de données';
 $string['localcoursefield'] = 'Nom du champ (de la table des cours du Moodle) utilisé pour faire correspondre les cours avec la base de données distante (par exemple « idnumber »)';
-$string['localuserfield'] = 'Nom du champ (de la table des utilisateurs du Moodle) utilisé pour faire correspondre les utilisateurs avec la base de données distante (par exemple « idnumber »)';
+$string['localuserfield'] = 'Nom du champ (de la table des utilisateurs du Moodle) utilisé pour faire correspondre les utilisateurs avec la base de données distante (par exemple « id »)';
 $string['remotecoursefield'] = 'Nom du champ de la base de données externe contenant l\'identifiant du cours';
 $string['remoteuserfield'] = 'Nom du champ de la base de données externe contenant l\'identifiant de l\'utilisateur';
 
