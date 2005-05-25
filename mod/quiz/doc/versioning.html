@@ -31,8 +31,23 @@ The first goal,  namely keeping around  old questions, is  easily achieved. They
 are just not deleted any more. However, this is not enough; it is also necessary
 to store which questions are versions of others. To achieve this goal, there  is
 an    additional    table,   which    stores    the   versioning    information:
-<code>quiz_question_versions</code>. Finally, there is a cosmetic issue. If  all
-old  versions of  questions are  kept around  this would  horribly clutter  the
+<code>quiz_question_versions</code>.
+
+</p><p>
+
+When a question is replaced for which there are already student attempts then
+all the attempt data gets associated to the new version of the question and is
+re-graded. This requires the question ids in the <code>quiz_attempts</code>,
+<code>quiz_states</code> and <code>quiz_newest_states</code> tables to be
+replaced by the new id. However we do also want to be able to reconstruct
+the quiz the way the student saw it when he gave his answers. For that purpose
+the id of the original question is always preserved in the 'originalquestion'
+field of the <code>quiz_states</code> table.
+
+</p><p>
+
+If  all
+old  versions of  questions are  kept around  this could  horribly clutter  the
 editing interface. Therefore a field called <code>hidden</code> was added to the
 <code>quiz_questions</code> table and all  old versions of edited  questions are
 automatically hidden. When this flag is  set to 1 the question is  not displayed
@@ -71,10 +86,12 @@ checked for that quiz as well.
 <a name='database'></a><h2>Database</h2>
 <p>
 
-The  changes  to  the  database   structure  are  limited  to  an   added  field
-(<code>hidden</code>) in the <code>quiz_questions</code> table and an additional
-table   called   <code>quiz_question_versions.   However,   dealing   with   the
-<code>quiz_questions</code> table has become slightly more complicated.
+The  changes  to  the  database   structure  are  limited  to  an
+added  field (<code>hidden</code>) in the
+<code>quiz_questions</code> table and an additional table   called
+<code>quiz_question_versions</code>.   However,   dealing   with the
+<code>quiz_questions</code> table has become slightly more
+complicated.
 
 </p><p>
 
@@ -104,15 +121,15 @@ the order shown below (compare with <strong>question.php</strong>):
 <ul>
     <li>
 
-    First a  new record  is inserted  into the <code>quiz_question_states</code>
-    table  for each  affected quiz  (i.e. each  quiz in  which the  questin was
+    First a  new record  is inserted  into the <code>quiz_question_versions</code>
+    table  for each  affected quiz  (i.e. each  quiz in  which the  question was
     replaced).
 
     </li><li>
 
-    Then, for each affected quiz, the <code>question</code> field is updated
-    with a comma separated list of question ids, where the old question id is
-    replaced with the new one.
+    Then, for each affected quiz, the comma separated list of question ids in the
+    <code>question</code> field is updated by replacing the old question id with
+    the new one.
 
     </li><li>
 
@@ -121,29 +138,21 @@ the order shown below (compare with <strong>question.php</strong>):
 
     </li><li>
 
-    Finally, if a question  has been versioned for  the first time after  a quiz
-    has  been   attempted,  the   <code>originalquestion</code>  field   in  the
-    <code>quiz_states</code>    table    (this    is    determined    by     the
-    <code>originalquestion</code> field  beeing set to '0').
+    In all attempts belonging to the old question the comma-separated list of
+    question ids in the <code>layout</code> field are changed by replacing the
+    old id by the new one.
 
     </li><li>
 
-    <p style="color:red;">
-    Question for Gustav:<br />
-    Should we also update the attempt->layout field at this point? Or do we  use
-    that to determine how the  student's attempt actually looked when  they took
-    the quiz?
-    <br />
-    That's what is causing bug #3311: the attempts->layout field is not updated,
-    so there are question ids in <code>attempts->layout</code>, which don't have
-    instances  associated  with  them. However,  we  need  information from  the
-    <code>quiz_question_instances</code>   table   (<code>grade</code>,    which
-    becomes <code>question->maxgrade</code> and  less importantly, I  think, the
-    instance id, which becomes <code>question->instance</code>).
-    <br />
-    In the remaining text I assume that we don't change
-    <code>attempt->layout</code>.
-    </p>
+    All states belonging to the old question are made to belong to the new
+    version by changing the id in the 'question' field. However if we are
+    replacing the original question then the id of this original version
+    is stored in the <code>originalquestion</code> field.
+
+    </li><li>
+
+    Finally we have to change the <code>questionid</code> field in <code>
+    quiz_newest_states</code>.
 
     </li>
 </ul>
