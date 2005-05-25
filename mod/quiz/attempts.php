@@ -234,12 +234,17 @@
 
     $select = 'SELECT '.$db->Concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).' AS uniqueid, qa.id AS attempt, u.id AS userid, u.firstname, u.lastname, u.picture, '.
               'qa.sumgrades, qa.timefinish, qa.timestart, qa.timefinish - qa.timestart AS duration ';
-    $from   = 'FROM mdl_user u LEFT JOIN mdl_quiz_attempts qa ON u.id = qa.userid ';
-    $where  = 'WHERE u.id IN ('.implode(',', array_keys($users)).') AND ('.($noattempts ? sql_isnull('qa.quiz').' OR ' : '') . 'qa.quiz = '.$quiz->id.') ';
+    $from   = 'FROM mdl_user u LEFT JOIN mdl_quiz_attempts qa ON (u.id = qa.userid AND qa.quiz = '.$quiz->id.') ';
+    $where  = 'WHERE u.id IN ('.implode(',', array_keys($users)).') ';
+
+    // Add extra limits if we 're not interested in students without attempts
+    if(!$noattempts) {
+        $where .= 'AND '.$db->IfNull('qa.attempt', '0').' != 0 ';
+    }
 
     // Add extra limits due to initials bar
     if($table->get_sql_where()) {
-        $where .= ' AND '.$table->get_sql_where();
+        $where .= 'AND '.$table->get_sql_where();
     }
 
     // Count the records NOW, before funky question grade sorting messes up $from
