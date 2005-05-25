@@ -22,11 +22,10 @@
 
 
 
-
 <tr valign="top">
     <td align="right">an_login:</td>
     <td>
-        <input type="text" name="an_login" value="<?php echo $frm->an_login ?>" />
+        <input type="text" name="an_login" value="<?php p($frm->an_login) ?>" />
     </td>
     <td>
     <?php  print_string("anlogin", "enrol_authorize") ?>
@@ -34,9 +33,16 @@
 </tr>
 
 <tr valign="top">
+    <td align="right"></td>
+    <td colspan="2">
+    <?php  print_string("chooseone", "enrol_authorize") ?>
+    </td>
+</tr>
+
+<tr valign="top">
     <td align="right">an_tran_key:</td>
     <td>
-        <input type="text" name="an_tran_key" value="<?php echo $frm->an_tran_key ?>" />
+        <input type="text" name="an_tran_key" value="<?php p($frm->an_tran_key) ?>" />
     </td>
     <td>
     <?php  print_string("antrankey", "enrol_authorize") ?>
@@ -46,7 +52,7 @@
 <tr valign="top">
     <td align="right">an_password:</td>
     <td>
-        <input type="text" name="an_password" value="<?php echo $frm->an_password ?>" />
+        <input type="text" name="an_password" value="<?php p($frm->an_password) ?>" />
     </td>
     <td>
     <?php  print_string("anpassword", "enrol_authorize") ?>
@@ -56,7 +62,7 @@
 <tr valign="top">
     <td align="right">an_referer:</td>
     <td>
-        <input type="text" name="an_referer" value="<?php echo $frm->an_referer ?>" />
+        <input type="text" name="an_referer" value="<?php p($frm->an_referer) ?>" />
     </td>
     <td>
     <?php  print_string("anreferer", "enrol_authorize") ?>
@@ -66,19 +72,19 @@
 <tr valign="top">
     <td align="right">an_test:</td>
     <td>
-        <input type="checkbox" value=1 name="an_test" <?php if ($frm->an_test) echo "checked=\"true\"" ?> />
+        <input type="checkbox" value="1" name="an_test" <?php if (!empty($frm->an_test)) echo "checked=\"true\"" ?> />
     </td>
     <td>
     <?php  print_string("antestmode", "enrol_authorize") ?>
     </td>
 </tr>
 
-<tr valign="top"><td colspan="3"><hr noshade size="1"></td></tr>
+<tr valign="top"><td colspan="3"><hr noshade="noshade" size="1"></td></tr>
 
 <tr valign="top">
     <td align="right">enrol_mailstudents:</td>
     <td>
-        <input type="checkbox" value=1 name="enrol_mailstudents" <?php if ($frm->enrol_mailstudents) echo "checked=\"true\"" ?> />
+        <input type="checkbox" value=1 name="enrol_mailstudents" <?php if (!empty($frm->enrol_mailstudents)) echo "checked=\"true\"" ?> />
     </td>
     <td>
     <?php  print_string("mailstudents") ?>
@@ -88,7 +94,7 @@
 <tr valign="top">
     <td align="right">enrol_mailteachers:</td>
     <td>
-        <input type="checkbox" value=1 name="enrol_mailteachers" <?php if ($frm->enrol_mailteachers) echo "checked=\"true\"" ?> />
+        <input type="checkbox" value=1 name="enrol_mailteachers" <?php if (!empty($frm->enrol_mailteachers)) echo "checked=\"true\"" ?> />
     </td>
     <td>
     <?php  print_string("mailteachers") ?>
@@ -98,7 +104,7 @@
 <tr valign="top">
     <td align="right">enrol_mailadmins:</td>
     <td>
-        <input type="checkbox" value=1 name="enrol_mailadmins" <?php if ($frm->enrol_mailadmins) echo "checked=\"true\"" ?> />
+        <input type="checkbox" value=1 name="enrol_mailadmins" <?php if (!empty($frm->enrol_mailadmins)) echo "checked=\"true\"" ?> />
     </td>
     <td>
     <?php  print_string("mailadmins") ?>
@@ -108,7 +114,7 @@
 <tr valign="top">
     <td align="right">enrol_allowinternal:</td>
     <td>
-        <input type="checkbox" value="1" name="enrol_allowinternal" <?php if ($frm->enrol_allowinternal) echo "checked=\"true\"" ?> />
+        <input type="checkbox" value="1" name="enrol_allowinternal" <?php if (!empty($frm->enrol_allowinternal)) echo "checked=\"true\"" ?> />
     </td>
     <td>
     <?php  print_string('allowinternal') ?>
