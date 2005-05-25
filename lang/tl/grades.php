@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // grades.php - created with Moodle 1.5 ALPHA (2005043000)
+      // grades.php - created with Moodle 1.5 ALPHA (2005051500)
 
 
 $string['addcategory'] = 'Magdagdag ng Kategoriya';
@@ -29,7 +29,7 @@ $string['errorreprintheadersnonnumeric'] = 'Nakatanggap ng di-bilang na halaga p
 $string['exceptions'] = 'Eksepsiyon';
 $string['excluded'] = 'Iniliban';
 $string['extracredit'] = 'Dagdag na Marka';
-$string['extracreditwarning'] = 'Tandaan: Ang paglalagay ng lahat ng aytem para sa isang kategoriya, sa dagdag na marka, ay magtatanggal sa mga ito sa kuwenta ng marka.  Dahil walang magiging kabuuan ng puntos.';
+$string['extracreditwarning'] = 'Tandaan: Kapag itinakda mong maging dagdag na marka ang lahat ng aytem ng isang kategoriya, matatanggal ang mga ito sa kuwentahan ng marka.  Dahil walang magiging kabuuang puntos.';
 $string['forstudents'] = 'Para sa mga Mag-aaral';
 $string['gradebook'] = 'Markáhan';
 $string['gradebookhiddenerror'] = 'Kasalukuyang nakatakda ang markáhan na itago ang lahat sa mga mag-aaral.';
@@ -45,7 +45,7 @@ $string['gradeitemremovemembers'] = 'Isama sa Pagmamarka';
 $string['gradeitems'] = 'Mga Aytem ng Marka';
 $string['gradeletter'] = 'Titik na Marka';
 $string['gradeletterhelp'] = 'Tulong sa Titik na Marka';
-$string['gradeletternote'] = 'Para mabura ang titik na marka, blangkuhin lamang ang alinman<br />sa tatlong text area para sa titik na iyon at iklik ang ipasa.';
+$string['gradeletternote'] = 'Para mabura ang titik na marka, blangkuhin lamang <br />ang alinman sa tatlong text area para sa titik na iyon <br />at iklik ang \"isave ang mga pagbabago\".';
 $string['gradepreferenceshelp'] = 'Tulong sa Mas-ibig para sa Marka';
 $string['grades'] = 'Mga Marka';
 $string['gradeweighthelp'] = 'Tulong sa May-timbang na Marka';
@@ -83,7 +83,7 @@ $string['percentdescending'] = 'Pagsunudsunurin ayon sa bahagdan pababa';
 $string['percentshort'] = '%%';
 $string['points'] = 'mga puntos';
 $string['pointsascending'] = 'Pagsunud-sunurin ayon sa mga puntos pataas';
-$string['pointsdescending'] = 'Pagsunud-sunurin ayon sa mg apuntos pababa';
+$string['pointsdescending'] = 'Pagsunud-sunurin ayon sa mga puntos pababa';
 $string['preferences'] = 'Mas-ibig';
 $string['rawpct'] = 'Hilaw %%';
 $string['reprintheaders'] = 'Muling iprint ang mga Header';
@@ -100,8 +100,8 @@ $string['setweights'] = 'Itakda ang mga Timbang';
 $string['showallstudents'] = 'Ipakita ang Lahat ng Mag-aaral';
 $string['showhiddenitems'] = 'Ipakita ang mga Nakatagong Aytem';
 $string['sort'] = 'pagsunud-sunurin';
-$string['sortbyfirstname'] = 'Pagsunud-sunirin ayon sa Unang pangalan';
-$string['sortbylastname'] = 'pagsunud-sunurin ayon sa Apelyido';
+$string['sortbyfirstname'] = 'Pagsunud-sunurin ayon sa unang pangalan';
+$string['sortbylastname'] = 'Pagsunud-sunurin ayon sa apelyido';
 $string['standarddeviation'] = 'Standard Deviation';
 $string['stats'] = 'Estadistika';
 $string['statslink'] = 'Mga Istat';
