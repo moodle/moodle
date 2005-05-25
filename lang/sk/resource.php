@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.5 ALPHA (2005051500)
+      // resource.php - created with Moodle 1.6 development (2005052400)
 
 
 $string['addresource'] = 'Prida» zdroj';
@@ -10,7 +10,7 @@ $string['configframesize'] = 'Keï je webová stránka alebo súbor zobrazovaný v rá
 $string['editingaresource'] = 'Upravi» zdroj ';
 $string['encryptedcode'] = 'Za¹ifrovaný kód';
 $string['example'] = 'Príklad';
-$string['exampleurl'] = 'http://www.prklad.sk/priecinok/subor.html';
+$string['exampleurl'] = 'http://www.priklad.sk/priecinok/subor.html';
 $string['filename'] = 'Názov súboru';
 $string['fulltext'] = 'Plný text';
 $string['htmlfragment'] = 'HTML fragment';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.5 ALPHA (2005051500)
+      // auth.php - created with Moodle 1.6 development (2005052400)
 
 
 $string['alternatelogin'] = 'Pokiaµ sem vlo¾íte nejaké URL, bude pou¾ité ako prihlasovacia stránka k tomuto systému. Táto Va¹a stránka by mala obsahova» formulár s vlastnos»ou \'action\' nastavenou na <strong>\'$a\'</strong>, ktorý vracia pole <strong>username</strong> a <strong>password</strong>.<br />Dbajte na to, aby ste vlo¾ili platné URL! V opaènom prípade by ste mohli komukoµvek vrátane seba zamedzi» prístup k týmto stránkam.<br />Ak chcete pou¾íva» ¹tandardnú prihlasovaciu stránku, nechajte toto pole prázdne.';
@@ -102,10 +102,11 @@ $string['auth_pop3mailbox'] = 'Meno po¹tovej schránky, s ktorou by mohol by» nad
 $string['auth_pop3port'] = 'Server port (110 je najbe¾nej¹í)';
 $string['auth_pop3title'] = 'Pou¾íva» POP3 server';
 $string['auth_pop3type'] = 'Typ servera. Ak vá¹ server pou¾íva certifikované zabezpeèenie, vyberte si pop3cert.';
-$string['auth_shib_convert_data'] = 'API pre úpravu dát';
-$string['auth_shib_convert_data_description'] = 'Toto API (aplikaèné rozhranie) Vám umo¾òuje ïalej upravova» dáta, ktoré máte k dispozícii zo systému Shibboleth. Viac infomácií <a href=\"../auth/shibboleth/README.txt\" target=\"_blank\">nájdete tu</a>.';
+$string['auth_shib_convert_data'] = 'API pre úpravu údajov';
+$string['auth_shib_convert_data_description'] = 'Toto API (aplikaèné rozhranie) Vám umo¾òuje ïalej upravova» údaje, ktoré máte k dispozícii zo systému Shibboleth. Viac infomácií <a href=\"../auth/shibboleth/README.txt\" target=\"_blank\">nájdete tu</a>.';
+$string['auth_shib_convert_data_warning'] = 'Súbor neexistuje alebo nie je èitatelný procesom web serveru!';
 $string['auth_shib_instructions'] = 'Pou¾ite <a href=\"$a\">prihlásenie cez Shibboleth</a>, pokiaµ Va¹a in¹titúcia tento systém podporuje.<br />V opaènom prípade pou¾ite normálny formulár pre prihlásenie.';
-$string['auth_shib_instructions_help'] = 'Tu mô¾ete vlo¾i» vlastné informácie o Va¹om systéme Shibboleth. Budú se zobrazova» na prihlasovacej stránke. Vlo¾ené informácie by maly obsahova» odkaz na zdroj chránený systémom Shibboleth, ktorý presmeruje pou¾ívateµov na &quot;<b>$a</b>&quot;, tak¾e sa pou¾ívatelia systému Shibboleth budú môc» prihlási» do Moodle. Ak ponecháte toto pole prázdne, budú se na prihlasovacej stránke zobrazova» v¹eobecné pokyny.';
+$string['auth_shib_instructions_help'] = 'Tu mô¾ete vlo¾i» vlastné informácie o Va¹om systéme Shibboleth. Budú se zobrazova» na prihlasovacej stránke. Vlo¾ené informácie by maly obsahova» odkaz na zdroj chránený systémom Shibboleth, ktorý presmeruje pou¾ívateµov na \"<b>$a</b>\", tak¾e sa pou¾ívatelia systému Shibboleth budú môc» prihlási» do Moodle. Ak ponecháte toto pole prázdne, budú se na prihlasovacej stránke zobrazova» v¹eobecné pokyny.';
 $string['auth_shib_only'] = 'Len pre Shibboleth';
 $string['auth_shib_only_description'] = 'Za¹krtnite túto voµbu, pokiaµ si chcete vynúti» prihlásenie za pomoci systému Shibboleth';
 $string['auth_shib_username_description'] = 'Názov premennej prostredia webserveru Shibboleth, ktorá má by» pou¾itá ako u¾ívateµské meno Moodle ';

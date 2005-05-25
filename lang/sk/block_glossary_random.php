@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // block_glossary_random.php - created with Moodle 1.5 ALPHA (2005051500)
+      // block_glossary_random.php - created with Moodle 1.6 development (2005052400)
 
 
 $string['addentry'] = 'Pridajte vá¹ obµúbený citát!';
@@ -20,7 +20,7 @@ $string['select_glossary'] = 'Vyberaj polo¾ky z tohoto slovníka';
 $string['showconcept'] = 'Zobrazuj pojem (hlavièku) pre ka¾dú polo¾ku';
 $string['title'] = 'Titul';
 $string['type'] = 'Ako má by» nová polo¾ka vybraná';
-$string['typehelp'] = '<b>Naposledy upravovaná polo¾ka</b> v¾dy zobrazuje poslednú upravovanú polo¾ku, zatiaµ èo <b>Náhodná polo¾ka</b> ju zaka¾dým náhodne vyberá. Voµba <b>Dal¹ia polo¾ka</b> prechádza slovníkom podµa poradia polo¾iek. Táto posledná voµba je veµmi u¾itoèná, pokiaµ zároveò nastavíte poèet dní. Tak si mô¾ete vytvori» blok obsahujúcí napr. <i>Citát tý¾dòa</i> èi <i>Tip pre dne¹ný deò</i>.';
+$string['typehelp'] = '<b>Naposledy upravovaná polo¾ka</b> v¾dy zobrazuje poslednú upravovanú polo¾ku, zatiaµ èo <b>Náhodná polo¾ka</b> ju zaka¾dým náhodne vyberá. Voµba <b>Ïal¹ia polo¾ka</b> prechádza slovníkom podµa poradia polo¾iek. Táto posledná voµba je veµmi u¾itoèná, pokiaµ zároveò nastavíte poèet dní. Tak si mô¾ete vytvori» blok obsahujúci napr. <i>Citát tý¾dòa</i> èi <i>Tip pre dne¹ný deò</i>.';
 $string['viewglossary'] = 'Viac citátov...';
 $string['whichfooter'] = 'Mô¾ete necha» zobrazova» odkazy na akcie slovníka, s ktorým je tento blok asociovaný. Blok bude zobrazova» iba tie akcie, ktoré sú v danom slovníku povolené.';
 

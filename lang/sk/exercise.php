@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // exercise.php - created with Moodle 1.5 ALPHA (2005051500)
+      // exercise.php - created with Moodle 1.6 development (2005052400)
 
 
 $string['absent'] = 'Chýba';
@@ -20,7 +20,7 @@ $string['assessmentofthissubmission'] = 'Hodnotenie tohto odovzdaného zadania';
 $string['assessments'] = 'Hodnotenia';
 $string['atthisstageyou'] = 'V tomto ¹tádiu ste dokonèili hodnotenie.<br />
 Na jeho základe mô¾ete chcie» svoju prácu prepracova».<br />
-Ak tak urobíte, nezapomeòte taktie¾ upravi» svoje hodnotenie.<br />
+Ak tak urobíte, nezabudnite taktie¾ upravi» svoje hodnotenie.<br />
 To mô¾ete vykona» kliknutím na odkaz Prehodnoti» uvedený ni¾¹ie.';
 $string['awaitingassessmentbythe'] = 'Èaká sa na hodnotenie od $a';
 $string['clearlateflag'] = 'Zmaza» oznaèenie Neskoro';
@@ -37,7 +37,7 @@ $string['deletesubmissionwarning'] = 'Upozornenie: táto úloha u¾ bola hodnotená 
 Rozhodne Vám ju doporuèujeme NEODSTRAÒOVA«.';
 $string['deleting'] = 'Odstraòuje sa';
 $string['description'] = 'Popis';
-$string['descriptionofexercise'] = 'Polo¾ka Zadávanie úlohy obsahuje popis cvièenia alebo úlohy, ktoré majú $a splni», zadaných vo Wordovskom dokumente alebo HTML súbore. Tento súbor sa skopíruje do predo¹lých cvièení tak, ¾e  u¾ívatelia majú sprístupnených $a cvièení. Je tie¾ mo¾né vytvori» sadu variant toho istého cvièenia alebo úlohy, opät vo Worde alebo v HTML, a skopírova» ich do cvièení, predtým, ako ho budú ma» $a sprístupnené.';
+$string['descriptionofexercise'] = 'Polo¾ka Zadávanie úlohy obsahuje popis cvièenia alebo úlohy, ktoré majú $a splni», zadaných vo Wordovskom dokumente alebo HTML súbore. Tento súbor sa skopíruje do predo¹lých cvièení tak, ¾e  u¾ívatelia majú sprístupnených $a cvièení. Je tie¾ mo¾né vytvori» sadu variant toho istého cvièenia alebo úlohy, opä» vo Worde alebo v HTML, a skopírova» ich do cvièení, predtým, ako ho budú ma» $a sprístupnené.';
 $string['detailsofassessment'] = 'Podrobnosti hodnotenia';
 $string['displayoffinalgrades'] = 'Zobrazenie koneèného poètu bodov';
 $string['doubleupload'] = 'Varovanie: toto rie¹enie úlohy bolo pravdepodobne poslané dvakrát. Choïte na stránku Administratíva a zistite, èi tento u¾ívateµ poslal dve rie¹enia v krátkom èasovom intervale. Predtým, ako budete pokraèova»,vyma¾te jedno z týchto rie¹ení.';
@@ -76,9 +76,9 @@ $string['mail6'] = 'Va¹e hodnotenie úlohy \'$a\' bolo posudzované';
 $string['mail7'] = 'Komentáre, ktoré uviedol $a, je mo¾né vidie» v Zadaní tejto úlohy.';
 $string['managingassignment'] = 'Správa cvièení';
 $string['maximum'] = 'Maximum';
-$string['maximumgradeforstudentassessments'] = '	Najvy¹¹í mo¾ný poèet bodov za hodnotenie ¹tudentov: $a';
+$string['maximumgradeforstudentassessments'] = 'Najvy¹¹í mo¾ný poèet bodov za hodnotenie ¹tudentov: $a';
 $string['maximumgradeforsubmissions'] = 'Najvy¹¹í mo¾ný poèet bodov za  rie¹enie: $a';
-$string['maximumsize'] = 'Najväè¹ia mo¾ná veµkosµ';
+$string['maximumsize'] = 'Najväè¹ia mo¾ná veµkos»';
 $string['mean'] = 'Priemer';
 $string['minimum'] = 'Minimum';
 $string['modulename'] = 'Cvièenie';

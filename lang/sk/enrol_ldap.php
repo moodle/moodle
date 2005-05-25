@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // enrol_ldap.php - created with Moodle 1.5 ALPHA (2005051500)
+      // enrol_ldap.php - created with Moodle 1.5 Beta (2005052300)
 
 
 $string['description'] = '<p>Na kontrolu Va¹ich zápisov, mô¾ete pou¾i» LDAP server. Predpokladom je, ¾e Vá¹ LDAP strom obsahuje skupiny, ktoré mapujú kurzy a ka¾dá z týchto skupín/kurzov obsahuje záznamy o u¾ívateµoch, ktoré mapujú ¹tudentov.</p>
@@ -21,6 +21,7 @@ $string['enrol_ldap_editlock'] = 'Uzamknú» hodnotu';
 $string['enrol_ldap_host_url'] = '©pecifikujte hos»ovský LDAP v URL forme, napr:  \'ldap://ldap.myorg.com/\'
 alebo \'ldaps://ldap.myorg.com/\'';
 $string['enrol_ldap_objectclass'] = 'Na vyhµadávanie kurzov sa pou¾íva objectClass. Obyèajne  \'posixGroup\'.';
+$string['enrol_ldap_search_sub'] = 'Hµada» úèastníkov skupiny  v subkontextoch.';
 $string['enrol_ldap_server_settings'] = 'Nastavenia LDAP servera';
 $string['enrol_ldap_student_contexts'] = 'Zoznam kontextov, kde sú umiestnené skupiny so zápismi ¹tudentov. Rozdielne kontexty oddeµte  \';\', napr:  \'ou=courses,o=org; ou=others,o=org\'';
 $string['enrol_ldap_student_memberattribute'] = 'Atribút u¾ívateµa, keï u¾ívatelia patria (sú zapísaní) do skupiny. Obyèajne \'member\'

@@ -1,11 +1,10 @@
 <?PHP // $Id$ 
-      // enrol_authorize.php - created with Moodle 1.5 ALPHA (2005051500)
+      // enrol_authorize.php - created with Moodle 1.6 development (2005052400)
 
 
 $string['anlogin'] = 'Authorize.net: Prihlasovacie meno';
-$string['anpassword'] = 'Authorize.net: Heslo (nie je po¾adované)';
-$string['anreferer'] = 'Sem vlo¾te URL referer, pokiaµ ho máte nastavený vo va¹om úète na authorize.net. Do HTTP po¾iadavku bude zaèlenená hlavièka &quot;Referer: URL&quot;.
-';
+$string['anpassword'] = 'Authorize.net: Heslo (nie je vy¾adované)';
+$string['anreferer'] = 'Sem vlo¾te URL referer, pokiaµ ho máte nastavený vo va¹om úète na authorize.net. Do HTTP po¾iadavku bude zaèlenená hlavièka \"Referer: URL\".';
 $string['antestmode'] = 'Authorize.net: Testovacia transakcia';
 $string['antrankey'] = 'Authorize.net: Transakèný kµúè';
 $string['ccexpire'] = 'Dátum zániku platnosti';
@@ -18,6 +17,6 @@ $string['description'] = 'Modul Authorize.net umo¾òuje pou¾íva» platený prístup 
 $string['enrolname'] = 'Authorize.net: Brána pre kreditné karty';
 $string['nameoncard'] = 'Meno karty';
 $string['sendpaymentbutton'] = 'Posla» platbu';
-$string['zipcode'] = 'Smerovacie èíslo';
+$string['zipcode'] = 'Po¹tové smerovacie èíslo';
 
 ?>

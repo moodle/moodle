@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.5 ALPHA (2005051500)
+      // editor.php - created with Moodle 1.6 development (2005052400)
 
 
 $string['about'] = 'O tomto editore';
@@ -29,10 +29,10 @@ $string['createanchor'] = 'Vytvori» návestie';
 $string['createfolder'] = 'Vytvori» prieèinok';
 $string['createlink'] = 'Vlo¾i» odkaz ';
 $string['cut'] = 'Vybra» výber';
-$string['cutpastemozilla'] = 'Bohu¾iaµ, pre vlo¾enie textu zo schránky momentálne nemô¾ete pou¾i» be¾nú klávesovú skratku èi tlaèítko Vlo¾i». Toto správanie je spôsobené bezpeènostným opatrením zabudovaným do niektorých verzií prehliadaèov Mozilla a Firefox.<br /><br />Existujú spôsoby, ako sa dá toto správanie obís», tak¾e vyskú¹ajte:<br />(1) Miesto CTRL+v skúste skratku SHIFT+Insert<br />(2) Pou¾ite ponuku Úpravy->Vlo¾i» v menu vá¹ho prehliadaèa<br />(3) Upravte si nastavenie vá¹ho prehliadaèa v súbore user.js<br />(4) Na Linuxu skúste vlo¾i» text pomocou nastaveného tlaèítka my¹i<br /><br />Pre viac informácií kliknite na tlaèítko OK, pre návrat do editoru stlaète Cancel, Storno èi Zru¹i».';
+$string['cutpastemozilla'] = 'Bohu¾iaµ, pre vlo¾enie textu zo schránky momentálne nemô¾ete pou¾i» be¾nú klávesovú skratku èi tlaèidlo Vlo¾i». Toto správanie je spôsobené bezpeènostným opatrením zabudovaným do niektorých verzií prehliadaèov Mozilla a Firefox.<br /><br />Existujú spôsoby, ako sa dá toto správanie obís», tak¾e vyskú¹ajte:<br />(1) Miesto CTRL+v skúste skratku SHIFT+Insert<br />(2) Pou¾ite ponuku Úpravy->Vlo¾i» v menu vá¹ho prehliadaèa<br />(3) Upravte si nastavenie vá¹ho prehliadaèa v súbore user.js<br />(4) Na Linuxe skúste vlo¾i» text pomocou nastaveného tlaèidla my¹i<br /><br />Pre viac informácií kliknite na tlaèidlo OK, pre návrat do editora stlaète Cancel, Storno èi Zru¹i».';
 $string['delete'] = 'Vymaza»';
 $string['filebrowser'] = 'Prehliadaè súborov';
-$string['findwhat'] = 'Hlada»';
+$string['findwhat'] = 'Hµada»';
 $string['fontname'] = 'Názov fontu';
 $string['fontsize'] = 'Veµkos» fontu';
 $string['forecolor'] = 'Farba fontu';
@@ -69,7 +69,7 @@ $string['linktargetself'] = 'V tom istom rámci';
 $string['linktargettop'] = 'V tom istom okne';
 $string['linktitle'] = 'Nadpis';
 $string['linkurl'] = 'URL';
-$string['matchcase'] = 'Citlivé na velkos»';
+$string['matchcase'] = 'Citlivé na veµkos»';
 $string['middle'] = 'Uprostred (Middle)';
 $string['minimize'] = 'Minimalizova» editor';
 $string['move'] = 'Presunú»';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.5 ALPHA (2005051500)
+      // admin.php - created with Moodle 1.6 development (2005052400)
 
 
 $string['adminseesallevents'] = 'Administrátori mô¾u prezera» v¹etky udalosti';
@@ -19,7 +19,7 @@ $string['configautologinguests'] = 'Mali by by» náv¹tevníci automaticky prihlaso
 $string['configcachetext'] = 'Toto nastavenie mô¾e zrýchli» prevádzku systému predov¹etkým pre tie stránky, ktoré sú obsahovo rozsiahlej¹ie alebo pou¾ívajú textové filtre. Kópie textov sa tu budú uchováva» v pôvodnej forme poèas vopred stanoveného èasového rozpätia. Ak sa tu nastavia nízke hodnoty parametrov, mô¾e to spomali» v¹etky èinnosti, ale ak sa tu nastavia pomerne vysoké hodnoty parametrov, bude obnova textov (napr. pri pridaní nových linkov) trva» veµmi dlho.';
 $string['configclamactlikevirus'] = 'Pova¾ova» súbory za napadnuté vírusom';
 $string['configclamdonothing'] = 'Pova¾ova» súbory za normálne';
-$string['configclamfailureonupload'] = 'Ak ste nastavili clam, aby skenoval naèítavané súbory, ale nie je správne nastavené alebo z neznámych dôvodov nereaguje tak, ako má, ako sa má systém správa»? Ak si vyberiete \'Pova¾ova» súbory za napadnuté vírusom\', budú súbory presunuté do karanténej oblasti alebo vymazané. Ak si vyberiete \'Pova¾ova» súbory za normálne\', budú súbory presunuté na to miesto, ktoré si Vy urèíte bez problémov. Samozrejme, administrátori budú upozornení, ak clam nebude fungova». Ak si vyberiete \'Pova¾ova» súbory za napadnuté vírusom\' a z neznámych dôvodov clam nebude reagova» správne (väè¹inou je nesprávne nastavená cesta ku clam), v¹etky naèítané súbory budú presunuté do zadanej karanténej oblasti alebo vymazané. Buïte opatrný pri tomto natavení.';
+$string['configclamfailureonupload'] = 'Ak ste nastavili clam, aby skenoval naèítavané súbory, ale nie je správne nastavené alebo z neznámych dôvodov nereaguje tak, ako má, ako sa má systém správa»? Ak si vyberiete \'Pova¾ova» súbory za napadnuté vírusom\', budú súbory presunuté do karanténnej oblasti alebo vymazané. Ak si vyberiete \'Pova¾ova» súbory za normálne\', budú súbory presunuté na to miesto, ktoré si Vy urèíte bez problémov. Samozrejme, administrátori budú upozornení, ak clam nebude fungova». Ak si vyberiete \'Pova¾ova» súbory za napadnuté vírusom\' a z neznámych dôvodov clam nebude reagova» správne (väè¹inou je nesprávne nastavená cesta ku clam), v¹etky naèítané súbory budú presunuté do zadanej karanténnej oblasti alebo vymazané. Buïte opatrný pri tomto natavení.';
 $string['configcountry'] = 'Ak si tu vyberiete krajinu, tak bude táto krajina nastavá aj pre nové u¾ívateµské kontá. Ak chcete, aby si u¾ívatelia sami vybrali krajinu, nechajte ju tu nenastavenú.';
 $string['configdbsessions'] = 'Ak povolené, toto nastavenie bude pou¾íva» databázu na uchovanie informácií o aktuálnych sedeniach (lekciách). Toto je výhodné pou¾i» najmä pri obsahovo rozsiahlej¹ích stránkach zalo¾ených na zoskupení serverov. Pre väè¹inu stránok by táto voµba mala zosta» neaktívna, aby sa namiesto databázy pou¾íval disk servera. Prosím berte na vedomie, ¾e ak teraz zmeníte toto nastavenie, v¹etci u¾ívatelia (vrátane vás) budú zo systému odhlásení.';
 $string['configdebug'] = 'Ak toto zapnete, PHP zvý¹i oznamovanie chýb tak, ¾e bude uvádzaných viac varovaní. Toto je u¾itoèné len pre tvorcov-programátorov.';
@@ -61,7 +61,7 @@ $string['configmaxeditingtime'] = 'Toto urèuje èas, ktorý majú µudia na upravova
 $string['configmessaging'] = 'Má by» aktivovaný systém posielania správ medzi u¾ívateµmi stránky?';
 $string['confignoreplyaddress'] = 'Emaily sa niekedy posielajú v mene pou¾ívateµa (napr. prispievanie do fór). Emailová adresa, ktorú tu ¹pecifikujete, bude pou¾ívaná ako adresa \'Od koho\' v prípade, ak prijímatelia nie sú schopní priamo odpoveda» pou¾ívateµovi (napr. keï si u¾ívateµ vyberie zachovanie súkromnej adresy).';
 $string['confignotifyloginfailures'] = 'Ak sa uchovávajú záznamy o neúspe¹ných pokusoch o prihlásenie do systému, mô¾u by» tieto odoslané emailom. Kto by si mal prezera» tieto oznámenia?';
-$string['confignotifyloginthreshold'] = 'Ak sú aktíne oznámenia o neúspe¹ných pokusoch o prihlásenie do systému, koµko takýchto prihlásení od jedného u¾ívateµa alebo jednej IP adresy sa má zobrazova» v oznámeniach?';
+$string['confignotifyloginthreshold'] = 'Ak sú aktívne oznámenia o neúspe¹ných pokusoch o prihlásenie do systému, koµko takýchto prihlásení od jedného u¾ívateµa alebo jednej IP adresy sa má zobrazova» v oznámeniach?';
 $string['configopentogoogle'] = 'Ak aktivujete toto nastavenie, potom Google bude ma» oprávnenie vstupu do Va¹ej stránky ako Hos». Naviac, µudia prichádzajúci na Va¹u stránku z prostredia vyhµadávaèa Google, budú automaticky prihlasovaní ako Hostia. Majte prosím na vedomí, ¾e takýto prístup mô¾e by» realizovaný len do tých kurzov, ktoré povoµujú vstup hos»ov. ';
 $string['configpathtoclam'] = 'Cesta do Clam AV. Pravdepodobne nieèo ako usr/bin/clamscan alebo /usr/bin/clamdscan. Túto cestu potrebujete, aby Clam AV fungoval správne.';
 $string['configproxyhost'] = 'Ak tento <b>server</b> potrebuje pou¾íva» server proxy (napríklad bránu firewall) pri prístupe na internet, tak tu uveïte hostiteµské meno a port. Ak nie, nechajte to prázdne.';
@@ -75,7 +75,7 @@ $string['configsectionoperatingsystem'] = 'Operaèný systém';
 $string['configsectionpermissions'] = 'Práva';
 $string['configsectionsecurity'] = 'Bezpeènos»';
 $string['configsectionuser'] = 'U¾ívateµ';
-$string['configsecureforms'] = 'Moodle mô¾e pou¾i» dodatoèné bezpeènostné opatrenia pri akceptovaní vstupov z web formulárov. Ak to umo¾níte, potom sa bude overova» premenná HTTP_REFERER, ktorú po¹le browser a porovná sa s aktuálnou adresou formulára. Toto mô¾e spôsobi» (vo veµmi zriedkavých prípadoch) problémy, napr. ak je u¾ívateµ za firewallom, ktorý je nakonfigurovaný tak, ¾e odstráni premennú HTTP_REFERER. Vtedy sa mô¾e sta», ¾e formulár vám \'stvrdne\'. Ak sa na to u¾ívatelia s»a¾ujú, mô¾ete deaktivova» toto nastavenie. V tomto prípade sa v¹ak vystavujete väè¹ím útokom zvonku (brute force password attacks).
+$string['configsecureforms'] = 'Moodle mô¾e pou¾i» dodatoèné bezpeènostné opatrenia pri akceptovaní vstupov z web formulárov. Ak to umo¾níte, potom sa bude overova» premenná HTTP_REFERER, ktorú po¹le browser a porovná sa s aktuálnou adresou formulára. Toto mô¾e spôsobi» (vo veµmi zriedkavých prípadoch) problémy, napr. ak je u¾ívateµ za firewallom, ktorý je nakonfigurovaný tak, ¾e odstráni premennú HTTP_REFERER. Vtedy sa mô¾e sta», ¾e formulár vám \'zmrzne\'. Ak sa na to u¾ívatelia s»a¾ujú, mô¾ete deaktivova» toto nastavenie. V tomto prípade sa v¹ak vystavujete väè¹ím útokom zvonku (brute force password attacks).
 Ak si nie ste istý, ponechajte túto voµbu nastavenú na \'Yes\'. ';
 $string['configsessioncookie'] = 'Toto nastavenie upravuje meno cookie pou¾ívaného v Moodle sedeniach(lekciách). Táto mo¾nos» je voliteµná a u¾itoèná v tom prípade, ak je spustená viac ako jedna kópia Moodle v rámci tej istej www stránky (aby ste sa vyhli popleteniu cookies).';
 $string['configsessiontimeout'] = 'Ak sú µudia pripojení na túto stránku dlho neèinní (bez s»ahovania stránok), sú automaticky odpojení. Táto premenná urèuje, aký dlhý by mal by» ten èasový interval neèinnosti.';
@@ -99,7 +99,7 @@ $string['editstrings'] = 'Upravi» re»azce';
 $string['filterall'] = 'Filtrova» v¹etky re»azce';
 $string['filteruploadedfiles'] = 'Filtrova» prená¹ané súbory';
 $string['helpadminseesall'] = 'Mô¾u si administrátori prezera» v¹etky udalosti kalendára, alebo len tie, ktoré sa ich týkajú? ';
-$string['helpcalendarsettings'] = 'Konfigurova» viaceré apekty kalendára týkajúce sa dátumu/èasu v prostredí Moodle';
+$string['helpcalendarsettings'] = 'Konfigurova» viaceré aspekty kalendára týkajúce sa dátumu/èasu v prostredí Moodle';
 $string['helpforcetimezone'] = 'Mô¾ete povoli» u¾ívateµom, aby si individuálne zvolili ich vlastné èasové pásmo alebo vnúti» èasové pásmo pre ka¾dého.';
 $string['helpsitemaintenance'] = 'Pre aktualizácie a ïal¹iu údr¾bu';
 $string['helpstartofweek'] = 'Ktorým dòom v tý¾dni by sa mal zaèína» tý¾deò v kalendári?';
@@ -116,16 +116,17 @@ $string['sitemaintenancemode'] = 'Re¾im údr¾by';
 $string['sitemaintenanceoff'] = 'Re¾im údr¾by bol vypnutý a web stránka bude dalej be¾a» normálne';
 $string['sitemaintenanceon'] = 'Va¹a web stránka je v re¾ime údr¾by (prihlási» sa a pou¾íva» web stránky mô¾u iba správci).';
 $string['sitemaintenancewarning'] = 'Va¹a web stránka je v re¾ime údr¾by (prihlási» sa a pou¾íva» web stránky mô¾u iba správci). Pre návrat k  normálnej prevádzke stránky <a href=\"maintenance.php\">vypnite re¾im údr¾by</a>.';
-$string['therewereerrors'] = 'Vo Va¹ich údajoch boli nájdené nejaké chyby';
+$string['tabselectedtofront'] = 'Mal by by» oznaèený tag v aktuálnom riadku v tabuµkách s tabulátorom umiestnený vpredu?';
+$string['therewereerrors'] = 'Vo Va¹ich údajoch boli nájdené chyby';
 $string['timezoneforced'] = 'Toto je vnútené správcom web stránok';
 $string['timezoneisforcedto'] = 'Vnúti» pou¾itie pre v¹etkých pou¾ívateµov';
 $string['timezonenotforced'] = 'U¾ívateµ si mô¾e vybra» vlastnú èasovú zónu';
 $string['upgradeforumread'] = 'Nová vlastnos» pridaná do Moodle 1.5 je sledovanie èítaných/neèítaných príspevkov do fór.<br />
 Pre pou¾itie tejto funkcie je potrebné <a href=\"$a\">aktualizova» tabuµky</a>.';
-$string['upgradeforumreadinfo'] = 'Nová vlastnos» pridaná do Moodle 1.5 je sledovanie èítaných/neèítaných príspevkov do fór. Pre pou¾itie tejto funkcie je potrebné aktualizova» tabuµky v¹etkymi informáciami pre sledovanie existujúcich príspevkov. Toto mô¾e trva» podµa veµkosti Va¹ich web stránok a¾ niekoµko hodín a mô¾e to veµmi zata¾i» vá¹ databázový server. Napriek tomu bude va¹a web stránka stále funkèná a u¾ívatelia nebudú zasiahnutý. Keï tento proces na¹tartujete, musí by» dokonèený (musíte ponecha» okno prehliadaèa otvorené). Napriek tomu, pokiaµ tento proces zastavíte zatvorením okna, nemusíte sa bá», mô¾ete ho na¹tartova» znovu.<br /><br />
+$string['upgradeforumreadinfo'] = 'Nová vlastnos» pridaná do Moodle 1.5 je sledovanie èítaných/neèítaných príspevkov do fór. Pre pou¾itie tejto funkcie je potrebné aktualizova» tabuµky v¹etkými informáciami pre sledovanie existujúcich príspevkov. Toto mô¾e trva» podµa veµkosti Va¹ich web stránok a¾ niekoµko hodín a mô¾e to veµmi za»a¾i» vá¹ databázový server. Napriek tomu bude va¹a web stránka stále funkèná a u¾ívatelia nebudú zasiahnutý. Keï tento proces na¹tartujete, musí by» dokonèený (musíte ponecha» okno prehliadaèa otvorené). Napriek tomu, pokiaµ tento proces zastavíte zatvorením okna, nemusíte sa bá», mô¾ete ho na¹tartova» znovu.<br /><br />
 Chcete na¹tartova» aktualizáciu teraz?';
 $string['upgradelogs'] = 'Va¹e staré záznamy musia by» aktualizované, aby bol systém plne funkèný.<a href=\"$a\" title=\"Viac informácií\">Viac informácií</a>';
-$string['upgradelogsinfo'] = 'Nedávno boli prevedené nejaké zmeny týkajúce sa spôsobu, ako sú záznamy uchovávané. Aby ste si mohli prezera» v¹etky Va¹e staré záznamy, musíte ich aktualizova». Toto mô¾e trva» dos» dlho (napr. niekoµko hodín - to zále¾í od Va¹ej stránky) a mô¾e to dos» za»a¾i» samotnú databázu u obsiahlej¹ích stránok. Ak tento proces raz zaènete, musíte ho aj dokonèi» (nechajte otvorené okno v prehliadaèi). Neobávjte sa, Va¹a stránka bude pre ostatných u¾ívateµov fungova» bez problémov, pokým Vy budete aktualizova» záznamy. <br /><br />Chcete aktualizova» va¹e záznamy teraz?';
+$string['upgradelogsinfo'] = 'Nedávno boli prevedené nejaké zmeny týkajúce sa spôsobu, ako sú záznamy uchovávané. Aby ste si mohli prezera» v¹etky Va¹e staré záznamy, musíte ich aktualizova». Toto mô¾e trva» dos» dlho (napr. niekoµko hodín - to zále¾í od Va¹ej stránky) a mô¾e to dos» za»a¾i» samotnú databázu u obsiahlej¹ích stránok. Ak tento proces raz zaènete, musíte ho aj dokonèi» (nechajte otvorené okno v prehliadaèi). Neobávajte sa, Va¹a stránka bude pre ostatných u¾ívateµov fungova» bez problémov, pokým Vy budete aktualizova» záznamy. <br /><br />Chcete aktualizova» va¹e záznamy teraz?';
 $string['upgradesure'] = '<p>Va¹e súbory v Moodle boli zmenené a Vy sa práve chystáte upgradova» Vá¹ server na túto verziu:</p>
 <p><b>$a</b></p>
 <p>Ak to teraz zaènete, u¾ sa nemô¾ete vráti» spä».</p>
