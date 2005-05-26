@@ -1,12 +1,18 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
+      // lesson.php - created with Moodle 1.5 ALPHA (2005050600)
 
 
+$string['accesscontrol'] = 'Øízení pøístupu';
 $string['actionaftercorrectanswer'] = 'Akce po správné odpovìdi';
 $string['addabranchtable'] = 'Pøidat rozcestník';
 $string['addanendofbranch'] = 'Pøidat konec vìtve';
 $string['addaquestionpage'] = 'Pøidat stránku s otázkou';
 $string['addcluster'] = 'Pøidat seskupení';
+$string['addedabranchtable'] = 'Pøidán rozcestník';
+$string['addedanendofbranch'] = 'Pøidán konec vìtve';
+$string['addedaquestionpage'] = 'Pøidána stránka s otázkou';
+$string['addedcluster'] = 'Pøidáno seskupení';
+$string['addedendofcluster'] = 'Pøidán konec seskupení';
 $string['addendofcluster'] = 'Pøidat konec seskupení';
 $string['answer'] = 'Odpovìï';
 $string['answeredcorrectly'] = 'zodpovìzeno správnì.';
@@ -42,7 +48,9 @@ $string['correctanswerscore'] = 'Skóre pøi správné odpovìdi';
 $string['correctresponse'] = 'Reakce pøi správné odpovìdi';
 $string['customscoring'] = 'Osobní skórování';
 $string['deadline'] = 'Uzávìrka';
+$string['defaultessayresponse'] = 'Va¹e kompozice bude ohodnocena va¹ím vyuèujícím v kurzu.';
 $string['deleteattempts'] = 'Odstranit záznamy o pokusech studentù absolvovat tuto pøedná¹ku';
+$string['deletedpage'] = 'Odebrat stránku';
 $string['deleting'] = 'Odstraòování';
 $string['deletingpage'] = 'Odstranìní stránky: $a';
 $string['description'] = 'Popis';
