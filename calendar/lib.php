@@ -598,8 +598,8 @@ function calendar_top_controls($type, $data) {
             $dayname = calendar_wday_name($date['weekday']);
             $prevdate = usergetdate(make_timestamp($data['y'], $data['m'], $data['d'] - 1));
             $nextdate = usergetdate(make_timestamp($data['y'], $data['m'], $data['d'] + 1));
-            $prevname = calendar_wday_name($prevdate['weekday']);
-            $nextname = calendar_wday_name($nextdate['weekday']);
+            $prevname = $prevdate['weekday'];
+            $nextname = $nextdate['weekday'];
             $content .= '<table class="calendar-controls"><tr>';
             $content .= '<td class="previous"><a href="'.calendar_get_link_href('view.php?view=day&amp;', $prevdate['mday'], $prevdate['mon'], $prevdate['year']).'">&lt;&lt; '.$prevname."</a></td>\n";
 
