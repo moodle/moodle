@@ -1,4 +1,4 @@
-<?PHP // $Id$ 
+<?PHP // $Id$
       // moodle.php - created with Moodle 1.6 development (2005052400)
 
 
@@ -311,7 +311,7 @@ $string['edit'] = 'Upravi» $a';
 $string['editcoursesettings'] = 'Upravi» nastavenia kurzu';
 $string['editfiles'] = 'Upravi» súbory';
 $string['editgroupprofile'] = 'Upravi» profil skupiny';
-$string['editinga'] = 'Upravovanie $a';
+$string['editinga'] = 'Upravi» $a';
 $string['editingteachershort'] = 'Editor';
 $string['editlock'] = 'Túto hodnotu nemô¾ete upravova»!';
 $string['editmyprofile'] = 'Upravi» profil';
@@ -533,7 +533,7 @@ $string['hiddensectionsinvisible'] = 'Skryté sekcie budú pre ostatných úplne nev
 $string['hide'] = 'Skry»';
 $string['hideadvancedsettings'] = 'Skry» roz¹írené nastavenia';
 $string['hidepicture'] = 'Skry» obrázky';
-$string['hidesettings'] = 'Skry» nasravenia';
+$string['hidesettings'] = 'Skry» nastavenia';
 $string['hits'] = 'Obµúbené';
 $string['hitsoncourse'] = 'Obµúbené v $a->coursename pre $a->username';
 $string['hitsoncoursetoday'] = 'Dne¹ná obµúbenos» v $a->coursename pre $a->username';
@@ -814,7 +814,6 @@ $string['pageheaderconfigablock'] = 'Konfiguruje sa blok v %%fullname%%';
 $string['parentcoursenotfound'] = 'Nebol nájdený rodièovský (nadradený) kurz!';
 $string['parentcoursenotmetacourse'] = 'Rodièovský (nadradený) kurz nie je meta kurz!';
 $string['parentfolder'] = 'Rodièovský prieèinok';
-$string['parentlanguage'] = '<<PREKLADATELIA: Ak Vá¹ jazyk má Rodièovský Jazyk, ktorý by mal Moodle pou¾íva», ak v súbore jazykov chýbajú urèité re»azce, potom tu ¹pecifikujte jeho kód. Ak túto voµbu necháte prázdnu, potom sa automaticky bude pou¾íva» anglický jazyk. Príklad: nl>>';
 $string['participants'] = 'Úèastníci';
 $string['password'] = 'Heslo';
 $string['passwordchanged'] = 'Heslo bolo zmenené';
@@ -1049,7 +1048,7 @@ $string['update'] = 'Aktualizova»';
 $string['updated'] = 'Aktualizované $a';
 $string['updatemyprofile'] = 'Aktualizova» profil';
 $string['updatesevery'] = 'Aktualizuje ka¾dých $a sekúnd';
-$string['updatethis'] = 'Aktualizova» toto $a';
+$string['updatethis'] = 'Aktualizova» $a';
 $string['updatethiscourse'] = 'Aktualizova» tento kurz';
 $string['updatinga'] = 'Aktualizuje $a';
 $string['updatingain'] = 'Aktualizuje $a->what v $a->in';

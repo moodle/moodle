@@ -13,6 +13,7 @@ $string['ccno'] = 'Èíslo kreditnej karty';
 $string['cctype'] = 'Typ kreditnej karty';
 $string['ccvv'] = 'CV2';
 $string['ccvvhelp'] = 'Pozrite sa na zadnú stranu karty (posledné 3 èísla)';
+$string['chooseone'] = 'Vypí¹te jedno alebo obidve nasledujúce polia';
 $string['description'] = 'Modul Authorize.net umo¾òuje pou¾íva» platený prístup ku kurzom cez poskytovateµov kreditných kariet. Pokiaµ je cena niektorého kurzu nulová, nebude od ¹tudentov vy¾adovaná platba za vstup. Cenu je mo¾né nastavi» globálne pre celý web a tie¾ pre ka¾dý kurz osobitne. Pokiaµ je nastavená cena za kurz, globálne nastavenie sa neberie do úvahy.';
 $string['enrolname'] = 'Authorize.net: Brána pre kreditné karty';
 $string['nameoncard'] = 'Meno karty';
