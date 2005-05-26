@@ -291,6 +291,14 @@
         error("You need to be an admin user to use this page.", "$CFG->wwwroot/login/index.php");
     }
 
+/// Check if we are returning from moodle.org registration and if so, we mark that fact to remove reminders
+
+    if (!empty($_GET['id'])) {
+        if ($_GET['id'] == $CFG->siteidentifier) {
+            set_config('registered', time());
+        }
+    }
+
 /// At this point everything is set up and the user is an admin, so print menu
 
     $stradministration = get_string("administration");
@@ -313,6 +321,18 @@
 /// Alert if we are currently in maintenance mode
     if (file_exists($CFG->dataroot.'/1/maintenance.html')) {
         print_simple_box(get_string('sitemaintenancewarning', 'admin') , 'center');
+    }
+
+/// Print slightly annoying registration button every six months   ;-)
+    if (!isset($CFG->registered) || $CFG->registered < (time() - 3600*24*30*6)) {
+        $options = array();
+        $options['sesskey'] = $USER->sesskey;
+        print_simple_box_start('center');
+        echo '<div align="center">';
+        print_string('pleaseregister', 'admin');
+        print_single_button('register.php', $options, get_string('registration'));
+        echo '</div>';
+        print_simple_box_end();
     }
 
     $table->tablealign = "right";
@@ -410,6 +430,7 @@
     echo '</td>';
 
     echo '<td align="center" width="33%">';
+    $options = array();
     $options['sesskey'] = $USER->sesskey;
     print_single_button('register.php', $options, get_string('registration'));
     echo '</td></tr></table>';
