@@ -18,12 +18,13 @@ class enrolment_plugin extends enrolment_base {
 function print_entry($course) {
     global $CFG, $USER, $form;
 
-    $strloginto = get_string("loginto", "", $course->shortname);
-    $strcourses = get_string("courses");
-    $teacher = get_teacher($course->id);
-
     if ($this->zero_cost($course)) {
-        parent::print_entry($course);
+        if (!empty($CFG->enrol_allowinternal)) {
+            parent::print_entry($course);
+        } else {
+            print_header();
+            notice(get_string("enrolmentnointernal"), $CFG->wwwroot);
+        }
     } else {
         // check payment
         $this->check_paid();
@@ -34,6 +35,10 @@ function print_entry($course) {
             redirect($sdestination);
             exit;
         }
+
+        $strloginto = get_string("loginto", "", $course->shortname);
+        $strcourses = get_string("courses");
+        $teacher = get_teacher($course->id);
 
         print_header($strloginto, $course->fullname, "<a href=\"$CFG->wwwroot/course/\">$strcourses</a> -> $strloginto");
         print_course($course, "80%");
@@ -75,7 +80,12 @@ function print_entry($course) {
 /// Override: check_entry()
 function check_entry($form, $course) {
     if ($this->zero_cost($course)) {
-    	parent::check_entry($form, $course);
+        if (!empty($CFG->enrol_allowinternal)) {
+            parent::check_entry($form, $course);
+        } else {
+            print_header();
+            notice(get_string("enrolmentnointernal"), $CFG->wwwroot);
+        }
     } else {
     	$this->cc_submit($form, $course);
     }
@@ -93,7 +103,9 @@ function cc_submit($form, $course)
     		return;
     	}
 
-    if (! CCVal($form->cc, $form->cctype)) {
+    $exp_date = (($form->ccexpiremm<10) ? strval('0'.$form->ccexpiremm) : strval($form->ccexpiremm)) . ($form->ccexpireyyyy);
+
+    if (! CCVal($form->cc, $form->cctype, $exp_date)) {
     	$this->errormsg = get_string("ccinvalid", "enrol_authorize");
     	return;
     }
@@ -122,7 +134,7 @@ function cc_submit($form, $course)
     	'x_card_code'		=> $form->cvv,
     	'x_currency_code'	=> $CFG->enrol_currency,
     	'x_amount'			=> $this->get_course_cost($course),
-    	'x_exp_date'		=> (($form->ccexpiremm<10) ? strval('0'.$form->ccexpiremm) : strval($form->ccexpiremm)) . ($form->ccexpireyyyy),
+    	'x_exp_date'		=> $exp_date,
     	'x_email'			=> $USER->email,
     	'x_email_customer'	=> 'False',
     	'x_cust_id'			=> $USER->id,
@@ -242,7 +254,7 @@ function cc_submit($form, $course)
     		// begin: authorize_table
     		$cclast4 = substr($form->cc, -4);
     		$datax->cclastfour = ($cclast4 === false) ? '0000' : $cclast4;
-    		$datax->ccexp = $formdata['x_exp_date'];
+    		$datax->ccexp = $exp_date;
     		$datax->cvv = $form->cvv;
     		$datax->ccname = $formdata['x_first_name'] . " " . $formdata['x_last_name'];
     		$datax->courseid = $course->id;
@@ -353,7 +365,7 @@ function config_form($frm) {
     	    notify("an_tran_key or an_password required");
         }
     }
-    include("$CFG->dirroot/enrol/authorize/config.html");
+    include($CFG->dirroot.'/enrol/authorize/config.html');
 }
 
 function check_openssl_loaded() {
