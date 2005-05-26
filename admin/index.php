@@ -324,6 +324,8 @@
     }
 
 /// Print slightly annoying registration button every six months   ;-)
+/// You can set the "registered" variable to something far in the future 
+/// if you really want to prevent this.   eg  9999999999
     if (!isset($CFG->registered) || $CFG->registered < (time() - 3600*24*30*6)) {
         $options = array();
         $options['sesskey'] = $USER->sesskey;
