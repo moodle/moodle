@@ -208,6 +208,25 @@ class quiz_default_questiontype {
         return $result;
     }
 
+    /**
+    * Changes all states for a question in a list of attempts over to a new question
+    *
+    * This is used by the versioning code if the teacher requests that a question
+    * gets replaced by the new version. In order for the attempts to be regraded
+    * properly all data in the states referring to the old question need to be
+    * changed to refer to the new version instead. In particular for question types
+    * that use the answers table the answers belonging to the old question have to
+    * be changed to those belonging to the new version.
+    *
+    * @param integer $oldquestionid  The id of the old question
+    * @param object $newquestion    The new question
+    * @param array  $attempts       An array of all attempt objects in whose states 
+    *                               replacement should take place
+    */
+    function change_states_question($oldquestionid, $newquestion, $attemtps) {
+        echo 'Not yet implemented';
+        return;
+    }
 
     /**
     * Loads the question type specific options for the question.
@@ -920,6 +939,9 @@ class quiz_default_questiontype {
     // It prints the table of quizzes in which the question is used
     // containing checkboxes to allow the teacher to replace the old question version
 
+        // Disable until the versioning code has been fixed
+        return;
+
         // no need to display replacement options if the question is new
         if(empty($question->id)) {
             return true;
@@ -1454,23 +1476,25 @@ function quiz_extract_responses($questions, $responses, $defaultevent) {
 * @return boolean            Indicates success/failure
 * @param object $question    A question object
 * @param array $quizlist     An array of quiz ids, in which the question should
-*                            be regraded. If quizlist is the empty array, all
-*                            quizzes are affected.
+*                            be regraded. If quizlist == 'all' all quizzes are affected
 */
 function quiz_regrade_question_in_quizzes($question, $quizlist) {
+
+    // Disable until tested
+    return;
 
     if (empty($quizlist)) {
         return;
     }
 
     if ($quizlist == 'all') { // assume that all quizzes are affected
-        if (! $instances = get_records('quiz_question_instances',
-         'question', $question->id)) {
+        // fetch a list of all the quizzes using this question
+        if (! $instances = (array)get_records('quiz_question_instances',
+         'question', $question->id, '', 'id, quiz')) {
             // No instances were found, so it successfully regraded all of them
             return true;
         }
-        $quizlist = implode(',', array_map(create_function('$val',
-         'return $val->quiz;'), $instances));
+        $quizlist = array_map(create_function('$val', 'return $val->quiz;'), $instances);
         unset($instances);
     }
 
@@ -1483,7 +1507,7 @@ function quiz_regrade_question_in_quizzes($question, $quizlist) {
     foreach ($quizzes as $quiz) {
         // All the attempts that need to be changed
         if (! $attempts = get_records('quiz_attempts', 'quiz', $quiz->id)) {
-            error("Couldn't get question instance for regrading!");
+            continue;
         }
         $attempts = array_values($attempts);
         if (! $instance = get_record('quiz_question_instances',
