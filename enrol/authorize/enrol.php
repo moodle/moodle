@@ -149,7 +149,7 @@ function cc_submit($form, $course)
     if (!empty($CFG->an_tran_key)) {
     	$poststring .= urlencode("x_tran_key") . "=" . urlencode($CFG->an_tran_key);
     }
-    if (!empty($CFG->an_password)) {
+    else { // MUST be an_tran_key or x_password
     	$poststring .= urlencode("x_password") . "=" . urlencode($CFG->an_password);
     }
     foreach($formdata as $key => $val) {
