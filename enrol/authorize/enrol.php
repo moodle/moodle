@@ -79,12 +79,10 @@ function print_entry($course) {
 
 /// Override: check_entry()
 function check_entry($form, $course) {
+    global $CFG;
     if ($this->zero_cost($course)) {
         if (!empty($CFG->enrol_allowinternal)) {
             parent::check_entry($form, $course);
-        } else {
-            print_header();
-            notice(get_string("enrolmentnointernal"), $CFG->wwwroot);
         }
     } else {
     	$this->cc_submit($form, $course);
