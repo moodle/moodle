@@ -57,6 +57,10 @@
 
     foreach ($assignments as $assignment) {
 
+        if (!file_exists($CFG->dirroot.'/mod/assignment/type/'.$assignment->assignmenttype.'/assignment.class.php')) {
+            continue;
+        }
+
         require_once ($CFG->dirroot.'/mod/assignment/type/'.$assignment->assignmenttype.'/assignment.class.php');
         $assignmentclass = 'assignment_'.$assignment->assignmenttype;
         $assignmentinstance = new $assignmentclass($assignment->coursemodule);
