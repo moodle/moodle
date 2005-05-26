@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.5 ALPHA (2005051500)
+      // quiz.php - created with Moodle 1.6 development (2005052400)
 
 
 $string['acceptederror'] = 'エラー範囲';
@@ -122,6 +122,7 @@ $string['editingquestion'] = '問題の編集';
 $string['editingquiz'] = '小テストの編集';
 $string['editingrandom'] = 'ランダム問題の編集';
 $string['editingrandomsamatch'] = 'ランダム記述組み合わせ問題の編集';
+$string['editingrqp'] = '$a: 問題の編集';
 $string['editingshortanswer'] = '記述問題の編集';
 $string['editingtruefalse'] = '○/×問題の編集';
 $string['editquestions'] = '問題の編集';
@@ -191,6 +192,7 @@ $string['link'] = 'リンク';
 $string['listitems'] = '問題一覧';
 $string['literal'] = '定数';
 $string['loguniform'] = '対数一様分布';
+$string['lowmarkslimit'] = '点数が次の数値より低い場合は分析しない:';
 $string['makecopy'] = '新しい問題として保存';
 $string['managetypes'] = '問題タイプとサーバの管理';
 $string['mark'] = '送信';
@@ -225,6 +227,7 @@ $string['newlocal3'] = '新しいリンク群、この問題のみで使用';
 $string['noanswers'] = '答えが選択されていません!';
 $string['noattempts'] = 'この小テストは解答されていません。';
 $string['noattemptstoshow'] = '表示する受験結果はありません。';
+$string['noconnection'] = '現在、この問題を処理できるウェブサービスとの接続がありません。管理者に連絡してください。';
 $string['nodataset'] = '無し - ワイルドカードではありません';
 $string['nominal'] = '名義尺度';
 $string['nomoreattempts'] = '解答回数が終了しました。';
@@ -237,6 +240,7 @@ $string['noreview'] = 'この小テストの復習を許可されていません。';
 $string['noreviewuntil'] = '$a までこの小テストの復習はできません。';
 $string['noscript'] = '続けるにはJavaスクリプトを使用可にしてください!';
 $string['notavailable'] = '申し訳御座いません、このクイズはまだ利用できません。';
+$string['notavailabletostudents'] = '注意: この小テストは現在あなたの学生は利用できません。';
 $string['notenoughanswers'] = 'このタイプの質問には少なくとも $a の解答が必要です。';
 $string['notenoughsubquestions'] = '十分な副質問が定義されていません！<br />
 この質問を修正しますか？';
@@ -251,6 +255,7 @@ $string['penalty'] = 'ペナルティ';
 $string['penaltyfactor'] = 'ペナルティ要素';
 $string['penaltyscheme'] = 'ペナルティを適用';
 $string['percentcorrect'] = '正答率';
+$string['pleaseclose'] = 'あなたのリクエストは処理されました。このウインドウを閉じてください。';
 $string['popup'] = '問題を「セキュア」ウインドウに表示する';
 $string['preview'] = 'プレビュー';
 $string['previewquestion'] = '問題のプレビュー';
