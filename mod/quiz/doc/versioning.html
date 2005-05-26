@@ -151,8 +151,17 @@ the order shown below (compare with <strong>question.php</strong>):
 
     </li><li>
 
-    Finally we have to change the <code>questionid</code> field in <code>
+    We have to change the <code>questionid</code> field in <code>
     quiz_newest_states</code>.
+
+    </li><li>
+
+    Finally we have to do any question-type specific changes. For example
+    question types that store student responses by storing the id of the
+    answer in the <code>quiz_answers</code> table will have to recode these
+    ids in all the states to point to the corresponding answers in the
+    new version. This is handled by the function replace_question_in_attempts()
+    in the question type class.
 
     </li>
 </ul>
