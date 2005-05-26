@@ -227,28 +227,36 @@ function extract_data($pages, $courseid, $lessonname) {
         }
         for($i = 0; $i < count($matches[1]); $i++) { // go through all of our div matches
     
-            if($class = isolate_class($matches[1][$i])) { // first step in isolating the class      
+            $class = isolate_class($matches[1][$i]); // first step in isolating the class      
         
-                // check for any static classes
-                switch ($class) {
-                    case 'T':  // class T is used for Titles
-                        $page->title = $matches[3][$i];
-                        break;
-                    case 'B':  // I would guess that all bullet lists would start with B then go to B1, B2, etc
-                    case 'B1': // B1-B4 are just insurance, should just hit B and all be taken care of
-                    case 'B2':
-                    case 'B3':
-                    case 'B4':
-                        $page->contents[] = build_list('<ul>', $i, 0);  // this is a recursive function that will grab all the bullets and rebuild the list in html
-                        break;
-                }
+            // check for any static classes
+            switch ($class) {
+                case 'T':  // class T is used for Titles
+                    $page->title = $matches[3][$i];
+                    break;
+                case 'B':  // I would guess that all bullet lists would start with B then go to B1, B2, etc
+                case 'B1': // B1-B4 are just insurance, should just hit B and all be taken care of
+                case 'B2':
+                case 'B3':
+                case 'B4':
+                    $page->contents[] = build_list('<ul>', $i, 0);  // this is a recursive function that will grab all the bullets and rebuild the list in html
+                    break;
+                default:
+                    if ($matches[3][$i] != '&#13;') {  // odd crap generated... sigh
+                        if (substr($matches[3][$i], 0, 1) == ':') {  // check for leading :    ... hate MS ...
+                            $page->contents[] = substr($matches[3][$i], 1);  // get rid of :
+                        } else {
+                            $page->contents[] = $matches[3][$i];
+                        }
+                    }
+                    break;
             }
         }
-        if (count($page->contents) == 0) {  // didnt find anything, grab all class O content
-                                            // potential to pull in a lot of crap because class O is used at random
+        /*if (count($page->contents) == 0) {  // didnt find anything, grab everything
+                                            // potential to pull in a lot of crap
             for($i = 0; $i < count($matches[1]); $i++) {        
-                if($class = isolate_class($matches[1][$i])) { 
-                    if ($class == 'O') {
+                //if($class = isolate_class($matches[1][$i])) { 
+                    //if ($class == 'O') {
                         if ($matches[3][$i] != '&#13;') {  // odd crap generated... sigh
                             if (substr($matches[3][$i], 0, 1) == ':') {  // check for leading :    ... hate MS ...
                                 $page->contents[] = substr($matches[3][$i], 1);  // get rid of :
@@ -256,10 +264,10 @@ function extract_data($pages, $courseid, $lessonname) {
                                 $page->contents[] = $matches[3][$i];
                             }
                         }
-                    }
-                }
+                    //}
+                //}
             }
-        }
+        }*/
         // add the page to the array;
         $extratedpages[] = $page;
         
@@ -300,7 +308,9 @@ function build_list($list, &$i, $depth) {
                 continue;
             }
             // no depth changes, so add the match to our list
-            $list .= '<li>'.ppt_clean_text($matches[3][$i]).'</li>';
+            if ($cleanstring = ppt_clean_text($matches[3][$i])) {
+                $list .= '<li>'.ppt_clean_text($matches[3][$i]).'</li>';
+            }
             $i++;
         } else {
             // not a B class, so get out of here...
@@ -328,7 +338,7 @@ function isolate_class($string) {
         }
     } else {
         // no class defined in the tag
-        return false;
+        return '';
     }
 }
 
@@ -344,7 +354,13 @@ function ppt_clean_text($string) {
     }
     // may need to add more later....
     
-    return substr($string, $chop);
+    $string = substr($string, $chop);
+    
+    if ($string != '&#13;') {
+        return $string;
+    } else {
+        return false;
+    }
 }
 
 /**
