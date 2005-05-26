@@ -5,7 +5,7 @@
 $string['anlogin'] = 'Authorize.net: Kullanýcý adý';
 $string['anpassword'] = 'Authorize.net: Þifre';
 $string['anreferer'] = 'Authorize.net hesabýnýzda URL referer ayarý yaptýysanýz buraya yazýnýz. Bu, web isteðinde \"Referer: URL\" baþlýðýný gönderir.';
-$string['antestmode'] = 'Authorize.net: Ýþlemleri test et';
+$string['antestmode'] = 'Ýþlemleri deneme modunda çalýþtýr (para çekilmez)';
 $string['antrankey'] = 'Authorize.net: Ýþlem Anahtarý (Transaction Key)';
 $string['ccexpire'] = 'Geçerlilik Tarihi';
 $string['ccexpired'] = 'Kredi kartýnýn süresi geçmiþ';
