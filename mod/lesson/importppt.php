@@ -162,23 +162,30 @@ function extract_data($pages, $courseid, $lessonname) {
     
     global $CFG;
     global $matches;
-    
+
     $extratedpages = array();
     
     // directory for images
-    make_mod_upload_directory($courseid); // we store our images in a subfolder in here
-
-    $imagedir = $CFG->dataroot.'/'.$courseid.'/moddata';
-    $imagelink = $CFG->wwwroot.'/file.php/'.$courseid.'/moddata/';
+    make_mod_upload_directory($courseid); // make sure moddata is made
+    make_upload_directory($courseid.'/moddata/lesson', false);  // we store our images in a subfolder in here 
+    
+    $imagedir = $CFG->dataroot.'/'.$courseid.'/moddata/lesson';
+    
+    if ($CFG->slasharguments) {
+        $imagelink = $CFG->wwwroot.'/file.php/'.$courseid.'/moddata/lesson';
+    } else {
+        $imagelink = $CFG->wwwroot.'/file.php?file=/'.$courseid.'/moddata/lesson';
+    }
     
     // try to make a unique subfolder to store the images
+    $lessonname = str_replace(' ', '_', $lessonname); // get rid of spaces
     $i = 0;
     while(true) {
         if (!file_exists($imagedir.'/'.$lessonname.$i)) {
             // ok doesnt exist so make the directory and update our paths
             mkdir($imagedir.'/'.$lessonname.$i);
             $imagedir = $imagedir.'/'.$lessonname.$i;
-            $imagelink = $imagelink.$lessonname.$i;
+            $imagelink = $imagelink.'/'.$lessonname.$i;
             break;
         }
         $i++;
