@@ -261,7 +261,7 @@ function calendar_show_day($d, $m, $y, $courses, $groups, $users) {
 }
 
 function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
-    global $CFG, $SESSION, $USER;
+    global $CFG, $SESSION, $USER, $CALENDARDAYS;
     global $day, $mon, $yr;
 
     $getvars = 'from=month&amp;cal_d='.$day.'&amp;cal_m='.$mon.'&amp;cal_y='.$yr; // For filtering
@@ -343,11 +343,10 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
     echo '<table class="calendarmonth"><tr class="weekdays">'; // Begin table. First row: day names
 
     // Print out the names of the weekdays
-    $days = array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday');
     for($i = $display->minwday; $i <= $display->maxwday; ++$i) {
         // This uses the % operator to get the correct weekday no matter what shift we have
         // applied to the $display->minwday : $display->maxwday range from the default 0 : 6
-        echo '<th>'.get_string($days[$i % 7], 'calendar').'</th>';
+        echo '<th>'.get_string($CALENDARDAYS[$i % 7], 'calendar').'</th>';
     }
 
     echo '</tr><tr>'; // End of day names; prepare for day numbers
