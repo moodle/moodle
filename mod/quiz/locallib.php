@@ -209,7 +209,7 @@ class quiz_default_questiontype {
     }
 
     /**
-    * Changes all states for a question in a list of attempts over to a new question
+    * Changes all states for the given attempts over to a new question
     *
     * This is used by the versioning code if the teacher requests that a question
     * gets replaced by the new version. In order for the attempts to be regraded
@@ -223,7 +223,7 @@ class quiz_default_questiontype {
     * @param array  $attempts       An array of all attempt objects in whose states 
     *                               replacement should take place
     */
-    function change_states_question($oldquestionid, $newquestion, $attemtps) {
+    function replace_question_in_attempts($oldquestionid, $newquestion, $attemtps) {
         echo 'Not yet implemented';
         return;
     }
