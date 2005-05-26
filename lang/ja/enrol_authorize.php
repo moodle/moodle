@@ -8,6 +8,7 @@ $string['anreferer'] = 'É¬Í×¤Ê¾ì¹ç¤Ï¡¢¥ê¥Õ¥¡¥éURL¤òÀßÄê¤·¤Æ¤¯¤À¤µ¤¤¡£¤³¤ì¤Ï¡¢¥¦¥
 $string['antestmode'] = 'Authorize.net: ¥Æ¥¹¥È¥È¥é¥ó¥¶¥¯¥·¥ç¥ó';
 $string['antrankey'] = 'Authorize.net: ¥È¥é¥ó¥¶¥¯¥·¥ç¥ó¥­¡¼';
 $string['ccexpire'] = 'Í­¸ú´ü¸Â';
+$string['ccexpired'] = '¥¯¥ì¥¸¥Ã¥È¥«¡¼¥É¤Î´ü¸Â¤¬ÀÚ¤ì¤Æ¤¤¤Þ¤¹¡£';
 $string['ccinvalid'] = '¥¯¥ì¥¸¥Ã¥È¥«¡¼¥É¤¬´Ö°ã¤Ã¤Æ¤¤¤Þ¤¹¡£';
 $string['ccno'] = '¥¯¥ì¥¸¥Ã¥È¥«¡¼¥ÉÈÖ¹æ';
 $string['cctype'] = '¥¯¥ì¥¸¥Ã¥È¥«¡¼¥É¥¿¥¤¥×';

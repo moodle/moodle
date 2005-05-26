@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.5 ALPHA (2005050600)
+      // admin.php - created with Moodle 1.6 development (2005052400)
 
 
 $string['adminseesallevents'] = '管理者に全てのイベントを表示';
@@ -107,6 +107,7 @@ $string['importtimezonescount'] = '$a->source より $a->count のエントリ�
 $string['importtimezonesfailed'] = 'ソースが見つかりませんでした!';
 $string['nodstpresetsexist'] = 'DST ( 夏時間 ) プリセットが設定されていないため、DST ( 夏時間 ) サポートは使用できません。下記のボタンをクリックしてプリセットを設定することができます。';
 $string['optionalmaintenancemessage'] = 'オプション・メンテナンスメッセージ';
+$string['pleaseregister'] = 'このボタンを消すには、あなたのサイトを登録してください。';
 $string['sitemaintenance'] = 'このサイトはメンテナンス中です。現在ご利用いただけません。';
 $string['sitemaintenancemode'] = 'メンテナンスモード';
 $string['sitemaintenanceoff'] = 'メンテナンスモードが解除されました。サイトは正常に動作しています。';

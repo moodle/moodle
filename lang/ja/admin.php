@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.5 ALPHA (2005050600)
+      // admin.php - created with Moodle 1.6 development (2005052400)
 
 
 $string['adminseesallevents'] = '´ÉÍý¼Ô¤ËÁ´¤Æ¤Î¥¤¥Ù¥ó¥È¤òÉ½¼¨';
@@ -107,6 +107,7 @@ $string['importtimezonescount'] = '$a->source ¤è¤ê $a->count ¤Î¥¨¥ó¥È¥ê¤¬¥¤¥ó¥Ý¡
 $string['importtimezonesfailed'] = '¥½¡¼¥¹¤¬¸«¤Ä¤«¤ê¤Þ¤»¤ó¤Ç¤·¤¿!';
 $string['nodstpresetsexist'] = 'DST ( ²Æ»þ´Ö ) ¥×¥ê¥»¥Ã¥È¤¬ÀßÄê¤µ¤ì¤Æ¤¤¤Ê¤¤¤¿¤á¡¢DST ( ²Æ»þ´Ö ) ¥µ¥Ý¡¼¥È¤Ï»ÈÍÑ¤Ç¤­¤Þ¤»¤ó¡£²¼µ­¤Î¥Ü¥¿¥ó¤ò¥¯¥ê¥Ã¥¯¤·¤Æ¥×¥ê¥»¥Ã¥È¤òÀßÄê¤¹¤ë¤³¤È¤¬¤Ç¤­¤Þ¤¹¡£';
 $string['optionalmaintenancemessage'] = '¥ª¥×¥·¥ç¥ó¡¦¥á¥ó¥Æ¥Ê¥ó¥¹¥á¥Ã¥»¡¼¥¸';
+$string['pleaseregister'] = '¤³¤Î¥Ü¥¿¥ó¤ò¾Ã¤¹¤Ë¤Ï¡¢¤¢¤Ê¤¿¤Î¥µ¥¤¥È¤òÅÐÏ¿¤·¤Æ¤¯¤À¤µ¤¤¡£';
 $string['sitemaintenance'] = '¤³¤Î¥µ¥¤¥È¤Ï¥á¥ó¥Æ¥Ê¥ó¥¹Ãæ¤Ç¤¹¡£¸½ºß¤´ÍøÍÑ¤¤¤¿¤À¤±¤Þ¤»¤ó¡£';
 $string['sitemaintenancemode'] = '¥á¥ó¥Æ¥Ê¥ó¥¹¥â¡¼¥É';
 $string['sitemaintenanceoff'] = '¥á¥ó¥Æ¥Ê¥ó¥¹¥â¡¼¥É¤¬²ò½ü¤µ¤ì¤Þ¤·¤¿¡£¥µ¥¤¥È¤ÏÀµ¾ï¤ËÆ°ºî¤·¤Æ¤¤¤Þ¤¹¡£';
