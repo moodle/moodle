@@ -62,6 +62,8 @@ define ('CALENDAR_URL', $CFG->wwwroot.'/calendar/');
 define ('CALENDAR_TF_24', '%H:%M');
 define ('CALENDAR_TF_12', '%I:%M %p');
 
+$CALENDARDAYS = array('sunday','monday','tuesday','wednesday','thursday','friday','saturday');
+
 // Initialize the session variables here to be sure
 calendar_session_vars();
 
@@ -536,7 +538,7 @@ function calendar_sql_where($tstart, $tend, $users, $groups, $courses, $withdura
 }
 
 function calendar_top_controls($type, $data) {
-    global $CFG;
+    global $CFG, $CALENDARDAYS;
     $content = '';
     if(!isset($data['d'])) {
         $data['d'] = 1;
@@ -595,11 +597,10 @@ function calendar_top_controls($type, $data) {
         break;
         case 'day':
             $data['d'] = $date['mday']; // Just for convenience
-            $dayname = calendar_wday_name($date['weekday']);
             $prevdate = usergetdate(make_timestamp($data['y'], $data['m'], $data['d'] - 1));
             $nextdate = usergetdate(make_timestamp($data['y'], $data['m'], $data['d'] + 1));
-            $prevname = $prevdate['weekday'];
-            $nextname = $nextdate['weekday'];
+            $prevname = calendar_wday_name($CALENDARDAYS[$prevdate['wday']]);
+            $nextname = calendar_wday_name($CALENDARDAYS[$nextdate['wday']]);
             $content .= '<table class="calendar-controls"><tr>';
             $content .= '<td class="previous"><a href="'.calendar_get_link_href('view.php?view=day&amp;', $prevdate['mday'], $prevdate['mon'], $prevdate['year']).'">&lt;&lt; '.$prevname."</a></td>\n";
 
