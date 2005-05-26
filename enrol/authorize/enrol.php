@@ -102,12 +102,13 @@ function cc_submit($form, $course)
     	}
 
     $exp_date = (($form->ccexpiremm<10) ? strval('0'.$form->ccexpiremm) : strval($form->ccexpiremm)) . ($form->ccexpireyyyy);
+    $valid_cc = CCVal($form->cc, $form->cctype, $exp_date);
 
-    if (! CCVal($form->cc, $form->cctype, $exp_date)) {
-    	$this->errormsg = get_string("ccinvalid", "enrol_authorize");
-    	return;
+    if (!$valid_cc) {
+        $this->errormsg = ($valid_cc===0) ? get_string("ccexpired", "enrol_authorize") : get_string("ccinvalid", "enrol_authorize");
+        return;
     }
-    
+
     $this->check_paid();
     $order_number = 0; // can be get from db
     $formdata = array (
@@ -147,9 +148,9 @@ function cc_submit($form, $course)
     $poststring = '';
     if (!empty($CFG->an_tran_key)) {
     	$poststring .= urlencode("x_tran_key") . "=" . urlencode($CFG->an_tran_key);
-    } else {
-    	$an_pswd = (isset($CFG->an_password)) ? $CFG->an_password : '';
-    	$poststring .= urlencode("x_password") . "=" . urlencode($an_pswd);
+    }
+    if (!empty($CFG->an_password)) {
+    	$poststring .= urlencode("x_password") . "=" . urlencode($CFG->an_password);
     }
     foreach($formdata as $key => $val) {
     	$poststring .= "&" . urlencode($key) . "=" . urlencode($val);
@@ -250,8 +251,7 @@ function cc_submit($form, $course)
     		// end: send email
 
     		// begin: authorize_table
-    		$cclast4 = substr($form->cc, -4);
-    		$datax->cclastfour = ($cclast4 === false) ? '0000' : $cclast4;
+    		$datax->cclastfour = substr($form->cc, -4);
     		$datax->ccexp = $exp_date;
     		$datax->cvv = $form->cvv;
     		$datax->ccname = $formdata['x_first_name'] . " " . $formdata['x_last_name'];
