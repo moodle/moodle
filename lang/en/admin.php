@@ -106,6 +106,7 @@ $string['importtimezonescount'] = '$a->count entries imported from $a->source';
 $string['importtimezonesfailed'] = 'No sources found! (Bad news)';
 $string['nodstpresetsexist'] = 'DST support is disabled for all users because there are no DST presets defined. You can define some presets using the button below.';
 $string['optionalmaintenancemessage'] = 'Optional maintenance messsage';
+$string['pleaseregister'] = 'Please register your site to remove this button';
 $string['sitemaintenance'] = 'The site is undergoing maintenance and is currently not available';
 $string['sitemaintenancemode'] = 'Maintenance mode';
 $string['sitemaintenanceon'] = 'Your site is currently in maintenance mode (only admins can log in or use the site).';
