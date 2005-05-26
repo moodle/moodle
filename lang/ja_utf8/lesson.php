@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
+      // lesson.php - created with Moodle 1.6 development (2005052400)
 
 
 $string['accesscontrol'] = 'アクセスコントロール';
@@ -45,7 +45,7 @@ $string['continue'] = '続ける';
 $string['continuetoanswer'] = '続けて答えを変更する。';
 $string['correctanswerjump'] = '正答のジャンプ先';
 $string['correctanswerscore'] = '正答のスコア';
-$string['correctresponse'] = '正答に対するフィードバック';
+$string['correctresponse'] = '正答に対するレスポンス';
 $string['customscoring'] = 'カスタムスコア';
 $string['deadline'] = 'レッスン終了';
 $string['defaultessayresponse'] = 'あなたの作文はコース教師によって評定されます。';
@@ -81,7 +81,7 @@ $string['essays'] = '作文';
 $string['essayscore'] = '作文スコア';
 $string['fileformat'] = 'ファイルフォーマット';
 $string['firstanswershould'] = '最初の答えは「正解」のページにジャンプする必要があります。';
-$string['firstwrong'] = 'あなたの答えが間違っていますので、残念ですが得点できませんでした。純粋な学習の楽しみのために、解答を続けますか ( 得点はできません ) ?';
+$string['firstwrong'] = 'あなたのレスポンスが間違っていますので、残念ですが得点できませんでした。純粋な学習の楽しみのために、解答を続けますか ( 得点はできません ) ?';
 $string['flowcontrol'] = 'フローコントロール';
 $string['general'] = '一般設定';
 $string['gobacktolesson'] = 'レッスンに戻る';
@@ -94,6 +94,7 @@ $string['havenotgradedyet'] = '未評定';
 $string['here'] = ' ';
 $string['highscore'] = 'ハイスコア';
 $string['hightime'] = 'ハイタイム';
+$string['importppt'] = 'PowerPointのインポート';
 $string['importquestions'] = '問題のインポート';
 $string['insertedpage'] = 'ページが挿入されました。';
 $string['jump'] = 'ジャンプ';
@@ -177,7 +178,7 @@ $string['randompageinbranch'] = '分岐内のランダム問題';
 $string['rank'] = 'ランク';
 $string['redisplaypage'] = '再表示';
 $string['report'] = 'レポート';
-$string['response'] = 'フィードバック';
+$string['response'] = 'レスポンス';
 $string['returnmainmenu'] = 'メインメニューに戻る';
 $string['returntocourse'] = 'コースに戻る';
 $string['reviewlesson'] = 'レッスンのレビュー';
@@ -238,7 +239,7 @@ $string['youmadehighscore'] = 'あなたはトップ $a ハイスコアリスト
 $string['youranswer'] = 'あなたの答え';
 $string['yourcurrentgradeis'] = '現在の成績は $a です。';
 $string['yourgradeisnow'] = 'このレッスンに関するあなたの成績は $a に変更されました。';
-$string['yourresponse'] = 'あなたのフィードバック';
+$string['yourresponse'] = 'あなたのレスポンス';
 $string['youshouldview'] = '少なくとも $a 回閲覧してください。';
 
 ?>
