@@ -396,6 +396,10 @@ body#admin-config .confighelp {
   margin-bottom: 0px;
 }
 
+.block_online_users .listentry {
+  padding-top:5px;
+}
+
 /***
  *** Calendar
  ***/
