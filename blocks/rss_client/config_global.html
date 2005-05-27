@@ -63,6 +63,10 @@
 </tr>
 <tr>
     
-    <td colspan="3" align="center"><a href=" <?php echo $CFG->wwwroot; ?>/blocks/rss_client/block_rss_client_action.php?courseid=<?php echo $courseid; ?>"><?php print_string('feedsaddedit', 'block_rss_client')?></a></center><br /><br />
+    <td colspan="3" align="center"><a href=" <?php echo $CFG->wwwroot; ?>/blocks/rss_client/block_rss_client_action.php?courseid=<?php 
+    if (!isset($courseid)) {
+        $courseid = '';
+    }
+    echo $courseid; ?>"><?php print_string('feedsaddedit', 'block_rss_client')?></a></center><br /><br />
     </td>
 </table>
