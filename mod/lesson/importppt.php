@@ -230,7 +230,7 @@ function extract_data($pages, $courseid, $lessonname, $modname) {
         }*/
         foreach ($imgs[2] as $img) {
             copy($path_parts['dirname'].'/'.$img, $imagedir.'/'.$img);
-            $page->images[] = "<img src=\"$imagelink/$img\" />";  // comment out this line if you are using the above foreach loop
+            $page->images[] = "<img src=\"$imagelink/$img\" title="$img" />";  // comment out this line if you are using the above foreach loop
         }
         for($i = 0; $i < count($matches[1]); $i++) { // go through all of our div matches
     
