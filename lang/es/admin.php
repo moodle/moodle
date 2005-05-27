@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005042100)
+      // admin.php - created with Moodle 1.6 development (2005052400)
 
 
 $string['adminseesallevents'] = 'Los administradores ven todos los eventos';
@@ -107,6 +107,7 @@ $string['importtimezonescount'] = '$a->count entradas importadas desde $a->sourc
 $string['importtimezonesfailed'] = '¡No se encuentran fuentes! (malas noticias)';
 $string['nodstpresetsexist'] = 'El soporte DST está desactivado para todos los usuarios porque no hay ajustes previos DST definidos. Puede definir algunos usando el botón de abajo.';
 $string['optionalmaintenancemessage'] = 'Mensaje de mantenimiento opcional';
+$string['pleaseregister'] = 'Por favor, registre su sitio para eliminar este botón';
 $string['sitemaintenance'] = 'Este sitio está en fase de mantenimiento y no está disponible en este momento';
 $string['sitemaintenancemode'] = 'Modo de mantenimiento';
 $string['sitemaintenanceoff'] = 'El modo de mantenimiento está desactivado y el sitio vuelve a funcionar con normalidad';
