@@ -54,8 +54,8 @@
 
         } else {  // Valid file is found
             
-            if ($rawpages = readdata($_FILES, $course->id)) {  // first try to reall all of the data in
-                $pageobjects = extract_data($rawpages, $course->id, $mod->name); // parse all the html files into objects
+            if ($rawpages = readdata($_FILES, $course->id, $modname)) {  // first try to reall all of the data in
+                $pageobjects = extract_data($rawpages, $course->id, $mod->name, $modname); // parse all the html files into objects
                 clean_temp(); // all done with files so dump em
                                 
                 $mod_create_objects = $modname.'_create_objects';  
@@ -103,7 +103,7 @@
     
 // START OF FUNCTIONS
 
-function readdata($file, $courseid) {
+function readdata($file, $courseid, $modname) {
 // this function expects a zip file to be uploaded.  Then it parses
 // outline.htm to determine the slide path.  Then parses each
 // slide to get data for the content
@@ -111,19 +111,19 @@ function readdata($file, $courseid) {
     global $CFG;
 
     // create an upload directory in temp
-    make_upload_directory('temp/lesson');   
+    make_upload_directory('temp/'.$modname);   
     
     $zipfile = $_FILES["newfile"]["name"];
     $tempzipfile = $_FILES["newfile"]["tmp_name"];
     
     // move our uploaded file to temp/lesson
-    move_uploaded_file($tempzipfile, "$CFG->dataroot/temp/lesson/".$zipfile);
+    move_uploaded_file($tempzipfile, "$CFG->dataroot/temp/$modname/".$zipfile);
 
     // unzip it!
-    unzip_file($CFG->dataroot."/temp/lesson/".$zipfile, '', false);
+    unzip_file($CFG->dataroot."/temp/$modname/".$zipfile, '', false);
     
     $dirname = substr($zipfile, 0, strpos($zipfile, '.')); // take off the .zip to get the name of the unzipped file
-    $base = $CFG->dataroot."/temp/lesson/".$dirname;  // base directory of what we uploaded
+    $base = $CFG->dataroot."/temp/$modname/".$dirname;  // base directory of what we uploaded
     
     // this is the file where we get the names of the files for the slides (in the correct order too)
     $outline = $base.'/outline.htm';
@@ -156,7 +156,7 @@ function readdata($file, $courseid) {
     return false;
 }
 
-function extract_data($pages, $courseid, $lessonname) {
+function extract_data($pages, $courseid, $lessonname, $modname) {
     // this function attempts to extract the content out of the slides
     // the slides are ugly broken xml.  and the xml is broken... yeah...
     
@@ -167,14 +167,14 @@ function extract_data($pages, $courseid, $lessonname) {
     
     // directory for images
     make_mod_upload_directory($courseid); // make sure moddata is made
-    make_upload_directory($courseid.'/moddata/lesson', false);  // we store our images in a subfolder in here 
+    make_upload_directory($courseid.'/moddata/'.$modname, false);  // we store our images in a subfolder in here 
     
-    $imagedir = $CFG->dataroot.'/'.$courseid.'/moddata/lesson';
+    $imagedir = $CFG->dataroot.'/'.$courseid.'/moddata/'.$modname;
     
     if ($CFG->slasharguments) {
-        $imagelink = $CFG->wwwroot.'/file.php/'.$courseid.'/moddata/lesson';
+        $imagelink = $CFG->wwwroot.'/file.php/'.$courseid.'/moddata/'.$modname;
     } else {
-        $imagelink = $CFG->wwwroot.'/file.php?file=/'.$courseid.'/moddata/lesson';
+        $imagelink = $CFG->wwwroot.'/file.php?file=/'.$courseid.'/moddata/'.$modname;
     }
     
     // try to make a unique subfolder to store the images
@@ -478,16 +478,17 @@ function prep_page($pageobject, $count) {
     
     // nab all the images first
     foreach ($pageobject->images as $image) {
-        $image = str_replace('\n', '', $image);
-        $image = str_replace('\r', '', $image);
+        $image = str_replace("\n", '', $image);
+        $image = str_replace("\r", '', $image);
         $image = str_replace("'", '"', $image);  // imgstyle
                     
         $page->contents .= addslashes($image);
     }
     // go through the contents array and put <p> tags around each element and strip out \n which I have found to be uneccessary
     foreach ($pageobject->contents as $content) {
-        $content = str_replace('\n', '', $content);
-        $content = str_replace('\r', '', $content);
+        $content = str_replace("\n", '', $content);
+        $content = str_replace("\r", '', $content);
+        $content = str_replace('&#13;', '', $content);  // puts in returns?
         $content = '<p>'.$content.'</p>';
         $page->contents .= addslashes($content);
     }
