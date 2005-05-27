@@ -4,6 +4,7 @@
 
 $string['adminseesallevents'] = 'מנהלים רואים את כל הארועים';
 $string['adminseesownevents'] = 'מנהלים רואים ארועים כמו משתמשים רגילים';
+$string['blockinstances'] = 'מופעים';
 $string['blockmultiple'] = 'מרובים';
 $string['cachetext'] = 'משך התקפות של טקסט במטמון';
 $string['calendarsettings'] = 'לוח שנה';
