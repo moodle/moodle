@@ -8,6 +8,7 @@ $string['anreferer'] = 'Sem vlo¾te URL referer, pokiaµ ho máte nastavenı vo va¹o
 $string['antestmode'] = 'Authorize.net: Testovacia transakcia';
 $string['antrankey'] = 'Authorize.net: Transakènı kµúè';
 $string['ccexpire'] = 'Dátum zániku platnosti';
+$string['ccexpired'] = 'Kreditná karta u¾ nie je platná';
 $string['ccinvalid'] = 'Neplatné èíslo karty';
 $string['ccno'] = 'Èíslo kreditnej karty';
 $string['cctype'] = 'Typ kreditnej karty';
