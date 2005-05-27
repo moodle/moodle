@@ -103,7 +103,7 @@ class block_online_users extends block_base {
         //Because they are online
         if (!empty($users)) {
             foreach ($users as $user) {
-                $this->content->text .= '<div style="text-align: left; font-size: 0.75em; padding-top: 5px;">';
+                $this->content->text .= '<div class="listentry">';
                 $timeago = format_time(time() - max($user->timeaccess, $user->lastaccess)); //bruno to calculate correctly on frontpage 
                 if ($user->picture) {
                     if ($CFG->slasharguments) {
