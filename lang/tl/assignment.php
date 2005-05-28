@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.5 ALPHA (2005043000)
+      // assignment.php - created with Moodle 1.5 ALPHA (2005051500)
 
 
 $string['allowresubmit'] = 'Pahintulutang maípasa mulî';
@@ -48,6 +48,7 @@ $string['modulename'] = 'Takdang-aralin';
 $string['modulenameplural'] = 'Mga takdang-aralin';
 $string['newsubmissions'] = 'Ipinasang takdang-aralin';
 $string['noassignments'] = 'Wala pang takdang-aralin';
+$string['noattempts'] = 'Wala pang kumukuha ng takdang-aralin na ito';
 $string['notgradedyet'] = 'Hindi pa namamarkahan';
 $string['notsubmittedyet'] = 'Hindi pa naipapasa';
 $string['overwritewarning'] = 'Babala: kung mag-aaplowd kang mulî, MAPAPALITAN nito ang kasalukuyan mong ipinasa';

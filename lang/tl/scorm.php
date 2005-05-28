@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.5 ALPHA (2005043000)
+      // scorm.php - created with Moodle 1.5 ALPHA (2005051500)
 
 
 $string['asset'] = 'Asset';
@@ -23,6 +23,7 @@ $string['errorlogs'] = 'Log ng mga error';
 $string['exit'] = 'Lumabas sa kursong SCORM';
 $string['expcoll'] = 'Palawakin/Paliitin';
 $string['failed'] = 'Bigô';
+$string['firstaccess'] = 'Unang pagpasok';
 $string['found'] = 'Natagpuan ang manifest';
 $string['frameheight'] = 'Itinatakda ng mas-ibig na ito ang default na taas ng frame ng SCO';
 $string['framewidth'] = 'Itinatakda ng mas-ibig na ito ang default na lapad ng frame ng SCO';
@@ -34,6 +35,7 @@ $string['gradesum'] = 'Kabuuang marka';
 $string['guestsno'] = 'Hindi maaaring makita ng mga bisita ang mga kursong scorm';
 $string['height'] = 'Taas';
 $string['incomplete'] = 'Dikumpleto';
+$string['lastaccess'] = 'Huling pagpasok';
 $string['missing_attribute'] = 'Nawawala ang attribute na $a->attr sa tag na $a->tag';
 $string['missing_tag'] = 'Nawawala ang tag na $a->tag';
 $string['mode'] = 'Mode';
@@ -42,11 +44,13 @@ $string['modulenameplural'] = 'Mga Scorm';
 $string['next'] = 'Ituloy';
 $string['no_attributes'] = 'Kailangang may mga attribute ang tag na $a->tag';
 $string['no_children'] = 'Kailangan ay may anak ang tag na $a->tag';
+$string['noactivity'] = 'Walang maiuulat';
 $string['nomanifest'] = 'Hindi natagpuan ang manifest';
 $string['noreports'] = 'Walang ulat na maipapakita';
 $string['normal'] = 'Normal';
 $string['not_corr_type'] = 'Hindi tugma ang uri para sa tag na $a->tag';
 $string['notattempted'] = 'Hind kinuha';
+$string['organization'] = 'Organisasyon';
 $string['organizations'] = 'Mga organisasyon';
 $string['packagedir'] = 'Filesystem Error: Hindi malikha ang direktoryo ng pakete';
 $string['passed'] = 'Pasado';
@@ -63,6 +67,7 @@ $string['syntax'] = 'Error sa sintaks';
 $string['tag_error'] = 'Dikilalang tag ($a->tag) na may ganitong laman: $a->value';
 $string['too_many_attributes'] = 'Labis ang attribute ng tag na $a->tag';
 $string['too_many_children'] = 'Labis ang anak ng tag na $a->tag';
+$string['totaltime'] = 'Oras';
 $string['trackingloose'] = 'Babalâ: Mawawala ang tracking data ng paketeng SCORM na ito!';
 $string['validateascorm'] = 'Suriin kung tanggap ang paketeng SCORM';
 $string['validation'] = 'Resulta ng pagsusuri kung tanggap';

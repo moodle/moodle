@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.5 ALPHA (2005043000)
+      // lesson.php - created with Moodle 1.5 ALPHA (2005051500)
 
 
 $string['accesscontrol'] = 'Kontrol ng Pagpasok';
@@ -89,7 +89,7 @@ $string['flowcontrol'] = 'Kontrol ng Daloy';
 $string['general'] = 'Pangkalahatan';
 $string['gobacktolesson'] = 'Bumalik sa Aralín';
 $string['grade'] = 'Marka';
-$string['gradeessay'] = 'Markahan ang mga Pansanaysay na Tanong';
+$string['gradeessay'] = 'Markahan ang mga Pansanaysay na Tanong  ($a->notgradedcount hindi namarkahan at $a->notsentcount hindi ipinadala)';
 $string['gradeis'] = 'Ang marka ay $a';
 $string['gradeoptions'] = 'Mga Opsiyon ng Marka';
 $string['handlingofretakes'] = 'Paano kukuwentahin ang mga Pagkuha-Mulî';
@@ -97,6 +97,7 @@ $string['havenotgradedyet'] = 'Hindi pa namamarkahan.';
 $string['here'] = 'dito';
 $string['highscore'] = 'Mataas na Iskor';
 $string['hightime'] = 'Mataas na Oras';
+$string['importppt'] = 'Mag-angkat ng PowerPoint';
 $string['importquestions'] = 'Mag-angkat ng mga Tanong';
 $string['insertedpage'] = 'Isiningit ang pahina';
 $string['jump'] = 'Jump';
@@ -237,7 +238,7 @@ $string['usepassword'] = 'Aralín na may Password';
 $string['viewallpages'] = 'Tingnan ang Lahat ng Pahina';
 $string['viewgrades'] = 'Tingnan ang mga marka';
 $string['viewhighscores'] = 'Tingnan ang Listahan ng Matataas na Iskor.';
-$string['viewlessonstats'] = 'Tingnan ang mga Estadistika ng Aralín';
+$string['viewlessonstats'] = 'Tingnan ang mga Estadistika ng Aralín ($a->users $a->usersname)';
 $string['waitpostscore'] = 'Maghintay lamang habang ipinopost ang mataas na iskor...';
 $string['welldone'] = 'Magaling!';
 $string['whatdofirst'] = 'Ano ang gusto mong unang gawin?';
