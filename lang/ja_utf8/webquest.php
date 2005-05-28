@@ -4,8 +4,5 @@
 
 $string['modulename'] = 'Webquest';
 $string['modulenameplural'] = 'Webquest';
-$string['thischarset'] = 'UTF-8';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Japanese';
 
 ?>

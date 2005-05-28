@@ -3,7 +3,6 @@
 
 
 $string['blockname'] = 'Activités sociales';
-$string['parentlanguage'] = 'fr';
-$string['thisdirection'] = 'ltr';
+
 
 ?>

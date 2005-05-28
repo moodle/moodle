@@ -12,11 +12,8 @@ $string['description'] = 'Puede usar una base de datos externa (prácticamente de
 $string['enrolname'] = 'Kanpo datu basea';
 $string['localcoursefield'] = 'Nombre del campo en la tabla de cursos que estamos usando para comparar las entradas en la base de datos remota (e.g., número de identificación)';
 $string['localuserfield'] = 'Nombre del campo en la tabla del usuario local que usamos para comparar al usuario con un registro remoto (e.g., número de identificación)';
-$string['parentlanguage'] = 'es';
 $string['remotecoursefield'] = 'Campo de la base de datos remota en el que esperamos encontrar el ID del curso';
 $string['remoteuserfield'] = 'Campo de la base de datos remota en el que esperamos encontrar el ID del usuario';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Euskara';
+
 
 ?>

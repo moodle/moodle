@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // dialogue.php - created with Moodle 1.4.2 (2004083125)
+      // dialogue.php - created with Moodle 1.6 development (2005052400)
 
 
 $string['addmynewentries'] = 'เพิ่มข้อความใหม่';
@@ -55,7 +55,6 @@ $string['pane2'] = '$a บทสนทนาที่รอการตอบจากคนอื่น';
 $string['pane2one'] = 'มีหนึ่งบทสนทนารอบการตอบจากคนอื่น';
 $string['pane3'] = '$a บทสนทนาที่ปิดแล้ว';
 $string['pane3one'] = 'มีหนึ่งบทสนทนาที่ปิดแล้ว';
-$string['parentlanguage'] = 'en';
 $string['seen'] = 'เห็นเมื่อ  $a  ที่แล้ว';
 $string['sendmailmessages'] = 'ส่งอีเมลเมื่อมีข้อความใหม่มาถึง';
 $string['status'] = 'สถานะ';
@@ -63,9 +62,6 @@ $string['studenttostudent'] = 'นักเรียนกับนักเรียน';
 $string['subject'] = 'หัวข้อ';
 $string['subjectadded'] = 'หัวข้อที่เพิ่ม';
 $string['teachertostudent'] = 'ครูกับนักเรียน';
-$string['thischarset'] = 'TIS-620';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Thai';
 $string['typefirstentry'] = 'พิมพ์ข้อความแรกที่นี่';
 $string['typefollowup'] = 'พิมพ์ข้อความต่อไปที่นี่';
 $string['typeofdialogue'] = 'ประเภทของบทสนทนา';

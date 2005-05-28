@@ -34,9 +34,6 @@ $string['slots'] = '시간대들';
 $string['slotsadded'] = '$a 시간대가 더해졌다';
 $string['start'] = '시작';
 $string['starttime'] = '시작 시간';
-$string['thischarset'] = 'UTF-8';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = '&#54620;&#44397;&#50612;';
 $string['welcomenewteacher'] = '당신의 모든 학생들을 알기위한 예정된 수업(시간)을 추가하기 위해 아래의 버튼을 클릭하세요. ';
 
 ?>

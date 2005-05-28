@@ -3,7 +3,6 @@
 
 
 $string['filtername'] = 'Notation algébrique';
-$string['parentlanguage'] = 'fr';
-$string['thisdirection'] = 'ltr';
+
 
 ?>

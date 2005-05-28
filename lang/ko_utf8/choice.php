@@ -27,9 +27,6 @@ $string['responses'] = '응답';
 $string['responsesto'] = '$a에 응답하다';
 $string['savemychoice'] = '나의 선택을 컴퓨터에 저장합니다';
 $string['showunanswered'] = '응답이 없는 항목을 보여라';
-$string['thischarset'] = 'UTF-8';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = '&#54620;&#44397;&#50612;';
 $string['timerestrict'] = '이 기간중에 답하는 것을 제한합니다.';
 $string['viewallresponses'] = '학생들의 응답 보고 피드백 쓰기';
 

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.4.2 (2004083125)
+      // scorm.php - created with Moodle 1.6 development (2005052400)
 
 
 $string['asset'] = 'Asset';
@@ -11,13 +11,6 @@ $string['browsed'] = 'Browsed';
 $string['browsemode'] = 'Browse Mode';
 $string['chooseapacket'] = 'เลือกหรืออัพเดท SCORM แพ็คเกจ';
 $string['completed'] = 'สมบูรณ์';
-$string['configframesize'] = 'ค่านี้เป็นขนาดของเฟรมด้านบน (พิกเซล)  เป็นที่สำหรับ navigation ในขณะที่กำลังใช้แพกเกจ scorm';
-$string['configpopup'] = 'คุณต้องการการให้แสดง scorm แพกเกจในหน้าป้อบอัพเป็นค่าที่ตั้งไว้หรือไม่';
-$string['configpopupheight'] = 'ความสูงของหน้าต่างป้อปอัพ';
-$string['configpopupresizable'] = 'ต้องการให้หน้าต่างป้อปอัพเปลี่ยนขนาดได้หรือไม่';
-$string['configpopupscrollbars'] = 'ต้องการให้หน้าต่างป้อปอัพสกรอลได้หรือไม่';
-$string['configpopupstatus'] = 'ต้องการให้หน้าต่างป้อปอัพแสดงแถบสถานะหรือไม่';
-$string['configpopupwidth'] = 'ความกว้างของหน้าต่างป้อปอัพ';
 $string['coursepacket'] = 'แพ็คเกจของรายวิชา';
 $string['coursestruct'] = 'โครงสร้างรายวิชา';
 $string['datadir'] = 'มีข้อผิดพลาด : ไม่สามารถสร้างไดเรคทอรี่ข้อมูลได้';
@@ -38,13 +31,6 @@ $string['missing_tag'] = 'แท็กหายไป $a->tag';
 $string['mode'] = 'โหมด';
 $string['modulename'] = 'Scorm';
 $string['modulenameplural'] = 'Scorms';
-$string['newheight'] = 'ความสูงที่ตั้งไว้(พิกเซล)';
-$string['newresizable'] = 'หน้าจอสามารถเปลี่ยนขนาดได้';
-$string['newscrollbars'] = 'หน้าจอสามารถสกรอลได้';
-$string['newstatus'] = 'แสดงแถบสถานะ';
-$string['newwidth'] = 'ความกว้างที่ตั้งไว้ (พิกเซล)';
-$string['newwindow'] = 'หน้าต่างใหม่';
-$string['newwindowopen'] = 'แสดงแพกเกจ scorm ในหน้าต่างป้อปอัพ';
 $string['next'] = 'ต่อไป';
 $string['no_attributes'] = '$a->tag ต้องมีแอทริบิวต์';
 $string['no_children'] = '$a->tag ต้องมี children';
@@ -55,7 +41,6 @@ $string['not_corr_type'] = '$a->tag ผิดประเภท';
 $string['notattempted'] = 'ยังไม่ได้ทำ';
 $string['organizations'] = 'องค์กร';
 $string['packagedir'] = 'มีข้อผิดพลาด ไม่สามารถสร้างแพกเกจไดเรคทอรี่';
-$string['parentlanguage'] = 'en';
 $string['passed'] = 'ผ่าน';
 $string['php5'] = 'PHP 5 (DOMXML native library)';
 $string['position_error'] = 'แท็ก$a->tag ไม่ใช่ลูกของ $a->parent tag';
@@ -67,9 +52,6 @@ $string['scoes'] = 'คะแนน';
 $string['score'] = 'คะแนน';
 $string['syntax'] = 'Syntax error';
 $string['tag_error'] = 'ไม่ทราบค่าแท็ก ($a->tag) ในเนื้อหา: $a->value';
-$string['thischarset'] = 'TIS-620';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Thai';
 $string['too_many_attributes'] = 'แท็ก  $a->tag มีแอทริบิวต์มากเกินไป';
 $string['too_many_children'] = 'แท้ก  $a->tag มีลูกมากเกินไป';
 $string['trackingloose'] = 'คำเตือน  ข้อมูลของแพคเกจ SCORM อาจจะอาจได้';

@@ -62,7 +62,6 @@ $string['pagedisplay'] = 'Afficher la ressource dans la fenêtre actuelle';
 $string['pagewindow'] = 'Même fenêtre';
 $string['parameter'] = 'Paramètre';
 $string['parameters'] = 'Paramètres';
-$string['parentlanguage'] = 'fr';
 $string['popupresource'] = 'Cette ressource devrait apparaître dans une fenêtre contextuelle (popup).';
 $string['popupresourcelink'] = 'Si ce n\'est pas le cas, cliquez ici : $a';
 $string['resourcetype'] = 'Type de ressource';
@@ -81,7 +80,6 @@ $string['resourcetypehtml'] = 'Rédiger une page Web';
 $string['resourcetypelabel'] = 'Insérer une étiquette';
 $string['resourcetypetext'] = 'Composer une page de texte';
 $string['searchweb'] = 'Chercher une page Web';
-$string['thisdirection'] = 'ltr';
 $string['variablename'] = 'Nom de la variable';
 
 ?>

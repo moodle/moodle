@@ -3,8 +3,5 @@
 
 
 $string['filtername'] = 'Automatisch linken van activiteiten';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Nederlands';
 
 ?>

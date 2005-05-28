@@ -3,7 +3,5 @@
 
 
 $string['filtername'] = 'Contenus multilingues';
-$string['parentlanguage'] = 'fr';
-$string['thisdirection'] = 'ltr';
 
 ?>

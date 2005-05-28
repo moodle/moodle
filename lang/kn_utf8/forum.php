@@ -3,8 +3,5 @@
 
 
 $string['addanewtopic'] = 'ಹೊಸ ವಿಷಯವನ್ನು ಸೇರಿಸಿ';
-$string['thischarset'] = 'utf-8';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'ಕನ್ನಡ';
 
 ?>

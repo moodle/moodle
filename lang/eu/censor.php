@@ -3,9 +3,5 @@
 
 
 $string['filtername'] = 'Hitzen zentsura';
-$string['parentlanguage'] = 'es';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Euskara';
 
 ?>

@@ -3,7 +3,6 @@
 
 
 $string['filtername'] = 'Extensions multimédia';
-$string['parentlanguage'] = 'fr';
-$string['thisdirection'] = 'ltr';
+
 
 ?>

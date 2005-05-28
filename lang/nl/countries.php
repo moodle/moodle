@@ -242,8 +242,5 @@ $string['ZA'] = 'Zuid-Afrika';
 $string['ZM'] = 'Zambië';
 $string['ZR'] = 'Zaïre';
 $string['ZW'] = 'Zimbabwe';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Nederlands';
 
 ?>

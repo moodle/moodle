@@ -14,8 +14,5 @@ $string['localcoursefield'] = 'De veldnaam in de vaktabel die we gebruiken om te
 $string['localuserfield'] = 'De naam van het veld in de lokale gebruikerstabel die we gebruiken om de gebruiker te koppelen aan een  record in de externe databank (bv idnummer)';
 $string['remotecoursefield'] = 'Het veld in de externe databank waarin course ID staat';
 $string['remoteuserfield'] = 'Het veld in de externe databank waarin user ID staat';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Nederlands';
 
 ?>

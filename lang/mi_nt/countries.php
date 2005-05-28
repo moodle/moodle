@@ -3,8 +3,5 @@
 
 
 $string['NZ'] = 'Aotearoa';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Maori - (Ngai Tahu)';
 
 ?>

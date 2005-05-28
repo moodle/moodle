@@ -85,8 +85,5 @@ $string['md5'] = 'MD5 인증 ';
 $string['plaintext'] = '단순 텍스트';
 $string['showguestlogin'] = '로그인 페이지에서 손님 로그인 버튼을 보이거나 숨길 수 있습니다.';
 $string['stdchangepassword'] = '비밀번호 페이지를 사용하기';
-$string['thischarset'] = 'UTF-8';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = '&#54620;&#44397;&#50612;';
 
 ?>

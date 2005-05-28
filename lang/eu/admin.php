@@ -4,9 +4,6 @@
 
 $string['cachetext'] = 'Testu katxearen iraupena';
 $string['filteruploadedfiles'] = 'Gora kargatutako fitxategiak filtratu';
-$string['parentlanguage'] = 'ES';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Euskara';
+
 
 ?>

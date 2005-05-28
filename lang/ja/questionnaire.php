@@ -12,8 +12,5 @@ $string['qmanagetitle'] = 'Survey Management phpESP';
 $string['qtype'] = 'タイプ';
 $string['questionnaireid'] = '調査';
 $string['respondenttype'] = '記名の有無';
-$string['thischarset'] = 'EUC-JP';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Japanese';
 
 ?>

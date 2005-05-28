@@ -23,8 +23,5 @@ $string['next'] = '계속하기';
 $string['report'] = '보고서';
 $string['review'] = '재검토';
 $string['score'] = '점수';
-$string['thischarset'] = 'UTF-8';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = '&#54620;&#44397;&#50612;';
 
 ?>

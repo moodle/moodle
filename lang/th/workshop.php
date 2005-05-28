@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.4.2 (2004083125)
+      // workshop.php - created with Moodle 1.6 development (2005052400)
 
 
 $string['absent'] = 'ไม่มี';
@@ -163,7 +163,6 @@ $string['overallocation'] = 'ค่าสมดุลในการกระจายงาน';
 $string['overallpeergrade'] = 'คะแนนทั้งหมดที่ผู้อื่นประเมิน: $a';
 $string['overallteachergrade'] = 'คะแนนทั้งหมดที่อาจารย์ประเมิน: $a';
 $string['ownwork'] = 'เจ้าของงาน';
-$string['parentlanguage'] = 'en';
 $string['passwordprotectedworkshop'] = 'ห้องปฎิบัติการต้องใช้รหัสผ่าน';
 $string['percentageofassessments'] = 'เปอร์เซ็นต์ของการประเมินที่จะถูกคัดออก';
 $string['phase'] = 'ขั้นตอน';
@@ -177,8 +176,6 @@ $string['phase4'] = 'ให้$a ประเมินผล';
 $string['phase4short'] = 'ประเมินผล';
 $string['phase5'] = 'ปิดห้องปฏิบัติการ';
 $string['phase5short'] = 'ปิดห้องปฎิบัติการ';
-$string['phase6'] = 'แสดงคะแนนสุดท้าย';
-$string['phase6short'] = 'แสดงคะแนน';
 $string['pleaseassesstheseexamplesfromtheteacher'] = 'โปรดประเมินตัวอย่างเหล่านี้จาก $a';
 $string['pleaseassessthesestudentsubmissions'] = 'โปรดประเมิน$a ด้วย';
 $string['pleaseassessyoursubmissions'] = 'กรุณาประเมินงานที่ส่งมา';
@@ -212,7 +209,6 @@ $string['scalepresent'] = 'สเกล 2 ระดับ มี/ไม่มี';
 $string['scaleyes'] = 'สเกล 2 ระดับ ไช่/ไม่ใช่';
 $string['select'] = 'เลือก';
 $string['selfassessment'] = 'การประเมินตนเอง';
-$string['setoverallocation'] = 'ตั้งค่าสมดุลในการกระจายงานให้นักเรียนเป็นผู้ประเมิน';
 $string['showgrades'] = 'แสดงคะแนน';
 $string['specimenassessmentform'] = 'รูปแบบตัวอย่างการประเมิน';
 $string['standarddeviation'] = 'ค่าเบี่ยงเบนมาตรฐาน';
@@ -241,10 +237,7 @@ $string['teachersubmissionsforassessment'] = 'งานที่อาจารย์ประเมินทั้งหมด $a  ชิ
 $string['thegradeforthisassessmentis'] = 'คะแนนจากการประเมินครั้งนี้คือ : $a  คะแนน';
 $string['thegradeis'] = 'คะแนนที่ได้ $a คะแนน';
 $string['theseasessmentsaregradedbytheteacher'] = 'งานที่ประเมินโดย $a';
-$string['thischarset'] = 'TIS-620';
-$string['thisdirection'] = 'ltr';
 $string['thisisadroppedassessment'] = 'การประเมินที่ไม่ใช้แล้ว';
-$string['thislanguage'] = 'Thai';
 $string['timeassessed'] = 'เวลาที่ประเมิน';
 $string['title'] = 'หัวข้อ';
 $string['typeofscale'] = 'ประเภทของสเกล';

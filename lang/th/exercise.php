@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // exercise.php - created with Moodle 1.4.2 (2004083125)
+      // exercise.php - created with Moodle 1.6 development (2005052400)
 
 
 $string['absent'] = 'ขาด';
@@ -98,7 +98,6 @@ $string['numberofnegativeresponses'] = 'จำนวนคำตอบแง่ลบ';
 $string['onesubmission'] = 'ส่งงานได้ครั้งเดียว';
 $string['optionaladjustment'] = 'ปรับเปลี่ยนเพิ่มเติม';
 $string['overallgrade'] = 'คะแนนโดยรวม';
-$string['parentlanguage'] = 'en';
 $string['passwordprotectedexercise'] = 'แบบฝึกหัดที่ต้องใช้รหัสผ่าน';
 $string['phase'] = 'ส่วน';
 $string['phase1'] = 'ติดตั้งแบบฝึกหัด';
@@ -156,10 +155,7 @@ $string['theexercise'] = 'แบบฝึกหัด';
 $string['theexerciseandthesubmissionby'] = 'แบบฝึกหัดและการส่งงานจาก $a';
 $string['thegradeis'] = 'ได้คะแนน  $a';
 $string['thereisfeedbackfromthe'] = 'มีความคิดเห็นจาก $a ส่งมา';
-$string['thischarset'] = 'TIS-620';
-$string['thisdirection'] = 'ltr';
 $string['thisisaresubmission'] = 'นี่คือการส่งที่มีการแก้ไขโดย$a การประเมินผลที่คุณได้ทำไปแล้วจะถูกแสดงให้เห็น <br /> หลังจากที่ดูงานที่ส่งมาใหม่แล้วกรุณาแก้ไขผลการประเมินด้วย <br /> กดที่ปุ่มใดปุ่มหนึ่งตรงส่วนล่างสุดของหน้า';
-$string['thislanguage'] = 'Thai';
 $string['title'] = 'หัวข้อ';
 $string['typeofscale'] = 'ประเภทของการวัดผล';
 $string['unassessed'] = '$a  ยังไม่ได้ประเมิน';

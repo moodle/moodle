@@ -4,8 +4,5 @@
 
 $string['modulename'] = 'webquest';
 $string['modulenameplural'] = 'webquests';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Nederlands';
 
 ?>

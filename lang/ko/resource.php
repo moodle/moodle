@@ -68,9 +68,6 @@ $string['resourcetypehtml'] = '웹 페이지 만들기';
 $string['resourcetypelabel'] = '표지 삽입하기';
 $string['resourcetypetext'] = '텍스트 페이지 만들기';
 $string['searchweb'] = '웹 사이트 검색';
-$string['thischarset'] = 'euc-kr';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = '&#54620;&#44397;&#50612;';
 $string['variablename'] = '변덕스러운 이름';
 
 ?>
