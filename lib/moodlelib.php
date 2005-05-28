@@ -2413,7 +2413,7 @@ function get_user_info_from_db($field, $value) {  // For backward compatibility
  * for the current SESSION
  */
 function set_login_session_preferences() {
-    global $SESSION;
+    global $SESSION, $CFG;
 
     $SESSION->justloggedin = true;
 
