@@ -1,5 +1,12 @@
 <?php // $Id$
 
+define('TABLE_VAR_SORT',   1);
+define('TABLE_VAR_HIDE',   2);
+define('TABLE_VAR_SHOW',   3);
+define('TABLE_VAR_IFIRST', 4);
+define('TABLE_VAR_ILAST',  5);
+define('TABLE_VAR_PAGE',   6);
+
 class flexible_table {
 
     var $uniqueid        = NULL;
@@ -12,6 +19,7 @@ class flexible_table {
     var $setup           = false;
     var $sess            = NULL;
     var $baseurl         = NULL;
+    var $request         = array();
 
     var $is_collapsible = false;
     var $is_sortable    = false;
@@ -25,6 +33,14 @@ class flexible_table {
 
     function flexible_table($uniqueid) {
         $this->uniqueid = $uniqueid;
+        $this->request  = array(
+            TABLE_VAR_SORT    => 'tsort',
+            TABLE_VAR_HIDE    => 'thide',
+            TABLE_VAR_SHOW    => 'tshow',
+            TABLE_VAR_IFIRST  => 'tifirst',
+            TABLE_VAR_ILAST   => 'tilast',
+            TABLE_VAR_PAGE    => 'page'
+        );
     }
 
     function sortable($bool) {
@@ -47,6 +63,14 @@ class flexible_table {
         $this->pagesize  = $perpage;
         $this->totalrows = $total;
         $this->use_pages = true;
+    }
+
+    function set_control_variables($variables) {
+        foreach($variables as $what => $variable) {
+            if(isset($this->request[$what])) {
+                $this->request[$what] = $variable;
+            }
+        }
     }
 
     function set_attribute($attribute, $value) {
@@ -153,15 +177,15 @@ class flexible_table {
 
         $this->sess = &$SESSION->flextable[$this->uniqueid];
 
-        if(!empty($_GET['tshow']) && isset($this->columns[$_GET['tshow']])) {
+        if(!empty($_GET[$this->request[TABLE_VAR_SHOW]]) && isset($this->columns[$_GET[$this->request[TABLE_VAR_SHOW]]])) {
             // Show this column
-            $this->sess->collapse[$_GET['tshow']] = false;
+            $this->sess->collapse[$_GET[$this->request[TABLE_VAR_SHOW]]] = false;
         }
-        else if(!empty($_GET['thide']) && isset($this->columns[$_GET['thide']])) {
+        else if(!empty($_GET[$this->request[TABLE_VAR_HIDE]]) && isset($this->columns[$_GET[$this->request[TABLE_VAR_HIDE]]])) {
             // Hide this column
-            $this->sess->collapse[$_GET['thide']] = true;
-            if(array_key_exists($_GET['thide'], $this->sess->sortby)) {
-                unset($this->sess->sortby[$_GET['thide']]);
+            $this->sess->collapse[$_GET[$this->request[TABLE_VAR_HIDE]]] = true;
+            if(array_key_exists($_GET[$this->request[TABLE_VAR_HIDE]], $this->sess->sortby)) {
+                unset($this->sess->sortby[$_GET[$this->request[TABLE_VAR_HIDE]]]);
             }
         }
 
@@ -173,21 +197,21 @@ class flexible_table {
         }
 
         if(
-            !empty($_GET['tsort']) &&
-            (isset($this->columns[$_GET['tsort']]) ||
-                (($_GET['tsort'] == 'firstname' || $_GET['tsort'] == 'lastname') && isset($this->columns['fullname']))
+            !empty($_GET[$this->request[TABLE_VAR_SORT]]) &&
+            (isset($this->columns[$_GET[$this->request[TABLE_VAR_SORT]]]) ||
+                (($_GET[$this->request[TABLE_VAR_SORT]] == 'firstname' || $_GET[$this->request[TABLE_VAR_SORT]] == 'lastname') && isset($this->columns['fullname']))
             ))
         {
-            if(empty($this->sess->collapse[$_GET['tsort']])) {
-                if(array_key_exists($_GET['tsort'], $this->sess->sortby)) {
+            if(empty($this->sess->collapse[$_GET[$this->request[TABLE_VAR_SORT]]])) {
+                if(array_key_exists($_GET[$this->request[TABLE_VAR_SORT]], $this->sess->sortby)) {
                     // This key already exists somewhere. Change its sortorder and bring it to the top.
-                    $sortorder = $this->sess->sortby[$_GET['tsort']] == SORT_ASC ? SORT_DESC : SORT_ASC;
-                    unset($this->sess->sortby[$_GET['tsort']]);
-                    $this->sess->sortby = array_merge(array($_GET['tsort'] => $sortorder), $this->sess->sortby);
+                    $sortorder = $this->sess->sortby[$_GET[$this->request[TABLE_VAR_SORT]]] == SORT_ASC ? SORT_DESC : SORT_ASC;
+                    unset($this->sess->sortby[$_GET[$this->request[TABLE_VAR_SORT]]]);
+                    $this->sess->sortby = array_merge(array($_GET[$this->request[TABLE_VAR_SORT]] => $sortorder), $this->sess->sortby);
                 }
                 else {
                     // Key doesn't exist, so just add it to the beginning of the array, ascending order
-                    $this->sess->sortby = array_merge(array($_GET['tsort'] => SORT_ASC), $this->sess->sortby);
+                    $this->sess->sortby = array_merge(array($_GET[$this->request[TABLE_VAR_SORT]] => SORT_ASC), $this->sess->sortby);
                 }
                 // Finally, make sure that no more than $this->maxsortkeys are present into the array
                 if(!empty($this->maxsortkeys) && ($sortkeys = count($this->sess->sortby)) > $this->maxsortkeys) {
@@ -198,26 +222,26 @@ class flexible_table {
             }
         }
 
-        if(isset($_GET['tilast'])) {
-            if(empty($_GET['tilast']) || is_numeric(strpos(get_string('alphabet'), $_GET['tilast']))) {
-                $this->sess->i_last = $_GET['tilast'];
+        if(isset($_GET[$this->request[TABLE_VAR_ILAST]])) {
+            if(empty($_GET[$this->request[TABLE_VAR_ILAST]]) || is_numeric(strpos(get_string('alphabet'), $_GET[$this->request[TABLE_VAR_ILAST]]))) {
+                $this->sess->i_last = $_GET[$this->request[TABLE_VAR_ILAST]];
             }
         }
 
-        if(isset($_GET['tifirst'])) {
-            if(empty($_GET['tifirst']) || is_numeric(strpos(get_string('alphabet'), $_GET['tifirst']))) {
-                $this->sess->i_first = $_GET['tifirst'];
+        if(isset($_GET[$this->request[TABLE_VAR_IFIRST]])) {
+            if(empty($_GET[$this->request[TABLE_VAR_IFIRST]]) || is_numeric(strpos(get_string('alphabet'), $_GET[$this->request[TABLE_VAR_IFIRST]]))) {
+                $this->sess->i_first = $_GET[$this->request[TABLE_VAR_IFIRST]];
             }
         }
 
         if(empty($this->baseurl)) {
             $getcopy  = $_GET;
-            unset($getcopy['tshow']);
-            unset($getcopy['thide']);
-            unset($getcopy['tsort']);
-            unset($getcopy['tifirst']);
-            unset($getcopy['tilast']);
-            unset($getcopy['page']);
+            unset($getcopy[$this->request[TABLE_VAR_SHOW]]);
+            unset($getcopy[$this->request[TABLE_VAR_HIDE]]);
+            unset($getcopy[$this->request[TABLE_VAR_SORT]]);
+            unset($getcopy[$this->request[TABLE_VAR_IFIRST]]);
+            unset($getcopy[$this->request[TABLE_VAR_ILAST]]);
+            unset($getcopy[$this->request[TABLE_VAR_PAGE]]);
 
             $strippedurl = strip_querystring(qualified_me());
 
@@ -250,7 +274,7 @@ class flexible_table {
             $this->sess->i_last  = '';
         }
 
-        $this->currpage = optional_param('page', 0);
+        $this->currpage = optional_param($this->request[TABLE_VAR_PAGE], 0);
         $this->setup = true;
     }
 
@@ -324,7 +348,7 @@ class flexible_table {
 
             echo '<div class="initialbar">'.get_string('firstname').' : ';
             if(!empty($this->sess->i_first)) {
-                echo '<a href="'.$this->baseurl.'tifirst=">'.$strall.'</a>';
+                echo '<a href="'.$this->baseurl.$this->request[TABLE_VAR_IFIRST].'=">'.$strall.'</a>';
             } else {
                 echo '<strong>'.$strall.'</strong>';
             }
@@ -332,7 +356,7 @@ class flexible_table {
                 if ($letter == $this->sess->i_first) {
                     echo ' <strong>'.$letter.'</strong>';
                 } else {
-                    echo ' <a href="'.$this->baseurl.'tifirst='.$letter.'">'.$letter.'</a>';
+                    echo ' <a href="'.$this->baseurl.$this->request[TABLE_VAR_IFIRST].'='.$letter.'">'.$letter.'</a>';
                 }
             }
             echo '</div>';
@@ -341,7 +365,7 @@ class flexible_table {
 
             echo '<div class="initialbar">'.get_string('lastname').' : ';
             if(!empty($this->sess->i_last)) {
-                echo '<a href="'.$this->baseurl.'tilast=">'.$strall.'</a>';
+                echo '<a href="'.$this->baseurl.$this->request[TABLE_VAR_ILAST].'=">'.$strall.'</a>';
             } else {
                 echo '<strong>'.$strall.'</strong>';
             }
@@ -349,7 +373,7 @@ class flexible_table {
                 if ($letter == $this->sess->i_last) {
                     echo ' <strong>'.$letter.'</strong>';
                 } else {
-                    echo ' <a href="'.$this->baseurl.'tilast='.$letter.'">'.$letter.'</a>';
+                    echo ' <a href="'.$this->baseurl.$this->request[TABLE_VAR_ILAST].'='.$letter.'">'.$letter.'</a>';
                 }
             }
             echo '</div>';
@@ -360,7 +384,7 @@ class flexible_table {
 
         // Paging bar
         if($this->use_pages) {
-            print_paging_bar($this->totalrows, $this->currpage, $this->pagesize, $this->baseurl);
+            print_paging_bar($this->totalrows, $this->currpage, $this->pagesize, $this->baseurl, $this->request[TABLE_VAR_PAGE]);
         }
 
         if (empty($this->data)) {
@@ -382,10 +406,10 @@ class flexible_table {
 
             if($this->is_collapsible) {
                 if(!empty($this->sess->collapse[$column])) {
-                    $icon_hide = ' <a href="'.$this->baseurl.'tshow='.$column.'"><img src="'.$CFG->pixpath.'/t/switch_plus.gif" title="'.get_string('show').' '.$this->headers[$index].'" /></a>';
+                    $icon_hide = ' <a href="'.$this->baseurl.$this->request[TABLE_VAR_SHOW].'='.$column.'"><img src="'.$CFG->pixpath.'/t/switch_plus.gif" title="'.get_string('show').' '.$this->headers[$index].'" /></a>';
                 }
                 else if($this->headers[$index] !== NULL) {
-                    $icon_hide = ' <a href="'.$this->baseurl.'thide='.$column.'"><img src="'.$CFG->pixpath.'/t/switch_minus.gif" title="'.get_string('hide').' '.$this->headers[$index].'" /></a>';
+                    $icon_hide = ' <a href="'.$this->baseurl.$this->request[TABLE_VAR_HIDE].'='.$column.'"><img src="'.$CFG->pixpath.'/t/switch_minus.gif" title="'.get_string('hide').' '.$this->headers[$index].'" /></a>';
                 }
             }
 
@@ -417,8 +441,8 @@ class flexible_table {
                             $icon_sort_last = ' <img src="'.$CFG->pixpath.'/t/up.gif" />';
                         }
                     }
-                    $this->headers[$index] = '<a href="'.$this->baseurl.'tsort=firstname">'.get_string('firstname').'</a> '.$icon_sort_first.' / '.
-                                          '<a href="'.$this->baseurl.'tsort=lastname">'.get_string('lastname').'</a> '.$icon_sort_last;
+                    $this->headers[$index] = '<a href="'.$this->baseurl.$this->request[TABLE_VAR_SORT].'=firstname">'.get_string('firstname').'</a> '.$icon_sort_first.' / '.
+                                          '<a href="'.$this->baseurl.$this->request[TABLE_VAR_SORT].'=lastname">'.get_string('lastname').'</a> '.$icon_sort_last;
                 }
                 break;
 
@@ -432,7 +456,7 @@ class flexible_table {
                             $icon_sort = ' <img src="'.$CFG->pixpath.'/t/up.gif" />';
                         }
                     }
-                    $this->headers[$index] = '<a href="'.$this->baseurl.'tsort='.$column.'">'.$this->headers[$index].'</a>';
+                    $this->headers[$index] = '<a href="'.$this->baseurl.$this->request[TABLE_VAR_SORT].'='.$column.'">'.$this->headers[$index].'</a>';
                 }
             }
 
@@ -492,7 +516,7 @@ class flexible_table {
 
         // Paging bar
         if($this->use_pages) {
-            print_paging_bar($this->totalrows, $this->currpage, $this->pagesize, $this->baseurl);
+            print_paging_bar($this->totalrows, $this->currpage, $this->pagesize, $this->baseurl, $this->request[TABLE_VAR_PAGE]);
         }
     }
 
