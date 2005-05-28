@@ -286,12 +286,29 @@ body#admin-modules .generaltablecell {
   padding-bottom: 2px;
 } 
 
-body#admin-blocks table.generaltable td.cell,
-body#admin-blocks .generaltablecell {
-  padding-top: 1px;
-  padding-bottom: 1px;
+body#admin-blocks table#blocks,
+body#admin-blocks table#incompatible {
+  width: 70%;
+  margin: auto;
+}
+
+body#admin-blocks table#blocks th,
+body#admin-blocks table#incompatible th,
+body#admin-blocks table#blocks td.cell,
+body#admin-blocks table#incompatible td.cell {
+  padding: 4px;
+  text-align: center;
+  vertical-align: middle;
 } 
 
+body#admin-blocks table#blocks td.c0,
+body#admin-blocks table#blocks th.c0,
+body#admin-blocks table#incompatible td.c0,
+body#admin-blocks table#incompatible th.c0 {
+  text-align: left;
+}
+
+body#admin-blocks 
 body#admin-config .confighelp {
   display: block;
   padding-bottom: 20px;

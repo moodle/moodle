@@ -177,6 +177,9 @@ table.formtable tbody th {
   text-align: right;
 }
 
+body#admin-blocks table#incompatible td.c0 {
+  font-weight: bold;
+}
 
 /***
  *** Blocks

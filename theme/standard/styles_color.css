@@ -215,6 +215,19 @@ body#admin-index .c0 {
   background-color: #FAFAFA;
 }
 
+body#admin-blocks table#blocks .r0,
+body#admin-blocks table#incompatible .r0 {
+  background-color: #f0f0f0;
+}
+
+body#admin-blocks table#blocks .r1,
+body#admin-blocks table#incompatible .r1 {
+  background-color: #fafafa;
+}
+
+body#admin-blocks table#incompatible td.c0 {
+  color: #ff0000;
+}
 
 
 /***
