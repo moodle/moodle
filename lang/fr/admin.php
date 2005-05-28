@@ -105,6 +105,7 @@ $string['importtimezonescount'] = '$a->count entrées importées depuis $a->source
 $string['importtimezonesfailed'] = 'Aucune source de données trouvée&nbsp;!';
 $string['nodstpresetsexist'] = 'Le support de l\'heure d\'été est désactivé pour tous les utilisateurs, car aucun réglage n\'est défini. Vous pouvez définir des réglages en cliquant sur le bouton ci-dessous.';
 $string['optionalmaintenancemessage'] = 'Message de maintenance facultatif';
+$string['pleaseregister'] = 'Pour enlever ce bouton, veuillez enregistrer votre site';
 $string['sitemaintenance'] = 'Ce site est actuellement en maintenance. Il est donc temporairement non disponible';
 $string['sitemaintenancemode'] = 'Mode maintenance';
 $string['sitemaintenanceon'] = 'Votre site est actuellement en mode maintenance (seuls les administrateurs peuvent se connecter et utiliser le site).';
