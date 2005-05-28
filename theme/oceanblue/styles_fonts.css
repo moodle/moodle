@@ -218,6 +218,11 @@ table.formtable tbody th {
   font-size: 0.8em;
 }
 
+.block_online_users .listentry {
+  text-align:left;
+  font-size:0.75em
+}
+
 /***
  *** Calendar
  ***/
