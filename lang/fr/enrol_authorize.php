@@ -6,6 +6,7 @@ $string['anreferer'] = 'Taper ici un URL référenceur si vous avez mis en place c
 $string['antestmode'] = 'Traiter les transactions en mode test (aucun montant ne sera prélevé)';
 $string['antrankey'] = 'Authorize.net&nbsp;: clef de transaction';
 $string['ccexpire'] = 'Date d\'échéance';
+$string['ccexpired'] = 'La carte de crédit est échue';
 $string['ccinvalid'] = 'Numéro de carte non valable';
 $string['ccno'] = 'Numéro de carte de crédit';
 $string['cctype'] = 'Type de carte de crédit';
