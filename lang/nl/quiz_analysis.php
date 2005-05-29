@@ -1,15 +1,18 @@
 <?PHP // $Id$ 
-      // quiz_analysis.php - created with Moodle 1.5 ALPHA (2005051500)
+      // quiz_analysis.php - created with Moodle 1.6 development (2005052400)
 
 
 $string['analysisoptions'] = 'Analyse-opties';
-$string['analysistitle'] = 'Item analysetabel';
+$string['analysistitle'] = 'Vraaganalysetabel';
 $string['attemptsall'] = 'Alle pogingen';
 $string['attemptselection'] = 'Te analyseren pogingen per gebruiker';
 $string['attemptsfirst'] = 'eerste poging';
 $string['attemptshighest'] = 'hoogste cijfer';
 $string['attemptslast'] = 'laatste poging';
+$string['dicsindextitle'] = 'Disc.<br/>Index';
+$string['disccoefftitle'] = 'Disc.<br/>Coeff.';
 $string['downloadooo'] = 'Download in OpenOffice formaat';
+$string['facilitytitle'] = '%% juis<br />Gemakkelijkheidsgraad';
 $string['lowmarkslimit'] = 'Analyseer niet als de score lager is dan:';
 $string['pagesize'] = 'Vragen per pagina';
 $string['qcounttitle'] = 'V. aantal';
@@ -19,8 +22,9 @@ $string['qtexttitle'] = 'Vraag tekst';
 $string['qtypetitle'] = 'V. type';
 $string['quizreportdir'] = 'test_rapport';
 $string['rcounttitle'] = 'A.<br />aantallen';
-$string['reportanalysis'] = 'Item analyse rapport';
+$string['reportanalysis'] = 'Vraaganalyserapport';
 $string['responsestitle'] = 'Antwoordtekst';
+$string['rfractiontitle'] = 'Cijfer per<br />antwoord';
 $string['rpercenttitle'] = 'A.%%';
 $string['stddevtitle'] = 'SD';
 
