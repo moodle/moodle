@@ -317,17 +317,11 @@ class quiz_report extends quiz_default_report {
             $qsd = format_float($q['qsd'],3);
             $di = format_float($q['disc_index'],2);
             $dc = format_float($q['disc_coeff'],2);
-           
-            foreach($responses as $response) {
-                $table->add_data(array($qnumber."\n<br>".$qicon."\n ".$qreview, $qquestion, $response->text, $response->credit, $response->rcount, $response->rpercent, $facility, $qsd, $di, $dc));
-            }
             
-            $last = count($table->data)-1;
-            for ($i=$last; $i>= $last - count($responses) + 2; $i--){
-                $blanks = array_merge(range(0,1),range(6,9));
-                foreach($blanks as $col){
-                    $table->data[$i][$col] = "";
-                }
+            $response = array_shift($responses);
+            $table->add_data(array($qnumber."\n<br>".$qicon."\n ".$qreview, $qquestion, $response->text, $response->credit, $response->rcount, $response->rpercent, $facility, $qsd, $di, $dc));
+            foreach($responses as $response) {
+                $table->add_data(array('', '', $response->text, $response->credit, $response->rcount, $response->rpercent, '', '', '', ''));
             }
         }
         
