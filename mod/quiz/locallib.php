@@ -2465,6 +2465,25 @@ function quizzes_question_used($id) {
     return $quizlist;
 }
 
+/** 
+* Array of names of quizzes a category appears in
+*
+* @return array   Array of quiz names (with quiz->id as array keys)
+* @param integer  Quiz category id
+*/
+function quizzes_category_used($id) {
+
+    $quizlist = array();
+    if ($questions = get_records('quiz_questions', 'category', $id)) {
+        foreach ($questions as $question) {
+            $qlist = quizzes_question_used($question->id);
+            $quizlist = $quizlist + $qlist;
+        }
+    }
+
+    return $quizlist;
+}
+
 /**
 * Parse field names used for the replace options on question edit forms
 */
