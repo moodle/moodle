@@ -8,17 +8,12 @@
 class quiz_report extends quiz_default_report {
 
     function display($quiz, $cm, $course) {     /// This function just displays the report
-
         global $CFG, $SESSION, $db, $QUIZ_QTYPES;
-        define('QUIZ_ALLATTEMPTS', 0);
-        define('QUIZ_HIGHESTATTEMPT', 1);
-        define('QUIZ_FIRSTATTEMPT', 2);
-        define('QUIZ_LASTATTEMPT', 3);
-
         $strnoquiz = get_string('noquiz','quiz');
         $strnoattempts = get_string('noattempts','quiz');
         
         if (!$quiz->questions) {
+            $this->print_header_and_tabs($cm, $course, $quiz, $reportmode="analysis");
             print_heading($strnoattempts);
             return true;
         }
@@ -39,6 +34,7 @@ class quiz_report extends quiz_default_report {
         }
 
         if(empty($users)) {
+            $this->print_header_and_tabs($cm, $course, $quiz, $reportmode="analysis");
             print_heading($strnoattempts);
             return true;
         }
@@ -92,7 +88,7 @@ class quiz_report extends quiz_default_report {
 
         if(empty($attempts)) {
             $this->print_header_and_tabs($cm, $course, $quiz, $reportmode="analysis");
-            print_heading($strnoattempts);
+            ($strnoattempts);
             $this->print_options_form($quiz, $cm, $attemptselection, $lowmarklimit, $pagesize);
             return true;
         }
@@ -133,7 +129,10 @@ class quiz_report extends quiz_default_report {
             }
             $numbers = explode(',', $questionlist);
             $statsrow = array();
-            foreach ($numbers as $i) {  
+            foreach ($numbers as $i) {              
+                if (!isset($quizquestions[$i]) or !isset($states[$i])) {
+                    continue;
+                }
                 $qtype = ($quizquestions[$i]->qtype==4) ? $states[$i]->options->question->qtype : $quizquestions[$i]->qtype;
                 if (!in_array ($qtype, $accepted_qtypes)){
                     continue;
@@ -224,7 +223,7 @@ class quiz_report extends quiz_default_report {
 
         $table->sortable(true);
         $table->collapsible(true);
-        $table->initialbars(true);
+        $table->initialbars(false);
         
         $table->column_class('id', 'numcol');
         $table->column_class('credits', 'numcol');
@@ -306,8 +305,8 @@ class quiz_report extends quiz_default_report {
                 } else {
                     $qclass = 'partialcorrect';
                 }
-                $response->credit = " (".format_float($q['credits'][$aid],2).") ";                
-                $response->text = format_text("$resp", FORMAT_MOODLE, $format_options, $quiz->course);
+                $response->credit = '<span class="'.$qclass.'">('.format_float($q['credits'][$aid],2).') </span>';                
+                $response->text = '<span class="'.$qclass.'">'.format_text("$resp", FORMAT_MOODLE, $format_options, $quiz->course).' </span>';
                 $count = $q['rcounts'][$aid].'/'.$q['count'];
                 $response->rcount = $count;  // format_text("$count", FORMAT_MOODLE, $format_options, $quiz->course);
                 $response->rpercent =  '('.format_float($q['rcounts'][$aid]/$q['count']*100,0).'%)';
@@ -662,6 +661,11 @@ class quiz_report extends quiz_default_report {
 
 
 }    
+
+define('QUIZ_ALLATTEMPTS', 0);
+define('QUIZ_HIGHESTATTEMPT', 1);
+define('QUIZ_FIRSTATTEMPT', 2);
+define('QUIZ_LASTATTEMPT', 3);
 
 function stats_sumx($sum, $data){
     $sum[0] += $data[0];
