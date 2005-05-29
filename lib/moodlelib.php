@@ -2735,7 +2735,7 @@ function remove_course_contents($courseid, $showfeedback=true) {
                             if ($moddelete($instance->id)) {
                                 $count++;
                             } else {
-                                notify('Could not delete '. $modname .' instance '. $instance->id .' ('. $instance->name .')');
+                                notify('Could not delete '. $modname .' instance '. $instance->id .' ('. format_string($instance->name) .')');
                                 $result = false;
                             }
                         }
