@@ -9,11 +9,6 @@
     $enable  = optional_param('enable', '');                  // enable email
     $disable = optional_param('disable', '');                 // disable email
 
-    if (!empty($SESSION->wantsurl)) {
-        $wantsurl = $SESSION->wantsurl;
-        unset($SESSION->wantsurl);
-        redirect($wantsurl);
-    }
 
     if (empty($id)) {         // See your own profile by default
         require_login();

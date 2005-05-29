@@ -222,9 +222,18 @@
                     }
                     if (isset($USER->newadminuser)) {
                         unset($USER->newadminuser);
-                        redirect("$CFG->wwwroot/", get_string("changessaved"));
+                        redirect("$CFG->wwwroot/", get_string('changessaved'));
                     }
-                    redirect("$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id", get_string("changessaved"));
+                    if (!empty($SESSION->wantsurl)) {  // User may have been forced to edit account, so let's 
+                                                       // send them to where they wanted to go originally
+                        $wantsurl = $SESSION->wantsurl;
+                        $SESSION->wantsurl = '';       // In case unset doesn't work as expected
+                        unset($SESSION->wantsurl);
+                        redirect($wantsurl, get_string('changessaved'));
+                    } else {
+                        redirect("$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id", 
+                                  get_string("changessaved"));
+                    }
                 } else {
                     redirect("$CFG->wwwroot/$CFG->admin/user.php", get_string("changessaved"));
                 }
