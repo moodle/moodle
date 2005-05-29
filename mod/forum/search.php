@@ -176,6 +176,7 @@
             $searchterms[$key] = preg_replace('/^\+/','',$searchterm);
         }
     }
+    $strippedsearch = implode(' ', $searchterms);    // Rebuild the string
 
     foreach ($posts as $post) {
 
@@ -186,8 +187,8 @@
             error("Could not find forum $discussion->forum");
         }
 
-        $post->subject = highlight("$strippedsearch", $post->subject);
-        $discussion->name = highlight("$strippedsearch", $discussion->name);
+        $post->subject = highlight($strippedsearch, $post->subject);
+        $discussion->name = highlight($strippedsearch, $discussion->name);
 
         $fullsubject = "<a href=\"view.php?f=$forum->id\">".format_string($forum->name,true)."</a>";
         if ($forum->type != 'single') {
