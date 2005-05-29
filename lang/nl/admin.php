@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.5 ALPHA (2005042300)
+      // admin.php - created with Moodle 1.6 development (2005052400)
 
 
 $string['adminseesallevents'] = 'Beheerders zien alle gebeurtenissen';
@@ -105,8 +105,9 @@ $string['helpweekenddays'] = 'Welke dagen van de week worden als \"weekend\" bes
 $string['importtimezones'] = 'Update de volledige lijst van tijdzones';
 $string['importtimezonescount'] = '$a->count items geïmporteerd van $a->source';
 $string['importtimezonesfailed'] = 'Geen bronnen gevonden! (= slecht nieuws)';
-$string['nodstpresetsexist'] = 'Zomertijd is uitgeschakeld voor alle gebruikers omdat er geen voorkeuzes voor zomertijd gedefiniëerd zijn. Je kunt er definiëren door op onderstaande knop te klikken.';
+$string['incompatibleblocks'] = 'Niet-compatibele blokken';
 $string['optionalmaintenancemessage'] = 'Optionele onderhoudsboodschap';
+$string['pleaseregister'] = 'Registreer aub je site.  Op die manier kun je deze knop verwijderen.';
 $string['sitemaintenance'] = 'De site is in onderhoud en is op dit ogenblik niet beschikbaar';
 $string['sitemaintenancemode'] = 'Onderhoudsmodus';
 $string['sitemaintenanceoff'] = 'De onderhoudsmodus is uitgeschakeld en de site loopt nu terug normaal';
