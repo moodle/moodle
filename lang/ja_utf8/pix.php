@@ -1,11 +1,11 @@
-<?php // $Id$ 
-      // pix.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+<?PHP // $Id$ 
+      // pix.php - created with Moodle 1.6 development (2005052400)
 
 
 $string['angry'] = '怒り';
 $string['approve'] = '賛成';
 $string['biggrin'] = '満面の笑顔';
-$string['blackeye'] = '眼帯';
+$string['blackeye'] = '青あざ';
 $string['blush'] = '赤面';
 $string['clown'] = 'ピエロ';
 $string['cool'] = 'クール';
@@ -20,7 +20,7 @@ $string['smiley'] = '笑顔';
 $string['surprise'] = '驚き';
 $string['thoughtful'] = '思慮深い';
 $string['tongueout'] = 'ベー';
-$string['wideeyes'] = '大きな目';
+$string['wideeyes'] = 'もうろうとした目';
 $string['wink'] = 'ウインク';
 
 ?>
