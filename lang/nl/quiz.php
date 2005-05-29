@@ -1,11 +1,11 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.5 ALPHA (2005051500)
+      // quiz.php - created with Moodle 1.6 development (2005052400)
 
 
 $string['acceptederror'] = 'Geaccepteerde fout';
 $string['action'] = 'Actie';
 $string['adaptive'] = 'Adaptieve modus';
-$string['addcategory'] = 'Voeg een categorie toe';
+$string['addcategory'] = 'Maak een nieuwe categorie';
 $string['addingquestions'] = 'Aan deze kant van de pagina kun je je vragenlijst beheren. De vragen worden bewaard per categorie om je te helpen ze te ordenen. Ze kunnen gebruikt worden in elke test van je vak of zelfs in andere vakken als je ze wil \'publiceren\'.
 <br /><br />Pas wanneer je een categorie gekozen of gemaakt hebt, kun je vragen maken of bewerken.
 Je kunt gelijk welke van die vragen selecteren om ze toe te voegen aan je test aan de andere kant van deze pagina.';
@@ -91,7 +91,7 @@ $string['countdowntenminutes'] = 'De test gaat over tien minuten dicht.';
 $string['coursetestmanager'] = 'Course Test Manager opmaak';
 $string['createfirst'] = 'Je moet eerst enkele kort antwoordvragen maken.';
 $string['createmultiple'] = 'Maak meer vragen';
-$string['createnewquestion'] = 'Maak een nieuwe vraag';
+$string['createnewquestion'] = 'Maak nieuwe vraag';
 $string['custom'] = 'Aangepast formaat';
 $string['datasetdefinitions'] = 'Herbruikbare datasetdefinities voor categorie $a';
 $string['datasetnumber'] = 'Aantal';
@@ -108,7 +108,7 @@ $string['deletequestionscheck'] = 'Weet je zeker dat je volgende vragen wil vewi
 $string['deleteselected'] = 'Selectie verwijderen';
 $string['description'] = 'Beschrijving';
 $string['discrimination'] = 'Discrim. Index';
-$string['displayoptions'] = 'Schermopties';
+$string['displayoptions'] = 'Toon';
 $string['download'] = 'Klik om het bestand met de geëxporteerde categorie te downloaden';
 $string['downloadextra'] = '(dit bestand is ook bewaard bij de bestanden van het vak in de map /quiz)';
 $string['duplicateresponse'] = 'De inzending werd genegeerd omdat je eerder al een gelijkaardig antwoord gaf.';
@@ -146,7 +146,7 @@ $string['existingcategory3'] = 'een link van een bestaande set links die ook doo
 $string['exportfilename'] = 'test';
 $string['exportname'] = 'Bestandsnaam';
 $string['exportnameformat'] = '%%Y%%m%%d-%%H%%M';
-$string['exportquestions'] = 'Exporteer de vragen naar een bestand';
+$string['exportquestions'] = 'Exporteer  vragen naar bestand';
 $string['false'] = 'Onwaar';
 $string['feedback'] = 'Feedback';
 $string['file'] = 'Bestand';
@@ -188,7 +188,7 @@ $string['imagedisplay'] = 'Weer te geven afbeelding';
 $string['imagemissing'] = 'Afbeelding niet beschikbaar op lijn $a. De bestandsnaam zal genegeerd worden';
 $string['importmax10error'] = 'Er zit een fout in de vraag. Je mag niet meer dan tien mogelijke antwoorden geven.';
 $string['importminerror'] = 'Er zit een fout in de vraag. Je hebt niet genoeg mogelijke antwoorden gegeven voor dit type vraag.';
-$string['importquestions'] = 'Importeer vragen uit een bestand';
+$string['importquestions'] = 'Importeer vragen uit bestand';
 $string['incorrect'] = 'Niet juist';
 $string['indivresp'] = 'Reacties van ieder afzonderlijk op elk item';
 $string['info'] = 'Info';
@@ -279,7 +279,7 @@ $string['penaltyscheme'] = 'Gebruik strafpunten';
 $string['percentcorrect'] = 'Percentage juist';
 $string['pleaseclose'] = 'Je vraag is verwerkt. Je mag dit venster nu sluiten.';
 $string['popup'] = 'Toon de test in een \"veilig\" venster';
-$string['preview'] = 'Controleer vraag';
+$string['preview'] = 'Controleer test';
 $string['previewquestion'] = 'Weergave van een vraag testen';
 $string['previewquiz'] = 'Voorbeeld van de test';
 $string['previous'] = 'Vorige status';
@@ -366,7 +366,7 @@ $string['select'] = 'Selecteer';
 $string['selectall'] = 'Selecteer alle';
 $string['selectcategoryabove'] = 'Selecteer één van de bovenstaande categorieën';
 $string['selectedattempts'] = 'Selecteer pogingen...';
-$string['selectnone'] = 'Selectie ongedaan maken';
+$string['selectnone'] = 'Selecteer geen';
 $string['serveradded'] = 'Server toegevoegd';
 $string['serveridentifier'] = 'Identificatie';
 $string['serverinfo'] = 'Serverinformatie';
@@ -378,10 +378,10 @@ $string['show'] = 'Laat zien';
 $string['showall'] = 'Toon alle vragen op één pagina';
 $string['showbreaks'] = 'Toon paginascheidingen';
 $string['showcorrectanswer'] = 'In de feedback, de juiste antwoorden laten zien?';
-$string['showdetailedmarks'] = 'Toon beoordelingsdetails';
+$string['showdetailedmarks'] = 'beoordelingsdetails';
 $string['showfeedback'] = 'Feedback laten zien na het beantwoorden?';
 $string['showhidden'] = 'Toon ook oude vragen';
-$string['shownoattempts'] = 'Toon de leerlingen die de test niet geprobeerd hebben';
+$string['shownoattempts'] = 'leerlingen die de test nog niet gemaakt hebben';
 $string['showteacherattempts'] = 'Toon de pogingen van de leraar';
 $string['shuffleanswers'] = 'Mix de antwoorden';
 $string['shufflequestions'] = 'Mix de vragen';
@@ -412,6 +412,7 @@ $string['uniform'] = 'decimalen, uniforme distributie';
 $string['unit'] = 'Eenheid';
 $string['unknowntype'] = 'Vraagtype op lijn $a niet ondersteund. De vraag zal genegeerd worden';
 $string['unsupportedformulafunction'] = 'De functie $a is niet ondersteund';
+$string['upgradesure'] = '<div style=\"color: red;\">Vooral de testmodule zal ingrijpende wijzigingen aanbrengen aan de tabellen. Deze upgrade is nog onvoldoende getest. Het is echt noodzakelijk dat je eerst een backup van je databank  maakt voor je verder gaat.</div>';
 $string['url'] = 'URL';
 $string['validate'] = 'Valideer';
 $string['viewallanswers'] = 'Bekijk $a voltooide testen';
