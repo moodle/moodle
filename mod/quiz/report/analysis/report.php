@@ -344,29 +344,34 @@ class quiz_report extends quiz_default_report {
         
         echo '<div class="controls">';
         echo '<form id="options" name="options" method="report.php" >';
-        echo '<p>'.get_string('analysisoptions', 'quiz').': ';
+        echo '<p class="quiz-report-options">'.get_string('analysisoptions', 'quiz').': </p>';
         echo '<input type="hidden" name="id" value="'.$cm->id.'" />';
         echo '<input type="hidden" name="q" value="'.$quiz->id.'" />';
         echo '<input type="hidden" name="mode" value="analysis" />';
-        echo '<label for="attemptselection">'.get_string('attemptselection', 'quiz_analysis').'</label>';
+        echo '<table id="analysis-options" align="center"><tr>';
+        echo '<td><label for="attemptselection">'.get_string('attemptselection', 'quiz_analysis').'</label></td><td>';
         $options = array ( QUIZ_ALLATTEMPTS     => get_string("attemptsall", 'quiz_analysis'),
                            QUIZ_HIGHESTATTEMPT => get_string("attemptshighest", 'quiz_analysis'),
                            QUIZ_FIRSTATTEMPT => get_string("attemptsfirst", 'quiz_analysis'),
                            QUIZ_LASTATTEMPT  => get_string("attemptslast", 'quiz_analysis'));
         choose_from_menu($options, "attemptselection", "$attempts", "");
-        
-        echo '<label for="lowmarklimit">'.get_string('lowmarkslimit', 'quiz_analysis').'</label> <input type="text" id="lowmarklimit" name="lowmarklimit" size="1" value="'.$lowlimit.'" /> % ';
-        
-        echo '<label for="pagesize">'.get_string('pagesize', 'quiz_analysis').'</label> <input type="text" id="pagesize" name="pagesize" size="1" value="'.$pagesize.'" />';
-        
+        echo '</td><tr>';
+        echo '<td><label for="lowmarklimit">'.get_string('lowmarkslimit', 'quiz_analysis').'</label></td>';
+        echo '<td><input type="text" id="lowmarklimit" name="lowmarklimit" size="1" value="'.$lowlimit.'" /> % </td>';
+        echo '</tr>';
+        echo '<tr>';
+        echo '<td><label for="pagesize">'.get_string('pagesize', 'quiz_analysis').'</label></td>';
+        echo '<td><input type="text" id="pagesize" name="pagesize" size="1" value="'.$pagesize.'" /></td>';
+        echo '</tr>';
+        echo '<tr><td colspan="2" align="center">';
         echo '<input type="submit" value="'.get_string('go').'" />';
         helpbutton("analysisoptions", get_string("analysisoptions",'quiz_analysis'), 'quiz_analysis');
-        echo '</p>';
+        echo '</td></tr></table>';
         echo '</form>';
         echo '</div>';    
         echo "\n";
  
-         echo '<table align="center"><tr>';
+        echo '<table align="center"><tr>';
         unset($options);
         $options["id"] = "$cm->id";
         $options["q"] = "$quiz->id";
