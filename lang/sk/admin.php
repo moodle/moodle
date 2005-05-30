@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.6 development (2005052400)
+      // admin.php - created with Moodle 1.6 development (2005053000)
 
 
 $string['adminseesallevents'] = 'Administrátori mô¾u prezera» v¹etky udalosti';
@@ -109,7 +109,7 @@ $string['helpweekenddays'] = 'Ktoré dni v tý¾dni sú pova¾ované za \"víkend\", t.
 $string['importtimezones'] = 'Aktualizova» kompletný zoznam èasových pásiem';
 $string['importtimezonescount'] = '$a->count polo¾iek importovaných z $a->source';
 $string['importtimezonesfailed'] = 'Nebol nájdený zdroj! (Zlá správa)';
-$string['nodstpresetsexist'] = 'Podpora DST je deaktivovaná pre v¹etkých u¾ívateµov, preto¾e nie sú definované ¾iadne DST prednastavenia. Ak chcete nejaké definova», pou¾ite prosím tlaèidlo dolu.';
+$string['incompatibleblocks'] = 'Nekompatibilné bloky';
 $string['optionalmaintenancemessage'] = 'Správa o údr¾be stránky (nepovinné)';
 $string['pleaseregister'] = 'Prosím, zaregistrujte si Va¹u stránku, aby ste odstránili toto tlaèidlo';
 $string['sitemaintenance'] = 'Táto stránka sa nachádza v re¾ime údr¾by a momentálne nie je prístupná';
