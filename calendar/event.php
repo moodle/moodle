@@ -248,6 +248,13 @@
         $nav = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$SESSION->cal_course_referer.'">'.$shortname.'</a> -> '.$nav;
     }
 
+    if (!empty($SESSION->cal_course_referer)) {
+        // TODO: This is part of the Great $course Hack in Moodle. Replace it at some point.
+        $course = get_record('course', 'id', $SESSION->cal_course_referer);
+    } else {
+        $course = $site;
+    }
+
     print_header($site->shortname.': '.$strcalendar.': '.$title, $strcalendar, $nav.' -> '.$title,
                  $focus, '', true, '', user_login_string($site));
 
@@ -330,7 +337,9 @@
                     $form->minutes = '';
                 }
             }
-            if (!empty($form->courseid)) {       // Fixes bug 1488
+
+            if (!empty($form->courseid)) {
+                // TODO: This is part of the Great $course Hack in Moodle. Replace it at some point.
                 $course = get_record('course', 'id', $form->courseid);
             } else {
                 $course = $site;
