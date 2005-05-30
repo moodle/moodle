@@ -277,9 +277,13 @@
 				break;
 	
 				default:
+					// set frame height (default 85). Height can be changed by admin user
+					// (Administration->Configuration->Module, Resource->Settings)
+					$framesize = isset($CFG->resource_framesize) ? $CFG->resource_framesize : 85;
+
 					print "<HTML>\n";
 					print "<HEAD><TITLE>$title</TITLE></HEAD>\n";
-					print "<FRAMESET rows=85,*>\n";
+					print "<FRAMESET rows=$framesize,*>\n";
 					print "<FRAME src=\"view.php?id=$cm->id&frameset=top\">\n";
 					print "<FRAME src=\"view.php?id=$cm->id&frameset=main\">\n";
 					print "</FRAMESET>\n";
