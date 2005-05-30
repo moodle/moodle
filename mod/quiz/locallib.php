@@ -2475,8 +2475,6 @@ function quizzes_question_used($id) {
 */
 function quizzes_category_used($id, $recursive=false, &$excluded = array()) {
 
-    echo "Analyse category: $id <br />";
-
     $quizlist = array();
 
     //Look for each question in the category
