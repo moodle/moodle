@@ -67,6 +67,16 @@ TO INSTALL OR UPDATE THIS MODULE
         $string['hotpot'] = 'Hot Potatoes XML format';
 
    (d) save the changes and close the file
+   
+   Steps (e), (f) and (g) are only required on Moodle 1.4.5
+
+   (e) open the "moodle/mod/quiz/import.php" file on your Moodle site with a text editor 
+   (f) if necessary, add 'hotpot' to the "fileformats" array on lines 9-10:
+
+        $fileformats = array('aiken','aon','blackboard','coursetestmanager',
+          'gift','learnwise','missingword','webct','xml','hotpot' );
+
+   (g) save the changes and close the file
 
 4. Login to your Moodle site as an administrator. 
 
