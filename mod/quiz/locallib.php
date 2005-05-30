@@ -2095,6 +2095,34 @@ function quiz_get_category_menu($courseid, $published=false) {
     return $catmenu;
 }
 
+function sort_categories_by_tree(&$categories, $id = 0, $level = 1) {
+// returns the categories with their names ordered following parent-child relationships
+// finally it tries to return pending categories (those being orphaned, whose parent is 
+// incorrect) to avoid missing any category from original array.
+    $children = array();
+    $keys = array_keys($categories);
+
+    foreach ($keys as $key) {
+        if (!isset($categories[$key]->processed) && $categories[$key]->parent == $id) {
+            $children[$key] = $categories[$key];
+            $categories[$key]->processed = true;
+            $children = $children + sort_categories_by_tree($categories, $children[$key]->id, $level+1);
+        }
+    }
+    //If level = 1, we have finished, try to look for non processed categories (bad parent) and sort them too
+    if ($level == 1) {
+        foreach ($keys as $key) {
+            //If not processed and it's a good candidate to start (because its parent doesn't exist in the course)
+            if (!isset($categories[$key]->processed) && !record_exists('quiz_categories', 'course', $categories[$key]->course, 'id', $categories[$key]->parent)) {
+                $children[$key] = $categories[$key];
+                $categories[$key]->processed = true;
+                $children = $children + sort_categories_by_tree($categories, $children[$key]->id, $level+1);
+            }
+        }
+    }
+    return $children;
+}
+
 function add_indented_names(&$categories, $id = 0, $indent = 0) {
 // returns the categories with their names indented to show parent-child relationships
     $fillstr = '&nbsp;&nbsp;&nbsp;';
