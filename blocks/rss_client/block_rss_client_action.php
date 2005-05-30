@@ -197,7 +197,7 @@
                 }
 
                 print '<tr><td valign="middle">'."\n";
-                print '<a href="'. $rss->items[$y]['link'] .'" target=_new><strong>'. $rss->items[$y]['title'];
+                print '<a href="'. $rss->items[$y]['link'] .'" target="_blank"><strong>'. $rss->items[$y]['title'];
                 print '</strong></a>'."\n";
                 print '</td>'."\n";
                 if (file_exists($CFG->dirroot .'/blog/lib.php')) {
