@@ -4,8 +4,10 @@
 This script enables Moodle translators to edit /docs and /help language
 files directly via WWW interface.
 
-Author:     mudrd8mz@it.pedf.cuni.cz (http://moodle.cz)
+Author:     mudrd8mz@uxit.pedf.cuni.cz (http://moodle.cz)
 Based on:   lang.php in 1.4.3+ release
+Thanks:     Jaime Villate for important bug fixing, koen roggemans for his job and all moodlers
+            for intensive testing of this my first contribution
 */
 
     //
@@ -21,11 +23,6 @@ Based on:   lang.php in 1.4.3+ release
 
     require_once("../config.php");
 
-    // 
-    // SECURITY NOTE
-    // Option PARAM_PATH prevents requesting langdoc.php with eg. currentfile=../../config.php
-    // which could give potential hacker direct access to the source of config.php
-    //
     $currentfile = optional_param('currentfile', 'docs/README.txt', PARAM_PATH); 
 
     require_login();
@@ -163,10 +160,7 @@ $langdir/$currentfile")."</font></p>";
 
         echo "<table align=\"center\"><tr valign=\"center\"><td align=\"center\">\n";
         echo "<textarea rows=\"$fileeditorrows\" cols=\"$fileeditorcols\" name=\"\">\n";
-        $currentsource = langdoc_read_file($enlangdir,$currentfile);
-        if ($currentsource) {
-            echo $currentsource;
-        }
+        echo htmlspecialchars(file_get_contents("$enlangdir/$currentfile"));
         echo "</textarea>\n";
         link_to_popup_window("/lang/en/$currentfile", "popup", get_string("preview"));
         echo "</td>\n";
@@ -184,10 +178,7 @@ $langdir/$currentfile")."</font></p>";
         echo "<textarea rows=\"$fileeditorrows\" cols=\"$fileeditorcols\" name=\"filedata\">\n";
 
         if (file_exists("$langdir/$currentfile")) {
-            $currentsource = langdoc_read_file($langdir,$currentfile);
-            if ($currentsource) {
-                echo $currentsource;
-            }
+	    echo htmlspecialchars(file_get_contents("$langdir/$currentfile"));
         } else {
             echo ($filetemplate);
         }
@@ -208,30 +199,6 @@ $langdir/$currentfile")."</font></p>";
 
 //////////////////////////////////////////////////////////////////////
 
-function langdoc_read_file($path, $file){
-//
-// reads the file without PHP parsing and returns its content as string
-// returns false if the file can't be open to read 
-//
-
-    global $CFG, $USER;
-
-    error_reporting(0);
-    
-    if (!$f = fopen("$path/$file","r")) {
-        error_reporting($CFG->debug);
-        return false;
-    }
-    
-    error_reporting($CFG->debug);
-
-    $content = fread($f,filesize ("$path/$file"));
-
-    fclose($f);
-
-    return $content;
-}
-
 function langdoc_save_file($path, $file, $content) {
 
 // $path is a full pathname to the file
@@ -251,11 +218,9 @@ function langdoc_save_file($path, $file, $content) {
 
     $content = str_replace("\r", "",$content);              // Remove linefeed characters
     $content = preg_replace("/\n{3,}/", "\n\n", $content);  // Collapse runs of blank lines
-    $content = str_replace("\\","",$content);               // Delete all slashes
-    $content = str_replace("%%","%",$content);
     $content = trim($content);                              // Delete leading/trailing whitespace
-
-    fwrite($f, $content);
+        
+    fwrite($f, stripslashes($content));
 
     fclose($f);
 
