@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz_analysis.php - created with Moodle 1.6 development (2005052400)
+      // quiz_analysis.php - created with Moodle 1.6 development (2005053000)
 
 
 $string['analysisoptions'] = 'Analyse-opties';
@@ -12,7 +12,7 @@ $string['attemptslast'] = 'laatste poging';
 $string['dicsindextitle'] = 'Disc.<br/>Index';
 $string['disccoefftitle'] = 'Disc.<br/>Coeff.';
 $string['downloadooo'] = 'Download in OpenOffice formaat';
-$string['facilitytitle'] = '%% juis<br />Gemakkelijkheidsgraad';
+$string['facilitytitle'] = '%% juist<br />Gemakkelijkheidsgraad';
 $string['lowmarkslimit'] = 'Analyseer niet als de score lager is dan:';
 $string['pagesize'] = 'Vragen per pagina';
 $string['qcounttitle'] = 'V. aantal';
