@@ -1090,6 +1090,17 @@ function main_upgrade($oldversion=0) {
         table_column('grade_category', 'weight', 'weight', 'numeric(5,2)', '', '', '0.00', '', '');
     }
 
+    if ($oldversion < 2005052301 ) { // Add config_plugins table
+        
+        execute_sql("CREATE TABLE {$CFG->prefix}config_plugins (
+                        id     SERIAL PRIMARY KEY,
+                        plugin varchar(255) NOT NULL default 'core',
+                        name   varchar(255) NOT NULL default '',
+                        value  text NOT NULL default '',
+                        CONSTRAINT {$CFG->prefix}config_plugins_plugin_name_uk UNIQUE (plugin, name)
+                     );");
+
+    }
 
     return $result;
 }

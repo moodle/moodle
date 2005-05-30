@@ -24,6 +24,21 @@ CREATE TABLE `prefix_config` (
 # --------------------------------------------------------
 
 #
+# Table structure for table `config_plugins`
+#
+
+CREATE TABLE `prefix_config_plugins` (
+  `id`         int(10) unsigned NOT NULL auto_increment,
+  `plugin`     varchar(255) NOT NULL default 'core',
+  `name`       varchar(255) NOT NULL default '',
+  `value`      text NOT NULL default '',
+  PRIMARY KEY  (`id`),
+  UNIQUE KEY `plugin_name` (`plugin`, `name`)
+) TYPE=MyISAM COMMENT='Moodle modules and plugins configuration variables';
+# --------------------------------------------------------
+
+
+#
 # Table structure for table `course`
 #
 
