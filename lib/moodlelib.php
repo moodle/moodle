@@ -3257,7 +3257,7 @@ function generate_email_processing_address($modid,$modargs) {
     }
 
     $header = $CFG->mailprefix . substr(base64_encode(pack('C',$modid)),0,2).$modargs;
-    return $header . substr(md5($header.$CFG->sitesecret),0,16).'@'.$CFG->maildomain;
+    return $header . substr(md5($header.$CFG->siteidentifier),0,16).'@'.$CFG->maildomain;
 }
 
 
