@@ -2466,18 +2466,39 @@ function quizzes_question_used($id) {
 }
 
 /** 
-* Array of names of quizzes a category appears in
+* Array of names of quizzes a category (and optionally its childs) appears in
 *
 * @return array   Array of quiz names (with quiz->id as array keys)
 * @param integer  Quiz category id
+* @param boolean  Examine category childs recursively
+* @param array    Array of categories (id)  to exclude 
 */
-function quizzes_category_used($id) {
+function quizzes_category_used($id, $recursive=false, &$excluded = array()) {
+
+    echo "Analyse category: $id <br />";
 
     $quizlist = array();
+
+    //Look for each question in the category
     if ($questions = get_records('quiz_questions', 'category', $id)) {
         foreach ($questions as $question) {
             $qlist = quizzes_question_used($question->id);
             $quizlist = $quizlist + $qlist;
+        }
+    }
+
+    //Mark this category as checked
+    $excluded[] = $id;
+
+    //Look under child categories recursively
+    if ($recursive) {
+        if ($childs = get_records('quiz_categories', 'parent', $id)) {
+            foreach ($childs as $child) {
+                //Only if the category isn't excluded
+                if (!in_array($child->id, $excluded)) {
+                    $quizlist = $quizlist + quizzes_category_used($child->id, $recursive, $excluded);
+                }
+            }
         }
     }
 
