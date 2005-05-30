@@ -596,8 +596,13 @@ function calendar_get_allowed_types(&$allowed) {
     $allowed->site = isteacher(SITEID);
 
     if(!empty($SESSION->cal_course_referer) && $SESSION->cal_course_referer != SITEID && isteacher($SESSION->cal_course_referer, $USER->id)) {
-        $allowed->courses = array($SESSION->cal_course_referer => 1);
-        $allowed->groups = get_groups($SESSION->cal_course_referer);
+        $course = get_record('course', 'id', $SESSION->cal_course_referer);
+
+        $allowed->courses = array($course->id => 1);
+
+        if($course->groupmode != NOGROUPS || !$course->groupmodeforce) {
+            $allowed->groups = get_groups($SESSION->cal_course_referer);
+        }
     }
 }
 

@@ -642,7 +642,7 @@ function calendar_filter_controls($type, $vars = NULL, $course = NULL) {
             } else {
                 $getvars = '&amp;from=course';
             }
-            if (isset($course->groupmode) and !$course->groupmode and $course->groupmodeforce) {
+            if (isset($course->groupmode) and $course->groupmode == NOGROUPS and $course->groupmodeforce) {
                 $groupevents = false;
             }
         break;
@@ -1055,11 +1055,11 @@ function calendar_set_filters(&$courses, &$group, &$user, $courseeventsfrom = NU
 
                     // The first time we get in here, retrieve all groupmodes at once
                     if($groupmodes === NULL) {
-                        $groupmodes = get_records_list('course', 'id', implode(',', $groupcourses), '', 'id, groupmode');
+                        $groupmodes = get_records_list('course', 'id', implode(',', $groupcourses), '', 'id, groupmode, groupmodeforce');
                     }
 
                     // If this course has groups, show events from all of them
-                    if(isset($groupmodes[$courseid]) && $groupmodes[$courseid]->groupmode != NOGROUPS && ($grouprecords = get_groups($courseid)) !== false) {
+                    if(isset($groupmodes[$courseid]) && ($groupmodes[$courseid]->groupmode != NOGROUPS || !$groupmodes[$courseid]->groupmodeforce) && ($grouprecords = get_groups($courseid)) !== false) {
                         $grouparray = array_merge($grouparray, array_keys($grouprecords));
                     }
                 }
