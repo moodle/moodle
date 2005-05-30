@@ -1090,6 +1090,20 @@ function main_upgrade($oldversion=0) {
         table_column('grade_category', 'weight', 'weight', 'numeric(5,2)', '', '', '0.00', '', '');
     }
 
+    if ($oldversion < 2005053000 ) { // Add config_plugins table
+        
+        // this table was created on the MOODLE_15_STABLE branch
+        // so it may already exist. Therefore we hide potential errors
+        // (Postgres doesn't support CREATE TABLE IF NOT EXISTS)
+        execute_sql("CREATE TABLE {$CFG->prefix}config_plugins (
+                        id     SERIAL PRIMARY KEY,
+                        plugin varchar(255) NOT NULL default 'core',
+                        name   varchar(255) NOT NULL default '',
+                        value  text NOT NULL default '',
+                        CONSTRAINT {$CFG->prefix}config_plugins_plugin_name_uk UNIQUE (plugin, name)
+                     );", false);
+
+    }
 
     return $result;
 }
