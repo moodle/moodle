@@ -31,6 +31,9 @@ optional_variable($frm->enrol_ldap_autocreate, false);
 optional_variable($frm->enrol_ldap_category, 1);
 optional_variable($frm->enrol_ldap_template, '');
 
+// general options
+optional_variable($frm->enrol_allowinternal, false);
+
 ?>
 
 <table cellspacing="0" cellpadding="5" border="0" align="center">
@@ -303,6 +306,22 @@ optional_variable($frm->enrol_ldap_template, '');
     <?php  if (isset($err["enrol_ldap_template"])) formerr($err["enrol_ldap_template"]); ?>
     </td><td>
     <?php  print_string("enrol_ldap_template","enrol_ldap") ?>
+    </td>
+</tr>
+
+<tr>
+   <td colspan="2">
+        <h4><?php print_string("enrol_ldap_general_options", "enrol_ldap") ?> </h4>
+   </td>
+</tr>
+
+<tr valign="top">
+	<td align="right">enrol_allowinternal:</td>
+	<td>
+        <input type="checkbox" name="enrol_allowinternal" <?php if ($frm->enrol_allowinternal) echo "checked=\"true\"" ?> />
+    </td>
+    <td>
+    <?php  print_string('allowinternal') ?>
     </td>
 </tr>
 

@@ -66,5 +66,6 @@ $string['enrol_ldap_course_idnumber'] = 'Map to the unique identifier in LDAP, u
 $string['enrol_ldap_course_shortname'] = 'Optional: LDAP field to get the shortname from.';
 $string['enrol_ldap_course_fullname']  = 'Optional: LDAP field to get the full name from.';
 $string['enrol_ldap_course_summary']   = 'Optional: LDAP field to get the summary from.';                                                                                                                                                
+$string['enrol_ldap_general_options']   = 'General Options';                                                                                                                                                
                                     
 ?>
