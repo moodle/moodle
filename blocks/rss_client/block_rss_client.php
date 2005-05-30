@@ -214,7 +214,7 @@ class block_rss_client extends block_base {
 
                 $item['link'] = str_replace('&', '&amp;', $item['link']);
 
-                $returnstring .= '<div class="link"><a href="'. $item['link'] .'" target="_new">'. $item['title'] . '</a></div>' ."\n";
+                $returnstring .= '<div class="link"><a href="'. $item['link'] .'" target="_blank">'. $item['title'] . '</a></div>' ."\n";
 
                 
                 if ($display_description && !empty($item['description'])) {
