@@ -2649,9 +2649,15 @@ function get_import_export_formats( $type ) {
   $fileformats = get_list_of_plugins("mod/quiz/format");
 
   $fileformatname=array();
-  include_once( "format.php" );
+  require_once( "format.php" );
   foreach ($fileformats as $key => $fileformat) {
-    require_once( $CFG->dirroot."/mod/quiz/format/$fileformat/format.php" );
+    $format_file = $CFG->dirroot . "/mod/quiz/format/$fileformat/format.php";
+    if (file_exists( $format_file ) ) {
+      require_once( $format_file );
+    }
+    else {
+      continue;
+    }
     $classname = "quiz_format_$fileformat";
     $format_class = new $classname();
     if ($type=='import') {
