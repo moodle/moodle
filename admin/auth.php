@@ -23,11 +23,27 @@
         $config = (array)$config;
         validate_form($config, $err);
 
+        // extract and sanitize the auth key explicitly
+        $modules = get_list_of_plugins("auth");
+        if (in_array($config['auth'], $modules)) {
+            $auth = $config['auth'];            
+        } else {
+            notify("Error defining the authentication method");
+        }
+
         if (count($err) == 0) {
             print_header();
             foreach ($config as $name => $value) {
-                if (! set_config($name, $value)) {
-                    notify("Problem saving config $name as $value");
+                if (preg_match('/^pluginconfig_(.+?)$/', $name, $matches)) {
+                    $plugin = "auth/$auth";
+                    $name   = $matches[1];
+                    if (! set_config($name, $value, $plugin)) {                        
+                        notify("Problem saving config $name as $value for plugin $plugin");
+                    }
+                } else { // normal handling for 
+                    if (! set_config($name, $value)) {
+                        notify("Problem saving config $name as $value");
+                    }
                 }
             }
             redirect("auth.php?sesskey=$USER->sesskey", get_string("changessaved"), 1);
@@ -198,5 +214,30 @@ function validate_form(&$form, &$err) {
     return;
 }
 
+//
+// Good enough for most auth plugins
+// but some may want a custom one if they are offering
+// other options
+// Note: pluginconfig_ fields have special handling. 
+function print_auth_lock_options ($auth, $user_fields, $helptext='', $refreshopts, $updateopts) {
+    echo '<tr><td colspan="3">';
+    print_heading(get_string('auth_fieldlocks', 'auth'));
+    echo '<td/></tr>';
+
+    $lockoptions = array ('unlocked'        => get_string('auth_unlocked', 'auth'),
+                          'unlockedifempty' => get_string('auth_unlockedifempty', 'auth'),
+                          'locked'          => get_string('auth_locked', 'auth'));
+    
+    $pluginconfig = get_config("auth/$auth");
+    
+    foreach ($user_fields as $field) {
+        echo '<tr valign="top"><td align="right">';
+        echo get_string($field);
+        echo '</td><td>';
+        choose_from_menu($lockoptions, "pluginconfig_field_lock_{$field}", $pluginconfig->{"field_lock_$field"}, "");
+        echo "</td><td>$helptext</td></tr>";
+        $helptext = '&nbsp;';
+    }
+}
 
 ?>

@@ -126,11 +126,13 @@
         // override locked values
         if (!isadmin()) {      
             $fields = get_user_fieldnames();
+            $authconfig = get_config( 'auth/' . $user->auth );
             foreach ($fields as $field) {
-                $configvariable = 'auth_user_'.$field.'_editlock';
-                if (!empty($CFG->$configvariable)) {
-                    if (isset($usernew->$field) && $user->$field !== $usernew->$field) {
-                        $usernew->$field = $user->$field;                    
+                $configvariable = 'field_lock_' . $field;  
+                if ( $authconfig->{$configvariable} === 'locked'
+                     || ($authconfig->{$configvariable} === 'unlockedifempty' && !empty($user->$field)) ) {
+                    if (!empty( $user->$field)) {
+                        $usernew->$field = $user->$field;
                     }
                 }
             }
@@ -323,9 +325,11 @@
         echo '<script type="text/javascript">'."\n";
         echo '<!--'."\n";
 
-        foreach ($fields as $field) {
-            $configvariable = 'auth_user_'.$field.'_editlock';
-            if (!empty($CFG->$configvariable)) {
+        $authconfig = get_config( 'auth/' . $user->auth );
+        foreach ($fields as $field) {            
+            $configvariable = 'field_lock_' . $field;
+            if ( $authconfig->{$configvariable} === 'locked'
+                 || ($authconfig->{$configvariable} === 'unlockedifempty' && !empty($user->$field)) ) {
                 echo "eval('document.form.$field.disabled=true');\n";
             }
         }

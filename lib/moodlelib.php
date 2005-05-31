@@ -387,28 +387,103 @@ function optional_variable(&$var, $default=0) {
  *
  * Set a key/value pair in both this session's {@link $CFG} global variable
  * and in the 'config' database table for future sessions.
+ * 
+ * Can also be used to update keys for plugin-scoped configs in config_plugin table. 
+ * In that case it doesn't affect $CFG. 
  *
  * @param string $name the key to set
  * @param string $value the value to set
+ * @param string $plugin (optional) the plugin scope
  * @uses $CFG
  * @return bool
  */
-function set_config($name, $value) {
+function set_config($name, $value, $plugin=NULL) {
 /// No need for get_config because they are usually always available in $CFG
 
     global $CFG;
 
-
-    $CFG->$name = $value;  // So it's defined for this invocation at least
-
-    if (get_field('config', 'name', 'name', $name)) {
-        return set_field('config', 'value', $value, 'name', $name);
-    } else {
-        $config->name = $name;
-        $config->value = $value;
-        return insert_record('config', $config);
+    if (empty($plugin)) {
+        $CFG->$name = $value;  // So it's defined for this invocation at least
+        
+        if (get_field('config', 'name', 'name', $name)) {
+            return set_field('config', 'value', $value, 'name', $name);
+        } else {
+            $config->name = $name;
+            $config->value = $value;
+            return insert_record('config', $config);
+        }
+    } else { // plugin scope
+        if ($id = get_field('config_plugins', 'id', 'name', $name, 'plugin', $plugin)) {
+            return set_field('config_plugins', 'value', $value, 'id', $id);
+        } else {
+            $config->plugin = $plugin;
+            $config->name   = $name;
+            $config->value  = $value;
+            return insert_record('config_plugins', $config);
+        }
     }
 }
+
+/**
+ * Get configuration values from the global config table 
+ * or the config_plugins table.
+ *
+ * If called with no parameters it will do the right thing
+ * generating $CFG safely from the database without overwriting
+ * existing values.  
+ *
+ * @param string $plugin 
+ * @param string $name 
+ * @uses $CFG
+ * @return hash-like object or single value
+ *
+ */
+function get_config($plugin=NULL, $name=NULL) {
+
+    global $CFG;
+
+    if (!empty($name)) { // the user is asking for a specific value
+        if (!empty($plugin)) {
+            return get_record('config_plugins', 'plugin' , $plugin, 'name', $name);
+        } else {
+            return get_record('config', 'name', $name);
+        }
+    }
+
+    // the user is after a recordset
+    if (!empty($plugin)) {
+        if ($configs=get_records('config_plugins', 'plugin', $plugin, '', 'name,value')) {
+            $configs = (array)$configs;
+            $localcfg = array();
+            foreach ($configs as $config) {
+                $localcfg[$config->name] = $config->value;
+            }
+            return (object)$localcfg;
+        } else {
+            return false;
+        }
+    } else {
+        // this was originally in setup.php
+        if ($configs = get_records('config')) {
+            $localcfg = (array)$CFG;
+            foreach ($configs as $config) {
+                if (!isset($localcfg[$config->name])) {
+                    $localcfg[$config->name] = $config->value;
+                } else {
+                    if ($localcfg[$config->name] != $config->value ) { 
+                        // complain if the DB has a different
+                        // value than config.php does
+                        error_log("\$CFG->{$config->name} in config.php ({$localcfg[$config->name]}) overrides database setting ({$config->value})");
+                    }
+                }
+            }
+            
+            $localcfg = (object)$localcfg;
+        }
+        return $localcfg;
+    }
+}
+
 
 /**
  * Refresh current $USER session global variable with all their current preferences.
