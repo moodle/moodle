@@ -1,18 +1,18 @@
-<?php // $Id$
-      // admin.php - created with Moodle 1.2 development (2003111400)
+<?PHP // $Id$ 
+      // admin.php - created with Moodle 1.6 development (2005053000)
+
 
 $string['adminseesallevents'] = 'Administrators see all events';
 $string['adminseesownevents'] = 'Administrators are just like other users';
 $string['blockinstances'] = 'Instances';
 $string['blockmultiple'] = 'Multiple';
-$string['change'] = 'change';
 $string['cachetext'] = 'Text cache lifetime';
 $string['calendarsettings'] = 'Calendar';
-$string['configallowemailaddresses'] = 'If you want to restrict all new email addresses to particular domains, then list them here separated by spaces.  All other domains will be rejected.  eg <strong>ourcollege.edu.au .gov.au</strong>';
-$string['configdenyemailaddresses'] = 'To deny email addresses from particular domains list them here in the same way.  All other domains will be accepted.  eg <strong>hotmail.com yahoo.co.uk</strong>';
-$string['configallowunenroll'] = 'If this is set \'Yes\', then students are allowed to unenroll themselves from courses whenever they like. Otherwise they are not allowed, and this process will be solely controlled by the teachers and administrators.';
-$string['configthemelist'] = 'Leave this blank to allow any valid theme to be used.  If you want to shorten the theme menu, you can specify a comma-separated list of names here.  For example:  standard,orangewhite';
+$string['change'] = 'change';
 $string['configallowcoursethemes'] = 'If you enable this, then courses will be allowed to set their own themes.  Course themes override all other theme choices (site, user, or session themes)';
+$string['configallowemailaddresses'] = 'If you want to restrict all new email addresses to particular domains, then list them here separated by spaces.  All other domains will be rejected.  eg <strong>ourcollege.edu.au .gov.au</strong>';
+$string['configallowunenroll'] = 'If this is set \'Yes\', then students are allowed to unenroll themselves from courses whenever they like. Otherwise they are not allowed, and this process will be solely controlled by the teachers and administrators.';
+$string['configallowuserblockhiding'] = 'Do you want to allow users to hide/show side blocks throughout this site?  This feature uses Javascript and cookies to remember the state of each collapsible block, and only affects the user\'s own view.';
 $string['configallowuserthemes'] = 'If you enable this, then users will be allowed to set their own themes.  User themes override site themes (but not course themes)';
 $string['configallusersaresitestudents'] = 'For activities on the front page of the site, should ALL users be considered as students?  If you answer \"Yes\", then any confirmed user account will be allowed to participate as a student in those activities.  If you answer \"No\", then only users who are already a participant in at least one course will be able to take part in those front page activities. Only admins and specially assigned teachers can act as teachers for these front page activities.';
 $string['configautologinguests'] = 'Should visitors be logged in as guests automatically when entering courses with guest access?';
@@ -24,6 +24,7 @@ $string['configcountry'] = 'If you set a country here, then this country will be
 $string['configdbsessions'] = 'If enabled, this setting will use the database to store information about current sessions.  This is especially useful for large/busy sites or sites built on cluster of servers.  For most sites this should probably be left disabled so that the server disk is used instead.  Note that changing this setting now will log out all current users (including you).';
 $string['configdebug'] = 'If you turn this on, then PHP\'s error_reporting will be increased so that more warnings are printed.  This is only useful for developers.';
 $string['configdeleteunconfirmed'] = 'If you are using email authentication, this is the period within which a response will be accepted from users.  After this period, old unconfirmed accounts are deleted.';
+$string['configdenyemailaddresses'] = 'To deny email addresses from particular domains list them here in the same way.  All other domains will be accepted.  eg <strong>hotmail.com yahoo.co.uk</strong>';
 $string['configdigestmailtime'] = 'People who choose to have emails sent to them in digest form will be emailed the digest daily. This setting controls which time of day the daily mail will be sent (the next cron that runs after this hour will send it).';
 $string['configdisplayloginfailures'] = 'This will display information to selected users about previous failed logins.';
 $string['configenablerssfeeds'] = 'This switch will enable RSS feeds from across the site.  To actually see any change you will need to enable RSS feeds in the individual modules too - go to the Modules settings under Admin Configuration.';
@@ -44,10 +45,10 @@ $string['configintroadmin'] = 'On this page you should configure your main admin
 $string['configintrosite'] = 'This page allows you to configure the front page and name of this new site.  You can come back here later to change these settings any time using the \'Site Settings\' link on the home page.';
 $string['configintrotimezones'] = 'This page will search for new information about world timezones (including daylight savings time rules) and update your local database with this information.  These locations will be checked, in order: $a This procedure is generally very safe and can not break normal installations.  Do you wish to update your timezones now?';
 $string['configlang'] = 'Choose a default language for the whole site.  Users can override this setting later.';
+$string['configlangcache'] = 'Cache the language menu. Saves a lot of memory and processing power. If you enable this, the menu takes a few minutes to update after you have added or removed languages.';
 $string['configlangdir'] = 'Most languages are printed left-to-right, but some, like Arabic and Hebrew, are printed right-to-left.';
 $string['configlanglist'] = 'Leave this blank to allow users to choose from any language you have in this installation of Moodle.  However, you can shorten the language menu by entering a comma-separated list of language codes that you want.  For example:  en,es_es,fr,it';
 $string['configlangmenu'] = 'Choose whether or not you want to display the general-purpose language menu on the home page, login page etc.  This does not affect the user\'s ability to set the preferred language in their own profile.';
-$string['configlangcache'] = 'Cache the language menu. Saves a lot of memory and processing power. If you enable this, the menu takes a few minutes to update after you have added or removed languages.';
 $string['configlocale'] = 'Choose a sitewide locale - this will affect the format and language of dates. You need to have this locale data installed on your operating system.  (eg en_US or es_ES).  If you don\'t know what to choose leave it blank.';
 $string['configloginhttps'] = 'Turning this on will make Moodle use a secure https connection just for the login page (providing a secure login), and then afterwards revert back to the normal http URL for general speed.  CAUTION: this setting REQUIRES https to be specifically enabled on the web server - if it is not then YOU COULD LOCK YOURSELF OUT OF YOUR SITE.';
 $string['configloglifetime'] = 'This specifies the length of time you want to keep logs about user activity.  Logs that are older than this age are automatically deleted.  It is best to keep logs as long as possible, in case you need them, but if you have a very busy server and are experiencing performance problems, then you may want to lower the log lifetime.';
@@ -81,14 +82,15 @@ $string['configslasharguments'] = 'Files (images, uploads etc) are provided via 
 $string['configsmtphosts'] = 'Give the full name of one or more local SMTP servers that Moodle should use to send mail (eg \'mail.a.com\' or \'mail.a.com;mail.b.com\'). If you leave it blank, Moodle will use the PHP default method of sending mail.';
 $string['configsmtpuser'] = 'If you have specified an SMTP server above, and the server requires authentication, then enter the username and password here.';
 $string['configteacherassignteachers'] = 'Should ordinary teachers be allowed to assign other teachers within courses they teach?  If \'No\', then only course creators and admins can assign teachers.';
+$string['configthemelist'] = 'Leave this blank to allow any valid theme to be used.  If you want to shorten the theme menu, you can specify a comma-separated list of names here (Don\'t use spaces!).  
+For example:  standard,orangewhite.';
 $string['configtimezone'] = 'You can set the default timezone here.  This is the only the DEFAULT timezone for displaying dates - each user can override this by setting their own in their profile. \"Server time\" here will make Moodle default to the server\'s operating system setting, but \"Server time\" in the user profile will make the user default to this timezone setting.';
 $string['configunzip'] = 'Indicate the location of your unzip program (Unix only, optional).  If specified, this will be used to unpack zip archives on the server.  If you leave this blank, then Moodle will use internal routines.';
-$string['configallowuserblockhiding'] = 'Do you want to allow users to hide/show side blocks throughout this site?  This feature uses Javascript and cookies to remember the state of each collapsible block, and only affects the user\'s own view.';
 $string['configvariables'] = 'Variables';
 $string['configwarning'] = 'Be careful modifying these settings - strange values could cause problems.';
 $string['configzip'] = 'Indicate the location of your zip program (Unix only, optional).  If specified, this will be used to create zip archives on the server.  If you leave this blank, then Moodle will use internal routines.';
 $string['confirmation'] = 'Confirmation';
-$string['cronwarning'] = 'The <a href=\"cron.php\">cron.php maintenance script</a> has not been run for at least 24 hours. <br />The <a href=\"../doc/?frame=install.html&amp;sub=cron\">installation documentation</a> explains how you can automate this.';
+$string['cronwarning'] = 'The <a href=\"cron.php\">cron.php maintenance script</a> has not been run for at least 24 hours. <br />The <a href=\"../doc/?frame=install.html&sub=cron\">installation documentation</a> explains how you can automate this.';
 $string['edithelpdocs'] = 'Edit help documents';
 $string['editstrings'] = 'Edit strings';
 $string['filterall'] = 'Filter all strings';
@@ -109,14 +111,14 @@ $string['optionalmaintenancemessage'] = 'Optional maintenance messsage';
 $string['pleaseregister'] = 'Please register your site to remove this button';
 $string['sitemaintenance'] = 'The site is undergoing maintenance and is currently not available';
 $string['sitemaintenancemode'] = 'Maintenance mode';
-$string['sitemaintenanceon'] = 'Your site is currently in maintenance mode (only admins can log in or use the site).';
 $string['sitemaintenanceoff'] = 'Maintenance mode has been disabled and the site is running normally again';
+$string['sitemaintenanceon'] = 'Your site is currently in maintenance mode (only admins can log in or use the site).';
 $string['sitemaintenancewarning'] = 'Your site is currently in maintenance mode (only admins can log in).  To return this site to normal operation, <a href=\"maintenance.php\">disable maintenance mode</a>.';
 $string['tabselectedtofront'] = 'On tables with tabs, should the row with the currently selected tag be placed at the front';
-$string['timezonenotforced'] = 'Users can choose their own timezone';
+$string['therewereerrors'] = 'There were errors in your data';
 $string['timezoneforced'] = 'This is forced by the site administrator';
 $string['timezoneisforcedto'] = 'Force all users to use';
-$string['therewereerrors'] = 'There were errors in your data';
+$string['timezonenotforced'] = 'Users can choose their own timezone';
 $string['upgradeforumread'] = 'A new feature has been added in Moodle 1.5 to track read/unread forum posts.<br />To use this functionality you need to <a href=\"$a\">update your tables</a>.';
 $string['upgradeforumreadinfo'] = 'A new feature has been added in Moodle 1.5 to track read/unread forum posts.  To use this functionality you need to update your tables with all the tracking information for existing posts.  Depending on the size of your site this can take a long time (hours) and can be quite taxing on the database, so it\'s best to do it during a quiet period.  However, your site will continue functioning during this upgrade and users won\'t be affected.  Once you start this process you should let it finish (keep your browser window open).  However, if you stop the process by closing the window: don\'t worry, you can start over.<br /><br />Do you want to start the upgrading process now?';
 $string['upgradelogs'] = 'For full functionality, your old logs need to be upgraded.  <a href=\"$a\">More information</a>';
@@ -125,7 +127,7 @@ $string['upgradesure'] = 'Your Moodle files have been changed, and you are about
 <p><b>$a</b></p>
 <p>Once you do this you can not go back again.</p> 
 <p>Are you sure you want to upgrade this server to this version?</p>';
-$string['upgradinglogs'] = 'Upgrading logs';
 $string['upgradingdata'] = 'Upgrading data';
+$string['upgradinglogs'] = 'Upgrading logs';
 
 ?>
