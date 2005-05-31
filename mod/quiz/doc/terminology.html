@@ -1,0 +1,71 @@
+<!DOCTYPE HTML PUBLIC>
+<html>
+<head>
+    <title>Terminology</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
+    <!--link rel="stylesheet" type="text/css" href="doc.css"-->
+</head>
+<body>
+
+<h1>Terminology in the Quiz Module</h1>
+
+<h2>Contents</h2>
+<ul class="navigation">
+    <li><a href='#description'>Purpose and Description</a></li>
+    <li><a href='#terms'>Terms</a></li>
+</ul>
+
+<a name='description'></a><h2>Purpose and Description</h2>
+<p>
+
+In order to describe and understand the quiz module, it is necessary to
+understand the terminology that is used to describe its aspects. On this page
+the important terms are named and explained and in some cases linked to more
+detailed documentation.
+
+</p>
+
+<a name='terms'></a><h2>Terms</h2>
+<table>
+    <tr>
+        <th>Term</th>
+        <th>Description</th>
+        <th>Related Links</th>
+    </tr>
+
+    <tr>
+        <td><a name="#answers"></a>answer(s)</td>
+        <td>The term answer is used exclusively for the teacher defined answers
+        of a question. These answers are usually stored in the
+        <code>quiz_answers</code> table and are compared to the responses for
+        grading.
+        </td>
+        <td></td>
+    </tr>
+
+    <tr>
+        <td><a name="#questiontype"></a>questiontype</td>
+        <td>There are several questiontypes built into the quiz module, however,
+        due to the plugin architechture of the quiz module, it is possible to
+        define custom questiontypes. Existing questiontypes include true/false,
+        multiple choice, short answer, numerical and  calculated questions.
+        </td>
+        <td><a href="http://moodle.org/mod/wiki/view.php?id=2935&page=Guidelines+for+converting+existing+questiontypes">conversion guide</a></td>
+    </tr>
+
+    <tr>
+        <td><a name="#responses"></a>responses</td>
+        <td>Conceptually these are the students' responses to a question. This
+        is always used in plural, although for some questiontypes there is only
+        one possible response. In the runtime <code>$state</code> object there
+        is a field <code>$state-&gt;responses</code>, which holds an array of a
+        student's responses to a question.
+        </td>
+        <td><a href="responsestorage.html">response storage</a></td>
+    </tr>
+
+</table>
+
+</p>
+</body>
+</html>
