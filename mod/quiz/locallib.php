@@ -2501,7 +2501,8 @@ function quizzes_question_used($id) {
 * @param boolean  Examine category childs recursively
 * @param array    Array of categories (id)  to exclude 
 */
-function quizzes_category_used($id, $recursive=false, &$excluded = array()) {
+// function quizzes_category_used($id, $recursive=false, &$excluded = array()) {
+function quizzes_category_used($id, $recursive, &$excluded) {
 
     $quizlist = array();
 
