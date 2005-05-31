@@ -266,7 +266,7 @@ function handle_questions_media(&$questions, $path, $courseid) {
         $this->add_qti_info($questions);
         
         // copy files used by the main questions to the export directory
-        $result = $this->handle_questions_media(&$questions, $path, $courseid);
+        $result = $this->handle_questions_media($questions, $path, $courseid);
         if ($result !== true) {
             notify(implode("<br />", $result));
         }
