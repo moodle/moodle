@@ -342,11 +342,42 @@ class assignment_base {
                                                         $assignment->availableminute);
         }
 
-        return insert_record('assignment', $assignment);
+        if ($returnid = insert_record("assignment", $assignment)) {
+
+            $event = NULL;
+            $event->name        = $assignment->name;
+            $event->description = $assignment->description;
+            $event->courseid    = $assignment->course;
+            $event->groupid     = 0;
+            $event->userid      = 0;
+            $event->modulename  = 'assignment';
+            $event->instance    = $returnid;
+            $event->eventtype   = 'due';
+            $event->timestart   = $assignment->timedue;
+            $event->timeduration = 0;
+
+            add_event($event);
+        }
+
+        return $returnid;
     }
 
     function delete_instance($assignment) {
-        return delete_records('assignment', 'id', $assignment->id);
+        $result = true;
+
+        if (! delete_records('assignment_submissions', 'assignment', $assignment->id)) {
+            $result = false;
+        }
+
+        if (! delete_records('assignment', 'id', $assignment->id)) {
+            $result = false;
+        }
+
+        if (! delete_records('event', 'modulename', 'assignment', 'instance', $assignment->id)) {
+            $result = false;
+        }
+
+        return $result;
     }
 
     function update_instance($assignment) {
@@ -374,7 +405,22 @@ class assignment_base {
         }
 
         $assignment->id = $assignment->instance;
-        return update_record('assignment', $assignment);
+
+        if ($returnid = update_record('assignment', $assignment)) {
+
+            $event = NULL;
+
+            if ($event->id = get_field('event', 'id', 'modulename', 'assignment', 'instance', $assignment->id)) {
+
+                $event->name        = $assignment->name;
+                $event->description = $assignment->description;
+                $event->timestart   = $assignment->timedue;
+
+                update_event($event);
+            }
+        }
+
+        return $returnid;
     }
 
 
