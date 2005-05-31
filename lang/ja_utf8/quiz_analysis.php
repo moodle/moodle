@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz_analysis.php - created with Moodle 1.5 ALPHA (2005051500)
+      // quiz_analysis.php - created with Moodle 1.6 development (2005053000)
 
 
 $string['analysisoptions'] = '分析オプション';
@@ -16,6 +16,10 @@ $string['qidtitle'] = 'Q#';
 $string['qnametitle'] = '問題名';
 $string['qtexttitle'] = '問題テキスト';
 $string['qtypetitle'] = 'Q. タイプ';
+$string['quizreportdir'] = 'quiz_reports';
+$string['rcounttitle'] = 'R.<br>カウント';
+$string['reportanalysis'] = 'アイテム分析レポート';
+$string['responsestitle'] = '解答テキスト';
 $string['rpercenttitle'] = 'R.%%';
 $string['stddevtitle'] = 'SD';
 
