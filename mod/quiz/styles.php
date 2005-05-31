@@ -90,7 +90,7 @@ body#mod-quiz-report table#itemanalysis .header {
 }
 body#mod-quiz-report table#itemanalysis .numcol {
   text-align: center;
-  ! vertical-align : middle;
+  vertical-align : middle !important;
 }
 
 body#mod-quiz-report table#itemanalysis .uncorrect {
@@ -103,11 +103,11 @@ body#mod-quiz-report table#itemanalysis .correct {
 }
 
 body#mod-quiz-report table#itemanalysis .partialcorrect {
-  !color: green;
+  color: green !important;
 }
 
 body#mod-quiz-report table#itemanalysis .qname {
-  !color: green;
+  color: green !important;
 }
 
 
