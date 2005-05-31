@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.6 development (2005052400)
+      // admin.php - created with Moodle 1.5 Beta (2005052300)
 
 
 $string['adminseesallevents'] = 'Los administradores ven todos los eventos';
@@ -10,7 +10,7 @@ $string['cachetext'] = 'Tiempo de vida de la caché de texto';
 $string['calendarsettings'] = 'Calendario';
 $string['change'] = 'cambiar';
 $string['configallowcoursethemes'] = 'Si activa esta opción, se permitirá a los cursos ajustar sus propios temas. Los temas de los cursos pasan por alto cualesquiera otras opciones de tema (sitio, usuario o sesión)';
-$string['configallowemailaddresses'] = 'Si desea restringir todas las direcciones nuevas de correo a dominios particulares, lístelos aquí separados por espacios. El resto de los dominios sserá rechazado, e.g., <strong>ourcollege.edu.au .gov.au</strong>';
+$string['configallowemailaddresses'] = 'Si desea restringir todas las direcciones nuevas de correo a dominios particulares, lístelos aquí separados por espacios. El resto de los dominios será rechazado, e.g., <strong>ourcollege.edu.au .gov.au</strong>';
 $string['configallowunenroll'] = 'Si selecciona \'Sí\', los estudiantes podrán desmatricularse de los cursos cuando quieran. En caso contrario no podrán hacerlo, quedando este proceso bajo el control de profesores y administradores.';
 $string['configallowuserblockhiding'] = '¿Desea que los usuarios puedan mostrar u ocultar bloques laterales en el sitio? Esta opción usa Javascript y cookies para recordar el estado de cada bloque colapsable, y sólo afecta al modo en que cada usuario ve la información.';
 $string['configallowuserthemes'] = 'Si se activa esta opción, los usuarios podrán elegir sus propios temas. Los temas de los usuarios pasan por alto los temas del sitio (pero no los temas del curso)';
@@ -105,7 +105,7 @@ $string['helpweekenddays'] = '¿Cuántos días de la semana se considerarán como \'
 $string['importtimezones'] = 'Actualizar la lista completa de zonas horarias';
 $string['importtimezonescount'] = '$a->count entradas importadas desde $a->source';
 $string['importtimezonesfailed'] = '¡No se encuentran fuentes! (malas noticias)';
-$string['nodstpresetsexist'] = 'El soporte DST está desactivado para todos los usuarios porque no hay ajustes previos DST definidos. Puede definir algunos usando el botón de abajo.';
+$string['incompatibleblocks'] = 'Bloques imcompatibles';
 $string['optionalmaintenancemessage'] = 'Mensaje de mantenimiento opcional';
 $string['pleaseregister'] = 'Por favor, registre su sitio para eliminar este botón';
 $string['sitemaintenance'] = 'Este sitio está en fase de mantenimiento y no está disponible en este momento';
