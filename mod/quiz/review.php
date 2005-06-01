@@ -22,13 +22,13 @@
         error("No such attempt ID exists");
     }
     if (! $quiz = get_record("quiz", "id", $attempt->quiz)) {
-        error("Course module is incorrect");
+        error("The quiz with id $attempt->quiz belonging to attempt $attempt is missing");
     }
     if (! $course = get_record("course", "id", $quiz->course)) {
-        error("Course is misconfigured");
+        error("The course with id $quiz->course that the quiz with id $quiz->id belongs to is missing");
     }
     if (! $cm = get_coursemodule_from_instance("quiz", $quiz->id, $course->id)) {
-        error("Course Module ID was incorrect");
+        error("The course module for the quiz with id $quiz->id is missing");
     }
 
     if (!count_records('quiz_newest_states', 'attemptid', $attempt->id)) {
