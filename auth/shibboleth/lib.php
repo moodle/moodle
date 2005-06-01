@@ -65,14 +65,17 @@ function auth_shib_attributes (){
 	global $CFG;
 
     $config = (array)$CFG;
+    $pcfg   = get_config('auth/shibboleth');
+    $pcfg   = (array) $pcfg;
+
     $fields = array("firstname", "lastname", "email", "phone1", "phone2", 
                     "department", "address", "city", "country", "description", 
                     "idnumber", "lang", "guid");
 
     $moodleattributes = array();
     foreach ($fields as $field) {
-        if ($config["auth_shib_user_$field"]) {
-            $moodleattributes[$field] = $config["auth_shib_user_$field"];
+        if ($pcfg["auth_shib_user_$field"]) {
+            $moodleattributes[$field] = $pcfg["auth_shib_user_$field"];
         }
     }
     $moodleattributes['username']=$config["shib_user_attribute"];
