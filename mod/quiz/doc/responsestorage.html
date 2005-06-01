@@ -158,7 +158,7 @@ accidentally contain a value with the empty string index.
 The runtime model for responses dictates the structure of the
 <code>$state->responses</code> array. Starting with the names of the form
 elements this section goes through the relevant processing steps and thus
-attempts to clarify why the indecies of the <code>$state->responses</code> array
+attempts to clarify why the indices of the <code>$state->responses</code> array
 can differ for different questiontypes; even more, it explains how the indicies
 are chosen and set.
 
@@ -174,8 +174,9 @@ with the value of <code>$question->name_prefix</code>. The
 the question id and an underscore, e.g. resp56_. In the default case, when
 there is only a single control element (this includes a list of equally named
 radio buttons), no postfix is appended to the name prefix. For questiontypes
-that allow or require multiple responses, an arbitrary string can be appended
-to the name prefix. Ideally the postfix should not include any relational data
+that allow or require multiple form elements, an arbitrary string can be appended
+to the name prefix to form the name of these form elements. The postfix must not
+include any relational data
 (i.e. ids of records in the <code>quiz_answers</code> table), because this can
 lead to problems with regrading of versioned questions.
 
@@ -186,7 +187,7 @@ submitted. So the submitted data will contain several values indexed by strings
 starting with respXX_. Upon submission, the function
 <code>quiz_process_responses</code> is called, which assigns the submitted
 responses to the state of the question with id XX, using the postfix (i.e.
-everything after the underscore) as array indecies. In the default case with
+everything after the underscore) as array indices. In the default case with
 only one control element the name only consists of the name prefix. This
 explains why the default index of the <code>$state->responses</code> array is
 the empty string. The value of each array element is obviously the value that
