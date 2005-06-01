@@ -205,7 +205,7 @@
                            "$quiz->id", $cm->id);
         }
     }
-    if ($attempt->timestart) { // shouldn't really happen, just for robustness
+    if (!$attempt->timestart) { // shouldn't really happen, just for robustness
         $attempt->timestart = time();
     }
 
