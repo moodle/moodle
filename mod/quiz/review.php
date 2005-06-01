@@ -47,18 +47,18 @@
         // If not even responses are to be shown in review then we
         // don't allow any review
         if (!($quiz->review & QUIZ_REVIEW_RESPONSES)) {
-            error(get_string("noreview", "quiz"));
+            redirect('view.php?q='.$quiz->id);
         }
         if ((time() - $attempt->timefinish) > 120) { // always allow review right after attempt
             if (time() < $quiz->timeclose and !($quiz->review & QUIZ_REVIEW_OPEN)) {
-                error(get_string("noreviewuntil", "quiz", userdate($quiz->timeclose)));
+                redirect('view.php?q='.$quiz->id, get_string("noreviewuntil", "quiz", userdate($quiz->timeclose)));
             }
             if (time() >= $quiz->timeclose and !($quiz->review & QUIZ_REVIEW_CLOSED)) {
-                error(get_string("noreview", "quiz"));
+                redirect('view.php?q='.$quiz->id, get_string("noreview", "quiz"));
             }
         }
         if ($attempt->userid != $USER->id) {
-            error("This is not your attempt!");
+            error("This is not your attempt!", 'view.php?q='.$quiz->id);
         }
     }
 
