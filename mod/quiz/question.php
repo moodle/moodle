@@ -141,7 +141,7 @@
 
     if ($form = data_submitted() and confirm_sesskey()) {
 
-        if (isset($form->versioning) && isset($question->id)) {
+        if (isset($form->versioning) && isset($question->id) and false) { // disable versioning until it is fixed.
             // use new code that handles whether to overwrite or copy a question
             // and keeps track of the versions in the quiz_question_version table
 
@@ -222,7 +222,7 @@
                         if (!set_field("quiz", 'questions', $questionlist, 'id', $quiz->id)) {
                         error("Could not update questionlist in quiz $quiz->id!");
                         }
-            
+
                         // the quiz_question_instances table needs to be updated too (aah, the joys of duplication :)
                         if (!set_field('quiz_question_instances', 'question', $question->id, 'quiz', $quiz->id, 'question', $oldquestionid)) {
                         error("Could not update question instance!");
@@ -233,12 +233,34 @@
                         unset($SESSION->modform->grades[$oldquestionid]);
                         }
                     }
-            
-                    // set originalquestion in states
+
+                    // change question in attempts
                     if ($attempts = get_records_list('quiz_attempts', 'quiz', implode(',', $replaceinquiz))) {
                         foreach ($attempts as $attempt) {
-                        set_field('quiz_states', 'originalquestion', $oldquestionid, 'attempt', $attempt->id, 'question', $question->id, 'originalquestion', '0');
+
+                            // replace question id in $attempt->layout
+                            $questionlist = ",$attempt->layout,"; // a little hack with the commas here. not nice but effective
+                            $questionlist = str_replace(",$oldquestionid,", ",$question->id,", $questionlist);
+                            $questionlist = substr($questionlist, 1, -1); // and get rid of the surrounding commas again
+                            if (!set_field('quiz_attempts', 'layout', $questionlist, 'id', $attempt->id)) {
+                                error("Could not update layout in attempt $attempt->id!");
+                            }
+
+                            // set originalquestion in states
+                            set_field('quiz_states', 'originalquestion', $oldquestionid, 'attempt', $attempt->id, 'question', $question->id, 'originalquestion', '0');
+
+                            // replace question id in states
+                            set_field('quiz_states', 'question', $question->id, 'attempt', $attempt->id, 'question', $oldquestionid);
+
+                            // replace question id in newest_states
+                            set_field('quiz_newest_states', 'questionid', $question->id, 'attemptid', $attempt->id, 'questionid', $oldquestionid);
+
                         }
+                        
+                        // Now do anything question-type specific that is required to replace the question
+                        // For example questions that use the quiz_answers table to hold part of their question will
+                        // have to recode the answer ids in the states
+                        $QUIZ_QTYPES[$question->qtype]->change_states_question($oldquestionid, $question, $attempts);
                     }
                 }
             }

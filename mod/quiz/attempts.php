@@ -234,7 +234,7 @@
 
     $select = 'SELECT '.$db->Concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).' AS uniqueid, qa.id AS attempt, u.id AS userid, u.firstname, u.lastname, u.picture, '.
               'qa.sumgrades, qa.timefinish, qa.timestart, qa.timefinish - qa.timestart AS duration ';
-    $from   = 'FROM mdl_user u LEFT JOIN mdl_quiz_attempts qa ON (u.id = qa.userid AND qa.quiz = '.$quiz->id.') ';
+    $from   = 'FROM '.$CFG->prefix.'user u LEFT JOIN '.$CFG->prefix.'quiz_attempts qa ON (u.id = qa.userid AND qa.quiz = '.$quiz->id.') ';
     $where  = 'WHERE u.id IN ('.implode(',', array_keys($users)).') ';
 
     // Add extra limits if we 're not interested in students without attempts
@@ -261,8 +261,8 @@
                 if(!$questionsort) {
                     $qid          = intval(substr($sortpart, 1));
                     $select .= ', grade ';
-                    $from        .= 'LEFT JOIN mdl_quiz_newest_states qns ON qns.attemptid = qa.id '.
-                                    'LEFT JOIN mdl_quiz_states qs ON qs.id = qns.newgraded ';
+                    $from        .= 'LEFT JOIN '.$CFG->prefix.'quiz_newest_states qns ON qns.attemptid = qa.id '.
+                                    'LEFT JOIN '.$CFG->prefix.'quiz_states qs ON qs.id = qns.newgraded ';
                     $where       .= ' AND ('.sql_isnull('qns.questionid').' OR qns.questionid = '.$qid.')';
                     $newsort[]    = 'grade '.(strpos($sortpart, 'ASC')? 'ASC' : 'DESC');
                     $questionsort = true;
