@@ -3,6 +3,7 @@
 // into a Moodle course export.  It assumes an unzipped directory and makes in-place alterations.
   
 // Ziba Scott <ziba@linuxbox.com> 10-25-04
+require_once('xsl_emulate_xslt.inc');
   
 function get_subdirs($directory){
     $opendirectory = opendir( $directory );
