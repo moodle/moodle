@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.6 development (2005052400)
+      // quiz.php - created with Moodle 1.6 development (2005053000)
 
 
 $string['acceptederror'] = 'Geaccepteerde fout';
@@ -75,6 +75,7 @@ $string['completedon'] = 'Afgewerkt op';
 $string['confirmclose'] = 'Je gaat deze poging afsluiten. Eens afgesloten kun je je antwoorden niet meer wijzigen.';
 $string['confirmserverdelete'] = 'Ben je er zeker van dat je server <b>$a</b> van de lijst wil schrappen?';
 $string['confirmstartattempt'] = 'Deze test heeft een tijdsduurbeperking. Ben je klaar om te beginnen?';
+$string['containercategorycreated'] = 'Deze categorie is aangemaakt om alle originele categorieën in te verzamelen. Die zijn naar site-niveau verplaatst om onderstaande redenen.';
 $string['continueattemptquiz'] = 'Ga verder met de laatste poging';
 $string['copyingfrom'] = 'Kopie aan het maken van vraag \'$a\'';
 $string['copyingquestion'] = 'Vraag kopiëren';
@@ -356,6 +357,7 @@ $string['rqp'] = 'Vraag op afstand';
 $string['rqps'] = 'Vragen op afstand';
 $string['save'] = 'Bewaar';
 $string['saveandedit'] = 'Bewaar de wijzigingen en bewerk de vragen';
+$string['savedfromdeletedcourse'] = 'Bewaard uit het verwijderde van \"$a\"';
 $string['savegrades'] = 'Bewaar cijfers';
 $string['savemyanswers'] = 'Bewaar mijn antwoorden';
 $string['savenosubmit'] = 'Bewaar zonder insturen';
@@ -412,8 +414,10 @@ $string['uniform'] = 'decimalen, uniforme distributie';
 $string['unit'] = 'Eenheid';
 $string['unknowntype'] = 'Vraagtype op lijn $a niet ondersteund. De vraag zal genegeerd worden';
 $string['unsupportedformulafunction'] = 'De functie $a is niet ondersteund';
+$string['unusedcategorydeleted'] = 'Deze categorie is verwijderd omdat na het verwijderen van het vak bleek dat de vragen nergens op de server nog gebruikt worden.';
 $string['upgradesure'] = '<div style=\"color: red;\">Vooral de testmodule zal ingrijpende wijzigingen aanbrengen aan de tabellen. Deze upgrade is nog onvoldoende getest. Het is echt noodzakelijk dat je eerst een backup van je databank  maakt voor je verder gaat.</div>';
 $string['url'] = 'URL';
+$string['usedcategorymoved'] = 'Deze categorie is verplaatst naar het site-niveau omdat na het verwijderen van het vak bleek dat de vragen nog door andere testen op de server gebruikt worden.';
 $string['validate'] = 'Valideer';
 $string['viewallanswers'] = 'Bekijk $a voltooide testen';
 $string['viewallreports'] = 'Bekijk overzicht van $a pogingen';
