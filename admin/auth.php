@@ -226,7 +226,7 @@ function print_auth_lock_options ($auth, $user_fields, $helptext, $retrieveopts,
                           'unlockedifempty' => get_string('unlockedifempty', 'auth'),
                           'locked'          => get_string('locked', 'auth'));
     $updatelocaloptions = array('oncreate'  => get_string('update_oncreate', 'auth'),
-                                'onlogin'   => get_string('update_onogin', 'auth'));
+                                'onlogin'   => get_string('update_onlogin', 'auth'));
     $updateextoptions = array('0'  => get_string('update_never', 'auth'),
                               '1'   => get_string('update_onupdate', 'auth'));
     

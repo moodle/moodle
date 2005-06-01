@@ -58,6 +58,9 @@ function auth_get_userinfo($username){
 
     $config = (array) $CFG;
 
+    $pcfg = get_config('auth/db');
+    $pcfg = (array) $pcfg;
+
     ADOLoadCode($CFG->auth_dbtype);          
     $authdb = &ADONewConnection();         
     $authdb->PConnect($CFG->auth_dbhost,$CFG->auth_dbuser,$CFG->auth_dbpass,$CFG->auth_dbname); 
@@ -69,8 +72,8 @@ function auth_get_userinfo($username){
     $result = array();
 
     foreach ($fields as $field) {
-        if ($config["auth_user_$field"]) {
-            if ($rs = $authdb->Execute("SELECT ".$config["auth_user_$field"]." FROM $CFG->auth_dbtable
+        if ($pcfg["field_map_$field"]) {
+            if ($rs = $authdb->Execute("SELECT ".$pcfg["field_map_$field"]." FROM $CFG->auth_dbtable
                                         WHERE $CFG->auth_dbfielduser = '$username'")) {
                 if ( $rs->RecordCount() == 1 ) {
                     $result["$field"] = $rs->fields[0];
