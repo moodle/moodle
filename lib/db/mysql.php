@@ -1383,6 +1383,52 @@ function main_upgrade($oldversion=0) {
                                   COMMENT='Moodle modules and plugins configuration variables';");
     }
 
+    if ($oldversion < 2005052302) {  // migrate some config items to config_plugins table
+
+        // NOTE: this block is in both postgres AND mysql upgrade
+        // files. If you edit either, update the otherone. 
+        $user_fields = array("firstname", "lastname", "email", 
+                             "phone1", "phone2", "department", 
+                             "address", "city", "country", 
+                             "description", "idnumber", "lang");
+        if (!empty($CFG->auth)) { // if we have no auth, just pass
+            foreach ($user_fields as $field) {
+                $suffixes = array('', '_editlock', '_updateremote', '_updatelocal');
+                foreach ($suffixes as $suffix) {
+                    $key = 'auth_user_' . $field . $suffix;
+                    if (isset($CFG->$key)) {
+                        
+                        // translate keys & values
+                        // to the new convention
+                        // this should support upgrading 
+                        // even 1.5dev installs
+                        $newkey = $key;
+                        $newval = $CFG->$key;
+                        if ($suffix === '') {
+                            $newkey = 'field_map_' . $field;
+                        } elseif ($suffix === '_editlock') {
+                            $newkey = 'field_lock_' . $field;
+                            $newval = ($newval==1) ? 'locked' : 'unlocked'; // translate 0/1 to locked/unlocked
+                        } elseif ($suffix === '_updateremote') {
+                            $newkey = 'field_updateremote_' . $field;                            
+                        } elseif ($suffix === '_updatelocal') {
+                            $newkey = 'field_updatelocal_' . $field;
+                            $newval = ($newval==1) ? 'onlogin' : 'oncreate'; // translate 0/1 to locked/unlocked
+                        }
+
+                        if (!(set_config($newkey, $newval, 'auth/'.$CFG->auth)
+                            && delete_records('config', 'name', $key))) {
+                            notify("Error updating Auth configuration $key to {$CFG->auth} $newkey .");
+                            $result = false;
+                        }
+                    } // end if isset key
+                } // end foreach suffix
+            } // end foreach field
+        }
+    }
+    
+
+
     return $result;
 }
 
