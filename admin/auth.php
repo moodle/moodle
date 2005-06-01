@@ -238,15 +238,26 @@ function print_auth_lock_options ($auth, $user_fields, $helptext, $retrieveopts,
     }
 
     foreach ($user_fields as $field) {
-        echo '<tr valign="top"><td align="right">';
-        echo get_string($field);
-        echo '</td><td>';
 
         // Define some vars we'll work with
         optional_variable($pluginconfig->{"field_map_$field"}, '');
         optional_variable($pluginconfig->{"field_updatelocal_$field"}, '');
         optional_variable($pluginconfig->{"field_updateremote_$field"}, '');
         optional_variable($pluginconfig->{"field_lock_$field"}, '');
+
+        // define the fieldname we display to the  user
+        $fieldname = $field;
+        if ($fieldname === 'lang') {
+            $fieldname = get_string('language');
+        } elseif (preg_match('/^(.+?)(\d+)$/', $fieldname, $matches)) {
+            $fieldname =  get_string($matches[1]) . ' ' . $matches[2];
+        } else {
+            $fieldname = get_string($fieldname);
+        }
+
+        echo '<tr valign="top"><td align="right">';
+        echo $fieldname;
+        echo '</td><td>';
 
         if ($retrieveopts) {
             $varname = 'field_map_' . $field;
