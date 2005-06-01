@@ -372,6 +372,7 @@ function auth_sync_users ($bulk_insert_records = 1000, $do_updates=1) {
 
 
     global $CFG ;
+    $pcfg = get_config('auth/ldap');
 
     // configure a temp table 
     print "Configuring temp table\n";    
@@ -503,11 +504,11 @@ function auth_sync_users ($bulk_insert_records = 1000, $do_updates=1) {
     ////
     if ($do_updates) {
         // narrow down what fields we need to update
-        $all_keys = array_keys(get_object_vars($CFG));
+        $all_keys = array_keys(get_object_vars($pcfg));
         $updatekeys = array();
         foreach ($all_keys as $key) {
-            if (preg_match('/^auth_user_(.+)_updatelocal$/',$key, $match)) {
-                if ($CFG->{$match[0]}) { // if it has a true value
+            if (preg_match('/^field_updatelocal_(.+)$/',$key, $match)) {
+                if ($pcfg->{$match[0]}) { // if it has a true value
                     array_push($updatekeys, $match[1]); // the actual key name
                 }
             }
@@ -637,6 +638,8 @@ function auth_ldap_update_user_record($username, $updatekeys=false) {
 
     global $CFG;
 
+    $pcfg = get_config('auth/ldap');
+
     //just in case check text case
     $username = trim(moodle_strtolower($username));
     
@@ -663,8 +666,7 @@ function auth_ldap_update_user_record($username, $updatekeys=false) {
                 } else {
                     $value = '';
                 }
-                if(isset($CFG->{'auth_user_' . $key. '_updatelocal'}) 
-                   &&    $CFG->{'auth_user_' . $key. '_updatelocal'}){
+                if (!empty($pcfg->{'field_updatelocal_' . $key})) { 
                        if ($user->{$key} != $value) { // only update if it's changed
                            set_field('user', $key, $value, 'username', $username);
                        }
@@ -782,6 +784,8 @@ function auth_iscreator($username=0) {
 function auth_user_update($olduser, $newuser) {
 
     global $USER , $CFG;
+
+    $pcfg = get_config('auth/ldap');
     
     $ldapconnection = auth_ldap_connect();
     
@@ -810,7 +814,7 @@ function auth_user_update($olduser, $newuser) {
         //error_log(var_export($user_entry) . 'fpp' );
         
         foreach ($attrmap as $key=>$ldapkeys){
-            if (isset($CFG->{'auth_user_'. $key.'_updateremote'}) && $CFG->{'auth_user_'. $key.'_updateremote'}){
+            if (!empty($pcfg->{'field_updateremote_'. $key})) {
 
                 // for ldap values that could be in more than one 
                 // ldap key, we will do our best to match 
@@ -1355,10 +1359,12 @@ function auth_ldap_attributes (){
                     "department", "address", "city", "country", "description", 
                     "idnumber", "lang" );
 
+    $pcfg = get_config('auth/ldap');
+
     $moodleattributes = array();
     foreach ($fields as $field) {
-        if (!empty($config["auth_user_$field"])) {
-            $moodleattributes[$field] = $config["auth_user_$field"];
+        if (!empty($pcfg->{"field_map_$field"})) {
+            $moodleattributes[$field] = $pcfg->{"field_map_$field"};
             if (preg_match('/,/',$moodleattributes[$field])) {
                 $moodleattributes[$field] = explode(',', $moodleattributes[$field]); // split ?
             }

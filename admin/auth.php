@@ -67,7 +67,7 @@
         $options[$module] = get_string("auth_$module"."title", "auth");
     }
     asort($options);
-    if (isset($_GET['auth'])) {
+    if (isset($_GET['auth']) && in_array($_GET['auth'], $modules)) {
         $auth = $_GET['auth'];
     } else {
         $auth = $config->auth;
@@ -87,13 +87,6 @@
         $config->changepassword = "";
     }
     $user_fields = array("firstname", "lastname", "email", "phone1", "phone2", "department", "address", "city", "country", "description", "idnumber", "lang");
-
-    foreach ($user_fields as $user_field) {
-        $user_field = "auth_user_$user_field";
-        if (! isset($config->$user_field)) {
-            $config->$user_field = "";
-        }
-    }
 
     if (empty($focus)) {
         $focus = "";
@@ -219,24 +212,70 @@ function validate_form(&$form, &$err) {
 // but some may want a custom one if they are offering
 // other options
 // Note: pluginconfig_ fields have special handling. 
-function print_auth_lock_options ($auth, $user_fields, $helptext='', $refreshopts, $updateopts) {
+function print_auth_lock_options ($auth, $user_fields, $helptext, $retrieveopts, $updateopts) {
+
     echo '<tr><td colspan="3">';
-    print_heading(get_string('auth_fieldlocks', 'auth'));
+    if ($retrieveopts) {
+        print_heading(get_string('auth_data_mapping', 'auth'));
+    } else {
+        print_heading(get_string('auth_fieldlocks', 'auth'));
+    }
     echo '<td/></tr>';
 
-    $lockoptions = array ('unlocked'        => get_string('auth_unlocked', 'auth'),
-                          'unlockedifempty' => get_string('auth_unlockedifempty', 'auth'),
-                          'locked'          => get_string('auth_locked', 'auth'));
+    $lockoptions = array ('unlocked'        => get_string('unlocked', 'auth'),
+                          'unlockedifempty' => get_string('unlockedifempty', 'auth'),
+                          'locked'          => get_string('locked', 'auth'));
+    $updatelocaloptions = array('oncreate'  => get_string('update_oncreate', 'auth'),
+                                'onlogin'   => get_string('update_onogin', 'auth'));
+    $updateextoptions = array('0'  => get_string('update_never', 'auth'),
+                              '1'   => get_string('update_onupdate', 'auth'));
     
     $pluginconfig = get_config("auth/$auth");
     
+    // helptext is on a field with rowspan
+    if (empty($helptext)) {
+                $helptext = '&nbsp;';
+    }
+
     foreach ($user_fields as $field) {
         echo '<tr valign="top"><td align="right">';
         echo get_string($field);
         echo '</td><td>';
-        choose_from_menu($lockoptions, "pluginconfig_field_lock_{$field}", $pluginconfig->{"field_lock_$field"}, "");
-        echo "</td><td>$helptext</td></tr>";
-        $helptext = '&nbsp;';
+
+        // Define some vars we'll work with
+        optional_variable($pluginconfig->{"field_map_$field"}, '');
+        optional_variable($pluginconfig->{"field_updatelocal_$field"}, '');
+        optional_variable($pluginconfig->{"field_updateremote_$field"}, '');
+        optional_variable($pluginconfig->{"field_lock_$field"}, '');
+
+        if ($retrieveopts) {
+            $varname = 'field_map_' . $field;
+
+            echo "<input name=\"pluginconfig_{$varname}\" type=\"text\" size=\"30\" value=\"{$pluginconfig->$varname}\">";
+            echo '<div align="right">';
+            echo  get_string('auth_updatelocal', 'auth') . '&nbsp;&nbsp;';
+            choose_from_menu($updatelocaloptions, "pluginconfig_field_updatelocal_{$field}", $pluginconfig->{"field_updatelocal_$field"}, "");
+            echo '<br />';
+            if ($updateopts) {
+                echo  get_string('auth_updateremote', 'auth') . '&nbsp;&nbsp;';
+                 '&nbsp;&nbsp;';
+                choose_from_menu($updateextoptions, "pluginconfig_field_updateremote_{$field}", $pluginconfig->{"field_updateremote_$field"}, "");
+                echo '<br />';
+
+
+            }
+            echo  get_string('auth_fieldlock', 'auth') . '&nbsp;&nbsp;';
+            choose_from_menu($lockoptions, "pluginconfig_field_lock_{$field}", $pluginconfig->{"field_lock_$field"}, "");
+            echo '</div>';
+        } else {
+            choose_from_menu($lockoptions, "pluginconfig_field_lock_{$field}", $pluginconfig->{"field_lock_$field"}, "");
+        }
+        echo '</td>';
+        if (!empty($helptext)) {
+            echo '<td rowspan="' . count($user_fields) . '">' . $helptext . '</td>';
+            $helptext = '';
+        }
+        echo '</tr>';
     }
 }
 
