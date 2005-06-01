@@ -479,8 +479,12 @@ function get_config($plugin=NULL, $name=NULL) {
             }
             
             $localcfg = (object)$localcfg;
+            return $localcfg;
+        } else {
+            // preserve $CFG if DB returns nothing or error
+            return $CFG;
         }
-        return $localcfg;
+        
     }
 }
 
