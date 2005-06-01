@@ -341,6 +341,8 @@ if (self.name == 'editquestion') {
 
     if (isset($_REQUEST['cat'])) { /// coming from category selection drop-down menu
         $modform->category = $cat;
+        $page = 0;
+        $modform->page = 0;
     }
 
     if(isset($_REQUEST['recurse'])) {
