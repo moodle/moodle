@@ -31,8 +31,8 @@ $string['auth_dbtable'] = 'Name of the table in the database';
 $string['auth_dbtitle'] = 'Use an external database';
 $string['auth_dbtype'] = 'The database type (See the <a href=\"../lib/adodb/readme.htm#drivers\">ADOdb documentation</a> for details)';
 $string['auth_dbuser'] = 'Username with read access to the database';
-$string['auth_editlock'] = 'Lock value';
-$string['auth_editlock_expl'] = '<p><b>Lock value:</b> If enabled, will prevent Moodle users and admins from editing the field directly. Use this option if you are maintaining this data in the external auth system. </p>';
+$string['auth_fieldlock'] = 'Lock value';
+$string['auth_fieldlock_expl'] = '<p><b>Lock value:</b> If enabled, will prevent Moodle users and admins from editing the field directly. Use this option if you are maintaining this data in the external auth system. </p>';
 $string['auth_emaildescription'] = 'Email confirmation is the default authentication method.  When the user signs up, choosing their own new username and password, a confirmation email is sent to the user\'s email address.  This email contains a secure link to a page where the user can confirm their account. Future logins just check the username and password against the stored values in the Moodle database.';
 $string['auth_emailtitle'] = 'Email-based authentication';
 $string['auth_fccreators'] = 'List of groups whose members are allowed to create new courses. Separate multiple groups with \';\'. Names must be spelled exactly as on FirstClass server. System is case-sensitive.';
@@ -113,10 +113,10 @@ $string['auth_shib_convert_data'] = 'Data modification API';
 $string['auth_shib_convert_data_description'] = 'You can use this API to further modify the data provided by Shibboleth. Read the <a href=\"../auth/shibboleth/README.txt\" target=\"_blank\">README</a> for further instructions.';
 $string['auth_shib_instructions_help'] = 'Here you should provide custom instructions for your users to explain Shibboleth.  It will be shown on the login page in the instructions section.  It should include a link to a Shibboleth-protected resource that redirects users to \"<b>$a</b>\" so that Shibboleth users can login in Moodle.  If you leave it blank, then standard instructions will be used (not Shibboleth-specific)';
 $string['auth_shib_convert_data_warning'] = 'The file does not exist or is not readable by the webserver process!';
-$string['auth_updatelocal'] = 'Update local data';
-$string['auth_updatelocal_expl'] = '<p><b>Update local data:</b> If enabled, the field will be updated (from external auth) every time the user logs in or there is a user synchronization. Fields set to update locally should be locked.</p>';
-$string['auth_updateremote'] = 'Update external data';
-$string['auth_updateremote_expl'] = '<p><b>Update external data:</b> If enabled, the external auth will be updated when the user record is updated. Fields should be unlocked to allow edits.</p>';
+$string['auth_updatelocal'] = 'Update local';
+$string['auth_updatelocal_expl'] = '<p><b>Update local:</b> If enabled, the field will be updated (from external auth) every time the user logs in or there is a user synchronization. Fields set to update locally should be locked.</p>';
+$string['auth_updateremote'] = 'Update external';
+$string['auth_updateremote_expl'] = '<p><b>Update external:</b> If enabled, the external auth will be updated when the user record is updated. Fields should be unlocked to allow edits.</p>';
 $string['auth_updateremote_ldap'] = '<p><b>Note:</b> Updating external LDAP data requires that you set binddn and bindpw to a bind-user with editing privileges to all the user records. It currently does not preserve multi-valued attributes, and will remove extra values on update. </p>';
 $string['auth_user_create'] = 'Enable user creation';
 $string['auth_user_creation'] = 'New (anonymous) users can create user accounts on the external authentication source and confirmed via email. If you enable this , remember to also configure module-specific options for user creation.';
@@ -137,5 +137,12 @@ $string['showguestlogin'] = 'You can hide or show the guest login button on the 
 $string['stdchangepassword'] = 'Use standard Change Password Page';
 $string['stdchangepassword_expl'] = 'If the external authentication system allows password changes through Moodle, switch this to Yes. This setting overrides \'Change Password URL\'.';
 $string['stdchangepassword_explldap'] = 'NOTE: It is recommended that you use LDAP over an SSL encrypted tunnel (ldaps://) if the LDAP server is remote.';
+$string['update_oncreate'] = 'On creation';
+$string['update_onlogin']  = 'On every login';
+$string['update_onupdate']  = 'On update';
+$string['update_never']    = 'Never';
+$string['unlocked'] = 'Unlocked';
+$string['unlockedifempty'] = 'Unlocked if empty';
+$string['locked'] = 'Locked';
 
 ?>
