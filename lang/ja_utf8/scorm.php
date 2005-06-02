@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.5 Beta (2005052300)
+      // scorm.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['asset'] = 'アセット';
@@ -27,10 +27,10 @@ $string['firstaccess'] = '最初のアクセス';
 $string['found'] = 'マニフェストファイルが見つかりました';
 $string['frameheight'] = 'SCOフレームの高さ';
 $string['framewidth'] = 'SCOフレームの幅';
-$string['gradeaverage'] = '平均得点';
-$string['gradehighest'] = '最高得点';
-$string['grademethod'] = '評価方法';
-$string['gradescoes'] = 'SCOの状態';
+$string['gradeaverage'] = '平均評点';
+$string['gradehighest'] = '最高評点';
+$string['grademethod'] = '評定方法';
+$string['gradescoes'] = 'SCO状態';
 $string['gradesum'] = '評点の合計';
 $string['guestsno'] = 'ゲストはscormのコースを閲覧できません';
 $string['height'] = '高さ';
@@ -63,7 +63,7 @@ $string['report'] = 'レポート';
 $string['review'] = 'レビュー';
 $string['scoes'] = 'SCO';
 $string['score'] = 'スコア';
-$string['syntax'] = 'シンタックスエラー';
+$string['syntax'] = '構文エラー';
 $string['tag_error'] = 'コンテンツに不明なタグ($a->tag) があります:  $a->value';
 $string['too_many_attributes'] = 'タグ $a->tag のアトリビュートが多過ぎます';
 $string['too_many_children'] = 'タグ $a->tag の子タグが多過ぎます';
