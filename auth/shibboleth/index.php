@@ -8,15 +8,17 @@
         redirect($CFG->wwwroot.'/index.php');
     }
 
+    $pluginconfig   = get_config('auth/shibboleth');
+
     // Check whether Shibboleth is configured properly
-    if (empty($CFG->shib_user_attribute)) {
+    if (empty($pluginconfig->shib_user_attribute)) {
         error('Shibboleth authentication (\'shib_user_attribute\') is not set up correctly. You probably haven\'t yet configured the Shibboleth authentication. Please consult the README in moodle/auth/shibboleth for further instructions on how to set up Shibboleth authentication.');
     }
 
 /// If we can find the Shibboleth attribute, save it in session and return to main login page
-    if (!empty($_SERVER[$CFG->shib_user_attribute])) {    // Shibboleth auto-login
-        $frm->username = $_SERVER[$CFG->shib_user_attribute];
-        $frm->password = substr(base64_encode($_SERVER[$CFG->shib_user_attribute]),0,8);
+    if (!empty($_SERVER[$pluginconfig->shib_user_attribute])) {    // Shibboleth auto-login
+        $frm->username = $_SERVER[$pluginconfig->shib_user_attribute];
+        $frm->password = substr(base64_encode($_SERVER[$pluginconfig->shib_user_attribute]),0,8);
         // The random password consists of the first 8 letters of the base 64 encoded user ID
         // This password is never used unless the user account is converted to manual 
 

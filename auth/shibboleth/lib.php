@@ -6,9 +6,11 @@
 function auth_user_login($username, $password) {
     global $CFG;
 
+    $pluginconfig   = get_config('auth/shibboleth');
+    
 /// If we are in the shibboleth directory then we trust the server var
-    if (!empty($_SERVER[$CFG->shib_user_attribute])) {
-        return ($_SERVER[$CFG->shib_user_attribute] == $username);
+    if (!empty($_SERVER[$pluginconfig->shib_user_attribute])) {
+        return ($_SERVER[$pluginconfig->shib_user_attribute] == $username);
     }    
 
 /// If we are not, then the server is probably set to not be Shibboleth-only
@@ -24,19 +26,21 @@ function auth_get_userinfo($username) {
 // reads user information from shibboleth attributes and return it in array()
     global $CFG;
 
+    $config = (array)$CFG;
+    $pluginconfig   = get_config('auth/shibboleth');
+
     // Check whether we have got all the essential attributes
     if (
-           empty($_SERVER[$CFG->shib_user_attribute])
-        || empty($_SERVER[$CFG->auth_shib_user_firstname])
-        || empty($_SERVER[$CFG->auth_shib_user_lastname])
-        || empty($_SERVER[$CFG->auth_shib_user_email])
+           empty($_SERVER[$pluginconfig->shib_user_attribute])
+        || empty($_SERVER[$pluginconfig->field_map_firstname])
+        || empty($_SERVER[$pluginconfig->field_map_lastname])
+        || empty($_SERVER[$pluginconfig->field_map_email])
         ) {
-        error("Moodle needs certain Shibboleth attributes which are not present in your case. The attributes are: '".$CFG->shib_user_attribute."' ('".$_SERVER[$CFG->shib_user_attribute]."'), '".$CFG->auth_shib_user_firstname."' ('".$_SERVER[$CFG->auth_shib_user_firstname]."'), '".$CFG->auth_shib_user_lastname."' ('".$_SERVER[$CFG->auth_shib_user_lastname]."') and '".$CFG->auth_shib_user_email."' ('".$_SERVER[$CFG->auth_shib_user_email]."')<br>Please contact your Identity Service Provider.");
+        error("Moodle needs certain Shibboleth attributes which are not present in your case. The attributes are: '".$pluginconfig->shib_user_attribute."' ('".$_SERVER[$pluginconfig->shib_user_attribute]."'), '".$pluginconfig->field_map_firstname."' ('".$_SERVER[$pluginconfig->field_map_firstname]."'), '".$pluginconfig->field_map_lastname."' ('".$_SERVER[$pluginconfig->field_map_lastname]."') and '".$pluginconfig->field_map_email."' ('".$_SERVER[$pluginconfig->field_map_email]."')<br>Please contact your Identity Service Provider.");
     }
 
-    $config = (array)$CFG;
     $attrmap = auth_shib_attributes();
-   
+
     $result = array();
     $search_attribs = array();
   
@@ -60,13 +64,13 @@ function auth_get_userinfo($username) {
     return $result;
 }
 
-function auth_shib_attributes (){
+function auth_shib_attributes(){
 //returns array containg attribute mappings between Moodle and shibboleth
 	global $CFG;
 
     $config = (array)$CFG;
-    $pcfg   = get_config('auth/shibboleth');
-    $pcfg   = (array) $pcfg;
+    $pluginconfig   = get_config('auth/shibboleth');
+    $pluginconfig   = (array) $pluginconfig;
 
     $fields = array("firstname", "lastname", "email", "phone1", "phone2", 
                     "department", "address", "city", "country", "description", 
@@ -74,12 +78,12 @@ function auth_shib_attributes (){
 
     $moodleattributes = array();
     foreach ($fields as $field) {
-        if ($pcfg["auth_shib_user_$field"]) {
-            $moodleattributes[$field] = $pcfg["auth_shib_user_$field"];
+        if ($pluginconfig["field_map_$field"]) {
+            $moodleattributes[$field] = $pluginconfig["field_map_$field"];
         }
     }
     $moodleattributes['username']=$config["shib_user_attribute"];
-    
+
 	return $moodleattributes;
 }
 ?>
