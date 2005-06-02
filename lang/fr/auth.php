@@ -29,8 +29,6 @@ $string['auth_dbtable'] = 'Nom de la table dans la base de données';
 $string['auth_dbtitle'] = 'Utiliser une base de données externe';
 $string['auth_dbtype'] = 'Type de la base de données (Pour plus d\'information, voir la <a href=\'../lib/adodb/readme.htm#drivers\'>documentation de ADOdb</a>)';
 $string['auth_dbuser'] = 'Compte avec accès en lecture à la base de données';
-$string['auth_editlock_expl'] = '<p><strong>Verrouiller cette valeur&nbsp;:</strong> si cette option est activée, elle empêchera les utilisateurs et les administrateurs de modifier le champ directement. Utilisez cette option si vous maintenez ces données dans le système d\'authentification externe.</p>';
-$string['auth_editlock'] = 'Verrouiller cette valeur';
 $string['auth_emaildescription'] = 'La confirmation par courriel est la méthode d\'authentification par défaut. Lorsqu\'un utilisateur s\'enregistre en choisissant ses nom d\'utilisateur et mot de passe, un message de confirmation est envoyé à son adresse de courriel. Ce message contient un lien sécurisé vers une page Web où il peut confirmer son inscription. Les connexions suivantes ne vérifient que les nom d\'utilisateur et mot de passe précédemment enregistrés dans la base de données de Moodle.';
 $string['auth_emailtitle'] = 'Authentification par courriel';
 $string['auth_fccreators'] = 'Liste des groupes dont les membres ont l\'autorisation de créer de nouveaux cours. Séparez les différents groupes par des points-virgules (;). Les noms doivent être transcrits exactement tels qu\'ils sont sur le serveur FirstClass. La casse des caractères doit être respectée.';
@@ -40,6 +38,8 @@ $string['auth_fchost'] = 'L\'adresse du serveur FirstClass. Indiquez l\'adresse 
 $string['auth_fcpasswd'] = 'Mot de passe du compte FirstClass ayant le privilège « Subadministrator ».';
 $string['auth_fctitle'] = 'Utilisation d\'un serveur FirstClass';
 $string['auth_fcuserid'] = 'Numéro d\'identification du compte FirstClass ayant le privilège « Subadministrator ».';
+$string['auth_fieldlock_expl'] = '<p><strong>Verrouiller cette valeur&nbsp;:</strong> si cette option est activée, elle empêchera les utilisateurs et les administrateurs de modifier le champ directement. Utilisez cette option si vous maintenez ces données dans le système d\'authentification externe.</p>';
+$string['auth_fieldlock'] = 'Verrouiller cette valeur';
 $string['auth_imapdescription'] = 'Cette méthode utilise un serveur IMAP pour vérifier qu\'un nom d\'utilisateur et son mot de passe sont valides.';
 $string['auth_imaphost'] = 'Adresse du serveur IMAP. Utiliser l\'adresse IP et non le nom de la machine.';
 $string['auth_imapport'] = 'Numéro de port du serveur IMAP. Il s\'agit généralement de 143 ou 993.';
@@ -121,11 +121,18 @@ $string['forcechangepassword'] = 'Imposer le changement du mot de passe';
 $string['forcechangepasswordfirst_help'] = 'Impose aux utilisateurs de changer leur mot de passe lors de leur prochaine connexion à Moodle.';
 $string['guestloginbutton'] = 'Bouton de connexion anonyme';
 $string['instructions'] = 'Instructions';
+$string['locked'] = 'Verrouillé';
 $string['md5'] = 'Cryptage MD5';
 $string['plaintext'] = 'Texte en clair';
 $string['showguestlogin'] = 'Vous pouvez choisir d\'afficher ou non le bouton de connexion en tant qu\'utilisateur anonyme sur la page de connexion.';
 $string['stdchangepassword_expl'] = 'Si la source d\'authentification externe permet le changement de mot de passe par l\'intermédaire de Moodle, mettez cette réglage sur «&nbsp;Oui&nbsp;». Ce réglage rend obsolète le réglage «&nbsp;URL de la page de changement du mot de passe&nbsp;».';
 $string['stdchangepassword_explldap'] = 'Remarque&nbsp;: il est recommandé d\'utiliser LDAP à travers un tunnel chiffré SSL (ldaps://) si le serveur LDAP n\'est pas dans un intranet.';
 $string['stdchangepassword'] = 'Utiliser la page de changement de mot de passe standard';
+$string['unlocked'] = 'Déverrouillé';
+$string['unlockedifempty'] = 'Déverrouillé si vide';
+$string['update_never']    = 'Jamais';
+$string['update_oncreate'] = 'À la création';
+$string['update_onlogin']  = 'À chaque connexion';
+$string['update_onupdate']  = 'Lors de la mise à jour';
 
 ?>
