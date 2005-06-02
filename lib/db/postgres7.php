@@ -1146,6 +1146,28 @@ function main_upgrade($oldversion=0) {
         }
     }
 
+    if ($oldversion < 2005060201) {  // Close down the Attendance module, we are removing it from CVS.
+        if (!file_exists($CFG->dirroot.'/mod/attendance/lib.php')) {
+            if (count_records('attendance')) {   // We have some data, so should keep it
+
+                set_field('modules', 'visible', 0, 'name', 'attendance');
+                notify('The Attendance module has been discontinued.  If you really want to 
+                        continue using it, you should download it individually from 
+                        http://download.moodle.org/modules and install it, then 
+                        reactivate it from Admin >> Configuration >> Modules.  
+                        None of your existing data has been deleted, so all existing 
+                        Attendance activities should re-appear.');
+
+            } else {  // No data, so do a complete delete
+
+                execute_sql('DROP TABLE '.$CFG->prefix.'attendance', false);
+                delete_records('modules', 'name', 'attendance');
+                notify("The Attendance module has been discontinued and removed from your site.  
+                        You weren't using it anyway.  ;-)");
+            }
+        }
+    }
+
     return $result;
 }
 
