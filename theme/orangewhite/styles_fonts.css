@@ -58,22 +58,30 @@ h6.main {
   font-weight:bold
 }
 h1 {
-  font-size:1.4em
-}
-h2 {
   font-size:1.2em
 }
-h3 {
+h2 {
   font-size:1em
 }
-h4 {
+h3 {
   font-size:0.8em
+}
+h4 {
+  font-size:0.7em
+}
+pre code {
+  font-size:1.2em
 }
 .bold {
   font-weight:bold
 }
 .generalboxcontent {
   font-size:0.8em
+}
+.generaltable .header {
+  font-size:0.9em;
+  font-weight:normal;
+  white-space:normal !important
 }
 .warning {
   font-weight:bold;
@@ -89,6 +97,9 @@ h4 {
 }
 .pagingbar .thispage {
   font-weight:bold
+}
+.paging {
+  font-size:0.8em
 }
 .categorybox .category,
 .categorybox .category {
@@ -169,10 +180,14 @@ table.formtable tbody th {
 #admin-config .r1 {
   font-size:0.9em
 }
+#admin-config #content > center {
+  font-size:0.8em
+}
 
 /***
  *** Blocks
  ***/
+ 
 .sideblock {
   font-size:0.7em
 }
@@ -198,7 +213,6 @@ table.formtable tbody th {
 .sideblock .date {
   font-style:italic
 }
-
 
 /***
  *** Calendar
@@ -258,6 +272,7 @@ table.minicalendar {
 /***
  *** Course
  ***/
+
 #course-view .section {
   font-size:0.8em;
   line-height:1.4em
@@ -304,6 +319,7 @@ table.minicalendar {
 /***
  *** Doc
  ***/
+
 body#doc-contents h1 {
   font-size:0.9em
 }
@@ -375,8 +391,8 @@ body#doc-contents ul {
 /***
  *** User
  ***/
- 
-#user-view .userinfobox .list {
+
+#user-view .userinfobox .content {
   font-size:0.8em
 }
 #course-user .section .content td {
@@ -391,7 +407,6 @@ body#doc-contents ul {
 #course-log .logtable {
   font-size:0.8em
 }
-
 .userinfobox .username {
   font-weight:bold
 }
@@ -404,21 +419,21 @@ body#doc-contents ul {
  ***/
 
 #mod-assignment-index .cell {
-  font-size:0.9em
+  font-size:0.85em
 }
 /***
  *** Modules:Chat
  ***/
 
 #mod-chat-index .cell {
-  font-size:0.9em
+  font-size:0.85em
 }
 /***
  *** Modules:Choice
  ***/
 
 #mod-choice-index .cell {
-  font-size:0.9em
+  font-size:0.85em
 }
   
 /***
@@ -447,8 +462,8 @@ body#doc-contents ul {
 body#mod-forum-search .introcontent {
   font-weight:bold
 }
-body#mod-forum-index .generalbox .cell {
-  font-size:0.9em
+body#mod-forum-index .cell {
+  font-size:0.85em
 }
 
 /***
@@ -484,7 +499,7 @@ body#mod-forum-index .generalbox .cell {
   font-size:0.8em
 }
 #mod-glossary-index .cell {
-  font-size:0.9em
+  font-size:0.85em
 }
 
 /***
@@ -507,7 +522,7 @@ body#mod-forum-index .generalbox .cell {
   font-style:italic
 }
 #mod-journal-index .cell {
-  font-size:0.9em
+  font-size:0.85em
 }
 /***
  *** Modules:Label
@@ -518,7 +533,7 @@ body#mod-forum-index .generalbox .cell {
  ***/
 
 #mod-lesson-index .cell {
-  font-size:0.9em
+  font-size:0.85em
 }
 /***
  *** Modules:Quiz
@@ -528,7 +543,7 @@ body#mod-forum-index .generalbox .cell {
   font-size:0.7em
 }
 #mod-quiz-index .cell {
-  font-size:0.9em
+  font-size:0.85em
 }
 
 /***
@@ -536,7 +551,7 @@ body#mod-forum-index .generalbox .cell {
  ***/
 
 #mod-resource-index .cell {
-  font-size:0.9em
+  font-size:0.85em
 }
 .mod-resource font {
   font-size:0.8em
@@ -547,26 +562,26 @@ body#mod-forum-index .generalbox .cell {
  ***/
 
 #mod-scorm-index .cell {
-  font-size:0.9em
+  font-size:0.85em
 }
 /***
  *** Modules:Survey
  ***/
 
 #mod-survey-index .cell {
-  font-size:0.9em
+  font-size:0.85em
 }
 /***
  *** Modules:Wiki
  ***/
 
 #mod-wiki-index .cell {
-  font-size:0.9em
+  font-size:0.85em
 }
 /***
  *** Modules:Workshop
  ***/
 
 #mod-workshop-index .cell {
-  font-size:0.9em
+  font-size:0.85em
 }

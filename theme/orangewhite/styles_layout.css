@@ -66,9 +66,15 @@ h6.main {
 #middle-column .section .side {
   border:0 none
 }
+.generalbox {
+  width:90%
+}
 .generaltable th.header {
   border-left:1px solid;
   border-right:1px solid;
+}
+.generaltable .smallinfo p {
+  margin-top:0
 }
 .sitetopiccontent {
   border:0 none
@@ -229,6 +235,12 @@ h6.main {
  *** Calendar
  ***/
 
+#calendar .today,
+.minicalendar .today {
+  padding-top:0;
+  padding-bottom:0;
+  border:1px solid !important
+}
 #calendar .maincalendar .calendarmonth {
   width:75%
 }
@@ -236,6 +248,7 @@ h6.main {
 /***
  *** Course
  ***/
+
 #site-index .headingblock {
   border:0 none
 }
@@ -257,6 +270,9 @@ h6.main {
 }
 #course-view .section .spacer {
   height:2em
+}
+#course-view .section .activity .spacer {
+  height:12px
 }
 #course-view .section .content .section {
   margin-top:0;
@@ -298,6 +314,9 @@ h6.main {
 .forumheaderlist .header {
   border-left:1px solid;
   border-right:1px solid
+}
+#mod-forum-index .generalbox {
+  width:100%
 }
   
 /***
