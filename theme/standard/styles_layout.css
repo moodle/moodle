@@ -999,8 +999,46 @@ table.groupinfobox {
   width: 100px;
   vertical-align: top;
 }
-body#user-index #longtimenosee {
-  text-align:center;
+
+body#user-index h2 {
+  text-align: center;
+}
+
+body#user-index #longtimenosee,
+body#user-index #showall {
+  text-align: center;
+}
+
+body#user-index #showall {
+  margin: 10px 0px;
+}
+
+body#user-index table#teachers,
+body#user-index table#students {
+  margin: auto;
+  width: 80%;
+}
+body#user-index table#teachers td,
+body#user-index table#teachers th,
+body#user-index table#students td,
+body#user-index table#students th {
+  vertical-align: middle;
+  text-align: left;
+  padding: 4px;
+}
+
+body#user-index table.controls {
+  width: 100%;
+}
+body#user-index table.controls tr {
+  vertical-align: top;
+}
+body#user-index table.controls td.right,
+body#user-index table.controls td.left {
+  padding: 4px;
+}
+body#user-index table.controls .right {
+  text-align: right;
 }
 
 

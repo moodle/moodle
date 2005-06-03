@@ -455,6 +455,10 @@ body#grade-index .grades .header {
   font-size: 0.7em;
 }
 
+body#user-index #longtimenosee {
+  font-size: 0.8em;
+}
+
 
 /***
  *** Modules: Assignment
