@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 ALPHA (2005051500)
+      // moodle.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['action'] = 'Aktion';
@@ -447,7 +447,7 @@ $string['forgotaccount'] = 'Haben Sie Ihr Passwort vergessen?';
 $string['forgotten'] = 'Benutzername und Kennwort vergessen?';
 $string['format'] = 'Format';
 $string['formathtml'] = 'HTML-Format';
-$string['formatmarkdown'] = 'Preisnachlaß';
+$string['formatmarkdown'] = 'Markdown-Format';
 $string['formatplain'] = 'Reines Textformat';
 $string['formatsocial'] = 'Offenes Kommunikationsforum';
 $string['formattext'] = 'Moodle Text-Format';
@@ -795,7 +795,6 @@ $string['pageheaderconfigablock'] = 'Konfiguration eines Blocks in %%fullname%%'
 $string['parentcoursenotfound'] = 'Kurs nicht gefunden!';
 $string['parentcoursenotmetacourse'] = 'Kurs ist kein Metakurs!';
 $string['parentfolder'] = 'Übergeordneter Ordner';
-$string['parentlanguage'] = '';
 $string['participants'] = 'Teilnehmer/innen';
 $string['password'] = 'Passwort';
 $string['passwordchanged'] = 'Passwort wurde geändert';

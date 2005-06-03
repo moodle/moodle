@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.5 ALPHA (2005051500)
+      // admin.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['adminseesallevents'] = 'Adiministrator/innen sehen alle Termine';
@@ -96,7 +96,7 @@ $string['configvariables'] = 'Variablen konfigurieren';
 $string['configwarning'] = 'Vorsicht bei der Veränderung dieser Einstellungen, ungeeignete Werte können zu Problemen führen.';
 $string['configzip'] = 'Geben Sie hier den Pfad zum Programm zip an (nur Unix). Dieser wird für die Erstellung ZIP-Archiven auf dem Server benötigt.';
 $string['confirmation'] = 'Bestätigung';
-$string['cronwarning'] = 'Das <a href=\"cron.php\">Cron-Skript</ a> wurde in den letzten 24 Stunden nicht ausgeführt. <br />Die  <a href=\"../doc/?frame=install.html&amp;sub=cron\">Installations Dokumentation</a> erläutert wie Sie diesen Vorgang automatisieren können.';
+$string['cronwarning'] = 'Das <a href=\"cron.php\">Cron-Skript</ a> wurde in den letzten 24 Stunden nicht ausgeführt. <br />Die  <a href=\"../doc/?frame=install.html&sub=cron\">Installations Dokumentation</a> erläutert wie Sie diesen Vorgang automatisieren können.';
 $string['edithelpdocs'] = 'Hilfedateien bearbeiten';
 $string['editstrings'] = 'Menutexte bearbeiten';
 $string['filterall'] = 'Alle Begriffe filtern';
@@ -112,8 +112,9 @@ $string['helpweekenddays'] = 'Welche Tage der Woche sollen als Wochenende farbig
 $string['importtimezones'] = 'Update der Zeitzonenliste';
 $string['importtimezonescount'] = '$a->count Einträge importiert von $a->source';
 $string['importtimezonesfailed'] = 'Keine Daten gefunden (schlechte Nachricht)';
-$string['nodstpresetsexist'] = 'Sommerzeit-Einstellungen sind deaktiviert für alle Nutzer/innen, weil keine Voreinstellung festgelegt wurde. Mit dem Button unten können Sie Vorenstellungen vornehmen.';
+$string['incompatibleblocks'] = 'Inkompatible Blöcke';
 $string['optionalmaintenancemessage'] = 'Optionale Wartungsinformation';
+$string['pleaseregister'] = 'Registrieren Sie Ihre Seite, um diesen Button zu entfernen';
 $string['sitemaintenance'] = 'Die Seite wird zur Zeit überarbeitet und steht für kurze Zeit nicht zur Verfügung.';
 $string['sitemaintenancemode'] = 'Wartungsmodus';
 $string['sitemaintenanceoff'] = 'Der Wartungsmodus wurde wieder abgeschaltet. Die Seite steht wieder zur Verfügung.';
