@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.6 development (2005052400)
+      // quiz.php - created with Moodle 1.6 development (2005053000)
 
 
 $string['acceptederror'] = 'Akceptovaná chyba';
@@ -74,6 +74,7 @@ $string['completedon'] = 'Ukonèené dòa';
 $string['confirmclose'] = 'Práve sa chystáte ukonèi» tento pokus. Ak ho teraz ukonèíte, u¾ nebudete ma» mo¾nos» zmeni» svoje odpovede. ';
 $string['confirmserverdelete'] = 'Ste si istý, ¾e chcete odstráni» server <b>$a</b> zo zoznamu?';
 $string['confirmstartattempt'] = 'Tento test je èasovo obmedzený. Naozaj sa ho chcete pokúsi» urobi» teraz?';
+$string['containercategorycreated'] = 'Táto kategória bola vytvorená na uchovanie v¹etkých pôvodných kategórií presunutých do úrovne stránky z dôvodov uvedených dolu.';
 $string['continueattemptquiz'] = 'Pokraèova» v poslednom pokuse';
 $string['copyingfrom'] = 'Vytvára sa kópia otázky \'$a\'';
 $string['copyingquestion'] = 'Kopíruje sa otázka';
@@ -360,6 +361,7 @@ $string['rqp'] = 'Nedostupná otázka';
 $string['rqps'] = 'Nedostupné otázky';
 $string['save'] = 'Ulo¾i»';
 $string['saveandedit'] = 'Ulo¾i» odpovede a upravi» otázky';
+$string['savedfromdeletedcourse'] = 'Ulo¾ené z vymazaného kurzu \"$a\"';
 $string['savegrades'] = 'Ulo¾i» známky';
 $string['savemyanswers'] = 'Ulo¾i» moje odpovede';
 $string['savenosubmit'] = 'Ulo¾i» bez odoslania';
@@ -416,8 +418,10 @@ $string['uniform'] = 'desatinné èísla,  zo v¹eobecných záznamov distribúcie';
 $string['unit'] = 'Jednotka';
 $string['unknowntype'] = 'Typ otázky nie je podporovaný na riadku $a. Otázka bude ignorovaná';
 $string['unsupportedformulafunction'] = 'Funkcia $a nie je podporovaná';
+$string['unusedcategorydeleted'] = 'Táto kategória bola vymazaná, preto¾e po vymazaní kurzu sa otázky pou¾ité v tejto kategórii u¾ viac nepou¾ili na serveri.';
 $string['upgradesure'] = '<div style=\"color: red;\">Tento testový modul èaká rozsiahla zmena testových tabuliek a táto aktualizácia e¹te nebola úspe¹ne otestovaná. Odporúèame Vám, aby ste si zazálohovali databázové tabuµky predtým, ako budete pokraèova».</div>';
 $string['url'] = 'URL';
+$string['usedcategorymoved'] = 'Táto kategória bola presunutá do úrovne stránky, preto¾e po vymazaní kurzu sa otázky v pou¾ité v tejto kategórii pou¾ívali aj v ostatných testoch na serveri.';
 $string['validate'] = 'Overi»';
 $string['viewallanswers'] = 'Zobrazi» $a celých testov';
 $string['viewallreports'] = 'Prezrie» zápisy $a pokusov';
