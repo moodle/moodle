@@ -951,6 +951,7 @@ $string['showgrades'] = 'Show grades';
 $string['showlistofcourses'] = 'Show list of courses';
 $string['showonlytopic'] = 'Show only topic $a';
 $string['showonlyweek'] = 'Show only week $a';
+$string['showperpage'] = 'Show $a per page';
 $string['showrecent'] = 'Show recent activity';
 $string['showreports'] = 'Show activity reports';
 $string['showsettings'] = 'Show settings';
