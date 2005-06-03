@@ -328,6 +328,22 @@ class flexible_table {
         return '';
     }
 
+    function get_initial_first() {
+        if(!$this->use_initials) {
+            return NULL;
+        }
+
+        return $this->sess->i_first;
+    }
+
+    function get_initial_last() {
+        if(!$this->use_initials) {
+            return NULL;
+        }
+
+        return $this->sess->i_last;
+    }
+
     function print_html() {
         global $CFG;
 
@@ -346,7 +362,7 @@ class flexible_table {
 
             // Bar of first initials
 
-            echo '<div class="initialbar">'.get_string('firstname').' : ';
+            echo '<div class="initialbar firstinitial">'.get_string('firstname').' : ';
             if(!empty($this->sess->i_first)) {
                 echo '<a href="'.$this->baseurl.$this->request[TABLE_VAR_IFIRST].'=">'.$strall.'</a>';
             } else {
@@ -363,7 +379,7 @@ class flexible_table {
 
             // Bar of last initials
 
-            echo '<div class="initialbar">'.get_string('lastname').' : ';
+            echo '<div class="initialbar lastinitial">'.get_string('lastname').' : ';
             if(!empty($this->sess->i_last)) {
                 echo '<a href="'.$this->baseurl.$this->request[TABLE_VAR_ILAST].'=">'.$strall.'</a>';
             } else {
