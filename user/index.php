@@ -194,6 +194,7 @@
                     print_user($teacher, $course);
                 }
             } else {
+                $countrysort = (strpos($sortclause, 'country') !== false);
                 foreach ($teachers as $teacher) {
         
                     if ($teacher->lastaccess) {
@@ -201,13 +202,25 @@
                     } else {
                         $lastaccess = $strnever;
                     }
+
+                    if (empty($teacher->country)) {
+                        $country = '';
+                    }
+                    else {
+                        if($countrysort) {
+                            $country = '('.$teacher->country.') '.$countries[$teacher->country];
+                        }
+                        else {
+                            $country = $countries[$teacher->country];
+                        }
+                    }
         
                     $table->add_data(array (
                                     //'<input type="checkbox" name="userid[]" value="'.$teacher->id.'" />',
                                     print_user_picture($teacher->id, $course->id, $teacher->picture, false, true),
                                     '<strong><a href="'.$CFG->wwwroot.'/user/view.php?id='.$teacher->id.'&amp;course='.$course->id.'">'.fullname($teacher, $isteacher).'</a></strong>',
                                     $teacher->city,
-                                    $teacher->country ? $countries[$teacher->country] : '',
+                                    $country,
                                     $lastaccess));
                 }
                 
