@@ -24,10 +24,9 @@
 
 <h1>Notes de mise &agrave; jour actuelles</h1>
 
-<h2>Moodle 1.5 (date de sortie non fixée)</h2>
+<h2>Moodle 1.5 (sortie très prochainement)</h2>
   	 
 <!-- (Cette version comporte d'importantes corrections concernant la sécurité. Pour cette raison, nous recommandons vivement aux responsables de sites utilisant une version antérieure, quelle qu'elle soit, d'effectuer au plus vite la mise à jour vers cette version.) -->
-  	 
   	 
 <h3>Fonctions centrales</h3>
   <ul type="circle" type="circle">
@@ -46,8 +45,8 @@
   	 
 <h4>Administration</h4>
   <ul type="circle">
-    <li>Nouveau « Mode de maintenance » permettant à l'administrateur de désactiver temporairement le site (pour les mises à jour, par exemple).</li>
-    <li>Moodle peut télécharger automatiquement une liste actualisée de fuseaux horaires depuis le site moodle.org ou depuis ailleurs, et l'installer dans la base de données.</li>
+    <li>Nouveau «&nbsp;Mode de maintenance&nbsp;» permettant à l'administrateur de désactiver temporairement le site (pour les mises à jour, par exemple).</li>
+    <li>Moodle peut télécharger automatiquement une liste actualisée de fuseaux horaires depuis le site moodle.org ou depuis ailleurs, et l'installer dans la base de données (les fichiers Olson sont également acceptés).</li>
     <li>Nouvelle version du module MySQL Admin de Moodle (disponible séparément).</li>
     <!-- <li>Nouvelle page de diagnostic permettant de contrôler l'état de santé de Moodle.</li> -->
     <li>Nouvelle page d'options du calendrier fournissant à l'utilisateur une interface pour configurer son calendrier.</li>
@@ -60,7 +59,7 @@
     <li>Support de PAM (Pluggable Authentication Modules)</li>
     <li>Meilleure intégration LDAP, permettant de contrôler la création des cours et l'appartenance aux groupes par LDAP. Augmentation des performances et de l'extensibilité lors de la synchronisation des utilisateurs.</li>
     <li>Certain champs utilisateurs peuvent être verrouillés par l'administrateur lors de l'utilisation de méthodes d'authentification externes.</li>
-    <li>Meilleur traitement des sessions, qui détecte et empêche maintenant les sessions « crossover » pouvant survenir avec des installations PHP défectueuses.</li>
+    <li>Meilleur traitement des sessions, qui détecte et empêche maintenant les sessions «&nbsp;crossover&nbsp;» pouvant survenir avec des installations PHP défectueuses.</li>
     <li>Les sessions peuvent être maintenant enregistrées dans la base de données (intéressant pour les installations en cluster&nbsp;!).</li>
     <li>On peut imposer aux utilisateurs le changement de leur mot de passe.</li>
   </ul>
@@ -69,14 +68,14 @@
   <ul type="circle">
     <li>La navigation dans les fichiers est standardisée dans tout le site.</li>
     <li>Amélioration du dépôt des fichiers, supportant l'inspection antivirale des nouveaux documents à l'aide de ClamAV.</li>
-    <li>Les « Slasharguments » fonctionnent maintenant aussi sur IIS (une mise à jour vers PHP 4.3.11 est nécessaire pour ISAPI).</li>
+    <li>Les «&nbsp;Slasharguments&nbsp;» fonctionnent maintenant aussi sur IIS (une mise à jour vers PHP 4.3.11 est nécessaire pour ISAPI).</li>
   </ul>
   	 
 <h4>Filtres</h4>
   <ul type="circle">
     <li>Une librairie de filtres standardisée permet d'écrire très simplement de nouveaux filtres qui requièrent la recherche et le surlignement de textes.</li>
     <li>Améliorations énormes de la performance des filtres complexes, tel le filtre de Glossaire.</li>
-    <li>Nouveau filtre « Tidy » utilisant le programme Tidy du W3C pour nettoyer (facultativement) tous les textes saisis par les utilisateurs dans tout le site et les convertir en code conforme au XHTML.</li>
+    <li>Nouveau filtre «&nbsp;Tidy&nbsp;» utilisant le programme Tidy du W3C pour nettoyer (facultativement) tous les textes saisis par les utilisateurs dans tout le site et les convertir en code conforme au XHTML.</li>
     <li>Amélioration du filtre de censure de mots inadéquats, qui utilise une liste de mots définie dans les fichiers de langue et empêche la lecture de ces mots à l'aide de styles.</li>
     <li>Amélioration du lecteur MP3 en Flash. Un indicateur de progression est affiché durant le téléchargement et la lecture.</li>
     <li>Amélioration du filtre multilingue, qui est plus rapide, pardonne plus facilement les erreurs de syntaxe et utilise une nouvelle syntaxe compatible avec l'éditeur WYSIWYG&nbsp;: &lt;span lang="fr"&gt;&lt;/span&gt;.</li>
@@ -90,7 +89,8 @@
     <li>Les thèmes peuvent ignorer les styles requis par d'autres thèmes.</li>
     <li>Les utilisateurs et les cours peuvent choisir leur propre thème si l'administrateur du site le permet.</li>
     <li>De nombreuses pages sont maintenant affichées avec des onglets.</li>
-  </ul>
+    <li>Les modules, blocs et langues peuvent définir leurs propres styles standard.</li>
+</ul>
   	 
 <h4>Éditeur WYSIWYG</h4>
   <ul type="circle">
@@ -107,16 +107,16 @@
   	 
 <h4>Nouveaux blocs</h4>
   <ul type="circle">
-    <li>Bloc HTML : permet de placer un contenu quelconque (texte, images, liens, etc.) dans la page d'accueil de n'importe quel cours.</li>
-    <li>Fils RSS distants : permet d'afficher des contenus d'autres sites dans un cours Moodle (syndication).</li>
-    <li>Article d'un glossaire : permet d'afficher le contenu d'un glossaire Moodle dans la page d'accueil des cours.</li>
+    <li>Bloc HTML&nbsp;: permet de placer un contenu quelconque (texte, images, liens, etc.) dans la page d'accueil de n'importe quel cours.</li>
+    <li>Fils RSS distants&nbsp;: permet d'afficher des contenus d'autres sites dans un cours Moodle (syndication).</li>
+    <li>Article d'un glossaire&nbsp;: permet d'afficher le contenu d'un glossaire Moodle dans la page d'accueil des cours.</li>
   </ul>
   	 
 <h4>Calendrier</h4>
   <ul type="circle">
     <li>Améliorations majeures de la performance pour les sites comportant un grand nombre de cours avec des groupes.</li>
     <li>Les événements répétés peuvent maintenant être modifiés ou supprimés en une seule opération, ou alors séparément.</li>
-    <li>Nouveau réglage « Enregistrer les réglages des filtres » permettant de conserver l'état des filtres entre les connexions.</li>
+    <li>Nouveau réglage «&nbsp;Enregistrer les réglages des filtres&nbsp;» permettant de conserver l'état des filtres entre les connexions.</li>
   </ul>
   	 
 <h3>Améliorations dans les Modules d'Activité</h3>
@@ -124,7 +124,7 @@
 <h4>Devoir</h4>
   <ul type="circle">
     <li>Refonte complète, permettant l'adjonction de nouveaux types de devoirs (plug-in).</li>
-    <li>Nouveau type de devoir « Texte en ligne » ne nécessitant pas de fichier, et permettant l'ajout de commentaires lors de la notation. Ce nouveau type remplace complètement l'ancien module Journal.</li>
+    <li>Nouveau type de devoir «&nbsp;Texte en ligne&nbsp;» ne nécessitant pas de fichier, et permettant l'ajout de commentaires lors de la notation. Ce nouveau type remplace complètement l'ancien module Journal.</li>
     <li>Interface de notation nettement améliorée lors de la gestion de grandes classes.</li>
     <li>Nouvelles options de configuration pour interdir la remise de devoirs en retard et pour permettre la notification par courriel aux enseignants de la remise des devoirs de la part des étudiants.</li>
   </ul>
@@ -138,7 +138,7 @@
 <h4>Sondage</h4>
   <ul type="circle">
     <li>Permet un nombre illimité de choix.</li>
-    <li>Le nombre des utilisateurs par choix peut être limité, ce qui permet d'utiliser le module pour « s'inscrire » à un panel d'options.</li>
+    <li>Le nombre des utilisateurs par choix peut être limité, ce qui permet d'utiliser le module pour «&nbsp;s'inscrire&nbsp;» à un panel d'options.</li>
     <li>On peut maintenant télécharger les résultats du sondage en format XLS ou TXT.</li>
   </ul>
   	 
@@ -162,7 +162,7 @@
   	 
 <h4>Journal</h4>
   <ul type="circle">
-    <li>Ce module est supprimé. Il a été remplacé par le type de devoir « Texte en ligne » du module Devoir.</li>
+    <li>Le module Journal n'a pas été modifié depuis la version 1.4. Il n'est plus supporté. La procédure de mise à jour à la version 1.5 convertira toutes vos activités de type Journal en Devoirs «&nbsp;Texte en ligne&nbsp;», et masquera les activités Journal. Si vous désirez éviter cette conversion, veuillez définir la variable suivante dans votre fichier «&nbsp;config.php&nbsp;»&nbsp;: $CFG-&gt;noconvertjournals = true;</li>
   </ul>
   	 
 <h4>Leçon</h4>
@@ -171,14 +171,14 @@
     <li>Possibilité de créer des leçons d'entraînement (les notes ne sont pas enregistrées).</li>
     <li>Option pour les étudiants d'afficher les points obtenus au cours de la leçon.</li>
     <li>Il est possible de permettre aux étudiants de relire leurs réponses avant de terminer la leçon.</li>
-    <li>Nouveau mode « Diaporama » (seules les tables de branchement sont affichées comme des dias).</li>
+    <li>Nouveau mode «&nbsp;Diaporama&nbsp;» (seules les tables de branchement sont affichées comme des dias).</li>
     <li>Nouveau menu à gauche (pour les tables de branchement seulement).</li>
     <li>Les leçons peuvent être protégées par mot de passe.</li>
     <li>Une vue en arbre peut être utilisée lors de la création de la leçon.</li>
     <li>Les étudiants peuvent publier leurs meilleurs résultats.</li>
     <li>Nouvelle option permettant d'enregistrer les réglages d'une leçon comme réglages par défaut des nouvelles leçons du même cours.</li>
     <li>Possibilité de supprimer les tentatives d'étudiants.</li>
-    <li>Nouveaux types de sauts :
+    <li>Nouveaux types de sauts&nbsp;:
     <ul type="circle">
       <li>Page précédente</li>
       <li>Question non vue d'un branchement</li>
@@ -187,7 +187,7 @@
              </ul>
     </li>
     <li>Affichage des statistiques de la leçon.</li>
-    <li>Nouveau type de question : « Composition ». Les enseignants peuvent voir chaque composition, écrire des commentaires, donner une note, puis envoyer le tout à l'étudiant par courriel.</li>
+    <li>Nouveau type de question&nbsp;: «&nbsp;Composition&nbsp;». Les enseignants peuvent voir chaque composition, écrire des commentaires, donner une note, puis envoyer le tout à l'étudiant par courriel.</li>
     <li>Nouvelle interface de création des questions.</li>
   </ul>
   	 
@@ -199,14 +199,14 @@
     <li>L'affichage et l'évaluation des questions peuvent être effectuées de façon externe (par exemple par un moteur d'évaluation mathématique) pour permettre d'intégrer ces questions dans des tests Moodle de façon transparente, via le protocole de services web RQP.</li>
     <li>La gestion des questions IMS QTI est prête, de façon à fonctionner dès que des services web seront disponibles pour ce type de questions.</li>
     <li>Pour les enseignants, nouvelle interface avec des onglets, pour la prévisualisation, la modification et la relecture des tests.</li>
-    <li>Nouveau mode de « sécurité améliorée » qui affiche le test dans une fenêtre séparée, plein-écran, avec de nombreuses fonctions du navigateur désactivées.</li>
+    <li>Nouveau mode de «&nbsp;sécurité améliorée&nbsp;» qui affiche le test dans une fenêtre séparée, plein-écran, avec de nombreuses fonctions du navigateur désactivées.</li>
     <li>Les tests peuvent être présentés aux étudiants en plusieurs pages. Le nombre de questions par page peut être fixé par l'enseignant.</li>
     <li>Des blocs peuvent être ajoutés aux pages des tests (pour afficher une table des résultats ou des informations supplémentaires, etc.).</li>
     <li>Interface améliorée et simplifiée pour la sélection et la gestion des questions de la base de données. Les questions sélectionnées peuvent être ajoutée aux tests, déplacées dans d'autres catégories ou supprimées en masse.</li>
     <li>Lorsqu'une question déjà utilisée est modifiée, l'enseignant peut choisir dans quels tests remplacer la version existante par la nouvelle.</li>
     <li>Si une question modifiée a déjà reçu des réponses de la part d'étudiants, ces réponses sont conservées, ainsi que la version originale de la question, pour permettre l'évaluation.</li>
     <li>Lorsqu'un enseignant modifie un test auquel des étudiants ont déjà répondu, les tests sont automatiquement ré-évalués.</li>
-    <li>Les questions aléatoires s'ajoutent à un test grâce à un bouton dédié, libérant l'interface des « questions fantômes ».</li>
+    <li>Les questions aléatoires s'ajoutent à un test grâce à un bouton dédié, libérant l'interface des «&nbsp;questions fantômes&nbsp;».</li>
     <li>La note finale peut être un nombre fractionnaire, avec des décimales définies par l'enseignant.</li>
     <li>La page des résultats a été améliorée, permettant un choix de l'affichage des colonnes, un tri plus propre et de nouvelles options pour l'affichage des notes.</li>
     <li>Les questions peuvent être modifiées en un seul clic à partir des pages de prévisualisation de test ou de question.</li>
@@ -224,17 +224,20 @@
   	 
 <h4>Scorm</h4>
   <ul type="circle">
-    <li>Améliorations dans le stockage et le rapport des résultats des utilisateurs. Le module SCORM de Moodle support maintenant le standard AICC.</li>
+    <li>Le module est maintenant totalement conforme au standard SCORM 1.2.</li>
+    <li>Le stockage et le rapport des résultats des utilisateurs ont été améliorés.</li>
+    <li>Les paquets AICC peuvent être importés.</li>
   </ul>
   	 
-<h4>Survey</h4>
+<h4>Consultation</h4>
   <ul type="circle">
+    <li>Le format des graphiques a été amélioré (les textes des étiquettes sont plus lisibles).</li>
   </ul>
 
 <h4>Wiki</h4>
   <ul type="circle">
     <li>Les modifications aux pages des wikis sont maintenant enregistrées et affichées dans le bloc des activités récentes.</li>
-    <li>D'autres améliorations « sous le capot » pour la sauvegarde et la restauration, ainsi que d'autres routines pour optimiser la fiabilité des wikis.</li>
+    <li>D'autres améliorations «&nbsp;sous le capot&nbsp;» pour la sauvegarde et la restauration, ainsi que d'autres routines pour optimiser la fiabilité des wikis.</li>
   </ul>
   	 
 <h4>Workshop</h4>
