@@ -25,9 +25,9 @@
     optional_variable($config->auth_ldap_stdchangepassword,        false); 
     
 if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
-    print '<p align="center"><font color="red"><strong>Warning:
+    print '<tr><td><p align="center"><font color="red"><strong>Warning:
            The PHP LDAP module does not seem to be present. 
-           Please ensure it is installed and enabled.</strong></font></p>';
+           Please ensure it is installed and enabled.</strong></font></p></td></tr>';
 }
     
 ?>
