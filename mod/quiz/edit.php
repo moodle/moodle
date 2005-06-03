@@ -80,9 +80,8 @@
         add_to_log($courseid, 'quiz', 'editquestions', "index.php?id=$courseid");
 
     } else {
-        // no quiz or course was specified so we need to use the stored modform
-        if (!isset($SESSION->modform)) { // we will get here after editing a question in
-            // a popup window. So close window automatically.
+        // we might get here after editing a question in
+        // a popup window. So close window automatically.
 ?>
 <script type="text/javascript">
 <!--
@@ -95,9 +94,12 @@ if (self.name == 'editquestion') {
 <?php notify(get_string('pleaseclose', 'quiz')); ?>
 </noscript>
 <?php
+        // no quiz or course was specified so we need to use the stored modform
+        if (isset($SESSION->modform)) { 
+            $modform = $SESSION->modform;
+        } else {
             exit;
         }
-        $modform = $SESSION->modform;
     }
 
     if (! $course = get_record("course", "id", $modform->course)) {
