@@ -58,6 +58,7 @@
                 fwrite ($bf,full_tag("MAXBYTES",4,false,$forum->maxbytes));
                 fwrite ($bf,full_tag("SCALE",4,false,$forum->scale));
                 fwrite ($bf,full_tag("FORCESUBSCRIBE",4,false,$forum->forcesubscribe));
+                fwrite ($bf,full_tag("TRACKINGTYPE",4,false,$forum->trackingtype));
                 fwrite ($bf,full_tag("RSSTYPE",4,false,$forum->rsstype));
                 fwrite ($bf,full_tag("RSSARTICLES",4,false,$forum->rssarticles));
                 fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$forum->timemodified));
