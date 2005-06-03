@@ -809,6 +809,109 @@ function quiz_upgrade($oldversion) {
         modify_database('','ALTER TABLE prefix_quiz_attemptonlast_datasets ADD CONSTRAINT prefix_quiz_category_userid_unique UNIQUE (category,userid);');
     }
 
+    if ($oldversion < 2005060300) {
+        // We need to remove some duplicate entries that may be present in some databases
+        // due to a faulty restore script
+
+        // Remove duplicate entries from quiz_numerical
+        if ($dups = get_records_sql("
+                SELECT question, answer, count(*) num
+                FROM {$CFG->prefix}quiz_numerical
+                GROUP BY question, answer
+                HAVING count(*) > 1"
+            )) {
+            foreach ($dups as $dup) {
+                $ids = get_records_sql("
+                    SELECT id, id
+                    FROM {$CFG->prefix}quiz_numerical
+                    WHERE question = '$dup->question'
+                    AND answer = '$dup->answer'"
+                );
+                $skip = true;
+                foreach ($ids as $id) {
+                    if ($skip) {
+                        $skip = false;
+                    } else {
+                        delete_records('quiz_numerical','id', $id->id);
+                    }
+                }
+            }
+        }
+
+        // Remove duplicate entries from quiz_shortanswer
+        if ($dups = get_records_sql("
+                SELECT question, answers, count(*) num
+                FROM {$CFG->prefix}quiz_shortanswer
+                GROUP BY question, answers
+                HAVING count(*) > 1"
+            )) {
+            foreach ($dups as $dup) {
+                $ids = get_records_sql("
+                    SELECT id, id
+                    FROM {$CFG->prefix}quiz_shortanswer
+                    WHERE question = '$dup->question'
+                    AND answers = '$dup->answers'"
+                );
+                $skip = true;
+                foreach ($ids as $id) {
+                    if ($skip) {
+                        $skip = false;
+                    } else {
+                        delete_records('quiz_shortanswer','id', $id->id);
+                    }
+                }
+            }
+        }
+
+        // Remove duplicate entries from quiz_multichoice
+        if ($dups = get_records_sql("
+                SELECT question, answers, count(*) num
+                FROM {$CFG->prefix}quiz_multichoice
+                GROUP BY question, answers
+                HAVING count(*) > 1"
+            )) {
+            foreach ($dups as $dup) {
+                $ids = get_records_sql("
+                    SELECT id, id
+                    FROM {$CFG->prefix}quiz_multichoice
+                    WHERE question = '$dup->question'
+                    AND answers = '$dup->answers'"
+                );
+                $skip = true;
+                foreach ($ids as $id) {
+                    if ($skip) {
+                        $skip = false;
+                    } else {
+                        delete_records('quiz_multichoice','id', $id->id);
+                    }
+                }
+            }
+        }
+
+        //Search all the orphan categories (those whose course doesn't exist)
+        //and process them, deleting or moving them to site course - Bug 2459
+
+        //Set debug to false
+        $olddebug = $db->debug;
+        $db->debug = false;
+
+        //Iterate over all the quiz_categories records to get their course id
+        if ($courses = get_records_sql ("SELECT DISTINCT course as id, course
+                                         FROM {$CFG->prefix}quiz_categories")) {
+            //Iterate over courses
+            foreach ($courses as $course) {
+                //If the course doesn't exist, orphan category found!
+                //Process it with quiz_delete_course(). It will do all the hard work.
+                if (!record_exists('course', 'id', $course->id)) {
+                    require_once("$CFG->dirroot/mod/quiz/lib.php");
+                    quiz_delete_course($course);
+                }
+            }
+        }
+        //Reset rebug to its original state
+        $db->debug = $olddebug;
+    }
+
 
     return true;
 }
