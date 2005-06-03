@@ -47,16 +47,24 @@
 
     $usehtmleditor = can_use_html_editor();
 
-    $sectionname = get_string("name$course->format");
-    $stredit = get_string("edit", "", " $sectionname $section->section");
+/// Inelegant hack for bug 3408
+    if ($course->format == 'site') {
+        $sectionname  = get_string('site');
+        $stredit      = get_string('edit', '', " $sectionname");
+        $strsummaryof = get_string('summaryof', '', " $sectionname");
+    } else {
+        $sectionname  = get_string("name$course->format");
+        $stredit      = get_string('edit', '', " $sectionname $section->section");
+        $strsummaryof = get_string('summaryof', '', " $sectionname $form->section");
+    }
 
     print_header("$course->shortname: $stredit", "$course->fullname", 
                  "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> 
                   -> $stredit");
 
-    print_heading(get_string("summaryof", "", "$sectionname $form->section"));
-    print_simple_box_start("center");
-    include("editsection.html");
+    print_heading($strsummaryof);
+    print_simple_box_start('center');
+    include('editsection.html');
     print_simple_box_end();
 
     if ($usehtmleditor) { 
