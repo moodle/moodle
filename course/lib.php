@@ -243,32 +243,19 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
         $showcourses = 1;
     }
    
-    if ($course->category && $selectedgroup) {
-        $sql = 'SELECT COUNT(ut.id) '.
-               'FROM '.$CFG->prefix.'groups_members gm '.
-               ' JOIN '.$CFG->prefix.'user_teachers  ut ON gm.userid=ut.userid '.
-               'WHERE ut.course='.$course->id.' AND gm.groupid='.$selectedgroup;
-        $numteachers = count_records_sql($sql); 
-        // students
-        $sql = 'SELECT COUNT(us.id) '.
-               'FROM '.$CFG->prefix.'groups_members gm '.
-               ' JOIN '.$CFG->prefix.'user_students us ON gm.userid=us.userid '.
-               'WHERE us.course='.$course->id.' AND gm.groupid='.$selectedgroup;
-        $numstudents = count_records_sql($sql); 
-        // add
-        $numusers = $numstudents + $numteachers;
+
+    if ($course->category) {
+        if ($selectedgroup) {   // If using a group, only get users in that group.
+            $courseusers = get_group_users($selectedgroup, 'u.lastname ASC', '', 'u.id');
+        } else {
+            $courseusers = get_course_users($course->id, '', '', 'u.id');
+        }
+    } else {
+        $courseusers = get_site_users('u.lastaccess DESC', 'u.id');
     }
-    else if ($course->category || !$CFG->allusersaresitestudents) {
-        $sql = "SELECT COUNT(t.id) FROM {$CFG->prefix}user_teachers t
-                            WHERE t.course = '$course->id'";
-        $numusers = count_records_sql($sql);
-        $sql = "SELECT count(s.id) FROM {$CFG->prefix}user_students s 
-                            WHERE s.course = '$course->id'";
-        $numusers = $numusers + count_records_sql($sql);
-    }
-    else if (!$course->category && $CFG->allusersaresitestudents) {
-        $numusers = get_users(false, '', true,'','','','',0,9999,'id');
-    }
+
+    $numusers = count((array)$courseusers);
+
 
     if ($numusers < COURSE_MAX_USERS_PER_DROPDOWN && !$showusers) {
         $showusers = 1;
