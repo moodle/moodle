@@ -162,6 +162,7 @@
     $attempt = get_record('quiz_attempts', 'quiz', $quiz->id,
      'userid', $USER->id, 'timefinish', 0);
 
+    $newattempt = false;
     if (!$attempt) {
         // Check if this is a preview request from a teacher
         // in which case the previous previews should be deleted
@@ -177,6 +178,7 @@
                 }
             }
         }
+        $newattempt = true;
         // Start a new attempt and initialize the question sessions
         $attempt = quiz_create_attempt($quiz, $attemptnumber);
         // If this is an attempt by a teacher mark it as a preview
@@ -215,10 +217,14 @@
     $pagelist = quiz_questions_on_page($attempt->layout, $page);
 
     // add all questions that are on the submitted form
-    if ($questionids) {
-        $questionlist = $pagelist.','.$questionids;
+    if ($newattempt) {
+        $questionlist = $attempt->layout;
     } else {
         $questionlist = $pagelist;
+    }
+
+    if ($questionids) {
+        $questionlist .= ','.$questionids;
     }
 
     if (!$questionlist) {
@@ -427,6 +433,14 @@
         quiz_print_quiz_question($questions[$i], $states[$i], $number, $quiz, $options);
         quiz_save_question_session($questions[$i], $states[$i]);
         $number += $questions[$i]->length;
+    }
+    if ($newattempt) {
+        $questionlist = explode(',', $attempt->layout);
+        foreach ($questionlist as $i) {
+            if ($i != 0) {
+                quiz_save_question_session($questions[$i], $states[$i]);
+            }
+        }
     }
 
 /// Print the submit buttons

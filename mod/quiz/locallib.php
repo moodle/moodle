@@ -220,7 +220,7 @@ class quiz_default_questiontype {
     *
     * @param integer $oldquestionid  The id of the old question
     * @param object $newquestion    The new question
-    * @param array  $attempts       An array of all attempt objects in whose states 
+    * @param array  $attempts       An array of all attempt objects in whose states
     *                               replacement should take place
     */
     function replace_question_in_attempts($oldquestionid, $newquestion, $attemtps) {
@@ -397,10 +397,10 @@ class quiz_default_questiontype {
     *
     * All answers are found and their text values isolated
     * @return object          A mixed object
-    *             ->id        question id. Needed to manage random questions: 
+    *             ->id        question id. Needed to manage random questions:
     *                         it's the id of the actual question presented to user in a given attempt
     *             ->responses An array of values giving the responses corresponding
-    *                         to all answers to the question. Answer ids are used as keys. 
+    *                         to all answers to the question. Answer ids are used as keys.
     *                         The text and partial credit are the object components
     * @param object $question The question for which the answers are to
     *                         be retrieved. Question type specific information is
@@ -462,7 +462,7 @@ class quiz_default_questiontype {
 
 
     /**
-    * Checks if the response given is correct and returns the id 
+    * Checks if the response given is correct and returns the id
     *
     * @return int             The ide number for the stored answer that matches the response
     *                         given by the user in a particular attempt.
@@ -2097,7 +2097,7 @@ function quiz_get_category_menu($courseid, $published=false) {
 
 function sort_categories_by_tree(&$categories, $id = 0, $level = 1) {
 // returns the categories with their names ordered following parent-child relationships
-// finally it tries to return pending categories (those being orphaned, whose parent is 
+// finally it tries to return pending categories (those being orphaned, whose parent is
 // incorrect) to avoid missing any category from original array.
     $children = array();
     $keys = array_keys($categories);
@@ -2493,7 +2493,7 @@ function quizzes_question_used($id) {
     return $quizlist;
 }
 
-/** 
+/**
 * Array of names of quizzes a category (and optionally its childs) appears in
 *
 * @return array   Array of quiz names (with quiz->id as array keys)

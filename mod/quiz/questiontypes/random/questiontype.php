@@ -45,7 +45,7 @@ class quiz_random_qtype extends quiz_default_questiontype {
         // 2. All random questions
         // 3. All questions that are already chosen by an other random question
         if (!isset($quiz->questionsinuse)) {
-            $quiz->questionsinuse = $quiz->questions;
+            $quiz->questionsinuse = $attempt->layout;
         }
 
         if (!isset($this->catrandoms[$question->category])) {
