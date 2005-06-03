@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.5 ALPHA (2005050600)
+      // admin.php - created with Moodle 1.6 development (2005052400)
 
 
 $string['adminseesallevents'] = 'Správci vidí v¹echny události';
@@ -89,7 +89,7 @@ $string['configvariables'] = 'Promìnné';
 $string['configwarning'] = 'S úpravou tìchto hodnot buïte opatrní - nezvyklé hodnoty mohou zpùsobovat problémy.';
 $string['configzip'] = 'Zadejte umístìní programu zip (volitelné). Pokud je zadáno, bude Moodle pou¾ívat tento program k vytváøení zip archívù na serveru. Jinak bude pou¾ívat vlastní knihovny.';
 $string['confirmation'] = 'Potvrzení';
-$string['cronwarning'] = 'Skript <a href=\"cron.php\">cron.php</a>, který má na starosti bì¾nou údr¾bu serveru, nebyl bìhem posledních 24 hodin spu¹tìn.<br /><a href=\"../doc/?frame=install.html&sub=cron\">Instalaèní pøíruèka</a> vysvìtluje, jak se dá nezbytná údr¾ba va¹eho serveru zautomatizovat.';
+$string['cronwarning'] = 'Skript <a href=\"cron.php\">cron.php</a>, který má na starosti bì¾nou údr¾bu serveru, nebyl bìhem posledních 24 hodin spu¹tìn.<br /><a href=\"../doc/?frame=install.html&#8834;=cron\">Instalaèní pøíruèka</a> vysvìtluje, jak se dá nezbytná údr¾ba va¹eho serveru zautomatizovat.';
 $string['edithelpdocs'] = 'Upravit nápovìdu a dokumentaci';
 $string['editstrings'] = 'Upravit textové øetìzce';
 $string['filterall'] = 'Filtrovat v¹echny øetìzce';
@@ -107,6 +107,7 @@ $string['importtimezonescount'] = '$a->count polo¾ek bylo importováno z $a->sour
 $string['importtimezonesfailed'] = 'Nenalezeny ¾ádné zdroje! (to je ¹patná zpráva)';
 $string['nodstpresetsexist'] = 'Podpora zimního a letního èasu (DST) není ¾ádným u¾ivatelùm k dispozici, nebo» nebylo provedeno její pøednastavení. Chcete-li DST pøednastavit, pou¾ijte následující tlaèítko.';
 $string['optionalmaintenancemessage'] = 'Volitelná zpráva o údr¾bì';
+$string['pleaseregister'] = 'Chcete-li se zbavit tohoto tlaèítka, registrujte va¹e Moodle stránky';
 $string['sitemaintenance'] = 'Momentálnì pracujeme na údr¾bì tìchto stránek a nejsou proto doèasnì k dispozici';
 $string['sitemaintenancemode'] = 'Re¾im údr¾by';
 $string['sitemaintenanceoff'] = 'Re¾im údr¾by byl vypnut a stránky zase bì¾í v normálním re¾imu.';

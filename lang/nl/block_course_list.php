@@ -6,8 +6,5 @@ $string['allcourses'] = 'Beheerder ziet alle vakken';
 $string['blockname'] = 'Vakkenlijst';
 $string['configadminview'] = ' ';
 $string['owncourses'] = 'Beheerder ziet eigen vakken';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Nederlands';
 
 ?>

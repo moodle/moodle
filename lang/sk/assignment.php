@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.5 ALPHA (2005051500)
+      // assignment.php - created with Moodle 1.6 development (2005052400)
 
 
 $string['allowresubmit'] = 'Povoli» opätovné odovzdanie zadania';
@@ -33,11 +33,16 @@ Je to dostupné tu:
 $a->url';
 $string['emailteachermailhtml'] = '$a->username aktualizoval zaslanie vypracovaného zadania pre <i>\'$a->assignment\'</i><br /><br />. Je to <a href=\"$a->url\">dostupné na www stránke</a>.';
 $string['emailteachers'] = 'Oboznámi» uèiteµov o zaslaní vypracovaného zadania prostredníctvom emailu';
+$string['emptysubmission'] = 'E¹te ste niè neposlali';
 $string['existingfiledeleted'] = 'Existujúci súbor bol vymazaný:$a';
 $string['failedupdatefeedback'] = 'Nepodarilo sa aktualizova» odpoveï pre u¾ívateµa $a';
 $string['feedback'] = 'Odpoveï';
 $string['feedbackfromteacher'] = 'Odpoveï od $a';
 $string['feedbackupdated'] = 'Odpoveï aktualizovaná pre $a µudí';
+$string['helpoffline'] = '	<p>Túto voµbu je vhodné pou¾i», ak vypracovávate zadanie mimo prostredia Moodle. Mô¾e to by» kdekoµvek na webe alebo systémom tvárou-v-tvár.</p><p>©tudenti si mô¾u prezrie» popis zadania, ale nemô¾u prenies» ¾iadne súbory ani èokoµvek iné. Systém známkovania funguje normálne a ¹tudenti budú oboznámení so svojimi známkami.';
+$string['helponline'] = '<p>Tento typ zadania vy¾aduje od ¹tudentov, aby si upravili text vyu¾itím ¹tandardných nástrojov na to urèených. Uèitelia ich mô¾u známkova» hneï (online) a mô¾u k tomu dokonca pridáva» rôzne komentáre, alebo zmeny.</p>
+ <p>(Ak máte skúsenosti so star¹ími verziami Moodle, tento Typ zadania má rovnaké mo¾nosti a funkkcie ako modul Písomná práca.</p>';
+$string['helpuploadsingle'] = '<p>Tento typ zadania povoµuje ka¾dému úèastníkovi prenies» si jeden súbor akéhokoµvek typu.</p> <p>Toto mô¾e by» dokument textového editoru Word, obrázok, zozipovaná wwww stránka alebo èokoµvek iné, èo nariadite ¹tudentom, aby Vám odoslali.</p>';
 $string['late'] = '$a neskoro';
 $string['maximumgrade'] = 'Maximálna známka';
 $string['maximumsize'] = 'Maximálna veµkos»';
@@ -45,9 +50,11 @@ $string['modulename'] = 'Zadanie';
 $string['modulenameplural'] = 'Zadania';
 $string['newsubmissions'] = 'Zadania odovzdané';
 $string['noassignments'] = 'Nie sú ¾iadne zadania';
+$string['noattempts'] = 'E¹te nikto sa nepokúsil vypracova» toto zadanie';
 $string['notgradedyet'] = 'E¹te neoznámkované';
 $string['notsubmittedyet'] = 'E¹te neodovzdané';
 $string['overwritewarning'] = 'Upozornenie: Opätovné predlo¾enie zadania NAHRADÍ predchádzajúcu verziu (pôvodné zadanie bude odstránené)';
+$string['preventlate'] = 'Predchádza» neskorým odovzdávaniam zadaní ';
 $string['saveallfeedback'] = 'Ulo¾i» v¹etky moje odpovede';
 $string['submission'] = 'Odovzdanie';
 $string['submissionfeedback'] = 'Odpoveï na odovzdanú úlohu';

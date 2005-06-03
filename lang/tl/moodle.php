@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 ALPHA (2005043000)
+      // moodle.php - created with Moodle 1.5 ALPHA (2005051500)
 
 
 $string['action'] = 'Aksiyon';
@@ -172,7 +172,7 @@ $string['clamunknownerror'] = 'May naganap na dikilalang error sa clam.';
 $string['cleaningtempdata'] = 'Nililinis ang datos ng temp';
 $string['clicktochange'] = 'Iklik para mabago';
 $string['closewindow'] = 'Isara ang bintanang ito';
-$string['comparelanguage'] = 'Ihambing at i-edit ang kasalukuyang wikà';
+$string['comparelanguage'] = 'Ihambing at iedit ang kasalukuyang wikà';
 $string['complete'] = 'Kumpleto';
 $string['completereport'] = 'Kumpletong Ulat';
 $string['configuration'] = 'Pagsasaayos';
@@ -270,7 +270,7 @@ $string['deletecheckwarning'] = 'Buburahin mo ang mga file na ito';
 $string['deletecompletely'] = 'Burahin nang lubos';
 $string['deletecourse'] = 'Burahin ang kurso';
 $string['deletecoursecheck'] = 'Talaga bang nais mong burahin nang lubos ang kursong ito at lahat ng datos na laman nito?';
-$string['deleted'] = 'Nabura na ang';
+$string['deleted'] = 'Nabura na ';
 $string['deletedactivity'] = 'Nabura na ang $a';
 $string['deletedcourse'] = 'Ang $a ay nabura na nang lubos';
 $string['deletednot'] = 'Hindi mabura ang $a !';
@@ -303,7 +303,7 @@ $string['edhelpenablespelling'] = 'Binubuhay o pinapatay ang pagtsek-ng-ispeling
 $string['edhelpfontfamily'] = 'Ang katangiang font-family ay isang listahan ng mga font family name at/o generic na mga family name.  Kailangang paghiwalayin ng kuwit ang mga family name.';
 $string['edhelpfontlist'] = 'Itakda ang mga font na gagamitin sa dropdown menu ng editor.';
 $string['edhelpfontsize'] = 'Itinatakda ng default na font-size ang laki ng font. <br />Ang mga tanggap na halaga ay tulad ng: medium, large, smaller, larger, 10pt, 11px.';
-$string['edit'] = 'Iedit ang $a';
+$string['edit'] = 'Iedit $a';
 $string['editcoursesettings'] = 'Iedit ang mga kaayusan ng kurso';
 $string['editfiles'] = 'Iedit ang mga file';
 $string['editgroupprofile'] = 'Iedit ang pagkakakilanlan ng pangkat';
@@ -333,7 +333,7 @@ $string['emailconfirmation'] = 'Kumusta $a->firstname,
 May humiling na lumikha ng bagong account sa \'$a->sitename\',
 gámit ang iyong email address.
 
-Upang makumpirama ang bago mong account, pumunta lamang sa web address
+Upang makumpirma ang bago mong account, pumunta lamang sa web address
 na ito:
 
 $a->link
@@ -396,7 +396,7 @@ Ang bagong password ay awtomatikong nilikha - baka mas gusto mong
 $string['enable'] = 'Buhayin';
 $string['encryptedcode'] = 'Naka-encrypt na code';
 $string['enrolledincourse'] = 'Nakaenrol sa kursong \"$a\"';
-$string['enrolledincoursenot'] = 'Hindi nakaenrol sa kurong \"$a\"';
+$string['enrolledincoursenot'] = 'Hindi nakaenrol sa kursong \"$a\"';
 $string['enrollfirst'] = 'Kailangan mo munang mag-enrol sa isa man lamang sa mga kurso bago mo magamit ang mga aktibidad sa site';
 $string['enrolme'] = 'Ienrol mo ako sa kursong ito';
 $string['enrolmentconfirmation'] = 'Ieenrol mo ang sarili mo bilang kasapi ng kursong ito.<br />Talaga bang nais mo itong gawin?';
@@ -408,14 +408,14 @@ $string['enrolmentnew'] = 'May bagong nakaenrol sa $a';
 $string['enrolmentnewuser'] = '$a->user ay nag-enrol sa kursong \"$a->course\"';
 $string['enrolmentnointernal'] = 'Hindi gumagana sa kasalukuyan ang mano-manong pag-eenrol';
 $string['enrolmentnotyet'] = 'Paumanhin, nguni\'t hindi mo mapapasok ang kursong ito hanggang <br /> $a';
-$string['enrolments'] = 'Mga nakaenrol';
-$string['enrolperiod'] = 'Panahon ng enrolment';
+$string['enrolments'] = 'Pag-eenrol';
+$string['enrolperiod'] = 'Panahon ng pag-eenrol';
 $string['entercourse'] = 'Iklik para makapasok sa kursong ito';
 $string['enteremailaddress'] = 'Ilagay ang email address mo upang mareset ang 
   password at makapagpadala ng bagong password sa iyo sa pamamagitan ng email.';
 $string['entries'] = 'Mga entry';
 $string['error'] = 'Error';
-$string['errortoomanylogins'] = 'Paumanhin, pero lumabis ka na sa pinapahintulutang ulit ng pagtatangkang maglog-in. I-restart ang iyong browser.';
+$string['errortoomanylogins'] = 'Paumanhin, pero lumabis ka na sa pinapahintulutang ulit ng pagtatangkang maglog-in. Irestart ang iyong browser.';
 $string['errorwhenconfirming'] = 'Hindi ka pa nakukumpirma dahil may naganap na error.  Kung nagklik ka ng link sa isang email upang makarating dito, tiyakin na hindi sira o nagwrap ang linya sa iyong email.  Marahil ay kakailanganin mong gamitin ang cut at paste upang maisaayos ang link.';
 $string['everybody'] = 'Lahat ng tao';
 $string['executeat'] = 'Patakbuhin sa';
@@ -479,7 +479,7 @@ $string['gd2'] = 'nakainstol ang GD 2.x';
 $string['gdneed'] = 'Kailangang nakainstol ang GD para makita ang grap na ito';
 $string['gdnot'] = 'hindi nakainstol ang GD';
 $string['go'] = 'Takbo';
-$string['gpl'] = 'Copyright (C) 1999-2004  Martin Dougiamas  (http://dougiamas.com)
+$string['gpl'] = 'Copyright (C) 1999-2005 Martin Dougiamas  (http://moodle.com)
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -906,8 +906,8 @@ $string['rss'] = 'RSS';
 $string['rssarticles'] = 'Bilang ng pinakabagong artikulo na RSS';
 $string['rsserror'] = 'Nagka-error sa pagbabasa ng datos na RSS';
 $string['rsstype'] = 'RSS feed para sa aktibidad na ito';
-$string['savechanges'] = 'I-save ang mga pagbabago';
-$string['saveto'] = 'I-save sa';
+$string['savechanges'] = 'Isave ang mga pagbabago';
+$string['saveto'] = 'Isave sa';
 $string['scale'] = 'Iskala';
 $string['scales'] = 'Mga Iskala';
 $string['scalescustom'] = 'Pasadyang iskala';
@@ -942,17 +942,17 @@ $string['shortnametaken'] = 'Ang maikling pangalan na ito ay ginagamit na sa iba
 $string['shortsitename'] = 'Maikling pangalan ng site (hal. iisang salita)';
 $string['show'] = 'Ipakita';
 $string['showadvancedsettings'] = 'Ipakita ang mga abanteng kaayusan';
-$string['showall'] = 'Ipakita ang lahat $a';
+$string['showall'] = 'Ipakita ang lahat  $a';
 $string['showallcourses'] = 'Ipakita ang lahat ng kurso';
 $string['showalltopics'] = 'Ipakita ang lahat ng paksa';
 $string['showallusers'] = 'Ipakita ang lahat ng user';
 $string['showallweeks'] = 'Ipakita ang lahat ng linggo';
 $string['showgrades'] = 'Ipakita ang mga marka';
 $string['showlistofcourses'] = 'Ipakita ang listahan ng kurso';
-$string['showonlytopic'] = 'Show only topic $a';
-$string['showonlyweek'] = 'Show only week $a';
-$string['showrecent'] = 'Show recent activity';
-$string['showreports'] = 'Show activity reports';
+$string['showonlytopic'] = 'Tanging paksa $a ang ipakita';
+$string['showonlyweek'] = 'Tanging linggo $a ang ipakita';
+$string['showrecent'] = 'Ipakita ang pinakabagong aktibidad';
+$string['showreports'] = 'Ipakita ang mga ulat ng aktibidad';
 $string['showsettings'] = 'Ipakita ang mga kaayusan';
 $string['showtheselogs'] = 'Ipakita ang mga log na ito';
 $string['since'] = 'Simula noong';
@@ -1026,7 +1026,7 @@ $string['todaylogs'] = 'Mga log ngayon';
 $string['toeveryone'] = 'para sa lahat';
 $string['toomanybounces'] = 'Labis ang pagtalbog ng email address na iyan. <b>Kailangan</b> mong baguhin ito upang makapagpatuloy.';
 $string['toomanytoshow'] = 'Hindi maipapakita ang lahat ng user dahil labis ang dami nila.';
-$string['toonly'] = 'para kay $a lamang';
+$string['toonly'] = 'para sa $a lamang';
 $string['top'] = 'Tuktok';
 $string['topic'] = 'Paksa';
 $string['topichide'] = 'Itago ang paksang ito sa $a';
@@ -1044,7 +1044,7 @@ $string['unenrol'] = 'Alisin sa pagkakaenrol';
 $string['unenrolallstudents'] = 'Alisin sa pagkakaenrol ang lahat ng mag-aaral';
 $string['unenrolallstudentssure'] = 'Talaga bang gusto mong ganap na alisin sa pagkakaenrol ang lahat ng mag-aaral sa kursong ito?';
 $string['unenrolme'] = 'Tanggalin mo ako sa pagkakaenrol sa  $a';
-$string['unenrolsure'] = 'Talaga bang gusto mong alisin sa pagkakaenrol si $a sa kurong ito?';
+$string['unenrolsure'] = 'Talaga bang gusto mong alisin sa pagkakaenrol si $a sa kursong ito?';
 $string['unfinished'] = 'Hindi natapos';
 $string['unknowncategory'] = 'Dikilalang kategoriya';
 $string['unlimited'] = 'Walang limitasyon';
@@ -1094,7 +1094,7 @@ $string['usernameexists'] = 'May gumagamit na ng username na ito, pumili ng iba'
 $string['usernotconfirmed'] = 'Hindi makumpirma ang $a';
 $string['userprofilefor'] = 'Pagkakakilanlan ng user na $a';
 $string['users'] = 'Mga User';
-$string['usersnew'] = 'New users';
+$string['usersnew'] = 'Mga Bagong User';
 $string['userzones'] = 'Mga sona ng User';
 $string['usethiscourse'] = 'Gamitin ang kursong ito';
 $string['usingexistingcourse'] = 'Ginagamit ang kasalukuyang kurso';

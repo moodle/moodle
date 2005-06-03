@@ -1,0 +1,55 @@
+<p align="center"><b>Análisis de ítems</b></p>
+
+<p>Esta tabla presenta los datos procesados del cuestionario a fin de poder analizar y
+juzgar el desempeño de cada pregunta de cara a la evaluación. Los parámetros estadísticos utilizados
+se calculan siguiendo la teoría clásica de los tests (ref. 1)</p>
+
+<p><b>Índice de Dificultad (% de ítems respondidos correctamente)</b></p>
+<p>Evalúa cuán fácil o difícil resulta una pregunta a los estudiantes:
+Se calcula como:
+<br>
+IF = (X<sub>promedio</sub>) / X<sub>máx</sub> 
+<br>
+
+donde X<sub>promedio</sub> es la media obtenida por todos los estudiantes que contestan el ítem, <br>
+y X<sub>máx</sub> es la puntuación máxima obtenida en el ítem.<br>
+Si las preguntas pueden distribuirse dicotómicamente en categorías correcto / incorrecto, 
+este parámetro coincide con el porcentaje de usuarios que responden correctamente a la pregunta.
+<br>En este caso, IF = a / n<br>
+donde a equivale al número de individuos que aciertan el ítem y n es el total de sujetos que realiza la prueba.
+</p>
+<p><b>Desviación Típica (DT)</b></p>
+<p>Este parámetro mide la dispersión de las respuestas en la población que responde. Si todos los
+usuarios responden lo mismo, DT=0. DT se calcula como la desviación estándar para la muestra de
+puntuaciones fraccionadas (correctas/máxima) para cada pregunta particular.  
+</p>
+
+<p><b>Índice de Discriminación (ID)</b></p>
+<p>Proporciona un indicador bruto del desempeño en cada ítem por separado de los respondientes competentes
+<i>frente a</i> los menos competentes (i.e., individuos que obtienen puntuaciones altas frente a individuos
+que obtienen puntuaciones bajas). El parámetro se calcula dividiendo en primer lugar a los respondientes en
+tercios basándose en la puntuación global obtenida en el cuestionario. A continuación se calcula la media
+obtenida en el ítem analizado por los grupos superior e inferior, y se sustrae la media. La expresión matemática es: 
+<br/>
+ID = (X<sub>superior</sub> - X<sub>inferior</sub>)/ N 
+<br/>
+
+donde X<sub>superior</sub> es la suma de la nota fraccional (obtenido/máximo) obtenida en este ítem por el tercio de estudiantes que tienen las calificaciones más altas en todo el cuestionario (i.e., número de respuestas correctas de este grupo), <br/>
+y X<sub>inferior</sub>) es la suma análoga para el tercio de usuarios que han obtenido las puntuaciones más bajas en el cuestionario total.</p> 
+
+<p>El rango de este parámetro abarca desde +1 a -1.  
+Si el índice es inferior a 0.0, significa que los estudiantes del grupo bajo rindieron más en el ítem que los del grupo alto. Tales ítems deberían eliminarse debido a su escasa fiabilidad. De hecho, estos ítems reducen la precisión de la puntuación global del cuestionario. </p>
+
+<p><b>Coeficiente de Discriminación (CD)</b></p>
+<p>Es otra medida del poder de cada ítem para diferenciar a los estudiantes eficientes de los no eficientes.<br/>
+El coeficiente de discriminación es un coeficiente de correlación entre las puntuaciones en el ítem y la puntuación global en el cuestionario. Se calcula como:
+
+<br/>
+CD = Suma(xy)/ (N * s<sub>x</sub> * s<sub>y</sub>) 
+<br/>
+donde Suma(xy) es la suma de los productos de las desviaciones de las puntuaciones en el ítem y las puntuaciones en todo el cuestionario, <br>
+N es el número de respuestas dadas a esta pregunta<br/>
+s<sub>x</sub> es la desviación típica de las puntuaciones fraccionales para esta pregunta, y <br/>
+s<sub>y</sub> es la desviación típica de las puntuaciones en todo el cuestionario.
+</p>
+<p>De nuevo este parámetro adopta valores entre +1 y -1. Los valores positivos indican los ítems que discriminan entre estudiantes competentes y no competentes, en tanto que los valores negativos se dan cuando los ítems son mejor contestados por los estudiantes con calificaciones más bajas. Los ítems con CD negativo son respondidos incorrectamente por los estudiantes mejores y, en consecuencia, constituyen una penalización contra estos estudiantes. Dichos ítems deberían eliminarse.<br/>La ventaja del Coeficiente de Discriminación frente al Índice de Discriminación es que el primero utiliza información proveniente de la población total de estudiantes, no sólo de los tercios extremos (superior e inferior). Por consiguiente, este parámetro puede ser más sensible para detectar el comportamiento de los ítems.</p>

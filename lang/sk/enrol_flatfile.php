@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // enrol_flatfile.php - created with Moodle 1.5 ALPHA (2005051500)
+      // enrol_flatfile.php - created with Moodle 1.6 development (2005052400)
 
 
 $string['description'] = 'Táto metóda bude opakovane kontrolova» a spracováva» ¹peciálne formátovaný textový súbor, ktorého umiestnenie tu urèíte. Súbor mô¾e ma» ¹truktúru podobnú tejto:
@@ -15,6 +15,6 @@ $string['filelockedmail'] = 'Textový súbor, ktorý pou¾ívate pre zápisy ($a), nem
 $string['filelockedmailsubject'] = 'Dôle¾itá chyba: Súbor so zápismi';
 $string['location'] = 'Umiestnenie súboru';
 $string['mailadmin'] = 'Upozorni» správcu emailom';
-$string['mailusers'] = 'Upozorni» u¾ívateµa emailom';
+$string['mailusers'] = 'Upozorni» u¾ívateµov emailom';
 
 ?>

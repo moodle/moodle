@@ -1,10 +1,10 @@
 <?PHP // $Id$ 
-      // install.php - created with Moodle 1.5 ALPHA (2005051500)
+      // install.php - created with Moodle 1.6 development (2005052400)
 
 
 $string['admindirerror'] = 'Adresár pre správu (admin) nie je urèený správne';
 $string['admindirname'] = 'Adresár pre správu (admin)';
-$string['admindirsetting'] = 'Niektorý poskytovatelia web priestoru pou¾ívajú adresár /admin pre prístup ku kontrolnému panelu, prípadne ku podobným funkciám. To bohu¾iaµ nie je v súlade so ¹tandardným umiestnením adresáru pre správu v Moodle. Tento konflikt je mo¾né vyrie¹i» premenovaním adresáru pre správu vo Va¹ej in¹talácii. Vlo¾te sem nový názov, napr.<br /><br />
+$string['admindirsetting'] = 'Niektorí poskytovatelia web priestoru pou¾ívajú adresár /admin pre prístup ku kontrolnému panelu, prípadne ku podobným funkciám. To bohu¾iaµ nie je v súlade so ¹tandardným umiestnením adresáru pre správu v Moodle. Tento konflikt je mo¾né vyrie¹i» premenovaním adresáru pre správu vo Va¹ej in¹talácii. Vlo¾te sem nový názov, napr.<br /><br />
 <b>moodleadmin</b><br /><br />
 Tým se opravia odkazy na správu Moodle.';
 $string['caution'] = 'Varovanie';
@@ -29,13 +29,13 @@ $string['dbhost'] = 'Hos»ovský server';
 $string['dbpass'] = 'Heslo';
 $string['dbprefix'] = 'Predpona tabuliek';
 $string['dbtype'] = 'Typ';
-$string['directorysettings'] = '<p> Prosím, potvrïte umiestnenie in¹talácie Moodle.</p>
+$string['directorysettings'] = '<p>Prosím, potvrïte umiestnenie in¹talácie Moodle.</p>
 
 <p><b>Web adresa:</b> ©pecifikujte celú web adresu, kde bude Moodle umiestnený. Ak sa na túto adresu pristupuje z viacerých url adries, potom vyberte tú, ktorú budú pou¾íva» Va¹i ¹tudenti. Na konci nepou¾ívajte lomítko.</p>
 
 <p><b>Adresár Moodle:</b> ©pecifikujte celú cestu k adresáru a tejto in¹talácii. Ubezpeète sa, ¾e ste korektne pou¾ili veµké a malé písmená.</p>
 
-<p><b>Adresár pre údaje:</b> Potrebujete miesto, kde Moodle bude uklada» prená¹ané súbory. Tento adresár by mal by» u¾ívateµovi webového servera prístupný aj na èítanie, aj na ZAPISOVANIE (zvyèajne \'nikto\' alebo \'apache\'), ale nemalo by sa da» k nemu pristupova» priamo z webu.</p>';
+<p><b>Adresár pre údaje:</b> Potrebujete miesto, kde Moodle bude uklada» prená¹ané súbory. Tento adresár by mal by» u¾ívateµovi webového servera prístupný aj na èítanie, aj na ZAPISOVANIE (zvyèajne \'nobody\' alebo \'apache\'), ale nemalo by sa da» k nemu pristupova» priamo z webu.</p>';
 $string['dirroot'] = 'Adresár Moodle';
 $string['dirrooterror'] = 'Nastavenia v \'Adresári Moodle\' sú nesprávne - nemô¾eme tu nájs» in¹taláciu Moodle. Hodnota dole bola vynulovaná.';
 $string['download'] = 'Stiahnu»';
@@ -85,7 +85,7 @@ $string['phpversion'] = 'Verzia PHP';
 $string['phpversionerror'] = 'Verzia PHP musí by» aspoò  4.1.0';
 $string['phpversionhelp'] = '<p>Moodle si vy¾aduje verziu PHP aspoò  4.1.0.</p>
 <p>Vy máte momentálne nain¹talovanú túto verziu $a</p>
-<p>Musíte obnovi» PHP alebo presunú» na hos»iteµský poèítaè s novou verziou PHP!</p>';
+<p>Musíte obnovi» PHP alebo presunú» na hostiteµský poèítaè s novou verziou PHP!</p>';
 $string['safemode'] = 'Bezpeèný mód';
 $string['safemodeerror'] = 'Moodle mô¾e ma» problémy, ak je zapnutý bezpeèný mód';
 $string['safemodehelp'] = '<p>Moodle mô¾e ma» viacero problémov, ak je zapnutý bezpeèný mód, pravdepodobne nedovolí vytvára» nové súbory.</p>

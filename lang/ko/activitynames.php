@@ -3,8 +3,4 @@
 
 
 $string['filtername'] = '활동명 자동 링크';
-$string['thischarset'] = 'euc-kr';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = '&#54620;&#44397;&#50612;';
-
 ?>

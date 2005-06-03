@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.5 ALPHA (2005051500)
+      // calendar.php - created with Moodle 1.6 development (2005052400)
 
 
 $string['calendar'] = 'Kalendár';
@@ -56,7 +56,7 @@ $string['noupcomingevents'] = 'Momentálne sa tu nenachádzajú ¾iadne nadchádzajúc
 $string['oneevent'] = 'jedna udalos»';
 $string['pref_lookahead'] = 'Pohµad dopredu na nadchádzajúce udalosti';
 $string['pref_maxevents'] = 'Maximálny poèet nadchádzajúcich udalostí';
-$string['pref_persistflt'] = 'Zapamäta» si nastavenia filtera';
+$string['pref_persistflt'] = 'Zapamäta» si nastavenia filtra';
 $string['pref_startwday'] = 'Prvý deò v tý¾dni';
 $string['pref_timeformat'] = 'Formát zobrazovania èasu';
 $string['preferences'] = 'Preferencie';

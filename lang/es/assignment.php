@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005042100)
+      // assignment.php - created with Moodle 1.6 development (2005052400)
 
 
 $string['allowresubmit'] = 'Permitir reenvío';
@@ -48,6 +48,7 @@ $string['modulename'] = 'Tarea';
 $string['modulenameplural'] = 'Tareas';
 $string['newsubmissions'] = 'Tareas enviadas';
 $string['noassignments'] = 'Aún no hay tareas';
+$string['noattempts'] = 'No se ha intentado realizar esta tarea';
 $string['notgradedyet'] = 'No calificado aún';
 $string['notsubmittedyet'] = 'Aún no ha enviado esta tarea';
 $string['overwritewarning'] = 'Advertencia: Si envía un nuevo archivo REEMPLAZARÁ al anterior';

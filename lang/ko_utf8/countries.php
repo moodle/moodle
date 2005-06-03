@@ -243,8 +243,4 @@ $string['ZA'] = '남아프리카 공화국 ';
 $string['ZM'] = '잠비아';
 $string['ZR'] = '자이르';
 $string['ZW'] = '짐바브웨';
-$string['thischarset'] = 'UTF-8';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = '&#54620;&#44397;&#50612;';
-
 ?>

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.4.2 (2004083125)
+      // resource.php - created with Moodle 1.6 development (2005052400)
 
 
 $string['addresource'] = 'เพิ่มแหล่งข้อมูล';
@@ -55,13 +55,12 @@ $string['newwindow'] = 'หน้าต่างใหม่';
 $string['newwindowopen'] = 'แสดงแหล่งข้อมูลในหน้าต่างใหม่';
 $string['note'] = 'หมายเหตุ';
 $string['notefile'] = 'หากต้องการอัพโหลดไฟล์ สำหรับรายวิชานี้กรุณาใช้
-<a href="\$a\">File Manager</a>.';
+<a href=\"$a\">File Manager</a>.';
 $string['notypechosen'] = 'คุณต้องเลือกประเภท กรุณาใช้ปุ่ม  back เพื่อกลับไปเลือก';
 $string['pagedisplay'] = 'แสดงแหล่งข้อมูลในหน้าต่างปัจจุบัน';
 $string['pagewindow'] = 'หน้าต่างเดิม';
 $string['parameter'] = 'พารามิเตอร์';
 $string['parameters'] = 'พารามิเตอร์';
-$string['parentlanguage'] = 'en';
 $string['popupresource'] = 'แหล่งข้อมูลนี้ควรจะปรากฎในหน้าต่างถัดไป';
 $string['popupresourcelink'] = 'ถ้าไม่ปรากฏ  คลิกที่นี่ค่ะ: $a';
 $string['resourcetype'] = 'ประเภทของแหล่งข้อมูล';
@@ -80,9 +79,6 @@ $string['resourcetypehtml'] = 'หน้าเว็บเพจ';
 $string['resourcetypelabel'] = 'Label';
 $string['resourcetypetext'] = 'หน้าตัวหนังสือธรรมดา';
 $string['searchweb'] = 'ค้นหาเว็บเพจ';
-$string['thischarset'] = 'TIS-620';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Thai';
 $string['variablename'] = 'ชื่อตัวแปร';
 
 ?>

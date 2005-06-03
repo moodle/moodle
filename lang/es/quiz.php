@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005042100)
+      // quiz.php - created with Moodle 1.5 Beta (2005052300)
 
 
 $string['acceptederror'] = 'Margen de error';
@@ -73,6 +73,7 @@ $string['completedon'] = 'Completado el';
 $string['confirmclose'] = 'Está a punto de cerrar este intento. Una vez lo cierre, no podrá cambiar sus respuestas.';
 $string['confirmserverdelete'] = '¿Está seguro de que desea eliminar el servidor  <b>$a</b> de la lista?';
 $string['confirmstartattempt'] = 'Este cuestionario ha de contestarse en un tiempo limitado. ¿Está seguro de que desea comenzar?';
+$string['containercategorycreated'] = 'Esta categoría se ha creado para almacenar todas las categorías originales trasladadas al sitio debido a causas especificadas más abajo.';
 $string['continueattemptquiz'] = 'Continuar el último intento';
 $string['copyingfrom'] = 'Creando una copia de la pregunta \'$a\'';
 $string['copyingquestion'] = 'Copiando una pregunta';
@@ -350,6 +351,7 @@ $string['rqp'] = 'Pregunta remota';
 $string['rqps'] = 'Preguntas remotas';
 $string['save'] = 'Guardar';
 $string['saveandedit'] = 'Guardar cambios y editar preguntas';
+$string['savedfromdeletedcourse'] = 'Guardado del curso eliminado \"$a\"';
 $string['savegrades'] = 'Guardar calificaciones';
 $string['savemyanswers'] = 'Guardar mis respuestas';
 $string['savenosubmit'] = 'Guardar sin enviar';
@@ -391,7 +393,7 @@ $string['timecompleted'] = 'Completado';
 $string['timeleft'] = 'Tiempo restante';
 $string['timelimit'] = 'Límite de tiempo';
 $string['timelimitexeeded'] = 'Lo sentimos. Se ha sobrepasado el límite de tiempo.';
-$string['timestr'] = '	%%H:%%M:%%S on %%d/%%m/%%y';
+$string['timestr'] = '%%H:%%M:%%S on %%d/%%m/%%y';
 $string['timesup'] = '¡Se ha pasado el tiempo!';
 $string['timetaken'] = 'Tiempo empleado';
 $string['tolerance'] = 'Tolerancia';
@@ -406,8 +408,10 @@ $string['uniform'] = 'defimales, de una distribución uniforme';
 $string['unit'] = 'Unidad';
 $string['unknowntype'] = 'Tipo de pregunta no permitida en la línea $a. La pregunta no se tendrá en cuenta';
 $string['unsupportedformulafunction'] = 'La función $a no está incluída';
+$string['unusedcategorydeleted'] = 'Esta categoría ha sido eliminada porque, tras eliminar el curso, sus preguntas no fueron utilizadas más en el servidor.';
 $string['upgradesure'] = '<div style=\"color: red;\">En concreto, el módulo Cuestionario efectuará un extenso cambio de las tablas del cuestionario y esta actualización aún no ha sido suficientemente probada. Le recomendamos encarecidamente a hacer una copia de seguridad de las tablas de su base de datos antes de continuar.</div>';
 $string['url'] = 'URL';
+$string['usedcategorymoved'] = 'Esta categoría ha sido trasladada al sitio porque, tras eliminar el curso, sus preguntas estaban en uso por otros cuestionarios del servidor.';
 $string['validate'] = 'Validar';
 $string['viewallanswers'] = 'Ver $a cuestionarios resueltos';
 $string['viewallreports'] = 'Ver los informes de $a intentos';

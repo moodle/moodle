@@ -1,12 +1,13 @@
 <?PHP // $Id$ 
-      // client.php - created with Moodle 1.5 ALPHA (2005051500)
+      // block_rss_client.php - created with Moodle 1.6 development (2005052400)
+
 
 $string['addfeed'] = 'Prida» URL pre kanál noviniek:';
 $string['addheadlineblock'] = 'Prida»  RSS hlavièku bloku';
 $string['addnew'] = 'Prida» nové';
 $string['choosefeedlabel'] = 'Vyberte si kanály, ktoré chcete, aby boli aktívne v tomto bloku:';
 $string['clientchannellink'] = 'Zdrojová stránka...';
-$string['clientnumentries'] = 'Východiskové nastavenie poètu záznamov v jednom kanáli';
+$string['clientnumentries'] = 'Východiskové nastavenie poètu záznamov v jednom kanáli.';
 $string['clientshowchannellinklabel'] = 'Má by» zobrazený odkaz na domovskú stránku (odkaz na kanál)? (Poznámka - berte prosím na vedomie, ¾e ak tento odkaz nie je podporovaný v kanáli noviniek, potom nebude zobrazený):';
 $string['clientshowimagelabel'] = 'Zobrazi» obrázok kanálu, ak je dostupný:';
 $string['configblock'] = 'Konfigurova» tento blok';
@@ -20,11 +21,11 @@ $string['editrssblock'] = 'Upravi» RSS hlavièku bloku';
 $string['feed'] = 'Kanál noviniek';
 $string['feedadded'] = 'Bol pridaný kanál s novinkami';
 $string['feeddeleted'] = 'Kanál s novinkami bol vymazaný';
-$string['feedupdated'] = 'Kanál s novinkami bol aktualizovaný';
 $string['feeds'] = 'Kanál s novinkami';
 $string['feedsaddedit'] = 'Prida»/Upravi» kanál s novinkami';
-$string['feedsconfigurenewinstance'] = 'Predtým ako mô¾e tento blok zobrazova» RSS kanály, je potrebné ho nakonfigurova», kliknutím na tento odkaz.';
+$string['feedsconfigurenewinstance'] = 'Predtým, ako mô¾e tento blok zobrazova» RSS kanály, je potrebné ho nakonfigurova», kliknutím na tento odkaz.';
 $string['feedstitle'] = 'Vzdialený RSS kanál';
+$string['feedupdated'] = 'Kanál s novinkami bol aktualizovaný';
 $string['findmorefeeds'] = 'Nájs» viac RSS kanálov';
 $string['managefeeds'] = 'Spravova» v¹etky moje RSS kanály';
 $string['nofeeds'] = 'Pre túto web stránku nie sú definované ¾iadne RSS kanály';

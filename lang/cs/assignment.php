@@ -28,7 +28,8 @@ $a->url';
 $string['emailteachermailhtml'] = '$a->username upravil(a) svùj odevzdaný úkol <em>\'$a->assignment\'</em><br /><br />
 
 Aktualizované øe¹ení je <a href=\"$a->url\">dostupné zde</a>.';
-$string['emailteachers'] = 'Upoyoròovat uèitele emailem';
+$string['emailteachers'] = 'Upozoròovat uèitele emailem';
+$string['emptysubmission'] = 'Zatím jste nic neodevzdali';
 $string['existingfiledeleted'] = 'Stávající soubor byl smazán: $a';
 $string['failedupdatefeedback'] = 'Selhala aktualizace odpovìdi pro u¾ivatele $a';
 $string['feedback'] = 'Odpovìï';
@@ -39,15 +40,17 @@ $string['helponline'] = '<p>V tomto typu úkolu se od studentù oèekává úprava lib
 <p>Znáte-li star¹í verze Moodlu, plní tento typ úkolu stejnou funkci jako modul Poznámkový blok (orig. Journal).</p>';
 $string['helpuploadsingle'] = '<p>Tento typ úkolu umo¾òuje ka¾dému úèastníkovi kurzu nahrát (angl. upload) jeden soubor libovolného typu jako vypracování úkolu.</p><p>Souborem mù¾e být dokument Wordu, obrázek, ZIP archív, zdrojový kód programu, prostì cokoliv, co mají studenti za úkol odevzdat.';
 $string['late'] = '$a pozdì';
-$string['maximumgrade'] = 'Maximum bodù';
+$string['maximumgrade'] = 'Nejlep¹í známka';
 $string['maximumsize'] = 'Nejvìt¹í velikost';
 $string['modulename'] = 'Úkol';
 $string['modulenameplural'] = 'Úkoly';
 $string['newsubmissions'] = 'Úkoly odevzdány';
 $string['noassignments'] = 'Zatím nebyly vlo¾eny ¾ádné úkoly';
-$string['notgradedyet'] = 'Zatím nebodováno';
+$string['noattempts'] = 'Tento úkol se zatím nikdo nepokusil odevzdat';
+$string['notgradedyet'] = 'Zatím neklasifikováno';
 $string['notsubmittedyet'] = 'Zatím neodevzdáno';
 $string['overwritewarning'] = 'Upozornìní: znovu odevzdaný úkol NAHRAZUJE døívìj¹í verzi (pøedchozí bude odstranìna)';
+$string['preventlate'] = 'Zakázat pozdní odevzdávání';
 $string['saveallfeedback'] = 'Ulo¾it v¹echny mé odpovìdi';
 $string['submission'] = 'Odevzdání';
 $string['submissionfeedback'] = 'Odpovìï na odevzdaný úkol';

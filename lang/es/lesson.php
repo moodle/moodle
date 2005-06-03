@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005042100)
+      // lesson.php - created with Moodle 1.5 Beta (2005052300)
 
 
 $string['accesscontrol'] = 'Control de Acceso';
@@ -45,7 +45,7 @@ $string['continue'] = 'Continuar';
 $string['continuetoanswer'] = 'Continuar a cambiar respuestas.';
 $string['correctanswerjump'] = 'Salto a respuesta correcta';
 $string['correctanswerscore'] = 'Puntuación de respuesta correcta';
-$string['correctresponse'] = 'Respuesta correcta';
+$string['correctresponse'] = 'Comentario (correcto)';
 $string['customscoring'] = 'Puntuación personalizada';
 $string['deadline'] = 'Fecha final';
 $string['defaultessayresponse'] = 'Su ensayo será calificado por el instructor del curso.';
@@ -187,7 +187,7 @@ $string['reached'] = 'alcanzado';
 $string['receivedcredit'] = 'Crédito recibido';
 $string['redisplaypage'] = 'Volver a mostrar página';
 $string['report'] = 'Informe';
-$string['response'] = 'Respuesta';
+$string['response'] = 'Comentario';
 $string['returnmainmenu'] = 'Volver al menú principal';
 $string['returntocourse'] = 'Volver al curso';
 $string['reviewlesson'] = 'Revisar lección';
@@ -212,7 +212,7 @@ $string['studentattemptlesson'] = 'Intento número $a->attempt de $a->lastname, $
 $string['studentname'] = '$a Nombre';
 $string['studentoneminwarning'] = 'Atención: Le queda 1 minuto o menos para terminar la lección.';
 $string['studentoutoftime'] = 'Atención: Ha sobrepasado el límite de esta lección. Su última respuesta no cuenta porque ha sido dada fuera de tiempo. Por favor, pulse en el botón Continuar para terminar la lección.';
-$string['studentresponse'] = 'respuesta de {$a}';
+$string['studentresponse'] = 'comentario de {$a}';
 $string['submitname'] = 'Enviar nombre';
 $string['teacherjumpwarning'] = 'Un salto $a->cluster o $a->unseen se está usando en esta lección. En su lugar se usará el salto a la página siguiente. Entre como estudiante para probar estos saltos.';
 $string['teacherongoingwarning'] = 'La puntuación acumulada sólo se muestra al estudiante. Entre como estudiante para probar la puntuación acumulada.';
@@ -243,14 +243,14 @@ $string['welldone'] = '¡Bien hecho!';
 $string['whatdofirst'] = '¿Qué desea hacer primero?';
 $string['wronganswerjump'] = 'Salto a respuesta errónea';
 $string['wronganswerscore'] = 'Puntuación de respuesta errónea';
-$string['wrongresponse'] = 'Respuesta errónea';
+$string['wrongresponse'] = 'Comentario (erróneo)';
 $string['youhavereceived'] = 'Ha obtenido una puntuación $a->score de un total de $a->outof puntos en esta pregunta.';
 $string['youhaveseen'] = 'Usted ya ha visto más de una página de esta lección.<br />¿Desea comenzar desde la última página vista?';
 $string['youmadehighscore'] = 'Lo ha hecho en la lista $a de puntuaciones más altas.';
 $string['youranswer'] = 'Su respuesta';
 $string['yourcurrentgradeis'] = 'Su calificación actual es $a';
 $string['yourgradeisnow'] = 'Su calificación de la lección ha cambiado a $a';
-$string['yourresponse'] = 'Su respuesta';
+$string['yourresponse'] = 'Su comentario';
 $string['youshouldview'] = 'Usted debería ver como mínimo: $a';
 
 ?>

@@ -241,8 +241,5 @@ $string['ZA'] = 'Etelä-Afrikka';
 $string['ZM'] = 'Zambia';
 $string['ZR'] = 'Zaire';
 $string['ZW'] = 'Zimbabwe';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Suomi';
 
 ?>

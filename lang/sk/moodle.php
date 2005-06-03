@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 ALPHA (2005051500)
+<?PHP // $Id$
+      // moodle.php - created with Moodle 1.6 development (2005052400)
 
 
 $string['action'] = 'Akcia';
@@ -24,7 +24,7 @@ $string['addedtogroupnot'] = 'Nepridaný do skupiny $a';
 $string['addedtogroupnotenrolled'] = 'Nepridaný do skupiny $a, preto¾e nie ste zapísaný do kurzu';
 $string['addinganew'] = 'Pridávanie novej $a';
 $string['addinganewto'] = 'Pridávanie novej $a->what do $a->to';
-$string['addingdatatoexisting'] = 'Prida» dáta do existujúcej';
+$string['addingdatatoexisting'] = 'Prida» údaje do existujúcej';
 $string['addnewcategory'] = 'Prida» novú kategóriu';
 $string['addnewcourse'] = 'Prida» nový kurz';
 $string['addnewuser'] = 'Prida» nového u¾ívateµa';
@@ -33,12 +33,12 @@ $string['address'] = 'Adresa';
 $string['addstudent'] = 'Prida» ¹tudenta';
 $string['addteacher'] = 'Prida» uèiteµa';
 $string['admin'] = 'Administrátor';
-$string['adminhelpaddnewuser'] = 'Manuálne vytvori» nové ú¾ívateµské konto';
+$string['adminhelpaddnewuser'] = 'Manuálne vytvori» nové u¾ívateµské konto';
 $string['adminhelpassignadmins'] = 'Administrátori mô¾u robi» v¹etko a v¹ade v rámci prostredia Moodle';
 $string['adminhelpassigncreators'] = 'Tvorcovia kurzov mô¾u vytvára» nové kurzy a vyuèova» v nich ';
 $string['adminhelpassignstudents'] = 'Ís» do kurzu a prida» ¹tudentov cez administrátorské menu';
 $string['adminhelpassignteachers'] = 'Vyhµada» kurz a potom pou¾i» ikonu na pridanie uèiteµov';
-$string['adminhelpauthentication'] = 'Mo¾ete pou¾i» interné u¾ívateµské kontá alebo externé databázy';
+$string['adminhelpauthentication'] = 'Mô¾ete pou¾i» interné u¾ívateµské kontá alebo externé databázy';
 $string['adminhelpbackup'] = 'Konfigurova» automatické zálohy a ich zoznamy';
 $string['adminhelpconfiguration'] = 'Konfigurova» ako bude stránka vyzera» a pracova»';
 $string['adminhelpconfigvariables'] = 'Nastavi» premenné, ktoré ovplyvnia základné operácie na stránke';
@@ -96,8 +96,8 @@ $string['assignstudentspass'] = 'V¹etko èo musíte urobi» je oznámi» va¹im ¹tuden
 $string['assignteachers'] = 'Prideli» uèiteµov';
 $string['authentication'] = 'Overovanie';
 $string['autosubscribe'] = 'Auto-prihlasovanie do fóra';
-$string['autosubscribeno'] = 'Nie:Neprihlasova» ma automaticky do fór';
-$string['autosubscribeyes'] = 'Áno:Prihlási» ma do fóra, keï po¹lem prvý príspevok';
+$string['autosubscribeno'] = 'Nie: Neprihlasova» ma automaticky do fór';
+$string['autosubscribeyes'] = 'Áno: Prihlási» ma do fóra, keï po¹lem prvý príspevok';
 $string['availability'] = 'Dostupnos»';
 $string['availablecourses'] = 'Dostupné kurzy';
 $string['backup'] = 'Zálohovanie';
@@ -107,14 +107,14 @@ $string['backupdetails'] = 'Detaily zálohovania';
 $string['backupfailed'] = 'Niektoré z Va¹ich kurzov neboli ulo¾ené!';
 $string['backupfilename'] = 'záloha';
 $string['backupfinished'] = 'Záloha prebehla úspe¹ne';
-$string['backupincludemoduleshelp'] = 'Vyberte, èi chcete zahrnú» moduly kurzov, s alebo bez dát u¾ívateµa, v automatických zálohách';
+$string['backupincludemoduleshelp'] = 'Vyberte, èi chcete zahrnú» moduly kurzov, s alebo bez údajov u¾ívateµa, v automatických zálohách';
 $string['backupkeephelp'] = 'Koµko posledných záloh z ka¾dého kurzu si chcete ponecha»? (star¹ie budú automaticky vymazané)';
 $string['backuplogdetailed'] = 'Detailný záznam o vykonávaní';
 $string['backuploglaststatus'] = 'Posledný záznam o vykonávaní';
 $string['backuplogshelp'] = 'Ak povolené, potom záznamy kurzu budú zahrnuté do automatických záloh';
 $string['backupmetacoursehelp'] = 'Ak povolené, potom metainformácie o kurze budú zahrnuté do automatických záloh';
 $string['backupnameformat'] = '%%Y%%m%%d-%%H%%M';
-$string['backupnoneusersinfo'] = 'V¹imnite si: Vybrali ste si zálohova» \"¾iadnych\" pou¾ívateµov, tak¾e zálohy modulov boli prepnuté do módu \"bez dát u¾ívateµa\". Berte prosím na vedomie, ¾e moduly \"Cvièenie\" a \"Tvorivá dielòa\" nie sú kompatibilné s týmto typom zálohovania a preto boli kompletne deaktivované.';
+$string['backupnoneusersinfo'] = 'V¹imnite si: Vybrali ste si zálohova» \"¾iadnych\" pou¾ívateµov, tak¾e zálohy modulov boli prepnuté do módu \"bez údajov u¾ívateµa\". Berte prosím na vedomie, ¾e moduly \"Cvièenie\" a \"Tvorivá dielòa\" nie sú kompatibilné s týmto typom zálohovania a preto boli kompletne deaktivované.';
 $string['backuporiginalname'] = 'Názov zálohy';
 $string['backupsavetohelp'] = 'Celá cesta k adresáru, kde si chcete ulo¾i» zálohované súbory<br />
 (nechajte voµné, aby ste doòho mohli ulo¾i» ¹tandardný adresár kurzov)';
@@ -124,8 +124,8 @@ $string['backupusershelp'] = 'Vyberte, èi chcete zahrnú» v¹etkých u¾ívateµov na 
 $string['backupversion'] = 'Verzia zálohy';
 $string['blockconfiga'] = 'Konfigurácia  $a bloku';
 $string['blockconfigbad'] = 'Tento blok nebol správne vlo¾ený a tak nemô¾e poskytnú» konfiguraèné rozhranie ';
-$string['blockdeleteconfirm'] = 'Práve sa chystáte úplne vymaza» blok $a\'.Týmto vyma¾ete úplne v¹etko z databázy, ktorá je spojená s týmto blokom. Ste si naozaj istý, ¾e chcete pokraèova»?';
-$string['blockdeletefiles'] = 'V¹etky dáta spojené s blokom \'$a->block\' boli vymazané z databázy. Na dokonèenie procesu vymazávania (a zabránenie bloku, aby sa sám opätovne nain¹taloval), by ste teraz mali vymaza» tento adresár z Vá¹ho servera: $a->directory';
+$string['blockdeleteconfirm'] = 'Práve sa chystáte úplne vymaza» blok \'$a\'.Týmto vyma¾ete úplne v¹etko z databázy, ktorá je spojená s týmto blokom. Ste si naozaj istý, ¾e chcete pokraèova»?';
+$string['blockdeletefiles'] = 'V¹etky údaje spojené s blokom \'$a->block\' boli vymazané z databázy. Na dokonèenie procesu vymazávania (a zabránenie bloku, aby sa sám opätovne nain¹taloval), by ste teraz mali vymaza» tento adresár z Vá¹ho servera: $a->directory';
 $string['blocks'] = 'Bloky';
 $string['blocksaddedit'] = 'Prida»/Upravi» bloky';
 $string['blockseditoff'] = 'Úprava blokov vypnutá';
@@ -168,11 +168,11 @@ $string['clamemailsubject'] = '$a :: oznámenie o Clam AV ';
 $string['clamfailed'] = 'Spustenie Clam AV bolo neúspe¹né. Správa o hlásení chyby bola $a. Tu je výstup z Clam-u:';
 $string['clamlost'] = 'Moodle ja nastavený tak, aby spustil clam pri naèítavaní súboru, ale cesta, ktorá bola vlo¾ená do Clam AV,$a, je neplatná.';
 $string['clamlostandactinglikevirus'] = 'Naviac, Moodle je nastavený tak, ¾e ak je spustenie clam neúspe¹né, so súbormi sa nakladá podobne ako s vírusmi. Toto znamená, ¾e ¾iaden ¹tudent nemô¾e úspe¹ne naèíta» súbor, pokým ho neopravíte.';
-$string['clammovedfile'] = 'Súbor bol presunutý do Vá¹ho karanténeho adresára, nachádza sa tu: $a';
+$string['clammovedfile'] = 'Súbor bol presunutý do Vá¹ho karanténneho adresára, jeho nové umiestnenie je: $a';
 $string['clammovedfilebasic'] = 'Súbor bol presunutý do Vá¹ho osobného adresára';
 $string['clamquarantinedirfailed'] = 'Nie je mo¾né presunú» súbor do Vá¹ho karanténeho adresára, $a. Túto chybu by ste mali èo najskôr odstáni», preto¾e súbory, ktoré pova¾uje systém za napadnuté vírusom, sa automaticky vymazávajú.';
 $string['clamunknownerror'] = 'Pri prilepovaní sa objavila neznáma chyba.';
-$string['cleaningtempdata'] = 'Vyèisti» doèasné dáta';
+$string['cleaningtempdata'] = 'Vyèisti» doèasné údaje';
 $string['clicktochange'] = 'Kliknite pre zmenu';
 $string['closewindow'] = 'Zavrie» toto okno';
 $string['comparelanguage'] = 'Porovna» a upravi» súèasný jazyk';
@@ -235,7 +235,7 @@ $string['creatingtemporarystructures'] = 'Vytvárajú sa doèasné ¹truktúry';
 $string['creatingusers'] = 'Vytvárajú sa u¾ívatelia';
 $string['creatingxmlfile'] = 'Vytvára sa XML súbor';
 $string['currency'] = 'Mena';
-$string['currentcourseadding'] = 'Aktuálny kurz, pridávajú sa do neho dáta ';
+$string['currentcourseadding'] = 'Aktuálny kurz, pridávajú sa do neho údaje ';
 $string['currentcoursedeleting'] = 'Aktuálny kurz, vymazáva sa ako prvý';
 $string['currentlanguage'] = 'Aktuálny jazyk';
 $string['currentlocaltime'] = 'Vá¹ aktuálny miestny èas';
@@ -280,8 +280,8 @@ $string['deletedcourse'] = '$a bolo úplne odstránené';
 $string['deletednot'] = 'Nemô¾e odstráni» $a !';
 $string['deleteselected'] = 'Odstráni» vybraté';
 $string['deletingcourse'] = 'Odstraòovanie $a';
-$string['deletingexistingcoursedata'] = 'Odstraòujú sa  dáta existujúceho kurzu';
-$string['deletingolddata'] = 'Odstraòujú sa staré dáta';
+$string['deletingexistingcoursedata'] = 'Odstraòujú sa  údaje existujúceho kurzu';
+$string['deletingolddata'] = 'Odstraòujú sa staré údaje';
 $string['department'] = 'Oddelenie';
 $string['description'] = 'Popis';
 $string['detailedless'] = 'Menej detailný';
@@ -311,7 +311,7 @@ $string['edit'] = 'Upravi» $a';
 $string['editcoursesettings'] = 'Upravi» nastavenia kurzu';
 $string['editfiles'] = 'Upravi» súbory';
 $string['editgroupprofile'] = 'Upravi» profil skupiny';
-$string['editinga'] = 'Upravovanie $a';
+$string['editinga'] = 'Upravi» $a';
 $string['editingteachershort'] = 'Editor';
 $string['editlock'] = 'Túto hodnotu nemô¾ete upravova»!';
 $string['editmyprofile'] = 'Upravi» profil';
@@ -324,7 +324,7 @@ $string['editorfontlist'] = 'Zoznam fontov';
 $string['editorfontsize'] = 'Východisková veµkos» fontu';
 $string['editorresettodefaults'] = 'Obnovi» východiskové hodnoty';
 $string['editorsettings'] = 'Nastavenia editora';
-$string['editsummary'] = 'Upravi» zhrmutie';
+$string['editsummary'] = 'Upravi» zhrnutie';
 $string['editthisactivity'] = 'Upravi» túto aktivitu';
 $string['editthiscategory'] = 'Upravi» túto kategóriu';
 $string['edituser'] = 'Upravi» u¾ívateµské kontá';
@@ -414,7 +414,7 @@ $string['executeat'] = 'Vykona»';
 $string['existing'] = 'Existujúci';
 $string['existingadmins'] = 'Existujúci administrátori';
 $string['existingcourse'] = 'Existujúci kurz';
-$string['existingcourseadding'] = 'Existujúci kurz, pripoji» k nemu dáta';
+$string['existingcourseadding'] = 'Existujúci kurz, pripoji» k nemu údaje';
 $string['existingcoursedeleting'] = 'Existujúci kurz, najprv ho vymaza»';
 $string['existingcreators'] = 'Existujúci tvorcovia kurzov';
 $string['existingstudents'] = 'Zapísaní ¹tudenti';
@@ -473,17 +473,16 @@ $string['gdnot'] = 'GD nie je nain¹talované';
 $string['go'] = 'Ís»';
 $string['gpl'] = 'Copyright (C) 2001-on  Martin Dougiamas  (http://dougiamas.com)
 
-Tento program je voµne ¹íriteµný softvér; mo¾ete ho ïalej distribuova» a/alebo upravova» v rámci podmienok GNU General Public License ako ich publikovala Free Software Foundation; buï druhú verziu alebo nov¹ie verzie licencie.
+Tento program je voµne ¹íriteµný softvér. Mô¾ete ho ¹íri» a modifikova» podµa ustanovení V¹eobecnej verejnej licencie GNU, vydávanej nadáciou Free Software Foundation a to buï verzie 2 tejto licencie, alebo (podµa vá¹ho uvá¾enia) kterejkoµvek neskor¹ej verzie.
 
-Tento program je distribuovaný v nádeji, ¾e bude u¾itoèný,
+Tento program je roz¹irovaný v nádeji, ¾e bude u¾itoèný, av¹ak BEZ AKEJKO¥VEK ZÁRUKY. Neposkytujú sa ani odvodené záruky PREDAJNOSTI alebo VHODNOSTI PRE URÈITÝ ÚÈEL. Ïal¹ie podrobnosti hµadajte vo V¹eobecnej verejnej licencii GNU.
 
-ale je BEZ AKEJKO¥VEK ZÁRUKY,
+Kópiu V¹eobecnej verejnej licencie GNU ste mali dosta» spolu s týmto programom. Ak sa tak nestalo, po¾iadajte o òu Free Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. 
 
-a to aj èo sa týka PREDAJNOSTI alebo VHODNOSTI PRE KONKRÉTNY CIE¥. 
+Pre ïal¹ie detaily si prezrite V¹eobecnú verejnú licenciu GNU na:
 
-Pre ïal¹ie detaily si prezrite GNU General Public License na :
-
-http://www.gnu.org/copyleft/gpl.html';
+[EN] http://www.gnu.org/copyleft/gpl.html
+[SK] http://www.gnu.sk/';
 $string['grade'] = 'Známka';
 $string['grades'] = 'Známky';
 $string['group'] = 'Skupina';
@@ -498,7 +497,7 @@ $string['groupmembers'] = 'Èlenovia skupiny';
 $string['groupmemberssee'] = 'Prezrie» si èlenov skupiny';
 $string['groupmembersselected'] = 'Èlenovia zvolenej skupiny';
 $string['groupmode'] = 'Re¾im skupiny';
-$string['groupmodeforce'] = 'y¾adova» re¾im skupiny';
+$string['groupmodeforce'] = 'Vy¾adova» re¾im skupiny';
 $string['groupmy'] = 'Moja skupina';
 $string['groupnonmembers'] = '¥udia nezaradení do skupiny';
 $string['groupnotamember'] = 'Prepáète, ale nie ste èlenom tejto skupiny';
@@ -528,13 +527,13 @@ $string['helpsummaries'] = 'O týchto zhrnutiach';
 $string['helptext'] = 'Ako napísa» text';
 $string['helpwiki'] = 'Ako písa» Wiki text';
 $string['helpwriting'] = 'Pí¹te opatrne';
-$string['hiddensections'] = 'Skyté sekcie';
+$string['hiddensections'] = 'Skryté sekcie';
 $string['hiddensectionscollapsed'] = 'Skryté sekcie sa nebudú zobrazova» v plnej forme';
 $string['hiddensectionsinvisible'] = 'Skryté sekcie budú pre ostatných úplne neviditeµné';
 $string['hide'] = 'Skry»';
 $string['hideadvancedsettings'] = 'Skry» roz¹írené nastavenia';
 $string['hidepicture'] = 'Skry» obrázky';
-$string['hidesettings'] = 'Skry» nasravenia';
+$string['hidesettings'] = 'Skry» nastavenia';
 $string['hits'] = 'Obµúbené';
 $string['hitsoncourse'] = 'Obµúbené v $a->coursename pre $a->username';
 $string['hitsoncoursetoday'] = 'Dne¹ná obµúbenos» v $a->coursename pre $a->username';
@@ -551,7 +550,7 @@ $string['htmlformat'] = 'Pekný HTML formát';
 $string['icqnumber'] = 'Èíslo ICQ';
 $string['idnumber'] = 'Èíslo ID';
 $string['importdata'] = 'Importova» údaje kurzu';
-$string['importdataexported'] = 'Export údajov z \'from\' kurzu prebehol úspe¹ne.<br />
+$string['importdataexported'] = 'Export údajov z \'odkiaµ\' kurzu prebehol úspe¹ne.<br />
 Pokraèujte v importovaní údajov do \'to\' kurzu.';
 $string['importdatafinished'] = 'Import údajov bol ukonèený! Teraz vstúpte do vá¹ho kurzu';
 $string['importdatafrom'] = 'Vyhµadajte kurz, z ktorého sa majú importova» údaje:';
@@ -603,7 +602,7 @@ $string['login_failure_logs'] = 'Záznamy o neúspe¹ných pokusoch o prihlásenie';
 $string['loginas'] = 'Prihlási» sa ako';
 $string['loginguest'] = 'Prihlási» sa ako hos»';
 $string['loginsite'] = 'Prihlási» sa na stránku';
-$string['loginsteps'] = 'Dobrý deò! Na úplný prístup do kurzov potrebujete chvíµu èasu,aby ste si vytvorili nový úèet na tejto web stránke.
+$string['loginsteps'] = 'Dobrý deò! Na úplný prístup do kurzov potrebujete chvíµu èasu, aby ste si vytvorili nový úèet na tejto web stránke.
 
 Ka¾dý z jednotlivých kurzov mô¾e ma» aj jednorazový \"kµúè na zápis do kurzu\", ktorý zatiaµ nebudete potrebova».
 
@@ -614,7 +613,7 @@ Tu sú kroky:
 <li>Na va¹u emailovú adresu bude okam¾ite odoslaný email.</li>
 <li>Preèítajte si vá¹ email a kliknite na webovú linku, ktorú obsahuje.</li>
 <li>Va¹e konto bude potvrdené a Vy budete prihlásený.</li>
-<li>Teraz si vyberte kurz, ktorého sa chcete zúèasni».</li>
+<li>Teraz si vyberte kurz, ktorého sa chcete zúèastni».</li>
 <li>Ak Vás systém po¾iada o  \"prihlasovací kµúè pre zápis do kurzu\" - pou¾ite ten, ktorý vám dal vá¹ uèiteµ. To vás \"zapí¹e\" do kurzu.</li>
 <li>Teraz máte prístup do celého kurzu. Od teraz budete musie» u¾ len uvies» Va¹e osobné u¾ívateµské meno a heslo (vo formulári na tejto strane) na prihlásenie a vstup do ka¾dého kurzu, na ktorý ste sa prihlásili.</li>
 </ol>';
@@ -686,7 +685,7 @@ $string['missingurl'] = 'Chýba URL adresa';
 $string['missingusername'] = 'Chýbajúce u¾ívateµské meno';
 $string['modified'] = 'Modifikované';
 $string['moduledeleteconfirm'] = 'Práve sa chystáte kompletne zru¹i» modul \'$a\'. To spôsobí tie¾ zru¹enie v¹etkých informácií v databáze, ktoré s týmto modulom súvisia. STE SI ISTÍ, ¾e chcete pokraèova»? ';
-$string['moduledeletefiles'] = 'V¹etky dáta súvisiace s modulom \'$a->module\' boli vymazané z databázy. Na dokonèenie procesu vymazávania by ste mali vymaza» adresár $a->directory z Vá¹ho servera.';
+$string['moduledeletefiles'] = 'V¹etky údaje súvisiace s modulom \'$a->module\' boli vymazané z databázy. Na dokonèenie procesu vymazávania by ste mali vymaza» adresár $a->directory z Vá¹ho servera.';
 $string['modulesetup'] = 'Nastavovanie modulových tabuliek';
 $string['modulesuccess'] = '$a tabuµky boli nastavené správne';
 $string['moodleversion'] = 'Verzia Moodle';
@@ -732,7 +731,7 @@ Ak chcete zmeni» Va¹e heslo, nav¹tívte prosím túto stránku:
 
    $a->link
 
-Vo väè¹ine emailových programovh by sa to malo objavi» ako modrá linka, na ktorú staèí kliknú». Ak to nefunguje, skopírujte adresu do riadku pre adresu vo vrchnej èasti okna vá¹ho web prehliadaèa.
+Vo väè¹ine programov pre 49tanie elektronickej po¹ty by sa mal tento odkaz objavi» ako modrá linka, na ktorú staèí kliknú». Ak to nefunguje, skopírujte adresu do riadku pre adresu vo vrchnej èasti okna vá¹ho web prehliadaèa.
 
 S pozdravom \'$a->sitename\' administrátor,
 
@@ -779,7 +778,7 @@ $string['nosuchemail'] = 'Nie je taká  emailová adresa';
 $string['notavailable'] = 'Nie je k dispozícii';
 $string['noteachersyet'] = 'Zatiaµ ¾iadni uèitelia v tomto kurze';
 $string['notenrolled'] = '$a nie je prihlásený do tohto kurzu.';
-$string['noteuserschangednonetocourse'] = 'Poznámka: U¾ívatelia kurzu musia by» obnovení, ak  sa obnovujú u¾ívateµské dáta. Toto nastavenie to bude meni» za Vás.';
+$string['noteuserschangednonetocourse'] = 'Poznámka: U¾ívatelia kurzu musia by» obnovení, ak  sa obnovujú u¾ívateµské údaje. Toto nastavenie to bude meni» za Vás.';
 $string['nothingnew'] = 'Od Vá¹ho posledného prihlásenia sa niè nezmenilo';
 $string['nothingtodisplay'] = 'Niè na zobrazenie';
 $string['noticenewerbackup'] = 'Táto záloha súboru bola vytvorená Moodlom $a->backuprelease ($a->backupversion) a je vy¹¹ia, ako aktuálna verzia Moodle $a->serverrelease ($a->serverversion). Toto mô¾e spôsobi» niektoré problémy, preto¾e spätná kompatibilita zálohovaných súborov nemô¾e by» garantovaná.';
@@ -819,7 +818,7 @@ $string['participants'] = 'Úèastníci';
 $string['password'] = 'Heslo';
 $string['passwordchanged'] = 'Heslo bolo zmenené';
 $string['passwordconfirmchange'] = 'Potvrdi» zmenu hesla';
-$string['passwordrecovery'] = 'Ano, pomô¾te mi prihlási» sa';
+$string['passwordrecovery'] = 'Áno, pomô¾te mi prihlási» sa';
 $string['passwordsdiffer'] = 'Tieto heslá nie sú správne';
 $string['passwordsent'] = 'Heslo bolo poslané';
 $string['passwordsenttext'] = '<p>Na va¹u adresu $a->email bol poslaný email.</p>
@@ -896,7 +895,7 @@ $string['role'] = 'Rola';
 $string['rss'] = 'RSS';
 $string['rssarticles'] = 'Poèet aktuálnych RSS èlánkov';
 $string['rsserror'] = 'Chyba pri èítaní RSS údajov';
-$string['rsstype'] = 'RSS väzba pre túto aktivitu';
+$string['rsstype'] = 'RSS kanály pre túto aktivitu';
 $string['savechanges'] = 'Ulo¾i» zmeny';
 $string['saveto'] = 'Ulo¾i» do';
 $string['scale'] = 'Stupnica';
@@ -1049,7 +1048,7 @@ $string['update'] = 'Aktualizova»';
 $string['updated'] = 'Aktualizované $a';
 $string['updatemyprofile'] = 'Aktualizova» profil';
 $string['updatesevery'] = 'Aktualizuje ka¾dých $a sekúnd';
-$string['updatethis'] = 'Aktualizova» toto $a';
+$string['updatethis'] = 'Aktualizova» $a';
 $string['updatethiscourse'] = 'Aktualizova» tento kurz';
 $string['updatinga'] = 'Aktualizuje $a';
 $string['updatingain'] = 'Aktualizuje $a->what v $a->in';
@@ -1136,7 +1135,7 @@ $string['wordforteachereg'] = 'Napr. uèiteµ, tútor, facilitátor atï.';
 $string['wordforteachers'] = 'Va¹e oznaèenie pre uèiteµov';
 $string['wordforteacherseg'] = 'Napr. uèitelia, tútori, facilitátori atï.';
 $string['writingcategoriesandquestions'] = 'Zapisujú sa  kategórie a otázky';
-$string['writingcoursedata'] = 'Zapisujú sa  dáta kurzu';
+$string['writingcoursedata'] = 'Zapisujú sa  údaje kurzu';
 $string['writingeventsinfo'] = 'Zapisujú sa informácie o udalostiach';
 $string['writinggeneralinfo'] = 'Zapisujú sa  základné informácie';
 $string['writinggradebookinfo'] = 'Zapisujú sa informácie do knihy bodov';

@@ -1,0 +1,13 @@
+<p align="center"><b>Modo adaptativo</b></p>
+
+<p>Si selecciona "Sí" en esta opción, se permitirá que el estudiante dé varias respuestas a una pregunta incluso en el mismo intento de resolver el cuestionario. Así, por ejemplo, si la respuesta es incorrecta, el estudiante puede dar otra respuesta inmediatamente. Sin embargo, normalmente se aplicará una penalización que se restará de la puntuación total por cada intento equivocado (la cantidad de penalización es determinada por el "Factor de penalización, que se ajusta en la siguiente opción).</p>
+
+<p>Este modo permite asimismo preguntas adaptativas que pueden cambiar en respuesta a la respuesta del estudiante. He aquí cómo la especificación IMS QTI define las preguntas (ítems) adaptativas:</p>
+
+<blockquote>
+Un ítem adaptativo es aquél que adapta bien su apariencia, bien su puntuación (Procesamiento de la Respuesta), o ambos, en respuesta a cada uno de los intentos del estudiante. Por ejemplo, un ítem adaptativo podría comenzar pidiendo al estudiante que escriba en una casilla una respuesta en texto libre pero, al recibir una respuesta insatisfactoria, presentar en su lugar una interacción basada en una elección simple y recompensar con menos puntos la subsiguiente identificación de la respuesta correcta. La adaptatividad permite a los profesores crear ítems para usarlos en situaciones formativas que por una parte ayudan a conducir a los estudiantes a través de una tarea determinada en tanto que también les proporcionan un resultado que toma en consideración el proceso seguido
+</blockquote>
+
+<p>En el modo adaptativo se muestra un botón <?php print_string('mark', 'quiz') ?> adicional para cada pregunta.
+Si el estudiante presiona el botón, la respuesta a esa pregunta se envía para ser puntuada, y se muestra al estudiante la nota obtenida. Si la pregunta es una pregunta adaptativa, se mostrará en su nuevo estado que toma en consideración la respuesta del estudiante y que en muchos casos le solicitará una nueva respuesta. En las preguntas adaptativas más sencillas este nuevo estado puede diferir únicamente en el textod e "feedback" y en que solicita al estudiante que responda de nuevo; en las preguntas más complejas, también pueden cambiar tanto el texto de la pregunta como los elementos de interacción.
+</p>

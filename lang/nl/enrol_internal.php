@@ -8,8 +8,5 @@ $string['description'] = 'Dit is de standaard manier van aanmelden. Er zijn twee
 <li>Er kan een wachtwoord ingegeven worden voor een vak, de \"vaksleutel\". Wie deze sleutel kent, kan zichzelf aanmelden in een vak.</li>
 </ul>';
 $string['enrolname'] = 'Interne aanmelding';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Nederlands';
 
 ?>

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // enrol_authorize.php - created with Moodle 1.5 ALPHA (2005043000)
+      // enrol_authorize.php - created with Moodle 1.5 Beta (2005052300)
 
 
 $string['anlogin'] = 'Authorize.net: Login name';
@@ -8,6 +8,7 @@ $string['anreferer'] = 'Define the URL referer if you have set up this in your a
 $string['antestmode'] = 'Run transactions in test mode only (no money will be drawn)';
 $string['antrankey'] = 'Authorize.net: Transaction Key';
 $string['ccexpire'] = 'Expiry Date';
+$string['ccexpired'] = 'The credit card has expired';
 $string['ccinvalid'] = 'Invalid card number';
 $string['ccno'] = 'Credit Card Number';
 $string['cctype'] = 'Credit Card Type';

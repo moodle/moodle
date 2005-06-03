@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // enrol_ldap.php - created with Moodle 1.5 ALPHA (2005051500)
+      // enrol_ldap.php - created with Moodle 1.6 development (2005053000)
 
 
 $string['description'] = '<p>Je kunt een LDAP-server gebruiken om je vakaanmeldingen te controleren. Er wordt vanuit gegaan dat je LDAP-structuur groepen bevat die verwijzen naar de vakken en dat elk van die groepen/vakken naar lidmaatschap van leerlingen verwijzen.</p>
@@ -18,6 +18,7 @@ $string['enrol_ldap_course_settings'] = 'Instellingen voor het aanmelden bij vak
 $string['enrol_ldap_course_shortname'] = 'Optioneel: LDAP-veld om de korte vaknaam uit te halen';
 $string['enrol_ldap_course_summary'] = 'Optioneel: LDAP-veld om de beschrijving uit te halen';
 $string['enrol_ldap_editlock'] = 'Lock-waarde';
+$string['enrol_ldap_general_options'] = 'Algemene instellingen';
 $string['enrol_ldap_host_url'] = 'Specifier de LDAP-host als een URL, bijvoorbeeld
 \'ldap://ldap.myorg.com/\'
 of \'ldaps://ldap.myorg.com/\'';

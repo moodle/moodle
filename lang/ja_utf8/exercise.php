@@ -1,5 +1,5 @@
-<?php // $Id$ 
-      // exercise.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+<?PHP // $Id$ 
+      // exercise.php - created with Moodle 1.6 development (2005052400)
 
 
 $string['absent'] = '欠席';
@@ -9,6 +9,8 @@ $string['ago'] = '$ 日前';
 $string['amend'] = '更新';
 $string['amendassessmentelements'] = '評価要素の更新';
 $string['amendtitle'] = 'タイトルの更新';
+$string['analysis'] = '分析';
+$string['assess'] = '評価';
 $string['assessment'] = '評価';
 $string['assessmentby'] = '$a による評価';
 $string['assessmentform'] = '評価フォーム';
@@ -34,6 +36,7 @@ $string['edit'] = '編集';
 $string['editingassessmentelements'] = '評価要素の編集';
 $string['element'] = '要素';
 $string['elementweight'] = '要素比重';
+$string['enterpassword'] = 'パスワードを入力してください。';
 $string['entriessaved'] = 'エントリが保存されました';
 $string['errorbanded'] = '減点方式';
 $string['excellent'] = '素晴らしい';
@@ -55,7 +58,9 @@ $string['lax'] = '甘い';
 $string['leaguetable'] = '提出物の成績一覧';
 $string['mail1'] = 'あなたの課題「 $a 」が評価されました。評価者: ';
 $string['managingassignment'] = 'エクササイズの管理';
+$string['maximum'] = '最大';
 $string['maximumsize'] = '最大サイズ';
+$string['minimum'] = '最小';
 $string['modulename'] = 'エクササイズ';
 $string['modulenameplural'] = 'エクササイズ';
 $string['movingtophase'] = 'フェーズ $a に移動中';
@@ -111,9 +116,6 @@ $string['theexercise'] = 'エクササイズ';
 $string['theexerciseandthesubmissionby'] = '$a によるエクササイズおよび提出';
 $string['thegradeis'] = '評価は $a です';
 $string['thereisfeedbackfromthe'] = '$a のフィードバックがあります';
-$string['thischarset'] = 'UTF-8';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Japanese';
 $string['title'] = 'タイトル';
 $string['typeofscale'] = '評価基準';
 $string['usemaximum'] = '最大値を使用';
@@ -123,6 +125,7 @@ $string['verylax'] = '非常に甘い';
 $string['verypoor'] = '非常に悪い';
 $string['verystrict'] = '非常に厳しい';
 $string['view'] = '表示';
+$string['viewteacherassessment'] = '$a の評価を表示';
 $string['warningonamendingelements'] = '警告: 実行された評価が存在します。<br />要素数、評価基準、要素比重を変更しないでください。';
 $string['weightederrorcount'] = '比重エラーカウント: $a';
 $string['weightforgradingofassessments'] = '評価のグレーディングに対する比重';

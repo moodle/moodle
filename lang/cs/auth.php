@@ -95,6 +95,7 @@ $string['auth_pop3title'] = 'Pou¾ívat POP3 server';
 $string['auth_pop3type'] = 'Typ serveru. Pokud vá¹ server pou¾ívá zabezpeèení pomocí certifikátù, zvolte pop3cert.';
 $string['auth_shib_convert_data'] = 'API pro úpravu dat';
 $string['auth_shib_convert_data_description'] = 'Toto API (aplikaèní rozhraní) vám umo¾òuje dále upravovat data, která máte k dispozici ze systému Shibboleth. Více infomací <a href=\"../auth/shibboleth/README.txt\" target=\"_blank\">zde</a>.';
+$string['auth_shib_convert_data_warning'] = 'Soubor buï neexistuje, nebo k nìmu nemá proces webového serveru pøístup ke ètení!';
 $string['auth_shib_instructions'] = 'Pou¾ijte <a href=\"$a\">pøihlá¹ení se pøes Shibboleth</a>, pakli¾e va¹e instituce tento systém podporuje.<br />V opaèném pøípadì pou¾ijte normální formuláø pro pøihlá¹ení.';
 $string['auth_shib_instructions_help'] = 'Zde mù¾ete vlo¾it vlastní informace o va¹em systému Shibboleth. Budou se zobrazovat na pøihla¹ovací stránce. Vlo¾ené informace by mìly obsahovat odkaz na zdroj chránìný systémem Shibboleth, který pøesmìruje u¾ivatele na \"<b>$a</b>\", tak¾e se u¾ivatelé systému Shibboleth budou moci pøihlásit do Moodlu. Necháte-li toto pole prázdné, budou se na pøihla¹ovací stránce zobrazovat obecné pokyny.';
 $string['auth_shib_only'] = 'Pouze Shibboleth';

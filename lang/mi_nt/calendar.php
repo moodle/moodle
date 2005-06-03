@@ -15,8 +15,5 @@ $string['eventtime'] = 'wä';
 $string['hidden'] = 'hunahuna';
 $string['oneevent'] = 'Tahi takahanga';
 $string['preferences'] = 'manakohanga';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Maori - Ngai Tahu';
 
 ?>

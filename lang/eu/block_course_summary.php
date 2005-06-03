@@ -3,10 +3,7 @@
 
 
 $string['blockname'] = 'Kurtsoaren sumarioa';
-$string['parentlanguage'] = 'ES';
 $string['siteinfo'] = 'Gunearen informazioa';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Euskara';
+
 
 ?>

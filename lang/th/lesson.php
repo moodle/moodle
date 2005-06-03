@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.4.2 (2004083125)
+      // lesson.php - created with Moodle 1.6 development (2005052400)
 
 
 $string['actionaftercorrectanswer'] = 'เมื่อตอบคำถามถูกให้';
@@ -150,7 +150,6 @@ $string['page'] = 'หน้า $a ';
 $string['pagecontents'] = 'เนื้อหา';
 $string['pages'] = 'หน้า';
 $string['pagetitle'] = 'หัวข้อ';
-$string['parentlanguage'] = 'en';
 $string['password'] = 'รหัสผ่าน';
 $string['passwordprotectedlesson'] = 'บทเรียน$a ต้องใช้รหัสผ่านในการเข้าไปทำ';
 $string['pleasecheckoneanswer'] = 'ตรวจคำตอบ';
@@ -204,9 +203,6 @@ $string['teachertimerwarning'] = 'การจับเวลาจะใช้งานได้เฉพาะกับนักเรียนจะเห็นก็ต
 $string['thatsthecorrectanswer'] = 'ถูกต้อง';
 $string['thatsthewronganswer'] = 'ผิด';
 $string['thefollowingpagesjumptothispage'] = 'หน้าถัดไปมายังหน้านี้';
-$string['thischarset'] = 'TIS-620';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Thai';
 $string['thispage'] = 'หน้านี้';
 $string['timed'] = 'จับเวลา';
 $string['timeremaining'] = 'เหลือเวลา';

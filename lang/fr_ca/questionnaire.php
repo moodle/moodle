@@ -12,6 +12,5 @@ $string['qmanagetitle'] = 'Gestion des sondages phpESP';
 $string['qtype'] = 'Type';
 $string['questionnaireid'] = 'Sondage';
 $string['respondenttype'] = 'Type de répondant';
-$string['thisdirection'] = 'ltr';
 
 ?>

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.5 ALPHA (2005042300)
+      // admin.php - created with Moodle 1.6 development (2005052400)
 
 
 $string['adminseesallevents'] = 'Beheerders zien alle gebeurtenissen';
@@ -82,7 +82,7 @@ $string['configslasharguments'] = 'Bestanden (afbeeldingen, uploads en dergelijk
 $string['configsmtphosts'] = 'Geef de volledige naam van één of meer lokale SMTP-servers die Moodle moet gebruiken om mail te versturen (bijvoorbeeld: \'mail.a.com\' of \'mail.a.com;mail.b.com\'). Als je dit leeg laat gebruikt Moodle de standaard PHP-methode voor het versturen van mail.';
 $string['configsmtpuser'] = 'Als je hierboven een SMTP-server hebt ingevuld en deze server authenticatie nodig heeft, vul hier dan de gebruikersnaam en het wachtwoord in.';
 $string['configteacherassignteachers'] = 'Zou een gewone leraar een andere leraar moeten kunnen aanwijzen binnen de vakken waarin hij les geeft? Als je dit op \'nee\' zet, dan kunnen alleen vak-aanmakers en beheerders leraren aanwijzen.';
-$string['configthemelist'] = 'Laat dit leeg om gelijk welk geldig thema te gebruiken. Geef hier een door komma\'s gescheiden lijst met thema-namen als je het thema-menu wil inkorten. Bijvoorbeeld: standard,orangewhite';
+$string['configthemelist'] = 'Laat dit leeg om gelijk welk geldig thema te gebruiken. Geef hier een door komma\'s gescheiden lijst met thema-namen als je het thema-menu wil inkorten. Bijvoorbeeld: standard,orangewhite. Let op: geen spaties!';
 $string['configtimezone'] = 'Hier kun je de standaardtijdzone instellen. Dit is slechts de STANDAARD tijdzone voor het tonen van datums - elke gebruiker kan deze instelling voor zichzelf wijzigen in zijn profiel. Op deze plaats zal de optie \"Servertijd\" de standaardtijd in Moodle gelijkzetten met de tijd van het besturingssysteem van de server, maar in het profiel van de gebruikers zal de instelling \"Servertijd\" de hier ingestelde tijdzone zijn.';
 $string['configunzip'] = 'Geef de locatie van je UNZIP-programma (alleen voor UNIX). Dit is nodig om ZIP-archieven op de server uit te pakken.';
 $string['configvariables'] = 'Configureer variabelen';
@@ -105,8 +105,9 @@ $string['helpweekenddays'] = 'Welke dagen van de week worden als \"weekend\" bes
 $string['importtimezones'] = 'Update de volledige lijst van tijdzones';
 $string['importtimezonescount'] = '$a->count items geïmporteerd van $a->source';
 $string['importtimezonesfailed'] = 'Geen bronnen gevonden! (= slecht nieuws)';
-$string['nodstpresetsexist'] = 'Zomertijd is uitgeschakeld voor alle gebruikers omdat er geen voorkeuzes voor zomertijd gedefiniëerd zijn. Je kunt er definiëren door op onderstaande knop te klikken.';
+$string['incompatibleblocks'] = 'Niet-compatibele blokken';
 $string['optionalmaintenancemessage'] = 'Optionele onderhoudsboodschap';
+$string['pleaseregister'] = 'Registreer aub je site.  Op die manier kun je deze knop verwijderen.';
 $string['sitemaintenance'] = 'De site is in onderhoud en is op dit ogenblik niet beschikbaar';
 $string['sitemaintenancemode'] = 'Onderhoudsmodus';
 $string['sitemaintenanceoff'] = 'De onderhoudsmodus is uitgeschakeld en de site loopt nu terug normaal';

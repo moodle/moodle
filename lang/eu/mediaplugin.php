@@ -3,9 +3,5 @@
 
 
 $string['filtername'] = 'Multimedia Pluginak';
-$string['parentlanguage'] = 'es';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'euskara';
 
 ?>

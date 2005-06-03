@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // exercise.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005011000)
+      // exercise.php - created with Moodle 1.6 development (2005052400)
 
 
 $string['absent'] = 'ÛÇÆÈ';
@@ -139,6 +139,7 @@ $string['scalegood3'] = '3 äÞÇØ ÌíÏ /ãÞíÇÓ ÖÚíÝ';
 $string['scalepresent'] = '2 äÞØÉ ÍÇÖÑ / ãÞíÇÓ ÛÇÆÈ';
 $string['scaleyes'] = '2 äÞØÉ äÚã / áÇ íæÌÏ ãÞíÇÓ';
 $string['specimenassessmentform'] = 'äãæÐÌ ÊÞííã ÇáÚíäÉ';
+$string['standarddeviation'] = 'ÇáãÊÛíÑ ÇáãÚíÇÑí';
 $string['strict'] = 'ÕÇÑã';
 $string['studentallowedtoresubmit'] = '$a ÓãÍ áå ÈÅÚÇÏÉ ÇáÊÓáíã';
 $string['studentassessments'] = '$a ÊÞííãÇÊ';

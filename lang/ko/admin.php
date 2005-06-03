@@ -46,9 +46,6 @@ $string['sitemaintenanceoff'] = '관리모드는 사용할 수 없고, 이 사이트는 다시 규�
 $string['sitemaintenanceon'] = '이 사이트는 현재 관리모드입니다(오직 관리자만이 이 사이트를 사용하거나 로그인 할 수 있습니다).';
 $string['sitemaintenancewarning'] = '당신은 현재 관리 모드에 있습니다(오직 관리자만 로그인 할 수 있습니다.) 일반 작업으로 되돌리시려면 <a href=\"maintenance.php\">는 </a>관리모드를 사용을 할 수 없게 합니다.';
 $string['therewereerrors'] = '데이터에 에러가 있었습니다.';
-$string['thischarset'] = 'euc-kr';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = '&#54620;&#44397;&#50612;';
 $string['helpdstforusers'] = '각각의 사용자들이 각자의 DST 설정을 사용할 수 있습니까?';
 $string['helpsitemaintenance'] = '업그레이드 및 다른 작업';
 $string['helpstartofweek'] = '일람표에서 주는 어느 날에 시작됩니까?';

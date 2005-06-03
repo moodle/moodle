@@ -69,9 +69,6 @@ $string['surveyname'] = '조사 이름';
 $string['surveysaved'] = '조사가 저장되었음';
 $string['surveytype'] = '조사 유형';
 $string['thanksforanswers'] = '조사에 응답해 주셔서 감사합니다.';
-$string['thischarset'] = 'euc-kr';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = '&#54620;&#44397;&#50612;';
 $string['time'] = '시간';
 $string['viewsurveyresponses'] = 'View $a survey responses';
 

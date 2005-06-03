@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.5 ALPHA (2005043000)
+      // admin.php - created with Moodle 1.5 ALPHA (2005051500)
 
 
 $string['adminseesallevents'] = 'Nakikita ng mga Administrador ang lahat ng okasyon';
@@ -105,8 +105,9 @@ $string['helpweekenddays'] = 'Aling araw ng linggo ang ituturing na \"katapusan 
 $string['importtimezones'] = 'Gawing bago ang kumpletong listahan ng timezone';
 $string['importtimezonescount'] = '$a->count entry ang inangkat mula sa $a->source';
 $string['importtimezonesfailed'] = 'Walang natagpuang source! (Masamang balita)';
-$string['nodstpresetsexist'] = 'Patay ang suportang DST para sa lahat ng user dahil walang itinakdang DST preset.  Maaari kang magtakda ng ilang preset sa pamamagitan ng buton sa ibaba.';
+$string['incompatibleblocks'] = 'Dimagkasundong Block';
 $string['optionalmaintenancemessage'] = 'Opsiyonal na pangmentinang mensahe';
+$string['pleaseregister'] = 'Pakirehistro ang site mo para maalis ang buton na ito';
 $string['sitemaintenance'] = 'Kasalukuyang minementina ang site na ito at hindi muna ito magagamit';
 $string['sitemaintenancemode'] = 'Mode na pangmentina';
 $string['sitemaintenanceoff'] = 'Pinatay ang mode na pangmentina at tumatakbo na ng normal ang site';

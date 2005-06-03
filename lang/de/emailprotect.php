@@ -3,9 +3,6 @@
 
 
 $string['filtername'] = 'E-Mail Sicherung';
-$string['parentlanguage'] = 'en';
-$string['thischarset'] = 'ISO-8859-1';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'ISO-8859-1';
+
 
 ?>

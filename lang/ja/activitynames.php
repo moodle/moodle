@@ -3,8 +3,5 @@
 
 
 $string['filtername'] = '活動名 オートリンク';
-$string['thischarset'] = 'EUC-JP';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Japanese';
 
 ?>

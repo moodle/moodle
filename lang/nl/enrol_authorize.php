@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // enrol_authorize.php - created with Moodle 1.5 ALPHA (2005051500)
+      // enrol_authorize.php - created with Moodle 1.6 development (2005052400)
 
 
 $string['anlogin'] = 'Authorize.net: Login naam';
@@ -8,11 +8,13 @@ $string['anreferer'] = 'Type hier de URL-verwijzing als je dit instelt met je au
 $string['antestmode'] = 'Authorize.net: test transacties';
 $string['antrankey'] = 'Authorize.net: transactiesleutel';
 $string['ccexpire'] = 'Vervaldatum';
+$string['ccexpired'] = 'De kredietkaart is vervallen';
 $string['ccinvalid'] = 'Ongeldig kaartnummer';
 $string['ccno'] = 'Kredietkaartnummer';
 $string['cctype'] = 'Kredietkaarttype';
 $string['ccvv'] = 'CV2';
 $string['ccvvhelp'] = 'Kijk op de achterkant van de kaart (laatste 3 cijfers)';
+$string['chooseone'] = 'Vul één of beide velden in';
 $string['description'] = 'Met de Authorize.net module kun je betaalde cursussen inrichten via CC-providers. Als de prijs voor een vak 0 is, dan krijgen leerlingen de vraag om te betalen niet. Er is een standaardprijs die je hier voor de hele site kunt instellen en er is een instelling om de prijs per vak vast te leggen. De prijs per vak gaat over de standaardprijs van de site.';
 $string['enrolname'] = 'Authorize.net Kredietkaart toegang';
 $string['nameoncard'] = 'Naam op de kaart';

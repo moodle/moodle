@@ -5,8 +5,6 @@
 $string['blockname'] = 'Liens sur les sections';
 $string['jumptocurrenttopic'] = 'Aller au sujet courant';
 $string['jumptocurrentweek'] = 'Aller à la semaine courante';
-$string['parentlanguage'] = 'fr';
-$string['thisdirection'] = 'ltr';
 $string['topics'] = 'Sujets';
 $string['weeks'] = 'Semaines';
 

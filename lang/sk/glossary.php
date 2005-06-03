@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.5 ALPHA (2005051500)
+      // glossary.php - created with Moodle 1.6 development (2005052400)
 
 
 $string['addcomment'] = 'Prida» komentár';
@@ -32,7 +32,7 @@ $string['categoryview'] = 'Prehµadáva» podµa kategórie';
 $string['cnfallowcomments'] = 'Definova», èi bude slovník implicitne akceptova» komentáre na záznamy';
 $string['cnfallowdupentries'] = 'Definova», èi bude slovník implicitne povoµova» duplikované záznamy';
 $string['cnfapprovalstatus'] = 'Implicitne pridanie nového záznamu ¹tudentom';
-$string['cnfcasesensitive'] = 'Definova», èi záznam, ak je prelinkovaný, zohµadòuje pou¾ívanie veµkých a makých písmen';
+$string['cnfcasesensitive'] = 'Definova», èi záznam, ak je prelinkovaný, zohµadòuje pou¾ívanie veµkých a malých písmen';
 $string['cnfdefaulthook'] = 'Ukáza» východiskovú ponuku, ak sa do slovníka vstúpi po prvý krát';
 $string['cnfdefaultmode'] = 'Ukáza» východiskový rámec, ak sa do slovníka vstúpi po prvý krát';
 $string['cnffullmatch'] = 'Definova», èi sa má záznam, ak je prelinkovaný, implicitne rovna» veµkosti písmen, ktoré sú pou¾ité v cieµovom texte ';
@@ -71,7 +71,7 @@ $string['displayformatfullwithauthor'] = 'Kompletný zoznam s autorom';
 $string['displayformatfullwithoutauthor'] = 'Kompletný zoznam bez autora';
 $string['displayformats'] = 'Zobrazi» formáty';
 $string['displayformatssetup'] = 'Nastavenie zobrazenia formátov';
-$string['duplicateentry'] = 'Duplikátny záznam';
+$string['duplicateentry'] = 'Duplicitný záznam';
 $string['editalways'] = 'V¾dy upravi»';
 $string['editcategories'] = 'Upravi» kategórie';
 $string['editentry'] = 'Upravi» komentár';
@@ -131,7 +131,7 @@ $string['noconceptfound'] = '®iaden koncept alebo definícia nebola nájdená.';
 $string['noentries'] = 'V tejto èasti neboli nájdené ¾iadne záznamy';
 $string['noentry'] = 'Nebol nájdený ¾iaden záznam';
 $string['notcategorised'] = 'Nezatriedené';
-$string['numberofentries'] = 'oèet záznamov';
+$string['numberofentries'] = 'Poèet záznamov';
 $string['onebyline'] = '(jeden záznam na jeden riadok)';
 $string['printerfriendly'] = 'Verzia ¹etrná k tlaèi';
 $string['printviewnotallowed'] = 'Náhµad tlaèe nie je dostupný';
@@ -160,7 +160,7 @@ $string['sortbylastupdate'] = 'Podµa dátumu poslednej aktualizácie';
 $string['sortchronogically'] = 'Triedi» chronologicky';
 $string['special'] = '©peciálny';
 $string['standardview'] = 'Prehµadáva» podµa abecedy';
-$string['studentcanpost'] = '©tudenti mô¾u priáva» záznamy';
+$string['studentcanpost'] = '©tudenti mô¾u pridáva» záznamy';
 $string['totalentries'] = 'Celkový poèet záznamov';
 $string['usedynalink'] = 'Automaticky prelinkuj záznamy v slovníku';
 $string['waitingapproval'] = 'Èaká sa na schválenie';

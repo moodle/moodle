@@ -3,7 +3,6 @@
 
 
 $string['filtername'] = 'Protection des courriels';
-$string['parentlanguage'] = 'fr';
-$string['thisdirection'] = 'ltr';
+
 
 ?>
