@@ -1902,7 +1902,7 @@
                 //Iterate over each group
                 foreach ($groups as $group) {
                     //Get record from backup_ids
-                    $data = backup_getid($restore->backup_unique_code,"group",$group->id);
+                    $data = backup_getid($restore->backup_unique_code,"groups",$group->id);
                     //Init variables
                     $create_group = false;
 
@@ -2107,7 +2107,7 @@
                             }
  
                             //We have to recode the groupid field
-                            $group = backup_getid($restore->backup_unique_code,"group",$eve->groupid);
+                            $group = backup_getid($restore->backup_unique_code,"groups",$eve->groupid);
                             if ($group) {
                                 $eve->groupid = $group->new_id;
                             } else {
@@ -4091,7 +4091,7 @@
                     //Get id and from data
                     $group_id = $data["GROUP"]["#"]["ID"]["0"]["#"];
                     //Save to db
-                    $status = backup_putid($this->preferences->backup_unique_code,"group",$group_id,
+                    $status = backup_putid($this->preferences->backup_unique_code,"groups",$group_id,
                                      null,$data);
                     //Create returning info
                     $ret_info->id = $group_id;
