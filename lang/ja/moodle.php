@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 ALPHA (2005051500)
+      // moodle.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['action'] = '操作';
@@ -921,7 +921,7 @@ $string['shortnametaken'] = '省略名は他のコース ( $a ) で使用されています。';
 $string['shortsitename'] = '短いサイト名 ( 例 単語 )';
 $string['show'] = '表示';
 $string['showadvancedsettings'] = '高度な設定を表示';
-$string['showall'] = '$a 全てを表示';
+$string['showall'] = '$a 名全員を表示';
 $string['showallcourses'] = '全てのコースを表示';
 $string['showalltopics'] = '全てのトピックを表示';
 $string['showallusers'] = '全てのユーザを表示';
@@ -930,6 +930,7 @@ $string['showgrades'] = '評定を表示';
 $string['showlistofcourses'] = 'コース一覧を表示';
 $string['showonlytopic'] = 'トピック $a のみ表示';
 $string['showonlyweek'] = '第 $a 週のみ表示';
+$string['showperpage'] = '1ページあたり $a 名を表示';
 $string['showrecent'] = '最新の活動を表示';
 $string['showreports'] = '活動レポートを表示';
 $string['showsettings'] = '設定を表示';
