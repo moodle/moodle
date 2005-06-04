@@ -2155,11 +2155,7 @@ function quiz_category_select_menu($courseid,$published=false,$only_editable=fal
         $publishsql = "or publish=1";
     }
 
-    if (!isadmin()) {
-        $categories = get_records_select("quiz_categories","course=$courseid $publishsql", 'parent, sortorder, name ASC');
-    } else {
-        $categories = get_records_select("quiz_categories", '', 'parent, sortorder, name ASC');
-    }
+    $categories = get_records_select("quiz_categories","course=$courseid $publishsql", 'parent, sortorder, name ASC');
 
     $categories = add_indented_names($categories);
 
