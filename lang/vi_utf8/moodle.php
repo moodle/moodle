@@ -869,6 +869,7 @@ $string['showgrades'] = 'Nhìn thấy các điểm số';
 $string['showlistofcourses'] = 'Hiện danh sách các cua học';
 $string['showonlytopic'] = 'Chỉ hiện chủ đề $a';
 $string['showonlyweek'] = 'Chỉ hiện tuần $a';
+$string['showperpage'] = 'Hiện $a mỗi trang';
 $string['showrecent'] = 'Hiện các hoạt động gần đây';
 $string['showreports'] = 'Hiện các thông báo gần đây';
 $string['showsettings'] = 'Hiện các thiết lập';
