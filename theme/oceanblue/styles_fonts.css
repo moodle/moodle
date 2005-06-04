@@ -177,6 +177,9 @@ table.formtable tbody th {
   text-align: right;
 }
 
+body#admin-blocks table#incompatible td.c0 {
+  font-weight: bold;
+}
 
 /***
  *** Blocks
@@ -450,6 +453,10 @@ body#grade-index .grades .header {
 
 .userinfobox .links {
   font-size: 0.7em;
+}
+
+body#user-index #longtimenosee {
+  font-size: 0.8em;
 }
 
 
