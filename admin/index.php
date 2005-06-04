@@ -144,7 +144,7 @@
             if (empty($_GET['confirmupgrade'])) {
                 print_header($strdatabasechecking, $stradministration, $strdatabasechecking,
                         "", "", false, "&nbsp;", "&nbsp;");
-                notice_yesno(get_string('upgradesure', 'admin', $a->newversion).'<br />'.get_string('upgradesure', 'quiz'), 'index.php?confirmupgrade=yes', 'index.php');
+                notice_yesno(get_string('upgradesure', 'admin', $a->newversion), 'index.php?confirmupgrade=yes', 'index.php');
                 exit;
 
             } else {
