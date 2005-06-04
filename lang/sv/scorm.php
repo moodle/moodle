@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.5 ALPHA (2005043000)
+      // scorm.php - created with Moodle 1.5 Beta (2005052300)
 
 
 $string['asset'] = 'Tillgång';
@@ -11,13 +11,6 @@ $string['browsed'] = 'Genombläddrad';
 $string['browsemode'] = 'Läge för bläddring';
 $string['chooseapacket'] = 'Välj eller uppdatera ett SCORM-paket';
 $string['completed'] = 'Slutfört';
-$string['configframesize'] = 'Det här värdet är storleken (i pixlar) på den översta ramen (som innehåller navigationen) när Du spelar upp ett SCORM-paket-';
-$string['configpopup'] = 'Ska det här alternativet vara aktiverat som standard när Du lägger till ett SCORM-paket som går att visa i ett popup-fönster?';
-$string['configpopupheight'] = 'Vilken höjd ska vara den förinställda standardhöjden på nys popup-fönster?';
-$string['configpopupresizable'] = 'Ska storleken på popup-fönster gå att ändra som standard? ';
-$string['configpopupscrollbars'] = 'Ska popup-fönster gå skrolla som standard?';
-$string['configpopupstatus'] = 'Ska popup-fönster visa statusraden som standard?';
-$string['configpopupwidth'] = 'Vilken bredd ska nys popup-fönster ha som förinställd standard?';
 $string['coursepacket'] = 'Kurspaket';
 $string['coursestruct'] = 'Struktur på kurs';
 $string['datadir'] = 'Fel i filsystemet: det går inte att skapa en datakatalog för kursen';
@@ -30,39 +23,39 @@ $string['errorlogs'] = 'Logg över fel';
 $string['exit'] = 'Avsluta SCORM-kurs';
 $string['expcoll'] = 'Utvidga/Fäll ihop';
 $string['failed'] = 'Det fungerade inte';
+$string['firstaccess'] = 'Första tillfället att använda';
 $string['found'] = 'Manifestet hittades';
 $string['frameheight'] = 'Det här alternativet ställer in höjden på ramen på en SCO';
+$string['framewidth'] = 'Den här inställningen avgör standardbredden på en SCO-ram';
 $string['gradeaverage'] = 'Medelbetyg/omdöme';
 $string['gradehighest'] = 'Högsta betyg/omdöme';
 $string['grademethod'] = 'Metod för betyg/omdömen';
 $string['gradescoes'] = 'Situation angående scoes';
 $string['gradesum'] = 'Summera betyg/omdöme(n)';
 $string['guestsno'] = 'Gäster har inte tillgång till scorm-kurser';
+$string['height'] = 'Höjd';
 $string['incomplete'] = 'Inte komplett';
+$string['lastaccess'] = 'Senaste tillfället att använda';
 $string['missing_attribute'] = 'Saknat attribut $a->attr i taggen $a->tag ';
 $string['missing_tag'] = 'Saknad tagg $a->tag';
 $string['mode'] = 'Läge';
 $string['modulename'] = 'Scorm';
 $string['modulenameplural'] = 'Scorms (flera)';
-$string['newheight'] = 'Standardhöjd på fönster (i pixlar)';
-$string['newresizable'] = 'Tillåt förändring av storlek på fönster';
-$string['newscrollbars'] = 'Tillåt skrollning av fönster';
-$string['newstatus'] = 'Visa statusraden';
-$string['newwidth'] = 'Standardbredd på fönster (i pixlar)';
-$string['newwindow'] = 'Nytt fönster';
-$string['newwindowopen'] = 'Visa det här SCORM-paketet i ett nytt popup-fönster';
 $string['next'] = 'Fortsätt';
 $string['no_attributes'] = 'Taggen $a->tag måste ha attribut';
 $string['no_children'] = 'Taggen $a->tag måste ha barn';
+$string['noactivity'] = 'Inget att rapportera';
 $string['nomanifest'] = 'Kunde inte hitta manifest';
 $string['noreports'] = 'Ingen rapport att visa';
 $string['normal'] = 'Normal';
 $string['not_corr_type'] = 'Felaktig matchning av datatyp för taggen  $a->tag';
 $string['notattempted'] = 'Inget försök';
+$string['organization'] = 'Organisation';
 $string['organizations'] = 'Organisationer';
 $string['packagedir'] = 'filsystemet: det går inte att skapa en katalog för paketet';
 $string['passed'] = 'Genomförd';
 $string['php5'] = 'PHP 5 (DOMXML ursprungligt (native) bibliotek)';
+$string['popup'] = 'Öppna den aktuella SCO i ett nytt fönster';
 $string['position_error'] = '$a->tag taggen kan inte vara \"child\" till $a->parent taggen';
 $string['prev'] = 'Föregående';
 $string['regular'] = 'Normalt manifest';
@@ -74,11 +67,13 @@ $string['syntax'] = 'Syntaxfel';
 $string['tag_error'] = 'Okänd tagg ($a->tag) med detta innehåll: $a->value';
 $string['too_many_attributes'] = 'Taggen $a->tag har för många attribut';
 $string['too_many_children'] = 'Taggen $a->tag har för många barn';
+$string['totaltime'] = 'Tid';
 $string['trackingloose'] = 'VARNING: spårningsdata till detta SCORM-paket kommer att försvinna!';
 $string['validateascorm'] = 'Validera ett SCORM-paket';
 $string['validation'] = 'Resultat av validering';
 $string['validationtype'] = 'Det här preferenssetet använder DOMXML-biblioteket för att validera SCORM Mansifestet om Du inte överger det markerade valet.  ';
 $string['versionwarning'] = 'Den här versionen av manifestet är äldre än 1.3, varning vid $a->tag taggen';
 $string['viewallreports'] = 'Visa rapporter för $a försök';
+$string['width'] = 'Bredd';
 
 ?>

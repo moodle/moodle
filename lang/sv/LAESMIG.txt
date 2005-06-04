@@ -9,6 +9,13 @@ Anders Berggren, IKT-Pedagogen underhÃ¥llit Ã¶versÃ¤ttningen.
 Slut Creative Commons
 ___________________________________________________________________________________________
 
+Log för redigering och komplettering av språkpaketet för svenska i Moodle 1.5 beta
+version 9.0 2005-06-03 
+Anders Berggren andersbe@ikt-pedagogen.se
+
+Översättningen är uppdaterad och nästan komplett.
+___________________________________________________________________________________________
+
 Log fÃ¶r redigering och komplettering av sprÃ¥kpaketet fÃ¶r svenska i Moodle 1.5 alfa
 version 8.0 2005-05-01 
 Anders Berggren andersbe@ikt-pedagogen.se

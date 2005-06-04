@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.5 ALPHA (2005042400)
+      // assignment.php - created with Moodle 1.5 Beta (2005052300)
 
 
 $string['allowresubmit'] = 'Låt användarna skicka om sina bidrag';
@@ -24,6 +24,7 @@ $string['emailteachermail'] = '$a->username har uppdaterat sina inskickade uppgi
  \'$a->assignment\'';
 $string['emailteachermailhtml'] = '$a->username har uppdaterat sina inskickade uppgiftslösningar för <i>\'$a->assignment\'</i><br /><br />De är <a href=\"$a->url\"> tillgängliga på webbplatsen.';
 $string['emailteachers'] = 'Skicka ett e-postmeddelande med information till distanslärarna';
+$string['emptysubmission'] = 'Du har inte skickat in någonting än';
 $string['existingfiledeleted'] = 'Befintlig fil har tagits bort: &a';
 $string['failedupdatefeedback'] = 'Uppdateringen av återkopplingen för det inskickade bidraget av användaren $a fungerade inte';
 $string['feedback'] = 'Återkoppling';
@@ -39,9 +40,11 @@ $string['modulename'] = 'Uppgift';
 $string['modulenameplural'] = 'Uppgifter';
 $string['newsubmissions'] = 'Uppgifterna är inskickade';
 $string['noassignments'] = 'Det finns inga uppgifter ännu.';
+$string['noattempts'] = 'Ingen har försökt lösa den här uppgiften ännu';
 $string['notgradedyet'] = 'Ännu ej bedömd';
 $string['notsubmittedyet'] = 'Ännu inte inskickade uppgifter';
 $string['overwritewarning'] = 'Varning: uppladdning igen kommer att ERSÄTTA Ditt nuvarande redan inskickade bidrag';
+$string['preventlate'] = 'Förhindra att någon skickar in försenade uppgiftslösningar';
 $string['saveallfeedback'] = 'Spara alla återkopplingar';
 $string['submission'] = 'Inskickad uppgift';
 $string['submissionfeedback'] = 'Återkoppling för inskickad uppgift';
