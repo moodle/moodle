@@ -301,7 +301,7 @@ class quiz_report extends quiz_default_report {
     /// Start form
     
             echo '<div id="tablecontainer">';
-            echo '<form id="attemptsform" method="post" action="report.php" onsubmit="var menu = document.getElementById(\'actionmenu\'); return (menu.options[menu.selectedIndex].value == \'delete\' ? \''.$strreallydel.'\' : true);">';
+            echo '<form id="attemptsform" method="post" action="report.php" onsubmit="var menu = document.getElementById(\'menuaction\'); return (menu.options[menu.selectedIndex].value == \'delete\' ? \''.$strreallydel.'\' : true);">';
             echo '<input type="hidden" name="id" value="'.$cm->id.'" />';
             echo '<input type="hidden" name="mode" value="overview" />';
     
@@ -313,15 +313,14 @@ class quiz_report extends quiz_default_report {
     
             echo '<table id="commands">';
             echo '<tr><td>';
-            echo '<a href="javascript:select_all_in(\'DIV\', null, \'tablecontainer\');">'.get_string('selectall', 'quiz').'</a> / ';
-            echo '<a href="javascript:deselect_all_in(\'DIV\', null, \'tablecontainer\');">'.get_string('selectnone', 'quiz').'</a> ';
+            echo '<a href="javascript:select_all_in(\'DIV\',null,\'tablecontainer\');">'.get_string('selectall', 'quiz').'</a> / ';
+            echo '<a href="javascript:deselect_all_in(\'DIV\',null,\'tablecontainer\');">'.get_string('selectnone', 'quiz').'</a> ';
             echo '&nbsp;&nbsp;';
             $options = array('delete' => get_string('delete'));
-            $menu = str_replace('<select', '<select id="actionmenu"', choose_from_menu($options, 'action', '', get_string('withselected', 'quiz'), 'if(this.selectedIndex > 0) submitFormById(\'attemptsform\');', '', true));
-            echo $menu;
-            echo '<noscript id="noscriptactionmenu" style="display: inline;">';
+            echo choose_from_menu($options, 'action', '', get_string('withselected', 'quiz'), 'if(this.selectedIndex > 0) submitFormById(\'attemptsform\');', '', true);
+            echo '<noscript id="noscriptmenuaction" style="display: inline;">';
             echo '<input type="submit" value="'.get_string('go').'" /></noscript>';
-            echo '<script type="text/javascript">'."\n<!--\n".'document.getElementById("noscriptactionmenu").style.display = "none";'."\n-->\n".'</script>';
+            echo '<script type="text/javascript">'."\n<!--\n".'document.getElementById("noscriptmenuaction").style.display = "none";'."\n-->\n".'</script>';
             echo '</td></tr></table>';
     
     /// Close form
