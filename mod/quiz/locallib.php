@@ -1465,6 +1465,78 @@ function quiz_extract_responses($questions, $responses, $defaultevent) {
 }
 
 
+
+
+function quiz_regrade_question_in_attempt($question, $attempt, $quiz=false, $verbose=false) {
+    if (!$quiz &&  !($quiz = get_record('quiz', 'id', $attempt->quiz))) {
+        $verbose && notify("Regrading of quiz #{$attempt->quiz} failed; " .
+         "Couldn't load quiz record from database!");
+        return false;
+    }
+
+    if ($states = get_records_select('quiz_states',
+     "attempt = '{$attempt->id}' ".
+     "AND question = '{$question->id}'",
+     'seq_number ASC')) {
+        $states = array_values($states);
+        $attempt->sumgrades -= $states[count($states)-1]->grade;
+
+        // Initialise the replaystate
+        quiz_restore_state($question, $states[0]);
+        $states[0]->sumpenalty = 0.0;
+        $replaystate = clone($states[0]);
+        $replaystate->last_graded = clone($states[0]);
+        if ($verbose) {
+            $a = new stdClass;
+            $a->attempt = $attempt->id;
+            $a->statecount = count($states);
+            print_string('regradeattempt', 'quiz', $a);
+            echo " . ";
+        }
+        $a->changed = 0;
+        $oldgrade = 0;
+        for($j = 1; $j < count($states); $j++) {
+            quiz_restore_state($question, $states[$j]);
+            $action = new stdClass;
+            $action->responses = $states[$j]->responses;
+            $action->timestamp = $states[$j]->timestamp;
+
+            // Close the last state of a finished attempt
+            if (((count($states) - 1) === $j) && ($attempt->timefinish > 0)) {
+                $action->event = QUIZ_EVENTCLOSE;
+
+            // Grade instead of closing, quiz_process_responses will then
+            // work out whether to close it
+            } else if (QUIZ_EVENTCLOSE == $states[$j]->event) {
+                $action->event = QUIZ_EVENTGRADE;
+
+            // By default take the event that was saved in the database
+            } else {
+                $action->event = $states[$j]->event;
+            }
+            // Reprocess (regrade) responses
+            if (!quiz_process_responses($question, $replaystate, $action, $quiz,
+             $attempt)) {
+                $verbose && notify("Couldn't regrade state #{$state->id}!");
+            }
+
+            if ((float)$replaystate->raw_grade != (float)$states[$j]->raw_grade) {
+                $a->changed++;
+            }
+
+            $verbose && print(". "); // Progress indicator
+            $replaystate->id = $states[$j]->id;
+            update_record('quiz_states', $replaystate);
+        }
+        update_record('quiz_attempts', $attempt);
+        quiz_save_best_grade($quiz, $attempt->userid);
+        $verbose && print_string('regradedone', 'quiz', $a);
+        $verbose && print("<br />");
+        return true;
+    }
+    return true;
+}
+
 /**
 * For a given question instance we walk the complete history of states for
 * each user and recalculate the grades as we go along.
@@ -1532,6 +1604,8 @@ function quiz_regrade_question_in_quizzes($question, $quizlist) {
                     quiz_restore_state($question, $states[$j]);
                     $action = new stdClass;
                     $action->responses = $states[$j]->responses;
+                    $action->timestamp = $states[$j]->timestamp;
+
                     // Close the last state of a finished attempt
                     if (((count($states) - 1) === $j) && ($attempts[$i]->timefinish > 0)) {
                         $action->event = QUIZ_EVENTCLOSE;

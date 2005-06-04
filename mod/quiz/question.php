@@ -256,7 +256,7 @@
                             set_field('quiz_newest_states', 'questionid', $question->id, 'attemptid', $attempt->id, 'questionid', $oldquestionid);
 
                         }
-                        
+
                         // Now do anything question-type specific that is required to replace the question
                         // For example questions that use the quiz_answers table to hold part of their question will
                         // have to recode the answer ids in the states
@@ -272,11 +272,12 @@
         }
 
         if (empty($question->errors) && $QUIZ_QTYPES[$qtype]->finished_edit_wizard($form)) {
+            // DISABLED AUTOMATIC REGRADING
             // Automagically regrade all attempts (and states) in the affected quizzes
-            if (!empty($replaceinquiz)) {
-                $QUIZ_QTYPES[$question->qtype]->get_question_options($question);
-                quiz_regrade_question_in_quizzes($question, $replaceinquiz);
-            }
+            //if (!empty($replaceinquiz)) {
+            //    $QUIZ_QTYPES[$question->qtype]->get_question_options($question);
+            //    quiz_regrade_question_in_quizzes($question, $replaceinquiz);
+            //}
             redirect("edit.php");
         }
     }
