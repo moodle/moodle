@@ -82,14 +82,14 @@ $string['configslasharguments'] = 'Ang mga file (larawan, inaplowd atbp.) ay ipi
 $string['configsmtphosts'] = 'Ibigay ang buong pangalan ng isa o mahigit pang lokal na SMTP server na dapat gamitin ng Moodle upang makapagpadala ng liham (hal \'liham.a.com\' o \'liham.a.com;liham.b.com\').  Kung pabayaan mo itong blangko, gagamitin ng Moodle ang PHP default na paraan ng pagpapadala ng liham.';
 $string['configsmtpuser'] = 'Kung nagtakda ka ng SMTP server sa itaas at kailangan ng server ng authentication, ilagay ang username at password dito.';
 $string['configteacherassignteachers'] = 'Dapat bang pahintulutan ang mga ordinaryong gurò na magtakda ng ibang gurò sa kursong pinagtuturuan nila? Kung \'Hindi\', tanging ang mga tagalikha ng kurso at admin ang maaaring magtakda ng gurò.';
-$string['configthemelist'] = 'Pabayaan itong blangko upang mapahintulutan ang paggamit ng anumang tanggap na tema.  Kung nais mong paikliin ang menu ng tema, maaari kang magtakda dito ng listahan ng pangalan na pinaghiwalay ng kuwit.  Halimbawa:  standard,orangewhite';
+$string['configthemelist'] = 'Pabayaan itong blangko upang mapahintulutan ang paggamit ng anumang tanggap na tema.  Kung nais mong paikliin ang menu ng tema, maaari kang magtakda dito ng listahan ng pangalan na pinaghiwalay ng kuwit (Huwag gagamit ng mga espasyo!).  Halimbawa:  standard,orangewhite';
 $string['configtimezone'] = 'Maaari mong itakda ang default na timezone dito.  DEFAULT timezone lamang ito para sa padidispley ng mga petsa - maaari itong baguhin ng bawat user sa pamamagitan ng pagtakda ng sarili nila sa kanilang pagkakakilanlan. Ang \"Oras ng server\" dito ay gagawing default ng Moodle ang setting ng operating system ng server, nguni\'t ang \"Oras ng server\" sa pagkakakilanlan ng user ay gagawing default ng user ang kaayusan ng timezone na ito.';
 $string['configunzip'] = 'Isulat ang lokasyon ng unzip program mo (pang-Unix lamang, opsiyonal). Kung itinakda, gagamitin ito sa paglalabas ng laman ng mga zip archive sa server. Kung pabayaan mo itong blangko, gagamitin ng Moodle ang mga internal na routine.';
 $string['configvariables'] = 'Mga Baryabol';
 $string['configwarning'] = 'Mag-ingat sa pagbabago ng mga kaayusang ito - ang dikilalang halaga ay maaaring magdulot ng problema.';
 $string['configzip'] = 'Isulat ang lokasyon ng zip program mo (pang-Unix lamang, opsiyonal).  Kung itinakda, gagamitin ito sa paglikha ng zip archive sa server.  Kung pabayaan mo itong blangko, gagamitin ng Moodle ang mga internal na routine.';
 $string['confirmation'] = 'Kumpirmasyon';
-$string['cronwarning'] = 'Ang <a href=\"cron.php\">cron.php maintenance script</a> ay hindi pinatakbo sa loob ng 24 na oras. <br />Ipinapaliwanag ng <a href=\"../doc/?frame=install.html&#8834;=cron\">dokumentasyon sa pag-iinstol</a>kung paano mo mapapatakbo ng auwtomatiko ito.';
+$string['cronwarning'] = 'Ang <a href=\"cron.php\">cron.php maintenance script</a> ay hindi pinatakbo sa loob ng 24 na oras. <br />Ipinapaliwanag ng <a href=\"../doc/?frame=install.html&sub=cron\">dokumentasyon sa pag-iinstol</a>kung paano mo mapapatakbo ng auwtomatiko ito.';
 $string['edithelpdocs'] = 'Iedit ang mga tulong na dokumento';
 $string['editstrings'] = 'Iedit ang mga string';
 $string['filterall'] = 'Ifilter ang lahat ng string';
