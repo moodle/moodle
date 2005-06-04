@@ -97,8 +97,11 @@ class quiz_random_qtype extends quiz_default_questiontype {
                 return true;
             }
         }
-        notify(get_string('toomanyrandom', 'quiz', $question->category));
-        return false;
+        $question->questiontext = '<span class="notifyproblem">'.
+         get_string('toomanyrandom', 'quiz', $question->category). '</span>';
+        $question->qtype = DESCRIPTION;
+        $state->responses = array('' => '');
+        return true;
     }
 
     function restore_session_and_responses(&$question, &$state) {
