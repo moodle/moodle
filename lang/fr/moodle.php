@@ -909,6 +909,7 @@ $string['showgrades'] = 'Afficher les notes';
 $string['showlistofcourses'] = 'Afficher la liste des cours';
 $string['showonlytopic'] = 'Afficher uniquement le thème $a';
 $string['showonlyweek'] = 'Afficher uniquement la semaine $a';
+$string['showperpage'] = 'Afficher $a par page';
 $string['showrecent'] = 'Afficher les événements récents';
 $string['showreports'] = 'Afficher les rapports d\'activités';
 $string['showsettings'] = 'Afficher les réglages';
