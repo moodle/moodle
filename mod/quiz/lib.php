@@ -299,8 +299,8 @@ function quiz_delete_course($course, $feedback=true) {
                 //Create a container category in SITEID course if it doesn't exist
                 if (!$concatid) {
                     $concat->course = SITEID;
-                    if (!$course->shortname) {
-                        $course->shortname = $course->id .'('.get_string('deleted').')';
+                    if (!isset($course->shortname)) {
+                        $course->shortname = 'id=' . $course->id;
                     }
                     $concat->name = get_string('savedfromdeletedcourse', 'quiz', $course->shortname);
                     $concat->info = $concat->name;
