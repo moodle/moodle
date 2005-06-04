@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.5 ALPHA (2005042300)
+      // admin.php - created with Moodle 1.5 Beta + (2005060201)
 
 
 $string['adminseesallevents'] = '管理员看到所有事件';
@@ -105,8 +105,9 @@ $string['helpweekenddays'] = '一周中的哪天是“周末”并用不同的�
 $string['importtimezones'] = '更新全部时区';
 $string['importtimezonescount'] = '从{$a-source}中导入{$a->count}项';
 $string['importtimezonesfailed'] = '没找到源！(坏消息)';
-$string['nodstpresetsexist'] = '由于并未定义任何夏时制预设信息，夏时制功能对所有用户都不可用。您可以点击下面的按钮定义一些预设信息。';
+$string['incompatibleblocks'] = '不兼容的版块';
 $string['optionalmaintenancemessage'] = '可选的维护信息';
+$string['pleaseregister'] = '要删除此按钮，请注册您的站点。';
 $string['sitemaintenance'] = '这个站点目前正在维护中，暂时不能访问。';
 $string['sitemaintenancemode'] = '维护模式';
 $string['sitemaintenanceoff'] = '维护模式已经关闭了，现在站点已经重新正常运行。';
