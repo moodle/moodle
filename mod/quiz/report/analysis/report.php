@@ -1,4 +1,5 @@
 <?php  // $Id$
+/// Item analysis displays a table of quiz questions and their performance 
 
     require_once($CFG->libdir.'/tablelib.php');
 
@@ -8,7 +9,7 @@ class quiz_report extends quiz_default_report {
 
     function display($quiz, $cm, $course) {     /// This function just displays the report
         global $CFG, $SESSION, $db, $QUIZ_QTYPES;
-
+        $strnoquiz = get_string('noquiz','quiz');
         $strnoattempts = get_string('noattempts','quiz');
         
         if (!$quiz->questions) {
@@ -338,27 +339,26 @@ class quiz_report extends quiz_default_report {
 
 
     function print_options_form($quiz, $cm, $attempts, $lowlimit=0, $pagesize=10) {
-        
         global $CFG, $USER;
-        
         echo '<div class="controls">';
         echo '<form id="options" name="options" action="report.php" method="post">';
         echo '<p class="quiz-report-options">'.get_string('analysisoptions', 'quiz').': </p>';
         echo '<input type="hidden" name="id" value="'.$cm->id.'" />';
         echo '<input type="hidden" name="q" value="'.$quiz->id.'" />';
         echo '<input type="hidden" name="mode" value="analysis" />';
-        echo '<table id="analysis-options" align="center"><tr>';
-        echo '<td><label for="attemptselection">'.get_string('attemptselection', 'quiz_analysis').'</label></td><td>';
+        echo '<table id="analysis-options" align="center">';
+        echo '<tr align="left"><td><label for="attemptselection">'.get_string('attemptselection', 'quiz_analysis').'</label></td><td>';
         $options = array ( QUIZ_ALLATTEMPTS     => get_string("attemptsall", 'quiz_analysis'),
                            QUIZ_HIGHESTATTEMPT => get_string("attemptshighest", 'quiz_analysis'),
                            QUIZ_FIRSTATTEMPT => get_string("attemptsfirst", 'quiz_analysis'),
                            QUIZ_LASTATTEMPT  => get_string("attemptslast", 'quiz_analysis'));
         choose_from_menu($options, "attemptselection", "$attempts", "");
-        echo '</td><tr>';
+        echo '</td></tr>';
+        echo '<tr align="left">';
         echo '<td><label for="lowmarklimit">'.get_string('lowmarkslimit', 'quiz_analysis').'</label></td>';
         echo '<td><input type="text" id="lowmarklimit" name="lowmarklimit" size="1" value="'.$lowlimit.'" /> % </td>';
         echo '</tr>';
-        echo '<tr>';
+        echo '<tr align="left">';
         echo '<td><label for="pagesize">'.get_string('pagesize', 'quiz_analysis').'</label></td>';
         echo '<td><input type="text" id="pagesize" name="pagesize" size="1" value="'.$pagesize.'" /></td>';
         echo '</tr>';
@@ -417,18 +417,15 @@ class quiz_report extends quiz_default_report {
             }
         }
         
-        //$sumx = array_reduce($qscores, "sumx");
-        
-        
         $n = count($qstats);
         $sumx = array_reduce($qstats, "stats_sumx");
-        $sumg = $sumx[0];
-        $sumq = $sumx[1];
+        $sumg = $sumx->x;
+        $sumq = $sumx->y;
         $sumx2 = array_reduce($qstats, "stats_sumx2");
-        $sumg2 = $sumx2[0];
-        $sumq2 = $sumx2[1];
+        $sumg2 = $sumx2->x;
+        $sumq2 = $sumx2->y;
         $sumxy = array_reduce($qstats, "stats_sumxy");
-        $sumgq = $sumxy[0];
+        $sumgq = $sumxy;
         
         $q['count'] = $n;
         $q['facility'] = $sumq/$n;
@@ -535,17 +532,12 @@ class quiz_report extends quiz_default_report {
         global $CFG;
         require_once("$CFG->libdir/phpdocwriter/lib/include.php");
         import('phpdocwriter.pdw_document');
-        
-        $filename .= ".sxw";
-
         header("Content-Type: application/download\n");   
-        header("Content-Disposition: attachment; filename=\"$filename\"");
+        header("Content-Disposition: attachment; filename=\"$filename.sxw\"");
         header("Expires: 0");
         header("Cache-Control: must-revalidate,post-check=0,pre-check=0");
         header("Pragma: public");
         header("Content-Transfer-Encoding: binary");
-
-        $filename = substr($filename, 0, -4);    
 
         $sxw = new pdw_document;
         $sxw->SetFileName($filename);
@@ -666,19 +658,19 @@ define('QUIZ_FIRSTATTEMPT', 2);
 define('QUIZ_LASTATTEMPT', 3);
 
 function stats_sumx($sum, $data){
-    $sum[0] += $data[0];
-    $sum[1] += $data[1];
+    $sum->x += $data[0];
+    $sum->y += $data[1];
     return $sum;
 }       
 
 function stats_sumx2($sum, $data){
-    $sum[0] += $data[0]*$data[0];
-    $sum[1] += $data[1]*$data[1];
+    $sum->x += $data[0]*$data[0];
+    $sum->y += $data[1]*$data[1];
     return $sum;
 }    
 
 function stats_sumxy($sum, $data){
-    $sum[0] += $data[0]*$data[1];
+    $sum += $data[0]*$data[1];
     return $sum;
 }
 
