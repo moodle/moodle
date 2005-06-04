@@ -204,6 +204,14 @@
     $pagequestions = explode(',', $pagelist);
     $number = quiz_first_questionnumber($attempt->layout, $pagelist);
     foreach ($pagequestions as $i) {
+        if (!isset($questions[$i])) {
+            print_simple_box_start('center', '90%');
+            echo '<b><font size="+1">' . $number . '</font></b><br />';
+            notify(get_string('errormissingquestion', 'quiz', $i));
+            print_simple_box_end();
+            $number++; // Just guessing that the missing question would have lenght 1
+            continue;
+        }
         $options = quiz_get_reviewoptions($quiz, $attempt, $isteacher);
         $options->validation = QUIZ_EVENTVALIDATE === $states[$i]->event;
         $options->history = ($isteacher and !$attempt->preview) ? 'all' : 'graded';

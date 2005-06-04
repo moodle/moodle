@@ -131,6 +131,7 @@ $string['editingshortanswer'] = 'Editing a Short-Answer question';
 $string['editingtruefalse'] = 'Editing a True/False question';
 $string['editquestions'] = 'Edit questions';
 $string['editquiz'] = 'Edit Quiz';
+$string['errormissingquestion'] = 'Error: The system is missing the question with id $a';
 $string['errornotnumbers'] = 'Error - answers must be numeric';
 $string['errorsdetected'] = '$a error(s) detected';
 $string['event1'] = 'Autosave';

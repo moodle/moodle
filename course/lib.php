@@ -1814,7 +1814,7 @@ function print_groupmode_setting($form, $course=NULL) {
     if ($course->groupmode or (!$course->groupmodeforce)) {
         echo '<tr valign="top">';
         echo '<td align="right"><b>'.get_string('groupmode').':</b></td>';
-        echo '<td>';
+        echo '<td align="left">';
         unset($choices);
         $choices[NOGROUPS] = get_string('groupsnone');
         $choices[SEPARATEGROUPS] = get_string('groupsseparate');
@@ -1851,7 +1851,7 @@ function print_visible_setting($form, $course=NULL) {
     
     echo '<tr valign="top">';
     echo '<td align="right"><b>'.get_string('visibletostudents','',moodle_strtolower($course->students)).':</b></td>';
-    echo '<td>';
+    echo '<td align="left">';
     unset($choices);
     $choices[1] = get_string('show');
     $choices[0] = get_string('hide');

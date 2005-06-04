@@ -1,41 +1,8 @@
 
-.feedbacktext {
-  display:block;
-}
 
 .quiz-report-title {
   text-align: center;
   font-weight : bold;
-}
-
-body#mod-quiz-attempts table#attempts,
-body#mod-quiz-attempts table#commands,
-body#mod-quiz-report table#commands,
-body#mod-quiz-report table#itemanalysis
-{
-  width: 80%;
-  margin: auto;
-}
-body#mod-quiz-attempts table#attempts {
-  margin: 20px auto;
-}
-body#mod-quiz-attempts table#attempts .header,
-body#mod-quiz-attempts table#attempts .cell
-{
-  padding: 4px;
-}
-body#mod-quiz-attempts table#attempts .header .commands {
-  display: inline;
-}
-body#mod-quiz-attempts table#attempts .picture {
-  width: 40px;
-}
-body#mod-quiz-attempts table#attempts td {
-  border-left-width: 1px;
-  border-right-width: 1px;
-  border-left-style: solid;
-  border-right-style: solid;
-  vertical-align: bottom;
 }
 
 .grade {
@@ -45,29 +12,6 @@ body#mod-quiz-attempts table#attempts td {
 .gradingdetails {
   font-size: small;
 }
-.feedbacktext {
-  text-align:right;
-}
-body#mod-quiz-attempts table#attempts .header {
-  text-align: left;
-}
-body#mod-quiz-attempts table#attempts .picture {
-  text-align: center !important;
-}
-body#mod-quiz-attempts .controls {
-  text-align: center;
-}
-
-
-
-
-body#mod-quiz-attempts table#attempts td {
-  border-color: #dddddd;
-}
-body#mod-quiz-attempts table#attempts .r1 {
-  background-color: #eeeeee;
-}
-
 
 
 body#mod-quiz-report table#itemanalysis {
@@ -111,11 +55,3 @@ body#mod-quiz-report table#itemanalysis .qname {
 }
 
 
-
-body#mod-quiz-report .controls {
-  text-align: center;
-}
-
-.editorhelptext {
-  font-size:0.7em;
-}

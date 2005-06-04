@@ -1356,10 +1356,12 @@ body#mod-forum-search .introcontent {
 
 .feedbacktext {
   display:block;
+  text-align:right;
 }
 
 body#mod-quiz-report table#attempts,
-body#mod-quiz-report table#commands
+body#mod-quiz-report table#commands,
+body#mod-quiz-report table#itemanalysis
 {
   width: 80%;
   margin: auto;
@@ -1383,9 +1385,7 @@ body#mod-quiz-report table#attempts td {
   border-right-width: 1px;
   border-left-style: solid;
   border-right-style: solid;
-}
-.feedbacktext {
-  text-align:right;
+  vertical-align: bottom;
 }
 body#mod-quiz-report table#attempts .header {
   text-align: left;

@@ -119,7 +119,7 @@
         $usercount = count_records_select('quiz_attempts', "quiz = '$quiz->id' AND preview = '0'", 'COUNT(DISTINCT userid)');
         $strusers  = $course->students;
 
-        notify("<a href=\"attempts.php?id=$cm->id\">$strviewallanswers ($usercount $strusers)</a>");
+        notify("<a href=\"report.php?mode=overview&amp;id=$cm->id\">$strviewallanswers ($usercount $strusers)</a>");
         print_footer($course);
         exit;
     }

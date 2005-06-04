@@ -408,7 +408,7 @@ if (self.name == 'editquestion') {
         if (! $cm = get_coursemodule_from_instance("quiz", $modform->instance, $course->id)) {
             error("Course Module ID was incorrect");
         }
-        notify("$strattemptsexist<br /><a href=\"attempts.php?id=$cm->id\">$strviewallanswers ($usercount $strusers)</a>");
+        notify("$strattemptsexist<br /><a href=\"report.php?mode=overview&amp;id=$cm->id\">$strviewallanswers ($usercount $strusers)</a>");
 
         echo "<center>\n";
         echo "<form target=\"_parent\" method=\"get\" action=\"$CFG->wwwroot/mod/quiz/edit.php\">\n";

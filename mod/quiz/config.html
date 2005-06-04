@@ -390,12 +390,15 @@
     if ($table_created) {
         echo '</table></td></tr>';
     }
+    if ($submitbutton) {
 ?>
 <tr>
   <td colspan="3" align="center">
     <input type="submit" value="<?php print_string("savechanges") ?>" />
   </td>
 </tr>
+<?php } ?>
+
 </table>
 
 </form>

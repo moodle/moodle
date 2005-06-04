@@ -8,7 +8,7 @@
     optional_variable($id);    // Course Module ID, or
     optional_variable($q);     // quiz ID
 
-    optional_variable($mode, "simplestat");        // Report mode
+    optional_variable($mode, "overview");        // Report mode
 
     if ($id) {
         if (! $cm = get_record("course_modules", "id", $id)) {
@@ -57,26 +57,6 @@
     }
 
     add_to_log($course->id, "quiz", "report", "report.php?id=$cm->id", "$quiz->id", "$cm->id");
-
-
-/* Code moved into each plugin report.php 
-/// Define some strings
-
-    $strquizzes = get_string("modulenameplural", "quiz");
-    $strquiz  = get_string("modulename", "quiz");
-
-/// Print the page header
-
-    print_header_simple(format_string($quiz->name), "",
-                 "<a href=\"index.php?id=$course->id\">$strquizzes</a>
-                  -> ".format_string($quiz->name),
-                 "", "", true, update_module_button($cm->id, $course->id, $strquiz), navmenu($course, $cm));
-
-/// Print the tabs
-
-    $currenttab = 'reports';
-    include('tabs.php');
-*/
 
 /// Open the selected quiz report and display it
 
