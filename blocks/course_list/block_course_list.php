@@ -79,7 +79,7 @@ class block_course_list extends block_list {
                     $this->content->icons = array();
                     $this->content->footer = get_string('nocoursesyet').'<br /><br />';
                     if (iscreator()) {
-                        $this->content .= '<a href="'.$CFG->wwwroot.'/course/edit.php?category='.$category->id.'">'.get_string("addnewcourse").'</a>...';
+                        $this->content->footer .= '<a href="'.$CFG->wwwroot.'/course/edit.php?category='.$category->id.'">'.get_string("addnewcourse").'</a>...';
                     }
                 }
                 $this->title = get_string('courses');
