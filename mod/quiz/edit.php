@@ -80,9 +80,8 @@
         add_to_log($courseid, 'quiz', 'editquestions', "index.php?id=$courseid");
 
     } else {
-        // no quiz or course was specified so we need to use the stored modform
-        if (!isset($SESSION->modform)) { // we will get here after editing a question in
-            // a popup window. So close window automatically.
+        // we might get here after editing a question in
+        // a popup window. So close window automatically.
 ?>
 <script type="text/javascript">
 <!--
@@ -95,9 +94,12 @@ if (self.name == 'editquestion') {
 <?php notify(get_string('pleaseclose', 'quiz')); ?>
 </noscript>
 <?php
+        // no quiz or course was specified so we need to use the stored modform
+        if (isset($SESSION->modform)) { 
+            $modform = $SESSION->modform;
+        } else {
             exit;
         }
-        $modform = $SESSION->modform;
     }
 
     if (! $course = get_record("course", "id", $modform->course)) {
@@ -341,6 +343,8 @@ if (self.name == 'editquestion') {
 
     if (isset($_REQUEST['cat'])) { /// coming from category selection drop-down menu
         $modform->category = $cat;
+        $page = 0;
+        $modform->page = 0;
     }
 
     if(isset($_REQUEST['recurse'])) {
@@ -404,7 +408,7 @@ if (self.name == 'editquestion') {
         if (! $cm = get_coursemodule_from_instance("quiz", $modform->instance, $course->id)) {
             error("Course Module ID was incorrect");
         }
-        notify("$strattemptsexist<br /><a href=\"attempts.php?id=$cm->id\">$strviewallanswers ($usercount $strusers)</a>");
+        notify("$strattemptsexist<br /><a href=\"report.php?mode=overview&amp;id=$cm->id\">$strviewallanswers ($usercount $strusers)</a>");
 
         echo "<center>\n";
         echo "<form target=\"_parent\" method=\"get\" action=\"$CFG->wwwroot/mod/quiz/edit.php\">\n";

@@ -22,13 +22,13 @@
         error("No such attempt ID exists");
     }
     if (! $quiz = get_record("quiz", "id", $attempt->quiz)) {
-        error("Course module is incorrect");
+        error("The quiz with id $attempt->quiz belonging to attempt $attempt is missing");
     }
     if (! $course = get_record("course", "id", $quiz->course)) {
-        error("Course is misconfigured");
+        error("The course with id $quiz->course that the quiz with id $quiz->id belongs to is missing");
     }
     if (! $cm = get_coursemodule_from_instance("quiz", $quiz->id, $course->id)) {
-        error("Course Module ID was incorrect");
+        error("The course module for the quiz with id $quiz->id is missing");
     }
 
     if (!count_records('quiz_newest_states', 'attemptid', $attempt->id)) {
@@ -47,18 +47,18 @@
         // If not even responses are to be shown in review then we
         // don't allow any review
         if (!($quiz->review & QUIZ_REVIEW_RESPONSES)) {
-            error(get_string("noreview", "quiz"));
+            redirect('view.php?q='.$quiz->id);
         }
         if ((time() - $attempt->timefinish) > 120) { // always allow review right after attempt
             if (time() < $quiz->timeclose and !($quiz->review & QUIZ_REVIEW_OPEN)) {
-                error(get_string("noreviewuntil", "quiz", userdate($quiz->timeclose)));
+                redirect('view.php?q='.$quiz->id, get_string("noreviewuntil", "quiz", userdate($quiz->timeclose)));
             }
             if (time() >= $quiz->timeclose and !($quiz->review & QUIZ_REVIEW_CLOSED)) {
-                error(get_string("noreview", "quiz"));
+                redirect('view.php?q='.$quiz->id, get_string("noreview", "quiz"));
             }
         }
         if ($attempt->userid != $USER->id) {
-            error("This is not your attempt!");
+            error("This is not your attempt!", 'view.php?q='.$quiz->id);
         }
     }
 
@@ -204,6 +204,14 @@
     $pagequestions = explode(',', $pagelist);
     $number = quiz_first_questionnumber($attempt->layout, $pagelist);
     foreach ($pagequestions as $i) {
+        if (!isset($questions[$i])) {
+            print_simple_box_start('center', '90%');
+            echo '<b><font size="+1">' . $number . '</font></b><br />';
+            notify(get_string('errormissingquestion', 'quiz', $i));
+            print_simple_box_end();
+            $number++; // Just guessing that the missing question would have lenght 1
+            continue;
+        }
         $options = quiz_get_reviewoptions($quiz, $attempt, $isteacher);
         $options->validation = QUIZ_EVENTVALIDATE === $states[$i]->event;
         $options->history = ($isteacher and !$attempt->preview) ? 'all' : 'graded';

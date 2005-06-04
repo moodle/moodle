@@ -14,7 +14,7 @@
 
     if ($id) {
         if (! $cm = get_record("course_modules", "id", $id)) {
-            error("Course Module ID was incorrect");
+            error("There is no coursemodule with id $id");
         }
 
         if (! $course = get_record("course", "id", $cm->course)) {
@@ -22,18 +22,18 @@
         }
 
         if (! $quiz = get_record("quiz", "id", $cm->instance)) {
-            error("Course module is incorrect");
+            error("The quiz with id $cm->instance corresponding to this coursemodule $id is missing");
         }
 
     } else {
         if (! $quiz = get_record("quiz", "id", $q)) {
-            error("Course module is incorrect");
+            error("There is no quiz with id $q");
         }
         if (! $course = get_record("course", "id", $quiz->course)) {
-            error("Course is misconfigured");
+            error("The course with id $quiz->course that the quiz with id $q belongs to is missing");
         }
         if (! $cm = get_coursemodule_from_instance("quiz", $quiz->id, $course->id)) {
-            error("Course Module ID was incorrect");
+            error("The course module for the quiz with id $q is missing");
         }
     }
 
@@ -119,7 +119,7 @@
         $usercount = count_records_select('quiz_attempts', "quiz = '$quiz->id' AND preview = '0'", 'COUNT(DISTINCT userid)');
         $strusers  = $course->students;
 
-        notify("<a href=\"attempts.php?id=$cm->id\">$strviewallanswers ($usercount $strusers)</a>");
+        notify("<a href=\"report.php?mode=overview&amp;id=$cm->id\">$strviewallanswers ($usercount $strusers)</a>");
         print_footer($course);
         exit;
     }

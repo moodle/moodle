@@ -9,7 +9,7 @@ class quiz_report extends quiz_default_report {
 
     function display($quiz, $cm, $course) {     /// This function just displays the report
         global $CFG, $SESSION, $db, $QUIZ_QTYPES;
-        $strnoquiz = get_string('noquiz','quiz');
+
         $strnoattempts = get_string('noattempts','quiz');
         
         if (!$quiz->questions) {
@@ -39,7 +39,7 @@ class quiz_report extends quiz_default_report {
             return true;
         }
         
-        // set tTable and Analysis stats options
+        // set Table and Analysis stats options
         if(!isset($SESSION->quiz_analysis_table)) {
             $SESSION->quiz_analysis_table = array('attemptselection' => 0, 'lowmarklimit' => 0, 'pagesize' => 10);
         }
@@ -343,7 +343,7 @@ class quiz_report extends quiz_default_report {
         global $CFG, $USER;
         
         echo '<div class="controls">';
-        echo '<form id="options" name="options" method="report.php" >';
+        echo '<form id="options" name="options" action="report.php" method="post">';
         echo '<p class="quiz-report-options">'.get_string('analysisoptions', 'quiz').': </p>';
         echo '<input type="hidden" name="id" value="'.$cm->id.'" />';
         echo '<input type="hidden" name="q" value="'.$quiz->id.'" />';

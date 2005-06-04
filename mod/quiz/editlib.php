@@ -525,10 +525,15 @@ function quiz_print_cat_question_list($course, $categoryid, $quizselected=true,
     }
 
     if (!$questions = get_records_select('quiz_questions', "category IN ($categorylist) AND parent = '0' $showhidden", 'qtype, name ASC', '*', $page*$perpage, $perpage)) {
-        echo "<p align=\"center\">";
-        print_string("noquestions", "quiz");
-        echo "</p>";
-        return;
+        // There are no questions on the requested page.
+        $page = 0;
+        if (!$questions = get_records_select('quiz_questions', "category IN ($categorylist) AND parent = '0' $showhidden", 'qtype, name ASC', '*', 0, $perpage)) {
+            // There are no questions at all
+            echo "<p align=\"center\">";
+            print_string("noquestions", "quiz");
+            echo "</p>";
+            return;
+        }
     }
 
     print_paging_bar($totalnumber, $page, $perpage,

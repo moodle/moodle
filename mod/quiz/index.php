@@ -107,7 +107,7 @@
             if ($usercount = count_records_select('quiz_attempts', "quiz = '$quiz->id' AND preview = '0'", 'COUNT(DISTINCT userid)')) {
                 $attemptcount = count_records('quiz_attempts', 'quiz', $quiz->id, 'preview', 0);
                 $strviewallreports  = get_string('viewallreports', 'quiz', $attemptcount);
-                $gradecol = "<a href=\"attempts.php?q=$quiz->id\">$strviewallreports ($usercount $strusers)</a>";
+                $gradecol = "<a href=\"report.php?mode=overview&amp;q=$quiz->id\">$strviewallreports ($usercount $strusers)</a>";
             } else {
                 $answercount = 0;
                 $gradecol = "";

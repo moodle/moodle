@@ -8,11 +8,11 @@
     optional_variable($id);    // Course Module ID, or
     optional_variable($q);     // quiz ID
 
-    optional_variable($mode, "simplestat");        // Report mode
+    optional_variable($mode, "overview");        // Report mode
 
     if ($id) {
         if (! $cm = get_record("course_modules", "id", $id)) {
-            error("Course Module ID was incorrect");
+            error("There is no coursemodule with id $id");
         }
 
         if (! $course = get_record("course", "id", $cm->course)) {
@@ -20,18 +20,18 @@
         }
 
         if (! $quiz = get_record("quiz", "id", $cm->instance)) {
-            error("Course module is incorrect");
+            error("The quiz with id $cm->instance corresponding to this coursemodule $id is missing");
         }
 
     } else {
         if (! $quiz = get_record("quiz", "id", $q)) {
-            error("Course module is incorrect");
+            error("There is no quiz with id $q");
         }
         if (! $course = get_record("course", "id", $quiz->course)) {
-            error("Course is misconfigured");
+            error("The course with id $quiz->course that the quiz with id $q belongs to is missing");
         }
         if (! $cm = get_coursemodule_from_instance("quiz", $quiz->id, $course->id)) {
-            error("Course Module ID was incorrect");
+            error("The course module for the quiz with id $q is missing");
         }
     }
 
@@ -57,26 +57,6 @@
     }
 
     add_to_log($course->id, "quiz", "report", "report.php?id=$cm->id", "$quiz->id", "$cm->id");
-
-
-/* Code moved into each plugin report.php 
-/// Define some strings
-
-    $strquizzes = get_string("modulenameplural", "quiz");
-    $strquiz  = get_string("modulename", "quiz");
-
-/// Print the page header
-
-    print_header_simple(format_string($quiz->name), "",
-                 "<a href=\"index.php?id=$course->id\">$strquizzes</a>
-                  -> ".format_string($quiz->name),
-                 "", "", true, update_module_button($cm->id, $course->id, $strquiz), navmenu($course, $cm));
-
-/// Print the tabs
-
-    $currenttab = 'reports';
-    include('tabs.php');
-*/
 
 /// Open the selected quiz report and display it
 
