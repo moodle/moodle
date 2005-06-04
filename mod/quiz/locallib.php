@@ -1466,7 +1466,20 @@ function quiz_extract_responses($questions, $responses, $defaultevent) {
 
 
 
-
+/**
+* For a given question in an attempt we walk the complete history of states
+* and recalculate the grades as we go along.
+*
+* This is used when a question in an existing quiz is changed and old student
+* responses need to be marked with the new version of a question.
+*
+* TODO: Finish documenting this
+* @return boolean            Indicates success/failure
+* @param object  $question   A question object
+* @param object  $attempt    The attempt, in which the question needs to be regraded.
+* @param object  $quiz       Optional. The quiz object that the attempt corresponds to.
+* @param boolean $verbose    Optional. Whether to print progress information or not.
+*/
 function quiz_regrade_question_in_attempt($question, $attempt, $quiz=false, $verbose=false) {
     if (!$quiz &&  !($quiz = get_record('quiz', 'id', $attempt->quiz))) {
         $verbose && notify("Regrading of quiz #{$attempt->quiz} failed; " .
@@ -1535,102 +1548,6 @@ function quiz_regrade_question_in_attempt($question, $attempt, $quiz=false, $ver
         return true;
     }
     return true;
-}
-
-/**
-* For a given question instance we walk the complete history of states for
-* each user and recalculate the grades as we go along.
-*
-* This is used when a question in an existing quiz is changed and old student
-* responses need to be marked with the new version of a question.
-*
-* TODO: Finish documenting this
-* @return boolean            Indicates success/failure
-* @param object $question    A question object
-* @param array $quizlist     An array of quiz ids, in which the question should
-*                            be regraded. If quizlist == 'all' all quizzes are affected
-*/
-function quiz_regrade_question_in_quizzes($question, $quizlist) {
-
-    // Disable until tested
-    return;
-
-    if (empty($quizlist)) {
-        return;
-    }
-
-    if ($quizlist == 'all') { // assume that all quizzes are affected
-        // fetch a list of all the quizzes using this question
-        if (! $instances = (array)get_records('quiz_question_instances',
-         'question', $question->id, '', 'id, quiz')) {
-            // No instances were found, so it successfully regraded all of them
-            return true;
-        }
-        $quizlist = array_map(create_function('$val', 'return $val->quiz;'), $instances);
-        unset($instances);
-    }
-
-    // Get all affected quizzes
-    $quizlist = implode(',', $quizlist);
-    if (! $quizzes = get_records_list('quiz', 'id', $quizlist)) {
-        error('Couldn\'t get quizzes for regrading!');
-    }
-
-    foreach ($quizzes as $quiz) {
-        // All the attempts that need to be changed
-        if (! $attempts = get_records('quiz_attempts', 'quiz', $quiz->id)) {
-            continue;
-        }
-        $attempts = array_values($attempts);
-        if (! $instance = get_record('quiz_question_instances',
-             'quiz', $quiz->id, 'question', $question->id)) {
-                error("Couldn't get question instance for regrading!");
-        }
-        $question->maxgrade = $instance->grade;
-        for ($i = 0; $i < count($attempts); $i++) {
-            if ($states = get_records_select('quiz_states',
-             "attempt = '{$attempts[$i]->id}' ".
-             "AND question = '{$question->id}'",
-             'seq_number ASC')) {
-                $states = array_values($states);
-
-                $attempts[$i]->sumgrades -= $states[count($states)-1]->grade;
-
-                // Initialise the replaystate
-                quiz_restore_state($question, $states[0]);
-                $replaystate = clone($states[0]);
-                $replaystate->last_graded = clone($states[0]);
-                for($j = 1; $j < count($states); $j++) {
-                    quiz_restore_state($question, $states[$j]);
-                    $action = new stdClass;
-                    $action->responses = $states[$j]->responses;
-                    $action->timestamp = $states[$j]->timestamp;
-
-                    // Close the last state of a finished attempt
-                    if (((count($states) - 1) === $j) && ($attempts[$i]->timefinish > 0)) {
-                        $action->event = QUIZ_EVENTCLOSE;
-
-                    // Grade instead of closing, quiz_process_responses will then
-                    // work out whether to close it
-                    } else if (QUIZ_EVENTCLOSE == $states[$j]->event) {
-                        $action->event = QUIZ_EVENTGRADE;
-
-                    // By default take the event that was saved in the database
-                    } else {
-                        $action->event = $states[$j]->event;
-                    }
-
-                    // Reprocess (regrade) responses
-                    quiz_process_responses($question, $replaystate, $action, $quiz,
-                     $attempts[$i]);
-                    $replaystate->id = $states[$j]->id;
-                    update_record('quiz_states', $replaystate);
-                }
-                update_record('quiz_attempts', $attempts[$i]);
-                quiz_save_best_grade($quiz, $attempts[$i]->userid);
-            }
-        }
-    }
 }
 
 /**
