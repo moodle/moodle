@@ -11,7 +11,7 @@
 
     if ($id) {
         if (! $cm = get_record("course_modules", "id", $id)) {
-            error("Course Module ID was incorrect");
+            error("There is no coursemodule with id $id");
         }
 
         if (! $course = get_record("course", "id", $cm->course)) {
@@ -19,18 +19,18 @@
         }
 
         if (! $quiz = get_record("quiz", "id", $cm->instance)) {
-            error("Course module is incorrect");
+            error("The quiz with id $cm->instance corresponding to this coursemodule $id is missing");
         }
 
     } else {
         if (! $quiz = get_record("quiz", "id", $q)) {
-            error("Course module is incorrect");
+            error("There is no quiz with id $q");
         }
         if (! $course = get_record("course", "id", $quiz->course)) {
-            error("Course is misconfigured");
+            error("The course with id $quiz->course that the quiz with id $q belongs to is missing");
         }
         if (! $cm = get_coursemodule_from_instance("quiz", $quiz->id, $course->id)) {
-            error("Course Module ID was incorrect");
+            error("The course module for the quiz with id $q is missing");
         }
     }
 
@@ -131,6 +131,22 @@
     }
     else {
         $users = get_course_students($course->id);
+    }
+
+    if($users === false) {
+        $users = array();
+    }
+    else {
+        $users = array_keys($users);
+    }
+
+/// Now the tricky part: if there are people with attempts but they have been unenrolled
+/// since making those attempts, count them in as well. DO NOT count course teachers.
+
+    $userswithattempts = get_records_sql('SELECT DISTINCT qa.userid AS id, qa.userid FROM '.$CFG->prefix.'quiz_attempts qa LEFT JOIN '.$CFG->prefix.'user_teachers ut ON qa.userid = ut.userid AND ut.course = '.$course->id.' WHERE ut.id IS NULL AND quiz = '.$quiz->id);
+    if(!empty($userswithattempts)) {
+        $unenrolledusers = array_diff(array_keys($userswithattempts), $users);
+        $users = array_merge($users, $unenrolledusers);
     }
 
     if(empty($users)) {
@@ -235,7 +251,7 @@
     $select = 'SELECT '.$db->Concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).' AS uniqueid, qa.id AS attempt, u.id AS userid, u.firstname, u.lastname, u.picture, '.
               'qa.sumgrades, qa.timefinish, qa.timestart, qa.timefinish - qa.timestart AS duration ';
     $from   = 'FROM '.$CFG->prefix.'user u LEFT JOIN '.$CFG->prefix.'quiz_attempts qa ON (u.id = qa.userid AND qa.quiz = '.$quiz->id.') ';
-    $where  = 'WHERE u.id IN ('.implode(',', array_keys($users)).') ';
+    $where  = 'WHERE u.id IN ('.implode(',', $users).') ';
 
     // Add extra limits if we 're not interested in students without attempts
     if(!$noattempts) {
@@ -298,10 +314,17 @@
 
             $picture = print_user_picture($attempt->userid, $course->id, $attempt->picture, false, true);
 
+            if(in_array($attempt->userid, $unenrolledusers)) {
+                $userlink = '<a class="dimmed" href="'.$CFG->wwwroot.'/user/view.php?id='.$attempt->userid.'&amp;course='.$course->id.'">'.fullname($attempt).'</a>';
+            }
+            else {
+                $userlink = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$attempt->userid.'&amp;course='.$course->id.'">'.fullname($attempt).'</a>';
+            }
+
             $row = array(
                       '<input type="checkbox" name="attemptid[]" value="'.$attempt->attempt.'" />',
                       $picture,
-                      '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$attempt->userid.'&amp;course='.$course->id.'">'.fullname($attempt).'</a>',
+                      $userlink,
                       empty($attempt->attempt) ? '-' : '<a href="review.php?q='.$quiz->id.'&amp;attempt='.$attempt->attempt.'">'.userdate($attempt->timestart, $strtimeformat).'</a>',
                       empty($attempt->attempt) ? '-' :
                        (empty($attempt->timefinish) ? get_string('unfinished', 'quiz') :
