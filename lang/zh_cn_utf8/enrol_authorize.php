@@ -18,5 +18,7 @@ $string['enrolname'] = 'Authorize.net 信用卡网关';
 $string['nameoncard'] = '卡所属人';
 $string['sendpaymentbutton'] = '发送付费信息';
 $string['zipcode'] = '邮政编码';
+$string['ccexpired'] = "信用卡已过期";
+$string['chooseone'] = "请至少填写下面两个字段中的一个";
 
 ?>
