@@ -54,8 +54,7 @@ h6.main {
   padding:5px
 }
 #layout-table #middle-column {
-  /*width:auto;*/
-  width:50%;
+  width:auto;
   padding:5px
 }
 #layout-table #right-column {
