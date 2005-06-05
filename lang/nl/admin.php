@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.6 development (2005052400)
+      // admin.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['adminseesallevents'] = 'Beheerders zien alle gebeurtenissen';
@@ -11,6 +11,7 @@ $string['calendarsettings'] = 'Kalender';
 $string['change'] = 'wijzig';
 $string['configallowcoursethemes'] = 'Als je dit inschakelt, dan kan elk vak zijn eigen thema instellen. De thema\'s van de vakken zullen alle andere thema\'s overschrijven (site, gebruiker of sessiethema\'s)';
 $string['configallowemailaddresses'] = 'Als je nieuwe e-mailadressen wil beperken tot bepaalde domeinen, zet ze dan hier in een lijst met een spatie als scheidingsteken. Alle andere domeinen zullen niet geaccepteerd worden. bv <strong>onzeschool.edu.be .onscollege.nl</strong>';
+$string['configallowobjectembed'] = 'Als standaard beveiligingsmaatregel kunnen gewone gebruikers geen multimedia (zoals Flash) in teksten insluiten door gebruik te maken van EMBED en OBJECT tags in hun HTML (hoewel het veilig ingesloten kan worden met de mediaplugins filter). Als je deze tags toch wil laten gebruiken, dan kun je deze optie inschakelen';
 $string['configallowunenroll'] = 'Als dit op \'ja\' staat, dan mogen leerlingen zichzelf uitschrijven uit vakken wanneer ze willen. Anders mogen zij dat niet en dan wordt dit proces uitsluitend door leraren en beheerders gecontroleerd.';
 $string['configallowuserblockhiding'] = 'Wil je gebruikers toelaten om blokken te verbergen of te tonen? Deze functie gebruikt Javascript en cookies om de status van elk samenklapbaar blok te bewaren en heeft enkel gevolg voor het beeld van de individuele gebruiker.';
 $string['configallowuserthemes'] = 'Als je dit inschakelt, dan kunnen gebruikers hun eigen thema kiezen. Gebruikersthema\'s gaan boven site-thema\'s (maar niet boven vakthema\'s)';
