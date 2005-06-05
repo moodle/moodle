@@ -368,7 +368,8 @@ class quiz_calculated_qtype extends quiz_dataset_dependent_questiontype {
         }
 
         // Get answers
-        $answers = $question->options->answers;
+        // the next line is hacked to get rid of the PHP notice until this gets fixed properly
+        $answers = (isset($question->options->answers)) ? $question->options->answers : null;
         $stranswers = get_string('answer', 'quiz');
         $strmin = get_string('min', 'quiz');
         $strmax = get_string('max', 'quiz');
@@ -378,26 +379,28 @@ class quiz_calculated_qtype extends quiz_dataset_dependent_questiontype {
         $state->responses = array();
         $state->options   = new stdClass;
         $virtualqtype = $this->get_virtual_qtype();
-        foreach ($answers as $answer) {
-            $calculated = quiz_qtype_calculated_calculate_answer(
-                    $answer->answer, $data, $answer->tolerance,
-                    $answer->tolerancetype, $answer->correctanswerlength,
-                    $answer->correctanswerformat, $unit);
-            $state->responses[''] = $calculated->answer;
-            $virtualqtype->get_tolerance_interval($question, $state);
-            $calculated->min = $state->options->min;
-            $calculated->max = $state->options->max;
-            if ($calculated->min === '') {
-                // This should mean that something is wrong
-                $errors .= " -$calculated->answer";
-                $stranswers .= $delimiter;
-            } else {
-                $stranswers .= $delimiter.$calculated->answer;
+        if ($answers) {
+            foreach ($answers as $answer) {
+                $calculated = quiz_qtype_calculated_calculate_answer(
+                        $answer->answer, $data, $answer->tolerance,
+                        $answer->tolerancetype, $answer->correctanswerlength,
+                        $answer->correctanswerformat, $unit);
+                $state->responses[''] = $calculated->answer;
+                $virtualqtype->get_tolerance_interval($question, $state);
+                $calculated->min = $state->options->min;
+                $calculated->max = $state->options->max;
+                if ($calculated->min === '') {
+                    // This should mean that something is wrong
+                    $errors .= " -$calculated->answer";
+                    $stranswers .= $delimiter;
+                } else {
+                    $stranswers .= $delimiter.$calculated->answer;
+                }
+                $strmin .= $delimiter.$calculated->min;
+                $strmax .= $delimiter.$calculated->max;
+    
+                $delimiter = ', ';
             }
-            $strmin .= $delimiter.$calculated->min;
-            $strmax .= $delimiter.$calculated->max;
-
-            $delimiter = ', ';
         }
         return "$stranswers<br/>$strmin<br/>$strmax<br/>$errors";
     }

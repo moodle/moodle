@@ -120,7 +120,7 @@ class quiz_truefalse_qtype extends quiz_default_questiontype {
 
         $answers = &$question->options->answers;
         $correctanswers = $this->get_correct_responses($question, $state);
-        $readonly = $options->readonly ? ' disabled="disabled"' : '';
+        $readonly = $options->readonly ? ' readonly="readonly"' : '';
 
         // Print question formulation
         echo format_text($question->questiontext,

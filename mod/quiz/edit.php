@@ -408,14 +408,13 @@ if (self.name == 'editquestion') {
         if (! $cm = get_coursemodule_from_instance("quiz", $modform->instance, $course->id)) {
             error("Course Module ID was incorrect");
         }
-        notify("$strattemptsexist<br /><a href=\"report.php?mode=overview&amp;id=$cm->id\">$strviewallanswers ($usercount $strusers)</a>");
-
         echo "<center>\n";
+        echo "$strattemptsexist<br /><a href=\"report.php?mode=overview&amp;id=$cm->id\">$strviewallanswers ($usercount $strusers)</a>";
         echo "<form target=\"_parent\" method=\"get\" action=\"$CFG->wwwroot/mod/quiz/edit.php\">\n";
         echo "    <input type=\"hidden\" name=\"courseid\" value=\"$course->id\" />\n";
         echo "    <input type=\"submit\" value=\"".get_string("editcatquestions", "quiz")."\" />\n";
         echo "</form>";
-        echo "</center>\n";
+        echo "</center><br/ >\n";
 
         $sumgrades = quiz_print_question_list($modform, false, $SESSION->quiz_showbreaks);
         if (!set_field('quiz', 'sumgrades', $sumgrades, 'id', $modform->instance)) {

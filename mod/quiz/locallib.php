@@ -247,7 +247,7 @@ class quiz_default_questiontype {
         // The default implementation attaches all answers for this question
         if (!$question->options->answers = get_records('quiz_answers', 'question',
          $question->id)) {
-           notify('Error: Missing question answers!');
+           //notify('Error: Missing question answers!');
            return false;
         }
         return true;
@@ -1349,38 +1349,42 @@ function quiz_save_question_session(&$question, &$state) {
     $state->answer = isset($state->responses['']) ? $state->responses[''] : '';
 
     // Save the state
-    unset($state->id);
-    if (!$state->id = insert_record('quiz_states', $state)) {
-        unset($state->id);
-        unset($state->answer);
-        return false;
-    }
-    unset($state->answer);
-
-    // this is the most recent state
-    if (!record_exists('quiz_newest_states', 'attemptid',
-     $state->attempt, 'questionid', $question->id)) {
-        $new->attemptid = $state->attempt;
-        $new->questionid = $question->id;
-        $new->newest = $state->id;
-        $new->newgraded = $state->id;
-        $new->sumpenalty = $state->sumpenalty;
-        if (!insert_record('quiz_newest_states', $new)) {
-            error('Could not insert entry in quiz_newest_states');
-        }
+    if (isset($state->update)) {
+        update_record('quiz_states', $state);
     } else {
-        set_field('quiz_newest_states', 'newest', $state->id, 'attemptid',
-         $state->attempt, 'questionid', $question->id);
-    }
-    if (quiz_state_is_graded($state)) {
-        // this is also the most recent graded state
-        if ($newest = get_record('quiz_newest_states', 'attemptid',
+        if (!$state->id = insert_record('quiz_states', $state)) {
+            unset($state->id);
+            unset($state->answer);
+            return false;
+        }
+
+        // this is the most recent state
+        if (!record_exists('quiz_newest_states', 'attemptid',
          $state->attempt, 'questionid', $question->id)) {
-            $newest->newgraded = $state->id;
-            $newest->sumpenalty = $state->sumpenalty;
-            update_record('quiz_newest_states', $newest);
+            $new->attemptid = $state->attempt;
+            $new->questionid = $question->id;
+            $new->newest = $state->id;
+            $new->newgraded = $state->id;
+            $new->sumpenalty = $state->sumpenalty;
+            if (!insert_record('quiz_newest_states', $new)) {
+                error('Could not insert entry in quiz_newest_states');
+            }
+        } else {
+            set_field('quiz_newest_states', 'newest', $state->id, 'attemptid',
+             $state->attempt, 'questionid', $question->id);
+        }
+        if (quiz_state_is_graded($state)) {
+            // this is also the most recent graded state
+            if ($newest = get_record('quiz_newest_states', 'attemptid',
+             $state->attempt, 'questionid', $question->id)) {
+                $newest->newgraded = $state->id;
+                $newest->sumpenalty = $state->sumpenalty;
+                update_record('quiz_newest_states', $newest);
+            }
         }
     }
+
+    unset($state->answer);
 
     // Save the question type specific state information and responses
     if (!$QUIZ_QTYPES[$question->qtype]->save_session_and_responses(
@@ -1465,98 +1469,92 @@ function quiz_extract_responses($questions, $responses, $defaultevent) {
 }
 
 
+
 /**
-* For a given question instance we walk the complete history of states for
-* each user and recalculate the grades as we go along.
+* For a given question in an attempt we walk the complete history of states
+* and recalculate the grades as we go along.
 *
 * This is used when a question in an existing quiz is changed and old student
 * responses need to be marked with the new version of a question.
 *
 * TODO: Finish documenting this
 * @return boolean            Indicates success/failure
-* @param object $question    A question object
-* @param array $quizlist     An array of quiz ids, in which the question should
-*                            be regraded. If quizlist == 'all' all quizzes are affected
+* @param object  $question   A question object
+* @param object  $attempt    The attempt, in which the question needs to be regraded.
+* @param object  $quiz       Optional. The quiz object that the attempt corresponds to.
+* @param boolean $verbose    Optional. Whether to print progress information or not.
 */
-function quiz_regrade_question_in_quizzes($question, $quizlist) {
-
-    // Disable until tested
-    return;
-
-    if (empty($quizlist)) {
-        return;
+function quiz_regrade_question_in_attempt($question, $attempt, $quiz=false, $verbose=false) {
+    if (!$quiz &&  !($quiz = get_record('quiz', 'id', $attempt->quiz))) {
+        $verbose && notify("Regrading of quiz #{$attempt->quiz} failed; " .
+         "Couldn't load quiz record from database!");
+        return false;
     }
 
-    if ($quizlist == 'all') { // assume that all quizzes are affected
-        // fetch a list of all the quizzes using this question
-        if (! $instances = (array)get_records('quiz_question_instances',
-         'question', $question->id, '', 'id, quiz')) {
-            // No instances were found, so it successfully regraded all of them
-            return true;
-        }
-        $quizlist = array_map(create_function('$val', 'return $val->quiz;'), $instances);
-        unset($instances);
-    }
+    if ($states = get_records_select('quiz_states',
+     "attempt = '{$attempt->id}' AND question = '{$question->id}'", 'seq_number ASC')) {
+        $states = array_values($states);
 
-    // Get all affected quizzes
-    $quizlist = implode(',', $quizlist);
-    if (! $quizzes = get_records_list('quiz', 'id', $quizlist)) {
-        error('Couldn\'t get quizzes for regrading!');
-    }
+        $attempt->sumgrades -= $states[count($states)-1]->grade;
 
-    foreach ($quizzes as $quiz) {
-        // All the attempts that need to be changed
-        if (! $attempts = get_records('quiz_attempts', 'quiz', $quiz->id)) {
-            continue;
-        }
-        $attempts = array_values($attempts);
-        if (! $instance = get_record('quiz_question_instances',
-             'quiz', $quiz->id, 'question', $question->id)) {
-                error("Couldn't get question instance for regrading!");
-        }
-        $question->maxgrade = $instance->grade;
-        for ($i = 0; $i < count($attempts); $i++) {
-            if ($states = get_records_select('quiz_states',
-             "attempt = '{$attempts[$i]->id}' ".
-             "AND question = '{$question->id}'",
-             'seq_number ASC')) {
-                $states = array_values($states);
+        // Initialise the replaystate
+        $state = clone($states[0]);
+        quiz_restore_state($question, $state);
+        $state->sumpenalty = 0.0;
+        $state->raw_grade = 0;
+        $state->grade = 0;
+        $state->responses = array(''=>'');
+        $state->event = QUIZ_EVENTOPEN;
+        $replaystate = clone($state);
+        $replaystate->last_graded = $state;
 
-                $attempts[$i]->sumgrades -= $states[count($states)-1]->grade;
+        $changed = 0;
+        for($j = 0; $j < count($states); $j++) {
+            quiz_restore_state($question, $states[$j]);
+            $action = new stdClass;
+            $action->responses = $states[$j]->responses;
+            $action->timestamp = $states[$j]->timestamp;
 
-                // Initialise the replaystate
-                quiz_restore_state($question, $states[0]);
-                $replaystate = clone($states[0]);
-                $replaystate->last_graded = clone($states[0]);
-                for($j = 1; $j < count($states); $j++) {
-                    quiz_restore_state($question, $states[$j]);
-                    $action = new stdClass;
-                    $action->responses = $states[$j]->responses;
-                    // Close the last state of a finished attempt
-                    if (((count($states) - 1) === $j) && ($attempts[$i]->timefinish > 0)) {
-                        $action->event = QUIZ_EVENTCLOSE;
+            // Close the last state of a finished attempt
+            if (((count($states) - 1) === $j) && ($attempt->timefinish > 0)) {
+                $action->event = QUIZ_EVENTCLOSE;
 
-                    // Grade instead of closing, quiz_process_responses will then
-                    // work out whether to close it
-                    } else if (QUIZ_EVENTCLOSE == $states[$j]->event) {
-                        $action->event = QUIZ_EVENTGRADE;
+            // Grade instead of closing, quiz_process_responses will then
+            // work out whether to close it
+            } else if (QUIZ_EVENTCLOSE == $states[$j]->event) {
+                $action->event = QUIZ_EVENTGRADE;
 
-                    // By default take the event that was saved in the database
-                    } else {
-                        $action->event = $states[$j]->event;
-                    }
-
-                    // Reprocess (regrade) responses
-                    quiz_process_responses($question, $replaystate, $action, $quiz,
-                     $attempts[$i]);
-                    $replaystate->id = $states[$j]->id;
-                    update_record('quiz_states', $replaystate);
-                }
-                update_record('quiz_attempts', $attempts[$i]);
-                quiz_save_best_grade($quiz, $attempts[$i]->userid);
+            // By default take the event that was saved in the database
+            } else {
+                $action->event = $states[$j]->event;
             }
+            // Reprocess (regrade) responses
+            if (!quiz_process_responses($question, $replaystate, $action, $quiz,
+             $attempt)) {
+                $verbose && notify("Couldn't regrade state #{$state->id}!");
+            }
+            if ((float)$replaystate->raw_grade != (float)$states[$j]->raw_grade) {
+                $changed++;
+
+            }
+            $replaystate->id = $states[$j]->id;
+            $replaystate->update = true;
+            quiz_save_question_session($question, $replaystate);
         }
+        if ($verbose) {
+            if ($changed) {
+                link_to_popup_window ('/mod/quiz/reviewquestion.php?attempt='.$attempt->id.'&amp;question='.$question->id,
+                 'reviewquestion', ' #'.$attempt->id, 450, 550, get_string('reviewresponse', 'quiz'));
+                update_record('quiz_attempts', $attempt);
+            } else {
+                echo ' #'.$attempt->id;
+            }
+            echo "\n"; flush(); ob_flush();
+        }
+
+        return true;
     }
+    return true;
 }
 
 /**
@@ -2244,7 +2242,7 @@ if (!$grade = get_record('quiz_grades', 'quiz', $quiz->id, 'userid', $userid)) {
 }
 
 /**
-* TODO: document this
+* Save the overall grade for a user at a quiz in the quiz_grades table
 *
 * @return boolean        Indicates success or failure.
 * @param object $quiz    The quiz for which the best grade is to be calculated
@@ -2269,11 +2267,12 @@ function quiz_save_best_grade($quiz, $userid=null) {
     // Calculate the best grade
     $bestgrade = quiz_calculate_best_grade($quiz, $attempts);
     $bestgrade = (($bestgrade / $quiz->sumgrades) * $quiz->grade);
+    $bestgrade = round($bestgrade, $quiz->decimalpoints);
 
     // Save the best grade in the database
     if ($grade = get_record('quiz_grades', 'quiz', $quiz->id, 'userid',
      $userid)) {
-        $grade->grade = round($bestgrade, $quiz->decimalpoints);
+        $grade->grade = $bestgrade;
         $grade->timemodified = time();
         if (!update_record('quiz_grades', $grade)) {
             notify('Could not update best grade');
@@ -2282,7 +2281,7 @@ function quiz_save_best_grade($quiz, $userid=null) {
     } else {
         $grade->quiz = $quiz->id;
         $grade->userid = $userid;
-        $grade->grade = round($bestgrade, $quiz->decimalpoints);
+        $grade->grade = $bestgrade;
         $grade->timemodified = time();
         if (!insert_record('quiz_grades', $grade)) {
             notify('Could not insert new best grade');
@@ -2292,9 +2291,14 @@ function quiz_save_best_grade($quiz, $userid=null) {
     return true;
 }
 
-
+/**
+* Calculate the overall grade for a quiz given a number of attempts by a particular user.
+*
+* @return float          The overall grade
+* @param object $quiz    The quiz for which the best grade is to be calculated
+* @param array $attempts An array of all the attempts of the user at the quiz
+*/
 function quiz_calculate_best_grade($quiz, $attempts) {
-/// Calculate the best grade for a quiz given a number of attempts by a particular user.
 
     switch ($quiz->grademethod) {
 
@@ -2331,9 +2335,16 @@ function quiz_calculate_best_grade($quiz, $attempts) {
     }
 }
 
-
+/**
+* Return the attempt with the best grade for a quiz
+*
+* Which attempt is the best depends on $quiz->grademethod. If the grade
+* method is GRADEAVERAGE then this function simply returns the last attempt.
+* @return object         The attempt with the best grade
+* @param object $quiz    The quiz for which the best grade is to be calculated
+* @param array $attempts An array of all the attempts of the user at the quiz
+*/
 function quiz_calculate_best_attempt($quiz, $attempts) {
-/// Return the attempt with the best grade for a quiz
 
     switch ($quiz->grademethod) {
 

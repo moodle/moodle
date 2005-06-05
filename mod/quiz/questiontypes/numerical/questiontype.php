@@ -246,7 +246,7 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
 
         $answers = &$question->options->answers;
         $correctanswers = $this->get_correct_responses($question, $state);
-        $readonly = empty($options->readonly) ? '' : 'disabled="disabled"';
+        $readonly = empty($options->readonly) ? '' : 'readonly="readonly"';
         $nameprefix = $question->name_prefix;
 
         /// Print question text and media

@@ -3,11 +3,11 @@
 -- http://www.phpmyadmin.net
 -- 
 -- Host: localhost
--- Generation Time: May 25, 2005 at 06:50 AM
+-- Generation Time: Jun 05, 2005 at 04:32 PM
 -- Server version: 4.0.15
 -- PHP Version: 4.3.3
 -- 
--- Database: `upgrading`
+-- Database: `moodle15`
 -- 
 
 -- --------------------------------------------------------
@@ -399,7 +399,7 @@ CREATE TABLE prefix_quiz_rqp (
 -- --------------------------------------------------------
 
 -- 
--- Table structure for table `prefix_quiz_rqp_states`
+-- Table structure for table `prefix_quiz_rqp_servers`
 -- 
 
 CREATE TABLE prefix_quiz_rqp_servers (
@@ -414,7 +414,7 @@ CREATE TABLE prefix_quiz_rqp_servers (
 -- --------------------------------------------------------
 
 -- 
--- Table structure for table `mdl_quiz_rqp_states`
+-- Table structure for table `prefix_quiz_rqp_states`
 -- 
 
 CREATE TABLE prefix_quiz_rqp_states (
@@ -429,15 +429,12 @@ CREATE TABLE prefix_quiz_rqp_states (
 -- --------------------------------------------------------
 
 -- 
--- Table structure for table `prefix_quiz_rqp_type`
+-- Table structure for table `prefix_quiz_rqp_types`
 -- 
 
 CREATE TABLE prefix_quiz_rqp_types (
   id int(10) unsigned NOT NULL auto_increment,
   name varchar(255) NOT NULL default '',
-  rendering_server varchar(255) NOT NULL default '',
-  cloning_server varchar(255) NOT NULL default '',
-  flags tinyint(3) NOT NULL default '0',
   PRIMARY KEY  (id),
   UNIQUE KEY name (name)
 ) TYPE=MyISAM COMMENT='RQP question types and the servers to be used to process the';
