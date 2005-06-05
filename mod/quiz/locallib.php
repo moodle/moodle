@@ -247,7 +247,7 @@ class quiz_default_questiontype {
         // The default implementation attaches all answers for this question
         if (!$question->options->answers = get_records('quiz_answers', 'question',
          $question->id)) {
-           notify('Error: Missing question answers!');
+           //notify('Error: Missing question answers!');
            return false;
         }
         return true;
