@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.6 development (2005053000)
+      // quiz.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['acceptederror'] = 'エラー範囲';
@@ -132,6 +132,7 @@ $string['editingshortanswer'] = '記述問題の編集';
 $string['editingtruefalse'] = '○/×問題の編集';
 $string['editquestions'] = '問題の編集';
 $string['editquiz'] = '小テストの編集';
+$string['errormissingquestion'] = 'エラー: id $a の問題はありません。';
 $string['errornotnumbers'] = 'エラー - 答えは数字を使用してください。';
 $string['errorsdetected'] = '$a のエラーが見つかりました';
 $string['event1'] = '自動保存';
