@@ -1420,6 +1420,9 @@
     //This function restores the quiz_attempts
     function quiz_attempts_restore_mods($quiz_id,$info,$restore) {
 
+        notify("Restoring quiz without user attempts. Restoring of user attempts will be implemented in Moodle 1.5.1");
+        return true;
+
         global $CFG;
 
         $status = true;
@@ -1761,7 +1764,7 @@
         return $status;
     }
 
-    //This function restores the quiz_states
+    //This function restores the quiz_rqp_states
     function quiz_rqp_states_restore_mods($state_id,$info,$restore) {
 
         global $CFG;
