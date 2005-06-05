@@ -239,7 +239,7 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
 
         $answers = &$question->options->answers;
         $correctanswers = $this->get_correct_responses($question, $state);
-        $readonly = empty($options->readonly) ? '' : 'disabled="disabled"';
+        $readonly = empty($options->readonly) ? '' : 'readonly="readonly"';
 
         $formatoptions = new stdClass;
         $formatoptions->para = false;
