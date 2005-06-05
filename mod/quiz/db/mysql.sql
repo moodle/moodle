@@ -435,9 +435,6 @@ CREATE TABLE prefix_quiz_rqp_states (
 CREATE TABLE prefix_quiz_rqp_types (
   id int(10) unsigned NOT NULL auto_increment,
   name varchar(255) NOT NULL default '',
-  rendering_server varchar(255) NOT NULL default '',
-  cloning_server varchar(255) NOT NULL default '',
-  flags tinyint(3) NOT NULL default '0',
   PRIMARY KEY  (id),
   UNIQUE KEY name (name)
 ) TYPE=MyISAM COMMENT='RQP question types and the servers to be used to process the';
