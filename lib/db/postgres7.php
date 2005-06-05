@@ -1092,7 +1092,7 @@ function main_upgrade($oldversion=0) {
 
     if ($oldversion < 2005052301 ) { // Add config_plugins table
         
-        $result = execute_sql("CREATE TABLE {$CFG->prefix}config_plugins (
+        execute_sql("CREATE TABLE {$CFG->prefix}config_plugins (
                         id     SERIAL PRIMARY KEY,
                         plugin varchar(255) NOT NULL default 'core',
                         name   varchar(255) NOT NULL default '',
