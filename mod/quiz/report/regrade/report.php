@@ -46,6 +46,28 @@ class quiz_report extends quiz_default_report {
             flush();ob_flush();
         }
 
+    /// Loop through all questions and recalculate $attempt->sumgrade
+        $attemptschanged = 0;
+        foreach ($attempts as $attempt) {
+            $sumgrades = 0;
+            $questionids = explode(',', quiz_questions_in_quiz($attempt->layout));
+            foreach($questionids as $questionid) {
+                $lastgradedid = get_field('quiz_newest_states', 'newgraded', 'attemptid', $attempt->id, 'questionid', $questionid);
+                $sumgrades += get_field('quiz_states', 'grade', 'id', $lastgradedid);
+            }
+            if ($attempt->sumgrades != $sumgrades) {
+                $attemptschanged++;
+                set_field('quiz_attempts', 'sumgrades', $sumgrades, 'id', $attempt->id);
+            }
+        }
+
+    /// Update the overall quiz grades
+        if ($grades = get_records('quiz_grades', 'quiz', $quiz->id)) {
+            foreach($grades as $grade) {
+                quiz_save_best_grade($quiz, $grade->userid);
+            }
+        }
+
         return true;
     }
 }

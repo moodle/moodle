@@ -1349,38 +1349,42 @@ function quiz_save_question_session(&$question, &$state) {
     $state->answer = isset($state->responses['']) ? $state->responses[''] : '';
 
     // Save the state
-    unset($state->id);
-    if (!$state->id = insert_record('quiz_states', $state)) {
-        unset($state->id);
-        unset($state->answer);
-        return false;
-    }
-    unset($state->answer);
-
-    // this is the most recent state
-    if (!record_exists('quiz_newest_states', 'attemptid',
-     $state->attempt, 'questionid', $question->id)) {
-        $new->attemptid = $state->attempt;
-        $new->questionid = $question->id;
-        $new->newest = $state->id;
-        $new->newgraded = $state->id;
-        $new->sumpenalty = $state->sumpenalty;
-        if (!insert_record('quiz_newest_states', $new)) {
-            error('Could not insert entry in quiz_newest_states');
-        }
+    if (isset($state->update)) {
+        update_record('quiz_states', $state);
     } else {
-        set_field('quiz_newest_states', 'newest', $state->id, 'attemptid',
-         $state->attempt, 'questionid', $question->id);
-    }
-    if (quiz_state_is_graded($state)) {
-        // this is also the most recent graded state
-        if ($newest = get_record('quiz_newest_states', 'attemptid',
+        if (!$state->id = insert_record('quiz_states', $state)) {
+            unset($state->id);
+            unset($state->answer);
+            return false;
+        }
+
+        // this is the most recent state
+        if (!record_exists('quiz_newest_states', 'attemptid',
          $state->attempt, 'questionid', $question->id)) {
-            $newest->newgraded = $state->id;
-            $newest->sumpenalty = $state->sumpenalty;
-            update_record('quiz_newest_states', $newest);
+            $new->attemptid = $state->attempt;
+            $new->questionid = $question->id;
+            $new->newest = $state->id;
+            $new->newgraded = $state->id;
+            $new->sumpenalty = $state->sumpenalty;
+            if (!insert_record('quiz_newest_states', $new)) {
+                error('Could not insert entry in quiz_newest_states');
+            }
+        } else {
+            set_field('quiz_newest_states', 'newest', $state->id, 'attemptid',
+             $state->attempt, 'questionid', $question->id);
+        }
+        if (quiz_state_is_graded($state)) {
+            // this is also the most recent graded state
+            if ($newest = get_record('quiz_newest_states', 'attemptid',
+             $state->attempt, 'questionid', $question->id)) {
+                $newest->newgraded = $state->id;
+                $newest->sumpenalty = $state->sumpenalty;
+                update_record('quiz_newest_states', $newest);
+            }
         }
     }
+
+    unset($state->answer);
 
     // Save the question type specific state information and responses
     if (!$QUIZ_QTYPES[$question->qtype]->save_session_and_responses(
@@ -1488,23 +1492,24 @@ function quiz_regrade_question_in_attempt($question, $attempt, $quiz=false, $ver
     }
 
     if ($states = get_records_select('quiz_states',
-     "attempt = '{$attempt->id}' ".
-     "AND question = '{$question->id}'",
-     'seq_number ASC')) {
+     "attempt = '{$attempt->id}' AND question = '{$question->id}'", 'seq_number ASC')) {
         $states = array_values($states);
 
-        // what is this for?
         $attempt->sumgrades -= $states[count($states)-1]->grade;
 
         // Initialise the replaystate
-        quiz_restore_state($question, $states[0]);
-        $states[0]->sumpenalty = 0.0;
-        $replaystate = clone($states[0]);
-        $replaystate->last_graded = clone($states[0]);
+        $state = clone($states[0]);
+        quiz_restore_state($question, $state);
+        $state->sumpenalty = 0.0;
+        $state->raw_grade = 0;
+        $state->grade = 0;
+        $state->responses = array(''=>'');
+        $state->event = QUIZ_EVENTOPEN;
+        $replaystate = clone($state);
+        $replaystate->last_graded = $state;
 
         $changed = 0;
-        $oldgrade = 0;
-        for($j = 1; $j < count($states); $j++) {
+        for($j = 0; $j < count($states); $j++) {
             quiz_restore_state($question, $states[$j]);
             $action = new stdClass;
             $action->responses = $states[$j]->responses;
@@ -1528,25 +1533,25 @@ function quiz_regrade_question_in_attempt($question, $attempt, $quiz=false, $ver
              $attempt)) {
                 $verbose && notify("Couldn't regrade state #{$state->id}!");
             }
-
             if ((float)$replaystate->raw_grade != (float)$states[$j]->raw_grade) {
                 $changed++;
 
             }
             $replaystate->id = $states[$j]->id;
-            update_record('quiz_states', $replaystate);
+            $replaystate->update = true;
+            quiz_save_question_session($question, $replaystate);
         }
         if ($verbose) {
             if ($changed) {
                 link_to_popup_window ('/mod/quiz/reviewquestion.php?attempt='.$attempt->id.'&amp;question='.$question->id,
                  'reviewquestion', ' #'.$attempt->id, 450, 550, get_string('reviewresponse', 'quiz'));
+                update_record('quiz_attempts', $attempt);
             } else {
                 echo ' #'.$attempt->id;
             }
             echo "\n"; flush(); ob_flush();
         }
 
-        quiz_save_best_grade($quiz, $attempt->userid);
         return true;
     }
     return true;

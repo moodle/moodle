@@ -205,8 +205,17 @@ class quiz_rqp_qtype extends quiz_default_questiontype {
         $options->persistent_data = $state->options->persistent_data;
         $options->template_vars =
          quiz_rqp_implode($state->options->template_vars);
-        if (!insert_record('quiz_rqp_states', $options)) {
-            return false;
+        if ($state->update) {
+            if (!$options->id = get_field('quiz_rqp_states', 'id', 'stateid', $state->id)) {
+                return false;
+            }
+            if (!update_record('quiz_rqp_states', $options)) {
+                return false;
+            }
+        } else {
+            if (!insert_record('quiz_rqp_states', $options)) {
+                return false;
+            }
         }
         return true;
     }
