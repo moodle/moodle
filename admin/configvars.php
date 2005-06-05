@@ -201,6 +201,10 @@ class configvarrss extends configvar {
     $permissions['messaging'] = new configvar (get_string('configmessaging', 'admin'),
         choose_from_menu ($noyesoptions, 'messaging', $config->messaging, '', '', '', true) );
 
+/// allowobjectembed
+    $permissions['allowobjectembed'] = new configvar (get_string('configallowobjectembed', 'admin'),
+        choose_from_menu ($noyesoptions, 'allowobjectembed', $config->allowobjectembed, '', '', '', true) );
+
 
 
 ////////////////////////////////////////////////////////////////////

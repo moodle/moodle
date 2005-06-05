@@ -4,9 +4,10 @@
 // It defines default values for any important configuration variables
 
    $defaults = array (
-       'allowemailaddresses'      =>  '',
-       'allowunenroll'            =>  true,
        'allowcoursethemes'        =>  false,
+       'allowemailaddresses'      =>  '',
+       'allowobjectembed'         =>  false,
+       'allowunenroll'            =>  true,
        'allowuserthemes'          =>  false,
        'allowuserblockhiding'     =>  true,
        'allusersaresitestudents'  =>  true,
