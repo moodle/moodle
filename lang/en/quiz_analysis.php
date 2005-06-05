@@ -3,7 +3,7 @@
 
 $string['analysisoptions'] = 'Analysis options';
 $string['attemptselection'] = 'Attempts to analyze per user ';
-$string['lowmarkslimit'] = "Don't analyze if score is less than: ";
+$string['lowmarkslimit'] = "Don't analyse if score is less than: ";
 $string['attemptsall'] = 'all attempts';
 $string['attemptshighest'] = 'highest grade';
 $string['attemptsfirst'] = 'first attempt';
@@ -19,7 +19,7 @@ $string['qtexttitle'] = 'Question text';
 $string['qcounttitle'] = 'Q. count';
 $string['qtypetitle'] = 'Q. type';
 $string['responsestitle'] = "Answer's text";
-$string['rfractiontitle'] = 'parcial<br>credit';
+$string['rfractiontitle'] = 'partial<br>credit';
 $string['rcounttitle'] = 'R.<br>Counts';
 $string['rpercenttitle'] = 'R.%%';
 $string['facilitytitle'] = '%% Correct<br>Facility';
