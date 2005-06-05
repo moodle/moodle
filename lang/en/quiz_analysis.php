@@ -12,21 +12,19 @@ $string['pagesize'] = 'Questions per page: ';
 $string['analysistitle'] = 'Item Analysis Table';
 $string['reportanalysis'] = 'Item Analysis Report';
 $string['downloadooo'] = 'Download in OpenOffice format';
-
 $string['qidtitle'] = 'Q#';
 $string['qnametitle'] = 'Question name';
 $string['qtexttitle'] = 'Question text';
 $string['qcounttitle'] = 'Q. count';
 $string['qtypetitle'] = 'Q. type';
 $string['responsestitle'] = "Answer's text";
-$string['rfractiontitle'] = 'partial<br>credit';
-$string['rcounttitle'] = 'R.<br>Counts';
+$string['rfractiontitle'] = 'partial<br />credit';
+$string['rcounttitle'] = 'R.<br />Counts';
 $string['rpercenttitle'] = 'R.%%';
 $string['facilitytitle'] = '%% Correct<br>Facility';
 $string['stddevtitle'] = 'SD';
-$string['dicsindextitle'] = 'Disc.<br/>Index';
-$string['disccoefftitle'] = 'Disc.<br/>Coeff.';
-
+$string['dicsindextitle'] = 'Disc.<br />Index';
+$string['disccoefftitle'] = 'Disc.<br />Coeff.';
 $string['quizreportdir'] = 'quiz_reports';
 
 
