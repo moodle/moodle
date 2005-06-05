@@ -932,7 +932,7 @@
                 fwrite ($bf,full_tag("ID",8,false,$newest_state->id));
                 fwrite ($bf,full_tag("QUESTIONID",8,false,$newest_state->questionid));
                 fwrite ($bf,full_tag("NEWEST",8,false,$newest_state->newest));
-                fwrite ($bf,full_tag("NEWESTGRADED",8,false,$newest_state->newestgraded));
+                fwrite ($bf,full_tag("NEWGRADED",8,false,$newest_state->newgraded));
                 fwrite ($bf,full_tag("SUMPENALTY",8,false,$newest_state->sumpenalty));
                 //End newest_state
                 $status =fwrite ($bf,end_tag("NEWEST_STATE",7,true));
