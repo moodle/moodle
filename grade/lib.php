@@ -1857,11 +1857,11 @@ function grade_view_category_grades($view_by_student) {
             echo  '</table>';
         }
         else { // no grades returned
-            error(get_string('nogradesreturned','grades'));
+            error(get_string('nogradesreturned','grades'), $CFG->wwwroot.'/course/view.php?id='.$course->id);
         }
     }
     else {
-        error(get_string('nocategoryview','grades'));
+        error(get_string('nocategoryview','grades'), $CFG->wwwroot.'/course/view.php?id='.$course->id);
     }
 }
 
