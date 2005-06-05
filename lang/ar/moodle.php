@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.6 development (2005053000)
+      // moodle.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['action'] = 'ÅÌÑÇÁ';
@@ -908,6 +908,7 @@ $string['showgrades'] = 'ÚÑÖ ÇáÏÑÌÇÊ';
 $string['showlistofcourses'] = 'ÚÑÖ ÞÇÆãÉ ÇáãäÇåÌ ÇáÏÑÇÓíÉ';
 $string['showonlytopic'] = 'ÚÑÖ ãæÖæÚ ÝÞØ $a';
 $string['showonlyweek'] = 'ÚÑÖ ÃÓÈæÚ ÝÞØ $a';
+$string['showperpage'] = 'ÃÚÑÖ $a Ýí ÇáÕÝÍÉ ÇáæÇÍÏÉ';
 $string['showrecent'] = 'ÚÑÖ ÇáäÔÇØ ÇáÍÇáí';
 $string['showreports'] = 'ÚÑÖ ÊÞÇÑíÑ ÇáäÔÇØ';
 $string['showsettings'] = 'ÚÑÖ ÇáÇÚÏÇÏÇÊ';
@@ -974,7 +975,7 @@ $string['themes'] = 'ÇáÇÔßÇá';
 $string['themesaved'] = 'Êã ÍÝÙ ÇáÔßá ÇáÌÏíÏ';
 $string['thischarset'] = 'windows-1256';
 $string['thisdirection'] = 'rtl';
-$string['thislanguage'] = '&#1593;&#1585;&#1576;&#1610;';
+$string['thislanguage'] = 'ÚÑÈí';
 $string['time'] = 'ÇáæÞÊ';
 $string['timezone'] = 'ÇáãäØÞÉ ÇáÒãäíÉ';
 $string['to'] = 'Åáì';
