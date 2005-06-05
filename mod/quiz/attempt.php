@@ -216,13 +216,13 @@
     // list of questions needed by page
     $pagelist = quiz_questions_on_page($attempt->layout, $page);
 
-    // add all questions that are on the submitted form
     if ($newattempt) {
-        $questionlist = $attempt->layout;
+        $questionlist = quiz_questions_in_quiz($attempt->layout);
     } else {
         $questionlist = $pagelist;
     }
 
+    // add all questions that are on the submitted form
     if ($questionids) {
         $questionlist .= ','.$questionids;
     }
@@ -251,6 +251,13 @@
     // creating new sessions where required
     if (!$states = quiz_restore_question_sessions($questions, $quiz, $attempt)) {
         error('Could not restore question sessions');
+    }
+
+    // Save all the newly created states
+    if ($newattempt) {
+        foreach ($questions as $i => $question) {
+            quiz_save_question_session($questions[$i], $states[$i]);
+        }
     }
 
 
@@ -436,14 +443,6 @@
         quiz_print_quiz_question($questions[$i], $states[$i], $number, $quiz, $options);
         quiz_save_question_session($questions[$i], $states[$i]);
         $number += $questions[$i]->length;
-    }
-    if ($newattempt) {
-        $questionlist = explode(',', $attempt->layout);
-        foreach ($questionlist as $i) {
-            if ($i != 0) {
-                quiz_save_question_session($questions[$i], $states[$i]);
-            }
-        }
     }
 
 /// Print the submit buttons

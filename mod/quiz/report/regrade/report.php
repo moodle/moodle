@@ -9,18 +9,16 @@ class quiz_report extends quiz_default_report {
     function display($quiz, $cm, $course) {     /// This function just displays the report
         global $CFG, $SESSION, $db, $QUIZ_QTYPES;
 
-        $strheading    = get_string('regradequiz', 'quiz', $quiz);
-        $strnoattempts = get_string('noattempts');
-        // 'There are no attempts for this quiz that could be regraded.';
-
     /// Print header
         $this->print_header_and_tabs($cm, $course, $quiz, $reportmode="regrade");
 
-        if (!$attempts = get_records('quiz_attempts', 'quiz', $quiz->id)) {
-            notify($strnoattempts);
+    /// Fetch all attempts
+        if (!$attempts = get_records_select('quiz_attempts', "quiz = '$quiz->id' AND preview = 0")) {
+            print_heading(get_string('noattempts', 'quiz'));
             return true;
         }
 
+    /// Fetch all questions
         $sql = "SELECT q.*, i.grade AS maxgrade FROM {$CFG->prefix}quiz_questions q,
                                          {$CFG->prefix}quiz_question_instances i
                 WHERE i.quiz = $quiz->id
@@ -31,15 +29,22 @@ class quiz_report extends quiz_default_report {
         }
         quiz_get_question_options($questions);
 
+    /// Print heading
+        print_heading(get_string('regradingquiz', 'quiz', $quiz));
+        echo '<center>';
+        print_string('regradedisplayexplanation', 'quiz');
+        echo '<center>';
 
-        print_heading($strheading);
-        print_simple_box_start('center', '70%');
-        foreach ($attempts as $attempt) {
-            foreach ($questions as $question) {
+    /// Loop through all questions and all attempts and regrade while printing progress info
+        foreach ($questions as $question) {
+            echo '<b>'.get_string('regradingquestion', 'quiz', $question->name).'</b> '.get_string('attempts', 'quiz').": \n";
+            foreach ($attempts as $attempt) {
                 quiz_regrade_question_in_attempt($question, $attempt, $quiz, true);
             }
+            echo '<br/ >';
+            // the following makes sure that the output is sent immediately.
+            flush();ob_flush();
         }
-        print_simple_box_end();
 
         return true;
     }

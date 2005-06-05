@@ -1492,6 +1492,8 @@ function quiz_regrade_question_in_attempt($question, $attempt, $quiz=false, $ver
      "AND question = '{$question->id}'",
      'seq_number ASC')) {
         $states = array_values($states);
+
+        // what is this for?
         $attempt->sumgrades -= $states[count($states)-1]->grade;
 
         // Initialise the replaystate
@@ -1499,14 +1501,8 @@ function quiz_regrade_question_in_attempt($question, $attempt, $quiz=false, $ver
         $states[0]->sumpenalty = 0.0;
         $replaystate = clone($states[0]);
         $replaystate->last_graded = clone($states[0]);
-        if ($verbose) {
-            $a = new stdClass;
-            $a->attempt = $attempt->id;
-            $a->statecount = count($states);
-            print_string('regradeattempt', 'quiz', $a);
-            echo " . ";
-        }
-        $a->changed = 0;
+
+        $changed = 0;
         $oldgrade = 0;
         for($j = 1; $j < count($states); $j++) {
             quiz_restore_state($question, $states[$j]);
@@ -1534,17 +1530,23 @@ function quiz_regrade_question_in_attempt($question, $attempt, $quiz=false, $ver
             }
 
             if ((float)$replaystate->raw_grade != (float)$states[$j]->raw_grade) {
-                $a->changed++;
-            }
+                $changed++;
 
-            $verbose && print(". "); // Progress indicator
+            }
             $replaystate->id = $states[$j]->id;
             update_record('quiz_states', $replaystate);
         }
-        update_record('quiz_attempts', $attempt);
+        if ($verbose) {
+            if ($changed) {
+                link_to_popup_window ('/mod/quiz/reviewquestion.php?attempt='.$attempt->id.'&amp;question='.$question->id,
+                 'reviewquestion', ' #'.$attempt->id, 450, 550, get_string('reviewresponse', 'quiz'));
+            } else {
+                echo ' #'.$attempt->id;
+            }
+            echo "\n"; flush(); ob_flush();
+        }
+
         quiz_save_best_grade($quiz, $attempt->userid);
-        $verbose && print_string('regradedone', 'quiz', $a);
-        $verbose && print("<br />");
         return true;
     }
     return true;
@@ -2235,7 +2237,7 @@ if (!$grade = get_record('quiz_grades', 'quiz', $quiz->id, 'userid', $userid)) {
 }
 
 /**
-* TODO: document this
+* Save the overall grade for a user at a quiz in the quiz_grades table
 *
 * @return boolean        Indicates success or failure.
 * @param object $quiz    The quiz for which the best grade is to be calculated
@@ -2260,11 +2262,12 @@ function quiz_save_best_grade($quiz, $userid=null) {
     // Calculate the best grade
     $bestgrade = quiz_calculate_best_grade($quiz, $attempts);
     $bestgrade = (($bestgrade / $quiz->sumgrades) * $quiz->grade);
+    $bestgrade = round($bestgrade, $quiz->decimalpoints);
 
     // Save the best grade in the database
     if ($grade = get_record('quiz_grades', 'quiz', $quiz->id, 'userid',
      $userid)) {
-        $grade->grade = round($bestgrade, $quiz->decimalpoints);
+        $grade->grade = $bestgrade;
         $grade->timemodified = time();
         if (!update_record('quiz_grades', $grade)) {
             notify('Could not update best grade');
@@ -2273,7 +2276,7 @@ function quiz_save_best_grade($quiz, $userid=null) {
     } else {
         $grade->quiz = $quiz->id;
         $grade->userid = $userid;
-        $grade->grade = round($bestgrade, $quiz->decimalpoints);
+        $grade->grade = $bestgrade;
         $grade->timemodified = time();
         if (!insert_record('quiz_grades', $grade)) {
             notify('Could not insert new best grade');
@@ -2283,9 +2286,14 @@ function quiz_save_best_grade($quiz, $userid=null) {
     return true;
 }
 
-
+/**
+* Calculate the overall grade for a quiz given a number of attempts by a particular user.
+*
+* @return float          The overall grade
+* @param object $quiz    The quiz for which the best grade is to be calculated
+* @param array $attempts An array of all the attempts of the user at the quiz
+*/
 function quiz_calculate_best_grade($quiz, $attempts) {
-/// Calculate the best grade for a quiz given a number of attempts by a particular user.
 
     switch ($quiz->grademethod) {
 
@@ -2322,9 +2330,16 @@ function quiz_calculate_best_grade($quiz, $attempts) {
     }
 }
 
-
+/**
+* Return the attempt with the best grade for a quiz
+*
+* Which attempt is the best depends on $quiz->grademethod. If the grade
+* method is GRADEAVERAGE then this function simply returns the last attempt.
+* @return object         The attempt with the best grade
+* @param object $quiz    The quiz for which the best grade is to be calculated
+* @param array $attempts An array of all the attempts of the user at the quiz
+*/
 function quiz_calculate_best_attempt($quiz, $attempts) {
-/// Return the attempt with the best grade for a quiz
 
     switch ($quiz->grademethod) {
 

@@ -18,8 +18,7 @@
     $stateid = optional_param('state', 0, PARAM_INT); // state id
     $attemptid = optional_param('attempt', 0, PARAM_INT); // attempt id
     $questionid = optional_param('question', 0, PARAM_INT); // attempt id
-
-    $number = required_param('number', PARAM_INT);  // question number
+    $number = optional_param('number', 0, PARAM_INT);  // question number
 
     if ($stateid) {
         if (! $state = get_record('quiz_states', 'id', $stateid)) {
