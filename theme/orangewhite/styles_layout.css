@@ -57,6 +57,9 @@ h6.main {
   width:auto;
   padding:5px
 }
+#layout-table #middle-column .topics {
+  width:95%
+}
 #layout-table #right-column {
   width:22%;
   padding:5px
@@ -260,9 +263,11 @@ h6.main {
 #course-view .topics {
   margin:0 0.5em 0 1em
 }
-#course-view .section .left,
-#course-view .section .right {
+#course-view .section .left {
   width:0.8em
+}
+#course-view .section .right {
+  width:30px
 }
 #course-view .section .left a {
   display:none
@@ -324,6 +329,9 @@ h6.main {
 
 .glossarydisplay {
   border-bottom:5px solid
+}
+.glossarypopup {
+  margin-top:0.5em
 }
 
 /***
