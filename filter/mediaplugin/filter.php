@@ -57,8 +57,9 @@ function mediaplugin_filter($courseid, $text) {
         $replace .= ' width="400" height="300" id="mp3player">';
         $replace .= " <param name=\"movie\" value=\"\\2.swf\" />";
         $replace .= ' <param name="quality" value="high" />';
+        $replace .= ' <param name="AllowScriptAccess" value="never" />';
         $replace .= " <embed src=\"\\2.swf\" ";
-        $replace .= "  quality=\"high\" width=\"400\" height=\"300\" name=\"flashfilter\" ";
+        $replace .= '  quality="high" width="400" height="300" name="flashfilter" AllowScriptAccess="never" ';
         $replace .= ' type="application/x-shockwave-flash" ';
         $replace .= ' pluginspage="http://www.macromedia.com/go/getflashplayer">';
         $replace .= '</embed>';
