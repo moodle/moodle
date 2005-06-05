@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // grades.php - created with Moodle 1.5 ALPHA (2005050600)
+      // grades.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['addcategory'] = 'カテゴリの追加';
@@ -110,7 +110,7 @@ $string['total'] = '合計';
 $string['totalweight100'] = '合計比重は100です。';
 $string['totalweightnot100'] = '合計比重は100ではありません。';
 $string['uncategorised'] = 'カテゴリ無し';
-$string['useadvanced'] = '拡張機能を使用する';
+$string['useadvanced'] = '拡張機能を表示';
 $string['usepercent'] = 'パーセントを使用';
 $string['useweighted'] = '比重を使用';
 $string['viewbygroup'] = 'グループ';

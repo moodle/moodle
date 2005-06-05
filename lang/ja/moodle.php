@@ -474,7 +474,7 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 GNU General Public License for more details:';
 $string['grade'] = '評点';
-$string['grades'] = '評点';
+$string['grades'] = '評定';
 $string['group'] = 'グループ';
 $string['groupadd'] = '新しいグループを追加';
 $string['groupaddusers'] = '選択した人をグループに追加';
