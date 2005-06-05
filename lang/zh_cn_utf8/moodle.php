@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 ALPHA (2005050600)
+      // moodle.php - created with Moodle 1.5 Beta + (2005060201)
 
 
 $string['action'] = '动作';
@@ -69,7 +69,7 @@ $string['advancedsettings'] = '高级设置';
 $string['again'] = '再次';
 $string['aimid'] = 'AIM号码';
 $string['all'] = '所有';
-$string['allactivities'] = '所以活动';
+$string['allactivities'] = '所有活动';
 $string['alldays'] = '所有天数';
 $string['allfieldsrequired'] = '所有字段都是必需';
 $string['allgroups'] = '所有组';
@@ -355,7 +355,7 @@ $string['emaildigest'] = 'E-mail摘要类型';
 $string['emaildigestcomplete'] = '完整的(每天一封，包含完整内容)';
 $string['emaildigestoff'] = '无摘要(每个帖子发送一封E-mail)';
 $string['emaildigestsubjects'] = '主题(每天一封，只包含主题)';
-$string['emaildisable'] = '这个电子邮件住址无效。';
+$string['emaildisable'] = '这个电子邮件地址无效。';
 $string['emaildisableclick'] = '点击此处不再向此地址发送任何邮件';
 $string['emaildisplay'] = 'E-mail显示';
 $string['emaildisplaycourse'] = '只允许参加同一课程的其他成员看见我的E-mail地址';
@@ -476,7 +476,6 @@ $string['gd1'] = 'GD 1.x已经安装';
 $string['gd2'] = 'GD 2.x已经安装';
 $string['gdneed'] = '要看到该图必须安装GD';
 $string['gdnot'] = 'GD没有安装';
-$string['go'] = '走';
 $string['gpl'] = '版权所有 (C) 2001-2002  Martin Dougiamas  (http://moodle.com)
 
 该系统是自由软件；你可以按照自由软件基金会所公布的GNU通用公共许可证(GPL)进行修改或重新发布；许可证可以是第2版或更新的版本。
@@ -742,7 +741,7 @@ $string['newsitems'] = '新闻条目';
 $string['newsitemsnumber'] = '要显示的新闻条目';
 $string['newuser'] = '新用户';
 $string['newusers'] = '新用户';
-$string['next'] = '下一个';
+$string['next'] = '向后';
 $string['no'] = '否';
 $string['nobody'] = '没人';
 $string['nocoursesfound'] = '没有含关键词\'$a\'的课程';
@@ -846,7 +845,7 @@ $string['preferredlanguage'] = '偏爱的语言';
 $string['preferredtheme'] = '偏爱的主题风格';
 $string['preview'] = '预览';
 $string['previeworchoose'] = '预览或选取一个主题风格';
-$string['previous'] = '早先的';
+$string['previous'] = '向前';
 $string['profile'] = '信息概要';
 $string['publicdirectory'] = '公用目录';
 $string['publicdirectory0'] = '请勿公开该站点';
@@ -1003,7 +1002,7 @@ $string['themes'] = '主题风格';
 $string['themesaved'] = '新主题风格已保存';
 $string['thischarset'] = 'UTF-8';
 $string['thisdirection'] = 'ltr';
-$string['thislanguage'] = '&#20013;&#25991;';
+$string['thislanguage'] = '中文';
 $string['time'] = '时间';
 $string['timezone'] = '时区';
 $string['to'] = '到';
@@ -1150,5 +1149,6 @@ $string['yourlastlogin'] = '你上次登录是在';
 $string['yourself'] = '你自己';
 $string['yourteacher'] = '你的$a';
 $string['zippingbackup'] = '压缩备份文件';
+$string['showperpage'] = '每页显示{$a}';
 
 ?>
