@@ -1,4 +1,4 @@
-<?PHP // $Id$ 
+<?PHP // $Id$
       // quiz.php - created with Moodle 1.5 ALPHA (2005050600)
 
 
@@ -181,7 +181,7 @@ $string['illegalformulasyntax'] = 'Illegal formula syntax starting with \'$a\'';
 $string['imagedisplay'] = 'Image to display';
 $string['imagemissing'] = 'Image not available at line $a. The filename will be ignored';
 $string['importmax10error'] = 'There is an error in the question. You may not have more than ten answers';
-$string['importminerror'] = 'There is an error in the queston. There are not enough answers for this question type';
+$string['importminerror'] = 'There is an error in the question. There are not enough answers for this question type';
 $string['importquestions'] = 'Import questions from file';
 $string['incorrect'] = 'Incorrect';
 $string['indivresp'] = 'Responses of Individuals to Each Item';
@@ -286,7 +286,7 @@ $string['questioninuse'] = 'The question \'$a->questionname\' is currently being
 $string['questionname'] = 'Question name';
 $string['questionnametoolong'] = 'Question name too long at line $a (255 char. max). It has been truncated.';
 $string['questions'] = 'Questions';
-$string['questionsinuse'] = '(* Questions marked by an asterix are already in use in some quizzes. These question will not be deleted from these quizzes but only from the category list.)';
+$string['questionsinuse'] = '(* Questions marked by an asterisk are already in use in some quizzes. These question will not be deleted from these quizzes but only from the category list.)';
 $string['questionsperpage'] = 'Questions per page';
 $string['questiontype'] = 'Question type $a';
 $string['questiontypesetupoptions'] = 'Setup options for question types:';
@@ -395,7 +395,7 @@ $string['time'] = 'Time';
 $string['timecompleted'] = 'Completed';
 $string['timeleft'] = 'Time Remaining';
 $string['timelimit'] = 'Time limit';
-$string['timelimitexeeded'] = 'Sorry! Quiz time limit exeeded!';
+$string['timelimitexeeded'] = 'Sorry! Quiz time limit exceeded!';
 $string['timestr'] = '%%H:%%M:%%S on %%d/%%m/%%y';
 $string['timesup'] = 'Time is up!';
 $string['timetaken'] = 'Time taken';
