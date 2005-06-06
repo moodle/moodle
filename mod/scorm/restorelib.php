@@ -49,12 +49,24 @@
             $scorm->reference = backup_todb($info['MOD']['#']['REFERENCE']['0']['#']);
             $scorm->version = backup_todb($info['MOD']['#']['VERSION']['0']['#']);
             $scorm->maxgrade = backup_todb($info['MOD']['#']['MAXGRADE']['0']['#']);
+            if (!is_int($scorm->maxgrade)) {
+                $scorm->maxgrade = 0;
+            }
             $scorm->grademethod = backup_todb($info['MOD']['#']['GRADEMETHOD']['0']['#']);
+            if (!is_int($scorm->grademethod)) {
+                $scorm->grademethod = 0;
+            }
             $scorm->launch = backup_todb($info['MOD']['#']['LAUNCH']['0']['#']);
             $scorm->summary = backup_todb($info['MOD']['#']['SUMMARY']['0']['#']);
             $scorm->auto = backup_todb($info['MOD']['#']['AUTO']['0']['#']);
             $scorm->width = backup_todb($info['MOD']['#']['WIDTH']['0']['#']);
+            if ($scorm->width == 0) {
+                $scorm->width = 800;
+            }
             $scorm->height = backup_todb($info['MOD']['#']['HEIGHT']['0']['#']);
+            if ($scorm->height == 0) {
+                $scorm->height = 600;
+            }
             $scorm->timemodified = time();
 
             //The structure is equal to the db, so insert the scorm
