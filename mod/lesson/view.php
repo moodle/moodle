@@ -1119,7 +1119,7 @@
                 echo "<p align=\"center\">".get_string("modattemptsnoteacher", "lesson")."</p>";                
             }
             echo "<p align=\"center\"><a href=\"../../course/view.php?id=$course->id\">".get_string("mainmenu", "lesson")."</a></p>\n"; //CDC Back to the menu (course view).
-            echo "<p align=\"center\"><a href=\"../../course/grade.php?id=$course->id\">".get_string("viewgrades", "lesson")."</a></p>\n"; //CDC view grades
+            echo "<p align=\"center\"><a href=\"../../grade/index.php?id=$course->id\">".get_string("viewgrades", "lesson")."</a></p>\n"; //CDC view grades
         }
 
         if ($lesson->displayleft || $lesson->slideshow) {  // this ends the table cell and table for the leftmenu or for slideshow
