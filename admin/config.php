@@ -109,6 +109,7 @@
     print_simple_box_start('center');
     
     echo '<form method="post" action="config.php" name="form">';
+    echo '<center><input type="submit" value="'.get_string('savechanges').'" /></center>';
 
 /// Cycle through each section of the configuration
     foreach ($configvars as $sectionname=>$section) {
