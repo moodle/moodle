@@ -84,6 +84,8 @@
                     if (isset($form->response[$i])) {
                         $oldanswer->response = clean_param(trim($form->response[$i]), PARAM_CLEANHTML);
                         $oldanswer->response = addslashes($oldanswer->response);
+                    } else {
+                        $oldanswer->response = '';
                     }
                     $oldanswer->jumpto = clean_param($form->jumpto[$i], PARAM_INT);
                     /// CDC-FLAG ///
@@ -146,6 +148,7 @@
             }
         }
     }
+
     if ($form->redisplay) {
         redirect("lesson.php?id=$cm->id&amp;action=editpage&amp;pageid=$page->id");
     } else {
