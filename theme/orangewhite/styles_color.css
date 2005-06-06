@@ -575,10 +575,9 @@ table.message_search_results td {
  *** Modules:Glossary
  ***/
  
- .mod-glossary #content {
-   background-color:#F9FAFA
- }
-
+.mod-glossary #content {
+ background-color:#F9FAFA
+}
 .entryboxheader {
   border-color:#BBB
 }
@@ -587,7 +586,8 @@ table.message_search_results td {
   background-color:#FFF
 }
 .glossarypost {
-  border-color:#DDD
+  border-color:#DDD;
+  background-color:#FFF
 }
 .glossarypost .entryheader,
 .glossarypost .entryapproval,

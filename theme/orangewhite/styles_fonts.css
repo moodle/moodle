@@ -484,6 +484,9 @@ body#mod-forum-index .cell {
 .glossarypost .entryheader .time {
   font-style:italic
 }
+.glossarypopup {
+  font-size:0.8em
+}
 .concept {
   font-weight:bold
 }
