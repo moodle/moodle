@@ -459,13 +459,17 @@ class quiz_report extends quiz_default_report {
         header("Pragma: public");
         header("Content-Transfer-Encoding: binary");
 
-        $workbook = new Workbook($filename);
+        $workbook = new Workbook("-");
         // Creating the first worksheet
         $sheettitle = get_string('reportanalysis','quiz_analysis');
-        $myxls = &$workbook->add_worksheet($sheettitle);
+        $myxls =& $workbook->add_worksheet($sheettitle);
         /// format types
         $format =& $workbook->add_format();
         $format->set_bold(0);
+        $formatbc =& $workbook->add_format();
+        $formatbc->set_bold(1);
+        $formatb =& $workbook->add_format();
+        $formatb->set_bold(1);
         $formaty =& $workbook->add_format();
         $formaty->set_bg_color('yellow');
         $formatyc =& $workbook->add_format();
@@ -474,10 +478,6 @@ class quiz_report extends quiz_default_report {
         $formatyc->set_align('center');
         $formatc =& $workbook->add_format();
         $formatc->set_align('center');
-        $formatb =& $workbook->add_format();
-        $formatb->set_bold(1);
-        $formatbc =& $workbook->add_format();
-        $formatbc->set_bold(1);
         $formatbc->set_align('center');
         $formatbpct =& $workbook->add_format();
         $formatbpct->set_bold(1);
@@ -493,8 +493,6 @@ class quiz_report extends quiz_default_report {
         $formatblue->set_bold(1);
         $formatblue->set_color('blue');
         $formatblue->set_align('center');
-        $myxls->write_string(0,0,format_string($quiz->name,true));    
-        
         // Here starts workshhet headers
         $myxls->write_string(0,0,$sheettitle,$formatb);
 
@@ -518,13 +516,14 @@ class quiz_report extends quiz_default_report {
             foreach($rows as $rowdata){
                 $col = 0;
                 foreach($rowdata as $item){
-                    $myxls->write($row,$col,$item,0);
+                    $myxls->write($row,$col,$item,$format);
                     $col++;
                 }
                 $row++;
             }
         }
         $workbook->close();
+        exit;
     }
 
 
@@ -571,6 +570,7 @@ class quiz_report extends quiz_default_report {
         }
         $sxw->Table($headers,$data);
         $sxw->Output();
+        exit;
     }
 
     function Export_CSV(&$questions, $filename) {
