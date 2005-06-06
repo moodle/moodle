@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.5 ALPHA (2005051500)
+      // auth.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['alternatelogin'] = 'Wenn Sie hier eine URL eingeben, wird diese als alternative Login-Seite  verwandt. Die Seite sollte ein Aktionsfeld (Button)auf <strong>\'$a\'</strong> enthalten und Eingabefelder für den <strong>Anmeldenamen</strong> und das <strong>Passwort</strong>.<br />Seien Sie sorgfältig bei der Eingabe der URL. Mit einer falschen URL schließen Sie sich selber vom Zugriff zur Seite aus.<br />Lassen Sie das Feld leer, um die Standardanmeldeseite zu verwenden.';
@@ -32,8 +32,6 @@ $string['auth_dbtable'] = 'Name der Datenbank-Tabelle';
 $string['auth_dbtitle'] = 'Eine externe Datenbank benutzen';
 $string['auth_dbtype'] = 'Der Datenbank-Typ (Siehe <a href=\"../lib/adodb/readme.htm#drivers\">ADOdb Anleitung</a> für Einzelheiten)';
 $string['auth_dbuser'] = 'Nutzername mit Schreibzugriff auf die Datenbank';
-$string['auth_editlock'] = 'Schlüsselwert (lock value)';
-$string['auth_editlock_expl'] = '<p><b>Schlüsselwert (lock value):</b> Wenn das Feld aktiviert wird, können moodle Nutzer und Admins das Feld nicht mehr direkt bearbeiten. Wenden Sie diese Option an, wenn Sie die Daten aus einem externen System übernehmen. </p>';
 $string['auth_emaildescription'] = 'E-Mail-Bestätigung ist die Standard-Authentifizierungsmethode. Wenn sich der Nutzer anmeldet, seinen eigenen Nutzernamen und sein Passwort auswählt, wird eine Bestätigungs-E-Mail an die E-Mail-Adresse des Nutzers gesendet. Diese E-Mail enthält einen sicheren Verweis auf eine Seite, wo der Nutzer seinen Zugang bestätigen kann. Spätere Anmeldungen prüfen nur den Nutzernamen und Kennwort anhand der in der Moodle-Datenbank gespeicherten Daten.';
 $string['auth_emailtitle'] = 'E-Mail basierte Authentifizierung';
 $string['auth_fccreators'] = 'Liste der Kursverwalter/innen. Trennen Sie verschiedene Gruppen durch \';\'. Namen müssen genau so geschrieben werden, wie auf dem Referenz-Server. Achten Sie auch auf die korrekte Groß- und Kleinschreibung.';
@@ -43,6 +41,8 @@ $string['auth_fchost'] = 'Server-Adresse des Referenz-Servers. Tragen Sie die IP
 $string['auth_fcpasswd'] = 'Passwort für den Zugang';
 $string['auth_fctitle'] = 'Verwendet einen Referenz-Server';
 $string['auth_fcuserid'] = 'Nutzer-ID auf dem Referenz-Server mit der bevorzugten \'Subadmin\'-Einstellung';
+$string['auth_fieldlock'] = 'Sperrwert';
+$string['auth_fieldlock_expl'] = '<p><b>Sperrwert:</b> Wenn Sie die Funktion aktivieren, verhindert moodle die Bearbeitung des Feldes durch Nutzer und Admins. Dies ist sinnvoll, wenn die Daten in einer externen Datenbank gepflegt werden. </p>';
 $string['auth_imapdescription'] = 'Diese Methode verwendet einen IMAP-Server, um zu prüfen, ob der angegebener Nutzername und das Passwort gültig sind.';
 $string['auth_imaphost'] = 'IMAP Server-Adresse. Benutzen Sie die IP, nicht den DNS-Namen';
 $string['auth_imapport'] = 'IMAP Serverport-Nummer. Normalerweise ist das 143 oder 993.';
@@ -124,11 +124,18 @@ $string['forcechangepassword_help'] = 'Nutzer werden aufgefordert Ihr Passwort b
 $string['forcechangepasswordfirst_help'] = 'Nutzer werden aufgefordert Ihr Passwort beim ersten Login zu ändern';
 $string['guestloginbutton'] = 'Gast-Login Schaltfläche';
 $string['instructions'] = 'Anweisungen';
+$string['locked'] = 'Gesperrt';
 $string['md5'] = 'MD5-Verschlüsselung';
 $string['plaintext'] = 'Reiner Text';
 $string['showguestlogin'] = 'Sie können die Gast-Login Schaltfläche auf der Anmeldeseite anzeigen oder verbergen.';
 $string['stdchangepassword'] = 'Standardseite zur Passwortänderung nutzen';
 $string['stdchangepassword_expl'] = 'Stellen Sie Ja ein, wenn das externe Authentifizierungssystem eine Änderung des Passwortes durch moodle zulässt. Die Einstellungen überschreiben \'Passwort-URL ändern\'';
 $string['stdchangepassword_explldap'] = 'Anmerkung: Es wird empfohlen LDAP über einen SSL verschlüsselten Tunnel (ldaps://) zu nutzen wenn der LDAP Server remote verwendet wird.';
+$string['unlocked'] = 'Bearbeitbar';
+$string['unlockedifempty'] = 'Bearbeitbar wenn Feld leer';
+$string['update_never'] = 'Nie';
+$string['update_oncreate'] = 'In Bearbeitung';
+$string['update_onlogin'] = 'Bei jedem Login';
+$string['update_onupdate'] = 'Bei Update';
 
 ?>

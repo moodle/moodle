@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 ALPHA (2005051500)
+      // moodle.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['action'] = '操作';
@@ -220,7 +220,7 @@ $string['creatingblocks'] = 'ブロックの作成';
 $string['creatingcategoriesandquestions'] = 'カテゴリと質問の作成';
 $string['creatingcoursemodules'] = 'コースモジュールの作成';
 $string['creatingevents'] = 'イベントの作成';
-$string['creatinggradebook'] = 'グレードブックの作成';
+$string['creatinggradebook'] = '評定表の作成';
 $string['creatinggroups'] = 'グループの作成';
 $string['creatinglogentries'] = 'ログエントリの作成';
 $string['creatingmessagesinfo'] = 'メッセージ情報の作成';
@@ -474,7 +474,7 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 GNU General Public License for more details:';
 $string['grade'] = '評点';
-$string['grades'] = '評点';
+$string['grades'] = '評定';
 $string['group'] = 'グループ';
 $string['groupadd'] = '新しいグループを追加';
 $string['groupaddusers'] = '選択した人をグループに追加';
@@ -921,7 +921,7 @@ $string['shortnametaken'] = '省略名は他のコース ( $a ) で使用され�
 $string['shortsitename'] = '短いサイト名 ( 例 単語 )';
 $string['show'] = '表示';
 $string['showadvancedsettings'] = '高度な設定を表示';
-$string['showall'] = '$a 全てを表示';
+$string['showall'] = '$a 名全員を表示';
 $string['showallcourses'] = '全てのコースを表示';
 $string['showalltopics'] = '全てのトピックを表示';
 $string['showallusers'] = '全てのユーザを表示';
@@ -930,6 +930,7 @@ $string['showgrades'] = '評定を表示';
 $string['showlistofcourses'] = 'コース一覧を表示';
 $string['showonlytopic'] = 'トピック $a のみ表示';
 $string['showonlyweek'] = '第 $a 週のみ表示';
+$string['showperpage'] = '1ページあたり $a 名を表示';
 $string['showrecent'] = '最新の活動を表示';
 $string['showreports'] = '活動レポートを表示';
 $string['showsettings'] = '設定を表示';
@@ -1127,7 +1128,7 @@ $string['writingcategoriesandquestions'] = 'カテゴリと質問の書き出し
 $string['writingcoursedata'] = 'コースデータの書き出し';
 $string['writingeventsinfo'] = 'イベント情報の書き出し';
 $string['writinggeneralinfo'] = '一般情報の書き出し';
-$string['writinggradebookinfo'] = 'グレードブックの書き出し';
+$string['writinggradebookinfo'] = '評定表の書き出し';
 $string['writinggroupsinfo'] = 'グループ情報の書き出し';
 $string['writingheader'] = 'ヘッダの書き出し';
 $string['writingloginfo'] = 'ログ情報の書き出し';

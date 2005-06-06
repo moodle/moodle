@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // grades.php - created with Moodle 1.5 ALPHA (2005050600)
+      // grades.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['addcategory'] = 'カテゴリの追加';
@@ -12,7 +12,7 @@ $string['bonuspoints'] = 'ボーナスポイント';
 $string['categories'] = 'カテゴリ';
 $string['category'] = 'カテゴリ';
 $string['choosecategory'] = 'カテゴリの選択';
-$string['creatinggradebooksettings'] = 'グレードブック設定の作成';
+$string['creatinggradebooksettings'] = '評定表設定の作成';
 $string['curveto'] = 'カーブ';
 $string['deletecategory'] = 'カテゴリの削除';
 $string['displaylettergrade'] = '評定文字を表示する';
@@ -31,8 +31,8 @@ $string['excluded'] = '除外';
 $string['extracredit'] = '自己申告';
 $string['extracreditwarning'] = '注意: カテゴリ内の全ての項目を自己申告にすることにより、評定の計算から項目を効果的に除外することができます。これにより合計点数は計算されません。';
 $string['forstudents'] = '学生に対して';
-$string['gradebook'] = 'グレードブック';
-$string['gradebookhiddenerror'] = '現在、グレードブックは学生から隠されています。';
+$string['gradebook'] = '評定表';
+$string['gradebookhiddenerror'] = '現在、評定表は学生から隠されています。';
 $string['gradecategoryhelp'] = '評定カテゴリヘルプ';
 $string['gradeexceptions'] = '例外設定';
 $string['gradeexceptionshelp'] = '評定例外ヘルプ';
@@ -86,7 +86,7 @@ $string['pointsascending'] = '点数の昇順で並び替え';
 $string['pointsdescending'] = '点数の降順で並び替え';
 $string['preferences'] = 'オプション';
 $string['rawpct'] = '実%%';
-$string['reprintheaders'] = 'Reprintヘッダ';
+$string['reprintheaders'] = 'ヘッダの再表示';
 $string['savechanges'] = '変更を保存';
 $string['savepreferences'] = '設定を保存';
 $string['scaledpct'] = '伸縮%%';
@@ -110,7 +110,7 @@ $string['total'] = '合計';
 $string['totalweight100'] = '合計比重は100です。';
 $string['totalweightnot100'] = '合計比重は100ではありません。';
 $string['uncategorised'] = 'カテゴリ無し';
-$string['useadvanced'] = '拡張機能を使用する';
+$string['useadvanced'] = '拡張機能を表示';
 $string['usepercent'] = 'パーセントを使用';
 $string['useweighted'] = '比重を使用';
 $string['viewbygroup'] = 'グループ';
@@ -120,7 +120,7 @@ $string['weightedascending'] = '比重パーセントの昇順で並び替え';
 $string['weighteddescending'] = '比重パーセントの降順で並び替え';
 $string['weightedpct'] = '比重%%';
 $string['weightedpctcontribution'] = '比重%%貢献';
-$string['writinggradebookinfo'] = 'グレードブック設定の書き込み';
+$string['writinggradebookinfo'] = '評定表設定の書き込み';
 $string['yes'] = 'Yes';
 
 ?>

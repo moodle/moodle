@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 ALPHA (2005051500)
+      // moodle.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['action'] = 'Aktion';
@@ -123,7 +123,7 @@ $string['backupusershelp'] = 'Wählen Sie, ob alle Nutzer/innen auf dem Server od
 $string['backupversion'] = 'Sicherungsversion';
 $string['blockconfiga'] = 'Konfiguration des $a Blocks';
 $string['blockconfigbad'] = 'Der Block wurde nicht richtig implementiert. Daher steht die Konfigurationsseite nicht zurVerfügung.';
-$string['blockdeleteconfirm'] = 'Sie wollen den Block $a vollständig löschen. Damit löscehn Sie alel Datenbankeinträge, die mit diesm Block in Verbindung stehen.Wollen Sie diesen Vorgang wirklich fortsetzen?';
+$string['blockdeleteconfirm'] = 'Sie wollen den Block $a vollständig löschen. Damit löschen Sie alle Datenbankeinträge, die mit diesm Block in Verbindung stehen.Wollen Sie diesen Vorgang wirklich fortsetzen?';
 $string['blockdeletefiles'] = 'Alle Daten, die mit \'$a->block\' verbunden sind, wurden in der Datenbank gelöscht. Um den Vorgang abzuschließen, und sicherzustellen, dass keine Neuinstallation erfolgt, sollten Sie das Verzeichnis $a->directory auf dem server löschen.';
 $string['blocks'] = 'Blöcke';
 $string['blocksaddedit'] = 'Hinzufügen/Bearbeiten von Blöcken';
@@ -447,7 +447,7 @@ $string['forgotaccount'] = 'Haben Sie Ihr Passwort vergessen?';
 $string['forgotten'] = 'Benutzername und Kennwort vergessen?';
 $string['format'] = 'Format';
 $string['formathtml'] = 'HTML-Format';
-$string['formatmarkdown'] = 'Preisnachlaß';
+$string['formatmarkdown'] = 'Markdown-Format';
 $string['formatplain'] = 'Reines Textformat';
 $string['formatsocial'] = 'Offenes Kommunikationsforum';
 $string['formattext'] = 'Moodle Text-Format';
@@ -612,8 +612,8 @@ $string['loginto'] = 'Angemeldet bei $a';
 $string['loginusing'] = 'Bitte beachten Sie, dass es notwendig ist, sich vor dem ersten Moodle-Login einmalig zu registrieren';
 $string['logout'] = 'LogOut';
 $string['logs'] = 'Statistiken';
-$string['logtoomanycourses'] = '	[ <a href=\"$a->url\">more</a> ]';
-$string['logtoomanyusers'] = '	[ <a href=\"$a->url\">more</a> ]';
+$string['logtoomanycourses'] = '[ <a href=\"$a->url\">more</a> ]';
+$string['logtoomanyusers'] = '[ <a href=\"$a->url\">more</a> ]';
 $string['mailadmins'] = 'Administrator/innen informieren';
 $string['mailstudents'] = 'Teilnehmer/innen informieren';
 $string['mailteachers'] = 'Trainer/innen informieren';
@@ -795,7 +795,6 @@ $string['pageheaderconfigablock'] = 'Konfiguration eines Blocks in %%fullname%%'
 $string['parentcoursenotfound'] = 'Kurs nicht gefunden!';
 $string['parentcoursenotmetacourse'] = 'Kurs ist kein Metakurs!';
 $string['parentfolder'] = 'Übergeordneter Ordner';
-$string['parentlanguage'] = '';
 $string['participants'] = 'Teilnehmer/innen';
 $string['password'] = 'Passwort';
 $string['passwordchanged'] = 'Passwort wurde geändert';
@@ -924,6 +923,7 @@ $string['showgrades'] = 'Noten anzeigen';
 $string['showlistofcourses'] = 'Die Liste der Kurse anzeigen';
 $string['showonlytopic'] = 'Nur Thema $a anzeigen';
 $string['showonlyweek'] = 'Nur Woche $a anzeigen';
+$string['showperpage'] = '$a pro Seite anzeigen';
 $string['showrecent'] = 'Neue Aktivitäten anzeigen';
 $string['showreports'] = 'Auswertung über die Aktivitäten anzeigen';
 $string['showsettings'] = 'Einstellungen anziegen';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // grades.php - created with Moodle 1.5 ALPHA (2005043000)
+      // grades.php - created with Moodle 1.5 ALPHA (2005051500)
 
 
 $string['addcategory'] = 'Lägg till en kategori';
@@ -49,6 +49,7 @@ $string['gradeletternote'] = 'För att ta bort en bokstav för betyg/omdöme så töm
 $string['gradepreferenceshelp'] = 'Hjälp angående inställningar för betyg/omdömen';
 $string['grades'] = 'Betyg/omdömen';
 $string['gradeweighthelp'] = 'Hjälp angående viktning av betyg/omdömen ';
+$string['hideadvanced'] = 'Dölj avancerade egenskaper';
 $string['hidecategory'] = 'Dold';
 $string['highgradeascending'] = 'Sortera enligt stigande skala för höga betyg/omdömen';
 $string['highgradedescending'] = 'Sortera enligt fallande skala för höga betyg/omdömen';
@@ -104,7 +105,7 @@ $string['sortbylastname'] = 'Sortera efter efternamn';
 $string['standarddeviation'] = 'Standaravvikelse';
 $string['stats'] = 'Statistik';
 $string['statslink'] = 'Stats';
-$string['student'] = 'StudentIelev/deltagare/lärande';
+$string['student'] = 'Student/elev/deltagare/lärande';
 $string['total'] = 'Summa';
 $string['totalweight100'] = 'Den sammanlagda viktningen är lika med 100';
 $string['totalweightnot100'] = 'Den sammanlagda viktningen är inte lika med 100';

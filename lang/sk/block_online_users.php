@@ -1,9 +1,9 @@
 <?PHP // $Id$ 
-      // block_online_users.php - created with Moodle 1.6 development (2005052400)
+      // block_online_users.php - created with Moodle 1.6 development (2005053000)
 
 
-$string['blockname'] = 'Práve prihlásení u¾ívatelia';
-$string['configtimetosee'] = 'Poèet minút, ktoré znamenajú, ¾e u¾ívateµ je práve prihlásený do systému';
+$string['blockname'] = 'Prihlásení u¾ívatelia';
+$string['configtimetosee'] = 'Ako èasto zis»ova» prihlásených u¾ívateµov (v minútach)?';
 $string['periodnminutes'] = 'posledných $a minút';
 
 ?>

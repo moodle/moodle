@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.6 development (2005053000)
+      // quiz.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['acceptederror'] = 'Geaccepteerde fout';
@@ -133,6 +133,7 @@ $string['editingshortanswer'] = 'Een vraag met kort antwoord bewerken';
 $string['editingtruefalse'] = 'Een waar/onwaar vraag bewerken';
 $string['editquestions'] = 'Bewerk vragen';
 $string['editquiz'] = 'Bewerk test';
+$string['errormissingquestion'] = 'Fout: de vraag met id $a ontbreekt in het systeem';
 $string['errornotnumbers'] = 'Fout - antwoorden moeten cijfers zijn';
 $string['errorsdetected'] = '$a fout(en) ontdekt';
 $string['event1'] = 'Bewaar automatisch';
@@ -327,7 +328,7 @@ $string['repaginate'] = 'Herpagineer met $a vragen per pagina';
 $string['replace'] = 'Vervang';
 $string['replacementoptions'] = 'Vervang in';
 $string['report'] = 'Rapporten';
-$string['reportanalysis'] = 'Item analyse';
+$string['reportanalysis'] = 'Vraag-analyse';
 $string['reportfullstat'] = 'Gedetailleerde cijfers';
 $string['reportmulti_percent'] = 'Verschillende percentages';
 $string['reportmulti_q_x_student'] = 'Overzicht keuzes van alle leerlingen';

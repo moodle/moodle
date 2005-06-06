@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.6 development (2005052400)
+      // admin.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['adminseesallevents'] = '管理者に全てのイベントを表示';
@@ -11,6 +11,7 @@ $string['calendarsettings'] = 'カレンダー';
 $string['change'] = '変更';
 $string['configallowcoursethemes'] = 'この設定を「Yes」に設定した場合、コースに独自のテーマを設定することができます。コーステーマは他の全てのテーマ ( サイト、ユーザ、セッションテーマ ) を上書きします。';
 $string['configallowemailaddresses'] = '受信する新しいメールを特定ドメインのみに制限したい場合は、この欄にスペースで区切って入力してください。他のドメインから送信されるメールは全て拒否されます。例 <strong>ourcollege.edu.au .gov.au</strong>';
+$string['configallowobjectembed'] = 'デフォルトのセキュリティ対策として、通常のユーザはマルチメディア ( Flash等 ) をEMBEDおよびOBJECTタグで明確にHTMLに埋め込むことは許可されていません ( メディアプラグインフィルタを使用して安全に埋め込むことは可能です )。これらのタグの使用を許可したい場合は「Yes」を選択してください。';
 $string['configallowunenroll'] = 'この設定を「Yes」に設定した場合、学生はいつでも好きな時にコースの参加を取り消すことができます。\'No\'に設定した場合、学生は参加取消しを行うことはできず、参加に関する全てを教師および管理者がコントロールします。';
 $string['configallowuserblockhiding'] = 'サイト全体においてユーザにブロックの表示/非表示を許可しますか? この機能では、折りたたみ可能なブロックの状態を記憶するために、Javaスクリプトとクッキーを使用します。また、ブロックの表示/非表示はユーザ自身の使用にのみ影響します。';
 $string['configallowuserthemes'] = 'この設定を「Yes」に設定した場合、ユーザは自分のテーマを設定することができます。サイトテーマはユーザテーマに上書きされます ( コーステーマは上書きされません ) 。';

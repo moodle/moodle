@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.5 ALPHA (2005051500)
+      // auth.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['alternatelogin'] = 'Als je hier een URL ingeeft, dan zal die dienen als loginpagina voor deze site. De pagina moet een formulier bevatten met de actie ingesteld op <strong>\'$a\'</strong> en die de velden <strong>username</strong> en <strong>password</strong> teruggeeft.<br />Let er op dat je een juiste URL ingeeft. Zoniet sluit je jezelf uit de site.<br />Laat deze instelling leeg als je de standaard loginpagina wil gebruiken.';
@@ -31,8 +31,6 @@ $string['auth_dbtable'] = 'Naam  van  de  tabel in de database';
 $string['auth_dbtitle'] = 'Gebruik een externe database';
 $string['auth_dbtype'] = 'Het type database (Bekijk <a href=\"../lib/adodb/readme.htm#drivers\">ADOdb documentatie</a> voor meer informatie)';
 $string['auth_dbuser'] = 'Gebruikersnaam met read access tot de database';
-$string['auth_editlock'] = 'Blokkeer deze waarde';
-$string['auth_editlock_expl'] = '<p><b>Blokkeer deze waarde:</b>Als je dit inschakelt, dan kunnen gebruikers en beheerders van Moodle dit veld niet meer rechtstreeks bewerken. Gebruik deze optie als je deze gegevens met een extern authenticatiesysteem beheert.</p>';
 $string['auth_emaildescription'] = 'E-mailbevestiging is standaard ingesteld als authenticatiemethode. Op het moment dat de gebruiker zich aanmeldt en daarbij een nieuwe gebruikersnaam en wachtwoord kiest wordt er een bevestigings e-mail gestuurd naar het e-mailadres van de gebruiker. In deze e-mail staat een veilige link naar een pagina waar de gebruiker zijn account kan bevestigen. Tijdens alle latere aanmeldingen worden de gebruikersnaam en het wachtwoord alleen maar vergeleken met de bewaarde waarden in de Moodle database.';
 $string['auth_emailtitle'] = 'Op e-mail gebaseerde authenticatie';
 $string['auth_fccreators'] = 'Lijst met groepen van wie de leden nieuwe vakken mogen maken. Gebruik een ; als scheidingsteken voor verschillende groepen. Namen moeten hetzelfde gespeld worden als op de FirstClass-server. Het systeem is hoofdlettergevoelig.';
@@ -42,6 +40,8 @@ $string['auth_fchost'] = 'Het adres van de server. Gebruik het IP-nummer of DNS-
 $string['auth_fcpasswd'] = 'Wachtwoord voor bovenstaande account';
 $string['auth_fctitle'] = 'Gebruik een FirstClass-server';
 $string['auth_fcuserid'] = 'Gebruikers-ID voor FirstClass account met het privilege \'Subadministrator\'.';
+$string['auth_fieldlock'] = 'Blokkeer waarde';
+$string['auth_fieldlock_expl'] = '<p><b>Blokkeer waarde:</b>Indien ingeschakeld zal Moodle verhinderen dat gebruikers en beheerders dit veld rechtstreeks kunnen bewerken. Gebruik deze optie als je deze gegevens in het externe autentificatiesysteem wil bewaren.</p>';
 $string['auth_imapdescription'] = 'Deze methode gebruikt een IMAP-server om te controleren of een bepaalde gebruikersnaam en een bepaald wachtwoord geldig zijn.';
 $string['auth_imaphost'] = 'Het adres van de IMAP-server. Gebruik een IP-adres, geen DNS-naam.  ';
 $string['auth_imapport'] = 'Het nummer van de poort van de IMAP-server. Meestal is dit 143 of 993.';
@@ -124,11 +124,18 @@ $string['forcechangepassword_help'] = 'Verplicht gebruikers om hun wachtwoord te
 $string['forcechangepasswordfirst_help'] = 'Verplicht gebruikers om hun wachtwoord te wijzigen bij hun volgende aanmelding bij Moodle.';
 $string['guestloginbutton'] = 'Knop om in te loggen als gast';
 $string['instructions'] = 'Instructies';
+$string['locked'] = 'Geblokkeerd';
 $string['md5'] = 'MD5-encryptie';
 $string['plaintext'] = 'Platte tekst';
 $string['showguestlogin'] = 'Je kunt de om in te loggen als gast verbergen of laten zien op de inlogpagina.';
 $string['stdchangepassword'] = 'Gebruik de standaardpagina om het wachtwoord te wijzigen';
 $string['stdchangepassword_expl'] = 'Zet dit op ja als het externe systeem toelaat om wachtwoorden via Moodle te wijzigen. Deze instelling gaat voor op de \"Verander wachtwoord-URL\"';
 $string['stdchangepassword_explldap'] = 'Merk op: het is aan te raaden om LDAP te gebruiken met een SSL geëncrypteerde tunnel (ldaps://) als de LDAP-server op afstand staat.';
+$string['unlocked'] = 'Niet geblokkeerd';
+$string['unlockedifempty'] = 'Niet geblokkeerd indien leeg';
+$string['update_never'] = 'Nooit';
+$string['update_oncreate'] = 'Bij het  aanmaken';
+$string['update_onlogin'] = 'Bij elke aanmelding';
+$string['update_onupdate'] = 'Bij het updaten';
 
 ?>

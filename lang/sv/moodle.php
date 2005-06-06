@@ -1,8 +1,9 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 ALPHA (2005042400)
+      // moodle.php - created with Moodle 1.5 Beta (2005052300)
 
 
 $string['action'] = 'Åtgärd';
+$string['actions'] = 'Åtgärder';
 $string['active'] = 'Aktiv';
 $string['activities'] = 'Aktiviteter';
 $string['activity'] = 'Aktivitet';
@@ -447,6 +448,7 @@ $string['forceno'] = 'Tvinga inte';
 $string['forcepasswordchange'] = 'Framtvinga ändring av lösenord';
 $string['forcepasswordchangehelp'] = 'Meddela användarna att de ska ändra det nästa gång de loggar in';
 $string['forcetheme'] = 'Tvinga tema';
+$string['forgotaccount'] = 'Förlorat lösenordet?';
 $string['forgotten'] = 'Har Du glömt Ditt användarnamn och lösenord?';
 $string['format'] = 'Format';
 $string['formathtml'] = 'HTML-format';
@@ -567,7 +569,7 @@ $string['includecoursefiles'] = 'Ta med all kursfiler';
 $string['includecourseusers'] = 'Ta med alla lärande';
 $string['included'] = 'Ingår';
 $string['includelogentries'] = 'Ta med logbidrag';
-$string['includemodules'] = 'Ta med moduler';
+$string['includemodules'] = 'Ta med moduler';
 $string['includeneededusers'] = 'Ta med \'behövda\' användare';
 $string['includenoneusers'] = 'Ta med icke-användare';
 $string['includeuserfiles'] = 'Ta med användarfiler';
@@ -600,6 +602,7 @@ $string['livelogs'] = 'Loggar från senaste timmen';
 $string['locale'] = 'sv_SE';
 $string['location'] = 'Plats';
 $string['loggedinas'] = 'Du är inloggad som $a ';
+$string['loggedinasguest'] = 'Du är f.n. inloggad som gäst';
 $string['loggedinnot'] = 'Du har inte loggat in.';
 $string['login'] = 'Logga in';
 $string['login_failure_logs'] = 'Loggar över misslyckade försök att logga in';

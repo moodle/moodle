@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.5 ALPHA (2005051500)
+      // auth.php - created with Moodle 1.5 Beta + (2005060201)
 
 
 $string['alternatelogin'] = '如果你在此输入一个URL，它将被用于本站的登录。这个页面上应当有一个表单，表单的action一项应设定为<strong>“{$a}”</strong>，并且返回的字段中应当有<strong>username</strong>和<strong>password</strong>。<br />小心宾不要输入错误的URL，否则你可能会被锁在站点之外。<br />要使用缺省的登录页面请为此设置保留空白。';
@@ -31,8 +31,6 @@ $string['auth_dbtable'] = '数据库中的表单名';
 $string['auth_dbtitle'] = '使用一个外部数据库';
 $string['auth_dbtype'] = '数据库类型（详情请看<a href=\"../lib/adodb/readme.htm#drivers\">ADOdb帮助文档</a>）';
 $string['auth_dbuser'] = '对该数据库具有读权限的用户名';
-$string['auth_editlock'] = '锁定值';
-$string['auth_editlock_expl'] = '<p><b>锁定值:</b> 如果开启，则Moodle用户和管理员都不能直接修改字段。如果您使用了外部的认证系统来维护这些信息则可以开启此选项。</p>';
 $string['auth_emaildescription'] = '电子邮件确认是默认的身份验证方法。用户注册时可以选用自己的用户名和密码，然后有一封确认信件发送到该用户的电子邮箱。该信件中有一个安全的链接指向用户确认帐号的页面。以后的登录就只根据本系统的数据库中储存的信息检验用户名和密码。';
 $string['auth_emailtitle'] = '基于电子邮件的身份验证';
 $string['auth_fccreators'] = '可以创建课程的组列表，组与组之间用‘;’隔开。其名称必须与FirstClass服务器上的完全一致，此系统大小写敏感。';
@@ -42,6 +40,8 @@ $string['auth_fchost'] = 'FirstClass服务器地址，使用IP或DNS名称。';
 $string['auth_fcpasswd'] = '上面帐号的密码';
 $string['auth_fctitle'] = '使用FirstClass服务器';
 $string['auth_fcuserid'] = '拥有‘Subadministrator’权限的FirstClass帐号的userid。';
+$string['auth_fieldlock'] = '锁定值';
+$string['auth_fieldlock_expl'] = '<p><b>锁定值：</b> 如果开启，Moodle用户和管理员将不能直接修改字段的值。如果您正在维护外部数据库的数据，请选择此项。';
 $string['auth_imapdescription'] = '该方法使用一个IMAP服务器来检验用户名和密码是否有效。';
 $string['auth_imaphost'] = 'IMAP服务器地址。用IP地址，不要用域名。';
 $string['auth_imapport'] = 'IMAP服务器端口号。通常是143或993。';
@@ -129,11 +129,25 @@ $string['forcechangepassword_help'] = '强制用户在下次登录时修改密�
 $string['forcechangepasswordfirst_help'] = '强制用户在第一次登录时修改密码。';
 $string['guestloginbutton'] = '访客登录按钮';
 $string['instructions'] = '使用说明';
+$string['locked'] = '锁定';
+$string['locked'] = '已锁定';
 $string['md5'] = 'MD5加密';
 $string['plaintext'] = '纯文本';
 $string['showguestlogin'] = '你可以在登录页面显示或隐藏访客登录按钮。';
 $string['stdchangepassword'] = '使用标准的修改密码页面';
 $string['stdchangepassword_expl'] = '如果外部认证系统允许通过Moodle修改密码，则应设为是。此选项会覆盖“修改密码URL”。';
+$string['unlocked'] = '不锁定';
+$string['unlockedifempty'] = '不锁定空内容';
+$string['update_never'] = '从不';
+$string['update_oncreate'] = '在建立时';
+$string['update_onlogin'] = '在每次登录时';
+$string['update_onupdate'] = '在更新时';
 $string['stdchangepassword_explldap'] = '注意: 如果使用远程服务器，建议您使用安全的LDAP连接(ldaps://)。';
+$string['unlocked'] = '已解除锁定';
+$string['unlockedifempty'] = '如果空则解除锁定';
+$string['update_never'] = '从不';
+$string['update_oncreate'] = '创建时';
+$string['update_onlogin'] = '每次登录时';
+$string['update_onupdate'] = '更新时';
 
 ?>

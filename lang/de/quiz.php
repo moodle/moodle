@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.5 ALPHA (2005051500)
+      // quiz.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['acceptederror'] = 'Akzeptierter Fehler';
@@ -72,6 +72,7 @@ $string['completedon'] = 'Beendet am';
 $string['confirmclose'] = 'Sie versuchen, den Versuch zu beenden. Wenn Sie den Versuch beenden, können Sie Ihre Antworten nicht mehr bearbeiten.';
 $string['confirmserverdelete'] = 'Sind Sie sicher, dass Sie den Server <b>$a</b> von der Liste löschen wollen?';
 $string['confirmstartattempt'] = 'Der Test muss in einer festgelegten Zeit abgeschlossen werden. Sind Sie sicher, dass Sie jetzt beginnen wollen?';
+$string['containercategorycreated'] = 'Die Kategorie wurde aus den unten genannten Gründen angelegt, um alle Fragen aus anderen Kategorien aufzunehmen.';
 $string['continueattemptquiz'] = 'Letzten Versuch fortsetzen';
 $string['copyingfrom'] = 'Erstellen einer Kopie der Frage \'$a\'';
 $string['copyingquestion'] = 'Eine Frage kopieren';
@@ -136,6 +137,7 @@ $string['event2'] = 'Sichern';
 $string['event3'] = 'Note';
 $string['event5'] = 'Validieren';
 $string['event6'] = 'Beenden';
+$string['examview'] = 'Prüfungsansicht';
 $string['existingcategory1'] = 'Einen Wert aus einem bereits existierenden Satz, der auch von anderen Fragen in dieser Kategorie genutzt wird';
 $string['existingcategory2'] = 'Eine Datei aus einem bereits existierenden Satz, der auch von anderen Fragen in dieser Kategorie genutzt wird';
 $string['existingcategory3'] = 'Ein Link aus einem bereits existierenden Satz, der auch von anderen Fragen in dieser Kategorie genutzt wird';
@@ -411,8 +413,10 @@ $string['uniform'] = 'Dezimalen, von einer einheitlichen Verteilung';
 $string['unit'] = 'Einheit';
 $string['unknowntype'] = 'Fragentyp in Zeile $a wird nicht unterstützt. Die Frage wird ignoriert.';
 $string['unsupportedformulafunction'] = 'Die Funktion $a wird nicht unterstützt';
+$string['unusedcategorydeleted'] = 'Nach dem Löschen des Kurses wurde diese Kategorie gelöscht. Die Fragen wurden nirgendswo genutzt.';
 $string['upgradesure'] = '<div style=\"color: red;\">Das Testmodul nimmt eine Reihe von weitreichenden Veränderungen an den Datenbanktabellen vor. Diese Upgradefunktion wurde noch nicht sehr umfassend getestet. Sie sollten daher unbedingt ein Backup Ihrer Datenbanktabellen vornehmen, bevor Sie fortfahren.</div>';
 $string['url'] = 'URL';
+$string['usedcategorymoved'] = 'Die Kategorie wurde verschoben, nachdem der Kurs gelöscht wurde, wiel die Fragen noch in anderen kursen genutzt werden.';
 $string['validate'] = 'Gültig';
 $string['viewallanswers'] = 'Zeige $a ausgefüllte Tests';
 $string['viewallreports'] = 'Berichte ansehen für $a Versuche';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.5 ALPHA (2005042400)
+      // auth.php - created with Moodle 1.5 Beta (2005052300)
 
 
 $string['alternatelogin'] = 'Om Du skriver in en URL här så kommer den att användas som sida för inloggning på den här webbplatsen. Sidan bör innehålla ett formulär som har egenskapen för händelse inställd till <strong>\'$a\'</strong><br />Var försiktig så att Du inte skriver in en felaktig URL eftersom Du då kan stänga Dig själv ute från webbplatsen. <br />Låt den här inställningen vara tom om Du vill använda standardsidan för inloggning.';
@@ -94,12 +94,14 @@ $string['auth_pop3mailbox'] = 'Namn på den \"brevlåda\" (mailbox) som Du vill fö
 $string['auth_pop3port'] = 'Serverport (110 är den vanligaste)';
 $string['auth_pop3title'] = 'Använd en POP3-server';
 $string['auth_pop3type'] = 'Servertyp. Om Din server använder certifikat som säkerhet, välj pop3cert.';
+$string['auth_shib_convert_data'] = 'API för modifikation av data';
+$string['auth_shib_convert_data_description'] = 'Du kan använda denna API för fortsatt modifikation av data som kommer via Shibboleth. Läs <a href=\"../auth/shibboleth/README.txt\" target=\"_blank\">README</a> för vidare instruktioner.';
+$string['auth_shib_convert_data_warning'] = 'Filen finns inte eller så kan den inte läsas av webbserver-processen.';
 $string['auth_shib_instructions'] = 'Använd <a href=\"$a\">logga in med Shibboleth</a>
  för att få tillgång via Shibboleth om Din institution stödjer det.<br />Annars får Du använda det vanliga formuläret(som visas här) för att logga in';
 $string['auth_shib_instructions_help'] = 'Här bör Du tillhandahålla instruktioner för hur man använder Shibboleth. Detta kommer att visas på sektionen för instruktioner på sidan för att logga in. Detta bör innehålla en länk till \"<b>$a</b>\" så att Shibboleth-användare kan logga in på ett enkelt sätt. Om Du lämnar detta tomt så kommer standardinstruktioner (som inte är Shibboleth-specifika) att användas.';
 $string['auth_shib_only'] = 'Endast Shibboleth';
 $string['auth_shib_only_description'] = 'Markera det här alternativet om Du vill aktivera autentisering med Shibboleth.';
-$string['auth_shib_settings'] = 'Var noga med att läsa <a href=\"../auth/shibboleth/README.txt\" target=\"_blank\">README</a> filen för Shibboleth angående hur Du ska ställa in Moodle för att samverka med Shibboleth.';
 $string['auth_shib_username_description'] = 'Namnet på den webbserver miljövariabel för Shibboleth som ska användas som användarnamn för Moodle.';
 $string['auth_shibboleth_login'] = 'Logga in med Shibboleth';
 $string['auth_shibboleth_manual_login'] = 'Logga in manuellt';

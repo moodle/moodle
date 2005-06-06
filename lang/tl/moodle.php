@@ -951,6 +951,7 @@ $string['showgrades'] = 'Ipakita ang mga marka';
 $string['showlistofcourses'] = 'Ipakita ang listahan ng kurso';
 $string['showonlytopic'] = 'Tanging paksa $a ang ipakita';
 $string['showonlyweek'] = 'Tanging linggo $a ang ipakita';
+$string['showperpage'] = 'Ipakita ang $a sa bawat pahina';
 $string['showrecent'] = 'Ipakita ang pinakabagong aktibidad';
 $string['showreports'] = 'Ipakita ang mga ulat ng aktibidad';
 $string['showsettings'] = 'Ipakita ang mga kaayusan';
