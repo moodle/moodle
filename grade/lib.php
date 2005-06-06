@@ -1656,6 +1656,9 @@ function grade_view_category_grades($view_by_student) {
                     }
                 }
             }
+            /// Make sure $item_order is initialised (bug 3424)
+            if (empty($item_order)) $item_order = array();
+            
             ksort($item_order);
             
             foreach($grades_by_student as $student => $categories) {
