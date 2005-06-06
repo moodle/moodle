@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.6 development (2005052400)
+      // moodle.php - created with Moodle 1.5 Beta (2005052300)
 
 
 $string['action'] = 'Akce';
@@ -901,6 +901,7 @@ $string['showgrades'] = 'Ukázat body';
 $string['showlistofcourses'] = 'Ukázat seznam kurzù';
 $string['showonlytopic'] = 'Ukázat pouze téma $a';
 $string['showonlyweek'] = 'Ukázat pouze týden $a';
+$string['showperpage'] = 'Ukázat $a na stránce';
 $string['showrecent'] = 'Ukázat nedávnou èinnost';
 $string['showreports'] = 'Ukázat zprávu o èinnosti';
 $string['showsettings'] = 'Ukázat nastavení';
