@@ -377,7 +377,7 @@
 
 /// Print the attempt number or preview heading
     if ($isteacher) {
-        print_heading(get_string('previewquiz', 'quiz', format_string($quiz->name)));}
+        print_heading(get_string('previewquiz', 'quiz', format_string($quiz->name)));
         unset($buttonoptions);
         $buttonoptions['q'] = $quiz->id;
         $buttonoptions['forcenew'] = true;
@@ -386,7 +386,7 @@
         echo '</center>';
         if ($quiz->popup) {
             notify(get_string('popupnotice', 'quiz'));
-        
+        }
     } else {
         print_heading($strattemptnum);
     }
