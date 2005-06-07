@@ -1135,7 +1135,7 @@ function main_upgrade($oldversion=0) {
                             $newval = ($newval==1) ? 'onlogin' : 'oncreate'; // translate 0/1 to locked/unlocked
                         }
 
-                        if (!(set_config($newkey, $newval, 'auth/'.$CFG->auth)
+                        if (!(set_config($newkey, addslashes($newval), 'auth/'.$CFG->auth)
                             && delete_records('config', 'name', $key))) {
                             notify("Error updating Auth configuration $key to {$CFG->auth} $newkey .");
                             $result = false;
