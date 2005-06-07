@@ -815,7 +815,7 @@ function quiz_upgrade($oldversion) {
 
         // Remove duplicate entries from quiz_numerical
         if ($dups = get_records_sql("
-                SELECT question, answer, count(*) num
+                SELECT question, answer, count(*) as num
                 FROM {$CFG->prefix}quiz_numerical
                 GROUP BY question, answer
                 HAVING count(*) > 1"
@@ -840,7 +840,7 @@ function quiz_upgrade($oldversion) {
 
         // Remove duplicate entries from quiz_shortanswer
         if ($dups = get_records_sql("
-                SELECT question, answers, count(*) num
+                SELECT question, answers, count(*) as num
                 FROM {$CFG->prefix}quiz_shortanswer
                 GROUP BY question, answers
                 HAVING count(*) > 1"
@@ -865,7 +865,7 @@ function quiz_upgrade($oldversion) {
 
         // Remove duplicate entries from quiz_multichoice
         if ($dups = get_records_sql("
-                SELECT question, answers, count(*) num
+                SELECT question, answers, count(*) as num
                 FROM {$CFG->prefix}quiz_multichoice
                 GROUP BY question, answers
                 HAVING count(*) > 1"
