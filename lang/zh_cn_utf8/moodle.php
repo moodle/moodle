@@ -203,7 +203,7 @@ $string['coursecategory'] = '课程类别';
 $string['coursecreators'] = '课程创建者';
 $string['coursefiles'] = '课程文件';
 $string['courseformats'] = '课程格式';
-$string['coursegrades'] = '课程等级';
+$string['coursegrades'] = '课程成绩';
 $string['coursehidden'] = '此课程目前并不对学生开放';
 $string['courseinfo'] = '课程信息';
 $string['courserestore'] = '课程恢复';
@@ -936,6 +936,7 @@ $string['showgrades'] = '显示等级';
 $string['showlistofcourses'] = '显示课程列表';
 $string['showonlytopic'] = '只显示第{$a}个主题';
 $string['showonlyweek'] = '只显示第{$a}周安排';
+$string['showperpage'] = '每页显示{$a}';
 $string['showrecent'] = '显示最新动态';
 $string['showreports'] = '显示活跃的报道';
 $string['showsettings'] = '显示设置';
@@ -1149,6 +1150,5 @@ $string['yourlastlogin'] = '你上次登录是在';
 $string['yourself'] = '你自己';
 $string['yourteacher'] = '你的$a';
 $string['zippingbackup'] = '压缩备份文件';
-$string['showperpage'] = '每页显示{$a}';
 
 ?>
