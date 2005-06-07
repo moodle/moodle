@@ -14,8 +14,7 @@
         error("Site isn't defined!");
     }
 
-    require_variable($_REQUEST['block']);
-    $blockid = intval($_REQUEST['block']);
+    $blockid = required_param( 'block',PARAM_INT );
    
     if(($blockrecord = blocks_get_record($blockid)) === false) {
         error('This block does not exist');
