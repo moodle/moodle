@@ -80,7 +80,7 @@
                 break;
             case LESSON_SHORTANSWER :
                 echo '<b>'.get_string("questiontype", "lesson").":</b> \n";
-                echo helpbutton("questiontype", get_string("questiontype", "lesson"), "lesson")."<br>";
+                echo helpbutton("questiontypes", get_string("questiontype", "lesson"), "lesson")."<br>";
                 lesson_qtype_menu($LESSON_QUESTION_TYPE, $page->qtype, 
                                   "lesson.php?id=$cm->id&action=editpage&pageid=$page->id",
                                   "document.editpage.redisplay.value=1;document.editpage.submit();");
@@ -98,7 +98,7 @@
             case LESSON_MATCHING :
             case LESSON_NUMERICAL :
                 echo '<b>'.get_string("questiontype", "lesson").":</b> \n";
-                echo helpbutton("questiontype", get_string("questiontype", "lesson"), "lesson")."<br>";
+                echo helpbutton("questiontypes", get_string("questiontype", "lesson"), "lesson")."<br>";
                 lesson_qtype_menu($LESSON_QUESTION_TYPE, $page->qtype, 
                                   "lesson.php?id=$cm->id&action=editpage&pageid=$page->id",
                                   "document.editpage.redisplay.value=1;document.editpage.submit();");
