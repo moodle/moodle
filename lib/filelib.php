@@ -167,7 +167,7 @@ function send_file($path, $filename, $lifetime=86400 , $filter=false, $pathisstr
         if ($pathisstring) {
             echo $path;
         }else {
-            readfile($path);
+            readfile_chunked($path);
         }
     } else {     // Try to put the file through filters
         global $course;  // HACK!
@@ -199,7 +199,7 @@ function send_file($path, $filename, $lifetime=86400 , $filter=false, $pathisstr
             if ($pathisstring) {
                 echo $path;
             }else {
-                readfile($path);
+                readfile_chunked($path);
             }
         }
     }
@@ -342,6 +342,28 @@ function fulldelete($location) {
         }
     }
     return true;
+}
+
+function readfile_chunked($filename,$retbytes=true) {
+    $chunksize = 1*(1024*1024); // 1MB chunks
+    $buffer = '';
+    $cnt =0;// $handle = fopen($filename, 'rb');
+    $handle = fopen($filename, 'rb');
+    if ($handle === false) {
+        return false;
+    }
+    
+    while (!feof($handle)) {
+        $buffer = fread($handle, $chunksize);
+        echo $buffer;
+        if ($retbytes) {
+            $cnt += strlen($buffer);}
+    }
+    $status = fclose($handle);
+    if ($retbytes && $status) {
+        return $cnt; // return num. bytes delivered like readfile() does.
+    }
+    return $status;
 }
 
 
