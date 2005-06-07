@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.5 ALPHA (2005051500)
+      // auth.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['alternatelogin'] = 'ここにURLを入力した場合、このサイトのログインページとして使用されます。ログインページでは、action属性に<strong>「 $a 」</strong>をセットして、 <strong>username</strong>フィールドおよび<strong>password</strong>フィールドを適切にMoodleに渡す必要があります。<br />間違ったURLを設定すると、あなたのサイトから締め出されることになりますので注意してください。<br />デフォルトのログイン画面を使用する場合は、空白のままにしてください。';
@@ -31,8 +31,6 @@ $string['auth_dbtable'] = 'データベースのテーブル名';
 $string['auth_dbtitle'] = '外部データベースを使用';
 $string['auth_dbtype'] = 'データベースタイプ ( 詳細は<a href=../lib/adodb/readme.htm#drivers>ADOdb documentation</a>をご覧ください )';
 $string['auth_dbuser'] = 'データベースアクセス用のユーザ名';
-$string['auth_editlock'] = 'ロック値';
-$string['auth_editlock_expl'] = '<p><b>ロック値:</b> この設定を「Yes」にした場合、Moodleユーザおよび管理者がフィールドを直接編集できないようにします。外部認証システムにあるこの値をメンテナンスする時に使用してください。</p>';
 $string['auth_emaildescription'] = 'メールによるアカウント確定はデフォルトの認証方法です。ユーザが新しいユーザ名とパスワードを選択してサインアップした場合、アカウント確定用メールがユーザのメールアドレスに送信されます。このメールにはユーザがアカウントを確定するためのリンクが記入されています。アカウント確定後のログインではMoodleデータベースに保存されているユーザ名とパスワードのみを確認します。';
 $string['auth_emailtitle'] = 'Emailベースの認証';
 $string['auth_fccreators'] = 'メンバーがコースの作成を許可されているグループの一覧です。複数のグループは「;」で分けてください。グループ名はFirstClassサーバと厳密に同じ名前にしてください。システムは、大文字と小文字を区別します。';
@@ -42,6 +40,8 @@ $string['auth_fchost'] = 'FirstClassサーバアドレス。IPアドレスまた
 $string['auth_fcpasswd'] = '上記アカウントのパスワード。';
 $string['auth_fctitle'] = 'FirstClassサーバを使用';
 $string['auth_fcuserid'] = '権限「Subadministrator」を持ったFirstClassアカウントのユーザID。';
+$string['auth_fieldlock'] = '値をロックする';
+$string['auth_fieldlock_expl'] = '<p><b>値をロックする:</b> このオプションを有効にした場合、Moodleユーザおよび管理者はフィールドを直接編集するのを防止します。外部認証システムでデータをメンテナンスしている場合にこのオプションを使用してください。</p>';
 $string['auth_imapdescription'] = 'ユーザ名とパスワードを確認するためにIMAPサーバを使用します。';
 $string['auth_imaphost'] = 'IMAPサーバーアドレスです。IPアドレスではなくドメイン名を使用してください。';
 $string['auth_imapport'] = 'IMAPサーバポート番号です。通常は143または993です。';
@@ -125,11 +125,18 @@ $string['forcechangepassword_help'] = '次にMoodleへログインする時に�
 $string['forcechangepasswordfirst_help'] = '最初にMoodleへログインする時に、ユーザのパスワード変更を強制します。';
 $string['guestloginbutton'] = 'ゲストログインボタン';
 $string['instructions'] = '説明';
+$string['locked'] = 'ロックする';
 $string['md5'] = 'MD5暗号化';
 $string['plaintext'] = 'テキスト';
 $string['showguestlogin'] = 'ログインページのゲストログインボタンを表示／非表示にできます。';
 $string['stdchangepassword'] = '標準パスワード変更ページを使用';
 $string['stdchangepassword_expl'] = '外部認証システムがMoodleにパスワードの変更を許可する場合、この設定を「Yes」にしてください。この設定は、「Change Password URL」を上書きします。';
 $string['stdchangepassword_explldap'] = '注意: LDAPサーバをリモートで使用する場合は、SSL暗号化トンネルを使用することをお勧めします。';
+$string['unlocked'] = 'ロックしない';
+$string['unlockedifempty'] = '空の場はロックしない';
+$string['update_never'] = 'しない';
+$string['update_oncreate'] = '作成時';
+$string['update_onlogin'] = '毎回ログイン時';
+$string['update_onupdate'] = '更新時';
 
 ?>
