@@ -1014,7 +1014,8 @@ class quiz_default_questiontype {
               <td colspan="2" align="center">
               <input type="submit" '.$submitscript.' value="'.get_string('savechanges').'" /> ';
         if ($question->id) {
-            echo '<input type="submit" name="makecopy" '.$submitscript.' value="'.get_string("makecopy", "quiz").'" /> ';
+// Switched off until bug 3445 is fixed
+//            echo '<input type="submit" name="makecopy" '.$submitscript.' value="'.get_string("makecopy", "quiz").'" /> ';
         }
         echo '<input type="submit" name="cancel" value="'.get_string("cancel").'" />
               <input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />
