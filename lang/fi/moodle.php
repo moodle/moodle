@@ -1,8 +1,9 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 ALPHA (2005042400)
+      // moodle.php - created with Moodle 1.5 + (2005060201)
 
 
-$string['action'] = 'Tapahtuma';
+$string['action'] = 'Toiminta';
+$string['actions'] = 'Toiminnat';
 $string['active'] = 'Aktiivinen';
 $string['activities'] = 'Aktiviteetit';
 $string['activity'] = 'Aktiviteetti';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005032600)
+      // lesson.php - created with Moodle 1.5 + (2005060201)
 
 
 $string['accesscontrol'] = 'Saatavuus';
@@ -95,6 +95,7 @@ $string['havenotgradedyet'] = 'Ei ole vielä arvostellut.';
 $string['here'] = 'tänne';
 $string['highscore'] = 'Parhaat tulokset';
 $string['hightime'] = 'Parhaat ajat';
+$string['importppt'] = 'Tuo powerpoint-esitys';
 $string['importquestions'] = 'Tuo kysymykset';
 $string['insertedpage'] = 'Lisätty sivu';
 $string['jump'] = 'Siirry';
@@ -103,10 +104,12 @@ $string['leftduringtimed'] = 'Olet lähtenyt ajastetun oppitunnin aikana.<br>Ole 
 $string['leftduringtimednoretake'] = 'Olet lähtenyt ajastetun oppitunnin aikana, etkä<br> saa aloittaa uudelleen tai jatkaa oppituntia.';
 $string['lesson'] = 'a$ oppitunti';
 $string['lessonclosed'] = 'Tämä oppitunti on suljettu $a:ssa';
+$string['lessoncloses'] = 'Opppitunti suljetaan';
 $string['lessondefault'] = 'Käytä tämän oppitunnin asetuksia oletuksina';
 $string['lessonformating'] = 'Oppitunnin muotoilu';
 $string['lessonmenu'] = 'Oppitunnin valikko';
 $string['lessonopen'] = 'Tämä oppitunti on auki $a:ssa';
+$string['lessonopens'] = 'Oppitunti avataan';
 $string['lessonstats'] = 'Tunnin tiedot';
 $string['loginfail'] = 'Sisäänkirjautuminen epäonnistui, yritä uudelleen...';
 $string['lowscore'] = 'Matalat pisteet';
@@ -204,6 +207,7 @@ $string['slideshowheight'] = 'Diaesityksen korkeus';
 $string['slideshowwidth'] = 'Diaesityksen leveys';
 $string['startlesson'] = 'Aloita oppitunti';
 $string['studentattemptlesson'] = '$a->lastname, $a->firstname\'s yritys numero $a->attempt';
+$string['studentname'] = '$a Nimi';
 $string['studentoneminwarning'] = 'Varoitus: Sinulla on 1 minuutti tai vähemmän viimeistellä oppitunti.';
 $string['studentoutoftime'] = 'HUOMIO: Aika loppui tämän oppitunnin osalta. Viimeistä vastaustasi ei lasketa, koska se annettiin ajan jo loputtua. Paina jatka painiketta lopettaaksesi oppitunnin.';
 $string['studentresponse'] = '{$a}\'n vastaus';
