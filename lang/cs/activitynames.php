@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // activitynames.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004100800)
+      // activitynames.php - created with Moodle 1.5 + (2005060201)
 
 
 $string['filtername'] = 'Automaticky propojovat názvy èinností';

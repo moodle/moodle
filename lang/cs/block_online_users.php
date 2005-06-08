@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // block_online_users.php - created with Moodle 1.3 (2004052500)
+      // block_online_users.php - created with Moodle 1.5 + (2005060201)
 
 
 $string['blockname'] = 'Pøipojení u¾ivatelé';

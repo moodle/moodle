@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // install.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
+      // install.php - created with Moodle 1.5 + (2005060201)
 
 
 $string['admindirerror'] = 'Adresáø správy (admin) není urèen správnì';

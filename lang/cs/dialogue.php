@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // dialogue.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
+      // dialogue.php - created with Moodle 1.5 + (2005060201)
 
 
 $string['addmynewentries'] = 'Pøidat mé nové pøíspìvky';

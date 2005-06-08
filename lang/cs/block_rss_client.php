@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // client.php - created with Moodle 1.5 ALPHA (2005050600)
+      // block_rss_client.php - created with Moodle 1.5 + (2005060201)
 
 
 $string['addfeed'] = 'Pøidat nové zdrojové URL:';
@@ -21,11 +21,11 @@ $string['editrssblock'] = 'Upravit RSS blok';
 $string['feed'] = 'Zdroj novinek';
 $string['feedadded'] = 'Pøidán zdroj novinek';
 $string['feeddeleted'] = 'Odstranìn zdroj novinek';
-$string['feedupdated'] = 'Upraven zdroj novinek';
 $string['feeds'] = 'Zdroje novinek';
 $string['feedsaddedit'] = 'Pøidat/Upravit zdroje';
 $string['feedsconfigurenewinstance'] = 'Tento blok zatím nemù¾e zobrazovat ¾ádný RSS zdroj. Nejprve jej musíte nastavit kliknutím zde.';
 $string['feedstitle'] = 'Vzdálené RSS zdroje';
+$string['feedupdated'] = 'Upraven zdroj novinek';
 $string['findmorefeeds'] = 'Najít dal¹í RSS zdroje';
 $string['managefeeds'] = 'Správa v¹ech mých zdrojù';
 $string['nofeeds'] = 'Tyto stránky nemají nadefinován ¾ádný RSS zdroj';

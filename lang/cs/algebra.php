@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // algebra.php - created with Moodle 1.2 Beta (2004022400)
+      // algebra.php - created with Moodle 1.5 + (2005060201)
 
 
 $string['filtername'] = 'Algebraický zápis';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.5 ALPHA (2005050600)
+      // auth.php - created with Moodle 1.5 + (2005060201)
 
 
 $string['alternatelogin'] = 'Pokud sem vlo¾íte nìjaké URL, bude pou¾ito jako pøihla¹ovací stránka k tomuto systému. Tato va¹e stránka by mìla obsahovat formuláø s vlastností \'action\' nastavenou na <strong>\'$a\'</strong>, který vrací pole <strong>username</strong> a <strong>password</strong>.<br />Dbejte na to, abyste vlo¾ili platné URL! V opaèném pøípadì byste mohli komukoliv vèetnì sebe zamezit pøístupu k tìmto stránkám.<br />Chcete-li pou¾ívat standardní pøihla¹ovací stránku, nechejte toto pole prázdné.';
@@ -31,8 +31,6 @@ $string['auth_dbtable'] = 'Název tabulky v databázi';
 $string['auth_dbtitle'] = 'Pou¾ívat externí databázi';
 $string['auth_dbtype'] = 'Typ databáze (Viz <a href=\"../lib/adodb/readme.htm#drivers\">ADOdb dokumentaci</a>)';
 $string['auth_dbuser'] = 'U¾ivatelské jméno s právy èíst externí databázi';
-$string['auth_editlock'] = 'Uzamknout hodnotu';
-$string['auth_editlock_expl'] = '<p><b>Uzamknout hodnotu:</b> Je-li povoleno, zabrání u¾ivatelùm i správcùm mìnit toto pole pøímo. Pou¾ijte tuto volbu, pokud udr¾ujete data v externím systému.</p>';
 $string['auth_emaildescription'] = 'Potvrzení emailem je pøednastavená metoda ovìøování. Pøi registraci si u¾ivatel vybere vlastní u¾ivatelské jméno a heslo. Poté je na jeho adresu odeslán email obsahující zabezpeèený odkaz na stránku, kde potvrdí zadané údaje. Pøi dal¹ím pøihlá¹ení se ji¾ ovìøuje pouze zadané u¾ivatelské jméno a heslo proti hodnotì ulo¾ené v databázi Moodle.';
 $string['auth_emailtitle'] = 'Ovìøení na základì emailu';
 $string['auth_fccreators'] = 'Seznam skupin, jejich¾ èlenové jsou oprávnìni vytváøet nové kurzy. Skupiny oddìlujte støedníkem. Názvy musí být zadány pøesnì jako na FirstClass serveru a zále¾í na malých/VELKÝCH písmenech.';
@@ -129,5 +127,11 @@ $string['showguestlogin'] = 'Na pøihla¹ovací stránce mù¾ete skrýt nebo ukázat tl
 $string['stdchangepassword'] = 'Pou¾ij standardní stránku \'Zmìna hesla\'';
 $string['stdchangepassword_expl'] = 'Pokud vá¹ externí autentizaèní systém umo¾òuje zmìnu hesla pøes Moodle, pøepnìte na Ano. Tímto potlaèíte hodnotu \'URL ke zmìnì hesla\'';
 $string['stdchangepassword_explldap'] = 'Pozn.: Pokud pou¾íváte vzdálený LDAP server, doporuèujeme vám komunikovat pøes ¹ifrované SSL spojení (ldaps://)';
+$string['unlocked'] = 'Uzamèeno';
+$string['unlockedifempty'] = 'Uzamèeno, je-li prázdné';
+$string['update_never'] = 'Nikdy';
+$string['update_oncreate'] = 'Pøi vytváøení';
+$string['update_onlogin'] = 'Pøi ka¾dém pøihlá¹ení';
+$string['update_onupdate'] = 'Pøi aktualizaci';
 
 ?>

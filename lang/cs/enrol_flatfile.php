@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // enrol_flatfile.php - created with Moodle 1.4 (2004083100)
+      // enrol_flatfile.php - created with Moodle 1.5 + (2005060201)
 
 
 $string['description'] = 'Tato metoda bude opakovanì kontrolovat a zpracovávat speciálnì formátovaný textový soubor, jeho¾ umístìní zde urèíte. Soubor mù¾e mít strukturu podobnou téhle:

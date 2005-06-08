@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 Beta (2005052300)
+      // moodle.php - created with Moodle 1.5 + (2005060201)
 
 
 $string['action'] = 'Akce';
@@ -119,7 +119,7 @@ $string['backuporiginalname'] = 'Název zálohy';
 $string['backupsavetohelp'] = 'Úplná cesta k adresáøi, do nìho¾ chcete ukládat soubory záloh<br />(ponecháte-li pole prázdné, budou se soubory ukládat do vlastního adresáøe daného kurzu)';
 $string['backuptakealook'] = 'Prosím, zkontrolujte protokoly záloh: $a';
 $string['backupuserfileshelp'] = 'Vyberte, zda mají být soubory u¾ivatele (napø. jeho fotografie) zahrnuty do automatických záloh.';
-$string['backupusershelp'] = 'Vyberte si, zda chcete zahrnout v¹echny u¾ivatele na serveru, nebo jen potøebné u¾ivatele pro ';
+$string['backupusershelp'] = 'Vyberte, zda chcete zahrnout v¹echny u¾ivatele na serveru, nebo jen potøebné u¾ivatele pro ka¾dý kurz';
 $string['backupversion'] = 'Verze zálohy';
 $string['blockconfiga'] = 'Konfigurace bloku $a';
 $string['blockconfigbad'] = 'Tento blok nebyl korektnì implementován a nemá proto  konfiguraèní rozhraní';
@@ -702,7 +702,7 @@ $a->link
 S pozdravem od spravce \'$a->sitename\', $a->signoff';
 $string['newpicture'] = 'Nový obrázek';
 $string['newsitem'] = 'novinka';
-$string['newsitems'] = 'novinky';
+$string['newsitems'] = 'novinek';
 $string['newsitemsnumber'] = 'Kolik novinek ukazovat';
 $string['newuser'] = 'Nový u¾ivatel';
 $string['newusers'] = 'Noví u¾ivatelé';
@@ -734,11 +734,11 @@ $string['noreplybouncesubject'] = '$a - vraceny email';
 $string['noreplyname'] = 'Nedpovidejte na tento email';
 $string['noresults'] = 'Bez výsledkù';
 $string['normal'] = 'Normalní';
-$string['normalfilter'] = 'Normální filtr';
+$string['normalfilter'] = 'Normální vyhledávání';
 $string['nostudentsfound'] = '$a nenalezeno';
 $string['nostudentsingroup'] = 'V této skupinì dosud nejsou ¾ádní studenti';
 $string['nostudentsyet'] = 'Je¹tì ¾ádní studenti nejsou zapsáni v tomto kurzu';
-$string['nosuchemail'] = 'To není emailová adresa';
+$string['nosuchemail'] = 'Taková adresa není registrovaná';
 $string['notavailable'] = 'Není dostupné';
 $string['noteachersyet'] = 'Je¹tì ¾ádní uèitelé nejsou v tomto kurzu';
 $string['notenrolled'] = '$a není zapsán v tomto kurzu.';
@@ -1037,7 +1037,7 @@ $string['user'] = 'U¾ivatel';
 $string['userconfirmed'] = 'Potvrzeno $a';
 $string['userdata'] = 'Data u¾ivatele';
 $string['userdeleted'] = 'U¾ivatelský úèet byl odstranìn';
-$string['userdescription'] = 'Popis';
+$string['userdescription'] = 'Dal¹í podrobnosti o u¾ivateli';
 $string['userfiles'] = 'Soubory u¾ivatele';
 $string['userlist'] = 'Seznam u¾ivatelù';
 $string['username'] = 'U¾ivatelské jméno';
@@ -1048,7 +1048,7 @@ $string['users'] = 'U¾ivatelé';
 $string['usersnew'] = 'Noví u¾ivatelé';
 $string['userzones'] = 'Èasové pásmo u¾ivatele';
 $string['usethiscourse'] = 'Pou¾ij tento kurz';
-$string['usingexistingcourse'] = 'Pou¾ívám stávající kurz';
+$string['usingexistingcourse'] = 'Pou¾ívám existující kurz';
 $string['version'] = 'Verze';
 $string['view'] = 'Prohlí¾ení';
 $string['virusfound'] = 'Pozor! Clam AV nalezl virus v souboru nahrávaném u¾ivatelem $a->user v kurzu $a->course. Zde je výstup programu clamscan:';
