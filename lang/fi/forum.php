@@ -1,9 +1,11 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005032600)
+      // forum.php - created with Moodle 1.5 + (2005060201)
 
 
 $string['addanewdiscussion'] = 'Lisää uusi keskustelu';
 $string['addanewtopic'] = 'Lisää uusi aihe';
+$string['advancedsearch'] = 'Tarkennettu haku';
+$string['allforums'] = 'Kaikki keskustelualueet';
 $string['allowchoice'] = 'Anna kaikkien valita';
 $string['allowdiscussions'] = 'Voiko $a avata uusia keskusteluja?';
 $string['allowratings'] = 'Voidaanko viestejä arvioida?';
