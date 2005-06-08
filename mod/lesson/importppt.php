@@ -128,13 +128,13 @@ function readdata($file, $courseid, $modname) {
     // this is the file where we get the names of the files for the slides (in the correct order too)
     $outline = $base.'/outline.htm';
     
-    if (is_readable($outline)) {
+    $pages = array();
+    
+    if (file_exists($outline) and is_readable($outline)) {
         $outlinecontents = file_get_contents($outline);
 
         $filenames = array();
         preg_match_all("/javascript:GoToSld\('(.*)'\)/", $outlinecontents, $filenames);  // this gets all of our files names
-            
-        $pages = array();
         
         // file $pages with the contents of all of the slides
         foreach ($filenames[1] as $file) {
@@ -144,16 +144,29 @@ function readdata($file, $courseid, $modname) {
             } else {
                 return false;
             }
+        }        
+    } else {
+        // cannot find the outline, so grab all files that start with slide        
+        $dh  = opendir($base);
+        while (false !== ($file = readdir($dh))) {  // read throug the directory
+           if ('slide' == substr($file, 0, 5)) {  // check for name (may want to check extension later)
+                $path = $base.'/'.$file;
+                if (is_readable($path)) {
+                    $pages[$path] = file_get_contents($path);
+                } else {
+                    return false;
+                }
+            }
         }
-        
-        if (empty($pages)) {
-            return false;
-        }
-        
-        return $pages;
-        
+
+        ksort($pages);  // order them by file name
     }
-    return false;
+    
+    if (empty($pages)) {
+        return false;
+    }
+    
+    return $pages;
 }
 
 function extract_data($pages, $courseid, $lessonname, $modname) {
