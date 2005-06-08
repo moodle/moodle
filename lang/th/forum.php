@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.6 development (2005052400)
+      // forum.php - created with Moodle 1.4.5 + (2004083150)
 
 
 $string['addanewdiscussion'] = 'ตั้งกระทู้';
@@ -11,14 +11,18 @@ $string['allowsdiscussions'] = 'กระดานนี้อนุญาตให้แต่แต่ละคนสามารถตั้งกระทู้ได้ค
 $string['anyfile'] = 'ไฟล์ทุกประเภท';
 $string['attachment'] = 'แนบไฟล์';
 $string['bynameondate'] = 'โดย  $a->name - $a->date';
+$string['configcleanreadtime'] = 'เวลาที่ต้องการลบโพสต์เก่า ๆ จากตาราง \"อ่านแล้ว\"';
 $string['configdisplaymode'] = 'จะแสดงค่าที่ตั้งไว้หากไม่มีการตั้งค่า';
 $string['configenablerssfeeds'] = 'สวิชต์นี้จะเปิดโอกาสให้ป้อน RSS ได้  คุณยังจะต้องเปิดป้อนข้อมูลในแต่ละกระทู้เอง';
 $string['configlongpost'] = 'โพสต์ใดก็ตามที่ยาวมากกว่านี้จะถือว่ายาว (ยกเว้น html)';
 $string['configmanydiscussions'] = 'จำนวนความคิดเห็นที่ต้องการแสดงในหนึ่งหน้า';
 $string['configmaxbytes'] = 'ขนาดไฟล์สูงสุดที่สามารถแนบลงบนกระทู้ได้';
+$string['configoldpostdays'] = 'จำนวนวันที่ถือว่าโพสต์นั้นได้รับการอ่านแล้ว';
 $string['configreplytouser'] = 'ในกรณีที่ฟอรั่มทำการส่งเมลล์ออกไปต้องการให้ระบุชื่อผู้ส่งเป็นอีเมลของสมาชิกหรือไม่  ถึงแม้สมาชิกจะทำการซ่อนอีเมลของตนเองไว้ก็ตาม';
 $string['configshortpost'] = 'โพสต์ใดก็ตามที่ยาวต่ำกว่านี้จะถือว่าสั้น (ยกเว้น html)';
-$string['couldnotadd'] = 'ไม่สามารถ เพิ่มโพสต์ของคุณได้  มีข้อผิดพลาด';
+$string['configtrackreadposts'] = 'ตั้งค่าเป็น \"ใช่\" หากต้องการดูว่าสมาชิกแต่ละคนอ่านหรือไม่อ่านกระทู้ดังกล่าว';
+$string['configusermarksread'] = 'ถ้า \"ใช่\" สมาชิกต้องทำเครื่องหมายว่า \"อ่านแล้ว\" สำหรับแต่ละโพสต์ด้วยตนเอง ถ้าเลือก \"ไม่\" เมื่อใดก็ตามที่เข้าไปอ่านกระทู้แล้วจะถือว่าอ่านแล้ว';
+$string['couldnotadd'] = ' มีข้อผิดพลาด ไม่สามารถเพิ่มโพสต์ของคุณได้ ';
 $string['couldnotdeleteratings'] = 'ขออภัยไม่สามารถลบได้ เพราะว่ามีคนให้คะแนนเรียบร้อยแล้ว ';
 $string['couldnotdeletereplies'] = 'ขออภัย ไม่สามารถลบได้ เพราะมีคนตอบเรียบร้อยแล้ว';
 $string['couldnotupdate'] = 'ไม่สามารถ อัพเดทโพสต์ของคุณได้ มีข้อผิดพลาด';
@@ -33,7 +37,7 @@ $string['digestsentusers'] = 'อีเมลไดเจสท์ได้ส่งให้ $a สมาชิกเรียบร้อยแล้ว';
 $string['discussion'] = 'กระทู้';
 $string['discussionmoved'] = 'กระทู้นี้ได้ย้ายไปที่ \'$a\'';
 $string['discussionname'] = 'ชื่อกระทู้';
-$string['discussions'] = 'กระทู้ทั้ง';
+$string['discussions'] = 'กระทู้ทั้งหมด';
 $string['discussionsstartedby'] = 'ตั้งกระทู้โดย $a';
 $string['discussionsstartedbyrecent'] = 'ตั้งกระทู้ล่าสุดโดย';
 $string['discussthistopic'] = 'ตอบกระทู้';
@@ -59,13 +63,15 @@ $string['introsocial'] = 'กระดานเสวนาแบบเปิดสามารถคุยกันได้ทุกเรื่อง';
 $string['introteacher'] = 'กระดานสำหรับครูเท่านั้น เพื่อปรึกษาเรื่องการเรียนการสอน';
 $string['lastpost'] = 'ตอบครั้งสุดท้าย';
 $string['learningforums'] = 'กระดานการเรียนการสอน';
+$string['markread'] = 'ตั้งว่าอ่านแล้ว';
+$string['markunread'] = 'ตั้งว่ายังไม่ได้อ่าน';
 $string['maxattachmentsize'] = 'ขนาดของไฟล์สูงสุด';
 $string['maxtimehaspassed'] = 'ขออภัยค่ะ เวลาที่ใช้ในการแก้ไขหมดแล้ว  ($a) ผ่านไป';
 $string['message'] = 'ข้อความ';
-$string['modeflatnewestfirst'] = 'แสดงคำตอบแบบไม่ย่อหน้าโดยเริ่มจากคำตอบล่าสุด';
-$string['modeflatoldestfirst'] = 'แสดงคำตอบแบบไม่ย่อหน้าโดยเริ่มจาก คำตอบแรกสุด';
-$string['modenested'] = 'แสดงคำตอบแบบย่อหน้า';
-$string['modethreaded'] = 'แสดงคำตอบแบบตัวหนังสือ';
+$string['modeflatnewestfirst'] = 'แสดงแบบไม่ย่อหน้าโดยเริ่มจากคำตอบล่าสุด';
+$string['modeflatoldestfirst'] = 'แสดงแบบไม่ย่อหน้าโดยเริ่มจากคำตอบแรกสุด';
+$string['modenested'] = 'แสดงแบบย่อหน้าเชื่อมโยงการตอบ';
+$string['modethreaded'] = 'แสดงแบบมุมมองสัมพันธ์';
 $string['modulename'] = 'กระดานเสวนา';
 $string['modulenameplural'] = 'กระดานเสวนา';
 $string['more'] = 'เพิ่มเติม';
@@ -91,7 +97,7 @@ $string['openmode1'] = 'ตั้งกระทู้ไม่ได้ ตอบได้';
 $string['openmode2'] = 'ตั้งกระทู้ได้ ตอบได้';
 $string['parent'] = 'ความเห็นก่อนหน้า';
 $string['parentofthispost'] = 'โพสต์ที่คุณเขียนตอบ';
-$string['postadded'] = 'เพิ่มโพสต์ของคุณแล้ว<br />คุณมีเวลา $a หากต้องการแก้ไข';
+$string['postadded'] = 'เพิ่มโพสต์ของคุณแล้ว<P>คุณมีเวลา $a หากต้องการแก้ไข';
 $string['postincontext'] = 'ดูเนื้อหาโพสต์';
 $string['postmailinfo'] = 'นี่เป็นก้อปปี้ข้อความ จากโพสต์  $a ใน เว็บไซต์
 หากต้องการตอบคลิกที่ลิงก์';
@@ -146,6 +152,10 @@ $string['subscribestart'] = 'ต้องสำเนาโพสต์ในกระทู้นี้ทางอีเมล';
 $string['subscribestop'] = 'ไม่ต้องการสำเนาโพสต์ทางอีเมล';
 $string['subscription'] = 'การเป็นสมาชิก';
 $string['subscriptions'] = 'การเป็นสมาชิก';
+$string['unread'] = 'ยังไม่ได้อ่าน';
+$string['unreadposts'] = 'กระทู้ที่ยังไม่ได้อ่าน';
+$string['unreadpostsnumber'] = '$a  กระทู้ที่ยังไม่ได้อ่าน';
+$string['unreadpostsone'] = 'ยังไม่ได้อ่าน 1 ความเห็น';
 $string['unsubscribe'] = 'ต้องการออกจากการเป็นสมาชิกกระดาน';
 $string['unsubscribed'] = 'ไม่ได้เป็นสมาชิก';
 $string['unsubscribeshort'] = 'ยกเลิกการเป็นสมาชิก';

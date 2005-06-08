@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // appointment.php - created with Moodle 1.6 development (2005052400)
+      // appointment.php - created with Moodle 1.4.2 (2004083125)
 
 
 $string['allowresubmit'] = 'อนุญาตให้ส่งใหม่ได้';
@@ -21,11 +21,15 @@ $string['newsubmissions'] = 'ส่งการนัดหมายแล้ว';
 $string['notgradedyet'] = 'ยังไม่ได้ให้คะแนน';
 $string['notsubmittedyet'] = 'ยังไม่ได้ส่ง';
 $string['overwritewarning'] = 'คำเตือน: ถ้าคุณอัพโหลดอีกครั้งระบบจะบันทึกซ้ำของเดิมที่มีอยู่';
+$string['parentlanguage'] = 'en';
 $string['saveallfeedback'] = 'บันทึกความคิดเห็นทั้งหมด';
 $string['submissionfeedback'] = 'ความคิดเห็นที่ส่งไป';
 $string['submissions'] = 'ความคิดเห็น';
 $string['submitappointment'] = 'ส่งการนัดหมายของคุณโดยใช้ฟอร์มต่อไปนี้';
 $string['submitted'] = 'ส่งแล้ว';
+$string['thischarset'] = 'TIS-620';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Thai';
 $string['timeend'] = 'สิ้นสุดเวลา';
 $string['timestart'] = 'เริ่มเวลา';
 $string['typeoffline'] = 'กิจกกรมออฟไลน์';

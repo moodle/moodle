@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.6 development (2005052400)
+      // calendar.php - created with Moodle 1.4.2 (2004083125)
 
 
 $string['calendar'] = 'ปฏิทิน';
@@ -53,6 +53,7 @@ $string['monthlyview'] = 'มุมมองรายเดือน';
 $string['newevent'] = 'กิจกรรมใหม่';
 $string['noupcomingevents'] = 'ไม่มีกิจกรรมที่กำลังจะเริ่ม';
 $string['oneevent'] = '1 กิจกรรม';
+$string['parentlanguage'] = 'en';
 $string['pref_lookahead'] = 'กิจกรรมที่กำลังจะเริ่ม ';
 $string['pref_maxevents'] = 'จำนวนสูงสุดของกิจกรรมที่กำลังจะเริ่ม';
 $string['pref_startwday'] = 'วันแรกของสัปดาห์';
@@ -68,6 +69,9 @@ $string['shown'] = 'แสดงอยู่';
 $string['spanningevents'] = 'กิจกรรมที่มีอยู่ขณะนี้';
 $string['sun'] = 'อา.';
 $string['sunday'] = 'อาทิตย์';
+$string['thischarset'] = 'TIS-620';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Thai';
 $string['thu'] = 'พฤ.';
 $string['thursday'] = 'พฤหัสบดี';
 $string['timeformat_12'] = '12 ชั่วโมง (am/pm)';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // attendance.php - created with Moodle 1.6 development (2005052400)
+      // attendance.php - created with Moodle 1.4.5 + (2004083150)
 
 
 $string['absentlong'] = 'ขาดเรียน';
@@ -8,26 +8,26 @@ $string['addingmultiple'] = 'กำลังเพิ่มบันทึกการเข้าเรียน';
 $string['addmultiple'] = 'คลิกที่นี่หากต้องการเช็คชื่อหลายวัน';
 $string['allmodulename'] = 'บันทึกการเข้าเรียนทั้งหมด';
 $string['auto'] = 'อัตโนมัติ';
-$string['autoattend'] = 'บันทึกการเข้าเรียนอัตโนมัติโดยดูจากบันทึกกิจกรรมของนักเรียน';
-$string['autoattendmulti'] = 'บันทึกการเข้าเรียนทั้งหมดอัตโนมัติโดยดูจากบันทึกกิจกรรมของนักเรียน';
+$string['autoattend'] = 'บันทึกการเข้าเรียนอัตโนมัติ';
+$string['autoattendmulti'] = 'บันทึกการเข้าเรียนอัตโนมัติ';
 $string['autoattendshort'] = 'บันทึกการเข้าเรียนอัตโนมัติ';
-$string['choosedays'] = 'วันที่มีการเช็คชื่อ';
-$string['dayofroll'] = 'วันที่ที่ต้องการเช็คชื่อ';
+$string['choosedays'] = 'วันที่ต้องเข้าเรียน';
+$string['dayofroll'] = 'วันที่เช็คชื่อ';
 $string['defaultautoattend'] = 'เลือกตั้งค่าบันทึกการเข้าเรียนจากบันทึกกิจกรรม';
 $string['defaultdynamicsection'] = 'เลือกเพื่อให้ย้ายบันทึกการเข้าเรียนให้ถูกสัปดาห์';
 $string['defaultgrade'] = 'เลือกเพื่อตั้งค่าให้คะแนนจากการเวลาเข้าเรียน';
 $string['defaulthoursinclass'] = 'จำนวนชั่วโมงที่ต้องเข้าเรียน';
 $string['defaultmaxgrade'] = 'คะแนนสูงสุดสำหรับนการเข้าเรียนทุกครั้ง';
-$string['defaultstudentstatus'] = 'สถานะการเข้าเรียนของนักเรียนในบันทึกเวลาเรียน';
+$string['defaultstudentstatus'] = 'สถานะเริ่มต้นของบันทึกการเข้าเรียนที่ระบบตั้งไว้';
 $string['downloadexcelfull'] = 'ดาวน์โหลด Excel ทั้งหมด';
 $string['downloadexceltotals'] = 'ดาวน์โหลดไฟล์ Excel สรุปผล';
 $string['downloadtextfull'] = 'ดาวน์โหลดรายงานเต็มแบบ text';
 $string['downloadtexttotals'] = 'ดาวน์โหลดรายงานสรุปแบบ text';
-$string['dynamicsection'] = 'เลื่อนโมดูลบันทึกการเข้าเรียนนี้ไปยังสัปดาห์ที่ตรงกับวันที่ระบุข้างต้น (สำหรับโครงสร้างรายสัปดาห์)';
-$string['dynamicsectionmulti'] = 'แสดงบันทึกการเข้าเรียนของนักเรียนอัตโนมัติ';
+$string['dynamicsection'] = 'เลื่อนไปยังสัปดาห์ที่ตรงกับวันที่';
+$string['dynamicsectionmulti'] = 'เพิ่มบันทึกการเข้าเรียนในแต่ละสัปดาห์อัตโนมัติ';
 $string['dynsectionshort'] = 'ย้ายมาส่วนนี้';
-$string['endbeforestart'] = 'ไม่สามารถระบุวันสุดท้ายก่อนวันเริ่มเรียนไม่ได้';
-$string['endmulti'] = 'วันที่จะมีการเช็คชื่อครั้งสุดท้าย';
+$string['endbeforestart'] = 'ไม่วันสุดท้ายต้องมาทีหลังวันเริ่มต้น';
+$string['endmulti'] = 'วันสุดท้ายที่ทำการเช็คชื่อ';
 $string['for'] = 'เพื่อ';
 $string['friday'] = 'ศุกร์';
 $string['gradeshort'] = 'ให้คะแนน';
@@ -51,7 +51,7 @@ $string['presentlong'] = 'เข้าเรียน';
 $string['presentshort'] = 'เข้าเรียน';
 $string['saturday'] = 'เสาร์';
 $string['startafterend'] = 'วันเริ่มต้นอยู่หลังวันปิดรายวิชา';
-$string['startmulti'] = 'วันที่ที่มีการเช็คชื่อครั้งแรก';
+$string['startmulti'] = 'วันแรกที่ทำการเช็คชื่อ';
 $string['sunday'] = 'อาทิตย์';
 $string['takeroll'] = 'เช็คชื่อวันนี้';
 $string['tardiesperabsence'] = 'การเข้าเรียนสายกี่ครั้งจึงจะนับเป็นการขาดเรียน 1 ครั้ง';
@@ -60,12 +60,12 @@ $string['tardyshort'] = 'สาย';
 $string['teacheredit'] = 'เช็คชื่อนักเรียน';
 $string['thursday'] = 'พฤหัส';
 $string['tuesday'] = 'อังคาร';
-$string['viewall'] = 'ดูบันทึกการเข้าเรียนทั้งหมด';
-$string['viewmulti'] = 'ดูรายงานแบบหลายหน้า';
-$string['viewone'] = 'ดูรายงานทุกหน้า';
-$string['viewsection'] = 'ดูบันทึกการเข้าเรียนทั้งหมดจากส่วนนี้';
-$string['viewtable'] = 'ดูรายงานทั้งหมดในหนึ่งตาราง';
-$string['viewweek'] = 'ดูบันทึกการเข้าเรียนจากปฏิทินรายสัปดาห์';
+$string['viewall'] = 'แสดงบันทึกการเข้าเรียนทั้งหมด';
+$string['viewmulti'] = 'แสดงรายงานโดยแบ่งเป็นหลายหน้า';
+$string['viewone'] = 'แสดงทุกหน้าของรายงาน';
+$string['viewsection'] = 'แสดงบันทึกการเข้าเรียนใน(ส่วน/สัปดาห์)นี้';
+$string['viewtable'] = 'แสดงรายงานในตารางเดียว';
+$string['viewweek'] = 'แสดงบันทึกการเข้าเรียนรายสัปดาห์';
 $string['wednesday'] = 'พุธ';
 $string['weekmodulename'] = 'บันทึกการเข้าเรียนทั้งหมดในสัปดาห์ที่ผ่านมา';
 

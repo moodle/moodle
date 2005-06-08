@@ -6,7 +6,7 @@ $string['addmoreresponses'] = 'เพิ่มคำตอบ';
 $string['brainstormname'] = 'ชื่อของเบรนสตอร์ม';
 $string['brainstormtext'] = 'ข้อความ';
 $string['categories'] = 'ประเภท';
-$string['categoriseresponses'] = 'ประเภท $ คำตอบ';
+$string['categoriseresponses'] = '$a ประเภท $a  คำตอบ';
 $string['heightresponse'] = 'ความสูง';
 $string['helptext'] = 'ช่วยเหลือในการเขียนข้อความเบรนสตอร์ม';
 $string['modulename'] = 'เบรนสตอร์ม';
@@ -23,6 +23,9 @@ $string['savecategories'] = 'บันทึกประเภท';
 $string['savecategorisation'] = 'บันทึกการแยกประเภท';
 $string['savemyresponse'] = 'บันทึกคำตอบ';
 $string['select'] = 'เลือก';
+$string['thischarset'] = 'TIS-620';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Thai';
 $string['widthresponse'] = 'ความกว้าง';
 
 ?>

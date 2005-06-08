@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // enrol_flatfile.php - created with Moodle 1.6 development (2005052400)
+      // enrol_flatfile.php - created with Moodle 1.4.2 (2004083125)
 
 
 $string['description'] = 'วิธีนี้เป็นการตรวจและจัดการไฟล์ text ที่คุณระบุไว้ ซ้ำไปมา ตัวอย่างไฟล์ 
@@ -17,5 +17,9 @@ $string['filelockedmailsubject'] = 'ไฟล์รายชื่อสมาชิกมีข้อผิดพลาดค่ะ';
 $string['location'] = 'ที่อยู่ของไฟล์';
 $string['mailadmin'] = 'แจ้งให้ผู้ดูแลระบบทราบทางอีเมล';
 $string['mailusers'] = 'แจ้งให้สมาชิกทราบทางอีเมล';
+$string['parentlanguage'] = 'en';
+$string['thischarset'] = 'TIS-620';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Thai';
 
 ?>

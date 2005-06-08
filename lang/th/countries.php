@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // countries.php - created with Moodle 1.6 development (2005052400)
+      // countries.php - created with Moodle 1.4.2 (2004083125)
 
 
 $string['AD'] = 'ÍÑ¹â´ÃÒ';
@@ -242,5 +242,9 @@ $string['ZA'] = 'ÍÑ¿ÃÔ¡Òãµé';
 $string['ZM'] = 'á«ÁàºÕÂ';
 $string['ZR'] = 'á«Ãì';
 $string['ZW'] = '«ÔÁºÑºàÇ';
+$string['parentlanguage'] = 'en';
+$string['thischarset'] = 'TIS-620';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Thai';
 
 ?>
