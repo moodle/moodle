@@ -51,7 +51,7 @@ b) all\'utente viene richiesto un numero ID ma può lasciarlo in bianco.
 c) all\'utente viene richiesto un numero ID e non può lasciarlo in bianco. Se attivato, il numero ID è viualizzato nel profilo degli utenti.';
 $string['configintro'] = 'In questa pagina si possono specificare un numero di variabili di configurazione che aiutano Moodle a lavorare correttamente sul vostro server.
 Non vi preoccupate troppo a riguardo, i valori predefiniti in genere svolgono bene il loro compito e potete sempre tornare su questa pagina in un secondo momento per cambiare queste impostazioni.';
-$string['configintroadmin'] = 'In uqesta pagina si dovrebbe configurare l\'account dell\'Amministratore principale che avrà il controllo completo sul sito. Assicuratevi di fornire uno username e una password sicuri, così come un indirizzo E-mail valido.
+$string['configintroadmin'] = 'In questa pagina si dovrebbe configurare l\'account dell\'Amministratore principale che avrà il controllo completo sul sito. Assicuratevi di fornire uno username e una password sicuri, così come un indirizzo E-mail valido.
 Potrete creare altri account di tipo Amministratore più tardi.';
 $string['configintrosite'] = 'Questa pagina vi permette di configurare la pagina principale e il nome di questo nuovo sito.
 Potrete tornare in un secondo momento su questa pagina per modificare queste impostazioni, seguendo il collegamento \'Impostazioni del sito\' dalla Home Page del sito.Questa pagina ';

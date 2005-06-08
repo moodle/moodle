@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.6 development (2005052400)
+      // admin.php - created with Moodle 1.5 Beta (2005052300)
 
 
 $string['adminseesallevents'] = 'Správci vidí v¹echny události';
@@ -11,6 +11,7 @@ $string['calendarsettings'] = 'Kalendáø';
 $string['change'] = 'zmìnit';
 $string['configallowcoursethemes'] = 'Tato mo¾nost povoluje nastavení vlastních motivù v kurzech. Motivy kurzù mají pøednost pøed v¹emi ostatními motivy (tj. pøed motivem stránek, u¾ivatele èi sezení)';
 $string['configallowemailaddresses'] = 'Chcete-li omezit v¹echny nové emailové adresy pouze na urèité domény. pak je zde uveïte oddìlené mezerou. V¹echny ostatní domény budou odmítnuty. Pøíklad: <strong>naseskola.cz .msmt.cz .edu.cz</strong>';
+$string['configallowobjectembed'] = 'Výchozí bezpeènostní opatøení nedovoluje normálním u¾ivatelùm vkládat multimediální objekty (napø. Flash) pomocí znaèek EMBED a OBJECT v jejich HTML textu. Bezpeèné vkládání multimediálních objektù zaji¹»uje jeden z tzv. filtrù. Chcete-li pøesto povolit uvedené znaèky, povolte tuto mo¾nost.';
 $string['configallowunenroll'] = 'Je-li toto nastaveno na \'Ano\', mohou se studenti sami vy¹krtávat z kurzù. Jinak je mù¾e z kurzu vy¹krtnout toliko uèitel nebo správce.';
 $string['configallowuserblockhiding'] = 'Chcete u¾ivatelùm povolit zasouvání/vysouvání postranních blokù na tìchto strínkách? Tato fièurinka pou¾ívá Javascript a pomocí cookies si pamatuje stav ka¾dého rolovatelného bloku. V¾dy je ovlivòován pouze pohled pøíslu¹ného u¾ivatele.';
 $string['configallowuserthemes'] = 'Tímto povolíte u¾ivatelùm nastavit si vlastní motiv. Motiv u¾ivatele má pøednost pøed motivem stránek, ale nikoliv pøed motivem kurzu.';
@@ -105,7 +106,7 @@ $string['helpweekenddays'] = 'Které z dnù v týdnu se mají pova¾ovat za \"víkend\
 $string['importtimezones'] = 'Aktualizovat kompletní seznam èasových pásem';
 $string['importtimezonescount'] = '$a->count polo¾ek bylo importováno z $a->source';
 $string['importtimezonesfailed'] = 'Nenalezeny ¾ádné zdroje! (to je ¹patná zpráva)';
-$string['nodstpresetsexist'] = 'Podpora zimního a letního èasu (DST) není ¾ádným u¾ivatelùm k dispozici, nebo» nebylo provedeno její pøednastavení. Chcete-li DST pøednastavit, pou¾ijte následující tlaèítko.';
+$string['incompatibleblocks'] = 'Nekompatibilní bloky';
 $string['optionalmaintenancemessage'] = 'Volitelná zpráva o údr¾bì';
 $string['pleaseregister'] = 'Chcete-li se zbavit tohoto tlaèítka, registrujte va¹e Moodle stránky';
 $string['sitemaintenance'] = 'Momentálnì pracujeme na údr¾bì tìchto stránek a nejsou proto doèasnì k dispozici';
@@ -113,6 +114,7 @@ $string['sitemaintenancemode'] = 'Re¾im údr¾by';
 $string['sitemaintenanceoff'] = 'Re¾im údr¾by byl vypnut a stránky zase bì¾í v normálním re¾imu.';
 $string['sitemaintenanceon'] = 'Va¹e stránky jsou momentálnì v re¾imu údr¾by (pouze správci se teï mohou pøihlásit a pou¾ívat tyto stránky).';
 $string['sitemaintenancewarning'] = 'Va¹e stránky jsou momentálnì v re¾imu údr¾by (pouze správci se teï mohou pøihlásit). K návratu do bì¾ného re¾imu <a href=\"maintenance.php\">vypnìte re¾im údr¾by</a>.';
+$string['tabselectedtofront'] = 'Má se v tabulkách, které pou¾ívají navigaci pomocí zálo¾ek, pøesunout øádek s právì vybranou zálo¾kou do popøedí?';
 $string['therewereerrors'] = 'Va¹e data obsahovala chyby';
 $string['timezoneforced'] = 'Toto je vnuceno správcem stránek';
 $string['timezoneisforcedto'] = 'Vnutit pou¾ívání v¹em u¾ivatelùm';

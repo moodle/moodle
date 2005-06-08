@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.5 Beta + (2005060201)
+      // admin.php - created with Moodle 1.5 + (2005060201)
 
 
 $string['adminseesallevents'] = '管理员看到所有事件';
@@ -11,6 +11,7 @@ $string['calendarsettings'] = '日历';
 $string['change'] = '修改';
 $string['configallowcoursethemes'] = '如果激活，则可以为每个课程设定自己的主题风格。课程的主题风格将覆盖在其它位置(站点、用户或会话)设定的主题风格。';
 $string['configallowemailaddresses'] = '如果你希望将新的电邮地址限制在一定的域名中，可以将它们列出，域名之间以空格分割。系统会拒绝所有其它域名的邮件。例如<strong>ourcollege.edu.au .gov.au</strong>';
+$string['configallowobjectembed'] = '作为缺省的安全考量，普通用户是不能在网页文本中通过显示的EMBED或OBJECT标记嵌入多媒体(如Falsh)的(通过mediaplugins过滤器是比较安全的)。如果你希望允许用户使用上述标记，请开启此选项。';
 $string['configallowunenroll'] = '如果设为“是”，那么学生可以在任何时候自己从课程注销。否则，只能由教师和管理员进行这项操作。';
 $string['configallowuserblockhiding'] = '是否允许用户隐藏/显示此站点中各页面两侧的版块？这个功能使用JavaScript和Cookie来记住每一个可折叠版块的状态，它只影响用户自己的视图。';
 $string['configallowuserthemes'] = '如果开启，则用户可以设定自己的主题风格。用户的主题风格设定会覆盖站点主题风格(但不会覆盖课程的)。';
@@ -89,7 +90,7 @@ $string['configvariables'] = '变量';
 $string['configwarning'] = '小心修改这些选项——不合法的值可能导致错误。';
 $string['configzip'] = 'zip程序的位置(仅针对Unix系统，可选)。如果指定了，将用它来创建服务器上的zip文件。如果留空，则Moodle使用内部函数压缩。';
 $string['confirmation'] = '确认';
-$string['cronwarning'] = '<a href=\"cron.php\">cron.php维护脚本</a>已经有最少24个小时都没有运行过了。<br /><a href=\"../doc/?frame=install.html&sub=cron\">安装文档</a>中解释了如何自动运行它。';
+$string['cronwarning'] = '<a href=\"cron.php\">cron.php维护脚本</a>已经有最少24个小时都没有运行过了。<br /><a href=\"../doc/?frame=install.html⊂=cron\">安装文档</a>中解释了如何自动运行它。';
 $string['edithelpdocs'] = '编辑帮助文档';
 $string['editstrings'] = '编辑字符串';
 $string['filterall'] = '过滤全部字符串';
@@ -107,7 +108,6 @@ $string['importtimezonescount'] = '从{$a-source}中导入{$a->count}项';
 $string['importtimezonesfailed'] = '没找到数据源！(坏消息)';
 $string['incompatibleblocks'] = '不兼容的版块';
 $string['optionalmaintenancemessage'] = '可选的维护信息';
-$string['pleaseregister'] = '请通过注册您的网站来删除这个按钮';
 $string['pleaseregister'] = '要删除此按钮，请注册您的站点。';
 $string['sitemaintenance'] = '这个站点目前正在维护中，暂时不能访问。';
 $string['sitemaintenancemode'] = '维护模式';

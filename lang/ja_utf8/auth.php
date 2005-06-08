@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.5 ALPHA (2005051500)
+      // auth.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['alternatelogin'] = 'ここにURLを入力した場合、このサイトのログインページとして使用されます。ログインページでは、action属性に<strong>「 $a 」</strong>をセットして、 <strong>username</strong>フィールドおよび<strong>password</strong>フィールドを適切にMoodleに渡す必要があります。<br />間違ったURLを設定すると、あなたのサイトから締め出されることになりますので注意してください。<br />デフォルトのログイン画面を使用する場合は、空白のままにしてください。';
@@ -31,8 +31,6 @@ $string['auth_dbtable'] = 'データベースのテーブル名';
 $string['auth_dbtitle'] = '外部データベースを使用';
 $string['auth_dbtype'] = 'データベースタイプ ( 詳細は<a href=../lib/adodb/readme.htm#drivers>ADOdb documentation</a>をご覧ください )';
 $string['auth_dbuser'] = 'データベースアクセス用のユーザ名';
-$string['auth_editlock'] = 'ロック値';
-$string['auth_editlock_expl'] = '<p><b>ロック値:</b> この設定を「Yes」にした場合、Moodleユーザおよび管理者がフィールドを直接編集できないようにします。外部認証システムにあるこの値をメンテナンスする時に使用してください。</p>';
 $string['auth_emaildescription'] = 'メールによるアカウント確定はデフォルトの認証方法です。ユーザが新しいユーザ名とパスワードを選択してサインアップした場合、アカウント確定用メールがユーザのメールアドレスに送信されます。このメールにはユーザがアカウントを確定するためのリンクが記入されています。アカウント確定後のログインではMoodleデータベースに保存されているユーザ名とパスワードのみを確認します。';
 $string['auth_emailtitle'] = 'Emailベースの認証';
 $string['auth_fccreators'] = 'メンバーがコースの作成を許可されているグループの一覧です。複数のグループは「;」で分けてください。グループ名はFirstClassサーバと厳密に同じ名前にしてください。システムは、大文字と小文字を区別します。';
@@ -42,8 +40,12 @@ $string['auth_fchost'] = 'FirstClassサーバアドレス。IPアドレスまた
 $string['auth_fcpasswd'] = '上記アカウントのパスワード。';
 $string['auth_fctitle'] = 'FirstClassサーバを使用';
 $string['auth_fcuserid'] = '権限「Subadministrator」を持ったFirstClassアカウントのユーザID。';
+$string['auth_fieldlock'] = '値をロックする';
+$string['auth_fieldlock_expl'] = '<p><b>値をロックする:</b> このオプションを有効にした場合、Moodleユーザおよび管理者はフィールドを直接編集するのを防止します。外部認証システムでデータをメンテナンスしている場合にこのオプションを使用してください。</p>';
+$string['auth_fieldlocks'] = 'ユーザフィールドのロック';
+$string['auth_fieldlocks_help'] = '<p>ここではユーザフィールドをロックすることができます。ユーザレコードを管理者が手動で編集する方法、または「ユーザのアップロード」機能を使ってユーザレコードをアップロードする方法をとっている場合に便利です。Moodleで必要なフィールドをロックする場合、ユーザアカウントを作成するときにそれらのデータを必ず提供してください。そうでない場合は、アカウントを使用できなくなります。</p><p>このトラブルを避けるために、「空の時はロックしない」に設定することを考慮してください。</p>';
 $string['auth_imapdescription'] = 'ユーザ名とパスワードを確認するためにIMAPサーバを使用します。';
-$string['auth_imaphost'] = 'IMAPサーバーアドレスです。IPアドレスではなくドメイン名を使用してください。';
+$string['auth_imaphost'] = 'IMAPサーバアドレスです。IPアドレスではなくドメイン名を使用してください。';
 $string['auth_imapport'] = 'IMAPサーバポート番号です。通常は143または993です。';
 $string['auth_imaptitle'] = 'IMAPサーバを使用';
 $string['auth_imaptype'] = 'IMAPサーバタイプです。IMAPサーバは異なる認証およびネゴシエーションを利用することが可能です。';
@@ -80,8 +82,8 @@ $string['auth_manualdescription'] = 'この方法ではユーザによるユー�
 $string['auth_manualtitle'] = '手動アカウント作成のみ';
 $string['auth_multiplehosts'] = '複数のホストを設定できます ( 例 host1.com;host2.com;host3.com ) ';
 $string['auth_nntpdescription'] = 'ユーザ名とパスワードを確認するためにNNTPサーバを使用します。';
-$string['auth_nntphost'] = 'NNTPサーバーアドレスです。IPアドレスではなくドメイン名を使用してください。';
-$string['auth_nntpport'] = 'サーバーポート(119が一般的です)';
+$string['auth_nntphost'] = 'NNTPサーバアドレスです。IPアドレスではなくドメイン名を使用してください。';
+$string['auth_nntpport'] = 'サーバポート(119が一般的です)';
 $string['auth_nntptitle'] = 'NNTPサーバを使用';
 $string['auth_nonedescription'] = 'ユーザはログインして外部サーバおよびメールによる認証無しにアカウントを直ちに作成できます。このオプションを使用するときは十分に注意してください - セキュリティーおよび管理上の問題が発生するかもしれないことを考えてください。';
 $string['auth_nonetitle'] = '認証無し';
@@ -90,9 +92,9 @@ $string['auth_pamtitle'] = 'PAM ( Pluggable Authentication Modules )';
 $string['auth_passwordisexpired'] = 'あなたのパスワードの有効期限が切れました。パスワードを変更しますか?';
 $string['auth_passwordwillexpire'] = 'あなたのパスワードの有効期限は、$a 日で切れます。パスワードを変更しますか?';
 $string['auth_pop3description'] = 'ユーザ名とパスワードを確認するためにPOP3サーバを使用します。';
-$string['auth_pop3host'] = 'POP3サーバーアドレスです。IPアドレスではなくドメイン名を使用してください。';
+$string['auth_pop3host'] = 'POP3サーバアドレスです。IPアドレスではなくドメイン名を使用してください。';
 $string['auth_pop3mailbox'] = '接続を試みるメールボックス名(通常は受信ボックス)';
-$string['auth_pop3port'] = 'サーバーポート ( 110が一般的です )';
+$string['auth_pop3port'] = 'サーバポート ( 110が一般的です )';
 $string['auth_pop3title'] = 'POP3サーバを使用';
 $string['auth_pop3type'] = 'サーバタイプです。もし認証が必要な場合はpop3certを選択してください。';
 $string['auth_shib_convert_data'] = 'データ修正API';
@@ -125,11 +127,18 @@ $string['forcechangepassword_help'] = '次にMoodleへログインする時に�
 $string['forcechangepasswordfirst_help'] = '最初にMoodleへログインする時に、ユーザのパスワード変更を強制します。';
 $string['guestloginbutton'] = 'ゲストログインボタン';
 $string['instructions'] = '説明';
+$string['locked'] = 'ロックする';
 $string['md5'] = 'MD5暗号化';
 $string['plaintext'] = 'テキスト';
 $string['showguestlogin'] = 'ログインページのゲストログインボタンを表示／非表示にできます。';
 $string['stdchangepassword'] = '標準パスワード変更ページを使用';
 $string['stdchangepassword_expl'] = '外部認証システムがMoodleにパスワードの変更を許可する場合、この設定を「Yes」にしてください。この設定は、「Change Password URL」を上書きします。';
 $string['stdchangepassword_explldap'] = '注意: LDAPサーバをリモートで使用する場合は、SSL暗号化トンネルを使用することをお勧めします。';
+$string['unlocked'] = 'ロックしない';
+$string['unlockedifempty'] = '空の場はロックしない';
+$string['update_never'] = 'しない';
+$string['update_oncreate'] = '作成時';
+$string['update_onlogin'] = '毎回ログイン時';
+$string['update_onupdate'] = '更新時';
 
 ?>

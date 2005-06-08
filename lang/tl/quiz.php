@@ -131,6 +131,7 @@ $string['editingshortanswer'] = 'Ineedit ang Maigsing-Sagot na tanong';
 $string['editingtruefalse'] = 'Ineedit ang Tamà/Malî na tanong';
 $string['editquestions'] = 'Iedit ang mga tanong';
 $string['editquiz'] = 'Iedit ang Pagsusulit';
+$string['errormissingquestion'] = 'Error: Nawawala sa sistema ang tanong na may id na $a';
 $string['errornotnumbers'] = 'Error - dapat ay numero ang mga sagot';
 $string['errorsdetected'] = 'nakita ang $a (mga) malî';
 $string['event1'] = 'Awtosave';
