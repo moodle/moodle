@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005042100)
+      // moodle.php - created with Moodle 1.5 Beta (2005052300)
 
 
 $string['action'] = 'Acción';
@@ -182,9 +182,9 @@ $string['confirmednot'] = 'Su registro no se ha confirmado aún.';
 $string['continue'] = 'Continuar';
 $string['continuetocourse'] = 'Haga clic aquí para entrar a su curso';
 $string['convertingwikitomarkdown'] = 'Convirtiendo Wiki a Markdown';
-$string['cookiesenabled'] = 'Las <i>Cookies</i> deben estar habilitadas en su navegador';
+$string['cookiesenabled'] = 'Las \"Cookies\" deben estar habilitadas en su navegador';
 $string['cookiesnotenabled'] = 'Las cookies no están habilitadas en su navegador';
-$string['copy'] = 'copiar';
+$string['copy'] = 'copia';
 $string['copyingcoursefiles'] = 'Copiando los archivos del curso';
 $string['copyinguserfiles'] = 'Copiando los archivos de los usuarios';
 $string['copyingzipfile'] = 'Copiando archivo zip';
@@ -555,7 +555,7 @@ $string['htmleditordisabledadmin'] = 'El administrador ha deshabilitado el edito
 $string['htmleditordisabledbrowser'] = 'El editor de HTML no está disponible porque su navegador no es compatible.';
 $string['htmlformat'] = 'Formato HTML';
 $string['icqnumber'] = 'Número de ICQ';
-$string['idnumber'] = 'Número de matrícula';
+$string['idnumber'] = 'Número de ID';
 $string['importdata'] = 'Importar datos del curso';
 $string['importdataexported'] = 'Datos correctamente exportados \'desde\' el curso.<br />Continúe importando \'hacia\' su curso.';
 $string['importdatafinished'] = 'Importación completa. Continúe con su curso';
@@ -788,7 +788,7 @@ $string['nosuchemail'] = 'No existe esa dirección de correo';
 $string['notavailable'] = 'No disponible';
 $string['noteachersyet'] = 'Aún no hay profesores en este curso';
 $string['notenrolled'] = '$a no está matriculado en este curso.';
-$string['noteuserschangednonetocourse'] = 'Nota: Los alumnos de los cursos deben ser restaurados cuando se restauran los datos. Esta configuración ha sido cambiada para usted.';
+$string['noteuserschangednonetocourse'] = 'Nota: Los usuarios de los cursos deben ser restaurados cuando se restauran los datos de usuario (en actividades, archivos o mensajes). Esta configuración ha sido cambiada para usted.';
 $string['nothingnew'] = 'Sin novedades desde el último acceso';
 $string['nothingtodisplay'] = 'Nada que mostrar';
 $string['noticenewerbackup'] = 'Esta copia de seguridad ha sido creada con Moodle $a->backuprelease ($a->backupversion) y es más reciente que la versión instalada de Moodle $a->serverrelease ($a->serverversion). Esto podría ocasionar algunas inconsistencias debido a que no se puede garantizar la compatibilidad retrospectiva de las copias de seguridad.';
@@ -824,7 +824,6 @@ $string['pageheaderconfigablock'] = 'Configurando un bloque en %%fullname%%';
 $string['parentcoursenotfound'] = '¡Curso raíz no encontrado!';
 $string['parentcoursenotmetacourse'] = '¡El curso raíz no es un metacurso!';
 $string['parentfolder'] = 'Directorio raíz';
-$string['parentlanguage'] = '';
 $string['participants'] = 'Participantes';
 $string['password'] = 'Contraseña';
 $string['passwordchanged'] = 'La contraseña ha cambiado';
@@ -953,6 +952,7 @@ $string['showgrades'] = 'Mostrar calificaciones';
 $string['showlistofcourses'] = 'Mostrar listas de cursos';
 $string['showonlytopic'] = 'Mostrar sólo el tema $a';
 $string['showonlyweek'] = 'Mostrar sólo la semana $a';
+$string['showperpage'] = 'Mostrar $a por página';
 $string['showrecent'] = 'Mostrar actividad reciente';
 $string['showreports'] = 'Mostrar informes de actividad';
 $string['showsettings'] = 'Mostrar ajustes';

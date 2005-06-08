@@ -1,13 +1,13 @@
 <?PHP // $Id$ 
-      // tui.php - created with Moodle 1.4.4 (2004083140)
+      // tui.php - created with Moodle 1.5 Beta (2005052300)
 
 
 $string['allresultsheading'] = 'Resultados de $a. (Disponible para administrador o profesor).';
 $string['average_for_stimulus_block'] = 'Tiempo de respuesta<br /> promedio para <br /> conjunto estimular $a';
 $string['compare1'] = 'Primer bloque a comparar';
-$string['compare1feedback'] = 'Feedback si se prefiere este bloque: Parece indicar que usted [degree]';
+$string['compare1feedback'] = 'Feedback si la reacción estimular en este bloque es más rápida';
 $string['compare2'] = 'Segundo bloque a comparar';
-$string['compare2feedback'] = 'Feedback si se prefiere este bloque: Parece indicar que usted [degree]';
+$string['compare2feedback'] = 'Feedback si la reacción estimular en este bloque es más rápida';
 $string['conclusion'] = 'Conclusión';
 $string['degree'] = '50:mucha, 30:moderada, 10:ligera';
 $string['dotest'] = 'Clic aquí para hacer el test.';

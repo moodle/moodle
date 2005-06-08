@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // scheduler.php - created with Moodle 1.3 (2004052500)
+      // scheduler.php - created with Moodle 1.5 Beta (2005052300)
 
 
 $string['action'] = 'Acción';
@@ -25,13 +25,16 @@ $string['modulenameplural'] = 'Reuniones';
 $string['moreslots'] = 'Tiene más estudiantes que franjas de cita, de modo que necesitará probablemente añadir más sesiones.';
 $string['move'] = 'Cambiar';
 $string['moveslot'] = 'Mover franja';
+$string['noslots'] = 'No hay franjas de citas disponibles. Por favor, contacte por email con su profesor para concertar la cita.';
 $string['notselected'] = 'Aún no ha hecho una elección';
 $string['reminder'] = 'Recordatorio';
 $string['remindertext'] = 'Este es un recordatorio de que usted aún no ha fijado su cita. Por favor, elija una franja de tiempo tan pronto como le sea posible en ';
 $string['save'] = 'Guardar';
 $string['savechoice'] = 'Guardar mi elección';
 $string['schedule'] = 'Reunión';
+$string['scheduleappointment'] = 'Programa de citas para $a';
 $string['seen'] = 'Visto';
+$string['slot_is_just_in_use'] = 'Lo sentimos, la cita ha sido ocupada por otro estudiante.<br>Por favor, inténtelo de nuevo.';
 $string['slots'] = 'Franjas';
 $string['slotsadded'] = 'Se han añadido $a franjas';
 $string['start'] = 'Comienzo';
