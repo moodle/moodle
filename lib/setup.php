@@ -330,7 +330,7 @@ global $THEME;
     }
 
     if (!isset($CFG->theme)) {
-        $CFG->theme = 'standard';
+        $CFG->theme = 'standardwhite';
     }
 
     theme_setup();  // Sets up theme global variables
