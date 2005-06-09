@@ -14,13 +14,15 @@ function glossary_show_entry_entrylist($course, $cm, $glossary, $entry, $mode=''
         echo "<span class=\"concept\"><a href=\"showentry.php?courseid=$course->id\&amp;eid=$entry->id\&amp;displayformat=dictionary\" target=\"_blank\" onClick=\"return openpopup('/mod/glossary/showentry.php?courseid=$course->id\&amp;eid=$entry->id\&amp;displayformat=dictionary', 'entry', 'menubar=0,location=0,scrollbars,resizable,width=600,height=450', 0);\">";
         glossary_print_entry_concept($entry);
         echo '</a></span> ';
-        echo '</td><td align="right">';
+        echo '</td><td align="right" class="entrylowersection">';
         if ($printicons) {
             glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode, $hook,'print');
         }
         if ($ratings) {
             echo '<br />';
+            echo '<span class="ratings">';
             glossary_print_entry_ratings($course, $entry, $ratings);
+            echo '</span>';
         }
         echo '<br />';
     } else {
