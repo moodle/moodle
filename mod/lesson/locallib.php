@@ -1028,7 +1028,7 @@ function lesson_calculate_ongoing_score($lesson, $userid, $retries, $return=fals
         }
         $nviewed = count($temp); // this counts number of Questions the user viewed
         if ($nviewed != 0) {
-            $thegrade = intval(100 * $ncorrect / $nviewed);
+            $thegrade = round(100 * $ncorrect / $nviewed, 5);
         } else {
             $thegrade = 0;
         }
@@ -1093,7 +1093,7 @@ function lesson_calculate_ongoing_score($lesson, $userid, $retries, $return=fals
             }
             
             $bestscore = array_sum($bestscores);
-            $thegrade = intval(100 * $score / $bestscore);
+            $thegrade = round(100 * $score / $bestscore, 5);
         }
             
         

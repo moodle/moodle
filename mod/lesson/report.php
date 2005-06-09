@@ -101,7 +101,7 @@
                         // see if n is = to the retry
                         if ($n == $attempt->retry) {
                             // get grade info
-                            $usergrade = $grade->grade;
+                            $usergrade = round($grade->grade, 2); // round it here so we only have to do it once
                             break;
                         }
                         $n++; // if not equal, then increment n
@@ -802,7 +802,7 @@
                 $grade = -1;
             } else {
                 $grade = current($grades);
-                $grade = $grade->grade;
+                $grade = round($grade->grade, 2);
             }
             if (!$times = get_records_select("lesson_timer", "lessonid = $lesson->id and userid = $userid", "starttime", "*", $try, 1)) {
                 $timetotake = -1;

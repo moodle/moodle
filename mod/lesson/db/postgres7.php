@@ -211,6 +211,10 @@ function lesson_upgrade($oldversion) {
         modify_database('','CREATE INDEX prefix_lesson_grades_userid_idx ON prefix_lesson_grades (userid);');
         modify_database('','CREATE INDEX prefix_lesson_pages_lessonid_idx ON prefix_lesson_pages (lessonid);');
    }
+   
+    if ($oldversion < 2005060900) {
+        table_column('lesson_grades', 'grade', 'grade', 'real', '', 'unsigned', '0', 'not null');
+    }
 
    return true;
 }

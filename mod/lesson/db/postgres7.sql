@@ -87,7 +87,7 @@ CREATE TABLE prefix_lesson_grades (
   id SERIAL8 PRIMARY KEY,
   lessonid INT8  NOT NULL default '0',
   userid INT8  NOT NULL default '0',
-  grade INT  NOT NULL default '0',
+  grade real NOT NULL default '0',
   late INT  NOT NULL default '0',
   completed INT8  NOT NULL default '0'
 ) ;
