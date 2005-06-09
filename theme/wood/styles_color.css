@@ -1,0 +1,192 @@
+/**
+  *  Adds all the nice finish to the standard theme
+  *
+  */
+
+body {
+    background-color:#CC9966;
+    background-image:url(background.jpg);
+}
+
+div {
+    color:#330000;
+}
+
+hr {
+    border-top-color:#330000;
+}
+
+.tablink a:link,
+.tablink a:visited,
+a:link,
+a:visited {
+    color:#330000;
+}
+
+a.autolink:link,
+a.autolink:visited {
+  background: #99FFCC;
+}
+
+.tabs .r0,
+.tabs .r1 {
+    background:none;
+}
+
+.tabs .side,
+.tabrow td {
+  border-color: #330000;
+}
+.tabrow td {
+  background:url(pix/tab/left.gif) top left no-repeat;
+}
+.tabrow td .tablink {
+  background:url(pix/tab/right.gif) top right no-repeat;
+}
+.tabrow td:hover {
+  background-image:url(pix/tab/left_hover.gif);
+}
+.tabrow td:hover .tablink {
+  background-image:url(pix/tab/right_hover.gif);
+}
+.tabrow .last {
+  background: transparent url(pix/tab/right_end.gif) top right no-repeat;
+}
+.tabrow .selected {
+  background:url(pix/tab/left_active.gif) top left no-repeat;
+}
+.tabrow .selected .tablink {
+  background:url(pix/tab/right_active.gif) top right no-repeat;
+}
+.tabrow td.selected:hover {
+  background-image:url(pix/tab/left_active_hover.gif);
+}
+.tabrow td.selected:hover .tablink {
+  background-image:url(pix/tab/right_active_hover.gif);
+}
+
+#left-column .hidden .header,
+#right-column .hidden .header
+{
+  border-bottom-color:#330000;
+}
+
+.sideblock .header .hide-show img.hide-show-image {
+  background: url('pix/t/switch_minus.gif') no-repeat bottom;
+}
+
+.sideblock.hidden .header .hide-show img.hide-show-image {
+  background: url('pix/t/switch_plus.gif') no-repeat bottom;
+}
+
+th.header,
+td.header,
+div.header,
+.sideblock .header,
+.forumpost .header,
+.navbar {
+    border-top:1px solid #FFCC99;
+    border-left:1px solid #FFCC99;
+    border-bottom:1px solid #330000;
+    border-right:1px solid #330000;
+    background-image:url(gradient1.jpg);     
+    background-position:bottom;
+    background-repeat:repeat-x repeat-y;  
+}
+
+.results,
+.sideblock .content,
+.generalboxcontent,
+.noticeboxcontent,
+.entryboxheader,
+.entrybox,
+#course-view .section .content,
+#admin-index .c1,
+#admin-configure .c1,
+#admin-config .c1,
+#calendar .maincalendar .filters table,
+#calendar .sidecalendar .filters table,
+.block_calendar_month .filters table,
+#calendar .maincalendar .minicalendar,
+#calendar .sidecalendar .minicalendar,
+.block_calendar_month .minicalendar,
+#calendar .maincalendar,
+.cal_popup_fg {
+    border-top:1px solid #FFCC99;
+    border-left:1px solid #FFCC99;
+    border-bottom:1px solid #330000;
+    border-right:1px solid #330000;
+    background-image:url(gradient2.jpg);     
+    background-position:bottom;
+    background-repeat:repeat-x repeat-y;  
+}
+
+.categoryheader {
+    background-image:url(background.jpg);
+    background-position:bottom;
+    background-repeat:repeat-x repeat-y;
+}
+
+.glossarypost .entryheader,
+.glossarypost .entryattachment,
+.glossarypost .left {
+    background-image:url(gradient1.jpg);
+    background-position:bottom;
+    background-repeat:repeat-x repeat-y;
+}
+
+
+.forumpost .left,
+.sideblock .r1,
+.r0,
+.glossarypost .entry,
+.glossarypost .entrylowersection {
+    background-image:url(gradient2.jpg);
+    background-position:bottom;
+    background-repeat:repeat-x repeat-y;
+}
+
+.r1 {
+    background-color:white;
+    background-position:bottom;
+    background-repeat:repeat-x repeat-y;
+}
+
+#admin-index .c0,
+#course-view .section .left,
+#admin-config .c0,
+.cal_popup_bg {
+    border-top:1px solid #FFCC99;
+    border-left:1px solid #FFCC99;
+    border-bottom:1px solid #330000;
+    border-right:1px solid #330000;
+    background-image:url(background.jpg);
+    background-position:bottom;
+    background-repeat:repeat-x repeat-y;
+}
+
+#course-view .section .side {
+    border-top:1px solid #FFCC99;
+    border-left:1px solid #FFCC99;
+    border-bottom:1px solid #330000;
+    border-right:1px solid #330000;
+    background-image:url(gradient3.jpg);
+    background-position:bottom;
+    background-repeat:repeat-x repeat-y;
+}
+
+
+.unread {
+    border-top:1px solid #99FF99;
+    border-left:1px solid #99FF99;
+    border-bottom:1px solid #99FF99;
+    border-right:1px solid #99FF99;
+}
+
+.read,
+.glossarypost {
+    border-top:1px solid #FFCC99;
+    border-left:1px solid #FFCC99;
+    border-bottom:1px solid #330000;
+    border-right:1px solid #330000;
+}
