@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.5 ALPHA (2005050600)
+      // editor.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['about'] = 'エディタに関して';
@@ -52,7 +52,7 @@ $string['insertlink'] = 'リンクの挿入';
 $string['insertsmile'] = 'スマイリーの挿入';
 $string['inserttable'] = 'テーブルの挿入';
 $string['italic'] = 'イタリック';
-$string['itemsreplaced'] = 'アイテムが置換されました!';
+$string['itemsreplaced'] = '項目が置換されました!';
 $string['justifycenter'] = '中央寄せ';
 $string['justifyfull'] = '均等';
 $string['justifyleft'] = '左寄せ';
