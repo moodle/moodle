@@ -2252,9 +2252,13 @@ function update_user_record($username) {
     if (function_exists('auth_get_userinfo')) {
         $username = trim(moodle_strtolower($username)); /// just in case check text case
 
+        $oldinfo = get_record('user', 'username', $username, '','','','', 'username, auth');
+        $authconfig = get_config('auth/' . $oldinfo->auth);
+
         if ($newinfo = auth_get_userinfo($username)) {
             foreach ($newinfo as $key => $value){
-                if (!empty($CFG->{'auth_user_' . $key. '_updatelocal'})) {
+                $confkey = 'field_updatelocal_' . $key;
+                if (!empty($authconfig->$confkey) && $authconfig->$confkey === 'onlogin') {
                     $value = addslashes(stripslashes($value));   // Just in case
                     set_field('user', $key, $value, 'username', $username);
                 }
