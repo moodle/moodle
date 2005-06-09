@@ -98,7 +98,7 @@ CREATE TABLE `prefix_lesson_grades` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `lessonid` int(10) unsigned NOT NULL default '0',
   `userid` int(10) unsigned NOT NULL default '0',
-  `grade` int(3) unsigned NOT NULL default '0',
+  `grade` float unsigned NOT NULL default '0',
   `late` int(3) unsigned NOT NULL default '0',
   `completed` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),

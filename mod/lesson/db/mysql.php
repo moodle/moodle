@@ -164,7 +164,9 @@ function lesson_upgrade($oldversion) {
         modify_database('','ALTER TABLE prefix_lesson_pages ADD INDEX lessonid (lessonid);');
     }
    
-
+    if ($oldversion < 2005060900) {
+        table_column('lesson_grades', 'grade', 'grade', 'float', '', 'unsigned', '0', 'not null');
+    }
          
     return true;
 }

@@ -935,7 +935,7 @@
                         }
                         echo "<p align=\"center\">".get_string("numberofcorrectanswers", "lesson", $ncorrect).
                             "</p>\n";
-                        $thegrade = intval(100 * $ncorrect / $nviewed);
+                        $thegrade = round(100 * $ncorrect / $nviewed, 5);
                         echo "<p align=\"center\">".get_string("gradeis", "lesson", 
                                 number_format($thegrade * $lesson->grade / 100, 1)).
                             " (".get_string("outof", "lesson", $lesson->grade).")</p>\n";
@@ -991,7 +991,7 @@
                             $bestscore = array_sum($bestscores);
                         }
                             
-                        $thegrade = intval(100 * $score / $bestscore);
+                        $thegrade = round(100 * $score / $bestscore, 5);
                         $a = new stdClass;
                         if ($essayquestions > 0) {
                             $a->score = $score;
