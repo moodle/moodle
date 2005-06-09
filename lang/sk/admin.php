@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.6 development (2005053000)
+      // admin.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['adminseesallevents'] = 'Administrátori mô¾u prezera» v¹etky udalosti';
@@ -11,6 +11,7 @@ $string['calendarsettings'] = 'Kalendár';
 $string['change'] = 'zmeni»';
 $string['configallowcoursethemes'] = 'Keï zapnete túto voµbu, bude mo¾né nastavi» pre kurz vlastnú tému. Téma kurzu má najvy¹¹iu prioritu, zobrazí sa aj v prípade, keï bude nastavenie témy hlavnej stránky, u¾ívateµa èi aktuálneho sedenia odli¹né.';
 $string['configallowemailaddresses'] = 'Ak chcete obmedzi» v¹etky nové emailové adresy na urèité domény, uveïte ich tu, oddelené medzerami. V¹etky ostatné domény budú odmietnuté. Napr. <strong>vasaskola.sk inaskola.sk</strong>';
+$string['configallowobjectembed'] = 'Ako ¹tandardne nastavené bezpeènostné opatrenie, normálni u¾ívatelia nemô¾u do textov vklada» multimediálne prvky (napr. Flash) prostredníctvom EMBED a OBJECT tagov v ich HTML (hoci sa to dá bezpeène urobi» pou¾itím filtera multimediálnych pluginov). Ak si ¾eláte, aby boli tieto tagy povolené pre u¾ívateµov, potom zapnite túto voµbu.  ';
 $string['configallowunenroll'] = 'Ak je toto nastavené na \'Áno\', potom sa mô¾u ¹tudenti sami kedykoµvek odhlási» z kurzov. V opaènom prípade im to nie je dovolené a celý proces prihlasovania sa do kurzov bude kontrolovaný iba uèiteµmi a administrátormi.';
 $string['configallowuserblockhiding'] = 'Chcete povoli» u¾ívateµom skrytie/zobrazenie postranných blokov na v¹etkých týchto stránkach? Táto vlastnos» pou¾íva Javasript a Cookies pre ulo¾enie aktuálneho stavu pre ka¾dý blok a ovplyvní iba u¾ívateµov pohµad.';
 $string['configallowuserthemes'] = 'Keï zapnete túto voµbu, u¾ívateµ si bude môc» nastavi» vlastné témy. Témy u¾ívateµa majú vy¹¹iu prioritu, zobrazia sa aj v prípade, keï bude nastavenie témy hlavnej stránky iné (toto neplatí pre témy kurzu).';

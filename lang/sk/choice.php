@@ -1,44 +1,44 @@
 <?PHP // $Id$ 
-      // choice.php - created with Moodle 1.5 ALPHA (2005051500)
+      // choice.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['addmorechoices'] = 'Prida» viac ankiet';
-$string['allowupdate'] = 'Povoli» aktualizáciu ankety';
+$string['allowupdate'] = 'Povoli» zmenu hlasovania';
 $string['answered'] = 'Zodpovedané';
-$string['choice'] = 'Anketa';
+$string['choice'] = 'Voµba';
 $string['choiceclose'] = 'Do';
 $string['choicename'] = 'Názov ankety';
-$string['choiceopen'] = 'Otvorený';
+$string['choiceopen'] = 'Od';
 $string['choicetext'] = 'Text ankety';
-$string['displayhorizontal'] = 'Zobraz horizontálne';
-$string['displaymode'] = 'Zobrazovací mód';
-$string['displayvertical'] = 'Zobraz vertikálne';
-$string['full'] = '(Plný)';
+$string['displayhorizontal'] = 'Zobrazi» horizontálne';
+$string['displaymode'] = 'Re¾im zobrazenia';
+$string['displayvertical'] = 'Zobrazi» vertikálne';
+$string['full'] = '(Obsadené)';
 $string['havetologin'] = 'Predtým, ako odo¹lete vyplnenú anketu, sa musíte prihlási»';
 $string['limit'] = 'Limit';
-$string['limitanswers'] = 'Limitova» poèet povolených odoziev';
+$string['limitanswers'] = 'Limitova» poèet povolených výberov';
 $string['modulename'] = 'Anketa';
 $string['modulenameplural'] = 'Ankety';
 $string['mustchooseone'] = 'Musíte si vybra» nejakú odpoveï, predtým ako ju ulo¾íte. Z tohto dôvodu nebolo niè ulo¾ené.';
 $string['notanswered'] = 'E¹te nezodpovedané';
 $string['notopenyet'] = 'Prepáète, ale táto aktivita nie je dostupná do $a';
-$string['privacy'] = 'Ochrana výsledkov ';
-$string['publish'] = 'Uvies»  výsledky';
+$string['privacy'] = 'Dôvernos» výsledkov ';
+$string['publish'] = 'Zverejni» výsledky';
 $string['publishafteranswer'] = 'Ukáza» výsledky ¹tudentovi po zodpovedaní ankety';
 $string['publishafterclose'] = 'Ukáza» výsledky ¹tudentovi a¾ po ukonèení ankety';
 $string['publishalways'] = 'V¾dy ukáza» výsledky ¹tudentom';
-$string['publishanonymous'] = 'Uvies» anonymné výsledky, neznázoròova» mená ¹tudentov';
-$string['publishnames'] = 'Uvies» kompletné výsledky, ukáza» mená a ich odpovede';
-$string['publishnot'] = 'Neuvádza» výsledky ¹tudentom';
+$string['publishanonymous'] = 'Zverejni» výsledky anonymne, nezobrazova» mená ¹tudentov';
+$string['publishnames'] = 'Uvies» kompletné výsledky, ukáza» mená ¹tudentov a aj ich voµby';
+$string['publishnot'] = 'Nezverejòova» výsledky ¹tudentom';
 $string['responses'] = 'Odpovede';
 $string['responsesto'] = 'Odpovede na $a';
 $string['savemychoice'] = 'Ulo¾i» moje odpovede';
 $string['showunanswered'] = 'Ukáza» ståpec pre nezodpovedané otázky ankety';
-$string['spaceleft'] = 'zostávajúce miesto';
-$string['spacesleft'] = 'zostávajúce miesta';
-$string['taken'] = 'Vzatý';
-$string['timerestrict'] = 'Obmedzi» vypåòanie anketových otázok poèas tohto èasového intervalu';
-$string['viewallresponses'] = 'Zobrazi»  $a správne odpovede';
-$string['yourselection'] = 'Tvoj výber';
+$string['spaceleft'] = 'voµné miesto';
+$string['spacesleft'] = 'voµné miesta';
+$string['taken'] = 'Obsadený';
+$string['timerestrict'] = 'Èasovo obmedzi» odpovedanie na otázky';
+$string['viewallresponses'] = 'Zobrazi»  $a  odpovedí';
+$string['yourselection'] = 'Va¹a voµba';
 
 ?>

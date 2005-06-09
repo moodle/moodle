@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.6 development (2005053000)
+      // quiz.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['acceptederror'] = 'Akceptovaná chyba';
@@ -132,6 +132,7 @@ $string['editingshortanswer'] = 'Zapisovanie otázky s krátkou odpoveïou';
 $string['editingtruefalse'] = 'Zapisovanie áno/nie otázky';
 $string['editquestions'] = 'Upravi» otázky';
 $string['editquiz'] = 'Upravi» test';
+$string['errormissingquestion'] = 'Chyba: V systéme chába otázka s id $a';
 $string['errornotnumbers'] = 'Chyba - odpoveï musí by» èíselného typu';
 $string['errorsdetected'] = '$a chyba(chyby) nájdené';
 $string['event1'] = 'Automatické ulo¾enie';

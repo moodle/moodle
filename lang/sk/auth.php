@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.6 development (2005053000)
+      // auth.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['alternatelogin'] = 'Pokiaµ sem vlo¾íte nejaké URL, bude pou¾ité ako prihlasovacia stránka k tomuto systému. Táto Va¹a stránka by mala obsahova» formulár s vlastnos»ou \'action\' nastavenou na <strong>\'$a\'</strong>, ktorá vracia pole <strong>username</strong> a <strong>password</strong>.<br />Dbajte na to, aby ste vlo¾ili platné URL! V opaènom prípade by ste mohli komukoµvek vrátane seba zamedzi» prístup k týmto stránkam.<br />Ak chcete pou¾íva» ¹tandardnú prihlasovaciu stránku, nechajte toto pole prázdne.';
@@ -33,8 +33,6 @@ $string['auth_dbtable'] = 'Názov tabuµky v databáze';
 $string['auth_dbtitle'] = 'Pou¾i» externú databázu';
 $string['auth_dbtype'] = 'Databázový typ (bli¾¹ie viï <a href=\"../lib/adodb/readme.htm#drivers\">ADOdb dokumentácia</a>)';
 $string['auth_dbuser'] = 'U¾ívateµské meno s prístupom do databázy len na èítanie.';
-$string['auth_editlock'] = 'Uzamknú» hodnotu';
-$string['auth_editlock_expl'] = '<p><b>Uzamknutá hodnota:</b>Ak je voµba akívna, zabráni tomu, aby u¾ívatelia a administrátori Moodle priamo upravovali toto políèko. Túto voµbu pou¾ite, ak uchovávate údaje v externom auth systéme.</p>';
 $string['auth_emaildescription'] = 'Emailové potvrdzovanie je prednastavený spôsob overovania. Keï sa u¾ívateµ prihlási, vyberie si vlastné nové u¾ívateµské meno a heslo. Následne dostane potvrdzujúci email na svoju emailovú adresu. Tento email obsahuje bezpeèný odkaz na stránku, kde mô¾e u¾ívateµ potvrdi» svoje nastavené údaje. Pri ïal¹ích prihlasovaniach sa u¾ iba skontroluje u¾ívateµské meno a heslo v porovnaní s údajmi ulo¾enými v Moodle databáze.';
 $string['auth_emailtitle'] = 'Emailové overovanie';
 $string['auth_fccreators'] = 'Zoznam skupín, ktorých èlenovia majú oprávnenie na vytváranie nových kurzov. Ak ide o viaceré skupiny, oddeµte ich bodkoèiarkou. Mená musia by» napísané presne tak, ako na FirstClass serveri. Systém zohµadòuje písanie malých a veµkých písmen.';
@@ -44,6 +42,10 @@ $string['auth_fchost'] = 'Adresa FirstClass servera. Pou¾ite IP adresu alebo men
 $string['auth_fcpasswd'] = 'Heslo pre hore uvedený u¾ívateµský úèet.';
 $string['auth_fctitle'] = 'Pou¾i» FirstClass server';
 $string['auth_fcuserid'] = 'ID u¾ívateµa pre úèet na FirstClass serveri s nastavením privilégia \'Vedµaj¹í administrátor\'.';
+$string['auth_fieldlock'] = 'Zamknú» hodnotu';
+$string['auth_fieldlock_expl'] = '<p><b>Zamknú» hodnotu:</b>Ak je voµba aktivovaná, bude zabraòova» priamemu upravovaniu políèok u¾ívateµmi a administrátormi Moodle. Pou¾ite túto voµbu, ak spravujete údaje v externom overovacom systéme.</p>';
+$string['auth_fieldlocks'] = 'Zamknú» políèka u¾ívateµov';
+$string['auth_fieldlocks_help'] = '	<p>Mô¾ete zamknú» údaje v políèkach u¾ívateµov. Toto je u¾itoèné najmä na tých stránkach , kde sú údaje u¾ívateµov spravované administrátormi ruène, prostredníctvom upravovania ich záznamov alebo ich prenesenia cez voµbu \'Prenies» u¾ívateµov\'. Ak zamknete políèka, ktoré sú vy¾adované Moodle, uistite sa, ¾e pri vytváraní u¾ívateµských úètov a &emdash, potom poskytnete v¹etky potrebné údaje; v opaènom prípade budú úèty nepou¾iteµné.</p><p>Odporúèame zvá¾i» mo¾nos» nastavenia re¾imu zamkýnania na \'Odomknuté, ak prázdne\', aby ste sa vyhli tomuto problému.</p>';
 $string['auth_imapdescription'] = 'Na kontrolu správnosti daného u¾ívateµského mena a hesla pou¾íva táto metóda IMAP server.';
 $string['auth_imaphost'] = 'Adresa IMAP serveru. Pou¾ívajte èíslo IP, nie názov DNS.';
 $string['auth_imapport'] = 'Èíslo portu IMAP serveru . Zvyèajne je to 143 alebo 993.';
@@ -130,16 +132,27 @@ $string['authinstructions'] = 'Tu mô¾ete uvies» pokyny pre u¾ívateµov, aby vedel
 $string['changepassword'] = 'URL na zmenu hesla ';
 $string['changepasswordhelp'] = 'Tu mô¾ete uvies» URL, na ktorom si Va¹i u¾ívatelia mô¾u obnovi» alebo zmeni» u¾ívateµské meno/heslo, ak ho zabudli. Pre u¾ívateµov to bude zobrazené ako tlaèidlo na prihlasovacej stránke ich u¾ívateµskej stránky. Ak to tu neuvediete, tlaèidlo sa nezobrazí.';
 $string['chooseauthmethod'] = 'Vyberte si spôsob overovania u¾ívateµov: ';
+$string['createchangepassword'] = 'Vytvori», ak chýba - je nutné zmeni»';
+$string['createpassword'] = 'Vytvori», ak chýba';
 $string['forcechangepassword'] = 'Vy¾adova» zmenu hesla';
 $string['forcechangepassword_help'] = 'Vy¾adova» od u¾ívateµov zmenu hesla pri ich ïal¹om prihlásení do Moodle.';
 $string['forcechangepasswordfirst_help'] = 'Vy¾adova» od u¾ívateµov zmenu hesla pri ich prvom prihlásení do Moodle.';
 $string['guestloginbutton'] = 'Prihlasovacie tlaèidlo pre hos»a';
+$string['infilefield'] = 'Políèko vy¾adované v súbore';
 $string['instructions'] = 'In¹trukcie';
+$string['locked'] = 'Zamknutý/Zamknuté';
 $string['md5'] = 'MD5 ¹ifrovanie';
+$string['passwordhandling'] = 'Zaobchádzanie s políèkom s heslom';
 $string['plaintext'] = 'Èistý text';
 $string['showguestlogin'] = 'Mô¾ete skry», alebo zobrazi», prihlasovacie tlaèidlo pre hos»a na prihlasovacej stránke.';
 $string['stdchangepassword'] = 'Pou¾i» ¹tandardnú stránku pre zmenu hesla';
 $string['stdchangepassword_expl'] = 'Ak Vá¹ externý overovací systém povoµuje zmeny hesla v prostredí Moodle, prepnite túto voµbu na \"Áno\". Toto nastavenie potlaèí funkciu \"URL na zmenu hesla\".';
 $string['stdchangepassword_explldap'] = 'Poznámka: Ak pou¾ívate vzdialený LDAP server, odporúèame Vám komunikova» cez ¹ifrované SSL spojenie (ldaps://).';
+$string['unlocked'] = 'Odomknutý/Odomknuté';
+$string['unlockedifempty'] = 'Odomknuté, ak prázdne';
+$string['update_never'] = 'Nikdy';
+$string['update_oncreate'] = 'Pri vytváraní';
+$string['update_onlogin'] = 'Pri ka¾dom prihlásení';
+$string['update_onupdate'] = 'Pri aktualizácii';
 
 ?>

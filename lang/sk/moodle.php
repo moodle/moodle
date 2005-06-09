@@ -1,5 +1,5 @@
-<?PHP // $Id$
-      // moodle.php - created with Moodle 1.6 development (2005052400)
+<?PHP // $Id$ 
+      // moodle.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['action'] = 'Akcia';
@@ -941,6 +941,7 @@ $string['showgrades'] = 'Zobrazi» známky';
 $string['showlistofcourses'] = 'Zobrazi» zoznam kurzov';
 $string['showonlytopic'] = 'Zobrazi» iba tému $a';
 $string['showonlyweek'] = 'Zobrazi» iba tý¾deò $a';
+$string['showperpage'] = 'Zobrazi» $a na jednej stránke';
 $string['showrecent'] = 'Zobrazi» aktuálnu èinnos»';
 $string['showreports'] = 'Zobrazi» správu o aktivitách';
 $string['showsettings'] = 'Zobrazi» nastavenia';
