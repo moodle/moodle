@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.5 ALPHA (2005051500)
+      // auth.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['alternatelogin'] = 'Se inserite un\'URL verso un file qui, verrà utilizzata come pagina di login del sito. La pagina dovrebbe contenere un modulo con le proprietà impostate su <strong>\'$a\'</strong> con i campi di <strong>login</strong> e <strong>password</strong>.<br/> Fate attenzione a non inserire un URL errato perchè potreste \"chiudervi fuori\" dal sito. <br/>
@@ -34,8 +34,6 @@ $string['auth_dbtable'] = 'Nome della tabella della base dati';
 $string['auth_dbtitle'] = 'Usa un database esterno';
 $string['auth_dbtype'] = 'Il tipo di base di dati (guarda la <a href=\"../lib/adodb/readme.htm#drivers\">documentazione ADOdb</a> per i dettagli)';
 $string['auth_dbuser'] = 'Nome utente con diritti di lettura nella base dati';
-$string['auth_editlock'] = 'Blocca valore';
-$string['auth_editlock_expl'] = '<p><b>Blocca valore:</b> Se abilitato, evita che gli utenti di Moodle e gli amministratori modifichino il campo direttamente. Utilizza questa opzione se gestisci questi dati con un sistema di autenticazione esterno.</p>';
 $string['auth_emaildescription'] = 'La conferma tramite email é il metodo di autenticazione di default. Quando l\'utente si iscrive, scegliendo il suo nome utente e la password, un email di conferma viene spedita all\'indirizzo di posta elettronica dell\'utente. Questa email contiene un link sicuro a una pagina dove l\'utente può confermare la sua iscrizione. Ai successivi login verranno controllati il nome utente e la password con i valori salvati nella base di dati di Moodle.';
 $string['auth_emailtitle'] = 'Autenticazione via email';
 $string['auth_fccreators'] = 'Elenca i gruppi dei membri abilitati alla creazione di nuovi corsi. Separa gruppi multipli con \';\'. I nomi devo essere scritti esattamente come sul server FirstClass. Il sistema è sensibile alla capitalizzazione. ';
@@ -45,6 +43,10 @@ $string['auth_fchost'] = 'Indirizzo del server FirstClass. Utilizza numero IP o 
 $string['auth_fcpasswd'] = 'Password per l\'account sopra.';
 $string['auth_fctitle'] = 'Utilizza un server FirstClass';
 $string['auth_fcuserid'] = 'Nome utente di FirstClass con privilegi di \'Subadministrator\'.';
+$string['auth_fieldlock'] = 'Blocca valore';
+$string['auth_fieldlock_expl'] = '<p><b>Blocca valore:</b>Se abilitato, impedirà agli utenti e agli amministratori di Moodle di modificare il campo direttamente. Utilizzare questa opzione se si sta gestendo questi dati in un sistema di autenticazione esterno.</p>';
+$string['auth_fieldlocks'] = 'Blocca campi utente';
+$string['auth_fieldlocks_help'] = '<p>&Egrave; possibile bloccare i campi relativi agli utenti. Questo può risultare utile per i siti dove i dati utente sono gestiti manualmente dagli amministratori modificando i record degli utenti e caricadoli utilizzando la funzione \'Importa utenti\'. Se si stanno bloccando dei campi richiesti da Moodle, accertatevi di fornirne i dati quando vengono registrati gli utenti &emdash; altrimenti la registrazione diventerebbe inutilizzabile.</p><p>Prendete in considerazione l\'utilizzo della modalità \'Libero se vuoto\' per evitare questo problema.</p>';
 $string['auth_imapdescription'] = 'Questo metodo usa un server IMAP per controllare se il nome utente e la password dati sono validi. ';
 $string['auth_imaphost'] = 'Indirizzo server IMAP. Usa il numero IP, non il nome DNS.';
 $string['auth_imapport'] = 'Porta server IMAP. Normalmente é 143o 993.';
@@ -102,6 +104,7 @@ $string['auth_pop3title'] = 'Usa server POP3';
 $string['auth_pop3type'] = 'Tipo di server. Se il vostro server usa i certificati per sicurezza, scegli pop3cert.';
 $string['auth_shib_convert_data'] = 'API per la modifica dei dati';
 $string['auth_shib_convert_data_description'] = 'Puoi usare queste API per modificare ulteriormente i dati forniti da Shibboleth. Per maggiori informazioni, leggi <a href=\"../auth/shibboleth/README.txt\" target=\"_blank\">README</a>';
+$string['auth_shib_convert_data_warning'] = 'Il file non esiste o non è leggibile dal processo del webserver!';
 $string['auth_shib_instructions'] = 'Utilizzare <a href=\"$a\">Shibboleth login</a> per avere accesso tramite Shibboleth, se la vostra istituzione lo supporta<br />Altrimenti, utilizzare il modulo di login normale qui mostrato.';
 $string['auth_shib_instructions_help'] = 'Qui dovreste fornire istruzioni su Shibbolet per i vostri utenti. Verranno mostrate nella pagina di login nella sezione delle istruzioni.
 Dovrebbe includere un collegamento a \"<b>$a</b>\"  iin modo che gli utenti Shibboleth possano effettuare facilmente il login. Se lasciato in bianco, saranno usate le istruzioni standard.';
@@ -125,16 +128,27 @@ $string['authinstructions'] = 'Qui si possono fornire le istruzioni per i vostri
 $string['changepassword'] = 'Cambia URL delle password';
 $string['changepasswordhelp'] = 'Qui si può specificare una collocazione dove i gli utenti possono recuperare o cambiare il loro nome utente/password se li hanno dimenticati. Questo servizio di Help verrà fornito agli utenti sotto forma di pulsante nella pagina di login e nella loro pagina utente. Se lasciato vuoto, il bottone non verrà visualizzato.';
 $string['chooseauthmethod'] = 'Scegliete un metodo di autenticazione:';
+$string['createchangepassword'] = 'Crea se mancante - forza la modifica';
+$string['createpassword'] = 'Crea se mancante';
 $string['forcechangepassword'] = 'Forza il cambiamento della password';
 $string['forcechangepassword_help'] = 'Forzare gli utenti a cambiare la password al successivo accesso a Moodle?';
 $string['forcechangepasswordfirst_help'] = 'Forzare gli utenti a cambiare la password al primo accesso a Moodle?';
 $string['guestloginbutton'] = 'Pulsante login ospite';
+$string['infilefield'] = 'Campo richiesto nel file';
 $string['instructions'] = 'Istruzioni';
+$string['locked'] = 'Bloccato';
 $string['md5'] = 'Criptatura MD5';
+$string['passwordhandling'] = 'Gestione del campo password';
 $string['plaintext'] = 'Testo semplice';
 $string['showguestlogin'] = 'Nascondere o mostrare il pulsante \'login come ospite\' nella pagina di login?';
 $string['stdchangepassword'] = 'Utilizzare la pagina standard per il cambiamento della password?';
 $string['stdchangepassword_expl'] = 'Se il sistema di autenticazione esterna permette il cambiamento delle password attraverso Moodle, cambiate questo su Si. Questa impostazione esclude l\'URL per cambiare la password.';
 $string['stdchangepassword_explldap'] = 'Nota: Si raccomanda di utilizzare LDAP su una connessione criptata con SSL (ldaps://) se il server è remoto.';
+$string['unlocked'] = 'Libero';
+$string['unlockedifempty'] = 'Libero se vuoto';
+$string['update_never'] = 'Mai';
+$string['update_oncreate'] = 'Alla creazione';
+$string['update_onlogin'] = 'A ogni accesso';
+$string['update_onupdate'] = 'Alla modifica';
 
 ?>

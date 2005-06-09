@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.5 ALPHA (2005050600)
+      // scorm.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['asset'] = 'Asset';
@@ -23,6 +23,7 @@ $string['errorlogs'] = 'Errori';
 $string['exit'] = 'Esci dal corso SCORM';
 $string['expcoll'] = 'Espandi/Collidi';
 $string['failed'] = 'Fallito';
+$string['firstaccess'] = 'Primo accesso';
 $string['found'] = 'Manifest trovato';
 $string['frameheight'] = 'Questa preferenza imposta l\'altezza standard del frame degli SCO';
 $string['framewidth'] = 'Questa preferenza imposta la larghezza standard del frame degli SCO';
@@ -34,6 +35,7 @@ $string['gradesum'] = 'Somma dei voti';
 $string['guestsno'] = 'Gli ospiti non possono visualizzare i corsi scorm';
 $string['height'] = 'Altezza';
 $string['incomplete'] = 'Incompleto';
+$string['lastaccess'] = 'Ultimo accesso';
 $string['missing_attribute'] = 'Attributo mancante $a->attr al tag $a->tag';
 $string['missing_tag'] = 'Tag mancante $a->tag';
 $string['mode'] = 'Modalità';
@@ -42,11 +44,13 @@ $string['modulenameplural'] = 'Scorms';
 $string['next'] = 'Continua';
 $string['no_attributes'] = 'Il tag $a->tag deve avere degli attributi';
 $string['no_children'] = 'Il tag $a->tag deve avere dei figli';
+$string['noactivity'] = 'Nessun rapporto';
 $string['nomanifest'] = 'Manifest non trovato';
 $string['noreports'] = 'Non ci sono tentativi da visualizzare';
 $string['normal'] = 'Normale';
 $string['not_corr_type'] = 'Tipo sbagliato per il tag $a->tag';
 $string['notattempted'] = 'Non provato';
+$string['organization'] = 'Organizzazione';
 $string['organizations'] = 'Organizzazioni';
 $string['packagedir'] = 'Errore Filesystem: non è possibile creare la directory del pacchetto SCORM';
 $string['passed'] = 'Superato';
@@ -63,6 +67,7 @@ $string['syntax'] = 'Errore di sintassi';
 $string['tag_error'] = 'Tag sconosciuto ($a->tag) con questo valore: $a->value';
 $string['too_many_attributes'] = 'Il tag $a->tag ha troppi attributi';
 $string['too_many_children'] = 'Il tag $a->tag ha troppi figli';
+$string['totaltime'] = 'Tempo';
 $string['trackingloose'] = 'ATTENZIONE: I dati di tracciamento esistenti saranno cancellati!';
 $string['validateascorm'] = 'Controllo pacchetto scorm';
 $string['validation'] = 'Risultato controllo';

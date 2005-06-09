@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.5 ALPHA (2005042400)
+      // assignment.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['allowresubmit'] = 'Permettere di sottomettere più volte';
@@ -29,6 +29,7 @@ Il compito è disponibile al link:
 $a->url';
 $string['emailteachermailhtml'] = '$a->username ha aggiornato la sottomissione del suo compito per <i>\'$a->assignment\'</i><br /><br />Il compito è <a href=\"$a->url\">disponibile sul sito web</a>.';
 $string['emailteachers'] = 'Avvisi ai docenti via email';
+$string['emptysubmission'] = 'Non avete ancora inviato niente';
 $string['existingfiledeleted'] = 'Il file esistente è stato cancellato: $a';
 $string['failedupdatefeedback'] = 'Aggiornamento delle risposte alle consegne dell\'utente $a non riuscito';
 $string['feedback'] = 'Risposte';
@@ -45,9 +46,11 @@ $string['modulename'] = 'Compito';
 $string['modulenameplural'] = 'Compiti';
 $string['newsubmissions'] = 'Compiti consegnati';
 $string['noassignments'] = 'Non ci sono ancora compiti';
+$string['noattempts'] = 'Nessun tentativo è stato ancora fatto per questo compito';
 $string['notgradedyet'] = 'Non ancora valutato';
 $string['notsubmittedyet'] = 'Non ancora inviato';
 $string['overwritewarning'] = 'Attenzione: trasferendo ulteriori allegati essi SOSTITUIRANNO quelli attualmente presenti.';
+$string['preventlate'] = 'Previeni sottomissioni in ritardo';
 $string['saveallfeedback'] = 'Salva tutte le mie risposte';
 $string['submission'] = 'Sottomissione';
 $string['submissionfeedback'] = 'Risposte alla consegna';

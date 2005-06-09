@@ -1,8 +1,9 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 ALPHA (2005050600)
+      // moodle.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['action'] = 'Azione';
+$string['actions'] = 'Azioni';
 $string['active'] = 'Attivo';
 $string['activities'] = 'Attività';
 $string['activity'] = 'Attività';
@@ -948,6 +949,7 @@ $string['showgrades'] = 'Mostra graduatorie';
 $string['showlistofcourses'] = 'Mostra la lista dei corsi';
 $string['showonlytopic'] = 'Mostra solo argomento $a';
 $string['showonlyweek'] = 'Mostra solo settimana $a';
+$string['showperpage'] = 'Mostra $a per pagina';
 $string['showrecent'] = 'Mostra le attività recenti';
 $string['showreports'] = 'Mostra i rapporti delle attività ';
 $string['showsettings'] = 'Mostra impostazioni';
