@@ -20,13 +20,9 @@
         unset($restore);
     }
 
-    //Check required objects from session
-
-    //info
-    require_variable($info);
-
-    //course_header
-    require_variable($course_header);
+    // check for session objects
+    assert_var_set( $info, 'info' );
+    assert_var_set( $course_header, 'course_header' );
 
     //If the restore object doesn't exist, we are going
     //to check every variable individually and create it
@@ -34,33 +30,33 @@
     if (!isset($restore)) {
         //Check that we have all we need
         //backup_unique_code
-        require_variable($backup_unique_code);
+        $backup_unique_code = required_param( 'backup_unique_code' );
         //file
-        require_variable($file);
+        $file = required_param( 'file');
         //Checks for the required restoremod parameters
         if ($allmods = get_records("modules")) {
             foreach ($allmods as $mod) {
                 $modname = $mod->name;
                 $var = "restore_".$modname;
-                require_variable($$var); 
+                $$var = required_param( $var); 
                 $var = "restore_user_info_".$modname;
-                require_variable($$var);
+                $$var = required_param( $var);
             }
         }
         //restoreto
-        require_variable($restore_restoreto);
+        $restore_restoreto = required_param('restore_restoreto');
         //restore_metacourse
-        require_variable($restore_metacourse);
+        $restore_metacourse = required_param('restore_metacourse');
         //restore_users
-        require_variable($restore_users);
+        $restore_users = required_param('restore_users');
         //restore_logs
-        require_variable($restore_logs);
+        $restore_logs = required_param('restore_logs');
         //restore_user_files
-        require_variable($restore_user_files);
+        $restore_user_files = required_param('restore_user_files');
         //restore_course_files
-        require_variable($restore_course_files);
+        $restore_course_files = required_param('restore_course_files');
         //restore_messages
-        require_variable($restore_messages);
+        $restore_messages = required_param('restore_messages');
 
         //Check we've selected a course
         if (!isset($course_id)) {

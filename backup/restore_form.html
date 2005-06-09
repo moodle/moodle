@@ -5,18 +5,18 @@
     //capabilities.
 
     //Get objects from session
-    $info = $SESSION->info;
-    $course_header = $SESSION->course_header;
+    if (!($info = $SESSION->info)) {
+      error( 'info object missing from session' );
+    }
+    if (!($course_header = $SESSION->course_header)) {
+      error( 'course_header object missing from session' );
+    }
 
     //Check that we have all we need
     //backup_unique_code
-    require_variable($backup_unique_code);
+    $backup_unique_code = required_param( 'backup_unique_code' );
     //file
-    require_variable($file);
-    //info
-    require_variable($info);
-    //course_header
-    require_variable($course_header);
+    $file = required_param( 'file' );
 
     //Check login
     require_login();
