@@ -21,8 +21,9 @@
     }
 
     // check for session objects
-    assert_var_set( $info, 'info' );
-    assert_var_set( $course_header, 'course_header' );
+    if (empty($info)) or empty($course_info)) {
+      error( 'important information missing from SESSION' );
+    }
 
     //If the restore object doesn't exist, we are going
     //to check every variable individually and create it
