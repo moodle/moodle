@@ -19,6 +19,7 @@ function glossary_show_entry_entrylist($course, $cm, $glossary, $entry, $mode=''
             glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode, $hook,'print');
         }
         if ($ratings) {
+            echo '<br />';
             glossary_print_entry_ratings($course, $entry, $ratings);
         }
         echo '<br />';
