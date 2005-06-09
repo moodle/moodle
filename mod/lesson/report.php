@@ -611,7 +611,7 @@
                                 } else {
                                     $answerdata->score = get_string("didnotreceivecredit", "lesson");
                                 }
-                            } elseif ($answer == end($answers) && !isset($answerdata) && $useranswer != NULL) {
+                            } elseif ($answer == end($answers) && empty($answerdata) && $useranswer != NULL) {
                                 // get in here when what the user entered is not one of the answers
                                 $data = "<input type=\"text\" size=\"50\" disabled=\"disabled\" readonly=\"readonly\" value=\"$useranswer->useranswer\">";
                                 if (isset($pagestats[$page->id][$answer->answer])) {
@@ -800,8 +800,10 @@
 
             if (!$grades = get_records_select("lesson_grades", "lessonid = $lesson->id and userid = $userid", "completed", "*", $try, 1)) {
                 $grade = -1;
+                $completed = -1;
             } else {
                 $grade = current($grades);
+                $completed = $grade->completed;
                 $grade = round($grade->grade, 2);
             }
             if (!$times = get_records_select("lesson_timer", "lessonid = $lesson->id and userid = $userid", "starttime", "*", $try, 1)) {
