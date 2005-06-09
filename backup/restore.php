@@ -14,11 +14,11 @@
     require_once("$CFG->libdir/wiki_to_markdown.php" );
 
     //Optional
-    optional_variable($id);
-    optional_variable($file);
-    optional_variable($cancel);
-    optional_variable($launch);
-    optional_variable($to);
+    $id = optional_param( 'id' );
+    $file = optional_param( 'file' );;
+    $cancel = optional_param( 'cancel' );
+    $launch = optional_param( 'launch' );
+    $to = optional_param( 'to' );
 
     //Check login       
     require_login();

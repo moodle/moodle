@@ -43,21 +43,19 @@
                    $count++;
                }
             }
+
             //Check data
             //Check module info
             $var = "backup_".$modname;
-            if (!isset($$var)) {
-                //Every undefined backup_XXXX isn't exported
-                $$var = 0;
-            }
+            $$var = optional_param( $var,0,PARAM_INT );
+
             //Now stores all the mods preferences into an array into preferences
             $preferences->mods[$modname]->backup = $$var;
 
             //Check include user info
             $var = "backup_user_info_".$modname;
-            if (!isset($$var)) {
-                $$var = 1;
-            }
+            $$var = optional_param( $var,0,PARAM_INT );
+
             //Now stores all the mods preferences into an array into preferences
             $preferences->mods[$modname]->userinfo = $$var; 
             //And the name of the mod
@@ -66,50 +64,31 @@
     }
 
     //Check other parameters
-    if (!isset($backup_metacourse)) {
-        $backup_metacourse = 1;
-    }
+    $backup_metacourse = optional_param( 'backup_metacourse',1,PARAM_INT );
     $preferences->backup_metacourse = $backup_metacourse;
-   
-    if (!isset($backup_users)) {
-        $backup_users = 1;
-    }
+  
+    $backup_users = optional_param( 'backup_users',1,PARAM_INT ); 
     $preferences->backup_users = $backup_users;
    
-    if (!isset($backup_logs)) {
-        $backup_logs = 0;
-    }
+    $backup_logs = optional_param( 'backup_logs',0,PARAM_INT );    
     $preferences->backup_logs = $backup_logs;
 
-    if (!isset($backup_user_files)) {
-        $backup_user_files = 1;
-   }
+    $backup_user_files = optional_param( 'backup_user_files',1,PARAM_INT );
     $preferences->backup_user_files = $backup_user_files;
 
-    if (!isset($backup_course_files)) {
-        $backup_course_files = 2;
-    }
+    $backup_course_files = optional_param( 'backup_course_files',2,PARAM_INT );
     $preferences->backup_course_files = $backup_course_files;
 
-    if (!isset($backup_messages)) {
-        $backup_messages = 1;
-    }
+    $backup_messages = optional_param( 'backup_messages',1,PARAM_INT );
     $preferences->backup_messages = $backup_messages;
 
-    if (!isset($id)) {
-        error ("Course not specified");
-    }
+    $id = required_param('id');
     $preferences->backup_course = $id;
 
-    if (!isset($backup_name)) {
-        error ("Backup name not specified");
-    }
-    //We clean it again (to prevent diacritics entered manually)
-    $preferences->backup_name = clean_filename($backup_name);
+    $backup_name = required_param('backup_name',PARAM_FILE );
+    $preferences->backup_name = $backup_name;
 
-    if (!isset($backup_unique_code)) {
-        error ("Backup unique code not specified");
-    }
+    $backup_unique_code = required_param('backup_unique_code');
     $preferences->backup_unique_code = $backup_unique_code;
 
     //Another Info

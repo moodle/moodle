@@ -8,10 +8,10 @@
     require_once ("backuplib.php");
     require_once ("$CFG->libdir/blocklib.php");
 
-    optional_variable($id);       // course id
-    optional_variable($to); // id of course to import into afterwards.
-    optional_variable($cancel);
-    optional_variable($launch);
+    $id = optional_param( 'id' );       // course id
+    $to = optional_param( 'to' ); // id of course to import into afterwards.
+    $cancel = optional_param( 'cancel' );
+    $launch = optional_param( 'launch' );
 
     require_login();
 

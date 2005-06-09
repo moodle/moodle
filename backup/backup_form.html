@@ -99,9 +99,9 @@
             if (isset($$var) && $$var) {
                 //Print the full tr
                 echo "<tr>";
-                echo "<td align=\"right\"><b>";
+                echo "  <td align=\"right\"><b>";
                 echo get_string("include")." ". get_string("modulenameplural",$modname).":";
-                echo "</b></td><td>";
+                echo "</b></td><td>\n";
                 $backup_options[0] = get_string("no"); 
                 $backup_options[1] = get_string("yes");
                 $var = "backup_".$modname;
@@ -115,11 +115,11 @@
                 else {
                     echo '<input type="hidden" name="'.$var.'" value="0" />';
                 }
-                echo "</td></tr>"; 
+                echo "</td></tr>\n"; 
             }
         }
         //Line
-        echo "<tr><td colspan=\"2\"><hr /></td></tr>";
+        echo "<tr><td colspan=\"2\"><hr /></td></tr>\n";
         
         if (empty($to)) {
             //Now print the Metacourse tr
