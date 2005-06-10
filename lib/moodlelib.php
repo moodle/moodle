@@ -172,6 +172,21 @@ function optional_param($varname, $default=NULL, $options=PARAM_CLEAN) {
 }
 
 /**
+ * Convenience function to test if a parameter is set
+ * @param string $varname name of the parameter
+ * @return boolean true if set otherwise false
+ */
+function isset_param($varname) {
+  if (isset($_GET[$varname])) {
+    return true;
+  }
+  if (isset($_POST[$varname])) {
+    return true;
+  }
+  return false;
+}
+
+/**
  * Used by {@link optional_param()} and {@link required_param()} to
  * clean the variables and/or cast to specific types, based on
  * an options field.
@@ -415,11 +430,27 @@ function require_variable($var) {
 function optional_variable(&$var, $default=0) {
     global $CFG;
     if (!empty($CFG->disableglobalshack)) {
-      error( 'The optional_variable() function is deprecated.' );
+      error( "The optional_variable() function is deprecated ($var, $default)." );
     }
     if (! isset($var)) {
         $var = $default;
     }
+}
+
+
+/**
+ * If a variable is empty set it to the default
+ * otherwise leave it alone
+ * @param mixed $var the variable to test
+ * @param mixed $default the default value
+ * @return boolean true if variable has changed
+ */
+function set_default( &$var, $default ) {
+  if (empty($var)) {
+    $var = $default;
+    return true;
+  }
+  return false;
 }
 
 /**
