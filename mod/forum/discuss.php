@@ -6,12 +6,12 @@
     require_once("../../config.php");
     require_once("lib.php");
 
-    require_variable($d);       // Discussion ID
-    optional_variable($parent); // If set, then display this post and all children.
-    optional_variable($mode);   // If set, changes the layout of the thread
-    optional_variable($move);   // If set, moves this discussion to another forum
-    optional_variable($mark);   // Used for tracking read posts if user initiated.
-    optional_variable($postid); // Used for tracking read posts if user initiated.
+    $d = required_param('d',PARAM_INT);       // Discussion ID
+    $parent = optional_param('parent',0,PARAM_INT); // If set, then display this post and all children.
+    $mode = optional_param('mode',0,PARAM_INT);   // If set, changes the layout of the thread
+    $move = optional_param('move',0,PARAM_INT);   // If set, moves this discussion to another forum
+    $mark = optional_param('mark',0,PARAM_INT);   // Used for tracking read posts if user initiated.
+    $postid = optional_param('postid',0,PARAM_INT); // Used for tracking read posts if user initiated.
 
     if (! $discussion = get_record("forum_discussions", "id", $d)) {
         error("Discussion ID was incorrect or no longer exists");

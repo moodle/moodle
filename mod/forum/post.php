@@ -6,6 +6,12 @@
     require_once('lib.php');
 
     $reply = optional_param('reply', 0, PARAM_INT);
+    $forum = optional_param('forum', 0, PARAM_INT);
+    $edit = optional_param('edit', 0, PARAM_INT);
+    $delete = optional_param('delete', 0, PARAM_INT);
+    $prune = optional_param('prune',0,PARAM_INT);
+    $name = optional_param('name','',PARAM_CLEAN);
+    $confirm = optional_param('confirm',0,PARAM_INT);
 
     if (isguest()) {
         $wwwroot = $CFG->wwwroot.'/login/index.php';
@@ -193,7 +199,7 @@
             }
         }
 
-    } else if (isset($forum)) {      // User is starting a new discussion in a forum
+    } else if (!empty($forum)) {      // User is starting a new discussion in a forum
 
         $SESSION->fromurl = $_SERVER["HTTP_REFERER"];
 
@@ -281,7 +287,7 @@
 
         unset($SESSION->fromdiscussion);
 
-    } else if (isset($edit)) {  // User is editing their own post
+    } else if (!empty($edit)) {  // User is editing their own post
 
         $adminedit = (isadmin() and !empty($CFG->admineditalways));
 
@@ -319,7 +325,7 @@
         unset($SESSION->fromdiscussion);
 
 
-    } else if (isset($delete)) {  // User is deleting a post
+    } else if (!empty($delete)) {  // User is deleting a post
 
         if (! $post = forum_get_post_full($delete)) {
             error("Post ID was incorrect");
@@ -343,7 +349,7 @@
 
         $replycount = forum_count_replies($post);
 
-        if (isset($confirm)) {    // User has confirmed the delete
+        if (!empty($confirm)) {    // User has confirmed the delete
 
             if ($post->totalscore) {
                 notice(get_string("couldnotdeleteratings", "forum"),
@@ -419,7 +425,7 @@
         die;
 
 
-    } else if (isset($prune)) {  // Teacher is pruning
+    } else if (!empty($prune)) {  // Teacher is pruning
 
         if (!$post = forum_get_post_full($prune)) {
             error("Post ID was incorrect");
@@ -440,7 +446,7 @@
             $cm->id = 0;
         }
 
-        if (isset($_GET['name'])) {    // User has confirmed the prune
+        if (!empty($name)) {    // User has confirmed the prune
 
             $newdiscussion->course = $discussion->course;
             $newdiscussion->forum = $discussion->forum;

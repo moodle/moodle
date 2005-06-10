@@ -3,10 +3,9 @@
     require_once("../../config.php");
     require_once("lib.php");
 
-    require_variable($id);                // forum
-    optional_variable($group);            // change of group
-
-    optional_variable($edit);     // Turn editing on and off
+    $id = required_param('id',PARAM_INT);                // forum
+    $group = optional_param('group',0,PARAM_INT);            // change of group
+    $edit = optional_param('edit','',PARAM_ALPHA);     // Turn editing on and off
 
     if (! $forum = get_record("forum", "id", $id)) {
         error("Forum ID is incorrect");
@@ -30,7 +29,7 @@
 
     add_to_log($course->id, "forum", "view subscribers", "subscribers.php?id=$forum->id", $forum->id, $cm->id);
 
-    if (isset($_GET['edit'])) {
+    if (isset_param('edit')) {
         if($edit == "on") {
             $USER->subscriptionsediting = true;
         } else {

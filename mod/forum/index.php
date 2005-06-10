@@ -4,7 +4,7 @@
     require_once("lib.php");
     require_once("$CFG->libdir/rsslib.php");
 
-    optional_variable($id);          // course
+    $id = optional_param('id',0,PARAM_INT);          // course
 
     if ($id) {
         if (! $course = get_record("course", "id", $id)) {

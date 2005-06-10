@@ -83,7 +83,7 @@
 /// Check to see if groups are being used in this forum
 /// and if so, set $currentgroup to reflect the current group
 
-    $changegroup = isset($_GET['group']) ? $_GET['group'] : -1;  // Group change requested?
+    $changegroup = isset_param('group') ? $group : -1;  // Group change requested?
 
     if ($forum->type == "teacher") {
         $groupmode = NOGROUPS;
