@@ -16,9 +16,9 @@
 
     require_once('config.php');
 
-    optional_variable($file, '');
-    optional_variable($text, 'No text to display');
-    optional_variable($module, 'moodle');
+    $file = optional_param('file', '',PARAM_FILE);
+    $text = optional_param('text', 'No text to display',PARAM_CLEAN);
+    $module = optional_param('module', 'moodle',PARAM_ALPHA);
 
     print_header();
 
