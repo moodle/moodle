@@ -20,7 +20,7 @@ hr {
 .tablink a:visited,
 a:link,
 a:visited {
-    color:#330000;
+    color:#990000;
 }
 
 a.autolink:link,
@@ -83,7 +83,7 @@ th.header,
 td.header,
 div.header,
 .sideblock .header,
-.forumpost .header,
+.forumpost,
 .navbar {
     border-top:1px solid #FFCC99;
     border-left:1px solid #FFCC99;
@@ -101,6 +101,7 @@ div.header,
 .entryboxheader,
 .entrybox,
 #course-view .section .content,
+#site-index .sitetopic .sitetopiccontent,
 #admin-index .c1,
 #admin-configure .c1,
 #admin-config .c1,
@@ -111,6 +112,7 @@ div.header,
 #calendar .sidecalendar .minicalendar,
 .block_calendar_month .minicalendar,
 #calendar .maincalendar,
+#mod-glossary-comment .generalbox,
 .cal_popup_fg {
     border-top:1px solid #FFCC99;
     border-left:1px solid #FFCC99;
@@ -127,6 +129,7 @@ div.header,
     background-repeat:repeat-x repeat-y;
 }
 
+.forumpost .header,
 .glossarypost .entryheader,
 .glossarypost .entryattachment,
 .glossarypost .left {
@@ -184,6 +187,7 @@ div.header,
 }
 
 .read,
+.forumheaderlist,
 .glossarypost {
     border-top:1px solid #FFCC99;
     border-left:1px solid #FFCC99;
