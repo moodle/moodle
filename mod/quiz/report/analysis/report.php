@@ -121,12 +121,13 @@ class quiz_report extends quiz_default_report {
             if (!quiz_get_question_options($quizquestions)) {
                 error('Could not load question options');
             }
-        
+            echo "estoy aqui";
             // Restore the question sessions to their most recent states
             // creating new sessions where required
             if (!$states = quiz_restore_question_sessions($quizquestions, $quiz, $attempt)) {
                 error('Could not restore question sessions');
             }
+            print_object($states);
             $numbers = explode(',', $questionlist);
             $statsrow = array();
             foreach ($numbers as $i) {              
@@ -425,7 +426,7 @@ class quiz_report extends quiz_default_report {
         $sumg2 = $sumx2->x;
         $sumq2 = $sumx2->y;
         $sumxy = array_reduce($qstats, "stats_sumxy");
-        $sumgq = $sumxy;
+        $sumgq = $sumxy->x;
         
         $q['count'] = $n;
         $q['facility'] = $sumq/$n;
@@ -670,7 +671,7 @@ function stats_sumx2($sum, $data){
 }    
 
 function stats_sumxy($sum, $data){
-    $sum += $data[0]*$data[1];
+    $sum->x += $data[0]*$data[1];
     return $sum;
 }
 
