@@ -5,10 +5,10 @@
 
     define("MAX_USERS_PER_PAGE", 50);
 
-    require_variable($id);         // course id
-    optional_variable($add, "");
-    optional_variable($remove, "");
-    optional_variable($search, ""); // search string
+    $id = required_param('id',PARAM_INT);         // course id
+    $add = optional_param('add', '', PARAM_ALPHA);
+    $remove = optional_param('remove', '', PARAM_ALPHA);
+    $search = optional_param('search', '', PARAM_CLEAN); // search string
 
     require_login();
 
@@ -96,7 +96,7 @@
 
 /// Add a teacher if one is specified
 
-    if (!empty($_GET['add']) and confirm_sesskey()) {
+    if (!empty($add) and confirm_sesskey()) {
         if (! add_teacher($add, $course->id)) {
             error("Could not add that teacher to this course!");
         }
@@ -104,7 +104,7 @@
 
 /// Remove a teacher if one is specified.
 
-    if (!empty($_GET['remove']) and confirm_sesskey()) {
+    if (!empty($remove) and confirm_sesskey()) {
         if (! remove_teacher($remove, $course->id)) {
             error("Could not remove that teacher from this course!");
         }
