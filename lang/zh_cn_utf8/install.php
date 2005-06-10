@@ -31,7 +31,7 @@ $string['dbtype'] = '类型';
 $string['directorysettings'] = '<p>请确认安装Moodle的位置。</p>
 
 <p><b>Web地址:</b>
-指定访问Moodle的完整Web地址。如果你的网站可以通过多个URL访问，那么选择其中最常用的一个。地址的末尾不要有斜线。</p>
+指定访问Moodle的完整Web地址。如果您的网站可以通过多个URL访问，那么选择其中最常用的一个。地址的末尾不要有斜线。</p>
 
 <p><b>Moodle目录:</b>
 指定安装的完整路径，要确保大小写正确。</p>

@@ -114,9 +114,9 @@ $string['nosubmissionsavailableforassessment'] = 'No Submissions available for a
 $string['notavailable'] = '没有';
 $string['noteonassessmentelements'] = '注意，得分可分解为一些“评价要素”。.<br />
 	这使评分变得容易且保持一致性。 <br />
-	作为教师你须在布置好作业之前添加这些要素。<br />
-	点击课程中的布置作业，如果没有指定过要素，你就会看到提示要求添加要素。<br />
-	你可以使用编辑课外作业页面来改变要素的数量。<br />
+	作为教师您须在布置好作业之前添加这些要素。<br />
+	点击课程中的布置作业，如果没有指定过要素，您就会看到提示要求添加要素。<br />
+	您可以使用编辑课外作业页面来改变要素的数量。<br />
 	具体要素本身在“管理课外作业”页面中修改。';
 $string['notgraded'] = '尚未评分';
 $string['notitlegiven'] = '尚未命名';
@@ -196,9 +196,9 @@ $string['submissions'] = 'Submissions';
 $string['submissionsnolongerallowed'] = 'Submissions no longer allowed';
 $string['submissionsused'] = '$a Submissions used in this table';
 $string['submitassignment'] = '提交布置的作业';
-$string['submitassignmentusingform'] = '用该表单提交你的作业';
+$string['submitassignmentusingform'] = '用该表单提交您的作业';
 $string['submitexampleassignment'] = '提交作业例样';
-$string['submitrevisedassignment'] = '用该表单提交你改后的作业';
+$string['submitrevisedassignment'] = '用该表单提交您改后的作业';
 $string['submitted'] = '提交';
 $string['submittedby'] = '提交来自';
 $string['suggestedgrade'] = '建议得分';
@@ -233,8 +233,8 @@ $string['workshopassessments'] = 'Workshop Assessments';
 $string['workshopcomments'] = 'Workshop Comments';
 $string['workshopfeedback'] = 'Workshop Feedback';
 $string['workshopsubmissions'] = 'Workshop Submissions';
-$string['yourassessments'] = '你的评价';
+$string['yourassessments'] = '您的评价';
 $string['yourassessmentsofexamplesfromtheteacher'] = 'Your Assessments of Examples from the $a';
-$string['yourfeedbackgoeshere'] = '你的反馈到这里来';
+$string['yourfeedbackgoeshere'] = '您的反馈到这里来';
 
 ?>
