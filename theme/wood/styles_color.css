@@ -94,12 +94,23 @@ div.header,
     background-repeat:repeat-x repeat-y;  
 }
 
+.forumpost .header,
+.glossarypost .entryheader,
+.glossarypost .entryattachment,
+.glossarypost .left {
+    background-image:url(gradient1.jpg);
+    background-position:bottom;
+    background-repeat:repeat-x repeat-y;
+}
+
 .results,
 .sideblock .content,
 .generalboxcontent,
 .noticeboxcontent,
 .entryboxheader,
 .entrybox,
+.userinfobox,
+#course-user .section, 
 #course-view .section .content,
 #site-index .sitetopic .sitetopiccontent,
 #admin-index .c1,
@@ -123,22 +134,6 @@ div.header,
     background-repeat:repeat-x repeat-y;  
 }
 
-.categoryheader {
-    background-image:url(background.jpg);
-    background-position:bottom;
-    background-repeat:repeat-x repeat-y;
-}
-
-.forumpost .header,
-.glossarypost .entryheader,
-.glossarypost .entryattachment,
-.glossarypost .left {
-    background-image:url(gradient1.jpg);
-    background-position:bottom;
-    background-repeat:repeat-x repeat-y;
-}
-
-
 .forumpost .left,
 .sideblock .r1,
 .r0,
@@ -149,14 +144,23 @@ div.header,
     background-repeat:repeat-x repeat-y;
 }
 
-.r1 {
-    background-color:white;
+#course-view .section .side {
+    border-top:1px solid #FFCC99;
+    border-left:1px solid #FFCC99;
+    border-bottom:1px solid #330000;
+    border-right:1px solid #330000;
+    background-image:url(gradient3.jpg);
+    background-position:bottom;
+    background-repeat:repeat-x repeat-y;
+}
+
+#notusefornow {
+    background-image:url(gradient3.jpg);
     background-position:bottom;
     background-repeat:repeat-x repeat-y;
 }
 
 #admin-index .c0,
-#course-view .section .left,
 #admin-config .c0,
 .cal_popup_bg {
     border-top:1px solid #FFCC99;
@@ -168,12 +172,15 @@ div.header,
     background-repeat:repeat-x repeat-y;
 }
 
-#course-view .section .side {
-    border-top:1px solid #FFCC99;
-    border-left:1px solid #FFCC99;
-    border-bottom:1px solid #330000;
-    border-right:1px solid #330000;
-    background-image:url(gradient3.jpg);
+.categoryheader {
+    background-image:url(background.jpg);
+    background-position:bottom;
+    background-repeat:repeat-x repeat-y;
+}
+
+
+.r1 {
+    background-color:white;
     background-position:bottom;
     background-repeat:repeat-x repeat-y;
 }
