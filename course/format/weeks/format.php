@@ -10,8 +10,8 @@
     define('BLOCK_R_MIN_WIDTH', 100);
     define('BLOCK_R_MAX_WIDTH', 210);
 
-    optional_variable($preferred_width_left,  blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]));
-    optional_variable($preferred_width_right, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]));
+    set_default($preferred_width_left,  blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]));
+    set_default($preferred_width_right, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]));
     $preferred_width_left = min($preferred_width_left, BLOCK_L_MAX_WIDTH);
     $preferred_width_left = max($preferred_width_left, BLOCK_L_MIN_WIDTH);
     $preferred_width_right = min($preferred_width_right, BLOCK_R_MAX_WIDTH);
