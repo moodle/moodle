@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.2 Beta (2004022400)
+<?PHP // $Id$
+
 
 
 $string['absent'] = '缺席';
@@ -236,5 +236,4 @@ $string['workshopsubmissions'] = 'Workshop Submissions';
 $string['yourassessments'] = '你的评价';
 $string['yourassessmentsofexamplesfromtheteacher'] = 'Your Assessments of Examples from the $a';
 $string['yourfeedbackgoeshere'] = '你的反馈到这里来';
-
 ?>

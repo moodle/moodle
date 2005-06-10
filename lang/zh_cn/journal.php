@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // journal.php - created with Moodle 1.2 Beta (2004022400)
+<?PHP // $Id$
+
 
 
 $string['alwaysopen'] = '总是开放';
@@ -22,6 +22,7 @@ $string['journalquestion'] = '杂志问题';
 $string['journalrating1'] = '不满意';
 $string['journalrating2'] = '满意';
 $string['journalrating3'] = '出色';
+$string['mailsubject'] = '杂志反馈';
 $string['modulename'] = '杂志';
 $string['modulenameplural'] = '杂志';
 $string['newjournalentries'] = '新杂志登记';
@@ -34,5 +35,4 @@ $string['rate'] = '评分';
 $string['saveallfeedback'] = '保存我的所有反馈';
 $string['startoredit'] = '启动或编辑我的杂志登记';
 $string['viewallentries'] = '查看 $a 个杂志登记';
-
 ?>
