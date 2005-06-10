@@ -17,7 +17,7 @@ class quiz_report extends quiz_default_report {
             print_heading($strnoattempts);
             return true;
         }
-        
+
     /// Check to see if groups are being used in this quiz
         if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
             $currentgroup = setup_and_print_groups($course, $groupmode, "report.php?id=$cm->id&amp;mode=overview");
@@ -121,13 +121,11 @@ class quiz_report extends quiz_default_report {
             if (!quiz_get_question_options($quizquestions)) {
                 error('Could not load question options');
             }
-            echo "estoy aqui";
             // Restore the question sessions to their most recent states
             // creating new sessions where required
             if (!$states = quiz_restore_question_sessions($quizquestions, $quiz, $attempt)) {
                 error('Could not restore question sessions');
             }
-            print_object($states);
             $numbers = explode(',', $questionlist);
             $statsrow = array();
             foreach ($numbers as $i) {              
@@ -417,16 +415,15 @@ class quiz_report extends quiz_default_report {
                 }               
             }
         }
-        
         $n = count($qstats);
-        $sumx = array_reduce($qstats, "stats_sumx");
-        $sumg = $sumx->x;
-        $sumq = $sumx->y;
-        $sumx2 = array_reduce($qstats, "stats_sumx2");
-        $sumg2 = $sumx2->x;
-        $sumq2 = $sumx2->y;
-        $sumxy = array_reduce($qstats, "stats_sumxy");
-        $sumgq = $sumxy->x;
+        $sumx = array_reduce($qstats, "stats_sumx", array(0,0));
+        $sumg = $sumx[0];
+        $sumq = $sumx[1];
+        $sumx2 = array_reduce($qstats, "stats_sumx2", array(0,0));
+        $sumg2 = $sumx2[0];
+        $sumq2 = $sumx2[1];
+        $sumxy = array_reduce($qstats, "stats_sumxy", array(0,0));
+        $sumgq = $sumxy[0];
         
         $q['count'] = $n;
         $q['facility'] = $sumq/$n;
@@ -440,7 +437,7 @@ class quiz_report extends quiz_default_report {
         $q['disc_index'] = ($top_scores - $bottom_scores)/max($top_count, $bottom_count, 1);
         $div = $n*$gsd*$q['qsd'];
         if ($div!=0) {
-            $q['disc_coeff'] = ($sumgq - $sumg*$sumq/$n)/($n*$gsd*$q['qsd']);
+            $q['disc_coeff'] = ($sumgq - $sumg*$sumq/$n)/$div;
         } else {
             $q['disc_coeff'] = -999;
         }
@@ -649,8 +646,6 @@ class quiz_report extends quiz_default_report {
         }
         return $result;
     }
-
-
 }    
 
 define('QUIZ_ALLATTEMPTS', 0);
@@ -659,19 +654,20 @@ define('QUIZ_FIRSTATTEMPT', 2);
 define('QUIZ_LASTATTEMPT', 3);
 
 function stats_sumx($sum, $data){
-    $sum->x += $data[0];
-    $sum->y += $data[1];
+    $sum[0] += $data[0];
+    $sum[1] += $data[1];
     return $sum;
 }       
 
 function stats_sumx2($sum, $data){
-    $sum->x += $data[0]*$data[0];
-    $sum->y += $data[1]*$data[1];
+    $sum[0] += $data[0]*$data[0];
+    $sum[1] += $data[1]*$data[1];
     return $sum;
 }    
 
 function stats_sumxy($sum, $data){
-    $sum->x += $data[0]*$data[1];
+    $sum[0] += $data[0]*$data[1];
+    $sum[1] += $data[1]*$data[0];
     return $sum;
 }
 
