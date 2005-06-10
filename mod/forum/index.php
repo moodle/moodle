@@ -220,7 +220,7 @@
                     $row[] = $trackedlink;    // Tracking.
                 }
                 $row[] = $sublink;
-                if (!empty($rsslink)) {
+                if ($show_rss) {
                     $row[] = $rsslink;
                 }
                 $generaltable->data[] = $row;
@@ -230,7 +230,7 @@
                     $row[] = $unreadlink;
                     $row[] = $trackedlink;    // Tracking.
                 }
-                if (!empty($rsslink)) {
+                if ($show_rss) {
                     $row[] = $rsslink;
                 }
                 $generaltable->data[] = $row;
@@ -373,7 +373,7 @@
                         $row[] = $trackedlink;    // Tracking.
                     }
                     $row[] = $sublink;
-                    if (!empty($rsslink)) {
+                    if ($show_rss) {
                         $row[] = $rsslink;
                     }
                     $learningtable->data[] = $row;
@@ -384,7 +384,7 @@
                         $row[] = $unreadlink;
                         $row[] = $trackedlink;    // Tracking.
                     }
-                    if (!empty($rsslink)) {
+                    if ($show_rss) {
                         $row[] = $rsslink;
                     }
                     $learningtable->data[] = $row;
