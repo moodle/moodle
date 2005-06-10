@@ -1,4 +1,4 @@
-<?PHP // $Id$ 
+<?PHP // $Id$
       // moodle.php - created with Moodle 1.6 development (2005060201)
 
 
@@ -700,7 +700,7 @@ $string['movefull'] = 'Presunú» $a na toto miesto';
 $string['movehere'] = 'Presunú» sem';
 $string['moveleft'] = 'Presunú» doµava';
 $string['moveright'] = 'Presunú» doprava';
-$string['moveselectedcoursesto'] = 'Presunú» ozna4en0 kurzy do ..';
+$string['moveselectedcoursesto'] = 'Presunú» oznaèené kurzy do ..';
 $string['movetoanotherfolder'] = 'Presunú» do iného prieèinka';
 $string['moveup'] = 'Presunú» nahor';
 $string['msnid'] = 'MSN ID';
