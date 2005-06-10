@@ -17,12 +17,12 @@
         error(get_string('noguestpost', 'forum'), $referrer);
     }
     
-    optional_variable($act, 'none');
-    optional_variable($rssid, 'none');
-    optional_variable($courseid, '');
-    optional_variable($url);
-    optional_variable($preferredtitle, '');
-    optional_variable($item);
+    $act = optional_param('act', 'none' );
+    $rssid = optional_param('rssid', 'none' );
+    $courseid = optional_param('courseid', '');
+    $url = optional_param('url');
+    $preferredtitle = optional_param('preferredtitle', '');
+    $item = optional_param('item');
 
     if (!defined('MAGPIE_OUTPUT_ENCODING')) {
         define('MAGPIE_OUTPUT_ENCODING', get_string('thischarset'));  // see bug 3107
@@ -62,7 +62,9 @@
         rss_get_form($act, $url, $rssid, $preferredtitle);
 
     } else if ($act == 'updfeed') {
-        require_variable($url);
+        if (empty($url)) {
+            error( 'url not defined for rss feed' );
+        }
         
         // By capturing the output from fetch_rss this way
         // error messages do not display and clutter up the moodle interface
@@ -94,7 +96,9 @@
 */
     } else if ($act == 'addfeed' ) {
 
-        require_variable($url);            
+        if (empty($url)) {
+          error('url not defined for rss feed');
+        }
         $dataobject->userid = $USER->id;
         $dataobject->description = '';
         $dataobject->title = '';

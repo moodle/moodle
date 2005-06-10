@@ -12,8 +12,8 @@ class block_calendar_month extends block_base {
 
     function get_content() {
         global $USER, $CFG, $SESSION;
-        optional_variable($_GET['cal_m']);
-        optional_variable($_GET['cal_y']);
+        $cal_m = optional_param( 'cal_m', 0, PARAM_INT );
+        $cal_y = optional_param( 'cal_y', 0, PARAM_INT );
 
         require_once($CFG->dirroot.'/calendar/lib.php');
         
@@ -54,15 +54,15 @@ class block_calendar_month extends block_base {
         if ($courseshown == SITEID) {
             // For the front page
             $this->content->text .= calendar_overlib_html();
-            $this->content->text .= calendar_top_controls('frontpage', array('m' => $_GET['cal_m'], 'y' => $_GET['cal_y']));
-            $this->content->text .= calendar_get_mini($courses, $group, $user, $_GET['cal_m'], $_GET['cal_y']);
+            $this->content->text .= calendar_top_controls('frontpage', array('m' => $cal_m, 'y' => $cal_y));
+            $this->content->text .= calendar_get_mini($courses, $group, $user, $cal_m, $cal_y);
             // No filters for now
 
         } elseif (!empty($courseshown)) {
             // For any other course
             $this->content->text .= calendar_overlib_html();
-            $this->content->text .= calendar_top_controls('course', array('id' => $courseshown, 'm' => $_GET['cal_m'], 'y' => $_GET['cal_y']));
-            $this->content->text .= calendar_get_mini($courses, $group, $user, $_GET['cal_m'], $_GET['cal_y']);
+            $this->content->text .= calendar_top_controls('course', array('id' => $courseshown, 'm' => $cal_m, 'y' => $cal_y));
+            $this->content->text .= calendar_get_mini($courses, $group, $user, $cal_m, $cal_y);
             $course = get_record('course', 'id', $this->instance->pageid);
             $this->content->text .= '<div class="filters">'.calendar_filter_controls('course', '', $course).'</div>';
             

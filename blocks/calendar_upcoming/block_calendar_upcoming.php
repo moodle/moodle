@@ -8,8 +8,8 @@ class block_calendar_upcoming extends block_base {
 
     function get_content() {
         global $USER, $CFG, $SESSION;
-        optional_variable($_GET['cal_m']);
-        optional_variable($_GET['cal_y']);
+        $cal_m = optional_param( 'cal_m', 0, PARAM_INT );
+        $cal_y = optional_param( 'cal_y', 0, PARAM_INT );
 
         require_once($CFG->dirroot.'/calendar/lib.php');
 
