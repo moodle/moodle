@@ -5,7 +5,7 @@ require_once($CFG->libdir .'/rsslib.php');
 $page = page_create_object($this->instance->pagetype, $this->instance->pageid);
 
 /// Print tabs at top
-global $currentaction;
+$currentaction = required_param( 'currentaction','',PARAM_ALPHA );
 if (empty($currentaction) || $currentaction == 'configblock') {
     $currentaction = 'configblock';
 } else {
