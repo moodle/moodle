@@ -234,7 +234,7 @@ GOOD: $assignments (for an array of objects)<br />
   <li class="spaced">Do not use the <code>require_variable()</code> function. Use the <code>required_param()</code>
     function instead. Pick the correct PARAM_XXXX value for the data type you expect.</li>
   <li class="spaced">Do not use <code>$_GET</code>, <code>$_POST</code> or <code>$_REQUEST</code>. Use the
-    appropriate <code>required_param()</code> or <code>optional_param</code> appropriate to your need.</li>
+    appropriate <code>required_param()</code> or <code>optional_param()</code> appropriate to your need.</li>
   <li class="spaced">Do not check for an action using something like <code>if (isset($_GET['something']))</code>. 
     Use, e.g., <code>$something = optional_param( 'something','',PARAM_ALPHA )</code> and test with
     <code>empty()</code> function</li>
@@ -253,7 +253,7 @@ GOOD: $assignments (for an array of objects)<br />
   <li class="spaced">Do not use data from <code>$_SERVER</code> if you can avoid it. This has portability 
     issues.</li>
   <li class="spaced">If it hasn't been done somewhere else, make sure all data written to the database has
-    been through the <code>clean_param</code> function using the appropriate PARAM_XXXX for the datatype.</li>
+    been through the <code>clean_param()</code> function using the appropriate PARAM_XXXX for the datatype.</li>
   <li class="spaced">If you write custom SQL code, make very sure it is correct. In particular watch out for
     missing quotes around values. Possible SQL 'injection' exploit.</li>
   <li class="spaced">Check all data (particularly that written to the database) on <strong>every</strong>
