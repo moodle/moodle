@@ -254,15 +254,22 @@ global $THEME;
 /// The following is a hack to get around the problem of PHP installations
 /// that have "register_globals" turned off (default since PHP 4.1.0).
 /// Eventually I'll go through and upgrade all the code to make this unnecessary
+/// $CFG->disableglobalshack=true in config.php will override this (for dev testing)
 
-    if (isset($_GET)) {
-        extract($_GET, EXTR_SKIP);    // Skip existing variables, ie CFG
+    if (empty($CFG->disableglobalshack)) {
+      if (isset($_GET)) {
+          extract($_GET, EXTR_SKIP);    // Skip existing variables, ie CFG
+      }
+      if (isset($_POST)) {
+          extract($_POST, EXTR_SKIP);   // Skip existing variables, ie CFG
+      }
+      if (isset($_SERVER)) {
+          extract($_SERVER);
+      }
     }
-    if (isset($_POST)) {
-        extract($_POST, EXTR_SKIP);   // Skip existing variables, ie CFG
-    }
-    if (isset($_SERVER)) {
-        extract($_SERVER);
+    else {
+      // remove globals if they are set in the server.
+      // unregister_globals();
     }
 
 

@@ -350,6 +350,38 @@ function confirm_sesskey($sesskey=NULL) {
     return ($USER->sesskey === $sesskey);
 }
 
+/**
+ * Unregister globals - emulates register_globals=off
+ * for additional security
+ * Borrowed from Mambo
+ */
+function unregister_globals () {
+    $REQUEST = $_REQUEST;
+    $GET = $_GET;
+    $POST = $_POST;
+    $COOKIE = $_COOKIE;
+    if (isset ( $_SESSION )) {
+        $SESSION = $_SESSION;
+    }
+    $FILES = $_FILES;
+    $ENV = $_ENV;
+    $SERVER = $_SERVER;
+    foreach ($GLOBALS as $key => $value) {
+        if ( $key != 'GLOBALS' ) {
+            unset ( $GLOBALS [ $key ] );
+        }
+    }
+    $_REQUEST = $REQUEST;
+    $_GET = $GET;
+    $_POST = $POST;
+    $_COOKIE = $COOKIE;
+    if (isset ( $SESSION )) {
+        $_SESSION = $SESSION;
+    }
+    $_FILES = $FILES;
+    $_ENV = $ENV;
+    $_SERVER = $SERVER;
+}
 
 /**
  * Improved ensure a variable is set
@@ -374,6 +406,10 @@ function assert_var_set( $var, $error='' ) {
  * @param mixed $default the value to return if $var is unset
  */
 function require_variable($var) {
+    global $CFG;
+    if (!empty($CFG->disableglobalshack)) {
+      error( 'The require_variable() function is deprecated.' );
+    }
     if (! isset($var)) {
         error('A required parameter was missing');
     }
@@ -389,6 +425,10 @@ function require_variable($var) {
  * @param mixed $default the value to return if $var is unset
  */
 function optional_variable(&$var, $default=0) {
+    global $CFG;
+    if (!empty($CFG->disableglobalshack)) {
+      error( 'The optional_variable() function is deprecated.' );
+    }
     if (! isset($var)) {
         $var = $default;
     }
