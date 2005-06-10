@@ -2,20 +2,20 @@
 
     require_once("../config.php");
 
-    optional_variable($newuser, "");
-    optional_variable($delete, "");
-    optional_variable($confirm, "");
-    optional_variable($confirmuser, "");
-    optional_variable($sort, "name");
-    optional_variable($dir, "ASC");
-    optional_variable($page, 0);
-    optional_variable($search, "");
+    $newuser = optional_param('newuser', "");
+    $delete = optional_param('delete', "");
+    $confirm = optional_param('confirm', "");
+    $confirmuser = optional_param('confirmuser', "");
+    $sort = optional_param('sort', "name", PARAM_ALPHA);
+    $dir = optional_param('dir', "ASC");
+    $page = optional_param('page', 0);
+    $search = optional_param('search', "");
     if (!empty($search)) {
         $search=trim($search);
     }
-    optional_variable($lastinitial, "");     // only show students with this last initial
-    optional_variable($firstinitial, "");    // only show students with this first initial
-    optional_variable($perpage, "30");       // how many per page
+    $lastinitial = optional_param('lastinitial', "");     // only show students with this last initial
+    $firstinitial = optional_param('firstinitial', "");    // only show students with this first initial
+    $perpage = optional_param('perpage', 30, PARAM_INT);       // how many per page
 
     unset($user);
     unset($admin);
