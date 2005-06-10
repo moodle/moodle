@@ -1882,7 +1882,31 @@ HTMLArea.prototype.execCommand = function(cmdID, UI, param) {
             }
         } catch (e) {
             if (HTMLArea.is_gecko) {
-                if (confirm("<?php echo str_replace('<br />', '\\n', get_string('cutpastemozilla','editor')) ?>"))
+            <?php
+            $strgecko = get_string('cutpastemozilla','editor');
+            $lines = explode("<br />", $strgecko);
+
+            echo "var geckonotice = ";
+            $cnt = count($lines);
+            $i = 2;
+            foreach ($lines as $line) {
+
+                if (empty($line)) {
+                    continue;
+                }
+
+                $line = addslashes(trim($line));
+
+                if ($cnt > $i) {
+                    echo "\"$line\\n\" + \n";
+                } else {
+                    echo "\"$line\";\n";
+                }
+                $i++;
+            }
+
+            ?>
+                if (confirm(geckonotice))
                     window.open("http://moodle.org/mozillahelp");
             }
         }
