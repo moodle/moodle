@@ -90,7 +90,7 @@ $string['configvariables'] = '变量';
 $string['configwarning'] = '小心修改这些选项——不合法的值可能导致错误。';
 $string['configzip'] = 'zip程序的位置(仅针对Unix系统，可选)。如果指定了，将用它来创建服务器上的zip文件。如果留空，则Moodle使用内部函数压缩。';
 $string['confirmation'] = '确认';
-$string['cronwarning'] = '<a href=\"cron.php\">cron.php维护脚本</a>已经有最少24个小时都没有运行过了。<br /><a href=\"../doc/?frame=install.html⊂=cron\">安装文档</a>中解释了如何自动运行它。';
+$string['cronwarning'] = '<a href=\"cron.php\">cron.php维护脚本</a>已经有最少24个小时都没有运行过了。<br /><a href=\"../doc/?frame=install.html&sub=cron\">安装文档</a>中解释了如何自动运行它。';
 $string['edithelpdocs'] = '编辑帮助文档';
 $string['editstrings'] = '编辑字符串';
 $string['filterall'] = '过滤全部字符串';
