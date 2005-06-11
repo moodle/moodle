@@ -93,11 +93,7 @@
         $form->frontpage = $CFG->frontpage;
 
     } else {
-        if ($form->newsitems > 0) {
-            $form->frontpage = 0;
-        } else {
-            $form->frontpage = 1;
-        }
+        $form->frontpage = FRONTPAGECOURSELIST;  // Show course list by default
         set_config("frontpage", $form->frontpage);
     }
 
