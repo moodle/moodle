@@ -85,14 +85,14 @@ $string['alphanumerical'] = '只允许用字母或阿拉伯数字';
 $string['alreadyconfirmed'] = '选课已经确认';
 $string['always'] = '经常';
 $string['answer'] = '回答';
-$string['areyousuretorestorethis'] = '你确定要继续吗?';
-$string['areyousuretorestorethisinfo'] = '稍后，在此过程中你将选择是将备份添加到一门现有课程或是创建一门新课程。';
+$string['areyousuretorestorethis'] = '您确定要继续吗?';
+$string['areyousuretorestorethisinfo'] = '稍后，在此过程中您将选择是将备份添加到一门现有课程或是创建一门新课程。';
 $string['assessment'] = '评价';
 $string['assignadmins'] = '任命网站管理员';
 $string['assigncreators'] = '任命课程管理员';
 $string['assignstudents'] = '学生选课';
-$string['assignstudentsnote'] = '注：你可能不需要使用此页，因为学生可以自己选修此课程。';
-$string['assignstudentspass'] = '你需要通知学生该课程的选课密钥，当前为:\'$a\'';
+$string['assignstudentsnote'] = '注：您可能不需要使用此页，因为学生可以自己选修此课程。';
+$string['assignstudentspass'] = '您需要通知学生该课程的选课密钥，当前为：“{$a}”';
 $string['assignteachers'] = '任命教师';
 $string['authentication'] = '身份验证';
 $string['autosubscribe'] = '论坛自动订阅';
@@ -104,11 +104,11 @@ $string['backup'] = '备份';
 $string['backupcoursefileshelp'] = '如果使用,课程文件将会被包含在自动备份中';
 $string['backupdate'] = '备份日期';
 $string['backupdetails'] = '备份细节';
-$string['backupfailed'] = '你的一些课程尚未保存!!';
+$string['backupfailed'] = '您的一些课程尚未保存!!';
 $string['backupfilename'] = '备份';
 $string['backupfinished'] = '备份成功';
 $string['backupincludemoduleshelp'] = '选择自动备份中是否包含带有或不带有用户数据的的课程模组';
-$string['backupkeephelp'] = '你想要为每门课程保存多少最近的备份? (比较旧的一些将会被自动划除)';
+$string['backupkeephelp'] = '您想要为每门课程保存多少最近的备份? (比较旧的一些将会被自动划除)';
 $string['backuplogdetailed'] = '详细的运行日志';
 $string['backuploglaststatus'] = '最后的运行日志';
 $string['backuplogshelp'] = '如果使用,课程记录将会被包含在自动备份中';
@@ -124,8 +124,8 @@ $string['backupusershelp'] = '选择是否包含所有用户还是只要各个课程需要的用户';
 $string['backupversion'] = '备份版本';
 $string['blockconfiga'] = '配置版块$a';
 $string['blockconfigbad'] = '由于版块未配置正确，无法显示其配置界面。';
-$string['blockdeleteconfirm'] = '你选择完全删除版块“$a“。这将删除数据库中与此版块相连的全部数据，你确定要继续么?';
-$string['blockdeletefiles'] = '与板块“$a->block”相关联的所有数据都已经被删除了。要完成删除(并防止版块重新自动安装)，你应当从服务器上删除如下目录:{$a->directory}。';
+$string['blockdeleteconfirm'] = '您选择完全删除版块“$a“。这将删除数据库中与此版块相连的全部数据，您确定要继续么?';
+$string['blockdeletefiles'] = '与板块“$a->block”相关联的所有数据都已经被删除了。要完成删除(并防止版块重新自动安装)，您应当从服务器上删除如下目录:{$a->directory}。';
 $string['blocks'] = '版块';
 $string['blocksaddedit'] = '添加/修改版块';
 $string['blockseditoff'] = '版块编辑关';
@@ -154,12 +154,12 @@ $string['choose'] = '选择';
 $string['choosecourse'] = '选择一个课程';
 $string['chooseenrolmethod'] = '选课的主要方式';
 $string['chooselivelogs'] = '或者查看当前活动项目';
-$string['chooselogs'] = '选择你要看的日志';
+$string['chooselogs'] = '选择您要看的日志';
 $string['choosereportfilter'] = '为报告选择一个过滤器';
 $string['choosetheme'] = '选择主题风格';
 $string['chooseuser'] = '选择一个用户';
 $string['city'] = '市/县';
-$string['clambroken'] = '你的管理员激活了对上传文件的病毒检查，但有些地方配置错误了。<br />你上传文件的操作并未成功。系统已经给管理员发信通知他们修复这个错误。<br />你可以稍后重新上传这个文件。';
+$string['clambroken'] = '您的管理员激活了对上传文件的病毒检查，但有些地方配置错误了。<br />您上传文件的操作并未成功。系统已经给管理员发信通知他们修复这个错误。<br />您可以稍后重新上传这个文件。';
 $string['clamdeletedfile'] = '文件已经被删除了';
 $string['clamdeletedfilefailed'] = '无法删除文件';
 $string['clamemailsubject'] = '$a :: Clam AV 通知';
@@ -178,12 +178,12 @@ $string['complete'] = '完全';
 $string['completereport'] = '完整报告';
 $string['configuration'] = '设置';
 $string['confirm'] = '确认';
-$string['confirmed'] = '你的选课已经得到确认';
-$string['confirmednot'] = '你的选课尚未得到确认!';
+$string['confirmed'] = '您的选课已经得到确认';
+$string['confirmednot'] = '您的选课尚未得到确认!';
 $string['continue'] = '继续';
 $string['continuetocourse'] = '点击这里输入您的课程';
 $string['convertingwikitomarkdown'] = '把Wiki转为Markdown';
-$string['cookiesenabled'] = '你的浏览器的Cookies设置必须打开';
+$string['cookiesenabled'] = '您的浏览器的Cookies设置必须打开';
 $string['cookiesnotenabled'] = '很不幸，目前您的浏览器并未开启对cookie的支持';
 $string['copy'] = '复制';
 $string['copyingcoursefiles'] = '复制课程文件';
@@ -236,7 +236,7 @@ $string['currency'] = '货币';
 $string['currentcourseadding'] = '当前课程，向其中添加数据';
 $string['currentcoursedeleting'] = '当前课程，先删除它';
 $string['currentlanguage'] = '当前语言';
-$string['currentlocaltime'] = '你的当地时间';
+$string['currentlocaltime'] = '您的当地时间';
 $string['currentpicture'] = '当前图片';
 $string['currentrelease'] = '当前发布信息';
 $string['currentversion'] = '当前版本';
@@ -263,14 +263,14 @@ $string['defaultcourseteacher'] = '老师';
 $string['defaultcourseteachers'] = '老师';
 $string['delete'] = '删除';
 $string['deleteall'] = '全部删除';
-$string['deletecategorycheck'] = '您确定要完全删除类别<b>\'$a\'</b>么?<br />此类别中的所有课程将会被移动到父类别或类别“五花八门”中。';
+$string['deletecategorycheck'] = '您确定要完全删除类别<b>“{$a}”</b>么?<br />此类别中的所有课程将会被移动到父类别或类别“五花八门”中。';
 $string['deletecheck'] = '删除{$a}吗?';
-$string['deletecheckfiles'] = '你真的确定要彻底删除此文件?';
-$string['deletecheckfull'] = '你真的确定要彻底删除{$a}吗?';
-$string['deletecheckwarning'] = '你打算删除这些文件';
+$string['deletecheckfiles'] = '您真的确定要彻底删除此文件?';
+$string['deletecheckfull'] = '您真的确定要彻底删除{$a}吗?';
+$string['deletecheckwarning'] = '您打算删除这些文件';
 $string['deletecompletely'] = '彻底删除';
 $string['deletecourse'] = '删除一个课程';
-$string['deletecoursecheck'] = '你真的确定要彻底删除该课程及其所有文件资料吗?';
+$string['deletecoursecheck'] = '您真的确定要彻底删除该课程及其所有文件资料吗?';
 $string['deleted'] = '已经删除';
 $string['deletedactivity'] = '已经删除$a';
 $string['deletedcourse'] = '{$a}已经被彻底删除';
@@ -293,11 +293,11 @@ $string['donotask'] = '不要问';
 $string['down'] = '下载';
 $string['downloadexcel'] = '以Excel文件格式下载';
 $string['downloadtext'] = '以纯文本格式下载';
-$string['doyouagree'] = '你已经阅读并理解了这些条件吗?';
+$string['doyouagree'] = '您已经阅读并理解了这些条件吗?';
 $string['duplicate'] = '复制';
 $string['duplicatinga'] = '正在复制: $a';
 $string['duplicatingain'] = '复制{$a->in}中的{$a->what}';
-$string['edhelpaspellpath'] = '要在编辑器中使用拼写检查功能，你必须在服务器上安装<strong>aspell 0.50</strong>或其更高版本，并且还要正确地指定aspell程序的路径。在Unix/Linux系统上通常是<strong>/usr/bin/aspell</strong>，当然也可能是其它地方。';
+$string['edhelpaspellpath'] = '要在编辑器中使用拼写检查功能，您必须在服务器上安装<strong>aspell 0.50</strong>或其更高版本，并且还要正确地指定aspell程序的路径。在Unix/Linux系统上通常是<strong>/usr/bin/aspell</strong>，当然也可能是其它地方。';
 $string['edhelpbgcolor'] = '定义可编辑区域的背景颜色。<br />可以使用如下合法的值: #ffffff 或 white';
 $string['edhelpcleanword'] = '这个项目激活或关闭Word相关的格式过滤。';
 $string['edhelpenablespelling'] = '激活或关闭拼写检查。当激活时，服务器上必须已经安装了<strong>aspell</strong>。第二个参数是<strong>缺省字典</strong>。它将会在aspell没有用户所用语言的字典时使用。';
@@ -328,14 +328,14 @@ $string['edituser'] = '编辑用户帐号';
 $string['email'] = 'E-mail地址';
 $string['emailactive'] = 'E-mail已激活';
 $string['emailagain'] = 'E-mail (重复)';
-$string['emailconfirm'] = '确认你的帐号';
+$string['emailconfirm'] = '确认您的帐号';
 $string['emailconfirmation'] = '{$a->firstname}:
 
-你好! 
+您好! 
 
-刚才你用你的电子邮箱地址在‘{$a->sitename}’上申请了一个新帐号。
+刚才您用您的电子邮箱地址在‘{$a->sitename}’上申请了一个新帐号。
 
-如果要确认你的新帐号，请点击以下链接: 
+如果要确认您的新帐号，请点击以下链接: 
 
   $a->link
 
@@ -348,9 +348,9 @@ $string['emailconfirmation'] = '{$a->firstname}:
 
 $a->admin';
 $string['emailconfirmationsubject'] = '$a: 帐号确认';
-$string['emailconfirmsent'] = '<p>一封已经发送到你的地址 <b>$a</b>。</p>
-<p>这封邮件简要说明了你如何完成注册。</p>
-<p>如果你还遇到什么困难，请和站点管理员联系。</p>';
+$string['emailconfirmsent'] = '<p>一封已经发送到您的地址 <b>$a</b>。</p>
+<p>这封邮件简要说明了您如何完成注册。</p>
+<p>如果您还遇到什么困难，请和站点管理员联系。</p>';
 $string['emaildigest'] = 'E-mail摘要类型';
 $string['emaildigestcomplete'] = '完整的(每天一封，包含完整内容)';
 $string['emaildigestoff'] = '无摘要(每个帖子发送一封E-mail)';
@@ -370,38 +370,38 @@ $string['emailnotallowed'] = '不允许使用如下域名的电子邮件: ($a)';
 $string['emailonlyallowed'] = '此电子邮件不在允许的域名中: ($a)';
 $string['emailpasswordconfirmation'] = '{$a->firstname}:
 
-你好! 
+您好! 
 
-有人(一般情况下是你自己)为你在‘{$a->sitename}’上的帐号申请了新的密码。
+有人(一般情况下是您自己)为您在‘{$a->sitename}’上的帐号申请了新的密码。
 
-如果你要确认这个行为并通过电子邮件获取新密码，请点击以下链接: 
+如果您要确认这个行为并通过电子邮件获取新密码，请点击以下链接: 
 
     $a->link
 
-在多数邮件软件(如outlook)中该链接应该显现为蓝色的链接，你只需点击它。如果它不能正常工作，那么请你复制该地址，然后粘贴到网页浏览器的地址栏中，按回车键，就可以到达。
+在多数邮件软件(如outlook)中该链接应该显现为蓝色的链接，您只需点击它。如果它不能正常工作，那么请您复制该地址，然后粘贴到网页浏览器的地址栏中，按回车键，就可以到达。
 
-如果你需要帮助，请联系网站管理员{$a->admin}。';
+如果您需要帮助，请联系网站管理员{$a->admin}。';
 $string['emailpasswordconfirmationsubject'] = '$a: 确认更改密码';
-$string['emailpasswordconfirmsent'] = '一封E-mail已经发送到你的邮箱<b>$a</b>。
+$string['emailpasswordconfirmsent'] = '一封E-mail已经发送到您的邮箱<b>$a</b>。
 
 <br />其中有关于如何确认并完成本次密码更改的简单说明。
-如果你还是有困难，请联系网站管理员。';
-$string['emailpasswordsent'] = '谢谢你对更改密码做了确认。
-一封包含着新密码的邮件已经发送到你的邮箱<br /><b>$a->E-mail</b>中。<br />
-这个新密码是自动生成的——你最好<a href=\"$a->link\">修改<a>一个更容易记住的密码。';
+如果您还是有困难，请联系网站管理员。';
+$string['emailpasswordsent'] = '谢谢您对更改密码做了确认。
+一封包含着新密码的邮件已经发送到您的邮箱<br /><b>$a->E-mail</b>中。<br />
+这个新密码是自动生成的——您最好<a href=\"$a->link\">修改<a>一个更容易记住的密码。';
 $string['enable'] = '使用';
 $string['encryptedcode'] = '加密代码';
 $string['enrolledincourse'] = '加入课程“{$a}”';
 $string['enrolledincoursenot'] = '退出课程“{$a}”';
 $string['enrollfirst'] = '在使用此站点前您必须选择某课程。';
 $string['enrolme'] = '将我加入此课程';
-$string['enrolmentconfirmation'] = '你想学习该课程。确定吗?';
+$string['enrolmentconfirmation'] = '您想学习该课程。确定吗?';
 $string['enrolmentkey'] = '选课密钥';
 $string['enrolmentkeyfrom'] = '该课程需要‘选课密钥’——<br />
 
 一个从{$a}获得的一次性密码';
 $string['enrolmentkeyhint'] = '这个选课密钥不正确，请再试一次<br />
-(提示: 以\'$a\'开头)';
+(提示: 以“{$a}”开头)';
 $string['enrolmentnew'] = '{$a}中新选课的';
 $string['enrolmentnewuser'] = '{$a->user}已经选择了“{$a->course}”课程';
 $string['enrolmentnointernal'] = '手工选课目前并未激活';
@@ -409,12 +409,12 @@ $string['enrolmentnotyet'] = '对不起，在{$a}之前您不能访问此课程';
 $string['enrolments'] = '选课';
 $string['enrolperiod'] = '选课时间';
 $string['entercourse'] = '点击进入该课程';
-$string['enteremailaddress'] = '输入你的E-mail地址以重设密码，
-新密码将送到你的信箱中。';
+$string['enteremailaddress'] = '输入您的E-mail地址以重设密码，
+新密码将送到您的信箱中。';
 $string['entries'] = '条目';
 $string['error'] = '错误';
-$string['errortoomanylogins'] = '抱歉，你已超过允许的最大登录尝试次数。请重启你的浏览器。';
-$string['errorwhenconfirming'] = '你未被确认，请确认你的E-mail里的链接无误。把它复制下来粘贴到浏览器看看。';
+$string['errortoomanylogins'] = '抱歉，您已超过允许的最大登录尝试次数。请重启您的浏览器。';
+$string['errorwhenconfirming'] = '您未被确认，请确认您的E-mail里的链接无误。把它复制下来粘贴到浏览器看看。';
 $string['everybody'] = '所有人';
 $string['executeat'] = '执行';
 $string['existing'] = '已有';
@@ -448,7 +448,7 @@ $string['forcepasswordchange'] = '强制修改密码';
 $string['forcepasswordchangehelp'] = '在用户下次登录时提示其修改';
 $string['forcetheme'] = '强制使用主题';
 $string['forgotaccount'] = '忘记了密码？';
-$string['forgotten'] = '忘了你的用户名或密码了?';
+$string['forgotten'] = '忘了您的用户名或密码了?';
 $string['format'] = '格式';
 $string['formathtml'] = 'HTML格式';
 $string['formatmarkdown'] = 'Markdown格式';
@@ -478,7 +478,7 @@ $string['gdneed'] = '要看到该图必须安装GD';
 $string['gdnot'] = 'GD没有安装';
 $string['gpl'] = '版权所有 (C) 2001-2002  Martin Dougiamas  (http://moodle.com)
 
-该系统是自由软件；你可以按照自由软件基金会所公布的GNU通用公共许可证(GPL)进行修改或重新发布；许可证可以是第2版或更新的版本。
+该系统是自由软件；您可以按照自由软件基金会所公布的GNU通用公共许可证(GPL)进行修改或重新发布；许可证可以是第2版或更新的版本。
 
 发布该软件是希望它有用有益，但不提供任何形式的担保，不论是明确的还是隐含的，包括但不限于可销售和适合特定用途的隐含保证。详见GNU通用公共许可证: 
 
@@ -496,21 +496,21 @@ $string['groupinfopeople'] = '所选人信息';
 $string['groupmembers'] = '组员';
 $string['groupmemberssee'] = '查看组员';
 $string['groupmembersselected'] = '选定的组的成员';
-$string['groupmode'] = '组模式';
-$string['groupmodeforce'] = '强制组模式';
+$string['groupmode'] = '小组模式';
+$string['groupmodeforce'] = '强制小组模式';
 $string['groupmy'] = '我的组';
 $string['groupnonmembers'] = '不属于某组的用户';
-$string['groupnotamember'] = '抱歉，你不是那个组的成员';
+$string['groupnotamember'] = '抱歉，您不是那个组的成员';
 $string['grouprandomassign'] = '随机分配所有人到组';
 $string['groupremove'] = '删除选定的组';
 $string['groupremovemembers'] = '删除选定的成员';
 $string['groups'] = '组';
-$string['groupsnone'] = '没有组';
-$string['groupsseparate'] = '分割组';
-$string['groupsvisible'] = '可访问的组';
+$string['groupsnone'] = '无小组';
+$string['groupsseparate'] = '分隔小组';
+$string['groupsvisible'] = '可视小组';
 $string['guestskey'] = '允许有密钥的访客进入';
 $string['guestsno'] = '不允许访客进入';
-$string['guestsnotallowed'] = '抱歉!  \'$a\' 不允许访客进入。';
+$string['guestsnotallowed'] = '抱歉！“{$a}”不允许访客进入。';
 $string['guestsyes'] = '允许没有密钥的访客进入';
 $string['guestuser'] = '访客用户';
 $string['guestuserinfo'] = '该用户是个特殊用户，允许以只读方式参观一些课程。';
@@ -543,9 +543,9 @@ $string['hours'] = '小时';
 $string['howtomakethemes'] = '如何创建新的主题风格';
 $string['htmleditor'] = '使用文本格式HTML编辑器(只支持部分浏览器)';
 $string['htmleditoravailable'] = 'HTML编辑器可用';
-$string['htmleditordisabled'] = '你在你的个人资料项里关闭了HTML编辑器';
+$string['htmleditordisabled'] = '您在个人资料项里关闭了HTML编辑器';
 $string['htmleditordisabledadmin'] = '网站管理员已将本站的文本格式编辑器关闭了';
-$string['htmleditordisabledbrowser'] = 'HTML编辑器不可用，因为你的浏览器不能支持它。';
+$string['htmleditordisabledbrowser'] = 'HTML编辑器不可用，因为您的浏览器不能支持它。';
 $string['htmlformat'] = '美化的HTML格式';
 $string['icqnumber'] = 'ICQ号码';
 $string['idnumber'] = 'ID号码';
@@ -586,46 +586,46 @@ $string['latestlanguagepack'] = '从moodle.org检查有无最新的语言包';
 $string['latestnews'] = '最新新闻';
 $string['leavetokeep'] = '留空以保留现有密码';
 $string['license'] = 'GPL许可证';
-$string['liketologin'] = '你希望现在以注册用户帐号登录么？';
+$string['liketologin'] = '您希望现在以注册用户帐号登录么？';
 $string['list'] = '列表';
 $string['listfiles'] = '$a 中的文件列表';
 $string['listofallpeople'] = '成员列表';
 $string['livelogs'] = '日志';
-$string['locale'] = 'zh_CN.UTF-8';
+$string['locale'] = 'zh_CN.GB18030';
 $string['location'] = '来自';
-$string['loggedinas'] = '你以{$a}登录';
-$string['loggedinasguest'] = '你正在用访客帐号访问';
-$string['loggedinnot'] = '你尚未登录。';
+$string['loggedinas'] = '您以{$a}登录';
+$string['loggedinasguest'] = '您正在用访客帐号访问';
+$string['loggedinnot'] = '您尚未登录。';
 $string['login'] = '登录';
 $string['login_failure_logs'] = '登录失败日志';
 $string['loginas'] = '登录为';
 $string['loginguest'] = '作为访客登录';
 $string['loginsite'] = '登录该站';
-$string['loginsteps'] = '嗨，你好! 为了完全访问所有课程，你必须花一两分钟时间申请一个新帐号。各个课程可能还需要一个一次性的“选课密钥”，用过一次以后就不再需要。请按以下步骤进行: 
+$string['loginsteps'] = '嗨，您好! 为了完全访问所有课程，您必须花一两分钟时间申请一个新帐号。各个课程可能还需要一个一次性的“选课密钥”，用过一次以后就不再需要。请按以下步骤进行: 
 
    <ol>
 
    <li>填写<a href=\"$a\">注册新帐号</a>上的关于个人情况的表单。</li>
 
-   <li>一封E-mail会马上发送到你的信箱中。</li>
+   <li>一封E-mail会马上发送到您的信箱中。</li>
 
    <li>阅读这封E-mail，点击信中包含的网页链接。</li>
 
-   <li>你的帐号会马上得到确认，而你也将登录到本站中。</li>
+   <li>您的帐号会马上得到确认，而您也将登录到本站中。</li>
 
-   <li>然后，选择你想选修的课程。</li>
+   <li>然后，选择您想选修的课程。</li>
 
-   <li>如果系统提示要“选课密钥”，请用你的老师提供给你的密钥。这样才能注册到该课程中。</li>
+   <li>如果系统提示要“选课密钥”，请用您的老师提供给您的密钥。这样才能注册到该课程中。</li>
 
-   <li>这时你可以完全访问课程。从此后你只需输入你个人的用户名和密码(在本页面的表单中)以登录并进入任一个你已注册的课程。</li>
+   <li>这时您可以完全访问课程。从此后您只需输入您个人的用户名和密码(在本页面的表单中)以登录并进入任一个您已注册的课程。</li>
 
    </ol>';
 $string['loginstepsnone'] = '<p>嗨! </p>
-<p>为了完全访问课程你必须申请一个新帐号。</p>
-<p>你所需要做的是创建一个用户名和密码，并在本页面中使用。</p>
-<p>如果别人已经申请了相同的用户名，只好请你委屈一下用别的用户名重试。</p>';
+<p>为了完全访问课程您必须申请一个新帐号。</p>
+<p>您所需要做的是创建一个用户名和密码，并在本页面中使用。</p>
+<p>如果别人已经申请了相同的用户名，只好请您委屈一下用别的用户名重试。</p>';
 $string['loginto'] = '登录到{$a}';
-$string['loginusing'] = '用你的用户名和密码在此登录';
+$string['loginusing'] = '用您的用户名和密码在此登录';
 $string['logout'] = '登离';
 $string['logs'] = '日志';
 $string['logtoomanycourses'] = '[<a href=\"$a->url\">更多</a>]';
@@ -635,7 +635,7 @@ $string['mailstudents'] = '通知学生';
 $string['mailteachers'] = '通知老师';
 $string['mainmenu'] = '主菜单';
 $string['makeafolder'] = '新建一个文件夹';
-$string['makeeditable'] = '如果你设置“{$a}”为Web服务器进程(例如apache)可写，那么你可以在此页中直接编辑该文件';
+$string['makeeditable'] = '如果您设置“{$a}”为Web服务器进程(例如apache)可写，那么您可以在此页中直接编辑该文件';
 $string['manageblocks'] = '版块';
 $string['managedatabase'] = '管理数据库';
 $string['managefilters'] = '过滤器';
@@ -665,7 +665,7 @@ $string['min'] = '分钟';
 $string['mins'] = '分钟';
 $string['minutes'] = '分钟';
 $string['miscellaneous'] = '五花八门';
-$string['missingcategory'] = '你必需选择一个分类';
+$string['missingcategory'] = '您必需选择一个分类';
 $string['missingcity'] = '市/县没填';
 $string['missingcountry'] = '国家和地区没填';
 $string['missingdescription'] = '自述没填';
@@ -687,8 +687,8 @@ $string['missingteacher'] = '必须选个东西';
 $string['missingurl'] = '遗漏了URL';
 $string['missingusername'] = '用户名没填';
 $string['modified'] = '修改时间';
-$string['moduledeleteconfirm'] = '你将要完全删除模块“{$a}”。这将完全删除数据库中与该活动模块有关的所有资料。你确定要继续下去吗?';
-$string['moduledeletefiles'] = '所有与模块“{$a->module}”有关的资料已经从数据库中删除。要彻底删除(防止模块自己又重新安装)，你还须在你的服务器上删除以下目录: 
+$string['moduledeleteconfirm'] = '您将要完全删除模块“{$a}”。这将完全删除数据库中与该活动模块有关的所有资料。您确定要继续下去吗?';
+$string['moduledeletefiles'] = '所有与模块“{$a->module}”有关的资料已经从数据库中删除。要彻底删除(防止模块自己又重新安装)，您还须在您的服务器上删除以下目录: 
 $a->directory';
 $string['modulesetup'] = '安装模组表';
 $string['modulesuccess'] = '$a 表已经正确安装';
@@ -709,7 +709,7 @@ $string['movetoanotherfolder'] = '移动至另一文件夹';
 $string['moveup'] = '上移';
 $string['msnid'] = 'MSN号码';
 $string['mustchangepassword'] = '新的密码必须和当前的不同';
-$string['mustconfirm'] = '你必须确认一下你的登录';
+$string['mustconfirm'] = '您必须确认一下您的登录';
 $string['mycourses'] = '我的课程';
 $string['name'] = '名称';
 $string['namesocial'] = '节段';
@@ -723,12 +723,12 @@ $string['newaccount'] = '新帐号';
 $string['newcourse'] = '新课程';
 $string['newpassword'] = '新密码';
 $string['newpasswordtext'] = '{$a->lastname}{$a->firstname}: 
-你好!  
-你在‘{$a->sitename}’上的帐号密码已被重设，这是你新的临时密码。
-现在你的登录信息是: 
+您好!  
+您在‘{$a->sitename}’上的帐号密码已被重设，这是您新的临时密码。
+现在您的登录信息是: 
  用户名: $a->username
  密码: $a->newpassword
-请到这里更改你的密码: 
+请到这里更改您的密码: 
    $a->link
 在多数的邮件软件中，这个地址应该显示为蓝色的链接。如果不是这样，请将以上地址复制粘贴到网页浏览器(比如IE或Netscape等)的地址栏，打开这个网页。
 致
@@ -744,17 +744,17 @@ $string['newusers'] = '新用户';
 $string['next'] = '向后';
 $string['no'] = '否';
 $string['nobody'] = '没人';
-$string['nocoursesfound'] = '没有含关键词\'$a\'的课程';
+$string['nocoursesfound'] = '没有含关键词“{$a}”的课程';
 $string['nocoursesyet'] = '此类中无课程';
 $string['nodstpresets'] = '管理员未开启本站的夏时制功能';
-$string['noexistingadmins'] = '没有管理员,这是个严重的错误,你不应该看到这条信息才对。';
+$string['noexistingadmins'] = '没有管理员,这是个严重的错误,您不应该看到这条信息才对。';
 $string['noexistingcreators'] = '没有创建者';
 $string['noexistingstudents'] = '没有学生';
 $string['noexistingteachers'] = '没有教师';
 $string['nofilesselected'] = '没有文件被选中用来恢复';
-$string['nofilesyet'] = '你的课程尚未上载任何文件';
+$string['nofilesyet'] = '您的课程尚未上载任何文件';
 $string['nograde'] = '没有分数';
-$string['noimagesyet'] = '你的课程尚未上载任何图片';
+$string['noimagesyet'] = '您的课程尚未上载任何图片';
 $string['nomorecourses'] = '没有匹配的课程';
 $string['nomoreidnumber'] = '并未使用ID号避免冲突';
 $string['none'] = '无';
@@ -762,7 +762,7 @@ $string['nopotentialadmins'] = '没有候选网站管理员';
 $string['nopotentialcreators'] = '没有候选课程管理员';
 $string['nopotentialstudents'] = '没有候选的学生';
 $string['nopotentialteachers'] = '没有候选教师';
-$string['noreplybouncemessage'] = '您把回复信发到了一个不支持回复的电子邮件地址上。如果你想要回复论坛中的帖子，清使用论坛{$a}来回复。
+$string['noreplybouncemessage'] = '您把回复信发到了一个不支持回复的电子邮件地址上。如果您想要回复论坛中的帖子，清使用论坛{$a}来回复。
 
 下面是您信件的内容:';
 $string['noreplybouncesubject'] = '$a - 退信。';
@@ -778,11 +778,11 @@ $string['notavailable'] = '不可得';
 $string['noteachersyet'] = '此课程尚无教师';
 $string['notenrolled'] = '$a 没有选修该课程。';
 $string['noteuserschangednonetocourse'] = '恢复用户资料后课程资料也需要恢复';
-$string['nothingnew'] = '自从你上次登录以来尚无新东西';
+$string['nothingnew'] = '自从您上次登录以来尚无新东西';
 $string['nothingtodisplay'] = '没有可显示内容';
 $string['noticenewerbackup'] = '这个备份文件是使用Moodle {$a->backuprelease}($a->backupversion)创建的，它比您正在使用的Moodle {$a->serverrelease}($a->serverversion)新。由于备份文件的向后兼容无法保证，这可能会导致恢复的内容和备份时不一致。';
 $string['notifyloginfailuresmessage'] = '$a->time, IP: $a->ip, 用户: $a->info';
-$string['notifyloginfailuresmessageend'] = '你可以在 $a/course/log.php?id=1&chooselog=1&modid=site_errors 查看日志。';
+$string['notifyloginfailuresmessageend'] = '您可以在 $a/course/log.php?id=1&chooselog=1&modid=site_errors 查看日志。';
 $string['notifyloginfailuresmessagestart'] = '这是自您上次于{$a}登录后的失败登录尝试';
 $string['notifyloginfailuressubject'] = '$a :: 失败登录通知';
 $string['notincluded'] = '不包括的';
@@ -820,20 +820,20 @@ $string['passwordconfirmchange'] = '确认密码更改';
 $string['passwordrecovery'] = '是的，帮我登录吧';
 $string['passwordsdiffer'] = '这些密码不对';
 $string['passwordsent'] = '密码已被发送';
-$string['passwordsenttext'] = '<p>一封E-mail已经送到你的邮箱{$a->email}。</p>
-<p><b>请查收你的E-mail以获取密码。</b></p>
-<p>这个新密码是自动生成的，所以你可能需要点击<a href=\"$a->link\">这里</a>改成你自己容易记的密码。</p>';
-$string['pathnotexists'] = '该路径在你的服务器上并不存在!';
+$string['passwordsenttext'] = '<p>一封E-mail已经送到您的邮箱{$a->email}。</p>
+<p><b>请查收您的E-mail以获取密码。</b></p>
+<p>这个新密码是自动生成的，所以您可能需要点击<a href=\"$a->link\">这里</a>改成您自己容易记的密码。</p>';
+$string['pathnotexists'] = '该路径在您的服务器上并不存在!';
 $string['pathslasherror'] = '路径不能以斜线符号结束!!';
 $string['paymentinstant'] = '点击下面的按钮便可以快速付费并加入课程!';
 $string['paymentrequired'] = '此课程需要付费才能进入。';
-$string['paymentsorry'] = '谢谢你付费! 您的付费手续尚未处理完毕，您还不能注册进入课程“$a->fullname”。请过几分钟后再试，但如果你始终有问题，请告知$a->teacher或站点管理员。';
-$string['paymentthanks'] = '谢谢您付费! 现在你已经可以加入如下课程了: <br />“$a”';
+$string['paymentsorry'] = '谢谢您付费! 您的付费手续尚未处理完毕，您还不能注册进入课程“$a->fullname”。请过几分钟后再试，但如果您始终有问题，请告知$a->teacher或站点管理员。';
+$string['paymentthanks'] = '谢谢您付费! 现在您已经可以加入如下课程了: <br />“$a”';
 $string['people'] = '人物';
 $string['personalprofile'] = '个人资料';
 $string['phone'] = '电话';
 $string['phpinfo'] = 'PHP 信息';
-$string['policyagree'] = '如要继续使用此站，你必须同意此协议。你同意么?';
+$string['policyagree'] = '如要继续使用此站，您必须同意此协议。您同意么?';
 $string['policyagreement'] = '网站使用协议';
 $string['policyagreementclick'] = '点击此处阅读站点政策协议';
 $string['popupwindow'] = '在新窗口中打开文件';
@@ -864,10 +864,10 @@ $string['registrationcontact'] = '允许从公众网络访问';
 $string['registrationcontactno'] = '不，我不希望在站点列表中显示联系表格';
 $string['registrationcontactyes'] = '是的提供一个表格给预期的Moodle用户以方便他联系我';
 $string['registrationemail'] = 'E-mail通知';
-$string['registrationinfo'] = '<p>你可以在本页面中到moodle.org注册你的站。这个过程是免费的。注册的主要好处是你会被加入一个mailing list，它只发送一些重要的提醒信息，比如安全警告和Moodle的版本更新。</P>
-<p>缺省情况，你的信息是被保密的，永远不会被出售或转让给它人。收集信息的目的仅仅是出于客户服务的目的，同时也用来建一个Moodle社区的统计图。</p>
-<p>如果你愿意，那么可以把你的站名、国家和URL放到Moodle官方网站的公用列表中。</p>
-<p>所有的新注册在加入列表之前都会被人工验证。不过一旦你被加入列表中，那么你可以随时通过提交这个表单来更新你的注册信息（公用列表也会更新）。</p>';
+$string['registrationinfo'] = '<p>您可以在本页面中到moodle.org注册您的站。这个过程是免费的。注册的主要好处是您会被加入一个mailing list，它只发送一些重要的提醒信息，比如安全警告和Moodle的版本更新。</P>
+<p>缺省情况，您的信息是被保密的，永远不会被出售或转让给它人。收集信息的目的仅仅是出于客户服务的目的，同时也用来建一个Moodle社区的统计图。</p>
+<p>如果您愿意，那么可以把您的站名、国家和URL放到Moodle官方网站的公用列表中。</p>
+<p>所有的新注册在加入列表之前都会被人工验证。不过一旦您被加入列表中，那么您可以随时通过提交这个表单来更新您的注册信息（公用列表也会更新）。</p>';
 $string['registrationno'] = '不，我不想收E-mail';
 $string['registrationsend'] = '发送注册信息到moodle.org';
 $string['registrationyes'] = '是的，有重要事情请通知我';
@@ -909,7 +909,7 @@ $string['screenshot'] = '抓屏';
 $string['search'] = '搜索';
 $string['searchagain'] = '再次搜索';
 $string['searchcourses'] = '搜索课程';
-$string['searchhelp'] = '你可以使用多关键字搜索。<br />word: 搜索任何包含该关键字的内容。<br />+word: 严格匹配。<br />-word: 结果中不含该关键词。';
+$string['searchhelp'] = '您可以使用多关键字搜索。<br />word: 搜索任何包含该关键字的内容。<br />+word: 严格匹配。<br />-word: 结果中不含该关键词。';
 $string['searchresults'] = '搜索结果';
 $string['sec'] = '秒';
 $string['secs'] = '秒';
@@ -965,7 +965,7 @@ $string['socialheadline'] = '社区论坛——最新话题';
 $string['someallowguest'] = '有些课程可能允许访客进入';
 $string['someerrorswerefound'] = '可能有些信息缺失或有误。详细情况请看下面。';
 $string['sortby'] = '分类标准';
-$string['specifyname'] = '你必须指定一个名称';
+$string['specifyname'] = '您必须指定一个名称';
 $string['startdate'] = '课程开始日期';
 $string['startsignup'] = '现在就以申请一个新帐号开始吧!';
 $string['state'] = '省/直辖市';
@@ -978,19 +978,19 @@ $string['strftimedaydate'] = '%%Y年%%m月%%d日 %%A';
 $string['strftimedaydatetime'] = '%%Y年%%m月%%d日 %%A %%H:%%M';
 $string['strftimedayshort'] = '%%m月%%d日 %%A';
 $string['strftimedaytime'] = '%%A %%H:%%M';
-$string['strftimemonthyear'] = '%%Y年%%B';
+$string['strftimemonthyear'] = '%%Y年%%m月';
 $string['strftimerecent'] = '%%m月%%d日 %%H:%%M';
 $string['strftimerecentfull'] = '%%Y年%%m月%%d日 %%A %%H:%%M';
 $string['strftimetime'] = '%%H:%%M';
 $string['stringsnotset'] = '以下字串{$a}中没有定义';
-$string['studentnotallowed'] = '抱歉，你作为‘{$a}’不能进入该课程';
+$string['studentnotallowed'] = '抱歉，您作为‘{$a}’不能进入该课程';
 $string['students'] = '学生';
 $string['studentsandteachers'] = '学生和老师';
 $string['subcategories'] = '子类别';
 $string['success'] = '成功';
 $string['summary'] = '概要';
 $string['summaryof'] = '$a 的概要';
-$string['supplyinfo'] = '请提供一些关于你自己的信息';
+$string['supplyinfo'] = '请提供一些关于您自己的信息';
 $string['teacheronly'] = '$a 专用';
 $string['teacherroles'] = '$a项任务';
 $string['teachers'] = '老师';
@@ -1030,7 +1030,7 @@ $string['unenrol'] = '注销';
 $string['unenrolallstudents'] = '注销全部学生';
 $string['unenrolallstudentssure'] = '您确定要从此课程中注销全部学生么?';
 $string['unenrolme'] = '我要从{$a}注销';
-$string['unenrolsure'] = '你确定要从该课程注销{$a}?';
+$string['unenrolsure'] = '您确定要从该课程注销{$a}?';
 $string['unfinished'] = '未完';
 $string['unknowncategory'] = '未知类别';
 $string['unlimited'] = '无限制';
@@ -1057,7 +1057,7 @@ $string['uploadfailednotrecovering'] = '您上传文件的操作并没有成功，在上传下列文
 $string['uploadfilelog'] = '文件{$a}的上传日志';
 $string['uploadformlimit'] = '上传文件的大小超过了表单中设置的最大尺寸限制';
 $string['uploadlabel'] = '标题:';
-$string['uploadnofilefound'] = '找不到文件——你能确定已经选择了一个文件上载吗?';
+$string['uploadnofilefound'] = '找不到文件——您能确定已经选择了一个文件上载吗?';
 $string['uploadnotallowed'] = '不允许上传';
 $string['uploadoldfilesdeleted'] = '您的上传区中的旧文件已经删除了';
 $string['uploadpartialfile'] = '文件只部分地上传了';
@@ -1103,7 +1103,7 @@ $string['virusfoundlateradminnolog'] = '管理员请注意! 系统发现一个用户上传的名为
 
 $a->action';
 $string['virusfoundsubject'] = '$a: 发现病毒!';
-$string['virusfounduser'] = '你上传的文件{$a->filename}经检查已经感染病毒! 文件上传并未成功。';
+$string['virusfounduser'] = '您上传的文件{$a->filename}经检查已经感染病毒! 文件上传并未成功。';
 $string['virusplaceholder'] = '上传的文件已感染病毒，并被转移或删除了，用户已经受到通知。';
 $string['visibletostudents'] = '对{$a}可见';
 $string['webpage'] = '网页';
@@ -1112,22 +1112,22 @@ $string['weekhide'] = '从{$a}隐藏这个星期';
 $string['weeklyoutline'] = '每周概要';
 $string['weekshow'] = '显示这个星期于$a';
 $string['welcometocourse'] = '欢迎进入课程{$a}';
-$string['welcometocoursetext'] = '欢迎你来{$a->coursename}! 
+$string['welcometocoursetext'] = '欢迎您来{$a->coursename}! 
 
-你首先要做的一件事情是修改课程中你的个人信息，这样我们才可以进一步了解你: 
+您首先要做的一件事情是修改课程中您的个人信息，这样我们才可以进一步了解您: 
 
   $a->profileurl';
 $string['whattocallzip'] = '如何命名该zip文件?';
 $string['withchosenfiles'] = '选中的文件或文件夹用于';
 $string['withoutuserdata'] = '不用用户资料';
 $string['withuserdata'] = '用用户资料';
-$string['wordforstudent'] = '你用于称呼学生的字词';
+$string['wordforstudent'] = '您用于称呼学生的字词';
 $string['wordforstudenteg'] = '例如学生、参与者等等';
-$string['wordforstudents'] = '你用于称呼多个学生的字词';
+$string['wordforstudents'] = '您用于称呼多个学生的字词';
 $string['wordforstudentseg'] = '例如学生们、参与者们';
-$string['wordforteacher'] = '你用于称呼教师的字词';
+$string['wordforteacher'] = '您用于称呼教师的字词';
 $string['wordforteachereg'] = '例如教师、导师、老师和教员等';
-$string['wordforteachers'] = '你用于称呼多个教师的字词';
+$string['wordforteachers'] = '您用于称呼多个教师的字词';
 $string['wordforteacherseg'] = '例如教师们、导师们、老师们和教员们等';
 $string['writingcategoriesandquestions'] = '书写类别及问题';
 $string['writingcoursedata'] = '书写课程数据';
@@ -1144,10 +1144,10 @@ $string['writinguserinfo'] = '书写用户信息';
 $string['wrongpassword'] = '该用户的密码错误';
 $string['yahooid'] = 'Yahoo号码';
 $string['yes'] = '是';
-$string['youareabouttocreatezip'] = '你打算创建一个zip文件包';
-$string['youaregoingtorestorefrom'] = '你将恢复自:';
-$string['yourlastlogin'] = '你上次登录是在';
-$string['yourself'] = '你自己';
-$string['yourteacher'] = '你的$a';
+$string['youareabouttocreatezip'] = '您打算创建一个zip文件包';
+$string['youaregoingtorestorefrom'] = '您将恢复自:';
+$string['yourlastlogin'] = '您上次登录是在';
+$string['yourself'] = '您自己';
+$string['yourteacher'] = '您的$a';
 $string['zippingbackup'] = '压缩备份文件';
 ?>
