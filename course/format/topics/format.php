@@ -93,7 +93,7 @@
     $thissection = $sections[$section];
 
     if ($thissection->summary or $thissection->sequence or isediting($course->id)) {
-        echo '<tr id="section-0" class="section">';
+        echo '<tr id="section-0" class="section main">';
         echo '<td class="left side">&nbsp;</td>';
         echo '<td class="content">';
         
@@ -117,7 +117,7 @@
         echo '</td>';
         echo '<td class="right side">&nbsp;</td>';
         echo '</tr>';
-        echo '<tr class="section"><td colspan="3" class="spacer"></td></tr>';
+        echo '<tr class="section separator"><td colspan="3" class="spacer"></td></tr>';
     }
 
 
@@ -172,7 +172,7 @@
                 $sectionstyle = '';
             }
 
-            echo '<tr id="section-'.$section.'" class="section'.$sectionstyle.'">';
+            echo '<tr id="section-'.$section.'" class="section main'.$sectionstyle.'">';
 
             echo '<td class="left side">';
             echo '<a name="'.$section.'">'.$section.'</a>';
@@ -240,7 +240,7 @@
             }
 
             echo '</td></tr>';
-            echo '<tr class="section"><td colspan="3" class="spacer"></td></tr>';
+            echo '<tr class="section separator"><td colspan="3" class="spacer"></td></tr>';
         }
 
         $section++;
