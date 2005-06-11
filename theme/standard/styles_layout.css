@@ -832,6 +832,10 @@ body#grade-index .grades .weighted {
  *** Login
  ***/
 
+.loginbox {
+  margin-top:15px;
+}
+
 .loginbox .content {
   border-width:1px;
   border-style:solid;
