@@ -43,7 +43,7 @@
        'forcetimezone'            =>  99,
        'fullnamedisplay'          => 'firstname lastname',
        'framename'                => '_top',
-       'frontpage'                =>  0,
+       'frontpage'                =>  1,
        'gdversion'                =>  1,
        'guestloginbutton'         =>  1,
        'htmleditor'               =>  true,
