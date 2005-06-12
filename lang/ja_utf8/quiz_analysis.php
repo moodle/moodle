@@ -5,7 +5,7 @@
 $string['analysisoptions'] = '分析オプション';
 $string['analysistitle'] = '項目分析テーブル';
 $string['attemptsall'] = '全ての受験';
-$string['attemptselection'] = 'ユーザごとの分析対象受験';
+$string['attemptselection'] = 'ユーザごとの分析対象';
 $string['attemptsfirst'] = '最初の受験';
 $string['attemptshighest'] = '最高評点';
 $string['attemptslast'] = '最後の受験';
