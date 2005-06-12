@@ -202,7 +202,7 @@ $string['coursecategory'] = 'Kategorie kurzu';
 $string['coursecreators'] = 'Tvùrci kurzu';
 $string['coursefiles'] = 'Soubory kurzu';
 $string['courseformats'] = 'Uspoøádání kurzu';
-$string['coursegrades'] = 'Body kurzu';
+$string['coursegrades'] = 'Známky kurzu';
 $string['coursehidden'] = 'Tento kurz není momentálnì studentùm dostupný';
 $string['courseinfo'] = 'Informace o kurzu';
 $string['courserestore'] = 'Obnova kurzu';
@@ -220,7 +220,7 @@ $string['creatingblocks'] = 'Vytváøím bloky';
 $string['creatingcategoriesandquestions'] = 'Vytváøím kategorie a otázky';
 $string['creatingcoursemodules'] = 'Vytváøím moduly kurzu';
 $string['creatingevents'] = 'Vytváøím události';
-$string['creatinggradebook'] = 'Vytváøím knihu bodù';
+$string['creatinggradebook'] = 'Vytváøím klasifikaci';
 $string['creatinggroups'] = 'Vytváøím skupiny';
 $string['creatinglogentries'] = 'Vytváøím polo¾ky protokolu';
 $string['creatingmessagesinfo'] = 'Vytváøím informace o zprávách';
@@ -454,13 +454,11 @@ Tento program je volný software; mù¾ete jej ¹íøit a modifikovat podle ustanovení
 <p>
 Tento program je roz¹iøován v nadìji, ¾e bude u¾iteèný, av¹ak BEZ JAKÉKOLI ZÁRUKY; neposkytují se ani odvozené záruky PRODEJNOSTI anebo VHODNOSTI PRO URÈITÝ ÚÈEL. Dal¹í podrobnosti hledejte ve Obecné veøejné licenci GNU:
 <p>
-http://www.gnu.cz
-<br />
-http://staff.cesnet.cz/~lhotka/gnugpl-cz.html
+http://www.gnu.cz/
 <br />
 http://www.gnu.org/copyleft/gpl.html';
-$string['grade'] = 'Body';
-$string['grades'] = 'Body';
+$string['grade'] = 'Známka';
+$string['grades'] = 'Známky';
 $string['group'] = 'Skupina';
 $string['groupadd'] = 'Pøidat novou skupinu';
 $string['groupaddusers'] = 'Pøidat vybrané do skupiny';
@@ -718,7 +716,7 @@ $string['noexistingstudents'] = '®ádní stávající studenti';
 $string['noexistingteachers'] = '®ádní stávající uèitelé';
 $string['nofilesselected'] = 'Nebyly vybrány ¾ádné soubory k obnovì';
 $string['nofilesyet'] = 'Je¹tì ¾ádné soubory nebyly pøipojeny k tomuto kurzu';
-$string['nograde'] = '®ádné body';
+$string['nograde'] = 'Bez známky';
 $string['noimagesyet'] = 'Je¹tì ¾ádné obrázky nebyly pøipojeny k tomuto kurzu';
 $string['nomorecourses'] = 'Nebylo mo¾no najít více odpovídajících kurzù';
 $string['nomoreidnumber'] = 'Z dùvodu pøedcházení kolizí se ji¾ nepou¾ívá idnumber';
@@ -897,7 +895,7 @@ $string['showallcourses'] = 'Ukázat v¹echny kurzy';
 $string['showalltopics'] = 'Ukázat v¹echna témata';
 $string['showallusers'] = 'Ukázat v¹echny u¾ivatele';
 $string['showallweeks'] = 'Ukázat v¹echny týdny';
-$string['showgrades'] = 'Ukázat body';
+$string['showgrades'] = 'Ukázat známky';
 $string['showlistofcourses'] = 'Ukázat seznam kurzù';
 $string['showonlytopic'] = 'Ukázat pouze téma $a';
 $string['showonlyweek'] = 'Ukázat pouze týden $a';
@@ -911,7 +909,7 @@ $string['sincelast'] = 'Od posledního pøihlá¹ení';
 $string['site'] = 'Stránky';
 $string['sitedefault'] = 'Výchozí stránky';
 $string['siteerrors'] = 'Chyby na stránkách';
-$string['sitefiles'] = 'Soubory';
+$string['sitefiles'] = 'Soubory stránek';
 $string['sitelogs'] = 'Protokol stránek';
 $string['sitenews'] = 'Novinky stránek';
 $string['sitepartlist0'] = 'Musíte být vyuèující na hlavní stránce, abyste mohli vidìt seznam úèastníkù stránek.';
@@ -1094,7 +1092,7 @@ $string['writingcategoriesandquestions'] = 'Zapisuji kategorie a otázky';
 $string['writingcoursedata'] = 'Zapisuji údaje kurzu';
 $string['writingeventsinfo'] = 'Zapisuji informace o událostech';
 $string['writinggeneralinfo'] = 'Zapisuji obecné informace';
-$string['writinggradebookinfo'] = 'Zapisuju informace o knize bodù';
+$string['writinggradebookinfo'] = 'Zapisuji informace o klasifikaci';
 $string['writinggroupsinfo'] = 'Zapisuji informace o skupinách';
 $string['writingheader'] = 'Zapisuji hlavièky';
 $string['writingloginfo'] = 'Zapisuji protokoly';
