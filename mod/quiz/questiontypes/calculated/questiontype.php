@@ -32,10 +32,6 @@ class quiz_calculated_qtype extends quiz_dataset_dependent_questiontype {
             $options->correctanswerlength = 2;
             $options->correctanswerformat = 1; // decimals
         }
-        $question->options->tolerance           = $options->tolerance;
-        $question->options->tolerancetype       = $options->tolerancetype;
-        $question->options->correctanswerlength = $options->correctanswerlength;
-        $question->options->correctanswerformat = $options->correctanswerformat;
 
         // For historic reasons we also need these fields in the answer objects.
         // This should eventually be removed and related code changed to use
@@ -49,35 +45,48 @@ class quiz_calculated_qtype extends quiz_dataset_dependent_questiontype {
             $answer->correctanswerformat = $options->correctanswerformat;
         }
 
-        $this->get_numerical_units($question);
+        $virtualqtype = $this->get_virtual_qtype();
+        $virtualqtype->get_numerical_units($question);
 
         return true;
     }
 
-    function get_numerical_units(&$question) {
-        $virtualqtype = $this->get_virtual_qtype();
-        return $virtualqtype->get_numerical_units($question);
-    }
-
-    function save_question_options($question, $options) {
+    function save_question_options($question) {
+        //$options = $question->subtypeoptions;
         // Get old answers:
-        $oldanswers = array();
-        if ($this->get_question_options($question)) {
-            $oldanswers = $question->options->answers;
+        global $CFG;
+        if (!$oldanswers = get_records_sql(
+            "SELECT a.*, c.tolerance, c.tolerancetype,
+                    c.correctanswerlength, c.id calcid
+               FROM {$CFG->prefix}quiz_answers a,
+                    {$CFG->prefix}quiz_calculated c
+              WHERE c.question = $question->id AND a.id = c.answer")) {
+            $oldanswers = array();
         }
 
         // Update with new answers
         $answerrec->question = $calcrec->question = $question->id;
-        foreach ($options->answers as $newanswer) {
-            $answerrec->answer = $newanswer->answer;
-            $answerrec->fraction = $newanswer->fraction;
-            $answerrec->feedback = $newanswer->feedback;
-            $calcrec->tolerance = $newanswer->tolerance;
-            $calcrec->tolerancetype = $newanswer->tolerancetype;
-            $calcrec->correctanswerlength = $newanswer->correctanswerlength;
-            $calcrec->correctanswerformat = $newanswer->correctanswerformat;
+        $n = count($question->answers);
+        for ($i = 0; $i < $n; $i++) {
+            $answerrec->answer   = $question->answers[$i];
+            $answerrec->fraction = isset($question->fraction[$i])
+                                 ? $question->fraction[$i] : 1.0;
+            $answerrec->feedback = isset($question->feedback[$i])
+                                 ? $question->feedback[$i] : '';
+            $calcrec->tolerance           = isset($question->tolerance[$i])
+                                          ? $question->tolerance[$i]
+                                          : $question->tolerance[0];
+            $calcrec->tolerancetype       = isset($question->tolerancetype[$i])
+                                          ? $question->tolerancetype[$i]
+                                          : $question->tolerancetype[0];
+            $calcrec->correctanswerlength = isset($question->correctanswerlength[$i])
+                                          ? $question->correctanswerlength[$i]
+                                          : $question->correctanswerlength[0];
+            $calcrec->correctanswerformat = isset($question->correctanswerformat[$i])
+                                          ? $question->correctanswerformat[$i]
+                                          : $question->correctanswerformat[0];
             if ($oldanswer = array_shift($oldanswers)) {
-                // Reuse old record:
+                // Reuse old records:
                 $calcrec->answer = $answerrec->id = $oldanswer->id;
                 $calcrec->id = $oldanswer->calcid;
                 if (!update_record('quiz_answers', $answerrec)) {
@@ -94,15 +103,15 @@ class quiz_calculated_qtype extends quiz_dataset_dependent_questiontype {
                 unset($answerrec->id);
                 unset($calcrec->id);
                 if (!($calcrec->answer = insert_record('quiz_answers',
-                                                       $answerrec))) {
-                    error("Unable to insert answer for calculated question $question->name");
+                 $answerrec))) {
+                    error("Unable to insert answer for calculated question $question->id");
                 } else {
-                    // notify("Answer inserted successfully for calculated question $question->name");
+                    // notify("Answer inserted successfully for calculated question $question->id");
                 }
                 if (!insert_record('quiz_calculated', $calcrec)) {
-                    error("Unable to insert options calculared question $question->name");
+                    error("Unable to insert options calculared question $question->id");
                 } else {
-                    // notify("Options inserted successfully for calculated question $question->name");
+                    // notify("Options inserted successfully for calculated question $question->id");
                 }
             }
         }
@@ -110,20 +119,81 @@ class quiz_calculated_qtype extends quiz_dataset_dependent_questiontype {
         // Delete excessive records:
         foreach ($oldanswers as $oldanswer) {
             if (!delete_records('quiz_answers', 'id', $oldanswer->id)) {
-                error("Unable to delete old answers for calculated question $question->name");
+                error("Unable to delete old answers for calculated question $question->id");
             } else {
-                // notify("Old answers deleted successfully for calculated question $question->name");
+                // notify("Old answers deleted successfully for calculated question $question->id");
             }
             if (!delete_records('quiz_calculated', 'id', $oldanswer->calcid)) {
-                error("Unable to delete old options for calculated question $question->name");
+                error("Unable to delete old options for calculated question $question->id");
             } else {
-                // notify("Old options deleted successfully for calculated question $question->name");
+                // notify("Old options deleted successfully for calculated question $question->id");
             }
         }
 
+        // Save units
         $virtualqtype = $this->get_virtual_qtype();
         $virtualqtype->save_numerical_units($question);
 
+        return true;
+    }
+
+    function create_runtime_question($question, $form) {
+        $question = parent::create_runtime_question($question, $form);
+        $question->options->answers = array();
+        foreach ($form->answers as $key => $answer) {
+            $a->answer              = trim($form->answer[$key]);
+            $a->tolerance           = $form->tolerance[$key];
+            $a->tolerancetype       = $form->tolerancetype[$key];
+            $a->correctanswerlength = $form->correctanswerlength[$key];
+            $a->correctanswerformat = $form->correctanswerformat[$key];
+            $question->options->answers[] = clone($a);
+        }
+
+        return $question;
+    }
+
+    function validate_form($form) {
+        switch($form->wizardpage) {
+            case 'question':
+                $calculatedmessages = array();
+                if (empty($form->name)) {
+                    $calculatedmessages[] = get_string('missingname', 'quiz');
+                }
+                if (empty($form->questiontext)) {
+                    $calculatedmessages[] = get_string('missingquestiontext', 'quiz');
+                }
+                // Verify formulas
+                foreach ($form->answers as $key => $answer) {
+                    if ('' === trim($answer)) {
+                        $calculatedmessages[] =
+                            get_string('missingformula', 'quiz');
+                    }
+                    if ($formulaerrors =
+                     quiz_qtype_calculated_find_formula_errors($answer)) {
+                        $calculatedmessages[] = $formulaerrors;
+                    }
+                    if (! isset($form->tolerance[$key])) {
+                        $form->tolerance[$key] = 0.0;
+                    }
+                    if (! is_numeric($form->tolerance[$key])) {
+                        $calculatedmessages[] =
+                            get_string('tolerancemustbenumeric', 'quiz');
+                    }
+                }
+
+                if (!empty($calculatedmessages)) {
+                    $errorstring = "The following errors were found:<br />";
+                    foreach ($calculatedmessages as $msg) {
+                        $errorstring .= $msg . '<br />';
+                    }
+                    error($errorstring);
+                }
+
+                break;
+            default:
+                return parent::validate_form($form);
+                break;
+        }
         return true;
     }
 
@@ -137,7 +207,6 @@ class quiz_calculated_qtype extends quiz_dataset_dependent_questiontype {
             $answer = &$question->options->answers[$key]; // for PHP 4.x
             $answer->answer = $this->substitute_variables($answer->answer,
              $state->options->dataset);
-            // apply_unit
         }
         $question->questiontext = parent::substitute_variables(
          $question->questiontext, $state->options->dataset);
@@ -154,7 +223,7 @@ class quiz_calculated_qtype extends quiz_dataset_dependent_questiontype {
         }
         return parent::grade_responses($question, $state, $quiz);
     }
-    
+
     // ULPGC ecastro
     function check_response(&$question, &$state) {
         // Forward the checking to the virtual qtype
@@ -170,7 +239,7 @@ class quiz_calculated_qtype extends quiz_dataset_dependent_questiontype {
     // ULPGC ecastro
     function get_actual_response(&$question, &$state) {
         // Substitute variables in questiontext before giving the data to the
-        // virtual type 
+        // virtual type
         $virtualqtype = $this->get_virtual_qtype();
         $unit = $virtualqtype->get_default_numerical_unit($question);
         foreach ($question->options->answers as $key => $answer) {
@@ -183,20 +252,16 @@ class quiz_calculated_qtype extends quiz_dataset_dependent_questiontype {
                                   $question->questiontext, $state->options->dataset);
         $responses = $virtualqtype->get_all_responses($question, $state);
         $response = reset($responses->responses);
-        $correct = $response->answer.' : ';         
-        
+        $correct = $response->answer.' : ';
+
         $responses = $virtualqtype->get_actual_response($question, $state);
-        
+
         foreach ($responses as $key=>$response){
             $responses[$key] = $correct.$response;
         }
 
-        return $responses;        
+        return $responses;
     }
-
-
-
-
 
     function create_virtual_qtype() {
         global $CFG;
@@ -212,13 +277,14 @@ class quiz_calculated_qtype extends quiz_dataset_dependent_questiontype {
     function custom_generator_tools($datasetdef) {
         if (ereg('^(uniform|loguniform):([^:]*):([^:]*):([0-9]*)$',
                 $datasetdef->options, $regs)) {
+            $defid = "$datasetdef->type-$datasetdef->category-$datasetdef->name";
             for ($i = 0 ; $i<10 ; ++$i) {
                 $lengthoptions[$i] = get_string(($regs[1] == 'uniform'
                                                 ? 'decimals'
                                                 : 'significantfigures'), 'quiz', $i);
             }
             return '<input type="submit" onClick="'
-                    . "document.addform.regenerateddefid.value='$datasetdef->id'; return true;"
+                    . "document.addform.regenerateddefid.value='$defid'; return true;"
                     .'" value="'. get_string('generatevalue', 'quiz') . '"/><br/>'
                     . '<input type="text" size="3" name="calcmin[]" '
                     . " value=\"$regs[2]\"/> &amp; <input name=\"calcmax[]\" "
@@ -266,9 +332,9 @@ class quiz_calculated_qtype extends quiz_dataset_dependent_questiontype {
         }
 
         // Look for empty options, on which we set default values
-        foreach ($datasetdefs as $def) {
+        foreach ($datasetdefs as $defid => $def) {
             if (empty($def->options)) {
-                $datasetdefs[$def->id]->options = 'uniform:1.0:10.0:1';
+                $datasetdefs[$defid]->options = 'uniform:1.0:10.0:1';
             }
         }
         return $datasetdefs;
@@ -346,60 +412,60 @@ class quiz_calculated_qtype extends quiz_dataset_dependent_questiontype {
     }
 
     function comment_header($question) {
-        $this->get_question_options($question);
-        $answers = $question->options->answers;
+        //$this->get_question_options($question);
+        global $SESSION;
         $strheader = '';
         $delimiter = '';
+        if (empty($question->id)) {
+            $answers = $SESSION->datasetdependent->questionform->answers;
+        } else {
+            $answers = $question->options->answers;
+        }
         foreach ($answers as $answer) {
-            $strheader .= $delimiter.$answer->answer;
+            if (is_string($answer)) {
+                $strheader .= $delimiter.$answer;
+            } else {
+                $strheader .= $delimiter.$answer->answer;
+            }
             $delimiter = ',';
         }
         return $strheader;
     }
 
     function comment_on_datasetitems($question, $data, $number) {
-
         /// Find a default unit:
-        if ($unit = get_record('quiz_numerical_units',
+        if (!empty($question->id) && $unit = get_record('quiz_numerical_units',
                 'question', $question->id, 'multiplier', 1.0)) {
             $unit = $unit->unit;
         } else {
             $unit = '';
         }
 
-        // Get answers
-        // the next line is hacked to get rid of the PHP notice until this gets fixed properly
-        $answers = (isset($question->options->answers)) ? $question->options->answers : null;
+        $answers = $question->options->answers;
         $stranswers = get_string('answer', 'quiz');
         $strmin = get_string('min', 'quiz');
         $strmax = get_string('max', 'quiz');
         $errors = '';
         $delimiter = ': ';
-        $state = new stdClass;
-        $state->responses = array();
-        $state->options   = new stdClass;
         $virtualqtype = $this->get_virtual_qtype();
-        if ($answers) {
-            foreach ($answers as $answer) {
-                $calculated = quiz_qtype_calculated_calculate_answer(
-                        $answer->answer, $data, $answer->tolerance,
-                        $answer->tolerancetype, $answer->correctanswerlength,
-                        $answer->correctanswerformat, $unit);
-                $state->responses[''] = $calculated->answer;
-                $virtualqtype->get_tolerance_interval($question, $state);
-                $calculated->min = $state->options->min;
-                $calculated->max = $state->options->max;
-                if ($calculated->min === '') {
-                    // This should mean that something is wrong
-                    $errors .= " -$calculated->answer";
-                    $stranswers .= $delimiter;
-                } else {
-                    $stranswers .= $delimiter.$calculated->answer;
-                }
-                $strmin .= $delimiter.$calculated->min;
-                $strmax .= $delimiter.$calculated->max;
-    
-                $delimiter = ', ';
+        foreach ($answers as $answer) {
+            $calculated = quiz_qtype_calculated_calculate_answer(
+                    $answer->answer, $data, $answer->tolerance,
+                    $answer->tolerancetype, $answer->correctanswerlength,
+                    $answer->correctanswerformat, $unit);
+            $calculated->tolerance = $answer->tolerance;
+            $calculated->tolerancetype = $answer->tolerancetype;
+            $calculated->correctanswerlength = $answer->correctanswerlength;
+            $calculated->correctanswerformat = $answer->correctanswerformat;
+            $virtualqtype->get_tolerance_interval($calculated);
+            if ($calculated->min === '') {
+                // This should mean that something is wrong
+                $errors .= " -$calculated->answer";
+                $stranswers .= $delimiter;
+            } else {
+                $stranswers .= $delimiter.$calculated->answer;
+                $strmin     .= $delimiter.$calculated->min;
+                $strmax     .= $delimiter.$calculated->max;
             }
         }
         return "$stranswers<br/>$strmin<br/>$strmax<br/>$errors";
@@ -411,11 +477,11 @@ class quiz_calculated_qtype extends quiz_dataset_dependent_questiontype {
                      '3'  => get_string('geometric', 'quiz'));
     }
 
-    function dataset_options($question, $name, $renameabledatasets=false) {
+    function dataset_options($form, $name, $renameabledatasets=false) {
     // Takes datasets from the parent implementation but
     // filters options that are currently not accepted by calculated
     // It also determines a default selection...
-        list($options, $selected) = parent::dataset_options($question, $name);
+        list($options, $selected) = parent::dataset_options($form, $name);
         foreach ($options as $key => $whatever) {
             if (!ereg('^'.LITERAL.'-', $key) && $key != '0') {
                 unset($options[$key]);
@@ -427,13 +493,13 @@ class quiz_calculated_qtype extends quiz_dataset_dependent_questiontype {
         return array($options, $selected);
     }
 
-    function construct_dataset_menus($question, $mandatorydatasets,
+    function construct_dataset_menus($form, $mandatorydatasets,
                                      $optionaldatasets) {
         $datasetmenus = array();
         foreach ($mandatorydatasets as $datasetname) {
             if (!isset($datasetmenus[$datasetname])) {
                 list($options, $selected) =
-                        $this->dataset_options($question, $datasetname);
+                        $this->dataset_options($form, $datasetname);
                 unset($options['0']); // Mandatory...
                 $datasetmenus[$datasetname] = choose_from_menu ($options,
                         'dataset[]', $selected, '', '', "0", true);
@@ -442,7 +508,7 @@ class quiz_calculated_qtype extends quiz_dataset_dependent_questiontype {
         foreach ($optionaldatasets as $datasetname) {
             if (!isset($datasetmenus[$datasetname])) {
                 list($options, $selected) =
-                        $this->dataset_options($question, $datasetname);
+                        $this->dataset_options($form, $datasetname);
                 $datasetmenus[$datasetname] = choose_from_menu ($options,
                         'dataset[]', $selected, '', '', "0", true);
             }
@@ -451,24 +517,19 @@ class quiz_calculated_qtype extends quiz_dataset_dependent_questiontype {
     }
 
     function get_correct_responses(&$question, &$state) {
-        foreach ($question->options->answers as $key => $answer) {
-            if (((float) $answer->fraction) === 1.0) {
-                $virtualqtype = $this->get_virtual_qtype();
-                $unit = $virtualqtype->get_default_numerical_unit($question);
+        $virtualqtype = $this->get_virtual_qtype();
+        $unit = $virtualqtype->get_default_numerical_unit($question);
+        foreach ($question->options->answers as $answer) {
+            if (((int) $answer->fraction) === 1) {
                 $answernumerical = quiz_qtype_calculated_calculate_answer(
-                    $answer->answer, $state->options->dataset,
-                    $answer->tolerance, $answer->tolerancetype,
-                    $answer->correctanswerlength,
-                    $answer->correctanswerformat, $unit);
+                 $answer->answer, $state->options->dataset, $answer->tolerance,
+                 $answer->tolerancetype, $answer->correctanswerlength,
+                 $answer->correctanswerformat, $unit->unit);
                 return array('' => $answernumerical->answer);
             }
         }
         return null;
     }
-
-
-
-
 
     function substitute_variables($str, $dataset) {
         $formula = parent::substitute_variables($str, $dataset);
@@ -476,10 +537,13 @@ class quiz_calculated_qtype extends quiz_dataset_dependent_questiontype {
             return $error;
         }
         /// Calculate the correct answer
-        eval('$str = '.$formula.';');
+        if (empty($formula)) {
+            $str = '';
+        } else {
+            eval('$str = '.$formula.';');
+        }
         return $str;
     }
-
 }
 //// END OF CLASS ////
 
@@ -672,6 +736,12 @@ function quiz_qtype_calculated_find_formula_errors($formula) {
         // Formula just might be valid
         return false;
     }
+}
+
+function dump($obj) {
+    echo "<pre>\n";
+    var_dump($obj);
+    echo "</pre><br />\n";
 }
 
 ?>

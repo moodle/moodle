@@ -70,17 +70,22 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
     }
 
     function get_default_numerical_unit(&$question) {
+        $unit = new stdClass;
+        $unit->unit = '';
+        $unit->multiplier = 1.0;
         if (!isset($question->options->units[0])) {
-            return '';
+            // do nothing
         } else if (1.0 === (float)$question->options->units[0]->multiplier) {
-            return $question->options->units[0];
+            $unit->unit = $question->options->units[0]->unit;
         } else {
-            foreach ($question->options->units as $unit) {
+            foreach ($question->options->units as $u) {
                 if (1.0 === (float)$unit->multiplier) {
-                    return $unit;
+                    $unit->unit = $u->unit;
+                    break;
                 }
             }
         }
+        return $unit;
     }
 
     function save_question_options($question) {
@@ -229,7 +234,7 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
             return ($response == $answer->answer);
         }
     }
-    
+
     // ULPGC ecastro
     function check_response(&$question, &$state){
         $answers = &$question->options->answers;
@@ -325,7 +330,7 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
         $unit = $this->get_default_numerical_unit($question);
         if (is_array($question->options->answers)) {
             foreach ($question->options->answers as $aid=>$answer) {
-                unset ($r); 
+                unset ($r);
                 $r->answer = $answer->answer;
                 $r->credit = $answer->fraction;
                 $this->get_tolerance_interval($answer);
@@ -344,7 +349,7 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
         }
         $result->id = $question->id;
         $result->responses = $answers;
-        return $result;        
+        return $result;
     }
 
     function get_tolerance_interval(&$answer) {
