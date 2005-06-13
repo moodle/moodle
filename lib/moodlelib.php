@@ -6279,7 +6279,7 @@ function report_session_error() {
  * @return bool true if property exists
  */
 function object_property_exists( $obj, $property ) {
-    if is_string( $obj ) {
+    if (is_string( $obj )) {
         $properties = get_class_vars( $obj );
     }
     else {
