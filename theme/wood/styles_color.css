@@ -97,7 +97,8 @@ div.header,
 .forumpost .header,
 .glossarypost .entryheader,
 .glossarypost .entryattachment,
-.glossarypost .left {
+.glossarypost .left,
+#calendar .maincalendar .eventlist .event .topic {
     background-image:url(gradient1.jpg);
     background-position:bottom;
     background-repeat:repeat-x repeat-y;
@@ -105,6 +106,7 @@ div.header,
 
 .results,
 .sideblock .content,
+.loginbox .content,
 .generalboxcontent,
 .noticeboxcontent,
 .entryboxheader,
@@ -117,13 +119,17 @@ div.header,
 #admin-configure .c1,
 #admin-config .c1,
 #calendar .maincalendar .filters table,
+#calendar .sidecalendar,
 #calendar .sidecalendar .filters table,
 .block_calendar_month .filters table,
 #calendar .maincalendar .minicalendar,
 #calendar .sidecalendar .minicalendar,
 .block_calendar_month .minicalendar,
+#calendar .maincalendar .eventlist .event,
 #calendar .maincalendar,
 #mod-glossary-comment .generalbox,
+#login-signup .generalbox,
+#login-forgot_password .generalbox,
 .cal_popup_fg {
     border-top:1px solid #FFCC99;
     border-left:1px solid #FFCC99;
@@ -132,6 +138,7 @@ div.header,
     background-image:url(gradient2.jpg);     
     background-position:bottom;
     background-repeat:repeat-x repeat-y;  
+    border-collapse:separate;
 }
 
 .forumpost .left,
@@ -154,7 +161,8 @@ div.header,
     background-repeat:repeat-x repeat-y;
 }
 
-#notusefornow {
+#calendar .maincalendar .eventlist .event .picture,
+#calendar .maincalendar .eventlist .event .side {
     background-image:url(gradient3.jpg);
     background-position:bottom;
     background-repeat:repeat-x repeat-y;
@@ -179,7 +187,8 @@ div.header,
 }
 
 
-.r1 {
+.r1,
+#calendar .maincalendar .eventlist .event .description {
     background-color:white;
     background-position:bottom;
     background-repeat:repeat-x repeat-y;
