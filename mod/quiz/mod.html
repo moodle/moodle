@@ -281,7 +281,7 @@
 
 <?php if (!$CFG->quiz_fix_review) {
     echo '<tr valign="top">';
-    include('reviewoptions.html');
+    include($CFG->dirroot . '/mod/quiz/reviewoptions.html');
     echo '</tr>';
 } else $fix=1 ?>
 
@@ -506,7 +506,7 @@
 
 <?php if ($CFG->quiz_fix_review) {
     echo '<tr valign="top">';
-    include('reviewoptions.html');
+    include($CFG->dirroot . '/mod/quiz/reviewoptions.html');
     echo '</tr>';
 } ?>
 
