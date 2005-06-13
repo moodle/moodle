@@ -1,13 +1,13 @@
 <?php
 // Set default values
-if (!isset($config->auth_instructions) or empty($config->shib_user_attribute)) {
+$pluginconfig   = get_config('auth/shibboleth');
+
+if (!isset($config->auth_instructions) or empty($pluginconfig->shib_user_attribute)) {
     $config->auth_instructions = get_string('auth_shib_instructions', 'auth', $CFG->wwwroot.'/auth/shibboleth/shib-protected.php');
 }
 
-optional_variable($config->auth_shib_only,      0);
-optional_variable($config->shib_user_attribute, '');
-optional_variable($config->shib_logout_url,     '');
-optional_variable($config->shib_convert_data,   0);
+optional_variable($pluginconfig->user_attribute, '');
+optional_variable($pluginconfig->convert_data,   '');
 
 ?>
 <tr>
@@ -17,33 +17,10 @@ optional_variable($config->shib_convert_data,   0);
       </p>
     </td>
 </tr>
-<!--
-<tr>
-    <td align="right"><?php  print_string("auth_shib_only", "auth") ?>:</td>
-    <td>
-    <select name="auth_shib_only">
-        <option value="0" <?php echo ($config->auth_shib_only ? '' : 'selected="yes"') ?> >
-            <?php  print_string("no")  ?></option>
-        <option value="1" <?php echo ($config->auth_shib_only ? 'selected="yes"' : '') ?> >
-            <?php  print_string("yes") ?></option>
-    </select>
-    </td>
-    <td><?php  print_string("auth_shib_only_description", "auth") ?></td>
-    </td>
-</tr>
-
-<tr>
-    <td align="right">Shibboleth logout url ():</td>
-    <td>
-    <input name="shib_logout_url" type="text" size="30" value="<?php echo $config->shib_logout_url?>">
-    </td>
-    <td></td>                                                                                                                                 </td>
-</tr>
---> 
 <tr valign="top" class="required">
     <td align="right"><?php  print_string("username") ?>:</td>
     <td>
-    <input name="shib_user_attribute" type="text" size="30" value="<?php echo $config->shib_user_attribute?>">
+    <input name="pluginconfig_shib_user_attribute" type="text" size="30" value="<?php echo $pluginconfig->shib_user_attribute ?>">
     </td>
     <td></td>
     </td>
@@ -64,9 +41,9 @@ optional_variable($config->shib_convert_data,   0);
 <tr valign="top">
     <td align="right"><?php  print_string("auth_shib_convert_data", "auth") ?>:</td>
     <td>
-    <input name="shib_convert_data" type="text" size="30" value="<?php echo $config->shib_convert_data?>"> 
+    <input name="pluginconfig_convert_data" type="text" size="30" value="<?php echo $pluginconfig->convert_data?>"> 
     <? 
-          if ($config->shib_convert_data && $config->shib_convert_data != '' && !is_readable($config->shib_convert_data)){
+          if ($pluginconfig->convert_data && $pluginconfig->convert_data != '' && !is_readable($pluginconfig->convert_data)){
               echo '<br><font color="red">';
               print_string("auth_shib_convert_data_warning", "auth");
               echo '</font>';
