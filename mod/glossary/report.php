@@ -42,10 +42,10 @@
     } else {
         echo "<table border=\"0\" cellpadding=\"3\" cellspacing=\"3\" class=\"generalbox\" width=\"100%\">";
         echo "<tr>";
-        echo "<th>&nbsp;</th>";
-        echo "<th><a href=\"report.php?id=$entry->id&amp;sort=u.firstname\">$strname</a></th>";
-        echo "<th width=\"100%\"><a href=\"report.php?id=$entry->id&amp;sort=r.rating\">$strrating</a></th>";
-        echo "<th><a href=\"report.php?id=$entry->id&amp;sort=r.time\">$strtime</a></th>";
+        echo "<th class=\"header\">&nbsp;</th>";
+        echo "<th class=\"header\"><a href=\"report.php?id=$entry->id&amp;sort=u.firstname\">$strname</a></th>";
+        echo "<th width=\"100%\" class=\"header\"><a href=\"report.php?id=$entry->id&amp;sort=r.rating\">$strrating</a></th>";
+        echo "<th class=\"header\"><a href=\"report.php?id=$entry->id&amp;sort=r.time\">$strtime</a></th>";
         foreach ($ratings as $rating) {
             if (isteacher($glossary->course, $rating->id)) {
                 echo '<tr class="teacher">';
