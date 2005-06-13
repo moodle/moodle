@@ -418,14 +418,14 @@ $string['upgradesure'] = '<div style=\"color: red;\">¾®¥Æ¥¹¥È¥â¥¸¥å¡¼¥ë¤Ï¹­ÈÏ°Ï¤
 $string['url'] = 'URL';
 $string['usedcategorymoved'] = '¥³¡¼¥¹¤òºï½ü¤·¤¿¸å¤Ë¡¢¥«¥Æ¥´¥ê¤ËÅÐÏ¿¤µ¤ì¤Æ¤¤¤ëÌäÂê¤¬Â¾¤Î¾®¥Æ¥¹¥È¤Ç»ÈÍÑ¤µ¤ì¤Æ¤¤¤ë¤¿¤á¡¢¤³¤Î¥«¥Æ¥´¥ê¤Ï¥µ¥¤¥È¥ì¥Ù¥ë¤Ç°ÜÆ°¤µ¤ì¤Þ¤·¤¿¡£';
 $string['validate'] = '³ÎÇ§';
-$string['viewallanswers'] = '½ªÎ»¤·¤¿ $a ·ï¤Î¾®¥Æ¥¹¥È¼õ¸³¤òÉ½¼¨';
+$string['viewallanswers'] = '$a ·ï¤Î¼õ¸³·ë²Ì¤òÉ½¼¨';
 $string['viewallreports'] = '$a ·ï¤Î¼õ¸³¥ì¥Ý¡¼¥È¤òÉ½¼¨';
 $string['warningsdetected'] = '$a ¤Î·Ù¹ð¤¬¸«¤Ä¤«¤ê¤Þ¤·¤¿¡£';
 $string['webct'] = 'WebCT¥Õ¥©¡¼¥Þ¥Ã¥È';
 $string['wildcard'] = '¥ï¥¤¥ë¥É¥«¡¼¥É';
 $string['withselected'] = '°ÜÆ°Àè';
 $string['withsummary'] = '( Åý·×³µÍ×¤ò´Þ¤à )';
-$string['wronggrade'] = '¸íÉ¾Äê ( $a °Ê¹ß ):';
+$string['wronggrade'] = '¸íÉ¾Äê ( $a ¹ÔÌÜ°Ê¹ß ):';
 $string['wronguse'] = '¤³¤Î¥Ú¡¼¥¸¤ò¤½¤Î¤è¤¦¤Ë»È¤¦¤³¤È¤Ï¤Ç¤­¤Þ¤»¤ó¡£';
 $string['xhtml'] = 'XHTML¥Õ¥©¡¼¥Þ¥Ã¥È';
 $string['xml'] = 'Moodle XML¥Õ¥©¡¼¥Þ¥Ã¥È';

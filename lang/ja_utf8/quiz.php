@@ -418,14 +418,14 @@ $string['upgradesure'] = '<div style=\"color: red;\">小テストモジュール
 $string['url'] = 'URL';
 $string['usedcategorymoved'] = 'コースを削除した後に、カテゴリに登録されている問題が他の小テストで使用されているため、このカテゴリはサイトレベルで移動されました。';
 $string['validate'] = '確認';
-$string['viewallanswers'] = '終了した $a 件の小テスト受験を表示';
+$string['viewallanswers'] = '$a 件の受験結果を表示';
 $string['viewallreports'] = '$a 件の受験レポートを表示';
 $string['warningsdetected'] = '$a の警告が見つかりました。';
 $string['webct'] = 'WebCTフォーマット';
 $string['wildcard'] = 'ワイルドカード';
 $string['withselected'] = '移動先';
 $string['withsummary'] = '( 統計概要を含む )';
-$string['wronggrade'] = '誤評定 ( $a 以降 ):';
+$string['wronggrade'] = '誤評定 ( $a 行目以降 ):';
 $string['wronguse'] = 'このページをそのように使うことはできません。';
 $string['xhtml'] = 'XHTMLフォーマット';
 $string['xml'] = 'Moodle XMLフォーマット';
