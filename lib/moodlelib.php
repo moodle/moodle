@@ -3423,7 +3423,7 @@ function moodle_process_email($modargs,$body) {
             if ($user = get_record_select("user","id=$userid","id,email")) {
                 // check the half md5 of their email
                 $md5check = substr(md5($user->email),0,16);
-                if ($md5check = substr($modargs, -16)) {
+                if ($md5check == substr($modargs, -16)) {
                     set_bounce_count($user);
                 }
                 // else maybe they've already changed it?
