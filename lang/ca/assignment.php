@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.5 ALPHA (2005042400)
+      // assignment.php - created with Moodle 1.5 Beta (2005052300)
 
 
 $string['allowresubmit'] = 'Permet tornar a trametre';
@@ -30,6 +30,7 @@ $a->url';
 $string['emailteachermailhtml'] = '$a->username ha actualitzat la tramesa  de la tasca <i>\"$a->assignment\"</i>.<br /><br />
 Està <a href=\"$a->url\">disponible al web</a>.';
 $string['emailteachers'] = 'Avisa els professors per correu electrònic';
+$string['emptysubmission'] = 'Encara no heu fet cap tramesa';
 $string['existingfiledeleted'] = 'S\'ha suprimit el fitxer existent : $a';
 $string['failedupdatefeedback'] = 'Ha fallat l\'actualització de la retroacció en la tasca de l\'usuari $a';
 $string['feedback'] = 'Retroacció';
@@ -45,9 +46,11 @@ $string['modulename'] = 'Tasca';
 $string['modulenameplural'] = 'Tasques';
 $string['newsubmissions'] = 'Tasques trameses';
 $string['noassignments'] = 'Encara no hi tasques';
+$string['noattempts'] = 'No s\'han fet intents en aquesta tasca';
 $string['notgradedyet'] = 'No s\'ha qualificat encara';
 $string['notsubmittedyet'] = 'No s\'ha tramès encara';
 $string['overwritewarning'] = 'Avís: si torneu a penjar un fitxer REEMPLAÇAREU la tramesa existent';
+$string['preventlate'] = 'Impedeix trameses fora de termini';
 $string['saveallfeedback'] = 'Desa tota la meva retroacció';
 $string['submission'] = 'Tramesa';
 $string['submissionfeedback'] = 'Retroacció per a la tramesa';
