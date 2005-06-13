@@ -4,7 +4,7 @@
     require_once("../config.php");
     require_once("lib.php");
 
-    require_variable($id);
+    $id = required_param('id',0,PARAM_INT);
 
     require_login();
 

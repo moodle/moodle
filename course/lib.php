@@ -31,7 +31,6 @@ function print_recent_selector_form($course, $advancedfilter=0, $selecteduser=0,
     global $USER, $CFG;
 
     $isteacher = isteacher($course->id);
-
     if ($advancedfilter) {
 
         // Get all the possible users
@@ -137,7 +136,7 @@ function print_recent_selector_form($course, $advancedfilter=0, $selecteduser=0,
             $numdates++;
         }
 
-        if ($selecteddate == "lastlogin") {
+        if ($selecteddate === "lastlogin") {
             $selecteddate = $USER->lastlogin;
         }
 
