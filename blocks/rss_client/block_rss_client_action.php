@@ -16,10 +16,10 @@
     if (isguest()) {
         error(get_string('noguestpost', 'forum'), $referrer);
     }
-    
+
     optional_variable($act, 'none');
     optional_variable($rssid, 'none');
-    optional_variable($courseid, '');
+    $courseid = optional_param('courseid', 0, PARAM_INT);
     optional_variable($url);
     optional_variable($preferredtitle, '');
     optional_variable($item);
@@ -27,14 +27,18 @@
     if (!defined('MAGPIE_OUTPUT_ENCODING')) {
         define('MAGPIE_OUTPUT_ENCODING', get_string('thischarset'));  // see bug 3107
     }
-    
+
+    if (!empty($courseid)) {
+        $course = get_record('course', 'id', $courseid, '', '', '', '', 'shortname');
+    }
+
     $straddedit = get_string('feedsaddedit', 'block_rss_client');
     if ( isadmin() ) {
         $stradmin = get_string('administration');
         $strconfiguration = get_string('configuration');
         $navigation = "<a href=\"$CFG->wwwroot/$CFG->admin/index.php\">$stradmin</a> -> ".
         "<a href=\"$CFG->wwwroot/$CFG->admin/configure.php\">$strconfiguration</a> -> $straddedit";
-    } else if (is_numeric($courseid) && $course = get_record('course', 'id', $courseid, '', '', '', '', 'shortname') ) {
+    } else if (!empty($course)) {
         $navigation = "<a href=\"$CFG->wwwroot/course/view.php?id=$courseid\">$course->shortname</a> -> $straddedit";
     } else {
         $navigation = $straddedit;
@@ -47,10 +51,10 @@
     //check to make sure that the user is allowed to post new feeds
     $submitters = $CFG->block_rss_client_submitters;
     $isteacher = false;
-    if (is_numeric($courseid)) {
-        $isteacher = isteacher($courseid);
+    if (!empty($course)) {
+        $isteacher = isteacher($course->id);
     }
-    
+
     //if the user is an admin or course teacher then allow the user to
     //assign categories to other uses than personal
     if (!( isadmin() || $submitters == SUBMITTERS_ALL_ACCOUNT_HOLDERS || ($submitters == SUBMITTERS_ADMIN_AND_TEACHER && $isteacher) ) ) {
