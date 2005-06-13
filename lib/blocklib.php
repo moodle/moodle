@@ -183,6 +183,18 @@ function blocks_name_allowed_in_format($name, $pageformat) {
 function blocks_delete_instance($instance) {
     global $CFG;
 
+    // Get the block object and call instance_delete() first
+    if(!$record = blocks_get_record($instance->blockid)) {
+        continue;
+    }
+    if(!$obj = block_instance($record->name, $instance)) {
+        continue;
+    }
+
+    // Return value ignored
+    $obj->instance_delete();
+
+    // Now kill the db record;
     delete_records('block_instance', 'id', $instance->id);
     // And now, decrement the weight of all blocks after this one
     execute_sql('UPDATE '.$CFG->prefix.'block_instance SET weight = weight - 1 WHERE pagetype = \''.$instance->pagetype.
@@ -526,7 +538,14 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid)
             $newinstance->weight     = empty($weight->nextfree) ? 0 : $weight->nextfree;
             $newinstance->visible    = 1;
             $newinstance->configdata = '';
-            insert_record('block_instance', $newinstance);
+            $newinstance->id = insert_record('block_instance', $newinstance);
+
+            // If the new instance was created, allow it to do additional setup
+            if($newinstance && ($obj = block_instance($block->name, $newinstance))) {
+                // Return value ignored
+                $obj->instance_create();
+            }
+
         break;
     }
 
