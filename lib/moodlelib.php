@@ -6285,7 +6285,7 @@ function object_property_exists( $obj, $property ) {
     else {
         $properties = get_object_vars( $obj );
     }
-    return array_key_exists( $properties, $property );
+    return array_key_exists( $property, $properties );
 }
 
 
