@@ -544,6 +544,24 @@ class block_base {
         return set_field('block_instance', 'configdata', base64_encode(serialize($this->config)), 'id', $this->instance->id);
     }
 
+     /**
+     * Do any additional initialization you may need at the time a new block instance is created
+     * @return boolean
+     * @todo finish documenting this function
+     */
+    function instance_create() {
+        return true;
+    }
+
+     /**
+     * Delete everything related to this instance if you have been using persistent storage other than the configdata field.
+     * @return boolean
+     * @todo finish documenting this function
+     */
+    function instance_delete() {
+        return true;
+    }
+
 }
 
 /**
