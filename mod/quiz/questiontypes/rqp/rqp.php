@@ -11,7 +11,7 @@
 
 // Load the SOAP library that gives a unified wrapping to either the native
 // PHP5 SOAP extension if available or to nuSOAP otherwise.
-require_once('uni_soap.php');
+require_once($CFG->dirroot . '/mod/quiz/questiontypes/rqp/uni_soap.php');
 
 /**
 * Base RQP URI for RQP-defined identifiers
@@ -68,23 +68,12 @@ function rqp_server_info($connection) {
 * @param anyURI $format          Item format
 * @return object    Object holding the return parameters or a SoapFault.
 */
-function rqp_item_info($connection, $source, $format='', $index=0) {
+function rqp_item_info($connection, $source, $format='') {
     $itemInfo = soap_call($connection, 'RQP_ItemInformation',
-     array('source'=>$source, 'format'=>$format, 'index'=>$index));
+     array('source'=>$source, 'format'=>$format));
     if (is_soap_fault($itemInfo)) {
         return $itemInfo;
     }
-    // put the sourceErrors into an associative array indexed by the
-    // error identifier
-    $sourceErrors = array();
-    if (!empty($itemInfo->sourceErrors)) {
-        foreach ($itemInfo->sourceErrors as $error) {
-            $id = $error->identifier;
-            unset($error->identifier);
-            $sourceErrors[$id] = (object) $error;
-        }
-    }
-    $itemInfo->sourceErrors = $sourceErrors;
     return $itemInfo;
 }
 
@@ -94,21 +83,15 @@ function rqp_item_info($connection, $source, $format='', $index=0) {
 * @param SoapClient $connection  The URL of the RQP server that we want to connect to
 * @param string $source          Item source
 * @param anyURI $format          Item format
+* @param array $options          Options array
 * @return object    Object holding the return parameters or a SoapFault.
 */
-function rqp_process_template($connection, $source, $format='') {
+function rqp_process_template($connection, $source, $format='', $options=array()) {
     $return = soap_call($connection, 'RQP_ProcessTemplate',
-     array('source'=>$source, 'format'=>$format));
+     array('source'=>$source, 'format'=>$format, 'options'=>$options));
     if (is_soap_fault($return)) {
         return $return;
     }
-    $templateVars = array();
-    if (!empty($return->templateVars)) {
-        foreach ($return->templateVars as $var) {
-            $templateVars[$var->identifier] = $var->values;
-        }
-    }
-    $return->templateVars = $templateVars;
     return $return;
 }
 
@@ -118,26 +101,15 @@ function rqp_process_template($connection, $source, $format='') {
 * @param SoapClient $connection  The URL of the RQP server that we want to connect to
 * @param string $source          Item source
 * @param anyURI $format          Item format
-* @param array $templateVars     Associative array of template variables
 * @return object    Object holding the return parameters or a SoapFault.
 */
-function rqp_clone($connection, $source, $format='', $templateVars=array()) {
-    // make an array of key-value pairs from the template variables array
-    array_walk($templateVars, create_function('&$val, $key',
-     '$val = (object) array(\'identifier\'=>$key, \'values\'=>$val);'));
+function rqp_clone($connection, $source, $format='') {
 
     $return = soap_call($connection, 'RQP_Clone', array('source'=>$source,
-     'format'=>$format, 'templateVars'=>array_values($templateVars)));
+     'format'=>$format));
     if (is_soap_fault($return)) {
         return $return;
     }
-    $templateVars = array();
-    if (!empty($return->templateVars)) {
-        foreach ($return->templateVars as $var) {
-            $templateVars[$var->identifier] = $var->values;
-        }
-    }
-    $return->templateVars = $templateVars;
     return $return;
 }
 
@@ -148,31 +120,21 @@ function rqp_clone($connection, $source, $format='', $templateVars=array()) {
 * @param SoapClient $connection  The URL of the RQP server that we want to connect to
 * @param string $source          Item source
 * @param anyURI $format          Item format
+* @param array $options          Options array
 * @param string $persistentData  String giving the state of the item session
-* @param array $templateVars     Associative array of template variables
-* @param string $embedPrefix
 * @return object    Object holding the return parameters or a SoapFault.
 */
-function rqp_session_info($connection, $source, $format='', $persistentData='',
- $templateVars=array(), $embedPrefix='', $index=0) {
+function rqp_session_info($connection, $source, $format='', $options=array(), $persistentData='') {
     // make an array of key-value pairs from the template variables array
-    array_walk($templateVars, create_function('&$val, $key',
+    array_walk($options, create_function('&$val, $key',
      '$val = (object) array(\'identifier\'=>$key, \'values\'=>$val);'));
 
     $return = soap_call($connection, 'RQP_SessionInformation',
-     array('source'=>$source, 'format'=>$format, 'index'=>$index, 
-     'templateVars'=>array_values($templateVars),
-     'persistentData'=>$persistentData, 'embedPrefix'=>$embedPrefix));
+     array('source'=>$source, 'format'=>$format, 'options'=>$options, 
+     'persistentData'=>$persistentData));
     if (is_soap_fault($return)) {
         return $return;
     }
-    $templateVars = array();
-    if (!empty($return->templateVars)) {
-        foreach ($return->templateVars as $var) {
-            $templateVars[$var->identifier] = $var->values;
-        }
-    }
-    $return->templateVars = $templateVars;
     $responses = array();
     if (!empty($return->correctResponses)) {
         foreach ($return->correctResponses as $var) {
@@ -189,24 +151,20 @@ function rqp_session_info($connection, $source, $format='', $persistentData='',
 * @param SoapClient $connection  The URL of the RQP server that we want to connect to
 * @param string $source          Item source
 * @param anyURI $format          Item format
+* @param array $options          Options array
 * @param string $persistentData  String giving the state of the item session
-* @param string $embedPrefix
-* @param array $responses        Student responses from the form elements
-* @param boolean $advanceState   Should the item be advanced to the next state?
-* @param anyURI $renderFormat
-* @param array $templateVars     Associative array of template variables
-* @param anyURI $mediaBase
-* @param anyURI $appletBase
-* @param anyURI $modalFormat
+* @param array $inputData        Array of responses
+* @param array $directives       Array of directives
+* @param array $mimetypes        Array of mime types orederd by preference
+* @param string $namePrefix
+* @param anyURI $itemBase
+* @param anyURI $resourceBase
+* @param anyURI tempfileBase
 * @return object    Object holding the return parameters or a SoapFault.
 */
-function rqp_render($connection, $source, $format='', $persistentData='',
- $embedPrefix='', $responses=array(), $advanceState=true, $renderFormat='',
- $templateVars=array(), $mediaBase='', $appletBase='',
- $modalFormat='', $index=0) {
-    // make an array of key-value pairs from the template vars array
-    array_walk($templateVars, create_function('&$val, $key',
-     '$val = (object) array(\'identifier\'=>$key, \'values\'=>$val);'));
+function rqp_render($connection, $source, $format='', $options=array(), $persistentData='',
+ $inputData=array(), $directives=array(), $mimetypes=array(), $namePrefix='',
+ $itemBase='', $resourceBase='', $tempfileBase='') {
 
     // make an array of name-value pairs from the responses array
     array_walk($responses, create_function('&$val, $key',

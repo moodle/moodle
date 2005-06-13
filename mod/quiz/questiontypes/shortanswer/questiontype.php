@@ -212,10 +212,10 @@ class quiz_shortanswer_qtype extends quiz_default_questiontype {
         $replace = array('\\\\', '\+', '\(', '\)', '\[', '\]', '\-');
 
         if (strpos(' '.$response1, '*')) {
-            $answer0 = str_replace('\*','@@@@@@',$response1);
-            $answer0 = str_replace('*','.*',$response1);
-            $answer0 = str_replace($search, $replace, $response1);
-            $answer0 = str_replace('@@@@@@', '\*',$response1);
+            $response1 = str_replace('\*','@@@@@@',$response1);
+            $response1 = str_replace('*','.*',$response1);
+            $response1 = str_replace($search, $replace, $response1);
+            $response1 = str_replace('@@@@@@', '\*',$response1);
 
             if (ereg('^'.$response1.'$', $response0)) {
                 return true;

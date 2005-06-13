@@ -2,10 +2,10 @@
 
 // This page lists all the available RQP question types
 
-    require_once('../../../../config.php');
+    require_once($CFG->dirroot . '/config.php');
     require_once($CFG->libdir.'/tablelib.php');
-    require_once('lib.php');
-    require_once('remote.php');
+    require_once($CFG->dirroot . '/mod/quiz/questiontypes/rqp/lib.php');
+    require_once($CFG->dirroot . '/mod/quiz/questiontypes/rqp/remote.php');
     
     $info = optional_param('info', 0, PARAM_INT); // id of server for which to show info
     $delete = optional_param('delete', 0, PARAM_INT); // id of server to delete

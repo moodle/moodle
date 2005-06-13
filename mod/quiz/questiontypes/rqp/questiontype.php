@@ -11,7 +11,7 @@
 */
 
 require_once($CFG->dirroot . '/mod/quiz/questiontypes/rqp/lib.php');
-require_once('remote.php');
+require_once($CFG->dirroot . '/mod/quiz/questiontypes/rqp/remote.php');
 
 /**
 * RQP question type class
@@ -61,11 +61,12 @@ class quiz_rqp_qtype extends quiz_default_questiontype {
             quiz_rqp_debug_soap($item);
             return $result;
         }
-        if ($item->sourceErrors) {
-            array_walk($item->sourceErrors,
-             create_function('&$val', '$val = $val->message;'));
-            $result->notice = get_string('invalidsource', 'quiz', $options) .
-             '<br />' . implode('<br />', array_values($item->sourceErrors));
+        if ($item->error) {
+            $result->notice = $item->error;
+            return $result;
+        }
+        if ($item->warning) {
+            $result->notice = $item->warning;
             return $result;
         }
         // Time dependent items are not supported by the quiz module yet
