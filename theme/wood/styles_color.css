@@ -3,9 +3,27 @@
   *
   */
 
+#mod-assignment-submissions table.submissions th,
+#mod-assignment-submissions table.submissions td,
+#mod-forum-view table.forumheaderlist th,
+#mod-forum-view table.forumheaderlist td,
+.forumheaderlist .discussion .starter,
+#course-view .section td,
+#course-view .section .side,
+#course-view .section .left,
+#course-view .section .content {
+    border:none;
+    background-color:transparent;
+}
+
 body {
     background-color:#CC9966;
     background-image:url(background.jpg);
+}
+
+table {
+    border:none;
+    collapse:separate;
 }
 
 div {
@@ -96,8 +114,8 @@ div.header,
 
 .forumpost .header,
 .glossarypost .entryheader,
+.glossarycomment .entryheader,
 .glossarypost .entryattachment,
-.glossarypost .left,
 #calendar .maincalendar .eventlist .event .topic {
     background-image:url(gradient1.jpg);
     background-position:bottom;
@@ -113,7 +131,6 @@ div.header,
 .entrybox,
 .userinfobox,
 #course-user .section, 
-#course-view .section .content,
 #site-index .sitetopic .sitetopiccontent,
 #admin-index .c1,
 #admin-configure .c1,
@@ -128,6 +145,7 @@ div.header,
 #calendar .maincalendar .eventlist .event,
 #calendar .maincalendar,
 #mod-glossary-comment .generalbox,
+#mod-glossary-report .generalbox,
 #login-signup .generalbox,
 #login-forgot_password .generalbox,
 .cal_popup_fg {
@@ -141,17 +159,16 @@ div.header,
     border-collapse:separate;
 }
 
+#course-view .section .content,
 .forumpost .left,
 .sideblock .r1,
-.r0,
-.glossarypost .entry,
-.glossarypost .entrylowersection {
+.r0 {
     background-image:url(gradient2.jpg);
     background-position:bottom;
     background-repeat:repeat-x repeat-y;
 }
 
-#course-view .section .side {
+#notused {
     border-top:1px solid #FFCC99;
     border-left:1px solid #FFCC99;
     border-bottom:1px solid #330000;
@@ -161,6 +178,9 @@ div.header,
     background-repeat:repeat-x repeat-y;
 }
 
+#course-view .section .side,
+.glossarypost .left,
+.glossarycomment .left,
 #calendar .maincalendar .eventlist .event .picture,
 #calendar .maincalendar .eventlist .event .side {
     background-image:url(gradient3.jpg);
@@ -188,10 +208,11 @@ div.header,
 
 
 .r1,
-#calendar .maincalendar .eventlist .event .description {
+#calendar .maincalendar .eventlist .event .description,
+.glossarypost .entry,
+.glossarycomment .entry,
+.glossarypost .entrylowersection {
     background-color:white;
-    background-position:bottom;
-    background-repeat:repeat-x repeat-y;
 }
 
 
@@ -200,13 +221,20 @@ div.header,
     border-left:1px solid #99FF99;
     border-bottom:1px solid #99FF99;
     border-right:1px solid #99FF99;
+    border-collapse: separate;
 }
 
 .read,
 .forumheaderlist,
-.glossarypost {
+.glossarypost,
+.glossarycomment,
+#mod-assignment-submissions .submissions,
+#mod-forum-view .forumheaderlist,
+#course-view .section.main {
     border-top:1px solid #FFCC99;
     border-left:1px solid #FFCC99;
     border-bottom:1px solid #330000;
     border-right:1px solid #330000;
+    border-collapse: separate;
 }
+
