@@ -339,7 +339,7 @@ global $THEME;
     if ($SESSION != NULL) {
         if (empty($_COOKIE['MoodleSessionTest'.$CFG->sessioncookie])) {
             report_session_error();
-        } else if ($_COOKIE['MoodleSessionTest'.$CFG->sessioncookie] != $SESSION->session_test) {
+        } else if (isset($SESSION->session_test) && $_COOKIE['MoodleSessionTest'.$CFG->sessioncookie] != $SESSION->session_test) {
             report_session_error();
         }
     }
