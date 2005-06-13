@@ -368,6 +368,7 @@ function confirm_sesskey($sesskey=NULL) {
 /**
  * Unregister globals - emulates register_globals=off
  * for additional security
+ * NOTE - needs some tweaking/thinking before use!!!
  * Borrowed from Mambo
  */
 function unregister_globals () {
@@ -6267,6 +6268,24 @@ function report_session_error() {
         set_config('session_error_counter', 1);
     }
     redirect($FULLME, get_string('sessionerroruser', 'error'), 2);
+}
+
+
+/**
+ * Detect if an object or a class contains a given property
+ * will take an actual object or the name of a class
+ * @param mix $obj Name of class or real object to test
+ * @param string $property name of property to find
+ * @return bool true if property exists
+ */
+function object_property_exists( $obj, $property ) {
+    if is_string( $obj ) {
+        $properties = get_class_vars( $obj );
+    }
+    else {
+        $properties = get_object_vars( $obj );
+    }
+    return array_key_exists( $properties, $property );
 }
 
 
