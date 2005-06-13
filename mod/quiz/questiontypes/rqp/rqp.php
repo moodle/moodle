@@ -11,7 +11,7 @@
 
 // Load the SOAP library that gives a unified wrapping to either the native
 // PHP5 SOAP extension if available or to nuSOAP otherwise.
-require_once('uni_soap.php');
+require_once($CFG->dirroot . '/mod/quiz/questiontypes/rqp/uni_soap.php');
 
 /**
 * Base RQP URI for RQP-defined identifiers

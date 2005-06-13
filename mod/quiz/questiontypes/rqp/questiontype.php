@@ -11,7 +11,7 @@
 */
 
 require_once($CFG->dirroot . '/mod/quiz/questiontypes/rqp/lib.php');
-require_once('remote.php');
+require_once($CFG->dirroot . '/mod/quiz/questiontypes/rqp/remote.php');
 
 /**
 * RQP question type class

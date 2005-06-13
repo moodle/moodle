@@ -4,7 +4,7 @@
     ///// This page offers a way to define category level datasets  /////
     /////////////////////////////////////////////////////////////////////
 
-    require_once("../../../../config.php");
+    require_once("$CFG->dirroot/config.php");
 
     require_variable($category);
     optional_variable($question);
