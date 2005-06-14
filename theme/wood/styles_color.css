@@ -3,18 +3,33 @@
   *
   */
 
+/** First of all, we reset some undesired styles from standard **/
+
 #mod-assignment-submissions table.submissions th,
 #mod-assignment-submissions table.submissions td,
 #mod-forum-view table.forumheaderlist th,
 #mod-forum-view table.forumheaderlist td,
-.forumheaderlist .discussion .starter,
+#grade-index table .generaltableheader,
+#grade-index table .generalboxcontent,
+#grade-exceptions table .generaltableheader,
+#grade-exceptions table .generalboxcontent,
+.forumheaderlist .discussion .starter {
+    border:none;
+    background-color:white;
+}
+
 #course-view .section td,
 #course-view .section .side,
 #course-view .section .left,
 #course-view .section .content {
     border:none;
-    background-color:transparent;
 }
+
+#course-view .section .activity a {
+    line-height:0.5em;
+}
+
+/** General HTML tags defined here **/
 
 body {
     background-color:#CC9966;
@@ -34,6 +49,8 @@ hr {
     border-top-color:#330000;
 }
 
+/** Links defined here **/
+
 .tablink a:link,
 .tablink a:visited,
 a:link,
@@ -45,6 +62,8 @@ a.autolink:link,
 a.autolink:visited {
   background: #99FFCC;
 }
+
+/** All the tabs stuff starts here **/
 
 .tabs .r0,
 .tabs .r1 {
@@ -83,6 +102,8 @@ a.autolink:visited {
   background-image:url(pix/tab/right_active_hover.gif);
 }
 
+/** Styles to have the blocks showed and hidden properly **/
+
 #left-column .hidden .header,
 #right-column .hidden .header
 {
@@ -96,6 +117,8 @@ a.autolink:visited {
 .sideblock.hidden .header .hide-show img.hide-show-image {
   background: url('pix/t/switch_plus.gif') no-repeat bottom;
 }
+
+/** Places using the horizontal medium wood texture with borders **/
 
 th.header,
 td.header,
@@ -112,15 +135,22 @@ div.header,
     background-repeat:repeat-x repeat-y;  
 }
 
+/** Places using the horizontal medium wood texture without borders **/
+
 .forumpost .header,
 .glossarypost .entryheader,
 .glossarycomment .entryheader,
 .glossarypost .entryattachment,
+#grade-index th.header,
+#grade-exceptions th.header,
 #calendar .maincalendar .eventlist .event .topic {
     background-image:url(gradient1.jpg);
     background-position:bottom;
     background-repeat:repeat-x repeat-y;
+    border:none;
 }
+
+/** Places using the vertical white wood texture with borders **/
 
 .results,
 .sideblock .content,
@@ -148,6 +178,8 @@ div.header,
 #mod-glossary-report .generalbox,
 #login-signup .generalbox,
 #login-forgot_password .generalbox,
+#grade-index .generalbox,
+#grade-exceptions .generalbox,
 .cal_popup_fg {
     border-top:1px solid #FFCC99;
     border-left:1px solid #FFCC99;
@@ -159,14 +191,23 @@ div.header,
     border-collapse:separate;
 }
 
+/** Places using the vertical white wood texture without borders **/
+
 #course-view .section .content,
+#grade-index .generaltableheader,
+#grade-index .generalboxcontent,
+#grade-exceptions .generaltableheader,
+#grade-exceptions .generalboxcontent,
 .forumpost .left,
 .sideblock .r1,
 .r0 {
     background-image:url(gradient2.jpg);
     background-position:bottom;
     background-repeat:repeat-x repeat-y;
+    border:none;
 }
+
+/** Places using the vertical medium wood texture with borders **/
 
 #notused {
     border-top:1px solid #FFCC99;
@@ -178,6 +219,8 @@ div.header,
     background-repeat:repeat-x repeat-y;
 }
 
+/** Places using the vertical medium wood texture without borders **/
+
 #course-view .section .side,
 .glossarypost .left,
 .glossarycomment .left,
@@ -186,7 +229,10 @@ div.header,
     background-image:url(gradient3.jpg);
     background-position:bottom;
     background-repeat:repeat-x repeat-y;
+    border:none;
 }
+
+/** Places using the horizontal dark wood texture with borders **/
 
 #admin-index .c0,
 #admin-config .c0,
@@ -200,14 +246,19 @@ div.header,
     background-repeat:repeat-x repeat-y;
 }
 
+/** Places using the horizontal dark wood texture without borders **/
+
 .categoryheader {
     background-image:url(background.jpg);
     background-position:bottom;
     background-repeat:repeat-x repeat-y;
+    border:none;
 }
 
+/** Places using a white background **/
 
-.r1,
+#mod-survey-view table tr.r1,
+r1,
 #calendar .maincalendar .eventlist .event .description,
 .glossarypost .entry,
 .glossarycomment .entry,
@@ -215,6 +266,7 @@ div.header,
     background-color:white;
 }
 
+/** Places using a green border **/
 
 .unread {
     border-top:1px solid #99FF99;
@@ -223,6 +275,8 @@ div.header,
     border-right:1px solid #99FF99;
     border-collapse: separate;
 }
+
+/** Places using an standard border **/
 
 .read,
 .forumheaderlist,
