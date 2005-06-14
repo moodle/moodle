@@ -111,8 +111,9 @@ function forum_add_instance($forum) {
         $discussion->name     = $forum->name;
         $discussion->intro    = $forum->intro;
         $discussion->assessed = $forum->assessed;
+        $discussion->format   = $forum->format;
 
-        if (! forum_add_discussion($discussion)) {
+        if (! forum_add_discussion($discussion, $discussion->intro)) {
             error('Could not add the discussion for this forum');
         }
     }
