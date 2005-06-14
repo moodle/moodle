@@ -165,7 +165,7 @@
                 foreach ($tries as $try) {
                 // start to build up the link
                     $temp = "<a href=\"report.php?id=$cm->id&amp;action=detail&amp;userid=".$try["userid"]."&amp;try=".$try["try"]."\">";
-                    if ($try["grade"] != NULL) { // if NULL then not done yet
+                    if ($try["grade"] !== NULL) { // if NULL then not done yet
                         // this is what the link does when the user has completed the try
                         $timetotake = $try["timeend"] - $try["timestart"];
 
@@ -186,7 +186,7 @@
                     $attempts[] = $temp;
 
                     // run these lines for the stats only if the user finnished the lesson
-                    if ($try["grade"] != NULL) {
+                    if ($try["grade"] !== NULL) {
                         $numofattempts++;
                         $avescore += $try["grade"];
                         $avetime += $timetotake;
