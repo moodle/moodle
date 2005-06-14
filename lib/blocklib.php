@@ -185,10 +185,10 @@ function blocks_delete_instance($instance) {
 
     // Get the block object and call instance_delete() first
     if(!$record = blocks_get_record($instance->blockid)) {
-        continue;
+        return false;
     }
     if(!$obj = block_instance($record->name, $instance)) {
-        continue;
+        return false;
     }
 
     // Return value ignored
@@ -200,6 +200,7 @@ function blocks_delete_instance($instance) {
     execute_sql('UPDATE '.$CFG->prefix.'block_instance SET weight = weight - 1 WHERE pagetype = \''.$instance->pagetype.
                 '\' AND pageid = '.$instance->pageid.' AND position = \''.$instance->position.
                 '\' AND weight > '.$instance->weight, false);
+    return true;
 }
 
 // Accepts an array of block instances and checks to see if any of them have content to display
