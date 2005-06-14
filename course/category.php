@@ -6,9 +6,17 @@
     require_once("../config.php");
     require_once("lib.php");
 
-    require_variable($id);    // Category id
-    optional_variable($page, "0");     // which page to show
-    optional_variable($perpage, "20"); // how many per page
+    $id = required_param('id',PARAM_INT);    // Category id
+    $page = optional_param('page', 0, PARAM_INT);     // which page to show
+    $perpage = optional_param('perpage', 20, PARAM_INT); // how many per page
+    $edit = optional_param('edit','',PARAM_ALPHA);
+    $hide = optional_param('hide',0,PARAM_INT);
+    $show = optional_param('show',0,PARAM_INT);
+    $moveup = optional_param('moveup',0,PARAM_INT);
+    $movedown = optional_param('movedown',0,PARAM_INT);
+    $moveto = optional_param('moveto',0,PARAM_INT);
+    $rename = optional_param('rename','');
+    $resort = optional_param('resort','');
 
     if (!$site = get_site()) {
         error("Site isn't defined!");
@@ -23,7 +31,7 @@
     }
 
     if (iscreator()) {
-        if (isset($_GET['edit']) and confirm_sesskey()) {
+        if (!empty($edit) and confirm_sesskey()) {
             if ($edit == "on") {
                 $USER->categoryediting = true;
             } else if ($edit == "off") {
@@ -47,8 +55,8 @@
 
     if (isadmin()) {
         /// Rename the category if requested
-        if (!empty($_POST['rename']) and confirm_sesskey()) {
-            $category->name = $_POST['rename'];
+        if (!empty($rename) and confirm_sesskey()) {
+            $category->name = $rename;
             if (! set_field("course_categories", "name", $category->name, "id", $category->id)) {
                 notify("An error occurred while renaming the category");
             }
@@ -56,7 +64,7 @@
 
         /// Resort the category if requested
 
-        if (!empty($_GET['resort']) and confirm_sesskey()) {
+        if (!empty($resort) and confirm_sesskey()) {
             if ($courses = get_courses($category->id, "fullname ASC", 'c.id,c.fullname,c.sortorder')) {
                 // move it off the range
                 $count = get_record_sql('SELECT MAX(sortorder) AS max, 1
@@ -118,7 +126,7 @@
 
     /// Move a specified course to a new category
 
-        if (isset($moveto) and $data = data_submitted() and confirm_sesskey()) {   // Some courses are being moved
+        if (!empty($moveto) and $data = data_submitted() and confirm_sesskey()) {   // Some courses are being moved
 
             if (! $destcategory = get_record("course_categories", "id", $data->moveto)) {
                 error("Error finding the category");
@@ -157,8 +165,8 @@
 
     /// Hide or show a course
 
-        if ((isset($hide) or isset($show)) and confirm_sesskey()) {
-            if (isset($hide)) {
+        if ((!empty($hide) or !empty($show)) and confirm_sesskey()) {
+            if (!empty($hide)) {
                 $course = get_record("course", "id", $hide);
                 $visible = 0;
             } else {
@@ -175,7 +183,7 @@
 
     /// Move a course up or down
 
-        if ((isset($moveup) or isset($movedown)) and confirm_sesskey()) {
+        if ((!empty($moveup) or !empty($movedown)) and confirm_sesskey()) {
 
             $movecourse = NULL;
             $swapcourse = NULL;
@@ -189,7 +197,7 @@
                                          FROM ' . $CFG->prefix . 'course WHERE category=' . $category->id);
             $max = $max->max + 100;
 
-            if (isset($moveup)) {
+            if (!empty($moveup)) {
                 $movecourse = get_record('course', 'id', $moveup);
                 $swapcourse = get_record('course',
                                          'category',  $category->id,

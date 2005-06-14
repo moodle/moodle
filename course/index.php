@@ -5,6 +5,16 @@
     require_once("../config.php");
     require_once("lib.php");
 
+    $edit = optional_param( 'edit','',PARAM_ALPHA );
+    $delete = optional_param( 'delete',0,PARAM_INT );
+    $hide = optional_param( 'hide',0,PARAM_INT );
+    $show = optional_param( 'show',0,PARAM_INT );
+    $sure = optional_param( 'sure','',PARAM_CLEAN );
+    $move = optional_param( 'move',0,PARAM_INT );
+    $moveto = optional_param( 'moveto',-1,PARAM_INT );
+    $moveup = optional_param( 'moveup',0,PARAM_INT );
+    $movedown = optional_param( 'movedown',0,PARAM_INT );
+
     if (!$site = get_site()) {
         error("Site isn't defined!");
     }
@@ -14,7 +24,7 @@
     }
 
     if (isadmin()) {
-        if (isset($_GET['edit']) and confirm_sesskey()) {
+        if (!empty($edit) and confirm_sesskey()) {
             if ($edit == "on") {
                 $USER->categoriesediting = true;
             } else if ($edit == "off") {
@@ -101,7 +111,7 @@
 
 /// Delete a category if necessary
 
-    if (isset($delete) and confirm_sesskey()) {
+    if (!empty($delete) and confirm_sesskey()) {
         if ($deletecat = get_record("course_categories", "id", $delete)) {
             if (!empty($sure) && $sure == md5($deletecat->timemodified)) {
                 /// Send the children categories to live with their grandparent
@@ -154,7 +164,7 @@
 
 /// Move a category to a new parent if required
 
-    if (isset($move) and isset($moveto) and confirm_sesskey()) {
+    if (!empty($move) and ($moveto>=0) and confirm_sesskey()) {
         if ($tempcat = get_record("course_categories", "id", $move)) {
             if ($tempcat->parent != $moveto) {
                 if (! set_field("course_categories", "parent", $moveto, "id", $tempcat->id)) {
@@ -166,8 +176,8 @@
 
 
 /// Hide or show a category 
-    if ((isset($hide) or isset($show)) and confirm_sesskey()) {
-        if (isset($hide)) {
+    if ((!empty($hide) or !empty($show)) and confirm_sesskey()) {
+        if (!empty($hide)) {
             $tempcat = get_record("course_categories", "id", $hide);
             $visible = 0;
         } else {
@@ -187,12 +197,12 @@
 
 /// Move a category up or down
 
-    if ((isset($moveup) or isset($movedown)) and confirm_sesskey()) {
+    if ((!empty($moveup) or !empty($movedown)) and confirm_sesskey()) {
         
         $swapcategory = NULL;
         $movecategory = NULL;
 
-        if (isset($moveup)) {
+        if (!empty($moveup)) {
             if ($movecategory = get_record("course_categories", "id", $moveup)) {
                 $categories = get_categories("$movecategory->parent");
 
@@ -204,7 +214,7 @@
                 }
             }
         }
-        if (isset($movedown)) {
+        if (!empty($movedown)) {
             if ($movecategory = get_record("course_categories", "id", $movedown)) {
                 $categories = get_categories("$movecategory->parent");
 
