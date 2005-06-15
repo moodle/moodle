@@ -6,6 +6,7 @@
 /** First of all, we reset some undesired styles from standard **/
 
 .forumheaderlist .discussion .starter,
+.forumpost .starter,
 #grade-index table .generaltableheader,
 #grade-index table .generalboxcontent,
 #grade-exceptions table .generaltableheader,
@@ -168,12 +169,8 @@ div.header,
 .block_calendar_month .minicalendar,
 #calendar .maincalendar .eventlist .event,
 #calendar .maincalendar,
-#mod-glossary-comment .generalbox,
-#mod-glossary-report .generalbox,
-#login-signup .generalbox,
-#login-forgot_password .generalbox,
-#grade-index .generalbox,
-#grade-exceptions .generalbox,
+.generalbox,
+.courseboxcontent,
 .cal_popup_fg {
     border-top:1px solid #FFCC99;
     border-left:1px solid #FFCC99;
