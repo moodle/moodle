@@ -150,11 +150,11 @@
         $emailswitch = '';
 
         if (isteacheredit($course->id) or $currentuser) {   /// Can use the enable/disable email stuff
-            if (!empty($_GET['enable'])) {     /// Recieved a parameter to enable the email address
+            if (!empty($enable)) {     /// Recieved a parameter to enable the email address
                 set_field('user', 'emailstop', 0, 'id', $user->id);
                 $user->emailstop = 0;
             }
-            if (!empty($_GET['disable'])) {     /// Recieved a parameter to disable the email address
+            if (!empty($disable)) {     /// Recieved a parameter to disable the email address
                 set_field('user', 'emailstop', 1, 'id', $user->id);
                 $user->emailstop = 1;
             }
