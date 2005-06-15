@@ -182,7 +182,6 @@ div.header,
     background-image:url(gradient2.jpg);     
     background-position:bottom;
     background-repeat:repeat-x repeat-y;
-    border-collapse:separate;
 }
 
 /** Places using the vertical white wood texture without borders **/
