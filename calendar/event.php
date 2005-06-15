@@ -50,10 +50,13 @@
         redirect(CALENDAR_URL.'view.php?view=upcoming');
     }
 
-    $action    = required_param('action', PARAM_ALPHA);
-    $eventid   = optional_param('id', 0, PARAM_INT);
+    $action = required_param('action', PARAM_ALPHA);
+    $eventid = optional_param('id', 0, PARAM_INT);
     $eventtype = optional_param('type', 'select', PARAM_ALPHA);
     $urlcourse = optional_param('course', 0, PARAM_INT);
+    $cal_y = optional_param('cal_y');
+    $cal_m = optional_param('cal_m');
+    $cal_d = optional_param('cal_d');
 
     if(!$site = get_site()) {
         redirect($CFG->wwwroot.'/'.$CFG->admin.'/index.php');
@@ -361,20 +364,17 @@
         break;
 
         case 'new':
-            optional_variable($_GET['cal_y']);
-            optional_variable($_GET['cal_m']);
-            optional_variable($_GET['cal_d']);
-            optional_variable($form->timestart, -1);
+            set_default($form->timestart, -1);
 
-            if($_GET['cal_y'] && $_GET['cal_m'] && $_GET['cal_d'] && checkdate($_GET['cal_m'], $_GET['cal_d'], $_GET['cal_y'])) {
-                $form->timestart = make_timestamp($_GET['cal_y'], $_GET['cal_m'], $_GET['cal_d'], 0, 0, 0);
+            if($cal_y && $cal_m && $cal_d && checkdate($cal_m, $cal_d, $cal_y)) {
+                $form->timestart = make_timestamp($cal_y, $cal_m, $cal_d, 0, 0, 0);
             }
-            else if($_GET['cal_y'] && $_GET['cal_m'] && checkdate($_GET['cal_m'], 1, $_GET['cal_y'])) {
-                if($_GET['cal_y'] == $now['year'] && $_GET['cal_m'] == $now['mon']) {
-                    $form->timestart = make_timestamp($_GET['cal_y'], $_GET['cal_m'], $now['mday'], 0, 0, 0);
+            else if($cal_y && $cal_m && checkdate($cal_m, 1, $cal_y)) {
+                if($cal_y == $now['year'] && $cal_m == $now['mon']) {
+                    $form->timestart = make_timestamp($cal_y, $cal_m, $now['mday'], 0, 0, 0);
                 }
                 else {
-                    $form->timestart = make_timestamp($_GET['cal_y'], $_GET['cal_m'], 1, 0, 0, 0);
+                    $form->timestart = make_timestamp($cal_y, $cal_m, 1, 0, 0, 0);
                 }
             }
             if($form->timestart < 0) {

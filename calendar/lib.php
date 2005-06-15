@@ -628,6 +628,8 @@ function calendar_filter_controls($type, $vars = NULL, $course = NULL) {
 
     $groupevents = true;
     $getvars = '';
+   
+    $id = optional_param( 'id',0,PARAM_INT );
 
     switch($type) {
         case 'event':
@@ -637,8 +639,8 @@ function calendar_filter_controls($type, $vars = NULL, $course = NULL) {
             $getvars = '&amp;from='.$type;
         break;
         case 'course':
-            if (isset($_GET['id'])) {
-                $getvars = '&amp;from=course&amp;id='.$_GET['id'];
+            if (isset_param('id')) {
+                $getvars = '&amp;from=course&amp;id='.$id;
             } else {
                 $getvars = '&amp;from=course';
             }

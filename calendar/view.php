@@ -44,7 +44,11 @@
     require_once($CFG->dirroot.'/course/lib.php');
     require_once($CFG->dirroot.'/calendar/lib.php');
 
-    optional_variable($_GET['course'], 0);
+    $course = optional_param('course', 0);
+    $view = optional_param('view', 'upcoming');
+    $day  = optional_param('cal_d', 0, PARAM_INT);
+    $mon  = optional_param('cal_m', 0, PARAM_INT);
+    $yr   = optional_param('cal_y', 0, PARAM_INT);
 
     if(!$site = get_site()) {
         redirect($CFG->wwwroot.'/'.$CFG->admin.'/index.php');
@@ -56,10 +60,6 @@
 
     $nav = calendar_get_link_tag(get_string('calendar', 'calendar'), CALENDAR_URL.'view.php?view=upcoming&amp;', $now['mday'], $now['mon'], $now['year']);
 
-    $view = optional_param('view', 'upcoming');
-    $day  = optional_param('cal_d', 0, PARAM_INT);
-    $mon  = optional_param('cal_m', 0, PARAM_INT);
-    $yr   = optional_param('cal_y', 0, PARAM_INT);
     
     if(!checkdate($mon, $day, $yr)) {
         $day = intval($now['mday']);
@@ -83,8 +83,8 @@
     }
 
     // If a course has been supplied in the URL, change the filters to show that one
-    if (!empty($_GET['course'])) {
-        if ($course = get_record('course', 'id', $_GET['course'])) {
+    if (!empty($course)) {
+        if ($course = get_record('course', 'id', $course)) {
             if ($course->id == 1) {
                 // If coming from the home page, show all courses
                 $SESSION->cal_courses_shown = calendar_get_default_courses(true);
