@@ -2,7 +2,7 @@
 
     require_once('../../config.php');
 
-    require_variable($error);
+    $error = required_param('error',PARAM_CLEAN);
 
     print_header(get_string('error'), 
                  get_string('error'), 
