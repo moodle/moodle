@@ -7,7 +7,7 @@
     require_once("lib.php");
     require_once("$CFG->dirroot/enrol/$CFG->enrol/enrol.php");
 
-    require_variable($id);
+    $id = required_param('id',PARAM_INT);
 
     require_login();
 

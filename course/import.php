@@ -4,11 +4,11 @@ require_once('../config.php');
 require_once('lib.php');
 require_once('../backup/restorelib.php');
 
-require_variable($id, 0);   // course id to import TO
-optional_variable($fromcourse,0);
-optional_variable($fromcoursesearch,'');
-optional_variable($page,0);
-optional_variable($filename,0);
+$id = required_param('id', PARAM_INT);   // course id to import TO
+$fromcourse = optional_param('fromcourse',0,PARAM_INT);
+$fromcoursesearch = optional_param('fromcoursesearch','',PARAM_CLEAN);
+$page = optional_param('page',0,PARAM_INT);
+$filename = optional_param('filename',0,PARAM_INT);
 
     if (! ($course = get_record("course", "id", $id)) ) {
         error("That's an invalid course id");

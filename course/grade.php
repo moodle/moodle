@@ -4,7 +4,7 @@
     require_once("../config.php");
     require_once("lib.php");
 
-    require_variable($id);              // course id
+    $id = required_param('id',PARAM_INT);              // course id
 
     if (! $course = get_record("course", "id", $id)) {
         error("Course ID was incorrect");

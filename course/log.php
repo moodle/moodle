@@ -89,6 +89,10 @@
         echo '<center><h3>';
         link_to_popup_window('/course/loglive.php?id='. $course->id,'livelog', get_string('livelogs'), 500, 800);
         echo '</h3></center>';
+
+        $activityreport = get_string( 'activityreport' );
+        echo "<center><a href=\"{$CFG->wwwroot}/course/outline_rep.php?id={$course->id}\">";
+        echo "$activityreport</a></center>\n";
     }
 
     print_footer($course);

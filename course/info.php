@@ -5,8 +5,8 @@
     require_once("../config.php");
     require_once("lib.php");
 
-    require_variable($id);    // Course id
-    optional_variable($name);
+    $id = required_param('id',PARAM_INT);    // Course id
+    $name = optional_param('name','',PARAM_CLEAN);
 
     if (!$id and !$name) {
         error("Must specify course id or short name");

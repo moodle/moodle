@@ -4,7 +4,7 @@
     require_once("../config.php");
     require_once("lib.php");
 
-    require_variable($id);    // Week ID
+    $id = required_param('id',PARAM_INT);    // Week ID
 
     require_login();
 

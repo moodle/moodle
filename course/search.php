@@ -5,9 +5,9 @@
     require_once("../config.php");
     require_once("lib.php");
 
-    optional_variable($search, "");    // search words
-    optional_variable($page, "0");     // which page to show
-    optional_variable($perpage, "10"); // how many per page
+    $search = optional_param('search', '', PARAM_CLEAN);    // search words
+    $page = optional_param('page', 0, PARAM_INT);     // which page to show
+    $perpage = optional_param('perpage', 10, PARAM_INT); // how many per page
 
     $search = trim(strip_tags($search));
 
