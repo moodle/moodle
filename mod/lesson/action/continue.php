@@ -132,12 +132,13 @@
                 $noanswer = true;
                 break;
             }
-            $useranswer = clean_param($useranswer, PARAM_CLEAN);
+            $useranswer = stripslashes(clean_param($useranswer, PARAM_CLEAN));
             $userresponse = addslashes($useranswer);
-        
+
             if (!$answers = get_records("lesson_answers", "pageid", $pageid, "id")) {
                 error("Continue: No answers found");
             }
+
             foreach ($answers as $answer) {
                 /// CDC-FLAG ///
                 if ($lesson->custom && $answer->score > 0) {
@@ -698,7 +699,6 @@
         }
     }
 
-
     /// CDC-FLAG 6/18/04 ///  - this is where some jump numbers are interpreted
     if($outoftime) {
         $newpageid = LESSON_EOL;  // ran out of time for the test, so go to eol
@@ -727,7 +727,7 @@
             error("Error: could not find page");
         }
         if ($page->qtype == LESSON_CLUSTER) {
-            $newpageid = LESSON_CLUSTERJUMP;
+            $newpageid = lesson_cluster_jump($lesson->id, $USER->id, $page->id);
         } elseif ($page->qtype == LESSON_ENDOFCLUSTER) {
             $jump = get_field("lesson_answers", "jumpto", "pageid", $page->id, "lessonid", $lesson->id);
             if ($jump == LESSON_NEXTPAGE) {
