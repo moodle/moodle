@@ -2,6 +2,9 @@
        // config.php - allows admin to edit all configuration variables
 
     include("../config.php");
+
+    $auth = optional_param( 'auth','',PARAM_CLEAN );
+
     require_login();
 
     if (!$site = get_site()) {
@@ -67,8 +70,7 @@
         $options[$module] = get_string("auth_$module"."title", "auth");
     }
     asort($options);
-    if (isset($_GET['auth']) && in_array($_GET['auth'], $modules)) {
-        $auth = $_GET['auth'];
+    if (!empty($auth) && in_array($auth, $modules)) {
     } else {
         $auth = $config->auth;
     }
@@ -240,10 +242,10 @@ function print_auth_lock_options ($auth, $user_fields, $helptext, $retrieveopts,
     foreach ($user_fields as $field) {
 
         // Define some vars we'll work with
-        optional_variable($pluginconfig->{"field_map_$field"}, '');
-        optional_variable($pluginconfig->{"field_updatelocal_$field"}, '');
-        optional_variable($pluginconfig->{"field_updateremote_$field"}, '');
-        optional_variable($pluginconfig->{"field_lock_$field"}, '');
+        set_default($pluginconfig->{"field_map_$field"}, '');
+        set_default($pluginconfig->{"field_updatelocal_$field"}, '');
+        set_default($pluginconfig->{"field_updateremote_$field"}, '');
+        set_default($pluginconfig->{"field_lock_$field"}, '');
 
         // define the fieldname we display to the  user
         $fieldname = $field;

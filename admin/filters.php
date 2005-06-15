@@ -3,12 +3,13 @@
 
     require_once("../config.php");
 
-    optional_variable($iselect);
-    optional_variable($uselect);
-    optional_variable($add);
-    optional_variable($remove);
-    optional_variable($up);
-    optional_variable($down);
+    $iselect = optional_param('iselect');
+    $uselect = optional_param('uselect');
+    $add = optional_param('add');
+    $remove = optional_param('remove');
+    $up = optional_param('up');
+    $down = optional_param('down');
+    $options = optional_param('options',0,PARAM_INT);
 
     require_login();
 

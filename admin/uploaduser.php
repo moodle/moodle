@@ -5,7 +5,7 @@
 
     require_once("../config.php");
 
-    optional_variable($numusers, 0);
+    $numusers = optional_param('numusers', 0, PARAM_INT);
 
     require_login();
 
@@ -141,7 +141,6 @@
             }
             if ($record[$header[0]]) {
                 // add a new user to the database
-                optional_variable($newuser, ""); 
 
                 // add fields to object $user
                 foreach ($record as $name => $value) {

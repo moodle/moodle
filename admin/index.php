@@ -9,6 +9,9 @@
     require_once("../config.php");
     include_once("$CFG->dirroot/lib/adminlib.php");  // Contains various admin-only functions
 
+    $id = optional_param( 'id',0,PARAM_INT );
+    $confirmupgrade = optional_param( 'confirm_upgrade','' );
+
 
 /// Check that PHP is of a sufficient version
 
@@ -141,7 +144,7 @@
             $a->newversion = "$release ($version)";
             $strdatabasechecking = get_string("databasechecking", "", $a);
 
-            if (empty($_GET['confirmupgrade'])) {
+            if (empty($confirmupgrade)) {
                 print_header($strdatabasechecking, $stradministration, $strdatabasechecking,
                         "", "", false, "&nbsp;", "&nbsp;");
                 notice_yesno(get_string('upgradesure', 'admin', $a->newversion), 'index.php?confirmupgrade=yes', 'index.php');
@@ -293,8 +296,8 @@
 
 /// Check if we are returning from moodle.org registration and if so, we mark that fact to remove reminders
 
-    if (!empty($_GET['id'])) {
-        if ($_GET['id'] == $CFG->siteidentifier) {
+    if (!empty($id)) {
+        if ($id == $CFG->siteidentifier) {
             set_config('registered', time());
         }
     }
