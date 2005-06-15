@@ -727,7 +727,7 @@
             error("Error: could not find page");
         }
         if ($page->qtype == LESSON_CLUSTER) {
-            $newpageid = LESSON_CLUSTERJUMP;
+            $newpageid = lesson_cluster_jump($lesson->id, $USER->id, $page->id);
         } elseif ($page->qtype == LESSON_ENDOFCLUSTER) {
             $jump = get_field("lesson_answers", "jumpto", "pageid", $page->id, "lessonid", $lesson->id);
             if ($jump == LESSON_NEXTPAGE) {
