@@ -5,24 +5,21 @@
 
 /** First of all, we reset some undesired styles from standard **/
 
-#mod-assignment-submissions table.submissions th,
-#mod-assignment-submissions table.submissions td,
-#mod-forum-view table.forumheaderlist th,
-#mod-forum-view table.forumheaderlist td,
+.forumheaderlist .discussion .starter,
 #grade-index table .generaltableheader,
 #grade-index table .generalboxcontent,
 #grade-exceptions table .generaltableheader,
 #grade-exceptions table .generalboxcontent,
-.forumheaderlist .discussion .starter {
-    border:none;
-    background-color:white;
-}
-
+#mod-forum-view table.forumheaderlist th,
+#mod-forum-view table.forumheaderlist td,
+#mod-assignment-submissions table.submissions th,
+#mod-assignment-submissions table.submissions td,
 #course-view .section td,
 #course-view .section .side,
 #course-view .section .left,
 #course-view .section .content {
     border:none;
+    background:none;
 }
 
 #course-view .section .activity a {
@@ -141,8 +138,8 @@ div.header,
 .glossarypost .entryheader,
 .glossarycomment .entryheader,
 .glossarypost .entryattachment,
-#grade-index th.header,
-#grade-exceptions th.header,
+#grade-index .header,
+#grade-exceptions .header,
 #calendar .maincalendar .eventlist .event .topic {
     background-image:url(gradient1.jpg);
     background-position:bottom;
@@ -162,9 +159,6 @@ div.header,
 .userinfobox,
 #course-user .section, 
 #site-index .sitetopic .sitetopiccontent,
-#admin-index .c1,
-#admin-configure .c1,
-#admin-config .c1,
 #calendar .maincalendar .filters table,
 #calendar .sidecalendar,
 #calendar .sidecalendar .filters table,
@@ -187,12 +181,14 @@ div.header,
     border-right:1px solid #330000;
     background-image:url(gradient2.jpg);     
     background-position:bottom;
-    background-repeat:repeat-x repeat-y;  
+    background-repeat:repeat-x repeat-y;
     border-collapse:separate;
 }
 
 /** Places using the vertical white wood texture without borders **/
 
+#admin-index .c1,
+#admin-config .c1,
 #course-view .section .content,
 #grade-index .generaltableheader,
 #grade-index .generalboxcontent,
@@ -234,8 +230,6 @@ div.header,
 
 /** Places using the horizontal dark wood texture with borders **/
 
-#admin-index .c0,
-#admin-config .c0,
 .cal_popup_bg {
     border-top:1px solid #FFCC99;
     border-left:1px solid #FFCC99;
@@ -248,6 +242,8 @@ div.header,
 
 /** Places using the horizontal dark wood texture without borders **/
 
+#admin-index .c0,
+#admin-config .c0,
 .categoryheader {
     background-image:url(background.jpg);
     background-position:bottom;
@@ -258,12 +254,13 @@ div.header,
 /** Places using a white background **/
 
 #mod-survey-view table tr.r1,
-r1,
+.r1,
 #calendar .maincalendar .eventlist .event .description,
 .glossarypost .entry,
 .glossarycomment .entry,
 .glossarypost .entrylowersection {
     background-color:white;
+    border:none;
 }
 
 /** Places using a green border **/
