@@ -215,6 +215,10 @@ function lesson_upgrade($oldversion) {
     if ($oldversion < 2005060900) {
         table_column('lesson_grades', 'grade', 'grade', 'real', '', 'unsigned', '0', 'not null');
     }
+    
+    if ($oldversion < 2005061500) {
+        table_column('lesson', '', 'mediafile', 'varchar', '255', '', '', 'not null', 'tree');
+    }
 
    return true;
 }

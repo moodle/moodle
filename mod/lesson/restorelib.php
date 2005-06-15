@@ -72,6 +72,7 @@
             $lesson->maxtime = backup_todb($info['MOD']['#']['MAXTIME']['0']['#']);
             $lesson->retake = backup_todb($info['MOD']['#']['RETAKE']['0']['#']);
             $lesson->tree = backup_todb($info['MOD']['#']['TREE']['0']['#']);
+            $lesson->mediafile = backup_todb($info['MOD']['#']['MEDIAFILE']['0']['#']);
             $lesson->slideshow = backup_todb($info['MOD']['#']['SLIDESHOW']['0']['#']);
             $lesson->width = backup_todb($info['MOD']['#']['WIDTH']['0']['#']);
             $lesson->height = backup_todb($info['MOD']['#']['HEIGHT']['0']['#']);

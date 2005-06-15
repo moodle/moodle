@@ -100,6 +100,9 @@ if ($form->mode == "add") {
         $form->modattempts = 0;
     }
 
+    if (!isset($form->mediafile)) {
+        $form->mediafile = '';
+    }
     
     $form->deleteattempts = "";
 
@@ -433,6 +436,18 @@ if ($form->mode == "add") {
         $options[0] = get_string("no"); $options[1] = get_string("yes");
         choose_from_menu($options, "tree", $form->tree, "");
         helpbutton("tree", get_string("treeview", "lesson"), "lesson");
+    ?>
+    </td>
+</tr>
+
+<tr>
+    <td align="right"><b><?php print_string("mediafile", "lesson"); ?>:</b></td>
+    <td>
+    <?PHP 
+        $strchooseafile = get_string("chooseafile", "resource");
+        echo "<input name=\"mediafile\" size=\"50\" value=\"$form->mediafile\" /><br />";
+        button_to_popup_window ("/files/index.php?id=$course->id&choose=form.mediafile", "coursefiles", $strchooseafile, 500, 750, $strchooseafile);
+        helpbutton("mediafile", get_string("mediafile", "lesson"), "lesson");
     ?>
     </td>
 </tr>

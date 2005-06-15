@@ -274,7 +274,7 @@
             if (!$pageid = get_field('lesson_pages', 'id', 'lessonid', $lesson->id, 'prevpageid', 0)) {
                     error('Navigation: first page not found');
             }
-            /// CDC-FLAG /// -- This is the code for starting a timed test
+            /// This is the code for starting a timed test
             if(!isset($USER->startlesson[$lesson->id]) && !isteacher($course->id)) {
                 $USER->startlesson[$lesson->id] = true;
                 $startlesson = new stdClass;
@@ -290,7 +290,18 @@
                     $timedflag = true;
                 }
             }
-            /// CDC-FLAG ///
+            
+            if (!empty($lesson->mediafile)) {
+                // open our pop-up
+                $url = '/mod/lesson/mediafile.php?id='.$cm->id;
+                $name = $lesson->mediafile;
+                $options = 'menubar=0,location=0,left=5,top=5,scrollbars,resizable,width='. 650 .',height='. 100;
+                echo "\n<script language=\"javascript\" type=\"text/javascript\">";
+                echo "\n<!--\n";
+                echo "     openpopup('$url', '$name', '$options', 0);";
+                echo "\n-->\n";
+                echo '</script>';
+            }
         }
         
         if ($pageid != LESSON_EOL) {
@@ -387,7 +398,15 @@
 
             // This is where several messages (usually warnings) are displayed
             // all of this is displayed above the actual page
-
+            
+            if (!empty($lesson->mediafile)) {
+                $url = '/mod/lesson/mediafile.php?id='.$cm->id;
+                $options = 'menubar=0,location=0,left=5,top=5,scrollbars,resizable,width='. 650 .',height='. 100;
+                echo '<div align="right">';
+                link_to_popup_window ($url, $lesson->mediafile, get_string('mediafilepopup', 'lesson'), '', '', get_string('mediafilepopup', 'lesson'), $options);
+                helpbutton("mediafilestudent", get_string("mediafile", "lesson"), "lesson");
+                echo '</div>';
+            }
             // clock code
             // get time information for this user
             if(!isteacher($course->id)) {

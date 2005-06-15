@@ -20,6 +20,7 @@ CREATE TABLE prefix_lesson (
   maxtime INT8  NOT NULL DEFAULT '0',
   retake INT  NOT NULL default '1',
   tree INT  NOT NULL DEFAULT '0',
+  mediafile varchar(255) NOT NULL default '',
   slideshow INT  NOT NULL DEFAULT '0',
   width INT8  NOT NULL DEFAULT '640',
   height INT8  NOT NULL DEFAULT '480',
