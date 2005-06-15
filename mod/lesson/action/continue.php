@@ -132,7 +132,7 @@
                 $noanswer = true;
                 break;
             }
-            $useranswer = clean_param($useranswer, PARAM_CLEAN);
+            $useranswer = stripslashes(clean_param($useranswer, PARAM_CLEAN));
             $userresponse = addslashes($useranswer);
         
             if (!$answers = get_records("lesson_answers", "pageid", $pageid, "id")) {
