@@ -523,7 +523,7 @@ function quiz_upgrade($oldversion) {
                                  template_vars text NOT NULL
                                );");
 
-        modify_database ('', "CREATE TABLE prefix_quiz_rqp_type (
+        modify_database ('', "CREATE TABLE prefix_quiz_rqp_types (
                                 id SERIAL PRIMARY KEY,
                                 name varchar(255) NOT NULL default '',
                                 rendering_server varchar(255) NOT NULL default '',
@@ -912,6 +912,14 @@ function quiz_upgrade($oldversion) {
         $db->debug = $olddebug;
     }
 
+    if ($oldversion < 2005060301) {
+        execute_sql('ALTER TABLE '.$CFG->prefix.'quiz_rqp_type RENAME TO '.$CFG->prefix.'quiz_rqp_types');
+        execute_sql('ALTER TABLE '.$CFG->prefix.'quiz_rqp_type_id_seq RENAME TO '.$CFG->prefix.'rqp_types_id_seq');
+        execute_sql('ALTER TABLE '.$CFG->prefix.'quiz_rqp_types ALTER COLUMN id SET DEFAULT nextval(\''.$CFG->prefix.'quiz_rqp_types_id_seq\')');
+        execute_sql('DROP INDEX '.$CFG->prefix.'quiz_rqp_type_name_uk');
+        execute_sql('CREATE UNIQUE INDEX '.$CFG->prefix.'quiz_rqp_types_name_uk ON '.$CFG->prefix.'quiz_rqp_types (name);');
+
+    }
 
     return true;
 }

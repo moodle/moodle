@@ -410,7 +410,7 @@ CREATE TABLE prefix_quiz_rqp_states (
 # Table structure for table prefix_quiz_rqp_type
 #
 
-CREATE TABLE prefix_quiz_rqp_type (
+CREATE TABLE prefix_quiz_rqp_types (
   id SERIAL PRIMARY KEY,
   name varchar(255) NOT NULL default '',
   rendering_server varchar(255) NOT NULL default '',
