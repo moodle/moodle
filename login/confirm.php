@@ -3,9 +3,12 @@
     require_once("../config.php");
     require_once("../auth/$CFG->auth/lib.php");
 
-    if (isset($_GET['p']) and isset($_GET['s']) ) {     #  p = user.secret   s = user.username
+    $p = required_param( 'p' ); // user.secret
+    $s = required_param( 's' ); // user.username
 
-        $user = get_complete_user_data('username', $_GET['s']);
+    if (!empty($p) and !empty($s) ) {    
+
+        $user = get_complete_user_data('username', $s );
 
         if (!empty($user)) {
 
@@ -18,7 +21,7 @@
                 exit;
             }
 
-            if ($user->secret == $_GET['p']) {   // They have provided the secret key to get in
+            if ($user->secret == $p) {   // They have provided the secret key to get in
 
                 if (!set_field("user", "confirmed", 1, "id", $user->id)) {
                     error("Could not confirm this user!");

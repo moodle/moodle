@@ -2,8 +2,8 @@
 
     require_once("../config.php");
 
-    optional_variable($p, "");
-    optional_variable($s, "");
+    $p = optional_param('p','');
+    $s = optional_param('s','');
 
     if (!empty($p) and !empty($s)) {  // User trying to authenticate change password routine
 
@@ -37,6 +37,10 @@
     }
 
     if ($frm = data_submitted()) {    // Initial request for new password
+
+        if (!confirm_sesskey()) {
+            error( 'sesskey invalid' );
+        }
 
         validate_form($frm, $err);
 
