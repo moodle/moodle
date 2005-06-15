@@ -3,9 +3,40 @@
   *
   */
 
+/** First of all, we reset some undesired styles from standard **/
+
+.forumheaderlist .discussion .starter,
+.forumpost .starter,
+#grade-index table .generaltableheader,
+#grade-index table .generalboxcontent,
+#grade-exceptions table .generaltableheader,
+#grade-exceptions table .generalboxcontent,
+#mod-forum-view table.forumheaderlist th,
+#mod-forum-view table.forumheaderlist td,
+#mod-assignment-submissions table.submissions th,
+#mod-assignment-submissions table.submissions td,
+#course-view .section td,
+#course-view .section .side,
+#course-view .section .left,
+#course-view .section .content {
+    border:none;
+    background:none;
+}
+
+#course-view .section .activity a {
+    line-height:0.5em;
+}
+
+/** General HTML tags defined here **/
+
 body {
     background-color:#CC9966;
     background-image:url(background.jpg);
+}
+
+table {
+    border:none;
+    collapse:separate;
 }
 
 div {
@@ -15,6 +46,8 @@ div {
 hr {
     border-top-color:#330000;
 }
+
+/** Links defined here **/
 
 .tablink a:link,
 .tablink a:visited,
@@ -27,6 +60,8 @@ a.autolink:link,
 a.autolink:visited {
   background: #99FFCC;
 }
+
+/** All the tabs stuff starts here **/
 
 .tabs .r0,
 .tabs .r1 {
@@ -65,6 +100,8 @@ a.autolink:visited {
   background-image:url(pix/tab/right_active_hover.gif);
 }
 
+/** Styles to have the blocks showed and hidden properly **/
+
 #left-column .hidden .header,
 #right-column .hidden .header
 {
@@ -78,6 +115,8 @@ a.autolink:visited {
 .sideblock.hidden .header .hide-show img.hide-show-image {
   background: url('pix/t/switch_plus.gif') no-repeat bottom;
 }
+
+/** Places using the horizontal medium wood texture with borders **/
 
 th.header,
 td.header,
@@ -94,36 +133,44 @@ div.header,
     background-repeat:repeat-x repeat-y;  
 }
 
+/** Places using the horizontal medium wood texture without borders **/
+
 .forumpost .header,
 .glossarypost .entryheader,
+.glossarycomment .entryheader,
 .glossarypost .entryattachment,
-.glossarypost .left {
+#grade-index .header,
+#grade-exceptions .header,
+#calendar .maincalendar .eventlist .event .topic {
     background-image:url(gradient1.jpg);
     background-position:bottom;
     background-repeat:repeat-x repeat-y;
+    border:none;
 }
+
+/** Places using the vertical white wood texture with borders **/
 
 .results,
 .sideblock .content,
+.loginbox .content,
 .generalboxcontent,
 .noticeboxcontent,
 .entryboxheader,
 .entrybox,
 .userinfobox,
 #course-user .section, 
-#course-view .section .content,
 #site-index .sitetopic .sitetopiccontent,
-#admin-index .c1,
-#admin-configure .c1,
-#admin-config .c1,
 #calendar .maincalendar .filters table,
+#calendar .sidecalendar,
 #calendar .sidecalendar .filters table,
 .block_calendar_month .filters table,
 #calendar .maincalendar .minicalendar,
 #calendar .sidecalendar .minicalendar,
 .block_calendar_month .minicalendar,
+#calendar .maincalendar .eventlist .event,
 #calendar .maincalendar,
-#mod-glossary-comment .generalbox,
+.generalbox,
+.courseboxcontent,
 .cal_popup_fg {
     border-top:1px solid #FFCC99;
     border-left:1px solid #FFCC99;
@@ -131,20 +178,30 @@ div.header,
     border-right:1px solid #330000;
     background-image:url(gradient2.jpg);     
     background-position:bottom;
-    background-repeat:repeat-x repeat-y;  
-}
-
-.forumpost .left,
-.sideblock .r1,
-.r0,
-.glossarypost .entry,
-.glossarypost .entrylowersection {
-    background-image:url(gradient2.jpg);
-    background-position:bottom;
     background-repeat:repeat-x repeat-y;
 }
 
-#course-view .section .side {
+/** Places using the vertical white wood texture without borders **/
+
+#admin-index .c1,
+#admin-config .c1,
+#course-view .section .content,
+#grade-index .generaltableheader,
+#grade-index .generalboxcontent,
+#grade-exceptions .generaltableheader,
+#grade-exceptions .generalboxcontent,
+.forumpost .left,
+.sideblock .r1,
+.r0 {
+    background-image:url(gradient2.jpg);
+    background-position:bottom;
+    background-repeat:repeat-x repeat-y;
+    border:none;
+}
+
+/** Places using the vertical medium wood texture with borders **/
+
+#notused {
     border-top:1px solid #FFCC99;
     border-left:1px solid #FFCC99;
     border-bottom:1px solid #330000;
@@ -154,14 +211,21 @@ div.header,
     background-repeat:repeat-x repeat-y;
 }
 
-#notusefornow {
+/** Places using the vertical medium wood texture without borders **/
+
+#course-view .section .side,
+.glossarypost .left,
+.glossarycomment .left,
+#calendar .maincalendar .eventlist .event .picture,
+#calendar .maincalendar .eventlist .event .side {
     background-image:url(gradient3.jpg);
     background-position:bottom;
     background-repeat:repeat-x repeat-y;
+    border:none;
 }
 
-#admin-index .c0,
-#admin-config .c0,
+/** Places using the horizontal dark wood texture with borders **/
+
 .cal_popup_bg {
     border-top:1px solid #FFCC99;
     border-left:1px solid #FFCC99;
@@ -172,32 +236,52 @@ div.header,
     background-repeat:repeat-x repeat-y;
 }
 
+/** Places using the horizontal dark wood texture without borders **/
+
+#admin-index .c0,
+#admin-config .c0,
 .categoryheader {
     background-image:url(background.jpg);
     background-position:bottom;
     background-repeat:repeat-x repeat-y;
+    border:none;
 }
 
+/** Places using a white background **/
 
-.r1 {
+#mod-survey-view table tr.r1,
+.r1,
+#calendar .maincalendar .eventlist .event .description,
+.glossarypost .entry,
+.glossarycomment .entry,
+.glossarypost .entrylowersection {
     background-color:white;
-    background-position:bottom;
-    background-repeat:repeat-x repeat-y;
+    border:none;
 }
 
+/** Places using a green border **/
 
 .unread {
     border-top:1px solid #99FF99;
     border-left:1px solid #99FF99;
     border-bottom:1px solid #99FF99;
     border-right:1px solid #99FF99;
+    border-collapse: separate;
 }
+
+/** Places using an standard border **/
 
 .read,
 .forumheaderlist,
-.glossarypost {
+.glossarypost,
+.glossarycomment,
+#mod-assignment-submissions .submissions,
+#mod-forum-view .forumheaderlist,
+#course-view .section.main {
     border-top:1px solid #FFCC99;
     border-left:1px solid #FFCC99;
     border-bottom:1px solid #330000;
     border-right:1px solid #330000;
+    border-collapse: separate;
 }
+
