@@ -1900,7 +1900,7 @@ function grade_view_all_grades($view_by_student) {
         $maxpercent = 0;
         $reprint=0;
 
-        echo  '<table align="center" border="1">';
+        echo  '<table border="1" cellspacing="2" cellpadding="5" align="center" class="generalbox">';
         if (isteacher($course->id) ) {
             $student_heading_link = get_string('student','grades');
             if ($view_by_student == -1) {
@@ -1915,7 +1915,7 @@ function grade_view_all_grades($view_by_student) {
         else {
             $header = '</tr>';
         }
-        $header1 = '<tr>';
+        $header1 = '<tr">';
         
         $rowcount = 0;
         $colcount = 0;
@@ -2204,10 +2204,10 @@ function grade_display_grade_weights() {
     
     $categories = get_records('grade_category', 'courseid', $course->id);
     if ($categories) {
-        echo  '<table align=center><tr><th colspan="5">'.get_string('setweights','grades');
+        echo  '<table border="0" cellspacing="2" cellpadding="5" align="center" class="generalbox"><tr><th colspan="5" class="header">'.get_string('setweights','grades');
         helpbutton('weight', get_string('gradeweighthelp','grades'), 'grade');
         echo  '</th></tr>';
-        echo  '<tr><th>'.get_string('category','grades').'</th><th>'.get_string('weight','grades').'</th><th>'.get_string('dropxlowest','grades').'</th><th>'.get_string('bonuspoints','grades').'</th><th>'.get_string('hidecategory','grades').'</th></tr>';
+        echo  '<tr><td align="center" class="generaltableheader">'.get_string('category','grades').'</td><td align="center" class="generaltableheader">'.get_string('weight','grades').'</td><td align="center" class="generaltableheader">'.get_string('dropxlowest','grades').'</td><td align="center" class="generaltableheader">'.get_string('bonuspoints','grades').'</td><td align="center" class="generaltableheader">'.get_string('hidecategory','grades').'</td></tr>';
         echo  '<form name="grade_weights" action="./index.php" method="post">';
         echo  '<input type="hidden" name="id" value="'.$course->id.'" />';
         echo  '<input type="hidden" name="action" value="set_grade_weights" />';
@@ -2224,22 +2224,22 @@ function grade_display_grade_weights() {
             if ($category->name == UNCATEGORISED) {
                 $category->name = get_string(UNCATEGORISED, 'grades');
             }
-            echo  '<tr><td>'.$category->name.'</td>';
-            echo  '<td align="right"><input type="text" size="5" name="'.$form_catname.'" value="'.$val.'" /></td>';
-            echo  '<td align="right"><input type="text" size="5" name="drop_x_lowest'.$form_catname.'" value="'.$category->drop_x_lowest.'" /></td>';
-            echo  '<td align="right"><input type="text" size="5" name="bonus_points'.$form_catname.'" value="'.$category->bonus_points.'" /></td>';
-            echo  '<td align="right"><input type="checkbox" name="hidden'.$form_catname.'" ';
+            echo  '<tr><td align="center" class="generalboxcontent">'.$category->name.'</td>';
+            echo  '<td align="center" class="generalboxcontent"><input type="text" size="5" name="'.$form_catname.'" value="'.$val.'" /></td>';
+            echo  '<td align="center" class="generalboxcontent"><input type="text" size="5" name="drop_x_lowest'.$form_catname.'" value="'.$category->drop_x_lowest.'" /></td>';
+            echo  '<td align="center" class="generalboxcontent"><input type="text" size="5" name="bonus_points'.$form_catname.'" value="'.$category->bonus_points.'" /></td>';
+            echo  '<td align="center" class="generalboxcontent"><input type="checkbox" name="hidden'.$form_catname.'" ';
             if ($category->hidden == 1) {
                 echo  ' checked="checked"';
             }
             echo  ' /></td>';
         }
-        echo  '<tr><td colspan="5" align="center"><input type="submit" value="'.get_string('savechanges','grades').'" /></td></tr></form>';
+        echo  '<tr><td colspan="5" align="center" class="generalboxcontent"><input type="submit" value="'.get_string('savechanges','grades').'" /></td></tr></form>';
         if ($sum != 100) {
-            echo  '<tr><td colspan="5" align="center"><font color="red">'.get_string('totalweightnot100','grades').'</font></td></tr>';
+            echo  '<tr><td colspan="5" align="center" class="generalboxcontent"><font color="red">'.get_string('totalweightnot100','grades').'</font></td></tr>';
         }
         else {
-            echo  '<tr><td colspan="5" align="center"><font color="green">'.get_string('totalweight100','grades').'</font></td></tr>';
+            echo  '<tr><td colspan="5" align="center" class="generalboxcontent"><font color="green">'.get_string('totalweight100','grades').'</font></td></tr>';
         }
     }
     else {
@@ -2259,9 +2259,9 @@ function grade_set_categories() {
     /// Collect modules data
     get_all_mods($course->id, $mods, $modnames, $modnamesplural, $modnamesused);
     
-    echo  '<table align="center"><tr><th colspan="5">'.get_string('setcategories','grades');
+    echo  '<table border="0" cellspacing="2" cellpadding="5" align="center" class="generalbox"><tr><th colspan="5" class="header">'.get_string('setcategories','grades');
     helpbutton('category', get_string('gradecategoryhelp','grades'), 'grade');
-    echo  '<tr><th>'.get_string('gradeitem','grades').'</th><th>'.get_string('category','grades').'</th><th>'.get_string('maxgrade','grades').'</th><th>'.get_string('curveto','grades').'</th><th>'.get_string('extracredit','grades').'</th></tr>';
+    echo  '<tr><td align="center" class="generaltableheader">'.get_string('gradeitem','grades').'</td><td align="center" class="generaltableheader">'.get_string('category','grades').'</td><td align="center" class="generaltableheader">'.get_string('maxgrade','grades').'</td><td align="center" class="generaltableheader">'.get_string('curveto','grades').'</td><td align="center" class="generaltableheader">'.get_string('extracredit','grades').'</td></tr>';
     echo  '<form name="set_categories" method="post" action="./index.php" >';
     echo  '<input type="hidden" name="action" value="assign_categories" />';
     echo  '<input type="hidden" name="id" value="'.$course->id.'" />';
@@ -2298,12 +2298,12 @@ function grade_set_categories() {
                                     echo  '<input type="hidden" name="modname'.$itemcount.'" value="'.$mod->modname.'" />';
                                     echo  '<input type="hidden" name="mod'.$itemcount.'" value="'.$mod->instance.'" />';
                                     echo  '<input type="hidden" name="course'.$itemcount.'" value="'.$mod->course.'" />';
-                                    echo  '<tr><td>';
+                                    echo  '<tr><td align="center" class="generalboxcontent">';
                                     // get instance name from db.
                                     $instance = get_record($mod->modname, 'id', $mod->instance);
                                     echo  format_string($instance->name)."</td>";
                                     // see if the item is already in the category table and if it is call category select with the id so it is selected
-                                    echo  '<td><select name="category'.$itemcount.'">';
+                                    echo  '<td align="center" class="generalboxcontent"><select name="category'.$itemcount.'">';
                                     $item_cat_id = get_record('grade_item', 'modid', $mod->module, 'courseid', $course->id, 'cminstance', $mod->instance);
                                     //print_object($item_cat_id);
                                     if (isset($item_cat_id)) {
@@ -2312,7 +2312,7 @@ function grade_set_categories() {
                                     else {
                                         grade_category_select(-1);
                                     }
-                                    echo  '</select></td><td align="right">'.$modgrades->maxgrade.'<input type="hidden" name="maxgrade'.$itemcount.'" value="'.$modgrades->maxgrade.'" /></td>';
+                                    echo  '</select></td><td align="center" class="generalboxcontent">'.$modgrades->maxgrade.'<input type="hidden" name="maxgrade'.$itemcount.'" value="'.$modgrades->maxgrade.'" /></td>';
                                         
                                     if (isset($item_cat_id)) {
                                         // the value held in scale_grade is a scaling percent. The next line just formats it so it is easier for the user (they just enter the point value they want to be 100%)
@@ -2320,13 +2320,13 @@ function grade_set_categories() {
                                             $scale_to = $modgrades->maxgrade;
                                         else
                                             $scale_to = round($modgrades->maxgrade/$item_cat_id->scale_grade);
-                                        echo  '<td><input type="text" size="5" name="scale_grade'.$itemcount.'" value="'.$scale_to.'" /></td>';
+                                        echo  '<td align="center" class="generalboxcontent"><input type="text" size="5" name="scale_grade'.$itemcount.'" value="'.$scale_to.'" /></td>';
                                     }
                                     else {
-                                        echo  '<td><input type="text" size="5" name="scale_grade'.$itemcount.'" value="'.$modgrades->maxgrade.'" /></td>';
+                                        echo  '<td align="center" class="generalboxcontent"><input type="text" size="5" name="scale_grade'.$itemcount.'" value="'.$modgrades->maxgrade.'" /></td>';
                                     }
                                     
-                                    echo  '<td align="right"><input type="checkbox" name="extra_credit'.$itemcount.'" ';
+                                    echo  '<td align="center" class="generalboxcontent"><input type="checkbox" name="extra_credit'.$itemcount.'" ';
                                     if ($item_cat_id->extra_credit == 1) {
                                         echo  ' checked="checked"';
                                     }
@@ -2340,13 +2340,14 @@ function grade_set_categories() {
         }
     }
     echo  '<input type="hidden" name="totalitems" value="'.$itemcount.'" />';
-    echo  '<tr><td colspan="5" align="center"><input type="submit" value="'.get_string('savechanges','grades').'" /></td></tr>';
+    echo  '<tr><td colspan="5" align="center" class="generalboxcontent"><input type="submit" value="'.get_string('savechanges','grades').'" /></td></tr>';
     echo  '</form>';
-    echo  '<tr><td colspan="5" align="center">';
+    echo  '<tr><td colspan="5" align="center" class="generalboxcontent">';
     grade_add_category_form();
-    echo  '</td></tr><tr><td colspan="5" align="center">';
+    echo  '</td></tr><tr><td colspan="5" align="center" class="generalboxcontent">';
     grade_delete_category_form();
-    echo  '</td></tr><tr><td colspan="5">'.get_string('extracreditwarning','grades').'</td></tr></table>';
+    echo  '</td></tr></table>';
+    echo '<center>'.get_string('extracreditwarning','grades').'<center>';
 }
 
 function grade_delete_category() {
@@ -2550,7 +2551,7 @@ function grade_display_grade_preferences($course, $preferences) {
     echo  '<input type="hidden" name="action" value="set_grade_preferences" />';
     echo  '<input type="hidden" name="id" value="'.$course->id.'" />';
     echo  '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-    echo  '<table align="center" class="gradeprefs">';
+    echo  '<table border="0" cellspacing="2" cellpadding="5" align="center" class="gradeprefs generalbox"';
     
     $optionsyesno = NULL;
     $optionsyesno[0] = get_string('no');
@@ -2695,9 +2696,9 @@ function grade_display_letter_grades() {
         $letters[10]->courseid = $course->id;
     }
     
-    echo '<table align="center"><tr><th colspan="3">'.get_string('setgradeletters','grades');
+    echo '<table border="0" cellspacing="2" cellpadding="5" align="center" class="generalbox"><tr><th colspan="3" class="header">'.get_string('setgradeletters','grades');
     helpbutton('letter', get_string('gradeletterhelp','grades'), 'grade');
-    echo '</th></tr><tr><th>'.get_string('gradeletter','grades').'</th><th>'.get_string('lowgradeletter','grades').'</th><th>'.get_string('highgradeletter','grades').'</th></tr>';
+    echo '</th></tr><tr><td align="center" class="generaltableheader">'.get_string('gradeletter','grades').'</td><td align="center" class="generaltableheader">'.get_string('lowgradeletter','grades').'</td><td align="center" class="generaltableheader">'.get_string('highgradeletter','grades').'</td></tr>';
     echo '<form name="grade_letter"><input type="hidden" name="id" value="'.$course->id.'" />';
     echo '<input type="hidden" name="action" value="set_letter_grades" />';
     echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
@@ -2707,15 +2708,15 @@ function grade_display_letter_grades() {
             // send the record id so if the user deletes the values we can delete the row.
             echo '<input type="hidden" name="id'.$i.'" value="'.$id.'" />';
         }
-        echo '<tr><td><input size="8" type="text" name="letter'.$i.'" value="'.$items->letter.'" /></td>'."\n";
-        echo '<td><input size="8" type="text" name="grade_low'.$i.'" value="'.$items->grade_low.'" /></td>'."\n";
-        echo '<td><input size="8" type="text" name="grade_high'.$i.'" value="'.$items->grade_high.'" /></td></tr>'."\n";
+        echo '<tr><td align="center" class="generalboxcontent"><input size="8" type="text" name="letter'.$i.'" value="'.$items->letter.'" /></td>'."\n";
+        echo '<td align="center" class="generalboxcontent"><input size="8" type="text" name="grade_low'.$i.'" value="'.$items->grade_low.'" /></td>'."\n";
+        echo '<td align="center" class="generalboxcontent"><input size="8" type="text" name="grade_high'.$i.'" value="'.$items->grade_high.'" /></td></tr>'."\n";
         $i++;
     }
-    echo '<tr><td><input size="8" type="text" name="letter'.$i.'" value="" /></td><td><input size="8" type="text" name="grade_low'.$i.'" value="" /></td><td><input type="text" size="8" name="grade_high'.$i.'" value="" /></td></tr>';
-    echo '<tr><td colspan="3" align="center"><input type="submit" value="'.get_string('savechanges','grades').'" /></td></tr>';
+    echo '<tr><td align="center" class="generalboxcontent"><input size="8" type="text" name="letter'.$i.'" value="" /></td><td align="center" class="generalboxcontent"><input size="8" type="text" name="grade_low'.$i.'" value="" /></td><td align="center" class="generalboxcontent"><input type="text" size="8" name="grade_high'.$i.'" value="" /></td></tr>';
+    echo '<tr><td colspan="3" align="center" class="generalboxcontent"><input type="submit" value="'.get_string('savechanges','grades').'" /></td></tr>';
     echo '<input type="hidden" name="totalitems" value="'.$i.'" />';
-    echo '</form><tr><td colspan="3">'.get_string('gradeletternote','grades').'</table>';
+    echo '</form><tr><td colspan="3" align="center" class="generalboxcontent">'.get_string('gradeletternote','grades').'</table>';
 }
 
 function grade_set_letter_grades() {
