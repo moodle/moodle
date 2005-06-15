@@ -194,7 +194,7 @@ function quiz_print_question_list($quiz, $allowdelete=true, $showbreaks=true) {
         echo "<p align=\"center\">";
         print_string("noquestions", "quiz");
         echo "</p>";
-        return;
+        return 0;
     }
 
     if (!$questions = get_records_sql("SELECT q.*,c.course
@@ -205,7 +205,7 @@ function quiz_print_question_list($quiz, $allowdelete=true, $showbreaks=true) {
         echo "<p align=\"center\">";
         print_string("noquestions", "quiz");
         echo "</p>";
-        return;
+        return 0;
     }
 
     $count = 0;
