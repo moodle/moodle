@@ -8,12 +8,12 @@ $string['addabranchtable'] = 'Add a Branch Table';
 $string['addanendofbranch'] = 'Add an End of Branch';
 $string['addaquestionpage'] = 'Add a Question Page';
 $string['addcluster'] = 'Add a Cluster';
-$string['addendofcluster'] = 'Add an End of Cluster';
 $string['addedabranchtable'] = 'Added a Branch Table';
 $string['addedanendofbranch'] = 'Added an End of Branch';
 $string['addedaquestionpage'] = 'Added a Question Page';
 $string['addedcluster'] = 'Added a Cluster';
 $string['addedendofcluster'] = 'Added an End of Cluster';
+$string['addendofcluster'] = 'Add an End of Cluster';
 $string['answer'] = 'Answer';
 $string['answeredcorrectly'] = 'answered correctly.';
 $string['answersfornumerical'] = 'Answers for Numerical questions should be matched pairs of Minimum and Maximum values';
@@ -97,8 +97,8 @@ $string['havenotgradedyet'] = 'Have not graded yet.';
 $string['here'] = 'here';
 $string['highscore'] = 'High score';
 $string['hightime'] = 'High time';
-$string['importquestions'] = 'Import questions';
 $string['importppt'] = 'Import PowerPoint';
+$string['importquestions'] = 'Import questions';
 $string['insertedpage'] = 'Inserted page';
 $string['jump'] = 'Jump';
 $string['jumptsto'] = 'jumps to';
@@ -123,6 +123,8 @@ $string['maximumnumberofanswersbranches'] = 'Maximum number of answers/branches'
 $string['maximumnumberofattempts'] = 'Maximum number of attempts';
 $string['maxtime'] = 'Time limit (minutes)';
 $string['maxtimewarning'] = 'You have $a minute(s) to finish the lesson.';
+$string['mediafile'] = 'Media File';
+$string['mediafilepopup'] = 'Click here to view this lesson\'s media file.';
 $string['minimumnumberofquestions'] = 'Minimum number of questions';
 $string['modattempts'] = 'Allow student review';
 $string['modattemptsnoteacher'] = 'Student review only works for students.';
@@ -253,5 +255,7 @@ $string['yourcurrentgradeis'] = 'Your current grade is $a';
 $string['yourgradeisnow'] = 'Your grade for the lesson has been changed to $a';
 $string['yourresponse'] = 'Your response';
 $string['youshouldview'] = 'You should view at least: $a';
+
+
 
 ?>
