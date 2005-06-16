@@ -294,7 +294,8 @@
             if (!empty($lesson->mediafile)) {
                 // open our pop-up
                 $url = '/mod/lesson/mediafile.php?id='.$cm->id;
-                $name = $lesson->mediafile;
+                $path_parts = pathinfo($lesson->mediafile);
+                $name = substr($path_parts['basename'], 0, strstr($path_parts['basename'], '.'));
                 $options = 'menubar=0,location=0,left=5,top=5,scrollbars,resizable,width='. 650 .',height='. 100;
                 echo "\n<script language=\"javascript\" type=\"text/javascript\">";
                 echo "\n<!--\n";
@@ -402,8 +403,10 @@
             if (!empty($lesson->mediafile)) {
                 $url = '/mod/lesson/mediafile.php?id='.$cm->id;
                 $options = 'menubar=0,location=0,left=5,top=5,scrollbars,resizable,width='. 650 .',height='. 100;
+                $path_parts = pathinfo($lesson->mediafile);
+                $name = substr($path_parts['basename'], 0, strstr($path_parts['basename'], '.'));
                 echo '<div align="right">';
-                link_to_popup_window ($url, $lesson->mediafile, get_string('mediafilepopup', 'lesson'), '', '', get_string('mediafilepopup', 'lesson'), $options);
+                link_to_popup_window ($url, $name, get_string('mediafilepopup', 'lesson'), '', '', get_string('mediafilepopup', 'lesson'), $options);
                 helpbutton("mediafilestudent", get_string("mediafile", "lesson"), "lesson");
                 echo '</div>';
             }
