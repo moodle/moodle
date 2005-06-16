@@ -58,7 +58,7 @@ class assignment_uploadsingle extends assignment_base {
         global $CFG, $USER;
 
         if (isguest($USER->id)) {
-	  error(get_string('guestnoupload','assignment'));
+            error(get_string('guestnoupload','assignment'));
         }
 
         $this->view_header(get_string('upload'));
