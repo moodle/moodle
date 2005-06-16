@@ -2208,7 +2208,7 @@
                             //Only if destination doesn't exists
                             if (!file_exists($dest_dir."/".$data->new_id)) {
                                 $status = backup_copy_file($rootdir."/".$dir,
-                                              $dest_dir."/".$data->new_id);
+                                              $dest_dir."/".$data->new_id,true);
                                 $counter ++;
                             }
                             //Do some output
@@ -2264,7 +2264,7 @@
                     //If that group exists in backup_ids
                     if ($data) {
                         if (!file_exists($dest_dir."/".$data->new_id)) {
-                            $status = backup_copy_file($rootdir."/".$dir, $dest_dir."/".$data->new_id);
+                            $status = backup_copy_file($rootdir."/".$dir, $dest_dir."/".$data->new_id,true);
                             $counter ++;
                         }
                         //Do some output
@@ -2316,7 +2316,7 @@
                     //Only if destination file/dir doesn exists
                     if (!file_exists($dest_dir."/".$dir)) {
                         $status = backup_copy_file($rootdir."/".$dir,
-                                      $dest_dir."/".$dir);
+                                      $dest_dir."/".$dir,true);
                         $counter ++;
                     }
                     //Do some output

@@ -280,7 +280,7 @@
     //I've copied it from: http://www.php.net/manual/en/function.copy.php
     //Little modifications done
   
-    function backup_copy_file ($from_file,$to_file) {
+    function backup_copy_file ($from_file,$to_file,$log_clam=false) {
 
         global $CFG;
 
@@ -290,7 +290,9 @@
             //return copy($from_file,$to_file) && chmod($to_file,$perms);
             umask(0000);
             if (copy($from_file,$to_file) && chmod($to_file,$CFG->directorypermissions)) {
-                clam_log_upload($to_file,null,true);
+                if (!empty($log_clam)) {
+                    clam_log_upload($to_file,null,true);
+                }
                 return true;
             }
             return false;
