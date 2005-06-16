@@ -23,11 +23,11 @@
 
     require_login($course->id, false, $cm);
     
-    print_header();
-    
     // get the mimetype
     $path_parts = pathinfo($lesson->mediafile);
     $mimetype = mimeinfo("type", $path_parts['basename']);
+
+    print_header($path_parts['basename']);  // or should it pass "Media File" and not the name?
 
     if (substr_count($lesson->mediafile, '//') == 1) {
         // OK, taking a leap of faith here.  We are assuming that teachers are cool
