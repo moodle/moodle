@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Moodle文档：升级</title>
+	<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+
+<body>
+<h1>升级Moodle</h1>
+
+<blockquote>
+  <p>Moodle被设计为可以顺利地从早期的任何一个版本升级到后期的任何一个版本。</p>
+  <p>在执行升级安装时应该按照如下步骤进行：</p>
+  <h3 class="sectionheading">1. 对重要的数据进行备份</h3>
+  <blockquote>
+    <p>虽然这不是绝对必要的，但是在对任何产品系统进行重要升级之前进行备份永远都是明智的选择，以防出于某种原因你需要将系统恢复到之前的版本。事实上，让你的服务器每天自动地进行备份是一个不错的办法，这样你就可以略过这一步了。</p>
+    <p>以下三个部分是需要备份的：</p>
+    <blockquote>
+      <p><strong>1. Moodle软件所在目录</strong></p>
+      <blockquote>
+        <p>在进行升级之前对目录进行单独的备份，以确保你能够恢复config.php或者已经添加的任何模块，比如主题，语言等等。<strong><br />
+        </strong></p>
+      </blockquote>
+      <p><strong>2. 你的数据目录</strong></p>
+      <blockquote>
+        <p>这里是保存上传数据的地方（比如课程资源，学生作业），因此无论如何，
+将这些文件备份都是十分重要的。有时升级会将你数据目录中的子目录移动或者重新命名。<strong><br />
+        </strong></p>
+      </blockquote>
+      <p><strong>3. 你的数据库</strong></p>
+      <blockquote>
+        <p>多数时候，Moodle升级会修改数据库的表，添加或修改某些字段。每一个数据库有不同的方法进行备份。一种备份MySOL数据库的方法是将它转存为单独的SQL文件。下面的例子显示了将一个名为moodle的数据库进行转存的Unix命令：</p>
+        <blockquote>
+          <p><font face="Courier New, Courier, mono">mysqldump moodle &gt; moodle-backup-2002-10-26.sql</font></p>
+        </blockquote>
+        <p>你也可以在所有平台上，使用Moodle可选的数据库web界面的“转出”功能实现对数据库的转存。</p>
+        <p>&nbsp;</p>
+      </blockquote>
+    </blockquote>
+  </blockquote>
+  <h3 class="sectionheading">2. 安装新的Moodle软件</h3>
+  <blockquote>
+    <p><strong>使用下载的软件包</strong></p>
+    <blockquote>
+      <p>如果你不知道你正在做什么，就千万不要将旧的安装覆盖……有的时候，旧的文件可能对新版本造成麻烦。最好的办法是将当前的Moodle目录重新命名为其它的东西，然后将新的软件包解压缩到旧文件的位置。</p>
+      <blockquote>
+        <p><font face="Courier New, Courier, mono">mv moodle moodle.backup<br />
+        tar xvzf moodle-1.1.tgz</font></p>
+      </blockquote>
+      <p>下一步，将你的config.php和所有的插件，例如自定义的主题，复制过来：</p>
+      <blockquote>
+        <p><font face="Courier New, Courier, mono">cp moodle.backup/config.php moodle<br />
+        cp -pr moodle.backup/theme/mytheme moodle/theme/mytheme</font></p>
+      </blockquote>
+    </blockquote>
+    <p><strong>使用CVS</strong></p>
+    <blockquote>
+      <p>如果你使用CVS，只需要进入Moodle的根目录，然后升级到新文件：</p>
+      <blockquote>
+        <p><font face="Courier New, Courier, mono">cvs update -dP</font></p>
+      </blockquote>
+      <p>如果有必要，一定要使用参数“d”创建新目录，使用参数“p”将空目录删除。</p>
+      <p>如果你编辑过Moodle文件，要非常仔细地看提示信息，以防可能出现的冲突。你定制的全部主题，以及非标准的插件都不会被改动。</p>
+    </blockquote>
+    <p>&nbsp;</p>
+  </blockquote>
+  <h3 class="sectionheading">3. 完成升级</h3>
+  <blockquote>
+    <p>最后一步是启动Moodle的升级过程。</p>
+    <p>完成这一步只需要访问<a target="_top" href="../admin/index.php">管理页</a>。</p>
+    <blockquote>
+      <p><font face="Courier New, Courier, mono">http://example.com/moodle/admin</font></p>
+    </blockquote>
+    <p>是否以管理员身份登陆是没有关系的。</p>
+    <p>Moodle会自动监测新版本，并执行所有必要的数据库或者文件系统的升级。如果出现不能自动完成的情况（非常少见），你会看见信息，提示你需要做什么。</p>
+  </blockquote>
+  <p>&nbsp; </p>
+  <p>如果一切正常（没有错误信息），你就可以开始使用新版本的Moodle，感受它的新特性了！</p>
+  <p>如果您在升级的过程中遇到了问题，请访问<a target="_top" href="http://moodle.org/">moodle.org</a>，并将您的问题写到“Using Moodle”课程中的<a target="_top" href="http://moodle.org/mod/forum/view.php?id=28">Installation Support论坛</a>上。</p>
+</blockquote>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p align="center"><font size="1"><a href="." target="_top">Moodle文档</a></font></p>
+<p align="center"><font size="1">Version: $Id$</font></p>
+
+</body>
+</html>
