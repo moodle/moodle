@@ -2709,8 +2709,9 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
 
     $timenow = time();
     $info = addslashes($info);
-    $url = html_entity_decode($url); // for php < 4.3.0 this is defined in moodlelib.php
-
+    if (!empty($url)) { // could break doing html_entity_decode on an empty var.
+        $url = html_entity_decode($url); // for php < 4.3.0 this is defined in moodlelib.php
+    }
 
     if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; $PERF->logwrites++;};
 
