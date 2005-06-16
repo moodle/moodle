@@ -119,6 +119,7 @@ $string['maximumnumberofanswersbranches'] = '答え/選択枝の最大数';
 $string['maximumnumberofattempts'] = '受験の最大回数';
 $string['maxtime'] = '制限時間 ( 分 )';
 $string['maxtimewarning'] = 'レッスン終了まで $a 分です。';
+$string['mediafile'] = 'メディアファイル';
 $string['minimumnumberofquestions'] = '最小問題数';
 $string['modattempts'] = '学生のレビューを許可';
 $string['modattemptsnoteacher'] = '学生レビューは学生のみに表示されます。';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.5 ALPHA (2005051500)
+      // assignment.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['allowresubmit'] = '再提出を許可する';
@@ -37,6 +37,7 @@ $string['failedupdatefeedback'] = 'ユーザ $a のフィードバック更新�
 $string['feedback'] = 'フィードバック';
 $string['feedbackfromteacher'] = '$a のフィードバック';
 $string['feedbackupdated'] = '$a の参加者に対するフィードバックの更新';
+$string['guestnoupload'] = '申し訳ございません、ゲストはアップロードできません。';
 $string['helpoffline'] = '<p>このタイプの課題は、Moodleの外で課題が行われる時に便利です。他のウェブサイト上での課題、対面により課される課題が考えられます。</p>
 <p>学生は課題の説明を読むことはできますが、ファイル等をアップロードすることはできません。評定は通常通り動作し、評定に関する通知メールが学生宛に送信されます。</p>';
 $string['helponline'] = '<p>このタイプの課題は、ユーザに通常の編集ツールを使用したテキストの編集を求めます。教師はオンラインでこれらを評定でき、インラインコメントの追加・変更を行うこともできます。</p>
