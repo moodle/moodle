@@ -574,7 +574,7 @@
             if ($lesson->slideshow) {
                 echo format_text($page->contents);
             } else {
-                print_simple_box(format_text($page->contents), 'center', '80%');
+                print_simple_box(format_text($page->contents), 'center');
             }
             echo "<br />\n";
             
