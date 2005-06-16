@@ -12,12 +12,12 @@ en de opmaak ondersteunt ook commentaar, namen voor de vragen, feedback en gewog
         Voor meerkeuzevragen worden foute antwoorden voorafgegaan door een tilde (~) en het juiste antwoord
         wordt voorafgegaan door een gelijkheidsteken (=).</p>
         <pre>     Wie is begraven in de tombe van Grant?{~Grant ~Jefferson =niemand}</pre>
-        <p>Het  <b>Gatentekst</b> formaat voegt automatisch een invullijn toe (zoals deze _____) in het midden van
+        <p>Het  <b>Gatentekst</b>-formaat voegt automatisch een invullijn toe (zoals deze _____) in het midden van
         de zin. Om het Gatentekstformaat te gebruiken plaats je de antwoorden op de plaats waar je in de zin de lijn
         wil laten verschijnen.</p>
-        <pre>     Grant is {~begraven =ter aarde besteld ~leeft} in Grant's tombe.</pre>
+        <pre>     Grant is {~begraven =ter aarde besteld ~leeft} in Grants tombe.</pre>
         <p>Als de antwoorden vóór het leesteken van het einde van de zin komen, dan zal er een invullijntje ingevoegd
-        worden voor het &quot;Gatentekst&quot; formaat. Alle vraagtypes kunnen als gatentekst geschreven worden.
+        worden voor het &quot;Gatentekst&quot;-formaat. Alle vraagtypes kunnen als gatentekst geschreven worden.
         </p>
         <p>Er moet een blanco regel ingevoegd worden (tweemaal op enter drukken) om de vragen te scheiden. Voor alle
         duidelijkheid: antwoorden kunnen geschreven worden op verschillende regels en zelfs met inspringen. Bijvoorbeeld:</p>
@@ -27,7 +27,7 @@ en de opmaak ondersteunt ook commentaar, namen voor de vragen, feedback en gewog
          ~tweede
          ~derde
          =vierde
-     } donderdag van November.
+     } donderdag van november.
      
      Van welk land kwamen de Japanse tekens oorspronkelijk? {
          ~India
@@ -42,7 +42,7 @@ en de opmaak ondersteunt ook commentaar, namen voor de vragen, feedback en gewog
         <p>Als er slechts <u>één</u> juist antwoord is, dan mag het geschreven worden zonder gelijkheidsteken, zolang
          het maar niet verward kan worden met Waar/Onwaar.</p>
         <p><u>Waar/Onwaar:</u><br />
-            Bij dit vraag-type geeft het antwoord aan of een stelling waar of onwaar is. Het antwoord moet geschreven worden als {TRUE} of {FALSE}, of afgekort als {T} of {F}.</p>
+            Bij dit vraagtype geeft het antwoord aan of een stelling waar of onwaar is. Het antwoord moet geschreven worden als {TRUE} of {FALSE}, of afgekort als {T} of {F}.</p>
         <pre>     Grant is begraven in de tombe van Grant.{F}
 
      De zon komt op in het oosten.{T}</pre>
@@ -65,19 +65,19 @@ en de opmaak ondersteunt ook commentaar, namen voor de vragen, feedback en gewog
  <p>Koppelvragen ondersteunen geen feedback of procentuele weging per antwoord.</p>
 
         <p><u>Numeriek:</u><br />
-           Het antwoordgedeelte voor numerieke vragen moet beginnen met een spoorwegteken (#). Numerieke antwoorden kunnen een foutenmarge bevatten, die onmiddellijk achter het juiste antwoord geschreven wordt, gescheiden door een komma. Als het juiste voorbeeld bijvoorbeeld ligt tussen de 1.5 en 2.5, dan schrijf je het als volgt <u>{#2:0.5}</u>. Dit geeft aan dat 2 met een foutenmarge van 0.5 juist is (het bereik van 1.5 tot 2.5). Als er geen foutenmarge gespecifieerd wordt, dan wordt er vanuitgegaan dat die 0 is.<br /><I>Nota van de vertaler: let op het gebruik van de komma -> als wiskundig teken moet een punt (.) gebruikt worden.</I></p>
-        <pre>     In welk jaar is Ulysses S. Grant geboren? {#1822}
+           Het antwoordgedeelte voor numerieke vragen moet beginnen met een hekje (#). Numerieke antwoorden kunnen een foutenmarge bevatten, die onmiddellijk achter het juiste antwoord geschreven wordt, gescheiden door een komma. Als het juiste voorbeeld bijvoorbeeld ligt tussen de 1.5 en 2.5, dan schrijf je het als volgt <u>{#2:0.5}</u>. Dit geeft aan dat 2 met een foutenmarge van 0.5 juist is (het bereik van 1.5 tot 2.5). Als er geen foutenmarge gespecifieerd wordt, dan wordt er vanuitgegaan dat die 0 is.<br /><I>Nota van de vertaler: let op het gebruik van de komma -> als wiskundig teken moet een punt (.) gebruikt worden.</I></p>
+        <pre>     In welk jaar werd Ulysses S. Grant geboren? {#1822}
 
      Welke waarde heeft het getal pi (tot 3 plaatsen na de komma)? {#3.1415:0.0005}.</pre>
-         <p>Optioneel kunnen numerieke antwoorden geschreven worden als een span op volgende manier {#<i>MinimumValue</i>..<i>MaximumValue</i>}.</p>
+         <p>Optioneel kunnen numerieke antwoorden op de volgende manier geschreven worden als een bereik {#<i>MinimumValue</i>..<i>MaximumValue</i>}.</p>
         <pre>     Welke waarde heeft het getal pi (tot 3 plaatsen na de komma)?{#3.141..3.142}.</pre>
 
 
-        <p>De grafische interface van Moodle's ondersteunt meerdere numerieke antwoorden per vraag niet, maar de code van Moodle kan het aan en GIFT ook. Die kan gebruikt worden om meerdere antwoorden op numerieke vragen in te geven en kan bijzonder nuttig zijn in combinatie met procentueel gewogen cijfers. Als meerdere antwoorden gebruikt worden, moeten zij gescheiden worden door een gelijkheidsteken, zoals korte antwoordvragen.</p>
-        <pre>     Wanneer is Ulysses S. Grant geboren? {#
+        <p>De grafische interface van Moodle ondersteunt meerdere numerieke antwoorden per vraag niet, maar de code van Moodle kan het aan en GIFT ook. Die kan gebruikt worden om meerdere antwoorden op numerieke vragen in te geven en kan bijzonder nuttig zijn in combinatie met procentueel gewogen cijfers. Als meerdere antwoorden gebruikt worden, moeten zij gescheiden worden door een gelijkheidsteken, zoals korte antwoordvragen.</p>
+        <pre>     Wanneer werd Ulysses S. Grant geboren? {#
          =1822:0
          =%50%1822:2}</pre>
-        <p>Omdat Moodle's grafische gebruikersinterface geen meerdere antwoorden voor numerieke vragen ondersteunt, is er geen enkele manier om ze te bekijken en te bewerken via Moodle. De enige manier om iets aan de numerieke vraag te veranderen is door ze te verwijderen en ze opnieuw te importeren (of iets te gebruken als phpMyadmin, rechtstreeks in de databank).</p>
+        <p>Omdat Moodles grafische gebruikersinterface geen meerdere antwoorden voor numerieke vragen ondersteunt, is er geen enkele manier om ze te bekijken en te bewerken via Moodle. De enige manier om iets aan de numerieke vraag te veranderen is door ze te verwijderen en ze opnieuw te importeren (of iets te gebruken als phpMyadmin, rechtstreeks in de databank).</p>
         <h3>OPTIES</h3>
         <p>Bijkomend bij deze basis vraagtypes, geeft deze filter je volgende extra mogelijkheden: inline commentaar, vragennamen, feedback en procentuele antwoordweging.</p>
         <p><u>Inline Commentaar:</u><br />
@@ -90,7 +90,7 @@ en de opmaak ondersteunt ook commentaar, namen voor de vragen, feedback en gewog
 
      ::Thanksgiving Date::De Amerikaanse feestdag Thanksgiving wordt gevierd op de {~tweede ~derde =vierde} donderdag van november.</pre>
         <p>Als er geen vraagnaam gegeven wordt, dan wordt standaard de hele vraag gebruikt als vraagnaam.</p>
-<p><u>Feedback:</u><br /> Feedback kan voor elk anwoord ingegeven worden door het na het antwoord te plaatsen, gescheiden door een spoorwegteken.</p>
+<p><u>Feedback:</u><br /> Feedback kan voor elk anwoord ingegeven worden door het na het antwoord te plaatsen, gescheiden door een hekje.</p>
 <pre>     Wat is het antwoord voor deze meerkeuzevraag?{
      ~fout antwoord#feedback voor dit fout antwoord
      ~nog een fout antwoord#feedback voor dit fout antwoord
@@ -100,41 +100,41 @@ en de opmaak ondersteunt ook commentaar, namen voor de vragen, feedback en gewog
      =niemand#schitterend antwoord!
      =helemaal niemand#schitterend antwoord!}
      
-     Grant is begraven in Grant's tomb.{FALSE#Niemand is begraven in Grant's tombe.}</pre>
+     Grant is begraven in Grants tomb.{FALSE#Niemand is begraven in Grant's tombe.}</pre>
 
-<p>Voor meerkeuzevragen wordt feedback alleen getoond voor het antwoord dat de leerling gekozen heeft. Voor kort antwoordvragen wordt feedback alleen getoond als de leerling het juiste antwoord gegeven heeft. Voor waar/onwaarvragen wordt de feedback zo bewaard dat hij getoond wordt als de vraag fout beantwoord wordt. Zo zou in het bovenstaande voorbeeld de leerling alleen feedback te zien krijgen als hij Waar als antwoord gekozen zou hebben.</p>
+<p>Voor meerkeuzevragen wordt feedback alleen getoond voor het antwoord dat de leerling gekozen heeft. Voor kort antwoordvragen wordt feedback alleen getoond als de leerling het juiste antwoord gegeven heeft. Voor waar/onwaarvragen wordt de feedback zo bewaard dat hij getoond wordt als de vraag fout beantwoord wordt. Zo zou in het bovenstaande voorbeeld de leerling alleen feedback te zien krijgen als hij Waar als antwoord had gekozen.</p>
 
-<p><u>Procentele weging:</u><br />
+<p><u>Procentuele weging:</u><br />
 Procentuele weging is beschikbaar voor meerkeuzevragen en voor kort antwoord vragen. De weging voor een antwoord kan ingegeven worden door onmiddellijk na de tilde (voor meerkeuzevragen) of het gelijkheidsteken (voor kort antwoord) het gewenste percentage te plaatsen, ingesloten door procenttekens (bijvoorbeeld %50% ). Deze optie kan gecombineerd worden met feedback.</p>
 <pre>     Moeilijke vraag.{~fout antwoord ~%50%antwoord op de helft van de punten =volledig juist antwoord}
           
      ::De stad van Jezus::Jesus was van {
      ~Jerusalem#Dit was een belangrijke stad, maar het foute antwoord.
      ~%25%Bethlehem#Daar is hij geboren, maar niet opgegroeid.
-     ~%50%Galilee#Je moet nauwkeuriger zijn.
+     ~%50%Galilea#Je moet nauwkeuriger zijn.
      =Nazareth#Ja, dat is juist!}.
      
      ::De stad van Jezus::Jesus was van {
      =Nazareth#Ja, dat is juist!
      =%75%Nazereth#Juist, maar fout geschreven.
-     =%25%Bethlehem#Hij was daar geboren, maar niet opgegroeid}</pre>
+     =%25%Bethlehem#Hij is daar geboren, maar niet opgegroeid}</pre>
 <p>Merk op dat de laatste twee voorbeelden nagenoeg dezelfde vragen zijn, eerst als meerkeuzevragen, dam als kort antwoord.</p>
 
-<p><small>Merk op dat het mogelijk is om procentuele wegingen te specifiëren die NIET mogelijk zijn via de grafisch gebruikersinterface. Zulke antwoordweging zal toch juist berekend worden (overeenkomend met de waarde die ingegeven is bij het importeren), en zal normaal verschijnen wanneer de leerling zijn test doet. Maar zulke antwoord-weging zal niet juist getoond worden aan de leraar, waneer de test achteraf via de interface om vragen te bewerken van Moodle bewerkt wordt. Het uitschuifmenu toont enkel enkele vastgelegde waarden. Wanneer de antwoord-weging niet juist overeenkomt met één van die vooraf gedefinieerde waarden, dan zullen ze niet juist getoond worden.Als je zo een vraag via de grafische interface bewerk, dan zal de antwoord-weging wijzigen in dat wat getoond wordt.</small></p>
+<p><small>Merk op dat het mogelijk is om procentuele wegingen te specifiëren die NIET mogelijk zijn via de grafisch gebruikersinterface. Zulke antwoordweging zal toch juist berekend worden (overeenkomend met de waarde die ingegeven is bij het importeren), en zal normaal verschijnen wanneer de leerling zijn test aflegt. Maar zulke antwoordweging zal niet juist getoond worden aan de leraar, wanneer de test achteraf via de interface om vragen te bewerken van Moodle bewerkt wordt. Het uitschuifmenu toont enkel enkele vastgelegde waarden. Wanneer de antwoordweging niet juist overeenkomt met één van die vooraf gedefinieerde waarden, dan zal ze niet juist getoond worden.Als je zo een vraag via de grafische interface bewerkt, zal de antwoordweging wijzigen in dat wat getoond wordt.</small></p>
 
 <p><u>Meerdere antwoorden mogelijk:</u><br />
-De meerdere antwoorden mogelijk-optie wordt gebruikt voor meerkeuzevragen wanneer twee of meer antwoorden gekozen moeten worden om alle punten te krijgen. De meerdere antwoorden mogelijk-optie wordt ingescakeld door een even grote deelwaarde toe te kennen aan meerdere antwoorden, terwijl geen enkel antwoord het maximumcijfer oplevert.</p>
+De optie "meerdere antwoorden mogelijk" wordt gebruikt voor meerkeuzevragen wanneer twee of meer antwoorden gekozen moeten worden om alle punten te krijgen. Deze optie wordt ingescakeld door een even grote deelwaarde toe te kennen aan meerdere antwoorden, terwijl geen enkel antwoord het maximumcijfer oplevert.</p>
 <pre>     Welke twee mensen liggen in de tombe van Grant? {
           ~Niemand
           ~%50%Grant
-          ~%50%Grant's vrouw
-          ~Grant's vader }</pre>
+          ~%50%Grants vrouw
+          ~Grants vader }</pre>
 <p>Merk op dat er in geen enkel antwoord een gelijkheidsteken (=) voorkomt en dat de som van de procenten niet hoger dan 100% mag liggen, anders geeft Moodle een foutmelding. Om te vermijden dat leerlingen 100% halen door gewoon alle anwoorden aan te vinken, kun je best een negatieve weging toekennen aan de foute antwoorden.</p>
-<pre>     WElke twee mensen liggen er begraven in Gran's tombe? {
+<pre>     Welke twee mensen liggen er begraven in Grants tombe? {
           ~%-50%Niemand
           ~%50%Grant
-          ~%50%Grant's vrouw
-          ~%-50%Grant's vader }</pre>
+          ~%50%Grants vrouw
+          ~%-50%Grants vader }</pre>
 
 <p><u>Speciale tekens ~ = # { } :</u><br />
     Deze symbolen <b> ~ = # { } </b> besturen deze filter en kunnen in de vragen niet als normale tekst gebruikt worden. Omdat deze tekens een speciale rol in het bepalen van de werking van deze filter hebben, worden ze "controletekens" genoemd. Het zou kunnen dat je één van deze tekens wil gebruiken in je vragen, zoals bijvoorbeeld in wiskundige formules. De manier om aan dit probleem te ontsnappen is deze karakters te "escapen". Je doet dit door een backslash (\) voor een controleteken te plaatsten zodat de filter weet dat je dit karakter letterlijk wil gebruiken en niet als controleteken.
@@ -144,8 +144,8 @@ De meerdere antwoorden mogelijk-optie wordt gebruikt voor meerkeuzevragen wannee
           = \= 2 + 3
           ~ \= 2 + 4  }
 
-     ::GIFT Controle karacters::
-     Welk van de onderstaande is GEEN controleteken voor het GIFT import formaat? {
+     ::GIFT Controlekarakters::
+     Welk van de onderstaande is GEEN controleteken voor het GIFT importformaat? {
         ~ \~     # \~ is een controleteken.
         ~ \=     # \= is een controleteken.
         ~ \#     # \# is een controleteken.
@@ -153,19 +153,19 @@ De meerdere antwoorden mogelijk-optie wordt gebruikt voor meerkeuzevragen wannee
         ~ \}     # \} is een controleteken.
         = \     # Juist! \ (backslash) is geen controleteken. MAAR, het wordt gebruikt om de controletekens te esacpen.
      }</pre>
-    <p>Wanneer de vraag geïmporteerd wordt, dan wordt de backslash verwijderd en niet bewaard in Moodle.</p>
+    <p>Wanneer de vraag geïmporteerd wordt, wordt de backslash verwijderd en niet bewaard in Moodle.</p>
 
         <p><u>Andere opties:</u><br />
-        Andere opties zijn mogelijk door het bewerken van de import filter <b>gift/format.php</b>. </p>
-<p>Kort antwoordvragen kunnen hoofdlettergevoelig gemaakt worden door &quot;0&quot; te veranderern naar &quot;1&quot; in de volgende lijn:<br />
+        Andere opties zijn mogelijk door het bewerken van de importfilter <b>gift/format.php</b>. </p>
+<p>Kort antwoordvragen kunnen hoofdlettergevoelig gemaakt worden door &quot;0&quot; te veranderen naar &quot;1&quot; in de volgende lijn:<br />
         <tt>$question-&gt;usecase = 0;  // Ignore case</tt></p>
 <p></p>
 <h3>PROBLEEMOPLOSSING EN HELP</h3>
-<p>De tekstcodering van je tekstbestand moet hetzelfde zijn als die van je Moodleinstallatie.</p>
+<p>De tekstcodering van je tekstbestand moet hetzelfde zijn als die van je Moodle-installatie.</p>
 <p>Een voorbeeldbestand met vragen kun je vinden op <a href="../../../../mod/quiz/format/gift/examples.txt">gift/examples.txt</a>.</p>
 <p>Voor vragen over deze filter, of als je fouten zou vinden, post deze dan in het Quiz module forum op Moodle.org.</p>
 <p></p>
 <h3>KREDIETEN</h3>
-<p>Deze filter is geschreven door de samenwerking van vele leden van de Moodlegemeenschap. Het was oorspronkelijk 
-gebaseerd op de filter van Gatentekst, die code van Martin Dougiamas, Thomas Robb en anderen bevat. Paul Tsuchido Shew schreef deze filter in December 2003 met daarin suggesties van de gemeenschap voor een meer robuust vragenformaat. De naam is samengesteld als een acroniem voor &quot;General Import Format Technology&quot; of iets dat er op lijkt, maar het is te lang voor een eenvoudige filter zoals dit, daarom gewoon GIFT.</p>
+<p>Deze filter is geschreven door de samenwerking van vele leden van de Moodlegemeenschap. Hij was oorspronkelijk 
+gebaseerd op de filter van Gatentekst, die code van Martin Dougiamas, Thomas Robb en anderen bevat. Paul Tsuchido Shew schreef deze filter in December 2003 met daarin suggesties van de gemeenschap voor een meer robuust vragenformaat. De naam is samengesteld als een acroniem voor &quot;General Import Format Technology&quot; of iets dat erop lijkt, maar het is te lang voor een eenvoudige filter zoals dit, daarom gewoon GIFT.</p>
         <p><small>GIFT documentatie door Paul Tsuchido Shew, 10 Jan 2004.</small></p>

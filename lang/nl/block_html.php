@@ -6,6 +6,6 @@ $string['configcontent'] = 'Inhoud';
 $string['configtitle'] = 'Bloktitel';
 $string['html'] = 'HTML';
 $string['leaveblanktohide'] = 'laat leeg om de titel te verbergen';
-$string['newhtmlblock'] = '(nieuw HTML blok)';
+$string['newhtmlblock'] = '(nieuw HTML-blok)';
 
 ?>

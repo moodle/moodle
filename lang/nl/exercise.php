@@ -34,7 +34,7 @@ $string['deletesubmissionwarning'] = 'Waarschuwing: er zijn $a beoordelingen gea
 Je wordt sterk geadviseerd om deze inzending NIET te verwijderen.';
 $string['deleting'] = 'Verwijdering';
 $string['description'] = 'Beschrijving';
-$string['descriptionofexercise'] = 'De beschrijving van de opdracht die door de $a gedaan moet worden in deze Oefening, wordt in een Word-document of in een HTML-bestand gezet. Dit bestand wordt in de Oefening geüploaded voor de opdracht voor de $a geopend wordt. Het is ook mogelijk een set varianten te maken van dezelfde opdracht of taak als Word- of HTML-documenten en deze te uploaden in de Oefening voor ze voor de $a geopend wordt.';
+$string['descriptionofexercise'] = 'De beschrijving van de opdracht die door de $a gedaan moet worden in deze Oefening, wordt in een Word-document of in een HTML-bestand gezet. Dit bestand wordt in de Oefening geüpload voor de opdracht voor de $a geopend wordt. Het is ook mogelijk een set varianten te maken van dezelfde opdracht of taak als Word- of HTML-documenten en deze te uploaden in de Oefening voor ze voor de $a geopend wordt.';
 $string['detailsofassessment'] = 'Details van de beoordeling';
 $string['displayoffinalgrades'] = 'Toon de totalen';
 $string['doubleupload'] = 'Waarschuwing: deze inzending is waarschijnlijk twee keer verzonden. Ga naar de Beheerpagina en controleer op twee inzendingen van deze gebruiker binnen een korte tijdsspanne. Verwijder één van deze inzendingen voor je verder gaat.';
