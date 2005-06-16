@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.5 ALPHA (2005051500)
+      // assignment.php - created with Moodle 1.5 + (2005060201)
 
 
 $string['allowresubmit'] = 'Tekrar göndermeye izin ver';
@@ -54,6 +54,7 @@ $string['modulename'] = 'Ödev';
 $string['modulenameplural'] = 'Ödevler';
 $string['newsubmissions'] = 'Gönderilmiþ Ödevler';
 $string['noassignments'] = 'Henüz bir ödev yok';
+$string['noattempts'] = 'Bu ödev için uygulama yapýlmadý';
 $string['notgradedyet'] = 'Henüz notlandýrýlmamýþ';
 $string['notsubmittedyet'] = 'Henüz gönderilmemiþ';
 $string['overwritewarning'] = 'Uyarý: Yüklediðiniz dosyayla DEÐÝÞTÝRÝLECEKTÝR';

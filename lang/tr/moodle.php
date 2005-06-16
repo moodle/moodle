@@ -1,8 +1,9 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 ALPHA (2005051500)
+      // moodle.php - created with Moodle 1.5 + (2005060201)
 
 
 $string['action'] = 'Eylem';
+$string['actions'] = 'Eylemler';
 $string['active'] = 'Etkin';
 $string['activities'] = 'Etkinlikler';
 $string['activity'] = 'Etkinlik';
@@ -498,6 +499,11 @@ $string['guestsnotallowed'] = 'Özür dileriz, \'$a\' dersine konuklarýn girmesine
 $string['guestsyes'] = 'Kayýt anahtarý olmayan konuklara izin ver';
 $string['guestuser'] = 'Konuk Kullanýcý';
 $string['guestuserinfo'] = 'Bu özel bir kullanýcýdýr ve bazý derslere sadece-okuma modunda girebilir.';
+$string['healthcenter'] = 'Servis Durumu';
+$string['healthproblemsdetected'] = 'Servis Sorunu Algýlandý!';
+$string['healthproblemsolution'] = 'Servis Sorunu Çözümü';
+$string['healthreturntomain'] = 'Devam Et';
+$string['healthsolution'] = 'Çözüm';
 $string['help'] = 'Yardým';
 $string['helpemoticons'] = 'Yüz ifadeleri kullan';
 $string['helpformatting'] = 'Yazý biçimlendirme hakkýnda';
@@ -907,6 +913,7 @@ $string['showgrades'] = 'Notlarý göster';
 $string['showlistofcourses'] = 'Ders listesini göster';
 $string['showonlytopic'] = 'Sadece $a konularýný göster';
 $string['showonlyweek'] = 'Sadece $a. haftayý göster';
+$string['showperpage'] = 'Her sayfada $a göster';
 $string['showrecent'] = 'Son etkinlikleri göster';
 $string['showreports'] = 'Etkinlik raporlarýný göster';
 $string['showsettings'] = 'Ayarlarý göster';
@@ -927,9 +934,9 @@ $string['sitesettings'] = 'Site ayarlarý';
 $string['siteteachers'] = 'Site eðitmenleri';
 $string['size'] = 'Boyut';
 $string['sizeb'] = 'byte';
-$string['sizegb'] = 'Gb';
-$string['sizekb'] = 'Kb';
-$string['sizemb'] = 'Mb';
+$string['sizegb'] = 'GB';
+$string['sizekb'] = 'KB';
+$string['sizemb'] = 'MB';
 $string['skypeid'] = 'Skype ID';
 $string['socialheadline'] = 'Sosyal forum - son konular';
 $string['someallowguest'] = 'Bazý derslerde konuk giriþlerine izin verilmektedir';
@@ -1055,6 +1062,7 @@ $string['usethiscourse'] = 'Bu kursu kullan';
 $string['usingexistingcourse'] = 'Var olan kurs kullanýlýyor';
 $string['version'] = 'Sürüm';
 $string['view'] = 'Bak';
+$string['viewsolution'] = 'çözüme bak';
 $string['virusfound'] = 'Yöneticinin dikkatine! Clam AV, $a->course kursu için $a->user kullanýcýsý tarafýndan gönderilen dosyada  bir virüs buldu. Clamscan çýktýsý:';
 $string['virusfoundlater'] = '$a->course kursu için, $a->date tarihinde $a->filename olarak gönderdiðiniz dosyada bir virüs bulundu. Dosyanýza ne olduðu ile ilgili özet bilgi:
 
