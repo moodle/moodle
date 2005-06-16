@@ -2,7 +2,7 @@
 
     require_once("../../config.php");
 
-    require_variable($id);   // course
+    $id = required_param( 'id', 0, PARAM_INT ); // course
 
     if (!empty($CFG->forcelogin)) {
         require_login();

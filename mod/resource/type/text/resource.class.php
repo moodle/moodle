@@ -87,7 +87,8 @@ function display() {
 
     $pagetitle = strip_tags($course->shortname.': '.format_string($resource->name));
     $formatoptions->noclean = true;
-    $inpopup = !empty($_GET["inpopup"]);
+    $inpopup_param = optional_param( 'inpopup', '' );
+    $inpopup = !empty($inpopup_param);
 
     if ($resource->popup) {
         if ($inpopup) {                    /// Popup only

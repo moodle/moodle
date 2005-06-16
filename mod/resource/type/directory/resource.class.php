@@ -19,8 +19,8 @@ function display() {
     $resource = $this->resource; 
 
     require_once($CFG->libdir.'/filelib.php');
- 
-    $subdir = isset($_GET['subdir']) ? $_GET['subdir'] : '';
+
+    $subdir = optional_param( 'subdir','' ); 
 
     add_to_log($course->id, "resource", "view", "view.php?id={$cm->id}", $resource->id, $cm->id);
 

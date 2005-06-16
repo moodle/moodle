@@ -3,7 +3,7 @@
     require_once("../../config.php");
     require_once("lib.php");
 
-    require_variable($id);   // course
+    $id = require_param('id',PARAM_INT);   // course
 
     redirect("$CFG->wwwroot/course/view.php?id=$id");
 

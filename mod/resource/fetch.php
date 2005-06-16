@@ -4,8 +4,8 @@
     require_once("../../config.php");
     require_once("lib.php");
 
-    require_variable($id);     // Course Module ID
-    require_variable($url);    // url to fetch
+    $id = required_param('id',0,PARAM_INT);     // Course Module ID
+    $url = required_param('url');    // url to fetch
 
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");
