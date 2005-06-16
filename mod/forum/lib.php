@@ -1280,14 +1280,13 @@ function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
 
     return get_records_sql("SELECT $postdata, d.name, d.timemodified, d.usermodified, d.groupid,
                                    u.firstname, u.lastname, u.email, u.picture $umfields
-                              FROM {$CFG->prefix}forum_discussions d,
-                                   {$CFG->prefix}forum_posts p,
-                                   {$CFG->prefix}user u  
+                              FROM {$CFG->prefix}forum_discussions d
+                              JOIN {$CFG->prefix}forum_posts p ON p.discussion = d.id
+                              JOIN {$CFG->prefix}user u ON p.userid = u.id
                                    $umtable
                              WHERE d.forum = '$forum'
-                               AND p.discussion = d.id
                                AND p.parent = 0
-                               AND p.userid = u.id $groupselect $userselect 
+                                   $groupselect $userselect 
                           ORDER BY $forumsort $limit");
 }
 
