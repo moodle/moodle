@@ -1,6 +1,6 @@
 <?php // $Id$ 
 
-$string['alternatelogin'] = 'Si vous spécifiez ici une URL here, elle sera utilisée comme page de connexion pour ce site. La page doit contenir un formulaire dont la propriété «&nbsp;action&nbsp;» est <strong>$a</strong> et doit contenir les champs <strong>username</strong> et <strong>password</strong>.<br />Attention à donner une URL correcte, sans quoi vous risquez de ne plus pouvoir accéder au site.<br />Pour utiliser la page de connexion par défaut, laissez ce champ vide.';
+$string['alternatelogin'] = 'Si vous spécifiez ici une URL, elle sera utilisée comme page de connexion pour ce site. La page doit contenir un formulaire dont la propriété «&nbsp;action&nbsp;» est <strong>$a</strong> et doit contenir les champs <strong>username</strong> et <strong>password</strong>.<br />Attention à donner une URL correcte, sans quoi vous risquez de ne plus pouvoir accéder au site.<br />Pour utiliser la page de connexion par défaut, laissez ce champ vide.';
 $string['alternateloginurl'] = 'URL de la page de connexion de rechange';
 $string['auth_cas_baseuri'] = 'Adresse URI du serveur CAS (ne rien mettre s\'il n\'y en a pas).<br />par exemple, si le serveur CAS répond à l\'adresse «&nbsp;host.domaine.fr/CAS/&nbsp;», la valeur à indiquer ici est «&nbsp;CAS/&nbsp;».';
 $string['auth_cas_create_user'] = 'Veuillez activer cette option si vous voulez insérer dans la base de données de Moodle les utilisateurs authentifiés par le CAS. Dans le cas contraire, seuls les utilisateurs déjà présents dans la base de données de Moodle pourront se connecter.';
