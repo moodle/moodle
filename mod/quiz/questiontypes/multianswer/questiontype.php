@@ -472,9 +472,9 @@ function quiz_qtype_multianswer_extract_question($text) {
             {
                 $wrapped->answer[] = $numregs[NUMERICAL_CORRECT_ANSWER];
                 if ($numregs[NUMERICAL_ABS_ERROR_MARGIN]) {
-                    $wrapped->tolerance = $numregs[NUMERICAL_ABS_ERROR_MARGIN];
+                    $wrapped->tolerance[] = $numregs[NUMERICAL_ABS_ERROR_MARGIN];
                 } else {
-                    $wrapped->tolerance = 0;
+                    $wrapped->tolerance[] = 0;
                 }
             } else { // Tolerance can stay undefined for non numerical questions
                 $wrapped->answer[] = $altregs[ANSWER_ALTERNATIVE_REGEX_ANSWER];
