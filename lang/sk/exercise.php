@@ -37,10 +37,10 @@ $string['deletesubmissionwarning'] = 'Upozornenie: toto odovzdané zadanie u¾ bol
 Rozhodne Vám ho doporuèujeme NEODSTRAÒOVA«.';
 $string['deleting'] = 'Odstraòuje sa';
 $string['description'] = 'Popis';
-$string['descriptionofexercise'] = 'Polo¾ka Zadanie úlohy obsahuje popis cvièenia alebo úlohy, ktoré majú $a splni», zadaných vo Wordovskom dokumente alebo HTML súbore. Tento súbor sa skopíruje do cvièenia skôr, ako majú u¾ívatelia $a toto zadanie sprístupnené. Je tie¾ mo¾né vytvori» sadu variant toho istého cvièenia alebo úlohy, opä» vo Worde alebo v HTML a skopírova» ich do cvièení predtým, ako ho budú ma» u¾ívatelia $a sprístupnené.';
+$string['descriptionofexercise'] = 'Polo¾ka Zadanie úlohy obsahuje popis cvièenia alebo úlohy, ktoré majú $a splni», zadaných vo Wordovskom dokumente alebo HTML súbore. Tento súbor sa skopíruje do cvièenia skôr, ako majú pou¾ívatelia $a toto zadanie sprístupnené. Je tie¾ mo¾né vytvori» sadu variant toho istého cvièenia alebo úlohy, opä» vo Worde alebo v HTML a skopírova» ich do cvièení predtým, ako ho budú ma» pou¾ívatelia $a sprístupnené.';
 $string['detailsofassessment'] = 'Podrobnosti hodnotenia';
 $string['displayoffinalgrades'] = 'Zobrazenie koneènej známky';
-$string['doubleupload'] = 'Varovanie: toto rie¹enie úlohy bolo pravdepodobne poslané dvakrát. Choïte na stránku Administratíva a zistite, èi tento u¾ívateµ poslal dve rie¹enia v krátkom èasovom intervale. Predtým, ako budete pokraèova», vyma¾te jedno z týchto rie¹ení.';
+$string['doubleupload'] = 'Varovanie: toto rie¹enie úlohy bolo pravdepodobne poslané dvakrát. Choïte na stránku Administratíva a zistite, èi tento pou¾ívateµ poslal dve rie¹enia v krátkom èasovom intervale. Predtým, ako budete pokraèova», vyma¾te jedno z týchto rie¹ení.';
 $string['duedate'] = 'Dátum uzávierky';
 $string['edit'] = 'Upravi»';
 $string['editingassessmentelements'] = 'Úprava polo¾iek hodnotenia';
@@ -124,7 +124,7 @@ $string['present'] = 'Obsahuje';
 $string['reasonforadjustment'] = 'Dôvod úpravy';
 $string['reassess'] = 'Prehodnoti»';
 $string['regradestudentassessments'] = 'Prebodova» hodnotenie ¹tudentov';
-$string['resubmissionfor'] = 'Znovuodovzdanie u¾ívateµom $a';
+$string['resubmissionfor'] = 'Znovuodovzdanie pou¾ívateµom $a';
 $string['resubmitnote'] = '* znamená, ¾e $a má povolené opakované zaslanie rie¹enia úlohy.<br />
 Toto oznaèenie mô¾e by» pridelené akejkoµvek odovzdanej úlohe jej prehodnotením a kliknutím <br />na tlaèidlo <b>Povoli» pre $a znovuodovzdanie</b>.<br />
 ©tudent mô¾e znovuodovzda» úlohu, ak je toto oznaèenie prítomné na <b>ktorejkoµvek</b> z jeho odovzdaných úloh.';
@@ -147,7 +147,7 @@ $string['specimenassessmentform'] = 'Vzorový formulár hodnotenia';
 $string['standarddeviation'] = 'Smerodajná odchýlka';
 $string['strict'] = 'Presný';
 $string['studentallowedtoresubmit'] = '$a MÔ®E znovuodovzdáva» zadanie';
-$string['studentassessments'] = 'Hodnotenie u¾ívateµa $a ';
+$string['studentassessments'] = 'Hodnotenie pou¾ívateµa $a ';
 $string['studentnotallowed'] = '$a NEMÔ®E znovuodovzdáva» zadanie';
 $string['studentsubmissions'] = '$a odovzdaných zadaní';
 $string['studentsubmissionsforassessment'] = '$a ©tudentmi odovzdané úlohy na hodnotenie';

@@ -5,7 +5,7 @@
 $string['analysisoptions'] = 'Mo¾nosti analýzy';
 $string['analysistitle'] = 'Tabuµka analyzovaných polo¾iek';
 $string['attemptsall'] = 'v¹etky pokusy';
-$string['attemptselection'] = 'Pokusy, ktoré sa najú analyzova» u u¾ívateµa';
+$string['attemptselection'] = 'Pokusy, ktoré sa najú analyzova» u pou¾ívateµa';
 $string['attemptsfirst'] = 'prvý pokus';
 $string['attemptshighest'] = 'najvy¹¹ia známka';
 $string['attemptslast'] = 'posledný pokus';

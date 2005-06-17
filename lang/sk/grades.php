@@ -4,7 +4,7 @@
 
 $string['addcategory'] = 'Prida» kategóriu';
 $string['addcategoryerror'] = 'Nebolo mo¾né prida» kategóriu';
-$string['addexceptionerror'] = 'Pri pridávaní výnimky pre id u¾ívateµa: gradeitem sa vyskytla chyba';
+$string['addexceptionerror'] = 'Pri pridávaní výnimky pre id pou¾ívateµa: gradeitem sa vyskytla chyba';
 $string['allgrades'] = 'V¹etky známky podµa kategórie';
 $string['allstudents'] = 'V¹etci ¹tudenti';
 $string['average'] = 'Priemer';

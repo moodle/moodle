@@ -15,6 +15,6 @@ $string['filelockedmail'] = 'Textový súbor, ktorý pou¾ívate pre zápisy do kurzov
 $string['filelockedmailsubject'] = 'Dôle¾itá chyba: Súbor so zápismi';
 $string['location'] = 'Umiestnenie súboru';
 $string['mailadmin'] = 'Upozorni» administrátora emailom';
-$string['mailusers'] = 'Upozorni» u¾ívateµov emailom';
+$string['mailusers'] = 'Upozorni» pou¾ívateµov emailom';
 
 ?>

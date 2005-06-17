@@ -14,11 +14,11 @@ $string['configfilenotwritten'] = 'In¹talaèný skript nebol schopný automaticky v
 $string['configfilewritten'] = 'súbor config.php bol úspe¹ne vytvorený';
 $string['configurationcomplete'] = 'Konfigurácia ukonèená';
 $string['database'] = 'Databáza';
-$string['databasesettings'] = 'Teraz potrebujete nastavi» databázu, kde bude uchovávaná väè¹ina údajov Moodle. Táto databáza v¹ak musí by» predtým vytvorená a tie¾ musí by» vytvorené u¾ívateµské meno a prístupové heslo.<br /><br /><br />
+$string['databasesettings'] = 'Teraz potrebujete nastavi» databázu, kde bude uchovávaná väè¹ina údajov Moodle. Táto databáza v¹ak musí by» predtým vytvorená a tie¾ musí by» vytvorené pou¾ívateµské meno a prístupové heslo.<br /><br /><br />
 <b>Typ:</b> mysql alebo postgres7<br />
 <b>Host:</b> napr. localhost alebo db.isp.com<br />
 <b>Meno:</b> meno databázy, napr. moodle<br />
-<b>U¾ívateµ:</b> u¾ívateµské meno Va¹ej databázy<br />
+<b>Pou¾ívateµ:</b> pou¾ívateµské meno Va¹ej databázy<br />
 <b>Heslo:</b> heslo Va¹ej databázy<br />
 <b>Predpona tabuliek:</b> nepovinná predpona pre v¹etky mená tabuliek';
 $string['dataroot'] = 'Adresár pre údaje';
@@ -35,7 +35,7 @@ $string['directorysettings'] = '<p>Prosím, potvrïte umiestnenie in¹talácie Moodl
 
 <p><b>Adresár Moodle:</b> ©pecifikujte celú cestu k adresáru a tejto in¹talácii. Ubezpeète sa, ¾e ste korektne pou¾ili veµké a malé písmená.</p>
 
-<p><b>Adresár pre údaje:</b> Potrebujete miesto, kde Moodle bude uklada» prená¹ané súbory. Tento adresár by mal by» u¾ívateµovi webového servera prístupný aj na èítanie, aj na ZAPISOVANIE (zvyèajne \'nobody\' alebo \'apache\'), ale nemalo by sa da» k nemu pristupova» priamo z webu.</p>';
+<p><b>Adresár pre údaje:</b> Potrebujete miesto, kde Moodle bude uklada» prená¹ané súbory. Tento adresár by mal by» pou¾ívateµovi webového servera prístupný aj na èítanie, aj na ZAPISOVANIE (zvyèajne \'nobody\' alebo \'apache\'), ale nemalo by sa da» k nemu pristupova» priamo z webu.</p>';
 $string['dirroot'] = 'Adresár Moodle';
 $string['dirrooterror'] = 'Nastavenia v \'Adresári Moodle\' sú nesprávne - nemô¾eme tu nájs» in¹taláciu Moodle. Hodnota dole bola vynulovaná.';
 $string['download'] = 'Stiahnu»';
@@ -44,14 +44,14 @@ $string['fileuploads'] = 'prenesené súbory';
 $string['fileuploadserror'] = 'Toto by malo by» zapnuté';
 $string['fileuploadshelp'] = '<p>Zdá sa, ¾e na Va¹om serveri nie je aktivovaný prenos súborov.</p>
 
-<p>Moodle mô¾e by» aj napriek tomu nain¹talovaný, ale bez tejto mo¾nosti, nebudete schopní prenies» súbory kurzu, alebo obrázky v nových u¾ívateµských profiloch.</p>
+<p>Moodle mô¾e by» aj napriek tomu nain¹talovaný, ale bez tejto mo¾nosti, nebudete schopní prenies» súbory kurzu, alebo obrázky v nových pou¾ívateµských profiloch.</p>
 
 <p>Na aktivovanie prenosu súborov, Vy (alebo Vá¹ systémový administrátor) budete musie» upravi» main php.ini súbor v systéme a zmeni» nastavenie pre <b>file_uploads</b> na \'1\'.</p>';
 $string['gdversion'] = 'Verzia kni¾nice GD';
 $string['gdversionerror'] = 'Kni¾nica GD by mala existova» na spracovávanie a vytváranie obrázkov';
 $string['gdversionhelp'] = '<p>Na Va¹om serveri zrejme nie je nain¹talovaná GD kni¾nica.</p>
 
-<p>GD je kni¾nica, ktorú si vy¾aduje PHP, aby mohlo Moodle povoli» spracováva» obrázky (napr. ikony v u¾ívateµských profiloch) a vytvára» nové obrázky (napr. grafy z prihlásení). Moodle bude stále pracova» bez GD - tieto mo¾nosti budú dostupné len Vám.</p>
+<p>GD je kni¾nica, ktorú si vy¾aduje PHP, aby mohlo Moodle povoli» spracováva» obrázky (napr. ikony v pou¾ívateµských profiloch) a vytvára» nové obrázky (napr. grafy z prihlásení). Moodle bude stále pracova» bez GD - tieto mo¾nosti budú dostupné len Vám.</p>
 
 <p>Keï chcete prida» GD do PHP pod Unixom, vytvorte PHP pou¾itím --with-gd parameter.</p>
 
@@ -70,7 +70,7 @@ $string['memorylimit'] = 'Limit pamäte';
 $string['memorylimiterror'] = 'PHP limit pamäte je nastavený na minimum...S týmto mô¾ete ma» neskôr problémy.';
 $string['memorylimithelp'] = '<p>PHP limit pamäte pre Vá¹ server je momentálne nastavený na $a.</p>
 
-<p>Toto mô¾e neskôr spôsobi» problémy v Moodle, najmä ak máte veµa modulov a/alebo veµa u¾ívateµov.</p>
+<p>Toto mô¾e neskôr spôsobi» problémy v Moodle, najmä ak máte veµa modulov a/alebo veµa pou¾ívateµov.</p>
 
 <p>Odporúèame Vám, aby ste nastavili PHP s vy¹¹ím limitom pamäte, ak je to mo¾né, napr. 16M. Na to existuje veµa spôsobov, ktoré mô¾ete vyskú¹a»:</p>
 <ol>

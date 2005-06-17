@@ -3,9 +3,9 @@
 
 
 $string['addentry'] = 'Pridajte Vá¹ obµúbený citát!';
-$string['askaddentry'] = 'Ak mô¾u u¾ívatelia pridáva» záznamy do slovníku, zobraz odkaz s týmto textom';
-$string['askinvisible'] = 'Ak nemô¾u u¾ívatelia pridáva» záznamy do slovníku, zobraz tento text (bez odkazu)';
-$string['askviewglossary'] = 'Ak si u¾ívatelia mô¾u prezera» slovník, ale nemô¾u doòho vklada» polo¾ky, zobraz odkaz s týmto textom';
+$string['askaddentry'] = 'Ak mô¾u pou¾ívatelia pridáva» záznamy do slovníku, zobraz odkaz s týmto textom';
+$string['askinvisible'] = 'Ak nemô¾u pou¾ívatelia pridáva» záznamy do slovníku, zobraz tento text (bez odkazu)';
+$string['askviewglossary'] = 'Ak si pou¾ívatelia mô¾u prezera» slovník, ale nemô¾u doòho vklada» polo¾ky, zobraz odkaz s týmto textom';
 $string['blockname'] = 'Náhodná polo¾ka slovníku';
 $string['intro'] = 'Uistite sa, ¾e máte vo svojom kurze aspoò jeden slovník s aspoò jedným záznamom. Potom mô¾ete upravi» nasledujúce nastavenia';
 $string['invisible'] = '(pokraèovanie)';
