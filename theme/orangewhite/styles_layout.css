@@ -232,6 +232,9 @@ h6.main {
   padding-bottom:0.2em;
   border-bottom:1px solid
 }
+.block_rss_client .title {
+  padding-top:0
+}
 
 /***
  *** Calendar
