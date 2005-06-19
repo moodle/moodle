@@ -1,7 +1,8 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.5 ALPHA (2005042300)
+      // auth.php - created with Moodle 1.5 + (2005060201)
 
 
+$string['alternateloginurl'] = 'Alternatif giriþ URL';
 $string['auth_common_settings'] = 'Genel Ayarlar';
 $string['auth_dbfieldpass'] = 'Þifreyi içeren alan adý';
 $string['auth_dbfielduser'] = 'Kullanýcý adýný içeren alan adý';
@@ -16,7 +17,11 @@ $string['auth_dbuser'] = 'Veritabaný kullanýcýsý';
 $string['auth_emaildescription'] = 'Email onayý varsayýlan yetkilendirme yöntemidir. Kullanýcý kendi seçtiði kullanýcý adý ve þifreyle kaydolduðunda kullanýcýnýn adresine bir onay emaili gönderilir. Bu email, kullanýcýnýn hesabýný onaylayabileceði güvenli bir baðlantý içerir.';
 $string['auth_emailtitle'] = 'Email-temelli yetki';
 $string['auth_fctitle'] = 'FirstClass sunucusu kullan';
+$string['auth_fieldlock'] = 'Deðeri kilitle';
+$string['auth_fieldlock_expl'] = '<p><b>Deðeri kilitle:</b> Etkinleþtirilirse, bu alanýn kullanýcýlar ve yöneticiler tarafýndan düzenlenmesi engellenecektir. Harici yetkilendirme sistemlerinde bu alaný düzenliyorsanýz bu seçeneði kullanabilirsiniz.</p>';
+$string['auth_fieldlocks'] = 'Kullanýcý alanlarýný kilitle';
 $string['auth_imaptitle'] = 'IMAP sunucu kullan';
+$string['auth_ldap_login_settings'] = 'Giriþ ayarlarý';
 $string['auth_ldaptitle'] = 'LDAP sunucu kullan';
 $string['auth_manualtitle'] = 'Sadece elle ayarlanabilir hesaplar';
 $string['auth_nntptitle'] = 'NNTP sunucu kullan';
