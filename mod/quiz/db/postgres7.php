@@ -531,7 +531,7 @@ function quiz_upgrade($oldversion) {
                                 flags integer NOT NULL default '0'
                               );");
 
-        modify_database ('', "CREATE UNIQUE INDEX prefix_quiz_rqp_type_name_uk ON prefix_quiz_rqp_type (name);");
+        modify_database ('', "CREATE UNIQUE INDEX prefix_quiz_rqp_types_name_uk ON prefix_quiz_rqp_types (name);");
 
         commit_sql();
     }
