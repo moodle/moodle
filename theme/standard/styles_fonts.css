@@ -520,19 +520,17 @@ body#mod-forum-index .generalbox .cell {
 .glossarypost .commands {
   font-size: 0.8em;
 }
-.glossarypost .entryheader .author,
-.glossarypost .entryheader .time {
+.glossarypost .author {
   font-size: 0.8em;
 }
-.glossarypost .entryheader .time {
-  font-style: italic;
+.glossarypost .time {
+  font-size: 0.8em;
 }
 .concept {
   font-weight: bold;
 }
-.glossarycomment .time {
+.glossarycomment .author {
   font-size: 0.8em;
-  font-style: italic;
 }
 .entrylowersection .aliases {
   font-size: 0.8em;
