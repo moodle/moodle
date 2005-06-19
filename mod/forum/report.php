@@ -48,7 +48,7 @@
         echo "<tr>";
         echo "<th>&nbsp;</th>";
         echo "<th><a href=\"report.php?id=$post->id&amp;sort=u.firstname\">$strname</a>";
-        echo "<th width=\"100%\"><a \"href=report.php?id=$post->id&amp;sort=r.rating\">$strrating</a>";
+        echo "<th width=\"100%\"><a href=\"report.php?id=$post->id&amp;sort=r.rating\">$strrating</a>";
         echo "<th><a href=\"report.php?id=$post->id&amp;sort=r.time\">$strtime</a>";
         foreach ($ratings as $rating) {
             if (isteacher($discussion->course, $rating->id)) {
