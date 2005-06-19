@@ -53,11 +53,11 @@
                 echo '<tr>';
             }
             echo '<td class="picture">';
-            print_user_picture($rating->id, $glossary->course, $rating->picture);
+            print_user_picture($rating->id, $glossary->course, $rating->picture, false, false, true, true);
             echo '</td>';
-            echo '<td nowrap="nowrap" class="author">'.fullname($rating).'</td>';
-            echo '<td nowrap="nowrap" align="center" class="author">'.$scalemenu[$rating->rating].'</td>';
-            echo '<td nowrap="nowrap" align="center" class="author">'.userdate($rating->time).'</td>';
+            echo '<td nowrap="nowrap" class="author"><a target="_blank" href="'.$CFG->wwwroot.'/user/view.php?id='.$rating->id.'&amp;course='.$glossary->course.'">'.fullname($rating).'</a></td>';
+            echo '<td nowrap="nowrap" align="center" class="rating">'.$scalemenu[$rating->rating].'</td>';
+            echo '<td nowrap="nowrap" align="center" class="time">'.userdate($rating->time).'</td>';
             echo "</tr>\n";
         }
         echo "</table>";
