@@ -353,7 +353,18 @@
 
             /// highlight the term if necessary
             if ($mode == 'search') {
-                $entry->highlight = $hook;
+                //We have to strip any word starting by + and take out words starting by -
+                //to make highlight works properly
+                $searchterms = explode(' ', $hook);    // Search for words independently
+                foreach ($searchterms as $key => $searchterm) {
+                    if (preg_match('/^\-/',$searchterm)) {
+                        unset($searchterms[$key]);
+                    } else {
+                        $searchterms[$key] = preg_replace('/^\+/','',$searchterm);
+                    }
+                }
+                $strippedsearch = implode(' ', $searchterms);    // Rebuild the string
+                $entry->highlight = $strippedsearch;
             }
 
             /// and finally print the entry.
