@@ -418,7 +418,7 @@ CREATE TABLE prefix_quiz_rqp_types (
   flags integer NOT NULL default '0'
 );
 
-CREATE UNIQUE INDEX prefix_quiz_rqp_type_name_uk ON prefix_quiz_rqp_type (name);
+CREATE UNIQUE INDEX prefix_quiz_rqp_types_name_uk ON prefix_quiz_rqp_types (name);
 
 
 # --------------------------------------------------------
