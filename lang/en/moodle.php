@@ -101,6 +101,7 @@ $string['autosubscribeyes'] = 'Yes: when I post, subscribe me to that forum';
 $string['availability'] = 'Availability';
 $string['availablecourses'] = 'Available Courses';
 $string['backup'] = 'Backup';
+$string['backupcancelled'] = 'Backup Cancelled';
 $string['backupcoursefileshelp'] = 'If enabled then course files will be included in automated backups';
 $string['backupdate'] = 'Backup Date';
 $string['backupdetails'] = 'Backup Details';
