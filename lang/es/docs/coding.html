@@ -10,12 +10,13 @@
 <h1>Manual de Estilo del C&oacute;digo</h1> 
 <p class="normaltext">Cualquier proyecto colaborativo necesita que la consistencia 
   y la estabilidad sean fuertes.</p>
-<p class="normaltext">Este manual de estilo ha sido escrito para conseguir que 
-  todo el c&oacute;digo de Moodle cumpla estas caracter&iacute;sticas. Es cierto 
-  que la parte m&aacute;s antigua del c&oacute;digo no cumple lo aqu&iacute; especificado 
-  en algunos casos, pero esto ser&aacute; solucionado en breve. Todo el c&oacute;digo 
-  nuevo definitivamente deber&aacute; adherirse a estos est&aacute;ndares de la 
-  forma m&aacute;s exacta posible.</p>
+<p class="normaltext">Este manual de estilo ha sido escrito para conseguir que
+   todo el c&oacute;digo de Moodle cumpla estas caracter&iacute;sticas. Es cierto
+    que la parte m&aacute;s antigua del c&oacute;digo no cumple lo aqu&iacute; especificado
+     en algunos casos, pero esto ser&aacute; solucionado gradualmente.
+     Todo el c&oacute;digo
+      nuevo definitivamente deber&aacute; adherirse a estos est&aacute;ndares
+      de la  forma m&aacute;s exacta posible.</p>
 <h2>Reglas Generales</h2>
 <ol class="normaltext">
   <li class="spaced">Todos los archivos con c&oacute;digo deber&iacute;an utilizar la extensi&oacute;n
@@ -27,8 +28,8 @@
        ?&gt;</font> ... no 'reducidas' como <font color="#339900">&lt;?
        ?&gt;</font>. 
   </li>
-  <li class="spaced">Todos los avisos de copyright deben ser mantenidos. Puedes
-    incluir los tuyos propios si resulta necesario.</li>
+  <li class="spaced">Todos los avisos de copyright deben ser mantenidos. Puede
+    incluir los suyos propios si resulta necesario.</li>
   <li class="spaced">Todos los archivos deben incluir el archivo principal config.php.</li>
   <li class="spaced">Cada archivo deber&iacute;a comprobar que el usuario est&aacute; autenticado
     correctamente, utilizando las funciones require_login() y
@@ -36,37 +37,41 @@
     isteacher(),
     iscreator()
     o isstudent().</li>
-  <li class="spaced">Todos los accesos a la base de datos deber&iacute;an utilizar 
-    las funciones definidas en lib/datalib.php cuando sea posible - esto permite 
-    la compatibilidad con un gran n&uacute;mero de bases de datos. Deber&iacute;as 
-    encontrar que pr&aacute;cticamente todo es posible utilizando estas funciones. 
-    Si quieres escribir c&oacute;digo SQL entonces deber&aacute;s comprobar que: 
-    funciona en cualquier plataforma; restringido a funciones espec&iacute;ficas 
-    de tu c&oacute;digo (normalmente un archivo lib.php); y claramente comentado.</li>
-  <li class="spaced">No crees o utilices variables globales distintas de las
+  <li class="spaced">Todos los accesos a la base de datos deber&iacute;an utilizar
+     las funciones definidas en lib/datalib.php cuando sea posible - esto permite
+    
+    la compatibilidad con un gran n&uacute;mero de bases de datos. Deber&iacute;a
+     encontrar que pr&aacute;cticamente todo es posible utilizando estas funciones.
+      Si quiere escribir c&oacute;digo SQL entonces deber&aacute; comprobar
+      que:  funciona en cualquier plataforma; restringido a funciones espec&iacute;ficas
+       de su c&oacute;digo (normalmente un archivo lib.php); y claramente comentado.</li>
+  <li class="spaced">No cree o utilice variables globales distintas de las
     est&aacute;ndar $CFG, $SESSION, $THEME y $USER.</li>
   <li class="spaced">Todas las variables deber&iacute;an ser inicializadas o, al menos,
     comprobada su existencia utilizando  isset()
     o empty()
     antes de ser utilizadas.</li>
-  <li class="spaced">Todas las cadenas deber&iacute;an ser traducibles - crea nuevos
-    textos en los archivos &quot;lang/es&quot; files
-    con palabras reducidas en ingl&eacute;s y su traducci&oacute;n completa al Espa&ntilde;ol y recup&eacute;ralas
-    en tu c&oacute;digo utilizando las funciones  get_string() or print_string().</li>
-  <li class="spaced">Todos los ficheros de ayuda deben ser traducibles - crea
-    nuevos textos en el directorio &quot;en/help&quot; y ll&aacute;malos utilizando
+  <li class="spaced">Todas las cadenas deber&iacute;an ser traducibles - cree
+    nuevos textos en los archivos &quot;lang/es&quot; files
+    con palabras reducidas en ingl&eacute;s y su traducci&oacute;n completa al
+    Espa&ntilde;ol y recup&eacute;relas
+    en su c&oacute;digo utilizando las funciones  get_string() or print_string().</li>
+  <li class="spaced">Todos los ficheros de ayuda deben ser traducibles - cree
+    nuevos textos en el directorio &quot;en/help&quot; y ll&aacute;melos utilizando
     la funci&oacute;n helpbutton().
-    <p>Si necesitas actualizar un fichero de ayuda:</p> 
+    <p>Si necesita actualizar un fichero de ayuda:</p> 
      <ul>
-      <li>para un peque&ntilde;o cambio, donde la traducci&oacute;n antigua del fichero
-        podr&iacute;a tener todav&iacute;a sentido, est&aacute; permitido que hagas el cambio, pero
-        deber&iacute;as notific&aacute;rselo a  translation@moodle.org</li>
-      <li>para un cambio importante tendr&aacute;s que crear un nuevo fichero a&ntilde;adiendole
+      <li>para un peque&ntilde;o cambio, donde la traducci&oacute;n antigua del
+        fichero podr&iacute;a tener todav&iacute;a sentido, est&aacute; permitido
+        que haga el cambio, pero deber&iacute;a notific&aacute;rselo a  translation@moodle.org</li>
+      <li>para un cambio importante tendr&aacute; que crear un nuevo fichero
+        a&ntilde;adiendole
         en el nombre un numero incrementado 
         (p.ej. filename2.html)
         para que los traductores puedan ver facilmente que se trata de una nueva
-        versi&oacute;n del archivo. Obviamente el nuevo c&oacute;digo y los &iacute;ndices de las
-        p&aacute;ginas de ayuda deben ser modificados para apuntar a las versiones m&aacute;s
+        versi&oacute;n del archivo. Obviamente el nuevo c&oacute;digo y los &iacute;ndices
+        de las p&aacute;ginas de ayuda deben ser modificados para apuntar a las
+        versiones m&aacute;s
         recientes.</li>
     </ul>
   </li>
@@ -78,26 +83,28 @@
     <font color="#339900">addslashes()</font> antes de insertarla en la base de 
     datos.</li>
 	  <li class="spaced">IMPORTANTE: Todos los textos dentro de Moodle, especialmente
-	    aqueloos que han sido introducidos por los usuarios, deben ser mostrados
-	    utilizando la funci&oacute;n format_text(). Esto asegura que el texto es filtrado
-	    y limpiado correctamente.</li>
+	    aquellos que han sido introducidos por los usuarios, deben ser mostrados
+	    utilizando la funci&oacute;n format_text(). Esto asegura que el texto es
+	    filtrado y limpiado correctamente.</li>
 </ol>
 <p>&nbsp;</p>
 <h2>Estilo del C&oacute;digo</h2>
-<p class="normaltext">Comprendo que puede ser un poco frustrante modificar tu 
-  estilo de programaci&oacute;n si has trabajado en otras cosas, pero compara 
-  esa frustraci&oacute;n con la frustraci&oacute;n de toda la gente que intente, 
-  m&aacute;s adelante, encontrar el sentido del c&oacute;digo de Moodle si es 
-  una mezcla de estilos. Obviamente, hay muchos puntos a favor y en contra de 
-  cada estilo que la gente utiliza, pero el que se detalla aqu&iacute; es el que 
-  deber&aacute;s utilizar.</p>
+<p class="normaltext">Comprendo que puede ser un poco frustrante modificar su
+   estilo de programaci&oacute;n si ha trabajado en otras cosas, pero compara
+    esa frustraci&oacute;n con la frustraci&oacute;n de toda la gente que intente,
+     m&aacute;s adelante, encontrar el sentido del c&oacute;digo de Moodle si
+     es  una mezcla de estilos. Obviamente, hay muchos puntos a favor y en contra
+     de 
+  cada estilo que la gente utiliza, pero el que se detalla aqu&iacute; es el
+  que  deber&aacute; utilizar.</p>
 <ol class="normaltext">
   <li class="spaced"><strong>El sangrado</strong> del texto debe ser siempre
     de 4 espacios. No utilices los tabuladosres NUNCA.</li>
   <li class="spaced"><strong>Los nombres de las variables</strong> tienen que
-    ser siempre f&aacute;ciles de leer, procurando que sean palabras en min&uacute;sculas con
-    significado en Ingl&eacute;s. Si realmente necesitas m&aacute;s de una palabra, ponlas
-    juntas, pero procura mantenerlas tan breves como sea posible. Utiliza nombres
+    ser siempre f&aacute;ciles de leer, procurando que sean palabras en min&uacute;sculas
+    con significado en Ingl&eacute;s. Si realmente necesita m&aacute;s de una
+    palabra, p&oacute;ngalas juntas, pero procure mantenerlas tan breves como sea posible.
+    Utilize nombres
     en plural para las matrices de objetos.
     <p class="examplecode"><font color="#006600">BIEN</font><font color="#006600">:
         $quiz<br />
@@ -117,13 +124,13 @@
     <p class="examplecode"><font color="#006600">define(&quot;FORUM_MODE_FLATOLDEST&quot;, 
       1);</font></p>
   </li>
-  <li class="spaced"><strong>Los nombres de las funciones</strong> tienen que 
-    ser palabras sencillas en min&uacute;sculas y en Ingl&eacute;s, y empezar 
-    con el nombre del m&oacute;dulo al que pertenecen para evitar conflictos entre 
-    m&oacute;dulos. Las palabras deber&iacute;an separarse por guiones bajos. 
-    Los par&aacute;mentros, si es posible, tendr&aacute;n valores por defecto. 
-    F&iacute;jate en que no haya espacio entre el nombre de la funci&oacute;n 
-    y lo siguiente (par&eacute;ntesis).<br />
+  <li class="spaced"><strong>Los nombres de las funciones</strong> tienen que
+     ser palabras sencillas en min&uacute;sculas y en Ingl&eacute;s, y empezar
+      con el nombre del m&oacute;dulo al que pertenecen para evitar conflictos
+      entre  m&oacute;dulos. Las palabras deber&iacute;an separarse por guiones
+      bajos.  Los par&aacute;mentros, si es posible, tendr&aacute;n valores por
+      defecto.  Compruebe que no haya espacio entre el nombre de la funci&oacute;n
+       y lo siguiente (par&eacute;ntesis).<br />
     <p class="examplecode"> <font color="#007700">function </font><font color="#0000BB">forum_set_display_mode</font><font color="#007700">(</font><font color="#0000BB">$mode</font><font color="#007700">=</font><font color="#0000BB">0</font><font color="#007700">) 
       {<br />
       &nbsp;&nbsp;&nbsp;&nbsp;global </font><font color="#0000BB">$USER</font><font color="#007700">, 
@@ -204,9 +211,9 @@
   
   
   <li class="spaced"><strong>El espacio en blanco</strong> se puede utilizar
-    con bastante libertad - no te preocupes por separar las cosas un poco para
-    ganar en claridad. Generalmente, deber&iacute;a haber un espacio entre llaves y
-    l&iacute;neas normales y ninguno entre llaves y variables o funciones:<br />
+    con bastante libertad - no se preocupe por separar las cosas un poco para
+    ganar en claridad. Generalmente, deber&iacute;a haber un espacio entre llaves
+    y l&iacute;neas normales y ninguno entre llaves y variables o funciones:<br />
     <p class="examplecode"> <font color="#007700">foreach (</font><font color="#0000BB">$objects 
       </font><font color="#007700">as </font><font color="#0000BB">$key </font><font color="#007700">=&gt;</font><font color="#0000BB"> 
       $thing</font><font color="#007700">)</font><font color="#006600"> {<br />
@@ -244,9 +251,9 @@
       <li><strong>name</strong> - el nombre completo de la instancia</li>
     </ul>
   </li>
-  <li class="spaced">El resto de las tablas asociadas con un m&oacute;dulo que 
-    contiene informaci&oacute;n sobre 'cosas', deber&iacute;an ser llamandas <strong>modulo_cosas 
-    </strong>(f&iacute;jate en el plural!).</li>
+  <li class="spaced">El resto de las tablas asociadas con un m&oacute;dulo que
+     contiene informaci&oacute;n sobre 'cosas', deber&iacute;an ser llamandas <strong>modulo_cosas 
+    </strong>(f&iacute;jese en el plural!).</li>
   <li class="spaced">Los nombres de los campos (columnas) deber&iacute;an ser sencillos
     y cortos, siguiendo las mismas reglas que los nombres de las variables.</li>
   <li class="spaced">Cuando sea posible, las columnas que contengan una referencia
@@ -261,6 +268,72 @@
     que ser&aacute; actualizado con la fecha actual (timestamp de UNIX) obtenida con
     la funci&oacute;n <strong>time</strong>()
     de PHP.</li>
+</ol>
+<p>&nbsp;</p>
+<h2>Normas de Seguridad (y control de la informaci&oacute;n de formularios y URLs)</h2>
+<ol class="normaltext">
+  <li class="spaced">No se base en  'register_globals'. <strong>Cada</strong> variable
+    debe ser correctamente inicializada en <strong>cada</strong> fichero de c&oacute;digo.
+    Debe ser obvia la procedencia de cada variable.</li>
+  <li class="spaced">Inicialice todos los arrays y objetos aunque est&eacute;n vac&iacute;os. <code>$a
+      = array()</code>
+    o <code>$obj = new stdClass();</code>.</li>
+  <li class="spaced">No utilice la funci&oacute;n <code>optional_variable()</code>.
+    En su lugar, utilice la funci&oacute;n <code>optional_param()</code>. Seleccione
+    la opci&oacute;n PARAM_XXXX apropiada al tipo de par&aacute;metro que espera. Para comprobar
+    y definir un valor opcional para una variable, utilice la funci&oacute;n <code>set_default()</code>.</li>
+  <li class="spaced">No utilice la funci&oacute;n <code>require_variable()</code>.
+    En su lugar, utilice la funci&oacute;n <code>required_param()</code>. Seleccione
+    la opci&oacute;n PARAM_XXXX apropiada al tipo de par&aacute;metro que espera.</li>
+  <li class="spaced">No utilice <code>$_GET</code>, <code>$_POST</code> o<code> $_REQUEST</code>.
+    En su lugar, utilice las funciones <code>required_param()</code> o <code>optional_param()</code> apropiadas.</li>
+  <li class="spaced">No compruebe las acciones con c&oacute;digo como: <code>if
+      (isset($_GET['algo']))</code>. 
+    Utilice, por ejemplo, <code>$algo = optional_param( algo,'',PARAM_ALPHA
+    )</code> y compruebe con la funci&oacute;n <code>empty()</code>,
+    o (si 'empty' es un posible valor) utilice la funci&oacute;n <code>isset_param()</code>.</li>
+  <li class="spaced">Cuando sea posible agrupe todas sus llamadas a <code>required_param()</code>, <code>optional_param()</code>
+    y el resto de inicializaci&oacute;n de variables en el principio de cada fichero
+      (o funci&oacute;n) para que sea f&aacute;cilmenente localizable.</li>
+  <li class="spaced">Utilice el mecanismo  'sesskey' para proteger el env&iacute;o de
+    formularios de ataques. Un ejemplo de uso: cuando el formulario es generado,
+    incluya <code>&lt;input
+    type="hidden" name="sesskey" value="&lt;?php
+    echo sesskey(); ?&gt;" /&gt;</code>.
+    Cuando el formulario es procesado, compruebe <code>if (!confirm_sesskey())
+    {error('Bad Session Key');}</code>.</li> 
+  <li class="spaced">Todos los nombres de ficheros deben ser 'limpiados' utilizando
+    la funci&oacute;n <code>clean_filename()</code>,
+    si esto no ha sido realizado con el uso de las funciones <code>required_param()</code> o <code>optional_param()</code>
+con anterioridad. </li>
+  <li class="spaced">Cualquier informaci&oacute;n le&iacute;da desde la base de datos debe
+    tener la funci&oacute;n <code>addslashes()</code> aplicada antes de volver
+    a enviar la informaci&oacute;n a la base de datos. Un objeto completo puede ser
+    procesado con la funci&oacute;n <code>addslashes_object()</code>.</li>
+  <li class="spaced">Cuando sea posible, la informaci&oacute;n que se almacenar&aacute; en
+    la base de datos debe venir de peticiones <code>POST</code>
+    (por ejemplo, informaci&oacute;n de un formulario) en lugar de utilizar peticiones <code>GET</code>    (por
+    ejemplo, informaci&oacute;n de la URL).</li>
+  <li class="spaced">No utilice informaci&oacute;n obtenida de <code>$_SERVER</code> si
+    puede evitarlo. Presenta algunos problemas de portabilidad.</li>
+  <li class="spaced">Si no ha sido realizado en ning&uacute;n otro lugar, asegurese
+    de que la informaci&oacute;n enviada a la base de datos ha sido filtrada mediante
+    la funci&oacute;n <code>clean_param()</code> utilizando la opci&oacute;n PARAM_XXXX
+    apropiada.</li>
+  <li class="spaced">Si escribe c&oacute;digo SQL, asegurese completamente de que es
+    correcto. En particular, compruebe la falta de comillas en las variables
+    utilizadas.
+    Es un punto de entrada para ataques de tipo
+    'SQL injection'.</li>
+  <li class="spaced">Compruebe toda la informaci&oacute;n (especialmente la que es enviada
+    a la base de datos) en <strong>cada</strong>
+    archivo que es utilizada. Nunca conf&iacute;e en que otro c&oacute;digo estar&aacute; haciendo
+    ese trabajo.</li>
+  <li class="spaced">Los bloques de c&oacute;digo que se incluyan deben presentar una
+    estructura PHP correcta  (por ejemplo, con una declaraci&oacute;n de una clase,
+    de funci&oacute;nes, etc.) -
+    los bloques de c&oacute;digo lineales (&quot;espagueti&quot;) suelen tender a utilizar variables
+    sin inicializar (y son menos legibles).</li>
 </ol>
 <hr />
 <p align="center"><font size="1"><a href="." target="_top">Documentaci&oacute;n de Moodle</a></font></p>
