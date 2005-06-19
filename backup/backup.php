@@ -56,8 +56,20 @@
     }
     $stradministration = get_string("administration");
 
-    //If no course has been selected or cancel button pressed
-    if (!$id or $cancel) {
+    //If cancel has been selected, go back to course main page (bug 2817)
+    if ($cancel) {
+        if ($id) {
+            $redirecto = $CFG->wwwroot . '/course/view.php?id=' . $id; //Course page
+        } else {
+            $redirecto = $CFG->wwwroot;
+        }
+        redirect ($redirecto, get_string('backupcancelled')); //Site page
+        exit;
+    }
+
+    //If no course has been selected, show a list of available courses
+
+    if (!$id) {
         print_header("$site->shortname: $strcoursebackup", $site->fullname,
                      "<a href=\"$CFG->wwwroot/$CFG->admin/index.php\">$stradministration</a> -> $strcoursebackup");
 
