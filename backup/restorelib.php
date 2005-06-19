@@ -498,8 +498,12 @@
             //$course->showrecent = addslashes($course_header->course_showrecent);   INFO: This is out in 1.3
             $course->maxbytes = addslashes($course_header->course_maxbytes);
             $course->showreports = addslashes($course_header->course_showreports);
-            $course->groupmode = addslashes($course_header->course_groupmode);
-            $course->groupmodeforce = addslashes($course_header->course_groupmodeforce);
+            if (isset($course_header->course_groupmode)) {
+                $course->groupmode = addslashes($course_header->course_groupmode);
+            }
+            if (isset($course_header->course_groupmodeforce)) {
+                $course->groupmodeforce = addslashes($course_header->course_groupmodeforce);
+            }
             $course->lang = addslashes($course_header->course_lang);
             $course->theme = addslashes($course_header->course_theme);
             $course->cost = addslashes($course_header->course_cost);
@@ -839,7 +843,9 @@
                                     $course_module->score = $mod->score;
                                     $course_module->indent = $mod->indent;
                                     $course_module->visible = $mod->visible;
-                                    $course_module->groupmode = $mod->groupmode;
+                                    if (isset($mod->groupmode)) {
+                                        $course_module->groupmode = $mod->groupmode;
+                                    }
                                     $course_module->instance = 0;
                                     //NOTE: The instance (new) is calculated and updated in db in the
                                     //      final step of the restore. We don't know it yet.
