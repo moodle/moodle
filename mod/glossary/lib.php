@@ -1516,8 +1516,12 @@ function glossary_print_comment($course, $cm, $glossary, $entry, $comment) {
     print_user_picture($user->id, $course->id, $user->picture);
     echo '</td>';
     echo '<td class="entryheader">';
-    echo "<span class=\"author\"><a href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id\">$fullname</a></span><br />";
-    echo '<span class="time">'.get_string('lastedited').': '.userdate($comment->timemodified).'</span>';
+
+    $fullname = fullname($user, isteacher($course->id));
+    $by->name = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$course->id.'">'.$fullname.'</a>';
+    $by->date = userdate($comment->timemodified);
+    echo '<span class="author">'.get_string('bynameondate', 'forum', $by).'</span>';
+
     echo '</td></tr>';
 
     echo '<tr valign="top"><td class="left side">';
