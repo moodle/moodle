@@ -364,14 +364,18 @@ function quiz_qtype_multianswer_extract_question($text) {
     // Regexes are always awkard when defined but more comprehensible
     // when used as constants in the executive code
 
-    // ANSWER_ALTERNATIVE regexes
+    // Handle the entity encoded ampersand in entities (e.g. &amp;lt; -> &lt;)
+    $text = preg_replace('/&amp;(.{2,9}?;)/', '&${1}', $text);
 
+    // ANSWER_ALTERNATIVE regexes
     define("ANSWER_ALTERNATIVE_FRACTION_REGEX",
            '=|%(-?[0-9]+)%');
     define("ANSWER_ALTERNATIVE_ANSWER_REGEX",
-            '[^~#}]+');
+            '.+?(?<!\\\\)(?=[~#}]|$)');
+            //'[^~#}]+');
     define("ANSWER_ALTERNATIVE_FEEDBACK_REGEX",
-            '[^~}]*');
+            '.*?(?<!\\\\)(?=[~}]|$)');
+            //'[//^~}]*');
     define("ANSWER_ALTERNATIVE_REGEX",
            '(' . ANSWER_ALTERNATIVE_FRACTION_REGEX .')?'
            . '(' . ANSWER_ALTERNATIVE_ANSWER_REGEX . ')'
@@ -405,7 +409,7 @@ function quiz_qtype_multianswer_extract_question($text) {
             . '(' . ANSWER_ALTERNATIVE_REGEX
             . '(~'
             . ANSWER_ALTERNATIVE_REGEX
-            . ')*)}' );
+            . ')*)\}' );
 
     // Parenthesis positions for singulars in ANSWER_REGEX
     define("ANSWER_REGEX_NORM", 1);
@@ -420,24 +424,24 @@ function quiz_qtype_multianswer_extract_question($text) {
 
     $question = new stdClass;
     $question->qtype= MULTIANSWER;
-    $question->questiontext= $text;
+    $question->questiontext= stripslashes($text);
     $question->options->questions = array();
     $question->defaultgrade = 0; // Will be increased for each answer norm
 
     for ($positionkey=1
-        ; ereg(ANSWER_REGEX, $question->questiontext, $answerregs)
+        ; preg_match('/'.ANSWER_REGEX.'/', $question->questiontext, $answerregs)
         ; ++$positionkey ) {
         $wrapped = new stdClass;
         $wrapped->defaultgrade = $answerregs[ANSWER_REGEX_NORM]
             or $wrapped->defaultgrade = '1';
-        if ($answerregs[ANSWER_REGEX_ANSWER_TYPE_NUMERICAL]) {
+        if (!empty($answerregs[ANSWER_REGEX_ANSWER_TYPE_NUMERICAL])) {
             $wrapped->qtype = NUMERICAL;
             $wrapped->multiplier = array();
             $wrapped->units      = array();
-        } else if($answerregs[ANSWER_REGEX_ANSWER_TYPE_SHORTANSWER]) {
+        } else if(!empty($answerregs[ANSWER_REGEX_ANSWER_TYPE_SHORTANSWER])) {
             $wrapped->qtype = SHORTANSWER;
             $wrapped->usecase = 0;
-        } else if($answerregs[ANSWER_REGEX_ANSWER_TYPE_MULTICHOICE]){
+        } else if(!empty($answerregs[ANSWER_REGEX_ANSWER_TYPE_MULTICHOICE])) {
             $wrapped->qtype = MULTICHOICE;
             $wrapped->single = 1;
         } else {
@@ -451,11 +455,11 @@ function quiz_qtype_multianswer_extract_question($text) {
         $wrapped->answer   = array();
         $wrapped->fraction = array();
         $wrapped->feedback = array();
-        $wrapped->questiontext = $answerregs[0];
+        $wrapped->questiontext = addslashes($answerregs[0]);
         $wrapped->questiontextformat = 0;
 
         $remainingalts = $answerregs[ANSWER_REGEX_ALTERNATIVES];
-        while (ereg(ANSWER_ALTERNATIVE_REGEX, $remainingalts, $altregs)) {
+        while (preg_match('/~?'.ANSWER_ALTERNATIVE_REGEX.'/', $remainingalts, $altregs)) {
             if ('=' == $altregs[ANSWER_ALTERNATIVE_REGEX_FRACTION]) {
                 $wrapped->fraction[] = '1';
             } else if ($percentile =
@@ -464,8 +468,10 @@ function quiz_qtype_multianswer_extract_question($text) {
             } else {
                 $wrapped->fraction[] = '0';
             }
-            $wrapped->feedback[] = $altregs[ANSWER_ALTERNATIVE_REGEX_FEEDBACK];
-            if ($answerregs[ANSWER_REGEX_ANSWER_TYPE_NUMERICAL]
+            $wrapped->feedback[] =
+             isset($altregs[ANSWER_ALTERNATIVE_REGEX_FEEDBACK])
+             ? $altregs[ANSWER_ALTERNATIVE_REGEX_FEEDBACK] : '';
+            if (!empty($answerregs[ANSWER_REGEX_ANSWER_TYPE_NUMERICAL])
                     && ereg(NUMERICAL_ALTERNATIVE_REGEX,
                             $altregs[ANSWER_ALTERNATIVE_REGEX_ANSWER],
                             $numregs) )
