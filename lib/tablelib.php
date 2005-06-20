@@ -30,6 +30,8 @@ class flexible_table {
     var $pagesize    = 30;
     var $currpage    = 0;
     var $totalrows   = 0;
+    var $sort_default_column = NULL;
+    var $sort_default_order  = SORT_ASC;
 
     function flexible_table($uniqueid) {
         $this->uniqueid = $uniqueid;
@@ -43,8 +45,10 @@ class flexible_table {
         );
     }
 
-    function sortable($bool) {
+    function sortable($bool, $defaultcolumn = NULL, $defaultorder = SORT_ASC) {
         $this->is_sortable = $bool;
+        $this->sort_default_column = $defaultcolumn;
+        $this->sort_default_order  = $defaultorder;
     }
 
     function collapsible($bool) {
@@ -220,6 +224,11 @@ class flexible_table {
                     }
                 }
             }
+        }
+
+        // If we didn't sort just now, then use the default sort order if one is defined and the column exists
+        if(empty($this->sess->sortby) && !empty($this->sort_default_column) && isset($this->columns[$this->sort_default_column])) {
+            $this->sess->sortby = array ($this->sort_default_column => ($this->sort_default_order == SORT_DESC ? SORT_DESC : SORT_ASC));
         }
 
         if(isset($_GET[$this->request[TABLE_VAR_ILAST]])) {
