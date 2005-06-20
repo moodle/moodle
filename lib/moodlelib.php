@@ -4371,6 +4371,9 @@ function get_string($identifier, $module='', $a=NULL) {
         $module = 'moodle';
     }
 
+    // if $a happens to have % in it, double it so sprintf() doesn't break
+    $a = str_replace( '%','%%',$a );
+
 /// Define the two or three major locations of language strings for this module
 
     $locations = array( $CFG->dataroot.'/lang/',  $CFG->dirroot.'/lang/' );

@@ -257,7 +257,7 @@ $CFG->admin = 'admin';
 //     $CFG->apacheloguser = 3; // Log username. 
 // To get the values logged in Apache's log, add to your httpd.conf
 // the following statements. In the General part put:
-//     LogFormat "%h %l %{MOODLEUSER}n %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\"" moodleformat
+//     LogFormat "%h %l %{MOODLEUSER}n %t \"%r\" %s %b \"%{Referer}i\" \"%{User-Agent}i\"" moodleformat
 // And in the part specific to your Moodle install / virtualhost:
 //     CustomLog "/your/path/to/log" moodleformat
 // CAUTION: Use of this option will expose usernames in the Apache log,
