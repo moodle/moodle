@@ -101,6 +101,7 @@ $string['autosubscribeyes'] = 'Sí, cuando envíe un mensaje suscríbame a ese foro
 $string['availability'] = 'Disponibilidad';
 $string['availablecourses'] = 'Cursos disponibles';
 $string['backup'] = 'Copia de seguridad';
+$string['backupcancelled'] = 'Copia de seguridad cancelada';
 $string['backupcoursefileshelp'] = 'Si se activa, los archivos del curso se incluirán en copias de seguridad automatizadas';
 $string['backupdate'] = 'Fecha de la copia de seguridad';
 $string['backupdetails'] = 'Detalles de la copia de seguridad';
