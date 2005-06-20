@@ -99,6 +99,7 @@ $string['autosubscribeyes'] = 'Oui, m\'inscrire automatiquement au forum si j\'y
 $string['availability'] = 'Disponibilité';
 $string['availablecourses'] = 'Cours disponibles';
 $string['backup'] = 'Sauvegarde';
+$string['backupcancelled'] = 'Sauvegarde annulée';
 $string['backupcoursefileshelp'] = 'Une fois cette option activée, les fichiers des cours seront inclus dans les sauvegardes automatiques';
 $string['backupdate'] = 'Date de la sauvegarde';
 $string['backupdetails'] = 'Détails de la sauvegarde';
