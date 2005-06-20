@@ -142,7 +142,7 @@
         $table->define_headers($tableheaders);
         $table->define_baseurl($baseurl);
 
-        $table->sortable(true);
+        $table->sortable(true, 'lastaccess', SORT_DESC);
 
         $table->set_attribute('cellspacing', '0');
         $table->set_attribute('id', 'teachers');
@@ -252,7 +252,7 @@
     $table->define_headers($tableheaders);
     $table->define_baseurl($baseurl);
 
-    $table->sortable(true);
+    $table->sortable(true, 'lastaccess', SORT_DESC);
 
     $table->set_attribute('cellspacing', '0');
     $table->set_attribute('id', 'students');
