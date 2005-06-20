@@ -176,25 +176,8 @@ $string['frontpagedescription'] = "Front page 說明";
 $string['frontpageformat'] = "Front page 格式";
 $string['fulllistofcourses'] = "所有課程";
 $string['fullname'] = "名稱";
-$string['fullnamedisplay'] = '$a->lastname $a->firstname';
 $string['fullprofile'] = "個人完整資料";
 $string['fullsitename'] = "網站名稱";
-$string['gd1'] = "GD 1.x is installed";
-$string['gd2'] = "GD 2.x is installed";
-$string['gdnot'] = "GD is not installed";
-$string['gpl'] = "Copyright (C) 2001-2002  Martin Dougiamas  (http://dougiamas.com)
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details:
-
-http://www.gnu.org/copyleft/gpl.html";
 $string['grade'] = "分數";
 $string['grades'] = "分數";
 $string['guestskey'] = "允許有課程密碼者進入(不需註冊也可以)";
@@ -407,7 +390,6 @@ $string['secs'] = "秒";
 $string['section'] = "Section";
 $string['selectacountry'] = "選擇國別";
 $string['senddetails'] = "以電子郵件傳送 詳細資訊";
-$string['separateandconnected'] = "Separate and Connected ways of knowing";
 $string['serverlocaltime'] = "伺服器時間";
 $string['settings'] = "設定課程資訊";
 $string['shortname'] = "課程簡稱/代碼";
@@ -433,7 +415,6 @@ $string['someerrorswerefound'] = "缺乏部分資料或不完整. 請觀看以下訊息.";
 $string['startdate'] = "課程開始日期";
 $string['startsignup'] = "申請一個使用者帳號!";
 $string['status'] = "狀態";
-$string['stringsnotset'] = "The following strings are not defined in \$a";
 $string['studentnotallowed'] = "抱歉, 你無法以 '\$a' 身分進入本課程";
 $string['success'] = "成功 ";
 $string['summary'] = "摘要";
@@ -447,7 +428,7 @@ $string['thanks'] = "謝謝";
 $string['theme'] = "顯示格式";
 $string['themesaved'] = "儲存新的顯示格式";
 $string['thischarset'] = "Big5";
-$string['thislanguage'] = "Taiwan";
+$string['thislanguage'] = "&#27491;&#39636;&#20013;&#25991;";
 $string['timezone'] = "時區";
 $string['today'] = "今日";
 $string['todaylogs'] = "今日的紀錄";
