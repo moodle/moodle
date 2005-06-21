@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.5 ALPHA (2005051500)
+      // assignment.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['allowresubmit'] = 'Sta herhaald insturen toe';
@@ -35,6 +35,7 @@ $string['failedupdatefeedback'] = 'Het updaten van de feedback op de ingestuurde
 $string['feedback'] = 'Feedback';
 $string['feedbackfromteacher'] = 'Feedback van de $a';
 $string['feedbackupdated'] = 'De feedback op ingestuurde opdrachten is voor $a mensen bijgewerkt';
+$string['guestnoupload'] = 'Sorry, gasten mogen geen bestanden uploaden';
 $string['helpoffline'] = '<p>Dit is nuttig wanneer de opdracht buiten Moodle gebeurt. Dat kan ergens anders op het web zijn of face-to-face.</p><p>Leerlingen kunnen een beschrijving van de opdracht zien, maar kunnen geen bestanden uploaden. Je kunt gewoon cijfers geven en leerlingen kunnen die dan inkijken.</p>';
 $string['helponline'] = '<p>Dit type opdracht vraagt gebruikers een tekst te bewerken. Leraren kunnen die dan on line beoordelen en zelfs verbeteren en wijzigingen aanbrengen in de tekst.</p>
 <p>(Als je vertrouwd bent met oudere versies van Moodle, dan lijkt dit type opdracht erg op de vroegere logboek module.)</p>';

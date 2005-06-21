@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.6 development (2005052400)
+      // lesson.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['accesscontrol'] = 'Toegangscontrole';
@@ -123,6 +123,8 @@ $string['maximumnumberofanswersbranches'] = 'Maximumaantal antwoorden/vertakking
 $string['maximumnumberofattempts'] = 'Maximumaantal pogingen';
 $string['maxtime'] = 'Tijdslimiet (minuten)';
 $string['maxtimewarning'] = 'Je hebt $a minuten om de les af te werken.';
+$string['mediafile'] = 'Mediabestand';
+$string['mediafilepopup'] = 'Klik hier om het mediabestand van deze les te bekijken';
 $string['minimumnumberofquestions'] = 'Minimumaantal vragen';
 $string['modattempts'] = 'Laat leerling nalezen';
 $string['modattemptsnoteacher'] = 'Nalezen werkt alleen voor leerlingen';
