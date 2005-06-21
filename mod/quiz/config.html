@@ -261,7 +261,7 @@
 
 
 <tr valign="top">
-  <?php include('reviewoptions.html'); ?>
+  <?php include($CFG->dirroot . '/mod/quiz/reviewoptions.html'); ?>
   <td align="center">
     <input type="hidden" name="fix_review" value="0" />
     <input type="checkbox" name="fix_review" value="1" <?php p($CFG->quiz_fix_review ? "checked" : "") ?> />
