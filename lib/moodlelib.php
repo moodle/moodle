@@ -4243,6 +4243,30 @@ function print_string($identifier, $module='', $a=NULL) {
 }
 
 /**
+ * fix up the optional data in get_string()/print_string() etc
+ * ensure possible sprintf() format characters are escaped correctly
+ * needs to handle arbitrary strings and objects
+ * @param mixed $a An object, string or number that can be used
+ * @return mixed the supplied parameter 'cleaned'
+ */
+function clean_a( $a ) {
+    if (is_string($a)) {
+        return str_replace( '%','%%',$a );
+    }
+    elseif (is_object($a)) {
+        $a_vars = get_object_vars( $a );
+        $new_a_vars = array();
+        foreach ($a_vars as $fname => $a_var) {
+            $new_a_vars[$fname] = clean_a( $a_var );
+        }
+        return (object)$new_a_vars;
+    } 
+    else {
+        return $a;
+    }
+}
+
+/**
  * Returns a localized string.
  *
  * Returns the translated string specified by $identifier as
@@ -4312,7 +4336,7 @@ function get_string($identifier, $module='', $a=NULL) {
     }
 
     // if $a happens to have % in it, double it so sprintf() doesn't break
-    $a = str_replace( '%','%%',$a );
+    $a = clean_a( $a );
 
 /// Define the two or three major locations of language strings for this module
 
