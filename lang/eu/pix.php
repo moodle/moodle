@@ -1,19 +1,26 @@
 <?PHP // $Id$ 
-      // pix.php - created with Moodle 1.4 + (2004083100)
+      // pix.php - created with Moodle 1.4.1 (2004083101)
 
 
 $string['angry'] = 'Haserre';
 $string['approve'] = 'Ondo da';
+$string['biggrin'] = 'Barrea';
+$string['blackeye'] = 'Pirata';
+$string['blush'] = 'Lotsatuta';
 $string['clown'] = 'Pailazoa';
 $string['cool'] = 'Primeran';
-$string['dead'] = 'Jota';
+$string['dead'] = 'Hilik';
 $string['evil'] = 'Deabrua';
-$string['kiss'] = 'Musua';
-$string['sad'] = 'Goibel';
-$string['shy'] = 'Lotsak';
-$string['sleepy'] = 'Erdi lo';
-$string['smiley'] = 'Irribarre';
-$string['surprise'] = 'Harrituta';
-$string['tongueout'] = 'Arnas estuka';
+$string['kiss'] = 'Musuak';
+$string['mixed'] = 'Erdipurdika';
+$string['sad'] = 'Triste';
+$string['shy'] = 'Lotsati';
+$string['sleepy'] = 'Lotan';
+$string['smiley'] = 'Irribarrea';
+$string['surprise'] = 'Harridura';
+$string['thoughtful'] = 'Pentsakor';
+$string['tongueout'] = 'Mihia atera';
+$string['wideeyes'] = 'Begiak zabal-zabalik';
+$string['wink'] = 'Begi-keinua';
 
 ?>

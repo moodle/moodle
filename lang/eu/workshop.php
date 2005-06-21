@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005011000)
+      // workshop.php - created with Moodle 1.4.1 (2004083101)
 
 
 $string['absent'] = 'Ez dago';
@@ -123,7 +123,7 @@ $string['nosubmission'] = 'Bidalketarik ez';
 $string['nosubmissionsavailableforassessment'] = 'Ebaluaketarako bidalketarik ez da onartzen';
 $string['notavailable'] = 'Ezin erabili';
 $string['notenoughexamplessubmitted'] = 'Bidalitako adibideak ez dira nahiko';
-$string['noteonassessmentelements'] = 'Kontuan hartu nota \"ebaluaketa-elementu\" zenbaitetan zatitua dagoela.<br /> Honek erraztu egiten du notak jartzeko lana eta zentzuzkoago bihurtzen ditu. Irakasle zaren aldetik, gehitu egin beharko zenituzke<br />elementu hauek, ebaluaketa ikasleek erabiltzeko moduan jarri aurretik. Hau honela egiten da:<br />sakatu ikastaroko ebaluaketak; elementurik ez badago, galdetu egingo zaizu gehitzeko.<br /> Elementuen kopurua aldatzeko Ebaluaketa Editatu izeneko pantaila erabil dezakezu.<br />Elementuak berak aldatu, Ebaluaketa Kudeatu pantailatik egin dezakezu.';
+$string['noteonassessmentelements'] = 'Kontuan hartu nota \"ebaluaketa-elementu\" zenbaitetan zatitua dagoela.<BR> Honek erraztu egiten du notak jartzeko lana eta zentzuzkoago bihurtzen ditu. Irakasle zaren aldetik, gehitu egin beharko zenituzke<BR>elementu hauek, ebaluaketa ikasleek erabiltzeko moduan jarri aurretik. Hau honela egiten da:<BR>sakatu ikastaroko ebaluaketak; elementurik ez badago, galdetu egingo zaizu gehitzeko.<BR> Elementuen kopurua aldatzeko Ebaluaketa Editatu izeneko pantaila erabil dezakezu.<BR>Elementuak berak aldatu, Ebaluaketa Kudeatu pantailatik egin dezakezu.';
 $string['notgraded'] = 'Notarik gabea';
 $string['notitlegiven'] = 'Izenbururik gabea';
 $string['numberofassessments'] = 'Ebaluaketen kopurua';
@@ -210,7 +210,7 @@ $string['verystrict'] = 'Oso zurruna';
 $string['view'] = 'Ikusi';
 $string['viewassessmentofteacher'] = 'Ikusi honen ebaluaketa:  $a';
 $string['viewotherassessments'] = 'Ikusi beste ebaluaketa batzuk';
-$string['warningonamendingelements'] = 'Oharra: hauek bidalitako ebaluaketak dira.<br />EZ aldatu elementuen kopurua, eskala-mota edo elementuen pisua.';
+$string['warningonamendingelements'] = 'Oharra: hauek bidalitako ebaluaketak dira.<BR>EZ aldatu elementuen kopurua, eskala-mota edo elementuen pisua.';
 $string['weight'] = 'Pisua';
 $string['workshopagreedassessments'] = 'Tailerreko ebaluaketa adostuak ';
 $string['workshopassessments'] = 'Tailerreko ebaluaketak';

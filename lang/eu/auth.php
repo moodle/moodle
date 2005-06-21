@@ -1,9 +1,9 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005011000)
+      // auth.php - created with Moodle 1.4.1 (2004083101)
 
 
 $string['auth_dbdescription'] = 'Metodo honek kanpoko datu-base taula bat erabiltzen du emandako erabiltzaile izen eta pasahitz bat baliozkoa den egiaztatzeko.  kontua berria bada, beste eremuetako informazioa ere zeharka kopiatu daiteke Moddlen.';
-$string['auth_dbextrafields'] = 'Eremu hauek aukerazkoak dira.  Moddle erabiltzaileen eremu batzuk hemen zehaztutako <b>kanpoko datu-base eremuetatik</b> aurrez betetzea erabaki dezakezu. <p>Hutsik uzten badituzu, lehenetsitako balioak erabiliko dira.</p><p>Edozein kasutan, erabiltzaileek eremu guztiak editazeko aukera izango dute behin saioa hasita.</p>';
+$string['auth_dbextrafields'] = 'Eremu hauek aukerazkoak dira.  Moddle erabiltzaileen eremu batzuk hemen zehaztutako <B>kanpoko datu-base eremuetatik</B> aurrez betetzea erabaki dezakezu. <P>Hutsik uzten badituzu, lehenetsitako balioak erabiliko dira.<P>Edozein kasutan, erabiltzaileek eremu guztiak editazeko aukera izango dute behin saioa hasita.';
 $string['auth_dbfieldpass'] = 'Pasahitzak dituen eremuaren izena';
 $string['auth_dbfielduser'] = 'Erabiltzaile-izenak dituen eremuaren izena';
 $string['auth_dbhost'] = 'Datu-base zerbitzaria ostatatzen duen ordenagailua.';
@@ -12,7 +12,7 @@ $string['auth_dbpass'] = 'Goiko erabiltzaile izenarekin bat datorren pasahitza';
 $string['auth_dbpasstype'] = 'Pasahitza eremuak erabiltzen duen formatua zehaztu.  MD5 enkiptazioa beste web aplikazio orokorrekin konektatzeko erabilgarria da, PostNuke adibidez';
 $string['auth_dbtable'] = 'Datu-baseko taulak duen izena';
 $string['auth_dbtitle'] = 'Kanpoko datu-base bat erabili';
-$string['auth_dbtype'] = 'Datu-base mota (Ikus <a href=\"../lib/adodb/readme.htm#drivers\">ADOdb documentation</a> xehetasun gahiagorako)';
+$string['auth_dbtype'] = 'Datu-base mota (Ikus <A HREF=../lib/adodb/readme.htm#drivers>ADOdb documentation</A> xehetasun gahiagorako)';
 $string['auth_dbuser'] = 'Datu-basean irakurtzeko baimena duen erabiltzaile izena';
 $string['auth_emaildescription'] = 'ePostaz berrestea da lehenetsitako autentifikazio metodoa.  Erabiltzaileak izena ematen duenean, bere izen eta pasahitza aukeratuz, konfirmazio ePosta mezu bat bidaltzen zaio erabiltzailearen ePostara.  ePosta Mezu honek, erabiltzaileei kontua berresteko aukera emango dien orri batera lotura zihur bat du. Hurrengoetan saioa hasteko izen eta pasahitza Moodle datu-basean dauden balioekin konparatzea nahikoa da.';
 $string['auth_emailtitle'] = 'E-posta bitarteko autentifikazioa';
@@ -33,7 +33,7 @@ $string['auth_ldapdescription'] = 'Metodo honek kanpo LDAP zerbitzari baten aurk
 								  sarrera berri bat sortuko du bere datu-basean. Modulu honek erabiltzaile atributuak 
 								  LDAP zerbitzaritik irakurri ditzazke eta eremuak Moodlen bete.  Hurrengo saio hasieretan
 								  soilik izen eta pasahitza egiaztatuko dira.';
-$string['auth_ldapextrafields'] = 'Eremu hauek aukerazkoak dira.  Moodle erabiltzaile eremu batzuk hemen zehaztutako <b>LDAP eremu</b>etako informazioz betetzea aukeratu dezakezu. <p>Zurian uzten badituzu, ez da ezer transferituko LDAP-tik eta Moodlek lehenetsitako balioak erabiliko dira ordez.>/p><p>Edozein kasutan, erabiltzaileak eremu guzti hauek editatzeko gaitasuna izango du behin saioa hasita.</p>';
+$string['auth_ldapextrafields'] = 'Eremu hauek aukerazkoak dira.  Moodle erabiltzaile eremu batzuk hemen zehaztutako <b>LDAP eremu</b>etako informazioz betetzea aukeratu dezakezu. <P>Zurian uzten badituzu, ez da ezer transferituko LDAP-tik eta Moodlek lehenetsitako balioak erabiliko dira ordez.<P>Edozein kasutan, erabiltzaileak eremu guzti hauek editatzeko gaitasuna izango du behin saioa hasita.';
 $string['auth_ldaptitle'] = 'LDAP zerbitzari bat erabili';
 $string['auth_nntpdescription'] = 'Metodo honek NNTP zerbitzari bat erabiltzen du emandako erabiltzaile izen eta pasahitza baliozkoak diren egiaztatzeko.';
 $string['auth_nntphost'] = 'NNTP zerbitzariaren helbidea. IP zenbakia erabili ezazu, ez DNS izena.';
