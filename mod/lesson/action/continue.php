@@ -126,12 +126,11 @@
             $userresponse = addslashes(serialize($userresponse));
         
              break;
-        /// CDC-FLAG ///
          case LESSON_SHORTANSWER :
             if (!$useranswer = $_POST['answer']) {
                 $noanswer = true;
                 break;
-            }
+            }            
             $useranswer = stripslashes(clean_param($useranswer, PARAM_CLEAN));
             $userresponse = addslashes($useranswer);
 
@@ -144,14 +143,17 @@
                 if (strpos(' '.$answer->answer, '*')) {
                     $answer->answer = str_replace('\*','@@@@@@', $answer->answer);
                     $answer->answer = str_replace('*','.*', $answer->answer);
-                    $answer->answer = str_replace('@@@@@@', '\*', $answer->answer);
-                    $answer->answer = str_replace('+', '\+', $answer->answer);
+                    $answer->answer = str_replace('@@@@@@', '\*', $answer->answer);    
                 }
+                $answer->answer = str_replace('.*','@@@@@@', $answer->answer);
+                $answer->answer = preg_quote($answer->answer, '/');
+                $answer->answer = str_replace('@@@@@@', '.*', $answer->answer);    
+
                 if (lesson_iscorrect($pageid, $answer->jumpto) or 
                     ($lesson->custom && $answer->score > 0) ) {
                     if ($page->qoption) {
                         // case sensitive
-                        if (ereg('^'.$answer->answer.'$', $useranswer)) {
+                        if (preg_match('/^'.$answer->answer.'$/', $useranswer)) {
                             $correctanswer = true;
                             $answerid = $answer->id;
                             $newpageid = $answer->jumpto;
@@ -162,7 +164,7 @@
                         }
                     } else {
                         // case insensitive
-                        if (eregi('^'.$answer->answer.'$', $useranswer)) {
+                        if (preg_match('/^'.$answer->answer.'$/i', $useranswer)) {
                             $correctanswer = true;
                             $answerid = $answer->id;
                             $newpageid = $answer->jumpto;
@@ -175,7 +177,7 @@
                 } else {
                     // see if user typed in any of the wrong answers
                     // don't worry about case
-                    if (eregi('^'.$answer->answer.'$', $useranswer)) {
+                    if (preg_match('/^'.$answer->answer.'$/i', $useranswer)) {
                         $newpageid = $answer->jumpto;
                         $answerid = $answer->id;
                         if (trim(strip_tags($answer->response))) {
