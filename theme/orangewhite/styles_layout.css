@@ -166,6 +166,10 @@ h6.main {
 #site-index #content {
   margin:0
 }
+#user-edit .userpicture,
+#user-view .userpicture {
+  margin-top:10px
+}
 
 /***
  *** Admin
@@ -232,8 +236,8 @@ h6.main {
   padding-bottom:0.2em;
   border-bottom:1px solid
 }
-.block_rss_client .title {
-  padding-top:0
+.block_rss_client .link {
+  border-top:0 none
 }
 
 /***
