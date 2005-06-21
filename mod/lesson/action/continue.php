@@ -140,53 +140,42 @@
             }
 
             foreach ($answers as $answer) {
-                /// CDC-FLAG ///
-                if ($lesson->custom && $answer->score > 0) {
+                // massage the wild cards (if present)
+                if (strpos(' '.$answer->answer, '*')) {
+                    $answer->answer = str_replace('\*','@@@@@@', $answer->answer);
+                    $answer->answer = str_replace('*','.*', $answer->answer);
+                    $answer->answer = str_replace('@@@@@@', '\*', $answer->answer);
+                    $answer->answer = str_replace('+', '\+', $answer->answer);
+                }
+                if (lesson_iscorrect($pageid, $answer->jumpto) or 
+                    ($lesson->custom && $answer->score > 0) ) {
                     if ($page->qoption) {
                         // case sensitive
-                        if ($answer->answer == $useranswer) {
+                        if (ereg('^'.$answer->answer.'$', $useranswer)) {
                             $correctanswer = true;
                             $answerid = $answer->id;
                             $newpageid = $answer->jumpto;
                             if (trim(strip_tags($answer->response))) {
                                 $response = $answer->response;
                             }
+                            break;
                         }
                     } else {
                         // case insensitive
-                        if (strcasecmp($answer->answer, $useranswer) == 0) {
+                        if (eregi('^'.$answer->answer.'$', $useranswer)) {
                             $correctanswer = true;
                             $answerid = $answer->id;
                             $newpageid = $answer->jumpto;
                             if (trim(strip_tags($answer->response))) {
                                 $response = $answer->response;
                             }
-                        }
-                    }
-                } elseif (lesson_iscorrect($pageid, $answer->jumpto) && !$lesson->custom) {  /// CDC-FLAG 6/21/04 ///
-                    if ($page->qoption) {
-                        // case sensitive
-                        if ($answer->answer == $useranswer) {
-                            $correctanswer = true;
-                            $newpageid = $answer->jumpto;
-                            if (trim(strip_tags($answer->response))) {
-                                $response = $answer->response;
-                            }
-                        }
-                    } else {
-                        // case insensitive
-                        if (strcasecmp($answer->answer, $useranswer) == 0) {
-                            $correctanswer = true;
-                            $newpageid = $answer->jumpto;
-                            if (trim(strip_tags($answer->response))) {
-                                $response = $answer->response;
-                            }
+                            break;
                         }
                     }
                 } else {
                     // see if user typed in any of the wrong answers
                     // don't worry about case
-                    if (strcasecmp($answer->answer, $useranswer) == 0) {
+                    if (eregi('^'.$answer->answer.'$', $useranswer)) {
                         $newpageid = $answer->jumpto;
                         $answerid = $answer->id;
                         if (trim(strip_tags($answer->response))) {
