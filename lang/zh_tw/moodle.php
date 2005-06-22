@@ -1,7 +1,5 @@
 <?PHP // $Id$ 
       // moodle.php - created with Moodle 1.0.8 dev (2002121200)
-
-
 $string['action'] = "課程活動";
 $string['activities'] = "課程活動分類";
 $string['activity'] = "瀏覽線上活動紀錄";
@@ -125,16 +123,11 @@ $string['edituser'] = "編輯使用者帳號";
 $string['email'] = "電子郵件";
 $string['emailconfirm'] = "確認你的帳號";
 $string['emailconfirmation'] = "你好 \$a->firstname,
-
 有人在 '\$a->sitename' 網站以你的郵件地址登記了帳號申請
-
-如果要確認帳號確實是你所申請的, 請到以下連結:
-
+如果要確認帳號確實是你所申請的, 請到以下連結:
   \$a->link
-
 對大多數電子郵件而言,你只要按下以上網址即可
 如果並未出現連結 請用剪貼的方式 啟動瀏覽器進入以上網址網頁.
-
 歡迎你的加入 '\$a->sitename' 系統管理員
 \$a->admin 敬上,";
 $string['emailconfirmsent'] = "   <p>本系統已經送出電子郵件到 <b>\$a</b>
@@ -300,20 +293,14 @@ $string['new'] = "新";
 $string['newaccount'] = "新 帳號名稱";
 $string['newpassword'] = "新 密碼";
 $string['newpasswordtext'] = "嗨 \$a->firstname,\$a->lastname
-
 你於 '\$a->sitename' 的帳號已經被要求重新設定一個 臨時密碼
-
 請按下以下連結 以便確認系統將登入時所需輸入的最新資訊設定如下:
    \$a->link
-
    帳號名稱username: \$a->username
    密碼: \$a->newpassword
-
 若是你並未提出重新設定要求 則可能是網友弄錯 請忽略以上訊息
-
 對大多數電子郵件而言,你只要按下以上網址即可
 如果並未出現連結 請用剪貼的方式 啟動瀏覽器進入以上網址網頁.
-
 歡迎使用本系統 '\$a->sitename' 管理者,
 \$a->signoff 敬上";
 $string['newpicture'] = "新圖片";
@@ -467,9 +454,7 @@ $string['week'] = "週";
 $string['weeklyoutline'] = "本週大綱";
 $string['welcometocourse'] = "歡迎到 \$a";
 $string['welcometocoursetext'] = "歡迎進入 \$a->coursename!
-
 你所需處理的第一件事是先修改個人設定 以便他人可以多了解你:
-
   \$a->profileurl";
 $string['withchosenfiles'] = "將選定的檔案";
 $string['wordforstudent'] = "學生的稱呼";
@@ -485,7 +470,6 @@ $string['yes'] = "是";
 $string['yourlastlogin'] = "你最後登入的時間";
 $string['yourself'] = "你自己";
 $string['yourteacher'] = "你的教師 \$a";
-
 $string['configdebug'] = "啟動本功能, 則系統執行錯誤時會顯示更多訊息,主要用於開發系統程式之用.";
 $string['displayingrecords'] = "顯示 \$a 紀錄";
 $string['gdneed'] = "必須安裝　GD 以便顯示本圖片";
@@ -493,7 +477,6 @@ $string['howtomakethemes'] = "如何設計新的網頁佈景";
 $string['uploadedfileto'] = "上載 \$a->file 到 \$a->directory　目錄下";
 $string['uploadnofilefound'] = "缺乏檔案 - 你確定選擇了上載檔案了嗎?";
 $string['uploadproblem'] = "上載檔案 '\$a' 時發生不知名錯誤  (是否檔案過大?)";
-//FKH
 $string['setleader'] = "設組長";
 $string['setleadersure'] = "你確定要將 [ \$a ] 設為組長嗎?";
 $string['studentmode']="進入學生模式";
@@ -509,4 +492,4 @@ $string['onlinecoursecount']="本課程線上人數 \$a 人";
 $string['width']="寬度";
 $string['height']="高度";
 $string['backonepage']="回前頁";
-?>
+?>
