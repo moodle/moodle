@@ -13,24 +13,28 @@ class filterobject {
     var $hreftagend;
     var $casesensitive;
     var $fullmatch;
+    var $replacementphrase;
     var $work_phrase;
     var $work_hreftagbegin;
     var $work_hreftagend;
     var $work_casesensitive;
     var $work_fullmatch;
+    var $work_replacementphrase;
     var $work_calculated;
 
     /// a constructor just because I like constructing
     function filterobject($phrase, $hreftagbegin='<span class="highlight">', 
                                    $hreftagend='</span>', 
                                    $casesensitive=false, 
-                                   $fullmatch=false) {
+                                   $fullmatch=false,
+                                   $replacementphrase=NULL) {
 
         $this->phrase           = $phrase;
         $this->hreftagbegin     = $hreftagbegin;
         $this->hreftagend       = $hreftagend;
         $this->casesensitive    = $casesensitive;
         $this->fullmatch        = $fullmatch;
+        $this->replacementphrase= $replacementphrase;
         $this->work_calculated  = false;
 
     }
@@ -60,9 +64,10 @@ function filter_phrases ($text, &$link_array, $ignoretagsopen=NULL, $ignoretagsc
     $filterignoretagsclose = array('</head>', '</nolink>', '</span>');
 
 /// Invalid prefixes and suffixes for the fullmatch searches
-    $filterinvalidprefixes = '([a-zA-Z0-9])';
-    $filterinvalidsuffixes  = '([a-zA-Z0-9])';
-
+/// Every "word" character, but the underscore, is a invalid suffix or prefix.
+/// (nice to use this because it includes national characters (accents...) as word characters.
+    $filterinvalidprefixes = '([^\W_])';
+    $filterinvalidsuffixes = '([^\W_])';
 
 /// Add the user defined ignore tags to the default list
 /// Unless specified otherwise, we will not replace within <a></a> tags
@@ -124,7 +129,16 @@ function filter_phrases ($text, &$link_array, $ignoretagsopen=NULL, $ignoretagsc
         /// Strip tags out of the phrase
             $linkobject->work_phrase = strip_tags($linkobject->phrase);
 
-        /// Quote any regular expression characters and the delimiter
+
+        /// Set the replacement phrase properly
+            if ($linkobject->replacementphrase) {    //We have specified a replacement phrase
+            /// Strip tags
+                $linkobject->work_replacementphrase = strip_tags($linkobject->replacementphrase);
+            } else {                                 //The replacement is the phrase itself
+                $linkobject->work_replacementphrase = $linkobject->work_phrase;
+            }
+
+        /// Quote any regular expression characters and the delimiter in the work phrase to be searched
             $linkobject->work_phrase = preg_quote($linkobject->work_phrase, '/');
 
         /// Work calculated
@@ -163,10 +177,14 @@ function filter_phrases ($text, &$link_array, $ignoretagsopen=NULL, $ignoretagsc
     /// Finally we do our highlighting
         if (!empty($CFG->filtermatchonepertext) || !empty($CFG->filtermatchoneperpage)) {
             $resulttext = preg_replace('/('.$linkobject->work_phrase.')/'.$modifiers, 
-                                      $linkobject->work_hreftagbegin.'$1'.$linkobject->work_hreftagend, $text, 1);
+                                      $linkobject->work_hreftagbegin.
+                                      $linkobject->work_replacementphrase.
+                                      $linkobject->work_hreftagend, $text, 1);
         } else {
             $resulttext = preg_replace('/('.$linkobject->work_phrase.')/'.$modifiers, 
-                                      $linkobject->work_hreftagbegin.'$1'.$linkobject->work_hreftagend, $text);
+                                      $linkobject->work_hreftagbegin.
+                                      $linkobject->work_replacementphrase.
+                                      $linkobject->work_hreftagend, $text);
         }
 
 
