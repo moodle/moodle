@@ -196,7 +196,7 @@ function forum_delete_instance($id) {
 
     if ($discussions = get_records('forum_discussions', 'forum', $forum->id)) {
         foreach ($discussions as $discussion) {
-            if (! forum_delete_discussion($discussion)) {
+            if (! forum_delete_discussion($discussion, true)) {
                 $result = false;
             }
         }
@@ -1705,7 +1705,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
                       '" title="'.$strpruneheading.'">'.$strprune.'</a>';
     }
 
-    if (($ownpost and $age < $CFG->maxeditingtime) or $isteacher) {
+    if ($ownpost or $isteacher) {
         $commands[] = '<a href="'.$CFG->wwwroot.'/mod/forum/post.php?delete='.$post->id.'">'.$strdelete.'</a>';
     }
 
@@ -2377,7 +2377,7 @@ function forum_add_discussion($discussion,&$message) {
 }
 
 
-function forum_delete_discussion($discussion) {
+function forum_delete_discussion($discussion, $fulldelete=false) {
 // $discussion is a discussion record object
 
     $result = true;
@@ -2389,7 +2389,7 @@ function forum_delete_discussion($discussion) {
             if (! delete_records("forum_ratings", "post", "$post->id")) {
                 $result = false;
             }
-            if (! forum_delete_post($post)) {
+            if (! forum_delete_post($post, $fulldelete)) {
                 $result = false;
             }
         }
