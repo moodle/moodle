@@ -2406,7 +2406,11 @@ function grade_assign_categories() {
         else {
             $cur_extra_credit = false;
         }
-        
+        if ($cur_extra_credit) {
+	    $cur_extra_credit = 1;
+        } else {
+            $cur_extra_credit = 0;
+        }
         if ($cur_scale_grade == 0 || $cur_scale_grade == '') {
             $cur_scale_grade = 1.0;
         }
@@ -2422,13 +2426,8 @@ function grade_assign_categories() {
                 // scale_grade doesn't match
                 set_field('grade_item', 'scale_grade', ($cur_maxgrade/$cur_scale_grade), 'id', $db_cat->id);
             }
-            
-            if ($cur_extra_credit) {
-                set_field('grade_item', 'extra_credit', 1, 'id', $db_cat->id);
-            }
-            else {
-                set_field('grade_item', 'extra_credit', 0, 'id', $db_cat->id);
-            }
+
+            set_field('grade_item', 'extra_credit', $cur_extra_credit, 'id', $db_cat->id);
         }
         else {
             // add a new record
