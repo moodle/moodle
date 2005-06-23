@@ -4249,7 +4249,7 @@ function print_string($identifier, $module='', $a=NULL) {
  * @param mixed $a An object, string or number that can be used
  * @return mixed the supplied parameter 'cleaned'
  */
-function clean_a( $a ) {
+function clean_getstring_data( $a ) {
     if (is_string($a)) {
         return str_replace( '%','%%',$a );
     }
@@ -4257,7 +4257,7 @@ function clean_a( $a ) {
         $a_vars = get_object_vars( $a );
         $new_a_vars = array();
         foreach ($a_vars as $fname => $a_var) {
-            $new_a_vars[$fname] = clean_a( $a_var );
+            $new_a_vars[$fname] = clean_getstring_data( $a_var );
         }
         return (object)$new_a_vars;
     } 
@@ -4336,7 +4336,9 @@ function get_string($identifier, $module='', $a=NULL) {
     }
 
     // if $a happens to have % in it, double it so sprintf() doesn't break
-    $a = clean_a( $a );
+    if ($a) {
+        $a = clean_getstring_data( $a );
+    }
 
 /// Define the two or three major locations of language strings for this module
 
