@@ -1705,7 +1705,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
                       '" title="'.$strpruneheading.'">'.$strprune.'</a>';
     }
 
-    if ($ownpost or $isteacher) {
+    if (($ownpost and $age < $CFG->maxeditingtime) or $isteacher) {
         $commands[] = '<a href="'.$CFG->wwwroot.'/mod/forum/post.php?delete='.$post->id.'">'.$strdelete.'</a>';
     }
 
