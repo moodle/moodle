@@ -177,7 +177,7 @@ function print_outline_row($mod, $instance, $result) {
     echo "   <a title=\"$mod->modfullname\"";
     echo "   href=\"../mod/$mod->modname/view.php?id=$mod->id\">".format_string($instance->name,true)."</a></td>";
     echo "<td>&nbsp;&nbsp;&nbsp;</td>";
-    echo "<td valign=\"top\" bgcolor=\"white\">";
+    echo "<td valign=\"top\">";
     if (isset($result->info)) {
         echo "$result->info";
     } else {
