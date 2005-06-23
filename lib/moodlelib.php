@@ -2940,40 +2940,40 @@ function remove_course_contents($courseid, $showfeedback=true) {
 
     // Delete gradebook stuff
 
-    if (delete_records("grade_category", "course", $course->id)) {
-        if ($showfeedback) {
-            notify("$strdeleted grade categories");
-        } else {
-            $result = false;
-        }
+    if (delete_records("grade_category", "courseid", $course->id)) {
+      if ($showfeedback) {
+	notify("$strdeleted grade categories");
+      }
+    } else {
+      $result = false;
     }
-    if (delete_records("grade_exceptions", "course", $course->id)) {
-        if ($showfeedback) {
-            notify("$strdeleted grade exceptions");
-        } else {
-            $result = false;
-        }
+    if (delete_records("grade_exceptions", "courseid", $course->id)) {
+      if ($showfeedback) {
+	notify("$strdeleted grade exceptions");
+      }
+    } else {
+      $result = false;
     }
-    if (delete_records("grade_item", "course", $course->id)) {
-        if ($showfeedback) {
-            notify("$strdeleted grade items");
-        } else {
-            $result = false;
-        }
-    }       
-    if (delete_records("grade_letter", "course", $course->id)) {
-        if ($showfeedback) {
-            notify("$strdeleted grade letters");
-        } else {
-            $result = false;
-        }
+    if (delete_records("grade_item", "courseid", $course->id)) {
+      if ($showfeedback) {
+	notify("$strdeleted grade items");
+      }
+    } else {
+      $result = false;
     }
-    if (delete_records("grade_preferences", "course", $course->id)) {
-        if ($showfeedback) {
-            notify("$strdeleted grade preferences");
-        } else {
-            $result = false;
-        }
+    if (delete_records("grade_letter", "courseid", $course->id)) {
+      if ($showfeedback) {
+	notify("$strdeleted grade letters");
+      }
+    } else {
+      $result = false;
+    }
+    if (delete_records("grade_preferences", "courseid", $course->id)) {
+      if ($showfeedback) {
+	notify("$strdeleted grade preferences");
+      }
+    } else {
+      $result = false;
     }
 
 
