@@ -122,6 +122,7 @@ class quiz_format_learnwise extends quiz_default_format {
                 }
                 $question->fraction[] = $fraction;
                 $question->answer[] = $optionstext[$n];
+                $question->feedback[] = ''; // no feedback in this type
             }
         }
 
