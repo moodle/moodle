@@ -599,8 +599,8 @@ function xml_entitize(&$collection) {
             break;
         case NUMERICAL:
             $qanswer = array_pop( $question->options->answers );
-            $smarty->assign('lowerbound', $qanswer->answer - $question->options->tolerance);        
-            $smarty->assign('upperbound', $qanswer->answer + $question->options->tolerance);        
+            $smarty->assign('lowerbound', $qanswer->answer - $qanswer->tolerance);        
+            $smarty->assign('upperbound', $qanswer->answer + $qanswer->tolerance);        
             $smarty->assign('answer', $qanswer->answer);        
             $expout = $smarty->fetch('numerical.tpl');
             break;
