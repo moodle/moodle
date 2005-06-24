@@ -489,10 +489,6 @@
         }
     }
 
-    if (!$isteacher) {
-        include('attempt_close_js.php');
-    }
-
     // Finish the page
     if (empty($popup)) {
         print_footer($course);
