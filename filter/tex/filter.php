@@ -125,6 +125,8 @@ function tex_filter ($courseid, $text) {
         $texexp = $matches[1][$i] . $matches[2][$i];
         $texexp = str_replace('<nolink>','',$texexp);
         $texexp = str_replace('</nolink>','',$texexp);
+        $texexp = str_replace('<span class="nolink">','',$texexp);
+        $texexp = str_replace('</span>','',$texexp);
         $align = "middle";
         if (preg_match('/^align=bottom /',$texexp)) {
           $align = "text-bottom";
