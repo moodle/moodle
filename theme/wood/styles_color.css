@@ -11,7 +11,6 @@
 #grade-index table .generalboxcontent,
 #grade-exceptions table .generaltableheader,
 #grade-exceptions table .generalboxcontent,
-#mod-forum-view table.forumheaderlist th,
 #mod-forum-view table.forumheaderlist td,
 #mod-assignment-submissions table.submissions th,
 #mod-assignment-submissions table.submissions td,
@@ -132,6 +131,7 @@ div.header,
 /** Places using the horizontal medium wood texture without borders **/
 
 .forumpost .header,
+#mod-forum-view table.forumheaderlist th,
 .glossarypost .entryheader,
 .glossarycomment .entryheader,
 .glossarypost .entryattachment,
