@@ -1207,6 +1207,11 @@ body#mod-forum-search .introcontent {
   white-space: nowrap;
 }
 
+#mod-glossary-comments .glossarypost,
+#mod-glossary-comment .glossarypost {
+      margin-top: 15px;
+}
+
 .entryboxheader {
   border-width: 1px 1px 0px 1px;
   border-style: solid;
