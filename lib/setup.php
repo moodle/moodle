@@ -420,6 +420,9 @@ global $THEME;
         apache_note('MOODLEUSER', $logname);
     }
 
+/// Adjust ALLOWED_TAGS
+    adjust_allowed_tags();
+
 /***
  *** init_performance_info() {
  ***

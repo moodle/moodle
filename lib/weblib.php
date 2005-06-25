@@ -77,10 +77,6 @@ define('FORMAT_MARKDOWN', '4');   // Markdown-formatted text http://daringfireba
 $ALLOWED_TAGS =
 '<p><br><b><i><u><font><table><tbody><span><div><tr><td><th><ol><ul><dl><li><dt><dd><h1><h2><h3><h4><h5><h6><hr><img><a><strong><emphasis><em><sup><sub><address><cite><blockquote><pre><strike><param><acronym><nolink><lang><tex><algebra><math><mi><mn><mo><mtext><mspace><ms><mrow><mfrac><msqrt><mroot><mstyle><merror><mpadded><mphantom><mfenced><msub><msup><msubsup><munder><mover><munderover><mmultiscripts><mtable><mtr><mtd><maligngroup><malignmark><maction><cn><ci><apply><reln><fn><interval><inverse><sep><condition><declare><lambda><compose><ident><quotient><exp><factorial><divide><max><min><minus><plus><power><rem><times><root><gcd><and><or><xor><not><implies><forall><exists><abs><conjugate><eq><neq><gt><lt><geq><leq><ln><log><int><diff><partialdiff><lowlimit><uplimit><bvar><degree><set><list><union><intersect><in><notin><subset><prsubset><notsubset><notprsubset><setdiff><sum><product><limit><tendsto><mean><sdev><variance><median><mode><moment><vector><matrix><matrixrow><determinant><transpose><selector><annotation><semantics><annotation-xml><tt><code>';
 
-if (!empty($CFG->allowobjectembed)) {
-    $ALLOWED_TAGS .= '<embed><object>';
-}
-
 /**
  * Allowed protocols - array of protocols that are safe to use in links and so on
  * @global string $ALLOWED_PROTOCOLS
@@ -4177,7 +4173,17 @@ function print_maintenance_message () {
     print_footer();
 }
 
+/**
+ * Adjust the list of allowed tags based on $CFG->allowobjectembed and user roles (admin)
+ */
+function adjust_allowed_tags() {
 
+    global $CFG, $ALLOWED_TAGS;
+
+    if (!empty($CFG->allowobjectembed) || isadmin()) {
+        $ALLOWED_TAGS .= '<embed><object>';
+    }
+}
 
 /// Some code to print tabs
 
