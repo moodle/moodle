@@ -169,7 +169,7 @@
 
         } else {
             /// original glossary entry
-            glossary_print_entry($course, $cm, $glossary, $entry, '', '', false);
+            glossary_print_entry($course, $cm, $glossary, $entry, 'approval', '', false);
             echo '<br />';
 
             if ($usehtmleditor = can_use_html_editor()) {
