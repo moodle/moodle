@@ -1,5 +1,5 @@
-<?php // $Id$ 
-      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
+<?PHP // $Id$ 
+      // resource.php - created with Moodle 1.5 ALPHA (2005051500)
 
 
 $string['addresource'] = '자원 추가';
@@ -27,8 +27,14 @@ $string['exampleurl'] = 'http://www.mirae.es.kr/';
 $string['fetchclienterror'] = '웹 페이지를 열면서 오류가 생겼습니다.(옳바르지 않은 URL입니다.)';
 $string['fetcherror'] = '웹 페이지를 열며 오류가 생겼습니다.';
 $string['filename'] = '파일명';
+$string['filtername'] = '자료 이름 자동 연결';
 $string['fulltext'] = '전체 내용';
 $string['htmlfragment'] = 'HTML 조각';
+$string['localfile'] = '지역 화일';
+$string['localfilechoose'] = '지역 화일을 선택하시오(CD-ROM)';
+$string['localfilehelp'] = '지역 화일을 배치하는 것을 도우시오';
+$string['localfileselect'] = '이 화일경로를 선택하시오';
+$string['maindirectory'] = '주 화일 디렉토리';
 $string['modulename'] = '자원';
 $string['modulenameplural'] = '자원';
 $string['neverseen'] = '보이지 않음';
@@ -44,6 +50,8 @@ $string['newtoolbar'] = '툴바 나타내기';
 $string['newwidth'] = '윈도우 너비 실패(픽셀)';
 $string['newwindow'] = '새 창으로';
 $string['newwindowopen'] = '팝업창으로 나타나게 합니다.';
+$string['notallowedlocalfileaccess'] = '
+';
 $string['note'] = '노트';
 $string['notefile'] = '더욱 많은 파일을 올리기 위해서는(이곳에 표시가 되어집니다.) <a href=\"$a\">파일 관리자</a>을 이용하시오.';
 $string['notypechosen'] = '유형을 선택하세요. 뒤로가기 버튼을 클릭하신후 재 시도해 주시기 바랍니다.';
@@ -68,6 +76,7 @@ $string['resourcetypehtml'] = '웹 페이지 만들기';
 $string['resourcetypelabel'] = '표지 삽입하기';
 $string['resourcetypetext'] = '텍스트 페이지 만들기';
 $string['searchweb'] = '웹 사이트 검색';
+$string['serverurl'] = '서버 URL';
 $string['variablename'] = '변덕스러운 이름';
 
 ?>
