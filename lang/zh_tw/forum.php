@@ -1,7 +1,5 @@
 <?PHP // $Id$ 
       // forum.php - created with Moodle 1.0.8 dev (2002121200)
-
-
 $string['addanewdiscussion'] = "新增一個討論主題";
 $string['allowchoice'] = "允許所有人選擇";
 $string['allowdiscussions'] = "設定學生張貼權限";

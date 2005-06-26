@@ -1,7 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.0.8.1 (2003011200)
-
-
+     // auth.php - created with Moodle 1.0.8.1 (2003011200)
 $string['auth_dbdescription'] = "從外界資料庫檢查 帳號名稱與密碼是否相符.  若是一個新帳號資料庫中其他資料也會被拷貝到本系統.";
 $string['auth_dbextrafields'] = "選填資料.  你可以選擇將使用者帳號部分資料從<b>外界資料庫</b> 中擷取填為預設值. <br />若是不填, 將以本系統預設值為準.<br />無論如何使用者皆可以登入後修改.";
 $string['auth_dbfieldpass'] = "包含密碼的欄位名稱";
@@ -56,5 +54,4 @@ $string['instructions'] = "指引";
 $string['md5'] = "MD5 encryption";
 $string['plaintext'] = "純文字內容";
 $string['showguestlogin'] = "你可以選擇登入網頁中是否顯示訪客登入按鈕.";
-
 ?>
