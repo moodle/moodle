@@ -2,22 +2,22 @@
       // error.php - created with Moodle 1.5 ALPHA (2005051500)
 
 
-$string['adminprimarynoedit'] = 'ë‹¤ë¥¸ì´ì— ì˜í•´ ì£¼ìš”í•œ ê´€ë¦¬ìžê°€ íŽ¸ì§‘ë˜ì§€ ì•ŠìŒ';
-$string['coursegroupunknown'] = 'ê·¸ë£¹ì— ìƒì‘í•˜ëŠ” ì½”ìŠ¤ $a ëª…ì‹œë˜ ìžˆì§€ ì•ŠìŒ.';
-$string['erroronline'] = 'ì˜¨ë¼ì¸ ìƒì˜ ì˜¤ë¥˜';
-$string['fieldrequired'] = '\"$a\"ëŠ” í•„ìš”í•œ(í•„ìˆ˜)ë¶„ì•¼';
-$string['filenotfound'] = 'ì£„ì†¡í•©ë‹ˆë‹¤. ìš”ì²­í•˜ì‹  íŒŒì¼ì„ ì°¾ì„ ìˆ˜ê°€ ì—†ìŠµë‹ˆë‹¤.';
-$string['groupalready'] = 'ì‚¬ìš©ìžëŠ” ì´ë¯¸ ê·¸ë£¹ì— ì†í•´ìžˆìŠµë‹ˆë‹¤. ';
-$string['groupunknown'] = '$a  ê·¸ë£¹ì€ íŠ¹ì • ì½”ìŠ¤ì— ì†í•´ìžˆì§€ ì•ŠìŠµë‹ˆë‹¤.';
-$string['invalidfieldname'] = ' \"$a\"ëŠ” ì‹¤íš¨ì„±ì´ ì—†ëŠ”(ì„¤ë“ë ¥ì´ ì—†ëŠ”) ë¶„ì•¼ëª…';
-$string['missingfield'] = 'ë¶„ì•¼\"$a\" ê°€ ì—†ë‹¤';
-$string['modulerequirementsnotmet'] = 'Moodleì´ ì„¤ì¹˜ë ìˆ˜ê°€ ì—†ìŠµë‹ˆë‹¤. ìµœì‹ ë²„ì „ì˜ Moodleì´ í•„ìš”í•©ë‹ˆë‹¤. ';
-$string['notavailable'] = 'ìœ ìš”í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤. ';
-$string['onlyeditown'] = 'ë³¸ì¸ì˜ ì •ë³´ë§Œì„ íŽ¸ì§‘í•˜ì‹œì˜¤';
-$string['restricteduser'] = 'ì£„ì†¡í•©ë‹ˆë‹¤. í˜„ìž¬ ë‹¹ì‹ ì˜ ê³„ì •ì€ ì°¨ë‹¨ë˜ì—ˆìŠµë‹ˆë‹¤. ';
-$string['unknowncourse'] = '\"$a\"ë¼ëŠ” ì•Œë ¤ì§€ì§€ ì•ŠëŠ” ê°•ì¢Œ(ê³¼ì •)';
-$string['usernotaddederror'] = 'ì‚¬ìš©ìž(ê°€)\"$a\"ë¥¼ ì¶”ê°€í•˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.-ì•Œë ¤ì§€ì§€ ì•Šì€ ì˜¤ë¥˜';
-$string['usernotaddedregistered'] = 'ì‚¬ìš©ìž \"$a\"ë¥¼ ì¶”ê°€í•˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤- ì´ë¯¸ ë“±ë¡ë˜ì–´ì§';
-$string['usernotavailable'] = 'ì´ ì‚¬ìš©ìžì˜ ì„¸ë¶€í•­ì˜ í—ˆìš©ë˜ì§€ ì•ŠìŠµë‹ˆë‹¤';
+$string['adminprimarynoedit'] = '´Ù¸¥ÀÌ¿¡ ÀÇÇØ ÁÖ¿äÇÑ °ü¸®ÀÚ°¡ ÆíÁýµÇÁö ¾ÊÀ½';
+$string['coursegroupunknown'] = '±×·ì¿¡ »óÀÀÇÏ´Â ÄÚ½º $a ¸í½ÃµÇ ÀÖÁö ¾ÊÀ½.';
+$string['erroronline'] = '¿Â¶óÀÎ »óÀÇ ¿À·ù';
+$string['fieldrequired'] = '\"$a\"´Â ÇÊ¿äÇÑ(ÇÊ¼ö)ºÐ¾ß';
+$string['filenotfound'] = 'ÁË¼ÛÇÕ´Ï´Ù. ¿äÃ»ÇÏ½Å ÆÄÀÏÀ» Ã£À» ¼ö°¡ ¾ø½À´Ï´Ù.';
+$string['groupalready'] = '»ç¿ëÀÚ´Â ÀÌ¹Ì ±×·ì¿¡ ¼ÓÇØÀÖ½À´Ï´Ù. ';
+$string['groupunknown'] = '$a  ±×·ìÀº Æ¯Á¤ ÄÚ½º¿¡ ¼ÓÇØÀÖÁö ¾Ê½À´Ï´Ù.';
+$string['invalidfieldname'] = ' \"$a\"´Â ½ÇÈ¿¼ºÀÌ ¾ø´Â(¼³µæ·ÂÀÌ ¾ø´Â) ºÐ¾ß¸í';
+$string['missingfield'] = 'ºÐ¾ß\"$a\" °¡ ¾ø´Ù';
+$string['modulerequirementsnotmet'] = 'MoodleÀÌ ¼³Ä¡µÉ¼ö°¡ ¾ø½À´Ï´Ù. ÃÖ½Å¹öÀüÀÇ MoodleÀÌ ÇÊ¿äÇÕ´Ï´Ù. ';
+$string['notavailable'] = 'À¯¿äÇÏÁö ¾Ê½À´Ï´Ù. ';
+$string['onlyeditown'] = 'º»ÀÎÀÇ Á¤º¸¸¸À» ÆíÁýÇÏ½Ã¿À';
+$string['restricteduser'] = 'ÁË¼ÛÇÕ´Ï´Ù. ÇöÀç ´ç½ÅÀÇ °èÁ¤Àº Â÷´ÜµÇ¾ú½À´Ï´Ù. ';
+$string['unknowncourse'] = '\"$a\"¶ó´Â ¾Ë·ÁÁöÁö ¾Ê´Â °­ÁÂ(°úÁ¤)';
+$string['usernotaddederror'] = '»ç¿ëÀÚ(°¡)\"$a\"¸¦ Ãß°¡ÇÏÁö ¾Ê¾Ò½À´Ï´Ù.-¾Ë·ÁÁöÁö ¾ÊÀº ¿À·ù';
+$string['usernotaddedregistered'] = '»ç¿ëÀÚ \"$a\"¸¦ Ãß°¡ÇÏÁö ¾Ê¾Ò½À´Ï´Ù- ÀÌ¹Ì µî·ÏµÇ¾îÁü';
+$string['usernotavailable'] = 'ÀÌ »ç¿ëÀÚÀÇ ¼¼ºÎÇ×ÀÇ Çã¿ëµÇÁö ¾Ê½À´Ï´Ù';
 
 ?>
