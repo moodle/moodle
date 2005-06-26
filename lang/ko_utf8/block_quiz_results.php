@@ -2,27 +2,27 @@
       // block_quiz_results.php - created with Moodle 1.5 ALPHA (2005051500)
 
 
-$string['bestgrade'] = '°¡Àå ³ôÀº ¼ºÀû';
-$string['bestgrades'] = '°¡Àå $a³ôÀº ¼ºÀû';
-$string['bestgroupgrade'] = '°¡Àå ³ôÀº Æò±ÕÀÇ ±×·ì';
-$string['bestgroupgrades'] = '°¡Àå ³ôÀº Æò±ÕÀÇ $a±×·ì';
-$string['config_format_absolute'] = 'Àýµ¥Àû ¼ýÀÚ';
-$string['config_format_fraction'] = '¼ÒºÎºÐ';
-$string['config_format_percentage'] = '¹éºÐÀ²';
-$string['config_grade_format'] = '¼ºÀû Ç¥½Ã:';
-$string['config_no_quizzes_in_course'] = 'ÀÌÄÚ½º´Â ¾î¶² ÄûÁî È°µ¿µµ Æ÷ÇÔÇÏ°í ÀÖÁö ¾Ê½À´Ï´Ù.ÀÌ ±¸¿ªÀ» ¿Ã¹Ù¸£°Ô ÀÌ¿ëÇÏ±â À§ÇØ Àû¾îµµ ÇÏ³ª¸¦ Ã·°¡ÇÏ½Ã¿À.';
-$string['config_select_quiz'] = '¾î¶² ÄûÁî·Î ºÎÅÍ ÀÌ ±¸¿ªÀº °á°ú¸¦ ¹èÄ¡ÇØ¾ß ÇÕ´Ï±î? ';
-$string['config_show_best'] = '¾ó¸¶³ª ¸¹Àº ³ôÀº ¼ºÀûÀÌ º¸¿©Á®¾ß ÇÕ´Ï±î?';
-$string['config_show_worst'] = '¾ó¸¶³ª ¸¹Àº ³·Àº ¼ºÀûÀÌ º¸¿©Á®¾ß ÇÕ´Ï±î?';
-$string['config_use_groups'] = 'ÇÐ»ýµé´ë½Å ±×·ìÀ» º¸ÀÌ½Ã¿À(ÄûÁî°¡ ±×·ìÀ» ÁöÁöÇÒ °æ¿ì¿¡¸¸)';
-$string['configuredtoshownothing'] = 'ÀÌ±¸¿ªÀÇ ¹èÄ¡´Â ÇöÀç ¾î¶² °á°úµµ º¸¿©ÁÙ¼ö ¾ø°ÔµÇ¾îÀÖ½À´Ï´Ù. ÀçÄ¡ÇÏ°Å³ª ±×°ÍÀ» ¼û±â±â¸¦ ¿øÇÒ°ÍÀÔ´Ï´Ù.  ';
-$string['error_emptyquizid'] = 'ÀÌ ±¸¿ª¿¡ Áö±Ý ¿¡·¯°¡ ÀÖ½À´Ï´Ù. ¾î¶² ÄûÁî·ÎºÎÅÍ °á°ú°¡ ¹èÄ¡µÇ´ÂÁö ¼±ÅÃÇØ¾ß ÇÕ´Ï´Ù.';
-$string['error_emptyquizrecord'] = 'ÀÌ ±¸¿ª¿¡ Áö±Ý ¿¡·¯°¡ ÀÖ½À´Ï´Ù: ¼±ÅÃµÇ ÄûÁî´Â ÀÌ µ¥ÀÌÅÍ º£ÀÌ½º¿¡ Á¸ÀçÇÏÁö ¾Ê´Â°Í °°½À´Ï´Ù.';
-$string['error_nogroupsexist'] = 'ÀÌ ±¸¿ª¿¡ Áö±Ý ¿¡·¯°¡ ÀÖ½À´Ï´Ù:±×·ì¸ðµå¿¡ ¼ºÀûÀ» ¹èÄ¡ÇÏ±â À§ÇÑ °ÍÀÌ³ª ±×±×·ìÀº ¸íÈ®È÷ Á¤ÇØÁø ±×·ìÀÌ ¾Æ´Õ´Ï´Ù.';
-$string['formaltitle'] = 'ÄûÁî °á°ú';
-$string['worstgrade'] = '°¡Àå ³·Àº ¼ºÀû';
-$string['worstgrades'] = '°¡Àå $a ³·Àº ¼ºÀû';
-$string['worstgroupgrade'] = '°¡Àå³·Àº Æò±ÕÀÇ ±×·ì';
-$string['worstgroupgrades'] = '°¡Àå³·Àº Æò±ÕÀÇ  $a ±×·ì';
+$string['bestgrade'] = 'ê°€ìž¥ ë†’ì€ ì„±ì ';
+$string['bestgrades'] = 'ê°€ìž¥ $aë†’ì€ ì„±ì ';
+$string['bestgroupgrade'] = 'ê°€ìž¥ ë†’ì€ í‰ê· ì˜ ê·¸ë£¹';
+$string['bestgroupgrades'] = 'ê°€ìž¥ ë†’ì€ í‰ê· ì˜ $aê·¸ë£¹';
+$string['config_format_absolute'] = 'ì ˆë°ì  ìˆ«ìž';
+$string['config_format_fraction'] = 'ì†Œë¶€ë¶„';
+$string['config_format_percentage'] = 'ë°±ë¶„ìœ¨';
+$string['config_grade_format'] = 'ì„±ì  í‘œì‹œ:';
+$string['config_no_quizzes_in_course'] = 'ì´ì½”ìŠ¤ëŠ” ì–´ë–¤ í€´ì¦ˆ í™œë™ë„ í¬í•¨í•˜ê³  ìžˆì§€ ì•ŠìŠµë‹ˆë‹¤.ì´ êµ¬ì—­ì„ ì˜¬ë°”ë¥´ê²Œ ì´ìš©í•˜ê¸° ìœ„í•´ ì ì–´ë„ í•˜ë‚˜ë¥¼ ì²¨ê°€í•˜ì‹œì˜¤.';
+$string['config_select_quiz'] = 'ì–´ë–¤ í€´ì¦ˆë¡œ ë¶€í„° ì´ êµ¬ì—­ì€ ê²°ê³¼ë¥¼ ë°°ì¹˜í•´ì•¼ í•©ë‹ˆê¹Œ? ';
+$string['config_show_best'] = 'ì–¼ë§ˆë‚˜ ë§Žì€ ë†’ì€ ì„±ì ì´ ë³´ì—¬ì ¸ì•¼ í•©ë‹ˆê¹Œ?';
+$string['config_show_worst'] = 'ì–¼ë§ˆë‚˜ ë§Žì€ ë‚®ì€ ì„±ì ì´ ë³´ì—¬ì ¸ì•¼ í•©ë‹ˆê¹Œ?';
+$string['config_use_groups'] = 'í•™ìƒë“¤ëŒ€ì‹  ê·¸ë£¹ì„ ë³´ì´ì‹œì˜¤(í€´ì¦ˆê°€ ê·¸ë£¹ì„ ì§€ì§€í•  ê²½ìš°ì—ë§Œ)';
+$string['configuredtoshownothing'] = 'ì´êµ¬ì—­ì˜ ë°°ì¹˜ëŠ” í˜„ìž¬ ì–´ë–¤ ê²°ê³¼ë„ ë³´ì—¬ì¤„ìˆ˜ ì—†ê²Œë˜ì–´ìžˆìŠµë‹ˆë‹¤. ìž¬ì¹˜í•˜ê±°ë‚˜ ê·¸ê²ƒì„ ìˆ¨ê¸°ê¸°ë¥¼ ì›í• ê²ƒìž…ë‹ˆë‹¤.  ';
+$string['error_emptyquizid'] = 'ì´ êµ¬ì—­ì— ì§€ê¸ˆ ì—ëŸ¬ê°€ ìžˆìŠµë‹ˆë‹¤. ì–´ë–¤ í€´ì¦ˆë¡œë¶€í„° ê²°ê³¼ê°€ ë°°ì¹˜ë˜ëŠ”ì§€ ì„ íƒí•´ì•¼ í•©ë‹ˆë‹¤.';
+$string['error_emptyquizrecord'] = 'ì´ êµ¬ì—­ì— ì§€ê¸ˆ ì—ëŸ¬ê°€ ìžˆìŠµë‹ˆë‹¤: ì„ íƒë˜ í€´ì¦ˆëŠ” ì´ ë°ì´í„° ë² ì´ìŠ¤ì— ì¡´ìž¬í•˜ì§€ ì•ŠëŠ”ê²ƒ ê°™ìŠµë‹ˆë‹¤.';
+$string['error_nogroupsexist'] = 'ì´ êµ¬ì—­ì— ì§€ê¸ˆ ì—ëŸ¬ê°€ ìžˆìŠµë‹ˆë‹¤:ê·¸ë£¹ëª¨ë“œì— ì„±ì ì„ ë°°ì¹˜í•˜ê¸° ìœ„í•œ ê²ƒì´ë‚˜ ê·¸ê·¸ë£¹ì€ ëª…í™•ížˆ ì •í•´ì§„ ê·¸ë£¹ì´ ì•„ë‹™ë‹ˆë‹¤.';
+$string['formaltitle'] = 'í€´ì¦ˆ ê²°ê³¼';
+$string['worstgrade'] = 'ê°€ìž¥ ë‚®ì€ ì„±ì ';
+$string['worstgrades'] = 'ê°€ìž¥ $a ë‚®ì€ ì„±ì ';
+$string['worstgroupgrade'] = 'ê°€ìž¥ë‚®ì€ í‰ê· ì˜ ê·¸ë£¹';
+$string['worstgroupgrades'] = 'ê°€ìž¥ë‚®ì€ í‰ê· ì˜  $a ê·¸ë£¹';
 
 ?>

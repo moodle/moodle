@@ -2,32 +2,32 @@
       // hotpot.php - created with Moodle 1.5 ALPHA (2005051500)
 
 
-$string['abandoned'] = '½ÇÆÐ';
-$string['allattempts'] = '¸ðµç ½Ãµµµé';
-$string['allmycourses'] = '³ªÀÇ ¸ðµç ÄÚ½ºµé';
-$string['average'] = 'Æò±Õ';
-$string['bestattempt'] = 'ÃÖ°íÀÇ ½Ãµµ';
-$string['checks'] = 'È®ÀÎ';
-$string['clues'] = 'ÈùÆ®';
-$string['correct'] = 'Á¤´ä';
-$string['enterafilename'] = 'È­ÀÏ ÀÌ¸§À» ÀÔ·ÂÇÏ½Ã¿À';
-$string['filetype'] = 'ÆÄÀÏ ÇüÅÂ';
-$string['giveup'] = 'Æ÷±â';
-$string['hints'] = 'ÈùÆ®';
-$string['ignored'] = '¹«½ÃµÊ';
-$string['inprogress'] = 'ÁøÇàÁß';
-$string['location'] = 'È­ÀÏ Àå¼Ò';
-$string['modulename'] = '¶ß°Å¿î °¨ÀÚ ÄûÁî';
-$string['modulenameplural'] = '¶ß°Å¿î °¨ÀÚ ÄûÁî';
-$string['noactivity'] = 'È°µ¿ ¾øÀ½';
-$string['outputformat_best'] = 'ÃÖ¼±';
-$string['quiztype'] = 'ÄûÁî ÇüÅÂ';
-$string['resultssaved'] = 'ÄûÁî °á°ú°¡ ÀúÀåµÊ';
-$string['score'] = '½ºÄÚ¾î';
-$string['selectattempt'] = '½Ãµµ¸¦ ¼±ÅÃÇÏ½Ã¿À';
-$string['showhtmlsource'] = 'HTML½ºÄÚ¾î¸¦ º¸ÀÌ½Ã¿À';
-$string['shownextquiz'] = '´ÙÀ½ ÄûÁî¸¦ º¸ÀÌ½Ã¿À';
-$string['thiscourse'] = 'ÀÌ ÄÚ½º';
-$string['wrong'] = 'Æ²¸²';
+$string['abandoned'] = 'ì‹¤íŒ¨';
+$string['allattempts'] = 'ëª¨ë“  ì‹œë„ë“¤';
+$string['allmycourses'] = 'ë‚˜ì˜ ëª¨ë“  ì½”ìŠ¤ë“¤';
+$string['average'] = 'í‰ê· ';
+$string['bestattempt'] = 'ìµœê³ ì˜ ì‹œë„';
+$string['checks'] = 'í™•ì¸';
+$string['clues'] = 'ížŒíŠ¸';
+$string['correct'] = 'ì •ë‹µ';
+$string['enterafilename'] = 'í™”ì¼ ì´ë¦„ì„ ìž…ë ¥í•˜ì‹œì˜¤';
+$string['filetype'] = 'íŒŒì¼ í˜•íƒœ';
+$string['giveup'] = 'í¬ê¸°';
+$string['hints'] = 'ížŒíŠ¸';
+$string['ignored'] = 'ë¬´ì‹œë¨';
+$string['inprogress'] = 'ì§„í–‰ì¤‘';
+$string['location'] = 'í™”ì¼ ìž¥ì†Œ';
+$string['modulename'] = 'ëœ¨ê±°ìš´ ê°ìž í€´ì¦ˆ';
+$string['modulenameplural'] = 'ëœ¨ê±°ìš´ ê°ìž í€´ì¦ˆ';
+$string['noactivity'] = 'í™œë™ ì—†ìŒ';
+$string['outputformat_best'] = 'ìµœì„ ';
+$string['quiztype'] = 'í€´ì¦ˆ í˜•íƒœ';
+$string['resultssaved'] = 'í€´ì¦ˆ ê²°ê³¼ê°€ ì €ìž¥ë¨';
+$string['score'] = 'ìŠ¤ì½”ì–´';
+$string['selectattempt'] = 'ì‹œë„ë¥¼ ì„ íƒí•˜ì‹œì˜¤';
+$string['showhtmlsource'] = 'HTMLìŠ¤ì½”ì–´ë¥¼ ë³´ì´ì‹œì˜¤';
+$string['shownextquiz'] = 'ë‹¤ìŒ í€´ì¦ˆë¥¼ ë³´ì´ì‹œì˜¤';
+$string['thiscourse'] = 'ì´ ì½”ìŠ¤';
+$string['wrong'] = 'í‹€ë¦¼';
 
 ?>

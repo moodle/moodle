@@ -2,7 +2,7 @@
       // block_course_summary.php - created with Moodle 1.5 ALPHA (2005051500)
 
 
-$string['coursesummary'] = 'ÄÚ½º ¿ä¾à';
-$string['pagedescription'] = 'ÄÚ½º/»çÀÌÆ® ±â¼ú';
+$string['coursesummary'] = 'ì½”ìŠ¤ ìš”ì•½';
+$string['pagedescription'] = 'ì½”ìŠ¤/ì‚¬ì´íŠ¸ ê¸°ìˆ ';
 
 ?>

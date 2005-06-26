@@ -2,7 +2,7 @@
       // enrol_database.php - created with Moodle 1.5 ALPHA (2005051500)
 
 
-$string['dbhost'] = 'µ¥ÀÌÅÍº£ÀÌ½º ¼­¹öÀÇ ÁÖÀÌ¸§';
-$string['dbname'] = 'ÀÌ¿ëÇÒ Æ¯º°ÇÑ µ¥ÀÌÅÍ º£ÀÌ½º';
+$string['dbhost'] = 'ë°ì´í„°ë² ì´ìŠ¤ ì„œë²„ì˜ ì£¼ì´ë¦„';
+$string['dbname'] = 'ì´ìš©í•  íŠ¹ë³„í•œ ë°ì´í„° ë² ì´ìŠ¤';
 
 ?>
