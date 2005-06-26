@@ -62,6 +62,7 @@ define("NUMERICAL",     "8");
 define("MULTIANSWER",   "9");
 define("CALCULATED",   "10");
 define("RQP",          "11");
+define("ESSAY",        "12");
 /**#@-*/
 
 

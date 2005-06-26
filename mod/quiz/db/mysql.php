@@ -839,6 +839,27 @@ function quiz_upgrade($oldversion) {
         $db->debug = $olddebug;
     }
 
+    if ($oldversion < 2005062600) {
+        modify_database ('', "
+            CREATE TABLE `prefix_quiz_essay` (
+                `id` int(10) unsigned NOT NULL auto_increment,
+                `question` int(10) unsigned NOT NULL default '0',
+                `answer` varchar(255) NOT NULL default '',
+                PRIMARY KEY  (`id`),
+                KEY `question` (`question`)
+           ) TYPE=MyISAM COMMENT='Options for essay questions'");
+    
+        modify_database ('', "
+            CREATE TABLE `prefix_quiz_essay_states` (
+              `id` int(10) unsigned NOT NULL auto_increment,
+              `stateid` int(10) unsigned NOT NULL default '0',
+              `graded` tinyint(4) unsigned NOT NULL default '0',
+              `fraction` varchar(10) NOT NULL default '0.0',
+              `response` text NOT NULL,
+              PRIMARY KEY  (`id`)
+            ) TYPE=MyISAM COMMENT='essay question type specific state information'");
+    }
+
     return true;
 }
 

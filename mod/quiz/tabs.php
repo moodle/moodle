@@ -25,6 +25,7 @@
     $row[] = new tabobject('preview', "attempt.php?q=$quiz->id", get_string('preview', 'quiz'));
     if (isteacheredit($course->id)) {
         $row[] = new tabobject('edit', "edit.php?quizid=$quiz->id", get_string('editquiz', 'quiz'));
+        $row[] = new tabobject('manualgrading', "grading.php?quizid=$quiz->id", get_string("manualgrading", "quiz")); 
         //$row[] = new tabobject('update', "$CFG->wwwroot/course/mod.php?update=$cm->id&amp;sesskey=$USER->sesskey", get_string('updatethis', '', get_string('modulename', 'quiz')));
     }
 

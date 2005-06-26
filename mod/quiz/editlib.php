@@ -28,7 +28,8 @@ $QUIZ_QUESTION_TYPE = array ( MULTICHOICE   => get_string("multichoice", "quiz")
                               MATCH         => get_string("match", "quiz"),
                               DESCRIPTION   => get_string("description", "quiz"),
                               RANDOMSAMATCH => get_string("randomsamatch", "quiz"),
-                              MULTIANSWER   => get_string("multianswer", "quiz")
+                              MULTIANSWER   => get_string("multianswer", "quiz"),
+                              ESSAY         => get_string("essay", "quiz")
                               );
 // add remote question types
 if ($rqp_types = get_records('quiz_rqp_types')) {
