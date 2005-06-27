@@ -52,6 +52,7 @@ $string['totaltime'] = 'Time';
 $string['noactivity'] = 'Nothing to report';
 $string['firstaccess'] = 'First access';
 $string['lastaccess'] = 'Last access';
+$string['scormcourse'] = 'SCORM Course';
 
 // Validation
 $string['attr_error'] = 'Bad value for attribute ($a->attr) in tag $a->tag.';
@@ -66,6 +67,7 @@ $string['not_corr_type'] = 'Type mismatch for tag $a->tag';
 $string['missing_attribute'] = 'Missing attribute $a->attr in tag $a->tag';
 $string['missing_tag'] = 'Missing tag $a->tag';
 $string['packagedir'] = 'Filesystem Error: Can\'t create package directory';
+$string['packagefile'] = 'No package file specified';
 $string['php5'] = 'PHP 5 (DOMXML native library)';
 $string['position_error'] = 'The $a->tag tag can\'t be child of $a->parent tag';
 $string['regular'] = 'Regular Manifest';
