@@ -1,11 +1,9 @@
 <?PHP // $Id$ 
-      // enrol_ldap.php - created with Moodle 1.4.3 (2004083130)
+      // enrol_ldap.php - created with Moodle 1.5 + (2005060201)
 
 
 $string['description'] = '<p>Você pode usar um server LDAP para controlar as inscrições. Se presume que o ramo LDAP contenha grupos mapeados em relação aos cursos e que cada um destes grupos/cursos terá itens que identificam membros mapeados em relação aos estudantes.</p>
-<p>Se presume que os cursos sejam definidos como grupos em LDAP, com cada grupo contendo campos múltiplos que identificam os membros (<em>member</em> ou <em>memberUid</em>) e que contém uma identificação unívoca do usuário </p>
-
-';
+<p>Se presume que os cursos sejam definidos como grupos em LDAP, com cada grupo contendo campos múltiplos que identificam os membros (<em>member</em> ou <em>memberUid</em>) e que contém uma identificação unívoca do usuário </p>';
 $string['enrol_ldap_autocreate'] = 'Podem ser criados cursos automaticamente quando existem inscrições em cursos ainda inexistentes.';
 $string['enrol_ldap_autocreation_settings'] = 'Parâmetros de criação automática de cursos';
 $string['enrol_ldap_bind_dn'] = 'Se você quiser usar o bind-user para buscar usuários, indicá-lo aqui. Algo como \'cn=ldapuser,ou=public,o=org\'';
@@ -17,9 +15,11 @@ $string['enrol_ldap_course_settings'] = 'Configuração da Inscrição em Cursos';
 $string['enrol_ldap_course_shortname'] = 'Opcional: campo LDAP que define o nome breve';
 $string['enrol_ldap_course_summary'] = 'Opcional: campo LDAP que define o sumário';
 $string['enrol_ldap_editlock'] = 'Bloquear valor';
+$string['enrol_ldap_general_options'] = 'Opções Gerais';
 $string['enrol_ldap_host_url'] = 'Definir o host LDAP em formato URL como \'ldap://ldap.myorg.com/\' 
 ou \'ldaps://ldap.myorg.com/\'';
 $string['enrol_ldap_objectclass'] = 'objectClass usado para buscar cursos. Normalmente é \'posixGroup\'.';
+$string['enrol_ldap_search_sub'] = 'Buscar membros de grupos em subcontextos';
 $string['enrol_ldap_server_settings'] = 'Parâmetros do Server LDAP';
 $string['enrol_ldap_student_contexts'] = 'Lista de contextos onde grupos com inscrição de estudantes estão localizados. Separar contextos diferentes com \';\'. Por exemplo: 
 \'ou=courses,o=org; ou=others,o=org\'';
