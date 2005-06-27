@@ -10,7 +10,7 @@
     include_once("$CFG->dirroot/lib/adminlib.php");  // Contains various admin-only functions
 
     $id = optional_param( 'id',0,PARAM_INT );
-    $confirmupgrade = optional_param( 'confirm_upgrade','' );
+    $confirmupgrade = optional_param( 'confirmupgrade','' );
 
 
 /// Check that PHP is of a sufficient version
