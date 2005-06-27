@@ -84,7 +84,8 @@ a img {
 }
 
 img.userpicture,
-img.grouppicture {
+img.grouppicture,
+.block_online_users .listentry img {
   border: 1px solid
 }
 

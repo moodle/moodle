@@ -57,6 +57,10 @@ img.grouppicture {
   border-color:#000
 }
 
+.block_online_users .listentry img {
+  border:#888
+}
+
 body {
   background-color:#FAFAFA;
 }
