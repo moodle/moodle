@@ -15,6 +15,9 @@
     if (empty($form->auto)) {
         $form->auto = "";
     }
+    if (empty($form->auto)) {
+        $form->popup = "0";
+    }
     if (empty($form->datadir)) {
         $form->datadir = "";
     }
@@ -171,15 +174,55 @@
             ?>
             </td>
         </tr>
+        <tr><td colspan="2"><hr /></td></tr>
+
+        <tr>
+            <td align="right"><b><?php print_string("advanced", "scorm") ?>:</b></td>
+            <td>
+            <script language="javascript" type="text/javascript">
+                function showhide (id, set) {
+        divobj = document.getElementById(id);
+        butobj = document.getElementById(id+'button');
+        prefobj = document.getElementById(id+'pref');
+        if (set == true) {
+            if (prefobj.value == '1') {
+                divobj.style.display = 'block';
+                butobj.value = '<?php print_string("hidesettings") ?>';
+            } else {
+                divobj.style.display = 'none';
+                butobj.value = '<?php print_string("showsettings") ?>...';
+            }
+        } else {
+            if (prefobj.value == '1') {
+                divobj.style.display = 'none';
+                butobj.value = '<?php print_string("showsettings") ?>...';
+                prefobj.value = '0';
+            } else {
+                divobj.style.display = 'block';
+                butobj.value = '<?php print_string("hidesettings") ?>';
+                prefobj.value = '1';
+            }
+        }
+    }
+</script>
+                <input type="button" value="<?php print_string("hidesettings") ?>" id="advancedsettingsbutton" onclick="javascrip: return showhide('advancedsettings');" />
+                <input type="hidden" name="advancedsettingspref" id="advancedsettingspref" 
+                       value="<?php echo get_user_preferences('scorm_advancedsettingspref', $CFG->scorm_advancedsettings); ?>" />
+                <?php helpbutton("advanced", get_string("advanced", "scorm"), "scorm", true) ?>
+            </td>
+        </tr>
+        <tr><td colspan="2">
+        <div id="advancedsettings">
+        <table align="center">
         <tr>
             <td align="right"><b><?php print_string("autocontinue","scorm") ?>:</b></td>
             <td>
             <?php
-                $options = array();
-                $options[0]=get_string("no");
-                $options[1]=get_string("yes");
-                choose_from_menu ($options, "auto", $form->auto,'');
-                helpbutton("autocontinue", get_string("autocontinue", "scorm"), "scorm", true);
+                   $options = array();
+                   $options[0]=get_string("no");
+                   $options[1]=get_string("yes");
+                   choose_from_menu ($options, "auto", $form->auto,'');
+                   helpbutton("autocontinue", get_string("autocontinue", "scorm"), "scorm", true);
             ?>
             </td>
         </tr>
@@ -195,25 +238,57 @@
             ?>
             </td>
         </tr>
+        <tr>
+            <td align="right"><b><?php print_string("popup","scorm") ?>:</b></td>
+            <td>
+            <?php
+                   $options = array();
+                   $options[0]=get_string("no");
+                   $options[1]=get_string("yes");
+                   choose_from_menu ($options, "popup", $form->popup,'');
+                   helpbutton("popupwindow", get_string("popup", "scorm"), "scorm", true);
+            ?>
+            </td>
+        </tr>
+        <tr valign="top">
+            <td align="right">
+                <b><?php print_string("stagesize","scorm") ?></b>
+                <?php helpbutton("stagesize", get_string("stagesize", "scorm"), "scorm", true); ?>
+            </td>
+            <td>&nbsp;</td>
+        </tr>
         <tr valign="top">
             <td align="right"><b><?php print_string("width","scorm") ?>:</b></td>
             <td>
                <input type="text" name="width" value="<?php echo $form->width ?>" size="4" />
-                <?php helpbutton("width", get_string("width", "scorm"), "scorm", true); ?>
             </td>
         </tr>
         <tr valign="top">
             <td align="right"><b><?php print_string("height","scorm") ?>:</b></td>
             <td>
                <input type="text" name="height" value="<?php echo $form->height ?>" size="4" />
-                <?php helpbutton("height", get_string("height", "scorm"), "scorm", true); ?>
             </td>
         </tr>
+        </table>
+        </div>
+        <script language="javascript" type="text/javascript">
+             showhide('advancedsettings', true);
+        </script>
+        </td></tr>
     </table>
     <input type="hidden" name="datadir" value="<?php p($form->datadir) ?>" />
     <input type="hidden" name="pkgtype" value="<?php p($form->pkgtype) ?>" />
     <input type="hidden" name="launch"  value="<?php p($form->launch) ?>" />
-
+    <?php
+        $scorms = get_all_instances_in_course("scorm", $course);
+        $coursescorm = current($scorms);
+        if (($course->format == 'scorm') && ((count($scorms) == 0) || ($form->instance == $coursescorm->id))) {
+    ?>
+    <input type="hidden" name="redirect"       value="yes" />
+    <input type="hidden" name="redirecturl"    value="../course/view.php?id=<?php p($form->course) ?>" />    
+    <?php
+        } 
+    ?>
     <input type="hidden" name="course"  value="<?php p($form->course) ?>" />
     <input type="hidden" name="sesskey" value="<?php p($form->sesskey) ?>" />
     <input type="hidden" name="section" value="<?php p($form->section) ?>" />

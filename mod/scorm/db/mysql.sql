@@ -14,6 +14,7 @@ CREATE TABLE prefix_scorm (
   summary text NOT NULL,
   browsemode tinyint(2) NOT NULL default '0',
   auto tinyint(1) unsigned NOT NULL default '0',
+  popup tinyint(1) unsigned NOT NULL default '0',
   width int(10) unsigned NOT NULL default '800',
   height int(10) unsigned NOT NULL default '600',
   timemodified int(10) unsigned NOT NULL default '0',

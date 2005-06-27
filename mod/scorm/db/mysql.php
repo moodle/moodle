@@ -178,6 +178,10 @@ function scorm_upgrade($oldversion) {
     if ($oldversion < 2005052200) {
        table_column("scorm_scoes_track", "", "timemodified", "INT", "10", "UNSIGNED", "0", "NOT NULL", "value");
     }
+    
+    if ($oldversion < 2005062700) {
+       table_column("scorm", "", "popup", "TINYINT", "1", "UNSIGNED", "0", "NOT NULL", "auto");
+    }
 
     return true;
 }

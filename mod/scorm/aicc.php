@@ -49,6 +49,7 @@
                         $userdata->mode = $mode;
                 
                         if ($sco = get_record('scorm_scoes','id',$scoid)) {
+                            $userdata->course_id = $sco->identifier;
                             $userdata->datafromlms = $sco->datafromlms;
                             $userdata->masteryscore = $sco->masteryscore;
                             $userdata->maxtimeallowed = $sco->maxtimeallowed;
@@ -89,6 +90,7 @@
                                 echo "[Core_Lesson]\n"."\n";
                             }
                             echo "[Core_Vendor]\n".$userdata->datafromlms."\n";
+                            echo "[Evaluation]\nCourse_ID = {".$userdata->course_id."}\n";
                         } else {
                             error('Sco not found');
                         }
@@ -96,47 +98,78 @@
                 break;
                 case 'putparam':
                     if ($status == 'Running') {
-                        print_r($_POST['aicc_data']);
                         echo "error = 0\nerror_text = Successful\n";
+                    } else if ($status == 'Terminated') {
+                        echo "error = 1\nerror_text = Terminated\n";
+                    } else {
+                        echo "error = 1\nerror_text = Not Initialized\n";
                     }
                 break;
                 case 'putcomments':
                     if ($status == 'Running') {
-                        print_r($_POST['aicc_data']);
                         echo "error = 0\nerror_text = Successful\n";
+                    } else if ($status == 'Terminated') {
+                        echo "error = 1\nerror_text = Terminated\n";
+                    } else {
+                        echo "error = 1\nerror_text = Not Initialized\n";
                     }
                 break;
                 case 'putinteractions':
                     if ($status == 'Running') {
-                        print_r($_POST['aicc_data']);
                         echo "error = 0\nerror_text = Successful\n";
+                    } else if ($status == 'Terminated') {
+                        echo "error = 1\nerror_text = Terminated\n";
+                    } else {
+                        echo "error = 1\nerror_text = Not Initialized\n";
                     }
                 break;
                 case 'putobjectives':
                     if ($status == 'Running') {
-                        print_r($_POST['aicc_data']);
                         echo "error = 0\nerror_text = Successful\n";
+                    } else if ($status == 'Terminated') {
+                        echo "error = 1\nerror_text = Terminated\n";
+                    } else {
+                        echo "error = 1\nerror_text = Not Initialized\n";
                     }
                 break;
                 case 'putpath':
                     if ($status == 'Running') {
-                        print_r($_POST['aicc_data']);
                         echo "error = 0\nerror_text = Successful\n";
+                    } else if ($status == 'Terminated') {
+                        echo "error = 1\nerror_text = Terminated\n";
+                    } else {
+                        echo "error = 1\nerror_text = Not Initialized\n";
                     }
                 break;
                 case 'putperformance':
                     if ($status == 'Running') {
-                        print_r($_POST['aicc_data']);
                         echo "error = 0\nerror_text = Successful\n";
+                    } else if ($status == 'Terminated') {
+                        echo "error = 1\nerror_text = Terminated\n";
+                    } else {
+                        echo "error = 1\nerror_text = Not Initialized\n";
                     }
                 break;
                 case 'exitau':
                     if ($status == 'Running') {
                         $SESSION->scorm_status = 'Terminated';                  
                         echo "error = 0\nerror_text = Successful\n";
+                    } else if ($status == 'Terminated') {
+                        echo "error = 1\nerror_text = Terminated\n";
+                    } else {
+                        echo "error = 1\nerror_text = Not Initialized\n";
                     }
                 break;
+                default:
+                    echo "error = 1\nerror_text = Invalid Command\n";
+                break;
             }
+        }
+    } else {
+        if (empty($command)) {
+            echo "error = 1\nerror_text = Invalid Command\n";
+        } else {
+            echo "error = 3\nerror_text = Invalid Session ID\n";
         }
     }
 ?>

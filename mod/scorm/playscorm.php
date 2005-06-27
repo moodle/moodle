@@ -81,23 +81,23 @@
     //
     // Print the page header
     //
+    $scripts = '';
+    if ($scorm->popup = 1) {
+        $scripts = 'onUnload="top.main.close();"';
+    }
 
     print_header($pagetitle, "$course->fullname",
                  "$navigation <a target='{$CFG->framename}' href='view.php?id=$cm->id'>".format_string($scorm->name,true)."</a>",
-                 '', '', true, update_module_button($cm->id, $course->id, $strscorm));
+                 '', '', true, update_module_button($cm->id, $course->id, $strscorm), '', false, $scripts);
 ?>
 
     <table class="fullscreen">
     <tr><td class="top">
-        <p><?php echo format_text($scorm->summary) ?></p>
         <p><?php echo $mode == 'browse' ? get_string('browsemode','scorm') : '&nbsp;'; ?></p>
         <table class='generalbox' cellpadding='5' cellspacing='0'>
             <tr>
                 <th>
                     <div class="structurehead"><?php print_string('coursestruct','scorm') ?></div>
-                    <!--<div class="popupbutton">
-                        <a href='#' onClick='popup(main,popupimg);'><img id='popupimg' src="pix/popup.gif" alt="<?php echo $strpopup ?>" title="<?php echo $strpopup ?>"/></a>
-                    </div> -->
                 </th>
             </tr>
             <tr><td class="top">
@@ -129,12 +129,26 @@
            </td></tr>
        </table>
     </td>
+<?php
+    if ($scorm->popup == 0) {
+?>
     <td class="top" width="<?php print $scorm->width ?>">
         <iframe name="main" width="<?php print $scorm->width ?>" height="<?php echo $scorm->height ?>" src="loadSCO.php?id=<?php echo $cm->id.$scoidstring.$modestring ?>"></iframe>
-    </td></tr>
+    </td>
+<?php
+    }
+?>
+    </tr>
     </table>
     <script language="javascript" type="text/javascript">
     <!--
+<?php
+    if ($scorm->popup == 1) {
+?>
+        top.main = window.open("loadSCO.php?id=<?php echo $cm->id.$scoidstring.$modestring ?>","","width=<?php echo $scorm->width ?>,height=<?php echo $scorm->height ?>,scrollbars=1");
+<?php
+    }
+?>
         function playSCO(scoid) {
             if (scoid == 0) {
                 document.location = '<?php echo $CFG->wwwroot ?>/course/view.php?id=<?php echo $cm->course ?>';
@@ -142,12 +156,6 @@
                 document.navform.scoid.value=scoid;
                 document.navform.submit();
             }
-        }
-
-        function popup(win,image) {
-            win = window.open("loadSCO.php?id=<?php echo $cm->id.$scoidstring.$modestring ?>","","width=<?php echo $scorm->width ?>,height=<?php echo $scorm->height ?>,scrollbars=1");
-            image.src = "pix/popdown.gif";
-            return win;
         }
 
         function prevSCO() {
