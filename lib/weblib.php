@@ -698,6 +698,43 @@ function choose_from_menu ($options, $name, $selected='', $nothing='choose', $sc
 }
 
 /**
+ * Given an array of values, creates a group of radio buttons to be part of a form
+ * 
+ * @param array  $options  An array of value-label pairs for the radio group (values as keys)
+ * @param string $name     Name of the radiogroup (unique in the form)
+ * @param string $checked  The value that is already checked
+ */
+function choose_from_radio ($options, $name, $checked='') {
+
+    if (!$name) {
+        $name = 'unnamed';
+    }
+
+    $output = '<span class="radiogroup '.$name."\">\n";
+
+    if (!empty($options)) {
+        $currentradio = 0;
+        foreach ($options as $value => $label) {
+            $output .= '   <span class="radioelement '.$name.' rb'.$currentradio."\">";
+            $output .= '<input name="'.$name.'" type="radio" value="'.$value.'"';
+            if ($value == $checked) {
+                $output .= ' checked="checked"';
+            }
+            if ($label === '') {
+                $output .= ' />'.  $value .'</span>' .  "\n";
+            } else {
+                $output .= ' />'.  $label .'</span>' .  "\n";
+            }
+            $currentradio = ($currentradio + 1) % 2;
+        }
+    }
+
+    $output .= '</span>' .  "\n";
+
+    echo $output;
+}
+
+/**
  * Implements a complete little popup form
  *
  * @uses $CFG
