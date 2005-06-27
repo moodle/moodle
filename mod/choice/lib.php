@@ -70,7 +70,7 @@ function choice_add_instance($choice) {
         foreach ($choice as $name => $value) {        
             if (strstr($name, "newoption")) {   /// New option
                 $value = trim($value);
-                if ($value) {
+                if (isset($value) && $value <> '') {
                     $option = NULL;
                     $option->text = $value;
                     $option->choiceid = $choice->id;
@@ -110,7 +110,7 @@ function choice_update_instance($choice) {
         $value = trim($value);
 
         if (strstr($name, "oldoption")) {  // Old option
-            if ($value) {
+            if (isset($value) && $value <> '') {
                 $option = NULL;
                 $option->id = substr($name, 9); // Get the ID of the answer that needs to be updated.
                 $option->text = $value;
@@ -122,7 +122,7 @@ function choice_update_instance($choice) {
                 delete_records("choice_options", "id", substr($name, 9));
             }
         } else if (strstr($name, "newoption")) {   /// New option
-            if ($value) {
+            if (isset($value)&& $value <> '') {
                 $option = NULL;
                 $option->text = $value;
                 $option->choiceid = $choice->id;

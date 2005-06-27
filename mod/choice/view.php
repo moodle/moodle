@@ -3,7 +3,7 @@
     require_once("../../config.php");
     require_once("lib.php");
 
-    $id = required_param('id',0,PARAM_INT);    // Course Module ID
+    require_variable($id);    // Course Module ID
 
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");
@@ -147,7 +147,7 @@
                     }
                     $maxans = $choice->maxanswers[$optionid];
                     
-                    if ($text) { 
+                    if (isset($text)) { 
                     echo "<td align=\"center\" valign=\"top\">";
                     echo "<input type=\"radio\" name=\"answer\" value=\"".$optionid."\" ".$answerchecked[$optionid]." alt=\"".strip_tags(format_text($text))."\"";
                     if ($choice->limitanswers && ($countanswers >= $maxans) && !($answerchecked[$optionid]) ) {
