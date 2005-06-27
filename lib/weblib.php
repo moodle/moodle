@@ -2447,7 +2447,7 @@ function print_user_picture($userid, $courseid, $picture, $size=0, $returnstring
                        ' border="0" width="'. $size .'" height="'. $size .'" alt="" />';
         }
     } else {         // Print default user pictures (use theme version if available)
-        $output .= "<img align=\"middle\" src=\"$CFG->pixpath/u/$file.png\"".
+        $output .= "<img class=\"userpicture defaultuserpic\" align=\"middle\" src=\"$CFG->pixpath/u/$file.png\"".
                    " border=\"0\" width=\"$size\" height=\"$size\" alt=\"\" />";
     }
     if ($link) {
