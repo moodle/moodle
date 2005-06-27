@@ -1115,7 +1115,7 @@ function scorm_display_structure($scorm,$liststyle,$currentorg='',$scoid='',$mod
                     $shownext = $sco->next;
                     $showprev = $sco->previous;
                 }
-                if (($nextid == 0) && (scorm_count_launchable($scorm->id,$currentorg) > 1)) {
+                if (($nextid == 0) && (scorm_count_launchable($scorm->id,$currentorg) > 1) && ( $nextsco!==false)) {
                     $previd = $sco->id;
                 }
                 echo "&nbsp;$startbold<a href='javascript:playSCO(".$sco->id.");'>$sco->title</a> $score$endbold</li>\n";
