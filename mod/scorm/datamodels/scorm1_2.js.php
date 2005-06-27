@@ -57,7 +57,6 @@ function SCORMapi1_2() {
         'cmi.core.student_name':{'defaultvalue':'<?php echo $userdata->student_name ?>', 'mod':'r', 'writeerror':'403'},
         'cmi.core.lesson_location':{'defaultvalue':'<?php echo isset($userdata->{'cmi.core.lesson_location'})?$userdata->{'cmi.core.lesson_location'}:'' ?>', 'format':CMIString256, 'mod':'rw', 'writeerror':'405'},
         'cmi.core.credit':{'defaultvalue':'<?php echo $userdata->credit ?>', 'mod':'r', 'writeerror':'403'},
-        //'cmi.core.credit':{'defaultvalue':'credit', 'mod':'r', 'writeerror':'403'},  
         'cmi.core.lesson_status':{'defaultvalue':'<?php echo isset($userdata->{'cmi.core.lesson_status'})?$userdata->{'cmi.core.lesson_status'}:'' ?>', 'format':CMIStatus, 'mod':'rw', 'writeerror':'405'},
         'cmi.core.entry':{'defaultvalue':'<?php echo $userdata->entry ?>', 'mod':'r', 'writeerror':'403'},
         'cmi.core.score._children':{'defaultvalue':score_children, 'mod':'r', 'writeerror':'402'},
@@ -481,14 +480,18 @@ function SCORMapi1_2() {
 
     function StoreData(data,storetotaltime) {
         if (storetotaltime) {
+            if (cmi.core.lesson_status == 'not attempted') {
+                cmi.core.lesson_status = 'completed';
+            }
             if (cmi.core.lesson_mode == 'normal') {
                 if (cmi.core.credit == 'credit') {
-                    cmi.core.lesson_status = 'completed';
-                    if (cmi.student_data.mastery_score != '') {
-                        if (cmi.core.score.raw >= cmi.student_data.mastery_score) {
-                            cmi.core.lesson_status = 'passed';
-                        } else {
-                            cmi.core.lesson_status = 'failed';
+                    if (cmi.core.lesson_status == 'completed') {
+                        if (cmi.student_data.mastery_score != '') {
+                            if (cmi.core.score.raw >= cmi.student_data.mastery_score) {
+                                cmi.core.lesson_status = 'passed';
+                            } else {
+                                cmi.core.lesson_status = 'failed';
+                            }
                         }
                     }
                 }
