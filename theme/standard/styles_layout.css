@@ -82,6 +82,12 @@ table {
 a img {
   border:none;
 }
+
+img.userpicture,
+img.grouppicture {
+  border: 1px solid
+}
+
 .notifyproblem {
   text-align: center;
   padding: 10px;

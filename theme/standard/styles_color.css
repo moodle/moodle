@@ -52,6 +52,11 @@ a.autolink.glossary:hover {
   cursor: help;
 }
 
+img.userpicture,
+img.grouppicture {
+  border-color:#000
+}
+
 body {
   background-color:#FAFAFA;
 }
