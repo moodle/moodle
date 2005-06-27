@@ -147,7 +147,7 @@
                     }
                     $maxans = $choice->maxanswers[$optionid];
                     
-                    if ($text) { 
+                    if (isset($text)) { 
                     echo "<td align=\"center\" valign=\"top\">";
                     echo "<input type=\"radio\" name=\"answer\" value=\"".$optionid."\" ".$answerchecked[$optionid]." alt=\"".strip_tags(format_text($text))."\"";
                     if ($choice->limitanswers && ($countanswers >= $maxans) && !($answerchecked[$optionid]) ) {
