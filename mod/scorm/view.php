@@ -151,10 +151,10 @@
     var mid=w3c?").style":".style";
 
         if (eval(beg+list+mid+".display") != "none") {
-            which.src = "pix/plus.gif";
+            which.src = "<?php echo $CFG->wwwroot ?>/mod/scorm/pix/plus.gif";
             eval(beg+list+mid+".display='none';");
         } else {
-            which.src = "pix/minus.gif";
+            which.src = "<?php echo $CFG->wwwroot ?>/mod/scorm/pix/minus.gif";
             eval(beg+list+mid+".display='block';");
         }
     }
