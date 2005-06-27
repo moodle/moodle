@@ -1155,7 +1155,7 @@ function format_string ($string, $striplinks = false, $courseid=NULL ) {
     static $strcache;
 
     //Calculate md5
-    $md5 = md5($string.$striplinks);
+    $md5 = md5($string.'<+>'.$striplinks);
 
     //Fetch from cache if possible
     if(isset($strcache[$md5])) {
