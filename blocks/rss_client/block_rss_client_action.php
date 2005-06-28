@@ -1,12 +1,21 @@
 <?php //$Id$
 
+/*******************************************************************
+* This file contains one class which...
+*
+* @author Daryl Hawes
+* @version  $Id$
+* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+* @package base
+******************************************************************/
+
     require_once('../../config.php');
     require_once($CFG->libdir .'/rsslib.php');
     require_once(MAGPIE_DIR .'rss_fetch.inc');
 
     require_login();
     global $USER;
-    
+
     //ensure that the logged in user is not using the guest account
     if (isset($_SERVER['HTTP_REFERER'])) {
         $referrer = $_SERVER['HTTP_REFERER'];
@@ -69,13 +78,16 @@
         if (empty($url)) {
             error( 'url not defined for rss feed' );
         }
-        
+                
         // By capturing the output from fetch_rss this way
         // error messages do not display and clutter up the moodle interface
         // however, we do lose out on seeing helpful messages like "cache hit", etc.
+        $message = '';
         ob_start();
         $rss = fetch_rss($url);
-        $rsserror = ob_get_contents();
+        if ($CFG->debug) {
+            $message .= ob_get_contents();
+        }
         ob_end_clean();
         
         $dataobject->id = $rssid;
@@ -94,10 +106,9 @@
             error('There was an error trying to update rss feed with id:'. $rssid);
         }
 
-        redirect($referrer, get_string('feedupdated', 'block_rss_client'));
-/*        rss_display_feeds();
-        rss_get_form($act, $dataobject->url, $rssid, $dataobject->preferredtitle);
-*/
+        $message .= '<br />'. get_string('feedupdated', 'block_rss_client');
+        redirect($referrer, $message);
+
     } else if ($act == 'addfeed' ) {
 
         if (empty($url)) {
@@ -117,13 +128,16 @@
         // By capturing the output from fetch_rss this way
         // error messages do not display and clutter up the moodle interface
         // however, we do lose out on seeing helpful messages like "cache hit", etc.
+        $message = '';
         ob_start();
         $rss = fetch_rss($url);
-        $rsserror = ob_get_contents();
+        if ($CFG->debug) {
+            $message .= ob_get_contents();
+        }
         ob_end_clean();
         
         if ($rss === false) {
-            $message = 'There was an error loading this rss feed. You may want to verify the url you have specified before using it.'; //Daryl Hawes note: localize this line
+            $message .= '<br /><br />There was an error loading this rss feed. You may want to verify the url you have specified before using it.'; //Daryl Hawes note: localize this line
         } else {
 
             $dataobject->id = $rssid;
@@ -136,7 +150,7 @@
             if (!update_record('block_rss_client', $dataobject)) {
                 error('There was an error trying to update rss feed with id:'. $rssid);
             }
-            $message = get_string('feedadded', 'block_rss_client');
+            $message .= '<br />'. get_string('feedadded', 'block_rss_client');
         }
         redirect($referrer, $message);
 /*
@@ -168,9 +182,6 @@
 
         redirect($referrer, get_string('feeddeleted', 'block_rss_client') );
 
-/*        rss_display_feeds();
-        rss_get_form($act, $url, $rssid, $preferredtitle);
-*/
     } else if ($act == 'view') {
         //              echo $sql; //debug
         //              print_object($res); //debug
@@ -183,7 +194,6 @@
             // however, we do lose out on seeing helpful messages like "cache hit", etc.
             ob_start();
             $rss = fetch_rss($rss_record->url);
-            $rsserror = ob_get_contents();
             ob_end_clean();
             
             if (empty($rss_record->preferredtitle)) {
@@ -212,7 +222,7 @@
                     //Blog module is installed - provide "blog this" link
                     print '<td align="right">'."\n";
                     print '<img src="'. $CFG->pixpath .'/blog/blog.gif" alt="'. get_string('blogthis', 'blog').'" title="'. get_string('blogthis', 'blog') .'" border="0" align="middle" />'."\n";
-                    print '<a href="'. $CFG->wwwroot .'/blog/blogthis.php?blogid='. $blogid .'&act=use&item='. $y .'&rssid='. $rssid .'"><small><strong>'. get_string('blogthis', 'blog') .'</strong></small></a>'."\n";
+                    print '<a href="'. $CFG->wwwroot .'/blog/blogthis.php?userid='. $userid .'&act=use&item='. $y .'&rssid='. $rssid .'"><small><strong>'. get_string('blogthis', 'blog') .'</strong></small></a>'."\n";
                 } else {
                     print '<td>&nbsp;';
                 }

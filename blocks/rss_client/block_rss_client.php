@@ -1,5 +1,18 @@
 <?php //$Id$
 
+/*******************************************************************
+* This file contains one class which...
+*
+* @author Daryl Hawes
+* @version  $Id$
+* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+* @package base
+******************************************************************/
+
+/**
+ * This class is for a block which....
+ */
+
 // Developer's debug assistant - if true then the display string will not cache, only
 // the magpie object's built in caching will be used
 define('BLOCK_RSS_SECONDARY_CACHE_ENABLED', true);
@@ -36,7 +49,6 @@ class block_rss_client extends block_base {
         }
 
         $this->content = new stdClass;
-        $this->content->footer = '';
         
         if (empty($this->instance)) {
             // We're being asked for content without an associated instance
@@ -159,7 +171,6 @@ class block_rss_client extends block_base {
 
         $rss_record = get_record('block_rss_client', 'id', $rssid);
         if (isset($rss_record) && isset($rss_record->id)) {
-                    
             // By capturing the output from fetch_rss this way
             // error messages do not display and clutter up the moodle interface
             // however, we do lose out on seeing helpful messages like "cache hit", etc.
@@ -198,6 +209,12 @@ class block_rss_client extends block_base {
 
             $formatoptions->para = false;
 
+            // first we must verify that the rss feed is loaded
+            // by checking $rss and $rss->items exist before using them
+            if (empty($rss) || empty($rss->items)) {
+                return '';
+            }
+            
             foreach ($rss->items as $item) {
                 $item['title'] = stripslashes_safe(rss_unhtmlentities($item['title']));
                 $item['description'] = stripslashes_safe(rss_unhtmlentities($item['description']));
