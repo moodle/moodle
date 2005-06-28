@@ -44,14 +44,19 @@
             }
             else {
                 $this->supported_platform = false;
-                return false;
             }
             $this->path_latex = "{$binpath}latex";
             $this->path_dvips = "{$binpath}dvips";
             $this->path_convert = "{$binpath}convert";
             $this->path_identify = "{$binpath}identify";
+        }
 
-            return true;
+        /**
+         * Accessor function for support_platform field. 
+         * @return boolean value of supported_platform
+         */
+        function supported() {
+            return $this->supported_platform;
         }
 
         /**
@@ -101,6 +106,11 @@
          * @return bool true if successful
          */
         function render( $formula, $filename, $fontsize=12, $density=240, $background='', $log=null ) {
+            // quick check - will this work?
+            if (!$this->supported_platform) {
+                return false;
+            }
+
             $doc = $this->construct_latex_document( $formula, $fontsize );
 
             // construct some file paths
