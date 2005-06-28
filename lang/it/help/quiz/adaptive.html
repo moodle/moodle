@@ -1,0 +1,13 @@
+<p align="center"><b>Modo adattativo</b></p>
+
+<p>Se si sceglie SI per questa opzione, lo studente avrà la possibilità di rispondere più volte a una domanda anche all'interno dello stesso tentativo di risposta al quiz. Così, per esempio, se la replica a una risposta è giudicata 'sbagliata' lo studente avrà la possibilità di riprovare immediatamente. Comunque normalmente, per ogni tentativo fallito, sarà sottratta una penalità dal punteggio dello studente (la penalità è determinata dal 'fattore di penalità' definito per ogni domanda è deciso dalla prossima opzione).</p>
+
+<p>Questa modalità permette anche la definizione di domande che possono modificare se stesse in funzione della risposta di uno studente. Ecco come la specifica IMS QTI definisce le domande (items) adattative:</p>
+
+<blockquote>
+Un item adattativo è un item che modifica (adatta) o la sua forma o il processo di valutazione o entrambi, in risposta a ciascun tentativo del candidato. Per esempio un item adattativo può iniziare presentando al candidato una casella per l'immissione di testo libero ma, ricevendo una risposta insoddisfacente, continua con una domanda a scelta semplice e assegna meno punti nella conseguente identificazione della risposta corretta. L'adattatività permette la creazione di items utilizzabili per la formazione che, da una parte guidano il candidato alla soluzione di un dato compito, dall'altra determinano una valutazione che tiene conto del percorso effettuato.
+</blockquote>
+
+<p>Nel modo adattativo per ogni domanda viene mostrato un ulteriore pulsante '<?php print_string('mark', 'quiz') ?>'.
+Se lo studente clicca su tale pulsante la risposta alla specifica domanda viene valutata e viene mostrato il punteggio ottenuto. Se la domanda è di tipo adattativo, allora questa viene mostrata nel suo nuovo stato che tiene conto della risposta dello studente e, nella maggior parte dei casi, chiederà un'ulteriore risposta. Nelle domande adattative più semplici il nuovo stato può differire solamente nel feedback che chiede allo studente di riprovare ancora; nelle domande più complesse anche la domanda e perfino gli elementi interattivi possono cambiare.
+</p>

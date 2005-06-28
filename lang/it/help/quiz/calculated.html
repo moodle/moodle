@@ -1,0 +1,69 @@
+<p align="center"><b>Domande calcolate</b></p>
+Le domande 'calcolate' offrono un modo per creare singole domande numeriche tramite l'uso di caratteri jolly che vengono sostituiti da valori effettivi quando il quiz è eseguito.
+<br />Di seguito è riportato uno stralcio della pagina principale di editing della domanda con alcuni input di esempio:<br />
+
+<table><tbody>
+<tr valign="top">
+    <td align="right"><p><b>Domanda:</b></p>
+    </td>
+    <td>
+        <textarea id="questiontext" name="questiontext" rows="5" cols="40" wrap="virtual">Quanto fa {a} + {b} ?</textarea>
+</td>
+</tr>
+<tr valign="top">
+    <td align="right"><p><b>Immagine da mostrare:</b></p></td>
+    <td>
+    <select name="image"><option value="" selected="selected">Nessuno</option><option value="grevture.gif">grevture.gif</option></select>
+    </td>
+</tr>
+
+<tr valign="top">
+<td align="right"><p><b>Formula della risposta corretta:</b></p></td>
+    <td>
+    <input align="left" type="text" id="formula0" name="answer[]" size="20" value="{a} + {b}">&nbsp;&nbsp;
+    <input type="hidden" name="fraction[]" value="1.0">
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right"><p><b>Tolleranza:</b></p></td>
+    <td>
+    <input align="left" type="text" id="tolerance0&quot;" name="tolerance[]" size="15" value="0.01">±
+    </td>
+</tr>
+<tr valign="top">
+<td align="right"><p><b>Tipo di tolleranza:</b></p></td>
+    <td>
+    <select name="tolerancetype[]"><option value="1" selected="selected">Relativa</option><option value="2">Nominale</option><option value="3">Geometrica</option></select>
+    </td>
+</tr>
+<tr valign="top">
+<td align="right"><p><b>La risposta corretta avrà:</b></p></td>
+    <td>
+    <select name="correctanswerlength[]"><option value="1">1</option><option value="2" selected="selected">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select>
+    </td>
+</tr>
+</tbody></table>
+
+<br />
+Nel testo della domanda e nel campo "Formula della risposta corretta" si possono vedere {a} e {b}. Queste e ogni altro {nome} possono essere usate come caratteri jolly che saranno sostituiti da qualche valore quando il quiz sarà eseguito. Inoltre, la risposta corretta è determinata quando il quiz è inviato, usando l'espressione in "Formula della risposta corretta", che è calcolato come una espressione numerica dopo la sostituzione dei caratteri jolly. I possibili valori da sostituire sono impostati o generati in una pagina successiva di aiuto (wizard) per l'editing delle domande calcolate.
+ 
+ <br/>La formula di esempio usa l'operatore +. Altri operatori possibili sono - * / e % dove % è l'operatore modulo. E' anche possibile utilizzare alcune funzioni matematiche in stile PHP. Tra queste sono presenti le 24 funzioni a singolo argomento:
+ <br /><b>
+abs, acos, acosh, asin, asinh, atan, atanh, ceil, cos, cosh, deg2rad, exp, expm1, floor, log, log10, log1p, rad2deg, round, sin, sinh, sprt, tan, tanh,
+</b><br />le 2 funzioni a doppio argomento:<br /><b>
+atan2, pow
+</b><br />e le funzioni <b>min</b> e <b>max</b> che possono avere due o più argomenti. E' anche possibile usare la funzione <b>pi</b> che non ha argomenti, ma non dimenticare di usare le parentisi - l'uso corretto è <b>pi()</b>. Analogamente anche le altre funzioni devono avere i propri argomenti racchiusi tra parentesi. Un esempio di utilizzo è <b>sin({a}) + cos({b}) * 2</b>. Non ci dovrebbe essere alcun problema a usare le parentesi anche nelle funzioni di funzioni, come ad esempio <b>cos(deg2rad({a} + 90))</b> ecc.
+<br />Maggiori dettagli sull'uso di queste funzioni stile PHP si possono trovare nella <a target="phpmathdoc" href="http://www.php.net/manual/en/ref.math.php">documentazione presente nel sito web del PHP.</a>
+<br /><br />
+Come nelle domande numeriche, anche per queste è possibile prevedere un margine di tolleranza tale che le risposte all'interno dello stesso sono accettate come corrette. Il campo "Tolleranza" serve a questo scopo. Comunque ci sono tre tipi di tolleranza <b>Relativa, Nominale e Geometrica</b>. Se diciamo che la risposta giusta calcolata al momento del quiz è 200 e la tolleranza è impostata a 0.5, allora i differenti tipi di tolleranza funzioneranno in questo modo:
+<br /><br /><b>Relativa:</b> L'intervallo di tolleranza è determinato moltiplicando la risposta corretta per 0.5, ottenendo nel caso in esempio 100 e cioè considerando corrette tutte le risposte tra 100 e 300 (200 ± 100).<br />
+Questo è utile se il valore della risposta corretta può variare molto all'interno di valori differenti dei caratteri jolly.
+<br /><br /><b>Nominale:</b> Questo è il tipo di tolleranza più semplice ma non molto significativo. La risposta giusta deve stare, nell'esempio, tra 199.5 e 200.5 (200 ± 0.5).<br />
+Questo tipo di tolleranza può essere utile se la differenza tra le varie risposte corrette è piccola. 
+<br /><br /><b>Geometrica:</b> Il limite superiore dell'intervallo di tolleranza è calcolato come 200 + 0.5*200 (nell'esempio) ed è lo stesso della tolleranza Relativa. Il limite inferiore è calcolato come 200/(1 + 0.5). La risposta corretta deve cadere quindi tra 133.33 e 300.<br />
+Questo è utile per calcoli complessi che devono avere tolleranze significative. Infatti una tolleranza relativa di 1 o più potrebbe essere usata per il limite superiore ma non sarebbe accettabile per il limite inferiore che renderebbe lo Zero una risposta corretta in tutti i casi.
+<br /><br />
+I due campi relativi a <b>La risposta corretta avrà</b> si riferiscono solamente a come la risposta corretta sarà mostrata nell'anteprima o nei risultati finali. Esempi: Se sono impostati a "3 cifre significative" la risposta corretta 13.333 sarà presentata come 13.3; 1236 sarà presentata come 1240; 23 sarà mostrato come 23.0 ecc.
+<br /><br />
+Il campo <b>Commenti</b> e i campi opzionali Unità funzionano esattamente come per le domande numeriche.
+<br />
