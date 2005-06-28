@@ -7,6 +7,7 @@
 
     require_once('../../config.php');
     require_once($CFG->libdir.'/filelib.php');
+    require_once('latex.php');
 
     $CFG->texfilterdir = 'filter/tex';
     $CFG->teximagedir  = 'filter/tex';
@@ -15,7 +16,7 @@
     $cmd    = '';               // Initialise these variables
     $status = '';
 
-    //error_reporting(E_ALL);
+    error_reporting(E_ALL);
 
     $relativepath = get_file_argument('pix.php');
 
@@ -35,48 +36,58 @@
                 make_upload_directory($CFG->teximagedir);
             }
 
-            $texexp = $texcache->rawtext;
-            $texexp = str_replace('&lt;','<',$texexp);
-            $texexp = str_replace('&gt;','>',$texexp);
-            $texexp = preg_replace('!\r\n?!',' ',$texexp);
-            $texexp = '\Large ' . $texexp;
-
-            if ((PHP_OS == "WINNT") || (PHP_OS == "WIN32") || (PHP_OS == "Windows")) {
-                $texexp = str_replace('"','\"',$texexp);
-                $cmd = "$CFG->dirroot/$CFG->texfilterdir/mimetex.exe";
-                $cmd = str_replace(' ','^ ',$cmd);
-                $cmd .= " ++ -e  \"$pathname\" -- \"$texexp\"";
-            } else if (is_executable("$CFG->dirroot/$CFG->texfilterdir/mimetex")) {   /// Use the custom binary
-
-                $cmd = "$CFG->dirroot/$CFG->texfilterdir/mimetex -e $pathname -- ". escapeshellarg($texexp);
-
-            } else {                                                           /// Auto-detect the right TeX binary
-                switch (PHP_OS) {
-
-                    case "Linux":
-                        $cmd = "\"$CFG->dirroot/$CFG->texfilterdir/mimetex.linux\" -e \"$pathname\" -- ". escapeshellarg($texexp);
-                    break;
-
-                    case "Darwin":
-                        $cmd = "\"$CFG->dirroot/$CFG->texfilterdir/mimetex.darwin\" -e \"$pathname\" -- ". escapeshellarg($texexp);
-                    break;
-
-                    default:      /// Nothing was found, so tell them how to fix it.
-                        if ($CFG->debug > 7) {
-                            echo "Make sure you have an appropriate MimeTeX binary here:\n\n";
-                            echo "    $CFG->dirroot/$CFG->texfilterdir/mimetex\n\n";
-                            echo "and that it has the right permissions set on it as executable program.\n\n";
-                            echo "You can get the latest binaries for your ".PHP_OS." platform from: \n\n";
-                            echo "    http://moodle.org/download/mimetex/";
-                        } else {
-                            echo "Mimetex executable was not found,\n";
-                            echo "Please turn on debug mode in site configuration to see more info here.";
-                        }
-                        die;
-                    break;
-                }
+            // try and render with latex first
+            $latex = new latex();
+            $latex_path = $latex->render( $texcache->rawtext, $md5, 12, 200, '#FFFFFF' );
+            if ($latex_path) {    
+                copy( $latex_path, $pathname );
+                $latex->clean_up( $md5 );
             }
-            system($cmd, $status);
+            else {                    
+                // failing that, use mimetex
+                $texexp = $texcache->rawtext;
+                $texexp = str_replace('&lt;','<',$texexp);
+                $texexp = str_replace('&gt;','>',$texexp);
+                $texexp = preg_replace('!\r\n?!',' ',$texexp);
+                $texexp = '\Large ' . $texexp;
+
+                if ((PHP_OS == "WINNT") || (PHP_OS == "WIN32") || (PHP_OS == "Windows")) {
+                    $texexp = str_replace('"','\"',$texexp);
+                    $cmd = "$CFG->dirroot/$CFG->texfilterdir/mimetex.exe";
+                    $cmd = str_replace(' ','^ ',$cmd);
+                    $cmd .= " ++ -e  \"$pathname\" -- \"$texexp\"";
+                } else if (is_executable("$CFG->dirroot/$CFG->texfilterdir/mimetex")) {   /// Use the custom binary
+
+                    $cmd = "$CFG->dirroot/$CFG->texfilterdir/mimetex -e $pathname -- ". escapeshellarg($texexp);
+
+                } else {                                                           /// Auto-detect the right TeX binary
+                    switch (PHP_OS) {
+
+                        case "Linux":
+                            $cmd = "\"$CFG->dirroot/$CFG->texfilterdir/mimetex.linux\" -e \"$pathname\" -- ". escapeshellarg($texexp);
+                        break;
+
+                        case "Darwin":
+                            $cmd = "\"$CFG->dirroot/$CFG->texfilterdir/mimetex.darwin\" -e \"$pathname\" -- ". escapeshellarg($texexp);
+                        break;
+
+                        default:      /// Nothing was found, so tell them how to fix it.
+                            if ($CFG->debug > 7) {
+                                echo "Make sure you have an appropriate MimeTeX binary here:\n\n";
+                                echo "    $CFG->dirroot/$CFG->texfilterdir/mimetex\n\n";
+                                echo "and that it has the right permissions set on it as executable program.\n\n";
+                                echo "You can get the latest binaries for your ".PHP_OS." platform from: \n\n";
+                                echo "    http://moodle.org/download/mimetex/";
+                            } else {
+                                echo "Mimetex executable was not found,\n";
+                                echo "Please turn on debug mode in site configuration to see more info here.";
+                            }
+                             die;
+                        break;
+                    }
+                }
+                system($cmd, $status);
+            }
         }
     }
 

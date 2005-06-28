@@ -69,7 +69,7 @@ function string_file_picture_tex($imagefile, $tex= "", $height="", $width="", $a
           $output .= urlencode($tex) . "', 'popup', 'menubar=0,location=0,scrollbars,";
           $output .= "resizable,width=300,height=240', 0);\">";
         }
-        $output .= "<img border=\"0\" $title $height $width alt=\"\" src=\"";
+        $output .= "<img class=\"texrender\" border=\"0\" $title $height $width alt=\"\" src=\"";
         if ($CFG->slasharguments) {        // Use this method if possible for better caching
             $output .= "$CFG->wwwroot/$CFG->texfilterdir/pix.php/$imagefile";
         } else {
@@ -108,7 +108,6 @@ function tex_filter ($courseid, $text) {
 #    if ($discussion->forum != 130) {
 #        return $text;
 #    }
-
     $text .= ' ';
     preg_match_all('/\$(\$\$+?)([^\$])/s',$text,$matches);
     for ($i=0;$i<count($matches[0]);$i++) {
