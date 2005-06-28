@@ -3,7 +3,7 @@
     require("../config.php");
     require("$CFG->dirroot/mod/forum/lib.php");
 
-    $confirm = optional_param($confirm);
+    $confirm = optional_param('confirm');
 
     require_login();
 
