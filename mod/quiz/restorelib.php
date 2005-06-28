@@ -4,9 +4,9 @@
 
 // Todo:
     // the restoration of the parent and sortorder fields in the category table needs
-    // a lot more thought. We should probably use a library function to add the category 
+    // a lot more thought. We should probably use a library function to add the category
     // rather than just writing it to the database
-    
+
     // whereever it says "/// We have to recode the .... field" we should put in a check
     // to see if the recoding was successful and throw an appropriate error otherwise
 
@@ -135,7 +135,7 @@
             $quiz_cat->parent = backup_todb($info['QUESTION_CATEGORY']['#']['PARENT']['0']['#']);
             $quiz_cat->sortorder = backup_todb($info['QUESTION_CATEGORY']['#']['SORTORDER']['0']['#']);
 
-            if ($catfound = restore_get_best_quiz_category($quiz_cat, $restore->course)) {            
+            if ($catfound = restore_get_best_quiz_category($quiz_cat, $restore->course)) {
                 $newid = $catfound;
             } else {
                 if (!$quiz_cat->stamp) {
@@ -175,6 +175,7 @@
         global $CFG;
 
         $status = true;
+        $restored_questions = array();
 
         //Get the questions array
         $questions = $info['QUESTION_CATEGORY']['#']['QUESTIONS']['0']['#']['QUESTION'];
@@ -206,7 +207,7 @@
 
             ////We have to recode the parent field
             // This should work alright because we ordered the questions appropriately during backup so that
-        // questions that can be parents are restored first
+            // questions that can be parents are restored first
             if ($question->parent and $parent = backup_getid($restore->backup_unique_code,"quiz_questions",$question->parent)) {
                 $question->parent = $parent->new_id;
             }
@@ -227,22 +228,32 @@
                 $creatingnewquestion = true;
             }
 
-            //Do some output
-            if (($i+1) % 2 == 0) {
-                echo ".";
-                if (($i+1) % 40 == 0) {
-                    echo "<br />";
-                }
-                backup_flush(300);
-            }
             //Save newid to backup tables
             if ($newid) {
                 //We have the newid, update backup_ids
                 backup_putid($restore->backup_unique_code,"quiz_questions",$oldid,
                              $newid);
             }
+
+            $restored_questions[$i] = new stdClass;
+            $restored_questions[$i]->newid  = $newid;
+            $restored_questions[$i]->oldid  = $oldid;
+            $restored_questions[$i]->qtype  = $question->qtype;
+            $restored_questions[$i]->is_new = $creatingnewquestion;
+        }
+
+        // Loop again, now all the question id mappings exist, so everything can
+        // be restored.
+        for($i = 0; $i < sizeof($questions); $i++) {
+            $que_info = $questions[$i];
+
+            $newid = $restored_questions[$i]->newid;
+            $oldid = $restored_questions[$i]->oldid;
+            $question->qtype = $restored_questions[$i]->qtype;
+
+
             //If it's a new question in the DB, restore it
-            if ($creatingnewquestion) {
+            if ($restored_questions[$i]->is_new) {
                 //Now, restore every quiz_answers in this question
                 $status = quiz_restore_answers($oldid,$newid,$que_info,$restore);
                 //Now, depending of the type of questions, invoke different functions
@@ -268,8 +279,7 @@
                     $status = quiz_restore_calculated($oldid,$newid,$que_info,$restore);
                 } else if ($question->qtype == "11") {
                     $status = quiz_restore_rqp($oldid,$newid,$que_info,$restore);
-        }
-                
+                }
             } else {
                 //We are NOT creating the question, but we need to know every quiz_answers
                 //map between the XML file and the database to be able to restore the states
@@ -299,6 +309,15 @@
                 } else if ($question->qtype == "10") {
                     //Calculated question. Nothing to remap
                 }
+            }
+
+            //Do some output
+            if (($i+1) % 2 == 0) {
+                echo ".";
+                if (($i+1) % 40 == 0) {
+                    echo "<br />";
+                }
+                backup_flush(300);
             }
         }
         return $status;
@@ -836,13 +855,13 @@
 
             //Now, build the QUIZ_NUMERICAL record structure
             $numerical->question = $new_question_id;
-            $numerical->answers = backup_todb($num_info['#']['ANSWERS']['0']['#']);
+            $numerical->answer = backup_todb($num_info['#']['ANSWER']['0']['#']);
             $numerical->tolerance = backup_todb($num_info['#']['TOLERANCE']['0']['#']);
 
             ////We have to recode the answer field
-            $answer = backup_getid($restore->backup_unique_code,"quiz_answers",$numerical->answers);
+            $answer = backup_getid($restore->backup_unique_code,"quiz_answers",$numerical->answer);
             if ($answer) {
-                $numerical->answers = $answer->new_id;
+                $numerical->answer = $answer->new_id;
             }
 
             //The structure is equal to the db, so insert the quiz_numerical
@@ -946,33 +965,29 @@
 
             //Now, build the QUIZ_MULTIANSWER record structure
             $multianswer->question = $new_question_id;
-            $multianswer->answers = backup_todb($mul_info['#']['ANSWERS']['0']['#']);
-            $multianswer->positionkey = backup_todb($mul_info['#']['POSITIONKEY']['0']['#']);
-            $multianswer->answertype = backup_todb($mul_info['#']['ANSWERTYPE']['0']['#']);
-            $multianswer->norm = backup_todb($mul_info['#']['NORM']['0']['#']);
+            $multianswer->sequence = backup_todb($mul_info['#']['SEQUENCE']['0']['#']);
 
-            //We have to recode the answers field (a list of answers id)
-            //Extracts answer id from sequence
-            $answers_field = "";
+            //We have to recode the sequence field (a list of question ids)
+            //Extracts question id from sequence
+            $sequence_field = "";
             $in_first = true;
-            $tok = strtok($multianswer->answers,",");
+            $tok = strtok($multianswer->sequence,",");
             while ($tok) {
                 //Get the answer from backup_ids
-                $answer = backup_getid($restore->backup_unique_code,"quiz_answers",$tok);
-                if ($answer) {
+                $question = backup_getid($restore->backup_unique_code,"quiz_questions",$tok);
+                if ($question) {
                     if ($in_first) {
-                        $answers_field .= $answer->new_id;
+                        $sequence_field .= $question->new_id;
                         $in_first = false;
                     } else {
-                        $answers_field .= ",".$answer->new_id;
+                        $sequence_field .= ",".$question->new_id;
                     }
                 }
                 //check for next
                 $tok = strtok(",");
             }
             //We have the answers field recoded to its new ids
-            $multianswer->answers = $answers_field;
-
+            $multianswer->sequence = $sequence_field;
             //The structure is equal to the db, so insert the quiz_multianswers
             $newid = insert_record ("quiz_multianswers",$multianswer);
 
@@ -990,7 +1005,7 @@
                 }
                 backup_flush(300);
             }
-
+/*
             //If we have created the quiz_multianswers record, now, depending of the
             //answertype, delegate the restore to every qtype function
             if ($newid) {
@@ -1004,6 +1019,7 @@
             } else {
                 $status = false;
             }
+*/
         }
 
         return $status;

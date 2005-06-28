@@ -37,8 +37,8 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
         foreach ($wrappedquestions as $wrapped) {
             if (!$QUIZ_QTYPES[$wrapped->qtype]
              ->get_question_options($wrapped)) {
-                error("Unable to recognized questiontype " .
-                $wrapped->qtype);
+                notify("Unable to get options for questiontype
+                {$wrapped->qtype} (id={$wrapped->id})");
             }
             $wrapped->maxgrade = $wrapped->defaultgrade;
             $question->options->questions[$sequence[$wrapped->id]] = clone($wrapped);
