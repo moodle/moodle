@@ -734,6 +734,37 @@ function choose_from_radio ($options, $name, $checked='') {
     echo $output;
 }
 
+/** Display an standard html checkbox with an optional label
+ *
+ * @param string  $name    The name of the checkbox
+ * @param string  $value   The valus that the checkbox will pass when checked
+ * @param boolean $checked The flag to tell the checkbox initial state
+ * @param string  $label   The label to be showed near the checkbox
+ * @param string  $alt     The info to be inserted in the alt tag
+ */
+function print_checkbox ($name, $value, $checked = true, $label = '', $alt = '') {
+
+    if (!$name) {
+        $name = 'unnamed';
+    }
+
+    if (!$alt) {
+        $alt = 'checkbox';
+    }
+
+    if ($checked) {
+        $strchecked = ' checked="checked"';
+    }
+
+    $output  = '<span class="checkbox '.$name."\">";
+    $output .= '<input name="'.$name.'" type="checkbox" value="'.$value.'" alt="'.$alt.'"'.$strchecked.' />';
+    $output .= $label;
+    $output .= '</span>'."\n";
+
+    echo $output;
+
+}
+
 /**
  * Implements a complete little popup form
  *
