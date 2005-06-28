@@ -44,13 +44,11 @@ function scorm_upgrade($oldversion) {
     if ($oldversion < 2005031300) {
         table_column("scorm_scoes", "", "prerequisites", "VARCHAR", "200", "", "", "NOT NULL", "title");
         table_column("scorm_scoes", "", "maxtimeallowed", "VARCHAR", "13", "", "", "NOT NULL", "prerequisites");
-        modify_database('',"ALTER TABLE prefix_scorm_scoes ADD timelimitaction ".
-                           "SET('exit,message','exit,no message','continue,message','continue,no message') ".
-                           "DEFAULT '' AFTER 'maxtimeallowed'");
+        table_column("scorm_scoes", "", "timelimitaction", "VARCHAR", "19", "", "", "NOT NULL", "maxtimeallowed");
         table_column("scorm_scoes", "", "masteryscore", "VARCHAR", "200", "", "", "NOT NULL", "datafromlms");
 
         $oldscoes = get_records_select("scorm_scoes","1","id ASC");
-        modify_database('',"ALTER TABLE prefix_scorm_scoes CHANGE type scormtype SET('sco','asset') DEFAULT '' NOT NULL");
+        table_column("scorm_scoes", "type", "scormtype", "VARCHAR", "5", "", "", "NOT NULL");
         if(!empty($oldscoes)) {
             foreach ($oldscoes as $sco) {
                 $sco->scormtype = $sco->type;
