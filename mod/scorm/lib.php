@@ -583,7 +583,7 @@ function scorm_endElement($parser, $name) {
         $level--;
     }
     //if ($name == 'TITLE' && $level>0) {
-    if ($name == 'TITLE') {
+    if (($name == 'TITLE') && !isset($scoes[$i]['title'])) {
         $scoes[$i]['title'] = $datacontent;
     }
     if ($name == 'ADLCP:HIDERTSUI') {
@@ -856,6 +856,9 @@ function scorm_parse_scorm($pkgdir,$file,$scormid) {
         for ($j=1; $j<=$i; $j++) {
             $sco->identifier = $scoes[$j]['identifier'];
             $sco->parent = $scoes[$j]['parent'];
+            if (!isset($scoes[$j]['title'])) {
+                $scoes[$j]['title'] = '';
+            }
             $sco->title = $scoes[$j]['title'];
             $sco->manifest = $scoes[$j]['manifest'];
             $sco->organization = $scoes[$j]['organization'];
@@ -1024,7 +1027,7 @@ function scorm_count_launchable($scormid,$organization) {
 }
 
 function scorm_display_structure($scorm,$liststyle,$currentorg='',$scoid='',$mode='normal',$play=false) {
-    global $USER;
+    global $USER, $CFG;
 
     $strexpand = get_string('expcoll','scorm');
 
@@ -1066,11 +1069,13 @@ function scorm_display_structure($scorm,$liststyle,$currentorg='',$scoid='',$mod
             $nextsco = next($scoes);
             if (($nextsco !== false) && ($sco->parent != $nextsco->parent) && (($level==0) || (($level>0) && ($nextsco->parent == $sco->identifier)))) {
                 $sublist++;
-                echo '<a href="#" onClick="expandCollide(img'.$sublist.','.$sublist.');"><img id="img'.$sublist.'" src="pix/minus.gif" alt="'.$strexpand.'" title="'.$strexpand.'"/></a>';
+                echo '<a href="#" onClick="expandCollide(img'.$sublist.','.$sublist.');"><img id="img'.$sublist.'" src="'.$CFG->wwwroot.'/mod/scorm/pix/minus.gif" alt="'.$strexpand.'" title="'.$strexpand.'"/></a>';
             } else {
-                echo '<img src="pix/spacer.gif" />';
+                echo '<img src="'.$CFG->wwwroot.'/mod/scorm/pix/spacer.gif" />';
             }
-
+            if (empty($sco->title)) {
+                $sco->title = $sco->identifier;
+            }
             if ($sco->launch) {
                 $startbold = '';
                 $endbold = '';
@@ -1083,7 +1088,7 @@ function scorm_display_structure($scorm,$liststyle,$currentorg='',$scoid='',$mod
                         $usertrack->status = 'notattempted';
                     }
                     $strstatus = get_string($usertrack->status,'scorm');
-                    echo "<img src='pix/".$usertrack->status.".gif' alt='$strstatus' title='$strstatus' />";
+                    echo "<img src='".$CFG->wwwroot."/mod/scorm/pix/".$usertrack->status.".gif' alt='$strstatus' title='$strstatus' />";
                     if (($usertrack->status == 'notattempted') || ($usertrack->status == 'incomplete') || ($usertrack->status == 'browsed')) {
                         $incomplete = true;
                         if ($play && empty($scoid)) {
@@ -1098,10 +1103,10 @@ function scorm_display_structure($scorm,$liststyle,$currentorg='',$scoid='',$mod
                         $scoid = $sco->id;
                     }
                     if ($sco->scormtype == 'sco') {
-                        echo '<img src="pix/notattempted.gif" alt="'.get_string('notattempted','scorm').'" title="'.get_string('notattempted','scorm').'" />';
+                        echo '<img src="'.$CFG->wwwroot.'/mod/scorm/pix/notattempted.gif" alt="'.get_string('notattempted','scorm').'" title="'.get_string('notattempted','scorm').'" />';
                         $incomplete = true;
                     } else {
-                        echo '<img src="pix/asset.gif" alt="'.get_string('asset','scorm').'" title="'.get_string('asset','scorm').'" />';
+                        echo '<img src="'.$CFG->wwwroot.'/mod/scorm/pix/asset.gif" alt="'.get_string('asset','scorm').'" title="'.get_string('asset','scorm').'" />';
                     }
                 }
                 if ($sco->id == $scoid) {
