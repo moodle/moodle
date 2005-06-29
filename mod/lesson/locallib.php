@@ -182,7 +182,10 @@ function lesson_save_question_options($question) {
                     $answer->jumpto = LESSON_NEXTPAGE;
                     $answer->timecreated   = $timenow;
                     $answer->grade = $question->fraction[$key] * 100;
-                    $answer->answer   = $question->min[$key].":".$question->max[$key];
+                    $min = $question->answer[$key] - $question->tolerance[$key];
+                    $max = $question->answer[$key] + $question->tolerance[$key];
+                    $answer->answer   = $min.":".$max;
+                    // $answer->answer   = $question->min[$key].":".$question->max[$key]; original line for min/max
                     $answer->response = $question->feedback[$key];
                     if (!$answer->id = insert_record("lesson_answers", $answer)) {
                         $result->error = "Could not insert numerical quiz answer!";
