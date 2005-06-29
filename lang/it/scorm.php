@@ -2,6 +2,7 @@
       // scorm.php - created with Moodle 1.6 development (2005060201)
 
 
+$string['advanced'] = 'Avanzate';
 $string['asset'] = 'Asset';
 $string['attr_error'] = 'Valore non valido per l\'attributo ($a->attr) del tag $a->tag.';
 $string['autocontinue'] = 'Continuazione automatica';
@@ -53,9 +54,10 @@ $string['notattempted'] = 'Non provato';
 $string['organization'] = 'Organizzazione';
 $string['organizations'] = 'Organizzazioni';
 $string['packagedir'] = 'Errore Filesystem: non è possibile creare la directory del pacchetto SCORM';
+$string['packagefile'] = 'Non è stato specificato nessun pacchetto';
 $string['passed'] = 'Superato';
 $string['php5'] = 'PHP5 (libreria DOMXML nativa)';
-$string['popup'] = 'Apri lo SCO corrente in una nuova finestra';
+$string['popup'] = 'Apri i Learning Objects in una nuova finestra';
 $string['position_error'] = 'It tag $a->tag non può essere figlio del tag $a->parent';
 $string['prev'] = 'Precedente';
 $string['regular'] = 'Manifest corretto';
@@ -63,6 +65,8 @@ $string['report'] = 'Report';
 $string['review'] = 'Rivedi';
 $string['scoes'] = 'Sco';
 $string['score'] = 'Voto';
+$string['scormcourse'] = 'Corso SCORM';
+$string['stagesize'] = 'Dimensione Frame/Finestra';
 $string['syntax'] = 'Errore di sintassi';
 $string['tag_error'] = 'Tag sconosciuto ($a->tag) con questo valore: $a->value';
 $string['too_many_attributes'] = 'Il tag $a->tag ha troppi attributi';

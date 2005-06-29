@@ -35,6 +35,7 @@ $string['failedupdatefeedback'] = 'Aggiornamento delle risposte alle consegne de
 $string['feedback'] = 'Risposte';
 $string['feedbackfromteacher'] = 'Risposte dal';
 $string['feedbackupdated'] = 'Risposte alle consegne aggiornate per $a utenti';
+$string['guestnoupload'] = 'Spiacente, agli ospiti non è permesso inviare file.';
 $string['helpoffline'] = '<p>Questo è utile quando il compito è compilato al di fuori di Moodle. Potrebbe essere da qualche altra parte sul web o un\'attività in presenza/aula.</p><p>Gli studenti possono vedere una descrizione del compito ma non possono inviare file o altro. La valutazione funziona normalmente, e gli studenti riceveranno la notifica delle loro valutazioni.</p>';
 $string['helponline'] = '<p>Questo tipo di compito chiede agli utenti di compilare un testo, utilizzando i normali strumenti di modifica. Gli insegnanti possono valutarli online, e anche aggiungere dei commenti in linea o modifiche.</p>
 <p>(Se hia familiarità con le vecchie versioni di Moodle, questo tipo di compito permette di fare le stesse cose che il vecchio modulo Diario permetteva).</p>';
