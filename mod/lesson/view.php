@@ -717,7 +717,7 @@
                         break;
                     case LESSON_BRANCHTABLE :
                         if ($lesson->slideshow) {
-                            echo "</table></div><table cellpadding=\"5\" cellspacing=\"5\" align=\"left\">";
+                            echo "</table></div><table cellpadding=\"5\" cellspacing=\"5\" align=\"center\">";
                         } else {
                             echo "<tr><td><table width=\"100%\">";
                         }
