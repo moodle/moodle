@@ -27,6 +27,16 @@ $string['databasesettings'] = '    Now you need to configure the database where 
        <b>User:</b> your database username<br />
        <b>Password:</b> your database password<br />
        <b>Tables Prefix:</b> optional prefix to use for all table names';
+$string['databasecreationsettings'] = '    Now you need to configure the database settings where most Moodle data
+    will be stored.  This database will be created automatically by the Moodle4Windows installer
+    with the settings specified below.<br />
+    <br /> <br />
+       <b>Type:</b> fixed to "mysql" by the installer<br />
+       <b>Host:</b> fixed to "localhost" by the installer<br />
+       <b>Name:</b> database name, eg moodle<br />
+       <b>User:</b> fixed to "root" by the installer<br />
+       <b>Password:</b> your database password<br />
+       <b>Tables Prefix:</b> optional prefix to use for all table names';
 $string['dataroot'] = 'Data Directory';
 $string['datarooterror'] = 'The \'Data Directory\' you specified could not be found or created.  Either correct the path or create that directory manually.';
 $string['dbconnectionerror'] = 'We could not connect to the database you specified. Please check your database settings.';
