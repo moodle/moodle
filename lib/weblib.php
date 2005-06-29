@@ -4248,7 +4248,7 @@ function adjust_allowed_tags() {
 
     global $CFG, $ALLOWED_TAGS;
 
-    if (!empty($CFG->allowobjectembed) || isadmin()) {
+    if (!empty($CFG->allowobjectembed)) {
         $ALLOWED_TAGS .= '<embed><object>';
     }
 }
