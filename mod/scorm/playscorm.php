@@ -82,7 +82,7 @@
     // Print the page header
     //
     $scripts = '';
-    if ($scorm->popup = 1) {
+    if ($scorm->popup == 1) {
         $scripts = 'onUnload="top.main.close();"';
     }
 
