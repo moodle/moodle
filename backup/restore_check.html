@@ -39,9 +39,9 @@
             foreach ($allmods as $mod) {
                 $modname = $mod->name;
                 $var = "restore_".$modname;
-                $$var = required_param( $var); 
+                $$var = optional_param( $var,0); 
                 $var = "restore_user_info_".$modname;
-                $$var = required_param( $var);
+                $$var = optional_param( $var,0);
             }
         }
         //restoreto
