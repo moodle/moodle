@@ -56,9 +56,24 @@
             if (!is_int($scorm->grademethod)) {
                 $scorm->grademethod = 0;
             }
-            $scorm->launch = backup_todb($info['MOD']['#']['LAUNCH']['0']['#']);
+            if ($restore->backup_version < 2005041500) {
+                $scorm->datadir = substr(backup_todb($info['MOD']['#']['DATADIR']['0']['#']),1);
+            } else {
+                $scorm->datadir = backup_todb($info['MOD']['#']['ID']['0']['#']);
+            }
+            $oldlaunch = backup_todb($info['MOD']['#']['LAUNCH']['0']['#']);
             $scorm->summary = backup_todb($info['MOD']['#']['SUMMARY']['0']['#']);
             $scorm->auto = backup_todb($info['MOD']['#']['AUTO']['0']['#']);
+            if ($restore->backup_version < 2005040200) {
+                $oldpopup = backup_todb($info['MOD']['#']['POPUP']['0']['#']);
+                if (!empty($oldpopup)) {
+                    $scorm->popup = 1;
+                } else {
+                    $scorm->popup = 0;
+                }
+            } else {
+                $scorm->popup = backup_todb($info['MOD']['#']['POPUP']['0']['#']);
+            }
             $scorm->width = backup_todb($info['MOD']['#']['WIDTH']['0']['#']);
             if ($scorm->width == 0) {
                 $scorm->width = 800;
@@ -79,13 +94,19 @@
                 //We have the newid, update backup_ids
                 backup_putid($restore->backup_unique_code,$mod->modtype,
                              $mod->id, $newid);
-
+                $scorm->id = $newid;
                 //Now copy moddata associated files
                 $status = scorm_restore_files ($scorm, $restore);
 
-                if ($status)
+                if ($status) {
                     $status = scorm_scoes_restore_mods ($newid,$info,$restore);
-
+                    if ($status) {
+                        $launchsco = backup_getid($restore->backup_unique_code,"scorm_scoes",$oldlaunch);
+                        $scorm->launch = $launchsco->new_id;
+                        update_record('scorm',$scorm);
+                    }
+                } 
+                
             } else {
                 $status = false;
             }
@@ -325,7 +346,7 @@
         //Now locate the temp dir we are restoring from
         if ($status) {
             $temp_path = $CFG->dataroot."/temp/backup/".$restore->backup_unique_code.
-                         "/moddata/scorm/".$package->id;
+                         "/moddata/scorm/".$package->datadir;
             //Check it exists
             if (is_dir($temp_path)) {
                 $todo = true;
@@ -336,7 +357,6 @@
         if ($status and $todo) {
             //Make scorm package directory path
             $this_scorm_path = $scorm_path."/".$package->id;
-
             $status = backup_copy_file($temp_path, $this_scorm_path);
         }
 

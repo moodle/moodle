@@ -50,6 +50,7 @@
                 fwrite ($bf,full_tag("SUMMARY",4,false,$scorm->summary));
                 fwrite ($bf,full_tag("BROWSEMODE",4,false,$scorm->browsemode));
                 fwrite ($bf,full_tag("AUTO",4,false,$scorm->auto));
+                fwrite ($bf,full_tag("POPUP",4,false,$scorm->popup));
                 fwrite ($bf,full_tag("WIDTH",4,false,$scorm->width));
                 fwrite ($bf,full_tag("HEIGHT",4,false,$scorm->height));
                 fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$scorm->timemodified));
