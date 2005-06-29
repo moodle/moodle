@@ -48,12 +48,13 @@ $string['stagesize'] = 'Frame/Windows size';
 $string['width'] = 'Width';
 $string['height'] = 'Height';
 $string['trackingloose'] = 'WARNING: The tracking data of this package will be lost!';
-$string['popup'] = 'Open current SCO in a new window';
+$string['popup'] = 'Open Learning Objects in a new window';
 $string['totaltime'] = 'Time';
 $string['noactivity'] = 'Nothing to report';
 $string['firstaccess'] = 'First access';
 $string['lastaccess'] = 'Last access';
 $string['scormcourse'] = 'SCORM Course';
+$string['advanced'] = 'Avanzate';
 
 // Validation
 $string['attr_error'] = 'Bad value for attribute ($a->attr) in tag $a->tag.';
