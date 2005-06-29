@@ -17,8 +17,8 @@ $SCORM_WINDOW_OPTIONS = array('resizable', 'scrollbars', 'status', 'height', 'wi
 if (!isset($CFG->scorm_popup)) {
     set_config('scorm_popup', '');
 }
-if (!isset($CFG->scorm_validate)) {
-    $scorm_validate = 'none';
+//if (!isset($CFG->scorm_validate)) {
+  //  $scorm_validate = 'none';
     //I've commented this out for Moodle 1.4, as I've seen errors in 
     //SCORM packages even though the actual package worked fine. -- Martin Dougiamas
     //if (extension_loaded('domxml') && version_compare(phpversion(),'5.0.0','<')) {
@@ -27,8 +27,8 @@ if (!isset($CFG->scorm_validate)) {
     //if (version_compare(phpversion(),'5.0.0','>=')) {
     //    $scorm_validate = 'php5';
     //}
-    set_config('scorm_validate', $scorm_validate);
-}
+    //set_config('scorm_validate', $scorm_validate);
+//}
 
 foreach ($SCORM_WINDOW_OPTIONS as $popupoption) {
     $popupoption = "scorm_popup$popupoption";
@@ -307,61 +307,60 @@ function scorm_datadir($strPath, $existingdir='', $prefix = 'SCORM')
     }
 } 
 
-if ($CFG->scorm_validate == 'domxml') {
-    require_once('validatordomxml.php');
-}
+//if ($CFG->scorm_validate == 'domxml') {
+//    require_once('validatordomxml.php');
+//}
 
 function scorm_validate($manifest)
 {
     global $CFG;
     
-    global $item_idref_array;
-    global $idres_array;
-    global $def_org_array;
-    global $id_org_array;
+    //global $item_idref_array;
+    //global $idres_array;
+    //global $def_org_array;
+    //global $id_org_array;
     
     if (is_file ($manifest)) {
-	if (file_exists($manifest)) {
-	    if ($CFG->scorm_validate == 'domxml') {
+		if (file_exists($manifest)) {
+	/*  	if ($CFG->scorm_validate == 'domxml') {
     	    	$manifest_string = file_get_contents($manifest);
 
-	    	/* Elimino i caratteri speciali di spaziatura e ritorno a capo dal file xml */
+	    		// Elimino i caratteri speciali di spaziatura e ritorno a capo dal file xml
 
-	    	$spec = array('\n', '\r', '\t', '\0', '\x0B');
-	    	$content = str_replace($spec, '', $manifest_string);
+	    		$spec = array('\n', '\r', '\t', '\0', '\x0B');
+	    		$content = str_replace($spec, '', $manifest_string);
 
-	    	if ($xmldoc = domxml_open_mem($content)) {
-		    $root = $xmldoc->document_element();
-		    if (!testRoot($root)) {
-		        return 'syntax';
-	    	    }
-		    if (testNode($root)) {	
-		        // Nel corpo di questo if si controllano le corrispondenze fra gli attributi
-		        // Nello Standard SCORM ad ogni attributo idRef di <item> deve corrispondere
+	    		if ($xmldoc = domxml_open_mem($content)) {
+		    		$root = $xmldoc->document_element();
+		    		if (!testRoot($root)) {
+		        		return 'syntax';
+	    	    	}
+		    		if (testNode($root)) {	
+		        		// Nel corpo di questo if si controllano le corrispondenze fra gli attributi
+		        		// Nello Standard SCORM ad ogni attributo idRef di <item> deve corrispondere
                         // un attributo ID di <resource>
-		        // Gli array degli attributi sono stati dichiarati globali in validator.php
-		        // pertanto possono essere utilizzati direttamente all'interno di main.php
+		        		// Gli array degli attributi sono stati dichiarati globali in validator.php
+		        		// pertanto possono essere utilizzati direttamente all'interno di main.php
 
-		        foreach($item_idref_array as $elem_it) {  
-		    	    if (array_search($elem_it, $idres_array) === false) {
-				return 'mismatch';
-		    	    }
-		    	}
+		        		foreach($item_idref_array as $elem_it) {  
+		    	    		if (array_search($elem_it, $idres_array) === false) {
+								return 'mismatch';
+		    	    		}
+		    			}
   
                     	foreach($def_org_array as $elem_def) {  
-		    	    if (array_search($elem_it, $id_org_array) === false) {
-				return 'mismatch';
-		   	    }
-		    	}
-                   
-		    } else {
-		    	return 'badmanifest';
-		    }
-	    	}
-	    	return 'regular';
-	    } else {
-	        return 'found';
-            }
+		    	    		if (array_search($elem_it, $id_org_array) === false) {
+								return 'mismatch';
+		   	    			}
+		    			}
+		    		} else {
+		    			return 'badmanifest';
+		    		}
+	    		}
+	    		return 'regular';
+	    	} else { */
+	        	return 'found';
+            //}
     	}
     } else {
         return 'nomanifest';

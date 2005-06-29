@@ -50,16 +50,16 @@
             $scorm->reference = backup_todb($info['MOD']['#']['MAXGRADE']['0']['#']);
             $scorm->reference = backup_todb($info['MOD']['#']['GRADEMETHOD']['0']['#']);
             $scorm->datadir = backup_todb($info['MOD']['#']['DATADIR']['0']['#']);
-            $scorm->launch = backup_todb($info['MOD']['#']['LAUNCH']['0']['#']);
+            $oldlaunch = backup_todb($info['MOD']['#']['LAUNCH']['0']['#']);
             $scorm->summary = backup_todb($info['MOD']['#']['SUMMARY']['0']['#']);
             $scorm->auto = backup_todb($info['MOD']['#']['AUTO']['0']['#']);
             $scorm->popup = backup_todb($info['MOD']['#']['POPUP']['0']['#']);
-            $scorm->timemodified = backup_todb($info['MOD']['#']['TIMEMODIFIED']['0']['#']);
+            $scorm->timemodified = time();
 
             //The structure is equal to the db, so insert the scorm
             $newid = insert_record ("scorm",$scorm);
             //Do some output     
-            echo "<ul><li>".get_string("modulename","scorm")." \"".$scorm->name."\"<br>";
+            echo "<ul><li>".get_string("modulename","scorm")." \"".$scorm->name."\"</li></ul>";
             backup_flush(300);
 
             if ($newid) {
@@ -70,9 +70,14 @@
                 //Now copy moddata associated files
                 $status = scorm_restore_files ($scorm->datadir, $restore);
                 
-                if ($status)
+                if ($status) {
                     $status = scorm_scoes_restore_mods ($newid,$info,$restore);
-                    
+                    if ($status) {
+                        $launchsco = backup_getid($restore->backup_unique_code,"scorm_scoes",$oldlaunch);
+                        $scorm->launch = $launchsco->new_id;
+                        set_field('scorm','launch',$scorm->launch,'id',$newid);
+                    }
+                }
                 //Now check if want to restore user data and do it.
                 if ($restore->mods['scorm']->userinfo) {
                     //Restore scorm_scoes

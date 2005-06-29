@@ -45,29 +45,31 @@
         $result = "datadir";
     }
     $errorlogs = '';
+    //
+    // Delete package file
+    //
+    unlink ($tempdir."/".basename($form->reference));
+    
     if (($result != "regular") && ($result != "found")) {
-        if ($CFG->scorm_validate == 'domxml') {
+        /*if ($CFG->scorm_validate == 'domxml') {
             foreach ($errors as $error) {
                 $errorlogs .= get_string($error->type,"scorm",$error->data) . ".\n";
             }
-        }
+        }*/
         //
         // Delete files and temporary directory
         //
         if (is_dir($tempdir))
             scorm_delete_files($tempdir);
-    } else {
-            //
-        // Delete package file
-        //
-            unlink ($tempdir."/".basename($form->reference));
+    	} else {
             if ($form->mode == "update") {
-            $fp = fopen($coursedir."/".$form->reference,"r");
-        $fstat = fstat($fp);
-        fclose($fp);
-        if (get_field("scorm","timemodified","id",$form->instance) < $fstat["mtime"])
-            $form->launch = 0;
-        }
+            	$fp = fopen($coursedir."/".$form->reference,"r");
+        		$fstat = fstat($fp);
+        		fclose($fp);
+        		if (get_field("scorm","timemodified","id",$form->instance) < $fstat["mtime"]) {
+            		$form->launch = 0;
+            	}
+        	}
         }
         //
         // Print validation result
@@ -76,13 +78,13 @@
         echo "<table cellpadding=\"5\" align=\"center\">\n";
         echo "    <tr><td align=\"right\" nowrap><p><b>$strname:</b></p></td><td><p>$form->name</p></a></td></tr>\n";
         echo "    <tr><td align=\"right\" nowrap><p><b>".get_string("validation","scorm").":</b></p></td><td><p>".get_string($result,"scorm")."</p></a></td></tr>\n";
-        if ($errorlogs != '') {
+        /*if ($errorlogs != '') {
             $lines = round(count($errors)/4);
             if ($lines < 5) {
                 $lines = 5;
             }
             echo "    <tr><td align=\"right\" nowrap><p><b>".get_string("errorlogs","scorm").":</b></p></td><td><textarea rows=\"".$lines."\" cols=\"30\" readonly>".$errorlogs."</textarea></a></td></tr>\n";
-        }
+        }*/
         if (($form->mode == "update") && ($form->launch == 0) && (get_records("scorm_sco_users","scormid",$form->instance)))
         echo "    <tr><td align=\"center\" colspan=\"2\" nowrap><p><b>".get_string("trackingloose","scorm")."</b></p></td></tr>\n";
         echo "</table>\n";
