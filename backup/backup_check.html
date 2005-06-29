@@ -46,41 +46,20 @@
             //Check data
             //Check module info
             $var = "backup_".$modname;
-            if (!isset($$var)) {
-                $$var = 1;
-            }
+            $$var = optional_param( $var,0);
             //Check include user info
             $var = "backup_user_info_".$modname;
-            if (!isset($$var)) {
-                $$var = 1;
-            }
+            $$var = optional_param( $var,0);
         }
     }
 
     //Check other parameters
-    if (!isset($backup_metacourse)) {
-        $backup_metacourse = 1;
-    }
-   
-    if (!isset($backup_users)) {
-        $backup_users = 1;
-    }
-   
-    if (!isset($backup_logs)) {
-        $backup_logs = 0;
-    }
-
-    if (!isset($backup_user_files)) {
-        $backup_user_files = 1;
-   }
-
-    if (!isset($backup_course_files)) {
-        $backup_course_files = 2;
-        }
-
-    if (!isset($backup_messages)) {
-        $backup_messages = 1;
-    }
+    $backup_metacourse = optional_param('backup_metacourse',1);
+    $backup_users = optional_param('backup_users',1);
+    $backup_logs = optional_param('backup_logs',0);
+    $backup_user_files = optional_param('backup_user_files',1);
+    $backup_course_files = optional_param('backup_course_files',1);
+    $backup_messages = optional_param('backup_messages',1);
 
     if ($count == 0) {
         notice("No backupable modules are installed!");
