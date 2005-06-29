@@ -97,6 +97,7 @@ $string['havenotgradedyet'] = 'Még nincs pontozva.';
 $string['here'] = 'itt';
 $string['highscore'] = 'Legmagasabb pont';
 $string['hightime'] = 'Leghosszabb idõ';
+$string['importppt'] = 'PowerPoint importálása';
 $string['importquestions'] = 'Kérdések importálása';
 $string['insertedpage'] = 'Oldal beszúrva';
 $string['jump'] = 'Ugrás';
