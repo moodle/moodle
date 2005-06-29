@@ -1126,7 +1126,9 @@
                 // look at the attempt records to find the first QUESTION page that the user answered, then use that page id
                 // to pass to view again.  This is slick cause it wont call the empty($pageid) code
                 // $ntries is decremented above
-                $attempts = get_records_select("lesson_attempts", "lessonid = $lesson->id AND userid = $USER->id AND retry = $ntries", "timeseen");
+                if (!$attempts = get_records_select("lesson_attempts", "lessonid = $lesson->id AND userid = $USER->id AND retry = $ntries", "timeseen")) {
+                    $attempts = array();
+                }
                 $firstattempt = current($attempts);
                 $pageid = $firstattempt->pageid;
                 // IF the student wishes to review, need to know the last question page that the student answered.  This will help to make
