@@ -44,6 +44,7 @@ $string['details'] = 'SCO track details';
 $string['enablebrowse'] = 'Enable preview mode';
 $string['frameheight'] = 'This preference set the default height of SCO frame';
 $string['framewidth'] = 'This preference set the default width of SCO frame';
+$string['stagesize'] = 'Frame/Windows size';
 $string['width'] = 'Width';
 $string['height'] = 'Height';
 $string['trackingloose'] = 'WARNING: The tracking data of this package will be lost!';
