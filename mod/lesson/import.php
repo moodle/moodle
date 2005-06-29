@@ -53,7 +53,8 @@
             require("$CFG->dirroot/mod/quiz/lib.php"); // for the constants used in quiz/format/<format>/format.php
             require("$CFG->dirroot/mod/quiz/format/$form->format/format.php");
 
-            $format = new quiz_file_format();
+            $classname = "quiz_format_$form->format";
+            $format = new $classname();
 
             if (! $format->importpreprocess()) {             // Do anything before that we need to
                 error("Error occurred during pre-processing!");
