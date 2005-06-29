@@ -167,7 +167,7 @@
         $select = 'SELECT '.$db->Concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).' AS uniqueid, 
                     qa.id AS attemptid, qa.attempt, qa.timefinish, qa.preview, 
                     u.id AS userid, u.firstname, u.lastname, u.picture ';
-        $from   = 'FROM mdl_user u LEFT JOIN mdl_quiz_attempts qa ON (u.id = qa.userid AND qa.quiz = '.$quiz->id.') ';
+        $from   = 'FROM '.$CFG->prefix.'user u LEFT JOIN '.$CFG->prefix.'quiz_attempts qa ON (u.id = qa.userid AND qa.quiz = '.$quiz->id.') ';
         
         if ($gradeall) { // get all user attempts
             $where  = 'WHERE u.id IN ('.implode(',', array_keys($users)).') ';
@@ -326,7 +326,7 @@
             
             // this sql is a join of the attempts table and the user table.  I do this so I can sort by user name and attempt number (not id)
             $select = 'SELECT '.$db->Concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).' AS uniqueid, qa.id AS attemptid, qa.attempt, u.id AS userid, u.firstname, u.lastname, u.picture ';
-            $from   = 'FROM mdl_user u LEFT JOIN mdl_quiz_attempts qa ON (u.id = qa.userid AND qa.quiz = '.$quiz->id.') ';
+            $from   = 'FROM '.$CFG->prefix.'user u LEFT JOIN '.$CFG->prefix.'quiz_attempts qa ON (u.id = qa.userid AND qa.quiz = '.$quiz->id.') ';
             $where  = 'WHERE u.id IN ('.implode(',', array_keys($users)).') ';
             $where .= 'AND '.$db->IfNull('qa.attempt', '0').' != 0 ';
             $where .= 'AND '.$db->IfNull('qa.timefinish', '0').' != 0 '; 
