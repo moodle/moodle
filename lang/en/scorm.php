@@ -54,7 +54,7 @@ $string['noactivity'] = 'Nothing to report';
 $string['firstaccess'] = 'First access';
 $string['lastaccess'] = 'Last access';
 $string['scormcourse'] = 'SCORM Course';
-$string['advanced'] = 'Avanzate';
+$string['advanced'] = 'Advanced';
 
 // Validation
 $string['attr_error'] = 'Bad value for attribute ($a->attr) in tag $a->tag.';
