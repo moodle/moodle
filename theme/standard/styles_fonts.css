@@ -511,6 +511,9 @@ body#mod-forum-index .generalbox .cell {
   font-size: 0.80em;
 }
 
+.forumpost .edited {
+  font-style: italic;
+}
 
 
 /***

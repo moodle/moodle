@@ -1401,7 +1401,7 @@ body#mod-quiz-report table#attempts td {
   border-right-width: 1px;
   border-left-style: solid;
   border-right-style: solid;
-  vertical-align: bottom;
+  vertical-align: middle;
 }
 body#mod-quiz-report table#attempts .header {
   text-align: left;
