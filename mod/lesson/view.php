@@ -145,6 +145,76 @@
        $timedflag = false;
        $attemptflag = false;
         if (empty($pageid)) {
+            // check for dependencies first
+            if ($lesson->dependency and !isteacher($course->id)) {
+                if ($dependentlesson = get_record('lesson', 'id', $lesson->dependency)) {
+                    // lesson exists, so we can proceed            
+                    $conditions = unserialize($lesson->conditions);
+                    // assume false for all
+                    $timespent = false;
+                    $completed = false;
+                    $gradebetterthan = false;
+                    // check for the timespent condition
+                    if ($conditions->timespent) {
+                        if ($attempttimes = get_records_select('lesson_timer', "userid = $USER->id AND lessonid = $dependentlesson->id")) {
+                            // go through all the times and test to see if any of them satisfy the condition
+                        	foreach($attempttimes as $attempttime) {
+                        		$duration = $attempttime->lessontime - $attempttime->starttime;
+                        		if ($conditions->timespent < $duration/60) {
+                        		    $timespent = true;
+                        		}
+                        	}
+                        } 
+                    } else {
+                        $timespent = true; // there isn't one set
+                    }
+                    
+                    // check for the gradebetterthan condition
+                    if($conditions->gradebetterthan) {
+                        if ($studentgrades = get_records_select('lesson_grades', "userid = $USER->id AND lessonid = $dependentlesson->id")) {
+                            // go through all the grades and test to see if any of them satisfy the condition
+                            foreach($studentgrades as $studentgrade) {
+                            	if ($studentgrade->grade >= $conditions->gradebetterthan) {
+                            	    $gradebetterthan = true;
+                            	}
+                            }
+                        }
+                    } else {
+                        $gradebetterthan = true; // there isn't one set
+                    }
+                
+                    // check for the completed condition
+                    if ($conditions->completed) {
+                        if (count_records('lesson_grades', 'userid', $USER->id, 'lessonid', $dependentlesson->id)) {
+                            $completed = true;
+                        }
+                    } else {
+                        $completed = true; // not set
+                    }
+                
+                    $errors = array();
+                    // collect all of our error statements
+                    if (!$timespent) {
+                        $errors[] = get_string('timespenterror', 'lesson', $conditions->timespent);
+                    }
+                    if (!$completed) {
+                        $errors[] = get_string('completederror', 'lesson');
+                    }
+                    if (!$gradebetterthan) {
+                        $errors[] = get_string('gradebetterthanerror', 'lesson', $conditions->gradebetterthan);
+                    }
+                    if (!empty($errors)) {  // print out the errors if any
+                        echo '<p>';
+                        print_simple_box_start('center');
+                        print_string('completethefollowingconditions', 'lesson', $dependentlesson->name);
+                        echo '<p align="center">'.implode('<br />'.get_string('and', 'lesson').'<br />', $errors).'</p>';
+                        print_simple_box_end();
+                        echo '</p>';
+                        print_footer($course);
+                        exit();
+                    } 
+                }
+            }
             add_to_log($course->id, 'lesson', 'start', 'view.php?id='. $cm->id, $lesson->id, $cm->id);
             // if no pageid given see if the lesson has been started
             if ($grades = get_records_select('lesson_grades', 'lessonid = '. $lesson->id .' AND userid = '. $USER->id,

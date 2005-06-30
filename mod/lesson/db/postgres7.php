@@ -219,6 +219,11 @@ function lesson_upgrade($oldversion) {
     if ($oldversion < 2005061500) {
         table_column('lesson', '', 'mediafile', 'varchar', '255', '', '', 'not null', 'tree');
     }
+    
+    if ($oldversion < 2005063000) {
+        table_column('lesson', '', 'dependency', 'INT', '8', 'unsigned', '0', 'not null', 'usepassword');
+        table_column('lesson', '', 'conditions', 'text', '', '', '', 'not null', 'dependency');
+    }
 
    return true;
 }

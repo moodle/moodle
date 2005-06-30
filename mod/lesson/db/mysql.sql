@@ -12,6 +12,8 @@ CREATE TABLE `prefix_lesson` (
   `modattempts` TINYINT(3) UNSIGNED NOT NULL DEFAULT '0',
   `usepassword` TINYINT(3) UNSIGNED NOT NULL DEFAULT '0',
   `password` VARCHAR(32) NOT NULL default '',
+  `dependency` int(10) unsigned NOT NULL default '0',
+  `conditions` text NOT NULL default '',
   `grade` tinyint(3) NOT NULL default '0',
   `custom` TINYINT(3) UNSIGNED NOT NULL DEFAULT '0',
   `ongoing` TINYINT(3) UNSIGNED NOT NULL DEFAULT '0',

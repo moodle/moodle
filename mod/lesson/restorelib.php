@@ -58,6 +58,8 @@
             $lesson->modattempts = backup_todb($info['MOD']['#']['MODATTEMPTS']['0']['#']);
             $lesson->password = backup_todb($info['MOD']['#']['PASSWORD']['0']['#']);
             $lesson->usepassword = backup_todb($info['MOD']['#']['USEPASSWORD']['0']['#']);
+            $lesson->dependency = backup_todb($info['MOD']['#']['DEPENDENCY']['0']['#']);
+            $lesson->conditions = backup_todb($info['MOD']['#']['CONDITIONS']['0']['#']);
             $lesson->grade = backup_todb($info['MOD']['#']['GRADE']['0']['#']);
             $lesson->custom = backup_todb($info['MOD']['#']['CUSTOM']['0']['#']);
             $lesson->ongoing = backup_todb($info['MOD']['#']['ONGOING']['0']['#']);

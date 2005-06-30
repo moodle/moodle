@@ -55,6 +55,8 @@
                 fwrite ($bf,full_tag("MODATTEMPTS",4,false,$lesson->modattempts));                
                 fwrite ($bf,full_tag("PASSWORD",4,false,$lesson->password));
                 fwrite ($bf,full_tag("USEPASSWORD",4,false,$lesson->usepassword));
+                fwrite ($bf,full_tag("DEPENDENCY",4,false,$lesson->dependency));
+                fwrite ($bf,full_tag("CONDITIONS",4,false,$lesson->conditions));
                 fwrite ($bf,full_tag("GRADE",4,false,$lesson->grade));
                 fwrite ($bf,full_tag("CUSTOM",4,false,$lesson->custom));
                 fwrite ($bf,full_tag("ONGOING",4,false,$lesson->ongoing));

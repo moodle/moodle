@@ -6,6 +6,8 @@ CREATE TABLE prefix_lesson (
   modattempts INT4 NOT NULL DEFAULT '0',
   usepassword INT  NOT NULL DEFAULT '0',
   password VARCHAR(32) NOT NULL default '',
+  dependency INT8 NOT NULL DEFAULT '0',
+  conditions text NOT NULL DEFAULT '',
   grade INT NOT NULL default '0',
   custom INT  NOT NULL DEFAULT '0',
   ongoing INT  NOT NULL DEFAULT '0',

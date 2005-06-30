@@ -99,9 +99,21 @@ if ($form->mode == "add") {
     if (!isset($form->modattempts)) {
         $form->modattempts = 0;
     }
-
     if (!isset($form->mediafile)) {
         $form->mediafile = '';
+    }
+    if (!isset($form->dependency)) {
+        $form->dependency = 0;
+    }
+    if (!isset($form->conditions)) {
+        $form->timespent = 0;
+        $form->completed = 0;
+        $form->gradebetterthan = 0;
+    } else {
+        $conditions = unserialize($form->conditions);
+        $form->timespent = $conditions->timespent;
+        $form->completed = $conditions->completed;
+        $form->gradebetterthan = $conditions->gradebetterthan;
     }
     
     $form->deleteattempts = "";
@@ -401,6 +413,57 @@ if ($form->mode == "add") {
     <td>
         <input type="text" name="password" size="7" value="" /> <?php echo " (".get_string("leavetokeep").")"; ?>
         <?php helpbutton("password", get_string("password", "lesson"), "lesson"); ?>
+    </td>
+</tr>
+
+<tr>
+    <td align="right"><b><?php  print_string("dependencyon", "lesson"); ?>:</b></td>
+    <td>
+        <?php
+        $options = array();
+        $options[0] = get_string("none");
+        if (empty($form->instance)) {
+            $select = "course = $course->id";
+        } else {
+            $select = "course = $course->id AND id != $form->instance";
+        }
+        if ($lessons = get_records_select('lesson', $select, 'name ASC')) {
+        	foreach($lessons as $lesson) {
+        		$options[$lesson->id] = $lesson->name;
+        	}
+        }
+        
+        choose_from_menu($options, "dependency", $form->dependency, "");
+        ?>
+        <?php helpbutton("password", get_string("dependency", "lesson"), "lesson"); ?>
+    </td>
+</tr>
+
+<tr>
+    <td align="right"><b><?php  print_string("conditionsfordependency", "lesson"); ?>:</b></td>
+    <td>
+        <table cellpadding="5px">
+            <tr align="center">
+                <td><?php  print_string("timespentminutes", "lesson"); ?></td>
+                <td><?php  print_string("completed", "lesson"); ?></td>
+                <td><?php  print_string("gradebetterthan", "lesson"); ?></td>
+            </tr>
+            <tr align="center">
+                <td><input type="text" name="timespent" maxlength="7" size="7" value="<?php  p($form->timespent) ?>" /></td>
+                <td>
+                    <?php
+                        if ($form->completed) {
+                            $checked = 'checked="checked"';
+                        } else {
+                            $checked = '';
+                        }
+                    ?>
+                    <input type="checkbox" name="completed" value="1" <?php echo $checked; ?> />
+                </td>
+                <td><input type="text" name="gradebetterthan" maxlength="7" size="7" value="<?php  p($form->gradebetterthan) ?>" /></td>
+            </tr>
+        </table>
+        
     </td>
 </tr>
 

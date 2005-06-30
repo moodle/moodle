@@ -28,13 +28,33 @@ function lesson_add_instance($lesson) {
             $lesson->deadlinemonth, $lesson->deadlineday, $lesson->deadlinehour, 
             $lesson->deadlineminute);
     
-    /// CDC-FLAG ///
+    if(empty($lesson->timespent) or !is_numeric($lesson->timespent) or $lesson->timespent < 0) {
+        $lesson->timespent = 0;
+    }
+    if(!isset($lesson->completed)) {
+        $lesson->completed = 0;
+    }
+    if(empty($lesson->gradebetterthan) or !is_numeric($lesson->timespent) or $lesson->gradebetterthan < 0) {
+        $lesson->gradebetterthan = 0;
+    } else if ($lesson->gradebetterthan > 100) {
+        $lesson->gradebetterthan = 100;
+    }
+    // conditions for dependency
+    $conditions = new stdClass;
+    $conditions->timespent = $lesson->timespent;
+    $conditions->completed = $lesson->completed;
+    $conditions->gradebetterthan = $lesson->gradebetterthan;
+    $lesson->conditions = addslashes(serialize($conditions));
+    unset($lesson->timespent);
+    unset($lesson->completed);
+    unset($lesson->gradebetterthan);
+    
     if (!empty($lesson->password)) {
         $lesson->password = md5($lesson->password);
     } else {
         unset($lesson->password);
     }
-    /// CDC-FLAG ///
+    
     if (!$lesson->id = insert_record("lesson", $lesson)) {
         return false; // bad
     }
@@ -106,13 +126,32 @@ function lesson_update_instance($lesson) {
             $lesson->deadlineminute);
     $lesson->id = $lesson->instance;
 
-    /// CDC-FLAG ///
+    if(empty($lesson->timespent) or !is_numeric($lesson->timespent) or $lesson->timespent < 0) {
+        $lesson->timespent = 0;
+    }
+    if(!isset($lesson->completed)) {
+        $lesson->completed = 0;
+    }
+    if(empty($lesson->gradebetterthan) or !is_numeric($lesson->timespent) or $lesson->gradebetterthan < 0) {
+        $lesson->gradebetterthan = 0;
+    } else if ($lesson->gradebetterthan > 100) {
+        $lesson->gradebetterthan = 100;
+    }
+    // conditions for dependency
+    $conditions = new stdClass;
+    $conditions->timespent = $lesson->timespent;
+    $conditions->completed = $lesson->completed;
+    $conditions->gradebetterthan = $lesson->gradebetterthan;
+    $lesson->conditions = addslashes(serialize($conditions));
+    unset($lesson->timespent);
+    unset($lesson->completed);
+    unset($lesson->gradebetterthan);
+
     if (!empty($lesson->password)) {
         $lesson->password = md5($lesson->password);
     } else {
         unset($lesson->password);
     }
-    /// CDC-FLAG ///
 
     if ($lesson->lessondefault) {
         $lessondefault = $lesson;
