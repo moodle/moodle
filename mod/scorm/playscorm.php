@@ -83,7 +83,7 @@
     //
     $scripts = '';
     if ($scorm->popup == 1) {
-        $scripts = 'onUnload="top.main.close();"';
+        $scripts = 'onunload="top.main.close();"';
     }
 
     print_header($pagetitle, "$course->fullname",
@@ -151,6 +151,7 @@
 ?>
         function playSCO(scoid) {
             if (scoid == 0) {
+                //top.main.close();
                 document.location = '<?php echo $CFG->wwwroot ?>/course/view.php?id=<?php echo $cm->course ?>';
             } else {
                 document.navform.scoid.value=scoid;
