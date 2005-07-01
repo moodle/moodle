@@ -61,7 +61,7 @@ function grade_get_grade_items($course) {
 
 function grade_get_module_link($course, $cminstance, $modid) {
     global $CFG;
-    $sql = "SELECT cm.id FROM {$CFG->prefix}course_modules cm, {$CFG->prefix}modules mm, {$CFG->prefix}grade_item i 
+    $sql = "SELECT cm.id, 1 FROM {$CFG->prefix}course_modules cm, {$CFG->prefix}modules mm, {$CFG->prefix}grade_item i 
             WHERE i.modid='".$modid."' 
                 AND i.modid=mm.id 
                 AND cm.instance = i.cminstance 
@@ -1624,7 +1624,7 @@ function grade_view_category_grades($view_by_student) {
                     $student_heading_link .= '<br /><a href="?id='.$course->id.'&amp;group='.$group.'&amp;action=vcats&amp;cview='.$cview.'">'.get_string('showallstudents','grades').'</a>';
                 }
             }
-            echo '<table align="center" cellspacing="0" class="grades">';
+            echo '<table align="center" class="grades">';
             if (isteacher($course->id)) {
                 $header = '<tr class="header"><th rowspan="2">'.$student_heading_link.'</th>';
             }
@@ -1900,7 +1900,7 @@ function grade_view_all_grades($view_by_student) {
         $maxpercent = 0;
         $reprint=0;
 
-        echo  '<table border="1" cellspacing="2" cellpadding="5" align="center" class="generalbox">';
+        echo  '<table align="center" class="grades">';
         if (isteacher($course->id) ) {
             $student_heading_link = get_string('student','grades');
             if ($view_by_student == -1) {
@@ -1918,7 +1918,9 @@ function grade_view_all_grades($view_by_student) {
         $header1 = '<tr">';
         
         $rowcount = 0;
+        $oddrow = true;
         $colcount = 0;
+        
         foreach($grades_by_student as $student => $categories) {
             $totalpoints = 0;
             $totalgrade = 0;
@@ -1927,17 +1929,11 @@ function grade_view_all_grades($view_by_student) {
                 echo  $header.$header1;
                 $reprint=0;
             }
-            if ($rowcount < 3) {
-                $row = '<tr class="header">';
-                $rowcount ++;
-            }
-            else {
-                $row = '<tr>';
-                $rowcount++;
-                if ($rowcount >= 6) {
-                    $rowcount = 0;
-                }
-            }
+            
+            // alternate row classes
+            $row = ($oddrow) ? '<tr class="r0">' : '<tr class="r1">';
+            $oddrow = !$oddrow;
+            
             // set the links to student information based on multiview or individual... if individual go to student info... if many go to individual grades view.
             if (isteacher($course->id)) {
                 if ($view_by_student != -1) {
@@ -2736,15 +2732,16 @@ function grade_set_letter_grades() {
             // item submitted was already in database
             $letterid = $_REQUEST["id$i"];
             $updateletters[$letterid]->letter = clean_param($_REQUEST["letter$i"], PARAM_CLEAN);
-            $updateletters[$letterid]->grade_low = clean_param($_REQUEST["grade_low$i"], PARAM_CLEAN);
-            $updateletters[$letterid]->grade_high = clean_param($_REQUEST["grade_high$i"], PARAM_CLEAN);
+            // grade_low && grade_high don't need cleaning as they are possibly floats (no appropriate clean method) so we check is_numeric
+            $updateletters[$letterid]->grade_low = $_REQUEST["grade_low$i"];
+            $updateletters[$letterid]->grade_high = $_REQUEST["grade_high$i"];
             $updateletters[$letterid]->id = $letterid;
         }
         else {
             // its a new item
             $newletter->letter = clean_param($_REQUEST["letter$i"], PARAM_CLEAN);
-            $newletter->grade_low = clean_param($_REQUEST["grade_low$i"], PARAM_CLEAN);
-            $newletter->grade_high = clean_param($_REQUEST["grade_high$i"], PARAM_CLEAN);
+            $newletter->grade_low = $_REQUEST["grade_low$i"];
+            $newletter->grade_high = $_REQUEST["grade_high$i"];
             $newletter->courseid = $course->id;
             if (is_numeric($newletter->grade_high) && is_numeric($newletter->grade_low)) {
                 insert_record('grade_letter', $newletter);
