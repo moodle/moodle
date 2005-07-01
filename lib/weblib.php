@@ -706,6 +706,8 @@ function choose_from_menu ($options, $name, $selected='', $nothing='choose', $sc
  */
 function choose_from_radio ($options, $name, $checked='') {
 
+    static $idcounter = 0;
+
     if (!$name) {
         $name = 'unnamed';
     }
@@ -715,15 +717,16 @@ function choose_from_radio ($options, $name, $checked='') {
     if (!empty($options)) {
         $currentradio = 0;
         foreach ($options as $value => $label) {
-            $output .= '   <span class="radioelement '.$name.' rb'.$currentradio."\">";
-            $output .= '<input name="'.$name.'" type="radio" value="'.$value.'"';
+            $htmlid = 'auto-rb'.sprintf('%04d', ++$idcounter);
+            $output .= ' <span class="radioelement '.$name.' rb'.$currentradio."\">";
+            $output .= '<input name="'.$name.'" id="'.$htmlid.'" type="radio" value="'.$value.'"';
             if ($value == $checked) {
                 $output .= ' checked="checked"';
             }
             if ($label === '') {
-                $output .= ' />'.  $value .'</span>' .  "\n";
+                $output .= ' /> <label for="'.$htmlid.'">'.  $value .'</label></span>' .  "\n";
             } else {
-                $output .= ' />'.  $label .'</span>' .  "\n";
+                $output .= ' /> <label for="'.$htmlid.'">'.  $label .'</label></span>' .  "\n";
             }
             $currentradio = ($currentradio + 1) % 2;
         }
@@ -744,6 +747,8 @@ function choose_from_radio ($options, $name, $checked='') {
  */
 function print_checkbox ($name, $value, $checked = true, $label = '', $alt = '') {
 
+    static $idcounter = 0;
+
     if (!$name) {
         $name = 'unnamed';
     }
@@ -756,9 +761,12 @@ function print_checkbox ($name, $value, $checked = true, $label = '', $alt = '')
         $strchecked = ' checked="checked"';
     }
 
+    $htmlid = 'auto-cb'.sprintf('%04d', ++$idcounter);
     $output  = '<span class="checkbox '.$name."\">";
-    $output .= '<input name="'.$name.'" type="checkbox" value="'.$value.'" alt="'.$alt.'"'.$strchecked.' />';
-    $output .= $label;
+    $output .= '<input name="'.$name.'" id="'.$htmlid.'" type="checkbox" value="'.$value.'" alt="'.$alt.'"'.$strchecked.' />';
+    if(!empty($label)) {
+        $output .= ' <label for="'.$htmlid.'">'.$label.'</label>';
+    }
     $output .= '</span>'."\n";
 
     echo $output;
