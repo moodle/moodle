@@ -91,10 +91,10 @@ optional_variable($frm->enrol_allowinternal, false);
     <td align="right">ldap_search_sub:</td>
     <td>
 <?php
-    $choices = array();;
+    $choices = array();
     $choices["0"] = get_string("no");
     $choices["1"] = get_string("yes");
-    choose_from_menu ($choices, "enrol_ldap_search_sub", $form->enrol_ldap_search_sub, "");
+    choose_from_menu ($choices, "enrol_ldap_search_sub", $frm->enrol_ldap_search_sub, "");
 ?>
     <?php  if (isset($err["enrol_ldap_search_sub"])) formerr($err["enrol_ldap_search_sub"]); ?>
     </td><td>

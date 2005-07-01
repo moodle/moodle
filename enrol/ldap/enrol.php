@@ -97,12 +97,12 @@ function get_user_courses(&$user, $type) {
                 $CFG->debug=10;
                 if ($type === 'student') { // enrol
                    error_log("Enrolling student $user->id ($user->username) in course $course_obj->id ($course_obj->shortname) ");
-                   if (!  enrol_student($user->id, $course_obj->id, NULL,NULL, 'ldap')){
+                   if (!  enrol_student($user->id, $course_obj->id, 0, 0, 'ldap')){
                         error_log("Failed to enrol student $user->id ($user->username) into course $course_obj->id ($course_obj->shortname)");
                    }
                 } else if ($type === 'teacher') {
                       error_log("Enrolling teacher $user->id ($user->username) in course $course_obj->id ($course_obj->shortname)");
-                    add_teacher($user->id, $course_obj->id, NULL,NULL,NULL, NULL,'ldap');
+                    add_teacher($user->id, $course_obj->id, 1, 0, 0,'ldap');
                 }
                 $CFG->debug=0;
             }
@@ -559,7 +559,7 @@ function create_course ($course_ext,$skip_fix_course_sortorder=0){
     $course->teacher  = 'Teacher';
     $course->teachers = 'Teachers';
     $course->format = 'topics';
-    $course->blockinfo = blocks_get_default_blocks();
+    $course->blockinfo = blocks_get_default();
     
     // override defaults with template course
     if(!empty($CFG->enrol_ldap_template)){
@@ -582,7 +582,7 @@ function create_course ($course_ext,$skip_fix_course_sortorder=0){
     }
 
     if(!empty($CFG->enrol_ldap_course_summary)){ // optional
-        $course->summary   = $course_ext->{$CFG->enrol_ldap_course_summary}[0];
+        $course->summary   = $course_ext[$CFG->enrol_ldap_course_summary][0];
     }
     if(!empty($CFG->enrol_ldap_category)){ // optional ... but ensure it is set!
         $course->category   = $CFG->enrol_ldap_category;
