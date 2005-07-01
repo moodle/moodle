@@ -34,7 +34,7 @@ detailed documentation.
     </tr>
 
     <tr>
-        <td><a name="#answers"></a>answer(s)</td>
+        <td valign="top"><a name="#answers"></a>answer(s)</td>
         <td>The term answer is used exclusively for the teacher defined answers
         of a question. These answers are usually stored in the
         <code>quiz_answers</code> table and are compared to the responses for
@@ -44,9 +44,26 @@ detailed documentation.
     </tr>
 
     <tr>
-        <td><a name="#questiontype"></a>questiontype</td>
+        <td valign="top"><a name="#attempts"></a>attempt(s)</td>
+        <td>The term attempt is used in the sense of "Attempt at the quiz".
+        Depending on the quiz settings, a student may be allowed several
+        attempts at a quiz. An attempt is finished when the student clicks on
+        the corresponding button on the attempt page. Students do not have to
+        complete an attempt in one visit. They can navigate away from
+        the quiz page and return later to continue the same attempt.<br />
+        Within one and the same quiz attempt a student may make several attempts
+        at answering a particular question, at least if the questiontype allows
+        it and the quiz is set up in adaptive mode. These will always be 
+        referred to as &quot;attempts at a question&quot;, never just as
+        &quot;attempts&quot;.
+        </td>
+        <td></td>
+    </tr>
+
+    <tr>
+        <td valign="top"><a name="#questiontype"></a>questiontype</td>
         <td>There are several questiontypes built into the quiz module, however,
-        due to the plugin architechture of the quiz module, it is possible to
+        due to the plugin architecture of the quiz module, it is possible to
         define custom questiontypes. Existing questiontypes include true/false,
         multiple choice, short answer, numerical and  calculated questions.
         </td>
@@ -54,7 +71,7 @@ detailed documentation.
     </tr>
 
     <tr>
-        <td><a name="#responses"></a>responses</td>
+        <td valign="top"><a name="#responses"></a>responses</td>
         <td>Conceptually these are the students' responses to a question. This
         is always used in plural, although for some questiontypes there is only
         one possible response. In the runtime <code>$state</code> object there

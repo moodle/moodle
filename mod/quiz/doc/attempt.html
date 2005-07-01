@@ -23,27 +23,28 @@
 <a name="description"></a><h2>Description and purpose</h2>
 <p>
 
-The attempt.php script is one of the most complicated scripts of the quiz
-module. It is responsible for displaying questions to a user, to evaluate and
-grade the users' responses and additionally it needs to take various quiz
-settings into account and change the behaviour of the script accordingly. This
-script, which is vital for the fucntioning of the quiz module is explained in
-this document in some detail in order to provide some context and examples for
-the use of the question/state model and to illustrate some of the functions
+The attempt.php script is one of the most complicated scripts of the
+quiz module. It is responsible for displaying questions to a user,
+to evaluate and grade the users' responses and additionally it needs
+to take various quiz settings into account and change the behaviour
+of the script accordingly. This script, which is vital for the
+functioning of the quiz module, is explained in this document in some
+detail in order to provide some context and examples for the use of
+the question/state model and to illustrate some of the functions
 provided in locallib.php.
 
 </p><p>
 
 In addition to the immediate benefit of explaining what happens in attempt.php,
 this piece of documentation should provide an entry point to the quiz module
-code. A number of functions are used in attempt.php, which are likely to be used
+code. A number of functions are used in attempt.php that are likely to be used
 in other scripts as well.
 
 </p><p>
 
 Although the attempt.php script is useful for understanding how user
-interactions are handled, it is of very limited use for understanding the
-teacher interface for editing quizzes and questions.
+interactions are handled, in order to gain an understanding of the
+teacher interface for editing quizzes and questions you should look at edit.php.
 
 </p>
 
@@ -64,9 +65,8 @@ core functionality.
 <a name='simple_start'></a><h3>Starting a new attempt</h3>
 <p>
 
-When a new attempt is started no session data exists for the user and therefore
-it needs to be created. A function is defined to do exactly this job, it is
-called <code>quiz_create_attempt</code> (line 183). It returns an empty <code>
+When a new attempt is started the attempt object is created by the function 
+<code>quiz_create_attempt()</code> (line 183). It returns an empty <code>
 $attempt</code> object, which is stored in the database immediately to record
 the fact that the student has seen the questions.
 
@@ -75,8 +75,8 @@ the fact that the student has seen the questions.
 The next step is to load up all questions and to create initial states for all
 of them. Loading up the questions is a two step process: first the question
 records are extracted from the database, then the function <code>
-quiz_get_questions_options</code> is called. This attaches the name_prefix
-field and calls the questiontype specific <code>get_question_options</code>
+quiz_get_questions_options()</code> is called. This attaches the name_prefix
+field and calls the questiontype specific <code>get_question_options()</code>
 method for each question record in order to add any required data.
 
 </p><pre>
@@ -97,26 +97,27 @@ method for each question record in order to add any required data.
 </pre><p>
 
 After all questions are correctly initialised a state object is created for
-each by the function <code>quiz_restore_question_sessions</code>. This may seem
-a bad name for a function to create states, however, it so happens that this
+each by the function <code>quiz_restore_question_sessions()</code>. This is
+a bad name for a function to create states, it should really be called
+<code>quiz_get_question_states()</code>. This
 function is responsible for providing a state for each question and creates a
-new state if there isn't one to be restored. Again, the new states are saved
-right away.
+new state if there isn't one to be restored. Again, ane newly states are added
+to the database right away.
 
 </p><p>
 
-At this point all the required data is generated or loaded, so the last step is
+At this point all the required data has been generated or loaded, so the last step is
 to print the page. The printing happens towards the end of the attempt.php
-script and, apart from a simple call to <code>print_heading</code> (line 409),
+script and, apart from a simple call to <code>print_heading()</code> (line 409),
 is done in a loop through all the question records by calling <code>
-quiz_print_quiz_question</code> (line 461), which is just a shorthand for
-calling the questiontype specific <code>print_question</code> method. So, quite
+quiz_print_quiz_question()</code> (line 461), which is just a shorthand for
+calling the questiontype specific <code>print_question()</code> method. So, quite
 conveniently, each question is responsible for printing itself. To round up the
 printing, submit buttons and a footer are printed to the bottom of the page.
 
 </p>
 
-<a name='simple_finish'></a><h3>Finishing an attempt</h3>
+<a name='simple_finish'></a><h3>Processing responses</h3>
 <p>
 
 The next logical step after creating and displaying an attempt is that the user
@@ -126,28 +127,33 @@ in the database and the same holds for each question's state.  So this time the
 attempt record is loaded from the database. The questions are loaded in the same
 way, by querying for the question records an then attaching any required
 questiontype specific fields by calling the function <code>
-quiz_get_question_options</code>. Now the call to the function <code>
-quiz_restore_question_sessions</code> does actually restore the states from the
+quiz_get_question_options()</code>. Now the call to the function <code>
+quiz_restore_question_sessions()</code> does actually restore the states from the
 database rather than generate new ones, so the same code works for the two
 scenarios, creating and closing an attempt.
 
 </p><p>
 
-Now all data concerning the attempt under discussion is loaded, the responses
-submitted by the student come to the scene. For each question they need to be
-evaluated and graded. The first step here is to determine how to deal with each
-question and the associated responses. In the simplified case this is clear; all
-responses need to be graded, the grades stored and then the attempt needs to be
-closed. However, ther are more complicated cases, so the function <code>
-quiz_extract_responses</code> is called to create the <code>$actions</code>
-array, which acts as a set of instructions for the fucntion <code>
-quiz_process_responses</code>, a quite complicated function, which encapsulates
-the entire response processing for one question and calls out to the
-questiontype specific <code>grade_responses</code> method for grading.
+Now that all data concerning the attempt under discussion has been loaded, the
+responses submitted by the student come to the scene. For each
+question they need to be evaluated and graded. The first step here
+is to determine how to deal with each question and the associated
+responses. In the simplified case this is clear; all responses need
+to be graded, the grades stored and then the attempt needs to be
+closed. However, there are more complicated cases, so the function
+<code> quiz_extract_responses()</code> is called to create the
+<code>$actions</code> array, which acts as a set of instructions for
+the function <code>quiz_process_responses()</code>, a quite
+complicated function, which encapsulates the entire response
+processing for one question and calls out to the questiontype
+specific <code>grade_responses()</code> method for grading.
 
 </p><p>
 
-After all questions are graded the attempt is closed by setting the
+After all submitted responses have been processed, the questions are rendered
+in the new states. An exception is if the student has requested to close the
+attempt (or if it is closed automatically due to a time limit). In this case
+the attempt is closed by setting the
 <code>timefinish</code> field to the current time. After this the user is
 redirected to review.php, which, depending on the quiz review settings, shows
 the questions including the student's responses, feedback, grades and correct

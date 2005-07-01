@@ -156,11 +156,12 @@ accidentally contain a value with the empty string index.
 <p>
 
 The runtime model for responses dictates the structure of the
-<code>$state->responses</code> array. Starting with the names of the form
-elements this section goes through the relevant processing steps and thus
-attempts to clarify why the indices of the <code>$state->responses</code> array
-can differ for different questiontypes; even more, it explains how the indicies
-are chosen and set.
+<code>$state->responses</code> array. Starting with the names of the
+form elements this section goes through the relevant processing
+steps and thus attempts to clarify why the indices of the
+<code>$state->responses</code> array can differ for different
+questiontypes; even more, it explains how the indices are chosen and
+set.
 
 </p><p>
 
@@ -195,12 +196,14 @@ was submitted by the form, basically a raw response.
 
 </p><p>
 
-The function <code>quiz_process_responses</code> in turn calls the questiontype
-specific method <code>grade_responses</code> to assign a grade to the submitted
-responses and <code>compare_responses</code> to determine whether the response
-was identical to the previous submission and to avoid regrading the same
-responses repeatedly. These questiontype specific functions need to be aware of
-the expected indicies of the <code>$state->responses</code> array.
+The function <code>quiz_process_responses</code> in turn calls the
+questiontype specific method <code>grade_responses</code> to assign
+a grade to the submitted responses and
+<code>compare_responses</code> to determine whether the response was
+identical to the previous submission and to avoid regrading the same
+responses repeatedly. These questiontype specific functions need to
+be aware of the expected indices of the
+<code>$state->responses</code> array.
 
 </p><p>
 
@@ -216,12 +219,12 @@ the information, e.g. by converting from or to the data representation.
 The calculated questiontype inherits its methods
 <code>create_session_and_responses</code>,
 <code>restore_session_and_responses</code> and
-<code>save_session_and_responses</code> from the abstract dataset dependent
-questiontype. This questiontype serializes the information of the chosen dataset
-together with the (single) response value into a string of the format
-datasetXX-RESPONSE, where dataset is the actual string "dataset", XX is the
-number of the chosen dataset item and RESPONSE is the value that was recieved
-from the submitted form.
+<code>save_session_and_responses</code> from the abstract dataset
+dependent questiontype. This questiontype serializes the information
+of the chosen dataset together with the (single) response value into
+a string of the format datasetXX-RESPONSE, where dataset is the
+actual string "dataset", XX is the number of the chosen dataset item
+and RESPONSE is the value that was received from the submitted form.
 
 </p>
 
@@ -234,16 +237,16 @@ from the submitted form.
 <h3>Multianswer</h3>
 <p>
 
-The serialized format of multianswer questions is a comma separated list of
-pairs. Each pair saves the reponse for one of the subquestions and is itself
-separated with a hyphen ('-'). In front of the hyphen there is the sequence
-number of the subquestion (starting at 1 incremented by the order the
-subquestions apear in the text). After the hyphen is the raw response, that was
-submitted by the student. The serialized format could look like the following
-example:<br />
-1-34,2-Napoleon,3-4,4-correct response,5-1<br />
-All commas and hyphens that are part of the raw answer are HTML entity encoded
-to avoid problems.
+The serialized format of multianswer questions is a comma separated
+list of pairs. Each pair saves the response for one of the
+subquestions and is itself separated with a hyphen ('-'). In front
+of the hyphen there is the sequence number of the subquestion
+(starting at 1 incremented by the order the subquestions appear in
+the text). After the hyphen is the raw response, that was submitted
+by the student. The serialized format could look like the following
+example:<br /> 1-34,2-Napoleon,3-4,4-correct response,5-1<br /> All
+commas and hyphens that are part of the raw answer are HTML entity
+encoded to avoid problems.
 
 </p>
 

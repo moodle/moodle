@@ -20,8 +20,8 @@
 
 <p>
 
-The quiz data model has a fairly large pool of database tables, so the fist step
-in  explaining them is to provide some order. Conceptually it is possible to
+The quiz data model has a fairly large pool of database tables, so the first step
+in explaining them is to provide some order. Conceptually it is possible to
 distinguish between a <em>static</em> model, which allows defining quizzes and
 questions, and a <em>runtime</em> model, which stores all the data that is
 generated when users interact with the statically defined quizzes and questions.
@@ -51,8 +51,8 @@ tables.
 <h3>Static model</h3>
 <ul>
 <li><a href="#quiz">quiz</a></li>
-<li><a href="#quiz_categories">quiz_categories</a></li>
 <li><a href="#quiz_answers">quiz_answers</a></li>
+<li><a href="#quiz_categories">quiz_categories</a></li>
 <li><a href="#quiz_grades">quiz_grades</a></li>
 <li><a href="#quiz_question_versions">quiz_question_versions</a></li>
 <li><a href="#quiz_questions">quiz_questions</a></li>
@@ -92,14 +92,15 @@ tables.
 These simplifications reduce the number of &quot;interesting&quot; tables to a
 significantly smaller number, and still some of them are only necessary for
 understanding very specific aspects of the quiz module. The diagram below shows
-how the (selected) most important tables are linked to one another.
+how the most important tables are linked to one another.
 
 </p><p>
 <img src="databasetables-01.gif" alt="Database Model" />
 </p>
 
+<h2>Static model</h2>
 
-<a name="quiz"></a><h2>quiz</h2>
+<a name="quiz"></a><h3>quiz</h3>
 <p>
 
 The quiz table contains the definition for all the quizzes. Each quiz belongs
@@ -120,70 +121,18 @@ module.
 
 </p>
 
-<a name="quiz_categories"></a><h2>quiz_categories</h2>
+<a name="quiz_questions"></a><h3>quiz_questions</h3>
 <p>
 
-Categories are provided as a way to organize questions. Each category has a name
-and a descriptive text (info) and the sortorder as metadata. Categories allow
-hierarchical nesting via the parent id and can be private or published, i.e.
-they can be made available to teachers in other courses.
-
-</p><p>
-
-Since categories are simply a means for organising questions they are not vital
-for undertanding how the quiz module works.
-
-</p>
-
-<a name="quiz_answers"></a><h2>quiz_answers</h2>
-<p>
-
-This table allows a common way to define one or more answers for each question.
-It is not mandatory for a questiontype to make use of this table however. A
-questiontype may choose to store it's answers in an entirely different way, or
-even to calculate the correct answer on the fly.
-
-
-</p><p>
-
-The question id links each answer to a question, the sequence number field may
-be used to store the order of the different answers, can be set to "0" though,
-if the order is of no importance. The answer field stores whatever constitutes
-an answer for the concerned questiontype (each questiontype can make whatever it
-wants off it's answers), the fraction field stores the assigned score for the
-question (range 0..1) and the feedback field allows defining some feedback, to
-be displayed when the student's answer compares to the defined answer record.
-
-</p>
-
-<a name="quiz_grades"></a><h2>quiz_grades</h2>
-<p>
-
-The quiz_grades table merely stores a student's awarded grade for a quiz. Since
-it is possible to allow several attempts on a quiz, the grade stored is
-calculated depending on the quiz setting <code>grademethod</code>. This table
-exists mainly for convenience, because the values of its fields can be
-recalculated.
-
-</p>
-
-<a name="quiz_question_versions"></a><h2>quiz_question_versions</h2>
-<p>
-
-This feature is not finished and disabled. The table structure may still change.
-
-</p>
-
-<a name="quiz_questions"></a><h2>quiz_questions</h2>
-<p>
-
-This table constitutes the item or question bank, i.e. the repository of defined
-questions. The <code>quiz_questions</code> table defines the common data for all
-questions (and not least provides a unique id to manage them), which is extended
-by other tables. E.g. the <code><a href="#quiz_answers">quiz_answers</a></code>
-table allows to define an abitrary number of answers that are part of the
-question. And many questiontype have their own extension of the
-<code>quiz_questions</code> table.
+This table constitutes the item or question bank, i.e. the
+repository of defined questions. The <code>quiz_questions</code>
+table defines the data that is common to questions of all types. It provides
+each question with a unique id which is used as a foreign key in many other 
+tables. for example the <code><a
+href="#quiz_answers">quiz_answers</a></code> table allows to define
+an arbitrary number of answers that are part of the question. And
+many questiontypes have their own tables that hold more information about the
+question.
 
 </p><p>
 
@@ -216,7 +165,76 @@ have a question number.
 
 </p>
 
-<a name="quiz_attempts"></a><h2>quiz_attempts</h2>
+We now deal with the remaining tables from the static model in alphabetical order.
+
+<a name="quiz_answers"></a><h3>quiz_answers</h3>
+<p>
+
+This table allows a common way to define one or more answers for each question.
+It is not mandatory for a questiontype to make use of this table however. A
+questiontype may choose to store it's answers in an entirely different way, or
+even to calculate the correct answer on the fly.
+
+
+</p><p>
+
+The question id links each answer to a question. The sequence number field may
+be used to store the order of the different answers, it can be set to "0" though
+if the order is of no importance. The answer field stores whatever constitutes
+an answer for the concerned questiontype (each questiontype can make whatever it
+wants off it's answers), the fraction field stores the assigned score for the
+question (range 0..1) and the feedback field allows defining some feedback, to
+be displayed when the student's answer agrees with the defined answer record.
+
+</p>
+
+<a name="quiz_categories"></a><h3>quiz_categories</h3>
+<p>
+
+Categories are provided as a way to organize questions. Each category has a name
+and a descriptive text (info) and the sortorder as metadata. Categories allow
+hierarchical nesting via the parent id and can be private or published, i.e.
+they can be made available to teachers in other courses.
+
+</p><p>
+
+Since categories are simply a means for organising questions they
+are not vital for understanding how the quiz module works.
+
+</p>
+
+<a name="quiz_grades"></a><h3>quiz_grades</h3>
+<p>
+
+The quiz_grades table merely stores a student's awarded grade for a quiz. Since
+it is possible to allow several attempts on a quiz, the grade stored is
+calculated depending on the quiz setting <code>grademethod</code>. This table
+exists mainly for convenience, because the values of its fields can be
+recalculated.
+
+</p>
+
+<a name="quiz_question_instances"></a><h3>quiz_question_instances</h3>
+<p>
+
+Questions can have different grades assigned in different quizzes. These are
+stored in the <code>quiz_question_instances</code> table. While, after a small
+extension, this table could also fulfill the purpose of storing the order of the
+questions in a quiz, this is currently still done in the <code>questions</code>
+field in the <code>quiz</code> table.
+
+</p>
+
+<a name="quiz_question_versions"></a><h3>quiz_question_versions</h3>
+<p>
+
+This feature is not finished and disabled. The table structure may still change.
+
+</p>
+
+<h2>Runtime Model</h2>
+
+<a name="quiz_attempts"></a><h3>quiz_attempts</h3>
 <p>
 
 In the quiz_attempts table a record is created each time when a user starts an
@@ -231,7 +249,7 @@ at maximum.
 
 The <code>timestart</code> field is set to the current time when an attempt is
 started and is never changed afterwards. The <code>timefinish</code> field is
-set to "0" initially and to the current time when it is closed. This fact that
+set to "0" initially and to the current time when the attempt is closed. This
 is exploited at several places in the code to determine whether an attempt
 has been closed or not (i.e. closed = timefinish > 0). For all other
 modifications of an attempt record the <code>timemodified</code> field should be
@@ -239,60 +257,30 @@ changed as well.
 
 </p><p>
 
-Finally, there are the <code>layout</code> and <code>preview</code> fields.
-While the preview field simply denotes a teacher preview (i.e. an attempt by a
-user with teacher privileges) that may be automatically deleted when the quiz is
-previewed again, and which is not taken into account when viewing statistics,
-the <code>layout</code> field is a little more complicated. It contains a comma
-separated list of question ids, with a "0" denoting a pagebreak. In the case
-where all questions on one page the comma separated list ends with ",0".
+Finally, there are the <code>layout</code> and <code>preview</code>
+fields. The preview field is a flag that marks a teacher preview
+(i.e. an attempt by a user with teacher privileges) that may be
+automatically deleted when the quiz is previewed again, and which is
+not taken into account when viewing statistics. The
+<code>layout</code> field contains
+a comma separated list of question ids, with a &quot;0&quot; denoting a page
+break. Usually the comma separated list ends with &quot;,0&quot;.
 
 </p>
 
-<a name="quiz_newest_states"></a><h2>quiz_newest_states</h2>
-<p>This table exists only for efficiency reasons:</p>
 
-<ol>
-  <li>Via its 'newest' and 'newgraded' fields it gives attempt.php
-  a way to quickly find the newest state
-  and the newest graded state for an attempt. It allows the
-  construction of SQL to select all the states that need to be loaded
-  on attempt.php or review.php.</li>
-  <li>Via its 'sumpenalty' field it gives quiz_apply_penalty() a quick
-  way for getting at the accummulated penalty that needs to be applied.
-  Without this field the penalties from all previous graded states
-  would have to be added up each time. Not a big deal actually because
-  this could be achieved with a single SQL query (using SUM) but this
-  field was introduced when we still had the multiplicative penalty
-  scheme around which would have been more difficult to recompute.</li>
-</ol>
-
-<p>This table was introduced in Moodle 1.5 and is not populated for all
-states during the upgrade because on sites with a lot of existing
-states that could take too long. Rather it is done whenever needed
-by quiz_upgrade_states().</p>
-
-<a name="quiz_question_instances"></a><h2>quiz_question_instances</h2>
+<a name="quiz_states"></a><h3>quiz_states</h3>
 <p>
 
-Questions can have different grades assigned in different quizzes. These are
-stored in the <code>quiz_question_instances</code> table. While, after a small
-extension, this table could also fulfill the purpose of storing the order of the
-questions in a quiz, this is currently still done in the <code>questions</code>
-field in the <code>quiz</code> table.
-
-</p>
-
-<a name="quiz_states"></a><h2>quiz_states</h2>
-<p>
-
-States are saved for each interaction with a question. This allows to review the
-complete history of a user's attempts on individual questions. The
-<code>seq_number</code> field stores the order of this history, the
-<code>answer</code> field stores a questiontype specific string unless the
-questiontype stores its answers differently. The <code>event</code> field stores an integer, each of which is
-defined as a named constant in the file <code>locallib.php</code>. E.g. values
-can denote a saveing or a grading interaction amongst others.
+States are saved for each interaction with a question. This allows
+to review the complete history of a user's attempts on individual
+questions. The <code>seq_number</code> field stores the order of
+this history, the <code>answer</code> field stores a questiontype
+specific string unless the questiontype stores its answers
+differently. The <code>event</code> field stores an integer which can be one of
+the named constant in the file
+<code>locallib.php</code> denoting for example a saving or a
+grading interaction amongst others.
 
 </p><p>
 
@@ -315,19 +303,49 @@ field.
 
 </p>
 
-<a name="quiz_calculated"></a><h2>quiz_calculated</h2>
+We now deal with the remaining tables from the runtime model in alphabetical
+order.
+
+<a name="quiz_newest_states"></a><h3>quiz_newest_states</h3>
+<p>This table exists only for efficiency reasons:</p>
+
+<ol>
+  <li>Via its 'newest' and 'newgraded' fields it gives attempt.php
+  a way to quickly find the newest state
+  and the newest graded state for an attempt. It allows the
+  construction of SQL to select all the states that need to be loaded
+  on attempt.php or review.php.</li>
+  <li>Via its 'sumpenalty' field it gives quiz_apply_penalty() a quick
+  way for getting at the accumulated penalty that needs to be applied.
+  Without this field the penalties from all previous graded states
+  would have to be added up each time. Not a big deal actually because
+  this could be achieved with a single SQL query (using SUM) but this
+  field was introduced when we still had the multiplicative penalty
+  scheme around which would have been more difficult to recompute.</li>
+</ol>
+
+<p>This table was introduced in Moodle 1.5 and is not populated for all
+states during the upgrade because on sites with a lot of existing
+states that could take too long. Rather it is done whenever needed
+by quiz_upgrade_states().</p>
+
+
+<h2>Questiontype specific tables</h2>
+
+<a name="quiz_calculated"></a><h3>quiz_calculated</h3>
 <p>
 
 The <code>quiz_calculated</code> table is an extension to the
-<code>quiz_questions</code> table by the calculated questiontype. However, it
-would be more suitable to change that to be an extension of the
-<code>quiz_answers</code> table, which, from a data perspective, is already
-possible, since an answer id is stored in the <code>answer</code> field. The
-questiontype code woud need some changes to take this into account, however.
+<code>quiz_questions</code> table by the calculated questiontype.
+However, it would be more suitable to change that to be an extension
+of the <code>quiz_answers</code> table, which, from a data
+perspective, is already possible, since an answer id is stored in
+the <code>answer</code> field. The questiontype code would need some
+changes to take this into account, however.
 
 </p>
 
-<a name="quiz_dataset_definitions"></a><h2>quiz_dataset_definitions</h2>
+<a name="quiz_dataset_definitions"></a><h3>quiz_dataset_definitions</h3>
 <p>
 
 The <code>quiz_dataset_definitions</code> table belongs to the abstract
@@ -339,7 +357,7 @@ in the questiontext or in the answer to a dataset dependent question.
 
 </p>
 
-<a name="quiz_dataset_items"></a><h2>quiz_dataset_items</h2>
+<a name="quiz_dataset_items"></a><h3>quiz_dataset_items</h3>
 <p>
 
 Dataset items can be created for each dataset. The <code>quiz_dataset_items
@@ -348,7 +366,7 @@ Dataset items can be created for each dataset. The <code>quiz_dataset_items
 
 </p>
 
-<a name="quiz_match"></a><h2>quiz_match</h2>
+<a name="quiz_match"></a><h3>quiz_match</h3>
 <p>
 
 The <code>quiz_match</code> table belongs to the match questiontype and extends
@@ -357,7 +375,7 @@ matching questions and can therefore be considered redundant.
 
 </p>
 
-<a name="quiz_match_sub"></a><h2>quiz_match_sub</h2>
+<a name="quiz_match_sub"></a><h3>quiz_match_sub</h3>
 <p>
 
 The <code>quiz_match_sub</code> table belongs to the match questiontype and
@@ -367,7 +385,7 @@ and answers (as strings) that need to be matched for a correct solution.
 </p>
 
 
-<a name="quiz_multianswers"></a><h2>quiz_multianswers</h2>
+<a name="quiz_multianswers"></a><h3>quiz_multianswers</h3>
 <p>
 
 The <code>quiz_multianswers</code> table belongs to the multianswer questiontype
@@ -378,19 +396,21 @@ which position in the questiontext.
 
 </p>
 
-<a name="quiz_multichoice"></a><h2>quiz_multichoice</h2>
+<a name="quiz_multichoice"></a><h3>quiz_multichoice</h3>
 <p>
 
-The <code>quiz_multichoice</code> table belongs to the multichoice questiontype
-and is an extension of the <code>quiz_questions</code> table. The <code>layout
-</code> field does not seem to be used, the <code>answers</code> field stores
-the order of the answers (should be superceeded by the <code>seq_number</code>
-field in the <code>quiz_answers</code> table) and the <code>single</code> field
-is a flag signaling, whether only one option or multiple options can be chosen.
+The <code>quiz_multichoice</code> table belongs to the multichoice
+questiontype and is an extension of the <code>quiz_questions</code>
+table. The <code>layout </code> field does not seem to be used, the
+<code>answers</code> field stores the order of the answers (should
+be superseded by the <code>seq_number</code> field in the
+<code>quiz_answers</code> table) and the <code>single</code> field
+is a flag signaling, whether only one option or multiple options can
+be chosen.
 
 </p>
 
-<a name="quiz_numerical"></a><h2>quiz_numerical</h2>
+<a name="quiz_numerical"></a><h3>quiz_numerical</h3>
 <p>
 
 The <code>quiz_numerical</code> table belongs to the numerical questiontype
@@ -399,7 +419,7 @@ value for each answer.
 
 </p>
 
-<a name="quiz_numerical_units"></a><h2>quiz_numerical_units</h2>
+<a name="quiz_numerical_units"></a><h3>quiz_numerical_units</h3>
 <p>
 
 The <code>quiz_numerical_units</code> table is used by the numerical
@@ -409,15 +429,16 @@ can be used in the responses.
 
 </p>
 
-<a name="quiz_question_datasets"></a><h2>quiz_question_datasets</h2>
+<a name="quiz_question_datasets"></a><h3>quiz_question_datasets</h3>
 <p>
 
-The <code>quiz_question_datasets</code> table is used by dataset depenndent
-questionypes (i.e. calculated) to link datasets to questions.
+The <code>quiz_question_datasets</code> table is used by dataset
+dependent questionypes (i.e. calculated) to link datasets to
+questions.
 
 </p>
 
-<a name="quiz_randomsamatch"></a><h2>quiz_randomsamatch</h2>
+<a name="quiz_randomsamatch"></a><h3>quiz_randomsamatch</h3>
 <p>
 
 This extension to the <code>quiz_questions</code> table simply stores how many
@@ -426,13 +447,13 @@ question.
 
 </p>
 
-<a name="quiz_rqp"></a><h2>quiz_rqp</h2>
+<a name="quiz_rqp"></a><h3>quiz_rqp</h3>
 <p>No information.</p>
-<a name="quiz_rqp_states"></a><h2>quiz_rqp_states</h2>
+<a name="quiz_rqp_states"></a><h3>quiz_rqp_states</h3>
 <p>No information.</p>
-<a name="quiz_rqp_types"></a><h2>quiz_rqp_types</h2>
+<a name="quiz_rqp_types"></a><h3>quiz_rqp_types</h3>
 <p>No information.</p>
-<a name="quiz_shortanswer"></a><h2>quiz_shortanswer</h2>
+<a name="quiz_shortanswer"></a><h3>quiz_shortanswer</h3>
 <p>
 
 The <code>quiz_shortanswer</code> table belongs to the shortanswer questiontype
@@ -444,7 +465,7 @@ insensitive comparison for grading.
 
 </p>
 
-<a name="quiz_truefalse"></a><h2>quiz_truefalse</h2>
+<a name="quiz_truefalse"></a><h3>quiz_truefalse</h3>
 <p>
 
 An extension of the <code>quiz_questions</code> table the <code>quiz_truefalse
