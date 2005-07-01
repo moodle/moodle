@@ -89,7 +89,7 @@ $string['notavailable'] = 'Niet beschikbaar';
 $string['noteonassessmentelements'] = ' Merk op dat het beoordelen opgesplitst is in een aantal \'Beoordelingselementen\'.<br />
 Dit maakt het beoordelen gemakkelijker en consequenter. Als leraar moet je deze<br />
 elementen ingeven voor je de opdracht opent voor je leerlingen. Dit doe je door <br />
-te klikken op de opdracht in het vak. Als er nog geen elementen zijn, wordt je gevraagd.<br />
+te klikken op de opdracht in de cursus. Als er nog geen elementen zijn, wordt je gevraagd.<br />
 ze toe te voegen. Je kunt het aantal elementen wijzigen met het scherm \"Bewerk Opdracht\",<br />
 de elementen zelf kunnen aangepast worden op het scherm \"Beheer opdracht\".';
 $string['noteongradinggrade'] = 'Dit cijfer is een maat voor hoe goed jouw beoordeling overeenkomt met de beoordeling van <br /> jouw werk door de $a. Hoe hoger het cijfer, hoe meer overeenkomst.';

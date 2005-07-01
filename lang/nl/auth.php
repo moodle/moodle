@@ -33,7 +33,7 @@ $string['auth_dbtype'] = 'Het type database (Bekijk <a href=\"../lib/adodb/readm
 $string['auth_dbuser'] = 'Gebruikersnaam met read access tot de database';
 $string['auth_emaildescription'] = 'E-mailbevestiging is standaard ingesteld als authenticatiemethode. Op het moment dat de gebruiker zich aanmeldt en daarbij een nieuwe gebruikersnaam en wachtwoord kiest wordt er een bevestigings e-mail gestuurd naar het e-mailadres van de gebruiker. In deze e-mail staat een veilige link naar een pagina waar de gebruiker zijn account kan bevestigen. Tijdens alle latere aanmeldingen worden de gebruikersnaam en het wachtwoord alleen maar vergeleken met de bewaarde waarden in de Moodle database.';
 $string['auth_emailtitle'] = 'Op e-mail gebaseerde authenticatie';
-$string['auth_fccreators'] = 'Lijst met groepen van wie de leden nieuwe vakken mogen maken. Gebruik een ; als scheidingsteken voor verschillende groepen. Namen moeten hetzelfde gespeld worden als op de FirstClass-server. Het systeem is hoofdlettergevoelig.';
+$string['auth_fccreators'] = 'Lijst met groepen van wie de leden nieuwe cursussen mogen maken. Gebruik een ; als scheidingsteken voor verschillende groepen. Namen moeten hetzelfde gespeld worden als op de FirstClass-server. Het systeem is hoofdlettergevoelig.';
 $string['auth_fcdescription'] = 'Deze methode gebruikt een FirstClass-server om te controleren of een gegeven gebruikersnaam en wachtwoord geldig zijn.';
 $string['auth_fcfppport'] = 'Serverpoort (3333 is de meest gebruikelijke)';
 $string['auth_fchost'] = 'Het adres van de server. Gebruik het IP-nummer of DNS-naam.';
@@ -54,7 +54,7 @@ $string['auth_ldap_bind_pw'] = 'Wachtwoord voor de \'bind-user\'';
 $string['auth_ldap_bind_settings'] = 'Bind instellingen';
 $string['auth_ldap_contexts'] = 'Lijst met contexten waar de gebruikers gelocaliseerd zijn. Scheid verschillende contexten met \';\'. Bijvoorbeeld: \'ou=users,o=org; ou=others,o=org\'';
 $string['auth_ldap_create_context'] = 'Als je het aanmaken van gebruikers met e-mailbevestiging aanzet, moet je de context aangeven waarin gebruikers worden aangemaakt. Deze context moet verschillen van andere contexten om beveiligingsproblemen te vermijden. Deze context hoef je niet toe te voegen aan ldap_context_variable. Moodle zoekt automatisch de gebruikers uit deze context.<br /><b>Merk op!</b> Je moet de functie auth_user_create() in het bestand auth/ldap/lib.php wijzigen om er voor te zorgen dat het aanmaken van gebruikers werkt.';
-$string['auth_ldap_creators'] = 'Lijst met groepen gebruikers. De leden van de groepen mogen nieuwe vakken aanmaken. Scheid verschillende groepen met \';\'. Meestal iets als \'cn=leraren,ou=medewerkers,o=mijnorganisatie\'';
+$string['auth_ldap_creators'] = 'Lijst met groepen gebruikers. De leden van de groepen mogen nieuwe cursussen aanmaken. Scheid verschillende groepen met \';\'. Meestal iets als \'cn=leraren,ou=medewerkers,o=mijnorganisatie\'';
 $string['auth_ldap_expiration_desc'] = 'Kies nee op de controle op verlopen wachtwoorden uit te schakelen of om LDAP de geldigheidsduur van de wachtwoorden rechtstreeks uit LDAP te laten lezen';
 $string['auth_ldap_expiration_warning_desc'] = 'Aantal dagen op voorhand dat er een waarschuwing voor het verlopen van het wachtwoord gegeven wordt.';
 $string['auth_ldap_expireattr_desc'] = 'Optioneel: gaat voor op het LDAP-attribuut dat de wachtwoordverlooptijd bewaard.';

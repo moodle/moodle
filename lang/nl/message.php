@@ -7,7 +7,7 @@ $string['addsomecontacts'] = 'Gebruik het tabblad <a href=\"$a\">Zoek</a> om iem
 $string['addsomecontactsincoming'] = 'Deze berichten zijn van mensen die niet in je contactenlijst zitten. Om ze toe te voegen klik je op het icoontje \"Voeg contactpersoon toe\" naast hun naam.';
 $string['ago'] = '$a geleden';
 $string['allmine'] = 'Alle berichten aan mij of van mij';
-$string['allstudents'] = 'Alle berichten tussen leerlingen binnen een vak';
+$string['allstudents'] = 'Alle berichten tussen leerlingen binnen een cursus';
 $string['allusers'] = 'Alle berichten van alle gebruikers';
 $string['backupmessageshelp'] = 'Als dit ingeschakeld is, dan zullen berichten in de automatische SITE backups gezet worden';
 $string['beepnewmessage'] = 'Geluidssignaal als er een nieuw bericht binnenkomt';
@@ -42,7 +42,7 @@ $string['offlinecontacts'] = 'Off line contactpersonenen ($a)';
 $string['online'] = 'On line';
 $string['onlinecontacts'] = 'On line contactpersonen ($a)';
 $string['onlyfromme'] = 'Enkel mijn berichten';
-$string['onlymycourses'] = 'Enkel in mijn vakken';
+$string['onlymycourses'] = 'Enkel in mijn cursussen';
 $string['onlytome'] = 'Enkel berichten aan mij';
 $string['pagerefreshes'] = 'Deze pagina ververst automatisch om de $a seconden';
 $string['readmessages'] = '$a gelezen berichten';

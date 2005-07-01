@@ -4,7 +4,7 @@
 
 $string['abandoned'] = 'verlaten';
 $string['allattempts'] = 'alle pogingen';
-$string['allmycourses'] = 'al mijn vakken';
+$string['allmycourses'] = 'al mijn cursussen';
 $string['average'] = 'Gemiddelde';
 $string['bestattempt'] = 'beste poging';
 $string['checks'] = 'controles';
@@ -54,7 +54,7 @@ $string['showhtmlsource'] = 'Toon HTML-bron';
 $string['shownextquiz'] = 'Toon volgende test?';
 $string['showxmlsource'] = 'Toon XML-bron';
 $string['showxmltree'] = 'Toon XML-boom';
-$string['thiscourse'] = 'dit vak';
+$string['thiscourse'] = 'deze cursus';
 $string['weighting'] = 'weging';
 $string['wrong'] = 'foutief';
 
