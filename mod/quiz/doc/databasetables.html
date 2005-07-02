@@ -51,18 +51,18 @@ tables.
 <h3>Static model</h3>
 <ul>
 <li><a href="#quiz">quiz</a></li>
+<li><a href="#quiz_questions">quiz_questions</a></li>
 <li><a href="#quiz_answers">quiz_answers</a></li>
 <li><a href="#quiz_categories">quiz_categories</a></li>
-<li><a href="#quiz_grades">quiz_grades</a></li>
+<li><a href="#quiz_question_instances">quiz_question_instances</a></li>
 <li><a href="#quiz_question_versions">quiz_question_versions</a></li>
-<li><a href="#quiz_questions">quiz_questions</a></li>
 </ul>
 <h3>Runtime Model</h3>
 <ul>
 <li><a href="#quiz_attempts">quiz_attempts</a></li>
-<li><a href="#quiz_newest_states">quiz_newest_states</a></li>
-<li><a href="#quiz_question_instances">quiz_question_instances</a></li>
 <li><a href="#quiz_states">quiz_states</a></li>
+<li><a href="#quiz_grades">quiz_grades</a></li>
+<li><a href="#quiz_newest_states">quiz_newest_states</a></li>
 </ul>
 <h3>Questiontype specific tables</h3>
 <ul>
@@ -203,17 +203,6 @@ are not vital for understanding how the quiz module works.
 
 </p>
 
-<a name="quiz_grades"></a><h3>quiz_grades</h3>
-<p>
-
-The quiz_grades table merely stores a student's awarded grade for a quiz. Since
-it is possible to allow several attempts on a quiz, the grade stored is
-calculated depending on the quiz setting <code>grademethod</code>. This table
-exists mainly for convenience, because the values of its fields can be
-recalculated.
-
-</p>
-
 <a name="quiz_question_instances"></a><h3>quiz_question_instances</h3>
 <p>
 
@@ -305,6 +294,17 @@ field.
 
 We now deal with the remaining tables from the runtime model in alphabetical
 order.
+
+<a name="quiz_grades"></a><h3>quiz_grades</h3>
+<p>
+
+The quiz_grades table merely stores a student's awarded grade for a quiz. Since
+it is possible to allow several attempts on a quiz, the grade stored is
+calculated depending on the quiz setting <code>grademethod</code>. This table
+exists mainly for convenience, because the values of its fields can be
+recalculated.
+
+</p>
 
 <a name="quiz_newest_states"></a><h3>quiz_newest_states</h3>
 <p>This table exists only for efficiency reasons:</p>
