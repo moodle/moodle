@@ -427,9 +427,9 @@ function handle_questions_media(&$questions, $path, $courseid) {
                 if ($localfile) {
                     // create the http url that the player will need to access the file
                     if ($CFG->slasharguments) {        // Use this method if possible for better caching
-                        $questions[$key]->mediaurl = "$CFG->wwwroot/mod/quiz/quizfile.php/$quizid/$question->id/$question->image";
+                        $questions[$key]->mediaurl = "$CFG->wwwroot/file.php/$question->image";
                     } else {
-                        $questions[$key]->mediaurl = "$CFG->wwwroot/mod/quiz/quizfile.php?file=/$quizid/$question->id/$question->image";
+                        $questions[$key]->mediaurl = "$CFG->wwwroot/file.php?file=$question->image";
                     } 
                 } else {
                     $questions[$key]->mediaurl = $question->image;

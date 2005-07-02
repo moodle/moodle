@@ -123,7 +123,7 @@ class quiz_report extends quiz_default_report {
             }
             // Restore the question sessions to their most recent states
             // creating new sessions where required
-            if (!$states = quiz_restore_question_sessions($quizquestions, $quiz, $attempt)) {
+            if (!$states = quiz_get_states($quizquestions, $quiz, $attempt)) {
                 error('Could not restore question sessions');
             }
             $numbers = explode(',', $questionlist);

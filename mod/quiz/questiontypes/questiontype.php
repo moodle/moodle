@@ -27,20 +27,6 @@ class quiz_default_questiontype {
     }
 
     /**
-    * Checks whether a given file is used by a particular question
-    *
-    * This is used by {@see quizfile.php} to determine whether a file
-    * should be served to the user
-    * @return boolean
-    * @param question $question
-    * @param string $relativefilepath
-    */
-    function uses_quizfile($question, $relativefilepath) {
-        // The default does only check whether the file is used as image:
-        return $question->image == $relativefilepath;
-    }
-
-    /**
     * Saves or updates a question after editing by a teacher
     *
     * Given some question info and some data about the answers
@@ -210,7 +196,7 @@ class quiz_default_questiontype {
     * This function is called to start a question session. Empty question type
     * specific session data (if any) and empty response data will be added to the
     * state object. Session data is any data which must persist throughout the
-    * quiz attempt possibly with updates as the user interacts with the
+    * attempt possibly with updates as the user interacts with the
     * question. This function does NOT create new entries in the database for
     * the session; a call to the {@link save_session_and_responses} member will
     * occur to do this.
@@ -225,15 +211,13 @@ class quiz_default_questiontype {
     *                         (it is passed by reference). In particular, empty
     *                         responses will be created in the ->responses
     *                         field.
-    * @param object $quiz     The quiz for which the session is to be started.
-    *                         Questions may wish to initialize the session in
-    *                         different ways depending on quiz settings.
-    * @param object $attempt  The quiz attempt for which the session is to be
+    * @param object $cmoptions
+    * @param object $attempt  The attempt for which the session is to be
     *                         started. Questions may wish to initialize the
     *                         session in different ways depending on the user id
     *                         or time available for the attempt.
     */
-    function create_session_and_responses(&$question, &$state, $quiz, $attempt) {
+    function create_session_and_responses(&$question, &$state, $cmoptions, $attempt) {
         // The default implementation should work for the legacy question types.
         // Most question types with only a single form field for the student's response
         // will use the empty string '' as the index for that one response. This will
@@ -436,12 +420,10 @@ class quiz_default_questiontype {
     *                         question type specific information is also
     *                         included.
     * @param integer $number  The number for this question.
-    * @param object $quiz     The quiz to which the question belongs. The
-    *                         question will likely be rendered differently
-    *                         depending on the quiz settings.
+    * @param object $cmoptions
     * @param object $options  An object describing the rendering options.
     */
-    function print_question(&$question, &$state, $number, $quiz, $options) {
+    function print_question(&$question, &$state, $number, $cmoptions, $options) {
         /* The default implementation should work for most question types
         provided the member functions it calls are overridden where required.
         The question number is printed in the first cell of a table.
@@ -463,7 +445,7 @@ class quiz_default_questiontype {
 
         // Print question number
         echo '<b><font size="+1">' . $number . '</font></b>';
-        if (isteacher($quiz->course)) {
+        if (isteacher($cmoptions->course)) {
             echo ' <font size="1">( ';
             link_to_popup_window ('/mod/quiz/question.php?id=' . $question->id,
              'editquestion', $question->id, 450, 550, get_string('edit'));
@@ -472,9 +454,9 @@ class quiz_default_questiontype {
         if ($question->maxgrade and $options->scores) {
             echo '<div class="grade">';
             echo get_string('marks', 'quiz').': ';
-            if ($quiz->optionflags & QUIZ_ADAPTIVE) {
+            if ($cmoptions->optionflags & QUIZ_ADAPTIVE) {
                 echo '<br />';
-                echo ('' === $state->last_graded->grade) ? '--/' : round($state->last_graded->grade, $quiz->decimalpoints).'/';
+                echo ('' === $state->last_graded->grade) ? '--/' : round($state->last_graded->grade, $cmoptions->decimalpoints).'/';
             }
             echo $question->maxgrade.'</div>';
         }
@@ -482,12 +464,12 @@ class quiz_default_questiontype {
         echo '</td><td valign="top">';
 
         $this->print_question_formulation_and_controls($question, $state,
-         $quiz, $options);
+         $cmoptions, $options);
 
         echo '</td></tr><tr><td valign="top">';
 
         if ($question->maxgrade and $options->scores) {
-            $this->print_question_grading_details($question, $state, $quiz, $options);
+            $this->print_question_grading_details($question, $state, $cmoptions, $options);
         }
 
         if (QUIZ_EVENTDUPLICATEGRADE == $state->event) {
@@ -498,7 +480,7 @@ class quiz_default_questiontype {
         if(!$options->readonly) {
             echo '</td></tr><tr><td align="right">';
             $this->print_question_submit_buttons($question, $state,
-             $quiz, $options);
+             $cmoptions, $options);
         }
 
         if(isset($options->history) and $options->history) {
@@ -532,9 +514,9 @@ class quiz_default_questiontype {
                         $b.get_string('event'.$st->event, 'quiz').$be,
                         $b.$this->response_summary($st).$be,
                         $b.userdate($st->timestamp, get_string('timestr', 'quiz')).$be,
-                        $b.round($st->raw_grade, $quiz->decimalpoints).$be,
-                        $b.round($st->penalty, $quiz->decimalpoints).$be,
-                        $b.round($st->grade, $quiz->decimalpoints).$be
+                        $b.round($st->raw_grade, $cmoptions->decimalpoints).$be,
+                        $b.round($st->penalty, $cmoptions->decimalpoints).$be,
+                        $b.round($st->grade, $cmoptions->decimalpoints).$be
                     );
                 }
                 echo '</td></tr><tr><td colspan="2" valign="top">';
@@ -560,12 +542,10 @@ class quiz_default_questiontype {
     *                         ->maxgrade.
     * @param object $state    The state. In particular the grading information
     *                          is in ->grade, ->raw_grade and ->penalty.
-    * @param object $quiz     The quiz to which the question belongs. The
-    *                         grading details may be rendered differently
-    *                         depending on the quiz settings.
+    * @param object $cmoptions
     * @param object $options  An object describing the rendering options.
     */
-    function print_question_grading_details(&$question, &$state, $quiz, $options) {
+    function print_question_grading_details(&$question, &$state, $cmoptions, $options) {
         /* The default implementation prints the number of marks if no attempt
         has been made. Otherwise it displays the grade obtained out of the
         maximum grade available and a warning if a penalty was applied for the
@@ -575,9 +555,9 @@ class quiz_default_questiontype {
         if (!empty($question->maxgrade)) {
             if (!('' === $state->last_graded->grade)) {
                 // Display the grading details from the last graded state
-                $grade->cur = round($state->last_graded->grade, $quiz->decimalpoints);
+                $grade->cur = round($state->last_graded->grade, $cmoptions->decimalpoints);
                 $grade->max = $question->maxgrade;
-                $grade->raw = round($state->last_graded->raw_grade, $quiz->decimalpoints);
+                $grade->raw = round($state->last_graded->raw_grade, $cmoptions->decimalpoints);
 
                 // let student know wether the answer was correct
                 echo '<div class="correctness">';
@@ -593,7 +573,7 @@ class quiz_default_questiontype {
                 echo '<div class="gradingdetails">';
                 // print grade for this submission
                 print_string('gradingdetails', 'quiz', $grade);
-                if ($quiz->penaltyscheme) {
+                if ($cmoptions->penaltyscheme) {
                     // print details of grade adjustment due to penalties
                     if ($state->last_graded->raw_grade > $state->last_graded->grade){
                         print_string('gradingdetailsadjustment', 'quiz', $grade);
@@ -640,12 +620,10 @@ class quiz_default_questiontype {
     *                         included.
     *                         The state is passed by reference because some adaptive
     *                         questions may want to update it during rendering
-    * @param object $quiz     The quiz to which the question belongs. The
-    *                         question might be rendered differently
-    *                         depending on the quiz settings.
+    * @param object $cmoptions
     * @param object $options  An object describing the rendering options.
     */
-    function print_question_formulation_and_controls(&$question, &$state, $quiz, $options) {
+    function print_question_formulation_and_controls(&$question, &$state, $cmoptions, $options) {
         /* This default implementation prints an error and must be overridden
         by all question type implementations, unless the default implementation
         of print_question has been overridden. */
@@ -672,17 +650,15 @@ class quiz_default_questiontype {
     * @param object $state    The state to render the buttons for. The
     *                         question type specific information is also
     *                         included.
-    * @param object $quiz     The quiz to which the question belongs. The
-    *                         choice of buttons may depend on the quiz
-    *                         settings.
+    * @param object $cmoptions
     * @param object $options  An object describing the rendering options.
     */
-    function print_question_submit_buttons(&$question, &$state, $quiz, $options) {
+    function print_question_submit_buttons(&$question, &$state, $cmoptions, $options) {
         /* The default implementation should be suitable for most question
         types. It prints a mark button in the case where individual marking is
-        allowed in the quiz. */
+        allowed. */
 
-        if($quiz->optionflags & QUIZ_ADAPTIVE) {
+        if($cmoptions->optionflags & QUIZ_ADAPTIVE) {
             echo '<input type="submit" name="';
             echo $question->name_prefix;
             echo 'mark" value="';
@@ -718,14 +694,12 @@ class quiz_default_questiontype {
     * @param object $state    The state to render the question in. The
     *                         question type specific information is also
     *                         included.
-    * @param object $quiz     The quiz to which the question belongs. The
-    *                         question will likely be rendered differently
-    *                         depending on the quiz settings.
+    * @param object $cmoptions
     * @param string $type     Indicates if the question or the solution is to be
     *                         rendered with the values 'question' and
     *                         'solution'.
     */
-    function get_texsource(&$question, &$state, $quiz, $type) {
+    function get_texsource(&$question, &$state, $cmoptions, $type) {
         // The default implementation simply returns a string stating that
         // the question is only available online.
 
@@ -778,11 +752,9 @@ class quiz_default_questiontype {
     *                         close the question session (preventing any further
     *                         attempts at this question) by setting
     *                         $state->event to QUIZ_EVENTCLOSE.
-    * @param object $quiz     The quiz to which the question belongs. The
-    *                         question might be graded differently depending on
-    *                         the quiz settings.
+    * @param object $cmoptions
     */
-    function grade_responses(&$question, &$state, $quiz) {
+    function grade_responses(&$question, &$state, $cmoptions) {
         /* The default implementation uses the comparison method to check if
         the responses given are equivalent to the responses for each answer
         in turn and sets the marks and penalty accordingly. This works for the
@@ -873,6 +845,7 @@ class quiz_default_questiontype {
     // containing checkboxes to allow the teacher to replace the old question version
 
         // Disable until the versioning code has been fixed
+        // The $quizid argument will become a $cmid
         return;
 
         // no need to display replacement options if the question is new

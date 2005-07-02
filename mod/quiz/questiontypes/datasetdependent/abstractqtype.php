@@ -23,7 +23,7 @@ class quiz_dataset_dependent_questiontype extends quiz_default_questiontype {
         return true;
     }
 
-    function create_session_and_responses(&$question, &$state, $quiz, $attempt) {
+    function create_session_and_responses(&$question, &$state, $cmoptions, $attempt) {
         // Find out how many datasets are available
         global $CFG;
         if(!$maxnumber = (int)get_field_sql(
@@ -76,7 +76,7 @@ class quiz_dataset_dependent_questiontype extends quiz_default_questiontype {
         return true;
     }
 
-    function print_question_formulation_and_controls(&$question, &$state, $quiz,
+    function print_question_formulation_and_controls(&$question, &$state, $cmoptions,
      $options) {
         // Substitute variables in questiontext before giving the data to the
         // virtual type for printing
@@ -89,17 +89,17 @@ class quiz_dataset_dependent_questiontype extends quiz_default_questiontype {
         $question->questiontext = $this->substitute_variables(
          $question->questiontext, $state->options->dataset);
         $virtualqtype->print_question_formulation_and_controls($question,
-         $state, $quiz, $options);
+         $state, $cmoptions, $options);
     }
 
-    function grade_responses(&$question, &$state, $quiz) {
+    function grade_responses(&$question, &$state, $cmoptions) {
         // Forward the grading to the virtual qtype
         foreach ($question->options->answers as $answer) {
             $answer->answer = $this->substitute_variables($answer->answer,
              $state->options->dataset);
         }
         $virtualqtype = $this->get_virtual_qtype();
-        return $virtualqtype->grade_responses($question, $state, $quiz) ;
+        return $virtualqtype->grade_responses($question, $state, $cmoptions) ;
     }
 
     // ULPGC ecastro

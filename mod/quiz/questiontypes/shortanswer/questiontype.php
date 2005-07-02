@@ -99,7 +99,7 @@ class quiz_shortanswer_qtype extends quiz_default_questiontype {
         }
     }
 
-    function print_question_formulation_and_controls(&$question, &$state, $quiz, $options) {
+    function print_question_formulation_and_controls(&$question, &$state, $cmoptions, $options) {
     /// This implementation is also used by question type NUMERICAL
 
         $answers = &$question->options->answers;
@@ -111,8 +111,8 @@ class quiz_shortanswer_qtype extends quiz_default_questiontype {
 
         echo format_text($question->questiontext,
                          $question->questiontextformat,
-                         NULL, $quiz->course);
-        quiz_print_possible_question_image($quiz->id, $question);
+                         NULL, $cmoptions->course);
+        quiz_print_possible_question_image($question);
 
         /// Print input controls
 
@@ -164,7 +164,7 @@ class quiz_shortanswer_qtype extends quiz_default_questiontype {
         return false;
     }
 
-    function grade_responses(&$question, &$state, $quiz) {
+    function grade_responses(&$question, &$state, $cmoptions) {
         $answers     = &$question->options->answers;
         $testedstate = clone($state);
         $teststate   = clone($state);

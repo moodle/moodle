@@ -197,7 +197,7 @@ class quiz_calculated_qtype extends quiz_dataset_dependent_questiontype {
         return true;
     }
 
-    function print_question_formulation_and_controls(&$question, &$state, $quiz,
+    function print_question_formulation_and_controls(&$question, &$state, $cmoptions,
      $options) {
         // Substitute variables in questiontext before giving the data to the
         // virtual type for printing
@@ -211,17 +211,17 @@ class quiz_calculated_qtype extends quiz_dataset_dependent_questiontype {
         $question->questiontext = parent::substitute_variables(
          $question->questiontext, $state->options->dataset);
         $virtualqtype->print_question_formulation_and_controls($question,
-         $state, $quiz, $options);
+         $state, $cmoptions, $options);
     }
 
-    function grade_responses(&$question, &$state, $quiz) {
+    function grade_responses(&$question, &$state, $cmoptions) {
         // Forward the grading to the virtual qtype
         foreach ($question->options->answers as $key => $answer) {
             $answer = &$question->options->answers[$key]; // for PHP 4.x
             $answer->answer = $this->substitute_variables($answer->answer,
              $state->options->dataset);
         }
-        return parent::grade_responses($question, $state, $quiz);
+        return parent::grade_responses($question, $state, $cmoptions);
     }
 
     // ULPGC ecastro

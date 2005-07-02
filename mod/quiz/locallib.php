@@ -521,6 +521,16 @@ function quiz_upgrade_states($attempt) {
     }
 }
 
+// ULPGc ecastro
+function quiz_get_question_review($quiz, $question) {
+// returns a question icon
+    $qnum = $question->id;
+    $strpreview = get_string('previewquestion', 'quiz');
+    $context = $quiz->id ? '&amp;contextquiz='.$quiz->id : '';
+    $quiz_id = $quiz->id ? '&amp;quizid=' . $quiz->id : '';
+    return "<a title=\"$strpreview\" href=\"javascript:void();\" onClick=\"openpopup('/mod/quiz/preview.php?id=$qnum$quiz_id','$strpreview','scrollbars=yes,resizable=yes,width=700,height=480', false)\">
+          <img src=\"../../pix/t/preview.gif\" border=\"0\" alt=\"$strpreview\" /></a>";
+}
 
 /// FUNCTIONS USED BY IMPORT AND EXPORT ///////////////////////////////
 

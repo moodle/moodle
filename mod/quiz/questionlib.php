@@ -87,28 +87,34 @@ function quiz_load_questiontypes() {
 /// FUNCTIONS //////////////////////////////////////////////////////
 
 /**
-* Updates the question objects in an array with the question type specific
-* information for each one by calling {@link get_question_options()}
+* Updates the question objects with question type specific
+* information by calling {@link get_question_options()}
 *
-* The get_question_options method of the question type of each question in the
-* array is called to add the options field to the question object.
+* Can be called either with an array of question objects or with a single
+* question object.
 * @return bool            Indicates success or failure.
-* @param array $questions The array of question objects to be updated.
+* @param mixed $questions Either an array of question objects to be updated
+*                         or just a single question object
 */
 function quiz_get_question_options(&$questions) {
     global $QUIZ_QTYPES;
 
-    // get the keys of the input array
-    $keys = array_keys($questions);
-    // update each question object
-    foreach ($keys as $i) {
-        // set name prefix
-        $questions[$i]->name_prefix = quiz_make_name_prefix($i);
-
-        if (!$QUIZ_QTYPES[$questions[$i]->qtype]->get_question_options($questions[$i]))
-            return false;
+    if (is_array($questions)) { // deal with an array of questions
+        // get the keys of the input array
+        $keys = array_keys($questions);
+        // update each question object
+        foreach ($keys as $i) {
+            // set name prefix
+            $questions[$i]->name_prefix = quiz_make_name_prefix($i);
+    
+            if (!$QUIZ_QTYPES[$questions[$i]->qtype]->get_question_options($questions[$i]))
+                return false;
+        }
+        return true;
+    } else { // deal with single question
+        $questions->name_prefix = quiz_make_name_prefix($questions->id);
+        return $QUIZ_QTYPES[$questions->qtype]->get_question_options($questions);
     }
-    return true;
 }
 
 /**
@@ -129,11 +135,11 @@ function quiz_get_question_options(&$questions) {
 *                         states of the question sessions.
 * @param array $questions The questions for which sessions are to be restored or
 *                         created.
-* @param object $quiz     The quiz to which the questions belong.
-* @param object $attempt  The quiz attempt for which the question sessions are
+* @param object $cmoptions
+* @param object $attempt  The attempt for which the question sessions are
 *                         to be restored or created.
 */
-function quiz_restore_question_sessions(&$questions, $quiz, $attempt) {
+function quiz_get_states(&$questions, $cmoptions, $attempt) {
     global $CFG, $QUIZ_QTYPES;
 
     // get the question ids
@@ -161,7 +167,7 @@ function quiz_restore_question_sessions(&$questions, $quiz, $attempt) {
            "   AND n.questionid IN ($questionlist)";
     $gradedstates = get_records_sql($sql);
 
-    // loop through all questions and set the last_graded states
+    // loop through all questions, restore the states, and set the last_graded states
     foreach ($ids as $i) {
         if (isset($states[$i])) {
             quiz_restore_state($questions[$i], $states[$i]);
@@ -173,7 +179,7 @@ function quiz_restore_question_sessions(&$questions, $quiz, $attempt) {
             }
         } else {
             // Create a new state object
-            if ($quiz->attemptonlast and $attempt->attempt > 1) {
+            if ($cmoptions->attemptonlast and $attempt->attempt > 1) {
                 // build on states from last attempt
                 if (empty($lastattemptid)) {
                     $lastattemptid = get_field('quiz_attempts', 'id', 'quiz', $attempt->quiz, 'userid', $attempt->userid, 'attempt', $attempt->attempt-1);
@@ -227,7 +233,7 @@ function quiz_restore_question_sessions(&$questions, $quiz, $attempt) {
 
                 // Create the empty question type specific information
                 if (!$QUIZ_QTYPES[$questions[$i]->qtype]
-                 ->create_session_and_responses($questions[$i], $states[$i], $quiz, $attempt)) {
+                 ->create_session_and_responses($questions[$i], $states[$i], $cmoptions, $attempt)) {
                     return false;
                 }
                 $states[$i]->last_graded = clone($states[$i]);
@@ -245,9 +251,8 @@ function quiz_restore_question_sessions(&$questions, $quiz, $attempt) {
 * {@link restore_session_and_responses()} or it creates a new one by
 * calling {@link create_session_and_responses()}
 * @return boolean         Represents success or failure
-* @param array $questions The questions for which states are needed
-* @param array $states    The states as loaded from the database, indexed
-*                         by question id
+* @param object $question The question for which the state is needed
+* @param object $state   The state as loaded from the database
 */
 function quiz_restore_state(&$question, &$state) {
     global $QUIZ_QTYPES;
@@ -418,22 +423,17 @@ function quiz_extract_responses($questions, $responses, $defaultevent) {
 * For a given question in an attempt we walk the complete history of states
 * and recalculate the grades as we go along.
 *
-* This is used when a question in an existing quiz is changed and old student
+* This is used when a question is changed and old student
 * responses need to be marked with the new version of a question.
 *
 * TODO: Finish documenting this
 * @return boolean            Indicates success/failure
 * @param object  $question   A question object
 * @param object  $attempt    The attempt, in which the question needs to be regraded.
-* @param object  $quiz       Optional. The quiz object that the attempt corresponds to.
+* @param object  $cmoptions       
 * @param boolean $verbose    Optional. Whether to print progress information or not.
 */
-function quiz_regrade_question_in_attempt($question, $attempt, $quiz=false, $verbose=false) {
-    if (!$quiz &&  !($quiz = get_record('quiz', 'id', $attempt->quiz))) {
-        $verbose && notify("Regrading of quiz #{$attempt->quiz} failed; " .
-         "Couldn't load quiz record from database!");
-        return false;
-    }
+function quiz_regrade_question_in_attempt($question, $attempt, $cmoptions, $verbose=false) {
 
     if ($states = get_records_select('quiz_states',
      "attempt = '{$attempt->id}' AND question = '{$question->id}'", 'seq_number ASC')) {
@@ -473,7 +473,7 @@ function quiz_regrade_question_in_attempt($question, $attempt, $quiz=false, $ver
                 $action->event = $states[$j]->event;
             }
             // Reprocess (regrade) responses
-            if (!quiz_process_responses($question, $replaystate, $action, $quiz,
+            if (!quiz_process_responses($question, $replaystate, $action, $cmoptions,
              $attempt)) {
                 $verbose && notify("Couldn't regrade state #{$state->id}!");
             }
@@ -512,15 +512,15 @@ function quiz_regrade_question_in_attempt($question, $attempt, $quiz=false, $ver
 *                         ->action which specifies the action, e.g., QUIZ_EVENTGRADE,
 *                         and ->timestamp which is a timestamp from when the responses
 *                         were submitted by the student.
-* @param object $quiz     The quiz object
+* @param object $cmoptions
 * @param object $attempt  The attempt is passed by reference so that
 *                         during grading its ->sumgrades field can be updated
 *
-* @todo There is a variable $quiz->ignoredupresp which makes the function go through
+* @todo There is a variable $cmoptions->ignoredupresp which makes the function go through
 *       all previous states when checking if a response is duplicated. There is no user
 *       interface for this yet.
 */
-function quiz_process_responses(&$question, &$state, $action, $quiz, &$attempt) {
+function quiz_process_responses(&$question, &$state, $action, $cmoptions, &$attempt) {
     global $QUIZ_QTYPES;
 
     // make sure these are gone!
@@ -567,7 +567,7 @@ function quiz_process_responses(&$question, &$state, $action, $quiz, &$attempt) 
     if (!quiz_isgradingevent($action->event)) {
         // Grade the response but don't update the overall grade
         $QUIZ_QTYPES[$question->qtype]->grade_responses(
-         $question, $state, $quiz);
+         $question, $state, $cmoptions);
         // Force the event to save or validate (even if the grading caused the
         // state to close)
         $state->event = $action->event;
@@ -582,7 +582,7 @@ function quiz_process_responses(&$question, &$state, $action, $quiz, &$attempt) 
          $question, $state, $state->last_graded)) {
             $state->event = QUIZ_EVENTDUPLICATEGRADE;
         } else {
-            if ($quiz->optionflags & QUIZ_IGNORE_DUPRESP) {
+            if ($cmoptions->optionflags & QUIZ_IGNORE_DUPRESP) {
                 /* Walk back through the previous graded states looking for
                 one where the responses are equivalent to the current
                 responses. If such a state is found, set the current grading
@@ -596,9 +596,9 @@ function quiz_process_responses(&$question, &$state, $action, $quiz, &$attempt) 
                 $attempt->sumgrades -= (float)$state->last_graded->grade;
 
                 $QUIZ_QTYPES[$question->qtype]->grade_responses(
-                 $question, $state, $quiz);
+                 $question, $state, $cmoptions);
                 // Calculate overall grade using correct penalty method
-                quiz_apply_penalty_and_timelimit($question, $state, $attempt, $quiz);
+                quiz_apply_penalty_and_timelimit($question, $state, $attempt, $cmoptions);
                 // Update the last graded state (don't simplify!)
                 unset($state->last_graded);
                 $state->last_graded = clone($state);
@@ -614,9 +614,9 @@ function quiz_process_responses(&$question, &$state, $action, $quiz, &$attempt) 
         // Only mark if they haven't been marked already
         if (!$sameresponses) {
             $QUIZ_QTYPES[$question->qtype]->grade_responses(
-             $question, $state, $quiz);
+             $question, $state, $cmoptions);
             // Calculate overall grade using correct penalty method
-            quiz_apply_penalty_and_timelimit($question, $state, $attempt, $quiz);
+            quiz_apply_penalty_and_timelimit($question, $state, $attempt, $cmoptions);
         }
         // Force the state to close (as the attempt is closing)
         $state->event = QUIZ_EVENTCLOSE;
@@ -650,7 +650,7 @@ function quiz_isgradingevent($event) {
 * This is used by {@link quiz_process_responses()} to determine whether
 * to ignore the marking request for the current response. However this
 * check against all previous graded responses is only performed if
-* the QUIZ_IGNORE_DUPRESP bit in $quiz->optionflags is set
+* the QUIZ_IGNORE_DUPRESP bit in $cmoptions->optionflags is set
 * @return boolean         Indicates if a state with duplicate responses was
 *                         found.
 * @param object $question
@@ -690,14 +690,14 @@ function quiz_search_for_duplicate_responses(&$question, &$state) {
 * @param object $state    The state for which the grade is to be set from the
 *                         raw grade and the cumulative penalty from the last
 *                         graded state. The ->grade field is updated by applying
-*                         the penalty scheme for the quiz to the ->raw_grade and
+*                         the penalty scheme determined in $cmoptions to the ->raw_grade and
 *                         ->last_graded->penalty fields.
-* @param object $quiz     The quiz to which the question belongs. The penalty
+* @param object $cmoptions  The options set by the course module. The penalty
 *                         scheme to apply is given by the ->penaltyscheme field.
 */
-function quiz_apply_penalty_and_timelimit(&$question, &$state, $attempt, $quiz) {
+function quiz_apply_penalty_and_timelimit(&$question, &$state, $attempt, $cmoptions) {
     // deal with penaly
-    if ($quiz->penaltyscheme) {
+    if ($cmoptions->penaltyscheme) {
             $state->grade = $state->raw_grade - $state->sumpenalty;
             $state->sumpenalty += (float) $state->penalty;
     } else {
@@ -705,15 +705,15 @@ function quiz_apply_penalty_and_timelimit(&$question, &$state, $attempt, $quiz) 
     }
 
     // deal with timeimit
-    if ($quiz->timelimit) {
+    if ($cmoptions->timelimit) {
         // We allow for 5% uncertainty in the following test
-        if (($state->timestamp - $attempt->timestart) > ($quiz->timelimit * 63)) {
+        if (($state->timestamp - $attempt->timestart) > ($cmoptions->timelimit * 63)) {
             $state->grade = 0;
         }
     }
 
-    // deal with quiz closing time
-    if ($state->timestamp > ($quiz->timeclose + 60)) { // allowing 1 minute lateness
+    // deal with closing time
+    if ($state->timestamp > ($cmoptions->timeclose + 60)) { // allowing 1 minute lateness
         $state->grade = 0;
     }
 
@@ -760,34 +760,15 @@ function quiz_print_question_icon($question, $editlink=true, $return = false) {
     }
 }
 
-// ULPGc ecastro
-function quiz_get_question_review($quiz, $question) {
-// returns a question icon
-    $qnum = $question->id;
-    $strpreview = get_string('previewquestion', 'quiz');
-    $context = $quiz->id ? '&amp;contextquiz='.$quiz->id : '';
-    $quiz_id = $quiz->id ? '&amp;quizid=' . $quiz->id : '';
-    return "<a title=\"$strpreview\" href=\"javascript:void();\" onClick=\"openpopup('/mod/quiz/preview.php?id=$qnum$quiz_id','$strpreview','scrollbars=yes,resizable=yes,width=700,height=480', false)\">
-          <img src=\"../../pix/t/preview.gif\" border=\"0\" alt=\"$strpreview\" /></a>";
-
-}
-
-
-
 
 /**
 * Print the question image if there is one
 *
-* @param integer $quizid  The id of the quiz
 * @param object $question The question object
 */
-function quiz_print_possible_question_image($quizid, $question) {
+function quiz_print_possible_question_image($question) {
 
     global $CFG;
-
-    if ($quizid == '') {
-        $quizid = '0';
-    }
 
     if ($question->image) {
         echo '<img border="0" src="';
@@ -796,10 +777,10 @@ function quiz_print_possible_question_image($quizid, $question) {
             echo $question->image;
 
         } else if ($CFG->slasharguments) {        // Use this method if possible for better caching
-            echo "$CFG->wwwroot/mod/quiz/quizfile.php/$quizid/$question->id/$question->image";
+            echo "$CFG->wwwroot/file.php/$question->image";
 
         } else {
-            echo "$CFG->wwwroot/mod/quiz/quizfile.php?file=/$quizid/$question->id/$question->image";
+            echo "$CFG->wwwroot/file.php?file=$question->image";
         }
         echo '" alt="" />';
 
@@ -811,8 +792,8 @@ function quiz_print_possible_question_image($quizid, $question) {
 * Construct name prefixes for question form element names
 *
 * Construct the name prefix that should be used for example in the
-* names of form elements created by questions for inclusion in the
-* quiz page. This is called by {@link quiz_get_question_options()}
+* names of form elements created by questions.
+* This is called by {@link quiz_get_question_options()}
 * to set $question->name_prefix.
 * This name prefix includes the question id which can be
 * extracted from it with {@link quiz_get_id_from_name_prefix()}.
@@ -860,15 +841,15 @@ function quiz_extract_correctanswers($answers, $nameprefix) {
 /// FUNCTIONS THAT SIMPLY WRAP QUESTIONTYPE METHODS //////////////////////////////////
 
 /**
-* Prints a question for a quiz page
+* Prints a question
 *
 * Simply calls the question type specific print_question() method.
 */
-function quiz_print_quiz_question(&$question, &$state, $number, $quiz, $options=null) {
+function quiz_print_quiz_question(&$question, &$state, $number, $cmoptions, $options=null) {
     global $QUIZ_QTYPES;
 
     $QUIZ_QTYPES[$question->qtype]->print_question($question, $state, $number,
-     $quiz, $options);
+     $cmoptions, $options);
 }
 
 /**

@@ -119,7 +119,7 @@
 
     // Restore the question sessions to their most recent states
     // creating new sessions where required
-    if (!$states = quiz_restore_question_sessions($questions, $quiz, $attempt)) {
+    if (!$states = quiz_get_states($questions, $quiz, $attempt)) {
         error('Could not restore question sessions');
     }
 

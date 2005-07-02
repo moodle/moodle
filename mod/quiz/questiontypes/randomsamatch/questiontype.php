@@ -57,7 +57,7 @@ class quiz_randomsamatch_qtype extends quiz_match_qtype {
         return true;
     }
 
-    function create_session_and_responses(&$question, &$state, $quiz, $attempt) {
+    function create_session_and_responses(&$question, &$state, $cmoptions, $attempt) {
         // Choose a random shortanswer question from the category:
         // We need to make sure that no question is used more than once in the
         // quiz. Therfore the following need to be excluded:
@@ -65,8 +65,8 @@ class quiz_randomsamatch_qtype extends quiz_match_qtype {
         // 2. All random questions
         // 3. All questions that are already chosen by an other random question
         global $QUIZ_QTYPES;
-        if (!isset($quiz->questionsinuse)) {
-            $quiz->questionsinuse = $quiz->questions;
+        if (!isset($cmoptions->questionsinuse)) {
+            $cmoptions->questionsinuse = $cmoptions->questions;
         }
 
         if ($question->options->subcats) {
@@ -76,7 +76,7 @@ class quiz_randomsamatch_qtype extends quiz_match_qtype {
             $categorylist = $question->category;
         }
 
-        $saquestions = $this->get_sa_candidates($categorylist, $quiz->questionsinuse);
+        $saquestions = $this->get_sa_candidates($categorylist, $cmoptions->questionsinuse);
 
         $count  = count($saquestions);
         $wanted = $question->options->choose;
@@ -131,20 +131,20 @@ class quiz_randomsamatch_qtype extends quiz_match_qtype {
             }
 
             if (!$QUIZ_QTYPES[$wrappedquestion->qtype]
-             ->create_session_and_responses($wrappedquestion, $state, $quiz,
+             ->create_session_and_responses($wrappedquestion, $state, $cmoptions,
              $attempt)) {
                 return false;
             }
             $wrappedquestion->name_prefix = $question->name_prefix;
             $wrappedquestion->maxgrade    = $question->maxgrade;
-            $quiz->questionsinuse .= ",$wrappedquestion->id";
+            $cmoptions->questionsinuse .= ",$wrappedquestion->id";
             $state->options->subquestions[$key] = clone($wrappedquestion);
         }
 
         // Shuffle the answers if required
         $subquestionids = array_values(array_map(create_function('$val',
          'return $val->id;'), $state->options->subquestions));
-        if ($quiz->shuffleanswers) {
+        if ($cmoptions->shuffleanswers) {
            $subquestionids = swapshuffle($subquestionids);
         }
         $state->options->order = $subquestionids;

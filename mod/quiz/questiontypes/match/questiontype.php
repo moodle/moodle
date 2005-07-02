@@ -87,7 +87,7 @@ class quiz_match_qtype extends quiz_default_questiontype {
         return true;
     }
 
-    function create_session_and_responses(&$question, &$state, $quiz, $attempt) {
+    function create_session_and_responses(&$question, &$state, $cmoptions, $attempt) {
         if (!$state->options->subquestions = get_records('quiz_match_sub',
          'question', $question->id)) {
            notify('Error: Missing subquestions!');
@@ -110,7 +110,7 @@ class quiz_match_qtype extends quiz_default_questiontype {
         // Shuffle the answers if required
         $subquestionids = array_values(array_map(create_function('$val',
          'return $val->id;'), $state->options->subquestions));
-        if ($quiz->shuffleanswers) {
+        if ($cmoptions->shuffleanswers) {
            $subquestionids = swapshuffle($subquestionids);
         }
         $state->options->order = $subquestionids;
@@ -187,7 +187,7 @@ class quiz_match_qtype extends quiz_default_questiontype {
         return empty($responses) ? null : $responses;
     }
 
-    function print_question_formulation_and_controls(&$question, &$state, $quiz, $options) {
+    function print_question_formulation_and_controls(&$question, &$state, $cmoptions, $options) {
         $subquestions   = $state->options->subquestions;
         $correctanswers = $this->get_correct_responses($question, $state);
         $nameprefix     = $question->name_prefix;
@@ -207,9 +207,9 @@ class quiz_match_qtype extends quiz_default_questiontype {
         if (!empty($question->questiontext)) {
             echo format_text($question->questiontext,
                              $question->questiontextformat,
-                             NULL, $quiz->course);
+                             NULL, $cmoptions->course);
         }
-        quiz_print_possible_question_image($quiz->id, $question);
+        quiz_print_possible_question_image($question);
 
         ///// Print the input controls //////
         echo '<table border="0" cellpadding="10" align="right">';
@@ -218,7 +218,7 @@ class quiz_match_qtype extends quiz_default_questiontype {
             /// Subquestion text:
             echo '<tr><td align="left" valign="top">';
             echo format_text($subquestion->questiontext,
-                $question->questiontextformat, NULL, $quiz->course);
+                $question->questiontextformat, NULL, $cmoptions->course);
             echo '</td>';
 
             /// Drop-down list:
@@ -252,7 +252,7 @@ class quiz_match_qtype extends quiz_default_questiontype {
         echo '</table>';
     }
 
-    function grade_responses(&$question, &$state, $quiz) {
+    function grade_responses(&$question, &$state, $cmoptions) {
         $subquestions = $state->options->subquestions;
         $responses    = &$state->responses;
 

@@ -119,7 +119,7 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
         return parent::save_question($question, $form, $course);
     }
 
-    function create_session_and_responses(&$question, &$state, $quiz, $attempt) {
+    function create_session_and_responses(&$question, &$state, $cmoptions, $attempt) {
         $state->responses = array();
         foreach ($question->options->questions as $key => $wrapped) {
             $state->responses[$key] = '';
@@ -167,18 +167,18 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
         return $responses;
     }
 
-    function print_question_formulation_and_controls(&$question, &$state, $quiz,
+    function print_question_formulation_and_controls(&$question, &$state, $cmoptions,
      $options) {
         global $QUIZ_QTYPES;
         $readonly = empty($options->readonly) ? '' : 'readonly="readonly"';
         $nameprefix = $question->name_prefix;
 
         // For this question type, we better print the image on top:
-        quiz_print_possible_question_image($quiz->id, $question);
+        quiz_print_possible_question_image($question);
 
         $qtextremaining = format_text($question->questiontext,
                                       $question->questiontextformat,
-                                      NULL, $quiz->course);
+                                      NULL, $cmoptions->course);
 
         $strfeedback = get_string('feedback', 'quiz');
 
@@ -306,7 +306,7 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
         echo $qtextremaining;
     }
 
-    function grade_responses(&$question, &$state, $quiz) {
+    function grade_responses(&$question, &$state, $cmoptions) {
         global $QUIZ_QTYPES;
         $teststate = clone($state);
         $state->raw_grade = 0;
@@ -314,7 +314,7 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
             $teststate->responses = array('' => $state->responses[$key]);
             $teststate->raw_grade = 0;
             if (false === $QUIZ_QTYPES[$wrapped->qtype]
-             ->grade_responses($wrapped, $teststate, $quiz)) {
+             ->grade_responses($wrapped, $teststate, $cmoptions)) {
                 return false;
             }
             $state->raw_grade += $teststate->raw_grade;

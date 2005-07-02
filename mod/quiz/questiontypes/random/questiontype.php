@@ -31,15 +31,15 @@ class quiz_random_qtype extends quiz_default_questiontype {
          $question->id) ? true : false);
     }
 
-    function create_session_and_responses(&$question, &$state, $quiz, $attempt) {
+    function create_session_and_responses(&$question, &$state, $cmoptions, $attempt) {
         // Choose a random question from the category:
         // We need to make sure that no question is used more than once in the
         // quiz. Therfore the following need to be excluded:
         // 1. All questions that are explicitly assigned to the quiz
         // 2. All random questions
         // 3. All questions that are already chosen by an other random question
-        if (!isset($quiz->questionsinuse)) {
-            $quiz->questionsinuse = $attempt->layout;
+        if (!isset($cmoptions->questionsinuse)) {
+            $cmoptions->questionsinuse = $attempt->layout;
         }
 
         if (!isset($this->catrandoms[$question->category])) {
@@ -57,7 +57,7 @@ class quiz_random_qtype extends quiz_default_questiontype {
                     ("SELECT * FROM {$CFG->prefix}quiz_questions
                        WHERE category IN ($categorylist)
                          AND parent = '0'
-                         AND id NOT IN ($quiz->questionsinuse)
+                         AND id NOT IN ($cmoptions->questionsinuse)
                          AND qtype NOT IN ($excludedtypes)");
             $this->catrandoms[$question->category] =
                   draw_rand_array($this->catrandoms[$question->category],
@@ -66,7 +66,7 @@ class quiz_random_qtype extends quiz_default_questiontype {
 
         while ($wrappedquestion =
                 array_pop($this->catrandoms[$question->category])) {
-            if (!ereg("(^|,)$wrappedquestion->id(,|$)", $quiz->questionsinuse)) {
+            if (!ereg("(^|,)$wrappedquestion->id(,|$)", $cmoptions->questionsinuse)) {
                 /// $randomquestion is not in use and will therefore be used
                 /// as the randomquestion here...
 
@@ -75,10 +75,10 @@ class quiz_random_qtype extends quiz_default_questiontype {
                  ->get_question_options($wrappedquestion);
                 $QUIZ_QTYPES[$wrappedquestion->qtype]
                  ->create_session_and_responses($wrappedquestion,
-                 $state, $quiz, $attempt);
+                 $state, $cmoptions, $attempt);
                 $wrappedquestion->name_prefix = $question->name_prefix;
                 $wrappedquestion->maxgrade    = $question->maxgrade;
-                $quiz->questionsinuse .= ",$wrappedquestion->id";
+                $cmoptions->questionsinuse .= ",$wrappedquestion->id";
                 $state->options->question = &$wrappedquestion;
                 return true;
             }
@@ -194,25 +194,25 @@ class quiz_random_qtype extends quiz_default_questiontype {
     }
 
 
-    function print_question(&$question, &$state, &$number, $quiz, $options) {
+    function print_question(&$question, &$state, &$number, $cmoptions, $options) {
         global $QUIZ_QTYPES;
         $wrappedquestion = &$state->options->question;
         $QUIZ_QTYPES[$wrappedquestion->qtype]
-         ->print_question($wrappedquestion, $state, $number, $quiz, $options);
+         ->print_question($wrappedquestion, $state, $number, $cmoptions, $options);
     }
 
-    function grade_responses(&$question, &$state, $quiz) {
+    function grade_responses(&$question, &$state, $cmoptions) {
         global $QUIZ_QTYPES;
         $wrappedquestion = &$state->options->question;
         return $QUIZ_QTYPES[$wrappedquestion->qtype]
-         ->grade_responses($wrappedquestion, $state, $quiz);
+         ->grade_responses($wrappedquestion, $state, $cmoptions);
     }
 
-    function get_texsource(&$question, &$state, $quiz, $type) {
+    function get_texsource(&$question, &$state, $cmoptions, $type) {
         global $QUIZ_QTYPES;
         $wrappedquestion = &$state->options->question;
         return $QUIZ_QTYPES[$wrappedquestion->qtype]
-         ->get_texsource($wrappedquestion, $state, $quiz, $type);
+         ->get_texsource($wrappedquestion, $state, $cmoptions, $type);
     }
 
     function compare_responses(&$question, $state, $teststate) {

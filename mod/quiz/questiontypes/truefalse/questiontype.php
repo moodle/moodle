@@ -116,7 +116,7 @@ class quiz_truefalse_qtype extends quiz_default_questiontype {
     * Prints the main content of the question including any interactions
     */
     function print_question_formulation_and_controls(&$question, &$state,
-            $quiz, $options) {
+            $cmoptions, $options) {
 
         $answers = &$question->options->answers;
         $correctanswers = $this->get_correct_responses($question, $state);
@@ -125,8 +125,8 @@ class quiz_truefalse_qtype extends quiz_default_questiontype {
         // Print question formulation
         echo format_text($question->questiontext,
                          $question->questiontextformat,
-                         NULL, $quiz->course);
-        quiz_print_possible_question_image($quiz->id, $question);
+                         NULL, $cmoptions->course);
+        quiz_print_possible_question_image($question);
 
         // Update the answer strings
         $stranswer = get_string('answer', 'quiz');
@@ -224,7 +224,7 @@ class quiz_truefalse_qtype extends quiz_default_questiontype {
         }
     }
 
-    function grade_responses(&$question, &$state, $quiz) {
+    function grade_responses(&$question, &$state, $cmoptions) {
         $teststate = clone($state);
 	    $teststate->raw_grade = 0;
         foreach($question->options->answers as $answer) {

@@ -121,7 +121,7 @@
         $SESSION->quizpreview->questionid = $id;
         // Create an empty session for the question
         if (!$newstates =
-         quiz_restore_question_sessions($questions, $quiz, $attempt)) {
+         quiz_get_states($questions, $quiz, $attempt)) {
             error(get_string('newattemptfail', 'quiz'));
         }
         $SESSION->quizpreview->states = array($newstates);

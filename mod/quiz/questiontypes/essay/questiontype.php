@@ -68,7 +68,7 @@ class quiz_essay_qtype extends quiz_default_questiontype {
         return true;
     }
 
-    function print_question_formulation_and_controls(&$question, &$state, $quiz, $options) {
+    function print_question_formulation_and_controls(&$question, &$state, $cmoptions, $options) {
 
         $answers = &$question->options->answers;
         //$correctanswers = $this->get_correct_responses($question, $state);  // no correct answers ;)
@@ -78,9 +78,9 @@ class quiz_essay_qtype extends quiz_default_questiontype {
         /// Print question text and media
        echo format_text($question->questiontext,
                          $question->questiontextformat,
-                         NULL, $quiz->course);
+                         NULL, $cmoptions->course);
 						 
-        quiz_print_possible_question_image($quiz->id, $question);
+        quiz_print_possible_question_image($question);
 
         /// Print input controls
         $stranswer = get_string("answer", "quiz");
@@ -158,7 +158,7 @@ class quiz_essay_qtype extends quiz_default_questiontype {
         }
     }
 
-    function grade_responses(&$question, &$state, $quiz) {
+    function grade_responses(&$question, &$state, $cmoptions) {
         $state->raw_grade = 0;
         // if a fraction is submitted, then we use it, otherwise the raw grade is 0
         if (isset($state->responses['fraction'])) {
@@ -177,7 +177,7 @@ class quiz_essay_qtype extends quiz_default_questiontype {
         return true;
     }
     
-    function create_session_and_responses(&$question, &$state, $quiz, $attempt) {
+    function create_session_and_responses(&$question, &$state, $cmoptions, $attempt) {
         $state->options->graded = 0;  // our flag to indicated wheather an essay has been graded or not
         $state->responses['fraction'] = 0;   // this fraction is used for grading.  The teacher sets it while grading
         $state->responses['response'] = '';  // this is teacher response to the students essay

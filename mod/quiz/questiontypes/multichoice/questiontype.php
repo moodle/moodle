@@ -132,11 +132,11 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
         return true;
     }
 
-    function create_session_and_responses(&$question, &$state, $quiz, $attempt) {
+    function create_session_and_responses(&$question, &$state, $cmoptions, $attempt) {
         // Shuffle the answers if required
         $answerids = array_values(array_map(create_function('$val',
          'return $val->id;'), $question->options->answers));
-        if ($quiz->shuffleanswers) {
+        if ($cmoptions->shuffleanswers) {
            $answerids = swapshuffle($answerids);
         }
         $state->options->order = $answerids;
@@ -235,7 +235,7 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
         }
     }
 
-    function print_question_formulation_and_controls(&$question, &$state, $quiz, $options) {
+    function print_question_formulation_and_controls(&$question, &$state, $cmoptions, $options) {
 
         $answers = &$question->options->answers;
         $correctanswers = $this->get_correct_responses($question, $state);
@@ -247,8 +247,8 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
         // Print formulation
         echo format_text($question->questiontext,
                          $question->questiontextformat,
-                         NULL, $quiz->course);
-        quiz_print_possible_question_image($quiz->id, $question);
+                         NULL, $cmoptions->course);
+        quiz_print_possible_question_image($question);
 
         // Print input controls and alternatives
         echo '<table align="right">';
@@ -311,7 +311,7 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
         echo '</td></tr></table>';
     }
 
-    function grade_responses(&$question, &$state, $quiz) {
+    function grade_responses(&$question, &$state, $cmoptions) {
         $answers      = $question->options->answers;
         $testedstate = clone($state);
         $teststate    = clone($state);
