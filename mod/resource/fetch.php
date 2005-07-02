@@ -1,6 +1,8 @@
 <?php  // $Id$
        // Fetches an external URL and passes it through the filters
 
+    die; //not used anymore, please FIX SC #99 before enabling
+
     require_once("../../config.php");
     require_once("lib.php");
 
