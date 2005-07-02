@@ -25,7 +25,7 @@
 <a href="terminology.html#responses">Responses</a> are an attribute of the
 <code>$state</code> object. Questiontypes are completely free to implement the
 storage mechanism of their responses (and other state information) the way they
-want. Still, the default <a href="terminology.html#responses">questiontypes</a>
+want. Still, the standard <a href="terminology.html#responses">questiontypes</a>
 all follow a similar model. The default storage model and the questiontype
 specific variations are explained below.
 
@@ -158,9 +158,9 @@ accidentally contain a value with the empty string index.
 The runtime model for responses dictates the structure of the
 <code>$state->responses</code> array. Starting with the names of the
 form elements this section goes through the relevant processing
-steps and thus attempts to clarify why the indices of the
+steps and thus attempts to clarify why the keys of the
 <code>$state->responses</code> array can differ for different
-questiontypes; even more, it explains how the indices are chosen and
+questiontypes; even more, it explains how the array keys are chosen and
 set.
 
 </p><p>
@@ -168,12 +168,12 @@ set.
 Although it may initially seem strange to start with the naming convention of
 the form fields, the reason for this will become clear later on. The controls
 (i.e. the form fields) of a question get printed by the method
-<code>print_question_formulation_and_controls</code>. The convention only
-dictates, that the name of the control element(s) <strong>must</strong> begin
+<code>print_question_formulation_and_controls()</code>. The convention only
+dictates that the name of the control element(s) <strong>must</strong> begin
 with the value of <code>$question->name_prefix</code>. The
 <code>$question->name_prefix</code> is a string starting with "resp" followed by
 the question id and an underscore, e.g. resp56_. In the default case, when
-there is only a single control element (this includes a list of equally named
+there is only a single control element (this includes the case of a list of equally named
 radio buttons), no postfix is appended to the name prefix. For questiontypes
 that allow or require multiple form elements, an arbitrary string can be appended
 to the name prefix to form the name of these form elements. The postfix must not
@@ -186,9 +186,9 @@ lead to problems with regrading of versioned questions.
 After the printing of the question the server only sees it again when it is
 submitted. So the submitted data will contain several values indexed by strings
 starting with respXX_. Upon submission, the function
-<code>quiz_process_responses</code> is called, which assigns the submitted
+<code>quiz_process_responses()</code> is called, which assigns the submitted
 responses to the state of the question with id XX, using the postfix (i.e.
-everything after the underscore) as array indices. In the default case with
+everything after the underscore) as array keys. In the default case with
 only one control element the name only consists of the name prefix. This
 explains why the default index of the <code>$state->responses</code> array is
 the empty string. The value of each array element is obviously the value that
@@ -196,19 +196,19 @@ was submitted by the form, basically a raw response.
 
 </p><p>
 
-The function <code>quiz_process_responses</code> in turn calls the
-questiontype specific method <code>grade_responses</code> to assign
+The function <code>quiz_process_responses()</code> in turn calls the
+questiontype specific method <code>grade_responses()</code> to assign
 a grade to the submitted responses and
-<code>compare_responses</code> to determine whether the response was
+<code>compare_responses()</code> to determine whether the response was
 identical to the previous submission and to avoid regrading the same
 responses repeatedly. These questiontype specific functions need to
-be aware of the expected indices of the
+be aware of the expected keys of the
 <code>$state->responses</code> array.
 
 </p><p>
 
-Finally, the methods <code>restore_session_and_responses</code> and
-<code>save_session_and_responses</code> also need to know the questiontype
+Finally, the methods <code>restore_session_and_responses()</code> and
+<code>save_session_and_responses()</code> also need to know the questiontype
 specific layout of the <code>$state->responses</code> array and restore or save
 the information, e.g. by converting from or to the data representation.
 
@@ -217,9 +217,9 @@ the information, e.g. by converting from or to the data representation.
 <p>
 
 The calculated questiontype inherits its methods
-<code>create_session_and_responses</code>,
-<code>restore_session_and_responses</code> and
-<code>save_session_and_responses</code> from the abstract dataset
+<code>create_session_and_responses()</code>,
+<code>restore_session_and_responses()</code> and
+<code>save_session_and_responses()</code> from the abstract dataset
 dependent questiontype. This questiontype serializes the information
 of the chosen dataset together with the (single) response value into
 a string of the format datasetXX-RESPONSE, where dataset is the
@@ -257,7 +257,7 @@ encoded to avoid problems.
 <p>
 
 The numerical questiontype, which inherits the function
-<code>print_question_formulation_and_controls</code> from the shortanswer
+<code>print_question_formulation_and_controls()</code> from the shortanswer
 questiontype, has only one response field, so its responses are handled by the
 default questiontype. The response is stored without any modifications in the
 <code>answer</code> field of the table <code>quiz_states</code>.
