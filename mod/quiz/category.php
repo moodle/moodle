@@ -591,7 +591,7 @@ class quiz_category_object {
             if (!$category2 = get_record("quiz_categories", "id", $destcategoryid)) {  // security
                 error("No such category $destcategoryid!", "category.php?id={$this->course->id}");
             }
-            if (! quiz_move_questions($category->id, $category2->id)) {
+            if (! set_field('quiz_questions', 'category', $category2, 'category', $category1)) {
                 error("Error while moving questions from category '$category->name' to '$category2->name'", "category.php?id={$this->course->id}");
             }
 
