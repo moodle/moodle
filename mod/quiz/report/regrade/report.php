@@ -52,7 +52,7 @@ class quiz_report extends quiz_default_report {
             $sumgrades = 0;
             $questionids = explode(',', quiz_questions_in_quiz($attempt->layout));
             foreach($questionids as $questionid) {
-                $lastgradedid = get_field('quiz_newest_states', 'newgraded', 'attemptid', $attempt->id, 'questionid', $questionid);
+                $lastgradedid = get_field('quiz_newest_states', 'newgraded', 'attemptid', $attempt->uniqueid, 'questionid', $questionid);
                 $sumgrades += get_field('quiz_states', 'grade', 'id', $lastgradedid);
             }
             if ($attempt->sumgrades != $sumgrades) {

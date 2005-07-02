@@ -50,7 +50,7 @@
     // Moodle 1.5 model (they will not yet have the timestamp set)
     if ($attempts = get_records_sql("SELECT a.*".
            "  FROM {$CFG->prefix}quiz_attempts a, {$CFG->prefix}quiz_states s".
-           " WHERE a.quiz = '$quiz->id' AND s.attempt = a.id AND s.timestamp = 0")) {
+           " WHERE a.quiz = '$quiz->id' AND s.attempt = a.uniqueid AND s.timestamp = 0")) {
         foreach ($attempts as $attempt) {
             quiz_upgrade_states($attempt);
         }

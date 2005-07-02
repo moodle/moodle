@@ -893,7 +893,7 @@ class quiz_default_questiontype {
                 $students = array();
                 if($attempts = get_records_select('quiz_attempts', "quiz = '$quiz->id' AND preview = '0'")) {
                     foreach($attempts as $attempt) {
-                        if (record_exists('quiz_states', 'attempt', $attempt->id, 'question', $question->id, 'originalquestion', 0)) {
+                        if (record_exists('quiz_states', 'attempt', $attempt->uniqueid, 'question', $question->id, 'originalquestion', 0)) {
                             $students[$attempt->userid] = 1;
                         }
                     }

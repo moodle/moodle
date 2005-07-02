@@ -41,7 +41,8 @@ class quiz_report extends quiz_default_report {
                     if ($todelete = get_record('quiz_attempts', 'id', $attemptid)) {
     
                         delete_records('quiz_attempts', 'id', $attemptid);
-                        delete_records('quiz_states', 'attempt', $attemptid);
+                        delete_records('quiz_states', 'attempt', $todelete->uniqueid);
+                        delete_records('quiz_newest_states', 'attemptid', $todelete->uniqueid);
     
                         // Search quiz_attempts for other instances by this user.
                         // If none, then delete record for this quiz, this user from quiz_grades
@@ -189,7 +190,7 @@ class quiz_report extends quiz_default_report {
     
         // Construct the SQL
     
-        $select = 'SELECT '.$db->Concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).' AS uniqueid, qa.id AS attempt, u.id AS userid, u.firstname, u.lastname, u.picture, '.
+        $select = 'SELECT '.$db->Concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).' AS uniqueid, qa.id AS attempt, qa.uniqueid as attemptuniqueid, u.id AS userid, u.firstname, u.lastname, u.picture, '.
                   'qa.sumgrades, qa.timefinish, qa.timestart, qa.timefinish - qa.timestart AS duration ';
         $from   = 'FROM '.$CFG->prefix.'user u LEFT JOIN '.$CFG->prefix.'quiz_attempts qa ON (u.id = qa.userid AND qa.quiz = '.$quiz->id.') ';
     $where  = 'WHERE u.id IN ('.implode(',', $users).') ';
@@ -218,7 +219,7 @@ class quiz_report extends quiz_default_report {
                     if(!$questionsort) {
                         $qid          = intval(substr($sortpart, 1));
                         $select .= ', grade ';
-                        $from        .= 'LEFT JOIN '.$CFG->prefix.'quiz_newest_states qns ON qns.attemptid = qa.id '.
+                        $from        .= 'LEFT JOIN '.$CFG->prefix.'quiz_newest_states qns ON qns.attemptid = qa.attemptuniqueid '.
                                         'LEFT JOIN '.$CFG->prefix.'quiz_states qs ON qs.id = qns.newgraded ';
                         $where       .= ' AND ('.sql_isnull('qns.questionid').' OR qns.questionid = '.$qid.')';
                         $newsort[]    = 'grade '.(strpos($sortpart, 'ASC')? 'ASC' : 'DESC');
@@ -284,7 +285,7 @@ class quiz_report extends quiz_default_report {
                     }
                     else {
                         foreach($questionids as $questionid) {
-                            if ($gradedstateid = get_field('quiz_newest_states', 'newgraded', 'attemptid', $attempt->attempt, 'questionid', $questionid)) {
+                            if ($gradedstateid = get_field('quiz_newest_states', 'newgraded', 'attemptid', $attempt->attemptuniqueid, 'questionid', $questionid)) {
                                 $grade = round(get_field('quiz_states', 'grade', 'id', $gradedstateid), $quiz->decimalpoints);
                             } else { 
                                 // This is an old-style attempt

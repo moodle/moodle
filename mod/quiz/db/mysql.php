@@ -860,6 +860,16 @@ function quiz_upgrade($oldversion) {
             ) TYPE=MyISAM COMMENT='essay question type specific state information'");
     }
 
+    if ($oldversion < 2005070202) {
+        // add new unique id to prepare the way for lesson module to have its own attempts table
+        table_column('quiz_attempts', '', 'uniqueid', 'integer', '10', 'unsigned', '0', 'not null', 'id');
+        // initially we can use the id as the unique id because no other modules use attempts yet.
+        execute_sql("UPDATE {$CFG->prefix}quiz_attempts SET uniqueid = id", false);
+        // we set $CFG->attemptuniqueid to the next available id
+        $record = get_record_sql("SELECT max(id)+1 AS nextid FROM {$CFG->prefix}quiz_attempts");
+        set_config('attemptuniqueid', $record->nextid);
+    }
+
     return true;
 }
 

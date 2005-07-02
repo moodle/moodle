@@ -154,7 +154,7 @@ function quiz_get_states(&$questions, $cmoptions, $attempt) {
            "  FROM {$CFG->prefix}quiz_states s,".
            "       {$CFG->prefix}quiz_newest_states n".
            " WHERE s.id = n.newest".
-           "   AND n.attemptid = '$attempt->id'".
+           "   AND n.attemptid = '$attempt->uniqueid'".
            "   AND n.questionid IN ($questionlist)";
     $states = get_records_sql($sql);
 
@@ -163,7 +163,7 @@ function quiz_get_states(&$questions, $cmoptions, $attempt) {
            "  FROM {$CFG->prefix}quiz_states s,".
            "       {$CFG->prefix}quiz_newest_states n".
            " WHERE s.id = n.newgraded".
-           "   AND n.attemptid = '$attempt->id'".
+           "   AND n.attemptid = '$attempt->uniqueid'".
            "   AND n.questionid IN ($questionlist)";
     $gradedstates = get_records_sql($sql);
 
@@ -182,7 +182,7 @@ function quiz_get_states(&$questions, $cmoptions, $attempt) {
             if ($cmoptions->attemptonlast and $attempt->attempt > 1) {
                 // build on states from last attempt
                 if (empty($lastattemptid)) {
-                    $lastattemptid = get_field('quiz_attempts', 'id', 'quiz', $attempt->quiz, 'userid', $attempt->userid, 'attempt', $attempt->attempt-1);
+                    $lastattemptid = get_field('quiz_attempts', 'uniqueid', 'quiz', $attempt->quiz, 'userid', $attempt->userid, 'attempt', $attempt->attempt-1);
                 }
                 // Load the last graded state for the question
                 $sql = "SELECT $statefields".
@@ -193,7 +193,7 @@ function quiz_get_states(&$questions, $cmoptions, $attempt) {
                        "   AND n.questionid = '$i'";
                 $states[$i] = get_record_sql($sql);
                 quiz_restore_state($questions[$i], $states[$i]);
-                $states[$i]->attempt = $attempt->id;
+                $states[$i]->attempt = $attempt->uniqueid;
                 $states[$i]->question = (int) $i;
                 $states[$i]->seq_number = 0;
                 $states[$i]->timestamp = $attempt->timestart;
@@ -203,7 +203,7 @@ function quiz_get_states(&$questions, $cmoptions, $attempt) {
                 $states[$i]->penalty = '';
                 $states[$i]->sumpenalty = '0.0';
                 $states[$i]->last_graded = new object;
-                $states[$i]->last_graded->attempt = $attempt->id;
+                $states[$i]->last_graded->attempt = $attempt->uniqueid;
                 $states[$i]->last_graded->question = (int) $i;
                 $states[$i]->last_graded->seq_number = 0;
                 $states[$i]->last_graded->timestamp = $attempt->timestart;
@@ -217,7 +217,7 @@ function quiz_get_states(&$questions, $cmoptions, $attempt) {
             } else {
                 // create a new empty state
                 $states[$i] = new object;
-                $states[$i]->attempt = $attempt->id;
+                $states[$i]->attempt = $attempt->uniqueid;
                 $states[$i]->question = (int) $i;
                 $states[$i]->seq_number = 0;
                 $states[$i]->timestamp = $attempt->timestart;
@@ -436,7 +436,7 @@ function quiz_extract_responses($questions, $responses, $defaultevent) {
 function quiz_regrade_question_in_attempt($question, $attempt, $cmoptions, $verbose=false) {
 
     if ($states = get_records_select('quiz_states',
-     "attempt = '{$attempt->id}' AND question = '{$question->id}'", 'seq_number ASC')) {
+     "attempt = '{$attempt->uniqueid}' AND question = '{$question->id}'", 'seq_number ASC')) {
         $states = array_values($states);
 
         $attempt->sumgrades -= $states[count($states)-1]->grade;

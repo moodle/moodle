@@ -31,7 +31,7 @@
         error("The course module for the quiz with id $quiz->id is missing");
     }
 
-    if (!count_records('quiz_newest_states', 'attemptid', $attempt->id)) {
+    if (!count_records('quiz_newest_states', 'attemptid', $attempt->uniqueid)) {
         // this question has not yet been upgraded to the new model
         quiz_upgrade_states($attempt);
     }

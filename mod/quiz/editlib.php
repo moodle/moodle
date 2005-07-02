@@ -72,8 +72,8 @@ function quiz_delete_quiz_question($id, &$modform) {
         // Delete all states associated with all attempts for this question in the quiz.
         if ($attempts = get_records('quiz_attempts', 'quiz', $modform->instance)) {
             foreach ($attempts as $attempt) {
-                delete_records('quiz_states', 'question', $question, 'attempt', $attempt->id);
-                delete_records('quiz_newest_states', 'questionid', $question, 'attemptid', $attempt->id);
+                delete_records('quiz_states', 'question', $question, 'attempt', $attempt->uniqueid);
+                delete_records('quiz_newest_states', 'questionid', $question, 'attemptid', $attempt->uniqueid);
             }
         }
         // Delete all instances of the question in the quiz (there

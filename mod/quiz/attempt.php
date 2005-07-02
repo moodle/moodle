@@ -173,8 +173,8 @@
                 delete_records('quiz_grades', 'quiz', $quiz->id, 'userid', $USER->id);
                 foreach ($oldattempts as $oldattempt) {
                     // there should only be one but we loop just in case
-                    delete_records('quiz_states', 'attempt', $oldattempt->id);
-                    delete_records('quiz_newest_states', 'attemptid', $oldattempt->id);
+                    delete_records('quiz_states', 'attempt', $oldattempt->uniqueid);
+                    delete_records('quiz_newest_states', 'attemptid', $oldattempt->uniqueid);
                 }
             }
         }
@@ -312,7 +312,7 @@
         // Find all the questions for this attempt for which the newest
         // state is not also the newest graded state
         if ($closequestions = get_records_select('quiz_newest_states',
-         "attemptid = $attempt->id AND newest != newgraded", '', 'questionid, questionid')) {
+         "attemptid = $attempt->uniqueid AND newest != newgraded", '', 'questionid, questionid')) {
 
             // load all the questions
             $closequestionlist = implode(',', array_keys($closequestions));

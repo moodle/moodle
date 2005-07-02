@@ -1458,8 +1458,12 @@
                 $attempt->userid = $user->new_id;
             }
 
+            //Set the uniqueid field
+            $attempt->uniqueid = $CFG->attemptuniqueid;
+            set_config('attemptuniqueid', $CFG->attemptuniqueid + 1);
+
             //We have to recode the layout field (a list of questions id and pagebreaks)
-        $attempt->layout = quiz_recode_layout($attempt->layout, $restore);
+            $attempt->layout = quiz_recode_layout($attempt->layout, $restore);
 
             //The structure is equal to the db, so insert the quiz_attempts
             $newid = insert_record ("quiz_attempts",$attempt);
@@ -2015,16 +2019,16 @@
     function quiz_recode_layout($layout, $restore) {
         //Recodes the quiz layout (a list of questions id and pagebreaks)
 
-    //Extracts question id from sequence
-    if ($questionids = explode(',', $layout)) {
-        foreach ($questionids as $id => $questionid) {
-        if ($questionid) { // If it iss zero then this is a pagebreak, don't translate
-            $newq = backup_getid($restore->backup_unique_code,"quiz_questions",$questionid);
-            $questionids[$id] = $newq->new_id;
+        //Extracts question id from sequence
+        if ($questionids = explode(',', $layout)) {
+            foreach ($questionids as $id => $questionid) {
+            if ($questionid) { // If it iss zero then this is a pagebreak, don't translate
+                $newq = backup_getid($restore->backup_unique_code,"quiz_questions",$questionid);
+                $questionids[$id] = $newq->new_id;
+            }
+            }
         }
-        }
-    }
-    return implode(',', $questionids);
+        return implode(',', $questionids);
     }
 
 ?>

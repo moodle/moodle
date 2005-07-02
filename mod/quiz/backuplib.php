@@ -865,6 +865,7 @@
                 $status =fwrite ($bf,start_tag("ATTEMPT",5,true));
                 //Print attempt contents
                 fwrite ($bf,full_tag("ID",6,false,$attempt->id));
+                fwrite ($bf,full_tag("UNIQUEID",6,false,$attempt->uniqueid));
                 fwrite ($bf,full_tag("USERID",6,false,$attempt->userid));
                 fwrite ($bf,full_tag("ATTEMPTNUM",6,false,$attempt->attempt));
                 fwrite ($bf,full_tag("SUMGRADES",6,false,$attempt->sumgrades));
@@ -874,7 +875,7 @@
                 fwrite ($bf,full_tag("LAYOUT",6,false,$attempt->layout));
                 fwrite ($bf,full_tag("PREVIEW",6,false,$attempt->preview));
                 //Now write to xml the states (in this attempt)
-                $status = backup_quiz_states ($bf,$preferences,$attempt->id);
+                $status = backup_quiz_states ($bf,$preferences,$attempt->uniqueid);
                 //End attempt
                 $status =fwrite ($bf,end_tag("ATTEMPT",5,true));
             }

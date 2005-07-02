@@ -124,7 +124,7 @@
                "  FROM {$CFG->prefix}quiz_states s,".
                "       {$CFG->prefix}quiz_newest_states n".
                " WHERE s.id = n.newest".
-               "   AND n.attemptid = '$attempt->id'".
+               "   AND n.attemptid = '$attempt->uniqueid'".
                "   AND n.questionid = $question->id";
             $state = get_record_sql($sql);
 
@@ -150,7 +150,7 @@
             $sumgrades = 0;
             $questionids = explode(',', quiz_questions_in_quiz($attempt->layout));
             foreach($questionids as $questionid) {
-                $lastgradedid = get_field('quiz_newest_states', 'newgraded', 'attemptid', $attempt->id, 'questionid', $questionid);
+                $lastgradedid = get_field('quiz_newest_states', 'newgraded', 'attemptid', $attempt->uniqueid, 'questionid', $questionid);
                 $sumgrades += get_field('quiz_states', 'grade', 'id', $lastgradedid);
             }            
 
@@ -276,7 +276,7 @@
                     $ungraded = 0;
                     foreach ($attempts as $attempt) {
                         // grab the state then check if it is graded
-                        if (!$neweststate = get_record('quiz_newest_states', 'attemptid', $attempt->id, 'questionid', $question->id)) {
+                        if (!$neweststate = get_record('quiz_newest_states', 'attemptid', $attempt->uniqueid, 'questionid', $question->id)) {
                             error('Invalid attempt and question ids');
                         }
                         if (!$questionstate = get_record('quiz_essay_states', 'stateid', $neweststate->newest)) {

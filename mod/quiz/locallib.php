@@ -52,7 +52,7 @@ $QUIZ_GRADE_METHOD = array ( QUIZ_GRADEHIGHEST => get_string("gradehighest", "qu
 * @param integer $attemptnumber The sequence number for the attempt.
 */
 function quiz_create_attempt($quiz, $attemptnumber) {
-    global $USER;
+    global $USER, $CFG;
 
     if (!$attemptnumber > 1 or !$quiz->attemptonlast or !$attempt = get_record('quiz_attempts', 'quiz', $quiz->id, 'userid', $USER->id, 'attempt', $attemptnumber-1)) {
         // we are not building on last attempt so create a new attempt
@@ -72,6 +72,8 @@ function quiz_create_attempt($quiz, $attemptnumber) {
     $attempt->timestart = $timenow;
     $attempt->timefinish = 0;
     $attempt->timemodified = $timenow;
+    $attempt->uniqueid = $CFG->attemptuniqueid;
+    set_config('attemptuniqueid', $CFG->attemptuniqueid + 1);
 
     return $attempt;
 }
@@ -502,16 +504,16 @@ function quiz_upgrade_states($attempt) {
     // only one state record per question for this attempt.
 
     // We set the timestamp of all states to the timemodified field of the attempt.
-    execute_sql("UPDATE {$CFG->prefix}quiz_states SET timestamp = '$attempt->timemodified' WHERE attempt = '$attempt->id'", false);
+    execute_sql("UPDATE {$CFG->prefix}quiz_states SET timestamp = '$attempt->timemodified' WHERE attempt = '$attempt->uniqueid'", false);
 
     // For each state we create an entry in the quiz_newest_states table, with both newest and
     // newgraded pointing to this state.
     // Actually we only do this for states whose question is actually listed in $attempt->layout.
     // We do not do it for states associated to wrapped questions like for example the questions
     // used by a RANDOM question
-    $newest->attemptid = $attempt->id;
+    $newest->attemptid = $attempt->uniqueid;
     $questionlist = quiz_questions_in_quiz($attempt->layout);
-    if ($states = get_records_select('quiz_states', "attempt = '$attempt->id' AND question IN ($questionlist)")) {
+    if ($states = get_records_select('quiz_states', "attempt = '$attempt->uniqueid' AND question IN ($questionlist)")) {
         foreach ($states as $state) {
             $newest->newgraded = $state->id;
             $newest->newest = $state->id;

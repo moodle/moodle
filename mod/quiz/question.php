@@ -247,13 +247,13 @@
                             }
 
                             // set originalquestion in states
-                            set_field('quiz_states', 'originalquestion', $oldquestionid, 'attempt', $attempt->id, 'question', $question->id, 'originalquestion', '0');
+                            set_field('quiz_states', 'originalquestion', $oldquestionid, 'attempt', $attempt->uniqueid, 'question', $question->id, 'originalquestion', '0');
 
                             // replace question id in states
-                            set_field('quiz_states', 'question', $question->id, 'attempt', $attempt->id, 'question', $oldquestionid);
+                            set_field('quiz_states', 'question', $question->id, 'attempt', $attempt->uniqueid, 'question', $oldquestionid);
 
                             // replace question id in newest_states
-                            set_field('quiz_newest_states', 'questionid', $question->id, 'attemptid', $attempt->id, 'questionid', $oldquestionid);
+                            set_field('quiz_newest_states', 'questionid', $question->id, 'attemptid', $attempt->uniqueid, 'questionid', $oldquestionid);
 
                         }
 

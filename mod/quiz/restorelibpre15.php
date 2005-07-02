@@ -1461,7 +1461,10 @@
             if (isteacher($restore->course_id,$attempt->userid)) {
                 $attempt->preview = 1;
             }
-            
+
+            //Set the uniqueid field
+            $attempt->uniqueid = $CFG->attemptuniqueid;
+            set_config('attemptuniqueid', $CFG->attemptuniqueid + 1);
 
             //The structure is equal to the db, so insert the quiz_attempts
             $newid = insert_record ("quiz_attempts",$attempt);
