@@ -18,6 +18,56 @@
 /// CONSTANTS ///////////////////////////////////////////////////////////////////
 
 /**#@+
+* Option flags for ->optionflags
+* The options are read out via bitwise operation using these constants
+*/
+/**
+* Whether the questions to be run in adaptive mode. If this is not set then
+* a question closes immediately after the first submission of responses. This
+* is how Moodle worked before version 1.5
+*/
+define('QUIZ_ADAPTIVE', 1);
+
+/** When processing responses the code checks that the new responses at
+* a question differ from those given on the previous submission. If
+* furthermore $ignoredupresp (ignore duplicate responses) is set to true
+* then the code goes through the whole history of attempts and checks if
+* ANY of them are identical to the current response in which case the 
+* current response is ignored.
+*/
+define('QUIZ_IGNORE_DUPRESP', 2);
+
+/**#@-*/
+
+/**#@+
+* The different review options are stored in the bits of $quiz->review
+* These constants help to extract the options
+*/
+/**
+* The first 6 bits refer to the time immediately after the attempt
+*/
+define('QUIZ_REVIEW_IMMEDIATELY', 64-1);
+/**
+* the next 6 bits refer to the time after the attempt but while the quiz is open
+*/
+define('QUIZ_REVIEW_OPEN', 4096-64);
+/**
+* the final 6 bits refer to the time after the quiz closes
+*/
+define('QUIZ_REVIEW_CLOSED', 262144-4096);
+
+// within each group of 6 bits we determine what should be shown
+define('QUIZ_REVIEW_RESPONSES', 1+64+4096);    // Show responses
+define('QUIZ_REVIEW_SCORES', 2*4161);   // Show scores
+define('QUIZ_REVIEW_FEEDBACK', 4*4161); // Show feedback
+define('QUIZ_REVIEW_ANSWERS', 8*4161);  // Show correct answers
+// Some handling of worked solutions is already in the code but not yet fully supported
+// and not switched on in the user interface.
+define('QUIZ_REVIEW_SOLUTIONS', 16*4161);  // Show solutions
+// the 6th bit is as yet unused
+/**#@-*/
+
+/**#@+
 * The different types of events that can create question states
 */
 define('QUIZ_EVENTOPEN', '0');
@@ -52,12 +102,13 @@ define("QUIZ_MAX_NUMBER_ANSWERS", "10");
 
 define("QUIZ_CATEGORIES_SORTORDER", "999");
 
+
+/// QUIZ_QTYPES INITIATION //////////////////
+
 /**
 * Array holding question type objects
 */
 $QUIZ_QTYPES= array();
-
-/// QUIZ_QTYPES INITIATION //////////////////
 
 require_once("$CFG->dirroot/mod/quiz/questiontypes/questiontype.php");
 quiz_load_questiontypes();
@@ -83,6 +134,71 @@ function quiz_load_questiontypes() {
         }
     }
 }
+
+/// OTHER CLASSES /////////////////////////////////////////////////////////
+
+/**
+* This holds the options that are determined by the course module
+*/
+class cmoptions {
+    /**
+    * Whether a new attempt should be based on the previous one. If true
+    * then a new attempt will start in a state where all responses are set
+    * to the last responses from the previous attempt.
+    */
+    var $attemptonlast = false;
+    
+    /**
+    * Various option flags. The flags are accessed via bitwise operations 
+    * using the constants defined in the CONSTANTS section above.
+    */
+    var $optionflags = QUIZ_ADAPTIVE;
+    
+    /**
+    * Determines whether in the calculation of the score for a question 
+    * penalties for earlier wrong responses within the same attempt will
+    * be subtracted.
+    */
+    var $penaltyscheme = true;
+    
+    /**
+    * The maximum time the user is allowed to answer the questions withing
+    * an attempt. This is measured in minutes so needs to be multiplied by
+    * 60 before compared to timestamps. If set to 0 no timelimit will be applied
+    */
+    var $timelimit = 0;
+    
+    /**
+    * Timestamp for the closing time. Responses submitted after this time will
+    * be saved but no credit will be given for them.
+    */
+    var $timeclose = 9999999999;
+    
+    /**
+    * The id of the course from withing which the question is currently being used
+    */
+    var $course = SITEID;
+    
+    /**
+    * Whether the answers in a multiple choice question should be randomly
+    * shuffled when a new attempt is started.
+    */
+    var $shuffleanswers = false;
+    
+    /**
+    * The number of decimals to be shown when scores are printed
+    */
+    var $decimalpoints = 2;
+    
+    /**
+    * Determines when a student is allowed to review. The information is read
+    * out from the bits with the help of the constants defined earlier
+    * We initialise this to allow the student to see everything (all bits set)
+    */
+    var $review = 16777215;
+}
+
+
 
 /// FUNCTIONS //////////////////////////////////////////////////////
 
@@ -515,13 +631,14 @@ function quiz_regrade_question_in_attempt($question, $attempt, $cmoptions, $verb
 * @param object $cmoptions
 * @param object $attempt  The attempt is passed by reference so that
 *                         during grading its ->sumgrades field can be updated
-*
-* @todo There is a variable $cmoptions->ignoredupresp which makes the function go through
-*       all previous states when checking if a response is duplicated. There is no user
-*       interface for this yet.
 */
 function quiz_process_responses(&$question, &$state, $action, $cmoptions, &$attempt) {
     global $QUIZ_QTYPES;
+
+    // if no responses are set initialise to empty response
+    if (!isset($action->responses)) {
+        $action->responses = array('' => '');
+    }
 
     // make sure these are gone!
     unset($action->responses['mark'], $action->responses['validate']);
@@ -678,12 +795,12 @@ function quiz_search_for_duplicate_responses(&$question, &$state) {
 }
 
 /**
-* Applies the penalty from the previous attempts to the raw grade for the current
-* attempt
+* Applies the penalty from the previous graded responses to the raw grade
+* for the current responses
 *
 * The grade for the question in the current state is computed by subtracting the
-* penalty accumulated over the previous marked attempts at the question from the
-* raw grade. If the timestamp is more than 1 minute beyond the start of the attempt
+* penalty accumulated over the previous graded responses at the question from the
+* raw grade. If the timestamp is more than 1 minute beyond the end of the attempt
 * the grade is set to zero. The ->grade field of the state object is modified to
 * reflect the new grade but is never allowed to decrease.
 * @param object $question The question for which the penalty is to be applied.
@@ -692,8 +809,9 @@ function quiz_search_for_duplicate_responses(&$question, &$state) {
 *                         graded state. The ->grade field is updated by applying
 *                         the penalty scheme determined in $cmoptions to the ->raw_grade and
 *                         ->last_graded->penalty fields.
-* @param object $cmoptions  The options set by the course module. The penalty
-*                         scheme to apply is given by the ->penaltyscheme field.
+* @param object $cmoptions  The options set by the course module. 
+*                           The ->penaltyscheme field determines whether penalties
+*                           for incorrect earlier responses are subtracted.
 */
 function quiz_apply_penalty_and_timelimit(&$question, &$state, $attempt, $cmoptions) {
     // deal with penaly
@@ -818,6 +936,73 @@ function quiz_get_id_from_name_prefix($name) {
     return (integer) $matches[1];
 }
 
+function quiz_new_attempt_uniqueid() {
+    global $CFG;
+    set_config('attemptuniqueid', $CFG->attemptuniqueid + 1);
+    return $CFG->attemptuniqueid;
+}
+
+/**
+* Determine render options
+*/
+function quiz_get_renderoptions($cmoptions, $state) {
+    // Show the question in readonly (review) mode if the question is in
+    // the closed state
+    $options->readonly = QUIZ_EVENTCLOSE === $state->event;
+
+    // Show feedback once the question has been graded (if allowed by the quiz)
+    $options->feedback = ('' !== $state->grade) && ($cmoptions->review & QUIZ_REVIEW_FEEDBACK & QUIZ_REVIEW_IMMEDIATELY);
+
+    // Show validation only after a validation event
+    $options->validation = QUIZ_EVENTVALIDATE === $state->event;
+
+    // Show correct responses in readonly mode if the quiz allows it
+    $options->correct_responses = $options->readonly && ($cmoptions->review & QUIZ_REVIEW_ANSWERS & QUIZ_REVIEW_IMMEDIATELY);
+
+    // Always show responses and scores
+    $options->responses = true;
+    $options->scores = true;
+
+    return $options;
+}
+
+
+/**
+* Determine review options
+*/
+function quiz_get_reviewoptions($cmoptions, $attempt, $isteacher=false) {
+    $options->readonly = true;
+    if ($isteacher and !$attempt->preview) {
+        // The teacher should be shown everything except during preview when the teachers
+        // wants to see just what the students see
+        $options->responses = true;
+        $options->scores = true;
+        $options->feedback = true;
+        $options->correct_responses = true;
+        $options->solutions = false;
+        return $options;
+    }
+    if ((time() - $attempt->timefinish) < 120) {
+        $options->responses = ($cmoptions->review & QUIZ_REVIEW_IMMEDIATELY & QUIZ_REVIEW_RESPONSES) ? 1 : 0;
+        $options->scores = ($cmoptions->review & QUIZ_REVIEW_IMMEDIATELY & QUIZ_REVIEW_SCORES) ? 1 : 0;
+        $options->feedback = ($cmoptions->review & QUIZ_REVIEW_IMMEDIATELY & QUIZ_REVIEW_FEEDBACK) ? 1 : 0;
+        $options->correct_responses = ($cmoptions->review & QUIZ_REVIEW_IMMEDIATELY & QUIZ_REVIEW_ANSWERS) ? 1 : 0;
+        $options->solutions = ($cmoptions->review & QUIZ_REVIEW_IMMEDIATELY & QUIZ_REVIEW_SOLUTIONS) ? 1 : 0;
+    } else if (time() < $cmoptions->timeclose) {
+        $options->responses = ($cmoptions->review & QUIZ_REVIEW_OPEN & QUIZ_REVIEW_RESPONSES) ? 1 : 0;
+        $options->scores = ($cmoptions->review & QUIZ_REVIEW_OPEN & QUIZ_REVIEW_SCORES) ? 1 : 0;
+        $options->feedback = ($cmoptions->review & QUIZ_REVIEW_OPEN & QUIZ_REVIEW_FEEDBACK) ? 1 : 0;
+        $options->correct_responses = ($cmoptions->review & QUIZ_REVIEW_IMMEDIATELY & QUIZ_REVIEW_ANSWERS) ? 1 : 0;
+        $options->solutions = ($cmoptions->review & QUIZ_REVIEW_OPEN & QUIZ_REVIEW_SOLUTIONS) ? 1 : 0;
+    } else {
+        $options->responses = ($cmoptions->review & QUIZ_REVIEW_CLOSED & QUIZ_REVIEW_RESPONSES) ? 1 : 0;
+        $options->scores = ($cmoptions->review & QUIZ_REVIEW_CLOSED & QUIZ_REVIEW_SCORES) ? 1 : 0;
+        $options->feedback = ($cmoptions->review & QUIZ_REVIEW_CLOSED & QUIZ_REVIEW_FEEDBACK) ? 1 : 0;
+        $options->correct_responses = ($cmoptions->review & QUIZ_REVIEW_IMMEDIATELY & QUIZ_REVIEW_ANSWERS) ? 1 : 0;
+        $options->solutions = ($cmoptions->review & QUIZ_REVIEW_CLOSED & QUIZ_REVIEW_SOLUTIONS) ? 1 : 0;
+    }
+    return $options;
+}
 
 /// FUNCTIONS THAT ARE USED BY SOME QUESTIONTYPES ///////////////////
 

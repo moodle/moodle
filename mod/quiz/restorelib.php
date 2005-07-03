@@ -1459,8 +1459,7 @@
             }
 
             //Set the uniqueid field
-            $attempt->uniqueid = $CFG->attemptuniqueid;
-            set_config('attemptuniqueid', $CFG->attemptuniqueid + 1);
+            $attempt->uniqueid = quiz_new_attempt_uniqueid();
 
             //We have to recode the layout field (a list of questions id and pagebreaks)
             $attempt->layout = quiz_recode_layout($attempt->layout, $restore);

@@ -1463,8 +1463,7 @@
             }
 
             //Set the uniqueid field
-            $attempt->uniqueid = $CFG->attemptuniqueid;
-            set_config('attemptuniqueid', $CFG->attemptuniqueid + 1);
+            $attempt->uniqueid = quiz_new_attempt_uniqueid();
 
             //The structure is equal to the db, so insert the quiz_attempts
             $newid = insert_record ("quiz_attempts",$attempt);

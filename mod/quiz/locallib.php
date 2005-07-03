@@ -72,8 +72,7 @@ function quiz_create_attempt($quiz, $attemptnumber) {
     $attempt->timestart = $timenow;
     $attempt->timefinish = 0;
     $attempt->timemodified = $timenow;
-    $attempt->uniqueid = $CFG->attemptuniqueid;
-    set_config('attemptuniqueid', $CFG->attemptuniqueid + 1);
+    $attempt->uniqueid = quiz_new_attempt_uniqueid();
 
     return $attempt;
 }
@@ -426,68 +425,6 @@ function quiz_parse_fieldname($name, $nameprefix='question') {
     }
 }
 
-
-/**
-* Determine render options
-*/
-function quiz_get_renderoptions($quiz, $state) {
-    // Show the question in readonly (review) mode if the quiz is in
-    // the closed state
-    $options->readonly = QUIZ_EVENTCLOSE === $state->event;
-
-    // Show feedback once the question has been graded (if allowed by the quiz)
-    $options->feedback = ('' !== $state->grade) && ($quiz->review & QUIZ_REVIEW_FEEDBACK & QUIZ_REVIEW_IMMEDIATELY);
-
-    // Show validation only after a validation event
-    $options->validation = QUIZ_EVENTVALIDATE === $state->event;
-
-    // Show correct responses in readonly mode if the quiz allows it
-    $options->correct_responses = $options->readonly && ($quiz->review & QUIZ_REVIEW_ANSWERS & QUIZ_REVIEW_IMMEDIATELY);
-
-    // Always show responses and scores
-    $options->responses = true;
-    $options->scores = true;
-
-    return $options;
-}
-
-
-/**
-* Determine review options
-*/
-function quiz_get_reviewoptions($quiz, $attempt, $isteacher=false) {
-    $options->readonly = true;
-    if ($isteacher and !$attempt->preview) {
-        // The teacher should be shown everything except during preview when the teachers
-        // wants to see just what the students see
-        $options->responses = true;
-        $options->scores = true;
-        $options->feedback = true;
-        $options->correct_responses = true;
-        $options->solutions = false;
-        return $options;
-    }
-    if ((time() - $attempt->timefinish) < 120) {
-        $options->responses = ($quiz->review & QUIZ_REVIEW_IMMEDIATELY & QUIZ_REVIEW_RESPONSES) ? 1 : 0;
-        $options->scores = ($quiz->review & QUIZ_REVIEW_IMMEDIATELY & QUIZ_REVIEW_SCORES) ? 1 : 0;
-        $options->feedback = ($quiz->review & QUIZ_REVIEW_IMMEDIATELY & QUIZ_REVIEW_FEEDBACK) ? 1 : 0;
-        $options->correct_responses = ($quiz->review & QUIZ_REVIEW_IMMEDIATELY & QUIZ_REVIEW_ANSWERS) ? 1 : 0;
-        $options->solutions = ($quiz->review & QUIZ_REVIEW_IMMEDIATELY & QUIZ_REVIEW_SOLUTIONS) ? 1 : 0;
-    } else if (time() < $quiz->timeclose) {
-        $options->responses = ($quiz->review & QUIZ_REVIEW_OPEN & QUIZ_REVIEW_RESPONSES) ? 1 : 0;
-        $options->scores = ($quiz->review & QUIZ_REVIEW_OPEN & QUIZ_REVIEW_SCORES) ? 1 : 0;
-        $options->feedback = ($quiz->review & QUIZ_REVIEW_OPEN & QUIZ_REVIEW_FEEDBACK) ? 1 : 0;
-        $options->correct_responses = ($quiz->review & QUIZ_REVIEW_IMMEDIATELY & QUIZ_REVIEW_ANSWERS) ? 1 : 0;
-        $options->solutions = ($quiz->review & QUIZ_REVIEW_OPEN & QUIZ_REVIEW_SOLUTIONS) ? 1 : 0;
-    } else {
-        $options->responses = ($quiz->review & QUIZ_REVIEW_CLOSED & QUIZ_REVIEW_RESPONSES) ? 1 : 0;
-        $options->scores = ($quiz->review & QUIZ_REVIEW_CLOSED & QUIZ_REVIEW_SCORES) ? 1 : 0;
-        $options->feedback = ($quiz->review & QUIZ_REVIEW_CLOSED & QUIZ_REVIEW_FEEDBACK) ? 1 : 0;
-        $options->correct_responses = ($quiz->review & QUIZ_REVIEW_IMMEDIATELY & QUIZ_REVIEW_ANSWERS) ? 1 : 0;
-        $options->solutions = ($quiz->review & QUIZ_REVIEW_CLOSED & QUIZ_REVIEW_SOLUTIONS) ? 1 : 0;
-    }
-    return $options;
-}
 
 /**
 * Upgrade states for an attempt to Moodle 1.5 model
