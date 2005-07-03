@@ -579,6 +579,9 @@ function scorm_startElement($parser, $name, $attrs) {
 
 function scorm_endElement($parser, $name) {
     global $scoes,$i,$level,$datacontent,$manifest,$organization,$version;
+    
+    $datacontent = trim($datacontent);
+    
     if ($name == 'ITEM') {
         $level--;
     }
@@ -618,11 +621,12 @@ function scorm_endElement($parser, $name) {
             $version = 'SCORM_1.2';
         }
     }
+    $datacontent = '';
 }
 
 function scorm_characterData($parser, $data) {
     global $datacontent;
-    $datacontent = utf8_decode($data);
+    $datacontent .= utf8_decode($data);
 }
 
 function scorm_parse($pkgdir,$pkgtype,$scormid){
