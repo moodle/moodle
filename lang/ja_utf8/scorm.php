@@ -2,6 +2,7 @@
       // scorm.php - created with Moodle 1.6 development (2005060201)
 
 
+$string['advanced'] = 'アドバンスト';
 $string['asset'] = 'アセット';
 $string['attr_error'] = 'タグ $a->tag のアトリビュート ($a->attr) に不適切な値が設定されています。';
 $string['autocontinue'] = '自動継続';
@@ -53,6 +54,7 @@ $string['notattempted'] = '未実行';
 $string['organization'] = '組織';
 $string['organizations'] = '組織';
 $string['packagedir'] = 'ファイルシステムエラー: パッケージディレクトリを作成できません。';
+$string['packagefile'] = 'パッケージファイルが指定されていません。';
 $string['passed'] = 'パス';
 $string['php5'] = 'PHP 5 ( DOMXMLネイティブライブラリ )';
 $string['popup'] = 'SCOを新しいウインドウで開く';
@@ -63,6 +65,8 @@ $string['report'] = 'レポート';
 $string['review'] = 'レビュー';
 $string['scoes'] = 'SCO';
 $string['score'] = 'スコア';
+$string['scormcourse'] = 'SCORMコース';
+$string['stagesize'] = 'フレーム/ウインドウサイズ';
 $string['syntax'] = '構文エラー';
 $string['tag_error'] = 'コンテンツに不明なタグ($a->tag) があります:  $a->value';
 $string['too_many_attributes'] = 'タグ $a->tag のアトリビュートが多過ぎます';
