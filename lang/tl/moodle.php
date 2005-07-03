@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 ALPHA (2005051500)
+      // moodle.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['action'] = 'Aksiyon';
@@ -101,6 +101,7 @@ $string['autosubscribeyes'] = 'Oo: kapag nagpost ako, isali mo ako sa talakayang
 $string['availability'] = 'Kung Puwedeng Makuha';
 $string['availablecourses'] = 'Mapapasukang Kurso';
 $string['backup'] = 'Bak-ap';
+$string['backupcancelled'] = 'Binalewala ang Pagbabak-ap';
 $string['backupcoursefileshelp'] = 'Kapag binuhay ito, ang mga file ng kurso ay isasama sa mga awtomatikong ibinabak-ap';
 $string['backupdate'] = 'Petsa ng Pagbabak-ap';
 $string['backupdetails'] = 'Detalye ng Pagbabak-ap';
@@ -148,7 +149,7 @@ $string['checkingforbbexport'] = 'Sinusuri ang iniluwas na BlackBoard';
 $string['checkinginstances'] = 'Sinusuri ang mga pag-iral';
 $string['checkingsections'] = 'Sinusuri ang mga seksiyon';
 $string['checklanguage'] = 'Suriin ang wikà';
-$string['childcoursenotfound'] = 'Hindi matagpuan ang anak na course!';
+$string['childcoursenotfound'] = 'Hindi matagpuan ang anak na kurso!';
 $string['choose'] = 'Piliin';
 $string['choosecourse'] = 'Pumilì ng kurso';
 $string['chooseenrolmethod'] = 'Pangunahing paraan ng pag-eenrol';
@@ -407,7 +408,7 @@ $string['enrolmentkeyhint'] = 'Hindi tama ang susi sa pageenrol, pakiulit<br />
 $string['enrolmentnew'] = 'May bagong nakaenrol sa $a';
 $string['enrolmentnewuser'] = '$a->user ay nag-enrol sa kursong \"$a->course\"';
 $string['enrolmentnointernal'] = 'Hindi gumagana sa kasalukuyan ang mano-manong pag-eenrol';
-$string['enrolmentnotyet'] = 'Paumanhin, nguni\'t hindi mo mapapasok ang kursong ito hanggang <br /> $a';
+$string['enrolmentnotyet'] = 'Paumanhin, nguni\'t hindi mo mapapasok ang kursong ito hanggang hindi sumasapit ang<br /> $a';
 $string['enrolments'] = 'Pag-eenrol';
 $string['enrolperiod'] = 'Panahon ng pag-eenrol';
 $string['entercourse'] = 'Iklik para makapasok sa kursong ito';
@@ -455,6 +456,7 @@ $string['format'] = 'Format';
 $string['formathtml'] = 'Format na HTML';
 $string['formatmarkdown'] = 'Format na Markdown';
 $string['formatplain'] = 'Format na Plain text';
+$string['formatscorm'] = 'Format na SCORM';
 $string['formatsocial'] = 'Panlipunang format';
 $string['formattext'] = 'Moodle auto-format';
 $string['formattexttype'] = 'Pagkakaformat';
@@ -523,6 +525,11 @@ $string['guestsnotallowed'] = 'Paumanhin, ang \'$a\' ay hindi nagpapapasok ng bi
 $string['guestsyes'] = 'Papasukin ang bisitang walang susi';
 $string['guestuser'] = 'Bisitang User';
 $string['guestuserinfo'] = 'Ang user na ito ay isang espesyal na user na binibigyang pahintulot na magbasa lamang sa ilang kurso.';
+$string['healthcenter'] = 'Sentrong Pangkalusugan';
+$string['healthproblemsdetected'] = 'May Nakitang Problemang Pangkalusugan';
+$string['healthproblemsolution'] = 'Lunas sa Problemang Pangkalusugan';
+$string['healthreturntomain'] = 'Ituloy';
+$string['healthsolution'] = 'Solusyon';
 $string['help'] = 'Tulong';
 $string['helpemoticons'] = 'Paggamit ng emoticons';
 $string['helpformatting'] = 'Hinggil sa pagpoformat ng text';
@@ -696,7 +703,7 @@ $string['modified'] = 'Binago';
 $string['moduledeleteconfirm'] = 'Lubos mo nang buburahin ang modyul \'$a\'.  ganap na mabubura nito ang lahat ng bagay sa database na kaugnay ng module na aktibidad na ito.  TALAGA bang gusto mong ituloy ito?';
 $string['moduledeletefiles'] = 'Lahat ng datos na kaugnay ng modyul \'$a->module\' ay nabura na sa database.  Upang makumpleto ang pagkakabura (at maiwasan ang muling pagiinstol ng modyul sa sarili nito), kailangan mong burahin ngayon ang direktoryong ito sa server mo:  $a->directory';
 $string['modulesetup'] = 'Isinasaayos ang mga teybol ng modyul';
-$string['modulesuccess'] = '$a teybol ang wastong naisaayos';
+$string['modulesuccess'] = 'naisaayos nang wasto ang $a na teybol';
 $string['moodleversion'] = 'Bersiyon ng Moodle';
 $string['more'] = 'marami pa';
 $string['mostrecently'] = 'pinakabago';
@@ -717,6 +724,7 @@ $string['mustchangepassword'] = 'Kailangan ay magkaiba ang bagong password at an
 $string['mustconfirm'] = 'Kailangan mong kumpirmahin ang iyong log-in';
 $string['mycourses'] = 'Aking kurso';
 $string['name'] = 'Pangalan';
+$string['namescorm'] = 'SCORM';
 $string['namesocial'] = 'seksiyon';
 $string['nametopics'] = 'paksa';
 $string['nameweeks'] = 'linggo';
@@ -1101,6 +1109,7 @@ $string['usethiscourse'] = 'Gamitin ang kursong ito';
 $string['usingexistingcourse'] = 'Ginagamit ang kasalukuyang kurso';
 $string['version'] = 'Bersiyon';
 $string['view'] = 'Tingnan';
+$string['viewsolution'] = 'tingnan ang lunas';
 $string['virusfound'] = 'Administrador, mahalaga ito!  May nakitang virus ang Clam AV sa file na inaplowd ni $a->user para sa kursong $a->course. Narito ang inilabas ng  clamscan:';
 $string['virusfoundlater'] = 'Ang file na inaplowd mo noong $a->date na may file name na $a->filename para sa kursong $a->course ay natagpuang may virus.  Narito ang buod ng nangyari sa file mo:
 

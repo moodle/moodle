@@ -1,7 +1,8 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.5 ALPHA (2005051500)
+      // scorm.php - created with Moodle 1.6 development (2005060201)
 
 
+$string['advanced'] = 'Abante';
 $string['asset'] = 'Asset';
 $string['attr_error'] = 'Masamang halaga para sa attribute na ($a->attr) sa tag na $a->tag.';
 $string['autocontinue'] = 'Awto-Pagpapatuloy';
@@ -53,9 +54,10 @@ $string['notattempted'] = 'Hind kinuha';
 $string['organization'] = 'Organisasyon';
 $string['organizations'] = 'Mga organisasyon';
 $string['packagedir'] = 'Filesystem Error: Hindi malikha ang direktoryo ng pakete';
+$string['packagefile'] = 'Walang paketeng file na itinakda';
 $string['passed'] = 'Pasado';
 $string['php5'] = 'PHP 5 (DOMXML native library)';
-$string['popup'] = 'Buksan ang kasalukuyang SCO sa isang bagong window';
+$string['popup'] = 'Buksan ang mga Bagay na Pag-aaralan sa bagong window';
 $string['position_error'] = 'Ang $a->tag na tag ay hindi maaaring maging anak ng $a->parent na tag';
 $string['prev'] = 'Nakaraan';
 $string['regular'] = 'Regular na Manifest';
@@ -63,6 +65,8 @@ $string['report'] = 'Ulat';
 $string['review'] = 'Irebyu';
 $string['scoes'] = 'Mga SCO';
 $string['score'] = 'Iskor';
+$string['scormcourse'] = 'Kursong SCORM';
+$string['stagesize'] = 'Laki ng Frame/Windows';
 $string['syntax'] = 'Error sa sintaks';
 $string['tag_error'] = 'Dikilalang tag ($a->tag) na may ganitong laman: $a->value';
 $string['too_many_attributes'] = 'Labis ang attribute ng tag na $a->tag';

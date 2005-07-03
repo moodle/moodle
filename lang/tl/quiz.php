@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.5 ALPHA (2005051500)
+      // quiz.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['acceptederror'] = 'Tinanggap na malî';
@@ -272,10 +272,11 @@ $string['penaltyfactor'] = 'Paktor ng parusa';
 $string['penaltyscheme'] = 'Ilapat ang mga parusa';
 $string['percentcorrect'] = 'Bahagdang Wasto';
 $string['pleaseclose'] = 'Ang kahilingan mo ay naproseso na.  Maaari mo nang isara ang window na ito';
-$string['popup'] = 'Show quiz in a \"secure\" window';
+$string['popup'] = 'Ipakita ang pagsusulit sa isang \"ligtas\" na window';
+$string['popupnotice'] = 'Makikita ng mga mag-aaral ang pagsusulit na ito sa isang ligtas na window';
 $string['preview'] = 'Silipin';
 $string['previewquestion'] = 'Silipin ang tanong';
-$string['previewquiz'] = 'Silipin ang pagsusulit';
+$string['previewquiz'] = 'Silipin ang $a';
 $string['previous'] = 'Dating kalagayan';
 $string['publish'] = 'Ilathalâ';
 $string['publishedit'] = 'Dapat ay may pahintulot ka sa naglathalang kurso upang makapagdagdag o ma-edit ang mga tanong sa kategoriyang ito';
@@ -293,10 +294,10 @@ $string['questiontypesetupoptions'] = 'Mga opsiyon na kaayusan para sa mga uri n
 $string['quizavailable'] = 'Ang pagsusulit ay puwedeng kunin hanggang: $a';
 $string['quizclose'] = 'Isara ang pagsusulit';
 $string['quizclosed'] = 'Nagsara ang pagsusulit na ito noong $a';
-$string['quizcloses'] = 'Nagsara na ang Pagsusulit';
+$string['quizcloses'] = 'Magsasara ang Pagsusulit';
 $string['quiznotavailable'] = 'Hindi maaaring kunin ang pagsusulit hanggang: $a';
 $string['quizopen'] = 'Buksan ang pagsusulit';
-$string['quizopens'] = 'Bukas na ang Pagsusulit';
+$string['quizopens'] = 'Magbubukas ang Pagsusulit';
 $string['quiztimelimit'] = 'Taning: $a';
 $string['quiztimer'] = 'Orasan ng Pagsusulit';
 $string['random'] = 'Random na Tanong';
@@ -312,6 +313,9 @@ $string['recurse'] = 'Ipakita rin ang mga tanong sa mga sub-kategoriya';
 $string['regrade'] = 'Markahan muli ang lahat ng pagkuha';
 $string['regradecomplete'] = 'Ang lahat ng pagkuha ay namarkahan nang muli';
 $string['regradecount'] = '$a->changed mula sa $a->attempt marka ang binago';
+$string['regradedisplayexplanation'] = 'Ang mga pagkuha na nagbago habang minamarkang muli ay ipinapakita na hyperlink papunta sa window na panrebyu ng tanong';
+$string['regradingquestion'] = 'Muling Minamarkahan ang  \"$a\".';
+$string['regradingquiz'] = 'Muling Minamarkahan ang Pagsusulit na \"$a\" ';
 $string['relative'] = 'Relatibo';
 $string['remove'] = 'Alisin';
 $string['rename'] = 'Palitan ang Panglan';
@@ -412,7 +416,7 @@ $string['upgradesure'] = '<div style=\"color: red;\">Sa partikular, ang modyul n
 $string['url'] = 'URL';
 $string['usedcategorymoved'] = 'Inilipat ang kategoriyang ito sa antas site dahil pagkatapos mabura ang kurso, ginagamit pa rin ng ilang pagsusulit sa server ang mga tanong nila.';
 $string['validate'] = 'Tingnan kung Tanggap';
-$string['viewallanswers'] = 'Tingnan ang $a nakumpletong pagsusulit';
+$string['viewallanswers'] = 'Tingnan ang $a nakuhang pagsusulit';
 $string['viewallreports'] = 'Tingnan ang mga ulat para sa $a pagkuha';
 $string['warningsdetected'] = '$a babala ang nakita';
 $string['webct'] = 'Format na WebCT';
