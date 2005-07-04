@@ -151,7 +151,24 @@
         return $info;
     }
 
+    //Return a content encoded to support interactivities linking. Every module
+    //should have its own. They are called automatically from the backup procedure.
+    function choice_encode_content_links ($content,$preferences) {
 
+        global $CFG;
+
+        $base = preg_quote($CFG->wwwroot,"/");
+
+        //Link to the list of choices
+        $buscar="/(".$base."\/mod\/choice\/index.php\?id\=)([0-9]+)/";
+        $result= preg_replace($buscar,'$@CHOICEINDEX*$2@$',$content);
+
+        //Link to choice view by moduleid
+        $buscar="/(".$base."\/mod\/choice\/view.php\?id\=)([0-9]+)/";
+        $result= preg_replace($buscar,'$@CHOICEVIEWBYID*$2@$',$result);
+
+        return $result;
+    }
 
     // INTERNAL FUNCTIONS. BASED IN THE MOD STRUCTURE
 
