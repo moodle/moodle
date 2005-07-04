@@ -109,6 +109,7 @@ define('PARAM_ALPHANUM', 0x0400);  //numbers or letters only
 define('PARAM_BOOL',     0x0800);  //convert to value 1 or 0 using empty()
 define('PARAM_CLEANHTML',0x1000);  //actual HTML code that you want cleaned and slashes removed
 define('PARAM_ALPHAEXT', 0x2000);  // PARAM_ALPHA plus the chars in quotes: "/-_" allowed
+define('PARAM_SAFEDIR',  0x4000);  // safe directory name, suitable for include() and require()
 
 /**
  * Definition of page types
@@ -220,6 +221,10 @@ function clean_param($param, $options) {
 
     if ($options & PARAM_NOTAGS) {       // Strip all tags completely
         $param = strip_tags($param);
+    }
+
+    if ($options & PARAM_SAFEDIR) {     // Remove everything not a-zA-Z0-9_-
+        $param = eregi_replace('[^a-zA-Z0-9_-]', '', $param);
     }
 
     if ($options & PARAM_CLEANFILE) {    // allow only safe characters
