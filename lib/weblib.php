@@ -2973,9 +2973,6 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
 
     if ($usehtmleditor) {
 
-        // cleanup bad html that may have made it to the db
-        $value = clean_text($value);
-
         if (!empty($courseid) and isteacher($courseid)) {
             echo ($scriptcount < 1) ? '<script type="text/javascript" src="'. $CFG->wwwroot .'/lib/editor/htmlarea.php?id='. $courseid .'"></script>'."\n" : '';
         } else {
