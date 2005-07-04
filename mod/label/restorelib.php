@@ -61,6 +61,41 @@
         return $status;
     }
 
+    function label_decode_content_links_caller($restore) {
+        global $CFG;
+        $status = true;
+
+        if ($labels = get_records_sql ("SELECT l.id, l.content
+                                   FROM {$CFG->prefix}label l
+                                   WHERE l.course = $restore->course_id")) {
+            $i = 0;   //Counter to send some output to the browser to avoid timeouts
+            foreach ($labels as $label) {
+                //Increment counter
+                $i++;
+                $content = $label->content;
+                $result = restore_decode_content_links_worker($content,$restore);
+
+                if ($result != $content) {
+                    //Update record
+                    $label->content = addslashes($result);
+                    $status = update_record("label", $label);
+                    if ($CFG->debug>7) {
+                        echo "<br /><hr />".$content."<br />changed to</br>".$result."<hr /><br />";
+                    }
+                }
+                //Do some output
+                if (($i+1) % 5 == 0) {
+                    echo ".";
+                    if (($i+1) % 100 == 0) {
+                        echo "<br />";
+                    }
+                    backup_flush(300);
+                }
+            }
+        }
+        return $status;
+    }
+
     //This function returns a log record with all the necessay transformations
     //done. It's used by restore_log_module() to restore modules log.
     function label_restore_logs($restore,$log) {

@@ -142,10 +142,24 @@
         return $info;
     }
 
+    //Return a content encoded to support interactivities linking. Every module
+    //should have its own. They are called automatically from the backup procedure.
+    function servey_encode_content_links ($content,$preferences) {
 
+        global $CFG;
 
+        $base = preg_quote($CFG->wwwroot,"/");
 
+        //Link to the list of serveys
+        $buscar="/(".$base."\/mod\/servey\/index.php\?id\=)([0-9]+)/";
+        $result= preg_replace($buscar,'$@SURVEYINDEX*$2@$',$content);
 
+        //Link to servey view by moduleid
+        $buscar="/(".$base."\/mod\/servey\/view.php\?id\=)([0-9]+)/";
+        $result= preg_replace($buscar,'$@SURVEYVIEWBYID*$2@$',$result);
+
+        return $result;
+    }
 
     // INTERNAL FUNCTIONS. BASED IN THE MOD STRUCTURE
 

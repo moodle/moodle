@@ -130,6 +130,110 @@
         return $status;
     }
 
+    //Return a content decoded to support interactivities linking. Every module
+    //should have its own. They are called automatically from
+    //chat_decode_content_links_caller() function in each module
+    //in the restore process
+    function chat_decode_content_links ($content,$restore) {
+            
+        global $CFG;
+            
+        $result = $content;
+                
+        //Link to the list of chats
+                
+        $searchstring='/\$@(CHATINDEX)\*([0-9]+)@\$/';
+        //We look for it
+        preg_match_all($searchstring,$content,$foundset);
+        //If found, then we are going to look for its new id (in backup tables)
+        if ($foundset[0]) {
+            //print_object($foundset);                                     //Debug
+            //Iterate over foundset[2]. They are the old_ids
+            foreach($foundset[2] as $old_id) {
+                //We get the needed variables here (course id)
+                $rec = backup_getid($restore->backup_unique_code,"course",$old_id);
+                //Personalize the searchstring
+                $searchstring='/\$@(CHATINDEX)\*('.$old_id.')@\$/';
+                //If it is a link to this course, update the link to its new location
+                if($rec->new_id) {
+                    //Now replace it
+                    $result= preg_replace($searchstring,$CFG->wwwroot.'/mod/chat/index.php?id='.$rec->new_id,$result);
+                } else { 
+                    //It's a foreign link so leave it as original
+                    $result= preg_replace($searchstring,$restore->original_wwwroot.'/mod/chat/index.php?id='.$old_id,$result);
+                }
+            }
+        }
+
+        //Link to chat view by moduleid
+
+        $searchstring='/\$@(CHATVIEWBYID)\*([0-9]+)@\$/';
+        //We look for it
+        preg_match_all($searchstring,$result,$foundset);
+        //If found, then we are going to look for its new id (in backup tables)
+        if ($foundset[0]) {
+            //print_object($foundset);                                     //Debug
+            //Iterate over foundset[2]. They are the old_ids
+            foreach($foundset[2] as $old_id) {
+                //We get the needed variables here (course_modules id)
+                $rec = backup_getid($restore->backup_unique_code,"course_modules",$old_id);
+                //Personalize the searchstring
+                $searchstring='/\$@(CHATVIEWBYID)\*('.$old_id.')@\$/';
+                //If it is a link to this course, update the link to its new location
+                if($rec->new_id) {
+                    //Now replace it
+                    $result= preg_replace($searchstring,$CFG->wwwroot.'/mod/chat/view.php?id='.$rec->new_id,$result);
+                } else {
+                    //It's a foreign link so leave it as original
+                    $result= preg_replace($searchstring,$restore->original_wwwroot.'/mod/chat/view.php?id='.$old_id,$result);
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    //This function makes all the necessary calls to xxxx_decode_content_links()
+    //function in each module, passing them the desired contents to be decoded
+    //from backup format to destination site/course in order to mantain inter-activities
+    //working in the backup/restore process. It's called from restore_decode_content_links()
+    //function in restore process
+    function chat_decode_content_links_caller($restore) {
+        global $CFG;
+        $status = true;
+        
+        if ($chats = get_records_sql ("SELECT c.id, c.intro
+                                   FROM {$CFG->prefix}chat c
+                                   WHERE c.course = $restore->course_id")) {
+                                               //Iterate over each chat->intro
+            $i = 0;   //Counter to send some output to the browser to avoid timeouts
+            foreach ($chats as $chat) {
+                //Increment counter
+                $i++;
+                $content = $chat->intro;
+                $result = restore_decode_content_links_worker($content,$restore);
+                if ($result != $content) {
+                    //Update record
+                    $chat->intro = addslashes($result);
+                    $status = update_record("chat",$chat);
+                    if ($CFG->debug>7) {
+                        echo "<br /><hr />".$content."<br />changed to</br>".$result."<hr /><br />";
+                    }
+                }
+                //Do some output
+                if (($i+1) % 5 == 0) {
+                    echo ".";
+                    if (($i+1) % 100 == 0) {
+                        echo "<br />";
+                    }
+                    backup_flush(300);
+                    }
+            }
+        }
+
+        return $status;
+    }
+
     //This function returns a log record with all the necessay transformations
     //done. It's used by restore_log_module() to restore modules log.
     function chat_restore_logs($restore,$log) {

@@ -638,7 +638,114 @@
 
         return $status;
     }
-    
+
+    //Return a content decoded to support interactivities linking. Every module
+    //should have its own. They are called automatically from
+    //lesson_decode_content_links_caller() function in each module
+    //in the restore process
+    function lesson_decode_content_links ($content,$restore) {
+            
+        global $CFG;
+            
+        $result = $content;
+                
+        //Link to the list of lessons
+                
+        $searchstring='/\$@(LESSONINDEX)\*([0-9]+)@\$/';
+        //We look for it
+        preg_match_all($searchstring,$content,$foundset);
+        //If found, then we are going to look for its new id (in backup tables)
+        if ($foundset[0]) {
+            //print_object($foundset);                                     //Debug
+            //Iterate over foundset[2]. They are the old_ids
+            foreach($foundset[2] as $old_id) {
+                //We get the needed variables here (course id)
+                $rec = backup_getid($restore->backup_unique_code,"course",$old_id);
+                //Personalize the searchstring
+                $searchstring='/\$@(LESSONINDEX)\*('.$old_id.')@\$/';
+                //If it is a link to this course, update the link to its new location
+                if($rec->new_id) {
+                    //Now replace it
+                    $result= preg_replace($searchstring,$CFG->wwwroot.'/mod/lesson/index.php?id='.$rec->new_id,$result);
+                } else { 
+                    //It's a foreign link so leave it as original
+                    $result= preg_replace($searchstring,$restore->original_wwwroot.'/mod/lesson/index.php?id='.$old_id,$result);
+                }
+            }
+        }
+
+        //Link to lesson view by moduleid
+
+        $searchstring='/\$@(LESSONVIEWBYID)\*([0-9]+)@\$/';
+        //We look for it
+        preg_match_all($searchstring,$result,$foundset);
+        //If found, then we are going to look for its new id (in backup tables)
+        if ($foundset[0]) {
+            //print_object($foundset);                                     //Debug
+            //Iterate over foundset[2]. They are the old_ids
+            foreach($foundset[2] as $old_id) {
+                //We get the needed variables here (course_modules id)
+                $rec = backup_getid($restore->backup_unique_code,"course_modules",$old_id);
+                //Personalize the searchstring
+                $searchstring='/\$@(LESSONVIEWBYID)\*('.$old_id.')@\$/';
+                //If it is a link to this course, update the link to its new location
+                if($rec->new_id) {
+                    //Now replace it
+                    $result= preg_replace($searchstring,$CFG->wwwroot.'/mod/lesson/view.php?id='.$rec->new_id,$result);
+                } else {
+                    //It's a foreign link so leave it as original
+                    $result= preg_replace($searchstring,$restore->original_wwwroot.'/mod/lesson/view.php?id='.$old_id,$result);
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    //This function makes all the necessary calls to xxxx_decode_content_links()
+    //function in each module, passing them the desired contents to be decoded
+    //from backup format to destination site/course in order to mantain inter-activities
+    //working in the backup/restore process. It's called from restore_decode_content_links()
+    //function in restore process
+    function lesson_decode_content_links_caller($restore) {
+        global $CFG;
+        $status = true;
+        
+        //Process every lesson PAGE in the course
+        if ($pages = get_records_sql ("SELECT p.id, p.contents
+                                   FROM {$CFG->prefix}lesson_pages p,
+                                        {$CFG->prefix}lesson l
+                                   WHERE l.course = $restore->course_id AND
+                                         p.lessonid = l.id")) {
+            //Iterate over each page->message
+            $i = 0;   //Counter to send some output to the browser to avoid timeouts
+            foreach ($pages as $page) {
+                //Increment counter
+                $i++;
+                $content = $page->contents;
+                $result = restore_decode_content_links_worker($content,$restore);
+                if ($result != $content) {
+                    //Update record
+                    $page->contents = addslashes($result);
+                    $status = update_record("lesson_pages",$page);
+                    if ($CFG->debug>7) {
+                        echo "<br /><hr />".$content."<br />changed to<br />".$result."<hr /><br />";
+                    }
+                }
+                //Do some output
+                if (($i+1) % 5 == 0) {
+                    echo ".";
+                    if (($i+1) % 100 == 0) {
+                        echo "<br />";
+                    }
+                    backup_flush(300);
+                }
+            }
+        }
+
+        return $status;
+    }
+
     //This function returns a log record with all the necessay transformations
     //done. It's used by restore_log_module() to restore modules log.
     function lesson_restore_logs($restore,$log) {

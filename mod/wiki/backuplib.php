@@ -170,4 +170,23 @@
 
     }
 
+    //Return a content encoded to support interactivities linking. Every module
+    //should have its own. They are called automatically from the backup procedure.
+    function wiki_encode_content_links ($content,$preferences) {
+
+        global $CFG;
+
+        $base = preg_quote($CFG->wwwroot,"/");
+
+        //Link to the list of wikis
+        $buscar="/(".$base."\/mod\/wiki\/index.php\?id\=)([0-9]+)/";
+        $result= preg_replace($buscar,'$@WIKIINDEX*$2@$',$content);
+
+        //Link to wiki view by moduleid
+        $buscar="/(".$base."\/mod\/wiki\/view.php\?id\=)([0-9]+)/";
+        $result= preg_replace($buscar,'$@WIKIVIEWBYID*$2@$',$result);
+
+        return $result;
+    }
+
 ?>
