@@ -269,7 +269,7 @@
 					print $footer;
 				break;
 	
-				case 'main';
+				case 'main':
 					if (!empty($available_msg)) {
 						$hp->insert_message('<!-- BeginTopNavButtons -->', $available_msg);
 					}
@@ -291,7 +291,7 @@
 		case HOTPOT_NAVIGATION_IFRAME:
 
 			switch ($frameset) {
-				case 'main';
+				case 'main':
 					print $hp->html;
 				break;
 		
