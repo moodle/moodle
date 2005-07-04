@@ -16,6 +16,11 @@ a:hover {
     color: #990000;
 }
 
+a.dimmed:link,
+a.dimmed:visited {
+  color:#AAAAAA;
+}
+
 h1 {
   background-color: #C6BDA8;
   border-color: #333333;
