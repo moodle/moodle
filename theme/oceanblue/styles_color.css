@@ -52,6 +52,15 @@ a.autolink.glossary:hover {
   cursor: help;
 }
 
+img.userpicture,
+img.grouppicture {
+  border-color:#000
+}
+
+.block_online_users .listentry img {
+  border:#888
+}
+
 body {
   background-color:#AAAAFF;
   color:#000066;
@@ -220,6 +229,19 @@ body#admin-index .c0 {
   background-color: #FAFAFA;
 }
 
+body#admin-blocks table#blocks .r0,
+body#admin-blocks table#incompatible .r0 {
+  background-color: #f0f0f0;
+}
+
+body#admin-blocks table#blocks .r1,
+body#admin-blocks table#incompatible .r1 {
+  background-color: #fafafa;
+}
+
+body#admin-blocks table#incompatible td.c0 {
+  color: #ff0000;
+}
 
 
 /***
@@ -243,7 +265,10 @@ body#admin-index .c0 {
   border-top-color:#999999;
 }
 
-.sideblock .list {
+#left-column .hidden .header,
+#right-column .hidden .header
+{
+  border-bottom-color: #dddddd;
 }
 
 .sideblock .header .hide-show img.hide-show-image {
@@ -254,6 +279,13 @@ body#admin-index .c0 {
   background: url('../../pix/t/switch_plus.gif') no-repeat bottom;
 }
 
+.blockconfigtable {
+  background-color:#FFFFFF;
+  border-left:1px solid;
+  border-right:1px solid;
+  border-bottom:1px solid;
+  border-color:#AAAAAA;
+}
 
 
 /***
