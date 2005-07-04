@@ -63,9 +63,6 @@
     //from backup format to destination site/course in order to mantain inter-activities
     //working in the backup/restore process
     function restore_decode_content_links($restore) {
-
-        global $CFG;
-
         $status = true;
 
         echo "<ul>";
@@ -75,14 +72,30 @@
                 //Check if the xxxx_decode_content_links_caller exists
                 $function_name = $name."_decode_content_links_caller";
                 if (function_exists($function_name)) {
-                    echo "<li>".get_string ("to")." ".get_string("modulenameplural",$name);
+                    echo "<li>".get_string ("from")." ".get_string("modulenameplural",$name);
                     $status = $function_name($restore);
                     echo '</li>';
                 }
             }
         }
         echo "</ul>";
+        
+        // TODO: process all html text also in blocks too
+        
         return $status;
+    }
+    
+    //This function is called from all xxxx_decode_content_links_caller(),
+    //its task is to ask all modules (maybe other linkable objects) to restore
+    //links to them.
+    function restore_decode_content_links_worker($content,$restore) {
+        foreach($restore->mods as $name => $info) {
+            $function_name = $name."_decode_content_links";
+            if (function_exists($function_name)) {
+                $content = $function_name($content,$restore);
+            }
+        }
+        return $content;
     }
 
     //This function converts all the wiki texts in the restored course
