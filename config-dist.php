@@ -269,6 +269,12 @@ $CFG->admin = 'admin';
 //=========================================================================
 // ALL DONE!  To continue installation, visit your main page with a browser
 //=========================================================================
+if ($CFG->wwwroot == 'http://example.com/moodle') {
+    echo "<p>Error detected in configuration file</p>";
+    echo "<p>Your server address can not be: \$CFG->wwwroot = 'http://example.com/moodle';</p>";
+    die;
+}
+
 if (file_exists("$CFG->dirroot/lib/setup.php"))  {       // Do not edit
     include_once("$CFG->dirroot/lib/setup.php");
 } else {
