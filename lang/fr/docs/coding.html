@@ -220,31 +220,31 @@
 
 <li class="spaced">N'utilisez pas la fonction <code>require_variable()</code>. Utilisez en lieu et place la fonction <code>required_param()</code>. Choisissez la valeur PARAM_XXXX correcte pour le type de données que vous attendez.</li>
 
+<li class="spaced">N'utilisez pas si possible la fonction <code>data_submitted()</code>, car elle court-circuite les fonctions de nettoyage de <code>required_param()</code> et de <code>optional_param()</code>.
+
 <li class="spaced">N'utilisez pas <code>$_GET</code>, <code>$_POST</code> ni <code>$_REQUEST</code>. Utilisez la fonction <code>required_param()</code> ou <code>optional_param()</code> appropriée à vos besoins.</li>
 
-<!-- TO BE TRANSLATED -->
+<li class="spaced">Ne vérifiez pas l'exécution d'actions avec par exemple <code>if (isset($_GET['something']))</code>. Utilisez plutôt <code>$something = optional_param( 'something',-1,PARAM_INT )</code> et effectuez ensuite un test correct pour vérifier si la valeur se trouve dans l'intervalle voulu, par exemple <code>if ($something>=0) {...</code>.</li>
 
-<li class="spaced">Do not check for an action using something like <code>if (isset($_GET['something']))</code>. Use, e.g., <code>$something = optional_param( 'something','',PARAM_ALPHA )</code> and test with <code>empty()</code> function, or (if 'empty' is a possible value) use <code>isset_param()</code> function.</li>
+<li class="spaced">Groupez chaque fois que cela est possible vos <code>required_param()</code>, <code>optional_param()</code> et les autres initialisations de variables initialisation au début de chaque fichier, de sorte qu'elles soient faciles à trouver.</li>
 
-<li class="spaced">Wherever possible group all your <code>required_param()</code>, <code>optional_param()</code> and other variables initialisation at the beginning of each file to make them easy to find.</li>
+<li class="spaced">Utilisez le mécanisme « sesskey » pour protéger vos routines de traitement de formulaires d'éventuelles attaques. Un exemple simple&nbsp;: lorsque le formulaire est généré, ajoutez <code><input type="hidden" name="sesskey" value="<?php echo sesskey(); ?>" /></code>. Lors du traitement du formulaire, vérifiez avec <code>if (!confirm_sesskey()) {error('Bad Session Key');}</code>.</li>
 
-<li class="spaced">Use 'sesskey' mechanism to protect form handling routines from attack. Basic example of use: when form is generated, include <code><input type="hidden" name="sesskey" value="<?php echo sesskey(); ?>" /></code>. When you process the form check with <code>if (!confirm_sesskey()) {error('Bad Session Key');}</code>.</li>
+<li class="spaced">Tous les noms de fichiers doivent être nettoyés par la fonction <code>clean_filename()</code>, pour autant que cela n'ait pas encore été fait par une utilisation adéquate de <code>required_param()</code> ou de <code>optional_param()</code>.</li>
 
-<li class="spaced">All filenames must be 'cleaned' using the <code>clean_filename()</code> function, if this has not been done already by appropriate use of <code>required_param()</code> or <code>optional_param()</code> </li>
+<li class="spaced">Toutes les données lues dans la base de données doivent être passées par <code>addslashes()</code> avant d'être récrites dans la base de données. La fonction <code>addslashes_object()</code> permet de traiter ainsi un objet complet de données.</li>
 
-<li class="spaced">Any data read from the database must have <code>addslashes()</code> applied to it before it can be written back. A whole object of data can be hit at once with <code>addslashes_object()</code>.</li>
+<li class="spaced">Chaque fois que c'est possible, les données devant être stockées dans la base de données doivent provenir de données <code>POST</code> (d'un formulaire avec <code>method="POST"</code>), et non de données <code>GET</code> (c'est-à-dire provenant de l'URL).</li>
 
-<li class="spaced">Wherever possible, data to be stored in the database must come from a <code>POST</code> data (ie, data from a form) as opposed to <code>GET</code> data (ie, data from the URL line).</li>
+<li class="spaced">Si vous pouvez l'éviter, n'utilisez pas de données provenant de la variable <code>$_SERVER</code>, en raison de problèmes de portabilité.</li>
 
-<li class="spaced">Do not use data from <code>$_SERVER</code> if you can avoid it. This has portability issues.</li>
+<li class="spaced">Si cela n'a pas été fait ailleurs, assurez-vous que toutes les données écrites dans la base de données ont été traitées par la fonction <code>clean_param()</code> avec le paramètre PARAM_XXXX adéquat au type de données.</li>
 
-<li class="spaced">If it hasn't been done somewhere else, make sure all data written to the database has been through the <code>clean_param()</code> function using the appropriate PARAM_XXXX for the datatype.</li>
+<li class="spaced">Si vous écrivez du code SQL brut, assurez-vous très attentivement qu'il est correct. Faites tout particulièrement attention aux guillemets manquants autour des valeurs, pouvant se transformer en autant de failles de sécurité (injections SQL).</li>
 
-<li class="spaced">If you write custom SQL code, make very sure it is correct. In particular watch out for missing quotes around values. Possible SQL 'injection' exploit.</li>
+<li class="spaced">Vérifiez toutes les données (particulièrement celles qui sont écrites dans la base de données) dans <strong>tous</strong> les fichiers où elles sont utilisées. N'attendez rien et ne vous reposez sur rien de ce qui est fait ailleurs.</li>
 
-<li class="spaced">Check all data (particularly that written to the database) in <strong>every</strong> file it is used. Do not expect or rely on it being done somewhere else.</li>
-
-<li class="spaced">Blocks of code to be included should contain a definite PHP structure (e.g, a class declaration, function definition(s) etc.) - straight blocks of code promote uninitialised variable usage.</li>
+<li class="spaced">Les blocs de code à inclure doivent comporter une structure PHP définie (par exemple, une déclaration de classe, des définitions de fonctions, etc.), Les blocs de code non structurés engendrent l'utilisation de variables non initialisées.</li>
 
 </ol>
 
