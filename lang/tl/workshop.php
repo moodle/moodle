@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.5 ALPHA (2005043000)
+      // workshop.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['absent'] = 'Walâ';
@@ -117,7 +117,7 @@ $string['gradingallassessments'] = 'Minamarkahan ang lahat ng Pagtatasa';
 $string['gradinggrade'] = 'Marka ng Pagmamarka';
 $string['gradingstrategy'] = 'Istratehiya ng Pagmamarka';
 $string['hidegradesbeforeagreement'] = 'Itago muna ang mga Marka hangga\'t di pa Nagkakasundo';
-$string['hidenamesfromstudents'] = 'Itago ang mga Pangalan kay $a';
+$string['hidenamesfromstudents'] = 'Itago ang mga Pangalan sa $a';
 $string['includeteachersgrade'] = 'Isama ang Markang ibinigay ng Gurò';
 $string['incorrect'] = 'Mali';
 $string['info'] = 'Impo';
@@ -129,7 +129,7 @@ $string['leaguetable'] = 'Panligang Manghad ng Ipinasang Gawa';
 $string['listassessments'] = 'Ilista ang mga Pagtatasa';
 $string['listofallsubmissions'] = 'Listahan ng lahat ng Ipinasa';
 $string['liststudentsassessments'] = 'Ilista ang mga Pagtatasa ng Mag-aaral';
-$string['loadingforteacherassessments'] = 'Bigat ng Pagtatasa ng  $a';
+$string['loadingforteacherassessments'] = 'Bigat ng $a Pagtatasa';
 $string['mail1'] = 'Ang takdang-aralin mo na \'$a\' ay tinasa ni';
 $string['mail10'] = 'Maari mo itong tasahin sa iyong takdang-araling pangworkshop';
 $string['mail2'] = 'Makikita ang mga opinyon at marka sa Takdang-Araling Pangworkshop \'$a\'.';
@@ -205,16 +205,16 @@ $string['phase0'] = 'Di-aktibo';
 $string['phase0short'] = 'Di-aktibo';
 $string['phase1'] = 'Isaayos ang Takdang-aralin';
 $string['phase1short'] = 'Isaayos';
-$string['phase2'] = 'Pahintulutan ang $a na Ipapasa';
+$string['phase2'] = 'Pahintulutan ang $a Pagpapasa';
 $string['phase2short'] = 'Mga Ipinasa';
-$string['phase3'] = 'Pahintulutan ang $a na Ipapasa at Pagtatasa';
+$string['phase3'] = 'Pahintulutan ang $a Pagpapasa at Pagtatasa';
 $string['phase3short'] = 'Pareho';
-$string['phase4'] = 'Pahintulutan ang $a na Pagtatasa';
-$string['phase4short'] = 'Mga Pagtatasa';
+$string['phase4'] = 'Pahintulutan ang $a Pagtatasa';
+$string['phase4short'] = 'Pagtatasa';
 $string['phase5'] = 'Ipakita ang mga Huling Marka';
 $string['phase5short'] = 'Ipakita ang mga Marka';
 $string['pleaseassesstheseexamplesfromtheteacher'] = 'Pakitasa ang mga Halimbawang ito sa $a';
-$string['pleaseassessthesestudentsubmissions'] = 'Pakitasa ang $a na Ipinasa';
+$string['pleaseassessthesestudentsubmissions'] = 'Pakitasa ang $a Ipinasa';
 $string['pleaseassessyoursubmissions'] = 'Pakitasa ang (mga) Ipinasa mo';
 $string['poor'] = 'Mahina';
 $string['present'] = 'Mayroon';
@@ -267,7 +267,7 @@ $string['submissions'] = 'Mga Ipinasa';
 $string['submissionsnolongerallowed'] = 'Hindi na pinapahintulutan ang mga pagpapasa';
 $string['submissionstart'] = 'Umpisa ng mga pagpapasa';
 $string['submissionstartevent'] = 'Umpisa ng mga pagpapasa para sa $a';
-$string['submissionsused'] = '$a Ipinasa ang ginamit sa manghad na ito';
+$string['submissionsused'] = '$a Ipinasang ginamit sa manghad na ito';
 $string['submitassignment'] = 'Ipasa ang Takdang-aralin';
 $string['submitassignmentusingform'] = 'Ipasa mo ang iyong Takdang-aralin sa pamamagitan ng Form na ito';
 $string['submitexample'] = 'Ipasa ang Halimbawa';
