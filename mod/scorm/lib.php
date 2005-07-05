@@ -630,6 +630,9 @@ function scorm_characterData($parser, $data) {
 }
 
 function scorm_parse($pkgdir,$pkgtype,$scormid){
+    delete_records('scorm_scoes','scorm',$scormid);
+    delete_records('scorm_scoes_track','scormid',$scormid);
+
     if ($pkgtype == 'AICC') {
         return scorm_parse_aicc($pkgdir,$scormid);
     } else {
@@ -853,9 +856,7 @@ function scorm_parse_scorm($pkgdir,$file,$scormid) {
     $launch = 0;
 
     $sco->scorm = $scormid;
-    delete_records('scorm_scoes','scorm',$scormid);
-    delete_records('scorm_scoes_track','scormid',$scormid);
-
+    
     if (isset($scoes[1])) {
         for ($j=1; $j<=$i; $j++) {
             $sco->identifier = $scoes[$j]['identifier'];
