@@ -134,7 +134,9 @@ class assignment_base {
      */
     function view_intro() {
         print_simple_box_start('center', '', '', '', 'generalbox', 'intro');
-        echo format_text($this->assignment->description, $this->assignment->format);
+        $formatoptions = new stdClass;
+        $formatoptions->noclean = true;
+        echo format_text($this->assignment->description, $this->assignment->format, $formatoptions);
         print_simple_box_end();
     }
 
@@ -245,7 +247,7 @@ class assignment_base {
             if (isset($USER->id)) {
                 if ($submission = $this->get_submission($USER->id)) {
                     if ($submission->timemodified) {
-                        if ($submission->timemodified <= $this->assignment->timedue) {
+                        if ($submission->timemodified <= $this->assignment->timedue || empty($this->assignment->timedue)) {
                             $submitted = '<span class="early">'.userdate($submission->timemodified).'</span>';
                         } else {
                             $submitted = '<span class="late">'.userdate($submission->timemodified).'</span>';
@@ -279,6 +281,8 @@ class assignment_base {
         }
         if (empty($form->assignmenttype)) {
             $form->assignmenttype = "";
+        } else {
+            $form->assignmenttype = clean_param($form->assignmenttype, PARAM_SAFEDIR);
         }
         if (empty($form->description)) {
             $form->description = "";
@@ -325,6 +329,8 @@ class assignment_base {
         // will create a new instance and return the id number
         // of the new instance.
 
+        $assignment->assignmenttype = clean_param($assignment->assignmenttype, PARAM_SAFEDIR);
+
         $assignment->timemodified = time();
         if (empty($assignment->dueenable)) {
             $assignment->timedue = 0;
@@ -344,19 +350,21 @@ class assignment_base {
 
         if ($returnid = insert_record("assignment", $assignment)) {
 
-            $event = NULL;
-            $event->name        = $assignment->name;
-            $event->description = $assignment->description;
-            $event->courseid    = $assignment->course;
-            $event->groupid     = 0;
-            $event->userid      = 0;
-            $event->modulename  = 'assignment';
-            $event->instance    = $returnid;
-            $event->eventtype   = 'due';
-            $event->timestart   = $assignment->timedue;
-            $event->timeduration = 0;
+            if ($assignment->timedue) {
+                $event = NULL;
+                $event->name        = $assignment->name;
+                $event->description = $assignment->description;
+                $event->courseid    = $assignment->course;
+                $event->groupid     = 0;
+                $event->userid      = 0;
+                $event->modulename  = 'assignment';
+                $event->instance    = $returnid;
+                $event->eventtype   = 'due';
+                $event->timestart   = $assignment->timedue;
+                $event->timeduration = 0;
 
-            add_event($event);
+                add_event($event);
+            }
         }
 
         return $returnid;
@@ -386,6 +394,8 @@ class assignment_base {
         // will create a new instance and return the id number
         // of the new instance.
 
+        $assignment->assignmenttype = clean_param($assignment->assignmenttype, PARAM_SAFEDIR);
+
         $assignment->timemodified = time();
         $assignment->timemodified = time();
         if (empty($assignment->dueenable)) {
@@ -408,15 +418,17 @@ class assignment_base {
 
         if ($returnid = update_record('assignment', $assignment)) {
 
-            $event = NULL;
+            if ($assignment->timedue) {
+                $event = NULL;
 
-            if ($event->id = get_field('event', 'id', 'modulename', 'assignment', 'instance', $assignment->id)) {
+                if ($event->id = get_field('event', 'id', 'modulename', 'assignment', 'instance', $assignment->id)) {
 
-                $event->name        = $assignment->name;
-                $event->description = $assignment->description;
-                $event->timestart   = $assignment->timedue;
+                    $event->name        = $assignment->name;
+                    $event->description = $assignment->description;
+                    $event->timestart   = $assignment->timedue;
 
-                update_event($event);
+                    update_event($event);
+                }
             }
         }
 
@@ -1047,7 +1059,7 @@ class assignment_base {
 
     function isopen() {
         $time = time();
-        if ($this->assignment->preventlate) {
+        if ($this->assignment->preventlate && $this->assignment->timedue) {
             return ($this->assignment->timeavailable <= $time && $time <= $this->assignment->timedue);
         } else {
             return ($this->assignment->timeavailable <= $time);
@@ -1100,6 +1112,9 @@ class assignment_base {
     }
 
     function display_lateness($timesubmitted) {
+        if (!$this->assignment->timedue) {
+            return '';
+        }
         $time = $this->assignment->timedue - $timesubmitted;
         if ($time < 0) {
             $timetext = get_string('late', 'assignment', format_time($time));
@@ -1109,9 +1124,6 @@ class assignment_base {
             return ' (<span class="early">'.$timetext.'</span>)';
         }
     }
-
-
-
 
 
 } ////// End of the assignment_base class
