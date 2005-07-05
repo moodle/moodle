@@ -41,6 +41,7 @@ if (isadmin()) {
     echo "</tr>\n";
 
     $modules = get_list_of_plugins("auth");
+    $auth_options = array();
     foreach ($modules as $module) {
         $auth_options[$module] = get_string("auth_$module"."title", "auth");
     } 
