@@ -1,5 +1,5 @@
 <?PHP
-// $Id: lib.php
+// $Id$
 // author: romuald Lorthioir
 //CHANGELOG:
 //16/03/2005 Use of LDAP Module
@@ -13,6 +13,7 @@ This Module is using the /auth/cas/index_form.html.
 This module is using the LDAP Module so you need the /auth/ldap directory.
 You can see /auth/ldap/lib.php for the other functions.
 */
+defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
 
 define('AUTH_LDAP_NAME', 'cas'); // for ldap module
 require_once($CFG->dirroot.'/config.php');
