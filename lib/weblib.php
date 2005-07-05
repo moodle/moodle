@@ -2013,6 +2013,8 @@ function style_sheet_setup($lastmodified=0, $lifetime=300, $themename='', $force
 
     if (empty($themename)) {
         $themename = current_theme();  // So we have something.  Normally not needed.
+    } else {
+        $themename = clean_param($themename, PARAM_SAFEDIR);
     }
 
     if (!empty($forceconfig)) {        // Page wants to use the config from this theme instead
