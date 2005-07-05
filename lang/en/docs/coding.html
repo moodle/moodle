@@ -232,12 +232,13 @@ GOOD: $assignments (for an array of objects)<br />
     value for a variable, use the <code>set_default()</code> function.</li>
   <li class="spaced">Do not use the <code>require_variable()</code> function. Use the <code>required_param()</code>
     function instead. Pick the correct PARAM_XXXX value for the data type you expect.</li>
+  <li class="spaced">Do not use <code>data_submitted()</code>, if possible, as this bypasses the data cleaning
+    functions of <code>required_param()</code> and <code>optional_param()</code>.
   <li class="spaced">Do not use <code>$_GET</code>, <code>$_POST</code> or <code>$_REQUEST</code>. Use the
     appropriate <code>required_param()</code> or <code>optional_param()</code> appropriate to your need.</li>
   <li class="spaced">Do not check for an action using something like <code>if (isset($_GET['something']))</code>. 
-    Use, e.g., <code>$something = optional_param( 'something','',PARAM_ALPHA )</code> and test with
-    <code>empty()</code> function, or (if 'empty' is a possible value) use <code>isset_param()</code>
-    function.</li>
+    Use, e.g., <code>$something = optional_param( 'something',-1,PARAM_INT )</code> and then perform 
+    proper test for it being in its expected range of values e.g., <code>if ($something>=0) {...</code>.</li>
   <li class="spaced">Wherever possible group all your <code>required_param()</code>, <code>optional_param()</code>
     and other variables initialisation at the beginning of each file to make them easy to find.</li>
   <li class="spaced">Use 'sesskey' mechanism to protect form handling routines from attack. 
@@ -249,8 +250,8 @@ GOOD: $assignments (for an array of objects)<br />
     </li>
   <li class="spaced">Any data read from the database must have <code>addslashes()</code> applied to it before it
     can be written back. A whole object of data can be hit at once with <code>addslashes_object()</code>.</li>
-  <li class="spaced">Wherever possible, data to be stored in the database must come from a <code>POST</code>
-    data (ie, data from a form) as opposed to <code>GET</code> data (ie, data from the URL line).</li>
+  <li class="spaced">Wherever possible, data to be stored in the database must come from <code>POST</code>
+    data (from a form with <code>method="POST"</code>) as opposed to <code>GET</code> data (ie, data from the URL line).</li>
   <li class="spaced">Do not use data from <code>$_SERVER</code> if you can avoid it. This has portability 
     issues.</li>
   <li class="spaced">If it hasn't been done somewhere else, make sure all data written to the database has
