@@ -5,10 +5,10 @@
     require_once("../../config.php");
     require_once("locallib.php");
 
-    optional_variable($id);    // Course Module ID, or
-    optional_variable($q);     // quiz ID
+    $id = optional_param('id',0,PARAM_INT);    // Course Module ID, or
+    $q = optional_param('q',0,PARAM_INT);     // quiz ID
 
-    optional_variable($mode, "overview");        // Report mode
+    $mode = optional_param('mode', 'overview', PARAM_ALPHA);        // Report mode
 
     if ($id) {
         if (! $cm = get_record("course_modules", "id", $id)) {
