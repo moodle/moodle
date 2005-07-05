@@ -116,6 +116,8 @@
 
     $SESSION->scorm_scoid = $sco->id;
 ?>
+               <script language="JavaScript" type="text/javascript" src="request.js"></script>
+               <script language="JavaScript" type="text/javascript" src="api.php?id=<?php echo $cm->id.$scoidstring.$modestring ?>"></script>
             </td></tr>
             <tr><td class="center">
                 <form name="navform" method="post" action="playscorm.php?id=<?php echo $cm->id ?>" target="_top">
@@ -174,7 +176,5 @@
         }
     -->
     </script>
-    <script language="JavaScript" type="text/javascript" src="request.js"></script>
-    <script language="JavaScript" type="text/javascript" src="api.php?id=<?php echo $cm->id.$scoidstring.$modestring ?>"></script>
 </body>
 </html>
