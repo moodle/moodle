@@ -5,6 +5,7 @@ $string['modulename'] = 'SCORM';
 $string['modulenameplural'] = 'SCORMs';
 #------------------------------------------------------------
 
+$string['advanced'] = 'Avancé';
 $string['asset'] = 'Élément';
 $string['attr_error'] = 'Valeur incorrecte de l\'attribut ($a->attr) dans la balise $a->tag.';
 $string['autocontinue'] = 'Continuer automatiquement';
@@ -57,7 +58,7 @@ $string['packagedir'] = 'Erreur du système de fichier : impossible de créer le d
 $string['packagefile'] = 'Pas de paquet spécifié';
 $string['passed'] = 'Réussi';
 $string['php5'] = 'PHP 5 (librairie DOMXML native)';
-$string['popup'] = 'Ouvrir le SCO actuel dans une nouvelle fenêtre';
+$string['popup'] = 'Ouvrir l\'objet dans une nouvelle fenêtre';
 $string['position_error'] = 'La balise $a->tag ne peut pas être un descendant de la balise $a->parent';
 $string['prev'] = 'Précédent';
 $string['regular'] = 'Descriptif normal';
@@ -66,6 +67,7 @@ $string['review'] = 'Relecture';
 $string['scoes'] = 'SCOs';
 $string['score'] = 'Résultat';
 $string['scormcourse'] = 'Cours SCORM';
+$string['stagesize'] = 'Taille cadre/fenêtre';
 $string['syntax'] = 'Erreur de syntaxe';
 $string['tag_error'] = 'Balise inconne ($a->tag) avec ce contenu : $a->value';
 $string['too_many_attributes'] = 'La balise $a->tag a trop d\'attributs';
