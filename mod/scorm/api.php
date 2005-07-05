@@ -39,7 +39,7 @@
         $userdata = $usertrack;
     } else {
         $userdata->status = '';
-        $userdata->scorre_raw = '';
+        $userdata->score_raw = '';
     }
     $userdata->student_id = $USER->username;
     $userdata->student_name = $USER->lastname .', '. $USER->firstname;
