@@ -134,8 +134,8 @@ function filter_phrases ($text, &$link_array, $ignoretagsopen=NULL, $ignoretagsc
             if ($linkobject->replacementphrase) {    //We have specified a replacement phrase
             /// Strip tags
                 $linkobject->work_replacementphrase = strip_tags($linkobject->replacementphrase);
-            } else {                                 //The replacement is the phrase itself
-                $linkobject->work_replacementphrase = $linkobject->work_phrase;
+            } else {                                 //The replacement is the original phrase as matched below
+                $linkobject->work_replacementphrase = '$1';
             }
 
         /// Quote any regular expression characters and the delimiter in the work phrase to be searched
