@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // survey.php - created with Moodle 1.3 Stable (001) (2004052500)
+      // survey.php - created with Moodle 1.5 + (2005060201)
 
 
 $string['actual'] = 'Atual';
@@ -138,8 +138,7 @@ Reflita sobre cada declaração e, depois, selecione a opção que descreve melhor a
 
 Não há respostas certas ou erradas; nós estamos interessados apenas na sua opinião. Todas as respostas dadas são confidenciais e não tem nenhum impacto sobre a avaliação do participante.
 
-Agradecemos a sua colaboração.
-';
+Agradecemos a sua colaboração.';
 $string['collesaname'] = 'COLLES (experiência efetiva)';
 $string['collesapintro'] = '<b>COMO RESPONDER AO QUESTIONÁRIO</b>
 
@@ -151,8 +150,7 @@ Reflita sobre cada declaração e, depois, selecione a opção que descreve melhor a
 
 Não há respostas certas ou erradas; nós estamos interessados apenas na sua opinião. Todas as respostas dadas são confidenciais e não tem nenhum impacto sobre a avaliação do participante.
 
-Agradecemos a sua colaboração.
-';
+Agradecemos a sua colaboração.';
 $string['collesapname'] = 'COLLES (expectativas e experiência efetiva)';
 $string['collesm1'] = 'Relevância';
 $string['collesm1short'] = 'Relevância';
@@ -182,18 +180,18 @@ $string['collespname'] = 'COLLES (expectativas)';
 $string['done'] = 'Feito';
 $string['download'] = 'Baixar';
 $string['downloadexcel'] = 'Baixar os dados como arquivo Excel';
-$string['downloadinfo'] = 'É possível baixar os dados completos desta avaliação do curso em formato compatível com Excel, SPSS ou outro pacote.';
+$string['downloadinfo'] = 'É possível baixar os dados completos desta pesquisa de avaliação em formato compatível com Excel, SPSS ou outro pacote.';
 $string['downloadtext'] = 'Baixar o arquivo dos dados em formato Texto Simples';
-$string['editingasurvey'] = 'Edição de um questionários de avaliação do curso';
-$string['guestsnotallowed'] = 'Os visitantes não podem responder os questionários de avaliação do curso';
-$string['helpsurveys'] = 'Ajuda sobre os diferentes tipos de questionário de avaliação do curso';
+$string['editingasurvey'] = 'Edição de uma pesquisa de avaliação';
+$string['guestsnotallowed'] = 'Os visitantes não podem responder às pesquisas de avaliação';
+$string['helpsurveys'] = 'Ajuda sobre os diferentes tipos de pesquisa de avaliação';
 $string['howlong'] = 'Em quanto tempo você concluiu este questionário?';
 $string['howlongoptions'] = 'menos de 1 min,1-2 min,2-3 min,3-4 min,4-5-min,5-10 min,mais de 10';
 $string['ifoundthat'] = 'Frequência atual';
 $string['introtext'] = 'Texto introdutório';
 $string['ipreferthat'] = 'Frequência desejada';
-$string['modulename'] = 'Avaliação do curso';
-$string['modulenameplural'] = 'Avaliações do curso';
+$string['modulename'] = 'Pesquisa de avaliação';
+$string['modulenameplural'] = 'Pesquisas de avaliação';
 $string['name'] = 'Nome';
 $string['newsurveyresponses'] = 'Novas respostas ao questionário';
 $string['nobodyyet'] = 'Ninguém respondeu ao questionário ainda';
@@ -207,7 +205,7 @@ $string['preferredstudent'] = 'Expectativas do $a';
 $string['question'] = 'Pergunta';
 $string['questions'] = 'Perguntas';
 $string['questionsnotanswered'] = 'Algumas das perguntas de múltipla escolha não foram respondidas.';
-$string['report'] = 'Relatório de avaliação do curso';
+$string['report'] = 'Relatório da pesquisa de avaliação';
 $string['savednotes'] = 'As suas anotações foram gravadas';
 $string['scaleagree5'] = 'Discordo completamente,Discordo em parte,Não concordo nem discordo,Concordo em parte,Concordo plenamente';
 $string['scales'] = 'Escalas';
@@ -216,9 +214,9 @@ $string['seemoredetail'] = 'Clique aqui para mais detalhes';
 $string['selectedquestions'] = 'Perguntas selecionadas de uma escala, todos os participantes';
 $string['summary'] = 'Sumário';
 $string['surveycompleted'] = 'Você concluiu este questionário. O gráfico abaixo mostra as suas respostas comparadas com a média das respostas dos outros participantes.';
-$string['surveyname'] = 'Nome da avaliação do curso';
-$string['surveysaved'] = 'Avaliação do curso enviada';
-$string['surveytype'] = 'Tipo de avaliação do curso';
+$string['surveyname'] = 'Nome da pesquisa de avaliação';
+$string['surveysaved'] = 'Pesquisa de avaliação enviada';
+$string['surveytype'] = 'Tipo de pesquisa de avaliação';
 $string['thanksforanswers'] = '$a , obrigado por responder a este questionário.';
 $string['time'] = 'Duração';
 $string['viewsurveyresponses'] = 'Ver $a respostas';
