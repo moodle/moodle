@@ -986,7 +986,7 @@ function wiki_print_search_form($cmid, $search="", $userid, $groupid, $return=fa
     $output .= "<input name=\"id\" type=\"hidden\" value=\"$cmid\" />";
     $output = $output.($groupid?"<input name=\"groupid\" type=\"hidden\" value=\"$groupid\" />":"");
     $output = $output.($userid?"<input name=\"userid\" type=\"hidden\" value=\"$userid\" />":"");
-    $output .= "<input name=\"q\" type=\"text\" size=\"20\" value=\"$search\" />".' ';
+    $output .= "<input name=\"q\" type=\"text\" size=\"20\" value=\"".s($search)."\" />".' ';
     $output .= "</font>";
     $output .= "<input name=\"page\" type=\"hidden\" value=\"SearchPages\" />";
     $output .= "</form>";
