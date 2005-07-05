@@ -12,11 +12,15 @@
 <h2>Contents</h2>
 <ul>
     <a href='#structure'><li>Database structure</li></a>
-    <a href='#quiz_questions'><li>quiz_questions</li></a>
-    <a href='#quiz_newest_states'><li>quiz_newest_states</li></a>
+    <ul>
+        <a href='#static'><li>Static model</li></a>
+        <a href='#runtime'><li>Runtime model</li></a>
+        <a href='#qtype'><li>Questiontype specific tables</li></a>
+        <a href='#redundant'><li>Redundant tables</li></a>
+    </ul>
 </ul>
 
-<h2>Database structure</h2>
+<a name="structure"></a><h2>Database structure</h2>
 
 <p>
 
@@ -48,7 +52,7 @@ tables.
 
 </p>
 
-<h3>Static model</h3>
+<a name="static"><h3>Static model</h3>
 <ul>
 <li><a href="#quiz">quiz</a></li>
 <li><a href="#quiz_questions">quiz_questions</a></li>
@@ -57,14 +61,14 @@ tables.
 <li><a href="#quiz_question_instances">quiz_question_instances</a></li>
 <li><a href="#quiz_question_versions">quiz_question_versions</a></li>
 </ul>
-<h3>Runtime Model</h3>
+<a name="runtime"><h3>Runtime Model</h3>
 <ul>
 <li><a href="#quiz_attempts">quiz_attempts</a></li>
 <li><a href="#quiz_states">quiz_states</a></li>
 <li><a href="#quiz_grades">quiz_grades</a></li>
 <li><a href="#quiz_newest_states">quiz_newest_states</a></li>
 </ul>
-<h3>Questiontype specific tables</h3>
+<a name="qtype"><h3>Questiontype specific tables</h3>
 <ul>
 <li><a href="#quiz_calculated">quiz_calculated</a></li>
 <li><a href="#quiz_dataset_definitions">quiz_dataset_definitions</a></li>
@@ -83,16 +87,16 @@ tables.
 <li><a href="#quiz_shortanswer">quiz_shortanswer</a></li>
 <li><a href="#quiz_truefalse">quiz_truefalse</a></li>
 </ul>
-<h3>Redundant</h3>
+<a name="redundant"><h3>Redundant tables</h3>
 <ul>
 <li><a href="#quiz_attemptonlast_datasets">quiz_attemptonlast_datasets</a></li>
 </ul>
 <p>
 
-These simplifications reduce the number of &quot;interesting&quot; tables to a
-significantly smaller number, and still some of them are only necessary for
-understanding very specific aspects of the quiz module. The diagram below shows
-how the most important tables are linked to one another.
+These simplifications reduce the number of &quot;interesting&quot; tables
+significantly, and still some of them are only necessary for understanding very
+specific aspects of the quiz module. The diagram below shows how the (selected)
+most important tables are linked to one another.
 
 </p><p>
 <img src="databasetables-01.gif" alt="Database Model" />

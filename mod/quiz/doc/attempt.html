@@ -163,8 +163,54 @@ answers.
 <a name="complicated"></a><h2>A more complicated perspective</h2>
 <p>
 
+Before an attempt may be started there are a series of mandatory and optional
+checks, to determine if the user is allowed to attempt the quiz. In addition to
+these checks, the page display and functionality are slightly different for
+users with and without teacher privileges. Also, when the quiz is set to start
+in "secure" mode (the $quiz->popup option), the printing of the page is slightly
+different. Including all of these scenarios evidently complicates the structure
+of the attempt.php script, deviating from the simple scenario described above.
+
+</p><p>
+
+First of all, access to the quiz is denied to guests. Additionally it is
+possible to restrict acces to an IP range ($quiz->subnet) and to set up a
+password for the quiz ($quiz->password). In both cases users that can't pass the
+required tests are denied access.
+
+</p><p>
+
+When a teacher "attempts" a quiz there is a tab navigation facility at the top
+of the page, which allows the teacher to jump between reviewing, previewing and
+editing the quiz (and possibly even more options). The teacher interface also
+contains a button to start a new attempt, which is not present on the student
+interface. Teachers' attempts are automatically marked as previews, which means
+that old attempts are automatically deleted when a new attempt is started. It
+also prevents previews to show up in the students' answers review and preview
+attempts don't block the possibility of editing the quiz, while students'
+attempts do.
+
+</p><p>
+
+Further complication is introduced by the feature to allow multiple pages with
+questions and navigation between these pages. This requieres mechanisms to
+determine which questions are on which page, which page is currently displayed
+and which page needs to be viewed next. This is not too hard to achieve,
+however, one subtlety should be noted: when the attempt is closed it is
+necessary to load all questions and their most recent states before they are
+marked, whereas in the case of navgation only the questions and related states
+of the page that was displayed before are loaded, processed and saved; and the
+questions and states for the next page are loaded.
+
+</p><p>
+
+Towards the end of the script there are two blocks of code that are responsible
+for timed quizzes ($quiz->timelimit). The first block prints the start element
+of the form using javascript to make sure that javascript is enabled (which
+obviously doesn't help a lot, because the quiz is printed as usual, only the
+submit won't work). The second block includes the file jstimer.php, which prints
+a timer that counts down and causes an auto-submit when time is up.
+
 </p>
-
-
 </body>
 </html>
