@@ -134,7 +134,9 @@ class assignment_base {
      */
     function view_intro() {
         print_simple_box_start('center', '', '', '', 'generalbox', 'intro');
-        echo format_text($this->assignment->description, $this->assignment->format);
+        $formatoptions = new stdClass;
+        $formatoptions->noclean = true;
+        echo format_text($this->assignment->description, $this->assignment->format, $formatoptions);
         print_simple_box_end();
     }
 
@@ -279,6 +281,8 @@ class assignment_base {
         }
         if (empty($form->assignmenttype)) {
             $form->assignmenttype = "";
+        } else {
+            $form->assignmenttype = clean_param($form->assignmenttype, PARAM_SAFEDIR);
         }
         if (empty($form->description)) {
             $form->description = "";
@@ -324,6 +328,8 @@ class assignment_base {
         // (defined by the form in mod.html) this function
         // will create a new instance and return the id number
         // of the new instance.
+
+        $assignment->assignmenttype = clean_param($assignment->assignmenttype, PARAM_SAFEDIR);
 
         $assignment->timemodified = time();
         if (empty($assignment->dueenable)) {
@@ -387,6 +393,8 @@ class assignment_base {
         // (defined by the form in mod.html) this function
         // will create a new instance and return the id number
         // of the new instance.
+
+        $assignment->assignmenttype = clean_param($assignment->assignmenttype, PARAM_SAFEDIR);
 
         $assignment->timemodified = time();
         $assignment->timemodified = time();

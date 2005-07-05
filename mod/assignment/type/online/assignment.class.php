@@ -162,7 +162,7 @@ class assignment_online extends assignment_base {
         $output = '<div class="files">'.
                   '<img align="middle" src="'.$CFG->pixpath.'/f/html.gif" height="16" width="16" alt="html" />'.
                   link_to_popup_window ('/mod/assignment/type/online/file.php?id='.$this->cm->id.'&amp;userid='.
-                  $submission->userid, 'file'.$userid, shorten_text($submission->data1, 15), 450, 580, 
+                  $submission->userid, 'file'.$userid, shorten_text(strip_tags(format_text($submission->data1,$submission->data2)), 15), 450, 580, 
                   get_string('submission', 'assignment'), 'none', true).
                   '</div>';
 
@@ -174,8 +174,15 @@ class assignment_online extends assignment_base {
 
     function preprocess_submission(&$submission) {
         if ($this->assignment->var1 && empty($submission->comment)) {  // comment inline
-            $submission->comment = $submission->data1;   // Copy student data to teacher
-            $submission->format  = $submission->data2;
+            if ($this->usehtmleditor) {
+                // Convert to html, clean & copy student data to teacher
+                $submission->comment = format_text($submission->data1, $submission->data2);
+                $submission->format  = FORMAT_HTML;
+            } else {
+                // Copy student data to teacher
+                $submission->comment = $submission->data1;
+                $submission->format  = $submission->data2;
+            }
         }
     }
 
