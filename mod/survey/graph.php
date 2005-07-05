@@ -4,10 +4,10 @@
     require_once("$CFG->libdir/graphlib.php");
     require_once("lib.php");
 
-    require_variable($id);    // Course Module ID
-    require_variable($type);  // Graph Type
-    optional_variable($group, "0");  // Group ID
-    optional_variable($sid);  // Student ID
+    $id = required_param('id',PARAM_INT);    // Course Module ID
+    $type = required_param('type',PARAM_CLEAN);  // Graph Type
+    $group = optional_param('group', 0, PARAM_INT);  // Group ID
+    $sid = optional_param('sid', 0, PARAM_INT);  // Student ID
 
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");

@@ -3,6 +3,7 @@
     require_once('../../config.php');
     require_once('lib.php');
 
+    $id = required_param( 'id', PARAM_INT );
 
 // Make sure this is a legitimate posting
 
@@ -13,8 +14,6 @@
     if (isguest()) {
         error("Guests are not allowed to answer surveys", $_SERVER["HTTP_REFERER"]);
     }
-
-    require_variable($id);    // Course Module ID
 
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");
