@@ -428,7 +428,23 @@ class assignment_base {
                     $event->timestart   = $assignment->timedue;
 
                     update_event($event);
+                } else {
+                    $event = NULL;
+                    $event->name        = $assignment->name;
+                    $event->description = $assignment->description;
+                    $event->courseid    = $assignment->course;
+                    $event->groupid     = 0;
+                    $event->userid      = 0;
+                    $event->modulename  = 'assignment';
+                    $event->instance    = $assignment->id;
+                    $event->eventtype   = 'due';
+                    $event->timestart   = $assignment->timedue;
+                    $event->timeduration = 0;
+
+                    add_event($event);
                 }
+            } else {
+                delete_records('event', 'modulename', 'assignment', 'instance', $assignment->id);
             }
         }
 
