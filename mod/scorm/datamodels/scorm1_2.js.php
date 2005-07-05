@@ -506,6 +506,7 @@ function SCORMapi1_2() {
         } else {
             datastring = CollectData(data,'cmi');
         }
+        datastring += '&scoid=<?php echo $sco->id ?>';
         //popupwin(datastring);
         var myRequest = NewHttpReq();
         result = DoRequest(myRequest,"<?php p($CFG->wwwroot) ?>/mod/scorm/datamodel.php","id=<?php p($id) ?>&sesskey=<?php p($USER->sesskey) ?>"+datastring);

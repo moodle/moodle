@@ -29,8 +29,8 @@
 
     require_login($course->id, false, $cm);
     
-    if (confirm_sesskey() && (isset($SESSION->scorm_scoid))) {
-        $scoid = $SESSION->scorm_scoid;
+    if (confirm_sesskey() && (isset($_POST['scoid']))) {
+        $scoid = $_POST['scoid'];
         $result = true;
         foreach ($_POST as $element => $value) {
             if (substr($element,0,3) == 'cmi') {
