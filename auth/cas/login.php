@@ -1,9 +1,9 @@
 <?php
-// $Id: login.php
+// $Id$
 // author: romualdLorthioir $
 //CHANGELOG:
 //05.03.2005 replace /login/index.php
-
+defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
 
     //Define variables used in page
     if (!$site = get_site()) {
