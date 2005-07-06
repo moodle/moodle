@@ -274,6 +274,14 @@ global $THEME;
     unset($_GET['MoodleSession'.$CFG->sessioncookie]);
     unset($_POST['MoodleSession'.$CFG->sessioncookie]);
 
+    //compatibility hack for Moodle Cron, cookies not deleted, but set to "deleted"
+    if (!empty($_COOKIE['MoodleSession'.$CFG->sessioncookie]) && $_COOKIE['MoodleSession'.$CFG->sessioncookie] == "deleted") {
+        unset($_COOKIE['MoodleSession'.$CFG->sessioncookie]);
+    }
+    if (!empty($_COOKIE['MoodleSessionTest'.$CFG->sessioncookie]) && $_COOKIE['MoodleSessionTest'.$CFG->sessioncookie] == "deleted") {
+        unset($_COOKIE['MoodleSessionTest'.$CFG->sessioncookie]);
+    }
+
     if (!isset($nomoodlecookie)) {
         session_name('MoodleSession'.$CFG->sessioncookie);
         @session_start();
