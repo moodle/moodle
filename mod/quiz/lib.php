@@ -11,14 +11,7 @@
 */
 
 require_once($CFG->libdir.'/pagelib.php');
-
-/// CONSTANTS ///////////////////////////////////////////////////////////////////
-
-/**
-* If start and end date for the quiz are more than this many seconds apart
-* they will be represented by two separate events in the calendar
-*/
-define("QUIZ_MAX_EVENT_LENGTH", "432000");   // 5 days maximum
+require_once($CFG->dirroot.'/mod/quiz/constants.php');
 
 
 /// FUNCTIONS ///////////////////////////////////////////////////////////////////
