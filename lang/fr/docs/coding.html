@@ -220,7 +220,7 @@
 
 <li class="spaced">N'utilisez pas la fonction <code>require_variable()</code>. Utilisez en lieu et place la fonction <code>required_param()</code>. Choisissez la valeur PARAM_XXXX correcte pour le type de données que vous attendez.</li>
 
-<li class="spaced">N'utilisez pas si possible la fonction <code>data_submitted()</code>, car elle court-circuite les fonctions de nettoyage de <code>required_param()</code> et de <code>optional_param()</code>.
+<li class="spaced">N'utilisez la fonction <code>data_submitted()</code> qu'avec précaution. Avant son utilisation, n'oubliez pas de nettoyer les données.</li>
 
 <li class="spaced">N'utilisez pas <code>$_GET</code>, <code>$_POST</code> ni <code>$_REQUEST</code>. Utilisez la fonction <code>required_param()</code> ou <code>optional_param()</code> appropriée à vos besoins.</li>
 
