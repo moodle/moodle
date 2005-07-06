@@ -232,8 +232,7 @@ GOOD: $assignments (for an array of objects)<br />
     value for a variable, use the <code>set_default()</code> function.</li>
   <li class="spaced">Do not use the <code>require_variable()</code> function. Use the <code>required_param()</code>
     function instead. Pick the correct PARAM_XXXX value for the data type you expect.</li>
-  <li class="spaced">Do not use <code>data_submitted()</code>, if possible, as this bypasses the data cleaning
-    functions of <code>required_param()</code> and <code>optional_param()</code>.
+  <li class="spaced">Use <code>data_submitted()</code>, with care. Data must still be cleaned before use.</li>
   <li class="spaced">Do not use <code>$_GET</code>, <code>$_POST</code> or <code>$_REQUEST</code>. Use the
     appropriate <code>required_param()</code> or <code>optional_param()</code> appropriate to your need.</li>
   <li class="spaced">Do not check for an action using something like <code>if (isset($_GET['something']))</code>. 
