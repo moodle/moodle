@@ -265,21 +265,21 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
 
             if ($question->options->single) {
                 $type = 'type="radio"';
-                $name = "name=\"{$question->name_prefix}\"";
+                $name   = "name=\"{$question->name_prefix}\"";
                 $checked = $aid == $state->responses['']
                          ? 'checked="checked"' : '';
             } else {
                 $type = ' type="checkbox" ';
-                $name = "name=\"{$question->name_prefix}$aid\"";
+                $name   = "name=\"{$question->name_prefix}{$aid}\"";
                 $checked = isset($state->responses[$aid])
                          ? 'checked="checked"' : '';
             }
-
+            $id   = $question->name_prefix . $aid;
+            $fullid = "id=\"$id\"";
 
             // Print the control
-            echo "<input $readonly $name $checked $type value=\"$aid\" alt=\""
-             . s($answer->answer) . '" />';
-
+            echo "<input $readonly $fullid $name $checked $type value=\"$aid\"" .
+                 "alt=\"" . s($answer->answer) . '" />';
             echo '</td>';
 
             // Print the text by the control highlighting if correct responses
@@ -288,13 +288,13 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
             // selection case
             if ($options->readonly && $options->correct_responses &&
              in_array($aid, $correctanswers)) {
-                echo '<td valign="top" class="highlight">' .
+                echo '<td valign="top" class="highlight"><label for="'.$id.'">'.
                  format_text("$qnumchar. $answer->answer", FORMAT_MOODLE ,
-                 $formatoptions) . '</td>';
+                 $formatoptions) . '</label></td>';
             } else {
-                echo '<td valign="top">' .
+                echo '<td valign="top"><label for="'.$id.'">'.
                  format_text("$qnumchar. $answer->answer", FORMAT_MOODLE,
-                 $formatoptions) . '</td>';
+                 $formatoptions) . '</label></td>';
             }
 
             // Print feedback by selected options if feedback is on

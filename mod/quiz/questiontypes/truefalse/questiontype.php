@@ -192,17 +192,20 @@ class quiz_truefalse_qtype extends quiz_default_questiontype {
 
         // Print the controls
         $inputname = ' name="'.$question->name_prefix.'" ';
+        $trueid    = $question->name_prefix.'true';
+        $falseid   = $question->name_prefix.'false';
         echo '<table align="right" cellpadding="5"><tr><td align="right">';
         echo $stranswer . ':&nbsp;&nbsp;</td>';
         echo '<td' . $truecorrect . '>';
         echo '<input type="radio"' . $truechecked . $readonly . $inputname;
-        echo 'value="' . $answers['true']->id . '" alt="';
-        echo s($answers['true']->answer) . '" />' . s($answers['true']->answer);
+        echo 'id="'.$trueid . '" value="' . $answers['true']->id . '" alt="';
+        echo s($answers['true']->answer) . '" /><label for="'.$trueid . '">';
+        echo s($answers['true']->answer) . '</label>';
         echo '</td><td' . $falsecorrect . '>';
         echo '<input type="radio"' . $falsechecked . $readonly . $inputname;
-        echo 'value="' . $answers['false']->id . '" alt="';
-        echo s($answers['false']->answer) . '" />';
-        p($answers['false']->answer);
+        echo 'id="'.$falseid . '" value="' . $answers['false']->id . '" alt="';
+        echo s($answers['false']->answer) . '" /><label for="'.$falseid . '">';
+        echo s($answers['false']->answer) . '</label>';
         if (!empty($marked) && (!$options->readonly || $marked !== $selected)) {
             /* This should never happen but it is here both for robustness and
             to serve as an example for question type authors */

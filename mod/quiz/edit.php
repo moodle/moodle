@@ -472,7 +472,7 @@ if (self.name == 'editquestion') {
     // continues with list of questions
     print_simple_box_start("center", "100%");
     quiz_print_cat_question_list($course, $modform->category,
-                                 isset($modform->instance), $SESSION->quiz_recurse, $page, $perpage, $SESSION->quiz_showhidden);
+                                 isset($modform->instance) ? $modform->instance : 0, $SESSION->quiz_recurse, $page, $perpage, $SESSION->quiz_showhidden);
     print_simple_box_end();
     if (!isset($modform->instance)) {
         print_continue("index.php?id=$modform->course");
