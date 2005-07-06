@@ -49,10 +49,11 @@ class block_rss_client extends block_base {
         }
 
         $this->content = new stdClass;
-        
+        $this->content->text   = '';
+        $this->content->footer = '';
+
         if (empty($this->instance)) {
             // We're being asked for content without an associated instance
-            $this->content->text = '';
             return $this->content;
         }
 
