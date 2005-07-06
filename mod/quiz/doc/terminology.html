@@ -34,6 +34,22 @@ detailed documentation.
     </tr>
 
     <tr>
+        <td valign="top"><a name="#adaptive_item"></a>adaptive question (QTI
+        speak: adaptive item)
+        </td>
+        <td>Adaptive questions are questions that walk the user through a
+        directed graph of question states depending on the user's responses.
+        E.g. a complicated mathematical question that is answered incorrectly,
+        but is likely to be incorrect because of a common mistake, could provide
+        the user with a hint towards this mistake, apply a penalty and allow a
+        second attempt at this question.<br />
+        Quizzes can be run in adaptive mode, which provides buttons to mark each
+        question individually.
+        </td>
+        <td></td>
+    </tr>
+
+    <tr>
         <td valign="top"><a name="#answers"></a>answer(s)</td>
         <td>The term answer is used exclusively for the teacher defined answers
         of a question. These answers are usually stored in the
@@ -53,9 +69,55 @@ detailed documentation.
         the quiz page and return later to continue the same attempt.<br />
         Within one and the same quiz attempt a student may make several attempts
         at answering a particular question, at least if the questiontype allows
-        it and the quiz is set up in adaptive mode. These will always be 
+        it and the quiz is set up in adaptive mode. These will always be
         referred to as &quot;attempts at a question&quot;, never just as
         &quot;attempts&quot;.
+        </td>
+        <td></td>
+    </tr>
+
+    <tr>
+        <td valign="top"><a name="#event"></a>event</td>
+        <td>The $stateobject (and the <code>quiz_states</code> table) has a
+        field <code>event</code>, which indicates the event that led to the
+        creation of the state. The field can take the value of any of the
+        following constants (defined in locallib.php):
+        <ul>
+          <li>EVENTOPEN: The attempt has just been opened and this is the
+          initial state of a question, i.e. the user has seen the question did
+          not interact with it yet.</li>
+          <li>EVENTSAVE: The responses are just being saved, either because the
+          student requested this explicitly or because the student navigated to
+          another quiz page.</li>
+          <li>EVENTVALIDATE: The student requested a validation of the
+          responses. (This is not supported by all questiontypes.)</li>
+          <li>EVENTGRADE: The responses are being graded but the question
+          session is not closed. This is generally the case for adaptive
+          questions.</li>
+          <li>EVENTCLOSE: The responses are being graded and the question
+          session is closed. Usually this happens because the whole attempt
+          closes, either because the student requests it or because the time is
+          up or because we are beyond the due date.</li>
+          <li>EVENTDUPLICATEGRADE: This is a strange one. It indicates that the
+          responses would have been graded had they not been found to be
+          identical to previous responses.</li>
+        </ul>
+        When new responses are being processed by the function <code>
+        quiz_process_responses</code>, then this function is being passed the
+        event type in <code>$action->event</code> while the responses are in
+        <code>$action->responses</code>.
+        </td>
+        <td></td>
+    </tr>
+
+    <tr>
+        <td valign="top"><a name="#question"></a>question(s)</td>
+        <td>Strictly, a question in the context of the quiz module is the set of
+        definitions (question name, question text, possible answers, feedback,
+        etc.) that constitute a reusable item. Therefore a question itself is a
+        static entity. All data related to interactions with a particular
+        question (in a particular attempt on a particular quiz) is stored in its
+        corresponding states.
         </td>
         <td></td>
     </tr>
@@ -81,8 +143,29 @@ detailed documentation.
         <td><a href="responsestorage.html">response storage</a></td>
     </tr>
 
-</table>
+    <tr>
+        <td valign="top"><a name="#state"></a>state</td>
+        <td>Question states are saved in the table <code>quiz_states</code>.
+        States always "belong" to a question within a particular attempt and are
+        therefore also user specific. The first state in a question's life cycle
+        during an attempt records the fact that the user has seen the question.
+        This state is never modified, however, it can be superseded by a new
+        state, which represents a user interaction. Different user interactions
+        are defined by the events, a set of constants, one
+        for each possible type of user interaction.
+        </td>
+        <td></td>
+    </tr>
 
-</p>
+    <tr>
+        <td valign="top"><a name="#session"></a>session</td>
+        <td>A question session is the complete history of question states that
+        the question is taken through. Usually only the most recent state and
+        the last graded state are of interest though.
+        </td>
+        <td></td>
+    </tr>
+
+</table>
 </body>
 </html>
