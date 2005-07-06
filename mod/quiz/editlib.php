@@ -430,13 +430,13 @@ function quiz_print_category_form($course, $current, $recurse=1, $showhidden=fal
 *
 * @param object $course   The course object
 * @param int $categoryid  The id of the question category to be displayed
-* @param boolean $quizselected True if we are in the context of a particular quiz
+* @param int $quizid      The quiz id if we are in the context of a particular quiz, 0 otherwise
 * @param int $recurse     This is 1 if subcategories should be included, 0 otherwise
 * @param int $page        The number of the page to be displayed
 * @param int $perpage     Number of questions to show per page
 * @param boolean $showhidden   True if also hidden questions should be displayed
 */
-function quiz_print_cat_question_list($course, $categoryid, $quizselected=true,
+function quiz_print_cat_question_list($course, $categoryid, $quizid,
  $recurse=1, $page, $perpage, $showhidden=false) {
     global $QUIZ_QUESTION_TYPE, $USER;
 
@@ -465,7 +465,7 @@ function quiz_print_cat_question_list($course, $categoryid, $quizselected=true,
         echo "<p align=\"center\"><b>";
         print_string("selectcategoryabove", "quiz");
         echo "</b></p>";
-        if ($quizselected) {
+        if ($quizid) {
             echo "<p>";
             print_string("addingquestions", "quiz");
             echo "</p>";
@@ -558,11 +558,11 @@ function quiz_print_cat_question_list($course, $categoryid, $quizselected=true,
         echo "<tr>\n";
         if ($canedit) {
             echo "<td>\n";
-                if ($quizselected) {
+                if ($quizid) {
                     echo "<a title=\"$straddtoquiz\" href=\"edit.php?addquestion=$question->id&amp;sesskey=$USER->sesskey\"><img
                      src=\"../../pix/t/moveleft.gif\" border=\"0\" alt=\"$straddtoquiz\" /></a>&nbsp;";
                 }
-                echo "<a title=\"$strpreview\" href=\"javascript:void();\" onClick=\"openpopup('/mod/quiz/preview.php?id=$question->id','$strpreview','scrollbars=yes,resizable=yes,width=700,height=480', false)\"><img
+                echo "<a title=\"$strpreview\" href=\"javascript:void();\" onClick=\"openpopup('/mod/quiz/preview.php?id=$question->id&quizid=$quizid','$strpreview','scrollbars=yes,resizable=yes,width=700,height=480', false)\"><img
                       src=\"../../pix/t/preview.gif\" border=\"0\" alt=\"$strpreview\" /></a>&nbsp;";
                 echo "<a title=\"$stredit\" href=\"question.php?id=$question->id\"><img
                      src=\"../../pix/t/edit.gif\" border=\"0\" alt=\"$stredit\" /></a>&nbsp;";
@@ -596,7 +596,7 @@ function quiz_print_cat_question_list($course, $categoryid, $quizselected=true,
     echo '<a href="javascript:select_all_in(\'TABLE\', null, \'categoryquestions\');">'.$strselectall.'</a> /'.
      ' <a href="javascript:deselect_all_in(\'TABLE\', null, \'categoryquestions\');">'.$strselectnone.'</a>'.
      '</td><td align="right"><b>'.get_string('withselected', 'quiz').':</b></td></tr><tr><td>';
-    if ($quizselected) {
+    if ($quizid) {
         echo "<input type=\"submit\" name=\"add\" value=\"<< $straddtoquiz\" />\n";
         echo '</td><td>';
     }
@@ -605,7 +605,7 @@ function quiz_print_cat_question_list($course, $categoryid, $quizselected=true,
     quiz_category_select_menu($course->id, false, true, $category->id);
     echo "</td></tr></table>";
 
-    if ($quizselected) {
+    if ($quizid) {
         for ($i=1;$i<=10; $i++) {
             $randomcount[$i] = $i;
         }
