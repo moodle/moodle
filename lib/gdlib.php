@@ -182,6 +182,18 @@ function save_profile_image($id, $uploadmanager, $dir='users') {
     ImageCopyBicubic($im1, $im, 0, 0, $cx-$half, $cy-$half, 100, 100, $half*2, $half*2);
     ImageCopyBicubic($im2, $im, 0, 0, $cx-$half, $cy-$half, 35, 35, $half*2, $half*2);
 
+    // Draw borders over the top.
+    $black1 = ImageColorAllocate ($im1, 0, 0, 0);
+    $black2 = ImageColorAllocate ($im2, 0, 0, 0);
+    ImageLine ($im1, 0, 0, 0, 99, $black1);
+    ImageLine ($im1, 0, 99, 99, 99, $black1);
+    ImageLine ($im1, 99, 99, 99, 0, $black1);
+    ImageLine ($im1, 99, 0, 0, 0, $black1);
+    ImageLine ($im2, 0, 0, 0, 34, $black2);
+    ImageLine ($im2, 0, 34, 34, 34, $black2);
+    ImageLine ($im2, 34, 34, 34, 0, $black2);
+    ImageLine ($im2, 34, 0, 0, 0, $black2);
+
     if (ImageJpeg($im1, $CFG->dataroot .'/'. $dir .'/'. $id .'/f1.jpg', 90) and 
         ImageJpeg($im2, $CFG->dataroot .'/'. $dir .'/'. $id .'/f2.jpg', 95) ) {
         @chmod($CFG->dataroot .'/'. $dir .'/'. $id .'/f1.jpg', 0666);
