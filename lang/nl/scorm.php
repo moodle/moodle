@@ -1,7 +1,8 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.6 development (2005052400)
+      // scorm.php - created with Moodle 1.6 development (2005060201)
 
 
+$string['advanced'] = 'Geavanceerd';
 $string['asset'] = 'Bezit';
 $string['attr_error'] = 'Foute waarde voor attribuut ($a->attr) in tag $a->tag.';
 $string['autocontinue'] = 'Ga automatisch verder';
@@ -53,6 +54,7 @@ $string['notattempted'] = 'Niet geprobeerd';
 $string['organization'] = 'Organisatie';
 $string['organizations'] = 'Organisaties';
 $string['packagedir'] = 'Fout van het bestandssysteem: kan geen map voor het pakket maken';
+$string['packagefile'] = 'Je hebt geen bestand met een pakket gespecifieerd';
 $string['passed'] = 'Geslaagd';
 $string['php5'] = 'PHP 5 (DOMXML native library)';
 $string['popup'] = 'Open de huidige SCO in een nieuw venster';
@@ -63,6 +65,8 @@ $string['report'] = 'Rapport';
 $string['review'] = 'Herzien';
 $string['scoes'] = 'Scoes';
 $string['score'] = 'Score';
+$string['scormcourse'] = 'SCORM cursus';
+$string['stagesize'] = 'Frame- / venstergrootte';
 $string['syntax'] = 'Syntaxfout';
 $string['tag_error'] = 'Onbekende tag ($a->tag) met deze inhoud: $a->value';
 $string['too_many_attributes'] = 'Tag $a->tag heeft te veel attributen';
