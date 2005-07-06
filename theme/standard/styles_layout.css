@@ -86,7 +86,7 @@ a img {
 img.userpicture,
 img.grouppicture,
 .block_online_users .listentry img {
-  border: 1px solid
+  border: 0px solid
 }
 
 .notifyproblem {
