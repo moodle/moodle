@@ -10,6 +10,7 @@
     $name        = optional_param('name');
     $edit        = optional_param('edit');
     $idnumber    = optional_param('idnumber');
+    $topic       = optional_param('topic',0,PARAM_INT);
 
     if (empty($id) && empty($name)) {
         error("Must specify course id or short name");
