@@ -121,7 +121,7 @@
                                      g.question = t.id",false);
 
         //Now, foreach detected category, we look for their parents upto 0 (top category)
-        $categories = get_records_sql("SELECT old_id, old_id 
+        $categories = get_records_sql("SELECT old_id, old_id
                                        FROM {$CFG->prefix}backup_ids
                                        WHERE backup_code = $backup_unique_code AND
                                              table_name = 'quiz_categories'");
@@ -190,7 +190,7 @@
             }
         }
     }
-    
+
     //Delete category ids from backup_ids table
     function delete_category_ids ($backup_unique_code) {
         global $CFG;
@@ -459,7 +459,7 @@
             foreach ($numericals as $numerical) {
                 $status =fwrite ($bf,start_tag("NUMERICAL",$level,true));
                 //Print numerical contents
-                fwrite ($bf,full_tag("ANSWERS",$level+1,false,$numerical->answers));
+                fwrite ($bf,full_tag("ANSWER",$level+1,false,$numerical->answer));
                 fwrite ($bf,full_tag("TOLERANCE",$level+1,false,$numerical->tolerance));
                 //Now backup numerical_units
                 $status = quiz_backup_numerical_units($bf,$preferences,$question,7);
@@ -491,21 +491,8 @@
                 $status =fwrite ($bf,start_tag("MULTIANSWER",7,true));
                 //Print multianswer contents
                 fwrite ($bf,full_tag("ID",8,false,$multianswer->id));
-                fwrite ($bf,full_tag("ANSWERS",8,false,$multianswer->answers));
-                fwrite ($bf,full_tag("POSITIONKEY",8,false,$multianswer->positionkey));
-                fwrite ($bf,full_tag("ANSWERTYPE",8,false,$multianswer->answertype));
-                fwrite ($bf,full_tag("NORM",8,false,$multianswer->norm));
-                //Depending of the ANSWERTYPE, we must encode different info
-                //to be able to re-create records in quiz_shortanswer, quiz_multichoice and
-                //quiz_numerical
-                if ($multianswer->answertype == "1") {
-                    $status = quiz_backup_shortanswer($bf,$preferences,$question,8,false);
-                } else if ($multianswer->answertype == "3") {
-                    $status = quiz_backup_multichoice($bf,$preferences,$question,8,false);
-                } else if ($multianswer->answertype == "8") {
-                    $status = quiz_backup_numerical($bf,$preferences,$question,8,false);
-                }
-
+                fwrite ($bf,full_tag("QUESTION",8,false,$multianswer->question));
+                fwrite ($bf,full_tag("SEQUENCE",8,false,$multianswer->sequence));
                 $status =fwrite ($bf,end_tag("MULTIANSWER",7,true));
             }
             //Print multianswers footer
@@ -1011,6 +998,24 @@
         return $info;
     }
 
+    //Return a content encoded to support interactivities linking. Every module
+    //should have its own. They are called automatically from the backup procedure.
+    function quiz_encode_content_links ($content,$preferences) {
+
+        global $CFG;
+
+        $base = preg_quote($CFG->wwwroot,"/");
+
+        //Link to the list of quizs
+        $buscar="/(".$base."\/mod\/quiz\/index.php\?id\=)([0-9]+)/";
+        $result= preg_replace($buscar,'$@QUIZINDEX*$2@$',$content);
+
+        //Link to quiz view by moduleid
+        $buscar="/(".$base."\/mod\/quiz\/view.php\?id\=)([0-9]+)/";
+        $result= preg_replace($buscar,'$@QUIZVIEWBYID*$2@$',$result);
+
+        return $result;
+    }
 
 // INTERNAL FUNCTIONS. BASED IN THE MOD STRUCTURE
 
