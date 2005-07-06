@@ -437,7 +437,7 @@ $string['loginguest'] = 'Entrar como invitado';
 $string['loginsite'] = 'Entrar al sitio';
 $string['loginsteps'] = 'Para tener acceso completo a los cursos necesita crear una cuenta para usted en este sitio web. Además, cada uno de los cursos puede tener una clave de acceso que necesitará para entrar en los mismos. Estos son los pasos a seguir:
    <ol>
-   <li>Rellene la <a href="$a">Solicitud de alta</a>.</li>
+   <li>Rellene la <a href=\"$a\">Solicitud de alta</a>.</li>
    <li>El sistema le enviará un correo electrónico para verificar que su dirección es correcta.</li>
    <li>Lea el correo y confirme su alta.</li>
    <li>Para entrar en los cursos se le pedirá una \"clave de acceso\", que se le enviará cuando se matricule en los mismos.</li>
