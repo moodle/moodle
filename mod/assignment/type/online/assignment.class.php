@@ -65,7 +65,7 @@ class assignment_online extends assignment_base {
         $defaulttext = $submission ? $submission->data1 : '';
         $defaultformat = $submission ? $submission->data2 : $this->defaultformat;
 
-        echo '<form name="theform" action="view.php?id='.$this->cm->id.'" method="post">';  // do this so URLs look good
+        echo '<form name="theform" action="view.php" method="post">';  // do this so URLs look good
 
         echo '<table cellspacing="0" class="editbox" align="center">';
         echo '<tr><td align="right">';
