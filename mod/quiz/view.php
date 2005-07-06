@@ -121,6 +121,7 @@
     
             notify("<a href=\"report.php?mode=overview&amp;id=$cm->id\">$strviewallanswers ($usercount $strusers)</a>");
         }
+        echo '</td></tr></table>';
         print_footer($course);
         exit;
     }
@@ -135,6 +136,7 @@
         notice_yesno(get_string('guestno', 'quiz').'<br /><br />'.get_string('liketologin'),
                      $wwwroot, $_SERVER['HTTP_REFERER']);
         print_footer($course);
+        echo '</td></tr></table>';
         exit;
     }
 
