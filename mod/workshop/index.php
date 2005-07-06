@@ -4,7 +4,7 @@
     require("lib.php");
     require("locallib.php");
 
-    require_variable($id);   // course
+    $id = required_param('id',PARAM_INT);   // course
 
     if (! $course = get_record("course", "id", $id)) {
         error("Course ID is incorrect");

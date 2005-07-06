@@ -4,9 +4,10 @@
     require("lib.php");
     require("locallib.php");
 
-    require_variable($aid);   // Assessment ID
-    optional_variable($allowcomments, false);
-    optional_variable($redirect, '');
+    $aid = required_param('aid',PARAM_INT);   // Assessment ID
+    $allowcomments = optional_param('allowcomments', false);
+    $redirect = optional_param('redirect', '');
+    $frameset = optional_param('frameset','',PARAM_ALPHA);
 
     if (! $assessment = get_record("workshop_assessments", "id", $aid)) {
         error("Assessment id is incorrect");
@@ -36,7 +37,7 @@
 
     /// Now check whether we need to display a frameset
 
-    if (empty($_GET['frameset'])) {
+    if (empty($frameset)) {
         echo "<head><title>{$course->shortname}: ".format_string($workshop->name,true)."</title></head>\n";
         echo "<frameset rows=\"90%,*\" border=\"10\">";
         echo "<frame src=\"viewassessment.php?id=$id&amp;aid=$aid&amp;allowcomments=$allowcomments&amp;frameset=top&amp;redirect=$redirect\" border=\"10\">";
@@ -47,7 +48,7 @@
 
     /// top frame with the navigation bar and the assessment form
 
-    if (!empty($_GET['frameset']) and $_GET['frameset'] == "top") {
+    if ($frameset == "top") {
 
         print_header_simple(format_string($workshop->name), "",
                      "<a href=\"index.php?id=$course->id\">$strworkshops</a> ->

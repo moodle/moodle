@@ -4,7 +4,7 @@
     require("lib.php");
     require("locallib.php");
 
-    require_variable($id);          // CM ID
+    $id = required_param('id',PARAM_INT);          // CM ID
 
 
     if (! $cm = get_record("course_modules", "id", $id)) {
