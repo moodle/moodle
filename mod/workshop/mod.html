@@ -351,24 +351,8 @@
     <td align="right"><b><?php  print_string("maximumsize", "workshop") ?>:</b></td>
     <td>
         <?php
-        $sizelist = array("10Kb", "50Kb", "100Kb", "500Kb", "1Mb", "2Mb", "5Mb", "10Mb", "20Mb", "50Mb");
-        $maxsize = get_max_upload_file_size();
-        $sizeinlist = false;
-        foreach ($sizelist as $size) {
-            $sizebytes = get_real_size($size);
-            if ($sizebytes < $maxsize) {
-                $filesize[$sizebytes] = $size;
-            }
-            if ($form->maxbytes == $sizebytes) {
-                $sizeinlist = true;
-            }
-        }
-        $filesize[$maxsize] = display_size($maxsize);
-        if (!$sizeinlist) {
-            $form->maxbytes = get_real_size("500K");
-        }
-        ksort($filesize, SORT_NUMERIC);
-        choose_from_menu($filesize, "maxbytes", "$form->maxbytes", "");
+        $choices = get_max_upload_sizes($CFG->maxbytes, $course->maxbytes);
+        choose_from_menu($choices, "maxbytes", "$form->maxbytes","" );
         ?>
     </td>
 </tr>
