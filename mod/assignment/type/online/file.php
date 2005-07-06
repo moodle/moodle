@@ -38,6 +38,19 @@
 
     if ($submission = $assignmentinstance->get_submission($userid)) {
         print_header(fullname($user,true).': '.$assignment->name);
+
+        print_simple_box_start('center', '', '', '', 'generalbox', 'dates');
+        echo '<table>';
+        if ($assignment->timedue) {
+            echo '<tr><td class="c0">'.get_string('duedate','assignment').':</td>';
+            echo '    <td class="c1">'.userdate($assignment->timedue).'</td></tr>';
+        }
+        echo '<tr><td class="c0">'.get_string('lastedited').':</td>';
+        echo '    <td class="c1">'.userdate($submission->timemodified);
+        echo ' ('.get_string('numwords', '', count_words(format_text($submission->data1, $submission->data2))).')</td></tr>';
+        echo '</table>';
+        print_simple_box_end();
+
         print_simple_box(format_text($submission->data1, $submission->data2), 'center', '100%');
         close_window_button();
         print_footer('none');

@@ -29,9 +29,12 @@ class assignment_online extends assignment_base {
 
         if ($data = data_submitted()) {      // No incoming data?
             if ($this->update_submission($data)) {
-                notify(get_string('submissionsaved', 'assignment'));
+                //redirect to get updated submission date and word count
+                redirect('view.php?id='.$this->cm->id.'&saved=1');
             }
-        }       
+        } else if (!empty($_GET['saved'])) {
+            notify(get_string('submissionsaved', 'assignment'));
+        }
 
         print_simple_box_start('center', '70%', '', '', 'generalbox', 'online');
         $submission = $this->get_submission();
@@ -57,6 +60,36 @@ class assignment_online extends assignment_base {
         $this->view_feedback();
 
         $this->view_footer();
+    }
+
+    /*
+     * Display the assignment dates
+     */
+    function view_dates() {
+        global $USER;
+
+        if (!$this->assignment->timeavailable && !$this->assignment->timedue) {
+            return;
+        }
+
+        print_simple_box_start('center', '', '', '', 'generalbox', 'dates');
+        echo '<table>';
+        if ($this->assignment->timeavailable) {
+            echo '<tr><td class="c0">'.get_string('availabledate','assignment').':</td>';
+            echo '    <td class="c1">'.userdate($this->assignment->timeavailable).'</td></tr>';
+        }
+        if ($this->assignment->timedue) {
+            echo '<tr><td class="c0">'.get_string('duedate','assignment').':</td>';
+            echo '    <td class="c1">'.userdate($this->assignment->timedue).'</td></tr>';
+        }
+        $submission = $this->get_submission($USER->id);
+        if ($submission) {
+            echo '<tr><td class="c0">'.get_string('lastedited').':</td>';
+            echo '    <td class="c1">'.userdate($submission->timemodified);
+            echo ' ('.get_string('numwords', '', count_words(format_text($submission->data1, $submission->data2))).')</td></tr>';
+        }
+        echo '</table>';
+        print_simple_box_end();
     }
 
     function view_edit_form($submission = NULL) {
@@ -162,7 +195,7 @@ class assignment_online extends assignment_base {
         $output = '<div class="files">'.
                   '<img align="middle" src="'.$CFG->pixpath.'/f/html.gif" height="16" width="16" alt="html" />'.
                   link_to_popup_window ('/mod/assignment/type/online/file.php?id='.$this->cm->id.'&amp;userid='.
-                  $submission->userid, 'file'.$userid, shorten_text(strip_tags(format_text($submission->data1,$submission->data2)), 15), 450, 580, 
+                  $submission->userid, 'file'.$userid, shorten_text(trim(strip_tags(format_text($submission->data1,$submission->data2))), 15), 450, 580, 
                   get_string('submission', 'assignment'), 'none', true).
                   '</div>';
 
