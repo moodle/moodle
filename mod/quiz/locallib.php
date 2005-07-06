@@ -1229,10 +1229,10 @@ function quiz_restore_question_sessions(&$questions, $quiz, $attempt) {
             }
         } else {
             // Create a new state object
-            if ($quiz->attemptonlast and $attempt->attempt > 1) {
+            if ($quiz->attemptonlast and $attempt->attempt > 1 and !$attempt->preview) {
                 // build on states from last attempt
-                if (empty($lastattemptid)) {
-                    $lastattemptid = get_field('quiz_attempts', 'id', 'quiz', $attempt->quiz, 'userid', $attempt->userid, 'attempt', $attempt->attempt-1);
+                if (!$lastattemptid = get_field('quiz_attempts', 'id', 'quiz', $attempt->quiz, 'userid', $attempt->userid, 'attempt', $attempt->attempt-1)) {
+                    error('Could not find previous attempt to build on');
                 }
                 // Load the last graded state for the question
                 $sql = "SELECT $statefields".
@@ -1241,7 +1241,9 @@ function quiz_restore_question_sessions(&$questions, $quiz, $attempt) {
                        " WHERE s.id = n.newgraded".
                        "   AND n.attemptid = '$lastattemptid'".
                        "   AND n.questionid = '$i'";
-                $states[$i] = get_record_sql($sql);
+                if (!$states[$i] = get_record_sql($sql)) {
+                    error('Could not find state for previous attempt to build on');
+                }
                 quiz_restore_state($questions[$i], $states[$i]);
                 $states[$i]->attempt = $attempt->id;
                 $states[$i]->question = (int) $i;
@@ -1252,6 +1254,7 @@ function quiz_restore_question_sessions(&$questions, $quiz, $attempt) {
                 $states[$i]->raw_grade = '';
                 $states[$i]->penalty = '';
                 $states[$i]->sumpenalty = '0.0';
+                $states[$i]->changed = true;
                 $states[$i]->last_graded = new object;
                 $states[$i]->last_graded->attempt = $attempt->id;
                 $states[$i]->last_graded->question = (int) $i;
@@ -1298,8 +1301,7 @@ function quiz_restore_question_sessions(&$questions, $quiz, $attempt) {
 * Creates the run-time fields for the states
 *
 * Extends the state objects for a question by calling
-* {@link restore_session_and_responses()} or it creates a new one by
-* calling {@link create_session_and_responses()}
+* {@link restore_session_and_responses()}
 * @return boolean         Represents success or failure
 * @param array $questions The questions for which states are needed
 * @param array $states    The states as loaded from the database, indexed
