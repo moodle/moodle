@@ -41,10 +41,13 @@ class assignment_uploadsingle extends assignment_base {
 
     function view_upload_form() {
         global $CFG;
+        $struploadafile = get_string("uploadafile");
+        $strmaxsize = get_string("maxsize", "", display_size($this->assignment->maxbytes));
 
         echo '<center>';
         echo '<form enctype="multipart/form-data" method="post" '.
              "action=\"$CFG->wwwroot/mod/assignment/upload.php\">";
+        echo "<p>$struploadafile ($strmaxsize)</p>";
         echo '<input type="hidden" name="id" value="'.$this->cm->id.'" />';
         require_once($CFG->libdir.'/uploadlib.php');
         upload_print_form_fragment(1,array('newfile'),false,null,0,$this->assignment->maxbytes,false);
