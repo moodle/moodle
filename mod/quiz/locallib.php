@@ -1225,7 +1225,8 @@ function quiz_restore_question_sessions(&$questions, $quiz, $attempt) {
                 quiz_restore_state($questions[$i], $gradedstates[$i]);
                 $states[$i]->last_graded = $gradedstates[$i];
             } else {
-                error('No graded state could be found!');
+                $states[$i]->last_graded = clone($states[$i]);
+                $states[$i]->last_graded->responses = array('' => '');
             }
         } else {
             // Create a new state object
@@ -1255,16 +1256,7 @@ function quiz_restore_question_sessions(&$questions, $quiz, $attempt) {
                 $states[$i]->penalty = '';
                 $states[$i]->sumpenalty = '0.0';
                 $states[$i]->changed = true;
-                $states[$i]->last_graded = new object;
-                $states[$i]->last_graded->attempt = $attempt->id;
-                $states[$i]->last_graded->question = (int) $i;
-                $states[$i]->last_graded->seq_number = 0;
-                $states[$i]->last_graded->timestamp = $attempt->timestart;
-                $states[$i]->last_graded->event = ($attempt->timefinish) ? QUIZ_EVENTCLOSE : QUIZ_EVENTOPEN;
-                $states[$i]->last_graded->grade = '';
-                $states[$i]->last_graded->raw_grade = '';
-                $states[$i]->last_graded->penalty = '';
-                $states[$i]->last_graded->sumpenalty = '0.0';
+                $states[$i]->last_graded = clone($states[$i]);
                 $states[$i]->last_graded->responses = array('' => '');
 
             } else {
@@ -1366,7 +1358,6 @@ function quiz_save_question_session(&$question, &$state) {
             $new->attemptid = $state->attempt;
             $new->questionid = $question->id;
             $new->newest = $state->id;
-            $new->newgraded = $state->id;
             $new->sumpenalty = $state->sumpenalty;
             if (!insert_record('quiz_newest_states', $new)) {
                 error('Could not insert entry in quiz_newest_states');
