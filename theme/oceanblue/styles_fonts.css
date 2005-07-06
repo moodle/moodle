@@ -498,7 +498,8 @@ body#user-index #longtimenosee {
   font-size: 0.8em;
 }
 .forumpost .commands,
-.forumpost .link {
+.forumpost .link,
+.forumpost .footer {
   font-size: 0.9em;
 }
 .forumheaderlist .discussion .lastpost {
