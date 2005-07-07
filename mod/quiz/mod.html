@@ -64,6 +64,9 @@
     if (!isset($form->penaltyscheme)) {
         $form->penaltyscheme = $CFG->quiz_penaltyscheme;
     }
+    if (empty($form->timedue)) {
+        $form->timedue = "";
+    }
 
     $fix = 0; // This will later be set to 1 if some of the variables have been fixed by the admin.
 
@@ -81,7 +84,10 @@
     }
 
 ?>
-
+<script type="text/javascript" language="javascript">
+    var dueitems = ['dueday','duemonth','dueyear','duehour', 'dueminute'];
+    var availableitems = ['availableday','availablemonth','availableyear','availablehour', 'availableminute'];
+</script>
 
 <form name="form" method="post" action="mod.php">
 
@@ -117,31 +123,38 @@
     </td>
 </tr>
 
-<tr valign="top">
-    <td align="right"><b><?php print_string("quizopen", "quiz") ?>:</b></td>
-     <td align="left">
+<tr valign=top>
+   <td align="right"><b><?php print_string("availabledate","assignment") ?>:</b></td>
+    <td align="left">
+        <input name="availableenable" type="checkbox" value="1" alt="<?php print_string('availabledate', 'assignment') ?>" onclick="return lockoptions('form', 'availableenable', availableitems)" <?php if ($form->timeopen) echo 'checked="checked"' ?> />
     <?php
-        if (!$form->timeopen and $course->format == "weeks") {
-            $form->timeopen  = $course->startdate + (($form->section - 1) * 608400);
-        }
-        print_date_selector("openday", "openmonth", "openyear", $form->timeopen);
-        print_time_selector("openhour", "openminute", $form->timeopen);
-        helpbutton("timeopen", get_string("quizopen","quiz"), "quiz");
+           print_date_selector("availableday", "availablemonth", "availableyear", $form->timeopen);
+           echo "&nbsp;-&nbsp;";
+           print_time_selector("availablehour", "availableminute", $form->timeopen);
      ?>
+        <input type="hidden" name="havailableday"    value="0" />
+        <input type="hidden" name="havailablemonth"  value="0" />
+        <input type="hidden" name="havailableyear"   value="0" />
+        <input type="hidden" name="havailablehour"   value="0" />
+        <input type="hidden" name="havailableminute" value="0" />
     </td>
 </tr>
 
-<tr valign="top">
-    <td align="right"><b><?php print_string("quizclose", "quiz") ?>:</b></td>
-     <td align="left">
+<tr valign=top>
+    <td align="right"><b><?php print_string("duedate", "assignment") ?>:</b></td>
+    <td align="left">
+        <input name="dueenable" type="checkbox" value="1" alt="<?php print_string('duedate', 'assignment') ?>" onclick="return lockoptions('form', 'dueenable', dueitems)" <?php if ($form->timeclose) echo 'checked="checked"' ?> />
     <?php
-        if (!$form->timeclose and $course->format == "weeks") {
-            $form->timeclose  = $course->startdate + (($form->section) * 608400);
-        }
-        print_date_selector("closeday", "closemonth", "closeyear", $form->timeclose);
-        print_time_selector("closehour", "closeminute", $form->timeclose);
-        helpbutton("timeopen", get_string("quizclose","quiz"), "quiz");
+           print_date_selector("dueday", "duemonth", "dueyear", $form->timeclose);
+           echo "&nbsp;-&nbsp;";
+           print_time_selector("duehour", "dueminute", $form->timeclose);
+           helpbutton("timeopen", get_string("timeclose","quiz"), "quiz");
      ?>
+        <input type="hidden" name="hdueday"    value="0" />
+        <input type="hidden" name="hduemonth"  value="0" />
+        <input type="hidden" name="hdueyear"   value="0" />
+        <input type="hidden" name="hduehour"   value="0" />
+        <input type="hidden" name="hdueminute" value="0" />
     </td>
 </tr>
 
@@ -575,4 +588,9 @@
 </center>
 </form>
 
-
+<script type="text/javascript">
+<?php 
+    if (!$form->timeclose) echo "lockoptions('form','dueenable', dueitems);";
+    if (!$form->timeopen) echo "lockoptions('form','availableenable', availableitems);";
+?>
+</script

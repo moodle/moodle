@@ -197,7 +197,7 @@ function quiz_get_states(&$questions, $cmoptions, $attempt) {
            "   AND n.questionid IN ($questionlist)";
     $gradedstates = get_records_sql($sql);
 
-    // loop through all questions, restore the states, and set the last_graded states
+    // loop through all questions and set the last_graded states
     foreach ($ids as $i) {
         if (isset($states[$i])) {
             quiz_restore_state($questions[$i], $states[$i]);
@@ -205,14 +205,15 @@ function quiz_get_states(&$questions, $cmoptions, $attempt) {
                 quiz_restore_state($questions[$i], $gradedstates[$i]);
                 $states[$i]->last_graded = $gradedstates[$i];
             } else {
-                error('No graded state could be found!');
+                $states[$i]->last_graded = clone($states[$i]);
+                $states[$i]->last_graded->responses = array('' => '');
             }
         } else {
             // Create a new state object
-            if ($cmoptions->attemptonlast and $attempt->attempt > 1) {
+            if ($quiz->attemptonlast and $attempt->attempt > 1 and !$attempt->preview) {
                 // build on states from last attempt
-                if (empty($lastattemptid)) {
-                    $lastattemptid = get_field('quiz_attempts', 'uniqueid', 'quiz', $attempt->quiz, 'userid', $attempt->userid, 'attempt', $attempt->attempt-1);
+                if (!$lastattemptid = get_field('quiz_attempts', 'uniqueid', 'quiz', $attempt->quiz, 'userid', $attempt->userid, 'attempt', $attempt->attempt-1)) {
+                    error('Could not find previous attempt to build on');
                 }
                 // Load the last graded state for the question
                 $sql = "SELECT $statefields".
@@ -221,7 +222,9 @@ function quiz_get_states(&$questions, $cmoptions, $attempt) {
                        " WHERE s.id = n.newgraded".
                        "   AND n.attemptid = '$lastattemptid'".
                        "   AND n.questionid = '$i'";
-                $states[$i] = get_record_sql($sql);
+                if (!$states[$i] = get_record_sql($sql)) {
+                    error('Could not find state for previous attempt to build on');
+                }
                 quiz_restore_state($questions[$i], $states[$i]);
                 $states[$i]->attempt = $attempt->uniqueid;
                 $states[$i]->question = (int) $i;
@@ -232,16 +235,8 @@ function quiz_get_states(&$questions, $cmoptions, $attempt) {
                 $states[$i]->raw_grade = '';
                 $states[$i]->penalty = '';
                 $states[$i]->sumpenalty = '0.0';
-                $states[$i]->last_graded = new object;
-                $states[$i]->last_graded->attempt = $attempt->uniqueid;
-                $states[$i]->last_graded->question = (int) $i;
-                $states[$i]->last_graded->seq_number = 0;
-                $states[$i]->last_graded->timestamp = $attempt->timestart;
-                $states[$i]->last_graded->event = ($attempt->timefinish) ? QUIZ_EVENTCLOSE : QUIZ_EVENTOPEN;
-                $states[$i]->last_graded->grade = '';
-                $states[$i]->last_graded->raw_grade = '';
-                $states[$i]->last_graded->penalty = '';
-                $states[$i]->last_graded->sumpenalty = '0.0';
+                $states[$i]->changed = true;
+                $states[$i]->last_graded = clone($states[$i]);
                 $states[$i]->last_graded->responses = array('' => '');
 
             } else {
@@ -278,8 +273,7 @@ function quiz_get_states(&$questions, $cmoptions, $attempt) {
 * Creates the run-time fields for the states
 *
 * Extends the state objects for a question by calling
-* {@link restore_session_and_responses()} or it creates a new one by
-* calling {@link create_session_and_responses()}
+* {@link restore_session_and_responses()}
 * @return boolean         Represents success or failure
 * @param object $question The question for which the state is needed
 * @param object $state   The state as loaded from the database
@@ -343,7 +337,6 @@ function quiz_save_question_session(&$question, &$state) {
             $new->attemptid = $state->attempt;
             $new->questionid = $question->id;
             $new->newest = $state->id;
-            $new->newgraded = $state->id;
             $new->sumpenalty = $state->sumpenalty;
             if (!insert_record('quiz_newest_states', $new)) {
                 error('Could not insert entry in quiz_newest_states');
@@ -745,7 +738,7 @@ function quiz_apply_penalty_and_timelimit(&$question, &$state, $attempt, $cmopti
     }
 
     // deal with closing time
-    if ($state->timestamp > ($cmoptions->timeclose + 60)) { // allowing 1 minute lateness
+    if ($cmoptions->timeclose and $state->timestamp > ($cmoptions->timeclose + 60)) { // allowing 1 minute lateness
         $state->grade = 0;
     }
 
@@ -902,7 +895,7 @@ function quiz_get_reviewoptions($cmoptions, $attempt, $isteacher=false) {
         $options->feedback = ($cmoptions->review & QUIZ_REVIEW_IMMEDIATELY & QUIZ_REVIEW_FEEDBACK) ? 1 : 0;
         $options->correct_responses = ($cmoptions->review & QUIZ_REVIEW_IMMEDIATELY & QUIZ_REVIEW_ANSWERS) ? 1 : 0;
         $options->solutions = ($cmoptions->review & QUIZ_REVIEW_IMMEDIATELY & QUIZ_REVIEW_SOLUTIONS) ? 1 : 0;
-    } else if (time() < $cmoptions->timeclose) {
+    } else if (!$cmoptions->timeclose or time() < $cmoptions->timeclose) {
         $options->responses = ($cmoptions->review & QUIZ_REVIEW_OPEN & QUIZ_REVIEW_RESPONSES) ? 1 : 0;
         $options->scores = ($cmoptions->review & QUIZ_REVIEW_OPEN & QUIZ_REVIEW_SCORES) ? 1 : 0;
         $options->feedback = ($cmoptions->review & QUIZ_REVIEW_OPEN & QUIZ_REVIEW_FEEDBACK) ? 1 : 0;

@@ -365,7 +365,7 @@
 /// Check access to quiz page
 
     // check the quiz times
-    if (($timestamp < $quiz->timeopen || $timestamp > $quiz->timeclose)) {
+    if ($timestamp < $quiz->timeopen || ($quiz->timeclose and $timestamp > $quiz->timeclose)) {
         if ($isteacher) {
             notify(get_string('notavailabletostudents', 'quiz'));
         } else {
@@ -473,7 +473,7 @@
     echo "</form>\n";
 
 
-    $secondsleft = $quiz->timeclose - time();
+    $secondsleft = ($quiz->timeclose ? $quiz->timeclose : 999999999999) - time();
     // If time limit is set include floating timer.
     if ($quiz->timelimit > 0) {
 

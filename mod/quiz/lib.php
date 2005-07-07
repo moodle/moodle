@@ -26,10 +26,22 @@ function quiz_add_instance($quiz) {
 
     $quiz->created      = time();
     $quiz->timemodified = time();
-    $quiz->timeopen = make_timestamp($quiz->openyear, $quiz->openmonth, $quiz->openday,
-                                     $quiz->openhour, $quiz->openminute, 0);
-    $quiz->timeclose = make_timestamp($quiz->closeyear, $quiz->closemonth, $quiz->closeday,
-                                      $quiz->closehour, $quiz->closeminute, 0);
+    // The following is adapted from the assignment module
+    if (empty($quiz->dueenable)) {
+        $quiz->timeclose = 0;
+    } else {
+        $quiz->timeclose = make_timestamp($quiz->dueyear, $quiz->duemonth, 
+                                              $quiz->dueday, $quiz->duehour, 
+                                              $quiz->dueminute);
+    }
+    if (empty($quiz->availableenable)) {
+        $quiz->timeopen = 0;
+        $quiz->preventlate = 0;
+    } else {
+        $quiz->timeopen = make_timestamp($quiz->availableyear, $quiz->availablemonth, 
+                                                    $quiz->availableday, $quiz->availablehour, 
+                                                    $quiz->availableminute);
+    }
 
     if (empty($quiz->name)) {
         if (empty($quiz->intro)) {
@@ -50,34 +62,47 @@ function quiz_add_instance($quiz) {
 
     delete_records('event', 'modulename', 'quiz', 'instance', $quiz->id);  // Just in case
 
-    $event = NULL;
-    $event->name        = $quiz->name;
+    unset($event);
     $event->description = $quiz->intro;
     $event->courseid    = $quiz->course;
     $event->groupid     = 0;
     $event->userid      = 0;
     $event->modulename  = 'quiz';
     $event->instance    = $quiz->id;
-    $event->eventtype   = 'open';
     $event->timestart   = $quiz->timeopen;
     $event->visible     = instance_is_visible('quiz', $quiz);
-    $event->timeduration = ($quiz->timeclose - $quiz->timeopen);
 
-    if ($event->timeduration > QUIZ_MAX_EVENT_LENGTH) {  /// Long durations create two events
-        $event2 = $event;
+    if ($quiz->timeclose and $quiz->timeopen) {
+        // we have both a start and an end date
+        $event->eventtype   = 'open';
+        $event->timeduration = ($quiz->timeclose - $quiz->timeopen);
 
-        $event->name         .= ' ('.get_string('quizopens', 'quiz').')';
-        $event->timeduration  = 0;
-
-        $event2->timestart    = $quiz->timeclose;
-        $event2->eventtype    = 'close';
-        $event2->timeduration = 0;
-        $event2->name        .= ' ('.get_string('quizcloses', 'quiz').')';
-
-        add_event($event2);
+        if ($event->timeduration > QUIZ_MAX_EVENT_LENGTH) {  /// Long durations create two events
+    
+            $event->name          = $quiz->name.' ('.get_string('quizopens', 'quiz').')';
+            $event->timeduration  = 0;
+            add_event($event);
+    
+            $event->timestart    = $quiz->timeclose;
+            $event->eventtype    = 'close';
+            $event->name         = $quiz->name.' ('.get_string('quizcloses', 'quiz').')';
+            unset($event->id);
+            add_event($event);
+        } else { // single event with duration
+            $event->name        = $quiz->name;
+            add_event($event);
+        }
+    } elseif ($quiz->timeopen) { // only an open date
+        $event->name          = $quiz->name.' ('.get_string('quizopens', 'quiz').')';
+        $event->eventtype   = 'open';
+        $event->timeduration = 0;
+        add_event($event);
+    } elseif ($quiz->timeclose) { // only a closing date
+        $event->name         = $quiz->name.' ('.get_string('quizcloses', 'quiz').')';
+        $event->timestart    = $quiz->timeclose;
+        $event->eventtype    = 'close';
+        $event->timeduration = 0;
     }
-
-    add_event($event);
 
     return $quiz->id;
 }
@@ -91,12 +116,23 @@ function quiz_update_instance($quiz) {
     quiz_process_options($quiz);
 
     $quiz->timemodified = time();
-    if (isset($quiz->openyear)) { // this would not be set if we come from edit.php
-        $quiz->timeopen = make_timestamp($quiz->openyear, $quiz->openmonth, $quiz->openday,
-                                         $quiz->openhour, $quiz->openminute, 0);
-        $quiz->timeclose = make_timestamp($quiz->closeyear, $quiz->closemonth, $quiz->closeday,
-                                          $quiz->closehour, $quiz->closeminute, 0);
+    // The following is adapted from the assignment module
+    if (empty($quiz->dueenable)) {
+        $quiz->timeclose = 0;
+    } else {
+        $quiz->timeclose = make_timestamp($quiz->dueyear, $quiz->duemonth, 
+                                              $quiz->dueday, $quiz->duehour, 
+                                              $quiz->dueminute);
     }
+    if (empty($quiz->availableenable)) {
+        $quiz->timeopen = 0;
+        $quiz->preventlate = 0;
+    } else {
+        $quiz->timeopen = make_timestamp($quiz->availableyear, $quiz->availablemonth, 
+                                                    $quiz->availableday, $quiz->availablehour, 
+                                                    $quiz->availableminute);
+    }
+
     $quiz->id = $quiz->instance;
 
     if (!update_record("quiz", $quiz)) {
@@ -125,25 +161,38 @@ function quiz_update_instance($quiz) {
     $event->userid      = 0;
     $event->modulename  = 'quiz';
     $event->instance    = $quiz->id;
-    $event->eventtype   = 'open';
     $event->timestart   = $quiz->timeopen;
     $event->visible     = instance_is_visible('quiz', $quiz);
-    $event->timeduration = ($quiz->timeclose - $quiz->timeopen);
+    if ($quiz->timeclose and $quiz->timeopen) {
+        // we have both a start and an end date
+        $event->eventtype   = 'open';
+        $event->timeduration = ($quiz->timeclose - $quiz->timeopen);
 
-    if ($event->timeduration > QUIZ_MAX_EVENT_LENGTH) {  /// Long durations create two events
-
+        if ($event->timeduration > QUIZ_MAX_EVENT_LENGTH) {  /// Long durations create two events
+    
+            $event->name          = $quiz->name.' ('.get_string('quizopens', 'quiz').')';
+            $event->timeduration  = 0;
+            add_event($event);
+    
+            $event->timestart    = $quiz->timeclose;
+            $event->eventtype    = 'close';
+            $event->name         = $quiz->name.' ('.get_string('quizcloses', 'quiz').')';
+            unset($event->id);
+            add_event($event);
+        } else { // single event with duration
+            $event->name        = $quiz->name;
+            add_event($event);
+        }
+    } elseif ($quiz->timeopen) { // only an open date
         $event->name          = $quiz->name.' ('.get_string('quizopens', 'quiz').')';
-        $event->timeduration  = 0;
+        $event->eventtype   = 'open';
+        $event->timeduration = 0;
         add_event($event);
-
+    } elseif ($quiz->timeclose) { // only a closing date
+        $event->name         = $quiz->name.' ('.get_string('quizcloses', 'quiz').')';
         $event->timestart    = $quiz->timeclose;
         $event->eventtype    = 'close';
-        $event->name         = $quiz->name.' ('.get_string('quizcloses', 'quiz').')';
-        unset($event->id);
-        add_event($event);
-    } else { // single event with duration
-        $event->name        = $quiz->name;
-        add_event($event);
+        $event->timeduration = 0;
     }
 
     return true;

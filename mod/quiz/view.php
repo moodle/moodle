@@ -77,7 +77,7 @@
 
     echo '<td id="middle-column">';
 
-    $available = ($quiz->timeopen < $timenow and $timenow < $quiz->timeclose) || $isteacher;
+    $available = ($quiz->timeopen < $timenow and ($timenow < $quiz->timeclose or !$quiz->timeclose)) || $isteacher;
 
 // Print the main part of the page
 
@@ -102,7 +102,7 @@
         if ($quiz->timelimit) {
             echo "<p align=\"center\">".get_string("quiztimelimit","quiz", format_time($quiz->timelimit * 60))."</p>";
         }
-        echo "<p align=\"center\">".get_string("quizavailable", "quiz", userdate($quiz->timeclose));
+        quiz_view_dates($quiz);
     } else if ($timenow < $quiz->timeopen) {
         echo "<p align=\"center\">".get_string("quiznotavailable", "quiz", userdate($quiz->timeopen));
     } else {
@@ -222,7 +222,7 @@
                 $datecompleted .= '</noscript>';
             } else { // attempt was not completed but is also not available any more.
                 $timetaken = format_time($quiz->timeclose - $attempt->timestart);
-                $datecompleted = userdate($quiz->timeclose);
+                $datecompleted = $quiz->timeclose ? userdate($quiz->timeclose) : '';
             }
 
         /// prepare strings for attempt number, mark and grade
@@ -313,10 +313,10 @@
         if (!($quiz->review & QUIZ_REVIEW_RESPONSES)) {
             return false;
         }
-        if ((time() < $quiz->timeclose) and !($quiz->review & QUIZ_REVIEW_OPEN)) {
+        if ((!$quiz->timeclose or time() < $quiz->timeclose) and !($quiz->review & QUIZ_REVIEW_OPEN)) {
             return false;
         }
-        if ((time() > $quiz->timeclose) and !($quiz->review & QUIZ_REVIEW_CLOSED)) {
+        if (($quiz->timeclose and time() > $quiz->timeclose) and !($quiz->review & QUIZ_REVIEW_CLOSED)) {
             return false;
         }
         return true;

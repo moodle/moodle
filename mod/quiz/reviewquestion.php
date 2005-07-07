@@ -70,10 +70,10 @@
             error(get_string("noreview", "quiz"));
         }
         if ((time() - $attempt->timefinish) > 120) { // always allow review right after attempt
-            if (time() < $quiz->timeclose and !($quiz->review & QUIZ_REVIEW_OPEN)) {
+            if (!$quiz->timeclose or time() < $quiz->timeclose and !($quiz->review & QUIZ_REVIEW_OPEN)) {
                 error(get_string("noreviewuntil", "quiz", userdate($quiz->timeclose)));
             }
-            if (time() >= $quiz->timeclose and !($quiz->review & QUIZ_REVIEW_CLOSED)) {
+            if ($quiz->timeclose and time() >= $quiz->timeclose and !($quiz->review & QUIZ_REVIEW_CLOSED)) {
                 error(get_string("noreview", "quiz"));
             }
         }

@@ -101,7 +101,7 @@
             $currentsection = $quiz->section;
         }
 
-        $closequiz = userdate($quiz->timeclose);
+        $closequiz = $quiz->timeclose ? userdate($quiz->timeclose) : '';
 
         if (isteacher($course->id)) {
             if ($usercount = count_records_select('quiz_attempts', "quiz = '$quiz->id' AND preview = '0'", 'COUNT(DISTINCT userid)')) {
