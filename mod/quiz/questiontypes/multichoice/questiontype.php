@@ -26,8 +26,7 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
             return false;
         }
 
-        if (!$question->options->answers = get_records('quiz_answers', 'question',
-         $question->id)) {
+        if (!$question->options->answers = get_records_select('quiz_answers', 'id IN ('.$question->options->answers.')')) {
            notify('Error: Missing question answers!');
            return false;
         }
