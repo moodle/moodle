@@ -180,6 +180,22 @@ function scorm_upgrade($oldversion) {
     if ($oldversion < 2005052700) {
        table_column("scorm", "", "popup", "TINYINT", "1", "UNSIGNED", "0", "NOT NULL", "auto");
     }
+    
+    if ($oldversion < 2005070600) {
+        table_column("scorm", "", "hidetoc", "TINYINT", "1", "UNSIGNED", "0", "NOT NULL", "browsemode"); 
+        $scorms = get_records_select("scorm","1","id ASC");
+        table_column("scorm", "browsemode", "hidebrowse", "TINYINT", "1", "UNSIGNED", "0", "NOT NULL", "");
+        if (!empty($scorms)) {
+            foreach($scorms as $scorm) {
+                if ($scorm->browsemode = 1) {
+                    $scorm->hidebrowse = 0;
+            	} else {
+                    $scorm->hidebrowse = 1;
+                }
+                update_record('scorm',$scorm);
+            }
+        }
+    }
 
     return true;
 }
