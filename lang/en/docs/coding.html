@@ -219,7 +219,6 @@ GOOD: $assignments (for an array of objects)<br />
   <li class="spaced">Boolean fields should be implemented as small integer fields (eg INT4) containing 0 or 1, to allow for later expansion of values if necessary.</li>
   <li class="spaced">Most tables should have a <strong>timemodified</strong> field (INT10) which is updated with a current timestamp obtained with the PHP <strong>time</strong>() function.</li>
 </ol>
-<hr />
 <p>&nbsp;</p>
 <h2>Security Issues (and handling form and URL data)</h2>
 <ol class="normaltext">
@@ -233,32 +232,38 @@ GOOD: $assignments (for an array of objects)<br />
     value for a variable, use the <code>set_default()</code> function.</li>
   <li class="spaced">Do not use the <code>require_variable()</code> function. Use the <code>required_param()</code>
     function instead. Pick the correct PARAM_XXXX value for the data type you expect.</li>
+  <li class="spaced">Use <code>data_submitted()</code>, with care. Data must still be cleaned before use.</li>
   <li class="spaced">Do not use <code>$_GET</code>, <code>$_POST</code> or <code>$_REQUEST</code>. Use the
-    appropriate <code>required_param()</code> or <code>optional_param</code> appropriate to your need.</li>
+    appropriate <code>required_param()</code> or <code>optional_param()</code> appropriate to your need.</li>
   <li class="spaced">Do not check for an action using something like <code>if (isset($_GET['something']))</code>. 
-    Use, e.g., <code>$something = optional_param( 'something','',PARAM_ALPHA )</code> and test with
-    <code>empty()</code> function</li>
+    Use, e.g., <code>$something = optional_param( 'something',-1,PARAM_INT )</code> and then perform 
+    proper test for it being in its expected range of values e.g., <code>if ($something>=0) {...</code>.</li>
   <li class="spaced">Wherever possible group all your <code>required_param()</code>, <code>optional_param()</code>
     and other variables initialisation at the beginning of each file to make them easy to find.</li>
-  <li class="spaced">Use 'sesskey' mechanism to protect form handling routines from attack. When form is generated,
-    include <code>&lt;input type="hidden" name="sesskey" value="&lt;?php echo sesskey(); ?&gt" /&gt;</code>.
+  <li class="spaced">Use 'sesskey' mechanism to protect form handling routines from attack. 
+    Basic example of use: when form is generated,
+    include <code>&lt;input type="hidden" name="sesskey" value="&lt;?php echo sesskey(); ?&gt;" /&gt;</code>.
     When you process the form check with <code>if (!confirm_sesskey()) {error('Bad Session Key');}</code>.</li> 
   <li class="spaced">All filenames must be 'cleaned' using the <code>clean_filename()</code> function, if this 
     has not been done already by appropriate use of <code>required_param()</code> or <code>optional_param()</code>
     </li>
   <li class="spaced">Any data read from the database must have <code>addslashes()</code> applied to it before it
     can be written back. A whole object of data can be hit at once with <code>addslashes_object()</code>.</li>
-  <li class="spaced">Wherever possible, data to be stored in the database must come from a <code>POST</code>
-    data (ie, data from a form) as opposed to <code>GET</code> data (ie, data from the URL line).</li>
+  <li class="spaced">Wherever possible, data to be stored in the database must come from <code>POST</code>
+    data (from a form with <code>method="POST"</code>) as opposed to <code>GET</code> data (ie, data from the URL line).</li>
   <li class="spaced">Do not use data from <code>$_SERVER</code> if you can avoid it. This has portability 
     issues.</li>
   <li class="spaced">If it hasn't been done somewhere else, make sure all data written to the database has
-    been through the <code>clean_param</code> function using the appropriate PARAM_XXXX for the datatype.</li>
+    been through the <code>clean_param()</code> function using the appropriate PARAM_XXXX for the datatype.</li>
   <li class="spaced">If you write custom SQL code, make very sure it is correct. In particular watch out for
     missing quotes around values. Possible SQL 'injection' exploit.</li>
-  <li class="spaced">Check all data (particularly that written to the database) on <strong>every</strong>
-    page it is used. Do not expect or rely on it being done somewhere else.</li>
+  <li class="spaced">Check all data (particularly that written to the database) in <strong>every</strong>
+    file it is used. Do not expect or rely on it being done somewhere else.</li>
+  <li class="spaced">Blocks of code to be included should contain a definite PHP structure (e.g, 
+    a class declaration, function definition(s) etc.) - straight blocks of code promote uninitialised
+    variable usage.</li>
 </ol>
+<hr />
 <p align="center"><font size="1"><a href="." target="_top">Moodle Documentation</a></font></p>
 <p align="center"><font size="1">Version: $Id$</font></p>
 </body>

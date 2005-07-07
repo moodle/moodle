@@ -1,103 +1,97 @@
-<p align="center"><b>Richtext HTML editoreari buruz</b></p>
+<P ALIGN=CENTER><B>Richtext HTML editoreari buruz</B></P>
 
-<p>Eskuragarritasuna: <b>
-<? if (!$CFG->htmleditor) {
-       print_string("htmleditordisabledadmin");
-   } else if (!$USER->htmleditor) {
-       print_string("htmleditordisabled");
-   } else if (!can_use_richtext_editor()) {
-       print_string("htmleditordisabledbrowser");
-   } else {
-       print_string("htmleditoravailable");
-   }
-?>
-</b></p>
+<P>Eskuragarritasuna: <B>HTML editorea eskuragarria dago</B></P>
 
-<p>Richtext HTML editoreak zure web gunean bertan testu editore interfaz bat ezartzen du testuak intuitiboki editatu ahal izateko,
-eta HTML kode normala sortzen du.</p>
+<P>Richtext HTML editoreak zure web gunean bertan testu-editore interfaz bat ezartzen du testuak intuitiboki editatu ahal izateko,
+eta HTML kode normala sortzen du.
 
-<p>Testuari formatua emateaz gain, editore honek hainbat funtzionalitate gehigarri ditu.</p>
+<P>Testuari formatua emateaz gain, editore honek hainbat funtzionalitate gehigarri ditu.
 
-<p><b>Beste aplikazioetatik testua itsatsi</b></p>
-<ul>
-<p>Beste aplikazioetatik, Word adibidez, formatodun testua kopiatu eta zuzenean editorean itsatsi dezakezu, zure formatua mantenduko da.
-Zure nabigatzaileko kopiatu eta itsatsi aukerak erabili (edo Control-C eta Control-V).</p>
-</ul>
+<P><B>Beste aplikazioetatik testua itsatsi</B></P>
+<UL>
+<P>Posible da beste aplikazioetatik, Word-etik adibidez, testua kopiatu eta zuzenean editorean
+itsastea, formatua mantenduz. Erabil itzazu &quot;Kopiatu&quot; eta &quot;Itsatsi&quot; aukerak
+(edo CTRL+C eta CTRL+V).
+</UL>
 
-<p><b>Irudiak Txertatu <img alt border="0" hspace="10" src="lib/rte/images/icon_ins_image.gif"></b></p>
-<ul>
-<p>Dagoeneko webera igo dituzun irudiak badituzu, eta URL bitartez eskuragarriak badira, irudi hauek zure testuetan sartu ditzazkezu "Irudia Txertatu" botoiarekin.</p>
-</ul>
+<P><B>Irudiak Txertatu <img border="0" hspace="10" src="lib/rte/images/icon_ins_image.gif"></B></P>
+<UL>
+<P>Dagoeneko web-era igo dituzun irudiak badituzu, eta URL bitartez eskuragarriak badira, irudi hauek zure testuetan
+sar ditzakezu "Irudia Txertatu" botoiarekin.
+</UL>
 
-<p><b>Taulak Txertatu <img alt border="0" hspace="10" src="lib/rte/images/icon_ins_table.gif"></b></p>
-<ul>
-<p>Zure testuei estruktura emateko, tresna barrako "taula txertatu" botoia erabili dezakezu.  
-</ul>
+<P><B>Taulak Txertatu <img border="0" hspace="10" src="lib/rte/images/icon_ins_table.gif"></B></P>
+<UL>
+<P>Zure testuei egitura emateko, tresna-barrako "taula txertatu" botoia erabil dezakezu.  
+</UL>
 
-<p><b>Lotura txertatu <img alt border="0" hspace="10" src="lib/rte/images/icon_ins_link.gif"></b></p>
-<ul>
-<p>Lotura berri bat egiteko, Lehenik loturaren testua sartu, ikusgai egingo dena.  Gero, aukeratu ezazu eta tresna barrako lotura botoia zapaldu.  Loturaren helburu den URL-a sartu, eta kitto!</p>
-</ul>
+<P><B>Lotura txertatu <img border="0" hspace="10" src="lib/rte/images/icon_ins_link.gif"></B></P>
+<UL>
+<P>Lotura berri bat egiteko, lehenik loturaren testua sartu, ikusgai egingo dena.  Gero,
+aukera ezazu eta tresna-barrako lotura botoia sakatu.  Loturaren helburu den URL-a sartu, eta kitto!
+</UL>
 
 
-<p><b>Irrifartxoak txertatu (emotikonoak) <img alt border="0" hspace="10" src="pix/s/smiley.gif" width="15" height="15"></b></p>
-<ul>
-<p>Ikonotxo hauek zure testuan sartzeko tresna barrako irrifartxoen ikonoan egin klik.  Hurrengo irrifartxoen artean hautatzeko aukera emango dizun leiho bat irekiko da. 
-(Bestela, dagokion kodea zuzenean sartu dezakezu zure testuan eta testua bistaratzerakoan irudia bihurtuko da).</p>
+<P><B>Aurpegierak txertatu (emotikoneak) <img border="0" hspace="10" src="pix/s/smiley.gif" width="15" height="15"></B></P>
+<UL>
+<P>Ikonotxo hauek zure testuan sartzeko, tresna-barrako aurpegieren ikonoan egin klik.  Hurrengo
+aurpegieren artean hautatzeko aukera emango dizun leiho bat irekiko da. 
+(Bestela, dagokion kodea zuzenean sar dezakezu zure testuan eta testua bistaratzerakoan
+irudi bihurtuko da).
 
     <table border="1">
       <tr valign="top">
         <td>
         <table border="0" align="center" cellpadding="10">
           <tr>
-            <td><img alt border="0" hspace="10" src="pix/s/smiley.gif" width="15" height="15"></td>
+            <td><img border="0" hspace="10" src="pix/s/smiley.gif" width="15" height="15"></td>
             <td>irribarrea</td>
-            <td nowrap="nowrap"><FONT FACE=Courier>:-)</td>
+            <td NOWRAP><FONT FACE=Courier>:-)</td>
           </tr>
           <tr>
             <td><img alt border="0" hspace="10" src="pix/s/biggrin.gif" width="15" height="15"></td>
             <td>barrea</td>
-            <td nowrap="nowrap"><FONT FACE=Courier>:-D</td>
+            <td NOWRAP><FONT FACE=Courier>:-D</td>
           </tr>
           <tr>
             <td><img alt border="0" hspace="10" src="pix/s/wink.gif" width="15" height="15"></td>
             <td>begi-keinua</td>
-            <td nowrap="nowrap"><FONT FACE=Courier>;-)</td>
+            <td NOWRAP><FONT FACE=Courier>;-)</td>
           </tr>
           <tr>
             <td><img alt border="0" hspace="10" src="pix/s/mixed.gif" width="15" height="15"></td>
-            <td>erdipurdizka</td>
-            <td nowrap="nowrap"><FONT FACE=Courier>:-/</td>
+            <td>erdipurdika</td>
+            <td NOWRAP><FONT FACE=Courier>:-/</td>
           </tr>
             <tr>
               <td><img alt border="0" hspace="10" src="pix/s/thoughtful.gif" width="15" height="15"></td>
               <td>pentsakor</td>
-              <td nowrap="nowrap"><FONT FACE=Courier>V-.</FONT></td>
+              <td NOWRAP><FONT FACE=Courier>V-.</FONT></td>
             </tr>
           <tr>
             <td><img alt border="0" hspace="10" src="pix/s/tongueout.gif" width="15" height="15"></td>
             <td>mihia atera</td>
-            <td nowrap="nowrap"><FONT FACE=Courier>:-P</td>
+            <td NOWRAP><FONT FACE=Courier>:-P</td>
          </tr>
           <tr>
             <td><img alt border="0" hspace="10" src="pix/s/cool.gif" width="15" height="15"></td>
             <td>primeran</td>
-            <td nowrap="nowrap"><FONT FACE=Courier>B-)</td>
+            <td NOWRAP><FONT FACE=Courier>B-)</td>
           </tr>
             <tr>
               <td><img alt border="0" hspace="10" src="pix/s/approve.gif" width="15" height="15"></td>
               <td>onartu</td>
-              <td nowrap="nowrap"><FONT FACE=Courier>^-)</td>
+              <td NOWRAP><FONT FACE=Courier>^-)</td>
             </tr>
             <tr>
               <td><img alt border="0" hspace="10" src="pix/s/wideeyes.gif" width="15" height="15"></td>
-              <td>begiak zabal zabalik</td>
-              <td nowrap="nowrap"><FONT FACE=Courier>8-)</td>
+              <td>begiak zabal-zabalik</td>
+              <td NOWRAP><FONT FACE=Courier>8-)</td>
             </tr>
             <tr>
               <td><img alt border="0" hspace="10" src="pix/s/surprise.gif" width="15" height="15"></td>
               <td>harridura</td>
-              <td nowrap="nowrap"><FONT FACE=Courier>8-o</td>
+              <td NOWRAP><FONT FACE=Courier>8-o</td>
             </tr>
         </table>
         </td>
@@ -106,56 +100,56 @@ Zure nabigatzaileko kopiatu eta itsatsi aukerak erabili (edo Control-C eta Contr
             <tr>
               <td><img alt border="0" hspace="10" src="pix/s/sad.gif" width="15" height="15"></td>
               <td>triste</td>
-              <td nowrap="nowrap"><FONT FACE=Courier>:-(</td>
+              <td NOWRAP><FONT FACE=Courier>:-(</td>
             </tr>
             <tr>
               <td><img alt border="0" hspace="10" src="pix/s/shy.gif" width="15" height="15"></td>
               <td>lotsati</td>
-              <td nowrap="nowrap"><FONT FACE=Courier>8-.</td>
+              <td NOWRAP><FONT FACE=Courier>8-.</td>
             </tr>
           <tr>
             <td><img alt border="0" hspace="10" src="pix/s/blush.gif" width="15" height="15"></td>
             <td>lotsatuta</td>
-            <td nowrap="nowrap"><FONT FACE=Courier>:-I</td>
+            <td NOWRAP><FONT FACE=Courier>:-I</td>
           </tr>
             <tr>
               <td><img alt border="0" hspace="10" src="pix/s/kiss.gif" width="15" height="15"></td>
               <td>musuak</td>
-              <td nowrap="nowrap"><FONT FACE=Courier>:-X</td>
+              <td NOWRAP><FONT FACE=Courier>:-X</td>
             </tr>
           <tr>
             <td><img alt border="0" hspace="10" src="pix/s/clown.gif" width="15" height="15"></td>
-            <td>pailasoa</td>
-            <td nowrap="nowrap"><FONT FACE=Courier>:o)</td>
+            <td>pailazoa</td>
+            <td NOWRAP><FONT FACE=Courier>:o)</td>
           </tr>
           <tr>
             <td><img alt border="0" hspace="10" src="pix/s/blackeye.gif" width="15" height="15"></td>
             <td>pirata</td>
-            <td nowrap="nowrap"><FONT FACE=Courier>P-|</td>
+            <td NOWRAP><FONT FACE=Courier>P-|</td>
           </tr>
             <tr>
               <td><img alt border="0" hspace="10" src="pix/s/angry.gif" width="15" height="15"></td>
               <td>haserre</td>
-              <td nowrap="nowrap"><FONT FACE=Courier>8-[</td>
+              <td NOWRAP><FONT FACE=Courier>8-[</td>
             </tr>
             <tr>
               <td><img alt border="0" hspace="10" src="pix/s/dead.gif" width="15" height="15"></td>
               <td>hilik</td>
-              <td nowrap="nowrap"><FONT FACE=Courier>xx-P</td>
+              <td NOWRAP><FONT FACE=Courier>xx-P</td>
             </tr>
             <tr>
               <td><img alt border="0" hspace="10" src="pix/s/sleepy.gif" width="15" height="15"></td>
               <td>lotan</td>
-              <td nowrap="nowrap"><FONT FACE=Courier>|-.</td>
+              <td NOWRAP><FONT FACE=Courier>|-.</td>
             </tr>
           <tr>
             <td><img alt border="0" hspace="10" src="pix/s/evil.gif" width="15" height="15"></td>
             <td>deabrua</td>
-            <td nowrap="nowrap"><FONT FACE=Courier>}-]</td>
+            <td NOWRAP><FONT FACE=Courier>}-]</td>
           </tr>
         </table>
     </table>
 
-</ul>
+</UL>
 
 

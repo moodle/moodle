@@ -1,10 +1,8 @@
 <?PHP // $Id$
-
 #------------------------------------------------------------
 $string['modulename'] = "測驗卷";
 $string['modulenameplural'] = "測驗卷";
 #------------------------------------------------------------
-
 $string['addselectedtoquiz'] = "將選擇的題目加到測驗卷";
 $string['alwaysavailable'] = "永遠可作答";
 $string['alreadysubmitted'] = "非常可能你已經送出這個試題";
@@ -105,3 +103,4 @@ $string['missingname'] = "缺少試題的名稱";
 $string['missingquestiontext'] = "缺少試題內文";
 $string['noreview'] = "本試題不允許重新檢視作答結果";
 $string['noreviewuntil'] = "本試題 \$a　以後才可以檢視作答結果";
+?>

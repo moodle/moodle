@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.5 ALPHA (2005043000)
+      // calendar.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['calendar'] = 'Calendario';
@@ -42,14 +42,14 @@ $string['explain_persistflt'] = 'Se attivata, Moodle ricorderà l\'ultima imposta
 $string['explain_startwday'] = 'Giorno di partenza del calendario mensile';
 $string['explain_timeformat'] = 'Questa preferenza imposta il modo in cui gli orari vengono visualizzati nel calendario. Scegliere se visualizzare il formatsi o a 12 o 24 ore. Se sceglie \"Impostazione base\", allora il formato verrà scelto automaticamente in base alla lingua utilizzata dal vostro sito.';
 $string['fri'] = 'Ven';
-$string['friday'] = 'Venerdì';
+$string['friday'] = 'Venerdi';
 $string['globalevents'] = 'Eventi generali';
 $string['gotocalendar'] = 'Vai al calendario';
 $string['groupevents'] = 'Eventi di gruppo';
 $string['hidden'] = 'Nascosto';
 $string['manyevents'] = '$a eventi';
 $string['mon'] = 'Lun';
-$string['monday'] = 'Lunedì';
+$string['monday'] = 'Lunedi';
 $string['monthlyview'] = 'Vista mensile';
 $string['newevent'] = 'Nuovo evento';
 $string['noupcomingevents'] = 'Non ci sono eventi prossimi';
@@ -89,7 +89,7 @@ $string['tt_showglobal'] = 'Gli eventi generali sono nascosti (clicca per mostra
 $string['tt_showgroups'] = 'Gli eventi di gruppo sono nascosti (clicca per mostrare)';
 $string['tt_showuser'] = 'Gli eventi dell\'utente sono nascosti (clicca per mostrare)';
 $string['tue'] = 'Mar';
-$string['tuesday'] = 'Martedì';
+$string['tuesday'] = 'Martedi';
 $string['typecourse'] = 'Evento del corso';
 $string['typegroup'] = 'Evento di gruppo';
 $string['typesite'] = 'Evento del sito';
@@ -97,7 +97,7 @@ $string['typeuser'] = 'Evento dell\'utente';
 $string['upcomingevents'] = 'Prossimi eventi';
 $string['userevents'] = 'Eventi dell\'utente';
 $string['wed'] = 'Mer';
-$string['wednesday'] = 'Mercoledì';
+$string['wednesday'] = 'Mercoledi';
 $string['yesterday'] = 'Ieri';
 $string['youcandeleteallrepeats'] = 'Questo evento è parte di una serie di eventi ripetuti. Potete camcellare solo questo evento, oppure tutti gli  $a eventi in questa serie in un colpo solo.';
 

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // pix.php - created with Moodle 1.6 development (2005052400)
+      // pix.php - created with Moodle 1.4.2 (2004083125)
 
 
 $string['angry'] = 'โกรธ';
@@ -13,11 +13,15 @@ $string['dead'] = 'ตายดีกว่า';
 $string['evil'] = 'มารร้าย';
 $string['kiss'] = 'จูบ';
 $string['mixed'] = 'สับสน';
+$string['parentlanguage'] = 'en';
 $string['sad'] = 'เศร้า';
 $string['shy'] = 'อาย';
 $string['sleepy'] = 'ง่วง';
 $string['smiley'] = 'ยิ้ม';
 $string['surprise'] = 'แปลกใจ';
+$string['thischarset'] = 'TIS-620';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Thai';
 $string['thoughtful'] = 'ช่างคิด';
 $string['tongueout'] = 'แลบลิ้น';
 $string['wideeyes'] = 'ตาโต';

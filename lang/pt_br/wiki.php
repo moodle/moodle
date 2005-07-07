@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.4.1 (2004083101)
+      // wiki.php - created with Moodle 1.5 + (2005060201)
 
 
 $string['action'] = '-- Ação --';
@@ -159,6 +159,7 @@ $string['tabview'] = 'Visualizar';
 $string['thanksforcontribution'] = 'Obrigada pela sua colaboração';
 $string['thispageisntlinkedfromanywhereelse'] = 'Nenhuma outra página contém links a esta.';
 $string['updatedpages'] = 'Páginas atualizadas';
+$string['updatedwikipages'] = 'Páginas wiki atualizadas';
 $string['uplerror'] = 'Não foi possível enviar o arquivo ao servidor.';
 $string['uplinsect'] = 'Enviar a';
 $string['uplnewnam'] = 'Salvar com outro nome de arquivo';

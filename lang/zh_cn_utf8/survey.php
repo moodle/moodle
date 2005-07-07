@@ -7,7 +7,7 @@ $string['actualclass'] = '班级实际的';
 $string['actualstudent'] = '{$a}实际的';
 $string['allquestions'] = '所有问题按序排列，所有学生';
 $string['allscales'] = '所有量表，所有学生';
-$string['alreadysubmitted'] = '你已经提交了这份问卷调查';
+$string['alreadysubmitted'] = '您已经提交了这份问卷调查';
 $string['analysisof'] = '{$a}的分析结果';
 $string['answers'] = '回答';
 $string['attls1'] = '在评价某人的说法，我就事论事，只关心言谈的质量，而不管是谁说的。';
@@ -50,22 +50,22 @@ $string['attls8'] = '我总是有兴趣了解人们为什么会这样说、这�
 $string['attls8short'] = '了解人们为什么做';
 $string['attls9'] = '我发现自己常常和我读的书作者争论，试图从逻辑上推断他们为什么错。';
 $string['attls9short'] = '与作者争论';
-$string['attlsintro'] = '该问卷的目的是为了了解你对思考和学习的态度。
-这里没有‘正确’或‘错误’的答案；我们只对你的观点感兴趣。请相信我们对你的回答保持高度机密，也不必担心影响对你的评分。';
+$string['attlsintro'] = '该问卷的目的是为了了解您对思考和学习的态度。
+这里没有‘正确’或‘错误’的答案；我们只对您的观点感兴趣。请相信我们对您的回答保持高度机密，也不必担心影响对您的评分。';
 $string['attlsm1'] = '对于思考和学习的态度';
 $string['attlsm2'] = '情景型学习';
 $string['attlsm3'] = '独立型学习';
 $string['attlsmintro'] = '在讨论中……';
 $string['attlsname'] = '学习与思考态度问卷调查（20项）';
-$string['ciq1'] = '什么时候你学习最投入？';
+$string['ciq1'] = '什么时候您学习最投入？';
 $string['ciq1short'] = '最投入';
-$string['ciq2'] = '什么时候你学习最不投入？';
+$string['ciq2'] = '什么时候您学习最不投入？';
 $string['ciq2short'] = '最不投入';
-$string['ciq3'] = '论坛上的人们的何种行为最让你感觉值得确信或有帮助？';
+$string['ciq3'] = '论坛上的人们的何种行为最让您感觉值得确信或有帮助？';
 $string['ciq3short'] = '最有帮助';
-$string['ciq4'] = '论坛上的人们的何种行为最让你感觉困惑。';
+$string['ciq4'] = '论坛上的人们的何种行为最让您感觉困惑。';
 $string['ciq4short'] = '最困惑';
-$string['ciq5'] = '什么事件让你最吃惊？';
+$string['ciq5'] = '什么事件让您最吃惊？';
 $string['ciq5short'] = '最吃惊';
 $string['ciqintro'] = '想想本班上周发生的事情，回答以下问题。';
 $string['ciqname'] = '关键事件';
@@ -119,16 +119,16 @@ $string['colles8'] = '我阅读时以批判的眼光审察书中的观点。';
 $string['colles8short'] = '批判审察读物';
 $string['colles9'] = '我向其他同学解释自己的观点。';
 $string['colles9short'] = '解释自己的观点';
-$string['collesaintro'] = '该问卷调查的目的是为了了解这个在线单元对促进你的学习有多大的作用。
-以下24个问题问的是你在此单元中的体会。
-这里无所谓“正确”或“错误”答案；我们只对你的观点感兴趣。请相信我们对你的回答保持高度机密，也不必担心会影响对你的评分。
-你深思熟虑的回答将有助于我们对该单元作进一步的改善。
+$string['collesaintro'] = '该问卷调查的目的是为了了解这个在线单元对促进您的学习有多大的作用。
+以下24个问题问的是您在此单元中的体会。
+这里无所谓“正确”或“错误”答案；我们只对您的观点感兴趣。请相信我们对您的回答保持高度机密，也不必担心会影响对您的评分。
+您深思熟虑的回答将有助于我们对该单元作进一步的改善。
 非常感谢！';
 $string['collesaname'] = '建构主义在线学习环境问卷调查（实际的）';
-$string['collesapintro'] = '该问卷调查的目的是为了了解这个在线单元对促进你的学习有多大的作用。 
-以下有24个问题，每个问题要求你比较在此单元中，你所<b>希望的</b>（理想的）和<b>实际的</b>体会。
-这里无所谓“正确”或“错误”答案；我们只对你的观点感兴趣。请相信我们对你的回答保持高度机密，也不必担心会影响对你的评分。
-你深思熟虑的回答将有助于我们对该单元作进一步的改善。
+$string['collesapintro'] = '该问卷调查的目的是为了了解这个在线单元对促进您的学习有多大的作用。 
+以下有24个问题，每个问题要求您比较在此单元中，您所<b>希望的</b>（理想的）和<b>实际的</b>体会。
+这里无所谓“正确”或“错误”答案；我们只对您的观点感兴趣。请相信我们对您的回答保持高度机密，也不必担心会影响对您的评分。
+您深思熟虑的回答将有助于我们对该单元作进一步的改善。
 非常感谢！';
 $string['collesapname'] = '建构主义在线学习环境问卷调查（希望的和实际的）';
 $string['collesm1'] = '实用性';
@@ -144,21 +144,21 @@ $string['collesm5short'] = '同学的支持';
 $string['collesm6'] = '解释的清晰程度';
 $string['collesm6short'] = '解释的清晰程度';
 $string['collesmintro'] = '在此在线单元中……';
-$string['collespintro'] = '该问卷调查的目的是为了了解你对网上学习的看法如何。
-以下有24个问题，每个问题要求你回答在此单元中，你所<b>希望的</b>（理想的）。
-这里无所谓“正确”或“错误”答案；我们只对你的观点感兴趣。请相信我们对你的回答保持高度机密，也不必担心会影响对你的评分。
-你深思熟虑的回答将有助于我们对该单元作进一步的改善。
+$string['collespintro'] = '该问卷调查的目的是为了了解您对网上学习的看法如何。
+以下有24个问题，每个问题要求您回答在此单元中，您所<b>希望的</b>（理想的）。
+这里无所谓“正确”或“错误”答案；我们只对您的观点感兴趣。请相信我们对您的回答保持高度机密，也不必担心会影响对您的评分。
+您深思熟虑的回答将有助于我们对该单元作进一步的改善。
 非常感谢！';
 $string['collespname'] = '建构主义在线学习环境问卷调查（希望的）';
 $string['done'] = '完成';
 $string['download'] = '下载';
 $string['downloadexcel'] = '以Excel电子表格形式下载数据';
-$string['downloadinfo'] = '你可以以适于Excel、SPSS或其它软件包分析的形式下载完整的原始数据。';
+$string['downloadinfo'] = '您可以以适于Excel、SPSS或其它软件包分析的形式下载完整的原始数据。';
 $string['downloadtext'] = '以纯文本形式下载数据';
 $string['editingasurvey'] = '编辑问卷调查';
 $string['guestsnotallowed'] = '访客不允许提交问卷';
 $string['helpsurveys'] = '不同类型问卷的帮助文档';
-$string['howlong'] = '你完成这份问卷花了多长时间？';
+$string['howlong'] = '您完成这份问卷花了多长时间？';
 $string['howlongoptions'] = '1分钟之内,1-2分钟,2-3分钟,3-4分钟,4-5分钟,5-10分钟,超过10分钟';
 $string['ifoundthat'] = '我发现';
 $string['introtext'] = '介绍';
@@ -169,8 +169,8 @@ $string['name'] = '名字';
 $string['newsurveyresponses'] = '新的调查答卷';
 $string['nobodyyet'] = '还没人完成这个问卷';
 $string['notdone'] = '尚未完成';
-$string['notes'] = '你的个人分析和注解';
-$string['othercomments'] = '你还有其它注解吗？';
+$string['notes'] = '您的个人分析和注解';
+$string['othercomments'] = '您还有其它注解吗？';
 $string['peoplecompleted'] = '迄今为止有{$a}人完成该问卷';
 $string['preferred'] = '希望的';
 $string['preferredclass'] = '班级希望的';
@@ -179,18 +179,18 @@ $string['question'] = '问题';
 $string['questions'] = '问题';
 $string['questionsnotanswered'] = '有些问题没有回答。';
 $string['report'] = '调查报告';
-$string['savednotes'] = '你的注解已经保存';
+$string['savednotes'] = '您的注解已经保存';
 $string['scaleagree5'] = '非常反对,稍许反对,既不同意也不反对,稍许同意,非常同意';
 $string['scales'] = '量表';
 $string['scaletimes5'] = '几乎从不,不常,偶尔,经常,几乎总是';
 $string['seemoredetail'] = '点击这里看更多细节';
 $string['selectedquestions'] = '从一个量表中选出的问题，所有学生';
 $string['summary'] = '概要';
-$string['surveycompleted'] = '你已经完成了该问卷。以下图表概要显示了你的结果与班级平均结果的比较。';
+$string['surveycompleted'] = '您已经完成了该问卷。以下图表概要显示了您的结果与班级平均结果的比较。';
 $string['surveyname'] = '问卷名称';
 $string['surveysaved'] = '问卷已保存';
 $string['surveytype'] = '问卷类型';
-$string['thanksforanswers'] = '{$a}，谢谢你回答了这个问卷！';
+$string['thanksforanswers'] = '{$a}，谢谢您回答了这个问卷！';
 $string['time'] = '时间';
 $string['viewsurveyresponses'] = '查看{$a}个调查答卷';
 

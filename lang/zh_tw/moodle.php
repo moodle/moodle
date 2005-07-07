@@ -1,7 +1,5 @@
 <?PHP // $Id$ 
       // moodle.php - created with Moodle 1.0.8 dev (2002121200)
-
-
 $string['action'] = "課程活動";
 $string['activities'] = "課程活動分類";
 $string['activity'] = "瀏覽線上活動紀錄";
@@ -125,16 +123,11 @@ $string['edituser'] = "編輯使用者帳號";
 $string['email'] = "電子郵件";
 $string['emailconfirm'] = "確認你的帳號";
 $string['emailconfirmation'] = "你好 \$a->firstname,
-
 有人在 '\$a->sitename' 網站以你的郵件地址登記了帳號申請
-
-如果要確認帳號確實是你所申請的, 請到以下連結:
-
+如果要確認帳號確實是你所申請的, 請到以下連結:
   \$a->link
-
 對大多數電子郵件而言,你只要按下以上網址即可
 如果並未出現連結 請用剪貼的方式 啟動瀏覽器進入以上網址網頁.
-
 歡迎你的加入 '\$a->sitename' 系統管理員
 \$a->admin 敬上,";
 $string['emailconfirmsent'] = "   <p>本系統已經送出電子郵件到 <b>\$a</b>
@@ -176,25 +169,8 @@ $string['frontpagedescription'] = "Front page 說明";
 $string['frontpageformat'] = "Front page 格式";
 $string['fulllistofcourses'] = "所有課程";
 $string['fullname'] = "名稱";
-$string['fullnamedisplay'] = '$a->lastname $a->firstname';
 $string['fullprofile'] = "個人完整資料";
 $string['fullsitename'] = "網站名稱";
-$string['gd1'] = "GD 1.x is installed";
-$string['gd2'] = "GD 2.x is installed";
-$string['gdnot'] = "GD is not installed";
-$string['gpl'] = "Copyright (C) 2001-2002  Martin Dougiamas  (http://dougiamas.com)
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details:
-
-http://www.gnu.org/copyleft/gpl.html";
 $string['grade'] = "分數";
 $string['grades'] = "分數";
 $string['guestskey'] = "允許有課程密碼者進入(不需註冊也可以)";
@@ -317,20 +293,14 @@ $string['new'] = "新";
 $string['newaccount'] = "新 帳號名稱";
 $string['newpassword'] = "新 密碼";
 $string['newpasswordtext'] = "嗨 \$a->firstname,\$a->lastname
-
 你於 '\$a->sitename' 的帳號已經被要求重新設定一個 臨時密碼
-
 請按下以下連結 以便確認系統將登入時所需輸入的最新資訊設定如下:
    \$a->link
-
    帳號名稱username: \$a->username
    密碼: \$a->newpassword
-
 若是你並未提出重新設定要求 則可能是網友弄錯 請忽略以上訊息
-
 對大多數電子郵件而言,你只要按下以上網址即可
 如果並未出現連結 請用剪貼的方式 啟動瀏覽器進入以上網址網頁.
-
 歡迎使用本系統 '\$a->sitename' 管理者,
 \$a->signoff 敬上";
 $string['newpicture'] = "新圖片";
@@ -407,7 +377,6 @@ $string['secs'] = "秒";
 $string['section'] = "Section";
 $string['selectacountry'] = "選擇國別";
 $string['senddetails'] = "以電子郵件傳送 詳細資訊";
-$string['separateandconnected'] = "Separate and Connected ways of knowing";
 $string['serverlocaltime'] = "伺服器時間";
 $string['settings'] = "設定課程資訊";
 $string['shortname'] = "課程簡稱/代碼";
@@ -433,7 +402,6 @@ $string['someerrorswerefound'] = "缺乏部分資料或不完整. 請觀看以下訊息.";
 $string['startdate'] = "課程開始日期";
 $string['startsignup'] = "申請一個使用者帳號!";
 $string['status'] = "狀態";
-$string['stringsnotset'] = "The following strings are not defined in \$a";
 $string['studentnotallowed'] = "抱歉, 你無法以 '\$a' 身分進入本課程";
 $string['success'] = "成功 ";
 $string['summary'] = "摘要";
@@ -447,7 +415,7 @@ $string['thanks'] = "謝謝";
 $string['theme'] = "顯示格式";
 $string['themesaved'] = "儲存新的顯示格式";
 $string['thischarset'] = "Big5";
-$string['thislanguage'] = "Taiwan";
+$string['thislanguage'] = "&#27491;&#39636;&#20013;&#25991;";
 $string['timezone'] = "時區";
 $string['today'] = "今日";
 $string['todaylogs'] = "今日的紀錄";
@@ -486,9 +454,7 @@ $string['week'] = "週";
 $string['weeklyoutline'] = "本週大綱";
 $string['welcometocourse'] = "歡迎到 \$a";
 $string['welcometocoursetext'] = "歡迎進入 \$a->coursename!
-
 你所需處理的第一件事是先修改個人設定 以便他人可以多了解你:
-
   \$a->profileurl";
 $string['withchosenfiles'] = "將選定的檔案";
 $string['wordforstudent'] = "學生的稱呼";
@@ -504,7 +470,6 @@ $string['yes'] = "是";
 $string['yourlastlogin'] = "你最後登入的時間";
 $string['yourself'] = "你自己";
 $string['yourteacher'] = "你的教師 \$a";
-
 $string['configdebug'] = "啟動本功能, 則系統執行錯誤時會顯示更多訊息,主要用於開發系統程式之用.";
 $string['displayingrecords'] = "顯示 \$a 紀錄";
 $string['gdneed'] = "必須安裝　GD 以便顯示本圖片";
@@ -512,7 +477,6 @@ $string['howtomakethemes'] = "如何設計新的網頁佈景";
 $string['uploadedfileto'] = "上載 \$a->file 到 \$a->directory　目錄下";
 $string['uploadnofilefound'] = "缺乏檔案 - 你確定選擇了上載檔案了嗎?";
 $string['uploadproblem'] = "上載檔案 '\$a' 時發生不知名錯誤  (是否檔案過大?)";
-//FKH
 $string['setleader'] = "設組長";
 $string['setleadersure'] = "你確定要將 [ \$a ] 設為組長嗎?";
 $string['studentmode']="進入學生模式";
@@ -528,4 +492,4 @@ $string['onlinecoursecount']="本課程線上人數 \$a 人";
 $string['width']="寬度";
 $string['height']="高度";
 $string['backonepage']="回前頁";
-?>
+?>

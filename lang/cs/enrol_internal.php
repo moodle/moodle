@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // enrol_internal.php - created with Moodle 1.4 (2004083100)
+      // enrol_internal.php - created with Moodle 1.5 + (2005060201)
 
 
 $string['description'] = 'Toto je výchozí forma zápisù do kurzù. Existují dva základní zpùsoby, jak se mohou studenti zapsat do urèitých kurzù:

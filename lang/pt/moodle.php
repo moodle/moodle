@@ -815,7 +815,6 @@ $string['pageheaderconfigablock'] = 'Configurando um bloco em %%fullname%%';
 $string['parentcoursenotfound'] = 'Disciplina progenitora desconhecida';
 $string['parentcoursenotmetacourse'] = 'A disciplina progenitrora não é uma metadisciplina';
 $string['parentfolder'] = 'Pasta progenitora';
-$string['parentlanguage'] = '<< TRADUCTORES: Se existir uma língua mãe para a sua língua, que o Moodle deva utilizar quando não encontrar uma tradução na sua língua, especifique o código dessa língua aqui. Exemplo: nl. Se deixar este campo em branco, será usado o inglês. >>';
 $string['participants'] = 'Participantes';
 $string['password'] = 'Palavra chave';
 $string['passwordchanged'] = 'Palavra chave modificada';

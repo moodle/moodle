@@ -44,14 +44,17 @@ $string['details'] = 'SCO track details';
 $string['enablebrowse'] = 'Enable preview mode';
 $string['frameheight'] = 'This preference set the default height of SCO frame';
 $string['framewidth'] = 'This preference set the default width of SCO frame';
+$string['stagesize'] = 'Frame/Windows size';
 $string['width'] = 'Width';
 $string['height'] = 'Height';
 $string['trackingloose'] = 'WARNING: The tracking data of this package will be lost!';
-$string['popup'] = 'Open current SCO in a new window';
+$string['popup'] = 'Open Learning Objects in a new window';
 $string['totaltime'] = 'Time';
 $string['noactivity'] = 'Nothing to report';
 $string['firstaccess'] = 'First access';
 $string['lastaccess'] = 'Last access';
+$string['scormcourse'] = 'SCORM Course';
+$string['advanced'] = 'Advanced';
 
 // Validation
 $string['attr_error'] = 'Bad value for attribute ($a->attr) in tag $a->tag.';
@@ -66,6 +69,7 @@ $string['not_corr_type'] = 'Type mismatch for tag $a->tag';
 $string['missing_attribute'] = 'Missing attribute $a->attr in tag $a->tag';
 $string['missing_tag'] = 'Missing tag $a->tag';
 $string['packagedir'] = 'Filesystem Error: Can\'t create package directory';
+$string['packagefile'] = 'No package file specified';
 $string['php5'] = 'PHP 5 (DOMXML native library)';
 $string['position_error'] = 'The $a->tag tag can\'t be child of $a->parent tag';
 $string['regular'] = 'Regular Manifest';

@@ -2,7 +2,7 @@
 
 $string['anlogin'] = 'Authorize.net&nbsp;: nom d\'utilisateur';
 $string['anpassword'] = 'Authorize.net&nbsp;: mot de passe';
-$string['anreferer'] = 'Taper ici un URL référenceur si vous avez mis en place cette fonctionnalité dans votre compte authorize.net. Ceci enverra une entête «&nbsp;Referer: URL&nbsp;» incluse dans la requête web';
+$string['anreferer'] = 'Taper ici une URL (référenceur) si vous avez mis en place cette fonctionnalité dans votre compte authorize.net. Ceci enverra une entête «&nbsp;Referer: URL&nbsp;» incluse dans la requête web';
 $string['antestmode'] = 'Traiter les transactions en mode test (aucun montant ne sera prélevé)';
 $string['antrankey'] = 'Authorize.net&nbsp;: clef de transaction';
 $string['ccexpire'] = 'Date d\'échéance';

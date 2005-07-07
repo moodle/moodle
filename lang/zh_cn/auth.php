@@ -1,9 +1,26 @@
-<?PHP // $Id$ 
-      // auth.php - created with Moodle 1.2 development (2003120700)
+<?PHP // $Id$
 
 
+
+$string['alternatelogin'] = '如果您在此输入一个URL，它将被用于本站的登录。这个页面上应当有一个表单，表单的action一项应设定为<strong>“{$a}”</strong>，并且返回的字段中应当有<strong>username</strong>和<strong>password</strong>。<br />小心宾不要输入错误的URL，否则您可能会被锁在站点之外。<br />要使用缺省的登录页面请为此设置保留空白。';
+$string['alternateloginurl'] = '换用其它登录链接';
+$string['auth_cas_baseuri'] = '服务器的URI<br />例如，如果CAS服务器位于 host.domaine.fr/CAS/ 那么<br />cas_baseuri = CAS/';
+$string['auth_cas_create_user'] = '如果您希望将CAS认证用户加入到Moodle数据库中，否则只有已经存在于Moodle数据库中的用户可以登录。';
+$string['auth_cas_enabled'] = '如果您希望使用CAS认证请开启此选项。';
+$string['auth_cas_hostname'] = 'CAS服务器主机名<br />例如: host.domain.fr';
+$string['auth_cas_invalidcaslogin'] = '对不起，您登录失败——无法对您进行认证。';
+$string['auth_cas_language'] = '选择语言';
+$string['auth_cas_logincas'] = '安全连接访问';
+$string['auth_cas_port'] = 'CAS服务端口';
+$string['auth_cas_server_settings'] = 'CAS服务配置';
+$string['auth_cas_text'] = '安全连接';
+$string['auth_cas_version'] = 'CAS版本';
+$string['auth_casdescription'] = '这个方法使用CAS服务器(中央认证服务)来认证Single Sing On(SSO)环境中的用户。您也可以使用LDAP认证。如果给定的用户名和密码在CAS中有效，Moodle会在数据库中船舰信用户项目，并从LDAP中取出相应的属性。在后续的登录中，只检查用户名和密码。';
+$string['auth_castitle'] = '使用CAS服务器(SSO)';
+$string['auth_common_settings'] = '公用设置';
+$string['auth_data_mapping'] = '数据映射';
 $string['auth_dbdescription'] = '该方法使用一个外部数据库来检验用户名和密码是否有效。如果是一个新帐号，该帐号其它字段的信息将一起复制到本系统中。';
-$string['auth_dbextrafields'] = '这些字段是可选的。你在此指定的<b>外部数据库字段</b>将预先填入本系统的用户数据库中。<br />如果你留空不填，将使用系统默认值。<br />无论以上哪种情况，用户在登录后都可以改写这些字段。';
+$string['auth_dbextrafields'] = '这些字段是可选的。您在此指定的<b>外部数据库字段</b>将预先填入本系统的用户数据库中。<p>如果您留空不填，将使用系统默认值。</p><p>无论以上哪种情况，用户在登录后都可以改写这些字段。</p>';
 $string['auth_dbfieldpass'] = '含有密码的字段名';
 $string['auth_dbfielduser'] = '含有用户名的字段名';
 $string['auth_dbhost'] = '数据库所在的主机。';
@@ -16,56 +33,113 @@ $string['auth_dbtype'] = '数据库类型（详情请看<a href=\"../lib/adodb/readme.htm#
 $string['auth_dbuser'] = '对该数据库具有读权限的用户名';
 $string['auth_emaildescription'] = '电子邮件确认是默认的身份验证方法。用户注册时可以选用自己的用户名和密码，然后有一封确认信件发送到该用户的电子邮箱。该信件中有一个安全的链接指向用户确认帐号的页面。以后的登录就只根据本系统的数据库中储存的信息检验用户名和密码。';
 $string['auth_emailtitle'] = '基于电子邮件的身份验证';
+$string['auth_fccreators'] = '可以创建课程的组列表，组与组之间用‘;’隔开。其名称必须与FirstClass服务器上的完全一致，此系统大小写敏感。';
+$string['auth_fcdescription'] = '此方法使用FirstClass服务器来检查用户名和密码是否正确。';
+$string['auth_fcfppport'] = '服务器端口(通常是3333)';
+$string['auth_fchost'] = 'FirstClass服务器地址，使用IP或DNS名称。';
+$string['auth_fcpasswd'] = '上面帐号的密码';
+$string['auth_fctitle'] = '使用FirstClass服务器';
+$string['auth_fcuserid'] = '拥有‘Subadministrator’权限的FirstClass帐号的userid。';
+$string['auth_fieldlock'] = '锁定值';
+$string['auth_fieldlock_expl'] = '<p><b>锁定值：</b> 如果开启，Moodle用户和管理员将不能直接修改字段的值。如果您正在维护外部数据库的数据，请选择此项。';
 $string['auth_imapdescription'] = '该方法使用一个IMAP服务器来检验用户名和密码是否有效。';
 $string['auth_imaphost'] = 'IMAP服务器地址。用IP地址，不要用域名。';
 $string['auth_imapport'] = 'IMAP服务器端口号。通常是143或993。';
 $string['auth_imaptitle'] = '使用一个IMAP服务器';
 $string['auth_imaptype'] = 'IMAP服务器类型。IMAP服务器可能有不同类型的身份验证。';
-$string['auth_ldap_bind_dn'] = '如果你想用绑定用户来搜索用户，在此指定。就象：‘cn=ldapuser,ou=public,o=org’';
+$string['auth_ldap_bind_dn'] = '如果您想用绑定用户来搜索用户，在此指定。就象：‘cn=ldapuser,ou=public,o=org’';
 $string['auth_ldap_bind_pw'] = '绑定用户的密码。';
+$string['auth_ldap_bind_settings'] = '绑定设置';
 $string['auth_ldap_contexts'] = '用户背景列表。以‘;’分隔。例如：‘ou=users,o=org; ou=others,o=org’';
-$string['auth_ldap_create_context'] = '如果你允许根据email信息创建用户,指定创建用户的内容.该值应该有别于别的用户';
+$string['auth_ldap_create_context'] = '如果您允许根据email信息创建用户,指定创建用户的内容.该值应该有别于别的用户';
 $string['auth_ldap_creators'] = '列出可创建新课程的组.用\';\'分割多个组.如\'cn=teachers,ou=staff,o=myorg\'';
+$string['auth_ldap_expiration_desc'] = '选择否关闭密码过期检查，选择LDAP则从LDAP中读取密码过期时间passwordexpiration。';
+$string['auth_ldap_expiration_warning_desc'] = '在多少天前显示密码过期警告。';
+$string['auth_ldap_expireattr_desc'] = '可选: 覆盖存储密码过期时间的属性passwordAxpirationTime';
+$string['auth_ldap_graceattr_desc'] = '可选: 覆盖宽限登录属性';
+$string['auth_ldap_gracelogins_desc'] = '激活LDAP gracelogin支持。在密码过期后，在宽限登录为0前用户仍可以登录。激活这个选项后，当密码过期时将显示gracelogin信息。';
 $string['auth_ldap_host_url'] = '以URL形式指定LDAP主机，类似于：‘ldap://ldap.myorg.com/’或‘ldaps://ldap.myorg.com/’';
-$string['auth_ldap_memberattribute'] = '指定从属于某个组的用户属性,一般是\'member\'';
-$string['auth_ldap_search_sub'] = '如果你想从次级上下文中搜索用户，设值&lt;&gt; 0。';
+$string['auth_ldap_login_settings'] = '登录设置';
+$string['auth_ldap_memberattribute'] = '可选的：指定从属于某个组的用户属性,一般是\'member\'';
+$string['auth_ldap_objectclass'] = '可选的：指定objectClass以外的属性在ldap_user_type中搜索用户。通常您不需修改这个选项。';
+$string['auth_ldap_opt_deref'] = '检查在搜索时如何处理别名。选择下列值之一: “否”(LDAP_DEREF_NEVER)或“是”(LDAP_DEREF_ALWAYS)。';
+$string['auth_ldap_passwdexpire_settings'] = 'LDAP密码过期设置。';
+$string['auth_ldap_search_sub'] = '如果您想从次级上下文中搜索用户，设值<> 0。';
+$string['auth_ldap_server_settings'] = 'LDAP服务器设置';
 $string['auth_ldap_update_userinfo'] = '从LDAP向本系统更新用户信息（姓名、地址……）要查看映射信息，请看/auth/ldap/attr_mappings.php';
 $string['auth_ldap_user_attribute'] = '用于命名/搜索用户的属性。通常为‘cn’。';
+$string['auth_ldap_user_settings'] = '用户查找设置';
+$string['auth_ldap_user_type'] = '选择用户如何储存在LDAP中。这个选项同时也指定了登录过期、宽限登录和用户创建如何工作。';
+$string['auth_ldap_version'] = '您的服务器所使用的LDAP协议版本。';
 $string['auth_ldapdescription'] = '该方法利用一个外部的LDAP服务器进行身份验证。
 
-                                  如果用户名和密码是有效的，本系统据此在数据库中创建一个新用户。 
+如果用户名和密码是有效的，本系统据此在数据库中创建一个新用户。
 
-                                  该模块可以从LDAP中读取用户属性，并把指定的字段预先填入本系统数据库。 
+该模块可以从LDAP中读取用户属性，并把指定的字段预先填入本系统数据库。
 
-                                  此后的登录只需检验用户名和密码。';
-$string['auth_ldapextrafields'] = '这些字段是可选的。你可以在此指定这些<b>LDAP字段</b>复制到本系统的数据库中。 <br />如果你不选，将使用本系统默认值。<br />无论以上何种情况，用户在登录之后都可以修改这些字段。';
+此后的登录只需检验用户名和密码。';
+$string['auth_ldapextrafields'] = '这些字段是可选的。您可以在此指定这些<b>LDAP字段</b>复制到本系统的数据库中。 <br />如果您不选，将使用本系统默认值。<br />无论以上何种情况，用户在登录之后都可以修改这些字段。';
 $string['auth_ldaptitle'] = '使用一个LDAP服务器';
 $string['auth_manualdescription'] = '该方法不允许用户以任何方式创建帐号。所有帐号只能由管理员手工创建。';
 $string['auth_manualtitle'] = '只允许手工添加帐号';
+$string['auth_multiplehosts'] = 'Multiple hosts can be specified (eg host1.com;host2.com;host3.com';
 $string['auth_nntpdescription'] = '该方法使用一个NNTP服务器来检验用户名和密码是否有效。';
 $string['auth_nntphost'] = 'NNTP服务器地址。用IP地址，不要用域名。';
 $string['auth_nntpport'] = '服务器端口（通常是119）';
 $string['auth_nntptitle'] = '使用一个NNTP服务器';
 $string['auth_nonedescription'] = '用户可以即刻进入本系统并创建一个有效帐号，不需要任何身份验证，也不需要电子邮件确认。慎用该方法——考虑一下安全性和管理上的问题。';
 $string['auth_nonetitle'] = '没有身份验证';
+$string['auth_pamdescription'] = '这个方法使用PAM来访问服务器上的用户，使用前必须安装<a href=\"http://www.math.ohio-state.edu/~ccunning/pam_auth/\" target=\"_blank\">PHP4 PAM认证</a>。';
+$string['auth_pamtitle'] = 'PAM';
+$string['auth_passwordisexpired'] = '您的密码已经过期，要修改么?';
+$string['auth_passwordwillexpire'] = '您的密码将在{$a}天后过期，现在要修改么?';
 $string['auth_pop3description'] = '该方法使用一个POP3服务器来检验用户名和密码。';
 $string['auth_pop3host'] = 'POP3服务器地址。用IP地址，不要用域名。';
-$string['auth_pop3port'] = '服务器端口（通常是110）';
+$string['auth_pop3mailbox'] = '要连接的邮箱名称。(通常是INBOX)';
+$string['auth_pop3port'] = '服务器端口(一般是110，SSL常用995)';
 $string['auth_pop3title'] = '使用一个POP3服务器';
-$string['auth_pop3type'] = '服务器类型。如果你的POP3服务器使用安全验证，请选择pop3cert。';
+$string['auth_pop3type'] = '服务器类型。如果您的POP3服务器使用安全验证，请选择pop3cert。';
+$string['auth_shib_convert_data'] = '数据修改API';
+$string['auth_shib_convert_data_description'] = '您可以是用此API将修改过的数据提交奥给Shibboleth。要了解细节，请参考<a href=\"../auth/shibboleth/README.txt\" target=\"_blank\">README</a>。';
+$string['auth_shib_convert_data_warning'] = '此文件不存在或无法被Web服务器读取！';
+$string['auth_shib_instructions'] = '如果您的学校支持Shibboleth，可以使用<a href=\"$a\">Shibboleth登录</a>来访问它。<br />否则请使用普通的登录表格。';
+$string['auth_shib_instructions_help'] = '应当在此为您的用户提供关于Shibboleth的解释。在登录屏幕上，将会显示这些提示。其中应当包含一个指向“<b>$a</b>”的链接，这样Shibboleth用户可以轻松等如。如果此项为空，缺省的指示信息将会被是用(并非为Shibboleth定制)。';
+$string['auth_shib_only'] = '只用Shibboleth';
+$string['auth_shib_only_description'] = '如果只是用Shibboleth认证方式，请设定此选项。';
+$string['auth_shib_username_description'] = '用在Moodle中当作用户名的Shibboleth环境变量名';
+$string['auth_shibboleth_login'] = 'Shibboleth登录';
+$string['auth_shibboleth_manual_login'] = '手工登录';
+$string['auth_shibbolethdescription'] = '是用这个方法，用户的创建和验证是使用<a href=\"http://shibboleth.internet2.edu/\" target=\"_blank\">Shibboleth</a>进行的';
+$string['auth_shibbolethtitle'] = 'Shibboleth';
+$string['auth_updatelocal'] = '更新本地数据';
+$string['auth_updatelocal_expl'] = '<p><b>更新本地数据:</b> 如果开启，则用户每次登录或有用户同步时字段将会被更新。设定为本地更新的字段应当被锁住。</p>';
+$string['auth_updateremote'] = '更新外部数据';
+$string['auth_updateremote_expl'] = '<p><b>更新外部数据:</b> 如果开启，则外部认证系统中的用户记录将被更新。要修改这个选项需首先解锁字段。</p>';
+$string['auth_updateremote_ldap'] = '<p><b>注意:</b> 更新外部LDAP数据需要您设定的binddn和binddw是有权限修改所有用户记录的用户。它目前不能保持多值属性的值，会在更新时删除其它的值。</p>';
 $string['auth_user_create'] = '激活用户创建功能';
-$string['auth_user_creation'] = '新的(匿名)用户可以在外部身份验证源中创建新用户帐号，并通过email确认。如果你激活了这个功能，请记住同时也为用户创建功能设置一下模块特定选项';
+$string['auth_user_creation'] = '新的(匿名)用户可以在外部身份验证源中创建新用户帐号，并通过email确认。如果您激活了这个功能，请记住同时也为用户创建功能设置一下模块特定选项';
 $string['auth_usernameexists'] = '选中的用户名已经存在。请选择一个新的。';
 $string['authenticationoptions'] = '身份验证选项';
-$string['authinstructions'] = '你在这里可以给你的用户提供使用说明，让他们知道该用哪个用户名和密码。你在这里输入的文本将出现在登录页面。如果留空不填，登录页面将不会出现使用说明。';
-$string['changepassword'] = '更改密码地址（URL）';
-$string['changepasswordhelp'] = '在这里你可以指定一个位置用户可以重新获得或更改他们的用户名/密码。这将在登录页面显示一个按钮。如果留空不填，就不会有按钮出现。';
+$string['authinstructions'] = '您在这里可以给您的用户提供使用说明，让他们知道该用哪个用户名和密码。您在这里输入的文本将出现在登录页面。如果留空不填，登录页面将不会出现使用说明。';
+$string['changepassword'] = '更改密码地址(URL)';
+$string['changepasswordhelp'] = '在这里您可以指定一个位置用户可以重新获得或更改他们的用户名/密码。这将在登录页面显示一个按钮。如果留空不填，就不会有按钮出现。';
 $string['chooseauthmethod'] = '选择一个身份验证方法：';
+$string['forcechangepassword'] = '强制修改密码';
+$string['forcechangepassword_help'] = '强制用户在下次登录时修改密码。';
+$string['forcechangepasswordfirst_help'] = '强制用户在第一次登录时修改密码。';
 $string['guestloginbutton'] = '访客登录按钮';
 $string['instructions'] = '使用说明';
+$string['locked'] = '已锁定';
 $string['md5'] = 'MD5加密';
 $string['plaintext'] = '纯文本';
-$string['showguestlogin'] = '你可以在登录页面显示或隐藏访客登录按钮。';
-//  1.2
-$string['auth_multiplehosts'] = "Multiple hosts can be specified (eg host1.com;host2.com;host3.com";
+$string['showguestlogin'] = '您可以在登录页面显示或隐藏访客登录按钮。';
+$string['stdchangepassword'] = '使用标准的修改密码页面';
+$string['stdchangepassword_expl'] = '如果外部认证系统允许通过Moodle修改密码，则应设为是。此选项会覆盖“修改密码URL”。';
+$string['unlocked'] = '已解除锁定';
+$string['unlockedifempty'] = '如果空则解除锁定';
+$string['update_never'] = '从不';
+$string['update_oncreate'] = '创建时';
+$string['update_onlogin'] = '每次登录时';
+$string['update_onupdate'] = '更新时';
+$string['stdchangepassword_explldap'] = '注意: 如果使用远程服务器，建议您使用安全的LDAP连接(ldaps://)。';
 ?>

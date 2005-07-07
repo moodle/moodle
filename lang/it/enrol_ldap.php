@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // enrol_ldap.php - created with Moodle 1.5 ALPHA (2005051500)
+      // enrol_ldap.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['description'] = '<p>Si può usare un server LDAP per controllare le vostre registrazioni. Viene presupposto che l\'albero LDAP contenga gruppi che corrispondano ai corsi, e che ognuno di questi gruppi/corsi avrà la sua istanza di appartenenza per corrispondere agli studenti.</p>
@@ -22,6 +22,7 @@ $string['enrol_ldap_course_settings'] = 'Impostazioni per l\'iscrizione al corso
 $string['enrol_ldap_course_shortname'] = 'Opzionale: campo LDAP per ottenere nomi corti da.';
 $string['enrol_ldap_course_summary'] = 'Opzionale: campo LDAP per ottenere sommario da.';
 $string['enrol_ldap_editlock'] = 'Blocca valore';
+$string['enrol_ldap_general_options'] = 'Opzioni Generali';
 $string['enrol_ldap_host_url'] = 'Specifica host LDAP in formato-URL come \'ldap://ldap.miosito.com/\' o \'ldaps://ldap.miosito.com/\'';
 $string['enrol_ldap_objectclass'] = 'Classe oggetto utilizzata per ricerca corsi. solitamente, \'posixGroup\'.';
 $string['enrol_ldap_search_sub'] = 'Cerca l\'appartenenza al gruppo a partire dal contesto.';

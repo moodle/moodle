@@ -1,4 +1,4 @@
-﻿<?php // $Id$ 
+<?php // $Id$ 
       // resource.php - created with Moodle 1.2 development (2003120700)
 
 

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.6 development (2005052400)
+      // forum.php - created with Moodle 1.5 + (2005060201)
 
 
 $string['addanewdiscussion'] = 'Pøidat nový pøíspìvek';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // enrol_database.php - created with Moodle 1.4 (2004083100)
+      // enrol_database.php - created with Moodle 1.5 + (2005060201)
 
 
 $string['dbhost'] = 'Název databázového serveru';

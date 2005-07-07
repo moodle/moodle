@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // journal.php - created with Moodle 1.5 + (2005060201)
+      // journal.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005030501)
 
 
 $string['alwaysopen'] = 'Aina avoinna';
@@ -24,7 +24,6 @@ $string['journalquestion'] = 'Muistion kysymys';
 $string['journalrating1'] = 'Välttävä';
 $string['journalrating2'] = 'Tyydyttävä';
 $string['journalrating3'] = 'Kiitettävä';
-$string['mailsubject'] = 'Muistion palaute';
 $string['modulename'] = 'Muistio';
 $string['modulenameplural'] = 'Muistiot';
 $string['newjournalentries'] = 'Uudet muistiot';

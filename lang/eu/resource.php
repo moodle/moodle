@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005011000)
+      // resource.php - created with Moodle 1.4.1 (2004083101)
 
 
 $string['addresource'] = 'Baliabidea gehitu';
@@ -22,7 +22,7 @@ $string['newwindow'] = 'Leiho berria';
 $string['newwindowopen'] = 'Erakutsi baliabide hau popup leiho berri batean';
 $string['note'] = 'Oharra';
 $string['notefile'] = 'Ikasgaian fitxategi gehiago igotzeko (zerrenda honetan ager daitezen)
-<a href=\"$a\">Fitxategi Kudeatzailea</a> erabil ezazu.';
+<A HREF=$a >Fitxategi Kudeatzailea</A> erabil ezazu.';
 $string['notypechosen'] = 'Mota bat aukeratu behar duzu.  Zure nabigatzailearen atzera botoia erabiliz bueltatu eta berriro saiatu.';
 $string['pagedisplay'] = 'Erakutsi baliabide hau oraingo leihoan';
 $string['pagewindow'] = 'Leiho berean';

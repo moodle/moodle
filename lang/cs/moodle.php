@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 Beta (2005052300)
+      // moodle.php - created with Moodle 1.5 + (2005060201)
 
 
 $string['action'] = 'Akce';
@@ -119,7 +119,7 @@ $string['backuporiginalname'] = 'Název zálohy';
 $string['backupsavetohelp'] = 'Úplná cesta k adresáøi, do nìho¾ chcete ukládat soubory záloh<br />(ponecháte-li pole prázdné, budou se soubory ukládat do vlastního adresáøe daného kurzu)';
 $string['backuptakealook'] = 'Prosím, zkontrolujte protokoly záloh: $a';
 $string['backupuserfileshelp'] = 'Vyberte, zda mají být soubory u¾ivatele (napø. jeho fotografie) zahrnuty do automatických záloh.';
-$string['backupusershelp'] = 'Vyberte si, zda chcete zahrnout v¹echny u¾ivatele na serveru, nebo jen potøebné u¾ivatele pro ';
+$string['backupusershelp'] = 'Vyberte, zda chcete zahrnout v¹echny u¾ivatele na serveru, nebo jen potøebné u¾ivatele pro ka¾dý kurz';
 $string['backupversion'] = 'Verze zálohy';
 $string['blockconfiga'] = 'Konfigurace bloku $a';
 $string['blockconfigbad'] = 'Tento blok nebyl korektnì implementován a nemá proto  konfiguraèní rozhraní';
@@ -202,7 +202,7 @@ $string['coursecategory'] = 'Kategorie kurzu';
 $string['coursecreators'] = 'Tvùrci kurzu';
 $string['coursefiles'] = 'Soubory kurzu';
 $string['courseformats'] = 'Uspoøádání kurzu';
-$string['coursegrades'] = 'Body kurzu';
+$string['coursegrades'] = 'Známky kurzu';
 $string['coursehidden'] = 'Tento kurz není momentálnì studentùm dostupný';
 $string['courseinfo'] = 'Informace o kurzu';
 $string['courserestore'] = 'Obnova kurzu';
@@ -220,7 +220,7 @@ $string['creatingblocks'] = 'Vytváøím bloky';
 $string['creatingcategoriesandquestions'] = 'Vytváøím kategorie a otázky';
 $string['creatingcoursemodules'] = 'Vytváøím moduly kurzu';
 $string['creatingevents'] = 'Vytváøím události';
-$string['creatinggradebook'] = 'Vytváøím knihu bodù';
+$string['creatinggradebook'] = 'Vytváøím klasifikaci';
 $string['creatinggroups'] = 'Vytváøím skupiny';
 $string['creatinglogentries'] = 'Vytváøím polo¾ky protokolu';
 $string['creatingmessagesinfo'] = 'Vytváøím informace o zprávách';
@@ -454,13 +454,11 @@ Tento program je volný software; mù¾ete jej ¹íøit a modifikovat podle ustanovení
 <p>
 Tento program je roz¹iøován v nadìji, ¾e bude u¾iteèný, av¹ak BEZ JAKÉKOLI ZÁRUKY; neposkytují se ani odvozené záruky PRODEJNOSTI anebo VHODNOSTI PRO URÈITÝ ÚÈEL. Dal¹í podrobnosti hledejte ve Obecné veøejné licenci GNU:
 <p>
-http://www.gnu.cz
-<br />
-http://staff.cesnet.cz/~lhotka/gnugpl-cz.html
+http://www.gnu.cz/
 <br />
 http://www.gnu.org/copyleft/gpl.html';
-$string['grade'] = 'Body';
-$string['grades'] = 'Body';
+$string['grade'] = 'Známka';
+$string['grades'] = 'Známky';
 $string['group'] = 'Skupina';
 $string['groupadd'] = 'Pøidat novou skupinu';
 $string['groupaddusers'] = 'Pøidat vybrané do skupiny';
@@ -702,7 +700,7 @@ $a->link
 S pozdravem od spravce \'$a->sitename\', $a->signoff';
 $string['newpicture'] = 'Nový obrázek';
 $string['newsitem'] = 'novinka';
-$string['newsitems'] = 'novinky';
+$string['newsitems'] = 'novinek';
 $string['newsitemsnumber'] = 'Kolik novinek ukazovat';
 $string['newuser'] = 'Nový u¾ivatel';
 $string['newusers'] = 'Noví u¾ivatelé';
@@ -718,7 +716,7 @@ $string['noexistingstudents'] = '®ádní stávající studenti';
 $string['noexistingteachers'] = '®ádní stávající uèitelé';
 $string['nofilesselected'] = 'Nebyly vybrány ¾ádné soubory k obnovì';
 $string['nofilesyet'] = 'Je¹tì ¾ádné soubory nebyly pøipojeny k tomuto kurzu';
-$string['nograde'] = '®ádné body';
+$string['nograde'] = 'Bez známky';
 $string['noimagesyet'] = 'Je¹tì ¾ádné obrázky nebyly pøipojeny k tomuto kurzu';
 $string['nomorecourses'] = 'Nebylo mo¾no najít více odpovídajících kurzù';
 $string['nomoreidnumber'] = 'Z dùvodu pøedcházení kolizí se ji¾ nepou¾ívá idnumber';
@@ -734,11 +732,11 @@ $string['noreplybouncesubject'] = '$a - vraceny email';
 $string['noreplyname'] = 'Nedpovidejte na tento email';
 $string['noresults'] = 'Bez výsledkù';
 $string['normal'] = 'Normalní';
-$string['normalfilter'] = 'Normální filtr';
+$string['normalfilter'] = 'Normální vyhledávání';
 $string['nostudentsfound'] = '$a nenalezeno';
 $string['nostudentsingroup'] = 'V této skupinì dosud nejsou ¾ádní studenti';
 $string['nostudentsyet'] = 'Je¹tì ¾ádní studenti nejsou zapsáni v tomto kurzu';
-$string['nosuchemail'] = 'To není emailová adresa';
+$string['nosuchemail'] = 'Taková adresa není registrovaná';
 $string['notavailable'] = 'Není dostupné';
 $string['noteachersyet'] = 'Je¹tì ¾ádní uèitelé nejsou v tomto kurzu';
 $string['notenrolled'] = '$a není zapsán v tomto kurzu.';
@@ -897,7 +895,7 @@ $string['showallcourses'] = 'Ukázat v¹echny kurzy';
 $string['showalltopics'] = 'Ukázat v¹echna témata';
 $string['showallusers'] = 'Ukázat v¹echny u¾ivatele';
 $string['showallweeks'] = 'Ukázat v¹echny týdny';
-$string['showgrades'] = 'Ukázat body';
+$string['showgrades'] = 'Ukázat známky';
 $string['showlistofcourses'] = 'Ukázat seznam kurzù';
 $string['showonlytopic'] = 'Ukázat pouze téma $a';
 $string['showonlyweek'] = 'Ukázat pouze týden $a';
@@ -911,7 +909,7 @@ $string['sincelast'] = 'Od posledního pøihlá¹ení';
 $string['site'] = 'Stránky';
 $string['sitedefault'] = 'Výchozí stránky';
 $string['siteerrors'] = 'Chyby na stránkách';
-$string['sitefiles'] = 'Soubory';
+$string['sitefiles'] = 'Soubory stránek';
 $string['sitelogs'] = 'Protokol stránek';
 $string['sitenews'] = 'Novinky stránek';
 $string['sitepartlist0'] = 'Musíte být vyuèující na hlavní stránce, abyste mohli vidìt seznam úèastníkù stránek.';
@@ -1037,7 +1035,7 @@ $string['user'] = 'U¾ivatel';
 $string['userconfirmed'] = 'Potvrzeno $a';
 $string['userdata'] = 'Data u¾ivatele';
 $string['userdeleted'] = 'U¾ivatelský úèet byl odstranìn';
-$string['userdescription'] = 'Popis';
+$string['userdescription'] = 'Dal¹í podrobnosti o u¾ivateli';
 $string['userfiles'] = 'Soubory u¾ivatele';
 $string['userlist'] = 'Seznam u¾ivatelù';
 $string['username'] = 'U¾ivatelské jméno';
@@ -1048,7 +1046,7 @@ $string['users'] = 'U¾ivatelé';
 $string['usersnew'] = 'Noví u¾ivatelé';
 $string['userzones'] = 'Èasové pásmo u¾ivatele';
 $string['usethiscourse'] = 'Pou¾ij tento kurz';
-$string['usingexistingcourse'] = 'Pou¾ívám stávající kurz';
+$string['usingexistingcourse'] = 'Pou¾ívám existující kurz';
 $string['version'] = 'Verze';
 $string['view'] = 'Prohlí¾ení';
 $string['virusfound'] = 'Pozor! Clam AV nalezl virus v souboru nahrávaném u¾ivatelem $a->user v kurzu $a->course. Zde je výstup programu clamscan:';
@@ -1094,7 +1092,7 @@ $string['writingcategoriesandquestions'] = 'Zapisuji kategorie a otázky';
 $string['writingcoursedata'] = 'Zapisuji údaje kurzu';
 $string['writingeventsinfo'] = 'Zapisuji informace o událostech';
 $string['writinggeneralinfo'] = 'Zapisuji obecné informace';
-$string['writinggradebookinfo'] = 'Zapisuju informace o knize bodù';
+$string['writinggradebookinfo'] = 'Zapisuji informace o klasifikaci';
 $string['writinggroupsinfo'] = 'Zapisuji informace o skupinách';
 $string['writingheader'] = 'Zapisuji hlavièky';
 $string['writingloginfo'] = 'Zapisuji protokoly';

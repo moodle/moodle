@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.6 development (2005052400)
+      // assignment.php - created with Moodle 1.4.5 + (2004083150)
 
 
 $string['allowresubmit'] = 'อนุญาตให้ส่งการบ้านซ้ำอีกครั้ง';
@@ -18,6 +18,14 @@ $string['description'] = 'รายละเอียด';
 $string['duedate'] = 'กำหนดส่ง ';
 $string['duedateno'] = 'ไม่มีกำหนดส่ง';
 $string['early'] = '$a  ก่อนกำหนด';
+$string['emailteachermail'] = '$a->username ได้แก้ไขการบ้าน \'$a->assignment\'
+
+สามารถเข้าไปตรวจได้ที่นี่
+
+$a->url';
+$string['emailteachermailhtml'] = '$a->username ทำการแก้ไขการบ้าน <i>\'$a->assignment\'</i><br /><br />
+เข้าไปตรวจการบ้าน <a href=\"$a->url\">คลิกที่นี่</a>.';
+$string['emailteachers'] = 'อีเมลแจ้งอาจารย์';
 $string['existingfiledeleted'] = 'ไฟล์ต่อไปนี้ถูกลบเรียบร้อยแล้ว : $a';
 $string['failedupdatefeedback'] = 'ไม่สามารถส่งความเห็นที่มีต่องานไปยัง $a';
 $string['feedback'] = 'ความเห็นที่มีต่องาน';

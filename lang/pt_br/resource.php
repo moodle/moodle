@@ -1,10 +1,11 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.4.1 (2004083101)
+      // resource.php - created with Moodle 1.5 + (2005060201)
 
 
 $string['addresource'] = 'Adicionar material';
-$string['chooseafile'] = 'Escolher ou carregar arquivo';
-$string['chooseparameter'] = 'Escolher parâmentro';
+$string['chooseafile'] = 'Escolher ou enviar arquivo';
+$string['chooseparameter'] = 'Escolher parâmetro';
+$string['configallowlocalfiles'] = 'Quando criar um novo material, permita links a arquivos do sistema local, como um CD ou um disco rígido. Isto pode ser útil numa classe onde todos os estudantes tem acesso ao mesmo dispositivo da rede ou quando è necessário acessar arquivos de um CD. O uso desta funcionalidade pode exigir a mudança da configuração de segurança de seu navegador.';
 $string['configdefaulturl'] = 'Este valor é usado para completar o form da URL automaticamente quando o material é baseado em URL';
 $string['configfilterexternalpages'] = 'Se esta opção estiver ativa, todos os materiais externos como paginas web e arquivos html carregados no servidor serão processados pelos filtros do site, como os autolinks do glossário. Isto pode reduzir a velocidade de visualização das páginas do curso - use esta opção apenas nos casos em que for realmente necessário.';
 $string['configframesize'] = 'Quando uma página web ou um arquivo é visualizado em um frame, este valor é o tamanho, em pixels, do frame que contém a navegação (top frame).';
@@ -13,11 +14,11 @@ $string['configpopup'] = 'A opção de visualizar os materiais em janela popup dev
 $string['configpopupdirectories'] = 'As janelas popup devem mostrar o diretório de links?';
 $string['configpopupheight'] = 'Qual é a altura predefinida das janelas popup?';
 $string['configpopuplocation'] = 'As janelas popup devem mostrar a barra de endereço?';
-$string['configpopupmenubar'] = 'As janelas popup devem mostrar a barra do menu?';
+$string['configpopupmenubar'] = 'As janelas popup devem mostrar a barra de menu?';
 $string['configpopupresizable'] = 'As janelas popup podem ser redimensionadas?';
 $string['configpopupscrollbars'] = 'As janelas popup devem ter a barra de rolagem?';
-$string['configpopupstatus'] = 'As janelas popup devem mostrar a brra de estado?';
-$string['configpopuptoolbar'] = 'As janelas popup devem  mostrar a barra de instrumentos?';
+$string['configpopupstatus'] = 'As janelas popup devem mostrar a barra de status?';
+$string['configpopuptoolbar'] = 'As janelas popup devem  mostrar a barra de ferramentas?';
 $string['configpopupwidth'] = 'Qual é a largura predefinida das janelas popup?';
 $string['configsecretphrase'] = 'Esta frase secreta é usada para produzir códigos com valôres cifrados que podem ser enviados aos materiais como parâmetros. O código cifrado é produzido por um valôr md5 do endereço IP ligado a current_users e concatenado à frase secreta: code = md5(IP.secretphrase). isto permite ao destinatário de verificar a conexão como medida adicional de segurança.';
 $string['configwebsearch'] = 'Quando se adiciona uma URL como uma página web ou link, este endereço é apresentado como referimento para ajudar o usuário a buscar a URL que está procurando.';
@@ -37,27 +38,35 @@ $string['filtername'] = 'Link automático aos materiais';
 $string['frameifpossible'] = 'Colocar o material em un frame par que a navegação do site continue visível';
 $string['fulltext'] = 'Texto completo';
 $string['htmlfragment'] = 'Fragmento de HTML';
+$string['localfile'] = 'Arquivo local';
+$string['localfilechoose'] = 'Escolha um arquivo local (CD-ROM)';
+$string['localfilehelp'] = 'Ajuda para visualização dos arquivos locais';
+$string['localfileinfo'] = '<p>Escolha um arquivo local em seu computador. O arquivo não será enviado para o servidor mas o sistema vai procurar este mesmo arquivo no computador de qualquer pessoa que esteja acessando este material.</p><p>Isto é útil quando você tem arquivos multimediais grandes armazenados em CD-ROMs standard que são distribuídos a todos os participantes. Cada participante pode escolher seu próprio caminho de acesso a estes arquivos, <a href=\"$a\" target=\"_blank\">editando seu perfil de usuário</a>.</p>';
+$string['localfilepath'] = 'Para definir o percurso de acesso deste material, escolha qualquer arquivo do dispositivo do seu computador que contém o material (normalmente um CD-ROM) . Este arquivo não será enviado, mas a informação sobre o dispositivo será arquivada e usada para futuros acesso a recursos locais.';
+$string['localfileselect'] = 'Escolha o caminho de acesso a este arquivo';
 $string['maindirectory'] = 'Diretório principal';
 $string['modulename'] = 'Material';
 $string['modulenameplural'] = 'Materiais';
 $string['neverseen'] = 'Nunca visto';
-$string['newdirectories'] = 'Mostrar links do diretório';
+$string['newdirectories'] = 'Mostrar diretório de links';
 $string['newfullscreen'] = 'Preencher toda a tela';
 $string['newheight'] = 'Altura predefinida da janela (em pixels)';
-$string['newlocation'] = 'Mostrar a brra de endereço';
+$string['newlocation'] = 'Mostrar a barra de localização';
 $string['newmenubar'] = 'Mostrar a barra de menu';
 $string['newresizable'] = 'Permitir redimensionamento da janela';
-$string['newscrollbars'] = 'Permitir o escorrimento da janela';
-$string['newstatus'] = 'Mostrar a barra de status';
-$string['newtoolbar'] = 'Mostrar a barra de instrumentos';
+$string['newscrollbars'] = 'Permitir a rolagem da janela';
+$string['newstatus'] = 'Mostrar a barra de estado';
+$string['newtoolbar'] = 'Mostrar a barra de ferramentas';
 $string['newwidth'] = 'Largura predefinida da janela (em pixels)';
 $string['newwindow'] = 'Nova janela';
 $string['newwindowopen'] = 'Mostre este material em uma janela popup';
+$string['notallowedlocalfileaccess'] = 'O acesso a arquivos locais está disabilitado, portanto este material não pode ser acessado';
 $string['note'] = 'Nota';
-$string['notefile'] = 'Para transferir mais arquivos ao curso (in modo que aparecerem nesta lista) use o <a href="\$a"\>Administrador de Arquivos</a>.';
+$string['notefile'] = 'Para transferir mais arquivos ao curso (in modo que aparecerem nesta lista) use o <a href=\"$a\">Administrador de Arquivos</a>.';
 $string['notypechosen'] = 'Você tem que escolher um tipo. Use seu botão de retorno e tente novamente.';
 $string['pagedisplay'] = 'Visualizar este material nesta janela';
 $string['pagewindow'] = 'Mesma janela';
+$string['pan'] = 'Pan';
 $string['parameter'] = 'Parâmetro';
 $string['parameters'] = 'Parâmetros';
 $string['popupresource'] = 'Este material deve ser mostrado em uma janela popup';
@@ -72,12 +81,14 @@ $string['resourcetype6'] = 'Texto HTML';
 $string['resourcetype7'] = 'Programa';
 $string['resourcetype8'] = 'Texto WIKI';
 $string['resourcetype9'] = 'Diretório';
-$string['resourcetypedirectory'] = 'Visualizar diretório';
-$string['resourcetypefile'] = 'Fazer link a um arquivo ou site';
+$string['resourcetypedirectory'] = 'Visualizar um diretório';
+$string['resourcetypefile'] = 'Link a um arquivo ou site';
 $string['resourcetypehtml'] = 'Criar uma página web';
 $string['resourcetypelabel'] = 'Inserir rótulo';
 $string['resourcetypetext'] = 'Criar uma página de texto simples';
 $string['searchweb'] = 'Buscar página web';
+$string['serverurl'] = 'URL do servidor  ($a->wwwroot)';
 $string['variablename'] = 'Nome da variável';
+$string['vol'] = 'Vol';
 
 ?>

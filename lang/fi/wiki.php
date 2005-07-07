@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.5 + (2005060201)
+      // wiki.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112900)
 
 
 $string['action'] = '-- Toiminto --';
@@ -26,7 +26,7 @@ $string['checklinkscheck'] = 'Oletko varma että haluat tarkistaa linkit tältä si
 $string['checklinksnotice'] = 'Ole hyvä ja odota rauhassa kun tämä sivu latautuu';
 $string['chooseadministration'] = '-- Ylläpito --';
 $string['chooseafile'] = 'Valitse/Lähetä ensimmäinen sivu';
-$string['choosewikilinks'] = '-- Wiki Linkit --';
+$string['choosewikilinks'] = '-- Valitse Wiki Linkit --';
 $string['comment'] = 'Kommentti';
 $string['contentsize'] = 'Sisällön koko';
 $string['created'] = 'Luotu';
@@ -56,7 +56,7 @@ $string['errorroandwr'] = 'Virhe: Sivu on Muokattava ja Kirjoitussuojattu';
 $string['errorsize'] = 'Sivu on suurempi kuin 64k';
 $string['errversionsave'] = 'Pahus, sillä aikaa kun muokkasit sivua joku muu tallensi muuttuneen version. Palaa edelliselle sivulle ja kopioi tekemäsi muutokset koneesi leikepöydälle ja liitä ne uudelleen sivulle.';
 $string['ewikiacceptbinary'] = 'Salli binääritiedostot';
-$string['ewikiprinttitle'] = 'Pane wikin nimi joka sivulle';
+$string['ewikiprinttitle'] = 'Pane wikinimi joka sivulle';
 $string['export'] = 'Vie';
 $string['exportformats'] = 'Vientimuodot';
 $string['exportsuccessful'] = 'Vienti onnistui';
@@ -81,7 +81,7 @@ $string['hits'] = '$a osumaa';
 $string['howtooperate'] = 'Kuinka toimia';
 $string['howtowiki'] = 'Kuinka käyttää wikiä';
 $string['html'] = 'HTML-muotoilu';
-$string['htmlmode'] = 'HTML muoto';
+$string['htmlmode'] = 'Sallittu HTML muotoilu';
 $string['htmlonly'] = 'Vain HTML';
 $string['index'] = 'Sisältö';
 $string['infoaboutpage'] = 'Tietoja tästä sivusta';
@@ -118,7 +118,7 @@ $string['orphanedpages'] = 'Orposivut';
 $string['otherwikis'] = 'Muut wikit';
 $string['ownerunknown'] = 'tuntematon';
 $string['pageactions'] = 'Sivun toiminnot';
-$string['pageindex'] = 'Sivuluettelo';
+$string['pageindex'] = 'Sivun sisältö';
 $string['pageinfo'] = 'Sivun tiedot';
 $string['pagename'] = 'Sivun nimi';
 $string['pagenamechoice'] = '- tai -';
@@ -159,7 +159,6 @@ $string['tabview'] = 'Katso';
 $string['thanksforcontribution'] = 'Kiitokset osallistumisesta';
 $string['thispageisntlinkedfromanywhereelse'] = 'Tätä sivua ei ole linkitetty minnekään';
 $string['updatedpages'] = 'Päivitetyt sivut';
-$string['updatedwikipages'] = 'Päivitetyt wikisivut';
 $string['uplerror'] = 'Pahus, jotain meni pieleen tiedoston lähettämisessä';
 $string['uplinsect'] = 'Lähetä';
 $string['uplnewnam'] = 'Tallenna toisella nimellä';

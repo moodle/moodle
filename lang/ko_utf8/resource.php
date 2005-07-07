@@ -1,12 +1,15 @@
-<?php // $Id$ 
-      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
+<?PHP // $Id$ 
+      // resource.php - created with Moodle 1.5 ALPHA (2005051500)
 
 
 $string['addresource'] = '자원 추가';
 $string['chooseafile'] = '업로드 파일 선택';
 $string['chooseparameter'] = '조건 선택';
+$string['configallowlocalfiles'] = '새로운 파일 요소를 만들었을때, CD 드라이브 또는 하드 드라이브와 같은 공간 파일 시스템의 파일 링크를 허락합니다.이것은 아마 모든 학생들이 공통의 네트워크 드라이브에 접속하거나 CD의 파일의 접속을 필요로 하는 강의실에 유용할 것입니다.';
 $string['configdefaulturl'] = 'URL 자원 추가시 기본값';
-$string['configframesize'] = '웹 페이지나 업로드된 파일이 프레임으로 보여진다면 이 값은 프레임으로 구성된 부분의 윗부분 값(픽셀로 표시)입니다.(네이게이션을 포합하고 있습니다.)';
+$string['configfilterexternalpages'] = '합법화하는 이 세팅은 최근의 정의된 사이트 필터(어휘사전,예시)에 의해 조작되는 모든 외부의 요소(웹 페이지,업로드된 HTML파일)들의 원인이 됩니다.';
+$string['configframesize'] = '웹 페이지나 업로드된 파일이 프레임으로 보여진다면 이 값은 프레임으로 구성된 부분의 윗부분 값(픽셀로 표시)입니다.(네이게이션을 포함하고 있습니다.)';
+$string['configparametersettings'] = '이것은 몇몇의 새로운 요소를 더할 때의 형태에서의 매개변수 배치 창에 디폴트 값을 둡니다.';
 $string['configpopup'] = '팝업창에 나타내여질 수 있는 새로운 자원값을 추가할때 디폴트 값으로 옵션이 작동되어져야 합니까?';
 $string['configpopupdirectories'] = '디폴트 값으로 팝업창의 디렉토리 링크를 나타내야 합니까?';
 $string['configpopupheight'] = '새로운 윈도우 팝업창의 디폴트 높이가 어느 정도여야 합니까?';
@@ -17,6 +20,9 @@ $string['configpopupscrollbars'] = '디폴트 값으로 팝업창을 스크롤�
 $string['configpopupstatus'] = '디폴트 값으로 팝업창의 스태투스바를 나타내야 합니까?';
 $string['configpopuptoolbar'] = '디폴트 값으로 팝업창의 툴바를 나타내야합니까?';
 $string['configpopupwidth'] = '새로운 윈도우 팝업창의 디폴트 넓이가 어느 정도여야 합니까?';
+$string['configsecretphrase'] = '이러한 비밀 구절은  매개변수와 같은 몇몇 요소에 보내질 수 있는 암호화된 코드값을 생성하곤 합니다. 암호화된 코트는 당신의 비밀 구절에 연결된 최근의 사용자 IP주소의 md5 값에 의해 생성됩니다. ie코드 = md5(IP.비밀구절). 이것은 보안 접속을 증명하는 수신자 요소를 허락합니다.';
+$string['configwebsearch'] = '웹 페이지 또는 웹 링크와 같은 URL을 추가할 때, 이 소재는 사용자가 원하는 URL 검색을 도와주는 사이트가 제공됩니다.';
+$string['configwindowsettings'] = '이것은 몇몇의 새로운 요소를 추가할 때의 형태의 윈도우 배치 창에 디폴트값을 배치합니다. 처음 이후에는, 이것은 개인 사용자의 선호가 됩니다.';
 $string['directlink'] = '이 파일로 직접 링크하기';
 $string['directoryinfo'] = '선택된 디렉토리의 모든 파일들이 표시될 것입니다.';
 $string['display'] = '윈도우';
@@ -26,9 +32,19 @@ $string['example'] = '예제';
 $string['exampleurl'] = 'http://www.mirae.es.kr/';
 $string['fetchclienterror'] = '웹 페이지를 열면서 오류가 생겼습니다.(옳바르지 않은 URL입니다.)';
 $string['fetcherror'] = '웹 페이지를 열며 오류가 생겼습니다.';
+$string['fetchservererror'] = '웹 페이지를 갱생하며 원격 서버 오류가 생겼습니다.';
 $string['filename'] = '파일명';
+$string['filtername'] = '자료 이름 자동 연결';
+$string['frameifpossible'] = '보이는 사이트 네비게이션 유지 틀에 요소를 넣으십시오.';
 $string['fulltext'] = '전체 내용';
 $string['htmlfragment'] = 'HTML 조각';
+$string['localfile'] = '지역 화일';
+$string['localfilechoose'] = '지역 화일을 선택하시오(CD-ROM)';
+$string['localfilehelp'] = '지역 화일을 배치하는 것을 도우시오';
+$string['localfileinfo'] = '당신의 컴퓨터로부터 로컬 파일을 선택하십시오. 파일은 웹사이트로 업로드 되지 않을것이지만, Moodle은 이 요소를 관찰하는 그 누구의 컴퓨터상에서라도 비슷한 파일을 찾을 것입니다. 이것은 당신이 모든 참여자에게 분배하는 표준의 CD-ROM에 저장 된 큰 미디어 파일을 가지고 있을 때 매우 유용할 것입니다. 각각의 참여자는 그들의 사용자 프로필을 수정하여 그러한 파일로 그들만의 길을 찾을 수 있습니다.';
+$string['localfilepath'] = '이러한 요소를 위한 당신의 길 배치는, 요소가 존재하는 당신의 컴퓨터의 드라이브(보통 CD-ROM)로부터 어떠한 파일이든 선택할 수 있습니다. 파일은 업로드되지 않을 것이지만 드라이브 정보는 저장될 것이고 다른 로컬파일 요소에 사용될것입니다.';
+$string['localfileselect'] = '이 화일경로를 선택하시오';
+$string['maindirectory'] = '주 화일 디렉토리';
 $string['modulename'] = '자원';
 $string['modulenameplural'] = '자원';
 $string['neverseen'] = '보이지 않음';
@@ -44,10 +60,13 @@ $string['newtoolbar'] = '툴바 나타내기';
 $string['newwidth'] = '윈도우 너비 실패(픽셀)';
 $string['newwindow'] = '새 창으로';
 $string['newwindowopen'] = '팝업창으로 나타나게 합니다.';
+$string['notallowedlocalfileaccess'] = '로컬 파일 접속은 최근에 억제되었기에,이 요소는 사용할 수 없습니다.';
 $string['note'] = '노트';
 $string['notefile'] = '더욱 많은 파일을 올리기 위해서는(이곳에 표시가 되어집니다.) <a href=\"$a\">파일 관리자</a>을 이용하시오.';
 $string['notypechosen'] = '유형을 선택하세요. 뒤로가기 버튼을 클릭하신후 재 시도해 주시기 바랍니다.';
+$string['pagedisplay'] = '최근의 창 범위 내의 요소를 표시하십시오.';
 $string['pagewindow'] = '같은 윈도우';
+$string['pan'] = '팬';
 $string['parameter'] = '조건';
 $string['parameters'] = '조건들';
 $string['popupresource'] = '이것은 팝업창으로 나타납니다.';
@@ -68,6 +87,8 @@ $string['resourcetypehtml'] = '웹 페이지 만들기';
 $string['resourcetypelabel'] = '표지 삽입하기';
 $string['resourcetypetext'] = '텍스트 페이지 만들기';
 $string['searchweb'] = '웹 사이트 검색';
+$string['serverurl'] = '서버 URL';
 $string['variablename'] = '변덕스러운 이름';
+$string['vol'] = '볼륨';
 
 ?>

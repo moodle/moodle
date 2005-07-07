@@ -1,5 +1,5 @@
-<?php // $Id$ 
-      // install.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112900)
+<?PHP // $Id$ 
+      // install.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['admindirerror'] = '設定されたadminディレクトリが間違っています。';
@@ -14,6 +14,14 @@ $string['configfilenotwritten'] = 'インストールスクリプトは、自動
 $string['configfilewritten'] = 'config.phpが正常に作成されました。';
 $string['configurationcomplete'] = '設定が完了しました。';
 $string['database'] = 'データベース';
+$string['databasecreationsettings'] = 'ほとんどのMoodleデータが保存されるデータベース設定を行ってください。このデータベースはMoodle4Windowsインストーラーにより、下記の設定が指定された形で自動的に作成されます。<br />
+<br /> <br />
+<b>タイプ:</b> インストーラーにより「mysql」に固定されます。<br />
+<b>ホスト:</b> インストーラーにより「localhost」に固定されます。<br />
+<b>データベース名:</b> データベース名、例 moodle<br />
+<b>ユーザ名:</b> インストーラーにより「root」に固定されます。<br />
+<b>パスワード:</b> あなたのデータベースパスワードです。<br />
+<b>テーブル接頭辞:</b> 全てのテーブル名に使用される任意の接頭辞です。';
 $string['databasesettings'] = 'ほとんどのMoodleデータが保存されるデータベースの設定を行います。このデータベースは、アクセスするためのユーザ名およびパスワードと共に作成されている必要があります。<br/>
 <br /> <br />
 <b>タイプ:</b> mysql または postgres7<br />

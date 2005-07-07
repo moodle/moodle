@@ -148,7 +148,7 @@ $string['minimum'] = 'Minimum';
 $string['modulename'] = 'Tvorivá dielòa';
 $string['modulenameplural'] = 'Tvorivé dielne';
 $string['movingtophase'] = 'Presunú» fázu $a';
-$string['namesnotshowntostudents'] = 'Mená sa nezobrazujú týmto u¾ívateµom:';
+$string['namesnotshowntostudents'] = 'Mená sa nezobrazujú týmto pou¾ívateµom:';
 $string['newassessments'] = 'Nové hodnotenie';
 $string['newattachment'] = 'Nová príloha';
 $string['newgradings'] = 'Nové bodovania';
@@ -319,7 +319,7 @@ $string['workshopfeedback'] = 'Spätná väzba tvorivej dielne';
 $string['workshopsubmissions'] = 'Odovzdané zadania tvorivej dielne';
 $string['wrongpassword'] = 'Neplatné heslo pre túto tvorivú dielòu';
 $string['yourassessments'] = 'Va¹e hodnotenia';
-$string['yourassessmentsofexamplesfromtheteacher'] = 'Va¹e hodnotenie vzorových uká¾ok od u¾ívateµa $a';
+$string['yourassessmentsofexamplesfromtheteacher'] = 'Va¹e hodnotenie vzorových uká¾ok od pou¾ívateµa $a';
 $string['yourfeedbackgoeshere'] = 'Va¹a odpoveï príde sem';
 $string['yoursubmissions'] = 'Va¹e odovzdané zadania';
 

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // enrol_flatfile.php - created with Moodle 1.6 development (2005052400)
+      // enrol_flatfile.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['description'] = 'Táto metóda bude opakovane kontrolova» a spracováva» ¹peciálne formátovaný textový súbor, ktorého umiestnenie tu urèíte. Súbor mô¾e ma» ¹truktúru podobnú tejto:
@@ -11,10 +11,10 @@ del, student, 8, CF101
 del, student, 17, CF101
 add, student, 21, CF101, 1091115000, 1091215000 </pre>';
 $string['enrolname'] = 'Zo súboru';
-$string['filelockedmail'] = 'Textový súbor, ktorý pou¾ívate pre zápisy ($a), nemô¾e by» odstránený procesom cron. Väè¹inou je to spôsobené zle nastavenými právami. Prosím, opravte práva tak, aby mohol Moodle tento súbor odstráni». Inak mô¾e dochádza» k jeho opakovanému spracovaniu.';
+$string['filelockedmail'] = 'Textový súbor, ktorý pou¾ívate pre zápisy do kurzov($a), nemô¾e by» odstránený procesom cron. Väè¹inou je to spôsobené zle nastavenými právami. Prosím, opravte práva tak, aby mohol Moodle tento súbor odstráni». Inak mô¾e dochádza» k jeho opakovanému spracovaniu.';
 $string['filelockedmailsubject'] = 'Dôle¾itá chyba: Súbor so zápismi';
 $string['location'] = 'Umiestnenie súboru';
-$string['mailadmin'] = 'Upozorni» správcu emailom';
-$string['mailusers'] = 'Upozorni» u¾ívateµov emailom';
+$string['mailadmin'] = 'Upozorni» administrátora emailom';
+$string['mailusers'] = 'Upozorni» pou¾ívateµov emailom';
 
 ?>

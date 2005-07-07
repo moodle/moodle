@@ -1,8 +1,9 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 ALPHA (2005050600)
+      // moodle.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['action'] = 'Azione';
+$string['actions'] = 'Azioni';
 $string['active'] = 'Attivo';
 $string['activities'] = 'Attività';
 $string['activity'] = 'Attività';
@@ -100,6 +101,7 @@ $string['autosubscribeyes'] = 'Si: quando invio post, iscrivimi a quel forum';
 $string['availability'] = 'Disponibilità';
 $string['availablecourses'] = 'Corsi disponibili';
 $string['backup'] = 'Copia di sicurezza';
+$string['backupcancelled'] = 'Copia di sicurezza annullata';
 $string['backupcoursefileshelp'] = 'Se abilitato i file del corso saranno inclusi nella copia di sicurezza automatica';
 $string['backupdate'] = 'Data copia di sicurezza';
 $string['backupdetails'] = 'Dettagli copia di sicurezza';
@@ -443,6 +445,7 @@ $string['format'] = 'Formato';
 $string['formathtml'] = 'Formato HTML';
 $string['formatmarkdown'] = 'Formato Markdown';
 $string['formatplain'] = 'Formato testo';
+$string['formatscorm'] = 'Formato SCORM';
 $string['formatsocial'] = 'Formato relazionale';
 $string['formattext'] = 'Formattazione automatica Moodle';
 $string['formattexttype'] = 'Formattazione';
@@ -509,6 +512,11 @@ $string['guestsnotallowed'] = 'Spiacenti, \'$a\' non è consentito l\'accesso agl
 $string['guestsyes'] = 'Permetti l\'accesso agli ospiti senza chiave d\'accesso';
 $string['guestuser'] = 'Utente ospite';
 $string['guestuserinfo'] = 'Questo utente è un utente speciale che ha accesso ai documenti del corso in modalità solo lettura in alcuni corsi.';
+$string['healthcenter'] = 'Centro Salute';
+$string['healthproblemsdetected'] = 'Problemi di salute rilevati!';
+$string['healthproblemsolution'] = 'Soluzione problema salute';
+$string['healthreturntomain'] = 'Continua';
+$string['healthsolution'] = 'Soluzione';
 $string['help'] = 'Aiuto';
 $string['helpemoticons'] = 'Usa emoticons';
 $string['helpformatting'] = 'Aiuto formattazione testo';
@@ -710,6 +718,7 @@ $string['mustchangepassword'] = 'La password deve essere diversa da quella che h
 $string['mustconfirm'] = 'È necessario confermare il tuo accesso';
 $string['mycourses'] = 'I miei corsi';
 $string['name'] = 'Nome';
+$string['namescorm'] = 'SCORM';
 $string['namesocial'] = 'sezione';
 $string['nametopics'] = 'argomento';
 $string['nameweeks'] = 'settimana';
@@ -948,6 +957,7 @@ $string['showgrades'] = 'Mostra graduatorie';
 $string['showlistofcourses'] = 'Mostra la lista dei corsi';
 $string['showonlytopic'] = 'Mostra solo argomento $a';
 $string['showonlyweek'] = 'Mostra solo settimana $a';
+$string['showperpage'] = 'Mostra $a per pagina';
 $string['showrecent'] = 'Mostra le attività recenti';
 $string['showreports'] = 'Mostra i rapporti delle attività ';
 $string['showsettings'] = 'Mostra impostazioni';
@@ -1097,6 +1107,7 @@ $string['usethiscourse'] = 'Utilizza questo corso';
 $string['usingexistingcourse'] = 'Utilizza corso esistente';
 $string['version'] = 'Versione';
 $string['view'] = 'Vista';
+$string['viewsolution'] = 'visualizza soluzione';
 $string['virusfound'] = 'Amministratore attenzione! Clam AV ha individuato un vorus in un file caricato da $a->user nel corso $a->course. Di seguito l\'output di clamscan:';
 $string['virusfoundlater'] = 'Un file caricato il $a->date nel corso $a->course di nome $a->filename contiene un virus. Questo è il resoconto di ciò che eè accaduto al tuo file:
 

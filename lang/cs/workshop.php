@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004100800)
+      // workshop.php - created with Moodle 1.5 + (2005060201)
 
 
 $string['absent'] = 'Chybí';
@@ -237,7 +237,7 @@ $string['thegradeforthisassessmentis'] = 'Poèet bodù za toto hodnocení je $a';
 $string['thegradeis'] = 'Poèet bodù je $a';
 $string['theseasessmentsaregradedbytheteacher'] = 'Tato hodnocení boduje: $a';
 $string['thisisadroppedassessment'] = 'Toto je sní¾ené hodnocení.';
-$string['timeassessed'] = 'Èas hodnocen';
+$string['timeassessed'] = 'Hodnoceno';
 $string['title'] = 'Název';
 $string['typeofscale'] = 'Typ ¹kály';
 $string['ungradedassessments'] = '$a neobodovaných hodnocení';

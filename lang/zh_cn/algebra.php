@@ -1,7 +1,6 @@
-<?PHP // $Id$ 
-      // algebra.php - created with Moodle 1.2 Beta (2004022400)
+<?PHP // $Id$
 
 
-$string['filtername'] = '数学符号';
 
+$string['filtername'] = 'Algebra数学符号';
 ?>

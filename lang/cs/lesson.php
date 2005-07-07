@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.5 ALPHA (2005050600)
+      // lesson.php - created with Moodle 1.5 + (2005060201)
 
 
 $string['accesscontrol'] = 'Øízení pøístupu';
@@ -85,25 +85,33 @@ $string['essayscore'] = 'Skóre za kompozici';
 $string['fileformat'] = 'Formát souboru';
 $string['firstanswershould'] = 'První odpovìï by mìla skoèit na \"správnou\" stránku';
 $string['firstwrong'] = 'Bohu¾el, va¹e odpovìï nebyla zcela správná, tak¾e nezískáváte ¾ádné body. Chcete se je¹tì pokusit odhadnout správnou odpovìï (u¾ ale jen pro vlastní dobro, nikoliv pro získání bodù)?';
+$string['flowcontrol'] = 'Øízení prùchodu';
+$string['general'] = 'Obecnì';
 $string['gobacktolesson'] = 'Jdi zpìt k pøedná¹ce';
 $string['grade'] = 'Bodovat';
 $string['gradeessay'] = 'Bodovat kompozice';
-$string['gradeis'] = 'Poèet bodù: $a';
+$string['gradeis'] = 'Známka: $a';
+$string['gradeoptions'] = 'Nastavení známkování';
 $string['handlingofretakes'] = 'Zpracování opakovaného prùchodu';
 $string['havenotgradedyet'] = 'Je¹tì nebodováno';
 $string['here'] = 'zde';
 $string['highscore'] = 'Nejvy¹¹í skóre';
 $string['hightime'] = 'Nejrychlej¹í';
+$string['importppt'] = 'Importovat PowerPoint';
 $string['importquestions'] = 'Importovat otázky';
+$string['insertedpage'] = 'Vlo¾ená stránka';
 $string['jump'] = 'Skoèit na';
 $string['jumptsto'] = 'skoèí na';
 $string['leftduringtimed'] = 'Opustili jste pøedná¹ku s èasovým limitem.<br />Chcete-li pøedná¹ku zaèít znovu, stisknìte Pokraèovat.';
 $string['leftduringtimednoretake'] = 'Opustili jste pøedná¹ku s èasovým limitem a není<br />vám povoleno zaèít znovu nebo pokraèovat.';
 $string['lesson'] = '$a Pøedná¹ka';
-$string['lessonclosed'] = 'Tato pøedná¹ka se uzavírá $a.';
+$string['lessonclosed'] = 'Tato pøedná¹ka bude pøístupná do $a.';
+$string['lessoncloses'] = 'Pøedná¹ka není pøístupná';
 $string['lessondefault'] = 'Pou¾ívej nastavení této pøedná¹ky jako výchozí';
+$string['lessonformating'] = 'Uspoøádání pøedná¹ky';
 $string['lessonmenu'] = 'Nabídka pøedná¹ky';
-$string['lessonopen'] = 'Tato pøedná¹ka bude otevøena $a.';
+$string['lessonopen'] = 'Tato pøedná¹ka bude pøístupná od $a.';
+$string['lessonopens'] = 'Pøedná¹ka je pøístupná';
 $string['lessonstats'] = 'Statistiky pøedná¹ky';
 $string['loginfail'] = 'Pøihlá¹ení selhalo. Prosím, zkuste to je¹tì jednou...';
 $string['lowscore'] = 'Nízké skóre';
@@ -120,6 +128,7 @@ $string['modattempts'] = 'Povolit studentùm pozdìj¹í revizi';
 $string['modattemptsnoteacher'] = 'Revize funguje pouze studentùm';
 $string['modulename'] = 'Pøedná¹ka';
 $string['modulenameplural'] = 'Pøedná¹ky';
+$string['movedpage'] = 'Pøesunutá stránka';
 $string['movepagehere'] = 'Pøesunout stránku sem';
 $string['moving'] = 'Pøesun stránky: $a';
 $string['movingtonextpage'] = 'Pøesun na dal¹í stránku';
@@ -151,6 +160,7 @@ $string['ongoingcustom'] = 'Toto je pøedná¹ka za $a->grade bodù. Zatím máte skór
 $string['ongoingnormal'] = 'Zatím jste správnì zodpovìdìli $a->correct z $a->viewed otázek.';
 $string['or'] = 'NEBO';
 $string['ordered'] = 'Seøazeno';
+$string['other'] = 'Jiný';
 $string['outof'] = 'Z $a';
 $string['outoftime'] = 'Èas vypr¹el';
 $string['overview'] = 'Pøehled';
@@ -218,6 +228,7 @@ $string['timetaken'] = 'Uplynulý èas';
 $string['topscorestitle'] = '®ebøíèek $a->maxhighscores nejvy¹¹ích skóre dosa¾ených v pøedná¹ce $a->name.';
 $string['treeview'] = 'Stromové zobrazení';
 $string['unseenpageinbranch'] = 'Nezobrazená otázka v rámci vìtve';
+$string['updatedpage'] = 'Aktualizovaná stránka';
 $string['updatefailed'] = 'Aktualizace selhala';
 $string['updatesuccess'] = 'Aktualizace probìhla úspì¹nì';
 $string['useeditor'] = 'Pou¾ít editor';

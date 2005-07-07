@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.5 ALPHA (2005042400)
+      // assignment.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['allowresubmit'] = 'Permettere di sottomettere più volte';
@@ -29,11 +29,13 @@ Il compito è disponibile al link:
 $a->url';
 $string['emailteachermailhtml'] = '$a->username ha aggiornato la sottomissione del suo compito per <i>\'$a->assignment\'</i><br /><br />Il compito è <a href=\"$a->url\">disponibile sul sito web</a>.';
 $string['emailteachers'] = 'Avvisi ai docenti via email';
+$string['emptysubmission'] = 'Non avete ancora inviato niente';
 $string['existingfiledeleted'] = 'Il file esistente è stato cancellato: $a';
 $string['failedupdatefeedback'] = 'Aggiornamento delle risposte alle consegne dell\'utente $a non riuscito';
 $string['feedback'] = 'Risposte';
 $string['feedbackfromteacher'] = 'Risposte dal';
 $string['feedbackupdated'] = 'Risposte alle consegne aggiornate per $a utenti';
+$string['guestnoupload'] = 'Spiacente, agli ospiti non è permesso inviare file.';
 $string['helpoffline'] = '<p>Questo è utile quando il compito è compilato al di fuori di Moodle. Potrebbe essere da qualche altra parte sul web o un\'attività in presenza/aula.</p><p>Gli studenti possono vedere una descrizione del compito ma non possono inviare file o altro. La valutazione funziona normalmente, e gli studenti riceveranno la notifica delle loro valutazioni.</p>';
 $string['helponline'] = '<p>Questo tipo di compito chiede agli utenti di compilare un testo, utilizzando i normali strumenti di modifica. Gli insegnanti possono valutarli online, e anche aggiungere dei commenti in linea o modifiche.</p>
 <p>(Se hia familiarità con le vecchie versioni di Moodle, questo tipo di compito permette di fare le stesse cose che il vecchio modulo Diario permetteva).</p>';
@@ -45,9 +47,11 @@ $string['modulename'] = 'Compito';
 $string['modulenameplural'] = 'Compiti';
 $string['newsubmissions'] = 'Compiti consegnati';
 $string['noassignments'] = 'Non ci sono ancora compiti';
+$string['noattempts'] = 'Nessun tentativo è stato ancora fatto per questo compito';
 $string['notgradedyet'] = 'Non ancora valutato';
 $string['notsubmittedyet'] = 'Non ancora inviato';
 $string['overwritewarning'] = 'Attenzione: trasferendo ulteriori allegati essi SOSTITUIRANNO quelli attualmente presenti.';
+$string['preventlate'] = 'Previeni sottomissioni in ritardo';
 $string['saveallfeedback'] = 'Salva tutte le mie risposte';
 $string['submission'] = 'Sottomissione';
 $string['submissionfeedback'] = 'Risposte alla consegna';

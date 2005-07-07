@@ -1,7 +1,6 @@
-<?PHP // $Id$ 
-      // censor.php - created with Moodle 1.2 Beta (2004022400)
+<?PHP // $Id$
+
 
 
 $string['filtername'] = 'ÎÄ×ÖÉó²é';
-
 ?>

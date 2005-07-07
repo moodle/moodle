@@ -1,7 +1,8 @@
 <?PHP // $Id$ 
-      // grades.php - created with Moodle 1.6 development (2005052400)
+      // grades.php - created with Moodle 1.4.1+ (2004083101)
 
 
+$string['Uncategorized'] = 'ไม่ระบุประเภท';
 $string['addcategory'] = 'เพิ่มประเภท';
 $string['addcategoryerror'] = 'ไม่สามารถเพิ่มประเภท';
 $string['addexceptionerror'] = 'มีข้อผิดพลาดในขณะที่เพิ่มการยกเว้นสำหรับ สมาชิก:ชิ้นงาน';
@@ -26,6 +27,10 @@ $string['excluded'] = 'ยกเว้น';
 $string['extracredit'] = 'คะแนนพิเศษ';
 $string['extracreditwarning'] = 'หมายเหตุ: การตั้งค่างานให้มีคะแนนพิเศษจะมีผลทำให้ระบบนำงานชิ้นนั้นออกจากการคำนวณหาคะแนนเพราะว่างานดังกล่าวจะไม่มีคะแนนรวม';
 $string['forstudents'] = 'สำหรับนักเรียน';
+$string['grade_itemaddusers'] = 'ยกเว้นจากการให้คะแนน';
+$string['grade_itemmembersselected'] = 'ยกเว้นจากการให้คะแนน';
+$string['grade_itemnonmembers'] = 'รวมเข้าไปในการให้คะแนน';
+$string['grade_itemremovemembers'] = 'รวมเข้าไปในการให้คะแนน';
 $string['gradebookhiddenerror'] = 'นักเรียนไม่สามารถดูคะแนนได้';
 $string['gradecategoryhelp'] = 'ช่วยเหลือประเภทคะแนน';
 $string['gradeexceptions'] = 'ได้รับการยกเว้น';
@@ -82,6 +87,9 @@ $string['standarddeviation'] = 'ค่าเบี่ยงเบนมาตรฐาน';
 $string['stats'] = 'สถิติ';
 $string['statslink'] = 'สถิติ';
 $string['student'] = 'นักเรียน';
+$string['thischarset'] = 'TIS-620';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Thai';
 $string['total'] = 'รวม';
 $string['totalweight100'] = 'น้ำหนักรวมมีค่าเท่ากับ 100';
 $string['totalweightnot100'] = 'น้ำหนักรวมมีค่าไม่เท่ากับ 100';

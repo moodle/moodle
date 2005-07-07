@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.6 development (2005052400)
+      // editor.php - created with Moodle 1.4.2 (2004083125)
 
 
 $string['about'] = 'เกี่ยวกับเครื่องมือแก้ไข';
@@ -70,6 +70,7 @@ $string['notset'] = 'ไม่ได้ตั้งค่า';
 $string['ok'] = 'ตกลง';
 $string['orderedlist'] = 'ลำดับรายการ';
 $string['outdent'] = 'ลดย่อหน้า';
+$string['parentlanguage'] = 'en';
 $string['paste'] = 'วาง';
 $string['path'] = 'path';
 $string['percent'] = 'เปอร์เซ็นต์';
@@ -95,6 +96,9 @@ $string['superscript'] = 'ตัวยก';
 $string['textindicator'] = 'สไตล์ปัจจุบัน';
 $string['textmode'] = 'คุณอยู่ในโหมด text  กดปุ่ม <> เพื่อทำการเปลี่ยนเป็น โหมด WYSIWYG';
 $string['texttop'] = 'ตัวหนังสืออยู่บน';
+$string['thischarset'] = 'TIS-620';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Thai';
 $string['top'] = 'บน';
 $string['type'] = 'ประเภท';
 $string['underline'] = 'ขีดเส้นใต้';

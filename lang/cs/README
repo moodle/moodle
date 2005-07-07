@@ -29,7 +29,7 @@ ZÁRUKY. Neposkytují se ani odvozené záruky PRODEJNOSTI anebo VHODNOSTI PRO
 URÈITÝ ÚÈEL. Dal¹í podrobnosti hledejte ve Obecné veøejné licenci GNU na
 adresách:
 
-http://staff.cesnet.cz/~lhotka/gnugpl-cz.html
+http://www.gnu.cz/
 http://www.gnu.org/copyleft/gpl.html
 
 
@@ -63,10 +63,16 @@ pou¾ívat Linuxový formát konce øádkù. Texty, které jsou Moodlem odesílány
 emailem ve formì prostého textu (tedy ne jako HTML), jsou pøelo¾eny bez 
 diakritiky.
 
-Pro pøeklad pou¾íváme na¹e oblíbené editory ViM a PSPad. 
+Pro pøeklad pou¾íváme na¹e oblíbené editory ViM a PSPad, pøípadnì zabudované
+nástroje lang.php a langdoc.php 
 
 
 DÙLE®ITÉ ZMÌNY
+
+R1.5
+* "Grade" je pøekládáno jako "Známka" èi "Známkovat" místo dosavadního "Body".
+  Bodování je v novém pojetí jedním ze zpùsobù Známkování. Známkování je 
+  klasifikované hodnocení (to je buï pomocí bodù nebo na stupnici).
 
 R1.4
 * Modul "Dotazník" (Survey) pøejmenován na "Prùzkum"
@@ -75,165 +81,3 @@ R1.4
 R1.2
 * Dosavadní modul "Písemná práce" (Journal) se zmìnil na "Poznámky"
 * Modul "Zdroj" (Resource) je od nynìj¹ka pøekládán jako "Studijní materiál"
-
-
-TERMINOLOGICKÝ SLOVNÍK
-
-Následující èást tohoto souboru bude v budoucnu pøesunuta do online slovníku na
-stránkách http://moodle.cz
-
-Formát následujícího slovníku je následující:
-
-ORIGINAL[, ORIGINAL_2 ...] - PREKLAD[, PREKLAD_2 ...] [(nepovinny komentar)]
-
-
-Hi! - Zdravíèko! (Objevily se námitky proti tomuto pøíli¹ neformálnímu pozdravu.
-Rozhodl jsem se pøesto ctít nìco jako "Ducha Moodle" - Martin Dougiamas vkládá
-pozdrav "Hi!" do zaèátku automaticky generovaných emailù a uvedený pøeklad mi
-pøijde jako rozumný kompromis mezi velmi osobním "Ahoj!" a formálnìj¹ím "Dobrý
-den") 
-
-Logs - Protokoly (Jiný mo¾ný pøeklad "Záznam" je pou¾it pro pøeklad slova
-"Record", popø. "Entry")
-
-Theme - Motiv (Kvùli podobnosti s motivy pracovní plochy ve Windows a dále
-proto, ¾e "Téma" pou¾ívám pro pøeklad slova "Topic")
-
-Site, Sites - Stránky ("Stránka" v jednotném èísle pou¾ívám pro právì
-zobrazovanou "Page") 
-
-Page - Stránka (Viz té¾ "Site")
-
-Enrol - Zapsat do kurzu
-
-Unenrol - Vy¹krtnout z kurzu
-
-Login - Pøihlásit se, Pøihlá¹ení (Na stránky pomocí u¾ivatelského jména a hesla.
-Nemíchat s pøihlá¹ením se do kurzu - srov. s Enrol)
-
-Logout - Odhlásit se, Odhlá¹ení
-
-Existing - Stávající (Napøíklad "Existing teachers", tedy ji¾ zalo¾ení uèitelé.
-Viz té¾ "Potential")
-
-Potential - K dispozici (Napø. "Potential admins", tedy u¾ivatelé, ze kterých je
-mo¾no udìlat administrátory)
-
-Subscribe forum - Odebírat nové pøíspìvky emailem (Podobnì "Unsubscribe..." je
-pouze "Neodebírat...")
-
-Force - Vnutit (Napø. odebírání nových pøíspìvkù emailem)
-
-Flat form - Zobrazit odpovìdi za sebou (Odpovìdi nebudou v diskusním fóru
-vnoøeny podle hierarchie návaznosti, ale budou zobrazeny chronologicky. Srov. s
-"Nested form" a "Threaded form")
-
-Nested form - Zobrazit hierarchii odpovìdí vèetnì textu (Srov. s "Threaded
-form" a "Flat form")
-
-Threaded form - Zobrazit hierarchii odpovìdí, ale pouze jako osnovu (Jsou
-zobrazovány pouze názvy pøíspìvkù, nikoliv jejich znìní. Srov. s "Nested form" a
-"Flat form")
-
-Rate, Ratings - Hodnotit, Hodnocení (U pøíspìvkù v diskusních fórech. Jiný
-význam hodnocení viz u "Assessment")
-
-Connected knowing - Kolektivní poznávání (Viz komentáø u "Separate knowing")
-
-Separate knowing - Samostatné poznávání (Viz té¾ "Connected knowing". Zatím jsem
-nena¹el èeský pøeklad literatury, na jejím¾ základì je hodnocení pøíspìvkù v
-diskusi postaveno, tak¾e zavádím tuto èeskou terminologii)
-
-Submit, Submission - Odevzdat, Odeslat, Odevzdaný úkol (Pøeklad tohoto termínu
-zdá se mi býti dosti komplikovaný. Vìt¹inou vystihuje buï proces odesílání èi
-odevzdávání nìèeho, typicky úkolu k hodnocení. V podobì podstatného jména
-"Submission" pak vìt¹inou obecný výsledek tohoto odevzdání. Nabízí se pak mo¾ný
-jednoslovný pøeklad "Øe¹ení", ale je tøeba je¹tì zvá¾it, zda bude opravdu
-vhodný)
-
-Assignment - Úkol, Zadání
-
-Early - Vèas, V pøedstihu
-
-Late - Pozdì, Zpo¾dìný
-
-Feedback - Vyjádøení, Odpovìï, Vysvìtlení 
-
-Upload - Nahrát, Odevzdat
-
-Choice - Hlasování
-
-Journal - Poznámky (Pùvodnì "Písemná práce" Na základì pøipomínek Daniela
-Mik¹íka a dal¹ích u¾ivatelù byl tento modul pøejmenován ve verzi 1.2)
-
-Open - Pøístupná, Otevøené, Otevøít ("Pøístupná" ve významu "Open Journal", tedy
-poznámky èi obecnì písemné práce, které jsou studentùm stále dostupné, nemají
-uzávìrku)
-
-Entry - Záznam, Polo¾ka
-
-Journal question - Téma poznámek
-
-Quiz - Test (Pøi pøekladu tohoto modulu èerpáno z èeské pedagogické terminologie
-uvádìné v publikacích CHRÁSKA, M. Didaktické testy. Brno : Paido, 1999 a
-BYÈKOVSKÝ, P. Základy mìøení výsledkù výuky : tvorba didaktického testu. Praha :
-ÈVUT, 1982)
-
-Resource - Studijní materiál (A¾ do verze 1.2 byl název modulu "Zdroj", na
-základì pøipomínek Petra ©kody a dal¹ích u¾ivatelù modul pøejmenován)
-
-Reference - Literatura (Podle èe¹tiny v LaTeXu)
-
-Web page  - Vlo¾ená webová stránka (Jako jeden typ studijního materiálu. Stránka
-je zobrazena v rámci Moodle. Viz té¾ komentáø u "Web link")
-
-Web link - Odkaz (Mj. typ studijního materiálu, kdy se stránka nezobrazuje v
-rámci Moodle, ale v novém oknì. Srov. s "Web page". Pozn.: toto platilo a¾ do
-verze 1.0.9, je mo¾né, ¾e ve stávající verzi se chování obou typù zdroje
-zmìnilo)
-
-Survey - Dotazník
-
-Scale - ©kála
-
-Deadline - Uzávìrka
-
-Grade - Body, Bodovat, Obodování
-
-Assesment - Hodnocení
-
-Error Banded - Mno¾ství chyb
-
-Grade for Bias - Zkreslení (Bez záruky, zatím jsem pøesnì nezkoumal, jak se s
-hodnotou zachází FIXME)
-
-Grade for Reliability - Spolehlivost (Platí podobný komentáø, jako u "Grade for
-Bias" FIXME)
-
-Final grades - Koneèný poèet bodù
-
-Examples from teacher - Ukázky uèitele, Pøíklady od uèitele
-
-Rubric - Oddíl
-
-Beep - Prozvonit
-
-Chat room - Místnost (Dle zvyklostí na èeských chat serverech)
-
-Chat sessions - Chatování
-
-Label - Popisek
-
-Display - Zobrazit
-
-Exercise - Cvièení
-
-Flag - Pøíznak
-
-Optional - Volitelný
-
-Set up - Nastavit
-
-Show - Ukázat, Zobrazit
-
-Task - Úloha

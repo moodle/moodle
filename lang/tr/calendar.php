@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.5 ALPHA (2005042400)
+      // calendar.php - created with Moodle 1.5 + (2005060201)
 
 
 $string['calendar'] = 'Takvim';
@@ -36,6 +36,7 @@ $string['eventstarttime'] = 'Baþlangýç tarihi';
 $string['eventtime'] = 'Zaman';
 $string['eventview'] = 'Olay Ayrýntýlarý';
 $string['expired'] = 'Süresi doldu';
+$string['explain_lookahead'] = 'Gelecek bir olayýn gösterilmesinde maksimum gün sayýsýný ayarlar. Bundan sonra olan olaylar gösterilmez. Lütfen dikkat; bu zaman çerçevesindeki tüm olaylarýn gösterilmesinin <strong>garantisi yoktur.</strong> Eðer çok fazla sayýda (Gelecek Maksimum Olay sayýsýndan daha fazla)olay varsa en sondaki olaylar gösterilmez. ';
 $string['explain_maxevents'] = 'Yaklaþan olaylarýn görüntülenme sayýsý sýnýrýný ayarlayabilirsiniz. Büyük bir sayý girerseniz yaklaþan olaylar ekranýnýzda çok yer kaplayabilir.';
 $string['explain_persistflt'] = 'Bu ayarýn etkin olmasý durumunda, son filtreleme ayarlarýnýz hatýrlanacak ve her giriþ yaptýðýnýzda bu ayarlara dönülecektir.';
 $string['explain_startwday'] = 'Burada seçtiðiniz gün, haftanýn ilk günü olarak görünecektir.';
@@ -60,6 +61,7 @@ $string['pref_startwday'] = 'Haftanýn ilk günü';
 $string['pref_timeformat'] = 'Zaman gösterim biçimi';
 $string['preferences'] = 'Seçenekler';
 $string['preferences_available'] = 'Kiþisel tercihleriniz';
+$string['repeateditall'] = 'Bu tekrarlanan seride deðiþiklikleri tüm $a olaylarýna uygula';
 $string['repeateditthis'] = 'Deðiþiklikleri sadece bu olaya uygula';
 $string['repeatnone'] = 'Tekrar yok';
 $string['repeatweeksl'] = 'Haftalýk tekrarla, gerçekleþme sayýsý:';
@@ -97,5 +99,6 @@ $string['userevents'] = 'Kullanýcý olaylarý';
 $string['wed'] = 'Çrþ';
 $string['wednesday'] = 'Çarþamba';
 $string['yesterday'] = 'Dün';
+$string['youcandeleteallrepeats'] = 'Bu durum bir tekrarlanan olay serisinin parçasýdýr. Sadece bu olayý silebilirsiniz, veya serideki tüm $a olaylarý bir seferde silersiniz.';
 
 ?>

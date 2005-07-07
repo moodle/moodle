@@ -1,27 +1,74 @@
-<?php // $Id$ 
-      // scorm.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
+<?PHP // $Id$ 
+      // scorm.php - created with Moodle 1.5 ALPHA (2005051500)
 
 
 $string['asset'] = '이점';
+$string['attr_error'] = '$a->tagd 특성의 나쁜점';
 $string['autocontinue'] = '자동 진행';
+$string['badmanifest'] = '명백한 에러들 ';
 $string['browse'] = '브라우즈';
+$string['browsed'] = '브라우즈된';
 $string['browsemode'] = '브라우즈 모드';
+$string['chooseapacket'] = '패키지 선택혹은 업데이트';
 $string['completed'] = '완료됨';
+$string['coursepacket'] = '코스 집합';
+$string['coursestruct'] = '코스 구조';
+$string['datadir'] = '파일시스탬 문제:코스정보의 파일목록을 창조할수 없는';
+$string['details'] = 'soc 트랙 세부사항';
+$string['display'] = '진열';
+$string['domxml'] = 'DOMXML 끝없는 도서관';
+$string['enablebrowse'] = '미리보기 모드 가능함 ';
 $string['entercourse'] = 'SCORM 코스 입장하기';
+$string['errorlogs'] = '에러 로그';
+$string['exit'] = 'SCORM 코스 나가기';
+$string['expcoll'] = '확장/충동';
 $string['failed'] = '실패함';
+$string['found'] = '명백한 발견';
+$string['frameheight'] = '이 선택은 SCORM FRAME의 높은 디폴트 값을 설정한다.';
+$string['framewidth'] = '이 선택은 SCORM FRAME의 폭넓은 디폴트 값을 설정한다. ';
 $string['gradeaverage'] = '평균 점수';
 $string['gradehighest'] = '최고 점수';
 $string['grademethod'] = '점수 매기는 법';
+$string['gradescoes'] = '점수 상황';
 $string['gradesum'] = '점수 합산';
 $string['guestsno'] = '손님은 scorm 코스를 볼 수 없습니다';
+$string['height'] = '높이';
 $string['incomplete'] = '미완성됨';
+$string['missing_attribute'] = '잘못된 특성$a->attr in tag $a->tag ';
+$string['missing_tag'] = '잘못된 표 $a->tag';
 $string['mode'] = '모드';
 $string['modulename'] = 'Scorm';
-$string['newstatus'] = '상태바 보이기';
-$string['newwindow'] = '새로운 윈도우';
+$string['modulenameplural'] = 'Scorms';
 $string['next'] = '계속하기';
+$string['no_attributes'] = '$a->tag 표는 속성을 가져야 한다. ';
+$string['no_children'] = '$a->tag 표는 하부조직을 가져야한다. ';
+$string['nomanifest'] = '분명하게 발견되지 않는';
+$string['noreports'] = '보여줄 기록이 없음';
+$string['normal'] = '보통';
+$string['not_corr_type'] = '$a->tag 표에는 부적당한 형태';
+$string['notattempted'] = '시도하지 않았음';
+$string['organizations'] = '조직들';
+$string['packagedir'] = '파일시스템 문제';
+$string['passed'] = '통과됨';
+$string['php5'] = 'PHP 5';
+$string['popup'] = '새로운 윈도우 창에서 현재SCO를 열어라';
+$string['position_error'] = '$a->tag표는 $a->parent표의 하부조직이 될수 없다.';
+$string['prev'] = '이전';
+$string['regular'] = '규칙적인 명백함';
 $string['report'] = '보고서';
 $string['review'] = '재검토';
+$string['scoes'] = 'Scoes';
 $string['score'] = '점수';
+$string['syntax'] = '통사 에러';
+$string['tag_error'] = '$a->value 이 개념을 지니고있는 알려지지 않은 표';
+$string['too_many_attributes'] = '$a->tag 표는 너무 많은 특성을 가지고 있다. ';
+$string['too_many_children'] = '$a->tag 표는 너무 많은 하부 조직을 가지고 있다. ';
+$string['trackingloose'] = '경고: 이 패키지의 추적 정보는 잃게 될것입니다 ';
+$string['validateascorm'] = '패키지를 확인하시오';
+$string['validation'] = '결과를 확인하시오';
+$string['validationtype'] = '이 선택은 SCORM Manifest을 확인하기 위해서 사용되는 DOMXML library이다. 만약 당신이 신중한 선택을 하지 않은것을 모른다면';
+$string['versionwarning'] = '분명한 버젼은 1.3 보다 더 오래됐다는 것이다. $a->tag표경고';
+$string['viewallreports'] = '$a 시도를 위해 보고서를 봐라';
+$string['width'] = '넓이';
 
 ?>

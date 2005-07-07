@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // message.php - created with Moodle 1.5 + (2005060201)
+      // message.php - created with Moodle 1.5 ALPHA (2005042400)
 
 
 $string['addcontact'] = 'Lisää kontakti';
@@ -16,7 +16,6 @@ $string['blockedmessages'] = '$a viesti(ä) estetyiltä käyttäjiltä/kayttäjille';
 $string['blocknoncontacts'] = 'Estä kaikki vietit jos lähettäjä ei ole listallani.';
 $string['contactlistempty'] = 'Kontaktilistasi on tyhjä.';
 $string['contacts'] = 'Kontaktit';
-$string['context'] = 'yhteys';
 $string['deletemessagesdays'] = 'Tätä vanhemmat viestit poistetaan automaattisesti.';
 $string['discussion'] = 'Keskustelu';
 $string['emailmessages'] = 'Lähetä viesit sähköpostilla jos olen poissa sivultolta';

@@ -134,7 +134,7 @@
   	         <li>Fichiers&nbsp;: ajout d'une icône pour le dossier parent (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2491" target="_blank">bogue 2491</a>)</li>  	 
   	         <li>Support de Postgres&nbsp;: correction de la cohérence dans la table mdl_log</li>  	 
   	         <li>Plugins d'authentification&nbsp;: meilleur nettoyage et troncage des données</li>
-  	         <li>Plugins d'authentification&nbsp;: correction d'un problème d'authentification externe &mdash; un utilisateur connecté comme anonyme ne pouvait se connecter par une authenfication externe lors de la toute première connexion avec un compte</li>
+  	         <li>Plugins d'authentification&nbsp;: correction d'un problème d'authentification externe &mdash; un utilisateur connecté comme invité ne pouvait se connecter par une authenfication externe lors de la toute première connexion avec un compte</li>
   	         <li>Authentification LDAP&nbsp;: correction d'une régression depuis 1.4.2, où un point-virgule final dans certains champs empêchait l'authentification</li>
   	         <li>Authentification par base de données&nbsp;: cette authentification n'allait pas chercher correctement les champs de données de l'utilisateur (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2319" target="_blank">bogue 2319</a>)</li>  	 
   	         <li>Plugin d'inscription PayPal&nbsp;: le texte envoyé à PayPal peut maintenant être nettoyé pour éviter certaines marques diacritiques (espagnoles pour l'instant) qui empêchent le déroulement des inscriptions. Actuellement, seules les marques diacritiques françaises et allemandes sont supportées par PayPal. Cette fonctionnalité peut être facilement étendue à d'autres caractères</li>  	 
@@ -173,7 +173,7 @@
         <li>Prévention contre l'appel direct des librairies internes</li>
         <li>Interdiction de la visualisation des glossaires cachés</li>
         <li>Pour les étudiants, les sections cachées sont aussi invisibles dans les activités récentes</li>
-        <li>Correction d'un problème qui permettait aux utilisateurs anonymes de voir les événements du calendrier</li>
+        <li>Correction d'un problème qui permettait aux invités de voir les événements du calendrier</li>
         <li>Correction de l'encodage des expressions TeX</li>
       </ul>
     </dd>
@@ -414,7 +414,7 @@
         <li>Les modules fonctionnent maintenant de fa&ccedil;on plus coh&eacute;rente sur la page d'accueil du site</li>
   	    <li>Les &laquo;&nbsp;&eacute;tudiants&nbsp;&raquo; des activit&eacute;s de la page d'accueil peuvent &ecirc;tre soit tous les utilisateurs du site, soit les utilisateurs inscrits &agrave; au moins un cours</li>
   	    <li>L'envoi de courriels peut &ecirc;tre activ&eacute; et d&eacute;sactiv&eacute; directement dans le profil des utilisateurs</li>
-        <li>Les visiteurs peuvent &ecirc;tre automatiquement connect&eacute;s en tant qu'utilisateurs anonymes</li>
+        <li>Les visiteurs peuvent &ecirc;tre automatiquement connect&eacute;s en tant qu'invités</li>
         <li>Le menu &laquo; Aller &agrave;...&nbsp;&raquo; affiche toujours le texte &laquo;&nbsp;Aller &agrave;&nbsp;&raquo;, pour indiquer plus clairement &agrave; quoi il sert</li>
         <li>Le menu &laquo; Aller &agrave;...&nbsp;&raquo; regroupe de fa&ccedil;on bien plus claire les activit&eacute;s en sections</li>
       </ul>
@@ -923,7 +923,7 @@
 		<li>Des styles sont &eacute;t&eacute; ajout&eacute;s pour les noms des disciplines et des cours</li>
 		<li>Suppression des balises dans le texte des questions dans le rapport &laquo;&nbsp;Statistique simple&nbsp;&raquo;</li>
 		<li>Ajout des pourcentages aux donn&eacute;es t&eacute;l&eacute;charg&eacute;es du rapport &laquo;&nbsp;Statistique simple&nbsp;&raquo;</li>
-		<li>Permet les liens vers l'int&eacute;rieur du site lors de l'utilisation du compte anonyme ?username=guest</li>
+		<li>Permet les liens vers l'int&eacute;rieur du site lors de la connexion en tant qu'invité ?username=guest</li>
 		<li>Tous les administrateurs peuvent maintenant ajouter et supprimer des responsables de cours</li>
 		<li>L'administrateur principal peut maintenant changer son nom d'utilisateur et son mot de passe, m&ecirc;me avec une authentification externe</li>
 		<li>On peut indiquer &laquo;&nbsp;pas de notes&nbsp;&raquo; pour les tests, et aucune note ne sera affich&eacute;e</li>

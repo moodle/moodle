@@ -120,7 +120,7 @@ Eskerrik asko.';
 $string['collesaname'] = 'COLLES (Benetazkoa)';
 $string['collesapintro'] = 'Galdeketa honen helburua unitate honen linea bidezko banaketak ikasten zenbat lagundu zaituen jakitea da. 
 
-Azpiko 24 esaldietako bakoitzak unitate honek sortutako esperientzia konparatzea eskatzen dizu, <b>nahia</b> (ideala) eta <b>benetako</b> esperientziaren artean.
+Azpiko 24 esaldietako bakoitzak unitate honek sortutako esperientzia konparatzea eskatzen dizu, <B>nahia</B> (ideala) eta <B>benetako</B> esperientziaren artean.
 
 Ez dago erantzun \'zuzen\' edo \'okerrik\'; zure iritzia jakin nahi dugu.  zure iritzia jakin nahi dugu besterik gabe. Zure erantzunak konfidentzialtasun osoz tratatuko ditugula zihur egon zaitezke, eta hauek ez dute zure ebaluaketan ez du eraginik izango.
 
@@ -143,7 +143,7 @@ $string['collesm6short'] = 'Interpretazioa';
 $string['collesmintro'] = 'Linea bidezko unitate honetan...';
 $string['collespintro'] = 'Galdeketa honen helburua linea bidezko ikasketa esperientzia batean zer baloratzen duzun jakitea da.
 
-Azpiko 24 esaldietako bakoitza unitate honekin zure <b>nahia</b> (esperientzia ideala) baloratzen du.
+Azpiko 24 esaldietako bakoitza unitate honekin zure <B>nahia</B> (esperientzia ideala) baloratzen du.
 
 Ez dago erantzun \'zuzen\' edo \'okerrik\'; zure iritzia jakin nahi dugu.  zure iritzia jakin nahi dugu besterik gabe. Zure erantzunak konfidentzialtasun osoz tratatuko ditugula zihur egon zaitezke, eta hauek ez dute zure ebaluaketan ez du eraginik izango.
 

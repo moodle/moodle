@@ -8,7 +8,20 @@ Estamos precisando de muuuita ajuda para a tradução da documentação técnica!
 
 Agradecemos a todos os moodlers brasileiros que estão sugerindo soluções para melhorar a tradução da interface nos fóruns da comunidade
 
+
+
+20/06/2005
+-------------------------------------
+
+19 de junho de 2005 - Pacote oficial atualizado por Paula de Waal depois da revisão de conformidade com xhtml feita por Koen Roegemas 
+Os seguintes arquivos foram comparados aos arquivos da UNB (universidade de Brasilia) 
+e incluiram algumas das modificações sugeridas: editor.php, resource.php, lesson.php, forum.php, moodle.php
+
+Arquivo translation.html - traduzido por celio mesquita e revisto por Paula de Waal
+
+
 12/10/2004
+-------------------------------------
 
 Revisão ortográfica, tradução dos novos arquivos php da versão 1.4 de Moodle, adicionados alguns arquivos da documentação.
 

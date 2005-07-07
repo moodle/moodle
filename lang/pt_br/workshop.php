@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.4.3 (2004083130)
+      // workshop.php - created with Moodle 1.5 + (2005060201)
 
 
 $string['absent'] = 'Ausente';
@@ -171,7 +171,8 @@ $string['noteonstudentassessments'] = '{Nota dada pelo aluno / Grade de Notas pa
 $string['notgraded'] = 'Nenhuma nota ';
 $string['notitle'] = 'Nenhum título';
 $string['notitlegiven'] = 'Nenhum título';
-$string['nowork'] = 'O período de envio já terminou.<br />Voc~e não enviou nenhum documento.';
+$string['notsubmittedyet'] = 'Nenhum envio foi feito por enquanto';
+$string['nowork'] = 'O período de envio já terminou.<br />Você não enviou nenhum documento.';
 $string['numberofassessmentelements'] = 'Número de comentários, Elementos da Avaliação, Notas, Definições de critérios ou categorias de uma rubrica';
 $string['numberofassessments'] = 'Número de Avaliações';
 $string['numberofassessmentschanged'] = 'Número de avalições modificadas: $a';
@@ -319,6 +320,6 @@ $string['wrongpassword'] = 'Senha errada para esta atividade';
 $string['yourassessments'] = 'As suas avaliações';
 $string['yourassessmentsofexamplesfromtheteacher'] = 'As suas avaliações dos  exemplos de $a';
 $string['yourfeedbackgoeshere'] = 'O seu feedback';
-$string['yoursubmissions'] = 'os seus documentos enviados';
+$string['yoursubmissions'] = 'Os seus documentos enviados';
 
 ?>

@@ -1,8 +1,9 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 ALPHA (2005042400)
+      // moodle.php - created with Moodle 1.5 Beta (2005052300)
 
 
 $string['action'] = 'Acció';
+$string['actions'] = 'Accions';
 $string['active'] = 'Actiu';
 $string['activities'] = 'Activitats';
 $string['activity'] = 'Activitat';
@@ -441,6 +442,7 @@ $string['forceno'] = 'No imposis';
 $string['forcepasswordchange'] = 'Imposa canvi de contrasenya';
 $string['forcepasswordchangehelp'] = 'L\'usuari haurà de canviar-la la pròxima vegada que es connecti';
 $string['forcetheme'] = 'Imposa tema';
+$string['forgotaccount'] = 'Heu oblidat la contrasenya?';
 $string['forgotten'] = 'Heu oblidat el nom d\'usuari o la contrasenya?';
 $string['format'] = 'Format';
 $string['formathtml'] = 'Format HTML';
@@ -450,7 +452,7 @@ $string['formatsocial'] = 'Format social';
 $string['formattext'] = 'Autoformat Moodle';
 $string['formattexttype'] = 'Formatatge';
 $string['formattopics'] = 'Format per temes';
-$string['formatweeks'] = 'Format semanal';
+$string['formatweeks'] = 'Format setmanal';
 $string['formatwiki'] = 'Format Wiki';
 $string['from'] = 'Des de';
 $string['frontpagecategorynames'] = 'Mostra una llista de categories';
@@ -597,6 +599,7 @@ $string['livelogs'] = 'Registres de l\'última hora';
 $string['locale'] = 'ca_ES';
 $string['location'] = 'Localització';
 $string['loggedinas'] = 'Heu entrat com $a';
+$string['loggedinasguest'] = 'Esteu accedint com a visitant';
 $string['loggedinnot'] = 'No heu entrat';
 $string['login'] = 'Entrada';
 $string['login_failure_logs'] = 'Registre d\'entrades fracassades';

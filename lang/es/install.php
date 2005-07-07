@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // install.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
+      // install.php - created with Moodle 1.5 Beta (2005052300)
 
 
 $string['admindirerror'] = 'El directorio especificado para admin es incorrecto';
@@ -13,6 +13,14 @@ $string['configfilenotwritten'] = 'El script instalador no ha podido crear autom
 $string['configfilewritten'] = 'config.php se ha creado con éxito';
 $string['configurationcomplete'] = 'Configuración completa';
 $string['database'] = 'Base de datos';
+$string['databasecreationsettings'] = 'Ahora necesita configurar los ajustes de la base de datos donde se almacenarán la mayoría de los datos de Moodle. El instalador creará la base de datos con los ajustes especificados más abajo.<br />
+<br /> <br />
+<b>Tipo:</b> el valor por defecto es \"mysql\"<br />
+<b>Servidor:</b> el valor por defecto es \"localhost\"<br />
+<b>Nombre:</b> nombre de la base de datos, e.g., moodle<br />
+<b>Usuario:</b> el valor por defecto es  \"root\"<br />
+<b>Contraseña:</b> contraseña de la base de datos<br />
+<b>Prefijo de tablas:</b> prefijo opcional para todas las tablas';
 $string['databasesettings'] = 'Ahora necesita configurar la base de datos en la que se almacenará la mayor parte de datos de Moodle. Esta base de datos debe haber sido ya creada, y disponer de un nombre de usuario y de una contraseña de acceso.<br />
 <br /> <br />
 <b>Tipo:</b> mysql o postgres7<br />

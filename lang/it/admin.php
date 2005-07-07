@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.5 ALPHA (2005043000)
+      // admin.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['adminseesallevents'] = 'Gli Amministratori  visualizzano tutti gli eventi';
@@ -11,6 +11,7 @@ $string['calendarsettings'] = 'Calendario';
 $string['change'] = 'cambia';
 $string['configallowcoursethemes'] = 'Se abilitato, sarà possibile impostare un tema personalizzato in ogni corso. Il tema del corso sovrascriverà ogni altra scelta (sito, utenti, sessioni di sistema).';
 $string['configallowemailaddresses'] = 'Se si desidera restringere tutti i nuovi indirizzi e-mail ad un particolare dominio, farne un\'elenco qui, separato da spazi. Tutti gli altri dominii verranno rifiutati: <strong>Per esempio, miosito.it, unito.it</strong>';
+$string['configallowobjectembed'] = 'Come misura di sicurezza standard, agli utenti normali non è permesso includere oggetti multimediali (come Flash) utilizzando esplicitamente i tag EMBED e OBJECT nei testi HTML (rimane la possibilità per loro di utilizzare il filtro mediaplugins). Se si vuole permettere l\'utilizzo di questi tag allora abilitare questa opzione.';
 $string['configallowunenroll'] = 'Se impostato su \"Si\", gli studenti saranno autorizzati a revocarsi autonomamente da un corso in qualunque momento. In caso contrario non verranno autorizzati a farlo, demandando a docenti e amministratori questa possibilità.';
 $string['configallowuserblockhiding'] = 'Si desidera permettere agli utenti di mostrare/nascondere i blocchi laterali di tutto il sito? <br>Questa caratteristica utilizza Javascript e i cookies per ricordare lo stato di ogni blocco, e influenza solo la vista personale dell\'utente.';
 $string['configallowuserthemes'] = 'Se abilitato, ogni utente potrà ad impostare un proprio tema personale. I temi personali dell\'utente sovrascrivono i temi del sito. (ma non i temi di un corso).';
@@ -128,9 +129,9 @@ $string['helpweekenddays'] = 'Quali giorni della settimana devono essere conside
 $string['importtimezones'] = 'Aggiorna la lista completa dei fusi orari';
 $string['importtimezonescount'] = '$a->conta entries importate da $a->source';
 $string['importtimezonesfailed'] = 'Non è stata trovata sorgente! (brutte notizie)';
-$string['nodstpresetsexist'] = 'Il supporto DST è disabilitato per tutti gli utenti poichè non ci sono presets DST definiti.
-Potete definire alcuni presets utilizzando il bottone sottostante.';
+$string['incompatibleblocks'] = 'Blocchi non compatibili';
 $string['optionalmaintenancemessage'] = 'Messaggio di mantenimento opzionale';
+$string['pleaseregister'] = 'Registrando il vostro sito questo pulsante verrà rimosso';
 $string['sitemaintenance'] = 'Il sito è sottoposto a mantenimento e non è attualmente disponibile';
 $string['sitemaintenancemode'] = 'Modalità di mantenimento';
 $string['sitemaintenanceoff'] = 'La modalità di mantenimento è stata disattivata e il sito è nuovamente operativo.';

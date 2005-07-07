@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // dialogue.php - created with Moodle 1.6 development (2005052400)
+      // dialogue.php - created with Moodle 1.4.5 + (2004083150)
 
 
 $string['addmynewentries'] = 'เพิ่มข้อความใหม่';
@@ -26,7 +26,7 @@ $string['dialoguewith'] = 'บทสนทนากับ$a';
 $string['everybody'] = 'ทุกคน';
 $string['furtherinformation'] = 'ข้อมูลเพิ่มเติม';
 $string['lastentry'] = 'ข้อความใหม่';
-$string['maildefault'] = 'ตั้งค่าอีเมล';
+$string['maildefault'] = 'แจ้งทางอีเมล';
 $string['mailnotification'] = 'การแจ้งทางอีเมล';
 $string['modulename'] = 'บทสนทนา';
 $string['modulenameplural'] = 'บทสนทนา';
@@ -48,20 +48,20 @@ $string['open'] = 'เปิด';
 $string['openadialoguewith'] = 'เปิดการสนทนากับ';
 $string['opendialogue'] = 'เปิดการสนทนา';
 $string['opendialogueentries'] = 'ข้อความเปิดการสนทนา';
-$string['pane0'] = 'เปิดการสนทนา';
-$string['pane1'] = '$a  การสนทนา  รอการตอบจากคุณ';
-$string['pane1one'] = 'มีหนึ่งบทสนทนาที่รอคุณตอบ';
-$string['pane2'] = '$a บทสนทนาที่รอการตอบจากคนอื่น';
-$string['pane2one'] = 'มีหนึ่งบทสนทนารอบการตอบจากคนอื่น';
-$string['pane3'] = '$a บทสนทนาที่ปิดแล้ว';
-$string['pane3one'] = 'มีหนึ่งบทสนทนาที่ปิดแล้ว';
+$string['pane0'] = 'เปิดการ<br>สนทนา';
+$string['pane1'] = '$a  การสนทนา <br>รอคุณตอบ';
+$string['pane1one'] = 'มี 1 บทสนทนา<br>รอคุณตอบ';
+$string['pane2'] = '$a บทสนทนา<br>รอการตอบกลับ';
+$string['pane2one'] = 'มี 1 บทสนทนา<br>รอการตอบกลับ';
+$string['pane3'] = '$a บทสนทนา<br>ที่ปิดแล้ว';
+$string['pane3one'] = 'มี 1 บทสนทนา<br>ที่ปิดแล้ว';
 $string['seen'] = 'เห็นเมื่อ  $a  ที่แล้ว';
 $string['sendmailmessages'] = 'ส่งอีเมลเมื่อมีข้อความใหม่มาถึง';
 $string['status'] = 'สถานะ';
 $string['studenttostudent'] = 'นักเรียนกับนักเรียน';
 $string['subject'] = 'หัวข้อ';
 $string['subjectadded'] = 'หัวข้อที่เพิ่ม';
-$string['teachertostudent'] = 'ครูกับนักเรียน';
+$string['teachertostudent'] = 'อาจารย์กับนักเรียน';
 $string['typefirstentry'] = 'พิมพ์ข้อความแรกที่นี่';
 $string['typefollowup'] = 'พิมพ์ข้อความต่อไปที่นี่';
 $string['typeofdialogue'] = 'ประเภทของบทสนทนา';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041900)
+      // workshop.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['absent'] = '欠席';
@@ -179,7 +179,7 @@ $string['notitle'] = '題名無し';
 $string['notitlegiven'] = '題名がありません。';
 $string['notsubmittedyet'] = 'まだ提出物はありません。';
 $string['nowork'] = '提出期限が終了しました。<br />あなたは課題を提出していません。';
-$string['numberofassessmentelements'] = '目標規準のコメント数、評価要素数、評価の幅、規準数<br />またはルブリックのカテゴリ数';
+$string['numberofassessmentelements'] = '目標規準のコメント数、評価要素数、評価の幅、規準数<br />またはルーブリックのカテゴリ数';
 $string['numberofassessments'] = '評価数';
 $string['numberofassessmentschanged'] = '変更された評価数: $a';
 $string['numberofassessmentsdropped'] = '下げられた評価数: $a';
@@ -231,7 +231,7 @@ $string['repeatanalysis'] = '分析を繰り返す';
 $string['reply'] = '返事';
 $string['returnto'] = '戻る';
 $string['returntosubmissionpage'] = '登録ページに戻る';
-$string['rubric'] = 'ルブリック';
+$string['rubric'] = 'ルーブリック';
 $string['savedok'] = '正常に保存されました。';
 $string['saveleaguetableoptions'] = 'リーグテーブルオプションを保存';
 $string['savemyassessment'] = '評価を保存';

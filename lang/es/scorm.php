@@ -1,7 +1,8 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005042100)
+      // scorm.php - created with Moodle 1.5 Beta (2005052300)
 
 
+$string['advanced'] = 'Avanzada';
 $string['asset'] = 'Asset';
 $string['attr_error'] = 'Valor erróneo para el atributo ($a->attr) en la marca $a->tag.';
 $string['autocontinue'] = 'Continuación automática';
@@ -23,6 +24,7 @@ $string['errorlogs'] = 'Registro de errores';
 $string['exit'] = 'Salir del curso SCORM';
 $string['expcoll'] = 'Expandir/Chocar';
 $string['failed'] = 'Error';
+$string['firstaccess'] = 'Primer acceso';
 $string['found'] = 'Encontrado manifiesto';
 $string['frameheight'] = 'Esta preferencia ajusta la altura por defecto del marco SCO';
 $string['framewidth'] = 'Esta preferencia ajusta la anchura por defecto del marco SCO';
@@ -34,6 +36,7 @@ $string['gradesum'] = 'Calificaciones sumadas';
 $string['guestsno'] = 'Los invitados no pueden ver cursos scorm';
 $string['height'] = 'Altura';
 $string['incomplete'] = 'Incompleto';
+$string['lastaccess'] = 'Último acceso';
 $string['missing_attribute'] = 'Falta atributo ($a->attr) en marca $a->tag.';
 $string['missing_tag'] = 'Falta marca $a->tag.';
 $string['mode'] = 'Modo';
@@ -42,13 +45,16 @@ $string['modulenameplural'] = 'Scorms';
 $string['next'] = 'Continuar';
 $string['no_attributes'] = 'La marca $a->tag debe tener atributos';
 $string['no_children'] = 'La marca $a->tag debe tener hijos';
+$string['noactivity'] = 'Nada que informar';
 $string['nomanifest'] = 'Manifiesto no encontrado';
 $string['noreports'] = 'No hay informes que mostrar';
 $string['normal'] = 'Normal';
 $string['not_corr_type'] = 'No concuerda el tipo para la marca $a->tag';
 $string['notattempted'] = 'No se ha intentado';
+$string['organization'] = 'Organización';
 $string['organizations'] = 'Organizaciones';
 $string['packagedir'] = 'Error del Sistema: No se puede crear el directorio del paquete';
+$string['packagefile'] = 'No se ha especificado paquete';
 $string['passed'] = 'Pasado';
 $string['php5'] = 'PHP 5 (librería nativa DOMXML)';
 $string['popup'] = 'Abrir el SCO actual en una ventana nueva';
@@ -59,10 +65,13 @@ $string['report'] = 'Informe';
 $string['review'] = 'Revisión';
 $string['scoes'] = 'Scoes';
 $string['score'] = 'Puntuación';
+$string['scormcourse'] = 'Curso SCORM';
+$string['stagesize'] = 'Tamaño de marco/ventana';
 $string['syntax'] = 'Error de sintaxis';
 $string['tag_error'] = 'Marca desconocida ($a->tag) con este contenido: $a->value';
 $string['too_many_attributes'] = 'La marca $a->tag tiene demasiados atributos';
 $string['too_many_children'] = 'La marca $a->tag tiene demasiados hijos';
+$string['totaltime'] = 'Tiempo';
 $string['trackingloose'] = 'ADVERTENCIA: ¡Los datos de rastreo de este paquete SCORM se perderán!';
 $string['validateascorm'] = 'Validar un paquete SCORM';
 $string['validation'] = 'Resultado de la validación';

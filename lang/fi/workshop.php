@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.5 + (2005060201)
+      // workshop.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005032600)
 
 
 $string['absent'] = 'Poissa';
@@ -27,7 +27,6 @@ $string['assessmentendevent'] = 'a$ :n arviointien loppu';
 $string['assessmentgrade'] = 'Arvioinnin arvosana: $a';
 $string['assessmentnotyetagreed'] = 'Arviointia ei ole vielä sovittu';
 $string['assessmentnotyetgraded'] = 'Arviointia ei ole vielä suoritettu';
-$string['assessmentof'] = '$a:n arvointi';
 $string['assessmentofresubmission'] = 'Tämä arviointi on päivitetystä työstä.<br />Lomakkeelle on haettu pohjaksi edelliset arvosanasi ja kommenttisi.<br />Muokkaa näitä tarvittaessa arvioituasi päivitetyn työn uudelleen.';
 $string['assessmentofthissubmission'] = 'Tämän esityksen arviointi';
 $string['assessments'] = 'Arvioinnit';

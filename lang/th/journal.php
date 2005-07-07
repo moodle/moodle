@@ -1,14 +1,14 @@
 <?PHP // $Id$ 
-      // journal.php - created with Moodle 1.6 development (2005052400)
+      // journal.php - created with Moodle 1.4.4 (2004083140)
 
 
 $string['alwaysopen'] = 'อ่านได้ตลอด';
 $string['blankentry'] = 'ข้อมูลว่าง';
-$string['daysavailable'] = 'วันที่เริ่มให้เข้าอ่าน';
+$string['daysavailable'] = 'ระยะเวลาในการแสดงบันทึก';
 $string['editingended'] = 'ระยะเวลาในการแก้ไขหมดแล้ว';
 $string['editingends'] = 'ระยะเวลาแก้ไขหมดใน ';
 $string['entries'] = 'งานเขียน';
-$string['feedbackupdated'] = 'อัพเดท feedback สำหรับ $a บันทึกความก้าวหน้าที่เข้ามาแล้ว ';
+$string['feedbackupdated'] = 'อัพเดท feedback สำหรับ $a บันทึกความก้าวหน้าเรียบร้อยแล้ว';
 $string['journalmail'] = '$a->teacher ได้ทำการตรวจบันทึกความก้าวหน้า \'$a->journal\' ของคุณแล้ว
 คุณสามารถดูผลการตรวจได้ที่ :$a->url';
 $string['journalmailhtml'] = '$a->teacher ได้ทำการตรวจบันทึกความก้าวหน้า

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.6 development (2005052400)
+      // lesson.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['accesscontrol'] = 'アクセスコントロール';
@@ -61,6 +61,7 @@ $string['displayinleftmenu'] = '左メニューに表示しますか?';
 $string['displayleftmenu'] = '左メニューを表示';
 $string['displayofgrade'] = '評価を表示する ( 学生に対してのみ )';
 $string['displayreview'] = 'レビューボタンを表示';
+$string['displayscorewithessays'] = '自動評定によるあなたの評点は $a->score 分の $a->tempmaxgrade です。<br />作文問題 $a->essayquestions は評定され、後日あなたの最終評点に追加されます。<br /><br />作文問題を除くあなたの現在の評点は $a->score 分の $a->grade です。';
 $string['displayscorewithoutessays'] = 'あなたのスコアは、 $a->score ( $a->grade 中 )です。';
 $string['editlessonsettings'] = 'レッスンの更新';
 $string['editpagecontent'] = 'ページコンテンツの編集';
@@ -118,7 +119,8 @@ $string['maximumnumberofanswersbranches'] = '答え/選択枝の最大数';
 $string['maximumnumberofattempts'] = '受験の最大回数';
 $string['maxtime'] = '制限時間 ( 分 )';
 $string['maxtimewarning'] = 'レッスン終了まで $a 分です。';
-$string['minimumnumberofquestions'] = '問題の最小数';
+$string['mediafile'] = 'メディアファイル';
+$string['minimumnumberofquestions'] = '最小問題数';
 $string['modattempts'] = '学生のレビューを許可';
 $string['modattemptsnoteacher'] = '学生レビューは学生のみに表示されます。';
 $string['modulename'] = 'レッスン';

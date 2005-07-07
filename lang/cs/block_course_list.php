@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // block_course_list.php - created with Moodle 1.4 development (2004070800)
+      // block_course_list.php - created with Moodle 1.5 + (2005060201)
 
 
 $string['allcourses'] = 'Správce vidí v¹echny kurzy';

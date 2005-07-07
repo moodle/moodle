@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // book.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
+      // book.php - created with Moodle 1.5 ALPHA (2005051500)
 
 
 $string['addafter'] = '새 문단 작성';

@@ -1,7 +1,6 @@
-<?PHP // $Id$ 
-      // mediaplugin.php - created with Moodle 1.2 Beta (2004022400)
+<?PHP // $Id$
+
 
 
 $string['filtername'] = '¶àÃ½Ìå²å¼þ';
-
 ?>

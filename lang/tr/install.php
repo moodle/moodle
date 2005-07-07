@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // install.php - created with Moodle 1.5 ALPHA (2005042300)
+      // install.php - created with Moodle 1.5 + (2005060201)
 
 
 $string['admindirerror'] = 'Belirtilen yönetici dizini hatalý';
@@ -12,6 +12,15 @@ $string['configfilenotwritten'] = 'Kurulum programý, Moodle dizini yazýlabilir o
 $string['configfilewritten'] = 'config.php dosyasý baþarýyla oluþturuldu';
 $string['configurationcomplete'] = 'Yapýlandýrma tamamlandý';
 $string['database'] = 'Veritabaný';
+$string['databasecreationsettings'] = 'Þimdi, Moodle verilerinin saklanacaðý veritabanýný
+oluþturmanýz gerekiyor. Bu veritabaný Moodle4Windows kurulumu tarafýndan aþaðýdaki ayarlara göre otomatik olarak oluþturulacak.<br />
+<br /> <br />
+<b>Tipi:</b> kurulum tarafýndan mysql olarak sabitlendi<br />
+<b>Sunucu:</b> kurulum tarafýndan localhost olarak sabitlendi<br />
+<b>Adý:</b> veritabaný adý, ör: moodle<br />
+<b>Kullanýcý:</b> kurulum tarafýndan root olarak sabitlendi<br />
+<b>Þifre:</b> kullanýcý þifresi<br />
+<b>Tablo öneki:</b> tüm tablo isimleri için isteðe baðlý önek';
 $string['databasesettings'] = 'Þimdi, Moodle verilerinin saklanacaðý veritabanýný
 oluþturmanýz gerekiyor. Bu veritabaný önceden oluþturulmalý
 ve bu veritabanýna eriþmek için kullanýcý adý - þifre ayarlanmalý.<br />

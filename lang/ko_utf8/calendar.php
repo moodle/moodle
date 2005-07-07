@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
+      // calendar.php - created with Moodle 1.5 ALPHA (2005051500)
 
 
 $string['calendar'] = '달력';
@@ -36,6 +36,12 @@ $string['eventstarttime'] = '시작 시간';
 $string['eventtime'] = '시간';
 $string['eventview'] = '이벤트 상세정보';
 $string['expired'] = '기간이 끝남';
+$string['explain_lookahead'] = '이것은 연기되어야할 예정된 이벤트를 위해 미래에 실행해야할 이벤트 날짜의 최대값을 조정합니다. 보다 늦게 실행될 이 이벤트는 예정한 것처럼 연기되지 않을 것입니다. <strong>에는 이 구조에서 실행되는 모든 이벤트가 연기될 </strong>이 보장되지 않습니다. 그리고 만약 너무 많은(\"예정된 이벤트의 최대값\"보다 더 많은 설정)이벤트가 있다면 가장 멀리 있는 이벤트는 보여지지 않을것입니다. ';
+$string['explain_maxevents'] = '앞으로 예정된 최대수의 이벤트의 조정은 연기될 수 있습니다. 만약 여기서 큰 수를 고른다면 연기된 이벤트는 당신의 화면에서 많은 공간을 차지 할 수 있습니다. ';
+$string['explain_persistflt'] = '이것을 사용한다면, Moodle은 당신의 최근 이벤트의 고정된 여과장치를 기억하고 자동적으로 당신이 로그인 할때마다 복구될 것입니다. ';
+$string['explain_startwday'] = '달력은 당신이 선택한 날이 시작되는 주간을 나타낼것입니다. ';
+$string['explain_timeformat'] = '당신은 시간을 12시간 또는 24간으로 포맷할 수 있습니다. 
+만약 당신이 \"초기설정\"을 선택한다면, 당신이 싸이트에서 사용하는 언어에 따라서 자동적으로 포맷될 것입니다. ';
 $string['fri'] = '금';
 $string['friday'] = '금요일';
 $string['globalevents'] = '너른 이벤트';
@@ -51,10 +57,13 @@ $string['noupcomingevents'] = '진행중인 이벤트가 없습니다.';
 $string['oneevent'] = '이벤트 1';
 $string['pref_lookahead'] = '앞으로 예정된 이벤트 미리보기';
 $string['pref_maxevents'] = '예정된 이벤트의 최대수';
+$string['pref_persistflt'] = '고정된 여과장치 기억 ';
 $string['pref_startwday'] = '주별 첫 요일(일요일=0)';
 $string['pref_timeformat'] = '시간 표시 형식';
 $string['preferences'] = '설정';
 $string['preferences_available'] = '개인적 설정';
+$string['repeateditall'] = '반복된 일련에서 모든 $a 이벤트로의 변경 지원 ';
+$string['repeateditthis'] = '이 이벤트로만의 변경 지원 ';
 $string['repeatnone'] = '반복 없음';
 $string['repeatweeksl'] = '매주 반복, 함께 생성함';
 $string['repeatweeksr'] = '이벤트';
@@ -91,5 +100,6 @@ $string['userevents'] = '사용자 이벤트';
 $string['wed'] = '수';
 $string['wednesday'] = '수요일';
 $string['yesterday'] = '어제';
+$string['youcandeleteallrepeats'] = '이 이벤트는 반복하는 이벤트의 일련의 한 부분입니다. 당신은 이 이벤트만 제거하거나 일련에서의 모든 $a 이벤트를 한번에 제거할 수 있습니다. ';
 
 ?>

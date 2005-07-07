@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // enrol_paypal.php - created with Moodle 1.5 ALPHA (2005050600)
+      // enrol_paypal.php - created with Moodle 1.5 + (2005060201)
 
 
 $string['business'] = 'Emailová adresa va¹eho obchodního Paypal úètu';

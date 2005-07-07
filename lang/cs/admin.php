@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.5 Beta (2005052300)
+      // admin.php - created with Moodle 1.5 + (2005060201)
 
 
 $string['adminseesallevents'] = 'Správci vidí v¹echny události';

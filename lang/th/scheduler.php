@@ -1,46 +1,46 @@
 <?PHP // $Id$ 
-      // scheduler.php - created with Moodle 1.4.1+ (2004083101)
+      // scheduler.php - created with Moodle 1.4.5 + (2004083150)
 
 
 $string['action'] = 'ต้องการทำ..';
 $string['addsession'] = 'เพิ่มช่องเวลา';
-$string['addslot'] = 'คุณสามารถเพิ่มเวลานัดหมายได้ตลอดเวลา';
-$string['cantfit'] = 'คุณไม่สามาถเพิ่มเวลา $ นาทีในช่วงนี้ได้';
-$string['choice'] = 'Choice';
-$string['composeemail'] = 'Compose email:';
-$string['conflict'] = 'There is already a slot during that period';
-$string['date'] = 'Date';
-$string['divide'] = 'Divide into slots?';
-$string['duration'] = 'Duration';
-$string['end'] = 'End';
-$string['endtime'] = 'End time';
-$string['invitation'] = 'Invitation';
-$string['invitationtext'] = 'Please choose a time-slot for an appointment at ';
-$string['markseen'] = 'After you have had an appointment with a student please mark them as \"Seen\" by clicking the appropriate checkbox in the table above.';
-$string['minutes'] = 'minutes';
-$string['minutesperslot'] = 'minutes per slot';
-$string['missingstudents'] = '$a students still need to make an appointment';
-$string['modulename'] = 'Scheduler';
-$string['modulenameplural'] = 'Schedulers';
-$string['moreslots'] = 'You have more students than appointment slots, so you will probably want to add more slots.';
-$string['move'] = 'Change';
-$string['moveslot'] = 'Move slot';
-$string['noslots'] = 'There are no appointment slots available. Please contact your lecturer by email to arrange the appointment.';
-$string['notselected'] = 'You have not yet made a choice';
-$string['reminder'] = 'Reminder';
-$string['remindertext'] = 'This is just a reminder that you have not yet set up your appointment. Please choose a time-slot as soon as possible at ';
-$string['save'] = 'Save';
-$string['savechoice'] = 'Save my choice';
-$string['schedule'] = 'Schedule';
-$string['scheduleappointment'] = 'Schedule appointment for $a';
-$string['seen'] = 'Seen';
-$string['slots'] = 'Slots';
-$string['slotsadded'] = '$a slots have been added';
-$string['start'] = 'Start';
-$string['startpast'] = 'You can\'t start an appointment slot in the past';
-$string['starttime'] = 'Start time';
-$string['welcomebackstudent'] = 'The bold line in the table below highlights your chosen appointment time. You are allowed to change to any other available slot.';
-$string['welcomenewstudent'] = 'The table below shows all available slots for an appointment. Make your choice by selecting a radiobutton and don\'t forget to click on \"Save my choice\" afterwards. If you need to make a change later you can revisit this page.';
-$string['welcomenewteacher'] = 'Please click on the button below to add appointment slots to see all your students.';
+$string['addslot'] = 'คุณสามารถเพิ่มเวลานัดพบได้ตลอดเวลา';
+$string['cantfit'] = 'เวลา $a นาทีไม่ลงตัวในช่วงดังกล่าว';
+$string['choice'] = 'ตัวเลือก';
+$string['composeemail'] = 'สร้างอีเมล';
+$string['conflict'] = 'มีการนัดพบในช่วงนั้นแล้ว';
+$string['date'] = 'วัน';
+$string['divide'] = 'แบ่งช่องเวลา';
+$string['duration'] = 'ระยะเวลา';
+$string['end'] = 'สิ้นสุด';
+$string['endtime'] = 'เวลาสิ้นสุด';
+$string['invitation'] = 'เชิญ';
+$string['invitationtext'] = 'กรุณาเลือกเวลาที่ต้องการนัดพบ';
+$string['markseen'] = 'หลังจากที่พบนักเรียนที่ทำการนัดหมายแล้วกรุณาทำเครื่องหมาย \"พบแล้ว\" โดยคลิกที่ช่องสี่เหลี่ยมในตารางด้านบน';
+$string['minutes'] = 'นาที';
+$string['minutesperslot'] = 'นาทีต่อ 1 การนัดพบ';
+$string['missingstudents'] = 'นักเรียน $a คนยังต้องการทำการนัดพบ';
+$string['modulename'] = 'ตารางนัดพบ';
+$string['modulenameplural'] = 'ตารางนัดพบ';
+$string['moreslots'] = 'คุณมีนักเรียนมากกว่าช่วงเวลาที่มีอยู่จำเป็นต้องเพิ่มช่วงการนัดพบ';
+$string['move'] = 'เปลี่ยน';
+$string['moveslot'] = 'ย้ายเวลา';
+$string['noslots'] = 'ไม่มีช่วงเวลาว่างกรุณาติดต่อผู้สอนทางอีเมลเพื่อทำการนัดหมายต่อไป';
+$string['notselected'] = 'คุณยังไม่ทำการเลือก';
+$string['reminder'] = 'เตือนความจำ';
+$string['remindertext'] = 'ข้อความเป็นเพียงโน้ตเตือนความจำว่าคุณยังไม่ได้ทำการนัดพบกรุณาเลือกช่วงเวลานัดพบเร็วที่สุดเท่าที่จะทำได้';
+$string['save'] = 'บันทึก';
+$string['savechoice'] = 'บันทึกตัวเลือก';
+$string['schedule'] = 'นัด';
+$string['scheduleappointment'] = 'ตารางการนัดหมายสำหรับ $a';
+$string['seen'] = 'พบแล้ว';
+$string['slots'] = 'ช่วงเวลา';
+$string['slotsadded'] = 'เพิ่ม $a ช่วงเวลาแล้ว';
+$string['start'] = 'เริ่ม';
+$string['startpast'] = 'คุณไม่สามารถเริ่มต้นช่วงเวลาที่ผ่านไปแล้ว';
+$string['starttime'] = 'เวลาเริ่มต้น';
+$string['welcomebackstudent'] = 'ตารางด้านล่างนี้แสดงช่วงเวลาที่คุณทำการนัดหมายไว้ด้วยเส้นหนาในตารางคุณสามารถเปลี่ยนแปลงช่วงเวลาเป็นช่วงอื่นที่ว่างอยู่ได้';
+$string['welcomenewstudent'] = 'ตารางด้านล่างนี้แสดงช่วงเวลาที่ว่างอยู่คุณสามารถเลือกช่วงเวลาได้โดยการเลือกที่ปุ่มวงกลมแล้วให้คลิก \"บันทึกตัวเลือก\" หากต้องการเปลี่ยนแปลงในภายหลังให้กลับมาที่หน้านี้อีกครั้งค่ะ';
+$string['welcomenewteacher'] = 'กรุณาคลิกที่ปุ่มด้านล่างเพื่อทำการเพิ่มช่วงเวลาสำหรับการนัดพบนักเรียน';
 
 ?>

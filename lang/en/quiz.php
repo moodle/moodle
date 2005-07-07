@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?PHP // $Id$ 
       // quiz.php - created with Moodle 1.5 ALPHA (2005050600)
 
 
@@ -347,7 +347,7 @@ $string['reviewclosed'] = 'After the quiz is closed';
 $string['reviewimmediately'] = 'Immediately after the attempt';
 $string['reviewnever'] = 'Never allow review';
 $string['reviewofattempt'] = 'Review of Attempt $a';
-$string['reviewopen'] = 'While the quiz is still open';
+$string['reviewopen'] = 'Later, while the quiz is still open';
 $string['reviewoptions'] = 'Students may review';
 $string['reviewresponse'] = 'Review response';
 $string['rqp'] = 'Remote Question';

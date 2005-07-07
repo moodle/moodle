@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.6 development (2005052400)
+      // lesson.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['accesscontrol'] = 'Kontrola prístupu';
@@ -37,7 +37,7 @@ $string['clicktopost'] = 'Kliknite sem pre uverejnenie Va¹ej známky na zozname n
 $string['clusterjump'] = 'Neprezretá otázka v rámci zoskupenia';
 $string['clustertitle'] = 'Zoskupenie';
 $string['comments'] = 'Va¹e komentáre';
-$string['commentswithname'] = 'Komentáre u¾ívateµa $a->firstname {$a->lastname}';
+$string['commentswithname'] = 'Komentáre pou¾ívateµa $a->firstname {$a->lastname}';
 $string['completed'] = 'Ukonèené';
 $string['confirmdeletionofthispage'] = 'Potvrdi» vymazanie tejto stránky';
 $string['congratulations'] = 'Blaho¾eláme - dosiahli ste koniec predná¹ky';
@@ -46,7 +46,7 @@ $string['continuetoanswer'] = 'Pokraèova» a zmeni» odpovede. ';
 $string['correctanswerjump'] = 'Ís» na správne odpovede';
 $string['correctanswerscore'] = 'Skóre správnych otázok';
 $string['correctresponse'] = 'Správna odpoveï';
-$string['customscoring'] = 'U¾ívateµský spôsob skórovania';
+$string['customscoring'] = 'Pou¾ívateµský spôsob skórovania';
 $string['deadline'] = 'Uzávierka (najneskor¹í termín)';
 $string['defaultessayresponse'] = 'Va¹a úloha bude oznámkovaná in¹truktorom kurzu.';
 $string['deleteattempts'] = 'Vymaza» záznamy o pokusoch ¹tudentov absolvova» túto predná¹ku (u¾ívateµove ID)';
@@ -119,7 +119,7 @@ $string['lowtime'] = 'Najhor¹í èas';
 $string['mainmenu'] = 'Menu kurzu';
 $string['matchesanswer'] = 'Zodpovedá odpovedi';
 $string['maxhighscores'] = 'Poèet zobrazovaných záznamov najvy¹¹ích skóre';
-$string['maximumnumberofanswersbranches'] = 'Maximálny poèet otázok/vetiev';
+$string['maximumnumberofanswersbranches'] = 'Maximálny poèet odpovedí';
 $string['maximumnumberofattempts'] = 'Maximálny poèet pokusov';
 $string['maxtime'] = 'Èasový limit (v minútach)';
 $string['maxtimewarning'] = 'Máte $a minút na ukonèenie predná¹ky.';
@@ -179,7 +179,7 @@ $string['postsuccess'] = 'Príspevok bol úspe¹ne uverejnený';
 $string['practice'] = 'Praktická predná¹ka';
 $string['previouspage'] = 'Predchádzajúca stránka';
 $string['question'] = 'Otázka';
-$string['questionoption'] = 'Otázky';
+$string['questionoption'] = 'Roz¹írené nastaveni otázky';
 $string['questiontype'] = 'Typ otázky';
 $string['randombranch'] = 'Stránka z náhodnej vetvy';
 $string['randompageinbranch'] = 'Náhodná otázka v rámci vetvy';
@@ -209,7 +209,7 @@ $string['slideshowbgcolor'] = 'Farba pozadia prezentácie';
 $string['slideshowheight'] = 'Vý¹ka prezentácie';
 $string['slideshowwidth'] = '©írka prezentácie';
 $string['startlesson'] = 'Zaèa» predná¹ku';
-$string['studentattemptlesson'] = 'Pokus èíslo $a->attempt u¾ívateµa $a->lastname, $a->firstname';
+$string['studentattemptlesson'] = 'Pokus èíslo $a->attempt pou¾ívateµa $a->lastname, $a->firstname';
 $string['studentname'] = '$a -  Meno';
 $string['studentoneminwarning'] = 'Varovanie: Máte jednu minútu alebo menej na dokonèenie predná¹ky.';
 $string['studentoutoftime'] = 'Upozornenie: Vypr¹al Vám èas urèený na túto predná¹ku. Va¹a posledná otázka sa neráta, preto¾e bola polo¾ená po uplynutí èasového limitu. Prosím, stisknite tlaèidlo Pokraèova» na dokonèenie predná¹ky.';

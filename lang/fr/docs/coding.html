@@ -2,7 +2,7 @@
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>Documentation Moodle : Directives pour la programmation</title>
+<title>Documentation Moodle&nbsp;: Directives pour la programmation</title>
 <link rel="stylesheet" href="docstyles.css" type="text/css" />
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 </head>
@@ -11,41 +11,41 @@
 
 <h1>Directives pour la programmation</h1>
 
-<p class="normaltext">Tout projet o&ugrave; l'on travaille en collaboration n&eacute;cessite une coh&eacute;rence et une stabilit&eacute; fortes.</p>
+<p class="normaltext">Tout projet où l'on travaille en collaboration nécessite une cohérence et une stabilité fortes.</p>
 
-<p class="normaltext">L'objectif de ces directives est de fournir un cadre &agrave; respecter pour tout le code de Moodle. Il est vrai que certaines parties plus anciennes du code ne les respectent pas toujours&nbsp;; le code sera corrig&eacute;. Tout le nouveau code doit absolument respecter ces directives aussi pr&eacute;cis&eacute;ment que possible.</p>
+<p class="normaltext">L'objectif de ces directives est de fournir un cadre à respecter pour tout le code de Moodle. Il est vrai que certaines parties plus anciennes du code ne les respectent pas toujours&nbsp;; le code sera corrigé. Tout le nouveau code doit absolument respecter ces directives aussi précisément que possible.</p>
 
-<h2>R&egrave;gles g&eacute;n&eacute;rales</h2>
+<h2>Règles générales</h2>
 
 <ol class="normaltext">
 
 <li class="spaced">Tous les fichiers contenant du code doivent avoir l'extension .php.</li>
 
-<li class="spaced">Tous les fichiers mod&egrave;les (&laquo;&nbsp;themes&nbsp;&raquo;) doivent avoir l'extension .html.</li>
+<li class="spaced">Tous les fichiers modèles («&nbsp;themes&nbsp;») doivent avoir l'extension .html.</li>
 
-<li class="spaced">Tous les fichiers en format texte doivent &ecirc;tre en format Unix (la plupart des &eacute;diteurs de texte permettent de convertir les caract&egrave;res de fin de ligne).</li>
+<li class="spaced">Tous les fichiers en format texte doivent être en format Unix (la plupart des éditeurs de texte permettent de convertir les caractères de fin de ligne).</li>
 
-<li class="spaced">Toutes les balises php doivent &ecirc;tre en forme compl&egrave;te, comme ceci <font color="#339900">&lt;?php ... ?&gt;</font>, et non en forme abr&eacute;g&eacute;e comme ceci <font color="#339900">&lt;?php  ... ?&gt;</font>.</li>
+<li class="spaced">Toutes les balises php doivent être en forme complète, comme ceci <font color="#339900"><?php ... ?></font>, et non en forme abrégée comme ceci <font color="#339900"><?php  ... ?></font>.</li>
 
-<li class="spaced">Toutes les indications de copyright doivent &ecirc;tre conserv&eacute;es. Vous pouvez ajouter les v&ocirc;tres au besoin.</li>
+<li class="spaced">Toutes les indications de copyright doivent être conservées. Vous pouvez ajouter les vôtres au besoin.</li>
 
 <li class="spaced">Tous les fichiers doivent comporter une commande d'inclusion du fichier config.php principal.</li>
 
-<li class="spaced">Tous les fichiers doivent v&eacute;rifier que l'utilisateur est correctement authentifi&eacute;, &agrave; l'aide de require_login() et d'une des fonctions isadmin(), isteacher(), iscreator() et isstudent().</li>
+<li class="spaced">Tous les fichiers doivent vérifier que l'utilisateur est correctement authentifié, à l'aide de require_login() et d'une des fonctions isadmin(), isteacher(), iscreator() et isstudent().</li>
 
-<li class="spaced">Tous les acc&egrave;s aux bases de donn&eacute;es doivent autant que possible utiliser les fonctions d&eacute;finies dans lib/datalib.php. Ceci permet la compatibilit&eacute; avec un grand nombre de marques de bases de donn&eacute;es. Il est possible de faire presque tout avec ces fonctions. Si vous devez &eacute;crire du code SQL, assurez-vous qu'il soit&nbsp;: multi-plateforme, restreint &agrave; des fonctions sp&eacute;cifiques de votre code (habituellement plac&eacute;s dans un fichier lib.php) et clairement marqu&eacute;.</li>
+<li class="spaced">Tous les accès aux bases de données doivent autant que possible utiliser les fonctions définies dans lib/datalib.php. Ceci permet la compatibilité avec un grand nombre de marques de bases de données. Il est possible de faire presque tout avec ces fonctions. Si vous devez écrire du code SQL, assurez-vous qu'il soit&nbsp;: multi-plateforme, restreint à des fonctions spécifiques de votre code (habituellement placés dans un fichier lib.php) et clairement marqué.</li>
 
-<li class="spaced">Ne cr&eacute;ez et n'utilisez aucune variable globale, sauf les variables standard $CFG, $SESSION, $THEME et $USER.</li>
+<li class="spaced">Ne créez et n'utilisez aucune variable globale, sauf les variables standard $CFG, $SESSION, $THEME et $USER.</li>
 
-<li class="spaced">Toutes les variables doivent &ecirc;tre initialis&eacute;es ou au moins leur existence doit &ecirc;tre test&eacute;e avec isset() ou empty() avant leur utilisation.</li>
+<li class="spaced">Toutes les variables doivent être initialisées ou au moins leur existence doit être testée avec isset() ou empty() avant leur utilisation.</li>
 
-<li class="spaced">Toutes les cha&icirc;nes de caract&egrave;res doivent &ecirc;tre traduisibles. Cr&eacute;ez les nouvelles cha&icirc;nes dans les fichiers du dossier &laquo;&nbsp;lang/en&nbsp;&raquo;, donnez-leur des noms en minuscules, courts, en anglais, et utilisez-les dans votre code par l'interm&eacute;diaire des fonctions get_string() ou print_string().</li>
+<li class="spaced">Toutes les chaînes de caractères doivent être traduisibles. Créez les nouvelles chaînes dans les fichiers du dossier «&nbsp;lang/en&nbsp;», donnez-leur des noms en minuscules, courts, en anglais, et utilisez-les dans votre code par l'intermédiaire des fonctions get_string() ou print_string().</li>
 
-<li class="spaced">Tous les fichiers d'aide doivent &ecirc;tre traduisibles. Cr&eacute;ez-les dans le dossier &laquo;&nbsp;lang/en/help&nbsp;&raquo; et appelez-les avec la fonction helpbutton().</li>
+<li class="spaced">Tous les fichiers d'aide doivent être traduisibles. Créez-les dans le dossier «&nbsp;lang/en/help&nbsp;» et appelez-les avec la fonction helpbutton().</li>
 
-<li class="spaced">Les magic_quotes sont automatiquement appliqu&eacute;es aux donn&eacute;es en provenance du navigateur (envoy&eacute;es via GET ou POST), ind&eacute;pendamment des r&eacute;glages de PHP. Il est donc s&ucirc;r de les ins&eacute;rer directement dans la base de donn&eacute;es. Toutes les autres donn&eacute;es brutes (en provenance de fichiers ou de bases de donn&eacute;es) doivent &ecirc;tre encod&eacute;es avec <font color="#339900">addslashes()</font> avant de les ins&eacute;rer dans la base de donn&eacute;es.</li>
+<li class="spaced">Les magic_quotes sont automatiquement appliquées aux données en provenance du navigateur (envoyées via GET ou POST), indépendamment des réglages de PHP. Il est donc sûr de les insérer directement dans la base de données. Toutes les autres données brutes (en provenance de fichiers ou de bases de données) doivent être encodées avec <font color="#339900">addslashes()</font> avant de les insérer dans la base de données.</li>
 
-<li class="spaced">IMPORTANT : tous les textes dans Moodle, tout particuli&egrave;rement ceux qui proviennent des utilisateurs, doivent &ecirc;tre affich&eacute;s &agrave; l'aide de la fonction format_text(). Ceci permet de s'assurer que le texte est filtr&eacute; et nettoy&eacute; correctement.</li>
+<li class="spaced">IMPORTANT : tous les textes dans Moodle, tout particulièrement ceux qui proviennent des utilisateurs, doivent être affichés à l'aide de la fonction format_text(). Ceci permet de s'assurer que le texte est filtré et nettoyé correctement.</li>
 
 </ol>
 
@@ -53,13 +53,13 @@
 
 <h2>Style du code</h2>
 
-<p class="normaltext">Je suis conscient qu'il est ennuyeux de changer votre style si vous avez d'autres habitudes, mais comparez cet emb&ecirc;tement avec les gros ennuis qu'ont ult&eacute;rieurement les personnes qui essaient de comprendre un code compos&eacute; dans des styles diff&eacute;rents. Bien s&ucirc;r il y a des avantages et des inconv&eacute;nients &agrave; chaque style, mais le style de Moodle <strong>existe</strong>, alors tenez-vous y, s'il vous pla&icirc;t.</p>
+<p class="normaltext">Je suis conscient qu'il est ennuyeux de changer votre style si vous avez d'autres habitudes, mais comparez cet embêtement avec les gros ennuis qu'ont ultérieurement les personnes qui essaient de comprendre un code composé dans des styles différents. Bien sûr il y a des avantages et des inconvénients à chaque style, mais le style de Moodle <strong>existe</strong>, alors tenez-vous y, s'il vous plaît.</p>
 
 <ol class="normaltext">
 
-<li class="spaced">L'<strong>indentation</strong> doit &ecirc;tre de 4 espaces. N'utiliser pas <strong>DU TOUT</strong> de tabulations.</li>
+<li class="spaced">L'<strong>indentation</strong> doit être de 4 espaces. N'utiliser pas <strong>DU TOUT</strong> de tabulations.</li>
 
-<li class="spaced">Les <strong>noms des variables</strong> doivent toujours &ecirc;tre des mots anglais en minuscules, faciles &agrave; lire et ayant une signification claire. Si vous avez vraiment besoin de plusieurs mots, concat&eacute;nez-les, mais gardez-les aussi courts que possible. Utilisez des noms au pluriel pour les tableaux d'objets.
+<li class="spaced">Les <strong>noms des variables</strong> doivent toujours être des mots anglais en minuscules, faciles à lire et ayant une signification claire. Si vous avez vraiment besoin de plusieurs mots, concaténez-les, mais gardez-les aussi courts que possible. Utilisez des noms au pluriel pour les tableaux d'objets.
     <p class="examplecode"><font color="#006600">BON : $quiz<br />
       BON : $errorstring<br />
       BON : $assignments (pour un tableau d'objets)<br />
@@ -69,10 +69,10 @@
       MAUVAIS : $aReallyLongVariableNameWithoutAGoodReason<br />
       MAUVAIS : $error_string</font></p></li>
 
-<li class="spaced">Les noms des <strong>constantes</strong> doivent toujours &ecirc;tre en majuscules, et toujours commencer par le nom du module. Les mots qui les constituent doivent &ecirc;tre s&eacute;par&eacute;s par des caract&egrave;res &laquo;&nbsp;soulign&eacute;&nbsp;&raquo; (underscore).
+<li class="spaced">Les noms des <strong>constantes</strong> doivent toujours être en majuscules, et toujours commencer par le nom du module. Les mots qui les constituent doivent être séparés par des caractères «&nbsp;souligné&nbsp;» (underscore).
 <p class="examplecode"><font color="#006600">define("FORUM_MODE_FLATOLDEST", 1);</font></p></li>
 
-<li class="spaced">Les noms des <strong>fonctions</strong> doivent &ecirc;tre de simples mots anglais en minuscules, et commencer par le nom du module, pour &eacute;viter les conflits entre modules. Les mots qui les constituent doivent &ecirc;tre s&eacute;par&eacute;s par des caract&egrave;res &laquo;&nbsp;soulign&eacute;&nbsp;&raquo; (underscore). Les param&egrave;tres doivent avoir si possible une valeur par d&eacute;faut sens&eacute;e. On ne place pas d'espace entre le nom de la fonction et la suite (parenth&egrave;ses)
+<li class="spaced">Les noms des <strong>fonctions</strong> doivent être de simples mots anglais en minuscules, et commencer par le nom du module, pour éviter les conflits entre modules. Les mots qui les constituent doivent être séparés par des caractères «&nbsp;souligné&nbsp;» (underscore). Les paramètres doivent avoir si possible une valeur par défaut sensée. On ne place pas d'espace entre le nom de la fonction et la suite (parenthèses)
     <p class="examplecode"> <font color="#007700">function </font><font color="#0000BB">forum_set_display_mode</font><font color="#007700">(</font><font color="#0000BB">$mode</font><font color="#007700">=</font><font color="#0000BB">0</font><font color="#007700">) 
       {<br />
       &nbsp;&nbsp;&nbsp;&nbsp;global </font><font color="#0000BB">$USER</font><font color="#007700">, 
@@ -90,7 +90,7 @@
       }</font></p>
 </li>
 
-<li class="spaced">Les <strong>blocs</strong> doivent toujours &ecirc;tre plac&eacute;s entre accolades (m&ecirc;me s'ils ne sont constitu&eacute;s que d'une ligne). Moodle utilise le style suivant&nbsp;:
+<li class="spaced">Les <strong>blocs</strong> doivent toujours être placés entre accolades (même s'ils ne sont constitués que d'une ligne). Moodle utilise le style suivant&nbsp;:
     <p class="examplecode"> <font color="#006600">if (</font><font color="#0000CC">$quiz</font><font color="#006600">-></font><font color="#0000CC">attempts</font><font color="#006600">) 
       {<br />
       &nbsp;&nbsp;&nbsp;&nbsp;if (</font><font color="#0000CC">$numattempts </font><font color="#006600">> 
@@ -102,7 +102,7 @@
       }</font></p>
 </li>
 
-<li class="spaced">Les <strong>cha&icirc;nes de caract&egrave;res</strong> doivent &ecirc;tre d&eacute;finies avec des apostrophes droites (pas des guillemets) lorsque c'est possible, afin d'am&eacute;liorer les performances.
+<li class="spaced">Les <strong>chaînes de caractères</strong> doivent être définies avec des apostrophes droites (pas des guillemets) lorsque c'est possible, afin d'améliorer les performances.
     <p class="examplecode"> <font color="#006600">$var = 'some text without any 
       variables';<br />
       $var = "with special characters like a new line \n";<br />
@@ -147,7 +147,7 @@
       ... etc. </p>
 </li>
 
-<li class="spaced">Les <strong>espaces</strong> doivent &ecirc;tre utilis&eacute;s g&eacute;n&eacute;reusement. N'ayez pas peur d'espacer les lignes pour accro&icirc;tre la lisibilit&eacute;. En g&eacute;n&eacute;ral, il doit y avoir un espace entre les parenth&egrave;ses et les instructions normales, mais aucun espace entre les parenth&egrave;ses et les variables ou fonctions&nbsp;:
+<li class="spaced">Les <strong>espaces</strong> doivent être utilisés généreusement. N'ayez pas peur d'espacer les lignes pour accroître la lisibilité. En général, il doit y avoir un espace entre les parenthèses et les instructions normales, mais aucun espace entre les parenthèses et les variables ou fonctions&nbsp;:
     <p class="examplecode"> <font color="#007700">foreach (</font><font color="#0000BB">$objects 
       </font><font color="#007700">as </font><font color="#0000BB">$key </font><font color="#007700">=></font><font color="#0000BB"> 
       $thing</font><font color="#007700">)</font><font color="#006600"> {<br />
@@ -174,13 +174,13 @@
 
 <p>&nbsp;</p>
 
-<h2>Structure des bases de donn&eacute;es</h2>
+<h2>Structure des bases de données</h2>
 
 <ol class="normaltext">
 
-<li class="spaced">Toutes les tables doivent avoir un champ <strong>id</strong> (INT10) &agrave; incr&eacute;mentation automatique pour index principal.</li>
+<li class="spaced">Toutes les tables doivent avoir un champ <strong>id</strong> (INT10) à incrémentation automatique pour index principal.</li>
 
-<li class="spaced">La table principale contenant les instances de chaque module doit avoir le m&ecirc;me nom que le module (par exemple <strong>bidule</strong>) et doit contenir au moins les champs suivants&nbsp;:
+<li class="spaced">La table principale contenant les instances de chaque module doit avoir le même nom que le module (par exemple <strong>bidule</strong>) et doit contenir au moins les champs suivants&nbsp;:
 
     <ul>
 
@@ -194,19 +194,60 @@
 
 </li>
 
-<li class="spaced">Les autres tables associ&eacute;es &agrave; un module et contenant des informations sur des &laquo;&nbsp;machins&nbsp;&raquo; doivent &ecirc;tre appel&eacute;es <strong>bidule_machins</strong> (remarquez le pluriel).</li>
+<li class="spaced">Les autres tables associées à un module et contenant des informations sur des «&nbsp;machins&nbsp;» doivent être appelées <strong>bidule_machins</strong> (remarquez le pluriel).</li>
 
-<li class="spaced">Les noms de colonnes doivent &ecirc;tre simples et courts, suivant les m&ecirc;mes r&egrave;gles que les noms des variables.</li>
+<li class="spaced">Les noms de colonnes doivent être simples et courts, suivant les mêmes règles que les noms des variables.</li>
 
-<li class="spaced">Si possible, les colonnes faisant r&eacute;f&eacute;rence au champ id d'une autre table (par exemple <strong>bidule</strong>) doivent &ecirc;tre appel&eacute;es <strong>biduleid</strong>. Cette convention est nouvelle, et n'a pas &eacute;t&eacute; suivie dans certaines tables plus anciennes.</li>
+<li class="spaced">Si possible, les colonnes faisant référence au champ id d'une autre table (par exemple <strong>bidule</strong>) doivent être appelées <strong>biduleid</strong>. Cette convention est nouvelle, et n'a pas été suivie dans certaines tables plus anciennes.</li>
 
-<li class="spaced">Les champs bool&eacute;ens doivent &ecirc;tre impl&eacute;ment&eacute;s comme des entiers petits (par exemple INT4) contenant 0 ou 1, afin de permettre une &eacute;ventuelle extension des valeurs si n&eacute;cessaire.</li>
+<li class="spaced">Les champs booléens doivent être implémentés comme des entiers petits (par exemple INT4) contenant 0 ou 1, afin de permettre une éventuelle extension des valeurs si nécessaire.</li>
 
-<li class="spaced">La plupart des tables doivent avoir un champ <strong>timemodified</strong> (INT10) qui soit mis &agrave; jour avec la date et l'heure obtenue avec la fonction PHP <strong>time()</strong>.</li>
+<li class="spaced">La plupart des tables doivent avoir un champ <strong>timemodified</strong> (INT10) qui soit mis à jour avec la date et l'heure obtenue avec la fonction PHP <strong>time()</strong>.</li>
 
 </ol>
 
 <hr />
+
+<h2>Problèmes de sécurité (et traitement des données des formulaires et des URLs)</h2>
+
+<ol class="normaltext">
+
+<li class="spaced">Ne vous basez pas sur l'option « register_globals ». <strong>Toutes</strong> les variables doivent être correctement initialisées dans <strong>tous</strong> les fichiers de code. La provenance du nom de la variable doit être évidente.</li>
+
+<li class="spaced">Initialisez tous les tableaux et tous les objets, même lorsqu'ils sont vides. <code>$a = array()</code> ou <code>$obj = new stdClass();</code>.</li>
+
+<li class="spaced">N'utilisez pas la fonction <code>optional_variable()</code>. Utilisez en lieu et place la fonction <code>optional_param()</code>. Choisissez la valeur PARAM_XXXX correcte pour le type de données que vous attendez. Pour vérifier et assigner une valeur optionnelle à une variable, utilisez la fonction <code>set_default()</code>.</li>
+
+<li class="spaced">N'utilisez pas la fonction <code>require_variable()</code>. Utilisez en lieu et place la fonction <code>required_param()</code>. Choisissez la valeur PARAM_XXXX correcte pour le type de données que vous attendez.</li>
+
+<li class="spaced">N'utilisez la fonction <code>data_submitted()</code> qu'avec précaution. Avant son utilisation, n'oubliez pas de nettoyer les données.</li>
+
+<li class="spaced">N'utilisez pas <code>$_GET</code>, <code>$_POST</code> ni <code>$_REQUEST</code>. Utilisez la fonction <code>required_param()</code> ou <code>optional_param()</code> appropriée à vos besoins.</li>
+
+<li class="spaced">Ne vérifiez pas l'exécution d'actions avec par exemple <code>if (isset($_GET['something']))</code>. Utilisez plutôt <code>$something = optional_param( 'something',-1,PARAM_INT )</code> et effectuez ensuite un test correct pour vérifier si la valeur se trouve dans l'intervalle voulu, par exemple <code>if ($something>=0) {...</code>.</li>
+
+<li class="spaced">Groupez chaque fois que cela est possible vos <code>required_param()</code>, <code>optional_param()</code> et les autres initialisations de variables initialisation au début de chaque fichier, de sorte qu'elles soient faciles à trouver.</li>
+
+<li class="spaced">Utilisez le mécanisme « sesskey » pour protéger vos routines de traitement de formulaires d'éventuelles attaques. Un exemple simple&nbsp;: lorsque le formulaire est généré, ajoutez <code><input type="hidden" name="sesskey" value="<?php echo sesskey(); ?>" /></code>. Lors du traitement du formulaire, vérifiez avec <code>if (!confirm_sesskey()) {error('Bad Session Key');}</code>.</li>
+
+<li class="spaced">Tous les noms de fichiers doivent être nettoyés par la fonction <code>clean_filename()</code>, pour autant que cela n'ait pas encore été fait par une utilisation adéquate de <code>required_param()</code> ou de <code>optional_param()</code>.</li>
+
+<li class="spaced">Toutes les données lues dans la base de données doivent être passées par <code>addslashes()</code> avant d'être récrites dans la base de données. La fonction <code>addslashes_object()</code> permet de traiter ainsi un objet complet de données.</li>
+
+<li class="spaced">Chaque fois que c'est possible, les données devant être stockées dans la base de données doivent provenir de données <code>POST</code> (d'un formulaire avec <code>method="POST"</code>), et non de données <code>GET</code> (c'est-à-dire provenant de l'URL).</li>
+
+<li class="spaced">Si vous pouvez l'éviter, n'utilisez pas de données provenant de la variable <code>$_SERVER</code>, en raison de problèmes de portabilité.</li>
+
+<li class="spaced">Si cela n'a pas été fait ailleurs, assurez-vous que toutes les données écrites dans la base de données ont été traitées par la fonction <code>clean_param()</code> avec le paramètre PARAM_XXXX adéquat au type de données.</li>
+
+<li class="spaced">Si vous écrivez du code SQL brut, assurez-vous très attentivement qu'il est correct. Faites tout particulièrement attention aux guillemets manquants autour des valeurs, pouvant se transformer en autant de failles de sécurité (injections SQL).</li>
+
+<li class="spaced">Vérifiez toutes les données (particulièrement celles qui sont écrites dans la base de données) dans <strong>tous</strong> les fichiers où elles sont utilisées. N'attendez rien et ne vous reposez sur rien de ce qui est fait ailleurs.</li>
+
+<li class="spaced">Les blocs de code à inclure doivent comporter une structure PHP définie (par exemple, une déclaration de classe, des définitions de fonctions, etc.), Les blocs de code non structurés engendrent l'utilisation de variables non initialisées.</li>
+
+</ol>
+
 
 <p align="center"><font size="1"><a href="." target="_top">Documentation Moodle</a></font></p>
 <p align="center"><font size="1">Version: $Id$</font></p>

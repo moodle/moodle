@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.5 + (2005060201)
+      // calendar.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005022400)
 
 
 $string['calendar'] = 'Kalenteri';
@@ -8,11 +8,23 @@ $string['clickhide'] = 'piilota';
 $string['clickshow'] = 'näytä';
 $string['confirmeventdelete'] = 'Haluatko varmasti poistaa tämän tapahtuman';
 $string['courseevents'] = 'Kurssin tapahtumat';
+$string['day'] = 'päivä';
 $string['dayview'] = 'Päivänäkymä';
 $string['daywithnoevents'] = 'Ei tapahtumia tälle päivälle';
 $string['default'] = 'Oletus';
 $string['deleteevent'] = 'Poista tapahtuma';
 $string['detailedmonthview'] = 'Tarkennettu kuukausinäkymä';
+$string['dstadjusttime'] = 'Siirrä kelloa';
+$string['dstat'] = 'kello';
+$string['dstby'] = 'tämän verran:';
+$string['dstdefaultpresetname'] = 'Uusi kesäajan asetus';
+$string['dsthumanreadable'] = 'Kuukauden $a->activate_index $a->activate_weekday aina {$a->activate_month}ssa, siirrä kelloa $a->offset minuuttia $a->direction. Tämä kellonajan muutos on voimassa aina {$a->deactivate_month}n $a->deactivate_index {$a->deactivate_weekday}hin.';
+$string['dstof'] = 'tässä kuussa:';
+$string['dstonthe'] = 'Kuukauden';
+$string['dstpresetactivated'] = 'Kesäaika alkaa';
+$string['dstpresetadjusttime'] = 'Kellon siirto';
+$string['dstpresetdeactivated'] = 'Kesäaika loppuu';
+$string['dstpresetname'] = 'Asetuksen nimi';
 $string['durationminutes'] = 'Kesto minuutteina';
 $string['durationnone'] = 'Ilman kestoa';
 $string['durationuntil'] = 'Päättymisaika';
@@ -36,24 +48,31 @@ $string['eventstarttime'] = 'Tapahtuman alkamisaika';
 $string['eventtime'] = 'kello';
 $string['eventview'] = 'Tapahtumanäkymä';
 $string['expired'] = 'Tapahtuma on jo mennyt';
+$string['explain_dstpreset'] = 'Alasvetovalikosta voit halutessasi valita alueen, jolla kesäajan asetukset ovat käytössä.';
+$string['explain_dstpresetforced'] = 'Tämän asetuksen muuttaminen ei ole sallittua.';
 $string['explain_lookahead'] = 'Tämä oletusasetus määrittää, kuinka monen päivän päässä tulevaisuudessa tapahtuman pitää olla, jotta se näytettäisiin \"tulevana tapahtumana\". Tapahtumia, jotka alkavat myöhemmin, ei näytetä koskaan tulevien tapahtumien listassa. Huomaa, että <strong>ei ole mitään takeita</strong> siitä, että kaikki tämän ajan sisällä olevat tapahtumat näytettäisiin tulevien listassa; mikäli niitä on paljon (enemmän kuin asetus \"Tulevien tapahtumien listan maksimikoko\", kaukaisimmat tulevista tapahtumista eivät näy listassa.';
 $string['explain_maxevents'] = 'Tämä asetus määrittää tulevien tapahtumien listan maksimikoon. Mikäli valitset tähän suuren luvun, saattaa tulevien tapahtumien lista viedä huomattavan paljon tilaa ruudultasi.';
 $string['explain_persistflt'] = 'Jos tämä asetus on päällä, Moodle muistaa kalenterista valitsemiesi tapahtumien piilotuksen ja näyttämisen asetukset myös kirjautumiskertojen välillä.';
 $string['explain_startwday'] = 'Tämä asetus määrittää tavan, jolla kuukausittainen kalenteri näytetään. Käytä tätä asettaaksesi näkymälle tavan, johon olet tottunut.';
 $string['explain_timeformat'] = 'Voit näyttää ajat joko 12 tai 24 tunnin muodossa. Jos valitset \"oletus\", valinta suoritetaan sivuston asetusten mukaisesti.';
+$string['first'] = 'ensimmäinen';
 $string['fri'] = 'pe';
 $string['friday'] = 'perjantai';
 $string['globalevents'] = 'Yhteiset tapahtumat';
 $string['gotocalendar'] = 'Siirry kalenteriin';
 $string['groupevents'] = 'Ryhmän tapahtumat';
 $string['hidden'] = 'Piilotettu';
+$string['last'] = 'viimeinen';
 $string['manyevents'] = '$a tapahtumaa';
 $string['mon'] = 'ma';
 $string['monday'] = 'maanantai';
 $string['monthlyview'] = 'Kuukausinäkymä';
 $string['newevent'] = 'Uusi tapahtuma';
+$string['notusingdst'] = 'Kesäaika ei ole käytössä';
 $string['noupcomingevents'] = 'Ei tulevia tapahtumia';
+$string['nth'] = '{$a}.';
 $string['oneevent'] = '1 tapahtuma';
+$string['pref_dstpreset'] = 'Kesäaika';
 $string['pref_lookahead'] = 'Tulevien tapahtumien tarkastelu';
 $string['pref_maxevents'] = 'Tulevien tapahtumien listan maksimikoko';
 $string['pref_persistflt'] = 'Tallenna tapahtumien piilotusvalinnat';
@@ -61,8 +80,6 @@ $string['pref_startwday'] = 'Viikon ensimmäinen päivä';
 $string['pref_timeformat'] = 'Kellonajan muoto';
 $string['preferences'] = 'Asetukset';
 $string['preferences_available'] = 'Henkilökohtaiset asetuksesi';
-$string['repeateditall'] = 'Kaikki $a toistuvaa tapahtumaa';
-$string['repeateditthis'] = 'Vain tämä tapahtuma';
 $string['repeatnone'] = 'Ei toistoja';
 $string['repeatweeksl'] = 'Toista viikoittain';
 $string['repeatweeksr'] = 'tapahtumaa';
@@ -76,6 +93,8 @@ $string['thu'] = 'to';
 $string['thursday'] = 'torstai';
 $string['timeformat_12'] = '12-tuntinen (AP/IP)';
 $string['timeformat_24'] = '24-tuntinen';
+$string['timeforward'] = 'eteenpäin';
+$string['timerewind'] = 'taaksepäin';
 $string['today'] = 'tänään';
 $string['tomorrow'] = 'huomenna';
 $string['tt_deleteevent'] = 'Poista tapahtuma';
@@ -99,6 +118,5 @@ $string['userevents'] = 'Omat tapahtumat';
 $string['wed'] = 'ke';
 $string['wednesday'] = 'keskiviikko';
 $string['yesterday'] = 'eilen';
-$string['youcandeleteallrepeats'] = 'Tämä papahtuma on yksi toistuvien tapahtumien joukosta. Voit poistaa vain tämän tapahtuman tai kaikki $a tapahtumaa kerralla.';
 
 ?>

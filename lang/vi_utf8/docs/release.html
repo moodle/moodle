@@ -1,434 +1,291 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     
-<title>Tài liệu về Moodle: Các chú ý về phiên bản hiện hành </title>
+<title>Tài liệu Moodle: Những chú ý về bản Moodle hiên thời</title>
 	
-<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS">
+<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS" />
     
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
     
 <style type="text/css">
-<!--       dt {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; font-weight: bold;}
-       dd {margin-bottom:1em;} 
+<!-- 
+      dt {font-family:  Arial, Verdana, Helvetica, sans-serif; font-weight: bold;}
+      dd {margin-bottom:1em;} 
+      dl {margin-left: 40px;}
 .style1 {font-weight: bold}
 -->
 </style>
 </head>
 
-<body bgcolor="#FFFFFF">
-<h1><font face="Arial">Các ghi chú phiên bản mới nhất</font></h1>
+<body>
 
-<h3><font face="Arial">Moodle 1.4.3 ( ngày 21 tháng 12 năm 2004)</font></h3>
 
-<p><font face="Arial">(Bởi vì phiên bản này chứa các cố định bảo mật quan trọng, chúng tôi khuyên rằng các site này sử dụng bất kỳ 
-    phiên bản trước của Moodle nâng cấp lên thành phiên bản này khi có thể.)</font></p>
+<h1>Latest Release notes</h1>
 
-<ul>
-  <dl>
-    <dt><font face="Arial">Một số cố định bảo mật quan trọng</font></dt>
-    <dd>
-      <ul>
-        <li><font face="Arial">Tốt hơn là kiểm tra/làm sạch dữ liệu của cookie</font></li>
-	<li><font face="Arial"> Ngăn cản các phạm vi đối với sự cố định của session </font></li>
-        <li><font face="Arial">Tốt hơn là kiểm tra/làm sạch các tham số đối với RSS feeds, các tham số bản đồ ip,  bảng chú giải thuật ngữ, diễn đàn,lựa chọn theme, môđun SCORM, quan sát tài liệu</font></li>
-        <li><font face="Arial">Thêm bảo mật trong khi quan sát các file được tải lên</font></li>
-        <li><font face="Arial">Thêm bảo mật Added protection against directory traversal</font></li>
-        <li><font face="Arial">Cố định biến $FULLME cần thiết đối với cron</font></li>
-        <li><font face="Arial">Prevention against internal libraries being called directly.</font></li>
-        <li><font face="Arial">Ngăn cản quan sát bảng chú giải nếu nó là một hoạt động ẩn </font></li>
-        <li><font face="Arial">Ân các phần ẩn từ các học viên trong hoạt động gần đây</font></li>
-        <li><font face="Arial">Cố định vấn đề với người dùng là khách có khả năng nhìn thấy các sự kiện trong lịch biểu </font></li>
-        <li><font face="Arial">Cố định mã hoá các văn bản Fixed encoding of TEX expressions</font></li>
-      </ul>
-    </dd>
+<h2>Moodle 1.5 (05/06/2005) </h2>
 
-    <dt><font face="Arial">Một vài thứ mới</font></dt>
-    <dd>
-      <ul>
-        <li><font face="Arial">Bắt buộc một khoá truy cập theo tuần tự Enforced enrolment uniqueness, điều này cũng thực hiện một cố định this is also a performance fix.</font></li>
-        <li><font face="Arial">Thêm giao dịch hỗ trợ đối với PostgreSQL</font> </li>
-        <li><font face="Arial">Đăng nhập và đăng xuất thì bây giờ được ghi logged</font></li>
-        <li><font face="Arial">Wiki và SCORM bây giờ cả hai sử dụng mã nén mới - các cố định này thông báo các vấn đề về SCORM</font></li>
-        <li><font face="Arial">Hệ thống phân trang mới đối với bảng chú giải thuật ngữ</font></li>
-        <li><font face="Arial">Thông tin người dùng từ LDAP được cắt để chèn vào trong moodle để ngăn cản việc mất dữ liệu </font></li>
-        <li><font face="Arial">pclzip được cập nhật thành phiên bản mới</font></li>
-        <li><font face="Arial">Memory_limit có thể được ghi đè bởi các thiết lập cấu hình cao hơn từ file php.ini, dòng chú thích,  httpd.conf, .htaccess</font></li>
-        <li><font face="Arial">Các bản dịch mới được bắt đầu: Maori, Kannada, Albanian và Việt Nam</font></li>
-        <li><font face="Arial">Nhiều bổ xung vào thành các gói ngôn ngữ khác </font></li>
-        <li><font face="Arial">Các giáo viên bây giờ có thể luôn luôn thử các bài thi, thậm trí chúng không được mở bao giờ </font></li>
-        <li><font face="Arial">Xem bảng chú giải thuật ngữ bây giờ thì khác đối với mỗi định dạng.</font></li>
-        <li><font face="Arial">Tìm kiếm bảng chú giải thuật ngữ bây giờ cũng tím kiếm các tên bí danh </font></li>
-        <li><font face="Arial">Vastly improved multilang filter with more forgiving syntax</font> </li>
-      </ul>
-    </dd>
-	
-   <dt><font face="Arial">Các cải tiến thực thi Performance improvements</font></dt>
-    <dd>
-      <ul>
-        <li><font face="Arial">Better caching headers mean improved performance on all pages when using back button</font></li>
-        <li><font face="Arial">Các chỉ số cơ sở dữ liệu được thêm vào trong nhiều vị trí phù hợp để Database indexes added in many places to enhance performance in large scale deployments</font></li>
-        <li><font face="Arial">Các cải tiến thực thi thông qua moodle ở đó các cua học đang được liệt kê.</font></li>
-        <li><font face="Arial">Various optimizations by removing unnecessary database retrievals and sorting.</font></li>
-      </ul>
-    </dd>
 
-    <dt><font face="Arial">Các vấn đề lỗi khác</font></dt>
-    <dd>
-      <ul>
-        <li><font face="Arial">Cố định lưu trữ vào một cua học mới tạo bản sao Fixed restoring into a new course generating duplicate course idnumbers</font></li>
-        <li><font face="Arial">Cố định nhiều vấn đề Postgres nhỏ </font> </li>
-        <li><font face="Arial">Cố định nhiều thông báo không cần thiết khi ở chế độ debug </font></li>
-        <li><font face="Arial">Cố định nhiều thông báo về PHP5 nhiều hơn </font></li>
-        <li><font face="Arial">Cố định hỗ trợ đối với các dấu nháy, dấu nháy kép và dấu gạch chéo trong dữ liệu người dùng LDAP </font></li>
-        <li><font face="Arial">Cố định đối với việc tổ chức trang tìm kiếm các kết quả cua học đối với Postgres</font> </li>
-        <li><font face="Arial">Cố định lỗi với các khoảng trống trong tìm kiếm người dùng </font></li>
-        <li><font face="Arial">Cố định lỗi chatroom ở đó tất cả các thành viên chat được liệt kê trong nhiều phòng chat</font> </li>
-        <li><font face="Arial">Cố định đối với các lỗi cài đặt</font></li>
-        <li><font face="Arial">Các tên đăng nhập có phân biệt kiểu chữ trong trường nhập vào được cố định </font></li>
-        <li><font face="Arial">Cố định lỗi trong redirection sau đánh giá các thông báo gửi lên diễn đàn </font></li>
-        <li><font face="Arial">Cố định lỗi trong bài thi với các câu hỏi phù hợp</font></li>
-        <li><font face="Arial">Cố định lỗi trong bài thi trong phần xem trước bài thi </font></li>
-        <li><font face="Arial">Cố định lỗi trong phần soạn thảo ngôn ngữ</font></li>
-        <li><font face="Arial">Các cố định nhỏ trong môđun SCORM</font></li>
-        <li><font face="Arial">Môđun SCORM hiển thị thuộc tính bức tranh người dùng</font></li>
-        <li><font face="Arial">Các tên hoạt động được lưu trữ bởi tên trong các bộ lọc hoạt động </font></li>
-        <li><font face="Arial">Tìm kiếm bảng chú giải thuật ngữ sẽ tìm kiếm như các tên bí danh</font></li>
-        <li><font face="Arial">Bất kỳ các lỗi RSS sẽ có kết quả trong file lỗi RSS  hơn là RSS không hợp lệ.</font></li>
-        <li><font face="Arial">Cố định vấn đề với gói SCORM hợp lệ và PHP5</font></li>
-        <li><font face="Arial">Cố định vấn đề với sao lưu/khôi phục và các danh mục trống</font></li>
-        <li><font face="Arial">Tốt hơn XHTML trong wiki</font></li>
-        <li><font face="Arial">Lỗi cố định trong các thông báo chat đối với phiên chat đầu tiên </font></li>
-        <li><font face="Arial">Cố định một vấn đề với SCORM khi xoá nhiều file, hoặc các file lớn </font></li>
-        <li><font face="Arial">Cố định một số vấn đề với định dạng bộ bách khoa toàn thư trong bảng chú giải thuật ngữ </font></li>
-        <li><font face="Arial">Cố định lỗi trong sự tích hợp SCORM cùng với mã đang nén </font></li>
-        <li><font face="Arial">Cố định lỗi trong hộp thoại các thư thông báo email văn bản thuần tuý </font></li>
-        <li><font face="Arial">Cố định các biến sesskey thiếu trong khối hoạt động mang tính xã hội </font> </li>
-        <li><font face="Arial"> Các phần vượt quá đối với một cua học bây giờ bị ẩn trong navmenu</font></li>
-        <li><font face="Arial"> Thêm thời kỳ thực hiện việc cố định đối với lịch biểu </font></li>
-        <li><font face="Arial">Đầu tiên bài thi soạn thảo trong một cua học mới có một danh mục mặc định được đăng ký</font></li>
-        <li><font face="Arial">Cố định lỗi trong môđun paypal khi chấp nhận khối lượng chi phí </font></li>
-        <li><font face="Arial">Cố định lỗi trong các file cua học cùng với chế độ chọn thiếu </font>	</li>
-      </ul>
-    </dd>
 
- 
+<h3>Các đặc điểm chính</h3>
+  <ul type="circle">
+  <li> Các trang web tuân theo XHTML Transitional 1.0</li>
 
-  </dl>
+  <li> Đã nâng cao <b>Khả năng có thể truy cập được</b>, hướng tới tuân theo WAI (W3C), SENDA (UK) và tiêu chuẩn Section 508 (US).</li>
+  <li> <b>Hệ thống theme mới và mạnh</b>, cho phép thay thế theme dễ dàng, gồm các theme của người dùng , các theme của cua học, kiểm soát tốt mọi trang trong Moodle thông qua CSS.</li>
+
+  <li> Tính năng <b>Nhắn tin</b> được tính hợp cho phép trao đổi trực tiếp giữa các người dùng trong site, bao gồm các cửa sổ popup thời gian thực, thông báo, các bản copy qua email, khoá, log, bộ soạn thảo WYSIWYG, etc</li>
+  <li> Tính năng theo dõi đọc hay chưa đọc trong diễn đàn cho phép bạn nhìn thấy các bài gửi mới tức thì và kiểm soát chúng được hiển thị như thế nào (mỗi diễn đàn, mỗi người dùng hoặc mỗi site).</li>
+  <li> Hệ thống <b>các khối</b> mới, cho phép có nhiều bản copy của block và cấu hình block tốt hơn</li>
+
+  <li> Hỗ trợ đầy đủ cho <b>Daylight Savings Time</b> ở mọi nơi trên toàn cầu, do đó mọi người luôn luôn nhìn thấy mọi sự kiện vào đúng thời gian địa phương nơi mình ở.</li>
+
+  <li> <b>Sổ điểm được mở rộng</b> cho phép tuỳ biến điểm của các hoạt động khác nhau, thiết lập các điểm phụ (or taking out others) và đã cải tiến các tuỳ chọn về hiển thị và điểm </li>
+
+  <li> Người dùng có thể được yêu cầu để đồng ý với <b>Site Policy</b>  </li>
+  </ul>
+
+<h3>Các tính năng cải thiện chính của hệ thống</h3>
+<h4>Admin </h4>
+  <ul type="circle">
+  <li> New "maintenance mode" allows the admin to temporarily disable a site (during upgrades, for example).</li>
+
+  <li> Moodle can automatically download a new list of timezones from moodle.org or elsewhere and install it to the database (Olson files are supported too)</li>
+  <li> New version of Moodle MySQL Admin module (available separately)</li>
+
+  <li> New calendar options page provides user interface to configure the behavior of the calendar  </li>
+  </ul>
+
+<h4>Authentication</h4>
+
+  <ul type="circle">
+  <li> New Shibboleth Support</li>
+  <li> New CAS Support</li>
+  <li> New PAM Support</li>
+  <li> Improved LDAP integration, so that LDAP can now control course creation, group assignments. Increased performance and scalability performing user synchronisation.</li>
+
+  <li> Certain user fields can be locked by the admin when using external authentication</li>
+  <li> Improved session handling now detects "crossover" sessions that we have found in some buggy PHP installations and prevents them</li>
+  <li> Sessions can now be stored in the database (good for clustered installations!)</li>
+
+  <li> Users can be forced to change their password  </li>
+  </ul>
+
+<h4>Files</h4>
+  <ul type="circle">
+  <li> Standardised file browsing in all areas</li>
+  <li> Improved uploading, with support for automated Virus scanning of new documents using ClamAV.</li>
+
+  <li> Slasharguments now work also on IIS (upgrade to PHP 4.3.11 needed for ISAPI)  </li>
+  </ul>
+
+<h4>Filters</h4>
+  <ul type="circle">
+  <li> Standardised filter library makes it trivial to write new filters that require searching and highlighting of text.</li>
+
+  <li> Huge efficiency improvements for complex filters like the Glossary filter</li>
+  <li> New Tidy filter uses the W3C Tidy program to (optionally) clean all user-entered texts throughout the site and convert it to valid XHTML code</li>
+  <li> Improved censorship filter, now "blacks out" words using styles and uses a word list from the language packs.</li>
+
+  <li> Improved Flash MP3 player, now shows progress bar while downloading and playing</li>
+  <li> Improved Multi-language filter is faster, more forgiving of syntax errors, and uses new editor-friendly syntax:  &lt;span lang="en"&gt;&lt;/span&gt;</li>
+  <li> Auto-linking filters (glossary, activities) can work to link all the occurrences (old behaviour), once for each text block or only once for the whole page ($CFG-&gt;filtermatchonepertext, $CFG-&gt;filtermatchoneperpage).</li>
+
+  <li> More text can now be filtered in Moodle, including activity names, headings and other such small texts.  This makes it possible to design completely multi-lingual sites in Moodle that fully appears in the user's chosen language.  </li>
+  </ul>
+
+<h4>Themes</h4>
+  <ul type="circle">
+  <li> Modules can provide standard styles </li>
+  <li> Themes can override required styles of other themes</li>
+
+  <li> Users and courses can choose their own themes if the admin allows it</li>
+  <li> Implementation of tabs interface on many pages  </li>
+  <li> Modules, Blocks and Languages can define their own standard styles </li>
+  </ul>
+
+<h4> HTML Editor</h4>
+  <ul type="circle">
+  <li> The toolbuttons offered in the editor toolbar are now configurable by the admin</li>
+  <li> Search and Replace text within the editor text area (with optional use of regular expressions)  </li>
+  </ul>
+
+<h4> Course management</h4>
+
+  <ul type="circle">
+  <li> Transparent Blackboard 5.5 course importing (partial 6.0 support)</li>
+  <li> The new meta-courses allow to get users automatically enroled in a general course (the metacourse) when enroled in any of the metacourse-linked courses</li>
+  <li> New tool to copy content from a course to other.  </li>
+  </ul>
+
+<h4> New blocks </h4>
+  <ul type="circle">
+  <li> HTML block: allowing to place arbitrary content (text, images links)  in any course mainpage </li>
+  <li> Remote RSS feed: allows to display external news channels inside a Moodle course</li>
+
+  <li> Glossary Selection: to choose and display content from a Moodle glossary in course mainpage  </li>
+  </ul>
+
+<h4> Calendar</h4>
+  <ul type="circle">
+  <li> Major speed improvements for sites with a large number of courses using groups</li>
+
+  <li> Repeating events can now be modified or deleted all at the same time or separately as before</li>
+  <li> New "remember filter settings" preference that allows calendar filters to remember their status between logins  </li>
+  </ul>
+
+<h3> Activity Module Improvements</h3>
+<h4>Assignment</h4>
+  <ul type="circle">
+  <li> Completely refactored into a new class-based design, allowing new plugin-assignment types</li>
+  <li> New Online Text assignment type that doesn't require files and allows inline comments when grading - this new type effectively replaces the old Journal module</li>
+  <li> Vastly improved grading interface for handling large classes</li>
+
+  <li> New configuration options to disable late submission and to e-mail alerts to teachers when students submit new work  </li>
+  </ul>
+
+<h4>Chat</h4>
+  <ul type="circle">
+  <li> Streamlined interface looks smoother, works faster, even without using the optional server daemon</li>
+
+  <li> Blocks can now be added to chat pages (e.g. for additional information)  </li>
+  </ul>
+
+<h4>Choice</h4>
+  <ul type="circle">
+  <li> Rewritten to allow any number of choices</li>
+
+  <li> The number of users per choice can be limited, which allows it to be used as tool for "signing up" to an array of options.</li>
+  <li> You can now download the results of the choice to XLS or a TXT file  </li>
+  </ul>
+
+<h4>Forum</h4>
+  <ul type="circle">
+
+  <li> Powerful new Google-like forum searching tools</li>
+  <li> Forum read/unread tracking - unread messages are highlighted on the course page, forum page, discussion listing and the discussion view</li>
+  <li> The tracking system may be disabled by teachers/users </li>
+  <li> User profiles show all posts by a user, as well as all discussions</li>
+  <li> When admins edit user messages, a notice is attached </li>
+
+  <li> Discussion listing shows the last user who posted to each discussion and when it was, with a direct link to that post</li>
+  <li> In group-enabled forums the discussion listing shows the group the thread applies to, with a link to the group description page.    </li>
+  </ul>
+
+<h4>Glossary</h4>
+  <ul type="circle">
+  <li> New setting to enable/disable the print view of each glossary.</li>
+
+  <li> New search system looks for words everywhere (instead of doing exact phrase match).</li>
+  <li> More information is sent to logs to be able to track activity better.  </li>
+  </ul>
+
+<h4>Journal</h4>
+  <ul type="circle">
+  <li> The Journal module has not changed since 1.4, and is now deprecated.  The upgrade procedure 
+       will convert all your Journal activities into Online Assignments, and hide all the old Journal
+       activities.  If you don't want this to happen, then define this in your config.php:  $CFG->noconvertjournals = true;</li>
+  </ul>
+
+<h4>Lesson</h4>
+
+  <ul type="circle">
+  <li> Now supports timed Lessons</li>
+  <li> Can create practice Lessons (grades are not stored)</li>
+  <li> Option for students to view points earned while taking the Lesson</li>
+  <li> Allow students to review their answers before submitting the Lesson</li>
+
+  <li> New Slide Show Mode (only branch tables are displayed as slides)</li>
+  <li> New Left Menu (for enabled branch tables only)</li>
+  <li> Lessons can now be Password Protected</li>
+  <li> A Tree View can be used for the Lesson creation screen</li>
+
+  <li> Students can post their high scores</li>
+  <li> New option to save a Lesson's settings as defaults for new lessons in the same course</li>
+  <li> Can delete a student's attempts</li>
+  <li> New page Jumps:
+    <ul type="circle">
+
+    <li> Previous Page</li>
+    <li> Unseen question within a branch</li>
+    <li> Random question within a branch</li>
+    <li> Unseen question within a cluster    </li>
+    </ul>
+
+  </li>
+  <li> Added functionality to view Lesson statistics</li>
+  <li> New question type: Essay.  Teachers can view each essay and write comments, assign a grade, and then email it all to the student</li>
+  <li> New question creation interface  </li>
+
+  </ul>
+
+<h4>Quiz</h4>
+
+  <ul type="circle">
+  <li> Can handle adaptive questions, i.e., questions that allow the student to interact with them repeatedly within the same quiz attempt and that can change in response to student answers.</li>
+  <li> Student can be allowed to try a question again immediately within the same quiz attempt until they get the answer right.</li>
+  <li> There is a penalty mechanism that deducts a specified fraction of the mark for each wrong attempt at a question.</li>
+
+  <li> Allows questions rendered and scored externally (e.g., by mathematical assessment engines) to be integrated seamlessly into Moodle quizzes via the RQP web services protocol.</li>
+  <li> Is prepared for the handling of IMS QTI questions once web services for these become available.</li>
+  <li> New tabbed teacher interface for previewing, editing, and reviewing quizzes.</li>
+  <li> New "improved security" mode shows quiz in a separate full-screen window, with many browser features disabled</li>
+
+  <li> Quizzes can be presented to students in several pages. The number of questions per page is selectable by the teacher.</li>
+  <li> Blocks can now be added to quiz pages (to show results table, or additional information etc)</li>
+  <li> Better and cleaner interface for question selection and management in the database. Selected questions can be added to quiz, moved to other categories or deleted en mass.</li>
+
+  <li> Random questions are now added to the quiz question list with a dedicated button, leaving a cleaner interface at questions database without phantom placeholders</li>
+
+  <li> Final grade can be a fractional number, with teacher-defined decimal figures </li>
+  <li> Improved results page with user-selectable display of columns, cleaner sorting and new mark display options </li>
+  <li> Questions can be edited with one click from the improved quiz preview and question preview screens.</li>
+  <li> Questions can be copied with one click, to allow question variations to be created with ease.</li>
+  <li> Revamped question categories structures and editing interface. </li>
+
+  <li> Categories now can contain nested subcategories and can be re-ordered. </li>
+  <li> It is possible to select whether questions from categories, and or their subcategories are displayed on the question edit page. </li>
+  <li> It is now possible to select whether to add random questions from a parent category alone, or from a parent category and its sub-categories. </li>
+  <li> Quiz creators are prevented from changing the question set of quizes that have had student responses. </li>
+  <li> Recognition, and rejection, of overlapping/redundant questions has been improved. </li>
+
+  <li> The display of questions in longer quiz categories on the quiz editing page is now paginated. </li>
+  <li> New export types - IMS QTI (2.0) and xhtml. Improvements &amp; fixes to others.</li>
+  <li> New import type - Hot Potato. Improvements &amp; fixes to others.  </li>
+
+  </ul>
+
+<h4>Scorm </h4>
+  <ul type="circle">
+  <li> The module is now fully conformant with the SCORM 1.2 standard.</li>
+  <li> User result data storage and reporting was improved. </li>
+  <li> AICC packages can now be imported. </li>
+  </ul>
+
+<h4>Survey</h4>
+  <ul type="circle">
+  <li> Graph formatting has been improved (labels are more readable)</li>
+  </ul>
+
+<h4>Wiki </h4>
+  <ul type="circle">
+  <li> Changes to wiki pages are now monitored and displayed in Recent Activity block</li>
+  <li> Several under the hood improvements to backup/restore and other routines that enhance the reliability of wikis  </li>
 </ul>
 
-<p>&nbsp;</p>
 
 
 
-<h3> <font face="Arial"> Phiên bản 1.4.2   (ngày 5 tháng 11 năm 2004)</font></h3>
-
-<p><font face="Arial">(Bởi vì phiên bản này chứa các cố định bảo mật quan trọng, chúng tôi khuyên rằng các site nên sử dụng bất kỳ
-nên sử dụng các phiên bản trước đó của Moodle để nâng cấp thành phiên bản này khi có thể .)</font></p>
-
-<ul>
-  <dl>
-    <dt><font face="Arial">Một số vấn đề bảo mật quan trọng Some important security fixes</font></dt>
-    <dd> 
-      <ul>
-        <li><font face="Arial">Tốt hơn kiểm tra/làm sạch các tham số kịch bản được sử dụng trong  
-        script parameters used in quite a few areas 
-            throughout Moodle (a BIG thanks to Petr Skoda for his recent security audit!)</font></li>
-        <li><font face="Arial">Quoted some SQL parameters in the glossary module to prevent possible injection</font></li>
-      </ul>
-    </dd>
-
-    <dt><font face="Arial">Một số nhỏ những thứ mới</font></dt>
-    <dd> 
-      <ul>
-        <li><font face="Arial">Môđun chứng thực PAM mới đối dựa trên việc chứng thực trực tiếp trên Unix/Linux</font></li>
-        <li><font face="Arial">Bây giờ các nhà tạo cua học có thể lưu trữ thành cái mới hoặc sang các cua học đã tồn tại</font></li>
-        <li><font face="Arial">Gửi các thông báo lên diễn đàn  bao gồm các phần đầu được chi tiết hoá để cho phép 
-        Forum posts now include detailed headers to allow correct threading in mail clients</font></li>
-      </ul>
-    </dd>
-
-    <dt><font face="Arial">Thêm một nhánh các vấn đề lỗi khác</font></dt>
-    <dd> 
-      <ul>
-        <li><font face="Arial">Bây giờ việc sao lưu có khả năng đương đầu với các lỗi (ví dụ nếu việc sao lưu bị đóng ngắt) 
-            và có thể dọn dẹp những file không được hoàn thành </font></li>
-        <li><font face="Arial">Cố định lại sự chứng thực cơ sở dữ liệu dựa vào một cơ sở dữ liệu PostgreSQL </font></li>
-        <li><font face="Arial">Cố định lại một số phần cài đặt PostgreSQL</font></li>
-        <li><font face="Arial">Các dòng chủ đề của diễn đàn bấy giờ chỉ thay đổi trong khi hiển thị hoạt động hiện hành </font></li>
-        <li><font face="Arial">Các khóa truy cập dựa trên cơ sở dữ liệu bây giờ thực sự làm việc  :-)</font></li>
-        <li><font face="Arial">SQL cố định việc tạo các RSS feeds từ PostgreSQL</font></li>
-        <li><font face="Arial">Thêm rtsp tới danh sách các giao thức được cho phép trong văn bản HTML cân đối </font></li>
-        <li><font face="Arial">Hồ sơ người dùng và trang soạn thảo hồ sơ có thể được gọi không có các tham số </font></li>
-        <li><font face="Arial">Thư viện xmlize được nâng cấp thành phiên bản mới nhất </font></li>
-        <li><font face="Arial">Thư viện phpmailer được nâng cấp thành phiên bản mới nhất </font></li>
-        <li><font face="Arial">Various small code-only cleanups</font></li>
-        <li><font face="Arial">Menu admin bây giờ cho phép sao lưu/ khôi phục "cua học của site" (trang đầu )</font></li>
-        <li><font face="Arial">Cố định một lỗi hiển thị trong chỉ mục các diễn đàn mà nó chỉ hiển thị trong PHP5</font></li>
-        <li><font face="Arial">Chức năng nổi bật (ví dụ sau tìm kiếm )là loại bỏ các dấu vạch chéo ngược </font></li>
-        <li><font face="Arial">Thông tin từ LDAP bây giờ được giải mã từ utf8</font></li>
-        <li><font face="Arial">Các danh sách cua học bây giờ làm việc tốt hơn với khối lượng lớn các cua học </font></li>
-        <li><font face="Arial">Hai lỗi SCORM được cố định (một lỗi ấn loát và một vấn đề với on before unload)</font></li>
-        <li><font face="Arial">Một số dọn dẹp khi in văn bản, các trang đầu và các biến trong bài học </font></li>
-        <li><font face="Arial">Các chức năng lịch bây giờ Calendar now functions as expected even when you login as someone else</font></li>
-        <li><font face="Arial">Cố định một số thẻ PHP rút gọn còn lại </font></li>
-        <li><font face="Arial">Better randomness for random questions (fix for bug introduced in 1.4)</font></li>
-        <li><font face="Arial">Khi một giáo viên bị tháo gỡ từ một cua học, chúng được tháo bỏ từ tất cả các nhóm trong cua học đó </font></li>
-        <li><font face="Arial">Cố định lỗi strip_pages trong Wiki</font></li>
-        <li><font face="Arial">Cố định đối với việc phát hiện charset trong các bản sao lưu và bộ lọc nhiều ngôn ngữ dưới PHP5</font></li>
-      </ul>
-    </dd>
-
-  </dl>
-</ul>
-
-<p>&nbsp;</p>
-
-
-<h3> <font face="Arial"> Moodle 1.4.1   (ngày 12 tháng 9 năm 2004)</font></h3>
-
-<ul><dl>
-    <dt><font face="Arial">Một số điều mới </font></dt>
-    <dd> 
-      <ul>
-        <li><font face="Arial">Bộ lọc "bảo vệ Email" sẽ làm bối rối tất cả các địa chỉ email trong tất cả các văn bản 
-            (để trợ giúp ngăn cản help prevent automated address-harvesting)</font></li>
-        <li><font face="Arial">Các địa chỉ email được cho phép bây giờ có thể được hạn chế ( xem config-dist.php để biết chi tiết )</font></li>
-        <li><font face="Arial">Thêm các hướng dẫn đối với Extra instructions for translators embedded in translation interface</font></li>
-        <li><font face="Arial">Trang trợ giúp mới đối với các đường dẫn thư mục </font></li>
-      </ul>
-    </dd>
-    <dt><font face="Arial">Và một số lỗi được cố định </font></dt>
-    <dd> 
-      <ul>
-        <li><font face="Arial">Cải tiến việc thực hiện khi quan sát các bản ghi của site </font></li>
-        <li><font face="Arial">Cải tiến thứ tự các trang và sự thực hiện trong bảng chú giải thuật ngữ </font></li>
-        <li><font face="Arial">Các mục nhập bảng chú giải thuật ngữ bây giờ được hiển thị một cách chính xác khi chúng thuộc vào nhiều danh mục </font></li>
-        <li><font face="Arial">Không khai báo lại bản ghi auth_user_login bị thất bại </font></li>
-        <li><font face="Arial">Cố định 2 biểu tượng thiếu trong cordoroyblue theme</font></li>
-        <li><font face="Arial">Cố định lại nút "sự kiện mới" trên trang các sự kiện sắp xảy ra </font></li>
-        <li><font face="Arial">Luôn luôn thêm các gạch chéo trên các thông báo messages từ những người dùng daemon trước khi chèn vào trong cơ sở dữ liệu.</font></li>
-        <li><font face="Arial">Cô định đối với Fixes for handling of fixed enrollment periods when this is set for a course</font></li>
-        <li><font face="Arial">ID cua học của site (được định nghĩa là SITEID) is no longer assumed to be always 1</font></li>
-        <li><font face="Arial">Các giới hạn bộ nhớ mặc định được tăng lên tới 16M, để giúp cho Moodle tiếp tục làm việc ngay cả khi có một số vấn đề về bộ nhớ </font></li>
-        <li><font face="Arial">Các bức tranh cười bây giờ được đưa ra như các bức tranh trong văn bản định dạng Markdown </font></li>
-        <li><font face="Arial">Các cuộc bình bầu làm việc theo cơ chế work under Recent Activity again</font></li>
-        <li><font face="Arial">file.php bây giờ có thể chỉ được sử dụng để truy cập dữ liệu trong các cua học </font></li>
-        <li><font face="Arial">Các hoạt động của các khối lịch trên trang chủ được cải tiến </font></li>
-        <li><font face="Arial">Lỗi dấu ngoặc kép được cố định cùng với đặc tả cơ sở dữ liệu PostgreSQL được đưa ra bởi người cài đặt </font></li>
-        <li><font face="Arial">Lỗi hiển thị các câu trả lời đúng trong quá trình xem lại bài thi được cố định</font></li>
-        <li><font face="Arial">&lt;tt> và &lt;code> bây giờ được cho phép các thẻ </font></li>
-        <li><font face="Arial">Section summaries, course summaries and labels are again no longer cleaned of Javascript</font></li>
-        <li><font face="Arial">Một lỗi LDAP hiếm có mà có thể nguyên nhân là các tài khoản mới không được tạo </font> </li>
-      </ul>
-    </dd>
-  </dl>
-</ul>
-
-<p>&nbsp;</p>
-
-
-<h3> <font face="Arial"> Moodle 1.4   ( ngày 31 tháng 8 năm 2004)</font></h3>
-
-<ul><dl>
-    <dt><font face="Arial">Các thông tin chính </font></dt>
-    <dd> 
-      <ul>
-        <li><font face="Arial">Có khả năng tương thích với PHP 5</font></li>
-        <li><font face="Arial">phần cài đặt wizard mới dễ dàng hướng dẫn bạn qua việc tạo file khởi tạo config.php </font></li>
-        <li><font face="Arial">Việc cài đặt bây giờ hoàn toàn phụ thuộc vào ngôn ngữ bạn chọn </font></li>
-        <li><font face="Arial">Môđun tài nguyên được tân trang hoàn toàn làm cho nó dễ hơn để thêm các nguồn tài nguyên mới và gửi dữ liệu tới chúng .</font></li>
-        <li><font face="Arial">Các môđun đặc trưng hệ thống khoá truy cập mới thí dụ như các chi phí Paypal được tự động trả hoàn toàn, 
-            quét file phẳng, hoặc điều khiển cơ sở dữ liệu bên ngoài.</font></li>
-        <li><font face="Arial">Các khối bây giờ làm việc trên trang đầu, cộng với bạn có thể một phần chủ đề trên phần giữa </font></li>
-        <li><font face="Arial">Chat bây giờ bao gồm một server-side daemon (trong PHP) có thể chat ngay lập tức </font></li>
-        <li><font face="Arial">Môđun Wiki mới!</font></li>
-        <li><font face="Arial">Hỗ trợ mới cho việc soạn thảo văn bản sử dụng định dạng Markdown </font></li>
-        <li><font face="Arial">Nhiều lỗi được cố định trong tất cả các vùng </font></li>
-      </ul>
-    </dd>
-
-    <dt><font face="Arial">Under the hood</font></dt>
-    <dd> 
-      <ul>
-        <li><font face="Arial">Môđun tài nguyên bây giờ có menu thêm vào, và sử dụng các môđun con dựa trên lớp, bây giờ làm cho nó dễ dàng hơn 
-            để thêm các kiểu tài nguyên mới vào menu này </font></li>
-        <li><font face="Arial">Môđun Quiz  has been refactored vào trong plugin kiểu câu hỏi dựa trên lớp.</font></li>
-        <li><font face="Arial">Phương thức kết nạp được has been refactored đưa vào trong các plugin kết nạp dựa trên lớp.</font></li>
-        <li><font face="Arial">Các định dạng hiển thị bảng chú giải thuật ngữ bây giờ dựa trên tên, và nó dễ hơn để thêm các cái mới.</font></li>
-        <li><font face="Arial">Hoạt động của nhiều môđun được cải tiến khi chúng được sử dụng  trên trang của site .</font></li>
-        <li><font face="Arial">Cấu trúc bộ lọc được sửa lại nhanh hơn  bây giờ và tương thích với Turck MMcache.</font></li>
-        <li><font face="Arial">Thêm các hoạt động bây giờ Adding activities is now more forgiving of fields left empty</font></li>
-        <li><font face="Arial">Bây giờ chúng ta có thể thay đổi các cột của PostgreSQL sử dụng hàm table_column()</font></li>
-        <li><font face="Arial">Sự phát sinh ra RSS được xúc tiến rất tốt, putting much less load on cron</font></li>
-        <li><font face="Arial">Một số môđun lớn hơn tách lib.php thành locallib.php đối với việc sử dụng bộ nhớ thấp </font></li>
-      </ul>
-    </dd>
-
-    <dt><font face="Arial">Các ngôn ngữ và sự định vị </font></dt>
-    <dd> 
-      <ul>
-        <li><font face="Arial">Cập nhật mọi gói ngôn ngữ gần đây</font></li>
-        <li><font face="Arial">Moodle có thể ghi đè tập hợp ký tự mặc định trong Apache, làm cho các ngôn ngữ trở nên đáng tin cậy hơn </font></li>
-        <li><font face="Arial">Nhiều ngôn ngữ bây giờ được gói một cách đúng cách </font></li>
-        <li><font face="Arial">Better handling of locales and encodings on very multilingual sites (like moodle.org)</font></li>
-        <li><font face="Arial">Các ngôn ngữ mới như: Slovenian và Hebrew!</font> </li>
-      </ul>
-    </dd>
-
-    <dt><font face="Arial">Các sự cố về bảo mật </font></dt>
-    <dd> 
-      <ul>
-        <li><font face="Arial">Fixed a number of possible XSS entry points and path disclosures</font></li>
-        <li><font face="Arial">Các thuộc tính của các thẻ trong HTML bây giờ được phân tách hầu như hoàn toàn đối với các bản chính hầu như chưa được chuẩn </font></li>
-        <li><font face="Arial">Tất cả các trang hồ sơ người dùng không có sẵn theo mặc định nữa đối với những người lạ </font></li>
-        <li><font face="Arial">Tất cả văn bản bây giờ được dọn dẹp trên đầu ra ( không phải đối với đầu vào )</font></li>
-        <li><font face="Arial">Các địa chỉ Email không sử dụng trên các đầu ra mail khi người dùng yêu cầu nó </font></li>
-        <li><font face="Arial"> <strong>loginhttps</strong> thiết lập mới sẽ sử dụng https  bảo mật cho việc đăng nhập, sau đó quay trở lại http</font></li>
-      </ul>
-    </dd>
-
-    <dt><font face="Arial">Quản trị </font></dt>
-    <dd> 
-      <ul>
-        <li><font face="Arial">Chỉ ra các giao diện mới để thêm/gỡ bỏ các học viên, các nhà tạo của học và các nhà quản trị </font></li>
-        <li><font face="Arial">Các lần đăng nhập bị thất bại bây giờ được ghi lại, và có thể được hiển thị tới những người dùng vào lúc một đăng nhập thành công </font></li>
-        <li><font face="Arial">Các bản ghi bây giờ hỗ trợ quan sát theo nhóm, và bởi các lỗi </font></li>
-        <li><font face="Arial">Các môđun bây giờ hoạt động phù hợp hơn trên trang đầu của site</font></li>
-        <li><font face="Arial">Trang đầu &quot;các học viên&quot; có thể là tất cả người dùng trên site, hoặc tất cả người dùng trong ít nhất một cua học trên site </font> </li>
-        <li><font face="Arial">Gửi Email bây giờ có thể là có hiệu lực/vô hiệu hoá trên bất kỳ trang hồ sơ cá nhân nào </font></li>
-      </ul>
-    </dd>
-
-    <dt><font face="Arial">Chứng thực </font></dt>
-    <dd> 
-      <ul>
-        <li><font face="Arial">Tất cả các phương pháp chứng thực bây giờ sẽ tồn tại trong các tài khoản được tạo nội bộ </font></li>
-        <li><font face="Arial">Hỗ trợ mới đối với việc chứng thực dựa vào các server lớp đầu tiên </font></li>
-        <li><font face="Arial">Các sửa chữa với mục đích là để chứng thực POP3</font></li>
-      </ul>
-    </dd>
-
-    <dt><font face="Arial">Duyệt </font></dt>
-    <dd> 
-      <ul>
-        <li><font face="Arial">Các du khách có thể được đăng nhập tự động như khách </font></li>
-        <li><font face="Arial">Menu chuyển tiếp cho phép hiển thị "chuyển tới" để trợ giúp phân phối về những gì nó làm </font></li>
-        <li><font face="Arial">Menu chuyển tiếp bây giờ có nhiều cách thức đưa nhóm các hoạt động vào trong nhiều phần rõ ràng hơn </font></li>
-      </ul>
-    </dd>
-
-    <dt><font face="Arial"> Các khối</font></dt>
-    <dd> 
-      <ul>
-        <li><font face="Arial">Hệ thống các khối bây giờ có thể đương đầu các định dạng của học tuỳ chọn và các thay đổi trong định dạng </font></li>
-        <li><font face="Arial">Khối đăng nhập mới cho phép đăng nhập từ trang đầu của site </font></li>
-        <li><font face="Arial">Khối những người dùng trực tuyến trên trang chủ xuất hiện những người dùng từ trong toàn bộ site</font></li>
-      </ul>
-    </dd>
-
-    <dt><font face="Arial">Trình soạn thảo</font></dt>
-    <dd> 
-      <ul>
-        <li><font face="Arial">màn hình cấu hình trình soạn thảo cho admin mới </font></li>
-        <li><font face="Arial">Hỗ trợ mới đối với anchors trong các trang </font></li>
-        <li><font face="Arial">Kiểm tra chính tả bây giờ được thêm vào trong trình soạn thảo, nó sử dụng một sự đánh vần trên hệ thống server của bạn </font></li>
-      </ul>
-    </dd>
-
-    <dt><font face="Arial">Chat</font></dt>
-    <dd> 
-      <ul>
-        <li><font face="Arial">Chat bây giờ bao gồm một server-side daemon (trong PHP) chat ngay lập tức</font></li>
-      </ul>
-    </dd>
-
-    <dt><font face="Arial">Lựa chọn</font></dt>
-    <dd> 
-      <ul>
-        <li><font face="Arial">Sự tân trang đáng kể làm tạo ra nhiều câu hơn, cùng với nhiều lựa chọn </font></li>
-      </ul>
-    </dd>
-
-    <dt><font face="Arial">Diễn đàn</font></dt>
-    <dd> 
-      <ul>
-        <li><font face="Arial">Một số sửa chữa khi phân chia các nhóm </font></li>
-        <li><font face="Arial">Người dùng có thể chọn nhận các thông báo gửi lên diễn đàn theo kiểu mỗi email một ngày liệt kê tất cả các chủ đề hoặc toàn bộ thông tin gửi lên.</font></li>
-        <li><font face="Arial">Danh sách các thảo luận bây giờ được phân trang </font></li>
-        <li><font face="Arial">Các giáo viên bây giờ hoàn toàn có quyền điều khiển toàn bộ sự tham gia diễn đàn, and can subscribe anyone at will</font></li>
-        <li><font face="Arial"> Ngày "gửi lên muộn nhất" được rút ngắn lại và được link tới thông báo đó </font></li>
-        <li><font face="Arial">Bây giờ các diễn đàn liệt kê RSS feeds trên trang chỉ số </font></li>
-        <li><font face="Arial">Better-looking HTML mail using the full stylesheet</font></li>
-        <li><font face="Arial">Thư tín gửi lên diễn đàn trước 2 ngày thì không bao giờ được gửi( để ngăn cản sự tràn ngập thư không mong muốn )</font></li>
-        <li><font face="Arial">Thư tín được ngăn chặn được ghi lại vì thế mà các giáo viên có thể nhìn thấy nó </font></li>
-        <li><font face="Arial">Các nhánh thảo luận có thể được "chia ra" từ vấn đề thảo luận chính, vào trong một thảo luận mới </font></li>
-      </ul>
-    </dd>
-
-    <dt><font face="Arial">Bảng chú giải thuật ngữ </font></dt>
-    <dd> 
-      <ul>
-        <li><font face="Arial">Các mục từ trong bảng chú giải thuật ngữ có thể được định nghĩa như "luôn luôn có khả năng soạn thảo "</font></li>
-        <li><font face="Arial">Các bảng chú giải thuật ngữ bây giờ liệt kê RSS feeds trên trang chỉ số </font></li>
-        <li><font face="Arial">Many fixes throughout</font></li>
-      </ul>
-    </dd>
-
-    <dt><font face="Arial"> Bài thi </font></dt>
-    <dd> 
-      <ul>
-        <li><font face="Arial">Thiết bị bấm thay đổi mới đối với các bài thi được tính giờ</font></li>
-        <li><font face="Arial">Số lần thử bây giờ có thể được hạn chế đối với các máy tính đặc biệt</font></li>
-        <li><font face="Arial">Các bài thi bây giờ có thể yêu cầu một mật khẩu riêng biệt</font></li>
-        <li><font face="Arial">Kiểu câu hỏi mới dành cho các câu hỏi được tính toán </font></li>
-        <li><font face="Arial">Các câu hỏi số bây giờ hỗ trợ các đơn vị</font><li><font face="Arial"> Các câu hỏi có thể được xem trước trong các trang soạn thảo </font></li>
-        <li><font face="Arial">Các câu hỏi bây giờ có thể được xuất ra theo một số định dạng</font></li>
-        <li><font face="Arial">Cách trình bày danh sách các danh mục thông minh hơn khi soạn thảo các câu hỏi</font></li>
-        <li><font face="Arial">Định dạng xuất (và không đầy đủ) XML, cuối cùng sẽ là quiz-feature-complete</font></li>
-        <li><font face="Arial">Các câu trả lời ngắn bây giờ có thể chứa tất cả các ký tự lạ</font></li>
-      </ul>
-    </dd>
-
-    <dt><font face="Arial">Tài nguyên</font></dt>
-    <dd> 
-      <ul>
-        <li><font face="Arial">Thêm các nguồn tài nguyên bây giờ là một quy trình từng bước một với nhiều điều khiển hơn </font></li>
-        <li><font face="Arial">Trang Web, các link Web, file được tải lên và tài nguyên chương trình tất cả được phối hợp vào một kiểu!</font></li>
-        <li><font face="Arial">Các tài nguyên chương trình được thay thế lại bởi các tham số mà cho phép nhiều sự tương tác cùng với các tài nguyên bên ngoài, cả tháo gõ và được tải lên vào trong Moodle.</font> </li>
-        <li><font face="Arial">Các form có khả năng gộp lại cùng với bộ nhớ để tạo nên các form làm giảm bớt sự nản chí đối với những người mới bắt đầu không làm trì hoãn những người dùng có kinh nghiệm tải xuống </font> </li>
-      </ul>
-    </dd>
-
-    <dt><font face="Arial">SCORM</font></dt>
-    <dd> 
-      <ul>
-        <li><font face="Arial">Nhiều vấn đề khó khăn và sự cải tiến - làm việc cùng với một sự đa dạng của các gói </font></li>
-        <li><font face="Arial">Sự kiểm chứng được thêm vào tuỳ ý trong file manifest </font> </li>
-      </ul>
-    </dd>
-    </dl>
-  <p>&nbsp;</p>
-  <dl>
-    <dt>
-      <div align="center" class="style1"></div>
-    <dd>&nbsp;</dd>
-    <dt>&nbsp; </dt>
-    <dd>
-      <div align="center" class="style1"><font size="+1" face="Arial">Cuối cùng, đừng quên xem xét một số <a href="http://moodle.org/download/modules/" target="_blank">tuỳ chọn và các môđun có tính chất đổi mới do sự phát triển</a>.</font></div>
-    </dd>
-  </dl>
-  <p align="center"><strong><font size="+1" face="Arial">Nếu bạn cảm thấy có bất kỳ lỗi nào trong phiên bản này, vui lòng thông báo chúng <a href="http://moodle.org/bugs" target="_blank">moodle.org/bugs</a> vì thế chúng tôi có thể cố định chúng trong các phiên bản tiếp theo .</font></strong></p>
-  <p>&nbsp;</p>
-</ul>
-
-<p>&nbsp;</p>
-<p><font face="Arial"><br />
-</font>
-</p>
+<br />
+<br />
+<div align="center" class="style1"><strong><font size="+1">If you experience any bugs in this release, please report them <a href="http://moodle.org/bugs" target="_blank">moodle.org/bugs</a> so we can fix them in the next release.</font></strong></div>
+<br />
 <center>
   <p>
-<a href="./?file=releaseold.html"><font face="Arial">Thông tin các phiên bản cũ</font></a>
+<a href="./?file=releaseold.html">Old release information</a>
 </p>
 </center>
-<p>&nbsp;</p>
-<p align="CENTER"><font size="1" face="Arial"><a href="../doc/" target="_top">Tài liệu về Moodle</a></font></p>
-<p align="CENTER"><font size="1" face="Arial">Phiên bản: $Id$</font></p>
+<br />
+<p align="center"><font size="1"><a href="../doc/" target="_top">Moodle Documentation</a></font></p>
+<p align="center"><font size="1">Version: $Id$</font></p>

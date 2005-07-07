@@ -17,17 +17,17 @@
   <li class="spaced">所有文本文件应当使用Unix风格的文本格式(多数的文本编辑器都有这个选项)。</li>
   <li class="spaced">所有php标记都必须是“完整”标记，譬如<font color="#339900">&lt;?php ?&gt;</font> ... 而不是如<font color="#339900">&lt;? ?&gt;</font>的“短”标记。
   </li>
-  <li class="spaced">所有已经存在的版权声明应当被保留。如果有必要，你可以加入自己的。</li>
+  <li class="spaced">所有已经存在的版权声明应当被保留。如果有必要，您可以加入自己的。</li>
   <li class="spaced">每个文件都应当包含主config.php文件。</li>
   <li class="spaced">每个文件都应当检查用户的身份是否正确，可以使用函数require_login()和isadmin()、isteacher()、iscreator()或者isstudent()。</li>
-  <li class="spaced">所有访问数据库的操作都应当使用lib/datalib.php中的函数――这样可以兼容更多的数据库服务器。所有的事情都应当是可以用这些函数来完成的，如果遇到必须要写SQL代码的情况，请记住这些代码应当是跨平台的，且仅仅对你代码中的特定函数(通常在一个lib.php文件中)有效，且代码中用注释进行明确说明。</li>
+  <li class="spaced">所有访问数据库的操作都应当使用lib/datalib.php中的函数――这样可以兼容更多的数据库服务器。所有的事情都应当是可以用这些函数来完成的，如果遇到必须要写SQL代码的情况，请记住这些代码应当是跨平台的，且仅仅对您代码中的特定函数(通常在一个lib.php文件中)有效，且代码中用注释进行明确说明。</li>
   <li class="spaced">不要建立和使用标准全局变量$CFG、$SESSION、$THEME和$USER之外的全局变量。</li>
   <li class="spaced">所有变量都应当被初始化或者至少在使用前用isset()或empty()等函数进行检测。</li>
   <li class="spaced">所有字符串都应当可翻译――在"lang/en"目录中创建新的文本文件，字符串应当使用简洁的英文小写名称，并通过函数get_string()或print_string()来取得。</li>
   <li class="spaced">所有帮助文件应当可翻译――在"en/help"目录中创建文本文件并且通过helpbutton()函数来调用它们。
     <p>如果需要上传一个帮助文件：</p>
     <ul>
-    <li>对于小的修改，旧的翻译文件仍然可以继续使用时，可以直接进行修改，但你应当通知translation@moodle.org</li>
+    <li>对于小的修改，旧的翻译文件仍然可以继续使用时，可以直接进行修改，但您应当通知translation@moodle.org</li>
     <li>对于大的修改，应当创建新的文件，新文件的文件名是在原文件名的末尾添加一个数字，并在以后逐渐增加(如filename2.html)，这样翻译人员就可以方便地知道文件有了一个新的版本。很显然，新的代码和帮助索引文件都必须修改以指向新版本的文件。</li>
     </ul>
 </li>
@@ -36,7 +36,7 @@
 </ol>
 <p> </p>
 <h2>编码风格</h2>
-<p class="normaltext">我知道，如果你已经习惯了一种编码风格而我却让你改变它是有一点讨厌的，但比较而言，这比日后所有人都需要去搞清混合风格的Moodle代码要好一些。对于人们使用的任何编码风格都有很多支持和反对的意见，但现在正在使用的风格<strong>已经存在</strong>了，因此请坚持下去。</p>
+<p class="normaltext">我知道，如果您已经习惯了一种编码风格而我却让您改变它是有一点讨厌的，但比较而言，这比日后所有人都需要去搞清混合风格的Moodle代码要好一些。对于人们使用的任何编码风格都有很多支持和反对的意见，但现在正在使用的风格<strong>已经存在</strong>了，因此请坚持下去。</p>
 <ol class="normaltext">
   <li class="spaced"><strong>缩进</strong>应当是4个连续的空格。绝对不要使用制表符。</li>
   <li class="spaced"><strong>变量名</strong>应当是容易理解、有含义的小写英文单词。如果确实需要两个或以上的单词，请把它们连在一起，但要保持名称尽可能短。对于数组对象，请使用复数名称。
@@ -168,7 +168,28 @@
   <li class="spaced">多数的表格应当有一个<strong>timemodified</strong>字段(INT10)，并用PHP的<strong>time</strong>()函数取得的当前时间戳来更新它。</li>
 </ol>
 <hr />
-<p align="CENTER"><font size="1"><a href="." target="_top">Moodle帮助文档</a></font></p>
+<p>&nbsp;</p>
+<h2>安全问题（处理表单和URL数据）</h2>
+<ol class="normaltext">
+  <li class="spaced">不要依靠“register_globals”。<strong>每个</strong>变量必须在<strong>每个</strong>源文件里正确初始化。变量的来源必须显而易见</li>
+  <li class="spaced">初始化所有的数组和对象，即使它是空的。<code>$a = array()</code>或<code>$obj = new stdClass();</code>。</li>
+  <li class="spaced">不要使用<code>optional_variable()</code>函数。使用<code>optional_param()</code>函数来替代。根据数据类型选择正确的PARAM_XXXX值。使用<code>set_default()</code>函数检查和设置变量的可选值。</li>
+  <li class="spaced">不要使用<code>require_variable()</code>函数。使用<code>required_param()</code>来替代。根据数据类型选择正确的PARAM_XXXX值。</li>
+  <li class="spaced">不要使用<code>$_GET</code>、<code>$_POST</code>或<code>$_REQUEST</code>。根据您的需要使用更合适的<code>required_param()</code>或<code>optional_param()</code></li>
+  <li class="spaced">检查一个动作时，不要使用像<code>if (isset($_GET['something']))</code>这样的代码。可以使用诸如：<code>$something = optional_param( 'something','',PARAM_ALPHA )</code>，并且用<code>empty()</code>函数或（如果'empty'也是一个合法值）<code>isset_param()</code>函数测试</li>
+  <li class="spaced">在任何可能的情况下，把您所有的<code>required_param()</code>、<code>optional_param()</code>和其它的变量初始化一起放在每个文件的开头，这样它们会更容易被找到。</li>
+  <li class="spaced">使用“sesskey”机制保护表单处理函数不被攻击。简单示例：当生成表单的时候，要包含<code>&lt;input type="hidden" name="sesskey" value="&lt;?php echo sesskey(); ?&gt" /&gt;</code>。使用表单时用<code>if (!confirm_sesskey()) {error('Bad Session Key');}</code>检查。</li> 
+  <li class="spaced">所有文件名必须用<code>clean_filename()</code>函数“过滤”，但如果已经适当地使用<code>required_param()</code>或<code>optional_param()做了此项工作，则不必如此</code>
+    </li>
+  <li class="spaced">再把任何从数据库读出的数据写回之前，必须先用<code>addslashes()</code>处理。一个完整数据对象可以用<code>addslashes_object()</code>一次性完全处理完毕。</li>
+  <li class="spaced">在任何可能的情况下，存入数据库的数据必须来自<code>POST</code>数据（也就是来自表单的数据），而不能来自<code>GET</code>数据（也就是来自URL的数据）。</li>
+  <li class="spaced">如果能避免的话，不要使用来自<code>$_SERVER</code>的数据。它会给移植性带来问题</li>
+  <li class="spaced">在其它地方没有做的情况下，确保所有写入数据库的数据已经被<code>clean_param</code> 函数处理，并且针对数据类型，使用了恰当的PARAM_XXXX。</li>
+  <li class="spaced">如果您编写了自定义的SQL代码，请确保它是正确的。尤其小心在数值周围不要丢失引号，这可能会带来SQL“注入”漏洞。</li>
+  <li class="spaced"><strong>每个</strong>文件内都要检查它使用的所有数据（尤其是写到数据库的数据）的合法性。不要期盼或依赖其它地方已经检查了。</li>
+  <li class="spaced">被其它文件包含的代码块应当有确切定义的PHP结构（例如类的声明、函数定义等）——直接执行的代码块建议使用变量时不要初始化。</li>
+</ol>
+<p align="CENTER"><font size="1"><a href="." target="_top">Moodle文档</a></font></p>
 <p align="center"><font size="1">Version: $Id$</font></p>
 </body>
 </html>

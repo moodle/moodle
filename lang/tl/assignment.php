@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.5 ALPHA (2005051500)
+      // assignment.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['allowresubmit'] = 'Pahintulutang maípasa mulî';
@@ -22,7 +22,7 @@ $string['configmaxbytes'] = 'Default na maksimum na laki ng takdang-aralin para 
 $string['description'] = 'Deskripsiyon';
 $string['duedate'] = 'Huling araw ng pasahan';
 $string['duedateno'] = 'Walang huling araw ng pasahan';
-$string['early'] = '$a maaga';
+$string['early'] = '$a na maaga';
 $string['editmysubmission'] = 'Iedit ang ipinasa ko';
 $string['emailteachermail'] = 'Binago ni $a->username ang ipinasa niyang takdang -aralin para sa \'$a->assignment\'
 
@@ -38,10 +38,11 @@ $string['failedupdatefeedback'] = 'Nabigong baguhin ang puna sa ipinasa ni user 
 $string['feedback'] = 'Puna';
 $string['feedbackfromteacher'] = 'Puna mula sa $a';
 $string['feedbackupdated'] = 'Nabago na ang puna sa mga ipinasa ng $a tao';
+$string['guestnoupload'] = 'Paumanhin nguni\'t hindi pinapahintulutang mag-aplowd ang bisita.';
 $string['helpoffline'] = '<p>Kapakipakinabang ito kapag ang takdang-aralin ay ginagawa sa labas ng Moodle.  Maaari itong isang bagay sa iba pang lugar sa web o harapan.</p><p>Maaaring makakita ng deskripsyon ng takdang-aralin ang mga mag-aaral, nguni hindi puwedeng mag-aplowd ng file o anupaman.  Gumagana ng normal ang pagmamarka, at tatanggap ng patalastas hinggil sa marka nila ang mga mag-aaral</p>';
-$string['helponline'] = '<p>Ang uri ng takdang-aralin na ito ay humihiling sa mga user na mag-edit ng teksto, gamit ang mga normal na editing tool.  Maaari itong markahan ng mga guro nang online, at puwede ring magdagdag ng inline na puno o pagbabago.</p><p>(Kung pamilyar ka sa mga lumang bersiyon ng Moodle, pareho ang silbi ng uri ng Takdang-aralin na ito sa lumang diyornal na modyul.)</p>';
+$string['helponline'] = '<p>Ang uri ng takdang-aralin na ito ay humihiling sa mga user na mag-edit ng teksto, gamit ang mga normal na editing tool.  Maaari itong markahan ng mga guro nang online, at puwede ring magdagdag ng inline na puna o pagbabago.</p><p>(Kung pamilyar ka sa mga lumang bersiyon ng Moodle, pareho ang silbi ng uri ng Takdang-aralin na ito sa lumang diyornal na modyul.)</p>';
 $string['helpuploadsingle'] = '<p>Ang uri ng takdang-aralin na ito ay pinapahintulutan ang bawat kalahok na mag-aplowd ng isang file, anuman ang uri.</p><p>Maaari itong maging Word processor na dokumento, o isang larawan, isang nakazip na web site, o anumang bagay na hilingin mong ipasa nila.</p>';
-$string['late'] = '$a huli';
+$string['late'] = '$a na huli';
 $string['maximumgrade'] = 'Pinakamataas na marka';
 $string['maximumsize'] = 'Pinakamataas na laki';
 $string['modulename'] = 'Takdang-aralin';

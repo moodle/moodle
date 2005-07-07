@@ -1,10 +1,10 @@
-<P ALIGN=CENTER><B>Importazione di domande</B></P>
+<p align="center"><b>Importazione di domande</b></p>
 
-<P>Questa funzione permette di importare domande da file di testo esterni, caricati tramite un opportuno form.</P>  
+<p>Questa funzione permette di importare domande da file di testo esterni, caricati tramite un opportuno form.</p>  
 
-<P>Sono supportati diversi formati di file:</P>
+<p>Sono supportati diversi formati di file:</p>
 
-<P><B>Formato GIFT</B></P>
+<p><b>Formato GIFT</b></p>
 <ul>
 <p>GIFT è il più completo formato di importazione disponibile per caricare le domande di un quiz da un file di testo. E' stato progettato per offrire agli insegnanti un metodo semplice per scrivere le domande sotto forma di un semplice testo. Supporta i vari tipi di domande a Risposta multipla, Vero/Falso, Risposta breve, Corrispondenze, Numeriche e anche l'inserimento di un _____ per il formato "parola mancante".
 Differenti tipi di domanda possono essere mischiati in un unico file di testo, e il formato supporta anche righe di commento, nomi di domande, feedback, e voti pesati su base percentuale. Seguono alcuni esempi:</p>
@@ -20,7 +20,7 @@ Napoleone è morto in un'isola?{=si =vero}
 Quando è morto Napoleone?{#1821}
 </pre>
 
-<p align=right><a href="help.php?file=formatgift.html&module=quiz">Altre informazioni sul formato "GIFT"</a></p>
+<p align="right"><a href="help.php?file=formatgift.html&module=quiz">Altre informazioni sul formato "GIFT"</a></p>
 </ul>
 
 <P><B>Formato Aiken</B></P>
@@ -35,7 +35,7 @@ D. Aiutare le vittime che cercano aiuto
 RISPOSTA: A
 </pre>
 
-<p align=right><a href="help.php?file=formataiken.html&module=quiz">Altre informazioni sul formato "Aiken"</a></p>
+<p align="right"><a href="help.php?file=formataiken.html&module=quiz">Altre informazioni sul formato "Aiken"</a></p>
 </ul>
 
 
@@ -48,7 +48,7 @@ Ogni domanda è separata da una tilde (~), e la risposta corretta è preceduta da 
 ~scienza ~sperimentazione}, e in un certo senso rimaniamo studenti per tutta la vita.
 </BLOCKQUOTE>
 
-<p align=right><a href="help.php?file=formatmissingword.html&module=quiz">Altre informazioni sul formato  "Missing Word"</a></p>
+<p align="right"><a href="help.php?file=formatmissingword.html&module=quiz">Altre informazioni sul formato  "Missing Word"</a></p>
 </UL>
 
 
@@ -64,7 +64,7 @@ Ogni domanda è separata da una tilde (~), e la risposta corretta è preceduta da 
 <UL>
 <P>Questo programma filtro può importare domande salvate nel formato di esportazione di Blackboard. E' basato sulle funzioni XML presenti all'interno del PHP.</P>
 
-<p align=right><a href="help.php?file=formatblackboard.html&module=quiz">Altre informazioni sul formato  "Blackboard"</a></p>
+<p align="right"><a href="help.php?file=formatblackboard.html&module=quiz">Altre informazioni sul formato  "Blackboard"</a></p>
 </UL>
 
 
@@ -72,7 +72,7 @@ Ogni domanda è separata da una tilde (~), e la risposta corretta è preceduta da 
 <UL>
 <P>Questo filtro può importare domande salvate nel formato a base testuale di WebCT.</P>
 
-<p align=right><a href="help.php?file=formatwebct.html&module=quiz">Altre informazioni sul formato "WebCT"</a></p>
+<p align="right"><a href="help.php?file=formatwebct.html&module=quiz">Altre informazioni sul formato "WebCT"</a></p>
 </UL>
 
 
@@ -84,7 +84,7 @@ Esistono diversi modi per accedere alla banca dati, che è un database Microsoft 
 <p>Su Linux, bisogna avere una macchina Windows sulla stessa rete sulla quale si trova il database del Course Test Manager e un pezzo di software che si chiama ODBC Socket Server, che usa l'XML per trasferire i dati a Moodle sul server Linux.</p>  
 <p>Si legga l'help file sotto indicato prima di usare questo filtro d'importazione.</p>
 
-<p align=right><a href="help.php?file=formatctm.html&module=quiz">Altre informazioni sul formato "CTM"</a></p>
+<p align="right"><a href="help.php?file=formatctm.html&module=quiz">Altre informazioni sul formato "CTM"</a></p>
 </UL>
 
 <P><B>Risposte a riempimento di vuoti (Cloze)</B></P>
@@ -92,8 +92,23 @@ Esistono diversi modi per accedere alla banca dati, che è un database Microsoft 
 <P>Questo filtro particolare serve per importare solamente un tipo di domande, quelle con le risposte a riempimento di vuoti (anche dette Cloze).
 </p>
 
-<p align=right><a href="help.php?file=multianswer.html&module=quiz">Altre informazioni sul formato "Cloze"</a></p>
+<p align="right"><a href="help.php?file=multianswer.html&module=quiz">Altre informazioni sul formato "Cloze"</a></p>
 </UL>
+
+<p><b>Formato Learnwise</b></p>
+<ul>
+<p>Possono essere importate domande a scelta multipla salvate nel formato XML di Learnwise.</p>
+</ul>
+
+<p><b>Formato Examview</b></p>
+<ul>
+<p>Possono essere importati files XML prodotti con Examview 4. Da notare che le vecchie versioni di Examview non sono supportate.</p>
+</ul>
+
+<p><b>Formato Moodle XML</b></p>
+<ul>
+<p>Questo formato specifico di Moodle permette di importare domande precedentemente esportate nello stesso formato. Il formato è molto chiaro e può essere verificato esportando una categoria di domande nel formato stesso.</p>
+</ul>
 
 <P><B>Formato Custom</B></P>
 <UL>
@@ -101,7 +116,7 @@ Esistono diversi modi per accedere alla banca dati, che è un database Microsoft 
 
 <P>La quantità di istruzioni da scrivere è modesta - solo quanto basta ad analizzare una singola domanda da un file di testo.</P>
 
-<p align=right><a href="help.php?file=formatcustom.html&module=quiz">Altre informazioni sul formato "Custom"</a></p>
+<p align="right"><a href="help.php?file=formatcustom.html&module=quiz">Altre informazioni sul formato "Custom"</a></p>
 </UL>
 
 <P>Altri formati devono ancora essere gestiti, tra cui IMS QTI, e qualunque altro gli utilizzatori di Moodle vorranno contribuire a creare! </p>

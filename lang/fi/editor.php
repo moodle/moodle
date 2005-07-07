@@ -1,11 +1,10 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.5 + (2005060201)
+      // editor.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112900)
 
 
 $string['about'] = 'Tietoja editorista';
 $string['absbottom'] = 'Absbottom';
 $string['address'] = 'Osoite';
-$string['alertnoselectedtext'] = 'Valitse teksti ensin';
 $string['alignment'] = 'Tasaus';
 $string['alternatetext'] = 'Oletusteksti';
 $string['anchorhelp'] = 'Tämä luo vain ankkurin. Sinun pitää luoda akkuriin viittaava linkki itse.';
@@ -22,27 +21,15 @@ $string['cellspacing'] = 'Solujen väli';
 $string['choosechar'] = 'Valitse merkki';
 $string['chooseicon'] = 'Valitse liitettävä hymiö';
 $string['close'] = 'Sulje';
-$string['closeafterreplace'] = 'Sulje korvauksen jälkeen';
 $string['cols'] = 'Solut';
 $string['copy'] = 'Kopioi';
 $string['createanchor'] = 'Luo ankkuri';
 $string['createfolder'] = 'Luo kansio';
 $string['createlink'] = 'Lisää linkki';
 $string['cut'] = 'Leikkaa';
-$string['cutpastemozilla'] = 'Pahus, et voi käyttää normaaleja näppäinyhdistelmiä liittääksesi teksitiä tänne. Tämän estää Mozilla ja Firefox selainten tietoturva ominaisuudet.<br />
-Voit kokeilla jotain seuraavista vaihtoehdoista:<br />
-(1) kaytä SHIFT-Insert näppäimiä<br />
-(2) käytä valikkokomentoa Muokkaa -> Liitä <br />
-(3) muuta selaimen asetuksia prefs.js tiedostoa muokkaamaalla<br />
-Klikkaa \"OK\" saadaksesi lisää ohjeita tai \"Peruuta\" palataksesi tekstisi pariin >br />
-';
 $string['delete'] = 'Poista';
 $string['filebrowser'] = 'Tiedostoselain';
-$string['findwhat'] = 'Etsi';
-$string['fontname'] = 'Kirjasin';
-$string['fontsize'] = 'Koko';
 $string['forecolor'] = 'Tekstin väri';
-$string['formatblock'] = 'Muoto';
 $string['fullscreen'] = 'Täydenruudun editori';
 $string['heading'] = 'Otsikko';
 $string['height'] = 'Korkeus';
@@ -58,7 +45,6 @@ $string['insertlink'] = 'Lisää linkki';
 $string['insertsmile'] = 'Lisää hymiö';
 $string['inserttable'] = 'Lisää taulukko';
 $string['italic'] = 'Kursivoitu';
-$string['itemsreplaced'] = 'kohdetta korvattu!';
 $string['justifycenter'] = 'Keskitä';
 $string['justifyfull'] = 'Tasaa molemmat reunat';
 $string['justifyleft'] = 'Tasaa vasen reuna';
@@ -75,16 +61,13 @@ $string['linktargetself'] = 'Samaan kehykseen';
 $string['linktargettop'] = 'Samaan ikkunaan';
 $string['linktitle'] = 'Otsikko';
 $string['linkurl'] = 'URL';
-$string['matchcase'] = 'Huomioi kirjainkoko';
 $string['middle'] = 'Keskitä';
 $string['minimize'] = 'Pienennä editori';
 $string['move'] = 'Siirrä';
-$string['nolink'] = 'Estä automaattinen linkitys';
 $string['normal'] = 'Normaali';
 $string['notimage'] = 'Valittu tiedosto ei ollut kuva. Valitse kuvatiedosto!';
 $string['notset'] = 'Ei valittua';
 $string['ok'] = 'OK';
-$string['options'] = 'Vaihtoehdot';
 $string['orderedlist'] = 'Numerointi';
 $string['outdent'] = 'Vähennä sisennystä';
 $string['paste'] = 'Liitä';
@@ -98,13 +81,9 @@ $string['properties'] = 'Ominaisuudet';
 $string['redo'] = 'Palauta viimeinen toiminto';
 $string['removelink'] = 'Poista linkki';
 $string['rename'] = 'Nimeä uudelleen';
-$string['replaceall'] = 'Korvaa kaikki';
-$string['replacewith'] = 'Korvaa';
 $string['right'] = 'Oikea';
 $string['righttoleft'] = 'Suunta oikealta vasemmalle';
 $string['rows'] = 'Rivit';
-$string['searchandreplace'] = 'Etsi ja korvaa';
-$string['searchnotfound'] = 'Merkkijonoa ei löytynyt!';
 $string['selectcolor'] = 'Valitse väri';
 $string['selection'] = 'Valinta';
 $string['showhelp'] = 'Ohje';
