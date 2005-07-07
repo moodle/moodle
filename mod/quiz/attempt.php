@@ -92,7 +92,11 @@
         $currenttab = 'preview';
         include('tabs.php');
     } else {
-        print_heading(format_string($quiz->name));
+        if ($quiz->attempts != 1) {
+            print_heading(format_string($quiz->name).' - '.$strattemptnum);
+        } else {
+            print_heading(format_string($quiz->name));
+        }
     }
 
 /// Check availability
@@ -375,7 +379,7 @@
 
 /// Print the quiz page ////////////////////////////////////////////////////////
 
-/// Print the attempt number or preview heading
+/// Print the preview heading
     if ($isteacher) {
         print_heading(get_string('previewquiz', 'quiz', format_string($quiz->name)));
         unset($buttonoptions);
@@ -387,8 +391,6 @@
         if ($quiz->popup) {
             notify(get_string('popupnotice', 'quiz'));
         }
-    } else {
-        print_heading($strattemptnum);
     }
 
 /// Start the form
