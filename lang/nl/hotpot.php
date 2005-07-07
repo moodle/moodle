@@ -4,7 +4,7 @@
 
 $string['abandoned'] = 'verlaten';
 $string['allattempts'] = 'alle pogingen';
-$string['allmycourses'] = 'al mijn vakken';
+$string['allmycourses'] = 'al mijn cursussen';
 $string['average'] = 'Gemiddelde';
 $string['bestattempt'] = 'beste poging';
 $string['checks'] = 'controles';
@@ -24,12 +24,12 @@ $string['hints'] = 'hints';
 $string['ignored'] = 'genegeerd';
 $string['inprogress'] = 'lopend';
 $string['location'] = 'Bestandslocatie';
-$string['modulename'] = 'Hot Potatoes test';
-$string['modulenameplural'] = 'Hot Potatoes testen';
+$string['modulename'] = 'Hot Potatoes-test';
+$string['modulenameplural'] = 'Hot Potatoes-testen';
 $string['navigation'] = 'navigatie';
-$string['navigation_bar'] = 'Moodle navigatiebalk';
-$string['navigation_buttons'] = 'Knoppen van Hot Potatoestest';
-$string['navigation_frame'] = 'Moodle navigatieframe';
+$string['navigation_bar'] = 'Moodle-navigatiebalk';
+$string['navigation_buttons'] = 'Knoppen van Hot Potatoes-test';
+$string['navigation_frame'] = 'Moodle-navigatieframe';
 $string['navigation_give_up'] = 'Een enkele \"Geef op\" knop';
 $string['navigation_iframe'] = 'Ingebed <IFRAME>';
 $string['navigation_none'] = 'Geen';
@@ -54,7 +54,7 @@ $string['showhtmlsource'] = 'Toon HTML-bron';
 $string['shownextquiz'] = 'Toon volgende test?';
 $string['showxmlsource'] = 'Toon XML-bron';
 $string['showxmltree'] = 'Toon XML-boom';
-$string['thiscourse'] = 'dit vak';
+$string['thiscourse'] = 'deze cursus';
 $string['weighting'] = 'weging';
 $string['wrong'] = 'foutief';
 

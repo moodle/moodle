@@ -34,7 +34,7 @@ $string['deletesubmissionwarning'] = 'Waarschuwing: er zijn $a beoordelingen gea
 Je wordt sterk geadviseerd om deze inzending NIET te verwijderen.';
 $string['deleting'] = 'Verwijdering';
 $string['description'] = 'Beschrijving';
-$string['descriptionofexercise'] = 'De beschrijving van de opdracht die door de $a gedaan moet worden in deze Oefening, wordt in een Word-document of in een HTML-bestand gezet. Dit bestand wordt in de Oefening geüploaded voor de opdracht voor de $a geopend wordt. Het is ook mogelijk een set varianten te maken van dezelfde opdracht of taak als Word- of HTML-documenten en deze te uploaden in de Oefening voor ze voor de $a geopend wordt.';
+$string['descriptionofexercise'] = 'De beschrijving van de opdracht die door de $a gedaan moet worden in deze Oefening, wordt in een Word-document of in een HTML-bestand gezet. Dit bestand wordt in de Oefening geüpload voor de opdracht voor de $a geopend wordt. Het is ook mogelijk een set varianten te maken van dezelfde opdracht of taak als Word- of HTML-documenten en deze te uploaden in de Oefening voor ze voor de $a geopend wordt.';
 $string['detailsofassessment'] = 'Details van de beoordeling';
 $string['displayoffinalgrades'] = 'Toon de totalen';
 $string['doubleupload'] = 'Waarschuwing: deze inzending is waarschijnlijk twee keer verzonden. Ga naar de Beheerpagina en controleer op twee inzendingen van deze gebruiker binnen een korte tijdsspanne. Verwijder één van deze inzendingen voor je verder gaat.';
@@ -89,7 +89,7 @@ $string['notavailable'] = 'Niet beschikbaar';
 $string['noteonassessmentelements'] = ' Merk op dat het beoordelen opgesplitst is in een aantal \'Beoordelingselementen\'.<br />
 Dit maakt het beoordelen gemakkelijker en consequenter. Als leraar moet je deze<br />
 elementen ingeven voor je de opdracht opent voor je leerlingen. Dit doe je door <br />
-te klikken op de opdracht in het vak. Als er nog geen elementen zijn, wordt je gevraagd.<br />
+te klikken op de opdracht in de cursus. Als er nog geen elementen zijn, wordt je gevraagd.<br />
 ze toe te voegen. Je kunt het aantal elementen wijzigen met het scherm \"Bewerk Opdracht\",<br />
 de elementen zelf kunnen aangepast worden op het scherm \"Beheer opdracht\".';
 $string['noteongradinggrade'] = 'Dit cijfer is een maat voor hoe goed jouw beoordeling overeenkomt met de beoordeling van <br /> jouw werk door de $a. Hoe hoger het cijfer, hoe meer overeenkomst.';

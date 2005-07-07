@@ -54,9 +54,9 @@
 	<li>HTML Editor: problemen met sommige karaktercoderingen opgelost.</li>
 	<li>Test: fouten opgelost aan  export/import menu (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2963" target="_blank">#2963</a>)</li> 
 	<li>Test: geef geen fatale fout bij een onbekend vraagtype, maar probeer verder te gaan.</li> 
-	<li>Vak Sociaal Forum: misleidende link naar lidmaatschap opzeggen verwijderd (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2945" target="_blank">#2945</a>).</li> 	
+	<li>Cursus Sociaal Forum: misleidende link naar lidmaatschap opzeggen verwijderd (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2945" target="_blank">#2945</a>).</li> 	
 	<li>Bijkomende / aangepaste vertalingen.</li> 
-	<li>Forums en Groepen: Laat leerlingen die niet in een groep zitten toe te posten in een forum dat niet in groepen verdeeld is, zelfs al is het vak zelf wel in groepen verdeeld.</li>
+	<li>Forums en Groepen: Laat leerlingen die niet in een groep zitten toe te posten in een forum dat niet in groepen verdeeld is, zelfs al is de cursus zelf wel in groepen verdeeld.</li>
 	<li>HTML Editor instellingen voor de site: Hersteld <a href="http://moodle.org/mod/forum/discuss.php?d=21359" target="_blank">Kan de wijzigingen in de configuratie van de editor niet bewaren</a> formulierfout.</li>
 	<li>Cron: Enkele waarschuwingen verwijderd.</li> 
 	<li>Keuze: Keuze toont een fout aantal antwoorden (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2452" target="_blank">#2452</a>).</li> 
@@ -141,8 +141,8 @@
 
         <li>Paypal aanmeldingsplugin: Nu kan tekst die naar PayPal gestuurd wordt, opgekuist worden om sommige diacritische tekens te vermijden (tot nu voor Spaans) die het aanmeldingsproces kunnen doen mislopen. Enkel Duitse en Franse diacritische tekens worden nu door Paypal ondersteund. Deze functie kan gemakkelijk uitgebreid worden naar andere tekens. </li>
 
-	<li>Backup/restore: Als de gebruiker geen beheerder is en het teruggezette vak bevat geen leraren, voeg dan een leraar toe (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2381" target="_blank">#2381</a>)</li>
-	<li>Backup/restore: Fouten hersteld in vakken met apostrophes in de volledig naam.</li>
+	<li>Backup/restore: Als de gebruiker geen beheerder is en de teruggezette cursus bevat geen leraren, voeg dan een leraar toe (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2381" target="_blank">#2381</a>)</li>
+	<li>Backup/restore: Fouten hersteld in cursussen met apostrophes in de volledig naam.</li>
 	<li>Backup/restore: Nu worden groepleden enkel toegevoegd als we gekozen hebben om gebruikers mee in te voegen (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2486" target="_blank">#2486</a>).</li>
 	<li>Backup/Restore: Algemene opkuis.</li>
 
@@ -152,7 +152,7 @@
 	<li>Kalender: robuuster afhandeling van foute gegevens.</li>
 	<li>Kalender: HTML hersteld (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2350" target="_blank">#2350</a>).</li>
 
-	<li>Sorteren en volgorde van vakken was stuk in 1.4.3 en kon soms verhinderen dat vakken aangemaakt werden &mdash; alle bekende problemen met sorteren zijn nu hersteld, inclusief sommige  get_categories() calls die soms verschijnen in  &quot;Mijn vakken&quot; lijst.</li>
+	<li>Sorteren en volgorde van cursussen was stuk in 1.4.3 en kon soms verhinderen dat cursussen aangemaakt werden &mdash; alle bekende problemen met sorteren zijn nu hersteld, inclusief sommige  get_categories() calls die soms verschijnen in  &quot;Mijn cursussen&quot; lijst.</li>
 
 	<li>Wiki: Verschillende herstelde fouten.</li>
 	<li>Loglive heeft nu een geschikte voettekst.</li>
@@ -212,7 +212,7 @@
       <ul>
         <li>Betere caching van de headers geeft een belangrijke performantiewinst op alle pagina's wanneer je de terug-toets van je browser gebruikt</li>
         <li>Database indexen op vele plaatsen toegevoegd, waardoor je grotere performantie krijgt bij grote installaties</li>
-        <li>Overal in Moodle performantieverbeteringen wanneer lijsten van vakken getoond worden</li>
+        <li>Overal in Moodle performantieverbeteringen wanneer lijsten van cursussen getoond worden</li>
         <li>Verschillende verbeteringen door het verwijderen van onnodig ondervragen van de databank en onnodig sorteren</li>
       </ul>
     </dd>
@@ -225,7 +225,7 @@
         <li>Onnodige meldingen in debugmode hersteld</li>
         <li>Meer PHP5 problemen opgelost</li>
         <li>Ondersteuning voor apostrophes, aanhalingstekens en backslashes in LDAP-gebruikersgegevens</li>
-        <li>Paginering van zoeken door vakken hersteld voor Postgres </li>
+        <li>Paginering van zoeken door cursussen hersteld voor Postgres </li>
         <li>Probleem met witte ruimte bij het zoeken in gebruikers hersteld</li>
         <li>Probleem waarbij chatgebruikers in meerdere chatrooms verschenen opgelost</li>
         <li>Fout in installatiescript hersteld</li>
@@ -248,11 +248,11 @@
         <li>Een probleem hersteld bij SCORM-integratie met gezipte code</li>
         <li>Fout hersteld bij e-mailnotificaties in platte tekst door de dialoogmodule</li>
         <li>Ontbrekende sesskey-variable hersteld in het sociale activiteitenblok</li>
-        <li>Overbodige secties van een vak worden nu verborgen in het navigatiemenu</li>
+        <li>Overbodige secties van een cursus worden nu verborgen in het navigatiemenu</li>
         <li>Oplossing voor zomertijd aan kalender toegevoegd</li>
-        <li>De eerste test in een nieuw vak krijgt een standaard.categorie toegewezen</li>
+        <li>De eerste test in een nieuwe cursus krijgt een standaard.categorie toegewezen</li>
         <li>Een fout in de paypal=module bij het aanvaarden van de betaling hersteld</li>
-        <li>Een fout hersteld in de bestanden van de vakken bug</li>
+        <li>Een fout hersteld in de bestanden van de cursussen bug</li>
       </ul>
     </dd>
 
@@ -277,7 +277,7 @@
     <dd> 
       <ul>
         <li>Nieuwe PAM authenticatiemodule voor rechtstreekse authenticatie op Unix/Linux</li>
-        <li>Vakaanmakers kunnen nu een backup terugplaaten naar zowel bestaande als nieuwe vakken</li>
+        <li>Cursusaanmakers kunnen nu een backup terugplaaten naar zowel bestaande als nieuwe cursussen</li>
         <li>Forumberichten hebben nu gedetailleerde berichtkoppen zodat ze in draden kunnen gezet wordend door e-mailprogramma's</li>
       </ul>
     </dd>
@@ -291,7 +291,7 @@
         <li>Herstellingen aan de databank voor authenticatie tegen een PostgreSQL databank</li>
         <li>Herstellingen aan de installatie met gebruik van PostgreSQL</li>
         <li>Onderwerplijnen van forumberichten worden nu alleen nog in het recente activiteitenvenster afgebroken</li>
-        <li>Vakaanmeldingen op basis van databanken werkt nu eindelijk  :-)</li>
+        <li>Cursusaanmeldingen op basis van databanken werkt nu eindelijk  :-)</li>
         <li>SQL-herstellingen voor het maken van RSS-feeds vanuit PostgreSQL</li>
         <li>rtsp toegevoegd aand e lijst van toegelaten protocollen gekuiste HTML-tekst</li>
         <li>Gebruikersprofiel en de pagina om het profiel te bewerken kunnen nu zonder parameters geopend worden</li>
@@ -302,13 +302,13 @@
         <li>Een bug hersteld in het tonen van de index van de forums met PHP5</li>
         <li>De highlight-functie  (bv na zoeken) verwijderde backslashes</li>
         <li>Informatie van LDAP wordt nu vanuit utf8 gedecodeerd</li>
-        <li>Vaklijsten werken nu beter met erg lange vaklijsten</li>
+        <li>Cursuslijsten werken nu beter met erg lange cursuslijsten</li>
         <li>Twee SCORM-fouten hersteld (een typefout en een een probleem met onbeforeunload)</li>
         <li>Wat opkuis bij het afdrukken van tekst, koppen en variablen in de lesmodule</li>
         <li>De kalender werkt nu zoals verwacht, zelfs als je je aanmeldt als iemand anders</li>
         <li>Nog enkele verkorte PHP tags weggewerkt</li>
         <li>Betere willekeurigheid bij willekeurige vragen (herstelling van een fout die er bij 1.4 ingeslopen is)</li>
-        <li>Wanneer een leraar uit een vak verwijderd wordt, wordt die nu ook uit alle groepen in dat vak verwijderd.</li>
+        <li>Wanneer een leraar uit een cursus verwijderd wordt, wordt die nu ook uit alle groepen in die cursus verwijderd.</li>
         <li>De strip_pages bug is hersteld in Wiki</li>
         <li>Fouten hersteld voor charset detectie in backups en multilang filter met PHP5</li>
       </ul>
@@ -338,17 +338,17 @@
         <li>Twee ontbrekende icoontjes aangevuld in cordoroy blue</li>
         <li>Ontbrekende "Nieuwe gebeurtenis"-knop geplaatst op de pagina met nieuwe gebeurtenissen</li>
         <li>Voeg altijd schuine strepen toe bij chatboodschappen bij daemongebruikers voor ze in de db te zetten.</li>
-        <li>Problemen hersteld voor het afhandelen van vaste aanmeldingsperiodes wanneer dit ingesteld is voor een vak</li>
-        <li>Site vak ID (gedefinieerd als SITEID) moet niet meer altijd 1 zijn</li>
+        <li>Problemen hersteld voor het afhandelen van vaste aanmeldingsperiodes wanneer dit ingesteld is voor een cursus</li>
+        <li>Site cursus ID (gedefinieerd als SITEID) moet niet meer altijd 1 zijn</li>
         <li>Standaard geheugenbeperkingen zijn verhoogd boven 16M, pm Moodle te laten voortwerken, zelfs wanneer er onverwachte geheugenproblemen zijn.</li>
         <li>Smileys worden nu als afbeeldingen verwerk in Markdownteksten</li>
         <li>Workshops werken terug met recente activiteiten</li>
-        <li>file.php kan nu alleen maar data binnen vakken verwerken</li>
-        <li>Verbeterd gedrag van kalenderblokken op de vakpagina</li>
+        <li>file.php kan nu alleen maar data binnen cursus verwerken</li>
+        <li>Verbeterd gedrag van kalenderblokken op de cursuspagina</li>
         <li>Aanhalingstekenfout met PostgreSQL databank, veroorzaakt door de installer is hersteld</li>
         <li>Het soms niet tonen van juiste antwoorden bij het nalezen van testen is hersteld</li>
         <li>&lt;tt> and &lt;code> zijn nu toegelaten tags</li>
-        <li>Uit sectiesamenvattingen, vakbeschrijvingen en labels wordt terug geen javascript meer gefilterd</li>
+        <li>Uit sectiesamenvattingen, cursusbeschrijvingen en labels wordt terug geen javascript meer gefilterd</li>
         <li>Een zeldzame LDAP fout hersteld die er voor zorgde dat nieuwe accounts niet konden gemaakt worden</li>
       </ul>
     </dd>
@@ -364,7 +364,7 @@
         <li>Nieuwe eenvoudige installatiewizard om het configuratiebestand aan te maken</li>
         <li>Installatieproces kan gebeuren in een taal naar keuze</li>
         <li>Compleet herwerkte bronmodule maakt het mogelijk om bronnen toe te voegen en er data naar te sturen.</li>
-        <li>Nieuwe aanmeldingsprocedure voor vakken met modules, zoals volledig geautomatiseerde Paypal betalingen, scannen van tekstbestand of controle via een externe databank.</li>
+        <li>Nieuwe aanmeldingsprocedure voor cursussen met modules, zoals volledig geautomatiseerde Paypal betalingen, scannen van tekstbestand of controle via een externe databank.</li>
         <li>Blokken werken nu ook op de startpagina, bovendien kun je nu ook een onderwerpsectie boven het middendeel plaatsen.</li>
         <li>Bij de Chat zit nu een server-side daemon (in PHP) voor een schaalbare, instant chat</li>
         <li>Nieuwe Wiki module!</li>
@@ -415,11 +415,11 @@
     <dt>Beheer</dt>
     <dd> 
       <ul>
-        <li>Verbeterde interfaces voor toevoegen/verwijderen van leerlingen, vakaanmakers en beheerders</li>
+        <li>Verbeterde interfaces voor toevoegen/verwijderen van leerlingen, cursusaanmakers en beheerders</li>
         <li>Mislukte logins worden nu gelogd en kunnen aan gebruikers getoond worden bij aanmelden met succes</li>
         <li>Logs ondersteunen nu tonen per groep en per fouten</li>
         <li>Modules gedragen zich beter op de startpagina van de site.</li>
-        <li>Voorpagina&quot;leerlingen&quot; kunnen alle gebruikers van de site of alle gebruikers in minstens één vak op de site</li>
+        <li>Voorpagina&quot;leerlingen&quot; kunnen alle gebruikers van de site of alle gebruikers in minstens één cursus op de site</li>
         <li>E-mail sturen kan nu ingeschakeld/uitgeschakeld worden in het profiel van elke gebruiker</li>
         <li>Bezoekers kunnen automatisch als gast aangemeld worden.</li>
         <li>Ga naar menu toont nu altijd "Ga naar" om aan te geven waarvoor het dient.</li>
@@ -439,7 +439,7 @@
     <dt>Blokken</dt>
     <dd> 
       <ul>
-        <li>Bloksysteem kan nu omgaan met aangepaste vakindeling en wijzigingen in de opmaak.</li>
+        <li>Bloksysteem kan nu omgaan met aangepaste cursusindeling en wijzigingen in de opmaak.</li>
         <li>Nieuw loginblok maakt login mogelijk van de voorpagina van de site.</li>
         <li>Gebruikers online blok op de voorpagina toont alle gebruikers van de hele site</li>
       </ul>
@@ -592,7 +592,7 @@
 <ul>
 <li>Een mogelijke kwetsbaarheid van de startpagina bij Moodle op servers met een oude versie van PHP is hersteld. Als je een versie ouder dan 4.3 gebruikt is het misschien een goed idee om naar deze versie van Moodle te upgraden</li>
 <li>Belangrijke herstellingen aan de logica achter de forums wanneer je ze gebruikt als groepsactiviteit</li>
-<li>De profielen van de leraren die het vak beheren zijn nu zihtbaar, zelfs al zijn ze ingedeeld bij een andere gescheiden groep van de klas.</li>
+<li>De profielen van de leraren die de cursus beheren zijn nu zihtbaar, zelfs al zijn ze ingedeeld bij een andere gescheiden groep van de klas.</li>
 <li>De onderwerpregels in multibyte talen in recente activiteit wordt niet meer afgebroken</li>
 <li>Enkele problemen met export/import in de woordenlijst zijn hersteld</li>
 <li>De Backupfunctie behandelt nu z'n tijdelijke bestanden beter</li>
@@ -629,17 +629,17 @@
 <dd>
 <ul>
 <li>Nieuwe <strong>kalender</strong> mogelijkheid (dank aan Jon Papaioannou en de <a target="_blank" href="http://www.sch.gr/">Greek School Network</a>!)</li>
-<li>Nieuwe <strong>Blokken</strong> mogelijkheid, waarmee je blokken kunt toevoegen en verplaatsen rond een vakpagina (dank aan Jon Papaioannou, Eloy Lafuente en anderen!)</li>
+<li>Nieuwe <strong>Blokken</strong> mogelijkheid, waarmee je blokken kunt toevoegen en verplaatsen rond een cursuspagina (dank aan Jon Papaioannou, Eloy Lafuente en anderen!)</li>
 <li>Nieuw <strong>RSS Systeem</strong> waarmee je Forums en Woordenlijsten (en later andere modules) kunt publiceren via RSS-feeds (Dank aan Eloy!)</li>
 <li>De <strong>Mediaplugin</strong> filter ondersteunt nu auto-embedding van Quicktime, Flash, and Windows Media files</li>
-<li>Een nieuwe <strong>Activiteitnaam</strong> filter die nu automatisch hyperlinks toevoegt aan andere activiteiten in hetzelfde vak wanneer hun naam gebruikt wordt</li>
+<li>Een nieuwe <strong>Activiteitnaam</strong> filter die nu automatisch hyperlinks toevoegt aan andere activiteiten in dezelfde cursus wanneer hun naam gebruikt wordt</li>
 </ul>
 </dd>
 <dt>Andere nieuwe mogelijkheden</dt>
 <dd>
 <ul>
 <li>Nieuw type bron "Map" toont een hele map met geüploade bestanden (inclusief submappen)</li>
-<li>Bij bronnen die bestanden zijn (geüpload of websites) wordt nu een relevant icoon getoond op de vakpagina</li>
+<li>Bij bronnen die bestanden zijn (geüpload of websites) wordt nu een relevant icoon getoond op de cursuspagina</li>
 <li>De meeste interne HTML links binnen forums en bronnen worden nu behouden tijdens backup en restore</li>
 <li>Het is nu mogelijk om gewone http arguments door te geven aan bestanden in de bestandenlijst. Hiermee kun je meer comlexiteit bereiken met Flash- en HTML-bronnen</li>
 <li>$CFG-&gt;forceloginforprofiles kan ingesteld worden om gasten (en Google) te verhinderen om gebruikersprofielen op site-niveau te bekijken.</li>
@@ -647,17 +647,17 @@
 <li>Sessies worden nu bewaard in de Moodle data map - hierdoor werkt Moodle beter op serverclusters en worden sommige sessie-time out problemen opgelost als Moodle op een gedeelde web host staat.</li>
 <li>Gebruikers foto's kunnen nu gemakkelijk verwijderd worden van de profiel bewerken pagina.\</li>
 <li>Chatten wordt nu gelogd.</li>
-<li>Verborgen secties kunnen nu volledig verborgen worden voor de leerlingen (vakinstelling)</li>
+<li>Verborgen secties kunnen nu volledig verborgen worden voor de leerlingen (cursusinstelling)</li>
 <li>Verbeteringen aan teksten in grafieken voor sommige niet-Engelse talen die unicode lettertypes gebruiken.</li>
 <li>Verbeterde interface voor het beheer van schalen, ook in meertalige sites</li>
-<li>Alle leerlingen kunnen nu uit een vak gehaald worden met één knop (op de leerlingen pagina)</li>
+<li>Alle leerlingen kunnen nu uit een cursus gehaald worden met één knop (op de leerlingen pagina)</li>
 <li>Leden van forums kunnen nu manueel ingeschreven of uitgeschreven worden in groepen</li>
 <li>Beter afhandelen van sommige Europese tekens in bestandsnamen en gebruikersnamen</li>
 <li>Feedbackopmerken voor een verborgen opdracht worden niet meer gemaild tot de opdracht zichtbaar gemaakt wordt.</li>
 <li>Betere ondersteuning voor het importeren van Blackboard testen</li>
 <li>Het cron script kan nu lopen door gebruik te maken van een PHP binary vanuit elke map</li>
 <li>De HTML-editor is verder verbeterd en meer aangepast</li>
-<li>Het standaard recente activiteiten scherm wordt nu berekend vanuit de laatste toegang tot het vak in (of twee dagen, afhankelijk van wat het meest recente is)T. Vroeger werd het berekend van de laatste aanmelding op de site.</li>
+<li>Het standaard recente activiteiten scherm wordt nu berekend vanuit de laatste toegang tot de cursus in (of twee dagen, afhankelijk van wat het meest recente is)T. Vroeger werd het berekend van de laatste aanmelding op de site.</li>
 <li>Bevestigingsmails zijn nu in HTML en in tekst, om het afbreken van de bevestigingslink te verhinderen.</li>
 <li><b>Nieuwe vertalingen</b>: Farsi, Latvian, Noors voor basisscholen, Unicode versie van Traditioneel Chinees.</li>
 </ul>
@@ -690,7 +690,7 @@
 <li>Karakters zoals :( die in Javascript code gebruikt worden binnen gefilterde HTML worden niet meer in een smiley geconverteerd</li>
 <li>Een verbeterde afhandeling van scores voor forums als secureforms ingeschakeld is.</li>
 <li>Bij het maken van meerkeuzevragen wordt nu standaard één enkel juist antwoordformaat voorgesteld</li>
-<li>Gasten kunnen de e-mailadressen van gebruikers die "toon mijn e-mailadres alleen aan leden van het vak" ingesteld hebben niet meer zien</li>
+<li>Gasten kunnen de e-mailadressen van gebruikers die "toon mijn e-mailadres alleen aan leden van de cursus" ingesteld hebben niet meer zien</li>
 <li>De Primaire beheerder is nu de record in user_admins met het laagste nummer in plaats van de beheerder met de kleinste userid.</li>
 <li>De flash MP3 plugin is gewijzigd om de helderheid van de Afspelen knop te verbeteren op donkere schermen</li>
 <li>Veel verbeteringen en oppoetsen in heel wat talenpakketten</li>
@@ -705,19 +705,19 @@
 <dt>Belangrijke nieuwe features</dt>
 <dd>
 <ul>
-<li>Nieuwe ondersteuning voor <strong>groepen</strong> en cohorten in vakken (met veel opties).</li>
+<li>Nieuwe ondersteuning voor <strong>groepen</strong> en cohorten in cursussen (met veel opties).</li>
 <li><strong>Tekst filters</strong> laten het arbitrair verwerken van alle tekst in Moodle toe, inclusief <strong>automatisch linken</strong>, <strong>wiskundig ondersteuning</strong>, <strong>meertalige inhoud</strong> en oneindig meer mogelijkheden.</li>
 <li>Een fantastische nieuwe <strong>Woordenlijst module</strong> (dankzij Williams Castillo!) met veel verschillende manieren om leeractiviteiten te construeren rondom het verzamelen van definities.</li>
 <li>Een geweldige nieuwe <strong>Les module</strong> (dankzij Ray Kingdon!) creëert gemakkelijk actieve inhoud met routes en multipe-choice vragen.</li>
-<li>Een nieuwe <strong>Label module</strong> maakt HTML in de vakpagina mogelijk.</li>
+<li>Een nieuwe <strong>Label module</strong> maakt HTML in de cursuspagina mogelijk.</li>
 <li>Een verbeterde <strong>WYSIWYG editor</strong>, sneller en beter bruikbaar op verschillende platforms dan de oude.</li>
-<li><strong>Automatische backups</strong> kunnen door de beheerder gepland worden voor alle vakken tegelijk.</li>
+<li><strong>Automatische backups</strong> kunnen door de beheerder gepland worden voor alle cursussen tegelijk.</li>
 </ul>
 </dd>
-<dt>Vakken</dt>
+<dt>Cursussen</dt>
 <dd>
 <ul>
-<li>Activiteiten kunnen ingesprongen worden in het vakoverzicht, wat zorgt voor meer structuur.</li>
+<li>Activiteiten kunnen ingesprongen worden in het cursusoverzicht, wat zorgt voor meer structuur.</li>
 <li>Een nieuw rapport voor Recente Activiteiten maakt het makkelijker om te zien wat er recent is gebeurd.</li>
 <li>Een nieuwe statistiekenknop bij elke activiteitenlink verwijst naar de statistieken pagina om de statistieken per activiteit te tonen.</li>
 <li>Terugzettenknop nu altijd functioneel.</li>
@@ -725,13 +725,13 @@
 <li>Verbeteringen aan weergave van deelnemers, inclusief verdeling in pagina's en zoeken op initialen.</li>
 <li>Excel downloads zijn meer congruent met verschillende operating systems.</li>
 <li>Betere fout berichtgeving bij het toevoegen of het bijwerken van activiteiten.</li>
-<li>Zoekveld auto-focused niet meer (het veroorzaakte vervelende auto-scrolling in lange vakken).</li>
-<li>Een link in de vakpagina voor leerlingen om hun lidmaatschap zelf op te zeggen.</li>
-<li>Een link in de vakpagina voor leerlingen om hun wachtwoord te wijzigen.</li>
-<li>Leerlingen kan het bekijken van hun eigen activiteitenrapporten toegestaan worden (vakinstelling).</li>
-<li>Leraren kunnen door vakbestanden bladeren op zoek naar afbeeldingen wanneer ze gebruik maken van de nieuwe editor.</li>
+<li>Zoekveld auto-focused niet meer (het veroorzaakte vervelende auto-scrolling in lange cursussen).</li>
+<li>Een link in de cursuspagina voor leerlingen om hun lidmaatschap zelf op te zeggen.</li>
+<li>Een link in de cursuspagina voor leerlingen om hun wachtwoord te wijzigen.</li>
+<li>Leerlingen kan het bekijken van hun eigen activiteitenrapporten toegestaan worden (cursusinstelling).</li>
+<li>Leraren kunnen door cursusbestanden bladeren op zoek naar afbeeldingen wanneer ze gebruik maken van de nieuwe editor.</li>
 <li>Nieuwe afbeelding van een lege cel als bestemming bij het verplaatsen van activiteiten.</li>
-<li>Binnenkomsten worden nu geregistreerd per vak, zodat de deelnemers lijsten meer betekenis hebben.</li>
+<li>Binnenkomsten worden nu geregistreerd per cursus, zodat de deelnemers lijsten meer betekenis hebben.</li>
 <li>De activiteitennavigatiebalk heeft nu knoppen voor vorige en volgende activiteit.</li>
 <li>De data van bestanden waren niet juist op sommige systemen, dit is nu opgelost.</li>
 <li>Oude chatgebruikers worden niet langer weergegeven in de recente activiteiten.</li>
@@ -740,20 +740,20 @@
 <dt>Site beheer</dt>
 <dd>
 <ul>
-<li>Een belangrijke veiligheidsaanpassing welke voorkomt dat leraren inloggen als beheerders die leerling zijn in hun vak.</li>
+<li>Een belangrijke veiligheidsaanpassing welke voorkomt dat leraren inloggen als beheerders die leerling zijn in hun cursus.</li>
 <li>Nieuwe instelling "verplichtlogin" kan mensen dwingen in te loggen voor ze maar iets van de site kunnen zien.</li>
 <li>Nieuwe instelling "toegangvoorgoogle" laat Google en mensen die doorverwezen zijn door Google toe binnen te gaan als gast.</li>
 <li>Nieuwe instelling "tijdzone" laat het instellen van een standaard tijdzone voor de hele site toe.</li>
 <li>Nieuwe instelling "verwijderonbevestigd" specificeert de tijd dat we wachten op de bevestiging van emailaccounts.</li>
-<li>Nieuwe instelling "stauitschrijventoe" stelt leerlingen in staat of juist niet om het lidmaatschap voor vakken op te zeggen.</li>
+<li>Nieuwe instelling "stauitschrijventoe" stelt leerlingen in staat of juist niet om het lidmaatschap voor cursussen op te zeggen.</li>
 <li>Nieuwe instelling "volledigenaamweergave" laat het overschrijven van de opmaak van de volledige naam van gebruikers toe zodat leerlingen alleen "voornaam achternaam", "achternaam voornaam" of "voornaam" kunnen zien.</li>
 <li>De leraar of beheerder kan het emailadres van individuele gebruikers uitschakelen (bruikbaar bij het behandelen van mail accounts die afstuiten).</li>
-<li>Upload grootte kan nu worden beheerd door heel Moodle door gebruik van "maxbytes". Er is een site limiet (begrensd door de huidige PHP limieten), welke op zichzelf de bovenste grens is voor vakken limieten, welke de bovenste grens is voor activiteiten limieten.</li>
+<li>Upload grootte kan nu worden beheerd door heel Moodle door gebruik van "maxbytes". Er is een site limiet (begrensd door de huidige PHP limieten), welke op zichzelf de bovenste grens is voor cursussen limieten, welke de bovenste grens is voor activiteiten limieten.</li>
 <li>Moodle cookies kunnen aangepast worden (helpt als meerdere Moodles op een site worden gebruikt).</li>
 <li>Ingevoegd script voor de analyse van de database functionering (admin/dbperformance.php).</li>
 <li>Ingevoegd standalone script om een server te checken op Moodle congruentie(lib/compatible.php)</li>
 <li>Als een bestand genaamd cronextra.php bestaat in de dataroot zal de cron deze ook uitvoeren. Dit staat sites toe "speciale" onderhouds voorzieningen te hebben.</li>
-<li>De opmaak van vakken zijn nu meer als plug-ins in verschillende mappen.</li>
+<li>De opmaak van cursussen zijn nu meer als plug-ins in verschillende mappen.</li>
 <li>Gebruikers kunnen nu geüpload worden vanuit tekstbestanden.</li>
 <li>Als $CFG-&gt;disableuserimages is gedefenieerd (in config.php) dan kunnen gebruikers afbeeldingen niet verander worden.</li>
 <li>Als $CFG-&gt;admineditalways is gedefinieerd kan de beheerder een bijdrage ten alle tijde bewerken.</li>
@@ -778,15 +778,15 @@
 <li>Taalpakketten kunnen nu de volgorde definiëren in welke de namen van personen weergegeven zouden moeten worden.</li>
 <li>Taalbestanden zijn nu geschreven gebruik makend van enigszins meer efficiënte PHP code.</li>
 <li>Eindelijk af van de onzinnige linefeeds in de strings met meerdere regels.</li>
-<li>Vakken kunnen een taal voor alle gebruikers afdwingen.</li>
+<li>Cursussen kunnen een taal voor alle gebruikers afdwingen.</li>
 </ul>
 </dd>
 <dt>Backup / Terugzetten</dt>
 <dd>
 <ul>
-<li>Automatische backups kunnen door de beheerder gepland worden voor alle vakken tegelijk.</li>
+<li>Automatische backups kunnen door de beheerder gepland worden voor alle cursussen tegelijk.</li>
 <li>Statistieken kunnen volledig worden teruggezet.</li>
-<li>Alle benodigde gebruikers worden nu in de vak backups ingevoegd (zelfs als ze niet meer ingeschreven zijn)</li>
+<li>Alle benodigde gebruikers worden nu in de cursusbackups ingevoegd (zelfs als ze niet meer ingeschreven zijn)</li>
 <li>Allerlei aanpassingen en verbeteringen.</li>
 </ul>
 </dd>

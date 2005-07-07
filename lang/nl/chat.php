@@ -2,7 +2,7 @@
       // chat.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
-$string['beep'] = 'Beep';
+$string['beep'] = 'Piep';
 $string['chatintro'] = 'Inleidende tekst';
 $string['chatname'] = 'Naam van deze chatroom';
 $string['chatreport'] = 'Chatsessies';

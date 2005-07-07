@@ -3,24 +3,24 @@
 
 
 $string['addcontact'] = 'Voeg een contactpersoon toe';
-$string['addsomecontacts'] = 'Gebruik het tabblad <a href=\"$a\">Zoek</a> om iemand een berichtje te sturen of om  µop deze pagina een snelkoppeling naar iemand te maken.';
-$string['addsomecontactsincoming'] = 'Deze berichten zijn van mensen die niet in je contactenlijst zitten. Om ze toe te voegen klik je op het \"Voeg contactpersoon toe\" -icoontje naast hun naam.';
+$string['addsomecontacts'] = 'Gebruik het tabblad <a href=\"$a\">Zoek</a> om iemand een berichtje te sturen of om op deze pagina een snelkoppeling naar iemand te maken.';
+$string['addsomecontactsincoming'] = 'Deze berichten zijn van mensen die niet in je contactenlijst zitten. Om ze toe te voegen klik je op het icoontje \"Voeg contactpersoon toe\" naast hun naam.';
 $string['ago'] = '$a geleden';
 $string['allmine'] = 'Alle berichten aan mij of van mij';
-$string['allstudents'] = 'Alle berichten tussen leerlingen binnen een vak';
+$string['allstudents'] = 'Alle berichten tussen leerlingen binnen een cursus';
 $string['allusers'] = 'Alle berichten van alle gebruikers';
 $string['backupmessageshelp'] = 'Als dit ingeschakeld is, dan zullen berichten in de automatische SITE backups gezet worden';
 $string['beepnewmessage'] = 'Geluidssignaal als er een nieuw bericht binnenkomt';
 $string['blockcontact'] = 'Blokkeer contactpersoon';
 $string['blockedmessages'] = '$a bericht(en) van/aan geblokkeerde gebruikers';
-$string['blocknoncontacts'] = 'Blokkeer alle nieuwe berichten van mensen die niet op mijn lijst contactenpersonen staan.';
+$string['blocknoncontacts'] = 'Blokkeer alle nieuwe berichten van mensen die niet op mijn lijst met contactenpersonen staan.';
 $string['contactlistempty'] = 'Je lijst met contactpersonen is leeg';
 $string['contacts'] = 'Contactpersonen';
 $string['context'] = 'context';
 $string['deletemessagesdays'] = 'Aantal dagen voor oude boodschappen automatisch verwijderd worden';
 $string['discussion'] = 'Discussie';
 $string['emailmessages'] = 'Stuur berichten door als e-mail wanneer ik off line ben';
-$string['emailtagline'] = 'Deze e-mail is een kopie van een bericht dat naar jouw gestuurd is op \"$a\"';
+$string['emailtagline'] = 'Deze e-mail is een kopie van een bericht dat naar jou gestuurd is op \"$a\"';
 $string['emptysearchstring'] = 'Je moet iets zoeken';
 $string['formorethan'] = 'Langer off line dan';
 $string['includeblockedusers'] = 'Geblokkeerde bezoekers inbegrepen';
@@ -42,7 +42,7 @@ $string['offlinecontacts'] = 'Off line contactpersonenen ($a)';
 $string['online'] = 'On line';
 $string['onlinecontacts'] = 'On line contactpersonen ($a)';
 $string['onlyfromme'] = 'Enkel mijn berichten';
-$string['onlymycourses'] = 'Enkel in mijn vakken';
+$string['onlymycourses'] = 'Enkel in mijn cursussen';
 $string['onlytome'] = 'Enkel berichten aan mij';
 $string['pagerefreshes'] = 'Deze pagina ververst automatisch om de $a seconden';
 $string['readmessages'] = '$a gelezen berichten';

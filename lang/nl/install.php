@@ -1,10 +1,10 @@
 <?PHP // $Id$ 
-      // install.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+      // install.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['admindirerror'] = 'De adminmap die je opgeeft is niet juist';
 $string['admindirname'] = 'Adminmap';
-$string['admindirsetting'] = 'Enkele webhosts gebruiken /admin als speciale URL  om je toegang te geven tot een controlepaneel of iets dergelijks. Jammer genoeg geeft dit conflicten met de standaardmap voor de Moodle-beheerpagina\'s. Je kunt dit toch aan het werk krijgen door de adminmap van jouw installatie te hernoemen en deze nieuwe mapnaam hier te zetten. Bijvoorbeeld <br />&nbsp;<br /><b>moodleadmin</b><br />&nbsp;<br />. Dit zal alle beheerlinks in Moodle aanpassen.';
+$string['admindirsetting'] = 'Enkele webhosts gebruiken /admin als speciale URL  om je toegang te geven tot een controlepaneel of iets dergelijks. Jammer genoeg geeft dit conflicten met de standaardmap voor de Moodle-beheerpagina\'s. Je kunt dit toch aan het werk krijgen door de adminmap van jouw installatie te hernoemen en deze nieuwe mapnaam hier te zetten. Bijvoorbeeld <br /> <br /><b>moodleadmin</b><br /> <br />. Dit zal alle beheerlinks in Moodle aanpassen.';
 $string['caution'] = 'Opgelet';
 $string['chooselanguage'] = 'Kies een taal';
 $string['compatibilitysettings'] = 'Bezig je PHP-instellingen te controleren ...';
@@ -12,8 +12,16 @@ $string['configfilenotwritten'] = 'Het installatiescript kon het bestand config.
 $string['configfilewritten'] = 'Het maken van config.php is gelukt';
 $string['configurationcomplete'] = 'De configuratie is volledig';
 $string['database'] = 'Databank';
+$string['databasecreationsettings'] = 'Nu moet je de databank configureren waar de meeste gegevens van Moodle bewaard zullen worden. Deze databank zal automatisch gecreëerd worden door de Moodle4Windows installatietechnologie met de onderstaande instellingen.<br />
+<br /> <br />
+<b>Type:</b> vastgezet op \"mysql\" door de installatie.<br />
+<b>Host:</b> vastgezet op \"localhost\" door de installatie.<br />
+<b>Naam:</b> naam voor de databank, bijvoorbeeld moodle<br />
+<b>Gebruiker:</b> vastgezet op \"root\" door de installatie.<br />
+<b>Wachtwoord:</b> jouw wachtwoord voor de databank.<br />
+<b>Tabelvoorvoegsel:</b> optionneel voorvoegsel om de naam van alle tabellen mee te beginnen.';
 $string['databasesettings'] = 'Nu moet je de databank voor de gegevens van Moodle configureren. Deze databank zou je al aangemaakt moeten hebben, samen met een gebruikersnaam en wachtwoord voor toegang tot die databank.<br />
-<br />&nbsp;<br />
+<br /> <br />
 <b>Type:</b> mysql of postgres7<br />
 <b>Host Server:</b> bv localhost of db.isp.com<br />
 <b>Naam:</b> databanknaam, bv moodle<br />

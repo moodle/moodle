@@ -1,27 +1,27 @@
 <p align="center"><b>Importeren van "Course Test Manager" bestanden</b></p>
 
-<p>Course Test Manager is een "End of Lifetime" software pakket van Course Technology. 
+<p>Course Test Manager is een "End of Lifetime" softwarepakket van Course Technology. 
 Het wordt niet langer actief ontwikkeld door Course Technology. Het is vervangen door een nieuwe testbeheerder, ExamView
-genaamd. Nochthans is er nooit een migratiepad geschreven om het CTM-formaat te exporteren naar een ander algemeen
+genaamd. Nochtans is er nooit een migratiepad geschreven om het CTM-formaat te exporteren naar een ander algemeen
 testformaat. Daarom is deze module geschreven.</p>
 
 <p> Om vragen van CTM te kunnen importeren moet je CTM geïnstalleerd hebben op een Windowsmachine en toegang hebben
 tot de MS Access gegevensbestanden op die machine. Twee gegevensbestanden zijn nodig om de gegegevens te kunnen 
 benaderen:</p> 
-<ul><li>System.mda - Dit bestand zit in de root-map van je CTM-installatie, in access taal wordt er naar verwezen
+<ul><li>System.mda - Dit bestand zit in de root-map van je CTM-installatie, in accesstaal wordt er naar verwezen
 als de "System Database".</li>
-<li>ctm.mdb - Dit is de databank die de testbank vragen bevat.  Er is zo één databank ver vak 
+<li>ctm.mdb - Dit is de databank die de testbankvragen bevat.  Er is zo één databank per cursus 
 in CTM. Het zit in een map 1 niveau onder de CTM installatiemap.</li>
 </ul>
 
-<p>Het importproces is verschillend, afhankelijk van je installatie van  Moodle: op Windows of op Linux.
-Gelijk op welk platform Moodle loopt, je moet een Windowssysteem (2000 of xp) in hetzelfde netwerk hebben om de 
+<p>Het importproces is verschillend afhankelijk van je installatie van  Moodle: op Windows of op Linux.
+Gelijk op welk platform Moodle werkt, je moet een Windowssysteem (2000 of xp) in hetzelfde netwerk hebben om de 
 Access databank op te zetten terwijl je de testen importeert.</p>
 
 <p>Het proces is wat gemakkelijker op een <b>Windowsgebaseerd</b> Moodle systeem. Het enige wat je dan moet doen
 om de CTM importmodule te gebruiken is:</p>
 
-<ol><li>upload system.mda systeem databank naar Moodle met bestandsbeheer. Het maakt niet uit naar welk vak je het 
+<ol><li>upload system.mda systeem databank naar Moodle met bestandsbeheer. Het maakt niet uit naar welke cursus je het 
 bestand upload. Moodle zal het in elk geval vinden.</li>
 <li>Maak je test en ga naar "importeer vragen uit bestand". Upload de ctm.mdb databank als het te importeren bestand. 
 Als je dit juist gedaan hebt, dan zie je een volgend scherm dat het je mogelijk maakt een subcategorie van vragen
