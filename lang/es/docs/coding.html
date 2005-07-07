@@ -285,13 +285,15 @@
   <li class="spaced">No utilice la funci&oacute;n <code>require_variable()</code>.
     En su lugar, utilice la funci&oacute;n <code>required_param()</code>. Seleccione
     la opci&oacute;n PARAM_XXXX apropiada al tipo de par&aacute;metro que espera.</li>
+	<li class="spaced">Utilice <code>data_submitted()</code>, with cuidado. La informaci&oacute;n
+	  todav&iacute;a debe ser limpiada antes de utilizarla.</li>
   <li class="spaced">No utilice <code>$_GET</code>, <code>$_POST</code> o<code> $_REQUEST</code>.
     En su lugar, utilice las funciones <code>required_param()</code> o <code>optional_param()</code> apropiadas.</li>
   <li class="spaced">No compruebe las acciones con c&oacute;digo como: <code>if
       (isset($_GET['algo']))</code>. 
-    Utilice, por ejemplo, <code>$algo = optional_param( algo,'',PARAM_ALPHA
-    )</code> y compruebe con la funci&oacute;n <code>empty()</code>,
-    o (si 'empty' es un posible valor) utilice la funci&oacute;n <code>isset_param()</code>.</li>
+    Utilice, por ejemplo, <code>$algo = optional_param( algo, -1, PARAM_INT
+    )</code> y entonces compruebe que est&aacute; dentro de los valores esperados, por
+    ejemplo, <code>if ($something>=0) {...</code>.</li>
   <li class="spaced">Cuando sea posible agrupe todas sus llamadas a <code>required_param()</code>, <code>optional_param()</code>
     y el resto de inicializaci&oacute;n de variables en el principio de cada fichero
       (o funci&oacute;n) para que sea f&aacute;cilmenente localizable.</li>
