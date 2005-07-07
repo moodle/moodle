@@ -131,8 +131,10 @@ class quiz_match_qtype extends quiz_default_questiontype {
 
         // Restore the previous responses
         $state->responses = array();
-        foreach ($responses as $response) {
-            $state->responses[$response[0]] = $response[1];
+        if ($responses) {
+            foreach ($responses as $response) {
+                $state->responses[$response[0]] = $response[1];
+            }
         }
 
         if (!$state->options->subquestions = get_records('quiz_match_sub',
@@ -213,7 +215,8 @@ class quiz_match_qtype extends quiz_default_questiontype {
 
         ///// Print the input controls //////
         echo '<table border="0" cellpadding="10" align="right">';
-        foreach ($subquestions as $key => $subquestion) {
+        foreach ($state->options->order as $key) {
+            $subquestion = $subquestions[$key];
 
             /// Subquestion text:
             echo '<tr><td align="left" valign="top">';
