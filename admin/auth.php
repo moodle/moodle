@@ -242,10 +242,18 @@ function print_auth_lock_options ($auth, $user_fields, $helptext, $retrieveopts,
     foreach ($user_fields as $field) {
 
         // Define some vars we'll work with
-        set_default($pluginconfig->{"field_map_$field"}, '');
-        set_default($pluginconfig->{"field_updatelocal_$field"}, '');
-        set_default($pluginconfig->{"field_updateremote_$field"}, '');
-        set_default($pluginconfig->{"field_lock_$field"}, '');
+        if(empty($pluginconfig->{"field_map_$field"})) {
+            $pluginconfig->{"field_map_$field"} = '';
+        }
+        if(empty($pluginconfig->{"field_updatelocal_$field"})) {
+            $pluginconfig->{"field_updatelocal_$field"} = '';
+        }  
+        if (empty($pluginconfig->{"field_updateremote_$field"})) {
+            $pluginconfig->{"field_updateremote_$field"} = '';
+        }
+        if (empty($pluginconfig->{"field_lock_$field"})) {
+            $pluginconfig->{"field_lock_$field"} = '';
+        }
 
         // define the fieldname we display to the  user
         $fieldname = $field;
