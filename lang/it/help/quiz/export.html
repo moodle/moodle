@@ -1,0 +1,51 @@
+<p align="center"><b>Esportazione di domande da una Categoria</b></p>
+
+<p>Questa funzione permette di esportare in un file di testo una intera categoria di domande. </p> 
+
+<p>Da notare che in molti formati alcuni informazioni vengono perdute quando le domande sono esportate. 
+Questo perché tali formati non possiedono tutte le caratteristiche esistenti nelle domande Moodle.
+Non bisogna aspettarsi di esportare e importare domande pensando che rimangono identiche.
+Peraltro alcuni tipi di domande non possono essere esportati affatto.
+Bisogna assolutamente controllare i dati esportati prima di utilizzarli in un ambiente di produzione.</p>
+
+<p>Sono supportati diversi formati di file:</p>
+
+<p><b>Formato GIFT</b></p>
+<ul>
+<p>GIFT è il più completo formato di importazione/esportazione disponibile per esportare le domande di un quiz in un file di testo. E' stato progettato per offrire agli insegnanti un metodo semplice per scrivere le domande sotto forma di un semplice testo. Supporta i vari tipi di domande a Risposta multipla, Vero/Falso, Risposta breve, Corrispondenze, Numeriche e anche l'inserimento di un _____ per il formato "parola mancante". Da notare che le domande di tipo Cloze non sono attualmente supportate. Differenti tipi di domanda possono essere mischiati in un unico file di testo, e il formato supporta anche righe di commento, nomi di domande, feedback, e voti pesati su base percentuale. Seguono alcuni esempi:</p>
+<pre>
+In quale isola è morto Napoleone? {~Elba ~Corsica =Sant'Elena}
+
+Napoleone è morto nell'isola di {~Corsica =Sant'Elena ~Elba}.
+
+Napoleone è morto in Corsica.{FALSE}
+
+Napoleone è morto in un'isola?{=si =vero}
+
+Quando è morto Napoleone?{#1821}
+</pre>
+
+<p align="right"><a href="help.php?file=formatgift.html&module=quiz">Altre informazioni sul formato "GIFT"</a></p>
+</ul>
+
+<p><b>Formato Moodle XML</b></p>
+<ul>
+<p>Questo formato specifico di Moodle esporta le domande di un quiz in un semplice formato XML 
+Queste possono essere importate successivamente in un'altra categoria del quiz o utilizzate in qualche altro processo come ad esempio una trasformazione XSLT. </p>
+</ul>
+
+<p><b>Formato IMS QTI 2.0</b></p>
+<ul>
+<p>Esporta nel formato standard IMS QTI (version 2.0). Da notare che questa esportazione genera un gruppo di files "zippati" in un unico file.</p>
+
+<p align="right"><a href="http://www.imsglobal.org/question/" target="_qti">Altre informazioni su questo formato sul sito del IMS QTI</a>
+ (sito esterno in una nuova finestra)</p>
+</ul>
+
+<p><b>XHTML</b></p>
+<ul>
+<p>Esporta la categoria come una singola pagina di XHTML 'stretto'. Ogni domanda è chiaramente posizionata nel suo proprio &lt;div&gt; tag. 
+Se si vuole utilizzare la pagina così com'è, bisogna almeno editare il &lt;form&gt; tag all'inizio della sezione &lt;body&gt; per definire un'azione significativa (ad es. una 'mailto').</p>
+</ul>
+
+<p>Altri formati devono ancora essere gestiti, tra cui WebCT, e qualunque altro gli utilizzatori di Moodle vorranno contribuire a creare! </p>

@@ -1,0 +1,44 @@
+<p align="center"><b>Analisi dei risultati</b></p>
+
+<p>Questa tabella presenta i risultati dei quiz in una forma idonea all'analisi e alla determinazione del comportamento di ogni domanda ai fini della valutazione degli studenti. I parametri statistici utilizzati sono calcolati come spiegato nella teoria classica dei test (rif.1).</p>
+
+<p><b>Indice di Facilità (% giuste)</b></p>
+<p>Questa è una misura di quanto facile o difficile è una domanda per i candidati. E' calcolata come segue:
+<br>
+IF = (X<sub>media</sub>) / X<sub>max</sub> 
+<br>
+
+dove X<sub>media</sub> è il voto medio ottenuto da tutti i candidati che hanno risposta alla domanda, <br>
+e X<sub>max</sub> è il voto massimo ottenibile.<br>
+Se le domande possono essere distribuite dicotomicamente tra categorie corrette/errate, questo parametro coincide con la percentuale di utenti che hanno risposto correttamente alla domanda.</p>
+
+</p>
+<p><b>Deviazione Standard (DS)</b></p>
+<p>Questo parametro misura la dispersione dell'insieme delle risposte. Se tutti i candidati danno la stessa risposta, allora DS=0. DS è calcolata come la deviazione standard statistica dei punteggi per ogni domanda particolare.</p>
+
+<p><b>Indice di Discriminazione (ID)</b></p>
+<p>Questo indicatore fornisce la capacità di massima di ogni domanda di distinguere i candidati più capaci da quelli meno capaci.
+Il parametro è calcolato dividendo dapprima tutti i candidati in tre gruppi sulla base del punteggio complessivo ottenuto.
+Quindi è calcolata la media dei punteggi del gruppo migliore e la media di quelli del gruppo peggiore e calcolata la differenza delle medie.
+L'espressione matematica è:
+<br/>
+ID = (X<sub>migliori</sub> - X<sub>peggiori</sub>)/ N 
+<br/>
+dove X<sub>migliori</sub> è la somma del credito parziale (risultato-ottenuto/massimo-ottenibile) ottenuto per questa domanda dal terzo di studenti che hanno avuto i punteggi più alti all'intero quiz (cioè il numero di risposte corrette in questo gruppo), <br/>
+e X<sub>peggiori</sub> è l'analoga somma per gli studenti del terzo con i punteggi più bassi.</p> 
+
+<p>Questo parametro può avere valori tra +1 e -1. Se l'indice va sotto 0.0 significa che hanno risposto correttamente alla domanda più studenti deboli che studenti forti. Queste domande dovrebbero essere scartate perché poco significative. Infatti riducono l'accuratezza del punteggio complessivo del quiz.</p>
+
+<p><b>Coefficiente di Discriminazione (CD)</b></p>
+<p>Questa è un'altra misura del potere di separazione che può avere una domanda per distinguere studenti forti e deboli.<br/>
+Il coefficiente di discriminazione rappresenta la correlazione tra i punteggi della domanda e quelli dell'intero quiz. E' calcolato come:
+<br/>
+CD = Somma(xy)/ (N * s<sub>x</sub> * s<sub>y</sub>) 
+<br/>
+dove Somma(xy) è la somma dei prodotti delle deviazioni fra i punteggi della domanda e quelli dell'intero quiz, <br>
+N è il numero di risposte date a questa domanda<br/>
+s<sub>x</sub> è la deviazione standard del credito parziale per questa domanda e, <br/>
+s<sub>y</sub> è la deviazione standard dei punteggi del quiz nel loro complesso.</p>
+
+<p>Ancora, questo parametro può avere valori tra +1 e -1. Valori positivi sono indice di domande che evidenziano gli studenti migliori, mentre valori negativi indicano domande che sono risposte meglio da studenti con un punteggio più basso. Domande con un CD negativo hanno più risposte sbagliate da studenti stagionali e così sono effettivamente una penalità contro gli studenti migliori. Queste domande dovrebbero essere evitate.<br/>
+Il vantaggio del Coefficiente di Discriminazione rispetto all'Indice di Discriminazione è che il primo usa informazioni raccolte dall'intera popolazione degli studenti, e non solamente dal terzo migliore e dal terzo peggiore. Così questo parametro può essere più significativo per determinare il valore di una domanda.</p>
