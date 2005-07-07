@@ -190,6 +190,11 @@
     }
     print_table($table);
 
+    // print javascript button to close the window, if necessary
+    if (!$isteacher) {
+        include('attempt_close_js.php');
+    }
+
 /// Print the navigation panel if required
     $numpages = quiz_number_of_pages($attempt->layout);
     if ($numpages > 1 and !$showall) {
