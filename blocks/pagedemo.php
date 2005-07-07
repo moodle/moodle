@@ -119,10 +119,18 @@
     // minor tweaks to display the page layout!
 
     // Calculate the preferred width for left, right and center (both center positions will use the same)
-    set_default($preferred_width_left,  blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]));
-    set_default($preferred_width_right, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]));
-    set_default($preferred_width_centerup,   blocks_preferred_width($pageblocks[BLOCK_POS_CENTERUP]));
-    set_default($preferred_width_centerdown, blocks_preferred_width($pageblocks[BLOCK_POS_CENTERDOWN]));
+    if (empty($preferred_width_left)) {
+        $preferred_width_left =  blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]);
+    }
+    if (empty($preferred_width_right)) {
+        $preferred_width_right = blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]);
+    }
+    if (empty($preferred_width_centerup)) {
+        $preferred_width_centerup = blocks_preferred_width($pageblocks[BLOCK_POS_CENTERUP]);
+    }
+    if (empty($preferred_width_centerdown)) {
+        $preferred_width_centerdown =  blocks_preferred_width($pageblocks[BLOCK_POS_CENTERDOWN]);
+    }
     $preferred_width_left = min($preferred_width_left, BLOCK_L_MAX_WIDTH);
     $preferred_width_left = max($preferred_width_left, BLOCK_L_MIN_WIDTH);
     $preferred_width_right = min($preferred_width_right, BLOCK_R_MAX_WIDTH);
@@ -153,15 +161,15 @@
     // The actual display logic is here
     echo '<table style="width: 100%;"><tr>';
 
-    if(blocks_have_content($pageblocks[BLOCK_POS_LEFT]) || $editing) {
+    if(blocks_have_content($pageblocks,BLOCK_POS_LEFT) || $editing) {
         echo '<td style="vertical-align: top; width: '.$preferred_width_left.'px;">';
-        blocks_print_group($PAGE, $pageblocks[BLOCK_POS_LEFT]);
+        blocks_print_group($PAGE, $pageblocks,BLOCK_POS_LEFT);
         echo '</td>';
     }
 
     echo '<td style="border: 1px black solid; width: '.$preferred_width_center.'px;"><p style="text-align: center; padding: 10px; background: black; color: white;">Center-up position:</p>';
-    if(blocks_have_content($pageblocks[BLOCK_POS_CENTERUP]) || $editing) {
-        blocks_print_group($PAGE, $pageblocks[BLOCK_POS_CENTERUP]);
+    if(blocks_have_content($pageblocks,BLOCK_POS_CENTERUP) || $editing) {
+        blocks_print_group($PAGE, $pageblocks,BLOCK_POS_CENTERUP);
     }
 
     echo '<div style="padding: 10px; background: gold; text-align: center;">Content Here';
@@ -171,14 +179,14 @@
     echo '</div>';
 
     echo '<p style="text-align: center; padding: 10px; background: black; color: white;">Center-down position:</p>';
-    if(blocks_have_content($pageblocks[BLOCK_POS_CENTERDOWN]) || $editing) {
-        blocks_print_group($PAGE, $pageblocks[BLOCK_POS_CENTERDOWN]);
+    if(blocks_have_content($pageblocks,BLOCK_POS_CENTERDOWN) || $editing) {
+        blocks_print_group($PAGE, $pageblocks,BLOCK_POS_CENTERDOWN);
     }
     echo '</td>';
 
-    if(blocks_have_content($pageblocks[BLOCK_POS_RIGHT]) || $editing) {
+    if(blocks_have_content($pageblocks,BLOCK_POS_RIGHT) || $editing) {
         echo '<td style="vertical-align: top; width: '.$preferred_width_right.'px;">';
-        blocks_print_group($PAGE, $pageblocks[BLOCK_POS_RIGHT]);
+        blocks_print_group($PAGE, $pageblocks,BLOCK_POS_RIGHT);
         if ($editing) {
             blocks_print_adminblock($PAGE, $pageblocks);
         }
