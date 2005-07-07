@@ -630,6 +630,9 @@ function scorm_characterData($parser, $data) {
 }
 
 function scorm_parse($pkgdir,$pkgtype,$scormid){
+    delete_records('scorm_scoes','scorm',$scormid);
+    delete_records('scorm_scoes_track','scormid',$scormid);
+
     if ($pkgtype == 'AICC') {
         return scorm_parse_aicc($pkgdir,$scormid);
     } else {
@@ -853,8 +856,6 @@ function scorm_parse_scorm($pkgdir,$file,$scormid) {
     $launch = 0;
 
     $sco->scorm = $scormid;
-    delete_records('scorm_scoes','scorm',$scormid);
-    delete_records('scorm_scoes_track','scormid',$scormid);
 
     if (isset($scoes[1])) {
         for ($j=1; $j<=$i; $j++) {
@@ -1030,12 +1031,12 @@ function scorm_count_launchable($scormid,$organization) {
     return count_records_select('scorm_scoes',"scorm=$scormid AND organization='$organization' AND launch<>''");
 }
 
-function scorm_display_structure($scorm,$liststyle,$currentorg='',$scoid='',$mode='normal',$play=false) {
+function scorm_get_toc($scorm,$liststyle,$currentorg='',$scoid='',$mode='normal',$play=false) {
     global $USER, $CFG;
 
     $strexpand = get_string('expcoll','scorm');
 
-    echo "<ul id='0' class='$liststyle'>";
+    $result->toc = "<ul id='0' class='$liststyle'>";
     $incomplete = false;
     $organizationsql = '';
     if (!empty($currentorg)) {
@@ -1050,7 +1051,7 @@ function scorm_display_structure($scorm,$liststyle,$currentorg='',$scoid='',$mod
         foreach ($scoes as $sco) {
             if ($parents[$level]!=$sco->parent) {
                 if ($level>0 && $parents[$level-1]==$sco->parent) {
-                    echo "\t\t</ul></li>\n";
+                    $result->toc .= "\t\t</ul></li>\n";
                     $level--;
                 } else {
                     $i = $level;
@@ -1060,22 +1061,22 @@ function scorm_display_structure($scorm,$liststyle,$currentorg='',$scoid='',$mod
                         $i--;
                     }
                     if (($i == 0) && ($sco->parent != $currentorg)) {
-                        echo "\t\t<li><ul id='$sublist' class='$liststyle'>\n";
+                        $result->toc .= "\t\t<li><ul id='$sublist' class='$liststyle'>\n";
                         $level++;
                     } else {
-                        echo $closelist;
+                        $result->toc .= $closelist;
                         $level = $i;
                     }
                     $parents[$level]=$sco->parent;
                 }
             }
-            echo "\t\t<li>";
+            $result->toc .= "\t\t<li>";
             $nextsco = next($scoes);
             if (($nextsco !== false) && ($sco->parent != $nextsco->parent) && (($level==0) || (($level>0) && ($nextsco->parent == $sco->identifier)))) {
                 $sublist++;
-                echo '<a href="#" onClick="expandCollide(img'.$sublist.','.$sublist.');"><img id="img'.$sublist.'" src="'.$CFG->wwwroot.'/mod/scorm/pix/minus.gif" alt="'.$strexpand.'" title="'.$strexpand.'"/></a>';
+                $result->toc .= '<a href="#" onClick="expandCollide(img'.$sublist.','.$sublist.');"><img id="img'.$sublist.'" src="'.$CFG->wwwroot.'/mod/scorm/pix/minus.gif" alt="'.$strexpand.'" title="'.$strexpand.'"/></a>';
             } else {
-                echo '<img src="'.$CFG->wwwroot.'/mod/scorm/pix/spacer.gif" />';
+                $result->toc .= '<img src="'.$CFG->wwwroot.'/mod/scorm/pix/spacer.gif" />';
             }
             if (empty($sco->title)) {
                 $sco->title = $sco->identifier;
@@ -1092,7 +1093,7 @@ function scorm_display_structure($scorm,$liststyle,$currentorg='',$scoid='',$mod
                         $usertrack->status = 'notattempted';
                     }
                     $strstatus = get_string($usertrack->status,'scorm');
-                    echo "<img src='".$CFG->wwwroot."/mod/scorm/pix/".$usertrack->status.".gif' alt='$strstatus' title='$strstatus' />";
+                    $result->toc .= "<img src='".$CFG->wwwroot."/mod/scorm/pix/".$usertrack->status.".gif' alt='$strstatus' title='$strstatus' />";
                     if (($usertrack->status == 'notattempted') || ($usertrack->status == 'incomplete') || ($usertrack->status == 'browsed')) {
                         $incomplete = true;
                         if ($play && empty($scoid)) {
@@ -1107,10 +1108,10 @@ function scorm_display_structure($scorm,$liststyle,$currentorg='',$scoid='',$mod
                         $scoid = $sco->id;
                     }
                     if ($sco->scormtype == 'sco') {
-                        echo '<img src="'.$CFG->wwwroot.'/mod/scorm/pix/notattempted.gif" alt="'.get_string('notattempted','scorm').'" title="'.get_string('notattempted','scorm').'" />';
+                        $result->toc .= '<img src="'.$CFG->wwwroot.'/mod/scorm/pix/notattempted.gif" alt="'.get_string('notattempted','scorm').'" title="'.get_string('notattempted','scorm').'" />';
                         $incomplete = true;
                     } else {
-                        echo '<img src="'.$CFG->wwwroot.'/mod/scorm/pix/asset.gif" alt="'.get_string('asset','scorm').'" title="'.get_string('asset','scorm').'" />';
+                        $result->toc .= '<img src="'.$CFG->wwwroot.'/mod/scorm/pix/asset.gif" alt="'.get_string('asset','scorm').'" title="'.get_string('asset','scorm').'" />';
                     }
                 }
                 if ($sco->id == $scoid) {
@@ -1127,25 +1128,28 @@ function scorm_display_structure($scorm,$liststyle,$currentorg='',$scoid='',$mod
                 if (($nextid == 0) && (scorm_count_launchable($scorm->id,$currentorg) > 1) && ( $nextsco!==false)) {
                     $previd = $sco->id;
                 }
-                echo "&nbsp;$startbold<a href='javascript:playSCO(".$sco->id.");'>$sco->title</a> $score$endbold</li>\n";
+                $result->toc .= "&nbsp;$startbold<a href='javascript:playSCO(".$sco->id.");'>$sco->title</a> $score$endbold</li>\n";
             } else {
-                echo "&nbsp;$sco->title</li>\n";
+                $result->toc .= "&nbsp;$sco->title</li>\n";
             }
         }
         for ($i=0;$i<$level;$i++) {
-            echo "\t\t</ul></li>\n";
+            $result->toc .= "\t\t</ul></li>\n";
         }
     }
-    echo "\t</ul>\n";
+    $result->toc .= "\t</ul>\n";
+    
     if ($play) {
-        $result->id = $scoid;
-        $result->prev = $previd;
-        $result->next = $nextid;
-        $result->showprev = $showprev;
-        $result->shownext = $shownext;
-        return $result;
+        unset($sco);
+        $sco->id = $scoid;
+        $sco->prev = $previd;
+        $sco->next = $nextid;
+        $sco->showprev = $showprev;
+        $sco->shownext = $shownext;
+        $result->sco = $sco;
     } else {
-        return $incomplete;
+        $result->incomplete = $incomplete;
     }
+    return $result;
 }
 ?>

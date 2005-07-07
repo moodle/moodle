@@ -63,6 +63,8 @@
             }
             $oldlaunch = backup_todb($info['MOD']['#']['LAUNCH']['0']['#']);
             $scorm->summary = backup_todb($info['MOD']['#']['SUMMARY']['0']['#']);
+            $scorm->hidebrowse = backup_todb($info['MOD']['#']['HIDEBROWSE']['0']['#']);
+            $scorm->hidetoc = backup_todb($info['MOD']['#']['HIDETOC']['0']['#']);
             $scorm->auto = backup_todb($info['MOD']['#']['AUTO']['0']['#']);
             if ($restore->backup_version < 2005040200) {
                 $oldpopup = backup_todb($info['MOD']['#']['POPUP']['0']['#']);

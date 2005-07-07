@@ -110,13 +110,15 @@
                 $orgidentifier = $org->organization;
             }
         }
-?>
-            <?php $incomplete = scorm_display_structure($scorm,'structurelist',$orgidentifier); ?>
-    <?php print_simple_box_end(); ?>
+        $result = scorm_get_toc($scorm,'structurelist',$orgidentifier);
+        $incomplete = $result->incomplete;
+        echo $result->toc;
+        print_simple_box_end();
+ ?>
     <div class="center">
         <form name="theform" method="post" action="playscorm.php?id=<?php echo $cm->id ?>">
 <?php
-    if ($scorm->browsemode == 1) {
+    if ($scorm->hidebrowse == 0) {
         print_string("mode","scorm");
         echo ': <input type="radio" id="b" name="mode" value="browse" /><label for="b">'.get_string('browse','scorm').'</label>'."\n";
         if ($incomplete === true) {

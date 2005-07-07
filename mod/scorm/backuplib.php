@@ -48,7 +48,8 @@
                 fwrite ($bf,full_tag("GRADEMETHOD",4,false,$scorm->grademethod));
                 fwrite ($bf,full_tag("LAUNCH",4,false,$scorm->launch));
                 fwrite ($bf,full_tag("SUMMARY",4,false,$scorm->summary));
-                fwrite ($bf,full_tag("BROWSEMODE",4,false,$scorm->browsemode));
+                fwrite ($bf,full_tag("HIDEBROWSE",4,false,$scorm->hidebrowse));
+                fwrite ($bf,full_tag("HIDETOC",4,false,$scorm->hidetoc));
                 fwrite ($bf,full_tag("AUTO",4,false,$scorm->auto));
                 fwrite ($bf,full_tag("POPUP",4,false,$scorm->popup));
                 fwrite ($bf,full_tag("WIDTH",4,false,$scorm->width));

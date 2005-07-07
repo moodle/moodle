@@ -79,51 +79,66 @@
     $strpopup = get_string('popup','scorm');
 
     //
-    // Print the page header
+    // TOC processing
     //
-    $scripts = '';
-    if ($scorm->popup == 1) {
-        $scripts = 'onunload="top.main.close();"';
-    }
-
-    print_header($pagetitle, "$course->fullname",
-                 "$navigation <a target='{$CFG->framename}' href='view.php?id=$cm->id'>".format_string($scorm->name,true)."</a>",
-                 '', '', true, update_module_button($cm->id, $course->id, $strscorm), '', false, $scripts);
-?>
-
-    <table class="fullscreen">
-    <tr><td class="top">
-        <p><?php echo $mode == 'browse' ? get_string('browsemode','scorm') : '&nbsp;'; ?></p>
-        <table class='generalbox' cellpadding='5' cellspacing='0'>
-            <tr>
-                <th>
-                    <div class="structurehead"><?php print_string('coursestruct','scorm') ?></div>
-                </th>
-            </tr>
-            <tr><td class="top">
-<?php
-    $sco = scorm_display_structure($scorm,'structurelist',$currentorg,$scoid,$mode,true);
+    $result = scorm_get_toc($scorm,'structurelist',$currentorg,$scoid,$mode,true);
+    $sco = $result->sco;
     if ($mode == 'normal') {
-    if ($trackdata = scorm_get_tracks($USER->id,$sco->id)) {
-        if (($trackdata->status == 'completed') || ($trackdata->status == 'passed') || ($trackdata->status == 'failed')) {
-        $mode = 'review';
+        if ($trackdata = scorm_get_tracks($USER->id,$sco->id)) {
+            if (($trackdata->status == 'completed') || ($trackdata->status == 'passed') || ($trackdata->status == 'failed')) {
+                $mode = 'review';
+            }
         }
-    }
     }
     add_to_log($course->id, 'scorm', 'view', "playscorm.php?id=$cm->id&scoid=$sco->id", "$scorm->id");
     $scoidstring = '&scoid='.$sco->id;
     $modestring = '&mode='.$mode;
 
     $SESSION->scorm_scoid = $sco->id;
+
+    //
+    // Print the page header
+    //
+    $scripts = '';
+    if ($scorm->popup == 1) {
+        $scripts = 'onunload="top.main.close();"';
+    }
+    
+    print_header($pagetitle, "$course->fullname",
+                 "$navigation <a target='{$CFG->framename}' href='view.php?id=$cm->id'>".format_string($scorm->name,true)."</a>",
+                 '', '', true, update_module_button($cm->id, $course->id, $strscorm), '', false, $scripts);
 ?>
-            </td></tr>
+    <script language="JavaScript" type="text/javascript" src="request.js"></script>
+    <script language="JavaScript" type="text/javascript" src="api.php?id=<?php echo $cm->id.$scoidstring.$modestring ?>"></script>
+    <table class="fullscreen">
+    <tr><td class="top">
+        <?php echo $mode == 'browse' ? '<p>'.get_string('browsemode','scorm').'</p>' : ''; ?>
+        <table class='generalbox' cellpadding='5' cellspacing='0'>
+<?php  
+    if ($scorm->hidetoc == 0) {
+?>
+            <tr>
+                <th>
+                    <div class="structurehead"><?php print_string('coursestruct','scorm') ?></div>
+                </th>
+            </tr>
+            <tr>
+               <td class="top">
+                  <?php
+                      echo $result->toc;
+                  ?>
+               </td>
+            </tr>
+<?php
+    }
+?>
             <tr><td class="center">
                 <form name="navform" method="post" action="playscorm.php?id=<?php echo $cm->id ?>" target="_top">
                    <input name="scoid" type="hidden" />
                    <input name="currentorg" type="hidden" value="<?php echo $currentorg ?>" />
                    <input name="mode" type="hidden" value="<?php echo $mode ?>" />
                    <input name="prev" type="<?php if (($sco->prev == 0) || ($sco->showprev == 1)) { echo 'hidden'; } else { echo 'button'; } ?>" value="<?php print_string('prev','scorm') ?>" onClick="prevSCO();" />
-                   <input name="next" type="<?php if (($sco->next == 0) || ($sco->shownext == 1)) { echo 'hidden'; } else { echo 'button'; } ?>" value="<?php print_string('next','scorm') ?>" onClick="nextSCO();" /><br />
+                   <input name="next" type="<?php if (($sco->next == 0) || ($sco->shownext == 1)) { echo 'hidden'; } else { echo 'button'; } ?>" value="<?php print_string('next','scorm') ?>" onClick="nextSCO();" />
                    <input name="exit" type="button" value="<?php print_string('exit','scorm') ?>" onClick="playSCO(0)" />
                </form>
            </td></tr>
@@ -132,8 +147,8 @@
 <?php
     if ($scorm->popup == 0) {
 ?>
-    <td class="top" width="<?php print $scorm->width ?>">
-        <iframe name="main" width="<?php print $scorm->width ?>" height="<?php echo $scorm->height ?>" src="loadSCO.php?id=<?php echo $cm->id.$scoidstring.$modestring ?>"></iframe>
+    <td class="top" width="<?php echo $scorm->width<=100 ? $scorm->width.'%' : $scorm->width ?>">
+        <iframe name="main" class="scoframe" width="<?php echo $scorm->width<=100 ? $scorm->width.'%' : $scorm->width ?>" height="<?php echo $scorm->height<=100 ? $scorm->height.'%' : $scorm->height ?>" src="loadSCO.php?id=<?php echo $cm->id.$scoidstring.$modestring ?>"></iframe>
     </td>
 <?php
     }
@@ -145,7 +160,7 @@
 <?php
     if ($scorm->popup == 1) {
 ?>
-        top.main = window.open("loadSCO.php?id=<?php echo $cm->id.$scoidstring.$modestring ?>","","width=<?php echo $scorm->width ?>,height=<?php echo $scorm->height ?>,scrollbars=1");
+        top.main = window.open("loadSCO.php?id=<?php echo $cm->id.$scoidstring.$modestring ?>","","width=<?php echo $scorm->width<=100 ? $scorm->width.'%' : $scorm->width ?>,height=<?php echo $scorm->height<=100 ? $scorm->height.'%' : $scorm->height ?>,scrollbars=1");
 <?php
     }
 ?>
@@ -183,7 +198,5 @@
         }
     -->
     </script>
-    <script language="JavaScript" type="text/javascript" src="request.js"></script>
-    <script language="JavaScript" type="text/javascript" src="api.php?id=<?php echo $cm->id.$scoidstring.$modestring ?>"></script>
 </body>
 </html>
