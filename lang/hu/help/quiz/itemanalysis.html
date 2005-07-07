@@ -1,0 +1,62 @@
+<p align="center"><strong>T&eacute;telelemz&eacute;s</strong></p>
+
+<p>Ez a t&aacute;bl&aacute;zat elemz&eacute;sre &eacute;s &eacute;rt&eacute;kel&eacute;sre alkalmas form&aacute;ban mutatja a teszt feldolgozott adatait. 
+A felhaszn&aacute;lt statisztikai param&eacute;terek kisz&aacute;m&iacute;t&aacute;si m&oacute;dj&aacute;t a klasszikus tesztelm&eacute;let 
+tartalmazza  (1. hiv.)</p>
+
+<p><strong>Neh&eacute;zs&eacute;gi fok (% helyes)</strong></p>
+<p>Ez jelzi, hogy mennyire k&ouml;nny&#369; vagy neh&eacute;z egy k&eacute;rd&eacute;s a vizsg&aacute;z&oacute;knak. Kisz&aacute;m&iacute;t&aacute;s&aacute;nak m&oacute;dja:
+<br>
+FI = (X<sub>&aacute;tlag</sub>) / X<sub>max</sub> 
+<br>
+
+ahol az  X<sub>&aacute;tlag</sub> a t&eacute;tellel pr&oacute;b&aacute;lkoz&oacute;k &aacute;ltal &ouml;sszesen el&eacute;rt pont &aacute;tlaga, <br>
+a X<sub>max</sub> pedig az adott t&eacute;tel eset&eacute;n el&eacute;rhet&#337; maxim&aacute;lis pont.<br>
+Ha a k&eacute;rd&eacute;sek k&eacute;t, helyes / helytelen csoportra oszthat&oacute;k, 
+akkor ez a param&eacute;ter egybeesik azon felhaszn&aacute;l&oacute;k sz&aacute;zal&eacute;k&aacute;val, akik a k&eacute;rd&eacute;sre helyesen v&aacute;laszoltak. </p>
+
+</p>
+<p><strong>Standard elt&eacute;r&eacute;s (SD)</strong></p>
+<p>Ez a param&eacute;ter a v&aacute;laszol&oacute;k v&aacute;laszainak a sz&oacute;r&aacute;s&aacute;t m&eacute;ri. Ha mindenki azonos m&oacute;don v&aacute;laszolt, akkor az
+SD=0. Az SD az egyes k&eacute;rd&eacute;sekre az el&eacute;rt/maximum ar&aacute;ny&aacute;nak statisztikai standard elt&eacute;r&eacute;s&eacute;t adja.  
+</p>
+
+<p><strong>Diszkrimin&aacute;ci&oacute;s mutat&oacute; (DI)</strong></p>
+<p>Ezzel k&uuml;l&ouml;n&iacute;thet&#337;k el az adott t&eacute;telre jobban <i>&eacute;s</i> gyeng&eacute;bben v&aacute;laszol&oacute;k.
+Kisz&aacute;m&iacute;t&aacute;sa sor&aacute;n el&#337;sz&ouml;r a tanul&oacute;k az &ouml;sszpontsz&aacute;m alapj&aacute;n harmadol&oacute;dnak, majd k&ouml;vetkezik a legjobb &eacute;s legrosszabb
+eredm&eacute;nyek &aacute;tlag&aacute;nak kisz&aacute;m&iacute;t&aacute;sa &eacute;s az &aacute;tlagpontsz&aacute;m kisz&aacute;m&iacute;t&aacute;sa. A matematikai k&eacute;plet a k&ouml;vetkez&#337;: 
+<br/>
+DI = (X<sub>top</sub> - X<sub>bottom</sub>)/ N 
+<br/>
+
+ahol az X<sub>top</sub> a teszt legjobb 1/3-a (a csoportban a helyes v&aacute;laszok sz&aacute;ma) &aacute;ltal 
+el&eacute;rt/maxim&aacute;lis pontsz&aacute;m &ouml;sszege, <br/>
+az X<sub>bottom</sub>) pedig ugyanez a leggyeng&eacute;bb 1/3-ra vonatkoztatva.</p> 
+
+<p>A param&eacute;ter  +1 &eacute;s -1 k&ouml;z&ouml;tti &eacute;rt&eacute;ket kaphat.  
+Ha a mutat&oacute; 0,0 al&aacute; ker&uuml;l, az azt jelenti, hogy a gyeng&eacute;bbek k&ouml;z&uuml;l t&ouml;bben feleltek
+j&oacute;l az adott t&eacute;telre, mint az er&#337;sebbek. Az ilyen t&eacute;teleket ki kell hagyni mint &eacute;rt&eacute;kteleneket.
+Ezek ugyanis cs&ouml;kkentik a teszt &ouml;sszpontsz&aacute;m&aacute;nak a pontoss&aacute;g&aacute;t. </p>
+
+<p><strong>Diszkrimin&aacute;ci&oacute;s egy&uuml;tthat&oacute; (DC)</strong></p>
+<p>Ezzel is a gyenge &eacute;s az er&#337;s tanul&oacute;k sz&eacute;tv&aacute;laszt&aacute;s&aacute;ra ny&iacute;lik lehet&#337;s&eacute;g.<br/>
+A diszkriminációs együttható a tételre és az egész tesztre kapott pontok közötti korrelációs együttható.
+Kiszámítása:
+
+<br/>
+DC = Sum(xy)/ (N * s<sub>x</sub> * s<sub>y</sub>) 
+<br/>
+ahol a Sum(xy) a t&eacute;telpontok &eacute;s a glob&aacute;lis tesztpontok elt&eacute;r&eacute;s&eacute;nek az &ouml;sszege, <br>
+az N a k&eacute;rd&eacute;sre adott v&aacute;laszok sz&aacute;ma<br/>
+a s<sub>x</sub> a k&eacute;rd&eacute;sre vonatkoz&oacute; pontok standard elt&eacute;r&eacute;se, <br/>
+az s<sub>y</sub> az eg&eacute;sz tesztre vonatkoz&oacute; pontok standard elt&eacute;r&eacute;se.
+</p>
+<p>Ez a param&eacute;ter is +1 &eacute;s -1 k&ouml;z&ouml;tti &eacute;rt&eacute;ket kaphat. A pozit&iacute;v
+&eacute;rt&eacute;kek a jobb tanul&oacute;k megk&uuml;l&ouml;nb&ouml;ztet&eacute;s&eacute;re val&oacute;k, a negat&iacute;v mutat&oacute;k 
+olyan t&eacute;teleket jel&ouml;lnek, amelyekre a legalacsonyabb pontsz&aacute;mot el&eacute;r&#337;k v&aacute;laszoltak a 
+legjobban. A negat&iacute;v DC-vel szerepl&#337; t&eacute;teleket helytelen&uuml;l v&aacute;laszolt&aacute;k meg 
+a tapasztaltabb tanul&oacute;k, &iacute;gy ez voltak&eacute;ppen b&uuml;nteti &#337;ket. Az ilyen t&eacute;tel ker&uuml;lend&#337;.<br/>
+A diszkrimin&aacute;ci&oacute;s egy&uuml;tthat&oacute; / diszkrimin&aacute;ci&oacute;s mutat&oacute; el&#337;nye az,
+hogy az el&#337;bbi a teljes tanul&oacute;i &aacute;llom&aacute;nyra vonatkoz&oacute; adatokat haszn&aacute;l, nem csak a 
+fels&#337; &eacute;s als&oacute; harmad&eacute;t. &Iacute;gy ezzel
+&eacute;rz&eacute;kenyebben m&eacute;rhet&#337; a t&eacute;telre vonatkoz&oacute; teljes&iacute;tm&eacute;ny.</p>
