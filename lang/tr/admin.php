@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.5 ALPHA (2005042400)
+      // admin.php - created with Moodle 1.5 + (2005060201)
 
 
 $string['adminseesallevents'] = 'Yöneticiler bütün olaylarý görür';
@@ -47,7 +47,7 @@ $string['configvariables'] = 'Deðiþkenler';
 $string['configwarning'] = 'Bu ayarlarý deðiþtirirken dikkatli olun. Bilmediðiniz deðerleri girmeniz sorunlara sebep olabilir.';
 $string['configzip'] = 'Zip programýnýn yerini belirtin (Sadece Unix için, isteðe baðlýdýr). Belirtilirse, sunucuda zip arþivi oluþturmak için bu kullanýlacaktýr. Boþ býrakýrsanýz, zip arþivi oluþturmak için dahili iþlemler kullanýlacaktýr.';
 $string['confirmation'] = 'Onay';
-$string['cronwarning'] = '<a href=\"cron.php\">cron.php bakým programý</a> son 24 saattir çalýþmýyor. <br /><a href=\"../doc/?frame=install.html&sub=cron\">Kurulum belgesi</a> bunu nasýl otomatikleþtireceðinizi açýklýyor.';
+$string['cronwarning'] = '<a href=\"cron.php\">cron.php bakým programý</a> son 24 saattir çalýþmýyor. <br /><a href=\"../doc/?frame=install.html&amp;sub=cron\">Kurulum belgesi</a> bunu nasýl otomatikleþtireceðinizi açýklýyor.';
 $string['edithelpdocs'] = 'Yardým belgelerini düzenle';
 $string['editstrings'] = 'Ýfadeleri düzenle';
 $string['filterall'] = 'Tüm ifadeleri filtrele';
@@ -62,7 +62,6 @@ $string['helpweekenddays'] = 'Hangi günler \"Hafta sonu\" olarak deðerlendirilec
 $string['importtimezones'] = 'Zaman dilimleri listesinin tamamýný güncelle';
 $string['importtimezonescount'] = '$a->source \'dan $a->count kayýt çýkartýldý';
 $string['importtimezonesfailed'] = 'Hiç kaynak bulunamadý! (Kötü haber)';
-$string['nodstpresetsexist'] = 'YSU (Yaz Saati Uygulamasý) önceden ayarlanmadýðý için YSU desteði kaldýrýldý. Aþaðýdaki butonu kullanarak bir kaç ön ayar yapmanýz gerekiyor. ';
 $string['optionalmaintenancemessage'] = 'Ýsteðe baðlý bakým mesajý';
 $string['sitemaintenance'] = 'Bu siteye þu anda bakým yapýlýyor ve þimdilik eriþilemez';
 $string['sitemaintenancemode'] = 'Bakým modu';

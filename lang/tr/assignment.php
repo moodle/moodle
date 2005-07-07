@@ -38,6 +38,7 @@ $string['failedupdatefeedback'] = 'Bu kullanýcýnýn gönderdiði geribildirim günce
 $string['feedback'] = 'Geribildirim';
 $string['feedbackfromteacher'] = '$a \'den geribildirim';
 $string['feedbackupdated'] = 'Bu kullanýcýnýn gönderdiði geribildirim güncellenmiþtir $a kiþi';
+$string['guestnoupload'] = 'Üzgünüz, konuklarýn dosya göndermesine izin verilmemektedir.';
 $string['helpoffline'] = '<p>Bu ödev türü site dýþý bir ödev verdiðinizde kullanýþlýdýr.</p>
 <p>Öðrenciler ödev ile ilgili açýklamayý okurlar ancak herhangi bir dosya yükleyemezler.
 Bu ödev türünde öðrenciye bir ödev verip size getirmelerini isteyebilirsiniz. Daha sonra

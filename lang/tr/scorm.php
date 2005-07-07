@@ -2,6 +2,7 @@
       // scorm.php - created with Moodle 1.5 + (2005060201)
 
 
+$string['advanced'] = 'Geliþmiþ';
 $string['asset'] = 'Varlýk';
 $string['attr_error'] = '$a->tag etiketinde ($a->attr) özelliði için hatalý deðer.';
 $string['autocontinue'] = 'Otomatik Devam Et';
@@ -53,9 +54,10 @@ $string['notattempted'] = 'Uygulanmadý';
 $string['organization'] = 'Düzenleme';
 $string['organizations'] = 'Düzenlemeler';
 $string['packagedir'] = 'Dosya sistemi hatasý: Klasör oluþturulamýyor';
+$string['packagefile'] = 'Paket dosya belirtilmedi';
 $string['passed'] = 'Geçti';
 $string['php5'] = 'PHP 5 (DOMXML doðal kütüphansesi)';
-$string['popup'] = 'Þu anki nesneyi yeni bir pencerede aç';
+$string['popup'] = 'Öðrenme Nesnelerini yeni pencerede aç';
 $string['position_error'] = '$a->tag etiketi, $a->parent etiketinin yavrusu olamaz.';
 $string['prev'] = 'Önceki';
 $string['regular'] = 'Düzenli Manifest';
@@ -63,6 +65,8 @@ $string['report'] = 'Rapor';
 $string['review'] = 'Önizleme';
 $string['scoes'] = 'Paylaþýlabilir içerik nesneleri';
 $string['score'] = 'Puan';
+$string['scormcourse'] = 'SCORM Kursu';
+$string['stagesize'] = 'Çerçeve/Pencere boyutu';
 $string['syntax'] = 'Yazým hatasý';
 $string['tag_error'] = 'Bu içerikte bilinmeyen bir etiket ($a->tag) var: $a->value';
 $string['too_many_attributes'] = '$a->tag etiketinin çok fazla özelliði var';
