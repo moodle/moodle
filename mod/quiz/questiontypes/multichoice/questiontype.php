@@ -259,14 +259,16 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
         foreach ($state->options->order as $key => $aid) {
             $answer = &$answers[$aid];
             $qnumchar = chr(ord('a') + $key);
+            $checked = '';
 
             echo '<tr><td valign="top">';
 
             if ($question->options->single) {
                 $type = 'type="radio"';
                 $name   = "name=\"{$question->name_prefix}\"";
-                $checked = $aid == $state->responses['']
-                         ? 'checked="checked"' : '';
+                if (isset($state->responses['']) and $aid == $state->responses['']) {
+                    $checked = 'checked="checked"';
+                }
             } else {
                 $type = ' type="checkbox" ';
                 $name   = "name=\"{$question->name_prefix}{$aid}\"";
