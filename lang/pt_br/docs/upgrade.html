@@ -1,0 +1,144 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>Moodle Docs: Upgrading</title>
+  <link rel="stylesheet" href="docstyles.css" type="TEXT/CSS">
+  <meta http-equiv="Content-Type"
+ content="text/html; charset=iso-8859-1">
+</head>
+<body>
+<h1>Atualizando o Moodle</h1>
+<blockquote>
+  <p>O Moodle &eacute; desenvolvido para permitir uma
+atualiza&ccedil;&atilde;o sem
+problemas, de qualquer vers&atilde;o anterior para qualquer
+vers&atilde;o posterior.<br />
+  </p>
+  <p>Ao atualizar o Moodle voc&ecirc; deve observar os seguintes passos:<br />
+  </p>
+  <h3 class="sectionheading">1. Fa&ccedil;a um Backup das
+informa&ccedil;&otilde;es importantes:<br />
+  </h3>
+  <blockquote> 
+    <p>Embora n&atilde;o seja rigorosamente necess&aacute;rio, &eacute; sempre 
+      uma boa id&eacute;ia fazer um backup de uma instala&ccedil;&atilde;o em 
+      produ&ccedil;&atilde;o antes de uma atualiza&ccedil;&atilde;o importante, 
+      porque pode ser necess&aacute;rio recuperar a vers&atilde;o anterior por 
+      alguma raz&atilde;o. Na realidade, &eacute; uma boa id&eacute;ia automatizar 
+      seu servidor para realizar um backup di&aacute;rio da sua instala&ccedil;&atilde;o 
+      Moodle, assim voc&ecirc; pode pular este passo.<br />
+      <br />
+      Existem tr&ecirc;s &aacute;reas que necessitam de backup:</p>
+    <blockquote>
+      <p><strong>1. O diret&oacute;rio do pr&oacute;prio software Moodle</strong></p>
+      <blockquote>
+        <p>Fa&ccedil;a uma c&oacute;pia separada desses arquivos antes
+da atualiza&ccedil;&atilde;o, assim voc&ecirc; pode recuperar&nbsp; seu
+config.php e outros m&oacute;dulos que voc&ecirc; tenha adicionado,
+tais como temas, idiomas, etc. <strong><br />
+        </strong></p>
+      </blockquote>
+      <p><strong>2. Seu diret&oacute;rio de dados</strong></p>
+      <blockquote>
+        <p>Aqui &eacute; onde s&atilde;o colocados os conte&uacute;dos (tais como 
+          recursos dos cursos e tarefas dos estudantes), dessa forma &eacute; 
+          muito importante sempre fazer backups desses arquivos. Algumas vezes 
+          uma atualiza&ccedil;&atilde;o pode mover ou renomear um diret&oacute;rio 
+          que faz parte do diret&oacute;rio de dados.<strong><br />
+        </strong></p>
+      </blockquote>
+      <p><strong>3. Seu banco de dados</strong></p>
+      <blockquote>
+        <p>A maioria das atualiza&ccedil;&otilde;es do Moodle ir&atilde;o alterar 
+          as tabelas do banco de dados, adicionando ou trocando campos. Para cada 
+          banco de dados existe uma forma diferente de efetuar o backup. Uma forma 
+          de fazer backup de um banco de dados MySQL &eacute; 'descarreg&aacute;-lo' 
+          (dump) em um &uacute;nico arquivo SQL. O exemplo seguinte exibe comandos 
+          UNIX para descarregar um banco de dados chamado "moodle":</p>
+        <blockquote>
+          <p><font face="Courier New, Courier, mono">mysqldump moodle
+&gt; moodle-backup-2002-10-26.sql</font></p>
+        </blockquote>
+        <p>Voc&ecirc; tamb&eacute;m pode utilizar a caracter&iacute;stica Exportar 
+          na interface web Banco de Dados, opcional do Moodle, para efetuar a 
+          mesma coisa em todas as plataformas. <br />
+        </p>
+        <p>&nbsp;</p>
+      </blockquote>
+    </blockquote>
+  </blockquote>
+  <h3 class="sectionheading">2. Instale o novo software Moodle</h3>
+  <blockquote>
+    <p><strong>Utilizando um arquivo compactado baixado da web</strong></p>
+    <blockquote>
+      <p>N&atilde;o sobreponha os arquivos de uma instala&ccedil;&atilde;o mais 
+        antiga a menos que voc&ecirc; saiba o que est&aacute; fazendo... algumas 
+        vezes arquivos antigos podem causar problemas em novas instala&ccedil;&otilde;es. 
+        A melhor forma &eacute; renomear o diret&oacute;rio corrente do Moodle 
+        e ent&atilde;o descompactar o arquivo da nova vers&atilde;o do Moodle 
+        no local antigo. <br />
+      </p>
+      <blockquote>
+        <p><font face="Courier New, Courier, mono">mv moodle
+moodle.backup<br />
+tar xvzf moodle-1.1.tgz</font></p>
+      </blockquote>
+      <p>Em seguida, copie (do diret&oacute;rio que cont&eacute;m a instala&ccedil;&atilde;o 
+        antiga) seu config.php e outros plugins, tais como temas personalizados:</p>
+      <blockquote>
+        <p><font face="Courier New, Courier, mono">cp
+moodle.backup/config.php moodle<br />
+cp -pr moodle.backup/theme/mytheme moodle/theme/mytheme</font></p>
+      </blockquote>
+    </blockquote>
+    <p><strong>Utilizando o CVS</strong></p>
+    <blockquote>
+      <p>Se voc&ecirc; est&aacute; utilizando o CVS, v&aacute; para o diret&oacute;rio 
+        raiz do Moodle e fa&ccedil;a a atualiza&ccedil;&atilde;o dos novos arquivos:</p>
+      <blockquote>
+        <p><font face="Courier New, Courier, mono">cvs update -dP</font></p>
+      </blockquote>
+      <p>Certifique-se de utilizar os par&acirc;metros "d", para criar
+novos diret&oacute;rios se necess&aacute;rio, e "P", para eliminar
+diret&oacute;rios vazios. <br />
+      </p>
+      <p>Se voc&ecirc; editou algum arquivo do Moodle, observe as mensagens com 
+        aten&ccedil;&atilde;o para identificar poss&iacute;veis conflitos. Todos 
+        os temas personalizados e plugins que n&atilde;o s&atilde;o padr&atilde;o 
+        n&atilde;o ser&atilde;o alterados.</p>
+    </blockquote>
+    <p>&nbsp;</p>
+  </blockquote>
+  <h3 class="sectionheading">3. Finalizando a atualiza&ccedil;&atilde;o</h3>
+  <blockquote>
+    <p>O &uacute;ltimo passo &eacute; ativar o processo de atualiza&ccedil;&atilde;o 
+      no seu Moodle.</p>
+    <p>Para isso visite <a target="_top" href="../admin/index.php">a
+p&aacute;gina admin da sua instala&ccedil;&atilde;o</a>.</p>
+    <blockquote>
+      <p><font face="Courier New, Courier, mono">http://example.com/moodle/admin</font></p>
+    </blockquote>
+    <p>N&atilde;o importa se voc&ecirc; acessou como "admin" ou
+n&atilde;o.</p>
+    <p>O Moodle detecta automaticamente a nova vers&atilde;o e realiza todas as 
+      atualiza&ccedil;&otilde;es necess&aacute;rias do banco de dados ou do sistema 
+      de arquivos. Se houver algo que o processo de atualiza&ccedil;&atilde;o 
+      n&atilde;o possa realizar (muito raro), ent&atilde;o voc&ecirc; vai ver 
+      mensagens dizendo o que &eacute; necess&aacute;rio fazer.&nbsp;<br />
+    </p>
+  </blockquote>
+  <p>&nbsp; </p>
+  <p>Considerando que tudo saia bem (sem mensagens de erro), voc&ecirc; pode come&ccedil;ar 
+    a utilizar a nova vers&atilde;o do Moodle e apreciar suas novas caracter&iacute;sticas!</p>
+  <p>Se voc&ecirc; tiver problemas com a atualiza&ccedil;&atilde;o, visite <a target="_top" href="http://moodle.org/">moodle.org</a> 
+    e envie uma mensagem para o <a target="_top"
+ href="http://moodle.org/mod/forum/view.php?id=28">F&oacute;rum de Suporte &agrave; 
+    Instala&ccedil;&atilde;o (em ingl&ecirc;s)</a> no curso "Using Moodle" ou 
+    visite a <a href="http://moodle.org/course/view.php?id=35">Comunidade Moodle 
+    Brasileira<font size="1">. </font></a></p>
+</blockquote>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p align="center"><font size="1"><a href="." target="_top">Documenta&ccedil;&atilde;o de Moodle</a></font></p>
+<p align="center"><font size="1">Version: $Id$</font></p>
+</body>

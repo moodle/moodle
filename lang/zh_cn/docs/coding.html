@@ -1,0 +1,194 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Moodle帮助文档: 程序编写准则</title>
+<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS" />
+<meta http-equiv="Content-Type" content="text/html; charset=GB18030" />
+</head>
+<body bgcolor="#FFFFFF">
+<h1>Moodle程序编写准则</h1>
+<p class="normaltext">任何合作的项目都需要一致性和稳定性才能保持它的强壮。</p>
+<p class="normaltext">编写这些准则的目的是为所有的Moodle代码提供一个努力的目标。有一些比较老的已经存在的代码在极少的方面尚未达标，但它们最终将会被修正。所有新的代码都必须尽可能地遵守这些准则。</p>
+<h2>一般规定</h2>
+<ol class="normaltext">
+  <li class="spaced">所有代码文件应当使用 .php 作为扩展名。</li>
+  <li class="spaced">所有模板文件应当使用 .html 作为扩展名。</li>
+  <li class="spaced">所有文本文件应当使用Unix风格的文本格式(多数的文本编辑器都有这个选项)。</li>
+  <li class="spaced">所有php标记都必须是“完整”标记，譬如<font color="#339900">&lt;?php ?&gt;</font> ... 而不是如<font color="#339900">&lt;? ?&gt;</font>的“短”标记。
+  </li>
+  <li class="spaced">所有已经存在的版权声明应当被保留。如果有必要，您可以加入自己的。</li>
+  <li class="spaced">每个文件都应当包含主config.php文件。</li>
+  <li class="spaced">每个文件都应当检查用户的身份是否正确，可以使用函数require_login()和isadmin()、isteacher()、iscreator()或者isstudent()。</li>
+  <li class="spaced">所有访问数据库的操作都应当使用lib/datalib.php中的函数――这样可以兼容更多的数据库服务器。所有的事情都应当是可以用这些函数来完成的，如果遇到必须要写SQL代码的情况，请记住这些代码应当是跨平台的，且仅仅对您代码中的特定函数(通常在一个lib.php文件中)有效，且代码中用注释进行明确说明。</li>
+  <li class="spaced">不要建立和使用标准全局变量$CFG、$SESSION、$THEME和$USER之外的全局变量。</li>
+  <li class="spaced">所有变量都应当被初始化或者至少在使用前用isset()或empty()等函数进行检测。</li>
+  <li class="spaced">所有字符串都应当可翻译――在"lang/en"目录中创建新的文本文件，字符串应当使用简洁的英文小写名称，并通过函数get_string()或print_string()来取得。</li>
+  <li class="spaced">所有帮助文件应当可翻译――在"en/help"目录中创建文本文件并且通过helpbutton()函数来调用它们。
+    <p>如果需要上传一个帮助文件：</p>
+    <ul>
+    <li>对于小的修改，旧的翻译文件仍然可以继续使用时，可以直接进行修改，但您应当通知translation@moodle.org</li>
+    <li>对于大的修改，应当创建新的文件，新文件的文件名是在原文件名的末尾添加一个数字，并在以后逐渐增加(如filename2.html)，这样翻译人员就可以方便地知道文件有了一个新的版本。很显然，新的代码和帮助索引文件都必须修改以指向新版本的文件。</li>
+    </ul>
+</li>
+  <li class="spaced">从浏览器发来的信息(以GET或POST形式发送)都应用了magic_quotes(无论PHP的设置如何)，因此直接将它们插入到数据库中是安全的。所有其它的原始数据(来自文件或数据库的)都必须在插入数据库前使用<font color="#339900">addslashes()</font>进行预处理。</li>
+  <li class="spaced">重要的：Moodle中所有的文本，特别是用户提供的文本，都必须使用format_text()函数来输出。这样就可以确保文本已经正确地过滤。</li>
+</ol>
+<p> </p>
+<h2>编码风格</h2>
+<p class="normaltext">我知道，如果您已经习惯了一种编码风格而我却让您改变它是有一点讨厌的，但比较而言，这比日后所有人都需要去搞清混合风格的Moodle代码要好一些。对于人们使用的任何编码风格都有很多支持和反对的意见，但现在正在使用的风格<strong>已经存在</strong>了，因此请坚持下去。</p>
+<ol class="normaltext">
+  <li class="spaced"><strong>缩进</strong>应当是4个连续的空格。绝对不要使用制表符。</li>
+  <li class="spaced"><strong>变量名</strong>应当是容易理解、有含义的小写英文单词。如果确实需要两个或以上的单词，请把它们连在一起，但要保持名称尽可能短。对于数组对象，请使用复数名称。
+    <p class="examplecode"><font color="#006600">好的: $quiz<br />
+      好的: $errorstring<br />
+      好的: $assignments (用于数组)<br />
+      好的: $i (仅用于小型循环)<br />
+      <br />
+      坏的: $Quiz <br />
+      坏的: $aReallyLongVariableNameWithoutAGoodReason<br />
+      坏的: $error_string</font></p>
+  </li>
+  <li class="spaced"><strong>常量</strong>应当总是大写的，并总是以模块的名称作为前缀。单词之间应当用下划线分隔。
+    <p class="examplecode"><font color="#006600">define("FORUM_MODE_FLATOLDEST", 
+      1);</font></p>
+  </li>
+  <li class="spaced"><strong>函数名称</strong>应当是简单的英文小写单词，且总是以模块名作为前缀以防止模块之间的冲突。单词之间以下划线分隔。变量如果可能应当总有合理的缺省值。注意在函数名和其后的括号之间没有空格。<br />
+      <p class="examplecode"> <font color="#007700">function </font><font color="#0000BB">forum_set_display_mode</font><font color="#007700">(</font><font color="#0000BB">$mode</font><font color="#007700">=</font><font color="#0000BB">0</font><font color="#007700">)
+      {<br />
+      &nbsp;&nbsp;&nbsp;&nbsp;global </font><font color="#0000BB">$USER</font><font color="#007700">,
+      </font><font color="#0000BB">$CFG</font><font color="#007700">;<br />
+      <br />
+      &nbsp;&nbsp;&nbsp;&nbsp;if (</font><font color="#0000BB">$mode</font><font color="#007700">)
+      {<br />
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">$USER</font><font color="#007700">-&gt;</font><font color="#0000BB">mode
+      </font><font color="#007700">= </font><font color="#0000BB">$mode</font><font color="#007700">;<br />
+      &nbsp;&nbsp;&nbsp;&nbsp;} else if (empty(</font><font color="#0000BB">$USER</font><font color="#007700">-&gt;</font><font color="#0000BB">mode</font><font color="#007700">))
+      {<br />
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">$USER</font><font color="#007700">-&gt;</font><font color="#0000BB">mode
+      </font><font color="#007700">= </font><font color="#0000BB">$CFG</font><font color="#007700">-&gt;</font><font color="#0000BB">forum_displaymode</font><font color="#007700">;<br />
+      &nbsp;&nbsp;&nbsp;&nbsp;}<br />
+      }</font></p>
+  </li>
+  <li class="spaced"><strong>语句块</strong>必须总是使用大括号(即便是只有一行)。Moodle使用如下风格:
+    <p class="examplecode"> <font color="#006600">if (</font><font color="#0000CC">$quiz</font><font color="#006600">-&gt;</font><font color="#0000CC">attempts</font><font color="#006600">)
+      {<br />
+      &nbsp;&nbsp;&nbsp;&nbsp;if (</font><font color="#0000CC">$numattempts </font><font color="#006600">&gt;
+      </font><font color="#0000CC">$quiz</font><font color="#006600">-&gt;</font><font color="#0000CC">attempts</font><font color="#006600">)
+      {<br />
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000CC">error</font><font color="#006600">(</font><font color="#0000BB">$strtoomanyattempts</font><font color="#006600">,
+      </font><font color="#CC0000">"view.php?id=$cm</font><font color="#006600">-&gt;</font><font color="#CC0000">id"</font><font color="#006600">);<br />
+      &nbsp;&nbsp;&nbsp;&nbsp;}<br />
+      }</font></p>
+  </li>
+  <li class="spaced"><strong>字符串</strong>应当尽可能用单引号定义以提高速度。<br />
+    <p class="examplecode"> <font color="#006600">$var = 'some text without any 
+      variables';<br />
+      $var = "with special characters like a new line n";<br />
+      $var = 'a very, very long string with a '.$single.' variable in it';<br />
+      $var = "some $text with $many variables $within it"; </font></p>
+  </li>
+  <li class="spaced">实用的<strong>注释</strong>应当尽可能填写，用以解释代码流程和函数与变量的功能。
+     <ul>
+     <li>每个函数和类都应该使用流行的<a target="_blank" href="http://www.phpdoc.org/">phpDoc格式</a>编写，以便自动生成代码文档。</li>
+     <li>内嵌注释应使用 // 风格，并且整齐布局，使其能融入代码中并和代码对齐。 
+     </li>
+     </ul>
+  
+   <p class="examplecode"><font color="#FF8000">
+/**<br />
+ * The description should be first, with asterisks laid out exactly<br />
+ * like this example.  If you want to refer to a another function,<br />
+ * do it like this: {@link clean_param()}.  Then, add descriptions <br />
+ * for each parameter as follows.<br />
+ *<br />
+ * @param int    $postid The PHP type is followed by the variable name<br />
+ * @param array  $scale The PHP type is followed by the variable name<br />
+ * @param array  $ratings The PHP type is followed by the variable name<br />
+ * @return mixed<br />
+ */</font><br />
+<font color="#006600">function </font><font color="#0000BB">forum_get_ratings_mean</font><font color="#007700">(</font><font color="#0000BB">$postid</font><font color="#007700">,
+      </font><font color="#0000BB">$scale</font><font color="#007700">, </font><font color="#0000BB">$ratings</font><font color="#007700">=</font><font color="#0000BB">NULL</font><font color="#007700">)
+      {<br /></font>
+      &nbsp;&nbsp;&nbsp;&nbsp;<font color="#007700">if (!</font><font color="#0000BB">$ratings</font><font color="#007700">)
+      {<br />
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">$ratings
+      </font><font color="#007700">= array(); &nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#FF8000">//
+      Initialize the empty array</font><font color="#007700"><br />
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (</font><font color="#0000BB">$rates
+      </font><font color="#007700">= </font><font color="#0000BB">get_records</font><font color="#007700">(</font><font color="#DD0000">"forum_ratings"</font><font color="#007700">,
+      </font><font color="#DD0000">"post"</font><font color="#007700">, </font><font color="#0000BB">$postid</font><font color="#007700">))
+      {<br />
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#FF8000">//
+      Process each rating in turn</font><font color="#007700"><br />
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;foreach
+      (</font><font color="#0000BB">$rates </font><font color="#007700">as </font><font color="#0000BB">$rate</font><font color="#007700">)
+      {</font> <br />
+      ....etc </p>
+  </li>
+
+  <li class="spaced"><strong>换行</strong>可以被大方地使用——把东西分散开看起来会比较清楚。一般情况下，在花括号和普通命令之间应当有一个换行符，但在花括号和变量或函数之间可以没有换行符:<br />
+    <p class="examplecode"> <font color="#007700">foreach (</font><font color="#0000BB">$objects
+      </font><font color="#007700">as </font><font color="#0000BB">$key </font><font color="#007700">=&gt;</font><font color="#0000BB">
+      $thing</font><font color="#007700">)</font><font color="#006600"> {<br />
+      </font><font color="#007700">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">process($thing);</font><font color="#006600">
+      <br />
+      } <br />
+      <br />
+      </font><font color="#007700">if (</font><font color="#0000BB">$x </font><font color="#007700">==
+      </font><font color="#0000BB">$y</font><font color="#007700">)</font><font color="#006600">
+      {<br />
+      </font><font color="#007700">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">$a
+      </font><font color="#007700">= </font><font color="#0000BB">$b</font><font color="#007700">;</font><font color="#006600"><br />
+      } else if (</font><font color="#0000BB">$x </font><font color="#007700">==
+      </font><font color="#0000BB">$z</font><font color="#006600">) {<br />
+      </font><font color="#007700">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">$a
+      </font><font color="#007700">= </font><font color="#0000BB">$c</font><font color="#007700">;</font><font color="#006600"><br />
+      } else {<br />
+      </font><font color="#007700">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">$a
+      </font><font color="#007700">= </font><font color="#0000BB">$d</font><font color="#007700">;</font><font color="#006600"><br />
+      } </font></p>
+  </li>
+</ol>
+<p> </p>
+<h2>数据库结构</h2>
+<ol class="normaltext">
+  <li class="spaced">每个表格都必须有一个自增的<strong>id</strong>字段(INT10)作为主键。</li>
+  <li class="spaced">包含着模块中数据实例的主表格必须和模块同名(譬如<strong>widget</strong>)，并且至少包含如下字段:
+    <ul>
+      <li><strong>id</strong> - 如上一条所述</li>
+      <li><strong>course</strong> - 每个实例所属的课程id</li>
+      <li><strong>name</strong> - 每个实例的完整名称</li>
+    </ul>
+  </li>
+  <li class="spaced">与模块相关的其它表格的命名规则是：如果它包含的信息是关于“things”的，则它的名字应当是<strong>widget_things</strong>(注意采用复数形式)。</li>
+  <li class="spaced">字段名称应当简短，与变量名的规则相同。</li>
+  <li class="spaced">在可能的情况下，包含着对其它表格(如<strong>widget</strong>)引用的字段应当命名为<strong>widgetid</strong>。(注意这是个新约定，有一些老的表格并未遵守)</li>
+  <li class="spaced">布尔字段应当使用小整数类型(如INT4)并存储为0或1，这样就可以在需要时扩展它。</li>
+  <li class="spaced">多数的表格应当有一个<strong>timemodified</strong>字段(INT10)，并用PHP的<strong>time</strong>()函数取得的当前时间戳来更新它。</li>
+</ol>
+<hr />
+<p>&nbsp;</p>
+<h2>安全问题（处理表单和URL数据）</h2>
+<ol class="normaltext">
+  <li class="spaced">不要依靠“register_globals”。<strong>每个</strong>变量必须在<strong>每个</strong>源文件里正确初始化。变量的来源必须显而易见</li>
+  <li class="spaced">初始化所有的数组和对象，即使它是空的。<code>$a = array()</code>或<code>$obj = new stdClass();</code>。</li>
+  <li class="spaced">不要使用<code>optional_variable()</code>函数。使用<code>optional_param()</code>函数来替代。根据数据类型选择正确的PARAM_XXXX值。使用<code>set_default()</code>函数检查和设置变量的可选值。</li>
+  <li class="spaced">不要使用<code>require_variable()</code>函数。使用<code>required_param()</code>来替代。根据数据类型选择正确的PARAM_XXXX值。</li>
+  <li class="spaced">不要使用<code>$_GET</code>、<code>$_POST</code>或<code>$_REQUEST</code>。根据您的需要使用更合适的<code>required_param()</code>或<code>optional_param()</code></li>
+  <li class="spaced">检查一个动作时，不要使用像<code>if (isset($_GET['something']))</code>这样的代码。可以使用诸如：<code>$something = optional_param( 'something','',PARAM_ALPHA )</code>，并且用<code>empty()</code>函数测试</li>
+  <li class="spaced">在任何可能的情况下，把您所有的<code>required_param()</code>、<code>optional_param()</code>和其它的变量初始化一起放在每个文件的开头，这样它们会更容易被找到。</li>
+  <li class="spaced">使用“sesskey”机制保护表单处理函数不被攻击。当生成表单的时候，要包含<code>&lt;input type="hidden" name="sesskey" value="&lt;?php echo sesskey(); ?&gt" /&gt;</code>。使用表单时用<code>if (!confirm_sesskey()) {error('Bad Session Key');}</code>检查。</li> 
+  <li class="spaced">所有文件名必须用<code>clean_filename()</code>函数“过滤”，但如果已经适当地使用<code>required_param()</code>或<code>optional_param()做了此项工作，则不必如此</code>
+    </li>
+  <li class="spaced">再把任何从数据库读出的数据写回之前，必须先用<code>addslashes()</code>处理。一个完整数据对象可以用<code>addslashes_object()</code>一次性完全处理完毕。</li>
+  <li class="spaced">在任何可能的情况下，存入数据库的数据必须来自<code>POST</code>数据（也就是来自表单的数据），而不能来自<code>GET</code>数据（也就是来自URL的数据）。</li>
+  <li class="spaced">如果能避免的话，不要使用来自<code>$_SERVER</code>的数据。它会给移植性带来问题</li>
+  <li class="spaced">在其它地方没有做的情况下，确保所有写入数据库的数据已经被<code>clean_param</code> 函数处理，并且针对数据类型，使用了恰当的PARAM_XXXX。</li>
+  <li class="spaced">如果您编写了自定义的SQL代码，请确保它是正确的。尤其小心在数值周围不要丢失引号，这可能会带来SQL“注入”漏洞。</li>
+  <li class="spaced">在<strong>每一</strong>页检查所有的数据（尤其是写到数据库的数据）。不要期盼或依赖其它地方已经检查了。</li>
+</ol>
+<p align="CENTER"><font size="1"><a href="." target="_top">Moodle文档</a></font></p>
+<p align="center"><font size="1">Version: $Id$</font></p>
+</body>
+</html>

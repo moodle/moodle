@@ -1,0 +1,158 @@
+<p align="center"><b>关于Richtext HTML编辑器</b></p>
+
+<p>可用性：<b>
+<?php  if (!$CFG->htmleditor) {
+       print_string("htmleditordisabledadmin");
+   } else if (!$USER->htmleditor) {
+       print_string("htmleditordisabled");
+   } else if (!can_use_richtext_editor()) {
+       print_string("htmleditordisabledbrowser");
+   } else {
+       print_string("htmleditoravailable");
+   }
+?>
+</b></p>
+
+<p>Richtext HTML编辑器提供了一个字处理程序的界面，它嵌入在您的Web页面之中，允许您以习惯的方式修改文本并生成普通的HTML代码。</p>
+
+<p>除了对文本进行格式化之外，这个编辑器还提供了一系列其它的有用功能。</p>
+
+<p><b>从其它应用程序粘贴文本</b></p>
+<ul>
+<p>您可以直接从其它的Windows应用程序如Microsoft Word中粘贴rich text到这个编辑器中，而其中的格式能保留下来。只需要使用浏览器菜单中的剪切和粘贴即可(或者Control-C和Control-V)。</p>
+</ul>
+
+<p><b>插入图片<img alt="" border="0" hspace="10" src="lib/editor/images/ed_image.gif" /></b></p>
+<ul>
+<p>如果您有已经发布到网站上的图片，并可以通过一个URL来访问它，您可以将这些图片加入到您的文本中，使用“插入图片”按钮就可以了。</p>
+</ul>
+
+<p><b>插入表格<img alt="" border="0" hspace="10" src="lib/editor/images/insert_table.gif" /></b></p>
+<ul>
+<p>要改变文本的布局，您可以使用工具栏上的“插入表格”按钮。</p>
+</ul>
+
+<p><b>插入链接<img alt="" border="0" hspace="10" src="lib/editor/images/ed_link.gif" /> /</b></p>
+<ul>
+<p>要生成一个新链接，首先您应当输入链接中的文字，然后选择这些文字并点击工具栏上的链接按钮，然后输入要链接到的URL即可。</p>
+</ul>
+
+
+<p><b>插入笑脸(表情)<img alt="" border="0" hspace="10" src="pix/s/smiley.gif" width="15" height="15" /></b></p>
+<ul>
+<p>要在您的文本中插入这些小图标，点击工具栏上的笑脸图片。系统会弹出一个对话框让您选择下面的笑脸图标。(另外，您也可以直接将相应的代码输入到您的文本中，稍后显示您的文字时它们会被转换为笑脸图标。)</p>
+
+    <table border="1">
+      <tr valign="top">
+        <td>
+        <table border="0" align="center" cellpadding="10">
+          <tr>
+            <td><img alt="" border="0" hspace="10" src="pix/s/smiley.gif" width="15" height="15" /></td>
+            <td>smile</td>
+            <td nowrap="nowrap"><font face="Courier">:-)</font></td>
+          </tr>
+          <tr>
+            <td><img alt="" border="0" hspace="10" src="pix/s/biggrin.gif" width="15" height="15" /></td>
+            <td>big grin</td>
+            <td nowrap="nowrap"><font face="Courier">:-D</font></td>
+          </tr>
+          <tr>
+            <td><img alt="" border="0" hspace="10" src="pix/s/wink.gif" width="15" height="15" /></td>
+            <td>wink</td>
+            <td nowrap="nowrap"><font face="Courier">;-)</font></td>
+          </tr>
+          <tr>
+            <td><img alt="" border="0" hspace="10" src="pix/s/mixed.gif" width="15" height="15" /></td>
+            <td>mixed</td>
+            <td nowrap="nowrap"><font face="Courier">:-/</font></td>
+          </tr>
+            <tr>
+              <td><img alt="" border="0" hspace="10" src="pix/s/thoughtful.gif" width="15" height="15" /></td>
+              <td>thoughtful</td>
+              <td nowrap="nowrap"><font face="Courier">V-.</font></td>
+            </tr>
+          <tr>
+            <td><img alt="" border="0" hspace="10" src="pix/s/tongueout.gif" width="15" height="15" /></td>
+            <td>tongue out</td>
+            <td nowrap="nowrap"><font face="Courier">:-P</font></td>
+         </tr>
+          <tr>
+            <td><img alt="" border="0" hspace="10" src="pix/s/cool.gif" width="15" height="15" /></td>
+            <td>cool</td>
+            <td nowrap="nowrap"><font face="Courier">B-)</font></td>
+          </tr>
+            <tr>
+              <td><img alt="" border="0" hspace="10" src="pix/s/approve.gif" width="15" height="15" /></td>
+              <td>approve</td>
+              <td nowrap="nowrap"><font face="Courier">^-)</font></td>
+            </tr>
+            <tr>
+              <td><img alt="" border="0" hspace="10" src="pix/s/wideeyes.gif" width="15" height="15" /></td>
+              <td>wide eyes</td>
+              <td nowrap="nowrap"><font face="Courier">8-)</font></td>
+            </tr>
+            <tr>
+              <td><img alt="" border="0" hspace="10" src="pix/s/surprise.gif" width="15" height="15" /></td>
+              <td>surprise</td>
+              <td nowrap="nowrap"><font face="Courier">8-o</font></td>
+            </tr>
+        </table>
+        </td>
+        <td>
+        <table border="0" align="center" cellpadding="10">
+            <tr>
+              <td><img alt="" border="0" hspace="10" src="pix/s/sad.gif" width="15" height="15" /></td>
+              <td>sad</td>
+              <td nowrap="nowrap"><font face="Courier">:-(</font></td>
+            </tr>
+            <tr>
+              <td><img alt="" border="0" hspace="10" src="pix/s/shy.gif" width="15" height="15" /></td>
+              <td>shy</td>
+              <td nowrap="nowrap"><font face="Courier">8-.</font></td>
+            </tr>
+          <tr>
+            <td><img alt="" border="0" hspace="10" src="pix/s/blush.gif" width="15" height="15" /></td>
+            <td>blush</td>
+            <td nowrap="nowrap"><font face="Courier">:-I</font></td>
+          </tr>
+            <tr>
+              <td><img alt="" border="0" hspace="10" src="pix/s/kiss.gif" width="15" height="15" /></td>
+              <td>kisses</td>
+              <td nowrap="nowrap"><font face="Courier">:-X</font></td>
+            </tr>
+          <tr>
+            <td><img alt="" border="0" hspace="10" src="pix/s/clown.gif" width="15" height="15" /></td>
+            <td>clown</td>
+            <td nowrap="nowrap"><font face="Courier">:o)</font></td>
+          </tr>
+          <tr>
+            <td><img alt="" border="0" hspace="10" src="pix/s/blackeye.gif" width="15" height="15" /></td>
+            <td>black eye</td>
+            <td nowrap="nowrap"><font face="Courier">P-|</font></td>
+          </tr>
+            <tr>
+              <td><img alt="" border="0" hspace="10" src="pix/s/angry.gif" width="15" height="15" /></td>
+              <td>angry</td>
+              <td nowrap="nowrap"><font face="Courier">8-[</font></td>
+            </tr>
+            <tr>
+              <td><img alt="" border="0" hspace="10" src="pix/s/dead.gif" width="15" height="15" /></td>
+              <td>dead</td>
+              <td nowrap="nowrap"><font face="Courier">xx-P</font></td>
+            </tr>
+            <tr>
+              <td><img alt="" border="0" hspace="10" src="pix/s/sleepy.gif" width="15" height="15" /></td>
+              <td>sleepy</td>
+              <td nowrap="nowrap"><font face="Courier">|-.</font></td>
+            </tr>
+          <tr>
+            <td><img alt="" border="0" hspace="10" src="pix/s/evil.gif" width="15" height="15" /></td>
+            <td>evil</td>
+            <td nowrap="nowrap"><font face="Courier">}-]</font></td>
+          </tr>
+        </table>
+    </table>
+
+</ul>
+
+

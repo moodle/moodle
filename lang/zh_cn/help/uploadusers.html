@@ -1,0 +1,31 @@
+<p align="center"><b>上传用户</b></p>
+
+<p>首先，注意<strong>通常都是没有必要大批量上传用户的</strong> - 要让您自己的维护工作比较好做，首先应当看一下是否有合适的无需手工维护的认证模式，如链接到已有的外部数据库或让用户自己创建他们的帐号。看一下管理菜单中的认证部分。</p>
+
+<p>如果您确定要从文本文件中导入众多用户帐号，您应当将该文件以下述格式保存：</p>
+
+<ul>
+  <li>文件中的每一行包含一条记录</li>
+  <li>每条记录都是一系列以逗号分割的数据</li>
+  <li>文件的第一条记录很特殊，它包含着字段名的列表。这定义了文件中余下部分的格式。
+    <blockquote>
+      <p><strong>必需的字段名：</strong>这些字段名必须包含在第一条记录中，并且每个用户都需要有。</p>
+      <p></p>
+      <font color="#990000" face="Courier New, Courier, mono">username, password, firstname, lastname, email</font></p>
+</p>
+      <p><strong>缺省的字段名：</strong>这些是可选的——如果并未包含它们，则会使用主管理员的值作为缺省值。</p>
+      <p><font color="#990000" face="Courier New, Courier, mono">institution, department, city, country, lang, auth, timezone</font> </p>
+      <p><strong>可选的字段名：</strong>所有这些都是可选的。课程名称是课程的“简称”——如果存在，则用户会自动选该课程。小组名称是和课程对应的，例如course1中的group1。</p>
+      <p> <font color="#990000" face="Courier New, Courier, mono">idnumber, icq, phone1, phone2, address, url, description, mailformat, maildisplay, htmleditor, autosubscribe, course1, course2, course3, course4, course5, group1, group2, group3, group4, group5</font></p>
+    </blockquote>
+    </li>
+  <li>数据中的逗号应当重新编码为&amp;#44——系统会自动将其解码。</li>
+  <li>对于布尔字段，是用0表示假、1表示真。</li>
+  <li>注意：如果用户已经在用户数据库中注册，系统会返回用户已有的userid号(数据库中的索引)，以及将他加入到相应的课程中，但不会更新其它的数据。</li>
+</ul>
+  
+  
+<p>下例是一个合法的导入文件：</p>
+<p><font size="-1" face="Courier New, Courier, mono">username, password, firstname, lastname, email, lang, idnumber, maildisplay, course1, group1<br />
+jonest, verysecret, Tom, Jones, jonest@someplace.edu, en, 3663737, 1, Intro101, Section 1<br />
+reznort, somesecret, Trent, Reznor, reznort@someplace.edu, en_us, 6736733, 0, Advanced202, Section 3</font></p>

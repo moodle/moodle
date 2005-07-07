@@ -1,0 +1,86 @@
+<p align="center"><b>导入新问题</b></p>
+
+<p>这个功能于允许您通过表单上传外部文本文件，并导入其中的问题。</p>
+
+<p>它可以支持很多文件格式：</p>
+
+<p><b>GIFT格式</b></p>
+<ul>
+<p>GIFT是Moodle可以用来从文本文件导入问题的最复杂的格式。它支持单选题、是非题、简答题、匹配题、数学题及填空题。在一个单独的文本文件中可以混合多种类型的题目，并且这种格式还支持整行注释、问题名称、反馈和百分比权重的打分方法。下面是一个例子:</p>
+<pre>
+Who's buried in Grant's tomb?~Grant ~Jefferson =no one}
+
+Grant is {~buried =entombed ~living} in Grant's tomb.
+
+Grant is buried in Grant's tomb.{FALSE}
+
+Who's buried in Grant's tomb?{=no one =nobody}
+
+When was Ulysses S. Grant born?{#1822}
+</pre>
+
+<p align="right"><a href="help.php?file=formatgift.html&module=quiz">"GIFT"格式的更多信息</a></p>
+</ul>
+
+<p><b>Aiken格式</b></p>
+<ul>
+<p>Aiken格式通常用来编写单选题，它很简单也易于读懂。下面就是这个格式的例子:</p>
+<pre>
+What is the purpose of first aid?
+A. To save life, prevent further injury, preserve good health
+B. To provide medical treatment to any injured or wounded person
+C. To prevent further injury
+D. To aid victims who may be seeking help
+ANSWER: A
+</pre>
+
+<p align="right"><a href="help.php?file=formataiken.html&module=quiz">"Aiken"格式的更多信息</a></p>
+</ul>
+
+<p><b>Missing Word</b></p>
+<ul>
+<p>这个格式只支持单选题，答案之间以波浪号(~)分隔，正确答案则以等号为前缀(=)。例子如下:</p>
+
+<blockquote>As soon as we begin to explore our body parts as infants
+we become students of {=anatomy and physiology ~reflexology 
+~science ~experiment}, and in a sense we remain students for life.
+</blockquote>
+
+<p align="right"><a href="help.php?file=formatmissingword.html&module=quiz">"Missing Word"格式的更多信息</a></p>
+</ul>
+
+<p><b>AON</b></p>
+<ul>
+<p>这个格式在多数情况下和Missing Word格式相同，但在导入后，所有简单题都会被转为匹配题。</p>
+<p>此外，多个答案在导入的过程中其顺序会被打乱。</p>
+<p>它以一个开发了多种测验功能的组织命名。</p>
+</ul>
+
+<p><b>Blackboard</b></p>
+<ul>
+<p>这个模块可以导入以Blackboard的导出格式保存的问题。要使用它，PHP必须具备XML处理函数。</p>
+
+<p align="right"><a href="help.php?file=formatblackboard.html&module=quiz">"Blackboard"格式的更多信息</a></p>
+</ul>
+
+<p><b>Course Test Manager</b></p>
+<ul>
+<p>这个模块可以引入Course Test Manager题库中的问题。由于题库保存于Micorsoft Access数据库中，它对于访问题库的方式特别是Moodle运行在Windows还是Linux服务器上有比较强的依赖性。</p>
+<p>在Windows上，它允许您象上传其它文件一样上传Access数据库。</p>
+<p>在Linux上，在您的网络上必须有一台安装了Course Test Manager数据库的Windows计算机，并通过ODBC Socket Server以XML格式将数据传到Linux服务器上。</p>  
+
+<p>在使用此功能导入前请仔细阅读完整的文档。</p>
+
+<p align="right"><a href="help.php?file=formatctm.html&module=quiz">"CTM"格式的更多信息</a></p>
+</ul>
+
+<p><b>自定义</b></p>
+<ul>
+<p>如果您希望以您自己的格式导入问题，请在“mod/quiz/format/custom.php”文件中实现它。</p>
+
+<p>需要编写的新代码并不多——只需从给定的文字中分析出试题就可以了。</p>
+
+<p align="right"><a href="help.php?file=formatcustom.html&module=quiz">"自定义"格式的更多信息</a></p>
+</ul>
+
+<p>将来还会有更多的格式，包括WebCT、IMS QTI和任何其它Moodle用户可以贡献的格式!</p>
