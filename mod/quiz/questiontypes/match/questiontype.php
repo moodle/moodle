@@ -105,19 +105,15 @@ class quiz_match_qtype extends quiz_default_questiontype {
             $answer->fraction = 1.0;
             $state->options->subquestions[$key]->options
              ->answers[$subquestion->id] = clone($answer);
+            
+            $state->responses[$key] = '';
         }
 
         // Shuffle the answers if required
-        $subquestionids = array_values(array_map(create_function('$val',
-         'return $val->id;'), $state->options->subquestions));
         if ($quiz->shuffleanswers) {
-           $subquestionids = swapshuffle($subquestionids);
+           $state->options->subquestions = swapshuffle_assoc($state->options->subquestions);
         }
-        $state->options->order = $subquestionids;
-        // Create empty responses
-        foreach ($subquestionids as $val) {
-            $state->responses[$val] = '';
-        }
+
         return true;
     }
 
@@ -129,18 +125,18 @@ class quiz_match_qtype extends quiz_default_questiontype {
         $responses = array_map(create_function('$val',
          'return explode("-", $val);'), $responses);
 
-        // Restore the previous responses
-        $state->responses = array();
-        if ($responses) {
-            foreach ($responses as $response) {
-                $state->responses[$response[0]] = $response[1];
-            }
-        }
-
-        if (!$state->options->subquestions = get_records('quiz_match_sub',
+        if (!$questions = get_records('quiz_match_sub',
          'question', $question->id)) {
            notify('Error: Missing subquestions!');
            return false;
+        }
+
+        // Restore the previous responses and place the questions into the state options
+        $state->responses = array();
+        $state->options->subquestions = array();
+        foreach ($responses as $response) {
+            $state->responses[$response[0]] = $response[1];
+            $state->options->subquestions[$response[0]] = $questions[$response[0]];
         }
 
         foreach ($state->options->subquestions as $key => $subquestion) {
@@ -162,10 +158,8 @@ class quiz_match_qtype extends quiz_default_questiontype {
     function save_session_and_responses(&$question, &$state) {
         // Serialize responses
         $responses = array();
-        foreach ($state->responses as $key => $val) {
-            if ($key != '') {
-                $responses[] = "$key-$val";
-            }
+        foreach ($state->options->subquestions as $key => $subquestion) {
+            $responses[] = $key.'-'.($state->responses[$key] ? $state->responses[$key] : 0);
         }
         $responses = implode(',', $responses);
 
@@ -215,8 +209,7 @@ class quiz_match_qtype extends quiz_default_questiontype {
 
         ///// Print the input controls //////
         echo '<table border="0" cellpadding="10" align="right">';
-        foreach ($state->options->order as $key) {
-            $subquestion = $subquestions[$key];
+        foreach ($subquestions as $key => $subquestion) {
 
             /// Subquestion text:
             echo '<tr><td align="left" valign="top">';
@@ -268,7 +261,7 @@ class quiz_match_qtype extends quiz_default_questiontype {
 
         $sumgrade = 0;
         foreach ($subquestions as $key => $sub) {
-            if (isset($sub->options->answers[$responses[$key]])) {
+            if (isset($responses[$key]) and isset($sub->options->answers[$responses[$key]])) {
                 $sumgrade += $sub->options->answers[$responses[$key]]->fraction;
             }
         }
