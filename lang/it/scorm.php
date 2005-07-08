@@ -18,7 +18,6 @@ $string['datadir'] = 'Errore Filesystem: non è possibile creare la directory dei
 $string['details'] = 'Dettagli tracciamento SCO';
 $string['display'] = 'Visualizzazione';
 $string['domxml'] = 'Libreria esterna DOMXML';
-$string['enablebrowse'] = 'Abilita il modo Visita';
 $string['entercourse'] = 'Segui corso SCORM';
 $string['errorlogs'] = 'Errori';
 $string['exit'] = 'Esci dal corso SCORM';
@@ -35,6 +34,8 @@ $string['gradescoes'] = 'Situazione degli sco';
 $string['gradesum'] = 'Somma dei voti';
 $string['guestsno'] = 'Gli ospiti non possono visualizzare i corsi scorm';
 $string['height'] = 'Altezza';
+$string['hidebrowse'] = 'Nascondi il pulsante visita';
+$string['hidetoc'] = 'Nascondi la struttura del corso nella finestra del player';
 $string['incomplete'] = 'Incompleto';
 $string['lastaccess'] = 'Ultimo accesso';
 $string['missing_attribute'] = 'Attributo mancante $a->attr al tag $a->tag';
@@ -79,5 +80,6 @@ $string['validationtype'] = 'Questa impostazione abilita l\'utilizzo di una libr
 $string['versionwarning'] = 'La versione del manifest è precedente alla 1.3, avviso rilevato al tag $a->tag';
 $string['viewallreports'] = 'Vedi lo stato dei $a tentativi';
 $string['width'] = 'Larghezza';
+$string['window'] = 'Frame/Finestra';
 
 ?>

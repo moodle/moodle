@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // install.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
+      // install.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['admindirerror'] = 'La directory di amministrazione specificata non è corretta';
@@ -13,6 +13,13 @@ $string['configfilenotwritten'] = 'Il sistema di installazione non è in grado di
 $string['configfilewritten'] = 'Il config.php è stato creato correttamente';
 $string['configurationcomplete'] = 'Configurazione completata';
 $string['database'] = 'Base di dati';
+$string['databasecreationsettings'] = 'È necessario configurare le impostazioni della base dati dove Moodle salvac la maggior parte dei dati. Questa base dati sarà creata automaticamente dall\'installatore di Moodle4Windows con le impostazioni specificate sotto.<br /><br /><br />
+<b>Tipo:</b> impostato a \"mysql\" dall\'installatore<br />
+<b>Server:</b> impostato a \"localhost\" dall\'installatore<br />
+<b>Nome:</b> nome della base dati, es. moodle<br />
+<b>Utente:</b> impostato a \"root\" dall\'installatore<br />
+<b>Password:</b> la vostra password della base dati<br />
+<b>Prefisso Tabelle:</b> prefisso opzionale che viene utilizzato per tutti i nomi delle tabelle';
 $string['databasesettings'] = '<p>È necessario configurare la base dati dove la maggior parte dei dati di Moodle vengono salvati. Questa base di dati deve essere già stata creata e un utente con password deve essere stato creato per accedervi.</p>
 <b>Tipo:</b> es. mysql o postgres7<br/>
 <b>Server della base dati:</b> es. localhost o db.isp.com<br />

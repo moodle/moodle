@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.4 beta (2004082300)
+      // lesson.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['accesscontrol'] = 'Controllo dell\'accesso';
@@ -14,6 +14,7 @@ $string['addedaquestionpage'] = 'Pagina di domanda aggiunta';
 $string['addedcluster'] = 'Cluster aggiunto';
 $string['addedendofcluster'] = 'Fine Cluster aggiunto';
 $string['addendofcluster'] = 'Aggiungi un Fine Cluster';
+$string['and'] = 'AND';
 $string['answer'] = 'Risposta';
 $string['answeredcorrectly'] = 'risposto correttamente.';
 $string['answersfornumerical'] = 'Le risposte alle domande numeriche devono essere comprese tra un minimo e un massimo';
@@ -39,6 +40,9 @@ $string['clustertitle'] = 'Cluster';
 $string['comments'] = 'I tuoi commenti';
 $string['commentswithname'] = 'Commenti di $a->firstname {$a->lastname}';
 $string['completed'] = 'Completato';
+$string['completederror'] = 'Completare la lezione';
+$string['completethefollowingconditions'] = 'È necessario completare le seguenti condizioni nella lezione <b>$a</b> prima di poter procedere.';
+$string['conditionsfordependency'] = 'Condizione(i) di dipendenza';
 $string['confirmdeletionofthispage'] = 'Confermi la cancellazione di questa pagina';
 $string['congratulations'] = 'Congratulazioni - hai terminato la lezione ';
 $string['continue'] = 'Continua';
@@ -53,6 +57,7 @@ $string['deleteattempts'] = 'Cancella i tentativi di uno studente (userid)';
 $string['deletedpage'] = 'Pagina cancellata';
 $string['deleting'] = 'Cancellazione';
 $string['deletingpage'] = 'Cancellazione pagina: $a';
+$string['dependencyon'] = 'Dipendente da';
 $string['description'] = 'Descrizione';
 $string['detailedstats'] = 'Statistiche dettagliate';
 $string['didnotanswerquestion'] = 'Non rispondere a questa domanda.';
@@ -89,6 +94,7 @@ $string['flowcontrol'] = 'Controllo dell\'esecuzione';
 $string['general'] = 'Generale';
 $string['gobacktolesson'] = 'Indietro alla lezione';
 $string['grade'] = 'Punteggio';
+$string['gradebetterthan'] = 'Voto maggiore di (&#37;)';
 $string['gradeessay'] = 'Valuta le domande solo testo ($a->notgradedcount non valutate e $a->notsentcount non inviate)';
 $string['gradeis'] = 'Il voto è $a';
 $string['gradeoptions'] = 'Opzioni per la valutazione';
@@ -180,8 +186,8 @@ $string['pointsearned'] = 'Punti ottenuti';
 $string['postsuccess'] = 'Inviato con successo';
 $string['practice'] = 'Lezione per pratica';
 $string['previouspage'] = 'Pagina precedente';
-$string['questionoption'] = 'Opzioni domanda';
 $string['question'] = 'Domanda';
+$string['questionoption'] = 'Opzioni domanda';
 $string['questiontype'] = 'Tipo di domanda';
 $string['randombranch'] = 'Pagina ramo casuale';
 $string['randompageinbranch'] = 'Domanda casuale da un ramo';
@@ -226,6 +232,8 @@ $string['thefollowingpagesjumptothispage'] = 'La pagina seguente salta a questa 
 $string['thispage'] = 'Questa pagina';
 $string['timed'] = 'A tempo';
 $string['timeremaining'] = 'Tempo rimanente';
+$string['timespenterror'] = 'Passato come minimo $a minuti nella lezione';
+$string['timespentminutes'] = 'Tempo passato (minuti)';
 $string['timetaken'] = 'Tempo impiegato';
 $string['topscorestitle'] = 'I $a->maxhighscores voti migliori per la lezione $a->name.';
 $string['treeview'] = 'Vista dell\'albero';
