@@ -867,7 +867,7 @@ function quiz_upgrade($oldversion) {
         execute_sql("UPDATE {$CFG->prefix}quiz_attempts SET uniqueid = id", false);
         // we set $CFG->attemptuniqueid to the next available id
         $record = get_record_sql("SELECT max(id)+1 AS nextid FROM {$CFG->prefix}quiz_attempts");
-        set_config('attemptuniqueid', empty($record->nextid) ? 1 : $record->nextid));
+        set_config('attemptuniqueid', empty($record->nextid) ? 1 : $record->nextid);
     }
 
     return true;
