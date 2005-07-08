@@ -1,9 +1,20 @@
 .top {
   vertical-align: top;
 }
+.left {
+  float: left;
+}
 .center {
   text-align: center;
 }
+.right {
+  float: right;
+}
+
+.scoframe {
+
+}
+
 .fullscreen {
   width: 100%;
 }
@@ -24,9 +35,6 @@
   list-style-type: none;
   text-indent:-4ex;
   font-size: small;
-}
-#mod-scorm-playscorm .popupbutton {
-  float: right;
 }
 
 #mod-scorm-view .structurehead {

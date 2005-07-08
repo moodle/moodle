@@ -5,11 +5,11 @@
     require_once("../../config.php");
     require_once("lib.php");
 
-    optional_variable($id);    // Course Module ID, or
-    optional_variable($b);     // SCO ID
-    optional_variable($user);  // User ID
+    $id = optional_param('id', '', PARAM_INT);       // Course Module ID, or
+    $b = optional_param('b', '', PARAM_INT);         // sco ID
+    $user = optional_param('user', '', PARAM_INT);   // user ID
 
-    if ($id) {
+    if (!empty($id)) {
         if (! $cm = get_record("course_modules", "id", $id)) {
             error("Course Module ID was incorrect");
         }
@@ -19,12 +19,12 @@
         if (! $scorm = get_record("scorm", "id", $cm->instance)) {
             error("Course module is incorrect");
         }
-    } else if (isset($b)) {
+    } else if (!empty($b)) {
         if (! $sco = get_record("scorm_scoes", "id", $b)) {
-            error("Scorm activity is incorrect");
+            error("Course module is incorrect");
         }
         if (! $scorm = get_record("scorm", "id", $sco->scorm)) {
-            error("Course module is incorrect");
+            error("Scorm activity is incorrect");
         }
         if (! $course = get_record("course", "id", $scorm->course)) {
             error("Course is misconfigured");
@@ -32,6 +32,8 @@
         if (! $cm = get_coursemodule_from_instance("scorm", $scorm->id, $course->id)) {
             error("Course Module ID was incorrect");
         }
+    } else {
+        error('A required parameter is missing');
     }
 
     require_login($course->id, false, $cm);

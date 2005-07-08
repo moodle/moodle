@@ -2,10 +2,14 @@
 
     require_once("../../config.php");
 
-    require_variable($id);   // course
+    $id = required_param('id', '', PARAM_INT);   // course id
 
-    if (! $course = get_record("course", "id", $id)) {
-        error("Course ID is incorrect");
+    if (!empty($id)) {
+        if (! $course = get_record("course", "id", $id)) {
+            error("Course ID is incorrect");
+        }
+    } else {
+        error('A required parameter is missing');
     }
 
     require_course_login($course);

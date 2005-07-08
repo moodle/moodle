@@ -6,10 +6,11 @@
     require_once("../../config.php");
     require_once("lib.php");
 
-    optional_variable($id);    // Course Module ID, or
-    optional_variable($a);     // scorm ID
+    $id = optional_param('id', '', PARAM_INT);       // Course Module ID, or
+    $a = optional_param('a', '', PARAM_INT);         // scorm ID
+    $organization = optional_param('organization', '', PARAM_INT); // organization ID
 
-    if ($id) {
+    if (!empty($id)) {
         if (! $cm = get_record("course_modules", "id", $id)) {
             error("Course Module ID was incorrect");
         }
@@ -19,7 +20,7 @@
         if (! $scorm = get_record("scorm", "id", $cm->instance)) {
             error("Course module is incorrect");
         }
-    } else {
+    } else if (!empty($a)) {
         if (! $scorm = get_record("scorm", "id", $a)) {
             error("Course module is incorrect");
         }
@@ -29,6 +30,8 @@
         if (! $cm = get_coursemodule_from_instance("scorm", $scorm->id, $course->id)) {
             error("Course Module ID was incorrect");
         }
+    } else {
+        error('A required parameter is missing');
     }
 
     require_login($course->id, false, $cm);
@@ -86,15 +89,14 @@
 ?>
         <div class="structurehead"><?php print_string('coursestruct','scorm') ?></div>
 <?php
-        $organization = $scorm->launch;
+        if (empty($organization)) {
+            $organization = $scorm->launch;
+        }
         if ($orgs = get_records_select_menu('scorm_scoes',"scorm='$scorm->id' AND organization='' AND launch=''",'id','id,title')) {
-            if (count($orgs) > 1) {
-                if (isset($_POST['organization'])) {
-                    $organization = $_POST['organization'];
-                }
+            if (count($orgs) > 1) {       
 ?>
             <div class='center'>
-		<?php print_string('organizations','scorm') ?>
+		        <?php print_string('organizations','scorm') ?>
                 <form name='changeorg' method='post' action='view.php?id=<?php echo $cm->id ?>'>
                     <?php choose_from_menu($orgs, 'organization', "$organization", '','submit()') ?>
                 </form>

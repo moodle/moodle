@@ -5,38 +5,58 @@
     require_once('../../config.php');
     require_once('lib.php');
 
-    optional_variable($id);    // Course Module ID, or
-    optional_variable($a);     // scorm ID
+    $id = optional_param('id', '', PARAM_INT);       // Course Module ID, or
+    $a = optional_param('a', '', PARAM_INT);         // scorm ID
+    $scoid = required_param('scoid', '', PARAM_INT);  // sco ID
+    $mode = optional_param('mode', '', PARAM_ALPHA); // navigation mode
+    $currentorg = optional_param('currentorg', '', PARAM_); // selected organization
+    
+    //
+    // Checkin script parameters
+    //
+    $modestring = '';
+    $scoidstring = '';
+    $currentorgstring = '';
+    if (!empty($mode)) {
+        $modestring = '&mode='.$mode;
+    }
+    if (!empty($scoid)) {
+        $scoidstring = '&scoid='.$scoid;
+    }
+    if (!empty($currentorg)) {
+        $currentorgstring = '&currentorg='.$currentorg;
+    }
 
-    if ($id) {
-        if (! $cm = get_record('course_modules', 'id', $id)) {
-            error('Course Module ID was incorrect');
+    if (!empty($id)) {
+        if (! $cm = get_record("course_modules", "id", $id)) {
+            error("Course Module ID was incorrect");
         }
-
-        if (! $course = get_record('course', 'id', $cm->course)) {
-            error('Course is misconfigured');
+        if (! $course = get_record("course", "id", $cm->course)) {
+            error("Course is misconfigured");
         }
-
-        if (! $scorm = get_record('scorm', 'id', $cm->instance)) {
-            error('Course module is incorrect');
+        if (! $scorm = get_record("scorm", "id", $cm->instance)) {
+            error("Course module is incorrect");
         }
-
+    } else if (!empty($a)) {
+        if (! $scorm = get_record("scorm", "id", $a)) {
+            error("Course module is incorrect");
+        }
+        if (! $course = get_record("course", "id", $scorm->course)) {
+            error("Course is misconfigured");
+        }
+        if (! $cm = get_coursemodule_from_instance("scorm", $scorm->id, $course->id)) {
+            error("Course Module ID was incorrect");
+        }
     } else {
-        if (! $scorm = get_record('scorm', 'id', $a)) {
-            error('Course module is incorrect');
-        }
-        if (! $course = get_record('course', 'id', $scorm->course)) {
-            error('Course is misconfigured');
-        }
-        if (! $cm = get_coursemodule_from_instance('scorm', $scorm->id, $course->id)) {
-            error('Course Module ID was incorrect');
-        }
+        error('A required parameter is missing');
     }
 
     require_login($course->id, false, $cm);
 
     $strscorms = get_string('modulenameplural', 'scorm');
     $strscorm  = get_string('modulename', 'scorm');
+    $strexpand = get_string('expcoll','scorm');
+    $strpopup = get_string('popup','scorm');
 
     if ($course->category) {
         $navigation = "<a target=\"{$CFG->framename}\" href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->
@@ -52,31 +72,6 @@
                      update_module_button($cm->id, $course->id, $strscorm), navmenu($course, $cm));
         notice(get_string("activityiscurrentlyhidden"));
     }
-
-    //
-    // Checkin script parameters
-    //
-    $mode = '';
-    $scoid='';
-    $currentorg='';
-    $modestring = '';
-    $scoidstring = '';
-    $currentorgstring = '';
-    if (!empty($_POST['mode'])) {
-        $mode = $_POST['mode'];
-        $modestring = '&mode='.$mode;
-    }
-    if (!empty($_POST['scoid'])) {
-        $scoid = $_POST['scoid'];
-        $scoidstring = '&scoid='.$scoid;
-    }
-    if (!empty($_POST['currentorg'])) {
-    $currentorg = $_POST['currentorg'];
-    $currentorgstring = '&currentorg='.$currentorg;
-    }
-
-    $strexpand = get_string('expcoll','scorm');
-    $strpopup = get_string('popup','scorm');
 
     //
     // TOC processing
@@ -110,51 +105,58 @@
 ?>
     <script language="JavaScript" type="text/javascript" src="request.js"></script>
     <script language="JavaScript" type="text/javascript" src="api.php?id=<?php echo $cm->id.$scoidstring.$modestring ?>"></script>
+
     <table class="fullscreen">
-    <tr><td class="top">
-        <?php echo $mode == 'browse' ? '<p>'.get_string('browsemode','scorm').'</p>' : ''; ?>
-        <table class='generalbox' cellpadding='5' cellspacing='0'>
+    <tr>
 <?php  
     if ($scorm->hidetoc == 0) {
 ?>
-            <tr>
-                <th>
-                    <div class="structurehead"><?php print_string('coursestruct','scorm') ?></div>
-                </th>
-            </tr>
-            <tr>
-               <td class="top">
-                  <?php
-                      echo $result->toc;
-                  ?>
-               </td>
-            </tr>
+	    <td class="top">
+            <table class='generalbox'>
+               <tr>
+                   <td class="structurehead"><?php print_string('coursestruct','scorm') ?></td>
+               </tr>
+               <tr>
+                   <td><?php echo $result->toc; ?></td>
+               </tr>
+            </table>
+        </td>
 <?php
     }
+    $browseclass = '';
+    if ($scorm->popup == 0) {
+        $browseclass = 'class="left"';
+    }
 ?>
-            <tr><td class="center">
+        <td class="top">
+            <table class="fullscreen">
+                <tr>
+                    <?php echo $mode == 'browse' ? '<td '.$browseclass.'>'.get_string('browsemode','scorm').'</td>' : ''; ?>
+                    <td class="right">       
                 <form name="navform" method="post" action="playscorm.php?id=<?php echo $cm->id ?>" target="_top">
-                   <input name="scoid" type="hidden" />
-                   <input name="currentorg" type="hidden" value="<?php echo $currentorg ?>" />
-                   <input name="mode" type="hidden" value="<?php echo $mode ?>" />
-                   <input name="prev" type="<?php if (($sco->prev == 0) || ($sco->showprev == 1)) { echo 'hidden'; } else { echo 'button'; } ?>" value="<?php print_string('prev','scorm') ?>" onClick="prevSCO();" />
-                   <input name="next" type="<?php if (($sco->next == 0) || ($sco->shownext == 1)) { echo 'hidden'; } else { echo 'button'; } ?>" value="<?php print_string('next','scorm') ?>" onClick="nextSCO();" />
-                   <input name="exit" type="button" value="<?php print_string('exit','scorm') ?>" onClick="playSCO(0)" />
-               </form>
-           </td></tr>
-       </table>
-    </td>
+                    <input name="scoid" type="hidden" />
+                    <input name="currentorg" type="hidden" value="<?php echo $currentorg ?>" />
+                    <input name="mode" type="hidden" value="<?php echo $mode ?>" />
+                    <input name="prev" type="<?php if (($sco->prev == 0) || ($sco->showprev == 1)) { echo 'hidden'; } else { echo 'button'; } ?>" value="<?php print_string('prev','scorm') ?>" onClick="prevSCO();" />
+                    <input name="next" type="<?php if (($sco->next == 0) || ($sco->shownext == 1)) { echo 'hidden'; } else { echo 'button'; } ?>" value="<?php print_string('next','scorm') ?>" onClick="nextSCO();" />
+                    <input name="exit" type="button" value="<?php print_string('exit','scorm') ?>" onClick="playSCO(0)" />
+                </form>
+                </td>
+                </tr>
 <?php
     if ($scorm->popup == 0) {
 ?>
-    <td class="top" width="<?php echo $scorm->width<=100 ? $scorm->width.'%' : $scorm->width ?>">
-        <iframe name="main" class="scoframe" width="<?php echo $scorm->width<=100 ? $scorm->width.'%' : $scorm->width ?>" height="<?php echo $scorm->height<=100 ? $scorm->height.'%' : $scorm->height ?>" src="loadSCO.php?id=<?php echo $cm->id.$scoidstring.$modestring ?>"></iframe>
-    </td>
+                <tr><td class="right">
+                    <iframe name="main" class="scoframe" width="<?php echo $scorm->width<=100 ? $scorm->width.'%' : $scorm->width ?>" height="<?php echo $scorm->height<=100 ? $scorm->height.'%' : $scorm->height ?>" src="loadSCO.php?id=<?php echo $cm->id.$scoidstring.$modestring ?>"></iframe>
+                </td></tr>
+            </table>
 <?php
     }
 ?>
+         </td>
     </tr>
     </table>
+
     <script language="javascript" type="text/javascript">
     <!--
 <?php

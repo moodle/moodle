@@ -2,10 +2,13 @@
     require_once('../../config.php');
     require_once('lib.php');
 
-    //require_login($course->id, false, $cm);
+    $command = required_param('command', '', PARAM_ALPHA);
+    $sessionid = required_param('session_id', '', PARAM_ALPHA);
+
+    require_login($course->id, false, $cm);
     
-    if (isset($_POST['command']) && confirm_sesskey($_POST['session_id'])) {
-        $command = strtolower($_POST['command']);
+    if (!empty($command) && confirm_sesskey($sessionid)) {
+        $command = strtolower($command);
        
         if (isset($SESSION->scorm_scoid)) {
             $scoid = $SESSION->scorm_scoid;

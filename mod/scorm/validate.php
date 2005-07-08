@@ -1,16 +1,25 @@
 <?php // $Id$
 
-require_once("../../config.php");
-require_once("lib.php");
+    require_once("../../config.php");
+    require_once("lib.php");
 
-require_login();
+    $courseid = required_param('id', '', PARAM_INT);             // Course Module ID, or
+    $reference = required_param('reference', '', PARAM_PATH);    // Package path
+    $scormid = optional_param('instance', '', PARAM_INT);       // scorm ID
 
-if (confirm_sesskey()) {
-    $reference = clean_param($_POST["reference"], PARAM_PATH);
-    $courseid = $_POST["id"];
+    require_login($course->id, false, $cm);
+
+if (confirm_sesskey() && !empty($courseid)) {
     $launch = 0;
-    if (isset($_POST["instance"])) {
-        $scormid = $_POST["instance"];
+    $validation = new stdClass();
+    if (empty($reference)) {
+        $launch = -1;
+        $validation->result = "packagefile";
+    }
+    if (!empty($scormid)) {  
+        //
+        // SCORM Update
+        //
         if (is_file($CFG->dataroot.'/'.$courseid.'/'.$reference)) {
             $fp = fopen($CFG->dataroot.'/'.$courseid.'/'.$reference,"r");
             $fstat = fstat($fp);
