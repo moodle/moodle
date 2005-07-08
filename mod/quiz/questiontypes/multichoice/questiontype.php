@@ -26,7 +26,8 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
             return false;
         }
 
-        if (!$question->options->answers = get_records_select('quiz_answers', 'id IN ('.$question->options->answers.')')) {
+        if (!$question->options->answers = get_records("quiz_answers",
+         'question', $question->id, 'seq_number ASC')) {
            notify('Error: Missing question answers!');
            return false;
         }
@@ -66,9 +67,10 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
         foreach ($question->answer as $key => $dataanswer) {
             if ($dataanswer != "") {
                 if ($answer = array_shift($oldanswers)) {  // Existing answer, so reuse it
-                    $answer->answer   = $dataanswer;
-                    $answer->fraction = $question->fraction[$key];
-                    $answer->feedback = $question->feedback[$key];
+                    $answer->answer     = $dataanswer;
+                    $answer->fraction   = $question->fraction[$key];
+                    $answer->feedback   = $question->feedback[$key];
+                    $answer->seq_number = $key + 1;
                     if (!update_record("quiz_answers", $answer)) {
                         $result->error = "Could not update quiz answer! (id=$answer->id)";
                         return $result;
@@ -79,6 +81,7 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
                     $answer->question = $question->id;
                     $answer->fraction = $question->fraction[$key];
                     $answer->feedback = $question->feedback[$key];
+                    $answer->seq_number = $key + 1;
                     if (!$answer->id = insert_record("quiz_answers", $answer)) {
                         $result->error = "Could not insert quiz answer! ";
                         return $result;
@@ -110,6 +113,13 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
             if (!insert_record("quiz_multichoice", $options)) {
                 $result->error = "Could not insert quiz multichoice options!";
                 return $result;
+            }
+        }
+
+        // delete old answer records
+        if (!empty($oldanswers)) {
+            foreach($oldanswers as $oa) {
+                delete_records('quiz_answers', 'id', $oa->id);
             }
         }
 

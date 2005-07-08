@@ -64,6 +64,13 @@ class quiz_match_qtype extends quiz_default_questiontype {
             }
         }
 
+        // delete old subquestions records
+        if (!empty($oldsubquestions)) {
+            foreach($oldsubquestions as $os) {
+                delete_records('quiz_match_sub', 'id', $os->id);
+            }
+        }
+
         if (count($subquestions) < 3) {
             $result->noticeyesno = get_string("notenoughsubquestions", "quiz");
             return $result;
@@ -105,7 +112,7 @@ class quiz_match_qtype extends quiz_default_questiontype {
             $answer->fraction = 1.0;
             $state->options->subquestions[$key]->options
              ->answers[$subquestion->id] = clone($answer);
-            
+
             $state->responses[$key] = '';
         }
 

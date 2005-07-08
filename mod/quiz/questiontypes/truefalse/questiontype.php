@@ -56,6 +56,13 @@ class quiz_truefalse_qtype extends quiz_default_questiontype {
             }
         }
 
+        // delete old answer records
+        if (!empty($oldanswers)) {
+            foreach($oldanswers as $oa) {
+                delete_records('quiz_answers', 'id', $oa->id);
+            }
+        }
+
         if ($options = get_record("quiz_truefalse", "question", $question->id)) {
             // No need to do anything, since the answer IDs won't have changed
             // But we'll do it anyway, just for robustness
