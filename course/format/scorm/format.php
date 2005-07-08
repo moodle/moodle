@@ -6,8 +6,9 @@
 
     require_once($CFG->dirroot.'/mod/scorm/lib.php');
     echo '<style type="text/css">';
-    require_once($CFG->dirroot.'/mod/scorm/styles.php');
+    include_once($CFG->dirroot.'/mod/scorm/styles.php');
     echo '</style>';
+    $organization = optional_param('organization', '', PARAM_INT);
 
     // Bounds for block widths
     define('BLOCK_L_MIN_WIDTH', 100);
@@ -44,18 +45,9 @@
         if (! $cm = get_coursemodule_from_instance('scorm', $scorm->id, $course->id)) {
             error("Course Module ID was incorrect");
         }
-
-        $headertext = '<table width="100%"><tr><td><div class="title">'.get_string('scormcourse','scorm').': <b>'.$scorm->name.'</b>';
+        $colspan = '';
+        $headertext = '<table width="100%"><tr><td class="title">'.get_string('name').': <b>'.format_string($scorm->name).'</b>';
         if (isteacher($course->id) || isadmin()) {
-            $reportlink = '';
-            $trackedusers = get_record('scorm_scoes_track', 'scormid', $scorm->id, '', '', '', '', 'count(distinct(userid)) as c');
-            if ($trackedusers->c > 0) {
-                $reportlink = '<div class="reportlink">'.
-                              '<a target="'.$CFG->framename.'" href="'.$CFG->wwwroot.'/mod/scorm/report.php?id='.$cm->id.'">'.
-                               get_string('viewallreports','scorm',$trackedusers->c).'</a></div>';
-            } else {
-                $reportlink = '<div class="reportlink">'.get_string('noreports','scorm').'</div>';
-            }
             if (isediting($course->id)) {
                 // Display update scorm icon
                 $path = $CFG->wwwroot.'/course';
@@ -63,27 +55,33 @@
                         '<a title="'.$strupdate.'" href="'.$path.'/mod.php?update='.$cm->id.'&amp;sesskey='.sesskey().'">'.
                         '<img src="'.$CFG->pixpath.'/t/edit.gif" hspace="2" height="11" width="11" border="0" alt="'.$strupdate.'" /></a></span>';
             }
+            $headertext .= '</td>';
             // Display report link
-            $headertext .= '</div></td><td>'.$reportlink;
-        } else {
-            $headertext .= '</div>';
-        }
-        $headertext .= '</td></tr><tr><td>'.$scorm->summary.'</td></tr></table>';
+            $trackedusers = get_record('scorm_scoes_track', 'scormid', $scorm->id, '', '', '', '', 'count(distinct(userid)) as c');
+            if ($trackedusers->c > 0) {
+                $headertext .= '<td class="reportlink">'.
+                              '<a target="'.$CFG->framename.'" href="'.$CFG->wwwroot.'/mod/scorm/report.php?id='.$cm->id.'">'.
+                               get_string('viewallreports','scorm',$trackedusers->c).'</a>';
+            } else {
+                $headertext .= '<td class="reportlink">'.get_string('noreports','scorm');
+            }
+            $colspan = ' colspan="2"';
+        } 
+        $headertext .= '</td></tr><tr><td'.$colspan.'>'.format_text(get_string('summary').':<br />'.$scorm->summary).'</td></tr></table>';
         print_simple_box($headertext,'','100%');
 ?>
         <?php print_simple_box_start('center','100%'); ?>
         <div class="structurehead"><?php print_string('coursestruct','scorm') ?></div>
         <?php
-            $organization = $scorm->launch;
+            if (empty($organization)) {
+                $organization = $scorm->launch;
+            }
             if ($orgs = get_records_select_menu('scorm_scoes',"scorm='$scorm->id' AND organization='' AND launch=''",'id','id,title')) {
                 if (count($orgs) > 1) {
-                    if (isset($_POST['organization'])) {
-                        $organization = $_POST['organization'];
-                    }
          ?>
             <div class='center'>
 		    <?php print_string('organizations','scorm') ?>
-                <form name='changeorg' method='post' action='view.php?id=<?php echo $cm->id ?>'>
+                <form name='changeorg' method='post' action='view.php?id=<?php echo $course->id ?>'>
                     <?php choose_from_menu($orgs, 'organization', "$organization", '','submit()') ?>
                 </form>
             </div>
@@ -98,13 +96,15 @@
                     $orgidentifier = $org->organization;
                 }
             }
+            $result = scorm_get_toc($scorm,'structlist',$orgidentifier);
+            $incomplete = $result->incomplete;
+            echo $result->toc;
+            print_simple_box_end();
          ?>
-         <?php $incomplete = scorm_display_structure($scorm,'structlist',$orgidentifier); ?>
-         <?php print_simple_box_end(); ?>
               <div class="center">
               <form name="theform" method="post" action="<?php echo $CFG->wwwroot ?>/mod/scorm/playscorm.php?id=<?php echo $cm->id ?>">
               <?php
-                  if ($scorm->browsemode == 1) {
+                  if ($scorm->hidebrowse == 0) {
                       print_string("mode","scorm");
                       echo ': <input type="radio" id="b" name="mode" value="browse" /><label for="b">'.get_string('browse','scorm').'</label>'."\n";
                       if ($incomplete === true) {
