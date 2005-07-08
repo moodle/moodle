@@ -116,7 +116,7 @@
 
             if($form = data_submitted()) {
 
-                $form->name = strip_tags($form->name,'<lang>');  // Strip all tags, but <lang>
+                $form->name = clean_text(strip_tags($form->name,'<lang><span>'));
 
                 $form->timestart = make_timestamp($form->startyr, $form->startmon, $form->startday, $form->starthr, $form->startmin);
                 if($form->duration == 1) {
@@ -183,7 +183,7 @@
             $form = data_submitted();
             if(!empty($form) && $form->type == 'defined') {
 
-                $form->name = strip_tags($form->name, '<lang>');  // Strip all tags but <lang>
+                $form->name = clean_text(strip_tags($form->name, '<lang><span>'));
 
                 $form->timestart = make_timestamp($form->startyr, $form->startmon, $form->startday, $form->starthr, $form->startmin);
                 if($form->duration == 1) {
