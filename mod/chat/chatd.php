@@ -27,6 +27,8 @@ $_SERVER['PHP_SELF']        = 'dummy';
 $_SERVER['SERVER_NAME']     = 'dummy';
 $_SERVER['HTTP_USER_AGENT'] = 'dummy';
 
+$nomoodlecookie = true;
+
 include('../../config.php');
 include('lib.php');
 
@@ -40,6 +42,10 @@ if($phpversion < '4.3') {
 }
 if(!empty($safemode)) {
     die("Error: Cannot run with PHP safe_mode = On. Turn off safe_mode in php.ini.\n");
+}
+
+if(ini_get('allow_call_time_pass_reference') == '0') {
+    die("Error: Cannot run with PHP allow_call_time_pass_reference = Off. Turn on allow_call_time_pass_reference in php.ini.\n");
 }
 
 @set_time_limit (0);
@@ -65,7 +71,7 @@ class ChatConnection {
 
     function ChatConnection($resource) {
         $this->handle = $resource;
-        socket_getpeername($this->handle, &$this->ip, &$this->port);
+        @socket_getpeername($this->handle, &$this->ip, &$this->port);
     }
 }
 
