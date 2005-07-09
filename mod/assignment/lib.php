@@ -1005,6 +1005,7 @@ class assignment_base {
         $posthtml .= '<hr /><font face="sans-serif">';
         $posthtml .= '<p>'.get_string('emailteachermailhtml', 'assignment', $info).'</p>';
         $posthtml .= '</font><hr />';
+        return $posthtml;
     }
 
 
