@@ -98,9 +98,8 @@ $ALLOWED_PROTOCOLS = array('http', 'https', 'ftp', 'news', 'mailto', 'rtsp', 'te
  * @return string
  */
 function s($var) {
-
-    if (empty($var)) {
-        return '';
+    if ($var == '0') {  // for integer 0, boolean false, string '0'
+        return '0';
     }
     return htmlSpecialChars(stripslashes_safe($var));
 }
@@ -115,11 +114,11 @@ function s($var) {
  * @return string
  */
 function p($var) {
-
-    if (empty($var)) {
-        echo '';
+    if ($var == '0') {  // for integer 0, boolean false, string '0'
+        echo '0';
+    } else {
+        echo htmlSpecialChars(stripslashes_safe($var));
     }
-    echo htmlSpecialChars(stripslashes_safe($var));
 }
 
 
