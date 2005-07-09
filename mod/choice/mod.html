@@ -109,7 +109,7 @@ function lockselects(form, master, subitems) {
 $standardblanks = 10;
 $count = 0;
 $limitfieldlist = '';
-if (($options = get_records_menu('choice_options','choiceid', $form->instance, 'id', 'id,text')) && ($options2 = get_records_menu('choice_options','choiceid', $form->instance, 'id', 'id,maxanswers')) ) {
+if (!empty($form->instance) && ($options = get_records_menu('choice_options','choiceid', $form->instance, 'id', 'id,text')) && ($options2 = get_records_menu('choice_options','choiceid', $form->instance, 'id', 'id,maxanswers')) ) {
     foreach ($options as $id => $text) { 
         $count++;
     ?>
