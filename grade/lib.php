@@ -33,7 +33,7 @@ $GRADEPREFSDEFAULTS = array('use_advanced'                => 0,
 
 function grade_get_category_weight($course, $category) {
     global $CFG;
-    $sql = "SELECT id, weight, drop_x_lowest, bonus_points, hidden, c.id cat_id
+    $sql = "SELECT id, weight, drop_x_lowest, bonus_points, hidden, c.id AS cat_id
         FROM {$CFG->prefix}grade_category c  
         WHERE c.courseid=$course  
             AND c.name='$category'";
