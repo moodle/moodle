@@ -25,14 +25,8 @@
     if (!isset($form->preventlate)) {
         $form->preventlate = 0;
     }
-    if (!isset($form->grade)) {
-        $form->grade = 100;
-    }
     if (empty($form->maxbytes)) {
         $form->maxbytes = $CFG->assignment_maxbytes;
-    }
-    if (empty($form->timedue)) {
-        $form->timedue = "";
     }
 
 ?>

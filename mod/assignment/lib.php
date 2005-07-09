@@ -505,7 +505,7 @@ class assignment_base {
             echo 'opener.document.getElementById("button'.$submission->userid.'").value="'.get_string('update').' ...";';
         }
         echo "\n-->\n</script>";
-        fflush();
+        flush();
     }
 
     /*
@@ -1304,11 +1304,14 @@ function assignment_grades($assignmentid) {
     if (!$assignment = get_record("assignment", "id", $assignmentid)) {
         return NULL;
     }
+    if ($assignment->grade == 0) { // No grading
+        return NULL;
+    }
 
     $grades = get_records_menu("assignment_submissions", "assignment",
                                $assignment->id, "", "userid,grade");
 
-    if ($assignment->grade >= 0) {
+    if ($assignment->grade > 0) {
         $return->grades = $grades;
         $return->maxgrade = $assignment->grade;
 
