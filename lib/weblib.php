@@ -2240,7 +2240,7 @@ function print_navigation ($navigation) {
 
    if ($navigation) {
        if (! $site = get_site()) {
-           $site->shortname = get_string('home');;
+           $site->shortname = get_string('home');
        }
        $navigation = str_replace('->', '&raquo;', $navigation);
        echo '<a target="'. $CFG->framename .'" href="'. $CFG->wwwroot .'/">'. $site->shortname .'</a> &raquo; '. $navigation;
@@ -2762,7 +2762,7 @@ function print_table($table) {
     $countcols = 0;
 
     if (!empty($table->head)) {
-        $countcols = count($table->head);;
+        $countcols = count($table->head);
         echo '<tr>';
         foreach ($table->head as $key => $heading) {
 
