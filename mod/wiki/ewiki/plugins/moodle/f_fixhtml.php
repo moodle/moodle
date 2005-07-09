@@ -54,7 +54,7 @@ function ewiki_html_tag_balancer(&$html) {
    $len = strlen($html);
    $done = "";
    $pos = 0;
-   $loop = 1000;
+   $loop = (int)$len / 3;
    while (($pos < $len) && $loop--) {
 
       #-- search next tag
