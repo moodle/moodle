@@ -66,9 +66,9 @@ class assignment_uploadsingle extends assignment_base {
 
         $this->view_header(get_string('upload'));
 
-        if (!$this->isopen()) {
-            notify(get_string("uploadfailnoupdate", "assignment"));
-        } else {
+        $filecount = $this->count_user_files($USER->id);
+
+        if ($this->isopen() && (!$filecount || $this->assignment->resubmit)) {
             if ($submission = $this->get_submission($USER->id)) {
                 if ($submission->grade and !$this->assignment->resubmit) {
                     notify(get_string('alreadygraded', 'assignment'));
@@ -107,6 +107,8 @@ class assignment_uploadsingle extends assignment_base {
                     }
                 }
             }
+        } else {
+            notify(get_string("uploaderror", "assignment")); //submitting not allowed!
         }
 
         print_continue('view.php?id='.$this->cm->id);

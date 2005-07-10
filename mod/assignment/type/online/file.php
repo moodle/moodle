@@ -1,21 +1,18 @@
 <?php  // $Id$
 
-    require_once("../../../../config.php");
-    require_once("../../lib.php");
+    require("../../../../config.php");
+    require("../../lib.php");
+    require("assignment.class.php");
  
-    $id     = required_param('id', PARAM_INT);    // Course Module ID
-    $userid = required_param('userid', PARAM_INT);    // Course Module ID
-
-    if (!empty($CFG->forcelogin)) {
-        require_login();
-    }
+    $id     = required_param('id', PARAM_INT);      // Course Module ID
+    $userid = required_param('userid', PARAM_INT);  // User ID
 
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");
     }
 
     if (! $assignment = get_record("assignment", "id", $cm->instance)) {
-        error("assignment ID was incorrect");
+        error("Assignment ID was incorrect");
     }
 
     if (! $course = get_record("course", "id", $assignment->course)) {
@@ -28,15 +25,17 @@
 
     require_login($course->id, false, $cm);
 
-    if (!isteacher($course->id)) {
-        error("Only teachers can look at this page");
+    if (($USER->id != $user->id) && !isteacher($course->id)) {
+        error("You can not view this assignment");
     }
 
-    require ("$CFG->dirroot/mod/assignment/type/$assignment->assignmenttype/assignment.class.php");
-    $assignmentclass = "assignment_$assignment->assignmenttype";
-    $assignmentinstance = new $assignmentclass($cm->id, $assignment, $cm, $course);
+    if ($assignment->assignmenttype != 'online') {
+        error("Incorrect assignment type");
+    }
 
-    if ($submission = $assignmentinstance->get_submission($userid)) {
+    $assignmentinstance = new assignment_online($cm->id, $assignment, $cm, $course);
+
+    if ($submission = $assignmentinstance->get_submission($user->id)) {
         print_header(fullname($user,true).': '.$assignment->name);
 
         print_simple_box_start('center', '', '', '', 'generalbox', 'dates');
