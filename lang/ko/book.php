@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // book.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
+<?PHP // $Id$
+
 
 
 $string['addafter'] = '새 문단 작성';
@@ -38,5 +38,4 @@ $string['subchapter'] = '부문단';
 $string['toc'] = '목차';
 $string['tocwidth'] = '모든 책들의 목차의 폭을 선택하십시오.';
 $string['top'] = '위';
-
 ?>

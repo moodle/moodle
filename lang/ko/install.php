@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // install.php - created with Moodle 1.5 ALPHA (2005051500)
+<?PHP // $Id$
+
 
 
 $string['admindirerror'] = '명시된 관리 디렉토리가 맞지 않습니다';
@@ -100,5 +100,4 @@ $string['sessionautostarterror'] = '이것은 종료되어야 합니다.';
 $string['sessionautostarthelp'] = '<p>무들은 세션의 지원을 요구하고 무들은 그것 없이는 기능하지 않을 것 입니다.<P>세션은 php 안에서 ini 파일이 될 수 있습니다. 세션의 자동적 활동의 시작을 위한 매개변수를 찾으세요.';
 $string['wwwroot'] = '웹 주소';
 $string['wwwrooterror'] = '이 유효한 무들 설비들 인 것 같지 않은 이 웹 주소는 있는 것 같지 않습니다.';
-
 ?>

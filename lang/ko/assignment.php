@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.5 ALPHA (2005051500)
+<?PHP // $Id$
+
 
 
 $string['allowresubmit'] = '재제출 허가';
@@ -68,5 +68,4 @@ $string['uploadsuccess'] = '\'$a\' 가 성공적으로 업로드됨';
 $string['viewfeedback'] = '과제 점수와 피드백 보기';
 $string['viewsubmissions'] = '내가 제출한  $a 개의 과제 보기';
 $string['yoursubmission'] = '과제 제출';
-
 ?>

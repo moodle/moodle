@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // block_rss_client.php - created with Moodle 1.5 ALPHA (2005051500)
+<?PHP // $Id$
+
 
 
 $string['addfeed'] = '새로운 feed URL 추가하기';
@@ -38,5 +38,4 @@ $string['timeout'] = 'rss 끊김 막기';
 $string['timeoutdesc'] = '케쉬에 있는 rss feed 를 위한 분단위의 시간';
 $string['updatefeed'] = '새로운 뉴스 feed URL 업데이트';
 $string['validatefeed'] = 'feed 확인';
-
 ?>

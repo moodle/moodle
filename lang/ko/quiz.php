@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.5 ALPHA (2005051500)
+<?PHP // $Id$
+
 
 
 $string['acceptederror'] = '인정된 오류';
@@ -423,5 +423,4 @@ $string['xml'] = 'XML형식';
 $string['xmltypeunsupported'] = '$a와 같은 질문은 Xml 취지로 뒷받침 되지 않는다. ';
 $string['yourfinalgradeis'] = '이번 퀴즈의 당신의 최종 점수는 $a 입니다';
 $string['zerosignificantfiguresnotallowed'] = '올바른 답은 0점을 받지 않습니다.';
-
 ?>

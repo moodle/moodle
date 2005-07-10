@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.5 ALPHA (2005051500)
+<?PHP // $Id$
+
 
 
 $string['calendar'] = '달력';
@@ -101,5 +101,4 @@ $string['wed'] = '수';
 $string['wednesday'] = '수요일';
 $string['yesterday'] = '어제';
 $string['youcandeleteallrepeats'] = '이 이벤트는 반복하는 이벤트의 일련의 한 부분입니다. 당신은 이 이벤트만 제거하거나 일련에서의 모든 $a 이벤트를 한번에 제거할 수 있습니다. ';
-
 ?>

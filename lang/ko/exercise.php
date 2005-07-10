@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // exercise.php - created with Moodle 1.5 ALPHA (2005051500)
+<?PHP // $Id$
+
 
 
 $string['absent'] = '결석';
@@ -181,5 +181,4 @@ $string['wrongpassword'] = '이 연습에서 잘못된 암호';
 $string['yourassessment'] = '여러분의 평가';
 $string['yourfeedbackgoeshere'] = '여러분의 피드백은 이곳으로';
 $string['yoursubmission'] = '여러분의 제출서';
-
 ?>

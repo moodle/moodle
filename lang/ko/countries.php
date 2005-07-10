@@ -1,5 +1,5 @@
-<?php // $Id$ 
-      // countries.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
+<?PHP // $Id$
+
 
 
 $string['AD'] = '안도라';
@@ -102,8 +102,7 @@ $string['ID'] = '인도네시아 ';
 $string['IE'] = '아일랜드';
 $string['IL'] = '이스라엘';
 $string['IN'] = '인디아';
-$string['IO'] = '영국령 인도양 식민지  
- ';
+$string['IO'] = '영국령 인도양 식민지';
 $string['IQ'] = '이라크';
 $string['IR'] = '이란';
 $string['IS'] = '아이슬란드';

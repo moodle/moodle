@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // message.php - created with Moodle 1.5 ALPHA (2005051500)
+<?PHP // $Id$
+
 
 
 $string['addcontact'] = '연락 추가';
@@ -65,5 +65,4 @@ $string['unreadmessages'] = '$a 읽지않은 메세지';
 $string['userisblockingyou'] = '이 사용자는 당신이 타인에게 메세지를 발송하는 것을 차단 했습니다';
 $string['userisblockingyounoncontact'] = '이 사용자는 연락처에 있는 사람들에게만 메세지를 받습니다, 당신은 현재 연락처에 있지 않습니다.';
 $string['userssearchresults'] = '검색 결과: $a 사용자 발견';
-
 ?>

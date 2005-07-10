@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // scheduler.php - created with Moodle 1.5 ALPHA (2005051500)
+<?PHP // $Id$
+
 
 
 $string['action'] = '실행,활동';
@@ -42,5 +42,4 @@ $string['starttime'] = '시작 시간';
 $string['welcomebackstudent'] = '테이블아래에 확실한 선은 당신의 선택된 약속 시간대를 강조한다. 당신은 다른 어떤 이용 가능한 시간대도 허락된다.';
 $string['welcomenewstudent'] = '테이블 아래는 약속을 위한 이용가능한 모든 시간대를 보여준다. 라디오버튼을 선택함으로써 결정하시오 그리고 \"나의 선택 저장\"을 클릭하는 것을 잊지마세요. 만약 당신이 나중에 변경할 필요가 있으면 당신은 이 페이지에 다시 방문할 수 있다.';
 $string['welcomenewteacher'] = '당신의 모든 학생들을 알기위한 예정된 수업(시간)을 추가하기 위해 아래의 버튼을 클릭하세요. ';
-
 ?>

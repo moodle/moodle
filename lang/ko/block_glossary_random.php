@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // block_glossary_random.php - created with Moodle 1.5 ALPHA (2005051500)
+<?PHP // $Id$
+
 
 
 $string['aboutfooter'] = '이 블럭은 그것과 연결되는 어휘해설로부터 몇개의 위치를 이어받는다. 오직 아래의 원문들중의 하나가 어휘해설의 위치에 의존하여 전시된다. ';
@@ -22,5 +22,4 @@ $string['title'] = '제목';
 $string['type'] = '새로운 기입이 선택되는 방법';
 $string['typehelp'] = '선택사항<b>next one</b>는 만약 당신이 흥미로운 링크/인용구들을 주마다 혹은 날마다 기본적으로 사용자들에게 전시하기 위해서 블록을 사용하기를 원한다면 유용한다. 당신이 세개의 새로운 기입을 어휘해석에 첨가하기를 원해도 블록은 오직 하나의 진보만 할것이다. 그것은 따라서 몇몇의 블랙로그를 생성하기를 가능하게 만든다. <br>The option <b>last modified</b>는 항상 마지막에 수정된 기입으로 전시된다.';
 $string['viewglossary'] = '더 많은 이용구...';
-
 ?>

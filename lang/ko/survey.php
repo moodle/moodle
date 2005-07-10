@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // survey.php - created with Moodle 1.5 ALPHA (2005051500)
+<?PHP // $Id$
+
 
 
 $string['actual'] = '실적';
@@ -196,5 +196,4 @@ $string['surveytype'] = '조사 유형';
 $string['thanksforanswers'] = '조사에 응답해 주셔서 감사합니다.';
 $string['time'] = '시간';
 $string['viewsurveyresponses'] = '견해 $a 조사 응답';
-
 ?>

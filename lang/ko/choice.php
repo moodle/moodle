@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // choice.php - created with Moodle 1.5 ALPHA (2005051500)
+<?PHP // $Id$
+
 
 
 $string['addmorechoices'] = '선택사항을 더 추가하시오';
@@ -38,5 +38,4 @@ $string['spacesleft'] = '이용가능한 공간들';
 $string['timerestrict'] = '이 기간중에 답하는 것을 제한합니다.';
 $string['viewallresponses'] = '학생들의 응답 보고 피드백 쓰기';
 $string['yourselection'] = '당신의 선택';
-
 ?>

@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.5 ALPHA (2005051500)
+<?PHP // $Id$
+
 
 
 $string['addcomment'] = '덧글 쓰기';
@@ -166,5 +166,4 @@ $string['withauthor'] = '올린이생각,사상';
 $string['withoutauthor'] = '올린이생각없이 ';
 $string['writtenby'] = '올린이:';
 $string['youarenottheauthor'] = '글 쓴 사람만 내용을 고칠 수 있습니다.';
-
 ?>

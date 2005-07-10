@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // forum.php - created with Moodle 1.5 ALPHA (2005051500)
+<?PHP // $Id$
+
 
 
 $string['addanewdiscussion'] = '새 토론 주제 추가하기';
@@ -199,5 +199,4 @@ $string['yesinitially'] = '예, 처음에';
 $string['youratedthis'] = '당신의 평가';
 $string['yournewtopic'] = '새로운 토론 주제';
 $string['yourreply'] = '당신의 답글';
-
 ?>

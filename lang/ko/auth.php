@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // auth.php - created with Moodle 1.5 ALPHA (2005051500)
+<?PHP // $Id$
+
 
 
 $string['alternatelogin'] = '만약 당신이 URL을 들어와 여기에 있다면, 이 사이트를 위한 로그인 페이지에서 사용될 것이다. 이 페이지는 행동 자산 설치 <strong>\'$a\'</strong> 를 가진 형태를 포함하여야 하고 <strong> 사용자 이름 </strong>  <strong>password</strong> 분야를 다시 돌려야 한다. 
@@ -139,5 +139,4 @@ $string['showguestlogin'] = '로그인 페이지에서 손님 로그인 버튼을 보이거나 숨길 
 $string['stdchangepassword'] = '비밀번호 페이지를 사용하기';
 $string['stdchangepassword_expl'] = '만약 외부의 인증 시스템이 모듈을 통해 비밀 번호 변경을 허락한다면, 이것을 Yes 로 바꾸십시오. 이 장치는 \'URL 비밀 번호 변경\'을 변경한다.';
 $string['stdchangepassword_explldap'] = '주목 : 만약 LDAP 서버가 제거되었다면, 당신이 사용하는 SSL 위의 SSL 은 터널(ldaps://)로 암호화 되는 것을 추천한다. ';
-
 ?>
