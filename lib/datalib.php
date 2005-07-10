@@ -2019,7 +2019,7 @@ function get_group_teachers($courseid, $groupid) {
             if (($teacher->authority > 0) and ismember($groupid, $teacher->id)) {  // Specific group teachers
                 continue;
             }
-            unset($teacher[$key]);
+            unset($teachers[$key]);
         }
     }
     return $teachers;
