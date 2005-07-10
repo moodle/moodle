@@ -297,7 +297,8 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
                    echo '</select>';
                    break;
                default:
-                   error("Unable to recognized answertype '$wrapped->qtype'.");
+                   error("Unable to recognized questiontype ($wrapped->qtype) of
+                          question part $positionkey.");
                    break;
            }
         }
