@@ -15,7 +15,9 @@ class assignment_online extends assignment_base {
 
         global $USER;
 
-        $editmode = ($this->isopen() && !empty($_GET['edit']));
+        $submission = $this->get_submission();
+        $editable = $this->isopen() && (!$submission || $this->assignment->resubmit);
+        $editmode = ($editable && !empty($_GET['edit']));
 
         if ($editmode) {
             $this->view_header(get_string('editmysubmission', 'assignment'));
@@ -28,9 +30,12 @@ class assignment_online extends assignment_base {
         $this->view_dates();
 
         if ($data = data_submitted()) {      // No incoming data?
-            if ($this->update_submission($data)) {
+            if ($editable && $this->update_submission($data)) {
                 //redirect to get updated submission date and word count
                 redirect('view.php?id='.$this->cm->id.'&saved=1');
+            } else {
+                // TODO: add better error message
+                notify(get_string("error")); //submitting not allowed!
             }
         } else if (!empty($_GET['saved'])) {
             notify(get_string('submissionsaved', 'assignment'));
@@ -46,7 +51,7 @@ class assignment_online extends assignment_base {
             } else {
                 echo '<center>'.get_string('emptysubmission', 'assignment').'</center>';
             }
-            if ($this->isopen()) {
+            if ($editable) {
                 print_single_button('view.php', array('id'=>$this->cm->id,'edit'=>'1'), 
                                      get_string('editmysubmission', 'assignment'));
             }
