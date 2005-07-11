@@ -26,8 +26,7 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
             return false;
         }
 
-        if (!$question->options->answers = get_records("quiz_answers",
-         'question', $question->id, 'seq_number ASC')) {
+        if (!$question->options->answers = get_records_select('quiz_answers', 'id IN ('.$question->options->answers.')')) {
            notify('Error: Missing question answers!');
            return false;
         }
@@ -70,7 +69,6 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
                     $answer->answer     = $dataanswer;
                     $answer->fraction   = $question->fraction[$key];
                     $answer->feedback   = $question->feedback[$key];
-                    $answer->seq_number = $key + 1;
                     if (!update_record("quiz_answers", $answer)) {
                         $result->error = "Could not update quiz answer! (id=$answer->id)";
                         return $result;
@@ -81,7 +79,6 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
                     $answer->question = $question->id;
                     $answer->fraction = $question->fraction[$key];
                     $answer->feedback = $question->feedback[$key];
-                    $answer->seq_number = $key + 1;
                     if (!$answer->id = insert_record("quiz_answers", $answer)) {
                         $result->error = "Could not insert quiz answer! ";
                         return $result;
