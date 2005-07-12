@@ -42,7 +42,6 @@ function assignment_online_upgrade($oldversion)  {
 
                 $assignment->id = insert_record('assignment', $assignment);
 
-
             /// Now create a new course module record
 
                 $oldcm = get_coursemodule_from_instance('journal', $journal->id, $journal->course);
@@ -58,7 +57,13 @@ function assignment_online_upgrade($oldversion)  {
                 
             /// And locate it above the old one
 
+                if (!$section = get_record('course_sections', 'id', $oldcm->section)) {
+                    $section->section = 0;  // So it goes somewhere!
+                }
+
                 $newcm->coursemodule = $newcm->id;
+                $newcm->section      = $section->section;  // need relative reference
+
                 if (! $sectionid = add_mod_to_section($newcm, $oldcm) ) {  // Add it before Journal
                     error("Could not add the new course module to that section");
                 }
@@ -108,5 +113,7 @@ function assignment_online_upgrade($oldversion)  {
                     "eye" icon here:  Admin >> Modules >> Journal.');
         }
     }
+
+    return true;
 
 }
