@@ -136,11 +136,16 @@ function mimeinfo($element, $filename) {
     }
 }
 
-function send_file($path, $filename, $lifetime=86400 , $filter=false, $pathisstring=false) {
+function send_file($path, $filename, $lifetime=86400 , $filter=false, $pathisstring=false,$forcedownload=false) {
 
-    $mimetype     = mimeinfo('type', $filename);
+    $mimetype     = $forcedownload ? 'application/force-download' : mimeinfo('type', $filename);
     $lastmodified = $pathisstring ? time() : filemtime($path);
     $filesize     = $pathisstring ? strlen($path) : filesize($path);
+
+    //IE compatibiltiy HACK!
+    if(ini_get('zlib.output_compression')) {
+        ini_set('zlib.output_compression', 'Off');
+    }
 
     @header('Last-Modified: '. gmdate('D, d M Y H:i:s', $lastmodified) .' GMT');
     if ($lifetime > 0) {
@@ -148,14 +153,20 @@ function send_file($path, $filename, $lifetime=86400 , $filter=false, $pathisstr
         @header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .'GMT');
         @header('Pragma: ');
     } else {
-        // this part is tricky, displaying of MS Office documents in IE needs
-        // to store the file on disk, but no-cache may prevent it
+        // This part is tricky, displaying of MS Office documents in IE needs
+        // to store the file on disk, but no-cache may prevent it.
+        // HTTPS:// sites might have problems with following code in IE, tweak it yourself if needed ;-)
         @header('Cache-Control: private, must-revalidate, pre-check=0, post-check=0, max-age=10');
         @header('Expires: '. gmdate('D, d M Y H:i:s', 0) .'GMT');
         @header('Pragma: no-cache');
     }
-    @header('Accept-Ranges: none'); // PDF compatibility
-    @header('Content-disposition: inline; filename='.$filename);
+    @header('Accept-Ranges: none'); // Comment out if PDFs do not work...
+
+    if ($forcedownload) {
+        @header('Content-disposition: attachment; filename='.$filename);
+    } else {
+        @header('Content-disposition: inline; filename='.$filename);
+    }
 
     if (!$filter) {
         @header('Content-length: '.$filesize);
@@ -167,7 +178,7 @@ function send_file($path, $filename, $lifetime=86400 , $filter=false, $pathisstr
         if ($pathisstring) {
             echo $path;
         }else {
-            readfile($path);
+            readfile_chunked($path);
         }
     } else {     // Try to put the file through filters
         global $course;  // HACK!
@@ -199,7 +210,7 @@ function send_file($path, $filename, $lifetime=86400 , $filter=false, $pathisstr
             if ($pathisstring) {
                 echo $path;
             }else {
-                readfile($path);
+                readfile_chunked($path);
             }
         }
     }
@@ -342,6 +353,28 @@ function fulldelete($location) {
         }
     }
     return true;
+}
+
+function readfile_chunked($filename,$retbytes=true) {
+    $chunksize = 1*(1024*1024); // 1MB chunks
+    $buffer = '';
+    $cnt =0;// $handle = fopen($filename, 'rb');
+    $handle = fopen($filename, 'rb');
+    if ($handle === false) {
+        return false;
+    }
+    
+    while (!feof($handle)) {
+        $buffer = fread($handle, $chunksize);
+        echo $buffer;
+        if ($retbytes) {
+            $cnt += strlen($buffer);}
+    }
+    $status = fclose($handle);
+    if ($retbytes && $status) {
+        return $cnt; // return num. bytes delivered like readfile() does.
+    }
+    return $status;
 }
 
 

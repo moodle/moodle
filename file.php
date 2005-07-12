@@ -1,6 +1,7 @@
 <?php // $Id$
       // This script fetches files from the dataroot directory
       // Syntax:      file.php/courseid/dir/dir/dir/filename.ext
+      //              file.php/courseid/dir/dir/dir/filename.ext?forcedownload=1 (download instead of inline)
       //              file.php/courseid/dir (returns index.html from dir)
       // Workaround:  file.php?file=/courseid/dir/dir/dir/filename.ext
       // Test:        file.php/testslasharguments
@@ -16,6 +17,7 @@
     
 
     $relativepath = get_file_argument('file.php');
+    $forcedownload = optional_param('forcedownload', 0, PARAM_BOOL);
     
     // relative path must start with '/', because of backup/restore!!!
     if (!$relativepath) {
@@ -86,10 +88,21 @@
         }
     }
 
+    // security: force download of all attachments submitted by students
+    if ((count($args) >= 3)
+        and (strtolower($args[1]) == 'moddata')
+        and ((strtolower($args[2]) == 'forum')
+            or (strtolower($args[2]) == 'assignment')
+            or (strtolower($args[2]) == 'glossary')
+            or (strtolower($args[2]) == 'wiki')
+            or (strtolower($args[2]) == 'exercise')
+            or (strtolower($args[2]) == 'workshop')
+            )) {
+        $forcedownload  = 1; // force download of all attachments
+    }
+
     // security: some protection of hidden resource files
     // warning: it may break backwards compatibility
-    // TODO: case sensitive in PostgresQL, case insensitive in MySQL (ok?)
-    // TODO: should we protect directories too?
     if ((!empty($CFG->preventaccesstohiddenfiles)) 
         and (count($args) >= 2)
         and (!isteacher($course->id))) {
@@ -131,7 +144,7 @@
     // ========================================
     session_write_close(); // unlock session during fileserving
     $filename = $args[count($args)-1];
-    send_file($pathname, $filename, $lifetime, !empty($CFG->filteruploadedfiles));
+    send_file($pathname, $filename, $lifetime, !empty($CFG->filteruploadedfiles), false, $forcedownload);
 
     function not_found($courseid) {
         global $CFG;
