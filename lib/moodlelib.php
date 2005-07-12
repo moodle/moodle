@@ -35,13 +35,13 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package moodlecore
  */
-/// CONSTANTS /////////////////////////////////////////////////////////////
+ 
+/// CONSTANTS (Encased in phpdoc proper comments)/////////////////////////
 
 /**
  * Used by some scripts to check they are being called by Moodle
  */
 define('MOODLE_INTERNAL', true);
-
 
 /**
  * No groups used?
@@ -58,6 +58,7 @@ define('SEPARATEGROUPS', 1);
  */
 define('VISIBLEGROUPS', 2);
 
+/// Date and time constants ///
 /**
  * Time constant - the number of seconds in a week
  */
@@ -88,33 +89,108 @@ define('DAYMINS', 1440);
  */
 define('HOURMINS', 60);
 
+/// Parameter constants - if set then the parameter is cleaned of scripts etc. ///
 /**
- * Parameter constants - if set then the parameter is cleaned of scripts etc
+ * PARAM_RAW specifies a parameter that should contain:
  */
 define('PARAM_RAW',      0x0000);
-define('PARAM_CLEAN',    0x0001);
-define('PARAM_INT',      0x0002);
-define('PARAM_INTEGER',  0x0002);  // Alias for PARAM_INT
-define('PARAM_ALPHA',    0x0004);
-define('PARAM_ACTION',   0x0004);  // Alias for PARAM_ALPHA
-define('PARAM_FORMAT',   0x0004);  // Alias for PARAM_ALPHA
-define('PARAM_NOTAGS',   0x0008);
-define('PARAM_FILE',     0x0010);
-define('PARAM_PATH',     0x0020);
-define('PARAM_HOST',     0x0040);  // FQDN or IPv4 dotted quad
-define('PARAM_URL',      0x0080);
-define('PARAM_LOCALURL', 0x0180);  // NOT orthogonal to the others! Implies PARAM_URL!
-define('PARAM_CLEANFILE',0x0200);
-define('PARAM_ALPHANUM', 0x0400);  //numbers or letters only
-define('PARAM_BOOL',     0x0800);  //convert to value 1 or 0 using empty()
-define('PARAM_CLEANHTML',0x1000);  //actual HTML code that you want cleaned and slashes removed
-define('PARAM_ALPHAEXT', 0x2000);  // PARAM_ALPHA plus the chars in quotes: "/-_" allowed
-define('PARAM_SAFEDIR',  0x4000);  // safe directory name, suitable for include() and require()
 
 /**
- * Definition of page types
+ * PARAM_CLEAN specifies a parameter that should contain:
+ */
+define('PARAM_CLEAN',    0x0001);
+
+/**
+ * PARAM_INT  specifies a parameter that should contain an integer value only.
+ */
+define('PARAM_INT',      0x0002);
+
+/**
+ * PARAM_INTEGER - an alias for PARAM_INT
+ */
+define('PARAM_INTEGER',  0x0002);
+
+/**
+ * PARAM_ALPHA  specifies a parameter that should contain a string type (?).
+ */
+define('PARAM_ALPHA',    0x0004);
+
+/**
+ * PARAM_INTEGER - an alias for PARAM_ALPHA
+ */
+define('PARAM_ACTION',   0x0004);
+
+/**
+ * PARAM_INTEGER - an alias for PARAM_ALPHA
+ */
+define('PARAM_FORMAT',   0x0004);
+
+/**
+ * PARAM_NOTAGS specifies a parameter that should contain:
+ */
+define('PARAM_NOTAGS',   0x0008);
+
+/**
+ * PARAM_FILE specifies a parameter that should contain:
+ */
+define('PARAM_FILE',     0x0010);
+
+/**
+ * PARAM_PATH specifies a parameter that should contain:
+ */
+define('PARAM_PATH',     0x0020);
+
+/**
+ * PARAM_HOST specifies a parameter that should contain a fully qualified domain name (FQDN) or an IPv4 dotted quad (IP address)
+ */
+define('PARAM_HOST',     0x0040);
+
+/**
+ * PARAM_URL specifies a parameter that should contain a string in the form of a properly formatted URL.
+ */
+define('PARAM_URL',      0x0080);
+
+/**
+ * PARAM_LOCALURL specifies a parameter that should contain a string in the form of a properly formatted URL as well as one that refers to the local server itself. (NOT orthogonal to the others! Implies PARAM_URL!)
+ */
+define('PARAM_LOCALURL', 0x0180);
+
+/**
+ * PARAM_CLEANFILE specifies a parameter that should contain:
+ */
+define('PARAM_CLEANFILE',0x0200);
+
+/**
+ * PARAM_ALPHANUM specifies a parameter that should contain either numbers or letters only.
+ */
+define('PARAM_ALPHANUM', 0x0400);
+
+/**
+ * PARAM_BOOL specifies a parameter that should contain a 0 or 1 boolean value only. It will convert to value 1 or 0 using empty()
+ */
+define('PARAM_BOOL',     0x0800);
+
+/**
+ * PARAM_CLEANHTML specifies a parameter that should contain actual HTML code that you want cleaned and slashes removed
+ */
+define('PARAM_CLEANHTML',0x1000);
+
+/**
+ * PARAM_ALPHAEXT specifies a parameter that should contain the same contents as PARAM_ALPHA plus the chars in quotes: "/-_" allowed
+ */
+define('PARAM_ALPHAEXT', 0x2000);
+
+/**
+ * PARAM_SAFEDIR specifies a parameter that should contain a safe directory name, suitable for include() and require()
+ */
+define('PARAM_SAFEDIR',  0x4000);
+
+/// Page types ///
+/**
+ * PAGE_COURSE_VIEW is a definition of a page type. For more information on the page class see moodle/lib/pagelib.php.
  */
 define('PAGE_COURSE_VIEW', 'course-view');
+
 
 /// PARAMETER HANDLING ////////////////////////////////////////////////////
 
@@ -129,7 +205,7 @@ define('PAGE_COURSE_VIEW', 'course-view');
  *    $id = required_param('id');
  *
  * @param string $varname the name of the parameter variable we want
- * @param integer $options a bit field that specifies any cleaning needed
+ * @param int $options a bit field that specifies any cleaning needed
  * @return mixed
  */
 function required_param($varname, $options=PARAM_CLEAN) {
@@ -156,7 +232,7 @@ function required_param($varname, $options=PARAM_CLEAN) {
  *
  * @param string $varname the name of the parameter variable we want
  * @param mixed  $default the default value to return if nothing is found
- * @param integer $options a bit field that specifies any cleaning needed
+ * @param int $options a bit field that specifies any cleaning needed
  * @return mixed
  */
 function optional_param($varname, $default=NULL, $options=PARAM_CLEAN) {
@@ -174,8 +250,9 @@ function optional_param($varname, $default=NULL, $options=PARAM_CLEAN) {
 
 /**
  * Convenience function to test if a parameter is set
- * @param string $varname name of the parameter
- * @return boolean true if set otherwise false
+ *
+ * @param string $varname The name of the parameter being checked
+ * @return bool Returns true if the parameter set, otherwise false
  */
 function isset_param($varname) {
   if (isset($_GET[$varname])) {
@@ -191,9 +268,30 @@ function isset_param($varname) {
  * Used by {@link optional_param()} and {@link required_param()} to
  * clean the variables and/or cast to specific types, based on
  * an options field.
+ * <code>
+ * $course->format = clean_param($course->format, PARAM_ALPHA);
+ * $selectedgrade_item = clean_param($selectedgrade_item, PARAM_CLEAN);
+ * </code>
  *
+ * @uses $CFG
+ * @uses PARAM_CLEAN
+ * @uses PARAM_INT
+ * @uses PARAM_INTEGER
+ * @uses PARAM_ALPHA
+ * @uses PARAM_ALPHANUM
+ * @uses PARAM_NOTAGS
+ * @uses PARAM_ALPHATEXT
+ * @uses PARAM_BOOL
+ * @uses PARAM_SAFEDIR
+ * @uses PARAM_CLEANFILE
+ * @uses PARAM_FILE
+ * @uses PARAM_PATH
+ * @uses PARAM_HOST
+ * @uses PARAM_URL
+ * @uses PARAM_LOCALURL
+ * @uses PARAM_CLEANHTML
  * @param mixed $param the variable we are cleaning
- * @param integer $options a bit field that specifies the cleaning needed
+ * @param int $options a bit field that specifies the cleaning needed. This field is specified by combining PARAM_* definitions together with a logical or.
  * @return mixed
  */
 function clean_param($param, $options) {
@@ -350,7 +448,7 @@ function clean_param($param, $options) {
  * matches that of the current user.
  *
  * @param string $sesskey optionally provided sesskey
- * @return boolean
+ * @return bool
  */
 function confirm_sesskey($sesskey=NULL) {
     global $USER;
@@ -449,7 +547,7 @@ function optional_variable(&$var, $default=0) {
  * otherwise leave it alone
  * @param mixed $var the variable to test
  * @param mixed $default the default value
- * @return boolean true if variable has changed
+ * @return bool true if variable has changed
  */
 function set_default( &$var, $default ) {
   if (empty($var)) {
@@ -599,7 +697,7 @@ function reload_user_preferences() {
  * @param string $value The value to set forthe $name key in the specified user's record
  * @param int $userid A moodle user ID
  * @todo Add inline links to $USER and user functions in above line.
- * @return boolean
+ * @return bool
  */
 function set_user_preference($name, $value, $otheruser=NULL) {
 
@@ -650,7 +748,7 @@ function set_user_preference($name, $value, $otheruser=NULL) {
  * @uses $USER
  * @param string  $name The key to unset as preference for the specified user
  * @param int $userid A moodle user ID
- * @return boolean
+ * @return bool
  */
 function unset_user_preference($name, $userid=NULL) {
 
@@ -673,7 +771,7 @@ function unset_user_preference($name, $userid=NULL) {
  * Sets a whole array of preferences for the current user
  * @param array $prefarray An array of key/value pairs to be set
  * @param int $userid A moodle user ID
- * @return boolean
+ * @return bool
  */
 function set_user_preferences($prefarray, $userid=NULL) {
 
@@ -754,7 +852,7 @@ function get_user_preferences($name=NULL, $default=NULL, $userid=NULL) {
  * @param int $hour The hour part to create timestamp of.
  * @param int $minute The minute part to create timestamp of.
  * @param int $second The second part to create timestamp of.
- * @param float $timezone
+ * @param float $timezone .
  * @return int timestamp
  * @todo Finish documenting this function
  */
@@ -847,7 +945,7 @@ function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, 
  * @param  int $date timestamp in GMT
  * @param string $format strftime format
  * @param float $timezone
- * @param boolean $fixday If true (default) then the leading
+ * @param bool $fixday If true (default) then the leading
  * zero from %d is removed. If false then the leading zero is mantained.
  * @return string
  */
@@ -1035,6 +1133,14 @@ function get_user_timezone_offset($tz = 99) {
     }
 }
 
+/**
+ * ?
+ *
+ * @uses $USER
+ * @uses $CFG
+ * @param int $tz ?
+ * @return int
+ */
 function get_user_timezone($tz = 99) {
     global $USER, $CFG;
 
@@ -1054,6 +1160,14 @@ function get_user_timezone($tz = 99) {
     return is_numeric($tz) ? (float) $tz : $tz;
 }
 
+/**
+ * ?
+ *
+ * @uses $CFG
+ * @uses $db
+ * @param string $timezonename ?
+ * @return object
+ */
 function get_timezone_record($timezonename) {
     global $CFG, $db;
     static $cache = NULL;
@@ -1070,6 +1184,15 @@ function get_timezone_record($timezonename) {
                             WHERE name = '.$db->qstr($timezonename).' ORDER BY year DESC', true);
 }
 
+/**
+ * ?
+ *
+ * @uses $CFG
+ * @uses $USER
+ * @param ? $fromyear ?
+ * @param ? $to_year ?
+ * @return bool
+ */
 function calculate_user_dst_table($from_year = NULL, $to_year = NULL) {
     global $CFG, $USER;
 
@@ -1319,10 +1442,25 @@ function find_day_in_month($startday, $weekday, $month, $year) {
     }
 }
 
+/**
+ * Calculate the number of days in a given month
+ *
+ * @param int $month The month whose day count is sought
+ * @param int $year The year of the month whose day count is sought
+ * @return int
+ */
 function days_in_month($month, $year) {
    return intval(date('t', mktime(12, 0, 0, $month, 1, $year, 0)));
 }
 
+/**
+ * Calculate the position in the week of a specific calendar day
+ *
+ * @param int $day The day of the date whose position in the week is sought
+ * @param int $month The month of the date whose position in the week is sought
+ * @param int $year The year of the date whose position in the week is sought
+ * @return int
+ */
 function dayofweek($day, $month, $year) {
     // I wonder if this is any different from
     // strftime('%w', mktime(12, 0, 0, $month, $daysinmonth, $year, 0));
@@ -1331,9 +1469,14 @@ function dayofweek($day, $month, $year) {
 
 /// USER AUTHENTICATION AND LOGIN ////////////////////////////////////////
 
-// Makes sure that $USER->sesskey exists, if $USER itself exists. It sets a new sesskey
-// if one does not already exist, but does not overwrite existing sesskeys. Returns the
-// sesskey string if $USER exists, or boolean false if not.
+/**
+ * Makes sure that $USER->sesskey exists, if $USER itself exists. It sets a new sesskey
+ * if one does not already exist, but does not overwrite existing sesskeys. Returns the
+ * sesskey string if $USER exists, or boolean false if not.
+ *
+ * @uses $USER
+ * @return string
+ */
 function sesskey() {
     global $USER;
 
@@ -1370,8 +1513,8 @@ function sesskey() {
  * @uses SITEID
  * @uses $MoodleSession
  * @param int $courseid id of the course
- * @param boolean $autologinguest
- * @param $cm course module object
+ * @param bool $autologinguest
+ * @param object $cm course module object
  */
 function require_login($courseid=0, $autologinguest=true, $cm=null) {
 
@@ -1524,7 +1667,7 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
  *
  * @uses $CFG
  * @param object $course The course object in question
- * @param boolean $autologinguest Allow autologin guests if that is wanted
+ * @param bool $autologinguest Allow autologin guests if that is wanted
  * @param object $cm Course activity module if known
  */
 function require_course_login($course, $autologinguest=true, $cm=null) {
@@ -1542,7 +1685,7 @@ function require_course_login($course, $autologinguest=true, $cm=null) {
  * last login to now.
  *
  * @uses $USER
- * @return boolean
+ * @return bool
  */
 function update_user_login_times() {
     global $USER;
@@ -1559,7 +1702,7 @@ function update_user_login_times() {
  * Determines if a user has completed setting up their account.
  *
  * @param user $user A {@link $USER} object to test for the existance of a valid name and email
- * @return boolean
+ * @return bool
  */
 function user_not_fully_set_up($user) {
     return ($user->username != 'guest' and (empty($user->firstname) or empty($user->lastname) or empty($user->email) or over_bounce_threshold($user)));
@@ -1845,7 +1988,7 @@ function remove_from_metacourse($metacourseid, $courseid) {
  * Determines if a user is currently logged in
  *
  * @uses $USER
- * @return boolean
+ * @return bool
  */
 function isloggedin() {
     global $USER;
@@ -1859,10 +2002,9 @@ function isloggedin() {
  *
  * @uses $USER
  * @param int $userid The id of the user as is found in the 'user' table
- * @staticvar array $admin ?
- * @staticvar array $nonadmins ?
- * @return boolean
- * @todo Complete documentation for this function
+ * @staticvar array $admins List of users who have been found to be admins by user id
+ * @staticvar array $nonadmins List of users who have been found not to be admins by user id
+ * @return bool
  */
 function isadmin($userid=0) {
     global $USER;
@@ -1901,11 +2043,11 @@ function isadmin($userid=0) {
  * Determines if a user is a teacher (or better)
  *
  * @uses $USER
+ * @uses $CFG
  * @param int $courseid The id of the course that is being viewed, if any
  * @param int $userid The id of the user that is being tested against. Set this to 0 if you would just like to test against the currently logged in user.
- * @param boolean $includeadmin If true this function will return true when it encounters an admin user.
- * @return boolean
- * @todo Finish documenting this function
+ * @param bool $includeadmin If true this function will return true when it encounters an admin user.
+ * @return bool
  */
 function isteacher($courseid=0, $userid=0, $includeadmin=true) {
 /// Is the user able to access this course as a teacher?
@@ -1945,9 +2087,8 @@ function isteacher($courseid=0, $userid=0, $includeadmin=true) {
  *
  * @uses $USER
  * @param int $userid The id of the user that is being tested against. Set this to 0 if you would just like to test against the currently logged in user.
- * @param boolean $includeadmin If true this function will return true when it encounters an admin user.
- * @return boolean
- * @todo Finish documenting this function
+ * @param bool $includeadmin If true this function will return true when it encounters an admin user.
+ * @return bool
  */
 function isteacherinanycourse($userid=0, $includeadmin=true) {
     global $USER;
@@ -1975,7 +2116,7 @@ function isteacherinanycourse($userid=0, $includeadmin=true) {
  * @uses $USER
  * @param int $courseid The id of the course that is being edited
  * @param int $userid The id of the user that is being tested against. Set this to 0 if you would just like to test against the currently logged in user.
- * @return boolean
+ * @return boo
  */
 function isteacheredit($courseid, $userid=0) {
     global $USER;
@@ -2002,7 +2143,7 @@ function isteacheredit($courseid, $userid=0) {
  *
  * @uses $USER
  * @param int $userid The user being tested. You can set this to 0 or leave it blank to test the currently logged in user.
- * @return boolean
+ * @return bool
  */
 function iscreator ($userid=0) {
     global $USER;
@@ -2030,7 +2171,7 @@ function iscreator ($userid=0) {
  * @uses SITEID
  * @param int $courseid The id of the course being tested
  * @param int $userid The user being tested. You can set this to 0 or leave it blank to test the currently logged in user.
- * @return boolean
+ * @return bool
  */
 function isstudent($courseid, $userid=0) {
     global $USER, $CFG;
@@ -2072,7 +2213,7 @@ function isstudent($courseid, $userid=0) {
  *
  * @uses $USER
  * @param int $userid The user being tested. You can set this to 0 or leave it blank to test the currently logged in user.
- * @return boolean
+ * @return bool
  */
 function isguest($userid=0) {
     global $USER;
@@ -2093,7 +2234,7 @@ function isguest($userid=0) {
  * @uses $USER
  * @param int $courseid The id of the course being tested
  * @param user $user A {@link $USER} object. If null then the currently logged in user is used.
- * @return boolean
+ * @return bool
  */
 function isediting($courseid, $user=NULL) {
     global $USER;
@@ -2111,7 +2252,7 @@ function isediting($courseid, $user=NULL) {
  *
  * @uses $USER
  * @param int $courseid The id of the course being tested
- * @return boolean
+ * @return bool
  */
 function ismoving($courseid) {
     global $USER;
@@ -2221,7 +2362,7 @@ function get_moodle_cookie() {
  *
  * @uses $CFG
  * @param string $auth Form of authentication required
- * @return boolean
+ * @return bool
  * @todo Outline auth types and provide code example
  */
 function is_internal_auth($auth='') {
@@ -2592,11 +2733,13 @@ function set_login_session_preferences() {
 /**
  * Enrols (or re-enrols) a student in a given course
  *
- * @param int $courseid The id of the course that is being viewed
+ * @uses $CFG
  * @param int $userid The id of the user that is being tested against. Set this to 0 if you would just like to test against the currently logged in user.
+ * @param int $courseid The id of the course that is being viewed
  * @param int $timestart ?
  * @param int $timeend ?
- * @return boolean
+ * @param string $enrol ?
+ * @return bool
  * @todo Finish documenting this function
  */
 function enrol_student($userid, $courseid, $timestart=0, $timeend=0, $enrol='') {
@@ -2610,9 +2753,9 @@ function enrol_student($userid, $courseid, $timestart=0, $timeend=0, $enrol='') 
         return false;
     }
     // enrol the student in any parent meta courses...
-    if ($parents = get_records('course_meta','child_course',$courseid)) {
+    if ($parents = get_records('course_meta', 'child_course', $courseid)) {
         foreach ($parents as $parent) {
-            enrol_student($userid, $parent->parent_course,$timestart,$timeend,$enrol);
+            enrol_student($userid, $parent->parent_course, $timestart, $timeend,$enrol);
         }
     }
 
@@ -2645,7 +2788,7 @@ function enrol_student($userid, $courseid, $timestart=0, $timeend=0, $enrol='') 
  *
  * @param int $courseid The id of the course that is being viewed, if any
  * @param int $userid The id of the user that is being tested against.
- * @return boolean
+ * @return bool
  */
 function unenrol_student($userid, $courseid=0) {
 
@@ -2679,14 +2822,15 @@ function unenrol_student($userid, $courseid=0) {
 /**
  * Add a teacher to a given course
  *
-  * @uses $USER
- * @param int $courseid The id of the course that is being viewed, if any
+ * @uses $USER
  * @param int $userid The id of the user that is being tested against. Set this to 0 if you would just like to test against the currently logged in user.
+ * @param int $courseid The id of the course that is being viewed, if any
  * @param int $editall ?
  * @param string $role ?
  * @param int $timestart ?
  * @param int $timeend ?
- * @return boolean
+ * @param string $enrol ?
+ * @return bool
  * @todo Finish documenting this function
  */
 function add_teacher($userid, $courseid, $editall=1, $role='', $timestart=0, $timeend=0, $enrol='manual') {
@@ -2752,7 +2896,7 @@ function add_teacher($userid, $courseid, $editall=1, $role='', $timestart=0, $ti
  *
  * @param int $courseid The id of the course that is being viewed, if any
  * @param int $userid The id of the user that is being tested against.
- * @return boolean
+ * @return bool
  */
 function remove_teacher($userid, $courseid=0) {
     if ($courseid) {
@@ -2784,7 +2928,7 @@ function remove_teacher($userid, $courseid=0) {
  * Add a creator to the site
  *
  * @param int $userid The id of the user that is being tested against.
- * @return boolean
+ * @return bool
  */
 function add_creator($userid) {
 
@@ -2801,9 +2945,9 @@ function add_creator($userid) {
 /**
  * Remove a creator from a site
  *
-  * @uses $db
+ * @uses $db
  * @param int $userid The id of the user that is being tested against.
- * @return boolean
+ * @return bool
  */
 function remove_creator($userid) {
     global $db;
@@ -2816,7 +2960,7 @@ function remove_creator($userid) {
  *
  * @uses SITEID
  * @param int $userid The id of the user that is being tested against.
- * @return boolean
+ * @return bool
  */
 function add_admin($userid) {
 
@@ -2841,10 +2985,10 @@ function add_admin($userid) {
 /**
  * Removes an admin from a site
  *
-  * @uses $db
-  * @uses SITEID
+ * @uses $db
+ * @uses SITEID
  * @param int $userid The id of the user that is being tested against.
- * @return boolean
+ * @return bool
  */
 function remove_admin($userid) {
     global $db;
@@ -2863,8 +3007,8 @@ function remove_admin($userid) {
  * @uses $SESSION
  * @uses $CFG
  * @param int $courseid The id of the course that is being viewed
- * @param boolean $showfeedback Set this to false to suppress notifications from being printed as the functions performs its steps.
- * @return boolean
+ * @param bool $showfeedback Set this to false to suppress notifications from being printed as the functions performs its steps.
+ * @return bool
  */
 function remove_course_contents($courseid, $showfeedback=true) {
 
@@ -3072,13 +3216,13 @@ function remove_course_contents($courseid, $showfeedback=true) {
  * @uses $SESSION
  * @uses $CFG
  * @param int $courseid The id of the course that is being viewed
- * @param boolean $showfeedback Set this to false to suppress notifications from being printed as the functions performs its steps.
- * @param boolean $removestudents ?
- * @param boolean $removeteachers ?
- * @param boolean $removegroups ?
- * @param boolean $removeevents ?
- * @param boolean $removelogs ?
- * @return boolean
+ * @param bool $showfeedback Set this to false to suppress notifications from being printed as the functions performs its steps.
+ * @param bool $removestudents ?
+ * @param bool $removeteachers ?
+ * @param bool $removegroups ?
+ * @param bool $removeevents ?
+ * @param bool $removelogs ?
+ * @return bool
  * @todo Finish documenting this function
  */
 function remove_course_userdata($courseid, $showfeedback=true,
@@ -3193,11 +3337,13 @@ function remove_course_userdata($courseid, $showfeedback=true,
 
 
 /**
-* Returns a boolean: is the user a member of the given group?
-*
-* @param    type description
- * @todo Finish documenting this function
-*/
+ * Determines if the user a member of the given group
+ *
+ * @uses $USER
+ * @param int $groupid The group to check the membership of
+ * @param int $userid The user to check against the group
+ * @return bool
+ */
 function ismember($groupid, $userid=0) {
     global $USER;
 
@@ -3290,11 +3436,10 @@ function set_current_group($courseid, $groupid) {
 /**
  * Gets the current group for the current user as an id or an object
  *
- * @uses $CFG
+ * @uses $USER
  * @uses $SESSION
  * @param int $courseid The course being examined - relates to id field in 'course' table.
- * @param boolean $full If true, the return value is a full record object. If false, just the id of the record.
- * @todo Finish documenting this function
+ * @param bool $full If true, the return value is a full record object. If false, just the id of the record.
  */
 function get_current_group($courseid, $full=false) {
     global $SESSION, $USER;
@@ -3446,7 +3591,7 @@ function moodle_process_email($modargs,$body) {
  * Send an email to a specified user
  *
  * @uses $CFG
- * @uses $_SERVER
+ * @uses $FULLME
  * @uses SITEID
  * @param user $user  A {@link $USER} object
  * @param user $from A {@link $USER} object
@@ -3455,9 +3600,9 @@ function moodle_process_email($modargs,$body) {
  * @param string $messagehtml complete html version of the message (optional)
  * @param string $attachment a file on the filesystem, relative to $CFG->dataroot
  * @param string $attachname the name of the file (extension indicates MIME)
- * @param boolean $usetrueaddress determines whether $from email address should
+ * @param bool $usetrueaddress determines whether $from email address should
  *          be sent out. Will be overruled by user profile setting for maildisplay
- * @return boolean|string Returns "true" if mail was sent OK, "emailstop" if email
+ * @return bool|string Returns "true" if mail was sent OK, "emailstop" if email
  *          was blocked by user and "false" if there was another sort of error.
  */
 function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $attachment='', $attachname='', $usetrueaddress=true, $repyto='', $replytoname='') {
@@ -3603,7 +3748,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
  *
  * @uses $CFG
  * @param user $user A {@link $USER} object
- * @return boolean|string Returns "true" if mail was sent OK, "emailstop" if email
+ * @return bool|string Returns "true" if mail was sent OK, "emailstop" if email
  *          was blocked by user and "false" if there was another sort of error.
  */
 function reset_password_and_mail($user) {
@@ -3639,7 +3784,7 @@ function reset_password_and_mail($user) {
  *
  * @uses $CFG
  * @param user $user A {@link $USER} object
- * @return boolean|string Returns "true" if mail was sent OK, "emailstop" if email
+ * @return bool|string Returns "true" if mail was sent OK, "emailstop" if email
  *          was blocked by user and "false" if there was another sort of error.
  */
  function send_confirmation_email($user) {
@@ -3674,9 +3819,8 @@ function reset_password_and_mail($user) {
  *
  * @uses $CFG
  * @param user $user A {@link $USER} object
- * @return boolean|string Returns "true" if mail was sent OK, "emailstop" if email
+ * @return bool|string Returns "true" if mail was sent OK, "emailstop" if email
  *          was blocked by user and "false" if there was another sort of error.
- * @todo Finish documenting this function
  */
 function send_password_change_confirmation_email($user) {
 
@@ -3745,7 +3889,7 @@ function email_is_not_allowed($email) {
  *
  * @uses $CFG
  * @param string $directory  a string of directory names under $CFG->dataroot eg  stuff/assignment/1
- * param boolean $shownotices If true then notification messages will be printed out on error.
+ * param bool $shownotices If true then notification messages will be printed out on error.
  * @return string|false Returns full path to directory if successful, false if not
  */
 function make_upload_directory($directory, $shownotices=true) {
@@ -3925,9 +4069,8 @@ function get_max_upload_sizes($sitebytes=0, $coursebytes=0, $modulebytes=0) {
  *
  * @uses $_FILES
  * @param array $filearray  A 1-dimensional sub-array of the $_FILES array
- * @param boolean $returnerror ?
- * @return boolean
- * @todo Finish documenting this function
+ * @param bool $returnerror If true then a string error message will be returned. Otherwise the user will be notified of the error in a notify() call.
+ * @return bool|string
  */
 function print_file_upload_error($filearray = '', $returnerror = false) {
 
@@ -3988,9 +4131,9 @@ function print_file_upload_error($filearray = '', $returnerror = false) {
  *
  * @param string $rootdir  ?
  * @param string $excludefile  If defined then the specified file/directory is ignored
- * @param boolean $descend  ?
- * @param boolean $getdirs  If true then (sub)directories are included in the output
- * @param boolean $getfiles  If true then files are included in the output
+ * @param bool $descend  ?
+ * @param bool $getdirs  If true then (sub)directories are included in the output
+ * @param bool $getfiles  If true then files are included in the output
  * @return array An array with all the filenames in
  * all subdirectories, relative to the given rootdir
  * @todo Finish documenting this function. Add examples of $excludefile usage.
@@ -4043,7 +4186,7 @@ function get_directory_list($rootdir, $excludefile='', $descend=true, $getdirs=f
  * itself
  *
  * @param string $dirName - full path to directory
- * @return boolean true if successful, false if error
+ * @return bool true if successful, false if error
 **/
  
 function delDirContents($dirName) {
@@ -4718,7 +4861,7 @@ function get_list_of_timezones() {
  *
  * @uses $CFG
  * @param string $file ?
- * @param boolean $include ?
+ * @param bool $include ?
  * @return ?
  * @todo Finish documenting this function
  */
@@ -4749,17 +4892,16 @@ function document_file($file, $include=true) {
 }
 
 /**
-* Function to raise the memory limit to a new value.
-* Will respect the memory limit if it is higher, thus allowing
-* settings in php.ini, apache conf or command line switches
-* to override it
-*
-* The memory limit should be expressed with a string (eg:'64M')
-*
-* Return boolean
-*
-* @param    value    string with the new memory limit
-*/
+ * Function to raise the memory limit to a new value.
+ * Will respect the memory limit if it is higher, thus allowing
+ * settings in php.ini, apache conf or command line switches
+ * to override it
+ *
+ * The memory limit should be expressed with a string (eg:'64M')
+ *
+ * @param string $newlimit the new memory limit
+ * @return bool
+ */
 function raise_memory_limit ($newlimit) {
 
     if (empty($newlimit)) {
@@ -4934,7 +5076,7 @@ function endecrypt ($pwd, $data, $case) {
  *
  * @uses $CFG
  * @param array $event An associative array representing an event from the calendar table. The event will be identified by the id field.
- * @return boolean
+ * @return bool
  * @todo Finish documenting this function
  */
 function update_event($event) {
@@ -5064,8 +5206,7 @@ function get_list_of_plugins($plugin='mod', $exclude='') {
  * Returns true if the current version of PHP is greater that the specified one.
  *
  * @param string $version The version of php being tested.
- * @return boolean
- * @todo Finish documenting this function
+ * @return bool
  */
 function check_php_version($version='4.1.0') {
     return (version_compare(phpversion(), $version) >= 0);
@@ -5079,8 +5220,7 @@ function check_php_version($version='4.1.0') {
  * @uses $_SERVER
  * @param string $brand The browser identifier being tested
  * @param int $version The version of the browser
- * @return boolean
- * @todo Finish documenting this function
+ * @return bool
  */
  function check_browser_version($brand='MSIE', $version=5.5) {
     $agent = $_SERVER['HTTP_USER_AGENT'];
@@ -5140,7 +5280,7 @@ function check_php_version($version='4.1.0') {
  * Contributed by jdell @ unr.edu
  *
  * @param string $ini_get_arg ?
- * @return boolean
+ * @return bool
  * @todo Finish documenting this function
  */
 function ini_get_bool($ini_get_arg) {
@@ -5234,8 +5374,7 @@ function check_gd_version() {
  * if there are any mismatches
  *
  * @uses $CFG
- * @return boolean
- * @todo Finish documenting this function
+ * @return bool
  */
 function moodle_needs_upgrading() {
     global $CFG;
@@ -5790,7 +5929,7 @@ function make_unique_id_code($extra='') {
  *
  * @param string $addr    The address you are checking
  * @param string $subnetstr    The string of subnet addresses
- * @return boolean
+ * @return bool
  */
 function address_in_subnet($addr, $subnetstr) {
 
