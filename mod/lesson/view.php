@@ -145,6 +145,75 @@
        $timedflag = false;
        $attemptflag = false;
         if (empty($pageid)) {
+            // check for dependencies first
+            if ($lesson->dependency and !isteacher($course->id)) {
+                if ($dependentlesson = get_record('lesson', 'id', $lesson->dependency)) {
+                    // lesson exists, so we can proceed            
+                    $conditions = unserialize($lesson->conditions);
+                    // assume true for all
+                    $timespent = false;
+                    $completed = false;
+                    $gradebetterthan = false;
+                    if ($conditions->timespent) {
+                        if ($attempttimes = get_records_select('lesson_timer', "userid = $USER->id AND lessonid = $dependentlesson->id")) {
+                        	foreach($attempttimes as $attempttime) {
+                        		$duration = $attempttime->lessontime - $attempttime->starttime;
+                        		if ($conditions->timespent < $duration/60) {
+                        		    $timespent = true;
+                        		}
+                        	}
+                        } 
+                    } else {
+                        $timespent = true; // there isn't one set
+                    }
+                
+                    if($conditions->gradebetterthan) {
+                        if ($studentgrades = get_records_select('lesson_grades', "userid = $USER->id AND lessonid = $dependentlesson->id")) {
+                            foreach($studentgrades as $studentgrade) {
+                            	if ($studentgrade->grade >= $conditions->gradebetterthan) {
+                            	    $gradebetterthan = true;
+                            	}
+                            }
+                        }
+                    } else {
+                        $gradebetterthan = true; // there isn't one set
+                    }
+                
+                    if ($conditions->completed) {
+                        if (count_records('lesson_grades', 'userid', $USER->id, 'lessonid', $dependentlesson->id)) {
+                            $completed = true;
+                        }
+                    } else {
+                        $completed = true; // not set
+                    }
+                
+                    if (!$gradebetterthan or !$timespent or !$completed) {
+
+                    } 
+                
+                    $errors = array();
+                
+                    if (!$timespent) {
+                        $errors[] = get_string('timespenterror', 'lesson', $conditions->timespent);
+                    }
+                    if (!$completed) {
+                        $errors[] = get_string('completederror', 'lesson');
+                    }
+                    if (!$gradebetterthan) {
+                        $errors[] = get_string('gradebetterthanerror', 'lesson', $conditions->gradebetterthan);
+                    }
+                    if (!empty($errors)) {
+                        echo '<p>';
+                        print_simple_box_start('center');
+                        print_string('completethefollowingconditions', 'lesson', $dependentlesson->name);
+                        echo '<p align="center">'.implode('<br />'.get_string('and', 'lesson').'<br />', $errors).'</p>';
+                        print_simple_box_end();
+                        echo '</p>';
+                        print_footer($course);
+                        exit();
+                    } 
+                }
+            }
             add_to_log($course->id, 'lesson', 'start', 'view.php?id='. $cm->id, $lesson->id, $cm->id);
             // if no pageid given see if the lesson has been started
             if ($grades = get_records_select('lesson_grades', 'lessonid = '. $lesson->id .' AND userid = '. $USER->id,
@@ -445,11 +514,35 @@
             }
 
             // update the clock
-            if (!isteacher($course->id)) {
+            if (!isteacher($course->id) and !isset($USER->lessonstopclock[$lesson->id])) {
                 $timer->lessontime = time();
                 if (!update_record('lesson_timer', $timer)) {
                     error('Error: could not update lesson_timer table');
                 }
+            }
+            
+            if (!$lesson->timed) {  // this is for Tom Wilson, wants the time spent on lesson to be printed out.  I do not print if
+                                    // it  is a timed lesson though
+                // get our times spent on lesson then calculate our hours, minutes, and seconds
+                $timespent = $timer->lessontime - $timer->starttime;
+                $hours = floor($timespent/3600);
+                $timespent = $timespent - ($hours * 3600);
+                $minutes = floor($timespent/60);
+                $secs = $timespent - ($minutes * 60);
+                // put them all together
+                $formattedtime = '';
+                if ($hours > 0) {
+                    $formattedtime .= $hours.":";
+                    if ($minutes < 10) {
+                        $minutes .= "0".$minutes;
+                    }
+                }
+                if ($secs < 10) {
+                    $secs = "0".$secs;
+                }
+                $formattedtime .= $minutes.":".$secs;
+                echo '<div align="right">'.get_string('timespent', 'lesson').': '.$formattedtime.'</div>';
+            
             }
             
             if ($attemptflag) {
@@ -552,6 +645,11 @@
             }
             echo "</div><br />";
             
+            if ($page->qtype == LESSON_IDENTITY) {
+                $identitytype = array_rand($LESSON_IDENTITY_QUESTIONS);
+                $page->contents = $LESSON_IDENTITY_QUESTIONS[$identitytype];
+            }
+            
             if ($lesson->slideshow) {
                 echo format_text($page->contents);
             } else {
@@ -582,6 +680,11 @@
                     echo '<table width="100%">';
                 }
                 switch ($page->qtype) {
+                    case LESSON_IDENTITY :
+                        if (!isteacher($course->id)) {
+                            $USER->lessonstopclock[$lesson->id] = true; // we need to stop the clock
+                        }
+                        echo '<input type="hidden" name="identitytype" value="'.$identitytype.'">';
                     case LESSON_SHORTANSWER :
                     case LESSON_NUMERICAL :
                         if (isset($USER->modattempts[$lesson->id])) {     
@@ -1270,6 +1373,8 @@
                             get_string("addendofcluster", "lesson")."</a> | ".
                             "<a href=\"lesson.php?id=$cm->id&amp;action=addbranchtable&amp;pageid=$page->prevpageid\">".
                             get_string("addabranchtable", "lesson")."</a> | ".
+                            "<a href=\"lesson.php?id=$cm->id&amp;sesskey=".$USER->sesskey."&amp;action=addidentitypage&amp;pageid=$page->prevpageid\">".
+                            get_string("addidentitypage", "lesson")."</a> | ".
                             "<a href=\"lesson.php?id=$cm->id&amp;action=addpage&amp;pageid=$page->prevpageid\">".
                             get_string("addaquestionpage", "lesson")." ".get_string("here","lesson").
                             "</a></small></td></tr>\n";
@@ -1288,6 +1393,8 @@
                             get_string("addcluster", "lesson")."</a> | ".
                             "<a href=\"lesson.php?id=$cm->id&amp;action=addbranchtable&amp;pageid=0\">".
                             get_string("addabranchtable", "lesson")."</a> | ".
+                            "<a href=\"lesson.php?id=$cm->id&amp;sesskey=".$USER->sesskey."&amp;action=addidentitypage&amp;pageid=$page->prevpageid\">".
+                            get_string("addidentitypage", "lesson")."</a> | ".
                             "<a href=\"lesson.php?id=$cm->id&amp;action=addpage&amp;pageid=0\">".
                             get_string("addaquestionpage", "lesson")." ".get_string("here","lesson").
                             "</a></small></td></tr>\n";
@@ -1344,6 +1451,9 @@
                             break;
                         case LESSON_ENDOFBRANCH :
                             echo get_string("endofbranch", "lesson");
+                            break;
+                        case LESSON_IDENTITY :
+                            echo get_string("identity", "lesson");
                             break;
                     }
                     echo "</b></td></tr>\n";
@@ -1472,7 +1582,11 @@
                                 echo "$jumptitle</td></tr>\n";
                             }
                         } else {
-                            if ($lesson->custom && $page->qtype != LESSON_BRANCHTABLE && $page->qtype != LESSON_ENDOFBRANCH) {                        
+                            if ($lesson->custom && $page->qtype != LESSON_BRANCHTABLE 
+                                && $page->qtype != LESSON_ENDOFBRANCH 
+                                && $page->qtype != LESSON_IDENTITY
+                                && $page->qtype != LESSON_CLUSTER
+                                && $page->qtype != LESSON_ENDOFCLUSTER) {                        
                                 echo "<tr><td align=\"right\" width=\"20%\"><b>".get_string("score", "lesson")." $i:";
                                 echo "</b></td><td width=\"80%\">\n";
                                 echo "$answer->score</td></tr>\n";
@@ -1518,7 +1632,9 @@
                         echo "<a href=\"lesson.php?id=$cm->id&amp;sesskey=".$USER->sesskey."&amp;action=addendofbranch&amp;pageid=$page->id\">".
                         get_string("addanendofbranch", "lesson")."</a> | ";
                     }
-                    echo "<a href=\"lesson.php?id=$cm->id&amp;action=addpage&amp;pageid=$page->id\">".
+                    echo "<a href=\"lesson.php?id=$cm->id&amp;sesskey=".$USER->sesskey."&amp;action=addidentitypage&amp;pageid=$page->prevpageid\">".
+                        get_string("addidentitypage", "lesson")."</a> | ".
+                        "<a href=\"lesson.php?id=$cm->id&amp;action=addpage&amp;pageid=$page->id\">".
                         get_string("addaquestionpage", "lesson")." ".get_string("here","lesson").
                         "</a></small></td></tr>\n";
                 }
@@ -1680,7 +1796,7 @@
         // all tables will have these
         $table = new stdClass;
         $table->align = array("left");
-        $table->wrap = array("wrap");
+        $table->wrap = array();
         $table->width = "70%";
         $table->size = array("100%");             
         
