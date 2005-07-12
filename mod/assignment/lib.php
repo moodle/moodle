@@ -1001,10 +1001,11 @@ class assignment_base {
 
 
     function email_teachers_html($info) {
+        global $CFG;
         $posthtml  = '<p><font face="sans-serif">'.
-                     '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$this->course->id.'">'.$course->shortname.'</a> ->'.
+                     '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$this->course->id.'">'.$this->course->shortname.'</a> ->'.
                      '<a href="'.$CFG->wwwroot.'/mod/assignment/index.php?id='.$this->course->id.'">'.$this->strassignments.'</a> ->'.
-                     '<a href="'.$CFG->wwwroot.'/mod/assignment/view.php?id='.$cm->id.'">'.format_string($this->assignment->name,true).'</a></font></p>';
+                     '<a href="'.$CFG->wwwroot.'/mod/assignment/view.php?id='.$this->cm->id.'">'.format_string($this->assignment->name,true).'</a></font></p>';
         $posthtml .= '<hr /><font face="sans-serif">';
         $posthtml .= '<p>'.get_string('emailteachermailhtml', 'assignment', $info).'</p>';
         $posthtml .= '</font><hr />';
