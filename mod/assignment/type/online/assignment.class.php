@@ -179,7 +179,9 @@ class assignment_online extends assignment_base {
         $newsubmission->teacher    = $USER->id;
         $newsubmission->mailed     = 0;       // Make sure mail goes out (again, even)
         $newsubmission->timemarked = time();
-        
+
+        $newsubmission->data1      = addslashes($newsubmission->data1);
+
         if (! update_record('assignment_submissions', $newsubmission)) {
             return false;
         }
