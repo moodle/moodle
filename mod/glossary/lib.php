@@ -1154,29 +1154,26 @@ function glossary_print_attachments($entry, $return=NULL, $align="left") {
     if ($basedir = glossary_file_area($newentry)) {
         if ($files = get_directory_list($basedir)) {
             $strattachment = get_string("attachment", "glossary");
-            $strpopupwindow = get_string("popupwindow");
             foreach ($files as $file) {
                 $icon = mimeinfo("icon", $file);
                 if ($CFG->slasharguments) {
-                    $ffurl = "file.php/$filearea/$file";
+                    $ffurl = "$CFG->wwwroot/file.php/$filearea/$file";
                 } else {
-                    $ffurl = "file.php?file=/$filearea/$file";
+                    $ffurl = "$CFG->wwwroot/file.php?file=/$filearea/$file";
                 }
-                $image = "<img border=\"0\" src=\"$CFG->pixpath/f/$icon\" height=\"16\" width=\"16\" alt=\"$strpopupwindow\" />";
+                $image = "<img border=\"0\" src=\"$CFG->pixpath/f/$icon\" height=\"16\" width=\"16\" alt=\"\" />";
 
                 if ($return == "html") {
-                    $output .= "<a target=\"_image\" href=\"$CFG->wwwroot/$ffurl\">$image</a> ";
-                    $output .= "<a target=\"_image\" href=\"$CFG->wwwroot/$ffurl\">$file</a><br />";
+                    $output .= "<a href=\"$ffurl\">$image</a> ";
+                    $output .= "<a href=\"$ffurl\">$file</a><br />";
                 } else if ($return == "text") {
-                    $output .= "$strattachment $file:\n$CFG->wwwroot/$ffurl\n";
+                    $output .= "$strattachment $file:\n$ffurl\n";
 
                 } else {
                     if ($icon == "image.gif") {    // Image attachments don't get printed as links
-                        $imagereturn .= "<img src=\"$CFG->wwwroot/$ffurl\" align=\"$align\" alt=\"\" />";
+                        $imagereturn .= "<img src=\"$ffurl\" align=\"$align\" alt=\"\" />";
                     } else {
-                        link_to_popup_window("/$ffurl", "attachment", $image, 500, 500, $strattachment);
-                        echo "<a target=\"_image\" href=\"$CFG->wwwroot/$ffurl\">$file</a>";
-                        echo "<br />";
+                        echo "<a href=\"$ffurl\">$file</a><br />";
                     }
                 }
             }
