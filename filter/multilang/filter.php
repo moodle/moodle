@@ -85,7 +85,7 @@ function multilang_filter_impl($langblock) {
 
     // Setup is done, now do multilang replacement on the match we 've been called for
 
-    $searchtosplit = '/<(?:lang|span) lang="([a-zA-Z_-]*)".*?>(.+?)<\/(?:lang|span)>/is';
+    $searchtosplit = '/<(?:lang|span) lang="([a-zA-Z_-8]*)".*?>(.+?)<\/(?:lang|span)>/is';
     preg_match_all($searchtosplit, $langblock[0], $langlist);
 
     /// Get the existing sections langs
