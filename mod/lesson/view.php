@@ -1774,7 +1774,7 @@
         // all tables will have these
         $table = new stdClass;
         $table->align = array("left");
-        $table->wrap = array("wrap");
+        $table->wrap = array();
         $table->width = "70%";
         $table->size = array("100%");             
         
