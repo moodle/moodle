@@ -88,6 +88,8 @@ class assignment_uploadsingle extends assignment_base {
                     unset($submission->data1);  // Don't need to update this.
                     unset($submission->data2);  // Don't need to update this.
                     if (update_record("assignment_submissions", $submission)) {
+                        add_to_log($this->course->id, 'assignment', 'upload', 
+                                'view.php?a='.$this->assignment->id, $this->assignment->id, $this->cm->id);
                         $this->email_teachers($submission);
                         print_heading(get_string('uploadedfile'));
                     } else {
