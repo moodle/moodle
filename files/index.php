@@ -689,7 +689,7 @@ function displaydir ($wdir) {
             if ($dir == '..') {
                 $fileurl = rawurlencode(dirname($wdir));
                 print_cell();
-                print_cell('left', '<a href="index.php?id='.$id.'&amp;wdir='.$fileurl.'"><img src="'.$CFG->pixpath.'/f/parent.gif" height="16" width="16" alt="'.get_string('parentfolder').'" /></a> <a href="index.php?id='.$id.'&amp;wdir='.$fileurl.'">'.get_string('parentfolder').'</a>', 'name');
+                print_cell('left', '<a href="index.php?id='.$id.'&amp;wdir='.$fileurl.'&amp;choose='.$choose.'"><img src="'.$CFG->pixpath.'/f/parent.gif" height="16" width="16" alt="'.get_string('parentfolder').'" /></a> <a href="index.php?id='.$id.'&amp;wdir='.$fileurl.'&amp;choose='.$choose.'">'.get_string('parentfolder').'</a>', 'name');
                 print_cell();
                 print_cell();
                 print_cell();
