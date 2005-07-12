@@ -191,8 +191,8 @@
                     $resource->summary = addslashes($result2);
                     $status = update_record("resource",$resource);
                     if ($CFG->debug>7) {
-                        echo "<br /><hr />".$content1."<br />changed to</br>".$result1."<hr /><br />";
-                        echo "<br /><hr />".$content2."<br />changed to</br>".$result2."<hr /><br />";
+                        echo '<br /><hr />'.htmlentities($content1).'<br />changed to<br />'.htmlentities($result1).'<hr /><br />';
+                        echo '<br /><hr />'.htmlentities($content2).'<br />changed to<br />'.htmlentities($result2).'<hr /><br />';
                     }
                 }
                 //Do some output

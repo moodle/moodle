@@ -984,7 +984,7 @@
                     $post->message = addslashes($result);
                     $status = update_record("forum_posts",$post);
                     if ($CFG->debug>7) {
-                        echo "<br /><hr />".$content."<br />changed to<br />".$result."<hr /><br />";
+                        echo '<br /><hr />'.htmlentities($content).'<br />changed to<br />'.htmlentities($result).'<hr /><br />';
                     }
                 }
                 //Do some output
@@ -1014,7 +1014,7 @@
                     $forum->intro = addslashes($result);
                     $status = update_record("forum",$forum);
                     if ($CFG->debug>7) {
-                        echo "<br /><hr />".$content."<br />changed to</br>".$result."<hr /><br />";
+                        echo '<br /><hr />'.htmlentities($content).'<br />changed to<br />'.htmlentities($result).'<hr /><br />';
                     }
                 }
                 //Do some output

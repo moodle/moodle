@@ -350,7 +350,7 @@
                     $page->content = addslashes($result);
                     $status = update_record("wiki_pages",$page);
                     if ($CFG->debug>7) {
-                        echo "<br /><hr />".$content."<br />changed to<br />".$result."<hr /><br />";
+                        echo '<br /><hr />'.htmlentities($content).'<br />changed to<br />'.htmlentities($result).'<hr /><br />';
                     }
                 }
                 //Do some output
@@ -380,7 +380,7 @@
                     $wiki->summary = addslashes($result);
                     $status = update_record("wiki",$wiki);
                     if ($CFG->debug>7) {
-                        echo "<br /><hr />".$content."<br />changed to</br>".$result."<hr /><br />";
+                        echo '<br /><hr />'.htmlentities($content).'<br />changed to<br />'.htmlentities($result).'<hr /><br />';
                     }
                 }
                 //Do some output
