@@ -136,11 +136,16 @@ function mimeinfo($element, $filename) {
     }
 }
 
-function send_file($path, $filename, $lifetime=86400 , $filter=false, $pathisstring=false) {
+function send_file($path, $filename, $lifetime=86400 , $filter=false, $pathisstring=false,$forcedownload=false) {
 
-    $mimetype     = mimeinfo('type', $filename);
+    $mimetype     = $forcedownload ? 'application/force-download' : mimeinfo('type', $filename);
     $lastmodified = $pathisstring ? time() : filemtime($path);
     $filesize     = $pathisstring ? strlen($path) : filesize($path);
+
+    //IE compatibiltiy HACK!
+    if(ini_get('zlib.output_compression')) {
+        ini_set('zlib.output_compression', 'Off');
+    }
 
     @header('Last-Modified: '. gmdate('D, d M Y H:i:s', $lastmodified) .' GMT');
     if ($lifetime > 0) {
@@ -148,14 +153,20 @@ function send_file($path, $filename, $lifetime=86400 , $filter=false, $pathisstr
         @header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .'GMT');
         @header('Pragma: ');
     } else {
-        // this part is tricky, displaying of MS Office documents in IE needs
-        // to store the file on disk, but no-cache may prevent it
+        // This part is tricky, displaying of MS Office documents in IE needs
+        // to store the file on disk, but no-cache may prevent it.
+        // HTTPS:// sites might have problems with following code in IE, tweak it yourself if needed ;-)
         @header('Cache-Control: private, must-revalidate, pre-check=0, post-check=0, max-age=10');
         @header('Expires: '. gmdate('D, d M Y H:i:s', 0) .'GMT');
         @header('Pragma: no-cache');
     }
-    @header('Accept-Ranges: none'); // PDF compatibility
-    @header('Content-disposition: inline; filename='.$filename);
+    @header('Accept-Ranges: none'); // Comment out if PDFs do not work...
+
+    if ($forcedownload) {
+        @header('Content-disposition: attachment; filename='.$filename);
+    } else {
+        @header('Content-disposition: inline; filename='.$filename);
+    }
 
     if (!$filter) {
         @header('Content-length: '.$filesize);
