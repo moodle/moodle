@@ -599,7 +599,7 @@
                     $entry->definition = addslashes($result);
                     $status = update_record("glossary_entries",$entry);
                     if ($CFG->debug>7) {
-                        echo "<br /><hr />".$content."<br />changed to<br />".$result."<hr /><br />";
+                        echo '<br /><hr />'.htmlentities($content).'<br />changed to<br />'.htmlentities($result).'<hr /><br />';
                     }
                 }
                 //Do some output
@@ -629,7 +629,7 @@
                     $glossary->intro = addslashes($result);
                     $status = update_record("glossary",$glossary);
                     if ($CFG->debug>7) {
-                        echo "<br /><hr />".$content."<br />changed to</br>".$result."<hr /><br />";
+                        echo '<br /><hr />'.htmlentities($content).'<br />changed to<br />'.htmlentities($result).'<hr /><br />';
                     }
                 }
                 //Do some output
