@@ -85,6 +85,8 @@ class assignment_uploadsingle extends assignment_base {
                     $submission->timemodified = time();
                     $submission->numfiles     = 1;
                     $submission->comment = addslashes($submission->comment);
+                    unset($submission->data1);  // Don't need to update this.
+                    unset($submission->data2);  // Don't need to update this.
                     if (update_record("assignment_submissions", $submission)) {
                         $this->email_teachers($submission);
                         print_heading(get_string('uploadedfile'));
@@ -140,7 +142,10 @@ class assignment_uploadsingle extends assignment_base {
         $newsubmission->teacher    = $USER->id;
         $newsubmission->mailed     = 0;       // Make sure mail goes out (again, even)
         $newsubmission->timemarked = time();
-        
+
+        unset($newsubmission->data1);  // Don't need to update this.
+        unset($newsubmission->data2);  // Don't need to update this.
+
         if (! update_record('assignment_submissions', $newsubmission)) {
             return false;
         }

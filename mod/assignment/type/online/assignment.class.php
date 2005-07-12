@@ -181,6 +181,7 @@ class assignment_online extends assignment_base {
         $newsubmission->timemarked = time();
 
         unset($newsubmission->data1);  // Don't need to update this.
+        unset($newsubmission->data2);  // Don't need to update this.
 
         if (! update_record('assignment_submissions', $newsubmission)) {
             return false;

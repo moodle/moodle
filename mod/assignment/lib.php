@@ -851,6 +851,9 @@ class assignment_base {
         $newsubmission->mailed     = 0;       // Make sure mail goes out (again, even)
         $newsubmission->timemarked = time();
 
+        unset($newsubmission->data1);  // Don't need to update this.
+        unset($newsubmission->data2);  // Don't need to update this.
+
         if (empty($submission->timemodified)) {   // eg for offline assignments
             $newsubmission->timemodified = time();
         }
@@ -1030,14 +1033,13 @@ class assignment_base {
                     require_once($CFG->libdir.'/filelib.php');
                     $icon = mimeinfo('icon', $file);
                     if ($CFG->slasharguments) {
-                        $ffurl = "file.php/$filearea/$file";
+                        $ffurl = "$CFG->wwwroot/file.php/$filearea/$file";
                     } else {
-                        $ffurl = "file.php?file=/$filearea/$file";
+                        $ffurl = "$CFG->wwwroot/file.php?file=/$filearea/$file";
                     }
     
                     $output = '<img align="middle" src="'.$CFG->pixpath.'/f/'.$icon.'" height="16" width="16" alt="'.$icon.'" />'.
-                              link_to_popup_window ('/'.$ffurl, 'file'.$key, $file, 450, 580, $file, 'none', true).
-                             '<br />';
+                              '<a href="'.$ffurl.'" >'.$file.'</a><br />';
                 }
             }
         }
