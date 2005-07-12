@@ -692,11 +692,11 @@ function reload_user_preferences() {
  * Sets a preference for the current user
  * Optionally, can set a preference for a different user object
  * @uses $USER
- * @todo Add a better description and include usage examples.
+ * @todo Add a better description and include usage examples. Add inline links to $USER and user functions in above line.
+
  * @param string $name The key to set as preference for the specified user
  * @param string $value The value to set forthe $name key in the specified user's record
  * @param int $userid A moodle user ID
- * @todo Add inline links to $USER and user functions in above line.
  * @return bool
  */
 function set_user_preference($name, $value, $otheruser=NULL) {
@@ -846,13 +846,14 @@ function get_user_preferences($name=NULL, $default=NULL, $userid=NULL) {
 /**
  * Given date parts in user time produce a GMT timestamp.
  *
- * @param int $year The year part to create timestamp of.
- * @param int $month The month part to create timestamp of.
- * @param int $day The day part to create timestamp of.
- * @param int $hour The hour part to create timestamp of.
- * @param int $minute The minute part to create timestamp of.
- * @param int $second The second part to create timestamp of.
- * @param float $timezone .
+ * @param int $year The year part to create timestamp of
+ * @param int $month The month part to create timestamp of
+ * @param int $day The day part to create timestamp of
+ * @param int $hour The hour part to create timestamp of
+ * @param int $minute The minute part to create timestamp of
+ * @param int $second The second part to create timestamp of
+ * @param float $timezone ?
+ * @param bool $applydst ?
  * @return int timestamp
  * @todo Finish documenting this function
  */
@@ -861,9 +862,9 @@ function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, 
     $timezone = get_user_timezone_offset($timezone);
 
     if (abs($timezone) > 13) {
-        $time = mktime((int)$hour,(int)$minute,(int)$second,(int)$month,(int)$day,(int)$year);
+        $time = mktime((int)$hour, (int)$minute, (int)$second, (int)$month, (int)$day, (int)$year);
     } else {
-        $time = gmmktime((int)$hour,(int)$minute,(int)$second,(int)$month,(int)$day,(int)$year);
+        $time = gmmktime((int)$hour, (int)$minute, (int)$second, (int)$month, (int)$day, (int)$year);
         $time = usertime($time, $timezone);
         if($applydst) {
             $time -= dst_offset_on($time);
@@ -1001,7 +1002,7 @@ function userdate($date, $format='', $timezone=99, $fixday = true) {
  *
  * @uses HOURSECS
  * @param int $time Timestamp in GMT
- * @param float $timezone
+ * @param float $timezone ?
  * @return array An array that represents the date in user time
  * @todo Finish documenting this function
  */
@@ -2270,10 +2271,11 @@ function ismoving($courseid) {
  * The result may depend on system settings
  * or language.  'override' will force both names
  * to be used even if system settings specify one.
+ *
  * @uses $CFG
  * @uses $SESSION
- * @param    type description
- * @todo Finish documenting this function
+ * @param object $user A {@link $USER} object to get full name of
+ * @param bool $override If true then the name will be first name followed by last name rather than adhering to fullnamedisplay setting.
  */
 function fullname($user, $override=false) {
 
@@ -2384,7 +2386,6 @@ function is_internal_auth($auth='') {
  * @uses $CFG
  * @uses $db
  * @return array User field/column names
- * @todo Finish documenting this function
  */
 function get_user_fieldnames() {
 
@@ -2403,7 +2404,7 @@ function get_user_fieldnames() {
  * @param string $username New user's username to add to record
  * @param string $password New user's password to add to record
  * @param string $auth Form of authentication required
- * @return user A {@link $USER} object
+ * @return object A {@link $USER} object
  * @todo Outline auth types and provide code example
  */
 function create_user_record($username, $password, $auth='') {
@@ -3369,9 +3370,9 @@ function ismember($groupid, $userid=0) {
 /**
  * Add a user to a group, return true upon success or if user already a group member
  *
- * @param groupid  The group id
- * @param userid   The user id
- * @todo Finish documenting this function
+ * @param int $groupid  The group id to add user to
+ * @param int $userid   The user id to add to the group
+ * @return bool
  */
 function add_user_to_group ($groupid, $userid) {
     if (ismember($groupid, $userid)) return true;
@@ -3383,11 +3384,11 @@ function add_user_to_group ($groupid, $userid) {
 
 
 /**
- * Returns the group ID of the current user in the given course
+ * Get the group ID of the current user in the given course
  *
  * @uses $USER
  * @param int $courseid The course being examined - relates to id field in 'course' table.
- * @todo Finish documenting this function
+ * @return int
  */
 function mygroupid($courseid) {
     global $USER;
@@ -3405,7 +3406,7 @@ function mygroupid($courseid) {
  * NOGROUPS, SEPARATEGROUPS or VISIBLEGROUPS
  *
  * @param course $course A {@link $COURSE} object
- * @param array? $cm A course module object
+ * @param object $cm A course module object
  * @return int A group mode (NOGROUPS, SEPARATEGROUPS or VISIBLEGROUPS)
  */
 function groupmode($course, $cm=null) {
@@ -3424,7 +3425,6 @@ function groupmode($course, $cm=null) {
  * @param int $courseid The course being examined - relates to id field in 'course' table.
  * @param int $groupid The group being examined.
  * @return int Current group id which was set by this function
- * @todo Finish documenting this function
  */
 function set_current_group($courseid, $groupid) {
     global $SESSION;
@@ -3472,7 +3472,6 @@ function get_current_group($courseid, $full=false) {
  * @param int $groupid Will try to use this optional parameter to
  *            reset the current group for the user
  * @return int|false Returns the current group id or false if error.
- * @todo Finish documenting this function
  */
 function get_and_set_current_group($course, $groupmode, $groupid=-1) {
 
@@ -3521,7 +3520,7 @@ function get_and_set_current_group($course, $groupmode, $groupid=-1) {
  * @param course $course A {@link $COURSE} object
  * @param int $groupmode Either NOGROUPS, SEPARATEGROUPS or VISIBLEGROUPS
  * @param string $urlroot ?
- * @todo Finish documenting this function
+ * @return int|false
  */
 function setup_and_print_groups($course, $groupmode, $urlroot) {
 
@@ -3845,8 +3844,9 @@ function send_password_change_confirmation_email($user) {
  * Check that an email is allowed.  It returns an error message if there
  * was a problem.
  *
- * @param    type description
- * @todo Finish documenting this function
+ * @uses $CFG
+ * @param  string $email Content of email
+ * @return string|false
  */
 function email_is_not_allowed($email) {
 
@@ -3937,7 +3937,6 @@ function make_upload_directory($directory, $shownotices=true) {
  * @uses $CFG
  * @param int $courseid The id of the course in question - maps to id field of 'course' table.
  * @return string|false Returns full path to directory if successful, false if not
- * @todo Finish documenting this function
  */
 function make_mod_upload_directory($courseid) {
     global $CFG;
@@ -3961,7 +3960,6 @@ function make_mod_upload_directory($courseid) {
  *
  * @param string $newfile File to be verified
  * @return string Current name of file on disk if true
- * @todo Finish documenting this function
  */
 function valid_uploaded_file($newfile) {
     if (empty($newfile)) {
@@ -4026,7 +4024,7 @@ function get_max_upload_file_size($sitebytes=0, $coursebytes=0, $modulebytes=0) 
 }
 
 /**
- * Related to the above function - this function returns an
+ * Related to {@link get_max_upload_file_size()} - this function returns an
  * array of possible sizes in an array, translated to the
  * local language.
  *
@@ -4664,7 +4662,6 @@ function get_strings($array, $module='') {
  *
  * @uses $CFG
  * @return array An associative array with contents in the form of LanguageCode => LanguageName
- * @todo Finish documenting this function
  */
 function get_list_of_languages() {
     global $CFG;
@@ -4722,8 +4719,7 @@ function get_list_of_languages() {
  *
  * @uses $CFG
  * @uses $USER
- * @return string?
- * @todo Finish documenting this function.
+ * @return array
  */
 function get_list_of_countries() {
     global $CFG, $USER;
@@ -4790,8 +4786,7 @@ function get_list_of_themes() {
  * Returns a list of picture names in the current language
  *
  * @uses $CFG
- * @return string?
- * @todo Finish documenting this function.
+ * @return array
  */
 function get_list_of_pixnames() {
     global $CFG;
@@ -4819,8 +4814,7 @@ function get_list_of_pixnames() {
  * Returns a list of picture names in the current language
  *
  * @uses $CFG
- * @return string?
- * @todo Finish documenting this function.
+ * @return array
  */
 function get_list_of_timezones() {
     global $CFG;
@@ -5045,7 +5039,6 @@ function endecrypt ($pwd, $data, $case) {
  *    <li><b>$event->visible</b> - 0 if the event should be hidden (e.g. because the activity that created it is hidden)
  *  </ul>
  * @return int The id number of the resulting record
- * @todo Finish documenting this function
  */
  function add_event($event) {
 
@@ -5077,7 +5070,6 @@ function endecrypt ($pwd, $data, $case) {
  * @uses $CFG
  * @param array $event An associative array representing an event from the calendar table. The event will be identified by the id field.
  * @return bool
- * @todo Finish documenting this function
  */
 function update_event($event) {
 
@@ -5310,7 +5302,6 @@ function ini_get_bool($ini_get_arg) {
  *
  * @return string|false Returns false if editor is not being used, otherwise
  * returns 'MSIE' or 'Gecko'.
- * @todo Finish documenting this function
  */
  function can_use_html_editor() {
     global $USER, $CFG;
@@ -5415,7 +5406,6 @@ function moodle_needs_upgrading() {
  * @uses $CFG
  * @uses $db
  * @uses HOURSECS
- * @todo Finish documenting this function. Add long description with more detail on what it does.
  */
 function notify_login_failures() {
     global $CFG, $db;
@@ -5668,7 +5658,6 @@ function getweek ($startdate, $thedate) {
  *
  * @param int $maxlength  The maximum size of the password being generated.
  * @return string
- * @todo Finish documenting this function
  */
 function generate_password($maxlen=10) {
     global $CFG;
