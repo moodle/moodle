@@ -488,7 +488,7 @@ class assignment_base {
         }
         if (empty($SESSION->flextable['mod-assignment-submissions']->collapse['comment'])) {
             echo 'opener.document.getElementById("com'.$submission->userid.
-                 '").innerHTML="'.shorten_text(strip_tags($submission->comment), 15)."\";\n";
+                 '").innerHTML="'.shorten_text(trim(strip_tags($submission->comment)), 15)."\";\n";
         }
         if (empty($SESSION->flextable['mod-assignment-submissions']->collapse['timemodified']) &&
             $submission->timemodified) {
