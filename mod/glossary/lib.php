@@ -1166,6 +1166,7 @@ function glossary_print_attachments($entry, $return=NULL, $align="left") {
                 if ($return == "html") {
                     $output .= "<a href=\"$ffurl\">$image</a> ";
                     $output .= "<a href=\"$ffurl\">$file</a><br />";
+
                 } else if ($return == "text") {
                     $output .= "$strattachment $file:\n$ffurl\n";
 
@@ -1173,6 +1174,7 @@ function glossary_print_attachments($entry, $return=NULL, $align="left") {
                     if ($icon == "image.gif") {    // Image attachments don't get printed as links
                         $imagereturn .= "<img src=\"$ffurl\" align=\"$align\" alt=\"\" />";
                     } else {
+                        echo "<a href=\"$ffurl\">$image</a> ";
                         echo "<a href=\"$ffurl\">$file</a><br />";
                     }
                 }
