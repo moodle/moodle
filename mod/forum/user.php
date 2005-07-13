@@ -5,11 +5,16 @@
     require_once('../../config.php');
     require_once('lib.php');
 
-    $id      = required_param('id');       // user id
-    $course    = required_param('course');     // course id
+    $course  = required_param('course');     // course id
+    $id      = optional_param('id');       // user id
     $mode    = optional_param('mode', 'posts');
     $page    = optional_param('page', 0);
     $perpage = optional_param('perpage', 5);
+
+    if (empty($id)) {         // See your own profile by default
+        require_login();
+        $id = $USER->id;
+    }
 
     if (! $user = get_record("user", "id", $id)) {
         error("User ID is incorrect");
