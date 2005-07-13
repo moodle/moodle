@@ -457,7 +457,7 @@ function quiz_qtype_multianswer_extract_question($text) {
         $wrapped->answer   = array();
         $wrapped->fraction = array();
         $wrapped->feedback = array();
-        $wrapped->questiontext = addslashes($answerregs[0]);
+        $wrapped->questiontext = $answerregs[0]; //addslashes($answerregs[0]);
         $wrapped->questiontextformat = 0;
 
         $remainingalts = $answerregs[ANSWER_REGEX_ALTERNATIVES];
@@ -496,10 +496,11 @@ function quiz_qtype_multianswer_extract_question($text) {
 
         $question->defaultgrade += $wrapped->defaultgrade;
         $question->options->questions[$positionkey] = clone($wrapped);
-        $question->questiontext = addslashes(str_replace('&\#', '&#',
+        $question->questiontext = str_replace('&\#', '&#',
          implode("{#$positionkey}", explode($answerregs[0],
-         $question->questiontext, 2))));
+         $question->questiontext, 2)));
     }
+    $question->questiontext = addslashes($question->questiontext);
     return $question;
 }
 
