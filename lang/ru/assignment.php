@@ -1,22 +1,51 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.4 development (2004070800)
+      // assignment.php - created with Moodle 1.5.1 (2005060210)
 
 
 $string['allowresubmit'] = 'Несколько попыток';
 $string['assignmentdetails'] = 'Детали задания';
-$string['assignmentmail'] = '$a->teacher сделал комментарий к Вашему заданию для \'$a->assignment\'.Вы можете посмотреть его по ссылке: $a->url';
-$string['assignmentmailhtml'] = '$a->teacher сделал комментарий к Вашему заданию для  \'<i>$a->assignment</i>\'<br /><br />Вы можете посмотреть его  <a href=\"$a->url\">по ссылке:</a>.';
+$string['assignmentmail'] = '$a->teacher написал отзыв по Вашему заданию \'$a->assignment\'.
+
+Вы можете посмотреть его по ссылке: 
+$a->url';
+$string['assignmentmailhtml'] = '$a->teacher написал отзыв по Вашему заданию \'<i>$a->assignment</i>\'<br /><br />
+
+Вы можете посмотреть его  <a href=\"$a->url\">на сайте</a>.';
 $string['assignmentname'] = 'Название задания';
 $string['assignmenttype'] = 'Тип задания';
+$string['availabledate'] = 'Доступно с';
+$string['comment'] = 'Коментарий';
+$string['commentinline'] = 'Коментировать, начиная с присланного текста';
 $string['configmaxbytes'] = 'Установленный по умолчанию максимальный размер для всех заданий на сайте (соотносится с установленным ограничением по курсу и с другими локальными установками)';
 $string['description'] = 'Описание';
 $string['duedate'] = 'Последний срок сдачи';
 $string['duedateno'] = 'Не имеет последнего срока сдачи';
 $string['early'] = '$a рано';
+$string['editmysubmission'] = 'Редактировать моё решение';
+$string['emailteachermail'] = '$a->username отправил новый ответ на задание \'$a->assignment\'
+Ответы на это задание доступны по адресу:
+$a->url';
+$string['emailteachermailhtml'] = '$a->username отправил новый ответ на задание <i>$a->assignment</i><br /><br />
+Ответы на это задание <a href=\"$a->url\">расположены на сайте</a>.';
+$string['emailteachers'] = 'Отправлять уведомления учителям';
+$string['emptysubmission'] = 'Вы ещё ничего не отправляли.';
 $string['existingfiledeleted'] = 'Существующий файл был удален: $a';
-$string['failedupdatefeedback'] = 'Не удалось обновить ответ пользователя $a';
-$string['feedback'] = 'Изменить';
+$string['failedupdatefeedback'] = 'Не удалось обновить отзыв пользователю $a';
+$string['feedback'] = 'Отзыв';
+$string['feedbackfromteacher'] = 'Ответ ';
 $string['feedbackupdated'] = 'Ответ изменен для $a ';
+$string['guestnoupload'] = 'Извините, гости не могут отвечать на задания';
+$string['helpoffline'] = '<p>Этот режим полезен, когда задание должно быть выполнено вне Moodle.</p>
+
+<p>Например, где-либо в сети или лицом к лицу с учителем. Студенты могут читать пояснение к заданию, но не могут прислать ни текст, ни файл в ответ.</p>
+
+<p>Учитель же, как и в других видах задания, может написать свой отзыв и поставить оценку.</p>';
+$string['helponline'] = '<p>Этот режим предполагает возможность ученика писать и, если Вы включите неоднократное отправление ответа, редактировать текст ответа, используя обычные средства редактирования текста (как в форуме, при отправке сообщения). </p>
+
+<p>Учитель может написать отзыв на ответ ученика и поставить оценку. Первый свой отзыв учитель может писать, взяв за основу присланный учеником ответ - вносить исправления, комментировать и т.п. При этом стоит не забывать выделять свои дописки хотябы цветом.</p>
+
+<p>(для тех, кто знаком с предыдущими версиями moodle, скажем - этот режим работы задания похож на использование рабочей тетради)</p>';
+$string['helpuploadsingle'] = '<p>Этот режим предполагает возможность ученика отправить в качестве ответа произвольный файл, Например, картинку, документ Word, архив, или что угодно другое.</p>';
 $string['late'] = '$a срок закончился';
 $string['maximumgrade'] = 'Максимальная оценка';
 $string['maximumsize'] = 'Максимальный размер';
@@ -27,11 +56,14 @@ $string['notgradedyet'] = 'Пока не оценена';
 $string['notsubmittedyet'] = 'Решение пока не отправлено';
 $string['overwritewarning'] = 'Предупреждение: Ваш ответ будет заменен';
 $string['saveallfeedback'] = 'Сохранить все исправления';
+$string['submission'] = 'Ответ';
 $string['submissionfeedback'] = 'Ответ исправлен';
 $string['submissions'] = 'Ответы';
+$string['submissionsaved'] = 'Ваши изменения сохранены';
 $string['submitassignment'] = 'Отправьте Ваше решение, использую форму';
 $string['submitted'] = 'Ответ принят';
 $string['typeoffline'] = 'Ответ - вне сайта';
+$string['typeonline'] = 'Ответ - в виде текста';
 $string['typeuploadsingle'] = 'Ответ - в виде файла';
 $string['uploadbadname'] = 'Этот файл содержит недопустимые символы и не может быть закачан';
 $string['uploadedfiles'] = 'Закачанные файлы';
