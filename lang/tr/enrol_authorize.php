@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // enrol_authorize.php - created with Moodle 1.5 Beta (2005052300)
+      // enrol_authorize.php - created with Moodle 1.5.1 (2005060210)
 
 
 $string['anlogin'] = 'Authorize.net: Kullanýcý adý';
@@ -14,6 +14,7 @@ $string['ccno'] = 'Kredi Kartý No';
 $string['cctype'] = 'Kredi Kartý Tipi';
 $string['ccvv'] = 'CV2';
 $string['ccvvhelp'] = 'Kartýn arkasýna bakýnýz (son 3 rakam)';
+$string['choosemethod'] = 'Kursun kayýt anahtarýný biliyorsanýz giriniz. Diðer durumda bu kurs için ödeme yapmalýsýnýz.';
 $string['chooseone'] = 'Aþaðýdaki iki alandan birini veya ikisini doldurun';
 $string['description'] = 'Authorize.net modülü Kredi Kartý saðlayýcýlarýyla ücretli kurslar ayarlamanýza olanak verir. Bir kursun ücreti sýfýr ise öðrencilere ödeme yapmalarý için bir istekte bulunulmaz. Sitenin geneli için ayarlayabileceðiniz varsayýlan bir tutar vardýr ve her bir dersin ücretini tek tek de ayarlayabilirsiniz. Kurs ücreti ayarlanýrsa site genelindeki ücret yoksayýlýr.';
 $string['enrolname'] = 'Authorize.net Kredi Kartý Saðlayýcýsý';
