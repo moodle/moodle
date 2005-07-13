@@ -4,8 +4,8 @@
 // Could be later expanded to change user responses for all question types
 
 # Flow of the file:
-#     Get variables, run essencial queries, print header and print tabs
-#     Check for post data submitted.  If true, then process data (the data is the grades and comments for essay questions)
+#     Get variables, run essential queries, print header and print tabs
+#     Check for post data submitted.  If exists, then process data (the data is the grades and comments for essay questions)
 #     Check for userid, attemptid, or gradeall and for questionid.  If found, print out the appropriate essay question attempts
 #     Switch:
 #         first case: print out all essay questions in quiz and the number of ungraded attempts
@@ -164,8 +164,8 @@
         print_string('changessaved', 'quiz');
     } else if ( ( !empty($attemptid) or !empty($gradeall) or !empty($userid)) and !empty($questionid) ) {  // need attemptid and questionid or gradeall and a questionid
         // this sql joins the attempts table and the user table
-        $select = 'SELECT '.$db->Concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).' AS uniqueid, 
-                    qa.id AS attemptid, qa.attempt, qa.timefinish, qa.preview, 
+        $select = 'SELECT '.$db->Concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).' AS userattemptid, 
+                    qa.id AS attemptid, qa.uniqueid, qa.attempt, qa.timefinish, qa.preview, 
                     u.id AS userid, u.firstname, u.lastname, u.picture ';
         $from   = 'FROM '.$CFG->prefix.'user u LEFT JOIN '.$CFG->prefix.'quiz_attempts qa ON (u.id = qa.userid AND qa.quiz = '.$quiz->id.') ';
         
@@ -190,8 +190,8 @@
         
         foreach ($attempts as $attempt) {
             // retrieve the state
-            if (!$neweststate = get_record('quiz_newest_states', 'attemptid', $attempt->attemptid, 'questionid', $questionid)) {
-                error('Invalid attempt and question ids');
+            if (!$neweststate = get_record('quiz_newest_states', 'attemptid', $attempt->uniqueid, 'questionid', $questionid)) {
+                error("Can not find newest states for attempt $attempt->uniqueid for question $questionid");
             }
             if (! $state = get_record('quiz_states', 'id', $neweststate->newest)) {
                 error('Invalid state id');
@@ -277,7 +277,7 @@
                     foreach ($attempts as $attempt) {
                         // grab the state then check if it is graded
                         if (!$neweststate = get_record('quiz_newest_states', 'attemptid', $attempt->uniqueid, 'questionid', $question->id)) {
-                            error('Invalid attempt and question ids');
+                            error("Can not find newest states for attempt $attempt->uniqueid for question $questionid");
                         }
                         if (!$questionstate = get_record('quiz_essay_states', 'stateid', $neweststate->newest)) {
                             error('Could not find question state');
@@ -325,7 +325,7 @@
             $table->setup();                    
             
             // this sql is a join of the attempts table and the user table.  I do this so I can sort by user name and attempt number (not id)
-            $select = 'SELECT '.$db->Concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).' AS uniqueid, qa.id AS attemptid, qa.attempt, u.id AS userid, u.firstname, u.lastname, u.picture ';
+            $select = 'SELECT '.$db->Concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).' AS userattemptid, qa.id AS attemptid, qa.uniqueid, qa.attempt, u.id AS userid, u.firstname, u.lastname, u.picture ';
             $from   = 'FROM '.$CFG->prefix.'user u LEFT JOIN '.$CFG->prefix.'quiz_attempts qa ON (u.id = qa.userid AND qa.quiz = '.$quiz->id.') ';
             $where  = 'WHERE u.id IN ('.implode(',', array_keys($users)).') ';
             $where .= 'AND '.$db->IfNull('qa.attempt', '0').' != 0 ';
@@ -365,8 +365,8 @@
                                 $attempt->firstname.' '.$attempt->lastname.'</a>';
                     
                     // nab the state of the attempt to see if it is graded or not
-                    if (!$neweststate = get_record('quiz_newest_states', 'attemptid', $attempt->attemptid, 'questionid', $question->id)) {
-                        error('Invalid attempt and question ids');
+                    if (!$neweststate = get_record('quiz_newest_states', 'attemptid', $attempt->uniqueid, 'questionid', $question->id)) {
+                        error("Can not find newest states for attempt $attempt->uniqueid for question $questionid");
                     }
 
                     if (!$questionstate = get_record('quiz_essay_states', 'stateid', $neweststate->newest)) {
