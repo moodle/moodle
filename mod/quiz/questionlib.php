@@ -210,7 +210,7 @@ function quiz_get_states(&$questions, $cmoptions, $attempt) {
             }
         } else {
             // Create a new state object
-            if ($quiz->attemptonlast and $attempt->attempt > 1 and !$attempt->preview) {
+            if ($cmoptions->attemptonlast and $attempt->attempt > 1 and !$attempt->preview) {
                 // build on states from last attempt
                 if (!$lastattemptid = get_field('quiz_attempts', 'uniqueid', 'quiz', $attempt->quiz, 'userid', $attempt->userid, 'attempt', $attempt->attempt-1)) {
                     error('Could not find previous attempt to build on');
