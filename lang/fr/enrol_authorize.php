@@ -12,6 +12,7 @@ $string['ccno'] = 'Numéro de carte de crédit';
 $string['cctype'] = 'Type de carte de crédit';
 $string['ccvv'] = 'Code vérification';
 $string['ccvvhelp'] = 'Au verso de votre carte (les 3 derniers chiffres)';
+$string['choosemethod'] = 'Tapez la clef d\'inscription à ce cours&nbsp;; si vous n\'avez pas cette clef, ce cours vous sera accessible contre paiement.';
 $string['chooseone'] = 'Veuillez remplir l\'un des deux champs ci-dessous ou tous les deux';
 $string['description'] = 'Le module Authorize.net permet de mettre en place des cours payant. Si le coût d\'un cours est nul, les étudiants peuvent s\'y inscrire sans payer. Un coût défini globalement, que vous fixez ici, est le coût par défaut pour tous les cours du site. Chaque cours peut ensuite avoir un coût spécifique fixé individuellement. S\'il est défini, le coût spécifique d\'un cours remplace le coût par défaut.';
 $string['enrolname'] = 'Paiement par carte de crédit Authorize.net';
