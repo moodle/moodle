@@ -457,7 +457,8 @@ function quiz_qtype_multianswer_extract_question($text) {
         $wrapped->answer   = array();
         $wrapped->fraction = array();
         $wrapped->feedback = array();
-        $wrapped->questiontext = $answerregs[0]; //addslashes($answerregs[0]);
+        $wrapped->questiontext = addslashes(str_replace('&\#', '&#',
+         $answerregs[0]));
         $wrapped->questiontextformat = 0;
 
         $remainingalts = $answerregs[ANSWER_REGEX_ALTERNATIVES];
