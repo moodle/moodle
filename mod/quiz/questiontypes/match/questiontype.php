@@ -117,7 +117,7 @@ class quiz_match_qtype extends quiz_default_questiontype {
         }
 
         // Shuffle the answers if required
-        if ($quiz->shuffleanswers) {
+        if ($cmoptions->shuffleanswers) {
            $state->options->subquestions = swapshuffle_assoc($state->options->subquestions);
         }
 
