@@ -1,0 +1,116 @@
+/*  $Id$ */
+
+/************************************************* 
+***
+*** pda
+***
+**************************************************/
+
+/*************************************************
+***
+*** This CSS file contains all layout definitions
+*** like positioning, floats,
+*** margins, padding,
+*** borders etc.
+***
+*** Shortindex:
+*** basic and general styles
+*** header and footer styles
+*** content styles (alphabetically)
+*** admin, course, activities, calendar, blocks
+*** 
+*** Please sort new styles for existing content
+*** into the appropriate part of this CSS file.
+*** Styles for new Blocks or Activities please
+*** place at the end.
+*** Wouldn't the alphabetical order be better?
+***
+**************************************************/
+#page,
+#content {
+  margin:0;
+  padding:0
+}
+p, a, li, dd, dt, pre, code, input, select {
+  font-size:1.5em !important 
+}
+.content, .topic {
+  font-size:1.5em !important 
+}
+#header {
+  height:auto;
+}
+.headermenu {
+  clear:left;
+  float:none;
+  text-align:left;
+}
+#layout-table #left-column,
+#layout-table #middle-column,
+#layout-table #right-column,
+#layout-table #middle-column .topics,
+#layout-table #middle-column .sections {
+  width:auto !important;
+  margin-left:0 !important;
+  margin-right:0 !important;
+  padding-left:0 !important;
+  padding-right:0 !important;
+  border:1px solid #AAA !important 
+}
+#course-view .headingblock,
+#course-view .topics {
+  margin-left:0 !important;
+  margin-right:0 !important;
+  border:1px solid #AAA !important;
+}
+#course-view .spacer {
+  height:1em !important; 
+}
+#course-view .topics .left,
+#course-view .topics .right {
+  width:1.5em;
+  border:1px solid #AAA !important;
+  vertical-align:top;
+}
+#course-view .topics .content {
+  border:1px solid #AAA !important;
+}
+.sideblock {
+  width:100% !important;
+  text-align:left !important;
+  font-size:1.3em !important;
+  line-height:1.3em !important;
+}
+#left-column .sideblock .header,
+#right-column .sideblock .header {
+  width:100%;
+  margin:0;
+  padding:0;
+  background:#A00 url(pix/gray.gif) repeat !important;
+  height:1.3em !important;
+  border:1px solid #AAA !important;
+  font-weight:bold;
+}
+/** {
+  border:1px solid #A00 !important 
+}*/
+.tabs tr,
+.tabs td {
+  background-image:none !important 
+}
+.tabs td {
+  border:1px solid #AAA !important;
+  padding:2px;
+  text-align:center;
+}
+.glossarydisplay {
+  width:100%
+}
+#course-log .r1 td {
+  border:1px solid #AAA;
+  text-align:left; 
+}
+.generaltable th,
+.generaltable td {
+  border:1px solid #AAA !important; 
+}

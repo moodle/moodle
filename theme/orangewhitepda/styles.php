@@ -1,48 +1,18 @@
 <?PHP /*  $Id$ */
 
-/// This PHP script is used because it provides a place for setting 
-/// up any necessary variables, and lets us include raw CSS files.
+/// Every theme should contain a copy of this script.  It lets us 
+/// set up variables and so on before we include the raw CSS files.
 /// The output of this script should be a completely standard CSS file.
 
-/// There should be no need to modify this file!!  Use config.php instead.
+/// THERE SHOULD BE NO NEED TO MODIFY THIS FILE!!  USE CONFIG.PHP INSTEAD.
 
-    $nomoodlecookie = true;
-    require_once("../../config.php");
 
-    $lastmodified = 0;
-    $lifetime = 600;
+    $lifetime  = 600;                                   // Seconds to cache this stylesheet
+    $nomoodlecookie = true;                             // Cookies prevent caching, so don't use them
+    require_once("../../config.php");                   // Load up the Moodle libraries
+    $themename = basename(dirname(__FILE__));           // Name of the folder we are in
+    $forceconfig = optional_param('forceconfig', '', PARAM_FILE);   // Get config from this theme
 
-/// If we are a parent theme, then check for parent definitions
-
-    if (isset($parent)) {
-        if (!isset($THEME->parentsheets) or $THEME->parentsheets === true) {     // Use all the sheets we have
-            $THEME->sheets = array('styles_layout', 'styles_fonts', 'styles_color', 'styles_moz');
-        } else if (empty($THEME->parentsheets)) {                                // We can stop right now!
-            exit;
-        } else {                                                                 // Use the provided subset only
-            $THEME->sheets = $THEME->parentsheets;
-        }
-    }
-
-/// Work out the last modified date for this theme
-
-    foreach ($THEME->sheets as $sheet) {
-        if (file_exists($sheet.'.css')) {
-            $sheetmodified = filemtime($sheet.'.css');
-            if ($sheetmodified > $lastmodified) {
-                $lastmodified = $sheetmodified;
-            }
-        }
-    }
-
-/// Print out the entire style sheet
-
-    style_sheet_setup($lastmodified, $lifetime);
-
-    foreach ($THEME->sheets as $sheet) {
-        echo "/***** $sheet.css start *****/\n\n";
-        include_once($sheet.'.css');
-        echo "\n\n/***** $sheet.css end *****/\n\n";
-    }
-
+    style_sheet_setup(filemtime('styles.php'), $lifetime, $themename, $forceconfig);
+   
 ?>
