@@ -20,6 +20,19 @@
     </td>
 </tr>
 
+<tr valign="top">
+    <td align="right">loginhttps:</td>
+    <td>
+    <?php  echo (empty($CFG->loginhttps) ? "<font color=\"red\">off</font>" : "<font color=\"green\">on</font>") ?>
+    </td>
+    <td>
+    <?php
+     $a->url = "$CFG->wwwroot/$CFG->admin/config.php#configsectionsecurity";
+     print_string("logindesc", "enrol_authorize", $a)
+    ?>
+    </td>
+</tr>
+
 <tr valign="top"><td colspan="3"><hr noshade="noshade" size="1"></td></tr>
 
 <tr valign="top">

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // enrol_authorize.php - created with Moodle 1.5 Beta (2005052300)
+      // enrol_authorize.php - created with Moodle 1.5.1 (2005060210)
 
 
 $string['anlogin'] = 'Authorize.net: Login name';
@@ -12,12 +12,15 @@ $string['ccexpired'] = 'The credit card has expired';
 $string['ccinvalid'] = 'Invalid card number';
 $string['ccno'] = 'Credit Card Number';
 $string['cctype'] = 'Credit Card Type';
-$string['ccvv'] = 'CV2';
+$string['ccvv'] = 'Card Verification';
 $string['ccvvhelp'] = 'Look at the back of card (last 3 digits)';
-$string['choosemethod'] = 'If you know enrolment key of the cource, enter it; otherwise you must paid for this course.';
+$string['choosemethod'] = 'If you know enrolment key of the cource, enter it; otherwise you need to paid for this course.';
 $string['chooseone'] = 'Fill one or both of the following two fields';
 $string['description'] = 'The Authorize.net module allows you to set up paid courses via CC providers.  If the cost for any course is zero, then students are not asked to pay for entry.  There is a site-wide cost that you set here as a default for the whole site and then a course setting that you can set for each course individually. The course cost overrides the site cost.';
 $string['enrolname'] = 'Authorize.net Credit Card Gateway';
+$string['logindesc'] = 'You can set up <a href=\"$a->url\">loginhttps</a> option in Variables/Security section.
+<br /><br />
+Turning this on will make Moodle use a secure https connection just for the login and payment page.';
 $string['nameoncard'] = 'Name on Card';
 $string['sendpaymentbutton'] = 'Send Payment';
 $string['zipcode'] = 'Zip Code';
