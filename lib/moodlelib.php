@@ -2430,7 +2430,11 @@ function create_user_record($username, $password, $auth='') {
 
     $newuser->auth = (empty($auth)) ? $CFG->auth : $auth;
     $newuser->username = $username;
-    $newuser->password = md5($password);
+    if(empty($CFG->{$newuser->auth.'_preventpassindb'})){  //Prevent passwords in Moodle's DB
+        $newuser->password = md5($password);
+    } else {
+        $newuser->password = 'not cached';  //Unusable password
+    }
     $newuser->lang = $CFG->lang;
     $newuser->confirmed = 1;
     $newuser->lastIP = getremoteaddr();
@@ -2589,7 +2593,13 @@ function authenticate_user_login($username, $password) {
                 set_field('user', 'auth', $auth, 'username', $username);
             }
             if ($md5password <> $user->password) {   // Update local copy of password for reference
-                set_field('user', 'password', $md5password, 'username', $username);
+                if(empty($CFG->{$user->auth.'_preventpassindb'})){  //Prevent passwords in Moodle's DB
+                    set_field('user', 'password', $md5password, 'username', $username);
+                } else {
+                    if ($user->password != 'not cached') {
+                        set_field('user', 'password', 'not cached', 'username', $username); //Unusable password
+                    }
+                }
             }
             if (!is_internal_auth()) {            // update user record from external DB
                 $user = update_user_record($username);
