@@ -216,9 +216,7 @@ class quiz_match_qtype extends quiz_default_questiontype {
 
         ///// Print the input controls //////
         echo '<table border="0" cellpadding="10" align="right">';
-        foreach ($state->options->order as $key) {
-            $subquestion = $subquestions[$key];
-
+        foreach ($subquestions as $key => $subquestion) {
             /// Subquestion text:
             echo '<tr><td align="left" valign="top">';
             echo format_text($subquestion->questiontext,
