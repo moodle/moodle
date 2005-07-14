@@ -62,7 +62,7 @@ function print_entry($course) {
     $strcourses = get_string("courses");
     $userfirstname = empty($form->ccfirstname) ? $USER->firstname : $form->ccfirstname;
     $userlastname = empty($form->cclastname) ? $USER->lastname : $form->cclastname;
-    $cost = $this->get_course_cost($course);
+    $curcost = $this->get_course_cost($course);
 
     $passwordoption = !empty($course->password);
 
@@ -113,6 +113,7 @@ function cc_submit($form, $course)
 
     $exp_date = (($form->ccexpiremm<10) ? strval('0'.$form->ccexpiremm) : strval($form->ccexpiremm)) . ($form->ccexpireyyyy);
     $valid_cc = CCVal($form->cc, $form->cctype, $exp_date);
+    $curcost = $this->get_course_cost($course);
 
     if (!$valid_cc) {
         $this->ccerrormsg = ($valid_cc===0) ? get_string('ccexpired', 'enrol_authorize') : get_string('ccinvalid', 'enrol_authorize');
@@ -140,8 +141,8 @@ function cc_submit($form, $course)
         'x_state'          => '',
         'x_card_num'       => $form->cc,
         'x_card_code'      => $form->cvv,
-        'x_currency_code'  => $CFG->enrol_currency,
-        'x_amount'         => $this->get_course_cost($course),
+        'x_currency_code'  => $curcost['currency'],
+        'x_amount'         => $curcost['cost'],
         'x_exp_date'       => $exp_date,
         'x_email'          => $USER->email,
         'x_email_customer' => 'False',
@@ -282,27 +283,32 @@ function cc_submit($form, $course)
 }
 
 function zero_cost($course) {
-
-    $cost = $this->get_course_cost($course);
-    if (abs($cost) < 0.01) { // no cost
-    	return true;
-    }
-    return false;
+    $curcost = $this->get_course_cost($course);
+    return (abs($curcost['cost']) < 0.01);
 }
 
 function get_course_cost($course) {
     global $CFG;
     $cost = (float)0;
-
+    $currency = (empty($CFG->enrol_currency) ? 'USD' : $CFG->enrol_currency);
+    
     if (isset($course->cost)) {
-    	if (((float)$course->cost) < 0) {
-    		$cost = (float)$CFG->enrol_cost;
-    	} else {
-    		$cost = (float)$course->cost;
-    	}   	
+        if (((float)$course->cost) < 0) {
+            $cost = (float)$CFG->enrol_cost;
+        } else {
+            $cost = (float)$course->cost;
+        }	
     }
+
+    if ( (!empty($course->currency)) && (intval($course->currency)!=0) ) {
+        $objcur = get_record("currencies", "id", $course->currency);
+        $currency = strval($objcur->code);
+    }
+
     $cost = format_float($cost, 2);
-    return $cost;
+    $ret = array('cost'=>$cost, 'currency'=>$currency);
+
+    return $ret;
 }
 
 /// Override the get_access_icons() function
@@ -310,29 +316,17 @@ function get_access_icons($course) {
     global $CFG;
 
     $str = '';
-    $cost = $this->get_course_cost($course);
+    $curcost = $this->get_course_cost($course);
 
-    if (abs($cost) < 0.01) {
+    if (abs($curcost['cost']) < 0.01) {
     	$str = parent::get_access_icons($course);
     } else {
     	$strrequirespayment = get_string("requirespayment");
     	$strcost = get_string("cost");
 
-    	if (empty($CFG->enrol_currency)) {
-    		set_config('enrol_currency', 'USD');
-    	}
-
-    	switch ($CFG->enrol_currency) {
-    	case 'EUR':	$currency = '&euro;'; break;
-    	case 'CAD':	$currency = '$'; break;
-    	case 'GBP':	$currency = '&pound;'; break;
-    	case 'JPY':	$currency = '&yen;'; break;
-    	default:	$currency = '$'; break;
-        }
-
         $str .= "<p class=\"coursecost\"><font size=-1>$strcost: " .
     			"<a title=\"$strrequirespayment\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\"></a>" .
-    			"$currency" . format_float($cost, 2) . '</a></p>';
+    			$curcost['currency'] . " " . $curcost['cost'] . '</a></p>';
     }
     return $str;
 }
@@ -340,13 +334,6 @@ function get_access_icons($course) {
 
 function config_form($frm) {
     global $CFG;
-    $ancurrencies = array(
-    	'USD' => 'US Dollars',
-    	'EUR' => 'Euros',
-    	'JPY' => 'Japanese Yen',
-    	'GBP' => 'British Pounds',
-    	'CAD' => 'Canadian Dollars'
-    );
 
     $vars = array('an_login', 'an_tran_key', 'an_password', 'an_referer', 'an_test',
                   'enrol_cost', 'enrol_currency', 'enrol_mailstudents', 'enrol_mailteachers', 'enrol_mailadmins');

@@ -13,7 +13,9 @@
 <tr valign="top">
     <td align="right">enrol_currency:</td>
     <td>
-    <?php choose_from_menu ($ancurrencies, "enrol_currency", $frm->enrol_currency, "","", "") ?>
+    <?php
+     $currenciesarray = get_records_menu("currencies", "", "", "name", "code,name");
+     choose_from_menu ($currenciesarray, "enrol_currency", $frm->enrol_currency, "","", "") ?>
     </td>
     <td>
     <?php  print_string("currency") ?>

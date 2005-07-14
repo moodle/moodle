@@ -3,7 +3,7 @@
 <div align="center">
 
 <p><?php print_string("paymentrequired") ?></p>
-<p><b><?php echo get_string("cost").": $CFG->enrol_currency $cost"; ?></b></p>
+<p><b><?php echo get_string("cost").": $curcost[currency]  $curcost[cost]"; ?></b></p>
 <p><?php print_string("paymentinstant") ?></p>
 
 <form name="form" method="post" action="enrol.php" autocomplete="off">
