@@ -251,6 +251,24 @@
 
         //Get the lesson_answers array (optional)
         if (isset($info['#']['ANSWERS']['0']['#']['ANSWER'])) {
+            // The following chunk of code is a fix for matching questions made
+            // pre moodle 1.5.  Matching questions need two answer fields designated
+            // for correct and wrong responses before the rest of the answer fields.
+            if ($restore->backup_version <= 2004083124) {  // Backup version for 1.4.5+
+                if ($ismatching = get_record('lesson_pages', 'id', $pageid)) {  // get the page we just inserted
+                    if ($ismatching->qtype == 5) { // check to make sure it is a matching question
+                        $time = time();  // this may need to be changed
+                        // make our 2 response answers
+                        $newanswer->lessonid = $lessonid;
+                        $newanswer->pageid = $pageid;
+                        $newanswer->timecreated = $time;
+                        $newanswer->timemodified = 0;
+                        insert_record('lesson_answers', $newanswer);
+                        insert_record('lesson_answers', $newanswer);
+                    }
+                }
+            }
+
             $answers = $info['#']['ANSWERS']['0']['#']['ANSWER'];
 
             //Iterate over lesson_answers

@@ -54,7 +54,7 @@ if (!defined("LESSON_MULTICHOICE")) { // if you change the value of this (WHICH 
 if (!defined("LESSON_RANDOM")) {
     define("LESSON_RANDOM",        "4");
 }
-if (!defined("LESSON_MATCHING")) { // if you change the value of this (WHICH YOU SHOULDNT) then you need to change it in restorelib.php as well
+if (!defined("LESSON_MATCHING")) { // if you change the value of this (WHICH YOU SHOULDNT) then you need to change it in restorelib.php, in mysql.php and postgres7.php as well
     define("LESSON_MATCHING",      "5");
 }
 if (!defined("LESSON_RANDOMSAMATCH")) {
