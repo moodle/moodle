@@ -4,6 +4,9 @@
 
     $loginguest = optional_param('loginguest', false); // determines whether visitors are logged in as guest automatically
 
+    //HTTPS is potentially required in this page
+    httpsrequired();
+
 /// Check if the guest user exists.  If not, create one.
     if (! record_exists("user", "username", "guest")) {
         $guest->auth        = "manual"; 
@@ -48,12 +51,7 @@
     } else {
         $currlang = current_language();
         $langs    = get_list_of_languages();
-        if (empty($CFG->loginhttps)) {
-            $wwwroot = $CFG->wwwroot;
-        } else {
-            $wwwroot = str_replace('http','https',$CFG->wwwroot);
-        }
-        $langmenu = popup_form ("$wwwroot/login/index.php?lang=", $langs, "chooselang", $currlang, "", "", "", true);
+        $langmenu = popup_form ("$CFG->httpswwwroot/login/index.php?lang=", $langs, "chooselang", $currlang, "", "", "", true);
     }
 
     $loginsite = get_string("loginsite");
