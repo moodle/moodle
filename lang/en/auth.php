@@ -66,6 +66,7 @@ $string['auth_ldap_memberattribute'] = 'Optional: Overrides user member attribut
 $string['auth_ldap_objectclass'] = 'Optional: Overrides objectClass used to name/search users on ldap_user_type. Usually you dont need to chage this.';
 $string['auth_ldap_opt_deref'] = 'Determines how aliases are handled during search. Select one of the following values: \"No\" (LDAP_DEREF_NEVER) or \"Yes\" (LDAP_DEREF_ALWAYS) ';
 $string['auth_ldap_passwdexpire_settings'] = 'LDAP password expiration settings.';
+$string['auth_ldap_preventpassindb'] = 'Select yes to prevent passwords from being stored in Moodle\'s DB.';
 $string['auth_ldap_search_sub'] = 'Search users from subcontexts.';
 $string['auth_ldap_server_settings'] = 'LDAP server settings';
 $string['auth_ldap_update_userinfo'] = 'Update user information (firstname, lastname, address..) from LDAP to Moodle.  Specify \"Data mapping\" settings as you need.';
