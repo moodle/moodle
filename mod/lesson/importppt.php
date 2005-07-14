@@ -112,18 +112,26 @@ function readdata($file, $courseid, $modname) {
 
     // create an upload directory in temp
     make_upload_directory('temp/'.$modname);   
-    
+
+    $base = $CFG->dataroot."/temp/$modname/";
+
     $zipfile = $_FILES["newfile"]["name"];
     $tempzipfile = $_FILES["newfile"]["tmp_name"];
     
+    // create our directory
+    $path_parts = pathinfo($zipfile);
+    $dirname = substr($zipfile, 0, strpos($zipfile, '.'.$path_parts['extension'])); // take off the extension
+    if (!file_exists($base.$dirname)) {
+        mkdir($base.$dirname);
+    }
+
     // move our uploaded file to temp/lesson
-    move_uploaded_file($tempzipfile, "$CFG->dataroot/temp/$modname/".$zipfile);
+    move_uploaded_file($tempzipfile, $base.$zipfile);
 
     // unzip it!
-    unzip_file($CFG->dataroot."/temp/$modname/".$zipfile, '', false);
+    unzip_file($base.$zipfile, $base.$dirname, false);
     
-    $dirname = substr($zipfile, 0, strpos($zipfile, '.')); // take off the .zip to get the name of the unzipped file
-    $base = $CFG->dataroot."/temp/$modname/".$dirname;  // base directory of what we uploaded
+    $base = $base.$dirname;  // update the base
     
     // this is the file where we get the names of the files for the slides (in the correct order too)
     $outline = $base.'/outline.htm';
