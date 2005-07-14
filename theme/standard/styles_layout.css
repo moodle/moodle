@@ -41,13 +41,11 @@ h6.main {
 #layout-table {
   width:100%;
   border-collapse:separate;
-  margin-top: 8px;
 }
 
 #layout-table #left-column,
 #layout-table #middle-column,
-#layout-table #right-column
-{
+#layout-table #right-column {
   vertical-align:top;
 }
 
@@ -55,7 +53,6 @@ h6.main {
   padding-left:12px;
   padding-right:12px;
 }
-
 
 .clearer {
   clear:both;
@@ -86,7 +83,7 @@ a img {
 img.userpicture,
 img.grouppicture,
 .block_online_users .listentry img {
-  border: 0px solid
+  border: 0px none
 }
 
 .notifyproblem {
@@ -112,27 +109,34 @@ img.grouppicture,
   border-width:1px;
   border-style:solid;
 }
+
 .errorbox {
   border-width:1px;
   border-style:solid;
   margin: 1em 15%;
   width: 70%;
 }
+
 .errorbox .title {
   padding: 5px;
 }
+
 .informationbox {
   border-width:1px;
   border-style:solid;
 }
+
 .feedbackbox {
   border-width:1px;
   border-style:solid;
 }
+
 .feedbackby {
 }
+
 .feedback {
 }
+
 .initialbar {
   text-align: center;
 }
@@ -161,9 +165,11 @@ img.grouppicture,
 .pagingbar {
   text-align:center;
 }
+
 .pagingbar a {
   padding-left: 10px;
 }
+
 .pagingbar .thispage {
   padding-left: 10px;
 }
@@ -277,11 +283,22 @@ form.popupform {
 }
 
 
+/***
+ *** Content
+ ***/
+
+#content {
+  margin-top:8px;
+}
+
+#admin-index #content {
+  margin-top:0;
+}
 
 /***
  *** Admin
  ***/
-
+ 
 body#admin-index .c0 {
   vertical-align: top;
 } 
@@ -672,6 +689,7 @@ table.calendar-controls .next {
 /***
  *** Course
  ***/
+ 
 .activitydate, .activityhead {
   text-align:center;
 }
@@ -734,6 +752,7 @@ body#course-view .unread {
 body#course-enrol .generalbox {
   margin-top: 20px;
 }
+
 body#course-enrol .coursebox {
   margin-top: 20px;
 }
@@ -839,7 +858,7 @@ body#grade-index .grades .weighted {
  ***/
 
 .loginbox {
-  margin-top:15px;
+  margin-top:7px;
 }
 
 .loginbox .content {
