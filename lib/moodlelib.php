@@ -6463,5 +6463,41 @@ function object_property_exists( $obj, $property ) {
 }
 
 
+/**
+ * Detect a custom script replacement in the data directory that will
+ * replace an existing moodle script
+ * @param string $urlpath path to the original script
+ * @return string full path name if a custom script exists
+ * @return bool false if no custom script exists
+ */
+function custom_script_path($urlpath='') {
+    global $CFG;
+
+    if (empty($urlpath) or (strpos($CFG->wwwroot, $urlpath) === false) ) {
+        $urlpath = qualified_me();
+        if (!$urlpath) return false;
+    }
+
+    // Strip wwwroot out
+    $scriptpath = str_replace($CFG->wwwroot, $CFG->dataroot.'/customscripts', $urlpath);
+
+    /// Strip the query string out
+    $parts = parse_url($scriptpath);
+    $scriptpath = $parts['path'];
+
+    /// put an index.php on the end if no explicit script name present
+    if (rtrim($scriptpath, '/') != $scriptpath) {
+        $scriptpath .= 'index.php';
+    }
+
+    if (file_exists($scriptpath)) {
+        return $scriptpath;
+    } else {
+        return false;
+    }
+}
+
+
+
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
 ?>
