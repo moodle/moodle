@@ -1,21 +1,19 @@
-.top {
+.mod-scorm .top {
   vertical-align: top;
 }
-.left {
+.mod-scorm .left {
   float: left;
 }
-.center {
+.mod-scorm .center {
   text-align: center;
 }
-.right {
+.mod-scorm .right {
   float: right;
 }
-
-.scoframe {
+.mod-scorm .scoframe {
 
 }
-
-.fullscreen {
+.mod-scorm .fullscreen {
   width: 100%;
 }
 .structlist  {
@@ -27,7 +25,6 @@
   font-weight: bold;
   font-size: small;
 }
-
 #mod-scorm-playscorm .structurehead {
   float: left;
 }
@@ -36,7 +33,6 @@
   text-indent:-4ex;
   font-size: small;
 }
-
 #mod-scorm-view .structurehead {
   font-weight: bold;
   text-align: center;

@@ -130,6 +130,10 @@
   -moz-border-radius:20px;
 }
 
+.editing .block_course_summary .content {
+  -moz-border-radius-topleft:0;
+  -moz-border-radius-topright:0;
+}
 
 
 /***
