@@ -1,18 +1,18 @@
-.top {
+.mod-scorm .top {
   vertical-align: top;
 }
-.center {
+.mod-scorm .center {
   text-align: center;
 }
-.fullscreen {
+.mod-scorm .fullscreen {
   width: 100%;
 }
-.structlist  {
+.mod-scorm .structlist  {
   list-style-type: none;
   white-space: nowrap;
   font-size: small;
 }
-.orgtitle {
+.mod-scorm .orgtitle {
   font-weight: bold;
   font-size: small;
 }
