@@ -466,7 +466,7 @@ CREATE TABLE prefix_quiz_rqp_types (
   name varchar(255) NOT NULL default '',
   PRIMARY KEY  (id),
   UNIQUE KEY name (name)
-) TYPE=MyISAM COMMENT='RQP question types and the servers to be used to process the';
+) TYPE=MyISAM COMMENT='RQP question types';
 
 -- --------------------------------------------------------
 
