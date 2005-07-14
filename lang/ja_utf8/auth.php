@@ -68,6 +68,7 @@ $string['auth_ldap_memberattribute'] = 'ユーザがグループに属性して�
 $string['auth_ldap_objectclass'] = 'フィルタはユーザ名検索時に使用されます。通常は、objectClass=posixAccountのように設定します。デフォルトのobjectClass=*は全てのオブジェクトをLDAPより返します。';
 $string['auth_ldap_opt_deref'] = '検索時にエイリアスがどのように扱われるか決定してください。次の値から選択してください:  「No」 (LDAP_DEREF_NEVER) または 「Yes」 (LDAP_DEREF_ALWAYS)';
 $string['auth_ldap_passwdexpire_settings'] = 'LDAPパスワード有効期限設定';
+$string['auth_ldap_preventpassindb'] = 'MoodleのDBにパスワードが保存されることを防ぐには「Yes」を選択してください。';
 $string['auth_ldap_search_sub'] = 'サブコンテキストからユーザを検索する場合は、  <> 0 のように入力してください。';
 $string['auth_ldap_server_settings'] = 'LDAPサーバ設定';
 $string['auth_ldap_update_userinfo'] = 'LDAPよりMoodleの情報 ( 名、姓、住所等 ) を更新します。マッピング情報に関しては /auth/ldap/attr_mappings をご覧ください。';
