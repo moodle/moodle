@@ -64,6 +64,13 @@ class quiz_match_qtype extends quiz_default_questiontype {
             }
         }
 
+        // delete old subquestions records
+        if (!empty($oldsubquestions)) {
+            foreach($oldsubquestions as $os) {
+                delete_records('quiz_match_sub', 'id', $os->id);
+            }
+        }
+
         if (count($subquestions) < 3) {
             $result->noticeyesno = get_string("notenoughsubquestions", "quiz");
             return $result;
@@ -105,19 +112,15 @@ class quiz_match_qtype extends quiz_default_questiontype {
             $answer->fraction = 1.0;
             $state->options->subquestions[$key]->options
              ->answers[$subquestion->id] = clone($answer);
+
+            $state->responses[$key] = '';
         }
 
         // Shuffle the answers if required
-        $subquestionids = array_values(array_map(create_function('$val',
-         'return $val->id;'), $state->options->subquestions));
-        if ($cmoptions->shuffleanswers) {
-           $subquestionids = swapshuffle($subquestionids);
+        if ($quiz->shuffleanswers) {
+           $state->options->subquestions = swapshuffle_assoc($state->options->subquestions);
         }
-        $state->options->order = $subquestionids;
-        // Create empty responses
-        foreach ($subquestionids as $val) {
-            $state->responses[$val] = '';
-        }
+
         return true;
     }
 
@@ -129,18 +132,18 @@ class quiz_match_qtype extends quiz_default_questiontype {
         $responses = array_map(create_function('$val',
          'return explode("-", $val);'), $responses);
 
-        // Restore the previous responses
-        $state->responses = array();
-        if ($responses) {
-            foreach ($responses as $response) {
-                $state->responses[$response[0]] = $response[1];
-            }
-        }
-
-        if (!$state->options->subquestions = get_records('quiz_match_sub',
+        if (!$questions = get_records('quiz_match_sub',
          'question', $question->id)) {
            notify('Error: Missing subquestions!');
            return false;
+        }
+
+        // Restore the previous responses and place the questions into the state options
+        $state->responses = array();
+        $state->options->subquestions = array();
+            foreach ($responses as $response) {
+                $state->responses[$response[0]] = $response[1];
+            $state->options->subquestions[$response[0]] = $questions[$response[0]];
         }
 
         foreach ($state->options->subquestions as $key => $subquestion) {
@@ -162,10 +165,8 @@ class quiz_match_qtype extends quiz_default_questiontype {
     function save_session_and_responses(&$question, &$state) {
         // Serialize responses
         $responses = array();
-        foreach ($state->responses as $key => $val) {
-            if ($key != '') {
-                $responses[] = "$key-$val";
-            }
+        foreach ($state->options->subquestions as $key => $subquestion) {
+            $responses[] = $key.'-'.($state->responses[$key] ? $state->responses[$key] : 0);
         }
         $responses = implode(',', $responses);
 

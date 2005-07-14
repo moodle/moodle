@@ -43,7 +43,8 @@
                 set_field('quiz_questions', 'questiontext', $parsableanswerdef,
                  'id', $wrapped->id);
             } else {
-                $parsableanswerdef = $wrapped->questiontext;
+                $parsableanswerdef = str_replace('&#', '&\#',
+                 $wrapped->questiontext);
             }
             //echo "{#$key}<br />";
             //echo $parsableanswerdef.'<br />';

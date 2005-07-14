@@ -151,6 +151,21 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
                         return $result;
                     }
                 }
+
+                // delete old answer records
+                if (!empty($oldanswers)) {
+                    foreach($oldanswers as $oa) {
+                        delete_records('quiz_answers', 'id', $oa->id);
+                    }
+                }
+
+                // delete old answer records
+                if (!empty($oldoptions)) {
+                    foreach($oldoptions as $oo) {
+                        delete_records('quiz_numerical', 'id', $oo->id);
+                    }
+                }
+
             }
         }
     }

@@ -113,6 +113,13 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
             }
         }
 
+        // delete old answer records
+        if (!empty($oldanswers)) {
+            foreach($oldanswers as $oa) {
+                delete_records('quiz_answers', 'id', $oa->id);
+            }
+        }
+
         /// Perform sanity checks on fractional grades
         if ($options->single) {
             if ($maxfraction != 1) {

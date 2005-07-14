@@ -297,7 +297,8 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
                    echo '</select>';
                    break;
                default:
-                   error("Unable to recognized answertype $answer->answertype");
+                   error("Unable to recognized questiontype ($wrapped->qtype) of
+                          question part $positionkey.");
                    break;
            }
         }
@@ -366,6 +367,7 @@ function quiz_qtype_multianswer_extract_question($text) {
 
     // Handle the entity encoded ampersand in entities (e.g. &amp;lt; -> &lt;)
     $text = preg_replace('/&amp;(.{2,9}?;)/', '&${1}', $text);
+    $text = stripslashes($text);
 
     // ANSWER_ALTERNATIVE regexes
     define("ANSWER_ALTERNATIVE_FRACTION_REGEX",
@@ -423,8 +425,8 @@ function quiz_qtype_multianswer_extract_question($text) {
 ////////////////////////////////////////
 
     $question = new stdClass;
-    $question->qtype= MULTIANSWER;
-    $question->questiontext= stripslashes($text);
+    $question->qtype = MULTIANSWER;
+    $question->questiontext = $text;
     $question->options->questions = array();
     $question->defaultgrade = 0; // Will be increased for each answer norm
 
@@ -455,7 +457,8 @@ function quiz_qtype_multianswer_extract_question($text) {
         $wrapped->answer   = array();
         $wrapped->fraction = array();
         $wrapped->feedback = array();
-        $wrapped->questiontext = addslashes($answerregs[0]);
+        $wrapped->questiontext = addslashes(str_replace('&\#', '&#',
+         $answerregs[0]));
         $wrapped->questiontextformat = 0;
 
         $remainingalts = $answerregs[ANSWER_REGEX_ALTERNATIVES];
@@ -468,22 +471,25 @@ function quiz_qtype_multianswer_extract_question($text) {
             } else {
                 $wrapped->fraction[] = '0';
             }
-            $wrapped->feedback[] =
+            $wrapped->feedback[] = addslashes(str_replace('&\#', '&#',
              isset($altregs[ANSWER_ALTERNATIVE_REGEX_FEEDBACK])
-             ? $altregs[ANSWER_ALTERNATIVE_REGEX_FEEDBACK] : '';
+             ? $altregs[ANSWER_ALTERNATIVE_REGEX_FEEDBACK] : ''));
             if (!empty($answerregs[ANSWER_REGEX_ANSWER_TYPE_NUMERICAL])
                     && ereg(NUMERICAL_ALTERNATIVE_REGEX,
                             $altregs[ANSWER_ALTERNATIVE_REGEX_ANSWER],
                             $numregs) )
             {
-                $wrapped->answer[] = $numregs[NUMERICAL_CORRECT_ANSWER];
+                $wrapped->answer[] =
+                 addslashes($numregs[NUMERICAL_CORRECT_ANSWER]);
                 if ($numregs[NUMERICAL_ABS_ERROR_MARGIN]) {
-                    $wrapped->tolerance[] = $numregs[NUMERICAL_ABS_ERROR_MARGIN];
+                    $wrapped->tolerance[] =
+                     $numregs[NUMERICAL_ABS_ERROR_MARGIN];
                 } else {
                     $wrapped->tolerance[] = 0;
                 }
             } else { // Tolerance can stay undefined for non numerical questions
-                $wrapped->answer[] = $altregs[ANSWER_ALTERNATIVE_REGEX_ANSWER];
+                $wrapped->answer[] = addslashes(str_replace('&\#', '&#',
+                 $altregs[ANSWER_ALTERNATIVE_REGEX_ANSWER]));
             }
             $tmp = explode($altregs[0], $remainingalts, 2);
             $remainingalts = $tmp[1];
@@ -494,6 +500,8 @@ function quiz_qtype_multianswer_extract_question($text) {
         $question->questiontext = implode("{#$positionkey}",
                     explode($answerregs[0], $question->questiontext, 2));
     }
+    $question->questiontext = addslashes(str_replace('&\#', '&#',
+     $question->questiontext));
     return $question;
 }
 
