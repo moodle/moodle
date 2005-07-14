@@ -6,15 +6,15 @@
     }
 
     if(!empty($CFG->aspellpath)) {      // Enable global access to spelling feature.
-        echo '<script language="JavaScript" type="text/javascript" src="'.$CFG->wwwroot.'/lib/speller/spellChecker.js"></script>'."\n";
+        echo '<script language="JavaScript" type="text/javascript" src="'.$CFG->httpswwwroot.'/lib/speller/spellChecker.js"></script>'."\n";
     }
 ?>
-<!--<style type="text/css">/*<![CDATA[*/ body{behavior:url(<?php echo $CFG->wwwroot ?>/lib/csshover.htc);} /*]]>*/</style>-->
+<!--<style type="text/css">/*<![CDATA[*/ body{behavior:url(<?php echo $CFG->httpswwwroot ?>/lib/csshover.htc);} /*]]>*/</style>-->
 
-<script language="JavaScript" type="text/javascript" src="<?php echo $CFG->wwwroot ?>/lib/javascript-static.js"></script>
-<script language="JavaScript" type="text/javascript" src="<?php echo $CFG->wwwroot ?>/lib/javascript-mod.php"></script>
-<script language="JavaScript" type="text/javascript" src="<?php echo $CFG->wwwroot ?>/lib/overlib.js"></script>
-<script language="JavaScript" type="text/javascript" src="<?php echo $CFG->wwwroot ?>/lib/cookies.js"></script>
+<script language="JavaScript" type="text/javascript" src="<?php echo $CFG->httpswwwroot ?>/lib/javascript-static.js"></script>
+<script language="JavaScript" type="text/javascript" src="<?php echo $CFG->httpswwwroot ?>/lib/javascript-mod.php"></script>
+<script language="JavaScript" type="text/javascript" src="<?php echo $CFG->httpswwwroot ?>/lib/overlib.js"></script>
+<script language="JavaScript" type="text/javascript" src="<?php echo $CFG->httpswwwroot ?>/lib/cookies.js"></script>
 
 <script language="JavaScript" type="text/javascript" defer="defer">
 
@@ -23,7 +23,7 @@
 setTimeout('fix_column_widths()', 20);
 
 function openpopup(url,name,options,fullscreen) {
-  fullurl = "<?php echo $CFG->wwwroot ?>" + url;
+  fullurl = "<?php echo $CFG->httpswwwroot ?>" + url;
   windowobj = window.open(fullurl,name,options);
   if (fullscreen) {
      windowobj.moveTo(0,0);
