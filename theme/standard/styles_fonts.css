@@ -195,10 +195,15 @@ body#admin-blocks table#incompatible td.c0 {
   line-height:1.2em;
 }
 
+.sideblock a {
+  line-height:1.2em
+}
+
 .sideblock .content h3,
 .sideblock .content h2 {
   font-size:1.0em;
 }
+
 .sideblock .header .commands {
   font-size:0.9em;
 }
