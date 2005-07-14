@@ -392,6 +392,8 @@ global $THEME;
             if (empty($_SESSION['USER']) and !empty($_SERVER['HTTP_REFERER'])) {
                 if (strpos($_SERVER['HTTP_REFERER'], 'google') !== false ) {
                     $USER = guest_user();
+                } else if (strpos($_SERVER['HTTP_REFERER'], 'altavista') !== false ) {
+                    $USER = guest_user();
                 }
             }
         }
