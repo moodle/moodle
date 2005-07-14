@@ -2,8 +2,8 @@
 
     require_once("../config.php");
 
-    optional_variable($mode, "");
-    optional_variable($currentfile, "moodle.php");
+    $mode = optional_param('mode', '', PARAM_ALPHA);
+    $currentfile = optional_param('currentfile', 'moodle.php', PARAM_FILE);
 
     require_login();
 
@@ -90,23 +90,22 @@
         // For each file, check that a counterpart exists, then check all the strings
     
         foreach ($stringfiles as $file) {
-            if (!file_exists("$langdir/$file")) {
-                if (!touch("$langdir/$file")) {
-                    echo "<p><font color=\"red\">".get_string("filemissing", "", "$langdir/$file")."</font></p>";
-                    continue;
-                }
-            }
-    
             unset($string);
             include("$enlangdir/$file");
             $enstring = $string;  
-    
+            
             unset($string);
-            include("$langdir/$file");
+
+            if (file_exists("$langdir/$file")) {
+                include("$langdir/$file");
+            } else {
+                notify(get_string("filemissing", "", "$langdir/$file"));
+                $string = array();
+            }
     
             $first = true;
             foreach ($enstring as $key => $value) {
-                if (!isset($string[$key]) or $string[$key] == "") {
+                if (empty($string[$key])) {
                     $value = htmlspecialchars($value);
                     $value = str_replace("$"."a", "\\$"."a", $value);
                     $value = str_replace("%%","%",$value);
