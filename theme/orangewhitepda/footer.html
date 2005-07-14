@@ -1,13 +1,15 @@
 
 </div> <!-- end div containerContent -->
 <!-- START OF FOOTER -->
+<?php global $CFG, $course; ?>
 <div id="footer">
 <?php echo $loggedinas ?>
-<p class="homelink"><?php echo $homelink ?></p>
+<?php echo $homelink ?>
+<!-- <p><div class="homelink"><a target="<?php echo $CFG->framename ?>" href="<?php $CFG->wwwroot ?>/course/view.php?id=<?php $course->id ?>"> <?php $course->shortname ?> </a></div></p> -->
 <p>
-<a href="http://validator.w3.org/check?verbose=1&amp;ss=1&amp;uri=<?php echo urlencode(qualified_me()) ?>"><img src="<?php echo "$CFG->wwwroot/theme/$CFG->theme" ?>/xhtml_1_0.gif" alt="XHTML Validator" /></a> 
+<!-- <<a href="http://validator.w3.org/check?verbose=1&amp;ss=1&amp;uri=<?php echo urlencode(qualified_me()) ?>"><img src="<?php echo "$CFG->wwwroot/theme/$CFG->theme" ?>/xhtml_1_0.gif" alt="XHTML Validator" /></a>
 <a href="http://jigsaw.w3.org/css-validator/validator?uri=<?php echo urlencode(qualified_me()) ?>&amp;warning=1&amp;profile=css2&amp;usermedium=all"><img src="<?php echo "$CFG->wwwroot/theme/$CFG->theme" ?>/css.gif" alt="CSS Validator" /></a> 
-<a href="http://www.contentquality.com/mynewtester/cynthia.exe?rptmode=-1&amp;url1=<?php echo urlencode(qualified_me()) ?>"><img src="<?php echo "$CFG->wwwroot/theme/$CFG->theme" ?>/section_508.gif" alt="Section 508 Validator" /></a>
+<a href="http://www.contentquality.com/mynewtester/cynthia.exe?rptmode=-1&amp;url1=<?php echo urlencode(qualified_me()) ?>"><img src="<?php echo "$CFG->wwwroot/theme/$CFG->theme" ?>/section_508.gif" alt="Section 508 Validator" /></a> -->
 </p>
 </div>
 </div>
