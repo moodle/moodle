@@ -65,9 +65,22 @@ global $db;
  */
 global $THEME;
 
+/**
+ * HTTPSPAGEREQUIRED is a global to define if the page being displayed must run under HTTPS. 
+ * 
+ * It's primary goal is to allow 100% HTTPS pages when $CFG->loginhttps is enabled. Default to false.
+ * It's enabled only by the httpsrequired() function and used in some pages to update some URLs
+*/
+global $HTTPSPAGEREQUIRED;
+
+
     if (!isset($CFG->wwwroot)) {
         die;
     }
+
+/// Set httpswwwroot default value (this variable will replace $CFG->wwwroot
+/// inside some URLs used in HTTPSPAGEREQUIRED pages.
+$CFG->httpswwwroot = $CFG->wwwroot;
 
 /// Time to start counting    
     init_performance_info();        
