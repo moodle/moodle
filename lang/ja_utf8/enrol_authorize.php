@@ -18,6 +18,9 @@ $string['choosemethod'] = 'コースの登録キーを知っている場合は�
 $string['chooseone'] = '次の2つのフィールドの1つまたは両方に入力してください。';
 $string['description'] = 'Authorize.netモジュールでは、クレジットカード経由でコースの支払いを行うことができます。コースの受講料がゼロの場合、学生に対して受講登録に関する支払いは求められません。サイト全体の利用料をデフォルトとしてここで設定して、コースごとに受講料を設定することができます。コース受講料を設定した場合、コース受講料はサイト利用料に優先します。';
 $string['enrolname'] = 'Authorize.net クレジットカード・ゲイトウェイ';
+$string['logindesc'] = '<a href=\"$a->url\">loginhttps</a>オプションを変数/セキュリティセクションに設定することができます。
+<br /><br />
+これを設定することにより、Moodleは安全なhttps接続をログインおよび支払いページで使用します。';
 $string['nameoncard'] = 'クレジットカード名義';
 $string['sendpaymentbutton'] = '支払いの送信';
 $string['zipcode'] = '郵便番号';
