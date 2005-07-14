@@ -1676,7 +1676,8 @@ function highlightfast($needle, $haystack) {
 function print_header ($title='', $heading='', $navigation='', $focus='', $meta='',
                        $cache=true, $button='&nbsp;', $menu='', $usexml=false, $bodytags='') {
 
-    global $USER, $CFG, $THEME, $SESSION, $ME, $SITE;
+    global $USER, $CFG, $THEME, $SESSION, $ME, $SITE, $HTTPSPAGEREQUIRED;
+
 
 /// This is an ugly hack to be replaced later by a proper global $COURSE
     global $course;
@@ -1690,6 +1691,15 @@ function print_header ($title='', $heading='', $navigation='', $focus='', $meta=
         }
     }
 
+/// We have to change some URLs in styles if we are in a $HTTPSPAGEREQUIRED page
+    if (!empty($HTTPSPAGEREQUIRED)) {
+        $CFG->themewww = str_replace('http', 'https', $CFG->themewww);
+        $CFG->pixpath = str_replace('http', 'https', $CFG->pixpath);
+        $CFG->modpixpath = str_replace('http', 'https', $CFG->modpixpath);
+        foreach ($CFG->stylesheets as $key => $stylesheet) {
+            $CFG->stylesheets[$key] = str_replace('http', 'https', $stylesheet);
+        }
+    }
 
 /// Add the required stylesheets
     $stylesheetshtml = '';
@@ -4213,7 +4223,7 @@ function page_id_and_class(&$getid, &$getclass) {
     static $id    = NULL;
 
     if(empty($class) || empty($id)) {
-        $path = str_replace($CFG->wwwroot.'/', '', $ME);
+        $path = str_replace($CFG->httpswwwroot.'/', '', $ME);  //Because the page could be HTTPSPAGEREQUIRED
         $path = str_replace('.php', '', $path);
         if (substr($path, -1) == '/') {
             $path .= 'index';
