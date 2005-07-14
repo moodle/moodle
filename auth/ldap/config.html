@@ -6,6 +6,7 @@
     optional_variable($config->ldap_user_attribute,    "");
     optional_variable($config->ldap_search_sub,         "");
     optional_variable($config->ldap_opt_deref,         "");
+    optional_variable($config->ldap_preventpassindb,       0); 
     optional_variable($config->ldap_bind_dn,             "");
     optional_variable($config->ldap_bind_pw,             "");
     optional_variable($config->ldap_version,             "2");
@@ -25,9 +26,9 @@
     optional_variable($config->auth_ldap_stdchangepassword,        false); 
     
 if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
-    print '<p align="center"><font color="red"><strong>Warning:
+    print '<tr><td><p align="center"><font color="red"><strong>Warning:
            The PHP LDAP module does not seem to be present. 
-           Please ensure it is installed and enabled.</strong></font></p>';
+           Please ensure it is installed and enabled.</strong></font></p></td></tr>';
 }
     
 ?>
@@ -67,6 +68,20 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
    <td colspan="2">
         <h4><?php print_string("auth_ldap_bind_settings", "auth") ?> </h4>
    </td>
+</tr>
+
+<tr valign="top" class="required">
+    <td align="right">ldap_preventpassindb:</td>
+    <td>
+    <?php
+        $choices = array();
+        $choices["0"] = get_string("no");
+        $choices["1"] = get_string("yes");
+        choose_from_menu ($choices, "ldap_preventpassindb", $config->ldap_preventpassindb, "");
+    ?>
+    </td><td>
+    <?php  print_string("ldap_preventpassindb","auth") ?>
+    </td>
 </tr>
 
 <tr valign="top" class="required">
@@ -121,7 +136,7 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
     <td align="right">ldap_search_sub:</td>
     <td>
 <?php
-    $choices = array();;
+    $choices = array();
     $choices["0"] = get_string("no");
     $choices["1"] = get_string("yes");
     choose_from_menu ($choices, "ldap_search_sub", $config->ldap_search_sub, "");
