@@ -3777,7 +3777,7 @@ function reset_password_and_mail($user) {
     $a->sitename = $site->fullname;
     $a->username = $user->username;
     $a->newpassword = $newpassword;
-    $a->link = $CFG->wwwroot .'/login/change_password.php';
+    $a->link = $CFG->httpswwwroot .'/login/change_password.php';
     $a->signoff = fullname($from, true).' ('. $from->email .')';
 
     $message = get_string('newpasswordtext', '', $a);
@@ -3840,7 +3840,7 @@ function send_password_change_confirmation_email($user) {
 
     $data->firstname = $user->firstname;
     $data->sitename = $site->fullname;
-    $data->link = $CFG->wwwroot .'/login/forgot_password.php?p='. $user->secret .'&s='. $user->username;
+    $data->link = $CFG->httpswwwroot .'/login/forgot_password.php?p='. $user->secret .'&s='. $user->username;
     $data->admin = fullname($from).' ('. $from->email .')';
 
     $message = get_string('emailpasswordconfirmation', '', $data);
