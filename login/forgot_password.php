@@ -5,6 +5,9 @@
     $p = optional_param('p','');
     $s = optional_param('s','');
 
+    //HTTPS is potentially required in this page
+    httpsrequired();
+
     if (!empty($p) and !empty($s)) {  // User trying to authenticate change password routine
 
         update_login_count();
@@ -29,7 +32,7 @@
                 print_header(get_string("passwordsent"), get_string("passwordsent"), get_string("passwordsent"));
 
                 $a->email = $user->email;
-                $a->link = "$CFG->wwwroot/login/change_password.php";
+                $a->link = "$CFG->httpswwwroot/login/change_password.php";
                 notice(get_string("emailpasswordsent", "", $a), $a->link);
             }
         }
