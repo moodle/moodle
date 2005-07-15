@@ -3,7 +3,7 @@
 
 
 $string['addcontact'] = 'Kontakt hinzufügen';
-$string['addsomecontacts'] = 'Verwenden Sie die <a href=\"$a\">Suchoption </a> oben, um eine Mitteilungen an jemenanden zu versenden oder einen Eintrag im Verzeichnis zu erstellen.';
+$string['addsomecontacts'] = 'Verwenden Sie die <a href=\"$a\">Suchoption </a> oben, um eine Mitteilungen an jemanden zu versenden oder einen Eintrag im Verzeichnis zu erstellen.';
 $string['addsomecontactsincoming'] = 'Diese Mitteilungen stammen von Personen, die nicht in Ihrer Kontaktliste aufgeführt sind. Um sie in Ihrer Kontaktliste einzufügen, klicken Sie auf den Button \"Kontakt hinzufügen\" neben dem Namen.';
 $string['ago'] = '$a beendet';
 $string['allmine'] = 'Alle Mitteilungen an mich oder von mir';
@@ -26,7 +26,7 @@ $string['formorethan'] = 'Für mehr als';
 $string['includeblockedusers'] = 'Gesperrte Nutzer/innen einschließen';
 $string['incomingcontacts'] = 'Eingehende Kontakte ($a)';
 $string['keywords'] = 'Schlüsselbegriffe';
-$string['keywordssearchresults'] = 'Suchergebnis: $a Mitteilungenn gefunden';
+$string['keywordssearchresults'] = 'Suchergebnis: $a Mitteilungen gefunden';
 $string['maxmessages'] = 'Höchstzahl der Mitteilungen, die im Rückblick angezeigt werden';
 $string['message'] = 'Mitteilung';
 $string['messagehistory'] = 'Mitteilungen (Rückblick)';
@@ -57,12 +57,12 @@ $string['settings'] = 'Einstellungen';
 $string['settingssaved'] = 'Ihre Einstellungen wurden gespeichert';
 $string['showmessagewindow'] = 'Mitteilungsfenster automatisch öffnen wenn eine neue Mitteilung ankommt (Pop-Up-Fenster dürfen für diese Funktion nicht geblockt werden)';
 $string['strftimedaydatetime'] = '%%A, %%d %%B %%Y, %%I:%%M %%p';
-$string['timenosee'] = 'Minute seit ich zuletzt online war';
+$string['timenosee'] = 'Minuten seit ich zuletzt online war';
 $string['timesent'] = 'Sendezeitpunkt';
 $string['unblockcontact'] = 'Kontakt aktivieren';
 $string['unreadmessages'] = '$a ungelesene Mitteilungen';
 $string['userisblockingyou'] = 'Diese/r Teilnehmer/innen hat Mitteilungen von Ihnen gesperrt';
-$string['userisblockingyounoncontact'] = 'Der/die Empfänger/in nimmt derzeit nur Nachrichten vo Personen an, die in der Kontkatliste eingetragen sind. Sie sind derzeit dort nicht aufgeführt.';
+$string['userisblockingyounoncontact'] = 'Der/die Empfänger/in nimmt derzeit nur Nachrichten von Personen an, die in der Kontkatliste eingetragen sind. Sie sind derzeit dort nicht aufgeführt.';
 $string['userssearchresults'] = 'Suchergebniss(e): $a Nutzer/innen gefunden';
 
 ?>

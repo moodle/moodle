@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // dialogue.php - created with Moodle 1.5 ALPHA (2005051500)
+<?PHP // $Id$
+
 
 
 $string['addmynewentries'] = '새 글 추가하기';
@@ -65,5 +65,4 @@ $string['typefollowup'] = '여기에 다음 내용을 쓰세요';
 $string['typeofdialogue'] = '대화의 유형';
 $string['typereply'] = '여기에 답글을 쓰세요';
 $string['viewallentries'] = '$a 대화 목록 보기';
-
 ?>

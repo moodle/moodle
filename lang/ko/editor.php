@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // editor.php - created with Moodle 1.5 ALPHA (2005051500)
+<?PHP // $Id$
+
 
 
 $string['about'] = '에디터(데이터를 편집할 수 있도록 한 프로그램)에 관하여';
@@ -123,5 +123,4 @@ $string['vertical'] = '수직면,세로';
 $string['width'] = '너비,폭';
 $string['wordclean'] = 'HTML 지우기';
 $string['zip'] = '지프';
-
 ?>

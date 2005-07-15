@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.5 ALPHA (2005051500)
+<?PHP // $Id$
+
 
 
 $string['accesscontrol'] = '접근 제한';
@@ -255,5 +255,4 @@ $string['yourcurrentgradeis'] = '당신의 현재 점수는 $a 입니다';
 $string['yourgradeisnow'] = '레슨에 대한 당신의 점수가 $a로 바뀌어졌습니다.';
 $string['yourresponse'] = '당신의 반응';
 $string['youshouldview'] = '당신은 최소한 이것을 보아야합니다:$a';
-
 ?>

@@ -1,5 +1,6 @@
-<?PHP // $Id$ 
-      // attendance.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021000)
+<?PHP // $Id$
+
+
 
 $string['absentlong'] = 'A 결석';
 $string['absentshort'] = 'A';
@@ -67,5 +68,4 @@ $string['viewtable'] = '보기: 하나의 표로 보고서';
 $string['viewweek'] = '보기: 달력의 주로 모든 참석자 명단';
 $string['wednesday'] = '수요일';
 $string['weekmodulename'] = '지난 주 모든 참석자 명단';
-
 ?>

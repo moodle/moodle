@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // journal.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
+<?PHP // $Id$
+
 
 
 $string['alwaysopen'] = '항상 공개';
@@ -18,6 +18,7 @@ $string['journalquestion'] = '저널 의문사항';
 $string['journalrating1'] = '불충분하다,만족스럽지않다';
 $string['journalrating2'] = '만족스럽다';
 $string['journalrating3'] = '우수하다,뛰어나다';
+$string['mailsubject'] = '저널에 대한 답변';
 $string['modulename'] = '저널';
 $string['modulenameplural'] = '저널';
 $string['newjournalentries'] = '새저널기재';
@@ -29,6 +30,5 @@ $string['overallrating'] = '전체적인 평점(평점)';
 $string['rate'] = '평가하다, 등급';
 $string['saveallfeedback'] = '나의 모든 의견을 저장해라(기억해라)';
 $string['startoredit'] = '나의 저널기재를 시작 또는 편집합니다.';
-$string['viewallentries'] = '저널을 다시 보다';
-
+$string['viewallentries'] = '저널 $a 등록 다시보기';
 ?>

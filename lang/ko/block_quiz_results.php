@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // block_quiz_results.php - created with Moodle 1.5 ALPHA (2005051500)
+<?PHP // $Id$
+
 
 
 $string['bestgrade'] = '가장 높은 성적';
@@ -24,5 +24,4 @@ $string['worstgrade'] = '가장 낮은 성적';
 $string['worstgrades'] = '가장 $a 낮은 성적';
 $string['worstgroupgrade'] = '가장낮은 평균의 그룹';
 $string['worstgroupgrades'] = '가장낮은 평균의  $a 그룹';
-
 ?>

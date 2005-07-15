@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // enrol_flatfile.php - created with Moodle 1.5 ALPHA (2005051500)
+<?PHP // $Id$
+
 
 
 $string['description'] = '이 방법은 다시 한번 검사하고, 당신이 지정한 장소에 특별히 포맷된 텍스트 파일을 처리할 것입니다. 파일은 이렇게 보일 수도 있습니다.
@@ -18,5 +18,4 @@ $string['filelockedmailsubject'] = '중요한 에러: 등록 화일';
 $string['location'] = '화일 위치';
 $string['mailadmin'] = '이 메일로 관리자를 알리시오';
 $string['mailusers'] = '이메일로 사용자를 알리시오';
-
 ?>

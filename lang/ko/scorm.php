@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.5 ALPHA (2005051500)
+<?PHP // $Id$
+
 
 
 $string['asset'] = '이점';
@@ -70,5 +70,4 @@ $string['validationtype'] = '이 선택은 SCORM Manifest을 확인하기 위해서 사용되는
 $string['versionwarning'] = '분명한 버젼은 1.3 보다 더 오래됐다는 것이다. $a->tag표경고';
 $string['viewallreports'] = '$a 시도를 위해 보고서를 봐라';
 $string['width'] = '넓이';
-
 ?>

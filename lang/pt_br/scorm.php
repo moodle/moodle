@@ -2,6 +2,7 @@
       // scorm.php - created with Moodle 1.5 + (2005060201)
 
 
+$string['advanced'] = 'Avançado';
 $string['asset'] = 'Recurso';
 $string['attr_error'] = 'Valor errado para o atributo ($a->attr) na etiqueta (tag)$a->tag.';
 $string['autocontinue'] = 'Continuação Automática';
@@ -65,6 +66,7 @@ $string['review'] = 'Rever';
 $string['scoes'] = 'Scoes';
 $string['score'] = 'Resultado';
 $string['scormcourse'] = 'Curso SCORM';
+$string['stagesize'] = 'Tamanho da Tela/Frame';
 $string['syntax'] = 'Erro de sintaxe';
 $string['tag_error'] = 'Etiqueta desconhecida ($a->tag) com o seguinte conteúdo: $a->value';
 $string['too_many_attributes'] = 'Etiqueta $a->tag tem atributos demais';

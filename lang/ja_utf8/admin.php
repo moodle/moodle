@@ -55,7 +55,7 @@ $string['configloginhttps'] = 'この設定をONにすることでMoodleは、�
 $string['configloglifetime'] = 'ここではユーザの活動に関するログの保持期間を設定します。指定した値より古いログは自動的に削除されます。可能な限り長い間ログを保持する方が良いのですが、アクセス件数が多く、サーバのパフォーマンスに問題がある場合は、短い期間に設定してください。';
 $string['configlongtimenosee'] = '学生が長期間ログインしていない場合、自動的にコースから削除されます。この値は削除期限を決定します。';
 $string['configmaxbytes'] = 'ここではサイト全体でアップロードできるファイルの最大サイズを設定します。この設定はPHP設定のupload_max_filesizeおよびApache設定のLimitRequestBodyに制限されます。maxbytesはコースレベルまたはモジュールレベルで選択するサイズ幅を制限します。';
-$string['configmaxeditingtime'] = 'ここではフォーラムの投稿や日誌等を編集可能な時間を設定します。通常30分が適切な値です。';
+$string['configmaxeditingtime'] = 'ここではフォーラムの投稿や用語集のコメント等を編集可能な時間を設定します。通常30分が適切な値です。';
 $string['configmessaging'] = 'サイトのユーザ間でメッセージシステムを利用できるようにしますか?';
 $string['confignoreplyaddress'] = 'Moodleでは、メールがユーザに送信される場合があります ( 例 フォーラムの投稿 )。ここで設定するメールアドレスは、「From」に使用され、受信者が直接送信者に返信できないようにします ( 例 ユーザが個人のメールアドレスを隠したい場合 )。';
 $string['confignotifyloginfailures'] = 'ログインに失敗した場合、メールによる通知を行うことができます。誰がメール通知を受け取りますか?';
@@ -64,7 +64,7 @@ $string['configopentogoogle'] = 'この設定を行った場合、Googleはあ�
 $string['configpathtoclam'] = 'clam AVのパス。恐らく、/usr/bin/clamscan or /usr/bin/clamdscan のようになります。clam AVを正常に動作させるために、この設定を行う必要があります。';
 $string['configproxyhost'] = '<b>サーバ</b>のインターネットアクセスにプロクシ ( 例 ファイアーウォール ) が必要な場合は、プロクシのホスト名とポート番号を入力してください。必要でない場合は空白にしてください。';
 $string['configquarantinedir'] = 'clam AVに感染ファイルを隔離用ディレクトリに移動させたい場合は、ここにそのディレクトリを入力してください。このディレクトリは、ウェブサーバより書き込みができるようにする必要があります。ここを空白にした場合、または存在しないか、書き込み権が無いディレクトリを指定した場合、感染ファイルは削除されます。末尾にスラッシュを付けないでください。';
-$string['configrunclamonupload'] = 'ファイルアップロード時にclam AVを動作させますか? 正常に動作させるためには、pathtoclamに正しいパスを入力する必要があります。 ( Clam AVは次の場所で入手できる無料ウイルススキャナーです。 http://www.clamav.net/ )\'';
+$string['configrunclamonupload'] = 'ファイルアップロード時にclam AVを動作させますか? 正常に動作させるためには、pathtoclamに正しいパスを入力する必要があります。 ( Clam AVは次の場所で入手できる無料ウイルススキャナーです。 http://www.clamav.net/ )';
 $string['configsectioninterface'] = 'インターフェース';
 $string['configsectionmail'] = 'メール';
 $string['configsectionmaintenance'] = 'メンテナンス';
@@ -79,7 +79,7 @@ $string['configsessiontimeout'] = 'このサイトにログインして長時間
 $string['configshowblocksonmodpages'] = 'いくつかの活動モジュールでは、ページにブロックを表示することができます。この設定を「Yes」に設定した場合、教師はサイドブロックをページに追加することができます。「No」にした場合、この機能は表示されません。';
 $string['configshowsiteparticipantslist'] = '全ての学生および教師は参加者リストに表示されます。誰がこの参加者リストを閲覧することができますか?';
 $string['configsitepolicy'] = 'このサイトを使用する前に、サイト使用許諾に全てのユーザが同意する必要がある場合は、サイト使用許諾のURLを指定してください。同意する必要が無い場合は空白のままにしてください。URLは自由に指定することができます - 便利な場所はサイトファイルの中です。例 http://yoursite/file.php/1/policy.html';
-$string['configslasharguments'] = 'ファイル ( イメージ、アップロード等 ) は/=スラッシュ ( ここでは2つ目のオプション ) を使ってプログラムに受け渡されます。この方法により簡単にブラウザ内やプロクシにイメージを一時保存させることが可能です。いくつかのPHPサーバではこの方法が取れない場合があります。もしファイルやイメージ(例 ユーザの顔写真等)のアップロードに問題がある場合は最初のオプションを選択してください。';
+$string['configslasharguments'] = 'ファイル ( イメージ、アップロード等 ) は/=スラッシュ ( ここでは2つ目のオプション ) を使ってプログラムに受け渡されます。この方法により簡単にブラウザ内やプロクシにイメージを一時保存させることが可能です。いくつかのPHPサーバではこの方法が取れない場合があります。もしファイルやイメージ ( 例 ユーザの顔写真等 ) のアップロードに問題がある場合は最初のオプションを選択してください。';
 $string['configsmtphosts'] = 'Moodleでメールを送信するときに使用する1つ以上のSMTPサーバを入力してください ( 例 mail.a.com またはmail.a.com;mail.b.com )。空白にした場合、Moodleは自動的にPHPのメール送信方法を使用します。';
 $string['configsmtpuser'] = '上記でSMTPサーバを設定して尚且つ認証が必要な場合はユーザ名とパスワードを設定してください。';
 $string['configteacherassignteachers'] = '一般の教師は他の教師をコース内に割当てる必要がありますか? 「No」の場合、コース作成者および管理者のみが教師の割当てを行うことができます。';
@@ -90,7 +90,7 @@ $string['configvariables'] = '詳細設定';
 $string['configwarning'] = '間違った設定はトラブルの原因になりますので、これらの設定を変更する場合は注意してください。';
 $string['configzip'] = 'ZIPプログラムの場所を指定してください ( UNIXのみ、任意 )。これはZIP書庫をサーバ内で作成するために必要です。空白にした場合、Moodleは内部ルーチンを使用します';
 $string['confirmation'] = '確認';
-$string['cronwarning'] = '<a href=\"cron.php\">cron.phpメンテナンススクリプト</a>が少なくとも24時間稼動していません。<br />cron.phpの自動化に関して<a href=\"../doc/?frame=install.html⊂=cron\">インストールドキュメント</a>をご覧ください。';
+$string['cronwarning'] = '<a href=\"cron.php\">cron.phpメンテナンススクリプト</a>が少なくとも24時間稼動していません。<br />cron.phpの自動化に関して<a href=\"../doc/?frame=install.html&sub=cron\">インストールドキュメント</a>をご覧ください。';
 $string['edithelpdocs'] = 'ヘルプ文書の編集';
 $string['editstrings'] = '翻訳ストリングの編集';
 $string['filterall'] = '全ての文字をフィルタする';

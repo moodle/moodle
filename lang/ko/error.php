@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // error.php - created with Moodle 1.5 ALPHA (2005051500)
+<?PHP // $Id$
+
 
 
 $string['adminprimarynoedit'] = '다른이에 의해 주요한 관리자가 편집되지 않음';
@@ -19,5 +19,4 @@ $string['unknowncourse'] = '\"$a\"라는 알려지지 않는 강좌(과정)';
 $string['usernotaddederror'] = '사용자(가)\"$a\"를 추가하지 않았습니다.-알려지지 않은 오류';
 $string['usernotaddedregistered'] = '사용자 \"$a\"를 추가하지 않았습니다- 이미 등록되어짐';
 $string['usernotavailable'] = '이 사용자의 세부항의 허용되지 않습니다';
-
 ?>

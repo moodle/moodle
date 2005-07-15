@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 ALPHA (2005051500)
+<?PHP // $Id$
+
 
 
 $string['action'] = '동작';
@@ -584,7 +584,7 @@ $string['livelogs'] = '최근 한 시간동안의 로그';
 $string['locale'] = 'ko';
 $string['location'] = '위치';
 $string['loggedinas'] = '$a 계정으로 접속되었습니다.';
-$string['loggedinasguest'] = '최근에 손님을 사용하셨습ㄴㅣㄷ.';
+$string['loggedinasguest'] = '최근에 손님을 사용하셨습';
 $string['loggedinnot'] = '접속되지 않았습니다.';
 $string['login'] = '로그인';
 $string['login_failure_logs'] = '로그인 실패 로그';
@@ -979,7 +979,7 @@ $string['thanks'] = '감사합니다.';
 $string['theme'] = '테마';
 $string['themes'] = '테마들';
 $string['themesaved'] = '새로 저장된 테마';
-$string['thischarset'] = 'euc-kr';
+$string['thischarset'] = 'EUC-KR';
 $string['thisdirection'] = 'ltr';
 $string['thislanguage'] = '&#54620;&#44397;&#50612;';
 $string['time'] = '시';
@@ -1126,5 +1126,4 @@ $string['yourlastlogin'] = '마지막 로그인';
 $string['yourself'] = '당신자신';
 $string['yourteacher'] = '당신의 $a';
 $string['zippingbackup'] = '백업 압축하기';
-
 ?>

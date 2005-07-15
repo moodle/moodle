@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.5 ALPHA (2005051500)
+<?PHP // $Id$
+
 
 
 $string['absent'] = '결석';
@@ -315,5 +315,4 @@ $string['yourassessments'] = '당신의평가';
 $string['yourassessmentsofexamplesfromtheteacher'] = '$a에서 당신 평가의 예';
 $string['yourfeedbackgoeshere'] = '당신의 반응은여기로';
 $string['yoursubmissions'] = '당신의 제출들';
-
 ?>

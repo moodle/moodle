@@ -1,7 +1,8 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.5 ALPHA (2005051500)
+      // scorm.php - created with Moodle 1.5.1 (2005060210)
 
 
+$string['advanced'] = 'Weitere Einstellungen';
 $string['asset'] = 'Asset';
 $string['attr_error'] = 'Falscher Wert für Attribut ($a->attr) in Tag $a->tag';
 $string['autocontinue'] = 'Automatische Fortsetzung';
@@ -9,7 +10,7 @@ $string['badmanifest'] = 'Einige dauerhafte Fehler: siehe Fehlerprotokoll';
 $string['browse'] = 'Durchsuchen';
 $string['browsed'] = 'Durchsucht';
 $string['browsemode'] = 'Durchsuchen Einstellung';
-$string['chooseapacket'] = 'Auswählen oder aktualisieren eines SCORM Pakets';
+$string['chooseapacket'] = 'Auswählen/aktualisieren eines SCORM Pakets';
 $string['completed'] = 'Abgeschlossen';
 $string['coursepacket'] = 'Kurspaket';
 $string['coursestruct'] = 'Kursstruktur';
@@ -53,9 +54,10 @@ $string['notattempted'] = 'Nicht versucht';
 $string['organization'] = 'Organisation';
 $string['organizations'] = 'Organisationen';
 $string['packagedir'] = 'Dateisystemfehler: Verzeichnis für Paket kann nicht erstellt werden';
+$string['packagefile'] = 'Keine Paket Datei ausgewählt';
 $string['passed'] = 'Abgeschlossen';
 $string['php5'] = 'PHP 5 (DOMXML native library)';
-$string['popup'] = 'Diesen SCO in einem neuen Fenster öffnen';
+$string['popup'] = 'Dieses Lernobjekt in einem neuen Fenster öffnen';
 $string['position_error'] = 'Der $a-tag Tag kann nicht Kind/Child des $a->parent Tag sein';
 $string['prev'] = 'Vorheriges';
 $string['regular'] = 'Reguläres Zeichen';
@@ -63,6 +65,8 @@ $string['report'] = 'Bericht';
 $string['review'] = 'Rückblick';
 $string['scoes'] = 'Scoes';
 $string['score'] = 'Bewertung';
+$string['scormcourse'] = 'SCORM Kurs';
+$string['stagesize'] = 'Frame/Fenster Größe';
 $string['syntax'] = 'Schreibfehler';
 $string['tag_error'] = 'Unbekannter Tag ($a->tag) mit dem Inhalt: $a->value';
 $string['too_many_attributes'] = 'Tag $a->tag hat zu viele Attribute';
