@@ -381,7 +381,7 @@ function chat_login_user($chatid, $version, $groupid, $course) {
     global $USER;
     if (($version != 'sockets') and $chatuser = get_record_select('chat_users', "chatid='$chatid' AND userid='$USER->id' AND groupid='$groupid'")) {
         $chatuser->version  = $version;
-        $chatuser->ip       = $USER->lastIP;
+        $chatuser->ip       = getremoteaddr();
         $chatuser->lastping = time();
         $chatuser->lang     = current_language();
 
@@ -397,7 +397,7 @@ function chat_login_user($chatid, $version, $groupid, $course) {
         $chatuser->userid   = $USER->id;
         $chatuser->groupid  = $groupid;
         $chatuser->version  = $version;
-        $chatuser->ip       = $USER->lastIP;
+        $chatuser->ip       = getremoteaddr();
         $chatuser->lastping = $chatuser->firstping = $chatuser->lastmessageping = time();
         $chatuser->sid      = random_string(32);
         $chatuser->course   = $course->id; //caching - needed for current_language too
