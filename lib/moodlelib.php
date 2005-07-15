@@ -2592,14 +2592,13 @@ function authenticate_user_login($username, $password) {
             if (empty($user->auth)) {             // For some reason auth isn't set yet
                 set_field('user', 'auth', $auth, 'username', $username);
             }
-            if ($md5password <> $user->password) {   // Update local copy of password for reference
-                if(empty($CFG->{$user->auth.'_preventpassindb'})){  //Prevent passwords in Moodle's DB
-                    set_field('user', 'password', $md5password, 'username', $username);
-                } else {
-                    if ($user->password != 'not cached') {
-                        set_field('user', 'password', 'not cached', 'username', $username); //Unusable password
-                    }
-                }
+            if (empty($CFG->{$user->auth.'_preventpassindb'})){   //Calculate the password to update
+                $passfield = $md5password;
+            } else {
+                 $passfield = 'not cached';
+            }
+            if ($passfield <> $user->password) {   // Update local copy of password for reference
+                set_field('user', 'password',  $passfield, 'username', $username); //Update password
             }
             if (!is_internal_auth()) {            // update user record from external DB
                 $user = update_user_record($username);
