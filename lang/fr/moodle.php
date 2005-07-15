@@ -1094,11 +1094,12 @@ $string['weekhide'] = 'Cacher cette semaine pour $a';
 $string['weeklyoutline'] = 'Aperçu des semaines';
 $string['weekshow'] = 'Afficher cette semaine pour $a';
 $string['welcometocourse'] = 'Bienvenue sur $a';
-$string['welcometocoursetext'] = 'Bienvenue au cours $a->coursename !
+$string['welcometocoursetext'] = 'Bienvenue au cours « $a->coursename » !
 
-Pour commencer, veuillez modifier votre profil dans ce cours afin que nous nous connaissions un peu mieux :
+Pour commencer, nous vous invitons à modifier et compléter votre profil :
+$a->profileurl
 
-$a->profileurl';
+Bon travail dans ce cours !';
 $string['whattocallzip'] = 'Quel nom voulez-vous donner au fichier compacté (zip) ?';
 $string['withchosenfiles'] = 'Avec les fichiers choisis';
 $string['withoutuserdata'] = 'sans les données des utilisateurs';
