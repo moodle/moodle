@@ -137,7 +137,8 @@ div.header,
 .glossarypost .entryattachment,
 #grade-index .header,
 #grade-exceptions .header,
-#calendar .maincalendar .eventlist .event .topic {
+#calendar .maincalendar .eventlist .event .topic,
+.required {
     background-image:url(gradient1.jpg);
     background-position:bottom;
     background-repeat:repeat-x repeat-y;
