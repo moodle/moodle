@@ -41,7 +41,7 @@ $string['auth_fcuserid'] = 'Numéro d\'identification du compte FirstClass ayant 
 $string['auth_fieldlock'] = 'Verrouillage';
 $string['auth_fieldlock_expl'] = '<p><strong>Verrouiller cette valeur&nbsp;:</strong> si cette option est activée, elle empêchera les utilisateurs et les administrateurs de modifier le champ directement. Utilisez cette option si vous maintenez ces données dans le système d\'authentification externe.</p>';
 $string['auth_fieldlocks'] = 'Verrouiller les champs utilisateur';
-$string['auth_fieldlocks_help'] = '<p>Vous pouvez verrouiller des champs utilisateurs. Ceci est utile sur les sites où les données des utilisateurs sont gérées manuellement par les administrateurs (en modifiant manuellement les enregistrements des utilisateurs) ou en utilisant l\'option «&nbsp;Importer des utilisateurs&nbsp;». Si vous verrouillez des champs requis par Moodle, assurez-vous que vous fournissez les données en question lors de la création des comptes, sans quoi ceux-ci seront inutilisables.</p><p>Pour éviter ce problèmes, vous pouvez choisir comme mode de verrouillage «&nbsp;Déverrouillé si vide&nbsp;».</p>';
+$string['auth_fieldlocks_help'] = '<p>Vous pouvez verrouiller des champs utilisateurs. Ceci est utile sur les sites où les données des utilisateurs sont gérées manuellement par les administrateurs (en modifiant manuellement les enregistrements des utilisateurs) ou en utilisant l\'option «&nbsp;Importer des utilisateurs&nbsp;». Si vous verrouillez des champs requis par Moodle, assurez-vous que vous fournissez les données en question lors de la création des comptes, sans quoi ceux-ci seront inutilisables.</p><p>Pour éviter ce problème, vous pouvez choisir comme mode de verrouillage «&nbsp;Déverrouillé si vide&nbsp;».</p>';
 $string['auth_imapdescription'] = 'Cette méthode utilise un serveur IMAP pour vérifier qu\'un nom d\'utilisateur et son mot de passe sont valides.';
 $string['auth_imaphost'] = 'Adresse du serveur IMAP. Utiliser l\'adresse IP et non le nom de la machine.';
 $string['auth_imapport'] = 'Numéro de port du serveur IMAP. Il s\'agit généralement de 143 ou 993.';
@@ -64,6 +64,7 @@ $string['auth_ldap_memberattribute'] = 'Indiquer l\'attribut d\'appartenance à u
 $string['auth_ldap_objectclass'] = 'Le filtre utilisé pour rechercher/renommer des utilisateurs. On y mettra d\'habitude quelque chose comme objectClass=posixAccount. La valeur par défaut est objectClass=*, ce qui retournera tous les objets du serveur LDAP.';
 $string['auth_ldap_opt_deref'] = 'Détermine le traitement des alias durant la recherche. Veuillez sélectionner une des valeurs suivantes&nbsp;: «&nbsp;Non&nbsp;» (LDAP_DEREF_NEVER) ou «&nbsp;Oui&nbsp;» (LDAP_DEREF_ALWAYS)';
 $string['auth_ldap_passwdexpire_settings'] = 'Réglages de l\'échéance du mot de passe LDAP.';
+$string['auth_ldap_preventpassindb'] = 'Choisissez «&nbsp;Oui&nbsp;» empêcher le stockage des mots de passe dans la base de données de Moodle.';
 $string['auth_ldap_search_sub'] = 'Rechercher les utilsateurs dans les sous-contextes.';
 $string['auth_ldap_server_settings'] = 'Configuration du serveur LDAP';
 $string['auth_ldap_update_userinfo'] = 'Mettre à jour les données des utilisateurs (prénom, nom, adresse, etc.) de Moodle depuis l\'annuaire LDAP. Lire « /auth/ldap/attr_mappings.php » pour avoir des informations sur la correspondance.';

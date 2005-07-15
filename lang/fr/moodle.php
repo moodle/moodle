@@ -296,10 +296,10 @@ $string['doyouagree'] = 'Avez-vous lu et compris ces conditions ?';
 $string['duplicate'] = 'Dupliquer';
 $string['duplicatinga'] = 'Duplication de $a';
 $string['duplicatingain'] = 'Duplication de $a->what vers $a->in';
-$string['edhelpaspellpath'] = 'Pour utiliser le correcteur orthographique dans l\'éditeur WYSIWYG, le logiciel <strong>aspell</strong> version <strong>0.50</strong> ou ultérieure doit être installé sur le serveur, et vous devez configurer correctement le chemin d\'accès du programme aspell. Sur les systèmes Unix/Linux, ce chemin d\'accès est en règle générale <strong>/usr/bin/aspell</strong>.';
+$string['edhelpaspellpath'] = 'Pour utiliser le correcteur orthographique dans l\'éditeur WYSIWYG, le logiciel <strong>aspell</strong> version <strong>0.50</strong> ou ultérieure doit être installé sur le serveur, et son chemin d\'accès doit être configuré correctement. Sur les systèmes Unix/Linux, ce chemin d\'accès est en règle générale <strong>/usr/bin/aspell</strong>.';
 $string['edhelpbgcolor'] = 'Définir la couleur de fond de l\'éditeur.<br />Des valeurs correctes sont par exemple : #ffffff ou white';
 $string['edhelpcleanword'] = 'Ce réglage permet l\'activation du filtre spécifique au format Word.';
-$string['edhelpenablespelling'] = 'Activation du correcteur orthographique. S\'il est activé, le programme <strong>aspell</strong> doit être installé sur le serveur. La seconde valeurest le <strong>dictionnaire par défaut</strong>. Cette valeur sera utilisée si aspell n\'a pas de dictionnaire pour la langue de l\'utilisateur.';
+$string['edhelpenablespelling'] = 'Activation du correcteur orthographique. S\'il est activé, le programme <strong>aspell</strong> doit être installé sur le serveur. La seconde valeur est le <strong>dictionnaire par défaut</strong>. Cette valeur sera utilisée si aspell n\'a pas de dictionnaire pour la langue de l\'utilisateur.';
 $string['edhelpfontfamily'] = 'La propriété « font-family » est une liste de noms de polices et/ou de familles de polices génériques. Les noms doivent être séparés par des virgules.';
 $string['edhelpfontlist'] = 'Définition des polices disponible dans le menu de l\'éditeur.';
 $string['edhelpfontsize'] = 'Le corps par défaut définit la taille de la police.<br />Des valeurs correctes sont par exemple : medium, large, smaller, larger, 10pt, 11px.';
@@ -1094,11 +1094,12 @@ $string['weekhide'] = 'Cacher cette semaine pour $a';
 $string['weeklyoutline'] = 'Aperçu des semaines';
 $string['weekshow'] = 'Afficher cette semaine pour $a';
 $string['welcometocourse'] = 'Bienvenue sur $a';
-$string['welcometocoursetext'] = 'Bienvenue au cours $a->coursename !
+$string['welcometocoursetext'] = 'Bienvenue au cours « $a->coursename » !
 
-Pour commencer, veuillez modifier votre profil dans ce cours afin que nous nous connaissions un peu mieux :
+Pour commencer, nous vous invitons à modifier et compléter votre profil :
+$a->profileurl
 
-$a->profileurl';
+Bon travail dans ce cours !';
 $string['whattocallzip'] = 'Quel nom voulez-vous donner au fichier compacté (zip) ?';
 $string['withchosenfiles'] = 'Avec les fichiers choisis';
 $string['withoutuserdata'] = 'sans les données des utilisateurs';

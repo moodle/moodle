@@ -103,6 +103,7 @@ $string['selection'] = 'Sélection';
 $string['showhelp'] = 'Aide sur l\'éditeur';
 $string['size'] = 'Taille';
 $string['spacing'] = 'Espacement';
+$string['spellcheck'] = 'Vérification orthographique';
 $string['strikethrough'] = 'Barré';
 $string['subscript'] = 'Indice';
 $string['superscript'] = 'Exposant';
