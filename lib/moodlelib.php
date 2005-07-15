@@ -2689,7 +2689,7 @@ function add_teacher($userid, $courseid, $editall=1, $role='', $timestart=0, $ti
     delete_records('user_students', 'userid', $userid, 'course', $courseid); // Unenrol as student
 
     /// Add forum subscriptions for new users
-    require_once('../mod/forum/lib.php');
+    require_once($CFG->dirroot.'/mod/forum/lib.php');
     forum_add_user($userid, $courseid);
 
     return insert_record('user_teachers', $teacher);
