@@ -214,7 +214,19 @@ function upgrade_activity_modules($return) {
                 error($module->name .' tables could NOT be set up successfully!');
             }
         }
-        
+
+    /// Check submodules of this module if necessary
+
+        include_once($fullmod.'/lib.php');  // defines upgrading function
+
+        $submoduleupgrade = $module->name.'_upgrade_submodules';
+        if (function_exists($submoduleupgrade)) {
+            $submoduleupgrade();
+        }
+
+
+    /// Run any defaults or final code that is necessary for this module
+
         if ( is_readable($fullmod .'/defaults.php')) {
             // Insert default values for any important configuration variables
             unset($defaults);
