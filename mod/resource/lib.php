@@ -36,6 +36,10 @@ if (!isset($CFG->resource_allowlocalfiles)) {
     set_config("resource_allowlocalfiles", "0");
 }
 
+if (!isset($CFG->resource_hide_repository)) {
+    set_config("resource_hide_repository", "1");
+}
+
 define('RESOURCE_LOCALPATH', 'LOCALPATH');
 
 $RESOURCE_WINDOW_OPTIONS = array('resizable', 'scrollbars', 'directories', 'location',
@@ -542,7 +546,7 @@ function resource_is_url($path) {
 
 function resource_get_resource_types() {
 /// Returns a menu of current resource types, in standard order
-    global $resource_standard_order;
+    global $resource_standard_order, $CFG;
 
     $resources = array();
 
@@ -555,6 +559,9 @@ function resource_get_resource_types() {
     /// Drop-in extra resource types
     $resourcetypes = get_list_of_plugins('mod/resource/type');
     foreach ($resourcetypes as $resourcetype) {
+        if (!empty($CFG->{'resource_hide_'.$resourcetype})) {  // Not wanted
+            continue;
+        }
         if (!in_array($resourcetype, $resources)) {
             $resources[$resourcetype] = get_string("resourcetype$resourcetype", 'resource');
         }
