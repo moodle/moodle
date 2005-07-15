@@ -3,6 +3,8 @@
 /// Library of functions and constants for module scorm
 /// (replace scorm with the name of your module and delete this line)
 
+require_once('xml2array.class.php');
+
 define('VALUESCOES', '0');
 define('VALUEHIGHEST', '1');
 define('VALUEAVERAGE', '2');
@@ -517,118 +519,6 @@ function scorm_scandir($directory) {
     }
 }
 
-function scorm_startElement($parser, $name, $attrs) {
-
-    global $scoes,$i,$resources,$parent,$level,$organization,$manifest,$defaultorg;
-
-    switch ($name) {
-        case 'ITEM':
-            $i++;
-            $scoes[$i]['manifest'] = $manifest;
-            $scoes[$i]['organization'] = $organization;
-            $scoes[$i]['identifier'] = $attrs['IDENTIFIER'];
-            if (empty($attrs['IDENTIFIERREF'])) {
-                $attrs['IDENTIFIERREF'] = '';
-            }
-            $scoes[$i]['identifierref'] = $attrs['IDENTIFIERREF'];
-            if (empty($attrs['ISVISIBLE'])) {
-                $attrs['ISVISIBLE'] = '';
-            }
-            $scoes[$i]['isvisible'] = $attrs['ISVISIBLE'];
-            if (empty($attrs['PARAMETERS'])) {
-                $attrs['PARAMETERS'] = '';
-            }
-            $scoes[$i]['parameters'] = $attrs['PARAMETERS'];
-            $scoes[$i]['parent'] = $parent[$level];
-            $level++;
-            $parent[$level] = $attrs['IDENTIFIER'];
-        break;
-        case 'RESOURCE':
-            if (!isset($attrs['HREF'])) {
-                $attrs['HREF'] = '';
-            }
-            $resources[$attrs['IDENTIFIER']]['href']=$attrs['HREF'];
-            if (!isset($attrs['ADLCP:SCORMTYPE'])) {
-                $attrs['ADLCP:SCORMTYPE'] = 'sco'; //Default scorm type
-            }
-            $resources[$attrs['IDENTIFIER']]['scormtype']=$attrs['ADLCP:SCORMTYPE'];
-        break;
-        case 'ORGANIZATION':
-            $i++;
-            $scoes[$i]['manifest'] = $manifest;
-            $scoes[$i]['organization'] = '';
-            $scoes[$i]['identifier'] = $attrs['IDENTIFIER'];
-            $scoes[$i]['identifierref'] = '';
-            $scoes[$i]['isvisible'] = '';
-            $scoes[$i]['parent'] = $parent[$level];
-            $level++;
-            $parent[$level] = $attrs['IDENTIFIER'];
-            $organization = $attrs['IDENTIFIER'];
-        break;
-        case 'MANIFEST':
-            $manifest = $attrs['IDENTIFIER'];
-        break;
-        case 'ORGANIZATIONS':
-            if (!isset($attrs['DEFAULT'])) {
-                $attrs['DEFAULT'] = '';
-            }
-            $defaultorg = $attrs['DEFAULT'];
-        break;
-    }
-}
-
-function scorm_endElement($parser, $name) {
-    global $scoes,$i,$level,$datacontent,$manifest,$organization,$version;
-    
-    $datacontent = trim($datacontent);
-    
-    if ($name == 'ITEM') {
-        $level--;
-    }
-    //if ($name == 'TITLE' && $level>0) {
-    if (($name == 'TITLE') && !isset($scoes[$i]['title'])) {
-        $scoes[$i]['title'] = $datacontent;
-    }
-    if ($name == 'ADLCP:HIDERTSUI') {
-        $scoes[$i][$datacontent] = 1;
-    }
-    if ($name == 'ADLCP:DATAFROMLMS') {
-        $scoes[$i]['datafromlms'] = $datacontent;
-    }
-    if ($name == 'ADLCP:PREREQUISITES') {
-        $scoes[$i]['prerequisites'] = $datacontent;
-    }
-    if ($name == 'ADLCP:MAXTIMEALLOWED') {
-        $scoes[$i]['maxtimeallowed'] = $datacontent;
-    }
-    if ($name == 'ADLCP:TIMELIMITACTION') {
-        $scoes[$i]['timelimitaction'] = $datacontent;
-    }
-    if ($name == 'ADLCP:MASTERYSCORE') {
-        $scoes[$i]['masteryscore'] = $datacontent;
-    }
-    if ($name == 'ORGANIZATION') {
-        $organization = '';
-        $level--;
-    }
-    if ($name == 'MANIFEST') {
-        $manifest = '';
-    }
-    if ($name == 'SCHEMAVERSION') {
-        if (preg_match("/^(1\.2)$|^(CAM )?(1\.3)$/",$datacontent,$matches)) {
-            $version = 'SCORM_'.$matches[count($matches)-1];
-        } else {
-            $version = 'SCORM_1.2';
-        }
-    }
-    $datacontent = '';
-} 
-
-function scorm_characterData($parser, $data) {
-    global $datacontent;
-    $datacontent .= utf8_decode($data);
-}
-
 function scorm_parse($pkgdir,$pkgtype,$scormid){
     delete_records('scorm_scoes','scorm',$scormid);
     delete_records('scorm_scoes_track','scormid',$scormid);
@@ -636,7 +526,7 @@ function scorm_parse($pkgdir,$pkgtype,$scormid){
     if ($pkgtype == 'AICC') {
         return scorm_parse_aicc($pkgdir,$scormid);
     } else {
-        return scorm_parse_scorm($pkgdir,'/imsmanifest.xml',$scormid);
+        return scorm_parse_scorm($pkgdir.'/imsmanifest.xml',$scormid);
     }
 }
 
@@ -823,120 +713,197 @@ function scorm_parse_aicc($pkgdir,$scormid){
     return $launch;
 }
 
-function scorm_parse_scorm($pkgdir,$file,$scormid) {
-    global $scoes,$i,$resources,$parent,$level,$defaultorg,$version,$organization,$manifest;
-    $datacontent = '';
-    $scoes[][] = '';
-    $resources[] = '';
-    $manifest = '';
-    $version = 'SCORM';
-    $organization = '';
-    $defaultorg = '';
-    $i = 0;
-    $level = 0;
-    $parent[$level] = '/';
-
-    $xmlparser = xml_parser_create('UTF-8');
-    // use case-folding so we are sure to find the tag in $map_array
-    xml_parser_set_option($xmlparser, XML_OPTION_CASE_FOLDING, true);
-    xml_set_element_handler($xmlparser, 'scorm_startElement', 'scorm_endElement');
-    xml_set_character_data_handler($xmlparser, 'scorm_characterData');
-    if (!($fp = fopen($pkgdir.$file, 'r'))) {
-       die('could not open XML input');
-    }
-
-    while ($data = fread($fp, 4096)) {
-        if (!xml_parse($xmlparser, $data, feof($fp))) {
-            die(sprintf('XML error: %s at line %d',
-            xml_error_string(xml_get_error_code($xmlparser)),
-            xml_get_current_line_number($xmlparser)));
-        }
-    }
-    xml_parser_free($xmlparser);
-    $launch = 0;
-
-    $sco->scorm = $scormid;
-
-    if (isset($scoes[1])) {
-        for ($j=1; $j<=$i; $j++) {
-            $sco->identifier = $scoes[$j]['identifier'];
-            $sco->parent = $scoes[$j]['parent'];
-            if (!isset($scoes[$j]['title'])) {
-                $scoes[$j]['title'] = '';
-            }
-            $sco->title = $scoes[$j]['title'];
-            $sco->manifest = $scoes[$j]['manifest'];
-            $sco->organization = $scoes[$j]['organization'];
-            if (!isset($scoes[$j]['datafromlms'])) {
-                $scoes[$j]['datafromlms'] = '';
-            }
-            $sco->datafromlms = $scoes[$j]['datafromlms'];
-            if (!isset($scoes[$j]['prerequisites'])) {
-                $scoes[$j]['prerequisites'] = '';
-            }
-            $sco->prerequisites = $scoes[$j]['prerequisites'];
-            if (!isset($scoes[$j]['maxtimeallowed'])) {
-                $scoes[$j]['maxtimeallowed'] = '';
-            }
-            $sco->maxtimeallowed = $scoes[$j]['maxtimeallowed'];
-            if (!isset($scoes[$j]['timelimitaction'])) {
-                $scoes[$j]['timelimitaction'] = '';
-            }
-            $sco->timelimitaction = $scoes[$j]['timelimitaction'];
-            if (!isset($scoes[$j]['masteryscore'])) {
-                $scoes[$j]['masteryscore'] = '';
-            }
-            $sco->masteryscore = $scoes[$j]['masteryscore'];
-
-            if (!isset($resources[($scoes[$j]['identifierref'])]['href'])) {
-                $resources[($scoes[$j]['identifierref'])]['href'] = '';
-            }
-            $sco->launch = $resources[($scoes[$j]['identifierref'])]['href'];
-
-            if (!isset($scoes[$j]['parameters'])) {
-                $scoes[$j]['parameters'] = '';
-            }
-            $sco->parameters = $scoes[$j]['parameters'];
-
-            if (!isset($resources[($scoes[$j]['identifierref'])]['scormtype'])) {
-                $resources[($scoes[$j]['identifierref'])]['scormtype'] = '';
-            }
-            $sco->scormtype = $resources[($scoes[$j]['identifierref'])]['scormtype'];
-
-            if (!isset($scoes[$j]['previous'])) {
-                $scoes[$j]['previous'] = 0;
-            }
-            $sco->previous = $scoes[$j]['previous'];
-
-            if (!isset($scoes[$j]['continue'])) {
-                $scoes[$j]['continue'] = 0;
-            }
-            $sco->next = $scoes[$j]['continue'];
-
-            if (scorm_remove_spaces($scoes[$j]['isvisible']) != 'false') {
-                $id = insert_record('scorm_scoes',$sco);
-            }
-            if (($launch==0) && ($defaultorg==$sco->identifier)) {
-                $launch = $id;
-            }
-        }
-    } else {
-        foreach ($resources as $label => $resource) {
-            if (!empty($resource['href'])) {
-                $sco->identifier = $label;
-                $sco->title = $label;
-                $sco->parent = '/';
-                $sco->launch = $resource['href'];
-                $sco->scormtype = $resource['type'];
-                $id = insert_record('scorm_scoes',$sco);
-
-                if ($launch == 0) {
-                    $launch = $id;
+function scorm_get_resources($blocks) {
+    foreach ($blocks as $block) {
+        if ($block['name'] == 'RESOURCES') {
+            foreach ($block['children'] as $resource) {
+                if ($resource['name'] == 'RESOURCE') {
+                    $resources[addslashes($resource['attrs']['IDENTIFIER'])] = $resource['attrs'];
                 }
             }
         }
     }
-    set_field('scorm','version',$version,'id',$scormid);
+    return $resources;
+}
+
+function scorm_get_manifest($blocks,$scoes) {
+    static $parents = array();
+    static $resources;
+
+    static $manifest;
+    static $organization;
+
+    if (count($blocks) > 0) {
+        foreach ($blocks as $block) {
+            switch ($block['name']) {
+                case 'METADATA':
+                    if (isset($block['children'])) {
+                        foreach ($block['children'] as $metadata) {
+                            if ($metadata['name'] == 'SCHEMAVERSION') {
+                                if (empty($scoes->version)) {
+                                    if (preg_match("/^(1\.2)$|^(CAM )?(1\.3)$/",$metadata['tagData'],$matches)) {
+                                        $scoes->version = 'SCORM_'.$matches[count($matches)-1];
+                                    } else {
+                                        $scoes->version = 'SCORM_1.2';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                break;
+                case 'MANIFEST':
+                    $manifest = addslashes($block['attrs']['IDENTIFIER']);
+                    $organization = '';
+                    $resources = array();
+                    $resources = scorm_get_resources($block['children']);
+                    $scoes = scorm_get_manifest($block['children'],$scoes);
+                    if (count($scoes->elements) <= 0) {
+                        foreach ($resources as $item => $resource) {
+                            if (!empty($resource['HREF'])) {
+                                $sco = new stdClass();
+                                $sco->identifier = $item;
+                                $sco->title = $item;
+                                $sco->parent = '/';
+                                $sco->launch = addslashes($resource['HREF']);
+                                $sco->scormtype = addslashes($resource['ADLCP:SCORMTYPE']);
+                                $scoes->elements[$manifest][$organization][$item] = $sco;
+                            }
+                        }
+                    }
+                break;
+                case 'ORGANIZATIONS':
+                    if (!isset($scoes->defaultorg)) {
+                        $scoes->defaultorg = addslashes($block['attrs']['DEFAULT']);
+                    }
+                    $scoes = scorm_get_manifest($block['children'],$scoes);
+                break;
+                case 'ORGANIZATION':
+                    $identifier = addslashes($block['attrs']['IDENTIFIER']);
+                    $organization = '';
+                    $scoes->elements[$manifest][$organization][$identifier]->identifier = $identifier;
+                    $scoes->elements[$manifest][$organization][$identifier]->parent = '/';
+                    $scoes->elements[$manifest][$organization][$identifier]->launch = '';
+                    $scoes->elements[$manifest][$organization][$identifier]->scormtype = '';
+
+                    $parents = array();
+                    $parent = new stdClass();
+                    $parent->identifier = $identifier;
+                    $parent->organization = $organization;
+                    array_push($parents, $parent);
+                    $organization = $identifier;
+
+                    $scoes = scorm_get_manifest($block['children'],$scoes);
+                    
+                    array_pop($parents);
+                break;
+                case 'ITEM':
+                    $parent = array_pop($parents);
+                    array_push($parents, $parent);
+                    
+                    $identifier = addslashes($block['attrs']['IDENTIFIER']);
+                    $scoes->elements[$manifest][$organization][$identifier]->identifier = $identifier;
+                    $scoes->elements[$manifest][$organization][$identifier]->parent = $parent->identifier;
+                    if (!isset($block['attrs']['ISVISIBLE'])) {
+                        $block['attrs']['ISVISIBLE'] = 'true';
+                    }
+                    $scoes->elements[$manifest][$organization][$identifier]->isvisible = addslashes($block['attrs']['ISVISIBLE']);
+                    if (!isset($block['attrs']['PARAMETERS'])) {
+                        $block['attrs']['PARAMETERS'] = '';
+                    }
+                    $scoes->elements[$manifest][$organization][$identifier]->parameters = addslashes($block['attrs']['PARAMETERS']);
+                    if (!isset($block['attrs']['IDENTIFIERREF'])) {
+                        $scoes->elements[$manifest][$organization][$identifier]->launch = '';
+                        $scoes->elements[$manifest][$organization][$identifier]->scormtype = 'asset';
+                    } else {
+                        $idref = addslashes($block['attrs']['IDENTIFIERREF']);
+                        $scoes->elements[$manifest][$organization][$identifier]->launch = addslashes($resources[$idref]['HREF']);
+                        if (empty($resources[$idref]['ADLCP:SCORMTYPE'])) {
+                            $resources[$idref]['ADLCP:SCORMTYPE'] = 'asset';
+                        }
+                        $scoes->elements[$manifest][$organization][$identifier]->scormtype = addslashes($resources[$idref]['ADLCP:SCORMTYPE']);
+                    }
+
+                    $parent = new stdClass();
+                    $parent->identifier = $identifier;
+                    $parent->organization = $organization;
+                    array_push($parents, $parent);
+
+                    $scoes = scorm_get_manifest($block['children'],$scoes);
+                    
+                    array_pop($parents);
+                break;
+                case 'TITLE':
+                    $parent = array_pop($parents);
+                    array_push($parents, $parent);
+                    $scoes->elements[$manifest][$parent->organization][$parent->identifier]->title = addslashes($block['tagData']);
+                break;
+                case 'ADLCP:PREREQUISITES':
+                    if ($block['attrs']['TYPE'] == 'aicc_script') {
+                        $parent = array_pop($parents);
+                        array_push($parents, $parent);
+                        $scoes->elements[$manifest][$parent->organization][$parent->identifier]->prerequisites = addslashes($block['tagData']);
+                    }
+                break;
+                case 'ADLCP:MAXTIMEALLOWED':
+                    $parent = array_pop($parents);
+                    array_push($parents, $parent);
+                    $scoes->elements[$manifest][$parent->organization][$parent->identifier]->maxtimeallowed = addslashes($block['tagData']);
+                break;
+                case 'ADLCP:TIMELIMITACTION':
+                    $parent = array_pop($parents);
+                    array_push($parents, $parent);
+                    $scoes->elements[$manifest][$parent->organization][$parent->identifier]->timelimitaction = addslashes($block['tagData']);
+                break;
+                case 'ADLCP:DATAFROMLMS':
+                    $parent = array_pop($parents);
+                    array_push($parents, $parent);
+                    $scoes->elements[$manifest][$parent->organization][$parent->identifier]->datafromlms = addslashes($block['tagData']);
+                break;
+                case 'ADLCP:MASTERYSCORE':
+                    $parent = array_pop($parents);
+                    array_push($parents, $parent);
+                    $scoes->elements[$manifest][$parent->organization][$parent->identifier]->masteryscore = addslashes($block['tagData']);
+                break;
+            }
+        }
+    }
+
+    return $scoes;
+}
+
+
+function scorm_parse_scorm($manifestfile,$scormid) {
+    
+    $launch = 0;
+
+    if (is_file($manifestfile)) {
+        $xmlstring = file_get_contents($manifestfile);
+        $objXML = new xml2Array();
+        $manifests = $objXML->parse($xmlstring);
+            
+        $scoes = new stdClass();
+        $scoes->version = 'SCORM';
+        $scoes = scorm_get_manifest($manifests,$scoes);
+
+        if (count($scoes->elements) > 0) {
+            foreach ($scoes->elements as $manifest => $organizations) {
+                foreach ($organizations as $organization => $items) {
+                    foreach ($items as $identifier => $item) {
+                        $item->scorm = $scormid;
+                        $item->manifest = $manifest;
+                        $item->organization = $organization;
+                        $id = insert_record('scorm_scoes',$item);
+                
+                        if (($launch == 0) && ((empty($scoes->defaultorg)) || ($scoes->defaultorg == $identifier))) {
+                            $launch = $id;
+                        }
+                    }
+                }
+            }
+            set_field('scorm','version',$scoes->version,'id',$scormid);
+        }
+    } 
+    
     return $launch;
 }
 
@@ -993,7 +960,7 @@ function scorm_get_user_data($userid) {
     return get_record('user','id',$userid,'','','','','firstname, lastname, picture');
 }
 
-function scorm_remove_spaces($sourcestr) {
+/*function scorm_remove_spaces($sourcestr) {
 // Remove blank space from a string
     $newstr='';
     for( $i=0; $i<strlen($sourcestr); $i++) {
@@ -1002,7 +969,7 @@ function scorm_remove_spaces($sourcestr) {
         }
     }
     return $newstr;
-}
+} */
 
 function scorm_string_round($stringa, $len=11) {
 // Crop a string to $len character and set an anchor title to the full string
@@ -1050,9 +1017,11 @@ function scorm_get_toc($scorm,$liststyle,$currentorg='',$scoid='',$mode='normal'
         $parents[$level]='/';
         foreach ($scoes as $sco) {
             if ($parents[$level]!=$sco->parent) {
-                if ($level>0 && $parents[$level-1]==$sco->parent) {
-                    $result->toc .= "\t\t</ul></li>\n";
-                    $level--;
+                if ($newlevel = array_search($sco->parent,$parents)) {
+                    for ($i=0; $i<($level-$newlevel); $i++) {
+                        $result->toc .= "\t\t</ul></li>\n";
+                    }
+                    $level = $newlevel;
                 } else {
                     $i = $level;
                     $closelist = '';
