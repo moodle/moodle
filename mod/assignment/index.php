@@ -76,7 +76,7 @@
 
         $type = $types[$assignment->assignmenttype];
 
-        $due = userdate($assignment->timedue);
+        $due = $assignment->timedue ? userdate($assignment->timedue) : '-';
         if (!$assignment->visible) {
             //Show dimmed if the mod is hidden
             $link = "<a class=\"dimmed\" href=\"view.php?id=$assignment->coursemodule\">".format_string($assignment->name,true)."</a>";
