@@ -1376,8 +1376,8 @@ function main_upgrade($oldversion=0) {
         // so it may already exist.
         $result = execute_sql("CREATE TABLE IF NOT EXISTS `{$CFG->prefix}config_plugins` (
                                   `id`         int(10) unsigned NOT NULL auto_increment,
-                                  `plugin`     varchar(250) NOT NULL default 'core',
-                                  `name`       varchar(250) NOT NULL default '',
+                                  `plugin`     varchar(100) NOT NULL default 'core',
+                                  `name`       varchar(100) NOT NULL default '',
                                   `value`      text NOT NULL default '',
                                   PRIMARY KEY  (`id`),
                                            UNIQUE KEY `plugin_name` (`plugin`, `name`)

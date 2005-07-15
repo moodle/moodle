@@ -1097,8 +1097,8 @@ function main_upgrade($oldversion=0) {
         // (Postgres doesn't support CREATE TABLE IF NOT EXISTS)
         execute_sql("CREATE TABLE {$CFG->prefix}config_plugins (
                         id     SERIAL PRIMARY KEY,
-                        plugin varchar(255) NOT NULL default 'core',
-                        name   varchar(255) NOT NULL default '',
+                        plugin varchar(100) NOT NULL default 'core',
+                        name   varchar(100) NOT NULL default '',
                         value  text NOT NULL default '',
                         CONSTRAINT {$CFG->prefix}config_plugins_plugin_name_uk UNIQUE (plugin, name)
                      );", false);

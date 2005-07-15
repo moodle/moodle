@@ -7,8 +7,8 @@ CREATE TABLE prefix_config (
 
 CREATE TABLE prefix_config_plugins (
    id     SERIAL PRIMARY KEY,
-   plugin varchar(255) NOT NULL default 'core',
-   name   varchar(255) NOT NULL default '',
+   plugin varchar(100) NOT NULL default 'core',
+   name   varchar(100) NOT NULL default '',
    value  text NOT NULL default '',
    CONSTRAINT prefix_config_plugins_plugin_name_uk UNIQUE (plugin, name)
 );
