@@ -38,15 +38,15 @@ function sso_user_login($username, $password) {
     $submit_vars['HIVE_USERIP'] = getremoteaddr();
 
 
-/// Ideally we would use POST for a bit more security, but there is a Hive bug preventing this
-/// $snoopy->submit($submit_url,$submit_vars);
+/// Ideally we use POST to call Hive with a bit more security
+    $snoopy->submit($submit_url,$submit_vars);
 
-/// Using GET instead
-    foreach ($submit_vars as $name => $value) {
-        $params[] = "$name=".urlencode($value);
-    }
-    $submit_url .= '?'.implode('&', $params);
-    $snoopy->fetch($submit_url);
+/// If there's a bug, we may need to use GET instead
+/// foreach ($submit_vars as $name => $value) {
+///     $params[] = "$name=".urlencode($value);
+/// }
+/// $submit_url .= '?'.implode('&', $params);
+/// $snoopy->fetch($submit_url);
 
 
 /// Extract HIVE_SESSION from headers
