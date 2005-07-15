@@ -450,8 +450,7 @@ $CFG->httpswwwroot = $CFG->wwwroot;
 /// Use a custom script replacement if one exists
     if (!empty($CFG->customscripts)) {
         if (($customscript = custom_script_path()) !== false) {
-            include ($customscript);
-            exit;
+            require ($customscript);
         }
     }
 
