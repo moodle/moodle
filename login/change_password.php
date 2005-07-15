@@ -4,6 +4,9 @@
 
     $id = optional_param('id', SITEID);
 
+    //HTTPS is potentially required in this page
+    httpsrequired();
+
     if (!$course = get_record('course', 'id', $id)) {
         error('No such course!');
     }
