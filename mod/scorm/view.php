@@ -120,9 +120,11 @@
     	    $parents[$level]="/";
     	    foreach ($scoes as $sco) {
     		if ($parents[$level]!=$sco->parent) {
-    		    if ($level>0 && $parents[$level-1]==$sco->parent) {
-    			echo "  </ul></li>\n";
-    			$level--;
+    		    if ($newlevel = array_search($sco->parent,$parents)) {
+                    for ($i=0; $i<($level-$newlevel); $i++) {
+                        echo "\t\t</ul></li>\n";
+                    }
+                    $level = $newlevel;
     		    } else {
     			$i = $level;
     			$closelist = "";
