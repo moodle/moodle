@@ -1699,12 +1699,23 @@ function assignment_upgrade_submodules() {
             continue;
         }
 
-    /// If we use versions, make sure an internal record exists
+    /// If the submodule is new, then let's install it!
 
         $currentversion = 'assignment_'.$type.'_version';
 
-        if (!isset($CFG->$currentversion)) {
-            set_config($currentversion, 0);
+        if (!isset($CFG->$currentversion)) {   // First install!
+            set_config($currentversion, $submodule->version);  // Must keep track of version
+
+            if (!is_readable($fullpath .'/db/'.$CFG->dbtype.'.sql')) {
+                continue;
+            }
+
+            $db->debug=true;
+            if (!modify_database($fullpath .'/db/'.$CFG->dbtype.'.sql')) {
+                notify("Error installing tables for submodule '$type'!");
+            }
+            $db->debug=false;
+            continue;
         }
 
     /// See if we need to upgrade
@@ -1733,8 +1744,6 @@ function assignment_upgrade_submodules() {
             $db->debug=false;
         }
     }
-
-
 }
 
 ?>
