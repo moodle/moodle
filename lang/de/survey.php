@@ -3,7 +3,7 @@
 
 
 $string['actual'] = 'Tatsächlich';
-$string['actualclass'] = 'Aaktuelle Erfahrungen der Lerngruppe';
+$string['actualclass'] = 'Aktuelle Erfahrungen der Lerngruppe';
 $string['actualstudent'] = 'tatsächliche Erfahrungen des/der $a ';
 $string['allquestions'] = 'Alle Fragen geordnet, alle Kursteilnehmer/innen';
 $string['allscales'] = 'Alle Ränge, alle Kursteilnehmer/innen';
