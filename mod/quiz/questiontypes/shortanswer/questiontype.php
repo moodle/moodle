@@ -26,7 +26,7 @@ class quiz_shortanswer_qtype extends quiz_default_questiontype {
         }
 
         if (!$question->options->answers = get_records('quiz_answers', 'question',
-         $question->id)) {
+         $question->id, 'id ASC')) {
            notify('Error: Missing question answers!');
            return false;
         }
@@ -108,7 +108,6 @@ class quiz_shortanswer_qtype extends quiz_default_questiontype {
 
     function print_question_formulation_and_controls(&$question, &$state, $quiz, $options) {
     /// This implementation is also used by question type NUMERICAL
-
         $answers = &$question->options->answers;
         $correctanswers = $this->get_correct_responses($question, $state);
         $readonly = empty($options->readonly) ? '' : 'readonly="readonly"';
@@ -142,6 +141,7 @@ class quiz_shortanswer_qtype extends quiz_default_questiontype {
                     break;
                 }
             }
+
         }
 
         if ($options->readonly && $options->correct_responses) {
@@ -172,20 +172,17 @@ class quiz_shortanswer_qtype extends quiz_default_questiontype {
     }
 
     function grade_responses(&$question, &$state, $quiz) {
-        $answers     = &$question->options->answers;
+        $answers = &$question->options->answers;
         $testedstate = clone($state);
         $teststate   = clone($state);
         $state->raw_grade = 0;
+
         foreach($answers as $answer) {
             $teststate->responses[''] = trim($answer->answer);
             if($this->compare_responses($question, $testedstate, $teststate)) {
-                if (empty($state->raw_grade) && $state->raw_grade < $answer->fraction) {
-                    $state->raw_grade = $answer->fraction;
-                }
+                $state->raw_grade = $answer->fraction;
+                break;
             }
-        }
-        if (empty($state->raw_grade)) {
-            $state->raw_grade = 0;
         }
 
         // Make sure we don't assign negative or too high marks
