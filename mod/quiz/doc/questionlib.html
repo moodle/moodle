@@ -1,0 +1,182 @@
+<!DOCTYPE HTML PUBLIC>
+<html>
+    <head>
+        <title>questionlib.php</title>
+        <meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
+        <!--LINK rel="Stylesheet" type="text/css" href="doc.css"-->
+    </head>
+<body>
+
+<h1>questionlib.php</h1>
+
+<h2>Contents</h2>
+<ul>
+    <a href='#description'><li>Description and purpose</li></a>
+    <a href='#quiz_load_questiontypes'><li>quiz_load_questiontypes</li></a>
+    <a href='#quiz_get_question_options'><li>quiz_get_question_options</li></a>
+    <a href='#quiz_get_states'><li>quiz_get_states</li></a>
+    <a href='#quiz_restore_state'><li>quiz_restore_state</li></a>
+    <a href='#quiz_save_question_session'><li>quiz_save_question_session</li></a>
+    <a href='#quiz_regrade_question_in_attempt'><li>quiz_regrade_question_in_attempt</li></a>
+    <a href='#quiz_process_responses'><li>quiz_process_responses</li></a>
+    <a href='#quiz_apply_penalty_and_timelimit'><li>quiz_apply_penalty_and_timelimit</li></a>
+    <a href='#quiz_new_attempt_uniqueid'><li>quiz_new_attempt_uniqueid</li></a>
+    <a href='#quiz_get_renderoptions'><li>quiz_get_renderoptions</li></a>
+    <a href='#quiz_get_reviewoptions'><li>quiz_get_reviewoptions</li></a>
+
+</ul>
+
+<a name="description"></a><h2>Description and purpose</h2>
+<p>
+
+The question library defines the core code that is used for the processing of
+question and state objects. For the understanding of the quiz module (and soon
+also the lesson module) these functions, which are defined to be generically
+reusable by any module that wants to use questions, are key. Therefore all
+non-trivial functions defined in this library is explained in this
+documentation. Further documentation is contained as phpDoc comments in the
+library itself.
+
+</p>
+
+<a name="quiz_load_questiontypes"></a><h2>quiz_load_questiontypes</h2>
+<p>
+
+This function loads the plugged in questiontypes, i.e. it looks for all folders
+in the <code>quiz/questiontypes</code> subdirectory, that contain a file called
+<code>questiontype.php</code> and loads these questiontype definitions.
+
+</p>
+
+<a name="quiz_get_question_options"></a><h2>quiz_get_question_options</h2>
+<p>
+
+This function adds the name prefix to a single question object or to each item
+in an array of question objects and calls the appropriate questiontype specific
+get_question_options method. Question objects that come directly from the
+database should always be processed by this function to guarantee that they are
+set up correctly for further processing.
+
+</p>
+
+<a name="quiz_get_states"></a><h2>quiz_get_states</h2>
+<p>
+
+This function attempts to load the most recent state for each question object in
+an array of question objects. If there is no such state it creates a new empty
+state object instead. For existing states the function <code>quiz_restore_state
+</code> is called automatically.
+
+</p>
+
+<a name="quiz_restore_state"></a><h2>quiz_restore_state</h2>
+<p>
+
+This function adds all generic runtime fields to a given state object and calls
+the corresponding quetsiontype specific <code>
+restore_session_and_responses method</code>. This function needs to be called on
+any states that are retrieved directly from the database. It should normally not
+be necessary to call this function directly; instead the function <code>
+quiz_get_states</code> should be used.
+
+</p>
+
+
+<a name="quiz_save_question_session"></a><h2>quiz_save_question_session</h2>
+<p>
+
+This function takes an array of state objects and saves all that are marked as
+changed to the database. After they are saved it calls the questiontype specific
+<code>save_session_and_responses</code> method. Additionally, this method
+determines what needs to be written to the table <code>quiz_newest_states
+</code>.
+
+</p>
+
+<a name="quiz_regrade_question_in_attempt"></a><h2>quiz_regrade_question_in_attempt</h2>
+<p>
+
+This function regrades a single question instance (identified by question and
+attempt). In order to do this correctly, it loads the complete history of states
+for the question instance and replays it. I.e. it starts out with the first
+state, prepares an <code>$action</code> object, that is required by the function
+<code>quiz_process_responses</code>, with its three fields: event, responses and
+timestamp and finally it calls the function <code>quiz_process_responses</code>,
+which does the actual grading. This means that the same code is used for grading
+and regrading, which should guarantee identical grades if the question remains
+unchanged.
+
+</p>
+
+
+<a name="quiz_process_responses"></a><h2>quiz_process_responses</h2>
+<p>
+
+The <code>quiz_process_responses</code> function is a rather complicated
+construct, which does all necessary processing to get from one state to the
+next, depending on the information provided in the <code>$action</code> object
+(event, responses and timestamp). It takes care that the questiontype specific
+<code>grade_responses</code> method is called, that the <code>changed</code>
+flag is set, that re-submissions are detected and not graded again and that the
+function <code>quiz_apply_penalty_and_timelimit</code> is called when necessary.
+
+</p>
+
+<a name="quiz_apply_penalty_and_timelimit"></a><h2>quiz_apply_penalty_and_timelimit</h2>
+<p>
+
+This function determines whether a penalty needs to be applied to the achieved
+grade (depending on the history of states) or if the timelimit was up and the
+grade should be set to zero in any case.
+
+</p>
+
+
+<a name="quiz_new_attempt_uniqueid"></a><h2>quiz_new_attempt_uniqueid</h2>
+<p>
+
+In order to make questions and states usable for several moodle modules a unique
+attempt id is needed for the states table. However, attempts are module specific
+and therefore they use different database tables. To guarantee that the attempt
+is still unique, the config option <code>attemptuniqueid</code> was introduced.
+It stores the value that needs to be used for the next attempt. This function
+makes sure that this counter is incremented and returns the id that should be
+used.
+
+</p>
+
+<a name="quiz_get_renderoptions"></a><h2>quiz_get_renderoptions</h2>
+<p>
+
+This function determines from the information provided whether to show specific
+pieces of information when the question is printed (or rendered). It returns an
+object (usually called <code>$options</code>) that has six boolean fields:
+readonly, feedback, validation, correct_responses, responses and scores. These
+boolean options are used by the questiontype specific print methods to determine
+whether certain bits of information should be displayed or not. This function is
+used during attempts.
+
+</p>
+
+<a name="quiz_get_reviewoptions"></a><h2>quiz_get_reviewoptions</h2>
+<p>
+
+This function is similar to <code>quiz_get_renderoptions</code> in that it
+returns the same object. However, this function is not used during an attempt,
+but when attempt is reviewed.
+
+</p>
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
