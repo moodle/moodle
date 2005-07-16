@@ -15,6 +15,7 @@ require_once("$CFG->dirroot/enrol/enrol.class.php");
 class enrolment_plugin extends enrolment_base {
 
 var $ccerrormsg;
+var $coursecost;
 
 /// Override: print_entry()
 function print_entry($course) {
@@ -290,14 +291,14 @@ function zero_cost($course) {
 function get_course_cost($course) {
     global $CFG;
     $cost = (float)0;
+
+    if (isset($coursecost))
+        return $coursecost;
+
     $currency = (empty($CFG->enrol_currency) ? 'USD' : $CFG->enrol_currency);
     
-    if (isset($course->cost)) {
-        if (((float)$course->cost) < 0) {
-            $cost = (float)$CFG->enrol_cost;
-        } else {
-            $cost = (float)$course->cost;
-        }	
+    if (!empty($course->cost)) {
+        $cost =  (float)(((float)$course->cost) < 0) ? $CFG->enrol_cost : $course->cost;
     }
 
     if ( (!empty($course->currency)) && (intval($course->currency)!=0) ) {
@@ -306,9 +307,9 @@ function get_course_cost($course) {
     }
 
     $cost = format_float($cost, 2);
-    $ret = array('cost'=>$cost, 'currency'=>$currency);
+    $coursecost = array('cost'=>$cost, 'currency'=>$currency);
 
-    return $ret;
+    return $coursecost;
 }
 
 /// Override the get_access_icons() function
