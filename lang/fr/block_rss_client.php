@@ -1,11 +1,11 @@
 <?php // $Id$ 
 
-$string['addfeed'] = 'Ajouter l\'URL d\'un fil URL : ';
+$string['addfeed'] = 'Ajouter l\'URL d\'un fil URL&nbsp;: ';
 $string['addheadlineblock'] = 'Ajouter un bloc manchette RSS';
 $string['addnew'] = 'Ajouter nouveau';
 $string['choosefeedlabel'] = 'Choisir les fils RSS que vous désirez rendre disponibles dans ce bloc&nbsp;:';
 $string['clientchannellink'] = 'Site d\'origine...';
-$string['clientnumentries'] = 'Nombre par défaut d\'articles RSS à afficher par bloc.';
+$string['clientnumentries'] = 'Nombre par défaut d\'articles RSS à afficher par bloc';
 $string['clientshowchannellinklabel'] = 'Un lien vers le site original doit-il être  affiché&nbsp;? (Si aucun lien n\'est fourni dans le fil, aucun lien ne sera affiché)&nbsp;:';
 $string['clientshowimagelabel'] = 'Afficher l\'image du fil si disponible&nbsp;:';
 $string['configblock'] = 'Configurer ce bloc';
