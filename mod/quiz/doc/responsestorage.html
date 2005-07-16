@@ -232,7 +232,21 @@ and RESPONSE is the value that was received from the submitted form.
 <p>The description questiontype does not have responses.</p>
 
 <h3>Match</h3>
-<p>Note: This will be changed soon, so the description is pending.</p>
+<p>
+
+The matching questiontype stores needs to store information about the order of
+its subquestions and the selected responses. Because each subquestion is
+identified by one record in the <code>quiz_match_sub</code> table, the ids of
+this table are used to identify both the question and the response part. For
+each subquestion a '-'-separated pair is created, giving first the id of the
+record that provided the subquestion and then the id of the record that provided
+the selected response. E.g. 1-3 means that the answer of the third question was
+selected for the first subquestion. Correct responses are always pairs of
+identical ids, e.g 2-2. If no response is selected, the second id in the pair is
+set to '0'. These pairs are then put into a comma separated list to allow each
+subquestion to store a response.
+
+</p>
 
 <h3>Multianswer</h3>
 <p>
@@ -251,7 +265,14 @@ encoded to avoid problems.
 </p>
 
 <h3>Multichoice</h3>
-<p>Note: This will be changed soon, so the description is pending.</p>
+<p>The multichoice questiontype stores both the order of the choices and the
+selected choices. Storing the order is optional (mainly to provide backward
+compatibility with previous versions of this questiontype). The order is stored
+as a comma separated list of answer ids (i.e. form the <code>quiz_answers</code>
+table). It is separated with a colon (':') from the selected responses, which
+are also stored as a comma separated list of answer ids. Note that the list of
+selected responses is usually shorter (and often contains only one id) than the
+list that provides the order.</p>
 
 <h3>Numerical</h3>
 <p>
@@ -274,7 +295,17 @@ that point onwards only states for the chosen question are saved.
 </p>
 
 <h3>RandomSAMatch</h3>
-<p>Note: This will be changed soon, so the description is pending.</p>
+<p>
+
+The random shortanswer matching questiontype reuses the <code>
+save_session_and_responses</code> method of the matching questiontype and
+therefore stores its responses in the same format. The difference is that the
+first id in the pair is the question id (<code>quiz_questions</code>) of the
+selected shortanswer and the second id is the id of the first correct answer
+that is found ofr that shortanswer question in the <code>quiz_answers</code>
+table.
+
+</p>
 
 
 <h3>Shortanswer</h3>
@@ -289,7 +320,14 @@ entered directly into the <code>answer</code> field.
 </p>
 
 <h3>Truefalse</h3>
-<p>Note: This will be changed soon, so the description is pending.</p>
+<p>
+
+The true/false questiontype stores a single answer id (from the table <code>
+quiz_answers</code>) in the <code>answer</code> field. Each true/false question
+defines two answer records, one for the 'true' option, one for the 'false'
+option, so either of these two ids gets stored as response.
+
+</p>
 
 </body>
 </html>
