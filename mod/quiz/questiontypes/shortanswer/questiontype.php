@@ -141,7 +141,6 @@ class quiz_shortanswer_qtype extends quiz_default_questiontype {
                     break;
                 }
             }
-
         }
 
         if ($options->readonly && $options->correct_responses) {
