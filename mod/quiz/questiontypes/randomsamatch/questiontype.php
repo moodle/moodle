@@ -147,7 +147,7 @@ class quiz_randomsamatch_qtype extends quiz_match_qtype {
         if ($cmoptions->shuffleanswers) {
            $subquestionids = swapshuffle($subquestionids);
         }
-        $state->options->order = $subquestionids;
+
         // Create empty responses
         foreach ($subquestionids as $val) {
             $state->responses[$val] = '';
@@ -172,7 +172,6 @@ class quiz_randomsamatch_qtype extends quiz_match_qtype {
             $state->responses = array();
             foreach ($responses as $response) {
                 $state->responses[$response[0]] = $response[1];
-                $state->options->order[] = $response[0];
                 if (!$wrappedquestion = get_record('quiz_questions', 'id',
                  $response[0])) {
                     notify("Couldn't get question (id=$response[0])!");
