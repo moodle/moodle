@@ -1,0 +1,273 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+    <head>
+        <title>Runtime Objects</title>
+    </head>
+<body>
+
+<h1>Runtime Objects</h1>
+
+<h2>Contents</h2>
+<ul>
+    <a href="#description"><li>Description and purpose</li></a>
+    <a href="#question_object"><li>The question object</li></a>
+    <a href="#state_object"><li>The state object</li></a>
+    <a href="#options_object"><li>The options object</li></a>
+</ul>
+
+<a name="description"></a><h2>Description and purpose</h2>
+<p>
+
+In most scripts the quiz module deals with the same objects. In some cases these
+are not identical to the records from the database, but they have some fields
+that are added at runtime. The objects concerned are questions and states; both
+are described below. Also the options object, purely a runtime object,
+is described. Many functions that are used to process these objects make use of
+the additional fields and it is therefore necessary to use the correct functions
+for creating these objects.
+
+</p>
+
+<a name="question_object"></a><h2>The question object</h2>
+<p>
+
+The question object is based on the database record for a question. The table
+below illustrates this structure.
+
+</p>
+
+<table>
+    <tr>
+        <td>id</td>
+        <td>Primary key</td>
+    </tr><tr>
+        <td>category</td>
+        <td>Foreign key: refers to an id in the table quiz_categories</td>
+    </tr><tr>
+        <td>parent</td>
+        <td>Foreign key: refers to an id in the table quiz_questions and
+        indicates for wrapped questions, which question they are a part of.
+        If parent is not '0' the question is never shown in a list of questions,
+        because it is not a valid question by itself.</td>
+    </tr><tr>
+        <td>name</td>
+        <td>Question name</td>
+    </tr><tr>
+        <td>questiontext</td>
+        <td>Main text of the question</td>
+    </tr><tr>
+        <td>questiontextformat</td>
+        <td></td>
+    </tr><tr>
+        <td>image</td>
+        <td></td>
+    </tr><tr>
+        <td>defaultgrade</td>
+        <td>Default grade for a question, usually '1'. In the wrapped parts of
+        cloze questions defaultgrade represents the weight of the part.</td>
+    </tr><tr>
+        <td>penalty</td>
+        <td>The penalty that is applied (if the respective quiz option is set)
+        for a incorrect attempt at the question.</td>
+    </tr><tr>
+        <td>qtype</td>
+        <td>The questiontype of the question. (Constants are defined in
+        locallib.php)</td>
+    </tr><tr>
+        <td>length</td>
+        <td>The number of question numbers used up by this question. 0 for descriptions, 1 for most other question types.</td>
+    </tr><tr>
+        <td>stamp</td>
+        <td>Unique identifier</td>
+    </tr><tr>
+        <td>version</td>
+        <td>A number representing how often the question was edited.</td>
+    </tr><tr>
+        <td>hidden</td>
+        <td>Controls whether to display a question in the question bank list in
+        edit.php.</td>
+    </tr>
+</table>
+
+<p>
+
+In addition to these static fields, which are part of the generic question
+definitions, there are some additional fields that are only added to the object
+at runtime. There are two different kinds of fields: On the one hand there are
+questiontype specific fields, which are also part of fthe static question
+definition, but only apply to some questions. On the other hand there are
+fields that refer to the question instance, i.e. the question in the context of
+a particular quiz. The values for these fields can differ when a question is
+used in different quizzes.
+
+</p>
+
+
+
+
+
+<table>
+    <tr>
+        <td>maxgrade</td>
+        <td>The maximum grade available for this question in this quiz, i.e. the
+        grade for a correct response.</td>
+    </tr><tr>
+        <td>instance</td>
+        <td>Foreign key: refers to an id in the table quiz_instances</td>
+    </tr><tr>
+        <td>options</td>
+        <td>Optional field. It provides a namespace for any questiontype
+        specific information that may be stored in this field. It is generally
+        set by the get_question_options method.</td>
+    </tr><tr>
+        <td>name_prefix</td>
+        <td>The prefix to be used on all interactions printed as part of the
+        question.</td>
+    </tr>
+</table>
+
+<a name="state_object"></a><h2>The state object</h2>
+<p>
+
+For each question object there is a corresponding state object, which holds all
+the information, which stores all the information that is specific to the
+current question and session. There can be several states stored for each
+question instance, however, this list of states represents the history of
+interactions. The state object that corresponds to a particular question is
+generally the most recent state. Again, like for the question objects, the state
+objects are mostly made up of data from the database and then some fields are
+added at runtime. First the fields from the database are described.
+
+</p>
+
+<table>
+    <tr>
+        <td>id</td>
+        <td>Primary key</td>
+    </tr><tr>
+        <td>attempt</td>
+        <td>Foreign key: refers to an id in the table quiz_attempts</td>
+    </tr><tr>
+        <td>question</td>
+        <td>Foreign key: refers to an id in the table quiz_questions. The
+        attempt id (or the quiz id) and the question id together sufficiently
+        identify a question instance, which a state logically belongs to.
+        However, for practical reasons it is more convenient to store the
+        attempt and question ids.</td>
+    </tr><tr>
+        <td>originalquestion</td>
+        <td>Foreign key: identifies which question was in use when the student
+        attempted the question. This is part of the versioning feature.</td>
+    </tr><tr>
+        <td>seq_number</td>
+        <td>A counter that provides information about the sequence in which the
+        states were created.</td>
+    </tr><tr>
+        <td>answer</td>
+        <td>This field is deleted during runtime and replaced with the responses
+        field. For legacy reasons it is still called answer in the database.
+        Questiontypes can store students' responses (usually in a serialized
+        format) in this field using the method <code>save_session_and_responses
+        </code>. Questiontypes are allowed to deviate from this and handle their
+        response storage in any desired way.</td>
+    </tr><tr>
+        <td>timestamp</td>
+        <td>A timestamp to record when the state was created. This could mainly
+        be useful for audit purposes.</td>
+    </tr><tr>
+        <td>event</td>
+        <td>Records the event or interaction type that lead from the previouse
+        state to the current one.</td>
+    </tr><tr>
+        <td>grade</td>
+        <td>The raw grade scaled to the defaultgrade value of the question.</td>
+    </tr><tr>
+        <td>raw_grade</td>
+        <td>A grade between 0 and 1, giving the correctness of the responses as
+        a percentage.</td>
+    </tr><tr>
+        <td>penalty</td>
+        <td>The penalty incurred during the transition from the previous state
+        to this one. This is different to the cumulative penalty, which can be
+        calculated by adding up all the penalties from previous states. For
+        convenience the most recent cumulative penalties are also stored in the
+        table <code>quiz_newes_states</code>.</td>
+    </tr>
+</table>
+
+<p>
+
+In addition to the database fields a few fields are added to the states at
+runtime. They are dealt with by the questiontypes with the methods <code>
+create_session_and_responses</code>,  <code>restore_session_and_responses</code>
+and <code>save_session_and_responses</code> and are defined as follows.
+
+</p>
+
+<table>
+    <tr>
+        <td>responses</td>
+        <td>This is automatically set to the value of the database field
+        <code>answer</code> before that one is removed. The responses field
+        contains  an array of responses. In the default case of a single
+        response the value can be found in ->responses['']. For questiontypes
+        using several HTML form elements for their responses the array contains
+        a value for each of the interaction elements. The indecies are
+        determined by the name of the elements if the <code>name_prefix</code>
+        is stripped.</td>
+    </tr><tr>
+        <td>last_graded</td>
+        <td>This field contains the most recent graded state in the history of
+        this question instance. This is necessary, because if a state merely
+        represents a save interaction, it should not affect the session in any
+        way. Therefore another grade interaction has to proceed from the last
+        graded state.</td>
+    </tr><tr>
+        <td>options</td>
+        <td>Optional field. Similarly to the options field in the question
+        object, this field provides a namespace for any questiontype specific
+        information. The difference is that the information in the
+        state->options field should be state specific, whereas the
+        question->options field should be static.</td>
+    </tr>
+</table>
+
+<a name="options_object"></a><h2>The options object</h2>
+<p>
+
+The options object is purely a runtime object. It is used to carry information
+about which optional bits of a question should be printed. That can be feedback,
+correct responses or any other information that a teacher can choose to show or
+hide to the students during different phases of the quiz lifecycle.
+
+</p>
+
+<table>
+    <tr>
+        <td>feedback</td>
+        <td>The feedback field holds a boolean value, indicating to the
+        questiontypes' <code>print_question_formulation_and_controls</code>
+        method whether or not to print feedback (if available) for the submitted
+        responses.</td>
+    </tr><tr>
+        <td>correct_responses</td>
+        <td>The correct_responses field holds a boolean value, indicating to the
+        questiontypes' <code>print_question_formulation_and_controls</code>
+        method whether or not to provide the correct responses (if available)
+        inline with the question.</td>
+    </tr><tr>
+        <td>readonly</td>
+        <td>The readonly field holds a boolean value, indicating to the
+        questiontypes' <code>print_question_formulation_and_controls</code>
+        method whether the interaction elements should be disabled or not.</td>
+    </tr><tr>
+        <td>validation</td>
+        <td>The validation field holds a boolean value, indicating to the
+        questiontypes' <code>print_question_formulation_and_controls</code>
+        method whether or not to print question validation information. (This is
+        currently only used by the RQP questiontype.)</td>
+    </tr>
+</table>
+
+</body>
+</html>
