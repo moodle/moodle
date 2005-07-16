@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.5 Beta (2005052300)
+      // admin.php - created with Moodle 1.5.1 (2005060210)
 
 
 $string['adminseesallevents'] = 'Los administradores ven todos los eventos';
@@ -11,6 +11,7 @@ $string['calendarsettings'] = 'Calendario';
 $string['change'] = 'cambiar';
 $string['configallowcoursethemes'] = 'Si activa esta opción, se permitirá a los cursos ajustar sus propios temas. Los temas de los cursos pasan por alto cualesquiera otras opciones de tema (sitio, usuario o sesión)';
 $string['configallowemailaddresses'] = 'Si desea restringir todas las direcciones nuevas de correo a dominios particulares, lístelos aquí separados por espacios. El resto de los dominios será rechazado, e.g., <strong>ourcollege.edu.au .gov.au</strong>';
+$string['configallowobjectembed'] = 'Como medida de seguridad por defecto, los usuarios normales no pueden incrustar objetos multimedia (e.g., Flash) en textos utilizando las marcas explícitas EMBED y OBJECT en el código HTML (si bien esto puede hacerse con seguridad usando el filtro mediaplugins). Active esta opción si desea permitir dichas marcas.';
 $string['configallowunenroll'] = 'Si selecciona \'Sí\', los estudiantes podrán desmatricularse de los cursos cuando quieran. En caso contrario no podrán hacerlo, quedando este proceso bajo el control de profesores y administradores.';
 $string['configallowuserblockhiding'] = '¿Desea que los usuarios puedan mostrar u ocultar bloques laterales en el sitio? Esta opción usa Javascript y cookies para recordar el estado de cada bloque colapsable, y sólo afecta al modo en que cada usuario ve la información.';
 $string['configallowuserthemes'] = 'Si se activa esta opción, los usuarios podrán elegir sus propios temas. Los temas de los usuarios pasan por alto los temas del sitio (pero no los temas del curso)';
