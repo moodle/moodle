@@ -198,30 +198,32 @@ class block_rss_client extends block_base {
 
             $formatoptions->para = false;
 
-            foreach ($rss->items as $item) {
-                $item['title'] = stripslashes_safe(rss_unhtmlentities($item['title']));
-                $item['description'] = stripslashes_safe(rss_unhtmlentities($item['description']));
-                if ($item['title'] == '') {
-                    // no title present, use portion of description
-                    $item['title'] = substr(strip_tags($item['description']), 0, 20) . '...';
-                } else {
-                    $item['title'] = break_up_long_words($item['title'], 30);
-                }
-        
-                if ($item['link'] == '') {
-                    $item['link'] = $item['guid'];
-                }
-
-                $item['link'] = str_replace('&', '&amp;', $item['link']);
-
-                $returnstring .= '<div class="link"><a href="'. $item['link'] .'" target="_blank">'. $item['title'] . '</a></div>' ."\n";
-
-                
-                if ($display_description && !empty($item['description'])) {
-                    $item['description'] = break_up_long_words($item['description'], 30);
-                    $returnstring .= '<div class="description">'.
-                                     format_text($item['description'], FORMAT_MOODLE, $formatoptions, $this->courseid) . 
-                                     '</div>' ."\n";
+            if(!empty($rss->items)) {
+                foreach ($rss->items as $item) {
+                    $item['title'] = stripslashes_safe(rss_unhtmlentities($item['title']));
+                    $item['description'] = stripslashes_safe(rss_unhtmlentities($item['description']));
+                    if ($item['title'] == '') {
+                        // no title present, use portion of description
+                        $item['title'] = substr(strip_tags($item['description']), 0, 20) . '...';
+                    } else {
+                        $item['title'] = break_up_long_words($item['title'], 30);
+                    }
+            
+                    if ($item['link'] == '') {
+                        $item['link'] = $item['guid'];
+                    }
+    
+                    $item['link'] = str_replace('&', '&amp;', $item['link']);
+    
+                    $returnstring .= '<div class="link"><a href="'. $item['link'] .'" target="_blank">'. $item['title'] . '</a></div>' ."\n";
+    
+                    
+                    if ($display_description && !empty($item['description'])) {
+                        $item['description'] = break_up_long_words($item['description'], 30);
+                        $returnstring .= '<div class="description">'.
+                                         format_text($item['description'], FORMAT_MOODLE, $formatoptions, $this->courseid) . 
+                                         '</div>' ."\n";
+                    }
                 }
             }
 
