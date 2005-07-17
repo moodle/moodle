@@ -1451,6 +1451,28 @@ function main_upgrade($oldversion=0) {
         }
     }
 
+    if ($oldversion < 2005071700) {  // Close down the Dialogue module, we are removing it from CVS.
+        if (!file_exists($CFG->dirroot.'/mod/dialogue/lib.php')) {
+            if (count_records('dialogue')) {   // We have some data, so should keep it
+
+                set_field('modules', 'visible', 0, 'name', 'dialogue');
+                notify('The Dialogue module has been discontinued.  If you really want to 
+                        continue using it, you should download it individually from 
+                        http://download.moodle.org/modules and install it, then 
+                        reactivate it from Admin >> Configuration >> Modules.  
+                        None of your existing data has been deleted, so all existing 
+                        Dialogue activities should re-appear.');
+
+            } else {  // No data, so do a complete delete
+
+                execute_sql('DROP TABLE '.$CFG->prefix.'dialogue', false);
+                delete_records('modules', 'name', 'dialogue');
+                notify("The Dialogue module has been discontinued and removed from your site.  
+                        You weren't using it anyway.  ;-)");
+            }
+        }
+    }
+
     return $result;
 }
 
