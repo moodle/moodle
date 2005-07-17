@@ -1,0 +1,529 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<title>Moodle Doks: Paano gumamit ng CVS</title>
+<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS">
+<meta http-equiv="Content-Type" content="text/html;
+charset=iso-8859-15" />
+<style type="text/css">
+<!--
+.style1 {color: #990000}
+.style3 {color: #990000; font-weight: bold; }
+.style4 {
+	color: #0000CC;
+	font-weight: bold;
+}
+-->
+    </style>
+</head>
+<body>
+<h1>CVS para sa mga Debeloper ng Moodle</h1>
+<blockquote>
+
+  <p>Ang CVS ay ang <strong>Concurrent Versioning System</strong>, isang
+karaniwang paraan ng pamamahala ng source code para sa malalaking
+proyektong software.  Itinatabi ng CVS ang lahat ng file kaya walang
+nawawala, at ang paggamit ng magkakaibang tao ay minamatyagan.  May
+paraan din ito kung paaano magsasamasama ng code kapag dalawang tao o
+mahigit pa ang nagtatrabaho sa iisang file. Lahat ng code, at lahat ng
+bersiyon ay iniiimbak sa isang sentral na server (sa kasong ng Moodle,
+sa <a target="_top" href="http://www.sf.net/">Sourceforge</a>). </p>
+
+<p>Kung gusto mo lamang na i-download ang Moodle sa pamamagitan ng CVS
+para makapagpatakbo ng site, marahil ay hindi mo na kailangang basahin
+ang pahinang ito - sundan na lamang ang mas payak na instruksiyon ng CVS
+sa <a target="_top" href="http://moodle.org/download">pahina para
+madownload ang Moodle</a>.
+
+</p>
+
+  <p>&nbsp;</p>
+  <ol>
+    <li><a href="#1">Pagsali sa proyekto bilang
+developer</a></li>
+    <li><a href="#2">Mga Modyul ng CVS</a> </li>
+    <li><a href="#3">Basic na Utos sa CVS</a> <br />
+      3.1. <a href="#3.1">Paggamit ng CVS sa Unix</a> <br />
+      3.2. <a href="#3.2">Paggamit ng CVS sa Windows</a></li>
+    <li> <a href="#4">Paggamit ng mga Branches</a><br />
+      4.1. <a href="#4.1">Pagdebelop ng Trunk</a><br 
+/>
+      4.2. <a href="#4.2">Mga branch na stable para sa
+bawat release</a><br />
+      4.3. <a href="#4.3">Branch ng mga katangian para sa malalaking 
+pagbabago</a> </li>
+  </ol>
+  <p>&nbsp;</p>
+  <h2><a name="1"></a>1. Pagsali sa proyekto bilang developer</h2>
+  <blockquote>
+
+    <p>Kung inalok ka ng CVS write access (karapatang magsulat) para
+matulungan kaming idebelop at imentina ang Moodle!
+<a href="http://sourceforge.net/project/memberlist.php?group_id=30935">
+Ikinagagalak naming makasama ka</a>!
+</p>
+
+    <p>Para makapagsulat ka ng mga pagbabago sa 
+<a target="_top"
+href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/moodle/moodle/">
+CVS archive ng Moodle</a>, kailangan ay may account ka muna sa Sourceforge.
+(<a
+href="http://sourceforge.net/account/register.php">libre na, madali
+pa ang rehistrasyon</a>). 
+
+     Para sa mga halimbawa na nasa pahinang ito, kunwari ang username mo
+ay <strong><font color="#990000">usernameko</font></strong> at ang
+password mo ay <strong><font color="#990000">passwordko</font></strong>.
+Basahing mabuti ang mga instruksiyon ng sourceforge para sa <a
+target="_top"
+href="http://sourceforge.net/docman/display_doc.php?docid=768&group_id=1#develhomedir"> 
+paglikha ng CVS home directory mo</a> - isang bagay na kailangan mong
+gawin sa bawat bagong account para "magamit" ito sa CVS.  Kailangan mo lamang gumamit ng ssh para makakonekta nang interaktibo sa cvs.sourceforge.net.</p>
+
+    <p>Kapag may Sourceforge account ka na, kontakin mo si <a target="_top"
+href="http://moodle.org/user/view.php?id=1&course=1">Martin
+Dougiamas</a>, para mabigyan ka niya ng karapatang magsulat sa ilang
+partikular na direktoryo ng Moodle.</p>
+   
+
+    <p>Para hindi mo na kailangang magbigay ng <strong><font
+color="#990000"> passwordko</font></strong> tuwing nagpapatakbo ka ng
+CVS command, sundin ang direksiyon sa <a target="_top"
+href="http://sourceforge.net/account/editsshkeys.php">Sourceforge para
+sa paggamit ng authorized keys</a>. Opsiyonal ang hakbang na ito, pero
+mapapadali nito ang paggamit mo ng CVS.</p>
+
+    <p>Kapag tapos na ito, mabibigyan ka na ng lahat ng permission na
+     kailangan mo, kailangan mo na lamang iset-up ang makina mo at
+     idownload ang mga kasalukuyang source upang makapagsimula ka nang
+     butitingin ang mga ito.</p>
+
+    <p>&nbsp;</p>
+  </blockquote>
+
+  <h2><a name="2" id="2"></a>2. Mga Modyul ng CVS</h2>
+  <blockquote>
+
+    <p>Sa CVS, ang salitang &quot;module&quot; ay tumutukoy sa
+magkakahiwalay na koleksiyon ng code.  Sa Moodle, ang mga sumusunod na
+module ay nasa loob ng ating imbakan: </p>
+
+    <blockquote>
+
+      <p><strong>moodle</strong> - ang punong Moodle source
+code</p>
+
+      <p><strong>contrib</strong> - ambag ng user at samu't-saring code
+na dinidibelop</p>
+
+      <p><strong>mysql</strong> - isang pasadyang phpMyAdmin na ipaplug
+sa Moodle para sa database admin </p>
+
+      <p><strong>windows-cron</strong> - isang maliit na pakete na
+ginagawang posible ang cron sa sistemang Windows </p>
+
+      <p><strong>docs</strong> - iba't-ibang ekstrang dokumentasyon na
+inambag ng user </p>
+
+    </blockquote>
+
+    <p>Karamihan sa mga tao ay trinatrabaho ang mga kasalukuyang
+katangian ng <strong>moodle</strong> module, pero marami ring nag-aambag
+ng bagong ideya sa <strong>contrib</strong> na module. Kapag medyo
+nag-mature na ang code sa pook <strong>contrib</strong>, puwede na itong
+ilipat sa punong <strong>moodle</strong> na modyul.  </p>
+
+    <p>&nbsp;</p>
+
+  </blockquote>
+  <h2><a name="3" id="3"></a>3. Basic na Utos sa CVS </h2>
+  <blockquote>
+    <h3><a name="3.1" id="3.1"></a>3.1 Paggamit ng CVS sa Unix</h3>
+
+    <blockquote>
+
+      <p>Ginagamit ng Sourceforge CVS ang ssh bilang transport layer
+para sa seguridad, kaya't kailangan mong iset ang isang CVS_RSH
+environment variable sa inyong Unix shell.  Pinakamaiging ilagay ang mga
+utos na ito sa .bashrc o .cshrc para hindi mo na ito kailanganing itype
+palagi<strong>:</strong></p>
+
+       <div class="commandline">setenv CVS_RSH ssh <em>(for csh, tcsh etc)</em><br /> 
+	    export CVS_RSH=ssh <em>(for sh, bash etc)</em></div>  
+
+      <p>Tapos, icheck-out mo ang pinakabagong dinidebelop na bersiyon
+ng Moodle gamit ito (lahat ay nasa isang linya): </p>
+
+ <div class="commandline">cvs -z3 -d:ext:<span class="style1">myusername</span>@cvs.sourceforge.net:/cvsroot/moodle co moodle</div>      
+
+      <p>Pareho rin ang utos para sa iba pang CVS modyul:</p>
+
+       <div class="commandline">cvs -z3 -d:ext:myusername@cvs.sourceforge.net:/cvsroot/moodle co contrib</div>      
+
+      <p>Huwag mong tangkaing patakbuhin ang unang CVS command na ito sa
+     isang nageexist nang moodle directory - magsimula nang bagong
+     direktoryo.</p>
+
+      <p>Tandaan na hihilingan ka na ibigay ang <strong><font
+color="#990000">passwordko</font></strong> para sa bawat command kung
+hindi mo isinet-up ang <a target="_top"
+href="http://sourceforge.net/account/editsshkeys.php">authorized
+keys</a>.</p>
+
+      <p>     Ngayon, dapat ay may bago ka nang 'moodle' na direktoryo. Puwede
+     mong baguhin ang pangalan nito o ilipat sa kung saan mo gusto.
+     Pumasok ka sa direktoryong ito:
+</p>
+
+       <div class="commandline">cd moodle </div>      
+
+      <p> Lahat ng pinakabagong Moodle file ay dapat naroroon. Maaari mo
+nang baguhin ang mga file sa kopya mo. Upang maihambing ang mga file at
+direktoryo mo sa pangunahing CVS na kopya sa server gamitin ang cvs
+diff, eg: </p>
+
+       <div class="commandline">cvs diff -c config-dist.php<br />
+       cvs diff -c lang </div>
+
+      <p> Upang makuha ang mga pinakabagong update mula sa server,
+gamitin ang:</p>
+      <div class="commandline">cvs update -dP</div>
+
+      <p>Upang makopya ang mga bago mong file pabalik sa server, gawin
+ang ganito: </p>
+ 
+     <div class="commandline">cd lang/ca <br />
+cvs commit</div>
+
+      <p>Hihilingan ka na magdagdag ng ilang komento (depende sa default
+     mong text editor) ... magdagdag ng makabuluhang komento at isara
+     ang editor ... ipadadala na ang mga file sa Sourceforge at iistore
+     na ito. Tapos na!
+</p>
+
+      <p>Upang makatipid ng mas maraming oras, puwede kang maglagay ng
+mga default na argument sa file na tinatawag na .cvsrc sa iyong
+direktoryong home. Halimbawa, ang sa akin ay may ganito:
+</p>
+
+      <div class="commandline">diff -c <br />
+update -dP</div>
+
+      <p>Gamitin mo ang 'cvs help' para sa iba pang detalye ... </p>
+
+      <p>&nbsp;</p>
+    </blockquote>
+
+    <h3><a name="3.2" id="3.2"></a>3.2 Paggamit ng CVS sa Windows </h3>
+
+    <blockquote>
+
+      <p>Una, kailangan mong mag-download ng ganap na bagong kopya ng
+Moodle gamit ang developer account mo. </p>
+
+    </blockquote>
+    <ol>
+      <ol>
+        <ol>
+
+          <li>Kunin mo ang TortoiseCVS mula sa <a target="_top"
+href="http://www.tortoisecvs.org/">tortoisecvs.org</a> at iinstol ito,
+pagkatapos ay magreboot. </li>
+
+          <li>Humanap o lumikha ng bagong folder kung saan mo man
+gustong madownload ang Moodle.  </li>
+
+          <li>Iright-mouse-click mo ang folder na iyon at piliin ang
+&quot;<strong>CVS Checkout</strong>&quot; mula sa menu. May lalabas na
+dialog box. </li>
+
+          <li>
+Kopyahin mo ang tekstong ito sa CVSROOT field (gamit ang sarili mong
+username!):
+            <pre> :ext:<font color="#990000">myusername</font>@cvs.sourceforge.net:/cvsroot/moodle</pre>
+          </li>
+
+          <li>Sa ilalim ng &quot;Module&quot; field, itype ang
+&quot;<strong>moodle</strong>&quot; para makuha ang pinakabagong
+dinidibelop na bersiyon ng Moodle, &quot;<strong>contrib</strong>&quot;
+para makuha ang direktoryo ng mga ambag, o
+&quot;<strong>mysql</strong>&quot; para makuha ang MySQL Admin module.
+
+</li>
+
+          <li>Pindutin ang butong: &quot;<strong>OK</strong>&quot; at
+madadowload na ang lahat.<br />
+
+          </li>
+        </ol>
+      </ol>
+    </ol>
+    <blockquote>
+
+      <p>Ipapakita ng isang dialog box ang lahat ng file na idinadownload,
+     at pagkatapos ng ilang saglit ay may kumpletong kopya ka na ng
+     Moodle. Pagkatapos ng unang checkout na ito, puwede ka nang kumuha
+     ng mga pinakabagong inupdate na file mula sa CVS server:
+</p>
+
+    </blockquote>
+    <ol>
+      <ol>
+        <ol>
+
+          <li>Iright-mouse-click ang Moodle folder mo (o anumang file)
+at piliin ang &quot;<strong>CVS Update</strong>&quot;. </li>
+
+          <li>Relaks ka lang at masdan ang pagscroll ng mga log.  Itala
+ang mga conflict na mangyayari kung ang lokal na code mo ay may mga
+pagbabago na dikasundo ng pumapasok na bersiyon - kakailanganin mong
+i-edit ang mga file na ito at ayusin ang mga dipagkakasundo nang
+mano-mano. <br />
+
+          </li>
+        </ol>
+      </ol>
+    </ol>
+    <blockquote>
+
+      <p> Matapos mamodify ang mga file (mapapansin mo na mula sa berde
+ay naging dilaw ang mga icon nito!), maaari mo nang icommit pabalik sa
+CVS server ang mga ito nang paganito: </p>
+
+    </blockquote>
+    <ol>
+      <ol>
+        <ol>
+
+          <li> Iright-mouse-click ang Moodle folder mo (o anumang file)
+at piliin ang &quot;<strong>CVS Commit...</strong>&quot;. </li>
+
+          <li>Sa dialog box, magtype ng malinaw na deskripsiyon ng mga
+pagbabago na ikinomit mo. </li>
+
+          <li>Iklik ang &quot;OK&quot;. Ipadadala na ang mga pagbabago mo sa
+server. <br />
+
+          </li>
+        </ol>
+      </ol>
+    </ol>
+    <p>&nbsp;</p>
+  </blockquote>
+
+  <h2><a name="4" id="4"></a>4. Paggamit ng mga Branches (Sanga?)</h2>
+
+  <blockquote>
+
+    <p>Ipinapakita sa dayagram na ito kung paano nagsasanga ang modyul
+ng <strong>moodle</strong> sa iba't-ibang bersiyon kapag lumaon.
+</p>
+
+    <p align="center"><img src="pix/cvstree.png" width="500" height="200"></p>
+
+    <p align="left">Para makita mo ang lahat ng kasalukuyang tag at
+branch (sanga) na makukuha, gamitin ang utos na sumusunod sa anumang
+lumang file (tulad ng index.php sa punong direktoryo ng moodle):
+</p>
+
+    <div class="commandline">cvs status -v index.php</div>
+
+    <p>Ilang gabay sa paglalagay ng tag:
+</p>
+    <ul>
+      <li>Dapat ay palaging nasa malaking titik ang mga pangalan ng tag
+at branch (sanga). </li>
+      <li>Dapat PALAGING lagyan ng mga tag at branch ang 
+<strong>buong modyul </strong> (kabuuan ng Moodle). Huwag lagyan ng tag
+ang indibidwal na file o direktoryo.
+</li>
+
+      <li>Hindi namin pinahihintulutan ang pagbabago ng pangalan ng mga
+tag dahil maaaring pinagbabatayan ito ng mga tao, kaya tiyakin mong tama
+ito sa unang pagkakataon!
+</li>
+    </ul>
+    <p><br />
+    </p>
+    <p>&nbsp;</p>
+    <h3><a name="4.1" id="4.1"></a>4.1 Pagdebelop ng trunk (katawan?)
+</h3>
+    <blockquote>
+
+      <p>Ang Trunk ng CVS ay ang pangunahing dinidebelop na bersiyon ng
+Moodle.  Sa CVS kilala rin ito sa tawag na 
+<span class="style4">HEAD</span>, o default na branch.
+</p>
+
+      <p>Tinatangka ng mga debeloper ng Moodle na panatiliing stable
+ito, hangga't maaari, subali't dahil naglalaman ito ng bagong code,
+malamang ay may mga bug at maliliit na parteng di-stable .
+</p>
+
+      <p>Panapanahon ay nagpapasiya kaming may sapat nang katangian ang
+produkto para gumawa ng isang release (lathala?).  Sa panahong ito, ang
+trunk ay nilalagyan ng tag na 
+<strong>MOODLE_XX_BETA</strong> tag (sakaling naisin namin na bumalik sa
+puntong iyon) at gagawa ng bagong branch para sa release, na tinatawag
+na
+<span
+class="style1">MOODLE_XX_STABLE</span>. 
+</p>
+
+      <p>Malalathala rin ng paketeng Beta sa panahong ito - para ito sa
+mga sumusubok ng produkto na hindi gumagamit ng CVS nguni't nagnanais na
+subukin ang pinakabagong katangian at mag-ulat ng mga bug.
+</p>
+
+    </blockquote>
+    <p>&nbsp;</p>
+
+    <h3><a name="4.2" id="4.2"></a>4.2 Mga branche na stable para sa
+bawat release</h3>
+    <blockquote>
+
+      <p>Kapag nabuo na ang stable branch na <span
+class="style3">MOODLE_XX_STABLE</span> ay pansamantalang magsasanga ang
+pagdedebelop sa dalawang agos.  May ilang taong magpapatuloy ng
+pagtrabaho sa mga bagong katangian ng trunk para sa susunod na release,
+ngunit ang karamihang debeloper ay dapat bigyang diin ang paggamit ng
+kasalukuyang <span class="style1"><strong>STABLE</strong></span> na
+branch at pagsasaayos ng mga bug nitong matutuklasan. </p>
+
+      <p>Maaari mong palitan ang lokal mong kopya ng Moodle ng STABLE na
+bersiyon sa pamamagitan ng sumusunod na utos sa Unix mula sa root na
+direktoryo: </p>
+      <div class="commandline">cvs update -dP -r <span
+class="style1">MOODLE_XX_STABLE</span></div>
+
+      <p>Pagkatapos nito, lahat ng utos na inilarawan sa itaas ay
+puwedeng gamitin sa stable na bersiyon.  Upang makabalik sa trunk na
+bersiyon iutos lamang ang:
+</p>
+
+      <div class="commandline">cvs update -dPA</div>
+
+      <p>Sa mga kliyenteng kompyuter na Windows, makakakita ka ng menu
+kung saan mo pipiliin ang branch.
+</p>
+
+      <p>Kapag ang bagong STABLE branch ay talagang matatag na, maaari
+nang maglabas ng release.  Lilikha ng mga pakete para sa pamamahagi at
+ang branch ay lalagyan ng tag (ni Martin) na: 
+<strong>MOODLE_XXX</strong></p>
+
+      <p>Panapanahon, ang mga solusyon sa bug para sa STABLE branch ay
+dapat isanib sa trunk upang magamit ang mga ito sa mga bersiyon ng
+Moodle sa hinaharap.  Imementina ang isang floating tag na may pangalang 
+MOODLE_XX_MERGED upang masubaybayan ang huling pagsasanib.  Ang proseso
+para sa ganitong pagsasanib ay ang sumusunod:
+</p>
+      <ol>
+        <ol>
+          <li>Kunin ang pinakabagong bersiyon ng trunk. <br />
+            <br />
+            <div class="commandline">cvs update -dPA</div>
+          </li>
+          <li>Isanib ang lahat ng nasa branch na huling sinaniban, sa
+iyong bersiyon ng trunk <br /><br />
+
+            <div class="commandline">cvs update -kk -j MOODLE_13_MERGED -j MOODLE_13_STABLE</div>
+	      </li>
+
+          <li>Matyagang mabuti ang mga update log kung may mga
+dipagkakasundo, at ayusin ang bawat file na makita ninyong may
+dipagkakasundo </li>
+
+          <li>Icheck pabalik sa CVS trunk version ang pinagsanib na 
+kopya mo<br />
+            <div class="commandline">cvs commit</div>
+          </li>
+          <li>Balikan ang bersiyon ng branch <br /><br />
+            <div class="commandline">cvs update -dPr MOODLE_13_STABLE</div>
+			</li>
+          <li>Baguhin ang floating merge tag upang maulit ang prosesong
+ito sa susunod na pagkakataon <br /><br />
+
+            <div class="commandline">cvs tag -RF MOODLE_13_MERGED</div>
+          </li>
+        </ol>
+      </ol>
+      <p><br /> Bilang panghuli, ang halaga ng <em>$version</em> sa
+lahat ng mga Moodle version.php na file sa loob ng stable na branch ay
+hindi dapat baguhin hangga't maaari (maliban sa huling numero kung
+kinakailangan).  Ito'y dahil baka dimapansin ng isang taong naga-update
+mula sa isang napaka-stable na bersiyon tungo sa susunod na
+napaka-stable na bersiyon, ang mga upgrade sa database na ginawa sa
+trunk. </p>
+    </blockquote>
+    <p>&nbsp;</p>
+
+    <h3><a name="4.3" id="4.3"></a>4.3 Mga branch ng katangian para sa
+malalaking pagbabago </h3>
+
+    <blockquote>
+
+      <p>Minsan, may napakalaking katangian na kailangang itsek-in,
+kaya't maaaring magtulong-tulong ang ilang tao dito, subali't
+napaka-unstable nito para maisama sa pangunahing dinedebelop na trunk.
+</p>
+
+      <p>Sa mga ganitong pagkakataon, maaaring lumikha ng panandaliang
+panahon na branch upang pagtrabahuhan ng katangian, at tapos ay isanib
+ito pabalik sa punong trunk sa pinakamadaling panahon.  Halimbawa ang
+<span class="style1"><strong>MOODLE_14_WIDGET</strong></span> branch na
+makikita sa dayagram sa itaas. </p>
+
+      <p>Kung nais mo itong gawin sa inyong bagong WIDGET na katangian,
+sundin ang mga sumusunod na hakbang: </p>
+
+    <ol>
+        <ol>
+          <li>Talakayin ito sa iba pang debeloper upang matiyak na
+kailangan nga ito!
+</li>
+
+          <li>Gumawa ng bagong tag sa <strong>trunk</strong> (para sa
+kabuuang moodle ) na may pangalang <strong>MOODLE_XX_WIDGET_PRE</strong>
+		  <br /><br />
+            <div class="commandline">cvs tag -R MOODLE_XX_WIDGET_PRE</div></li>
+
+          <li>Likhain ang branch mo na may pangalang <span
+class="style1"><strong>MOODLE_XX_WIDGET</strong></span>
+		  <br /><br />
+            <div class="commandline">cvs tag -Rb <span class="style1">MOODLE_XX_WIDGET</span></strong></div></li>
+
+          <li>Magtrabaho sa branch na ito hanggang maging sapat ang 
+stability ng katangian.  Icommit kung kinakailangan.
+		  <br /><br />
+            <div class="commandline">cvs commit</div></li>
+
+          <li>Kapag handa na, isanib ang buong branch sa trunk, ayusin
+ang mga dipagkakasundo, i-commit ito sa trunk at abandonahin na ang
+branch.
+		  <br />
+		  <br />
+
+            <div class="commandline">
+            <strong>cvs update -dPA</strong><br />
+            <strong>cvs update -kk -j <span class="style1">MOODLE_XX_WIDGET</span></strong><br />
+            <strong>cvs commit </strong></div>
+          </li>
+      </ol>
+    </ol>
+   </blockquote>
+    <blockquote>
+      <p>&nbsp;</p>
+    </blockquote>
+  </blockquote>
+  <p align="center">Good luck, mag-ingat at magpakasaya sana kayo!</p>
+  <p>&nbsp;</p>
+</blockquote>
+
+<p align="center"><font size="1"><a href="." target="_top">
+Dokumentasyon ng Moodle</a></font></p>
+<p align="center"><font size="1">Version: $Id$</font></p>
+</body>
+</html>

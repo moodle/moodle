@@ -1,0 +1,314 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Moodle Doks: Alituntunin sa Pagcode</title>
+<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS">
+<meta http-equiv="Content-Type" content="text/html;
+charset=iso-8859-15" />
+</head>
+<body>
+<h1>Mga Alituntunin sa Pagcode ng Moodle</h1>
+<p class="normaltext">
+Alinmang proyekto na pinagtutulungtulungan ng maraming tao ay
+nangangailangan ng pagiging consistent at stable para manatiling
+matatag.
+</p>
+<p class="normaltext">
+Ibinibigay ang mga alituntuning ito para maging pamantayan ng
+lahat ng code ng Moodle.  May ilang matatandang code na hindi aabot sa
+pamantayang ito, pero inaasahan natin na ma-aayos din ang mga ito sa
+hinaharap. Ang lahat naman ng bagong code ay kailangang mahigpit
+na sumunod sa mga istandard na ito hangga't maaari.
+</p>
+
+<h2>Pangkalahatang Patakaran</h2>
+
+<ol class="normaltext">
+  <li class="spaced">Dapat gamitin ng lahat ng code file ang ekstensiyong
+.php.</li>
+  <li class="spaced">Dapat gamitin ng lahat ng template file ang
+extensiong .html.</li>
+  <li class="spaced">Dapat gamitin ng lahat ng text file ang  Unix-style
+na text format (ang karamihang text editor ay may ganitong option).</li>
+  <li class="spaced">Dapat 'full' tag ang gamitin ng lahat ng php tag
+tulad ng <font color="#339900">&lt;?php ?&gt;</font> ... sa halip
+na  'short' tag tulad ng <font color="#339900">&lt;? ?&gt;</font>. 
+  </li>
+
+  <li class="spaced">Dapat panatilihin ang mga copyright notice.
+Maaari kang magdagdag ng sarili mo kung kinakailangan.</li> 
+
+<li class="spaced">Dapat kasama ng bawat file ang main config.php file.</li>   
+
+<li class="spaced">Dapat tsekin ng bawat file kung ang user ay
+na-authenticate ng wasto, gamit ang require_login() at isadmin(),
+isteacher(), iscreator() o isstudent().</li>
+
+  <li class="spaced">Dapat gamitin ng lahat ng pagaccess sa mga database
+ang mga function sa lib/datalib.php hangga't maaari - ginagawa nitong
+magkaroon ng compatibility sa maraming uri ng database.  Makikita mo na
+posible ang halos lahat ng gusto mong gawin sa pamamagitan ng mga
+function na ito.  Kung kailangan mong magsulat ng SQL code, tiyakin na
+ito ay: cross-platform; nakarestrict sa mga partikular na function sa
+iyong code (karaniwan ay isang lib.php na file); at may malinaw na
+marka.
+</li>
+
+  <li class="spaced">Huwag kang lilikha o gagamit ng mga global variable
+maliban na lamang sa istandard na $CFG, $SESSION, $THEME at $USER.
+</li>
+
+  <li class="spaced">Dapat mainitialise o matest man lamang ang lahat ng
+variable sa pamamagitan ng isset() o empty() bago gamitin ang mga ito.
+</li>
+
+  <li class="spaced">Dapat ay maisasalin sa ibang wika ang lahat ng
+string - lumikha ng bagong teksto sa mga &quot;lang/en&quot; file sa
+maigsing mga Ingles na pangalang nasa lowercase at hugutin ang mga ito
+mula sa code mo sa pamamagitan ng get_string() o print_string(). </li>
+
+  <li class="spaced">Dapat ay maisasalin sa ibang wika ang lahat ng help
+file - lumikha ng mga bagong teksto sa &quot;en/help&quot; na direktoryo
+at icall ito sa pamamagitan ng helpbutton().
+<p>Kung kailangan mong mag-update ng isang help file:
+   
+ <ul>
+    <li>kung may kaunting pagbabago, at ang lumang salin ng file ay
+mauunawaan pa rin, OK lang na baguhin ito pero kailangan mong pasabihan
+ang translation@moodle.org </li>
+
+    <li>kung may malaking pagbabago, dapat ay lumikha ka ng bagong file
+sa pamamagitan ng pagdaragdag ng incrementing na bilang (eg
+filename2.html), para makita agad ng mga tagasalin na bagong bersiyon
+ito ng file.  Siyempre ang bagong code at ang mga help index file ay
+kailangan ding baguhin upang tumuro sa mga pinakabagong bersiyon. </li>
+
+    </ul>
+    </p>
+</li>
+
+  <li class="spaced">Awtomatikong nilalagyan ng magic_quotes (anuman ang kaayusan ng PHP) ang
+pumapasok na datos mula sa browser (na ipinadala sa pamamagitan ng GET o
+POST) upang ligtas na maipasok ito nang diretso sa database.  Lahat ng
+iba pang raw na datos (mula sa files, o mula sa mga database) ay
+kailangang lagyan ng escape sa pamamagitan ng <font
+color="#339900">addslashes()</font> bago ipasok sa database. </li>
+
+  <li class="spaced">IMPORTANTE:  Lahat ng teksto sa loob ng Moodle,
+lalo na iyong nagmula sa mga user, ay dapat ipinirint sa pamamagitan ng 
+format_text() na function.  Sinisiguro nito na ang teksto ay nafilter at
+nalinis ng wasto.
+</li>
+
+</ol>
+<p>&nbsp;</p>
+<h2>Estilo ng Pagcocode</h2>
+<p class="normaltext">Alam kong medyo nakakainis na magbago ng estilo
+lalo pa't kung sanay ka na sa sarili mo, pero isipin mo na lang ang
+pagkainis naman ng ibang tao na naghihirap sa pagbasa ng mga Moodle code
+na iba-iba ang estilo.  Mayroon siyempreng kagalingan at kahinaan ang
+anumang estilo na ginagamit ng mga tao, pero ang kasalukuyang estilo ay
+hindi na pinagtatalunan kundi <strong>basta</strong> ito ang estilo,
+kaya pakisunod naman.
+</p>
+
+<ol class="normaltext">
+  <li class="spaced">Dapat ay palaging 4 na space ang mga
+  <strong>Indent</strong>.  Huwag gagamit KAILANMAN ng mga tab.
+  </li>
+  
+  <li class="spaced">Dapat ay palaging madaling basahin na
+  makahulugang Ingles na salita, na nasa lowercase, ang mga 
+  <strong>pangalan ng variable</strong>.  Kung talagang kailangan mo ng
+  higit sa isang salita, pagkabitin ang mga ito, pero panatilihing
+  maigsi hangga't makakaya.  Gumamit ng mga plural na pangalan para sa
+  mga array ng mga object.
+  <p class="examplecode"><font color="#006600">TAMA: $quiz<br />
+      TAMA: $errorstring<br />
+      TAMA: $assignments (para sa isang array ng mga object)<br />
+      TAMA: $i (pero gamitin lamang sa maiigsing loop)<br />
+      <br />
+      MALI: $Quiz <br />
+      MALI: $aReallyLongVariableNameWithoutAGoodReason<br />
+      MALI: $error_string</font></p>
+  </li>
+  <li class="spaced">Dapat ay palaging nasa upper case ang mga 
+  <strong>constant</strong>, at magsimula palagi sa pangalan ng modyul.
+  Ang mga salita ng mga ito ay dapat pinaghihiwalay ng mga underscore. 
+  <p class="examplecode"><font 
+  color="#006600">define(&quot;FORUM_MODE_FLATOLDEST&quot;, 
+  1);</font></p>
+  </li>
+
+  <li class="spaced">Dapat ay simpleng Ingles na salita na nasa
+lowercase ang gagamitin sa mga <strong>pangalan ng function</strong>,
+at dapat itong magsimula sa pangalan ng modyul para maiwasan ang
+pagkakagulo ng mga modyul.  Dapat ay palaging may makatwirang default
+ang mga parameter, kung maaari.  Tandaan na walang space sa pagitan ng
+pangalan ng function at ng sumusunod na (bracket).
+<br />
+
+    <p class="examplecode"> <font color="#007700">function </font><font color="#0000BB">forum_set_display_mode</font><font color="#007700">(</font><font color="#0000BB">$mode</font><font color="#007700">=</font><font color="#0000BB">0</font><font color="#007700">) 
+      {<br />
+      &nbsp;&nbsp;&nbsp;&nbsp;global </font><font color="#0000BB">$USER</font><font color="#007700">, 
+      </font><font color="#0000BB">$CFG</font><font color="#007700">;<br />
+      <br />
+      &nbsp;&nbsp;&nbsp;&nbsp;if (</font><font color="#0000BB">$mode</font><font color="#007700">) 
+      {<br />
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">$USER</font><font color="#007700">-&gt;</font><font color="#0000BB">mode 
+      </font><font color="#007700">= </font><font color="#0000BB">$mode</font><font color="#007700">;<br />
+      &nbsp;&nbsp;&nbsp;&nbsp;} else if (empty(</font><font color="#0000BB">$USER</font><font color="#007700">-&gt;</font><font color="#0000BB">mode</font><font color="#007700">)) 
+      {<br />
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">$USER</font><font color="#007700">-&gt;</font><font color="#0000BB">mode 
+      </font><font color="#007700">= </font><font color="#0000BB">$CFG</font><font color="#007700">-&gt;</font><font color="#0000BB">forum_displaymode</font><font color="#007700">;<br />
+      &nbsp;&nbsp;&nbsp;&nbsp;}<br />
+      }</font></p>
+  </li>
+<li class="spaced">Dapat ay palaging nakakulong sa mga curly braces
+ang mga <strong>block</strong> (kahit iisang linya lang ito).  Ganito
+ang ginagamit na estilo ng Moodle:
+    <p class="examplecode"> <font color="#006600">if (</font><font color="#0000CC">$quiz</font><font color="#006600">-&gt;</font><font color="#0000CC">attempts</font><font color="#006600">) 
+      {<br />
+      &nbsp;&nbsp;&nbsp;&nbsp;if (</font><font color="#0000CC">$numattempts </font><font color="#006600">&gt; 
+      </font><font color="#0000CC">$quiz</font><font color="#006600">-&gt;</font><font color="#0000CC">attempts</font><font color="#006600">) 
+      {<br />
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000CC">error</font><font color="#006600">(</font><font color="#0000BB">$strtoomanyattempts</font><font color="#006600">, 
+      </font><font color="#CC0000">"view.php?id=$cm</font><font color="#006600">-&gt;</font><font color="#CC0000">id"</font><font color="#006600">);<br />
+      &nbsp;&nbsp;&nbsp;&nbsp;}<br />
+      }</font></p>
+  </li>
+  <li class="spaced">Dapat idefine ang mga <strong>string</strong> sa
+pamamagitan ng iisang pansipi hangga't maaari, para mapabilis ito.
+<br />
+    <p class="examplecode"> <font color="#006600">$var = 'some text without any 
+      variables';<br />
+      $var = &quot;with special characters like a new line \n&quot;;<br />
+      $var = 'a very, very long string with a '.$single.' variable in it';<br />
+      $var = &quot;some $text with $many variables $within it&quot;; </font></p>
+  </li>
+
+  <li class="spaced">Dapat magdagdag ng mga 
+<strong>comment</strong> hangga't maaari, upang maipaliwanag ang daloy at layunin ng mga function at variable.
+
+ <ul>
+     <li>Ang bawat function (at class) ay dapat gamitan ng popular na
+         <a target="_blank" href="http://www.phpdoc.org/">phpDoc format</a>.
+          Pinapahintulutan nito ang awtomatikong paglikha ng dokumentasyon ng code.</li>
+     <li>Ang mga inline na comment ay dapat gamitan ng estilong // , na ihinanay nang maayos upang umangkop ito sa code at umayon ito sa linya nito.
+</li>
+     </ul>
+  
+  
+   <p class="examplecode"><font color="#FF8000">
+/**<br />
+ * The description should be first, with asterisks laid out exactly<br />
+ * like this example.  If you want to refer to a another function,<br />
+ * do it like this: {@link clean_param()}.  Then, add descriptions <br />
+ * for each parameter as follows.<br />
+ *<br />
+ * @param int    $postid The PHP type is followed by the variable name<br />
+ * @param array  $scale The PHP type is followed by the variable name<br />
+ * @param array  $ratings The PHP type is followed by the variable name<br />
+ * @return mixed<br />
+ */</font><br />
+<font color="#006600">function </font><font color="#0000BB">forum_get_ratings_mean</font><font color="#007700">(</font><font color="#0000BB">$postid</font><font color="#007700">, 
+      </font><font color="#0000BB">$scale</font><font color="#007700">, </font><font color="#0000BB">$ratings</font><font color="#007700">=</font><font color="#0000BB">NULL</font><font color="#007700">) 
+      {<br /></font>
+      &nbsp;&nbsp;&nbsp;&nbsp;<font color="#007700">if (!</font><font color="#0000BB">$ratings</font><font color="#007700">) 
+      {<br />
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">$ratings 
+      </font><font color="#007700">= array(); &nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#FF8000">// 
+      Initialize the empty array</font><font color="#007700"><br />
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (</font><font color="#0000BB">$rates 
+      </font><font color="#007700">= </font><font color="#0000BB">get_records</font><font color="#007700">(</font><font color="#DD0000">"forum_ratings"</font><font color="#007700">, 
+      </font><font color="#DD0000">"post"</font><font color="#007700">, </font><font color="#0000BB">$postid</font><font color="#007700">)) 
+      {<br />
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#FF8000">// 
+      Process each rating in turn</font><font color="#007700"><br />
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;foreach 
+      (</font><font color="#0000BB">$rates </font><font color="#007700">as </font><font color="#0000BB">$rate</font><font color="#007700">) 
+      {</font> <br />
+      ....etc </p>
+  </li>
+
+  <li class="spaced">Dapat gumamit ng maraming <strong>space</strong> -
+huwag kang matakot na medyo magkalayo-layo ang mga bagay para mas
+malinaw itong basahin.  Sa pangkalahatan, dapat magkaroon ng isang space
+sa pagitan ng bawat bracket at mga normal na pahayag, pero walang space
+sa pagitan ng mga bracket at variable o function:
+<br />
+
+    <p class="examplecode"> <font color="#007700">foreach (</font><font color="#0000BB">$objects 
+      </font><font color="#007700">as </font><font color="#0000BB">$key </font><font color="#007700">=&gt;</font><font color="#0000BB"> 
+      $thing</font><font color="#007700">)</font><font color="#006600"> {<br />
+      </font><font color="#007700">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">process($thing);</font><font color="#006600"> 
+      <br />
+      } <br />
+      <br />
+      </font><font color="#007700">if (</font><font color="#0000BB">$x </font><font color="#007700">== 
+      </font><font color="#0000BB">$y</font><font color="#007700">)</font><font color="#006600"> 
+      {<br />
+      </font><font color="#007700">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">$a 
+      </font><font color="#007700">= </font><font color="#0000BB">$b</font><font color="#007700">;</font><font color="#006600"><br />
+      } else if (</font><font color="#0000BB">$x </font><font color="#007700">== 
+      </font><font color="#0000BB">$z</font><font color="#006600">) {<br />
+      </font><font color="#007700">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">$a 
+      </font><font color="#007700">= </font><font color="#0000BB">$c</font><font color="#007700">;</font><font color="#006600"><br />
+      } else {<br />
+      </font><font color="#007700">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">$a 
+      </font><font color="#007700">= </font><font color="#0000BB">$d</font><font color="#007700">;</font><font color="#006600"><br />
+      } </font></p>
+  </li>
+</ol>
+<p>&nbsp;</p>
+<h2>Mga balangkas ng database</h2>
+<ol class="normaltext">
+  <li class="spaced">Dapat magka-auto-incrementing <strong>id</strong>
+field (INT10) ang bawat table bilang primary na index.
+</li>
+  <li class="spaced">Ang pangunahing table na naglalaman ng mga instance
+ng bawat modyul ay dapat pangalanan ng parehong pangalan ng modyul (eg
+<strong>widget</strong>) at dapat din itong maglaman ng mga sumusunod na
+minimum na field:
+
+    <ul>
+      <li><strong>id</strong> - ayon sa pagkakalarawan sa itaas</li>
+      <li><strong>course</strong> - ang id ng kurso kung saan nabibilang
+ang bawat instance</li>
+      <li><strong>name</strong> - ang buong pangalan ng bawat instance
+ng modyul</li>
+    </ul>
+  </li>
+  <li class="spaced">Ang iba pang table na kaugnay ng isang modyul na
+naglalaman ng impormasyon hinggil sa mga 'things' ay dapat pangalanan ng 
+<strong>widget_things</strong> (pansinin ang plural).
+</li>
+ <li class="spaced">Dapat maging simple at maigsi ang mga pangalan ng
+mga column, alinsunod din sa mga alituntunin para sa mga pangalan ng
+variable.
+</li>
+  <li class="spaced">Kung puwede, dapat tawagin na
+<strong>widgetid</strong> ang mga column na may reference sa id field ng
+isa pang table (eg <strong>widget</strong>).  (Pansinin na medyo bago
+ang convention na ito at hindi sinusunod sa ilang lumang table)
+</li>
+  <li class="spaced">Dapat i-implement ang mga boolean field bilang mga
+maliit na integer field (eg INT4) na naglalaman ng 0 o 1, upang
+makapaglaan ng pagpapalawak ng mga value sa hinaharap kung
+kakailanganin.
+</li>
+
+  <li class="spaced">Dapat magka-<strong>timemodified</strong> field
+(INT10) ang karamihan sa mga table, na ia-update sa pamamagitan ng
+kasalukuyang timestamp na nakuha sa pamamgitan ng PHP
+<strong>time</strong>() function. </li>
+
+</ol>
+<hr />
+<p align="CENTER"><font size="1"><a href="." target="_top">
+Dokumentasyon ng Moodle</a></font></p>
+<p align="center"><font size="1">Version: $Id$</font></p>
+
+</body>
+</html>

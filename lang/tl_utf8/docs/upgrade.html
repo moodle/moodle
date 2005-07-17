@@ -1,0 +1,165 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Moodle Doks: Paga-upgrade</title>
+	<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS">
+    <meta http-equiv="Content-Type" content="text/html;
+charset=iso-8859-15" />
+</head>
+
+<body>
+<h1>Pag-Upgrade ng Moodle</h1>
+
+<blockquote>
+  <p>Ang Moodle ay dinisenyo na makakapag-upgrade nang malinis mula sa
+lumang bersiyon tungo sa isang bagong bersiyon.
+</p>
+
+  <p>Kapag nag-upgrade ka ng instalasyon ng Moodle, dapat mong sundin
+ang mga hakbang na ito:</p>
+
+  <h3 class="sectionheading">1. I-backup ang important datos</h3>
+  <blockquote>
+    <p>Bagama't hindi lubhang mahalaga, mas makabubuting mag-back-up ng
+isang sistemang pangproduksiyon bago gumawa ng malawakang upgrade, kung
+sakaling kailanganin mong balikan ang lumang bersiyon sa ano't anumang
+dahilan.  Ang kailangan pa nga ay gawing awtomatiko ang pagback-up ng
+instalasyon ng Moodle sa server mo nang araw-araw, upang malampasan mo
+na ang hakbang na ito.
+</p>
+
+    <p>May tatlong pook na dapat i-back-up:</p>
+
+    <blockquote>
+      <p><strong>1. Ang direktoryo ng Moodle software mismo</strong></p>
+
+      <blockquote>
+
+        <p>Gumawa ng hiwalay na kopya ng mga file na ito bago
+mag-upgrade, upang mabawi mo ang config.php at anumang modyul na
+idinagdag mo tulad ng tema, wika atbp.<strong><br />
+
+        </strong></p>
+      </blockquote>
+      <p><strong>2. Ang direktoryo mo ng datos.</strong></p>
+      <blockquote>
+
+        <p>Dito nakalagay ang inapload na nilalaman (tulad ng mga
+rekurso ng kurso at mga takdang-aralin ng mag-aaral) kaya't
+napakahalagang magka-back-up ng mga file na ito.  Minsan ang mga upgrade
+ay ililipat o babaguhin ang pangalan ng mga direktoryo mo sa loob ng
+direktoryo ng datos.
+<strong><br />
+        </strong></p>
+      </blockquote>
+      <p><strong>3. Ang database mo</strong></p>
+      <blockquote>
+        <p>Karamihan sa mga upgrade ng Moodle ang binabago ang mga
+database table, nagdadagdag o nagbabago ng mga field.  May iba't-ibang
+paraan ang bawat database sa pagbaback-up.  Ang isang paraan ng
+pagback-up ng MySQL database ay ang 'pagdump' nito sa iisang SQL file.
+Ipinapakita sa sumusunod na halimbawa ang mga Unix command sa pag-dump
+ng database na tinatawag na &quot;moodle&quot;:
+</p>
+
+        <blockquote>
+          <p><font face="Courier New, Courier, mono">mysqldump moodle &gt; moodle-backup-2002-10-26.sql</font></p>
+        </blockquote>
+        
+
+<p>Maaari mo ring gamitin ang &quot;Export&quot; na katangian sa
+opsiyonal na &quot;Database&quot; web interface ng Moodle para gawin ang
+katulad nitong bagay para sa lahat ng plataporma.</p>
+        <p>&nbsp;</p>
+      </blockquote>
+    </blockquote>
+  </blockquote>
+  <h3 class="sectionheading">2. Iinstol ang bagong Moodle
+software</h3>
+  <blockquote>
+    <p><strong>Paggamit ng isang download archive
+</strong></p>
+    <blockquote>
+      <p>Huwag patungan ang lumang instalasyon kundi mo lubos na alam
+ang ginagawa mo ... minsan nagdudulot ng problema ang mga lumang file sa
+bagong instalasyon.  Ang pinakamabisang paraan ay baguhin ang pangalan
+ng kasalukuyang direktoryo ng Moodle, tapos ay i-unpack ang bagong
+Moodle archive sa dating lokasyon.
+</p>
+
+      <blockquote>
+        <p><font face="Courier New, Courier, mono">mv moodle moodle.backup<br />
+        tar xvzf moodle-1.1.tgz</font></p>
+      </blockquote>
+
+      <p>Tapos, kopyahin mo ang lumang config.php mo at iba pang plugin
+tulad ng pasadyang tema sa dating direktoryo: </p>
+
+      <blockquote>
+        <p><font face="Courier New, Courier, mono">cp moodle.backup/config.php moodle<br />
+        cp -pr moodle.backup/theme/mytheme moodle/theme/mytheme</font></p>
+      </blockquote>
+    </blockquote>
+    <p><strong>Paggamit ng CVS</strong></p>
+    <blockquote>
+      <p>Kung gagamitin mo ang CVS, pumunta lamang sa punong direktoryo
+ng Moodle at i-update ito sa mga bagong file:
+</p>
+
+      <blockquote>
+        <p><font face="Courier New, Courier, mono">cvs update -dP</font></p>
+      </blockquote>
+      <p>Tiyakin na gagamitin ninyo ang &quot;d&quot; parameter sa
+paglikha ng mga bagong direktoryo kung kinakailangan, at ang 
+&quot;P&quot; parameter para burahin ang mga walang laman na direktoryo.</p>
+      <p>Kung ineedit mo ang mga file ng Moodle, matyagan ang mga
+mensahe ng mabuti para makita mo kung may mga posibleng dipagkakasundo.
+Lahat ng sinadyang tema mo at di-istandard na plugin ay hindi
+pakikialaman.</p>
+
+    </blockquote>
+    <p>&nbsp;</p>
+  </blockquote>
+  <h3 class="sectionheading">3. Pagtatapos ng upgrade</h3>
+  <blockquote>
+    <p>Ang huling hakbang ay pasimulan ang proseso ng pag-upgrade sa
+loob ng Moodle.</p>
+    <p>Para magawa ito, bisitahin lamang ang <a target="_top"
+href="../admin/index.php">pahinang admin ng instalasyon mo</a>.</p>
+
+    <blockquote>
+      <p><font face="Courier New, Courier,
+mono">http://halimbawa.com/moodle/admin</font></p>
+    </blockquote>
+    <p>Hindi importante kung nakalog-in ka bilang admin o hindi.</p>
+
+    <p>Awtomatikong malalaman ng Moodle na may bagong bersiyon at
+gagawin nito ang lahat ng upgrade ng database o filesystem na
+kinakailangan.  Kung may bagay na di nito kayang gawin sa sarili nito
+(napakadalang), makakakita ka ng mga mensahe na magsasabi sa iyo kung
+ano ang kailangan mong gawin. </p>
+
+  </blockquote>
+  <p>&nbsp; </p>
+
+  <p> Kung lahat ay maayos naman (walang mensahe ng mga error)
+masisimulan mo nang gamitin ang bago mong bersiyon ng Moodle at i-enjoy
+ang mga bago nitong katangian!</p>
+
+  <p>Kung magkaproblema ka sa upgrade, bisitahin ang <a target="_top"
+href="http://moodle.org/">moodle.org</a> at magpost sa <a target="_top"
+href="http://moodle.org/mod/forum/view.php?id=28">Installation 
+  Support Forum</a> sa Using Moodle na kurso.
+
+</p>
+
+</blockquote>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p align="center"><font size="1"><a href="." target="_top">
+Dokumentasyon ng Moodle</a></font></p>
+<p align="center"><font size="1">Version: $Id$</font></p>
+
+</body>
+</html>

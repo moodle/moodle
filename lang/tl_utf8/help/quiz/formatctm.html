@@ -1,0 +1,54 @@
+<p style="text-align: center"><b>Pag-angkat ng mga file na "Course Test Manager"</b></p>
+
+<p>Ang Course Test Manager ay isang "End of Lifetime" na paketeng software package mula sa Course Technology. Hindi na ito aktibong pinauunlad ng Course Technology.  Pinalitan na ito ng bagong 
+test manager na tinatawag ng ExamView.  Subali't, walang naging migration path na magpapahintulot na mailuwas ang format na ito mula sa CTM testbank papunta sa iba pang karaniwang format ng test.  Ito ang dahilang kung bakit isinulat ang modyul na ito.</p>
+
+<p> Upang makapag-angkat ng mga tanong mula sa CTM , kailangan ay may CTM kang naka-instol sa makinang Windows, at dapat ay may karapatan kang pasukin ang mga file ng datos ng MS Access sa makinang iyon.  Dalawang file ng datos ang kinakailangan upang mapasok ang mga file ng datos:</p>
+
+<ul><li>System.mda - Ang file na ito ay nasa tuktok na direktoryo ng CTM na instalasyon mo, at tinatawag sa bokabularyo ng MS access na "System Database".</li>
+<li>ctm.mdb - ito ang database na naglalaman ng mga tanong ng test bank.  May isang database na ganito sa bawat kurso na nakainstol sa CTM.  Ito ay nasa direktoryo, na isang antas na nasa ibaba ng iyong direktoryo ng instalasyon ng CTM.</li>
+</ul>
+
+<p>Ang proseso ng pag-angkat ay magkaiba kung ikaw ay nagpapatakbo ng Moodle sa Windows o Linux.
+Anumang plataporma ang pinagtatakbuhan ng Moodle, kailangan ay mayroon kang sistemang Windows (Windows 2000 o Windows XP) sa parehong network ng sistemang Moodle mo, upang maihost ang database na Access habang inaangkat ang mga test bank.</p>
+
+<p>Ang proseso ay mas madali sa isang <b>pang-Windows</b> na sistemang moodle.  Ang kailangan mo lamang gawin upang magamit ang ay:</p>
+
+<ol><li>iaplowd ang system.mda system database sa moodle gamit ang tagapamahala ng file.  Hindi mahalaga kung saan kurso mo iaplowd ang system.mda file.  Matatagpuan din ito ng Moodle kahit saan.</li>
+<li>Likhain mo ang iyong pagsusulit at tumungo sa "mag-angkat ng mga tanong mula sa file" na proseso.  Iaplowd ang pinilì mong ctm.mdb database bilang file na aangkatin.  Kung wasto mong nagawa ito, makakakita ka ng isa pang screen na magpapahintulot sa iyong pumilì ng sub-kategoriya ng mga tanong na maaangkat mula sa database.  Ang dahilan kung bakit may ganitong hakbang ay dahil ang mga CTM test bank ay karaniwang naglalaman ng malaking bilang ng maykategoriyang tanong, batay sa mga kabanata ng aklat o seksiyon ng kurso.</li>
+</ol>
+
+<p>Ang proseso sa isang <b>pang-Linux</b> na sistemang moodle ay nangangailangan ng isang ikatlong-partido na piyesa ng software na tinatawag na <a href="http://odbcsock.sourceforge.net/" target="_new"><b>ODBC Socket Server</b></a>.  Upang makapag-angkat ng CTM database sa Linux, 
+kailangan mo munang idownload at iinstol ang maliit na network program na ito sa sistemang Windows na naghohost ng CTM database mo.  <b>Huwag</b> sundin ang mga hakbang sa pag-instol na binalangkas sa ODBC Socket Server Installation.  Masyado itong masalimuot na hindi naman kailangan!
+Sa halip ay sundin ang mga hakbang sa pag-instol ng program na ito sa iyong sitemang Windows:</p>
+
+<ol><li>Pumunta ka sa sistemang windows at i-unzip ang pang-instol na file an idinownload mo mula sa 
+<a href="http://odbcsock.sourceforge.net/" target="_new">sa site na ito</a>, sa sistema.</li>
+<li>Kopyahin ang binary ODBCSocketServer.exe sa isang permanenteng lokasyon, tulad ng direktoryo ng sistema mo (marahil ay C:\WINNT\ o C:\Windows) o sa iyong Program Files na direktoryo. </li> 
+
+<li>Iinstol ang ODBC Socket Server bilang Service sa sistema sa pamamagitan ng atas na ito:<br />
+<b>&lt;path kung saan mo kinopya ang file sa hakbang sa itaas&gt;ODBCSocketServer.exe /Service</b><br />
+Maaari mo itong magawa sa pamamagitan ng pagtype ng atas na ito mula sa  Start-&gt;Run... dialog, o mula sa isang command prompt.</li>
+
+<li>Buksan ang Service Manager sa pamamagitan ng pagpunta sa
+Start-&gt;Settings-&gt;Control Panels-&gt;Administrative Tools-&gt;Services o sa pamamagitan ng pag right-click sa <b>My Computer</b>, pagpilì ng <b>Manage</b>, tapos ay pagpilì ng <b>Services at Applications-&gt;Services</b> mula sa kanang panel.
+  Maari mo ring mapasok ang Service manager sa pamamagitan ng pagtype ng <b>services.msc</b> sa Start-&gt;Run... dialog</li>
+
+<li>Sa Service manager, iright-click ang aytem na ODBC Socket Server at piliin ang aytem na  <b>Start</b>.  Ang estado nito ay dapat maging "started" kapag ginawa mo ito.  Tandaan na maaari mong ihinto at/o patayin ang service na ito nang ganap matapos mong makumpleto ang proseso ng pag-aangkat.</li>
+
+<li>Tiyakin na ang system.mda at ctm.mdb access data file ay nasa makina, 
+at ang MS Access ODBC driver ay presente.  Nakainstol ito sa isang istandard na instalasyon ng Windows.  Masusubok ninyo kung nakainstol ito sa pamamagitan ng pagbubukas ng aytem na 
+"Data Sources" sa "Administrative Tools" at pagsangguni sa "Drivers" tab.  Kailangan mong alamin kung saan nakainstol ang CTM at hanapin ang system.mda file at ang ctm.mdb database 
+o mga database na gusto mong pag-angkatan ng datos.  Tandaan ang buong lokal na path papunta sa mga ito, gayundin ang IP address o hostname ng Windows server.  Ngayon kakailanganin mo ang impormasyong ito para sa proseso ng pag-angkat.</li>
+
+<li>Ngayon maaari mo nang angkatin ang testbank o mga testbank sa moodle. Likhain ang iyong tanong at pumunta sa prosesong"mag-angkat ng mga tanong mula sa file".  <b>DITO NA KAKAIBA ANG MGA BAGAY PARA SA LINUX - </b>
+KAILANGAN MONG MAGTAKDA NG ISANG DUMMY FILE SA PUWANG NA PANG-APLOWD UPANG MASIMULAN ANG PROSESO NG PAG-ANGKAT.  ANG FILE NA ITO AY <b>HINDI</b> IPROPROSESO, PLACEHOLDER LANG ITO PARA SA IMPORT FORM. 
+PAGKATAPOS AY MAKAKAKUHA KA NG LUGAR NA PAGTATAKDAAN NG IMPORMASYON TUNGKOL SA WINDOWS SERVER.  
+Pagkatapos, ay makakakuha ka ng screen kung saan mo puwedeng itype ang hostname para sa Windows ODBC Socket Server na makina, gayundin para sa mga path papunta sa sytem at testbank database.  Itype mo ang impormasyong isinulat mo sa mga nakaraang hakbang dito at iklik ang "Connect to Server".
+Kung naisaayos ang lahat ng wasto, makakakuha ka ng isa pang form na magpapahintulot sa iyong pumilì ng sub-kategoriya ng mga tanong na aangkatin mula sa database.  Ang dahilan kung bakit may ganitong hakbang ay dahil karaniwang naglalaman ang mga CTM test bank ng malalaking bilang ng maykategoriyang tanong, batay sa mga kabanata ng aklat o seksiyon ng kurso.  KUNG MAKUHA MO ANG HAKBANG NA ITO NANG WALANG MENSAHE NG ERROR, NAISAAYOS MO NA ANG SOCKET SERVER NANG WASTO AT MAKAKAPAG-ANGKAT KA NA NAG MGA TANONG SA MOODLE!</li>
+</ol>
+
+<p>Kung nakatanggap ka ng mga mensahe ng error habang nasa prosesong ito, magagamit mo ang teknikal na impormasyong ito.  Gumagamit ang ODBC Socket server ng port 9628 para mabuksan ang isang 
+socket at trade at XML query para sa isang XML result table ng resulta ng query.
+Ipinaparse ng pang-angkat na class ang XML na iyon at ginagamit ito na tulad ng paggamit ko ng lokal na query sa pag-angkat.
+</p>

@@ -1,0 +1,17 @@
+HINGGIL SA DIREKTORYONG ITO
+---------------------------
+
+HUWAG BABAGUHIN, IIBAHIN ANG PANGALAN O ILILIPAT ANG ALINMAN SA MGA FILE
+SA DIREKTORYONG ITO, maliban na lamang kung TALAGANG alam mo ang
+ginagawa mo.
+
+Ang pagbabago sa mga file na ito ay maaaring gumulo sa kurso mo.
+
+Ang direktoryong ito ay naglalaman ng mga file na in-upload sa kurso mo,
+sa loob ng mga partikular na modyul (karamihan ay mula sa mga
+mag-aaral), tulad ng mga ipinasang takdang-aralin at mga kalakip sa mga
+talakayan.
+
+Ang mga pangalan ng mga direktoryo at file sa loob ng direktoryong ito
+ay hinahanap at minementina ng Moodle nang awtomatiko.
+

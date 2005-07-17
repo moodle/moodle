@@ -1,0 +1,43 @@
+<p style="text-align: center"><b>Naka-embed na mga sagot (Cloze)</b></p>
+
+<p>Ito ay isang uri ng tanong na madaling naiaangkop sa iba't-ibang sitwasyon, na katulad ng popular na format na tinatawag na format na Cloze.  </p>
+
+<p>Ang mga tanong ay binubuo ng mga parirala ng teksto (sa format na Moodle) na may iba't-ibang sagot na naka-embed sa loob nito, kabilang ang maraming-pagpipiliang-sagot, maikling sagot at denumerong sagot.</p>
+
+<p>Sa kasalukuyan ay walang graphical na interface para likhain ang mga tanong na ito - kailangan mong itakda ang format ng tanong sa pamamagitan ng text box o sa pamamagitan ng pag-angkat sa mga ito mula sa isang panlabas na file.</p>
+
+<p>Narito ang isang halimbawa ng input text na ginagamit sa pagtatakda ng ganitong tanong:</p>
+
+<form action="">
+<center>
+<textarea rows="15" cols="60" wrap="virtual">Ang tanong na ito ay binubuo ng ilang teksto na may mga sagot na nakaembed dito {1:MULTICHOICE:Maling sagot#Puna para sa maling sagot na ito~Isa pang maling sagot#Puna para sa isa pang maling sagot~=Wastong sagot#Puna para sa wastong sagot~%50%Sagot na nagbibigay ng kalahati ng marka#Puna para sa kalahating marka na sagot} at pagkatapos nito ay haharapin mo naman ang maikling sagot na ito 
+ {1:SHORTANSWER:Maling sagot#Puna para sa maling sagot na ito~=Wastong sagot#Puna para sa wastong sagot~%50%Sagot na nagbibigay ng kalahating marka#Puna para sa kalahating marka na sagot}  at panghuli ay mayroon tayong floating point na bilang {2:NUMERICAL:=23.8:0.1#Puna para sa wastong sagot 23.8~%50%23.8:2#Puna para sa kalahating marka na sagot na malapit sa wastong sagot}.
+
+Tandaan na ang mga address tulad ng www.moodle.org at mga smiley :-) ay gagana lahat ng normal:
+ a) Gaano kagaling ang isang ito? {:MULTICHOICE:=Oo#Tama~Hindi#Mayroon kaming ibang opinyon}
+ b) Anong marka ang ibibigay mo rito? {3:NUMERICAL:=3:2}
+
+Good luck!
+</textarea>
+</center>
+</form>
+
+<p>Makikita ng mga mag-aaral ang halimbawang ito nang paganito:</p>
+
+
+<form action="">
+<table align="center" width="90%" class="generalbox" border="0" cellpadding="5" cellspacing="0"><tr><td bgcolor="#FFFFFF" class="generalboxcontent"><table width="100%" cellspacing="10"><tr><td nowrap="nowrap" width="100" valign="top"><p align="center"><b>3</b></p><p align="center"><font size="1">8 Marka</font></p><img height="1" width="100" src="pix/spacer.gif" alt="" /><br />
+</td><td valign="top"><p>Ang tanong na ito ay binubuo ng ilang teksto na may mga sagot na nakaembed dito<select   name="q4ma1" ><option>&nbsp;</option><option value="4" >Maling Sagot</option><option value="5" >Isa pang maling sagot</option><option value="6" >Wastong sagot</option><option value="7" >Sagot na nagbibigay ng kalahating marka</option></select>  at pagkatapos nito ay haharapin mo naman ang maikling sagot na ito  <input   name="q4ma2"  value="" type="text" size="8"/>  at panghuli ay mayroon tayong floating point na bilang <input   name="q4ma3"  value="" type="text" size="8"/> .<br />
+
+<br />
+
+Tandaan na lahat ng address tulad ng <a href="http://www.moodle.org" target="_blank">www.moodle.org</a> at smiley <img alt=""  border="0" src="pix/s/smiley.gif" width="15" height="15" /> ay gagana lahat ng normal:<br />
+
+a) Gaano kagaling ang isang ito?   <select   name="q4ma4" ><option>&nbsp;</option><option value="13" >Oo</option><option value="14" >Hindi</option></select> <br />
+
+b) Anong marka ang ibibigay mo rito?  <input   name="q4ma5"  value="" type="text" size="8"/> <br />
+
+<br />
+
+Good luck!</p></td></tr></table></td></tr></table>
+</form>

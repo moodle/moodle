@@ -1,0 +1,420 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Moodle Doks: Manwal ng mga Developer</title>
+<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS">
+<meta http-equiv="Content-Type" content="text/html;
+charset=iso-8859-15" />
+</head>
+
+<body>
+<h1>Manwal ng mga Developer</h1>
+<blockquote>
+<p>Inilalarawan ng dokumentong ito ang ilan sa disenyo ng Moodle at kung
+paano ka makapag-aambag sa pagdebelop nito.
+</p>
+
+<p>Medyo maikli pa lamang ito - pero magkakaroon din tayo ng mas mahusay
+na dokumentasyon sa hinaharap!
+</p>
+<p>Mga seksiyon sa dokumentong ito:</p>
+<ol>
+  <li><a href="#architecture">Arkitektura ng Moodle</a></li>
+  <li><a href="#contribute">Kung paano ka makapag-aambag sa Moodle</a> 
+    <ul>
+      <li><a href="#activities">Mga Aktibidad para sa Pag-aaral</a></li>
+      <li><a href="#themes">Mga Tema</a></li>
+      <li><a href="#languages">Mga Wika</a></li>
+      <li><a href="#database">Mga Database Schema</a></li>
+      <li><a href="#courseformats">Mga format ng Kurso</a></li>
+      <li><a href="#doc">Dokumentasyon at mga artikulo</a></li>
+      <li><a href="#bugs">Paglahok sa bug tracker</a></li>
+    </ul>
+  </li>
+</ol>
+</blockquote>
+<p>&nbsp;</p>
+
+<h2><a name="architecture"></a>1.
+Arkitektura ng Moodle</h2>
+<blockquote>
+  <p>Kung titingnan natin ito sa pananaw ng isang system administrator,
+ang Moodle ay dinisenyo ayon sa mga sumusunod na criteria:
+</p>
+  <ol>
+    <li><strong>Kailangang tumakbo ang Moodle sa pinakamaraming klase ng
+plataporma</strong><br />
+      <br />Ang web application platform na tumatakbo sa pinakamaraming
+platform ay ang PHP kasama ang MySQL, at ito rin ang kapaligiran kung
+saan dinibelop ang Moodle (sa Linux, Windows, at Mac OS X).  Ginagamit
+din ng Moodle ang ADOdb library para sa database abstraction, alalaong
+baga'y makagagamit ang Moodle ng  
+<a href="http://php.weblogs.com/ADOdb_manual#drivers">higit pa sa
+sampung magkakaibang brand ng database</a> (kaya lang, hindi pa nito
+kayang <em><strong>magset-up ng mga table</strong></em> sa lahat ng
+database na ito - paguusapan pa natin ito mamaya).
+<br />
+      <br />
+    </li>
+    <li><strong>Dapat ay madaling maiinstol, matutunan at mabago ang
+Moodle
+</strong><br />
+      <br />Ang mga unang prototype ng Moodle (1999) ay nilikha gamit ang 
+<a target=_top href="http://www.zope.org/">Zope</a> - isang abanteng
+object-oriented web application server.  Kaya lang, bagama't cool ang
+dating sa akin ng teknolohiyang ito, medyo mahirap matutunan at hindi
+gaanong flexible, kung system administration ang pag-uusapan.  Sa
+kabilang banda ang PHP scripting language ay napakadaling matutunan
+(lalo pa kung nakapagprogram ka na, gamit ang anumang scripting
+language).
+Sa simula pa nagpasiya na akong iwasan ang paggamit ng anumang
+class-oriented na disenyo - para nga mapanatili itong madaling
+maintindihan ng mga baguhan.  Sa halip ang muling paggamit ng code ay
+ginawa sa pamamagitan ng mga library ng mga clearly-named function at sa
+consistent na layout ng mga script file.  Madali ring iinstol ang PHP
+(may binary para sa bawat platform) at kalát na ang gamit, ibinibigay
+na
+nga itong istandard na serbisyo ng karamihang web hosting service.
+
+<br />
+      <br />
+    </li>
+
+    <li><strong>Dapat ay madali itong iupgrade sa mga susunod na
+bersiyon
+</strong><br />
+      <br />Alam ng Moodle kung anong bersiyon ito (gayundin ang mga
+bersiyon ng lahat ng plug-in na modyul) at may built-in na itong
+mekanismo na mag-aupgrade ng sarili nito sa bagong bersiyon (halimbawa
+kaya nitong magrename ng mga database table o magdagdag ng mga bagong
+field).  Halimbawa, kung gumagamit ka ng CVS sa Unix, magtatype ka lang
+ng &quot;cvs update -d&quot; pagkatapos ay bisitahin ang home page ng
+site upang makumpleto ang upgrade.
+<br />
+      <br />
+    </li>
+    <li><strong>Kailangan ay modular ito upang mabigyan ng kakayahang
+lumaki</strong><br />
+      <br />Maraming feature ang Moodle na modular, tulad ng tema,
+aktibidad, mga wika ng interface, mga database schema at mga format ng
+kurso.  Maaari ngayong magdagdag ng feature ang sinuman sa pangunahing
+codebase o kaya'y ipamahagi ang mga feature ng hiwalay.  Tatalakayin pa
+natin ito sa susunod na seksiyon sa ibaba.
+<br />
+      <br />
+    </li>
+    <li><strong>Dapat ay nagagamit ito kasabay ng iba pang sistema</strong><br />
+      <br />Itinatago ng Moodle ang lahat ng file para sa isang kurso sa
+iisang, normal na direktoryo sa server.  Dahil dito magagawa ng system
+administrator na magbigay ng seamless forms ng file-level access para sa
+bawat guro, tulad ng Appletalk, SMB, NFS, FTP, WebDAV at iba pa.
+Pinapahintulutan ng mga authentication module ang Moodle na gumamit ng  
+LDAP, IMAP, POP3, NNTP at iba pang  database bilang source para sa
+impormasyon hinggil sa user. Kung hindi, ay marami pang kailangang
+gawin.  Ang mga feature na planong isama sa Moodle sa mga bersiyon sa
+hinaharap ay : import at export ng Moodle data gámit ang mga XML-based
+na format (kasama ang IMS at SCORM); at mas malaking bahagi sa paggamit
+ng mga style sheet para sa interface formatting (para maiintegrate ito
+nang biswal sa iba pang web site).
+</li>
+  </ol>
+</blockquote>
+<p>&nbsp;</p>
+
+<h2><a name="contribute" id="contribute"></a>
+2. Kung paano ka makapag-aambag</h2>
+<blockquote>
+  <p>Nasabi na natin kanina na ang Moodle ay maraming feature na
+modular.  Kahit hindi ka programer, may mga bagay na mababago mo o
+makakatulong ka.
+</p>
+<h3><a name="activities" id="activities"></a>Mga
+Aktibidad sa Pag-aaral</h3>
+  <blockquote>
+    <p> Ito ang mga pinakaimportanteng modyul, na nasa 'mod' na
+direktoryo.  May anim na default na modyul: takdang-aralin, pagpipilian,
+talakayan, pagsusulit, rekurso, at survey. Ang bawat modyul ay
+nasa hiwalay na subdirektoryo at binubuo ng mga sumusunod na
+kinakailangang elemento (kasama pa ang mga ekstrang script na unique sa
+bawat modyul):
+</p>
+
+    <ul>
+      <li>
+mod.html: isang form para iset-up o iupdate ang instance ng modyul na
+ito</li>
+      <li>version.php: nagdedefine ng ilang meta-info at
+nagbibigay ng upgrading code</li>
+      <li>icon.gif: isang 16x16 na icon para sa module</li>
+      <li>db/: mga SQL dump ng lahat ng kinakailangang db table at
+datos (para sa bawat uri ng database) </li>
+      <li>index.php: isang pahina para ilista ang lahat ng instance sa
+isang kurso</li>
+      <li>view.php: isang pahina para makita ang isang partikular na
+instance</li>
+       <li>lib.php: anuman/lahat ng function na idinefine ng modyul
+ay dapat naririto.
+Kung ang modulename ay tinatawag na widget, ang mga kinakailangang
+function ay dapat may kasamang:          
+
+        <ul>
+          <li>widget_add_instance() - code para magdagdag ng isang
+bagong instance ng widget</li>
+          <li>widget_update_instance() - code para magupdate ng instance
+na narooroon na</li>
+          <li>widget_delete_instance() - code para burahin ang instance</li>
+          <li>widget_user_outline() - kung may instance, nagbabalik ng
+buod ng iniambag ng user</li>
+          <li>widget_user_complete() - kung may instance, magpiprint ng
+mga detalye ng iniambag ng isang user<br />
+          </li>
+          <li>Upang hindi magkaconflict, ang alinmang module function ay
+dapat bigyan ng pangalang nagsisimula sa widget_ at anumang constant na
+idefine mo ay dapat magsimula sa WIDGET_
+</li>
+        </ul>
+      </li>
+
+      <li>Panghuli, ang bawat moyul ay magkakaroon ng ilang file ng wika
+na naglalaman ng mga string para sa modyul na iyon.  Tingnan sa ibaba.</li>
+    </ul>
+
+    <p>Ang pinakamadaling paraan para magsimula ng bagong learning
+activity module ay gamitin ang template sa 
+<strong><a 
+href="http://moodle.com/mod/newmodule_template.zip">mod/newmodule_template.zip</a>.</strong> 
+      Iunzip ito at sundin ang README sa loob.  
+</p>
+
+    <p>Baka gusto mo ring magpost muna sa 
+<a href="http://moodle.com/mod/forum/view.php?id=44" target="_top">
+Talakayan ng Activities modules sa Paggamit ng Moodle</a>.</p>
+    <p>&nbsp;</p>
+  </blockquote>
+
+ <h3><a name="themes" id="themes"></a>Mga Tema</h3></p>
+
+  <blockquote>
+    <p>Itinatakda ng tema (o skin) ang itsura ng isang site.  May ilang
+simpleng tema na nasa pangunahing distribusyon, baka mas gusto mong
+lumikha ng sarili mong tema na may sarili mong kulay, logo, estilo at
+graphics.
+</p>
+
+    <p>Ang bawat tema ay nasa isang subdirektoryo ng &quot;theme&quot;
+na direktoryo, at naglalaman ng, sa minimum, ng sumusunod na file:
+</p>
+
+    <ul>
+      <li><strong>config.php</strong>: idinidefine ang kulay ng tema na
+ginagamit sa buong site</li>
+      <li><strong>styles.php</strong>: ang style sheet, na naglalaman ng
+mga CSS definition para sa mga standard HTML element, gayundin ang
+maraming elemento ng Moodle.
+</li>
+      <li><strong>header.html</strong>: Isinasama sa itaas ng bawat
+pahina.  Ito ang kailangan mong iedit upang makapagdagdag ng isang logo
+sa itaas ng mga pahina.</li>
+      <li><strong>footer.html</strong>:  Isinasama sa ibaba ng
+bawat pahina.</li>
+    </ul>
+
+    <p>Para makalikha ka ng mga sarili mong tema para sa kasalukuyang
+bersiyon ng Moodle:</p>
+    <ol>
+      <li>Kopyahin ang isa sa dating theme folder sa isang folder na may
+bagong pangalan.  Inirerekomenda ko na magsimula sa isa sa mga istandard
+na tema. </li>
+      <li>Editin ang config.php at iinsert ang sarili mong mga kulay.</li>
+       <li>Editin ang styles.php at baguhin ang CSS styles mo.</li>
+      <li>Editin ang header.html at footer.html upang makapagdagdag ng 
+mga bagong logo, o mabago ang layout. 
+      </li>
+    </ol>
+
+    <p>Tandaan na ang lahat ng hakbang na ito ay opsiyonal - maaari kang
+lumikha ng talagang kakaibang itsura ng site mo sa pamamagitan lamang ng
+pag-edit sa mga kulay sa config.php</p>
+    <p>Tandaan din na ang mga Moodle upgrade ay <em>posibleng</em>
+sumira nang kaunti sa mga tema, kaya basahing mabuti ang mga release
+note kung gumagamit ka ng pasadyang tema.
+</p>
+    <p>Lalo pa, ang Moodle 2.0 ay magkakaroon ng ganap na bagong display
+system, posibleng nakabatay sa mga XSL transformation ng XML output mula
+sa Moodle.  Posibleng ang mga bagong tema para dito ay magkakaroon ng
+kakaibang format, pero ang bentahe ay magkakaroon ng posibleng mas
+mataas na degree ng customisation (kasama ang paglilipat-lipat ng mga
+elemento sa pahina).
+</p>
+
+    <p>May mas malawak na talakayan hinggil dito sa 
+<a target=_top href="http://moodle.com/mod/forum/view.php?id=46">
+Talakayan ng Tema sa Paggamit ng Moodle</a>. Kung lumikha ka ng
+magandang tema na sa palagay mo ay magagamit ng iba, pakipost ang zip
+file mo sa talakayan ng mga tema!
+<br />
+    </p>
+  </blockquote>
+  <p>&nbsp;</p>
+
+  <h3><a name="languages" id="languages"></a>Mga Wika</h3>
+  <blockquote>
+    <p>Ang Moodle ay idinesenyo para sa internasiyonalisasyon.  Ang
+bawat 'string' o 'pahina' ng teksto na idinidispley bilang bahagi ng
+interface ay kinukuha mula sa isang set ng mga file ng wika.  Ang bawat
+wika ay subdirektoryo ng direktoryong 'lang'.  Ang istruktura ng lang
+direktoryo ay sumusunod:
+</p>
+
+    <p><strong>lang/en</strong> - direktoryong naglalaman ng lahat ng
+file para sa isang wika (eg Ingles)</p>
+    <ul>
+      <li>moodle.php - mga string para sa pangunahing interface</li>
+      <li>assignment.php - mga string para sa assignment module</li>
+      <li>choice.php - mga string para sa choice module</li>
+      <li>forum.php - mga string para sa forum module</li>
+      <li>quiz.php - mga string para sa quiz module</li>
+      <li>resource.php - mga string para sa resource module</li>
+      <li>survey.php - mga string para sa survey module</li>
+      <li>.... kasama pa ang ibang modyul kung mayroon man.<br />
+
+        <br />
+Ang string ay tinatawag mula sa mga file na ito sa
+pamamagitan ng <strong><em>get_string()</em></strong><em> </em>o<em>
+<strong>print_string()</strong> </em> na function. Sinusuportahan ng
+bawat string ang pagpapalit ng variable, upang masuportahan ang variable
+ordering sa iba't-ibang wika. <em><br />
+<br /> 
+</em>eg $strdueby = get_string(&quot;assignmentdueby&quot;,
+&quot;assignment&quot;, userdate($date)); <br />
+<br /> 
+Kung ang string ay wala sa isang partikular na wika, ang
+katumbas nito sa Ingles ang awtomatikong gagamitin. </li>
+    </ul>
+
+    <p><strong>lang/en/help</strong> - naglalaman ng mga buong pahina ng
+tulong (para sa popup context-sensitive na tulong)</p>
+    <blockquote>
+      <p>Ang pangunahing mga pahina ng tulong ay naririto, samantalang
+ang mga pahina ng tulong na para sa bawat modyul ay nasa subdirektoryo
+na may pangalan ng modyul. </p>
+      <p>Puwede kang mag-insert ng helpbutton sa isang pahina sa
+pamamagitan ng helpbutton na function. </p>
+      <p>eg helpbutton(&quot;text&quot;, &quot;Iklik ito para sa tulong
+tungkol sa teksto;);</p>
+      <p>at para sa mga modyul:</p>
+      <p>helpbutton(&quot;forumtypes&quot;, &quot;Forum types&quot;, &quot;forum&quot;);</p>
+    </blockquote>
+
+    <p>Tandaan na puwede mong editin ang mga wika nang online, gamit ang
+administration web tools na nasa ilalim ng &quot;Tingnan ang wikang
+ito&quot;. Pinadadali nito ang paglikha ng mga bagong wika gayundin ang
+pagpapahusay ng dati na.  Kung magsisimula ka ng bagong wika, pakikontak
+ako, <a target=_top href="http://dougiamas.com/">Martin Dougiamas</a>. 
+</p>
+
+    <p>Baka gusto mong magpost sa 
+<a target=_top href="http://moodle.com/mod/forum/view.php?id=43">Talakayan ng
+Wika sa Paggamit ng Moodle</a>. </p>
+    <p>Kung magmementina ka ng wika nang matagalan, maaari kitang bigyan
+ng <a href="?file=cvs.html">CVS 
+      write access sa Moodle source code</a> para direkta mong
+mamentina ang mga file.</p>
+  </blockquote>
+  <p><br />
+
+  <h3><a name="database" id="database"></a>Mga Schema ng Database
+</h3>
+  <blockquote>
+    <p>Kung may gumaganang database ka na may nadefine nang mga table,
+ang sinadyang simpleng SQL na ginamit sa Moodle ay inaasahang gagana
+nang maayos sa iba't-ibang klase ng database brand.
+</p>
+
+    <p>May problema sa <strong>awtomatikong paglikha</strong> ng mga
+bagong table sa isang database, na siyang tinatangkang gawin ng Moodle
+sa unang pagkakataon na iinstol ito.  Dahil magkakaiba ang mga
+database, walang paraan para gawin ito nang hiwalay sa plataporma.  Para
+masuportahan ang automation na ito sa bawat database, maaaring gumawa ng
+mga schema na naglilista ng kinakailangang SQL para malikha ang mga
+Moodle table sa isang partikular na database.  Ang mga file na ito ay
+nasa <strong>lib/db</strong> at sa loob ng <strong>db</strong>
+subdirektoryo ng bawat module.
+</p>
+
+    <p>Sa kasalukuyan, tanging ang MySQL at PostgreSQL ang ganap na
+nasusuportahan sa paraang ito (wala pang nagsusulat ng schema para sa
+ibang brand).
+</p>
+
+    <p>Gagamit ang Moodle 1.2 ng bagong paraan ng
+independiyente-sa-database na XML schema para hindi na kailanganin ang
+pagsusulat ng schema para sa bawat klase ng database.
+</p>
+  </blockquote>
+  <p>&nbsp;</p>
+  <h3><a name="courseformats" id="courseformats"></a>Mga Format ng
+Kurso</h3>   <blockquote>
+    <p>Sinusuportahan sa kasalukuyan ng Moodle ang tatlong klase ng
+format ng kurso: linguhan, paksaan at panlipunan.
+</p>
+    <p>Mas nakaugnay ito sa iba pang code (kaya, mas mahirap gawing
+&quot;plugagable&quot;) pero madali pa ring magdagdag ng mga bago.
+</p>
+    <p>Kung may ideya kayo para sa naiibang format na kailangan ninyo o
+gusto ninyong makita, kontakin ninyo ako at pipilitin kong isama ito sa
+mga release sa hinaharap.
+</p>
+  </blockquote>
+  <p>&nbsp;</p>
+  <h3><a name="doc" id="doc"></a>Dokumentasyon at mga artikulo</h3>
+  <blockquote>
+    <p>Kung gusto mong magsulat ng tyutoryal, artikulo o akademikong
+papel o anumang bagay hinggil sa Moodle, sige lang!
+</p>
+    <p>Ilagay ito sa web at tiyaking samahan ng mga link sa 
+<a target="_top" href="http://moodle.org/">http://moodle.org/
+</a></p>
+  </blockquote>
+  <p>&nbsp;</p>
+  <h3><a name="bugs" id="bugs"></a>Paglahok sa bug tracker</h3>
+  <blockquote>
+    <p>Bilang panghuli, nais ko kayong anyayahang magrehistro sa 
+&quot;bug tracker&quot; sa <a target="_top"
+href="http://moodle.org/bugs/">http://moodle.org/bugs</a> 
+para maiulat mo ang anumang bug na matagpuan mo at marahil ay makalahok
+sa pagtalakay at paglutas ng mga ito.
+</p>
+    <p>Ang mga &quot;bug&quot; ay hindi lamang mga software bug sa
+kasalukuyang bersiyon ng Moodle, kundi kasama rin ang mga bagong ideya,
+hinihiling na bagong feature at kahit konstruktibong puna sa mga
+kasalukuyang feature.  Ang kaigihan ng open source ay puwede ang lahat
+na lumahok sa anumang paraan upang tumulong sa paglikha ng mas mahusay
+na produkto na masisiyahan tayong lahat.  Sa proyektong ito, ang input
+mo ay gusto naming marinig!
+</p>
+
+  </blockquote>
+</blockquote>
+<p>&nbsp;</p>
+<blockquote> 
+  <blockquote> 
+    <blockquote> 
+      <p align="center">Salamat sa paggamit ng Moodle!<br />
+        <br />
+        <a target="_top" href="http://dougiamas.com/">Martin Dougiamas</a>, Lead 
+        Developer </p>
+    </blockquote>
+  </blockquote>
+</blockquote>
+<p>&nbsp;</p>
+<blockquote> 
+  <p>&nbsp;</p>
+</blockquote>
+
+<p align="center"><font size="1"><a href="." target="_top">
+Dokumentasyon ng Moodle</a></font></p>
+<p align="center"><font size="1">Version: $Id$</font></p>
+</body>
+</html>

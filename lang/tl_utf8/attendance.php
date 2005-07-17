@@ -1,0 +1,72 @@
+<?PHP // $Id$ 
+      // attendance.php - created with Moodle 1.5 ALPHA (2005051500)
+
+
+$string['absentlong'] = 'Walâ';
+$string['absentshort'] = 'W';
+$string['addingmultiple'] = 'Nagdadagdag ng Maraming Talaan ng Nagsipasok';
+$string['addmultiple'] = 'Magdagdag ng Maraming Talaan ng Nagsipasok';
+$string['allmodulename'] = 'Lahat ng Talaan ng Nagsipasok';
+$string['auto'] = 'awto';
+$string['autoattend'] = 'Awtomatikong tsekin ang pagpasok batay sa log ng aktibidad ng user';
+$string['autoattendmulti'] = 'Awtomatikong tsekin ang pagpasok para sa lahat ng talaan batay sa log ng aktibidad ng user';
+$string['autoattendshort'] = 'Awtomatiko mula sa mga log';
+$string['choosedays'] = 'Mga araw sa bawat linggo na tsetsekin ang pagpasok';
+$string['dayofroll'] = 'Petsa na tsetsekin ang nagsipasok';
+$string['defaultautoattend'] = 'Kung ang pagtsek na pagpasok batay sa log ng aktibidad ng user ay gagawing default';
+$string['defaultdynamicsection'] = 'Kung ililipat ba ang talaan ng pagpasok sa wastong linggo bilang default';
+$string['defaultgrade'] = 'Kung ang namamarkahang talaan ng pagpasok ang gagawing default';
+$string['defaulthoursinclass'] = 'Ilang oras dapat magkaroon sa isang default na talaan ng pagpasok';
+$string['defaultmaxgrade'] = 'Kung ano dapat maging default na maksimum na halaga ng marka para sa kumpletong pagpasok';
+$string['defaultstudentstatus'] = 'Ang default na kalagayan ng pagpasok ng mag-aaral sa mga bagong talaan ng pagpasok';
+$string['downloadexcelfull'] = 'Idownlowd ang Buong  Excel Spreadsheet';
+$string['downloadexceltotals'] = 'Idownload ang Lagom na Excel Spreadsheet';
+$string['downloadtextfull'] = 'Idownload ang Buong Ulat na Teksto';
+$string['downloadtexttotals'] = 'Idownload ang Lagom na Ulat na Teksto';
+$string['dynamicsection'] = 'Itakda ang linggo para sa pagpasok batay sa petsang ito';
+$string['dynamicsectionmulti'] = 'Ilagay ang mga talaan sa kanilang linguhang seksiyon nang awtomatiko';
+$string['dynsectionshort'] = 'Dagliang ilipat sa seksiyon';
+$string['endbeforestart'] = 'Nauna ang katapusang petsa kaysa sa umpisang petsa';
+$string['endmulti'] = 'Petsa ng huling talaan ng pagpasok';
+$string['for'] = 'para sa';
+$string['friday'] = 'Biy';
+$string['gradeshort'] = 'Minarkahan';
+$string['gradevalue'] = 'Gawing namamarkahan ang talaang ito';
+$string['gradevaluemulti'] = 'Gawing namamarkahan ang mga talaang ito';
+$string['hoursinclass'] = 'Bilang ng oras sa isang period ng klase';
+$string['hoursineachclass'] = 'Bilang ng Oras sa bawat period ng klase';
+$string['hoursinfullreport'] = 'Ang maksimum na bilang ng oras ng pagpasok na dapat ipakita sa isang pahina ng isang ulat';
+$string['maxgradeshort'] = 'Maksimum na marka';
+$string['maxgradevalue'] = 'Maksimum na halaga ng marka para sa kumpletong pagpasok';
+$string['modulename'] = 'Nagsipasok';
+$string['modulenameplural'] = 'Mga Talaan ng Nagsipasok';
+$string['monday'] = 'Lun';
+$string['norolls'] = 'Walang talaan ng pagpasok sa kursong ito';
+$string['notes'] = 'Natatanging impormasyon';
+$string['notesfor'] = 'Natatanging impormasyon para sa';
+$string['noviews'] = 'Paumanhin, walang datos para sa account mo rito';
+$string['of'] = 'ng';
+$string['pages'] = 'Mga pahina';
+$string['presentlong'] = 'Pumasok';
+$string['presentshort'] = 'P';
+$string['saturday'] = 'Sab';
+$string['startafterend'] = 'Ang umpisang petsa ay pagkatapos ng katapusan ng kurso';
+$string['startmulti'] = 'Petsa ng unang talaan ng pagpasok';
+$string['sunday'] = 'Lgo';
+$string['takeroll'] = 'Tsekin ang nagsipasok sa araw na ito?';
+$string['tardiesperabsence'] = 'Ilang hulí ang bubuo ng isang walâ';
+$string['tardylong'] = 'Hulí';
+$string['tardyshort'] = 'H';
+$string['teacheredit'] = 'Tsekin ang Pagpasok';
+$string['thursday'] = 'Huw';
+$string['tuesday'] = 'Mar';
+$string['viewall'] = 'Tingnan ang Lahat ng Talaan ng Pagpasok';
+$string['viewmulti'] = 'Tingnan ang Ulat na Maraming Pahina';
+$string['viewone'] = 'Tingnan ang Lahat ng Pahina ng Ulat';
+$string['viewsection'] = 'Tingnan ang Lahat ng Talaan ng Pagpasok mula sa Seksiyong ito';
+$string['viewtable'] = 'Tingnan ang Ulat bilang Isang Manghad';
+$string['viewweek'] = 'Tingnan ang Lahat ng Talaan ng Pagpasok mula sa Linggo sa Kalendaryo';
+$string['wednesday'] = 'Miy';
+$string['weekmodulename'] = 'Lahat ng Talaan ng Nagsipasok noong Huling Linggo';
+
+?>

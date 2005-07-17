@@ -1,0 +1,76 @@
+<p style="text-align: center"><b>Pag-aaplowd ng mga user</b></p>
+
+<p>Una, tandaan na <strong>hindi naman talaga kailangang mag-angkat ng
+mga user nang maramihan</strong> - upang mabawasan ang gawain mo sa
+pagmementina, dapat ay pag-aralan mo muna ang ibang anyo ng pagsusuri ng
+pagkakakilanlan na hindi nangangailangan ng mano-manong pagsasaayos.
+Tulad ng pagkonekta sa yari nang panlabas na database o pagpapahintulot
+sa mga user na lumikha ng sarili nilang account.  Tingnan ang seksiyon
+hinggil sa Awtentikasyon sa mga pang-admin na
+menu. </p>
+
+<p>Kung talagang nais mong mag-angkat ng maramihang user account mula
+sa isang text file, kakailanganin mong ipormat ang text file mo ng
+paganito: </p>
+
+<ul>
+  <li>Ang bawat linya sa file ay maglalaman ng isang record </li>
+
+  <li>Ang bawat record ay isang serye ng datos na pinaghihiwalay ng
+kuwit </li>
+
+  <li>Natatangi ang unang record ng file, at naglalaman ito ng listahan
+ng mga fieldname.  Ito ang nagtatakda sa format ng kabuuang file.
+    <blockquote>
+
+      <p><strong>Mga kinakailangang fieldname: </strong> ang mga field
+na ito ay kailangang isama sa unang record, at bigyang kahulugan ayon sa
+bawat user </p>
+
+      <p>
+      <font color="#990000" face="Courier New, Courier, mono">username,
+password, firstname, lastname, email</font></p> 
+
+      <p><strong>Mga default na fieldname:</strong> opsiyonal ang mga
+ito - kapag hindi ito isinama, ang mga halaga ay kukunin sa pangunahing
+admin </p>
+
+      <p><font color="#990000" face="Courier New, Courier,
+mono">institution, department, city, country, lang, auth, timezone</font> </p>
+
+      <p><strong>Mga opsiyonal na fieldname: </strong>ganap na opsiyonal
+ang mga ito.  Ang mga pangalan ng kurso ay ang "maiikling
+panglan" ng mga kurso - kung mayroon nito, ang user ay ieenrol
+bilang mag-aaral sa mga kursong itinakda.  Ang mga pangalan ng pangkat
+ay dapat kaugnay ng angkop na kurso, a.b. group1 sa course1, atbp.
+</p>
+
+      <p> <font color="#990000" face="Courier New, Courier,
+mono">idnumber, icq, phone1, phone2, address, url, description,
+mailformat, maildisplay, htmleditor, autosubscribe, course1, course2,
+course3, course4, course5, group1, group2, group3, group4,
+group5</font></p>
+
+    </blockquote>
+    </li>
+  <li>Ang mga kuwit sa loob ng datos ay kailangang iencode na &amp;&#035;44 -
+awtomatikong idedecode ng script ang mga ito pabalik sa kuwit. </li>
+
+  <li>Para sa mga Boolean na field, gumamit ng 0 para sa ditotoo at 1
+para sa totoo. </li>
+
+  <li>Tala: Kung ang user ay nakarehistro na sa Moodle user database,
+ihuhudyat ng script ang userid na bilang (database index) ng user na
+iyon, at ieenrol ang user bilang mag-aaral sa anumang itinakdang kurso
+NANG HINDI binabago ang iba pang itinakdang datos. </li>
+
+</ul>
+  
+  
+<p>Halimbawa ng isang balidong file na pang-importa: </p> <p><tt>
+username, password,
+firstname, lastname, email, lang, idnumber, maildisplay, course1,
+group1<br /> jonest, verysecret, Tom, Jones, jonest@someplace.edu, en,
+3663737, 1, Intro101, Section 1<br /> reznort, somesecret, Trent,
+Reznor, reznort@someplace.edu, en_us, 6736733, 0, Advanced202, Section
+3</tt></p>

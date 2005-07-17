@@ -1,0 +1,167 @@
+<p style="text-align: center"><b>Tungkol sa  Richtext HTML
+editor</b></p>
+
+<p>Magagamit ba: <b>
+<?php if (!$CFG->htmleditor) {
+       print_string("htmleditordisabledadmin");
+   } else if (!$USER->htmleditor) {
+       print_string("htmleditordisabled");
+   } else if (!can_use_richtext_editor()) {
+       print_string("htmleditordisabledbrowser");
+   } else {
+       print_string("htmleditoravailable");
+   }
+?>
+</b></p>
+
+<p>Nagagamit ang Richtext HTML editor bilang word processor interface na
+nakaembed sa iyong pahina ng web.  Maaari kang mag-edit dito ng teksto
+sa intuitive na paraan, at lumikha ng normal na HTML code.</p>
+
+<p>Maliban pa sa pagpoformat ng teksto, may iba pang feature ang editor
+na ito na kapakipakinabang.</p>
+
+<p><b>Ipaste ang teksto mula sa ibang application</b></p> 
+
+<p style="margin-left: 3em">Maaari kang magcut at paste ng rich text mula sa iba pang Windows
+application tulad ng Microsoft Word papunta ng diretso sa editor na ito,
+at mapapanatili ang formatting mo.  Gamitin lamang ang normal na cut at
+paste menu sa inyong web browser (o Control-C at Control-V).</p>
+
+<p><b>Pagsisingit ng mga larawan  <img alt="" border="0" hspace="10" src="lib/editor/images/ed_image.gif" /></b></p>
+
+<p  style="margin-left: 3em">Kung may mga larawan kang nalathala na sa isang web site at maaari
+itong maaccess sa pamamagitan ng URL, puwede mo isama ang mga larawang
+ito sa iyong teksto sa pamamagitan ng "Insert Image" na buton.</p>
+
+<p><b>Pagsisingit ng mga Table <img alt="" border="0" hspace="10" src="lib/editor/images/insert_table.gif" /></b></p>
+
+<p style="margin-left: 3em">Upang malagyan ng layout ang teksto mo, maaari mong gamitin ang
+"Insert Tables" na buton sa toolbar.</p>
+
+<p><b>Pagsisingit ng mga Link <img alt="" border="0" hspace="10" src="lib/editor/images/ed_link.gif" /> </b></p>
+
+<p style="margin-left: 3em">Para makagawa ka ng bagong link, itype muna ang teksto na gusto mong
+maging link.  Pagkatapos ay iselect ito at iklik ang link na buton sa
+toolbar.  Itype ang URL na gusto mong malink dito at yari na!</p>
+
+<p><b>Pagsisingit ng mga smiley (emoticon) <img alt="" border="0" hspace="10" src="pix/s/smiley.gif" width="15" height="15" /></b></p>
+
+<p style="margin-left: 3em">Para maembed ang mga maliliit na icong ito sa teksto mo, iklik ang
+smiley icon sa toolbar.  May lilitaw na dialog na puwede mong pagpilian
+ng alinman sa sumusunod na smiley icon. (O kaya'y, itype mo na lang nang
+diretsa ang katumbas nitong code sa teksto mo at makukumberte ito kapag
+idinispley na ang teksto).</p>
+
+    <table style="margin-left: 3em" border="1">
+      <tr valign="top">
+        <td>
+        <table border="0" align="center" cellpadding="10">
+          <tr>
+            <td><img alt="" border="0" hspace="10" src="pix/s/smiley.gif" width="15" height="15" /></td>
+            <td>ngiti</td>
+            <td nowrap="nowrap" style="font-family: Courier">:-)</td>
+          </tr>
+          <tr>
+            <td><img alt="" border="0" hspace="10" src="pix/s/biggrin.gif" width="15" height="15" /></td>
+            <td>ngisi</td>
+            <td nowrap="nowrap" style="font-family: Courier">:-D</td>
+          </tr>
+          <tr>
+            <td><img alt="" border="0" hspace="10" src="pix/s/wink.gif" width="15" height="15" /></td>
+            <td>kindat</td>
+            <td nowrap="nowrap" style="font-family: Courier">;-)</td>
+          </tr>
+          <tr>
+            <td><img alt="" border="0" hspace="10" src="pix/s/mixed.gif" width="15" height="15" /></td>
+            <td>alanganin</td>
+            <td nowrap="nowrap" style="font-family: Courier">:-/</td>
+          </tr>
+            <tr>
+              <td><img alt="" border="0" hspace="10" src="pix/s/thoughtful.gif" width="15" height="15" /></td>
+              <td>nag-iisip</td>
+              <td nowrap="nowrap" style="font-family: Courier">V-. </td>
+            </tr>
+          <tr>
+            <td><img alt="" border="0" hspace="10" src="pix/s/tongueout.gif" width="15" height="15" /></td>
+            <td>belat</td>
+            <td nowrap="nowrap" style="font-family: Courier">:-P</td>
+         </tr>
+          <tr>
+            <td><img alt="" border="0" hspace="10" src="pix/s/cool.gif" width="15" height="15" /></td>
+            <td>kool</td>
+            <td nowrap="nowrap" style="font-family: Courier">B-)</td>
+          </tr>
+            <tr>
+              <td><img alt="" border="0" hspace="10" src="pix/s/approve.gif" width="15" height="15" /></td>
+              <td>aprub</td>
+              <td nowrap="nowrap" style="font-family: Courier">^-)</td>
+            </tr>
+            <tr>
+              <td><img alt="" border="0" hspace="10" src="pix/s/wideeyes.gif" width="15" height="15" /></td>
+              <td>nandidilat</td>
+              <td nowrap="nowrap" style="font-family: Courier">8-)</td>
+            </tr>
+            <tr>
+              <td><img alt="" border="0" hspace="10" src="pix/s/surprise.gif" width="15" height="15" /></td>
+              <td>nagulat</td>
+              <td nowrap="nowrap" style="font-family: Courier">8-o</td>
+            </tr>
+        </table>
+        </td>
+        <td>
+        <table border="0" align="center" cellpadding="10">
+            <tr>
+              <td><img alt="" border="0" hspace="10" src="pix/s/sad.gif" width="15" height="15" /></td>
+              <td>malungkot</td>
+              <td nowrap="nowrap" style="font-family: Courier">:-(</td>
+            </tr>
+            <tr>
+              <td><img alt="" border="0" hspace="10" src="pix/s/shy.gif" width="15" height="15" /></td>
+              <td>nahihiya</td>
+              <td nowrap="nowrap" style="font-family: Courier">8-.</td>
+            </tr>
+          <tr>
+            <td><img alt="" border="0" hspace="10" src="pix/s/blush.gif" width="15" height="15" /></td>
+            <td>namumula</td>
+            <td nowrap="nowrap" style="font-family: Courier">:-I</td>
+          </tr>
+            <tr>
+              <td><img alt="" border="0" hspace="10" src="pix/s/kiss.gif" width="15" height="15" /></td>
+              <td>halik</td>
+              <td nowrap="nowrap" style="font-family: Courier">:-X</td>
+            </tr>
+          <tr>
+            <td><img alt="" border="0" hspace="10" src="pix/s/clown.gif" width="15" height="15" /></td>
+            <td>payaso</td>
+            <td nowrap="nowrap" style="font-family: Courier">:o)</td>
+          </tr>
+          <tr>
+            <td><img alt="" border="0" hspace="10" src="pix/s/blackeye.gif" width="15" height="15" /></td>
+            <td>black eye</td>
+            <td nowrap="nowrap" style="font-family: Courier">P-|</td>
+          </tr>
+            <tr>
+              <td><img alt="" border="0" hspace="10" src="pix/s/angry.gif" width="15" height="15" /></td>
+              <td>galit</td>
+              <td nowrap="nowrap" style="font-family: Courier">8-[</td>
+            </tr>
+            <tr>
+              <td><img alt="" border="0" hspace="10" src="pix/s/dead.gif" width="15" height="15" /></td>
+              <td>patay</td>
+              <td nowrap="nowrap" style="font-family: Courier">xx-P</td>
+            </tr>
+            <tr>
+              <td><img alt="" border="0" hspace="10" src="pix/s/sleepy.gif" width="15" height="15" /></td>
+              <td>inaantok</td>
+              <td nowrap="nowrap" style="font-family: Courier">|-.</td>
+            </tr>
+          <tr>
+            <td><img alt="" border="0" hspace="10" src="pix/s/evil.gif" width="15" height="15" /></td>
+            <td>may masamang iniisip</td>
+            <td nowrap="nowrap" style="font-family: Courier">}-]</td>
+          </tr>
+        </table>
+	</td>
+     </tr>
+    </table>

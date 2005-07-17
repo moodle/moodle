@@ -1,0 +1,313 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>Gabay sa pagsasalin ng Moodle</title>
+  <link rel="stylesheet" href="docstyles.css" type="TEXT/CSS">
+  <meta http-equiv="Content-Type" content="text/html;
+charset=iso-8859-15" />
+</head>
+
+<body>
+
+<h1>Gabay sa Pagsasalin ng Moodle</h1>
+
+<p>Hindi mahirap ang pagsasalin ng Moodle, magkagayonman mabuti na ring
+matutunan natin ang ilang bagay bago ka magsimula.
+</p>
+
+<p>&nbsp;</p>
+
+<h2>Ang istruktura ng isang Moodle language pack</h2>
+
+<p style="margin-left: 40px;">Ang lahat ng Moodle language pack ay nasa
+<i>lang</i> na direktoryo.  Sa loob ng direktoryong ito ang bawat wika
+ay nasa isang direktoryo na ang pangalan ay katulad ng maikling pangalan
+ng wika (tg, en, fr, nl, es ...). </p>
+
+<p style="margin-left: 40px;">Lahat ng pangunahing file ay nasa folder
+na ito, na ang mga pangalan ay may .php na extension 
+(eg moodle.php, resource.php atbp).
+&nbsp; Naglalaman ng maiikling parirala ang bawat file na ito na ang
+karaniwang tawag ay "<span style="font-style: italic;">string</span>". 
+</p>
+
+<p style="margin-left: 40px;">Maaari ring may mga folder itong
+naglalaman ng mga .html web pages:
+</p>
+
+<ul style="margin-left: 40px;">
+
+<li><strong>help</strong>: naglalaman ng 
+
+mga context-sensitive help file na lumilitaw kapag ikinlik mo ang mga
+help icon sa Moodle </li><li><strong>docs</strong>: 
+na naglalaman ng mga pahina ng batayang dokumentasyon (tulad nitong
+binabasa mo!)<br />
+</li>
+</ul>
+
+<p>&nbsp;</p>
+
+<h2>Paglikha ng isang ganap na bagong pakete ng wika</h2>
+
+<p style="margin-left: 40px;">Kung hindi pa sinusuportahan ng Moodle ang
+wika ninyo, o kung gusto mo lamang ng ilang pasadyang pagbabago sa
+interface ng site mo, puwede kang magsimula ng bagong pagsasalin.
+</p>
+
+<p style="margin-left: 40px;">Ang kailangan mo lang gawin ay lumikha ng
+isang bagong folder sa <i>lang</i> directory na ang pangalan ay ang 2-titik na
+code ng wika mo.  Makikita mo ang mga istandard na code na ito sa
+lib/languages.php.  Kung gumagawa ka ng lokal na variation ng isa pang
+wika, gamitin mo ang code ng wikang yaon nang may underscore at isang
+makabuluhang dalawang titik na extension (e.g. <span style="font-style:
+italic;">pt </span>para sa Portuges at <span style="font-style:
+italic;">pt_br</span> para sa Brasilian na variation ng Portuges na
+pakete ng wika).&nbsp; Kung gumagawa ka ng Unicode na bersiyon idagdag
+mo ang <span style="font-weight: bold;">_utf8</span> sa may dulo (eg
+<span style="font-style: italic;">sr_utf8</span>).<br />
+</p>
+
+<p style="margin-left: 40px;">Pagkatapos, likhain mo sa bago mong folder ng wika ang file an 
+&quot;moodle.php&quot;, na naglalaman ng mga sumusunod na linya:<br /><br />
+<code>
+&lt;?PHP <br />
+$string['thischarset'] = 'iso-8859-1';<br />
+$string['thisdirection'] = 'ltr';<br />
+$string['thislanguage'] = 'new language pack';<br />
+?>
+</code>
+<br /><br />
+
+o kopyahin mo ang moodle.php
+mula sa ibang wika, sa bago mong direktoryo.&nbsp; Ang nasa "en" na
+folder ang pinakamaigi pero hindi na ito mahalaga dahil babaguhin mo rin
+naman.  Ang paglikha ng sarili mong moodle.php ay may bentahe na magsisimula
+ka sa isang kumpletong blangkong pakete ng wika.
+<br />
+</p>
+
+<p style="margin-left: 40px;">Handa ka nang magsimulang maginsert ng mga
+bagong string sa pamamagitan ng pag-edit ng wika mo...tingnan sa ibaba
+ang mga detalye nito.
+</p>
+
+<p style="margin-left: 40px;">Para sa isang bagong pakete ng wika, ang
+kauna-unahan mong kailangang gawin ay editin ang string na maypangalang
+"thischarset" sa moodle.php.  Kailangan nitong magkaroon ng balidong web
+character set para sa wika mo.  Matapos mong mabago ang string na ito,
+isave mo ang moodle.php file, tapos ay  
+<span style="font-weight: bold;">ireload mo ang pahina</span>. Puwede 
+mo nang ituloy ang pagbabago sa iba pang string. 
+</p>
+
+<p>&nbsp;</p>
+
+<h2>Pag-edit ng tapos nang gawin na pakete ng wika</h2>
+
+<h3 style="margin-left: 40px;">Paggawa ng maliliit na pasadyang
+pagbabago<br />
+</h3>
+
+<p style="margin-left: 80px;">Kung gusto mo lamang na magbago ng ilang
+bagay sa interface para sumunod ito sa estilong gusto mo, 
+<span style="font-weight: bold;">huwag mong editin ang isa sa mga
+istandard na pakete ng wika </span>.&nbsp; Dahil pag ginawa mo ito,
+mapapalitan lamang ito kapag nag-upgrade ka na sa bagong Moodle.<br />
+</p>
+<p style="margin-left: 80px;">Sa halip ay gamitin mo ang mga
+instruksiyon sa itaas para sa paggawa ng bagong pakete ng wika, at iset
+ang pinagmulang wika (sa moodle.php) na wikang pinakahawig sa iyo.&nbsp;
+Halimbawa, maaring gamitin ang pangalang "<span style="font-style:
+italic;">en_local</span>" para sa isang lokal na ingles na bersiyon, at
+ang pinagmulang wika ay "<span style="font-style: italic;">en</span>" o
+"<span style="font-style: italic;">en_us</span>".
+</p>
+
+<p style="margin-left: 80px;">Tandaan na kung gusto mong makita ng lahat
+sa site mo ang bagong paketeng ito, kailangan mong iselect ito na wika
+ng site at irestrict ang mga wikang mapagpipilian sa 
+<span style="font-weight: bold;">Admin &gt;&gt; Pagsasaayos &gt;&gt;
+Baryabol</span>.
+<br />
+<br />
+</p>
+
+<h3 style="margin-left: 40px;">
+Pagsasalin ng mga interface language file ng Moodle (ang mga "string" na
+file)<br />
+</h3>
+
+<ol>
+
+  <ol>
+    <li>Mag-log-on sa Moodle server mo bilang administrador.</li>
+    <li>Magpunta ka sa <span style="font-weight: bold;">Administrasyon
+&gt;&gt; Pagsasaayos &gt;&gt; Wika</span>, na siyang pahina sa
+pamamahala ng wika. </li>
+    <li>Sa pahinang ito mapipili mo ang wika mo mula sa menu, pagkatapos
+ay piliin ang "Paghambingin at Iedit ang Wika".</li>
+    <li>Makakakita ka ng mga form na maeedit mo para sa bawat file.
+Kung hindi ka makakita ng form, kailangan mong tiyakin na ang mga file
+ay masusulatan - maaring kailangan mong magbago ng mga file permission.</li>
+
+    <li>Binubuo ang mga form ng tatlong column, ang una ay ang pangalan
+ng bawat string, ang pangalawa ay ang string sa Ingles, at ang huli ay
+ang pagkakasalin sa kasalukuyang wika.</li>
+
+    <li>I-edit ang mga nawawalang string sa bawat file (nakahighlight
+ito na may kulay), huwag kalilimutan na pindutin ang "I-save ang mga
+pagbabago" na buton sa dulo ng bawat form.</li>
+
+    <li>OK lang na mag-iwan ng mga blangkong string - gagamitin na
+lamang ng Moodle ang pinagmulang wika para sa string na iyon.  Puwede
+mong i-define ang pinagmulang wika sa moodle.php, kung hindi ay Ingles
+ang palaging ginagamit na default.</li>
+
+    <li>Ang mabilis na paraan para makita ang lahat ng nawawalang string
+ay sa pamamagitan ng buton na "Tsekin ang mga nawawalang string".
+<br />
+      <br />
+    </li>
+    
+  </ol>
+</ol>
+
+<h3 style="margin-left: 40px;">Pagsasalin ng mga tulong at
+dokumentasyong file
+</h3>
+
+<p style="margin-left: 80px;">Walang pang built-in na editor sa Moodle
+para ipangsalin ng mga tulong na file, subalit hindi naman ito
+kahirapan 
+
+(Tala ng nagsalin: Mayroon na noong isinusulat ang pagsasalin 
+na ito.  Ang pangalan ng file ay langdoc.php na dapat ay nasa admin
+na folder.  Kung wala ka ng file na ito, kunin sa cvs ng
+moodle. Maglog-in bilang admin sa site mo at pumunta sa
+sitemo.org/admin/langdoc.php o sa bersiyon ng Moodle na 1.55 pataas;
+Pumunta ka sa Pagsasaayos &gt;&gt; Wikà &gt;&gt; Iedit ang mga tulong na
+dokumento.  Makakakita ka ng isang pahina na may drop down na listahan
+ng mga doks at tulong na file; at may dalawang form na textarea, ang
+nasa itaas ay ang Ingles na bersiyon ng dokumento ang ang nasa ibaba ay
+ang sa wika mo.--Roel). 
+
+Mahalaga na gamitin ang <span style="font-weight: bold;">en</span> na pakete ng wika
+bilang sangguniang wika. Kopyahin ang tulong na file mula sa en na
+pakete ng wika at i-paste ito sa katugma nitong lokasyon sa iyong pakete
+ng wika.  Tapos ay gumamit ng plain text na editor upang maisalin ang
+file; tiyakin na wala kayong mababagong code sa file (kalimitan ay
+walang code, mga HTML-tag lamang).   (HUWAG GAGAMIT NG WORDPROCESSOR sa
+pagsusulat ng mga tulong na file dahil nagdadag ng basura ang mga
+program na ito sa file).
+</p>
+
+<p style="margin-left: 80px;">Pag-ingatan na isulat ang mga helpfile sa 
+anyong XHTML-compliant. Sa madaling salita ay:</p>
+<ul style="margin-left: 80px;">
+  <li>Dapat ay sarado lahat ng tag: <span style="color:rgb(255, 0, 0);" >&lt;p&gt;</span>lalala<span style="color:rgb(255, 0, 0);" >&lt;/p&gt;</span></li>
+  <li>Dapat ay nakanest ang lahat ng elemento: <span style="color:rgb(255, 0, 0);">&lt;p&gt;</span> lalala <span style="color:rgb(0, 0, 255);" >&lt;em&gt;</span>lalala<span style="color:rgb(0, 0, 255);" >&lt;/em&gt;</span> <span style="color:rgb(255, 0, 0);" >&lt;/p&gt;</span></li>
+  <li>Dapat ay maliit ang mga titik ng lahat ng elemento at attribute</li>
+  <li>Dapat ay isulat ng buo at nasa loob ng panipi ang lahat ng attribute: <span style="color:rgb(255, 0, 0);" >&lt;p align=&quot;right&quot;&gt;</span> lalala &lt;/p&gt;</li>
+  <li>Dapat ay magtapos ang mga walang laman na elemento sa  /&gt;: <span style="color:rgb(255, 0, 0);" >&lt;br /&gt; &lt;hr /&gt;</span>. 
+Dapat ay magdagdag ka ng ekstrang espasyo sa unahan ng &quot;/&quot; na simbolo.</li>
+  <li>Dapat ay may alt=&quot;&quot; (puwedeng walang laman) ang  &lt;img at tulad ng iba pang walang laman na elemento ay dapat magtapos sa espasyo at  /&gt; tulad ng <span style="color:rgb(255, 0, 0);" >&lt;img alt="" src="picture.gif" /></span></li>
+  <li>Ang <span style="color:rgb(255, 0, 0);" >&lt;?=</span> at <span style="color:rgb(255, 0, 0);" >&lt;?</span> ay dapat na maging <span style="color:rgb(255, 0, 0);" >&lt;?php</span></li>
+
+  <li>Dapat ay walang ANUMANG font tag. <span style="color:rgb(255, 0, 0);" > &lt;p&gt;&lt;em&gt; &lt;h1&gt; &lt;h2&gt;</span> atbp. ay dapat sumapat na para sa mga pakete ng wika ...</li>
+  <li>Ang pangalan ng wika sa languagepack ($string['thislanguage'] sa moodle.php) ay dapat na gumamit ng Unicode Numeric Character References (NCR) hangga't maaari, dahil pinapahintulutan nitong mabasa ang pangalan sa ANUMANG encoding context (tingnan ang paketeng Tsino halimbawa).</li>
+
+</ul>
+<p style="margin-left: 80px;">Hindi nangangailangan ang mga file sa help 
+folder ng panimula at pangwakas na mga tag na doc type, html, body, 
+at head - ang mga tag na ito ay kasama na sa help.php.  Bahala na ang 
+script sa pagsasaayos ng mga pahina.  Nangangahulugan din na walang 
+gaanong puwang para sa pagiging malikhain sa HTML!  Pilitin po ninyong 
+gumaya sa sa halimbawang Ingles.</p>
+
+<p style="margin-left: 80px;">Dapat maging ganap na XHTML compliant ang mga file sa docs na folder, kasama ang doc type, header atbp.</p>
+ 
+ 
+<p style="margin-left: 80px;">Ang pagklik ng "Magtsek ng mga nawawalang
+string" sa language administration screen ay magpapakita rin sa iyo ng
+mga file na wala ka.  Kung may kulang kang file, gagamitin ng Moodle ang
+pinagmulang wika, kaya walang dahilan para mag-iwan ka pa ng mga kopya 
+ng tulong na file na <strong>dinaisalin</strong> sa pakete mo ng
+wika.</p>
+
+<p>&nbsp;</p>
+
+<h2>Pagpapasa ng pakete ng wika mo sa proyektong Moodle</h2>
+
+<p style="margin-left: 40px;">Ang pagbabahagi mo ng pagsasalin mo ng
+Moodle ay makakatulong sa ibang taong nagsasalita ng wika mo.
+&nbsp;&nbsp;Masasama ang wika ng interface mo sa mga susunod na bersiyon
+ng Moodle.<br />
+</p>
+
+<p style="margin-left: 40px;">I-archive lamang ang buo mong bagong
+direktoryo ng wika bilang isang <span style="font-weight:
+bold;">zip</span> file at i-email ito sa <a
+href="m&#97&#105&#108&#116&#111:tra%6es%6ca%74%69o%6e%40%6d%6f%6f%64%6c%65.org">&#116&#114a&#110&#115&#108&#97t&#105on&#64&#109o&#111&#100&#108e&#46o&#114&#103</a>.<br /> </p>
+
+<p style="margin-left: 40px;">Kokontakin ka namin para sa iba pang
+detalye.<br />
+</p>
+
+<p>&nbsp;</p>
+
+<p  style="margin-left: 40px;">Checklist na magagamit mo bago magcommit::</p>
+<ul type="circle" style="margin-left: 80px;">
+<li>Wala bang blangkong file?</li>
+<li>Wala bang hindi naisasalin na file o string?</li>
+<li>Hindi ba inedit ang mga help file sa pamamagitan ng wordprocessor?</li>
+<li>Laman ba ng README file ang wika, pangalan at emailadress ng 
+nagsalin?</li>
+<li>Tama ba ang language code ng foldername (tingnan ang
+moodle\lib\languages.php)?</li>
+<li>Tumatakbo ba ng walang error ang pakete ng wika sa isang 
+testsite?</li>
+<li>Kapag naglalaman ang &quot;thislanguage&quot; ng iba pang titik 
+maliban sa latin na titik, nakasulat ba ito sa NCR notation?</li>
+<li>XHTML compliant ba ang mga string at file?</li>
+</ul>
+
+<h2>Pagmementina ng isang istandard na pakete ng wika<br />
+</h2>
+
+<p style="margin-left: 40px;">Kung seryoso ka sa pagmementina ng isang
+wika sa Moodle, pinakamabuting gumamit ng <a
+href="?file=cvs.html">Moodle CVS</a> para magka-up-to-date na bersiyon
+ka ng Moodle, at madali mong mai"check in" ang mga pagbabago mo nang
+direkta sa proyektong Moodle.  Pakikontak ang <a
+href="m&#97&#105&#108&#116&#111:tra%6es%6ca%74%69o%6e%40%6d%6f%6f%64%6c%65.org">&#116&#114a&#110&#115&#108&#97t&#105on&#64&#109o&#111&#100&#108e&#46o&#114&#103</a> 
+kung kailangan mo ng tulong sa pagseset-up nito.<br />
+</p>
+
+<p style="margin-left: 40px;">Makabubuti ring sumali sa 
+<a target="_top" 
+href="http://moodle.org/mod/forum/view.php?id=43">Languages Forum</a>
+para sa mga balita at diskusyon hinggil sa mga isyung nakakaapekto sa 
+mga pagsasalin.<br \>
+</p>
+
+<p style="margin-left: 40px;">Bilang pangwakas, upang parati kang
+nakakasunod sa mga pang-araw-araw na pagbabago sa proyekto, makabubuting
+sumali sa <a href="http://sourceforge.net/mail/?group_id=30935"
+target="_top">
+CVS mailing list</a>.&nbsp; Mapapanatili nitong mas malapit ang
+pagkakasalin mo sa Ingles na teksto.
+
+<br />
+</p>
+
+<p style="margin-left: 40px;"><br />
+</p>
+
+<p align="CENTER"><font size="1"><a href="." target="_top">
+Dokumentasyon ng Moodle</a></font></p>
+
+<p align="center"><font size="1">Version: $Id$</font></p>
+
+</body></html>

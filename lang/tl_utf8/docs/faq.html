@@ -1,0 +1,476 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<title>Moodle Doks: Frequently Asked Questions (FAQ)</title>
+<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS">
+<meta http-equiv="Content-Type" content="text/html;
+charset=iso-8859-15" />
+</head>
+
+<body>
+<h1>Malimit na Itinatanong (FAQ)</h1>
+
+<p class="normaltext">Nilalaman ng pahinang ito ang mga sagot sa ilang
+tanong na malimit itanong ng mga taong nag-iinstol ng Moodle.  Kung
+sinunod mo ang <a href="./?file=install.html">mga gabay sa pag-iinstol
+</a> nguni't nagkakaproblema pa rin kayo, itong pahinang ito marahil ang
+pinakamahusay na basahin. </p>
+
+<p class="normaltext">Kung hindi ka makakuha ng kasagutan dito, subukin
+ang <a href="http://moodle.org/mod/forum/index.php?id=5" target="_top">
+Using Moodle</a> na kurso sa moodle.org.  Magsimula sa pamamagitan ng
+pag-search sa mga forum sa pamamagitan ng ilang keyword, kung sakaling
+natalakay na ang problema mo.  Kapag wala kang nakita, ipost mo ang
+tanong mo sa angkop na forum - kadalasan ay may makakatulong sa iyo.
+</p>
+
+<p class="normaltext">Kung sinubok mo na ang ilang solusyon pero wala
+kang malutas na suliranin, at tumatakbo ang program mo sa likod ng isang
+firewall, maimumungkahi namin na tangkain mong baguhin ang kaayusan
+ng firewall mo, upang matiyak na hindi nito hinaharang ang isang
+kinakailangang function o kinakailangang komunikasyon.  Madalang
+magbunga ng problema ang mga firewall sa Moodle subali't minsan ay 
+siyang maysala sa paghina ng functionality bunga ng maling pagkaaayos
+sa setting ng firewall.
+
+<p class="normaltext">Gamitin ang listahang ito upang makalundag sa
+angkop na sagot sa ibaba:
+</p>
+
+<p class="questionlink"><a href="#filenotfound">Kapag tinatangka kong
+pasukin o tingnan ang isang file na inaplowd ko, nakakatanggap ako ng
+error na &quot;Hindi Nahanap ang File (File not Found)&quot; </a></p>
+
+<p class="questionlink"><a href="#php">PHP - nakainstol ba ito at anong
+bersiyon ang mayroon ako? </a></p>
+
+<p class="questionlink"><a href="#blankpages">Bakit blangko ang lahat ng
+pahina ko? </a></p>
+
+<p class="questionlink"><a href="#errorgetstring">Nagpapakita ng mga
+fatal na error ang mga pahina ko, tulad ng: call to undefined function:
+get_string()</a></p>
+
+<p class="questionlink"><a href="#headerssent">Bakit palagi akong
+nakakatanggap ng mga hudyat ng error hinggil sa &quot;headers already
+sent&quot;?</a></p>
+
+<p class="questionlink"><a href="#failedopen">Palagi akong nakakatanggap
+ng ganitong error: Failed opening required
+'/web/moodle/lib/setup.php'</a></p>
+
+<p class="questionlink"><a href="#quotes">Kapag nagsulat ako ng teksto
+na may apostrophe (') o quote (&quot;), nagbubunga ito ng error o
+lumilitaw na may kasamang slash </a></p>
+
+<p class="questionlink"><a href="#sessiontmp">Palagi akong nakakatanggap
+ng hudyat ng error hinggil sa session_start</a></p>
+
+<p class="questionlink"><a href="#fixdirroot">Kapag nagpunta ako sa
+pahinang pang-admin, sinasabihan ako na gawing blangko ang
+dirroot!</a></p>
+
+<p class="questionlink"><a href="#loginsetting">Naglalog-in ako pero
+hindi nagbabago ang log-in link.  Nakapaglog-in na ako at nakapag-ikot
+ng maalwan. </a></p>
+
+<p class="questionlink"><a href="#resource1">Kapag nagtangka akong
+magdagdag ng rekurso nakakatanggap ako ng hudyat ng error. </a></p>
+
+<p class="questionlink"><a href="#noadmin">Sa panahon ng panimulang
+proseso ng pagse-set-up, hindi ako kailanman tinanong kung nais kong
+lumikha ng admin account! </a></p>
+
+<p class="questionlink"><a href="#nologin">Hindi ako makapag-log-in -
+nananatili lamang ako sa log-in screen. </a></p>
+
+<p class="questionlink"><a href="#backup">Paano ko iba-back-up ang
+Moodle site ko?</a></p>
+
+<p class="questionlink"><a href="#locale">Bakit hindi tama ang
+ipinapakitang oras at araw ng ng Moodle site ko?
+</a></p>
+
+<p class="questionlink"><a href="#cron">Hindi nagpapadala ng kopya ng
+email ang mga talakayan ko </a></p>
+
+<p class="questionlink">&nbsp;</p>
+
+<h3><a name="filenotfound"></a>Kapag tinatangka kong pasukin o tingnan
+ang isang file na inaplowd ko, nakakatanggap ako ng error na &quot;Hindi
+Nahanap ang File (File not Found)&quot; </h3>
+
+<p class="answer">Halimbawa: Hindi Nahanap: Ang hiniling na URL (Not
+Found: The requested URL) /moodle/file.php/2/myfile.jpg ay hindi nahanap
+sa server na ito. </p>
+
+<p class="answer">Kailangang isaayos ang web server mo na pahintulutan
+ang bahagi ng URL na kasunod ng isang pangalan ng script na maipasa nang
+direkta sa script.  Kadalasan ay buhay na ito sa Apache 1, ngunit
+karaniwang patay sa Apache 2 bilang default.  Upang mabuhay ito, idagdag
+ang linyang ito sa httpd.conf mo, o sa isang .htaccess na file sa iyong
+lokal na direktoryo (tingnan ang <a
+href="./?file=install.html#webserver">Dokumentasyon sa pag-install </a>
+para sa dagdag na detalye ): </p>
+
+<p class="answercode"><b>AcceptPathInfo</b> on</p>
+
+<p class="answer">Tandaan, na gagana LAMANG ito sa Apache versions 2.x.
+</p>
+
+<p class="answer">Kung hindi ka gumagamit ng Apache 2 at nananatili ang
+suliraning ito (malabong mangyari) maaari mong i-switch ang Moodle na
+gumamit ng alternatibong paraan.  Ang kahinaan nito ay may mga bagay na
+hindi magagawa ang mga user mo, at di ka makagagamit ng mga relatibong
+link sa loob ng mga rekursong HTML. </p>
+
+<p class="answer">Para magamit ang alternatibong paraang ito: mag-log-in
+bilang Admin, pumunta sa "Isaayos ang mga Baryabol (Configure
+Variables)" na pahina at baguhin ang setting para sa
+"<b>slasharguments</b>". Maaari mo na ngayong pasukin ang mga inaplowd
+mong file. </p>
+
+<p class="answer">&nbsp;</p>
+
+  <h3><a name="php"></a>PHP - nakainstol ba ito at anong bersiyon ang
+mayroon ako ?</h3>
+
+  <p class="answer">Gumawa ng bagong file sa iyong web site na may
+pangalang info.php, na naglalaman ng sumusunod na teksto, at tawagin ito
+mula sa iyong browser: </p>
+
+  <p class="answercode">&lt;?PHP phpinfo() ?&gt;</p>
+
+<p class="answer">Kung walang mangyari, samakatuwid wala kang PHP na
+nakainstol.  Tingnan ang mga doks para sa pag-instol para sa ilang
+impormasyon kung saan puwede itong ma-download para sa iyong kompyuter.
+</p>
+
+<p class="answer">&nbsp;</p>
+
+<h3><a name="blankpages"></a>Bakit blangko ang lahat ng pahina ko? </h3>
+
+<p class="answer">Tingnan ang dirroot na baryabol sa config.php.
+Kailangan mong gumamit ng kumpletong, absolute na pathname, eg: </p>
+
+<p class="answercode"> $CFG->dirroot =
+"d:\inetpub\sites\www.sitemo.com\web\moodle";</p>
+
+<p>&nbsp; </p>
+
+<p class="answer">Para sa Redhat Linux na plataporma pakitingnan ang: <a
+href="http://moodle.org/doc/?file=installamp.html">Redhat Linux</a></p>
+
+<p>&nbsp; </p>
+
+<h3><a name="errorgetstring"></a>Naghuhudyat ng mga fatal na error ang
+mga pahina ko, tulad ng: call to undefined function: get_string() </h3>
+
+<p class="answer">Kung makakita ka ng mga error na tulad ng: </p>
+
+<p class="answercode">Parse error: parse error, unexpected T_VARIABLE in
+c:\program 
+
+files\easyphp\www\moodle\config.php on line 94 <br /> Fatal error: Call
+to undefined function: get_string() in c:\program
+files\easyphp\www\moodle\mod\resource\lib.php on line 11</p>
+
+<p class="answer">malamang ay may nakaligtaan kang tuldok-kuwit
+(semi-colon) o dulong panipi (quote) sa isang linya sa config.php
+(bago dumating ang ika-94 na linya).</p>
+
+<p class="answer">Ang isa pang dahilan ay maaaring binuksan mo ang
+config.php sa isang program na tulad ng Word upang ma-edit ito, tapos ay
+isinave ito bilang HTML na web page, sa halip na text file. </p>
+
+<p>&nbsp;</p>
+
+<h3><a name="headerssent"></a>Bakit palagi akong nakakatanggap ng mga
+hudyat ng error hinggil sa &quot;headers already sent&quot;? </h3>
+
+<p class="answer">Kapag nakakita ka ng mga error na tulad nito: </p>
+
+<p class="answercode">Warning: Cannot add header information - headers
+already sent by (output started at /webs/moodle/config.php:87) in
+/webs/moodle/lib/moodlelib.php on line 1322 </p> 
+
+<p class="answercode"> Warning: Cannot add header information - headers
+already sent by (output started at /webs/moodle/config.php:87) in
+/webs/moodle/lib/moodlelib.php on line 1323 </p>
+
+<p class="answercode"> Warning: Cannot add header information - headers
+already sent by (output started at /webs/moodle/config.php:87) in
+/webs/moodle/login/index.php on line 54 </p>
+
+<p class="answer">May mga blankong linya o espasyo ka pagkatapos ng
+huling ?> sa config.php file mo.  Minsan idinadagdag ito ng mga text
+editor - halimbawa ng Notepad sa Windows - kaya't maaaring kailangan
+mong gumamit ng ibang text editor para matanggal ang mga espasyo o
+blankong linyang ito nang ganap. </p>
+
+<p class="answer">&nbsp;</p>
+
+<h3><a name="failedopen"></a>Palagi akong nakakatanggap ng ganitong
+error: Failed opening required '/web/moodle/lib/setup.php' </h3>
+
+<p class="answer">Sa config.php mo, ang setting na ginamit mo para sa
+dirroot na baryabol ay dapat na <strong>kumpletong path mula sa root ng
+hard drive ng server mo </strong>.</p>
+
+<p class="answer">Minsan, ginagamit lamang ng mga tao ang path nila mula
+sa home na direktoryo, o relatibong path na nakaturo sa root ng
+direktoryo ng web server. </p>
+
+<p class="answer">&nbsp;</p>
+
+<h3><a name="quotes" id="quotes"></a>Kapag nagsulat ako ng teksto na may
+apostrophe (') o quote (&quot;), nagbubunga ito ng error o lumilitaw na
+may kasamang slash </h3>
+
+<p class="answer">Ang mga problemang bunga ng mga apostrophe ay dahil sa
+mga maling setting ng &quot;magic quotes&quot;. Kailangan ng Moodle ang
+mga sumusunod na setting (na siyang karaniwang default Moodle requires
+the following settings (which :</p>
+
+<p class="answercode">magic_quotes_gpc = On<br />
+
+  magic_quotes_runtime = Off</p>
+
+<p class="answer">Tingnan ang seksiyon hinggil sa <a
+href="./?file=install.html#webserver">pagsasaayos ng webserver </a> sa
+mga doks sa Pag-iinstol para sa dagdag na detalye. </p>
+
+<p class="answer">&nbsp;</p>
+
+<h3><a name="sessiontmp"></a>Palagi akong nakakatanggap ng hudyat ng
+error hinggil sa session_start </h3>
+
+<p class="answer">Kapag nakakita kayo ng ganitong mga error: </p>
+
+<p class="answercode">Warning: session_start() [function.session-start]:
+open(/tmp\sess_d40f380d37d431fc1516e9a895ad9ce0, O_RDWR) failed: No such
+file or directory (2) in G:\web\moodle\lib\setup.php on line 123</p>
+
+<p class="answercode">Warning: session_start() [function.session-start]:
+open(/tmp\sess_d40f380d37d431fc1516e9a895ad9ce0, O_RDWR) failed: No such
+file or directory (2) in G:\web\moodle\lib\setup.php on line 123</p>
+
+<p class="answercode">Warning: session_start() [function.session-start]:
+Cannot send session cache limiter - headers already sent (output started
+at G:\web\moodle\lib\setup.php:1) in G:\web\moodle\lib\setup.php on line
+123</p>
+
+<p class="answer">...bunga ito ng pagkabigo ng PHP na i-save ang mga
+"session" file sa hard disk mo (sa isang direktoryo na may pangalang
+/tmp).  Ang kadalasang dahilan ay WALA kang direktoryong /tmp sa
+kompyuter mo.  Kalimitan itong kaso sa mga instalasyon sa Windows.
+
+<p class="answer">Ang solusyon ay ayusin ang PHP setting para sa path na
+ito na tumuro sa isang tunay na direktoryo.  Maaari mo itong gawin sa
+iyong php.ini file: </p>
+
+<p class="answercode">session.save_path = C:\temp</p>
+
+<p class="answer">o kaya'y sa isang .htaccess file sa iyong punong
+direktoryo ng moodle: </p>
+
+<p class="answercode">php_value session.save_path "/home/moodle/sessions"</p>
+
+<p class="answercode">&nbsp;</p>
+
+<h3><a name="fixdirroot"></a>Kapag nagpunta ako sa pahinang pang-admin,
+sinasabihan ako na gawing blangko ang dirroot! </h3>
+
+<p class="answer">Kapag nakakita ka ng error na ganito sa Moodle
+1.0.9:</p>
+
+<table class="generalbox" cellspacing="0" cellpadding="5" align="center"
+border="0">
+
+<tbody>
+
+<tr>
+
+<td bgcolor=#ffbbbb>Paki-ayos ang setting mo sa config.php: 
+
+<p>Ang nakasulat sa iyo ay:
+
+<p>$CFG-&gt;dirroot = "/home/users/fred/public_html/moodle"; 
+
+<p>nguni't ang dapat na nakasulat ay:
+
+<p>$CFG-&gt;dirroot = "";</p></td></tr></tbody></table>
+
+<p class="answer">samakatuwid ay nakatagpo ka ng isang maliit na bug na
+nangyayari sa ilang server.  Nagmumula ang suliranin sa mekanismo ng 
+error-checking, hindi sa aktuwal mong path.  Upang maayos ito, hanapin
+ang linya (ika-66 na linya) sa file na admin/index.php:</p>
+
+<p class="answercode">if ($dirroot != $CFG->dirroot) {</p>
+
+<p class="answer">at baguhin ito nang paganito: :</p>
+
+<p class="answercode">if (!empty($dirroot) and $dirroot != $CFG->dirroot) {</p>
+
+<p class="answercode">&nbsp;</p>
+
+<h3><a name="loginsetting"></a>Naglalog-in ako pero hindi lumalabas na
+nakalog-in nga ako.  Nakapaglog-in na ako at nakapag-ikot ng maalwan.
+</h3>
+
+<p class="answer">Tiyakin na ang URL sa iyong $CFG->wwwroot setting ay
+kapareho nang eksakto ng aktuwal mong ginagamit sa pagpasok sa site mo.
+</p>
+
+<p class="answer">&nbsp;</p>
+
+<h3><a name="resource1"></a>Kapag nagtangka akong magdagdag ng rekurso
+nakakatanggap ako ng hudyat ng error. </h3>
+
+<p class="answer">Kung gumagamit ka ng Apache, malamang na ang setting
+mo sa config.php para sa $CFG->wwwroot ay kakaiba sa aktuwal na URL mong
+ginagamit sa pagpasok sa site.  Tangkain mo ring patayin ang
+"<b>secureforms</b>" sa mga setting na pang-admin. </p>
+
+<p class="answer">&nbsp;</p>
+
+<h3><a name="noadmin"></a>Sa panahon ng panimulang proseso ng
+pagse-set-up, hindi ako kailanman tinanong kung nais kong lumikha ng
+admin account! </h3>
+
+<p class="answer">Kilala itong bug sa bersiyon ng Moodle na hanggang
+1.0.9, na naayos na sa pangunahing code at sa bersiyon 1.1. </p>
+
+<p class="answer">Hindi nito naaapektuhan ang lahat ng tao, nangyayari
+lamang ito kapag ang taong nag-iinstol sa Moodle ay may cookie sa
+browser nila na mula sa ibang program sa site ding yaon, na may
+pangalang "user", "admin", o "teacher". </p>
+
+<p class="answer">Ang ilang madaliang solusyon ay ang pagbura ng mga
+cookie'ng yaon sa browser mo bago mag-instol, paggamit ng ibang browser,
+o pag-edit ng file na moodle/admin/user.php para makapagsingit ng mga
+linya na malapit sa itaas :</p>
+
+<p class="answercode">unset($user);<br />unset($admin);<br
+/>unset($teacher);</p>
+
+<p class="answer">Matapos mong magawa ang alinman sa mga solusyong ito,
+makabubuting i-drop mo ang lahat ng table mo sa database mo at muling
+mag-instol mula sa simula. </p>
+
+<p class="answer">&nbsp;</p>
+
+<h3><a name="nologin"></a>Hindi ako makapag-log-in - nananatili lamang
+ako sa log-in screen. </h3>
+
+<p class="answer">Ang pinakakaraniwang dahilan nito ay may firewall ang
+kompyuter mo (hindi ang Moodle server) na nagtatanggal ng referrer
+information mula sa browser.  Narito ang ilang instruksiyon para sa
+pag-ayos ng mga <a
+href="http://service1.symantec.com/SUPPORT/nip.nsf/46f26a2d6dafb0a788256bc7005c3fa3/b9b47ad7eddd343b88256c6b006a85a8?OpenDocument&src=bar_sch_nam">Norton firewall products</a>.</p>
+
+<p class="answer">Puwede rin itong ayusin ng server admin para sa lahat,
+sa pamamagitan ng pag-edit ng pahinang pang-configuration ng Moodle at
+paggawang "Hindi (No)" sa baryabol na "<b>secureforms</b>" .</p>
+
+<p class="answer">Ang isa pang posibleng dahilan ng suliraning ito ay
+hindi nakaayos ng mabuti ang sessions sa server.  Puwede mong testingin
+ito sa pamamagitan ng pagtawag sa script na
+http://yourserver/moodle/lib/session-test.php.</p>
+
+<p class="answer">&nbsp;</p>
+
+<h3><a name="backup"></a>Paano ko iba-back-up ang Moodle site ko? </h3>
+
+<p class="answer">May dalawang bagay na dapat mong unang kopyahin: ang
+database at ang mga inaplowd na file.  Hindi gaanong mahalaga ang mga
+script ng Moodle, dahil puwede ka namang mag-download ng bagong kopya
+kung kailanganin mo. </p>
+
+<p class="answer">Maraming paraan kung paano mag-back-up.  Narito ang
+balangkas ng isang maliit na script na maaari mong patakbuhin sa Unix
+upang mai-backup ang database (mabuting magpatakbo ng ganitong script
+nang araw-araw sa pamamagitan ng cron task) </p>
+
+<p class="answercode">cd /my/backup/directory</p>
+
+<p class="answercode">mv moodle-database.sql.gz moodle-database-old.sql.gz</p>
+
+<p class="answercode">mysqldump -h example.com -u myusername --password=mypassword -C -Q -e -a mydatabasename > moodle-database.sql</p>
+
+<p class="answercode">gzip moodle-database.sql</p>
+
+<p class="answer">For the files, you can use rsync regularly to copy only the changed files to another host:</p>
+
+<p class="answercode">rsync -auvtz --delete -e ssh mysshusername@example.com:/my/server/directory 
+
+  /my/backup/directory/</p>
+
+<p class="answercode">&nbsp;</p>
+
+<h3><a name="locale"></a>Bakit hindi tama ang ipinapakitang oras at araw
+ng ng Moodle site ko? </h3>
+
+<p class="answer">Kailangan ng bawat wika ng isang partikular na code ng
+wika (na tinatawag na (called a <strong>locale</strong> code) upang
+makapagpakita ng mga wastong petsa.  Naglalaman ng mga default na
+standard code ang mga pakete ng wika, pero minsan ay hindi ito gumagana
+sa mga server na Windows. </p>
+
+<p class="answer">Maaari mong makita ang mga wastong locale code para sa
+Windows sa dalawang pahinang ito: <a
+href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vclib/html/_crt_language_strings.asp" target="_blank">Mga code ng Wika</a> at <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vclib/html/_crt_country_strings.asp" target="_blank">Mga code ng Bansa/rehiyon </a>.(eg &quot;esp_esp&quot; para sa kastila)</p>
+
+<p class="answer">Maaaring ipasok ang mga bagong locale code na ito sa
+Admin -&gt; Configure -&gt; Variables na pahina, kung saan mananaig ito
+sa nasa kasalukuyang piniling pakete ng wika. .</p>
+
+<p class="answer">&nbsp;</p>
+
+<h3><a name="cron"></a>Hindi nagpapadala ng kopya ng email ang mga
+talakayan ko </h3>
+
+<p class="answer"><strong>Kailangan</strong> mong iayos ang cron nang
+wasto kung gusto mong magpadala ng mga awtomatikong email ang Moodle
+mula sa mga talakayan, takdang-aralin atbp.  Gumagawa rin ang
+prosesong ito ng ilang gawaing paglilinis tulad ng pagbura ng lumang
+dinakukumpirmang user, pagsipa sa mga nakaenrol na dating mag-aaral at
+gayon nang gayon. </p>
+
+<p class="answer">Kailangan mong magsaayos ng isang proseso na regular
+na tatawag sa 
+
+  script http://yoursite/admin/cron.php. Pakitingnan ang <a
+href="./?file=install.html#cron">seksiyon hinggil sa cron sa
+dokumentasyon tungkol sa Pag-iinstol </a>.</p>
+
+<p class="answer">Tip: Subukin ninyo ang default na setting sa pahina ng
+mga baryabol ng Moodle . Bayaan ninyong blangko ang smtphost.
+
+Ito ay magiging katanggap-tanggap para sa mayorya ng user.
+
+<p class="answer">&nbsp;
+<p class="answer">&nbsp;
+
+<hr />
+
+<p align="center" class="normaltext"><a
+href='ma&#105&#108t&#111:ma%72%74in@%6d%6fo%64%6c%65.o%72g'
+title='mar&#116&#105n@&#109oo&#100&#108&#101&#46&#111&#114g'>
+Magmungkahi ng bagong FAQ
+</a> (isama ang sagot!)</p>
+<hr />
+<p align="right"><strong><em>
+Salamat kay 
+John Eyre para sa pagtulong sa pagmementina ng FAQ ito.
+</em></strong></p>
+
+<p align="center"><font size="1"><a href="." target="_top">
+Dokumentasyon ng Moodle</a></font></p>
+<p align="center"><font size="1">Version: $Id: faq.html,v 1.6 2003/03/30 13:54:28 
+  moodler Exp $</font></p>
+
+</body>
+</html>

@@ -1,0 +1,117 @@
+<p style="text-align: center"><b>Kinuwentang tanong</b></p>
+<p>Nagbibigay ang Kinuwentang tanong ng paraan ng paglikha ng indibidwal na denumerong tanong sa pamamagitan ng paggamit ng wildcard na papalitan ng mga indibidwal na halaga kapag kinukuha na ang pagsusulit.</p>
+<p>Nasa ibaba ang pinaliit na tanaw sa punong pahina na pang-edit, na may ilang halimbawang input: </p>
+
+<table><tbody>
+<tr valign="top">
+    <td align="right"><b>Tanong:</b>
+    </td>
+<td>
+        <textarea id="questiontext" name="questiontext" rows="5" cols="40" wrap="virtual">Ilan ang  {a} + {b} ?</textarea>
+</td>
+</tr>
+<tr valign="top">
+    <td align="right"><b>Larawan na ipapakita:</b></td>
+    <td>
+    <select name="image"><option value="" selected="selected">Walâ</option><option value="grevture.gif">grevture.gif</option></select>
+    </td>
+</tr>
+
+<tr valign="top">
+<td align="right"><b>Pormula ng Wastong Sagot:</b></td>
+    <td>
+    <input align="left" type="text" id="formula0" name="answer[]" size="20" value="{a} + {b}" />&nbsp;&nbsp;
+    <input type="hidden" name="fraction[]" value="1.0" />
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right"><b>Tolerance:</b></td>
+    <td>
+    <input align="left" type="text" id="tolerance0" name="tolerance[]" size="15" value="0.01" />±
+    </td>
+</tr>
+<tr valign="top">
+<td align="right"><b>Uri ng Tolerance:</b></td>
+    <td>
+    <select name="tolerancetype[]"><option value="1" selected="selected">Relatibo</option><option value="2">Nominal</option><option value="3">Geometric</option></select>
+    </td>
+</tr>
+<tr valign="top">
+<td align="right"><b>Makabuluhang Bilang:</b></td>
+    <td>
+    <select name="correctanswerlength[]"><option value="1">1</option><option value="2" selected="selected">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select>
+    </td>
+</tr>
+</tbody></table>
+
+<p> Sa puwang para sa tanong na teksto at sa "Pormula ng Wastong Sagot"
+ay makikita ang {a} at {b}.  Ito at anumang {name} ay maaaring gamiting
+wildcard na papalitan ng anumang halaga kapag kinukuha ang ang
+pagsusulit.  Gayundin ang wastong sagot ay kinikuwenta kapag ipinasa na
+ang pagsusulit sa pamamagitan ng ekspresiyon sa "Pormula ng Wastong
+Sagot", na kinukuwenta bilang isang denumerong ekspresiyon pagkatapos
+mapalitan ang mga wildcard.  Ang mga posibleng halaga ng wildcard ay
+itinatakda o nililikha sa susunod na pahina na "wizard na pang-edit"
+para sa mga kinuwentang tanong... </p>
+
+<p>Ginagamit sa halimbawang pormula
+ang pang-opera na +.  Ang iba pang tanggap na pang-opera ay - * / at %,
+alalaong baga'y ang % ay ang pang-operang modulo.  Maaari ring gumamit
+ng estilong PHP na mga pangmatematikang function.  Kasama rito ang 24 na
+isahang-argumento na function:<br /><b> abs, acos, acosh, asin, asinh,
+atan, atanh, ceil, cos, cosh, deg2rad, exp, expm1, floor, log, log10,
+log1p, rad2deg, round, sin, sinh, sprt, tan, tanh </b><br />at dalawang
+dalawahang-argumento na function<br /><b> atan2, pow </b><br />at ang
+mga function na <b>min</b> at <b>max</b> na maaaring tumanggap ng dalawa
+o mahigit pang argumento.  Puwede ring gamitin ang function na <b>pi</b>
+na walang tinatanggap na argumento, pero huwag mong kalilimutan ang mga
+panaklong - alalaong baga'y ang wastong paggamit nito ay <b>pi()</b>.
+Gayundin sa ibang function, kailangan ipaloob sa panaklong ang (mga)
+argumento nila.  Posibleng gamit ay para sa halimbawa na <b>sin({a}) +
+cos({b}) * 2</b>. Hindi dapat maging problema ang pagbalot ng mga
+function sa isa't-isa, tulad ng <b>cos(deg2rad({a} + 90))</b> atbp. </p>
+
+<p>Matatagpuan ang marami pang detalye hinggil sa mga estilong PHP na
+function na ito sa <a target="phpmathdoc"
+href="http://www.php.net/manual/en/ref.math.php">dokumentasyon sa PHP
+web site</a> </p>
+
+<p>Para sa mga denumerong tanong, posible na magpahintulot ng agwat kung
+saan ang lahat ng papaloob dito ay tatanggapin na wasto.  Ang
+"Tolerance" na puwang ang ginagamit para dito.  Nguni't, may tatlong uri
+ng tolerance.  Ito ay ang <b>Relatibo, Nominal at Geometric</b>. Kapag
+sinabi natin na ang wastong sagot sa oras ng pagkuha ng pagsusulit ay
+kukuwentahin na maging 200 at ang tolerance ay itinakda sa 0.5,
+samakatuwid ang magkakaibang uri ng tolerance ay gagana ng paganito:</p>
+
+<p style="margin-left: 3em"><b>Relatibo:</b> Ang agwat ng tolerance ay
+kinukuwenta sa pamamagitan ng pagpaparami ng wastong sagot sa 0.5, a.b.
+sa kasong ito makukuha natin ay 100, kaya para sa tolerance na ito ang
+wastong sagot ay nasa pagitan ng 100 at 300.  (200 ± 100)<br />
+Kapakipakinabang ito kung ang halaga ng wastong sagot ay malaki ang
+pagkakaiba para sa magkakaibang halaga ng wildcard.</p>
+
+<p style="margin-left: 3em"><b>Nominal:</b> Ang pinakapayak na uri ng
+tolerance nguni't hindi gaanong makapangyarihan.  Ang wastong sagot ay
+dapat nasa pagitan ng 199.5 at 200.5 (200 ± 0.5)<br /> Ang uring ito ng
+tolerance ay kapakipakinabang kung ang pagkakaiba ng magkakaibang
+wastong sagot ay maliit lamang.</p>
+
+<p style="margin-left: 3em"><b>Geometric:</b> Ang itaas na hangganan ng
+agwat ng tolerance ay kinukuwenta na 200 + 0.5*200 at pareho rin ng sa
+relatibong kaso.  Ang ibabang hangganan ay kinukuwenta na 200/(1 + 0.5). 
+Ang wastong sagot ay dapat nasa pagitan ng 133.33 at 300.<br />
+Kapakipakinabang ito para sa mga masalimuot na pagkuwenta na kailangang
+magkaroon ng malalaking tolerance kung saan ang relatibong tolerance na
+1 o mahigit pa ay gagamitin sa itaas na hangganan subali't malinaw na
+hindi puwedeng gamitin sa ibabang hangganan dahil gagawin nitong wastong
+sagot ang sero para sa lahat ng kaso.</p>
+
+
+<p> Ang puwang na <b>Makabuluhang Bilang</b> ay para lamang sa kung
+paano ipapakita ang wastong sagot sa rebyu o sa mga ulat.  Halimbawa:
+Kung itinakda ito sa 3, ang wastong sagot na 13.333 ay ipapakita na
+13.3; 1236 ay ipapakita na 1240; 23 ay ipapakita na 23.0 atbp. </p>
+
+<p>Ang puwang para sa puna at ang opsiyonal na puwang para sa yunit ay
+gumagana nang tulad ng para sa denumerong tanong. </p>
