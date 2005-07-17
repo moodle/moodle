@@ -10,6 +10,7 @@ $string['clickhide'] = 'paslëpkite';
 $string['clickshow'] = 'atvaizduokite';
 $string['confirmeventdelete'] = 'Ar tikrai norite paðalinti ðá ávyká?';
 $string['courseevents'] = 'Kurso ávykiai';
+$string['day'] = 'diena';
 $string['dayview'] = 'Dienos vaizdas';
 $string['daywithnoevents'] = 'Ðiandien nëra ávykiø';
 $string['december'] = 'Gruodis';
