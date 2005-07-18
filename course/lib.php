@@ -619,7 +619,7 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
         echo "<td class=\"r$row c1\" nowrap=\"nowrap\" align=\"right\">".userdate($log->time, '%a').
              ' '.userdate($log->time, $strftimedatetime)."</td>\n";
         echo "<td class=\"r$row c2\" nowrap=\"nowrap\">\n";
-        link_to_popup_window("/lib/ipatlas/plot.php?address=$log->ip&amp;user=$log->userid", 'ipatlas',$log->ip, 400, 700);
+        link_to_popup_window("/iplookup/index.php?ip=$log->ip&amp;user=$log->userid", 'iplookup',$log->ip, 400, 700);
         echo "</td>\n";
         $fullname = fullname($log, $isteacher);
         echo "<td class=\"r$row c3\" nowrap=\"nowrap\">\n";
