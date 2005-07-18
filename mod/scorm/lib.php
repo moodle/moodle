@@ -3,7 +3,7 @@
 /// Library of functions and constants for module scorm
 /// (replace scorm with the name of your module and delete this line)
 
-require_once('xml2array.class.php');
+include_once($CFG->dirroot.'/mod/scorm/xml2array.class.php');
 
 define('VALUESCOES', '0');
 define('VALUEHIGHEST', '1');
