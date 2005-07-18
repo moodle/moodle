@@ -148,6 +148,14 @@
 
                         $course->category  = $destcategory->id;
                         $course->sortorder = $sortorder;
+                        $course->fullname = addslashes($course->fullname);
+                        $course->shortname = addslashes($course->shortname);
+                        $course->summary = addslashes($course->summary);
+                        $course->password = addslashes($course->password);
+                        $course->teacher = addslashes($course->teacher);
+                        $course->teachers = addslashes($course->teachers);
+                        $course->student = addslashes($course->student);
+                        $course->students = addslashes($course->students);
  
                         if (!update_record('course', $course)) {
                             notify("An error occurred - course not moved!");
