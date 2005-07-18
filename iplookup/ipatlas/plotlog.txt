@@ -1,0 +1,13 @@
+192.168.19.1	August 26, 2002, 4:45 pm	192.168.19.1	192.168.19.1		
+192.168.19.1	August 26, 2002, 4:45 pm	dougiamas.com	dougiamas.com	-31.97	115.82
+192.168.19.1	August 26, 2002, 4:46 pm	dougiamas.com	dougiamas.com	-31.97	115.82
+192.168.19.1	August 26, 2002, 4:46 pm	192.168.19.1	192.168.19.1		
+192.168.19.1	August 26, 2002, 4:48 pm	hungry.com	hungry.com	46.73	-116.99
+192.168.19.1	August 26, 2002, 4:50 pm	yahoo.com	yahoo.com	37.40	-122.00
+192.168.19.1	August 26, 2002, 4:55 pm	192.168.19.1	192.168.19.1		
+192.168.19.1	August 26, 2002, 4:55 pm	192.168.19.1	192.168.19.1		
+192.168.19.1	August 26, 2002, 4:56 pm	hungry.com	hungry.com	46.73	-116.99
+192.168.19.1	August 26, 2002, 4:56 pm	hungry.com	hungry.com	46.73	-116.99
+192.168.19.1	August 26, 2002, 4:56 pm	washington.com	washington.com		
+192.168.19.1	August 26, 2002, 4:56 pm	amazon.com	amazon.com	47.55	-122.31
+192.168.19.1	August 26, 2002, 4:57 pm	nytimes.com	nytimes.com	37.40	-122.00

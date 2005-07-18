@@ -1,0 +1,7 @@
+To make this program fit into Moodle, I:
+
+ - deleted the black and white earth image
+ - modified plotconf.inc slightly to use Moodle configs
+ - modified plot.php slightly to use Moodle's background colour
+
+Martin Dougiamas, 26/8/2002
