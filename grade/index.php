@@ -115,7 +115,7 @@
         } // end switch
     } // end if isTeacher
     else {
-        if ($preferences->show_weighted || $preferences->show_points || $preferences->show_points) {
+        if ($preferences->show_weighted || $preferences->show_points || $preferences->show_percent) {
 
             if ($preferences->use_advanced == 1) {
                 if($action != 'vcats') {
