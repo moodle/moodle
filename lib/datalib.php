@@ -2678,7 +2678,7 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
 
     global $db, $CFG, $USER;
 
-    if ($cm === '') { // postgres won't translate empty string to its default
+    if ($cm === '' || is_null($cm)) { // postgres won't translate empty string to its default
         $cm = 0;
     }
 
