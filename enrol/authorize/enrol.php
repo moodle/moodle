@@ -39,6 +39,10 @@ function print_entry($course) {
         exit;
     }
 
+    if (!isset($_SERVER['HTTPS'])) {
+        error(get_string("httpsrequired", "enrol_authorize"));
+    }
+
     $CCTYPES = array(
         'mcd' => 'Master Card',
         'vis' => 'Visa',
@@ -356,6 +360,9 @@ function config_form($frm) {
         if (empty($frm->an_tran_key) && empty($frm->an_password)) {
     	    notify("an_tran_key or an_password required");
         }
+        if (empty($CFG->loginhttps)) {
+    	    notify("\$CFG->loginhttps MUST BE ON");
+        }
     }
     include($CFG->dirroot.'/enrol/authorize/config.html');
 }
@@ -365,6 +372,7 @@ function check_openssl_loaded() {
 }
 
 function process_config($config) {
+    global $CFG;
 
     $return = $this->check_openssl_loaded();
 
@@ -390,6 +398,8 @@ function process_config($config) {
     if (empty($config->an_tran_key) && empty($config->an_password)) {
     	$return = false;   	
     }
+    // $CFG->loginhttps must be on.
+    $return = (!empty($CFG->loginhttps));
 
     if (empty($config->an_referer)) {
     	$config->an_referer = 'http://';
