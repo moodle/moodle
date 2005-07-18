@@ -13,10 +13,25 @@
 <tr valign="top">
     <td align="right">enrol_currency:</td>
     <td>
-    <?php choose_from_menu ($ancurrencies, "enrol_currency", $frm->enrol_currency, "","", "") ?>
+    <?php
+     $currenciesarray = get_records_menu("currencies", "", "", "name", "code,name");
+     choose_from_menu ($currenciesarray, "enrol_currency", $frm->enrol_currency, "","", "") ?>
     </td>
     <td>
     <?php  print_string("currency") ?>
+    </td>
+</tr>
+
+<tr valign="top">
+    <td align="right">loginhttps:</td>
+    <td>
+    <?php  echo (empty($CFG->loginhttps) ? "<font color=\"red\">off</font>" : "<font color=\"green\">on</font>") ?>
+    </td>
+    <td>
+    <?php
+     $a->url = "$CFG->wwwroot/$CFG->admin/config.php#configsectionsecurity";
+     print_string("logindesc", "enrol_authorize", $a)
+    ?>
     </td>
 </tr>
 
@@ -108,16 +123,6 @@
     </td>
     <td>
     <?php  print_string("mailadmins") ?>
-    </td>
-</tr>
-
-<tr valign="top">
-    <td align="right">enrol_allowinternal:</td>
-    <td>
-        <input type="checkbox" value="1" name="enrol_allowinternal" <?php if (!empty($frm->enrol_allowinternal)) echo "checked=\"true\"" ?> />
-    </td>
-    <td>
-    <?php  print_string('allowinternal') ?>
     </td>
 </tr>
 
