@@ -346,8 +346,10 @@ class quiz_format_webct extends quiz_default_format {
                        $QuestionOK = FALSE;
                     }
                     else {
-                        // Perform string length check
+                        // Perform string length check and create empty feedback array
+                        $question->feedback = array();
                         foreach ($question->answer as $key => $dataanswer) {
+                            $question->feedback[$key] = '';
                             if (strlen($dataanswer) > 255) {
                                 $question->answer[$key] = substr($dataanswer,0,250)."...";
                                 $warnings[] = get_string("answertoolong", "quiz", $nQuestionStartLine);
