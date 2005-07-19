@@ -20,14 +20,14 @@ class block_quiz_results extends block_base {
         if ($this->content !== NULL) {
             return $this->content;
         }
-        if (empty($this->instance)) {
-            $this->content = '';
-            return $this->content;
-        }
 
         $this->content = new stdClass;
         $this->content->text = '';
         $this->content->footer = '';
+
+        if (empty($this->instance)) {
+            return $this->content;
+        }
 
         if($this->instance->pagetype == 'course-view') {
             // We need to see if we are monitoring a quiz 
