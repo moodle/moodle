@@ -16,7 +16,8 @@ $string['choosemethod'] = 'Tapez la clef d\'inscription à ce cours&nbsp;; si vou
 $string['chooseone'] = 'Veuillez remplir l\'un des deux champs ci-dessous ou tous les deux';
 $string['description'] = 'Le module Authorize.net permet de mettre en place des cours payant. Si le coût d\'un cours est nul, les étudiants peuvent s\'y inscrire sans payer. Un coût défini globalement, que vous fixez ici, est le coût par défaut pour tous les cours du site. Chaque cours peut ensuite avoir un coût spécifique fixé individuellement. S\'il est défini, le coût spécifique d\'un cours remplace le coût par défaut.';
 $string['enrolname'] = 'Paiement par carte de crédit Authorize.net';
-$string['logindesc'] = 'Vous pouvez activer l\'option «&nbsp;<a href=\"$a->url\">loginhttps</a>&nbsp;» dans les paramètres de l\'administration.<br /><br />Après activation de cette option, Moodle utilisera une connexion sécurisée https pour le traitement des pages de connexion et de paiement.';
+$string['httpsrequired'] = 'Votre requête ne peut pas être traitée pour l\'instant. Les réglages du site n\'ont pas pu être configurés correctement.<br /><br />Veuillez NE PAS taper votre numéro de carte de  crédit, à moins que vous ne voyez un cadenas jaune au bas ou dans la barre d\'adresse de votre navigateur. Ce cadenas indique que toutes les données transmises entre votre ordinateur et le serveur sont chiffrées, et que les informations échangées entre ces deux ordinateurs sont protégées et ne peuvent pas être interceptées sur Internet.';
+$string['logindesc'] = 'Cette option doit impérativement être activée&nbsp;!<br /><br />Vous pouvez effectuer le réglage de l\'option <a href=\"$a->url\">loginhttps</a>&nbsp;» dans les paramètres de l\'administration, section Sécurité.';
 $string['nameoncard'] = 'Nom sur la carte';
 $string['sendpaymentbutton'] = 'Envoyer paiement';
 $string['zipcode'] = 'Code postal';
