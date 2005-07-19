@@ -1,0 +1,71 @@
+<?PHP // $Id$ 
+      // exercise.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005032800)
+
+
+$string['absent'] = 'חסר';
+$string['accumulative'] = 'מצטבר';
+$string['action'] = 'פעולה';
+$string['ago'] = 'לפני $a ';
+$string['amend'] = 'שפר';
+$string['amendassessmentelements'] = 'שפר אלמנטי הערכה';
+$string['amendtitle'] = 'שפר כותרת';
+$string['assess'] = 'הערך';
+$string['assessed'] = 'העריך';
+$string['assessment'] = 'הערכה';
+$string['assessmentby'] = 'הערכה על ידי $a';
+$string['assessmentform'] = 'הערכה מ';
+$string['assessmentmadebythe'] = 'הערכה נעשתה על ידי $a';
+$string['assessmentofthissubmission'] = 'הערכה של הגשה זו';
+$string['assessments'] = 'הערכות';
+$string['atthisstageyou'] = 'בשלב זה השלמת הערכה.<br />יכול להיות ותרצה לשנות את עבודתך לאור הערכה זו.<br /> אם תבחר לעשות זאת אנא זכור לשנות גם את הערכתך.<br /> אתה יכול לעשות זאת על ידי לחיצה על הקישור ההערכה מחדש למטה.';
+$string['awaitingassessmentbythe'] = 'ממתין להערכה על ידי ה $a';
+$string['comment'] = 'הערה';
+$string['confirmdeletionofthisitem'] = 'אמת מחיקב של $a';
+$string['correct'] = 'נכון';
+$string['criterion'] = 'קריטריון';
+$string['deadline'] = 'תאריך יעד';
+$string['deadlineis'] = 'תאריך יעד זה הוא $a';
+$string['delete'] = 'מחק';
+$string['deleting'] = 'מוחק';
+$string['description'] = 'תיאור';
+$string['descriptionofexercise'] = 'במשימת תרגול, תיאור התרגול או המשימה שצריכה להיעשות על ידי ה $a, מוכנס לתוך מסמך word או קובץ HTML. קובץ זה מועלה לתוך התרגול לפני שהמשימה נפתחת בפני ה $a. זה גם אפשרי ליצור סט של ווריאציות על אותו תרגול או משימה - שוב כמסמכי word או קבצי HTML, ולהעלות אותם לתוך התרגול לפני שהוא נפתח בפני ה$a.';
+$string['detailsofassessment'] = 'פרטי ההערכה';
+$string['displayoffinalgrades'] = 'תצוגה של ציונים סופיים';
+$string['doubleupload'] = 'אזהרה: כנראה והגשה זו הוגשה פעמיים. לך לעמוד ההנהלה, חפש שתי הגשות ממשתמש זה בתוך תקופת זמן קצרה. מחק אחת מההגשות לפני שאתה ממשיך.';
+$string['duedate'] = 'תאריך הגשה';
+$string['edit'] = 'ערוך';
+$string['editingassessmentelements'] = 'אלמנטי הערכת עריכה';
+$string['element'] = 'אלמנט';
+$string['elementweight'] = 'משקל האלמנט';
+$string['entriessaved'] = 'הגשות נשמרו';
+$string['excellent'] = 'מצויין';
+$string['exerciseassessments'] = 'הערכות התרגול';
+$string['exercisefeedback'] = 'משוב התרגול';
+$string['exercisesubmissions'] = 'הגשות התרגול';
+$string['generalcomment'] = 'הערה כללית';
+$string['good'] = 'טוב';
+$string['gradeforassessment'] = 'ציון להערכה';
+$string['gradeforstudentsassessment'] = 'ציון בשביל $a הערכה';
+$string['gradeforsubmission'] = 'ציון להגשה';
+$string['gradetable'] = 'טבלת ציונים';
+$string['gradingstrategy'] = 'אסטרטגיית מתן ציונים';
+$string['handlingofmultiplesubmissions'] = 'טיפול בהגשות מרובות';
+$string['hidenamesfromstudents'] = 'הסתר שמות מהסטודנטים';
+$string['incorrect'] = 'לא נכון';
+$string['mail1'] = 'משימתך \'$a\' הוערכה על ידי';
+$string['mail2'] = 'את ההערכות והציונים ניתן לראות במשימת תרגול \'$a\'';
+$string['mail3'] = 'אתה יכול לראות זאת במשימת התרגול שלך';
+$string['mail6'] = 'הערכתך של המשימה \'$a\' נבחנה';
+$string['mail7'] = 'את ההערות שנתנו על ידי $a אפשר לראות במשימת התרגול ';
+$string['managingassignment'] = 'הסתדרות עם התרגול';
+$string['maximumsize'] = 'גבול מקסימלי';
+$string['modulename'] = 'תרגול';
+$string['modulenameplural'] = 'תרגולים';
+$string['movingtophase'] = 'עובר לשלב $a';
+$string['multiplesubmissions'] = 'הגשות מרובות';
+$string['noexercisedescriptionssubmitted'] = 'לא הוגשו תיאורי תרגול';
+$string['nosubmissions'] = 'איו הגשות';
+$string['notassessedyet'] = 'לא הוערך עדיין';
+$string['notavailable'] = 'לא זמין';
+
+?>
