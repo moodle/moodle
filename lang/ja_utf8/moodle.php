@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.6 development (2005060201)
+      // moodle.php - created with Moodle 1.6 development (2005071700)
 
 
 $string['action'] = '操作';
@@ -437,7 +437,7 @@ $string['forgotaccount'] = 'パスワードを忘れました?';
 $string['forgotten'] = 'ユーザ名またはパスワードを忘れましたか?';
 $string['format'] = 'フォーマット';
 $string['formathtml'] = 'HTMLフォーマット';
-$string['formatmarkdown'] = 'マークダウンフォーマット';
+$string['formatmarkdown'] = 'Markdownフォーマット';
 $string['formatplain'] = 'プレインテキストフォーマット';
 $string['formatscorm'] = 'SCORMフォーマット';
 $string['formatsocial'] = 'ソーシャルフォーマット';
