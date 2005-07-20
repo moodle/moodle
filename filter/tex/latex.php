@@ -21,8 +21,8 @@
          * Other platforms could/should be added
          */
         function latex() {
-            global $CFG;          
-
+            global $CFG; 
+            
             // construct directory structure
             $this->temp_dir = $CFG->dataroot . "/temp/latex";
             if (!file_exists("$CFG->dataroot/temp")) {
@@ -36,19 +36,32 @@
             // it would be nice to expand this
             if (PHP_OS=='Linux') {
                 $binpath = '/usr/bin/';
+                $this->path_latex = "{$binpath}latex";
+                $this->path_dvips = "{$binpath}dvips";
+                $this->path_convert = "{$binpath}convert";
+                $this->path_identify = "{$binpath}identify";
                 $this->supported_platform = true;
             }
             elseif (PHP_OS=='Darwin') {
                 $binpath = '/sw/bin/'; // most likely needs a fink install (fink.sf.net)
+                $this->path_latex = "{$binpath}latex";
+                $this->path_dvips = "{$binpath}dvips";
+                $this->path_convert = "{$binpath}convert";
+                $this->path_identify = "{$binpath}identify";
                 $this->supported_platform = true;
             }
+            elseif (PHP_OS=='WINNT' or PHP_OS=='WIN32' or PHP_OS=='Windows') {
+	           // note: you need Ghostscript installed (standard), miktex (standard)
+	           // and ImageMagick (install at c:\ImageMagick)
+	           $this->path_latex = "\"c:\\texmf\\miktex\\bin\\latex.exe\" ";
+               $this->path_dvips = "\"c:\\texmf\\miktex\\bin\\dvips.exe\" ";
+               $this->path_convert = "\"c:\\imagemagick\\convert.exe\" ";
+               $this->path_identify = "identify"; 
+               $this->supported_platform = true;
+            }    
             else {
                 $this->supported_platform = false;
             }
-            $this->path_latex = "{$binpath}latex";
-            $this->path_dvips = "{$binpath}dvips";
-            $this->path_convert = "{$binpath}convert";
-            $this->path_identify = "{$binpath}identify";
         }
 
         /**
@@ -139,7 +152,7 @@
 
             // run convert on document (.ps to .gif)
             if ($background) {
-                $bg_opt = "-background \"$background\"";
+                $bg_opt = "-background '$background'";
             } else {
                 $bg_opt = "";
             }
@@ -157,6 +170,7 @@
          * @param string $filename file base (no extension)
          */
         function clean_up( $filename ) {
+	        return;
             unlink( "{$this->temp_dir}/$filename.tex" );
             unlink( "{$this->temp_dir}/$filename.dvi" );
             unlink( "{$this->temp_dir}/$filename.ps" );
