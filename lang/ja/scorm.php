@@ -1,12 +1,12 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.6 development (2005060201)
+      // scorm.php - created with Moodle 1.6 development (2005071700)
 
 
 $string['advanced'] = 'アドバンスト';
 $string['asset'] = 'アセット';
 $string['attr_error'] = 'タグ $a->tag のアトリビュート ($a->attr) に不適切な値が設定されています。';
 $string['autocontinue'] = '自動継続';
-$string['badmanifest'] = 'マニフェストファイルエラー: エラーログをご覧ください。';
+$string['badmanifest'] = 'マニフェストエラー: エラーログをご覧ください。';
 $string['browse'] = '閲覧';
 $string['browsed'] = '閲覧済み';
 $string['browsemode'] = '閲覧モード';
@@ -18,7 +18,6 @@ $string['datadir'] = 'ファイルシステムエラー: コースデータディレクトリを作成でき
 $string['details'] = 'SCOトラック詳細';
 $string['display'] = '表示';
 $string['domxml'] = 'DOMXML外部ライブラリ';
-$string['enablebrowse'] = 'プレビューモードを使用';
 $string['entercourse'] = 'SCORMコースの入力';
 $string['errorlogs'] = 'エラーログ';
 $string['exit'] = 'SCORMコースから抜ける';
@@ -35,6 +34,8 @@ $string['gradescoes'] = 'SCO状態';
 $string['gradesum'] = '評点の合計';
 $string['guestsno'] = 'ゲストはscormのコースを閲覧できません';
 $string['height'] = '高さ';
+$string['hidebrowse'] = 'プレビューモードボタンを隠す';
+$string['hidetoc'] = 'コース構造をプレイヤーウインドウから隠す';
 $string['incomplete'] = '不完全';
 $string['lastaccess'] = '最後のアクセス';
 $string['missing_attribute'] = 'タグ $a->tag に属性 $a->attr がありません';
@@ -47,6 +48,7 @@ $string['no_attributes'] = 'タグ $a->tag にアトリビュートがありません';
 $string['no_children'] = 'タグ $a->tag に子タグがありません';
 $string['noactivity'] = '報告内容はありません。';
 $string['nomanifest'] = 'マニフェストファイルが見つかりませんでした';
+$string['noprerequisites'] = '申し訳ございません。あなたはこの学習オブジェクトにアクセスするための十分な必要条件に到達していません。';
 $string['noreports'] = '表示するレポートがありません';
 $string['normal'] = 'ノーマル';
 $string['not_corr_type'] = 'タグ $a->tag のタイプが合致しません';
@@ -79,5 +81,6 @@ $string['validationtype'] = 'ここではSCORMマニフェストファイルを確認するDOMXMLラ
 $string['versionwarning'] = 'マニフェストファイルのバージョンが1.3より古いため、$a->tag タグに警告があります。';
 $string['viewallreports'] = '$a 回分のレポートを表示';
 $string['width'] = '幅';
+$string['window'] = 'フレーム/ウインドウ';
 
 ?>
