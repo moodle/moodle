@@ -85,6 +85,7 @@ $string['resourcetypedirectory'] = '디렉토리 표시하기';
 $string['resourcetypefile'] = '파일이나 웹 사이트로 링크(연결)하기';
 $string['resourcetypehtml'] = '웹 페이지 만들기';
 $string['resourcetypelabel'] = '표지 삽입하기';
+$string['resourcetyperepository'] = '저장 대상에 연결';
 $string['resourcetypetext'] = '텍스트 페이지 만들기';
 $string['searchweb'] = '웹 사이트 검색';
 $string['serverurl'] = '서버 URL';

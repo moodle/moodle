@@ -1,5 +1,5 @@
-<?PHP // $Id$
-
+<?PHP // $Id$ 
+      // moodle.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['action'] = '동작';
@@ -101,6 +101,7 @@ $string['autosubscribeyes'] = '예: 내가 글을 쓰면, 그 포럼을 구독하겠습니다.';
 $string['availability'] = '활용도';
 $string['availablecourses'] = '이용할 수 있는 배움터';
 $string['backup'] = '백업';
+$string['backupcancelled'] = '백업 취소';
 $string['backupcoursefileshelp'] = '백업에 코스 파일을 포함할까요?';
 $string['backupdate'] = '백업 일';
 $string['backupdetails'] = '백업 상세보기';
@@ -441,6 +442,7 @@ $string['format'] = '포멧';
 $string['formathtml'] = 'HTML 포멧';
 $string['formatmarkdown'] = '하향 포멧';
 $string['formatplain'] = '텍스트 포멧';
+$string['formatscorm'] = 'SCORM 포멧';
 $string['formatsocial'] = '사회적 포멧';
 $string['formattext'] = '무들 자동 포멧';
 $string['formattexttype'] = '포멧팅';
@@ -504,6 +506,11 @@ $string['guestsnotallowed'] = '미안합니다, \'$a\'  손님 계정은 입장할 수 없습니�
 $string['guestsyes'] = '키 없는 손님 계정 허용하기';
 $string['guestuser'] = '손님 계정';
 $string['guestuserinfo'] = '어떤 배움터에서는 단지 읽기만을 할 수 있는 계정입니다.';
+$string['healthcenter'] = '건강 센터';
+$string['healthproblemsdetected'] = '건강 문제가 발견';
+$string['healthproblemsolution'] = '건강 문제 해답';
+$string['healthreturntomain'] = '계속';
+$string['healthsolution'] = '해답';
 $string['help'] = '도움';
 $string['helpemoticons'] = '이모티콘 사용하기';
 $string['helpformatting'] = '텍스트 포멧에 대해';
@@ -695,6 +702,7 @@ $string['mustchangepassword'] = '새 비밀번호는 쓰던 것과는 다른 것이어야 합니다.
 $string['mustconfirm'] = '로그인 계정을 확인하세요.';
 $string['mycourses'] = '나의 배움터';
 $string['name'] = '이름';
+$string['namescorm'] = 'SCORM';
 $string['namesocial'] = '마당';
 $string['nametopics'] = '토픽';
 $string['nameweeks'] = '주';
@@ -915,6 +923,7 @@ $string['showgrades'] = '등급 보기';
 $string['showlistofcourses'] = '배움터 목록보기';
 $string['showonlytopic'] = '토픽 보기:$a ';
 $string['showonlyweek'] = '한 주 보기: $a';
+$string['showperpage'] = '페이지 별로 보기';
 $string['showrecent'] = '최근 활동 보기';
 $string['showreports'] = '활동 보고서 보기';
 $string['showsettings'] = '설정 보기';
@@ -1064,6 +1073,7 @@ $string['usethiscourse'] = '이 배움터 사용하기';
 $string['usingexistingcourse'] = '개설된 배움터 사용하기';
 $string['version'] = '버전';
 $string['view'] = '보기';
+$string['viewsolution'] = '해답 보기';
 $string['virusfound'] = '관지라 집중! 클램AV가 파일에 바이러스가 있음을 발견함 자료올림의 $a-> 사용자 진로로서 $a->진로.
 여기 클램스캔의 사용결과가 있음:';
 $string['virusfoundlater'] = '올림된 파일 $a->자료 파일이름과 함께 $a->파일이름 진로로서 $a->진로 바이러스를 포함하고 있음이 밝혀짐. 여기 그 파일에 무슨일이 일어났는지 요약이 있음:
@@ -1126,4 +1136,5 @@ $string['yourlastlogin'] = '마지막 로그인';
 $string['yourself'] = '당신자신';
 $string['yourteacher'] = '당신의 $a';
 $string['zippingbackup'] = '백업 압축하기';
+
 ?>
