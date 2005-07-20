@@ -41,10 +41,10 @@ $string['display'] = 'Display';
 $string['expcoll'] = 'Expand/Collide';
 $string['exit'] = 'Exit from SCORM course';
 $string['details'] = 'SCO track details';
-$string['enablebrowse'] = 'Enable preview mode';
+$string['hidebrowse'] = 'Hide preview mode button';
 $string['frameheight'] = 'This preference set the default height of SCO frame';
 $string['framewidth'] = 'This preference set the default width of SCO frame';
-$string['stagesize'] = 'Frame/Windows size';
+$string['stagesize'] = 'Frame/Window size';
 $string['width'] = 'Width';
 $string['height'] = 'Height';
 $string['trackingloose'] = 'WARNING: The tracking data of this package will be lost!';
@@ -55,6 +55,9 @@ $string['firstaccess'] = 'First access';
 $string['lastaccess'] = 'Last access';
 $string['scormcourse'] = 'SCORM Course';
 $string['advanced'] = 'Advanced';
+$string['window'] = 'Frame/Window';
+$string['hidetoc'] = 'Hide course structure from player window';
+$string['noprerequisites'] = 'Sorry but you don\'t reach enough prerequisites to access this learning object';
 
 // Validation
 $string['attr_error'] = 'Bad value for attribute ($a->attr) in tag $a->tag.';

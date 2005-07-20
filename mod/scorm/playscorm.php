@@ -5,15 +5,15 @@
     require_once('../../config.php');
     require_once('lib.php');
 
+    //
+    // Checkin' script parameters
+    //
     $id = optional_param('id', '', PARAM_INT);       // Course Module ID, or
     $a = optional_param('a', '', PARAM_INT);         // scorm ID
     $scoid = required_param('scoid', '', PARAM_INT);  // sco ID
     $mode = optional_param('mode', '', PARAM_ALPHA); // navigation mode
-    $currentorg = optional_param('currentorg', '', PARAM_); // selected organization
+    $currentorg = optional_param('currentorg', '', PARAM_ALPHANUM); // selected organization
     
-    //
-    // Checkin script parameters
-    //
     $modestring = '';
     $scoidstring = '';
     $currentorgstring = '';
@@ -147,12 +147,20 @@
     if ($scorm->popup == 0) {
 ?>
                 <tr><td class="right">
+<?php
+        if ($result->prerequisites) {
+?>
                     <iframe name="main" class="scoframe" width="<?php echo $scorm->width<=100 ? $scorm->width.'%' : $scorm->width ?>" height="<?php echo $scorm->height<=100 ? $scorm->height.'%' : $scorm->height ?>" src="loadSCO.php?id=<?php echo $cm->id.$scoidstring.$modestring ?>"></iframe>
+<?php
+        } else {
+            print_simple_box(get_string('noprerequisites','scorm'),'center');
+        }
+?>
                 </td></tr>
-            </table>
 <?php
     }
 ?>
+            </table>
          </td>
     </tr>
     </table>
@@ -161,9 +169,15 @@
     <!--
 <?php
     if ($scorm->popup == 1) {
+        if ($result->prerequisites) {
 ?>
         top.main = window.open("loadSCO.php?id=<?php echo $cm->id.$scoidstring.$modestring ?>","","width=<?php echo $scorm->width<=100 ? $scorm->width.'%' : $scorm->width ?>,height=<?php echo $scorm->height<=100 ? $scorm->height.'%' : $scorm->height ?>,scrollbars=1");
 <?php
+        } else {
+?>
+        alert("<?php print_string('noprerequisites','scorm') ?>");
+<?php
+        }
     }
 ?>
         function playSCO(scoid) {

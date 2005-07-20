@@ -980,6 +980,172 @@ function scorm_string_round($stringa, $len=11) {
     }
 }
 
+/*function scorm_id_search($id, $usertracks) {
+    foreach ($usertracks as $key => $usertrack) {
+        if ($usertrack->identifier == $id) {
+            return $key;
+        } 
+    }
+    return false;
+} */
+    
+function scorm_eval_prerequisites($prerequisites,$usertracks) {
+    $element = '';
+    $stack = array();
+    $statuses = array(
+                'passed' => 'passed',
+                'completed' => 'completed',
+                'failed' => 'failed',
+                'incomplete' => 'incomplete',
+                'browsed' => 'browsed',
+                'not attempted' => 'notattempted',
+                'p' => 'passed',
+                'c' => 'completed',
+                'f' => 'failed',
+                'i' => 'incomplete',
+                'b' => 'browsed',
+                'n' => 'notattempted'
+                );
+    $i=0;  
+    while ($i<strlen($prerequisites)) {
+        $symbol = $prerequisites[$i];
+        switch ($symbol) {
+            case '&':
+            case '|':
+                $symbol .= $symbol;
+            case '~':
+            case '(':
+            case ')':
+            case '*':
+            case '{':
+            case '}':
+            case ',':
+                $element = trim($element);
+                
+                if (!empty($element)) {
+                    $element = trim($element);
+                    if (isset($usertracks[$element])) {
+                        $element = '((\''.$usertracks[$element]->status.'\' == \'completed\') || '.
+                                  '(\''.$usertracks[$element]->status.'\' == \'passed\'))'; 
+                    } else if (($operator = strpos($element,'=')) !== false) {
+                        $item = trim(substr($element,0,$operator));
+                        if (!isset($usertracks[$item])) {
+                            return false;
+                        }
+                        
+                        $value = trim(trim(substr($element,$operator+1)),'"');
+                        if (isset($statuses[$value])) {
+                            $status = $statuses[$value];
+                        } else {
+                            return false;
+                        }
+                                              
+                        $element = '(\''.$usertracks[$item]->status.'\' == \''.$status.'\')';
+                    } else if (($operator = strpos($element,'<>')) !== false) {
+                        $item = trim(substr($element,0,$operator));
+                        if (!isset($usertracks[$item])) {
+                            return false;
+                        }
+                        
+                        $value = trim(trim(substr($element,$operator+2)),'"');
+                        if (isset($statuses[$value])) {
+                            $status = $statuses[$value];
+                        } else {
+                            return false;
+                        }
+                        
+                        $element = '(\''.$usertracks[$item]->status.'\' != \''.$status.'\')';
+                    } else if (is_numeric($element)) {
+                        if ($symbol == '*') {
+                            $symbol = '';
+                            $open = strpos($prerequisites,'{',$i);
+                            $opened = 1;
+                            $closed = 0;
+                            for ($close=$open+1; (($opened > $closed) && ($close<strlen($prerequisites))); $close++) { 
+                                 if ($prerequisites[$close] == '}') {
+                                     $closed++;
+                                 } else if ($prerequisites[$close] == '{') {
+                                     $opened++;
+                                 }
+                            } 
+                            $i = $close;
+                            
+                            $setelements = explode(',', substr($prerequisites, $open+1, $close-($open+1)-1));
+                            $settrue = 0;
+                            foreach ($setelements as $setelement) {
+                                if (scorm_eval_prerequisites($setelement,$usertracks)) {
+                                    $settrue++;
+                                }
+                            }
+                            
+                            if ($settrue >= $element) {
+                                $element = 'true'; 
+                            } else {
+                                $element = 'false';
+                            }
+                        }
+                    } else {
+                        return false;
+                    }
+                    
+                    array_push($stack,$element);
+                    $element = '';
+                }
+                if ($symbol == '~') {
+                    $symbol = '!';
+                }
+                if (!empty($symbol)) {
+                    array_push($stack,$symbol);
+                }
+            break;
+            default:
+                $element .= $symbol;
+            break;
+        }
+        $i++;
+    }
+    if (!empty($element)) {
+        $element = trim($element);
+        if (isset($usertracks[$element])) {
+            $element = '((\''.$usertracks[$element]->status.'\' == \'completed\') || '.
+                       '(\''.$usertracks[$element]->status.'\' == \'passed\'))'; 
+        } else if (($operator = strpos($element,'=')) !== false) {
+            $item = trim(substr($element,0,$operator));
+            if (!isset($usertracks[$item])) {
+                return false;
+            }
+            
+            $value = trim(trim(substr($element,$operator+1)),'"');
+            if (isset($statuses[$value])) {
+                $status = $statuses[$value];
+            } else {
+                return false;
+            }
+            
+            $element = '(\''.$usertracks[$item]->status.'\' == \''.$status.'\')';
+        } else if (($operator = strpos($element,'<>')) !== false) {
+            $item = trim(substr($element,0,$operator));
+            if (!isset($usertracks[$item])) {
+                return false;
+            }
+            
+            $value = trim(trim(substr($element,$operator+1)),'"');
+            if (isset($statuses[$value])) {
+                $status = $statuses[$value];
+            } else {
+                return false;
+            }
+            
+            $element = '(\''.$usertracks[$item]->status.'\' != \''.trim($status).'\')';
+        } else {
+            return false;
+        }
+        
+        array_push($stack,$element);
+    }
+    return eval('return '.implode($stack).';');
+}
+
 function scorm_external_link($link) {
 // check if a link is external
     $result = false;
@@ -1010,6 +1176,18 @@ function scorm_get_toc($scorm,$liststyle,$currentorg='',$scoid='',$mode='normal'
         $organizationsql = "AND organization='$currentorg'";
     }
     if ($scoes = get_records_select('scorm_scoes',"scorm='$scorm->id' $organizationsql order by id ASC")){
+        $usertracks = array();
+        foreach ($scoes as $sco) {
+            if (!empty($sco->launch)) {
+                if ($usertrack=scorm_get_tracks($sco->id,$USER->id)) {
+                    if ($usertrack->status == '') {
+                        $usertrack->status = 'notattempted';
+                    }
+                    $usertracks[$sco->identifier] = $usertrack;
+                }
+            }
+        }
+
         $level=0;
         $sublist=1;
         $previd = 0;
@@ -1050,17 +1228,15 @@ function scorm_get_toc($scorm,$liststyle,$currentorg='',$scoid='',$mode='normal'
             if (empty($sco->title)) {
                 $sco->title = $sco->identifier;
             }
-            if ($sco->launch) {
+            if (!empty($sco->launch)) {
                 $startbold = '';
                 $endbold = '';
                 $score = '';
                 if (empty($scoid) && ($mode != 'normal')) {
                     $scoid = $sco->id;
                 }
-                if ($usertrack=scorm_get_tracks($sco->id,$USER->id)) {
-                    if ($usertrack->status == '') {
-                        $usertrack->status = 'notattempted';
-                    }
+                if (isset($usertracks[$sco->identifier])) {
+                    $usertrack = $usertracks[$sco->identifier];
                     $strstatus = get_string($usertrack->status,'scorm');
                     $result->toc .= "<img src='".$CFG->wwwroot."/mod/scorm/pix/".$usertrack->status.".gif' alt='$strstatus' title='$strstatus' />";
                     if (($usertrack->status == 'notattempted') || ($usertrack->status == 'incomplete') || ($usertrack->status == 'browsed')) {
@@ -1097,7 +1273,17 @@ function scorm_get_toc($scorm,$liststyle,$currentorg='',$scoid='',$mode='normal'
                 if (($nextid == 0) && (scorm_count_launchable($scorm->id,$currentorg) > 1) && ( $nextsco!==false)) {
                     $previd = $sco->id;
                 }
-                $result->toc .= "&nbsp;$startbold<a href='javascript:playSCO(".$sco->id.");'>$sco->title</a> $score$endbold</li>\n";
+                if (empty($sco->prerequisites) || scorm_eval_prerequisites($sco->prerequisites,$usertracks)) {
+                    if ($sco->id == $scoid) {
+                        $result->prerequisites = true;
+                    }
+                    $result->toc .= "&nbsp;$startbold<a href='javascript:playSCO(".$sco->id.");'>$sco->title</a> $score$endbold</li>\n";
+                } else {
+                    if ($sco->id == $scoid) {
+                        $result->prerequisites = false;
+                    }
+                    $result->toc .= "&nbsp;$sco->title</li>\n";
+                }
             } else {
                 $result->toc .= "&nbsp;$sco->title</li>\n";
             }
