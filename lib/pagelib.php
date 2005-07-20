@@ -104,7 +104,7 @@ function page_map_class($type, $classname = NULL) {
         }
     }
 
-    if (!class_exists($mappings[$type])) {
+    if (empty($classname) && !class_exists($mappings[$type])) {
         if ($CFG->debug > 7) {
             error('Page class mapping for id "'.$type.'" exists but class "'.$mappings[$type].'" is not defined');
         }
