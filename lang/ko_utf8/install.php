@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // install.php - created with Moodle 1.5 ALPHA (2005051500)
+      // install.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['admindirerror'] = '명시된 관리 디렉토리가 맞지 않습니다';
@@ -14,6 +14,14 @@ $string['configfilenotwritten'] = '그 장치 필기문자는 config.php파일�
 $string['configfilewritten'] = 'contig.php는 성공적으로 생성되었다.';
 $string['configurationcomplete'] = '와성된 구성배열';
 $string['database'] = '데이타 베이스';
+$string['databasecreationsettings'] = '지금 당신은 모든 무들 데이터가 저장될 데이터 베이스를 설정할 필요가 있습니다. 이 데이터 베이스는  아래에 있는 특별한 설정의 윈도우 설치프로그램으로써 무들 프로그램에 의해 자동 설치 될것입니다.<br />
+<br /> <br />
+<b>Type:</b> fixed to \"mysql\" by the installer<br />
+<b>Host:</b> fixed to \"localhost\" by the installer<br />
+<b>Name:</b> database name, eg moodle<br />
+<b>User:</b> fixed to \"root\" by the installer<br />
+<b>Password:</b> your database password<br />
+<b>Tables Prefix:</b> optional prefix to use for all table names';
 $string['databasesettings'] = '지금 당신은 대부분의 모들 정보가 저장될 데이터 베이스를 형성할 필요가 있다. 이 데이터베이스는 이미 형성되어있어야 한다. 그리고 사용자이름과 비밀번호는 접근하기위해서 생성되어야 한다.
 .<br />
 <br /> <br />
@@ -49,14 +57,12 @@ $string['fileuploads'] = '업로드된 파일 ';
 $string['fileuploadserror'] = '이것은 켜져야 합니다.';
 $string['fileuploadshelp'] = '<p> 당신의 서버에서 파일 업로딩이 불가능해 보입니다.
 
-
 모들은 여전히 설치되어있지만 이 능력없이 당신은 진행파일이나 사진을 업로드 할 수 없을 것입니다.
 
 파일 업로딩이 가능하게 하기 위해서는 당신(또는 당신의 시스템 관리자)가 main php.ini.파일을 당신의 서버에서 편집하고 <b>file_upload</b>을 \'1.</p>으로 위치시켜야 할 것입니다.';
 $string['gdversion'] = 'GD방식';
 $string['gdversionerror'] = 'GD 라이브러리는 진행과정과 사진을 만드는 것을 보여주어야 합니다.';
 $string['gdversionhelp'] = '<P>당신의 서버는 GD가 설치된 것으로 보여지지 않습니다.
-
 
 <P>GD는 모들이 사진을 만드는 과정을 허락하는 PHP에 의해서 요구되는 라이브러리 입니다.{사용자 아이콘과 같은}그리고 새로운 이미지를 창조하는{함수 그래프와 같은} 모들은 여전히 GD의 이런 특징들없이 작동할 것이고 이런 GD의 특징드은 단지 당신에게는 사용할 수 없을 것입니다.';
 $string['installation'] = '설치, 설비';
@@ -66,7 +72,6 @@ $string['magicquotesruntimehelp'] = '매직 코트 실행시간은 모들이 적
 
 일반적으로 이것은 디폴트값에 의해 꺼집니다. 당신의 php.ini파일에 있는 매직 코트 실행시간을 조절하세요.
 
-
 만약에 당신의 php.ini파일에 접속하지 않았다면 당신은 요구되는 파일안의 라인을 따르는 곳에 위치할 수 있을 것입니다. 당신의 모들 주소성명록대로 접속하세요<blockquote>php_value magic_quotes_runtime off<blockquote>';
 $string['memorylimit'] = '기억 제한';
 $string['memorylimiterror'] = '이 php 기억 제한은 매우 낮게 설치되어 있습니다. 당신은 후에 문제를 닥치게 될 것입니다.';
@@ -74,13 +79,10 @@ $string['memorylimithelp'] = '당신의 서버의 PHP기억제한이 최근에 S
 
 이것은 아마 무들이 나중에 기억의 문제를 갖게 되는 것을 야기시킬것입니다. 특히 만약 당신이 사용할 수 있는 많은 무들을 가지고 있거나 그런 사용자를 가지고 있다면 그러할 것입니다.
 
-
 우리는 당신이 16M 와 같은 가능하면 더 높은 제한을 가지고 있는 PHP를 형성하기를 요구합니다.
 당신이 시도 할 수 잇는 여러가지 방법들이 있습니다.
 
 만약 당신이 할 수 있다면 기억제한이 가능한 파일과 함께 PHP를 번역하세요. 이것은 무들이 자기 스스로 기억제한을 설치하는데 허락할 것입니다.
-
-
 
 만약 다신이 php.ini.파일에 접속했다면 당신은 <b>memory_limit</b>을  16M와 같은 어떤 것으로 바꿔설치 할 수 있을것입니다. 만약 당신이 접속하지 않았다면 이것을 실행하기 위한 당신의관리자에게 문의하 실 수 있습니다.
 

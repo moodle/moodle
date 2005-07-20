@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // hotpot.php - created with Moodle 1.5 ALPHA (2005051500)
+      // hotpot.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['abandoned'] = '실패';
@@ -18,6 +18,7 @@ $string['deletedattempts'] = '$a 지운것 시도하기';
 $string['deletedresponses'] = '$a 지운것 응답하기';
 $string['enterafilename'] = '화일 이름을 입력하시오';
 $string['filetype'] = '파일 형태';
+$string['forceplugins'] = '강제 미디어 플러그인';
 $string['giveup'] = '포기';
 $string['hints'] = '힌트';
 $string['ignored'] = '무시됨';
@@ -26,7 +27,11 @@ $string['location'] = '화일 장소';
 $string['modulename'] = '뜨거운 감자 퀴즈';
 $string['modulenameplural'] = '뜨거운 감자 퀴즈';
 $string['navigation'] = '향해';
+$string['navigation_bar'] = '무들 네비게이션 창';
 $string['navigation_buttons'] = '뜨거운 감자 퀴즈 누르기';
+$string['navigation_frame'] = '무들 네비게이션 프레임';
+$string['navigation_give_up'] = '시도 포기 버튼 ';
+$string['navigation_iframe'] = '프래임 추가 ';
 $string['navigation_none'] = '없음';
 $string['noactivity'] = '활동 없음';
 $string['noresponses'] = '발견된 개인적인 질문이나 응답에 대한 정보가 없음';

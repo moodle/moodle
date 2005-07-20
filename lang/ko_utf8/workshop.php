@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.5 ALPHA (2005051500)
+      // workshop.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['absent'] = '결석';
@@ -161,6 +161,11 @@ $string['nosubmissionsavailableforassessment'] = '평가에대한제안없음';
 $string['notallowed'] = '지금 이 페이지는 허락되지 않습니다.';
 $string['notavailable'] = '불가능한';
 $string['notenoughexamplessubmitted'] = '충분한 예가 제출되지 않았습니다';
+$string['noteonassessmentelements'] = '숫자로 나누어진 성적평가 요소에 대해 언급하겠습니다.<br />
+이것은 성적을 보다 쉽고 일관되게 만듭니다. 당신이 선생님이라면 반드시 학생들에게 숙제를 내기 전에 이 요소를 설정하십시오.<br /> 
+이것은 교육과정의 숙제를 클릭했을때 완료됩니다.<br /> 
+만약 이 요소가 설정되지 않았다면 프로그램을 요소 설정으로 바꾸십시오. <br />
+당신은 숙제 화면의 숫자구성을 바꿀수 있고 이 구성요소 자신이 성적평가 화면으로 부터 수정됩니다.';
 $string['noteonstudentassessments'] = '{학생에 의한 평가 / 평가성적평가하기}';
 $string['notgraded'] = '점수처리되지않은';
 $string['notitle'] = '제목없음';

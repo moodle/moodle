@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.5 ALPHA (2005051500)
+      // lesson.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['accesscontrol'] = '접근 제한';
@@ -14,6 +14,7 @@ $string['addedaquestionpage'] = '질문 페이지 첨가됨';
 $string['addedcluster'] = '묶음 첨가됨';
 $string['addedendofcluster'] = '묶음의 첨가됨';
 $string['addendofcluster'] = '묶음의 첨가';
+$string['and'] = '그리고';
 $string['answer'] = '정답';
 $string['answeredcorrectly'] = '옳은 정답을 기재하였음';
 $string['answersfornumerical'] = '수에 관한 질문은 최소 값과 최대 값에 맞게 상응 되어져야 합니다. ';
@@ -39,6 +40,9 @@ $string['clustertitle'] = '묶음';
 $string['comments'] = '당신의 의견';
 $string['commentswithname'] = '$a->이름 {$a->성}의 설명';
 $string['completed'] = '완성됨';
+$string['completederror'] = '수업의 완성';
+$string['completethefollowingconditions'] = '당신은 반드시 먼저 실행하기 전에 다음 상태의 수업을 완성해야만 합니다.';
+$string['conditionsfordependency'] = '의존을 의한 상태';
 $string['confirmdeletionofthispage'] = '이 페이지를 삭제합니다.';
 $string['congratulations'] = '축하합니다 - 마지막 레슨입니다.';
 $string['continue'] = '계속';
@@ -53,6 +57,7 @@ $string['deleteattempts'] = '이 수업을 위해 학생의 시도를 삭제하�
 $string['deletedpage'] = '페이지 삭제';
 $string['deleting'] = '삭제하기';
 $string['deletingpage'] = '삭제 페이지: $a';
+$string['dependencyon'] = '의존함';
 $string['description'] = '기술';
 $string['detailedstats'] = '세세한 통계';
 $string['didnotanswerquestion'] = '이 질문에 답하지 않음';
@@ -91,6 +96,8 @@ $string['flowcontrol'] = '흐름 조절';
 $string['general'] = '일반적';
 $string['gobacktolesson'] = '수업으로 돌아가기';
 $string['grade'] = '점수';
+$string['gradebetterthan'] = '성적을 보다 좋게';
+$string['gradebetterthanerror'] = '퍼센트 보다 좋은 성적 얻기';
 $string['gradeessay'] = '에세이 질문에 대한 점수';
 $string['gradeis'] = '$a점';
 $string['gradeoptions'] = '점수 선택';
@@ -99,6 +106,7 @@ $string['havenotgradedyet'] = '아직 점수를 내지 않았음';
 $string['here'] = '여기';
 $string['highscore'] = '높은 점수';
 $string['hightime'] = '높은 시간';
+$string['importppt'] = '파워포인트 적용하기';
 $string['importquestions'] = '중요 질문';
 $string['insertedpage'] = '삽입 페이지';
 $string['jump'] = '건너뛰기';
@@ -125,6 +133,8 @@ $string['maximumnumberofanswersbranches'] = '답변/가지의 최대 수 보기'
 $string['maximumnumberofattempts'] = '최대 시도 수 ';
 $string['maxtime'] = '시간 제한(분)';
 $string['maxtimewarning'] = '레슨을 마치기까지 $a분 남았습니다.';
+$string['mediafile'] = '미디어 파일';
+$string['mediafilepopup'] = '이곳을 누르면 수업 동영상 파일을 볼수 있습니다.';
 $string['minimumnumberofquestions'] = '최소 질문의 수';
 $string['modattempts'] = '학생들에게 재검토 허용';
 $string['modattemptsnoteacher'] = '학생들의 재검토는 학생들에게만 허용됨.';
@@ -226,6 +236,8 @@ $string['thefollowingpagesjumptothispage'] = '다음의 페이지는 이 페이�
 $string['thispage'] = '이 페이지';
 $string['timed'] = '시간이 다 되었음';
 $string['timeremaining'] = '시간이 남았음';
+$string['timespenterror'] = '적어도 몇 분간은 수업에 시간을 써야합니다.';
+$string['timespentminutes'] = '시간 보내기';
 $string['timetaken'] = '시간이 초과됨';
 $string['topscorestitle'] = '레슨을 위한 상위점수';
 $string['treeview'] = '나무 보기';

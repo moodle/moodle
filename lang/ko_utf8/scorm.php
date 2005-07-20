@@ -1,7 +1,8 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.5 ALPHA (2005051500)
+      // scorm.php - created with Moodle 1.6 development (2005060201)
 
 
+$string['advanced'] = '진보';
 $string['asset'] = '이점';
 $string['attr_error'] = '$a->tagd 특성의 나쁜점';
 $string['autocontinue'] = '자동 진행';
@@ -23,6 +24,7 @@ $string['errorlogs'] = '에러 로그';
 $string['exit'] = 'SCORM 코스 나가기';
 $string['expcoll'] = '확장/충동';
 $string['failed'] = '실패함';
+$string['firstaccess'] = '첫번째 접속';
 $string['found'] = '명백한 발견';
 $string['frameheight'] = '이 선택은 SCORM FRAME의 높은 디폴트 값을 설정한다.';
 $string['framewidth'] = '이 선택은 SCORM FRAME의 폭넓은 디폴트 값을 설정한다. ';
@@ -34,6 +36,7 @@ $string['gradesum'] = '점수 합산';
 $string['guestsno'] = '손님은 scorm 코스를 볼 수 없습니다';
 $string['height'] = '높이';
 $string['incomplete'] = '미완성됨';
+$string['lastaccess'] = '마지막 접속';
 $string['missing_attribute'] = '잘못된 특성$a->attr in tag $a->tag ';
 $string['missing_tag'] = '잘못된 표 $a->tag';
 $string['mode'] = '모드';
@@ -42,13 +45,16 @@ $string['modulenameplural'] = 'Scorms';
 $string['next'] = '계속하기';
 $string['no_attributes'] = '$a->tag 표는 속성을 가져야 한다. ';
 $string['no_children'] = '$a->tag 표는 하부조직을 가져야한다. ';
+$string['noactivity'] = '보고 할 것이 없습니다.';
 $string['nomanifest'] = '분명하게 발견되지 않는';
 $string['noreports'] = '보여줄 기록이 없음';
 $string['normal'] = '보통';
 $string['not_corr_type'] = '$a->tag 표에는 부적당한 형태';
 $string['notattempted'] = '시도하지 않았음';
+$string['organization'] = '기구';
 $string['organizations'] = '조직들';
 $string['packagedir'] = '파일시스템 문제';
+$string['packagefile'] = '열수 있는 패키지 파일이 없습니다.';
 $string['passed'] = '통과됨';
 $string['php5'] = 'PHP 5';
 $string['popup'] = '새로운 윈도우 창에서 현재SCO를 열어라';
@@ -59,10 +65,13 @@ $string['report'] = '보고서';
 $string['review'] = '재검토';
 $string['scoes'] = 'Scoes';
 $string['score'] = '점수';
+$string['scormcourse'] = 'SCORM 과정';
+$string['stagesize'] = '프레임/윈도우 크기';
 $string['syntax'] = '통사 에러';
 $string['tag_error'] = '$a->value 이 개념을 지니고있는 알려지지 않은 표';
 $string['too_many_attributes'] = '$a->tag 표는 너무 많은 특성을 가지고 있다. ';
 $string['too_many_children'] = '$a->tag 표는 너무 많은 하부 조직을 가지고 있다. ';
+$string['totaltime'] = '시간';
 $string['trackingloose'] = '경고: 이 패키지의 추적 정보는 잃게 될것입니다 ';
 $string['validateascorm'] = '패키지를 확인하시오';
 $string['validation'] = '결과를 확인하시오';

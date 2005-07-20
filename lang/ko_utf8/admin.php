@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.5 ALPHA (2005051500)
+      // admin.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['adminseesallevents'] = '관리자가 모든 이벤트를 봄';
@@ -11,6 +11,7 @@ $string['calendarsettings'] = '일람표';
 $string['change'] = '변경';
 $string['configallowcoursethemes'] = '이것을 가능하면, 그때 과정들은 그들의 자신의 주제로 맞춰질 것이다. 과정 주제는 모든 다른 주제 선택 (위치, 사용자, 또는 회의 주제)을 무시한다';
 $string['configallowemailaddresses'] = '만약 당신이 특별한 도메인에서 모든 새로운 이메일 주소를 제한한다면, 그것들은 공간에 의해 여기에 분리될 것이다. 모든 다른 도메인들은 거부된다. eg <strong>우리대학.교육.화학.정부.물리</strong>';
+$string['configallowobjectembed'] = '지정된 설정값에 의해서 일반 사용자들은 멀티미디어 파일 (예:플래시,동영상,mp3)를 명령어나 태그를 사용해서 올릴수 없습니다. (비록 안전한 미디어 파일일지라도) 운영자가 허락 옵션을 켜야만 파일을 올릴수 있습니다.';
 $string['configallowunenroll'] = '만약 이것이 \"네\"로 설정된다면, 학생들은 그들 자신이 좋아하는 과정으로부터 자신들을 등록시킬수 없다. 반면에 그들이 허락되지 않으면, 이 과정은 선생님과 관리자에 의해 단독으로 운영될 것이다.';
 $string['configallowuserblockhiding'] = '당신은 사용자들에게 이 싸이트 안에서 숨기기/보기 블록을 허락하길 원합니까? 이것의 특징은 각각의 분리된 블록을 기억하기 위해 자바스크립트와 쿠키를 사용한 것이다. 그리고 사용자들 자신의 의견에 영향을 미친다.';
 $string['configallowuserthemes'] = '이것을 가능하면, 그때 사용자들은 그들의 자신의 주제로 맞춰질 것이다. 사용자들 주제는 모든 싸이트 주제 (과정 주제가 아닌)를 무시한다.';
@@ -63,8 +64,7 @@ $string['configmessaging'] = '싸이트 사용자들 간의 메세지 시스템�
 $string['confignoreplyaddress'] = '이메일은 때때로 사용자 자신에게 보내집니다. ';
 $string['confignotifyloginfailures'] = '만약 로그인 실패가 기록된다면, 이메일을 통해 통보될 것입니다. 누가 이런 통보를 보겠습니까?';
 $string['confignotifyloginthreshold'] = '로그인실패에 관한 인식이 작동한다면, 한사람 또는 한 IP주소에 의한 실패된 로그인시도의 횟수가 얼마나 많냐는 것을 인식하는 것이 가치가 있는가?';
-$string['configopentogoogle'] = '만약 니가 이 셋팅을 할 수 있단면, 구글은 너의 사이트에 Guest로 들어올 수 있게 된다. 또한, 구글서치를 통해서 들어오는 사람들도 자동적으로 Guest로서 로그인 될 것이다. 그리고 이것은 단지 Guest들이 갈수 있는 허락된 코스에 까지만 분명히 연결 되어질 수 있다.
-';
+$string['configopentogoogle'] = '만약 니가 이 셋팅을 할 수 있단면, 구글은 너의 사이트에 Guest로 들어올 수 있게 된다. 또한, 구글서치를 통해서 들어오는 사람들도 자동적으로 Guest로서 로그인 될 것이다. 그리고 이것은 단지 Guest들이 갈수 있는 허락된 코스에 까지만 분명히 연결 되어질 수 있다.';
 $string['configpathtoclam'] = 'clam AV로 갈 수 있는 길.  /usr/bin/clamscan 이나 /usr/bin/clamdscan 처럼. clam AV를 실행하기 위해 이것이 필요하다.';
 $string['configproxyhost'] = '이서버가 인터넷에 접속하기위해 프록시 컴퓨터를 사용해야한다면, proxy hostname과 port를 이곳에 제공해라. 아니면 비워라.';
 $string['configquarantinedir'] = '만약 당신이 clam AV가 감염된 파일들을 quarantine 디렉토리로 이동시키길 원한다면, 이것을 여기에 입력시켜라.
@@ -119,8 +119,9 @@ $string['helpweekenddays'] = '주중 어떤 날이 \"주말\"로 취급되어져
 $string['importtimezones'] = '타임존의 목록의 업데이트가 완료되었습니다.';
 $string['importtimezonescount'] = 'SA->count어귀는 Sa->source로 부터 가져왔습니다.';
 $string['importtimezonesfailed'] = '소스를 찾을 수 없습니다.(안좋은 소식)';
-$string['nodstpresetsexist'] = 'DST지원은 DST 프리셋이 규정되지 않아 모든 사용자들에게 불능하다. 당신은 아래에 있는 버튼을 사용하여 몇개의 프리셋의 경계를 정할 수 있습니다.';
+$string['incompatibleblocks'] = '호환되지 않는 구역';
 $string['optionalmaintenancemessage'] = '임의의 정보 유지';
+$string['pleaseregister'] = '이 버튼을 제거하고 당신의 사이트를 등록해주세요.';
 $string['sitemaintenance'] = '이 싸이트는 중이며 현재 사용하실 수 없습니다.';
 $string['sitemaintenancemode'] = '모드 유지';
 $string['sitemaintenanceoff'] = '관리모드는 사용할 수 없고, 이 사이트는 다시 규칙적으로 작동하고 있습니다.';
