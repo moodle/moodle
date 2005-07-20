@@ -235,6 +235,10 @@ function table_column($table, $oldfield, $field, $type='integer', $size='10',
                     $type = 'VARCHAR('. $size .')';
                     $signed = '';
                     break;
+                case 'char':
+                    $type = 'CHAR('. $size .')';
+                    $signed = '';
+                    break;
             }
 
             if (!empty($oldfield)) {
@@ -277,6 +281,10 @@ function table_column($table, $oldfield, $field, $type='integer', $size='10',
                     break;
                 case 'varchar':
                     $type = 'VARCHAR('. $size .')';
+                    break;
+                case 'char':
+                    $type = 'CHAR('. $size .')';
+                    $signed = '';
                     break;
             }
 
