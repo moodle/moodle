@@ -231,6 +231,10 @@ function table_column($table, $oldfield, $field, $type='integer', $size='10',
                 case 'integer':
                     $type = 'INTEGER('. $size .')';
                     break;
+                case 'char':
+                    $type = 'CHAR('. $size .')';
+                    $signed = '';
+                    break;
                 case 'varchar':
                     $type = 'VARCHAR('. $size .')';
                     $signed = '';
@@ -344,6 +348,10 @@ function table_column($table, $oldfield, $field, $type='integer', $size='10',
                     break;
                 case 'varchar':
                     $type = 'VARCHAR';
+                    break;
+                case 'char':
+                    $type = 'CHAR('. $size .')';
+                    $signed = '';
                     break;
             }
 
