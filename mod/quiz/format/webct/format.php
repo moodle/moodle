@@ -346,14 +346,10 @@ class quiz_format_webct extends quiz_default_format {
                        $QuestionOK = FALSE;
                     }
                     else {
-                        // Perform string length check and create empty feedback array
+                        // Create empty feedback array
                         $question->feedback = array();
                         foreach ($question->answer as $key => $dataanswer) {
                             $question->feedback[$key] = '';
-                            if (strlen($dataanswer) > 255) {
-                                $question->answer[$key] = substr($dataanswer,0,250)."...";
-                                $warnings[] = get_string("answertoolong", "quiz", $nQuestionStartLine);
-                            }
                         }
                         $maxfraction = -1;
                         $totalfraction = 0;
@@ -501,6 +497,10 @@ class quiz_format_webct extends quiz_default_format {
             }
 
             // Need to put the parsing of calculated items here to avoid ambitiuosness:
+            // if question isn't defined yet there is nothing to do here (avoid notices)
+            if (!isset($question)) {
+                continue;
+            }
             if (CALCULATED == $question->qtype && ereg(
                     "^:([[:lower:]].*|::.*)-(MIN|MAX|DEC|VAL([0-9]+))::?:?($webctnumberregex)", $line, $webct_options)) {
                 $datasetname = ereg_replace('^::', '', $webct_options[1]);
