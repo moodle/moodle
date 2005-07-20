@@ -8,15 +8,25 @@ It plays SCORM1.2 and launch AICC packages.
 Moodle SCORM Module is SCORM Version 1.2 Run-Time Environment Conformant -
 Minimum with All Optional Data Model Elements (LMS-RTE3)
 
-THIS MODULE IS JAVA FREE.
+SCORM MODULE IS JAVA FREE.
 
 ================================================================
 
-Still in development (you can see this as a road map):
-- LMS store for all datamodels for AICC;
-- support for playing SCORM 1.3;
-- navigation/sequencing (prerequisites, objective,etc...);
-- SCORM packages validation (I disabled the old one);
+ROAD MAP
+
+Moodle 1.6
+A popup window display mode.             DONE (needs some javascript fixing)
+New Moodle course format: SCORM.         DONE (needs to check CSS)
+Complete AICC conformance.
+Add prerequisites support to SCORM 1.2.  DONE
+
+Moodle 1.7
+Complete conformity to SCORM 2004 RTE.
+Support of SCORM 2004's sequencing and navigation.
+New package validation subsystem.
+
+Moodle 2.0
+Many GREAT new features that NOW we can't think about.
 
 ================================================================
 
