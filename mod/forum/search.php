@@ -161,7 +161,7 @@
 
     print_heading("$strsearchresults: $totalcount");
 
-    print_paging_bar($totalcount, $page, $perpage, "search.php?search=$search&amp;id=$course->id&amp;perpage=$perpage&amp;");
+    print_paging_bar($totalcount, $page, $perpage, "search.php?search=".urlencode(stripslashes($search))."&amp;id=$course->id&amp;perpage=$perpage&amp;");
 
     //added to implement highlighting of search terms found only in HTML markup
     //fiedorow - 9/2/2005
@@ -230,7 +230,7 @@
         echo "<br />";
     }
 
-    print_paging_bar($totalcount, $page, $perpage, "search.php?search=".urlencode($search)."&amp;id=$course->id&amp;perpage=$perpage&amp;");
+    print_paging_bar($totalcount, $page, $perpage, "search.php?search=".urlencode(stripslashes($search))."&amp;id=$course->id&amp;perpage=$perpage&amp;");
 
     print_footer($course);
 
