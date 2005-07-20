@@ -29,7 +29,7 @@ function mediaplugin_filter($courseid, $text) {
             }
         }
         $c = htmlentities($c);
-        $search = '/<a(.*?)href=\"([^<]+)\.mp3\"([^>]*)>(.*?)<\/a>/i';
+        $search = '/<a(.*?)href=\"([^<]+)\.mp3\"([^>]*)>(.*?)<\/a>/is';
 
         $replace  = '\\0&nbsp;<object class="mediaplugin mp3" classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"';
         $replace .= ' codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,0,0" ';
@@ -50,7 +50,7 @@ function mediaplugin_filter($courseid, $text) {
     }
 
     if (empty($CFG->filter_mediaplugin_ignore_swf)) {
-        $search = '/<a(.*?)href=\"([^<]+)\.swf\"([^>]*)>(.*?)<\/a>/i';
+        $search = '/<a(.*?)href=\"([^<]+)\.swf\"([^>]*)>(.*?)<\/a>/is';
 
         $replace  = '\\0<p class="mediaplugin swf"><object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"';
         $replace .= ' codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,0,0" ';
@@ -69,7 +69,7 @@ function mediaplugin_filter($courseid, $text) {
     }
 
     if (empty($CFG->filter_mediaplugin_ignore_mov)) {
-        $search = '/<a(.*?)href=\"([^<]+)\.mov\"([^>]*)>(.*?)<\/a>/i';
+        $search = '/<a(.*?)href=\"([^<]+)\.mov\"([^>]*)>(.*?)<\/a>/is';
 
         $replace  = '\\0<p class="mediaplugin mov"><object classid="CLSID:02BF25D5-8C17-4B23-BC80-D3488ABDDC6B"';
         $replace .= '        codebase="http://www.apple.com/qtactivex/qtplugin.cab" ';
@@ -91,7 +91,7 @@ function mediaplugin_filter($courseid, $text) {
     }
 
     if (empty($CFG->filter_mediaplugin_ignore_wmv)) {
-        $search = '/<a(.*?)href=\"([^<]+)\.wmv\"([^>]*)>(.*?)<\/a>/i';
+        $search = '/<a(.*?)href=\"([^<]+)\.wmv\"([^>]*)>(.*?)<\/a>/is';
 
         $replace  = '\\0<p class="mediaplugin wmv"><object classid="CLSID:22D6f312-B0F6-11D0-94AB-0080C74C7E95"';
         $replace .= ' codebase="http://activex.microsoft.com/activex/controls/mplayer/en/nsmp2inf.cab#Version=5,1,52,701" ';
@@ -118,7 +118,7 @@ function mediaplugin_filter($courseid, $text) {
     }
 
     if (empty($CFG->filter_mediaplugin_ignore_mpg)) {
-        $search = '/<a(.*?)href=\"([^<]+)\.(mpe?g)\"([^>]*)>(.*?)<\/a>/i';
+        $search = '/<a(.*?)href=\"([^<]+)\.(mpe?g)\"([^>]*)>(.*?)<\/a>/is';
 
         $replace = '\\0<p class="mediaplugin mpg"><object width="240" height="180">';
         $replace .= '<param name="src" value="\\2.\\3" />';
@@ -131,7 +131,7 @@ function mediaplugin_filter($courseid, $text) {
     }
 
     if (empty($CFG->filter_mediaplugin_ignore_avi)) {
-        $search = '/<a(.*?)href=\"([^<]+)\.avi\"([^>]*)>(.*?)<\/a>/i';
+        $search = '/<a(.*?)href=\"([^<]+)\.avi\"([^>]*)>(.*?)<\/a>/is';
 
         $replace = '\\0<p class="mediaplugin avi"><object width="240" height="180">';
         $replace .= '<param name="src" value="\\2.avi" />';
