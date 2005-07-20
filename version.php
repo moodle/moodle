@@ -10,6 +10,6 @@
                            //         X  = Moodle 1.5 Point release (0,1,2...)
                            //          Y = Interim incrementer
 
-   $release = '1.5.2';    // Human-friendly version name
+   $release = '1.5.2 +';    // Human-friendly version name
 
 ?>
