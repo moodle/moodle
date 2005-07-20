@@ -1473,6 +1473,11 @@ function main_upgrade($oldversion=0) {
         }
     }
 
+    if ($oldversion < 2005072000) {  // Add a couple fields to mdl_event to work towards iCal import/export
+        table_column('event', '', 'uuid', 'char', '36', '', '', 'not null', 'visible');
+        table_column('event', '', 'sequence', 'integer', '10', 'unsigned', '1', 'not null', 'uuid');
+    }
+
     return $result;
 }
 

@@ -192,6 +192,8 @@ CREATE TABLE `prefix_event` (
   `timestart` int(10) unsigned NOT NULL default '0',
   `timeduration` int(10) unsigned NOT NULL default '0',
   `visible` tinyint(4) NOT NULL default '1',
+  `uuid` char(36) NOT NULL default '',
+  `sequence` int(10) unsigned NOT NULL default '1',
   `timemodified` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `id` (`id`),

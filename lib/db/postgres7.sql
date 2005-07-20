@@ -126,6 +126,8 @@ CREATE TABLE prefix_event (
    timestart integer NOT NULL default '0',
    timeduration integer NOT NULL default '0',
    visible integer NOT NULL default '1',
+   uuid char(36) NOT NULL default '',
+   sequence integer NOT NULL default '1',
    timemodified integer NOT NULL default '0'
 );
 
