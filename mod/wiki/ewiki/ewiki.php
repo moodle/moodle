@@ -1152,7 +1152,7 @@ function ewiki_page_info($id, &$data, $action) {
    if ( ($uu=@$_REQUEST[EWIKI_UP_PAGENUM]) && ($uu<=$v_start) ) {
       $v_start = $uu;
    }
-   $v_end = $v_start - $ewiki_config["list_limit"];
+   $v_end = $v_start - $ewiki_config["list_limit"] + 1;
    if ( ($uu=@$_REQUEST[EWIKI_UP_PAGEEND]) && ($uu<=$v_start) ) {
       $v_end = $uu;
    }
@@ -1172,14 +1172,14 @@ function ewiki_page_info($id, &$data, $action) {
 
       #-- additional info-actions
       $commands = '';
-      foreach ($ewiki_config["action_links"]["info"] as $action=>$title)
-      if (@$ewiki_plugins["action"][$action] || @$ewiki_plugins["action_always"][$action]) {
+      foreach ($ewiki_config["action_links"]["info"] as $thisaction=>$title)
+      if (@$ewiki_plugins["action"][$thisaction] || @$ewiki_plugins["action_always"][$thisaction]) {
    ##### BEGIN MOODLE ADDITION #####
          if ($commands) {
              $commands .= '&nbsp;&nbsp;';
          }
          $commands .= '<a href="' .
-           ewiki_script($action, $id, array("version"=>$current["version"])) .
+           ewiki_script($thisaction, $id, array("version"=>$current["version"])) .
            '">' . get_string($title,"wiki") . '</a>';
    ##### END MOODLE ADDITION #####
       }
@@ -1270,11 +1270,12 @@ function ewiki_page_info($id, &$data, $action) {
       }
 
       $o .= "</table><br /><br />\n";
+
    }
 
    #-- page result split
    if ($v >= 1) {
-      $o .= "<br />\n show " . ewiki_chunked_page($this, $id, -1, $v+1, 1) . "\n <br />";
+      $o .= "<br />\n".get_string('showversions','wiki').' '.ewiki_chunked_page($action, $id, -1, $v, 1, 0, 0) . "\n <br />";
    }
 
    return($o);
@@ -1301,7 +1302,7 @@ function ewiki_chunked_page($action, $id, $dir=-1, $start=10, $end=1, $limit=0, 
 
       $n -= $dir * $overlap;
 
-      $e = $n + $dir * ($limit + $overlap);
+      $e = $n + $dir * ($limit + $overlap) + 1;
 
       if ($dir<0) {
          $e = max(1, $e);
@@ -1320,12 +1321,12 @@ function ewiki_chunked_page($action, $id, $dir=-1, $start=10, $end=1, $limit=0, 
          . '<a href="'.ewiki_script($action, $id, array(EWIKI_UP_PAGENUM=>$n, EWIKI_UP_PAGEEND=>$e))
          . '">'. "$n-$e" . '</a>';
 
-      if (($n=$e) <= $end) {
+      if (($n=$e-1) < $end) {
          $n = false;
       }
    }
 
-   return('<div class="chunked-result">'. $o .'</div>');
+   return('<span class="chunked-result">'. $o .'</span>');
 }
 
 
