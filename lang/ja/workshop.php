@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.6 development (2005060201)
+      // workshop.php - created with Moodle 1.6 development (2005072100)
 
 
 $string['absent'] = '欠席';
@@ -255,7 +255,7 @@ $string['sgrade'] = '提出<br />評点';
 $string['showdescription'] = 'ワークショップ説明の表示';
 $string['showgrades'] = '評価を表示';
 $string['showsubmission'] = '提出物の表示: $a';
-$string['specimenassessmentform'] = '評価見本';
+$string['specimenassessmentform'] = '評価見本フォーム';
 $string['standarddeviation'] = '要素 $a の標準偏差';
 $string['standarddeviationnote'] = 'ゼロまたは非常に小さい値の標準偏差を持った要素は分析を歪めます。<br/>この要素は分析から除かれました。';
 $string['standarddeviationofelement'] = '要素 $a の標準偏差:';
