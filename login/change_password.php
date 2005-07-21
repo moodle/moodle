@@ -60,11 +60,15 @@
             }
             
             /// Are we admin logged in as someone else? If yes then we need to retain our real identity.
-            if (!empty($USER->realuser)) $realuser = $USER->realuser;
+            if (!empty($USER->realuser)) {
+                $realuser = $USER->realuser;
+            }
             
-            $USER = $user;
+            $USER = clone($user); // Get a fresh copy
 
-            if (!empty($realuser)) $USER->realuser = $realuser;
+            if (!empty($realuser)) {
+                $USER->realuser = $realuser;
+            }
 
             // register success changing password
             unset_user_preference('auth_forcepasswordchange');
