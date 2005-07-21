@@ -30,8 +30,9 @@
     $strquizzes = get_string('modulenameplural', 'quiz');
     $streditingquiz = get_string(isset($SESSION->modform->instance) ? "editingquiz" : "editquestions", "quiz");
 
+    $dirname = get_string("exportfilename","quiz");
     print_header_simple("$strexportquestions", "$strexportquestions",
-                 "<a href=\"$CFG->wwwroot/mod/quiz/index.php?id=$course->id\">$strquizzes</a>".
+                 "<a href=\"$CFG->wwwroot/mod/$dirname/index.php?id=$course->id\">$strquizzes</a>".
                   " -> <a href=\"edit.php\">$streditingquiz</a> -> $strexportquestions");
 
     if ($form = data_submitted()) {   /// Filename
