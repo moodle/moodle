@@ -41,7 +41,6 @@ h6.main {
 #layout-table {
   width:100%;
   border-collapse:separate;
-  margin-top: 8px;
 }
 
 #layout-table #left-column,
@@ -337,6 +336,28 @@ body#admin-blocks
 body#admin-config .confighelp {
   display: block;
   padding-bottom: 20px;
+}
+
+table.flexible td.cell {
+  padding-top: 2px;
+  padding-bottom: 2px;
+} 
+
+table.flexible {
+  width: 70%;
+  margin: auto;
+}
+
+table.flexible thi, 
+table.flexible td.cell {
+  padding: 4px;
+  text-align: center;
+  vertical-align: middle;
+} 
+
+table.flexible td.c0,
+table.flexible th.c0 {
+  text-align: left;
 }
 
 
