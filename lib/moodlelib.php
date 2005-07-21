@@ -763,6 +763,12 @@ function unset_user_preference($name, $userid=NULL) {
         }
     }
 
+    //Delete the preference from $USER
+    if (isset($USER->preference[$name])) {
+        unset($USER->preference[$name]);
+    }
+    
+    //Then from DB
     return delete_records('user_preferences', 'userid', $userid, 'name', $name);
 }
 
