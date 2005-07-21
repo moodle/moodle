@@ -238,6 +238,13 @@ body#admin-blocks table#incompatible td.c0 {
   color: #ff0000;
 }
 
+table.flexible  .r0 {
+  background-color: #f0f0f0;
+}
+
+table.flexible .r1 {
+  background-color: #fafafa;
+}
 
 /***
  *** Blocks
