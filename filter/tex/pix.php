@@ -38,7 +38,7 @@
 
             // try and render with latex first
             $latex = new latex();
-            $latex_path = $latex->render( $texcache->rawtext, $md5, 12, 200, '#FFFFFF' );
+            $latex_path = $latex->render( $texcache->rawtext, $md5, 12, 120, '#FFFFFF' );
             if ($latex_path) {    
                 copy( $latex_path, $pathname );
                 $latex->clean_up( $md5 );

@@ -5,6 +5,11 @@
     // software installed. 
     // Much of this inspired/copied from Benjamin Zeiss' work
 
+    //Preamble should be configurable from Filter Config
+    define('TEX_DOC_PREAMBLE', " \\usepackage[latin1]{inputenc}\n \\usepackage{amsmath}\n \\usepackage{amsfonts}\n");
+    //Preamble for Russian
+    //define('TEX_DOC_PREAMBLE', " \\usepackage{mathtext}\n \\usepackage[T2A]{fontenc}\n \\usepackage[cp1251]{inputenc}\n \\usepackage[russian]{babel}\n");
+
     class latex {
 
         var $temp_dir;
@@ -51,13 +56,13 @@
                 $this->supported_platform = true;
             }
             elseif (PHP_OS=='WINNT' or PHP_OS=='WIN32' or PHP_OS=='Windows') {
-	           // note: you need Ghostscript installed (standard), miktex (standard)
-	           // and ImageMagick (install at c:\ImageMagick)
-	           $this->path_latex = "\"c:\\texmf\\miktex\\bin\\latex.exe\" ";
-               $this->path_dvips = "\"c:\\texmf\\miktex\\bin\\dvips.exe\" ";
-               $this->path_convert = "\"c:\\imagemagick\\convert.exe\" ";
-               $this->path_identify = "identify"; 
-               $this->supported_platform = true;
+	        // note: you need Ghostscript installed (standard), miktex (standard)
+	        // and ImageMagick (install at c:\ImageMagick)
+	        $this->path_latex = "\"c:\\texmf\\miktex\\bin\\latex.exe\" ";
+                $this->path_dvips = "\"c:\\texmf\\miktex\\bin\\dvips.exe\" ";
+                $this->path_convert = "\"c:\\imagemagick\\convert.exe\" ";
+                $this->path_identify = "identify"; 
+                $this->supported_platform = true;
             }    
             else {
                 $this->supported_platform = false;
@@ -79,10 +84,9 @@
          * @return string the latex document
          */
         function construct_latex_document( $formula, $fontsize=12 ) {
-            $doc =  "\\documentclass[{$fontsize}pt]{article}\n";
-            $doc .= "\\usepackage[latin1]{inputenc}\n";
-            $doc .= "\\usepackage{amsmath}\n";
-            $doc .= "\\usepackage{amsfonts}\n";
+            // $fontsize don't affects to formula's size. $density can change size
+            $doc =  "\\documentclass[{$fontsize}pt]{article}\n"; 
+            $doc .=  TEX_DOC_PREAMBLE;
             $doc .= "\\pagestyle{empty}\n";
             $doc .= "\\begin{document}\n";
             $doc .= "$ {$formula} $\n";
@@ -129,7 +133,7 @@
             // construct some file paths
             $tex = "{$this->temp_dir}/$filename.tex";
             $dvi = "{$this->temp_dir}/$filename.dvi";
-            $ps = "{$this->temp_dir}/$filename.ps";
+            $ps  = "{$this->temp_dir}/$filename.ps";
             $gif = "{$this->temp_dir}/$filename.gif";
 
             // turn the latex doc into a .tex file in the temp area
@@ -140,8 +144,8 @@
             // run latex on document
             $command = "{$this->path_latex} --interaction=nonstopmode $tex";
             chdir( $this->temp_dir );
-            if ($this->execute($command, $log)) {
-                return false;
+            if ($this->execute($command, $log)) { // It allways False on Windows
+//                return false;
             } 
 
             // run dvips (.dvi to .ps)
@@ -152,7 +156,7 @@
 
             // run convert on document (.ps to .gif)
             if ($background) {
-                $bg_opt = "-background '$background'";
+                $bg_opt = "-transparent \"$background\""; // Makes transparent background
             } else {
                 $bg_opt = "";
             }
@@ -170,13 +174,13 @@
          * @param string $filename file base (no extension)
          */
         function clean_up( $filename ) {
-	        return;
             unlink( "{$this->temp_dir}/$filename.tex" );
             unlink( "{$this->temp_dir}/$filename.dvi" );
             unlink( "{$this->temp_dir}/$filename.ps" );
             unlink( "{$this->temp_dir}/$filename.gif" );
             unlink( "{$this->temp_dir}/$filename.aux" );
             unlink( "{$this->temp_dir}/$filename.log" );
+	        return;
         }
 
     }
