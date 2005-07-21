@@ -1197,6 +1197,13 @@ function main_upgrade($oldversion=0) {
         table_column('event', '', 'uuid', 'char', '36', '', '', 'not null', 'visible');
         table_column('event', '', 'sequence', 'integer', '10', 'unsigned', '1', 'not null', 'uuid');
     }
+    
+    if ($oldversion < 2005072100) { // run the online assignment cleanup code
+        include($CFG->dirroot.'/'.$CFG->admin.'/oacleanup.php');
+        if (function_exists('online_assignment_cleanup')) {
+            online_assignment_cleanup();
+        }
+    }
 
     return $result;
 }
