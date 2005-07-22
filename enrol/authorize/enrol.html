@@ -1,9 +1,9 @@
-<p align="center"><?php if (!empty($this->ccerrormsg) ) {formerr($this->ccerrormsg);} ?></p>
+<p align="center"><?php if (! empty($this->errormsg)) {formerr($this->errormsg);} ?></p>
 
 <div align="center">
 
 <p><?php print_string("paymentrequired") ?></p>
-<p><b><?php echo get_string("cost").": $curcost[currency]  $curcost[cost]"; ?></b></p>
+<p><b><?php echo get_string("cost").": $CFG->enrol_currency $cost"; ?></b></p>
 <p><?php print_string("paymentinstant") ?></p>
 
 <form name="form" method="post" action="enrol.php" autocomplete="off">
@@ -11,8 +11,8 @@
 <table align="center" width="100%" border=0>
 <tr>
   <td align="right"><?php print_string("nameoncard", "enrol_authorize") ?>: </td>
-  <td align="left"><input type="text" name="ccfirstname" size="15" value="<?php p($userfirstname) ?>"  />
-                   <input type="text" name="cclastname" size="15" value="<?php p($userlastname) ?>"  /></td>
+  <td align="left"><input type="text" name="ccfirstname" size="16" value="<?php p($userfirstname) ?>"  />
+                   <input type="text" name="cclastname" size="16" value="<?php p($userlastname) ?>"  /></td>
 </tr>
 <tr>
   <td align="right"><?php print_string("ccno", "enrol_authorize") ?>: </td>
@@ -24,14 +24,8 @@
     for ($i=1; $i<=12; $i++) {
         $months[$i] = userdate(gmmktime(12,0,0,$i,1,2000), "%B");
     }
-    choose_from_menu($months, 'ccexpiremm', $form->ccexpiremm);
-    $nowdate = getdate();
-    $nowyear = $nowdate["year"]-1;
-    for ($i=$nowyear; $i<=$nowyear+11; $i++) {
-        $years[$i] = $i;
-    }
-    choose_from_menu($years, 'ccexpireyyyy', $form->ccexpireyyyy);
-    ?></td>
+    choose_from_menu($months, 'ccexpiremm', $form->ccexpiremm, '');
+    ?> <input type="text" name="ccexpireyyyy" size="4" maxlength="4" value="<?php p($form->ccexpireyyyy) ?>"  /></td>
 </tr>
 <tr>
   <td align="right"><?php print_string("cctype", "enrol_authorize") ?>: </td>

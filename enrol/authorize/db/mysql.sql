@@ -9,4 +9,4 @@ CREATE TABLE `prefix_enrol_authorize` (
   `avscode` char(1) default 'P',
   `transid` varchar(255) default '',
   PRIMARY KEY  (`id`)
-) TYPE=MyISAM COMMENT='Holds all known information about authorize.net transactions';
+) TYPE=MyISAM COMMENT='Holds all known information about creditcard transactions';
