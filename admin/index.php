@@ -18,6 +18,13 @@
         die;
     }
 
+/// This is a Moodle 1.5 hack ONLY to fix accidental bad versions from version.php
+/// Do not copy this code into HEAD
+  
+    if ($CFG->version == '2005072100') {
+        set_config('version', 2005060221);
+    }
+
 
 /// Check some PHP server settings
 
