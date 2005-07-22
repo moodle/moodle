@@ -39,6 +39,7 @@ class quiz_report extends quiz_default_report {
         foreach ($questions as $question) {
             echo '<b>'.get_string('regradingquestion', 'quiz', $question->name).'</b> '.get_string('attempts', 'quiz').": \n";
             foreach ($attempts as $attempt) {
+                set_time_limit(30);
                 quiz_regrade_question_in_attempt($question, $attempt, $quiz, true);
             }
             echo '<br/ >';
