@@ -133,6 +133,7 @@ $string['blocksetup'] = 'Installation des tables de blocs';
 $string['blocksuccess'] = 'Les tables $a ont été installées correctement';
 $string['bycourseorder'] = 'Ordre dans le cours';
 $string['byname'] = 'par $a';
+$string['cachecontrols'] = 'Réglages du cache';
 $string['cancel'] = 'Annuler';
 $string['categories'] = 'Catégories de cours';
 $string['category'] = 'Catégorie';
