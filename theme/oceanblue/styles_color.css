@@ -424,6 +424,7 @@ table.minicalendar {
 }
 
 #course-view .section .content {
+  background: #FFFFFF;
 }
 
 #course-view .section .side {
@@ -495,7 +496,7 @@ body#grade-index .grades .r1 {
 
 .loginbox .content {
   border-color:#9999FF;
-  background: #EEEEEE;
+  background: #FFFFFF;
 }
 
 
