@@ -1175,6 +1175,10 @@ function main_upgrade($oldversion=0) {
         }
     }
 
+    if ($oldversion < 2005060222) { // delete the mistakenly-added currencies table from enrol_authorize
+        execute_sql("DROP TABLE {$CFG->prefix}currencies",false); // drop silently
+    }
+
     return $result;
 }
 
