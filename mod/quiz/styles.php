@@ -105,3 +105,39 @@ body#mod-quiz-grading table#grading .r1 {
 }
 /* grading */
 
+
+
+body#mod-quiz-report table#responses {
+  margin: 20px auto;
+}
+body#mod-quiz-report table#responses .header,
+body#mod-quiz-report table#responses .cell
+{
+  padding: 4px;
+}
+body#mod-quiz-report table#responses .header .commands {
+  display: inline;
+}
+body#mod-quiz-report table#responses td {
+  border-width: 1px;
+  border-style: solid;
+}
+body#mod-quiz-report table#responses .header {
+  text-align: left;
+}
+body#mod-quiz-report table#responses .numcol {
+  text-align: center;
+  vertical-align : middle !important;
+}
+
+body#mod-quiz-report table#responses .uncorrect {
+  color: red;
+}
+
+body#mod-quiz-report table#responses .correct {
+  color: green;
+}
+
+body#mod-quiz-report table#responses .partialcorrect {
+  color: orange;
+}

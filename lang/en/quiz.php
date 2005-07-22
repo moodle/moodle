@@ -332,6 +332,7 @@ $string['reportmulti_q_x_student'] = 'Multi-Student Choices';
 $string['reportmulti_resp'] = 'Individual Responses';
 $string['reportoverview'] = 'Overview';
 $string['reportregrade'] = 'Regrade attempts';
+$string['reportresponses'] = 'Detailed responses';
 $string['reports'] = 'Reports';
 $string['reportsimplestat'] = 'Simple statistics';
 $string['requirepassword'] = 'Require password';
@@ -431,5 +432,6 @@ $string['xml'] = 'Moodle XML format';
 $string['xmltypeunsupported'] = 'Question type $a is not supported by xml import';
 $string['yourfinalgradeis'] = 'Your final grade for this quiz is $a';
 $string['zerosignificantfiguresnotallowed'] = 'The correct answer cannot have zero significant figures!';
+
 
 ?>
