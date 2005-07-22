@@ -88,7 +88,7 @@ function tex_filter ($courseid, $text) {
     global $CFG;
 
     /// Do a quick check using stripos to avoid unnecessary work
-    if (!preg_match('/<tex/i',$text) and !strstr($text,'$$')) {
+    if (!preg_match('/<tex/i',$text) and !strstr($text,'$$') and !strstr($text,'\\[')) { //added one more tag (dlnsk)
         return $text;
     }
 
@@ -119,13 +119,15 @@ function tex_filter ($courseid, $text) {
 
     // <tex> TeX expression </tex>
     // or $$ TeX expression $$
-    preg_match_all('/<tex>(.+?)<\/tex>|\$\$(.+?)\$\$/is', $text, $matches);  
+    // or \[ TeX expression \]        // original tag of MathType and TeXaide (dlnsk)
+    preg_match_all('/<tex>(.+?)<\/tex>|\$\$(.+?)\$\$|\\\\\[(.+?)\\\\\]/is', $text, $matches);
     for ($i=0; $i<count($matches[0]); $i++) {
-        $texexp = $matches[1][$i] . $matches[2][$i];
+        $texexp = $matches[1][$i] . $matches[2][$i] . $matches[3][$i];
         $texexp = str_replace('<nolink>','',$texexp);
         $texexp = str_replace('</nolink>','',$texexp);
         $texexp = str_replace('<span class="nolink">','',$texexp);
         $texexp = str_replace('</span>','',$texexp);
+        $texexp = eregi_replace("<br[[:space:]]*\/?>", '', $texexp);  //dlnsk
         $align = "middle";
         if (preg_match('/^align=bottom /',$texexp)) {
           $align = "text-bottom";

@@ -71,6 +71,10 @@
                             $cmd = "\"$CFG->dirroot/$CFG->texfilterdir/mimetex.darwin\" -e \"$pathname\" -- ". escapeshellarg($texexp);
                         break;
 
+                        case "FreeBSD":
+                            $cmd = "\"$CFG->dirroot/$CFG->texfilterdir/mimetex.freebsd\" -e \"$pathname\" ". escapeshellarg($texexp);
+                        break;
+
                         default:      /// Nothing was found, so tell them how to fix it.
                             if ($CFG->debug > 7) {
                                 echo "Make sure you have an appropriate MimeTeX binary here:\n\n";
