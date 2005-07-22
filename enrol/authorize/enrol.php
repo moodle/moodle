@@ -296,24 +296,19 @@ function get_course_cost($course) {
     global $CFG;
     $cost = (float)0;
 
-    if (isset($coursecost))
-        return $coursecost;
+    if (isset($this->coursecost))
+        return $this->coursecost;
 
-    $currency = (empty($CFG->enrol_currency) ? 'USD' : $CFG->enrol_currency);
-    
     if (!empty($course->cost)) {
         $cost =  (float)(((float)$course->cost) < 0) ? $CFG->enrol_cost : $course->cost;
     }
 
-    if ( (!empty($course->currency)) && (intval($course->currency)!=0) ) {
-        $objcur = get_record("currencies", "id", $course->currency);
-        $currency = strval($objcur->code);
-    }
+    $currency = (!empty($course->currency)) ? $course->currency : (empty($CFG->enrol_currency) ? 'USD' : $CFG->enrol_currency);
 
     $cost = format_float($cost, 2);
-    $coursecost = array('cost'=>$cost, 'currency'=>$currency);
+    $this->coursecost = array('cost'=>$cost, 'currency'=>$currency);
 
-    return $coursecost;
+    return $this->coursecost;
 }
 
 /// Override the get_access_icons() function
