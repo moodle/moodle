@@ -4876,6 +4876,40 @@ function get_list_of_timezones() {
     return $timezones;
 }
 
+/**
+ * Returns a list of currencies in the current language
+ *
+ * @uses $CFG
+ * @uses $USER
+ * @return array
+ */
+function get_list_of_currencies() {
+    global $CFG, $USER;
+
+    $lang = current_language();
+
+    if (!file_exists($CFG->dirroot .'/lang/'. $lang .'/currencies.php')) {
+        if ($parentlang = get_string('parentlanguage')) {
+            if (file_exists($CFG->dirroot .'/lang/'. $parentlang .'/currencies.php')) {
+                $lang = $parentlang;
+            } else {
+                $lang = 'en';  // currencies.php must exist in this pack
+            }
+        } else {
+            $lang = 'en';  // currencies.php must exist in this pack
+        }
+    }
+
+    include($CFG->dirroot .'/lang/'. $lang .'/currencies.php');
+
+    if (!empty($string)) {
+        asort($string);
+    }
+
+    return $string;
+}
+
+
 
 /**
  * Can include a given document file (depends on second
