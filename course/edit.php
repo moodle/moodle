@@ -157,6 +157,7 @@
             $form->numsections = 10;
             $form->idnumber = '';
             $form->cost = '';
+            $form->currency = empty($CFG->enrol_currency) ? 'USD' : $CFG->enrol_currency;
             $form->newsitems = 5;
             $form->showgrades = 1;
             $form->groupmode = 0;

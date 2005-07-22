@@ -160,7 +160,11 @@
 <tr valign="top">
     <td align="right"><?php  print_string("cost") ?>:</td>
     <td><input type="text" name="cost" maxlength="6" size="6" value="<?php  p($form->cost) ?>" alt="<?php  print_string("cost") ?>" />
-    <?php  helpbutton("cost", get_string("cost")) ?>
+    <?php
+        $currencies = get_list_of_currencies();
+        choose_from_menu($currencies, 'currency', $form->currency, '');
+        helpbutton("cost", get_string("cost"));
+    ?>
     </td>
 </tr>
 <?php
