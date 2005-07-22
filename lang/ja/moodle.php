@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.6 development (2005071700)
+      // moodle.php - created with Moodle 1.6 development (2005072100)
 
 
 $string['action'] = '操作';
@@ -134,6 +134,7 @@ $string['blocksetup'] = 'ブロックテーブルの設定';
 $string['blocksuccess'] = '$a のテーブルが正常に設定されました。';
 $string['bycourseorder'] = 'コース順';
 $string['byname'] = '$a 順';
+$string['cachecontrols'] = 'キャッシュコントロール';
 $string['cancel'] = 'キャンセル';
 $string['categories'] = 'コースカテゴリ';
 $string['category'] = 'カテゴリ';

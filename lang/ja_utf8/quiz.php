@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.6 development (2005060201)
+      // quiz.php - created with Moodle 1.6 development (2005072100)
 
 
 $string['acceptederror'] = 'エラー範囲';
@@ -265,6 +265,7 @@ $string['numerical'] = '数値問題';
 $string['optional'] = 'オプション';
 $string['outof'] = '/最大';
 $string['overdue'] = '期限切れ';
+$string['pagesize'] = '1ページあたりの受験表示数:';
 $string['paragraphquestion'] = '$a 行目の段落問題はサポートされていません。問題は無視されます。';
 $string['parent'] = '親';
 $string['partiallycorrect'] = '部分的に正解';
@@ -333,6 +334,7 @@ $string['reportmulti_q_x_student'] = 'マルチ - 学生選択';
 $string['reportmulti_resp'] = '個別の解答';
 $string['reportoverview'] = '概要';
 $string['reportregrade'] = '受験の再評定';
+$string['reportresponses'] = '解答詳細';
 $string['reports'] = 'レポート';
 $string['reportsimplestat'] = '単純統計';
 $string['requirepassword'] = 'パスワード';
