@@ -1,20 +1,18 @@
 <?PHP // $Id$ 
       // lesson.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
 
-
 $string['accesscontrol'] = 'Access control';
 $string['actionaftercorrectanswer'] = 'Action after correct answer';
 $string['addabranchtable'] = 'Add a Branch Table';
 $string['addanendofbranch'] = 'Add an End of Branch';
 $string['addaquestionpage'] = 'Add a Question Page';
 $string['addcluster'] = 'Add a Cluster';
+$string['addendofcluster'] = 'Add an End of Cluster';
 $string['addedabranchtable'] = 'Added a Branch Table';
 $string['addedanendofbranch'] = 'Added an End of Branch';
 $string['addedaquestionpage'] = 'Added a Question Page';
 $string['addedcluster'] = 'Added a Cluster';
 $string['addedendofcluster'] = 'Added an End of Cluster';
-$string['addendofcluster'] = 'Add an End of Cluster';
-$string['and'] = 'AND';
 $string['answer'] = 'Answer';
 $string['answeredcorrectly'] = 'answered correctly.';
 $string['answersfornumerical'] = 'Answers for Numerical questions should be matched pairs of Minimum and Maximum values';
@@ -40,8 +38,6 @@ $string['clustertitle'] = 'Cluster';
 $string['comments'] = 'Your comments';
 $string['commentswithname'] = '$a->firstname {$a->lastname}\'s comments';
 $string['completed'] = 'Completed';
-$string['completederror'] = 'Complete the lesson';
-$string['completethefollowingconditions'] = 'You must complete the following condition(s) in <b>$a</b> lesson before you can proceed.';
 $string['confirmdeletionofthispage'] = 'Confirm deletion of this page';
 $string['congratulations'] = 'Congratulations - end of lesson reached';
 $string['continue'] = 'Continue';
@@ -92,8 +88,6 @@ $string['flowcontrol'] = 'Flow control';
 $string['general'] = 'General';
 $string['gobacktolesson'] = 'Go back to lesson';
 $string['grade'] = 'Grade';
-$string['gradebetterthan'] = 'Grade better than (&#37;)'; // &#37; = %
-$string['gradebetterthanerror'] = 'Earn a grade better than $a percent';
 $string['gradeessay'] = 'Grade essay questions ($a->notgradedcount not graded and $a->notsentcount not sent)';
 $string['gradeis'] = 'Grade is $a';
 $string['gradeoptions'] = 'Grade options';
@@ -102,8 +96,8 @@ $string['havenotgradedyet'] = 'Have not graded yet.';
 $string['here'] = 'here';
 $string['highscore'] = 'High score';
 $string['hightime'] = 'High time';
-$string['importppt'] = 'Import PowerPoint';
 $string['importquestions'] = 'Import questions';
+$string['importppt'] = 'Import PowerPoint';
 $string['insertedpage'] = 'Inserted page';
 $string['jump'] = 'Jump';
 $string['jumptsto'] = 'jumps to';
@@ -128,8 +122,6 @@ $string['maximumnumberofanswersbranches'] = 'Maximum number of answers/branches'
 $string['maximumnumberofattempts'] = 'Maximum number of attempts';
 $string['maxtime'] = 'Time limit (minutes)';
 $string['maxtimewarning'] = 'You have $a minute(s) to finish the lesson.';
-$string['mediafile'] = 'Media File';
-$string['mediafilepopup'] = 'Click here to view this lesson\'s media file.';
 $string['minimumnumberofquestions'] = 'Minimum number of questions';
 $string['modattempts'] = 'Allow student review';
 $string['modattemptsnoteacher'] = 'Student review only works for students.';
@@ -231,8 +223,6 @@ $string['thefollowingpagesjumptothispage'] = 'The following pages jump to this p
 $string['thispage'] = 'This page';
 $string['timed'] = 'Timed';
 $string['timeremaining'] = 'Time remaining';
-$string['timespenterror'] = 'Spend at least $a minutes in the lesson';
-$string['timespentminutes'] = 'Time Spent (minutes)';
 $string['timetaken'] = 'Time taken';
 $string['topscorestitle'] = 'Top $a->maxhighscores scores for $a->name lesson.';
 $string['treeview'] = 'Tree view';
@@ -262,8 +252,5 @@ $string['yourcurrentgradeis'] = 'Your current grade is $a';
 $string['yourgradeisnow'] = 'Your grade for the lesson has been changed to $a';
 $string['yourresponse'] = 'Your response';
 $string['youshouldview'] = 'You should view at least: $a';
-
-
-
 
 ?>
