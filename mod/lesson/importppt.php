@@ -129,7 +129,7 @@ function readdata($file, $courseid, $modname) {
     move_uploaded_file($tempzipfile, $base.$zipfile);
 
     // unzip it!
-    unzip_file($base.$zipfile, $base.$dirname, false);
+    unzip_file($base.$zipfile, $base, false);
     
     $base = $base.$dirname;  // update the base
     
@@ -140,10 +140,9 @@ function readdata($file, $courseid, $modname) {
     
     if (file_exists($outline) and is_readable($outline)) {
         $outlinecontents = file_get_contents($outline);
-
         $filenames = array();
         preg_match_all("/javascript:GoToSld\('(.*)'\)/", $outlinecontents, $filenames);  // this gets all of our files names
-        
+
         // file $pages with the contents of all of the slides
         foreach ($filenames[1] as $file) {
             $path = $base.'/'.$file;
