@@ -44,6 +44,7 @@ CREATE TABLE prefix_course (
    lang varchar(10) NOT NULL default '',
    theme varchar(50) NOT NULL default '',
    cost varchar(10) NOT NULL default '',
+   currency varchar(3) NOT NULL default 'USD',
    timecreated integer NOT NULL default '0',
    timemodified integer NOT NULL default '0',
    metacourse integer NOT NULL default '0'

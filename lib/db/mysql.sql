@@ -73,6 +73,7 @@ CREATE TABLE `prefix_course` (
   `lang` varchar(10) NOT NULL default '',
   `theme` varchar(50) NOT NULL default '',
   `cost` varchar(10) NOT NULL default '',
+  `currency` char(3) NOT NULL default 'USD',
   `timecreated` int(10) unsigned NOT NULL default '0',
   `timemodified` int(10) unsigned NOT NULL default '0',
   `metacourse` int(1) unsigned NOT NULL default '0',
