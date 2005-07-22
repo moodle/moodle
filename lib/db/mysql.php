@@ -1485,6 +1485,13 @@ function main_upgrade($oldversion=0) {
         }
     }
 
+    if ($oldversion < 2005072200) { // fix the mistakenly-added currency stuff from enrol/authorize
+        execute_sql("DROP TABLE {$CFG->prefix}currencies", false); // drop silently
+        execute_sql("ALTER TABLE {$CFG->prefix}course DROP currency", false);
+        $defaultcurrency = empty($CFG->enrol_currency) ? 'USD' : $CFG->enrol_currency;
+        table_column('course', '', 'currency', 'char', '3', '', $defaultcurrency, 'not null', 'cost');
+    }
+
     return $result;
 }
 

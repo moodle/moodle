@@ -597,6 +597,7 @@
             fwrite ($bf,full_tag("LANG",3,false,$course->lang));
             fwrite ($bf,full_tag("THEME",3,false,$course->theme));
             fwrite ($bf,full_tag("COST",3,false,$course->cost));
+            fwrite ($bf,full_tag("CURRENCY",3,false,$course->currency));
             fwrite ($bf,full_tag("MARKER",3,false,$course->marker));
             fwrite ($bf,full_tag("VISIBLE",3,false,$course->visible));
             fwrite ($bf,full_tag("HIDDENSECTIONS",3,false,$course->hiddensections));

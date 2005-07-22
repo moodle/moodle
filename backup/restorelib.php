@@ -520,6 +520,7 @@
             $course->lang = addslashes($course_header->course_lang);
             $course->theme = addslashes($course_header->course_theme);
             $course->cost = addslashes($course_header->course_cost);
+            $course->currency = addslashes($course_header->course_currency);
             $course->marker = addslashes($course_header->course_marker);
             $course->visible = addslashes($course_header->course_visible);
             $course->hiddensections = addslashes($course_header->course_hiddensections);
@@ -3290,6 +3291,9 @@
                             break;
                         case "COST":
                             $this->info->course_cost = $this->getContents();
+                            break;
+                        case "CURRENCY":
+                            $this->info->course_currency = $this->getContents();
                             break;
                         case "MARKER":
                             $this->info->course_marker = $this->getContents();
