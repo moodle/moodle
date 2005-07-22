@@ -2479,7 +2479,6 @@ function print_user_picture($userid, $courseid, $picture, $size=0, $returnstring
     }
     if (empty($size)) {
         $file = 'f2';
-        $size = 35;
     } else if ($size === true or $size == 1) {
         $file = 'f1';
         $size = 100;
@@ -2488,18 +2487,19 @@ function print_user_picture($userid, $courseid, $picture, $size=0, $returnstring
     } else {
         $file = 'f2';
     }
+    $class = "userpicture";
     if ($picture) {  // Print custom user picture
         if ($CFG->slasharguments) {        // Use this method if possible for better caching
-            $output .= '<img class="userpicture defaultuserpic" align="middle" src="'. $CFG->wwwroot .'/user/pix.php/'. $userid .'/'. $file .'.jpg"'.
-                       ' border="0" width="'. $size .'" height="'. $size .'" alt="" />';
+            $src =  $CFG->wwwroot .'/user/pix.php/'. $userid .'/'. $file .'.jpg"';
         } else {
-            $output .= '<img class="userpicture defaultuserpic" align="middle" src="'. $CFG->wwwroot .'/user/pix.php?file=/'. $userid .'/'. $file .'.jpg"'.
-                       ' border="0" width="'. $size .'" height="'. $size .'" alt="" />';
+            $src =  $CFG->wwwroot .'/user/pix.php?file=/'. $userid .'/'. $file .'.jpg"';
         }
     } else {         // Print default user pictures (use theme version if available)
-        $output .= "<img class=\"userpicture defaultuserpic\" align=\"middle\" src=\"$CFG->pixpath/u/$file.png\"".
-                   " border=\"0\" width=\"$size\" height=\"$size\" alt=\"\" />";
+        $class .= " defaultuserpic";
+        $src =  "$CFG->pixpath/u/$file.png\"";
     }
+    $output .= "<img class=\"$class\" align=\"middle\" src=\"$src".
+                   " border=\"0\" width=\"$size\" height=\"$size\" alt=\"\" />";
     if ($link) {
         $output .= '</a>';
     }
