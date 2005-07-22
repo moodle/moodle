@@ -182,15 +182,81 @@ function save_profile_image($id, $uploadmanager, $dir='users') {
     ImageCopyBicubic($im1, $im, 0, 0, $cx-$half, $cy-$half, 100, 100, $half*2, $half*2);
     ImageCopyBicubic($im2, $im, 0, 0, $cx-$half, $cy-$half, 35, 35, $half*2, $half*2);
 
-    if (ImageJpeg($im1, $CFG->dataroot .'/'. $dir .'/'. $id .'/user100.jpg', 90) and 
-        ImageJpeg($im2, $CFG->dataroot .'/'. $dir .'/'. $id .'/user35.jpg', 95) ) {
-        @chmod($CFG->dataroot .'/'. $dir .'/'. $id .'/user100.jpg', 0666);
-        @chmod($CFG->dataroot .'/'. $dir .'/'. $id .'/user35.jpg', 0666);
+    if (ImageJpeg($im1, $CFG->dataroot .'/'. $dir .'/'. $id .'/f1.jpg', 90) and 
+        ImageJpeg($im2, $CFG->dataroot .'/'. $dir .'/'. $id .'/f2.jpg', 95) ) {
+        @chmod($CFG->dataroot .'/'. $dir .'/'. $id .'/f1.jpg', 0666);
+        @chmod($CFG->dataroot .'/'. $dir .'/'. $id .'/f2.jpg', 0666);
         return 1;
     } else {
         return 0;
     }
 }
 
+/** 
+ * Given a user id this function scales and crops the user images to remove 
+ * the one pixel black border.
+ *
+ * @uses $CFG
+ * @param int $id description?
+ * @return boolean
+ */
+function upgrade_profile_image($id, $dir='users') {
+    global $CFG;
 
+    $im = ImageCreateFromJPEG($CFG->dataroot .'/'. $dir .'/'. $id .'/f1.jpg'); 
+
+    if (function_exists('ImageCreateTrueColor') and $CFG->gdversion >= 2) {
+        $im1 = ImageCreateTrueColor(100,100);
+        $im2 = ImageCreateTrueColor(35,35);
+    } else {
+        $im1 = ImageCreate(100,100);
+        $im2 = ImageCreate(35,35);
+    }
+    
+    if (function_exists('ImageCopyResampled') and $CFG->gdversion >= 2) { 
+        ImageCopyBicubic($im1, $im, 0, 0, 2, 2, 100, 100, 96, 96);
+    } else {
+        imagecopy($im1, $im, 0, 0, 0, 0, 100, 100);
+                $c = ImageColorsForIndex($im1,ImageColorAt($im1,2,2)); 
+                $color = ImageColorClosest ($im1, $c['red'], $c['green'], $c['blue']); 
+                ImageSetPixel ($im1, 0, 0, $color); 
+                $c = ImageColorsForIndex($im1,ImageColorAt($im1,2,97)); 
+                $color = ImageColorClosest ($im1, $c['red'], $c['green'], $c['blue']); 
+                ImageSetPixel ($im1, 0, 99, $color); 
+                $c = ImageColorsForIndex($im1,ImageColorAt($im1,97,2)); 
+                $color = ImageColorClosest ($im1, $c['red'], $c['green'], $c['blue']); 
+                ImageSetPixel ($im1, 99, 0, $color); 
+                $c = ImageColorsForIndex($im1,ImageColorAt($im1,97,97)); 
+                $color = ImageColorClosest ($im1, $c['red'], $c['green'], $c['blue']); 
+                ImageSetPixel ($im1, 99, 99, $color); 
+        for ($x = 1; $x < 99; $x++) { 
+                $c1 = ImageColorsForIndex($im1,ImageColorAt($im,$x,1)); 
+                $color = ImageColorClosest ($im, $c1['red'], $c1['green'], $c1['blue']); 
+                ImageSetPixel ($im1, $x, 0, $color); 
+                $c2 = ImageColorsForIndex($im1,ImageColorAt($im1,$x,98)); 
+                $color = ImageColorClosest ($im1, $red, $green, $blue); 
+                $color = ImageColorClosest ($im, $c2['red'], $c2['green'], $c2['blue']); 
+                ImageSetPixel ($im1, $x, 99, $color); 
+        } 
+        for ($y = 1; $y < 99; $y++) { 
+                $c3 = ImageColorsForIndex($im1,ImageColorAt($im, 1, $y)); 
+                $color = ImageColorClosest ($im, $red, $green, $blue); 
+                $color = ImageColorClosest ($im, $c3['red'], $c3['green'], $c3['blue']); 
+                ImageSetPixel ($im1, 0, $y, $color); 
+                $c4 = ImageColorsForIndex($im1,ImageColorAt($im1, 98, $y)); 
+                $color = ImageColorClosest ($im, $c4['red'], $c4['green'], $c4['blue']); 
+                ImageSetPixel ($im1, 99, $y, $color); 
+        } 
+    } 
+    ImageCopyBicubic($im2, $im, 0, 0, 2, 2, 35, 35, 96, 96);
+
+    if (ImageJpeg($im1, $CFG->dataroot .'/'. $dir .'/'. $id .'/f1.jpg', 90) and 
+        ImageJpeg($im2, $CFG->dataroot .'/'. $dir .'/'. $id .'/f2.jpg', 95) ) {
+        @chmod($CFG->dataroot .'/'. $dir .'/'. $id .'/f1.jpg', 0666);
+        @chmod($CFG->dataroot .'/'. $dir .'/'. $id .'/f2.jpg', 0666);
+        return 1;
+    } else {
+        return 0;
+    }
+}
 ?>
