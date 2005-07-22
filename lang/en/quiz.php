@@ -263,6 +263,7 @@ $string['numerical'] = 'Numerical';
 $string['optional'] = 'optional';
 $string['outof'] = ' out of a maximum of ';
 $string['overdue'] = 'Overdue';
+$string['pagesize'] = 'Attempts shown per page: ';
 $string['paragraphquestion'] = 'Paragraph Question not supported at line $a. The question will be ignored';
 $string['parent'] = 'Parent';
 $string['partiallycorrect'] = 'Partially correct';
