@@ -7,11 +7,14 @@
 
     require_once('../../config.php');
     require_once($CFG->libdir.'/filelib.php');
+    require_once('defaultsettings.php' );
     require_once('latex.php');
 
     $CFG->texfilterdir = 'filter/tex';
     $CFG->teximagedir  = 'filter/tex';
 
+    // check/initialise default configuration for filter (in defaultsettings.php)
+    tex_defaultsettings();
 
     $cmd    = '';               // Initialise these variables
     $status = '';
@@ -38,7 +41,9 @@
 
             // try and render with latex first
             $latex = new latex();
-            $latex_path = $latex->render( $texcache->rawtext, $md5, 12, 120, '#FFFFFF' );
+            $density = $CFG->filter_tex_density;
+            $background = $CFG->filter_tex_latexbackground;
+            $latex_path = $latex->render( $texcache->rawtext, $md5, 12, $density, $background );
             if ($latex_path) {    
                 copy( $latex_path, $pathname );
                 $latex->clean_up( $md5 );

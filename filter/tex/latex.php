@@ -5,11 +5,6 @@
     // software installed. 
     // Much of this inspired/copied from Benjamin Zeiss' work
 
-    //Preamble should be configurable from Filter Config
-    define('TEX_DOC_PREAMBLE', " \\usepackage[latin1]{inputenc}\n \\usepackage{amsmath}\n \\usepackage{amsfonts}\n");
-    //Preamble for Russian
-    //define('TEX_DOC_PREAMBLE', " \\usepackage{mathtext}\n \\usepackage[T2A]{fontenc}\n \\usepackage[cp1251]{inputenc}\n \\usepackage[russian]{babel}\n");
-
     class latex {
 
         var $temp_dir;
@@ -85,8 +80,10 @@
          */
         function construct_latex_document( $formula, $fontsize=12 ) {
             // $fontsize don't affects to formula's size. $density can change size
+
+            global $CFG;
             $doc =  "\\documentclass[{$fontsize}pt]{article}\n"; 
-            $doc .=  TEX_DOC_PREAMBLE;
+            $doc .=  $CFG->filter_tex_latexpreamble;
             $doc .= "\\pagestyle{empty}\n";
             $doc .= "\\begin{document}\n";
             $doc .= "$ {$formula} $\n";
