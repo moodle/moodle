@@ -1449,7 +1449,7 @@ function main_upgrade($oldversion=0) {
         }
     }
 
-    if ($oldversion < 2005072100) { // run the online assignment cleanup code
+    if ($oldversion < 2005060221) { // run the online assignment cleanup code
         include($CFG->dirroot.'/'.$CFG->admin.'/oacleanup.php');
         if (function_exists('online_assignment_cleanup')) {
             online_assignment_cleanup();
