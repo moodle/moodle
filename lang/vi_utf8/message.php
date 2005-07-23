@@ -1,0 +1,67 @@
+<?php  // $Id$
+
+$string['addcontact'] = 'Add contact';
+$string['addsomecontacts'] = 'Để gửi thông điệp tới ai đó, hoặc đưa thêm một shortcut cho họ trong trang này, sử dụng <a href=\"$a\">tab tìm kiếm</a> ở trên.';
+$string['addsomecontactsincoming'] = 'Các thông điệp này từ những người không trong danh sách liên hệ của bạn. Để đưa họ vào danh sách, nhấn chuột vào icon \"Đưa thêm liên hệ\"  gần tên của họ.';
+$string['ago'] = '$a trước đó';
+$string['allmine'] = 'Tất cả các thông điệp tới tôi hoặc từ tôi';
+$string['allstudents'] = 'Tất cả các thông điệp giữa các học viên trong cua học';
+$string['allusers'] = 'Tất cả các thông điệp từ tất cả các ngươi dùng';
+$string['backupmessageshelp'] = 'Nếu cho phép, thì các thông điệp sẽ được gộp vào khi sao lưu site';
+$string['beepnewmessage'] = 'Kêu bíp khi một thông điệp tới có thể yêu cầu plugin để có thể chơi được âm thanh, chẳng hạn QuickTime)';
+$string['blockcontact'] = 'Khoá liên hệ';
+$string['blocknoncontacts'] = 'Khoá các thông điệp mới từ những người không trong danh sách liên hệ của tôi';
+$string['blockedmessages'] = '$a thông điệp từ/tới các người dùng bị khoá';
+$string['context'] = 'ngữ cảnh';
+$string['contactlistempty'] = 'Danh sách liên hệ của bạn rỗng';
+$string['contacts'] = 'Các liên hệ';
+$string['deletemessagesdays'] = 'Số ngày trước khi các thông điệp cũ được xoá tự động';
+$string['discussion'] = 'Thảo luận';
+$string['emailmessages'] = 'Gửi cho tôi các thông điệp khi tôi ngoại tuyến';
+$string['emailtagline'] = 'Email này là copy của thông điệp được gửi tới bạn vào lúc \"$a\"';
+$string['emptysearchstring'] = 'Bạn phải tìm kiếm một cái gì đó';
+$string['formorethan'] = 'Cho hơn ';
+$string['includeblockedusers'] = 'Bao gồm các người dùng bị chặn';
+$string['incomingcontacts'] = 'Các liên hệ đến ($a)';
+$string['keywords'] = 'Các từ khoá';
+$string['keywordssearchresults'] = 'Các kết quả tìm kiếm: $a thông điệp tìm thấy';
+$string['maxmessages'] = 'Số lớn nhất các thông điệp để hiện thị trong thông tin lưu';
+$string['message'] = 'Thông điệp';
+$string['messagehistory'] = 'Lưu các thông điệp';
+$string['messages'] = 'Các thông điệp';
+$string['messaging'] = 'Gửi các thông điệp';
+$string['mycontacts'] = 'Các địa chỉ liên hệ của tôi';
+$string['newsearch'] = 'Tìm kiếm mới';
+$string['nosearchresults'] = 'Không có kết quả tìm kiếm nào cả';
+$string['nomessages'] = 'Không có thông điệp nào đợi';
+$string['nomessagesfound'] = 'Không có thông điệp nào tìm thấy';
+$string['offline'] = 'Ngoại tuyến';
+$string['offlinecontacts'] = 'Các liên hệ ngoại tuyến ($a)';
+$string['online'] = 'Online';
+$string['onlinecontacts'] = 'Các liên hệ trực tuyến ($a)';
+$string['onlyfromme'] = 'Chỉ các thông điệp từ tôi';
+$string['onlymycourses'] = 'Chỉ trong các cua học của tôi';
+$string['onlytome'] = 'Chỉ các thông điệp tới tôi';
+$string['pagerefreshes'] = 'Trang này tải lại tự động $a giây một lần';
+$string['readmessages'] = '$a đọc thông điệp';
+$string['removecontact'] = 'Huỷ bỏ liên hệ';
+$string['savemysettings'] = 'Lưu các thiết lập của tôi';
+$string['search'] = 'Tìm kiếm';
+$string['searchforperson'] = 'Tìm kiếm một người';
+$string['searchmessages'] = 'Tìm kiếm các thông điệp';
+$string['sendmessage'] = 'Gửi thông điệp';
+$string['sendmessageto'] = 'Gửi thông điệp tới $a';
+$string['settings'] = 'Các thiết lập';
+$string['settingssaved'] = 'Các thiết lập được lưu';
+$string['showmessagewindow'] = 'Tự động hiện của sổ thông điệp khi tôi có các thông điệp mới (trình duyệt của bạn cần thiết lập sao cho nó không chặn các popup trong site này)';
+$string['strftimedaydatetime'] = '%%A, %%d %%B %%Y, %%I:%%M %%p';
+$string['timenosee'] = 'Các phút kể từ lần tôi được nhìn thấy cuối cùng trực tuyến';
+$string['timesent'] = 'Thời gian gửi';
+$string['unblockcontact'] = 'Không khoá liên hệ';
+$string['unreadmessages'] = '$a các thông điệp không đọc';
+$string['userisblockingyou'] = 'Người dùng này đã chặn bạn gửi thông điệp tới';
+$string['userisblockingyounoncontact'] = 'Người dùng này chỉ chấp nhận các liên hệ từ những người được liệt kê như là các liên hệ, và bạn không có trong danh sách đó.';
+$string['userssearchresults'] = 'Kết quả tìm kiếm: $a người dùng được tìm thấy';
+
+
+?>
