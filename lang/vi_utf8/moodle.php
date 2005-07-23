@@ -124,6 +124,7 @@ $string['blocksetup'] = 'Thiết lập các bảng khối';
 $string['blocksuccess'] = '$a bảng vừa được thiết lập đúng';
 $string['bycourseorder'] = 'Theo thứ tự cua học';
 $string['byname'] = 'bởi $a';
+$string['cachecontrols'] = 'Điều khiển cache';
 $string['cancel'] = 'Huỷ';
 $string['categories'] = 'Các danh mục cua học';
 $string['category'] = 'Danh mục';
