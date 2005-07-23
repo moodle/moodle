@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 ALPHA (2005042300)
+      // moodle.php - created with Moodle 1.5.1 (2005060210)
 
 
 $string['action'] = 'פעולה';
@@ -410,7 +410,7 @@ $string['filesfolders'] = 'קבצים/תיקיות';
 $string['filloutallfields'] = 'אנא מלא את כל השדות בטופס זה';
 $string['findmorecourses'] = 'מצא קורסים נוספים...';
 $string['firstdayofweek'] = '0';
-$string['firstname'] = 'שם נתון';
+$string['firstname'] = 'שם פרטי';
 $string['firsttime'] = 'האם זהו הביקור הראשון שלך באתר זה?';
 $string['followingoptional'] = 'הפריטים הבאים אינם הכרחיים';
 $string['followingrequired'] = 'הפריטים הבאים הינם הכרחיים';
@@ -488,6 +488,8 @@ $string['guestsnotallowed'] = 'סליחה, \'$a\' אינו מרשה לאורחים להיכנס.';
 $string['guestsyes'] = 'הרשה אורחים ללא המפתח';
 $string['guestuser'] = 'משתמש אורח';
 $string['guestuserinfo'] = 'משתמש זה הינו משתמש מיוחד המאפשר גישת קריאה בלבד לחלק מהקורסים.';
+$string['healthreturntomain'] = 'המשך';
+$string['healthsolution'] = 'פתרון';
 $string['help'] = 'עזרה';
 $string['helpemoticons'] = 'השתמש בסמיילים';
 $string['helpformatting'] = 'בקשר לפירמוט טקסט';
@@ -556,7 +558,7 @@ $string['lastmodified'] = 'שינוי אחרון';
 $string['lastname'] = 'שם משפחה';
 $string['latestlanguagepack'] = 'חפש את חבילת השפה האחרונה ב moodle.org';
 $string['latestnews'] = 'חדשות אחרונות';
-$string['leavetokeep'] = 'השאר ריק כדי לשמור על סיסמא נוחכית';
+$string['leavetokeep'] = 'השאר ריק כדי לשמור על סיסמא נוכחית';
 $string['license'] = ' רשיון GPL ';
 $string['liketologin'] = 'האם ברצונך להתחבר כעת עם חשבון משתמש רגיל?';
 $string['list'] = 'רשימה';
@@ -705,6 +707,7 @@ $string['no'] = 'לא';
 $string['nobody'] = 'אף אחד';
 $string['nocoursesfound'] = 'לא נמצאו קורסים עם המילים  \'$a\'';
 $string['nocoursesyet'] = 'אין קורסים בקטגוריה זו';
+$string['nodstpresets'] = 'מנהל המערכת לא אפשר תמיכה בעדכון שעון קיץ.';
 $string['noexistingadmins'] = 'אין מנהלים קיימים, זוהי בעיה חמורה ובכלל לא היית צריך לראות הודעה זו אי פעם. ';
 $string['noexistingcreators'] = 'אין יוצרים קיימים';
 $string['noexistingstudents'] = 'אין סטודנטים קיימים';
@@ -929,7 +932,7 @@ $string['themes'] = 'ערכות נושא';
 $string['themesaved'] = 'ערכת הנושא החדשה נשמרה';
 $string['thischarset'] = 'ISO-8859-8-I';
 $string['thisdirection'] = 'rtl';
-$string['thislanguage'] = '&#1506;&#1489;&#1512;&#1497;&#1514;';
+$string['thislanguage'] = 'עברית';
 $string['time'] = 'זמן';
 $string['timezone'] = 'אזור זמן';
 $string['to'] = 'ל';
@@ -1001,14 +1004,15 @@ $string['view'] = 'תצוגה';
 $string['virusfoundsubject'] = '$a: נמצא וירוס!';
 $string['webpage'] = 'דף בית באינטרנט';
 $string['week'] = 'שבוע';
-$string['weekhide'] = 'החבא שבוע זה מפני a$';
+$string['weekhide'] = 'החבא שבוע זה מפני $a';
 $string['weeklyoutline'] = 'סקירה שבועית';
-$string['weekshow'] = 'הראה שבוע זה ל a$';
-$string['welcometocourse'] = 'ברוך הבא ל a$';
-$string['welcometocoursetext'] = 'ברוך הבא ל a->coursename$!
+$string['weekshow'] = 'הראה שבוע זה ל $a';
+$string['welcometocourse'] = 'ברוך בואך לקורס $a';
+$string['welcometocoursetext'] = 'ברוך בואך לקורס $a->coursename!
 
-אם לא עשית זאת כבר, עלייך לערוך את עמוד הפרופיל שלך בתוך הקורס כך שנוכל ללמוד עליך יותר :
-  a->profileurl$';
+אם לא עשית זאת כבר, עליך לערוך את עמוד הפרופיל שלך בקורס כך שנוכל להכירך טוב יותר:
+
+$a->profileurl';
 $string['whattocallzip'] = 'כיצד אתה רוצה לקרוא לקובץ זיפ זה?';
 $string['withchosenfiles'] = 'עם קבצים נבחרים';
 $string['withoutuserdata'] = 'ללא נתוני משתמש';
@@ -1037,7 +1041,7 @@ $string['yes'] = 'כן';
 $string['youareabouttocreatezip'] = 'אתה עומד ליצור קובץ ארכיב המכיל';
 $string['youaregoingtorestorefrom'] = 'אתה עומד להתחיל את תהליך השיחזור ל';
 $string['yourlastlogin'] = 'התחברותך האחרונה היתה';
-$string['yourself'] = 'את עצמך';
+$string['yourself'] = 'עצמך';
 $string['yourteacher'] = '$a שלך';
 $string['zippingbackup'] = 'מכווץ את הגיבוי לארכיב';
 
