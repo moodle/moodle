@@ -29,7 +29,20 @@ function online_assignment_cleanup($output=false) {
         echo '<center>';
     }
 
-    // get the module id for assignments from db
+
+    /// We don't want to run this code if we are doing an upgrade from an assignment
+    /// version earlier than 2005041400
+    /// because the assignment type field will not exist
+    $amv = get_field('modules', 'version', 'name', 'assignment');
+    if ((int)$amv < 2005041400) {
+        if ($output) {
+            echo '</center>';
+        }
+        return;
+    }
+
+
+    /// get the module id for assignments from db
     $arecord = get_record('modules', 'name', 'assignment');
     $aid = $arecord->id;
 
