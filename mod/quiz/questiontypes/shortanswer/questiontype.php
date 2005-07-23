@@ -180,8 +180,8 @@ class quiz_shortanswer_qtype extends quiz_default_questiontype {
             $teststate->responses[''] = trim($answer->answer);
             if($this->compare_responses($question, $testedstate, $teststate)) {
                 $state->raw_grade = $answer->fraction;
-                break;            
-            }        
+                break;
+            }
         }
 
         // Make sure we don't assign negative or too high marks
