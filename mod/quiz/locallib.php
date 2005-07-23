@@ -578,40 +578,42 @@ function quizzes_category_used($id, $recursive = false) {
 
 /**
  * Get list of available import or export formats
+ * @param string $type 'import' if import list, otherwise export list assumed
+ * @return array sorted list of import/export formats available 
 **/
 function get_import_export_formats( $type ) {
 
-  global $CFG;
-  $fileformats = get_list_of_plugins("mod/quiz/format");
+    global $CFG;
+    $fileformats = get_list_of_plugins("mod/quiz/format");
 
-  $fileformatname=array();
-  require_once( "format.php" );
-  foreach ($fileformats as $key => $fileformat) {
-    $format_file = $CFG->dirroot . "/mod/quiz/format/$fileformat/format.php";
-    if (file_exists( $format_file ) ) {
-      require_once( $format_file );
+    $fileformatname=array();
+    require_once( "format.php" );
+    foreach ($fileformats as $key => $fileformat) {
+        $format_file = $CFG->dirroot . "/mod/quiz/format/$fileformat/format.php";
+        if (file_exists( $format_file ) ) {
+            require_once( $format_file );
+        }
+        else {
+            continue;
+        }
+        $classname = "quiz_format_$fileformat";
+        $format_class = new $classname();
+        if ($type=='import') {
+            $provided = $format_class->provide_import();
+        }
+        else {
+            $provided = $format_class->provide_export();
+        }
+        if ($provided) {
+            $formatname = get_string($fileformat, 'quiz');
+            if ($formatname == "[[$fileformat]]") {
+                $formatname = $fileformat;  // Just use the raw folder name
+            }
+            $fileformatnames[$fileformat] = $formatname;
+        }
     }
-    else {
-      continue;
-    }
-    $classname = "quiz_format_$fileformat";
-    $format_class = new $classname();
-    if ($type=='import') {
-      $provided = $format_class->provide_import();
-    }
-    else {
-      $provided = $format_class->provide_export();
-    }
-    if ($provided) {
-      $formatname = get_string($fileformat, 'quiz');
-      if ($formatname == "[[$fileformat]]") {
-        $formatname = $fileformat;  // Just use the raw folder name
-      }
-      $fileformatnames[$fileformat] = $formatname;
-    }
-  }
-  natcasesort($fileformatnames);
+    natcasesort($fileformatnames);
 
-  return $fileformatnames;
+    return $fileformatnames;
 }
 ?>
