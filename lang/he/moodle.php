@@ -1002,6 +1002,7 @@ $string['usingexistingcourse'] = 'משתמש בקורס קיים';
 $string['version'] = 'גרסה';
 $string['view'] = 'תצוגה';
 $string['virusfoundsubject'] = '$a: נמצא וירוס!';
+$string['visibletostudents'] = 'זמין ל$a';
 $string['webpage'] = 'דף בית באינטרנט';
 $string['week'] = 'שבוע';
 $string['weekhide'] = 'החבא שבוע זה מפני $a';
