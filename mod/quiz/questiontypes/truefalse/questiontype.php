@@ -254,6 +254,16 @@ class quiz_truefalse_qtype extends quiz_default_questiontype {
 
         return true;
     }
+
+    function get_actual_response($question, $state) {
+        $answers = $question->options->answers;
+        if (!empty($state->responses)) {
+                $responses[] = ($answers['true']->id == $state->responses['']) ? get_string("true", "quiz") : get_string("false", "quiz");
+        } else {
+            $responses[] = '';
+        }
+        return $responses;
+    }
 }
 //// END OF CLASS ////
 

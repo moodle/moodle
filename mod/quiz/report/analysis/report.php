@@ -11,16 +11,31 @@ class quiz_report extends quiz_default_report {
         global $CFG, $SESSION, $db, $QUIZ_QTYPES;
         $strnoquiz = get_string('noquiz','quiz');
         $strnoattempts = get_string('noattempts','quiz');
+    /// Only print headers if not asked to download data
+        $download = optional_param('download', NULL);
+        if (!$download) {
+            $this->print_header_and_tabs($cm, $course, $quiz, $reportmode="analysis");
+        }
+    /// Construct the table for this particular report
         
         if (!$quiz->questions) {
-            $this->print_header_and_tabs($cm, $course, $quiz, $reportmode="analysis");
             print_heading($strnoattempts);
             return true;
         }
 
     /// Check to see if groups are being used in this quiz
         if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
-            $currentgroup = setup_and_print_groups($course, $groupmode, "report.php?id=$cm->id&amp;mode=overview");
+            if (!$download) {
+                $currentgroup = setup_and_print_groups($course, $groupmode, "report.php?id=$cm->id&amp;mode=analysis");
+            } else {
+                if (isset($_GET['group'])) {
+                    $changegroup = $_GET['group'];  /// 0 or higher
+                } else {
+                    $changegroup = -1;              /// This means no group change was specified
+                }
+
+                $currentgroup = get_and_set_current_group($course, $groupmode, $changegroup);  
+            }
         } else {
             $currentgroup = false;
         }
@@ -34,7 +49,6 @@ class quiz_report extends quiz_default_report {
         }
 
         if(empty($users)) {
-            $this->print_header_and_tabs($cm, $course, $quiz, $reportmode="analysis");
             print_heading($strnoattempts);
             return true;
         }
@@ -54,7 +68,7 @@ class quiz_report extends quiz_default_report {
             }
         }
       
-        $scorelimit = $quiz->grade * $lowmarklimit/ 100;
+        $scorelimit = $quiz->sumgrades * $lowmarklimit/ 100;
         
         // ULPGC ecastro DEBUG this is here to allow for different SQL to select attempts
         switch ($attemptselection) {
@@ -76,18 +90,21 @@ class quiz_report extends quiz_default_report {
             break;
         }
 
-        $select = 'SELECT  qa.* '.$limit;
-        $sql = 'FROM '.$CFG->prefix.'user u '.
+        if ($attemptselection != QUIZ_ALLATTEMPTS) {
+            $sql = 'SELECT qa.userid '.$limit.'FROM '.$CFG->prefix.'user u LEFT JOIN '.$CFG->prefix.'quiz_attempts qa ON u.id = qa.userid '. 'WHERE ( qa.quiz = '.$quiz->id.') '.$group;
+            $usermax = get_records_sql_menu($sql);
+        }
+
+        $sql = 'SELECT  qa.* FROM '.$CFG->prefix.'user u '.
                'LEFT JOIN '.$CFG->prefix.'quiz_attempts qa ON u.id = qa.userid '.
                'WHERE u.id IN ('.implode(',', array_keys($users)).') AND ( qa.quiz = '.$quiz->id.') '. // ULPGC ecastro
                ' AND ( qa.sumgrades >= '.$scorelimit.' ) ';
                                                                                    // ^^^^^^ es posible seleccionar aquí TODOS los quizzes, como quiere Jussi,
                                                                                    // pero habría que llevar la cuenta ed cada quiz para restaura las preguntas (quizquestions, states)
         /// Fetch the attempts
-        $attempts = get_records_sql($select.$sql.$group);
+        $attempts = get_records_sql($sql);
 
         if(empty($attempts)) {
-            $this->print_header_and_tabs($cm, $course, $quiz, $reportmode="analysis");
             ($strnoattempts);
             $this->print_options_form($quiz, $cm, $attemptselection, $lowmarklimit, $pagesize);
             return true;
@@ -107,6 +124,23 @@ class quiz_report extends quiz_default_report {
         $accepted_qtypes = array(SHORTANSWER, TRUEFALSE, MULTICHOICE, MATCH, NUMERICAL, CALCULATED);        
 
         foreach ($attempts as $attempt) {
+            switch ($attemptselection) {
+            case QUIZ_ALLATTEMPTS : 
+                $userscore = 0;      // can be anything, not used
+                break;
+            case QUIZ_HIGHESTATTEMPT :
+                $userscore = $attempt->sumgrades;
+                break;
+            case QUIZ_FIRSTATTEMPT :
+                $userscore = $attempt->timemodified;
+                break;
+            case QUIZ_LASTATTEMPT : 
+                $userscore = $attempt->timemodified;
+                break;
+            }
+
+            if ($attemptselection == QUIZ_ALLATTEMPTS || $userscore == $usermax[$attempt->userid]) {
+
             $sql = "SELECT q.*, i.grade AS maxgrade, i.id AS instance".
                    "  FROM {$CFG->prefix}quiz_questions q,".
                    "       {$CFG->prefix}quiz_question_instances i".
@@ -170,6 +204,7 @@ class quiz_report extends quiz_default_report {
             }
             $attemptscores[$attempt->id] = $attempt->sumgrades;   
             $statstable[$attempt->id] = $statsrow;
+            }
         } // Statistics Data table built
         
         unset($attempts);
@@ -204,7 +239,6 @@ class quiz_report extends quiz_default_report {
             }
         }
         
-        $this->print_header_and_tabs($cm, $course, $quiz, $reportmode="analysis");
     /// Construct the table for this particular report
 
         $tablecolumns = array('id', 'qname',    'answers', 'credits', 'rcounts', 'rpercent', 'facility', 'sd','discrimination_index', 'discrimination_coeff');
@@ -363,7 +397,7 @@ class quiz_report extends quiz_default_report {
         echo '</tr>';
         echo '<tr><td colspan="2" align="center">';
         echo '<input type="submit" value="'.get_string('go').'" />';
-        helpbutton("analysisoptions", get_string("analysisoptions",'quiz_analysis'), 'quiz_analysis');
+        helpbutton("analysisoptions", get_string("analysisoptions",'quiz_analysis'), 'quiz');
         echo '</td></tr></table>';
         echo '</form>';
         echo '</div>';    
@@ -416,13 +450,13 @@ class quiz_report extends quiz_default_report {
             }
         }
         $n = count($qstats);
-        $sumx = array_reduce($qstats, "stats_sumx", array(0,0));
+        $sumx = stats_sumx($qstats, array(0,0));
         $sumg = $sumx[0];
         $sumq = $sumx[1];
-        $sumx2 = array_reduce($qstats, "stats_sumx2", array(0,0));
+        $sumx2 = stats_sumx2($qstats, array(0,0));
         $sumg2 = $sumx2[0];
         $sumq2 = $sumx2[1];
-        $sumxy = array_reduce($qstats, "stats_sumxy", array(0,0));
+        $sumxy = stats_sumxy($qstats, array(0,0));
         $sumgq = $sumxy[0];
         
         $q['count'] = $n;
@@ -653,22 +687,31 @@ define('QUIZ_HIGHESTATTEMPT', 1);
 define('QUIZ_FIRSTATTEMPT', 2);
 define('QUIZ_LASTATTEMPT', 3);
 
-function stats_sumx($sum, $data){
-    $sum[0] += $data[0];
-    $sum[1] += $data[1];
-    return $sum;
+function stats_sumx($data, $initsum){
+    $accum = $initsum;
+    foreach ($data as $v) {
+        $accum[0] += $v[0];
+        $accum[1] += $v[1];
+    }
+    return $accum;
 }       
 
-function stats_sumx2($sum, $data){
-    $sum[0] += $data[0]*$data[0];
-    $sum[1] += $data[1]*$data[1];
-    return $sum;
+function stats_sumx2($data, $initsum){
+    $accum = $initsum;
+    foreach ($data as $v) {
+        $accum[0] += $v[0]*$v[0];
+        $accum[1] += $v[1]*$v[1];
+    }
+    return $accum;
 }    
 
-function stats_sumxy($sum, $data){
-    $sum[0] += $data[0]*$data[1];
-    $sum[1] += $data[1]*$data[0];
-    return $sum;
+function stats_sumxy($data, $initsum){
+    $accum = $initsum;
+    foreach ($data as $v) {
+        $accum[0] += $v[0]*$v[1];
+        $accum[1] += $v[1]*$v[0];
+    }
+    return $accum;
 }
 
 ?>
