@@ -225,6 +225,7 @@
 
         if ($recs = get_records_sql ("SELECT p.id AS postid,
                                              d.id AS discussionid,
+                                             d.name AS discussionname,
                                              u.id AS userid,
                                              u.firstname AS userfirstname,
                                              u.lastname AS userlastname,
@@ -252,6 +253,7 @@
             foreach ($recs as $rec) {
                 unset($item);
                 unset($user);
+                $item->category = $rec->discussionname;
                 $item->title = $rec->postsubject;
                 $user->firstname = $rec->userfirstname;
                 $user->lastname = $rec->userlastname;
