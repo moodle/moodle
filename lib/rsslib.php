@@ -204,6 +204,10 @@ function rss_add_items($items) {
     if (!empty($items)) {
         foreach ($items as $item) {
             $result .= rss_start_tag('item',2,true);
+            //Include the category if exists (some rss readers will use it to group items)
+            if (isset($item->category)) {
+                $result .= rss_full_tag('category',3,false,$item->category);
+            }
             $result .= rss_full_tag('title',3,false,$item->title);
             $result .= rss_full_tag('link',3,false,$item->link);
             $result .= rss_full_tag('pubDate',3,false,date('r',$item->pubdate));
