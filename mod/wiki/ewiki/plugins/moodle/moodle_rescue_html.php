@@ -1,4 +1,4 @@
-<?php
+<?php // $Id$
 
 /*
      Can be used to allow preserving of certain "safe" HTML <tags>

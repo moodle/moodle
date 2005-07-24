@@ -1,4 +1,4 @@
-<?php
+<?php // $Id$
 
 # lists pages, which were referenced
 # but not yet written

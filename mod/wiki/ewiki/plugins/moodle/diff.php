@@ -1,4 +1,4 @@
-<?php
+<?php // $Id$
 
  # this is the "stupid diff", which shows up changes between two
  # saved versions of a WikiPage; even if working very unclean it

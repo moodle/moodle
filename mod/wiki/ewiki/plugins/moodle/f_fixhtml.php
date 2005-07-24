@@ -1,4 +1,4 @@
-<?php
+<?php // $Id$
 
 /*
    This filter plugin implements minimal html tag balancing, and can also
