@@ -1,4 +1,4 @@
-<?php
+<?php // $Id$
 
 /*
    CSS-highlights the terms used as search patterns. This is done

@@ -1,4 +1,4 @@
-<?php
+<?php // $Id$
 
 /*
     This plugin will create a sitemap rooted at the given location
