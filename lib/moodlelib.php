@@ -4362,7 +4362,12 @@ function get_string($identifier, $module='', $a=NULL) {
 
 /// Define the two or three major locations of language strings for this module
 
-    $locations = array( $CFG->dataroot.'/lang/',  $CFG->dirroot.'/lang/' );
+    if ($module == 'install') {
+        $locations = array( $CFG->dirroot.'/install/lang/', $CFG->dataroot.'/lang/',  $CFG->dirroot.'/lang/' );
+    } else {
+        $locations = array( $CFG->dataroot.'/lang/',  $CFG->dirroot.'/lang/' );
+    }
+
     if ($module != 'moodle') {
         if (strpos($module, 'block_') === 0) {  // It's a block lang file
             $locations[] =  $CFG->dirroot .'/blocks/'.substr($module, 6).'/lang/';
