@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.5 ALPHA (2005043000)
+      // forum.php - created with Moodle 1.5.2 (2005072200)
 
 
 $string['addanewdiscussion'] = 'Yeni tartýþma konusu ekle';
@@ -104,7 +104,7 @@ $string['openmode2'] = 'Tartýþma açýlabilir ve yanýt verilebilir';
 $string['parent'] = 'Bir üst forumu göster';
 $string['parentofthispost'] = 'Bu mesajýn bir üstü';
 $string['postadded'] = 'Mesajýnýz baþarýyla eklendi.<P>Herhangi bir deðiþiklik yapmak için $a süreniz var.';
-$string['postincontext'] = 'Mesajý konu içinde görün';
+$string['postincontext'] = 'Bu mesajý konu içinde göster';
 $string['postmailinfo'] = 'Bu metin $a websitesinde gönderilmiþ mesajýn bir kopyasýdýr.
 Websitesi aracýlýðýyla yanýtlamak için bu baðlantýyý týklayýnýz:';
 $string['postrating1'] = 'Çoðunlukla AYRI bilgiler gösteriliyor';
