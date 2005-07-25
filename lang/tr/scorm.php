@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.5 + (2005060201)
+      // scorm.php - created with Moodle 1.5.2 (2005072200)
 
 
 $string['advanced'] = 'Geliþmiþ';
@@ -18,7 +18,6 @@ $string['datadir'] = 'Dosya sistemi hatasý: Kurs veri klasörü oluþturulamadý.';
 $string['details'] = 'Pylþ.Ýçr.Nesn. izleme detaylarý';
 $string['display'] = 'Görünüm';
 $string['domxml'] = 'DOMXML harici kütüphanesi';
-$string['enablebrowse'] = 'Önizleme modunu etkinleþtir';
 $string['entercourse'] = 'Kursa gir';
 $string['errorlogs'] = 'Hata kayýtlarý';
 $string['exit'] = 'SCORM kursundan çýk';
@@ -35,6 +34,8 @@ $string['gradescoes'] = 'Pylþ.Ýçr.Nesn durumu';
 $string['gradesum'] = 'Notlarý topla';
 $string['guestsno'] = 'Konuk kullanýcýlar SCORM kurslarýna eriþemezler';
 $string['height'] = 'Yükseklik';
+$string['hidebrowse'] = 'Gözat modu düðmesini gizle';
+$string['hidetoc'] = 'Oynatýcý penceresinden kurs yapýsýný gizle';
 $string['incomplete'] = 'Tamamlanmadý';
 $string['lastaccess'] = 'Son eriþim';
 $string['missing_attribute'] = '$a->tag etiketi içinde hatalý $a->attr özelliði';
@@ -47,6 +48,7 @@ $string['no_attributes'] = '$a->tag etiketinin özellikleri olmalý';
 $string['no_children'] = '$a->tag etiketinin yavrularý olmalý';
 $string['noactivity'] = 'Rapor edilecek bir þey yok';
 $string['nomanifest'] = 'Manifest bulunamadý';
+$string['noprerequisites'] = 'Üzgünüz, bu öðrenme nesnesine eriþmek için gerekli ön þartlarý yerine getirmediniz.';
 $string['noreports'] = 'Gösterilecek rapor yok';
 $string['normal'] = 'Normal';
 $string['not_corr_type'] = '$a->tag etiketi için tip uyumsuzluðu';
@@ -79,5 +81,6 @@ $string['validationtype'] = 'Bu seçenek SCORM paketindeki manifest dosyasýnýnýn 
 $string['versionwarning'] = 'Manifest sürümü 1.3\'den daha eski, $a->tag etiketinde uyarý';
 $string['viewallreports'] = 'Toplam $a uygulama raporu var';
 $string['width'] = 'Geniþlik';
+$string['window'] = 'Çerçeve/Pencere';
 
 ?>
