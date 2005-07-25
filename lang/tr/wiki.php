@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.5 ALPHA (2005042400)
+      // wiki.php - created with Moodle 1.5.2 (2005072200)
 
 
 $string['action'] = '-- Eylem --';
@@ -24,6 +24,8 @@ $string['contentsize'] = 'Ýçerik boyutu';
 $string['created'] = 'Oluþturuldu';
 $string['deletemewikiword'] = 'BeniSil';
 $string['deletepage'] = 'Sayfayý sil';
+$string['diff'] = 'Fark';
+$string['differences'] = '$a->pagename sayfasýnýn $a->new_ver ve $a->old_ver sürümleri arasýndaki farklar';
 $string['disablecamel'] = 'camelCase baðlantý etkin deðil';
 $string['disabledpage'] = 'Bu sayfaya þu anda ulaþýlamaz.';
 $string['doesnotexist'] = 'Bu sayfa henüz yok, oluþturmak istiyorsanýz \'Düzenle\' düðmesine basýnýz.';
@@ -32,6 +34,7 @@ $string['downloadtimes'] = '$a kez indirildi';
 $string['dwnlnofiles'] = 'Henüz dosya yüklenmedi.';
 $string['dwnlsection'] = 'Ýndirme bölümü';
 $string['editform1'] = 'Þu anda biçimlendirme için fazla uðraþmanýza gerek yok. Daha sonra bu sayfayý geliþtirebilirsiniz.';
+$string['editform2'] = 'Lütfen duyarlý yazýn ve tüm düzenlemelerin kayýt altýnda tutulduðunu unutmayýn.';
 $string['editthispage'] = 'Bu sayfayi düzenle';
 $string['emptypage'] = 'Boþ sayfa';
 $string['errorbinandtxt'] = 'Bayrak hatasý: Sayfa tipi BIN ve TXT';
@@ -65,6 +68,7 @@ $string['htmlonly'] = 'Sadece HTML';
 $string['index'] = 'Dizin';
 $string['infoaboutpage'] = 'Geçmiþ:';
 $string['initialcontent'] = 'Bir Baþlangýç Sayfasý seçin';
+$string['lastchanged'] = 'Son düzenleme: $a';
 $string['lastmodified'] = 'Son güncelleme';
 $string['linkdead'] = 'ÖLÜ';
 $string['linkok'] = 'TAMAM';
@@ -89,16 +93,20 @@ $string['pagename'] = 'Sayfa adý';
 $string['pagenamechoice'] = '- veya -';
 $string['pageslinkingto'] = 'Bu sayfaya baglantilar';
 $string['pagesremoved'] = 'Sayfalar silindi.';
+$string['pagesreverted'] = 'Deðiþiklikler geri alýndý';
 $string['plaintext'] = 'Düz Yazý';
 $string['preview'] = 'Önizleme';
 $string['refs'] = 'Referanslar';
 $string['removepagecheck'] = 'Bu sayfalarý silmek istediðinizden emin misiniz?';
 $string['removepages'] = 'Sayfalarý sil';
 $string['removeselectedpages'] = 'Seçili sayfalarý sil';
+$string['revertpages'] = 'Toplu deðiþiklikleri geri al';
+$string['revertpagescheck'] = 'Aþaðýdaki deðiþiklikleri geri almak istediðinizden emin misiniz?';
 $string['safehtml'] = 'Güvenli HTML';
 $string['save'] = 'Kaydet';
 $string['searchwiki'] = 'Wiki Ara';
 $string['setpageflags'] = 'Sayfa bayraklarýný ayarla';
+$string['showversions'] = 'Sürümleri göster:';
 $string['sitemap'] = 'Site haritasý';
 $string['smfor'] = 'Site haritasý: ';
 $string['status'] = 'Durum';
@@ -129,6 +137,7 @@ $string['viewsmfor'] = 'Site haritasýna bak:';
 $string['wantedpages'] = 'Ýstenen Sayfalar';
 $string['wikiexport'] = 'Sayfalarý çýkar';
 $string['wikilinkoptions'] = 'Otomatik-linkleme seçenekleri';
+$string['wikilinks'] = 'Wiki Baglantilari';
 $string['wikiname'] = 'Sayfa Adý';
 $string['wikitype'] = 'Tip';
 $string['wikiusage'] = 'Wiki kullanýmý';
