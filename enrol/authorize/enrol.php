@@ -21,9 +21,9 @@ var $coursecost;
 function print_entry($course) {
     global $CFG, $USER, $form;
 
-    $free_cost = $this->zero_cost($course);
+    $freecost = $this->zero_cost($course);
 
-    if ($free_cost || isguest()) { // No money for guests ;), So parent::print_entry
+    if ($freecost || isguest()) { // No money for guests ;), So parent::print_entry
         parent::print_entry($course);
         return;
     }
@@ -74,16 +74,16 @@ function print_entry($course) {
     print_header($strloginto, $course->fullname, "<a href=\"$CFG->wwwroot/course/\">$strcourses</a> -> $strloginto");
     print_course($course, "80%");
     
-    if ($passwordoption && !$free_cost) {
+    if ($passwordoption && !$freecost) {
         print_simple_box(get_string('choosemethod', 'enrol_authorize'), 'center');
     }
 
-    if ($passwordoption || $free_cost) {
+    if ($passwordoption || $freecost) {
         $password = ''; 
         include($CFG->dirroot . '/enrol/internal/enrol.html'); 
     }
 
-    if (!$free_cost) {
+    if (!$freecost) {
         print_simple_box_start("center");
         include($CFG->dirroot . '/enrol/authorize/enrol.html');
         print_simple_box_end();
@@ -185,7 +185,7 @@ function cc_submit($form, $course)
     	$this->ccerrormsg =  "$errstr ($errno)";
     	return;
     } else {
-    	fputs($fp,
+        fputs($fp,
             "POST " . AN_PATH . " HTTP/1.0\r\n" .
             "Host: " . AN_HOST . "\r\n" . 
             $anrefererheader .
@@ -193,99 +193,98 @@ function cc_submit($form, $course)
             "Content-length: " . strlen($poststring) . "\r\n" .
             "Connection: close\r\n\r\n" .
             $poststring . "\r\n\r\n");
-    	$str = '';
-    	while(!feof($fp) && !stristr($str, 'content-length')) {
+
+        $str = '';
+        while(!feof($fp) && !stristr($str, 'content-length')) {
             $str = fgets($fp, 4096);
         }
     	// If didnt get content-lenght, something is wrong.
     	if (!stristr($str, 'content-length')) {
-    		$this->ccerrormsg =  "content-length error";
-    		return;
-    	}
+            $this->ccerrormsg =  "content-length error";
+            @fclose($fp);
+            return;
+        }
     	// Get length of data to be received.
-    	$length = trim(substr($str,strpos($str,'content-length') + 15));
-    	// Get buffer (blank data before real data)
-    	fgets($fp, 4096);
-    	// Get real data
-    	$data = fgets($fp, $length);
-    	fclose($fp);
-    	$response = explode(AN_ENCAP.AN_DELIM.AN_ENCAP, $data);
-    	if ($response === false)
-    	{
-    		$this->ccerrormsg = "response error";
-    		return;
-    	}
-    	$rcount = count($response) - 1;
-    	if ($response[0]{0} == AN_ENCAP) {
-    		$response[0] = substr($response[0], 1);
-    	}
-    	if (substr($response[$rcount], -1) == AN_ENCAP) {
-    		$response[$rcount] = substr($response[$rcount], 0, -1);
-    	}
+        $length = trim(substr($str,strpos($str,'content-length') + 15));
+        // Get buffer (blank data before real data)
+        fgets($fp, 4096);
+        // Get real data
+        $data = fgets($fp, $length);
+        @fclose($fp);
+        $response = explode(AN_ENCAP.AN_DELIM.AN_ENCAP, $data);
+        if ($response === false) {
+            $this->ccerrormsg = "response error";
+            return;
+        }
+        $rcount = count($response) - 1;
+        if ($response[0]{0} == AN_ENCAP) {
+            $response[0] = substr($response[0], 1);
+        }
+        if (substr($response[$rcount], -1) == AN_ENCAP) {
+            $response[$rcount] = substr($response[$rcount], 0, -1);
+        }
     }
 
     if ($response[0] != AN_APPROVED) {
-    	$this->ccerrormsg = isset($response[3]) ? $response[3] : 'unknown error';
+        $this->ccerrormsg = isset($response[3]) ? $response[3] : 'unknown error';
     } else {
-    	$SESSION->ccpaid = 1; // security check: don't duplicate payment
-    	if ($course->enrolperiod) {
-    		$timestart = time();
-    		$timeend   = $timestart + $course->enrolperiod;
-    	} else {
-    		$timestart = $timeend = 0;
-    	}
+        $SESSION->ccpaid = 1; // security check: don't duplicate payment
+        if ($course->enrolperiod) {
+            $timestart = time();
+            $timeend   = $timestart + $course->enrolperiod;
+        } else {
+            $timestart = $timeend = 0;
+        }
 
-    	if (!enrol_student($USER->id, $course->id, $timestart, $timeend)) {
-    		$this->email_cc_error_to_admin("Error while trying to enrol ".fullname($USER)." in '$course->fullname'", $response);
-    	} else {
-    		// begin: send email
-    		$teacher = get_teacher($course->id);
-    		if (!empty($CFG->enrol_mailstudents)) {
-    			$a->coursename = "$course->fullname";
-    			$a->profileurl = "$CFG->wwwroot/user/view.php?id=$USER->id";
-    			email_to_user($USER, $teacher, get_string("enrolmentnew", '', $course->shortname),
-    			get_string('welcometocoursetext', '', $a));
+        if (!enrol_student($USER->id, $course->id, $timestart, $timeend)) {
+            $this->email_cc_error_to_admin("Error while trying to enrol ".fullname($USER)." in '$course->fullname'", $response);
+        } else {
+            // begin: send email
+            $teacher = get_teacher($course->id);
+            if (!empty($CFG->enrol_mailstudents)) {
+                $a->coursename = "$course->fullname";
+                $a->profileurl = "$CFG->wwwroot/user/view.php?id=$USER->id";
+                email_to_user($USER, $teacher, get_string("enrolmentnew", '', $course->shortname),
+                get_string('welcometocoursetext', '', $a));
+            }
+            if (!empty($CFG->enrol_mailteachers)) {
+                $a->course = "$course->fullname";
+                $a->user = fullname($USER);
+                email_to_user($teacher, $USER, get_string("enrolmentnew", '', $course->shortname),
+                get_string('enrolmentnewuser', '', $a));
+            }
+            if (!empty($CFG->enrol_mailadmins)) {
+                $a->course = "$course->fullname";
+                $a->user = fullname($USER);
+                $admins = get_admins();
+                foreach ($admins as $admin) {
+                    email_to_user($admin, $USER, get_string("enrolmentnew", '', $course->shortname),
+                        get_string('enrolmentnewuser', '', $a));
     		}
-    		if (!empty($CFG->enrol_mailteachers)) {
-    			$a->course = "$course->fullname";
-    			$a->user = fullname($USER);
-    			email_to_user($teacher, $USER, get_string("enrolmentnew", '', $course->shortname),
-    			get_string('enrolmentnewuser', '', $a));
-    		}
-    		if (!empty($CFG->enrol_mailadmins)) {
-    			$a->course = "$course->fullname";
-    			$a->user = fullname($USER);
-    			$admins = get_admins();
-    			foreach ($admins as $admin) {
-    				email_to_user($admin, $USER, get_string("enrolmentnew", '', $course->shortname),
-    				get_string('enrolmentnewuser', '', $a));
-    			}
-    		}
-    		// end: send email
+            }
+            // end: send email
+            // begin: authorize_table
+            $datax->cclastfour = substr($form->cc, -4);
+            $datax->ccexp = $exp_date;
+            $datax->cvv = $form->cvv;
+            $datax->ccname = $formdata['x_first_name'] . " " . $formdata['x_last_name'];
+            $datax->courseid = $course->id;
+            $datax->userid = $USER->id;
+            $datax->avscode = strval($response[5]);
+            $datax->transid = strval($response[6]);
+            if (!insert_record("enrol_authorize", $datax)) { // Insert a transaction record
+                $this->email_cc_error_to_admin("Error while trying to insert valid transaction", $datax);
+            }
+        } // end if (!enrol_student)
 
-    		// begin: authorize_table
-    		$datax->cclastfour = substr($form->cc, -4);
-    		$datax->ccexp = $exp_date;
-    		$datax->cvv = $form->cvv;
-    		$datax->ccname = $formdata['x_first_name'] . " " . $formdata['x_last_name'];
-    		$datax->courseid = $course->id;
-    		$datax->userid = $USER->id;
-    		$datax->avscode = strval($response[5]);
-    		$datax->transid = strval($response[6]);
-    		if (!insert_record("enrol_authorize", $datax)) {	// Insert a transaction record
-    			$this->email_cc_error_to_admin("Error while trying to insert valid transaction", $datax);
-    		}
-
-    	} // end if (!enrol_student)
-
-    	if ($SESSION->wantsurl) {
-    		$destination = $SESSION->wantsurl;
-    		unset($SESSION->wantsurl);
-    	} else {
-    		$destination = "$CFG->wwwroot/course/view.php?id=$course->id";
-    	}
-    	redirect($destination);
-    }
+        if ($SESSION->wantsurl) {
+            $destination = $SESSION->wantsurl;
+            unset($SESSION->wantsurl);
+        } else {
+            $destination = "$CFG->wwwroot/course/view.php?id=$course->id";
+        }
+        redirect($destination);
+    } // end if ($response[0] != AN_APPROVED)
 }
 
 function zero_cost($course) {
@@ -325,9 +324,9 @@ function get_access_icons($course) {
     	$strrequirespayment = get_string("requirespayment");
     	$strcost = get_string("cost");
 
-        $str .= "<p class=\"coursecost\"><font size=-1>$strcost: " .
-    			"<a title=\"$strrequirespayment\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\"></a>" .
-    			$curcost['currency'] . " " . $curcost['cost'] . '</a></p>';
+        $str .= "<p class=\"coursecost\"><font size=\"-1\">$strcost: " .
+    			"<a title=\"$strrequirespayment\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">" .
+    			$curcost['currency'] . " " . $curcost['cost'] . '</a></font></p>';
     }
     return $str;
 }
@@ -370,68 +369,50 @@ function check_openssl_loaded() {
 function process_config($config) {
     global $CFG;
 
+    // enrol config
+    $val = optional_param('enrol_cost', 0, PARAM_INT);
+    set_config('enrol_cost', $val);
+
+    $val = optional_param('enrol_currency', 'USD', PARAM_ALPHA);
+    set_config('enrol_currency', $val);
+
+    $val = optional_param('enrol_mailstudents', '');
+    set_config('enrol_mailstudents', $val);
+
+    $val = optional_param('enrol_mailteachers', '');
+    set_config('enrol_mailteachers', $val);
+
+    $val = optional_param('enrol_mailadmins', '');
+    set_config('enrol_mailadmins', $val);
+
+    // authorize config
     $return = $this->check_openssl_loaded();
 
-    if (!isset($config->an_login)) {
-    	$config->an_login = '';
-    }
-    set_config('an_login', $config->an_login);
+    $login_val = optional_param('an_login', '');
+    set_config('an_login', $login_val);
 
-    if (!isset($config->an_password)) {
-    	$config->an_password = '';
-    }
-    set_config('an_password', $config->an_password);
+    $password_val = optional_param('an_password', '');
+    set_config('an_password', $password_val);
 
-    if (!isset($config->an_tran_key)) {
-    	$config->an_tran_key = '';
-    }
-    set_config('an_tran_key', $config->an_tran_key);
+    $tran_val = optional_param('an_tran_key', '');
+    set_config('an_tran_key', $tran_val);
 
-    // Some required fields
-    if (empty($config->an_login)) {
+    $test_val = optional_param('an_test', '');
+    set_config('an_test', $test_val);
+
+    $referer_val = optional_param('an_referer', 'http://', PARAM_URL);
+    set_config('an_referer', $referer_val);
+
+    // some required fields
+    if (empty($login_val)) {
     	$return = false;   	
     }
-    if (empty($config->an_tran_key) && empty($config->an_password)) {
+    if (empty($tran_val) && empty($password_val)) {
     	$return = false;   	
     }
-    // $CFG->loginhttps must be on.
-    $return = (!empty($CFG->loginhttps));
-
-    if (empty($config->an_referer)) {
-    	$config->an_referer = 'http://';
+    if (empty($CFG->loginhttps)) {
+        $return = false;
     }
-    set_config('an_referer', $config->an_referer);
-
-    if (!isset($config->an_test)) {
-    	$config->an_test = '';
-    }
-    set_config('an_test', $config->an_test);
-
-    // --------------------------------------
-    if (!isset($config->enrol_cost)) {
-    	$config->enrol_cost = '0';
-    }
-    set_config('enrol_cost', $config->enrol_cost);
-
-    if (!isset($config->enrol_currency)) {
-    	$config->enrol_currency = 'USD';
-    }
-    set_config('enrol_currency', $config->enrol_currency);
-
-    if (!isset($config->enrol_mailstudents)) {
-    	$config->enrol_mailstudents = '';
-    }
-    set_config('enrol_mailstudents', $config->enrol_mailstudents);
-
-    if (!isset($config->enrol_mailteachers)) {
-    	$config->enrol_mailteachers = '';
-    }
-    set_config('enrol_mailteachers', $config->enrol_mailteachers);
-
-    if (!isset($config->enrol_mailadmins)) {
-    	$config->enrol_mailadmins = '';
-    }
-    set_config('enrol_mailadmins', $config->enrol_mailadmins);
 
     return $return;
 }
