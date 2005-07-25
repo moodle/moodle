@@ -119,6 +119,8 @@ function cc_submit($form, $course)
     $exp_date = (($form->ccexpiremm<10) ? strval('0'.$form->ccexpiremm) : strval($form->ccexpiremm)) . ($form->ccexpireyyyy);
     $valid_cc = CCVal($form->cc, $form->cctype, $exp_date);
     $curcost = $this->get_course_cost($course);
+    $useripno = getremoteaddr(); // HTTP_CLIENT_IP, HTTP_X_FORWARDED_FOR, REMOTE_ADDR
+    $order_number = 0; // can be get from db
 
     if (!$valid_cc) {
         $this->ccerrormsg = ($valid_cc===0) ? get_string('ccexpired', 'enrol_authorize') : get_string('ccinvalid', 'enrol_authorize');
@@ -126,7 +128,6 @@ function cc_submit($form, $course)
     }
 
     $this->check_paid();
-    $order_number = 0; // can be get from db
     $formdata = array (
         'x_version'        => '3.1',
         'x_delim_data'     => 'True',
@@ -152,7 +153,7 @@ function cc_submit($form, $course)
         'x_email'          => $USER->email,
         'x_email_customer' => 'False',
         'x_cust_id'        => $USER->id,
-        'x_customer_ip'    => $_SERVER["REMOTE_ADDR"],
+        'x_customer_ip'    => $useripno,
         'x_phone'          => '',
         'x_fax'            => '',
         'x_invoice_num'    => $order_number,
