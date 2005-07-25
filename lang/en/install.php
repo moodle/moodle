@@ -31,10 +31,10 @@ $string['databasecreationsettings'] = '    Now you need to configure the databas
     will be stored.  This database will be created automatically by the Moodle4Windows installer
     with the settings specified below.<br />
     <br /> <br />
-       <b>Type:</b> fixed to "mysql" by the installer<br />
-       <b>Host:</b> fixed to "localhost" by the installer<br />
+       <b>Type:</b> fixed to \"mysql\" by the installer<br />
+       <b>Host:</b> fixed to \"localhost\" by the installer<br />
        <b>Name:</b> database name, eg moodle<br />
-       <b>User:</b> fixed to "root" by the installer<br />
+       <b>User:</b> fixed to \"root\" by the installer<br />
        <b>Password:</b> your database password<br />
        <b>Tables Prefix:</b> optional prefix to use for all table names';
 $string['dataroot'] = 'Data Directory';
