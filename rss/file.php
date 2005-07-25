@@ -60,8 +60,10 @@
     $isteacher = isteacher($courseid,$userid);
 
     //Check for "security" if !course->guest or course->password
-    if ((!$course->guest || $course->password) && (!($isstudent || $isteacher))) {
-        not_found();
+    if ($course->id != SITEID) {
+        if ((!$course->guest || $course->password) && (!($isstudent || $isteacher))) {
+            not_found();
+        }
     }
 
     //Check for "security" if the course is hidden or the activity is hidden 
