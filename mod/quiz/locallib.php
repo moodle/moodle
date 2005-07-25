@@ -138,7 +138,7 @@ function quiz_first_questionnumber($quizlayout, $pagelayout) {
     // this works by finding all the questions from the quizlayout that
     // come before the current page and then adding up their lengths.
     global $CFG;
-    $start = strpos($quizlayout, $pagelayout)-3;
+    $start = strpos($quizlayout, ','.$pagelayout.',')-2;
     if ($start > 0) {
         $prevlist = substr($quizlayout, 0, $start);
         return get_field_sql("SELECT sum(length)+1 FROM {$CFG->prefix}quiz_questions
