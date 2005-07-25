@@ -445,7 +445,7 @@
             }
 
             // update the clock
-            if (!isteacher($course->id) and !isset($USER->lessonstopclock[$lesson->id])) {
+            if (!isteacher($course->id)) {
                 $timer->lessontime = time();
                 if (!update_record('lesson_timer', $timer)) {
                     error('Error: could not update lesson_timer table');
