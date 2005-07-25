@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // install.php - created with Moodle 1.6 development (2005060201)
+      // install.php - created with Moodle 1.6 development (2005072200)
 
 
 $string['admindirerror'] = '設定されたadminディレクトリが間違っています。';
@@ -30,9 +30,9 @@ $string['databasesettings'] = 'ほとんどのMoodleデータが保存される�
 <b>ユーザ名:</b> データベースのユーザ名<br />
 <b>パスワード:</b> データベースのパスワード<br />
 <b>テーブル接頭辞:</b> 全てのテーブル名にオプションで使用する接頭辞';
-$string['dataroot'] = 'データ';
+$string['dataroot'] = 'データディレクトリ';
 $string['datarooterror'] = 'あなたが指定した「データディレクトリ」が見つからないか、作成されませんでした。パスを訂正するか、ディレクトリを手動で作成してください。';
-$string['dbconnectionerror'] = 'データベース接続エラー。データベース設定を確認してください。';
+$string['dbconnectionerror'] = 'あなたが指定したデータベースに接続できませんでした。データベース設定を確認してください。';
 $string['dbcreationerror'] = 'データベース作成エラー。設定で提示された名称のデータベースを作成できませんでした。';
 $string['dbhost'] = 'ホストサーバ';
 $string['dbpass'] = 'パスワード';
@@ -68,9 +68,9 @@ $string['gdversionhelp'] = '<p>サーバにGDがインストールされてい�
 
 <p>Windows環境下では、php.iniでlibgd.dllを参照している行のコメントアウトを取り除いてください。</p>';
 $string['installation'] = 'インストレーション';
-$string['magicquotesruntime'] = 'Magic Quotes';
+$string['magicquotesruntime'] = 'Magic Quotesランタイム';
 $string['magicquotesruntimeerror'] = 'これは無効にしてください。';
-$string['magicquotesruntimehelp'] = '<p>Moodleを正常に動作させるためには、Magic quotes を無効にする必要があります。</p>
+$string['magicquotesruntimehelp'] = '<p>Moodleを正常に動作させるためには、Magic quotesランタイムを無効にする必要があります。</p>
 
 <p>通常はデフォルトで無効にされています ... php.iniの <b>magic_quotes_runtime</b> 設定を確認してください。</p>
 
@@ -94,9 +94,11 @@ $string['mysqlextensionisnotpresentinphp'] = 'MySQLと通信できるようにPH
 $string['pass'] = 'パス';
 $string['phpversion'] = 'PHPバージョン';
 $string['phpversionerror'] = 'PHPバージョンは4.1.0以上をお使いください。';
-$string['phpversionhelp'] = 'MoodleではPHPバージョン4.1.0以上が必要です。現在、バージョン $a が動作しています。';
+$string['phpversionhelp'] = '<p>MoodleではPHPバージョン4.1.0以上が必要です。</p>
+<p>現在、バージョン $a が動作しています。</p>
+<p>PHPをアップグレードするか、新しいバージョンがインストールされているホストに移動してください!</p>';
 $string['safemode'] = 'セーフモード';
-$string['safemodeerror'] = 'セーフモードが有効の場合、Moodleはファイルを正常に処理できません。';
+$string['safemodeerror'] = 'セーフモードが有効の場合、Moodleに問題が発生する場合があります。';
 $string['safemodehelp'] = '<p>セーフモードが有効にされている場合、Moodleには様々な問題が発生します。 特に新しいファイルを作成することができません。</p>
 <p>セーフモードは通常被害妄想を持ったウェブホストで有効にされています。Moodleサイト用に別の新しいウェブホスティング会社を探してください。</p>
 <p>セーフモード環境下で、インストール作業を続けることも可能ですが、後でいくつかの問題が発生することが予想されます。</p>';
