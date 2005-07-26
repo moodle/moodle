@@ -4,6 +4,9 @@
 
 $string['adminseesallevents'] = 'Administrators see all events';
 $string['adminseesownevents'] = 'Administrators are just like other users';
+$string['backgroundcolour'] = 'Background Colour';
+$string['badwordsconfig'] = 'Enter your list of bad words separated by commas';
+$string['badwordslist'] = 'Bad Words List';
 $string['blockinstances'] = 'Instances';
 $string['blockmultiple'] = 'Multiple';
 $string['cachetext'] = 'Text cache lifetime';
@@ -92,6 +95,7 @@ $string['configwarning'] = 'Be careful modifying these settings - strange values
 $string['configzip'] = 'Indicate the location of your zip program (Unix only, optional).  If specified, this will be used to create zip archives on the server.  If you leave this blank, then Moodle will use internal routines.';
 $string['confirmation'] = 'Confirmation';
 $string['cronwarning'] = 'The <a href=\"cron.php\">cron.php maintenance script</a> has not been run for at least 24 hours. <br />The <a href=\"../doc/?frame=install.html&amp;sub=cron\">installation documentation</a> explains how you can automate this.';
+$string['density'] = 'Density';
 $string['edithelpdocs'] = 'Edit help documents';
 $string['editstrings'] = 'Edit strings';
 $string['filterall'] = 'Filter all strings';
@@ -108,6 +112,8 @@ $string['importtimezones'] = 'Update complete list of timezones';
 $string['importtimezonescount'] = '$a->count entries imported from $a->source';
 $string['importtimezonesfailed'] = 'No sources found! (Bad news)';
 $string['incompatibleblocks'] = 'Incompatible Blocks';
+$string['latexpreamble'] = 'LaTeX Preamble';
+$string['latexsettings'] = 'LaTeX Renderer Settings';
 $string['optionalmaintenancemessage'] = 'Optional maintenance messsage';
 $string['pleaseregister'] = 'Please register your site to remove this button';
 $string['sitemaintenance'] = 'The site is undergoing maintenance and is currently not available';
