@@ -1,9 +1,12 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.6 development (2005060201)
+      // admin.php - created with Moodle 1.6 development (2005072200)
 
 
 $string['adminseesallevents'] = '管理者に全てのイベントを表示';
 $string['adminseesownevents'] = '管理者は他のユーザと同じ';
+$string['backgroundcolour'] = '背景色';
+$string['badwordsconfig'] = 'コンマで区切られた使用禁止用語を入力してください。';
+$string['badwordslist'] = '使用禁止用語一覧';
 $string['blockinstances'] = 'インスタンス';
 $string['blockmultiple'] = '複数';
 $string['cachetext'] = 'テキストキャッシュ保存時間';
@@ -90,7 +93,8 @@ $string['configvariables'] = '詳細設定';
 $string['configwarning'] = '間違った設定はトラブルの原因になりますので、これらの設定を変更する場合は注意してください。';
 $string['configzip'] = 'ZIPプログラムの場所を指定してください ( UNIXのみ、任意 )。これはZIP書庫をサーバ内で作成するために必要です。空白にした場合、Moodleは内部ルーチンを使用します';
 $string['confirmation'] = '確認';
-$string['cronwarning'] = '<a href=\"cron.php\">cron.phpメンテナンススクリプト</a>が少なくとも24時間稼動していません。<br />cron.phpの自動化に関して<a href=\"../doc/?frame=install.html&sub=cron\">インストールドキュメント</a>をご覧ください。';
+$string['cronwarning'] = '<a href=\"cron.php\">cron.phpメンテナンススクリプト</a>が少なくとも24時間稼動していません。<br />cron.phpの自動化に関して<a href=\"../doc/?frame=install.html⊂=cron\">インストールドキュメント</a>をご覧ください。';
+$string['density'] = '密度';
 $string['edithelpdocs'] = 'ヘルプ文書の編集';
 $string['editstrings'] = '翻訳ストリングの編集';
 $string['filterall'] = '全ての文字をフィルタする';
@@ -107,6 +111,8 @@ $string['importtimezones'] = 'タイムゾーンリストの更新';
 $string['importtimezonescount'] = '$a->source より $a->count のエントリがインポートされました。';
 $string['importtimezonesfailed'] = 'ソースが見つかりませんでした!';
 $string['incompatibleblocks'] = '互換性がないブロック';
+$string['latexpreamble'] = 'LaTeXプリアンブル';
+$string['latexsettings'] = 'LaTeXレンダ設定';
 $string['optionalmaintenancemessage'] = 'オプション・メンテナンスメッセージ';
 $string['pleaseregister'] = 'このボタンを消すには、あなたのサイトを登録してください。';
 $string['sitemaintenance'] = 'このサイトはメンテナンス中です。現在ご利用いただけません。';
