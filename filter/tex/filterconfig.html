@@ -2,6 +2,10 @@
     // check the default settings
     require_once "defaultsettings.php";
     tex_defaultsettings();
+
+    // bit of a bodge - clear the tex cache area
+    // so that any changes will display
+    delDirContents( "$CFG->dataroot/filter/tex" ); 
 ?>
 
 <table cellpadding="9" cellspacing="0">
