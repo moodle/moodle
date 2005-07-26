@@ -90,12 +90,14 @@
     $modestring = '&mode='.$mode;
 
     $SESSION->scorm_scoid = $sco->id;
+    $SESSION->scorm_status = 'Not Initialized';
+    $SESSION->scorm_mode = $mode;
 
     //
     // Print the page header
     //
     $scripts = '';
-    if ($scorm->popup == 1) {
+    if (($scorm->popup == 1) && ($result->prerequisites)) {
         $scripts = 'onunload="top.main.close();"';
     }
     

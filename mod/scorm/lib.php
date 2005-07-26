@@ -960,17 +960,6 @@ function scorm_get_user_data($userid) {
     return get_record('user','id',$userid,'','','','','firstname, lastname, picture');
 }
 
-/*function scorm_remove_spaces($sourcestr) {
-// Remove blank space from a string
-    $newstr='';
-    for( $i=0; $i<strlen($sourcestr); $i++) {
-        if ($sourcestr[$i]!=' ') {
-            $newstr .=$sourcestr[$i];
-        }
-    }
-    return $newstr;
-} */
-
 function scorm_string_round($stringa, $len=11) {
 // Crop a string to $len character and set an anchor title to the full string
     if (strlen($stringa)>$len) {
@@ -979,15 +968,6 @@ function scorm_string_round($stringa, $len=11) {
         return $stringa;
     }
 }
-
-/*function scorm_id_search($id, $usertracks) {
-    foreach ($usertracks as $key => $usertrack) {
-        if ($usertrack->identifier == $id) {
-            return $key;
-        } 
-    }
-    return false;
-} */
     
 function scorm_eval_prerequisites($prerequisites,$usertracks) {
     $element = '';
@@ -1144,6 +1124,72 @@ function scorm_eval_prerequisites($prerequisites,$usertracks) {
         array_push($stack,$element);
     }
     return eval('return '.implode($stack).';');
+}
+
+function scorm_insert_track($userid,$scormid,$scoid,$element,$value) {
+    $id = null;
+    if ($track = get_record_select('scorm_scoes_track',"userid='$userid' AND scormid='$scormid' AND scoid='$scoid' AND element='$element'")) {
+        $track->value = $value;
+        $track->timemodified = time();
+        $id = update_record('scorm_scoes_track',$track);
+    } else {
+        $track->userid = $userid;
+        $track->scormid = $scormid;
+        $track->scoid = $scoid;
+        $track->element = $element;
+        $track->value = $value;
+        $track->timemodified = time();
+        $id = insert_record('scorm_scoes_track',$track);
+    }
+    return $id;
+}
+
+function scorm_add_time($a, $b) {
+    $aes = explode(':',$a);
+    $bes = explode(':',$b);
+    $aseconds = explode('.',$aes[2]);
+    $bseconds = explode('.',$bes[2]);
+    $change = 0;
+
+    $acents = 0;  //Cents
+    if (count($aseconds) > 1) {
+        $acents = $aseconds[1];
+    }
+    $bcents = 0;
+    if (count($bseconds) > 1) {
+        $bcents = $bseconds[1];
+    }
+    $cents = $acents + $bcents;
+    $change = floor($cents / 100);
+    $cents = $cents - ($change * 100);
+    if (floor($cents) < 10) {
+        $cents = '0'. $cents;
+    }
+
+    $secs = $aseconds[0] + $bseconds[0] + $change;  //Seconds
+    $change = floor($secs / 60);
+    $secs = $secs - ($change * 60);
+    if (floor($secs) < 10) {
+        $secs = '0'. $secs;
+    }
+
+    $mins = $aes[1] + $bes[1] + $change;   //Minutes
+    $change = floor($mins / 60);
+    $mins = $mins - ($change * 60);
+    if ($mins < 10) {
+        $mins = '0' .  $mins;
+    }
+
+    $hours = $aes[0] + $bes[0] + $change;  //Hours
+    if ($hours < 10) {
+        $hours = '0' . $hours;
+    }
+
+    if ($cents != '0') {
+        return $hours . ":" . $mins . ":" . $secs . '.' . $cents;
+    } else {
+        return $hours . ":" . $mins . ":" . $secs;
+    }
 }
 
 function scorm_external_link($link) {

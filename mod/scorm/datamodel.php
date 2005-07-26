@@ -38,19 +38,7 @@
             if (substr($element,0,3) == 'cmi') {
                 $element = str_replace('__','.',$element);
                 $element = preg_replace('/_(\d+)/',".\$1",$element);
-                if ($track = get_record_select('scorm_scoes_track',"userid='$USER->id' AND scormid='$scorm->id' AND scoid='$scoid' AND element='$element'")) {
-                    $track->value = $value;
-		    $track->timemodified = time();
-                    $result = update_record('scorm_scoes_track',$track) && $result;
-                } else {
-                    $track->userid = $USER->id;
-                    $track->scormid = $scorm->id;
-                    $track->scoid = $scoid;
-                    $track->element = $element;
-                    $track->value = $value;
-		    $track->timemodified = time();
-                    $result = insert_record('scorm_scoes_track',$track) && $result;
-                }
+                $result = scorm_insert_track($USER->id, $scorm->id, $scoid, $element, $value) && $result;
             }
         }
         if ($result) {
