@@ -77,20 +77,23 @@
             $connector = '?';
         }
     }
-    if (scorm_external_link($sco->launch)) {
-        if ($version == 'AICC') {
-            if (!empty($sco->parameters)) {
-                $sco->parameters = '&'. $sco->parameters;
-            }
-            $result = $sco->launch.$connector.'aicc_sid='.sesskey().'&aicc_url='.$CFG->wwwroot.'/mod/scorm/aicc.php'.$sco->parameters;
-        } else {
-            $result = $sco->launch.$connector.$sco->parameters;
+    
+    if ($version == 'AICC') {
+        if (!empty($sco->parameters)) {
+            $sco->parameters = '&'. $sco->parameters;
         }
+        $launcher = $sco->launch.$connector.'aicc_sid='.sesskey().'&aicc_url='.$CFG->wwwroot.'/mod/scorm/aicc.php'.$sco->parameters;
+    } else {
+        $launcher = $sco->launch.$connector.$sco->parameters;
+    }
+    
+    if (scorm_external_link($sco->launch)) {
+        $result = $launcher;
     } else {
         if ($CFG->slasharguments) {
-            $result = $CFG->wwwroot.'/file.php/'.$scorm->course.'/moddata/scorm/'.$scorm->id.'/'.$sco->launch.$connector.$sco->parameters;
+            $result = $CFG->wwwroot.'/file.php/'.$scorm->course.'/moddata/scorm/'.$scorm->id.'/'.$launcher;
         } else {
-            $result = $CFG->wwwroot.'/file.php?file=/'.$scorm->course.'/moddata/scorm/'.$scorm->id.'/'.$sco->launch.$connector.$sco->parameters;
+            $result = $CFG->wwwroot.'/file.php?file=/'.$scorm->course.'/moddata/scorm/'.$scorm->id.'/'.$launcher;
         }
     }
 ?>

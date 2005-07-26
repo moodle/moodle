@@ -115,6 +115,9 @@
     $modestring = '&mode='.$mode;
 
     $SESSION->scorm_scoid = $sco->id;
+    $SESSION->scorm_status = 'Not Initialized';
+    $SESSION->scorm_mode = $mode;
+
 ?>
                <script language="JavaScript" type="text/javascript" src="request.js"></script>
                <script language="JavaScript" type="text/javascript" src="api.php?id=<?php echo $cm->id.$scoidstring.$modestring ?>"></script>

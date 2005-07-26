@@ -980,6 +980,72 @@ function scorm_string_round($stringa, $len=11) {
     }
 }
 
+function scorm_insert_track($userid,$scormid,$scoid,$element,$value) {
+    $id = null;
+    if ($track = get_record_select('scorm_scoes_track',"userid='$userid' AND scormid='$scormid' AND scoid='$scoid' AND element='$element'")) {
+        $track->value = $value;
+        $track->timemodified = time();
+        $id = update_record('scorm_scoes_track',$track);
+    } else {
+        $track->userid = $userid;
+        $track->scormid = $scormid;
+        $track->scoid = $scoid;
+        $track->element = $element;
+        $track->value = $value;
+        $track->timemodified = time();
+        $id = insert_record('scorm_scoes_track',$track);
+    }
+    return $id;
+}
+
+function scorm_add_time($a, $b) {
+    $aes = explode(':',$a);
+    $bes = explode(':',$b);
+    $aseconds = explode('.',$aes[2]);
+    $bseconds = explode('.',$bes[2]);
+    $change = 0;
+
+    $acents = 0;  //Cents
+    if (count($aseconds) > 1) {
+        $acents = $aseconds[1];
+    }
+    $bcents = 0;
+    if (count($bseconds) > 1) {
+        $bcents = $bseconds[1];
+    }
+    $cents = $acents + $bcents;
+    $change = floor($cents / 100);
+    $cents = $cents - ($change * 100);
+    if (floor($cents) < 10) {
+        $cents = '0'. $cents;
+    }
+
+    $secs = $aseconds[0] + $bseconds[0] + $change;  //Seconds
+    $change = floor($secs / 60);
+    $secs = $secs - ($change * 60);
+    if (floor($secs) < 10) {
+        $secs = '0'. $secs;
+    }
+
+    $mins = $aes[1] + $bes[1] + $change;   //Minutes
+    $change = floor($mins / 60);
+    $mins = $mins - ($change * 60);
+    if ($mins < 10) {
+        $mins = '0' .  $mins;
+    }
+
+    $hours = $aes[0] + $bes[0] + $change;  //Hours
+    if ($hours < 10) {
+        $hours = '0' . $hours;
+    }
+
+    if ($cents != '0') {
+        return $hours . ":" . $mins . ":" . $secs . '.' . $cents;
+    } else {
+        return $hours . ":" . $mins . ":" . $secs;
+    }
+}
+
 function scorm_external_link($link) {
 // check if a link is external
     $result = false;
