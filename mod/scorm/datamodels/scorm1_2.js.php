@@ -487,7 +487,7 @@ function SCORMapi1_2() {
                 if (cmi.core.credit == 'credit') {
                     if (cmi.core.lesson_status == 'completed') {
                         if (cmi.student_data.mastery_score != '') {
-                            if (cmi.core.score.raw >= cmi.student_data.mastery_score) {
+                            if (parseFloat(cmi.core.score.raw) >= parseFloat(cmi.student_data.mastery_score)) {
                                 cmi.core.lesson_status = 'passed';
                             } else {
                                 cmi.core.lesson_status = 'failed';
