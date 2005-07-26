@@ -48,6 +48,13 @@ a:visited {
 a:hover {
   text-decoration:underline
 }
+a.autolink {
+  font-size:100% !important;
+}
+a.autolink:hover {
+  text-decoration:none;
+  cursor:help
+}
 h1.main,
 h2.main,
 h3.main,
