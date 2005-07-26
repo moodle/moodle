@@ -15,10 +15,15 @@
 function censor_filter($courseid, $text) {
 
     static $words;
+    global $CFG;
+
+    if (!isset($CFG->filter_censor_badwords)) {
+        set_config( 'filter_censor_badwords','' );
+    }
 
     if (empty($words)) {
         $words = array();
-        $badwords = explode(',', get_string('badwords', 'censor'));
+        $badwords = explode(',', $CFG->filter_censor_badwords );
         foreach ($badwords as $badword) {
             $words[] = new filterobject(trim($badword), '<span class="censoredtext">', '</span>', false, false,str_pad('',strlen(trim($badword)),'*'));
         }
