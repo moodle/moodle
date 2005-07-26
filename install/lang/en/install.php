@@ -31,10 +31,10 @@ $string['databasecreationsettings'] = '    Now you need to configure the databas
     will be stored.  This database will be created automatically by the Moodle4Windows installer
     with the settings specified below.<br />
     <br /> <br />
-       <b>Type:</b> fixed to "mysql" by the installer<br />
-       <b>Host:</b> fixed to "localhost" by the installer<br />
+       <b>Type:</b> fixed to \"mysql\" by the installer<br />
+       <b>Host:</b> fixed to \"localhost\" by the installer<br />
        <b>Name:</b> database name, eg moodle<br />
-       <b>User:</b> fixed to "root" by the installer<br />
+       <b>User:</b> fixed to \"root\" by the installer<br />
        <b>Password:</b> your database password<br />
        <b>Tables Prefix:</b> optional prefix to use for all table names';
 $string['dataroot'] = 'Data Directory';
@@ -144,5 +144,12 @@ $string['sessionautostarthelp'] = '<p>Moodle requires session support and will n
 <p>Sessions can be enabled in the php.ini file ... look for the session.auto_start parameter.</p>';
 $string['wwwroot'] = 'Web address';
 $string['wwwrooterror'] = 'The web address does not appear to be valid - this Moodle installation doesn\'t appear to be there.';
-
+$string['welcomep10'] = 'Welcome to $a->installername ($a->installerversion)';
+$string['welcomep20'] = 'If you are seeing this page is because you have been able to execute the <strong>$a->packname $a->packversion</strong> package in your computer. Congratulations!';
+$string['welcomep30'] = 'This release of <strong>$a->installername</strong> includes, mainly, this applications:';
+$string['welcomep40'] = 'and, of course:';
+$string['welcomep50'] = 'The use of all this applications (and other components not mentioned) are governed by their respective licenses. This program (<strong>$a->installername</strong>) is <a href=\"http://www.opensource.org/docs/definition_plain.html\">open source</a> and it\'s distributed under the <a href=\"http://www.gnu.org/copyleft/gpl.html\">GPL</a> license.';
+$string['welcomep60'] = 'Now, <strong>Moodle\'s</strong> installation assistant will be executed. Using some easy pages all the needed configurations and databases will be created to run <strong>Moodle</strong> in your personal computer.';
+$string['welcomep70'] = 'See you!';
+$string['welcomep80'] = 'Start Installation';
 ?>
