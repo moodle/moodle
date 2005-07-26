@@ -23,21 +23,6 @@
     $txt->managefilters = get_string( 'managefilters' );
     $txt->administration = get_string( 'administration' );
     $txt->configuration = get_string( 'configuration' );
-    $txt->name = get_string( 'name' );
-    $txt->hide = get_string( 'hide' );
-    $txt->show = get_string( 'show' );
-    $txt->hideshow = "$txt->hide/$txt->show";
-    $txt->settings = get_string( 'settings' );
-    $txt->up = get_string( 'up' );
-    $txt->down = get_string( 'down' );
-    $txt->updown = "$txt->up/$txt->down";
-    $txt->cachetext = get_string( 'cachetext', 'admin' );
-    $txt->configcachetext = get_string( 'configcachetext', 'admin' );
-    $txt->filteruploadedfiles = get_string( 'filteruploadedfiles','admin' );
-    $txt->configfilteruploadedfiles = get_string( 'configfilteruploadedfiles','admin' );
-    $txt->filterall = get_string( 'filterall','admin' );
-    $txt->configfilterall = get_string( 'configfilterall','admin' );
-    $txt->cachecontrols = get_string( 'cachecontrols' );
 
 
     //======================
@@ -64,9 +49,10 @@
     // Display logic
     //==============================
 
+    $filtername = ucfirst( substr( $param->filter, strpos( $param->filter, '/' )+1 ) );
     print_header( "$site->shortname: $txt->managefilters", "$site->fullname",
         "<a href=\"index.php\">$txt->administration</a> -> <a href=\"configure.php\">$txt->configuration</a> " .
-        "-> $txt->managefilters" );
+        "-> <a href=\"filters.php\">$txt->managefilters</a> -> $filtername" );
 
     print_heading( $txt->managefilters );
 
