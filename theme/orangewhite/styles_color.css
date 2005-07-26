@@ -40,13 +40,9 @@ a.dimmed:visited {
 a:hover {
   color:#F00
 }
-a.autolink:link,
-a.autolink:visited {
-  color:#000;
-  background-color:transparent
-}
-a.autolink.glossary:hover {
-  cursor:help
+a.autolink {
+  background-color:#FFEDCE;
+  border-bottom:1px solid #A74;
 }
 body {
   background-color:#FFF
