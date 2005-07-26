@@ -50,17 +50,22 @@
     // note filters can be in the dedicated filters area OR in their 
     // associated modules
     $allfilters = array();
+    $filtersettings = array();
     $filterlocations = array('mod','filter');
     foreach ($filterlocations as $filterlocation) {
         $plugins = get_list_of_plugins( $filterlocation );
         foreach ($plugins as $plugin) {
             $pluginpath = "$CFG->dirroot/$filterlocation/$plugin/filter.php";
+            $settingspath = "$CFG->dirroot/$filterlocation/$plugin/filterconfig.html";
             if (is_readable( $pluginpath )) {
                 $name = trim( get_string("filtername", $plugin) );
                 if (empty($name) or ($name == '[[filtername]]')) {
                     $name = $plugin;
                 }
             $allfilters[ "$filterlocation/$plugin" ] = ucfirst( $name );
+            }
+            if (is_readable($settingspath)) {
+                $filtersettings[] = "$filterlocation/$plugin";
             }
         }
     }
@@ -218,9 +223,16 @@
             }
             ++$updowncount;
         }
+ 
+        // settings link (if defined)
+        $settings = '';
+        if (in_array( $path, $filtersettings )) {
+            $settings = "<a href=\"filter.php?filter=" . urlencode($path) . "\">";
+            $settings .= "settings</a>";
+        }
 
         // write data into the table object
-        $table->add_data( array( $name, $hideshow, $updown, '' ) );
+        $table->add_data( array( $name, $hideshow, $updown, $settings ) );
     }
 
     // build options list for cache lifetime
