@@ -1,0 +1,25 @@
+<?php
+    // check the default settings
+    require_once "defaultsettings.php";
+    tex_defaultsettings();
+?>
+
+<table cellpadding="9" cellspacing="0">
+    <tr valign="top">
+        <th align="right">LaTeX Renderer Settings</th>
+        <th>&nbsp;</th>
+    </tr>
+    <tr valign="top">
+        <td align="right">LaTeX Preamble</td>
+        <td><textarea type="text" name="filter_tex_latexpreamble" cols="60" rows="5"><?php echo "$CFG->filter_tex_latexpreamble"; ?></textarea></td>
+    </tr>
+    <tr valign="top">
+        <td align="right">Background Colour</td>
+        <td><input type="text" name="filter_tex_latexbackground" 
+            value="<?php echo $CFG->filter_tex_latexbackground; ?>"></td>
+    </tr>
+    <tr valign="top">
+        <td align="right">Density</td>
+        <td><input type="text" name="filter_tex_density"
+            value="<?php echo $CFG->filter_tex_density; ?>"></td>
+</table>

@@ -8,7 +8,7 @@
 	global $CFG;
 
         if (!isset($CFG->filter_tex_latexpreamble)) {
-            set_config( 'filter_text_latexpreamble', " \\usepackage[latin1]{inputenc}\n \\usepackage{amsmath}\n \\usepackage{amsfonts}\n");
+            set_config( 'filter_tex_latexpreamble', " \\usepackage[latin1]{inputenc}\n \\usepackage{amsmath}\n \\usepackage{amsfonts}\n");
         }
 
         if (!isset($CFG->filter_tex_latexbackground)) {
