@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.6 development (2005060201)
+      // editor.php - created with Moodle 1.6 development (2005072200)
 
 
 $string['about'] = 'エディタに関して';
@@ -38,7 +38,7 @@ $string['fontsize'] = 'フォントサイズ';
 $string['forecolor'] = 'フォント色';
 $string['formatblock'] = 'フォーマット';
 $string['fullscreen'] = 'フルスクリーンエディタ';
-$string['heading'] = 'Heading';
+$string['heading'] = '見出し';
 $string['height'] = '高さ';
 $string['hilitecolor'] = '背景色';
 $string['horizontal'] = '水平';
@@ -86,7 +86,7 @@ $string['path'] = 'パス';
 $string['percent'] = 'パーセント';
 $string['pixels'] = 'ピクセル';
 $string['popupeditor'] = 'エディタを大きくする';
-$string['preformatted'] = '整形された';
+$string['preformatted'] = '整形済み';
 $string['preview'] = 'プレビュー';
 $string['properties'] = '属性';
 $string['redo'] = 'やり直す';

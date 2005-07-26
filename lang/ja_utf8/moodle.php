@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.6 development (2005072100)
+      // moodle.php - created with Moodle 1.6 development (2005072200)
 
 
 $string['action'] = '操作';
@@ -413,8 +413,8 @@ $string['existingcreators'] = 'コース作成者一覧';
 $string['existingstudents'] = '登録学生一覧';
 $string['existingteachers'] = '教師一覧';
 $string['explanation'] = '説明';
-$string['failedloginattempts'] = '最終ログインより、$a->attempts 回のログイン失敗がありました。';
-$string['failedloginattemptsall'] = 'アカウント $a->accounts がログインに $a->attempts 回失敗しました。';
+$string['failedloginattempts'] = '最終ログインより $a->attempts 回のログイン失敗がありました。';
+$string['failedloginattemptsall'] = '$a->accounts 件のアカウントがログインに $a->attempts 回失敗しました。';
 $string['feedback'] = 'フィードバック';
 $string['file'] = 'ファイル';
 $string['filemissing'] = '$a が見つかりません。';
