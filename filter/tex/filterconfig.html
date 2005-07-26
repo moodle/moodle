@@ -6,24 +6,32 @@
     // bit of a bodge - clear the tex cache area
     // so that any changes will display
     delDirContents( "$CFG->dataroot/filter/tex" ); 
+
+    // get strings
+    $txt = new Object;
+    $txt->latexsettings = get_string( 'latexsettings','admin' );
+    $txt->latexpreamble = get_string( 'latexpreamble','admin' );
+    $txt->backgroundcolour = get_string( 'backgroundcolour','admin' );
+    $txt->density = get_string( 'density','admin' );
 ?>
 
 <table cellpadding="9" cellspacing="0">
     <tr valign="top">
-        <th align="right">LaTeX Renderer Settings</th>
+        <th align="right"><?php echo $txt->latexsettings; ?></th>
         <th>&nbsp;</th>
     </tr>
     <tr valign="top">
-        <td align="right">LaTeX Preamble</td>
+        <td align="right"><?php echo $txt->latexpreamble; ?></td>
         <td><textarea type="text" name="filter_tex_latexpreamble" cols="60" rows="5"><?php echo "$CFG->filter_tex_latexpreamble"; ?></textarea></td>
     </tr>
     <tr valign="top">
-        <td align="right">Background Colour</td>
+        <td align="right"><?php echo $txt->backgroundcolour; ?></td>
         <td><input type="text" name="filter_tex_latexbackground" 
             value="<?php echo $CFG->filter_tex_latexbackground; ?>"></td>
     </tr>
     <tr valign="top">
-        <td align="right">Density</td>
+        <td align="right"><?php echo $txt->density; ?></td>
         <td><input type="text" name="filter_tex_density"
             value="<?php echo $CFG->filter_tex_density; ?>"></td>
+        </td>
 </table>
