@@ -113,5 +113,12 @@ $string['sessionautostarthelp'] = '<p>Moodle requiere apoyo de sesión y no funci
 <p>Las sesiones deben estar activadas en el archhivo php.ini para el parámetro session.auto_start.</p>';
 $string['wwwroot'] = 'WWW';
 $string['wwwrooterror'] = 'El ajuste \'WWW\' es incorrecto';
+$string['welcomep10'] = 'Bienvenido a $a->installername ($a->installerversion)';
+$string['welcomep20'] = 'Si está viendo esta página es porque ha podido ejecutar el paquete <strong>$a->packname $a->packversion</strong> en su ordenador. !Enhorabuena!';
+$string['welcomep30'] = 'Esta versión de <strong>$a->installername</strong> incluye, principalmente, las siguientes aplicaciones:';
+$string['welcomep40'] = 'y, por supuesto:';
+$string['welcomep50'] = 'El uso de todas estas aplicaciones (y otros componentes no mencionados) está gobernado por sus respectivas licencias. Este programa (<strong>$a->installername</strong>) es <a href=\"http://www.opensource.org/docs/definition_plain.html\">código abierto</a> y se distribuye bajo licencia <a href=\"http://www.gnu.org/copyleft/gpl.html\">GPL</a>.';
+$string['welcomep60'] = 'A continuación, el asistente de instalación de <strong>Moodle</strong> será ejecutado. A través de algunas sencillas páginas se creará toda la configuración y bases de datos necesarias para la utilización de <strong>Moodle</strong> en su ordenador personal.';
+$string['welcomep70'] = '¡Nos vemos!';
 
 ?>
