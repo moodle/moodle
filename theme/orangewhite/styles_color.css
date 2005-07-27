@@ -437,6 +437,15 @@ table.minicalendar {
 #course-user .logtable .r1 {
   background-color:#DFDFDF
 }
+#course-view .section.hidden *,
+#course-view .section.hidden .content,
+#course-view .section.hidden .side {
+  border-color:#EEE;
+  color:#AAA
+}
+#course-view .section.hidden .left {
+  background-color:#EEE
+}
 
 /***
  *** Doc

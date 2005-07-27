@@ -31,9 +31,9 @@
 .clearer {
   font-size:1px
 }
-* font {
+/** font {
   font-size:100%
-}
+}*/
 body {
   font-family:Verdana, Arial, Helvetica, sans-serif;
   font-size:100%
@@ -258,14 +258,16 @@ table.formtable tbody th {
 table.minicalendar {
   font-size:0.85em
 }
-.cal_popup_caption {
+.cal_popup_close {
   font-family:sans-serif;
   font-size:0.8em;
   font-weight:bold
 }
-.cal_popup_close {
-  font-family:sans-serif;
-  font-size:0.8em;
+.cal_popup_bg {
+  font-size:1.2em
+}
+.cal_popup_cg {
+  font-size:0.95em;
   font-weight:bold
 }
 #calendar .maincalendar .calendar-controls .current {
@@ -562,9 +564,9 @@ body#mod-forum-index .cell {
 #mod-resource-index .cell {
   font-size:0.85em
 }
-.mod-resource font {
+/*.mod-resource font {
   font-size:0.8em
-}
+}*/
 
 /***
  *** Modules:Scorm
