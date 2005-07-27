@@ -2,6 +2,9 @@
 
 $string['adminseesallevents'] = 'Les administrateurs voient tous les événements';
 $string['adminseesownevents'] = 'Les administrateurs sont comme tous les autres utilisateurs';
+$string['backgroundcolour'] = 'Couleur de fond';
+$string['badwordsconfig'] = 'Taper ici votre liste de mots à censurer, séparés par des virgules';
+$string['badwordslist'] = 'Liste des mots à censurer';
 $string['blockinstances'] = 'Instances';
 $string['blockmultiple'] = 'Multiple';
 $string['cachetext'] = 'Durée de vie du cache texte';
@@ -89,6 +92,7 @@ $string['configwarning'] = 'Attention ! Des valeurs bizarres pour ces paramètres
 $string['configzip'] = 'Indiquer le chemin complet du programme « zip » (seulement pour Unix). Ce programme est requis pour réaliser des archives zip sur le serveur.';
 $string['confirmation'] = 'Confirmation';
 $string['cronwarning'] = 'Le <a href=\"cron.php\">script de maintenance cron.php</a> n\'a pas été lancé depuis au moins 24 heures.<br />La <a href=\"../doc/?frame=install.html&amp;sub=cron\">documentation d\'installation</a> explique comment vous pouvez automatiser cette tâche.';
+$string['density'] = 'Densité';
 $string['edithelpdocs'] = 'Modifier les fichiers d\'aide';
 $string['editstrings'] = 'Modifier les chaînes de caractères';
 $string['filterall'] = 'Filtrer toutes les chaînes de caractères';
@@ -105,6 +109,8 @@ $string['importtimezones'] = 'Mise à jour complète de la liste des fuseaux horai
 $string['importtimezonescount'] = '$a->count entrées importées depuis $a->source';
 $string['importtimezonesfailed'] = 'Aucune source de données trouvée&nbsp;!';
 $string['incompatibleblocks'] = 'Blocs incompatibles';
+$string['latexpreamble'] = 'Préambule LaTeX';
+$string['latexsettings'] = 'Réglages de LaTeX Renderer';
 $string['optionalmaintenancemessage'] = 'Message de maintenance facultatif';
 $string['pleaseregister'] = 'Pour enlever ce bouton, veuillez enregistrer votre site';
 $string['sitemaintenance'] = 'Ce site est actuellement en maintenance. Il est donc temporairement non disponible';
