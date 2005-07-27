@@ -62,7 +62,7 @@
 // Get number for the next or unfinished attempt
     if(!$attemptnumber = (int)get_field_sql('SELECT MAX(attempt)+1 FROM ' .
      "{$CFG->prefix}quiz_attempts WHERE quiz = '{$quiz->id}' AND " .
-     "userid = '{$USER->id}' AND timefinish > 0")) {
+     "userid = '{$USER->id}' AND timefinish > 0 AND preview != 1")) {
         $attemptnumber = 1;
     }
 
