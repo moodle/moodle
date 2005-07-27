@@ -24,10 +24,56 @@ function workshop_upgrade($oldversion) {
         ");
     }
 
+	if ($oldversion < 2003051400) {
+		table_column("workshop", "", "showleaguetable", "INT", "2", "UNSIGNED", "0", "NOT NULL");
+		execute_sql("
+		CREATE TABLE {$CFG->prefix}workshop_rubrics (
+		  id SERIAL PRIMARY KEY,
+		  workshopid INT8 NOT NULL default '0',
+		  elementid INT8 NOT NULL default '0',
+		  rubricno INT NOT NULL default '0',
+		  description text NOT NULL default ''
+		)
+        ");
+	}
+
+	if ($oldversion < 2003082200) {
+		table_column("workshop_rubrics", "elementid", "elementno", "INT", "8", "UNSIGNED", "0", "NOT NULL");
+	}
+
+	if ($oldversion < 2003092500) {
+		table_column("workshop", "", "overallocation", "INT", "2", "UNSIGNED", "0", "NOT NULL");
+	}
+
+    if ($oldversion < 2003100200) {
+        table_column("workshop_assessments", "", "resubmission", "INT", "2", "UNSIGNED", "0", "NOT NULL");
+	}
+		
+    if ($oldversion < 2003100800) {
+        // tidy up log_display entries
+        execute_sql("DELETE FROM {$CFG->prefix}log_display WHERE `module` = 'workshop'");
+        execute_sql("INSERT INTO {$CFG->prefix}log_display VALUES('workshop', 'assessments', 'workshop', 'name')");
+        execute_sql("INSERT INTO {$CFG->prefix}log_display VALUES ('workshop', 'close', 'workshop', 'name')");
+        execute_sql("INSERT INTO {$CFG->prefix}log_display VALUES ('workshop', 'display', 'workshop', 'name')");
+        execute_sql("INSERT INTO {$CFG->prefix}log_display VALUES ('workshop', 'resubmit', 'workshop', 'name')");
+        execute_sql("INSERT INTO {$CFG->prefix}log_display VALUES ('workshop', 'set up', 'workshop', 'name')");
+        execute_sql("INSERT INTO {$CFG->prefix}log_display VALUES ('workshop', 'submissions', 'workshop', 'name')");
+        execute_sql("INSERT INTO {$CFG->prefix}log_display VALUES ('workshop', 'view', 'workshop', 'name')");
+        execute_sql("INSERT INTO {$CFG->prefix}log_display VALUES ('workshop', 'update', 'workshop', 'name')");
+    }
+    
+    if ($oldversion < 2003113000) {
+        table_column("workshop", "", "teacherloading", "INT", "2", "unsigned", "5", "NOT NULL");
+        table_column("workshop", "", "assessmentstodrop", "INT", "2", "unsigned", "0", "NOT NULL");
+        table_column("workshop_assessments", "", "donotuse", "INT", "2", "unsigned", "0", "NOT NULL");
+        execute_sql("CREATE INDEX prefix_workshop_grades_assessmentid_idx ON prefix_workshop_grades (assessmentid)");
+    }
+
     if ($oldversion < 2004052100) {
         include_once("$CFG->dirroot/mod/workshop/lib.php");
         workshop_refresh_events();
     }
+
     if ($oldversion < 2004060401) {
         modify_database('','CREATE INDEX prefix_workshop_course_idx ON prefix_workshop (course);');
         modify_database('','CREATE INDEX prefix_workshop_assessments_workshopid_idx ON prefix_workshop_assessments (workshopid);');

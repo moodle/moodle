@@ -13,6 +13,7 @@ CREATE TABLE prefix_lesson (
   maxanswers INT  NOT NULL default '4',
   maxattempts INT NOT NULL default '0',
   nextpagedefault INT NOT NULL default '0',
+  minquestions INT NOT NULL default '0',
   maxpages INT NOT NULL default '0',
   retake INT  NOT NULL default '1',
   available INT8  NOT NULL default '0',
