@@ -151,5 +151,4 @@ $string['welcomep40'] = 'and, of course:';
 $string['welcomep50'] = 'The use of all this applications (and other components not mentioned) are governed by their respective licenses. This program (<strong>$a->installername</strong>) is <a href=\"http://www.opensource.org/docs/definition_plain.html\">open source</a> and it\'s distributed under the <a href=\"http://www.gnu.org/copyleft/gpl.html\">GPL</a> license.';
 $string['welcomep60'] = 'Now, <strong>Moodle\'s</strong> installation assistant will be executed. Using some easy pages all the needed configurations and databases will be created to run <strong>Moodle</strong> in your personal computer.';
 $string['welcomep70'] = 'See you!';
-$string['welcomep80'] = 'Start Installation';
 ?>
