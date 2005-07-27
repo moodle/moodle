@@ -32,7 +32,7 @@ CREATE TABLE prefix_workshop (
   gradingweight INT  NOT NULL default '5',
   teacherloading INT NOT NULL default '5',
   assessmentstodrop INT NOT NULL default '0',
-  showleaguetable INT NOT NULL default '0',
+  showleaguetable INT NOT NULL default '0'
 );
 
 CREATE INDEX prefix_workshop_course_idx ON prefix_workshop (course);
