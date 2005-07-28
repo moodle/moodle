@@ -8,11 +8,6 @@
     class latex {
 
         var $temp_dir;
-        var $path_latex;
-        var $path_dvips;
-        var $path_convert;
-        var $path_identify;
-        var $supported_platform;
         var $error;
 
         /**
@@ -32,36 +27,6 @@
                 mkdir( $this->temp_dir, $CFG->directorypermissions );
             }
 
-            // load the paths for the appropriate OS
-            // it would be nice to expand this
-            if (PHP_OS=='Linux') {
-                $binpath = '/usr/bin/';
-                $this->path_latex = "{$binpath}latex";
-                $this->path_dvips = "{$binpath}dvips";
-                $this->path_convert = "{$binpath}convert";
-                $this->path_identify = "{$binpath}identify";
-                $this->supported_platform = true;
-            }
-            elseif (PHP_OS=='Darwin') {
-                $binpath = '/sw/bin/'; // most likely needs a fink install (fink.sf.net)
-                $this->path_latex = "{$binpath}latex";
-                $this->path_dvips = "{$binpath}dvips";
-                $this->path_convert = "{$binpath}convert";
-                $this->path_identify = "{$binpath}identify";
-                $this->supported_platform = true;
-            }
-            elseif (PHP_OS=='WINNT' or PHP_OS=='WIN32' or PHP_OS=='Windows') {
-	        // note: you need Ghostscript installed (standard), miktex (standard)
-	        // and ImageMagick (install at c:\ImageMagick)
-	        $this->path_latex = "\"c:\\texmf\\miktex\\bin\\latex.exe\" ";
-                $this->path_dvips = "\"c:\\texmf\\miktex\\bin\\dvips.exe\" ";
-                $this->path_convert = "\"c:\\imagemagick\\convert.exe\" ";
-                $this->path_identify = "identify"; 
-                $this->supported_platform = true;
-            }    
-            else {
-                $this->supported_platform = false;
-            }
         }
 
         /**
@@ -120,8 +85,11 @@
          * @return bool true if successful
          */
         function render( $formula, $filename, $fontsize=12, $density=240, $background='', $log=null ) {
+            
+            global $CFG;
+  
             // quick check - will this work?
-            if (!$this->supported_platform) {
+            if (empty($CFG->filter_tex_pathlatex)) {
                 return false;
             }
 
@@ -139,14 +107,14 @@
             fclose( $fh );
 
             // run latex on document
-            $command = "{$this->path_latex} --interaction=nonstopmode $tex";
+            $command = "{$CFG->filter_tex_pathlatex} --interaction=nonstopmode $tex";
             chdir( $this->temp_dir );
             if ($this->execute($command, $log)) { // It allways False on Windows
 //                return false;
             } 
 
             // run dvips (.dvi to .ps)
-            $command = "{$this->path_dvips} -E $dvi -o $ps";
+            $command = "{$CFG->filter_tex_pathdvips} -E $dvi -o $ps";
             if ($this->execute($command, $log )) {
                 return false;
             }
@@ -157,7 +125,7 @@
             } else {
                 $bg_opt = "";
             }
-            $command = "{$this->path_convert} -density $density -trim $bg_opt $ps $gif";
+            $command = "{$CFG->filter_tex_pathconvert} -density $density -trim $bg_opt $ps $gif";
             if ($this->execute($command, $log )) {
                 return false;
             }

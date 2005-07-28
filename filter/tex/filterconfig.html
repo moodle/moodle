@@ -13,6 +13,9 @@
     $txt->latexpreamble = get_string( 'latexpreamble','admin' );
     $txt->backgroundcolour = get_string( 'backgroundcolour','admin' );
     $txt->density = get_string( 'density','admin' );
+    $txt->pathlatex = get_string( 'pathlatex','admin' );
+    $txt->pathdvips = get_string( 'pathdvips','admin' );
+    $txt->pathconvert = get_string( 'pathconvert','admin' );
 ?>
 
 <table cellpadding="9" cellspacing="0">
@@ -33,5 +36,20 @@
         <td align="right"><?php echo $txt->density; ?></td>
         <td><input type="text" name="filter_tex_density"
             value="<?php echo $CFG->filter_tex_density; ?>"></td>
-        </td>
+    </tr>
+    <tr valign="top">
+        <td align="right"><?php echo $txt->pathlatex; ?></td>
+        <td><input type="text" name="filter_tex_pathlatex" size="50"
+            value="<?php echo $CFG->filter_tex_pathlatex; ?>"</td>
+    </tr>
+    <tr valign="top">
+        <td align="right"><?php echo $txt->pathdvips; ?></td>
+        <td><input type="text" name="filter_tex_pathdvips" size="50"
+            value="<?php echo $CFG->filter_tex_pathdvips; ?>"</td>
+    </tr>
+    <tr valign="top">
+        <td align="right"><?php echo $txt->pathconvert; ?></td>
+        <td><input type="text" name="filter_tex_pathconvert" size="50"
+            value="<?php echo $CFG->filter_tex_pathconvert; ?>"</td>
+    </tr>
 </table>
