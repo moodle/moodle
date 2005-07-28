@@ -183,3 +183,11 @@ table.calendarmonth tr td  {
   border-right-width: 1px;
   border-right-style: dashed;
 }
+
+#course-view .section.hidden .content,
+#course-view .section.hidden .side {
+  border-width: 1px;
+  border-style: dashed;
+}
+
+

@@ -229,15 +229,28 @@ table.minicalendar tr td.weekend {
   border-color: #C6BDA8;
 }
 
-#course-view .section .content {
+#course-view .section.main .content {
   border-color: #C6BDA8;
   background-color: #FFFFFF;
 }
 
-#course-view .section .side {
+#course-view .section.main .side {
   border-color: #C6BDA8;
   background-color: #FFFFFF;
 }
+
+#course-view .current .right.side,
+#course-view .current .left.side {
+  background-color: #C6BDA8;
+}
+
+#course-view .section.hidden .content,
+#course-view .section.hidden .side {
+  border-color:#C6BDA8;
+ }
+
+
+
 
 /***
  *** Tabs
