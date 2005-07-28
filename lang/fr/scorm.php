@@ -38,6 +38,7 @@ $string['gradesum'] = 'Note totale';
 $string['guestsno'] = 'Les invités ne peuvent accéder aux cours SCORM';
 $string['height'] = 'Hauteur';
 $string['hidebrowse'] = 'Masquer le bouton mode prévisualisation';
+$string['hidetoc'] = 'Masquer la structure du cours dans la fenêtre de visualisation';
 $string['incomplete'] = 'Incomplet';
 $string['lastaccess'] = 'Dernier accès';
 $string['missing_attribute'] = 'Attribut $a->attr manquant dans la balise $a->tag';
