@@ -86,7 +86,6 @@ function workshop_upgrade($oldversion) {
         modify_database('','CREATE INDEX prefix_workshop_comments_mailed_idx ON prefix_workshop_comments (mailed);');
         modify_database('','CREATE INDEX prefix_workshop_elements_workshopid_idx ON prefix_workshop_elements (workshopid);');
         modify_database('','CREATE INDEX prefix_workshop_grades_workshopid_idx ON prefix_workshop_grades (workshopid);');
-        modify_database('','CREATE INDEX prefix_workshop_grades_assessmentid_idx ON prefix_workshop_grades (assessmentid);');
         modify_database('','CREATE INDEX prefix_workshop_submissions_workshopid_idx ON prefix_workshop_submissions (workshopid);');
         modify_database('','CREATE INDEX prefix_workshop_submissions_userid_idx ON prefix_workshop_submissions (userid);');
         modify_database('','CREATE INDEX prefix_workshop_submissions_mailed_idx ON prefix_workshop_submissions (mailed);');
