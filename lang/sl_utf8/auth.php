@@ -1,0 +1,155 @@
+<?PHP // $Id:auth.php from auth.xml
+      // Comments: tomaz at zid dot si
+
+$string['alternatelogin'] = 'Če tu vnesete URL, bo uporabljen kot stran za prijavo v to spletno mesto. Stran mora vsebovati obrazec, ki ima nastavljeno lastnost <i>action</i> na <strong>\'$a\'</strong> in polji <strong>username</strong> ter <strong>password</strong>.<br />Bodite pozorni, da ne vnesete napačnega naslova URL, da se ne zaklenete iz tega spletnega mesta.<br />Pustite to nastavitev prazno za uporabo privzete prijavne strani.';
+$string['alternateloginurl'] = 'Alternativni URL prijave';
+$string['auth_cas_logincas'] = 'Dostop z varno povezavo';
+$string['auth_cas_invalidcaslogin'] = 'Oprostite, vaša prijava je spodletela - ne morete se prijaviti';
+$string['auth_cas_server_settings'] = 'Konfiguracija strežnika CAS';
+$string['auth_castitle'] = 'Uporabi strežnik CAS (SSO)';
+$string['auth_cas_hostname'] = 'Ime gostitelja strežnika CAS <br />npr.: gostitelj.domena.si';
+$string['auth_cas_baseuri'] = 'URI strežnika (nič, če ni baseUri)<br />Na primer, če se strežnik CAS odziva na gostitelj.domena.si/CAS/ potem<br />cas_baseuri = CAS/';
+$string['auth_cas_port'] = 'Vrata strežnika CAS';
+$string['auth_cas_version'] = 'Različica CAS';
+$string['auth_cas_language'] = 'Izbran jezik';
+$string['auth_casdescription'] = 'Ta način uporablja strežnik CAS (Central Authentication Service) za preverjanje pristnosti uporabnikov v okolju z enojno prijavo (SSO - Single Sign On). Uporabite lahko tudi preprosto preverjanje pristnosti z LDAP. Če sta podana uporabniško ime in geslo veljavni glede na CAS, bo Moodle ustvaril nov vnos uporabnika v svoji podatkovni zbirki in prevzel zahtevane lastnosti s strežnika LDAP. Ob prihodnjih prijavah se preverjata samo uporabniško ime in geslo.';
+$string['auth_cas_enabled'] = 'Če želite uporabljati preverjanje pristnosti CAS, to vključite.';
+$string['auth_cas_text'] = 'Varna povezava';
+$string['auth_cas_create_user'] = 'Če želite vstaviti CAS preverjene uporabnike v podatkovno zbirko Moodle, to vključite. Sicer se bodo lahko prijavili samo uporabniki, ki že obstajajo v podatkovni zbirki Moodle.';
+$string['auth_common_settings'] = 'Splošne nastavitve';
+$string['auth_data_mapping'] = 'Povezovanje podatkov';
+$string['auth_dbdescription'] = 'Ta način uporablja zunanjo tabelo podatkovne zbirke za preverjanje, če sta podano uporabniško ime in geslo pravilna.  Če je uporabniški račun nov, je možno prenesti v Moodle tudi podatke iz ostalih polij.';
+$string['auth_dbextrafields'] = 'Ta polja niso obvezna.  Odločite se lahko in nekatera uporabniška polja vnaprej izpolnite s podatki iz <b>zunanjih polij podatkovne zbirke</b>, ki jih tu določite. <p>Če pustite ta polja prazna, bodo uporabljene privzete vrednosti.</p><p>V vsakem primeru bodo lahko uporabniki urejali vsa ta polja, ko se bodo prijavili.</p>';
+$string['auth_dbfieldpass'] = 'Ime polja, ki vsebuje gesla';
+$string['auth_dbfielduser'] = 'Ime polja, ki vsebuje uporabniška imena';
+$string['auth_dbhost'] = 'Računalnik na katerem teče strežnik podatkovne zbirke.';
+$string['auth_dbname'] = 'Samo ime podatkovne zbirke';
+$string['auth_dbpass'] = 'Geslo, ki ustreza gornjemu uporabniškemu imenu';
+$string['auth_dbpasstype'] = 'Opredelite zapis, ki ga uporablja polje z geslom.  Kodiranje MD5 je uporabno za povezovanje z drugimi pogostimi spletnimi aplikacijami, kot je PostNuke';
+$string['auth_dbtable'] = 'Ime tabele v podatkovni zbirki';
+$string['auth_dbtitle'] = 'Uporabi zunanjo podatkovno zbirko';
+$string['auth_dbtype'] = 'Vrsta podatkovne zbirke (Poglej si  <a href=\"../lib/adodb/readme.htm#drivers\">dokumentacijo ADOdb</A> za podrobnosti)';
+$string['auth_dbuser'] = 'Uporabniško ime s pravico bralnega dostopa do podatkovne zbirke';
+$string['auth_fieldlock'] = 'Zakleni vrednost';
+$string['auth_fieldlock_expl'] = '<p><b>Zakleni vrednost:</b> Če je omogočeno, bo to preprečilo uporabnikom Moodle in skrbnikom neposredno urejanje tega polja. Uporabite to možnost, če vzdržujete te podatke v zunanjem sistemu preverjanja pristnosti. </p>';
+$string['auth_fieldlocks'] = 'Zakleni uporabniška polja';
+$string['auth_fieldlocks_help'] = '<p>Zaklenete lahko uporabniška podatkovna polja. To je uporabno za spletna mesta, kjer uporabniške podatke vzdržujejo skrbniki ročno z vnašanjem uporabniških zapisov ali nalaganjem z možnostjo \'Naloži uporabnike\'- Če zaklepate polja. ki jih Moodle zahteva, poskrbite, da bodo podatki ob ustvarjanju uporabniških računov ali računov uporabni.</p><p>Razmislite o nastavitvi načina zaklepanja na \'Odkleni prazno\' v izogib tem problemom.</p>';
+$string['auth_emaildescription'] = 'Potrditev prek e-pošte je privzet način preverjanja pristnosti.  Ko se uporabnik prijavi, si izbere novo uporabniško ime in geslo, potrditev prejme prek elektronske pošte na svoj elektronski naslov.  Ta elektronska pošta vsebuje varno povezavo na stran, kjer lahko uporabnik potrdi svoj uporabniški račun. Ob prihodnjih prijavah se zgolj preveri uporabniško ime in geslo z vrednostmi shranjenimi v podatkovni zbirki Moodle.';
+$string['auth_emailtitle'] = 'Preverjanje pristnosti na osnovi e-pošte';
+$string['auth_fccreators'] = 'Seznam skupin katerih člani smejo ustvarjati nove predmete. Ločite več skupin s podpičjem \';\'. Imena morajo biti črkovana natančno tako kot na strežniku FirstClass. Sistem različuje velike in male črke.';
+$string['auth_fcdescription'] = 'Ta način uporablja strežnik FirstClass za preverjanje, če sta podano uporabniško ime in geslo pravilna.';
+$string['auth_fcfppport'] = 'Vrata strežnika (3333 je najbolj pogosto)';
+$string['auth_fchost'] = 'Naslov strežnika FirstClass. Uporabite številko IP ali ime DNS.';
+$string['auth_fcpasswd'] = 'Geslo za gornji račun.';
+$string['auth_fctitle'] = 'Uporabi strežnik FirstClass';
+$string['auth_fcuserid'] = 'Uporabniška identifikacija za račun FirstClass z nastavljeno pravico \'Subadministrator\'.';
+$string['auth_imapdescription'] = 'Ta način uporablja strežnik IMAP za preverjanje, če sta podano uporabniško ime in geslo pravilna.';
+$string['auth_imaphost'] = 'Naslov strežnika IMAP. Uporabi številko IP, ne imena DNS.';
+$string['auth_imapport'] = 'Številka vrat strežnika IMAP. Običajno je to 143 ali 993.';
+$string['auth_imaptitle'] = 'Uporabi strežnik IMAP';
+$string['auth_imaptype'] = 'Vrsta strežnika IMAP.  Strežniki IMAP lahko uporabljajo različne vrste preverjanja pristnosti in pogajanj.';
+$string['auth_ldap_bind_dn'] = 'Če želite uporabljati bind-user za iskanje uporabnikov, to opredelite tu. Nekaj podobnega \'cn=ldapuser,ou=public,o=org\'';
+$string['auth_ldap_bind_pw'] = 'Geslo za bind-user.';
+$string['auth_ldap_bind_settings'] = 'Nastavitev bind';
+$string['auth_ldap_contexts'] = 'Seznam kontekstov kjer se nahajajo uporabniki. Različne kontekste ločite s podpičjem \';\'. Na primer: \'ou=users,o=org; ou=others,o=org\'';
+$string['auth_ldap_create_context'] = 'Če omogočite ustvarjanje uporabnika s potrditvijo prek elektronske pošte, opredelite kontekst kjer se uporabniki ustvarijo. Ta kontekst bi moral biti različen od ostalih uporabnikov, zaradi varnostnih razlogov. Ni vam potrebno dodati tega konteksta v spremenljivko ldap_context, Moodle bo iskal uporabnike v tem kotekstu samodejno.<br /><b>Opomba!</b> Spremeniti morate funkcijo auth_user_create() v datoteki auth/ldap/lib.php, da bo delovalo ustvarjanje uporabnikov';
+$string['auth_ldap_creators'] = 'Seznam skupin katerih člani smejo ustvarjati nove predmete. Ločite več skupin s podpičjem \';\'. Po navadi nekaj podobnega \'cn=teachers,ou=staff,o=myorg\'';
+$string['auth_ldap_expiration_desc'] = 'Izberite Ne za onemogočanje preverjanja poteklega gesla ali LDAP branja časa passwordexpiration neposredno iz strežnika LDAP';
+$string['auth_ldap_expiration_warning_desc'] = 'Število dni pred potekom gesla za prikaz opozorila o tem.';
+$string['auth_ldap_expireattr_desc'] = 'Neobvezno: preglasi lastnost v strežniku LDAP, ki shranjuje čas poteka gesla passwordExpirationTime';
+$string['auth_ldap_graceattr_desc'] = 'Neobvezno: Preglasi lastnost gracelogin';
+$string['auth_ldap_gracelogins_desc'] = 'Omogoči podporo za LDAP gracelogin. Ko je geslo poteklo se lahko uporabnik prijavi dokler ni števec gracelogin enak 0. Če to omogočite se bo prikazalo sporočilo o podaljšani prijavi, če je geslo poteklo.';
+$string['auth_ldap_host_url'] = 'Določite gostitelja LDAP v obliki URL kot \'ldap://ldap.myorg.com/\' ali \'ldaps://ldap.myorg.com/\' Ločite vel strežnikov s podpičjem \';\' za podporo prevzema v primeru odpovedi (failover). ';
+$string['auth_ldap_login_settings'] = 'Nastavitve prijave';
+$string['auth_ldap_memberattribute'] = 'Neobvezno: Preglasi lastnostnost uporabnikovega članstva, če uporabnik pripada skupini. Običajno \'member\'';
+$string['auth_ldap_objectclass'] = 'Neobvezno: Preglasi objectClass uporabljen za imenovanje/iskanje uporabnikov v ldap_user_type. Po navadi vam tega ni potrebno spreminjati.';
+$string['auth_ldap_opt_deref'] = 'Določi kako se ob iskanju obravnavajo vzdevki. Izberite eno izmed naslednjih vrednosti: \"Ne\" (LDAP_DEREF_NEVER) ali \"Da\" (LDAP_DEREF_ALWAYS) ';
+$string['auth_ldap_passwdexpire_settings'] = 'Nastavitve poteka LDAP gesla.';
+$string['auth_ldap_preventpassindb'] = 'Izberite da za preprečevanje hranjenja gesel v podatkovni zbirki Moodle.';
+$string['auth_ldap_search_sub'] = 'Išči uporabnike v podkontekstih.';
+$string['auth_ldap_server_settings'] = 'Nastavitve strežnika LDAP';
+$string['auth_ldap_update_userinfo'] = 'Posodobi podatke o uporaniku (ime, priimek, naslov...) iz strežnika LDAP v Moodle.  Določite nastavitve \"Povezovanje podatkov\" kakor je potrebno.';
+$string['auth_ldap_user_attribute'] = 'Neobvezno: Preglasi lastnost uporabljeno za določanje/iskanje uporabnikov. Običajno \'cn\'.';
+$string['auth_ldap_user_settings'] = 'Nastavitve poizvedb uporabnikov';
+$string['auth_ldap_user_type'] = 'Izberite kako so uporabniki shranjeni v LDAP-u. Ta nastavitev tudi določa kako bodo delovali potek gesel, podaljšana prijava in ustvarjanje uporabnikov. ';
+$string['auth_ldap_version'] = 'Različica protokola LDAP, ki ga uporablja vaš strežnik.';
+$string['auth_ldapdescription'] = 'Ta način omogoča preverjanje pristnosti na zunanji strežnik LDAP.
+
+                                  Če sta podano uporabniško ime in geslo veljavna, Moodle ustvari novega uporabnika
+
+                                  v podatkovni zbirki. Ta modul lahko prebere uporabnikove lastnosti iz LDAP-a in vnaprej izpolni
+
+                                  želena polja v Moodlu.  Za nadaljne prijave se preverita samo uporabniško ime in
+
+                                  geslo.';
+$string['auth_ldapextrafields'] = 'Ta polja niso obvezna.  Odločite se lahko in nekatera uporabniška polja vnaprej izpolnite s podatki iz <b>LDAP polij</b>, ki jih tu določite. <p>Če pustite ta polja prazna, ne bo nič prenešeno iz LDAP-a in bodo namesto tega uporabljene Moodle privzete vrednosti.</p><p>V obeh primerih bo uporabnik lahko uredil vsa ta polja po prijavi.</p>';
+$string['auth_ldaptitle'] = 'Uporabi strežnik LDAP';
+$string['auth_manualdescription'] = 'Ta način odstrani vse možnosti, da bi uporabniki sami ustvarili svoje račune.  Vse račune mora ročno ustvariti skrbnik.';
+$string['auth_manualtitle'] = 'Samo ročno ustvarjeni računi';
+$string['auth_multiplehosts'] = 'Določenih je več gostiteljev ALI naslovov (npr. host1.com;host2.com;host3.com) ali (npr. xxx.xxx.xxx.xxx;xxx.xxx.xxx.xxx)';
+$string['auth_nntpdescription'] = 'Ta način uporablja strežnik NNTP za preverjanje, če sta podano uporabniško ime in geslo pravilna.';
+$string['auth_nntphost'] = 'Naslov strežnika NNTP Uporabi številko IP, ne imena DNS.';
+$string['auth_nntpport'] = 'Vrata strežnika (119 je najbolj pogosto)';
+$string['auth_nntptitle'] = 'Uporabi strežnik NNTP';
+$string['auth_nonedescription'] = 'Uporabniki se lahko prijavijo in ustvarijo veljavne račune takoj, brez preverjanja pristnosti prek zunanjega strežnika in brez potrditve prek e-pošte.  Bodite previdni pri rabi te možnosti - pomislite na varnostne in skrbniške probleme, ki jih to lahko povzroči.';
+$string['auth_nonetitle'] = 'Brez preverjanja pristnosti';
+$string['auth_pamdescription'] = 'Ta način uporablja PAM za dostop do dejanskih uporabniških imen na tem strežniku. Namestiti morate <a href=\"http://www.math.ohio-state.edu/~ccunning/pam_auth/\" target=\"_blank\">PHP4 PAM Authentication</a>, če želite uporabljati ta modul.';
+$string['auth_pamtitle'] = 'PAM (Pluggable Authentication Modules)';
+$string['auth_passwordisexpired'] = 'Vaše geslo je poteklo. Želite spremeniti svoje geslo zdaj?';
+$string['auth_passwordwillexpire'] = 'Vaše geslo bo poteklo čez $a dni. Želite spremeniti svoje geslo zdaj?';
+$string['auth_pop3description'] = 'Ta način uporablja strežnik POP3 za preverjanje, če sta podano uporabniško ime in geslo pravilna.';
+$string['auth_pop3host'] = 'Naslov strežnika POP3. Uporabi številko IP, ne imena DNS.';
+$string['auth_pop3mailbox'] = 'Ime poštnega predala za poskus povezave z njim.  (običajno INBOX)';
+$string['auth_pop3port'] = 'Vrata strežnika (110 je najbolj pogosto, 995 je pogosto za SSL)';
+$string['auth_pop3title'] = 'Uporabi strežnik POP3';
+$string['auth_pop3type'] = 'Vrsta strežnika. Če vaš strežnik uporablja varnostne certifikate izberite pop3cert.';
+$string['auth_shibbolethdescription'] = 'Z uporabo tega načina se uporabniki ustvarijo in se njihova pristnost preveri prek <a href=\"http://shibboleth.internet2.edu/\" target=\"_blank\">Shibboleth</a>.<br>Preberite si <a href=\"../auth/shibboleth/README.txt\" target=\"_blank\">README</a> za Shibboleth o tem kako nastaviti Moodle s Shibboleth';
+$string['auth_shibbolethtitle'] = 'Shibboleth';
+$string['auth_shibboleth_login'] = 'Prijava Shibboleth';
+$string['auth_shibboleth_manual_login'] = 'Ročna prijava';
+$string['auth_shib_only'] = 'Samo Shibboleth';
+$string['auth_shib_only_description'] = 'Označite to možnost, če naj bo preverjanje pristnosti Shibboleth vsiljeno';
+$string['auth_shib_username_description'] = 'Ime spremenljivke okolja spletnega strežnika Shibboleth, ki naj se uporabi kot Moodle uporabniško ime';
+$string['auth_shib_instructions'] = 'Uporabite <a href=\"$a\">prijavo Shibboleth</a> za pridobitev dostopa prek Shibboleth, če vaša organizacija to podpira.<br />Sicer uporabite navaden tu prikazan prijavni obrazec.';
+$string['auth_shib_convert_data'] = 'API spreminjanja podatkov';
+$string['auth_shib_convert_data_description'] = 'Ta programski vmesnik (API) lahko uporabite za dodatno spreminjanje podatkov, ki jih zagotavlja Shibboleth. Preberite <a href=\"../auth/shibboleth/README.txt\" target=\"_blank\">README</a> za dodatna navodila.';
+$string['auth_shib_instructions_help'] = 'Tu morate zagotoviti lastna navodila za vaše uporabnike, da jim razložite Shibboleth.  Prikazana bodo na strani prijave v področju navodil.  Navodila naj vključujejo povezavo na vir zaščiten s Shibboleth, ki preusmeri uporabnika na \"<b>$a</b>\", da se lahko uporabniki Shibboleth prijavijo v Moodle.  Če to pustite prazno bodo prikazana standardna navodila (ne specifična za Shibboleth)';
+$string['auth_shib_convert_data_warning'] = 'Datoteka ne obstaja ali ni berljiva za proces spletnega strežnika!';
+$string['auth_updatelocal'] = 'Posodobi lokalno';
+$string['auth_updatelocal_expl'] = '<p><b>Posodobi lokalno:</b> Če je omogočeno, bo polje posodobljeno (iz zunanjega mehanizma) vsakič, ko se uporabnik prijavi ali se sinhronizirajo uporabniki. Polja nastavljena za lokalno posodobitev morajo biti zaklenjena.</p>';
+$string['auth_updateremote'] = 'Posodobi zunanje';
+$string['auth_updateremote_expl'] = '<p><b>Posodobi zunanje:</b> Če je omogočeno bo zunanji mehanizem posodobljen, ko bo posodobljen uporabniški zapis. Polja morajo biti odklenjena za možnost urejanja.</p>';
+$string['auth_updateremote_ldap'] = '<p><b>Opomba:</b> Posodabljanje zunanjih LDAP podatkov zahteva nastavitev binddn in bindpw na uporabnika bind s pravicami urejanja vseh uporabniških zapisov. Trenutno ne ohranja lastnosti v zečimi vrednostmi in bo ob posodobitvi odstranilo dodatne vrednosti. </p>';
+$string['auth_user_create'] = 'Omogoči ustvarjanje uporabnikov';
+$string['auth_user_creation'] = 'Novi (anonimni) uporabniki lahko ustvarjajo uporabniške račune na zunanjem viru preverjanja pristnosti in so potrjeni prek e-pošte. Če to omogočite, konfigurirajte tudi specifične možnosti za posamezne module za ustvarjanje uporabnikov.';
+$string['auth_usernameexists'] = 'Izbrano uporabniško ime že obstaja. Prosimo izberite novega.';
+$string['authenticationoptions'] = 'Možnosti preverjanja pristnosti';
+$string['authinstructions'] = 'Tu lahko zagotovite navodila za vaše uporabnike, da bodo vedeli katero uporabniško ime in geslo naj uporabijo.  Besedilo, ki ga boste tu vnesli, se bo pojavilo na strani prijave.  Če boste pustili to prazno, ne bo prikazanih nobenih navodil.';
+$string['createpassword'] = 'Ustvari če manjka';
+$string['createchangepassword'] = 'Ustvari če manjka - vsili spremembo';
+$string['changepassword'] = 'URL za spremembo gesla';
+$string['changepasswordhelp'] = 'Tu lahko navedete lokacijo na kateri lahko vaši uporabniki pridobijo ali spremenijo svoje uporabniško ime ali geslo, če so ga pozabili.  To bo ponujeno uporabnikom kot gumb na prijavni strani in njihovi uporabniški strani.  Če pustite to prazno, gumb ne bo prikazan.';
+$string['chooseauthmethod'] = 'Izberite način preverjanja pristnosti';
+$string['infilefield'] = 'Zahtevano polje v datoteki';
+$string['forcechangepassword'] = 'Vsili spremembo gesla';
+$string['forcechangepassword_help'] = 'Prisili uporabnike v spremembo geslo ob njihovi naslednji prijavi.';
+$string['forcechangepasswordfirst_help'] = 'Prisili uporabnike v spremembo geslo ob njihovi prvi prijavi.';
+$string['guestloginbutton'] = 'Gumb za prijavo gosta';
+$string['instructions'] = 'Navodila';
+$string['md5'] = 'Šifriranje MD5';
+$string['passwordhandling'] = 'Obravnava polja za geslo';
+$string['plaintext'] = 'Golo besedilo';
+$string['showguestlogin'] = 'Gumb za prijavo gosta na strani za prijavo lahko skrijete ali prikažete.';
+$string['stdchangepassword'] = 'Uporabi standardno stran za spremembo gesla';
+$string['stdchangepassword_expl'] = 'Če zunanji sistem preverjanja pristnosti dovoljuje spreminjanje gesel prek Moodle, preklopite to na Da. Ta nastavitev preglasi \'URL za spremembo gesla\'.';
+$string['stdchangepassword_explldap'] = 'Opomba: Priporočeno je, da uporabljate LDAP prek SSL šifriranega tunela (ldaps://), če je strežnik LDAP oddaljen strežnik.';
+$string['update_oncreate'] = 'Ob ustvarjanju';
+$string['update_onlogin'] = 'Ob vsaki prijavi';
+$string['update_onupdate'] = 'Ob posodobitvi';
+$string['update_never'] = 'Nikoli';
+$string['unlocked'] = 'Odklenjeno';
+$string['unlockedifempty'] = 'Odkleni prazno';
+$string['locked'] = 'Zaklenjeno';
+
+
+?>

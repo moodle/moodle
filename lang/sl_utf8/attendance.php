@@ -1,0 +1,72 @@
+<?PHP // $Id:attendance.php from attendance.xml
+      // Comments: tomaz at zid dot si
+
+$string['modulename'] = 'Udeležba';
+$string['allmodulename'] = 'Vse vloge udeležbe';
+$string['modulenameplural'] = 'Vloge udeležbe';
+$string['weekmodulename'] = 'Vse vloge udeležbe v zadnjem tednu';
+$string['addmultiple'] = 'Dodaj več vlog udeležbe';
+$string['addingmultiple'] = 'Dodajanje večih vlog udeležbe';
+$string['takeroll'] = 'Prijavi se na ta dan?';
+$string['for'] = 'za';
+$string['dayofroll'] = 'Dan udeležbe za vlogo';
+$string['notes'] = 'Posebne opombe';
+$string['notesfor'] = 'Posebne opombe za';
+$string['hoursinclass'] = 'Število ur v časovnem obdobju';
+$string['presentshort'] = 'P';
+$string['tardyshort'] = 'Z';
+$string['absentshort'] = 'O';
+$string['presentlong'] = 'Prisotnost';
+$string['tardylong'] = 'Zamuda';
+$string['absentlong'] = 'Odsotnost';
+$string['dynamicsection'] = 'Določi teden za udeležbo na osnovi tega datuma';
+$string['defaultdynamicsection'] = 'Ali naj se vloge udeležbe samodejno premaknejo v ustrezen teden';
+$string['defaulthoursinclass'] = 'Koliko ur naj bo v privzeti vlogi udeležbe';
+$string['tardiesperabsence'] = 'Koliko zamud naj šteje kot ena odsotnost';
+$string['hoursinfullreport'] = 'Največje število ur prisotnosti, ki naj se prikaže na posamezni strani poročila';
+$string['pages'] = 'Strani';
+$string['of'] = 'od';
+$string['viewall'] = 'Ogled vseh vlog udeležbe';
+$string['teacheredit'] = 'Sestavi seznam udeležbe';
+$string['viewone'] = 'Ogled vseh strani poročila';
+$string['viewtable'] = 'Ogled poročila kot ene preglednice';
+$string['viewmulti'] = 'Ogled poročila kot več strani';
+$string['viewweek'] = 'Ogled vseh vlog udeležbe iz koledarskega tedna';
+$string['viewsection'] = 'Ogled vseh vlog udeležbe iz tega odseka';
+$string['noviews'] = 'Oprostite, za vaš račun ni podatkov';
+$string['norolls'] = 'V tem predmetu ni vlog udeležbe';
+$string['startmulti'] = 'Datum za prvo vlogo udeležbe';
+$string['endmulti'] = 'Datum za zadnjo vlogo udeležbe';
+$string['choosedays'] = 'Dnevi v tednu za preverjanje udeležbe';
+$string['dynamicsectionmulti'] = 'Postavi vloge v njihove tedenske odseke samodejno';
+$string['hoursineachclass'] = 'Število ur v vsakem časovnem obdobju';
+$string['sunday'] = 'ned';
+$string['monday'] = 'pon';
+$string['tuesday'] = 'tor';
+$string['wednesday'] = 'sre';
+$string['thursday'] = 'čet';
+$string['friday'] = 'pet';
+$string['saturday'] = 'sob';
+$string['endbeforestart'] = 'Tadum konca je pred datumom začetka';
+$string['startafterend'] = 'Datum začetka je po koncu predmeta';
+$string['defaultstudentstatus'] = 'Privzeto stanje udeležbe udeleženca za nove vloge udeležbe';
+$string['downloadexcelfull'] = 'Prenesi celotno peglednico v Excel';
+$string['downloadexceltotals'] = 'Prenesi povzetek v preglednico Excel';
+$string['downloadtextfull'] = 'Prenesi celotno besedilno poročilo';
+$string['downloadtexttotals'] = 'Prenesi povzetek besedilnega poročila';
+$string['autoattend'] = 'Samodejno beleži udeležba na osnovi dnevnikov dejavnosti uporabnika';
+$string['defaultautoattend'] = 'Ali naj se privzeto beleži udeležba na osnovi ddnevnikov dejavnosti uporabnika';
+$string['autoattendmulti'] = 'Samodejno beleži udeležbo za vse vloge na osnovi dnevnikov dejavnosti uporabnika';
+$string['auto'] = 'sam';
+$string['gradevalue'] = 'Uvedi ocenjevanje';
+$string['defaultgrade'] = ' Ali naj bodo privzeto vloge udeležbe ocenjevane';
+$string['gradevaluemulti'] = 'Naj bodo te vloge ocenjevane';
+$string['maxgradevalue'] = 'Najvišja ocena za polno udeležbo';
+$string['defaultmaxgrade'] = 'Kaj naj bo privzeta najvišja vrednost ocene za polno udeležbo';
+$string['gradeshort'] = 'Ocenjeno';
+$string['maxgradeshort'] = 'Najvišja ocena';
+$string['autoattendshort'] = 'Samodejno iz dnevnikov';
+$string['dynsectionshort'] = 'Dinamično premaknjeno v odsek';
+
+
+?>
