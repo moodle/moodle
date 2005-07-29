@@ -69,6 +69,13 @@ $string['safemodehelp'] = '<p>Moodle risque de rencontrer un certain nombre de p
 $string['sessionautostart'] = 'Démarrage automatique des sessions';
 $string['sessionautostarterror'] = 'Ce paramètre doit être désactivé';
 $string['sessionautostarthelp'] = '<p>Moodle a besoin du support des sessions. il ne fonctionnera pas sans cela.</p><p>Les sessions peuvent être activées dans le fichier «&nbsp;php.ini&nbsp;» de votre serveur, en changeant la valeur du paramètre <strong>session.auto_start</strong>.</p>';
+$string['welcomep10'] = '$a->installername ($a->installerversion)';
+$string['welcomep20'] = 'Vous voyez cette page, car vous avez installé Moodle correctement et lancé le logiciel <strong>$a->packname $a->packversion</strong> sur votre ordinateur. Félicitations&nbsp;!';
+$string['welcomep30'] = 'Cette version du paquet <strong>$a->installername</strong> comprend des logiciels qui créent un environnement dans lequel <strong>Moodle</strong> va fonctionner, à savoir&nbsp;:';
+$string['welcomep40'] = 'Ce paquet contient également <strong>Moodle $a->moodlerelease ($a->moodleversion)</strong>.';
+$string['welcomep50'] = 'L\'utilisation de tous les logiciels de ce paquet est soumis à l\'acceptation de leurs licences respectives. Le paquet <strong>$a->installername</strong> est un <a href=\"http://www.opensource.org/docs/definition_plain.html\">logiciel libre</a>. Il est distribué sous licence <a href=\"http://www.gnu.org/copyleft/gpl.html\">GPL</a>.';
+$string['welcomep60'] = 'Les pages suivantes vous aideront pas à pas à configurer et mettre en place <strong>Moodle</strong> sur votre ordinateur. Il vous sera possible d\'accepter les réglages par défaut ou, facultativement, de les adapter à vos propres besoins.';
+$string['welcomep70'] = 'Cliquer sur le bouton «&nbsp;Suivant&nbsp;» ci-dessous pour continuer l\'installation de <strong>Moodle</strong>.';
 $string['wwwroot'] = 'Adresse web';
 $string['wwwrooterror'] = 'L\'adresse web indiquée semble incorrecte&nbsp;: aucune installation de Moodle ne se trouve à cette adresse.';
 
