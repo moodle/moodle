@@ -256,7 +256,7 @@ function display() {
     $inpopup = !empty($_GET["inpopup"]);
     
 
-    $fullurl =  $CFG->hiveprot .'://'. $CFG->hivehost .':'. $CFG->hiveport .''. $CFG->hivepath . '?'. $resource->reference . '&amp;HIVE_SESSION='.$SESSION->HIVE_SESSION;
+    $fullurl =  $CFG->hiveprotocol .'://'. $CFG->hivehost .':'. $CFG->hiveport .''. $CFG->hivepath . '?'. $resource->reference . '&amp;HIVE_SESSION='.$SESSION->HIVE_SESSION;
 
     if (!empty($querystring)) {
         $urlpieces = parse_url($resource->reference);
@@ -266,6 +266,23 @@ function display() {
             $fullurl .= '&'.$querystring;
         }
     }
+
+    /// MW check that the HIVE_SESSION is there
+    if (empty($SESSION->HIVE_SESSION)) {
+        if ($inpopup) {
+            print_header($pagetitle, $course->fullname);
+        } else {
+            print_header($pagetitle, $course->fullname, "$this->navigation ".format_string($resource->name), "", "", true, update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm));
+        }
+        notify('You do not have access to HarvestRoad Hive. This resource is unavailable.');
+        if ($inpopup) {
+            close_window_button();
+        }
+        print_footer('none');
+        die;
+    }
+    /// MW END
+
 
     /// Print a notice and redirect if we are trying to access a file on a local file system
     /// and the config setting has been disabled

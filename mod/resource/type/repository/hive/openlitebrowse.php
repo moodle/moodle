@@ -17,6 +17,7 @@
         die;
     }
 
+// MW Redirect to the Hive page. No need for a self-posting form as there is no sensitive data.
 $query .= '&HISTORY=';
 $query .= '&hiveLanguage=en_AU';
 $query .= '&PUBCATEGORY_LIST=';
@@ -25,10 +26,9 @@ $query .= '&HIDE_LOGOUT=Y';
 $query .= '&mkurl='.$CFG->wwwroot.'/mod/resource/type/repository/hive/makelink.php';
 $query .= '&HIDE_CHANGEUSERDETAILS=Y';
 $query .= '&HIVE_RET=ORG';
-$query .= '&HIVE_PAGE=Lite%20Browse';
 $query .= '&HIVE_REQ=2113';
 $query .= '&HIVE_ERRCODE=0';
-$query .= '&mklms=Doodle';
+$query .= '&mklms=Moodle';
 $query .= '&HIVE_PROD=0';
 $query .= '&HIVE_REF=hin:hive@Hive%20Login%20HTML%20Template';
 $query .= '&HIVE_LITEMODE=liteBrowse';
@@ -36,7 +36,8 @@ $query .= '&HIVE_SEREF='.$CFG->wwwroot.'/sso/hive/expired.php';
 $query .= '&HIVE_SESSION='.$SESSION->HIVE_SESSION;
 
     redirect($CFG->hiveprotocol .'://'. $CFG->hivehost .':'. $CFG->hiveport .''. $CFG->hivepath .'?'.$query);
-/***********8
+/***********
+// MW The original form
     notify('Opening HarvestRoad Hive. Please wait. Contacting '. $CFG->hivehost );
 
     echo '<form name="OPEN_HIVE_FORM" action="'. $CFG->hiveprotocol .'://'. $CFG->hivehost .':'. $CFG->hiveport .''. $CFG->hivepath .'" method="post">';
