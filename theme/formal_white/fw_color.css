@@ -16,6 +16,11 @@ a:hover {
     color: #990000;
 }
 
+a.dimmed:link,
+a.dimmed:visited {
+  color:#AAAAAA;
+}
+
 h1 {
   background-color: #C6BDA8;
   border-color: #333333;
@@ -120,6 +125,11 @@ div.header {
   background: url('../../pix/t/switch_plus.gif') no-repeat bottom;
 }
 
+.sideblock .content .post .head .date,
+.sideblock .content .post .head .name {
+  color: #000000;
+  }
+
 /***
  *** Calendar
 ***/
@@ -219,15 +229,28 @@ table.minicalendar tr td.weekend {
   border-color: #C6BDA8;
 }
 
-#course-view .section .content {
+#course-view .section.main .content {
   border-color: #C6BDA8;
   background-color: #FFFFFF;
 }
 
-#course-view .section .side {
+#course-view .section.main .side {
   border-color: #C6BDA8;
   background-color: #FFFFFF;
 }
+
+#course-view .current .right.side,
+#course-view .current .left.side {
+  background-color: #C6BDA8;
+}
+
+#course-view .section.hidden .content,
+#course-view .section.hidden .side {
+  border-color:#C6BDA8;
+ }
+
+
+
 
 /***
  *** Tabs
