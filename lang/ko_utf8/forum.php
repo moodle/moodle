@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.5 ALPHA (2005051500)
+      // forum.php - created with Moodle 1.6 development (2005072000)
 
 
 $string['addanewdiscussion'] = '새 토론 주제 추가하기';
@@ -12,7 +12,7 @@ $string['allowratings'] = '등록된 글을 평가할 수 있도록 할까요?';
 $string['allowsdiscussions'] = '이 포럼은 한 사람이 한가지 토론 주제만 시작할 수 있도록 할까요?';
 $string['anyfile'] = '모든 파일';
 $string['attachment'] = '첨부';
-$string['bynameondate'] = 'sa가 sa일에';
+$string['bynameondate'] = 'by $a->name - $a->date';
 $string['configcleanreadtime'] = '\'읽기\'란에 오래된 게시물을 청소하는 시간';
 $string['configdisplaymode'] = '만약 설정되지 않았다면 기본 설정이 보여집니다.';
 $string['configenablerssfeeds'] = '이 스위치는 모든 게시물을 지원하는 RSS의 가능에 의해 할 수 있게 됩니다. 당신은 여전히 각각 포럼마다 수동으로 지원함으로 설치해야 합니다. ';
