@@ -7,21 +7,41 @@
 
     require_login();
 
-    if (empty($SESSION->HIVE_PASSWORD)) {  // We don't have old password
-        error('Sorry, but Hive has timed out, you need to log in again', 
-               $CFG->wwwroot.'/login/logout.php');
-    }
-
-/// Try and log back in silently
-
-    if (sso_user_login($USER->username, $SESSION->HIVE_PASSWORD)) {  // Log back into Hive
-
-        /// Need something in here to redirect back to Hive
-
-    } else {
-        error('Sorry, could not restore Hive connection, please try logging in again', 
-               $CFG->wwwroot.'/login/logout.php');
-    }
-
-   
+    //MW theres no easy way to log in seamlessly. We need the users unhashed password.
+    // It's a security risk to carry that in $SESSION so we put up login form.
+    print_header();
+    notify('Your Hive session has expired. Please reauthenticate using your usual Moodle login'); 
+?>
+      <form action="login.php" method="post" name="login" id="login">
+        <table border="0" align="center">
+        <tr>
+          <td width="80%">
+            <table align="center" class="loginform">
+              <tr class="username">
+                <td align="right" class="c0">
+                  <?php print_string("username") ?>:
+                </td>
+                <td class="c1">
+                  <input type="text" name="username" size="15" value="<?php p($frm->username) ?>" alt="<?php print_string("username") ?>" />
+                </td>
+              </tr>
+              <tr class="password">
+                <td align="right" class="c0">
+                  <?php print_string("password") ?>:
+                </td>
+                <td class="c1">
+                  <input type="password" name="password" size="15" value="" alt="<?php print_string("password") ?>" />
+                </td>
+              </tr>
+            </table>
+          </td>
+          <td width="20%">
+            <input type="submit" value="<?php print_string("login") ?>" />
+          </td>
+        </tr>
+        </table>
+      </form>
+<br />
+<?php
+    close_window_button();
 ?>
