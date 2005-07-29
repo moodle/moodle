@@ -1,7 +1,8 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.4.4 (2004083140)
+      // scorm.php - created with Moodle 1.6 development (2005072200)
 
 
+$string['advanced'] = 'ชั้นสูง';
 $string['asset'] = 'องค์ประกอบ';
 $string['attr_error'] = 'ค่าไม่ถูกต้องสำหรับแอทริบิวต์ ($a->attr) ในแท็ก $a->tag';
 $string['autocontinue'] = 'เดินหน้าอัตโนมัติ';
@@ -11,20 +12,18 @@ $string['browsed'] = 'Browsed';
 $string['browsemode'] = 'Browse Mode';
 $string['chooseapacket'] = 'เลือกหรืออัพเดท SCORM แพกเเกจ';
 $string['completed'] = 'สมบูรณ์';
-$string['configframesize'] = 'ค่านี้เป็นขนาดของเฟรมด้านบน (พิกเซล)  เป็นที่สำหรับ navigation ในขณะที่กำลังใช้แพกเกจ scorm';
-$string['configpopup'] = 'คุณต้องการการให้แสดง scorm แพกเกจในหน้าใหม่เป็นค่าที่ตั้งไว้หรือไม่';
-$string['configpopupheight'] = 'ความสูงของหน้าต่างใหม่';
-$string['configpopupresizable'] = 'ต้องการให้เปลี่ยนขนาดได้หรือไม่';
-$string['configpopupscrollbars'] = 'ต้องการแสดงแถบเลื่อนขึ้นลงหรือไม่';
-$string['configpopupstatus'] = 'ต้องการแสดงแถบสถานะหรือไม่';
-$string['configpopupwidth'] = 'ความกว้างของหน้าต่างป้อปอัพ';
 $string['coursepacket'] = 'แพกเกจ SCORM';
 $string['coursestruct'] = 'โครงสร้างรายวิชา';
 $string['datadir'] = 'มีข้อผิดพลาด : ไม่สามารถสร้างไดเรกทอรี่ข้อมูลได้';
+$string['details'] = 'รายละเอียดการติดตาม SCO';
+$string['display'] = 'แสดง';
 $string['domxml'] = 'DOMXML ใช้ไลบรารี่นอก';
 $string['entercourse'] = 'เข้าสู่บทเรียน SCORM';
 $string['errorlogs'] = 'บันทึกข้อผิดพลาด';
+$string['exit'] = 'ออกจากคอร์ส SCORM';
+$string['expcoll'] = 'ขยาย/ย่อ';
 $string['failed'] = 'ไม่สำเร็จ';
+$string['firstaccess'] = 'เข้าครั้งแรก';
 $string['found'] = 'พบหน้าการแสดงผล';
 $string['gradeaverage'] = 'คะแนนเฉลี่ย';
 $string['gradehighest'] = 'คะแนนสูงสุด';
@@ -38,13 +37,6 @@ $string['missing_tag'] = 'แท็กหายไป $a->tag';
 $string['mode'] = 'โหมด';
 $string['modulename'] = 'SCORM';
 $string['modulenameplural'] = 'SCORM';
-$string['newheight'] = 'ความสูงที่ตั้งไว้(พิกเซล)';
-$string['newresizable'] = 'หน้าจอสามารถเปลี่ยนขนาดได้';
-$string['newscrollbars'] = 'หน้าจอสามารถเลื่อนขึ้นลงได้';
-$string['newstatus'] = 'แสดงแถบสถานะ';
-$string['newwidth'] = 'ความกว้างที่ตั้งไว้ (พิกเซล)';
-$string['newwindow'] = 'หน้าต่างใหม่';
-$string['newwindowopen'] = 'แสดงแพกเกจ SCORM ในหน้าต่างใหม่';
 $string['next'] = 'ต่อไป';
 $string['no_attributes'] = '$a->tag ต้องมีแอทริบิวต์';
 $string['no_children'] = '$a->tag ต้องมี children';
@@ -64,15 +56,20 @@ $string['report'] = 'รายงาน';
 $string['review'] = 'ตรวจ';
 $string['scoes'] = 'คะแนน';
 $string['score'] = 'คะแนน';
+$string['scormcourse'] = 'คอร์ส SCORM';
+$string['stagesize'] = 'ขนาดเฟรม/หน้าต่าง';
 $string['syntax'] = 'Syntax error';
 $string['tag_error'] = 'ไม่ทราบค่าแท็ก ($a->tag) ในเนื้อหา: $a->value';
 $string['too_many_attributes'] = 'แท็ก  $a->tag มีแอทริบิวต์มากเกินไป';
 $string['too_many_children'] = 'แท้ก  $a->tag มีลูกมากเกินไป';
+$string['totaltime'] = 'เวลา';
 $string['trackingloose'] = 'คำเตือน  ข้อมูลของแพคเกจ SCORM อาจจะอาจได้';
 $string['validateascorm'] = 'ตรวจสอบแพกเกจ SCORM ว่าใช้การได้หรือไม่';
 $string['validation'] = 'ผลการตรวจสอบ';
 $string['validationtype'] = 'การตั้งค่าของ DOMXML library ใช้ในการตรวจสอบการแสดงผลของSCORM หากไม่ทราบให้ทิ้งค่านี้ไว้';
 $string['versionwarning'] = 'เวอร์ชันของการแสดงผลต่ำกว่าเวอร์ชัน 1.3 คำเตือนที่แท็ก $a->tag ';
 $string['viewallreports'] = 'ดูรายงานของ $a  ครั้ง';
+$string['width'] = 'กว้าง';
+$string['window'] = 'เฟรม/หน้าต่าง';
 
 ?>

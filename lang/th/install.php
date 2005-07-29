@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // install.php - created with Moodle 1.4.2 (2004083125)
+      // install.php - created with Moodle 1.6 development (2005072200)
 
 
 $string['admindirerror'] = 'ไดเรกทอรี admin ที่ระบุไม่ถูกต้อง';
@@ -12,6 +12,20 @@ $string['configfilenotwritten'] = 'ตัวติดตั้งอัตโนมัติไม่สามารถสร้างไฟล์ config.
 $string['configfilewritten'] = 'สร้าง config.php เรียบร้อยแล้ว';
 $string['configurationcomplete'] = 'ตั้งค่าตัวแปรเสร็จสิ้นแล้ว';
 $string['database'] = 'ฐานข้อมูล';
+$string['databasecreationsettings'] = 'คุณจำเป็นต้องตั้งค่าฐานข้อมูลที่ใช้ในการเก็บข้อมูลของ moodle ฐานข้อมูลดังกล่าวจะต้องมีการสร้างไว้แล้วล่วงหน้า 
+<br /> <br />
+
+<b>ประเภท:</b> ตั้งค่าไว้ที่ mysql <br />
+
+<b>โฮสต์:</b> ตั้งค่าไว้ที่ localhost <br />
+
+<b>ชื่อฐานข้อมูล:</b> ชื่อฐานข้อมูล, เช่นmoodle<br />
+
+<b>ชื่อผู้ใช้ (username):</b>ตั้งค่าไว้ที่ root <br />
+
+<b>รหัสผ่าน:</b> รหัสผ่านเข้าฐานข้อมูล<br />
+
+<b>คำนำหน้าตาราง:</b> คำนำหน้าตาราง มีประโยชน์หากมีฐานข้อมูลของหลายโปรแกรมทำให้แยกออกได้ง่ายว่า ตารางใดเป็นของโปรแกรมใด เช่น mdl_';
 $string['databasesettings'] = 'คุณจำเป็นต้องตั้งค่าฐานข้อมูลที่ใช้ในการเก็บข้อมูลของ moodle ฐานข้อมูลดังกล่าวจะต้องมีการสร้างไว้แล้วล่วงหน้า 
 <br /> <br />
 
@@ -101,7 +115,6 @@ $string['memorylimithelp'] = '<p>ค่าความจำสูงสุดของเซิร์ฟเวอร์ของคุณตั้งไว้ที่  
 <p>อย่างไรก็ตามในบางเซิร์ฟเวอร์คุณไม่สามารถใช้ วิธีนี้ได้ โดยจะมีการแสดง error ขึ้นมาคุณจำเป็นต้องลบไฟล์ดังกล่าวนี้ทิ้ง 
 </ol>';
 $string['mysqlextensionisnotpresentinphp'] = 'การตั้งค่า  PHP ให้ใช้กับ MySQL ไม่ถูกต้องกรุณาตรวจสอบใน php.ini อีกครั้งหรือรีคอมไฟล์ php';
-$string['parentlanguage'] = 'en';
 $string['pass'] = 'สำเร็จ';
 $string['phpversion'] = 'PHP เวอร์ชัน';
 $string['phpversionerror'] = 'เวอร์ชันของ PHP ควรเป็นอย่างน้อย 4.1.0';
@@ -122,9 +135,6 @@ $string['sessionautostarterror'] = 'ควรจะปิด (off)';
 $string['sessionautostarthelp'] = '<p>Moodle จะทำงานก็ต่อเมื่อเซิร์ฟเวอร์สนับสนุน session </p>
 
 <p>คุณสามารถทำให้ Sessions ทำงานได้โดยการแก้ไขไฟล์  php.ini ดูภายใต้ตัวแปร  session.auto_start </p>';
-$string['thischarset'] = 'TIS-620';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Thai';
 $string['wwwroot'] = 'ที่อยู่ของเว็บ';
 $string['wwwrooterror'] = 'ที่อยู่ของเว็บไม่ถูกต้อง ระบบไม่พบว่ามี Moodle อยู่ที่นั่น';
 

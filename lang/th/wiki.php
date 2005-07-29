@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.4.5 + (2004083150)
+      // wiki.php - created with Moodle 1.6 development (2005072200)
 
 
 $string['action'] = 'ต้องการทำ..';
@@ -159,6 +159,7 @@ $string['tabview'] = 'แสดง';
 $string['thanksforcontribution'] = 'ขอบคุณสำหรับข้อมูลที่คุณเพิ่มเข้ามาค่ะ';
 $string['thispageisntlinkedfromanywhereelse'] = 'ไม่ได้ลิงก์หน้านี้มาจากที่อื่น';
 $string['updatedpages'] = 'หน้าที่มีการแก้ไขแล้ว';
+$string['updatedwikipages'] = 'อัพเดทหน้า Wiki';
 $string['uplerror'] = 'ขออภัยค่ะมีปัญหาในระหว่างการอัพโหลด';
 $string['uplinsect'] = 'อัพโหลดไปยัง';
 $string['uplnewnam'] = 'บันทึกในชื่ออื่น';

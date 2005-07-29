@@ -1,7 +1,22 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.4.2 (2004083125)
+      // auth.php - created with Moodle 1.6 development (2005072200)
 
 
+$string['alternatelogin'] = 'ใส่ url ของหน้าที่ต้องการใช้เป็นหน้าสำหรับเข้าสู่ระบบโดยหน้าดังกล่าวควรประกอบไปด้วย <strong>\'$a\'</strong> และมีฟิลด์ต่อไปนี้ <strong>ชื่อผู้ใช้</strong> และ <strong>รหัสผ่าน</strong> <br />  โปรดใช้ความระมัดระวังในการใส่ค่า url  เพราะการใส่ค่าที่ไม่ถูกต้องอาจทำให้ระบบนำคุณออกจากระบบ <br /> ทิ้งช่องนี้ให้ว่างไว้เพื่อใช้หน้าที่ระบบตั้งไว้';
+$string['alternateloginurl'] = 'URL ของหน้าเข้าสู่ระบบที่ต้องการ';
+$string['auth_cas_baseuri'] = 'URI ของเซิร์ฟเวอร์ ตัวอย่างเช่น ในกรณีที่ CAS เซิร์ฟเวอร์ทำงานโต้ตอบกับ  host.domain.uk/CAS/   ค่าของ  cas_basuri= CAS/';
+$string['auth_cas_create_user'] = 'เปิดใช้งานค่านี้ถ้าหากต้องการแทรกการอนุมัติผ่าน CAS ในฐานข้อมูล Moodle  หากไม่เฉพาะสมาชิกที่อยู่ในฐานข้อมูลเท่านั้นจึงสามารถเข้าสู่ระบบได้ ';
+$string['auth_cas_enabled'] = 'เปิดใช้งานค่านี้หากต้องการใช้งานการอนุมัติผ่าน CAS';
+$string['auth_cas_hostname'] = 'ชื่อโฮสต์ของ CAS เซิร์ฟเวอร์ เช่น  host.domain.uk';
+$string['auth_cas_invalidcaslogin'] = 'ขออภัยค่ะ เข้าสู่ระบบไม่สำเร็จคุณไม่ได้รับอนุญาตให้เข้าสู่ระบบ';
+$string['auth_cas_language'] = 'เลือกภาษา';
+$string['auth_cas_logincas'] = 'การเข้าสู่ระบบแบบความปลอดภัยสูง';
+$string['auth_cas_port'] = 'พอร์ตสำหรับ CAS เซิร์ฟเวอร์';
+$string['auth_cas_server_settings'] = 'การตั้งค่า CAS เซิร์ฟเวอร์';
+$string['auth_cas_text'] = 'การเข้าสู่ระบบความปลอดภัยสูง';
+$string['auth_cas_version'] = 'เวอร์ชันของ CAS';
+$string['auth_casdescription'] = 'วิธีนี้เป็นการใช้ CAS เซิร์ฟเวอร์ ( Central Authentication Service) เพื่ออนุมัติการเข้าใช้งานของสมาชิกเพื่อให้สามารถเข้าใช้งานแบบ Single Sign On environment (SSO) คือทำการตรวจสอบชื่อผู้ใช้และรหัสผ่านร่วมกับการอนุมัติผ่าน LDAP อย่างง่าย ในกรณีที่ชื่อผู้ใช้และรหัสผ่านถูกต้องตาม CAS   Moodle จะทำการสร้างสมาชิกใหม่ลงในฐานข้อมูลโดยนำข้อมูลผู้ใช้จาก LDAP หากจำเป็น ในการเข้าสู่ระบบครั้งต่อไประบบจะทำการตรวจสอบเฉพาะชื่อผู้ใช้และรหัสผ่านเท่านั้น';
+$string['auth_castitle'] = 'ใช้ CAS เซิร์ฟเวอร์ (SSO)';
 $string['auth_common_settings'] = 'การตั้งค่าทั่วไป';
 $string['auth_data_mapping'] = 'การจับคู่ข้อมูล';
 $string['auth_dbdescription'] = 'วิธีนี้เป็นการใช้ฐานข้อมูลนอกในการตรวจสอบว่าชื่อและรหัสผ่านนั้นถูกต้องหรือไม่ ถ้าหาก account ดังกล่าวเป็น ข้อมูลใหม่ ข้อมูลจะถูกส่งไปยังส่วนต่าง ๆ ใน Moodle';
@@ -16,8 +31,6 @@ $string['auth_dbtable'] = 'ชื่อของตารางในฐานข้อมูล';
 $string['auth_dbtitle'] = 'ใช้ฐานข้อมูลนอก';
 $string['auth_dbtype'] = 'ประเภทของฐานข้อมูล(ดูข้อมูลเพิ่มเติมจาก  <A HREF=../lib/adodb/readme.htm#drivers>การใช้ ADOdb </A> )';
 $string['auth_dbuser'] = 'ชื่อผู้ใช้ (username)ที่สามารถเข้าไปอ่านฐานข้อมูลได้';
-$string['auth_editlock'] = 'ล็อคค่านี้';
-$string['auth_editlock_expl'] = '<p><b>ล็อคค่านี้:</b>ถ้าเปิดใช้งานทั้งสมาชิกและผู้ดูแลระบบจะไม่สามารถแก้ไขข้อมูลในช่องดังกล่าวได้โดยตรง  ให้เลือกใช้ค่านี้ถ้าหากคุณเลือกใช้ฐานข้อมูลนอกและไม่ต้องการให้ข้อมูลนั้นมีการเปลี่ยนแปลง</p>';
 $string['auth_emaildescription'] = 'ในการสมัครเป็นสมาชิกนั้น ผู้สมัครจะได้รับการอนุมัติ ผ่านอีเมล ซึ่งเป็นค่าที่ตั้งไว้ของระบบ เมื่อผู้สมัครเลือก ชื่อ และ รหัสผ่านแล้ว ระบบจะทำการส่งอีเมลไปยัง อีเมลของสมาชิกนั้น อีเมลนี้จะมีลิงก์กลับไปยังหน้าหลักของหน้า ซึ่งจะเป็นการยืนยันว่า อีเมลดังกล่าวใช้ได้จริง  หลังจากนั้นสมาชิก สามารถล็อกอินโดยใช้ชื่อและรหัสผ่านเว็บ';
 $string['auth_emailtitle'] = 'ใช้วิธีอนุมัติผ่านอีเมล';
 $string['auth_fccreators'] = 'รายชื่อของกลุ่มที่สมาชิกสามารถสร้างรายวิชาใหม่ได้ ให้แยกแต่ละกลุ่มด้วยเครื่องหมาย \';\' ชื่อที่ตั้งขึ้นมาต้องตรงกับบนเซิร์ฟเวอร์';
@@ -27,6 +40,11 @@ $string['auth_fchost'] = 'ที่อยู่ของเซิร์ฟเวอรื ให้ใช้หมายเลข IP หรือ DNS';
 $string['auth_fcpasswd'] = 'รหัสผ่านของบัญชีผู้ใช้ข้างต้น';
 $string['auth_fctitle'] = 'ใช้เฟิร์สคลาสเซิร์ฟเวอร์';
 $string['auth_fcuserid'] = 'Userid สำหรับ FirstClass account  โดยให้สิทธิ์ \" Subadministrator\"';
+$string['auth_fieldlock'] = 'ล็อคค่า';
+$string['auth_fieldlock_expl'] = '<p><b>ล็อคค่า:</b> หากเปิดใช้งานจะทำให้สมาชิก Moodle และผู้ดูแลระบบไม่สามารถแก้ไขค่าในฟิลด์ต่าง ๆ ได้โดยตรง ให้เลือกใช้ค่านี้หากคุณต้องการเก็บข้อมูลต่าง ๆ ไว้ในฐานข้อมูลนอก </p>';
+$string['auth_fieldlocks'] = 'ล็อคฟิลด์สมาชิก';
+$string['auth_fieldlocks_help'] = 'คุณสามารถล็อคฟิลด์ข้อมูลสมาชิก มีประโยชน์สำหรับเว็บไซต์ที่เฉพาะผู้ดูแลระบบทำเท่านั้นที่จะทำหน้าที่แก้ไขข้อมูลของสมาชิกจากนั้นทำการอัพโหลดสมาชิกเข้าสู่ระบบ ถ้าหากมีการล็อกฟิลด์ให้ตรวจสอบให้ดีว่าได้ทำการเพิ่มข้อมูลที่จำเป็นสำหรับการสร้างบัญชีผู้ใช้ใน moodle  เรียบร้อยแล้วมิเช่นนั้นบัญชีผู้ใช้จะไม่สามารถใช้การได้ 
+<p> หากต้องการหลีกเลี่ยงปัญหาดังกล่าวให้ตั้งค่าโหมดการล็อคไว้ที่ \"เปิดล็อคหากไม่มีข้อมูล\" ';
 $string['auth_imapdescription'] = 'ใช้วิธีการ ชื่อและรหัส โดย IMAP เซิร์ฟเวอร์';
 $string['auth_imaphost'] = 'IMAP เซิร์ฟเวอร์นั้น ใช้ เลข  IP ไม่ใช่เลข DNS ';
 $string['auth_imapport'] = 'หมายเลขพอร์ต IMAP โดยปกติ คือ  143 หรือ 993.';
@@ -48,7 +66,9 @@ $string['auth_ldap_host_url'] = 'ระบุ LDAP host เช่น  \'ldap://ldap.myorg.com/\'
 $string['auth_ldap_login_settings'] = 'ตั้งค่าการเข้าสู่ระบบ';
 $string['auth_ldap_memberattribute'] = 'คุณสมบัติของสมาชิกใหม่ของกลุ่ม ปกติใช้  \'member\'';
 $string['auth_ldap_objectclass'] = 'ฟิลเตอร์คุ้นเคยกับชื่อหรือการค้นหาสมาชิก โดยปกติแล้วจะตั้งค่าไว้ตัวอย่างเช่น objectClass=posixAccount  โดยค่าที่ตั้งไว้ objectClass=* ค่าที่จะแสดงจาก LDAP';
+$string['auth_ldap_opt_deref'] = 'พิจารณาว่าต้องการจัดการกับนามแฝงที่ใช้ในการค้นหาอย่างไร เลือกค่าใดค่าหนึ่งต่อไปนี้ \"ไม่\" (LDAP_DEREF_NEVER) หรือ \"ใช่\" (LDAP_DEREF_ALWAYS) ';
 $string['auth_ldap_passwdexpire_settings'] = 'ตั้งค่าวันหมดอายุของหรหัสผ่าน LDAP';
+$string['auth_ldap_preventpassindb'] = 'เลือก \"ใช่\" เพื่อป้องกันมิให้รหัสผ่านเก็บไว้ในฐานข้อมูล Moodle';
 $string['auth_ldap_search_sub'] = 'ใส่ค่า <> 0 ถ้าหากต้องการ ค้นหาสมาชิกผ่านหัวข้อย่อย ';
 $string['auth_ldap_server_settings'] = 'ตั้งค่า LDAP เซิร์ฟเวอร์';
 $string['auth_ldap_update_userinfo'] = 'อัพเดทข้อมูลสมาชิก (ชื่อ,นามสกุล,ที่อยู่..) จาก LDAP ถึง  Moodle. ดูเพิ่มเติมที่  /auth/ldap/attr_mappings.php ';
@@ -78,6 +98,18 @@ $string['auth_pop3mailbox'] = 'ชื่อของกล่องจดหมายที่ต้องการติดต่อ (ปกติคือ INBOX
 $string['auth_pop3port'] = 'Server port (110 โดยทั่วไป)';
 $string['auth_pop3title'] = 'ใช้ POP3 server';
 $string['auth_pop3type'] = 'ประเภทของเซิร์ฟเวอร์ ถ้าเซิร์ฟเวอร์ ใช้  certificate security ให้เลือก pop3cert.';
+$string['auth_shib_convert_data'] = 'การเปลี่ยนแปลงข้อมูล API';
+$string['auth_shib_convert_data_description'] = 'คุณสามารถใช้ API ในการแก้ไขข้อมูลต่าง ๆ ที่ป้อนจาก Shibboleth อ่าน <a href=\"../auth/shibboleth/README.txt\" target=\"_blank\">README</a> หากต้องการข้อมูลเพิ่มเติม';
+$string['auth_shib_convert_data_warning'] = 'ไม่พบไฟล์ที่ต้องการหรือไม่สามารถอ่านได้จากกระบวนการเว็บเซิร์ฟเวอร์';
+$string['auth_shib_instructions'] = 'ถ้าหากสถาบันของท่านสนับสนุนการใช้งาน Shibboleth ท่านสามารถ ใช้ <a href=\"$a\">เข้าสู่ระบบผ่าน Shibboleth</a> หากไม่สามารถเข้าสู่ระบบโดยวิธีปกติได้ที่นี่';
+$string['auth_shib_instructions_help'] = 'อธิบายวิธีการเข้าสู่ระบบแก่สมาชิกเพื่ออธิบาย  Shibboleth ซึ่งวิธีการดังกล่าวจะนำไปแสดงในหน้าการเข้าสู่ระบบในส่วนของคำแนะนำ วิธีดังกล่าวควรจะมีลิงก์ไปยัง แหล่งข้อมูลที่ป้องกันด้วย Shibboleth ที่จะทำหน้าที่นำสมาชิกไปยัง \"<b>$a</b>\" เพื่อให้สมาชิก Shibboleth สามารถเข้าสู่ระบบใน Moodle  หากปล่อยว่างไว้ระบบจะแสดงวิธีการใช้งานที่ตั้งไว้';
+$string['auth_shib_only'] = 'Shibboleth  เท่านั้น';
+$string['auth_shib_only_description'] = 'เลือกค่านี้หากต้องการใช้การอนุมัติผ่าน Shibboleth ';
+$string['auth_shib_username_description'] = 'ชื่อของตัวแปร \"ชื่อผู้ใช้\" ใน Shibboleth เว็บเซิร์ฟเวอร์ที่จะใช้ใน Moodle';
+$string['auth_shibboleth_login'] = 'การเข้าสู่ระบบผ่าน Shibboleth ';
+$string['auth_shibboleth_manual_login'] = 'เข้าสู่ระบบด้วยตนเอง';
+$string['auth_shibbolethdescription'] = 'ใช้วิธีนี้หากต้องการสร้างผู้ใช้และอนุมัติโดยใช้ a href=\"http://shibboleth.internet2.edu/\" target=\"_blank\">Shibboleth</a><br> อ่านข้อมูลเพิ่มเติม <a href=\"../auth/shibboleth/README.txt\" target=\"_blank\">README</a> เกี่ยวกับวิธีการตั้งค่า Moodle กับ Shibboleth';
+$string['auth_shibbolethtitle'] = 'Shibboleth ';
 $string['auth_updatelocal'] = 'อัพเดทข้อมูลภายใน ';
 $string['auth_updatelocal_expl'] = '<p><b>อัพเดทข้อมูลภายใน :</b> หากเปิดใช้งาน ฟิลด์ของตารางในฐานข้อมูลภายนอกจะมีการอัพเดททุกครั้งที่สมาชิกเข้าสู่ระบบหรือมีการ synchronise ฐานข้อมูลสมาชิก  ในกรณีที่เลือกให้อัพเดทข้อมูลภายในควรทำการล็อกฟิลด์เอาไว้</p>';
 $string['auth_updateremote'] = 'อัพเดทข้อมูลภายนอก';
@@ -91,20 +123,27 @@ $string['authinstructions'] = 'คุณสามารถให้ข้อมูลกับสมาชิก และแนะนำวิธีการใช้ ผ่
 $string['changepassword'] = 'เปลี่ยนรหัส URL';
 $string['changepasswordhelp'] = 'คุณสามารถระบุลิงก์ ที่สมาชิกสามารถจะเปลี่ยน หรือ หา ชื่อ และ passwordได้ เมื่อมีการลืม ลิงก์ดังกล่าวจะนำสมาชิกไปยังหน้า ล็อกอิน และหน้าข้อมูลส่วนตัว แต่หากไม่เติมอะไร ปุ่มดังกล่าวจะไม่ปรากฎ';
 $string['chooseauthmethod'] = 'เลือกวิธีการอนุมัติ';
+$string['createchangepassword'] = 'สร้างหากหายไป -บังคับการเปลี่ยนแปลง';
+$string['createpassword'] = 'สร้างหากหายไป';
 $string['forcechangepassword'] = 'บังคับให้เปลี่ยนรหัสผ่าน';
 $string['forcechangepassword_help'] = 'บังคับสมาชิกให้เปลี่ยนรหัสผ่านในครั้งต่อไปที่เข้าสู่ระบบ';
 $string['forcechangepasswordfirst_help'] = 'บังคับให้สมาชิกเปลี่ยนรหัสผ่านในครั้งแรกที่เข้าสู่ระบบ';
 $string['guestloginbutton'] = 'ปุ่มล็อกอินในฐานะบุคคลทั่วไป';
+$string['infilefield'] = 'ฟิลด์ที่ต้องการในไฟล์';
 $string['instructions'] = 'วิธีใช้';
+$string['locked'] = 'ล็อคไว้';
 $string['md5'] = 'เข้ารหัสแบบ MD5  ';
-$string['parentlanguage'] = 'en';
+$string['passwordhandling'] = 'การจัดการฟิลด์รหัสผ่าน';
 $string['plaintext'] = 'ตัวหนังสือธรรมดา(Plain Text)';
 $string['showguestlogin'] = 'คุณสามารถซ่อนหรือแสดงปุ่มล็อกอินในฐานะบุคคลทั่วไปในหน้าล็อกอินเข้าสู่ระบบ';
 $string['stdchangepassword'] = 'ใช้หน้าปกติในการเปลี่ยนรหัสผ่าน';
 $string['stdchangepassword_expl'] = 'ในกรณีที่ใช้ระบบการอนุมัติจากภายนอกที่อนุญาตให้เปลี่ยนรหัสผ่าน moodle  ให้ตั้งค่านี้เป็น \"ใช่\" ค่านี้จะตั้งค่าทับกับลิงก์ \"เปลี่ยนรหัสผ่าน\"';
 $string['stdchangepassword_explldap'] = 'หมายเหตุ : ขอแนะนำให้ท่านใช้ LDAP ผ่านการเข้ารหัสแบบ SSL (ldaps://) ในกรณีที่ใช้ LDAP เซิร์ฟเวอร์เป็นหลัก';
-$string['thischarset'] = 'TIS-620';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Thai';
+$string['unlocked'] = 'เปิดล็อค';
+$string['unlockedifempty'] = 'เปิดล็อคหากไม่มีค่า';
+$string['update_never'] = 'ไม่เคย';
+$string['update_oncreate'] = 'เมื่อสร้างใหม่';
+$string['update_onlogin'] = 'เมื่อเข้าสู่ระบบทุกครั้ง';
+$string['update_onupdate'] = 'เมื่อมีการอัพเดท';
 
 ?>
