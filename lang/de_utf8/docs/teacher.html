@@ -1,0 +1,349 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Moodle Dokumentation Kleines Trainerhandbuch</title>
+<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS">
+  <script language="JavaScript" type="text/javascript">
+  <!-- //hide
+  var themeCSS = "<?php echo "$CFG->wwwroot/theme/$CFG->theme" ?>";
+  if (themeCSS.indexOf("CFG->wwwroot") != true) {
+    document.write ("<link rel=\"stylesheet\" type=\"text/css\" href=\"" + themeCSS +"/styles.php\" />");
+    document.write ("<link rel=\"stylesheet\" type=\"text/css\" href=\"" + themeCSS +"/docstyles.php\" />");
+  }
+  // done hiding -->
+  </script>
+<meta http-equiv="Content-Type" content=
+"text/html; charset=us-ascii">
+</head>
+<body bgcolor="#FFFFFF">
+<h1>Kleines Trainerhandbuch</h1>
+<p>Diese Seite ist eine kurze Einleitung f&uuml;r das Erstellen
+von Online-Kursen mit Moodle. Sie beschreibt die Hauptfunktionen,
+die in Moodle vorhanden sind, sowie wichtige Entscheidungen, die
+Sie zuerst treffen m&uuml;ssen, um ein gew&uuml;nschtes Layout
+einzurichten.</p>
+<p>Abschnitte in diesem Dokument</p>
+<ol>
+<li><a href="#started">Einleitung</a></li>
+<li><a href="#settings">Kurseinstellungen</a></li>
+<li><a href="#upload">Files Hochladen</a></li>
+<li><a href="#activities">Aktivit&auml;ten erstellen</a></li>
+<li><a href="#course">Kurs starten</a></li>
+<li><a href="#further">Weitere Informationen</a></li>
+</ol>
+<h3><a name="started" id="started"></a>Einleitung</h3>
+<blockquote>
+<p>Dieses Dokument setzt voraus, dass Moodle installiert ist und
+der Administrator Ihnen die Rechte gegeben hat einen Kurs zu
+erstellen.&nbsp;</p>
+<p>Hier sind drei grunds&auml;tzliche Dinge, die Ihnen helfen
+sollen mit der Arbeit zu beginnen.</p>
+<ol>
+<li><strong>Haben Sie keine Angst zu experimentieren:</strong>
+<blockquote>
+<p>Versuchen Sie so viel wie m&ouml;glich zu experimentieren und
+Einstellungen zu &auml;ndern, damit Sie beim Erstellen eigener
+Kurse einsch&auml;tzen k&ouml;nnen, welches Modul sich am Besten
+eignet. Es ist schwer alles in einem Moodle-Kurs unterzubringen,
+aber es ist meist einfach, Dinge zu korrigieren.</p>
+</blockquote>
+</li>
+<li><strong>Beachten und benutzen Sie die kleinen
+Buttons:</strong>
+<blockquote>
+<p>&nbsp;<img src="../pix/i/edit.gif"> - der <strong>edit
+Button</strong> wei&szlig;t Sie darauf hin, dass Sie hier
+&Auml;nderungen vornehmen k&ouml;nnen</p>
+<p><img src="../pix/help.gif" width="22" height="17"> - der
+<strong>help Button</strong> &ouml;ffnet ein Popup- Fenster mit
+dem entsprechenden Hilfetext</p>
+</blockquote>
+</li>
+<li><strong>Benutzen Sie die Navigationsleiste im oberen Bereich
+jeder Seite, die</strong>
+<blockquote>&nbsp;
+<p>Ihnen helfen soll, zu wissen wo sie im Moment sind, und die
+verhindern soll, dass Sie sich verirren.</p>
+</blockquote>
+</li>
+</ol>
+<hr></blockquote>
+<h3><a name="settings" id="settings"></a>Kurseinstellungen</h3>
+<blockquote>
+<p>Die erste Sache, die Sie tun sollten, ist unter Administration
+den Punkt Einstellungen anklicken. (Anmerkung : Beachten Sie
+dabei die Tatsache, dass das gesamte Administrations-Men&uuml;
+nur f&uuml;r Sie und den Administrator zu sehen ist). Teilnehmer/innen
+(Studenten) k&ouml;nnen diesen Link nicht sehen. Sie k&ouml;nnen
+den Zeitpunkt, wann Ihr Kurs online gestellt wird, und welche
+Teile sichtbar sind immer selbst bestimmen.</p>
+<p>Auf dieser Seite k&ouml;nnen Sie die Einstellungen zu Ihrem
+Kurs ver&auml;ndern bzw. neu eingeben, wenn Sie einen neuen Kurs
+erstellen. Dabei k&ouml;nnen Sie alle Dinge &auml;ndern, die Sie
+w&uuml;nschen, angefangen von der Bezeichnung des Kurses bis zum
+Start- und Endtermin Ihres Kurses. Ich m&ouml;chte hier nicht
+alle Einzelheiten vorstellen, da jeder Punkt mit einem Help
+Button versehen ist. Jedoch m&ouml;chte ich auf die wichtigste
+Einstellung, das <b>Kursformat</b> etwas genauer eingehen.&nbsp;</p>
+<p>Das <b>Kursformat</b>, welches Sie ausw&auml;hlen, entscheidet
+&uuml;ber das grundlegende Layout Ihres Kurses. Moodle in der
+Version 1.1 hat drei Kursformate. In der Zukunft wird es
+vermutlich viel mehr geben. Bitte schicken Sie Vorschl&auml;ge
+f&uuml;r neue&nbsp; Kursformate an <a href=
+"mailto:martin@moodle.com">martin@moodle.com</a> .</p>
+<p>Hier sehen Sie Screenshoots von drei Beispielkursen mit den
+drei bis jetzt m&ouml;glichen Kurslayouts (Ignorieren Sie bitte
+die unterschiedlichen Farben in den Kursen, diese k&ouml;nnen nur
+durch den Administrator ge&auml;ndert werden.):</p>
+<p align="center"><strong>W&ouml;chentliches Format:</strong></p>
+<p align="center"><img src="pix/weekly.jpg" width="570" height=
+"527"></p>
+<p align="center">&nbsp;</p>
+<p align="center"><strong>Themen Format:</strong></p>
+<p align="center"><img src="pix/topics.jpg" width="570" height=
+"463"></p>
+<p align="center">&nbsp;</p>
+<p align="center"><strong>Soziales Format:</strong></p>
+<p align="center"><img src="pix/social.jpg" width="570" height=
+"429"></p>
+<p>&nbsp;</p>
+<p>Beachten Sie bitte, dass das W&ouml;chentliche Format und das
+Themen Format in der Struktur sehr &auml;hnlich sind. Der
+Hauptunterschied besteht darin, dass beim W&ouml;chentlichen
+Format, jeder Kursabschnitt in Themen f&uuml;r eine Woche
+gegliedert ist, w&auml;hrend beim Themen Format die Gliederung
+nach einzelnen Themen erfolgt. Das Soziale Format ist gut
+geeignet f&uuml;r Kurse mit weniger Inhalt, da hier das Forum im
+Mittelpunkt der Seite steht.</p>
+<p>Benutzen Sie den Hilfe Button auf der Einstellungsseite
+f&uuml;r weitere Details.</p>
+<hr></blockquote>
+<h3><a name="upload" id="upload"></a> Dateien hochladen</h3>
+<blockquote>
+<p>Sie k&ouml;nnen bereits vorhandene Inhalte wie Internetseiten,
+Audiodateien, Videos, Worddokumente oder Animationen jederzeit zu
+Ihrem Kurs hinzuf&uuml;gen. Jedes bekannte Dateiformat, dass
+existiert, kann f&uuml;r den Kurs hochgeladen werden und auf dem
+Server gespeichert werden. Nachdem die Dateien auf dem Server
+gespeichert wurden, k&ouml;nnen Sie diese verschieben,
+umbenennen, bearbeiten oder l&ouml;schen.</p>
+<p>Im Administrationsmen&uuml; unter dem Men&uuml;punkt
+<strong>Dateien</strong> finden Sie die gesamten von Ihnen zu den
+jeweiligen Kursen abgelegten Dateien:</p>
+<p align="center"><img src="pix/files.jpg" width="400" height=
+"347"></p>
+<p>&nbsp;</p>
+<p>Dieses Archiv ist nur f&uuml;r den/die Trainer/iner vorhanden und
+f&uuml;r die Teilnehmer/innen nicht erreichbar. Einzelne
+Dateien aus diesem Archiv k&ouml;nnen sp&auml;ter f&uuml;r
+Teilnehmer/innen zug&auml;nglich gemacht werden. Beachten Sie
+hierzu im n&auml;chsten Kapitel den Abschnitt Ressourcen.</p>
+<p>Wie auf dem Screenshot zu erkennen ist, werden Dateien in
+Unterverzeichnissen abgelegt. Sie k&ouml;nnen soviel Unterordner
+anlegen wie Sie m&ouml;chten, um Ihre Dateien zu bestimmten
+Themen zusammen zu fassen. Ebenfalls ist es m&ouml;glich, die
+Dateien innerhalb der Unterordner zu verschieben. Die
+Gr&ouml;&szlig;e der Dateien ist meist durch den Administrator
+beschr&auml;nkt, da der Speicherplatz auf dem Server nur
+beschr&auml;nkt ist. Diese Einstellung kann jedoch vom
+Administrator ge&auml;ndert werden.</p>
+<p>Das Hochladen von Dateien aus dem Internet ist auf eine Datei
+zur gleichen Zeit beschr&auml;nkt. Ablegen von doppelten Inhalten
+sollte allgemein vermieden werden. Deshalb empfehle ich, wenn Sie
+auf bestimmte Teile einer Website in Ihrem Kurs verweisen wollen,
+hier nur einen Link in den Kurs aufzunehmen. Wenn Sie viele
+Dateien&nbsp; auf einmal hochladen wollen, ist es in der Regel
+leichter diese vorher mit einem <strong>zip program</strong> zu
+einem Archiv zu verdichten. Danach wird nur die Archiv-Datei
+hochgeladen und diese anschlie&szlig;end auf dem Server wieder
+entpackt (Sie werden dazu einen Link zum Entpacken unmittelbar im
+Archiv sehen).</p>
+<p>Um die Dateien, die Sie hochgeladen haben zu betrachten,
+klicken Sie einfach auf den entsprechenden Dateinamen. Der Inhalt
+wird dann entweder in Ihrem Webbrowser angezeigt oder auf Ihren
+Computer geladen.</p>
+<p>HTML- und Textdateien k&ouml;nnen innerhalb des Kurses online
+bearbeitet werden. Andere Dateien m&uuml;ssen heruntergeladen
+werden, auf dem lokalen Computer bearbeitet werden und danach
+wieder auf den Server geladen werden. Wenn Sie eine Datei mit dem
+gleichen Namen wieder auf den Server hochladen, wird die alte
+Datei automatisch &uuml;berschrieben.&nbsp;</p>
+<p>Eine abschlie&szlig;ende Bemerkung: Wenn Ihre Inhalte bereits
+im Netz verf&uuml;gbar sind, ist es unn&ouml;tig alle Dateien
+noch einmal hochzuladen. Sie k&ouml;nnen diese durch einen
+Verweis mit Ihrem Kurs verbinden. (Beachten Sie dazu die
+Beschreibung zum Modul Arbeitsunterlagen im n&auml;chsten
+Abschnitt).</p>
+<hr></blockquote>
+<h3><a name="activities" id="activities"></a> Aktivit&auml;ten
+erstellen</h3>
+<blockquote>
+<p>Die Erstellung eines Kurses wird im wesentlichen durch das
+Hinzuf&uuml;gen von Aktivit&auml;ten innerhalb des Kurses
+erreicht, die die Teilnehmer/innen sp&auml;ter benutzen sollen.
+Sie k&ouml;nnen die Aktivit&auml;ten jederzeit so zusammenstellen
+wie Sie es w&uuml;nschen, da Sie jederzeit entscheiden
+k&ouml;nnen, welche Module f&uuml;r die Teilnehmer/innen sichtbar
+sind.</p>
+<p>Damit es m&ouml;glich ist zu einem Kurs etwas
+hinzuzuf&uuml;gen, klicken Sie auf den Men&uuml;punkt Bearbeiten
+einschalten im Administrationsmen&uuml;. Dieser Schalter
+erm&ouml;glicht es Ihnen das entsprechenden Popup-Men&uuml;&nbsp;
+f&uuml;r das Einf&uuml;gen von Aktivit&auml;ten ein- der
+auszuschalten und so den Kurs nach ihren W&uuml;nschen zu
+gestalten. Gleichzeitig werden Ihnen damit weitere Einstellungen
+zu Ihrem Kurs erm&ouml;glicht. &nbsp;</p>
+<p>Neue Aktivit&auml;ten f&uuml;gen Sie einfach in der
+entsprechenden Woche oder dem entsprechenden Thema hinzu, indem
+Sie &uuml;ber das Popup-Men&uuml; die entsprechende
+Aktivit&auml;t ausw&auml;hlen. Nachfolgend erhalten Sie einen
+&Uuml;berblick &uuml;ber alle in Moodle, Version 1.0 enthaltenen
+Aktivit&auml;ten:</p>
+<dl>
+<dt><strong>Aufgabe</strong></dt>
+<dd>Eine Aufgabe besteht aus einer Aufgabenstellung und
+-beschreibung, einem Abgabedatum und der Festlegung der
+Bewertung. Teilnehmer sind dadurch in der Lage ihre Ergebnisse
+auf den Server zu laden. Das Datum, wann sie die L&ouml;sung auf
+dem Server ablegen wird dokumentiert. Nach Ablauf der Abgabefrist
+haben Sie eine Seite, auf der Sie alle eingereichten
+L&ouml;sungen sehen k&ouml;nnen, und wann diese eingereicht
+wurden. Sie m&uuml;ssen dann nur noch die Bewertung und einen
+entsprechenden Kommentar hinterlegen. Eine halbe Stunde nach
+ihrer Bewertung, (Zeit kann vom Administrator eingestellt werden)
+erh&auml;lt jeder Teilnehmer eine automatische E-Mail durch
+Moodle.</dd>
+<dt><strong>Abstimmung</strong></dt>
+<dd>Eine Abstimmung ist sehr einfach: Sie stellen eine Frage und
+geben mehrere Antwortm&ouml;glichkeiten vor. Nachdem Teilnehmer
+ihre Wahl getroffen haben, haben Sie die M&ouml;glichkeit die
+Resultate auszuwerten. Ich verwende diese M&ouml;glichkeit zur
+Evaluation meiner Kurse, aber man kann sie genauso f&uuml;r
+andere Wahlen oder Abstimmungen verwenden. Probieren Sie es doch
+einfach einmal aus.</dd>
+<dt><strong>Forum</strong></dt>
+<dd>Dieses Modul ist f&uuml;r Online-Kurse sehr wichtig, da hier
+die Diskussionen stattfinden. Wenn Sie ein neues Forum
+hinzuf&uuml;gen haben Sie die Wahl zwischen unterschiedlichen
+Arten von Foren.</dd>
+<dt><strong>Journal</strong></dt>
+<dd>Jede Nutzung der Aktivit&auml;t Journal steht nicht nur dem
+entsprechenden Thema, sondern auch f&uuml;r den gesamten Kurs zur
+Verf&uuml;gung. Mit jedem Journaleintrag kann man eine offene
+Frage formulieren, zu dem die Teilnehmer ihre Meinung sagen
+k&ouml;nnen, sowie einen Zeitraum festlegen in dem das Journal
+ge&ouml;ffnet ist. Fordern Sie die Kursteilnehmer auf zu
+reflektieren bzw. Kritik zu &auml;u&szlig;ern, da diese
+Eintr&auml;ge nur f&uuml;r den Teilnehmer, der die Meinung
+geschrieben hat und dem Lehrer zug&auml;nglich sind. Nach dem
+Schlie&szlig;en des Journals k&ouml;nnen sie die Eintr&auml;ge
+ordnen und jeweils einen Kommentar dazu abgeben. Die Kommentare
+werden durch moodle automatisch an die Kursteilnehmer
+verschickt.</dd>
+<dt><strong>Arbeitsmaterialien</strong></dt>
+<dd>Arbeitsmaterialien sind die Inhalte ihres Kurses. Der Inhalt
+kann jede Datei sein, die sie auf den Server geladen haben oder
+kann ein Link zu einer URL im Netz sein. Sie k&ouml;nnen auch
+einfach dadurch textbasierte Seiten bereitstellen, indem Sie die
+Inhalte in Moodle verfassen.</dd>
+<dt><strong>Quiz</strong></dt>
+<dd>Mit der Aktivit&auml;t Quiz k&ouml;nnen Sie Tests erstellen,
+welche Fragen mit mehreren Antworten, Fragen mit einer sehr
+kurzen Antwort oder wahr-/falsch- Aussagen enthalten. Diese
+Fragen werden in Kategorien auf der Datenbank abgelegt und
+k&ouml;nnen innerhalb des Kurses bei jedem Thema wieder verwendet
+werden. Es ist ebenfalls m&ouml;glich diese Fragen zu
+ver&ouml;ffentlichen, so dass Sie sie auch f&uuml;r andere Kurse
+verwenden k&ouml;nnen. Bei einem Quiz k&ouml;nnen Sie mehrere
+Antwortversuche erlauben. Jeder Versuch wird aufgezeichnet und
+der Lehrer kann w&auml;hlen, ob der Teilnehmer eine Bewertung
+oder die richtige Antwort angezeigt bekommt. In diesem Modul ist
+ein Bewertungsschema enthalten, so dass die Antworten automatisch
+ausgewertet werden k&ouml;nnen.&nbsp;</dd>
+<dt><strong>Umfrage</strong></dt>
+<dd>Bei einer Umfrage gibt man auf eine Frage verschiedene
+Antworten vor und der Teilnehmer kann entscheiden, welche Antwort
+f&uuml;r ihn zutrifft. Momentan sind in diesem Modul COLLES- und
+ATTLS- Umfragen enthalten. Diese Umfragen k&ouml;nnen zu Beginn
+des Kurses als Diagnoseinstrument und zum Ende des Kurses
+f&uuml;r die Auswertung verwendet werden. Ich benutze jede Woche
+eine Umfrage in meinen Kursen.</dd>
+</dl>
+Mit jeder Version kommen hier neue Aktivit&auml;ten hinzu, so
+dass auch diese Dokumentation immer &uuml;berarbeitet wird. Im
+Moment gibt es bereits Chat, &Uuml;bungen und Workshop.<br>
+<p>Nachdem Sie alle Aktivit&auml;ten zu einem Thema oder einer
+Woche hinzugef&uuml;gt haben, k&ouml;nnen Sie &uuml;ber die
+Pfeiltasten (<img src="../pix/t/up.gif" width="9" height="10">
+<img src="../pix/t/down.gif" width="9" height="10">) hinter jeder
+Aktivit&auml;t die Reihenfolge der Aktivit&auml;ten festlegen.
+Au&szlig;erdem ist es m&ouml;glich, Aktivit&auml;ten zu
+l&ouml;schen <img src="../pix/t/delete.gif" width="10" height=
+"10">, bzw. zu bearbeiten <img src="../pix/t/edit.gif" width="10"
+height="11">. Au&szlig;erdem ist es neuerdings m&ouml;glich
+Aktivit&auml;ten auszublenden, so dass sie f&uuml;r die
+Teilnehmer nicht sichtbar sind.</p>
+<hr></blockquote>
+<h3><a name="course" id="course"></a>Den Kurs starten</h3>
+<blockquote>
+<p>Ich k&ouml;nnte eine Doktorarbeit dar&uuml;ber schreiben.
+Aktuell schreibe ich eine dar&uuml;ber. <img src=
+"../pix/s/biggrin.gif" width="15" height="15"></p>
+<p>Bis dahin hier ein paar kurze Hinweise:</p>
+<ol>
+<li>Melden Sie sich bei allen Foren an.</li>
+<li>Regen Sie alle Teilnehmer dazu an, ihr Benutzerprofil
+(einschlie&szlig;lich Foto) vollst&auml;ndig auszuf&uuml;llen und
+lesen Sie alle. Dies hilft ihnen sp&auml;ter einige Bemerkungen
+besser zu verstehen.</li>
+<li>Machen Sie f&uuml;r sich selbst Anmerkungen im <b>Lehrer
+Forum</b> (im Administrationsmen&uuml;). Diese sind besonders
+wertvoll, wenn Sie im Team unterrichten.</li>
+<li>Nutzen Sie die <strong>Statistiken</strong>
+(Administrationsmen&uuml;) um einen &Uuml;berblick dar&uuml;ber
+zu erhalten, wer wann angemeldet war. Das Fenster wird alle 60
+Sekunden neu aufgebaut, so dass Sie genau verfolgen k&ouml;nnen,
+wer angemeldet ist. Es ist hilfreich dieses Fenster am
+Arbeitsplatz ge&ouml;ffnet zu halten, um zu erfahren was im Kurs
+passiert.</li>
+<li>Nutzen Sie die <strong>T&auml;tigkeitsberichte</strong>
+(hinter jedem Namen in der Liste aller Teilnehmer, oder &uuml;ber
+das Teilnehmerprofil). Dies ist die beste M&ouml;glichkeit zu
+sehen, wann eine bestimmte Person im Kurs aktiv war.</li>
+<li>Antworten Sie umgehend bei Fragen der Teilnehmer/innen. Lassen Sie
+es nicht weiter liegen sondern tun Sie es sofort. Versuchen Sie
+in Ihrem Kurs ein Gemeinschaftsgef&uuml;hl zu entwickeln, damit
+viele Dinge gemeinsam gel&ouml;st werden k&ouml;nnen.</li>
+</ol>
+<hr></blockquote>
+<h3><a name="further" id="further"></a>Weitere Informationen</h3>
+<blockquote>
+<p>Wenn Sie irgendwelche bestimmten Probleme mit ihrem Kurs
+haben, wenden Sie sich bitte an den Administrator ihrer
+Seite.</p>
+<p>Wenn Sie weitere Vorschl&auml;ge zur Verbesserung oder
+Erweiterung von Moodle haben oder einige gute Geschichten, gehen
+Sie zu <a href="http://moodle.org/" target="_top">moodle.org</a>
+und nehmen Sie teil am Forum mit der &Uuml;berschrift <a href=
+"http://moodle.org/course/view.php?id=5" target="_top">Using
+Moodle</a>. Wir w&uuml;rden gern von ihnen h&ouml;ren und
+vielleicht k&ouml;nnen Sie helfen Moodle weiter zu
+verbessern.&nbsp;</p>
+<p>Wenn Sie zur&nbsp; Weiterentwicklung beitragen m&ouml;chten, bei
+der Programmierung neuer Module mithelfen oder Dokumentationen
+schreiben m&ouml;chten setzen Sie sich : <a href=
+"http://dougiamas.com/" target="_top">Martin Dougiamas</a> in
+Verbindung oder informieren Sie sich auf der&nbsp; "Fehlerseite"
+f&uuml;r Moodle unter <a href="http://bugs.moodle.com" target=
+"_top">bugs.moodle.com</a></p>
+<p align="center">Danke f&uuml;r die Nutzung von Moodle - viel
+Erfolg !</p>
+<hr>
+<p>&nbsp;</p>
+</blockquote>
+<p align="center"><a href="./" target="_top"><font size=
+"1">Moodle Documentation</font></a></p>
+<p align="center"><font size="1">Version: $Id: teacher.html,v 1.4
+2002/08/18 10:00:01 martin Exp $</font></p>
+</body>
+</html>

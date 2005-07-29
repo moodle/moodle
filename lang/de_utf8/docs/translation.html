@@ -1,0 +1,204 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>moodle Dokumentation: Leitfaden f&uuml;r
+Moodle-&Uuml;bersetzungen</title>
+<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS">
+  <script language="JavaScript" type="text/javascript">
+  <!-- //hide
+  var themeCSS = "<?php echo "$CFG->wwwroot/theme/$CFG->theme" ?>";
+  if (themeCSS.indexOf("CFG->wwwroot") != true) {
+    document.write ("<link rel=\"stylesheet\" type=\"text/css\" href=\"" + themeCSS +"/styles.php\" />");
+    document.write ("<link rel=\"stylesheet\" type=\"text/css\" href=\"" + themeCSS +"/docstyles.php\" />");
+  }
+  // done hiding -->
+  </script>
+<meta http-equiv="Content-Type" content=
+"text/html; charset=us-ascii">
+</head>
+<body style="background-color: rgb(255, 255, 255);">
+<h1>Leitfaden f&uuml;r Moodle-&Uuml;bersetzungen</h1>
+<p>Moodle zu &uuml;bersetzen ist nicht schwierig. Es gibt aber
+einige Dinge, die Sie zu Beginn wissen sollten.</p>
+<p>&nbsp;</p>
+<h2>Struktur des Moodle Sprachpakets</h2>
+<p style="margin-left: 40px;">Alle Moodle Sprachpakete liegen im
+lang-Verzeichnis. Jede Sprache verf&uuml;gt &uuml;ber ein eigenes
+Unterverzeichnis mit einem Kurznamen der Sprache (en, fr, nl, es
+...).</p>
+<p style="margin-left: 40px;">Die wichtigsten Dateien in diesem
+Ordner haben .php-Endungen (z.B. moodle.php, resource.php etc).&nbsp;
+Diese Dateien enthalten kurze Aussagen, h&auml;ufig als
+"<span style="font-style: italic;">strings</span>" bezeichnet.
+Sie werden auf der Oberfl&auml;che von moodle angezeigt.</p>
+<p style="margin-left: 40px;">Die weiteren Ordner enthalten .html
+Webseiten:</p>
+<ul style="margin-left: 40px;">
+<li><strong>help</strong>: enthalten situationsabh&auml;ngige
+Hilfedateien, die mit den Hilfe-Buttons in moodle aufgerufen
+werden</li>
+<li><strong>docs</strong>: enthalten die wichtigsten
+Dokumentationsseiten (wie diese Seite)<br></li>
+</ul>
+<p>&nbsp;</p>
+<h2>So erstellen Sie ein v&ouml;llig neues Sprachpaket f&uuml;r
+moodle</h2>
+<p style="margin-left: 40px;">Wenn Ihre Sprache von moodle noch
+nicht unterst&uuml;tzt wird oder wenn Sie einige spezifische
+Anpassungen f&uuml;r Ihre Seite an einem bestehenden Sprachpaket
+vornehmen wollen, k&ouml;nnen Sie einen neue &Uuml;berstzung
+beginnen.</p>
+<p style="margin-left: 40px;">Erstellen Sie im lang-Verzeichnis
+einen neuen Ordner (verwenden Sie einen zwei-Buchstaben-Code
+f&uuml;r die Sprache als Verzeichnisnamen). Die Standardcodes der
+Namen finden Sie in der Datei lib/languages.php. Wenn Sie eine
+lokale Variation einer bestehenden Sprache erstellen, verwenden
+Sie den bestehenden Namenscode der Basissprache und erg&auml;nzen
+Sie mit einem Unterstrich die lokale Version (z.B. <span style=
+"font-style: italic;">pt</span> f&uuml;r Portugiesisch und
+<span style="font-style: italic;">pt_br</span> f&uuml;r die
+brasilianische Modifikation).&nbsp; Wenn Sie eine Unicode Version
+erstellen f&uuml;gen Sie <span style=
+"font-weight: bold;">_utf8</span> am Ende hinzu (z.B.
+<span style="font-style: italic;">sr_utf8</span>).<br></p>
+<p style="margin-left: 40px;">Als n&auml;chstes kopieren Sie die
+Datei moodle.php aus einem anderen Sprachverzeichnis in Ihr neues
+Sprachverzeichnis.&nbsp; Meist ist die Datei aus dem Verzeichnis "en"
+gut geeignet. F&uuml;r die Bearbeitung des de_du Paketes kann
+jedoch besser noch die deutsche Basisversion genutzt
+werden.<br></p>
+<p style="margin-left: 40px;">Sie haben nun alles vorbereitet, um
+neue Ausdr&uuml;cke in Ihrer Sprache in moodle
+hinzuzuf&uuml;gen.</p>
+<p style="margin-left: 40px;">Wenn Sie eine komplett neue Sprache
+in moodle anlegen, m&uuml;ssen Sie zuerst den String
+"thischarset" in der Datei moodle.php bearbeiten. Hier
+m&uuml;ssen Sie einen g&uuml;ltigen Zeichensatz f&uuml;r Ihre
+Sprache definieren. Speichern Sie danach die Datei moodle.php ab.
+und <span style="font-weight: bold;">laden Sie die Datei
+neu</span>. Nun k&ouml;nnen Sie mit den weiteren Ausdr&uuml;cken
+fortsetzen.</p>
+<p>&nbsp;</p>
+<h2>So bearbeiten Sie ein bestehendes Sprachpaket</h2>
+<h3 style="margin-left: 40px;">Einige kleinere
+Anpassungen<br></h3>
+<p style="margin-left: 80px;">Wenn Sie nur einige Anpassungen
+f&uuml;r Ihr moodle machen wollen (z.B. Anpassung an den
+Sprachgebrauch Ihrer Organisation) <span style=
+"font-weight: bold;">sollten Sie nicht ein bestehendes
+Sprachpaket &uuml;berarbeiten.</span>.&nbsp; Beim n&auml;chsten
+upgrade von moodle w&uuml;rden Sie alle &Auml;nderungen wieder
+&uuml;berschreiben.<br></p>
+<p style="margin-left: 80px;">Erstellen Sie statt dessen ein
+neues Verzeichnis, wie oben beschrieben. Stellen Sie als
+Basissprache (in moodle.php) eine Sprache, auf die Sie sich
+beziehen wollen, ein.&nbsp; Zum Beispiel k&ouml;nnte ein guter Name
+f&uuml;r eine lokale englische Version "<span style=
+"font-style: italic;">en_local</span>" sein, die Basissprache
+k&ouml;nnte sein "<span style="font-style: italic;">en</span>"
+oder "<span style="font-style: italic;">en_us</span>".</p>
+<p style="margin-left: 80px;">Damit jeder auf Ihrer Seite auf
+Ihre Sprachversion zugreift stellen Sie diese Sprache als
+Seitensprache ein beschr&auml;nken Sie die verf&uuml;gbaren
+Sprachen f&uuml;r Ihre Seite auf <span style=
+"font-weight: bold;">Admin &gt;&gt; Konfigurationn &gt;&gt;
+Variablen</span>.<br>
+<br></p>
+<h3 style="margin-left: 40px;">So &uuml;bersetzen Sie die Texte
+auf der moodle Oberfl&auml;che ("string" Dateien)<br></h3>
+<div style="margin-left: 2em">
+<ol>
+<li>Melden Sie sich in Ihrem moodle als Administrator an.</li>
+<li>Gehehn Sie zu <span style="font-weight: bold;">Administration
+&gt;&gt; Konfiguration &gt;&gt; Sprache</span>, zur
+Sprachadministrationsseite.</li>
+<li>W&auml;hlen Sie Ihre Sprache aus dem Menu aus, und klicken
+Sie auf "Sprache vergleichen und bearbeiten".</li>
+<li>Nun sollten Sie ein Formular mit allen Ausdr&uuml;cken
+f&uuml;r die verschiedenen php-Dateien sehen. Wennn Sie die
+Dateien nicht sehen k&ouml;nnen, m&uuml;ssen Sie pr&uuml;fen, ob
+Sie in den Verzeichnissen Schreibzugriff haben und ggfs. die
+Zugriffsrechte anpassen. the</li>
+<li>Das Formular verf&uuml;gt &uuml;ber drei Spalten, die erste
+zeigt den Namen des Ausdrucks, die zweite den Ausdruck auf
+Englisch und zuletzt die &Uuml;bersetzung in die gew&auml;hlte
+Sprache.</li>
+<li>Bearbeiten Sie die fehlenden Ausdr&uuml;cke in jeder Datei
+(farblich herborgehoben) und denken Sie an das Abspeichern jeder
+einzelnen Datei am Ende der Datei.</li>
+<li>Wenn Sie Ausdr&uuml;cke leer lassen - verwendet Moodle
+einfach den englischen Ausdruck weiter. Die Ursprungsprache kann
+in moodle.php gew&auml;hlt werden, andernfalls wird immer
+Englisch verwandt.</li>
+<li>Eine schnelle M&ouml;glichkeit, sich einen &Uuml;berblick
+&uuml;ber fehlende Ausdr&uuml;cke und Dateien zu verschaffen ist
+die Option "Auf fehlende Textpassagen pr&uuml;fen".<br>
+<br></li>
+</ol>
+</div>
+<h3 style="margin-left: 40px;">&Uuml;bersetzung der Hilfedateien
+und der Dokumentation</h3>
+<p style="margin-left: 80px;">moodle verf&uuml;gt nicht &uuml;ber
+einen integrierten Editor zur &Uuml;bersetzung der Hilfedateien.
+Damit ist es sehr einfach. Nutzen Sie auf jeden Fall das
+<span style="font-weight: bold;">en</span> Sprachpaket als
+Referenz f&uuml;r Ihre &Uuml;bersetzung. Kopieren Sie die
+Hilfedatei(en) aus dem en-Sprachverzeichnis an die gleiche Stelle
+f&uuml;r Ihre Sprache. Nutzen Sie einen Editor f&uuml;r einfachen
+Text oder einen HTML-Editor um die Datei zu &uuml;bersetzen.
+Achten Sie darauf, dass Sie keinen Code (meist nur
+HTML-Codierungen) ver&auml;ndern.(VERWENDEN SIE IN KEINEM FALL
+EIN TEXTVERARBEITUNGSPROGRAMM, zur Bearbeitung der Hilfedateien,
+da Sie zus&auml;tzliche Textinformationen einf&uuml;gen</p>
+<p style="margin-left: 80px;">Klicken Sie auf "Auf fehlende
+Textpassagen pr&uuml;fen/Check for missing strings" in der
+Sprachadministration Ihres moodles. Sie erhalten eine
+&Uuml;bersicht &uuml;ber fehlende Dateien in Ihrer Sprachversion.
+So lange Sie nicht alle Dateien &uuml;bersetzt haben, ruft moodle
+automatisch die vorhandenen englischen Sprachdateien im
+en-Verzeichnis auf. Es ist also nicht erforderlich, alle Dateien
+vor der &Uuml;bersetzung in Ihr Sprachverzeichnis zu
+kopieren.</p>
+<p>&nbsp;</p>
+<h2>Unterst&uuml;tzen Sie mit Ihrem Sprachpaket das moodle
+Projekt</h2>
+<p style="margin-left: 40px;">Wenn Sie Ihre &Uuml;bersetzung zur
+Verf&uuml;gung stellen, helfen Sie anderen Nutzern in Ihrer
+Sprache weiter. &nbsp;&nbsp; Ihre Sprachversion wird in k&uuml;nftigen
+moodle-Versionen eingebaut.<br></p>
+<p style="margin-left: 40px;">Speichern Sie das gesamte
+Sprachpaket f&uuml;r die neue Sprache als gepackte <span style=
+"font-weight: bold;">zip</span> Datei ab und schicken es per
+E-Mail an <a href=
+"mailto:martin@moodle.org">translation@moodle.org</a>.<br></p>
+<p style="margin-left: 40px;">Wir nehmen mit Ihnen Kontakt auf,
+um Details zu besprechen.<br></p>
+<p>&nbsp;</p>
+<h2>Pflege des Sprachpaketes<br></h2>
+<p style="margin-left: 40px;">Wenn Sie eine Sprachversion von
+moodle bearbeiten ist es am besten das <a href=
+"?file=cvs.html">Moodle CVS</a> zu verwenden. Damit k&ouml;nnen
+Sie immer auf die aktuellste Version zur&uuml;ckgreifen und Ihre
+Erg&auml;nzungen und &Auml;nderungen direkt dem moodle Projekt
+zur Verf&uuml;gung stellen.. Kontakten Sie bitte <a href=
+"mailto:martin@moodle.org">translation@moodle.org</a> wenn Sie
+Hilfe ben&ouml;tigen.<br></p>
+<p style="margin-left: 40px;">Tragen Sie sich bitte unbedingt im
+<a target="_top" href=
+"http://moodle.org/mod/forum/view.php?id=43">Languages Forum</a>
+ein, um sich &uuml;ber Neuigkeiten zu informieren, die die
+Sprachpakete betreffen.<br></p>
+<p style="margin-left: 40px;">Wenn Sie sich &uuml;ber die
+laufenden &Auml;nderungen und Neuerungen t&auml;glich informieren
+wollen, tragen Sie sich bitte auf der <a href=
+"http://sourceforge.net/mail/?group_id=30935" target="_top">CVS
+mailing list</a> ein.&nbsp; Damit stellen Sie sicher, dass Ihre
+&Uuml;bersetzung mit dem englischsprachigen Original
+&uuml;bereinstimmt.<br></p>
+<p style="margin-left: 40px;"><br></p>
+<p align="center"><a href="." target="_top"><font size="1">Moodle
+Dokumentation</font></a></p>
+<p align="center"><font size="1">Version: $Id: translation.html,v
+1.2 2004/09/16 17:10:54 gustav_delius Exp $</font></p>
+</body>
+</html>

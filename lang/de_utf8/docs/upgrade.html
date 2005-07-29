@@ -1,0 +1,145 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Moodle Dokumentation: Upgrade</title>
+<link rel="stylesheet" href="docstyles.css" type=
+"TEXT/CSS">
+  <script language="JavaScript" type="text/javascript">
+  <!-- //hide
+  var themeCSS = "<?php echo "$CFG->wwwroot/theme/$CFG->theme" ?>";
+  if (themeCSS.indexOf("CFG->wwwroot") != true) {
+    document.write ("<link rel=\"stylesheet\" type=\"text/css\" href=\"" + themeCSS +"/styles.php\" />");
+    document.write ("<link rel=\"stylesheet\" type=\"text/css\" href=\"" + themeCSS +"/docstyles.php\" />");
+  }
+  // done hiding -->
+  </script>
+<meta http-equiv="Content-Type" content=
+"text/html; charset=us-ascii">
+</head>
+<body bgcolor="#FFFFFF">
+<h1>Moodle Upgrade</h1>
+<p>Moodle ist so designed, dass man problemlos von einer
+fr&uuml;heren Version auf eine sp&auml;tere Version 'upgraden'
+kann.</p>
+<p>Um ein Upgrade einer Moodle-Installation durchzuf&uuml;hren,
+sollte man folgende Schritte durchf&uuml;hren:</p>
+<h2>1. Datensicherung wichtiger Daten durchf&uuml;hren</h2>
+<blockquote>
+<p>Auch wenn es nicht unbedingt notwendig ist, ist es immer eine
+gute Idee, eine Datensicherung von einem System zu machen, bevor
+man ein Upgrade durchf&uuml;hrt, nur f&uuml;r den Fall, dass man
+aus irgendeinem Grund zu einer &auml;lteren Version
+zur&uuml;ckkehren m&ouml;chte. Tats&auml;chlich ist es sinnvoll,
+den Server so zu automatisieren, dass er t&auml;glich eine
+Datensicherung der Moodle-Installation durchf&uuml;hrt. Dann kann
+man diesen Schritt auslassen.</p>
+<p>Es gibt drei Gebiete, die man sichern sollte:</p>
+<blockquote>
+<p><strong>1. Das Moodle Systemverzeichnis</strong></p>
+<blockquote>
+<p>Mache vor dem Upgrade eine separate Kopie von diesen Dateien,
+so dass du deine config.php und andere Module, die du
+hinzugef&uuml;gt hast, wie Themen, Sprachen usw. abrufen
+kannst.</p>
+</blockquote>
+<p><strong>2. Dein Datenverzeichnis.</strong></p>
+<blockquote>
+<p>Dies ist dort, wo sich der hochgeladene Inhalt befindet (so
+wie Kurs die Kurs-Inhalte und Studentenarbeiten). Damit ist es
+sowieso sehr wichtig, von diesen Dateien eine Datensicherung zu
+haben. Manchmal k&ouml;nnen Upgrades Verzeichnisse deines
+Datenverzeichnisses verschieben oder umbenennen.</p>
+</blockquote>
+<p><strong>3. Deine Datenbank</strong></p>
+<blockquote>
+<p>Die meisten Moodleupgrades werden die Datenbanktabellen
+&auml;ndern, indem Felder hinzugef&uuml;gt oder ver&auml;ndert
+werden. Jede Datenbank hat unterschiedliche Methoden f&uuml;r
+eine Datensicherung. Ein Weg, eine MySQL-Datenbank zu sichern,
+ist, sie in eine einzelne SQL-Datei zu 'dumpen'. Das folgende
+Beispiel zeigt den Befehl (Unix und Windows), um die Datenbank
+"moodle" in die Datei moodle-backup-2002-10-26.sql zu dumpen.</p>
+<blockquote>
+<p><font face="Courier New, Courier, mono">mysqldump moodle &gt;
+moodle-backup-2002-10-26.sql</font></p>
+</blockquote>
+<p>Du kannst ebenfalls das "Export"-Werkzeug in Moodles
+"Datenbank verwalten" Web-Interface nutzen, um die gleiche Sache
+f&uuml;r alle Plattformen durchzuf&uuml;hren.</p>
+<p>&nbsp;</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<h2>2. Installieren der neuen Moodle-Software</h2>
+<blockquote>
+<p><strong>Mit einem heruntergeladenen Archiv</strong></p>
+<blockquote>
+<p>&Uuml;berschreibe nicht die alte Installtion, es sei denn, du
+wei&szlig;t, was du tust ... Manchmal k&ouml;nnen alte Dateien
+Probleme in der neuen Installation bewirken. Der beste Weg ist
+es, das aktuelle Moodle-Verzeichnis um zu benennen, und dann das
+neue Moodle-Archiv an die alte Stelle zu entpacken.</p>
+<blockquote>
+<p><font face="Courier New, Courier, mono">mv moodle
+moodle.backup<br>
+tar xvzf moodle-1.0.6.tgz</font></p>
+</blockquote>
+<p>Als n&auml;chstes kopiere deine config.php und alle anderen
+pers&ouml;nlichen Module wie Themen her&uuml;ber.</p>
+<blockquote>
+<p><font face="Courier New, Courier, mono">cp
+moodle.backup/config.php moodle<br>
+cp -pr moodle.backup/theme/mytheme
+moodle/theme/mytheme</font></p>
+</blockquote>
+</blockquote>
+<p><strong>Mit CVS</strong></p>
+<blockquote>
+<p>Falls du CVS benutzt, gehe nur in das Moodle Wurzelvezeichnis
+und f&uuml;hre ein Update durch:</p>
+<blockquote>
+<p><font face="Courier New, Courier, mono">cvs update
+-dP</font></p>
+</blockquote>
+<p>Gehe sicher, dass du den "d"-Parameter nutzt, um neue
+Verzeichnisse zu erstellen und den "P"-Parameter, um leere
+Verzeichnisse zu entfernen.</p>
+<p>Solltest du Moodle-Dateien editiert haben, achte
+sorgf&auml;ltig auf die Mitteilungen wegen m&ouml;glicher
+Konflikte. All deine individuellen Themen und zus&auml;tzlichen
+Inhalte bleiben unber&uuml;hrt.</p>
+<p>&nbsp;</p>
+</blockquote>
+</blockquote>
+<h2>3. Fertigstellen des Upgrades</h2>
+<blockquote>
+<p>Der letzte Schritt ist es, den Upgradeprozess innerhalb von
+Moodle auszul&ouml;sen.</p>
+<p>Um das zu tun, besuche nur <a href="../admin/index.php">die
+admin Seite deiner Installation</a>.</p>
+<blockquote>
+<p><font face=
+"Courier New, Courier, mono">http://example.com/moodle/admin</font></p>
+</blockquote>
+<p>Es ist nicht wichtig, ob du als root angemeldet bist.</p>
+<p>Moodle wird automatisch die neue Version entdecken und alle
+Datenbank- oder Dateisystemanpassungen durchf&uuml;hren, die
+notwendig sind. Sollte es irgendetwas geben, das nicht
+automatisch durchgef&uuml;hrt werden kann (sehr selten), dann
+wirst du Mitteilungen sehen, die dir sagen, was du zu tun
+hast.</p>
+</blockquote>
+<p>Angenommen, alles geht gut (keine Fehlermeldungen), kannst du
+beginnen, die neue Moodleversion zu nutzen und die neuen Features
+zu genie&szlig;en.</p>
+<p>Falls du Probleme mit dem Upgrade hast, besuche <a href=
+"www.moodle.org">moodle.org</a> und poste in das <a target="_top"
+href="http://moodle.org/mod/forum/view.php?id=28">Installation
+Support Forum</a>.</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p align="center"><a href="." target="_top"><font size="1">Moodle
+Documentation</font></a></p>
+<p align="center"><font size="1">Version: $Id$</font></p>
+</body>
+</html>

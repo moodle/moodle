@@ -1,0 +1,210 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Moodle Dokumentation: Wie Sie das CVS benutzen
+k&ouml;nnen</title>
+<link rel="stylesheet" href="docstyles.css" type=
+"TEXT/CSS">
+  <script language="JavaScript" type="text/javascript">
+  <!-- //hide
+  var themeCSS = "<?php echo "$CFG->wwwroot/theme/$CFG->theme" ?>";
+  if (themeCSS.indexOf("CFG->wwwroot") != true) {
+    document.write ("<link rel=\"stylesheet\" type=\"text/css\" href=\"" + themeCSS +"/styles.php\" />");
+    document.write ("<link rel=\"stylesheet\" type=\"text/css\" href=\"" + themeCSS +"/docstyles.php\" />");
+  }
+  // done hiding -->
+  </script>
+<meta http-equiv="Content-Type" content=
+"text/html; charset=us-ascii">
+</head>
+<body bgcolor="#FFFFFF">
+<br>
+<h1>Zugang und Nutzung des CVS</h1>
+<br>
+<blockquote>
+<p>Das CVS bietet den Zugang zu den aktuellen Entwicklerversionen
+von Moodle. Die Anleitung zur Nutzung des CVS wird nicht ins
+Deutsche &uuml;bersetzt.</p>
+</blockquote>
+<br>
+<br>
+<br>
+<h2>Using CVS to access and update Moodle source code</h2>
+<blockquote>
+<p>CVS is the Concurrent Versioning System. It's a commonly used
+way of storing source code because it keeps versions of all files
+so that nothing is ever lost, and usage by different people is
+tracked. It also provides ways to merge code if two or more
+people are working on the same file. All code and all versions
+are stored on a central server (in this case, at <a href=
+"http://www.sf.net/">Sourceforge</a>).</p>
+<p>To use <a href=
+"http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/moodle/moodle/">Moodle's
+CVS archive</a> (as a <a href=
+"http://sourceforge.net/project/memberlist.php?group_id=30935">developer
+with write access</a>), you first need to have an <a href=
+"http://sourceforge.net/account/register.php">account on
+Sourceforge</a>. For the examples on this page, let's assume your
+username is <strong><font color=
+"#990000">myusername</font></strong> and your password is
+<strong><font color="#990000">mypassword</font></strong>. Once
+you have a Sourceforge account, contact me (<a href=
+"http://dougiamas.com/">Martin Dougiamas</a>) so I can give you
+write access to particular directories.</p>
+<p>To avoid being prompted for <strong><font color=
+"#990000">mypassword</font></strong> every time you run a CVS
+command, follow the <a href=
+"http://sourceforge.net/account/editsshkeys.php">Sourceforge
+directions for using authorized keys</a>. This step is optional,
+but it can make your CVS experience a lot nicer.</p>
+<p>With that done, you should have all the permissions you need,
+so you just need to set up your machine and download the current
+sources so you can start working on them. Below are instructions
+for Unix and Windows systems.</p>
+<h3>1. Using CVS on Unix</h3>
+<blockquote>
+<p>Sourceforge CVS uses ssh as a transport layer for security, so
+you will have to set this CVS_RSH environment variable in your
+Unix shell:</p>
+<blockquote>
+<pre>
+<strong>setenv CVS_RSH ssh</strong> (for csh, tcsh etc)
+</pre>
+<pre>
+<strong>export CVS_RSH=ssh</strong> (for sh, bash etc)
+</pre></blockquote>
+<p>It's best to put this in your .bashrc or .cshrc so you don't
+have to type it all the time. Then, check out Moodle using this
+(all one line):</p>
+<blockquote>
+<pre>
+<strong>cvs -z3 -d:ext:myusername@cvs.sourceforge.net:/cvsroot/moodle co moodle</strong>
+</pre></blockquote>
+<p>Don't try to do run this first CVS command into an existing
+moodle directory - start fresh with a new directory.</p>
+<p>Note that you will be prompted for <strong><font color=
+"#990000">mypassword</font></strong> for each command unless you
+set up <a href=
+"http://sourceforge.net/account/editsshkeys.php">authorized
+keys</a></p>
+<p>Now, you should have a new 'moodle' directory. You can rename
+it and move it around if you like. Go into it:</p>
+<blockquote>
+<pre>
+<strong>cd moodle </strong>
+</pre></blockquote>
+<p>All the latest Moodle files should be in there. You can now
+change files in your copy. To compare your files against the main
+CVS copy on the server use cvs diff, eg:</p>
+<blockquote>
+<pre>
+<strong>cvs diff -c config-dist.php
+cvs diff -c lang</strong>
+</pre></blockquote>
+<p>To fetch the latest updates from the server use:</p>
+<blockquote>
+<pre>
+<strong>cvs update -dP</strong> 
+</pre></blockquote>
+<p>To copy your new files back to the server you would do
+something like:</p>
+<blockquote>
+<pre>
+<strong>cd lang/ca
+cvs commit</strong> 
+</pre></blockquote>
+<p>You will be prompted to add some comments (depends on your
+default text editor) ... add a meangingful comment and close the
+editor ... the files will be sent to Sourceforge and stored.
+Done!</p>
+<p>To save more time you can put default arguments into a file
+called .cvsrc in your home directory. For example, mine
+contains:</p>
+<blockquote>
+<pre>
+<strong>diff -c
+update -dP</strong> 
+</pre></blockquote>
+<p>Try 'cvs help' for more details ...</p>
+<p>&nbsp;</p>
+</blockquote>
+<h3>2. Using CVS on Windows</h3>
+<blockquote>
+<p>These instructions are based on notes provided by Mitsuhiro
+Yoshida &lt;mits@mitstek.com&gt;.</p>
+<p>Firstly, download and install WinCVS.</p>
+<blockquote>
+<p><a href=
+"https://sourceforge.net/project/showfiles.php?group_id=10072">https://sourceforge.net/project/showfiles.php?group_id=10072</a></p>
+</blockquote>
+<p>Secondly, download sfsetup for SourceForge ssh access, install
+it and reboot Windows.</p>
+<blockquote>
+<p><a href=
+"http://sourceforge.net/projects/sfsetup/">http://sourceforge.net/projects/sfsetup/</a></p>
+</blockquote>
+<p>Next, configure WinCVS. Launch it, and select Admin -&gt;
+Preferences. Then change them as follows:</p>
+<blockquote>
+<p>[General]<br>
+<strong>CVSROOT data</strong>:<br>
+<strong>Authentication</strong>: ssh<br>
+<strong>Path</strong>: /cvsroot/moodle<br>
+<strong>Host address</strong>: cvs.sourceforge.net<br>
+<strong>User name</strong>: <font color=
+"#990000">myusername</font><br>
+<strong>CVSROOT</strong>: <font color=
+"#990000">myusername</font>@cvs.sourceforge.net:/cvsroot/moodle</p>
+<p>[Globals]<br>
+<strong>Checkout read-only</strong>: uncheck<br>
+<strong>Supply control when adding files</strong>: check<br>
+<strong>Quiet mode</strong>: uncheck<br>
+<strong>TCP/IP compression</strong>: check and select 9<br>
+<strong>Dirty files support</strong>: check<br>
+<strong>Prune(remove) empty directories</strong>: check<br>
+<strong>Disable splash screen</strong>: uncheck</p>
+</blockquote>
+<p>Congratulations, WinCVS is set up. Now, you should check out a
+complete working copy of the Moodle course code:</p>
+<ol>
+<li>Select 'Create -&gt; checkout'</li>
+<li>For the setting 'Module name and path on the server", type
+"moodle", then click OK.</li>
+<li>Type in <strong><font color=
+"#990000">mypassword</font></strong> and press Enter in the DOS
+window.</li>
+</ol>
+<p>After this first checkout, you can fetch updated files from
+the CVS server like this:</p>
+<ol>
+<li>Select folders or files you want to update</li>
+<li>Press right mouse button and select '<strong>Update
+selection</strong>'</li>
+<li>Press OK button</li>
+<li>Type in <strong><font color=
+"#990000">mypassword</font></strong> and press Enter in the DOS
+window.</li>
+</ol>
+<p>After modifying files, you can commit them back to the CVS
+server like this:</p>
+<ol>
+<li>Select folders or files you want to commit</li>
+<li>Press right button and select '<strong>Commit
+selection</strong>'</li>
+<li>Press OK button</li>
+<li>Type in a meaningful comment and press OK button.</li>
+<li>Type in <strong><font color=
+"#990000">mypassword</font></strong> and press Enter in the DOS
+window.</li>
+</ol>
+</blockquote>
+<p>&nbsp;</p>
+<p align="center">Good luck!</p>
+<p>&nbsp;</p>
+</blockquote>
+<p align="center"><a href="." target="_top"><font size="1">Moodle
+Documentation</font></a></p>
+<p align="center"><font size="1">Version: $Id: features.html,v
+1.2 2001/12/09 10:34:19 martin Exp $</font></p>
+</body>
+</html>
