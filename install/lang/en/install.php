@@ -27,16 +27,16 @@ $string['databasesettings'] = '    Now you need to configure the database where 
        <b>User:</b> your database username<br />
        <b>Password:</b> your database password<br />
        <b>Tables Prefix:</b> optional prefix to use for all table names';
-$string['databasecreationsettings'] = '    Now you need to configure the database settings where most Moodle data
-    will be stored.  This database will be created automatically by the Moodle4Windows installer
-    with the settings specified below.<br />
-    <br /> <br />
-       <b>Type:</b> fixed to \"mysql\" by the installer<br />
+$string['databasecreationsettings'] = '<p>Now you need to configure the database settings where most Moodle data
+    will be stored.  The database will be created automatically by the installer
+    with the default settings below or others that you specify in the editable 
+	fields below. If security is an issue you may want to specify a password in the \"Password\" field.</p>
+       <p><b>Type:</b> fixed to \"mysql\" by the installer<br />
        <b>Host:</b> fixed to \"localhost\" by the installer<br />
        <b>Name:</b> database name, eg moodle<br />
        <b>User:</b> fixed to \"root\" by the installer<br />
        <b>Password:</b> your database password<br />
-       <b>Tables Prefix:</b> optional prefix to use for all table names';
+       <b>Tables Prefix:</b> optional prefix to use for all table names</p>';
 $string['dataroot'] = 'Data Directory';
 $string['datarooterror'] = 'The \'Data Directory\' you specified could not be found or created.  Either correct the path or create that directory manually.';
 $string['dbconnectionerror'] = 'We could not connect to the database you specified. Please check your database settings.';
@@ -144,11 +144,18 @@ $string['sessionautostarthelp'] = '<p>Moodle requires session support and will n
 <p>Sessions can be enabled in the php.ini file ... look for the session.auto_start parameter.</p>';
 $string['wwwroot'] = 'Web address';
 $string['wwwrooterror'] = 'The web address does not appear to be valid - this Moodle installation doesn\'t appear to be there.';
-$string['welcomep10'] = 'Welcome to $a->installername ($a->installerversion)';
-$string['welcomep20'] = 'If you are seeing this page is because you have been able to execute the <strong>$a->packname $a->packversion</strong> package in your computer. Congratulations!';
-$string['welcomep30'] = 'This release of <strong>$a->installername</strong> includes, mainly, this applications:';
-$string['welcomep40'] = 'and, of course:';
-$string['welcomep50'] = 'The use of all this applications (and other components not mentioned) are governed by their respective licenses. This program (<strong>$a->installername</strong>) is <a href=\"http://www.opensource.org/docs/definition_plain.html\">open source</a> and it\'s distributed under the <a href=\"http://www.gnu.org/copyleft/gpl.html\">GPL</a> license.';
-$string['welcomep60'] = 'Now, <strong>Moodle\'s</strong> installation assistant will be executed. Using some easy pages all the needed configurations and databases will be created to run <strong>Moodle</strong> in your personal computer.';
-$string['welcomep70'] = 'See you!';
+$string['welcomep10'] = '$a->installername ($a->installerversion)';
+$string['welcomep20'] = 'You are seeing this page because you have successfully installed and 
+    launched the <strong>$a->packname $a->packversion</strong> package in your computer. Congratulations!';
+$string['welcomep30'] = 'This release of the <strong>$a->installername</strong> includes the applications 
+    which create an environment in <strong>Moodle</strong> will operate, namely:';
+$string['welcomep40'] = 'The package also includes <strong>Moodle $a->moodlerelease ($a->moodleversion)</strong>.';
+$string['welcomep50'] = 'The use of all the applications in this package is governed by their respective 
+    licences. The complete <strong>$a->installername</strong> package is 
+	<a href=\"http://www.opensource.org/docs/definition_plain.html\">open source</a> and is distributed 
+	under the <a href=\"http://www.gnu.org/copyleft/gpl.html\">GPL</a> license.';
+$string['welcomep60'] = 'The following pages will lead you through some easy to follow steps to 
+    configure and set up <strong>Moodle</strong> on your computer. You may accept the default 
+	settings or, optionally, amend them to suit your own needs.';
+$string['welcomep70'] = 'Click the \"Next\" button below to continue with the set up of <strong>Moodle</strong>.';
 ?>
