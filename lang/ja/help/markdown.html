@@ -1,1621 +1,216 @@
-<p align="center"><b>Markdownフォーマットを使用してウェブページを書く</b></p>
+<h2>Markdownでテキストを整える</h2>
 
-<p>(このテキストは、<a target="_blank" href="http://daringfireball.net/projects/markdown/syntax">the original Markdown syntax page</a>)のコピーです。</p>
-
-<hr />
 <div id="Main">
 
 <div class="article">
+<p>Markdownは、Moodleで利用できるシンプルなテキストフォーマットを、強調 ( 太字、斜体 )、構造 ( 弾丸リスト、見出し ) およびリンク ( 画像または他のウェブリソース ) を簡単に追加することによって発展させます。あなたが選択したテキスト入力エリアの下にある<strong>書式</strong>ドロップダウンリストを単純に選択するだけで、Moodleの多くの場所でMarkdownを使用することができます。</p>
 
 <ul>
-
-<li><a href="#overview">概要</a>
-
-<ul>
-
-<li><a href="#philosophy">理念</a></li>
-
-<li><a href="#html">インラインHTML</a></li>
-
-<li><a href="#autoescape">スペシャルキャラクタの自動エスケープ</a></li>
-
-</ul></li>
-
-<li><a href="#block">ブロック要素</a>
-
-<ul>
-
-<li><a href="#p">段落と改行</a></li>
-
-<li><a href="#header">ヘッダ</a></li>
-
-<li><a href="#blockquote">引用</a></li>
-
-<li><a href="#list">リスト項目</a></li>
-
-<li><a href="#precode">コード</a></li>
-
-<li><a href="#hr">水平線</a></li>
-
-</ul></li>
-
-<li><a href="#span">汎用的なインライン要素</a>
-
-<ul>
-
-<li><a href="#link">リンク</a></li>
-
-<li><a href="#em">強調</a></li>
-
-<li><a href="#code">コード</a></li>
-
-<li><a href="#img">イメージ</a></li>
-
-</ul></li>
-
-<li><a href="#misc">その他</a>
-
-<ul>
-
-<li><a href="#backslash">バックシュラッシュエスケープ</a></li>
-
-<li><a href="#autolink">自動リンク</a></li>
-
-</ul></li>
-
+<li><a href="#concepts">基本概念</a></li>
+<li><a href="#emphasis">テキストの強調</a></li>
+<li><a href="#headings">見出し</a></li>
+<li><a href="#lists">リスト</a></li>
+<li><a href="#quotes">引用段落</a></li>
+<li><a href="#links">ウェブリンク</a></li>
+<li><a href="#images">画像</a></li>
+<li><a href="#advanced">特論</a></li>
 </ul>
 
-<hr />
+<h2><a id="concepts">基本概念</a></h2>
 
-<h2 id="overview">概要</h2>
+<p>テキストを入力するには、単にテキストエリアまたはテキストボックスにテキストを打ち込んでください。段落の終わりと、次の行の始まりに空白行を残すため、リターンキーを2度押してください。</p>
 
-<h3 id="philosophy">理念</h3>
+<h2><a id="emphasis">テキストの強調</a></h2>
 
-<p>Markdownは、可能な限り簡単に読み、簡単に書くことを目的としています。</p>
+<p>Markdownでは、<em>斜体</em>のテキスト、<strong>太字</strong>のテキスト、または<strong><em>太字かつ斜体</em></strong>のテキストの、 3つのレベルのテキスト強調を追加することができます。テキストをアスタリスクで囲むことで、テキストを強調することができます。例:</p>
 
-<p>しかしながら、何にもまして読みやすいことが重要視されています。
-Markdownフォーマットドキュメントは、タグによるマークアップやフォーマットインストラクション無しに、プレインテキストとしてそのまま公開されます。
-Markdownのシンタックスは、
-<a href="http://docutils.sourceforge.net/mirror/setext.html">Setext</a>、
-<a href="http://www.aaronsw.com/2002/atx/">atx</a>、
-<a href="http://textism.com/tools/textile/">Textile</a>、
-<a href="http://docutils.sourceforge.net/rst.html">reStructuredText</a>、
-<a href="http://www.triptico.com/software/grutatxt.html">Grutatext</a>、
-<a href="http://ettext.taint.org/doc/">EtText</a>
-を含む幾つかのテキストtoHTMLフィルタに影響を受けました。
-しかし、Markdownのシンタックスの一番大きなインスピレーションの源は、プレインテキストメールのフォーマットです。
-</p>
+<p><strong><code>*斜体*</code></strong> -> <em>斜体</em> <br />
+<strong><code>**太字**</code></strong> -> <strong>太字</strong> <br />
+<strong><code>***太字 斜体***</code></strong> -> <strong><em>太字 斜体</em></strong></p>
 
-<p>このため、Markdownのシンタックスは、完全に句読記号文字から成ります。句読記号文字は、それらが意味するとおりに見えるように慎重に選ばれました。
-例えば、言葉の周りのアスタリスクは実際には*強調*のように見えます。Markdownではリストとして表示されます。
-あなたがメールを使用したことがあると仮定して、blockquotes(引用)は引用されたテキストのように見えます。
-</p>
+<p>強調は、単一の単語、連続した単語、また単語の一部にも追加することができます。</p>
 
-<h3 id="html">インラインHTML</h3>
+<p><strong><code>*単一の* 単語</code></strong> -> <em>単一の</em> 単語<br />
+<strong><code>***連続した 単語***</code></strong> -> <strong><em>連続した 単語</em></strong> <br />
+<strong><code>**区別**できる</code></strong> -> <strong>区別</strong>できる</p>
 
-<p>Markdownのシンタックスは、1つの事柄を目的としています: ウェブを<em>記述</em>するようなフォーマットとして使用する。</p>
+<p>この目的のために、アンダースコア ( _ )  を代わりに使用することができます。</p>
 
-<p>Markdownは、HTMLの代替物ではなく、むしろHTMLに近いと言えます。
-シンタックスは非常にコンパクトで、HTMLタグの非常に小さなサブセットのみと一致します。
-Markdownのアイディアは、HTMLタグを簡単に挿入できるシンタックスを作成することでは<em>ありません</em>。
-私の見解として、HTMLタグは既に簡単に挿入することができるからです。
-Markdownのアイディアは、簡単に読め、簡単に書け、散文的に編集できることにあります。
-HTMLは<em>出版するための</em>フォーマットです。これに対して、Markdownは<em>書くための</em>フォーマットです。
-従って、Markdownフォーマットシンタックスは、プレインテキストで表現することのみに重点を置いています。</p>
+<h2><a id="headings">見出し</a></h2>
 
-<p>Markdownシンタックスで表現できないマークアップには、単純にHTMLそのものを使用できます。
-MarkdownからHTMLに切り替える場合、事前に記したり、区切り文字を入れる必要はありません。タグを使用するだけです。</p>
+<p>Markdownでは、見出しを使用してテキストを分割することができます; 6つの異なるレベルの見出しを使用できますが、通常のテキストに3つ以上の見出しを使用することは不自然です。例えば、あなたが現在読んでいるテキストには、3つのレベルの見出しが使用されています。</p>
 
-<p>唯一の制限事項は、ブロック要素を使用する場合です - 例 <code>&lt;div&gt;</code>、<code>&lt;table&gt;</code>、<code>&lt;pre&gt;</code>、<code>&lt;p&gt;</code>等
- - これらは空白行で囲まれたコンテンツで分離する必要があります。また、開始および終了タグはタブまた空白でインデントしてはいけません。
-Markdownは、余分(不必要)な<code>&lt;p&gt;</code>タグをブロック要素の周囲に追加することはありません。</p>
+<p>行を1つまたはそれ以上のシャープ文字 ( # ) で開始することで、見出しを作成することができます。1つのシャープでは、一番大切な見出しを、6つのシャープでは最も重要でない、または一番小さな見出しを表示します。</p>
 
-<p>例えば、HTMLテーブルをMarkdown記事に追加する場合:</p>
+<p><strong><code># セクション見出し</code></strong> <br />
+<strong><code>## サブ・セクション見出し</code></strong> <br />
+<strong><code>### サブ・サブ・セクション見出し</code></strong> <br />
+その他</p>
 
-<pre><code>これは通常の段落です。
+<p>最初の2つのレベルの見出しは最も一般的で、テキストバージョンで更に目立たせる代替的な方法として作成 ( 出力は前の方式と同じ ) することができます。次のようにタイトルの下に等号 ( = ) またはハイフン ( - ) の行を代わりに使用することができます:</p>
 
-&lt;table&gt;
+<p><strong><code>セクション見出し</code></strong> <br />
+<strong><code>===============</code></strong></p>
 
-    &lt;tr&gt;
+<p><strong><code>サブセクション見出し</code></strong> <br />
+<strong><code>------------------</code></strong>   </p>
 
-        &lt;td&gt;Foo&lt;/td&gt;
+<h2><a id="lists">リスト</a></h2>
 
-    &lt;/tr&gt;
+<h3>弾丸リスト</h3>
 
-&lt;/table&gt;
+<p>弾丸リストは、それぞれの行のコンテンツの前を、アスタリスクと空白で始めることで作成することができます。空白は重要ですので、入力を忘れないように注意してください。</p>
 
-これはもう1つの通常の段落です。
+<p><strong><code>* 1番目ポイント</code></strong> <br />
+<strong><code>* 2番目のポイント</code></strong> <br />
+<strong><code>* 3番目のポイント</code></strong>  </p>
 
-</code></pre>
-
-
-<p>注意: Markdownフォーマットシンタックスはブロック要素の中では処理されません 
-例、あなたはMarkdownスタイル <code>*強調*</code> をHTMLブロックの中で使用できません。</p>
-
-<p>汎用的なインライン要素 - 例 <code>&lt;span&gt;</code>、<code>&lt;cite&gt;</code>、<code>&lt;del&gt;</code> - は、
-Markdown段落、リスト、ヘッダのどこでも使用することができます。あなたが希望する場合、Markdownフォーマットの
-代わりにHTMLタグを使用することもできます。例えば、HTMLの<code>&lt;a&gt;</code>または<code>&lt;img&gt;</code>タグをMarkdown
-のリンクやイメージのシンタックスの代わりに使用できます。</p>
-
-<p>HTMLのブロック要素と異なり、Markdownシンタックスは汎用的なインライン要素の中でも処理<em>されます</em>。</p>
-
-<h3 id="autoescape">スペシャルキャラクタの自動エスケープ</h3>
-
-<p>HTMLには特別に扱う必要のある2つの文字があります: <code>&lt;</code> と <code>&amp;</code>です。左鍵括弧タグの開始に使用し、アンパサンドはHTMLエンティティーを示すために使用します。
-これらの文字を使用する場合は、エンティティーとしてエスケープする必要があります。例、<code>&amp;lt;</code> と <code>&amp;amp;</code>です。</p>
-
-<p>特にアンパサンドは、ホームページ製作者泣かせの存在です。&#8216;AT&amp;T&#8217;と書きたい場合、&#8216;<code>AT&amp;amp;T</code>&#8217;と書く必要があります。
-さらに、URLの中でもアンパサンドをエスケープする必要があります。従って、次のようにリンクしたい場合:</p>
-
-<pre><code>http://images.google.com/images?num=30&amp;q=larry+bird
-
-</code></pre>
-
-<p>アンカータグ<code>href</code>の属性において、URLを次のようにエンコードする必要があります:</p>
-
-<pre><code>http://images.google.com/images?num=30&amp;amp;q=larry+bird
-
-</code></pre>
-
-<p>言うまでもなく、このことは忘れやすく、恐らく適切にマークアップされたウェブサイトでHTML妥当性エラーが発生する最も一般的な原因となっています。</p>
-
-<p>Markdownは必要に応じてエスケープ処理を行いますので、あなたはこれらの文字を自然に使うことができます。
-アンパサンドをHTMLエンティティーの一部として使用したい場合は、そのままの状態にされます。そうで無い場合は、<code>&amp;amp;</code>にエンコードされます。</p>
-
-<p>ですから、あなたが著作権記号を記事に入れたい場合は、次のように記述できます:</p>
-
-<pre><code>&amp;copy;
-
-</code></pre>
-
-<p>Markdownはアンパサンドをそのままにします。しかし、次のように記述すると:</p>
-
-<pre><code>AT&amp;T
-
-</code></pre>
-
-<p>Markdownは次のようにエンコードします:</p>
-
-<pre><code>AT&amp;amp;T
-
-</code></pre>
-
-<p>同様に、Markdownは<a href="#html">inline HTML</a>をサポートします。鍵括弧をHTMLの区切り文字として使用する場合、Markdownは鍵括弧をそのままにします。しかし、次のように記述すると:</p>
-
-<pre><code>4 &lt; 5
-
-</code></pre>
-
-<p>Markdownは次のようにエンコードします:</p>
-
-<pre><code>4 &amp;lt; 5
-
-</code></pre>
-
-<p>しかし、Markdownコードspansとblocksの中では、鍵括弧、アンパサンドは<em>常に</em>自動的にエンコードされます。このことにより、Markdownを使用すると簡単にHTMLコードを記述することができます。
-(逆に、生のHTMLでHTMLシンタックスを記述すると酷いことになります。あなたのサンプルコード内の全ての <code>&lt;</code> と <code>&amp;</code> をエスケープする必要があるからです。)</p>
-
-<hr />
-
-<h2 id="block">ブロック要素</h2>
-
-<h3 id="p">段落と改行</h3>
-
-<p>段落は、単純に1つまたはそれ以上の空白行で区切られた、1つまたはそれ以上の連続したテキストの行です。
-(空白行は空白行に見えるあらゆる行を指します - スペースまたはタブを含んでいるに過ぎない行も空白行と見なされます。)
-標準的な段落はスペースやタブで区切られることはありません。</p>
-
-<p>「1つまたはそれ以上の連続したテキストの行」ルールは、Markdownが「ハードラップ」テキストの段落をサポートすることを意味します。
-これは他の殆どのtext-toHTMLフォーマッタ(Movable Typeの「改行の変換」オプションも含む)が段落内の全ての改行を <code>&lt;br /&gt;</code>タグに変換する
-のと極めて異なる部分です。
-</p>
-
-<p>あなたがMarkdownを使って<code>&lt;br /&gt;</code>タグを挿入<em>したい</em>場合は、行を1つまたはそれ以上のスペースで終わって、
-改行してください。</p>
-
-<p>そうです、<code>&lt;br /&gt;</code>を作成するには少しばかり努力が必要ですが、単純に「全ての改行は<code>&lt;br /&gt;</code>に変換」
-というルールはMarkdownでは働きません。Markdownのemailスタイル<a href="#blockquote">引用</a>と複数段落の<a href="#list">リスト項目</a>は、
-ハードブレークのフォーマットを行う時に、最も良く動作し、見栄えが良くなります。</p>
-
-<h3 id="header">ヘッダ</h3>
-
-<p>Markdownは、<a href="http://docutils.sourceforge.net/mirror/setext.html">Setext</a> と <a href="http://www.aaronsw.com/2002/atx/">atx</a> の2つのヘッダスタイルをサポートします。</p>
-
-<p>Setextスタイルヘッダは、 イコールサイン (第一レベルヘッダ) とダッシュ (第二レベルヘッダ) を使用して「下線」を引きます。例えば:</p>
-
-<pre><code>これは H1 です。
-
-=============
-
-
-
-これは H2 です。
-
--------------
-
-</code></pre>
-
-<p>下線は <code>=</code> の数に関わらず表示されます。</p>
-
-<p>Atxスタイルのヘッダは、ヘッダレベル1〜6に応じて1〜6のハッシュキャラクタを行頭で使用します。例えば:</p>
-
-
-
-<pre><code># これは H1 です。
-
-
-
-## これは H2 です。
-
-
-
-###### これは H6 です。
-
-</code></pre>
-
-<p>Atxスタイルヘッダを「閉じる」こともできます。これは純粋に装飾的なものです - 見た目が良くなる場合は使ってください。ハッシュの数はヘッダを開始する時に使用するハッシュの数に合致する必要はありません。( ヘッダを開始する時のハッシュ数は、ヘッダレベルを決定します。):</p>
-
-<pre><code># これは H1 です。 #
-
-
-
-## これは H2 です。 ##
-
-
-
-### これは H3 です。 ######
-
-</code></pre>
-
-
-
-<h3 id="blockquote">引用</h3>
-
-
-
-<p>Markdownでは、E-メールと同じように <code>&gt;</code> を引用に使用します。
-もし、あなたがメールメッセージの引用に慣れているのでしたら、Markdownでどのように引用を作成すればよいか分かるでしょう。
-ハードラップにして、各行の前に <code>&gt;</code> を付けることで見栄えが最良になります:</p>
-
-
-
-<pre><code>&gt; This is a blockquote with two paragraphs. Lorem ipsum dolor sit amet,
-
-&gt; consectetuer adipiscing elit. Aliquam hendrerit mi posuere lectus.
-
-&gt; Vestibulum enim wisi, viverra nec, fringilla in, laoreet vitae, risus.
-
-&gt; 
-
-&gt; Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse
-
-&gt; id sem consectetuer libero luctus adipiscing.
-
-</code></pre>
-
-
-
-<p>Markdownでは、ハードラップした段落の最初の行のみに <code>&gt;</code> コードを付けることもできます:</p>
-
-
-
-<pre><code>&gt; This is a blockquote with two paragraphs. Lorem ipsum dolor sit amet,
-
-consectetuer adipiscing elit. Aliquam hendrerit mi posuere lectus.
-
-Vestibulum enim wisi, viverra nec, fringilla in, laoreet vitae, risus.
-
-
-
-&gt; Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse
-
-id sem consectetuer libero luctus adipiscing.
-
-</code></pre>
-
-
-
-<p>更に <code>&gt;</code> コードを付けることで、引用をネスト ( 例 引用の中の引用 ) することができます:</p>
-
-
-<pre><code>&gt; これは最初の階層の引用です。
-
-&gt;
-
-&gt; &gt; これはネストした引用です。
-
-&gt;
-
-&gt; 最初の階層に戻ります。
-
-</code></pre>
-
-
-
-<p>引用は、ヘッダー、リスト、コードブロック等、他のMarkdown要素を含むことができます:</p>
-
-
-
-<pre><code>&gt; ## これはヘッダーです。
-
-&gt; 
-
-&gt; 1.   これは最初のリスト項目です。
-
-&gt; 2.   これは2番目のリスト項目です。
-
-&gt; 
-
-&gt; サンプルコードです:
-
-&gt; 
-
-&gt;     return shell_exec("echo $input | $markdown_script");
-
-</code></pre>
-
-
-<p>優れたテキストエディタでは、どれでもE-メールスタイルの引用を簡単に付けることができます。
-例えば、BBEditではテキストを選択して、テキストメニューより引用の階層レベルを増やすことができます。</p>
-
-<h3 id="list">リスト</h3>
-
-<p>Markdownは、番号付きリスト(番号) と 番号無しリスト(黒丸) をサポートします。</p>
-
-<p>番号無しリストは、アスタリスク、プラス、ハイフンのどれかで記述します:</p>
-
-
-
-<pre><code>*   赤
-
-*   緑
-
-*   青
-
-</code></pre>
-
-
-
-<p>は下記と同じです:</p>
-
-
-
-<pre><code>+   赤
-
-+   緑
-
-+   青
-
-</code></pre>
-
-
-
-<p>そして下記とも同じです:</p>
-
-
-
-<pre><code>-   赤
-
--   緑
-
--   青
-
-</code></pre>
-
-
-
-<p>Ordered lists use numbers followed by periods:</p>
-
-
-
-<pre><code>1.  Bird
-
-2.  McHale
-
-3.  Parish
-
-</code></pre>
-
-
-
-<p>It&#8217;s important to note that the actual numbers you use to mark the
-
-list have no effect on the HTML output Markdown produces. The HTML
-
-Markdown produces from the above list is:</p>
-
-
-
-<pre><code>&lt;ol&gt;
-
-&lt;li&gt;Bird&lt;/li&gt;
-
-&lt;li&gt;McHale&lt;/li&gt;
-
-&lt;li&gt;Parish&lt;/li&gt;
-
-&lt;/ol&gt;
-
-</code></pre>
-
-
-
-<p>If you instead wrote the list in Markdown like this:</p>
-
-
-
-<pre><code>1.  Bird
-
-1.  McHale
-
-1.  Parish
-
-</code></pre>
-
-
-
-<p>or even:</p>
-
-
-
-<pre><code>3. Bird
-
-1. McHale
-
-8. Parish
-
-</code></pre>
-
-
-
-<p>you&#8217;d get the exact same HTML output. The point is, if you want to,
-
-you can use ordinal numbers in your ordered Markdown lists, so that
-
-the numbers in your source match the numbers in your published HTML.
-
-But if you want to be lazy, you don&#8217;t have to.</p>
-
-
-
-<p>If you do use lazy list numbering, however, you should still start the
-
-list with the number 1. At some point in the future, Markdown may support
-
-starting ordered lists at an arbitrary number.</p>
-
-
-
-<p>List markers typically start at the left margin, but may be indented by
-
-up to three spaces. List markers must be followed by one or more spaces
-
-or a tab.</p>
-
-
-
-<p>To make lists look nice, you can wrap items with hanging indents:</p>
-
-
-
-<pre><code>*   Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
-
-    Aliquam hendrerit mi posuere lectus. Vestibulum enim wisi,
-
-    viverra nec, fringilla in, laoreet vitae, risus.
-
-*   Donec sit amet nisl. Aliquam semper ipsum sit amet velit.
-
-    Suspendisse id sem consectetuer libero luctus adipiscing.
-
-</code></pre>
-
-
-
-<p>But if you want to be lazy, you don&#8217;t have to:</p>
-
-
-
-<pre><code>*   Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
-
-Aliquam hendrerit mi posuere lectus. Vestibulum enim wisi,
-
-viverra nec, fringilla in, laoreet vitae, risus.
-
-*   Donec sit amet nisl. Aliquam semper ipsum sit amet velit.
-
-Suspendisse id sem consectetuer libero luctus adipiscing.
-
-</code></pre>
-
-
-
-<p>If list items are separated by blank lines, Markdown will wrap the
-
-items in <code>&lt;p&gt;</code> tags in the HTML output. For example, this input:</p>
-
-
-
-<pre><code>*   Bird
-
-*   Magic
-
-</code></pre>
-
-
-
-<p>will turn into:</p>
-
-
-
-<pre><code>&lt;ul&gt;
-
-&lt;li&gt;Bird&lt;/li&gt;
-
-&lt;li&gt;Magic&lt;/li&gt;
-
-&lt;/ul&gt;
-
-</code></pre>
-
-
-
-<p>But this:</p>
-
-
-
-<pre><code>*   Bird
-
-
-
-*   Magic
-
-</code></pre>
-
-
-
-<p>will turn into:</p>
-
-
-
-<pre><code>&lt;ul&gt;
-
-&lt;li&gt;&lt;p&gt;Bird&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Magic&lt;/p&gt;&lt;/li&gt;
-
-&lt;/ul&gt;
-
-</code></pre>
-
-
-
-<p>List items may consist of multiple paragraphs. Each subsequent
-
-paragraph in a list item must be intended by either 4 spaces
-
-or one tab:</p>
-
-
-
-<pre><code>1.  This is a list item with two paragraphs. Lorem ipsum dolor
-
-    sit amet, consectetuer adipiscing elit. Aliquam hendrerit
-
-    mi posuere lectus.
-
-
-
-    Vestibulum enim wisi, viverra nec, fringilla in, laoreet
-
-    vitae, risus. Donec sit amet nisl. Aliquam semper ipsum
-
-    sit amet velit.
-
-
-
-2.  Suspendisse id sem consectetuer libero luctus adipiscing.
-
-</code></pre>
-
-
-
-<p>It looks nice if you indent every line of the subsequent
-
-paragraphs, but here again, Markdown will allow you to be
-
-lazy:</p>
-
-
-
-<pre><code>*   This is a list item with two paragraphs.
-
-
-
-    This is the second paragraph in the list item. You're
-
-only required to indent the first line. Lorem ipsum dolor
-
-sit amet, consectetuer adipiscing elit.
-
-
-
-*   Another item in the same list.
-
-</code></pre>
-
-
-
-<p>To put a blockquote within a list item, the blockquote&#8217;s <code>&gt;</code>
-
-delimiters need to be indented:</p>
-
-
-
-<pre><code>*   A list item with a blockquote:
-
-
-
-    &gt; This is a blockquote
-
-    &gt; inside a list item.
-
-</code></pre>
-
-
-
-<p>To put a code block within a list item, the code block needs
-
-to be indented <em>twice</em> &#8212; 8 spaces or two tabs:</p>
-
-
-
-<pre><code>*   A list item with a code block:
-
-
-
-        &lt;code goes here&gt;
-
-</code></pre>
-
-
-
-<p>It&#8217;s worth noting that it&#8217;s possible to trigger an ordered list by
-
-accident, by writing something like this:</p>
-
-
-
-<pre><code>1986. What a great season.
-
-</code></pre>
-
-
-
-<p>In other words, a <em>number-period-space</em> sequence at the beginning of a
-
-line. To avoid this, you can backslash-escape the period:</p>
-
-
-
-<pre><code>1986\. What a great season.
-
-</code></pre>
-
-
-
-<h3 id="precode">Code Blocks</h3>
-
-
-
-<p>Pre-formatted code blocks are used for writing about programming or
-
-markup source code. Rather than forming normal paragraphs, the lines
-
-of a code block are interpreted literally. Markdown wraps a code block
-
-in both <code>&lt;pre&gt;</code> and <code>&lt;code&gt;</code> tags.</p>
-
-
-
-<p>To produce a code block in Markdown, simply indent every line of the
-
-block by at least 4 spaces or 1 tab. For example, given this input:</p>
-
-
-
-<pre><code>This is a normal paragraph:
-
-
-
-    This is a code block.
-
-</code></pre>
-
-
-
-<p>Markdown will generate:</p>
-
-
-
-<pre><code>&lt;p&gt;This is a normal paragraph:&lt;/p&gt;
-
-
-
-&lt;pre&gt;&lt;code&gt;This is a code block.
-
-&lt;/code&gt;&lt;/pre&gt;
-
-</code></pre>
-
-
-
-<p>One level of indentation &#8212; 4 spaces or 1 tab &#8212; is removed from each
-
-line of the code block. For example, this:</p>
-
-
-
-<pre><code>Here is an example of AppleScript:
-
-
-
-    tell application "Foo"
-
-        beep
-
-    end tell
-
-</code></pre>
-
-
-
-<p>will turn into:</p>
-
-
-
-<pre><code>&lt;p&gt;Here is an example of AppleScript:&lt;/p&gt;
-
-
-
-&lt;pre&gt;&lt;code&gt;tell application "Foo"
-
-    beep
-
-end tell
-
-&lt;/code&gt;&lt;/pre&gt;
-
-</code></pre>
-
-
-
-<p>A code block continues until it reaches a line that is not indented
-
-(or the end of the article).</p>
-
-
-
-<p>Within a code block, ampersands (<code>&amp;</code>) and angle brackets (<code>&lt;</code> and <code>&gt;</code>)
-
-are automatically converted into HTML entities. This makes it very
-
-easy to include example HTML source code using Markdown &#8212; just paste
-
-it and indent it, and Markdown will handle the hassle of encoding the
-
-ampersands and angle brackets. For example, this:</p>
-
-
-
-<pre><code>    &lt;div class="footer"&gt;
-
-        &amp;copy; 2004 Foo Corporation
-
-    &lt;/div&gt;
-
-</code></pre>
-
-
-
-<p>will turn into:</p>
-
-
-
-<pre><code>&lt;pre&gt;&lt;code&gt;&amp;lt;div class="footer"&amp;gt;
-
-    &amp;amp;copy; 2004 Foo Corporation
-
-&amp;lt;/div&amp;gt;
-
-&lt;/code&gt;&lt;/pre&gt;
-
-</code></pre>
-
-
-
-<p>Regular Markdown syntax is not processed within code blocks. E.g.,
-
-asterisks are just literal asterisks within a code block. This means
-
-it&#8217;s also easy to use Markdown to write about Markdown&#8217;s own syntax.</p>
-
-
-
-<h3 id="hr">Horizontal Rules</h3>
-
-
-
-<p>You can produce a horizontal rule tag (<code>&lt;hr /&gt;</code>) by placing three or
-
-more hyphens or asterisks on a line by themselves. If you wish, you
-
-may use spaces between the hyphens or asterisks. Each of the following
-
-lines will produce a horizontal rule:</p>
-
-
-
-<pre><code>* * *
-
-
-
-***
-
-
-
-*****
-
-
-
-- - -
-
-
-
----------------------------------------
-
-</code></pre>
-
-
-
-<hr />
-
-
-
-<h2 id="span">Span Elements</h2>
-
-
-
-<h3 id="link">Links</h3>
-
-
-
-<p>Markdown supports two style of links: <em>inline</em> and <em>reference</em>.</p>
-
-
-
-<p>In both styles, the link text is delimited by [square brackets].</p>
-
-
-
-<p>To create an inline link, use a set of regular parentheses immediately
-
-after the link text&#8217;s closing square bracket. Inside the parentheses,
-
-put the URL where you want the link to point, along with an <em>optional</em>
-
-title for the link, surrounded in quotes. For example:</p>
-
-
-
-<pre><code>This is [an example](http://example.com/ "Title") inline link.
-
-
-
-[This link](http://example.net/) has no title attribute.
-
-</code></pre>
-
-
-
-<p>Will produce:</p>
-
-
-
-<pre><code>&lt;p&gt;This is &lt;a href="http://example.com/" title="Title"&gt;
-
-an example&lt;/a&gt; inline link.&lt;/p&gt;
-
-
-
-&lt;p&gt;&lt;a href="http://example.net/"&gt;This link&lt;/a&gt; has no
-
-title attribute.&lt;/p&gt;
-
-</code></pre>
-
-
-
-<p>If you&#8217;re referring to a local resource on the same server, you can
-
-use relative paths:</p>
-
-
-
-<pre><code>See my [About](/about/) page for details.
-
-</code></pre>
-
-
-
-<p>Reference-style links use a second set of square brackets, inside
-
-which you place a label of your choosing to identify the link:</p>
-
-
-
-<pre><code>This is [an example][id] reference-style link.
-
-</code></pre>
-
-
-
-<p>You can optionally use a space to separate the sets of brackets:</p>
-
-
-
-<pre><code>This is [an example] [id] reference-style link.
-
-</code></pre>
-
-
-
-<p>Then, anywhere in the document, you define your link label like this,
-
-on a line by itself:</p>
-
-
-
-<pre><code>[id]: http://example.com/  "Optional Title Here"
-
-</code></pre>
-
-
-
-<p>That is:</p>
-
-
+<p>は下記のようになります:</p>
 
 <ul>
-
-<li>Square brackets containing the link identifier (optionally
-
-indented from the left margin using spaces or tabs);</li>
-
-<li>followed by a colon;</li>
-
-<li>followed by one or more spaces (or tabs);</li>
-
-<li>followed by the URL for the link;</li>
-
-<li>optionally followed by a title attribute for the link, enclosed
-
-in double or single quotes.</li>
-
+<li>1番目ポイント</li>
+<li>2番目のポイント</li>
+<li>3番目のポイント</li>
 </ul>
 
-
-
-<p>The link URL may, optionally, be surrounded by angle brackets:</p>
-
-
-
-<pre><code>[id]: &lt;http://example.com/&gt;  "Optional Title Here"
-
-</code></pre>
-
-
-
-<p>You can put the title attribute on the next line and use extra spaces
-
-or tabs for padding, which tends to look better with longer URLs:</p>
-
-
-
-<pre><code>[id]: http://example.com/longish/path/to/resource/here
-
-    "Optional Title Here"
-
-</code></pre>
-
-
-
-<p>Link definitions are only used for creating links during Markdown
-
-processing, and are stripped from your document in the HTML output.</p>
-
-
-
-<p>Link definition names may constist of letters, numbers, spaces, and punctuation &#8212; but they are <em>not</em> case sensitive. E.g. these two links:</p>
-
-
-
-<pre><code>[link text][a]
-
-[link text][A]
-
-</code></pre>
-
-
-
-<p>are equivalent.</p>
-
-
-
-<p>The <em>implicit link name</em> shortcut allows you to omit the name of the
-
-link, in which case the link text itself is used as the name.
-
-Just use an empty set of square brackets &#8212; e.g., to link the word
-
-&#8220;Google&#8221; to the google.com web site, you could simply write:</p>
-
-
-
-<pre><code>[Google][]
-
-</code></pre>
-
-
-
-<p>And then define the link:</p>
-
-
-
-<pre><code>[Google]: http://google.com/
-
-</code></pre>
-
-
-
-<p>Because link names may contain spaces, this shortcut even works for
-
-multiple words in the link text:</p>
-
-
-
-<pre><code>Visit [Daring Fireball][] for more information.
-
-</code></pre>
-
-
-
-<p>And then define the link:</p>
-
-
-
-<pre><code>[Daring Fireball]: http://daringfireball.net/
-
-</code></pre>
-
-
-
-<p>Link definitions can be placed anywhere in your Markdown document. I
-
-tend to put them immediately after each paragraph in which they&#8217;re
-
-used, but if you want, you can put them all at the end of your
-
-document, sort of like footnotes.</p>
-
-
-
-<p>Here&#8217;s an example of reference links in action:</p>
-
-
-
-<pre><code>I get 10 times more traffic from [Google] [1] than from
-
-[Yahoo] [2] or [MSN] [3].
-
-
-
-  [1]: http://google.com/        "Google"
-
-  [2]: http://search.yahoo.com/  "Yahoo Search"
-
-  [3]: http://search.msn.com/    "MSN Search"
-
-</code></pre>
-
-
-
-<p>Using the implicit link name shortcut, you could instead write:</p>
-
-
-
-<pre><code>I get 10 times more traffic from [Google][] than from
-
-[Yahoo][] or [MSN][].
-
-
-
-  [google]: http://google.com/        "Google"
-
-  [yahoo]:  http://search.yahoo.com/  "Yahoo Search"
-
-  [msn]:    http://search.msn.com/    "MSN Search"
-
-</code></pre>
-
-
-
-<p>Both of the above examples will produce the following HTML output:</p>
-
-
-
-<pre><code>&lt;p&gt;I get 10 times more traffic from &lt;a href="http://google.com/"
-
-title="Google"&gt;Google&lt;/a&gt; than from
-
-&lt;a href="http://search.yahoo.com/" title="Yahoo Search"&gt;Yahoo&lt;/a&gt;
-
-or &lt;a href="http://search.msn.com/" title="MSN Search"&gt;MSN&lt;/a&gt;.&lt;/p&gt;
-
-</code></pre>
-
-
-
-<p>For comparison, here is the same paragraph written using
-
-Markdown&#8217;s inline link style:</p>
-
-
-
-<pre><code>I get 10 times more traffic from [Google](http://google.com/ "Google")
-
-than from [Yahoo](http://search.yahoo.com/ "Yahoo Search") or
-
-[MSN](http://search.msn.com/ "MSN Search").
-
-</code></pre>
-
-
-
-<p>The point of reference-style links is not that they&#8217;re easier to
-
-write. The point is that with reference-style links, your document
-
-source is vastly more readable. Compare the above examples: using
-
-reference-style links, the paragraph itself is only 81 characters
-
-long; with inline-style links, it&#8217;s 176 characters; and as raw HTML,
-
-it&#8217;s 234 characters. In the raw HTML, there&#8217;s more markup than there
-
-is text.</p>
-
-
-
-<p>With Markdown&#8217;s reference-style links, a source document much more
-
-closely resembles the final output, as rendered in a browser. By
-
-allowing you to move the markup-related metadata out of the paragraph,
-
-you can add links without interrupting the narrative flow of your
-
-prose.</p>
-
-
-
-<h3 id="em">Emphasis</h3>
-
-
-
-<p>Markdown treats asterisks (<code>*</code>) and underscores (<code>_</code>) as indicators of
-
-emphasis. Text wrapped with one <code>*</code> or <code>_</code> will be wrapped with an
-
-HTML <code>&lt;em&gt;</code> tag; double <code>*</code>&#8217;s or <code>_</code>&#8217;s will be wrapped with an HTML
-
-<code>&lt;strong&gt;</code> tag. E.g., this input:</p>
-
-
-
-<pre><code>*single asterisks*
-
-
-
-_single underscores_
-
-
-
-**double asterisks**
-
-
-
-__double underscores__
-
-</code></pre>
-
-
-
-<p>will produce:</p>
-
-
-
-<pre><code>&lt;em&gt;single asterisks&lt;/em&gt;
-
-
-
-&lt;em&gt;single underscores&lt;/em&gt;
-
-
-
-&lt;strong&gt;double asterisks&lt;/strong&gt;
-
-
-
-&lt;strong&gt;double underscores&lt;/strong&gt;
-
-</code></pre>
-
-
-
-<p>You can use whichever style you prefer; the lone restriction is that
-
-the same character must be used to open and close an emphasis span.</p>
-
-
-
-<p>Emphasis can be used in the middle of a word:</p>
-
-
-
-<pre><code>un*fucking*believable
-
-</code></pre>
-
-
-
-<p>But if you surround an <code>*</code> or <code>_</code> with spaces, it&#8217;ll be treated as a
-
-literal asterisk or underscore.</p>
-
-
-
-<p>To produce a literal asterisk or underscore at a position where it
-
-would otherwise be used as an emphasis delimiter, you can backslash
-
-escape it:</p>
-
-
-
-<pre><code>\*this text is surrounded by literal asterisks\*
-
-</code></pre>
-
-
-
-<h3 id="code">Code</h3>
-
-
-
-<p>To indicate a span of code, wrap it with backtick quotes (<code>`</code>).
-
-Unlike a pre-formatted code block, a code span indicates code within a
-
-normal paragraph. For example:</p>
-
-
-
-<pre><code>Use the `printf()` function.
-
-</code></pre>
-
-
-
-<p>will produce:</p>
-
-
-
-<pre><code>&lt;p&gt;Use the &lt;code&gt;printf()&lt;/code&gt; function.&lt;/p&gt;
-
-</code></pre>
-
-
-
-<p>To include a literal backtick character within a code span, you can
-
-backslash escape it:</p>
-
-
-
-<pre><code>`There is a literal backtick (\`) here.`
-
-</code></pre>
-
-
-
-<p>Or, if you prefer, you can use multiple backticks as the opening and
-
-closing delimiters:</p>
-
-
-
-<pre><code>``There is a literal backtick (`) here.``
-
-</code></pre>
-
-
-
-<p>Both of the previous two examples will produce this:</p>
-
-
-
-<pre><code>&lt;p&gt;&lt;code&gt;There is a literal backtick (`) here.&lt;/code&gt;&lt;/p&gt;
-
-</code></pre>
-
-
-
-<p>With a code span, ampersands and angle brackets are encoded as HTML
-
-entities automatically, which makes it easy to include example HTML
-
-tags. Markdown will turn this:</p>
-
-
-
-<pre><code>Please don't use any `&lt;blink&gt;` tags.
-
-</code></pre>
-
-
-
-<p>into:</p>
-
-
-
-<pre><code>&lt;p&gt;Please don't use any &lt;code&gt;&amp;lt;blink&amp;gt;&lt;/code&gt; tags.&lt;/p&gt;
-
-</code></pre>
-
-
-
-<p>You can write this:</p>
-
-
-
-<pre><code>`&amp;#8212;` is the decimal-encoded equivalent of `&amp;mdash;`.
-
-</code></pre>
-
-
-
-<p>to produce:</p>
-
-
-
-<pre><code>&lt;p&gt;&lt;code&gt;&amp;amp;#8212;&lt;/code&gt; is the decimal-encoded
-
-equivalent of &lt;code&gt;&amp;amp;mdash;&lt;/code&gt;.&lt;/p&gt;
-
-</code></pre>
-
-
-
-<h3 id="img">Images</h3>
-
-
-
-<p>Admittedly, it&#8217;s fairly difficult to devise a &#8220;natural&#8221; syntax for
-
-placing images into a plain text document format.</p>
-
-
-
-<p>Markdown uses an image syntax that is intended to resemble the syntax
-
-for links, allowing for two styles: <em>inline</em> and <em>reference</em>.</p>
-
-
-
-<p>Inline image syntax looks like this:</p>
-
-
-
-<pre><code>![Alt text](/path/to/img.jpg)
-
-
-
-![Alt text](/path/to/img.jpg "Optional title")
-
-</code></pre>
-
-
-
-<p>That is:</p>
-
-
+<h3>番号付きリスト</h3>
+
+<p>同様に、番号付きリストは、それぞれの行を数字とそれに続く空白で始めて、関連するテキストを入力することで作成することができます。</p>
+
+<p><strong><code>1. 1番目ポイント</code></strong> <br />
+<strong><code>2. 2番目ポイント</code></strong> <br />
+<strong><code>3. 3番目ポイント</code></strong></p>
+
+<p>は下記のようになります:</p>
+
+<ol>
+<li>1番目ポイント</li>
+<li>2番目のポイント</li>
+<li>3番目のポイント</li>
+</ol>
+
+<h3>インデントリスト</h3>
+
+<p>1つの構造の中に弾丸リストと番号付きリストがあっても、弾丸または番号付きリストをネスト、またはインデントすることができます:
+<b></p>
+
+<pre>
+    * トップレベル弾丸1
+      * サブ-弾丸  
+      * サブ-弾丸2 
+    * トップレベル弾丸2  
+    1. 番号付きポイント1
+       1. ネスト化した番号付きポイント  
+    2. ネスト化した番号付きポイント2
+</pre>
+
+<p></b>
+は下記のようになります:</p>
 
 <ul>
-
-<li>An exclamation mark: <code>!</code>;</li>
-
-<li>followed by a set of square brackets, containing the <code>alt</code>
-
-attribute text for the image;</li>
-
-<li>followed by a set of parentheses, containing the URL or path to
-
-the image, and an optional <code>title</code> attribute enclosed in double
-
-or single quotes.</li>
-
+<li>トップレベル弾丸1
+<ul>
+<li>サブ-弾丸 </li>
+<li>サブ-弾丸2</li>
+</ul></li>
+<li>トップレベル弾丸2 
+<ol>
+<li>番号付きポイント1
+<ol>
+<li>ネスト化した番号付きポイント</li>
+</ol></li>
+<li>ネスト化した番号付きポイント2</li>
+</ol></li>
 </ul>
 
+<h2><a id="quotes">引用段落</a></h2>
 
+<p>それぞれの行を鉤括弧 ( > ) で始めることで、引用欄を表示することができます。この文字は、多くのメールプログラムで引用欄を表示するために使用されています。一般的に出力は、引用欄を両方のマージンからインデントします。</p>
 
-<p>Reference-style image syntax looks like this:</p>
+<p><strong><code>&gt; これは2行に展開した</code> <br />
+<code>&gt; 引用段落です。</code></strong>  </p>
 
+<p>は下記のようになります:</p>
 
+<blockquote>
+  <p>これは2行に展開した引用段落です。</p>
+</blockquote>
 
-<pre><code>![Alt text][id]
+<p>段落の最初の行に、1つの鉤括弧を付けるだけで保存することができます。</p>
 
-</code></pre>
+<p><strong><code>&gt; これは全て1つの</code> <br />
+<code>引用段落ですが、複数の行に</code> <br />
+<code>展開されています。</code></strong></p>
 
+<p>は下記のようになります:</p>
 
+<blockquote>
+  <p>これは全て1つの引用段落ですが、複数の行に展開されています。</p>
+</blockquote>
 
-<p>Where &#8220;id&#8221; is the name of a defined image reference. Image references
+<h2><a id="links">ウェブリンク</a></h2>
 
-are defined using syntax identical to link references:</p>
+<p>ウェブリソースのリンクを作成するには2つの方法があります: 1つ目は行の中に、次のインラインリンクを入れる方法です。まず、角括弧の中に読者にクリックして欲しいテキストを置きます。その直後に、表示したいページのURLを、間にスペースまたはギャップを入れずに丸括弧の中に置きます。リンクに関する任意のタイトルを、引用符を囲んでURLの後に追加することもできます。</p>
 
+<p><strong><code>文章の中の[サンプルリンク](http://example.com/ "任意のタイトル") です。</code></strong></p>
 
+<p>は下記のようになります:</p>
 
-<pre><code>[id]: url/to/image  "Optional title attribute"
+<p>文章の中の <a href="http://example.com/" title="任意のタイトル">サンプルリンク</a> です。</p>
 
-</code></pre>
+<p>タイトルが設定された場合、ユーザがリンクテキスト上にマウスポインタを乗せると「ツールチップ」が表示されます。上記のリンクでお試しください。</p>
 
+<p>長いリンクの場合、脚注スタイルを使用し、短い識別名  ( 短い説明語、語句または単純な番号 ) をリンク内の2番目の角括弧に入れることで、テキストの流れがバラバラになるのを避けることができます。</p>
 
+<p><strong><code>文章の中の [サンプルリンク][ex] です。</code></strong></p>
 
-<p>As of this writing, Markdown has no syntax for specifying the
+<p>そして、実際にはリンクを設置した段落の直下、または文書の下部にある他のリンクURLが集められている部分が好ましいのですが、文章のどこにでも、idと関連するURLを定義することができます:</p>
 
-dimensions of an image; if this is important to you, you can simply
+<p><strong><code>[ex]: http://example.com/  "任意のタイトル"</code></strong></p>
 
-use regular HTML <code>&lt;img&gt;</code> tags.</p>
+<p>この2番目の例は、最初のものとは区別が付きません。これは単に作業中の文書を、更なる編集のために、きちんと整理するだけ ( 特にあなたが他の人と作業を行っている場合 ) の違いです。 </p>
 
+<p>最後のショートカットです。あなたのリンクテキストをURLと同じようにしたい場合は、次のようにURLを角括弧に入れてください:</p>
 
+<p><strong><code>&lt;http://moodle.org/&gt;</code></strong></p>
 
-<hr />
+<p>は下記のようになります:</p>
 
+<p><a href="http://moodle.org">http://moodle.org</a></p>
 
+<h2><a id="images">画像</a></h2>
 
-<h2 id="misc">Miscellaneous</h2>
+<p>画像は、ウェブリンクと非常に似た方法で組み込まれますが、感嘆符により囲まれます。「altテキスト」 (<em>alt</em>は<em>代替物</em>を意味します ) は、ユーザが様々な理由で画像を閲覧できない場合に提供されます。 従って、テキストは視覚的な合図が無い場合に、意味をなします。この処理をすることで、リマインダまたはヒントを、画像を目的としたMarkdownテキストの編集に提供します。</p>
 
+<p>「タイトル」は、ユーザが画像の上にマウスポインタを置いた場合、小さなポップアップに表示され、付加的な情報を提供します。</p>
 
+<p><strong><code>![altテキスト](/path/img.jpg "任意のタイトル")</code></strong></p>
 
-<h3 id="autolink">Automatic Links</h3>
+<p>そして、ウェブリンクのように、全てのURLを「脚注」スタイル参照と共に保存することで、あなたの文書を整理することができます。単に、画像に短い独自の名称を付けてください:</p>
 
+<p><strong><code>![altテキスト][photo]</code></strong></p>
 
+<p>そして、あなたの文書のどこでも良いですから、その名称と画像ファイルを関連付けてください:</p>
 
-<p>Markdown supports a shortcut style for creating &#8220;automatic&#8221; links for URLs and email addresses: simply surround the URL or email address with angle brackets. What this means is that if you want to show the actual text of a URL or email address, and also have it be a clickable link, you can do this:</p>
+<p><strong><code>[photo]: /url/to/img.jpg "任意のタイトル"</code></strong></p>
 
+<p>下記はサンプルおよびその出力です:</p>
 
+<p><strong><code>![Googleロゴ](http://www.google.com/images/logo.gif  "Googleロゴ")</code></strong></p>
 
-<pre><code>&lt;http://example.com/&gt;
+<p><img src="http://www.google.com/images/logo.gif" alt="Googleロゴ" title="Googleロゴ" /></p>
 
-</code></pre>
+<p>アクセスのしやすさのため重要な「altテキスト」は、しばしば画像へのリンクが壊れたり、一時的に利用不可の場合に使用されます:</p>
 
+<p><strong><code>![壊れた画像へのaltテキスト](http://example.com/intentionally.broken.link "この画像は決して表示されません。")</code></strong></p>
 
+<p>は下記のようになります ( 表示形態はあなたのブラウザに依存します ):</p>
 
-<p>Markdown will turn this into:</p>
+<p><img src="http://example.com/intentionally.broken.link" alt="壊れた画像へのaltテキスト" title="この画像は決して表示されません。" /></p>
 
+<h2><a id="advanced">特論</a></h2>
 
-
-<pre><code>&lt;a href="http://example.com/"&gt;http://example.com/&lt;/a&gt;
-
-</code></pre>
-
-
-
-<p>Automatic links for email addresses work similarly, except that
-
-Markdown will also perform a bit of randomized decimal and hex
-
-entity-encoding to help obscure your address from address-harvesting
-
-spambots. For example, Markdown will turn this:</p>
-
-
-
-<pre><code>&lt;address@example.com&gt;
-
-</code></pre>
-
-
-
-<p>into something like this:</p>
-
-
-
-<pre><code>&lt;a href="&amp;#x6D;&amp;#x61;i&amp;#x6C;&amp;#x74;&amp;#x6F;:&amp;#x61;&amp;#x64;&amp;#x64;&amp;#x72;&amp;#x65;
-
-&amp;#115;&amp;#115;&amp;#64;&amp;#101;&amp;#120;&amp;#x61;&amp;#109;&amp;#x70;&amp;#x6C;e&amp;#x2E;&amp;#99;&amp;#111;
-
-&amp;#109;"&gt;&amp;#x61;&amp;#x64;&amp;#x64;&amp;#x72;&amp;#x65;&amp;#115;&amp;#115;&amp;#64;&amp;#101;&amp;#120;&amp;#x61;
-
-&amp;#109;&amp;#x70;&amp;#x6C;e&amp;#x2E;&amp;#99;&amp;#111;&amp;#109;&lt;/a&gt;
-
-</code></pre>
-
-
-
-<p>which will render in a browser as a clickable link to &#8220;address@example.com&#8221;.</p>
-
-
-
-<p>(This sort of entity-encoding trick will indeed fool many, if not
-
-most, address-harvesting bots, but it definitely won&#8217;t fool all of
-
-them. It&#8217;s better than nothing, but an address published in this way
-
-will probably eventually start receiving spam.)</p>
-
-
-
-<h3 id="backslash">Backslash Escapes</h3>
-
-
-
-<p>Markdown allows you to use backslash escapes to generate literal
-
-characters which would otherwise have special meaning in Markdown&#8217;s
-
-formatting syntax. For example, if you wanted to surround a word with
-
-literal asterisks (instead of an HTML <code>&lt;em&gt;</code> tag), you can backslashes
-
-before the asterisks, like this:</p>
-
-
-
-<pre><code>\*literal asterisks\*
-
-</code></pre>
-
-
-
-<p>Markdown provides backslash escapes for the following characters:</p>
-
-
-
-<pre><code>\   backslash
-
-`   backtick
-
-*   asterisk
-
-_   underscore
-
-{}  curly braces
-
-[]  square brackets
-
-()  parentheses
-
-#   hash mark
-
-.   dot
-
-!   exclamation mark
-
-</code></pre>
-
-
-
-</div> <!-- article -->
+<p>この短い手引書は、Markdownの機能に関する大まかな部分を取り上げたものです。特にあなたがHTMLの書き方を知っているのでしたら、更に複雑なことを行うことができます。しかし、それらは「Markdownの高度な使用」内にある別の文書に記述されています。</p>
+<p align="right"><a href="help.php?file=advanced_markdown.html">Markdownの高度な使用に関する詳細情報</a></p>
+</div>
+</div>
