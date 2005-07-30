@@ -25,7 +25,9 @@ function censor_filter($courseid, $text) {
         $words = array();
         $badwords = explode(',', $CFG->filter_censor_badwords );
         foreach ($badwords as $badword) {
-            $words[] = new filterobject(trim($badword), '<span class="censoredtext">', '</span>', false, false,str_pad('',strlen(trim($badword)),'*'));
+            $badword = trim($badword);
+            $words[] = new filterobject($badword, '<span class="censoredtext" title="'.$badword.'">', '</span>', 
+                                        false, false, str_pad('',strlen($badword),'*'));
         }
     }
 
