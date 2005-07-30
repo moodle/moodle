@@ -5,12 +5,11 @@
 $string['admindirerror'] = '設定されたadminディレクトリが間違っています。';
 $string['admindirname'] = 'Adminディレクトリ';
 $string['admindirsetting'] = '稀に、/adminディレクトリをコントロールパネルまたはその他の管理ツールにアクセスするためのURLとして使用しているウェブホストがあります。残念ながら、これはMoodle管理ページの標準的なロケーションと衝突します。インストールする時にadminディレクトリをリネームすることが可能です。ここに新しいディレクトリ名を入力してください。例: <br/> <br /><b>moodleadmin</b><br /> <br />
-
 これはMoodleのadminリンクを変更します。';
 $string['caution'] = '警告';
 $string['chooselanguage'] = '言語を選択してください。';
 $string['compatibilitysettings'] = 'PHP設定を確認しています ...';
-$string['configfilenotwritten'] = 'インストールスクリプトは、自動的にあなたの設定を反映したconfig.phpファイルを作成することができませんでした。恐らくMoodleディレクトリに書き込み権が無いためだと思われます。下記のコードをconfig.phpという名称のファイルにコピーして、Moodleのルートディレクトリに入れてください。';
+$string['configfilenotwritten'] = 'インストールスクリプトは、自動的にあなたの選択した設定を反映したconfig.phpファイルを作成することができませんでした。恐らく、Moodleディレクトリに書き込み権が無いためだと思われます。下記のコードをconfig.phpという名称のファイルとしてMoodleのルートディレクトリにコピーすることができます。';
 $string['configfilewritten'] = 'config.phpが正常に作成されました。';
 $string['configurationcomplete'] = '設定が完了しました。';
 $string['database'] = 'データベース';
@@ -33,12 +32,12 @@ $string['databasesettings'] = 'ほとんどのMoodleデータが保存される�
 $string['dataroot'] = 'データディレクトリ';
 $string['datarooterror'] = 'あなたが指定した「データディレクトリ」が見つからないか、作成されませんでした。パスを訂正するか、ディレクトリを手動で作成してください。';
 $string['dbconnectionerror'] = 'あなたが指定したデータベースに接続できませんでした。データベース設定を確認してください。';
-$string['dbcreationerror'] = 'データベース作成エラー。設定で提示された名称のデータベースを作成できませんでした。';
+$string['dbcreationerror'] = 'データベース作成エラー。設定で指定された名称のデータベースを作成できませんでした。';
 $string['dbhost'] = 'ホストサーバ';
 $string['dbpass'] = 'パスワード';
 $string['dbprefix'] = 'テーブル接頭辞';
 $string['dbtype'] = 'タイプ';
-$string['directorysettings'] = '<p>Moodleのインストール先を確認してください。</p>
+$string['directorysettings'] = '<p>このMoodleのインストール先を確認してください。</p>
 
 <p><b>ウェブアドレス:</b>
 Moodleにアクセスする完全なウェブアドレスを指定してください。複数のURLよりアクセス可能な場合は、学生が利用する最も自然なURLを選択してください。最後にスラッシュを付けないでください。</p>
@@ -47,7 +46,7 @@ Moodleにアクセスする完全なウェブアドレスを指定してくだ�
 インストール先の完全なディレクトリパスを指定してください。大文字/小文字が間違っていないか確認してください。</p>
 
 <p><b>データディレクトリ:</b>
-Moodleがアップロードされたファイルを保存する場所が必要です。 このディレクトリは、ウェブサーバのユーザ ( 通常は「nobody」または「apache」 ) が読み込みおよび書き込みできるようにしてください。しかし、ウェブから直接アクセスできないようにしてください。</p>';
+Moodleが、アップロードされたファイルを保存する場所が必要です。 このディレクトリは、ウェブサーバのユーザ ( 通常は「nobody」または「apache」 ) が読み込みおよび書き込みできるようにしてください。しかし、ウェブから直接アクセスできないようにしてください。</p>';
 $string['dirroot'] = 'Moodleディレクトリ';
 $string['dirrooterror'] = '「Moodleディレクトリ」設定が間違っているようです - インストール済みMoodleが見つかりませんでした。下記の値がリセットされました。';
 $string['download'] = 'ダウンロード';
@@ -56,13 +55,12 @@ $string['fileuploads'] = 'ファイルアップロード';
 $string['fileuploadserror'] = 'これは有効にしてください。';
 $string['fileuploadshelp'] = '<p>あなたのサーバでは、ファイルのアップロードができないようです。</p>
 <p>Moodleのインストールは可能ですが、ファイルのアップロードができない場合は、コースファイルやユーザプロフィールのイメージをアップロードすることができません。</p>
-<p>ファイルアップロードを可能にするには、あなた ( またはシステム管理者 ) がメインphp.iniファイルを編集して、
-<b>file_uploads</b> を \'1\'にする必要があります。</p>';
+<p>ファイルアップロードを可能にするには、あなた ( またはシステム管理者 ) があなたのシステムのメインphp.iniファイルを編集して、<b>file_uploads</b> を \'1\'にする必要があります。</p>';
 $string['gdversion'] = 'GDバージョン';
 $string['gdversionerror'] = 'イメージの処理および作成を行うにはGDライブラリが必要です。';
-$string['gdversionhelp'] = '<p>サーバにGDがインストールされていないようです。</p>
+$string['gdversionhelp'] = '<p>あなたのサーバには、GDがインストールされていないようです。</p>
 
-<p>GDは、Moodleがイメージ ( ユーザプロフィールアイコン等 ) を処理したり、新しいイメージ ( ロググラフ等 ) を作成するためにPHPが必要とするライブラリです。Moodleは、GD無しでも動作します -  イメージ処理が使用できないだけです。</p>
+<p>GDは、Moodleがイメージ ( ユーザプロフィールアイコン等 ) を処理したり、新しいイメージ ( ロググラフ等 ) を作成するためにPHPが必要とするライブラリです。Moodleは、GD無しでも動作します -  イメージ処理等が使用できないだけです。</p>
 
 <p>Unix環境下で、GDをPHPにインストールするには、PHPを --with-gd パラメータでコンパイルしてください。</p>
 
@@ -78,7 +76,7 @@ $string['magicquotesruntimehelp'] = '<p>Moodleを正常に動作させるため�
 <blockquote>php_value magic_quotes_runtime Off</blockquote>
 </p>';
 $string['memorylimit'] = 'メモリー制限';
-$string['memorylimiterror'] = 'PHPのメモリー制限が低すぎます ... 問題が発生する可能性があります。';
+$string['memorylimiterror'] = 'PHPのメモリー制限が低すぎます ... 後で問題が発生する可能性があります。';
 $string['memorylimithelp'] = '<p>現在、サーバのPHPメモリー制限が $a に設定されています。</p>
 <p>この設定では、Moodleのメモリーに関わるトラブルが発生します。 特に多くのモジュールを使用したり、多くのユーザがMoodleを使用する場合に、トラブルが発生します。</p>
 <p>可能でしたら、PHPのメモリー制限上限を16M以上に設定されることをお勧めします。この設定を実現するために、幾つかの方法があります:
@@ -86,9 +84,9 @@ $string['memorylimithelp'] = '<p>現在、サーバのPHPメモリー制限が $
 <li>コンパイル可能な場合は、PHPを<i>--enable-memory-limit</i>オプションでコンパイルしてください。
 これにより、Moodle自身がメモリー制限を設定することが可能になります。
 <li>php.iniファイルにアクセスできる場合は、<b>memory_limit</b>設定を16Mのように変更することができます。php.iniファイルにアクセスできない場合は、管理者に変更を依頼してください。
-<li>次の行を含む.htaccessファイルをMoodleディレクトリに作成することができるサーバもあります:
+<li>いくつかのPHPサーバでは、下記の行を含む.htaccessファイルをMoodleディレクトリに作成することができます:
 <p><blockquote>php_value memory_limit 16M</blockquote></p>
-<p>しかし、この設定が<b>全ての</b>PHPページの動作を妨げる場合もあります。ページを閲覧時にエラーが表示される場合は、.htaccessファイルを削除してください。</p>
+<p>しかし、この設定が<b>全ての</b>PHPページの動作を妨げる場合もあります。ページ閲覧時にエラーが表示される場合は、.htaccessファイルを削除してください。</p>
 </ol>';
 $string['mysqlextensionisnotpresentinphp'] = 'MySQLと通信できるようにPHPのMySQL extension設定が正しく設定されていません。php.iniを確認するか、PHPを再度コンパイルしてください。';
 $string['pass'] = 'パス';
@@ -99,8 +97,8 @@ $string['phpversionhelp'] = '<p>MoodleではPHPバージョン4.1.0以上が必�
 <p>PHPをアップグレードするか、新しいバージョンがインストールされているホストに移動してください!</p>';
 $string['safemode'] = 'セーフモード';
 $string['safemodeerror'] = 'セーフモードが有効の場合、Moodleに問題が発生する場合があります。';
-$string['safemodehelp'] = '<p>セーフモードが有効にされている場合、Moodleには様々な問題が発生します。 特に新しいファイルを作成することができません。</p>
-<p>セーフモードは通常被害妄想を持ったウェブホストで有効にされています。Moodleサイト用に別の新しいウェブホスティング会社を探してください。</p>
+$string['safemodehelp'] = '<p>セーフモードが有効にされている場合、Moodleには様々な問題が発生する場合があります。 特に新しいファイルを作成することができません。</p>
+<p>通常セーフモードは、被害妄想を持ったウェブホストで有効にされています。Moodleサイト用に別の新しいウェブホスティング会社を探してください。</p>
 <p>セーフモード環境下で、インストール作業を続けることも可能ですが、後でいくつかの問題が発生することが予想されます。</p>';
 $string['sessionautostart'] = 'セッション自動スタート';
 $string['sessionautostarterror'] = 'これは無効にしてください。';
