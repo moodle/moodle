@@ -427,12 +427,14 @@ function rss_unhtmlentities($string) {
 
 /**
  * Prints or returns a form for managing rss feed entries.
- * @param string $act .
- * @param string $url .
- * @param int $rssid .
+ * @param string $act The current action. If "rss_edit" then and "update" button is used, otherwise "add" is used.
+ * @param string $url The url of the feed that is being updated or NULL
+ * @param int $rssid The dataabse id of the feed that is being updated or NULL
  * @param bool $printnow True if the generated form should be printed out, false if the string should be returned from this function quietly
+ * @param int $courseid The course that is currently being viewed if applicable
+ * @return string Either the form is printed directly and nothing is returned or the form is returned as a string
  */
-function rss_get_form($act='none', $url='', $rssid='', $preferredtitle='', $printnow=true) {
+function rss_get_form($act='none', $url='', $rssid='', $preferredtitle='', $printnow=true, $courseid=SITEID) {
     global $USER, $CFG, $_SERVER, $blockid, $blockaction;
     global $blogid; //hackish, but if there is a blogid it would be good to preserve it
     $stredit = get_string('edit');
@@ -470,6 +472,7 @@ function rss_get_form($act='none', $url='', $rssid='', $preferredtitle='', $prin
     if ($act == 'rss_edit') { 
         $returnstring .= '<input type="hidden" name="rssid" value="'. $rssid .'" />'. "\n"; 
     }
+    $returnstring .= '<input type="hidden" name="courseid" value="'. $courseid .'" />'."\n";
     $returnstring .= '<input type="hidden" name="blogid" value="'. $blogid .'" />'."\n";
     $returnstring .= '<input type="hidden" name="user" value="'. $USER->id .'" />'."\n";
     $returnstring .= '<br /><input type="submit" value="';

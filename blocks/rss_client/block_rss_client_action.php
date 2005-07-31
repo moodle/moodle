@@ -28,7 +28,7 @@
     
     $act            = optional_param('act', 'none' );
     $rssid          = optional_param('rssid', 'none' );
-    $courseid       = optional_param('courseid', 0, PARAM_INT);
+    $courseid       = optional_param('courseid', SITEID, PARAM_INT);
     $url            = optional_param('url');
     $preferredtitle = optional_param('preferredtitle', '');
     $item           = optional_param('item');
@@ -67,12 +67,12 @@
     //if the user is an admin or course teacher then allow the user to
     //assign categories to other uses than personal
     if (!( isadmin() || $submitters == SUBMITTERS_ALL_ACCOUNT_HOLDERS || ($submitters == SUBMITTERS_ADMIN_AND_TEACHER && $isteacher) ) ) {
-        error(get_string('noguestpost', 'forum'), $referrer);
+        error(get_string('noguestpost', 'forum').' You are not allowed to make modifications to this RSS feed at this time.', $referrer);
     }
 
     if ($act == 'none') {
         rss_display_feeds();
-        rss_get_form($act, $url, $rssid, $preferredtitle);
+        rss_get_form($act, $url, $rssid, $preferredtitle, $courseid);
 
     } else if ($act == 'updfeed') {
         if (empty($url)) {
@@ -155,7 +155,7 @@
         redirect($referrer, $message);
 /*
         rss_display_feeds();
-        rss_get_form($act, $dataobject->url, $dataobject->id, $dataobject->preferredtitle);
+        rss_get_form($act, $dataobject->url, $dataobject->id, $dataobject->preferredtitle, $courseid);
 */
     } else if ( $act == 'rss_edit') {
         
@@ -166,7 +166,7 @@
         }
         $url = stripslashes_safe($rss_record->url);
         rss_display_feeds('', $rssid);
-        rss_get_form($act, $url, $rssid, $preferredtitle);
+        rss_get_form($act, $url, $rssid, $preferredtitle, $courseid);
 
     } else if ($act == 'delfeed') {
         
@@ -234,7 +234,7 @@
         }
     } else {
         rss_display_feeds();
-        rss_get_form($act, $url, $rssid, $preferredtitle);
+        rss_get_form($act, $url, $rssid, $preferredtitle, $courseid);
     }
 
     print_footer();
