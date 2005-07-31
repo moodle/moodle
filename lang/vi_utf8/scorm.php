@@ -35,6 +35,7 @@ $string['gradescoes'] = ' trạng thái Scoes ';
 $string['gradesum'] = ' Điểm tổng kết ';
 $string['guestsno'] = 'Khách không thể xem các cua học SCORM ';
 $string['hidebrowse'] = 'Ẩn chế độ duyệt';
+$string['hidetoc'] = 'Ẩn cấu trúc của cua học trong cửa sổ hiển thị';
 $string['incomplete'] = 'Không hoàn thành';
 $string['newheight'] = 'Chiều cao cửa sổ mặc định(theo các điểm ảnh)';
 $string['newresizable'] = 'Cho phép cửa sổ được đặt lại kích thước';
