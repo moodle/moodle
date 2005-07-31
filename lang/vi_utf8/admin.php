@@ -2,7 +2,10 @@
       // admin.php - created with Moodle 1.2 development (2003111400)
 
 $string['adminseesallevents'] = 'Các người quản trị nhìn thấy tất cả các sự kiện ';
-$string['adminseesownevents'] = 'Các người quản trị cũng được coi như người dùng';
+$string['adminseesownevents'] = 'Các người quản trị cũng được coi như người dùng khác';
+$string['backgroundcolour'] = 'Màu nền';
+$string['badwordsconfig'] = 'Gõ ở đây danh sách các từ nhạy cảm, phân cách bằng các dấu phẩy';
+$string['badwordslist'] = 'Danh sách các từ nhạy cảm';
 $string['blockinstances'] = 'Các trường hợp';
 $string['blockmultiple'] = 'Nhiều';
 $string['change'] = 'thay đổi';
@@ -11,6 +14,7 @@ $string['calendarsettings'] = 'Lịch';
 $string['confirmation'] = 'tính xác nhận';
 $string['confirmdeletedst'] = 'Xoá tên được có trước <strong>$a</strong> ngay lập tức làm cho DST mất hiệu lực đối với tất cả những người sử dụng đang dùng nó. Điều này có thể làm thay đổi một só thông tin. Bạn có chắc chắn muốn tiếp tục ?';
 $string['confirmdeletedstdefault'] = '<strong> Tên đặt trước $a đang được sử dụng đối với tất cả người sử dụng site này !</strong> Xoá nó sẽ làm thay đổi một số thông tin. Bạn có muốn tiếp tục ?';
+$string['density'] = 'Mật độ';
 $string['dstisapreference'] = 'Mỗi người sử dụng có thể chọn tên định trước để sử dụng';
 $string['dstisforcedto'] = 'Bắt buộc tất cả người dùng sử dụng';
 $string['dstpresets'] = ' DST định trước';
@@ -28,6 +32,8 @@ $string['helpstartofweek'] = 'Ngày nào bắt đầu tuần theo lịch ?';
 $string['helpupcominglookahead'] = 'Bao nhiêu ngày trong tương lai lịch biểu mong chờ các sự kiện sắp xảy ra theo mặc định ?';
 $string['helpupcomingmaxevents'] = 'Bao nhiêu sự kiện sắp xảy ra được người dùng nhìn thấy theo mặc định ?';
 $string['helpweekenddays'] = 'Những ngày nào trong tuần được xem như \"cuối tuần\" và thể hiện với một màu sắc khác ?';
+$string['latexpreamble'] = 'Giới thiệu về LaTeX';
+$string['latexsettings'] = 'Quản lý hiển thị của LaTeX';
 $string['managedstpresets'] = 'Quản lý DST định trước';
 $string['nodstpresetsexist'] = 'Sự hỗ trợ DST thì làm mất khả năng đối với tất cả người sử dụng bởi vì không có DST định trước được định nghĩa. Bạn có thể định nghĩa một số cái định trước bởi việc sử dụng nút dưới đây.';
 $string['therewereerrors'] = 'Có nhiều lỗi trong dữ liệu của bạn';
