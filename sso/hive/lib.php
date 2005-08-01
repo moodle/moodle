@@ -57,6 +57,7 @@ function sso_user_login($username, $password) {
                 $cookie = explode(';', $header[1]);
                 $cookie = $cookie[0];
                 $SESSION->HIVE_SESSION = $cookie;
+                $SESSION->HIVE_PASSWORD = $password;
                 return true;
             }
         }
