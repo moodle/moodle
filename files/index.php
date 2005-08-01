@@ -754,7 +754,7 @@ function displaydir ($wdir) {
             print_cell("right", $filedate, 'date');
 
             if ($choose) {
-                $edittext = "<b><a onMouseDown=\"return set_value('$selectfile')\" href=\"\">$strchoose</a></b>&nbsp;";
+                $edittext = "<strong><a onclick=\"return set_value('$selectfile')\" href=\"#\">$strchoose</a></strong>&nbsp;";
             } else {
                 $edittext = '';
             }
