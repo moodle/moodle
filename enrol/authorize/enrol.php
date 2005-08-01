@@ -15,7 +15,6 @@ require_once("$CFG->dirroot/enrol/enrol.class.php");
 class enrolment_plugin extends enrolment_base {
 
 var $ccerrormsg;
-var $coursecost;
 
 /// Override: print_entry()
 function print_entry($course) {
@@ -110,11 +109,11 @@ function cc_submit($form, $course)
     require_once($CFG->dirroot . '/enrol/authorize/ccval.php');
 
     if (empty($form->ccfirstname) || empty($form->cclastname) ||
-    	empty($form->cc) || empty($form->cvv) || empty($form->cctype) ||
-    	empty($form->ccexpiremm) || empty($form->ccexpireyyyy) || empty($form->cczip)) {
+        empty($form->cc) || empty($form->cvv) || empty($form->cctype) ||
+        empty($form->ccexpiremm) || empty($form->ccexpireyyyy) || empty($form->cczip)) {
               $this->ccerrormsg = get_string("allfieldsrequired");
               return;
-        }
+    }
 
     $exp_date = (($form->ccexpiremm<10) ? strval('0'.$form->ccexpiremm) : strval($form->ccexpiremm)) . ($form->ccexpireyyyy);
     $valid_cc = CCVal($form->cc, $form->cctype, $exp_date);
@@ -123,7 +122,7 @@ function cc_submit($form, $course)
     $order_number = 0; // can be get from db
 
     if (!$valid_cc) {
-        $this->ccerrormsg = ($valid_cc===0) ? get_string('ccexpired', 'enrol_authorize') : get_string('ccinvalid', 'enrol_authorize');
+        $this->ccerrormsg = get_string( (($valid_cc===0) ? 'ccexpired' : 'ccinvalid'), 'enrol_authorize' );
         return;
     }
 
@@ -163,27 +162,26 @@ function cc_submit($form, $course)
     //build the post string
     $poststring = '';
     if (!empty($CFG->an_tran_key)) {
-    	$poststring .= urlencode("x_tran_key") . "=" . urlencode($CFG->an_tran_key);
-    }
-    else { // MUST be x_tran_key or x_password
-    	$poststring .= urlencode("x_password") . "=" . urlencode($CFG->an_password);
+        $poststring .= urlencode("x_tran_key") . "=" . urlencode($CFG->an_tran_key);
+    } else { // MUST be x_tran_key or x_password
+        $poststring .= urlencode("x_password") . "=" . urlencode($CFG->an_password);
     }
     foreach($formdata as $key => $val) {
-    	$poststring .= "&" . urlencode($key) . "=" . urlencode($val);
+        $poststring .= "&" . urlencode($key) . "=" . urlencode($val);
     }
     //built
 
     $response = array();
-    $anrefererheader = '';    	
-    if (isset($CFG->an_referer) && (!empty($CFG->an_referer)) &&
-       ($CFG->an_referer != "http://") && ($CFG->an_referer != "https://")) {
-        $anrefererheader = "Referer: " . $CFG->an_referer . "\r\n";
+    $anrefererheader = '';
+    if(isset($CFG->an_referer) && (!empty($CFG->an_referer)) &&
+            ($CFG->an_referer != "http://") && ($CFG->an_referer != "https://")) {
+                $anrefererheader = "Referer: " . $CFG->an_referer . "\r\n";
     }
 
     $fp = fsockopen("ssl://" . AN_HOST, AN_PORT, $errno, $errstr, 60);
     if(!$fp) {
-    	$this->ccerrormsg =  "$errstr ($errno)";
-    	return;
+        $this->ccerrormsg =  "$errstr ($errno)";
+        return;
     } else {
         fputs($fp,
             "POST " . AN_PATH . " HTTP/1.0\r\n" .
@@ -198,13 +196,13 @@ function cc_submit($form, $course)
         while(!feof($fp) && !stristr($str, 'content-length')) {
             $str = fgets($fp, 4096);
         }
-    	// If didnt get content-lenght, something is wrong.
-    	if (!stristr($str, 'content-length')) {
+        // If didnt get content-lenght, something is wrong.
+        if (!stristr($str, 'content-length')) {
             $this->ccerrormsg =  "content-length error";
             @fclose($fp);
             return;
         }
-    	// Get length of data to be received.
+        // Get length of data to be received.
         $length = trim(substr($str,strpos($str,'content-length') + 15));
         // Get buffer (blank data before real data)
         fgets($fp, 4096);
@@ -259,8 +257,8 @@ function cc_submit($form, $course)
                 $admins = get_admins();
                 foreach ($admins as $admin) {
                     email_to_user($admin, $USER, get_string("enrolmentnew", '', $course->shortname),
-                        get_string('enrolmentnewuser', '', $a));
-    		}
+                       get_string('enrolmentnewuser', '', $a));
+                }
             }
             // end: send email
             // begin: authorize_table
@@ -296,9 +294,6 @@ function get_course_cost($course) {
     global $CFG;
     $cost = (float)0;
 
-    if (isset($this->coursecost))
-        return $this->coursecost;
-
     if (!empty($course->cost)) {
         $cost =  (float)(((float)$course->cost) < 0) ? $CFG->enrol_cost : $course->cost;
     }
@@ -306,28 +301,35 @@ function get_course_cost($course) {
     $currency = (!empty($course->currency)) ? $course->currency : (empty($CFG->enrol_currency) ? 'USD' : $CFG->enrol_currency);
 
     $cost = format_float($cost, 2);
-    $this->coursecost = array('cost'=>$cost, 'currency'=>$currency);
+    $ret = array('cost'=>$cost, 'currency'=>$currency);
 
-    return $this->coursecost;
+    return $ret;
 }
 
 /// Override the get_access_icons() function
 function get_access_icons($course) {
     global $CFG;
 
-    $str = '';
+    $str = parent::get_access_icons($course);
     $curcost = $this->get_course_cost($course);
 
-    if (abs($curcost['cost']) < 0.01) {
-    	$str = parent::get_access_icons($course);
-    } else {
-    	$strrequirespayment = get_string("requirespayment");
-    	$strcost = get_string("cost");
+    if (abs($curcost['cost']) > 0.00) {
+        $strrequirespayment = get_string("requirespayment");
+        $strcost = get_string("cost");
+        $currency = $curcost['currency'];
 
-        $str .= "<p class=\"coursecost\"><font size=\"-1\">$strcost: " .
-    			"<a title=\"$strrequirespayment\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">" .
-    			$curcost['currency'] . " " . $curcost['cost'] . '</a></font></p>';
+        switch ($currency) {
+            case 'USD': $currency = 'US$'; break;
+            case 'CAD': $currency = 'C$'; break;
+            case 'EUR': $currency = '&euro;'; break;
+            case 'GBP': $currency = '&pound;'; break;
+            case 'JPY': $currency = '&yen;'; break;
+        }
+
+        $str .= '<div class="cost" title="'.$strrequirespayment.'">'.$strcost.': ';
+        $str .= $currency . ' ' . $curcost['cost'].'</div>';
     }
+
     return $str;
 }
 
@@ -345,18 +347,18 @@ function config_form($frm) {
     }
 
     if (!$this->check_openssl_loaded()) {
-    	notify('PHP must be compiled with SSL support (--with-openssl)');
+        notify('PHP must be compiled with SSL support (--with-openssl)');
     }
     if (data_submitted()) {  // something POSTed
         // Some required fields
         if (empty($frm->an_login)) {
-    	    notify("an_login required");
+            notify("an_login required");
         }
         if (empty($frm->an_tran_key) && empty($frm->an_password)) {
-    	    notify("an_tran_key or an_password required");
+            notify("an_tran_key or an_password required");
         }
         if (empty($CFG->loginhttps)) {
-    	    notify("\$CFG->loginhttps MUST BE ON");
+            notify("\$CFG->loginhttps MUST BE ON");
         }
     }
     include($CFG->dirroot.'/enrol/authorize/config.html');
@@ -405,10 +407,10 @@ function process_config($config) {
 
     // some required fields
     if (empty($login_val)) {
-    	$return = false;   	
+        $return = false;       
     }
     if (empty($tran_val) && empty($password_val)) {
-    	$return = false;   	
+        $return = false;       
     }
     if (empty($CFG->loginhttps)) {
         $return = false;
@@ -423,7 +425,7 @@ function email_cc_error_to_admin($subject, $data) {
 
     $message = "$site->fullname:  Transaction failed.\n\n$subject\n\n";
     foreach ($data as $key => $value) {
-    	$message .= "$key => $value\n";
+        $message .= "$key => $value\n";
     }
     email_to_user($admin, $admin, "CC ERROR: ".$subject, $message);
 }
@@ -433,9 +435,9 @@ function check_paid() {
     global $CFG, $SESSION;
 
     if (isset($SESSION->ccpaid)) {
-    	unset($SESSION->ccpaid);
-    	redirect($CFG->wwwroot . '/login/logout.php');
-    	exit;    	
+        unset($SESSION->ccpaid);
+        redirect($CFG->wwwroot . '/login/logout.php');
+        exit;
     }
 }
 
