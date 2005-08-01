@@ -5,11 +5,11 @@
     global $USER;
     $tabs = $row = array();
 
-    $script = $page->url_get_full(array('instanceid' => $this->instance->id, 'sesskey' => $USER->sesskey, 'blockaction' => 'config', 'currentaction' => 'configblock'));
+    $script = $page->url_get_full(array('instanceid' => $this->instance->id, 'sesskey' => $USER->sesskey, 'blockaction' => 'config', 'currentaction' => 'configblock', 'id' => $id));
     $row[] = new tabobject('configblock', $script, 
                 get_string('configblock', 'block_rss_client'));
 
-    $script = $page->url_get_full(array('instanceid' => $this->instance->id, 'sesskey' => $USER->sesskey, 'blockaction' => 'config', 'currentaction' => 'managefeeds'));
+    $script = $page->url_get_full(array('instanceid' => $this->instance->id, 'sesskey' => $USER->sesskey, 'blockaction' => 'config', 'currentaction' => 'managefeeds', 'id' => $id));
     $row[] = new tabobject('managefeeds', $script, 
                 get_string('managefeeds', 'block_rss_client'));
 

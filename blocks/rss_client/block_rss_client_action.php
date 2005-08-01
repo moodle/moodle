@@ -25,10 +25,10 @@
     if (isguest()) {
         error(get_string('noguestpost', 'forum'), $referrer);
     }
-    
+
     $act            = optional_param('act', 'none' );
     $rssid          = optional_param('rssid', 'none' );
-    $courseid       = optional_param('courseid', SITEID, PARAM_INT);
+    $id             = optional_param('id', SITEID, PARAM_INT);
     $url            = optional_param('url');
     $preferredtitle = optional_param('preferredtitle', '');
     $item           = optional_param('item');
@@ -37,8 +37,10 @@
         define('MAGPIE_OUTPUT_ENCODING', get_string('thischarset'));  // see bug 3107
     }
 
-    if (!empty($courseid)) {
-        $course = get_record('course', 'id', $courseid, '', '', '', '', 'shortname');
+    if (!empty($id)) {
+        // we get the complete $course object here because print_header assumes this is 
+        // a complete object (needed for proper course theme settings)
+        $course = get_record('course', 'id', $id);
     }
 
     $straddedit = get_string('feedsaddedit', 'block_rss_client');
@@ -48,7 +50,7 @@
         $navigation = "<a href=\"$CFG->wwwroot/$CFG->admin/index.php\">$stradmin</a> -> ".
         "<a href=\"$CFG->wwwroot/$CFG->admin/configure.php\">$strconfiguration</a> -> $straddedit";
     } else if (!empty($course)) {
-        $navigation = "<a href=\"$CFG->wwwroot/course/view.php?id=$courseid\">$course->shortname</a> -> $straddedit";
+        $navigation = "<a href=\"$CFG->wwwroot/course/view.php?id=$id\">$course->shortname</a> -> $straddedit";
     } else {
         $navigation = $straddedit;
     }
@@ -61,18 +63,22 @@
     $submitters = $CFG->block_rss_client_submitters;
     $isteacher = false;
     if (!empty($course)) {
-        $isteacher = isteacher($course->id);
+        $isteacher = isteacher($id);
     }
+
+    $rss_record = get_record('block_rss_client', 'id', $rssid);
 
     //if the user is an admin or course teacher then allow the user to
     //assign categories to other uses than personal
-    if (!( isadmin() || $submitters == SUBMITTERS_ALL_ACCOUNT_HOLDERS || ($submitters == SUBMITTERS_ADMIN_AND_TEACHER && $isteacher) ) ) {
+    if (!( isadmin() || $submitters == SUBMITTERS_ALL_ACCOUNT_HOLDERS || 
+           ($submitters == SUBMITTERS_ADMIN_AND_TEACHER && $isteacher) || 
+                ( ($act == 'rss_edit' || $act == 'delfeed') && $USER->id == $rss_record->userid)  ) ) {
         error(get_string('noguestpost', 'forum').' You are not allowed to make modifications to this RSS feed at this time.', $referrer);
     }
 
     if ($act == 'none') {
-        rss_display_feeds();
-        rss_get_form($act, $url, $rssid, $preferredtitle, $courseid);
+        rss_display_feeds($id);
+        rss_print_form($act, $url, $rssid, $preferredtitle, $id);
 
     } else if ($act == 'updfeed') {
         if (empty($url)) {
@@ -154,19 +160,18 @@
         }
         redirect($referrer, $message);
 /*
-        rss_display_feeds();
-        rss_get_form($act, $dataobject->url, $dataobject->id, $dataobject->preferredtitle, $courseid);
+        rss_display_feeds($id);
+        rss_print_form($act, $dataobject->url, $dataobject->id, $dataobject->preferredtitle, $id);
 */
     } else if ( $act == 'rss_edit') {
-        
-        $rss_record = get_record('block_rss_client', 'id', $rssid);
+
         $preferredtitle = stripslashes_safe($rss_record->preferredtitle);
         if (empty($preferredtitle)) {
             $preferredtitle = stripslashes_safe($rss_record->title);
         }
         $url = stripslashes_safe($rss_record->url);
-        rss_display_feeds('', $rssid);
-        rss_get_form($act, $url, $rssid, $preferredtitle, $courseid);
+        rss_display_feeds($id, '', $rssid);
+        rss_print_form($act, $url, $rssid, $preferredtitle, $id);
 
     } else if ($act == 'delfeed') {
         
@@ -185,7 +190,6 @@
     } else if ($act == 'view') {
         //              echo $sql; //debug
         //              print_object($res); //debug
-        $rss_record = get_record('block_rss_client', 'id', $rssid);
         if (!$rss_record->id) {
             print '<strong>'. get_string('couldnotfindfeed', 'block_rss_client') .': '. $rssid .'</strong>';
         } else {
@@ -233,8 +237,8 @@
             print '</table>'."\n";
         }
     } else {
-        rss_display_feeds();
-        rss_get_form($act, $url, $rssid, $preferredtitle, $courseid);
+        rss_display_feeds($id);
+        rss_print_form($act, $url, $rssid, $preferredtitle, $id);
     }
 
     print_footer();

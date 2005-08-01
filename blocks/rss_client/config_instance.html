@@ -1,7 +1,7 @@
 <?php 
 require_once($CFG->libdir .'/rsslib.php');
 
-$courseid       = optional_param('courseid', SITEID, PARAM_INT);
+$id       = optional_param('id', SITEID, PARAM_INT);
 
 //create a page object for url_get_full()
 $page = page_create_object($this->instance->pagetype, $this->instance->pageid);
@@ -89,7 +89,7 @@ if ($currentaction == 'configblock') {
             } else {
                 print_string('nofeeds', 'block_rss_client');
                 if ( isadmin() ) {
-                    print '&nbsp;<a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?courseid='. $courseid .'"> '. get_string('editnewsfeeds', 'block_rss_client') .'</a><br />';
+                    print '&nbsp;<a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?id='. $id .'"> '. get_string('editnewsfeeds', 'block_rss_client') .'</a><br />';
                 }
             }
         ?>
@@ -149,8 +149,8 @@ if ($currentaction == 'configblock') {
     global $act, $url, $rssid, $preferredtitle;
     print '<table cellpadding="9" cellspacing="0" class="blockconfigtable">';
     print '<tr valign="top"><td>';
-    rss_display_feeds();
+    rss_display_feeds($id);
     print '</form>'; //not sure that this is needed
-    rss_get_form($act, $url, $rssid, $preferredtitle, $courseid);
+    rss_print_form($act, $url, $rssid, $preferredtitle, $id);
     print '</td></tr></table>';
 } ?>
