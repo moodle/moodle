@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.6 development (2005060201)
+      // lesson.php - created with Moodle 1.6 development (2005072200)
 
 
 $string['accesscontrol'] = 'アクセスコントロール';
@@ -39,6 +39,8 @@ $string['clustertitle'] = 'クラスタ';
 $string['comments'] = 'あなたのコメント';
 $string['commentswithname'] = '$a->firstname {$a->lastname}のコメント';
 $string['completed'] = '完了';
+$string['completederror'] = 'レッスンを完了する';
+$string['completethefollowingconditions'] = '先へ進む前に、<b>$a</b> レッスンの下記の状態を完了させる必要があります。';
 $string['confirmdeletionofthispage'] = 'このページを本当に削除してもよろしいですか?';
 $string['congratulations'] = 'おめでとうございます - 最終レッスンに到達しました。';
 $string['continue'] = '続ける';
@@ -120,6 +122,7 @@ $string['maximumnumberofattempts'] = '受験の最大回数';
 $string['maxtime'] = '制限時間 ( 分 )';
 $string['maxtimewarning'] = 'レッスン終了まで $a 分です。';
 $string['mediafile'] = 'メディアファイル';
+$string['mediafilepopup'] = 'レッスンメディアファイルを閲覧するにはここをクリックしてください。';
 $string['minimumnumberofquestions'] = '最小問題数';
 $string['modattempts'] = '学生のレビューを許可';
 $string['modattemptsnoteacher'] = '学生レビューは学生のみに表示されます。';
@@ -214,6 +217,8 @@ $string['thefollowingpagesjumptothispage'] = '下記のページは、このページにジャン
 $string['thispage'] = 'このページ';
 $string['timed'] = '時間制限';
 $string['timeremaining'] = '残り時間';
+$string['timespenterror'] = '少なくとも $a 分の時間を使用してください。';
+$string['timespentminutes'] = '利用時間 ( 分 )';
 $string['timetaken'] = '経過時間';
 $string['topscorestitle'] = '$a->name レッスンのハイスコア上位 $a->maxhighscores 件';
 $string['treeview'] = 'ツリービュー';
