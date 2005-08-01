@@ -2430,6 +2430,17 @@ function authenticate_user_login($username, $password) {
                 }
             }
         }
+
+    /// Log in to a second system if necessary
+        if (!empty($CFG->sso)) {
+            include_once($CFG->dirroot .'/sso/'. $CFG->sso .'/lib.php');
+            if (function_exists('sso_user_login')) {
+                if (!sso_user_login($username, $password)) {   // Perform the signon process
+                    notify('Second sign-on failed');
+                }
+            }
+        }
+
         return $user;
 
     } else {
