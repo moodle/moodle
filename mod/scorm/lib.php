@@ -1214,10 +1214,13 @@ function scorm_get_toc($scorm,$liststyle,$currentorg='',$scoid='',$mode='normal'
     global $USER, $CFG;
 
     $strexpand = get_string('expcoll','scorm');
-
+    
+    $result = new stdClass();
     $result->toc = "<ul id='0' class='$liststyle'>";
+    $result->prerequisites = true;
     $incomplete = false;
     $organizationsql = '';
+    
     if (!empty($currentorg)) {
         $organizationsql = "AND organization='$currentorg'";
     }
@@ -1239,6 +1242,7 @@ function scorm_get_toc($scorm,$liststyle,$currentorg='',$scoid='',$mode='normal'
         $previd = 0;
         $nextid = 0;
         $parents[$level]='/';
+        
         foreach ($scoes as $sco) {
             if ($parents[$level]!=$sco->parent) {
                 if ($newlevel = array_search($sco->parent,$parents)) {
@@ -1323,7 +1327,7 @@ function scorm_get_toc($scorm,$liststyle,$currentorg='',$scoid='',$mode='normal'
                     if ($sco->id == $scoid) {
                         $result->prerequisites = true;
                     }
-                    $result->toc .= "&nbsp;$startbold<a href='javascript:playSCO(".$sco->id.");'>$sco->title</a> $score$endbold</li>\n";
+                    $result->toc .= "&nbsp;$startbold<a href='javascript:playSCO(".$sco->id.");'>".format_string($sco->title)."</a> $score$endbold</li>\n";
                 } else {
                     if ($sco->id == $scoid) {
                         $result->prerequisites = false;
@@ -1337,20 +1341,21 @@ function scorm_get_toc($scorm,$liststyle,$currentorg='',$scoid='',$mode='normal'
         for ($i=0;$i<$level;$i++) {
             $result->toc .= "\t\t</ul></li>\n";
         }
+        
+        if ($play) {
+            $sco = new stdClass();
+            $sco->id = $scoid;
+            $sco->prev = $previd;
+            $sco->next = $nextid;
+            $sco->showprev = $showprev;
+            $sco->shownext = $shownext;
+            $result->sco = $sco;
+        } else {
+            $result->incomplete = $incomplete;
+        }
     }
     $result->toc .= "\t</ul>\n";
     
-    if ($play) {
-        unset($sco);
-        $sco->id = $scoid;
-        $sco->prev = $previd;
-        $sco->next = $nextid;
-        $sco->showprev = $showprev;
-        $sco->shownext = $shownext;
-        $result->sco = $sco;
-    } else {
-        $result->incomplete = $incomplete;
-    }
     return $result;
 }
 ?>
