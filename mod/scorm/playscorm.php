@@ -12,7 +12,7 @@
     $a = optional_param('a', '', PARAM_INT);         // scorm ID
     $scoid = required_param('scoid', '', PARAM_INT);  // sco ID
     $mode = optional_param('mode', '', PARAM_ALPHA); // navigation mode
-    $currentorg = optional_param('currentorg', '', PARAM_ALPHANUM); // selected organization
+    $currentorg = optional_param('currentorg', '', PARAM_RAW); // selected organization
     
     $modestring = '';
     $scoidstring = '';
