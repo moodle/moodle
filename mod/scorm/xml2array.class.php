@@ -13,8 +13,34 @@ class xml2Array {
    var $resParser;
    var $strXmlData;
    
-   function parse($strInputXML) {
+   function utf8_to_entities($str) {
+        $entities = '';
+        $values = array();
+        $lookingfor = 1;
+        
+        for ($i = 0; $i < strlen($str); $i++) {
+            $thisvalue = ord($str[$i]);
+            if ($thisvalue < 128) {
+                $entities .= chr($thisvalue);
+            } else {
+                if (count($values) == 0) {
+                    $lookingfor = ($thisvalue < 224) ? 2 : 3;
+                }
+                $values[] = $thisvalue;
+                if (count($values) == $lookingfor) {
+                    $number = ($lookingfor == 3) ?
+                        (($values[0] % 16) * 4096) + (($values[1] % 64) * 64) + ($values[2] % 64):
+                        (($values[0] % 32) * 64) + ($values[1] % 64);
+                    $entities .= '&#' . $number . ';';
+                    $values = array();
+                    $lookingfor = 1;
+                }
+            }
+        }
+        return $entities;
+    }
    
+   function parse($strInputXML) {
            $this->resParser = xml_parser_create ('UTF-8');
            xml_set_object($this->resParser,$this);
            xml_set_element_handler($this->resParser, "tagOpen", "tagClosed");
@@ -41,9 +67,9 @@ class xml2Array {
    function tagData($parser, $tagData) {
        if(trim($tagData)) {
            if(isset($this->arrOutput[count($this->arrOutput)-1]['tagData'])) {
-               $this->arrOutput[count($this->arrOutput)-1]['tagData'] .= utf8_decode($tagData);
+               $this->arrOutput[count($this->arrOutput)-1]['tagData'] .= $this->utf8_to_entities($tagData);
            } else {
-               $this->arrOutput[count($this->arrOutput)-1]['tagData'] = utf8_decode($tagData);
+               $this->arrOutput[count($this->arrOutput)-1]['tagData'] = $this->utf8_to_entities($tagData);
            }
        }
    }
