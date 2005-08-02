@@ -1014,8 +1014,8 @@ function main_upgrade($oldversion=0) {
                               id SERIAL PRIMARY KEY,
                               courseid integer NOT NULL default '0',
                               letter varchar(8) NOT NULL default 'NA',
-                              grade_high decimal(4,2) NOT NULL default '100.00',
-                              grade_low decimal(4,2) NOT NULL default '0.00'
+                              grade_high decimal(6,2) NOT NULL default '100.00',
+                              grade_low decimal(6,2) NOT NULL default '0.00'
                             );");
 
         modify_database('',"CREATE INDEX prefix_grade_letter_courseid_idx ON prefix_grade_letter (courseid);");
