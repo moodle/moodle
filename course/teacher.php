@@ -158,7 +158,7 @@
             }
     
             $table->data[] = array ($picture, fullname($teacher, true), $authority,
-                                    "<input type=\"text\" name=\"r$teacher->id\" value=\"$teacher->role\" size=\"30\" />",
+                                    "<input type=\"text\" name=\"r$teacher->id\" value=\"$teacher->role\" size=\"30\" maxlength=\"40\" />",
                                     $editall, $removelink);
         }
         $teacherlist = implode(",",$teacherarray);
