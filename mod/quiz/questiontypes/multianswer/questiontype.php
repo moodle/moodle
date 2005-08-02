@@ -497,11 +497,11 @@ function quiz_qtype_multianswer_extract_question($text) {
 
         $question->defaultgrade += $wrapped->defaultgrade;
         $question->options->questions[$positionkey] = clone($wrapped);
-        $question->questiontext = str_replace('&\#', '&#',
-         implode("{#$positionkey}", explode($answerregs[0],
-         $question->questiontext, 2)));
+        $question->questiontext = implode("{#$positionkey}",
+                    explode($answerregs[0], $question->questiontext, 2));
     }
-    $question->questiontext = addslashes($question->questiontext);
+    $question->questiontext = addslashes(str_replace('&\#', '&#',
+     $question->questiontext));
     return $question;
 }
 
