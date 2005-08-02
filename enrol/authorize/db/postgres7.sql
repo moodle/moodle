@@ -7,5 +7,5 @@ CREATE TABLE prefix_enrol_authorize (
    courseid integer NOT NULL default '0',
    userid integer NOT NULL default '0',
    avscode varchar(1) default 'P',
-   transid varchar(255) default '',
+   transid varchar(255) default ''
 );
