@@ -24,7 +24,7 @@
             }
         }
     } else {
-        $cm->id = NULL;
+        $cm->id = 0;
     }
 
     if ($user) {
