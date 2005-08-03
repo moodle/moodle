@@ -32,7 +32,6 @@
         }
 
         if (count($err) == 0) {
-            print_header();
             foreach ($config as $name => $value) {
                 if (preg_match('/^pluginconfig_(.+?)$/', $name, $matches)) {
                     $plugin = "auth/$auth";

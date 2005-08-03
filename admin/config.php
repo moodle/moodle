@@ -30,7 +30,6 @@
         validate_form($config, $err);
 
         if (count($err) == 0) {
-            print_header();
             foreach ($config as $name => $value) {
                 if ($name == "sessioncookie") {
                     $value = eregi_replace("[^a-zA-Z]", "", $value);
