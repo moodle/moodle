@@ -630,6 +630,28 @@
                 }
             }
             break;
+        case "mark read":
+            if ($log->cmid) {
+                //Get the new_id of the module (to recode the url and info fields)
+                $mod = backup_getid($restore->backup_unique_code,$log->module,$log->info);
+                if ($mod) {
+                    $log->url = "view.php?f=".$mod->new_id;
+                    $log->info = $mod->new_id;
+                    $status = true;
+                }
+            }
+            break;
+        case "start tracking":
+            if ($log->cmid) {
+                //Get the new_id of the module (to recode the url and info fields)
+                $mod = backup_getid($restore->backup_unique_code,$log->module,$log->info);
+                if ($mod) {
+                    $log->url = "view.php?f=".$mod->new_id;
+                    $log->info = $mod->new_id;
+                    $status = true;
+                }
+            }
+            break;
         case "update":
             if ($log->cmid) {
                 //Get the new_id of the module (to recode the info field)
@@ -742,6 +764,21 @@
                     $dbpos = get_record("forum_posts","id","$pos->new_id");
                     if ($dbpos) {
                         $log->url = "discuss.php?d=".$dbpos->discussion."&amp;parent=".$pos->new_id;
+                        $log->info = $pos->new_id;
+                        $status = true;
+                    }
+                }
+            }
+            break;
+        case "prune post":
+            if ($log->cmid) {
+                //Get the new_id of the post (to recode the url and info field)
+                $pos = backup_getid($restore->backup_unique_code,"forum_posts",$log->info);
+                if ($pos) {
+                    //Get the post record from database
+                    $dbpos = get_record("forum_posts","id","$pos->new_id");
+                    if ($dbpos) {
+                        $log->url = "discuss.php?d=".$dbpos->discussion;
                         $log->info = $pos->new_id;
                         $status = true;
                     }
