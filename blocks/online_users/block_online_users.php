@@ -97,7 +97,7 @@ class block_online_users extends block_base {
         //Calculate minutes
         $minutes  = floor($timetoshowusers/60);
 
-        $this->content->text = "<center><font size=\"-2\">(".get_string("periodnminutes","block_online_users",$minutes).")</font></center>";
+        $this->content->text = "<div class=\"message\">(".get_string("periodnminutes","block_online_users",$minutes).")</div>";
 
         //Now, we have in users, the list of users to show
         //Because they are online
@@ -122,7 +122,7 @@ class block_online_users extends block_base {
                 $this->content->text .= '</div>';
             }
         } else {
-            $this->content->text .= "<center><font size=\"-1\">".get_string("none")."</font></center>";
+            $this->content->text .= "<div class=\"message\">".get_string("none")."</div>";
         }
 
         return $this->content;
