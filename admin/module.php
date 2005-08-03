@@ -37,8 +37,6 @@
             $moduleprefix = '';
         }
 
-        print_header();
-
         foreach ($config as $name => $value) {
             set_config($moduleprefix.$name, $value);
         }

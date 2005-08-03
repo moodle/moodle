@@ -55,16 +55,6 @@
     }
 
 
-
-/// Print headers
-
-    print_header("$course->shortname: $strassignteachers", 
-                 "$course->fullname", 
-                 "<a href=\"index.php\">$strcourses</a> -> ".
-                 "<a href=\"view.php?id=$course->id\">$course->shortname</a> -> ".
-                 "$strassignteachers", "");
-
-
 /// If data submitted, then process and store.
 
     if ($form = data_submitted() and confirm_sesskey()) {
@@ -93,6 +83,15 @@
         }
         redirect("teacher.php?id=$course->id", get_string("changessaved"));
     }
+
+
+/// Print headers
+
+    print_header("$course->shortname: $strassignteachers", 
+                 "$course->fullname", 
+                 "<a href=\"index.php\">$strcourses</a> -> ".
+                 "<a href=\"view.php?id=$course->id\">$course->shortname</a> -> ".
+                 "$strassignteachers", "");
 
 /// Add a teacher if one is specified
 

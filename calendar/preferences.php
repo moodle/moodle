@@ -17,7 +17,6 @@
 /// If data submitted, then process and store.
 
     if ($form = data_submitted()) {
-        print_header();
         foreach ($form as $preference => $value) {
             switch ($preference) {
                 case 'timeformat':

@@ -54,7 +54,6 @@
         $config = (object)$a_config;
         //weekdays conversions done. Continue
 
-        print_header();
         foreach ($config as $name => $value) {
             backup_set_config($name, $value);
         }

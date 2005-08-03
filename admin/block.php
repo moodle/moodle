@@ -47,7 +47,6 @@
             unset($config->$item);
         }
         $block->config_save($config);
-        print_header();
         redirect("$CFG->wwwroot/$CFG->admin/blocks.php", get_string("changessaved"), 1);
         exit;
     }
