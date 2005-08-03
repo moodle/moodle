@@ -264,6 +264,17 @@
                 }
             }
             break;
+        case "talk":
+            if ($log->cmid) {
+                //Get the new_id of the module (to recode the info field)
+                $mod = backup_getid($restore->backup_unique_code,$log->module,$log->info);
+                if ($mod) {
+                    $log->url = "view.php?id=".$log->cmid;
+                    $log->info = $mod->new_id;
+                    $status = true;
+                }
+            }
+            break;
         case "view":
             if ($log->cmid) {
                 //Get the new_id of the module (to recode the info field)
