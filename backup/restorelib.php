@@ -2525,6 +2525,10 @@
             $log->info = $log->course;
             $toinsert = true;
             break;
+        case "guest":
+            $log->url = "view.php?id=".$log->course;
+            $toinsert = true;
+            break;
         case "user report":
             //recode the info field (it's the user id)
             $user = backup_getid($restore->backup_unique_code,"user",$log->info);
@@ -2532,7 +2536,7 @@
                 $log->info = $user->new_id;
                 //Now, extract the mode from the url field
                 $mode = substr(strrchr($log->url,"="),1);
-                $log->url = "user.php?id=".$log->course."&amp;user=".$log->info."&amp;mode=".$mode;
+                $log->url = "user.php?id=".$log->course."&user=".$log->info."&mode=".$mode;
                 $toinsert = true;
             }
             break;
@@ -2658,7 +2662,7 @@
             $user = backup_getid($restore->backup_unique_code,"user",$log->info);
             if ($user) {
                 $log->info = $user->new_id;
-                $log->url = "view.php?id=".$log->info."&amp;course=".$log->course;
+                $log->url = "view.php?id=".$log->info."&course=".$log->course;
                 $toinsert = true;
             }
             break;
@@ -2667,7 +2671,25 @@
             $user = backup_getid($restore->backup_unique_code,"user",$log->info);
             if ($user) {
                 $log->info = $user->new_id;
-                $log->url = "view.php?id=".$log->info."&amp;course=".$log->course;
+                $log->url = "view.php?id=".$log->info."&course=".$log->course;
+                $toinsert = true;
+            }
+            break;
+        case "login":
+            //recode the info field (it's the user id)
+            $user = backup_getid($restore->backup_unique_code,"user",$log->info);
+            if ($user) {
+                $log->info = $user->new_id;
+                $log->url = "view.php?id=".$log->info."&course=".$log->course;
+                $toinsert = true;
+            }
+            break;
+        case "logout":
+            //recode the info field (it's the user id)
+            $user = backup_getid($restore->backup_unique_code,"user",$log->info);
+            if ($user) {
+                $log->info = $user->new_id;
+                $log->url = "view.php?id=".$log->info."&course=".$log->course;
                 $toinsert = true;
             }
             break;
@@ -2684,7 +2706,7 @@
             $user = backup_getid($restore->backup_unique_code,"user",$userid);
             if ($user) {
                 $log->info = "";
-                $log->url = "view.php?id=".$user->new_id."&amp;course=".$log->course;
+                $log->url = "view.php?id=".$user->new_id."&course=".$log->course;
                 $toinsert = true;
             }
             break;
