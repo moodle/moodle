@@ -20,9 +20,7 @@ var $ccerrormsg;
 function print_entry($course) {
     global $CFG, $USER, $form;
 
-    $freecost = $this->zero_cost($course);
-
-    if ($freecost || isguest()) { // No money for guests ;), So parent::print_entry
+    if ($this->zero_cost($course) || isguest()) { // No money for guests ;)
         parent::print_entry($course);
         return;
     }
@@ -37,28 +35,21 @@ function print_entry($course) {
         redirect($sdestination);
         exit;
     }
-
     if (!isset($_SERVER['HTTPS'])) {
         error(get_string("httpsrequired", "enrol_authorize"));
     }
 
     $CCTYPES = array(
-        'mcd' => 'Master Card',
-        'vis' => 'Visa',
-        'amx' => 'American Express',
-        'dsc' => 'Discover',
-        'dnc' => 'Diners Club',
-        'jcb' => 'JCB',
-        'swi' => 'Switch',
-        'dlt' => 'Delta',
-        'enr' => 'EnRoute'
+        'mcd' => 'Master Card', 'vis' => 'Visa',        'amx' => 'American Express',
+        'dsc' => 'Discover',    'dnc' => 'Diners Club', 'jcb' => 'JCB',
+        'swi' => 'Switch',      'dlt' => 'Delta',       'enr' => 'EnRoute'
     );
 
     $formvars = array('password','ccfirstname','cclastname','cc','ccexpiremm','ccexpireyyyy','cctype','cvv','cczip');
     foreach ($formvars as $var) {
         if (!isset($form->$var)) {
             $form->$var = '';
-        } 
+        }
     }
 
     $teacher = get_teacher($course->id);
@@ -68,43 +59,32 @@ function print_entry($course) {
     $userlastname = empty($form->cclastname) ? $USER->lastname : $form->cclastname;
     $curcost = $this->get_course_cost($course);
 
-    $passwordoption = !empty($course->password);
-
     print_header($strloginto, $course->fullname, "<a href=\"$CFG->wwwroot/course/\">$strcourses</a> -> $strloginto");
     print_course($course, "80%");
     
-    if ($passwordoption && !$freecost) {
+    if ($course->password) {
         print_simple_box(get_string('choosemethod', 'enrol_authorize'), 'center');
-    }
-
-    if ($passwordoption || $freecost) {
         $password = ''; 
         include($CFG->dirroot . '/enrol/internal/enrol.html'); 
     }
 
-    if (!$freecost) {
-        print_simple_box_start("center");
-        include($CFG->dirroot . '/enrol/authorize/enrol.html');
-        print_simple_box_end();
-    }
+    print_simple_box_start("center");
+    include($CFG->dirroot . '/enrol/authorize/enrol.html');
+    print_simple_box_end();
 
     print_footer();
-
 }
 
 /// Override: check_entry()
 function check_entry($form, $course) {
-    global $CFG;
-
-    if ($this->zero_cost($course) || (!empty($form->password)) || isguest()) {
+    if ($this->zero_cost($course) || isguest() || (!empty($form->password))) {
         parent::check_entry($form, $course);
     } else {
         $this->cc_submit($form, $course);
     }
 }
 
-function cc_submit($form, $course)
-{
+function cc_submit($form, $course) {
     global $CFG, $USER, $SESSION;
     require_once($CFG->dirroot . '/enrol/authorize/ccval.php');
 
@@ -173,9 +153,8 @@ function cc_submit($form, $course)
 
     $response = array();
     $anrefererheader = '';
-    if(isset($CFG->an_referer) && (!empty($CFG->an_referer)) &&
-            ($CFG->an_referer != "http://") && ($CFG->an_referer != "https://")) {
-                $anrefererheader = "Referer: " . $CFG->an_referer . "\r\n";
+    if((!empty($CFG->an_referer)) && ($CFG->an_referer != "http://") && ($CFG->an_referer != "https://")) {
+        $anrefererheader = "Referer: " . $CFG->an_referer . "\r\n";
     }
 
     $fp = fsockopen("ssl://" . AN_HOST, AN_PORT, $errno, $errstr, 60);
@@ -295,20 +274,19 @@ function get_course_cost($course) {
     $cost = (float)0;
 
     if (!empty($course->cost)) {
-        $cost =  (float)(((float)$course->cost) < 0) ? $CFG->enrol_cost : $course->cost;
+        $cost = (float)(((float)$course->cost) < 0) ? $CFG->enrol_cost : $course->cost;
     }
 
     $currency = (!empty($course->currency)) ? $course->currency : (empty($CFG->enrol_currency) ? 'USD' : $CFG->enrol_currency);
 
     $cost = format_float($cost, 2);
-    $ret = array('cost'=>$cost, 'currency'=>$currency);
+    $ret = array('cost' => $cost, 'currency' => $currency);
 
     return $ret;
 }
 
 /// Override the get_access_icons() function
 function get_access_icons($course) {
-    global $CFG;
 
     $str = parent::get_access_icons($course);
     $curcost = $this->get_course_cost($course);
@@ -333,7 +311,6 @@ function get_access_icons($course) {
     return $str;
 }
 
-
 function config_form($frm) {
     global $CFG;
 
@@ -349,6 +326,7 @@ function config_form($frm) {
     if (!$this->check_openssl_loaded()) {
         notify('PHP must be compiled with SSL support (--with-openssl)');
     }
+
     if (data_submitted()) {  // something POSTed
         // Some required fields
         if (empty($frm->an_login)) {
@@ -361,11 +339,8 @@ function config_form($frm) {
             notify("\$CFG->loginhttps MUST BE ON");
         }
     }
-    include($CFG->dirroot.'/enrol/authorize/config.html');
-}
 
-function check_openssl_loaded() {
-    return extension_loaded('openssl');
+    include($CFG->dirroot.'/enrol/authorize/config.html');
 }
 
 function process_config($config) {
@@ -431,7 +406,6 @@ function email_cc_error_to_admin($subject, $data) {
 }
 
 function check_paid() {
-
     global $CFG, $SESSION;
 
     if (isset($SESSION->ccpaid)) {
@@ -439,6 +413,10 @@ function check_paid() {
         redirect($CFG->wwwroot . '/login/logout.php');
         exit;
     }
+}
+
+function check_openssl_loaded() {
+    return extension_loaded('openssl');
 }
 
 } // end of class definition
