@@ -203,6 +203,10 @@ table.formtable tbody th {
 .sideblock .content {
   line-height:1.2em
 }
+.sideblock .content *,
+.sideblock .content .message {
+  text-align:left
+}
 .sideblock .content h3,
 .sideblock .content h2 {
   font-size:1.2em
@@ -218,6 +222,9 @@ table.formtable tbody th {
 }
 .sideblock .date {
   font-style:italic
+}
+.activitydate, .activityhead {
+  /*font-size:0.8em*/
 }
 
 /***
@@ -276,6 +283,9 @@ table.minicalendar {
 .block_calendar_month .filters {
   font-size:0.9em
 }
+.block_calendar_month .day {
+  text-align:center
+}
 
 /***
  *** Course
@@ -301,9 +311,6 @@ table.minicalendar {
   font-weight:bold
 }
 .course .generalbox{
-  font-size:0.8em
-}
-.activitydate, .activityhead {
   font-size:0.8em
 }
 .weeklydatetext {
