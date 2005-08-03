@@ -436,6 +436,10 @@ table.flexible th.c0 {
   padding: 2px;
 }
 
+.sideblock .content .message {
+  text-align:center  
+}
+
 .sideblock .footer {
   margin-bottom: 4px;
   text-align:center;
