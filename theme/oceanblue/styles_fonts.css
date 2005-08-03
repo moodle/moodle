@@ -204,6 +204,10 @@ body#admin-blocks table#incompatible td.c0 {
   font-size:1.0em;
 }
 
+.sideblock .content .message {
+  font-size:0.9em
+}
+
 .sideblock .header .commands {
   font-size:0.9em;
 }
