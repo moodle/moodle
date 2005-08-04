@@ -2774,7 +2774,7 @@ function grade_set_letter_grades() {
 }
 
 function grade_download_form($type='both') {
-    global $course,$USER;
+    global $course,$USER, $action, $cview;
     if ($type != 'both' || $type != 'excel' || $type != 'text') {
         $type = 'both';
     }
@@ -2797,7 +2797,15 @@ function grade_download_form($type='both') {
             echo '</td>';
         }
         echo '<td>';
-        setup_and_print_groups($course, $course->groupmode, 'index.php?id='.$course->id);
+
+        $url = 'index.php?id='.$course->id;
+        if (!empty($action)) {
+            $url .= '&amp;action='.$action;
+            if ($action == 'vcats') {
+               $url .= '&amp;cview='.$cview;
+            }
+        }
+        setup_and_print_groups($course, $course->groupmode, $url);
         echo '</td>';
 
         echo '</tr></table>';
