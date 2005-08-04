@@ -1,5 +1,14 @@
 <?php //$Id$
 
+/*******************************************************************
+* This file contains one class which...
+*
+* @author Daryl Hawes
+* @version  $Id$
+* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+* @package base
+******************************************************************/
+
     require_once('../../config.php');
     require_once($CFG->libdir .'/rsslib.php');
     require_once(MAGPIE_DIR .'rss_fetch.inc');
@@ -17,19 +26,21 @@
         error(get_string('noguestpost', 'forum'), $referrer);
     }
 
-    optional_variable($act, 'none');
-    optional_variable($rssid, 'none');
-    $courseid = optional_param('courseid', 0, PARAM_INT);
-    optional_variable($url);
-    optional_variable($preferredtitle, '');
-    optional_variable($item);
+    $act            = optional_param('act', 'none' );
+    $rssid          = optional_param('rssid', 'none' );
+    $id             = optional_param('id', SITEID, PARAM_INT);
+    $url            = optional_param('url');
+    $preferredtitle = optional_param('preferredtitle', '');
+    $item           = optional_param('item');
 
     if (!defined('MAGPIE_OUTPUT_ENCODING')) {
         define('MAGPIE_OUTPUT_ENCODING', get_string('thischarset'));  // see bug 3107
     }
 
-    if (!empty($courseid)) {
-        $course = get_record('course', 'id', $courseid, '', '', '', '', 'shortname');
+    if (!empty($id)) {
+        // we get the complete $course object here because print_header assumes this is 
+        // a complete object (needed for proper course theme settings)
+        $course = get_record('course', 'id', $id);
     }
 
     $straddedit = get_string('feedsaddedit', 'block_rss_client');
@@ -39,7 +50,7 @@
         $navigation = "<a href=\"$CFG->wwwroot/$CFG->admin/index.php\">$stradmin</a> -> ".
         "<a href=\"$CFG->wwwroot/$CFG->admin/configure.php\">$strconfiguration</a> -> $straddedit";
     } else if (!empty($course)) {
-        $navigation = "<a href=\"$CFG->wwwroot/course/view.php?id=$courseid\">$course->shortname</a> -> $straddedit";
+        $navigation = "<a href=\"$CFG->wwwroot/course/view.php?id=$id\">$course->shortname</a> -> $straddedit";
     } else {
         $navigation = $straddedit;
     }
@@ -52,28 +63,37 @@
     $submitters = $CFG->block_rss_client_submitters;
     $isteacher = false;
     if (!empty($course)) {
-        $isteacher = isteacher($course->id);
+        $isteacher = isteacher($id);
     }
+
+    $rss_record = get_record('block_rss_client', 'id', $rssid);
 
     //if the user is an admin or course teacher then allow the user to
     //assign categories to other uses than personal
-    if (!( isadmin() || $submitters == SUBMITTERS_ALL_ACCOUNT_HOLDERS || ($submitters == SUBMITTERS_ADMIN_AND_TEACHER && $isteacher) ) ) {
-        error(get_string('noguestpost', 'forum'), $referrer);
+    if (!( isadmin() || $submitters == SUBMITTERS_ALL_ACCOUNT_HOLDERS || 
+           ($submitters == SUBMITTERS_ADMIN_AND_TEACHER && $isteacher) || 
+                ( ($act == 'rss_edit' || $act == 'delfeed') && $USER->id == $rss_record->userid)  ) ) {
+        error(get_string('noguestpost', 'forum').' You are not allowed to make modifications to this RSS feed at this time.', $referrer);
     }
 
     if ($act == 'none') {
-        rss_display_feeds();
-        rss_get_form($act, $url, $rssid, $preferredtitle);
+        rss_display_feeds($id);
+        rss_print_form($act, $url, $rssid, $preferredtitle, $id);
 
     } else if ($act == 'updfeed') {
-        require_variable($url);
+        if (empty($url)) {
+            error( 'url not defined for rss feed' );
+        }
         
         // By capturing the output from fetch_rss this way
         // error messages do not display and clutter up the moodle interface
         // however, we do lose out on seeing helpful messages like "cache hit", etc.
+        $message = '';
         ob_start();
         $rss = fetch_rss($url);
-        $rsserror = ob_get_contents();
+        if ($CFG->debug) {
+            $message .= ob_get_contents();
+        }
         ob_end_clean();
         
         $dataobject->id = $rssid;
@@ -92,13 +112,14 @@
             error('There was an error trying to update rss feed with id:'. $rssid);
         }
 
-        redirect($referrer, get_string('feedupdated', 'block_rss_client'));
-/*        rss_display_feeds();
-        rss_get_form($act, $dataobject->url, $rssid, $dataobject->preferredtitle);
-*/
+        $message .= '<br />'. get_string('feedupdated', 'block_rss_client');
+        redirect($referrer, $message);
+
     } else if ($act == 'addfeed' ) {
 
-        require_variable($url);            
+        if (empty($url)) {
+          error('url not defined for rss feed');
+        }
         $dataobject->userid = $USER->id;
         $dataobject->description = '';
         $dataobject->title = '';
@@ -113,9 +134,12 @@
         // By capturing the output from fetch_rss this way
         // error messages do not display and clutter up the moodle interface
         // however, we do lose out on seeing helpful messages like "cache hit", etc.
+        $message = '';
         ob_start();
         $rss = fetch_rss($url);
-        $rsserror = ob_get_contents();
+        if ($CFG->debug) {
+            $message .= ob_get_contents();
+        }
         ob_end_clean();
         
         if ($rss === false) {
@@ -132,7 +156,7 @@
             if (!update_record('block_rss_client', $dataobject)) {
                 error('There was an error trying to update rss feed with id:'. $rssid);
             }
-            $message = get_string('feedadded', 'block_rss_client');
+            $message .= '<br />'. get_string('feedadded', 'block_rss_client');
         }
         redirect($referrer, $message);
 /*
@@ -141,14 +165,13 @@
 */
     } else if ( $act == 'rss_edit') {
         
-        $rss_record = get_record('block_rss_client', 'id', $rssid);
         $preferredtitle = stripslashes_safe($rss_record->preferredtitle);
         if (empty($preferredtitle)) {
             $preferredtitle = stripslashes_safe($rss_record->title);
         }
         $url = stripslashes_safe($rss_record->url);
-        rss_display_feeds('', $rssid);
-        rss_get_form($act, $url, $rssid, $preferredtitle);
+        rss_display_feeds($id, '', $rssid);
+        rss_print_form($act, $url, $rssid, $preferredtitle, $id);
 
     } else if ($act == 'delfeed') {
         
@@ -170,7 +193,6 @@
     } else if ($act == 'view') {
         //              echo $sql; //debug
         //              print_object($res); //debug
-        $rss_record = get_record('block_rss_client', 'id', $rssid);
         if (!$rss_record->id) {
             print '<strong>'. get_string('couldnotfindfeed', 'block_rss_client') .': '. $rssid .'</strong>';
         } else {
@@ -179,7 +201,6 @@
             // however, we do lose out on seeing helpful messages like "cache hit", etc.
             ob_start();
             $rss = fetch_rss($rss_record->url);
-            $rsserror = ob_get_contents();
             ob_end_clean();
             
             if (empty($rss_record->preferredtitle)) {
@@ -219,8 +240,8 @@
             print '</table>'."\n";
         }
     } else {
-        rss_display_feeds();
-        rss_get_form($act, $url, $rssid, $preferredtitle);
+        rss_display_feeds($id);
+        rss_print_form($act, $url, $rssid, $preferredtitle, $id);
     }
 
     print_footer();

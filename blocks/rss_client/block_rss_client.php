@@ -1,5 +1,20 @@
 <?php //$Id$
 
+/*******************************************************************
+* This file contains one class which...
+*
+* @todo Finish documenting this file
+* @author Daryl Hawes
+* @version  $Id$
+* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+* @package base
+******************************************************************/
+
+/**
+ * This class is for a block which....
+ * @todo Finish documenting this class
+ */
+
 // Developer's debug assistant - if true then the display string will not cache, only
 // the magpie object's built in caching will be used
 define('BLOCK_RSS_SECONDARY_CACHE_ENABLED', true);
@@ -36,11 +51,11 @@ class block_rss_client extends block_base {
         }
 
         $this->content = new stdClass;
+        $this->content->text   = '';
         $this->content->footer = '';
         
         if (empty($this->instance)) {
             // We're being asked for content without an associated instance
-            $this->content->text = '';
             return $this->content;
         }
 
@@ -90,11 +105,11 @@ class block_rss_client extends block_base {
             $page = page_create_object($this->instance->pagetype, $this->instance->pageid);
             if (isset($this->config)) {
                 // this instance is configured - show Add/Edit feeds link
-                $script = $page->url_get_full(array('instanceid' => $this->instance->id, 'sesskey' => $USER->sesskey, 'blockaction' => 'config', 'currentaction' => 'managefeeds'));
+                $script = $page->url_get_full(array('instanceid' => $this->instance->id, 'sesskey' => $USER->sesskey, 'blockaction' => 'config', 'currentaction' => 'managefeeds', 'id' => $this->courseid));
                 $output .= '<div align="center"><a title="'. get_string('feedsaddedit', 'block_rss_client') .'" href="'. $script .'">'. get_string('feedsaddedit', 'block_rss_client') .'</a></div>';
             } else {
                 // this instance has not been configured yet - show configure link
-                $script = $page->url_get_full(array('instanceid' => $this->instance->id, 'sesskey' => $USER->sesskey, 'blockaction' => 'config', 'currentaction' => 'configblock'));
+                $script = $page->url_get_full(array('instanceid' => $this->instance->id, 'sesskey' => $USER->sesskey, 'blockaction' => 'config', 'currentaction' => 'configblock', 'id' => $this->courseid));
                 $output .= '<div align="center"><a title="'. get_string('feedsconfigurenewinstance', 'block_rss_client') .'" href="'. $script.'">'. get_string('feedsconfigurenewinstance', 'block_rss_client') .'</a></div>';
             }
         }
@@ -198,32 +213,36 @@ class block_rss_client extends block_base {
 
             $formatoptions->para = false;
 
-            if(!empty($rss->items)) {
-                foreach ($rss->items as $item) {
-                    $item['title'] = stripslashes_safe(rss_unhtmlentities($item['title']));
-                    $item['description'] = stripslashes_safe(rss_unhtmlentities($item['description']));
-                    if ($item['title'] == '') {
-                        // no title present, use portion of description
-                        $item['title'] = substr(strip_tags($item['description']), 0, 20) . '...';
-                    } else {
-                        $item['title'] = break_up_long_words($item['title'], 30);
-                    }
+            // first we must verify that the rss feed is loaded
+            // by checking $rss and $rss->items exist before using them
+            if (empty($rss) || empty($rss->items)) {
+                return '';
+            }
             
-                    if ($item['link'] == '') {
-                        $item['link'] = $item['guid'];
-                    }
-    
-                    $item['link'] = str_replace('&', '&amp;', $item['link']);
-    
-                    $returnstring .= '<div class="link"><a href="'. $item['link'] .'" target="_blank">'. $item['title'] . '</a></div>' ."\n";
-    
-                    
-                    if ($display_description && !empty($item['description'])) {
-                        $item['description'] = break_up_long_words($item['description'], 30);
-                        $returnstring .= '<div class="description">'.
-                                         format_text($item['description'], FORMAT_MOODLE, $formatoptions, $this->courseid) . 
-                                         '</div>' ."\n";
-                    }
+            foreach ($rss->items as $item) {
+                $item['title'] = stripslashes_safe(rss_unhtmlentities($item['title']));
+                $item['description'] = stripslashes_safe(rss_unhtmlentities($item['description']));
+                if ($item['title'] == '') {
+                    // no title present, use portion of description
+                    $item['title'] = substr(strip_tags($item['description']), 0, 20) . '...';
+                } else {
+                    $item['title'] = break_up_long_words($item['title'], 30);
+                }
+        
+                if ($item['link'] == '') {
+                    $item['link'] = $item['guid'];
+                }
+
+                $item['link'] = str_replace('&', '&amp;', $item['link']);
+
+                $returnstring .= '<div class="link"><a href="'. $item['link'] .'" target="_blank">'. $item['title'] . '</a></div>' ."\n";
+
+                
+                if ($display_description && !empty($item['description'])) {
+                    $item['description'] = break_up_long_words($item['description'], 30);
+                    $returnstring .= '<div class="description">'.
+                                     format_text($item['description'], FORMAT_MOODLE, $formatoptions, $this->courseid) . 
+                                     '</div>' ."\n";
                 }
             }
 

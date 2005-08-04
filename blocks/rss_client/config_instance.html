@@ -1,11 +1,13 @@
 <?php 
 require_once($CFG->libdir .'/rsslib.php');
 
+$id       = optional_param('id', SITEID, PARAM_INT);
+
 //create a page object for url_get_full()
 $page = page_create_object($this->instance->pagetype, $this->instance->pageid);
 
 /// Print tabs at top
-global $currentaction;
+$currentaction = optional_param( 'currentaction','',PARAM_ALPHA );
 if (empty($currentaction) || $currentaction == 'configblock') {
     $currentaction = 'configblock';
 } else {
@@ -147,8 +149,8 @@ if ($currentaction == 'configblock') {
     global $act, $url, $rssid, $preferredtitle;
     print '<table cellpadding="9" cellspacing="0" class="blockconfigtable">';
     print '<tr valign="top"><td>';
-    rss_display_feeds();
+    rss_display_feeds($id);
     print '</form>'; //not sure that this is needed
-    rss_get_form($act, $url, $rssid, $preferredtitle); 
+    rss_print_form($act, $url, $rssid, $preferredtitle, $id);
     print '</td></tr></table>';
 } ?>
