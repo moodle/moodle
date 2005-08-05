@@ -28,15 +28,16 @@ function print_entry($course) {
     // check payment
     $this->check_paid();
 
-    // HTTPS support: I want to paid on secure layer.
-    if ((!empty($CFG->loginhttps)) && (!isset($_SERVER['HTTPS']))) {
-        $wwwsroot = str_replace('http://','https://', $CFG->wwwroot);
-        $sdestination = "$wwwsroot/course/enrol.php?id=$course->id";
-        redirect($sdestination);
-        exit;
-    }
-    if (!isset($_SERVER['HTTPS'])) {
-        error(get_string("httpsrequired", "enrol_authorize"));
+    // I want to paid on SSL.
+    if (empty($_SERVER['HTTPS'])) {
+        if (empty($CFG->loginhttps)) {
+            error(get_string("httpsrequired", "enrol_authorize"));
+        } else {
+            $wwwsroot = str_replace('http://','https://', $CFG->wwwroot);
+            $sdestination = "$wwwsroot/course/enrol.php?id=$course->id";
+            redirect($sdestination);
+            exit;
+        }
     }
 
     $CCTYPES = array(
@@ -61,7 +62,7 @@ function print_entry($course) {
 
     print_header($strloginto, $course->fullname, "<a href=\"$CFG->wwwroot/course/\">$strcourses</a> -> $strloginto");
     print_course($course, "80%");
-    
+
     if ($course->password) {
         print_simple_box(get_string('choosemethod', 'enrol_authorize'), 'center');
         $password = ''; 
@@ -95,7 +96,8 @@ function cc_submit($form, $course) {
               return;
     }
 
-    $exp_date = (($form->ccexpiremm<10) ? strval('0'.$form->ccexpiremm) : strval($form->ccexpiremm)) . ($form->ccexpireyyyy);
+    $exp_date = ($form->ccexpiremm < 10) ? strval('0'.$form->ccexpiremm) : strval($form->ccexpiremm);
+    $exp_date .= $form->ccexpireyyyy;
     $valid_cc = CCVal($form->cc, $form->cctype, $exp_date);
     $curcost = $this->get_course_cost($course);
     $useripno = getremoteaddr(); // HTTP_CLIENT_IP, HTTP_X_FORWARDED_FOR, REMOTE_ADDR
@@ -214,7 +216,7 @@ function cc_submit($form, $course) {
         }
 
         if (!enrol_student($USER->id, $course->id, $timestart, $timeend)) {
-            $this->email_cc_error_to_admin("Error while trying to enrol ".fullname($USER)." in '$course->fullname'", $response);
+            $this->email_to_admin("Error while trying to enrol ".fullname($USER)." in '$course->fullname'", $response);
         } else {
             // begin: send email
             $teacher = get_teacher($course->id);
@@ -250,7 +252,7 @@ function cc_submit($form, $course) {
             $datax->avscode = strval($response[5]);
             $datax->transid = strval($response[6]);
             if (!insert_record("enrol_authorize", $datax)) { // Insert a transaction record
-                $this->email_cc_error_to_admin("Error while trying to insert valid transaction", $datax);
+                $this->email_to_admin("Error while trying to insert valid transaction", $datax);
             }
         } // end if (!enrol_student)
 
@@ -277,7 +279,9 @@ function get_course_cost($course) {
         $cost = (float)(((float)$course->cost) < 0) ? $CFG->enrol_cost : $course->cost;
     }
 
-    $currency = (!empty($course->currency)) ? $course->currency : (empty($CFG->enrol_currency) ? 'USD' : $CFG->enrol_currency);
+    $currency = (!empty($course->currency))
+                 ? $course->currency :( empty($CFG->enrol_currency)
+                                        ? 'USD' : $CFG->enrol_currency );
 
     $cost = format_float($cost, 2);
     $ret = array('cost' => $cost, 'currency' => $currency);
@@ -394,7 +398,7 @@ function process_config($config) {
     return $return;
 }
 
-function email_cc_error_to_admin($subject, $data) {
+function email_to_admin($subject, $data) {
     $admin = get_admin();
     $site = get_site();
 
