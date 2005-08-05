@@ -1,0 +1,48 @@
+<?php
+    // check the default settings
+    require_once "defaultsettings.php";
+
+    // get strings
+    $txt = new Object;
+    $txt->mediapluginmp3 = get_string( 'mediapluginmp3','admin' );
+    $txt->mediapluginswf = get_string( 'mediapluginswf','admin' );
+    $txt->mediapluginmov = get_string( 'mediapluginmov','admin' );
+    $txt->mediapluginwmv = get_string( 'mediapluginwmv','admin' );
+    $txt->mediapluginmpg = get_string( 'mediapluginmpg','admin' );
+    $txt->mediapluginavi = get_string( 'mediapluginavi','admin' );
+
+    $yesno = array( 'no', 'yes' );
+?>
+
+<table cellpadding="9" cellspacing="0">
+    <tr valign="top">
+        <td align="right"><?php echo $txt->mediapluginmp3 ?></td>
+        <td><?php choose_from_menu( $yesno,'filter_mediaplugin_enable_mp3',
+             $CFG->filter_mediaplugin_enable_mp3 ); ?></td> 
+    </tr>
+    <tr valign="top">
+        <td align="right"><?php echo $txt->mediapluginswf?></td>
+        <td><?php choose_from_menu( $yesno,'filter_mediaplugin_enable_swf',
+             $CFG->filter_mediaplugin_enable_swf ); ?></td> 
+    </tr>
+    <tr valign="top">
+        <td align="right"><?php echo $txt->mediapluginmov ?></td>
+        <td><?php choose_from_menu( $yesno,'filter_mediaplugin_enable_mov',
+             $CFG->filter_mediaplugin_enable_mov ); ?></td> 
+    </tr>
+    <tr valign="top">
+        <td align="right"><?php echo $txt->mediapluginwmv ?></td>
+        <td><?php choose_from_menu( $yesno,'filter_mediaplugin_enable_wmv',
+             $CFG->filter_mediaplugin_enable_wmv ); ?></td> 
+    </tr>
+    <tr valign="top">
+        <td align="right"><?php echo $txt->mediapluginmpg ?></td>
+        <td><?php choose_from_menu( $yesno,'filter_mediaplugin_enable_mpg',
+             $CFG->filter_mediaplugin_enable_mpg ); ?></td> 
+    </tr>
+    <tr valign="top">
+        <td align="right"><?php echo $txt->mediapluginavi ?></td>
+        <td><?php choose_from_menu( $yesno,'filter_mediaplugin_enable_avi',
+             $CFG->filter_mediaplugin_enable_avi ); ?></td> 
+    </tr>
+</table>
