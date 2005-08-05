@@ -18,7 +18,9 @@
 function mediaplugin_filter($courseid, $text) {
     global $CFG, $THEME;
 
-    if (empty($CFG->filter_mediaplugin_ignore_mp3)) {
+    include "defaultsettings.php";
+
+    if ($CFG->filter_mediaplugin_enable_mp3) {
         static $c;
 
         if (empty($c)) {
@@ -49,7 +51,7 @@ function mediaplugin_filter($courseid, $text) {
         $text = preg_replace($search, $replace, $text);
     }
 
-    if (empty($CFG->filter_mediaplugin_ignore_swf)) {
+    if ($CFG->filter_mediaplugin_enable_swf) {
         $search = '/<a(.*?)href=\"([^<]+)\.swf\"([^>]*)>(.*?)<\/a>/is';
 
         $replace  = '\\0<p class="mediaplugin swf"><object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"';
@@ -68,7 +70,7 @@ function mediaplugin_filter($courseid, $text) {
         $text = preg_replace($search, $replace, $text);
     }
 
-    if (empty($CFG->filter_mediaplugin_ignore_mov)) {
+    if ($CFG->filter_mediaplugin_enable_mov) {
         $search = '/<a(.*?)href=\"([^<]+)\.mov\"([^>]*)>(.*?)<\/a>/is';
 
         $replace  = '\\0<p class="mediaplugin mov"><object classid="CLSID:02BF25D5-8C17-4B23-BC80-D3488ABDDC6B"';
@@ -90,7 +92,7 @@ function mediaplugin_filter($courseid, $text) {
         $text = preg_replace($search, $replace, $text);
     }
 
-    if (empty($CFG->filter_mediaplugin_ignore_wmv)) {
+    if ($CFG->filter_mediaplugin_enable_wmv) {
         $search = '/<a(.*?)href=\"([^<]+)\.wmv\"([^>]*)>(.*?)<\/a>/is';
 
         $replace  = '\\0<p class="mediaplugin wmv"><object classid="CLSID:22D6f312-B0F6-11D0-94AB-0080C74C7E95"';
@@ -117,7 +119,7 @@ function mediaplugin_filter($courseid, $text) {
         $text = preg_replace($search, $replace, $text);
     }
 
-    if (empty($CFG->filter_mediaplugin_ignore_mpg)) {
+    if ($CFG->filter_mediaplugin_enable_mpg) {
         $search = '/<a(.*?)href=\"([^<]+)\.(mpe?g)\"([^>]*)>(.*?)<\/a>/is';
 
         $replace = '\\0<p class="mediaplugin mpg"><object width="240" height="180">';
@@ -130,7 +132,7 @@ function mediaplugin_filter($courseid, $text) {
         $text = preg_replace($search, $replace, $text);
     }
 
-    if (empty($CFG->filter_mediaplugin_ignore_avi)) {
+    if ($CFG->filter_mediaplugin_enable_avi) {
         $search = '/<a(.*?)href=\"([^<]+)\.avi\"([^>]*)>(.*?)<\/a>/is';
 
         $replace = '\\0<p class="mediaplugin avi"><object width="240" height="180">';
