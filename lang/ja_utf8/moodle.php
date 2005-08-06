@@ -92,7 +92,7 @@ $string['assignadmins'] = '管理者の割当て';
 $string['assigncreators'] = 'コース作成者の割当て';
 $string['assignstudents'] = '学生の登録';
 $string['assignstudentsnote'] = '注意: 学生が自分でコースに登録することができますので、このページを使う必要はありません。';
-$string['assignstudentspass'] = 'あなたがやらなければならないことは、このコースの学生に登録キーを知らせることです。登録キー:  \'$a\'';
+$string['assignstudentspass'] = 'あなたがやらなければならないことは、このコースの学生に登録キーを知らせることです。登録キー:  「 $a 」';
 $string['assignteachers'] = '教師の割当て';
 $string['authentication'] = '認証オプション';
 $string['autosubscribe'] = 'フォーラムメール購読';
@@ -119,7 +119,7 @@ $string['backupnoneusersinfo'] = '注意: ユーザファイルのバックア�
 $string['backuporiginalname'] = 'バックアップ名';
 $string['backupsavetohelp'] = 'バックアップファイル保存先ディレクトリをフルパスで入力してください。<br />( コースデフォルトディレクトリに保存する場合は空白 )';
 $string['backuptakealook'] = '次のバックアップログをご覧ください: $a';
-$string['backupuserfileshelp'] = '自動バックアップにユーザファイル ( 例 プロフィール写真 ) を含めるか否か選択してください。';
+$string['backupuserfileshelp'] = '自動バックアップにユーザファイル ( 例 プロフィール写真 ) を含めるか選択してください。';
 $string['backupusershelp'] = 'サーバ内の全ユーザを含めるか、各コースに必要なユーザのみを含めるか選択してください。';
 $string['backupversion'] = 'バックアップバージョン';
 $string['blockconfiga'] = '$a ブロックの設定';
@@ -378,7 +378,7 @@ $a->link
 $string['emailpasswordconfirmationsubject'] = '$a: パスワード変更の確認';
 $string['emailpasswordconfirmsent'] = 'メールがあなたのアドレス <b>$a</b> 宛に送信されました。<br />送信されたメールにはパスワードの変更を確認・完了するための簡単な説明が書いてあります。問題がある場合はサイト管理者にご連絡ください。';
 $string['emailpasswordsent'] = 'パスワードの変更確認ありがとうございます。
-<p>新しいパスワードが記載されたメールがあなたのメールアドレス<br /><b>$a->email</b>に送信されました。<br />新しいパスワードは自動的に生成されたものです - <a href=$a->link>パスワードの変更</a> で覚えやすいものに変更することができます。';
+<p>新しいパスワードが記載されたメールがあなたのメールアドレス<br /><b>$a->email</b>に送信されました。<br />新しいパスワードは自動的に生成されたものです - <a href=\"$a->link\">パスワードの変更</a> で覚えやすいものに変更することができます。';
 $string['enable'] = 'Yes';
 $string['encryptedcode'] = '暗号化コード';
 $string['enrolledincourse'] = 'コース「 $a 」登録済';
@@ -588,8 +588,8 @@ $string['livelogs'] = 'リアルタイムログの表示';
 $string['locale'] = 'ja_JP.utf8';
 $string['location'] = 'ロケーション';
 $string['loggedinas'] = 'ログイン名 $a ';
-$string['loggedinasguest'] = '現在あなたはゲストログインしています。';
-$string['loggedinnot'] = 'あなたはログインしていません。';
+$string['loggedinasguest'] = '現在ゲストログインしています。';
+$string['loggedinnot'] = 'ログインしていません。';
 $string['login'] = 'ログイン';
 $string['login_failure_logs'] = 'ログイン失敗ログ';
 $string['loginas'] = 'ログイン';
@@ -597,7 +597,6 @@ $string['loginguest'] = 'ゲストとしてログインする';
 $string['loginsite'] = 'ログイン画面';
 $string['loginsteps'] = 'こんにちは! コースにアクセスするために新しいアカウントを作成してください。アカウント作成方法は下記の通りです。
 <ol>
-
 <li>アカウントの作成
 <ul>
 <li type=disc><a href=\"$a\">新しいアカウントを作成する</a>で<b>必要事項を入力してください</b>。</li>
@@ -616,7 +615,6 @@ $string['loginsteps'] = 'こんにちは! コースにアクセスするため�
 <li type=disc>「登録キー」を入力する必要がある場合は、先生が教えたものを入力してください。これでコースにアクセスできるようになります。</li>
 <li type=disc>今後、登録したコースにアクセスするために必要なものは、ユーザ名とパスワードのみです。 このページの左側のユーザ名とパスワードの入力欄を利用してください。</li>
 </ul>
-
 </ol>';
 $string['loginstepsnone'] = '<p>こんにちは!</p>
 <p>コースを利用するためにはアカウントを開設する必要があります。</p>
@@ -639,7 +637,7 @@ $string['managedatabase'] = 'データベース管理';
 $string['managefilters'] = 'フィルタ';
 $string['managemeta'] = 'このコースはメタコースですか?';
 $string['managemetadisabled'] = 'このコースは既にメタコースに登録されていますので利用できません。';
-$string['managemetaexplan'] = '( 他のコースからユーザ登録情報を継承することを意味します)';
+$string['managemetaexplan'] = '( 他のコースからユーザ登録情報を継承することを意味します )';
 $string['managemodules'] = 'モジュール管理';
 $string['markedthistopic'] = 'このトピックは最新トピックとして強調されています。';
 $string['markthistopic'] = 'このトピックを最新トピックにする。';
@@ -1060,7 +1058,7 @@ $string['uploadnofilefound'] = 'ファイルが見つかりません - アップ
 $string['uploadnotallowed'] = 'アップロードは許可されていません';
 $string['uploadoldfilesdeleted'] = 'アップロードエリアの古いファイルが削除されました。';
 $string['uploadpartialfile'] = 'ファイルが部分的にアップロードされました。';
-$string['uploadproblem'] = 'ファイル「 $a 」のアップロード中に原因不明のエラーが発生しました(ファイルサイズが大きすぎると思われます)';
+$string['uploadproblem'] = 'ファイル「 $a 」のアップロード中に原因不明のエラーが発生しました ( ファイルサイズが大きすぎると思われます )';
 $string['uploadrenamedchars'] = '無効なキャラクターが使われているため、ファイルが $a->oldname から $a->newname へリネームされました。';
 $string['uploadrenamedcollision'] = '同一名称のファイルが存在するため、ファイルが $a->oldname から $a->newname へリネームされました。';
 $string['uploadserverlimit'] = 'アップロードファイルがサーバで設定された最大サイズを超えました。';
