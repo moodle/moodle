@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // enrol_authorize.php - created with Moodle 1.5.1 (2005060210)
+      // enrol_authorize.php - created with Moodle 1.6 development (2005072200)
 
 
 $string['anlogin'] = 'Authorize.net: Kullanýcý adý';
@@ -18,7 +18,12 @@ $string['choosemethod'] = 'Kursun kayýt anahtarýný biliyorsanýz giriniz. Diðer d
 $string['chooseone'] = 'Aþaðýdaki iki alandan birini veya ikisini doldurun';
 $string['description'] = 'Authorize.net modülü Kredi Kartý saðlayýcýlarýyla ücretli kurslar ayarlamanýza olanak verir. Bir kursun ücreti sýfýr ise öðrencilere ödeme yapmalarý için bir istekte bulunulmaz. Sitenin geneli için ayarlayabileceðiniz varsayýlan bir tutar vardýr ve her bir dersin ücretini tek tek de ayarlayabilirsiniz. Kurs ücreti ayarlanýrsa site genelindeki ücret yoksayýlýr.';
 $string['enrolname'] = 'Authorize.net Kredi Kartý Saðlayýcýsý';
-$string['logindesc'] = '<a href=\"$a->url\">Loginhttps</a> seçeneðini Deðiþkenler/Güvenlik bölümünden ayarlayabilirsiniz.
+$string['httpsrequired'] = 'Üzgünüz, isteðinizi þu anda yerine getiremiyoruz. Bu sitenin ayarý doðru yapýlandýrýlmamýþ.
+<br /><br />
+Tarayýcýnýzýn alt tarafýnda sarý bir kilit görmüyorsanýz kredi kartý numaranýzý girmeyiniz. Bu, sizinle sunucu arasýnda gidip gelen verinin þifrelendiði anlamýna gelir. Böylece 2 bilgisayar arasýnda akan bilgi korunmuþ olur ve kredi kartý numaranýz internet üzerinden yakalanamaz.';
+$string['logindesc'] = 'Bu seçenek AÇIK olmalý.
+<br /><br />
+<a href=\"$a->url\">Loginhttps</a> seçeneðini Deðiþkenler/Güvenlik bölümünden ayarlayabilirsiniz.
 <br /><br />
 Bu seçenek aktif ise sadece giriþ ve ödeme sayfalarý için güvenli baðlantý (https) kullanýlacaktýr.';
 $string['nameoncard'] = 'Kart Üzerindeki Ýsim';
