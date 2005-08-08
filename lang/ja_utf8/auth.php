@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.6 development (2005060201)
+      // auth.php - created with Moodle 1.6 development (2005072200)
 
 
 $string['alternatelogin'] = 'ここにURLを入力した場合、このサイトのログインページとして使用されます。ログインページでは、action属性に<strong>「 $a 」</strong>をセットして、 <strong>username</strong>フィールドおよび<strong>password</strong>フィールドを適切にMoodleに渡す必要があります。<br />間違ったURLを設定すると、あなたのサイトから締め出されることになりますので注意してください。<br />デフォルトのログイン画面を使用する場合は、空白のままにしてください。';
@@ -16,11 +16,11 @@ $string['auth_cas_server_settings'] = 'CASサーバ設定';
 $string['auth_cas_text'] = 'セキュアコネクション';
 $string['auth_cas_version'] = 'CASのバージョン';
 $string['auth_casdescription'] = 'この方法は、単一ログイン環境 (Single Sign On environment: SSO) にて、CASサーバ (Central Authentication Service) をユーザ認証に使用します。シンプルLDAP認証を使用することもできます。ユーザ名とパスワードがCASで認証された場合、Moodleは新しいユーザエントリをデータベースに作成します。また、必要であれば、LDAPよりユーザ属性を取得します。次回からはユーザ名とパスワードのみが確認されます。';
-$string['auth_castitle'] = 'CASサーバ (SSO)';
+$string['auth_castitle'] = 'CASサーバ ( SSO ) を使用';
 $string['auth_common_settings'] = '一般設定';
 $string['auth_data_mapping'] = 'データマッピング';
 $string['auth_dbdescription'] = 'ユーザ名とパスワードを確認するために外部のデータベースを使用します。新しいアカウントを作成する場合、他のフィールドの情報がMoodleへ複製されます。';
-$string['auth_dbextrafields'] = 'これらのフィールドは任意項目です。<b>外部データベースフィールド</b>より事前に入力されたMoodleユーザフィールドを選択することも可能です。<p>空白の場合は初期値が使用されます。<p>どちらの場合でも、ユーザはログイン後に全てのフィールドを編集可能です。';
+$string['auth_dbextrafields'] = 'これらのフィールドは任意項目です。<b>外部データベースフィールド</b>より事前に入力されたMoodleユーザフィールドを選択することも可能です。<p>空白の場合は初期値が使用されます。</p><p>どちらの場合でも、ユーザはログイン後に全てのフィールドを編集可能です。</p>';
 $string['auth_dbfieldpass'] = 'パスワードを含んだフィールド名';
 $string['auth_dbfielduser'] = 'ユーザ名を含んだフィールド名';
 $string['auth_dbhost'] = 'データベースサーバが稼動しているコンピュータ';
@@ -53,38 +53,36 @@ $string['auth_ldap_bind_dn'] = 'ユーザ検索にbindユーザを利用した�
 $string['auth_ldap_bind_pw'] = 'bindユーザ用のパスワード';
 $string['auth_ldap_bind_settings'] = 'Bind設定';
 $string['auth_ldap_contexts'] = 'ユーザが配置されているコンテキスト一覧です。異なるコンテキストは「;」で分けてください。例 \'ou=users,o=org; ou=others,o=org\'';
-$string['auth_ldap_create_context'] = 'ユーザ作成をメールによる認証で行う場合、ユーザが作成されるコンテキストを特定してください。セキュリティーの観点から、このコンテキストは各ユーザ毎に異なるものでなければなりません。Moodleが自動的にコンテキストからユーザを探しますので、ldap_context-vaiableをこのコンテキストに追加する必要はありません。';
+$string['auth_ldap_create_context'] = 'ユーザ作成をメールによる認証で行う場合、ユーザが作成されるコンテキストを特定してください。セキュリティの観点から、このコンテキストは各ユーザ毎に異なるものでなければなりません。Moodleが自動的にコンテキストからユーザを探しますので、ldap_context-vaiableをこのコンテキストに追加する必要はありません。<br /><b>注意!</b> ユーザ作成を動作させるために、auth/ldap/lib.phpファイルのauth_user_create() 関数を修正してください。';
 $string['auth_ldap_creators'] = 'メンバーが新しいコースの作成を許されているグループのリストです。複数のグループは「;」で分けられています。通常は\'cn=teachers,ou=staff,o=myorg\'のようになります。';
-$string['auth_ldap_expiration_desc'] = 'パスワードチェックの有効期限を無効にする場合、またはLDAPがLDAPサーバから直接passwordexpirationを参照する場合は、「No」を選択してください。必ず属性名にldap_expireattrを入力してください。';
+$string['auth_ldap_expiration_desc'] = 'パスワードチェックの有効期限を無効にする場合、またはLDAPがLDAPサーバから直接passwordexpirationを参照する場合は、「No」を選択してください。';
 $string['auth_ldap_expiration_warning_desc'] = 'パスワードの有効期限切れを警告するまでの日数を入力してください。';
 $string['auth_ldap_expireattr_desc'] = 'オプション: ldap-attributeはパスワードの有効期限passwordExpirationTimeを保存します。';
-$string['auth_ldap_graceattr_desc'] = 'LDAP 猶予ログイン属性';
+$string['auth_ldap_graceattr_desc'] = '任意: 猶予ログイン属性をオーバーライドする';
 $string['auth_ldap_gracelogins_desc'] = 'LDAPの猶予ログインサポートを有効にします。パスワードの有効期限が切れた後、猶予ログインカウントがゼロになるまでログインすることができます。この設定を「Yes」にすると、パスワードが期限切れになった場合に猶予ログインメッセージが表示されます。';
-$string['auth_ldap_host_url'] = 'LDAPホストのURLを下記のように明示してください。
-
-\'ldap://ldap.myorg.com/\' または \'ldaps://ldap.myorg.com/\' ';
+$string['auth_ldap_host_url'] = 'LDAPホストのURLを次ののように明示してください。\'ldap://ldap.myorg.com/\' または \'ldaps://ldap.myorg.com/\' 複数サーバのフェイルオーバーをサポートするには「;」で分離してください。';
 $string['auth_ldap_login_settings'] = 'ログイン設定';
-$string['auth_ldap_memberattribute'] = 'ユーザがグループに属性している場合、ユーザの属性を特定してください。通常は\'member\'です。';
-$string['auth_ldap_objectclass'] = 'フィルタはユーザ名検索時に使用されます。通常は、objectClass=posixAccountのように設定します。デフォルトのobjectClass=*は全てのオブジェクトをLDAPより返します。';
+$string['auth_ldap_memberattribute'] = '任意: ユーザがグループに所属している場合、ユーザの属性を特定してください。通常は「member」です。';
+$string['auth_ldap_objectclass'] = '任意: ldap_user_typeのname/searchユーザで使用されるオブジェクトクラスをオーバーライドしてください。通常、この設定を変更する必要はありません。';
 $string['auth_ldap_opt_deref'] = '検索時にエイリアスがどのように扱われるか決定してください。次の値から選択してください:  「No」 (LDAP_DEREF_NEVER) または 「Yes」 (LDAP_DEREF_ALWAYS)';
 $string['auth_ldap_passwdexpire_settings'] = 'LDAPパスワード有効期限設定';
 $string['auth_ldap_preventpassindb'] = 'MoodleのDBにパスワードが保存されることを防ぐには「Yes」を選択してください。';
-$string['auth_ldap_search_sub'] = 'サブコンテキストからユーザを検索する場合は、  <> 0 のように入力してください。';
+$string['auth_ldap_search_sub'] = 'サブコンテキストからユーザを検索する。';
 $string['auth_ldap_server_settings'] = 'LDAPサーバ設定';
-$string['auth_ldap_update_userinfo'] = 'LDAPよりMoodleの情報 ( 名、姓、住所等 ) を更新します。マッピング情報に関しては /auth/ldap/attr_mappings をご覧ください。';
-$string['auth_ldap_user_attribute'] = 'name/searchユーザに使われる属性です。通常は\'cn\'です。';
+$string['auth_ldap_update_userinfo'] = 'LDAPよりMoodleの情報 ( 名、姓、住所等 ) を更新します。「データマッピング」設定を指定してください。';
+$string['auth_ldap_user_attribute'] = '任意: name/searchユーザに使用される属性です。通常は「cn」です。';
 $string['auth_ldap_user_settings'] = 'ユーザlookup設定';
 $string['auth_ldap_user_type'] = 'ユーザがどのようにLDAPに保存されるか選択してください。この設定では、有効期限、猶予ログイン、ユーザ作成がどのようになされるのかも指定します。';
 $string['auth_ldap_version'] = 'サーバで使用しているLDAPプロトコルのバージョン';
 $string['auth_ldapdescription'] = '外部のLDAPサーバに対して認証を行います。ユーザ名とパスワードが正しい場合、Moodleは新しいユーザをデータベースに作成します。このモジュールはユーザ属性をLDAPから取得してMoodleのフィールドに入力します。認証後のログインではユーザ名とパスワードのみが確認されます。';
-$string['auth_ldapextrafields'] = 'これらのフィールドは任意項目です。<b>LDAPフィールド</b>より事前に入力されたMoodleユーザフィールドを選択することも可能です。<p>空白の場合はLDAPよりデータの転送は行われずにMoodleの初期値が使用されます<p>どちらの場合でも、ユーザはログイン後に全てのフィールドを編集可能です。';
+$string['auth_ldapextrafields'] = 'これらのフィールドは任意項目です。<b>LDAPフィールド</b>より事前に入力されたMoodleユーザフィールドを選択することも可能です。<p>空白の場合はLDAPよりデータの転送は行われずにMoodleの初期値が使用されます</p><p>どちらの場合でも、ユーザはログイン後に全てのフィールドを編集可能です。</p>';
 $string['auth_ldaptitle'] = 'LDAPサーバを使用';
-$string['auth_manualdescription'] = 'この方法ではユーザによるユーザアカウント作成機能を停止します。全てのアカウント作成は管理者により手動で行う必要があります。';
+$string['auth_manualdescription'] = 'この方法では、ユーザによるユーザアカウント作成機能を停止します。全てのアカウント作成は、管理者により手動で行う必要があります。';
 $string['auth_manualtitle'] = '手動アカウント作成のみ';
-$string['auth_multiplehosts'] = '複数のホストを設定できます ( 例 host1.com;host2.com;host3.com ) ';
+$string['auth_multiplehosts'] = '複数のホストまたはアドレスを設定できます ( 例 host1.com;host2.com;host3.com ) または ( 例 xxx.xxx.xxx.xxx;xxx.xxx.xxx.xxx )';
 $string['auth_nntpdescription'] = 'ユーザ名とパスワードを確認するためにNNTPサーバを使用します。';
 $string['auth_nntphost'] = 'NNTPサーバアドレスです。IPアドレスではなくドメイン名を使用してください。';
-$string['auth_nntpport'] = 'サーバポート(119が一般的です)';
+$string['auth_nntpport'] = 'サーバポート ( 119が一般的です )';
 $string['auth_nntptitle'] = 'NNTPサーバを使用';
 $string['auth_nonedescription'] = 'ユーザはログインして外部サーバおよびメールによる認証無しにアカウントを直ちに作成できます。このオプションを使用するときは十分に注意してください - セキュリティーおよび管理上の問題が発生するかもしれないことを考えてください。';
 $string['auth_nonetitle'] = '認証無し';
@@ -94,7 +92,7 @@ $string['auth_passwordisexpired'] = 'あなたのパスワードの有効期限�
 $string['auth_passwordwillexpire'] = 'あなたのパスワードの有効期限は、$a 日で切れます。パスワードを変更しますか?';
 $string['auth_pop3description'] = 'ユーザ名とパスワードを確認するためにPOP3サーバを使用します。';
 $string['auth_pop3host'] = 'POP3サーバアドレスです。IPアドレスではなくドメイン名を使用してください。';
-$string['auth_pop3mailbox'] = '接続を試みるメールボックス名(通常は受信ボックス)';
+$string['auth_pop3mailbox'] = '接続を試みるメールボックス名 ( 通常は受信ボックス )';
 $string['auth_pop3port'] = 'サーバポート ( 110が一般的です )';
 $string['auth_pop3title'] = 'POP3サーバを使用';
 $string['auth_pop3type'] = 'サーバタイプです。もし認証が必要な場合はpop3certを選択してください。';
@@ -104,11 +102,11 @@ $string['auth_shib_convert_data_warning'] = 'ファイルが存在しないか�
 $string['auth_shib_instructions'] = 'あなたの機関がShibbolethをサポートしている場合、Shibboleth経由のアクセスには、<a href=\"$a\">Shibbolethログイン</a>を使用してください。 <br />Shibbolethをサポートしていない場合は、ここに表示される通常ログインを使用してください。';
 $string['auth_shib_instructions_help'] = 'Shibbolethに関してユーザに提示する説明文です。 これはログインページの説明セクションに表示されます。Shibbolethユーザが簡単にログインできるように \"<b>$a</b>\" のようなリンクを入れてください。空白にした場合、通常の説明文 ( Shibboleth限定では無く ) が使用されます。';
 $string['auth_shib_only'] = 'Shibbolethのみ';
-$string['auth_shib_only_description'] = '「Yes」を選択するとShibboleth認証が強制されます。';
+$string['auth_shib_only_description'] = 'Shibboleth認証を強制する場合は、このオプションをチェックしてください。';
 $string['auth_shib_username_description'] = 'Moodleユーザ名として使用されるShibbolethウェブサーバ環境のユーザ名';
 $string['auth_shibboleth_login'] = 'Shibbolethログイン';
 $string['auth_shibboleth_manual_login'] = '手動ログイン';
-$string['auth_shibbolethdescription'] = 'ここでは、ユーザのチェックおよびアカウントの作成を行うためにShibbolethサーバに接続することができます。';
+$string['auth_shibbolethdescription'] = 'この方法を使用すると、<a href=\"http://shibboleth.internet2.edu/\" target=\"_blank\">Shibboleth</a>を使用してユーザは作成および認証されます。<br>あなたが使用しているMoodleにShibbolethを設定するには、<a href=\"../auth/shibboleth/README.txt\" target=\"_blank\">README</a> をご覧ください。';
 $string['auth_shibbolethtitle'] = 'Shibboleth';
 $string['auth_updatelocal'] = 'ローカルデータの更新';
 $string['auth_updatelocal_expl'] = '<p><b>ローカルデータの更新:</b> この設定を「Yes」にした場合、このフィールドは(外部認証を通して)ログイン毎またはユーザの同期毎に更新されます。更新されるローカルフィールドはロックする必要があります。</p>';
@@ -121,20 +119,24 @@ $string['auth_usernameexists'] = 'このユーザ名は既に存在します。�
 $string['authenticationoptions'] = '認証オプション';
 $string['authinstructions'] = 'どのようなユーザ名やパスワードを使用したらよいのかユーザに説明します。ここに入力した文章はログインページに表示されます。空白の場合、何も表示されません。';
 $string['changepassword'] = 'パスワードのURLを変更する';
-$string['changepasswordhelp'] = 'ユーザがユーザ名/パスワードを忘れたときに回復または変更するためのボタンをログインページに表示します。空白の場合、ボタンは表示されません。';
+$string['changepasswordhelp'] = 'ユーザがユーザ名/パスワードを忘れたときに回復または変更するためのボタンをログインページに表示します。この設定により、ログインページおよびユーザページにボタンが表示されます。空白の場合、ボタンは表示されません。';
 $string['chooseauthmethod'] = '認証方法の選択:';
+$string['createchangepassword'] = '無い場合は作成 - 強制変更';
+$string['createpassword'] = '無い場合は作成';
 $string['forcechangepassword'] = 'パスワード変更の強制';
 $string['forcechangepassword_help'] = '次にMoodleへログインする時に、ユーザのパスワード変更を強制します。';
 $string['forcechangepasswordfirst_help'] = '最初にMoodleへログインする時に、ユーザのパスワード変更を強制します。';
 $string['guestloginbutton'] = 'ゲストログインボタン';
+$string['infilefield'] = 'ファイルの必須フィールド';
 $string['instructions'] = '説明';
 $string['locked'] = 'ロックする';
 $string['md5'] = 'MD5暗号化';
+$string['passwordhandling'] = 'パスワードフィールド取り扱い';
 $string['plaintext'] = 'テキスト';
 $string['showguestlogin'] = 'ログインページのゲストログインボタンを表示／非表示にできます。';
 $string['stdchangepassword'] = '標準パスワード変更ページを使用';
-$string['stdchangepassword_expl'] = '外部認証システムがMoodleにパスワードの変更を許可する場合、この設定を「Yes」にしてください。この設定は、「Change Password URL」を上書きします。';
-$string['stdchangepassword_explldap'] = '注意: LDAPサーバをリモートで使用する場合は、SSL暗号化トンネルを使用することをお勧めします。';
+$string['stdchangepassword_expl'] = '外部認証システムがMoodleにパスワードの変更を許可する場合、この設定を「Yes」にしてください。この設定は、「Change Password URL」をオーバーライドします。';
+$string['stdchangepassword_explldap'] = '注意: LDAPサーバがリモートの場合、SSL暗号化トンネル (ldaps://) の使用をお勧めします。';
 $string['unlocked'] = 'ロックしない';
 $string['unlockedifempty'] = '空の場はロックしない';
 $string['update_never'] = 'しない';
