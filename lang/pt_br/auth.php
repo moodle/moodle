@@ -1,7 +1,22 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.4.3 (2004083130)
+      // auth.php - created with Moodle 1.5 + (2005060201)
 
 
+$string['alternatelogin'] = 'Para substituir a página de default de login é necessário indicar uma outra URL aqui. Esta deve conter a propriedade de ação configurada em modo adequado como <strong>\'$a\'</strong> e retornar os campos <strong>username</strong> e <strong>password</strong>.<br />Atenção, com uma URL errada você pode ficar bloqueado sem acesso a este site.<br />';
+$string['alternateloginurl'] = 'URL para Login Alternativo';
+$string['auth_cas_baseuri'] = 'URI do servidor (nada se não existir uma baseUri))<br />Por exemplo, seo servidor responde a um endereço como host.domaine.fr/CAS/ então<br />cas_baseuri = CAS/ ';
+$string['auth_cas_create_user'] = 'Ativar esta opção se você quiser inserir usuãrios autenticados pelo CAS no DB do Moodle. Em caso contrário, apenas os usuários inseridos no DB do Moodle podem fazer o login.';
+$string['auth_cas_enabled'] = 'Ative esta opção para utilizar a autenticação CAS.';
+$string['auth_cas_hostname'] = 'Hostname do servidor CAS <br />ex.: host.domain.br';
+$string['auth_cas_invalidcaslogin'] = 'O seu login não foi autorizado';
+$string['auth_cas_language'] = 'Idioma selecionado';
+$string['auth_cas_logincas'] = 'Acesso com conexão segura';
+$string['auth_cas_port'] = 'Porta do servidor CAS';
+$string['auth_cas_server_settings'] = 'Configuração do servidor CAS';
+$string['auth_cas_text'] = 'Conexão segura';
+$string['auth_cas_version'] = 'Versão de CAS';
+$string['auth_casdescription'] = 'Este método usa un servidor CAS (Central Authentication Service)para autenticar os usuários em SSO (Single Sign On environment). Você também pode usar uma simples autenticação LDAP. Se um usuário e uma senha são válidos para o CAS, o Moodle cria um novo usuário no DB utilizando os atributos LDAP definidos. Nos logins sucessivos apenas o nome do usuário e a senha serão controlados.';
+$string['auth_castitle'] = 'Usar um servidor (SSO) CAS';
 $string['auth_common_settings'] = 'Configurações comuns';
 $string['auth_data_mapping'] = 'Mapeamento dos dados';
 $string['auth_dbdescription'] = 'Este método usa uma tabela de uma base de dados externa para verificar se a senha e o nome do usuário são válidos. Se a conta for nova, a informação de outros campos também deve ser copiada em Moodle.';
@@ -16,8 +31,6 @@ $string['auth_dbtable'] = 'Nome da tabela na base de dados';
 $string['auth_dbtitle'] = 'Use uma base de dados externa';
 $string['auth_dbtype'] = 'O tipo de base de dados (veja <a href=\"../lib/adodb/readme.htm#drivers\"> Documentação do ADOdb</a> para mais detalhes)';
 $string['auth_dbuser'] = 'Nome de usuário com permissão de leitura da base de dados';
-$string['auth_editlock'] = 'Bloquear valor';
-$string['auth_editlock_expl'] = '<p><b>Bloquear valor:</b> Se for ativado, impede que os usuários e admins editem diretamente o campo. Use esta opção se você estiver mantendo estes dados em um sistema de autenticação. </p>';
 $string['auth_emaildescription'] = 'Confirmação via correio eletrônico é o método de autenticação predefinido. Depois que o usuário se inscrever, escolhendo o nome de usuário e a senha, receberá uma mensagem de confirmação via Email. Essa mensagem contém um link seguro a uma página onde o usuário deve confirmar a sua inscrição. Quando o usuário preencher os campos relativos ao nome de usuário e à senha na página de ingresso, estes dados serão confrontados com os valores arquivados na base de dados.';
 $string['auth_emailtitle'] = 'Autenticação via correio eletrônico';
 $string['auth_fccreators'] = 'Lista de grupos cujos membros tem permissão para criar novos cursos. Separar os grupos com \';\'. Os nomes devem ser escritos exatamente como em FirstClass, o sistema é sensível a diferenças entre maiúsculas e minúsculas. ';
@@ -27,6 +40,10 @@ $string['auth_fchost'] = 'Endereço do servidor FirstClass. Usar o número IP ou o
 $string['auth_fcpasswd'] = 'Senha para a conta acima';
 $string['auth_fctitle'] = 'Usar servidor Firstclass';
 $string['auth_fcuserid'] = 'ID da conta de usuário de FirstClass com privilégio de Subadministrador';
+$string['auth_fieldlock'] = 'Bloquear valor';
+$string['auth_fieldlock_expl'] = '<p><b>Bloquear valor:</b> Quando ativado, impede que usuários e administradores modifiquem o campo diretamente. usar esta opção quando os dados são mantidos em sistemas de autenticação externos. </p>';
+$string['auth_fieldlocks'] = 'Bloquear campos de usuário';
+$string['auth_fieldlocks_help'] = '<p>Você pode bloquear compos de dados de usuários. Isto é útil em sites mantidos pelo administrador manualmente, editando os records dos usuários ou usando a função \'Upload de usuários\'. Se você bloquear campos exigidos pelo Moodle, forneça estes dados quando criar as contas de usuários &emdash; ou as contas náo serão utilizáveis.</p><p>Considere a possibilidade de configurar o bloqueio como \'Desbloqueado se vazio\' para evitar este problema.</p>';
 $string['auth_imapdescription'] = 'Este método usa um servidor IMAP para verificar se o nome de usuário e a senha são válidos.';
 $string['auth_imaphost'] = 'Endereço do servidor IMAP. Use o NÚMERO IP e não o nome DNS.';
 $string['auth_imapport'] = 'Número da porta do servidor IMAP. Geralmente é 143 ou 993.';
@@ -50,6 +67,7 @@ $string['auth_ldap_objectclass'] = 'O filtro usado para a busca de nomes de usuá
 $string['auth_ldap_opt_deref'] = 'Determina como os aliases são tratados durante a busca. Escolha um dos seguintes valôres:
 \"Não\" (LDAP_DEREF_NEVER) or \"Sim\" (LDAP_DEREF_ALWAYS)';
 $string['auth_ldap_passwdexpire_settings'] = 'Configurações de expiração da senha LDAP';
+$string['auth_ldap_preventpassindb'] = 'Selecionar SIM para impedir que as senhas sejam arquivadas no DB do Moodle';
 $string['auth_ldap_search_sub'] = 'Inserir valor <> 0 se quiser procurar usuários nos sub-contextos.';
 $string['auth_ldap_server_settings'] = 'Configurações do servidor LDAP';
 $string['auth_ldap_update_userinfo'] = 'Atualizar os dados dos usuários (nome, sobrenome, endereço..) a partir do LDAP. Para informação sobre o mapeamento consulte /auth/ldap/attr_mappings.php';
@@ -79,6 +97,18 @@ $string['auth_pop3mailbox'] = 'Nome do mailbox indicado para a conexão (normalme
 $string['auth_pop3port'] = 'Porta do servidor  (normalmente 110)';
 $string['auth_pop3title'] = 'Use um servidor POP3';
 $string['auth_pop3type'] = 'Tipo de servidor. Se o seu servidor usar certificados de segurança, escolha pop3cert.';
+$string['auth_shib_convert_data'] = 'API de modificação dos dados';
+$string['auth_shib_convert_data_description'] = 'Você pode usar este API para modificar os dados fornecidos por Shibboleth. Leia <a href=\"../auth/shibboleth/README.txt\" target=\"_blank\">README</a> para maiores detalhes.';
+$string['auth_shib_convert_data_warning'] = 'Este campo não existe ou não é legível com o processo do servidor web!';
+$string['auth_shib_instructions'] = 'Use o <a href=\"$a\">login Shibboleth</a> para acessar por Shibboleth quando a sua instituição suporta isto.<br />Em caso contrário, utilize o método normal indicado aqui.';
+$string['auth_shib_instructions_help'] = 'Explique o uso de Shibboleth aos seus usuários. Este texto será publicado na página de login. É necessário incluir um link a um recurso protegido pelo Shibboleth que faça o enderaçamento a \"<b>$a</b>\" em modo que os usuários de Shibboleth possam fazer o login em Moodle. Deixando este campo vazio, serão utilizadas as instruções padrão.';
+$string['auth_shib_only'] = 'Shibboleth apenas';
+$string['auth_shib_only_description'] = 'Selecionar esta opção para utilizar uma autenticação Shibboleth ';
+$string['auth_shib_username_description'] = 'Nome da variãvel do servidor Shibboleth que deve ser usada come nome de usuãrio em Moodle';
+$string['auth_shibboleth_login'] = 'Login Shibboleth';
+$string['auth_shibboleth_manual_login'] = 'Login manual';
+$string['auth_shibbolethdescription'] = 'Com este método os usuários são criados e autenticados utilizando <a href=\"http://shibboleth.internet2.edu/\" target=\"_blank\">Shibboleth</a>.<br>Leia o <a href=\"../auth/shibboleth/README.txt\" target=\"_blank\">README</a> de Shibboleth para instruções sobre a configuração de Moodle com Shibboleth';
+$string['auth_shibbolethtitle'] = 'Shibboleth';
 $string['auth_updatelocal'] = 'Atualizar local data';
 $string['auth_updatelocal_expl'] = '<p><b>Atualizar local data:</b> Se estiver ativado, o campo será atualizado (por auth externo) toda vez que o usuário fizer o login ou houver uma sincronização de usuários. Os campos configurados para serem atualizados localmente devem ser bloqueados.</p>';
 $string['auth_updateremote'] = 'Atualizar dados externos';
@@ -92,16 +122,27 @@ $string['authinstructions'] = 'Aqui você pode incluir instruções para os seus us
 $string['changepassword'] = 'URL para mudança de senha';
 $string['changepasswordhelp'] = 'Aqui você pode especificar um endereço onde os usuários podem recuperar ou modificar a senha e o nome de usuário esquecidos. Este será publicado como um botão na página de entrada e na página do usuário. Se deixar este espaço em branco o botão não aparecerá.';
 $string['chooseauthmethod'] = 'Escolha um método de autenticação: ';
+$string['createchangepassword'] = 'Criar se faltar - forçar mudança';
+$string['createpassword'] = 'Criar se faltar';
 $string['forcechangepassword'] = 'Forçar mudança de senha';
 $string['forcechangepassword_help'] = 'Forçar usuários a mudar a senha a próxima vez que fizerem o login';
 $string['forcechangepasswordfirst_help'] = 'Forçar usuários a mudar a senha no primeiro login';
 $string['guestloginbutton'] = 'Botão de entrada como visitante';
+$string['infilefield'] = 'Campos obrigatórios no arquivo';
 $string['instructions'] = 'Instruções';
+$string['locked'] = 'Bloqueado';
 $string['md5'] = 'codificação MD5';
+$string['passwordhandling'] = 'Gestão do campo Senha';
 $string['plaintext'] = 'Texto simples';
 $string['showguestlogin'] = 'Você pode esconder ou mostrar o botão de entrada para visitantes na página de ingresso.';
 $string['stdchangepassword'] = 'Usar página standard para mudança de senha';
 $string['stdchangepassword_expl'] = 'Se o sistema de autenticação externa permite mudanças de senha usando Moodle, escolha SIM. Esta configuração ignora a \'URL para mudança de senha\'.';
 $string['stdchangepassword_explldap'] = 'ATENÇÃO: É recomendável o uso de LDAP em um túnel cifrado SSL (ldaps://) se o servidor LDAP for remoto.';
+$string['unlocked'] = 'Desbloqueado';
+$string['unlockedifempty'] = 'Desbloqueado se vazio';
+$string['update_never'] = 'Nunca';
+$string['update_oncreate'] = 'Quando for criado';
+$string['update_onlogin'] = 'Em cada login';
+$string['update_onupdate'] = 'Quando for atualizado';
 
 ?>

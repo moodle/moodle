@@ -1,0 +1,71 @@
+<?PHP // $Id$ 
+      // currencies.php - created with Moodle 1.5 + (2005060201)
+
+
+$string['ADP'] = 'Andorra, Peseta';
+$string['AED'] = 'Emirados Arabes Unidos, Dirham';
+$string['AFA'] = ' Afeganistão, Afegano';
+$string['ALL'] = ' Albania, Lek';
+$string['ANG'] = 'Antilhas Holandesas, Florim';
+$string['AOK'] = 'Angola, Cuanza Novo';
+$string['ARA'] = 'Argentina, Peso';
+$string['ATS'] = 'Austria, Xelim';
+$string['AUD'] = 'Australia, Dolar';
+$string['AWG'] = 'Aruba, Florim';
+$string['BBD'] = ' Barbados, Dolar';
+$string['BDT'] = 'Bangladesh, Taca';
+$string['BEF'] = ' Belgica, Franco';
+$string['BGL'] = 'Bulgaria, Lev';
+$string['BHD'] = 'Ilhas Bahrein, Dinar ';
+$string['BIF'] = 'Burundi, Franco';
+$string['BMD'] = 'Bermudas, Dolar';
+$string['BND'] = 'Brunei, Dolar';
+$string['BOB'] = 'Bolivia, Boliviano';
+$string['BRC'] = 'Brasil, Real';
+$string['BSD'] = 'Bahamas, Dolar ';
+$string['BTN'] = 'Butao, Ngultrum';
+$string['BUK'] = 'Myanmar, Quiate';
+$string['BWP'] = 'Botsuana, Pula ';
+$string['BZD'] = 'Belize, Dolar';
+$string['CAD'] = 'Canada, Dolar';
+$string['CHF'] = 'Suiça, Franco';
+$string['CLP'] = ' Chile, Peso';
+$string['CNY'] = 'China, Iuan Renmimbi';
+$string['COP'] = 'Colombia, Peso';
+$string['CRC'] = 'Costa Rica, Colon';
+$string['CSK'] = 'Republica Tcheca, Coroa';
+$string['CUP'] = 'Cuba, Peso';
+$string['CVE'] = 'Cabo Verde, Escudo';
+$string['CYP'] = 'Chipre, Libra';
+$string['DEM'] = 'Alemanha, Marco';
+$string['DJF'] = 'Djibuti, Franco';
+$string['DKK'] = 'Dinamarca, Coroa';
+$string['DOP'] = 'Republica Dominicana, Peso';
+$string['DZD'] = 'Dinar Argelino';
+$string['ECS'] = 'Equador, Sucre';
+$string['EGP'] = ' Egito, Libra';
+$string['ESP'] = 'Espanha, Peseta';
+$string['ETB'] = 'Etiopia, Birr';
+$string['EUR'] = ' Comunidade Europeia, Euro';
+$string['FIM'] = 'Finlandia, Marco';
+$string['FJD'] = ' Fiji, Dolar';
+$string['FKP'] = 'Falkland, Libra';
+$string['FRF'] = 'França, Franco';
+$string['GBP'] = 'Reino Unido, Libra';
+$string['GHC'] = 'Gana, Cedi';
+$string['GIP'] = 'Gibraltar, Libra';
+$string['GMD'] = 'Gambia, Dalasi';
+$string['GNF'] = 'Guiné, Franco';
+$string['GRD'] = ' Grecia, Dracma';
+$string['GTQ'] = 'Guatemala, Quetzal';
+$string['GWP'] = 'Guine-bissau, Peso';
+$string['GYD'] = 'Guiana, Dolar';
+$string['HKD'] = 'Hong Kong, Dolar';
+$string['HNL'] = 'Honduras, Lempira';
+$string['HTG'] = 'Haiti, Gourde';
+$string['HUF'] = 'Hungria, Forint';
+$string['ZAR'] = 'Africa Do Sul, Rand ';
+$string['ZMK'] = 'Zambia, Quacha';
+$string['ZWD'] = 'Zimbabue, Dolar';
+
+?>

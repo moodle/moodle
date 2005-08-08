@@ -90,7 +90,7 @@ Com esta operação Moodle será capaz de configurar o limite de memória sózinho.</
 <p>Alguns servidores não aceitam este procedimento e <b>todas</b> as páginas PHP do servidor ficam bloqueadas ou imprimem mensagens de erro. Neste caso será necessário cancelar o arquivo .htaccess .</p>
 </li></ol> ';
 $string['mysqlextensionisnotpresentinphp'] = 'O pHP não foi configurado corretamente com a extensão MySQL e não pode comunicar com a base de dados. Controle o seu php.ini ou faça a recompilação do PHP.';
-$string['pass'] = 'Senha';
+$string['pass'] = 'Passe';
 $string['phpversion'] = 'Versão do PHP';
 $string['phpversionerror'] = 'A versão do PHP não deve ser inferior a 4.1.0';
 $string['phpversionhelp'] = '<p>Moodle requer a versão 4.1.0 de PHP ou posterior.</p>

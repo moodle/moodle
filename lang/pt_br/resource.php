@@ -85,6 +85,7 @@ $string['resourcetypedirectory'] = 'Visualizar um diretório';
 $string['resourcetypefile'] = 'Link a um arquivo ou site';
 $string['resourcetypehtml'] = 'Criar uma página web';
 $string['resourcetypelabel'] = 'Inserir rótulo';
+$string['resourcetyperepository'] = 'Link a um objeto do repositório';
 $string['resourcetypetext'] = 'Criar uma página de texto simples';
 $string['searchweb'] = 'Buscar página web';
 $string['serverurl'] = 'URL do servidor  ($a->wwwroot)';
