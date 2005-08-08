@@ -4,11 +4,11 @@
 
 $string['allowresubmit'] = 'Несколько попыток';
 $string['assignmentdetails'] = 'Детали задания';
-$string['assignmentmail'] = '$a->teacher написал отзыв по Вашему заданию \'$a->assignment\'.
+$string['assignmentmail'] = '$a->teacher написал отзыв на Ваше задание \'$a->assignment\'.
 
 Вы можете посмотреть его по ссылке: 
 $a->url';
-$string['assignmentmailhtml'] = '$a->teacher написал отзыв по Вашему заданию \'<i>$a->assignment</i>\'<br /><br />
+$string['assignmentmailhtml'] = '$a->teacher написал отзыв на Ваше задание \'<i>$a->assignment</i>\'<br /><br />
 
 Вы можете посмотреть его  <a href=\"$a->url\">на сайте</a>.';
 $string['assignmentname'] = 'Название задания';
@@ -19,13 +19,13 @@ $string['commentinline'] = 'Коментировать, начиная с присланного текста';
 $string['configmaxbytes'] = 'Установленный по умолчанию максимальный размер для всех заданий на сайте (соотносится с установленным ограничением по курсу и с другими локальными установками)';
 $string['description'] = 'Описание';
 $string['duedate'] = 'Последний срок сдачи';
-$string['duedateno'] = 'Не имеет последнего срока сдачи';
+$string['duedateno'] = 'Срок сдачи не ограничен';
 $string['early'] = '$a рано';
 $string['editmysubmission'] = 'Редактировать моё решение';
-$string['emailteachermail'] = '$a->username отправил новый ответ на задание \'$a->assignment\'
+$string['emailteachermail'] = '$a->username отправил(а) новый ответ на задание \'$a->assignment\'
 Ответы на это задание доступны по адресу:
 $a->url';
-$string['emailteachermailhtml'] = '$a->username отправил новый ответ на задание <i>$a->assignment</i><br /><br />
+$string['emailteachermailhtml'] = '$a->username отправил(а) новый ответ на задание <i>$a->assignment</i><br /><br />
 Ответы на это задание <a href=\"$a->url\">расположены на сайте</a>.';
 $string['emailteachers'] = 'Отправлять уведомления учителям';
 $string['emptysubmission'] = 'Вы ещё ничего не отправляли.';
@@ -46,7 +46,7 @@ $string['helponline'] = '<p>Этот режим предполагает возможность ученика писать и
 
 <p>(для тех, кто знаком с предыдущими версиями moodle, скажем - этот режим работы задания похож на использование рабочей тетради)</p>';
 $string['helpuploadsingle'] = '<p>Этот режим предполагает возможность ученика отправить в качестве ответа произвольный файл, Например, картинку, документ Word, архив, или что угодно другое.</p>';
-$string['late'] = '$a срок закончился';
+$string['late'] = 'Срок выполнения закончился $a';
 $string['maximumgrade'] = 'Максимальная оценка';
 $string['maximumsize'] = 'Максимальный размер';
 $string['modulename'] = 'Задание';
@@ -60,21 +60,21 @@ $string['submission'] = 'Ответ';
 $string['submissionfeedback'] = 'Ответ исправлен';
 $string['submissions'] = 'Ответы';
 $string['submissionsaved'] = 'Ваши изменения сохранены';
-$string['submitassignment'] = 'Отправьте Ваше решение, использую форму';
+$string['submitassignment'] = 'Отправьте Ваше решение, используя форму';
 $string['submitted'] = 'Ответ принят';
 $string['typeoffline'] = 'Ответ - вне сайта';
 $string['typeonline'] = 'Ответ - в виде текста';
 $string['typeuploadsingle'] = 'Ответ - в виде файла';
 $string['uploadbadname'] = 'Этот файл содержит недопустимые символы и не может быть закачан';
 $string['uploadedfiles'] = 'Закачанные файлы';
-$string['uploaderror'] = 'При сохранении файла на сервер произошла ошибка';
+$string['uploaderror'] = 'При отправке файла на сервер произошла ошибка';
 $string['uploadfailnoupdate'] = 'Файл был закачан, но не может обновить ваш предыдущий ответ!';
 $string['uploadfiletoobig'] = 'Файл слишком большой (ограничение в $a байт)';
 $string['uploadnofilefound'] = 'Файл не был найден. Вы уверены, что выбрали его для закачки';
 $string['uploadnotregistered'] = '\'$a\' был закачан, но ответ не зарегистрирован';
 $string['uploadsuccess'] = 'Закачка \'$a\' завершена';
 $string['viewfeedback'] = 'Посмотреть оценки задания';
-$string['viewsubmissions'] = 'Посмотреть $a ответов  на задание';
+$string['viewsubmissions'] = 'Посмотреть $a ответов на задание';
 $string['yoursubmission'] = 'Ваш ответ';
 
 ?>

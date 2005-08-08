@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.4.4 (2004083140)
+      // quiz.php - created with Moodle 1.5 (2005060201)
 
 
 $string['acceptederror'] = 'Допустимая ошибка';
@@ -218,7 +218,7 @@ $string['tolerance'] = 'Погрешность';
 $string['tolerancetype'] = 'Тип погрешности';
 $string['toomanyrandom'] = 'Необходимое число случайных вопросов, больше, чем содержит категория ($a)';
 $string['true'] = 'Верно';
-$string['truefalse'] = 'Да/Нет';
+$string['truefalse'] = 'Верно/Неверно';
 $string['type'] = 'Тип';
 $string['unit'] = 'Единица измерения';
 $string['unknowntype'] = 'Тип Вопроса, не поддержан на линии $a. Вопрос будет игнорироваться';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // book.php - created with Moodle 1.4.4 (2004083140)
+      // book.php - created with Moodle 1.4.5 (2004083150)
 
 
 $string['addafter'] = 'Добавить главу';
@@ -12,7 +12,7 @@ $string['customtitles'] = 'Без заголовков';
 $string['disableprinting'] = 'Запретить вид \"для печати\"';
 $string['doimport'] = 'Импортировать';
 $string['editingchapter'] = 'Редактировать главу';
-$string['faq'] = 'ЧАвО по модулю';
+$string['faq'] = 'ЧаВо по модулю';
 $string['fileordir'] = 'Файл или папка';
 $string['import'] = 'Импорт';
 $string['importinfo'] = 'Вы можете импортировать один HTML файл или целую папку.<br />Главы будут отсортированы по алфавиту в соответствии с именами файлов.<br />Названия глав берутся из тега TITLE.';
@@ -25,10 +25,10 @@ $string['navexit'] = 'Покинуть Книгу';
 $string['navnext'] = 'Следующая';
 $string['navprev'] = 'Предыдущая';
 $string['numbering'] = 'Нумерация глав';
-$string['numbering0'] = 'Нет';
+$string['numbering0'] = 'Отсутствует';
 $string['numbering1'] = 'Номера';
 $string['numbering2'] = 'Маркеры';
-$string['numbering3'] = 'Сдвиг';
+$string['numbering3'] = 'Отступ';
 $string['printbook'] = 'Печатать всю книгу';
 $string['printchapter'] = 'Печатать только эту главу';
 $string['printdate'] = 'Дата';
