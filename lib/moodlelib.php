@@ -6027,7 +6027,7 @@ function httpsrequired() {
 
     if (!empty($CFG->loginhttps)) {
         $HTTPSPAGEREQUIRED = true;
-        $CFG->httpswwwroot = str_replace('http', 'https', $CFG->wwwroot);
+        $CFG->httpswwwroot = str_replace('http:', 'https:', $CFG->wwwroot);
     } else {
         $CFG->httpswwwroot = $CFG->wwwroot;
     }
