@@ -3630,7 +3630,7 @@ function error ($message, $link='') {
 
     $message = clean_text($message);   // In case nasties are in here
 
-    print_simple_box($message, 'center', '', '#FFBBBB', 5, 'errorbox');
+    print_simple_box($message, '', '', '', '', 'errorbox');
 
     if (!$link) {
         if ( !empty($SESSION->fromurl) ) {
