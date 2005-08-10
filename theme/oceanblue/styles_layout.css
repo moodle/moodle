@@ -121,6 +121,10 @@ img.grouppicture,
   padding: 5px;
 }
 
+.errorboxcontent {
+  padding: 5px;
+}
+
 .informationbox {
   border-width:1px;
   border-style:solid;

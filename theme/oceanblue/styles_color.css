@@ -133,6 +133,10 @@ table.formtable tbody th {
   background-color:#990000;
 }
 
+.errorboxcontent {
+  background-color:#FFBBBB;
+}
+
 .tabledivider {
   border-color:#9999FF;
 }
