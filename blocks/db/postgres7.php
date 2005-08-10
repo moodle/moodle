@@ -59,9 +59,9 @@ global $CFG;
         if(!empty($records)) {
             foreach($records as $block) {
                 $block->multiple = 0;
-                unset($block->id);
                 insert_record('block', $block);
             }
+            execute_sql("SELECT setval('{$CFG->prefix}block_id_seq', (SELECT MAX(id) FROM {$CFG->prefix}block), true)");
         }
 
         execute_sql("DROP TABLE {$CFG->prefix}blocks");
