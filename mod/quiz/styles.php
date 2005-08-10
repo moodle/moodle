@@ -1,15 +1,14 @@
 
 
-.quiz-report-title {
+.mod-quiz .quiz-report-title {
   text-align: center;
   font-weight : bold;
 }
-
-.grade {
+.mod-quiz .grade {
   font-size: small;
   margin-top: 10pt
 }
-.gradingdetails {
+.mod-quiz .gradingdetails {
   font-size: small;
 }
 
