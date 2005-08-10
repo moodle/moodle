@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.5 ALPHA (2005050600)
+      // forum.php - created with Moodle 1.6 development (2005072200)
 
 
 $string['addanewdiscussion'] = 'ディスカッショントピックを追加';
@@ -127,9 +127,9 @@ $string['postupdated'] = '投稿が更新されました。';
 $string['potentialsubscribers'] = '潜在的メール購読ユーザ';
 $string['processingdigest'] = '$a のメールダイジェストを処理中';
 $string['processingpost'] = '投稿 $a を処理中';
-$string['prune'] = '中断';
-$string['prunedpost'] = '新しいディスカッションが作成されました。';
-$string['pruneheading'] = '投稿の中断および新しいディスカッションへの移動';
+$string['prune'] = '分割';
+$string['prunedpost'] = '新しいディスカッションが投稿記事より作成されました。';
+$string['pruneheading'] = '投稿記事を分割して、新しいディスカッションへ移動する。';
 $string['rate'] = '評価';
 $string['rating'] = '評価';
 $string['ratingeveryone'] = '誰でも投稿を評価できる';
