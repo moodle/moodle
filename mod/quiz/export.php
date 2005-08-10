@@ -96,7 +96,7 @@
     $fileformatnames = get_import_export_formats( "export" );
 
     // get filename
-    if (!isset($exportfilename)) {
+    if (empty($exportfilename)) {
         $exportfilename = default_export_filename($course, $category);
     }
 
