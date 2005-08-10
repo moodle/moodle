@@ -4,7 +4,7 @@
 
 $string['adminseesallevents'] = 'Administrators see all events';
 $string['adminseesownevents'] = 'Administrators are just like other users';
-$string['backgroundcolour'] = 'Background Colour';
+$string['backgroundcolour'] = 'Transparent Colour';
 $string['badwordsconfig'] = 'Enter your list of bad words separated by commas';
 $string['badwordslist'] = 'Bad Words List';
 $string['blockinstances'] = 'Instances';
