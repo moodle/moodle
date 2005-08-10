@@ -1,19 +1,14 @@
-
-
-.quiz-report-title {
+.mod-quiz .quiz-report-title {
   text-align: center;
   font-weight : bold;
 }
-
-.grade {
+.mod-quiz .grade {
   font-size: small;
   margin-top: 10pt
 }
-.gradingdetails {
+.mod-quiz .gradingdetails {
   font-size: small;
 }
-
-
 body#mod-quiz-report table#itemanalysis {
   margin: 20px auto;
 }
@@ -36,22 +31,16 @@ body#mod-quiz-report table#itemanalysis .numcol {
   text-align: center;
   vertical-align : middle !important;
 }
-
 body#mod-quiz-report table#itemanalysis .uncorrect {
   color: red;
 }
-
 body#mod-quiz-report table#itemanalysis .correct {
   color: blue;
   font-weight : bold;
 }
-
 body#mod-quiz-report table#itemanalysis .partialcorrect {
   color: green !important;
 }
-
 body#mod-quiz-report table#itemanalysis .qname {
   color: green !important;
 }
-
-
