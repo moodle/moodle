@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // message.php - created with Moodle 1.5 ALPHA (2005042300)
+      // message.php - created with Moodle 1.6 development (2005072200)
 
 
 $string['addcontact'] = 'コンタクトリストに追加';
@@ -51,7 +51,7 @@ $string['savemysettings'] = '設定の保存';
 $string['search'] = '検索';
 $string['searchforperson'] = '人の検索';
 $string['searchmessages'] = 'メッセージの検索';
-$string['sendmessage'] = 'メッセージを送信';
+$string['sendmessage'] = 'メッセージの送信';
 $string['sendmessageto'] = '$a にメッセージを送信';
 $string['settings'] = '設定';
 $string['settingssaved'] = '設定が保存されました。';
