@@ -4,7 +4,7 @@
 
 $string['adminseesallevents'] = '管理者に全てのイベントを表示';
 $string['adminseesownevents'] = '管理者は他のユーザと同じ';
-$string['backgroundcolour'] = '背景色';
+$string['backgroundcolour'] = '透明色';
 $string['badwordsconfig'] = 'コンマで区切られた使用禁止用語を入力してください。';
 $string['badwordslist'] = '使用禁止用語一覧';
 $string['blockinstances'] = 'インスタンス';
