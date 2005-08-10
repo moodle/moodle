@@ -82,8 +82,8 @@ class quiz_format_gift extends quiz_default_format {
     function escapedchar_pre($string) {
         //Replaces escaped control characters with a placeholder BEFORE processing
         
-        $escapedcharacters = array("\\#",    "\\=",    "\\{",    "\\}",    "\\~"   );
-        $placeholders      = array("&&035;", "&&061;", "&&123;", "&&125;", "&&126;");
+        $escapedcharacters = array("\\#",    "\\=",    "\\{",    "\\}",    "\\~",    "\\n"   );  //dlnsk
+        $placeholders      = array("&&035;", "&&061;", "&&123;", "&&125;", "&&126;", "&&010" );  //dlnsk
 
         $string = str_replace("\\\\", "&&092;", $string);
         $string = str_replace($escapedcharacters, $placeholders, $string);
@@ -93,8 +93,8 @@ class quiz_format_gift extends quiz_default_format {
 
     function escapedchar_post($string) {
         //Replaces placeholders with corresponding character AFTER processing is done
-        $placeholders = array("&&035;", "&&061;", "&&123;", "&&125;", "&&126;");
-        $characters   = array("#",      "=",      "{",      "}",      "~"     );
+        $placeholders = array("&&035;", "&&061;", "&&123;", "&&125;", "&&126;", "&&010"); //dlnsk
+        $characters   = array("#",      "=",      "{",      "}",      "~",      "\n"   ); //dlnsk
         $string = str_replace($placeholders, $characters, $string);
         return $string;
     }
@@ -482,8 +482,8 @@ class quiz_format_gift extends quiz_default_format {
 function repchar( $text, $format=0 ) {
     // escapes 'reserved' characters # = ~ { ) and removes new lines
     // also pushes text through format routine
-    $reserved = array( '#','=','~','{','}',"\n","\r" );
-    $escaped = array( '\#','\=','\~','\{','\}',' ','' );
+    $reserved = array( '#', '=', '~', '{', '}', "\n","\r");
+    $escaped =  array( '\#','\=','\~','\{','\}','\n',''  ); //dlnsk
 
     $newtext = str_replace( $reserved, $escaped, $text ); 
     $format = 0; // turn this off for now
