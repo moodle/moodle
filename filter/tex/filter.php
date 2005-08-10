@@ -88,7 +88,7 @@ function tex_filter ($courseid, $text) {
     global $CFG;
 
     /// Do a quick check using stripos to avoid unnecessary work
-    if (!preg_match('/<tex/i',$text) and !strstr($text,'$$') and !strstr($text,'\\[')) { //added one more tag (dlnsk)
+    if (!preg_match('/<tex/i',$text) and !strstr($text,'$$') and !strstr($text,'\\[') and !preg_match('/\[tex/i',$text)) { //added one more tag (dlnsk)
         return $text;
     }
 
@@ -119,10 +119,11 @@ function tex_filter ($courseid, $text) {
 
     // <tex> TeX expression </tex>
     // or $$ TeX expression $$
-    // or \[ TeX expression \]        // original tag of MathType and TeXaide (dlnsk)
-    preg_match_all('/<tex>(.+?)<\/tex>|\$\$(.+?)\$\$|\\\\\[(.+?)\\\\\]/is', $text, $matches);
+    // or \[ TeX expression \]          // original tag of MathType and TeXaide (dlnsk)
+    // or [tex] TeX expression [/tex]   // somtime it's more comfortable than <tex> (dlnsk)
+    preg_match_all('/<tex>(.+?)<\/tex>|\$\$(.+?)\$\$|\\\\\[(.+?)\\\\\]|\\[tex\\](.+?)\\[\/tex\\]/is', $text, $matches);
     for ($i=0; $i<count($matches[0]); $i++) {
-        $texexp = $matches[1][$i] . $matches[2][$i] . $matches[3][$i];
+        $texexp = $matches[1][$i] . $matches[2][$i] . $matches[3][$i] . $matches[4][$i];
         $texexp = str_replace('<nolink>','',$texexp);
         $texexp = str_replace('</nolink>','',$texexp);
         $texexp = str_replace('<span class="nolink">','',$texexp);

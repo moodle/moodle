@@ -51,7 +51,12 @@
             $doc .=  $CFG->filter_tex_latexpreamble;
             $doc .= "\\pagestyle{empty}\n";
             $doc .= "\\begin{document}\n";
-            $doc .= "$ {$formula} $\n";
+//dlnsk            $doc .= "$ {$formula} $\n";
+            if (preg_match("/^[[:space:]]*\\\\begin\\{(gather|align|alignat|multline).?\\}/i",$formula)) {
+               $doc .= "$formula\n";
+            } else {
+               $doc .= "$ {$formula} $\n";
+            }
             $doc .= "\\end{document}\n";
             return $doc;
         }
