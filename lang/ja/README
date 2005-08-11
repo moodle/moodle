@@ -2,12 +2,14 @@
 ----------------------------------------------------------------------
 STARTED BY Mitsuhiro Yoshida  : November 21, 2002
 LAST MODIFIED                 : August 11, 2005
-
-[TRANSLATORS]
 ----------------------------------------------------------------------
+
 Mitsuhiro Yoshida ( http://mitstek.com/ )
  Translating whole ja and ja_utf8 files, translation management.
- Moodle Partner
+
+Timothy Takemoto ( http://eigodaigaku.com )
+ Facilitator of "Japanese Moodle" ( http://moodle.org/course/view.php?id=14 )
+ Translation brushup
 
 Paul Shew ( http://ac.shew.jp )
  Translation brushup
@@ -26,13 +28,6 @@ Masataka Nakaue ( http://ldt.stanford.edu/~mnakauye/ )
 Hiroto Kagotani ( http://www.infsys.cne.okayama-u.ac.jp/~kagotani/ )
  Translation brushup
  Translation: /lang/ja/help/*
-
-
-[CONTRIBUTORS]
-----------------------------------------------------------------------
-Timothy Takemoto ( http://eigodaigaku.com )
- Facilitator of "Japanese Moodle" ( http://moodle.org/course/view.php?id=14 )
- Translation brushup
 
 Thomas N. Robb ( http://www.kyoto-su.ac.jp/~trobb/ )
  Translation brushup
