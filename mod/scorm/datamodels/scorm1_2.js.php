@@ -166,6 +166,11 @@ function SCORMapi1_2() {
         errorCode = "0";
         if (param == "") {
             if (!Initialized) {
+                <?php 
+                    if ($CFG->debug > 7) {
+                        echo 'alert("Initialized");';
+                    }
+                ?>
                 Initialized = true;
                 errorCode = "0";
                 return "true";
@@ -182,6 +187,11 @@ function SCORMapi1_2() {
         errorCode = "0";
         if (param == "") {
             if (Initialized) {
+                <?php 
+                    if ($CFG->debug > 7) {
+                        echo 'alert("Finished");';
+                    }
+                ?>
                 Initialized = false;
                 result = StoreData(cmi,true);
                 if (nav.event != '') {
@@ -222,6 +232,11 @@ function SCORMapi1_2() {
                         }
                             if (subelement == element) {
                             errorCode = "0";
+                            <?php 
+                                if ($CFG->debug > 7) {
+                                    echo 'alert(element+": "+eval(element));';
+                                }
+                            ?>
                             return eval(element);
                         } else {
                             errorCode = "0"; // Need to check if it is the right errorCode
@@ -332,6 +347,11 @@ function SCORMapi1_2() {
                                         eval(element+'="'+value+'";');
                                     }
                                     errorCode = "0";
+                                    <?php 
+                                        if ($CFG->debug > 7) {
+                                            echo 'alert(element+":= "+value);';
+                                        }
+                                    ?>
                                     return "true";
                                 }
                             }
@@ -461,15 +481,17 @@ function SCORMapi1_2() {
                 element = parent+'.'+property;
                 expression = new RegExp(CMIIndex,'g');
                 elementmodel = element.replace(expression,'.n.');
-                if ((typeof eval('datamodel["'+elementmodel+'"]')) != "undefined") {
-                    if (eval('datamodel["'+elementmodel+'"].mod') != 'r') {
-                        elementstring = '&'+underscore(element)+'='+escape(data[property]);
-                        if ((typeof eval('datamodel["'+elementmodel+'"].defaultvalue')) != "undefined") {
-                            if (eval('datamodel["'+elementmodel+'"].defaultvalue') != data[property]) {
+                if (elementmodel != "cmi.core.session_time") {
+                    if ((typeof eval('datamodel["'+elementmodel+'"]')) != "undefined") {
+                        if (eval('datamodel["'+elementmodel+'"].mod') != 'r') {
+                            elementstring = '&'+underscore(element)+'='+escape(data[property]);
+                            if ((typeof eval('datamodel["'+elementmodel+'"].defaultvalue')) != "undefined") {
+                                if (eval('datamodel["'+elementmodel+'"].defaultvalue') != data[property]) {
+                                    datastring += elementstring;
+                                }
+                            } else {
                                 datastring += elementstring;
                             }
-                        } else {
-                            datastring += elementstring;
                         }
                     }
                 }
