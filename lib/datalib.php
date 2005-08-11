@@ -1370,7 +1370,7 @@ function get_courses_in_metacourse($metacourseid) {
     global $CFG;
 
     $sql = "SELECT c.id,c.shortname,c.fullname FROM {$CFG->prefix}course c, {$CFG->prefix}course_meta mc WHERE mc.parent_course = $metacourseid
-        AND mc.child_course = c.id";
+        AND mc.child_course = c.id ORDER BY c.shortname";
 
     return get_records_sql($sql);
 }
@@ -1388,8 +1388,8 @@ function get_courses_notin_metacourse($metacourseid,$count=false) {
     $alreadycourses = get_courses_in_metacourse($metacourseid);
     
     $sql .= " FROM {$CFG->prefix}course c WHERE ".((!empty($alreadycourses)) ? "c.id NOT IN (".implode(',',array_keys($alreadycourses)).")
-    AND " : "")." c.id !=$metacourseid and c.id != ".SITEID." and c.metacourse != 1";
-
+    AND " : "")." c.id !=$metacourseid and c.id != ".SITEID." and c.metacourse != 1 ".((empty($count)) ? " ORDER BY c.shortname" : "");
+    
     return get_records_sql($sql);
 }
 
