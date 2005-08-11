@@ -133,22 +133,22 @@
         <td class="top">
             <table class="fullscreen">
                 <tr>
-                    <?php echo $mode == 'browse' ? '<td '.$browseclass.'>'.get_string('browsemode','scorm').'</td>' : ''; ?>
+                    <?php echo $mode == 'browse' ? '<td '.$browseclass.'>'.get_string('browsemode','scorm')."</td>\n" : ''; ?>
                     <td class="right">       
-                <form name="navform" method="post" action="playscorm.php?id=<?php echo $cm->id ?>" target="_top">
-                    <input name="scoid" type="hidden" />
-                    <input name="currentorg" type="hidden" value="<?php echo $currentorg ?>" />
-                    <input name="mode" type="hidden" value="<?php echo $mode ?>" />
-                    <input name="prev" type="<?php if (($sco->prev == 0) || ($sco->showprev == 1)) { echo 'hidden'; } else { echo 'button'; } ?>" value="<?php print_string('prev','scorm') ?>" onClick="prevSCO();" />
-                    <input name="next" type="<?php if (($sco->next == 0) || ($sco->shownext == 1)) { echo 'hidden'; } else { echo 'button'; } ?>" value="<?php print_string('next','scorm') ?>" onClick="nextSCO();" />
-                    <input name="exit" type="button" value="<?php print_string('exit','scorm') ?>" onClick="playSCO(0)" />
-                </form>
-                </td>
+                        <form name="navform" method="post" action="playscorm.php?id=<?php echo $cm->id ?>" target="_top">
+                            <input name="scoid" type="hidden" />
+                            <input name="currentorg" type="hidden" value="<?php echo $currentorg ?>" />
+                            <input name="mode" type="hidden" value="<?php echo $mode ?>" />
+                            <input name="prev" type="<?php if (($sco->prev == 0) || ($sco->showprev == 1)) { echo 'hidden'; } else { echo 'button'; } ?>" value="<?php print_string('prev','scorm') ?>" onClick="prevSCO();" />
+                            <input name="next" type="<?php if (($sco->next == 0) || ($sco->shownext == 1)) { echo 'hidden'; } else { echo 'button'; } ?>" value="<?php print_string('next','scorm') ?>" onClick="nextSCO();" />
+                            <input name="exit" type="button" value="<?php print_string('exit','scorm') ?>" onClick="playSCO(0)" />
+                        </form>
+                    </td>
                 </tr>
 <?php
     if ($scorm->popup == 0) {
 ?>
-                <tr><td class="right">
+                <tr><td <?php echo $mode=='browse'?'colspan="2" ':'' ?>class="right">
 <?php
         if ($result->prerequisites) {
 ?>
