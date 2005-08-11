@@ -1288,7 +1288,7 @@ function auth_ldap_connect($binddn='',$bindpwd=''){
             return $connresult;
         }
         
-        $debuginfo == "<br/>Server: '$server' <br/> Connection: '$connresult'<br/> Bind result: '$bindresult'</br>";
+        $debuginfo = "<br/>Server: '$server' <br/> Connection: '$connresult'<br/> Bind result: '$bindresult'</br>";
     }
 
     //If any of servers are alive we have already returned connection
