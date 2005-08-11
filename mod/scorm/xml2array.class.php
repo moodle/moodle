@@ -13,33 +13,45 @@ class xml2Array {
    var $resParser;
    var $strXmlData;
    
+   /**
+   * Convert a utf-8 string to html entities
+   *
+   * @param string $str The UTF-8 string
+   * @return string
+   */
    function utf8_to_entities($str) {
-        $entities = '';
-        $values = array();
-        $lookingfor = 1;
-        
-        for ($i = 0; $i < strlen($str); $i++) {
-            $thisvalue = ord($str[$i]);
-            if ($thisvalue < 128) {
-                $entities .= chr($thisvalue);
-            } else {
-                if (count($values) == 0) {
-                    $lookingfor = ($thisvalue < 224) ? 2 : 3;
-                }
-                $values[] = $thisvalue;
-                if (count($values) == $lookingfor) {
-                    $number = ($lookingfor == 3) ?
-                        (($values[0] % 16) * 4096) + (($values[1] % 64) * 64) + ($values[2] % 64):
-                        (($values[0] % 32) * 64) + ($values[1] % 64);
-                    $entities .= '&#' . $number . ';';
-                    $values = array();
-                    $lookingfor = 1;
-                }
-            }
-        }
-        return $entities;
-    }
-   
+       $entities = '';
+       $values = array();
+       $lookingfor = 1;
+
+       for ($i = 0; $i < strlen($str); $i++) {
+           $thisvalue = ord($str[$i]);
+           if ($thisvalue < 128) {
+               $entities .= $str[$i]; // Leave ASCII chars unchanged 
+           } else {
+               if (count($values) == 0) {
+                   $lookingfor = ($thisvalue < 224) ? 2 : 3;
+               }
+               $values[] = $thisvalue;
+               if (count($values) == $lookingfor) {
+                   $number = ($lookingfor == 3) ?
+                       (($values[0] % 16) * 4096) + (($values[1] % 64) * 64) + ($values[2] % 64):
+                       (($values[0] % 32) * 64) + ($values[1] % 64);
+                   $entities .= '&#' . $number . ';';
+                   $values = array();
+                   $lookingfor = 1;
+               }
+           }
+       }
+       return $entities;
+   }
+
+   /**
+   * Parse an XML text string and create an array tree that rapresent the XML structure
+   *
+   * @param string $strInputXML The XML string
+   * @return array
+   */
    function parse($strInputXML) {
            $this->resParser = xml_parser_create ('UTF-8');
            xml_set_object($this->resParser,$this);
