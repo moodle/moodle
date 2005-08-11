@@ -1,9 +1,6 @@
 <?php  // $Id$
 
 /// Library of functions and constants for module scorm
-/// (replace scorm with the name of your module and delete this line)
-
-include_once($CFG->dirroot.'/mod/scorm/xml2array.class.php');
 
 define('VALUESCOES', '0');
 define('VALUEHIGHEST', '1');
@@ -14,16 +11,16 @@ $SCORM_GRADE_METHOD = array (VALUESCOES => get_string('gradescoes', 'scorm'),
                              VALUEAVERAGE => get_string('gradeaverage', 'scorm'),
                              VALUESUM => get_string('gradesum', 'scorm'));
 
-//if (!isset($CFG->scorm_validate)) {
-//    $scormvalidate = 'none';
-//    if (extension_loaded('domxml') && version_compare(phpversion(),'5.0.0','<')) {
-//        $scormvalidate = 'domxml';
-//    }
-//    if (version_compare(phpversion(),'5.0.0','>=')) {
-//        $scormvalidate = 'php5';
-//    }
-//    set_config('scorm_validate', $scormvalidate);
-//}
+/*if (!isset($CFG->scorm_validate)) {
+    $scormvalidate = 'none';
+    if (extension_loaded('domxml') && version_compare(phpversion(),'5.0.0','<')) {
+        $scormvalidate = 'domxml';
+    }
+    if (version_compare(phpversion(),'5.0.0','>=')) {
+        $scormvalidate = 'php5';
+    }
+    set_config('scorm_validate', $scormvalidate);
+}*/
 
 if (!isset($CFG->scorm_frameheight)) {
     set_config('scorm_frameheight','600');
@@ -33,11 +30,16 @@ if (!isset($CFG->scorm_framewidth)) {
     set_config('scorm_framewidth','800');
 }
 
+/**
+* Given an object containing all the necessary data,
+* (defined by the form in mod.html) this function
+* will create a new instance and return the id number
+* of the new instance.
+*
+* @param mixed $scorm Form data
+* @return int
+*/
 function scorm_add_instance($scorm) {
-/// Given an object containing all the necessary data,
-/// (defined by the form in mod.html) this function
-/// will create a new instance and return the id number
-/// of the new instance.
 
     $scorm->timemodified = time();
 
@@ -46,56 +48,71 @@ function scorm_add_instance($scorm) {
 
     $id = insert_record('scorm', $scorm);
 
-    //
-    // Rename temp scorm dir to scorm id
-    //
 
+    // Rename temp scorm dir to scorm id
     $scormdir = $CFG->dataroot.'/'.$scorm->course.'/moddata/scorm';
     rename($scormdir.$scorm->datadir,$scormdir.'/'.$id);
-    //
+
     // Parse scorm manifest
-    //
     if ($scorm->launch == 0) {
-        $scorm->launch = scorm_parse($scormdir.'/'.$id,$scorm->pkgtype,$id);
+
+        if ($scorm->pkgtype == 'AICC') {
+            $scorm->launch = scorm_parse_aicc($scormdir.'/'.$id,$id);
+        } else {
+            $scorm->launch = scorm_parse_scorm($scormdir.'/'.$id,$id);
+        }
         set_field('scorm','launch',$scorm->launch,'id',$id);
     }
 
     return $id;
 }
 
-
+/**
+* Given an object containing all the necessary data,
+* (defined by the form in mod.html) this function
+* will update an existing instance with new data.
+*
+* @param mixed $scorm Form data
+* @return int
+*/
 function scorm_update_instance($scorm) {
-/// Given an object containing all the necessary data,
-/// (defined by the form in mod.html) this function
-/// will update an existing instance with new data.
 
     $scorm->timemodified = time();
     $scorm->id = $scorm->instance;
 
-    # May have to add extra stuff in here #
     global $CFG;
 
-
-    //
     // Check if scorm manifest needs to be reparsed
-    //
     if ($scorm->launch == 0) {
+        // Delete old related records
+        delete_records('scorm_scoes','scorm',$scormid);
+        delete_records('scorm_scoes_track','scormid',$scormid);
+        
         $scormdir = $CFG->dataroot.'/'.$scorm->course.'/moddata/scorm';
         if (isset($scorm->datadir) && ($scorm->datadir != $scorm->id)) {
             scorm_delete_files($scormdir.'/'.$scorm->id);
             rename($scormdir.$scorm->datadir,$scormdir.'/'.$scorm->id);
         }
-        $scorm->launch = scorm_parse($scormdir.'/'.$scorm->id,$scorm->pkgtype,$scorm->id);
+        
+        if ($scorm->pkgtype == 'AICC') {
+            $scorm->launch = scorm_parse_aicc($scormdir.'/'.$scorm->id,$scorm->id);
+        } else {
+            $scorm->launch = scorm_parse_scorm($scormdir.'/'.$scorm->id,$scorm->id);
+        }
     }
 
     return update_record('scorm', $scorm);
 }
 
-
+/**
+* Given an ID of an instance of this module,
+* this function will permanently delete the instance
+* and any data that depends on it.
+*
+* @param int $id Scorm instance id
+* @return boolean
+*/
 function scorm_delete_instance($id) {
-/// Given an ID of an instance of this module,
-/// this function will permanently delete the instance
-/// and any data that depends on it.
 
     require('../config.php');
 
@@ -105,10 +122,10 @@ function scorm_delete_instance($id) {
 
     $result = true;
 
-    # Delete any dependent files #
+    // Delete any dependent files
     scorm_delete_files($CFG->dataroot.'/'.$scorm->course.'/moddata/scorm/'.$scorm->id);
 
-    # Delete any dependent records here #
+    // Delete any dependent records
     if (! delete_records('scorm_scoes_track', 'scormid', $scorm->id)) {
         $result = false;
     }
@@ -119,14 +136,21 @@ function scorm_delete_instance($id) {
         $result = false;
     }
 
-
     return $result;
 }
 
-function scorm_user_outline($course, $user, $mod, $scorm) {
-/// Return a small object with summary information about what a
-/// user has done with a given particular instance of this module
-/// Used for user activity reports.
+/**
+* Return a small object with summary information about what a
+* user has done with a given particular instance of this module
+* Used for user activity reports.
+*
+* @param int $course Course id
+* @param int $user User id
+* @param int $mod  
+* @param int $scorm The scorm id
+* @return mixed
+*/
+function scorm_user_outline($course, $user, $mod, $scorm) { 
 
     $return = NULL;
     $scores->values = 0;
@@ -209,9 +233,17 @@ function scorm_user_outline($course, $user, $mod, $scorm) {
     return $return;
 }
 
+/**
+* Print a detailed representation of what a user has done with
+* a given particular instance of this module, for user activity reports.
+*
+* @param int $course Course id
+* @param int $user User id
+* @param int $mod  
+* @param int $scorm The scorm id
+* @return boolean
+*/
 function scorm_user_complete($course, $user, $mod, $scorm) {
-/// Print a detailed representation of what a  user has done with
-/// a given particular instance of this module, for user activity reports.
     global $CFG;
 
     $liststyle = 'structlist';
@@ -279,12 +311,6 @@ function scorm_user_complete($course, $user, $mod, $scorm) {
                             }
                             $strstatus = get_string($usertrack->status,'scorm');
                             $report .= "<img src='".$scormpixdir.$usertrack->status.".gif' alt='$strstatus' title='$strstatus' />";
-                            //if ($usertrack->score_raw != '') {
-                            //    $score = ' - ('.get_string('score','scorm').':&nbsp;'.$usertrack->score_raw.')';
-                            //}
-                            //if ($usertrack->total_time != '00:00:00') {
-                            //    $totaltime = ' - ('.get_string('totaltime','scorm').':&nbsp;'.$usertrack->total_time.')';
-                            //}
                             if ($usertrack->timemodified != 0) {
                                 if ($usertrack->timemodified > $lastmodify) {
                                     $lastmodify = $usertrack->timemodified;
@@ -340,28 +366,41 @@ function scorm_user_complete($course, $user, $mod, $scorm) {
     return true;
 }
 
+/**
+* Given a list of logs, assumed to be those since the last login
+* this function prints a short list of changes related to this module
+* If isteacher is true then perhaps additional information is printed.
+* This function is called from course/lib.php: print_recent_activity()
+*
+* @param reference $logs Logs reference
+* @param boolean $isteacher
+* @return boolean
+*/
 function scorm_print_recent_activity(&$logs, $isteacher=false) {
-/// Given a list of logs, assumed to be those since the last login
-/// this function prints a short list of changes related to this module
-/// If isteacher is true then perhaps additional information is printed.
-/// This function is called from course/lib.php: print_recent_activity()
-
     return false;  // True if anything was printed, otherwise false
 }
 
+/**
+* Function to be run periodically according to the moodle cron
+* This function searches for things that need to be done, such
+* as sending out mail, toggling flags etc ...
+*
+* @return boolean
+*/
 function scorm_cron () {
-/// Function to be run periodically according to the moodle cron
-/// This function searches for things that need to be done, such
-/// as sending out mail, toggling flags etc ...
 
     global $CFG;
 
     return true;
 }
 
+/**
+* Given a scorm id return all the grades of that activity
+*
+* @param int $scormid Scorm instance id
+* @return mixed
+*/
 function scorm_grades($scormid) {
-/// Must return an array of grades for a given instance of this module,
-/// indexed by user.  It also returns a maximum allowed grade.
 
     global $CFG;
 
@@ -390,14 +429,15 @@ function scorm_grades($scormid) {
             $scores->sum = 0;
 
             foreach ($scoes as $sco) {
-                $userdata=scorm_get_tracks($sco->id, $scouser->userid);
-                if (($userdata->status == 'completed') || ($userdata->status == 'passed')) {
-                    $scores->scoes++;
-                }
-                if (!empty($userdata->score_raw)) {
-                    $scores->values++;
-                    $scores->sum += $userdata->score_raw;
-                    $scores->max = ($userdata->score_raw > $scores->max)?$userdata->score_raw:$scores->max;
+                if ($userdata=scorm_get_tracks($sco->id, $scouser->userid)) {
+                    if (($userdata->status == 'completed') || ($userdata->status == 'passed')) {
+                        $scores->scoes++;
+                    }
+                    if (!empty($userdata->score_raw)) {
+                        $scores->values++;
+                        $scores->sum += $userdata->score_raw;
+                        $scores->max = ($userdata->score_raw > $scores->max)?$userdata->score_raw:$scores->max;
+                    }
                 }
             }
             switch ($scorm->grademethod) {
@@ -423,38 +463,32 @@ function scorm_grades($scormid) {
     return $return;
 }
 
-
-//////////////////////////////////////////////////////////////////////////////////////
-/// Any other scorm functions go here.  Each of them must have a name that
-/// starts with scorm_
-
-
-function scorm_randstring($len = '8') {
-    $rstring = NULL;
-    $lchar = '';
-    for ($i=0; $i<$len; $i++) {
-        $char = chr(rand(48,122));
-        while (!ereg('[a-zA-Z0-9]', $char)){
-            if ($char == $lchar) continue;
-            $char = chr(rand(48,90));
-        }
-        $rstring .= $char;
-        $lchar = $char;
-    }
-    return $rstring;
-}
-
-
-function scorm_datadir($strPath, $existingdir='')
+/**
+* Create a new temporary subdirectory with a random name in the given path
+*
+* @param string $strpath The scorm data directory
+* @return string/boolean
+*/
+function scorm_datadir($strPath)
 {
     global $CFG;
 
-    if (($existingdir!='') && (is_dir($strPath.'/'.$existingdir)))
-        return $strPath.'/'.$existingdir;
-
     if (is_dir($strPath)) {
         do {
-            $datadir='/'.scorm_randstring();
+            // Create a random string of 8 chars
+            $randstring = NULL;
+            $lchar = '';
+            $len = 8;
+            for ($i=0; $i<$len; $i++) {
+                $char = chr(rand(48,122));
+                while (!ereg('[a-zA-Z0-9]', $char)){
+                    if ($char == $lchar) continue;
+                        $char = chr(rand(48,90));
+                    }
+                    $randstring .= $char;
+                    $lchar = $char;
+            } 
+            $datadir='/'.randstring;
         } while (file_exists($strPath.$datadir));
         mkdir($strPath.$datadir, $CFG->directorypermissions);
         @chmod($strPath.$datadir, $CFG->directorypermissions);  // Just in case mkdir didn't do it
@@ -464,7 +498,14 @@ function scorm_datadir($strPath, $existingdir='')
     }
 }
 
+/**
+* Given a package directory, this function will check if the package is valid
+*
+* @param string $packagedir The package directory
+* @return mixed
+*/
 function scorm_validate($packagedir) {
+    $validation = new stdClass();
     if (is_file($packagedir.'/imsmanifest.xml')) {
         $validation->result = 'found';
         $validation->pkgtype = 'SCORM';
@@ -488,6 +529,13 @@ function scorm_validate($packagedir) {
     return $validation;
 }
 
+/**
+* This function will permanently delete the given
+* directory and all files and subdirectories.
+*
+* @param string $directory The directory to remove
+* @return boolean
+*/
 function scorm_delete_files($directory) {
     if (is_dir($directory)) {
         $files=scorm_scandir($directory);
@@ -501,14 +549,22 @@ function scorm_delete_files($directory) {
             }
         }
         rmdir($directory);
+        return true;
     }
+    return false;
 }
 
+/**
+* Given a diretory path returns the file list
+*
+* @param string $directory
+* @return array
+*/
 function scorm_scandir($directory) {
     if (version_compare(phpversion(),'5.0.0','>=')) {
         return scandir($directory);
     } else {
-        $files = null;
+        $files = array();
         if ($dh = opendir($directory)) {
             while (($file = readdir($dh)) !== false) {
                $files[] = $file;
@@ -519,17 +575,15 @@ function scorm_scandir($directory) {
     }
 }
 
-function scorm_parse($pkgdir,$pkgtype,$scormid){
-    delete_records('scorm_scoes','scorm',$scormid);
-    delete_records('scorm_scoes_track','scormid',$scormid);
-
-    if ($pkgtype == 'AICC') {
-        return scorm_parse_aicc($pkgdir,$scormid);
-    } else {
-        return scorm_parse_scorm($pkgdir.'/imsmanifest.xml',$scormid);
-    }
-}
-
+/**
+* Take the header row of an AICC definition file
+* and returns sequence of columns and a pointer to
+* the sco identifier column.
+*
+* @param string $row AICC header row
+* @param string $mastername AICC sco identifier column
+* @return mixed
+*/
 function scorm_get_aicc_columns($row,$mastername='system_id') {
     $tok = strtok(strtolower($row),"\",\n\r");
     $result->columns = array();
@@ -547,6 +601,14 @@ function scorm_get_aicc_columns($row,$mastername='system_id') {
     return $result;
 }
 
+/**
+* Given a colums array return a string containing the regular
+* expression to match the columns in a text row.
+*
+* @param array $column The header columns
+* @param string $remodule The regular expression module for a single column
+* @return string
+*/
 function scorm_forge_cols_regexp($columns,$remodule='(".*")?,') {
     $regexp = '/^';
     foreach ($columns as $column) {
@@ -555,6 +617,7 @@ function scorm_forge_cols_regexp($columns,$remodule='(".*")?,') {
     $regexp = substr($regexp,0,-1) . '/';
     return $regexp;
 }
+
 
 function scorm_parse_aicc($pkgdir,$scormid){
     $version = 'AICC';
@@ -713,6 +776,7 @@ function scorm_parse_aicc($pkgdir,$scormid){
     return $launch;
 }
 
+
 function scorm_get_resources($blocks) {
     foreach ($blocks as $block) {
         if ($block['name'] == 'RESOURCES') {
@@ -725,6 +789,7 @@ function scorm_get_resources($blocks) {
     }
     return $resources;
 }
+
 
 function scorm_get_manifest($blocks,$scoes) {
     static $parents = array();
@@ -872,11 +937,16 @@ function scorm_get_manifest($blocks,$scoes) {
 }
 
 
-function scorm_parse_scorm($manifestfile,$scormid) {
+function scorm_parse_scorm($pkgdir,$scormid) {
+    global $CFG;
     
     $launch = 0;
+    $manifestfile = $pkgdir.'/imsmanifest.xml';
 
     if (is_file($manifestfile)) {
+    
+        require_once($CFG->dirroot.'/mod/scorm/xml2array.class.php');
+        
         $xmlstring = file_get_contents($manifestfile);
         $objXML = new xml2Array();
         $manifests = $objXML->parse($xmlstring);
@@ -906,6 +976,7 @@ function scorm_parse_scorm($manifestfile,$scormid) {
     
     return $launch;
 }
+
 
 function scorm_get_tracks($scoid,$userid) {
 /// Gets all tracks of specified sco and user
@@ -953,6 +1024,7 @@ function scorm_get_tracks($scoid,$userid) {
     }
 }
 
+
 function scorm_get_user_data($userid) {
 /// Gets user info required to display the table of scorm results
 /// for report.php
@@ -960,15 +1032,31 @@ function scorm_get_user_data($userid) {
     return get_record('user','id',$userid,'','','','','firstname, lastname, picture');
 }
 
-function scorm_string_round($stringa, $len=11) {
-// Crop a string to $len character and set an anchor title to the full string
-    if (strlen($stringa)>$len) {
-        return '<a name="none" title="'.$stringa.'">'.substr($stringa,0,$len-4).'...'.substr($stringa,strlen($stringa)-1,1).'</a>';
+
+function scorm_string_wrap($stringa, $len=15) {
+// Crop the given string into max $len characters lines
+    if (strlen($stringa) > $len) {
+        $words = explode(' ', $stringa);
+        $newstring = '';
+        $substring = '';
+        foreach ($words as $word) {
+           if ((strlen($substring)+strlen($word)+1) < $len) {
+               $substring .= ' '.$word;
+           } else {
+               $newstring .= ' '.$substring.'<br />';
+               $substring = $word;
+           }
+        }
+        if (!empty($substring)) {
+            $newstring .= ' '.$substring;
+        }
+        return $newstring;
     } else {
         return $stringa;
     }
 }
-    
+
+
 function scorm_eval_prerequisites($prerequisites,$usertracks) {
     $element = '';
     $stack = array();
@@ -997,9 +1085,9 @@ function scorm_eval_prerequisites($prerequisites,$usertracks) {
             case '(':
             case ')':
             case '*':
-            case '{':
-            case '}':
-            case ',':
+            //case '{':
+            //case '}':
+            //case ',':
                 $element = trim($element);
                 
                 if (!empty($element)) {
@@ -1126,6 +1214,7 @@ function scorm_eval_prerequisites($prerequisites,$usertracks) {
     return eval('return '.implode($stack).';');
 }
 
+
 function scorm_insert_track($userid,$scormid,$scoid,$element,$value) {
     $id = null;
     if ($track = get_record_select('scorm_scoes_track',"userid='$userid' AND scormid='$scormid' AND scoid='$scoid' AND element='$element'")) {
@@ -1143,6 +1232,7 @@ function scorm_insert_track($userid,$scormid,$scoid,$element,$value) {
     }
     return $id;
 }
+
 
 function scorm_add_time($a, $b) {
     $aes = explode(':',$a);
@@ -1192,6 +1282,7 @@ function scorm_add_time($a, $b) {
     }
 }
 
+
 function scorm_external_link($link) {
 // check if a link is external
     $result = false;
@@ -1206,9 +1297,11 @@ function scorm_external_link($link) {
     return $result;
 }
 
+
 function scorm_count_launchable($scormid,$organization) {
     return count_records_select('scorm_scoes',"scorm=$scormid AND organization='$organization' AND launch<>''");
 }
+
 
 function scorm_get_toc($scorm,$liststyle,$currentorg='',$scoid='',$mode='normal',$play=false) {
     global $USER, $CFG;
