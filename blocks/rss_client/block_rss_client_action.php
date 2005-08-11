@@ -54,7 +54,7 @@
     } else {
         $navigation = $straddedit;
     }
-    
+
     print_header(get_string('feedsaddedit', 'block_rss_client'), 
                  get_string('feedsaddedit', 'block_rss_client'), 
                  $navigation );
@@ -84,7 +84,7 @@
         if (empty($url)) {
             error( 'url not defined for rss feed' );
         }
-                
+
         // By capturing the output from fetch_rss this way
         // error messages do not display and clutter up the moodle interface
         // however, we do lose out on seeing helpful messages like "cache hit", etc.
@@ -95,7 +95,7 @@
             $message .= ob_get_contents();
         }
         ob_end_clean();
-        
+
         $dataobject->id = $rssid;
         if ($rss === false) {
             $dataobject->description = '';
@@ -141,7 +141,7 @@
             $message .= ob_get_contents();
         }
         ob_end_clean();
-        
+
         if ($rss === false) {
             $message .= '<br /><br />There was an error loading this rss feed. You may want to verify the url you have specified before using it.'; //Daryl Hawes note: localize this line
         } else {
@@ -174,7 +174,7 @@
         rss_print_form($act, $url, $rssid, $preferredtitle, $id);
 
     } else if ($act == 'delfeed') {
-        
+
         $file = $CFG->dataroot .'/cache/rsscache/'. $rssid .'.xml';
         if (file_exists($file)) {
             unlink($file);
@@ -199,7 +199,7 @@
             ob_start();
             $rss = fetch_rss($rss_record->url);
             ob_end_clean();
-            
+
             if (empty($rss_record->preferredtitle)) {
                 $feedtitle = stripslashes_safe($rss_record->preferredtitle);
             } else {

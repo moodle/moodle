@@ -40,7 +40,7 @@ class block_rss_client extends block_base {
             $this->title = get_string('remotenewsfeed', 'block_rss_client');
         }
     }
-    
+
     function get_content() {
         global $CFG, $editing;
 
@@ -128,11 +128,11 @@ class block_rss_client extends block_base {
                 $count ++;
             }
         }
-        
+
         $this->content->text = $output;
         return $this->content;
     }
-    
+
     function instance_allow_multiple() {
         return true;
     }
@@ -144,7 +144,7 @@ class block_rss_client extends block_base {
     function instance_allow_config() {
         return true;
     }
-    
+
     /**
      * @param int $rssid The feed to be displayed
      * @param bool $display_description Should the description information from the feed be displayed or simply the title?
@@ -161,7 +161,7 @@ class block_rss_client extends block_base {
         if (!defined('MAGPIE_OUTPUT_ENCODING')) {
             define('MAGPIE_OUTPUT_ENCODING', get_string('thischarset'));  // see bug 3107
         }
-        
+
         // Check if there is a cached string which has not timed out.
         if (BLOCK_RSS_SECONDARY_CACHE_ENABLED &&
                 isset($this->config->{'rssid'. $rssid}) && 
@@ -181,7 +181,7 @@ class block_rss_client extends block_base {
             $rss = fetch_rss($rss_record->url);
             $rsserror = ob_get_contents();
             ob_end_clean();
-            
+
             if ($rss === false) {
                 if ($CFG->debug && !empty($rsserror)) {
                     // There was a failure in loading the rss feed, print link to full error text
@@ -217,7 +217,7 @@ class block_rss_client extends block_base {
             if (empty($rss) || empty($rss->items)) {
                 return '';
             }
-            
+
             foreach ($rss->items as $item) {
                 $item['title'] = stripslashes_safe(rss_unhtmlentities($item['title']));
                 $item['description'] = stripslashes_safe(rss_unhtmlentities($item['description']));
@@ -227,7 +227,7 @@ class block_rss_client extends block_base {
                 } else {
                     $item['title'] = break_up_long_words($item['title'], 30);
                 }
-        
+
                 if ($item['link'] == '') {
                     $item['link'] = $item['guid'];
                 }
@@ -236,7 +236,6 @@ class block_rss_client extends block_base {
 
                 $returnstring .= '<div class="link"><a href="'. $item['link'] .'" target="_blank">'. $item['title'] . '</a></div>' ."\n";
 
-                
                 if ($display_description && !empty($item['description'])) {
                     $item['description'] = break_up_long_words($item['description'], 30);
                     $returnstring .= '<div class="description">'.
@@ -263,7 +262,7 @@ class block_rss_client extends block_base {
                 $this->title = $feedtitle;
             }
         }
-        
+
         // store config setting for this rssid so we do not need to read from file each time
         $this->config->{'rssid'. $rssid} = addslashes($returnstring);
         $this->config->{'rssid'. $rssid .'timestamp'} = $now; 
