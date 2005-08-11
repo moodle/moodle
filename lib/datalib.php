@@ -261,7 +261,7 @@ function table_column($table, $oldfield, $field, $type="integer", $size="10",
             if ($dbver >= "7.3") {
                 // modifying 'not null' is posible before 7.3
                 //update default values to table
-                if ($null == "NOT NULL") {
+                if (strtoupper($null) == "NOT NULL") {
                     execute_sql("UPDATE {$CFG->prefix}$table SET $field=$default where $field IS NULL");
                     execute_sql("ALTER TABLE {$CFG->prefix}$table ALTER COLUMN $field SET $null");
                 } else {
