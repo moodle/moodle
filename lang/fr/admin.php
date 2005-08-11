@@ -126,7 +126,7 @@ $string['sitemaintenance'] = 'Ce site est actuellement en maintenance. Il est do
 $string['sitemaintenancemode'] = 'Mode de maintenance';
 $string['sitemaintenanceoff'] = 'Le mode de maintenance a été désactivé et le site fonctionne à nouveau normalement';
 $string['sitemaintenanceon'] = 'Votre site est actuellement en mode maintenance (seuls les administrateurs peuvent se connecter et utiliser le site).';
-$string['sitemaintenancewarning'] = 'Votre site est actuellement en mode maintenance (seuls les administrateurs peuvent se connecter). Pour revenir à un fonctionnement normal du site, veuillez <a href=\"maintenance.php\">désactiver le mode maintenance</a>.';
+$string['sitemaintenancewarning'] = 'Votre site est actuellement en mode de maintenance (seuls les administrateurs peuvent s\'y connecter). Pour revenir à un fonctionnement normal du site, veuillez <a href=\"maintenance.php\">désactiver le mode de maintenance</a>.';
 $string['tabselectedtofront'] = 'Dans les tables avec onglets, la rangée contenant l\'onglet sélectionné doit-il être ramené au premier plan&nbsp;?';
 $string['therewereerrors'] = 'Des erreurs sont présentes dans vos données';
 $string['timezoneforced'] = 'Ce réglage est imposé par l\'administrateur du site';
