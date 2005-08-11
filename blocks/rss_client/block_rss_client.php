@@ -1,25 +1,25 @@
 <?php //$Id$
 
 /*******************************************************************
-* This file contains one class which...
+* This file contains one class which defines a block for display on
+* any Moodle page. This block can be configured to display the contents
+* of a remote RSS news feed in your web site.
 *
-* @todo Finish documenting this file
 * @author Daryl Hawes
 * @version  $Id$
 * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
 * @package base
 ******************************************************************/
 
-/**
- * This class is for a block which....
- * @todo Finish documenting this class
- */
-
 // Developer's debug assistant - if true then the display string will not cache, only
 // the magpie object's built in caching will be used
 define('BLOCK_RSS_SECONDARY_CACHE_ENABLED', true);
 
-class block_rss_client extends block_base {
+/**
+ * This class is for a block which defines a block for display on
+ * any Moodle page. 
+ */
+ class block_rss_client extends block_base {
 
     function init() {
         $this->title = get_string('feedstitle', 'block_rss_client');
