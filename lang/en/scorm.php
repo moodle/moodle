@@ -58,6 +58,22 @@ $string['advanced'] = 'Advanced';
 $string['window'] = 'Frame/Window';
 $string['hidetoc'] = 'Hide course structure from player window';
 $string['noprerequisites'] = 'Sorry but you don\'t reach enough prerequisites to access this learning object';
+$string['element'] = 'Element';
+$string['value'] = 'Value';
+$string['raw'] = 'Raw score';
+$string['min'] = 'Min score';
+$string['max'] = 'Max score';
+$string['status'] = 'Status';
+$string['time'] = 'Time';
+$string['general'] = 'General data';
+$string['identifier'] = 'Question Identifier';
+$string['type'] = 'Type';
+$string['result'] = 'Result';
+$string['student_response'] = 'Response';
+$string['interactions'] = 'Interactions';
+$string['objectives'] = 'Objectives';
+$string['othertracks'] = 'Other Tracks';
+
 
 // Validation
 $string['attr_error'] = 'Bad value for attribute ($a->attr) in tag $a->tag.';
