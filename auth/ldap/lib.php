@@ -125,8 +125,12 @@ function auth_get_userinfo($username){
                 $values = array($values);
             }
             foreach ($values as $value) {
-                if(isset($user_entry[0][strtolower($value)][0])){
+                if(is_array($user_entry[0][strtolower($value)])) {
                     $result[$key]=addslashes(stripslashes(utf8_decode($user_entry[0][strtolower($value)][0])));
+                }
+                else {
+                    $result[$key] = addslashes(stripslashes(utf8_decode($user_entry[0][strtolower($value)])));
+
                 }
             }
         }
