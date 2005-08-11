@@ -2,13 +2,13 @@
   vertical-align: top;
 }
 .mod-scorm .left {
-  float: left;
+  text-align: left;
 }
 .mod-scorm .center {
   text-align: center;
 }
 .mod-scorm .right {
-  float: right;
+  text-align: right;
 }
 .mod-scorm .scoframe {
 
