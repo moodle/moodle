@@ -10,8 +10,8 @@ function countdown_clock() {
 
     if(quizTimerValue == 0) {
         clearTimeout(timeout_id);
-        document.forms[0].timeup.value = 1;
-        document.forms[0].submit();
+        document.forms['responseform'].timeup.value = 1;
+        document.forms['responseform'].submit();
     }
 
     now = quizTimerValue;
