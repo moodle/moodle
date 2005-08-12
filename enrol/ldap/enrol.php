@@ -297,13 +297,13 @@ function sync_enrolments($type, $enrol) {
                         if (!get_record($table{$type}, 'course', $course_obj->id, 
                                         'userid', $member, 'enrol', 'ldap')){
                             if($type === 'student'){
-                                if (enrol_student($member, $course_obj->id, NULL,NULL, 'ldap')){
+                                if (enrol_student($member, $course_obj->id, 0, 0, 'ldap')){
                                     print "Enrolled $type $member ($ldapmember) into course $course_obj->id ($course_obj->shortname)\n";
                                 } else {
                                     print "Failed to enrol $type $member ($ldapmember) into course $course_obj->id ($course_obj->shortname)\n";
                                 }
                             } else { // teacher
-                                if (add_teacher($member, $course_obj->id, NULL,NULL,NULL, NULL,'ldap')){
+                                if (add_teacher($member, $course_obj->id, 1,'',0,0,'ldap')){
                                     print "Enrolled $type $member ($ldapmember) into course $course_obj->id ($course_obj->shortname)\n";
                                 } else {
                                     print "Failed to enrol $type $member ($ldapmember) into course $course_obj->id ($course_obj->shortname)\n";
