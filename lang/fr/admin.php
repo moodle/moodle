@@ -2,7 +2,7 @@
 
 $string['adminseesallevents'] = 'Les administrateurs voient tous les événements';
 $string['adminseesownevents'] = 'Les administrateurs sont comme tous les autres utilisateurs';
-$string['backgroundcolour'] = 'Couleur de fond';
+$string['backgroundcolour'] = 'Couleur transparente';
 $string['badwordsconfig'] = 'Taper ici votre liste de mots à censurer, séparés par des virgules';
 $string['badwordslist'] = 'Liste des mots à censurer';
 $string['blockinstances'] = 'Instances';
