@@ -383,10 +383,10 @@ function auth_sync_users ($bulk_insert_records = 1000, $do_updates=1) {
     if(strtolower($CFG->dbtype) === 'mysql'){
         // help old mysql versions cope with large temp tables
         execute_sql('SET SQL_BIG_TABLES=1', false); 
-        execute_sql('CREATE TEMPORARY TABLE ' . $CFG->prefix .'extuser (idnumber VARCHAR(12), PRIMARY KEY (idnumber)) TYPE=MyISAM',false); 
+        execute_sql('CREATE TEMPORARY TABLE ' . $CFG->prefix .'extuser (idnumber VARCHAR(64), PRIMARY KEY (idnumber)) TYPE=MyISAM',false); 
     } elseif (strtolower($CFG->dbtype) === 'postgres7'){
         $bulk_insert_records = 1; // no support for multiple sets of values
-        execute_sql('CREATE TEMPORARY TABLE '.$CFG->prefix.'extuser (idnumber VARCHAR(12), PRIMARY KEY (idnumber))',false); 
+        execute_sql('CREATE TEMPORARY TABLE '.$CFG->prefix.'extuser (idnumber VARCHAR(64), PRIMARY KEY (idnumber))',false); 
     }
 
         
