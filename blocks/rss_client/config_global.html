@@ -17,6 +17,7 @@
         <?php print_string('clientnumentries', 'block_rss_client') ?>
     </td>
 </tr>
+
 <tr valign="top">
     <td align="right">block_rss_timeout:</td>
     <td>
@@ -31,6 +32,7 @@
         <?php print_string('timeout', 'block_rss_client') ?>
     </td>
 </tr>
+
 <tr valign="top">
     <td align="right">block_rss_client_submitters:</td>
     <td>
@@ -56,13 +58,16 @@
     </td>
 </tr>
 
-
 <tr>
     <td colspan="3" align="center">
     <input type="submit" value="<?php print_string('savechanges') ?>"></td>
 </tr>
 <tr>
-    
-    <td colspan="3" align="center"><a href=" <?php echo $CFG->wwwroot; ?>/blocks/rss_client/block_rss_client_action.php?courseid=<?php echo $courseid; ?>"><?php print_string('feedsaddedit', 'block_rss_client')?></a></center><br /><br />
+    <td colspan="3" align="center"><a href=" <?php echo $CFG->wwwroot; ?>/blocks/rss_client/block_rss_client_action.php?id=<?php 
+    if (!isset($id)) {
+        $id = '';
+    }
+    echo $id; ?>"><?php print_string('feedsaddedit', 'block_rss_client')?></a></center><br /><br />
     </td>
+    </tr>
 </table>

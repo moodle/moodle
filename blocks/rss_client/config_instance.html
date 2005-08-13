@@ -1,4 +1,4 @@
-<?php 
+<?php // $Id$ //
 require_once($CFG->libdir .'/rsslib.php');
 
 $id       = optional_param('id', SITEID, PARAM_INT);
@@ -7,7 +7,7 @@ $id       = optional_param('id', SITEID, PARAM_INT);
 $page = page_create_object($this->instance->pagetype, $this->instance->pageid);
 
 /// Print tabs at top
-$currentaction = optional_param( 'currentaction','',PARAM_ALPHA );
+$currentaction = optional_param('currentaction', '', PARAM_ALPHA);
 if (empty($currentaction) || $currentaction == 'configblock') {
     $currentaction = 'configblock';
 } else {
@@ -38,6 +38,7 @@ if ($currentaction == 'configblock') {
             ?>
     </td>
 </tr>
+
 <tr valign="top">
     <td align="right" width="50%">
         <?php print_string('shownumentrieslabel', 'block_rss_client') ?>
@@ -56,6 +57,7 @@ if ($currentaction == 'configblock') {
         ?>" />
     </td>
 </tr>
+
 <tr valign="top">
     <td align="right" width="50%">
         <?php print_string('choosefeedlabel', 'block_rss_client') ?>
@@ -89,12 +91,13 @@ if ($currentaction == 'configblock') {
             } else {
                 print_string('nofeeds', 'block_rss_client');
                 if ( isadmin() ) {
-                    print '&nbsp;<a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php"> '. get_string('editnewsfeeds', 'block_rss_client') .'</a><br />';
+                    print '&nbsp;<a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?id='. $id .'"> '. get_string('editnewsfeeds', 'block_rss_client') .'</a><br />';
                 }
             }
         ?>
     </td>
 </tr>
+
 <tr valign="top">
     <td align="right" width="50%"><?php print_string('uploadlabel'); ?></td>
     <?php 
@@ -106,6 +109,7 @@ if ($currentaction == 'configblock') {
     <td width="50%"><input type="text" name="title" size="30" value="<?php echo $title; ?>" />
     </td>
 </tr>
+
 <tr valign="top">
     <td align="right" width="50%"><?php print_string('clientshowchannellinklabel', 'block_rss_client'); ?></td>
     <td width="50%">
@@ -122,6 +126,7 @@ if ($currentaction == 'configblock') {
         ?>
     </td>
 </tr>
+
 <tr valign="top">
     <td align="right" width="50%"><?php print_string('clientshowimagelabel', 'block_rss_client'); ?></td>
     <td width="50%">
@@ -138,6 +143,7 @@ if ($currentaction == 'configblock') {
         ?>
     </td>
 </tr>
+
 <tr>
     <td colspan="2" align="center">
         <input type="submit" value="<?php print_string('savechanges') ?>">

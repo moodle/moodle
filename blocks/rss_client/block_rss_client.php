@@ -1,25 +1,25 @@
 <?php //$Id$
 
 /*******************************************************************
-* This file contains one class which...
+* This file contains one class which defines a block for display on
+* any Moodle page. This block can be configured to display the contents
+* of a remote RSS news feed in your web site.
 *
-* @todo Finish documenting this file
 * @author Daryl Hawes
 * @version  $Id$
 * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
 * @package base
 ******************************************************************/
 
-/**
- * This class is for a block which....
- * @todo Finish documenting this class
- */
-
 // Developer's debug assistant - if true then the display string will not cache, only
 // the magpie object's built in caching will be used
 define('BLOCK_RSS_SECONDARY_CACHE_ENABLED', true);
 
-class block_rss_client extends block_base {
+/**
+ * This class is for a block which defines a block for display on
+ * any Moodle page. 
+ */
+ class block_rss_client extends block_base {
 
     function init() {
         $this->title = get_string('feedstitle', 'block_rss_client');
@@ -40,7 +40,7 @@ class block_rss_client extends block_base {
             $this->title = get_string('remotenewsfeed', 'block_rss_client');
         }
     }
-    
+
     function get_content() {
         global $CFG, $editing;
 
@@ -53,7 +53,7 @@ class block_rss_client extends block_base {
         $this->content = new stdClass;
         $this->content->text   = '';
         $this->content->footer = '';
-        
+
         if (empty($this->instance)) {
             // We're being asked for content without an associated instance
             return $this->content;
@@ -128,11 +128,11 @@ class block_rss_client extends block_base {
                 $count ++;
             }
         }
-        
+
         $this->content->text = $output;
         return $this->content;
     }
-    
+
     function instance_allow_multiple() {
         return true;
     }
@@ -144,7 +144,7 @@ class block_rss_client extends block_base {
     function instance_allow_config() {
         return true;
     }
-    
+
     /**
      * @param int $rssid The feed to be displayed
      * @param bool $display_description Should the description information from the feed be displayed or simply the title?
@@ -161,7 +161,7 @@ class block_rss_client extends block_base {
         if (!defined('MAGPIE_OUTPUT_ENCODING')) {
             define('MAGPIE_OUTPUT_ENCODING', get_string('thischarset'));  // see bug 3107
         }
-        
+
         // Check if there is a cached string which has not timed out.
         if (BLOCK_RSS_SECONDARY_CACHE_ENABLED &&
                 isset($this->config->{'rssid'. $rssid}) && 
@@ -174,7 +174,6 @@ class block_rss_client extends block_base {
 
         $rss_record = get_record('block_rss_client', 'id', $rssid);
         if (isset($rss_record) && isset($rss_record->id)) {
-                    
             // By capturing the output from fetch_rss this way
             // error messages do not display and clutter up the moodle interface
             // however, we do lose out on seeing helpful messages like "cache hit", etc.
@@ -182,7 +181,7 @@ class block_rss_client extends block_base {
             $rss = fetch_rss($rss_record->url);
             $rsserror = ob_get_contents();
             ob_end_clean();
-            
+
             if ($rss === false) {
                 if ($CFG->debug && !empty($rsserror)) {
                     // There was a failure in loading the rss feed, print link to full error text
@@ -218,7 +217,7 @@ class block_rss_client extends block_base {
             if (empty($rss) || empty($rss->items)) {
                 return '';
             }
-            
+
             foreach ($rss->items as $item) {
                 $item['title'] = stripslashes_safe(rss_unhtmlentities($item['title']));
                 $item['description'] = stripslashes_safe(rss_unhtmlentities($item['description']));
@@ -228,7 +227,7 @@ class block_rss_client extends block_base {
                 } else {
                     $item['title'] = break_up_long_words($item['title'], 30);
                 }
-        
+
                 if ($item['link'] == '') {
                     $item['link'] = $item['guid'];
                 }
@@ -237,7 +236,6 @@ class block_rss_client extends block_base {
 
                 $returnstring .= '<div class="link"><a href="'. $item['link'] .'" target="_blank">'. $item['title'] . '</a></div>' ."\n";
 
-                
                 if ($display_description && !empty($item['description'])) {
                     $item['description'] = break_up_long_words($item['description'], 30);
                     $returnstring .= '<div class="description">'.
@@ -264,7 +262,7 @@ class block_rss_client extends block_base {
                 $this->title = $feedtitle;
             }
         }
-        
+
         // store config setting for this rssid so we do not need to read from file each time
         $this->config->{'rssid'. $rssid} = addslashes($returnstring);
         $this->config->{'rssid'. $rssid .'timestamp'} = $now; 
