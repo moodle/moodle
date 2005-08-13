@@ -4,6 +4,9 @@
 
 $string['adminseesallevents'] = 'Los administradores ven todos los eventos';
 $string['adminseesownevents'] = 'Los administradores son como los demás usuarios';
+$string['backgroundcolour'] = 'Color de fondo';
+$string['badwordsconfig'] = 'Escriba su lista de palabras censuradas, separadas por comas';
+$string['badwordslist'] = 'Lista de palabras censuradas';
 $string['blockinstances'] = 'Ejemplos';
 $string['blockmultiple'] = 'Múltiples';
 $string['cachetext'] = 'Tiempo de vida de la caché de texto';
@@ -91,6 +94,7 @@ $string['configwarning'] = 'Sea cuidadoso al modificar estos resultados (valores
 $string['configzip'] = 'Indique dónde está el programa de compresión -\'Zip-\'  (sólo Unix, opcional). Si se especifica, esto puede usarse para comprimir archivos en el servidor. Si lo deja en blanco, Moodle usará sus rutinas internas.';
 $string['confirmation'] = 'Confirmación';
 $string['cronwarning'] = 'El script de mantenimiento del <a href=\"cron.php\">cron.php </a> no ha sido ejecutado durante las últimas 24 horas. <br />La <a href=\"../doc/?frame=install.html&#8834;=cron\">documentación de instalación</a> explica cómo puede automatizarlo.';
+$string['density'] = 'Densidad';
 $string['edithelpdocs'] = 'Editar documentos de ayuda';
 $string['editstrings'] = 'Editar cadenas';
 $string['filterall'] = 'Filtrar todas las cadenas';
@@ -107,7 +111,18 @@ $string['importtimezones'] = 'Actualizar la lista completa de zonas horarias';
 $string['importtimezonescount'] = '$a->count entradas importadas desde $a->source';
 $string['importtimezonesfailed'] = '¡No se encuentran fuentes! (malas noticias)';
 $string['incompatibleblocks'] = 'Bloques imcompatibles';
+$string['latexpreamble'] = 'Preámbulo LaTeX';
+$string['latexsettings'] = 'Ajustes de LaTeX';
+$string['mediapluginavi'] = 'Habilitar filtro .avi';
+$string['mediapluginmov'] = 'Habilitar filtro .mov';
+$string['mediapluginmp3'] = 'Habilitar filtro .mp3';
+$string['mediapluginmpg'] = 'Habilitar filtro .mpg';
+$string['mediapluginswf'] = 'Habilitar filtro .swf';
+$string['mediapluginwmv'] = 'Habilitar filtro .wmv';
 $string['optionalmaintenancemessage'] = 'Mensaje de mantenimiento opcional';
+$string['pathconvert'] = 'Ruta de <i>convert</i> binario';
+$string['pathdvips'] = 'Ruta de <i>dvips</i> binario';
+$string['pathlatex'] = 'Ruta de <i>latex</i> binario';
 $string['pleaseregister'] = 'Por favor, registre su sitio para eliminar este botón';
 $string['sitemaintenance'] = 'Este sitio está en fase de mantenimiento y no está disponible en este momento';
 $string['sitemaintenancemode'] = 'Modo de mantenimiento';

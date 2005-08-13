@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // install.php - created with Moodle 1.5 Beta (2005052300)
+      // install.php - created with Moodle 1.5.1 (2005060210)
 
 
 $string['admindirerror'] = 'El directorio especificado para admin es incorrecto';
@@ -7,7 +7,7 @@ $string['admindirname'] = 'Directorio Admin';
 $string['admindirsetting'] = '<p>Muy pocos servidores web usan /admin como URL especial para permitirle acceder a un panel de control o similar. Desgraciadamente, esto entra en conflicto con la ubicación estándar de las páginas de administración de Moodle Usted puede corregir esto renombrando el directorio admin en su instalación, y poniendo aquí ese nuevo nombre. Por ejemplo: <blockquote> moodleadmin</blockquote>.
 Así se corregirán los enlaces admin en Moodle.</p>';
 $string['caution'] = 'Precaución';
-$string['chooselanguage'] = 'Seleccionar idioma';
+$string['chooselanguage'] = 'Seleccione un idioma';
 $string['compatibilitysettings'] = 'Comprobando sus ajustes PHP...';
 $string['configfilenotwritten'] = 'El script instalador no ha podido crear automáticamente un archivo config.php con las especificaciones elegidas. Por favor, copie el siguiente código en un archivo llamado config.php y coloque ese archivo en el directorio raíz de Moodle.';
 $string['configfilewritten'] = 'config.php se ha creado con éxito';

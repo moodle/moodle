@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 Beta (2005052300)
+      // moodle.php - created with Moodle 1.5.1 (2005060210)
 
 
 $string['action'] = 'Acción';
@@ -134,6 +134,7 @@ $string['blocksetup'] = 'Configurando tablas de bloque';
 $string['blocksuccess'] = 'Las tablas de $a han sido instaladas correctamente';
 $string['bycourseorder'] = 'Por orden de curso';
 $string['byname'] = 'por $a';
+$string['cachecontrols'] = 'Controles de caché';
 $string['cancel'] = 'Cancelar';
 $string['categories'] = 'Categorías';
 $string['category'] = 'Categoría';

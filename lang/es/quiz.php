@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.5 Beta (2005052300)
+      // quiz.php - created with Moodle 1.5.1 (2005060210)
 
 
 $string['acceptederror'] = 'Margen de error';
@@ -265,6 +265,7 @@ $string['numerical'] = 'Numérico';
 $string['optional'] = 'opcional';
 $string['outof'] = ' de un máximo de ';
 $string['overdue'] = 'Vencido';
+$string['pagesize'] = 'Intentos mostrados por página:';
 $string['paragraphquestion'] = 'Pregunta de parágrafo no permitida en la línea $a. La pregunta no se tendrá en cuenta';
 $string['parent'] = 'Padre';
 $string['partiallycorrect'] = 'Parcialmente correcto';
@@ -333,6 +334,7 @@ $string['reportmulti_q_x_student'] = 'Opciones multi-estudiante';
 $string['reportmulti_resp'] = 'Respuestas individuales';
 $string['reportoverview'] = 'Vista general';
 $string['reportregrade'] = 'Recalificar intentos';
+$string['reportresponses'] = 'Respuestas detalladas';
 $string['reports'] = 'Informes';
 $string['reportsimplestat'] = 'Estadística simple';
 $string['requirepassword'] = 'Se requiere contraseña';
