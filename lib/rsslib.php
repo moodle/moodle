@@ -357,12 +357,12 @@ function rss_display_feeds($courseid='', $userid='', $rssid='') {
     $select = '';
 
     if (!isadmin()) {
-        $userid = $USER->id;
+     	$userid = $USER->id;
     }
 
     if ($userid != '' && is_numeric($userid)) {
-        // if a user is specified and not an admin then only show their own feeds
-        $select = 'userid='. $userid;
+	    // if a user is specified and not an admin then only show their own feeds
+	    $select = 'userid='. $userid;
     } else if ($rssid != ''){
         $select = 'id='. $rssid;
     }
@@ -397,7 +397,7 @@ function rss_display_feeds($courseid='', $userid='', $rssid='') {
                              '<img src="'. $CFG->pixpath .'/t/edit.gif" alt="'. get_string('edit').'" title="'. get_string('edit') .'" /></a>&nbsp;'.
                              
                              '<a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?id='. $courseid .'&amp;act=delfeed&amp;rssid='. $feed->id.'&amp;blogid='. $blogid .'" 
-                onclick="return confirm(\''. get_string('deletefeedconfirm', 'block_rss_client') .'\');">'.
+				onclick="return confirm(\''. get_string('deletefeedconfirm', 'block_rss_client') .'\');">'.
                              '<img src="'. $CFG->pixpath .'/t/delete.gif" alt="'. get_string('delete').'" title="'. get_string('delete') .'" /></a>';
             }
             else {
@@ -448,7 +448,7 @@ function rss_get_form($act='none', $url='', $rssid='', $preferredtitle='', $cour
     $strupdatefeed = get_string('updatefeed', 'block_rss_client');
     $straddfeed = get_string('addfeed', 'block_rss_client');
     
-    $returnstring = '<table align="center"><tbody><tr><td>'."\n";
+    $returnstring = '<table align="center"><tbody><tr><td>'."\n";    
     $returnstring .= '<form action="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php" method="POST" name="block_rss">'."\n";
 
     if ($act == 'rss_edit') {
@@ -469,14 +469,16 @@ function rss_get_form($act='none', $url='', $rssid='', $preferredtitle='', $cour
     if ($act == 'rss_edit') { 
         $returnstring .= $preferredtitle; 
     }
-    $returnstring .= '" />'."\n";
 
+    $returnstring .= '" />'."\n";
     $returnstring .= '<input type="hidden" name="act" value="';
+
     if ($act == 'rss_edit') {
         $returnstring .= 'updfeed';
     } else {
         $returnstring .= 'addfeed';
     }
+
     $returnstring .= '" />'."\n";
     if ($act == 'rss_edit') { 
         $returnstring .= '<input type="hidden" name="rssid" value="'. $rssid .'" />'. "\n"; 
@@ -488,17 +490,15 @@ function rss_get_form($act='none', $url='', $rssid='', $preferredtitle='', $cour
     $returnstring .= '<br /><input type="submit" value="';
     $validatestring = "<a href=\"#\" 
 onClick=\"window.open('http://feedvalidator.org/check.cgi?url='+document.block_rss.elements['url'].value,'validate','width=640,height=480,scrollbars=yes,status=yes,resizable=yes');return true;\">". get_string('validatefeed', 'block_rss_client')."</a>";
+
     if ($act == 'rss_edit') {
         $returnstring .= $stredit;
     } else {
         $returnstring .= $stradd;
     }
+
     $returnstring .= '" />&nbsp;'. $validatestring .'</form>'."\n";
     $returnstring .= '</td></tr></tbody></table>'."\n";
-
-    if ($printnow){
-        print $returnstring;
-    }
     return $returnstring;
 }
 ?>
