@@ -87,6 +87,7 @@ $string['resourcetypehtml'] = 'Compose a web page';
 $string['resourcetypelabel'] = 'Insert a label';
 $string['resourcetyperepository'] = 'Link to a repository object';
 $string['resourcetypetext'] = 'Compose a text page';
+$string['showcourseblocks'] = 'Show the course blocks';
 $string['searchweb'] = 'Search for web page';
 $string['serverurl'] = 'Server URL ($a->wwwroot)';
 $string['variablename'] = 'Variable name';
