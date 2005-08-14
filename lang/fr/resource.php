@@ -78,6 +78,7 @@ $string['resourcetyperepository'] = 'Lien vers un espace de dépôt';
 $string['resourcetypetext'] = 'Composer une page de texte';
 $string['searchweb'] = 'Rechercher une page web';
 $string['serverurl'] = 'URL du serveur ($a->wwwroot)';
+$string['showcourseblocks'] = 'Afficher les blocs de cours';
 $string['variablename'] = 'Nom de la variable';
 $string['vol'] = 'Vol';
 
