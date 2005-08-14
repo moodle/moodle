@@ -41,15 +41,13 @@
     }
 
     if ($currentgroup) {
-        $users = get_group_users($currentgroup, "u.firstname ASC", '', 'u.id, u.picture, u.firstname, u.lastname') + get_admins();
+        $users = get_group_users($currentgroup, "u.firstname ASC", '', 'u.id, u.picture, u.firstname, u.lastname');
     } else {
         $users = get_course_users($course->id, "u.firstname ASC", '', 'u.id, u.picture, u.firstname, u.lastname') + get_admins();
     }
 
     if (!$users) {
-        print_heading(get_string("nousersyet"));
-        print_footer($course);
-        exit;
+        print_heading(get_string("nousersyet"));        
     }
 
     if ($allresponses = get_records("choice_answers", "choiceid", $choice->id)) {
