@@ -302,7 +302,7 @@
             html_footer();
             break;
 
-        case "mkdir":
+        case "makedir":
             if (!empty($name) and confirm_sesskey()) {
                 html_header($course, $wdir);
                 $name = clean_filename($name);
@@ -324,7 +324,7 @@
                 echo ' <input type="hidden" name="choose" value="'.$choose.'">';
                 echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />";
                 echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />";
-                echo " <input type=\"hidden\" name=\"action\" value=\"mkdir\" />";
+                echo " <input type=\"hidden\" name=\"action\" value=\"makedir\" />";
                 echo " <input type=\"text\" name=\"name\" size=\"35\" />";
                 echo " <input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
                 echo " <input type=\"submit\" value=\"$strcreate\" />";
@@ -814,7 +814,7 @@ function displaydir ($wdir) {
         echo ' <input type="hidden" name="choose" value="'.$choose.'">';
         echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />";
         echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />";
-        echo " <input type=\"hidden\" name=\"action\" value=\"mkdir\" />";
+        echo " <input type=\"hidden\" name=\"action\" value=\"makedir\" />";
         echo " <input type=\"submit\" value=\"$strmakeafolder\" />";
         echo "</form>";
     echo "</td>";
