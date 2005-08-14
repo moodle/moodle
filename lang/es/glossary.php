@@ -1,11 +1,11 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
+      // glossary.php - created with Moodle 1.5.1 (2005060210)
 
 
 $string['addcomment'] = 'Agregar comentario';
 $string['addentry'] = 'Agregar entrada';
 $string['addingcomment'] = 'Agregar un comentario';
-$string['aliases'] = 'Seudónimo';
+$string['aliases'] = 'Palabra(s) clave';
 $string['allcategories'] = 'Todas las categorías';
 $string['allentries'] = 'TODAS';
 $string['allowcomments'] = 'Permitir comentar las entradas';
@@ -164,7 +164,7 @@ $string['waitingapproval'] = 'Esperando aprobación';
 $string['warningstudentcapost'] = '(Esto sólo aplica si el glosario no es el principal)';
 $string['withauthor'] = 'Conceptos con autor';
 $string['withoutauthor'] = 'Conceptos sin autor';
-$string['writtenby'] = 'Por';
+$string['writtenby'] = 'por';
 $string['youarenottheauthor'] = 'Dado que usted no es el autor de este comentario, no está autorizado a modificarlo.';
 
 ?>
