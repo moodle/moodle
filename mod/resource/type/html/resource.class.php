@@ -30,6 +30,10 @@ function add_instance($resource) {
         $resource->popup = "";
     }
 
+    if (isset($resource->blockdisplay)) {
+        $resource->options = 'showblocks';
+    }
+
     if (isset($resource->parametersettingspref)) {
         set_user_preference('resource_parametersettingspref', $resource->parametersettingspref);
     }
@@ -64,6 +68,10 @@ function update_instance($resource) {
         $resource->popup = "";
     }
 
+    if (isset($resource->blockdisplay)) {
+        $resource->options = 'showblocks';
+    }
+
     if (isset($resource->parametersettingspref)) {
         set_user_preference('resource_parametersettingspref', $resource->parametersettingspref);
     }
@@ -79,67 +87,82 @@ function update_instance($resource) {
 function display() {
     global $CFG;
 
-/// Set up generic stuff first, including checking for access
-    parent::display();
+    /// Are we displaying the course blocks?
+    if ($this->resource->options == 'showblocks') {
 
-/// Set up some shorthand variables
-    $cm = $this->cm;     
-    $course = $this->course;
-    $resource = $this->resource; 
+        parent::display_course_blocks_start();
 
-    $pagetitle = strip_tags($course->shortname.': '.format_string($resource->name));
-    $formatoptions->noclean = true;
-    $inpopup_param = optional_param( 'inpopup','' );
-    $inpopup = !empty($inpopup_param);
+        $formatoptions->noclean = true;
+        print_simple_box(format_text($this->resource->alltext, FORMAT_HTML, $formatoptions, $this->course->id), "center", "", "", "20");
 
-    if ($resource->popup) {
-        if ($inpopup) {                    /// Popup only
-            add_to_log($course->id, "resource", "view", "view.php?id={$cm->id}", $resource->id, $cm->id);
-            print_header();
-            print_simple_box(format_text($resource->alltext, FORMAT_HTML, $formatoptions, $course->id), 
-                                         "center", "", "", "20");
-            print_footer($course);
-        } else {                           /// Make a page and a pop-up window
+        parent::display_course_blocks_end();
 
-            print_header($pagetitle, $course->fullname, "$this->navigation ".format_string($resource->name), 
-                         "", "", true, update_module_button($cm->id, $course->id, $this->strresource), 
-                         navmenu($course, $cm));
+    } else {
 
-            echo "\n<script language=\"javascript\" type=\"text/javascript\">";
-            echo "\n<!--\n";
-            echo "openpopup('/mod/resource/view.php?inpopup=true&id={$cm->id}','resource{$resource->id}','{$resource->popup}');\n";
-            echo "\n-->\n";
-            echo '</script>';
-    
-            if (trim(strip_tags($resource->summary))) {
-                print_simple_box(format_text($resource->summary, FORMAT_MOODLE, $formatoptions, $course->id), "center");
+        /// Set up generic stuff first, including checking for access
+        parent::display();
+
+        /// Set up some shorthand variables
+        $cm = $this->cm;     
+        $course = $this->course;
+        $resource = $this->resource; 
+
+        $pagetitle = strip_tags($course->shortname.': '.format_string($resource->name));
+        $formatoptions->noclean = true;
+        $inpopup_param = optional_param( 'inpopup','' );
+        $inpopup = !empty($inpopup_param);
+
+        if ($resource->popup) {
+            if ($inpopup) {                    /// Popup only
+                add_to_log($course->id, "resource", "view", "view.php?id={$cm->id}", $resource->id, $cm->id);
+                print_header();
+                print_simple_box(format_text($resource->alltext, FORMAT_HTML, $formatoptions, $course->id), 
+                        "center", "", "", "20");
+                print_footer($course);
+            } else {                           /// Make a page and a pop-up window
+
+                print_header($pagetitle, $course->fullname, "$this->navigation ".format_string($resource->name), 
+                        "", "", true, update_module_button($cm->id, $course->id, $this->strresource), 
+                        navmenu($course, $cm));
+
+                echo "\n<script language=\"javascript\" type=\"text/javascript\">";
+                echo "\n<!--\n";
+                echo "openpopup('/mod/resource/view.php?inpopup=true&id={$cm->id}','resource{$resource->id}','{$resource->popup}');\n";
+                echo "\n-->\n";
+                echo '</script>';
+
+                if (trim(strip_tags($resource->summary))) {
+                    print_simple_box(format_text($resource->summary, FORMAT_MOODLE, $formatoptions, $course->id), "center");
+                }
+
+                $link = "<a href=\"$CFG->wwwroot/mod/resource/view.php?inpopup=true&amp;id={$cm->id}\" target=\"resource{$resource->id}\" onclick=\"return openpopup('/mod/resource/view.php?inpopup=true&amp;id={$cm->id}', 'resource{$resource->id}','{$resource->popup}');\">".format_string($resource->name,true)."</a>";
+
+                echo "<p>&nbsp</p>";
+                echo '<p align="center">';
+                print_string('popupresource', 'resource');
+                echo '<br />';
+                print_string('popupresourcelink', 'resource', $link);
+                echo "</p>";
+
+                print_footer($course);
             }
-    
-            $link = "<a href=\"$CFG->wwwroot/mod/resource/view.php?inpopup=true&amp;id={$cm->id}\" target=\"resource{$resource->id}\" onclick=\"return openpopup('/mod/resource/view.php?inpopup=true&amp;id={$cm->id}', 'resource{$resource->id}','{$resource->popup}');\">".format_string($resource->name,true)."</a>";
-    
-            echo "<p>&nbsp</p>";
-            echo '<p align="center">';
-            print_string('popupresource', 'resource');
-            echo '<br />';
-            print_string('popupresourcelink', 'resource', $link);
-            echo "</p>";
-    
+        } else {    /// not a popup at all
+
+            add_to_log($course->id, "resource", "view", "view.php?id={$cm->id}", $resource->id, $cm->id);
+            print_header($pagetitle, $course->fullname, "$this->navigation ".format_string($resource->name),
+                    "", "", true, update_module_button($cm->id, $course->id, $this->strresource), 
+                    navmenu($course, $cm));
+
+            print_simple_box(format_text($resource->alltext, FORMAT_HTML, $formatoptions, $course->id), "center", "", "", "20");
+
+            $strlastmodified = get_string("lastmodified");
+            echo "<center><p><font size=\"1\">$strlastmodified: ".userdate($resource->timemodified)."</font></p></center>";
+
             print_footer($course);
         }
-    } else {    /// not a popup at all
 
-        add_to_log($course->id, "resource", "view", "view.php?id={$cm->id}", $resource->id, $cm->id);
-        print_header($pagetitle, $course->fullname, "$this->navigation ".format_string($resource->name),
-                     "", "", true, update_module_button($cm->id, $course->id, $this->strresource), 
-                     navmenu($course, $cm));
-    
-        print_simple_box(format_text($resource->alltext, FORMAT_HTML, $formatoptions, $course->id), "center", "", "", "20");
-    
-        $strlastmodified = get_string("lastmodified");
-        echo "<center><p><font size=\"1\">$strlastmodified: ".userdate($resource->timemodified)."</font></p></center>";
-    
-        print_footer($course);
     }
+
 }
 
 
@@ -164,9 +187,9 @@ function setup($form) {
         $jsoption[] = "\"$optionname\"";
     }
     
-    $frameoption = "\"framepage\"";
+    $blockoption = "\"blockdisplay\"";
     $popupoptions = implode(",", $jsoption);
-    $jsoption[] = $frameoption;
+    $jsoption[] = $blockoption;
     $alloptions = implode(",", $jsoption);
 
     if ($form->instance) {     // Re-editing

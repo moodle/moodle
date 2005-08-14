@@ -64,11 +64,19 @@
     <td colspan="2">
         <script type="text/javascript">
             var popupitems = [<?php echo $popupoptions; ?>];
+            var blockitem = [<?php echo $blockoption; ?>];
             var allitems = [<?php echo $alloptions; ?>];
         </script>
         <input type="radio" name="windowpopup" value="0" alt="<?php print_string('pagewindow', 'resource') ?>" <?php echo ($windowtype != 'popup') ? 'checked="checked"' : '' ?> 
-        onclick="return lockoptions('form', 'windowpopup[1]', popupitems);" />
+        onclick="lockoptions('form', 'windowpopup[0]', blockitem);
+        return lockoptions('form', 'windowpopup[1]', popupitems);" />
         <b title="<?php print_string('pagedisplay', 'resource') ?>"><?php print_string('pagewindow', 'resource') ?></b>
+        <blockquote>
+            <input type="hidden" name="hblockdisplay" value="0" />
+            <input type="checkbox" name="blockdisplay" value="1" <?php echo ($form->options == "showblocks") ? "checked=\"checked\"" : "" ?> alt="<?php print_string('showcourseblocks', 'resource') ?>" />
+            <?php print_string("showcourseblocks", "resource") ?>
+        </blockquote>
+
     </td>
 </tr>
 
@@ -76,7 +84,8 @@
     
     <td colspan="2">
         <input name="windowpopup" type="radio" value="1" alt="<?php p($strnewwindow) ?>" <?php echo ($windowtype == "popup") ? "checked=\"checked\"" : "" ?>
-        onclick=" return lockoptions('form', 'windowpopup[1]', popupitems);" />
+        onclick="lockoptions('form', 'windowpopup[0]', blockitem);
+        return lockoptions('form', 'windowpopup[1]', popupitems);" />
         <b title="<?php p($strnewwindowopen) ?>"><?php p($strnewwindow) ?></b>
         <blockquote>
         <?php
