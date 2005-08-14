@@ -93,7 +93,7 @@ function display() {
         parent::display_course_blocks_start();
 
         $formatoptions->noclean = true;
-        print_simple_box(format_text($this->resource->alltext, FORMAT_HTML, $formatoptions, $this->course->id), "center", "", "", "20");
+        echo format_text($this->resource->alltext, FORMAT_HTML, $formatoptions, $this->course->id);
 
         parent::display_course_blocks_end();
 
