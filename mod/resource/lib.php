@@ -129,6 +129,78 @@ function display() {
 }
 
 
+/**
+* Display the resource with the course blocks.
+*/
+function display_course_blocks_start() {
+
+    global $CFG;
+    global $USER;
+
+    require_once($CFG->libdir.'/blocklib.php');
+    require_once($CFG->libdir.'/pagelib.php');
+
+    $PAGE = page_create_object(PAGE_COURSE_VIEW, $this->course->id);
+    $this->PAGE = $PAGE;
+    $pageblocks = blocks_setup($PAGE);
+
+    $blocks_preferred_width = bounded_number(180, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]), 210);
+
+/// Print the page header
+
+    if (!empty($edit) && $PAGE->user_allowed_editing()) {
+        if ($edit == 'on') {
+            $USER->editing = true;
+        } else if ($edit == 'off') {
+            $USER->editing = false;
+        }
+    }
+    $morebreadcrumbs = array($this->strresources   => 'index.php?id='.$this->course->id,
+                             $this->resource->name => '');
+
+    $PAGE->print_header($this->course->shortname.': %fullname%', $morebreadcrumbs);
+
+    echo '<table id="layout-table"><tr>';
+
+    if((blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $PAGE->user_is_editing())) {
+        echo '<td style="width: '.$blocks_preferred_width.'px;" id="left-column">';
+        blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
+        echo '</td>';
+    }
+
+    echo '<td id="middle-column">';
+    echo '<div id="resource">';
+
+}
+
+
+/**
+ * Finish displaying the resource with the course blocks
+ */
+function display_course_blocks_end() {
+
+    global $CFG;
+
+    $PAGE = $this->PAGE;
+    $pageblocks = blocks_setup($PAGE);
+    $blocks_preferred_width = bounded_number(180, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]), 210);
+
+    echo '</div>';
+    echo '</td>';
+
+    if((blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $PAGE->user_is_editing())) {
+        echo '<td style="width: '.$blocks_preferred_width.'px;" id="right-column">';
+        blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
+        echo '</td>';
+    }
+
+    echo '</tr></table>';
+
+    print_footer($this->course);
+
+}
+
+
 function setup(&$form) {
     global $CFG, $usehtmleditor;
 
