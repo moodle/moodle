@@ -252,6 +252,9 @@
 /// Check all enrolment plugins and upgrade if necessary
     upgrade_enrol_plugins("$CFG->wwwroot/$CFG->admin/index.php");  // Return here afterwards
 
+/// Check for local database customisations
+    require_once("$CFG->dirroot/lib/locallib.php");
+    upgrade_local_db("$CFG->wwwroot/$CFG->admin/index.php");  // Return here afterwards
 
 
 /// Set up the overall site name etc.

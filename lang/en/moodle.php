@@ -248,6 +248,7 @@ $string['databasesetup'] = 'Setting up database';
 $string['databasesuccess'] = 'Database was successfully upgraded';
 $string['databaseupgradebackups'] = 'Backup version is now $a';
 $string['databaseupgradeblocks'] = 'Blocks version is now $a';
+$string['databaseupgradelocal'] = 'Local database customisations version is now $a';
 $string['databaseupgrades'] = 'Upgrading database';
 $string['date'] = 'Date';
 $string['datemostrecentfirst'] = 'Date - most recent first';
