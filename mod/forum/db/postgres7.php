@@ -146,6 +146,9 @@ function forum_upgrade($oldversion) {
       modify_database('','CREATE INDEX prefix_forum_track_user_forum_idx ON prefix_forum_track_prefs (userid, forumid);');
   }
 
+  if ($oldversion < 2005042601) { // Mass cleanup of bad postgres upgrade scripts
+      modify_database('','ALTER TABLE prefix_forum ALTER trackingtype SET NOT NULL');
+  }
 
   return true;
 

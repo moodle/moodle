@@ -920,6 +920,44 @@ function quiz_upgrade($oldversion) {
         execute_sql('CREATE UNIQUE INDEX '.$CFG->prefix.'quiz_rqp_types_name_uk ON '.$CFG->prefix.'quiz_rqp_types (name);');
 
     }
+    
+    if ($oldversion < 2005060302) { // Mass cleanup of bad postgres upgrade scripts
+        modify_database('','CREATE UNIQUE INDEX prefix_quiz_newest_states_attempt_idx ON prefix_quiz_newest_states (attemptid, questionid)');
+        modify_database('','ALTER TABLE ONLY prefix_quiz_attemptonlast_datasets DROP CONSTRAINT prefix_quiz_category_userid_unique');
+        modify_database('','ALTER TABLE ONLY prefix_quiz_attemptonlast_datasets ADD CONSTRAINT prefix_quiz_attemptonlast_datasets_category_userid UNIQUE (category, userid)');
+        modify_database('','ALTER TABLE ONLY prefix_quiz_question_instances DROP CONSTRAINT prefix_quiz_question_grades_pkey');
+        modify_database('','ALTER TABLE ONLY prefix_quiz_question_instances ADD CONSTRAINT prefix_quiz_question_instances_pkey PRIMARY KEY (id)');
+        modify_database('','ALTER TABLE ONLY prefix_quiz_question_versions DROP CONSTRAINT prefix_quiz_question_version_pkey');
+        modify_database('','ALTER TABLE ONLY prefix_quiz_question_versions ADD CONSTRAINT prefix_quiz_question_versions_pkey PRIMARY KEY (id)');
+        modify_database('','ALTER TABLE ONLY prefix_quiz_states DROP CONSTRAINT prefix_quiz_responses_pkey');
+        modify_database('','ALTER TABLE ONLY prefix_quiz_states ADD CONSTRAINT prefix_quiz_states_pkey PRIMARY KEY (id)');
+        modify_database('','ALTER TABLE prefix_quiz ALTER decimalpoints SET NOT NULL');
+        modify_database('','ALTER TABLE prefix_quiz ALTER optionflags SET NOT NULL');
+        modify_database('','ALTER TABLE prefix_quiz ALTER penaltyscheme SET NOT NULL');
+        modify_database('','ALTER TABLE prefix_quiz ALTER popup SET NOT NULL');
+        modify_database('','ALTER TABLE prefix_quiz ALTER questionsperpage SET NOT NULL');
+        modify_database('','ALTER TABLE prefix_quiz ALTER review SET NOT NULL');
+        modify_database('','ALTER TABLE prefix_quiz_answers ALTER answer SET NOT NULL');
+        modify_database('','ALTER TABLE prefix_quiz_attempts ALTER layout SET NOT NULL');
+        modify_database('','ALTER TABLE prefix_quiz_attempts ALTER preview SET NOT NULL');
+        table_column('quiz_calculated','correctanswerformat','correctanswerformat','integer','16','unsigned','2');
+        modify_database('','ALTER TABLE prefix_quiz_categories ALTER parent SET NOT NULL');
+        modify_database('','ALTER TABLE prefix_quiz_categories ALTER sortorder SET NOT NULL');
+        modify_database('','ALTER TABLE prefix_quiz_grades ALTER grade SET NOT NULL');
+        modify_database('','ALTER TABLE prefix_quiz_multianswers ALTER sequence SET NOT NULL');
+        modify_database('','ALTER TABLE prefix_quiz_numerical ALTER tolerance SET NOT NULL');
+        modify_database('','ALTER TABLE prefix_quiz_questions ALTER hidden SET NOT NULL');
+        modify_database('','ALTER TABLE prefix_quiz_questions ALTER length SET NOT NULL');
+        modify_database('','ALTER TABLE prefix_quiz_questions ALTER parent SET NOT NULL');
+        table_column('quiz_questions','penalty','penalty','real','','UNSIGNED','0.1');
+        modify_database('','ALTER TABLE prefix_quiz_states ALTER answer SET NOT NULL');
+        modify_database('','ALTER TABLE prefix_quiz_states ALTER event SET NOT NULL');
+        modify_database('','ALTER TABLE prefix_quiz_states ALTER originalquestion SET NOT NULL');
+        modify_database('','ALTER TABLE prefix_quiz_states ALTER penalty SET NOT NULL');
+        modify_database('','ALTER TABLE prefix_quiz_states ALTER raw_grade SET NOT NULL');
+        modify_database('','ALTER TABLE prefix_quiz_states ALTER seq_number SET NOT NULL');
+        modify_database('','ALTER TABLE prefix_quiz_states ALTER timestamp SET NOT NULL');
+    }
 
     return true;
 }

@@ -244,6 +244,36 @@ function lesson_upgrade($oldversion) {
         table_column('lesson_grades', 'grade', 'grade', 'real', '', 'unsigned', '0', 'not null');
     }
     
+    if ($oldversion < 2005060901) { // Mass cleanup of bad postgres upgrade scripts
+        modify_database('','ALTER TABLE prefix_lesson ALTER bgcolor SET NOT NULL');
+        modify_database('','ALTER TABLE prefix_lesson ALTER custom SET NOT NULL');
+        table_column('lesson','height','height','integer','16','unsigned','480');
+        modify_database('','ALTER TABLE prefix_lesson ALTER highscores SET NOT NULL');
+        modify_database('','ALTER TABLE prefix_lesson ALTER maxattempts SET DEFAULT 5');
+        table_column('lesson','maxhighscores','maxhighscores','integer','16');
+        modify_database('','ALTER TABLE prefix_lesson ALTER displayleft SET NOT NULL');
+        table_column('lesson','','minquestions','integer','8');
+        table_column('lesson','maxtime','maxtime','integer','16');
+        modify_database('','ALTER TABLE prefix_lesson ALTER ongoing SET NOT NULL');
+        modify_database('','ALTER TABLE prefix_lesson ALTER password SET NOT NULL');
+        modify_database('','ALTER TABLE prefix_lesson ALTER practice SET NOT NULL');
+        modify_database('','ALTER TABLE prefix_lesson ALTER review SET NOT NULL');
+        modify_database('','ALTER TABLE prefix_lesson ALTER slideshow SET NOT NULL');
+        modify_database('','ALTER TABLE prefix_lesson ALTER timed SET NOT NULL');
+        modify_database('','ALTER TABLE prefix_lesson ALTER tree SET NOT NULL');
+        modify_database('','ALTER TABLE prefix_lesson ALTER usepassword SET NOT NULL');
+        modify_database('','ALTER TABLE prefix_lesson ALTER width SET NOT NULL');
+        table_column('lesson','width','width','integer','16','unsigned','640');
+        table_column('lesson_answers','flags','flags','integer','8');
+        table_column('lesson_answers','grade','grade','integer','8');
+        table_column('lesson_answers','score','score','integer','16');
+        modify_database('','ALTER TABLE prefix_lesson_grades ALTER grade SET NOT NULL');
+        modify_database('','ALTER TABLE prefix_lesson_pages ALTER display SET NOT NULL');
+        modify_database('','ALTER TABLE prefix_lesson_pages ALTER layout SET NOT NULL');
+        table_column('lesson_pages','qoption','qoption','integer','8');
+        table_column('lesson_pages','qtype','qtype','integer','8');
+    }
+
     if ($oldversion < 2005061500) {
         table_column('lesson', '', 'mediafile', 'varchar', '255', '', '', 'not null', 'tree');
     }

@@ -138,6 +138,14 @@ global $CFG;
         }
     }
 
+    if ($oldversion < 2005022401 && $result) { // Mass cleanup of bad upgrade scripts
+        modify_database('','CREATE INDEX prefix_block_instance_pageid_idx ON prefix_block_instance (pageid)');
+        modify_database('','ALTER TABLE prefix_block_instance ALTER pagetype SET DEFAULT \'\'');
+        modify_database('','ALTER TABLE prefix_block_instance ALTER position SET DEFAULT \'\'');
+        modify_database('','ALTER TABLE prefix_block_instance ALTER pagetype SET NOT NULL');
+        modify_database('','ALTER TABLE prefix_block_instance ALTER position SET NOT NULL');
+    }
+
     //Finally, return result
     return $result;
 }

@@ -447,6 +447,7 @@ CREATE TABLE prefix_user_students (
 CREATE UNIQUE INDEX prefix_user_students_courseuserid_uk ON prefix_user_students (course,userid);
 CREATE INDEX prefix_user_students_userid_idx ON prefix_user_students (userid);
 CREATE INDEX prefix_user_students_enrol_idx ON prefix_user_students (enrol);
+CREATE INDEX prefix_user_students_timeaccess_idx ON prefix_user_students (timeaccess);
 
 CREATE TABLE prefix_user_teachers (
    id SERIAL PRIMARY KEY,
@@ -470,6 +471,8 @@ CREATE TABLE prefix_user_coursecreators (
    id SERIAL8 PRIMARY KEY,
    userid int8  NOT NULL default '0'
 );
+
+CREATE INDEX prefix_user_coursecreators_userid_idx ON prefix_user_coursecreators (userid);
 
 CREATE TABLE adodb_logsql (
    created timestamp NOT NULL,

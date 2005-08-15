@@ -90,6 +90,15 @@ function choice_upgrade($oldversion) {
         table_column('choice', '', 'limitanswers', 'INTEGER', '2', 'unsigned', 0, 'not null', 'showunanswered');
         table_column('choice_options', '', 'maxanswers', 'INTEGER', '10', 'unsigned', 0, 'null', 'text');
     }
+
+    if ($oldversion < 2005041501) { // Mass cleanup of bad upgrade scripts
+        modify_database('','CREATE INDEX prefix_choice_answers_choice_idx ON prefix_choice_answers (choiceid)');
+        modify_database('','ALTER TABLE prefix_choice ALTER display SET NOT NULL');
+        modify_database('','ALTER TABLE prefix_choice ALTER limitanswers SET NOT NULL');
+        modify_database('','ALTER TABLE prefix_choice_answers ALTER choiceid SET NOT NULL');
+        modify_database('','ALTER TABLE prefix_choice_answers ALTER optionid SET NOT NULL');
+    }
+
     return true;
 }
 

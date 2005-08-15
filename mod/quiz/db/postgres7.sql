@@ -88,7 +88,7 @@ CREATE TABLE prefix_quiz_attempts (
   timestart integer NOT NULL default '0',
   timefinish integer NOT NULL default '0',
   timemodified integer NOT NULL default '0',
-  layout text NOT NULL,
+  layout text NOT NULL default '',
   preview integer NOT NULL default '0'
 );
 
@@ -272,6 +272,7 @@ CREATE TABLE prefix_quiz_numerical (
   tolerance varchar(255) NOT NULL default '0.0'
 );
 
+CREATE INDEX prefix_quiz_numerical_answer_idx ON prefix_quiz_numerical (answer);
 CREATE INDEX prefix_quiz_numerical_question_idx ON prefix_quiz_numerical (question);
 
 # --------------------------------------------------------
@@ -448,7 +449,7 @@ CREATE TABLE prefix_quiz_states (
   question integer NOT NULL default '0',
   originalquestion integer NOT NULL default '0',
   seq_number integer NOT NULL default '0',
-  answer text NOT NULL,
+  answer text NOT NULL default '',
   timestamp integer NOT NULL default '0',
   event integer NOT NULL default '0',
   grade varchar(10) NOT NULL default '0.0',

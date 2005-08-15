@@ -178,6 +178,10 @@ function glossary_upgrade($oldversion) {
         $wtm->update( 'glossary_comments','text','format',$sql );
     }
 
+    if ($oldversion < 2005041901) { // Mass cleanup of bad postgres upgrade scripts
+        table_column('glossary','allowprintview','allowprintview','smallint','4','unsigned','1');
+    }
+
   return true;
 }
 

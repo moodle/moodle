@@ -47,6 +47,11 @@ function chat_upgrade($oldversion) {
         table_column('chat_users', '', 'lang'  , 'varchar', '10', ''        , '' , 'not null', '');
     }
 
+    if ($oldversion < 2005031001) { // Mass cleanup of bad upgrade scripts
+        modify_database('','ALTER TABLE prefix_chat_users ALTER course SET NOT NULL');
+        modify_database('','ALTER TABLE prefix_chat_users ALTER lang SET NOT NULL');
+    }
+
     return true;
 }
 
