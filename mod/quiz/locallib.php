@@ -2587,13 +2587,13 @@ function quiz_get_reviewoptions($quiz, $attempt, $isteacher=false) {
         $options->responses = ($quiz->review & QUIZ_REVIEW_OPEN & QUIZ_REVIEW_RESPONSES) ? 1 : 0;
         $options->scores = ($quiz->review & QUIZ_REVIEW_OPEN & QUIZ_REVIEW_SCORES) ? 1 : 0;
         $options->feedback = ($quiz->review & QUIZ_REVIEW_OPEN & QUIZ_REVIEW_FEEDBACK) ? 1 : 0;
-        $options->correct_responses = ($quiz->review & QUIZ_REVIEW_IMMEDIATELY & QUIZ_REVIEW_ANSWERS) ? 1 : 0;
+        $options->correct_responses = ($quiz->review & QUIZ_REVIEW_OPEN & QUIZ_REVIEW_ANSWERS) ? 1 : 0;
         $options->solutions = ($quiz->review & QUIZ_REVIEW_OPEN & QUIZ_REVIEW_SOLUTIONS) ? 1 : 0;
     } else {
         $options->responses = ($quiz->review & QUIZ_REVIEW_CLOSED & QUIZ_REVIEW_RESPONSES) ? 1 : 0;
         $options->scores = ($quiz->review & QUIZ_REVIEW_CLOSED & QUIZ_REVIEW_SCORES) ? 1 : 0;
         $options->feedback = ($quiz->review & QUIZ_REVIEW_CLOSED & QUIZ_REVIEW_FEEDBACK) ? 1 : 0;
-        $options->correct_responses = ($quiz->review & QUIZ_REVIEW_IMMEDIATELY & QUIZ_REVIEW_ANSWERS) ? 1 : 0;
+        $options->correct_responses = ($quiz->review & QUIZ_REVIEW_OPEN & QUIZ_REVIEW_ANSWERS) ? 1 : 0;
         $options->solutions = ($quiz->review & QUIZ_REVIEW_CLOSED & QUIZ_REVIEW_SOLUTIONS) ? 1 : 0;
     }
     return $options;
@@ -2636,7 +2636,7 @@ function quiz_upgrade_states($attempt) {
 /**
  * Get list of available import or export formats
  * @param string $type 'import' if import list, otherwise export list assumed
- * @return array sorted list of import/export formats available 
+ * @return array sorted list of import/export formats available
 **/
 function get_import_export_formats( $type ) {
 
