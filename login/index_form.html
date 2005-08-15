@@ -55,8 +55,10 @@
         </form>
 <?php } ?>
 
-<?php if ($CFG->changepassword or is_internal_auth() ) {
-          if (is_internal_auth()) {
+<?php if (!empty($CFG->{'auth_'.$CFG->auth.'_stdchangepassword'})
+          || $CFG->changepassword 
+	  || is_internal_auth() ) {
+	  if (is_internal_auth() || !empty($CFG->{'auth_'.$CFG->auth.'_stdchangepassword'})) {
               $changepassword = "forgot_password.php";
               $changebuttonname = get_string("senddetails");
           } else {

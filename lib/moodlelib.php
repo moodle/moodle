@@ -3795,10 +3795,28 @@ function reset_password_and_mail($user) {
     $site  = get_site();
     $from = get_admin();
 
+    $external = false;
+    if (!is_internal_auth($user->auth)) {
+        include_once($CFG->dirroot . '/auth/' . $user->auth . '/lib.php');
+        if (empty($CFG->{'auth_'.$user->auth.'_stdchangepassword'}) 
+            || !function_exists('auth_user_update_password')) {
+            trigger_error("Attempt to reset user password for user $user->username with Auth $user->auth.");
+            return false;
+        } else {
+            $external = true;
+        }
+    }
+
     $newpassword = generate_password();
 
-    if (! set_field('user', 'password', md5($newpassword), 'id', $user->id) ) {
-        error('Could not set user password!');
+    if ($external) {
+        if (!auth_user_update_password($user->username, $newpassword)) {
+            error("Could not set user password!");
+        }
+    } else {
+        if (! set_field("user", "password", md5($newpassword), "id", $user->id) ) {
+            error("Could not set user password!");
+        }
     }
 
     $a->firstname = $user->firstname;
