@@ -1179,6 +1179,30 @@ function main_upgrade($oldversion=0) {
         execute_sql("DROP TABLE {$CFG->prefix}currencies",false); // drop silently
     }
 
+    if ($oldversion < 2005060223) { // Mass cleanup of bad postgres upgrade scripts
+        execute_sql("DROP TABLE {$CFG->prefix}attendance_roll", false); // There are no attendance module anymore
+        modify_database('','ALTER TABLE prefix_config ALTER value SET NOT NULL');
+        modify_database('','ALTER TABLE prefix_course ALTER metacourse SET NOT NULL');
+        modify_database('','ALTER TABLE prefix_course ALTER theme SET NOT NULL');
+        modify_database('','ALTER TABLE prefix_event ALTER repeatid SET NOT NULL');
+        modify_database('','ALTER TABLE prefix_groups ALTER password SET NOT NULL');
+        modify_database('','ALTER TABLE prefix_groups ALTER theme SET NOT NULL');
+        modify_database('','ALTER TABLE prefix_message ALTER format SET NOT NULL');
+        modify_database('','ALTER TABLE prefix_message_read ALTER format SET NOT NULL');
+        modify_database('','ALTER TABLE prefix_groups ALTER theme SET NOT NULL');
+        modify_database('','ALTER TABLE prefix_user ALTER aim DROP DEFAULT');
+        modify_database('','ALTER TABLE prefix_user ALTER idnumber DROP DEFAULT');
+        modify_database('','ALTER TABLE prefix_user ALTER msn DROP DEFAULT');
+        modify_database('','ALTER TABLE prefix_user ALTER policyagreed SET NOT NULL');
+        modify_database('','ALTER TABLE prefix_user ALTER skype DROP DEFAULT');
+        modify_database('','ALTER TABLE prefix_user ALTER theme SET NOT NULL');
+        modify_database('','ALTER TABLE prefix_user ALTER timezone SET NOT NULL');
+        modify_database('','ALTER TABLE prefix_user ALTER trackforums SET NOT NULL');
+        modify_database('','ALTER TABLE prefix_user ALTER yahoo DROP DEFAULT');
+        modify_database('','ALTER TABLE prefix_user_students ALTER enrol SET NOT NULL');
+        modify_database('','ALTER TABLE prefix_user_teachers ALTER enrol SET NOT NULL');
+    }
+
     return $result;
 }
 

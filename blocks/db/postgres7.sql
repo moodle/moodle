@@ -10,7 +10,7 @@ CREATE TABLE prefix_block (
   cron INT8  NOT NULL default '0',
   lastcron INT8  NOT NULL default '0',
   visible int NOT NULL default '1',
-  multiple int NOT NULL default '1'
+  multiple int NOT NULL default '0'
 ) ;
 
 CREATE TABLE prefix_block_instance (
@@ -23,5 +23,7 @@ CREATE TABLE prefix_block_instance (
   visible int not null default '0',
   configdata text not null default ''
 ) ;
+
+CREATE INDEX prefix_block_instance_pageid_idx ON prefix_block_instance (pageid);
       
 # --------------------------------------------------------

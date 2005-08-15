@@ -20,6 +20,11 @@ function dialogue_upgrade($oldversion) {
         modify_database('','CREATE INDEX prefix_dialogue_entries_userid_idx ON prefix_dialogue_entries (userid);');
     }
 
+    if ($oldversion < 2005031001) { // Mass cleanup of bad postgres upgrade scripts
+        modify_database('','ALTER TABLE prefix_dialogue ALTER name SET DEFAULT \'\'');
+        modify_database('','ALTER TABLE prefix_dialogue ALTER name SET NOT NULL');
+    }
+
     $result = true;
     return $result;
 }

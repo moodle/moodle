@@ -207,6 +207,36 @@ function workshop_upgrade($oldversion) {
         $wtm->update( 'workshop','description','format' );
     }
 
+    if ($oldversion < 2005041201) { // Mass cleanup of bad upgrade scripts
+        // Some of those steps might fail, it is normal.
+        table_column('workshop','assessmentend','assessmentend','integer','16');
+        table_column('workshop','assessmentstart','assessmentstart','integer','16');
+        table_column('workshop','','phase','integer','4');
+        table_column('workshop','','showleaguetable','integer','8');
+        table_column('workshop','releasegrades','releasegrades','integer','16');
+        table_column('workshop','submissionend','submissionend','integer','16');
+        table_column('workshop','submissionstart','submissionstart','integer','16');
+        modify_database('','ALTER TABLE prefix_workshop ALTER teacherweight SET DEFAULT 1');
+        modify_database('','ALTER TABLE prefix_workshop DROP timeagreed');
+        modify_database('','ALTER TABLE prefix_workshop RENAME inalgrade TO finalgrade');
+        table_column('workshop_assessments','','donotuse','integer','8');
+        table_column('workshop_assessments','','timeagreed','integer','16');
+        modify_database('','ALTER TABLE prefix_workshop_assessments DROP teachergraded');
+        modify_database('','ALTER TABLE prefix_workshop_elements RENAME totalrassesments TO totalassessments');
+        modify_database('','ALTER TABLE prefix_workshop_submissions ALTER description DROP DEFAULT');
+        table_column('workshop_submissions','nassessments','nassessments','integer','16');
+        table_column('workshop_elements','totalassessments','totalassessments','integer','16');
+        execute_sql("
+        CREATE TABLE {$CFG->prefix}workshop_rubrics (
+          id SERIAL PRIMARY KEY,
+          workshopid int8 NOT NULL default '0',
+          elementno int8  NOT NULL default '0',
+          rubricno int4  NOT NULL default '0',
+          description text NOT NULL
+        )
+        ");
+    }
+
     return true;
 
 }

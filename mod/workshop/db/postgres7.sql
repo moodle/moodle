@@ -55,8 +55,8 @@ CREATE TABLE prefix_workshop_submissions (
   description TEXT,
   gradinggrade INT  NOT NULL default '0',
   late INT NOT NULL DEFAULT '0',
-  inalgrade INT  NOT NULL default '0',
-  nassessments INT8 NOT NULL default 0 
+  finalgrade INT  NOT NULL default '0',
+  nassessments INT8 NOT NULL default '0'
 
 );
 CREATE INDEX prefix_workshop_submissions_title_idx on prefix_workshop_submissions (title);
@@ -108,7 +108,7 @@ CREATE TABLE prefix_workshop_elements (
   maxscore INT  NOT NULL default '1',
   weight INT4 NOT NULL default '11',
   stddev FLOAT NOT NULL default '0',
-  totalrassesments INT8 NOT NULL DEFAULT '0'
+  totalassessments INT8 NOT NULL DEFAULT '0'
 );
 
 CREATE INDEX prefix_workshop_elements_workshopid_idx ON prefix_workshop_elements (workshopid);
