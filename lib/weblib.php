@@ -3064,9 +3064,39 @@ function update_course_icon($courseid) {
             $edit = 'on';
         }
         return "<form target=\"$CFG->framename\" method=\"get\" action=\"$CFG->wwwroot/course/view.php\">".
-               "<input type=\"hidden\" name=\"id\" value=\"$courseid\" />".
-               "<input type=\"hidden\" name=\"edit\" value=\"$edit\" />".
-               "<input type=\"submit\" value=\"$string\" /></form>";
+            "<input type=\"hidden\" name=\"id\" value=\"$courseid\" />".
+            "<input type=\"hidden\" name=\"edit\" value=\"$edit\" />".
+            "<input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />".
+            "<input type=\"submit\" value=\"$string\" /></form>";
+    }
+}
+
+/**
+ * Returns a turn student view on/off button for course in a self contained form.
+ *
+ * @uses $CFG
+ * @uses $USER
+ * @param int $courseid The course  to update by id as found in 'course' table
+ * @return string
+ */
+function update_studentview_button($courseid) {
+
+    global $CFG, $USER;
+
+    if (isteacheredit($courseid,0,true)) {
+        if (!empty($USER->studentview)) {
+            $svstring = get_string('studentviewoff');
+            $svedit = 'off';
+        } else {
+            $svstring = get_string('studentviewon');
+            $svedit = 'on';
+        }
+        $button = "<form target=\"$CFG->framename\" method=\"get\" action=\"$CFG->wwwroot/course/view.php\">".
+            "<input type=\"hidden\" name=\"id\" value=\"$courseid\" />".
+            "<input type=\"hidden\" name=\"studentview\" value=\"$svedit\" />".
+            "<input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />".
+            "<input type=\"submit\" value=\"$svstring\" /></form>";
+        return $button;
     }
 }
 
@@ -3079,6 +3109,11 @@ function update_course_icon($courseid) {
  */
 function update_module_button($moduleid, $courseid, $string) {
     global $CFG, $USER;
+
+    // do not display if studentview is on
+    if (!empty($USER->studentview)) {
+        return '';
+    }
 
     if (isteacheredit($courseid)) {
         $string = get_string('updatethis', '', $string);

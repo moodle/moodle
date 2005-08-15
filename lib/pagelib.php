@@ -388,10 +388,11 @@ class page_course extends page_base {
 
         // The "Editing On" button will be appearing only in the "main" course screen
         // (i.e., no breadcrumbs other than the default one added inside this function)
-        $button = empty($morebreadcrumbs) ? update_course_icon($this->courserecord->id) : '&nbsp;';
+        $buttons = update_course_icon($this->courserecord->id ) . update_studentview_button( $this->courserecord->id );
+        $buttons = empty($morebreadcrumbs) ? $buttons : '&nbsp;';
 
         print_header($title, $this->courserecord->fullname, $crumbtext,
-                     '', '', true, $button, user_login_string($this->courserecord, $USER));
+                     '', '', true, $buttons, user_login_string($this->courserecord, $USER));
     }
 
     // SELF-REPORTING SECTION

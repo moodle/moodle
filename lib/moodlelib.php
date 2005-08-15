@@ -2017,6 +2017,10 @@ function isadmin($userid=0) {
     global $USER;
     static $admins, $nonadmins;
 
+//    if (!empty($USER->studentview)) {
+//        return false;
+//    }
+
     if (!isset($admins)) {
         $admins = array();
         $nonadmins = array();
@@ -2066,7 +2070,13 @@ function isteacher($courseid=0, $userid=0, $includeadmin=true) {
         }
         if (!empty($USER->teacher) and $courseid) {   // look in session cache
             if (!empty($USER->teacher[$courseid])) {  // Explicitly a teacher, good
-                return true;
+                // normally return 'true', but override if 'studentview' on
+                if (!empty($USER->studentview)) {
+                    return false;
+                }
+                else {
+                    return true;
+                }
             }
         }
         $userid = $USER->id;                        // we need to make further checks
@@ -2123,10 +2133,16 @@ function isteacherinanycourse($userid=0, $includeadmin=true) {
  * @uses $USER
  * @param int $courseid The id of the course that is being edited
  * @param int $userid The id of the user that is being tested against. Set this to 0 if you would just like to test against the currently logged in user.
+ * @param bool $ignorestudentview true = don't do check for studentview mode
  * @return boo
  */
-function isteacheredit($courseid, $userid=0) {
+function isteacheredit($courseid, $userid=0, $ignorestudentview=false) {
     global $USER;
+
+    // we can't edit in studentview
+    if (!empty($USER->studentview) and !$ignorestudentview) {
+        return false;
+    }
 
     if (isadmin($userid)) {  // admins can do anything
         return true;
