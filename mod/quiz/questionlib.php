@@ -61,49 +61,49 @@ class cmoptions {
     * to the last responses from the previous attempt.
     */
     var $attemptonlast = false;
-    
+
     /**
-    * Various option flags. The flags are accessed via bitwise operations 
+    * Various option flags. The flags are accessed via bitwise operations
     * using the constants defined in the CONSTANTS section above.
     */
     var $optionflags = QUIZ_ADAPTIVE;
-    
+
     /**
-    * Determines whether in the calculation of the score for a question 
+    * Determines whether in the calculation of the score for a question
     * penalties for earlier wrong responses within the same attempt will
     * be subtracted.
     */
     var $penaltyscheme = true;
-    
+
     /**
     * The maximum time the user is allowed to answer the questions withing
     * an attempt. This is measured in minutes so needs to be multiplied by
     * 60 before compared to timestamps. If set to 0 no timelimit will be applied
     */
     var $timelimit = 0;
-    
+
     /**
     * Timestamp for the closing time. Responses submitted after this time will
     * be saved but no credit will be given for them.
     */
     var $timeclose = 9999999999;
-    
+
     /**
     * The id of the course from withing which the question is currently being used
     */
     var $course = SITEID;
-    
+
     /**
     * Whether the answers in a multiple choice question should be randomly
     * shuffled when a new attempt is started.
     */
     var $shuffleanswers = false;
-    
+
     /**
     * The number of decimals to be shown when scores are printed
     */
     var $decimalpoints = 2;
-    
+
     /**
     * Determines when a student is allowed to review. The information is read
     * out from the bits with the help of the constants defined earlier
@@ -136,7 +136,7 @@ function quiz_get_question_options(&$questions) {
         foreach ($keys as $i) {
             // set name prefix
             $questions[$i]->name_prefix = quiz_make_name_prefix($i);
-    
+
             if (!$QUIZ_QTYPES[$questions[$i]->qtype]->get_question_options($questions[$i]))
                 return false;
         }
@@ -453,7 +453,7 @@ function quiz_extract_responses($questions, $responses, $defaultevent) {
 * @return boolean            Indicates success/failure
 * @param object  $question   A question object
 * @param object  $attempt    The attempt, in which the question needs to be regraded.
-* @param object  $cmoptions       
+* @param object  $cmoptions
 * @param boolean $verbose    Optional. Whether to print progress information or not.
 */
 function quiz_regrade_question_in_attempt($question, $attempt, $cmoptions, $verbose=false) {
@@ -716,7 +716,7 @@ function quiz_search_for_duplicate_responses(&$question, &$state) {
 *                         graded state. The ->grade field is updated by applying
 *                         the penalty scheme determined in $cmoptions to the ->raw_grade and
 *                         ->last_graded->penalty fields.
-* @param object $cmoptions  The options set by the course module. 
+* @param object $cmoptions  The options set by the course module.
 *                           The ->penaltyscheme field determines whether penalties
 *                           for incorrect earlier responses are subtracted.
 */
@@ -899,13 +899,13 @@ function quiz_get_reviewoptions($cmoptions, $attempt, $isteacher=false) {
         $options->responses = ($cmoptions->review & QUIZ_REVIEW_OPEN & QUIZ_REVIEW_RESPONSES) ? 1 : 0;
         $options->scores = ($cmoptions->review & QUIZ_REVIEW_OPEN & QUIZ_REVIEW_SCORES) ? 1 : 0;
         $options->feedback = ($cmoptions->review & QUIZ_REVIEW_OPEN & QUIZ_REVIEW_FEEDBACK) ? 1 : 0;
-        $options->correct_responses = ($cmoptions->review & QUIZ_REVIEW_IMMEDIATELY & QUIZ_REVIEW_ANSWERS) ? 1 : 0;
+        $options->correct_responses = ($cmoptions->review & QUIZ_REVIEW_OPEN & QUIZ_REVIEW_ANSWERS) ? 1 : 0;
         $options->solutions = ($cmoptions->review & QUIZ_REVIEW_OPEN & QUIZ_REVIEW_SOLUTIONS) ? 1 : 0;
     } else {
         $options->responses = ($cmoptions->review & QUIZ_REVIEW_CLOSED & QUIZ_REVIEW_RESPONSES) ? 1 : 0;
         $options->scores = ($cmoptions->review & QUIZ_REVIEW_CLOSED & QUIZ_REVIEW_SCORES) ? 1 : 0;
         $options->feedback = ($cmoptions->review & QUIZ_REVIEW_CLOSED & QUIZ_REVIEW_FEEDBACK) ? 1 : 0;
-        $options->correct_responses = ($cmoptions->review & QUIZ_REVIEW_IMMEDIATELY & QUIZ_REVIEW_ANSWERS) ? 1 : 0;
+        $options->correct_responses = ($cmoptions->review & QUIZ_REVIEW_CLOSED & QUIZ_REVIEW_ANSWERS) ? 1 : 0;
         $options->solutions = ($cmoptions->review & QUIZ_REVIEW_CLOSED & QUIZ_REVIEW_SOLUTIONS) ? 1 : 0;
     }
     return $options;
