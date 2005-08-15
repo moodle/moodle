@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.6 development (2005072100)
+      // workshop.php - created with Moodle 1.6 development (2005072200)
 
 
 $string['absent'] = '欠席';
@@ -9,7 +9,7 @@ $string['addacomment'] = 'コメントの追加';
 $string['addcomment'] = 'コメントの追加';
 $string['afterdeadline'] = '提出期限後： $a';
 $string['ago'] = '$a 前';
-$string['agrade'] = '評価<br />成績';
+$string['agrade'] = '評価<br />評点';
 $string['agreetothisassessment'] = 'この評価に同意する';
 $string['allgradeshaveamaximumof'] = '全ての成績の最大:  $a';
 $string['allowresubmit'] = '再提出を許可';
@@ -81,7 +81,7 @@ $string['displayofgrades'] = '評点の表示';
 $string['dontshowgrades'] = '評点を表示しない';
 $string['edit'] = '編集';
 $string['editacomment'] = 'コメントの編集';
-$string['editingassessmentelements'] = '評価要素を編集';
+$string['editingassessmentelements'] = '評価要素の編集';
 $string['editsubmission'] = '提出物の編集';
 $string['element'] = '要素';
 $string['elementweight'] = '要素比重';
