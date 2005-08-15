@@ -2017,10 +2017,6 @@ function isadmin($userid=0) {
     global $USER;
     static $admins, $nonadmins;
 
-//    if (!empty($USER->studentview)) {
-//        return false;
-//    }
-
     if (!isset($admins)) {
         $admins = array();
         $nonadmins = array();
