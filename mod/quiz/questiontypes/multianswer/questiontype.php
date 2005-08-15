@@ -260,11 +260,11 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
                 }
 
                 /// Determine style
-                if (!empty($chosenanswer)) {
+                if (!empty($chosenanswer) && $options->correct_responses) {
                     if (!isset($chosenanswer->fraction)
                             || $chosenanswer->fraction <= 0.0) {
                         // The response must have been totally wrong:
-                        $style = ' style="background-color:red" ';
+                        $style = 'style="background-color:red"';
 
                     } else if ($chosenanswer->fraction >= 1.0) {
                         // The response was correct!!
@@ -274,8 +274,9 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
                         // This response did at least give some credit:
                         $style = 'style="background-color:yellow"';
                     }
+                } else {
+                    $style = '';
                 }
-
             }
 
             // Print the input control
