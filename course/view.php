@@ -8,9 +8,10 @@
 
     $id          = optional_param('id', 0, PARAM_INT);
     $name        = optional_param('name');
-    $edit        = optional_param('edit');
+    $edit        = optional_param('edit','',PARAM_ALPHA);
     $idnumber    = optional_param('idnumber');
     $topic       = optional_param('topic',0,PARAM_INT);
+    $studentview = optional_param('studentview','',PARAM_ALPHA);
 
     if (empty($id) && empty($name)) {
         error("Must specify course id or short name");
@@ -59,15 +60,29 @@
         $USER->editing = false;
     }
 
+    if (!isset($USER->studentview)) {
+        $USER->studentview = false;
+    }
+
+    // need to check this here, as studentview=on disables edit allowed (where 'on' is checked)
+    if (($studentview == 'off') and confirm_sesskey()) {
+        $USER->studentview = false;
+    }
+
     if ($PAGE->user_allowed_editing()) {
-        if ($edit == 'on') {
+        if (($edit == 'on') and confirm_sesskey()) {
             $USER->editing = true;
-        } else if ($edit == 'off') {
+        } else if (($edit == 'off') and confirm_sesskey()) {
             $USER->editing = false;
             if(!empty($USER->activitycopy) && $USER->activitycopycourse == $course->id) {
                 $USER->activitycopy       = false;
                 $USER->activitycopycourse = NULL;
             }
+        }
+
+        if (($studentview == 'on') and confirm_sesskey()) {
+            $USER->studentview = true;
+            $USER->editing = false;
         }
 
         if (isset($hide) && confirm_sesskey()) {
