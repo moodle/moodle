@@ -411,8 +411,7 @@ class block_base {
      */
     function applicable_formats() {
         // Default case: the block can be used in courses and site index, but not in activities
-        require_once($GLOBALS['CFG']->dirroot.'/my/pagelib.php');
-        return array('all' => true, 'mod' => false, MY_MOODLE_FORMAT => true);
+        return array('all' => true, 'mod' => false);
     }
     
 
