@@ -1550,7 +1550,7 @@ function set_send_count($user,$reset=false) {
         $pref->name = 'email_send_count';
         $pref->value = 1;
         $pref->userid = $user->id;
-        insert_record('user_preferences',$pref);
+        insert_record('user_preferences',$pref, false);
     }
 }
 
@@ -1568,7 +1568,7 @@ function set_bounce_count($user,$reset=false) {
         $pref->name = 'email_bounce_count';
         $pref->value = 1;
         $pref->userid = $user->id;
-        insert_record('user_preferences',$pref);
+        insert_record('user_preferences',$pref, false);
     }
 }
 
