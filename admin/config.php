@@ -34,6 +34,9 @@
                 if ($name == "sessioncookie") {
                     $value = eregi_replace("[^a-zA-Z]", "", $value);
                 }
+                if ($name == "defaultallowedmodules") {
+                    $value = implode(',',$value);
+                }
                 unset($conf);
                 $conf->name  = $name;
                 $conf->value = $value;

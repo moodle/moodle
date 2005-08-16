@@ -110,6 +110,10 @@
 
             case "add":
 
+                if (!course_allowed_module($course,$mod->modulename)) {
+                    error("This module ($mod->modulename) has been disabled for this particular course");
+                }
+
                 if (trim($mod->name) == '') {
                     $mod->name = get_string("modulename", $mod->modulename);
                 }
@@ -558,6 +562,10 @@
 
         if (! $module = get_record("modules", "name", $add)) {
             error("This module type doesn't exist");
+        }
+
+        if (!course_allowed_module($course,$module->id)) {
+            error("This module has been disabled for this particular course");
         }
 
         $form->section    = $section;         // The section number itself

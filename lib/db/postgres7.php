@@ -1236,6 +1236,34 @@ function main_upgrade($oldversion=0) {
         table_column('course', '', 'currency', 'char', '3', '', $defaultcurrency, 'not null', 'cost');
     }
 
+    if ($oldversion < 2005081600) { //set up the course requests table
+        modify_database('',"CREATE TABLE prefix_course_request (
+           id SERIAL PRIMARY KEY,
+           fullname varchar(254) NOT NULL default '',
+           shortname varchar(15) NOT NULL default '',
+           summary text NOT NULL default '',
+           reason text NOT NULL default '',
+           requester INTEGER NOT NULL default 0
+         );");
+        
+        modify_database('','CREATE INDEX prefix_course_request_shortname_idx ON prefix_course_request (shortname);');
+
+        table_column('course','','requested');
+    }
+
+    if ($oldversion < 2005081601) {
+        modify_database('','CREATE TABLE prefix_course_allowed_modules (
+            id SERIAL PRIMARY KEY,
+            course INTEGER NOT NULL default 0,
+            module INTEGER NOT NULL default 0
+         );');
+         
+        modify_database('','CREATE INDEX prefix_course_allowed_modules_course_idx ON prefix_course_allowed_modules (course);');
+        modify_database('','CREATE INDEX prefix_course_allowed_modules_module_idx ON prefix_course_allowed_modules (module);');
+        table_column('course','','restrictmodules','int','1','','0','not null');
+     }
+    
+
     return $result;
 }
 

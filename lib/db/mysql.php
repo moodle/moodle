@@ -1492,6 +1492,34 @@ function main_upgrade($oldversion=0) {
         table_column('course', '', 'currency', 'char', '3', '', $defaultcurrency, 'not null', 'cost');
     }
 
+    if ($oldversion < 2005081600) { //set up the course requests table
+        modify_database('',"CREATE TABLE `prefix_course_request`  (
+          `id` int(10) unsigned NOT NULL auto_increment,
+          `fullname` varchar(254) NOT NULL default '',
+          `shortname` varchar(15) NOT NULL default '',
+          `summary` text NOT NULL,
+          `reason` text NOT NULL,
+          `requester` int(10) NOT NULL default 0,
+          PRIMARY KEY (`id`),
+          KEY `shortname` (`shortname`)
+        ) TYPE=MyISAM;");
+        
+        table_column('course','','requested');
+    }
+
+    if ($oldversion < 2005081601) {
+        modify_database('',"CREATE TABLE `prefix_course_allowed_modules` (
+         `id` int(10) unsigned NOT NULL auto_increment,
+         `course` int(10) unsigned NOT NULL default 0,
+         `module` int(10) unsigned NOT NULL default 0,
+         PRIMARY KEY (`id`),
+         KEY `course` (`course`),
+         KEY `module` (`module`)
+      ) TYPE=MyISAM;");
+        
+        table_column('course','','restrictmodules','int','1','','0','not null');
+    }
+
     return $result;
 }
 

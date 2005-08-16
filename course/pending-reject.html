@@ -1,0 +1,6 @@
+<form action="pending.php" method="post" name="reject">
+<input type="hidden" name="reject" value="<?php p($reject->id); ?>" />
+<textarea name="rejectnotice" rows="10" cols="50"></textarea><br />
+<input type="submit" value="<?php print_string("savechanges");?>" />
+<input type="button" value="<?php print_string("cancel"); ?>"  onClick="window.location='pending.php';" />
+</form>

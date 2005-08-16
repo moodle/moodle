@@ -1,0 +1,59 @@
+<?php
+// make sure all variables are defined
+if (empty($form->shortname)) {
+    $form->shortname = '';
+}
+if (empty($form->fullname)) {
+    $form->fullname = '';
+}
+if (empty($form->summary)) {
+    $form->summary = '';
+}
+if (empty($form->reason)) {
+    $form->reason = '';
+}
+if (empty($usehtmleditor)) {
+    $usehtmleditor = 0;
+}
+?>
+<form method="post" action="request.php" name="request">
+<table cellpadding="9" cellspacing="0" >
+<tr valign="top">
+    <td align="right"><?php  print_string("fullname") ?>:</td>
+    <td><input type="text" name="fullname" maxlength="254" size="50" value="<?php  p($form->fullname) ?>" alt="<?php  print_string("fullname") ?>" />
+    <?php  helpbutton("coursefullname", get_string("fullname")) ?>
+    <?php  if (isset($err["fullname"])) formerr($err["fullname"]); ?>
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right"><?php  print_string("shortname") ?>:</td>
+    <td><input type="text" name="shortname" maxlength="15"  size="10" value="<?php  p($form->shortname) ?>" alt="<?php  print_string("shortname") ?>" />
+    <?php  helpbutton("courseshortname", get_string("shortname")) ?>
+    <?php  if (isset($err["shortname"])) formerr($err["shortname"]); ?>
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right"><?php  print_string("summary") ?>:</td>
+    <td><?php
+        print_textarea($usehtmleditor, 10, 50, 660, 200, "summary", $form->summary);
+        helpbutton("text", get_string("helptext"));
+        if (isset($err["summary"])) formerr($err["summary"]);
+    ?>
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right"><?php  print_string("courserequestreason") ?>:</td>
+    <td><?php
+        print_textarea($usehtmleditor, 10, 50, 660, 200, "reason", $form->reason);
+        helpbutton("text", get_string("helptext"));
+        if (isset($err["reason"])) formerr($err["reason"]);
+    ?>
+    </td>
+</tr>
+<tr>
+    <td></td>
+    <td><input type="submit" value="<?php  print_string("savechanges") ?>" /></td>
+</tr>
+</table>
+<input type="hidden" name="sesskey" value="<?php echo $form->sesskey ?>" />
+</form>

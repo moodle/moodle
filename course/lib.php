@@ -1120,15 +1120,30 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
         foreach ($resourceraw as $type => $name) {
             $resources["resource&amp;type=$type"] = $name;
         }
-        $resources['label'] = get_string('resourcetypelabel', 'resource');
+        if (course_allowed_module($course,'label')) {
+            $resources['label'] = get_string('resourcetypelabel', 'resource');
+        }
     }
 
     $output  = '<div style="text-align: right">';
-    $output .= popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$section&amp;sesskey=$USER->sesskey&amp;add=",
-                $resources, "ressection$section", "", $straddresource, 'resource/types', $straddresource, true);
+    if (course_allowed_module($course,'resource')) {
+        $output .= popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$section&amp;sesskey=$USER->sesskey&amp;add=",
+                              $resources, "ressection$section", "", $straddresource, 'resource/types', $straddresource, true);
+    }
 
     if ($vertical) {
         $output .= '<div>';
+    }
+
+    // we need to loop through the forms and check to see if we can add them.
+    foreach ($modnames as $key) {
+        if (!course_allowed_module($course,$key))
+            unset($modnames[strtolower($key)]);
+    }
+    
+    // this is stupid but labels get put into resource, so if resource is hidden and label is not, we're in trouble.
+    if (course_allowed_module($course,'label') && empty($resourceallowed)) {
+        $modnames['label'] = get_string('modulename', 'label');
     }
 
     $output .= ' ';
@@ -1238,11 +1253,26 @@ function print_whole_category_list($category=NULL, $displaylist=NULL, $parentsli
             $down = $last ? false : true;
             $first = false;
 
-            print_whole_category_list($cat, $displaylist, $parentslist, $depth + 1);
+            print_whole_category_list($cat, $displaylist, $parentslist, $depth + 1, $printfunction);
         }
     }
 }
 
+// this function will return $options array for choose_from_menu, with whitespace to denote nesting.
+
+function make_categories_options() {
+    make_categories_list($cats,$parents);
+    foreach ($cats as $key => $value) {
+        if (array_key_exists($key,$parents)) {
+            if ($indent = count($parents[$key])) {
+                for ($i = 0; $i < $indent; $i++) {
+                    $cats[$key] = '&nbsp;'.$cats[$key];
+                }
+            }
+        }
+    }
+    return $cats;
+}
 
 function print_category_info($category, $depth) {
 /// Prints the category info in indented fashion
@@ -1889,5 +1919,47 @@ function print_visible_setting($form, $course=NULL) {
     choose_from_menu($choices, 'visible', $visible, '', '', 0, false, $hiddensection);
     echo '</td></tr>';
 } 
+
+function update_restricted_mods($course,$mods) {
+    delete_records("course_allowed_modules","course",$course->id);
+    if (empty($course->restrictmodules)) {
+        return;
+    }
+    else {
+        foreach ($mods as $mod) {
+            if ($mod == 0)
+                continue; // this is the 'allow none' option
+            $am->course = $course->id;
+            $am->module = $mod;
+            insert_record("course_allowed_modules",$am);
+        }
+    }
+}
+
+/**
+ * This function will take an int (module id) or a string (module name)
+ * and return true or false, whether it's allowed in the given course (object)
+ * $mod is not allowed to be an object, as the field for the module id is inconsistent 
+ * depending on where in the code it's called from (sometimes $mod->id, sometimes $mod->module)
+ */
+
+function course_allowed_module($course,$mod) {
+    if (empty($course->restrictmodules)) {
+        return true;
+    }
+    if (isadmin()) {
+        return true;
+    }
+    if (is_numeric($mod)) {
+        $modid = $mod;
+    } else if (is_string($mod)) {
+        if ($mod = get_field("modules","id","name",strtolower($mod)))
+            $modid = $mod;
+    }
+    if (empty($modid)) {
+        return false;
+    }
+    return (record_exists("course_allowed_modules","course",$course->id,"module",$modid));
+}
 
 ?>

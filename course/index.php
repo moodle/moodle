@@ -58,12 +58,14 @@
             print_courses(0, "80%");
         }
 
+        echo "<center>";
         if (iscreator()) {       // Print link to create a new course
-            echo "<center>";
             print_single_button("edit.php", NULL, get_string("addnewcourse"), "get");
-            echo "</center>";
         }
-            
+        if (!empty($CFG->enablecourserequests)) {
+            print_single_button('request.php',NULL, get_string('requestcourse'),"get");
+        }
+        echo "</center>";
         print_footer();
         exit;
     }
@@ -309,6 +311,7 @@
     unset($options);
     $options["category"] = $category->id;
     print_single_button("edit.php", $options, get_string("addnewcourse"), "get");
+    print_single_button('pending.php',NULL, get_string('coursespending'),"get");
     echo "<br />";
     echo "</center>";
 

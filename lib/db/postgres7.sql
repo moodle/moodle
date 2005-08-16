@@ -47,7 +47,9 @@ CREATE TABLE prefix_course (
    currency varchar(3) NOT NULL default 'USD',
    timecreated integer NOT NULL default '0',
    timemodified integer NOT NULL default '0',
-   metacourse integer NOT NULL default '0'
+   metacourse integer NOT NULL default '0',
+   requested integer NOT NULL default '0',
+   restrictmodules integer NOT NULL default '0'
 );
 
 CREATE UNIQUE INDEX prefix_course_category_sortorder_uk ON prefix_course (category,sortorder);
@@ -111,6 +113,26 @@ CREATE TABLE prefix_course_sections (
 );
 
 CREATE INDEX prefix_course_sections_coursesection_idx ON prefix_course_sections (course,section);
+
+CREATE TABLE prefix_course_request (
+   id SERIAL PRIMARY KEY,
+   fullname varchar(254) NOT NULL default '',
+   shortname varchar(15) NOT NULL default '',
+   summary text NOT NULL default '',
+   reason text NOT NULL default '',
+   requester INTEGER NOT NULL default 0
+);
+
+CREATE INDEX prefix_course_request_shortname_idx ON prefix_course_request (shortname);
+
+CREATE TABLE prefix_course_allowed_modules (
+   id SERIAL PRIMARY KEY,
+   course INTEGER NOT NULL default 0,
+   module INTEGER NOT NULL default 0
+);
+         
+CREATE INDEX prefix_course_allowed_modules_course_idx ON prefix_course_allowed_modules (course);
+CREATE INDEX prefix_course_allowed_modules_module_idx ON prefix_course_allowed_modules (module);
 
 CREATE TABLE prefix_event (
    id SERIAL PRIMARY KEY,

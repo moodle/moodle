@@ -77,6 +77,8 @@ CREATE TABLE `prefix_course` (
   `timecreated` int(10) unsigned NOT NULL default '0',
   `timemodified` int(10) unsigned NOT NULL default '0',
   `metacourse` int(1) unsigned NOT NULL default '0',
+  `requested` int(1) unsigned NOT NULL default '0',
+  `restrictmodules` int(1) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
   KEY `category` (`category`),
   KEY `idnumber` (`idnumber`),
@@ -173,6 +175,37 @@ CREATE TABLE `prefix_course_sections` (
   KEY `coursesection` (course,section)
 ) TYPE=MyISAM;
 # --------------------------------------------------------
+
+# 
+# Table structure for table `course_request`
+#
+
+CREATE TABLE `prefix_course_request`  (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `fullname` varchar(254) NOT NULL default '',
+  `shortname` varchar(15) NOT NULL default '',
+  `summary` text NOT NULL,
+  `reason` text NOT NULL,
+  `requester` int(10) NOT NULL default 0,
+  PRIMARY KEY (`id`),
+  KEY `shortname` (`shortname`)
+) TYPE=MyISAM;
+# ---------------------------------------------------------
+
+#
+# Table structure for table `coursre_allowed_modules`
+# 
+
+CREATE TABLE `prefix_course_allowed_modules` (
+   `id` int(10) unsigned NOT NULL auto_increment,
+   `course` int(10) unsigned NOT NULL default 0,
+   `module` int(10) unsigned NOT NULL default 0,
+   PRIMARY KEY (`id`),
+   KEY `course` (`course`),
+   KEY `module` (`module`)
+) TYPE=MyISAM;
+
+------------------------------------------------------------
 
 #
 # Table structure for table `event`

@@ -206,6 +206,67 @@ class configvarrss extends configvar {
         choose_from_menu ($noyesoptions, 'allowobjectembed', $config->allowobjectembed, '', '', '', true) );
 
 
+    unset($options);
+    $options['none'] = 'No courses';
+    $options['all'] = 'All courses';
+    $options['requested'] = 'Requested courses';
+
+    $permissions['restrictmodulesfor'] = new configvar (get_string('configrestrictmodulesfor','admin'),
+   ' <script language="JavaScript">
+    function togglemodules(index) {
+        if (index == 0) {
+            document.getElementById(\'allowedmodules\').disabled=true;
+        }
+        else {
+            document.getElementById(\'allowedmodules\').disabled=false;
+        }
+    }
+    </script>'.
+        choose_from_menu($options,'restrictmodulesfor',$config->restrictmodulesfor,'','togglemodules(this.selectedIndex);','',true) );
+
+    $permissions['restrictbydefault'] = new configvar (get_string('configrestrictbydefault','admin'),
+        choose_from_menu($noyesoptions, 'restrictbydefault',$config->restrictbydefault,'','','',true) );
+
+    $allowstr = '<select name="defaultallowedmodules[]" id="allowedmodules" multiple="multiple" size="10"'.((empty($config->restrictmodulesfor)) ? "disabled=\"disabled\"" : "").'>';
+
+    $allowedmodules = array();
+    if (!empty($config->defaultallowedmodules)) {
+        $allowedmodules = explode(',',$config->defaultallowedmodules);
+    }
+    $mods = get_records("modules");
+    $s = "selected=\"selected\"";
+    $allowstr .= '<option value="0" '.((empty($allowedmodules)) ? $s : '').'>'.get_string('allownone').'</option>'."\n";
+    foreach ($mods as $mod) {
+        $selected = "";
+        if (in_array($mod->id,$allowedmodules)) 
+            $selected = $s;
+        $allowstr .= '<option '.$selected.' value="'.$mod->id.'">'.$mod->name.'</option>'."\n";
+    }  
+    $allowstr .= '</select>';
+
+    $permissions['defaultallowedmoules'] = new configvar (get_string('configdefaultallowedmodules','admin'),$allowstr);
+
+
+/// course requests
+    $reqcourse['enablecourserequests'] = new configvar (get_string('configenablecourserequests', 'admin'),
+        choose_from_menu ($noyesoptions,'enablecourserequests',$config->enablecourserequests,'','','',true) );
+
+/// default category for course requests
+    require_once($CFG->dirroot.'/course/lib.php');
+    $reqcourse['defaultrequestedcategory'] = new configvar (get_string('configdefaultrequestedcategory', 'admin'),
+        choose_from_menu (make_categories_options(), 'defaultrequestedcategory',$config->defaultrequestedcategory,'','','',true) );
+
+    $reqcourse['requestedteachername'] = new configvar (get_string('configrequestedteachername','admin'),
+        '<input type="text" name="requestedteachername" size="20" maxlength="100" value="'.s($config->requestedteachername).'" />');
+
+    $reqcourse['requestedteachersname'] = new configvar (get_string('configrequestedteachersname','admin'),
+        '<input type="text" name="requestedteachersname" size="20" maxlength="100" value="'.s($config->requestedteachersname).'" />');
+
+    $reqcourse['requestedstudentname'] = new configvar (get_string('configrequestedstudentname','admin'),
+        '<input type="text" name="requestedstudentname" size="20" maxlength="100" value="'.s($config->requestedstudentname).'" />');
+
+    $reqcourse['requestedstudentsname'] = new configvar (get_string('configrequestedstudentsname','admin'),
+        '<input type="text" name="requestedstudentsname" size="20" maxlength="100" value="'.s($config->requestedstudentsname).'" />');
 
 ////////////////////////////////////////////////////////////////////
 /// INTERFACE config variables
@@ -479,6 +540,7 @@ class configvarrss extends configvar {
     $configvars['mail']            = $mail;
     $configvars['user']            = $user;
     $configvars['permissions']     = $permissions;
+    $configvars['requestedcourse'] = $reqcourse;
     $configvars['misc']            = $misc;
 
 ?>

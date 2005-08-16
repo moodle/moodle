@@ -66,8 +66,14 @@
 
         if (count($err) == 0) {
 
+            $allowedmods = array();
+            if (!empty($form->allowedmods)) {
+                $allowedmods = $form->allowedmods;
+                unset($form->allowedmods);
+            }
+            
             $form->timemodified = time();
-
+            
             if (!empty($course)) {
                 // Test for and remove blocks which aren't appropriate anymore
                 $page = page_create_object(PAGE_COURSE_VIEW, $course->id);
@@ -76,6 +82,10 @@
                 // Update with the new data
                 if (update_record('course', $form)) {
                     add_to_log($course->id, "course", "update", "edit.php?id=$id", "");
+                    if (isadmin()) {
+                        $course->restrictmodules = $form->restrictmodules;
+                        update_restricted_mods($course,$allowedmods);
+                    }
                     fix_course_sortorder();
                     redirect($page->url_get_full(), get_string('changessaved'));
                 } else {
@@ -96,6 +106,11 @@
                     // Setup the blocks
                     $page = page_create_object(PAGE_COURSE_VIEW, $newcourseid);
                     blocks_repopulate_page($page); // Return value not checked because you can always edit later
+
+                    if (isadmin()) {
+                        $course = get_record("course","id",$newcourseid);
+                        update_restricted_mods($course,$allowedmods);
+                    }
 
                     $section = NULL;
                     $section->course = $newcourseid;   // Create a default section.
@@ -192,6 +207,29 @@
     foreach ($courseformats as $courseformat) {
         $form->courseformats["$courseformat"] = get_string("format$courseformat");
     }
+
+    if (empty($allowedmods)) {
+        $allowedmods = array();
+        if (!empty($course)) {
+            if ($am = get_records("course_allowed_modules","course",$course->id)) {
+                foreach ($am as $m) {
+                    $allowedmods[] = $m->module;
+                }
+            } else {
+                if (empty($course->restrictmodules)) {
+                    $allowedmods = explode(',',$CFG->defaultallowedmodules);
+                } // it'll be greyed out but we want these by default anyway.
+            }
+        } else {
+            if ($CFG->restrictmodulesfor == 'all') {
+                $allowedmods = explode(',',$CFG->defaultallowedmodules);
+                if (!empty($CFG->restrictbydefault)) {
+                    $form->restrictmodules = 1;
+                }
+            }
+        }
+    }
+
 
     $usehtmleditor = can_use_html_editor();
 

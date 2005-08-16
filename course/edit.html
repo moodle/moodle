@@ -21,6 +21,9 @@
     if (!isset($form->metacourse)) {
         $form->metacourse = 0;
     }
+    if(!isset($form->restrictmodules)) {
+        $form->restrictmodules = 0;
+    }
 ?>
 <form method="post" action="edit.php" name="form">
 <table cellpadding="9" cellspacing="0" >
@@ -294,6 +297,43 @@
       } ?>
     </td>
 </tr>
+<?php if (isadmin() && ((!empty($course->requested) && $CFG->restrictmodulesfor == 'requested') || $CFG->restrictmodulesfor == 'all')) { ?>
+<tr valign="top">
+    <td align="right"><?php print_string("restrictmodules") ?>:</td>
+    <td valign="top"><table cellpadding="0" border="0"><tr valign="top"><td>
+    <script language="JavaScript">
+    function togglemodules(index) {
+        if (index == 0) {
+            document.getElementById('allowedmods').disabled=true;
+        }
+        else {
+            document.getElementById('allowedmods').disabled=false;
+        }
+    }
+    </script>
+    <?php
+    unset($options);
+    $options[0] = get_string("no");
+    $options[1] = get_string("yes");
+    choose_from_menu($options,"restrictmodules",$form->restrictmodules,"","togglemodules(this.selectedIndex);","");
+?>&nbsp;</td><td>&nbsp;<?php p(strtolower(get_string('to'))); ?>&nbsp;</td><td>&nbsp;
+    <select name="allowedmods[]" id="allowedmods" multiple="multiple" size="10" <?php echo ((empty($form->restrictmodules)) ? "disabled=\"disabled\"" : ""); ?>>
+    <?php
+    $mods = get_records("modules");
+    $s = "selected=\"selected\"";
+    echo '<option value="0" '.((empty($allowedmods)) ? $s : '').'>'.get_string('allownone').'</option>'."\n";
+    foreach ($mods as $mod) {
+        $selected = "";
+        if (in_array($mod->id,$allowedmods)) 
+            $selected = $s;
+        echo '<option '.$selected.' value="'.$mod->id.'">'.$mod->name.'</option>'."\n";
+    }  
+    ?>
+    </select></td></tr></table></td>
+</tr>
+<?php } else { ?>
+   <input type="hidden" name="restrictmodules" value="<?php p($form->restrictmodules); ?>" />
+<?php } ?>
 <tr>
     <td></td>
     <td><input type="submit" value="<?php  print_string("savechanges") ?>" /></td>
