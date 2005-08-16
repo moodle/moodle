@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // currencies.php - created with Moodle 1.6 development (2005072200)
+      // currencies.php - created with Moodle 1.6 development (2005081601)
 
 
 $string['ADP'] = 'アンドラ ・ペセタ';
@@ -140,6 +140,7 @@ $string['THB'] = 'タイ・バーツ';
 $string['TND'] = 'チュニジア・ディナール';
 $string['TOP'] = 'トンガ・バーアンガ';
 $string['TPE'] = '東チモール・エスクード';
+$string['TRY'] = '新トルコ・リラ';
 $string['TTD'] = 'トリニタード・トバゴ・ドル';
 $string['TWD'] = '台湾・ドル';
 $string['TZS'] = 'タンザニア・シリング';
@@ -152,7 +153,6 @@ $string['VUV'] = 'バヌアツ・バツ';
 $string['WST'] = 'サモア・ターラ';
 $string['YDD'] = 'イエメン・ディナール';
 $string['YER'] = 'イエメン・リアル';
-$string['YTL'] = '新トルコ・リラ';
 $string['YUD'] = '新ユーゴスラビア・ディナール';
 $string['ZAR'] = '南アフリカ・ランド';
 $string['ZMK'] = 'ザンビア・クワチャ';
