@@ -1,5 +1,5 @@
 <?
-$string['studentloancalc'] = 'Student loan calculator';
+$string['loancalc'] = 'Loan calculator';
 $string['amountofloan'] = 'Amount of loan';
 $string['repaymentamount'] = 'Repayment amount';
 $string['loanterm']  = 'Loan term (years)';

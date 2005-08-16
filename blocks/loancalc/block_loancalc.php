@@ -1,9 +1,9 @@
 <?php
 
-class block_student_loan_calc extends block_base {
+class block_loancalc extends block_base {
 
     function init() {
-        $this->title = get_string('studentloancalc','block_student_loan_calc');
+        $this->title = get_string('loancalc','block_loancalc');
         $this->content_type = BLOCK_TYPE_TEXT;
         $this->version = 2005022100;
     }
@@ -158,40 +158,40 @@ function comp(v) { // general entry point for all cases
 <form method="post" id="vbankform" name="vbankform">
 			<table>
                 <tr>
-					<td colspan="2">'.get_string('amountofloan','block_student_loan_calc').'</td>
+					<td colspan="2">'.get_string('amountofloan','block_loancalc').'</td>
                 </tr>
 				<tr>
 					<td><input name="LOANAMOUNT" id="LOANAMOUNT" size="17"></td>
 					<td><a href="JavaScript:comp(\'pv\');"><img src="'.$calc.'" alt="calculate" border="0"></a></td>
 				</tr>
 				<tr>
-					<td colspan="2">'.get_string('repaymentamount','block_student_loan_calc').'</td>
+					<td colspan="2">'.get_string('repaymentamount','block_loancalc').'</td>
 				</tr>
 				<tr>
 					<td><input name="LOANREPAYMENT" id="LOANREPAYMENT" size="17"></td>
 					<td><a href="JavaScript:comp(\'pmt\');"><img src="'.$calc.'" alt="calculate" border="0"></a></td>
 				</tr>
 				<tr>
-					<td colspan="2">'.get_string('loanterm','block_student_loan_calc').'</td>
+					<td colspan="2">'.get_string('loanterm','block_loancalc').'</td>
 				</tr>
 				<tr>
 					<td><input name="LOANTERM" id="LOANTERM" size="17"></td>
 					<td><a href="JavaScript:comp(\'np\');"><img src="'.$calc.'" alt="calculate" border="0"></a></td>
 				</tr>	
 				<tr>
-					<td colspan="2">'.get_string('interestrate','block_student_loan_calc').'</td>
+					<td colspan="2">'.get_string('interestrate','block_loancalc').'</td>
 				</tr>
 				<tr>
 					<td><input name="LOANINTRATE" id="LOANINTRATE" size="17"></td>
 					<td></td>
 				</tr>	
 				<tr>
-					<td colspan="2">'.get_string('repaymentfreq','block_student_loan_calc').'</td>
+					<td colspan="2">'.get_string('repaymentfreq','block_loancalc').'</td>
                 </tr>
 					<td>';
-        $options[52] = get_string('weekly','block_student_loan_calc');
-        $options[26] = get_string('fortnightly','block_student_loan_calc');
-        $options[12] = get_string('monthly','block_student_loan_calc');
+        $options[52] = get_string('weekly','block_loancalc');
+        $options[26] = get_string('fortnightly','block_loancalc');
+        $options[12] = get_string('monthly','block_loancalc');
         $this->content->text .= choose_from_menu($options,'LOANPAYPERIOD','12',NULL,NULL,NULL,true);
         $this->content->text .= '</td>
 					<td></td>
