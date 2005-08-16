@@ -27,8 +27,12 @@ class block_calendar_upcoming extends block_base {
             $this->content->footer = '';
 
         } else {
-
-            $courseshown = $this->instance->pageid;
+            if (!empty($this->instance->pageid)) {
+                $courseshown = $this->instance->pageid;
+            }
+            else {
+                $courseshown = SITEID;
+            }
             $this->content->footer = '<br /><a href="'.$CFG->wwwroot.
                                      '/calendar/view.php?view=upcoming&amp;course='.$courseshown.'">'.
                                       get_string('gotocalendar', 'calendar').'</a>...';

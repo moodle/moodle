@@ -143,6 +143,19 @@ global $CFG;
         }
     }
 
+    if ($oldversion < 2005081600) {
+         $result = $result && modify_database('',"CREATE TABLE `prefix_block_pinned` (
+           `id` int(10) not null auto_increment,
+           `blockid` int(10) not null default '0',
+           `pagetype` varchar(20) not null default '',
+           `position` varchar(10) not null default '',
+           `weight` tinyint(3) not null default '0',
+           `visible` tinyint(1) not null default '0',
+           `configdata` text not null default '',
+           PRIMARY KEY(`id`)
+          ) TYPE=MyISAM;");
+    }
+
     //Finally, return result
     return $result;
 }

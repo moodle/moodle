@@ -31,8 +31,12 @@ class block_calendar_month extends block_base {
             $filtercourse = array();
 
         } else {
-
-            $courseshown = $this->instance->pageid;
+            if (!empty($this->instance->pageid)) {
+                $courseshown = $this->instance->pageid;
+            }
+            else {
+                $courseshown = SITEID;
+            }
 
             if($courseshown == SITEID) {
                 // Being displayed at site level. This will cause the filter to fall back to auto-detecting

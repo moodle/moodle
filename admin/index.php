@@ -411,6 +411,8 @@
                            "<font size=\"+1\">&nbsp;</font>".get_string("adminhelplogs"));
     $table->data[] = array("<font size=\"+1\"><b><a href=\"../files/index.php?id=$site->id\">".get_string("sitefiles")."</a></b></font>",
                            "<font size=\"+1\">&nbsp;</font>".get_string("adminhelpsitefiles"));
+    $table->data[] = array("<font size=+1><b><a href=\"mymoodle.php\">".get_string('mymoodle','my')."</a></b>",
+                           "<font size=+1>&nbsp;</font>".get_string("adminhelpmymoodle"));
     if (file_exists("$CFG->dirroot/$CFG->admin/$CFG->dbtype")) {
         $table->data[] = array("<font size=\"+1\"><b><a href=\"$CFG->dbtype/frame.php\">".get_string("managedatabase")."</a></b></font>",
                                "<font size=\"+1\">&nbsp;</font>".get_string("adminhelpmanagedatabase"));

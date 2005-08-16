@@ -23,6 +23,10 @@ class block_participants extends block_list {
         $this->content->footer = '';
 
 
+        if (empty($this->instance->pageid)) {
+            $this->instance->pageid = SITEID;
+        }
+
         if ($this->instance->pageid != SITEID || 
             $CFG->showsiteparticipantslist > 1 || 
             ($CFG->showsiteparticipantslist == 1 && isteacherinanycourse()) || 
@@ -36,6 +40,12 @@ class block_participants extends block_list {
 
 
         return $this->content;
+    }
+    
+    // my moodle can only have SITEID and it's redundant here, so take it away
+    function applicable_formats() {
+        require_once($GLOBALS['CFG']->dirroot.'/my/pagelib.php');
+        return array('all' => true, MY_MOODLE_FORMAT => false);
     }
 }
 

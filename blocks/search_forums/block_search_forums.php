@@ -1,5 +1,8 @@
 <?PHP //$Id$
 
+require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
+require_once($CFG->dirroot.'/mod/forum/lib.php');
+
 class block_search_forums extends block_base {
     function init() {
         $this->title = get_string('blocktitle', 'block_search_forums');
@@ -33,6 +36,10 @@ class block_search_forums extends block_base {
         $this->content->text .= '</form></div>';
 
         return $this->content;
+    }
+
+    function applicable_formats() {
+        return array('site' => true, 'course' => true);
     }
 }
 

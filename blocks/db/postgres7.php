@@ -146,6 +146,18 @@ global $CFG;
         modify_database('','ALTER TABLE prefix_block_instance ALTER position SET NOT NULL');
     }
 
+    if ($oldversion < 2005081600) {
+         $result = $result && modify_database('',"CREATE TABLE prefix_block_pinned ( 
+            id SERIAL8 PRIMARY KEY,
+            blockid INT8 NOT NULL default 0,
+            pagetype varchar(20) NOT NULL default '',
+            position varchar(10) NOT NULL default '',
+            weight INT NOT NULL default 0,
+            visible INT NOT NULL default 0,
+            configdata text NOT NULL default 0
+          );");
+     }
+
     //Finally, return result
     return $result;
 }

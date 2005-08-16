@@ -411,7 +411,8 @@ class block_base {
      */
     function applicable_formats() {
         // Default case: the block can be used in courses and site index, but not in activities
-        return array('all' => true, 'mod' => false);
+        require_once($GLOBALS['CFG']->dirroot.'/my/pagelib.php');
+        return array('all' => true, 'mod' => false, MY_MOODLE_FORMAT => true);
     }
     
 
@@ -529,10 +530,14 @@ class block_base {
      * @return boolean
      * @todo finish documenting this function
      */
-    function instance_config_save($data) {
+    function instance_config_save($data,$pinned=false) {
         $data = stripslashes_recursive($data);
         $this->config = $data;
-        return set_field('block_instance', 'configdata', base64_encode(serialize($data)), 'id', $this->instance->id);
+        $table = 'block_instance';
+        if (!empty($pinned)) {
+            $table = 'block_pinned';
+        }
+        return set_field($table, 'configdata', base64_encode(serialize($data)), 'id', $this->instance->id);
     }
 
     /**
@@ -540,8 +545,12 @@ class block_base {
      * @return boolean
      * @todo finish documenting this function
      */
-    function instance_config_commit() {
-        return set_field('block_instance', 'configdata', base64_encode(serialize($this->config)), 'id', $this->instance->id);
+    function instance_config_commit($pinned=false) {
+        $table = 'block_instance';
+        if (!empty($pinned)) {
+            $table = 'block_pinned';
+        }
+        return set_field($table, 'configdata', base64_encode(serialize($this->config)), 'id', $this->instance->id);
     }
 
      /**

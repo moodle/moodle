@@ -1,5 +1,7 @@
 <?PHP //$Id$
 
+include_once($CFG->dirroot . '/course/lib.php');
+
 class block_course_list extends block_list {
     function init() {
         $this->title = get_string('courses');

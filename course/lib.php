@@ -648,6 +648,34 @@ function print_log_graph($course, $userid=0, $type="course.png", $date=0) {
 }
 
 
+function print_overview($course) {
+
+    global $CFG, $USER;
+
+    if (!$lastaccess = get_record("user_teachers","userid",$USER->id,"course",$course->id)) {
+        if (!$lastaccess = get_record("user_students","userid",$USER->id,"course",$course->id)) {
+            return false;
+        }
+    }
+    $lastaccess = $lastaccess->timeaccess;
+
+    print_simple_box_start("center", '400', '', 5, "coursebox");
+    print_heading('<a title="'.$course->fullname.'" href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.$course->fullname.'</a>');
+    if ($mods = get_course_mods($course->id)) {
+        foreach ($mods as $mod) {
+            if (file_exists(dirname(dirname(__FILE__)).'/mod/'.$mod->modname.'/lib.php')) {
+                require_once(dirname(dirname(__FILE__)).'/mod/'.$mod->modname.'/lib.php');
+                $fname = $mod->modname.'_print_overview';
+                if (function_exists($fname)) {
+                    $fname($course,$mod,$lastaccess);
+                }
+            }
+        }
+    }
+    print_simple_box_end();
+}
+
+
 
 function print_recent_activity($course) {
     // $course is an object

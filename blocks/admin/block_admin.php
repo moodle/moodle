@@ -195,6 +195,11 @@ class block_admin extends block_list {
             }
         }
     }
+
+    function applicable_formats() {
+        require_once($GLOBALS['CFG']->dirroot.'/my/pagelib.php');
+        return array('all' => true, 'mod' => false, MY_MOODLE_FORMAT => false);
+    }
 }
 
 ?>

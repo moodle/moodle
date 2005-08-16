@@ -32,6 +32,11 @@ class block_activity_modules extends block_list {
 
         return $this->content;
     }
+
+    function applicable_formats() {
+        require_once($GLOBALS['CFG']->dirroot.'/my/pagelib.php');
+        return array('all' => true, 'mod' => false, MY_MOODLE_FORMAT => false);
+    }
 }
 
 ?>

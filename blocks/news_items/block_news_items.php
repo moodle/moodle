@@ -22,6 +22,9 @@ class block_news_items extends block_base {
         }
 
 
+        if ($this->instance->pageid == 0) {
+            $this->instance->pageid = SITEID;
+        }
         $course = get_record('course', 'id', $this->instance->pageid);
 
         if ($course->newsitems) {   // Create a nice listing of recent postings

@@ -148,7 +148,10 @@
                 unset($SESSION->wantsurl);
 
             } else {
-                $urltogo = $CFG->wwwroot.'/';      /// Go to the standard home page
+                $urltogo = $CFG->wwwroot.'/my';      /// Go to the standard home page
+                if (isadmin()) {
+                    $urltogo = $CFG->wwwroot;       /// not needed by admins.
+                }
                 unset($SESSION->wantsurl);         /// Just in case
             }
 
@@ -188,7 +191,10 @@
 /// First, let's remember where the user was trying to get to before they got here
 
     if (empty($SESSION->wantsurl)) {
-        $SESSION->wantsurl = array_key_exists('HTTP_REFERER',$_SERVER) ? $_SERVER["HTTP_REFERER"] : $CFG->wwwroot; 
+        $SESSION->wantsurl = (array_key_exists('HTTP_REFERER',$_SERVER) && 
+                              $_SERVER["HTTP_REFERER"] != $CFG->wwwroot && 
+                              $_SERVER["HTTP_REFERER"] != $CFG->wwwroot.'/')
+            ? $_SERVER["HTTP_REFERER"] : NULL;
     }
 
     if (!empty($loginurl)) {   // We don't want the standard forms, go elsewhere

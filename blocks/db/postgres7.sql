@@ -23,7 +23,16 @@ CREATE TABLE prefix_block_instance (
   visible int not null default '0',
   configdata text not null default ''
 ) ;
-
 CREATE INDEX prefix_block_instance_pageid_idx ON prefix_block_instance (pageid);
+
+CREATE TABLE prefix_block_pinned ( 
+  id SERIAL8 PRIMARY KEY,
+  blockid INT8 NOT NULL default 0,
+  pagetype varchar(20) NOT NULL default '',
+  position varchar(10) NOT NULL default '',
+  weight INT NOT NULL default 0,
+  visible INT NOT NULL default 0,
+  configdata text NOT NULL default 0
+) ;
       
 # --------------------------------------------------------

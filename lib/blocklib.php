@@ -180,7 +180,7 @@ function blocks_name_allowed_in_format($name, $pageformat) {
     return $accept;
 }
 
-function blocks_delete_instance($instance) {
+function blocks_delete_instance($instance,$pinned=false) {
     global $CFG;
 
     // Get the block object and call instance_delete() first
@@ -193,13 +193,20 @@ function blocks_delete_instance($instance) {
 
     // Return value ignored
     $obj->instance_delete();
-
-    // Now kill the db record;
-    delete_records('block_instance', 'id', $instance->id);
-    // And now, decrement the weight of all blocks after this one
-    execute_sql('UPDATE '.$CFG->prefix.'block_instance SET weight = weight - 1 WHERE pagetype = \''.$instance->pagetype.
-                '\' AND pageid = '.$instance->pageid.' AND position = \''.$instance->position.
-                '\' AND weight > '.$instance->weight, false);
+    if (!empty($pinned)) {
+         delete_records('block_pinned', 'id', $instance->id);
+        // And now, decrement the weight of all blocks after this one
+        execute_sql('UPDATE '.$CFG->prefix.'block_pinned SET weight = weight - 1 WHERE pagetype = \''.$instance->pagetype.
+                    '\' AND position = \''.$instance->position.
+                    '\' AND weight > '.$instance->weight, false);
+    } else {
+        // Now kill the db record;
+        delete_records('block_instance', 'id', $instance->id);
+        // And now, decrement the weight of all blocks after this one
+        execute_sql('UPDATE '.$CFG->prefix.'block_instance SET weight = weight - 1 WHERE pagetype = \''.$instance->pagetype.
+                    '\' AND pageid = '.$instance->pageid.' AND position = \''.$instance->position.
+                    '\' AND weight > '.$instance->weight, false);
+    }
     return true;
 }
 
@@ -207,6 +214,10 @@ function blocks_delete_instance($instance) {
 // (causing them to calculate their content in the process). Returns true or false. Parameter passed
 // by reference for speed; the array is actually not modified.
 function blocks_have_content(&$pageblocks, $position) {
+
+    if (empty($pageblocks) || !is_array($pageblocks) || !array_key_exists($position,$pageblocks)) {
+        return false;
+    }
     foreach($pageblocks[$position] as $instance) {
         if(!$instance->visible) {
             continue;
@@ -251,7 +262,11 @@ function blocks_print_group(&$page, &$pageblocks, $position) {
             continue;
         }
 
-        if ($isediting) {
+        if (method_exists($page,'edit_always')) {
+             $editalways = $page->edit_always();
+        }
+
+        if (($isediting  && empty($instance->pinned)) || !empty($editalways)) {
             $options = 0;
             // The block can be moved up if it's NOT the first one in its position. If it is, we look at the OR clause:
             // the first block might still be able to move up if the page says so (i.e., it will change position)
@@ -295,6 +310,12 @@ function blocks_preferred_width(&$instances) {
 
     $blocks = blocks_get_record();
 
+    foreach ($instances as $instance) {
+        if (!empty($instance->pinned)) {
+            $maxweight--;
+        }
+    }
+
     foreach($instances as $instance) {
         if(!$instance->visible) {
             continue;
@@ -329,7 +350,13 @@ function blocks_get_record($blockid = NULL, $invalidate = false) {
 }
 
 function blocks_find_block($blockid, $blocksarray) {
+    if (empty($blocksarray)) {
+        return false;
+    }
     foreach($blocksarray as $blockgroup) {
+        if (empty($blockgroup)) {
+            continue;
+        }
         foreach($blockgroup as $instance) {
             if($instance->blockid == $blockid) {
                 return $instance;
@@ -357,7 +384,7 @@ function blocks_setup(&$PAGE) {
     return $pageblocks;
 }
 
-function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid) {
+function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid, $pinned=false) {
     global $CFG;
 
     if (is_int($instanceorid)) {
@@ -399,7 +426,7 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid)
                 foreach($remove as $item) {
                     unset($data->$item);
                 }
-                if(!$blockobject->instance_config_save($data)) {
+                if(!$blockobject->instance_config_save($data,$pinned)) {
                     error('Error saving block configuration');
                 }
                 // And nothing more, continue with displaying the page
@@ -426,13 +453,17 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid)
                 error('Invalid block instance for '.$blockaction);
             }
             $instance->visible = ($instance->visible) ? 0 : 1;
-            update_record('block_instance', $instance);
+            if (!empty($pinned)) {
+                update_record('block_pinned', $instance);
+            } else {
+                update_record('block_instance', $instance);
+            }
         break;
         case 'delete':
             if(empty($instance))  {
                 error('Invalid block instance for '. $blockaction);
             }
-            blocks_delete_instance($instance);
+            blocks_delete_instance($instance, $pinned);
         break;
         case 'moveup':
             if(empty($instance))  {
@@ -445,7 +476,7 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid)
                 $newpos = $page->blocks_move_position($instance, BLOCK_MOVE_UP);
                 $newweight = (empty($pageblocks[$newpos]) ? 0 : max(array_keys($pageblocks[$newpos])) + 1);
 
-                blocks_execute_repositioning($instance, $newpos, $newweight);
+                blocks_execute_repositioning($instance, $newpos, $newweight, $pinned);
             }
             else {
                 // The block is just moving upwards in the same position.
@@ -457,10 +488,18 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid)
                 }
                 if(!empty($other)) {
                     ++$other->weight;
-                    update_record('block_instance', $other);
+                    if (!empty($pinned)) {
+                        update_record('block_pinned', $other);
+                    } else {
+                        update_record('block_instance', $other);
+                    }                        
                 }
                 --$instance->weight;
-                update_record('block_instance', $instance);
+                if (!empty($pinned)) {
+                    update_record('block_pinned', $instance);
+                } else {
+                    update_record('block_instance', $instance);
+                }
             }
         break;
         case 'movedown':
@@ -474,7 +513,7 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid)
                 $newpos = $page->blocks_move_position($instance, BLOCK_MOVE_DOWN);
                 $newweight = (empty($pageblocks[$newpos]) ? 0 : max(array_keys($pageblocks[$newpos])) + 1);
 
-                blocks_execute_repositioning($instance, $newpos, $newweight);
+                blocks_execute_repositioning($instance, $newpos, $newweight, $pinned);
             }
             else {
                 // The block is just moving downwards in the same position.
@@ -486,10 +525,18 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid)
                 }
                 if(!empty($other)) {
                     --$other->weight;
-                    update_record('block_instance', $other);
+                    if (!empty($pinned)) {
+                        update_record('block_pinned', $other);
+                    } else {
+                        update_record('block_instance', $other);
+                    }
                 }
                 ++$instance->weight;
-                update_record('block_instance', $instance);
+                if (!empty($pinned)) {
+                    update_record('block_pinned', $instance);
+                } else {
+                    update_record('block_instance', $instance);
+                }
             }
         break;
         case 'moveleft':
@@ -501,7 +548,7 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid)
             $newpos = $page->blocks_move_position($instance, BLOCK_MOVE_LEFT);
             $newweight = (empty($pageblocks[$newpos]) ? 0 : max(array_keys($pageblocks[$newpos])) + 1);
 
-            blocks_execute_repositioning($instance, $newpos, $newweight);
+            blocks_execute_repositioning($instance, $newpos, $newweight, $pinned);
         break;
         case 'moveright':
             if(empty($instance))  {
@@ -512,7 +559,7 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid)
             $newpos    = $page->blocks_move_position($instance, BLOCK_MOVE_RIGHT);
             $newweight = (empty($pageblocks[$newpos]) ? 0 : max(array_keys($pageblocks[$newpos])) + 1);
 
-            blocks_execute_repositioning($instance, $newpos, $newweight);
+            blocks_execute_repositioning($instance, $newpos, $newweight, $pinned);
         break;
         case 'add':
             // Add a new instance of this block, if allowed
@@ -529,17 +576,30 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid)
             }
 
             $newpos = $page->blocks_default_position();
-            $weight = get_record_sql('SELECT 1, max(weight) + 1 AS nextfree FROM '. $CFG->prefix .'block_instance WHERE pageid = '. $page->get_id() .' AND pagetype = \''. $page->get_type() .'\' AND position = \''. $newpos .'\''); 
+            if (!empty($pinned)) {
+                $sql = 'SELECT 1, max(weight) + 1 AS nextfree FROM '. $CFG->prefix .'block_pinned WHERE '
+                    .' pagetype = \''. $page->get_type() .'\' AND position = \''. $newpos .'\''; 
+            } else {
+                $sql = 'SELECT 1, max(weight) + 1 AS nextfree FROM '. $CFG->prefix .'block_instance WHERE pageid = '. $page->get_id() 
+                    .' AND pagetype = \''. $page->get_type() .'\' AND position = \''. $newpos .'\''; 
+            }
+            $weight = get_record_sql($sql);
 
             $newinstance = new stdClass;
             $newinstance->blockid    = $blockid;
-            $newinstance->pageid     = $page->get_id();
+            if (empty($pinned)) {
+                $newinstance->pageid = $page->get_id();
+            }
             $newinstance->pagetype   = $page->get_type();
             $newinstance->position   = $newpos;
             $newinstance->weight     = empty($weight->nextfree) ? 0 : $weight->nextfree;
             $newinstance->visible    = 1;
             $newinstance->configdata = '';
-            $newinstance->id = insert_record('block_instance', $newinstance);
+            if (!empty($pinned)) {
+                $newinstance->id = insert_record('block_pinned', $newinstance);
+            } else {
+                $newinstance->id = insert_record('block_instance', $newinstance);
+            }
 
             // If the new instance was created, allow it to do additional setup
             if($newinstance && ($obj = block_instance($block->name, $newinstance))) {
@@ -555,7 +615,7 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid)
 }
 
 // You can use this to get the blocks to respond to URL actions without much hassle
-function blocks_execute_url_action(&$PAGE, &$pageblocks) {
+function blocks_execute_url_action(&$PAGE, &$pageblocks,$pinned=false) {
     $blockaction = optional_param('blockaction');
 
     if (empty($blockaction) || !$PAGE->user_allowed_editing() || !confirm_sesskey()) {
@@ -566,18 +626,18 @@ function blocks_execute_url_action(&$PAGE, &$pageblocks) {
     $blockid     = optional_param('blockid',    0, PARAM_INT);
     
     if (!empty($blockid)) {
-        blocks_execute_action($PAGE, $pageblocks, strtolower($blockaction), $blockid);
+        blocks_execute_action($PAGE, $pageblocks, strtolower($blockaction), $blockid, $pinned);
 
     }
     else if (!empty($instanceid)) {
         $instance = blocks_find_instance($instanceid, $pageblocks);
-        blocks_execute_action($PAGE, $pageblocks, strtolower($blockaction), $instance);
+        blocks_execute_action($PAGE, $pageblocks, strtolower($blockaction), $instance, $pinned);
     }
 }
 
 // This shouldn't be used externally at all, it's here for use by blocks_execute_action()
 // in order to reduce code repetition.
-function blocks_execute_repositioning(&$instance, $newpos, $newweight) {
+function blocks_execute_repositioning(&$instance, $newpos, $newweight, $pinned=false) {
     global $CFG;
 
     // If it's staying where it is, don't do anything
@@ -586,15 +646,82 @@ function blocks_execute_repositioning(&$instance, $newpos, $newweight) {
     }
 
     // Close the weight gap we 'll leave behind
-    execute_sql('UPDATE '. $CFG->prefix .'block_instance SET weight = weight - 1 WHERE pagetype = \''. $instance->pagetype.
+    if (!empty($pinned)) {
+        $sql = 'UPDATE '. $CFG->prefix .'block_instance SET weight = weight - 1 WHERE pagetype = \''. $instance->pagetype.
+                      '\' AND position = \'' .$instance->position.
+            '\' AND weight > '. $instance->weight;
+    } else {
+        $sql = 'UPDATE '. $CFG->prefix .'block_instance SET weight = weight - 1 WHERE pagetype = \''. $instance->pagetype.
                       '\' AND pageid = '. $instance->pageid .' AND position = \'' .$instance->position.
-                      '\' AND weight > '. $instance->weight,
-                false);
+            '\' AND weight > '. $instance->weight;
+    }
+    execute_sql($sql,false);
 
     $instance->position = $newpos;
     $instance->weight   = $newweight;
 
-    update_record('block_instance', $instance);
+    if (!empty($pinned)) {
+        update_record('block_pinned', $instance);
+    } else {
+        update_record('block_instance', $instance);
+    }
+}
+
+function blocks_get_pinned($page) {
+    
+    $visible = true;
+
+    if (method_exists($page,'edit_always')) {
+        if ($page->edit_always()) {
+            $visible = false;
+        }
+    }
+    
+    $blocks = get_records_select('block_pinned', 'pagetype = \''. $page->get_type() .'\''.(($visible) ? 'AND visible = 1' : ''), 'position, weight');
+
+    $positions = $page->blocks_get_positions();
+    $arr = array();
+
+    foreach($positions as $key => $position) {
+        $arr[$position] = array();
+    }
+
+    if(empty($blocks)) {
+        return $arr;
+    }
+
+    foreach($blocks as $block) {
+        $block->pinned = true; // so we know we can't move it.
+        $arr[$block->position][$block->weight] = $block;
+    }
+
+    return $arr;    
+}
+
+
+function blocks_get_by_page_pinned($page) {
+    $pinned = blocks_get_pinned($page);
+    $user = blocks_get_by_page($page);
+    
+    $weights = array();
+
+    foreach ($pinned as $pos => $arr) {
+        $weights[$pos] = count($arr);
+    }
+
+    foreach ($user as $pos => $blocks) {
+        if (!array_key_exists($pos,$pinned)) {
+             $pinned[$pos] = array();
+        }
+        if (!array_key_exists($pos,$weights)) {
+            $weights[$pos] = 0;
+        }
+        foreach ($blocks as $block) {
+            $pinned[$pos][$weights[$pos]] = $block;
+            $weights[$pos]++;
+        }
+    }
+    return $pinned;
 }
 
 function blocks_get_by_page($page) {

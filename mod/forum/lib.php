@@ -734,6 +734,33 @@ function forum_user_complete($course, $user, $mod, $forum) {
     }
 }
 
+function forum_print_overview($course, $cm,$lastaccess) {
+    global $USER, $CFG;
+    $forum = get_record("forum","id","$cm->instance");
+    $str = '<a title="'.get_string('forums').'" href="mod/forum/view.php?id='.$cm->id.'">'
+        .get_string('forum','forum').': '.$forum->name.'</a><br />';
+    if ($numnew = count_records_select("log","time > $lastaccess AND "
+                                       ." course = $course->id AND "
+                                       ." module = 'forum' AND cmid = $cm->id "
+                                       ." AND action LIKE 'add %' AND userid != $USER->id")) {
+        $str .= get_string('overviewnumpostssince','forum',$numnew)."<br />";
+        $p = 1;
+    }
+    if ($CFG->forum_trackreadposts) {
+        $groupid = ($groupmode==SEPARATEGROUPS && !isteacheredit($course->id)) ? $currentgroup : false;
+        $unread = forum_tp_count_forum_posts($forum->id, $groupid) -
+            forum_tp_count_forum_read_records($USER->id, $forum->id, $groupid);
+        if ($unread > 0) {
+            $a->unread = $unread;
+            $str .= get_string('overviewnumunread','forum',$unread).'<br />';
+            $p = 1;
+        }
+    }
+    if (!empty($p)) {
+        echo $str;
+    }
+}
+
 function forum_print_recent_activity($course, $isteacher, $timestart) {
 /// Given a course and a date, prints a summary of all the new
 /// messages posted in the course since that date

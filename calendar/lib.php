@@ -1057,7 +1057,10 @@ function calendar_set_filters(&$courses, &$group, &$user, $courseeventsfrom = NU
 
                     // The first time we get in here, retrieve all groupmodes at once
                     if($groupmodes === NULL) {
-                        $groupmodes = get_records_list('course', 'id', implode(',', $groupcourses), '', 'id, groupmode, groupmodeforce');
+                        $count = count($groupcourses);
+                        if ($count && ($count != 1 || !empty($count[0]))) {
+                            $groupmodes = get_records_list('course', 'id', implode(',', $groupcourses), '', 'id, groupmode, groupmodeforce');
+                        }
                     }
 
                     // If this course has groups, show events from all of them

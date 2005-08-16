@@ -2246,14 +2246,15 @@ function user_login_string($course=NULL, $user=NULL) {
  * @param string $navigation The breadcrumbs string to be printed
  */
 function print_navigation ($navigation) {
-   global $CFG;
+   global $CFG, $USER;
 
    if ($navigation) {
        if (! $site = get_site()) {
            $site->shortname = get_string('home');
        }
        $navigation = str_replace('->', '&raquo;', $navigation);
-       echo '<a target="'. $CFG->framename .'" href="'. $CFG->wwwroot .'/">'. $site->shortname .'</a> &raquo; '. $navigation;
+       echo '<a target="'. $CFG->framename .'" href="'. $CFG->wwwroot.((!isadmin() && !empty($USER->id)) ? '/my' : '') .'/">'. $site->shortname .'</a> &raquo; '. $navigation;
+
    }
 }
 
@@ -3098,6 +3099,31 @@ function update_studentview_button($courseid) {
             "<input type=\"submit\" value=\"$svstring\" /></form>";
         return $button;
     }
+}
+
+/**
+ * Returns a turn edit on/off button for course in a self contained form.
+ * Used to be an icon, but it's now a simple form button
+ *
+ * @uses $CFG
+ * @uses $USER
+ * @param int $courseid The course  to update by id as found in 'course' table
+ * @return string
+ */
+function update_mymoodle_icon() {
+
+    global $CFG, $USER;
+    
+    if (!empty($USER->editing)) {
+        $string = get_string('updatemymoodleoff');
+        $edit = 'off';
+    } else {
+        $string = get_string('updatemymoodleon');
+        $edit = 'on';
+    }
+    return "<form target=\"$CFG->framename\" method=\"get\" action=\"$CFG->wwwroot/my/index.php\">".
+        "<input type=\"hidden\" name=\"edit\" value=\"$edit\" />".
+        "<input type=\"submit\" value=\"$string\" /></form>";
 }
 
 /**
