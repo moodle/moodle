@@ -1,9 +1,9 @@
 <?PHP // $Id$ 
-      // exercise.php - created with Moodle 1.6 development (2005072200)
+      // exercise.php - created with Moodle 1.6 development (2005081601)
 
 
 $string['absent'] = '欠席';
-$string['accumulative'] = '累積方式';
+$string['accumulative'] = '累積評価';
 $string['action'] = '活動';
 $string['ago'] = '$ 日前';
 $string['amend'] = '更新';
@@ -26,7 +26,7 @@ $string['comparisonofassessments'] = '評価の比較';
 $string['confirmdeletionofthisitem'] = '$a の削除確認';
 $string['correct'] = '正解';
 $string['count'] = 'カウント';
-$string['criterion'] = '目標規準方式';
+$string['criterion'] = '到達評価';
 $string['deadline'] = '提出期限';
 $string['deadlineis'] = '提出期限は $a です';
 $string['delete'] = '削除';
@@ -44,7 +44,7 @@ $string['element'] = '要素';
 $string['elementweight'] = '要素比重';
 $string['enterpassword'] = 'パスワードを入力してください。';
 $string['entriessaved'] = 'エントリが保存されました';
-$string['errorbanded'] = '減点方式';
+$string['errorbanded'] = '減点評価';
 $string['excellent'] = '素晴らしい';
 $string['exerciseassessments'] = 'エクササイズ評価';
 $string['exercisefeedback'] = 'エクササイズフィードバック';
@@ -118,7 +118,7 @@ $string['reassess'] = '再評価';
 $string['regradestudentassessments'] = '学生の評価の再評定';
 $string['resubmissionfor'] = '$a の再提出';
 $string['resubmitnote'] = '* は、$a がこの提出を再度できること意味します。<br />このフラグは、提出物を再評価し、<b>$a の再提出を許可</b>ボタンをクリック<br />することで設定できます。<br />学生はこのフラグが表示されている提出物は、<b>どれでも</b>再提出することができます。';
-$string['rubric'] = '到達基準方式';
+$string['rubric'] = 'ルーブリック';
 $string['savedok'] = '保存完了';
 $string['saveentries'] = 'エントリの保存';
 $string['savemyassessment'] = '評価の保存';

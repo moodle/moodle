@@ -1,9 +1,9 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.6 development (2005072200)
+      // workshop.php - created with Moodle 1.6 development (2005081601)
 
 
 $string['absent'] = '欠席';
-$string['accumulative'] = '累積方式';
+$string['accumulative'] = '累積評価';
 $string['action'] = '操作';
 $string['addacomment'] = 'コメントの追加';
 $string['addcomment'] = 'コメントの追加';
@@ -64,7 +64,7 @@ $string['comparisonofassessments'] = '評価の比較';
 $string['confirmdeletionofthisitem'] = '$a の削除を確定する';
 $string['correct'] = '正解';
 $string['count'] = 'カウント';
-$string['criterion'] = '目標規準';
+$string['criterion'] = '到達評価';
 $string['currentphase'] = '現在のフェーズ';
 $string['date'] = '日時';
 $string['datestr'] = '%%Y/%%m/%%d<br />%%H:%%M';
@@ -86,7 +86,7 @@ $string['editsubmission'] = '提出物の編集';
 $string['element'] = '要素';
 $string['elementweight'] = '要素比重';
 $string['enterpassword'] = 'パスワード入力';
-$string['errorbanded'] = '減点方式';
+$string['errorbanded'] = '減点評価';
 $string['errortable'] = 'エラーテーブル';
 $string['examplesubmissions'] = '提出サンプル';
 $string['excellent'] = '素晴らしい';
@@ -185,12 +185,12 @@ $string['numberofassessmentschanged'] = '変更された評価数: $a';
 $string['numberofassessmentsdropped'] = '下げられた評価数: $a';
 $string['numberofassessmentsofstudentsubmissions'] = '学生の提出物に対する評価数';
 $string['numberofassessmentsofteachersexamples'] = '教師の模範解答に対する評価数';
-$string['numberofassessmentsweighted'] = '評価数(加重した): $a';
+$string['numberofassessmentsweighted'] = '評価数 ( 加重した ) : $a';
 $string['numberofattachments'] = '提出物に求められる添付ファイル数';
 $string['numberofentries'] = 'エントリ数';
 $string['numberofnegativeresponses'] = '否定的な返答数';
 $string['numberofsubmissions'] = '提出物数: $a';
-$string['ograde'] = '評点<br />合計';
+$string['ograde'] = '合計<br />評点';
 $string['on'] = '$a';
 $string['openassignment'] = '課題を開く';
 $string['optionaladjustment'] = 'オプション調整';
