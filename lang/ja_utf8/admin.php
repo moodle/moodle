@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.6 development (2005072200)
+      // admin.php - created with Moodle 1.6 development (2005081601)
 
 
 $string['adminseesallevents'] = '管理者に全てのイベントを表示';
@@ -27,10 +27,13 @@ $string['configclamfailureonupload'] = 'アップロードファイルをclamが
 $string['configcountry'] = 'ここで国を設定した場合、新規アカウントのユーザに初期値として表示されます。ユーザに国を選ばせる場合は何も選択しないでください。';
 $string['configdbsessions'] = 'この設定を「Yes」にした場合、現在のセッション情報はデータベースに保存されます。これは特に規模の大きい/アクセス数の多いサイト、またはクラスタサーバに構築されたサイトに向いています。ほとんどのサイトでは、セッションの保存をサーバディスクに行うように、この設定を「No」のままにしてください。この設定を変更すると、現在のユーザ ( あなたも含めて ) がログアウトされます。';
 $string['configdebug'] = 'この設定を「Yes」にした場合、PHPのエラーレポートが増加して、より多くの警告が表示されるようになります。開発者向けの設定です。';
+$string['configdefaultallowedmodules'] = '上位カテゴリに分類される<b>コースが作成される場合</b>、どのモジュールをデフォルトで許可しますか?';
+$string['configdefaultrequestedcategory'] = 'リクエストされたコースが認証された場合、コースが設置されるデフォルトカテゴリです。';
 $string['configdeleteunconfirmed'] = 'メールによる承認を利用している場合、この値はユーザからの返答を受け付ける期間を指します。この期間の終了後、古い未承認のアカウントは削除されます。';
 $string['configdenyemailaddresses'] = '特定ドメインから送信される新しいメールを拒否したい場合は、この欄にスペースで区切って入力してください。他のドメインから送信されるメールは全て受信されます。例  <strong>hotmail.com yahoo.co.uk</strong> ';
 $string['configdigestmailtime'] = 'メール送信する選択をしたユーザに、投稿内容を要約したメールが毎日送信されます。ここでは1日の内で何時に要約メールを送信するかを設定します ( 次のcronがここで設定した時間の後に実行されます )。';
 $string['configdisplayloginfailures'] = 'ここでは選択したユーザにログイン失敗情報を表示します。';
+$string['configenablecourserequests'] = '全てのユーザにコースの作成のリクエストを許可します。';
 $string['configenablerssfeeds'] = 'ここではRSSフィードの設定を行います。RSSフィードを使用するためには、管理画面のモジュール管理にてRSSモジュールを使用可にする必要があります。';
 $string['configenablerssfeedsdisabled'] = 'サイト全てにおいてRSSフィードが利用不可にされているため、利用できません。管理メニュー内の詳細設定でRSSフィードを利用可にすることができます。';
 $string['configerrorlevel'] = '表示したいPHPの警告数を選択してください。通常はNormalが最適です。';
@@ -67,6 +70,12 @@ $string['configopentogoogle'] = 'この設定を行った場合、Googleはあ�
 $string['configpathtoclam'] = 'clam AVのパス。恐らく、/usr/bin/clamscan or /usr/bin/clamdscan のようになります。clam AVを正常に動作させるために、この設定を行う必要があります。';
 $string['configproxyhost'] = '<b>サーバ</b>のインターネットアクセスにプロクシ ( 例 ファイアーウォール ) が必要な場合は、プロクシのホスト名とポート番号を入力してください。必要でない場合は空白にしてください。';
 $string['configquarantinedir'] = 'clam AVに感染ファイルを隔離用ディレクトリに移動させたい場合は、ここにそのディレクトリを入力してください。このディレクトリは、ウェブサーバより書き込みができるようにする必要があります。ここを空白にした場合、または存在しないか、書き込み権が無いディレクトリを指定した場合、感染ファイルは削除されます。末尾にスラッシュを付けないでください。';
+$string['configrequestedstudentname'] = 'リクエストされたコースで使用する学生 ( 単数 ) に対する呼称';
+$string['configrequestedstudentsname'] = 'リクエストされたコースで使用する学生 ( 複数 ) に対する呼称';
+$string['configrequestedteachername'] = 'リクエストされたコースで使用する教師 ( 単数 ) に対する呼称';
+$string['configrequestedteachersname'] = 'リクエストされたコースで使用する教師 ( 複数 ) に対する呼称';
+$string['configrestrictbydefault'] = '上位カテゴリに分類される新しく作成されたコースでは、デフォルトでモジュールを制限しますか?';
+$string['configrestrictmodulesfor'] = 'どのコースに、活動モジュールを停止するための<b>設定</b>を設置しますか?';
 $string['configrunclamonupload'] = 'ファイルアップロード時にclam AVを動作させますか? 正常に動作させるためには、pathtoclamに正しいパスを入力する必要があります。 ( Clam AVは次の場所で入手できる無料ウイルススキャナーです。 http://www.clamav.net/ )';
 $string['configsectioninterface'] = 'インターフェース';
 $string['configsectionmail'] = 'メール';
@@ -74,6 +83,7 @@ $string['configsectionmaintenance'] = 'メンテナンス';
 $string['configsectionmisc'] = 'その他';
 $string['configsectionoperatingsystem'] = 'オペレーティングシステム';
 $string['configsectionpermissions'] = 'パーミッション';
+$string['configsectionrequestedcourse'] = 'コースリクエスト';
 $string['configsectionsecurity'] = 'セキュリティ';
 $string['configsectionuser'] = 'ユーザ';
 $string['configsecureforms'] = 'Moodleでは、フォームデータを受入れる場合の追加的なレベルのセキュリティーを使用することができます。この設定をYesにした場合、ブラウザのHTTP_REFERER変数とフォーム設置のアドレスが照合されます。 ユーザがファイアーウォールソフト(例 Zonealarm)を使用してトラフィックからHTTP_REFERERを取除く設定をしている場合、稀に問題が発生する場合があります。 これは、フォーム使用時に画面が「固まる」現象です。ユーザがログインページ(例えば)で問題を抱えている場合はこの設定をNoにしてください。しかしこの設定ではブルートフォース・パスワードアタックに対して無防備な状態になります。分からない場合は、この設定を「Yes」のままにしてください。';
