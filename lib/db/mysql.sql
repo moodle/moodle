@@ -99,6 +99,8 @@ CREATE TABLE `prefix_course_categories` (
   `coursecount` int(10) unsigned NOT NULL default '0',
   `visible` tinyint(1) NOT NULL default '1',
   `timemodified` int(10) unsigned NOT NULL default '0',
+  `depth` int(10) unsigned NOT NULL default '0',
+  `path` varchar(255) NOT NULL default '',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `id` (`id`)
 ) TYPE=MyISAM COMMENT='Course categories';

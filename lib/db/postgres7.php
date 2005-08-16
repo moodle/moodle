@@ -1261,8 +1261,12 @@ function main_upgrade($oldversion=0) {
         modify_database('','CREATE INDEX prefix_course_allowed_modules_course_idx ON prefix_course_allowed_modules (course);');
         modify_database('','CREATE INDEX prefix_course_allowed_modules_module_idx ON prefix_course_allowed_modules (module);');
         table_column('course','','restrictmodules','int','1','','0','not null');
-     }
+    }
     
+    if ($oldversion < 2005081700) {
+        table_column('course_categories','','depth','integer');
+        table_column('course_categories','','path','varchar','255');
+    }
 
     return $result;
 }

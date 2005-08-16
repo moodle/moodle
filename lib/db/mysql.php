@@ -1520,6 +1520,11 @@ function main_upgrade($oldversion=0) {
         table_column('course','','restrictmodules','int','1','','0','not null');
     }
 
+    if ($oldversion < 2005081700) {
+        table_column('course_categories','','depth','integer');
+        table_column('course_categories','','path','varchar','255');
+    }
+
     return $result;
 }
 

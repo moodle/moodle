@@ -64,7 +64,9 @@ CREATE TABLE prefix_course_categories (
    sortorder integer NOT NULL default '0',
    coursecount integer NOT NULL default '0',
    visible integer NOT NULL default '1',
-   timemodified integer NOT NULL default '0'
+   timemodified integer NOT NULL default '0',
+   depth integer NOT NULL default '0',
+   path varchar(255) NOT NULL default ''
 );
 
 CREATE TABLE prefix_course_display (

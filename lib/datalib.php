@@ -2330,20 +2330,38 @@ function get_categories($parent='none', $sort='sortorder ASC') {
 * $safe (bool) prevents it from assuming category-sortorder is unique, used to upgrade
 *       safely from 1.4 to 1.5
 */
-function fix_course_sortorder($categoryid=0, $n=0, $safe=0) {
-
+function fix_course_sortorder($categoryid=0, $n=0, $safe=0, $depth=0, $path='') {
+    
     global $CFG;
 
     $count = 0;
     
-    $catgap    = 1000; # "standard" category gap
-    $tolerance = 200;  # how "close" categories can get
+    $catgap    = 1000; // "standard" category gap
+    $tolerance = 200;  // how "close" categories can get
+    
+    if ($categoryid > 0){
+        // update depth and path
+        $cat   = get_record('course_categories', 'id', $categoryid);
+        if ($cat->parent == 0) {
+            $depth = 0;
+            $path  = '';
+        } else if ($depth == 0 ) { // doesn't make sense; get from DB
+            // this is only called if the $depth parameter looks dodgy
+            $parent = get_record('course_categories', 'id', $cat->parent);
+            $path  = $parent->path;
+            $depth = $parent->depth;
+        }
+        $path  = $path . '/' . $categoryid;
+        $depth = $depth + 1;
 
+        set_field('course_categories', 'path',  addslashes($path),  'id', $categoryid);        
+        set_field('course_categories', 'depth', $depth, 'id', $categoryid);        
+    }
 
     // get some basic info about courses in the category
     $info = get_record_sql('SELECT MIN(sortorder) AS min, 
                                    MAX(sortorder) AS max,
-                                   COUNT(sortorder)  AS count
+                                   COUNT(sortorder)  AS count                                   
                             FROM ' . $CFG->prefix . 'course 
                             WHERE category=' . $categoryid);
     if (is_object($info)) { // no courses?
@@ -2417,7 +2435,7 @@ function fix_course_sortorder($categoryid=0, $n=0, $safe=0) {
 
     if ($categories = get_categories($categoryid)) {
         foreach ($categories as $category) {
-            $n = fix_course_sortorder($category->id, $n, $safe);
+            $n = fix_course_sortorder($category->id, $n, $safe, $depth, $path);
         }
     }
 
