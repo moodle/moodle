@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.6 development (2005072200)
+      // lesson.php - created with Moodle 1.6 development (2005081700)
 
 
 $string['accesscontrol'] = 'アクセスコントロール';
@@ -14,6 +14,7 @@ $string['addedaquestionpage'] = '問題ページが追加されました。';
 $string['addedcluster'] = 'クラスタが追加されました。';
 $string['addedendofcluster'] = 'クラスタ終了が追加されました。';
 $string['addendofcluster'] = '終了クラスタを追加';
+$string['and'] = 'AND';
 $string['answer'] = '選択肢';
 $string['answeredcorrectly'] = '正常に解答されました。';
 $string['answersfornumerical'] = '数字問題に対する解答は最大値および最小値の範囲内に入る必要があります。';
@@ -41,6 +42,7 @@ $string['commentswithname'] = '$a->firstname {$a->lastname}のコメント';
 $string['completed'] = '完了';
 $string['completederror'] = 'レッスンを完了する';
 $string['completethefollowingconditions'] = '先へ進む前に、<b>$a</b> レッスンの下記の状態を完了させる必要があります。';
+$string['conditionsfordependency'] = '依存条件';
 $string['confirmdeletionofthispage'] = 'このページを本当に削除してもよろしいですか?';
 $string['congratulations'] = 'おめでとうございます - 最終レッスンに到達しました。';
 $string['continue'] = '続ける';
@@ -55,6 +57,7 @@ $string['deleteattempts'] = 'このレッスンの学生の受験を削除 ( ユ
 $string['deletedpage'] = '削除済みページ';
 $string['deleting'] = '削除中';
 $string['deletingpage'] = 'ページの削除: $a';
+$string['dependencyon'] = '依存';
 $string['description'] = '説明';
 $string['detailedstats'] = '統計詳細';
 $string['didnotanswerquestion'] = 'この問題に答えていません。';
@@ -106,10 +109,12 @@ $string['leftduringtimed'] = 'あなたは時間制限のあるレッスンの�
 $string['leftduringtimednoretake'] = 'あなたは時間制限のあるレッスンの途中で離れました。<br>レッスンの再受験、継続はできません。';
 $string['lesson'] = '$a レッスン';
 $string['lessonclosed'] = 'このレッスンは $a に終了します。';
+$string['lessoncloses'] = 'レッスン終了';
 $string['lessondefault'] = 'この設定をデフォルトにする';
 $string['lessonformating'] = 'レッスンフォーマット';
 $string['lessonmenu'] = 'レッスンメニュー';
 $string['lessonopen'] = 'このレッスンは $a に開始されます。';
+$string['lessonopens'] = 'レッスン開始';
 $string['lessonstats'] = 'レッスン統計';
 $string['loginfail'] = 'ログインに失敗しました、再度ログインしてください...';
 $string['lowscore'] = 'ロースコア';
