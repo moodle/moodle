@@ -197,6 +197,7 @@
                 $usernew->url = "http://".$usernew->url;
             }
 
+            $userold = get_record('user','id',$usernew->id);
             if (update_record("user", $usernew)) {
                 if (function_exists("auth_user_update")){
                     // pass a true $userold here 
