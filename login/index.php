@@ -121,7 +121,7 @@
         
         
             //Select password change url
-            if (is_internal_auth() || $CFG->{'auth_'.$USER->auth.'_stdchangepassword'}){
+            if (is_internal_auth($USER->auth) || $CFG->{'auth_'.$USER->auth.'_stdchangepassword'}){
                 $passwordchangeurl=$CFG->wwwroot.'/login/change_password.php';
             } elseif($CFG->changepassword) {
                 $passwordchangeurl=$CFG->changepassword;
