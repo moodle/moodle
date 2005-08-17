@@ -71,7 +71,6 @@
             }
 
             // register success changing password
-            // echo "<pre>"; print_r( $user ); print_r( $USER ); die;
             unset_user_preference('auth_forcepasswordchange', $user->id);
 
             set_moodle_cookie($USER->username);
