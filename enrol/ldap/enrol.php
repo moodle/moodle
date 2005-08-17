@@ -45,7 +45,7 @@ function get_user_courses(&$user, $type) {
     $ldap_connection = $this->enrol_ldap_connect();
     if (!$ldap_connection) {
         @ldap_close($ldap_connection);
-        error("LDAP-module cannot connect to server: $CFG->ldap_host_url");
+        notify("LDAP-module cannot connect to server: $CFG->ldap_host_url");
         return false;
     }
     
@@ -150,7 +150,7 @@ function sync_enrolments($type, $enrol) {
     $ldap_connection = $this->enrol_ldap_connect();
     if (!$ldap_connection) {
         @ldap_close($ldap_connection);
-        error("LDAP-module cannot connect to server: $CFG->ldap_host_url");
+        notify("LDAP-module cannot connect to server: $CFG->ldap_host_url");
         return false;
     }
     
@@ -444,7 +444,7 @@ function enrol_ldap_connect(){
         return $result;
 
     } else {
-        error("LDAP-module cannot connect to server: $CFG->enrol_ldap_host_url");
+        notify("LDAP-module cannot connect to server: $CFG->enrol_ldap_host_url");
         return false;
     }
 }
@@ -458,14 +458,14 @@ function enrol_ldap_bind($ldap_connection){
     if ( ! empty($CFG->enrol_ldap_bind_dn) ){
         //bind with search-user
         if (!ldap_bind($ldap_connection, $CFG->enrol_ldap_bind_dn,$CFG->enrol_ldap_bind_pw)){
-            error("Error: could not bind ldap with ldap_bind_dn/pw");
+            notify("Error: could not bind ldap with ldap_bind_dn/pw");
             return false;
         }
 
     } else {
         //bind anonymously 
         if ( !ldap_bind($ldap_connection)){
-            error("Error: could not bind ldap anonymously");
+            notify("Error: could not bind ldap anonymously");
             return false;
         }  
     }
@@ -615,7 +615,7 @@ function create_course ($course_ext,$skip_fix_course_sortorder=0){
         add_to_log($newcourseid, "course", "new", "view.php?id=$newcourseid", "enrol/ldap auto-creation");
     } else {
         error_log("Could not create new course from LDAP from DN:" . $course_ext['dn']);
-        error("Serious Error! Could not create the new course!");
+        notify("Serious Error! Could not create the new course!");
         return false;
     }
     
