@@ -4,6 +4,9 @@
 
 $string['adminseesallevents'] = '관리자가 모든 이벤트를 봄';
 $string['adminseesownevents'] = '관리자는 다른 사용자들과 같음';
+$string['backgroundcolour'] = '바탕화면 색상';
+$string['badwordsconfig'] = '콤마에 의해 분리된 나쁜 언어 목록을 입력하시오';
+$string['badwordslist'] = '나쁜 언어 목록';
 $string['blockinstances'] = '보기';
 $string['blockmultiple'] = '다각';
 $string['cachetext'] = '텍스트 기업 메모리 ';
@@ -104,6 +107,7 @@ $string['configwarning'] = '이러한 설치를 수정하는 것을 조심히 하십시오-생소한 �
 $string['configzip'] = '당신의 zip 프로그램의 위치(유닉스만,선택사항)를 가르키세요. 만약 조건으로 지정한다면, 이것은 서버상에서 zip 문서를 생성시킬 것이다. 만약 당신이 이 빈칸을 비워둔다면, Moodle은 내부의 루틴을 사용할 것이다.';
 $string['confirmation'] = '확정';
 $string['cronwarning'] = '<a href=\"cron.php\">cron.php 유지 원본</a> 최소 24시간 동안 작동 되지 않습니다.<br /><a href=\"../doc/?frame=install.html&sub=cron\">설치 문서화는</a> 당신이 어떻게 이것을 자동화 할 수 있는 지를 설명해 줍니다.';
+$string['density'] = '밀도';
 $string['edithelpdocs'] = '도움 문서를 편집하다';
 $string['editstrings'] = '문자열을 편집하다';
 $string['filterall'] = '필터 문자열을 거르다.';
@@ -120,7 +124,18 @@ $string['importtimezones'] = '타임존의 목록의 업데이트가 완료되었습니다.';
 $string['importtimezonescount'] = 'SA->count어귀는 Sa->source로 부터 가져왔습니다.';
 $string['importtimezonesfailed'] = '소스를 찾을 수 없습니다.(안좋은 소식)';
 $string['incompatibleblocks'] = '호환되지 않는 구역';
+$string['latexpreamble'] = '라텍스 전문';
+$string['latexsettings'] = '라텍스 표현 설정';
+$string['mediapluginavi'] = 'avi 필터 사용';
+$string['mediapluginmov'] = 'mov 필터 사용';
+$string['mediapluginmp3'] = 'mp3 필터 사용';
+$string['mediapluginmpg'] = 'mpg 필터 사용';
+$string['mediapluginswf'] = 'swf 필터 사용';
+$string['mediapluginwmv'] = 'wmv 필터 사용';
 $string['optionalmaintenancemessage'] = '임의의 정보 유지';
+$string['pathconvert'] = '전환 실행파일 경로';
+$string['pathdvips'] = 'divps 실행파일 경로';
+$string['pathlatex'] = '라텍스 실행파일 경로';
 $string['pleaseregister'] = '이 버튼을 제거하고 당신의 사이트를 등록해주세요.';
 $string['sitemaintenance'] = '이 싸이트는 중이며 현재 사용하실 수 없습니다.';
 $string['sitemaintenancemode'] = '모드 유지';
