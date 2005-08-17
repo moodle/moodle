@@ -1253,7 +1253,7 @@ function print_whole_category_list($category=NULL, $displaylist=NULL, $parentsli
             $down = $last ? false : true;
             $first = false;
 
-            print_whole_category_list($cat, $displaylist, $parentslist, $depth + 1, $printfunction);
+            print_whole_category_list($cat, $displaylist, $parentslist, $depth + 1);
         }
     }
 }
