@@ -1963,7 +1963,14 @@ function get_group_users($groupid, $sort='u.lastaccess DESC', $exceptions='', $f
     } else {
         $except = '';
     }
-    return get_records_sql("SELECT DISTINCT $fields
+    // in postgres, you can't have things in sort that aren't in the select, so...
+    $extrafield = str_replace('ASC','',$sort);
+    $extrafield = str_replace('DESC','',$sort);
+    $extrafield = trim($extrafield);
+    if (!empty($extrafield)) {
+        $extrafield = ','.$extrafield;
+    }
+    return get_records_sql("SELECT DISTINCT $fields $extrafield
                               FROM {$CFG->prefix}user u,
                                    {$CFG->prefix}groups_members m
                              WHERE m.groupid = '$groupid'
