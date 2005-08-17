@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.6 development (2005060201)
+      // quiz.php - created with Moodle 1.6 development (2005072000)
 
 
 $string['acceptederror'] = '인정된 오류';
@@ -265,6 +265,7 @@ $string['numerical'] = '수에 관련된';
 $string['optional'] = '선택의';
 $string['outof'] = '~의 최대치를 초과하는';
 $string['overdue'] = '기한초과';
+$string['pagesize'] = '한 페이지에 보이기 시도';
 $string['paragraphquestion'] = '$a에서 지지되지 않는 문단질문. 질문은 무시됩니다.';
 $string['parent'] = '부모/근원';
 $string['partiallycorrect'] = '부분 수정 ';
@@ -333,6 +334,7 @@ $string['reportmulti_q_x_student'] = '멀티 학습자 선택';
 $string['reportmulti_resp'] = '개인 응답';
 $string['reportoverview'] = '개요';
 $string['reportregrade'] = '재시도';
+$string['reportresponses'] = '상세한 반응';
 $string['reports'] = '보고들 ';
 $string['reportsimplestat'] = '간단한 통계';
 $string['requirepassword'] = '비밀번호를 입력하세요';

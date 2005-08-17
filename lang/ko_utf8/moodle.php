@@ -1,10 +1,10 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.6 development (2005060201)
+      // moodle.php - created with Moodle 1.6 development (2005072000)
 
 
 $string['action'] = '동작';
 $string['actions'] = '동작들';
-$string['active'] = '액티브';
+$string['active'] = '활동';
 $string['activities'] = '활동들';
 $string['activity'] = '활동';
 $string['activityclipboard'] = '이 활동을 옮기기: <b>$a</b>';
@@ -28,7 +28,7 @@ $string['addingdatatoexisting'] = '존재하는 데이터 추가하기';
 $string['addnewcategory'] = '새로운 범주 추가';
 $string['addnewcourse'] = '새로운 배움터 추가';
 $string['addnewuser'] = '새로운 사용자 추가';
-$string['addresource'] = '리소스 추가';
+$string['addresource'] = '자원 추가';
 $string['address'] = '주소';
 $string['addstudent'] = '학생 추가';
 $string['addteacher'] = '교사 추가';
@@ -134,6 +134,7 @@ $string['blocksetup'] = '블럭 테이블을 설치합니다';
 $string['blocksuccess'] = '$a 테이블 설치가 무사히 완료되었습니다';
 $string['bycourseorder'] = '코스 순서에 의해';
 $string['byname'] = '$a 에 의해';
+$string['cachecontrols'] = '캐시 제어';
 $string['cancel'] = '취소';
 $string['categories'] = '배움터 범주';
 $string['category'] = '범주';
@@ -990,7 +991,7 @@ $string['themes'] = '테마들';
 $string['themesaved'] = '새로 저장된 테마';
 $string['thischarset'] = 'UTF-8';
 $string['thisdirection'] = 'ltr';
-$string['thislanguage'] = '&#54620;&#44397;&#50612;';
+$string['thislanguage'] = '한국어';
 $string['time'] = '시';
 $string['timezone'] = '타임존';
 $string['to'] = '까지';
