@@ -6100,15 +6100,22 @@ function unzip_show_status ($list,$removepath) {
  */
  function getremoteaddr() {
     if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
-        return $_SERVER['HTTP_CLIENT_IP'];
+        return cleanremoteaddr($_SERVER['HTTP_CLIENT_IP']);
     }
     if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-        return $_SERVER['HTTP_X_FORWARDED_FOR'];
+        return cleanremoteaddr($_SERVER['HTTP_X_FORWARDED_FOR']);
     }
     if (!empty($_SERVER['REMOTE_ADDR'])) {
-        return $_SERVER['REMOTE_ADDR'];
+        return cleanremoteaddr($_SERVER['REMOTE_ADDR']);
     }
     return '';
+}
+
+/** 
+ * Cleans a remote address ready to put into the log table
+ */
+function cleanremoteaddr($addr) {
+    return preg_replace('/(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(.*)/','$1',$addr);
 }
 
 /**
