@@ -58,7 +58,7 @@ global $CFG;
         if(!empty($records)) {
             foreach($records as $block) {
                 $block->multiple = 0;
-                insert_record('block', $block);
+                insert_record('block', $block, false);
             }
         }
 
@@ -82,7 +82,7 @@ global $CFG;
             return false;
         }
 
-        $records = get_records('course');
+        $records = get_records('course', '','','', 'id, shortname, blockinfo');
         if(!empty($records)) {
             foreach($records as $thiscourse) {
                 // The @ suppresses a notice emitted if there is no : in the string
@@ -98,7 +98,7 @@ global $CFG;
                         $instance->weight     = $weight;
                         $instance->visible    = ($blk > 0) ? 1 : 0;
                         $instance->configdata = '';
-                        insert_record('block_instance', $instance);
+                        insert_record('block_instance', $instance, false);
                     }
                 }
                 if(!empty($right)) {
@@ -112,7 +112,7 @@ global $CFG;
                         $instance->weight     = $weight;
                         $instance->visible    = ($blk > 0) ? 1 : 0;
                         $instance->configdata = '';
-                        insert_record('block_instance', $instance);
+                        insert_record('block_instance', $instance, false);
                     }
                 }
             }
