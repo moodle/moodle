@@ -89,6 +89,7 @@ $string['resourcetyperepository'] = 'Link a um objeto do repositório';
 $string['resourcetypetext'] = 'Criar uma página de texto simples';
 $string['searchweb'] = 'Buscar página web';
 $string['serverurl'] = 'URL do servidor  ($a->wwwroot)';
+$string['showcourseblocks'] = 'Mostrar os box do curso';
 $string['variablename'] = 'Nome da variável';
 $string['vol'] = 'Vol';
 
