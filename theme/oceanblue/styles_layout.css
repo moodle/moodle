@@ -1467,7 +1467,9 @@ body#mod-quiz-report .controls {
   text-align: center;
 }
 
-
+.navbutton form {
+  display: inline;
+  }
 
 /***
  *** Modules: Resource
