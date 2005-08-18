@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.5.2 (2005072200)
+      // forum.php - created with Moodle 1.6 development (2005081700)
 
 
 $string['addanewdiscussion'] = 'Yeni tartýþma konusu ekle';
@@ -101,6 +101,8 @@ $string['oldertopics'] = 'Eski konular';
 $string['openmode0'] = 'Tartýþma ve yanýt yok';
 $string['openmode1'] = 'Tartýþma yok, yanýt verilebilir';
 $string['openmode2'] = 'Tartýþma açýlabilir ve yanýt verilebilir';
+$string['overviewnumpostssince'] = 'Son giriþinizden beri $a mesaj';
+$string['overviewnumunread'] = 'Toplam $a okunmamýþ';
 $string['parent'] = 'Bir üst forumu göster';
 $string['parentofthispost'] = 'Bu mesajýn bir üstü';
 $string['postadded'] = 'Mesajýnýz baþarýyla eklendi.<P>Herhangi bir deðiþiklik yapmak için $a süreniz var.';

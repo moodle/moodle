@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.5 + (2005060201)
+      // resource.php - created with Moodle 1.6 development (2005081700)
 
 
 $string['addresource'] = 'Kaynak ekle';
@@ -64,6 +64,7 @@ $string['resourcetypelabel'] = 'Yeni bir etiket ekle';
 $string['resourcetypetext'] = 'Düzmetin dosyasý oluþtur';
 $string['searchweb'] = 'Web sayfasýný ara';
 $string['serverurl'] = 'Sunucu adresi ($a->wwwroot)';
+$string['showcourseblocks'] = 'Kurs bloklarýný göster';
 $string['variablename'] = 'Deðiþken adý';
 $string['vol'] = 'Cilt';
 
