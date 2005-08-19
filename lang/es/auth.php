@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.5 Beta (2005052300)
+      // auth.php - created with Moodle 1.5.2 (2005060220)
 
 
 $string['alternatelogin'] = 'Si introduce aquí una URL, se usará como página de acceso al sitio. La página debería contener un formulario cuya propiedad de acción está ajustada a <strong>\'$a\'</strong> y devuelve los campos <strong>nombre de usuario</strong> y <strong>contraseña</strong>.<br />Procure no introducir una URL incorrecta puesto que hacerlo supondrá su expulsión del sitio.<br />Deje el ajuste en blanco para utilizar la página de acceso por defecto.';
@@ -67,6 +67,7 @@ $string['auth_ldap_memberattribute'] = 'Especificar el atributo para nombre de u
 $string['auth_ldap_objectclass'] = 'Filtro usado para usuarios name/search. Normalmente deberá ajustarlo a algo parecido a objectClass=posixAccount. Valores por defecto para objectClass=* que devolverán todos los objetos desde LDAP.';
 $string['auth_ldap_opt_deref'] = 'Determina cómo se manejan los alias durante la búsqueda. Seleccione uno de los siguientes valores: \"No\" (LDAP_DEREF_NEVER) o \"Sí\" (LDAP_DEREF_ALWAYS)';
 $string['auth_ldap_passwdexpire_settings'] = 'Ajustes de caducidad de la contraseña LDAP.';
+$string['auth_ldap_preventpassindb'] = 'Seleccione \'sí\' para evitar que las contraseñas se almacenen en la base de datos de Moodle.';
 $string['auth_ldap_search_sub'] = 'Ponga el valor <> 0 si quiere buscar usuarios desde subcontextos.';
 $string['auth_ldap_server_settings'] = 'Ajustes de servidor LDAP';
 $string['auth_ldap_update_userinfo'] = 'Actualizar información del usuario (nombre, apellido, dirección..) desde LDAP a Moodle. Mire en /auth/ldap/attr_mappings.php para información de mapeado';

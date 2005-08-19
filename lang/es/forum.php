@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005042100)
+      // forum.php - created with Moodle 1.5.2 (2005060220)
 
 
 $string['addanewdiscussion'] = 'Colocar un nuevo tema de discusión aquí';
@@ -112,6 +112,8 @@ $string['oldertopics'] = 'Temas antiguos';
 $string['openmode0'] = 'No se pueden colocar temas ni respuestas ';
 $string['openmode1'] = 'No se pueden colocar temas, sólo respuestas';
 $string['openmode2'] = 'Permitir nuevos temas y respuestas';
+$string['overviewnumpostssince'] = '$a mensajes desde la última entrada';
+$string['overviewnumunread'] = '$a totales no leídos';
 $string['parent'] = 'Mostrar mensaje anterior';
 $string['parentofthispost'] = 'Anterior a este mensaje';
 $string['postadded'] = 'Su mensaje se ha colocado con éxito.<P>Tiene $a para hacer cualquier cambio.';

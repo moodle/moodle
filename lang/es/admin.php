@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.5.1 (2005060210)
+      // admin.php - created with Moodle 1.5.2 (2005060220)
 
 
 $string['adminseesallevents'] = 'Los administradores ven todos los eventos';
@@ -27,10 +27,13 @@ $string['configclamfailureonupload'] = 'Si ha configurado clam para escanear arc
 $string['configcountry'] = 'Si selecciona un país, dicho país quedará como valor por defecto para nuevos usuarios o cuentas. Para forzar a los usuarios a elegir un país, deje la opción sin seleccionar.';
 $string['configdbsessions'] = 'Si elige esta opción, se usará la base de datos para almacenar información sobre las sesiones actuales. Esto es especialmente útil para sitios grandes u ocupados construídos sobre racimos (\'clusters\') de servidores. En la mayoría de los casos debería dejarse en blanco de modo que se use en su lugar el disco del servidor. Note que la modificación de este ajuste desconectará a todos los usuarios, incluído usted.';
 $string['configdebug'] = 'Si activa esta opción, se incrementará el error_reporting de PHP, de modo que recibirá más advertencias. Sólo resulta útil para los desarrolladores.';
+$string['configdefaultallowedmodules'] = 'En los cursos comprendidos en la categoría anterior, ¿qué módulos desea que aparezcan por defecto <b>cuando se crea el curso</b>?';
+$string['configdefaultrequestedcategory'] = 'Categoría por defecto en la que ubica los cursos requeridos, si se aprueban.';
 $string['configdeleteunconfirmed'] = 'Si está usando una autenticación basada en email, éste es el período dentro del cual se aceptará una respuesta enviada por los usuarios. Pasado ese período, se eliminarán todas las cuentas no confirmadas.';
 $string['configdenyemailaddresses'] = 'Para denegar direcciones de email de dominios particulares, escriba aquí una lista de ellos. El resto de los dominios serán aceptados. Por ejemplo, <strong>hotmail.com yahoo.es</strong>';
 $string['configdigestmailtime'] = 'Se enviará un resumen de los correos a las personas que eligen dicha opción. Este ajuste controla a qué hora del día se enviará el correo (por medio del primer cron que se ejecute después de la hora fijada).';
 $string['configdisplayloginfailures'] = 'Esta opción muestra información a los usuarios seleccionados sobre intentos previos de acceso fallidos.';
+$string['configenablecourserequests'] = 'Esta opción permitirá que cualquier usuario solicite que se crée un curso.';
 $string['configenablerssfeeds'] = 'Esta opción posibilita el acceso a canales RSS. Para ver cualquier cambio es necesario también activar los canales RSS en los módulos individuales (vaya a los ajustes de Módulos en Admin - Configuración).';
 $string['configenablerssfeedsdisabled'] = 'No está disponible porque los canales RSS están desactivados en todo el sitio. Para activarlos, vaya a Variables en Admin - Configuración.';
 $string['configerrorlevel'] = 'Seleccionar la cantidad de advertencias PHP que desea mostrar. La mejor elección es \'Normal\'.';
@@ -67,6 +70,12 @@ $string['configopentogoogle'] = 'Si activa esta opción, se permitirá a Google en
 $string['configpathtoclam'] = 'Ruta a clam AV. Probablemente algo parecido a /usr/bin/clamscan or /usr/bin/clamdscan. Esta ruta es necesaria para que clam AV funcione.';
 $string['configproxyhost'] = 'Si este <b>servidor</b> necesita usar un proxi (e.g., un cortafuegos) para acceder a Internet, escriba aquí el nombre del proxy y el puerto. En caso contrario, déjelo en blanco.';
 $string['configquarantinedir'] = 'Si desea que clam AV traslade los archivos infectados a un directorio de cuarentena, escríbalo aquí. El directorio debe tener permiso de escritura en el servidor. Si lo deja en blanco, o si escribe un directorio inexistente o sin permiso de escritura, los archivos infectados serán destruídos. No incluya la barra final.';
+$string['configrequestedstudentname'] = 'Palabra para \'estudiante\' usada en los cursos solicitados';
+$string['configrequestedstudentsname'] = 'Palabra para \'estudiantes\' usada en los cursos solicitados';
+$string['configrequestedteachername'] = 'Palabra para \'profesor\' usada en los cursos solicitados';
+$string['configrequestedteachersname'] = 'Palabra para \'profesores\' usada en los cursos solicitados';
+$string['configrestrictbydefault'] = '¿Deberían los nuevos cursos incluídos en la categoría anterior tener por defecto sus módulos restringidos?';
+$string['configrestrictmodulesfor'] = '¿Qué cursos deberían disponer del <b>ajuste</b> para deshabilitar algunos módulos de actividad?';
 $string['configrunclamonupload'] = '¿Deberá ejecutarse clam AV cuando se sube un archivo? Para que esto funcione es necesaria una ruta correcta \'pathtoclam\'. (Clam AV es un programa antivirus gratuito que se puede bajar de http://www.clamav.net/)';
 $string['configsectioninterface'] = 'Interface';
 $string['configsectionmail'] = 'Correo electrónico';
@@ -74,6 +83,7 @@ $string['configsectionmaintenance'] = 'Mantenimiento';
 $string['configsectionmisc'] = 'Miscelánea';
 $string['configsectionoperatingsystem'] = 'Sistema Operativo';
 $string['configsectionpermissions'] = 'Permisos';
+$string['configsectionrequestedcourse'] = 'Solicitudes de cursos';
 $string['configsectionsecurity'] = 'Seguridad';
 $string['configsectionuser'] = 'Usuario';
 $string['configsecureforms'] = 'Moodle puede usar un nivel adicional de seguridad cuando acepta datos provenientes de formularios web. Si la opción está activada, se contrastará la variable HTTP_REFERER del navegador con la dirección del formulario actual. En muy pocos casos esto ocasiona problemas si el usuario utiliza un cortafuegos (e.g., ZoneAlarm) configurado para desmontar su HTTP_REFERER del tráfico web. El síntoma consiste en quedarse \'atascasdo\' en un formulario. Si, pongamos por caso, los usuarios tuvieran problemas con la página de acceso, quizás conviniera desactivar la opción, aun con el riesgo de dejar el sitio más vulnerable a ataques de fuerza bruta. En caso de duda, seleccione la opción \'Sí\'.';
