@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // exercise.php - created with Moodle 1.6 development (2005081601)
+      // exercise.php - created with Moodle 1.6 development (2005081700)
 
 
 $string['absent'] = '·çÀÊ';
@@ -26,7 +26,7 @@ $string['comparisonofassessments'] = 'É¾²Á¤ÎÈæ³Ó';
 $string['confirmdeletionofthisitem'] = '$a ¤Îºï½ü³ÎÇ§';
 $string['correct'] = 'Àµ²ò';
 $string['count'] = '¥«¥¦¥ó¥È';
-$string['criterion'] = 'ÅþÃ£É¾²Á';
+$string['criterion'] = '¥¯¥ê¥Æ¥ê¥ª¥ó';
 $string['deadline'] = 'Äó½Ð´ü¸Â';
 $string['deadlineis'] = 'Äó½Ð´ü¸Â¤Ï $a ¤Ç¤¹';
 $string['delete'] = 'ºï½ü';
@@ -90,7 +90,7 @@ $string['noteongradinggrade'] = '¤³¤ÎÉ¾ÅÀ¤Ï¡¢¤¢¤Ê¤¿¤ÎÄó½ÐÊª¤ËÂÐ¤¹¤ë $a ¤Ë¤è¤ëÉ¾²
 $string['noteonstudentassessments'] = '{ ³ØÀ¸¤Ë¤è¤ëÉ¾Äê / É¾²Á¤Î¤¿¤á¤ÎÉ¾ÅÀ }';
 $string['notgraded'] = 'É¾²ÁÌµ¤·';
 $string['notitlegiven'] = '¥¿¥¤¥È¥ëÌµ¤·';
-$string['numberofassessmentelements'] = '¥³¥á¥ó¥È¿ô¡¢É¾²ÁÍ×ÁÇ¿ô¡¢É¾²Á¤ÎÉý¡¢µ¬½à¿ô¤Þ¤¿¤Ï¥ë¡¼¥Ö¥ê¥Ã¥¯¤Î¥«¥Æ¥´¥ê¿ô';
+$string['numberofassessmentelements'] = '¥³¥á¥ó¥È¿ô¡¢É¾²ÁÍ×ÁÇ¿ô¡¢É¾²Á¤ÎÉý¡¢¥¯¥ê¥Æ¥ê¥ª¥ó¡¦¥¹¥Æ¡¼¥È¥á¥ó¥È¤Þ¤¿¤Ï¥ë¡¼¥Ö¥ê¥Ã¥¯¤Î¥«¥Æ¥´¥ê¿ô';
 $string['numberofcriterionelements'] = 'µ¬½à¿ô¤Ï1¤è¤ê¤âÂç¤­¤¯ÀßÄê¤·¤Æ¤¯¤À¤µ¤¤¡£';
 $string['numberofentries'] = '¥¨¥ó¥È¥ê¿ô';
 $string['numberofentriesinleaguetable'] = 'À®ÀÓÉ½¤Î¥¨¥ó¥È¥ê¿ô';

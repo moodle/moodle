@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // exercise.php - created with Moodle 1.6 development (2005081601)
+      // exercise.php - created with Moodle 1.6 development (2005081700)
 
 
 $string['absent'] = '欠席';
@@ -26,7 +26,7 @@ $string['comparisonofassessments'] = '評価の比較';
 $string['confirmdeletionofthisitem'] = '$a の削除確認';
 $string['correct'] = '正解';
 $string['count'] = 'カウント';
-$string['criterion'] = '到達評価';
+$string['criterion'] = 'クリテリオン';
 $string['deadline'] = '提出期限';
 $string['deadlineis'] = '提出期限は $a です';
 $string['delete'] = '削除';
@@ -90,7 +90,7 @@ $string['noteongradinggrade'] = 'この評点は、あなたの提出物に対�
 $string['noteonstudentassessments'] = '{ 学生による評定 / 評価のための評点 }';
 $string['notgraded'] = '評価無し';
 $string['notitlegiven'] = 'タイトル無し';
-$string['numberofassessmentelements'] = 'コメント数、評価要素数、評価の幅、規準数またはルーブリックのカテゴリ数';
+$string['numberofassessmentelements'] = 'コメント数、評価要素数、評価の幅、クリテリオン・ステートメントまたはルーブリックのカテゴリ数';
 $string['numberofcriterionelements'] = '規準数は1よりも大きく設定してください。';
 $string['numberofentries'] = 'エントリ数';
 $string['numberofentriesinleaguetable'] = '成績表のエントリ数';
