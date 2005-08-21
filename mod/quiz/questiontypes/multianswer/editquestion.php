@@ -40,17 +40,13 @@
                 }
                 $parsableanswerdef .= '}';
                 // Fix the questiontext fields of old questions
-                set_field('quiz_questions', 'questiontext', $parsableanswerdef,
-                 'id', $wrapped->id);
+                set_field('quiz_questions', 'questiontext', addslashes($parsableanswerdef), 'id', $wrapped->id);
             } else {
-                $parsableanswerdef = str_replace('&#', '&\#',
-                 $wrapped->questiontext);
+                $parsableanswerdef = str_replace('&#', '&\#', $wrapped->questiontext);
             }
             //echo "{#$key}<br />";
             //echo $parsableanswerdef.'<br />';
-            $question->questiontext = str_replace
-                    ("{#$key}", $parsableanswerdef,
-                     $question->questiontext);
+            $question->questiontext = str_replace("{#$key}", $parsableanswerdef, $question->questiontext);
         }
     }
     print_heading_with_help(get_string('editingmultianswer', 'quiz'),

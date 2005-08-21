@@ -20,14 +20,14 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
     }
 
     function get_question_options(&$question) {
+        global $QUIZ_QTYPES;
+
         // Get relevant data indexed by positionkey from the multianswers table
-        if (!$sequence = get_field('quiz_multianswers', 'sequence', 'question',
-         $question->id)) {
+        if (!$sequence = get_field('quiz_multianswers', 'sequence', 'question', $question->id)) {
             notify('Error: Missing question options!');
             return false;
         }
 
-        global $QUIZ_QTYPES;
         $wrappedquestions = get_records_list('quiz_questions', 'id', $sequence);
 
         // We want an array with question ids as index and the positions as values
@@ -35,10 +35,8 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
         array_walk($sequence, create_function('&$val', '$val++;'));
 
         foreach ($wrappedquestions as $wrapped) {
-            if (!$QUIZ_QTYPES[$wrapped->qtype]
-             ->get_question_options($wrapped)) {
-                notify("Unable to get options for questiontype
-                {$wrapped->qtype} (id={$wrapped->id})");
+            if (!$QUIZ_QTYPES[$wrapped->qtype]->get_question_options($wrapped)) {
+                notify("Unable to get options for questiontype {$wrapped->qtype} (id={$wrapped->id})");
             }
             $wrapped->maxgrade = $wrapped->defaultgrade;
             $question->options->questions[$sequence[$wrapped->id]] = clone($wrapped);
@@ -49,8 +47,7 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
 
     function save_question_options($question) {
         global $QUIZ_QTYPES;
-        if (!$oldwrappedids =
-         get_records('quiz_questions', 'parent', $question->id, '', 'id, id')) {
+        if (!$oldwrappedids = get_records('quiz_questions', 'parent', $question->id, '', 'id, id')) {
          // We need to select 'id, id' because the first one is consumed by
          // get_records.
             $oldwrappedids = array();
@@ -96,8 +93,7 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
     }
 
     function save_question($authorizedquestion, $form, $course) {
-        $question =
-         quiz_qtype_multianswer_extract_question ($form->questiontext);
+        $question = quiz_qtype_multianswer_extract_question ($form->questiontext);
         if (isset($authorizedquestion->id)) {
             $question->id = $authorizedquestion->id;
             $question->version = $form->version = $authorizedquestion->version;
@@ -167,8 +163,7 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
         return $responses;
     }
 
-    function print_question_formulation_and_controls(&$question, &$state, $cmoptions,
-     $options) {
+    function print_question_formulation_and_controls(&$question, &$state, $cmoptions, $options) {
         global $QUIZ_QTYPES;
         $readonly = empty($options->readonly) ? '' : 'readonly="readonly"';
         $nameprefix = $question->name_prefix;
@@ -458,8 +453,7 @@ function quiz_qtype_multianswer_extract_question($text) {
         $wrapped->answer   = array();
         $wrapped->fraction = array();
         $wrapped->feedback = array();
-        $wrapped->questiontext = addslashes(str_replace('&\#', '&#',
-         $answerregs[0]));
+        $wrapped->questiontext = addslashes(str_replace('&\#', '&#', $answerregs[0]));
         $wrapped->questiontextformat = 0;
 
         $remainingalts = $answerregs[ANSWER_REGEX_ALTERNATIVES];
@@ -501,8 +495,7 @@ function quiz_qtype_multianswer_extract_question($text) {
         $question->questiontext = implode("{#$positionkey}",
                     explode($answerregs[0], $question->questiontext, 2));
     }
-    $question->questiontext = addslashes(str_replace('&\#', '&#',
-     $question->questiontext));
+    $question->questiontext = addslashes(str_replace('&\#', '&#', $question->questiontext));
     return $question;
 }
 
