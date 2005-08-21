@@ -1,0 +1,72 @@
+<?PHP // $Id$ 
+      // attendance.php - created with Moodle 1.4.4 (2004083140)
+
+
+$string['absentlong'] = 'არ ესწრება';
+$string['absentshort'] = 'არ';
+$string['addingmultiple'] = 'მრავალჯერადი დასწრებების ფოლიანტების დამატება';
+$string['addmultiple'] = 'დაუმატე მრავალჯერადი დასწრებების ფოლიანტები';
+$string['allmodulename'] = 'ყველა დასწრებების ფოლიანტები';
+$string['auto'] = 'ავტომატური';
+$string['autoattend'] = 'ავტომატურად აღნიშნე დასწრებები დამყარებული მომხმარებელთა ლოგებზე';
+$string['autoattendmulti'] = 'ავტომატურად აღნიშნე ყველა დასწრებების ფოლიანტები დამყარებული მომხმარებელთა ლოგებზე';
+$string['autoattendshort'] = 'ავტომატურად ლოგებიდან';
+$string['choosedays'] = 'ყოველი კვირის დასასწრები დრეები';
+$string['dayofroll'] = 'თარიღი ფოლიანტების ასაკრეფად';
+$string['defaultautoattend'] = 'იყოს თუ არა დასწრებები ნაგულისხმევად აღებული მომხმარებელთა აქტიურობის ლოგებზე დაყრდნობით';
+$string['defaultdynamicsection'] = 'იყოს თუ არა დასწრებების ფოლიანტები მიკუთვნებული ნაგულისხმევად აღებული კვირისათვის';
+$string['defaultgrade'] = 'იყოს თუ არა დასწრებების ფოლიანტები ნაგულისხევად დახარისხებული ';
+$string['defaulthoursinclass'] = 'რამდენი საათი უნდა ყოს  ნაგულისხევი დასწრებების ფოლიანტებში';
+$string['defaultmaxgrade'] = 'რამდენი უნდა ყოს  ნაგულისხევად დასწრებების მთლიანი მაქსიმალური რაოდენობა';
+$string['defaultstudentstatus'] = 'სტუდენტების დასწრების ნაგულისხმევი სტატუსი დასწრებების ახალ ფოლიანტებში';
+$string['downloadexcelfull'] = 'ამოტვირთე ექსელის სრული დავთარი';
+$string['downloadexceltotals'] = 'ამოტვირთე ექსელის შემაჯამებელი დავთარი';
+$string['downloadtextfull'] = 'ამოტვირთე სრული ტექსტური  ანგარიში ';
+$string['downloadtexttotals'] = 'ამოტვირთე ტექსტური   შემაჯამებელი ანგარიში ';
+$string['dynamicsection'] = 'განცაზღვრე დასასწრები კვირა ამ თარიღზე დაყრდნობით';
+$string['dynamicsectionmulti'] = 'ავტომატურად მოათავსე ფოლიანტები მათ ყოველკვირეულ სექციაში';
+$string['dynsectionshort'] = 'დინამიურად გადაადგილდა სექციაში';
+$string['endbeforestart'] = 'დასრულების თარიღი უფრო ადრეა ვიდრე დაწყების';
+$string['endmulti'] = 'დასწრების ბოლო ფოლიანტის თარიღი';
+$string['for'] = 'თვის';
+$string['friday'] = 'პარ';
+$string['gradeshort'] = 'შეფასდა';
+$string['gradevalue'] = 'გარდაქმენი ეს ფოლიანტი შეფასებადად';
+$string['gradevaluemulti'] = 'გარდაქმენი ეს ფოლიანტები შეფასებადად';
+$string['hoursinclass'] = 'სააუდიტორიო საათების რაოდენობა';
+$string['hoursineachclass'] = 'თითოეული სააუდიტორიო საათების რაოდენობა';
+$string['hoursinfullreport'] = 'დასწრების საათების მაქსიმალური რაოდენობა, რაც შეიძლებაგამოჩნდეს ანგარიშის თითოეულ გვერდზე';
+$string['maxgradeshort'] = 'მაქსიმალური შეფასება';
+$string['maxgradevalue'] = 'სრული დასწრებისთვის მაქსიმალური შეფასების მნიშვნელობა';
+$string['modulename'] = 'დასწრება';
+$string['modulenameplural'] = 'დასწრების ფოლიანტებიო';
+$string['monday'] = 'ორშ';
+$string['norolls'] = 'არ არსებობს ამ კურსზე დასწრების ფოლიანტები';
+$string['notes'] = 'განსაკუთრბული ინფორმაცია';
+$string['notesfor'] = 'განსაკუთრბული ინფორმაცია';
+$string['noviews'] = 'საწყენია! აქ არ არის მონაცემები თქვენი ანგარიშის შესახებ';
+$string['of'] = 'of';
+$string['pages'] = 'გვერდები';
+$string['presentlong'] = 'ესწრება';
+$string['presentshort'] = 'არის';
+$string['saturday'] = 'შაბ';
+$string['startafterend'] = 'დაწყების თარიღად არის მითითებული თარიღი კურსის დასრულების შემდეგ ';
+$string['startmulti'] = 'დასწრების პირველი ფოლიანტის თარიღი';
+$string['sunday'] = 'კვ';
+$string['takeroll'] = 'ავიღოთ ამ დღისთვის დასწრების ფოლიანტი ?';
+$string['tardiesperabsence'] = 'რამდენი დაგვიანება უნდა იქნას მიჩნეული ერთ გაცდენად';
+$string['tardylong'] = 'დაგვიანება';
+$string['tardyshort'] = 'დაგვ';
+$string['teacheredit'] = 'დაესწარი';
+$string['thursday'] = 'ხუთშ';
+$string['tuesday'] = 'სამშ';
+$string['viewall'] = 'იხილე ყველა დასწრებების ფოლიანტები';
+$string['viewmulti'] = 'იხილე ანგარიში მრავალი გვერდის სახით';
+$string['viewone'] = 'იხილე ანგარიშის ყველა გვერდი';
+$string['viewsection'] = 'იხილე ამ სექციაზე დასწრების ყველა ფოლიანტი';
+$string['viewtable'] = 'იხილე ანგარიში როგორც ერთი ცხრილი';
+$string['viewweek'] = 'იხილე კალენდარული კვირის განმავლობაში ყველა დასწრებათა ფოლიანტები';
+$string['wednesday'] = 'ოთხშ';
+$string['weekmodulename'] = 'ბოლო  კვირის განმავლობაში ყველა დასწრებათა ფოლიანტები';
+
+?>
