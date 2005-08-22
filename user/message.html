@@ -1,0 +1,74 @@
+<form name="theform" method="post" action="messageselect.php">
+<input type="hidden" name="id" value="<?php p($id) ?>" />
+<input type="hidden" name="returnto" value="<?php p($returnto) ?>" />
+<input type="hidden" name="deluser" value="" />
+<?php print_simple_box_start("center", "", "$THEME->cellheading"); ?>
+<table border="0" cellpadding="5">
+<tr valign="top">
+    <td align="right"><b>
+     <?php print_string("messagebody"); ?>:
+     </b></td>
+    <td align="left" rowspan="2">
+    <?php print_textarea($usehtmleditor, 25, 65, 630, 400, "messagebody", $messagebody); ?>
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right" valign="middle" nowrap="nowrap">
+     <?php
+        helpbutton("reading", get_string("helpreading"), "moodle", true, true);
+        echo "<br />";
+        helpbutton("writing", get_string("helpwriting"), "moodle", true, true);
+        echo "<br />";
+        helpbutton("questions", get_string("helpquestions"), "moodle", true, true);
+        echo "<br />";
+        if ($usehtmleditor) {
+           helpbutton("richtext", get_string("helprichtext"), "moodle", true, true);
+        } else {
+           emoticonhelpbutton("theform", "message");
+        }
+      ?>
+     <br />
+    </td>
+</tr>
+
+<tr valign="top">
+    <td align="right"><b><?php print_string("formattexttype"); ?>:</b></td>
+    <td>
+    <?php
+        if ($usehtmleditor) {   /// Trying this out for a while
+            print_string('formathtml');
+            echo '<input type="hidden" name="format" value="'.FORMAT_HTML.'" />';
+        } else {
+            choose_from_menu(format_text_menu(), "format", $format, "");
+        }
+        helpbutton("textformat", get_string("helpformatting"));
+     ?>
+    </td>
+</tr>
+
+<tr><td align="center" colspan="2"><input type="submit" name="preview" value="Preview" /></td></tr>
+</table>
+<?php print_simple_box_end(); ?>
+<table align="center"><tr><th colspan="4"><? print_string('currentlyselectedusers'); ?></th></tr>
+<?php
+    if (count($SESSION->emailto[$id])) {
+        foreach ($SESSION->emailto[$id] as $user) {
+            echo '<tr><td>'.fullname($user,true).'</td><td>'.$user->email.'</td><td>';
+            if ($user->emailstop) {
+                $error = get_string('emaildisable');
+            } elseif (empty($user->email)) {
+                $error = get_string('emailempty');
+            }
+            if (!empty($error)) {
+                echo '<img src="'.$CFG->wwwroot.'/pix/t/emailno.gif" alt="'.$error.'" title="'.$error.'"/>';
+                unset($error);
+            }
+            echo '</td><td><input type="submit" onClick="this.form.deluser.value='.$user->id.';" value="remove" /></td></tr>';
+        }
+    }
+    else {
+        echo '<tr><td colspan="3" align="center">'.get_string('nousersyet').'</td></tr>';
+    }
+?>
+</table>
+</form>

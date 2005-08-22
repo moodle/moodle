@@ -2520,7 +2520,7 @@ function print_user_picture($userid, $courseid, $picture, $size=0, $returnstring
  * @param user $user A {@link $USER} object representing a user
  * @param course $course A {@link $COURSE} object representing a course
  */
-function print_user($user, $course) {
+function print_user($user, $course, $messageselect=false) {
 
     global $CFG, $USER;
 
@@ -2606,6 +2606,10 @@ function print_user($user, $course) {
         }
     }
     echo '<a href="'. $CFG->wwwroot .'/user/view.php?id='. $user->id .'&amp;course='. $course->id .'">'. $string->fullprofile .'...</a>';
+
+    if (!empty($messageselect) && $isteacher) {
+        echo '<br /><input type="checkbox" name="email'.$user->id.'" /> ';
+    }
 
     echo '</td></tr></table>';
 }

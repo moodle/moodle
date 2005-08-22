@@ -243,8 +243,8 @@
     $guest = get_guest();
     $exceptions[] = $guest->id;
 
-    $tablecolumns = array('picture', 'fullname', 'city', 'country', 'lastaccess');
-    $tableheaders = array('', get_string('fullname'), get_string('city'), get_string('country'), get_string('lastaccess'));
+    $tablecolumns = array('picture', 'fullname', 'city', 'country', 'lastaccess','messageselect');
+    $tableheaders = array('', get_string('fullname'), get_string('city'), get_string('country'), get_string('lastaccess'), ($isteacher) ? get_string('select') : '');
 
     $table = new flexible_table('user-index-students');
 
@@ -338,6 +338,12 @@
         echo '<p id="longtimenosee">('.get_string('unusedaccounts', '', $CFG->longtimenosee).')</p>';
     }
 
+    if ($isteacher) {
+        echo '<form action="messageselect.php" method="post" name="messageselect">';
+        echo '<input type="hidden" name="id" value="'.$id.'" />';
+        echo '<input type="hidden" name="returnto" value="'.$_SERVER['REQUEST_URI'].'" />';
+    }
+
     if ($fullmode) {    // Print simple listing
         if ($totalcount < 1) {
             print_heading(get_string("nostudentsfound", "", $course->students));
@@ -391,7 +397,7 @@
 
             if($matchcount > 0) {
                 foreach ($students as $student) {
-                    print_user($student, $course);
+                    print_user($student, $course, true);
                 }
             }
             else {
@@ -427,12 +433,24 @@
                         '<strong><a href="'.$CFG->wwwroot.'/user/view.php?id='.$student->id.'&amp;course='.$course->id.'">'.fullname($student).'</a></strong>',
                         $student->city,
                         $country,
-                        $lastaccess));
+                        $lastaccess,
+                        ($isteacher ? '<input type="checkbox" name="email'.$student->id.'" />' : '')
+                        ));
+
             }
         }
 
         $table->print_html();
 
+    }
+
+    if ($isteacher) {
+        echo '<center>';
+        echo '<input type="button" onclick="checkall()" value="'.get_string('checkall').'" />';
+        echo '<input type="button" onclick="checknone()" value="'.get_string('checknone').'" />';
+        $displaylist[1] = get_string('messageselectadd');
+        choose_from_menu ($displaylist, "messageselect", "", get_string("withselectedusers"), "javascript:document.messageselect.submit()");
+        echo '</center></form>';
     }
 
     if ($perpage == 99999) {
