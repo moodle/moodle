@@ -1,9 +1,9 @@
 <?PHP // $Id$ 
-      // block_quiz_results.php - created with Moodle 1.5 ALPHA (2005042300)
+      // block_quiz_results.php - created with Moodle 1.6 development (2005081700)
 
 
 $string['bestgrade'] = 'En yüksek not:';
-$string['bestgrades'] = 'En yüksek $a notlarý:';
+$string['bestgrades'] = 'En yüksek $a not:';
 $string['bestgroupgrade'] = 'En yüksek ortalamalý grup';
 $string['bestgroupgrades'] = 'En yüksek ortalamalý $a grup';
 $string['config_format_absolute'] = 'Tam sayý';
