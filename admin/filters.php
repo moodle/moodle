@@ -92,8 +92,6 @@
     // Process Actions
     //======================
 
-    // echo "<pre>"; print_r( $installedfilters ); die;    
-
     if (($params->action=="hide") and confirm_sesskey()) {
         $key=array_search( $params->filterpath, $installedfilters );
         // check filterpath is valid
@@ -256,6 +254,9 @@
         }
     }
 
+    // help button
+    $help = helpbutton( 'filters','','moodle',true,false,'',true ); 
+
     //==============================
     // Display logic
     //==============================
@@ -264,7 +265,7 @@
         "<a href=\"index.php\">$txt->administration</a> -> <a href=\"configure.php\">$txt->configuration</a> " .
         "-> $txt->managefilters" );
 
-    print_heading( $txt->managefilters );
+    print_heading( $txt->managefilters . $help );
 
     // print the table of all the filters
     $table->print_html();
