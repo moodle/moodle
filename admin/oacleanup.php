@@ -57,7 +57,7 @@ function online_assignment_cleanup($output=false) {
         if ($output) print_heading($fullname);
 
         /// retrieve a list of sections beyond what is currently being shown
-        $sql = 'SELECT * FROM '.$CFG->prefix.'course_sections WHERE `course`='.$course->id.' AND `section`>'.$course->numsections.' ORDER BY `section` ASC';
+        $sql = 'SELECT * FROM '.$CFG->prefix.'course_sections WHERE course='.$course->id.' AND section>'.$course->numsections.' ORDER BY section ASC';
         if (!($xsections = get_records_sql($sql))) {
             if ($output) echo 'No extra sections<br />';
             continue;
