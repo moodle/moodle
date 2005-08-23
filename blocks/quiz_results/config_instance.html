@@ -53,11 +53,22 @@
 </tr>
 <tr valign="top">
     <td align="right">
+        <?php print_string('config_name_format', 'block_quiz_results') ?>
+    </td>
+    <td>
+    <?php
+        $usenames = array(B_QUIZRESULTS_NAME_FORMAT_FULL => get_string('config_names_full', 'block_quiz_results'), B_QUIZRESULTS_NAME_FORMAT_ID => get_string('config_names_id', 'block_quiz_results'), B_QUIZRESULTS_NAME_FORMAT_ANON => get_string('config_names_anon', 'block_quiz_results'));
+        choose_from_menu($usenames, 'nameformat', empty($this->config->nameformat) ? B_QUIZRESULTS_NAME_FORMAT_FULL : $this->config->nameformat, '');
+    ?>
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right">
         <?php print_string('config_grade_format', 'block_quiz_results') ?>
     </td>
     <td>
     <?php
-        $formats = array(GRADE_FORMAT_PCT => get_string('config_format_percentage', 'block_quiz_results'), GRADE_FORMAT_FRA => get_string('config_format_fraction', 'block_quiz_results'), GRADE_FORMAT_ABS => get_string('config_format_absolute', 'block_quiz_results'));
+        $formats = array(B_QUIZRESULTS_GRADE_FORMAT_PCT => get_string('config_format_percentage', 'block_quiz_results'), B_QUIZRESULTS_GRADE_FORMAT_FRA => get_string('config_format_fraction', 'block_quiz_results'), B_QUIZRESULTS_GRADE_FORMAT_ABS => get_string('config_format_absolute', 'block_quiz_results'));
         choose_from_menu($formats, 'gradeformat', empty($this->config->gradeformat) ? 0 : $this->config->gradeformat, '');
     ?>
     </td>

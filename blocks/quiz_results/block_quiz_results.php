@@ -1,13 +1,16 @@
 <?php //$Id$
 
-define('GRADE_FORMAT_PCT', 1);
-define('GRADE_FORMAT_FRA', 2);
-define('GRADE_FORMAT_ABS', 3);
+define('B_QUIZRESULTS_NAME_FORMAT_FULL', 1);
+define('B_QUIZRESULTS_NAME_FORMAT_ID',   2);
+define('B_QUIZRESULTS_NAME_FORMAT_ANON', 3);
+define('B_QUIZRESULTS_GRADE_FORMAT_PCT', 1);
+define('B_QUIZRESULTS_GRADE_FORMAT_FRA', 2);
+define('B_QUIZRESULTS_GRADE_FORMAT_ABS', 3);
 
 class block_quiz_results extends block_base {
     function init() {
         $this->title = get_string('formaltitle', 'block_quiz_results');
-        $this->version = 2005012600;
+        $this->version = 2005082300;
     }
 
     function applicable_formats() {
@@ -78,9 +81,16 @@ class block_quiz_results extends block_base {
         $best      = array();
         $worst     = array();
 
+        $nameformat = intval(empty($this->config->nameformat)  ? B_QUIZRESULTS_NAME_FORMAT_FULL : $this->config->nameformat);
+
+        // If the block is configured to operate in group mode, or if the name display format
+        // is other than "fullname", then we need to retrieve the full course record
+        if(!empty($this->config->usegroups) || $nameformat != B_QUIZRESULTS_NAME_FORMAT_FULL) {
+            $course = get_record_select('course', 'id = '.$courseid, 'groupmode, groupmodeforce, student');
+        }
+
         if(!empty($this->config->usegroups)) {
             // The block was configured to operate in group mode
-            $course = get_record_select('course', 'id = '.$courseid, 'groupmode, groupmodeforce');
             if($course->groupmodeforce) {
                 $groupmode = $course->groupmode;
             }
@@ -163,7 +173,7 @@ class block_quiz_results extends block_base {
             }
 
             // Ready for output!
-            $gradeformat = intval(empty($this->config->gradeformat) ? GRADE_FORMAT_PCT : $this->config->gradeformat);
+            $gradeformat = intval(empty($this->config->gradeformat) ? B_QUIZRESULTS_GRADE_FORMAT_PCT : $this->config->gradeformat);
 
             if($this->instance->pagetype != 'mod-quiz-view') {
                 // Don't show header and link to the quiz if we ARE at the quiz...
@@ -176,16 +186,26 @@ class block_quiz_results extends block_base {
                 $this->content->text .= ($numbest == 1?get_string('bestgroupgrade', 'block_quiz_results'):get_string('bestgroupgrades', 'block_quiz_results', $numbest));
                 $this->content->text .= '</caption><colgroup class="number" /><colgroup class="name" /><colgroup class="grade" /><tbody>';
                 foreach($best as $groupid => $averagegrade) {
-                    $this->content->text .= '<tr><td>'.(++$rank).'.</td><td><a href="'.$CFG->wwwroot.'/course/group.php?group='.$groupid.'&amp;id='.$courseid.'">'.$groupgrades[$groupid]['group'].'</a></td><td>';
+                    switch($nameformat) {
+                        case B_QUIZRESULTS_NAME_FORMAT_ANON:
+                        case B_QUIZRESULTS_NAME_FORMAT_ID:
+                            $thisname = get_string('group');
+                        break;
+                        default:
+                        case B_QUIZRESULTS_NAME_FORMAT_FULL:
+                            $thisname = '<a href="'.$CFG->wwwroot.'/course/group.php?group='.$groupid.'&amp;id='.$courseid.'">'.$groupgrades[$groupid]['group'].'</a>';
+                        break;
+                    }
+                    $this->content->text .= '<tr><td>'.(++$rank).'.</td><td>'.$thisname.'</td><td>';
                     switch($gradeformat) {
-                        case GRADE_FORMAT_FRA:
+                        case B_QUIZRESULTS_GRADE_FORMAT_FRA:
                             $this->content->text .= (format_float($averagegrade,$quiz->decimalpoints).'/'.$quiz->grade);
                         break;
-                        case GRADE_FORMAT_ABS:
+                        case B_QUIZRESULTS_GRADE_FORMAT_ABS:
                             $this->content->text .= format_float($averagegrade,$quiz->decimalpoints);
                         break;
                         default:
-                        case GRADE_FORMAT_PCT:
+                        case B_QUIZRESULTS_GRADE_FORMAT_PCT:
                             $this->content->text .= round((float)$averagegrade / (float)$quiz->grade * 100).'%';
                         break;
                     }
@@ -201,16 +221,26 @@ class block_quiz_results extends block_base {
                 $this->content->text .= ($numworst == 1?get_string('worstgroupgrade', 'block_quiz_results'):get_string('worstgroupgrades', 'block_quiz_results', $numworst));
                 $this->content->text .= '</caption><colgroup class="number" /><colgroup class="name" /><colgroup class="grade" /><tbody>';
                 foreach($worst as $groupid => $averagegrade) {
-                    $this->content->text .= '<tr><td>'.(++$rank).'.</td><td><a href="'.$CFG->wwwroot.'/course/group.php?group='.$groupid.'&amp;id='.$courseid.'">'.$groupgrades[$groupid]['group'].'</a></td><td>';
+                    switch($nameformat) {
+                        case B_QUIZRESULTS_NAME_FORMAT_ANON:
+                        case B_QUIZRESULTS_NAME_FORMAT_ID:
+                            $thisname = get_string('group');
+                        break;
+                        default:
+                        case B_QUIZRESULTS_NAME_FORMAT_FULL:
+                            $thisname = '<a href="'.$CFG->wwwroot.'/course/group.php?group='.$groupid.'&amp;id='.$courseid.'">'.$groupgrades[$groupid]['group'].'</a>';
+                        break;
+                    }
+                    $this->content->text .= '<tr><td>'.(++$rank).'.</td><td>'.$thisname.'</td><td>';
                     switch($gradeformat) {
-                        case GRADE_FORMAT_FRA:
+                        case B_QUIZRESULTS_GRADE_FORMAT_FRA:
                             $this->content->text .= (format_float($averagegrade,$quiz->decimalpoints).'/'.$quiz->grade);
                         break;
-                        case GRADE_FORMAT_ABS:
+                        case B_QUIZRESULTS_GRADE_FORMAT_ABS:
                             $this->content->text .= format_float($averagegrade,$quiz->decimalpoints);
                         break;
                         default:
-                        case GRADE_FORMAT_PCT:
+                        case B_QUIZRESULTS_GRADE_FORMAT_PCT:
                             $this->content->text .= round((float)$averagegrade / (float)$quiz->grade * 100).'%';
                         break;
                     }
@@ -271,11 +301,11 @@ class block_quiz_results extends block_base {
 
             // Now grab all the users from the database
             $userids = array_merge(array_keys($best), array_keys($worst));
-            $users = get_records_list('user', 'id', implode(',',$userids), '', 'id, firstname, lastname');
+            $users = get_records_list('user', 'id', implode(',',$userids), '', 'id, firstname, lastname, idnumber');
 
             // Ready for output!
 
-            $gradeformat = intval(empty($this->config->gradeformat) ? GRADE_FORMAT_PCT : $this->config->gradeformat);
+            $gradeformat = intval(empty($this->config->gradeformat) ? B_QUIZRESULTS_GRADE_FORMAT_PCT : $this->config->gradeformat);
 
             if($this->instance->pagetype != 'mod-quiz-view') {
                 // Don't show header and link to the quiz if we ARE at the quiz...
@@ -288,16 +318,28 @@ class block_quiz_results extends block_base {
                 $this->content->text .= ($numbest == 1?get_string('bestgrade', 'block_quiz_results'):get_string('bestgrades', 'block_quiz_results', $numbest));
                 $this->content->text .= '</caption><colgroup class="number" /><colgroup class="name" /><colgroup class="grade" /><tbody>';
                 foreach($best as $userid => $gradeid) {
-                    $this->content->text .= '<tr><td>'.(++$rank).'.</td><td><a href="'.$CFG->wwwroot.'/user/view.php?id='.$userid.'&amp;course='.$courseid.'">'.fullname($users[$userid]).'</a></td><td>';
+                    switch($nameformat) {
+                        case B_QUIZRESULTS_NAME_FORMAT_ID:
+                            $thisname = $course->student.' '.intval($users[$userid]->idnumber);
+                        break;
+                        case B_QUIZRESULTS_NAME_FORMAT_ANON:
+                            $thisname = $course->student;
+                        break;
+                        default:
+                        case B_QUIZRESULTS_NAME_FORMAT_FULL:
+                            $thisname = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$userid.'&amp;course='.$courseid.'">'.fullname($users[$userid]).'</a>';
+                        break;
+                    }
+                    $this->content->text .= '<tr><td>'.(++$rank).'.</td><td>'.$thisname.'</td><td>';
                     switch($gradeformat) {
-                        case GRADE_FORMAT_FRA:
+                        case B_QUIZRESULTS_GRADE_FORMAT_FRA:
                             $this->content->text .= (format_float($grades[$gradeid]->grade,$quiz->decimalpoints).'/'.$quiz->grade);
                         break;
-                        case GRADE_FORMAT_ABS:
+                        case B_QUIZRESULTS_GRADE_FORMAT_ABS:
                             $this->content->text .= format_float($grades[$gradeid]->grade,$quiz->decimalpoints);
                         break;
                         default:
-                        case GRADE_FORMAT_PCT:
+                        case B_QUIZRESULTS_GRADE_FORMAT_PCT:
                             if ($quiz->grade) {
                                 $this->content->text .= round((float)$grades[$gradeid]->grade / (float)$quiz->grade * 100).'%';
                             } else {
@@ -317,16 +359,28 @@ class block_quiz_results extends block_base {
                 $this->content->text .= ($numworst == 1?get_string('worstgrade', 'block_quiz_results'):get_string('worstgrades', 'block_quiz_results', $numworst));
                 $this->content->text .= '</caption><colgroup class="number" /><colgroup class="name" /><colgroup class="grade" /><tbody>';
                 foreach($worst as $userid => $gradeid) {
-                    $this->content->text .= '<tr><td>'.(++$rank).'.</td><td><a href="'.$CFG->wwwroot.'/user/view.php?id='.$userid.'&amp;course='.$courseid.'">'.fullname($users[$userid]).'</a></td><td>';
+                    switch($nameformat) {
+                        case B_QUIZRESULTS_NAME_FORMAT_ID:
+                            $thisname = $course->student.' '.intval($users[$userid]->idnumber);
+                        break;
+                        case B_QUIZRESULTS_NAME_FORMAT_ANON:
+                            $thisname = $course->student;
+                        break;
+                        default:
+                        case B_QUIZRESULTS_NAME_FORMAT_FULL:
+                            $thisname = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$userid.'&amp;course='.$courseid.'">'.fullname($users[$userid]).'</a>';
+                        break;
+                    }
+                    $this->content->text .= '<tr><td>'.(++$rank).'.</td><td>'.$thisname.'</td><td>';
                     switch($gradeformat) {
-                        case GRADE_FORMAT_FRA:
+                        case B_QUIZRESULTS_GRADE_FORMAT_FRA:
                             $this->content->text .= (format_float($grades[$gradeid]->grade,$quiz->decimalpoints).'/'.$quiz->grade);
                         break;
-                        case GRADE_FORMAT_ABS:
+                        case B_QUIZRESULTS_GRADE_FORMAT_ABS:
                             $this->content->text .= format_float($grades[$gradeid]->grade,$quiz->decimalpoints);
                         break;
                         default:
-                        case GRADE_FORMAT_PCT:
+                        case B_QUIZRESULTS_GRADE_FORMAT_PCT:
                             $this->content->text .= round((float)$grades[$gradeid]->grade / (float)$quiz->grade * 100).'%';
                         break;
                     }
