@@ -84,8 +84,8 @@
 
     // If a course has been supplied in the URL, change the filters to show that one
     if (!empty($_GET['course'])) {
-        if ($course = get_record('course', 'id', $_GET['course'])) {
-            if ($course->id == 1) {
+        if ($course = get_record('course', 'id', intval($_GET['course']))) {
+            if ($course->id == SITEID) {
                 // If coming from the home page, show all courses
                 $SESSION->cal_courses_shown = calendar_get_default_courses(true);
                 calendar_set_referring_course(0);
@@ -108,7 +108,7 @@
 
     // Let's see if we are supposed to provide a referring course link
     // but NOT for the "main page" course
-    if ($SESSION->cal_course_referer > 1 &&
+    if ($SESSION->cal_course_referer != SITEID &&
        ($shortname = get_field('course', 'shortname', 'id', $SESSION->cal_course_referer)) !== false) {
         // If we know about the referring course, show a return link and ALSO require login!
         require_login();
@@ -558,7 +558,7 @@ function calendar_course_filter_selector($getvars = '') {
 
     unset($courses[SITEID]);
 
-    $courseoptions[1] = get_string('fulllistofcourses');
+    $courseoptions[SITEID] = get_string('fulllistofcourses');
     foreach ($courses as $course) {
         $courseoptions[$course->id] = $course->shortname;
     }
