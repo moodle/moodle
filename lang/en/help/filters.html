@@ -1,0 +1,75 @@
+<p align="center"><b>Filters Administration</b></p>
+
+<p>The Filters administration page allows you to specify which filters are
+   applied to displayed text and in what order. It also provides access to
+   the settings page provided by some filters. Filters are applied to most
+   user-text in moodle just before it is displayed. They permit 'last minute'
+   modification of the text.</p>
+
+<p>Filters are a 'pluggable' resource. More may be available at 
+   <a href="http://download.moodle.org/modules/filters.php">
+   http://download.moodle.org/modules/filters.php</a>.</p>
+
+<p>Select the filters you wish to use by 'unhiding' them, with the eye icon.
+   If you have more that one unhidden you can change the order in which they
+   are applied with the up and down arrows.</p> 
+   
+<p><b>TeX notation</b></p>
+
+<ul>
+  <p>TeX notation is primarily used to generate inline mathematical formulae
+  within Moodle resources. For example $$ sqrt(a+b) $$ (the $$ is the 'tag'
+  for the start and end of this format).</p>
+  <p>Moodle uses external binaries to render the images which may need setting
+  up for your system. The filter will first check for a LaTeX renderer (Ghostscript
+  is also required for this method) and failing that will use the simpler <i>miktex</i>
+  binary included in the Moodle distribution. LaTex permits the whole range
+  of syntax, whereas miktex only supports a mathematical subset.</p>
+  <p>The settings page allows the LaTeX and Ghostscript binary paths to be
+  configured, along with the LaTeX preamble.</p>
+  <p><b>More info</b></p>
+  <p><a href="http://www.miktex.org/">MiKTeX</a><br/>
+     <a href="http://www.latex-project.org/">LaTeX</a><br/>
+     <a href="http://www.ghostscript.com/">ghostscript</a></p>
+</ul>
+
+<p><b>Word Censorship</b></p>
+
+<ul>
+  <p>Word Censorship scans text for 'bad words' from a pre-defined list. To use
+  this function you must first enter the settings page and define your list of
+  words. The user will see the words obscured with a black block, although 
+  mousing over will pop up the original word.</p>
+</ul>
+
+<p><b>Resource Names Auto-Linking</b></b>
+
+<ul>
+  <p>Resource Name Auto_linking scans text for resource titles that
+  exist in the same course. Where found they will be highlighted and a link
+  created. Note that to use this effectively you should use descriptive titles. For
+  example a title of 'Introduction' is poor because <b>any</b> use of the word 
+  'Introduction' in the text will be linked regardless of what it refers to.</p>
+</ul>
+
+<p><b>Activity Names Auto-Linking</b></b>
+
+<ul>
+  <p>Activity Name Auto_linking scans text for activity titles that
+  exist in the same course. Where found they will be highlighted and a link
+  created. Note that to use this effectively you should use descriptive titles. For
+  example a title of 'Quiz' is poor because <b>any</b> use of the word 
+  'Quiz' in the text will be linked regardless of what it refers to.</p>
+</ul>
+
+<p><b>Glossary Auto-Linking</b></p>
+
+<ul>
+  <p>This filter scans the text for keywords used in any glossary in the course. Note,
+  however, that each glossary entry must have linking enabled. Where found they
+  will be highlighted and a link created.
+  </p>
+</ul>
+
+
+
