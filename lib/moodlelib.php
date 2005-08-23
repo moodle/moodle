@@ -1858,14 +1858,14 @@ function sync_metacourses() {
 
 function sync_metacourse($metacourseid) {
 
-    global $CFG,$db;
+    global $CFG;
 
     if (!$metacourse = get_record("course","id",$metacourseid)) {
         return false;
     }
 
-
-    if (count_records('course_meta','parent_course',$metacourseid) == 0) { // if there are no child courses for this meta course, nuke the enrolments
+    if (count_records('course_meta','parent_course',$metacourseid) == 0) {
+        // if there are no child courses for this meta course, nuke the enrolments
         if ($enrolments = get_records('user_students','course',$metacourseid,'','userid,1')) {
             foreach ($enrolments as $enrolment) {
                 unenrol_student($enrolment->userid,$metacourseid);
@@ -1874,84 +1874,65 @@ function sync_metacourse($metacourseid) {
         return true;
     }
 
-    // this will return a list of userids from user_student for enrolments in the metacourse that shouldn't be there.
-    $sql = "SELECT parent.userid,max(child.course) as course
-            FROM {$CFG->prefix}course_meta meta
-              JOIN {$CFG->prefix}user_students parent
-                ON meta.parent_course = parent.course
-              LEFT OUTER JOIN {$CFG->prefix}user_students child
-                ON child.course = meta.child_course
-                AND child.userid = parent.userid
-              WHERE  meta.parent_course = $metacourseid
-              GROUP BY child.course,parent.userid
-              ORDER BY parent.userid,child.course";
-
-    $res = $db->Execute($sql);
-
-    //iterate results
-    $enrolmentstodelete = array();
-    while( !$res->EOF && isset($res->fields) ) {
-        $enrolmentstodelete[] = $res->fields;
-        $res->MoveNext();
+    // first get the list of child courses
+    $c_courses = get_records('course_meta','parent_course',$metacourseid);
+    $instr = '';
+    foreach ($c_courses as $c) {
+        $instr .= $c->child_course.',';
     }
+    $instr = substr($instr,0,-1);
 
-    if (!empty($enrolmentstodelete)) {
-        $last->id = 0;
-        $last->course = 0;
-        foreach ($enrolmentstodelete as $enrolment) {
-            $enrolment = (object)$enrolment;
-            if (count($enrolmentstodelete) == 1 && empty($enrolment->course)) {
-                unenrol_student($enrolment->userid,$metacourseid);
-                break;
-            }
-            if ($last->id != $enrolment->userid) { // we've changed
-                if (empty($last->course) && !empty($last->id)) {
-                    unenrol_student($last->id,$metacourseid); // doing it this way for forum subscriptions etc.
-                }
-                $last->course = 0;
-                $last->id = $enrolment->userid;
-            }
-
-            if (!empty($enrolment->course)) {
-                $last->course = $enrolment->course;
-            }
-        }
-        if (!empty($last->id) && empty($last->course)) {
-            unenrol_student($last->id,$metacourseid); // doing it this way for forum subscriptions etc.
+    // now get the list of valid enrolments in the child courses
+    $sql = 'SELECT DISTINCT userid,1 FROM '.$CFG->prefix.'user_students WHERE course IN ('.$instr.')';
+    $enrolments = get_records_sql($sql);
+    
+    // put it into a nice array we can happily use array_diff on.
+    $ce = array();
+    if (!empty($enrolments)) {
+        foreach ($enrolments as $en) {
+            $ce[] = $en->userid;
         }
     }
 
+    // now get the list of current enrolments in the meta course.
+    $sql = 'SELECT userid,1 FROM '.$CFG->prefix.'user_students WHERE course = '.$metacourseid;
+    $enrolments = get_records_sql($sql);
 
-    // this will return a list of userids that need to be enrolled in the metacourse
-    $sql = "SELECT DISTINCT child.userid,1
-            FROM {$CFG->prefix}course_meta meta
-              JOIN {$CFG->prefix}user_students child
-                 ON meta.child_course = child.course
-              LEFT OUTER JOIN {$CFG->prefix}user_students parent
-                 ON meta.parent_course = parent.course
-                 AND parent.userid = child.userid
-                 WHERE parent.course IS NULL
-                 AND meta.parent_course = $metacourseid";
-
-    if ($userstoadd = get_records_sql($sql)) {
-        foreach ($userstoadd as $user) {
-            enrol_student($user->userid,$metacourseid);
+    $me = array();
+    if (!empty($enrolments)) {
+        foreach ($enrolments as $en) {
+            $me[] = $en->userid;
         }
     }
 
+    $enrolmentstodelete = array_diff($me,$ce);
+    $userstoadd = array_diff($ce,$me);
+
+    foreach ($enrolmentstodelete as $userid) {
+        unenrol_student($userid,$metacourseid);
+    }
+    foreach ($userstoadd as $userid) {
+        enrol_student($userid,$metacourseid,0,0,'metacourse');
+    }
+    
     // and next make sure that we have the right start time and end time (ie max and min) for them all.
     if ($enrolments = get_records('user_students','course',$metacourseid,'','id,userid')) {
         foreach ($enrolments as $enrol) {
             if ($maxmin = get_record_sql("SELECT min(timestart) AS timestart, max(timeend) AS timeend
-               FROM {$CFG->prefix}user_students u JOIN {$CFG->prefix}course_meta mc ON u.course = mc.child_course WHERE userid = $enrol->userid
+               FROM {$CFG->prefix}user_students u,
+                    {$CFG->prefix}course_meta mc 
+               WHERE u.course = mc.child_course 
+               AND userid = $enrol->userid
                AND mc.parent_course = $metacourseid")) {
                 $enrol->timestart = $maxmin->timestart;
                 $enrol->timeend = $maxmin->timeend;
+                $enrol->enrol = 'metacourse'; // just in case it wasn't there earlier.
                 update_record('user_students',$enrol);
             }
         }
     }
     return true;
+
 }
 
 /**
@@ -2794,7 +2775,7 @@ function enrol_student($userid, $courseid, $timestart=0, $timeend=0, $enrol='') 
     // enrol the student in any parent meta courses...
     if ($parents = get_records('course_meta', 'child_course', $courseid)) {
         foreach ($parents as $parent) {
-            enrol_student($userid, $parent->parent_course, $timestart, $timeend,$enrol);
+            enrol_student($userid, $parent->parent_course, $timestart, $timeend,'metacourse');
         }
     }
 
