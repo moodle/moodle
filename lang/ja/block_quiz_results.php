@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // block_quiz_results.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
+      // block_quiz_results.php - created with Moodle 1.6 development (2005081700)
 
 
 $string['bestgrade'] = '最高得点:';
@@ -10,6 +10,10 @@ $string['config_format_absolute'] = '絶対数';
 $string['config_format_fraction'] = '分数';
 $string['config_format_percentage'] = 'パーセンテージ';
 $string['config_grade_format'] = '評点の表示方法';
+$string['config_name_format'] = '結果表示のプライバシーレベル:';
+$string['config_names_anon'] = '匿名結果';
+$string['config_names_full'] = 'フルネームを表示';
+$string['config_names_id'] = 'IDナンバーのみ表示';
 $string['config_no_quizzes_in_course'] = 'このコースには小テストが含まれていません。このブロックを使用するために、少なくとも1つのコースを追加してください。';
 $string['config_select_quiz'] = 'どの小テストの結果をこのブロックで表示しますか?';
 $string['config_show_best'] = '何件の最高評点を表示しますか (0 は非表示 ) ?';
