@@ -251,8 +251,8 @@ function blocks_print_group(&$page, &$pageblocks, $position) {
     else {
         $maxweight = max(array_keys($pageblocks[$position]));
     }
-    
-    foreach ($instances as $instance) {
+
+    foreach ($pageblocks[$position] as $instance) {
         if (!empty($instance->pinned)) {
             $maxweight--;
         }
