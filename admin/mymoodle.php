@@ -13,18 +13,8 @@
     define('OVERRIDE_PAGE_TYPE',PAGE_MY_MOODLE);
 
     $PAGE = page_create_object(PAGE_MY_MOODLE,0);
-    
-    $blockaction = optional_param('blockaction');
 
-    $blocks = blocks_get_pinned($PAGE);
-
-    if (!empty($blockaction)) {
-        blocks_execute_url_action($PAGE, $blocks,true);
-        // This re-query could be eliminated by judicious programming in blocks_execute_action(),
-        // but I 'm not sure if it's worth the complexity increase...
-        $blocks = blocks_get_pinned($PAGE);
-    }
-
+    $blocks = blocks_setup($PAGE,BLOCKS_PINNED_TRUE);
     
     $strtitle = get_string('pinblocks','my');
     

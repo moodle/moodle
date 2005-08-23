@@ -11,6 +11,10 @@ define('BLOCK_CONFIGURE',   0x10);
 define('BLOCK_POS_LEFT',  'l');
 define('BLOCK_POS_RIGHT', 'r');
 
+define('BLOCKS_PINNED_TRUE',0);
+define('BLOCKS_PINNED_FALSE',1);
+define('BLOCKS_PINNED_BOTH',2);
+
 require_once($CFG->libdir.'/pagelib.php');
 
 
@@ -378,9 +382,20 @@ function blocks_find_instance($instanceid, $blocksarray) {
 }
 
 // Simple entry point for anyone that wants to use blocks
-function blocks_setup(&$PAGE) {
-    $pageblocks = blocks_get_by_page($PAGE);
-    blocks_execute_url_action($PAGE, $pageblocks);
+function blocks_setup(&$PAGE,$pinned=BLOCKS_PINNED_FALSE) {
+    switch ($pinned) {
+    case BLOCKS_PINNED_TRUE:
+        $pageblocks = blocks_get_pinned($PAGE);
+        break;
+    case BLOCKS_PINNED_BOTH:
+        $pageblocks = blocks_get_by_page_pinned($PAGE);
+        break;
+    case BLOCKS_PINNED_FALSE:
+    default:
+        $pageblocks = blocks_get_by_page($PAGE);
+        break;
+    }
+    blocks_execute_url_action($PAGE, $pageblocks,($pinned==BLOCKS_PINNED_TRUE));
     return $pageblocks;
 }
 
