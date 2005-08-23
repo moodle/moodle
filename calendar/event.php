@@ -113,7 +113,7 @@
 
             if($form = data_submitted()) {
 
-                $form->name = strip_tags($form->name,'<lang>');  // Strip all tags, but <lang>
+                $form->name = clean_text(strip_tags($form->name,'<lang><span>'));
 
                 $form->timestart = make_timestamp($form->startyr, $form->startmon, $form->startday, $form->starthr, $form->startmin);
                 if($form->duration == 1) {
@@ -455,7 +455,7 @@
                 case 'site':
                     $form->name = '';
                     $form->description = '';
-                    $form->courseid = 1;
+                    $form->courseid = SITEID;
                     $form->groupid = 0;
                     $form->userid = $USER->id;
                     $form->modulename = '';
