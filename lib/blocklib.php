@@ -251,6 +251,12 @@ function blocks_print_group(&$page, &$pageblocks, $position) {
     else {
         $maxweight = max(array_keys($pageblocks[$position]));
     }
+    
+    foreach ($instances as $instance) {
+        if (!empty($instance->pinned)) {
+            $maxweight--;
+        }
+    }
 
     $isediting = $page->user_is_editing();
 
@@ -266,9 +272,7 @@ function blocks_print_group(&$page, &$pageblocks, $position) {
             continue;
         }
 
-        if (method_exists($page,'edit_always')) {
-             $editalways = $page->edit_always();
-        }
+        $editalways = $page->edit_always();
 
         if (($isediting  && empty($instance->pinned)) || !empty($editalways)) {
             $options = 0;
@@ -313,12 +317,6 @@ function blocks_preferred_width(&$instances) {
     }
 
     $blocks = blocks_get_record();
-
-    foreach ($instances as $instance) {
-        if (!empty($instance->pinned)) {
-            $maxweight--;
-        }
-    }
 
     foreach($instances as $instance) {
         if(!$instance->visible) {

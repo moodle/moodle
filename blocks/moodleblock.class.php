@@ -279,6 +279,9 @@ class block_base {
             $title = $this->str->show;
         }
 
+        if (empty($this->instance->pageid)) {
+            $this->instance->pageid = 0;
+        }
         $page   = page_create_object($this->instance->pagetype, $this->instance->pageid);
         $script = $page->url_get_full(array('instanceid' => $this->instance->id, 'sesskey' => $USER->sesskey));
      

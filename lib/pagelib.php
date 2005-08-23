@@ -293,6 +293,12 @@ class page_base {
     function init_full() {
         $this->full_init_done = true;
     }
+
+
+    // is this  page always editable, regardless of anything else?
+    function edit_always() {
+        return false;
+    }
 }
 
 
