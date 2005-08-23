@@ -61,6 +61,10 @@ class page_my_moodle extends page_base {
         return BLOCK_POS_LEFT;
     }
 
+    function blocks_get_positions() {
+        return array(BLOCK_POS_LEFT, BLOCK_POS_RIGHT);
+    }
+
     function blocks_move_position(&$instance, $move) {
         if($instance->position == BLOCK_POS_LEFT && $move == BLOCK_MOVE_RIGHT) {
             return BLOCK_POS_RIGHT;
