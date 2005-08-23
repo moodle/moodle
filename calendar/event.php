@@ -216,9 +216,14 @@
 
                     if ($form->repeat) {
                         for($i = 1; $i < $form->repeats; $i++) {
-                            // [pj]
-                            // This will not necessarily work correctly because of DST
-                            $form->timestart += 604800;  // add one week
+                            // What's the DST offset for the previous repeat?
+                            $dst_offset_prev = dst_offset_on($form->timestart);
+
+                            $form->timestart += WEEKSECS;
+
+                            // If the offset has changed in the meantime, update this repeat accordingly
+                            $form->timestart += $dst_offset_prev - dst_offset_on($form->timestart);
+
                             /// Get the event id for the log record.
                             $eventid = insert_record('event', $form, true);
                             /// Log the event entry.
