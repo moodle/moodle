@@ -455,7 +455,7 @@
                 case 'site':
                     $form->name = '';
                     $form->description = '';
-                    $form->courseid = 1;
+                    $form->courseid = SITEID;
                     $form->groupid = 0;
                     $form->userid = $USER->id;
                     $form->modulename = '';
