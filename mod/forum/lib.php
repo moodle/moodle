@@ -747,6 +747,11 @@ function forum_print_overview($course, $cm,$lastaccess) {
         $p = 1;
     }
     if ($CFG->forum_trackreadposts) {
+        if (isset($forum->groupmode)) {
+            $groupmode = groupmode($course, $forum);  /// Can do this because forum->groupmode is defined
+        } else {
+            $groupmode = NOGROUPS;
+        }
         $groupid = ($groupmode==SEPARATEGROUPS && !isteacheredit($course->id)) ? $currentgroup : false;
         $unread = forum_tp_count_forum_posts($forum->id, $groupid) -
             forum_tp_count_forum_read_records($USER->id, $forum->id, $groupid);
