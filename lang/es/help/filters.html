@@ -1,0 +1,102 @@
+<p align="center"><b>Administración de filtros</b></p>
+
+<p>La página de administración de filtros permite especificar qué filtros
+   se aplicarán al texto, y en qué orden. Proporciona asimismo acceso a la
+   página de opciones que acompaña a algunos filtros. Los filtros se aplican a
+   la mayor parte de los textos del usuario justo antes de mostrarlos. Permiten
+   modificar el texto 'en el último minuto'.</p>
+
+<p>Los filtros son recursos semejantes a los '<i>plugin</i>'. Puede encontrar más información en 
+   <a href="http://download.moodle.org/modules/filters.php">
+   http://download.moodle.org/modules/filters.php</a>.</p>
+
+<p>Seleccione los filtros que desea usar haciéndolos visibles mediante el icono
+   del ojo. Si está visible más de un filtro, puede cambiar el orden en que se
+   aplican mediante las flechas.</p> 
+   
+<p><b>Notación TeX</b></p>
+
+<ul>
+  <p>La notación TeX se usa sobre todo para generar fórmulas matemáticas dentro del
+  texto en los recursos Moodle. Por ejemplo, $$ sqrt(a+b) $$ (la $$ es la 'marca'
+  que señala el principio y el final de este formato).</p>
+  <p>Moodle usa código binario externo para construir las imágenes que pueden requerir
+  un ajuste de su sistema (para usar este método también se requiere Ghostscript) y, en
+  el caso de fallo, usará el código binario más simple <i>miktex</i> incluido en el paquete
+  de distribución de Moodle. LaTex permite todo el rango de sintaxis, en tanto que miktex
+  sólo soporta el subconjunto matemático.</p>
+  <p>La página de ajustes permite configurar las rutas binarias de LaTeX y Ghostscript,
+  junto con el preámbulo LaTeX.</p>
+  <p><b>Más información</b></p>
+  <p><a href="http://www.miktex.org/">MiKTeX</a><br/>
+     <a href="http://www.latex-project.org/">LaTeX</a><br/>
+     <a href="http://www.ghostscript.com/">ghostscript</a></p>
+</ul>
+
+<p><b>Censura de palabras</b></p>
+
+<ul>
+  <p>Este filtro revisa el texto para encontrar 'palabras inconvenientes' a
+  partir de una lista previamente definida. Para usar esta función usted debe en
+  primer lugar entrar en la página de ajustes y definir su lista de palabras. El
+  usuario verá las palabras oscurecidas por un bloque negro, si bien al pasar el
+  ratón por encima aparecerá la palabra original.</p>
+</ul>
+
+<p><b>Enlace automático a nombres de recurso</b></b>
+
+<ul>
+  <p>El enlace automático a nombres de recurso revisa el texto para encontrar nombres
+  de recursos que existan en el mismo curso. Cuando los encuentra, los resalta y crea
+  un enlace a ellos. Note que, para usar esta opción de forma eficaz, se deberían
+  utilizar títulos descriptivos. Por ejemplo, el título 'Introducción' no sería adecuado
+  porque <b>cualquier</b> aparición de la palabra 'Introducción' en el texto será
+  enlazada independientemente de a qué se refiera.</p>
+</ul>
+
+<p><b>Enlace automático a nombres de actividad</b></b>
+
+<ul>
+  <p>El enlace automático a nombres de actividad revisa el texto para encontrar nombres
+  de actividades que existan en el mismo curso. Cuando los encuentra, los resalta y crea
+  un enlace a ellos. Note que para usar esta opción de forma eficaz, se deberían
+  utilizar títulos descriptivos. Por ejemplo, el título 'Cuestionario' no sería adecuado
+  porque <b>cualquier</b> aparición de la palabra 'Cuestionario' en el texto será
+  enlazada independientemente de a qué se refiera.</p>
+</ul>
+
+<p><b>Enlace automático al glosario</b></p>
+
+<ul>
+  <p>Este filtro revisa el texto y busca palabras clave en cualquier glosario del curso.
+  Note, sin embargo, que cada entrada del glosario debe tener el enlace activado. Cuando
+  las encuentra, se resaltarán y se creará un enlace.
+  </p>
+</ul>
+
+<p><b>Protección de email</b></p>
+
+<ul>
+  <p>El filtro de protección de email revisa el texto para encontrar direcciones email.
+  Cuando las encuentra, quedan 'ofuscadas' para ayudar a evitar que los sistemas
+  automáticos de recolección de emails puedan capturarlas. Así se puede reducir el riesgo
+  de <i>spam</i> cuando están abiertas distintas partes de su sitio Moodle.</p>
+</ul>
+
+<p><b>Tidy</b></p>
+
+<ul>
+  <p>Este filtro revisa el texto para encontrar bloques HTML. Cuando los encuentra, aplica
+  reglas que intentan hacer que el código HTML sea válido. Note que la funcionalidad <i>tidy</i>
+  debe estar configurada en su instalación PHP para que funcione.</p>
+</ul>
+
+<p><b>Recursos en varios idiomas</b></p>
+
+<ul>
+  <p>Este filtro posibilita crear recursos en múltiples idiomas. El idioma del recurso
+  cambiará cuando el usuario modifique el idioma Moodle seleccionado. Para usar esta opción
+  deberá crear antes sus contenidos en varios idiomas. Luego encierre cada contenido entre:
+  <pre>      &lt;lang lang="XX&gt;your_content_here&lt;/lang&gt;</pre>
+  </p>
+</ul>
