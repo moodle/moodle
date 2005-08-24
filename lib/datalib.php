@@ -1965,7 +1965,7 @@ function get_group_users($groupid, $sort='u.lastaccess DESC', $exceptions='', $f
     }
     // in postgres, you can't have things in sort that aren't in the select, so...
     $extrafield = str_replace('ASC','',$sort);
-    $extrafield = str_replace('DESC','',$sort);
+    $extrafield = str_replace('DESC','',$extrafield);
     $extrafield = trim($extrafield);
     if (!empty($extrafield)) {
         $extrafield = ','.$extrafield;
