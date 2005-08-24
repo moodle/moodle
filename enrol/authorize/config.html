@@ -94,6 +94,26 @@
     </td>
 </tr>
 
+<tr valign="top">
+    <td align="right">an_review:</td>
+    <td>
+        <input type="checkbox" value="1" name="an_review" <?php if (!empty($frm->an_review)) echo "checked=\"true\"" ?> />
+    </td>
+    <td>
+    <?php  print_string("adminreview", "enrol_authorize") ?>
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right">an_review_day:</td>
+    <td>
+        <input type="text" name="an_review_day" size="1" maxlength="1" value="<?php p($frm->an_review_day) ?>" />
+    </td>
+    <td>
+    <?php
+     print_string("reviewday", "enrol_authorize", $frm->an_review_day) ?>
+    </td>
+</tr>
+
 <tr valign="top"><td colspan="3"><hr noshade="noshade" size="1"></td></tr>
 
 <tr valign="top">

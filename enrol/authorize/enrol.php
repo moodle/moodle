@@ -318,7 +318,7 @@ function get_access_icons($course) {
 function config_form($frm) {
     global $CFG;
 
-    $vars = array('an_login', 'an_tran_key', 'an_password', 'an_referer', 'an_test',
+    $vars = array('an_login', 'an_tran_key', 'an_password', 'an_referer', 'an_test', 'an_review', 'an_review_day',
                   'enrol_cost', 'enrol_currency', 'enrol_mailstudents', 'enrol_mailteachers', 'enrol_mailadmins');
 
     foreach ($vars as $var) {
@@ -381,6 +381,13 @@ function process_config($config) {
     $test_val = optional_param('an_test', '');
     set_config('an_test', $test_val);
 
+    $review_val = optional_param('an_review', '');
+    set_config('an_review', $review_val);
+
+    $review_day_val = optional_param('an_review_day', 5, PARAM_INT);
+    if ($review_day_val > 7) $review_day_val = 7;
+    set_config('an_review_day', $review_day_val);
+
     $referer_val = optional_param('an_referer', 'http://', PARAM_URL);
     set_config('an_referer', $referer_val);
 
@@ -421,6 +428,15 @@ function check_paid() {
 
 function check_openssl_loaded() {
     return extension_loaded('openssl');
+}
+
+function cron() {
+    global $CFG;
+    parent::cron();
+
+    if ( empty($CFG->an_review) || empty($CFG->an_review_day) || $CFG->an_review_day==0 )
+        return;
+
 }
 
 } // end of class definition
