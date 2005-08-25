@@ -124,15 +124,19 @@ function auth_get_userinfo($username){
             if (!is_array($values)) {
                 $values = array($values);
             }
+            $ldapval = NULL;
             foreach ($values as $value) {
                 if(is_array($user_entry[0][strtolower($value)])) {
-                    $result[$key]=addslashes(stripslashes(utf8_decode($user_entry[0][strtolower($value)][0])));
+                    $newval = addslashes(stripslashes(utf8_decode($user_entry[0][strtolower($value)][0])));
                 }
                 else {
-                    $result[$key] = addslashes(stripslashes(utf8_decode($user_entry[0][strtolower($value)])));
-
+                    $newval = addslashes(stripslashes(utf8_decode($user_entry[0][strtolower($value)])));
                 }
+                if (!empty($newval)) { // favour ldap entries that are set
+                    $ldapval = $newval;
+                } 
             }
+            $result[$key] = $ldapval;
         }
     }
 
