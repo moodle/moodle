@@ -2129,8 +2129,13 @@ function get_courses($categoryid="all", $sort="c.sortorder ASC", $fields="c.*") 
         $selectsql = "{$CFG->prefix}course c $teachertable";
     }
 
-
-    return get_records_sql("SELECT ".((!empty($teachertable)) ? " DISTINCT " : "")." $fields FROM $selectsql ".((!empty($sort)) ? "ORDER BY $sort" : ""));
+    $extrafield = str_replace('ASC','',$sort);
+    $extrafield = str_replace('DESC','',$extrafield);
+    $extrafield = trim($extrafield);
+    if (!empty($extrafield)) {
+        $extrafield = ','.$extrafield;
+    }
+    return get_records_sql("SELECT ".((!empty($teachertable)) ? " DISTINCT " : "")." $fields $extrafield FROM $selectsql ".((!empty($sort)) ? "ORDER BY $sort" : ""));
 }
 
 
