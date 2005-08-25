@@ -178,7 +178,7 @@ function editor_get_dictionaries () {
     $dictionaries = array();
     $dicts        = array();
 
-    if(!($handle = @popen($cmd .' dump dicts', 'r'))) {
+    if(!($handle = @popen(escapeshellarg($cmd) .' dump dicts', 'r'))) {
         return $strerror = "Couldn't create handle!";
         exit;
     }
