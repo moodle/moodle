@@ -7,7 +7,7 @@ header('Content-type: text/html; charset=utf-8');
 // Speller pages script http://spellerpages.sourceforge.net/
 // Modified by Marc Alier on August 2004 for the integration with moodle
 
-$aspell_prog = $CFG->aspellpath;
+$aspell_prog = escapeshellarg($CFG->aspellpath);
 $spellercss = $CFG->wwwroot .'/lib/speller/spellerStyle.css';
 $word_win_src = $CFG->wwwroot .'/lib/speller/wordWindow.js';
 
@@ -37,7 +37,7 @@ function check_language($cmd) {
     $current_lang = current_language();
     $output = '';
 
-    if(!($handle = popen($cmd .' dump dicts', 'r'))) {
+    if(!($handle = popen(escapeshellarg($cmd) .' dump dicts', 'r'))) {
         error_handler("Couldn't create handle!");
         exit;
     }
