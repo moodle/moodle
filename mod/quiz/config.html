@@ -60,6 +60,11 @@
     }
 
 ?>
+
+<script type="text/javascript" language="javascript">
+    var timelimititems = ['timelimit'];
+</script>
+
 <form method="post" action="module.php" name="form">
 <input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>" />
 
@@ -94,13 +99,16 @@
 </tr>
 
 <tr valign="top">
-  <td align="right"><b><?php print_string("timelimit", "quiz") ?>:</b></td>
-  <td>
-    <?php
-      print_timer_selector($form->timelimit, get_string("minutes","quiz"), 'timelimit');
-      helpbutton("timelimit", get_string("quiztimer","quiz"), "quiz");
-    ?>
-  </td>
+    <td align="right"><b><?php print_string("timelimit", "quiz") ?>:</b></td>
+    <td>
+        <input name="timelimitenable" type="checkbox" value="1" alt="<?php print_string('timelimit', 'quiz') ?>" onclick="return lockoptions('form', 'timelimitenable', timelimititems)" <?php if ($form->timelimit) echo 'checked="checked"' ?> />
+        <input type="text" name="timelimit" size="3" value="<?php p($form->timelimit ? $form->timelimit : '') ?>" />
+        <?php 
+            print_string('minutes');
+            helpbutton("timelimit", get_string("quiztimer","quiz"), "quiz");
+        ?>
+        <input type="hidden" name="htimelimit"    value="0" />
+    </td>
   <td align="center">
     <input type="hidden" name="fix_timelimit" value="0" />
     <input type="checkbox" name="fix_timelimit" value="1" <?php p($CFG->quiz_fix_timelimit ? "checked" : "") ?> />
@@ -403,3 +411,8 @@
 
 </form>
 
+<script type="text/javascript">
+<?php 
+    if (!$form->timelimit) echo "lockoptions('form','timelimitenable', timelimititems);";
+?>
+</script>
