@@ -8,6 +8,7 @@
     optional_variable($config->cas_language,"");
     optional_variable($config->cas_use_cas,"");
     optional_variable($config->cas_create_user,"0");
+    optional_variable($config->cas_logout,"");
 ?>
 
 
@@ -92,6 +93,20 @@
        choose_from_menu ($options, "cas_create_user", $config->cas_create_user, "");?>
     </td><td>
     <?php  print_string("auth_cas_create_user","auth") ?>
+    </td>
+</tr>
+
+<tr valign="top"  class="required">
+    <td align="right">cas_logout:</td>
+    <td>
+    <?php
+       unset($options);
+       $options[0] = get_string("no");
+       $options[1] = get_string("yes");
+
+       choose_from_menu ($options, "cas_logout", $config->cas_logout, "");?>
+    </td><td>
+    <?php  print_string("auth_cas_logout","auth") ?>
     </td>
 </tr>
 

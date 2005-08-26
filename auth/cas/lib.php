@@ -99,12 +99,9 @@ function cas_authenticate_user_login ($username, $password) {
 
    global $CFG;
    $cas_validate=true;
-
    phpCAS::client($CFG->cas_version,$CFG->cas_hostname,(Integer)$CFG->cas_port,$CFG->cas_baseuri);
    phpCAS::setLang($CFG->cas_language);
-   if (!phpCAS::isAuthenticated()){
-      phpCAS::authenticateIfNeeded();
-   }
+   phpCAS::forceAuthentication();
    if ($CFG->cas_create_user=="0"){
       if (record_exists('user', 'username', phpCAS::getUser())) {
          $user = authenticate_user_login(phpCAS::getUser(), 'cas');
@@ -138,10 +135,11 @@ function cas_automatic_authenticate ($user="") {
         $cas_validate=true;
         phpCAS::client($CFG->cas_version,$CFG->cas_hostname,(Integer)$CFG->cas_port,$CFG->cas_baseuri);
         phpCAS::setLang($CFG->cas_language);
-        if (!phpCAS::isAuthenticated() && !$CFG->guestloginbutton){
-           phpCAS::authenticateIfNeeded();
+        $cas_user_exist=phpCAS::checkAuthentication();
+        if (!$cas_user_exist && !$CFG->guestloginbutton){
+           $cas_user_exist=phpCAS::forceAuthentication();
         }
-        if (phpCAS::isAuthenticated()){
+        if ($cas_user_exist){
            if ($CFG->cas_create_user=="0"){
               if (record_exists('user', 'username', phpCAS::getUser())) {
                  $user = authenticate_user_login(phpCAS::getUser(), 'cas');
@@ -166,5 +164,6 @@ function cas_automatic_authenticate ($user="") {
       return $user;
    }
 }
+
 
 ?>
