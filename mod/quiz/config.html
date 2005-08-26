@@ -139,10 +139,7 @@
   <td align="right"><b><?php print_string("shufflequestions", "quiz") ?>:</b></td>
   <td>
     <?php
-       unset($options);
-       $options[0] = get_string("no");
-       $options[1] = get_string("yes");
-       choose_from_menu ($options, "shufflequestions", $form->shufflequestions, "", "", "");
+       choose_from_menu ($yesnooptions, "shufflequestions", $form->shufflequestions, "", "", "");
        helpbutton("shufflequestions", get_string("shufflequestions","quiz"), "quiz");
     ?>
   </td>
@@ -156,10 +153,7 @@
   <td align="right"><b><?php print_string("shuffleanswers", "quiz") ?>:</b></td>
   <td>
     <?php
-       unset($options);
-       $options[0] = get_string("no");
-       $options[1] = get_string("yes");
-       choose_from_menu ($options, "shuffleanswers", $form->shuffleanswers, "", "", "");
+       choose_from_menu ($yesnooptions, "shuffleanswers", $form->shuffleanswers, "", "", "");
        helpbutton("attempts", get_string("attemptsallowed","quiz"), "quiz");
     ?>
   </td>
@@ -193,10 +187,7 @@
   <td align="right"><b><?php print_string("eachattemptbuildsonthelast", "quiz") ?>:</b></td>
   <td>
     <?php
-       unset($options);
-       $options[0] = get_string("no");
-       $options[1] = get_string("yes");
-       choose_from_menu ($options, "attemptonlast", $form->attemptonlast, "", "", "");
+       choose_from_menu ($yesnooptions, "attemptonlast", $form->attemptonlast, "", "", "");
        helpbutton("repeatattempts", get_string("eachattemptbuildsonthelast", "quiz"), "quiz");
     ?>
   </td>
@@ -280,10 +271,7 @@
   <td align="right"><b><?php print_string("popup", "quiz") ?>:</b></td>
   <td>
     <?php
-       unset($options);
-       $options[0] = get_string("no");
-       $options[1] = get_string("yes");
-       choose_from_menu ($options, "popup", $form->popup, "", "", "");
+       choose_from_menu ($yesnooptions, "popup", $form->popup, "", "", "");
        helpbutton("popup", get_string("popup","quiz"), "quiz");
     ?>
   </td>
