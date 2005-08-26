@@ -5,8 +5,9 @@
 $string['adminseesallevents'] = 'Administrators see all events';
 $string['adminseesownevents'] = 'Administrators are just like other users';
 $string['backgroundcolour'] = 'Transparent Colour';
-$string['badwordsconfig'] = 'Enter your list of bad words separated by commas';
-$string['badwordslist'] = 'Bad Words List';
+$string['badwordsconfig'] = 'Enter your list of bad words separated by commas.';
+$string['badwordsdefault'] = 'If the custom list is empty, a default list from the language pack will be used.';
+$string['badwordslist'] = 'Custom Bad Words List';
 $string['blockinstances'] = 'Instances';
 $string['blockmultiple'] = 'Multiple';
 $string['cachetext'] = 'Text cache lifetime';
