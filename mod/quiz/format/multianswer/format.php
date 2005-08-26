@@ -25,9 +25,10 @@ class quiz_format_multianswer extends quiz_default_format {
         $thequestion= quiz_qtype_multianswer_extract_question
                             (addslashes(implode('',$lines)));
         $thequestion->qtype = MULTIANSWER;
+        $thequestion->course = $this->course;
 
         if (!empty($thequestion)) {
-            $thequestion->name = $lines[0];
+            $thequestion->name = addslashes($lines[0]);
             
             $questions[] = $thequestion;
         }
