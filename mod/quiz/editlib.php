@@ -292,18 +292,19 @@ function quiz_print_question_list($quiz, $allowdelete=true, $showbreaks=true) {
         }
         echo '</td><td align="center">';
 
+        $context = $quiz->id ? '&amp;contextquiz='.$quiz->id : '';
+        $quiz_id = $quiz->id ? '&amp;quizid=' . $quiz->id : '';
+        echo "<a title=\"$strpreview\" href=\"javascript:void();\" onClick=\"openpopup('/mod/quiz/preview.php?id=$qnum$quiz_id','$strpreview','scrollbars=yes,resizable=yes,width=700,height=480', false)\">
+              <img src=\"../../pix/t/preview.gif\" border=\"0\" alt=\"$strpreview\" /></a>";
         if ($canedit) {
-            $context = $quiz->id ? '&amp;contextquiz='.$quiz->id : '';
-            $quiz_id = $quiz->id ? '&amp;quizid=' . $quiz->id : '';
-            echo "<a title=\"$strpreview\" href=\"javascript:void();\" onClick=\"openpopup('/mod/quiz/preview.php?id=$qnum$quiz_id','$strpreview','scrollbars=yes,resizable=yes,width=700,height=480', false)\">
-                  <img src=\"../../pix/t/preview.gif\" border=\"0\" alt=\"$strpreview\" /></a>";
             echo "<a title=\"$stredit\" href=\"question.php?id=$qnum$context\">
                   <img src=\"../../pix/t/edit.gif\" border=\"0\" alt=\"$stredit\" /></a>";
-            if ($allowdelete) {
-                echo "<a title=\"$strremove\" href=\"edit.php?delete=$count&amp;sesskey=$USER->sesskey\">
-                      <img src=\"../../pix/t/removeright.gif\" border=\"0\" alt=\"$strremove\" /></a>";
-            }
         }
+        if ($allowdelete) {
+            echo "<a title=\"$strremove\" href=\"edit.php?delete=$count&amp;sesskey=$USER->sesskey\">
+                  <img src=\"../../pix/t/removeright.gif\" border=\"0\" alt=\"$strremove\" /></a>";
+        }
+
         echo "</td>";
         $count++;
         $sumgrade += $quiz->grades[$qnum];
@@ -545,9 +546,8 @@ function quiz_print_cat_question_list($course, $categoryid, $quizid,
     echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
     print_simple_box_start('center', '100%', '#ffffff', 0);
     echo '<table id="categoryquestions" cellspacing="0"><tr>';
-    if ($canedit) {
-        echo "<th width=\"95\" nowrap=\"nowrap\" class=\"header\">$straction</th>";
-    }
+    $actionwidth = $canedit ? 95 : 70;
+    echo "<th width=\"$actionwidth\" nowrap=\"nowrap\" class=\"header\">$straction</th>";
     echo "<th width=\"100%\" align=\"left\" nowrap=\"nowrap\" class=\"header\">$strquestionname</th>
     <th nowrap=\"nowrap\" class=\"header\">$strtype</th>";
     echo "</tr>\n";
@@ -555,28 +555,28 @@ function quiz_print_cat_question_list($course, $categoryid, $quizid,
         if ($question->qtype == RANDOM) {
             //continue;
         }
-        echo "<tr>\n";
-        if ($canedit) {
-            echo "<td>\n";
-                if ($quizid) {
-                    echo "<a title=\"$straddtoquiz\" href=\"edit.php?addquestion=$question->id&amp;sesskey=$USER->sesskey\"><img
-                     src=\"../../pix/t/moveleft.gif\" border=\"0\" alt=\"$straddtoquiz\" /></a>&nbsp;";
-                }
-                echo "<a title=\"$strpreview\" href=\"javascript:void();\" onClick=\"openpopup('/mod/quiz/preview.php?id=$question->id&quizid=$quizid','$strpreview','scrollbars=yes,resizable=yes,width=700,height=480', false)\"><img
-                      src=\"../../pix/t/preview.gif\" border=\"0\" alt=\"$strpreview\" /></a>&nbsp;";
-                echo "<a title=\"$stredit\" href=\"question.php?id=$question->id\"><img
-                     src=\"../../pix/t/edit.gif\" border=\"0\" alt=\"$stredit\" /></a>&nbsp;";
-                // hide-feature
-                if($question->hidden) {
-                    echo "<a title=\"$strrestore\" href=\"question.php?id=$question->id&amp;hide=0&amp;sesskey=$USER->sesskey\"><img
-                         src=\"../../pix/t/restore.gif\" border=\"0\" alt=\"$strrestore\" /></a>";
-                } else {
-                    echo "<a title=\"$strdelete\" href=\"question.php?id=$question->id&amp;delete=$question->id\"><img
-                         src=\"../../pix/t/delete.gif\" border=\"0\" alt=\"$strdelete\" /></a>";
-                }
-                echo "&nbsp;<input title=\"$strselect\" type=\"checkbox\" name=\"q$question->id\" value=\"1\" />";
-            echo "</td>\n";
+        echo "<tr>\n<td>\n";
+        if ($quizid) {
+            echo "<a title=\"$straddtoquiz\" href=\"edit.php?addquestion=$question->id&amp;sesskey=$USER->sesskey\"><img
+                  src=\"../../pix/t/moveleft.gif\" border=\"0\" alt=\"$straddtoquiz\" /></a>&nbsp;";
         }
+        echo "<a title=\"$strpreview\" href=\"javascript:void();\" onClick=\"openpopup('/mod/quiz/preview.php?id=$question->id&quizid=$quizid','$strpreview','scrollbars=yes,resizable=yes,width=700,height=480', false)\"><img
+              src=\"../../pix/t/preview.gif\" border=\"0\" alt=\"$strpreview\" /></a>&nbsp;";
+        if ($canedit) {
+            echo "<a title=\"$stredit\" href=\"question.php?id=$question->id\"><img
+                 src=\"../../pix/t/edit.gif\" border=\"0\" alt=\"$stredit\" /></a>&nbsp;";
+            // hide-feature
+            if($question->hidden) {
+                echo "<a title=\"$strrestore\" href=\"question.php?id=$question->id&amp;hide=0&amp;sesskey=$USER->sesskey\"><img
+                     src=\"../../pix/t/restore.gif\" border=\"0\" alt=\"$strrestore\" /></a>";
+            } else {
+                echo "<a title=\"$strdelete\" href=\"question.php?id=$question->id&amp;delete=$question->id\"><img
+                     src=\"../../pix/t/delete.gif\" border=\"0\" alt=\"$strdelete\" /></a>";
+            }
+        }
+        echo "&nbsp;<input title=\"$strselect\" type=\"checkbox\" name=\"q$question->id\" value=\"1\" />";
+        echo "</td>\n";
+
         if ($question->hidden) {
             echo '<td class="dimmed_text">'.$question->name."</td>\n";
         } else {
@@ -595,14 +595,16 @@ function quiz_print_cat_question_list($course, $categoryid, $quizid,
     echo '<table class="quiz-edit-selected"><tr><td colspan="2">';
     echo '<a href="javascript:select_all_in(\'TABLE\', null, \'categoryquestions\');">'.$strselectall.'</a> /'.
      ' <a href="javascript:deselect_all_in(\'TABLE\', null, \'categoryquestions\');">'.$strselectnone.'</a>'.
-     '</td><td align="right"><b>'.get_string('withselected', 'quiz').':</b></td></tr><tr><td>';
+     '</td><td align="right"><b>&nbsp;'.get_string('withselected', 'quiz').':</b></td></tr><tr><td>';
     if ($quizid) {
         echo "<input type=\"submit\" name=\"add\" value=\"<< $straddtoquiz\" />\n";
         echo '</td><td>';
     }
-    echo '<input type="submit" name="deleteselected" value="'.$strdelete."\" /></td><td>\n";
-    echo '<input type="submit" name="move" value="'.get_string('moveto', 'quiz')."\" />\n";
-    quiz_category_select_menu($course->id, false, true, $category->id);
+    if ($canedit) {
+        echo '<input type="submit" name="deleteselected" value="'.$strdelete."\" /></td><td>\n";
+        echo '<input type="submit" name="move" value="'.get_string('moveto', 'quiz')."\" />\n";
+        quiz_category_select_menu($course->id, false, true, $category->id);
+    }
     echo "</td></tr></table>";
 
     if ($quizid) {
