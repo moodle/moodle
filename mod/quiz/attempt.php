@@ -108,7 +108,9 @@
         exit;
     }
 
-    if ($quiz->attempts and $attemptnumber > $quiz->attempts) {
+    $numberofpreviousattempts = count_records_select('quiz_attempts', "quiz = '{$quiz->id}' AND " .
+        "userid = '{$USER->id}' AND timefinish > 0 AND preview != 1");
+    if ($quiz->attempts and $numberofpreviousattempts >= $quiz->attempts) {
         error(get_string('nomoreattempts', 'quiz'), "view.php?id={$cm->id}");
     }
 
