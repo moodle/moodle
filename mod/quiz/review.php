@@ -47,7 +47,15 @@
         // If not even responses are to be shown in review then we
         // don't allow any review
         if (!($quiz->review & QUIZ_REVIEW_RESPONSES)) {
-            redirect('view.php?q='.$quiz->id);
+            if (empty($popup)) {
+                redirect('view.php?q='.$quiz->id);
+            } else {
+                ?><script type="text/javascript">
+                opener.document.location.reload();
+                self.close();
+                </script><?php
+                die();
+            }
         }
         if ((time() - $attempt->timefinish) > 120) { // always allow review right after attempt
             if ((!$quiz->timeclose or time() < $quiz->timeclose) and !($quiz->review & QUIZ_REVIEW_OPEN)) {
