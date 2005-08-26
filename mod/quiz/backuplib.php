@@ -939,7 +939,7 @@
 
         $status = true;
 
-        $rqp_state = get_record("quiz_rqp_states","stateid",$state,"id");
+        $rqp_state = get_record("quiz_rqp_states","stateid",$state);
         //If there is a state
         if ($rqp_state) {
             //Write start tag
