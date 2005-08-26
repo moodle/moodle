@@ -23,7 +23,13 @@ function censor_filter($courseid, $text) {
 
     if (empty($words)) {
         $words = array();
-        $badwords = explode(',', $CFG->filter_censor_badwords );
+        // if no user-specified words, use default list from language pack
+        if (empty($CFG->filter_censor_badwords)) {
+            $badwords = explode(',',get_string('badwords','censor') );
+        }
+        else {
+            $badwords = explode(',', $CFG->filter_censor_badwords );
+        }
         foreach ($badwords as $badword) {
             $badword = trim($badword);
             $words[] = new filterobject($badword, '<span class="censoredtext" title="'.$badword.'">', '</span>', 

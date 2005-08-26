@@ -8,6 +8,7 @@
     $txt = new Object;
     $txt->badwordslist = get_string( 'badwordslist','admin' );
     $txt->badwordsconfig = get_string( 'badwordsconfig','admin' );
+    $txt->badwordsdefault = get_string( 'badwordsdefault','admin' );
 ?>
 
 <table cellpadding="9" cellspacing="0">
@@ -17,6 +18,7 @@
     </tr>
     <tr>
         <td>&nbsp;</td>
-        <td><?php echo $txt->badwordsconfig; ?></td>
+        <td align="center"><?php echo $txt->badwordsconfig; ?><br />
+            <i><?php echo $txt->badwordsdefault; ?></i></td>
     </tr>
 <table>
