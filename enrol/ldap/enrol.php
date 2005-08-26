@@ -180,7 +180,7 @@ function sync_enrolments($type, $enrol) {
     if (!empty($CFG->enrol_ldap_objectclass)){ 
         $ldap_search_pattern='(objectclass='.$CFG->enrol_ldap_objectclass.')';
     } else {
-       $ldap_search_pattern="(objectclass='*')";
+       $ldap_search_pattern="(objectclass=*)";
         
     }
 
@@ -441,8 +441,17 @@ function enrol_ldap_connect(){
             ldap_set_option($result, LDAP_OPT_PROTOCOL_VERSION, $CFG->enrol_ldap_version);
         }
 
-        return $result;
+        if (!empty($CFG->enrol_ldap_bind_dn)) {
+            $bind = ldap_bind( $result,
+                                 $CFG->enrol_ldap_bind_dn, 
+                                 $CFG->enrol_ldap_bind_pw );
+            if (!$bind) {
+                notify("Error in binding to LDAP server");
+                trigger_error("Error in binding to LDAP server $!");
+            }
 
+        }
+        return $result;
     } else {
         notify("LDAP-module cannot connect to server: $CFG->enrol_ldap_host_url");
         return false;
