@@ -86,6 +86,20 @@ function begin_sql() {
     }
     return true;
 }
+/**
+* on DBs that support it, commit the transaction 
+*/
+function rollback_sql() {
+/// Completely general function - it just runs some SQL and reports success.
+
+    global $CFG;
+    if ($CFG->dbtype === 'postgres7') {
+        return execute_sql('ROLLBACK', false);
+    }
+    return true;
+}
+
+
 
 /**
  * returns db specific uppercase function
