@@ -60,7 +60,7 @@ function get_student_courses(&$user) {
                         if (isset($user->student[$course->id])) {   /// We have it already
                             unset($user->student[$course->id]);       /// Remove from old list
                         } else {
-                            enrol_student($user->id, $course->id);   /// Enrol the student
+                            enrol_student($user->id, $course->id, 0, 0, 'database');   /// Enrol the student
                         }
                     }
                 }
@@ -68,8 +68,12 @@ function get_student_courses(&$user) {
 
             if (!empty($user->student)) {    /// We have some courses left that we need to unenrol from
                 foreach ($user->student as $courseid => $value) {
-                    unenrol_student($user->id, $courseid);       /// Unenrol the student
-                    unset($user->student[$course->id]);           /// Remove from old list
+
+                    // unenrol only if it's a record pulled from external db
+                    if (get_record_select('user_students', 'userid', $user->id, 'courseid', $courseid, 'enrol', 'database')) {
+                        unenrol_student($user->id, $courseid);       /// Unenrol the student
+                        unset($user->student[$course->id]);           /// Remove from old list
+                    }
                 }
             }
 

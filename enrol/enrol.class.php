@@ -145,7 +145,7 @@ function print_entry($course) {
                 $timestart = $timeend = 0;
             }
 
-            if (! enrol_student($USER->id, $course->id, $timestart, $timeend)) {
+            if (! enrol_student($USER->id, $course->id, $timestart, $timeend, 'manual')) {
                 error("An error occurred while trying to enrol you.");
             }
 
@@ -226,7 +226,7 @@ function check_entry($form, $course) {
                 $timestart = $timeend = 0;
             }
 
-            if (! enrol_student($USER->id, $course->id, $timestart, $timeend)) {
+            if (! enrol_student($USER->id, $course->id, $timestart, $timeend, 'manual')) {
                 error("An error occurred while trying to enrol you.");
             }
 

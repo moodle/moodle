@@ -2753,6 +2753,9 @@ function set_login_session_preferences() {
 /**
  * Enrols (or re-enrols) a student in a given course
  *
+ * NOTE: Defaults to 'manual' enrolment - enrolment plugins 
+ * must set it explicitly.
+ *
  * @uses $CFG
  * @param int $userid The id of the user that is being tested against. Set this to 0 if you would just like to test against the currently logged in user.
  * @param int $courseid The id of the course that is being viewed
@@ -2762,7 +2765,7 @@ function set_login_session_preferences() {
  * @return bool
  * @todo Finish documenting this function
  */
-function enrol_student($userid, $courseid, $timestart=0, $timeend=0, $enrol='') {
+function enrol_student($userid, $courseid, $timestart=0, $timeend=0, $enrol='manual') {
 
     global $CFG;
 
@@ -2779,9 +2782,6 @@ function enrol_student($userid, $courseid, $timestart=0, $timeend=0, $enrol='') 
         }
     }
 
-    if (empty($enrol)) {
-        $enrol = $CFG->enrol;   // Default current method
-    }
     if ($student = get_record('user_students', 'userid', $userid, 'course', $courseid)) {
         $student->timestart = $timestart;
         $student->timeend = $timeend;
