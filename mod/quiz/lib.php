@@ -43,6 +43,11 @@ function quiz_add_instance($quiz) {
                                                     $quiz->availableminute);
     }
 
+    // The following similarly implements the time limit check box
+    if (empty($quiz->timelimitenable) or $quiz->timelimit < 1) {
+        $quiz->timelimit = 0;
+    }
+
     if (empty($quiz->name)) {
         if (empty($quiz->intro)) {
             $quiz->name = get_string('modulename', 'quiz');
@@ -131,6 +136,11 @@ function quiz_update_instance($quiz) {
         $quiz->timeopen = make_timestamp($quiz->availableyear, $quiz->availablemonth, 
                                                     $quiz->availableday, $quiz->availablehour, 
                                                     $quiz->availableminute);
+    }
+
+    // The following similarly implements the time limit check box
+    if (empty($quiz->timelimitenable) or $quiz->timelimit < 1) {
+        $quiz->timelimit = 0;
     }
 
     $quiz->id = $quiz->instance;

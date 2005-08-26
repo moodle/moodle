@@ -87,6 +87,7 @@
 <script type="text/javascript" language="javascript">
     var dueitems = ['dueday','duemonth','dueyear','duehour', 'dueminute'];
     var availableitems = ['availableday','availablemonth','availableyear','availablehour', 'availableminute'];
+    var timelimititems = ['timelimit'];
 </script>
 
 <form name="form" method="post" action="mod.php">
@@ -161,11 +162,14 @@
 <?php if (!$CFG->quiz_fix_timelimit) { ?>
     <tr valign="top">
         <td align="right"><b><?php print_string("timelimit", "quiz") ?>:</b></td>
-         <td align="left">
-        <?php
-            print_timer_selector($form->timelimit, get_string("minutes","quiz"));
-            helpbutton("timelimit", get_string("quiztimer","quiz"), "quiz");
-        ?>
+        <td align="left">
+            <input name="timelimitenable" type="checkbox" value="1" alt="<?php print_string('timelimit', 'quiz') ?>" onclick="return lockoptions('form', 'timelimitenable', timelimititems)" <?php if ($form->timelimit) echo 'checked="checked"' ?> />
+            <input type="text" name="timelimit" size="3" value="<?php p($form->timelimit) ?>" />
+            <?php 
+                print_string('minutes');
+                helpbutton("timelimit", get_string("quiztimer","quiz"), "quiz");
+            ?>
+            <input type="hidden" name="htimelimit"    value="0" />
         </td>
     </tr>
 <?php } else $fix=1 ?>
@@ -592,5 +596,6 @@
 <?php 
     if (!$form->timeclose) echo "lockoptions('form','dueenable', dueitems);";
     if (!$form->timeopen) echo "lockoptions('form','availableenable', availableitems);";
+    if (!$form->timelimit) echo "lockoptions('form','timelimitenable', timelimititems);";
 ?>
 </script
