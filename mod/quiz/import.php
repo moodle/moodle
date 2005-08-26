@@ -57,7 +57,7 @@
             $classname = "quiz_format_$form->format";
             $format = new $classname();
 
-            if (! $format->importpreprocess($category)) {             // Do anything before that we need to
+            if (! $format->importpreprocess($category,$course)) {             // Do anything before that we need to
                 error("Error occurred during pre-processing!",
                       "$CFG->wwwroot/mod/quiz/import.php?category=$category->id");
             }
