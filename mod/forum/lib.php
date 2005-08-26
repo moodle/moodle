@@ -3550,10 +3550,10 @@ function forum_discussion_update_last_post($discussionid) {
     }
     
 /// Use SQL to find the last post for this discussion
-    $sql = 'SELECT `id`, `userid`, `modified` '.
+    $sql = 'SELECT id, userid, modified '.
            'FROM '.$CFG->prefix.'forum_posts '.
-           'WHERE `discussion`='.$discussionid.' '.
-           'ORDER BY `modified` DESC ';
+           'WHERE discussion='.$discussionid.' '.
+           'ORDER BY modified DESC ';
 
 /// Lets go find the last post
     if (($lastpost = get_record_sql($sql, true))) {
