@@ -680,7 +680,7 @@ function quiz_process_options(&$form) {
     $review = 0;
 
     if (!empty($form->adaptive)) {
-        $optionflags += QUIZ_ADAPTIVE;
+        $optionflags |= QUIZ_ADAPTIVE;
     }
 
     if (isset($form->responsesimmediately)) {

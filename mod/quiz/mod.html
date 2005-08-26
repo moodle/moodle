@@ -260,7 +260,7 @@
         <td align="right"><b><?php print_string("adaptive", "quiz") ?>:</b></td>
          <td align="left">
         <?php
-            choose_from_menu($yesnooptions, "adaptive", $form->optionflags & QUIZ_ADAPTIVE, "");
+            choose_from_menu($yesnooptions, "adaptive", ($form->optionflags & QUIZ_ADAPTIVE) ? 1 : 0, "");
             helpbutton("adaptive", get_string("adaptive","quiz"), "quiz");
          ?>
         </td>
@@ -488,7 +488,7 @@
         <td align="right"><b><?php print_string("adaptive", "quiz") ?>:</b></td>
          <td align="left">
         <?php
-            choose_from_menu($yesnooptions, "adaptive", $form->optionflags & QUIZ_ADAPTIVE, "");
+            choose_from_menu($yesnooptions, "adaptive", ($form->optionflags & QUIZ_ADAPTIVE) ? 1 : 0, "");
             helpbutton("adaptive", get_string("adaptive","quiz"), "quiz");
          ?>
         </td>
