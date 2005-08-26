@@ -192,7 +192,7 @@ class quiz_report extends quiz_default_report {
                 $sort = ' ORDER BY '.implode(', ', $newsort);
             }
             // Now it is time to page the data, even if we ajust $total later 
-            if (!isset($pagesize)) {
+            if (!isset($pagesize) || ((int)$pagesize < 1) ) {
                 $pagesize = 10;
             }
             $table->pagesize($pagesize, $total);

@@ -308,7 +308,7 @@ class quiz_report extends quiz_default_report {
         }
 
         // Now it is time to page the data, simply slice the keys in the array 
-        if (!isset($pagesize)){
+        if (!isset($pagesize) || ((int)$pagesize < 1) ){
             $pagesize = 10;
         }
         $table->pagesize($pagesize, count($questions));
