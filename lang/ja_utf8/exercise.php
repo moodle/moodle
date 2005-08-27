@@ -178,6 +178,6 @@ $string['weightsusedforoverallgrade'] = '総合評価に使用される比重';
 $string['wrongpassword'] = 'エクササイズのパスワードが違います。';
 $string['yourassessment'] = 'あなたの評価';
 $string['yourfeedbackgoeshere'] = 'あなたのフィードバックはここに表示されます';
-$string['yoursubmission'] = 'あなたの評価';
+$string['yoursubmission'] = 'あなたの提出物';
 
 ?>
