@@ -1,7 +1,5 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.3 development (2004041800)
-
-
+// calendar.php - created with Moodle 1.3 development (2004041800)
 $string['april'] = '四月';
 $string['august'] = '八月';
 $string['calendar'] = '行事曆';
@@ -95,5 +93,4 @@ $string['userevents'] = '使用者事件';
 $string['wed'] = '週三';
 $string['wednesday'] = '星期三';
 $string['yesterday'] = '昨天';
-
 ?>

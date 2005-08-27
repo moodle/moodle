@@ -1,7 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.3 development (2004032800)
-
-
+// quiz.php - created with Moodle 1.3 development (2004032800)
 $string['acceptederror'] = '普遍的錯誤';
 $string['addingquestions'] = '頁面的這一邊用來管理題庫。題目分門別類，以便管理。題庫中的題目可用於你的課程中的任何測驗。如果你選擇“公佈”它們，則甚至可用於其他課程。<br /><br />你在選擇或創建類別後才能創建或編輯題目。你可以選擇任何題目加入到另一邊的測驗中。';
 $string['addquestions'] = '添加題目';
@@ -183,5 +181,4 @@ $string['webct'] = 'WebCT 格式';
 $string['withsummary'] = '總覽';
 $string['wronggrade'] = '錯誤的成績(在 $a 之後)';
 $string['yourfinalgradeis'] = '這個測驗你的最後得分是 $a';
-
 ?>

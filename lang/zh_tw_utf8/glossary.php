@@ -1,7 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.2 Beta (2004022400)
-
-
+// glossary.php - created with Moodle 1.2 Beta (2004022400)
 $string['addcomment'] = '新增評論';
 $string['addentry'] = '新增項目';
 $string['addingcomment'] = '新增一條評論';
@@ -153,5 +151,4 @@ $string['waitingapproval'] = '待審';
 $string['warningstudentcapost'] = '(僅適用於非主辭彙)';
 $string['writtenby'] = '作者是';
 $string['youarenottheauthor'] = '您不是該評論的作者, 故您無權編輯它.';
-
 ?>

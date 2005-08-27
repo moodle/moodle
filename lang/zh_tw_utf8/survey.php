@@ -1,7 +1,5 @@
 <?PHP // $Id$ 
-      // survey.php - created with Moodle 1.2 Beta (2004022400)
-
-
+// survey.php - created with Moodle 1.2 Beta (2004022400)
 $string['actual'] = '實際的';
 $string['actualclass'] = '課程實際的';
 $string['actualstudent'] = '$a 實際的';
@@ -191,5 +189,4 @@ $string['surveytype'] = '問卷型態';
 $string['thanksforanswers'] = '謝謝你回答本問卷, $a';
 $string['time'] = '時間';
 $string['viewsurveyresponses'] = '檢視 $a 問卷結果';
-
 ?>

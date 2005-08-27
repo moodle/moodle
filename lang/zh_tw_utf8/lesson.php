@@ -1,7 +1,5 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.3 development (2004032800)
-
-
+// lesson.php - created with Moodle 1.3 development (2004032800)
 $string['actionaftercorrectanswer'] = '在正確的回答後，開始新的活動';
 $string['addabranchtable'] = '增加分支表';
 $string['addanendofbranch'] = '增加分支終點';
@@ -82,5 +80,4 @@ $string['youhaveseen'] = '你已經瀏覽了該課程的多個頁面.<br />想�
 $string['youranswer'] = '你的答案';
 $string['yourcurrentgradeis'] = '你目前的成績為 $a';
 $string['youshouldview'] = '你應看最近的：$a';
-
 ?>

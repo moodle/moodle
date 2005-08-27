@@ -1,7 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.3 development (2004032800)
-
-
+// editor.php - created with Moodle 1.3 development (2004032800)
 $string['about'] = '關於此編輯器';
 $string['absbottom'] = '正底部';
 $string['middle'] = '正中';
@@ -96,5 +94,4 @@ $string['upload'] = '上傳';
 $string['vertical'] = '垂直位置';
 $string['width'] = '寬度';
 $string['zip'] = '壓縮';
-
 ?>

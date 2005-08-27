@@ -1,7 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.2 Beta (2004022400)
-
-
+// forum.php - created with Moodle 1.2 Beta (2004022400)
 $string['addanewdiscussion'] = '新增一個討論主題';
 $string['addanewtopic'] = '新增一個主題';
 $string['allowchoice'] = '允許所有人選擇';
@@ -85,6 +83,7 @@ $string['parent'] = '顯示上層文章';
 $string['parentofthispost'] = '本留言回應的上一篇討論';
 $string['postadded'] = '你的留言已成功加入討論區.<br />你有 $a 可以修改留言內容.';
 $string['postincontext'] = '檢視本留言內容';
+
 $string['postmailinfo'] = '這是張貼在 $a 網站的一篇留言.
 請按以下連結以便回應此留言內容:';
 $string['postrating1'] = '極端獨立型';
@@ -133,5 +132,4 @@ $string['unsubscribed'] = '取消訂閱 ';
 $string['youratedthis'] = '你對此的評比是';
 $string['yournewtopic'] = '你的新討論主題';
 $string['yourreply'] = '你的回應內容';
-
 ?>

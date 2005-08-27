@@ -1,7 +1,5 @@
 <?PHP // $Id$ 
-      // dialogue.php - created with Moodle 1.2 Beta (2004022400)
-
-
+// dialogue.php - created with Moodle 1.2 Beta (2004022400)
 $string['addmynewentries'] = '添加我的話題';
 $string['addmynewentry'] = '添加我的新項目';
 $string['addsubject'] = '添加主題';
@@ -61,5 +59,4 @@ $string['typefollowup'] = '繼續輸入';
 $string['typeofdialogue'] = '對話類別';
 $string['typereply'] = '在此輸入回覆';
 $string['viewallentries'] = '查看 $a 對話項目';
-
 ?>

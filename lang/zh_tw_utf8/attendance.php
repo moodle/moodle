@@ -1,7 +1,5 @@
 <?PHP // $Id$ 
-      // attendance.php - created with Moodle 1.3 development (2004041800)
-
-
+// attendance.php - created with Moodle 1.3 development (2004041800)
 $string['absentlong'] = '缺席';
 $string['absentshort'] = '曠  ';
 $string['addingmultiple'] = '增加多樣性的出點名單';
@@ -67,5 +65,4 @@ $string['viewtable'] = '使用單一表格來觀看結果';
 $string['viewweek'] = '從行事曆觀看所有的點名記錄';
 $string['wednesday'] = '星期三';
 $string['weekmodulename'] = '最後一星期的所有點名記錄';
-
 ?>

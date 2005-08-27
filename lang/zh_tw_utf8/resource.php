@@ -1,7 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.2 Beta (2004022400)
-
-
+// resource.php - created with Moodle 1.2 Beta (2004022400)
 $string['addresource'] = '新增資源';
 $string['chooseafile'] = '選擇或上傳一個檔';
 $string['configdefaulturl'] = '這個值被使用來提示URL，當建立一個新的URL資源連結時';
@@ -58,5 +56,4 @@ $string['resourcetype5'] = '外部網頁連結';
 $string['resourcetype6'] = '網頁文件';
 $string['resourcetype7'] = '執行程式';
 $string['resourcetype8'] = 'Wiki 文件';
-
 ?>

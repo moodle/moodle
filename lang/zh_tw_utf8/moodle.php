@@ -1,7 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.3 development (2004041800)
-
-
+// moodle.php - created with Moodle 1.3 development (2004041800)
 $string['action'] = '課程活動';
 $string['active'] = '啟動';
 $string['activities'] = '課程活動分類';
@@ -258,22 +256,23 @@ $string['email'] = '電子郵件';
 $string['emailagain'] = '電子郵件(再次輸入)';
 $string['emailconfirm'] = '確認你的帳號';
 $string['emailconfirmation'] = '你好 $a->firstname,
-
 有人在 $a->sitename 網站以你的郵件地址登記了帳號申請
-
 如果要確認帳號確實是你所申請的, 請到以下連結:
-
   $a->link
 
 對大多數電子郵件而言,你只要按下以上網址即可
+
 如果並未出現連結 請用剪貼的方式 啟動瀏覽器進入以上網址網頁.
 
 歡迎你的加入 $a->sitename 系統管理員
+
 $a->admin 敬上,';
 $string['emailconfirmationsubject'] = '$a :帳號資訊';
-$string['emailconfirmsent'] = '   <p>本系統已經送出電子郵件到 <b>$a</b></p>
-   <p>訊息內容包含如何完成註冊手續.</p>
-   <p>請閱覽你的私人郵件 按下確認連結後 便可登入本系統, 若是有問題請和系統管理者連絡.</p>';
+$string['emailconfirmsent'] = '   <p>本系統已經送出電子郵件到 <b>$a</b>
+</p>
+<p>訊息內容包含如何完成註冊手續.
+</p>
+<p>請閱覽你的私人郵件 按下確認連結後 便可登入本系統, 若是有問題請和系統管理者連絡.</p>';
 $string['emaildisable'] = '這個電子郵件信箱無法使用';
 $string['emaildisplay'] = '電子郵件訊息';
 $string['emaildisplaycourse'] = '僅允許其他修課成員觀看我的電子郵件';
@@ -457,17 +456,29 @@ $string['loginas'] = '以該學生身分登入';
 $string['loginguest'] = '以 訪客 身分登入';
 $string['loginsite'] = '登入本網站';
 $string['loginsteps'] = '你好! 若要使用本網站功能你必須先在本網站註冊.
+
    部分課程可能還需要開課教師所設定的專屬密碼
+
    請遵循以下步驟:
+
    <ol>
-   <li>請於 <a href=\"$a\">申請新帳號</a> 表格中輸入個人相關資料.</li>
-   <li>依據指示完成註冊手續,進行登入動作.</li>
-   <li>登入後請選擇想要參加的課程.</li>
+
+   <li>請於 <a href=\"$a\">申請新帳號</a> 表格中輸入個人相關資料.
+</li>
+   <li>依據指示完成註冊手續,進行登入動作.
+</li>
+   <li>登入後請選擇想要參加的課程.
+</li>
    <br />部分課程開課教師可能會設定專屬密碼, 則需要取得專屬密碼後才能進入(僅需初次進入課程時輸入)
-   進入課程後 未來只需要登入便可再次進入課程, 不需要再輸入課程專屬密碼</li>
+
+   進入課程後 未來只需要登入便可再次進入課程, 不需要再輸入課程專屬密碼
+</li>
    </ol>';
-$string['loginstepsnone'] = '<p>嗨!<p>需要完成註冊手續才可能進入本課程.</p>
+
+$string['loginstepsnone'] = '<p>嗨!<p>需要完成註冊手續才可能進入本課程.
+</p>
 <p>你需要申請一個 帳號名稱和密碼 以便進行登入系統的動作!</p><p>
+
 假如你所選定 帳號名稱已經有人先登記 則需要輸入新的名稱.</p>';
 $string['loginto'] = '登入 $a';
 $string['loginusing'] = '請輸入 帳號名稱與密碼 進行登入';
@@ -546,7 +557,9 @@ $string['newpasswordtext'] = '嗨 $a->firstname,$a->lastname
 你於 $a->sitename 的帳號已經被要求重新設定一個 臨時密碼
 
 請按下以下連結 以便確認系統將登入時所需輸入的最新資訊設定如下:
+
    $a->link
+
 
    帳號名稱username: $a->username
    密碼: $a->newpassword
@@ -554,10 +567,14 @@ $string['newpasswordtext'] = '嗨 $a->firstname,$a->lastname
 若是你並未提出重新設定要求 則可能是網友弄錯 請忽略以上訊息
 
 對大多數電子郵件而言,你只要按下以上網址即可
+
 如果並未出現連結 請用剪貼的方式 啟動瀏覽器進入以上網址網頁.
 
+
 歡迎使用本系統 $a->sitename 管理者,
+
 $a->signoff 敬上';
+
 $string['newpicture'] = '新圖片';
 $string['newsitem'] = '新選項';
 $string['newsitems'] = '新選項';
@@ -621,6 +638,7 @@ $string['passwordconfirmchange'] = '密碼變更確認';
 $string['passwordrecovery'] = '請協助我登入';
 $string['passwordsdiffer'] = '密碼不相符';
 $string['passwordsent'] = '已經送出密碼';
+
 $string['passwordsenttext'] = '   <p>系統以電子郵件送出資訊到 $a->email.
    </p><p><b>請閱覽你的郵件以獲得新設定的臨時密碼</b>
    </p><p>重新登入後可以進入
@@ -815,6 +833,7 @@ $string['week'] = '週次';
 $string['weekhide'] = '從$a 畫面，隱藏這個星期';
 $string['weeklyoutline'] = '本週大綱';
 $string['weekshow'] = '顯示本周到 $a';
+
 $string['welcometocourse'] = '歡迎到 $a';
 $string['welcometocoursetext'] = '歡迎進入 $a->coursename!
 
@@ -851,5 +870,4 @@ $string['yourlastlogin'] = '你最後登入的時間';
 $string['yourself'] = '你自己';
 $string['yourteacher'] = '你的教師 $a';
 $string['zippingbackup'] = '壓縮備份檔';
-
 ?>

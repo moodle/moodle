@@ -1,7 +1,4 @@
-<?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.3 development (2004032800)
-
-
+<?PHP // $Id$ // workshop.php - created with Moodle 1.3 development (2004032800)
 $string['absent'] = '缺席';
 $string['accumulative'] = '累積的';
 $string['action'] = '動作';
@@ -216,5 +213,4 @@ $string['workshopsubmissions'] = '工作坊的意見';
 $string['yourassessments'] = '你的評價';
 $string['yourassessmentsofexamplesfromtheteacher'] = '你的評估樣本來自於 $a';
 $string['yourfeedbackgoeshere'] = '你的回饋到這裏來';
-
 ?>
