@@ -3,8 +3,9 @@
 $string['adminseesallevents'] = 'Les administrateurs voient tous les événements';
 $string['adminseesownevents'] = 'Les administrateurs sont comme tous les autres utilisateurs';
 $string['backgroundcolour'] = 'Couleur transparente';
-$string['badwordsconfig'] = 'Taper ici votre liste de mots à censurer, séparés par des virgules';
-$string['badwordslist'] = 'Liste des mots à censurer';
+$string['badwordsconfig'] = 'Taper ici votre liste de mots à censurer, séparés par des virgules.';
+$string['badwordsdefault'] = 'Si votre liste de mots à censurer est vide, une liste de mots tirée du fichier de langue sera utilisée.';
+$string['badwordslist'] = 'Votre liste de mots à censurer';
 $string['blockinstances'] = 'Instances';
 $string['blockmultiple'] = 'Multiple';
 $string['cachetext'] = 'Durée de vie du cache texte';
