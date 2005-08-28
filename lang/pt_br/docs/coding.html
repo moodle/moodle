@@ -1,0 +1,222 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Moodle Docs: Coding Guidelines</title>
+<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS" />
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+</head>
+<body>
+<h1>Normas para o desenvolvimento do código de Moodle</h1>
+<p class="normaltext">Qualquer projeto colaborativo necessita de consistência e estabilidade para permanecer fortalecido.</p>
+<p class="normaltext">Essas normas são um objetivo a ser alcançado por todo o código do Moodle. É verdade que existem algumas áreas com falha nos códigos antigos, mas que estas serão corrigidas aos poucos. Todo código novo deve seguir essas normas.</p>
+<h2>Regras Gerais</h2>
+<ol class="normaltext">
+  <li class="spaced">Todos os arquivos de código devem usar a estensão .php.</li>
+  <li class="spaced">Todos os arquivos de modelo (template) devem usar a estensão .html.</li>
+  <li class="spaced">Todos os arquivos de texto devem usar a formatação de texto do estilo Unix (a maioria dos editores de texto possuem essa opção).</li>
+  <li class="spaced">Todos os tags php devem ser completos como <font color="#339900">&lt;?php 
+    ?&gt;</font> ... e não abreviado como <font color="#339900">&lt;? ?&gt;</font>. 
+  </li>
+  <li class="spaced">Todas as notas de direitos autorais (copyright) devem ser mantidas. Você pode adicionar as suas caso seja necessário..</li>
+  <li class="spaced">Cada arquivo deve incluir o arquivo conifg.php principal.</li>
+  <li class="spaced">Cada arquivo deve verificar se o usuário está autenticado corretamente, 
+usando require_login() e isadmin(), isteacher(), iscreator() ou isstudent().</li>
+  <li class="spaced">Todos os acessos a bases de dados devem usar as funções em lib/datalib.php quando possível - isto permitirá a compatibilidade por entre os vários tipos de base de dados. Você verá que quase tudo é possível usando essas funções. Se você necessita escrever seu próprio código SQL então faça em modo que ele seja: multi-plataforma, restrito a funções específicas dentro de seu código (geralmente um arquivo lib.php) e cometado em modo claro.</li>
+  <li class="spaced">Não crie ou use variáveis globais exceto para os padrões  
+    $CFG, $SESSION, $THEME and $USER.</li>
+  <li class="spaced">Todas as variáveis devem ser inicializadas ou ao menos ter sua existência verificada usando isset() ou empty() antes de serem utilizadas.</li>
+  <li class="spaced">Todos os textos (strings) devem ser passíveis de tradução - crie novas entradas de texto nos arquivos em &quot;lang/en&quot; usando nomes em Inglês conciso e em caixa baixa e recupere-os em seu código usando get_string() ou print_string().</li>
+  <li class="spaced">Todos os arquivos de ajuda devem ser passíveis de tradução - crie os novos textos no diretório &quot;en/help&quot; directory e se refira a eles usando helpbutton().
+    <p>Caso você precise atualizar um arquivo de ajuda: </p>
+    <ul>
+    <li>em mudanças pequenas, onde a tradução anterior continua fazendo sentido, você pode fazer as mudanças mas deve notificar  translation@moodle.org </li>
+    <li>para uma mudança maior você deve criar um novo arquivo acrescentando um número incrementado (ex. filename2.html) assim os tradutores poderão facilmente ver a nova versão do arquivo. Obviamente o novo código e o arquivo Indíce de Ajuda devem ser modificados e apontar para as novas versões.</li>
+    </ul>
+    
+</li>
+  <li class="spaced">Os dados originados via navegador (enviados via GET ou POST) automaticamente tem o magic_quotes aplicado (independentemente da configuração do PHP). Todos os outros dados brutos (de arquivos ou de base de dados) devem ser utilizaods com <font color="#339900">addslashes()</font> antes de serem inseridos nas base de dados.</li>
+  <li class="spaced">IMPORTANTE: Todos os textos dentro do Moodle, especialmente aqueles que se originam dos usuários, devem ser impressos usando a função format_text(). Isto assegura que o texto está filtrado e devidamente limpo.</li>
+</ol>
+<p>&nbsp;</p>
+<h2>Estilo de redação de código</h2>
+<p class="normaltext">Eu sei que é chato mudar o seu estilo se você está acostumado a outro, mas pondere isso com o aborrecimento de todas as pessoas que tentam dar sentido ao código do Moodle com estilos variados. Obviamente há prós e contras em qalquer estilo que você use, mas o estilo atual simplesmente <strong>é este</strong>, por favor respeite-o. </p>
+<ol class="normaltext">
+  <li class="spaced"><strong>Indentação</strong> deve ser consistente de 4 espaços. Não use tab DE FORMA ALGUMA.</li>
+  <li class="spaced"><strong>Nomes de váriaveis</strong> devem ser fáceis de ler, ter significado e usar termos em Inglês em caixa baixa. Se você necessita usar mais de uma palavra então coloque tudo junto sem espaços, mas tente ser o mais breve possível. Use nomes plurais para arrays de objetos.
+    <p class="examplecode"><font color="#006600">CORRETO: $quiz<br />
+      CORRETO: $errorstring<br />
+CORRETO: $assignments (for an array of objects)<br />
+      CORRETO: $i (but only in little loops)<br />
+      <br />
+      ERRADO: $Quiz <br />
+      ERRADO: $aReallyLongVariableNameWithoutAGoodReason<br />
+      ERRADO: $error_string</font></p>
+  </li>
+  <li class="spaced"><strong>Constantes</strong> devem ser sempre em caixa alta, e iniciar com o nome do módulo. Eles devem ter sempre as palavras separadas por traço baixo (underscore).    <p class="examplecode"><font color="#006600">define(&quot;FORUM_MODE_FLATOLDEST&quot;, 
+      1);</font></p>
+  </li>
+  <li class="spaced"><strong>Nomes de funções </strong> devem ser sempre palavras em Inglês e em caixa baixa, e começar com o nome do módulo para evitar conflitos entre os módulos. As palavras devem ser separadas por traço baixo. Parâmetros devem ser padronizados na medida do possível. Observe que não há espaços entre o nome da função e o parentêses seguinte. <br />
+    <p class="examplecode"> <font color="#007700">function </font><font color="#0000BB">forum_set_display_mode</font><font color="#007700">(</font><font color="#0000BB">$mode</font><font color="#007700">=</font><font color="#0000BB">0</font><font color="#007700">) 
+      {<br />
+      &nbsp;&nbsp;&nbsp;&nbsp;global </font><font color="#0000BB">$USER</font><font color="#007700">, 
+      </font><font color="#0000BB">$CFG</font><font color="#007700">;<br />
+      <br />
+      &nbsp;&nbsp;&nbsp;&nbsp;if (</font><font color="#0000BB">$mode</font><font color="#007700">) 
+      {<br />
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">$USER</font><font color="#007700">-&gt;</font><font color="#0000BB">mode 
+      </font><font color="#007700">= </font><font color="#0000BB">$mode</font><font color="#007700">;<br />
+      &nbsp;&nbsp;&nbsp;&nbsp;} else if (empty(</font><font color="#0000BB">$USER</font><font color="#007700">-&gt;</font><font color="#0000BB">mode</font><font color="#007700">)) 
+      {<br />
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">$USER</font><font color="#007700">-&gt;</font><font color="#0000BB">mode 
+      </font><font color="#007700">= </font><font color="#0000BB">$CFG</font><font color="#007700">-&gt;</font><font color="#0000BB">forum_displaymode</font><font color="#007700">;<br />
+      &nbsp;&nbsp;&nbsp;&nbsp;}<br />
+      }</font></p>
+  </li>
+  <li class="spaced"><strong>Blocos</strong> devem ser sempre fechados entre chaves (even if there is only one line)mesmo que seja só uma linha. Moodle usa esse estilo: 
+    <p class="examplecode"> <font color="#006600">if (</font><font color="#0000CC">$quiz</font><font color="#006600">-&gt;</font><font color="#0000CC">attempts</font><font color="#006600">) 
+      {<br />
+      &nbsp;&nbsp;&nbsp;&nbsp;if (</font><font color="#0000CC">$numattempts </font><font color="#006600">&gt; 
+      </font><font color="#0000CC">$quiz</font><font color="#006600">-&gt;</font><font color="#0000CC">attempts</font><font color="#006600">) 
+      {<br />
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000CC">error</font><font color="#006600">(</font><font color="#0000BB">$strtoomanyattempts</font><font color="#006600">, 
+      </font><font color="#CC0000">"view.php?id=$cm</font><font color="#006600">-&gt;</font><font color="#CC0000">id"</font><font color="#006600">);<br />
+      &nbsp;&nbsp;&nbsp;&nbsp;}<br />
+      }</font></p>
+  </li>
+  <li class="spaced"><strong>Strings</strong> devem ser definidos por aspas simples na medida do possível, para aumentar a velocidade.<br />
+    <p class="examplecode"> <font color="#006600">$var = 'texto sem variáveis';<br />
+      $var = &quot;com caracteres especiais como uma nova linha \n&quot;;<br />
+      $var = 'muito longa com uma '.$single.' variável';<br />
+      $var = &quot;pouco $text com $many variáveis $within &quot;; </font></p>
+  </li>
+
+  <li class="spaced"><strong>Commentários</strong> devem ser úteis e práticos para explicar a estrutura do código e a lógica das funções e das variáveis. 
+     <ul>
+     <li>Cada função (e classe) deve usar o popular 
+         <a target="_blank" href="http://www.phpdoc.org/">phpDoc format</a>.
+         isto permite que a documentação seja generada automáticamente.</li>
+     <li>Comentários embutidos na linha devem usar o estilo  // , em modo ordenado que se encaixe entre o código e as linhas correspondentes.</li>
+     </ul>
+  
+   <p class="examplecode"><font color="#FF8000">
+/**<br />
+ * Descrição primeiro, com asteriscos posicionados em ordem<br />
+ * como neste exemplo.  para referir-se a uma outra função,<br />
+ * faça isto: {@link clean_param()}.  Depois acrescente descrições<br />
+ * para cada parâmetro como em seguida.<br />
+ *<br />
+ * @param int    $postid The PHP type is followed by the variable name<br />
+ * @param array  $scale The PHP type is followed by the variable name<br />
+ * @param array  $ratings The PHP type is followed by the variable name<br />
+ * @return mixed<br />
+ */</font><br />
+<font color="#006600">function </font><font color="#0000BB">forum_get_ratings_mean</font><font color="#007700">(</font><font color="#0000BB">$postid</font><font color="#007700">, 
+      </font><font color="#0000BB">$scale</font><font color="#007700">, </font><font color="#0000BB">$ratings</font><font color="#007700">=</font><font color="#0000BB">NULL</font><font color="#007700">) 
+      {<br /></font>
+      &nbsp;&nbsp;&nbsp;&nbsp;<font color="#007700">if (!</font><font color="#0000BB">$ratings</font><font color="#007700">) 
+      {<br />
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">$ratings 
+      </font><font color="#007700">= array(); &nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#FF8000">// 
+      Initialize the empty array</font><font color="#007700"><br />
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (</font><font color="#0000BB">$rates 
+      </font><font color="#007700">= </font><font color="#0000BB">get_records</font><font color="#007700">(</font><font color="#DD0000">"forum_ratings"</font><font color="#007700">, 
+      </font><font color="#DD0000">"post"</font><font color="#007700">, </font><font color="#0000BB">$postid</font><font color="#007700">)) 
+      {<br />
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#FF8000">// 
+      Process each rating in turn</font><font color="#007700"><br />
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;foreach 
+      (</font><font color="#0000BB">$rates </font><font color="#007700">as </font><font color="#0000BB">$rate</font><font color="#007700">) 
+      {</font> <br />
+      ....etc </p>
+  </li>
+  
+  <li class="spaced"><strong>Espaço</strong> deve ser usado livremente - não tenha medo de expandir as coisas um pouco para ganhar clareza. Geralmente, deve haver um ou dois espaços entre os parentêses e as declarações normais, mas não há espaço entre os parentêses e variáveis ou funções:<br />
+    <p class="examplecode"> <font color="#007700">foreach (</font><font color="#0000BB">$objects 
+      </font><font color="#007700">as </font><font color="#0000BB">$key </font><font color="#007700">=&gt;</font><font color="#0000BB"> 
+      $thing</font><font color="#007700">)</font><font color="#006600"> {<br />
+      </font><font color="#007700">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">process($thing);</font><font color="#006600"> 
+      <br />
+      } <br />
+      <br />
+      </font><font color="#007700">if (</font><font color="#0000BB">$x </font><font color="#007700">== 
+      </font><font color="#0000BB">$y</font><font color="#007700">)</font><font color="#006600"> 
+      {<br />
+      </font><font color="#007700">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">$a 
+      </font><font color="#007700">= </font><font color="#0000BB">$b</font><font color="#007700">;</font><font color="#006600"><br />
+      } else if (</font><font color="#0000BB">$x </font><font color="#007700">== 
+      </font><font color="#0000BB">$z</font><font color="#006600">) {<br />
+      </font><font color="#007700">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">$a 
+      </font><font color="#007700">= </font><font color="#0000BB">$c</font><font color="#007700">;</font><font color="#006600"><br />
+      } else {<br />
+      </font><font color="#007700">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">$a 
+      </font><font color="#007700">= </font><font color="#0000BB">$d</font><font color="#007700">;</font><font color="#006600"><br />
+      } </font></p>
+  </li>
+</ol>
+<p>&nbsp;</p>
+<h2>Estrutura da base de dados</h2>
+<ol class="normaltext">
+  <li class="spaced">Cada tabela deve ter um campo id (INT10)  auto-incremental como index primário.</li>
+  <li class="spaced">A tabela principal contendo instâncias de cada módulo deve ter o mesmo nome que o módulo  (ex. <strong>widget</strong>) e conter no mínimo os seguintes campos:
+    <ul>
+      <li><strong>id</strong> - como descrito acima</li>
+      <li><strong>course</strong> - o id de cada curso à qual cada  instância pertence</li>
+      <li><strong>name</strong> - o nome completo de cada instância do módulo</li>
+    </ul>
+  </li>
+  <li class="spaced">Outras tabelas associadas com o módulo que contém informações sobre 'coisas' devem ser nomeadas como <strong>widget_things</strong> (note o plural).</li>
+  <li class="spaced">Nomes de colunas devem ser simples e curtas, valendo as mesmas regras para os nomes de variáveis.</li>
+  <li class="spaced">Quando possível, colunas que contém referência ao campo id de outra tabela  (ex. <strong>widget</strong>) devem ser nomeadas como <strong>widgetid</strong>. (observe que essa convenção é recente e não foi utilizada em algumas tabelas antigas)</li>
+  <li class="spaced">Campos booleanos devem ser implementados como campos small integer (ex. INT4) contendo 0 ou 1, para permitir uma expansão futura dos valores, caso se torne necessário.</li>
+  <li class="spaced">A maior parte das tabelas deve conter um campo <strong>timemodified</strong> (INT10) que é atualizado com timestamp (rótulo de tempo) obtido com a função do PHP <strong>time</strong>() .</li>
+</ol>
+<p>&nbsp;</p>
+<h2>Security Issues (and handling form and URL data)</h2>
+<ol class="normaltext">
+  <li class="spaced">Do not rely on 'register_globals'. <strong>Every</strong> variable must be
+    properly initialised in <strong>every</strong> code file. It must be obvious where the variable
+    came from</li>
+  <li class="spaced">Initialise all arrays and objects, even if empty. <code>$a = array()</code>
+    or <code>$obj = new stdClass();</code>.</li>
+  <li class="spaced">Do not use the <code>optional_variable()</code> function. Use the <code>optional_param()</code>
+    function instead. Pick the correct PARAM_XXXX value for the data type you expect. To check and set an optional
+    value for a variable, use the <code>set_default()</code> function.</li>
+  <li class="spaced">Do not use the <code>require_variable()</code> function. Use the <code>required_param()</code>
+    function instead. Pick the correct PARAM_XXXX value for the data type you expect.</li>
+  <li class="spaced">Use <code>data_submitted()</code>, with care. Data must still be cleaned before use.</li>
+  <li class="spaced">Do not use <code>$_GET</code>, <code>$_POST</code> or <code>$_REQUEST</code>. Use the
+    appropriate <code>required_param()</code> or <code>optional_param()</code> appropriate to your need.</li>
+  <li class="spaced">Do not check for an action using something like <code>if (isset($_GET['something']))</code>. 
+    Use, e.g., <code>$something = optional_param( 'something',-1,PARAM_INT )</code> and then perform 
+    proper test for it being in its expected range of values e.g., <code>if ($something>=0) {...</code>.</li>
+  <li class="spaced">Wherever possible group all your <code>required_param()</code>, <code>optional_param()</code>
+    and other variables initialisation at the beginning of each file to make them easy to find.</li>
+  <li class="spaced">Use 'sesskey' mechanism to protect form handling routines from attack. 
+    Basic example of use: when form is generated,
+    include <code>&lt;input type="hidden" name="sesskey" value="&lt;?php echo sesskey(); ?&gt;" /&gt;</code>.
+    When you process the form check with <code>if (!confirm_sesskey()) {error('Bad Session Key');}</code>.</li> 
+  <li class="spaced">All filenames must be 'cleaned' using the <code>clean_filename()</code> function, if this 
+    has not been done already by appropriate use of <code>required_param()</code> or <code>optional_param()</code>
+    </li>
+  <li class="spaced">Any data read from the database must have <code>addslashes()</code> applied to it before it
+    can be written back. A whole object of data can be hit at once with <code>addslashes_object()</code>.</li>
+  <li class="spaced">Wherever possible, data to be stored in the database must come from <code>POST</code>
+    data (from a form with <code>method="POST"</code>) as opposed to <code>GET</code> data (ie, data from the URL line).</li>
+  <li class="spaced">Do not use data from <code>$_SERVER</code> if you can avoid it. This has portability 
+    issues.</li>
+  <li class="spaced">If it hasn't been done somewhere else, make sure all data written to the database has
+    been through the <code>clean_param()</code> function using the appropriate PARAM_XXXX for the datatype.</li>
+  <li class="spaced">If you write custom SQL code, make very sure it is correct. In particular watch out for
+    missing quotes around values. Possible SQL 'injection' exploit.</li>
+  <li class="spaced">Check all data (particularly that written to the database) in <strong>every</strong>
+    file it is used. Do not expect or rely on it being done somewhere else.</li>
+  <li class="spaced">Blocks of code to be included should contain a definite PHP structure (e.g, 
+    a class declaration, function definition(s) etc.) - straight blocks of code promote uninitialised
+    variable usage.</li>
+</ol>
+<hr />
+<p align="center"><font size="1"><a href="." target="_top">Moodle Documentation</a></font></p>
+<p align="center"><font size="1">Version: $Id$</font></p>
+</body>
+</html>
