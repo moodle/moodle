@@ -973,7 +973,9 @@
                                     $essayquestions++;
                                     $essayquestionpoints += $pageanswers[$attempt->answerid]->score;
                                 } else {
-                                    $score += $pageanswers[$attempt->answerid]->score;
+                                    if (array_key_exists($attempt->answerid, $pageanswers)) {
+                                        $score += $pageanswers[$attempt->answerid]->score;
+                                    }
                                 }
                             }
                             $bestscores = array();
