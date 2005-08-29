@@ -64,6 +64,7 @@ $string['configlongtimenosee'] = '学生が長期間ログインしていない�
 $string['configmaxbytes'] = 'ここではサイト全体でアップロードできるファイルの最大サイズを設定します。この設定はPHP設定のupload_max_filesizeおよびApache設定のLimitRequestBodyに制限されます。maxbytesはコースレベルまたはモジュールレベルで選択するサイズ幅を制限します。';
 $string['configmaxeditingtime'] = 'ここではフォーラムの投稿や用語集のコメント等を編集可能な時間を設定します。通常30分が適切な値です。';
 $string['configmessaging'] = 'サイトのユーザ間でメッセージシステムを利用できるようにしますか?';
+$string['configmymoodleredirect'] = 'この設定は管理者以外のログインを /my に強制的にリダイレクトし、トップレベルのサイト・ブレッドクラムを /my に置き換えます。';
 $string['confignoreplyaddress'] = 'Moodleでは、メールがユーザに送信される場合があります ( 例 フォーラムの投稿 )。ここで設定するメールアドレスは、「From」に使用され、受信者が直接送信者に返信できないようにします ( 例 ユーザが個人のメールアドレスを隠したい場合 )。';
 $string['confignotifyloginfailures'] = 'ログインに失敗した場合、メールによる通知を行うことができます。誰がメール通知を受け取りますか?';
 $string['confignotifyloginthreshold'] = 'ログイン失敗通知が有効の場合、同一ユーザまたはIPアドレスが何回ログインに失敗するとメール通知しますか?';
