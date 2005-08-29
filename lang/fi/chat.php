@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // chat.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112900)
+      // chat.php - created with Moodle 1.5.2 + (2005060222)
 
 
 $string['beep'] = 'kutsu';
@@ -13,17 +13,17 @@ $string['configrefreshroom'] = 'Kuinka usein chat-huone päivitetään (sekunteina)
 $string['configrefreshuserlist'] = 'Kuinka nopeasti käyttäjälista päivitetään (sekunteina)';
 $string['configserverhost'] = 'Palvelimen nimi jolla chat-palvelu sijaitsee';
 $string['configserverip'] = 'Chat-palvelun ip-osoite joka vastaa palvelimen nimeä';
-$string['configservermax'] = 'Maksimi asiakkaden määrä';
+$string['configservermax'] = 'Suurin asiakkaiden määrä';
 $string['configserverport'] = 'Chat-palvelun portti';
 $string['currentchats'] = 'Aktiiviset chat-istunnot';
 $string['currentusers'] = 'Tämänhetkiset käyttäjät';
 $string['deletesession'] = 'Poista tämä istunto';
 $string['deletesessionsure'] = 'Oletko varma, että haluat poistaa tämän istunnon?';
 $string['donotusechattime'] = 'Älä julkaise mitään chat-istuntoaikoja';
-$string['enterchat'] = 'Klikkaa tästä päästäksesi mukaan chat-istuntoon';
+$string['enterchat'] = 'Napsauta tästä päästäksesi mukaan chat-istuntoon';
 $string['errornousers'] = 'Muita käyttäjiä ei löydy!';
-$string['explaingeneralconfig'] = 'Nämä asetukset ovat <strong>aina</strong>voimassa';
-$string['explainmethoddaemon'] = 'Näillä asetuksilla on vaikutusta vain jos käytät \"Chat-palvelu\"-asetusta.';
+$string['explaingeneralconfig'] = 'Nämä asetukset ovat <strong>aina</strong> voimassa';
+$string['explainmethoddaemon'] = 'Näillä asetuksilla on vaikutusta <strong>vain</strong> jos käytät \"Chat-palvelu\"-asetusta.';
 $string['explainmethodnormal'] = 'Näillä asetuksilla on vaikutusta <strong>vain</strong> jos käytät \"Normaali toiminta\"-asetusta.';
 $string['generalconfig'] = 'Yleiset asetukset';
 $string['helpchatting'] = 'Apua chat-toiminnon käyttöön';

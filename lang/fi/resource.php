@@ -1,14 +1,15 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005032600)
+      // resource.php - created with Moodle 1.5.2 + (2005060222)
 
 
 $string['addresource'] = 'Lisää aineisto';
 $string['chooseafile'] = 'Valitse tai lähetä tiedosto';
 $string['chooseparameter'] = 'Valitse parametri';
+$string['configallowlocalfiles'] = 'Kun luodaan uutta tiedostoaineistoa, annetaanko luoda linkkejä paikallisiin tiedostoihin, jotka ovat esimerkikisi CD:llä tai kiintolevyllä. Tästä voi olla hyötyä luokkatilassa, jossa kaikilla oppilailla on pääsy yhteiseen verkkoasemaan tai jos on tarpeen käyttää CD:llä olevia tiedostoja. Tämän asetuksen käyttö voi vaatia muutoksia selaimesi turvallisuusasetuksiin.';
 $string['configdefaulturl'] = 'Tätä käytetään esimerkkiosoitteena, kun lisätään uusia URL-osoiteen sisältäviä aineistoja.';
-$string['configfilterexternalpages'] = 'Tämä asetus aiheuttaa kaikkien ulkoisten aineistoiden suodattamisen sivuston suotimien läpi. Tämän toiminnon kytkeminen päälle hidastaa sivustoa, käytä sitä vain, jos et muuta voi.';
+$string['configfilterexternalpages'] = 'Tämä asetus aiheuttaa kaikkien ulkoisten aineistoiden suodattamisen sivuston suotimien läpi. Tämän toiminnon kytkeminen päälle hidastaa sivustoa, käytä sitä vain, jos ei ole muuta mahdollisuutta.';
 $string['configframesize'] = 'Kun WWW-sivu tai palvelimelle tallennettu tiedosto on osa kehystä, tämä arvo on yläkehyksen koko pikseleinä (sisältää navigointipalkit).';
-$string['configparametersettings'] = 'Tässä voit määritellä oletusarvot asetuksille mitä käytetään uusia resursseja lisätessä. Tämän jälkeen oletusasetukset määräytyvät käyttäjän asetusten mukaan.';
+$string['configparametersettings'] = 'Tässä voit määritellä oletusarvot asetuksille joita käytetään uusia resursseja lisätessä. Tämän jälkeen oletusasetukset määräytyvät käyttäjän asetusten mukaan.';
 $string['configpopup'] = 'Jos uusi aineisto on mahdollista näyttää ponnahdusikkunassa, otetetaanko ponnahdusikkuna käyttöön?';
 $string['configpopupdirectories'] = 'Näytetäänkö ponnahdusikkunoissa hakemistolinkit?';
 $string['configpopupheight'] = 'Ponnahdusikkunoiden korkeus?';
@@ -37,6 +38,14 @@ $string['filtername'] = 'Aineiston automaattilinkitys';
 $string['frameifpossible'] = 'Pane aineisto kehykseen ja jätä sivuston navigointipainikkeet näkyviin.';
 $string['fulltext'] = 'Teksti';
 $string['htmlfragment'] = 'HTML';
+$string['localfile'] = 'Paikallinen tiedosto';
+$string['localfilechoose'] = 'Valitse paikallinen tiedosto (CD-ROM)';
+$string['localfilehelp'] = 'Apua paikallisten tiedostojen näyttämiseen';
+$string['localfileinfo'] = '<p>Valitse paikallinen tiedosto tietokoneeltasi. Tiedostoa ei kopioida verkkosivustolle, vaan Moodle etsii vastaavaa tiedostoa kaikkien tätä aineistoa käyttävien omilta koneilta.</p>
+
+<p>Tämä on käytännöllistä esimerkiksi silloin, kun olet jakanut osanottajille materiaalia, esim. isokokoisia mediatiedostoja, samansisältöisillä CD-ROM-levyillä. Jokainen osallistuja voi valita itse hakemistopolun koneellaan näihin tiedostoihin <a href=\"$a\" target=\"_blank\">muokkaamalla käyttäjäprofiiliaan</a>.</p>';
+$string['localfilepath'] = 'Asettaaksesi oman hakemistopolkusi aineiston paikallisiin tiedostoihin, valitse mikä tahansa tiedosto asemalta, jolla aineisto sijaitsee (yleensä CD-ROM-asema). Tiedostoa ei kopioida verkkosivustolle, mutta käytetty polku tallennetaan ja sitä käytetään muidenkin paikallisia tiedostoja käyttävien aineistojen kanssa.';
+$string['localfileselect'] = 'Valitse tämä hakemistopolku.';
 $string['maindirectory'] = 'Tiedostojen hakemisto';
 $string['modulename'] = 'Aineisto';
 $string['modulenameplural'] = 'Aineistot';
@@ -53,6 +62,7 @@ $string['newtoolbar'] = 'Näytä työkalurivi';
 $string['newwidth'] = 'Ikkunan oletusleveys pikseleinä';
 $string['newwindow'] = 'Uusi ikkuna';
 $string['newwindowopen'] = 'Näytä linkki uudessa ikkunassa';
+$string['notallowedlocalfileaccess'] = 'Pääsy paikallisiin tiedostoihin on estetty, eikä tämä aineisto ole saatavilla.';
 $string['note'] = 'Huomaa';
 $string['notefile'] = 'Lisätäksesi tiedostoja kurssille (jotta ne näkysivät tässä listassa) käytä 
 <a href=\"$a\">Tiedostot</a>-työkalua.';
@@ -62,7 +72,7 @@ $string['pagewindow'] = 'Samassa ikkunassa';
 $string['parameter'] = 'Asetus';
 $string['parameters'] = 'Asetukset';
 $string['popupresource'] = 'Tämän aineiston tulee näkyä ponnahdusikkunassa.';
-$string['popupresourcelink'] = 'Jos et vielä klikannut, klikkaa tässä: $a';
+$string['popupresourcelink'] = 'Jos et vielä napsannut, napsauta tässä: $a';
 $string['resourcetype'] = 'Aineiston tyyppi';
 $string['resourcetype1'] = 'Referenssi';
 $string['resourcetype2'] = 'Websivu';

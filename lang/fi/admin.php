@@ -1,20 +1,127 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005030501)
+      // admin.php - created with Moodle 1.5.2 + (2005060222)
 
 
-$string['adminseesallevents'] = 'Yll‰pit‰j‰ n‰kee kaikki tapahtumat';
-$string['adminseesownevents'] = 'Yll‰pit‰j‰ on kuten tavallinen k‰ytt‰j‰';
+$string['adminseesallevents'] = 'Yll‰pit‰j‰t n‰kev‰t kaikki tapahtumat';
+$string['adminseesownevents'] = 'Yll‰pit‰j‰t ovat tavallisia k‰ytt‰ji‰';
 $string['blockinstances'] = 'Ilmentym‰t';
 $string['blockmultiple'] = 'Monenkertainen';
 $string['cachetext'] = 'Tekstiv‰limuistin kesto';
 $string['calendarsettings'] = 'Kalenteri';
 $string['change'] = 'muutos';
 $string['configallowcoursethemes'] = 'T‰m‰ asetus sallii kurssien k‰ytt‰‰ omia teemojaan.';
-$string['configallowemailaddresses'] = 'Jos haluat sallie k‰ytt‰j‰t vain tietyist‰ ositteista kirjoita toimialueet t‰h‰n pilkuilla eroteltuina.';
+$string['configallowemailaddresses'] = 'Jos haluat rajoittaa uudet sallitut s‰hkˆpostiosoitteet tiettyihin verkoalueisiin, niin kirjoita niis‰t t‰h‰n lista v‰lilyˆnnein erotettuna. Kaikki muut verkkoalueet hyl‰t‰‰n. Esim: <strong>meidan.koulu.fi joku.muu.com .fi .org</strong>';
+$string['configallowobjectembed'] = 'Turvallisuuden t‰hden eiv‰t tavalliset k‰ytt‰j‰t oletusarvoisesti saa sis‰llytt‰‰ HTML-teksteihins‰ multimediaa (kuten Flash-animaatioita) k‰ytt‰m‰ll‰  EMBED- ja OBJECT-merkintˆj‰ (vaikka n‰in voidaan tehd‰ turvallisesti, jos k‰ytet‰‰n medialaajennus-suodatinta). Laita t‰m‰ asetus p‰‰lle , jos haluat sallia n‰iden merkintˆjen k‰ytˆn.';
 $string['configallowunenroll'] = 'T‰m‰ sallii opiskelijoiden poistua kursseilta koska tahansa. Jos asetus ei ole p‰‰ll‰ opettajien tai yll‰pit‰jien pit‰‰ poistaa opiskelijat kursseilta.';
 $string['configallowuserblockhiding'] = 'Voivatko k‰ytt‰j‰t piiloittaa lohkoja?';
 $string['configallowuserthemes'] = 'Voivatko k‰ytt‰j‰t valita omia teemojaan?';
+$string['configallusersaresitestudents'] = 'Pit‰isikˆ KAIKKIA k‰ytt‰ji‰ k‰sitell‰ etusivun toiminnoissa opiskelijoina? Jos vastaat \"Kyll‰\" kaikki hyv‰ksytyn k‰ytt‰j‰tilin luoneet k‰ytt‰j‰t voivat osallistua n‰ihin toimintoihin oppilaina. Jos vastaat \"Ei\", niin t‰llˆin vain k‰ytt‰j‰t jotka ovat jo osanottajana v‰hint‰‰n yhdell‰ kurssilla voivat osallistua etusivun toimintoihin. Vain yll‰pit‰j‰t ja erityisesti m‰‰r‰tyt opettajat voivat toimia opettajina etusivun toiminnoissa.';
+$string['configautologinguests'] = 'Pit‰isikˆ vierailijat kirjata automaattisesti sis‰‰n vierailija-tunnuksilla, kun he menev‰t kurssille, joka sallii vieraiden osallistua?';
+$string['configcachetext'] = 'T‰m‰n asetuksen k‰yttˆ voi nopeuttaa toimintaa huomattavasti laajemmilla sivustoilla sek‰ sivustoilla, jotka k‰ytt‰v‰t tekstisuodattimia. Teksteist‰ s‰ilytet‰‰n kopio k‰sitellyss‰ muodossa t‰ss‰ m‰‰ritellyn ajan. T‰m‰n asetuksen asettaminen liian pieneksi voi itseasiassa hidastaa sivuston toimintaa hieman, mutta liian suuri arvo voi tehd‰ tekstien p‰ivitt‰misen hitaaksi (esimerkiksi uusien linkkien kanssa).';
+$string['configclamactlikevirus'] = 'K‰sittele tiedostoja viruksina';
+$string['configclamdonothing'] = 'K‰sittele tiedostoja viruksettomina';
+$string['configclamfailureonupload'] = 'Mit‰ clamin pit‰isi tehd‰, jos olet asettanut sen tarkastamaan palvelimelle kopioidut tiedostot, mutta jos clamin asetukset ovat virheelliset tai se ei jostain syyst‰ k‰ynnistyk‰‰n? Jos valitset ¥K‰sittele tiedostoja viruksina¥, tiedostot siirret‰‰n karanteenialueelle tai tuhotaan. Jos valitset ¥K‰sittele tiedostoja viruksettomina¥, tiedostot siirret‰‰n normaalisti kohdehakemistoonsa. Kummassakin tapauksessa yll‰pit‰jille ilmoitetaan, jos clam ei ole toiminnassa. Jos valitset ¥K‰sittele tiedostoja viruksina¥ ja jostain syyst‰ clam ei k‰ynnistyk‰‰n (johtuen yleens‰ v‰‰rin m‰‰ritellyst‰ polusta clam-ohjelmaan) KAIKKI tiedostot, jotka kopioidaan palvelimelle, siirret‰‰n karanteenialueelle tai tuhotaan. Ole varovainen k‰ytt‰ess‰si t‰t‰ asetusta.';
+$string['configcountry'] = 'Jos asetat oletusmaan t‰h‰n, niin t‰m‰ asetus tulee voimaan kaikille luoduille uusille k‰ytt‰j‰tileille. Jos haluat k‰ytt‰jien valitsevan itse maan, j‰t‰ vain t‰m‰ kohta tyhj‰ksi.';
+$string['configdbsessions'] = 'Jos t‰m‰ asetus on p‰‰ll‰, niin auki olevista istunnoista tallennetaan tietoja tietokantaan. T‰st‰ on hyˆty‰ erityisesti laajoilla, runsaasti k‰ytetyill‰ tai palvelinklustereille asennetuilla sivustoilla. Useimmilla sivustoilla t‰m‰ asetus pit‰isi j‰tt‰‰ pois p‰‰lt‰, jolloin tallennetukseen palvelimen kovalevy‰. Huomio, ett‰ t‰m‰n asetuksen muuttaminen kirjaa ulos kaikki sen hetkiset k‰ytt‰j‰t (mukaan lukien sinut).';
+$string['configdebug'] = 'Jos t‰m‰ asetus on p‰‰ll‰, niin PHPn virheiden ilmoittaminen asetetaan tasolle, jolla enemm‰n virheit‰ n‰ytet‰‰n. T‰m‰ asetus on k‰yt‰nnˆllinen vain kehitt‰jille.';
+$string['configdeleteunconfirmed'] = 'Jos k‰yt‰t s‰hkˆpostivahvistusta, t‰ss‰ m‰‰ritell‰‰n ajanjakso, jonka aikana vastaukset k‰ytt‰jilt‰ hyv‰ksyt‰‰n. T‰m‰n ajanjakson j‰lkeen vanhat vahvistamattomat k‰ytt‰j‰tilit poistetaan.';
+$string['configdenyemailaddresses'] = 'Jos haluat est‰‰ s‰hkˆpostit tietyilt‰ verkkotunnuksilta, kirjoita ne t‰h‰n. Kaikista muista verkkotunnuksista tulevat s‰hkˆpostit hyv‰ksyt‰‰n. Esim. <strong>hotmail.com yahoo.co.uk</strong>';
+$string['configdigestmailtime'] = 'K‰ytt‰j‰t, jotka valitsevat s‰hkˆpostin vastaanottamisen lyhennelm‰muodossa saavat lyhennelm‰n p‰ivitt‰in. T‰m‰ asetus s‰‰t‰‰ mihin aikaan p‰iv‰st‰ s‰hkˆposti l‰hetet‰‰n (ensimm‰inen cron, joka ajetaan t‰m‰n tunnin j‰lkeen l‰hett‰‰ s‰hkˆpostit).';
+$string['configdisplayloginfailures'] = 'T‰m‰ n‰ytt‰‰ valituille k‰ytt‰jille tietoja tapahtuneista ep‰onnistuneista sis‰‰nkirjautumisyrityksist‰.';
+$string['configenablerssfeeds'] = 'T‰m‰ asetus antaa mahdollisuuden RSS-syˆtteisiin kaikkialla sivustolla. Jotta asetus tulisi voimaan on yksitt‰isiss‰ moduuleissa myˆs aktivoitava RSS-syˆtteet - t‰m‰ tapahtuu Moduulit-asetuksista Yll‰pidon asetusten alla.';
+$string['configenablerssfeedsdisabled'] = 'Ei ole mahdollista, koska RSS-syˆtteet on otettu pois k‰ytˆst‰ koko sivustolla. Ottaaksesi ne k‰yttˆˆn, mene Asetukset-kohtaan Yll‰pidon asetusten alla.';
+$string['configerrorlevel'] = 'Valitse kuinka paljon PHP-varoituksia haluat n‰ytett‰v‰n. Normaali on yleens‰ paras vaihtoehto.';
+$string['configextendedusernamechars'] = 'T‰t‰ asetusta k‰ytt‰m‰ll‰ voit antaa oppilaille oikeuden k‰ytt‰‰ k‰ytt‰j‰nimiss‰‰n mit‰ tahansa merkkej‰ (t‰m‰ ei kuitenkaan koske heid‰n oikeita nimi‰‰n). Oletusarvo asetukselle on \"false\", joka rajoittaa k‰ytett‰viss‰ olevat merkit aakkosnumeerisiin merkkeihin.';
+$string['configfilterall'] = 'Suodata kaikki merkkijonot, mukaan lukien otsikot, navikaatiopalkki, jne. T‰m‰ on hyˆdyllist‰ l‰hinn‰ k‰ytett‰ess‰ monikielist‰ suodatinta, muuten t‰m‰ vain kuormittaa palvelinta turhaan, tuottamatta merkitt‰v‰‰ hyˆty‰.';
+$string['configfilteruploadedfiles'] = 'T‰m‰n asetuksen valinta k‰skee Moodlen k‰sitell‰ kaikki palvelimelle kopioidut HTML- ja tekstitiedostot suodattimilla ennen kuin ne n‰ytet‰‰n .';
+$string['configforcelogin'] = 'Yleens‰ sivuston etusivu ja kurssilista (muttei kurssien sis‰ltˆ) on kaikkien sivustolle saapuneiden n‰ht‰vill‰ ilman sis‰‰nkirjautumista. Jos haluat, ett‰ k‰ytt‰jien on kirjauduttava sis‰‰n ennen kuin he voivat tehd‰ MITƒƒN sivustolla, laita t‰m‰ asetus p‰‰lle. ';
+$string['configforceloginforprofiles'] = 'Ota t‰m‰ asetus k‰yttˆˆn, jos haluat ett‰ k‰ytt‰j‰t kirjautuvat sis‰‰n (eiv‰t siis ole vieraita) ennen kuin he voivat n‰hd‰ k‰ytt‰j‰profiilisivuja. Oletusarvoisesti t‰m‰ ei ole p‰‰ll‰ (asetus \"Ei\"), jotta mahdolliset tulevat oppilaat voivat lukea jokaisen kurssin opettajista, mutta t‰m‰ tarkoittaa myˆs sit‰ ett‰ hakukoneet n‰kev‰t sivut.';
+$string['configframename'] = 'Jos sijoitat Moodlen kehykseen verkkosivulla, kirjoita kyseisen kehyksen nimi t‰h‰n. Muuten t‰m‰n kohdan voi j‰tt‰‰ ennalleen (\'_top\').';
+$string['configfullnamedisplay'] = 'T‰m‰ m‰‰ritt‰‰ kuinka nimet n‰ytet‰‰n silloin, kun nimet n‰ytet‰‰n kokonaisuudessaan. Useimmille vain yht‰ kielt‰ k‰ytt‰ville sivuilla toimii asetus \"Etunimet + Sukunimet\", mutta voit myˆs k‰tke‰ sukunimet kokonaan, tai antaa valitun kielipaketin p‰‰tt‰‰ muodosta (eri kieliss‰ on eri tapoja).';
+$string['configgdversion'] = 'M‰‰rit‰ mik‰ GD:n versio on asennettuna. Oletusarvona on havaittu versio. ƒl‰ muuta, ellet tied‰ mit‰ olet tekem‰ss‰.';
+$string['confightmleditor'] = 'M‰‰rit‰ haluatko sallia upotetun HTML-tekstieditorin. Jos p‰‰t‰t sallia sen, editori tulee k‰yttˆˆn vain, jos k‰ytt‰j‰ll‰ on yhteensopiva selain. K‰ytt‰j‰t voivat myˆs valita olla k‰ytt‰m‰tt‰ editoria.';
+$string['configidnumber'] = 'T‰m‰ asetus m‰‰ritt‰‰ (a) kysyt‰‰nkˆ k‰ytt‰jilt‰ ollenkaan ID:t‰, (b) k‰ytt‰jilt‰ kysyt‰‰n ID-numeroa, mutta he voivat j‰tt‰‰ kent‰n tyhj‰ksi, (c) k‰ytt‰jilt‰ kysyt‰‰n ID-numeroa, eiv‰tk‰ he voi j‰tt‰‰ kohtaa tyhj‰ksi. Jos ID-numero annetaan, se n‰ytet‰‰n k‰ytt‰j‰n profiiliss‰.';
+$string['configintro'] = 'T‰ll‰ sivulla voit m‰‰ritell‰ useita asetuksia, jotta Moodle toimisi oikein palvelimellasi. ƒl‰ turhaan kanna huolta n‰ist‰ - oletusarvot toimivat yleens‰ hyvin ja voit aina myˆhemmin palata t‰lle sivulle ja muuttaa n‰it‰ asetuksia.';
+$string['configintroadmin'] = 'T‰ll‰ sivulla sinun pit‰‰ m‰‰ritell‰ p‰‰asiallinen yll‰pit‰j‰ sivustollesi, jolla on t‰ydet valtuudet koko sivustolla. Huolehdi siit‰ ett‰ k‰ytt‰j‰nimi ja salasana ovat turvallisia ja ett‰ s‰hkˆpostiosoite on toimiva. Voit luoda lis‰‰ yll‰pit‰j‰k‰ytt‰ji‰ myˆhemmin.';
+$string['configintrosite'] = 'T‰ll‰ sivulla m‰‰ritell‰‰n etusivu ja uuden sivuston nimi. Voit palata t‰lle sivulle myˆhemmin k‰ytt‰m‰ll‰ ¥Sivuston asetukset¥-linkki‰ kotisivulla.';
+$string['configintrotimezones'] = 'T‰m‰ sivu etsii uutta tietoa aikavyˆhykkeist‰ (mukaan lukien mahdolliset kes‰aikaa koskevat s‰‰nnˆt) ja p‰ivitt‰v‰t paikallisen tietokantasi n‰ill‰ tiedoilla. N‰m‰ sijainnit tarkistetaan, j‰rjestyksess‰: $a T‰m‰ toimenpide on yleens‰ hyvin turvallinen, eik‰ se riko tavallisia asennuksia. Haluatko p‰ivitt‰‰ aikavyˆhykkeet nyt?';
+$string['configlang'] = 'Valitse oletuskieli koko sivustolle. K‰ytt‰j‰t voivat muuttaa myˆhemmin omaa kieliasetustaan.';
+$string['configlangcache'] = 'Talleta kielivalikko v‰limuistiin. S‰‰st‰‰ runsaasti muistia ja prosessointitehoa. Jos otat asetuksen k‰yttˆˆn, kielien lis‰‰misen tai poistamisen j‰lkeen kielivalikon p‰ivittyminen kest‰‰ muutaman minuutin.';
+$string['configlangdir'] = 'Useimmat kielet kirjoitetaan vasemmalta oikelle, mutta jotkin, kuten arabia ja hebrea, kirjoitetaan oikealta vasemmalle.';
+$string['configlanglist'] = 'J‰t‰ t‰m‰ tyhj‰ksi antaaksesi k‰ytt‰jien kaikista Moodleen asentamistasi kielist‰. Voit lyhent‰‰ kielivalikkoa kirjoittamalla halutut kielet t‰h‰n pilkulla erottuina. Esimerkki: fi,en,es_es,fr,it';
+$string['configlangmenu'] = 'Valitse n‰ytet‰‰nkˆ kielivalikko kotisivulla, kirjautumissivulla, jne. T‰m‰ ei vaikuta k‰ytt‰jien kykyyn valita haluamansa kielen profiileissaan.';
+$string['configlocale'] = 'Valitse koko sivustoa koskeva maa-asetus, joka vaikuttaa p‰iv‰m‰‰rien moutoon ja kieleen. Maa-asetuksen vaatimien tietojen t‰ytyy olla asennettuna (esim.  fi_FI tai en_US). Jos et osaa valita, j‰t‰ tyhj‰ksi.';
+$string['configloginhttps'] = 'Kun t‰m‰ asetus on asetettu p‰‰lle, Moodle k‰ytt‰‰ suojattua https-yhteytt‰ vain kirjautumissivulle (mahdollistaen turvallisen kirjautumisen) ja t‰m‰n j‰lkeen palaa k‰ytt‰m‰‰n tavallista http:t‰ lis‰nopeuden saavuttamiseksi. HUOMIOI: t‰t‰ asetusta k‰ytett‰ess‰ https:n TƒYTYY olla valittuna palvelimen asetuksissa - jos n‰in ei ole, SAATAT LUKITA ITSESI SIVUSTOLTASI. ';
+$string['configloglifetime'] = 'T‰ss‰ m‰‰ritell‰‰n kuinka kauan haluat s‰ilytt‰‰ lokitiedostoja k‰ytt‰jien toimista. T‰t‰ asetusta vanhemmat lokitiedostot poistetaan automaattisesti. On parasta s‰ilytt‰‰ lokitiedostot mahdollisimman kauan, koska saatat tarvita niit‰. Mutta jos palvelimesi liikenne on eritt‰in vilkasta ja sill‰ esiintyy suorituskykyyn liittyvi‰ ongelmia,  kannatta ehk‰ laskea lokien s‰ilytysaikaa. ';
+$string['configlongtimenosee'] = 'Jos oppilaat eiv‰t ole kirjautuneet sis‰‰n pitk‰‰n aikaan, heid‰t poistetaan automaattisesti kursseilta. T‰m‰ asetus m‰‰rittelee tuon ajan.';
+$string['configmaxbytes'] = 'T‰m‰ asetus m‰‰rittelee palvelimelle kopioitavien tiedostojen suurimman koon koko sivustolle. T‰m‰n asetuksen yl‰raja riippuu PHP:n upload_max_filesize-asetuksesta ja Apachen LimitRequestBody-aetuksesta. T‰m‰ asetus taas m‰‰rittelee kokoluokat, jotka voidaan valita kurssi- tai moduulitasolla.';
+$string['configmaxeditingtime'] = 'T‰ss‰ m‰‰ritell‰‰n kuinka kauan k‰ytt‰j‰t voivat muokata kirjoittamiaan keskustelualueen viestej‰, sanakirjan huomautuksia, jne. Yleens‰ 30 minuutia on hyv‰ arvo asetukselle.';
+$string['configmessaging'] = 'K‰ytet‰‰nkˆ sivuston k‰ytt‰jien v‰list‰ viestint‰j‰rjestelm‰‰?';
+$string['confignoreplyaddress'] = 'Joskus s‰hkˆposteja l‰hetet‰‰n k‰ytt‰j‰n puolesta (esim. keskustelualueen viestit). T‰ss‰ m‰‰rittelem‰‰si s‰hkˆpostiosoitetta k‰ytet‰‰n \"L‰hett‰j‰\"-osoitteena niiss‰ tapauksissa, joissa halutaan etteiv‰t vastaanottajat voi vastata suoraan k‰ytt‰j‰lle (esim. kun k‰ytt‰j‰ haluaa pit‰‰ s‰hkˆpostiosoitteensa salaisena).';
+$string['confignotifyloginfailures'] = 'Jos havaitaan ep‰onnistuneita kirjautumisyrityksi‰, voidaan l‰hett‰‰ ilmoitus s‰hkˆpostitse. Kenelle ilmoitukset l‰hetet‰‰n?';
+$string['confignotifyloginthreshold'] = 'Jos l‰hetet‰‰n ilmoitukset ep‰onnistuneista kirjautumisyrityksist‰, kuinka monesta yrityksest‰ yhden k‰ytt‰j‰n tai IP:n osalta l‰hetet‰‰n ilmoitus?';
+$string['configopentogoogle'] = 'Jos t‰m‰ asetus asetetaan p‰‰lle, Googlelle sallitaan vierasoikeudet sivustolla. Lis‰ksi ihmiset, jotka saapuvat sivustolle Googlen kautta, kirjataan automaattisesti vieraiksi. T‰m‰ tarjoaa kuitenkin avoimen p‰‰syn vain kursseille, joille jo sallitaan vieraiden liittyminen.';
+$string['configpathtoclam'] = 'Polku clam AV-ohjelmaan. Todenn‰kˆisesti /usr/bin/clamscan tai /usr/bin/clamdscan. T‰m‰ polku t‰ytyy olla asetettu, ett‰ voit k‰ytt‰‰ clam AV-virustutkaa.';
+$string['configproxyhost'] = 'Jos t‰m‰n <b>palvelimen</b> tarvitsee k‰ytt‰‰ v‰lityspalvelinta (esim. palomuuria) Internet-yhteyksiin, m‰‰rit‰ v‰lityspalvelimen palvelinnimi ja portti t‰h‰n. Muuten j‰t‰ tyhj‰ksi.';
+$string['configquarantinedir'] = 'Jos haluat clam AV:n siirt‰v‰n viruksen saastuttamat tiedostot karanteenihakemistoon, kirjoita hakemiston nimi t‰h‰n. Verkkopalvelimen t‰ytyy voida kirjoittaa hakemistoon. Jos j‰t‰t t‰m‰n kohdan tyhj‰ksi, tai jos m‰‰rit‰t hakemiston, jota ei ole tai johon ei voida kirjoittaa, tiedostot tuhotaan. ƒl‰ kirjoita hakemistopolun per‰‰n viimeiseksi merkiksi vinoviivaa ¥/¥.';
+$string['configrunclamonupload'] = 'K‰ynnistet‰‰nkˆ clam AV kun tiedostoja kopioidaan palvelimelle? Sinun tarvitsee olla m‰‰ritt‰nyt oikea polku clam AV-ohjelmaan, jotta t‰m‰ toimisi. (Clam AV on ilmainen ja GPL-lisensoitu virustutka, jonka voit ladata osoitteesta http://www.clamav.net/)';
+$string['configsectioninterface'] = 'K‰yttˆliittym‰';
+$string['configsectionmail'] = 'S‰hkˆposti';
+$string['configsectionmaintenance'] = 'Yll‰pito';
+$string['configsectionmisc'] = 'Muut asetukset';
+$string['configsectionoperatingsystem'] = 'K‰yttˆj‰rjestelm‰';
+$string['configsectionpermissions'] = 'Oikeudet';
+$string['configsectionsecurity'] = 'Turvallisuus';
+$string['configsectionuser'] = 'K‰ytt‰j‰';
+$string['configsecureforms'] = 'Moodle voi k‰ytt‰‰ korkeampaa turvallisuustasoa ottaessaan vastaan tietoa verkkolomakkeista. Jos asetus asetetaan p‰‰lle selaimen HTTP_REFERER-muuttujaa verrataan lomakkeen osoitteeseen. Harvoissa tapauksissa t‰m‰ aiheuttaa ongelmia, kun k‰ytt‰j‰n palomuuri (esim. ZoneAlarm) on asetettu poistamaan HTTP_REFERER-muuttuja l‰htev‰st‰ verkkoliikenteest‰. Oireena on ¥juuttuminen¥ lomakkeeseen. Jos k‰ytt‰jill‰si on ongelmia esimerkiksi kirjautumissivun kanssa, kannattaa mahdollisesti ottaa t‰m‰ asetus pois k‰ytˆst‰, vaikkakin t‰m‰ saattaa altistaa raakaan laskentatehoon perustuville salasanahyˆkk‰yksille. Jos olet ep‰varma, j‰t‰ asetukseksi ¥Yes¥.';
+$string['configsessioncookie'] = 'T‰m‰ asetus muokkaa Moodle-istunnoissa k‰ytett‰v‰n cookien nime‰. T‰m‰ on valinnanvaraista ja hyˆdyllist‰ vain, kun halutaan v‰ltt‰‰ cookieiden sekaantuminen kun k‰ytˆss‰ enemm‰n kuin yksi Moodle-istunto samalla sivustolla.';
+$string['configsessiontimeout'] = 'Jos sivustolle kirjautuvat ihmiset eiv‰t tee mit‰‰n toimintoa pitk‰‰n aikaan (eiv‰t lataa sivuja), silloin heid‰t kirjataan ulos automaattisesti (heid‰n istuntonsa lopetetaan). T‰m‰ asetus m‰‰r‰‰ kuinka pitk‰ toimettomana olon on oltava ennen kuin k‰ytt‰j‰ kirjataan ulos.';
+$string['configshowblocksonmodpages'] = 'Jotkin toiminnat tukevat lohkoja sivuillaan. Jos t‰m‰ asetus on p‰‰ll‰ opettajat voivat lis‰t‰ sivulohkoja n‰ille sivuille, muutoin ei t‰t‰ mahdollisuutta n‰ytet‰ k‰yttˆliittym‰ss‰.';
+$string['configshowsiteparticipantslist'] = 'Kaikki n‰m‰ sivuston oppilaat ja sivuston opettajat listataan sivuston osanottajalistaan. Kenelle osallistumislista n‰ytet‰‰n?';
+$string['configsitepolicy'] = 'Jos sivustollasi on k‰yttˆsopimus, joka k‰ytt‰jien pit‰‰ lukea ja hyv‰ksy‰, m‰‰rit‰ tuon sopimuksen URL t‰h‰n, muutoin voit j‰tt‰‰ kohdan tyhj‰ksi. URL voi viitata mihin vain - yksi k‰yt‰nnˆllinen ratkaisu olisi tiedosto sivuston tiedostoissa, esim. ¥http://sivustosi.php/1/policy.html¥';
+$string['configslasharguments'] = 'Tiedostoihin (kuviin ja muihin palvelimelle kopioituihin) viitataan scriptill‰, joka k‰ytt‰‰ ¥kauttaviiva-argumentteja¥ (pudotusvalikon alempi vaihtoehto). T‰ll‰ menetelm‰ll‰ tiedostojen s‰ilytt‰minen verkkopalvelinten, v‰lityspalvelinten tms. v‰limuistissa helpottuu. Valitettavasti jotkin PHP-palvelimet eiv‰t salli t‰t‰ menetelm‰‰, joten jos palvelimelle kopioitujen tiedostojen k‰ytˆss‰ on ongelmia (esim. k‰ytt‰j‰kuvat eiv‰t n‰y), aseta asetus ensimm‰iseen arvoon.';
+$string['configsmtphosts'] = 'Anna yhden tai useamman, Moodlen s‰hkˆpostin l‰hett‰miseen k‰ytt‰m‰n, paikallisen SMTP-palvelimen koko nimi (esim. \'mail.a.com\' tai \'mail.a.com;mail.b.com\'). Jos j‰t‰t t‰m‰n tyhj‰ksi, Moodle k‰ytt‰‰ PHP:n oletustapaa l‰hett‰‰ s‰hkˆpostit. ';
+$string['configsmtpuser'] = 'Jos olet m‰‰ritellyt ylh‰‰ll‰ SMTP-palvelimen ja tuo palvelin vaatii kirjautumista, niin kirjoita k‰ytt‰j‰nimi (ylle) ja salasana (alle) t‰h‰n.';
+$string['configteacherassignteachers'] = 'Pit‰isikˆ tavallisten opettajien olla mahdollista lis‰t‰ muita opettajia kursseilleen? Jos t‰h‰n asetetaan ¥Ei¥ vain kurssit luoneet ja yll‰pit‰j‰t voivat lis‰t‰ opettajia.';
+$string['configthemelist'] = 'J‰t‰ tyhj‰ksi salliaksesi mink‰ tahansa k‰yv‰n teeman k‰yttˆ. Jos haluat lyhent‰‰ teema-valikkoa, voit m‰‰ritt‰‰ t‰h‰n pilkulla erotellun listan sallituista teemoista (‰l‰ k‰yt‰ v‰lilyˆnti‰!). Esim: standard,orangewhite.';
+$string['configtimezone'] = 'Voit m‰‰ritt‰‰ oletusaikavyˆhykkeen t‰h‰n. T‰m‰ on vain OLETUSaikavyˆhyke ajan n‰ytt‰miseksi, jokainen k‰ytt‰j‰ voi m‰‰ritt‰‰ oman aikavyˆhykkeens‰ omassa profiilissaan. Jos kirjoitat t‰h‰n \"Server time\", k‰ytt‰‰ Moodle palvelimen k‰yttˆj‰rjestelm‰n  ilmoittamaa aikaa, kun taas k‰ytt‰j‰profiilissa asetus \"Server time\" hakee aikavyˆhykkeen nyt m‰‰ritelt‰v‰st‰ asetuksesta.';
+$string['configunzip'] = 'M‰‰rit‰ t‰h‰n unzip-ohjelmasi polku (vain Unix, vapaaehtoinen). Jos polku m‰‰ritell‰‰n, unzip-ohjelmalla puretaan tarvittaessa palvelimella olevat zip-pakatut tiedostot. Jos j‰t‰t tyhj‰ksi, Moodle k‰ytt‰‰ sis‰isi‰ aliohjelmiaan.';
+$string['configvariables'] = 'Asetukset';
+$string['configwarning'] = 'Ole varovainen muuttaessasi n‰it‰ asetuksia, v‰‰r‰t arvot voivat aiheuttaa ongelmia.';
+$string['configzip'] = 'M‰‰rit‰ polku zip-ohjelmaasi (vain Unixille, valinnanvarainen). Jos polku m‰‰ritell‰‰n, zip-ohjelmaa k‰ytet‰‰n luotaessa pakattuja arkistoja palvelimelle. Jos j‰t‰t t‰m‰n tyhj‰ksi Moodle k‰ytt‰‰ sis‰isi‰ ohjelmiaan.';
+$string['confirmation'] = 'Vahvistus';
+$string['cronwarning'] = '<a href=\"cron.php\">cron.php-yll‰pitoscripti‰</a> ei ole ajettu viimeisen 24. tunnin sis‰ll‰.<br /> <a href=\"../doc/?frame=install.html&#8834;=cron\">Asennusdokumentaatiossa</a>
+selvitet‰‰n, kuinka voit automatisoida scriptin suorittamisen.';
+$string['edithelpdocs'] = 'Muokkaa aputiedostoja';
+$string['editstrings'] = 'Muokkaa merkkijonoja';
+$string['filterall'] = 'Suodata kaikki merkkijonot';
 $string['filteruploadedfiles'] = 'Suodata l‰hetettyj‰ tiedostoja';
+$string['helpadminseesall'] = 'N‰kev‰tkˆ yll‰pit‰j‰t kaikki kalenterimerkinn‰t, vaiko vain heit‰ itse‰‰n koskevat?';
+$string['helpcalendarsettings'] = 'Aseta erin‰isi‰ Moodlen kalenteriin ja p‰iv‰m‰‰riin/kellonaikoihin liittyvi‰ asetuksia';
+$string['helpforcetimezone'] = 'Voit antaa k‰ytt‰jien valita aikavyˆhykkeens‰ otse, tai voit valita aikavyˆhykkeen, joka koskee kaikkia.';
+$string['helpsitemaintenance'] = 'P‰ivityksille ja muulle tyˆlle';
+$string['helpstartofweek'] = 'Mik‰ on viikon ensimm‰inen p‰iv‰?';
+$string['helpupcominglookahead'] = 'Kuinka monen p‰iv‰n p‰‰h‰n tulevaisuuteen kalenteri etsii tapahtumia?';
+$string['helpupcomingmaxevents'] = 'Mik‰ on oletuksena suurin m‰‰r‰ tapahtumia, joka n‰ytet‰‰n k‰ytt‰jille?';
+$string['helpweekenddays'] = 'Mit‰ p‰ivi‰ pidet‰‰n \"viikonloppuna\" ja n‰ytet‰‰n eri v‰rill‰?';
+$string['importtimezones'] = 'P‰ivit‰ lista kaikista aikavyˆhykkeist‰';
+$string['importtimezonescount'] = '$a->count merkint‰‰ tuotu $a->source';
+$string['importtimezonesfailed'] = 'L‰hteit‰ ei lˆytynyt! (Huono juttu)';
+$string['incompatibleblocks'] = 'Yhteensopimattomia lohkoja';
+$string['optionalmaintenancemessage'] = 'Valinnainen yll‰pitoviesti';
+$string['pleaseregister'] = 'Ole hyv‰ ja rekisterˆi sivustosi ja t‰m‰ painike poistuu';
+$string['sitemaintenance'] = 'Sivusto on yll‰pitotilassa eik‰ se ole nyt saatavilla';
+$string['sitemaintenancemode'] = 'Yll‰pitotila';
+$string['sitemaintenanceoff'] = 'Yll‰pitotila on kytketty pois ja sivusto toimii taas normaalisti';
+$string['sitemaintenanceon'] = 'Sivustosi on parhaimmillaan yll‰pitotilassa (vain yll‰pit‰j‰t voivat kirjautua sis‰‰n tai k‰ytt‰‰ sivustoa).';
+$string['sitemaintenancewarning'] = 'Sivustosi on parhaimmillaan yll‰pitotilassa (vain yll‰pit‰j‰t voivat kirjautua sis‰‰n). Palauttaaksesi sivuston takaisin normaaliin tilaan <a href=\"maintenance.php\">kytke yll‰pitotila pois p‰‰lt‰</a>. ';
+$string['tabselectedtofront'] = 'Taulukoissa, joissa on v‰lilehti‰, pit‰isikˆ se rivi, jolla on sen hetkinen valittu merkint‰ tuoda eteen?';
+$string['therewereerrors'] = 'Tiedoissasi oli virheit‰';
+$string['timezoneforced'] = 'T‰m‰n on valinnut sivuston yll‰pit‰j‰';
+$string['timezoneisforcedto'] = 'Pakota kaikki k‰ytt‰j‰t k‰ytt‰m‰‰n';
+$string['timezonenotforced'] = 'K‰ytt‰j‰t voivat oman aikavyˆhykkeens‰';
+$string['upgradeforumread'] = 'Moodle 1.5een on lis‰tty uusi ominaisuus, jolla voidaan seurata luettuja ja lukemattomia viestej‰ keskustelupalstoilla. .<br />K‰ytt‰‰ksesi t‰t‰ ominaisuutta sinun pit‰‰ <a href=\"$a\">p‰ivitt‰‰ taulukkosi</a>.';
+$string['upgradeforumreadinfo'] = 'Moodle 1.5een on lis‰tty uusi ominaisuus, jolla voidaan seurata luettuja ja lukemattomia viestej‰ keskustelupalstoilla. K‰ytt‰‰ksesi t‰t‰ ominaisuutta sinun pit‰‰ p‰ivitt‰‰ taulukkosi kaikella seurantatiedolla, joka liittyy olemassaoleviin viesteihin. Riippuen sivustosi koosta t‰h‰n voi menn‰ kauan (tunteja) ja olla varsin vaativaa tietokannallesi, joten p‰ivitt‰minen on parasta tehd‰ hiljaisena aikana. P‰ivitys ei kuitenkaan vaikuta sivustosi toimintaan, eik‰ sill‰ ole vaikutuksia k‰ytt‰jiisi. Kun aloitat p‰ivityksen, anna sen tulla valmiiksi, ‰l‰k‰ siis sulje sel<br /><br />Do you want to start the upgrading process now?aimen ikkunaa. Jos kuitenkin pys‰yt‰t p‰ivityksen sulkemalla selainikkunan, ‰l‰ huolehdi, p‰ivityksen voi aloittaa uudelleen. <br /><br />Haluatko aloittaa p‰ivityksen nyt?';
 $string['upgradelogs'] = 'Tapahtumalokien sis‰llˆt pit‰‰ p‰ivitt‰‰ uuteen muotoon. <a href=\"$a\">Lis‰tietoja</a>';
 $string['upgradelogsinfo'] = 'Tapahtumalokien tallennuksessa on tapahtunut muutoksia. Jotta voisit tarkastella lokeja uudella tavalla, vanhat lokimerkinn‰t pit‰‰ p‰ivitt‰‰ uuteen muotoon. T‰m‰ tapahtuu automaattisesti eik‰ h‰iritse sivustosi muuta k‰yttˆ‰. Riippuen sivustosi koosta t‰h‰n saattaa kuitenkin menn‰ aikaa jopa useita tunteja. Kun aloitat p‰ivityksen, pit‰‰ se antaan menn‰ loppuun asti keskeytt‰m‰tt‰.
 <br /><br />
@@ -23,6 +130,7 @@ $string['upgradesure'] = 'Moodlen asennustiedostot ovat muuttuneet, j‰rjestelm‰ 
  <p><b>$a</b></p>
 <p>Kun aloitat p‰ivitt‰misen et voi en‰‰ palata takaisin aiempaan versioon.</p>
 <p>Oletko varma ett‰ haluat p‰ivitt‰‰ palvelimen?</p>';
+$string['upgradingdata'] = 'P‰ivitet‰‰n tietoja';
 $string['upgradinglogs'] = 'P‰ivitet‰‰n tapahtumalokeja';
 
 ?>

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005030501)
+      // glossary.php - created with Moodle 1.5.2 + (2005060222)
 
 
 $string['addcomment'] = 'Lisää kommentti';
@@ -10,6 +10,7 @@ $string['allcategories'] = 'Kaikki kategoriat';
 $string['allentries'] = 'Kaikki';
 $string['allowcomments'] = 'Salli tietueiden kommentit ';
 $string['allowduplicatedentries'] = 'Päällekkäiset tietueet sallitaan';
+$string['allowprintview'] = 'Salli tulostusnäkymä';
 $string['allowratings'] = 'Salli tietueiden arviointi';
 $string['answer'] = 'Vastaus';
 $string['approve'] = 'Vahvista';

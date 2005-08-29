@@ -1,10 +1,10 @@
 <?PHP // $Id$ 
-      // message.php - created with Moodle 1.5 ALPHA (2005042400)
+      // message.php - created with Moodle 1.5.2 + (2005060222)
 
 
 $string['addcontact'] = 'Lisää kontakti';
 $string['addsomecontacts'] = 'Käytä <a href=\"$a\">hakutoimintoa</a> lähettääksesi viestin jollekin, tai lisätäksesi heidät tälle sivulle. ';
-$string['addsomecontactsincoming'] = 'Nämä viestit ovat henkilöiltä jotka eivät ole kontakteissasi. Lisätäksesi heidät kontakteihin, klikkaa \"Lisää kontakti\" ikonia nimen perässä.';
+$string['addsomecontactsincoming'] = 'Nämä viestit ovat henkilöiltä jotka eivät ole kontakteissasi. Lisätäksesi heidät kontakteihin, napsauta \"Lisää kontakti\" ikonia nimen perässä.';
 $string['ago'] = '$a sitten';
 $string['allmine'] = 'Kaikki viestit minulta tai minulle';
 $string['allstudents'] = 'Kaikki viestit kurssin oppilaiden kesken';
@@ -16,6 +16,7 @@ $string['blockedmessages'] = '$a viesti(ä) estetyiltä käyttäjiltä/kayttäjille';
 $string['blocknoncontacts'] = 'Estä kaikki vietit jos lähettäjä ei ole listallani.';
 $string['contactlistempty'] = 'Kontaktilistasi on tyhjä.';
 $string['contacts'] = 'Kontaktit';
+$string['context'] = 'asiayhteys';
 $string['deletemessagesdays'] = 'Tätä vanhemmat viestit poistetaan automaattisesti.';
 $string['discussion'] = 'Keskustelu';
 $string['emailmessages'] = 'Lähetä viesit sähköpostilla jos olen poissa sivultolta';
@@ -55,6 +56,7 @@ $string['sendmessageto'] = 'Lähetä viesti $a:lle';
 $string['settings'] = 'Asetukset';
 $string['settingssaved'] = 'Asetuksesi on tallennettu';
 $string['showmessagewindow'] = 'Näytä viesti-ikkuna automaatisesti kun saan uuden viestin.';
+$string['timenosee'] = 'Kuinka monta minuttia sitten olin viimeksi kirjautuneena';
 $string['timesent'] = 'Lähetysaika';
 $string['unblockcontact'] = 'Salli kontakti';
 $string['unreadmessages'] = '$a uutta viestiä';
