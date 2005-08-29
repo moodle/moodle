@@ -4,7 +4,7 @@
     require('../../config.php');
     require('lib.php');
 
-    if (isloggedin()) {      // Nothing to do
+    if (isloggedin() && $USER->username != 'guest') {      // Nothing to do
         redirect($CFG->wwwroot.'/index.php');
     }
 
