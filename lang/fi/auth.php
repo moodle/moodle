@@ -1,7 +1,28 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005032600)
+      // auth.php - created with Moodle 1.5.2 + (2005060222)
 
 
+$string['alternatelogin'] = 'Jos kirjoitat t‰h‰n URL:n, sit‰ k‰ytet‰‰n kirjautumissivuna t‰lle sivustolle. Sivun pit‰isi sis‰lt‰‰ lomake, jonak ominaisuudet on asetettu <strong>\'$a\'</strong> ja joko antaa paluukent‰t <strong>k‰ytt‰j‰nimi</strong> and <strong>salasana</strong>.<br />
+
+Ole varovainen, ettet syˆt‰ virheellist‰ URL:‰‰, koska siten voit lukita itsesi ulos sivustoltasi.<br />
+
+J‰t‰ t‰m‰ kohta tyhj‰ksi k‰ytt‰‰ksesi oletuskirjautumissivua.';
+$string['alternateloginurl'] = 'Vaihtoehtoinen kirjautumis-URL';
+$string['auth_cas_baseuri'] = 'Palvelimen URI (tyhj‰, jos ei baseURIa)<br /> Esimerkiksi, jos CAS-palvelin on ¥host.domaine.fr/CAS/¥, niin t‰llˆin<br />
+cas_baseuri = CAS/';
+$string['auth_cas_create_user'] = 'Laita t‰m‰ asetus p‰‰lle, jos haluat lis‰t‰ CAsvarmistetut k‰ytt‰j‰t Moodlen tietokantaan. Jos n‰in ei tehd‰, vain jo ennest‰‰n Moodlen tietokannassa olevat k‰ytt‰j‰t voivat kirjautua sis‰‰n.';
+$string['auth_cas_enabled'] = 'Laita t‰m‰ asetus p‰‰lle, jos haluat k‰ytt‰‰ CAS-varmennusta';
+$string['auth_cas_hostname'] = 'CAS-palvelimen palvelinnimi 
+<br />Esim. host.domain.fr';
+$string['auth_cas_invalidcaslogin'] = 'Kirjautumisesi ei onnistunut - sinua ei voitu varmentaa';
+$string['auth_cas_language'] = 'Valitse kieli';
+$string['auth_cas_logincas'] = 'Suojatun yhteyden muodostus';
+$string['auth_cas_port'] = 'CAS-palvelimen k‰ytt‰m‰ portti';
+$string['auth_cas_server_settings'] = 'CAS-palvelimen asetukset';
+$string['auth_cas_text'] = 'Suojattu yhteys';
+$string['auth_cas_version'] = 'CAS:in versio';
+$string['auth_casdescription'] = 'T‰ss‰ menetelm‰ss‰ k‰ytet‰‰n CAS-palvelinta (Central Authentication Service) k‰ytt‰jien varmennukseen k‰ytt‰m‰ll‰ yhden kirjautumisen ymp‰ristˆ‰, Single Sign On environment (SSO). Voit myˆs k‰ytt‰‰ yksinkertaista LDAP-varmistusta. Jos annettu k‰ytt‰j‰nimi ja salasana ovat kelvollisia CAS:n mukaan Moodle luo uuden k‰ytt‰j‰tiedon tietokantaan ottaen k‰ytt‰j‰tiedot LDAP:st‰, jos se  on tarpeen. Seuraavilla kirjautumiskerroilla vain k‰ytt‰j‰nimi ja salasana tarkistetaan.';
+$string['auth_castitle'] = 'K‰yt‰ CAS-palvelinta (SSO)';
 $string['auth_common_settings'] = 'Yleiset asetukset';
 $string['auth_data_mapping'] = 'Tietojen yhdist‰minen';
 $string['auth_dbdescription'] = 'T‰m‰ moduli tarkistaa ulkoisen tietokannan taulusta k‰ytt‰j‰tunnuksen ja salasanan. Jos k‰ytt‰j‰tunnus on uusi, myˆs muita tietoja voidaan kopioda Moodleen.';
@@ -16,8 +37,6 @@ $string['auth_dbtable'] = 'Tietokannan taulun nimi';
 $string['auth_dbtitle'] = 'K‰yt‰ ulkoista tietokantaa';
 $string['auth_dbtype'] = 'Tietokannan tyyppi (Katso <a href=\"../lib/adodb/readme.htm#drivers\">ADOdb dokumentoinnista</a> yksityiskohdat)';
 $string['auth_dbuser'] = 'K‰ytt‰j‰tunnus tietokantaan lukuoikeuksin';
-$string['auth_editlock'] = 'Lukitse arvo';
-$string['auth_editlock_expl'] = '<p><b>Lukitse arvo:</b> Est‰‰ tiedon muokaamisen Moodlen sis‰lt‰. </p>';
 $string['auth_emaildescription'] = 'S‰hkˆpostivarmistus on oletusarvoinen tunnistusmetodi k‰ytt‰j‰lle.
 Kun k‰ytt‰j‰ luo itselleen tunnuksen, l‰hetet‰‰n varmistusviesti
 k‰ytt‰j‰lle. Viesti sis‰lt‰‰ linkin, mink‰ avulla k‰ytt‰j‰ voi aktivoida tunnuksensa.';
@@ -29,6 +48,11 @@ $string['auth_fchost'] = 'FisrtClass palvelimen osoite. K‰yt‰ IP numeroa tai DNS
 $string['auth_fcpasswd'] = 'Salasana yll‰ olevalle tilille';
 $string['auth_fctitle'] = 'K‰yt‰ FirstClass palvelinta';
 $string['auth_fcuserid'] = 'K‰ytt‰j‰tunnus FirstClass tilille etuoikeutetulla \"alayll‰pit‰j‰\" asetuksella.';
+$string['auth_fieldlock'] = 'Lukitse arvo';
+$string['auth_fieldlock_expl'] = '<p><b>Lukitse arvo:</b>P‰‰ll‰ ollessaan t‰m‰ asetus est‰‰ Moodlen k‰ytt‰ji‰ ja yll‰pit‰ji‰ muokkaamasta kentt‰‰ suoraan. K‰yt‰ t‰ta asetusta, jos hallinnoit t‰t‰ tietoa ulkoisesta j‰rjestelm‰st‰.</p>';
+$string['auth_fieldlocks'] = 'Lukitse k‰ytt‰jien kent‰t';
+$string['auth_fieldlocks_help'] = '<p>Voit lukita k‰ytt‰jien tietokent‰t. T‰m‰ on hyˆdyllist‰ sivustoilla, joilla yll‰pit‰j‰t hallinnoivat k‰ytt‰j‰tietoja k‰sin muokkaamalla k‰ytt‰j‰rekistereit‰ tai kopioimalla palvelimelle k‰ytt‰en ¥Upload Users¥-toimintoa. Jos lukitset kentti‰, joita Moodle tarvitsee, varmista ett‰ annat kenttien tiedot luodessasi k‰ytt‰ji‰ tai muuten k‰ytt‰j‰tilit ovat k‰yttˆkelvottomia.</p>
+<p>Harkitse ¥Lukitsematon, jos tyhj‰¥-asetuksen k‰yttˆ‰ v‰ltt‰‰ksesi t‰m‰n ongelman.</p>';
 $string['auth_imapdescription'] = 'T‰m‰ tapa k‰ytt‰‰ IMAP-palvelinta k‰ytt‰j‰tunnuksen ja salasanan tarkistamiseen.';
 $string['auth_imaphost'] = 'IMAP-palvelimen osoite. K‰yt‰ IP-numeroa, ‰l‰ domainnime‰.';
 $string['auth_imapport'] = 'IMAP-palvelimen portti, yleens‰ 143 tai 993.';
@@ -51,6 +75,7 @@ $string['auth_ldap_memberattribute'] = 'Valinnainen: ylim‰‰rit‰ k‰ytt‰j‰n ryhm‰j
 $string['auth_ldap_objectclass'] = 'Valinnainen: ylim‰‰rit‰ objectClass jota k‰ytet‰‰ k‰ytt‰jien hakuun.';
 $string['auth_ldap_opt_deref'] = 'm‰‰ritt‰ kuinka aliakset k‰sitell‰‰n haun aikana. Valitse yksi seuraavista vaihtoehdoista: \"Ei\" (LDAP_DEREF_NEVER) tai \"Kyll‰\" (LDAP_DEREF_ALWAYS)';
 $string['auth_ldap_passwdexpire_settings'] = 'LDAP salasanojen vanheneminen';
+$string['auth_ldap_preventpassindb'] = 'Valitse kyll‰, jos haluat est‰‰ salasanojen tallentamisen Moodlen tietokantaa.';
 $string['auth_ldap_search_sub'] = 'Aseta arvo <> 0, jos haluat hakea k‰ytt‰ji‰ myˆs alikonteksteista.';
 $string['auth_ldap_server_settings'] = 'LDAP palvelimen asetukset';
 $string['auth_ldap_update_userinfo'] = 'P‰ivit‰ k‰ytt‰j‰tiedot LDAP:ista Moodleen (etunimi, sukunimi, osoite..). Katso <a href=\"/auth/ldap/attr_mappings.php\">/auth/ldap/attr_mappings.php</a> tarkempia m‰‰rittelytietoja.';
@@ -84,6 +109,19 @@ $string['auth_pop3mailbox'] = 'Postilaatikon nimi jonka kanssa yritet‰‰n yhteytt
 $string['auth_pop3port'] = 'POP3-palvelimen portti (yleens‰ 110 )';
 $string['auth_pop3title'] = 'K‰yt‰ POP3-palvelinta';
 $string['auth_pop3type'] = 'Palvelimen tyyppi. Jos k‰yt‰tte salattua yhteytt‰, valitse pop3cert.';
+$string['auth_shib_convert_data'] = 'Tiedon muokaamisen API';
+$string['auth_shib_convert_data_description'] = 'Voit k‰ytt‰‰ t‰t‰ APIa muokataksesi edelleen tietoja, joita Shibboleth tarjoaa. Lue  <a href=\"../auth/shibboleth/README.txt\" target=\"_blank\">README (englanniksi)</a> saadakseis lis‰‰ tietoa.';
+$string['auth_shib_convert_data_warning'] = 'Tiedosto ei ole olemassa tai se ei ole verkkopalvelinprosessin luettavissa!';
+$string['auth_shib_instructions'] = 'K‰yt‰ <a href=\"$a\">Shibboleth-kirjautumista</a> k‰ytt‰‰ksesi yhteyden muodostamiseen Shibbolethia, jos se on tarjolla. <br />
+Muuten voit k‰ytt‰‰ t‰t‰ tavallista kirjautumislomaketta.';
+$string['auth_shib_instructions_help'] = 'T‰h‰n voit kirjoittaa lis‰ohjeita k‰ytt‰jillesi selitt‰‰ksesi Shibboleth-varmennusta. N‰m‰ ohjeet n‰ytet‰‰n kirjautumissivun ohjeosiossa. Siin‰ pit‰isi olla linkki, joka ohjaa k‰ytt‰j‰t \"<b>$a</b>\", niin ett‰ Shibbolethin k‰ytt‰j‰t voivat kirjautua sis‰‰n Moodleen. Jos j‰t‰t t‰m‰n tyhj‰ksi, n‰ytet‰‰ k‰ytt‰jille tavallset ohjeet (eiv‰t k‰sittele erityisesti Shibbolethia)';
+$string['auth_shib_only'] = 'Vain Shibboleth';
+$string['auth_shib_only_description'] = 'K‰yt‰ t‰t‰ valintaa, jos haluat pakottaa Shibboleth-varmennuksen';
+$string['auth_shib_username_description'] = 'Sen verkkopalvelimen Shibboleth-ymp‰ristˆn muuttujan nimi, jota k‰ytet‰‰n Moodlen k‰ytt‰j‰nimen‰.';
+$string['auth_shibboleth_login'] = 'Shibboleth-kirjautuminen';
+$string['auth_shibboleth_manual_login'] = 'Sis‰‰nkirjaantuminen k‰sin';
+$string['auth_shibbolethdescription'] = 'T‰t‰ menetelm‰‰ k‰ytt‰ess‰ k‰ytt‰j‰t luodaan ja varmennetaan k‰ytt‰en href=\"http://shibboleth.internet2.edu/\" target=\"_blank\">Shibboleth-k‰ytt‰j‰nvarmennusta</a>. Lue <a href=\"../auth/shibboleth/README.txt\" target=\"_blank\">README (englanniksi)</a>, jossa kerrotaan kuinka Moodle asetaan k‰ytt‰m‰‰n Shibbolethin-varmennusta.';
+$string['auth_shibbolethtitle'] = 'Shibboleth';
 $string['auth_updatelocal'] = 'P‰ivit‰ sis‰inen arvo';
 $string['auth_updatelocal_expl'] = '<p><b>P‰ivit‰ sis‰inen arvo:</b> Jos ei onnistu, kentt‰ p‰ivittyy joka kerta k‰ytt‰j‰n kirjautuessa tai k‰ytt‰j‰synkronoinnin yhteydess‰. Kent‰t jotka on asetettu p‰ivittym‰‰n paikallisesti tulisi lukita.</p> ';
 $string['auth_updateremote'] = 'P‰ivit‰ ulkoinen arvo';
@@ -98,16 +136,27 @@ $string['authinstructions'] = 'T‰h‰n voi kirjoittaa ohjeet opiskelijoille, mit‰ 
 $string['changepassword'] = 'Salasananvaihto-URL';
 $string['changepasswordhelp'] = 'T‰ss‰ osoitteessa k‰ytt‰j‰t voivat vaihtaa unohtamansa salasanan. K‰ytt‰jille t‰m‰ n‰kyy painikkeena kirjautumissivulla ja heid‰n k‰ytt‰j‰tietosivullaan.';
 $string['chooseauthmethod'] = 'Valitse k‰ytt‰j‰ntunnistusmetodi: ';
+$string['createchangepassword'] = 'Luo, jos ei olemassa - pakota muutos';
+$string['createpassword'] = 'Luo, jos ei olemassa';
 $string['forcechangepassword'] = 'Pakoita salasanan vaihto';
 $string['forcechangepassword_help'] = 'Pakota k‰ytt‰j‰t vaihtamaan salasanaa heid‰n seuraavalla Moodleen kirjautumiskerrallaan.';
 $string['forcechangepasswordfirst_help'] = 'Pakota k‰ytt‰j‰t vaihtamaan salasanaa heid‰n ensimm‰isell‰ Moodleen kirjautumiskerrallaan.';
 $string['guestloginbutton'] = 'Kirjaudu vieraana-painike';
+$string['infilefield'] = 'Kentt‰‰n tarvitaan tiedostossa';
 $string['instructions'] = 'Ohjeet';
+$string['locked'] = 'Lukittu';
 $string['md5'] = 'MD5-salaus';
+$string['passwordhandling'] = 'Salasanakent‰n k‰sittely';
 $string['plaintext'] = 'Selv‰kielinen teksti';
 $string['showguestlogin'] = 'Voit n‰ytt‰‰ tai piilottaa Kirjaudu vieraana-painikkeen kirjautumissivulla.';
 $string['stdchangepassword'] = 'K‰yt‰ norminmukaista Vaihda salasana Sivua';
 $string['stdchangepassword_expl'] = 'Jos ulkoinen oikeuksien tarkistaminen sallii salasanojen vaihdot Moodlen kautta, vaihda t‰m‰ muotoon kyll‰. T‰m‰ asetus syrj‰ytt‰‰ \"Vaihda salasana URL\".';
 $string['stdchangepassword_explldap'] = 'HUOMAUTUS: On suositeltavaa, ett‰ k‰ytet‰‰n ennemmin LDAP kuin SSL salakirjoitettua tunnelia (ldaps://)jos LDAP palvelin on et‰k‰ytˆss‰.';
+$string['unlocked'] = 'Lukitsematon';
+$string['unlockedifempty'] = 'Lukitsematon, jos tyhj‰';
+$string['update_never'] = 'Ei koskaan';
+$string['update_oncreate'] = 'Luotaessa';
+$string['update_onlogin'] = 'Jokaisella kirjautumisella';
+$string['update_onupdate'] = 'P‰ivitett‰ess‰';
 
 ?>

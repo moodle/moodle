@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // install.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005032600)
+      // install.php - created with Moodle 1.5.2 + (2005060222)
 
 
 $string['admindirerror'] = 'Yll‰pitohakemisto on m‰‰ritetty v‰‰rin';
@@ -14,6 +14,14 @@ $string['configfilenotwritten'] = 'Asennus ei pystynyt luomaan automaattisesti c
 $string['configfilewritten'] = 'config.php on luotu.';
 $string['configurationcomplete'] = 'Asetukset suoritettu';
 $string['database'] = 'Tietokanta';
+$string['databasecreationsettings'] = 'Nyt sinun t‰ytyy asettaa assetukset tietokannalle, johon suurin osa Moodlen tiedoista tallennetaan. Moodle4Windows-asennusohjelma luo tietokannan automaattisesti k‰ytt‰en asetuksia, jotka on kerrottu alla.<br />
+ <br /> <br />
+<b>Type:</b> asennusohjelma asettaa asetusarvoksi \"mysql\"<br />
+<b>Host:</b> asennusohjelma asettaa asetusarvoksi \"localhost\"<br />
+<b>Name:</b> tietokannan nimi, esim. moodle<br />
+<b>User:</b>asennusohjelma asettaa oletusk‰ytt‰j‰ksi \"root\"-k‰ytt‰j‰n <br />
+<b>Password:</b> salasanasi tietokantaan<br />
+<b>Tables Prefix:</b> valinnanvarainen etuliite kaikille taulukoille tietokannassasi';
 $string['databasesettings'] = 'Nyt sinun t‰ytyy valita tietokanta miss‰ suurin osa Moodlen tiedoista s‰ilytet‰‰n. T‰m‰n tietokannan t‰ytyy jo valmiiksi olla luotu, kuten myˆs k‰ytt‰j‰nimen ja salasanan, joilla siihen p‰‰st‰‰n. .<br />
 <br /> <br />
 <b>Tyyppi:</b> mysql or postgres7<br />

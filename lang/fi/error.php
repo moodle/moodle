@@ -1,7 +1,8 @@
 <?PHP // $Id$ 
-      // error.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112900)
+      // error.php - created with Moodle 1.5.2 + (2005060222)
 
 
+$string['adminprimarynoedit'] = 'Muut eiv‰t voi muokata p‰‰asiallista yll‰pit‰j‰‰';
 $string['confirmsesskeybad'] = 'Valitettavasti istuntoavaintasi ei voitu varmistaa toteuttaaksesi t‰m‰n toiminnon. T‰m‰ turvaominaisuus ehk‰isee vahingossa tapahtuvaa tai tahallista ilkivaltaista t‰rkeiden toimintojen suoritusta nimell‰si. Varmista, ett‰ todella haluat suorittaa t‰m‰n toiminnon.';
 $string['coursegroupunknown'] = 'Ryhm‰‰ $a vastaavaa kurssia  ei ole m‰‰ritetty.';
 $string['erroronline'] = 'Virhe rivill‰ $a';
@@ -13,7 +14,10 @@ $string['invalidfieldname'] = '\"$a\" ei ole kelvollinen kent‰n nimi';
 $string['missingfield'] = 'Kentt‰ \"$a\" puuttuu';
 $string['modulerequirementsnotmet'] = 'Moduulia \"$a->modulename\" ($a->moduleversion) ei voitu asentaa. Se vaatii uudemman version Moodlesta (K‰yt‰t versiota $a->currentmoodle. Tarvitset version $a->requiremoodle).';
 $string['notavailable'] = 'Ominaisuus ei ole t‰ll‰ hetkell‰ k‰ytett‰viss‰.';
+$string['onlyeditown'] = 'Voit muokata vain omia tietojasi.';
+$string['processingstops'] = 'K‰sittely loppuu t‰h‰n. J‰ljelle j‰‰neet merkinn‰t j‰tet‰‰n huomiotta.';
 $string['restricteduser'] = 'K‰ytt‰j‰tili‰si \"$a\" on rajoitettu toiminnon osalta.';
+$string['sessionerroruser'] = 'Istuntosi on kirjautunut ulos aikarajan takia. Kirjaudu uudestaan sis‰‰n.';
 $string['sessionipnomatch'] = 'Valitettavasti IP numerosi n‰ytt‰‰ muuttuneen siit‰, kun aluksi kirjauduit sis‰‰n. T‰m‰ turvatoiminto est‰‰ hakkereita varastamasta identiteetti‰si sill‰ v‰lin kun olet rekisterˆityneen‰ t‰ll‰ sivulla. Normaalien k‰ytt‰jien ei pit‰isi n‰hd‰ t‰t‰ viesti‰- pyyd‰ sivuston hallinnolta apua.';
 $string['unknowncourse'] = 'Tuntematon kurssi nimelt‰‰n \"$a\"';
 $string['usernotaddederror'] = 'K‰ytt‰j‰‰ \"$a\" ei lis‰tty - tuntematon virhe';

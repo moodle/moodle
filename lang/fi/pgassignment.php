@@ -89,7 +89,7 @@ $string['notavailable'] = "T‰t‰ teht‰v‰‰ valmistellaan, se ei ole viel‰ saatavil
 $string['notenoughmarked'] = "Valittuja tehv‰vi‰ ei ole riitt‰v‰sti jotta  jaetut tyˆt pit‰isiv‰t sis‰ll‰‰n v‰hint‰‰n yhden huonon ja yhden hyv‰n teht‰v‰n.";
 $string['noteonassessmentelements'] = "huomaa ett‰ vertaisarvioisun tehv‰n arvioiti on jaettu useisiin 'Arviointi elementteihin'.<br />
 	T‰m‰ tekee arvioinnista helmpompaa ja yhdenmukaisempaa. Opettaja sinun pit‰‰ lis‰t‰ n‰m‰ 'Arviointi Elementit' ennen teht‰v‰n antamista opiskejoille.
-	T‰m‰ tehd‰‰n klikaamalla lis‰tty‰ vertaiarvioitua teht‰v‰‰‰ ja valitsemalla ensimm‰inen vaihtoehto &quot;Vartaisarvioidun teht‰v‰n hallinta&quot valikosta.";
+	T‰m‰ tehd‰‰n napsauttamalla lis‰tty‰ vertaiarvioitua teht‰v‰‰‰ ja valitsemalla ensimm‰inen vaihtoehto &quot;Vartaisarvioidun teht‰v‰n hallinta&quot valikosta.";
 $string['notgraded'] = "Ei arviointia, vain muiden opiskelijoiden palaute";
 $string['notyetassessedby'] = "\$a ei ole viel‰ katsonut";
 $string['notyetgraded'] = "Arvioimatta";

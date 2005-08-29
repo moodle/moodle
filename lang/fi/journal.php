@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // journal.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005030501)
+      // journal.php - created with Moodle 1.5.2 + (2005060222)
 
 
 $string['alwaysopen'] = 'Aina avoinna';
@@ -17,13 +17,13 @@ $a->url';
 $string['journalmailhtml'] = '$a->teacher on antanut sinulle palautetta muistiosta \'<i>$a->journal</i>\'<br /><br />
 
 Voit nähdä sen lisättynä
-
 <a href=\"$a->url\">muistioosi</a>.';
 $string['journalname'] = 'Muistion nimi';
 $string['journalquestion'] = 'Muistion kysymys';
 $string['journalrating1'] = 'Välttävä';
 $string['journalrating2'] = 'Tyydyttävä';
 $string['journalrating3'] = 'Kiitettävä';
+$string['mailsubject'] = 'palautetta muistiosta';
 $string['modulename'] = 'Muistio';
 $string['modulenameplural'] = 'Muistiot';
 $string['newjournalentries'] = 'Uudet muistiot';

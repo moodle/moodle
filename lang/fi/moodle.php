@@ -1,8 +1,9 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 ALPHA (2005042400)
+      // moodle.php - created with Moodle 1.5.2 + (2005060222)
 
 
 $string['action'] = 'Tapahtuma';
+$string['actions'] = 'Tapahtumat';
 $string['active'] = 'Aktiivinen';
 $string['activities'] = 'Aktiviteetit';
 $string['activity'] = 'Aktiviteetti';
@@ -40,7 +41,7 @@ $string['adminhelpassignteachers'] = 'Valitse kurssi ja käytä ikonia opettajien 
 $string['adminhelpauthentication'] = 'Voit käyttää Moodlen omia käyttäjätilejä tai ulkoista tietokantaa';
 $string['adminhelpbackup'] = 'Määritä, kuinka varmuuskopiointi toimii';
 $string['adminhelpconfiguration'] = 'Määritä sivuston ulkoasu ja toiminnot';
-$string['adminhelpconfigvariables'] = 'Määritä sivuston yleiseen toimintaan vaikuttavat muuttujat';
+$string['adminhelpconfigvariables'] = 'Määritä sivuston yleiseen toimintaan vaikuttavat asetukset';
 $string['adminhelpcourses'] = 'Määritä kategoriat ja kurssit sekä niille käyttäjät';
 $string['adminhelpeditorsettings'] = 'Määrittele HTML editorin perusasetukset';
 $string['adminhelpedituser'] = 'Selaa käyttäjälistaa ja muokkaa tunnuksia';
@@ -100,10 +101,11 @@ $string['autosubscribeyes'] = 'Kyllä: tilaa keskustelualue osallistuessani kesku
 $string['availability'] = 'Saatavuus';
 $string['availablecourses'] = 'Kurssit';
 $string['backup'] = 'Varmuuskopiointi';
+$string['backupcancelled'] = 'Varmuuskopiointi peruutettu';
 $string['backupcoursefileshelp'] = 'Jos asetus on päällä, tulevat kurssien tiedostot mukaan automaattisiin varmuuskopiohin.';
 $string['backupdate'] = 'Varmuuskopion päivämäärä';
 $string['backupdetails'] = 'Varmuuskopion yksityiskohdat';
-$string['backupfailed'] = 'Joitain kursseitasi ei tallennettu!';
+$string['backupfailed'] = 'Joitain kursseistasi ei tallennettu!';
 $string['backupfilename'] = 'varmuuskopio';
 $string['backupfinished'] = 'Varmuuskopio tehty onnistuneesti';
 $string['backupincludemoduleshelp'] = 'Valitse, halutko sisällyttää kurssimodulit, käyttäjätietojen kanssa tai ilman, automaattiseen varmuuskopiointiin';
@@ -111,6 +113,7 @@ $string['backupkeephelp'] = 'Montako varmuuskopiota haluat säilyttää? Vanhimmat 
 $string['backuplogdetailed'] = 'Tarkka suoritusloki';
 $string['backuploglaststatus'] = 'Viimeisin suoritusloki';
 $string['backuplogshelp'] = 'Jos asetus on päällä, kurssin tapahtumalokit tulevat mukaan varmuuskopioihin.';
+$string['backupmetacoursehelp'] = 'Jos asetus on päällä, metakurssin tiedot (perityt kurssi-ilmoittautumiset) tulevat mukaan varmuuskopioihin';
 $string['backupnameformat'] = '%%Y%%m%%d-%%H%%M';
 $string['backupnoneusersinfo'] = 'Huomaa: Et ole valinnut käyttäjiä varmuuskopioitavaksi, täten kaikki modulivarmuuskopiot on muutettu \"Ilman käyttäjien tiedostoja\" muotoon. Huomaa, että oppimistehtävä ja työryhmä modulit eivät ole yhteensopivia tämän tyypisen varmuuskopioinnin kanssa ja kyseisiä moduleita ei varmuuskopioida.';
 $string['backuporiginalname'] = 'Varmuuskopion nimi';
@@ -168,7 +171,7 @@ $string['clammovedfilebasic'] = 'Tiedosto on siirretty karanteenihakemistoon.';
 $string['clamquarantinedirfailed'] = 'Tiedostoa ei voitu siirtää karanteenihakemistoon $a. Ongelma pitää korjata koska tässä tapauksessa kaikki saatuneet tiedostot poistetaan.';
 $string['clamunknownerror'] = 'Tuntematon virhe Clam AV-ohjelmiston käytössä.';
 $string['cleaningtempdata'] = 'Puhdistetaan väliaikaiset tiedot';
-$string['clicktochange'] = 'Klikkaa muokataksesi';
+$string['clicktochange'] = 'Napsauta muokataksesi';
 $string['closewindow'] = 'Sulje tämä ikkuna';
 $string['comparelanguage'] = 'Vertaa ja muokkaa käännöstä';
 $string['complete'] = 'Suoritettu loppuun';
@@ -178,7 +181,7 @@ $string['confirm'] = 'Vahvista';
 $string['confirmed'] = 'Rekisteröitymisesi on vahvistettu';
 $string['confirmednot'] = 'Rekisteröitymisesi ei ole vielä vahvistettu';
 $string['continue'] = 'Jatka';
-$string['continuetocourse'] = 'Klikkaa tästä päästäksesi kurssille';
+$string['continuetocourse'] = 'Napsauta tästä päästäksesi kurssille';
 $string['convertingwikitomarkdown'] = 'Muunnetaan Wiki Markdown-muotoon';
 $string['cookiesenabled'] = 'Selaimessasi pitää olla evästeet (cookies) päällä.';
 $string['cookiesnotenabled'] = 'Selaimessasi ei ole evästeiden (cookies) tuki päällä.';
@@ -294,6 +297,7 @@ $string['doyouagree'] = 'Oletko lukenut käyttöoikeuslisenssin ja ymmärtänyt sen?
 $string['duplicate'] = 'Monista';
 $string['duplicatinga'] = 'Monistetaan: $a';
 $string['duplicatingain'] = 'Monistetaan: $a->what  (  $a->in )';
+$string['edhelpaspellpath'] = 'Jotta voisit käyttää oikeinkirjoituksen tarkistusta editorissa, sinulla TÄYTYY olla <strong>aspell 0.50</strong> tai sitä uudempi versio asennettuna palvelimellasi ja sinun täytyy määrittää oikea polku aspell-ohjelmalle. Linux/Unix-järjestelmissä tämä polku on tavallisesti strong>/usr/bin/aspell</strong>, mutta se saattaa olla jokin muukin.';
 $string['edhelpbgcolor'] = 'Määritä muokkausalueen taustan väri.<br /> Sallittuja arvoja ovat esim #ffffff tai white';
 $string['edhelpcleanword'] = 'Suodata Wordin tekemät muotoilut liitettäessä tekstiä.';
 $string['edhelpenablespelling'] = 'Oikoluvun käyttö editorissa. Jos asetus on päällä, pitää <strong>aspell</strong> ohjelmiston olla asennettuna palvelimelle.';
@@ -333,7 +337,7 @@ Vahvistaaksesi käyttäjätunnuksen itsellesi mene selaimellasi osoitteeseen
 
   $a->link
 
-Useimmissa postiohjelmissa sinun tarvitsee vain klikata ylläolevaan linkkiä.
+Useimmissa postiohjelmissa sinun tarvitsee vain napsauttaa ylläolevaan linkkiä.
 Jos tämä ei toimi, kopioi ja liitä osoite selaimen osoitekenttään.
 
 Terveisin \'$a->sitename\' pääkäyttäjä,
@@ -363,7 +367,7 @@ $string['emailpasswordconfirmation'] = 'Hei $a->firstname,
 
 Joku (luultavasti sinä) on pyytänyt uutta salasanaa tunnukselle sivustolla \'$a->sitename\'.
 
-Vahvistaaksesi uuden salasanan klikkaa alla olevaa linkkiä:
+Vahvistaaksesi uuden salasanan napsauta alla olevaa linkkiä:
 
 $a->link
 
@@ -394,7 +398,7 @@ $string['enrolmentnointernal'] = 'Rekisteröityminen ei ole tällä hetkellä sallit
 $string['enrolmentnotyet'] = 'Pahus, et voi päästä kursille ennen <br /> $a';
 $string['enrolments'] = 'Rekisteröityminen';
 $string['enrolperiod'] = 'Rekisteröitymisjakso';
-$string['entercourse'] = 'Klikkaa päästäksesi kurssille';
+$string['entercourse'] = 'Napsauta päästäksesi kurssille';
 $string['enteremailaddress'] = 'Anna sähköpostiosoitteesi, jotta uusi salasana voidaan lähettää sinulle.';
 $string['entries'] = 'Merkinnät';
 $string['error'] = 'Virhe';
@@ -432,11 +436,13 @@ $string['forceno'] = 'Älä pakota';
 $string['forcepasswordchange'] = 'Pakota salasanan vaihto';
 $string['forcepasswordchangehelp'] = 'Pakota salasanan vaihto seuraavan kirjautumisen yhteydessä';
 $string['forcetheme'] = 'Pakota teema';
+$string['forgotaccount'] = 'Unohditko salasanasi?';
 $string['forgotten'] = 'Unohditko käyttäjänimesi tai salasanasi?';
 $string['format'] = 'Muoto';
 $string['formathtml'] = 'HTML-muoto';
 $string['formatmarkdown'] = 'Markdown-formaatti';
 $string['formatplain'] = 'Pelkkä teksti-muoto';
+$string['formatscorm'] = 'SCORM-formaatti';
 $string['formatsocial'] = 'Keskustelu';
 $string['formattext'] = 'Automaattimuotoilu';
 $string['formattexttype'] = 'Muotoilu';
@@ -506,6 +512,11 @@ $string['guestsnotallowed'] = '\'$a\' ei salli vieraiden liittyä.';
 $string['guestsyes'] = 'Salli vieraat ilman avainta';
 $string['guestuser'] = 'Vierailijatunnus';
 $string['guestuserinfo'] = 'Tämä tunnus sallii joidenkin kurssien \"vain luku\" -tyyppisen selailun.';
+$string['healthcenter'] = 'Terveyskeskus';
+$string['healthproblemsdetected'] = 'Terveysongelmia havaittu!';
+$string['healthproblemsolution'] = 'Terveysongelman ratkaisu';
+$string['healthreturntomain'] = 'Jatka';
+$string['healthsolution'] = 'Vastaus';
 $string['help'] = 'Ohje';
 $string['helpemoticons'] = 'Käytä hymiöitä';
 $string['helpformatting'] = 'Tekstin muotoilusta';
@@ -542,6 +553,11 @@ $string['htmlformat'] = 'HTML-muotoilu';
 $string['icqnumber'] = 'ICQ-numero';
 $string['idnumber'] = 'Tunnistenumero';
 $string['importdata'] = 'Tuo kurssit tiedot';
+$string['importdataexported'] = 'Tietojen vieminen kurssilta \'from\' onnistui.<br />
+Jatka tuodaksesi tiedot \'to\' kurssille.';
+$string['importdatafinished'] = 'Tietojen tuominen valmis! Voit jatkaa kurssillesi';
+$string['importdatafrom'] = 'Etsi kurssi, jolta tuodaan tiedot:';
+$string['importmetacoursenote'] = 'Käytä tätä lomaketta lisätäksesi kursseja metakurssillesi (tämä tuo ilmoittautumiset kursseilta metakurssille)';
 $string['inactive'] = 'Ei käytössä';
 $string['include'] = 'Ota mukaan';
 $string['includeallusers'] = '...  kaikki käyttäjät';
@@ -574,6 +590,7 @@ $string['latestlanguagepack'] = 'Tarkista moodle.org-sivuilta uusin kielipaketti
 $string['latestnews'] = 'Viimeisimmät uutiset';
 $string['leavetokeep'] = 'Jätä tyhjäksi säilyttääksi nykyisen salasanasi.';
 $string['license'] = 'GPL';
+$string['liketologin'] = 'Haluatko kirjautua sisään nyt täydellä käyttäjätilillä?';
 $string['list'] = 'Lista';
 $string['listfiles'] = 'Lista tiedostoista $a:ssa';
 $string['listofallpeople'] = 'Kaikki henkilöt';
@@ -581,6 +598,7 @@ $string['livelogs'] = 'Anna viimeisen tunnin loki';
 $string['locale'] = 'fi_FI';
 $string['location'] = 'Sijainti';
 $string['loggedinas'] = 'Olet kirjautunut nimellä  $a.';
+$string['loggedinasguest'] = 'Käytät vierastunnuksia';
 $string['loggedinnot'] = 'Et ole kirjautunut.';
 $string['login'] = 'Kirjaudu';
 $string['login_failure_logs'] = 'Kirjautumisvirhelokit';
@@ -592,7 +610,7 @@ $string['loginsteps'] = 'Hei! Käytä hetki aikaa luodaksesi itsellesi käyttäjätun
    <ol>
    <li>Täyttää  <a href=\"$a\">uusi tunnus</a> lomake henkilötiedoillasi.</li>
    <li>Sähköposti lähetetään antamaasi osoitteeseen.</li>
-   <li>Lue postisi ja klikkaa linkkiä viestissä</li>
+   <li>Lue postisi ja napsauta linkkiä viestissä</li>
    <li>Tunnuksesi vahvistetaan ja sinut kirjataan sisään.</li>
    <li>Valitse kurssit, mihin haluat.</li>
    <li>Jos kurssi vaatii  \"avaimen\", käytä sitä, jonka sait opettajaltasi.</li>
@@ -616,15 +634,28 @@ $string['makeeditable'] = 'Jos annat WWW-palvelimelle kirjoitusoikeudet kansioon
 $string['manageblocks'] = 'Lohkot';
 $string['managedatabase'] = 'Tietokanta';
 $string['managefilters'] = 'Suotimet';
+$string['managemeta'] = 'Onko tämä metakurssi?';
+$string['managemetadisabled'] = 'Tämä on pois käytöstä, koska kurssi on jo metakurssi';
+$string['managemetaexplan'] = '(Tämä tarkoittaa ilmoittautumisten periytyvän toisilta kursseilta)';
 $string['managemodules'] = 'Moduulit';
 $string['markedthistopic'] = 'Tämä aihe on merkitty aktiiviseksi';
 $string['markthistopic'] = 'Merkitse tämä aihe aktiiviseksi.';
 $string['maximumchars'] = 'Korkeintaan $a merkkiä';
 $string['maximumgrade'] = 'Arviointimaksimi';
-$string['maximumshort'] = 'Maksimi';
+$string['maximumshort'] = 'Max';
 $string['maximumupload'] = 'Suurin lähetyskoko';
 $string['maxsize'] = 'Suurin koko: $a';
 $string['metaaddcourse'] = 'Lisää tämä kurssi';
+$string['metaalreadycourses'] = 'Valitut kurssit';
+$string['metaalreadyhascourses'] = 'Tällä metakurssilla on jo alikursseja.';
+$string['metaalreadyhasenrolments'] = 'Tälle kurssille on jo tavallisia ilmoittautumisia.';
+$string['metaalreadyinmeta'] = 'Tämä kurssi on jo osa metakurssia.';
+$string['metaassigncourses'] = 'Valitse kurssit';
+$string['metacourse'] = 'Metakurssi';
+$string['metanoalreadycourses'] = 'Ei valittuja kursseja';
+$string['metanopotentialcourses'] = 'Ei kursseja tarjolla';
+$string['metapotentialcourses'] = 'Tarjolla olevat kurssit';
+$string['metaremovecourse'] = 'Poista tämä kurssi';
 $string['min'] = 'min';
 $string['mins'] = 'min';
 $string['minutes'] = 'minuuttia';
@@ -671,9 +702,11 @@ $string['moveselectedcoursesto'] = 'Siirrä valitut kurssit kohtaan';
 $string['movetoanotherfolder'] = 'Siirrä toiseen kansioon';
 $string['moveup'] = 'Siirrä ylös';
 $string['msnid'] = 'MSN ID';
+$string['mustchangepassword'] = 'Uuden salasanan on oltava eri kuin nykyinen';
 $string['mustconfirm'] = 'Vahvista kirjautumisesi ';
 $string['mycourses'] = 'Omat kurssini';
 $string['name'] = 'Nimi';
+$string['namescorm'] = 'SCORM';
 $string['namesocial'] = 'osio';
 $string['nametopics'] = 'aihe';
 $string['nameweeks'] = 'viikko';
@@ -695,7 +728,7 @@ Uudet tunnuksesi ja salasanasi ovat seuraavat :
 Käytä alla olevaa linkkiä vaihtaaksesi salasanasi:
    $a->link
 
-Useimmissa postiohjelmissa sinun tarvitsee vain klikata ylläolevaan linkkiä.
+Useimmissa postiohjelmissa sinun tarvitsee vain napsasta ylläolevaan linkkiä.
 Jos tämä ei toimi, kopioi ja liitä osoite selaimen osoitekenttään.
 
 Terveiset \'$a->sitename\' pääkäyttäjä,
@@ -711,6 +744,7 @@ $string['no'] = 'Ei';
 $string['nobody'] = 'Ei kukaan';
 $string['nocoursesfound'] = 'Sanaa \'$a\' ei löytynyt kurssien nimistä';
 $string['nocoursesyet'] = 'Ei kursseja tässä kategoriassa';
+$string['nodstpresets'] = 'Ylläpitäjä ei ole ottanut käyttöön kesäajan huomioimista.';
 $string['noexistingadmins'] = 'Ei ylläpitäjiä. Tämä on vakava virhe, jota ei pitäisi koskaan tapahtua.';
 $string['noexistingcreators'] = 'Ei kurssiylläpitäjiä';
 $string['noexistingstudents'] = 'Ei yhtään opiskelijaa';
@@ -720,11 +754,17 @@ $string['nofilesyet'] = 'Tälle kurssille ei ole vielä lähetetty tiedostoja.';
 $string['nograde'] = 'Ei arviointia';
 $string['noimagesyet'] = 'Tälle kursille ei ole vielä lähetty kuvia.';
 $string['nomorecourses'] = 'Muita haun ehdot täyttäviä kursseja ei löytynyt';
+$string['nomoreidnumber'] = 'Ei käytetä tunnistenumeroa ristiriitojen välttämiseksi';
 $string['none'] = 'Ei yhtään';
 $string['nopotentialadmins'] = 'Ei mahdollisia ylläpitäjiä';
 $string['nopotentialcreators'] = 'Ei mahdollisia kurssiylläpitäjiä';
 $string['nopotentialstudents'] = 'Ei mahdollisia opiskelijoita';
 $string['nopotentialteachers'] = 'Ei mahdollisia opettajia';
+$string['noreplybouncemessage'] = 'Olet yrittänyt vastata sähköpostiosoitteeseen, joka ei ota vastausviestejä vastaan. Jos yritit vastata viestiin keskustelualueella, käytä vastauksesi lähettämiseen $a keskustelualueita.
+
+Sähköpostisi sisältö:';
+$string['noreplybouncesubject'] = '$a - sähköposti ei päässyt perille';
+$string['noreplyname'] = 'Älä vastaa tähän sähköpostiin';
 $string['noresults'] = 'Ei tuloksia';
 $string['normal'] = 'Normaali';
 $string['normalfilter'] = 'Normaali haku';
@@ -741,10 +781,11 @@ $string['nothingtodisplay'] = 'Ei näytettävää';
 $string['noticenewerbackup'] = 'Tämä varmuuskopio on luoto Moodlen versiolla $a->backuprelease ($a->backupversion) ja se on uudempi kuin käyttämällesi palvelimelle asennttu versio $a->serverrelease ($a->serverversion). Tämä saattaa aiheuttaa palauttaessa joitain yhteensopivuusongelmia, koska varmuukopioiden alaspäin yhteensopivuutta ei voida taata.';
 $string['notifyloginfailuresmessage'] = '$a->time, IP: $a->ip, Käyttäjä: $a->info';
 $string['notifyloginfailuresmessageend'] = 'Voit katsella näitä tapahtumia osoitteessa $a/course/log.php?id=1&chooselog=1&modid=site_errors. 	';
-$string['notifyloginfailuresmessagestart'] = 'Tässä on lista epäonnistuneista kirjautumisyrityksitä edellisen ilmoituksen jälkeen';
+$string['notifyloginfailuresmessagestart'] = 'Tässä on lista epäonnistuneista kirjautumisyrityksistä $a edellisen ilmoituksen jälkeen';
 $string['notifyloginfailuressubject'] = '$ :: Epäonnistuneiden kirjautumisyritysten ilmoitus';
 $string['notincluded'] = 'Ei  mukana';
 $string['notingroup'] = 'Sinun pitää olla ryhmän jäsen nähdäksesi tämän aktiviteetin.';
+$string['notpublic'] = 'Ei julkinen!';
 $string['nousersmatching'] = 'Haku \'$a\' ei löytänyt käyttäjiä';
 $string['nousersyet'] = 'Ei vielä käyttäjiä';
 $string['now'] = 'nyt';
@@ -764,9 +805,11 @@ $string['optional'] = 'vapaaehtoinen';
 $string['order'] = 'Järjestys';
 $string['other'] = 'Toinen';
 $string['outline'] = 'Rakenne';
+$string['outlinereport'] = 'Rakenneraportti';
 $string['page'] = 'Sivu';
+$string['pageheaderconfigablock'] = 'Määritellään lohkoa kurssilla %%fullname%%';
 $string['parentcoursenotfound'] = 'Isäntäkurssia ei löytynyt!';
-$string['parentcoursenotmetacourse'] = 'Isäntäkurssia ei ole metakurssi!';
+$string['parentcoursenotmetacourse'] = 'Isäntäkurssi ei ole metakurssi!';
 $string['parentfolder'] = 'Yläkansio';
 $string['participants'] = 'Osallistujat';
 $string['password'] = 'Salasana';
@@ -781,7 +824,7 @@ $string['passwordsenttext'] = '   <p>Viesti on lähetetty osoitteeseen: $a->email
    <a href=\"$a\"->link>vaihtaa sen sen joksikin helpommin muistettavaksi</a>.</p>';
 $string['pathnotexists'] = 'Polkua ei löydy palvelimelta';
 $string['pathslasherror'] = 'Polku ei voi päätyä kauttaviivaan \"/\"!';
-$string['paymentinstant'] = 'Klikaa painiketta maksaaksesi kurssista ja rekisteröityäksesi kurssille.';
+$string['paymentinstant'] = 'Napsauta painiketta maksaaksesi kurssista ja rekisteröityäksesi kurssille.';
 $string['paymentrequired'] = 'Tämä kurssi vaatii osallistumismaksun.';
 $string['paymentsorry'] = 'Kiitokset maksusta! Maksuasi ei ole vielä rekisteröity järjestelmään ja sinua ei ole vielä rekisteröity kurssille \"$a->fullname\". Yritä uudelleen hetken kuluttua, mutta jos ongelma jatkuu ilmoita siitä $a->teacher tai sivuston ylläpitäjälle.';
 $string['paymentthanks'] = 'Kiitokset maksusta! Sinut rekisteröity kurssille: <br /> \"$a\"';
@@ -789,15 +832,20 @@ $string['people'] = 'Henkilöt';
 $string['personalprofile'] = 'Omat henkilötiedot';
 $string['phone'] = 'Puhelin';
 $string['phpinfo'] = 'PHP-info';
+$string['policyagree'] = 'Sinun täytyy hyväksyä tämä käyttösopimus voidaksesi jatkaa sivun käyttöä. Hyväksytkö käyttösopimuksen?';
+$string['policyagreement'] = 'Sivuston käyttösopimus';
+$string['policyagreementclick'] = 'Napsauttalla tästä voit lukea sivuston käyttösopimuksen';
 $string['popupwindow'] = 'Avaa tiedosto uudessa ikkunassa';
 $string['potentialadmins'] = 'Mahdolliset ylläpitäjät';
 $string['potentialcreators'] = 'Mahdolliset kurssiylläpitäjät';
 $string['potentialstudents'] = 'Mahdolliset opiskelijat';
 $string['potentialteachers'] = 'Mahdolliset opettajat';
 $string['preferredlanguage'] = 'Haluttu kieli';
+$string['preferredtheme'] = 'Haluttu teema';
 $string['preview'] = 'Esikatsele';
 $string['previeworchoose'] = 'Esikatsele tai valitse teema';
 $string['previous'] = 'Edellinen';
+$string['profile'] = 'Profiili';
 $string['publicdirectory'] = 'Julkinen hakemisto';
 $string['publicdirectory0'] = 'Älä julkaise tätä sivua';
 $string['publicdirectory1'] = 'Julkaise vain sivun nimi';
@@ -808,8 +856,12 @@ $string['readinginfofrombackup'] = 'Luetaan dataa varmuuskopiosta';
 $string['readme'] = 'LUEMINUT';
 $string['recentactivity'] = 'Viimeisimmät tapahtumat';
 $string['recentactivityreport'] = 'Viimeisimpien tapahtumien kattava raportti';
+$string['recreatedcategory'] = 'Luotiin uudelleen kategoria $a';
 $string['refreshingevents'] = 'Päivitetään tapahtumia';
 $string['registration'] = 'Rekisteröi Moodle';
+$string['registrationcontact'] = 'Yhteydenotto yleisöltä';
+$string['registrationcontactno'] = 'Ei, en halua yhteydenottolomaketta näkyviin verkkosivuille';
+$string['registrationcontactyes'] = 'Kyllä, tarjoa mahdollisille uusille Moodlen käyttäjille lomake, jolla ottaa yhteyttä minuun';
 $string['registrationemail'] = 'Tietoa sähköpostitse';
 $string['registrationinfo'] = '<p>Tällä sivulla voi ilmaiseksi rekisteröidä Moodlen moodle.org sivulle. Rekisteröity käyttäjä lisätään postituslistaan tärkeitä tiedotuksia varten. Aiheena voi olla esim. tietoturva-aukon löytyminen ja uusista versioista tiedottaminen.</p>
 <p>Oletuksena tietojasi ei anneta muiden käyttöön, eikä niitä myydä eteenpäin. Näitä tietoja kerätään vain tukea varten ja jotta saadaan tilastollista tietoa Moodlen käyttäjistä kokonaisuutena.</p>
@@ -852,7 +904,7 @@ $string['scalesstandard'] = 'Standardiasteikko';
 $string['scalestip'] = 'Luodaksesi omia asteikkoja, käytä \'Asteikot...\' linkkiä kurssin ylläpitövalikossa.';
 $string['schedule'] = 'Ajoita';
 $string['scheduledbackupstatus'] = 'Ajoitetun varmuuskopioinnin tila';
-$string['screenshot'] = 'Näyttökuva';
+$string['screenshot'] = 'Ruudunkaappaus';
 $string['search'] = 'Hae';
 $string['searchagain'] = 'Hae uudelleen';
 $string['searchcourses'] = 'Etsi kursseja';
@@ -883,6 +935,7 @@ $string['showgrades'] = 'Näytä arvioinnit';
 $string['showlistofcourses'] = 'Näytä kurssilista';
 $string['showonlytopic'] = 'Näytä vain aihe $a';
 $string['showonlyweek'] = 'Näytä vain viikko $a';
+$string['showperpage'] = 'Näytä $a sivulla';
 $string['showrecent'] = 'Näytä viimeiset tapahtumat';
 $string['showreports'] = 'Näytä tapahtumaraportti';
 $string['showsettings'] = 'Näytä asetukset';
@@ -906,6 +959,7 @@ $string['sizeb'] = 'tavua';
 $string['sizegb'] = 'Gt';
 $string['sizekb'] = 'Kt';
 $string['sizemb'] = 'Mt';
+$string['skypeid'] = 'Skypen ID';
 $string['socialheadline'] = 'Keskustelu - viimeisimmät aiheet';
 $string['someallowguest'] = 'Jotkut kurssit saattavat sallia vierastunnukset.';
 $string['someerrorswerefound'] = 'Joitain tietoja puuttui tai ne olivat vääränlaisia. Katso tarkemmat tiedot alta.';
@@ -914,6 +968,7 @@ $string['specifyname'] = 'Määrittele nimi';
 $string['startdate'] = 'Kurssin aloituspäivämäärä';
 $string['startsignup'] = 'Aloita nyt luomalla uusi käyttäjätunnus!';
 $string['state'] = 'Maakunta';
+$string['statistics'] = 'Tilastot';
 $string['status'] = 'Tilanne';
 $string['strftimedate'] = '%%d %%B %%Y';
 $string['strftimedateshort'] = '%%d %%B';
@@ -953,13 +1008,19 @@ $string['timezone'] = 'Aikavyöhyke';
 $string['to'] = 'Saakka';
 $string['today'] = 'Tänään';
 $string['todaylogs'] = 'Päivän tapahtumat';
+$string['toeveryone'] = 'kaikille';
+$string['toomanybounces'] = 'Kyseiseen sähköpostiosoitteeseen lähetetyt viestit eivät ole päässeet perille. Sinun <b>täytyy</b> muuttaa sähköpostiosoitetta jatkaaksesi.';
 $string['toomanytoshow'] = 'Liian paljon käyttäjiä näytettäväksi';
+$string['toonly'] = 'vain {$a}:lle';
 $string['top'] = 'Ylös';
 $string['topic'] = 'Aihe';
 $string['topichide'] = 'Piilota tämä aihe';
 $string['topicoutline'] = 'Aiheen kuvaus';
 $string['topicshow'] = 'Näytä tämä aihe';
 $string['total'] = 'Yhteensä';
+$string['trackforums'] = 'Keskustelualueen seuranta';
+$string['trackforumsno'] = 'Ei: älä pidä kirjaa näkemistäni viesteistä';
+$string['trackforumsyes'] = 'Kyllä: korosta uudet viestit';
 $string['trysearching'] = 'Kokeile hakutoimintoa.';
 $string['turneditingoff'] = 'Muokkaustila pois';
 $string['turneditingon'] = 'Muokkaustila päälle';
@@ -1024,6 +1085,7 @@ $string['usethiscourse'] = 'Käytä tätä kurssia';
 $string['usingexistingcourse'] = 'Käytä olemassaolevaa kurssia';
 $string['version'] = 'Versio';
 $string['view'] = 'Näkymä';
+$string['viewsolution'] = 'Katso vastaus';
 $string['virusfound'] = 'Ylläpitäjä huomio! Clam AV löysi viruksen käyttäjän $a->user kurssille $a->course lähettämästä tiedostosta. Tässä on Clam AV:n  tiedot tapahtuneesta:';
 $string['virusfoundlater'] = 'Kurssille $a->course  $a->date lähettämästäsi tiedostosta $a->filename on löytynyt virus. Tiedostollesi on tapahtunut seuraavaa:
 
@@ -1071,6 +1133,7 @@ $string['writingcategoriesandquestions'] = 'Kirjoitetaan kategorioita ja kysymyk
 $string['writingcoursedata'] = 'Kirjoitetaan kurssidataa';
 $string['writingeventsinfo'] = 'Kirjoitetaan tapahtumien tietoja';
 $string['writinggeneralinfo'] = 'Kirjoitetaan yleistietoja';
+$string['writinggradebookinfo'] = 'Kirjoitetaan  arviointikirjan tietoja';
 $string['writinggroupsinfo'] = 'Kirjoitetaan ryhmien tietoja';
 $string['writingheader'] = 'Kirjoitetaan otsikkoa';
 $string['writingloginfo'] = 'Kirjoitetaan lokitietoja';
