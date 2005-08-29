@@ -85,7 +85,8 @@ class configvarrss extends configvar {
         choose_from_menu ($noyesoptions, 'enablerssfeeds', $config->enablerssfeeds, '', '', '', true),
         '<font color="red"> You need to add XML support to your PHP installation.</font>' );
 
-
+    $misc['mymoodleredirect'] = new configvar (get_string('configmymoodleredirect','admin'),
+        choose_from_menu($noyesoptions,'mymoodleredirect',$config->mymoodleredirect,'','','',true));
 
 
 ////////////////////////////////////////////////////////////////////

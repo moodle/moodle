@@ -64,6 +64,7 @@ $string['configlongtimenosee'] = 'If students haven\'t logged in for a very long
 $string['configmaxbytes'] = 'This specifies a maximum size that uploaded files can be throughout the whole site.  This setting is limited by the PHP setting upload_max_filesize and the Apache setting LimitRequestBody.  In turn, maxbytes limits the range of sizes that can be chosen at course level or module level.';
 $string['configmaxeditingtime'] = 'This specifies the amount of time people have to re-edit forum postings, glossary comments etc.  Usually 30 minutes is a good value.';
 $string['configmessaging'] = 'Should the messaging system between site users be enabled?';
+$string['configmymoodleredirect'] = 'This setting forces redirects to /my on login for non-admins and replaces the top level site breadcrumb with /my';
 $string['confignoreplyaddress'] = 'Emails are sometimes sent out on behalf of a user (eg forum posts). The email address you specify here will be used as the \"From\" address in those cases when the recipients should not be able to reply directly to the user (eg when a user chooses to keep their address private).';
 $string['confignotifyloginfailures'] = 'If login failures have been recorded, email notifications can be sent out.  Who should see these notifications?';
 $string['confignotifyloginthreshold'] = 'If notifications about failed logins are active, how many failed login attempts by one user or one IP address is it worth notifying about?';

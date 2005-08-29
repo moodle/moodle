@@ -149,8 +149,8 @@
 
             } else {
                 $urltogo = $CFG->wwwroot.'/my';      /// Go to the standard home page
-                if (isadmin()) {
-                    $urltogo = $CFG->wwwroot;       /// not needed by admins.
+                if (isadmin() || empty($CFG->mymoodleredirect)) {
+                    $urltogo = $CFG->wwwroot;       /// not needed by admins or when it's turned off
                 }
                 unset($SESSION->wantsurl);         /// Just in case
             }
