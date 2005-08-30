@@ -227,6 +227,7 @@ function scorm_user_complete($course, $user, $mod, $scorm) {
             unset($orgs);
             $orgs[]->identifier = '';
         }
+        $report .= '<div class="mod-scorm">'."\n";
         foreach ($orgs as $org) {
             $organizationsql = '';
             $currentorg = '';
@@ -321,6 +322,7 @@ function scorm_user_complete($course, $user, $mod, $scorm) {
             }
             $report .= "\t</ul><br />\n";
         }
+        $report .= "</div>\n";
     }
     if ($sometoreport) {
         if ($firstmodify < $now) {
@@ -882,7 +884,7 @@ function scorm_parse_scorm($manifestfile,$scormid) {
         $manifests = $objXML->parse($xmlstring);
             
         $scoes = new stdClass();
-        $scoes->version = 'SCORM';
+        $scoes->version = '';
         $scoes = scorm_get_manifest($manifests,$scoes);
 
         if (count($scoes->elements) > 0) {
@@ -1073,6 +1075,9 @@ function scorm_display_structure($scorm,$liststyle,$currentorg='',$scoid='',$mod
     $incomplete = false;
     $organizationsql = '';
     if (!empty($currentorg)) {
+        if (($organizationtitle = get_field('scorm_scoes','title','scorm',$scorm->id,'identifier',$currentorg)) != '') {
+            echo "\t<li>$organizationtitle</li>\n";
+        }
         $organizationsql = "AND organization='$currentorg'";
     }
     if ($scoes = get_records_select('scorm_scoes',"scorm='$scorm->id' $organizationsql order by id ASC")){
@@ -1080,6 +1085,7 @@ function scorm_display_structure($scorm,$liststyle,$currentorg='',$scoid='',$mod
         $sublist=1;
         $previd = 0;
         $nextid = 0;
+        $findnext = false;
         $parents[$level]='/';
         foreach ($scoes as $sco) {
             if ($parents[$level]!=$sco->parent) {
@@ -1152,20 +1158,23 @@ function scorm_display_structure($scorm,$liststyle,$currentorg='',$scoid='',$mod
                 if ($sco->id == $scoid) {
                     $startbold = '<b>';
                     $endbold = '</b>';
-                    if ($nextsco !== false) {
-                        $nextid = $nextsco->id;
-                    } else {
-                        $nextid = 0;
-                    }
+                    $findnext = true;
                     $shownext = $sco->next;
                     $showprev = $sco->previous;
                 }
-                if (($nextid == 0) && (scorm_count_launchable($scorm->id,$currentorg) > 1) && ( $nextsco!==false)) {
-                    $previd = $sco->id;
+                if (($nextid == 0) && (scorm_count_launchable($scorm->id,$currentorg) > 1) && ($nextsco!==false) && (!$findnext)) {
+                    if (!empty($sco->launch)) {
+                        $previd = $sco->id;
+                    }
                 }
                 echo "&nbsp;$startbold<a href='javascript:playSCO(".$sco->id.");'>$sco->title</a> $score$endbold</li>\n";
             } else {
                 echo "&nbsp;$sco->title</li>\n";
+            }
+            if (($nextsco !== false) && ($nextid == 0) && ($findnext)) {
+                if (!empty($nextsco->launch)) {
+                    $nextid = $nextsco->id;
+                }
             }
         }
         for ($i=0;$i<$level;$i++) {
