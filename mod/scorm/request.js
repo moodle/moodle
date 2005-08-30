@@ -1,6 +1,7 @@
+<!--
 function NewHttpReq() {
     var httpReq = false;
-    if (typeof XMLHttpRequest!='undefined') {
+    if (typeof XMLHttpRequest != 'undefined') {
         httpReq = new XMLHttpRequest();
     } else {
         try {
@@ -34,9 +35,10 @@ function DoRequest(httpReq,url,param) {
     }
 }
 
-function popupwin(content) {
-    op = window.open();
+/*function popupwin(content) {
+    var op = window.open();
     op.document.open('text/plain');
     op.document.write(content);
     op.document.close();
-}
+}*/
+//-->
