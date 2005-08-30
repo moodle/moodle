@@ -5,9 +5,6 @@
     require_once("$CFG->dirroot/mod/forum/lib.php");
 
     require_once($CFG->dirroot.'/mod/scorm/lib.php');
-    echo '<style type="text/css">';
-    include_once($CFG->dirroot.'/mod/scorm/styles.php');
-    echo '</style>';
     $organization = optional_param('organization', '', PARAM_INT);
 
     // Bounds for block widths
@@ -38,7 +35,7 @@
         echo '</td>';
     }
 
-    echo '<td id="middle-column">';
+    echo '<td id="middle-column"><div class="mod-scorm">';
     if ($scorms = get_all_instances_in_course("scorm", $course)) {
         // The SCORM with the least id is the course SCORM  
         $scorm = current($scorms);
@@ -102,7 +99,7 @@
             print_simple_box_end();
          ?>
               <div class="center">
-              <form name="theform" method="post" action="<?php echo $CFG->wwwroot ?>/mod/scorm/playscorm.php?id=<?php echo $cm->id ?>">
+              <form name="theform" method="post" action="<?php echo $CFG->wwwroot ?>/mod/scorm/playscorm.php?id=<?php echo $cm->id ?>"<?php echo $scorm->popup == 1?' target="newwin"':'' ?>>
               <?php
                   if ($scorm->hidebrowse == 0) {
                       print_string("mode","scorm");
@@ -158,7 +155,7 @@
             notify('Could not find a SCORM course here');
         }
     }
-    echo '</td>';
+    echo '</div></td>';
 
     // The right column
     if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $editing) {
