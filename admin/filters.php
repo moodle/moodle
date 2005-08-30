@@ -45,6 +45,8 @@
     $txt->filterall = get_string( 'filterall','admin' );
     $txt->configfilterall = get_string( 'configfilterall','admin' );
     $txt->cachecontrols = get_string( 'cachecontrols' );
+    $txt->yes = get_string( 'yes' );
+    $txt->no = get_string('no');
 
     // get a list of possible filters (and translate name if possible)
     // note filters can be in the dedicated filters area OR in their 
@@ -226,7 +228,7 @@
         $settings = '';
         if (in_array( $path, $filtersettings )) {
             $settings = "<a href=\"filter.php?filter=" . urlencode($path) . "\">";
-            $settings .= "settings</a>";
+            $settings .= "{$txt->settings}</a>";
         }
 
         // write data into the table object
@@ -286,12 +288,12 @@
             </tr>
             <tr valign="top">
                 <td nowrap="nowrap" align="right"><?php echo $txt->filteruploadedfiles; ?></td>
-                <td><?php choose_from_menu( array('no','yes'), "filteruploadedfiles", $CFG->filteruploadedfiles,"","",""); ?></td>
+                <td><?php choose_from_menu( array($txt->no,$txt->yes), "filteruploadedfiles", $CFG->filteruploadedfiles,"","",""); ?></td>
                 <td><?php echo $txt->configfilteruploadedfiles; ?></td>
             </tr>
             <tr valign="top">
                 <td nowrap="nowrap" align="right"><?php echo $txt->filterall; ?></td>
-                <td><?php choose_from_menu( array('no','yes'), "filterall", $CFG->filterall,"","",""); ?></td>
+                <td><?php choose_from_menu( array($txt->no,$txt->yes), "filterall", $CFG->filterall,"","",""); ?></td>
                 <td><?php echo $txt->configfilterall; ?></td>
             </tr>
             <tr valign="top">
