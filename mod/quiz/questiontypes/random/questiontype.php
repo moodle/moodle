@@ -109,9 +109,16 @@ class quiz_random_qtype extends quiz_default_questiontype {
         /// record per question.
         global $QUIZ_QTYPES;
         if (!ereg('^random([0-9]+)-(.*)$', $state->responses[''], $answerregs)) {
+            if (empty($state->responses[''])) {
+                // This is the case if there weren't enough questions available in the category.
+                $question->questiontext = '<span class="notifyproblem">'.
+                 get_string('toomanyrandom', 'quiz', $question->category). '</span>';
+                $question->qtype = DESCRIPTION;
+                return true;
+            }
             // this must be an old-style state which stores only the id for the wrapped question
             if (!$wrappedquestion = get_record('quiz_questions', 'id', $state->responses[''])) {
-                error("Can not find wrapped question $state->responses['']");
+                error("Can not find wrapped question {$state->responses['']}");
             }
             // In the old model the actual response was stored in a separate entry in
             // the state table
