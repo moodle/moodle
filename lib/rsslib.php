@@ -428,7 +428,8 @@ function rss_unhtmlentities($string) {
 }
 
 /**
-*/
+ * Wrapper function for rss_get_form
+ */
 function rss_print_form($act='none', $url='', $rssid='', $preferredtitle='', $courseid='') {
 	print rss_get_form($act, $url, $rssid, $preferredtitle, $courseid);
 }
