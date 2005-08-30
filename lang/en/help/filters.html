@@ -36,8 +36,9 @@
 <p><b>Word Censorship</b></p>
 
 <ul>
-  <p>Word Censorship scans text for 'bad words' from a pre-defined list. To use
-  this function you must first enter the settings page and define your list of
+  <p>Word Censorship scans text for 'bad words' from a pre-defined list. 
+  Each language pack has its own default list, but you can define your own. 
+  To define your own list enter the settings page and specify your list of
   words. The user will see the words obscured with a black block, although 
   mousing over will pop up the original word.</p>
 </ul>
@@ -45,7 +46,7 @@
 <p><b>Resource Names Auto-Linking</b></b>
 
 <ul>
-  <p>Resource Name Auto_linking scans text for resource titles that
+  <p>Resource Name Auto-linking scans text for resource titles that
   exist in the same course. Where found they will be highlighted and a link
   created. Note that to use this effectively you should use descriptive titles. For
   example a title of 'Introduction' is poor because <b>any</b> use of the word 
@@ -55,7 +56,7 @@
 <p><b>Activity Names Auto-Linking</b></b>
 
 <ul>
-  <p>Activity Name Auto_linking scans text for activity titles that
+  <p>Activity Name Auto-linking scans text for activity titles that
   exist in the same course. Where found they will be highlighted and a link
   created. Note that to use this effectively you should use descriptive titles. For
   example a title of 'Quiz' is poor because <b>any</b> use of the word 
@@ -83,7 +84,7 @@
 <p><b>Tidy</b></p>
 
 <ul>
-  <p>Tidy scans text for HTML constructs. Where found it applied rules that attempt
+  <p>Tidy scans text for HTML constructs. Where found it applies rules that attempt
   to make the HTML valid. Note that the tidy functionality must be built in to your
   PHP installation for this to work.</p>
 </ul>
@@ -93,8 +94,8 @@
 <ul>
   <p>This filter enables resources to be created in multiple languages. The resource
   language will then change when the user changes their selected Moodle language. To
-  use this feature first create your contents in multiple languages. Then enclose
-  each language content between:
-  <pre>      &lt;lang lang="XX&gt;your_content_here&lt;/lang&gt;</pre>
+  use this feature first create your contents in multiple languages (in the same 
+  resource. Then enclose each language block in the following tags:
+  <pre>      &lt;lang lang="XX"&gt;your_content_here&lt;/lang&gt;</pre>
   </p>
 </ul>
