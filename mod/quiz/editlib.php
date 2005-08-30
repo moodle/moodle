@@ -505,7 +505,7 @@ function quiz_print_cat_question_list($course, $categoryid, $quizid,
         helpbutton("import", $strimportquestions, "quiz");
         echo ' | ';
     }
-    echo '<a href="export.php?category='.$category->id.'">'.$strexportquestions.'</a>';
+    echo "<a href=\"export.php?category={$category->id}&amp;courseid={$course->id}\">$strexportquestions</a>";
     helpbutton("export", $strexportquestions, "quiz");
     echo '</font></td></tr>';
 

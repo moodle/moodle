@@ -5,6 +5,7 @@
     require_once("locallib.php");
 
     $category = required_param('category',PARAM_INT);
+    $courseid = required_param('courseid',PARAM_INT);
     $format = optional_param('format','', PARAM_CLEANFILE );
     $exportfilename = optional_param('exportfilename','',PARAM_CLEANFILE );
 
@@ -12,8 +13,12 @@
         error("This wasn't a valid category!");
     }
 
-    if (! $course = get_record("course", "id", $category->course)) {
+    if (! $categorycourse = get_record("course", "id", $category->course)) {
         error("This category doesn't belong to a valid course!");
+    }
+
+    if (! $course = get_record("course", "id", $courseid)) {
+        error("Course does not exist!");
     }
 
     require_login($course->id, false);
@@ -110,7 +115,7 @@
     echo "<tr><td align=\"right\">\n";
     print_string("category", "quiz");
     echo ":</td><td>";
-    echo str_replace('&nbsp;', '', $categories[$category->id]) . " ($course->shortname)";
+    echo str_replace('&nbsp;', '', $category->name) . " ($categorycourse->shortname)";
     echo "</td></tr>\n";
 
     echo "<tr><td align=\"right\">";
@@ -128,6 +133,7 @@
 
     echo "<tr><td align=\"center\" colspan=\"2\">";
     echo " <input type=\"hidden\" name=\"category\" value=\"$category->id\" />";
+    echo " <input type=\"hidden\" name=\"courseid\" value=\"$course->id\" />";
     echo " <input type=\"submit\" name=\"save\" value=\"".get_string("exportquestions","quiz")."\" />";
     echo "</td></tr>\n";
 
