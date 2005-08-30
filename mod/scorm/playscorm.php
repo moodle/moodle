@@ -68,8 +68,9 @@
     $pagetitle = strip_tags("$course->shortname: ".format_string($scorm->name));
 
     if (!$cm->visible and !isteacher($course->id)) {
-        print_header($pagetitle, "$course->fullname", "$navigation ".format_string($scorm->name), '', '', true,
-                     update_module_button($cm->id, $course->id, $strscorm), navmenu($course, $cm));
+        print_header($pagetitle, "$course->fullname",
+                 "$navigation <a target='{$CFG->framename}' href='view.php?id=$cm->id'>".format_string($scorm->name,true)."</a>",
+                 '', '', true, update_module_button($cm->id, $course->id, $strscorm), '', false);
         notice(get_string("activityiscurrentlyhidden"));
     }
 
@@ -86,8 +87,8 @@
         }
     }
     add_to_log($course->id, 'scorm', 'view', "playscorm.php?id=$cm->id&scoid=$sco->id", "$scorm->id");
-    $scoidstring = '&scoid='.$sco->id;
-    $modestring = '&mode='.$mode;
+    $scoidstring = '&amp;scoid='.$sco->id;
+    $modestring = '&amp;mode='.$mode;
 
     $SESSION->scorm_scoid = $sco->id;
     $SESSION->scorm_status = 'Not Initialized';
@@ -96,14 +97,16 @@
     //
     // Print the page header
     //
-    $scripts = '';
-    if (($scorm->popup == 1) && ($result->prerequisites)) {
-        $scripts = 'onunload="top.main.close();"';
-    }
-    
-    print_header($pagetitle, "$course->fullname",
+    if ($scorm->popup == 1) {
+        print_header($pagetitle);
+        echo '    <script language="Javascript">'."\n";
+        echo "         top.resizeTo({$scorm->width},{$scorm->height});\n";
+        echo '    </script>'."\n";
+    } else {
+        print_header($pagetitle, "$course->fullname",
                  "$navigation <a target='{$CFG->framename}' href='view.php?id=$cm->id'>".format_string($scorm->name,true)."</a>",
-                 '', '', true, update_module_button($cm->id, $course->id, $strscorm), '', false, $scripts);
+                 '', '', true, update_module_button($cm->id, $course->id, $strscorm), '', false);
+    }
 ?>
     <script language="JavaScript" type="text/javascript" src="request.js"></script>
     <script language="JavaScript" type="text/javascript" src="api.php?id=<?php echo $cm->id.$scoidstring.$modestring ?>"></script>
@@ -111,7 +114,7 @@
     <table class="fullscreen">
     <tr>
 <?php  
-    if ($scorm->hidetoc == 0) {
+    if (($scorm->hidetoc == 0) && ($scorm->popup == 0)) {
 ?>
 	    <td class="top">
             <table class='generalbox'>
@@ -125,15 +128,11 @@
         </td>
 <?php
     }
-    $browseclass = '';
-    if ($scorm->popup == 0) {
-        $browseclass = 'class="left"';
-    }
 ?>
         <td class="top">
             <table class="fullscreen">
                 <tr>
-                    <?php echo $mode == 'browse' ? '<td '.$browseclass.'>'.get_string('browsemode','scorm')."</td>\n" : ''; ?>
+                    <?php echo $mode == 'browse' ? '<td class="left">'.get_string('browsemode','scorm')."</td>\n" : ''; ?>
                     <td class="right">       
                         <form name="navform" method="post" action="playscorm.php?id=<?php echo $cm->id ?>" target="_top">
                             <input name="scoid" type="hidden" />
@@ -145,23 +144,25 @@
                         </form>
                     </td>
                 </tr>
-<?php
-    if ($scorm->popup == 0) {
-?>
                 <tr><td <?php echo $mode=='browse'?'colspan="2" ':'' ?>class="right">
 <?php
         if ($result->prerequisites) {
+            $width = $scorm->width;
+            if ($scorm->popup) {
+                $width = '100%';
+            } else {
+                if ($width<=100) {
+                    $width = $width.'%';
+                }
+            }
 ?>
-                    <iframe name="main" class="scoframe" width="<?php echo $scorm->width<=100 ? $scorm->width.'%' : $scorm->width ?>" height="<?php echo $scorm->height<=100 ? $scorm->height.'%' : $scorm->height ?>" src="loadSCO.php?id=<?php echo $cm->id.$scoidstring.$modestring ?>"></iframe>
+                    <iframe name="main" class="scoframe" width="<?php echo $width ?>" height="<?php echo $scorm->height<=100 ? $scorm->height.'%' : $scorm->height ?>" src="loadSCO.php?id=<?php echo $cm->id.$scoidstring.$modestring ?>"></iframe>
 <?php
         } else {
             print_simple_box(get_string('noprerequisites','scorm'),'center');
         }
 ?>
                 </td></tr>
-<?php
-    }
-?>
             </table>
          </td>
     </tr>
@@ -169,23 +170,18 @@
 
     <script language="javascript" type="text/javascript">
     <!--
-<?php
-    if ($scorm->popup == 1) {
-        if ($result->prerequisites) {
-?>
-        top.main = window.open("loadSCO.php?id=<?php echo $cm->id.$scoidstring.$modestring ?>","","width=<?php echo $scorm->width<=100 ? $scorm->width.'%' : $scorm->width ?>,height=<?php echo $scorm->height<=100 ? $scorm->height.'%' : $scorm->height ?>,scrollbars=1");
-<?php
-        } else {
-?>
-        alert("<?php print_string('noprerequisites','scorm') ?>");
-<?php
-        }
-    }
-?>
         function playSCO(scoid) {
+<?php if ($scorm->popup == 1) { ?>
+            if (self.opener && !self.opener.closed){
+                self.opener.location.reload();
+            }
+<?php } ?>
             if (scoid == 0) {
-                //top.main.close();
+<?php if ($scorm->popup == 1) { ?>
+                self.close();
+<?php } else { ?>
                 document.location = '<?php echo $CFG->wwwroot ?>/course/view.php?id=<?php echo $cm->course ?>';
+<?php } ?>
             } else {
                 document.navform.scoid.value=scoid;
                 document.navform.submit();
@@ -216,5 +212,7 @@
         }
     -->
     </script>
+    </div> <!-- Content -->
+    </div> <!-- Page -->
 </body>
 </html>
