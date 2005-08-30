@@ -1201,11 +1201,7 @@ function get_timezone_record($timezonename) {
  * @return bool
  */
 function calculate_user_dst_table($from_year = NULL, $to_year = NULL) {
-    global $CFG, $USER;
-
-    if (empty($USER)) {
-        return false;
-    }
+    global $CFG, $SESSION;
 
     $usertz = get_user_timezone();
 
@@ -1214,13 +1210,13 @@ function calculate_user_dst_table($from_year = NULL, $to_year = NULL) {
         return false;
     }
 
-    if (!empty($USER->dstoffsettz) && $USER->dstoffsettz != $usertz) {
+    if (!empty($SESSION->dst_offsettz) && $SESSION->dst_offsettz != $usertz) {
         // We have precalculated values, but the user's effective TZ has changed in the meantime, so reset
-        unset($USER->dstoffsets);
-        unset($USER->dstrange);
+        unset($SESSION->dst_offsets);
+        unset($SESSION->dst_range);
     }
 
-    if (!empty($USER->dstoffsets) && empty($from_year) && empty($to_year)) {
+    if (!empty($SESSION->dst_offsets) && empty($from_year) && empty($to_year)) {
         // Repeat calls which do not request specific year ranges stop here, we have already calculated the table
         // This will be the return path most of the time, pretty light computationally
         return true;
@@ -1229,13 +1225,13 @@ function calculate_user_dst_table($from_year = NULL, $to_year = NULL) {
     // Reaching here means we either need to extend our table or create it from scratch
 
     // Remember which TZ we calculated these changes for
-    $USER->dstoffsettz = $usertz;
+    $SESSION->dst_offsettz = $usertz;
 
-    if(empty($USER->dstoffsets)) {
+    if(empty($SESSION->dst_offsets)) {
         // If we 're creating from scratch, put the two guard elements in there
-        $USER->dstoffsets = array(1 => NULL, 0 => NULL);
+        $SESSION->dst_offsets = array(1 => NULL, 0 => NULL);
     }
-    if(empty($USER->dstrange)) {
+    if(empty($SESSION->dst_range)) {
         // If creating from scratch
         $from = max((empty($from_year) ? intval(date('Y')) - 3 : $from_year), 1971);
         $to   = min((empty($to_year)   ? intval(date('Y')) + 3 : $to_year),   2035);
@@ -1247,28 +1243,28 @@ function calculate_user_dst_table($from_year = NULL, $to_year = NULL) {
         }
 
         // Take note of which years we have processed for future calls
-        $USER->dstrange = array($from, $to);
+        $SESSION->dst_range = array($from, $to);
     }
     else {
         // If needing to extend the table, do the same
         $yearstoprocess = array();
 
-        $from = max((empty($from_year) ? $USER->dstrange[0] : $from_year), 1971);
-        $to   = min((empty($to_year)   ? $USER->dstrange[1] : $to_year),   2035);
+        $from = max((empty($from_year) ? $SESSION->dst_range[0] : $from_year), 1971);
+        $to   = min((empty($to_year)   ? $SESSION->dst_range[1] : $to_year),   2035);
 
-        if($from < $USER->dstrange[0]) {
+        if($from < $SESSION->dst_range[0]) {
             // Take note of which years we need to process and then note that we have processed them for future calls
-            for($i = $from; $i < $USER->dstrange[0]; ++$i) {
+            for($i = $from; $i < $SESSION->dst_range[0]; ++$i) {
                 $yearstoprocess[] = $i;
             }
-            $USER->dstrange[0] = $from;
+            $SESSION->dst_range[0] = $from;
         }
-        if($to > $USER->dstrange[1]) {
+        if($to > $SESSION->dst_range[1]) {
             // Take note of which years we need to process and then note that we have processed them for future calls
-            for($i = $USER->dstrange[1] + 1; $i <= $to; ++$i) {
+            for($i = $SESSION->dst_range[1] + 1; $i <= $to; ++$i) {
                 $yearstoprocess[] = $i;
             }
-            $USER->dstrange[1] = $to;
+            $SESSION->dst_range[1] = $to;
         }
     }
 
@@ -1287,8 +1283,8 @@ function calculate_user_dst_table($from_year = NULL, $to_year = NULL) {
     }
 
     // Remove ending guard (first element of the array)
-    reset($USER->dstoffsets);
-    unset($USER->dstoffsets[key($USER->dstoffsets)]);
+    reset($SESSION->dst_offsets);
+    unset($SESSION->dst_offsets[key($SESSION->dst_offsets)]);
 
     // Add all required change timestamps
     foreach($yearstoprocess as $y) {
@@ -1305,19 +1301,19 @@ function calculate_user_dst_table($from_year = NULL, $to_year = NULL) {
             continue;
         }
         if($changes['dst'] != 0) {
-            $USER->dstoffsets[$changes['dst']] = $preset->dstoff * MINSECS;
+            $SESSION->dst_offsets[$changes['dst']] = $preset->dstoff * MINSECS;
         }
         if($changes['std'] != 0) {
-            $USER->dstoffsets[$changes['std']] = 0;
+            $SESSION->dst_offsets[$changes['std']] = 0;
         }
     }
 
     // Put in a guard element at the top
-    $maxtimestamp = max(array_keys($USER->dstoffsets));
-    $USER->dstoffsets[($maxtimestamp + DAYSECS)] = NULL; // DAYSECS is arbitrary, any "small" number will do
+    $maxtimestamp = max(array_keys($SESSION->dst_offsets));
+    $SESSION->dst_offsets[($maxtimestamp + DAYSECS)] = NULL; // DAYSECS is arbitrary, any "small" number will do
 
     // Sort again
-    krsort($USER->dstoffsets);
+    krsort($SESSION->dst_offsets);
 
     return true;
 }
@@ -1349,18 +1345,14 @@ function dst_changes_for_year($year, $timezone) {
 
 // $time must NOT be compensated at all, it has to be a pure timestamp
 function dst_offset_on($time) {
-    global $USER;
+    global $SESSION;
 
-    if(!calculate_user_dst_table()) {
+    if(!calculate_user_dst_table() || empty($SESSION->dst_offsets)) {
         return 0;
     }
 
-    if(empty($USER) || empty($USER->dstoffsets)) {
-        return 0;
-    }
-
-    reset($USER->dstoffsets);
-    while(list($from, $offset) = each($USER->dstoffsets)) {
+    reset($SESSION->dst_offsets);
+    while(list($from, $offset) = each($SESSION->dst_offsets)) {
         if($from <= $time) {
             break;
         }
@@ -1376,19 +1368,19 @@ function dst_offset_on($time) {
     // moves toward the stopping condition, so will always end.
 
     if($from == 0) {
-        // We need a year smaller than $USER->dstrange[0]
-        if($USER->dstrange[0] == 1971) {
+        // We need a year smaller than $SESSION->dst_range[0]
+        if($SESSION->dst_range[0] == 1971) {
             return 0;
         }
-        calculate_user_dst_table($USER->dstrange[0] - 5, NULL);
+        calculate_user_dst_table($SESSION->dst_range[0] - 5, NULL);
         return dst_offset_on($time);
     }
     else {
-        // We need a year larger than $USER->dstrange[1]
-        if($USER->dstrange[1] == 2035) {
+        // We need a year larger than $SESSION->dst_range[1]
+        if($SESSION->dst_range[1] == 2035) {
             return 0;
         }
-        calculate_user_dst_table(NULL, $USER->dstrange[1] + 5);
+        calculate_user_dst_table(NULL, $SESSION->dst_range[1] + 5);
         return dst_offset_on($time);
     }
 }
