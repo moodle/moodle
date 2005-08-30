@@ -2284,6 +2284,8 @@ function print_scale_menu_helpbutton($courseid, $scale) {
 function error ($message, $link="") {
     global $CFG, $SESSION;
 
+    header('HTTP/1.0 404 Not Found');
+   
     print_header(get_string("error"));
     echo "<br />";
 
@@ -2301,6 +2303,9 @@ function error ($message, $link="") {
     }
     print_continue($link);
     print_footer();
+    for ($i=0;$i<512;$i++) {  // Padding to help IE work with 404
+        echo ' ';
+    }
     die;
 }
 
