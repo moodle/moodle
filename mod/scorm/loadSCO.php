@@ -55,8 +55,8 @@
             }
             $sco = get_record("scorm_scoes","id",$sco_track->scoid);
         }
-           }
-       //
+    }
+    //
     // If no sco was found get the first of SCORM package
     //
     if (!isset($sco)) {
@@ -74,6 +74,9 @@
             $connector = '&';
         } else {
             $connector = '?';
+        }
+        if ($sco->parameters[0] == '?') {
+            $sco->parameters = substr($sco->parameters,1);
         }
     }
     
