@@ -85,8 +85,8 @@ function scorm_update_instance($scorm) {
     // Check if scorm manifest needs to be reparsed
     if ($scorm->launch == 0) {
         // Delete old related records
-        delete_records('scorm_scoes','scorm',$scormid);
-        delete_records('scorm_scoes_track','scormid',$scormid);
+        delete_records('scorm_scoes','scorm',$scorm->id);
+        delete_records('scorm_scoes_track','scormid',$scorm->id);
         
         $scormdir = $CFG->dataroot.'/'.$scorm->course.'/moddata/scorm';
         if (isset($scorm->datadir) && ($scorm->datadir != $scorm->id)) {
@@ -259,6 +259,7 @@ function scorm_user_complete($course, $user, $mod, $scorm) {
             unset($orgs);
             $orgs[]->identifier = '';
         }
+        $report .= '<div class="mod-scorm">'."\n";
         foreach ($orgs as $org) {
             $organizationsql = '';
             $currentorg = '';
@@ -347,6 +348,7 @@ function scorm_user_complete($course, $user, $mod, $scorm) {
             }
             $report .= "\t</ul><br />\n";
         }
+        $report .= "</div>\n";
     }
     if ($sometoreport) {
         if ($firstmodify < $now) {
@@ -881,7 +883,11 @@ function scorm_get_manifest($blocks,$scoes) {
                         $scoes->elements[$manifest][$organization][$identifier]->scormtype = 'asset';
                     } else {
                         $idref = addslashes($block['attrs']['IDENTIFIERREF']);
-                        $scoes->elements[$manifest][$organization][$identifier]->launch = addslashes($resources[$idref]['HREF']);
+                        $base = '';
+                        if (isset($resources[$idref]['XML:BASE'])) {
+                            $base = $resources[$idref]['XML:BASE'];
+                        }
+                        $scoes->elements[$manifest][$organization][$identifier]->launch = addslashes($base.$resources[$idref]['HREF']);
                         if (empty($resources[$idref]['ADLCP:SCORMTYPE'])) {
                             $resources[$idref]['ADLCP:SCORMTYPE'] = 'asset';
                         }
@@ -952,7 +958,7 @@ function scorm_parse_scorm($pkgdir,$scormid) {
         $manifests = $objXML->parse($xmlstring);
             
         $scoes = new stdClass();
-        $scoes->version = 'SCORM';
+        $scoes->version = '';
         $scoes = scorm_get_manifest($manifests,$scoes);
 
         if (count($scoes->elements) > 0) {
@@ -995,7 +1001,7 @@ function scorm_get_tracks($scoid,$userid) {
             $usertrack->{$element} = $track->value;
             switch ($element) {
                 case 'cmi.core.lesson_status':
-                case 'cmi.completition_status':
+                case 'cmi.completion_status':
                     if ($track->value == 'not attempted') {
                         $track->value = 'notattempted';
                     }
@@ -1309,12 +1315,15 @@ function scorm_get_toc($scorm,$liststyle,$currentorg='',$scoid='',$mode='normal'
     $strexpand = get_string('expcoll','scorm');
     
     $result = new stdClass();
-    $result->toc = "<ul id='0' class='$liststyle'>";
+    $result->toc = "<ul id='0' class='$liststyle'>\n";
     $result->prerequisites = true;
     $incomplete = false;
     $organizationsql = '';
     
     if (!empty($currentorg)) {
+        if (($organizationtitle = get_field('scorm_scoes','title','scorm',$scorm->id,'identifier',$currentorg)) != '') {
+            $result->toc .= "\t<li>$organizationtitle</li>\n";
+        }
         $organizationsql = "AND organization='$currentorg'";
     }
     if ($scoes = get_records_select('scorm_scoes',"scorm='$scorm->id' $organizationsql order by id ASC")){
@@ -1334,6 +1343,7 @@ function scorm_get_toc($scorm,$liststyle,$currentorg='',$scoid='',$mode='normal'
         $sublist=1;
         $previd = 0;
         $nextid = 0;
+        $findnext = false;
         $parents[$level]='/';
         
         foreach ($scoes as $sco) {
@@ -1371,6 +1381,11 @@ function scorm_get_toc($scorm,$liststyle,$currentorg='',$scoid='',$mode='normal'
             if (empty($sco->title)) {
                 $sco->title = $sco->identifier;
             }
+            if (($nextsco !== false) && ($nextid == 0) && ($findnext)) {
+                if (!empty($nextsco->launch)) {
+                    $nextid = $nextsco->id;
+                }
+            }
             if (!empty($sco->launch)) {
                 $startbold = '';
                 $endbold = '';
@@ -1405,16 +1420,15 @@ function scorm_get_toc($scorm,$liststyle,$currentorg='',$scoid='',$mode='normal'
                 if ($sco->id == $scoid) {
                     $startbold = '<b>';
                     $endbold = '</b>';
-                    if ($nextsco !== false) {
-                        $nextid = $nextsco->id;
-                    } else {
-                        $nextid = 0;
-                    }
+                    $findnext = true;
                     $shownext = $sco->next;
                     $showprev = $sco->previous;
                 }
-                if (($nextid == 0) && (scorm_count_launchable($scorm->id,$currentorg) > 1) && ( $nextsco!==false)) {
-                    $previd = $sco->id;
+                
+                if (($nextid == 0) && (scorm_count_launchable($scorm->id,$currentorg) > 1) && ($nextsco!==false) && (!$findnext)) {
+                    if (!empty($sco->launch)) {
+                        $previd = $sco->id;
+                    }
                 }
                 if (empty($sco->prerequisites) || scorm_eval_prerequisites($sco->prerequisites,$usertracks)) {
                     if ($sco->id == $scoid) {
