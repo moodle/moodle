@@ -1381,11 +1381,6 @@ function scorm_get_toc($scorm,$liststyle,$currentorg='',$scoid='',$mode='normal'
             if (empty($sco->title)) {
                 $sco->title = $sco->identifier;
             }
-            if (($nextsco !== false) && ($nextid == 0) && ($findnext)) {
-                if (!empty($nextsco->launch)) {
-                    $nextid = $nextsco->id;
-                }
-            }
             if (!empty($sco->launch)) {
                 $startbold = '';
                 $endbold = '';
@@ -1443,6 +1438,11 @@ function scorm_get_toc($scorm,$liststyle,$currentorg='',$scoid='',$mode='normal'
                 }
             } else {
                 $result->toc .= "&nbsp;$sco->title</li>\n";
+            }
+            if (($nextsco !== false) && ($nextid == 0) && ($findnext)) {
+                if (!empty($nextsco->launch)) {
+                    $nextid = $nextsco->id;
+                }
             }
         }
         for ($i=0;$i<$level;$i++) {
