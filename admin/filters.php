@@ -197,11 +197,13 @@
             $hideshow = "<a href=\"$myurl&amp;action=hide&amp;filterpath=$path\">";
             $hideshow .= "<img src=\"$img/hide.gif\" alt=\"hide\"></a>";
             $hidden = false;
+            $displayname = "<span>$name</span>";
         }
         else {
             $hideshow = "<a href=\"$myurl&amp;action=show&amp;filterpath=$path\">";
             $hideshow .= "<img src=\"$img/show.gif\" alt=\"show\"></a>";
             $hidden = true;
+            $displayname = "<span class=\"dimmed_text\">$name</span>";
         }
 
         // get up/down link (only if not hidden)
@@ -232,7 +234,7 @@
         }
 
         // write data into the table object
-        $table->add_data( array( $name, $hideshow, $updown, $settings ) );
+        $table->add_data( array( $displayname, $hideshow, $updown, $settings ) );
     }
 
     // build options list for cache lifetime
