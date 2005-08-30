@@ -6,6 +6,7 @@ $string['adminseesallevents'] = 'Los administradores ven todos los eventos';
 $string['adminseesownevents'] = 'Los administradores son como los demás usuarios';
 $string['backgroundcolour'] = 'Color de fondo';
 $string['badwordsconfig'] = 'Escriba su lista de palabras censuradas, separadas por comas';
+$string['badwordsdefault'] = 'Si la lista personalizada está vacía, se usará la lista por defecto del paquete de idioma.';
 $string['badwordslist'] = 'Lista de palabras censuradas';
 $string['blockinstances'] = 'Ejemplos';
 $string['blockmultiple'] = 'Múltiples';
