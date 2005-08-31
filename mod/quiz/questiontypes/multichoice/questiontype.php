@@ -295,7 +295,7 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
             // the single selection case or has a positive score in the multiple
             // selection case
             if ($options->readonly && $options->correct_responses &&
-             in_array($aid, $correctanswers)) {
+                is_array($correctanswers) && in_array($aid, $correctanswers)) {
                 echo '<td valign="top" class="highlight"><label for="'.$id.'">'.
                  format_text("$qnumchar. $answer->answer", FORMAT_MOODLE ,
                  $formatoptions) . '</label></td>';
