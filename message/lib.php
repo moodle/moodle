@@ -1023,7 +1023,10 @@ function message_get_participants() {
 
     global $CFG;
 
-    return get_records_sql("SELECT DISTINCT u.id, u.id
+    // the first query is VERY intensive on large dbs, but 
+    // the second won't work with mysql < 4
+    if (!check_db_compat()) {
+        return get_records_sql("SELECT DISTINCT u.id, u.id
                               FROM {$CFG->prefix}user as u,
                                    {$CFG->prefix}message as m, 
                                    {$CFG->prefix}message_read as mr,
@@ -1034,6 +1037,14 @@ function message_get_participants() {
                                 OR mr.useridto = u.id
                                 OR mc.userid = u.id
                                 OR mc.contactid = u.id");
+    } else {
+        return get_records_sql("SELECT useridfrom,useridfrom FROM {$CFG->prefix}message
+                           UNION SELECT useridto,useridto FROM {$CFG->prefix}message
+                           UNION SELECT useridfrom,useridfrom FROM {$CFG->prefix}message_read
+                           UNION SELECT useridto,useridto FROM {$CFG->prefix}message_read
+                           UNION SELECT userid,userid FROM {$CFG->prefix}message_contacts
+                           UNION SELECT contactid,contactid from {$CFG->prefix}message_contacts");
+    }
 }
 
 ?>

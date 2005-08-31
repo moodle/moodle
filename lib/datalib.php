@@ -2972,5 +2972,27 @@ function sql_isnull($fieldname) {
     }
 }
 
+/**
+ * Checks for pg or mysql > 4
+ */
+
+function check_db_compat() {
+    global $CFG,$db;
+    
+    if ($CFG->dbtype == 'postgres7') {
+        return true;
+    }
+    
+    if (!$rs = $db->Execute("SELECT version();")) {
+        return false;
+    }
+
+    if (intval($rs->fields[0]) <= 3) {
+        return false;
+    }
+
+    return true;
+}
+
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
 ?>
