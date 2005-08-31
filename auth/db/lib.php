@@ -76,7 +76,7 @@ function auth_get_userinfo($username){
             if ($rs = $authdb->Execute("SELECT ".$pcfg["field_map_$field"]." FROM $CFG->auth_dbtable
                                         WHERE $CFG->auth_dbfielduser = '$username'")) {
                 if ( $rs->RecordCount() == 1 ) {
-                    $result["$field"] = $rs->fields[0];
+                    $result["$field"] = addslashes(stripslashes(utf8_decode($rs->fields[0])));
                 }
             }
         }
