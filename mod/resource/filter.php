@@ -14,6 +14,11 @@
             return $text;
         }
 
+        // if we don't have a courseid, we can't run the query, so
+        if (empty($courseid)) {
+            return $text;
+        }
+        
     /// Create a list of all the resources to search for.  It may be cached already.
 
         if (empty($resourcelist)) {
