@@ -28,7 +28,7 @@ You can set up <a href=\"$a->url\">loginhttps</a> option in Variables/Security s
 <br /><br />
 Turning this on will make Moodle use a secure https connection just for the login and payment pages.';
 $string['nameoncard'] = 'Name on Card';
-$string['reviewday'] = 'Capture the credit card automatically unless a teacher or administrator review the order within <b>$a</b> days. CRON MUST BE ENABLED.<br />(0=disable=teacher,admin review it. Transaction will be cancelled unless you review it within 30 days)';
+$string['reviewday'] = 'Capture the credit card automatically unless a teacher or administrator review the order within <b>$a</b> days. CRON MUST BE ENABLED.<br />(0 day = disable autocapture = teacher,admin review it manually. Transaction will be cancelled if you disable autocapture or unless you review it within 30 days.)';
 $string['reviewnotify'] = 'Your payment will be reviewed. Expect an email within a few days from your teacher.';
 $string['sendpaymentbutton'] = 'Send Payment';
 $string['zipcode'] = 'Zip Code';
