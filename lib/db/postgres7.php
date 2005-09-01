@@ -1268,6 +1268,113 @@ function main_upgrade($oldversion=0) {
         table_column('course_categories','','path','varchar','255');
     }
 
+    if  ($oldversion < 2005090100) { // stats!
+        modify_database('','CREATE TABLE prefix_stats_daily (
+           id SERIAL PRIMARY KEY,
+           courseid INTEGER NOT NULL default 0,
+           timeend INTEGER NOT NULL default 0,
+           students INTEGER NOT NULL default 0,
+           teachers INTEGER NOT NULL default 0,
+           activestudents INTEGER NOT NULL default 0,
+           activeteachers INTEGER NOT NULL default 0,
+           studentreads INTEGER NOT NULL default 0,
+           studentwrites INTEGER NOT NULL default 0,
+           teacherreads INTEGER NOT NULL default 0,
+           teacherwrites INTEGER NOT NULL default 0,
+           logins INTEGER NOT NULL default 0,
+           uniquelogins INTEGER NOT NULL default 0
+        );');
+
+        modify_database('','CREATE INDEX prefix_stats_daily_courseid_idx ON prefix_stats_daily (courseid);');
+        modify_database('','CREATE INDEX prefix_stats_daily_timeend_idx ON prefix_stats_daily (timeend);');
+        
+        modify_database('','CREATE TABLE prefix_stats_weekly (
+           id SERIAL PRIMARY KEY,
+           courseid INTEGER NOT NULL default 0,
+           timeend INTEGER NOT NULL default 0,
+           students INTEGER NOT NULL default 0,
+           teachers INTEGER NOT NULL default 0,
+           activestudents INTEGER NOT NULL default 0,
+           activeteachers INTEGER NOT NULL default 0,
+           studentreads INTEGER NOT NULL default 0,
+           studentwrites INTEGER NOT NULL default 0,
+           teacherreads INTEGER NOT NULL default 0,
+           teacherwrites INTEGER NOT NULL default 0,
+           logins INTEGER NOT NULL default 0,
+           uniquelogins INTEGER NOT NULL default 0
+        );');
+
+        modify_database('','CREATE INDEX prefix_stats_weekly_courseid_idx ON prefix_stats_weekly (courseid);');
+        modify_database('','CREATE INDEX prefix_stats_weekly_timeend_idx ON prefix_stats_weekly (timeend);');
+
+        modify_database('','CREATE TABLE prefix_stats_monthly (
+           id SERIAL PRIMARY KEY,
+           courseid INTEGER NOT NULL default 0,
+           timeend INTEGER NOT NULL default 0,
+           students INTEGER NOT NULL default 0,
+           teachers INTEGER NOT NULL default 0,
+           activestudents INTEGER NOT NULL default 0,
+           activeteachers INTEGER NOT NULL default 0,
+           studentreads INTEGER NOT NULL default 0,
+           studentwrites INTEGER NOT NULL default 0,
+           teacherreads INTEGER NOT NULL default 0,
+           teacherwrites INTEGER NOT NULL default 0,
+           logins INTEGER NOT NULL default 0,
+           uniquelogins INTEGER NOT NULL default 0
+        );');
+
+        modify_database('','CREATE INDEX prefix_stats_monthly_courseid_idx ON prefix_stats_monthly (courseid);');
+        modify_database('','CREATE INDEX prefix_stats_monthly_timeend_idx ON prefix_stats_monthly (timeend);');
+        
+        modify_database("","CREATE TABLE prefix_stats_user_daily (
+           id SERIAL PRIMARY KEY,
+           courseid INTEGER NOT NULL default 0,
+           userid INTEGER NOT NULL default 0,
+           roleid INTEGER NOT NULL default 0,
+           timeend INTEGER NOT NULL default 0,
+           reads INTEGER NOT NULL default 0,
+           writes INTEGER NOT NULL default 0,
+           stattype varchar(30) NOT NULL default ''
+         );");
+         
+         modify_database("","CREATE INDEX prefix_stats_user_daily_courseid_idx ON prefix_stats_user_daily (courseid);");
+         modify_database("","CREATE INDEX prefix_stats_user_daily_userid_idx ON prefix_stats_user_daily (userid);");
+         modify_database("","CREATE INDEX prefix_stats_user_daily_roleid_idx ON prefix_stats_user_daily (roleid);");
+         modify_database("","CREATE INDEX prefix_stats_user_daily_timeend_idx ON prefix_stats_user_daily (timeend);");
+
+         modify_database("","CREATE TABLE prefix_stats_user_weekly (
+           id SERIAL PRIMARY KEY,
+           courseid INTEGER NOT NULL default 0,
+           userid INTEGER NOT NULL default 0,
+           roleid INTEGER NOT NULL default 0,
+           timeend INTEGER NOT NULL default 0,
+           reads INTEGER NOT NULL default 0,
+           writes INTEGER NOT NULL default 0,
+           stattype varchar(30) NOT NULL default ''
+         );");
+         
+         modify_database("","CREATE INDEX prefix_stats_user_weekly_courseid_idx ON prefix_stats_user_weekly (courseid);");
+         modify_database("","CREATE INDEX prefix_stats_user_weekly_userid_idx ON prefix_stats_user_weekly (userid);");
+         modify_database("","CREATE INDEX prefix_stats_user_weekly_roleid_idx ON prefix_stats_user_weekly (roleid);");
+         modify_database("","CREATE INDEX prefix_stats_user_weekly_timeend_idx ON prefix_stats_user_weekly (timeend);");
+
+         modify_database("","CREATE TABLE prefix_stats_user_monthly (
+           id SERIAL PRIMARY KEY,
+           courseid INTEGER NOT NULL default 0,
+           userid INTEGER NOT NULL default 0,
+           roleid INTEGER NOT NULL default 0,
+           timeend INTEGER NOT NULL default 0,
+           reads INTEGER NOT NULL default 0,
+           writes INTEGER NOT NULL default 0,
+           stattype varchar(30) NOT NULL default ''
+         );");
+         
+         modify_database("","CREATE INDEX prefix_stats_user_monthly_courseid_idx ON prefix_stats_user_monthly (courseid);");
+         modify_database("","CREATE INDEX prefix_stats_user_monthly_userid_idx ON prefix_stats_user_monthly (userid);");
+         modify_database("","CREATE INDEX prefix_stats_user_monthly_roleid_idx ON prefix_stats_user_monthly (roleid);");
+         modify_database("","CREATE INDEX prefix_stats_user_monthly_timeend_idx ON prefix_stats_user_monthly (timeend);");
+    }
+    
     return $result;
 }
 

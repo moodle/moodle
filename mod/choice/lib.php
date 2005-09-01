@@ -207,4 +207,12 @@ function choice_get_choice($choiceid) {
     return false;
 }
 
+function choice_get_view_actions() {
+    return array('view','view all','report');
+}
+
+function choice_get_post_actions() {
+    return array('choose','choose again');
+}
+
 ?>

@@ -758,6 +758,12 @@ function quiz_process_options(&$form) {
 
 }
 
+function quiz_get_view_actions() {
+    return array('view','view all','report');
+}
 
+function quiz_get_post_actions() {
+    return array('attempt','editquestions','review','submit');
+}
 
 ?>

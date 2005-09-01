@@ -78,7 +78,59 @@
             print_log($course, $user->id, 0, "l.time DESC", $page, $perpage, 
                       "user.php?id=$course->id&amp;user=$user->id&amp;mode=$mode");
             break;
+        case 'stats':
 
+            if (empty($CFG->enablestats)) {
+                error("Stats is not enabled.");
+            }
+
+            require_once($CFG->dirroot.'/lib/statslib.php');
+
+            $earliestday = get_field_sql('SELECT timeend FROM '.$CFG->prefix.'stats_user_daily ORDER BY timeend LIMIT 1');
+            $earliestweek = get_field_sql('SELECT timeend FROM '.$CFG->prefix.'stats_user_weekly ORDER BY timeend LIMIT 1');
+            $earliestmonth = get_field_sql('SELECT timeend FROM '.$CFG->prefix.'stats_user_monthly ORDER BY timeend LIMIT 1');
+    
+            if (empty($earliestday)) $earliestday = time();
+            if (empty($earliestweek)) $earliestweek = time();
+            if (empty($earliestmonth)) $earliestmonth = time();
+            
+            $now = stats_get_base_daily();
+            $lastweekend = stats_get_base_weekly();
+            $lastmonthend = stats_get_base_monthly();
+
+            $timeoptions = stats_get_time_options($now,$lastweekend,$lastmonthend,$earliestday,$earliestweek,$earliestmonth);
+
+            if (empty($timeoptions)) { 
+                error(get_string('nostatstodisplay'), $CFG->wwwroot.'/course/user.php?id='.$course->id.'&user='.$user->id.'&mode=outline');
+            }
+
+            // use the earliest.
+            $time = array_pop($timeoptions);
+            
+            echo '<center><img src="'.$CFG->wwwroot.'/course/statsgraph.php?course='.$course->id.'&time='.$time.'&report='.STATS_REPORT_USER_VIEW.'&userid='.$user->id.'" /></center>';
+
+            $param = stats_get_parameters($time,STATS_REPORT_USER_VIEW);
+
+            $param->table = 'user_'.$param->table;
+        
+            $sql = 'SELECT timeend,'.$param->fields.',id FROM '.$CFG->prefix.'stats_'.$param->table.' WHERE courseid = '.$course->id.' AND userid = '.$user->id
+                .' AND stattype = \''.$param->stattype.'\''
+                .' AND timeend > '.$param->timeafter
+                .' ORDER BY timeend DESC';
+            $stats = get_records_sql($sql);
+            
+            $table = new object();
+            $table->align = array('left','center','center','center');
+            $param->table = str_replace('user_','',$param->table);
+            $table->head = array(get_string('periodending','moodle',$param->table),$param->line1,$param->line2,$param->line3);
+            foreach  ($stats as $stat) {
+                $a = array(userdate($stat->timeend),$stat->line1);
+                $a[] = $stat->line2;
+                $a[] = $stat->line3;
+                $table->data[] = $a;
+            }
+            print_table($table);
+            break;
         case "outline" :
         case "complete" :
         default:

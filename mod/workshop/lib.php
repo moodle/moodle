@@ -1842,4 +1842,12 @@ function workshop_fullname($userid, $courseid) {
         fullname($user).'</a>';
 }
 
+function workshop_get_view_actions() {
+    return array('view','view all');
+}
+
+function workshop_get_post_actions() {
+    return array('agree','assess','comment','grade','newattachment','removeattachments','resubmit','submit');
+}
+
 ?>

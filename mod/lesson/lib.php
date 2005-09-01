@@ -461,4 +461,13 @@ function lesson_get_participants($lessonid) {
     //Return students array (it contains an array of unique users)
     return ($students);
 }
+
+function lesson_get_view_actions() {
+    return array('view','view all');
+}
+
+function lesson_get_post_actions() {
+    return array('end','start');
+}
+
 ?>

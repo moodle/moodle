@@ -65,6 +65,8 @@
         print_heading("$course->fullname: $userinfo, $dateinfo (".usertimezone().")");
 
         print_log_selector_form($course, $user, $date, $modname, $modid, $modaction, $group, $showcourses, $showusers);
+        
+        echo '<p align="center">[ <a href="'.$CFG->wwwroot.'/course/stats.php?course='.$course->id.'">'.get_string('seealsostats').'</a> ]</p>';
 
         print_log($course, $user, $date, 'l.time DESC', $page, $perpage, 
                   "log.php?id=$course->id&amp;chooselog=1&amp;user=$user&amp;date=$date&amp;modid=$modid&amp;modaction=$modaction&amp;group=$group", 

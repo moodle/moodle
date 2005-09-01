@@ -640,4 +640,13 @@ function resource_get_resource_types() {
     }
     return $resources;
 }
+
+function resource_get_view_actions() {
+    return array('view','view all');
+}
+
+function resource_get_post_actions() {
+    return array();
+}
+
 ?>

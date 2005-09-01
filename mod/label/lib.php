@@ -78,4 +78,12 @@ function label_get_coursemodule_info($coursemodule) {
    return $info;
 }
 
+function label_get_view_actions() {
+    return array();
+}
+
+function label_get_post_actions() {
+    return array();
+}
+
 ?>

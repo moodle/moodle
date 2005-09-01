@@ -1746,4 +1746,12 @@ function assignment_upgrade_submodules() {
     }
 }
 
+function assignment_get_view_actions() {
+    return array('view','view all','view submission');
+}
+
+function assignment_get_post_actions() {
+    return array('upload','update grades');
+}
+
 ?>

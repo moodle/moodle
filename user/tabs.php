@@ -61,7 +61,7 @@
         $toprow[] = new tabobject('reports', $CFG->wwwroot.'/course/user.php?id='.$course->id.
                                   '&amp;user='.$user->id.'&amp;mode=outline', get_string('activityreports'));
 
-        if (in_array($currenttab, array('outline', 'complete', 'todaylogs', 'alllogs'))) {
+        if (in_array($currenttab, array('outline', 'complete', 'todaylogs', 'alllogs', 'stats'))) {
             $inactive = array('reports');
             $activetwo = array('reports');
 
@@ -73,7 +73,11 @@
             $secondrow[] = new tabobject('todaylogs', $CFG->wwwroot.'/course/user.php?id='.$course->id.
                                       '&amp;user='.$user->id.'&amp;mode=todaylogs', get_string('todaylogs'));
             $secondrow[] = new tabobject('alllogs', $CFG->wwwroot.'/course/user.php?id='.$course->id.
-                                  '&amp;user='.$user->id.'&amp;mode=alllogs', get_string('alllogs'));
+                                      '&amp;user='.$user->id.'&amp;mode=alllogs', get_string('alllogs'));
+            if (!empty($CFG->enablestats)) {
+                $secondrow[] = new tabobject('stats',$CFG->wwwroot.'/course/user.php?id='.$course->id.
+                                             '&amp;user='.$user->id.'&amp;mode=stats',get_string('stats'));
+            }
         }
 
     }

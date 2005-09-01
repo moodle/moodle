@@ -247,4 +247,40 @@ function upgrade_activity_modules($return) {
     }
 }
 
+/** 
+ * This function will return FALSE if the lock fails to be set (ie, if it's already locked)
+ */
+function set_cron_lock($name,$value=true,$staleafter=7200,$clobberstale=false) {
+
+    if (empty($name)) {
+        mtrace("Tried to get a cron lock for a null fieldname");
+        return false;
+    }
+
+    if (empty($value)) {
+        set_config($name,0);
+        return true;
+    }
+
+    if ($config = get_record('config','name',$name)) {
+        if (empty($config->value)) {
+            set_config($name,time());
+        } else {
+            // check for stale.
+            if ((time() - $staleafter) > $config->value) {
+                mtrace("STALE LOCKFILE FOR $name - was $config->value");
+                if (!empty($clobberstale)) {
+                    set_config($name,time());
+                    return true;
+                }
+            } else {
+                return false; // was not stale - ie, we're ok to still be running.
+            }
+        }
+    }
+    else {
+        set_config($name,time());
+    }
+    return true;
+}
 ?>

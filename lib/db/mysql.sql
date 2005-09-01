@@ -727,6 +727,112 @@ CREATE TABLE `adodb_logsql` (
  `timer` decimal(16,6) NOT NULL
 );
 
+CREATE TABLE `prefix_stats_daily` (
+   `id` int(10) unsigned NOT NULL auto_increment,
+   `courseid` int(10) unsigned NOT NULL default 0,
+   `timeend` int(10) unsigned NOT NULL default 0,
+   `students` int(10) unsigned NOT NULL default 0,
+   `teachers` int(10) unsigned NOT NULL default 0,
+   `activestudents` int(10) unsigned NOT NULL default 0,
+   `activeteachers` int(10) unsigned NOT NULL default 0,
+   `studentreads` int(10) unsigned NOT NULL default 0,
+   `studentwrites` int(10) unsigned NOT NULL default 0,
+   `teacherreads` int(10) unsigned NOT NULL default 0,
+   `teacherwrites` int(10) unsigned NOT NULL default 0,
+   `logins` int(10) unsigned NOT NULL default 0,
+   `uniquelogins` int(10) unsigned NOT NULL default 0,
+   PRIMARY KEY (`id`),
+   KEY `courseid` (`courseid`),
+   KEY `timeend` (`timeend`)	 
+);
+
+CREATE TABLE prefix_stats_weekly (
+   `id` int(10) unsigned NOT NULL auto_increment,
+   `courseid` int(10) unsigned NOT NULL default 0,
+   `timeend` int(10) unsigned NOT NULL default 0,
+   `students` int(10) unsigned NOT NULL default 0,
+   `teachers` int(10) unsigned NOT NULL default 0,
+   `activestudents` int(10) unsigned NOT NULL default 0,
+   `activeteachers` int(10) unsigned NOT NULL default 0,
+   `studentreads` int(10) unsigned NOT NULL default 0,
+   `studentwrites` int(10) unsigned NOT NULL default 0,
+   `teacherreads` int(10) unsigned NOT NULL default 0,
+   `teacherwrites` int(10) unsigned NOT NULL default 0,
+   `logins` int(10) unsigned NOT NULL default 0,
+   `uniquelogins` int(10) unsigned NOT NULL default 0,
+   PRIMARY KEY (`id`),
+   KEY `courseid` (`courseid`),
+   KEY `timeend` (`timeend`)	 
+);
+
+CREATE TABLE prefix_stats_monthly (
+   `id` int(10) unsigned NOT NULL auto_increment,
+   `courseid` int(10) unsigned NOT NULL default 0,
+   `timeend` int(10) unsigned NOT NULL default 0,
+   `students` int(10) unsigned NOT NULL default 0,
+   `teachers` int(10) unsigned NOT NULL default 0,
+   `activestudents` int(10) unsigned NOT NULL default 0,
+   `activeteachers` int(10) unsigned NOT NULL default 0,
+   `studentreads` int(10) unsigned NOT NULL default 0,
+   `studentwrites` int(10) unsigned NOT NULL default 0,
+   `teacherreads` int(10) unsigned NOT NULL default 0,
+   `teacherwrites` int(10) unsigned NOT NULL default 0,
+   `logins` int(10) unsigned NOT NULL default 0,
+   `uniquelogins` int(10) unsigned NOT NULL default 0,
+   PRIMARY KEY (`id`),
+   KEY `courseid` (`courseid`),
+   KEY `timeend` (`timeend`)	 
+);
+
+CREATE TABLE prefix_stats_user_daily (
+   `id` int(10) unsigned NOT NULL auto_increment,
+   `courseid` int(10) unsigned NOT NULL default 0,
+   `userid` int(10) unsigned NOT NULL default 0,
+   `roleid` int(10) unsigned NOT NULL default 0,
+   `timeend` int(10) unsigned NOT NULL default 0,
+   `reads` int(10) unsigned NOT NULL default 0,
+   `writes` int(10) unsigned NOT NULL default 0,
+   `stattype` varchar(30) NOT NULL default '',
+   PRIMARY KEY (`id`),
+   KEY `courseid` (`courseid`),
+   KEY `userid` (`userid`),
+   KEY `roleid` (`roleid`),
+   KEY `timeend` (`timeend`)	
+);
+
+CREATE TABLE prefix_stats_user_weekly (
+   `id` int(10) unsigned NOT NULL auto_increment,
+   `courseid` int(10) unsigned NOT NULL default 0,
+   `userid` int(10) unsigned NOT NULL default 0,
+   `roleid` int(10) unsigned NOT NULL default 0,
+   `timeend` int(10) unsigned NOT NULL default 0,
+   `reads` int(10) unsigned NOT NULL default 0,
+   `writes` int(10) unsigned NOT NULL default 0,
+   `stattype` varchar(30) NOT NULL default '',
+   PRIMARY KEY (`id`),
+   KEY `courseid` (`courseid`),
+   KEY `userid` (`userid`),
+   KEY `roleid` (`roleid`),
+   KEY `timeend` (`timeend`)	
+);
+
+CREATE TABLE prefix_stats_user_monthly (
+   `id` int(10) unsigned NOT NULL auto_increment,
+   `courseid` int(10) unsigned NOT NULL default 0,
+   `userid` int(10) unsigned NOT NULL default 0,
+   `roleid` int(10) unsigned NOT NULL default 0,
+   `timeend` int(10) unsigned NOT NULL default 0,
+   `reads` int(10) unsigned NOT NULL default 0,
+   `writes` int(10) unsigned NOT NULL default 0,
+   `stattype` varchar(30) NOT NULL default '',
+   PRIMARY KEY (`id`),
+   KEY `courseid` (`courseid`),
+   KEY `userid` (`userid`),
+   KEY `roleid` (`roleid`),
+   KEY `timeend` (`timeend`)	
+);
+
+
 INSERT INTO prefix_log_display VALUES ('user', 'view', 'user', 'CONCAT(firstname," ",lastname)');
 INSERT INTO prefix_log_display VALUES ('course', 'user report', 'user', 'CONCAT(firstname," ",lastname)');
 INSERT INTO prefix_log_display VALUES ('course', 'view', 'course', 'fullname');

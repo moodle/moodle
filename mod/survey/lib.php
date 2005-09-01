@@ -484,4 +484,12 @@ function survey_print_graph($url) {
     }
 }
 
+function survey_get_view_actions() {
+    return array('download','view all','view form','view graph','view report');
+}
+
+function survey_get_post_actions() {
+    return array('submit');
+}
+
 ?>

@@ -3602,5 +3602,13 @@ function forum_discussion_update_last_post($discussionid) {
 /// or we couldn't update the discussion record (weird x2)
     return false;
 }
-         
+
+function forum_get_view_actions() {
+    return array('view discussion','search','forum','forums','subscribers');
+}
+
+function forum_get_post_actions() {
+    return array('add discussion','add post','delete discussion','delete post','move discussion','prune post','update post');
+}
+
 ?>

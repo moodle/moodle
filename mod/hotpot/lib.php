@@ -2818,4 +2818,12 @@ if (!function_exists('optional_param')) {
 	}
 }
 
+function hotpot_get_view_actions() {
+    return array('view','view all','report','review');
+}
+
+function hotpot_get_post_actions() {
+    return array('submit');
+}
+
 ?>

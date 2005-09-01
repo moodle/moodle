@@ -1465,4 +1465,13 @@ function scorm_get_toc($scorm,$liststyle,$currentorg='',$scoid='',$mode='normal'
     
     return $result;
 }
+
+function scorm_get_view_actions() {
+    return array('pre-view','view','view all','report');
+}
+
+function scorm_get_post_actions() {
+    return array();
+}
+
 ?>

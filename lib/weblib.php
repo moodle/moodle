@@ -3558,7 +3558,7 @@ function print_date_selector($day, $month, $year, $currenttime=0) {
  * @param int $step ?
  * @todo Finish documenting this function
  */
-function print_time_selector($hour, $minute, $currenttime=0, $step=5) {
+function print_time_selector($hour, $minute, $currenttime=0, $step=5 ,$return=false) {
 
     if (!$currenttime) {
         $currenttime = time();
@@ -3573,8 +3573,9 @@ function print_time_selector($hour, $minute, $currenttime=0, $step=5) {
     for ($i=0; $i<=59; $i+=$step) {
         $minutes[$i] = sprintf("%02d",$i);
     }
-    choose_from_menu($hours,   $hour,   $currentdate['hours'],   '');
-    choose_from_menu($minutes, $minute, $currentdate['minutes'], '');
+
+    return choose_from_menu($hours,   $hour,   $currentdate['hours'],   '','','',$return)
+        .choose_from_menu($minutes, $minute, $currentdate['minutes'], '','','',$return);
 }
 
 /**

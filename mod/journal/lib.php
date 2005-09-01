@@ -545,4 +545,12 @@ function journal_print_feedback($course, $entry, $grades) {
     echo '</td></tr></table>';
 }
 
+function journal_get_view_actions() {
+    return array('view','view all','view responses');
+}
+
+function journal_get_post_actions() {
+    return array('add entry','update entry','update feedback');
+}
+
 ?>

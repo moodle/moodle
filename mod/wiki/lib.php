@@ -1470,4 +1470,15 @@ function wiki_admin_revert($proceed, $authorfieldpattern, $changesfield, $howtoo
   } #-- while($row)
   return $ret;
 }
+
+
+function wiki_get_view_actions() {
+    return array('view','view all');
+}
+
+function wiki_get_post_actions() {
+    return array('hack');
+}
+
+
 ?>

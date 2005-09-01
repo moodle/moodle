@@ -27,6 +27,7 @@
     }
 
     require_once("../config.php");
+    require_once($CFG->dirroot.'/lib/adminlib.php');
 
     if (!$alreadyadmin = isadmin()) {
         unset($_SESSION['USER']);
@@ -177,6 +178,37 @@
     $enrol->cron();
     if (!empty($enrol->log)) {
         mtrace($enrol->log);
+    }
+
+    if (!empty($CFG->enablestats)) {
+        if (!get_field_sql('SELECT id FROM '.$CFG->prefix.'stats_daily LIMIT 1')) {
+            // first run, set another lock. we'll check for this in subsequent runs to set the timeout to later for the normal lock.
+            set_cron_lock('statsfirstrunlock',true,60*60*20,true);
+            $firsttime = true;
+        }
+        $time = 60*60*2;
+        $clobber = true;
+        if ($config = get_record('config','name','statsfirstrunlock')) {
+            if (!empty($config->value)) {
+                $time = 60*60*20;
+                $clobber = false;
+            }
+        }
+        if (set_cron_lock('statsrunning',true,$time, $clobber)) {
+            require_once($CFG->dirroot.'/lib/statslib.php');
+            $return = stats_cron_daily();
+            if ($return == STATS_RUN_COMPLETE) {
+                $return = stats_cron_weekly();
+            }
+            if ($return == STATS_RUN_COMPLETE) {
+                $return = stats_cron_monthly();
+            }
+            stats_clean_old();
+            set_cron_lock('statsrunning',false);
+            if (!empty($firsttime)) {
+                set_cron_lock('statsfirstrunlock',false);
+            }
+        }
     }
 
     //Unset session variables and destroy it

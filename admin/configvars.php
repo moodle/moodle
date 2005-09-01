@@ -527,8 +527,49 @@ class configvarrss extends configvar {
     $mail['denyemailaddresses'] = new configvar (get_string('configdenyemailaddresses', 'admin'),
         '<input name="denyemailaddresses" type="text" size="60" value="'.s($config->denyemailaddresses).'" alt="denyemailaddresses" />' );
 
+/// enable stats
+    $stats['enablestats'] = new configvar (get_string('configenablestats','admin'),
+        choose_from_menu($noyesoptions, 'enablestats', $config->enablestats, '', '', '', true) );
 
+    unset($options);
+    $options['none'] = get_string('none');
+    $options[60*60*24*7] = get_string('numweeks','moodle',1);
+    $options[60*60*24*14] = get_string('numweeks','moodle',2);
+    $options[60*60*24*21] = get_string('numweeks','moodle',3);
+    $options[60*60*24*28] = get_string('nummonths','moodle',1);
+    $options[60*60*24*56] = get_string('nummonths','moodle',2);
+    $options[60*60*24*84] = get_string('nummonths','moodle',3);
+    $options[60*60*24*112] = get_string('nummonths','moodle',4);
+    $options[60*60*24*140] = get_string('nummonths','moodle',5);
+    $options[60*60*24*168] = get_string('nummonths','moodle',6);
+    $options['all'] = get_string('all');
+    
+    $stats['statsfirstrun'] = new configvar (get_string('configstatsfirstrun','admin'),
+       choose_from_menu($options,'statsfirstrun',$config->statsfirstrun,'','','',true) );
 
+    unset($options);
+    $options[0] = get_string('untilcomplete');
+    $options[60*60] = '1 '.get_string('hour');
+    $options[60*60*2] = '2 '.get_string('hours');
+    $options[60*60*3] = '3 '.get_string('hours');
+    $options[60*60*4] = '4 '.get_string('hours');
+    $options[60*60*5] = '5 '.get_string('hours');
+    $options[60*60*6] = '6 '.get_string('hours');
+    $options[60*60*7] = '7 '.get_string('hours');
+    $options[60*60*8] = '8 '.get_string('hours');
+
+    if (empty($config->statsruntimestarthour)) {
+        $config->statsruntimestarthour = 0;
+    }
+    if (empty($config->statsruntimestartminute)) {
+        $config->statsruntimestartminute = 0;
+    }
+
+    $stats['statsmaxruntime'] = new configvar (get_string('configstatsmaxruntime','admin'),
+      choose_from_menu($options,'statsmaxruntime',$config->statsmaxruntime,'','','',true) );                                        
+
+    $stats['statsruntimestart'] = new configvar (get_string('configstatsruntimestart','admin'),
+      print_time_selector("statsruntimestarthour","statsruntimestartminute",make_timestamp(2000,1,1,$config->statsruntimestarthour,$config->statsruntimestartminute),5,true) );
 
 
 
@@ -543,5 +584,6 @@ class configvarrss extends configvar {
     $configvars['permissions']     = $permissions;
     $configvars['requestedcourse'] = $reqcourse;
     $configvars['misc']            = $misc;
+    $configvars['stats']           = $stats;
 
 ?>

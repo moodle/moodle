@@ -2143,4 +2143,12 @@ function glossary_get_paging_bar($totalcount, $page, $perpage, $baseurl, $maxpag
     return $code;
 }
 
+function glossary_get_view_actions() {
+    return array('view','view all','view entry');
+}
+
+function glossary_get_post_actions() {
+    return array('add category','add comment','add entry','approve entry','delete category','delete comment','delete entry','edit category','update comment','update entry');
+}
+
 ?>

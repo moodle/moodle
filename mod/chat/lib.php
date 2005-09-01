@@ -615,4 +615,12 @@ if (!function_exists('ob_get_clean')) {
     }
 }
 
+function chat_get_view_actions() {
+    return array('view','view all','report');
+}
+
+function chat_get_post_actions() {
+    return array('talk');
+}
+
 ?>

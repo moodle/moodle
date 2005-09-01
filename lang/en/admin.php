@@ -37,6 +37,7 @@ $string['configdisplayloginfailures'] = 'This will display information to select
 $string['configenablecourserequests'] = 'This will allow any user to request a course be created.';
 $string['configenablerssfeeds'] = 'This switch will enable RSS feeds from across the site.  To actually see any change you will need to enable RSS feeds in the individual modules too - go to the Modules settings under Admin Configuration.';
 $string['configenablerssfeedsdisabled'] = ' It is not available because RSS feeds are disabled in all the Site. To enable them, go to the Variables settings under Admin Configuration.';
+$string['configenablestats'] = 'If you choose \'yes\' here, Moodle\'s cronjob will process the logs and gather some statistics.  Depending on the amount of traffic on your site, this can take awhile. If you enable this, you will be able to see some interesting graphs and statistics about each of your courses, or on a sitewide basis.';
 $string['configerrorlevel'] = 'Choose the amount of PHP warnings that you want to be displayed.  Normal is usually the best choice.';
 $string['configextendedusernamechars'] = 'Enable this setting to allow students to use any characters in their usernames (note this does not affect their actual names).  The default is \"false\" which restricts usernames to be alphanumeric characters only';
 $string['configfilterall'] = 'Filter all strings, including headings, titles, navigation bar and so on.  This is mostly useful when using the multilang filter, otherwise it will just create extra load on your site for little gain.';
@@ -87,6 +88,7 @@ $string['configsectionoperatingsystem'] = 'Operating System';
 $string['configsectionpermissions'] = 'Permissions';
 $string['configsectionrequestedcourse'] = 'Course requests';
 $string['configsectionsecurity'] = 'Security';
+$string['configsectionstats'] = 'Statistics';
 $string['configsectionuser'] = 'User';
 $string['configsecureforms'] = 'Moodle can use an additional level of security when accepting data from web forms. If this is enabled, then the browser\'s HTTP_REFERER variable is checked against the current form address.  In a very few cases this can cause problems if the user is using a firewall (eg Zonealarm) configured to strip HTTP_REFERER from their web traffic.  Symptoms are getting \'stuck\' on a form. If your users are having problems with the login page (for example) you might want to disable this setting, although it might leave your site more open to brute-force password attacks.  If in doubt, leave this set to \'Yes\'.';
 $string['configsessioncookie'] = 'This setting customises the name of the cookie used for Moodle sessions.  This is optional, and only useful to avoid cookies being confused when there is more than one copy of Moodle running within the same web site.';
@@ -97,6 +99,9 @@ $string['configsitepolicy'] = 'If you have a site policy that all users must see
 $string['configslasharguments'] = 'Files (images, uploads etc) are provided via a script using \'slash arguments\' (the second option here). This method allows files to be more easily cached in web browsers, proxy servers etc.  Unfortunately, some PHP servers don\'t allow this method, so if you have trouble viewing uploaded files or images (eg user pictures), set this variable to the first option.';
 $string['configsmtphosts'] = 'Give the full name of one or more local SMTP servers that Moodle should use to send mail (eg \'mail.a.com\' or \'mail.a.com;mail.b.com\'). If you leave it blank, Moodle will use the PHP default method of sending mail.';
 $string['configsmtpuser'] = 'If you have specified an SMTP server above, and the server requires authentication, then enter the username and password here.';
+$string['configstatsfirstrun'] = 'This specifies how far back the logs should be processed <b>the first time</b> the cronjob wants to process statistics. If you have a lot of traffic and are on shared hosting, it\'s probably not a good idea to go too far back, as it could take a long time to run and be quite resource intensive. (Note that for this setting, 1 month = 28 days. In the graphs and reports generated, 1 month = 1 calendar month.)';
+$string['configstatsmaxruntime'] = 'Stats processing can be quite intensive, so use a combination of this field and the next one to specify when it will run and how long for.';
+$string['configstatsruntimestart'] = 'What time should the cronjob that does the stats processing <b>start</b>?';
 $string['configteacherassignteachers'] = 'Should ordinary teachers be allowed to assign other teachers within courses they teach?  If \'No\', then only course creators and admins can assign teachers.';
 $string['configthemelist'] = 'Leave this blank to allow any valid theme to be used.  If you want to shorten the theme menu, you can specify a comma-separated list of names here (Don\'t use spaces!).  
 For example:  standard,orangewhite.';
