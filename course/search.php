@@ -27,6 +27,26 @@
         require_login();
     }
 
+    if (iscreator()) {
+        if (isset($_GET['edit']) and confirm_sesskey()) {
+            if ($edit == "on") {
+                $USER->categoriessearchediting = true;
+            } else if ($edit == "off") {
+                $USER->categoriessearchediting = false;
+            }
+
+            print_paging_bar($totalcount, $page, $perpage, "search.php?search=$search&perpage=$perpage&");
+
+        }
+
+        $creatorediting = !empty($USER->categoriessearchediting);
+        $adminediting = (isadmin() and $creatorediting);
+    }
+
+    if ($adminediting && $perpage != 99999) {
+        $perpage = 30;
+    }
+
     $displaylist = array();
     $parentlist = array();
     make_categories_list($displaylist, $parentlist, "");
@@ -35,6 +55,10 @@
     $strsearch = get_string("search");
     $strsearchresults = get_string("searchresults");
     $strcategory = get_string("category");
+    $strselect   = get_string("select");
+    $strselectall = get_string("selectall");
+    $strdeselectall = get_string("deselectall");
+    $stredit = get_string("edit");
 
     if (!$search) {
         print_header("$site->fullname : $strsearch", $site->fullname, 
@@ -52,32 +76,128 @@
         exit;
     }
 
+    if (isset($moveto) and $data = data_submitted() and confirm_sesskey()) {   // Some courses are being moved
+    
+        if (! $destcategory = get_record("course_categories", "id", $data->moveto)) {
+            error("Error finding the category");
+        }
+        
+        $courses = array();        
+        foreach ( $data as $key => $value ) {
+            if (preg_match('/^c\d+$/', $key)) {
+                array_push($courses, substr($key, 1));
+            }
+        }
+        move_courses($courses, $data->moveto);
+    }
+
+    $courses = get_courses_search($searchterms, "fullname ASC", 
+                                  $page*$perpage, $perpage, $totalcount);
+
     $searchform = print_course_search($search, true, "navbar");
+
+    if (!empty($courses) && iscreator()) {
+        $searchform .= update_categories_search_button($search,$page,$perpage);
+    }
+ 
 
     print_header("$site->fullname : $strsearchresults", $site->fullname, 
                  "<a href=\"index.php\">$strcourses</a> -> <a href=\"search.php\">$strsearch</a> -> '$search'", "", "", "", $searchform);
 
 
     $lastcategory = -1;
-    if ($courses = get_courses_search($searchterms, "fullname ASC", 
-                                      $page*$perpage, $perpage, $totalcount)) {
+    if ($courses) {
 
         print_heading("$strsearchresults: $totalcount");
 
-        print_paging_bar($totalcount, $page, $perpage, "search.php?search=$search&amp;perpage=$perpage&");
+        if (!$adminediting) {
+            foreach ($courses as $course) {
+                $course->fullname = highlight("$search", $course->fullname);
+                $course->summary = highlight("$search", $course->summary);
+                $course->summary .= "<br /><p align=\"right\">";
+                $course->summary .= "$strcategory: <a href=\"category.php?id=$course->category\">";
+                $course->summary .= $displaylist[$course->category];
+                $course->summary .= "</a></p>";
+                print_course($course);
+                print_spacer(5,5);
+            }
+        } else { // slightly more sophisticated
 
-        foreach ($courses as $course) {
-            $course->fullname = highlight("$search", $course->fullname);
-            $course->summary = highlight("$search", $course->summary);
-            $course->summary .= "<br /><p align=\"right\">";
-            $course->summary .= "$strcategory: <a href=\"category.php?id=$course->category\">";
-            $course->summary .= $displaylist[$course->category];
-            $course->summary .= "</a></p>";
-            print_course($course);
-            print_spacer(5,5);
+            $oldperpage = ($adminediting) ? 30 : 10;
+            print_paging_bar($totalcount, $page, $oldperpage, "search.php?search=$search&perpage=$perpage&",($perpage == 99999));
+
+            if ($perpage != 99999 && $totalcount > $perpage) {
+                echo "<center><p>";
+                echo "<a href=\"search.php?search=$search&perpage=99999\">".get_string("showall", "", $totalcount)."</a>";
+                echo "</p></center>";
+            }
+            echo "<form name=\"movecourses\" action=\"search.php\" method=\"post\">";
+            echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\">";
+            echo "<input type=\"hidden\" name=\"search\" value=\"$search\">";
+            echo "<input type=\"hidden\" name=\"page\" value=\"$page\">";
+            echo "<input type=\"hidden\" name=\"perpage\" value=\"$perpage\">";
+            echo "<table align=\"center\" border=0 cellspacing=2 cellpadding=4 class=\"generalbox\"><tr>";
+            echo "<th>$strcourses</th>";
+            echo "<th>$strcategory</th>";
+            echo "<th>$strselect</th>";
+            echo "<th>$stredit</th>";
+            foreach ($courses as $course) {
+                $course->fullname = highlight("$search", $course->fullname);
+                $linkcss = $course->visible ? "" : " class=\"dimmed\" ";
+                echo "<tr>";
+                echo "<td><a $linkcss href=\"view.php?id=$course->id\">$course->fullname</a></td>";
+                echo "<td>".$displaylist[$course->category]."</td>";
+                echo "<td align=\"center\">";
+                echo "<input type=\"checkbox\" name=\"c$course->id\">";
+                echo "</td>";
+                echo "<td>";
+                if (empty($THEME->custompix)) {
+                    $pixpath = "$CFG->wwwroot/pix";
+                } else {
+                    $pixpath = "$CFG->wwwroot/theme/$CFG->theme/pix";
+                }
+                echo "<a title=\"".get_string("settings")."\" href=\"$CFG->wwwroot/course/edit.php?id=$course->id\"><img".
+                    " src=\"$pixpath/t/edit.gif\" height=\"11\" width=\"11\" border=\"0\"></a> ";
+                echo "<a title=\"".get_string("assignteachers")."\" href=\"$CFG->wwwroot/course/teacher.php?id=$course->id\"><img".
+                    " src=\"$pixpath/t/user.gif\" height=\"11\" width=\"11\" border=\"0\"></a> ";
+                echo "<a title=\"".get_string("delete")."\" href=\"delete.php?id=$course->id\"><img".
+                    " src=\"$pixpath/t/delete.gif\" height=\"11\" width=\"11\" border=\"0\"></a> ";
+                if (!empty($course->visible)) {
+                    echo "<a title=\"".get_string("hide")."\" href=\"category.php?id=$course->category&hide=$course->id&amp;sesskey=$USER->sesskey\"><img".
+                        " src=\"$pixpath/t/hide.gif\" height=\"11\" width=\"11\" border=\"0\"></a> ";
+                } else {
+                    echo "<a title=\"".get_string("show")."\" href=\"category.php?id=$course->category&show=$course->id&amp;sesskey=$USER->sesskey\"><img".
+                        " src=\"$pixpath/t/show.gif\" height=\"11\" width=\"11\" border=\"0\"></a> ";
+                }
+                
+                echo "<a title=\"".get_string("backup")."\" href=\"../backup/backup.php?id=$course->id\"><img".
+                    " src=\"$pixpath/t/backup.gif\" height=\"11\" width=\"11\" border=\"0\"></a> ";
+                
+                echo "<a title=\"".get_string("restore")."\" href=\"../files/index.php?id=$course->id&wdir=/backupdata\"><img".
+                    " src=\"$pixpath/t/restore.gif\" height=\"11\" width=\"11\" border=\"0\"></a> ";
+                echo "</td></tr>";
+            }
+            echo "<tr><td colspan=\"4\" align=\"center\">";
+            echo "<br />";
+            echo "<input type=\"button\" onclick=\"checkall()\" value=\"$strselectall\" />\n";
+            echo "<input type=\"button\" onclick=\"uncheckall()\" value=\"$strdeselectall\" />\n";
+            choose_from_menu ($displaylist, "moveto", "", get_string("moveselectedcoursesto"), "javascript:document.movecourses.submit()");
+            echo "</td></tr>";
+            echo "</table>";
+
+            print_paging_bar($totalcount, $page, $oldperpage, "search.php?search=$search&perpage=30&",($perpage == 99999));
+
+
+            if ($perpage != 99999 && $totalcount > $perpage) {
+                echo "<center><p>";
+                echo "<a href=\"search.php?search=$search&perpage=99999\">".get_string("showall", "", $totalcount)."</a>";
+                echo "</p></center>";
+            }
+
         }
 
-        print_paging_bar($totalcount, $page, $perpage, "search.php?search=$search&amp;perpage=$perpage&");
+
+
 
     } else {
         print_heading(get_string("nocoursesfound", "", $search));

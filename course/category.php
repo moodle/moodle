@@ -132,35 +132,14 @@
                 error("Error finding the category");
             }
 
-            unset($data->moveto);
-            unset($data->id);
-            unset($data->sesskey);
-
-            if ($data) {
-                foreach ($data as $code => $junk) {
-
-                    $courseid = substr($code, 1);
-
-                    if (! record_exists('course', 'id', $courseid)) {
-                        notify('Error finding a course');
-                    } else {
-                        // figure out a sortorder that we can use in the destination category
-                        $sortorder = get_field_sql('SELECT MIN(sortorder)-1 AS min
-                                                    FROM ' . $CFG->prefix . 'course WHERE category=' . $destcategory->id) || 1000;
-
-                        $newcourse = new stdClass;
-                        $newcourse->id        = $courseid;
-                        $newcourse->category  = $destcategory->id;
-                        $newcourse->sortorder = $sortorder;
-
-                        if (!update_record('course', $newcourse)) {
-                            notify("An error occurred - course not moved!");
-                        }
-                        fix_course_sortorder();
-                    }
+            
+            $courses = array();        
+            foreach ( $data as $key => $value ) {
+                if (preg_match('/^c\d+$/', $key)) {
+                    array_push($courses, substr($key, 1));
                 }
-                $category = get_record('course_categories', 'id', $category->id);   // Refresh it
-            }
+            } 
+            move_courses($courses, $data->moveto);
         }
 
     /// Hide or show a course
@@ -430,6 +409,9 @@
         echo '<input type="submit" value="'.$strrename.'" />';
         echo "</form>";
         echo "<br />";
+
+        print_course_search();
+
     }
     echo "</center>";
 

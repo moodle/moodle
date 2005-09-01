@@ -33,6 +33,13 @@ function openpopup(url,name,options,fullscreen) {
   return false;
 }
 
+function uncheckall() {
+  void(d=document);
+  void(el=d.getElementsByTagName('INPUT'));
+  for(i=0;i<el.length;i++)
+    void(el[i].checked=0)
+}
+
 function inserttext(text) {
 <?php
     if (!empty($SESSION->inserttextform)) {

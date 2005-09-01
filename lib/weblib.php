@@ -3211,6 +3211,33 @@ function update_categories_button() {
 }
 
 /**
+ * Prints the editing button on search results listing
+ * For bulk move courses to another category
+ */
+
+function update_categories_search_button($search,$page,$perpage) {
+    global $CFG, $USER;
+
+    if (isadmin()) {
+        if (!empty($USER->categoriessearchediting)) {
+            $string = get_string("turneditingoff");
+            $edit = "off";
+            $perpage = 30;
+        } else {
+            $string = get_string("turneditingon");
+            $edit = "on";
+        }
+        return "<form target=\"$CFG->framename\" method=\"get\" action=\"$CFG->wwwroot/course/search.php\">".
+               "<input type=\"hidden\" name=\"edit\" value=\"$edit\" />".
+               "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />".
+               "<input type=\"hidden\" name=\"search\" value=\"$search\" />".
+               "<input type=\"hidden\" name=\"page\" value=\"$page\" />".
+               "<input type=\"hidden\" name=\"perpage\" value=\"$perpage\" />".
+               "<input type=\"submit\" value=\"$string\" /></form>";
+    }
+}
+
+/**
  * Prints the editing button on group page
  *
  * @uses $CFG
@@ -4022,7 +4049,7 @@ function obfuscate_mailto($email, $label='', $dimmed=false) {
 var an equal sign, then the page number.
  * @param string $pagevar This is the variable name that you use for the page number in your code (ie. 'tablepage', 'blogpage', etc)
  */
-function print_paging_bar($totalcount, $page, $perpage, $baseurl, $pagevar='page') {
+function print_paging_bar($totalcount, $page, $perpage, $baseurl, $pagevar='page',$nocurr=false) {
 
     $maxdisplay = 18;
 
@@ -4044,7 +4071,7 @@ function print_paging_bar($totalcount, $page, $perpage, $baseurl, $pagevar='page
         $displaycount = 0;
         while ($displaycount < $maxdisplay and $currpage < $lastpage) {
             $displaypage = $currpage+1;
-            if ($page == $currpage) {
+            if ($page == $currpage && empty($nocurr)) {
                 echo '&nbsp;&nbsp;'. $displaypage;
             } else {
                 echo '&nbsp;&nbsp;<a href="'. $baseurl . $pagevar .'='. $currpage .'">'. $displaypage .'</a>';

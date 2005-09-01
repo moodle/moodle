@@ -1400,7 +1400,7 @@ function print_courses($category, $width="100%") {
 
 function print_course($course, $width="100%") {
 
-    global $CFG;
+    global $CFG, $USER;
 
     static $enrol;
 
@@ -1960,6 +1960,60 @@ function course_allowed_module($course,$mod) {
         return false;
     }
     return (record_exists("course_allowed_modules","course",$course->id,"module",$modid));
+}
+
+/***
+ *** Efficiently moves many courses around while maintaining
+ *** sortorder in order.
+ *** 
+ *** $courseids is an array of course ids
+ ***
+ **/
+
+function move_courses ($courseids, $categoryid) {
+
+    global $CFG;
+
+    if (!empty($courseids)) {
+       
+            $courseids = array_reverse($courseids); 
+
+            foreach ($courseids as $courseid) {
+                                      
+                if (! $course  = get_record("course", "id", $courseid)) {
+                    notify("Error finding course $courseid");
+                } else {
+                    // figure out a sortorder that we can use in the destination category
+                    $sortorder = get_field_sql('SELECT MIN(sortorder)-1 AS min
+                                                    FROM ' . $CFG->prefix . 'course WHERE category=' . $categoryid);
+                    if ($sortorder === false) {
+                        // the category is empty
+                        // rather than let the db default to 0
+                        // set it to > 100 and avoid extra work in fix_coursesortorder()                        
+                        $sortorder = 200;
+                    } else if ($sortorder < 10) {
+                        fix_course_sortorder($categoryid);
+                    }
+
+                    $course->category  = $categoryid;
+                    $course->sortorder = $sortorder;
+                    $course->fullname = addslashes($course->fullname);
+                    $course->shortname = addslashes($course->shortname);
+                    $course->summary = addslashes($course->summary);
+                    $course->password = addslashes($course->password);
+                    $course->teacher = addslashes($course->teacher);
+                    $course->teachers = addslashes($course->teachers);
+                    $course->student = addslashes($course->student);
+                    $course->students = addslashes($course->students);
+                    
+                    if (!update_record('course', $course)) {
+                        notify("An error occurred - course not moved!");
+                    }
+                }
+            }
+            fix_course_sortorder();
+        }    
+    return true;
 }
 
 ?>
