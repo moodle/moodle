@@ -1,7 +1,8 @@
 <?PHP // $Id$ 
-      // enrol_authorize.php - created with Moodle 1.6 development (2005071700)
+      // enrol_authorize.php - created with Moodle 1.6 development (2005090100)
 
 
+$string['adminreview'] = 'クレジットカード情報が取得される前に注文を検査する。';
 $string['anlogin'] = 'Authorize.net: ログイン名';
 $string['anpassword'] = 'Authorize.net: パスワード ( 不要 )';
 $string['anreferer'] = '必要な場合は、リファラURLを設定してください。これは、ウェブリクエストの「Referer: URL」ヘッダを送信します。';
@@ -25,6 +26,8 @@ $string['logindesc'] = '<a href=\"$a->url\">loginhttps</a>オプションを変�
 <br /><br />
 これを設定することにより、Moodleは安全なhttps接続をログインおよび支払いページで使用します。';
 $string['nameoncard'] = 'クレジットカード名義';
+$string['reviewday'] = '教師または管理者が、<b>$a</b> 日以内に注文を検査しない場合、自動的にクレジットカード情報を取得する。CRONを有効にする必要があります。( 0=無効にする=教師、管理者の検査。30日以内にトランザクションを検査しない場合、注文はキャンセルされます。 )';
+$string['reviewnotify'] = 'あなたの支払いが確認されました。数日中に先生からメールが送信されますのでお待ちください。';
 $string['sendpaymentbutton'] = '支払いの送信';
 $string['zipcode'] = '郵便番号';
 

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.6 development (2005081700)
+      // admin.php - created with Moodle 1.6 development (2005090100)
 
 
 $string['adminseesallevents'] = '管理者に全てのイベントを表示';
@@ -37,6 +37,7 @@ $string['configdisplayloginfailures'] = 'ここでは選択したユーザにロ
 $string['configenablecourserequests'] = '全てのユーザにコースの作成のリクエストを許可します。';
 $string['configenablerssfeeds'] = 'ここではRSSフィードの設定を行います。RSSフィードを使用するためには、管理画面のモジュール管理にてRSSモジュールを使用可にする必要があります。';
 $string['configenablerssfeedsdisabled'] = 'サイト全てにおいてRSSフィードが利用不可にされているため、利用できません。管理メニュー内の詳細設定でRSSフィードを利用可にすることができます。';
+$string['configenablestats'] = '「Yes」を選択した場合、Moodleのcronジョブはログを処理し、統計情報を集めます。あなたのサイトのトラフィックにより、しばらく時間がかかる場合があります。このオプションを有効にした場合、あなたの各コースまたはサイト全体に関する面白いグラフおよび統計を見ることができます。';
 $string['configerrorlevel'] = '表示したいPHPの警告数を選択してください。通常はNormalが最適です。';
 $string['configextendedusernamechars'] = 'この設定を行うことで、学生はユーザ名にどのような文字でも使用することができます ( 実際の名前には影響しません )。デフォルトは、ユーザ名をアルファベットに制限する「No」が設定されています。';
 $string['configfilterall'] = 'ヘッダ、タイトル、ナビゲーションバーを含む全ての文字をフィルタします。これは多言語フィルタを使用している時に最も便利です。そうでない場合は、あなたのサイトに単に負荷がかかるだけになります。';
@@ -87,6 +88,7 @@ $string['configsectionoperatingsystem'] = 'オペレーティングシステム'
 $string['configsectionpermissions'] = 'パーミッション';
 $string['configsectionrequestedcourse'] = 'コースリクエスト';
 $string['configsectionsecurity'] = 'セキュリティ';
+$string['configsectionstats'] = '統計';
 $string['configsectionuser'] = 'ユーザ';
 $string['configsecureforms'] = 'Moodleでは、フォームデータを受入れる場合の追加的なレベルのセキュリティーを使用することができます。この設定をYesにした場合、ブラウザのHTTP_REFERER変数とフォーム設置のアドレスが照合されます。 ユーザがファイアーウォールソフト(例 Zonealarm)を使用してトラフィックからHTTP_REFERERを取除く設定をしている場合、稀に問題が発生する場合があります。 これは、フォーム使用時に画面が「固まる」現象です。ユーザがログインページ(例えば)で問題を抱えている場合はこの設定をNoにしてください。しかしこの設定ではブルートフォース・パスワードアタックに対して無防備な状態になります。分からない場合は、この設定を「Yes」のままにしてください。';
 $string['configsessioncookie'] = 'ここではMoodleのセッションで使用されるクッキーの名前を設定します。この設定は1つ以上のMoodleが同じウェブサイトで稼動している場合に、クッキーが混乱するのを防ぐためだけに任意でお使いください。';
@@ -97,6 +99,9 @@ $string['configsitepolicy'] = 'このサイトを使用する前に、サイト�
 $string['configslasharguments'] = 'ファイル ( イメージ、アップロード等 ) は/=スラッシュ ( ここでは2つ目のオプション ) を使ってプログラムに受け渡されます。この方法により簡単にブラウザ内やプロクシにイメージを一時保存させることが可能です。いくつかのPHPサーバではこの方法が取れない場合があります。もしファイルやイメージ ( 例 ユーザの顔写真等 ) のアップロードに問題がある場合は最初のオプションを選択してください。';
 $string['configsmtphosts'] = 'Moodleでメールを送信するときに使用する1つ以上のSMTPサーバを入力してください ( 例 mail.a.com またはmail.a.com;mail.b.com )。空白にした場合、Moodleは自動的にPHPのメール送信方法を使用します。';
 $string['configsmtpuser'] = '上記でSMTPサーバを設定して尚且つ認証が必要な場合はユーザ名とパスワードを設定してください。';
+$string['configstatsfirstrun'] = 'ここでは、cronジョブが<b>最初の</b>統計処理を行う場合に、どれくらい過去にさかのぼるか指定します。トラフィックが多く、共有ホスティングを利用している場合、あまりにも過去にさかのぼるのは良い考えではありません。統計処理は長時間を必要とし、非常にリソースに負荷をかけます。( この設定では、 1ヵ月 = 28日ですので注意してください。 グラフおよびレポートの生成には、1ヶ月= 1カレンダー月が利用されます。 )';
+$string['configstatsmaxruntime'] = '統計処理は、コンピュータに多大な負荷がかかる場合があります。このオプションと次のオプションの組み合わせで、「いつ」および「どれくらい」稼動させるか設定してください。';
+$string['configstatsruntimestart'] = '何時にcronジョブの統計処理を<b>開始</b>させますか?';
 $string['configteacherassignteachers'] = '一般の教師は他の教師をコース内に割当てる必要がありますか? 「No」の場合、コース作成者および管理者のみが教師の割当てを行うことができます。';
 $string['configthemelist'] = '空白にした場合、全てのテーマを使用することができます。テーマメニューを短くしたい場合は、コンマで区切ったテーマ名のリストを指定してください。例: standard,orangewhite';
 $string['configtimezone'] = 'ここではデフォルトタイムゾーンの設定を行うことができます。これは日付表示のためのデフォルトタイムゾーンを設定するのみで、各ユーザはプロフィールの設定により、この設定を変更することができます。ここで設定する「サーバ時間」はオペレーティングシステムに対するMoodleのデフォルト設定です。これに対してユーザプロフィールの「サーバ時間」ではユーザが独自のデフォルトタイムゾーン設定を行います。';
