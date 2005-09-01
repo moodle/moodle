@@ -444,10 +444,12 @@ function stats_clean_old() {
     // delete dailies older than 2 months (to be safe)
     $deletebefore = stats_get_next_monthend(strtotime('-2 months',time()));
     delete_records_select('stats_daily',"timeend < $deletebefore");
+    delete_records_select('stats_user_daily',"timeend < $deletebefore");
     
     // delete weeklies older than 8 months (to be safe)
     $deletebefore = stats_get_next_monthend(strtotime('-8 months',time()));
     delete_records_select('stats_weekly',"timeend < $deletebefore");
+    delete_records_select('stats_user_weekly',"timeend < $deletebefore");
 
     // don't delete monthlies
 }
