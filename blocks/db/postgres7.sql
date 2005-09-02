@@ -25,5 +25,6 @@ CREATE TABLE prefix_block_instance (
 ) ;
 
 CREATE INDEX prefix_block_instance_pageid_idx ON prefix_block_instance (pageid);
+CREATE INDEX prefix_block_instance_pagetype_idx ON prefix_block_instance (pagetype);
       
 # --------------------------------------------------------

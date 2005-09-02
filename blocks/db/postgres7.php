@@ -139,11 +139,16 @@ global $CFG;
     }
 
     if ($oldversion < 2005022401 && $result) { // Mass cleanup of bad upgrade scripts
-        modify_database('','CREATE INDEX prefix_block_instance_pageid_idx ON prefix_block_instance (pageid)');
+        execute_sql("CREATE INDEX {$CFG->prefix}block_instance_pageid_idx ON {$CFG->prefix}block_instance (pageid)",false); // this one should be quiet...
         modify_database('','ALTER TABLE prefix_block_instance ALTER pagetype SET DEFAULT \'\'');
         modify_database('','ALTER TABLE prefix_block_instance ALTER position SET DEFAULT \'\'');
         modify_database('','ALTER TABLE prefix_block_instance ALTER pagetype SET NOT NULL');
         modify_database('','ALTER TABLE prefix_block_instance ALTER position SET NOT NULL');
+    }
+
+    if ($oldversion < 2005022401) {
+        // add an index where we really need it
+        modify_database('','CREATE INDEX prefix_block_instance_pagetype_idx ON prefix_block_instance (pagetype);');
     }
 
     //Finally, return result

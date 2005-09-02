@@ -143,6 +143,11 @@ global $CFG;
         }
     }
 
+    if ($oldversion < 2005022401) {
+        // add an index where we really need it
+        modify_database('','ALTER TABLE prefix_block_instance ADD INDEX pagetype (pagetype);');
+    }
+
     //Finally, return result
     return $result;
 }

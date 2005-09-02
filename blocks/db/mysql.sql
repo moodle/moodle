@@ -24,6 +24,7 @@ CREATE TABLE `prefix_block_instance` (
   `visible` tinyint(1) not null default '0',
   `configdata` text not null default '',
   PRIMARY KEY(`id`),
-  INDEX pageid(`pageid`)
+  INDEX pageid(`pageid`),
+  INDEX pagetype(`pagetype`)
 ) TYPE=MyISAM;
 # --------------------------------------------------------
