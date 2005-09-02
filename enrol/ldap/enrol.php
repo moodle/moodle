@@ -3,6 +3,7 @@
 require_once("$CFG->dirroot/enrol/enrol.class.php");
 require_once("$CFG->dirroot/course/lib.php");
 require_once("$CFG->dirroot/lib/blocklib.php");
+require_once("$CFG->dirroot//lib/pagelib.php");
 
 $CFG->enrol_localcoursefield = 'idnumber';
 
@@ -568,7 +569,6 @@ function create_course ($course_ext,$skip_fix_course_sortorder=0){
     $course->teacher  = 'Teacher';
     $course->teachers = 'Teachers';
     $course->format = 'topics';
-    $course->blockinfo = blocks_get_default();
     
     // override defaults with template course
     if(!empty($CFG->enrol_ldap_template)){
@@ -617,6 +617,9 @@ function create_course ($course_ext,$skip_fix_course_sortorder=0){
         $section->course = $newcourseid;   // Create a default section.
         $section->section = 0;
         $section->id = insert_record("course_sections", $section);
+        $page = page_create_object(PAGE_COURSE_VIEW, $newcourseid);
+        blocks_repopulate_page($page); // Return value no
+
 
         if(!$skip_fix_course_sortorder){ 
             fix_course_sortorder(); 
