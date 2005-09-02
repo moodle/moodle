@@ -3491,6 +3491,12 @@ function forum_tp_get_untracked_forums($userid, $courseid=false) {
 function forum_tp_can_track_forums($forum=false, $user=false) {
     global $USER, $CFG;
 
+    // if possible, avoid expensive
+    // queries
+    if (empty($CFG->forum_trackreadposts)) {
+        return false;
+    }
+
     if ($user === false) {
         /// Must be logged in and not a guest.
         $isauser = isloggedin() && !isguest();
@@ -3505,15 +3511,14 @@ function forum_tp_can_track_forums($forum=false, $user=false) {
     } else {
         /// Work toward always passing an object...
         if (is_numeric($forum)) {
-            $forum = get_record('forum', 'id', $forum);
+            $forum = get_record('forum', 'id', $forum, '','','','', 'id,trackingtype');
         }
 
         $forumallows = ($forum->trackingtype == FORUM_TRACKING_OPTIONAL);
         $forumforced = ($forum->trackingtype == FORUM_TRACKING_ON);
     }
 
-    return ($isauser && $CFG->forum_trackreadposts && 
-            ($forumforced || ($forumallows && !empty($user->trackforums))));
+    return ($isauser && ($forumforced || ($forumallows && !empty($user->trackforums))));
 }
 
 /**
