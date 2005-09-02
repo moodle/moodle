@@ -516,7 +516,11 @@ function auth_sync_users ($bulk_insert_records = 1000, $do_updates=1) {
         $updatekeys = array();
         foreach ($all_keys as $key) {
             if (preg_match('/^field_updatelocal_(.+)$/',$key, $match)) {
-                if ($pcfg->{$match[0]}) { // if it has a true value
+                // if we have a field to update it from
+                // and it must be updated 'onlogin' we 
+                // update it on cron
+                if ( !empty($pcfg->{'field_map_'.$match[1]})
+                     && $pcfg->{$match[0]} === 'onlogin') { 
                     array_push($updatekeys, $match[1]); // the actual key name
                 }
             }
@@ -608,7 +612,7 @@ function auth_sync_users ($bulk_insert_records = 1000, $do_updates=1) {
             $CFG->debug=$old_debug;
             $userobj = auth_ldap_update_user_record($user->username);
             if(isset($CFG->{'auth_ldap_forcechangepassword'}) && $CFG->{'auth_ldap_forcechangepassword'}){
-                set_user_preference('auth_forcepasswordchange', 1, $userobj);
+                set_user_preference('auth_forcepasswordchange', 1, $userobj->id);
             }
             
             // update course creators
