@@ -746,7 +746,7 @@ function forum_print_overview($course, $cm,$lastaccess) {
         $str .= get_string('overviewnumpostssince','forum',$numnew)."<br />";
         $p = 1;
     }
-    if ($CFG->forum_trackreadposts) {
+    if ($CFG->forum_trackreadposts &&  forum_tp_can_track_forums($forum)) {
         if (isset($forum->groupmode)) {
             $groupmode = groupmode($course, $forum);  /// Can do this because forum->groupmode is defined
         } else {
