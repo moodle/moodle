@@ -3371,11 +3371,31 @@ function forum_tp_count_forum_read_records($userid, $forumid, $groupid=false) {
         $groupsel = ' AND (d.groupid = '.$groupid.' OR d.groupid = -1)';
     }
 
-    $sql = 'SELECT COUNT(DISTINCT p.id) '.
-           'FROM '.$CFG->prefix.'forum_posts p,'.$CFG->prefix.'forum_read r,'.$CFG->prefix.'forum_discussions d '.
-           'WHERE d.forum = '.$forumid.$groupsel.' AND p.discussion = d.id AND '.
-                '((p.id = r.postid AND r.userid = '.$userid.') OR p.modified < '.$cutoffdate.' ) ';
+    error_log("forumcount");
 
+    if ($CFG->dbtype === 'postgres7') {
+        // this query takes 20ms, vs several minutes for the one below
+        $sql = " SELECT COUNT (DISTINCT u.id ) " 
+            .  " FROM ( "
+            .  "   SELECT  p.id " 
+            .  "   FROM  {$CFG->prefix}forum_posts p "
+            .  "       JOIN {$CFG->prefix}forum_discussions d ON p.discussion = d.id "
+            .  "       JOIN {$CFG->prefix}forum_read r ON p.id = r.postid"
+            .  "   WHERE d.forum = $forumid $groupsel "
+            .  "         AND r.userid= $userid"
+            .  "   UNION"
+            .  "   SELECT  p.id"
+            .  "   FROM  {$CFG->prefix}forum_posts p "
+            .  "         JOIN {$CFG->prefix}forum_discussions d ON p.discussion = d.id "
+            .  "   WHERE d.forum = $forumid $groupsel "
+            .  "         AND p.modified < $cutoffdate"
+            .  ") u";
+   } else {
+        $sql = 'SELECT COUNT(DISTINCT p.id) '.
+            'FROM '.$CFG->prefix.'forum_posts p,'.$CFG->prefix.'forum_read r,'.$CFG->prefix.'forum_discussions d '.
+            'WHERE d.forum = '.$forumid.$groupsel.' AND p.discussion = d.id AND '.
+            '((p.id = r.postid AND r.userid = '.$userid.') OR p.modified < '.$cutoffdate.' ) ';
+    }
     return (count_records_sql($sql));
 }
 
