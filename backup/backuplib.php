@@ -435,8 +435,20 @@
     
     //Return the start tag, the contents and the end tag
     function full_tag($tag,$level=0,$endline=true,$content,$to_utf=true) {
+
+        global $CFG;
+
         //Here we encode absolute links
         $content = backup_encode_absolute_links($content);
+
+        //If enabled, we strip all the control chars from the text but tabs, newlines and returns
+        //because they are forbiden in XML 1.0 specs. The expression below seems to be
+        //UTF-8 safe too because it simply ignores the rest of characters.
+        if (!empty($CFG->backup_strip_controlchars)) {
+            $content = preg_replace("/(?(?=[[:cntrl:]])[^\n\r\t])/is","",$content);
+        }
+
+        //Start to build the tag
         $st = start_tag($tag,$level,$endline);
         $co="";
         if ($to_utf) {
