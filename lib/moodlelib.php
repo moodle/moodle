@@ -2434,7 +2434,7 @@ function create_user_record($username, $password, $auth='') {
     if (insert_record('user', $newuser)) {
          $user = get_complete_user_data('username', $newuser->username);
          if($CFG->{'auth_'.$newuser->auth.'_forcechangepassword'}){
-             set_user_preference('auth_forcepasswordchange', 1, $user);
+             set_user_preference('auth_forcepasswordchange', 1, $user->id);
          }
          return $user;
     }
@@ -2458,11 +2458,13 @@ function update_user_record($username) {
         $authconfig = get_config('auth/' . $oldinfo->auth);
 
         if ($newinfo = auth_get_userinfo($username)) {
+            $newinfo = truncate_userinfo($newinfo);
             foreach ($newinfo as $key => $value){
                 $confkey = 'field_updatelocal_' . $key;
                 if (!empty($authconfig->$confkey) && $authconfig->$confkey === 'onlogin') {
                     $value = addslashes(stripslashes($value));   // Just in case
-                    set_field('user', $key, $value, 'username', $username);
+                    set_field('user', $key, $value, 'username', $username) 
+                        || error_log("Error updating $key for $username");
                 }
             }
         }
