@@ -155,7 +155,12 @@ global $CFG;
            PRIMARY KEY(`id`)
           ) TYPE=MyISAM;");
     }
-
+    
+    if ($oldversion < 2005090200) {
+        execute_sql("ALTER TABLE {$CFG->prefix}block_instance ADD INDEX pagetype (pagetype);",false);  // do it silently, in case it's already there from 1.5
+        modify_database('','ALTER TABLE prefix_block_pinned ADD INDEX pagetype (pagetype);');
+    }
+    
     //Finally, return result
     return $result;
 }

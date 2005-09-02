@@ -24,6 +24,7 @@ CREATE TABLE prefix_block_instance (
   configdata text not null default ''
 ) ;
 CREATE INDEX prefix_block_instance_pageid_idx ON prefix_block_instance (pageid);
+CREATE INDEX prefix_block_instance_pagetype_idx ON prefix_block_instance (pagetype);
 
 CREATE TABLE prefix_block_pinned ( 
   id SERIAL8 PRIMARY KEY,
@@ -35,4 +36,6 @@ CREATE TABLE prefix_block_pinned (
   configdata text NOT NULL default 0
 ) ;
       
+CREATE INDEX prefix_block_pinned_pagetype_idx ON prefix_block_pinned (pagetype);
+
 # --------------------------------------------------------
