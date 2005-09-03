@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.5 ALPHA (2005051500)
+      // assignment.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['allowresubmit'] = '재제출 허가';
@@ -32,6 +32,7 @@ $string['failedupdatefeedback'] = '사용자 $a를 위해 제출 과제에 대�
 $string['feedback'] = '피드백';
 $string['feedbackfromteacher'] = '$a로부터의 피드백';
 $string['feedbackupdated'] = '$a 명의 과제에 대한 의견을 업데이트함';
+$string['guestnoupload'] = '죄송합니다. 손님은 업로드를 할수 없습니다.';
 $string['helpoffline'] = '과제가 모들 외부에서 수행되어지면 <p>이것은 유용합니다. 웹상에서 혹은 일대일로 볼수있습니다.</p><p>학생들은 그 과제의 설명을 볼수 있습니다.그러나 업로드 시킬수 없습니다. 채점은 정상적으로 작동되며, 학생들은 그들의 성적</p>에 대한 공지를 받을 것입니다. ';
 $string['helponline'] = '<p> 이과제 형식은 사용자에게 표준 편집기를 이용하여 텍스트를 편집하며, 평이나 변경사항을 편집하길 요청합니다.</p> <p>(만일 낡은 모들의 버전에 익숙하다면, 이 과제 형식은 예전 저널 모듈과 동일하게 작동됩니다.)</p>
  ';
@@ -43,6 +44,7 @@ $string['modulename'] = '과제';
 $string['modulenameplural'] = '과제들';
 $string['newsubmissions'] = '제출된 과제들';
 $string['noassignments'] = '아직 과제가 지정되지 않았습니다.';
+$string['noattempts'] = '이 과제를 만드려는 시도가 없었음.';
 $string['notgradedyet'] = '아직 채점되지 않음';
 $string['notsubmittedyet'] = '아직 제출되지 않음';
 $string['overwritewarning'] = '경고: 다시 업로드를 하면 현재글과 대체됩니다';

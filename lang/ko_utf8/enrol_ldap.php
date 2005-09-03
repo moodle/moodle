@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // enrol_ldap.php - created with Moodle 1.5 ALPHA (2005051500)
+      // enrol_ldap.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['description'] = '<p>LDAP서버를 이용하여 당신은 등록자를 관리 할수 있습니다. . 
@@ -29,6 +29,7 @@ $string['enrol_ldap_course_settings'] = '코스 등록 설정';
 $string['enrol_ldap_course_shortname'] = '옵션: 별명(shortname)을 위한 LDAP 창';
 $string['enrol_ldap_course_summary'] = '옵션: 간단한 정리를 위한 LDAP 창';
 $string['enrol_ldap_editlock'] = '값수정 잠금';
+$string['enrol_ldap_general_options'] = '기본 옵션';
 $string['enrol_ldap_host_url'] = 'Specify LDAP host in URL-창의 LDAP호스트 값을 다음과 같이 입력하시오
 \'ldap://ldap.myorg.com/\' 
 or \'ldaps://ldap.myorg.com/\'';

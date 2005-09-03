@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.5 ALPHA (2005051500)
+      // auth.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['alternatelogin'] = '만약 당신이 URL을 들어와 여기에 있다면, 이 사이트를 위한 로그인 페이지에서 사용될 것이다. 이 페이지는 행동 자산 설치 <strong>\'$a\'</strong> 를 가진 형태를 포함하여야 하고 <strong> 사용자 이름 </strong>  <strong>password</strong> 분야를 다시 돌려야 한다. 
@@ -33,8 +33,6 @@ $string['auth_dbtable'] = '데이타베이스의 테이블명';
 $string['auth_dbtitle'] = '외부 데이타베스 사용하기';
 $string['auth_dbtype'] = '데이타베이스 유형(See the <a href=\"../lib/adodb/readme.htm#drivers\">ADOdb documentation</a>)에 대해 자세히 알고 싶으면';
 $string['auth_dbuser'] = '데이타베이스의 읽기 권한을 가진 사용자명';
-$string['auth_editlock'] = '평가부문은 잠겨있습니다.';
-$string['auth_editlock_expl'] = '<p><b> 평가부문은 잠겨 있습니다 :</b> 만약 가능하다면, 분야를 직접적으로 편집하는 것으로 부터 모듈 사용자와 관리자를 보호할 것이다. ';
 $string['auth_emaildescription'] = '이메일 확인 인증은 기본 인증 방법입니다. 사용자가 가입할 때, 새로운 사용자 아이디와 비밀번호를 선택하면, 사용자의 이메일 계정으로 확인 메일이 보내집니다. 이 메일에는 계정을 활성화할 수 있는 안전한 링크를 포함합니다. 다음 로그인할 경우에는 무들 데이타베이스에 저장된 값을 참고하게 됩니다.';
 $string['auth_emailtitle'] = '이메일 기반 인증';
 $string['auth_fccreators'] = '회원들이 있는 그룹의 리스트는 새로운 코스를 만들기 위해 허락된다. 분류된 다수의 그룹들은 함께 \';\' 이름들은 반드시 정확하게 최고급 서버에 철자가 쓰여져야 한다. 시스템은 case-sensitive이다. ';
@@ -44,6 +42,10 @@ $string['auth_fchost'] = '펄스트클래스 서버 주소. IP 주소나 DNS 이
 $string['auth_fcpasswd'] = '상층부 설명을 위한 비밀번호';
 $string['auth_fctitle'] = '펄스트클래스 서버를 이용하세요.';
 $string['auth_fcuserid'] = '최고급을 위해 \'Subadministrator\' 설치 특권과 함께 설명한다. ';
+$string['auth_fieldlock'] = '사용자 정보 잠김.';
+$string['auth_fieldlock_expl'] = '<p><b>사용자 정보 잠김:</b> 만약 보기가 허락된다면 무들 프로그램은 사용자 정보 분야를 바로 편집해서 정보 유출을 방지할것입니다. 이 옵션을 사용하면 사용자 정보 파일은 외부 시스템으로 부터 지속적으로 지킬수 있습니다. </p>';
+$string['auth_fieldlocks'] = '사용자 분야 잠금';
+$string['auth_fieldlocks_help'] = '<p>당신은 사용자 정보 분야를 잠굴수 있습니다. 이 기능은 사용자 정보 기록이나 사용자 정보를 사이트에서 운영자가 직접 유지 관리하는데 유용합니다. 무들 프로그램에 의해 잠긴 분야가 있다면 사용자 계정을 새로만들거나 하지 않으면 계정은 사용할수 없게 될 것입니다.</p><p>이런 문제가 생기지 않길 바란다면 설정을 칸이 비워져있을땐 잠기지 않음으로 설정하십시오.</p>';
 $string['auth_imapdescription'] = 'IMAP 서버를 사용하여 사용자의 이름과 패스워드의 유용성을 확인합니다';
 $string['auth_imaphost'] = 'IMAP 서버의 주소. DNS 이름을 사용하지 않고 IP주소를 사용합니다.';
 $string['auth_imapport'] = 'IMAP 서버의 포트 숫자를 나타냅니다. 보통 이 숫자는 143이거나 993입니다';
@@ -68,13 +70,13 @@ $string['auth_ldap_opt_deref'] = '다른 경우 탐색 동안에 얼마나 통�
 \"아니오\" (LDAP_DEREF_NEVER) or 
 \"예\" (LDAP_DEREF_ALWAYS) ';
 $string['auth_ldap_passwdexpire_settings'] = 'LDAP 비밀번호의 만료 설정';
+$string['auth_ldap_preventpassindb'] = '비밀번호 노출 방지를 위해서 무들의 데이터 베이스에 저장에 대한 물음에 \"네\" 로 설정해 주십시오.';
 $string['auth_ldap_search_sub'] = 'Subcontext(하위문맥)에서 사용자들을 찾고 싶다면  <> 0값을 넣으세요.';
 $string['auth_ldap_server_settings'] = 'LDAP 서버 설정';
 $string['auth_ldap_update_userinfo'] = 'LDAP에서 Mooddle로 사용자의 정보를 갱신한다.(성, 이름, 주소 등.)  Mapping 정보를 위해 /auth/ldap/attr_mappings.php 이곳을 보십시오. ';
 $string['auth_ldap_user_attribute'] = '이 속성은(보통 \'cn\' 입니다) 사용자들을 찾아내기 위해 이름을 사용합니다. ';
 $string['auth_ldap_user_settings'] = '사용자 검색 설정';
-$string['auth_ldap_user_type'] = '어떻게 사용자가 LDAP에서 저장되는 지를 선택하십시오. 이 설치는 또한 얼마나 특정한 로그인이 만기되었는지, 사용자 창작이 작동 될 것이다. 
-';
+$string['auth_ldap_user_type'] = '어떻게 사용자가 LDAP에서 저장되는 지를 선택하십시오. 이 설치는 또한 얼마나 특정한 로그인이 만기되었는지, 사용자 창작이 작동 될 것이다. ';
 $string['auth_ldap_version'] = '당신 서버 LDAP 프로토콜 버전을 사용하고 있습니다.';
 $string['auth_ldapdescription'] = '이 방법은 외부 LDAP서버에 대항해 인증을 해 줍니다. 만약 계정과 비밀번호가 유요하다면 Moodle은 데이터베이스 안에 새로운 사용자를 만듭니다. Moodle은 LDAP와 자체 필드에 미리 작성된 사용자의 특성을 읽을 수 있습니다. 로그인 방법을 따라야 계정과 비밀번호가 확인 되어 집니다. ';
 $string['auth_ldapextrafields'] = '이 필드는 선택사항입니다. 당신이 여기에 명시한 LDAP서버에서 정보와 함께 Moodle 사용자 필드를 프리필(pre-fill)을 결정 할 수 있습니다. 만약 당신이 이 필드를 빈 공간으로 남겨둔다면, LDAP서버에서 아무것도 이동이 되지 않으며 Moodle 결점이 대신 사용 되어집니다. 어떠한 경우라도 사용자가 로그인을 한 후, 이 필드의 모든 것을 에디트 할 수 있습니다. ';
@@ -128,16 +130,27 @@ $string['authinstructions'] = '이곳에서 당신은 사용자들이 사용하�
 $string['changepassword'] = '패스워드 URL을 바꾼다';
 $string['changepasswordhelp'] = '만약 계정과 비밀번호를 잊어버렸다면 이곳에서 계정과 비밀번호를 찾거나 혹은 바꿀 수 있습니다. 이 형식은 로그인 페이지나 사용자 페이지에서  버튼형식으로 제공되어지지만  이곳을 빈칸으로 놓아둔다면 버튼은 웹페이지에 나타나지 않습니다. ';
 $string['chooseauthmethod'] = '인증 방법 선택하세요:';
+$string['createchangepassword'] = '파일이 없다면 만드시오 - 강제 변경';
+$string['createpassword'] = '파일이 없다면 만드시오';
 $string['forcechangepassword'] = '암호변경 강요';
 $string['forcechangepassword_help'] = '다음 무들 사용 로그인시 비밀번호를 바꿀 것을 사용자에게 요청합니다.';
 $string['forcechangepasswordfirst_help'] = '사용자에게 무들에 처음 로그인 할 때 비밀번호를 변경할 것을요청합니다.';
 $string['guestloginbutton'] = '손님 접속 버튼';
+$string['infilefield'] = '이 분야는 파일이 필요합니다.';
 $string['instructions'] = '도움말';
+$string['locked'] = '잠겨있음';
 $string['md5'] = 'MD5 인증 ';
+$string['passwordhandling'] = '비밀번호 분야 다루기.';
 $string['plaintext'] = '단순 텍스트';
 $string['showguestlogin'] = '로그인 페이지에서 손님 로그인 버튼을 보이거나 숨길 수 있습니다.';
 $string['stdchangepassword'] = '비밀번호 페이지를 사용하기';
 $string['stdchangepassword_expl'] = '만약 외부의 인증 시스템이 모듈을 통해 비밀 번호 변경을 허락한다면, 이것을 Yes 로 바꾸십시오. 이 장치는 \'URL 비밀 번호 변경\'을 변경한다.';
 $string['stdchangepassword_explldap'] = '주목 : 만약 LDAP 서버가 제거되었다면, 당신이 사용하는 SSL 위의 SSL 은 터널(ldaps://)로 암호화 되는 것을 추천한다. ';
+$string['unlocked'] = '잠기지 않음';
+$string['unlockedifempty'] = '비어있다면 잠기지 않음';
+$string['update_never'] = '불가';
+$string['update_oncreate'] = '제작하다';
+$string['update_onlogin'] = '모든 접속';
+$string['update_onupdate'] = '업데이트';
 
 ?>
