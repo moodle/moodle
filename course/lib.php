@@ -242,25 +242,6 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
         $showcourses = 1;
     }
    
-
-    if ($course->category) {
-        if ($selectedgroup) {   // If using a group, only get users in that group.
-            $courseusers = get_group_users($selectedgroup, 'u.lastname ASC', '', 'u.id');
-        } else {
-            $courseusers = get_course_users($course->id, '', '', 'u.id');
-        }
-    } else {
-        $courseusers = get_site_users('u.lastaccess DESC', 'u.id');
-    }
-
-    $numusers = count((array)$courseusers);
-
-
-    if ($numusers < COURSE_MAX_USERS_PER_DROPDOWN && !$showusers) {
-        $showusers = 1;
-    }
-    
-
     /// Setup for group handling.
     $isteacher = isteacher($course->id);
     $isteacheredit = isteacheredit($course->id);
@@ -280,17 +261,21 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
     // Get all the possible users
     $users = array();
 
-    if ($showusers) {
-        if ($course->category) {
-            if ($selectedgroup) {   // If using a group, only get users in that group.
-                $courseusers = get_group_users($selectedgroup, 'u.lastname ASC', '', 'u.id, u.firstname, u.lastname');
-            } else {
-                $courseusers = get_course_users($course->id, '', '', 'u.id, u.firstname, u.lastname');
-            }
+    if ($course->category) {
+        if ($selectedgroup) {   // If using a group, only get users in that group.
+            $courseusers = get_group_users($selectedgroup, 'u.lastname ASC', '', 'u.id, u.firstname, u.lastname, u.nickname, u.idnumber');
         } else {
-            $courseusers = get_site_users("u.lastaccess DESC", "u.id, u.firstname, u.lastname");
+            $courseusers = get_course_users($course->id, '', '', 'u.id, u.firstname, u.lastname, u.nickname, u.idnumber');
         }
+    } else {
+        $courseusers = get_site_users("u.lastaccess DESC", "u.id, u.firstname, u.lastname, u.nickname, u.idnumber");
+    }
+    
+    if (count($courseusers) < COURSE_MAX_USERS_PER_DROPDOWN && !$showusers) {
+        $showusers = 1;
+    }
 
+    if ($showusers) {
         if ($courseusers) {
             foreach ($courseusers as $courseuser) {
                 $users[$courseuser->id] = fullname($courseuser, $isteacher);
