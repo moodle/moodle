@@ -89,6 +89,7 @@ $string['resourcetyperepository'] = '저장 대상에 연결';
 $string['resourcetypetext'] = '텍스트 페이지 만들기';
 $string['searchweb'] = '웹 사이트 검색';
 $string['serverurl'] = '서버 URL';
+$string['showcourseblocks'] = '교육과정 블럭 보이기';
 $string['variablename'] = '변덕스러운 이름';
 $string['vol'] = '볼륨';
 ?>
