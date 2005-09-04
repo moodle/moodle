@@ -1,0 +1,215 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Moodle Docs: How to use CVS</title>
+<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS" />
+<meta http-equiv="Content-Type" content="text/html; charset=EUC-JP" />
+<style type="text/css">
+<!--
+style ol {margin-left:40px;}
+.style1 {color: #990000}
+.style3 {color: #990000; font-weight: bold; }
+.style4 {
+	color: #0000CC;
+	font-weight: bold;
+}
+-->
+    </style>
+</head>
+<body>
+<h1>Moodle開発者のCVS使用に関して</h1>
+<blockquote>
+  <p>CVSは、大規模ソフトウェアプロジェクトのソースコード管理によく使用される<strong>Concurrent Versioning System</strong> ( バージョン管理システム ) です。CVSは、喪失しないように全てのファイルの全てのバージョンを保持し、異なる人々による使用を追跡記録します。CVSは、2人またはそれ以上の人が同じファイルを更新している場合に、コードを結合する方法も提供します。全てのコードおよびバージョンはセントラルサーバに保存されます ( Moodleの場合は、<a target="_top" href="http://www.sf.net/">Sourceforge</a> です )。 </p>
+  <p>サイトを運用するためにCVSを使ってMoodleをダウンロードしたいだけでしたら、恐らくこのページは必要ありません - より簡単な<a target="_top" href="http://moodle.org/download">Moodleダウンロードページ</a>のCVS使用説明に従うだけにしてください。</p>
+  <p>&nbsp;</p>
+  <ol>
+    <li><a href="#n1">開発者としてプロジェクトに参加する</a></li>
+    <li><a href="#n2">CVSモジュール</a> </li>
+    <li><a href="#n3">基本的なCVSコマンド</a> <br />
+      3.1. <a href="#n3.1">UnixのCVS</a> <br />
+      3.2. <a href="#n3.2">WindowsのCVS</a></li>
+    <li> <a href="#n4">ブランチの取り扱い</a><br />
+      4.1. <a href="#n4.1">トランク開発</a><br />
+      4.2. <a href="#n4.2">各リリースのステイブルブランチ</a><br />
+      4.3. <a href="#n4.3">大幅な変更に関するフィーチャーブランチ</a> </li>
+  </ol>
+</blockquote>
+<br />
+  <h2><a name="n1" id="n1"></a>1. 開発者としてプロジェクトに参加する</h2>
+  <blockquote>
+    <p>さて、あなたはCVS書き込み権を与えられて、Moodleの開発およびメンテナンスに関して私達を支援することになりました! <a href="http://sourceforge.net/project/memberlist.php?group_id=30935">搭乗ありがとうございます</a>!</p>
+    <p><a target="_top" href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/moodle/moodle/">MoodleのCVSアーカイブ</a>を書き換えるためには、まず最初にSourceforgeにアカウントを持つ必要があります ( <a href="http://sourceforge.net/account/register.php">登録は無料で簡単です</a> )。このページの例として、あなたのユーザ名が <strong><font color="#990000">myusername</font></strong> で、パスワードが <strong><font color="#990000">mypassword</font></strong> だと仮定しましょう。<a target="_top" href="http://sourceforge.net/docman/display_doc.php?docid=768&amp;group_id=1#develhomedir">あなたのCVSホームディレクトリを作成するには</a>、sourceforge利用説明のスペシャルノートを取得してください - CVSで新しいアカウントを作成する場合、「有効」にする必要がある作業です。cvs.sourceforge.netにインタラクティブに接続するには、基本的にsshを使用する必要があります。</p>
+    <p>アカウントの作業を完了した時点で、<a target="_top" href="http://moodle.org/user/view.php?id=1&amp;course=1">Martin Dougiamas</a>に連絡してください。あなたのアカウントが特定のMoodleディレクトリに書き込みアクセスできるように、彼が設定作業を行います。</p>
+    <p>CVSコマンドを実行する時に毎回 <strong><font color="#990000">mypassword</font></strong> の入力を避けるには、<a target="_top" href="http://sourceforge.net/account/editsshkeys.php">認証キーを使用するためのSourceforge道案内</a>に従ってください。このステップは任意ですが、あなたのCVSに関する経験を更に素晴らしくすることができます。</p>
+    <p>この作業が完了したら、あなたが必要な全てのパーミッションを設定する必要があります。そして、あなたのマシンを設定して、現在のソースをダウンロードすることで、作業を開始することができます。</p>
+    <p>&nbsp;</p>
+  </blockquote>
+  <h2><a name="n2" id="n2"></a>2. CVSモジュール</h2>
+  <blockquote>
+    <p>CVSにおいて「モジュール」は分類されたコード群を参照します。Moodleでは、リボジトリに下記のモジュールを持っています:</p>
+    <blockquote>
+      <p><strong>moodle</strong> - Moodleメインソースコード</p>
+      <p><strong>contrib</strong> - ユーザ寄与および開発における他の様々なコード</p>
+      <p><strong>mysql</strong> - データベース管理のためMoodleに付加するカスタマイズされたphpMyAdmin</p>
+      <p><strong>windows-cron</strong> - Windowsシステムでcronの動作を可能にする小さなパッケージ</p>
+      <p><strong>docs</strong> - ユーザ寄与の様々な特別文書</p>
+    </blockquote>
+    <p>ほとんどの人達は、現在の<strong>moodle</strong>モジュールの機能に関する作業を行っていますが、<strong>contrib</strong>モジュールに新しいアイディアを寄与している多くの人達もいます。 <strong>contrib</strong>エリアのコードが一定レベルの完成度に到達した場合、メイン<strong>moodle</strong>ツリーに移動されます。</p>
+    <p>&nbsp;</p>
+  </blockquote>
+  <h2><a name="n3" id="n3"></a>3. 基本的なCVSコマンド</h2>
+  <blockquote>
+    <h3><a name="n3.1" id="n3.1"></a>3.1 UnixのCVS</h3>
+    <blockquote>
+      <p>Sourceforge CVSは、セキュリティのためsshをトランスポート・レイヤーで使用しますので、UnixシェルでCVS_RSH環境変数を設定する必要があります。毎回、全てを入力しないように .bashrc または .cshrc にこれらのコマンドを記述した方が良いでしょう<strong>:</strong></p>
+       <div class="commandline">setenv CVS_RSH ssh <em>(for csh, tcsh etc)</em><br /> 
+	    export CVS_RSH=ssh <em>(for sh, bash etc)</em></div>  
+      <p>次に、下記のコマンドを ( 全てを1行で ) 入力することで、最新のMoodle開発バージョンをチェックアウトすることができます: </p>
+       <div class="commandline">cvs -z3 -d:ext:<span class="style1">myusername</span>@cvs.sourceforge.net:/cvsroot/moodle co moodle</div>      
+      <p>コマンドは他のCVSモジュールにも似ています:</p>
+       <div class="commandline">cvs -z3 -d:ext:myusername@cvs.sourceforge.net:/cvsroot/moodle co contrib</div>      
+      <p>この最初のCVSコマンドをインストール済みのmoodle上で実行しないようにしてください。空の新しいディレクトリで実行してください。</p>
+      <p><a target="_top" href="http://sourceforge.net/account/editsshkeys.php">認証キー</a>を設定しない場合は、各コマンドに対して <strong><font color="#990000">mypassword</font></strong> を入力するよう要求されますので注意してください。</p>
+      <p>さて、あなたは新しい「moodle」ディレクトリを持っています。ディレクトリをリネームして、好きな場所に移動することができます。中に入ってください: </p>
+       <div class="commandline">cd moodle </div>      
+      <p>全ての最新Moodleファイルがディレクトリの中に入っています。あなたがコピーしたファイルを変更することができます。あなたのファイル、ディレクトリとサーバのメインCVSコピーを比較するには、cvs diff を使用してください。例: </p>
+       <div class="commandline">cvs diff -c config-dist.php<br />
+       cvs diff -c lang </div>
+      <p>サーバより最新版をフェッチするには、次のコマンドを使用してください: </p>
+      <div class="commandline">cvs update -dP</div>
+      <p>あなたの新しいファイルをサーバにコピーするには、次のようなコマンドになります: </p>
+      <div class="commandline">cd lang/ca <br />
+cvs commit</div>
+      <p>コメントの追加を要求されますので ( デフォルトテキストエディタによって決まります ) ... 意味のあるコメントを追加してエディタをクローズしてください ... ファイルは、Sourceforgeに送信され、保存されます。完了です! </p>
+      <p>更に時間を節約するため、ホームディレクトリの .cvsrc という名称のファイルにデフォルト値を記述することができます。例えば、私は次のようにしています: </p>
+      <div class="commandline">diff -c <br />
+update -dP</div>
+      <p>詳細は「cvsヘルプ」をご覧ください ... </p>
+      <p>&nbsp;</p>
+    </blockquote>
+    <h3><a name="n3.2" id="n3.2"></a>3.2 WindowsのCVS</h3>
+    <blockquote>
+      <p>最初に、あなたの開発者アカウントを使って、完全に新しいMoodleのコピーをダウンロードする必要があります。</p>
+    </blockquote>
+        <ol>
+          <li>TortoiseCVSを <a target="_top" href="http://www.tortoisecvs.org/">tortoisecvs.org</a> からダウンロードしてインストール、そしてリブートしてください。</li>
+          <li>Moodleをダウンロードしたいフォルダを探すか、新しいフォルダを作成してください。</li>
+          <li>そのフォルダでマウスを右クリックして、メニューから「<strong>CVS Checkout</strong>」を選択してください。ダイアログボックスが表示されます。</li>
+          <li>CVSROOTフィールドに下記のテキストを入力してください ( あなたのユーザ名を使用してください! ):
+            <pre> :ext:<font color="#990000">myusername</font>@cvs.sourceforge.net:/cvsroot/moodle</pre>
+          </li>
+          <li>「Module」フィールドに「<strong>moodle</strong>」と入力すると、最新のMoodle開発バージョン、「<strong>contrib</strong>」と入力するとユーザ寄与ディレクトリ、「<strong>mysql</strong>」と入力するとMySQL Adminモジュールを取得します。</li>
+          <li>「<strong>OK</strong>」ボタンをクリックすると、全てのファイルがダウンロードされます。<br />
+          </li>
+        </ol>
+    <blockquote>
+      <p>ダイアログボックスは、ダウンロード中の全てのファイルを表示し、暫くするとMoodleの完全なコピー処理が終了します。この最初のチェックアウトの後、CVSサーバより最新の更新ファイルをフェッチすることができます:</p>
+    </blockquote>
+        <ol>
+          <li>Moodleフォルダ ( またはファイル ) で、マウスの右クリックをして「<strong>CVS Update</strong>」を選択してください。</li>
+          <li>くつろいで、スクロールしながらログを確認してください。取得されるバージョンとコンフリクトするローカルコードの変更により、コンフリクトが発生しているか注意してください - これらのファイルを編集して、手動でコンフリクトを解消する必要があります。<br />
+          </li>
+        </ol>
+    <blockquote>
+      <p>ファイルを修正した後  ( アイコンが緑から赤に変わるのに気付くでしょう! )、CVSサーバにコミットして戻すことができます:</p>
+    </blockquote>
+        <ol>
+          <li>Moodleフォルダ ( またはファイル ) でマウスの右クリックをして、「<strong>CVS Commit...</strong>」を選択してください。</li>
+          <li>ダイアログボックスで、コミットを行う変更内容に関する分かりやすい説明文を入力してください。</li>
+          <li>「OK」ボタンをクリックしてください。あなたの変更内容がサーバに送信されます。<br />
+          </li>
+        </ol>
+<br />
+  </blockquote>
+  <h2><a name="n4" id="n4"></a>4. ブランチの取り扱い</h2>
+  <blockquote>
+    <p>この図は、時間とともにメイン<strong>moodle</strong>モジュールが、どのように異なるバージョンに分岐されるか示しています。</p>
+    <p align="center"><img src="pix/cvstree.png" width="500" height="200" /></p>
+    <p align="left">現在の全てのタグおよびブランチを見るには、古いファイルのどれでも結構ですので、このコマンドを使用してください ( トップmoodleディレクトリにある index.phpファイルのようなファイル ):</p>
+    <div class="commandline">cvs status -v index.php</div>
+    <p>いくつかのタグ付けガイドライン:</p>
+    <ul>
+      <li>タグおよびブランチ名は常に大文字にする必要があります。</li>
+      <li>タグおよびブランチは常に<strong>全体のモジュール</strong> ( Moodleの全て ) に適用される必要があります。個々のファイルやディレクトリにタグ付けしないでください。</li>
+      <li>moodleに関わる人達がタグを信頼しているため、タグのリネームは許可しません。ですから、最初に正しいネーミングを行ってください! </li>
+    </ul>
+</blockquote>
+<br />
+    <h3><a name="n4.1" id="n4.1"></a>4.1 トランク開発</h3>
+    <blockquote>
+      <p>CVSのトランクは、Moodleのメイン開発バージョンです。CVSでは、<span class="style4">HEAD</span>またはデフォルトブランチとして知られています。</p>
+      <p>Moodleの開発者は、これを可能な限り安定させるようにしますが、通常はバグや少ない程度の不安定さのある新しいコードが含まれる場合があります。</p>
+      <p>しばしば、私達は製品が十分な機能を持ち、リリースすることができると決定します。この時、トランクは <strong>MOODLE_XX_BETA</strong> タグにタグされ ( そのポイントにロールバックする場合に備えて )、新しいブランチが <span class="style1">MOODLE_XX_STABLE</span> と呼ばれるリリースのために形成されます。</p>
+      <p>この時点で、ベータパッケージもリリースされます - これは、CVSを使用せず、最新機能をテストしてバグをレポートしたいテスター用です。</p>
+    </blockquote>
+    <p>&nbsp;</p>
+    <h3><a name="n4.2" id="n4.2"></a>4.2 各リリースのステイブルブランチ</h3>
+    <blockquote>
+      <p>ステイブルブランチ <span class="style3">MOODLE_XX_STABLE</span> が作成されるとすぐに、しばらくの間、開発者の成果は2つの流れに分岐されます。一部の人は新しい機能のために開発を続けますが、ほとんどの開発者は現在の<span class="style1"><strong>ステイブル</strong></span>ブランチに集中し、発見されたバグの修正を行います。</p>
+      <p>ルートディレクトリで次のUnixコマンドを使用して、あなたのMoodleのローカルコピーをステイブルバージョンに入れ替えることができます:</p>
+      <div class="commandline">cvs update -dP -r <span class="style1">MOODLE_XX_STABLE</span></div>
+      <p>この後で、上記に記載されたコマンド全ては、ステイブルバージョンに適用されます。トランクバージョンに戻りたい場合は、次のコマンドを実行してください:</p>
+      <div class="commandline">cvs update -dPA</div>
+      <p>Windowsクライアントでは、ブランチを選択できるメニューがあります。</p>
+      <p>新しいステイブルブランチが確かに安定している場合、リリースを宣言することができます。配布のためパッケージが作成され、ブランチは ( Martinにより ) <strong>MOODLE_XXX</strong> のようにタグされます。</p>
+      <p>定期的に、ステイブルブランチのバグフィックスは、将来のMoodleバージョンで利用できるようにトランクにマージされます。MOODLE_XX_MERGEDと呼ばれるフローティングタグは、最新マージの経過を追うために保守されます。このようなマージの手順は下記の通りです:</p>
+        <ol>
+          <li>最新のトランクバージョンを取得する。<br />
+            <br />
+            <div class="commandline">cvs update -dPA</div>
+          </li>
+          <li>最近のマージ以来の全てのブランチを、あなたのトランクバージョンにマージする。<br /><br />
+            <div class="commandline">cvs update -kk -j MOODLE_13_MERGED -j MOODLE_13_STABLE</div>
+	      </li>
+          <li>コンフリクトに関してアップデートログを慎重に観察して、コンフリクトのある全てのファイルを修正する。</li>
+          <li>マージされているコピーをチェックして、CVSトランクバージョンに戻す。<br />
+            <br />
+            <div class="commandline">cvs commit</div>
+          </li>
+          <li>ブランチバージョンに戻る。<br /><br />
+            <div class="commandline">cvs update -dPr MOODLE_13_STABLE</div>
+			</li>
+          <li>この処理を次回も繰り返すことができるように、フローティングマージタグを更新する。<br /><br />
+            <div class="commandline">cvs tag -RF MOODLE_13_MERGED</div>
+          </li>
+        </ol>
+      <p><br />
+        最後に、可能であればステイブルブランチ内にあるMoodleの全てのversion.phpファイルの値 <em>$version</em> を更新しないでください ( 必要であれば最後の桁を除いて )。理由は、非常に安定したバージョンから次の安定したバージョンにアップデートする時に、トランクで起こったデータベースへのアップグレードを逃す可能性があるからです。</p>
+    </blockquote>
+<br />
+    <h3><a name="n4.3" id="n4.3"></a>4.3 大幅な変更に関するフィーチャーブランチ</h3>
+    <blockquote>
+      <p>時々、数人が開発を行うために、非常に大きな機能を登録する必要があります。しかし、それはメイン開発トランクに入れるには、あまりにも不安定です。</p>
+      <p>このような場合、機能の開発を行うために短期のブランチを作成し、できるだけ早くメイントランクにマージすることができます。例として、<span class="style1"><strong>MOODLE_14_WIDGET</strong></span> という名称のブランチを上の図で見ることができます。</p>
+      <p>これを新しいウィジェット機能に使用したい場合は、下記の手順に従ってください:</p>
+        <ol>
+          <li>本当に必要か他の開発者と議論します!</li>
+          <li><strong>MOODLE_XX_WIDGET_PRE</strong> という名称の新しいタグを ( moodle全ての ) <strong>トランク</strong>に作成します。 
+		  <br /><br />
+            <div class="commandline">cvs tag -R MOODLE_XX_WIDGET_PRE</div></li>
+          <li><span class="style1"><strong>MOODLE_XX_WIDGET</strong></span> という名称のブランチを作成します。
+		  <br /><br />
+            <div class="commandline">cvs tag -Rb <span class="style1">MOODLE_XX_WIDGET</span></div></li>
+          <li>機能が適度に安定するまでブランチで開発作業を行います。必要に応じてコミットします。
+		  <br /><br />
+            <div class="commandline">cvs commit</div></li>
+          <li>準備ができたら、全てのブランチをトランクにマージ、コンフリクトを修正、これをトランクにコミットし、ブランチを放棄します。
+		  <br />
+		  <br />
+            <div class="commandline">
+            <strong>cvs update -dPA</strong><br />
+            <strong>cvs update -kk -j <span class="style1">MOODLE_XX_WIDGET</span></strong><br />
+            <strong>cvs commit </strong></div>
+          </li>
+      </ol>
+</blockquote>
+<br />
+<blockquote>
+  <p align="center">グッドラック、気を付けて楽しんでください!</p>
+</blockquote>
+<br />
+<p align="center"><font size="1"><a href="." target="_top">Moodle文書</a></font></p>
+<p align="center"><font size="1">Version: $Id$</font></p>
+</body>
+</html>
