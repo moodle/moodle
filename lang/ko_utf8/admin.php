@@ -1,11 +1,12 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.6 development (2005072000)
+      // admin.php - created with Moodle 1.6 development (2005081700)
 
 
 $string['adminseesallevents'] = '관리자가 모든 이벤트를 봄';
 $string['adminseesownevents'] = '관리자는 다른 사용자들과 같음';
 $string['backgroundcolour'] = '바탕화면 색상';
 $string['badwordsconfig'] = '콤마에 의해 분리된 나쁜 언어 목록을 입력하시오';
+$string['badwordsdefault'] = '사용자가 정리한 리스트가 비어있다면 언어팩에 들어있는 기본적인 리스트가 사용될 것입니다';
 $string['badwordslist'] = '나쁜 언어 목록';
 $string['blockinstances'] = '보기';
 $string['blockmultiple'] = '다각';
@@ -28,10 +29,12 @@ $string['configcountry'] = '만약 당신이 여기에 나라를 설정한다면
 $string['configdbsessions'] = '만약 할수 없다면, 이 구조는 현재의 과업에서 정보를 저장하기 위해서데이타 베이스를 사용할 것이다. 이것은 특히 유용하다 큰 싸이트나 많은 서버를 포함한 사이트에서 말이다.
 대부분의 싸이트에서 이것은 아마도 불가능하다 서버 디스크가 대신 사용되는 것은,이 구조는 지금 로그 아웃될것이다 현재의 모든 사용자를 그리고 바뀔 것이다.';
 $string['configdebug'] = '이것을 연다면 지속적인 경고를 위해서 PHP 에러 보고가 증가할 것입니다.';
+$string['configdefaultrequestedcategory'] = '기본설정 범주를 교육과정에 집어넣고 서버에 요구하면 승인될 것입니다';
 $string['configdeleteunconfirmed'] = '만약 당신이 이메일 인증제를 사용한다면, 이 기간은 사용자들로부터 받아들여진 것에 대해 반응해야 한다. 이 기간이 끝나면 예전의 확인되지 않은 보고는 삭제된다. ';
 $string['configdenyemailaddresses'] = '같은 방법으로 여기에 있는 특별한 도메인 리스트의 이메일 주소를 부정한다. 모든 다른 도메인들은 허락된다. eg<strong>hotmail.com yahoo.co.uk<strong/>';
 $string['configdigestmailtime'] = '이해되 그들을 메일로 보내기로 선택한 사람들은 메일을 매일 받을 것이다. 이것의 구조는 통제된다 낮에 그리고 보내진다.(다음은 이시간 다음에 보내진다) ';
 $string['configdisplayloginfailures'] = '이것은 이전에 실패한 로그인에 대해 선택되어진 사용자들을 위해 정보를 표시할 것입니다.';
+$string['configenablecourserequests'] = '수업과정을 만드려고 하는 모든 사용자에게 허락됩니다.';
 $string['configenablerssfeeds'] = '이 스위치는 싸이트를 가로질러 RSS급송 장치를 가능하게 한다. 당신이 개인적 모듈안에서 RSS 급송 장치를 가능하게 할 필요가 있다면, 실질적으로 어떤 변화가 있는지 보아라 -관리자 환경설정 아래 있는 모듈 설정으로 가라.  ';
 $string['configenablerssfeedsdisabled'] = '이것은 이용할 수 없다. 왜냐하면 모든 싸이트에서 RSS 급송장치가 고장났기 때문이다. 그것들을 다시 가능하게 하려면 관리자 환경설정 아래 있는 다양한 설정으로 가라.';
 $string['configerrorlevel'] = '당신이 표시하길 원했던 PHP경고의 양을 선택하라. 대부분 보통이 가장 좋은 선택이다.';
@@ -73,6 +76,12 @@ $string['configproxyhost'] = '이서버가 인터넷에 접속하기위해 프�
 $string['configquarantinedir'] = '만약 당신이 clam AV가 감염된 파일들을 quarantine 디렉토리로 이동시키길 원한다면, 이것을 여기에 입력시켜라.
 이것은 반드시 웹서버에 의해 기록되어질 수 있어야 한다. 
 당신이 만약에 이것을 비워두거나 기록될 수 없거나 존재하지 않는 디렉토리를 입력한다면, 감염된 파일은 삭제될 것이다. trailing slash를 포함시키지 말아라.';
+$string['configrequestedstudentname'] = '학생이 요구한 교육과정에 사용되는 언어 ';
+$string['configrequestedstudentsname'] = '학생들이 요구한 교육과정에 사용되는 언어';
+$string['configrequestedteachername'] = '선생님이 요구한 교육과정에 사용되는 언어';
+$string['configrequestedteachersname'] = '선생님들이 요구한 교육과정에 사용되는 언어 ';
+$string['configrestrictbydefault'] = '윗단계 범주에 만들어진 새로운 교육과정의 모듈을 기본설정으로 제한할것인가?';
+$string['configrestrictmodulesfor'] = '교육과정에 몇몇의 활동 모듈 세팅을 사용안함으로 설정해 놓을것인가?';
 $string['configrunclamonupload'] = '파일업로드에 clam AV가 작동하는가? 이것을 작동시키기 위해서는 당신은 pathtoclam에 정확한 경로가 필요할 것이다.
 (clam AV는 http://www.clamav.net/로부터 공짜로 제공되는 바이러스 스캐너이다.)';
 $string['configsectioninterface'] = '인터페이스';
@@ -81,6 +90,7 @@ $string['configsectionmaintenance'] = '유지';
 $string['configsectionmisc'] = '기타';
 $string['configsectionoperatingsystem'] = '작동시스템';
 $string['configsectionpermissions'] = '승인';
+$string['configsectionrequestedcourse'] = '교육과정 요구';
 $string['configsectionsecurity'] = '보안';
 $string['configsectionuser'] = '사용자';
 $string['configsecureforms'] = 'Moodle은 웹형태들로부터 데이터를 받을 때의 추가적인 보안의 레벨을 사용할 수 있다. 만약 이것이 되어진다면, browser\'s HTTP_REFERER variable은 현재의 form adress와 반대로 확인되어진다. 이것은 매우적은 경우이지만, 만약 사용자가  웹 트래픽으로부터 HTTP_REFERER를 벗겨내기위해 설정된 방화벽을 사용할 경우 이것은 문제들를 야기할 수 있다. 증상들은 점점 폼에 갇혀있게 된다. 만약 당신의 유저들이 로그인 페이지에 문제를 가지고 있다면 당신은 이 셋팅을 작동시키지 말아야한다. 이것이 당신의 사이트를 brute-force password 공격에 더 노출 시킬지라도. 
@@ -106,7 +116,7 @@ $string['configvariables'] = '변화';
 $string['configwarning'] = '이러한 설치를 수정하는 것을 조심히 하십시오-생소한 값이 문제를 일으킬 수 있습니다.';
 $string['configzip'] = '당신의 zip 프로그램의 위치(유닉스만,선택사항)를 가르키세요. 만약 조건으로 지정한다면, 이것은 서버상에서 zip 문서를 생성시킬 것이다. 만약 당신이 이 빈칸을 비워둔다면, Moodle은 내부의 루틴을 사용할 것이다.';
 $string['confirmation'] = '확정';
-$string['cronwarning'] = '<a href=\"cron.php\">cron.php 유지 원본</a> 최소 24시간 동안 작동 되지 않습니다.<br /><a href=\"../doc/?frame=install.html&sub=cron\">설치 문서화는</a> 당신이 어떻게 이것을 자동화 할 수 있는 지를 설명해 줍니다.';
+$string['cronwarning'] = '<a href=\"cron.php\">cron.php 유지 원본</a> 최소 24시간 동안 작동 되지 않습니다.<br /><a href=\"../doc/?frame=install.html⊂=cron\">설치 문서화는</a> 당신이 어떻게 이것을 자동화 할 수 있는 지를 설명해 줍니다.';
 $string['density'] = '밀도';
 $string['edithelpdocs'] = '도움 문서를 편집하다';
 $string['editstrings'] = '문자열을 편집하다';

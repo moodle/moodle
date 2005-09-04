@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // block_quiz_results.php - created with Moodle 1.5 ALPHA (2005051500)
+      // block_quiz_results.php - created with Moodle 1.6 development (2005081700)
 
 
 $string['bestgrade'] = '가장 높은 성적';
@@ -10,6 +10,10 @@ $string['config_format_absolute'] = '절데적 숫자';
 $string['config_format_fraction'] = '소부분';
 $string['config_format_percentage'] = '백분율';
 $string['config_grade_format'] = '성적 표시:';
+$string['config_name_format'] = '표시 결과를 위한 보안 레벨';
+$string['config_names_anon'] = '익명의 결과';
+$string['config_names_full'] = '전체 이름 표시하기';
+$string['config_names_id'] = '학번으로만 표시하기';
 $string['config_no_quizzes_in_course'] = '이코스는 어떤 퀴즈 활동도 포함하고 있지 않습니다.이 구역을 올바르게 이용하기 위해 적어도 하나를 첨가하시오.';
 $string['config_select_quiz'] = '어떤 퀴즈로 부터 이 구역은 결과를 배치해야 합니까? ';
 $string['config_show_best'] = '얼마나 많은 높은 성적이 보여져야 합니까?';

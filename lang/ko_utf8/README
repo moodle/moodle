@@ -1,18 +1,30 @@
 Korean
 ------
 
-The Korean Moodle Translation Project is a collaborative effort led by Timothy Allen of Hannam University.
+The Korean Moodle Translation Project is a collaborative effort led by Timothy  Allen of Hannam University. 
 
-Korean Moodle course: http://moodle.org/course/view.php?id=21
-Korean Moodle Translation Project website:  http://tim.hannam.ac.kr/
+There are two Korean language packs in Moodle: this one is "ko_utf8" and has a  unicode UTF-8 encoding.  It would be appropriate for courses in which mutliple languages are likely to be used.  
 
-Contributors include:
+Due to the planned shift of Moodle to unicode this language will soon supersede the "ko" pack which has a EUC-KR encoding and which is appropriate only for sites in which Korean is the only or pre-dominant language used. This "ko_utf8" unicode language pack is now the default language pack for Korean Moodle and users are encouraged to use it rather than the other one.
 
+Project Contributors include:
+-----------------------------
  Timothy Allen (co-ordinator)
  Kui In Keem
+ Park Min-jeong
  Park Wang Kyu
- Lee Yong-keun (translators)
+ Lee Yong-keun 
+ Lee Chan-young (translators)
  (and more)
 
+Current state of the project:
+-----------------------------
+Finally the screen interface is virtually 100% complete.  The next priority is to correct errors in the completed translation and to finish translating the help and documentation files.  There is always a need for collaborators.  If you have any time to volunteer to help finish the translation as soon as possible please do not hesitate to contact me! (contact details below)  
+
+Resources:
+----------
+Korean Moodle community: http://moodle.org/course/view.php?id=21 (please join this community and make Korean Moodle more active!)
+Korean Moodle Translation Project website:  http://tim.hannam.ac.kr/
+
 If you have any questions or comments about the translation, including bugs,
-please contact me at scop@hannam.ac.kr or http://tim.hannam.ac.kr/ 
+please contact me at scop@hannam.ac.kr or http://tim.hannam.ac.kr/
