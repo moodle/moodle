@@ -243,7 +243,7 @@
     $guest = get_guest();
     $exceptions[] = $guest->id;
 
-    $tablecolumns = array('picture', 'fullname', 'city', 'country', 'lastaccess','messageselect');
+    $tablecolumns = array('picture', 'fullname', 'city', 'country', 'lastaccess','');
     $tableheaders = array('', get_string('fullname'), get_string('city'), get_string('country'), get_string('lastaccess'), ($isteacher) ? get_string('select') : '');
 
     $table = new flexible_table('user-index-students');
