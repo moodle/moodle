@@ -644,8 +644,13 @@ function print_overview($course) {
     }
     $lastaccess = $lastaccess->timeaccess;
 
+    $linkcss = '';
+    if (empty($course->visible)) {
+        $linkcss = 'class="dimmed"';
+    }
+
     print_simple_box_start("center", '400', '', 5, "coursebox");
-    print_heading('<a title="'.$course->fullname.'" href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.$course->fullname.'</a>');
+    print_heading('<a title="'.$course->fullname.'" '.$linkcss.' href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.$course->fullname.'</a>');
     if ($mods = get_course_mods($course->id)) {
         foreach ($mods as $mod) {
             if (file_exists(dirname(dirname(__FILE__)).'/mod/'.$mod->modname.'/lib.php')) {
