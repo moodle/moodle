@@ -3625,7 +3625,7 @@ function print_scale_menu_helpbutton($courseid, $scale) {
 function error ($message, $link='') {
     global $CFG, $SESSION;
 
-    header('HTTP/1.0 404 Not Found');
+    @header('HTTP/1.0 404 Not Found');
 
     print_header(get_string('error'));
     echo '<br />';
