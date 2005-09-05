@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.6 development (2005081700)
+      // workshop.php - created with Moodle 1.6 development (2005090100)
 
 
 $string['absent'] = '欠席';
@@ -11,7 +11,7 @@ $string['afterdeadline'] = '提出期限後： $a';
 $string['ago'] = '$a 前';
 $string['agrade'] = '評価<br />評点';
 $string['agreetothisassessment'] = 'この評価に同意する';
-$string['allgradeshaveamaximumof'] = '全ての成績の最大:  $a';
+$string['allgradeshaveamaximumof'] = '全ての評点の最大:  $a';
 $string['allowresubmit'] = '再提出を許可';
 $string['allsubmissions'] = '全ての提出';
 $string['alreadyinphase'] = '既にフェーズ $a　に達しています。';
@@ -30,7 +30,7 @@ $string['assessmentgrade'] = '評価評点： $a';
 $string['assessmentnotyetagreed'] = '評価はまだ同意されていません。';
 $string['assessmentnotyetgraded'] = '評価はまだ評定されていません。';
 $string['assessmentof'] = '$a の評価';
-$string['assessmentofresubmission'] = 'これは訂正された課題です。<br />このフォームにはあなたの以前の成績とコメントが記載されています。<br />訂正した課題を元にこれらを修正してください。';
+$string['assessmentofresubmission'] = 'これは修正された課題です。<br />このフォームにはあなたの以前の評点とコメントが記載されています。<br />修正した課題を元にこれらを修正してください。';
 $string['assessmentofthissubmission'] = 'この提出物の評価';
 $string['assessments'] = '評価';
 $string['assessmentsareok'] = '評価は正常です。';
@@ -54,7 +54,7 @@ $string['averageerror'] = 'エラー平均';
 $string['awaitinggradingbyteacher'] = '$a により待たれている採点';
 $string['beforedeadline'] = '提出期限前： $a';
 $string['by'] = '提出';
-$string['calculationoffinalgrades'] = '最終成績を計算';
+$string['calculationoffinalgrades'] = '最終評点を計算';
 $string['clearlateflag'] = '遅刻フラグをクリア';
 $string['closeassignment'] = '課題を閉じる';
 $string['comment'] = 'コメント';
@@ -97,7 +97,7 @@ $string['feedbackgoeshere'] = 'フィードバックはここに表示されます';
 $string['firstname'] = '名';
 $string['generalcomment'] = '一般的なコメント';
 $string['good'] = '良い';
-$string['grade'] = '成績';
+$string['grade'] = '評点';
 $string['gradeassessment'] = '評価評定';
 $string['graded'] = '評定';
 $string['gradedbyteacher'] = '$a による評定';
@@ -317,7 +317,7 @@ $string['workshopcomments'] = 'ワークショップコメント';
 $string['workshopfeedback'] = 'ワークショップフィードバック';
 $string['workshopsubmissions'] = 'ワークショップ提出';
 $string['wrongpassword'] = 'ワークショップのパスワードが正しくありません。';
-$string['yourassessments'] = 'あなたの課題に対する仲間の評価';
+$string['yourassessments'] = 'あなたの課題に対するクラスメートの評価';
 $string['yourassessmentsofexamplesfromtheteacher'] = '$a によるあなたの評価例';
 $string['yourfeedbackgoeshere'] = 'あなたのフィードバックはここに表示されます。';
 $string['yoursubmissions'] = 'あなたの提出物';
