@@ -6539,6 +6539,8 @@ function report_session_error() {
     } else {
         set_config('session_error_counter', 1);
     }
+    unset($_SESSION['USER']);
+    unset($GLOBALS['USER']);
     redirect($FULLME, get_string('sessionerroruser', 'error'), 2);
 }
 
