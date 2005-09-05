@@ -734,35 +734,48 @@ function forum_user_complete($course, $user, $mod, $forum) {
     }
 }
 
-function forum_print_overview($course, $cm,$lastaccess) {
+function forum_print_overview($course,$lastaccess) {
     global $USER, $CFG;
-    $forum = get_record("forum","id","$cm->instance");
-    $str = '<a title="'.get_string('forums').'" href="mod/forum/view.php?id='.$cm->id.'">'
-        .get_string('forum','forum').': '.$forum->name.'</a><br />';
-    if ($numnew = count_records_select("log","time > $lastaccess AND "
-                                       ." course = $course->id AND "
-                                       ." module = 'forum' AND cmid = $cm->id "
-                                       ." AND action LIKE 'add %' AND userid != $USER->id")) {
-        $str .= get_string('overviewnumpostssince','forum',$numnew)."<br />";
-        $p = 1;
+
+    if  (!$forums =  get_all_instances_in_course("forum", $course)) {
+        return;
     }
-    if ($CFG->forum_trackreadposts &&  forum_tp_can_track_forums($forum)) {
-        if (isset($forum->groupmode)) {
-            $groupmode = groupmode($course, $forum);  /// Can do this because forum->groupmode is defined
-        } else {
-            $groupmode = NOGROUPS;
+    // get all forum logs in ONE query (much better!)
+    $new = get_records_sql("SELECT instance,cmid,COUNT(l.id) as count FROM {$CFG->prefix}log l JOIN {$CFG->prefix}course_modules cm ON cm.id = cmid WHERE time > $lastaccess AND l.course = ".$course->id
+                           ." AND l.module = 'forum' AND action LIKE 'add%' AND userid != ".$USER->id." GROUP BY cmid,instance");
+    foreach ($forums as $forum) {
+        $count = 0;
+        $unread = 0;
+        $showunread = false;
+        // either we have something from logs, or trackposts, or nothing.
+        if (array_key_exists($forum->id, $new) && !empty($new[$forum->id])) {
+            $count = $new[$forum->id]->count;
         }
-        $groupid = ($groupmode==SEPARATEGROUPS && !isteacheredit($course->id)) ? $currentgroup : false;
-        $unread = forum_tp_count_forum_posts($forum->id, $groupid) -
-            forum_tp_count_forum_read_records($USER->id, $forum->id, $groupid);
-        if ($unread > 0) {
-            $a->unread = $unread;
-            $str .= get_string('overviewnumunread','forum',$unread).'<br />';
-            $p = 1;
+        if (forum_tp_can_track_forums($forum)) {
+            $showunread = true;
+            if (isset($forum->groupmode)) {
+                $groupmode = groupmode($course, $forum);  /// Can do this because forum->groupmode is defined
+            } else {
+                $groupmode = NOGROUPS;
+            }
+            $groupid = ($groupmode==SEPARATEGROUPS && !isteacheredit($course->id)) ? $currentgroup : false;
+            $unread = forum_tp_count_forum_posts($forum->id, $groupid) -
+                forum_tp_count_forum_read_records($USER->id, $forum->id, $groupid);
         }
-    }
-    if (!empty($p)) {
+        if ($count > 0 || $unread > 0) {
+            $str .= '<a title="'.get_string('forums').'" href="'.$CFG->wwwroot.'/mod/forum/view.php?f='.$forum->id.'">'
+                .get_string('forum','forum').': '.$forum->name.'</a><br />';
+            $str .= get_string('overviewnumpostssince','forum',$count)."<br />";
+            if (!empty($showunread)) {
+                $str .= get_string('overviewnumunread','forum',$unread).'<br />';
+            }
+        }
+    }        
+    print_heading(get_string("modulenameplural", "forum"));
+    if (!empty($str)) {
         echo $str;
+    } else {
+        echo get_string('nothingnew');
     }
 }
 

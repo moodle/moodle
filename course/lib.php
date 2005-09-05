@@ -651,13 +651,13 @@ function print_overview($course) {
 
     print_simple_box_start("center", '400', '', 5, "coursebox");
     print_heading('<a title="'.$course->fullname.'" '.$linkcss.' href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.$course->fullname.'</a>');
-    if ($mods = get_course_mods($course->id)) {
-        foreach ($mods as $mod) {
-            if (file_exists(dirname(dirname(__FILE__)).'/mod/'.$mod->modname.'/lib.php')) {
-                require_once(dirname(dirname(__FILE__)).'/mod/'.$mod->modname.'/lib.php');
-                $fname = $mod->modname.'_print_overview';
+    if ($modules = get_records('modules')) {
+        foreach ($modules as $mod) {
+            if (file_exists(dirname(dirname(__FILE__)).'/mod/'.$mod->name.'/lib.php')) {
+                require_once(dirname(dirname(__FILE__)).'/mod/'.$mod->name.'/lib.php');
+                $fname = $mod->name.'_print_overview';
                 if (function_exists($fname)) {
-                    $fname($course,$mod,$lastaccess);
+                    $fname($course,$lastaccess);
                 }
             }
         }
