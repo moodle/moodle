@@ -12,10 +12,10 @@ del, student, 17, CF101
 add, student, 21, CF101, 1091115000, 1091215000
 </pre>';
 $string['enrolname'] = 'Tekstbestand';
-$string['filelockedmail'] = 'Het tekstbestand dat je gebruikt voor het bestandsgebaseerde inschrijvingen ($a) kan niet verwijderd worden door het cron-proces. Dit is gewoonlijk omdat de rechten op het bestand verkeerd ingesteld zijn. Zet aub de rechten zo dat Moodle het bestand kan verwijderen, anders wordt dat herhaaldelijk verwerkt.';
+$string['filelockedmail'] = 'Het tekstbestand dat je gebruikt voor bestandsgebaseerde inschrijvingen ($a) kan niet verwijderd worden door het cron-proces. Dit is gewoonlijk omdat de rechten op het bestand verkeerd ingesteld zijn. Zet aub de rechten zo dat Moodle het bestand kan verwijderen, anders wordt dat herhaaldelijk verwerkt.';
 $string['filelockedmailsubject'] = 'Belangrijke fout: aanmeldingsbestand';
 $string['location'] = 'Bestandslokatie';
-$string['mailadmin'] = 'Verwittig de beheerder met e-mail';
-$string['mailusers'] = 'Verwittig de gebruikers met e-mail';
+$string['mailadmin'] = 'Verwittig de beheerder per e-mail';
+$string['mailusers'] = 'Verwittig de gebruikers per e-mail';
 
 ?>

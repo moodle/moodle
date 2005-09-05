@@ -37,7 +37,7 @@ $string['adminhelpaddnewuser'] = 'Handmatig een nieuwe account aanmaken';
 $string['adminhelpassignadmins'] = 'Beheerders kennen geen beperkingen en hebben overal toegang binnen de site';
 $string['adminhelpassigncreators'] = 'Cursus-aanmakers kunnen nieuwe cursussen aanmaken en binnen deze cursussen les geven';
 $string['adminhelpassignstudents'] = 'Ga naar een cursus en voeg leerlingen toe door middel van het beheerdersmenu';
-$string['adminhelpassignteachers'] = 'Kies een cursus en gebruik dit icoon om leraren toe te voegen';
+$string['adminhelpassignteachers'] = 'Kies een cursus en gebruik dit pictogram om leraren toe te voegen';
 $string['adminhelpauthentication'] = 'Je kunt interne gebruikeraccounts of externe databases gebruiken';
 $string['adminhelpbackup'] = 'Configureer hoe de backups werken';
 $string['adminhelpconfiguration'] = 'Stel in hoe de site er uitziet  en werkt';
@@ -169,7 +169,7 @@ $string['clamlost'] = 'Moodle is geconfigureerd om Clam te gebruiken voor bestan
 $string['clamlostandactinglikevirus'] = 'Moodle is zo geconfigureerd dat, wanneer Clam niet werkt, alle bestanden als virussen behandeld worden. Dit heeft natuurlijk als gevolg dat geen enkele leerling bestanden kan uploaden tot je dit hersteld hebt';
 $string['clammovedfile'] = 'Het bestand is naar je quarantainemap verplaatst. De nieuwe locatie is $a';
 $string['clammovedfilebasic'] = 'Het bestand is in de quarantainemap gezet';
-$string['clamquarantinedirfailed'] = 'Het bestand kon niet naar de quarantinemap, $a, verplaatst worden. Je moet dit herstellen want de bestanden die als besmet gezien worden, worden verwijderd.';
+$string['clamquarantinedirfailed'] = 'Het bestand kon niet naar de quarantainemap, $a, verplaatst worden. Je moet dit herstellen want de bestanden die als besmet beschouwdworden, worden verwijderd.';
 $string['clamunknownerror'] = 'Er was een onbekende fout met clam.';
 $string['cleaningtempdata'] = 'Schoon de tijdelijke data op';
 $string['clicktochange'] = 'Klik om te wijzigen';
@@ -184,7 +184,7 @@ $string['confirmednot'] = 'Je registratie is nog niet bevestigd !';
 $string['continue'] = 'Ga door';
 $string['continuetocourse'] = 'Klik hier om je cursus binnen te gaan';
 $string['convertingwikitomarkdown'] = 'Wiki naar Markdown aan het converteren';
-$string['cookiesenabled'] = 'Cookies moeten aan staan in je browser';
+$string['cookiesenabled'] = 'Cookies moeten aanstaan in je browser';
 $string['cookiesnotenabled'] = 'Het gebruik van cookies is door je browser niet toegelaten. Met deze instelling kun je deze site niet gebruiken.';
 $string['copy'] = 'Kopie';
 $string['copyingcoursefiles'] = 'Cursusbestanden kopiëren';
@@ -205,7 +205,7 @@ $string['coursecreators'] = 'Cursus-aanmakers';
 $string['coursefiles'] = 'Cursusbestanden';
 $string['courseformats'] = 'Cursusformats';
 $string['coursegrades'] = 'Cursuscijfers';
-$string['coursehidden'] = 'Deze cursus is nu niet ter beschikking voor leerlingen';
+$string['coursehidden'] = 'Deze cursus is nu niet beschikbaar voor leerlingen';
 $string['courseinfo'] = 'Cursusinformatie';
 $string['courserestore'] = 'Backup cursussen terugzetten';
 $string['courses'] = 'Cursussen';
@@ -566,7 +566,7 @@ $string['includeuserfiles'] = 'Voeg gebruikersbestanden toe';
 $string['info'] = 'Informatie';
 $string['institution'] = 'Instituut';
 $string['invalidemail'] = 'Ongeldig e-mailadres';
-$string['invalidlogin'] = 'Ongeldige log in, probeer het nog eens';
+$string['invalidlogin'] = 'Ongeldige log in, probeer nog eens';
 $string['ip_address'] = 'IP-adres';
 $string['jump'] = 'Spring';
 $string['jumpto'] = 'Ga naar...';
@@ -809,6 +809,7 @@ $string['pageheaderconfigablock'] = 'Blok configureren in %%fullname%%';
 $string['parentcoursenotfound'] = 'Bovenliggende cursus niet gevonden';
 $string['parentcoursenotmetacourse'] = 'Bovenliggende cursus is geen overkoepelende cursus!';
 $string['parentfolder'] = 'Bovenliggende map';
+$string['parentlanguage'] = 'VERTALERS: Als bepaalde teksten ontbreken in een taalpakket, zal Moodle deze uit een ander taalpakket gebruiken. Geef hier de juiste aanduiding daarvan aan, bijv. nl. Als je niets invult, wordt standaard het Engelse taalpakket gebruikt.';
 $string['participants'] = 'Deelnemers';
 $string['password'] = 'Wachtwoord';
 $string['passwordchanged'] = 'Het wachtwoord is veranderd';
@@ -1049,7 +1050,7 @@ $string['updatinga'] = 'Een $a wijzigen';
 $string['updatingain'] = 'Een $a->what wijzigen in $a->in';
 $string['upload'] = 'Upload';
 $string['uploadafile'] = 'Upload een bestand';
-$string['uploadedfile'] = 'Bestand met succes geüploadet';
+$string['uploadedfile'] = 'Bestand met succes geüpload';
 $string['uploadedfileto'] = '$a->file is geüpload naar $a->directory';
 $string['uploadedfiletoobig'] = 'Sorry, maar dit bestand is te groot (limiet is $a bytes)';
 $string['uploadfailednotrecovering'] = 'Je bestandsupload is mislukt omdat er een probleem was met één van de bestanden, $a->name.<br/>Hier is een log van de problemen:<br/>$a->problem<br/>Niet te herstellen.';
@@ -1086,18 +1087,18 @@ $string['usingexistingcourse'] = 'Gebruik bestaande cursus';
 $string['version'] = 'Versie';
 $string['view'] = 'Zien';
 $string['viewsolution'] = 'Bekijk oplossing';
-$string['virusfound'] = 'Opgelet beheerder! Clam AV vond een virus in een bestand, geüploadet door $a->user voor de cursus $a->course. Hier is de boodschap van clamscan:';
-$string['virusfoundlater'] = 'Een bestand dat geüploadet werd op $a->date met als bestandsnaam $a->filename voor de cursus $a->course is  besmet met een virus. Hier is een samenvatting van wat er sinds toen met je bestand gebeurd is:
+$string['virusfound'] = 'Opgelet beheerder! Clam AV vond een virus in een bestand, geüpload door $a->user voor de cursus $a->course. Hier is de boodschap van clamscan:';
+$string['virusfoundlater'] = 'Een bestand dat geüpload werd op $a->date met als bestandsnaam $a->filename voor de cursus $a->course is  besmet met een virus. Hier is een samenvatting van wat er met je bestand gebeurd is:
 
 $a->action
 
 Als dit een taak was, dan wil je het misschien terug insturen, zodat je leraar het kan nakijken.';
-$string['virusfoundlateradmin'] = 'Opgelet beheerder! Een bestand dat geüpload werd op $a->date met als bestandsnaam $a->filename voor de cursus $a->course is  besmet met een virus. Hier is een samenvatting van wat er sinds toen met het bestand gebeurd is:
+$string['virusfoundlateradmin'] = 'Opgelet beheerder! Een bestand dat geüpload werd op $a->date met als bestandsnaam $a->filename voor de cursus $a->course is  besmet met een virus. Hier is een samenvatting van wat er met het bestand gebeurd is:
 
 $a->action
 
 De gebruiker is ook verwittigd.';
-$string['virusfoundlateradminnolog'] = 'Opgelet beheerder! Een bestand dat geüpload werd met bestandsnaam $a->filename bevat een virus. Moodle kon dit bestand niet terugsturen naar de gebruiker die het oorspronkelijk geüploadet had.
+$string['virusfoundlateradminnolog'] = 'Opgelet beheerder! Een bestand dat geüpload werd met bestandsnaam $a->filename bevat een virus. Moodle kon dit bestand niet terugsturen naar de gebruiker die het oorspronkelijk geüpload had.
 
 Hier is een samenvatting van wat er met dat bestand gebeurd is:
 

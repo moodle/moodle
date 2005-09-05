@@ -38,8 +38,8 @@ $string['feedbackupdated'] = 'De feedback op ingestuurde opdrachten is voor $a m
 $string['guestnoupload'] = 'Sorry, gasten mogen geen bestanden uploaden';
 $string['helpoffline'] = '<p>Dit is nuttig wanneer de opdracht buiten Moodle gebeurt. Dat kan ergens anders op het web zijn of face-to-face.</p><p>Leerlingen kunnen een beschrijving van de opdracht zien, maar kunnen geen bestanden uploaden. Je kunt gewoon cijfers geven en leerlingen kunnen die dan inkijken.</p>';
 $string['helponline'] = '<p>Dit type opdracht vraagt gebruikers een tekst te bewerken. Leraren kunnen die dan on line beoordelen en zelfs verbeteren en wijzigingen aanbrengen in de tekst.</p>
-<p>(Als je vertrouwd bent met oudere versies van Moodle, dan lijkt dit type opdracht erg op de vroegere logboek module.)</p>';
-$string['helpuploadsingle'] = '<p>Dit type opdracht laat elke deelnemer toe om één bestand te uploaden, gelijk welk bestandstype.</p><p>Dit kan een bestand zijn van een tekstverwerker, een afbeelding, een website in een zip-bestand of gelijk welk bestandstype dat je je leerlingen vraagt te maken</p>';
+<p>(Als je vertrouwd bent met oudere versies van Moodle, dan lijkt dit type opdracht erg op de vroegere logboekmodule.)</p>';
+$string['helpuploadsingle'] = '<p>Dit type opdracht laat elke deelnemer toe om één bestand te uploaden, van gelijk welk bestandstype.</p><p>Dit kan een bestand zijn van een tekstverwerker, een afbeelding, een website in een zip-bestand of gelijk welk type dat je je leerlingen vraagt te maken</p>';
 $string['late'] = '$a laat';
 $string['maximumgrade'] = 'Maximale cijfer';
 $string['maximumsize'] = 'Maximale grootte  ';
