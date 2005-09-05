@@ -71,6 +71,7 @@ $string['confignotifyloginfailures'] = 'If login failures have been recorded, em
 $string['confignotifyloginthreshold'] = 'If notifications about failed logins are active, how many failed login attempts by one user or one IP address is it worth notifying about?';
 $string['configopentogoogle'] = 'If you enable this setting, then Google will be allowed to enter your site as a Guest.  In addition, people coming in to your site via a Google search will automatically be logged in as a Guest.  Note that this only provides transparent access to courses that already allow guest access.';
 $string['configpathtoclam'] = 'Path to clam AV.  Probably something like /usr/bin/clamscan or /usr/bin/clamdscan. You need this in order for clam AV to run.';
+$string['configpathtodu'] = 'Path to du. Probably something like /usr/bin/du. If you enter this, pages that display directory contents will run much faster for directories with a lot of files.';
 $string['configproxyhost'] = 'If this <b>server</b> needs to use a proxy computer (eg a firewall) to access the Internet, then provide the proxy hostname and port here.  Otherwise leave it blank.';
 $string['configquarantinedir'] = 'If you want clam AV to move infected files to a quarantine directory, enter it here. It must be writable by the webserver.  If you leave this blank, or if you enter a directory that doesn\'t exit or isn\'t writable, infected files will be deleted.  Do not include a trailing slash.';
 $string['configrequestedteachername'] = 'Word for teacher used in requested courses';

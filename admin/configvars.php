@@ -136,6 +136,9 @@ class configvarrss extends configvar {
     $operatingsystem['unzip'] = new configvar (get_string('configunzip', 'admin'),
         '<input name="unzip" type="text" size="30" value="'.s($config->unzip).'" alt="unzip" />' );
 
+    $operatingsystem['pathtodu'] = new configvar(get_string('configpathtodu', 'admin'),
+        '<input name="pathtodu" type="text" size="30" value="'.s($config->pathtodu).'" alt="pathtodu" />');                                                
+
 /// slasharguments
     unset($options);
     $options[0] = "file.php?file=/pic.jpg";

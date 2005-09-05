@@ -4251,6 +4251,17 @@ function delDirContents($dirName) {
  */
 function get_directory_size($rootdir, $excludefile='') {
 
+    global $CFG;
+
+    // do it this way if we can, it's much faster
+    if (!empty($CFG->pathtodu) && is_executable(trim($CFG->pathtodu))) {
+        $command = trim($CFG->pathtodu).' -sk --apparent-size '.$rootdir;
+        exec($command,$output,$return);
+        if (is_array($output)) {
+            return get_real_size(intval($output[0]).'k'); // we told it to return k.
+        }
+    }
+    
     $size = 0;
 
     if (!is_dir($rootdir)) {          // Must be a directory
