@@ -258,9 +258,6 @@
         }
     }
 
-    // help button
-    $help = helpbutton( 'filters','','moodle',true,false,'',true ); 
-
     //==============================
     // Display logic
     //==============================
@@ -269,7 +266,7 @@
         "<a href=\"index.php\">$txt->administration</a> -> <a href=\"configure.php\">$txt->configuration</a> " .
         "-> $txt->managefilters" );
 
-    print_heading( $txt->managefilters . $help );
+    print_heading_with_help( $txt->managefilters, 'filters' );
 
     // print the table of all the filters
     $table->print_html();
