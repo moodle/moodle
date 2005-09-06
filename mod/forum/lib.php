@@ -737,7 +737,9 @@ function forum_user_complete($course, $user, $mod, $forum) {
 function forum_print_overview($course,$lastaccess) {
     global $USER, $CFG;
 
+    print_heading(get_string("modulenameplural", "forum"));
     if  (!$forums =  get_all_instances_in_course("forum", $course)) {
+        echo get_string('nothingnew','forum',$course->fullname);
         return;
     }
     // get all forum logs in ONE query (much better!)
@@ -771,11 +773,10 @@ function forum_print_overview($course,$lastaccess) {
             }
         }
     }        
-    print_heading(get_string("modulenameplural", "forum"));
     if (!empty($str)) {
         echo $str;
     } else {
-        echo get_string('nothingnew');
+        echo get_string('nothingnew','forum',$course->fullname);
     }
 }
 
