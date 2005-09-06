@@ -98,6 +98,7 @@ $string['nonews'] = 'Aucune brève n\'a été encore publiée';
 $string['noposts'] = 'Aucun message';
 $string['nopostscontaining'] = 'Aucun message contenant « $a » n\'a été trouvé';
 $string['nosubscribers'] = 'Personne n\'est abonné à ce forum';
+$string['nothingnew'] = 'Rien de neuf pour $a';
 $string['notingroup'] = 'Désolé, vous devez faire partie d\'un groupe pour consulter ce forum.';
 $string['notrackforum'] = 'Ne pas signaler les messages non lus';
 $string['nownotsubscribed'] = 'Les messages du forum « $a->forum » NE seront PAS envoyés à $a->name.';
