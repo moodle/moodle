@@ -2,8 +2,8 @@
       // forum.php - created with Moodle 1.5 + (2005060201)
 
 
-$string['addanewdiscussion'] = 'Adicionar um novo tópico de discussão';
-$string['addanewtopic'] = 'Adicionar um novo tópico';
+$string['addanewdiscussion'] = 'Acrescentar um novo tópico de discussão';
+$string['addanewtopic'] = 'Acrescentar um novo tópico';
 $string['advancedsearch'] = 'Busca avançada';
 $string['allforums'] = 'Todos os fóruns';
 $string['allowchoice'] = 'Todos podem escolher';
@@ -100,6 +100,7 @@ $string['nonews'] = 'Nenhuma notícia publicada';
 $string['noposts'] = 'Nenhuma mensagem';
 $string['nopostscontaining'] = 'Não foi encontrada nenhuma mensagem com \'$a\' ';
 $string['nosubscribers'] = 'Este fórum não tem nenhum assinante';
+$string['nothingnew'] = 'Nenhuma novidade em $a';
 $string['notingroup'] = 'Sinto muito mas você precisa ser membro de um grupo para acessar este fórum';
 $string['notrackforum'] = 'Não monitorar mensagens não lidas';
 $string['nownotsubscribed'] = '$a->name não receberá cópias de \'$a->forum\' pelo correio eletrônico.';

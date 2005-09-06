@@ -2,6 +2,7 @@
       // enrol_authorize.php - created with Moodle 1.5 + (2005060201)
 
 
+$string['adminreview'] = 'Controlar a encomenda antes de completar a transação com o cartão de crédito';
 $string['anlogin'] = 'Authorize.net: Nome para Login';
 $string['anpassword'] = 'Authorize.net: Senha';
 $string['anreferer'] = 'Definir a URL de referência se você configurou isto na tua conta authorize.net. Isto incluirá uma linha \"Referer: URL\" na solicitação.';
@@ -26,6 +27,8 @@ Você pode configurar a opção <a href=\"$a->url\">loginhttps</a> na seção Variáve
 <br /><br />
 Com esta opção ativada Moodle usa o https seguro no hora do login e na página de pagamentos.';
 $string['nameoncard'] = 'Nome no cartão';
+$string['reviewday'] = 'Completar a transação do cartão de crédito automaticamente a menos que um administrador ou professor não faça o controle da encomenda em <b>$a</b> dias. O CRON DEVE ESTAR ATIVADO. .<br />( 0 dias = desativar transação automatica = prof. o admin. controlam a operação manualmente. A transação será cancelada quando a modalidade autocapture for desativada a menos que você não controle a operação em 30 dias.)';
+$string['reviewnotify'] = 'O seu pagamento vai ser controlado. Você receberá um email do seu professor nos próximos dias.';
 $string['sendpaymentbutton'] = 'Enviar Pagamento';
 $string['zipcode'] = 'C[odigo Postal';
 
