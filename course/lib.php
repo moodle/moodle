@@ -1129,6 +1129,14 @@ function make_categories_list(&$list, &$parents, $category=NULL, $path="") {
 /// categories, building up a nice list for display.  It also makes
 /// an array that list all the parents for each category.
 
+    // initialize the arrays if needed
+    if (!is_array($list)) {
+        $list = array(); 
+    }
+    if (!is_array($parents)) {
+        $parents = array(); 
+    }
+
     if ($category) {
         if ($path) {
             $path = $path.' / '.$category->name;
