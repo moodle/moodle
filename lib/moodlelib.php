@@ -6335,7 +6335,10 @@ function unzip_show_status ($list,$removepath) {
  * Cleans a remote address ready to put into the log table
  */
 function cleanremoteaddr($addr) {
-    return preg_replace('/(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(.*)/','$1',$addr);
+    $addr = preg_replace('/(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(.*)/','$1',$addr);
+    // just to make SURE, we strip off anything past a ,
+    $addr = preg_replace('/(.*)\,(.*)/','$1',$addr);
+    return $addr;
 }
 
 /**
