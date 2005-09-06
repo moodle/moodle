@@ -1,0 +1,185 @@
+<p align="center"><b>Importando arquivos no formato "GIFT"</b></p>
+<p>GIFT é o formato de importação mais abrangente disponível para importar perguntas de um arquivo texto para o quiz do 
+   Moodle. Suporta perguntas múltipla escolha, falso-verdadeiro, resposta breve, associação e numérica, tão bem como a inserção de um _____ para o formato de preenchimento. Vários tipos de perguntas podem ser misturadas em um arquivo texto, e o formato também suporta linhas de comentários, nomes das perguntas,  avaliação e notas com pesos porcentuais.</p>
+
+    <p>A codificação do texto de seu arquivo texto deve ser a mesma como na instalação do Moodle. 
+    Um arquivo texto com exemplos de perguntas pode ser encontrado em: <a href="../../../../mod/quiz/format/gift/examples.txt">gift/examples.txt</a>.</p>
+
+    <h3>TIPOS DE PERGUNTAS</h3>
+
+    <p><u>Múltipla escolha:</u><br />
+    Para perguntas múltipla escolha, as respostas erradas são prefixadas com um til (~) e as respostas corretas com um sinal de igual (=).</p>
+    <pre>     Quem está enterrado na tumba de Grant?{~Grant ~Jefferson =ninguém}</pre>
+    <p>O formato de <b>preenchimento </b> automaticamente insere uma linha com brancos  (______) no meio da sentença. Para se utilizar o formato de preenchimento, coloque as respostas onde você deseja que a linha apareça na sentença.</p>
+    <pre>     Grant está {~enterrado =sepultado ~morando} na tumba de Grant.</pre>
+    <p>Se as respostas vierem antes da marca de pontuação final, uma linha com brancos será inserida para o formato de preenchimento. Todos os tipos de perguntas podem ser escritas no formato de preenchimento.</p>
+    <p>Deve haver uma linha separando as perguntas (duplo CR - carriage return). Para ficar mais claro, as respostas podem ser escritas em linhas separadas ou até mesmo recuadas. Por exemplo:</p>
+    <pre>     O feriado americano de ação de graças é celebrado na {
+         ~segunda
+         ~terceira
+         =quarta
+     } quinta-feira de novembro.
+     
+     Os caracteres japoneses originalmente vêm de qual país? {
+         ~Índia
+         =China
+         ~Coréia
+         ~Egito}</pre>
+
+    <p><u><br>
+      Resposta breve:</u><br />
+    Respostas para o tipo de pergunta com resposta breve são todas prefixadas com um sinal de igual  (=), 
+    indicando que todas são respostas corretas. As respostas não devem conter um til.</p>
+    <pre>     Quem está enterrado na tumba de Grant?{=nenhuma pessoa =ninguém}
+	   Dois mais dois é igual a (=quatro =4).
+</pre>
+    <p>Caso somente <u>uma</u> resposta breve seja correta, ela pode ser escrita sem o sinal de igual, contanto que não seja confundida como falso-verdadeiro.</p>
+
+    <p><u>Falso-verdadeiro:</u><br />
+    Neste tipo de pergunta a resposta indica se a sentença é falsa ou verdadeira. A resposta deve ser escrita como (FALSE) ou (TRUE), ou abreviadamente como (F) ou (T).</p>
+    <pre>     Grant está enterrado na tumba de Grant.{F)
+
+     O sol nasce no leste.{T}</pre>
+
+    <p><u>Associação:</u><br />
+    Pares de associação iniciam-se com o sinal de igual (=) e são separados pelo símbolo "->". Deve haver no mínimo três pares.</p>
+    <pre>     Pergunta de associação. {
+         =pergunta1 -> resposta1
+         =pergunta2 -> resposta2
+         =pergunta3 -> resposta3
+         }
+     
+     Associe os seguintes países com suas respectivas capitais. {
+         =Canadá -> Ottawa
+         =Itália  -> Roma
+         =Japão  -> Tókio
+         =Índia  -> Nova Deli
+         }</pre>
+    <p>Pergunta de associação não suporta avaliação ou respostas com pesos porcentuais.</p>
+
+    <p><u>Numérica:</u><br />
+    A secção de resposta para questões numéricas deve iniciar com o sinal  (#). 
+    As respostas numéricas podem incluir uma margem de erro, que é escrita após a resposta correta, separada por uma vírgula. Assim, por exemplo, se a resposta correta estiver entre 1.5 e 2.5, então deve-se escrever <u>{#2:0.5}</u>. 
+    Isto indica que 2 com uma margem de 0.5 está correto  (isto é, um valor entre 1.5 e 2.5). 
+    Caso não seja especificada a margem de erro, ela será assumida como  zero.</p>
+    <pre>     Quando nasceu Ulysses S. Grant? {#1822}
+
+     Qual é o valor de pi (até 3 casas decimais)? {#3.1415:0.0005}.</pre>
+    <p>Opcionalmente, as respostas numéricas podem ser escritas como uma faixa no seguinte formato  {#<i>ValorMínimo</i>..<i>ValorMáximo</i>}.</p>
+    <pre>     Qual é o valor de pi (até 3 casas decimais)? {#3.141..3.142}.</pre>
+    <p>A interface do navegador do Moodle não suporta respostas numéricas múltiplas, mas o código do Moodle pode e assim faz o GIFT. 
+    Isto pode ser usado para especificar faixas múltiplas numéricas, e pode ser particularmente utilizável quando combinado com notas em pesos porcentuais. Se as respostas múltiplas forem utilizadas, elas devem estar separadas por um sinal de igual, como nas perguntas com respostas breves.</p>
+    <pre>     Quando nasceu Ulysses S. Grant? {#
+         =1822:0
+         =%50%1822:2}</pre>
+    <p>Note que desde que o navegador GUI do Moodle não suporta respostas múltiplas para questões numéricas, não há maneira de vê-las ou editá-las pelo  Moodle. 
+    A única maneira de alterar a resposta numérica além do primeiro, será apagar a questão e reimportá-la (ou usar algo como  phpMyAdmin).</p>
+
+    <h3>OPÇÕES</h3>
+    <p>Além destes três tipos de perguntas, este filtro oferece as seguintes opções: 
+    comentários em linhas, nomes das perguntas, avaliação e notas com pesos porcentuais.</p>
+
+    <p><u>Comentários em linhas:</u><br />
+    Os comentários que não foram importados para o  Moodle podem ser incluídos no arquivo texto. Isto pode ser utlizado para prover cabeçalhos ou mais informações sobre as perguntas. Todas as linhas que se iniciarem com duas barras (sem contar com tab ou espaço) serão ignoradas pelo filtro.</p>
+    <pre>     // Sub-título: Questões numéricas abaixo
+     Quanto são 2 mais 2? {#4}</pre>
+
+    <p><u>Nome da pergunta:</u><br />
+    Um nome de pergunta pode ser especificado colocando-se no início e no final dele  duplos dois pontos.</p>
+    <pre>     ::Origem do Kanji::Os caracteres japoneses originalmente
+     vêm de qual país? {=China}
+
+     ::Data de ação de graças::O feriado americano de ação de graças é 
+     celebrado na {~segunda ~terceira =quarta} quinta-feira de novembro.</pre>
+    <p>Se nenhum nome da pergunta for especificado, a pergunta inteira será usado como nome por default.</p>
+
+    <p><u>Avaliação:</u><br />
+    A avaliação pode ser incluída em cada resposta colocando-se após a resposta e depois do sinal  (# também conhecido como jogo da velha).</p>
+    <pre>     Qual é a resposta para esta pergunta de múltipla escolha?{
+     ~resposta errada#comentário para a resposta errada
+     ~outra resposta errada#comentário para a resposta errada
+     =resposta certa#Muito bem!}
+     
+     Quem está enterrado na tumba de Grant?{
+     =nenhuma pessoa#Resposta excelente!
+     =ninguém#Resposta excelente!}
+     
+     Grant está enterrado na tumba de Grant.{FALSO#Ninguém está enterrado na tumba de Grant.}</pre>
+    <p>Para perguntas de múltipla escolha, a avaliação é mostrada somente para a resposta que o estudante selecionou. Para resposta breve, a avaliação é mostrada somente quando a entrada do estudante corresponde à resposta correta. Para perguntas falso-verdadeiro, a avaliação importada é salva para que seja mostrado se o estudante escolheu a resposta errada. Assim, no último exemplo acima, o estudante verá a avaliação somente se selecionar VERDADEIRO como resposta. </p>
+    <p><u>Respostas com pesos porcentuais:</u><br />
+      As notas com pesos porcentuais estão disponíveis para ambas as perguntas de múltipla escolha e resposta breve. As respostas com pesos porcentuais podem ser incluídas após o til (para múltipla escolha) ou sinal de igual (para resposta breve) com o por cento desejado dentro de sinais de por cento (p.ex., %50%). 
+    Esta opção pode ser combinada com os comentários de avaliação.</p>
+    <pre>     Pergunta difícil.{~resposta errada ~%50%resposta meia correta =resposta totalmente correta}
+          
+     ::Cidade de Jesus::Jesus Cristo era de {
+     ~Jerusalém#Foi uma importante cidade, mas a resposta está errada.
+     ~%25%Belém#Ele nasceu aqui, mas não cresceu aqui.
+     ~%50%Galiléia#Você precisa ser mais específico.
+     =Nazaré#Sim! Está correta!}.
+     
+     ::Cidade de Jesus:: Jesus Cristo era de {
+     =Nazaré#Sim! Está correta!
+     =%75%Nazaret#Correto, mas escrito erradamente.
+     =%25%Belém#Ele nasceu aqui, mas não cresceu aqui.}</pre>
+    <p>Note que os dois últimos exemplos são essencialmente a mesma pergunta, antes como múltipla escolha e depois como resposta breve.</p>
+
+    <p><font size="-1">Note que é possível especificar pesos porcentuais para respostas que NÃO estão disponíveis através da interface do navegador. Tais pesos serão calculados corretamente (de acordo com o valor nomeado quando foi importado), e aparecerão normalmente aos estudantes fazendo o teste. Mas tais pesos não serão mostrados corretamente aos professores quando editados através da interface de  Moodle para editar as questões. O menu pull-down somente permite certos valores fixos, e se o peso não equivale exatamente a um destes valores pré-determinados, então não será mostrado corretamente. Se você editar uma pergunta através da interface do navegador, o peso mudará para aquele mostrado.</font></p>
+
+<p><u>Especificando a formatação do texto para a pergunta</u><br />
+    O texto da pergunta (somente) pode ter especificado um formato de texto opcional. Atualmente os formato disponíveis são <b>moodle</b> (formato automático do Moodle), <b>html</b> (formato HTML), <b>plain</b> e <b>markdown</b>. O formato é especificado entre colchetes imediatamente antes do texto da pergunta. <a href="help.php?file=textformat.html">Mais informações nos formatos de texto no Moodle.</a></p>
+
+ <pre>[markdown]O *Feriado americano de ação de graças* é celebrado na {
+         ~segunda
+         ~terceira
+         =quarta
+     } quinta-feira de novembro.</pre>
+
+ <p><u>Respostas múltiplas:</u><br />
+    A opção de respostas múltiplas é utilizada para perguntas de múltipla escolha quando duas ou mais respostas podem ser selecionadas para obter-se a nota total. A opção de múltiplas respostas está habilitada nomeando-se pesos parciais  para as múltiplas respostas,  não permitindo-se receber a nota total para uma simples resposta..</p>
+    <pre>     Quais  pessoas estão sepultadas na tumba de Grant? {
+          ~Ninguém
+          ~%50%Grant
+          ~%50%esposa de Grant
+          ~pai de Grant }</pre>
+    <p>Note que não há o sinal de igual  (=) em qualquer resposta e as respostas devem totalizar não mais do que 100%, 
+    caso contrário o  Moodle retornará erro. 
+    Para evitar que os estudantes recebam automaticamente  100% simplesmente checando todas as respostas, é melhor incluir pesos negativos às respostas erradas.</p>
+    <pre>     Quais pessoas estão sepultadas na tumba de Grant? {
+          ~%-50%Ninguém
+          ~%50%Grant
+          ~%50%esposa de Grant
+          ~%-50%pai de Grant }</pre>
+
+    <p><u>Caracteres especiais ~ = # { } :</u><br />
+    Estes símbolos<b> ~ = # { } </b> controlam a operação deste filtro e não podem ser utilizados como texto normais dentro das perguntas.
+    Desde que símbolos têm um especial significado em determinadas operações deste filtro, eles podem ser chamados de "caracteres de controle."
+    Mas algumas vezes você pode desejar utlizar um destes caracteres, por exemplo para mostrar uma fórmula matemática em uma pergunta. A maneira para contornar este problema é "escapando" dos caracteres de controle. 
+    Isto significa colocar uma barra invertida (\) antes do caracter de controle, assim o filtro saberá que você deseja utilizá-lo como um caracter literal ao invés de caracter de controle. Por exemplo:</p>
+    <pre>     Qual resposta iguala 5? {
+          ~ \= 2 + 2
+          = \= 2 + 3
+          ~ \= 2 + 4  }
+
+     ::Caracteres de controle GIFT::
+     Qual dos seguintes caracteres NÃO é um caracter de controle para o formato de importação GIFT? {
+        ~ \~     # \~ é um caracter de controle.
+        ~ \=     # \= é um caracter de controle.
+        ~ \#     # \# é um caracter de controle.
+        ~ \{     # \{ é um caracter de controle.
+        ~ \}     # \} é um caracter de controle.
+        = \     # Correto! \ (barra invertida) não é um caracter de controle. MAS,
+                   é utilizado para escapar dos caracteres de controle.
+     }</pre>
+    <p>Quando a pergunta é processada, a barra invertida é removida e não é salva no  Moodle.</p>
+
+    <p><u>Outras opções:</u><br />
+    As perguntas de resposta breve podem ser feitas "sensíveis a maíusculas e minúsculas" alterando-se "0" para "1" na seguinte linha:<br />
+    <tt>$question->usecase = 0;  // Ignore "case sensitive" </tt></p>
+    <p>Outras opções estão disponíveis através da edição do filtro de importação <b>gift/format.php</b>. </p>
+    <p></p>
+
+<h3>CRÉDITOS</h3>
+    <p>Este filtro foi escrito através da colaboração de inúmeros membros da comunidade  Moodle. 
+    Foi originalmente baseado no formato de preenchimento, cujo código foi incluído por Martin Dougiamas e Thomas Robb.
+    Paul Tsuchido Shew escreveu este filtro em dezembro de 2003 incorporando as sugestões da comunidade para formatos mais robustos de perguntas. O nome foi concebido como um acrônimo "General Import Format Technology" ou algo parecido, mas muito longo para um filtro simples como este, assim usou-se  GIFT.</p>
+    <p><font size="-1">Filtro GIFT e documentação by Paul Tsuchido Shew http://ac.shew.jp. Última atualização em 27 Fev 2004.</font></p>

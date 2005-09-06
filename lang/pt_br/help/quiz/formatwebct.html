@@ -1,0 +1,59 @@
+<p align="center"><b>Importando arquivos no formato de questionário "WebCT"</b></p>
+
+<p>O filtro para importar WebCT está em desenvolvimento e não suporta 
+   todos os tipos de perguntas do WebCT.</p>
+
+<p>No momento desta descrição, somente perguntas de múltipla escolha e resposta breve
+   são suportadas.</p>
+
+<p>Aqui estão alguns exemplos destas perguntas em um arquivo texto:</p>
+
+<pre>
+# Início da pergunta: Pergunta de Resposta Breve
+:TYPE:S:
+:TITLE:Pergunta de Resposta Breve
+:QUESTION:H
+Qual é o nome do "WebCT Learning Hub"?
+&lt;br />
+:IMAGE:dotcomLogoc.gif
+:ANSWERS:1
+:CASE:0
+:ANSWER1:WebCT.com:100:0:20:0
+:FEEDBACK1:H
+Esteja certo de visitar o "Learning Hub"\: www.WebCT.com
+:CAT:Default
+# Fim da pergunta: Pergunta de Resposta Breve
+
+# Início da pergunta: Pergunta de Múltipla Escolha
+:TYPE:MC:1:0:C
+:TITLE:Pergunta de Múltipla Escolha
+:FEEDBACK
+Darwin inventou a teoria da evolução e criou o Darwinismo.
+:QUESTION:H
+Onde é o Centro de Pesquisas Darwin?
+:IMAGE:
+:LAYOUT:vertical
+:ANSWER1:0:H
+Menlo Park, California
+:REASON1:H
+Sinto muito!
+:ANSWER2:0:H
+Vancouver, Canada
+:REASON2:H
+Sinto muito!
+:ANSWER3:100:H
+Galapagos Islands, Ecuador
+:REASON3:H
+Resposta correta!
+:ANSWER4:0:H
+London, England
+:REASON4:H
+Sinto muito!
+:ANSWER5:0:H
+Sidney, Australia
+:REASON5:H
+Sinto muito!
+:CAT:Default
+# Fim da pergunta: Pergunta de Múltipla Escolha
+
+</pre>
