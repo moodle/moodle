@@ -263,12 +263,12 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
 
     if ($course->category) {
         if ($selectedgroup) {   // If using a group, only get users in that group.
-            $courseusers = get_group_users($selectedgroup, 'u.lastname ASC', '', 'u.id, u.firstname, u.lastname, u.nickname, u.idnumber');
+            $courseusers = get_group_users($selectedgroup, 'u.lastname ASC', '', 'u.id, u.firstname, u.lastname, u.idnumber');
         } else {
-            $courseusers = get_course_users($course->id, '', '', 'u.id, u.firstname, u.lastname, u.nickname, u.idnumber');
+            $courseusers = get_course_users($course->id, '', '', 'u.id, u.firstname, u.lastname, u.idnumber');
         }
     } else {
-        $courseusers = get_site_users("u.lastaccess DESC", "u.id, u.firstname, u.lastname, u.nickname, u.idnumber");
+        $courseusers = get_site_users("u.lastaccess DESC", "u.id, u.firstname, u.lastname, u.idnumber");
     }
     
     if (count($courseusers) < COURSE_MAX_USERS_PER_DROPDOWN && !$showusers) {
