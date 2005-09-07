@@ -21,13 +21,14 @@ function get_student_courses(&$user) {
                                          /// If the database fails we can at least use this
 
     // This is a hack to workaround what seems to be a bug in ADOdb with accessing 
-    // two databases of the same kind ... it seems to get confused when trying to access
+    // two MySQL databases ... it seems to get confused when trying to access
     // the first database again, after having accessed the second.
     // The following hack will make the database explicit which keeps it happy
-
-    if (strpos($CFG->prefix, $CFG->dbname) === false) {
-        $oldprefix = $CFG->prefix;
-        $CFG->prefix = "$CFG->dbname.$CFG->prefix";
+    if ($CFG->dbtype === 'mysql' && $CFG->enrol_dbtype === 'mysql') {
+        if (strpos($CFG->prefix, $CFG->dbname) === false) {
+            $oldprefix = $CFG->prefix;
+            $CFG->prefix = "`$CFG->dbname`.$CFG->prefix";
+        }
     }
 
     // Try to connect to the external database
