@@ -217,7 +217,7 @@ function rss_add_items($items) {
                 //We put it in the description instead because it's more important 
                 //for moodle than most other feeds, and most rss software seems to ignore
                 //the author field ...
-                $item->description = get_string('byname','',$item->author).'. &nbsp;<p>'.$item->description.'</p>';
+                $item->description = get_string('byname','',$item->author).'. &nbsp;<p />'.$item->description.'</p>';
             }
             $result .= rss_full_tag('description',3,false,$item->description);
             $result .= rss_end_tag('item',2,true);
