@@ -1088,10 +1088,10 @@ $string['version'] = 'Version';
 $string['view'] = 'Ansicht';
 $string['viewsolution'] = 'Ansicht Lösung';
 $string['virusfound'] = 'Achtung Administration: Clam-AV hat einen Virus in der Datei von Nutzer/in $a->user im Kurs $a->course gefunden. Bericht von Clam-AV:';
-$string['virusfoundlater'] = 'Eine Datei mit dem Namen $a->filename, hochgeladen am §a->date im Kurs $a->course, kann einen Virus enthalten. Hier ist eine Information, was mit der Datei passiert ist:<br />
+$string['virusfoundlater'] = 'Eine Datei mit dem Namen $a->filename, hochgeladen am $a->date im Kurs $a->course, kann einen Virus enthalten. Hier ist eine Information, was mit der Datei passiert ist:<br />
 $a->action
 Falls es sich dabei um eine wichtige Datei handelt, die Ihr/e Trainer/in erhalten sollte, müssen Sie die Datei evtl. erneut hochladen.';
-$string['virusfoundlateradmin'] = 'Achtung Administration! Eine Datei mit dem Namen $a->filename, hochgeladen am §a->date im Kurs $a->course von §a->user, kann einen Virus enthalten. Hier ist eine Information, was mit der Datei passiert ist:<br />
+$string['virusfoundlateradmin'] = 'Achtung Administration! Eine Datei mit dem Namen $a->filename, hochgeladen am $a->date im Kurs $a->course von §a->user, kann einen Virus enthalten. Hier ist eine Information, was mit der Datei passiert ist:<br />
 $a->action
 Die/der Nutzer/in wurde ebenfalls benachrichtigt.';
 $string['virusfoundlateradminnolog'] = 'Achtung Administration! Eine Datei mit dem Namen $a->filename kann einen Virus enthalten.

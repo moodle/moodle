@@ -99,6 +99,6 @@ $string['userevents'] = 'Teilnehmer- termine';
 $string['wed'] = 'Mi';
 $string['wednesday'] = 'Mittwoch';
 $string['yesterday'] = 'Gestern';
-$string['youcandeleteallrepeats'] = 'Dieser Termin ist Teil einer ganzen Reihe von Terminen. Sie können diesen einzelnen Termin oder alle §a Termine dieser Reihe auf einmal löschen.';
+$string['youcandeleteallrepeats'] = 'Dieser Termin ist Teil einer ganzen Reihe von Terminen. Sie können diesen einzelnen Termin oder alle $a Termine dieser Reihe auf einmal löschen.';
 
 ?>
