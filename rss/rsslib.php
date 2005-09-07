@@ -225,7 +225,7 @@ function rss_add_items($items) {
             $result .= rss_full_tag("pubDate",3,false,date("r",$item->pubdate));
             //Include the author if exists 
             if (isset($item->author)) {
-                $item->description = get_string("byname","",$item->author)."<p>".$item->description;
+                $item->description = get_string("byname","",$item->author)."<p />".$item->description;
             }
             $result .= rss_full_tag("description",3,false,$item->description);
             $result .= rss_end_tag("item",2,true);
