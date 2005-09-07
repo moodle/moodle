@@ -74,6 +74,8 @@ function get_student_courses(&$user) {
                     if (get_record_select('user_students', 'userid', $user->id, 'courseid', $courseid, 'enrol', 'database')) {
                         unenrol_student($user->id, $courseid);       /// Unenrol the student
                         unset($user->student[$course->id]);           /// Remove from old list
+                    } else {
+                        $newstudent[$courseid] = true;
                     }
                 }
             }
