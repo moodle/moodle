@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 Beta (2005052300)
+      // moodle.php - created with Moodle 1.5.2 + (2005060222)
 
 
 $string['action'] = 'Acció';
@@ -101,6 +101,7 @@ $string['autosubscribeyes'] = 'Sí: quan escrigui en un fòrum, subscriu-me a aque
 $string['availability'] = 'Disponibilitat';
 $string['availablecourses'] = 'Cursos disponibles';
 $string['backup'] = 'Còpia de seguretat';
+$string['backupcancelled'] = 'S\'ha cancel·lat la còpia';
 $string['backupcoursefileshelp'] = 'Si habiliteu aquesta opció els fitxers del curs s\'inclouran a les còpies de seguretat automàtiques.';
 $string['backupdate'] = 'Data de la còpia';
 $string['backupdetails'] = 'Informació sobre la còpia';
@@ -448,6 +449,7 @@ $string['format'] = 'Format';
 $string['formathtml'] = 'Format HTML';
 $string['formatmarkdown'] = 'Format Markdown';
 $string['formatplain'] = 'Format text';
+$string['formatscorm'] = 'Format SCORM';
 $string['formatsocial'] = 'Format social';
 $string['formattext'] = 'Autoformat Moodle';
 $string['formattexttype'] = 'Formatatge';
@@ -519,6 +521,11 @@ $string['guestsnotallowed'] = '\'$a\' no permet l\'entrada de visitants';
 $string['guestsyes'] = 'Permet visitants sense clau';
 $string['guestuser'] = 'Usuari visitant';
 $string['guestuserinfo'] = 'Aquest usuari és un usuari especial que permet entrar a alguns cursos en mode només de lectura (read-only).';
+$string['healthcenter'] = 'Centre de salut';
+$string['healthproblemsdetected'] = 'S\'han detectat problemes de salut';
+$string['healthproblemsolution'] = 'Solució del problema de salut';
+$string['healthreturntomain'] = 'Continua';
+$string['healthsolution'] = 'Solució';
 $string['help'] = 'Ajuda';
 $string['helpemoticons'] = 'Emoticones';
 $string['helpformatting'] = 'Sobre el formatatge del text';
@@ -530,7 +537,7 @@ $string['helpreading'] = 'Llegiu amb cura';
 $string['helprichtext'] = 'Sobre l\'editor HTML';
 $string['helpsummaries'] = 'Sobre aquests resums';
 $string['helptext'] = 'Com escriure text';
-$string['helpwiki'] = 'Com escriure text Wiki';
+$string['helpwiki'] = 'Com escriure text tipus wiki';
 $string['helpwriting'] = 'Escriviu amb cura';
 $string['hiddensections'] = 'Temes ocults';
 $string['hiddensectionscollapsed'] = 'Els temes ocults es mostren en format reduït';
@@ -706,6 +713,7 @@ $string['mustchangepassword'] = 'La nova contrasenya ha de ser diferent de l\'ac
 $string['mustconfirm'] = 'Necessiteu confirmar el vostre registre';
 $string['mycourses'] = 'Els meus cursos';
 $string['name'] = 'Nom';
+$string['namescorm'] = 'SCORM';
 $string['namesocial'] = 'secció';
 $string['nametopics'] = 'tema';
 $string['nameweeks'] = 'setmana';
@@ -934,6 +942,7 @@ $string['showgrades'] = 'Mostra les qualificacions';
 $string['showlistofcourses'] = 'Mostra la llista de cursos';
 $string['showonlytopic'] = 'Mostra només el tema $a';
 $string['showonlyweek'] = 'Mostra només la setmana $a';
+$string['showperpage'] = 'Mostra $a per pàgina';
 $string['showrecent'] = 'Mostra l\'activitat recent';
 $string['showreports'] = 'Mostra informes d\'activitat';
 $string['showsettings'] = 'Mostra paràmetres';
@@ -1083,6 +1092,7 @@ $string['usethiscourse'] = 'Utilitza aquest curs';
 $string['usingexistingcourse'] = 'S\'està utilitzant un curs existent';
 $string['version'] = 'Versió';
 $string['view'] = 'Visualització';
+$string['viewsolution'] = 'Mostra la solució';
 $string['virusfound'] = 'Alerta administrador: Clam AV ha trobat un virus en un fitxer penjat per $a->user en el curs $a->course. Heus ací la sortida de Clamscan:';
 $string['virusfoundlater'] = 'S\'ha trobat un virus en un fitxer anomenat $a->filename que heu penjat el $a->date en el curs $a->course. Heus ací un resum dels esdeveniments:
 

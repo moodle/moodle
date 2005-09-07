@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // install.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005010100)
+      // install.php - created with Moodle 1.5.2 + (2005060222)
 
 
 $string['admindirerror'] = 'El directori d\'administració especificat és incorrecte';
@@ -13,6 +13,13 @@ $string['configfilenotwritten'] = 'La seqüència d\'instal·lació no ha estat capa
 $string['configfilewritten'] = 'S\'ha creat amb èxit el fitxer config.php';
 $string['configurationcomplete'] = 'S\'ha completat la configuració';
 $string['database'] = 'Base de dades';
+$string['databasecreationsettings'] = 'Ara cal configurar els paràmetres de la base de dades on s\'emmagatzemara la majoria de dades de Moodle. L\'instal·lador Moodle4Windows crearà automàticament aquesta base de dades amb els paràmetres que especifiqueu aquí.<br /><br /><br />
+<b>Tipus:</b> mysql (determinat per l\'instal·lador).<br />
+<b>Servidor:</b> localhost (determinat per l\'instal·lador.<br />
+<b>Nom:</b> nom de la base de dades, p. ex. moodle.<br />
+<b>Usuari:</b> root (determinat per l\'instal·lador).<br />
+<b>Contrasenya</b>: la vostra contrasenya per a la base de dades.<br />
+<b>Prefix de les taules:</b>: prefix opcional per als noms de les taules.';
 $string['databasesettings'] = 'Ara heu de configurar la base de dades on s\'emmagatzemaran la major part de les dades de Moodle. Aquesta base de dades s\'ha de crear abans i cal tenir un nom d\'usuari i una contrasenya amb accés a ella.<br />
 <br /> <br />
 <b>Tipus:</b> mysql o postgres7<br />

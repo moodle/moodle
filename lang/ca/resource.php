@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
+      // resource.php - created with Moodle 1.5.2 + (2005060222)
 
 
 $string['addresource'] = 'Afegeix un recurs';
@@ -84,6 +84,7 @@ $string['resourcetypedirectory'] = 'Visualitza un directori';
 $string['resourcetypefile'] = 'Enllaça un fitxer o lloc web';
 $string['resourcetypehtml'] = 'Compon una pàgina web';
 $string['resourcetypelabel'] = 'Insereix una etiqueta';
+$string['resourcetyperepository'] = 'Enllaç a un repositori';
 $string['resourcetypetext'] = 'Compon una pàgina de text';
 $string['searchweb'] = 'Cerca una pàgina web';
 $string['serverurl'] = 'URL del servidor ($a->wwwroot)';

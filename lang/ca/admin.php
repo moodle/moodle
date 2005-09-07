@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.5 ALPHA (2005042400)
+      // admin.php - created with Moodle 1.5.2 + (2005060222)
 
 
 $string['adminseesallevents'] = 'Els administradors veuen tots els esdeveniments';
@@ -11,6 +11,7 @@ $string['calendarsettings'] = 'Calendari';
 $string['change'] = 'Canvia';
 $string['configallowcoursethemes'] = 'Si habiliteu aquesta opció, cada curs podrà definir el seu tema. Els temes dels cursos substitueixen qualsevol altra selecció de tema: tema del lloc, de l\'usuari o de la sessió.';
 $string['configallowemailaddresses'] = 'Si voleu limitar les noves adreces de correu a certs dominis, especifiqueu-los aquí separats per espais. Tots els altres dominis seran rebutjats. P. ex. <strong>uji.es upc.es xtec.es</strong>';
+$string['configallowobjectembed'] = 'Com a mesura de seguretat per defecte, no es permet que els usuaris normals incrusten multimèdia (p. ex. Flash) dins dels textos usant explícitament etiquetes EMBED i OBJECT en l\'HTML (encara que poden fer-ho sense problemes de seguretat per mitjà del filtre multimèdia). Si voleu permetre aquestes etiquetes habiliteu aquesta opció.';
 $string['configallowunenroll'] = 'Si especifiqueu \'Sí\', llavors els estudiants podran cancel·lar quan vulguin la seva inscripció en un curs. Si no, només podran cancel·lar la inscripció els professors i els administradors.';
 $string['configallowuserblockhiding'] = 'Voleu que els usuaris puguin ocultar/mostrar els blocs laterals arreu d\'aquest lloc? Aquesta característica fa servir Javascript i galetes per recordar l\'estat de cada bloc. Només afecta la visualització de cada usuari.';
 $string['configallowuserthemes'] = 'Si habiliteu aquesta opció, els usuaris podran definir els seus temes. Els temes dels usuaris substitueixen el tema del lloc (però no substitueixen els temes dels cursos).';
@@ -61,6 +62,7 @@ $string['confignotifyloginfailures'] = 'Si s\'estan registrant les entrades errò
 $string['confignotifyloginthreshold'] = 'Si s\'han activat les notificacions d\'entrades errònies, quants intents erronis del mateix usuari o de la mateixa adreça IP cal esperar per enviar la notificació?';
 $string['configopentogoogle'] = 'Si habiliteu aquest paràmetre, es permetrà que Google entri en el vostre lloc com a visitant. A més a més, la gent que entri al vostre lloc a través d\'una cerca de Google, hi entrarà automàticament com a visitant. Teniu en compte que això proporciona un accés transparent als cursos que permeten l\'accés de visitants.';
 $string['configpathtoclam'] = 'Camí del clam AV. Probablement quelcom semblant a /usr/bin/clamscan o /usr/bin/clamdscan. Necessari per fer funcionar el clam AV.';
+$string['configpathtodu'] = 'Camí de du. Probablement /usr/bin/du o alguna cosa semblant. Si definiu aquest paràmetre, les pàgines que visualitzen el contingut d\'un directori amb molts fitxers funcionaran més ràpides.';
 $string['configproxyhost'] = 'Si aquest <b>servidor</b> necessita usar un ordinador intermediari (p. ex. un tallafocs) per accedir a Internet, introduïu aquí el nom i el port de l\'intermediari. Si no, deixeu-lo en blanc.';
 $string['configquarantinedir'] = 'Si voleu que clam AV mogui els fitxers infectats a un directori de quarantena, definiu el directori aquí. El servidor web ha de tenir permís d\'escriptura en aquest directori. Si el deixeu en blanc, o introduïu un directori que no existeix, o no s\'hi pot escriure, lllavors els fitxers infectats se suprimiran. No inclogueu una barra final.';
 $string['configrunclamonupload'] = 'Voleu executar el clam AV quan es pugin fitxers? Proporcioneu un camí correcte en pathtoclam perquè funcioni. (Clam AV és un escanejador de virus lliure que podeu obtenir en http://www.clamav.net/)';
@@ -105,8 +107,9 @@ $string['helpweekenddays'] = 'Quins dies de la setmana es consideren \"cap de se
 $string['importtimezones'] = 'Actualitza la llista completa de zones horàries';
 $string['importtimezonescount'] = '$a->count entrades importades des de $a->source';
 $string['importtimezonesfailed'] = 'Males notícies: no s\'ha trobat cap font';
-$string['nodstpresetsexist'] = 'El funcionament de l\'horari d\'estiu està inhabilitat per a tots els usuaris perquè no hi ha un horari d\'estiu definit. Podeu definir-ne un amb el botó d\'aquí baix.';
+$string['incompatibleblocks'] = 'Blocs incompatibles';
 $string['optionalmaintenancemessage'] = 'Missatge opcional de manteniment';
+$string['pleaseregister'] = 'Registreu si us plau el vostre lloc per eliminar aquest botó';
 $string['sitemaintenance'] = 'S\'estan executant tasques de manteniment i el lloc no està disponible';
 $string['sitemaintenancemode'] = 'Mode manteniment';
 $string['sitemaintenanceoff'] = 'El mode manteniment ha estat desactivat i el lloc torna a funcionar amb normalitat';
