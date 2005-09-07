@@ -1056,6 +1056,8 @@ $a->action.
 
 U¿ytkownik tak¿e by³ zawiadamiany. ';
 $string['virusfoundsubject'] = '$a: Znaleziono wirusa';
+$string['virusfounduser'] = 'Plik przesy³an $a->filename, by³ skanowany przez program antywirusowy i zosta³ znaleziony wirus. Plik nie zosta³ przes³any.';
+$string['virusplaceholder'] = 'Plik który by³ przesy³any zawiera wirusa i zosta³ przesuniêty lub usuniêty. U¿ytkownik powiadomiony';
 $string['visibletostudents'] = 'poka¿ studenta $a';
 $string['webpage'] = 'Strona WWW';
 $string['week'] = 'Tydzieñ';

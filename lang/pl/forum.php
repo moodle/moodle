@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.6 development (2005072200)
+      // forum.php - created with Moodle 1.5.2 + (2005060222)
 
 
 $string['addanewdiscussion'] = 'Dodaj nowy temat dyskusji';
@@ -184,6 +184,7 @@ $string['tracking'] = 'Obserwuj';
 $string['trackingoff'] = 'wy³±cz';
 $string['trackingon'] = 'w³±cz';
 $string['trackingoptional'] = 'Opcjonalnie';
+$string['trackingtype'] = 'Przeczytaæ obserwacje dla tego forum?';
 $string['unread'] = 'Nieprzeczytane';
 $string['unreadposts'] = 'Nieprzeczytane posty';
 $string['unreadpostsnumber'] = '$a nieprzeczytanych postów';

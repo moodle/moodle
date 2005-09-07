@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.5.2 + (2005072200)
+      // scorm.php - created with Moodle 1.5.2 + (2005060222)
 
 
 $string['advanced'] = 'Zaawansowane';
@@ -18,6 +18,7 @@ $string['datadir'] = 'B³±d systemu plików: Nie mo¿na utworzyæ folderu z danymi k
 $string['details'] = 'Szcegó³y SCO';
 $string['display'] = 'Poka¿';
 $string['domxml'] = 'Zewnêtrzna biblioteka DOMXML';
+$string['enablebrowse'] = 'W³±cz tryb przegl±dania';
 $string['entercourse'] = 'Wpisz kurs SCORMa';
 $string['errorlogs'] = 'Logi b³êdów';
 $string['exit'] = 'Wyj¶cie';
@@ -34,8 +35,6 @@ $string['gradescoes'] = 'Sytuacja Scoes';
 $string['gradesum'] = 'Zsumuj oceny';
 $string['guestsno'] = 'Go¶cie nie mog± przegl±daæ kursów SCORM';
 $string['height'] = 'Wysoko¶æ ';
-$string['hidebrowse'] = 'Ukryj przycisk \"wstecz\"';
-$string['hidetoc'] = 'Ukryj strukturê kursu przed u¿ytkownikiem';
 $string['incomplete'] = 'Niepe³ne';
 $string['lastaccess'] = 'Ostatni dostêp';
 $string['missing_attribute'] = 'Brakuje atrybutu $a->attr w tagu $a->tag';
@@ -48,7 +47,6 @@ $string['no_attributes'] = 'Tag $a->tag musi mieæ atrybuty';
 $string['no_children'] = 'Tag $a->tag musi mieæ \'dzieci\'';
 $string['noactivity'] = 'Utwórz raport';
 $string['nomanifest'] = 'Nie znaleziono manifestu';
-$string['noprerequisites'] = 'Przepraszam, ale nie masz dostatecznych uprawnieñ, aby mieæ dostêp do tego obiektu';
 $string['noreports'] = 'Brak raportu do wy¶wietlenia';
 $string['normal'] = 'Normalne';
 $string['not_corr_type'] = 'B³±d typu w tagu $a->tag';
@@ -81,6 +79,5 @@ $string['validationtype'] = 'Wybierz bibliotekê DOMXML, która bêdzie autoryzowa³
 $string['versionwarning'] = 'Wersja manifestu jest starsza ni¿ 1.3, ostrze¿enie w tagu $a->tag';
 $string['viewallreports'] = 'Przejrzyj raportu dla $a prób';
 $string['width'] = 'Szeroko¶æ';
-$string['window'] = 'Ramka/Okno';
 
 ?>

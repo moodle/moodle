@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // hotpot.php - created with Moodle 1.5.2 + (2005072200)
+      // hotpot.php - created with Moodle 1.5.2 + (2005060222)
 
 
 $string['abandoned'] = 'Zaniechany';
@@ -28,8 +28,16 @@ $string['modulename'] = 'Quiz Hot Potatoes';
 $string['modulenameplural'] = 'Quizy Hot Potatoes';
 $string['navigation'] = 'Nawigacja';
 $string['navigation_bar'] = 'Pasek nawigacyjny moodla';
+$string['navigation_buttons'] = 'Hot Potatoes przyciski quizu';
+$string['navigation_frame'] = 'Ramka nawigacji moodle';
+$string['navigation_give_up'] = 'Pojedyñczy przycisk \"zaniechaj\"';
+$string['navigation_iframe'] = 'osadzony &lt;IFRAME&gt;';
+$string['navigation_none'] = 'Nikt';
 $string['noactivity'] = 'Nie aktywny';
+$string['noresponses'] = 'Informacja o poszczególnych pytaniach i odpowiedziach nie by³a znaleziona. 
+';
 $string['outputformat'] = 'format wy¶wietlania';
+$string['outputformat_best'] = 'lepszy';
 $string['outputformat_flash'] = 'Flash';
 $string['outputformat_mobile'] = 'Zdalny';
 $string['outputformat_v3'] = 'v3';

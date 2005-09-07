@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.5.2 + (2005072200)
+      // resource.php - created with Moodle 1.5.2 + (2005060222)
 
 
 $string['addresource'] = ' Dodaj zasób';
@@ -40,6 +40,8 @@ $string['fulltext'] = ' Pe³na tre¶æ';
 $string['htmlfragment'] = ' Fragment HTML';
 $string['localfile'] = 'Lokalizacja pliku';
 $string['localfilechoose'] = 'Wybierz plik';
+$string['localfilehelp'] = 'Poka¿ lokalne pliki';
+$string['localfilepath'] = 'Ustaw ¶cie¿kê do Twojego lokalnego zasobu, wybierz plik z napêdu (przewa¿nie CD-ROM) na Twoim komputerze, gdzie zasób siê znajduje. Plik nie bêdzie przesy³any ale informacja o napêdzie bêdzie przechowywana i u¿yta dla lokalnych plików (zasobów).';
 $string['localfileselect'] = 'Wybierz';
 $string['maindirectory'] = 'Folder z g³ównymi plikami';
 $string['modulename'] = ' Zasób';

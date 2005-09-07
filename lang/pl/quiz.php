@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.5.2 + (2005072200)
+      // quiz.php - created with Moodle 1.5.2 + (2005060222)
 
 
 $string['acceptederror'] = 'Zaakceptowany b³±d';
@@ -259,6 +259,7 @@ $string['numerical'] = 'Numeryczne';
 $string['optional'] = 'opcjonalny';
 $string['outof'] = ' z mo¿liwych do uzyskania';
 $string['overdue'] = 'Zaleg³y';
+$string['pagesize'] = 'Próby na stronê: ';
 $string['paragraphquestion'] = 'Pytanie w bloku tekstu nie mo¿e byæ odnalezione na lini $a. Pytanie zostanie zignorowane';
 $string['parent'] = 'Nadrzêdny';
 $string['partiallycorrect'] = 'Czêsciowo poprawny';
@@ -327,7 +328,6 @@ $string['reportmulti_q_x_student'] = 'Wybory wielu studentów*';
 $string['reportmulti_resp'] = 'Indywidualne odpowiedzi';
 $string['reportoverview'] = 'Przegl±d';
 $string['reportregrade'] = 'Ponownie oceñ próby';
-$string['reportresponses'] = 'Szczegó³y';
 $string['reports'] = 'Raporty';
 $string['reportsimplestat'] = 'Proste statystyki';
 $string['requirepassword'] = 'Wymagane has³o';
@@ -347,6 +347,8 @@ $string['reviewofattempt'] = 'Przerzyj próbê $a';
 $string['reviewopen'] = 'po¼niej, podczas gdy quiz jest wci±¿ otwarty';
 $string['reviewoptions'] = 'Student mo¿e przegl±daæ';
 $string['reviewresponse'] = 'Przejrzyj odpowiedzi';
+$string['rqp'] = 'Obce (zdalne) pytanie';
+$string['rqps'] = 'Obce (zdalne) pytania';
 $string['save'] = 'Zapisz';
 $string['saveandedit'] = 'Zapisz zmiany';
 $string['savedfromdeletedcourse'] = 'Zachowany z usuniêtego kursu \"$a\"';
@@ -364,6 +366,7 @@ $string['selectnone'] = 'Odznacz wszystkie';
 $string['serveradded'] = 'Dodaj serwer';
 $string['serveridentifier'] = 'Identyfikator';
 $string['serverinfo'] = 'Informacje serwera';
+$string['serverinuse'] = 'Serwer który chcesz usun±æ jest ostatnim $a serwerem i tam znajduj± siê pytania których nie ma na innych serwerach.';
 $string['servers'] = 'Serwery';
 $string['serverurl'] = 'Adres URL serwera';
 $string['shortanswer'] = 'Krótka odpowied¼';
