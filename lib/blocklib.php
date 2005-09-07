@@ -598,7 +598,7 @@ function blocks_execute_repositioning(&$instance, $newpos, $newweight) {
 }
 
 function blocks_get_by_page($page) {
-    $blocks = get_records_select('block_instance', 'pageid = '. $page->get_id() .' AND pagetype = \''. $page->get_type() .'\'', 'position, weight');
+    $blocks = get_records_select('block_instance', "pageid = '". $page->get_id() ."' AND pagetype = '". $page->get_type() ."'", 'position, weight');
 
     $positions = $page->blocks_get_positions();
     $arr = array();
