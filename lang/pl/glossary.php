@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.4 (2004083100)
+      // glossary.php - created with Moodle 1.6 development (2005072200)
 
 
 $string['addcomment'] = 'Dodaj komentarz';
@@ -10,6 +10,7 @@ $string['allcategories'] = 'Wszystkie kategorie';
 $string['allentries'] = 'Wszystkie';
 $string['allowcomments'] = 'Pozwól komentowaæ wpisy';
 $string['allowduplicatedentries'] = 'Pozwól na wielokrotne definiowanie tego samego pojêcia';
+$string['allowprintview'] = 'Pozwól drukowaæ s³ownik';
 $string['allowratings'] = 'Czy chcesz aby wpisy by³y oceniane?';
 $string['answer'] = 'Odpowied¼';
 $string['approve'] = 'Potwierd¼';
@@ -85,6 +86,8 @@ $string['entrydeleted'] = 'Wpis zosta³ usuniêty';
 $string['entryexported'] = 'Wpis zosta³ wyeksportowany';
 $string['entryishidden'] = '(ten wpis jest aktualnie ukryty)';
 $string['entryleveldefaultsettings'] = 'Domy¶lne ustawienia wej¶ciowe';
+$string['entrysaved'] = 'Has³o zosta³o zapisane';
+$string['entryupdated'] = 'Has³o zosta³o uaktualnione';
 $string['entryusedynalink'] = 'Ten wpis powinien zostaæ automatycznie po³±czony z innymi wpisami w systemie';
 $string['explainaddentry'] = 'Dodaj nowe pojêcie do tego s³ownika pojêæ.<br />Pola: Termin i Definicja musz± zostaæ wype³nione.';
 $string['explainall'] = 'Wy¶wietl wszystkie pojêcia na jednej stronie';
@@ -128,6 +131,7 @@ $string['notcategorised'] = 'Nieskategoryzowane';
 $string['numberofentries'] = 'Ilo¶æ pojêæ';
 $string['onebyline'] = '(jedno na liniê)';
 $string['printerfriendly'] = 'Wersja do wydruku';
+$string['printviewnotallowed'] = 'Nie pozwalaj na drukowanie s³ownika';
 $string['question'] = 'Pytanie';
 $string['rate'] = 'Ranking';
 $string['rating'] = 'Ocena';

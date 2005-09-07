@@ -1,10 +1,11 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.4 (2004083100)
+      // resource.php - created with Moodle 1.5.2 + (2005072200)
 
 
 $string['addresource'] = ' Dodaj zasób';
 $string['chooseafile'] = 'Prze¶lij plik';
 $string['chooseparameter'] = 'Wybierz parametr';
+$string['configallowlocalfiles'] = 'Kiedy tworzysz nowy zasób, zezwalasz na dostêp do plików umieszczonych lokalnie. To mo¿e byæ u¿yteczny gdy studenci maj± dostêp do wspó³nego dysku sieciowego lub CD. U¿ycie tej cechy mo¿e wymagaæ zmian parametrów bezpieczeñstwa twojej przegl±darki. ';
 $string['configdefaulturl'] = 'Ta warto¶æ jest u¿ywana a¿eby domy¶lnie wype³niæ formê URL podczas dodawania nowego zasobu opartego o URL.';
 $string['configfilterexternalpages'] = 'W³±czenie tej opcji spowoduje, ¿e wszystkie zewnêtrzne zasoby (np strony, za³adowane pliki HTML) zostan± przefiltrowane (np. dynamiczne linki w s³owniku pojêæ). Wybranie tej opcji mo¿e mocno spowolniæ dzia³anie systemu - u¿ywaj wiêc tej opcji tylko wtedy kiedy musisz.';
 $string['configframesize'] = 'Kiedy strona WWW lub przes³any plik jest wy¶wietlany wewn±trz ramki, ta warto¶æ jest rozmiarem (podanym w pikselach) górnej ramki (zawieraj±cej nawigacjê)';
@@ -37,6 +38,9 @@ $string['filtername'] = 'Automatyczne linkowanie zasobów';
 $string['frameifpossible'] = 'Umie¶æ zasób w ramce aby nawigacja by³a widoczna';
 $string['fulltext'] = ' Pe³na tre¶æ';
 $string['htmlfragment'] = ' Fragment HTML';
+$string['localfile'] = 'Lokalizacja pliku';
+$string['localfilechoose'] = 'Wybierz plik';
+$string['localfileselect'] = 'Wybierz';
 $string['maindirectory'] = 'Folder z g³ównymi plikami';
 $string['modulename'] = ' Zasób';
 $string['modulenameplural'] = ' Zasoby';
@@ -53,8 +57,9 @@ $string['newtoolbar'] = 'Pokazuj pasek narzêdzi';
 $string['newwidth'] = 'Domy¶lna szeroko¶æ okna (w pikselach)';
 $string['newwindow'] = ' Nowe okno';
 $string['newwindowopen'] = 'Pokazuj zasoby w nowym oknie';
+$string['notallowedlocalfileaccess'] = 'Dostêp do lokalnych plików jest w tej chwili nie mo¿liwy, ten zasób nie jest dostêpny.';
 $string['note'] = ' Uwaga';
-$string['notefile'] = 'Aby przes³aæ wiêcej plików (tak, by pojawi³y siê na tej li¶cie) u¿yj <a href="\$a\"> menad¿era plików</a>.';
+$string['notefile'] = 'Aby przes³aæ wiêcej plików (tak, by pojawi³y siê na tej li¶cie) u¿yj <a href=\"$a\"> menad¿era plików</a>.';
 $string['notypechosen'] = 'Musisz wybraæ typ. Skorzystaj z przycisku cofania i spróbuj ponownie';
 $string['pagedisplay'] = 'Wy¶wietl zasób w obecny oknie';
 $string['pagewindow'] = 'To samo okno';
@@ -76,8 +81,11 @@ $string['resourcetypedirectory'] = 'Wy¶wietl katalog plików';
 $string['resourcetypefile'] = 'Link do pliku lub strony www';
 $string['resourcetypehtml'] = 'Stwórz stronê HTML';
 $string['resourcetypelabel'] = 'Wstaw etykietê';
+$string['resourcetyperepository'] = '³±cze do obiektu w repozytorium';
 $string['resourcetypetext'] = 'Stwórz stronê tekstow±';
 $string['searchweb'] = 'Szukaj strony www';
+$string['serverurl'] = 'URL serwera ($a->wwwroot)';
 $string['variablename'] = 'Nazwa zmiennej';
+$string['vol'] = 'dysk';
 
 ?>

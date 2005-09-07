@@ -1,7 +1,8 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.4 (2004083100)
+      // auth.php - created with Moodle 1.5.2 + (2005072200)
 
 
+$string['auth_cas_language'] = 'Wybierz jêzyk';
 $string['auth_dbdescription'] = 'Metoda ta wykorzystuje tabelê zewnêtrznej bazy danych dla sprawdzenia czy podana nazwa u¿ytkownika i has³o s± poprawne. W przypadku nowego konta, informacje z innych pól równie¿ mog± zostaæ skopiowane do Moodle.';
 $string['auth_dbextrafields'] = 'Te pola s± opcjonalne. Mo¿esz wstêpnie wype³niæ niektóre pola dotycz±ce u¿ytkownika informacj± z <b>pól zewnêtrznej bazy danych</b>, które tutaj okre¶lasz. <br />Je¿eli nic w tym miejscu nie wpiszesz, u¿yte zostan± warto¶ci domy¶lne. <br /> W obu przypadkach, u¿ytkownik bêdzie móg³ dokonaæ edycji tych pól po zalogowaniu';
 $string['auth_dbfieldpass'] = 'Nazwa pola zawieraj±cego has³a';
@@ -36,7 +37,7 @@ $string['auth_ldap_creators'] = 'Lista grup, których cz³onkowie mog± tworzyæ now
 $string['auth_ldap_host_url'] = 'Okre¶l hosta LDAP za pomoc± adresu, np. URL\'ldap://ldap.myorg.com/\' lub \'ldaps://ldap.myorg.com/\'';
 $string['auth_ldap_memberattribute'] = 'Okre¶l atrybut cz³onkostwa u¿ytkownika je¿eli u¿ytkownik nale¿y do grupy. Zazwyczaj jest to \'member\'';
 $string['auth_ldap_objectclass'] = 'Filtr wykorzystany do nazywania/szukania u¿ytkowników. Zwykle bêdzie to objectClass=posixAccount. Ustawienie objectClass=* zwróci wszystkie obiekty LDAP.';
-$string['auth_ldap_search_sub'] = 'Wpisz warto¶æ &lt;&gt; 0 je¿eli chcesz szukaæ u¿ytkowników z podkontekstów';
+$string['auth_ldap_search_sub'] = 'Wpisz warto¶æ <> 0 je¿eli chcesz szukaæ u¿ytkowników z podkontekstów';
 $string['auth_ldap_update_userinfo'] = 'Uaktualnij informacje o u¿ytkowniku (imiê, nazwisko, adres...) z LDAP do Moodle. Informacje na temat mapowania: /auth/ldap/attr_mappings.php';
 $string['auth_ldap_user_attribute'] = 'Atrybut u¿ywany do nazywania/szukania u¿ytkowników, zwykle \'cn\'.';
 $string['auth_ldap_version'] = 'Wersja protoko³u LDAP u¿ywana przez serwer.';

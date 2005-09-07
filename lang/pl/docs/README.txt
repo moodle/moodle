@@ -1,11 +1,11 @@
 Dokumentacja Moodle
 --------------------
 
-Jeœli chcia³byœ przet³umaczyæ t¹ dokumentacjê na inny jêzyk proponujê Ci abyœ: 
+Je¶li chcia³by¶ przet³umaczyæ tê dokumentacjê na inny jêzyk proponujê Ci aby¶: 
 
- 1) Nie zamieszcza³ dokumentacji w jêzyku angielskim w swoim katalogu, poniewa¿ pliki angielski s¹ automatycznie u¿ywane, jeœli brakuje ich w pakiecie jêzykowym.
+ 1) Nie zamieszcza³ dokumentacji w jêzyku angielskim w swoim katalogu, poniewa¿ pliki angielski s± automatycznie u¿ywane, je¶li brakuje ich w pakiecie jêzykowym.
 
- 2) T³umacz pliki w nastêpuj¹cej kolejnoœci (od najwa¿niejszego)
+ 2) T³umacz pliki w nastêpuj±cej kolejno¶ci (od najwa¿niejszego)
   
     Najwa¿niejszy
     |-------------------
@@ -41,5 +41,3 @@ Jeœli chcia³byœ przet³umaczyæ t¹ dokumentacjê na inny jêzyk proponujê Ci abyœ:
    Najmniej istotny
 
  3) Proszê nie t³umacz pliku credits.html : i tak zmienia siê on zbyt szybko
-
-
