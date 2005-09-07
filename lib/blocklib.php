@@ -738,7 +738,7 @@ function blocks_get_by_page_pinned($page) {
 }
 
 function blocks_get_by_page($page) {
-    $blocks = get_records_select('block_instance', 'pageid = '. $page->get_id() .' AND pagetype = \''. $page->get_type() .'\'', 'position, weight');
+    $blocks = get_records_select('block_instance', "pageid = '". $page->get_id() ."' AND pagetype = '". $page->get_type() ."'", 'position, weight');
 
     $positions = $page->blocks_get_positions();
     $arr = array();
