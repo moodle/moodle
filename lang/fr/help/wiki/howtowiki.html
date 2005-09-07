@@ -1,0 +1,172 @@
+<!-- $Id$ -->
+
+<h2>Comment utiliser un Wiki</h2>
+
+<p>Le Wiki de Moodle est basé sur l'<a href="http://erfurtwiki.sourceforge.net/?id=ErfurtWiki" target="_blank">ErfurtWiki</a>, une implémentation du système hypertexte <a href="http://c2.com/cgi/wiki?WikiWikiWeb" target="_blank">WikiWikiWeb</a>. Il permet la création de page et leur édition en mode collaboratif, à partir d'actions simples.</p>
+
+<ul>
+
+<li>Apprenez à <a href="#createpages">créer des pages</a>,</li>
+
+<li>cliquez sur l'icône <img alt="edit" src="pix/t/edit.gif" /> ou sélectionnez l'action «&nbsp;Editer cette page&nbsp;» dans la liste déroulante pour modifier le contenu d'une page,</li>
+
+<li>formatez votre contenu en utilisant la syntaxe <a href="#wikimarkup">Wiki</a>, ou en HTML (si les paramètres du Wiki le permettent)</li>
+
+<li>cherchez des pages par le moteur de recherche intégré ou par la liste des pages «&nbsp;les plus récentes&nbsp;»</li>
+
+<li>Il y a également des listes pour les pages «&nbsp;les plus visitées&nbsp;», «&nbsp;les plus souvent modifiées&nbsp;» et les pages récemment «&nbsp;modifiées&nbsp;»</li>
+
+</ul>
+
+<h3><a name="createpages"></a>Créer des pages</h3>
+
+<p>Vous créez une page en la nommant dans le texte d'une page existante. Une page Wiki est désignée par un nom <a href="#camelcase">CamelCase</a> ou par une syntaxe entre crochets ([]).</p>
+
+<p>Exemple&nbsp;:</p>
+
+<ul>
+
+<li>MaPageDeWiki (CamelCase)</li>
+
+<li>[Ma Page De Wiki] (entre crochets)</li>
+
+</ul>
+
+<p>Après enregistrement de la mise à jour, un texte qui correspond à une désignation d'une nouvelle page Wiki apparaît suivie d'un '?'. En cliquant sur le '?', vous créez effectivement le contenu de cette page dans un nouvel éditeur. Entrez votre texte, enregistrez et votre nouvelle page est en place.</p>
+
+<h3><a name="wikimarkup"></a>Syntaxe Wiki</h3>
+
+<p>Une page Wiki peut être formatée simplement, par quelques syntaxes Wiki élémentaires.</p>
+
+<h4>Paragraphes</h4>
+
+<ul type="circle">
+
+<li> Nouveau paragraphe&nbsp;: une ligne vide</li>
+
+<li> Retour à la ligne&nbsp;: trois caractères «&nbsp;pour-cent&nbsp;» %%% </li>
+
+<li> Indentation&nbsp;: gérée par des espaces ou tabulations en début de ligne</li>
+
+</ul>
+
+
+
+<h4> !! Titres</h4>
+
+<p>Les titres peuvent être marqués par des points d'exclamation en début de ligne&nbsp;:</p>
+
+<ul type="circle">
+
+<li> Un point d'exclamation (!)&nbsp;: un petit titre</li>
+
+<li> Deux points d'exclamation (!!)&nbsp;: un titre moyen</li>
+
+<li> Trois points d'exclamation (!!!)&nbsp;: un grand titre</li>
+
+</ul>
+
+<h4>Attributs de texte</h4>
+
+<ul type="circle">
+
+<li> Encadrez le texte entre des guillemets droits simples '' pour donner de <em>l'emphase</em> (est rendu en général par de l'italique)</li>
+
+<li> Encadrez le texte par des astérisques ** ou des caractères de soulignement __ pour le passer en <strong>gras</strong></li>
+
+<li> Encadrez le texte par des dièses ## pour passer en <big>gros caractères</big></li>
+
+<li> Encadrez le texte par des caractères «&nbsp;µµ&nbsp;» pour passer en <small>petits caractères</small></li>
+
+<li> Encadrez le texte par des signes égal == pour obtenir un affichage <tt>à chasse fixe</tt></li>
+
+</ul>
+
+
+
+<h4>Listes</h4>
+
+<ul type="circle">
+
+<li> Pour commencer une liste (non ordonnée), commencez la ligne avec un astérisque * </li>
+
+<li> Utilisez un dièse # pour les listes numérotées
+
+<ol>
+
+<li> Vous pouvez créer des sous-listes</li>
+
+<li> Les points suivants d'une même liste commencent avec la même séquence de * et de # que le premier point de la liste</li>
+
+</ol>
+
+</li>
+
+</ul>
+
+<h4>Hyperliens</h4>
+
+<ul type="circle">
+
+<li> Tapez un nom CamelCase dans votre texte pour automatiquement créer un lien vers la page Wiki désignée, ou</li>
+
+<li> Encadrez une désignation de cible <b>par des crochets</b></li>
+
+<li> Toute URL internet valide (commençant par «&nbsp;http://&nbsp;») comme http://www.exemple.com/ trouvée dans le texte sera automatiquement transformée en lien hypertexte</li>
+
+<li> Dans un lien Wiki, vous pouvez spécifier, pour l'affichage, un texte différent de la cible [<a href="http://www.moodle.org/">Moodle</a>], écrivez le texte entre guillemets droits doubles ou séparez-le de la cible par le caractère | (trait vertical, pipe)
+
+<ul type="circle">
+
+<li> [texte | http://ma.cible.com]</li>
+
+<li> [LienWiki "texte"] or ["texte pour" LienWiki]</li>
+
+</ul>
+
+</li>
+
+<li> Pour éviter qu'un MotWiki ou une URL valide (ou [quoi que ce soit] entre crochets) ne devienne un hyperlien, placez un point d'exclamation ! ou un tilde ~ devant.
+
+<ul type="circle">
+
+<li> !PasDeLien, ~PasDeLien</li>
+
+<li> ![pas d'hyperlien], !!http://pasdelien.org/    </li>
+
+</ul>
+
+</li>
+
+</ul>
+
+<h4>Tableaux avec des |</h4>
+
+<pre>| Placez votre contenu | entre des caractères «&nbsp;trait vertical&nbsp;» |
+| pour créer la structure | de la table. |
+| Les navigateurs | ignorent en général | les cellules manquantes. |
+</pre>
+
+<p>Prenez l'habitude de placer une ligne vide avant ET après la table, ainsi la table sera placée dans son propre paragraphe, bien séparée du reste du texte.</p>
+
+<h4>Images</h4>
+
+<ul type="circle">
+
+<li>Pour inclure une image dans une page, écrivez son URL complète entre crochets, comme ceci&nbsp;: [http://www.exemple.com/pics/image.png] </li>
+
+<li>Vous pouvez également utiliser les fonctions de téléchargement de fichiers de Moodle ou d'annexes.</li>
+
+</ul>
+
+<h4>Autres références</h4>
+
+<p>Le balisage du Wiki offre d'autres syntaxes possibles. Consultez le document <a href="http://erfurtwiki.sourceforge.net" target="_blank">Erfurt Wiki Homepage</a> pour plus d'information.</p>
+
+<h3><a name="camelcase"></a>Camel Case</h3>
+
+<p>Le mot «&nbsp;CamelCase&nbsp;» décrit en fait un caractère typographique des MotsWiki&nbsp;: Plusieurs mots, accolés les uns aux autres, identifiables par une majuscule au début de chaque mot. C'est la séquence de casse (haute et basse) des caractères qui fait penser aux bosses d'un chameau.</p>
+
+<p>Cette syntaxe de lien est également appelée «&nbsp;BumpyText&nbsp;» (littéralement&nbsp;: texte en relief) par les anglo-saxons.</p>
+
+<p>Bien que les puristes des langages détestent les Wikis pour cette façon minimaliste de baliser les textes, ceux-ci sont très utilisés dans la sphère informatique et par les programmeurs pour leur efficacité.</p>
