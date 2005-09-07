@@ -743,8 +743,13 @@ function forum_print_overview($course,$lastaccess) {
         return;
     }
     // get all forum logs in ONE query (much better!)
-    $new = get_records_sql("SELECT instance,cmid,COUNT(l.id) as count FROM {$CFG->prefix}log l JOIN {$CFG->prefix}course_modules cm ON cm.id = cmid WHERE time > $lastaccess AND l.course = ".$course->id
-                           ." AND l.module = 'forum' AND action LIKE 'add%' AND userid != ".$USER->id." GROUP BY cmid,instance");
+    if (!$new = get_records_sql("SELECT instance,cmid,COUNT(l.id) as count FROM {$CFG->prefix}log l "
+                                ." JOIN {$CFG->prefix}course_modules cm ON cm.id = cmid "
+                                ." WHERE time > $lastaccess AND l.course = ".$course->id
+                                ." AND l.module = 'forum' AND action LIKE 'add%' "
+                                ." AND userid != ".$USER->id." GROUP BY cmid,instance")) {
+        $new = array(); // avoid warnings;
+    }
     foreach ($forums as $forum) {
         $count = 0;
         $unread = 0;
@@ -3384,8 +3389,6 @@ function forum_tp_count_forum_read_records($userid, $forumid, $groupid=false) {
     if ($groupid !== false) {
         $groupsel = ' AND (d.groupid = '.$groupid.' OR d.groupid = -1)';
     }
-
-    error_log("forumcount");
 
     if ($CFG->dbtype === 'postgres7') {
         // this query takes 20ms, vs several minutes for the one below
