@@ -307,6 +307,11 @@ $CFG->httpswwwroot = $CFG->wwwroot;
             } else {
                 $_COOKIE['MoodleSessionTest'.$CFG->sessioncookie] = 'error!!';
             }
+        } else {
+            if (empty($_COOKIE['MoodleSessionTest'.$CFG->sessioncookie])) {
+                setcookie('MoodleSessionTest'.$CFG->sessioncookie, $_SESSION['SESSION']->session_test, 0, '/');
+                $_COOKIE['MoodleSessionTest'.$CFG->sessioncookie] = $_SESSION['SESSION']->session_test;
+            }            
         }
         if (! isset($_SESSION['USER']))    {
             $_SESSION['USER']    = new object;

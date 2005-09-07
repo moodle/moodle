@@ -6291,7 +6291,7 @@ function remove_dir($dir, $content_only=false) {
 }
 
 function report_session_error() {
-    global $CFG, $FULLME, $SESSOIN;
+    global $CFG, $FULLME;
     if (empty($CFG->lang)) {
         $CFG->lang = "en";
     }
@@ -6305,9 +6305,6 @@ function report_session_error() {
     } else {
         set_config('session_error_counter', 1);
     }
-    unset($_SESSION['USER']);
-    unset($GLOBALS['USER']);
-    unset($SESSION->session_test);
     redirect($FULLME, get_string('sessionerroruser', 'error'), 2);
 }
 
