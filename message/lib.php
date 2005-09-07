@@ -1023,27 +1023,48 @@ function message_get_participants() {
 
     global $CFG;
 
-    // the first query is VERY intensive on large dbs, but 
-    // the second won't work with mysql < 4
     if (!check_db_compat()) {
-        return get_records_sql("SELECT DISTINCT u.id, u.id
-                              FROM {$CFG->prefix}user as u,
-                                   {$CFG->prefix}message as m, 
-                                   {$CFG->prefix}message_read as mr,
-                                   {$CFG->prefix}message_contacts as mc
-                             WHERE m.useridfrom = u.id 
-                                OR m.useridto = u.id
-                                OR mr.useridfrom = u.id
-                                OR mr.useridto = u.id
-                                OR mc.userid = u.id
-                                OR mc.contactid = u.id");
+        // do it using php since mysql < 4 doesn't like the unions.
+        $users = array();
+        
+        if ($message_from_users = get_records_sql("SELECT DISTINCT userfrom as id, 1 FROM  {$CFG->prefix}message")) {
+            foreach ($message_from_users as $user) {
+                $users[$user->id] =  $user;
+            }
+        }
+        if ($message_to_users = get_records_sql("SELECT DISTINCT useridto as id,1 FROM {$CFG->prefix}message")) {
+            foreach ($message_to_users as $user) {
+                $users[$user->id] = $user;
+            }
+        }
+        if ($read_from_users = get_records_sql("SELECT DISTINCT useridfrom as id,1 FROM {$CFG->prefix}message_read")) {
+            foreach ($read_from_users as $user) {
+                $users[$user->id] = $user;
+            }
+        }
+        if ($read_to_users = get_records_sql("SELECT DISTINCT useridto as id,1 FROM {$CFG->prefix}message_read")) {
+            foreach ($read_to_users as $user) {
+                $users[$user->id] = $user;
+            }
+        }
+        if ($contact_from_users = get_records_sql("SELECT DISTINCT userid as id,1 FROM {$CFG->prefix}message_contacts")) {
+            foreach ($contact_from_users as $user) {
+                $users[$user->id] = $user;
+            }
+        }
+        if ($contact_to_users = get_records_sql("SELECT DISTINCT mc.contactid as id,1 FROM {$CFG->prefix}message_contacts")) {
+            foreach ($contact_to_users as $user) {
+                $users[$user->id] = $user;
+            }
+        }
+        return $users;
     } else {
-        return get_records_sql("SELECT useridfrom,useridfrom FROM {$CFG->prefix}message
-                           UNION SELECT useridto,useridto FROM {$CFG->prefix}message
-                           UNION SELECT useridfrom,useridfrom FROM {$CFG->prefix}message_read
-                           UNION SELECT useridto,useridto FROM {$CFG->prefix}message_read
-                           UNION SELECT userid,userid FROM {$CFG->prefix}message_contacts
-                           UNION SELECT contactid,contactid from {$CFG->prefix}message_contacts");
+        return get_records_sql("SELECT useridfrom as id,1 FROM {$CFG->prefix}message
+                           UNION SELECT useridto as id,1 FROM {$CFG->prefix}message
+                           UNION SELECT useridfrom as id,1 FROM {$CFG->prefix}message_read
+                           UNION SELECT useridto as id,1 FROM {$CFG->prefix}message_read
+                           UNION SELECT userid as id,1 FROM {$CFG->prefix}message_contacts
+                           UNION SELECT contactid as id,1 from {$CFG->prefix}message_contacts");
     }
 }
 
