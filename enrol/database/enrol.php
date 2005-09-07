@@ -71,7 +71,7 @@ function get_student_courses(&$user) {
                 foreach ($user->student as $courseid => $value) {
 
                     // unenrol only if it's a record pulled from external db
-                    if (get_record_select('user_students', 'userid', $user->id, 'courseid', $courseid, 'enrol', 'database')) {
+                    if (get_record('user_students', 'userid', $user->id, 'courseid', $courseid, 'enrol', 'database')) {
                         unenrol_student($user->id, $courseid);       /// Unenrol the student
                         unset($user->student[$course->id]);           /// Remove from old list
                     } else {
