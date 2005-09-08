@@ -6335,10 +6335,51 @@ function unzip_show_status ($list,$removepath) {
  * Cleans a remote address ready to put into the log table
  */
 function cleanremoteaddr($addr) {
-    $addr = preg_replace('/(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(.*)/','$1',$addr);
-    // just to make SURE, we strip off anything past a ,
-    $addr = preg_replace('/(.*)\,(.*)/','$1',$addr);
-    return $addr;
+    $originaladdr = $addr;
+    $matches = array();
+    // first get all things that look like IP addresses.
+    if (!preg_match_all('/(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/',$addr,$matches,PREG_SET_ORDER)) {
+        return '';
+    }
+    $goodmatches = array();
+    $lanmatches = array();
+    foreach ($matches as $match) {
+        //        print_r($match);
+        // check to make sure it's not an internal address.
+        // the following are reserved for private lans...
+        // 10.0.0.0 - 10.255.255.255
+        // 172.16.0.0 - 172.31.255.255
+        // 192.168.0.0 - 192.168.255.255
+        // 169.254.0.0 -169.254.255.255 
+        $bits = explode('.',$match[0]);
+        if (count($bits) != 4) {
+            // weird, preg match shouldn't give us it.
+            continue;
+        }
+        if (($bits[0] == 10) 
+            || ($bits[0] == 172 && $bits[1] >= 16 && $bits[1] <= 31)
+            || ($bits[0] == 192 && $bits[1] == 168)
+            || ($bits[0] == 169 && $bits[1] == 254)) {
+            $lanmatches[] = $match[0];
+            continue;
+        }
+        // finally, it's ok
+        $goodmatches[] = $match[0];
+    }
+    if (!count($goodmatches)) {
+        // perhaps we have a lan match, it's probably better to return that.
+        if (!count($lanmatches)) {
+            return '';
+        } else {
+            return array_pop($lanmatches);
+        }
+    } 
+    if (count($goodmatches) == 1) {
+        return $goodmatches[0];
+    }
+    error_log("NOTICE: cleanremoteaddr gives us something funny: $originaladdr had ".count($goodmatches)." matches");
+    // we need to return something, so
+    return array_pop($goodmatches);
 }
 
 /**
