@@ -182,6 +182,20 @@ class quiz_randomsamatch_qtype extends quiz_match_qtype {
                     notify("Couldn't get question options (id=$response[0])!");
                     return false;
                 }
+
+                // Now we overwrite the $question->options->answers field to only
+                // *one* (the first) correct answer. This loop can be deleted to
+                // take all answers into account (i.e. put them all into the
+                // drop-down menu.
+                $foundcorrect = false;
+                foreach ($wrappedquestion->options->answers as $answer) {
+                    if ($foundcorrect || $answer->fraction != 1.0) {
+                        unset($wrappedquestion->options->answers[$answer->id]);
+                    } else if (!$foundcorrect) {
+                        $foundcorrect = true;
+                    }
+                }
+
                 if (!$QUIZ_QTYPES[$wrappedquestion->qtype]
                  ->restore_session_and_responses($wrappedquestion, $state)) {
                     notify("Couldn't restore session of question (id=$response[0])!");
