@@ -42,7 +42,7 @@
                 // Fix the questiontext fields of old questions
                 set_field('quiz_questions', 'questiontext', addslashes($parsableanswerdef), 'id', $wrapped->id);
             } else {
-                $parsableanswerdef = $wrapped->questiontext;
+                $parsableanswerdef = str_replace('&#', '&\#', $wrapped->questiontext);
             }
             $question->questiontext = str_replace("{#$key}", $parsableanswerdef, $question->questiontext);
         }

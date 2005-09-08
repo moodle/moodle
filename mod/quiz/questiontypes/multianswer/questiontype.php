@@ -377,6 +377,10 @@ function quiz_qtype_multianswer_extract_question($text) {
     // Regexes are always awkard when defined but more comprehensible
     // when used as constants in the executive code
 
+    // Handle the entity encoded ampersand in entities (e.g. &amp;lt; -> &lt;)
+    $text = preg_replace('/&amp;(.{2,9}?;)/', '&${1}', $text);
+    $text = stripslashes($text);
+
     // ANSWER_ALTERNATIVE regexes
     define("ANSWER_ALTERNATIVE_FRACTION_REGEX",
            '=|%(-?[0-9]+)%');

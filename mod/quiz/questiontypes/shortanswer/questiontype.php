@@ -171,7 +171,7 @@ class quiz_shortanswer_qtype extends quiz_default_questiontype {
     }
 
     function grade_responses(&$question, &$state, $cmoptions) {
-        $answers     = &$question->options->answers;
+        $answers = &$question->options->answers;
         $testedstate = clone($state);
         $teststate   = clone($state);
         $state->raw_grade = 0;

@@ -66,9 +66,9 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
         foreach ($question->answer as $key => $dataanswer) {
             if ($dataanswer != "") {
                 if ($answer = array_shift($oldanswers)) {  // Existing answer, so reuse it
-                    $answer->answer   = $dataanswer;
-                    $answer->fraction = $question->fraction[$key];
-                    $answer->feedback = $question->feedback[$key];
+                    $answer->answer     = $dataanswer;
+                    $answer->fraction   = $question->fraction[$key];
+                    $answer->feedback   = $question->feedback[$key];
                     if (!update_record("quiz_answers", $answer)) {
                         $result->error = "Could not update quiz answer! (id=$answer->id)";
                         return $result;
