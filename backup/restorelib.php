@@ -4586,6 +4586,7 @@
         global $SESSION;
         $restore->backup_unique_code=$backup_unique_code;
         $restore->users = 2; // yuk
+        $restore->course_files = $SESSION->restore->restore_course_files;
         if ($allmods = get_records("modules")) {
             foreach ($allmods as $mod) {
                 $modname = $mod->name;
