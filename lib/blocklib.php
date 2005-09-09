@@ -408,6 +408,9 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid)
                 // We need to show the config screen, so we highjack the display logic and then die
                 $strheading = get_string('blockconfiga', 'moodle', $blocktitle);
                 $page->print_header(get_string('pageheaderconfigablock', 'moodle'), array($strheading => ''));
+
+                echo '<div class="block-config" id="'.$block->name.'">';   /// Make CSS easier
+
                 print_heading($strheading);
                 echo '<form method="post" action="'. $page->url_get_path() .'">';
                 echo '<p>';
@@ -417,6 +420,8 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid)
                 echo '</p>';
                 $blockobject->instance_config_print();
                 echo '</form>';
+
+                echo '</div>';
                 print_footer();
                 die(); // Do not go on with the other page-related stuff
             }
