@@ -237,7 +237,7 @@ function print_outline_row($mod, $instance, $result) {
     }
     echo "</td>";
     echo "<td>&nbsp;&nbsp;&nbsp;</td>";
-    if (isset($result->time)) {
+    if (!empty($result->time)) {
         $timeago = format_time(time() - $result->time);
         echo "<td valign=\"top\" nowrap=\"nowrap\">".userdate($result->time)." ($timeago)</td>";
     }

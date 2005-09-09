@@ -1111,8 +1111,12 @@ class assignment_base {
     
             print_simple_box_start();
             echo get_string("lastmodified").": ";
-            echo userdate($submission->timemodified);
-            echo $this->display_lateness($submission->timemodified);
+            if (empty($submission->timemodified)) {
+                print_string('never');
+            } else {
+                echo userdate($submission->timemodified);
+                echo $this->display_lateness($submission->timemodified);
+            }
     
             $this->print_user_files($user->id);
     
