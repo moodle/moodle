@@ -124,7 +124,7 @@ class quiz_shortanswer_qtype extends quiz_default_questiontype {
 
         $stranswer = get_string("answer", "quiz");
         if (isset($state->responses[''])) {
-            $value = ' value="'.htmlSpecialChars($state->responses['']).'" ';
+            $value = ' value="'.s($state->responses['']).'" ';
         } else {
             $value = ' value="" ';
         }
