@@ -425,11 +425,12 @@ function hotpot_get_grades($hotpot, $user_ids='') {
 			WHERE timefinish>0 AND hotpot='$hotpot->id' $userid_condition
 			GROUP BY userid
 		");
-
-		if ($hotpot->grademethod==HOTPOT_GRADEMETHOD_FIRST || $hotpot->grademethod==HOTPOT_GRADEMETHOD_LAST) {
-			// remove left hand characters in $grade (up to and including the underscore)
-			foreach ($grades as $userid=>$grade) {
-				$grades[$userid] = substr($grades[$userid], strpos($grades[$userid], '_')+1);
+		if ($grades) {
+			if ($hotpot->grademethod==HOTPOT_GRADEMETHOD_FIRST || $hotpot->grademethod==HOTPOT_GRADEMETHOD_LAST) {
+				// remove left hand characters in $grade (up to and including the underscore)
+				foreach ($grades as $userid=>$grade) {
+					$grades[$userid] = substr($grades[$userid], strpos($grades[$userid], '_')+1);
+				}
 			}
 		}
 	}
@@ -571,13 +572,13 @@ class hotpot_xml_tree {
 			$value = strtr($value, array('&#x003C;'=>'<', '&#x003E;'=>'>', "\n"=>'<br />'));
 
 			// encode any orphaned angle brackets back to html entities
-			if (empty($this->tag_pattern)) {
-				$q   = "'"; // single quote
-				$qq  = '"'; // double quote
-				$this->tag_pattern = '<(([^>'.$q.$qq.']*)|('."{$q}[^$q]*$q".')|('."{$qq}[^$qq]*$qq".'))*>';
-			}
-			$value = preg_replace('/<([^>]*'.$this->tag_pattern.')/', '&lt;$1', $value);
-			$value = preg_replace('/('.$this->tag_pattern.'[^<]*)>/', '$1&gt;', $value);
+			//if (empty($this->tag_pattern)) {
+			//	$q   = "'"; // single quote
+			//	$qq  = '"'; // double quote
+			//	$this->tag_pattern = '<(([^>'.$q.$qq.']*)|('."{$q}[^$q]*$q".')|('."{$qq}[^$qq]*$qq".'))*>';
+			//}
+			//$value = preg_replace('/<([^>]*'.$this->tag_pattern.')/', '&lt;$1', $value);
+			//$value = preg_replace('/('.$this->tag_pattern.'[^<]*)>/', '$1&gt;', $value);
 		}
 		return $value;
 	}
