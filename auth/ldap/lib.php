@@ -715,17 +715,18 @@ function auth_ldap_bulk_insert($users){
  * @return boolen result
  */
 function auth_user_activate ($username) {
-    global $CFG;
-
-    $ldapconnection = auth_ldap_connect();
     
+    global $CFG;
+    
+    $ldapconnection = auth_ldap_connect();
+
     $userdn = auth_ldap_find_userdn($ldapconnection, $username);
     switch ($CFG->ldap_user_type)  {
-         case 'edir':
-    $newinfo['loginDisabled']="FALSE";
-         default;
-            error ('auth: ldap auth_user_activate() does not support selected usertype (..yet)');    
-    }    
+    case 'edir':
+        $newinfo['loginDisabled']="FALSE";
+    default:
+        error ('auth: ldap auth_user_activate() does not support selected usertype (..yet)');    
+    } 
     $result = ldap_modify($ldapconnection, $userdn, $newinfo);
     ldap_close($ldapconnection);
     return $result;
