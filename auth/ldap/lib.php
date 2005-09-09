@@ -1430,7 +1430,7 @@ function auth_ldap_get_userlist($filter="*") {
                                      $filter,
                                      array($CFG->ldap_user_attribute));
         }
-
+        
         $users = auth_ldap_get_entries($ldapconnection, $ldap_result);
 
         //add found users to list
@@ -1458,7 +1458,7 @@ function auth_ldap_get_entries($conn, $searchresult){
     $fresult=array();
     $entry = ldap_first_entry($conn, $searchresult);
     do {
-        $attributes = ldap_get_attributes($conn, $entry);
+        $attributes = @ldap_get_attributes($conn, $entry);
         for($j=0; $j<$attributes['count']; $j++) {
             $values = ldap_get_values_len($conn, $entry,$attributes[$j]);
             if (is_array($values)) {
@@ -1469,7 +1469,7 @@ function auth_ldap_get_entries($conn, $searchresult){
         }         
         $i++;               
     }
-    while ($entry = ldap_next_entry($conn, $entry));
+    while ($entry = @ldap_next_entry($conn, $entry));
     //were done
     return ($fresult);
 }
