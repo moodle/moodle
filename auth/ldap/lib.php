@@ -218,14 +218,14 @@ function auth_user_create ($userobject,$plainpass) {
 
     switch ($CFG->ldap_user_type)  {
         case 'edir':
-    $newuser['objectClass']= array("inetOrgPerson","organizationalPerson","person","top");
-    $newuser['uniqueId']= $userobject->username;
-    $newuser['logindisabled']="TRUE";
-    $newuser['userpassword']=$plainpass;
+            $newuser['objectClass']= array("inetOrgPerson","organizationalPerson","person","top");
+            $newuser['uniqueId']= $userobject->username;
+            $newuser['logindisabled']="TRUE";
+            $newuser['userpassword']=$plainpass;
+            break;
         default:
-           error('auth: ldap auth_user_create() does not support selected usertype (..yet)');
+           error('auth: ldap auth_user_create() does not support selected usertype:"'.$CFG->ldap_user_type.'" (..yet)');
     }
-        
     $uadd = ldap_add($ldapconnection, $CFG->ldap_user_attribute."=$userobject->username,".$CFG->ldap_create_context, $newuser);
 
     ldap_close($ldapconnection);
@@ -722,10 +722,11 @@ function auth_user_activate ($username) {
 
     $userdn = auth_ldap_find_userdn($ldapconnection, $username);
     switch ($CFG->ldap_user_type)  {
-    case 'edir':
-        $newinfo['loginDisabled']="FALSE";
-    default:
-        error ('auth: ldap auth_user_activate() does not support selected usertype (..yet)');    
+        case 'edir':
+            $newinfo['loginDisabled']="FALSE";
+            break;
+        default:
+            error ('auth: ldap auth_user_activate() does not support selected usertype:"'.$CFG->ldap_user_type.'" (..yet)');    
     } 
     $result = ldap_modify($ldapconnection, $userdn, $newinfo);
     ldap_close($ldapconnection);
@@ -748,7 +749,8 @@ function auth_user_disable ($username) {
     $userdn = auth_ldap_find_userdn($ldapconnection, $username);
     switch ($CFG->ldap_user_type)  {
         case 'edir':
-    $newinfo['loginDisabled']="TRUE";
+            $newinfo['loginDisabled']="TRUE";
+            break;
         default:
             error ('auth: ldap auth_user_disable() does not support selected usertype (..yet)');    
     }    
@@ -1283,7 +1285,8 @@ function auth_ldap_connect($binddn='',$bindpwd=''){
 
         if (!empty($binddn)){
             //bind with search-user
-            $bindresult=@ldap_bind($connresult, $binddn,$bindpwd);
+            //$debuginfo .= 'Using bind user'.$binddn.'and password:'.$bindpwd; 
+            $bindresult=ldap_bind($connresult, $binddn,$bindpwd);
         } else {
             //bind anonymously 
             $bindresult=@ldap_bind($connresult);
@@ -1297,7 +1300,7 @@ function auth_ldap_connect($binddn='',$bindpwd=''){
             return $connresult;
         }
         
-        $debuginfo = "<br/>Server: '$server' <br/> Connection: '$connresult'<br/> Bind result: '$bindresult'</br>";
+        $debuginfo .= "<br/>Server: '$server' <br/> Connection: '$connresult'<br/> Bind result: '$bindresult'</br>";
     }
 
     //If any of servers are alive we have already returned connection
