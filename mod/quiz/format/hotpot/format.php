@@ -146,6 +146,7 @@ function process_jmatch(&$xml, &$questions) {
 
         $question->qtype = MATCH;
         $question->defaultgrade = 1;
+        $question->usecase = 0; // Ignore case
         $question->image = "";  // No images with this format
         $question->name = get_hotpotatoes_title($xml, $x);
 
@@ -216,6 +217,7 @@ function process_jquiz(&$xml, &$questions) {
 
             $question = NULL;
             $question->defaultgrade = 1;
+            $question->usecase = 0; // Ignore case
             $question->image = "";  // No images with this format
             $question->name = get_hotpotatoes_title($xml, $q, true);
 
@@ -298,6 +300,17 @@ function get_hotpotatoes_reading(&$xml) {
         }
     }
     return addslashes($str);
+}
+
+// allow importing in Moodle v1.4 (and less)
+// same core functions but different class name
+if (!class_exists("quiz_file_format")) {
+	class quiz_file_format extends quiz_default_format {
+		function readquestions ($lines) {
+			$format = new quiz_format_hotpot();
+			return $format->readquestions($lines);
+		}
+	}
 }
 
 ?>
