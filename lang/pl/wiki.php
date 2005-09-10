@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.4 (2004083100)
+      // wiki.php - created with Moodle 1.6 development (2005072200)
 
 
 $string['action'] = '--Dzia³anie--';
@@ -145,6 +145,7 @@ $string['safehtml'] = 'Bezpeczny HTML';
 $string['save'] = 'Zapisz';
 $string['searchwiki'] = 'Szukaj Wiki';
 $string['setpageflags'] = 'Ustaw flagi na stronie';
+$string['showversions'] = 'poka¿ wersje';
 $string['sitemap'] = 'Mapa serwisu';
 $string['smfor'] = 'Mapa serwisu dla';
 $string['status'] = 'Status';
@@ -160,6 +161,7 @@ $string['tabview'] = 'Podgl±d';
 $string['thanksforcontribution'] = 'Dziêkujê za Twój wk³ad';
 $string['thispageisntlinkedfromanywhereelse'] = 'Do tej strony nie odwo³uje siê ¿adna inna';
 $string['updatedpages'] = 'Uaktualnione strony';
+$string['updatedwikipages'] = 'uaktualnianie stron WIKI';
 $string['uplerror'] = 'Niestety proces przesy³ania plików nie zakoñczy³ siê powodzeniem...';
 $string['uplinsect'] = 'Info przesy³ania';
 $string['uplnewnam'] = 'Zapisz pod inn± nazw±';

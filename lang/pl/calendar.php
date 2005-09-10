@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.4 (2004083100)
+      // calendar.php - created with Moodle 1.6 development (2005072200)
 
 
 $string['calendar'] = 'Kalendarz';
@@ -38,6 +38,8 @@ $string['eventview'] = 'Szczegó³y terminu';
 $string['expired'] = 'Wygas³y(a)';
 $string['explain_lookahead'] = 'Ten parametr oznacza maksymaln± liczbê dni \"na przysz³o¶æ\" na podstawie której okre¶lony termin zostanie wy¶wietlony jako nadchodz±cy. Terminy ustalone jako rozpoczynaj±ce siê pó¼niej w stosunku do tej ilo¶ci dni nie bêd± wy¶wietlone. Zauwa¿, ¿e <strong>nie ma gwarancji</strong>, ¿e wszystkie zdarzenia zaczynaj±ce siê w danym przeci±gu czasu bêd± wy¶wietlone jako nadchodz±ce; je¶li jest ich zbyt wiele, najbardziej oddalone zdarzenia nie zostana wy¶wietlone. ';
 $string['explain_maxevents'] = 'Ten parametr ustala maksymaln± liczbê wydarzeñ, które zostan± wy¶wietlone.';
+$string['explain_persistflt'] = 'Je¿eli opcja jest w³±czona, to Moodle bêdzie pamiêtaæ ostatnie ustawienie filtru i automatycznie odtwarzaæ je za ka¿dym razem kiedy siê zalogujesz. 
+';
 $string['explain_startwday'] = 'Ten parametr ustawia sposób w jaki wszystkie miesiêczne kalendarze bêd± wy¶wietlone. Ustaw go w sposób do którego jeste¶ przyzwyczajony.';
 $string['explain_timeformat'] = 'Mo¿esz wybraæ czas w formacie 12 albo 24 godzinnym. Je¶li wybierzesz \"domy¶lny\", wówczas ten format bêdzie automatycznie wybrany w zgodzie z jêzykiem, który u¿ywasz na tej stronie';
 $string['fri'] = 'Pi.';
@@ -55,10 +57,13 @@ $string['noupcomingevents'] = 'Brak nadchodz±cych spotkañ';
 $string['oneevent'] = '1 termin';
 $string['pref_lookahead'] = 'Nadchodz±ce spotkania';
 $string['pref_maxevents'] = 'Maximum nadchodz±cych spotkañ';
+$string['pref_persistflt'] = 'Pamiêtaj ustawienia filtru';
 $string['pref_startwday'] = 'Pierwszy dzieñ tygodnia';
 $string['pref_timeformat'] = 'Format wy¶wietlenia czasu';
 $string['preferences'] = 'Preferencje';
 $string['preferences_available'] = 'Twoje osobiste preferencje';
+$string['repeateditall'] = 'Zachwowaj zmiany dla wszystkich $a zdarzeñ';
+$string['repeateditthis'] = 'Zachowaj zmiany';
 $string['repeatnone'] = 'Brak powtórzeñ';
 $string['repeatweeksl'] = 'Powtórz co tydzieñ';
 $string['repeatweeksr'] = 'Spotkania';
@@ -95,5 +100,6 @@ $string['userevents'] = 'Terminy u¿ytkownika';
 $string['wed'] = '¦r.';
 $string['wednesday'] = '¦roda';
 $string['yesterday'] = 'Wczoraj';
+$string['youcandeleteallrepeats'] = 'To zdarzenie jest czêsci± serii zdarzeñ. Mo¿esz usun±æ tylko te zdarzenie, lub wszystkie $a zdarzeñ od razu.';
 
 ?>

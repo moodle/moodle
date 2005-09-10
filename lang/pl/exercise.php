@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // exercise.php - created with Moodle 1.4 (2004083100)
+      // exercise.php - created with Moodle 1.6 development (2005072200)
 
 
 $string['absent'] = 'Nieobecny/a';
@@ -42,6 +42,7 @@ $string['edit'] = 'Edytuj';
 $string['editingassessmentelements'] = 'Edytuj elementy sk³adowe oceny ';
 $string['element'] = 'Element';
 $string['elementweight'] = 'Waga elementu';
+$string['enterpassword'] = 'Wprowad¼ has³o';
 $string['entriessaved'] = 'Zapisano';
 $string['errorbanded'] = 'W oparciu o ilo¶æ b³êdów';
 $string['excellent'] = '¦wietnie';
@@ -98,6 +99,7 @@ $string['numberofnegativeresponses'] = 'Ilo¶æ negatywnych odpowiedzi';
 $string['onesubmission'] = 'Jedno oddanie';
 $string['optionaladjustment'] = 'Mo¿liwo¶æ zmiany oceny';
 $string['overallgrade'] = 'Ocena ogólna';
+$string['passwordprotectedexercise'] = 'Ochrona has³em';
 $string['phase'] = 'Faza';
 $string['phase1'] = 'U³ó¿ æwiczenie';
 $string['phase1short'] = 'U³ó¿ ';
@@ -162,6 +164,7 @@ $string['unassessed'] = '$a nieocenionych';
 $string['ungradedstudentassessments'] = '$a nieocenionych ocen studenta';
 $string['usemaximum'] = 'U¿yj maksymalnej';
 $string['usemean'] = 'U¿yj ¶redniej';
+$string['usepassword'] = 'U¿yj has³a';
 $string['verylax'] = 'Bardzo nie¶cis³y';
 $string['verypoor'] = 'Niedostateczny';
 $string['verystrict'] = 'Bardzo dok³adny';
@@ -174,6 +177,7 @@ $string['weightforteacherassessments'] = 'Waga dla w³a¶ciwej oceny z wykonania p
 $string['weights'] = 'Wagi';
 $string['weightssaved'] = 'Zapisane wagi';
 $string['weightsusedforoverallgrade'] = 'Wagi u¿yte w ocenie ogólnej';
+$string['wrongpassword'] = 'Niepoprawne has³o';
 $string['yourassessment'] = 'Twoja ocena';
 $string['yourfeedbackgoeshere'] = 'Tutaj twój komentarz zostanie umieszczony';
 $string['yoursubmission'] = 'Twoja praca';

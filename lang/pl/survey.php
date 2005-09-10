@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // survey.php - created with Moodle 1.3 - (2004052400)
+      // survey.php - created with Moodle 1.5.2 + (2005072200)
 
 
 $string['actual'] = 'Aktualne';
