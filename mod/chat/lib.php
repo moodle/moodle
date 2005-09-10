@@ -493,7 +493,7 @@ function chat_update_chat_times($chatid=0) {
 }
 
 
-function chat_format_message_manually($message, $courseid, $sender, $currentuser) {
+function chat_format_message_manually($message, $courseid, $sender, $currentuser, $chat_lastrow=NULL) {
     global $CFG;
 
     $output = New stdClass;
@@ -512,13 +512,20 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
         $message->picture = "<a target=\"_new\" href=\"$CFG->wwwroot/user/view.php?id=$sender->id&amp;course=$courseid\">$message->picture</a>";
     }
 
+    //Calculate the row class
+    if ($chat_lastrow !== NULL) {
+        $rowclass = ' class="r'.$chat_lastrow.'" ';
+    } else {
+        $rowclass = '';
+    }
+
     // Start processing the message
 
     if(!empty($message->system)) {
         // System event
         $output->text = $message->strtime.': '.get_string('message'.$message->message, 'chat', fullname($sender));
-        $output->html  = '<table><tr><td style="vertical-align: top;">'.$message->picture.'</td><td>';
-        $output->html .= '<font size="2" color="#ccaaaa">'.$output->text.'</font></td></tr></table>';
+        $output->html  = '<table class="chat-event"><tr'.$rowclass.'><td class="picture">'.$message->picture.'</td><td class="text">';
+        $output->html .= '<span class="event">'.$output->text.'</span></td></tr></table>';
 
         if($message->message == 'exit' or $message->message == 'enter') {
             $output->refreshusers = true; //force user panel refresh ASAP
@@ -579,17 +586,17 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
 
     $output->text  = strip_tags($outinfo.': '.$outmain);
 
-    $output->html  = "<table><tr><td valign=\"top\">$message->picture</td><td><font size=\"2\">";
-    $output->html .= "<font color=\"#888888\">$outinfo</font>";
+    $output->html  = "<table class=\"chat-message\"><tr$rowclass><td class=\"picture\">$message->picture</td><td class=\"text\">";
+    $output->html .= "<span class=\"title\">$outinfo</span>";
     if ($outmain) {
         $output->html .= ": $outmain";
     }
-    $output->html .= "</font></td></tr></table>";
+    $output->html .= "</td></tr></table>";
 
     return $output;
 }
 
-function chat_format_message($message, $courseid, $currentuser) {
+function chat_format_message($message, $courseid, $currentuser, $chat_lastrow=NULL) {
 /// Given a message object full of information, this function
 /// formats it appropriately into text and html, then
 /// returns the formatted data.
@@ -598,7 +605,7 @@ function chat_format_message($message, $courseid, $currentuser) {
         return "Error finding user id = $message->userid";
     }
 
-    return chat_format_message_manually($message, $courseid, $user, $currentuser);
+    return chat_format_message_manually($message, $courseid, $user, $currentuser, $chat_lastrow);
 
 }
 

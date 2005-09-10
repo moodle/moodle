@@ -12,6 +12,20 @@
         error('Not logged in!');
     }
 
+    //Get the course theme
+    $course = get_record('course','id',$chatuser->course,'','','','','id,theme');
+    //Set the course theme if necessary
+    if (!empty($course->theme)) {
+        if (!empty($CFG->allowcoursethemes)) {
+            $CFG->coursetheme = $course->theme;
+        }
+    }
+    //Get the user theme
+    $USER = get_record('user','id',$chatuser->userid,'','','','','id, theme');
+
+    //Adjust the prefered theme (main, course, user)
+    theme_setup();
+
     chat_force_language($chatuser->lang);
 
     $courseid = $chatuser->course;
