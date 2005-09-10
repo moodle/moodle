@@ -41,6 +41,8 @@ $string['htmlfragment'] = ' Fragment HTML';
 $string['localfile'] = 'Lokalizacja pliku';
 $string['localfilechoose'] = 'Wybierz plik';
 $string['localfilehelp'] = 'Poka¿ lokalne pliki';
+$string['localfileinfo'] = '<p>Wybierz lokalny plik na swoim komputerze.
+Plik nie zostanie za³adowany na serwer, ale Moodle poszuka tego pliku na komputerze wszystkich u¿ytkowników korzystaj±cych z tego zasobu.</p><p>  Ta opcja jest szczególnie u¿yteczna kiedy udostêpniasz wszystkim uczestnikom duze pliki z CD-romu. Ka¿dy uczestnik mo¿e wówczas, poprzez a href=\"$a\" target=\"_blank\">edycjê swojego profilu u¿ytkownika</a>, okre¶liæ w³asn± lokaln± ¶cie¿kê dla takich plików .</p>';
 $string['localfilepath'] = 'Ustaw ¶cie¿kê do Twojego lokalnego zasobu, wybierz plik z napêdu (przewa¿nie CD-ROM) na Twoim komputerze, gdzie zasób siê znajduje. Plik nie bêdzie przesy³any ale informacja o napêdzie bêdzie przechowywana i u¿yta dla lokalnych plików (zasobów).';
 $string['localfileselect'] = 'Wybierz';
 $string['maindirectory'] = 'Folder z g³ównymi plikami';

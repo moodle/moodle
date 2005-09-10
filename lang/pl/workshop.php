@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.5.2 + (2005072200)
+      // workshop.php - created with Moodle 1.5.2 + (2005060222)
 
 
 $string['absent'] = 'Nieobecny';
@@ -192,7 +192,7 @@ $string['overallteachergrade'] = 'Koñcowa ocena prowadz±cego: $a';
 $string['ownwork'] = 'Praca w³asna';
 $string['passmnts'] = 'Poka¿ oceny ***';
 $string['passwordprotectedworkshop'] = 'Praca chroniona has³em';
-$string['percentageofassessments'] = 'Procent ocen, którye nie zostan± uwzglêdnione';
+$string['percentageofassessments'] = 'Procent ocen, które nie zostan± uwzglêdnione';
 $string['phase'] = 'Faza';
 $string['phase0'] = 'Nieaktywny';
 $string['phase0short'] = 'Nieaktywny';
@@ -286,7 +286,7 @@ $string['unassessed'] = '$a nieoceni³';
 $string['ungradedassessments'] = '$a niepostopniowa³ ocen';
 $string['ungradedassessmentsofstudentsubmissions'] = '$a niesklasyfikowanych ocen przes³anych przez studentów';
 $string['ungradedassessmentsofteachersubmissions'] = '$a niesklasyfikowanych ocen przes³anych przez prowadz±cego';
-$string['uploadsuccess'] = 'Pobierani zakoñczone sukcesemm';
+$string['uploadsuccess'] = 'Pobieranie zakoñczone sukcesem';
 $string['usepassword'] = 'U¿yj has³a';
 $string['verylax'] = 'Do¶æ dobrze';
 $string['verypoor'] = 'Bardzo s³abo';
