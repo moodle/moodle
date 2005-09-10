@@ -101,7 +101,7 @@ function s($var) {
     if ($var == '0') {  // for integer 0, boolean false, string '0'
         return '0';
     }
-    return htmlSpecialChars(stripslashes_safe($var));
+    return preg_replace("/&amp;(\w+|#\d+);/i", "&$1;", htmlspecialchars(stripslashes_safe($var)));
 }
 
 /**
@@ -114,11 +114,7 @@ function s($var) {
  * @return string
  */
 function p($var) {
-    if ($var == '0') {  // for integer 0, boolean false, string '0'
-        echo '0';
-    } else {
-        echo htmlSpecialChars(stripslashes_safe($var));
-    }
+    echo s($var);
 }
 
 
