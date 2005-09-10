@@ -583,10 +583,17 @@ table.message_search_results td {
   border-color: #DDDDDD;
 }
 
-
 /***
  *** Modules: Chat
  ***/
+
+#mod-chat-gui_header_js-jsupdate .text {
+  color:#000
+}
+#mod-chat-gui_header_js-jsupdate .event,
+#mod-chat-gui_header_js-jsupdate .title {
+  color:#888
+}
 
 /***
  *** Modules: Choice

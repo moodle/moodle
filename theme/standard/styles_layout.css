@@ -1109,6 +1109,19 @@ body#user-index table.controls .right {
  *** Modules: Chat
  ***/
 
+#mod-chat-gui_header_js-jsupdate {
+  margin:10px
+}
+#mod-chat-gui_header_js-jsupdate .chat-event,
+#mod-chat-gui_header_js-jsupdate .chat-message {
+  width:100%;
+  padding:0;
+  margin-top:7px
+}
+#mod-chat-gui_header_js-jsupdate .picture {
+  width:40px
+}
+
 /***
  *** Modules: Choice
  ***/
