@@ -130,6 +130,7 @@ div.header,
 
 /** Places using the horizontal medium wood texture without borders **/
 
+#mod-chat-gui_header_js-chatinput,
 .forumpost .header,
 #mod-forum-view table.forumheaderlist th,
 .glossarypost .entryheader,
@@ -180,6 +181,7 @@ div.header,
 
 /** Places using the vertical white wood texture without borders **/
 
+#mod-chat-gui_header_js-users,
 #admin-index .c1,
 #admin-config .c1,
 #course-view .section .content,
