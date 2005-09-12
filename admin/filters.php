@@ -24,6 +24,8 @@
     $params->cachetext = optional_param( 'cachetext','0',PARAM_INT );
     $params->filteruploadedfiles = optional_param( 'filteruploadedfiles','',PARAM_ALPHA );
     $params->filterall = optional_param( 'filterall','',PARAM_ALPHA );
+    $params->filtermatchoneperpage = optional_param( 'filtermatchoneperpage','',PARAM_ALPHA );
+    $params->filtermatchonepertext = optional_param( 'filtermatchonepertext','',PARAM_ALPHA );
 
     // get translated strings for use on page
     $txt = new Object;
@@ -43,7 +45,11 @@
     $txt->filteruploadedfiles = get_string( 'filteruploadedfiles','admin' );
     $txt->configfilteruploadedfiles = get_string( 'configfilteruploadedfiles','admin' );
     $txt->filterall = get_string( 'filterall','admin' );
+    $txt->filtermatchoneperpage = get_string( 'filtermatchoneperpage','admin' );
+    $txt->filtermatchonepertext = get_string( 'filtermatchonepertext','admin' );
     $txt->configfilterall = get_string( 'configfilterall','admin' );
+    $txt->configfiltermatchoneperpage = get_string( 'configfiltermatchoneperpage','admin' );
+    $txt->configfiltermatchonepertext = get_string( 'configfiltermatchonepertext','admin' );
     $txt->cachecontrols = get_string( 'cachecontrols' );
     $txt->yes = get_string( 'yes' );
     $txt->no = get_string('no');
@@ -154,6 +160,8 @@
         set_config( 'cachetext', $params->cachetext );
         set_config( 'filteruploadedfiles', $params->filteruploadedfiles );
         set_config( 'filterall', $params->filterall );
+        set_config( 'filtermatchoneperpage', $params->filtermatchoneperpage );
+        set_config( 'filtermatchonepertext', $params->filtermatchonepertext );
     }
 
     //======================
@@ -289,6 +297,16 @@
                 <td nowrap="nowrap" align="right"><?php echo $txt->filteruploadedfiles; ?></td>
                 <td><?php choose_from_menu( array($txt->no,$txt->yes), "filteruploadedfiles", $CFG->filteruploadedfiles,"","",""); ?></td>
                 <td><?php echo $txt->configfilteruploadedfiles; ?></td>
+            </tr>
+            <tr valign="top">
+                <td nowrap="nowrap" align="right"><?php echo $txt->filtermatchoneperpage; ?></td>
+                <td><?php choose_from_menu( array($txt->no,$txt->yes), "filtermatchoneperpage", $CFG->filtermatchoneperpage,"","",""); ?></td>
+                <td><?php echo $txt->configfiltermatchoneperpage; ?></td>
+	    <tr valign="top">
+		<td nowrap="nowrap" align="right"><?php echo $txt->filtermatchonepertext; ?></td>
+		<td><?php choose_from_menu( array($txt->no,$txt->yes), "filtermatchonepertext", $CFG->filtermatchonepertext,"","",""); ?></td>
+		<td><?php echo $txt->configfiltermatchonepertext; ?></td>
+	    </tr>
             </tr>
             <tr valign="top">
                 <td nowrap="nowrap" align="right"><?php echo $txt->filterall; ?></td>
