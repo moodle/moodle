@@ -140,7 +140,7 @@ function mimeinfo($element, $filename) {
 
 function send_file($path, $filename, $lifetime=86400 , $filter=false, $pathisstring=false,$forcedownload=false) {
 
-    $mimetype     = $forcedownload ? 'application/force-download' : mimeinfo('type', $filename);
+    $mimetype     = $forcedownload ? 'application/x-forcedownload' : mimeinfo('type', $filename);
     $lastmodified = $pathisstring ? time() : filemtime($path);
     $filesize     = $pathisstring ? strlen($path) : filesize($path);
 
