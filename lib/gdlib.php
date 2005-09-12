@@ -182,14 +182,17 @@ function save_profile_image($id, $uploadmanager, $dir='users') {
     ImageCopyBicubic($im1, $im, 0, 0, $cx-$half, $cy-$half, 100, 100, $half*2, $half*2);
     ImageCopyBicubic($im2, $im, 0, 0, $cx-$half, $cy-$half, 35, 35, $half*2, $half*2);
 
-    if (ImageJpeg($im1, $CFG->dataroot .'/'. $dir .'/'. $id .'/f1.jpg', 90) and 
-        ImageJpeg($im2, $CFG->dataroot .'/'. $dir .'/'. $id .'/f2.jpg', 95) ) {
-        @chmod($CFG->dataroot .'/'. $dir .'/'. $id .'/f1.jpg', 0666);
-        @chmod($CFG->dataroot .'/'. $dir .'/'. $id .'/f2.jpg', 0666);
-        return 1;
+    if (function_exists('ImageJpeg')) {
+        if (ImageJpeg($im1, $CFG->dataroot .'/'. $dir .'/'. $id .'/f1.jpg', 90) and 
+            ImageJpeg($im2, $CFG->dataroot .'/'. $dir .'/'. $id .'/f2.jpg', 95) ) {
+            @chmod($CFG->dataroot .'/'. $dir .'/'. $id .'/f1.jpg', 0666);
+            @chmod($CFG->dataroot .'/'. $dir .'/'. $id .'/f2.jpg', 0666);
+            return 1;
+        }
     } else {
-        return 0;
+        notify('PHP has not been configured to support JPEG images.  Please correct this.');
     }
+    return 0;
 }
 
 /** 
@@ -250,13 +253,16 @@ function upgrade_profile_image($id, $dir='users') {
     } 
     ImageCopyBicubic($im2, $im, 0, 0, 2, 2, 35, 35, 96, 96);
 
-    if (ImageJpeg($im1, $CFG->dataroot .'/'. $dir .'/'. $id .'/f1.jpg', 90) and 
-        ImageJpeg($im2, $CFG->dataroot .'/'. $dir .'/'. $id .'/f2.jpg', 95) ) {
-        @chmod($CFG->dataroot .'/'. $dir .'/'. $id .'/f1.jpg', 0666);
-        @chmod($CFG->dataroot .'/'. $dir .'/'. $id .'/f2.jpg', 0666);
-        return 1;
+    if (function_exists('ImageJpeg')) {
+        if (ImageJpeg($im1, $CFG->dataroot .'/'. $dir .'/'. $id .'/f1.jpg', 90) and 
+            ImageJpeg($im2, $CFG->dataroot .'/'. $dir .'/'. $id .'/f2.jpg', 95) ) {
+            @chmod($CFG->dataroot .'/'. $dir .'/'. $id .'/f1.jpg', 0666);
+            @chmod($CFG->dataroot .'/'. $dir .'/'. $id .'/f2.jpg', 0666);
+            return 1;
+        }
     } else {
-        return 0;
+        notify('PHP has not been configured to support JPEG images.  Please correct this.');
     }
+    return 0;
 }
 ?>
