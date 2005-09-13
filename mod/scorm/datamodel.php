@@ -34,11 +34,13 @@
     
     if (confirm_sesskey() && (!empty($scoid))) {
         $result = true;
-        foreach ($_POST as $element => $value) {
-            if (substr($element,0,3) == 'cmi') {
-                $element = str_replace('__','.',$element);
-                $element = preg_replace('/_(\d+)/',".\$1",$element);
-                $result = scorm_insert_track($USER->id, $scorm->id, $scoid, $element, $value) && $result;
+        if (isstudent($course->id)) {
+            foreach ($_POST as $element => $value) {
+                if (substr($element,0,3) == 'cmi') {
+                    $element = str_replace('__','.',$element);
+                    $element = preg_replace('/_(\d+)/',".\$1",$element);
+                    $result = scorm_insert_track($USER->id, $scorm->id, $scoid, $element, $value) && $result;
+                }
             }
         }
         if ($result) {

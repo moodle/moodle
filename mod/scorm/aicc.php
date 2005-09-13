@@ -129,7 +129,7 @@
                 break;
                 case 'putparam':
                     if ($status == 'Running') {
-                        if (!empty($aiccdata)) {
+                        if (!empty($aiccdata) && isstudent($scorm->course)) {
                             $initlessonstatus = 'not attempted';
                             $lessonstatus = 'not attempted';
                             if (isset($SESSION->scorm_lessonstatus)) {

@@ -80,11 +80,6 @@
 
         print_simple_box(format_text($scorm->summary), 'center', '70%', '', 5, 'generalbox', 'intro');
 
-        if (isguest()) {
-            print_heading(get_string("guestsno", "scorm"));
-            print_footer($course);
-            exit;
-        }
         print_simple_box_start('center');
 ?>
         <div class="structurehead"><?php print_string('coursestruct','scorm') ?></div>
