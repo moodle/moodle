@@ -167,7 +167,7 @@ function SCORMapi1_2() {
         if (param == "") {
             if (!Initialized) {
                 <?php 
-                    if ($CFG->debug > 7) {
+                    if (($CFG->debug > 7) && (isadmin())) {
                         echo 'alert("Initialized");';
                     }
                 ?>
@@ -188,7 +188,7 @@ function SCORMapi1_2() {
         if (param == "") {
             if (Initialized) {
                 <?php 
-                    if ($CFG->debug > 7) {
+                    if (($CFG->debug > 7) && (isadmin())) {
                         echo 'alert("Finished");';
                     }
                 ?>
@@ -233,7 +233,7 @@ function SCORMapi1_2() {
                             if (subelement == element) {
                             errorCode = "0";
                             <?php 
-                                if ($CFG->debug > 7) {
+                                if (($CFG->debug > 7) && (isadmin())) {
                                     echo 'alert(element+": "+eval(element));';
                                 }
                             ?>
@@ -348,7 +348,7 @@ function SCORMapi1_2() {
                                     }
                                     errorCode = "0";
                                     <?php 
-                                        if ($CFG->debug > 7) {
+                                        if (($CFG->debug > 7) && (isadmin())) {
                                             echo 'alert(element+":= "+value);';
                                         }
                                     ?>
