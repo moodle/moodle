@@ -27,7 +27,7 @@ class block_login extends block_base {
             $wwwroot = str_replace("http://", "https://", $CFG->wwwroot);
         }
 
-        if (is_internal_auth()) {
+        if ($CFG->auth == 'email') {
             $signup = $wwwroot . '/login/signup.php';
             $forgot = $wwwroot . '/login/forgot_password.php';
         } else {
@@ -36,7 +36,9 @@ class block_login extends block_base {
             } else {
                 $forgot = '';
             }
-            $signup = $wwwroot . '/login/index.php';  // to see instructions!
+            if (!empty($CFG->auth_user_create)) {
+                $signup = $wwwroot . '/login/index.php';  // to see instructions!
+            }
         }
 
         $username = get_moodle_cookie() === 'nobody' ? '' : get_moodle_cookie();
