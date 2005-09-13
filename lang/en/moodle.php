@@ -480,6 +480,7 @@ $string['forcelanguage'] = 'Force language';
 $string['forceno'] = 'Do not force';
 $string['forcepasswordchange'] = 'Force password change';
 $string['forcepasswordchangehelp'] = 'Prompt user to change it on their next login';
+$string['forcepasswordchangenotice'] = 'You must change your password to proceed.';
 $string['forcetheme'] = 'Force theme';
 $string['forgotten'] = 'Forgotten your username or password?';
 $string['forgotaccount'] = 'Lost password?';
