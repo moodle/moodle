@@ -96,7 +96,12 @@
         $usernew->mailformat    = clean_param($usernew->mailformat,    PARAM_INT);
         $usernew->maildigest    = clean_param($usernew->maildigest,    PARAM_INT);
         $usernew->autosubscribe = clean_param($usernew->autosubscribe, PARAM_INT);
-        $usernew->htmleditor    = clean_param($usernew->htmleditor,    PARAM_INT);
+        if (!empty($CFG->htmleditor)) {
+            $usernew->htmleditor    = clean_param($usernew->htmleditor,    PARAM_INT);
+        }
+        else {
+            unset( $usernew->htmleditor );
+        }
         $usernew->emailstop     = clean_param($usernew->emailstop,     PARAM_INT);
 
         if (isset($usernew->timezone)) {
