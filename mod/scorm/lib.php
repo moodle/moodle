@@ -48,10 +48,11 @@ function scorm_add_instance($scorm) {
 
     $id = insert_record('scorm', $scorm);
 
-
-    // Rename temp scorm dir to scorm id
-    $scormdir = $CFG->dataroot.'/'.$scorm->course.'/moddata/scorm';
-    rename($scormdir.$scorm->datadir,$scormdir.'/'.$id);
+    if (basename($scorm->reference) != 'imsmanifest.xml') {
+        // Rename temp scorm dir to scorm id
+        $scormdir = $CFG->dataroot.'/'.$scorm->course.'/moddata/scorm';
+        rename($scormdir.$scorm->datadir,$scormdir.'/'.$id);
+    }
 
     // Parse scorm manifest
     if ($scorm->launch == 0) {
@@ -59,7 +60,11 @@ function scorm_add_instance($scorm) {
         if ($scorm->pkgtype == 'AICC') {
             $scorm->launch = scorm_parse_aicc($scormdir.'/'.$id,$id);
         } else {
-            $scorm->launch = scorm_parse_scorm($scormdir.'/'.$id,$id);
+            if (basename($scorm->reference) != 'imsmanifest.xml') {
+                $scorm->launch = scorm_parse_scorm($scormdir.'/'.$id,$id);
+            } else {
+                $scorm->launch = scorm_parse_scorm($CFG->dataroot.'/'.$scorm->course.'/'.dirname($scorm->reference),$id);
+            }
         }
         set_field('scorm','launch',$scorm->launch,'id',$id);
     }
@@ -89,7 +94,7 @@ function scorm_update_instance($scorm) {
         delete_records('scorm_scoes_track','scormid',$scorm->id);
         
         $scormdir = $CFG->dataroot.'/'.$scorm->course.'/moddata/scorm';
-        if (isset($scorm->datadir) && ($scorm->datadir != $scorm->id)) {
+        if (isset($scorm->datadir) && ($scorm->datadir != $scorm->id) && (basename($scorm->reference) != 'imsmanifest.xml')) {
             scorm_delete_files($scormdir.'/'.$scorm->id);
             rename($scormdir.$scorm->datadir,$scormdir.'/'.$scorm->id);
         }
@@ -97,7 +102,11 @@ function scorm_update_instance($scorm) {
         if ($scorm->pkgtype == 'AICC') {
             $scorm->launch = scorm_parse_aicc($scormdir.'/'.$scorm->id,$scorm->id);
         } else {
-            $scorm->launch = scorm_parse_scorm($scormdir.'/'.$scorm->id,$scorm->id);
+            if (basename($scorm->reference) != 'imsmanifest.xml') {
+                $scorm->launch = scorm_parse_scorm($scormdir.'/'.$scorm->id,$scorm->id);
+            } else {
+                $scorm->launch = scorm_parse_scorm($CFG->dataroot.'/'.$scorm->course.'/'.dirname($scorm->reference),$scorm->id);
+            }
         }
     }
 
@@ -114,7 +123,7 @@ function scorm_update_instance($scorm) {
 */
 function scorm_delete_instance($id) {
 
-    require('../config.php');
+    global $CFG;
 
     if (! $scorm = get_record('scorm', 'id', $id)) {
         return false;

@@ -62,6 +62,7 @@
     function validate_scorm(theform,filename) {
         var myRequest = NewHttpReq();
         result = DoRequest(myRequest,"<?php p($CFG->wwwroot) ?>/mod/scorm/validate.php","id=<?php p($form->course) ?>&reference="+filename+"<?php echo $sessionkey.$scormid.$datadir ?>");
+        //alert(result);
         results = result.split('\n');
         result = '';
         errorlogs = '';

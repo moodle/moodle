@@ -7,7 +7,7 @@
     $reference = required_param('reference', '', PARAM_PATH);    // Package path
     $scormid = optional_param('instance', '', PARAM_INT);       // scorm ID
 
-    require_login($course->id, false, $cm);
+    require_login($courseid, false);
 
 if (confirm_sesskey() && !empty($courseid)) {
     $launch = 0;
@@ -53,25 +53,36 @@ if (confirm_sesskey() && !empty($courseid)) {
         // Package must be validated
         //
 
-        // Create a temporary directory to unzip package and validate package
-        $tempdir = '';
-        $scormdir = '';
-        if ($scormdir = make_upload_directory("$courseid/$CFG->moddata/scorm")) {
-            if ($tempdir = scorm_datadir($scormdir)) {
-                copy ("$CFG->dataroot/$courseid/$reference", $tempdir."/".basename($reference));
-                $ext = strtolower(substr(basename($reference),strrpos(basename($reference),'.')));
-                if (($ext == '.zip') || ($ext == '.pif')) {
-                    unzip_file($tempdir."/".basename($reference), $tempdir, false);
-                    unlink ($tempdir."/".basename($reference));
-                    $validation = scorm_validate($tempdir);
+        $ext = strtolower(substr(basename($reference),strrpos(basename($reference),'.')));
+        switch ($ext) {
+            case '.pif':
+            case '.zip':
+                // Create a temporary directory to unzip package and validate package
+                $tempdir = '';
+                $scormdir = '';
+                if ($scormdir = make_upload_directory("$courseid/$CFG->moddata/scorm")) {
+                    if ($tempdir = scorm_datadir($scormdir)) {
+                        copy ("$CFG->dataroot/$courseid/$reference", $tempdir."/".basename($reference));
+                        unzip_file($tempdir."/".basename($reference), $tempdir, false);
+                        unlink ($tempdir."/".basename($reference));
+                        $validation = scorm_validate($tempdir);
+                    } else {
+                        $validation->result = "packagedir";
+                    }
                 } else {
-                    $validation->result = "packagefile";
+                    $validation->result = "datadir";
                 }
-            } else {
-                $validation->result = "packagedir";
-            }
-        } else {
-            $validation->result = "datadir";
+            break;
+            case '.xml':
+                if (basename($reference) == 'imsmanifest.xml') {
+                    $validation = scorm_validate("$CFG->dataroot/$courseid/".dirname($reference));
+                } else {
+                    $validation->result = "manifestfile";
+                }
+            break;
+            default: 
+                $validation->result = "packagefile";
+            break;
         }
         if (($validation->result != "regular") && ($validation->result != "found")) {
             $validation->result = get_string($validation->result,'scorm');
@@ -80,7 +91,11 @@ if (confirm_sesskey() && !empty($courseid)) {
                 scorm_delete_files($tempdir);
             }
         } else {
-            $datadir = substr($tempdir,strlen($scormdir));
+            if ($ext == '.xml') {
+                $datadir = dirname($reference);
+            } else {
+                $datadir = substr($tempdir,strlen($scormdir));
+            }
         }
     }
     //

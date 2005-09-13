@@ -75,7 +75,7 @@
         } else {
             $connector = '?';
         }
-        if ($sco->parameters[0] == '?') {
+        if (!empty($sco->parameters) && ($sco->parameters[0] == '?')) {
             $sco->parameters = substr($sco->parameters,1);
         }
     }
@@ -92,10 +92,15 @@
     if (scorm_external_link($sco->launch)) {
         $result = $launcher;
     } else {
-        if ($CFG->slasharguments) {
-            $result = $CFG->wwwroot.'/file.php/'.$scorm->course.'/moddata/scorm/'.$scorm->id.'/'.$launcher;
+        if (basename($scorm->reference) == 'imsmanifest.xml') {
+            $basedir = dirname($scorm->reference);
         } else {
-            $result = $CFG->wwwroot.'/file.php?file=/'.$scorm->course.'/moddata/scorm/'.$scorm->id.'/'.$launcher;
+            $basedir = 'moddata/scorm/'.$scorm->id;
+        }
+        if ($CFG->slasharguments) {
+            $result = $CFG->wwwroot.'/file.php/'.$scorm->course.'/'.$basedir.'/'.$launcher;
+        } else {
+            $result = $CFG->wwwroot.'/file.php?file=/'.$scorm->course.'/'.$basedir.'/'.$launcher;
         }
     }
 ?>
