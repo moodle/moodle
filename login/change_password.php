@@ -11,7 +11,10 @@
         error('No such course!');
     }
 
-    if (empty($USER->preference['auth_forcepasswordchange'])) {  // Don't redirect if they just got sent here
+    // did we get here because of a force password change
+    $forcepassword = !empty($USER->preference['auth_forcepasswordchange']);
+
+    if (!$forcepassword) {  // Don't redirect if they just got sent here
         require_login($id);
     }
     
