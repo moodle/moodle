@@ -47,7 +47,7 @@
        <a href=\"view.php?f=$forum->id\">".format_string($forum->name,true)."</a> -> $strsubscribers";
 
     print_header_simple("$strsubscribers", "", "$navigation",
-        "", "", true, forum_update_subscriptions_button($course->id, $id), true);
+        "", "", true, forum_update_subscriptions_button($course->id, $id));
 
 /// Check to see if groups are being used in this forum
     if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
