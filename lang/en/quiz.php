@@ -1,4 +1,4 @@
-<?PHP // $Id$ 
+<?PHP // $Id$
       // quiz.php - created with Moodle 1.5 ALPHA (2005050600)
 
 
@@ -387,6 +387,11 @@ $string['shuffleanswers'] = 'Shuffle answers';
 $string['shufflequestions'] = 'Shuffle questions';
 $string['significantfigures'] = ' with $a ';
 $string['significantfiguresformat'] = 'significant figures';
+$string['sortalpha'] = 'Sort alphabetically';
+$string['sortage']   = 'Sort by age';
+$string['sortsubmit']   = 'Sort quetsions';
+$string['startagain'] = 'Start again';
+$string['startagain'] = 'Start again';
 $string['startagain'] = 'Start again';
 $string['startedon'] = 'Started on';
 $string['subneterror'] = 'Sorry, this quiz has been locked so that it is only accessible from certain locations.  Currently your computer is not one of those allowed to use this quiz.';

@@ -438,7 +438,7 @@ function quiz_print_category_form($course, $current, $recurse=1, $showhidden=fal
 * @param boolean $showhidden   True if also hidden questions should be displayed
 */
 function quiz_print_cat_question_list($course, $categoryid, $quizid,
- $recurse=1, $page, $perpage, $showhidden=false) {
+ $recurse=1, $page, $perpage, $showhidden=false, $sortorder='qtype, name ASC') {
     global $QUIZ_QUESTION_TYPE, $USER;
 
     $strcategory = get_string("category", "quiz");
@@ -461,6 +461,10 @@ function quiz_print_cat_question_list($course, $categoryid, $quizid,
     $strtype = get_string("type", "quiz");
     $strcreatemultiple = get_string("createmultiple", "quiz");
     $strpreview = get_string("preview","quiz");
+
+    $strsortalpha  = get_string("sortalpha", "quiz");
+    $strsortage    = get_string("sortage", "quiz");
+    $strsortsubmit = get_string("sortsubmit", "quiz");
 
     if (!$categoryid) {
         echo "<p align=\"center\"><b>";
@@ -525,10 +529,10 @@ function quiz_print_cat_question_list($course, $categoryid, $quizid,
         return;
     }
 
-    if (!$questions = get_records_select('quiz_questions', "category IN ($categorylist) AND parent = '0' $showhidden", 'qtype, name ASC', '*', $page*$perpage, $perpage)) {
+    if (!$questions = get_records_select('quiz_questions', "category IN ($categorylist) AND parent = '0' $showhidden", $sortorder, '*', $page*$perpage, $perpage)) {
         // There are no questions on the requested page.
         $page = 0;
-        if (!$questions = get_records_select('quiz_questions', "category IN ($categorylist) AND parent = '0' $showhidden", 'qtype, name ASC', '*', 0, $perpage)) {
+        if (!$questions = get_records_select('quiz_questions', "category IN ($categorylist) AND parent = '0' $showhidden", $sortorder, '*', 0, $perpage)) {
             // There are no questions at all
             echo "<p align=\"center\">";
             print_string("noquestions", "quiz");
@@ -548,7 +552,11 @@ function quiz_print_cat_question_list($course, $categoryid, $quizid,
     echo '<table id="categoryquestions" cellspacing="0"><tr>';
     $actionwidth = $canedit ? 95 : 70;
     echo "<th width=\"$actionwidth\" nowrap=\"nowrap\" class=\"header\">$straction</th>";
-    echo "<th width=\"100%\" align=\"left\" nowrap=\"nowrap\" class=\"header\">$strquestionname</th>
+    $sortoptions = array('qtype, name ASC' => $strsortalpha,
+                         'id ASC' => $strsortage);
+    $orderselect  = choose_from_menu ($sortoptions, 'sortorder', $sortorder, false, 'this.form.submit();', '0', true);
+    $orderselect .= '<noscript><input type="submit" value="$strsortsubmit" /></noscript>';
+    echo "<th width=\"100%\" align=\"left\" nowrap=\"nowrap\" class=\"header\">$strquestionname $orderselect</th>
     <th nowrap=\"nowrap\" class=\"header\">$strtype</th>";
     echo "</tr>\n";
     foreach ($questions as $question) {
