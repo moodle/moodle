@@ -1,7 +1,8 @@
 <?PHP // $Id$ 
-      // enrol_authorize.php - created with Moodle 1.6 development (2005072200)
+      // enrol_authorize.php - created with Moodle 1.6 development (2005081700)
 
 
+$string['adminreview'] = 'Kredi kartýndan çekmeden önce sipariþi incele.';
 $string['anlogin'] = 'Authorize.net: Kullanýcý adý';
 $string['anpassword'] = 'Authorize.net: Þifre';
 $string['anreferer'] = 'Authorize.net hesabýnýzda URL referer ayarý yaptýysanýz buraya yazýnýz. Bu, web isteðinde \"Referer: URL\" baþlýðýný gönderir.';
@@ -27,6 +28,8 @@ $string['logindesc'] = 'Bu seçenek AÇIK olmalý.
 <br /><br />
 Bu seçenek aktif ise sadece giriþ ve ödeme sayfalarý için güvenli baðlantý (https) kullanýlacaktýr.';
 $string['nameoncard'] = 'Kart Üzerindeki Ýsim';
+$string['reviewday'] = '<b>$a</b> gün içinde eðitimci veya yönetici sipariþi incelemezse kredi kartýndan otomatik olarak parayý çek. CRON ETKÝN OLMALI. <br /> (0 gün = otomatik çekme aktif deðil = Eðimci veya yönetici sipariþi kendisi inceleyecek. Otomatik çekmeyi etinleþtirmezseniz veya 30 gün içinde sipariþi incelemezseniz iþlem iptal edilir.)';
+$string['reviewnotify'] = 'Ödemeniz incelenecek. Bir kaç gün içinde eðitimcinizden bir email bekleyin.';
 $string['sendpaymentbutton'] = 'Ödemeyi Yap';
 $string['zipcode'] = 'Posta Kodu';
 
