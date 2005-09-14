@@ -89,6 +89,7 @@ $string['nonews'] = 'Henüz haber gönderilmemiþ';
 $string['noposts'] = 'Mesaj yok';
 $string['nopostscontaining'] = 'Ýçinde \'$a\' olan bir mesaj bulunamadý';
 $string['nosubscribers'] = 'Bu forumun henüz bir abonesi yoktur';
+$string['nothingnew'] = '$a için yeni bir þey yok';
 $string['notingroup'] = 'Üzgünüz, bu forumu görebilmeniz için üyesi olmalýsýnýz.';
 $string['notrackforum'] = 'Okunmamýþ mesajlarý ÝZLEME';
 $string['nownotsubscribed'] = 'Kullanýcý $a->name, \'$a->forum\' baþlýklý forumun kopyasýný epostayla ALAMAYACAKTIR.';
