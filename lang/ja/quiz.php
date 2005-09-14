@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.6 development (2005072100)
+      // quiz.php - created with Moodle 1.6 development (2005090100)
 
 
 $string['acceptederror'] = 'エラー範囲';
@@ -50,9 +50,9 @@ $string['bestgrade'] = '最高評点';
 $string['blackboard'] = 'Blackboard';
 $string['calculated'] = '計算問題';
 $string['calculatedquestion'] = '$a 行の計算された問題はサポートされていません。問題は無視されました。';
-$string['caseno'] = 'いいえ、区別しません';
+$string['caseno'] = 'いいえ、文字の大小は重要ではありません。';
 $string['casesensitive'] = '大文字小文字の区別';
-$string['caseyes'] = 'はい、合致する必要があります';
+$string['caseyes'] = 'はい、文字の大小は合致する必要があります。';
 $string['categories'] = 'カテゴリ';
 $string['category'] = 'カテゴリ';
 $string['categoryadded'] = 'カテゴリ「 $a 」が追加されました。';
@@ -257,8 +257,7 @@ $string['noscript'] = '続けるにはJavaスクリプトを使用可にしてください!';
 $string['notavailable'] = '申し訳御座いません、このクイズはまだ利用できません。';
 $string['notavailabletostudents'] = '注意: この小テストは現在あなたの学生は利用できません。';
 $string['notenoughanswers'] = 'このタイプの質問には少なくとも $a の解答が必要です。';
-$string['notenoughsubquestions'] = '十分な副質問が定義されていません！<br />
-この質問を修正しますか？';
+$string['notenoughsubquestions'] = '十分な副質問が定義されていません！<br />この質問を修正しますか？';
 $string['notimedependentitems'] = '現在、時間に依存する項目は小テストモジュールではサポートされていません。代わりに小テスト全体に対して時間制限を設定してください。他の項目を選択しますか ( または無視してこの項目を使いますか ) ?';
 $string['numberabbr'] = '#';
 $string['numerical'] = '数値問題';
@@ -390,6 +389,9 @@ $string['shuffleanswers'] = '答えをシャッフルする';
 $string['shufflequestions'] = '問題をシャッフルする';
 $string['significantfigures'] = '有効数字 $a 桁';
 $string['significantfiguresformat'] = '有効数字';
+$string['sortage'] = '作成日時順';
+$string['sortalpha'] = 'アルファベット順';
+$string['sortsubmit'] = '問題の並び替え';
 $string['startagain'] = 'もう一度';
 $string['startedon'] = '開始日時';
 $string['subneterror'] = '申し訳ございません、この小テストは特定の場所からのみアクセス可能です。あなたのコンピュータはこの小テストを利用できるコンピュータではありません。';
