@@ -453,6 +453,7 @@ $string['forcelanguage'] = 'Imposer la langue';
 $string['forceno'] = 'Ne pas imposer';
 $string['forcepasswordchange'] = 'Imposer le changement du mot de passe';
 $string['forcepasswordchangehelp'] = 'Demande à l\'utilisateur de changer son mot de passe lors de la prochaine connexion';
+$string['forcepasswordchangenotice'] = 'Vous devez changer votre mot de passe pour continuer.';
 $string['forcetheme'] = 'Imposer le thème';
 $string['forgotaccount'] = 'Mot de passe perdu&nbsp;?';
 $string['forgotten'] = 'Vous avez oublié votre nom d\'utilisateur et/ou votre mot de passe ?';
