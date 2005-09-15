@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.6 development (2005060201)
+      // moodle.php - created with Moodle 1.6 development (2005090100)
 
 
 $string['action'] = 'Actie';
@@ -113,7 +113,7 @@ $string['backupkeephelp'] = 'Hoeveel recente backups wil je houden voor elke cur
 $string['backuplogdetailed'] = 'Gedetailleerde log van de bewerking';
 $string['backuploglaststatus'] = 'Laatste log van de bewerking';
 $string['backuplogshelp'] = 'Selecteer als je de logbestanden van de cursus mee in de backup wil';
-$string['backupmetacoursehelp'] = 'Als dit ingeschakeld is, dan zal de informatie voor overkoepelende cursussen (overgeërfde aanmeldingen) meegenomen worden in automatische backups';
+$string['backupmetacoursehelp'] = 'Als dit ingeschakeld is, dan zal de informatie voor overkoepelde cursussen (met overgeërfde aanmeldingen) meegenomen worden in automatische backups';
 $string['backupnameformat'] = '%%Y%%m%%d-%%H%%M';
 $string['backupnoneusersinfo'] = 'Let op: je hebt ervoor gekozen om \"geen\" gebruikers in de backup op te nemen. De backup van alle modules staat nu in de \"zonder gebruikersgegevens\"-modus. De modules \"oefening\" en \"workshop\" zijn niet compatibel met dit type backup en zullen niet mee in de backup gezet worden.';
 $string['backuporiginalname'] = 'Naam backup';
@@ -226,7 +226,7 @@ $string['creatinggradebook'] = 'Puntenboek maken';
 $string['creatinggroups'] = 'Groepen maken';
 $string['creatinglogentries'] = 'Loginvoer maken';
 $string['creatingmessagesinfo'] = 'Informatie voor berichten maken';
-$string['creatingmetacoursedata'] = 'Informatie voor overkoepelende cursus maken';
+$string['creatingmetacoursedata'] = 'Informatie voor overkoepelde cursus maken';
 $string['creatingnewcourse'] = 'Nieuwe cursus maken';
 $string['creatingscales'] = 'Schalen maken';
 $string['creatingsections'] = 'Secties maken';
@@ -551,7 +551,7 @@ $string['importdata'] = 'Importeer gegevens uit een cursus';
 $string['importdataexported'] = 'Gegevens met succes uit de broncursus geëxporteerd.<br />Ga verder om te importeren in de doelcursus.';
 $string['importdatafinished'] = 'Import volledig! Ga terug naar je cursus';
 $string['importdatafrom'] = 'Zoek de cursus waarvan je gegevens wil importeren:';
-$string['importmetacoursenote'] = 'Gebruik dit formulier om onderliggende cursussen aan je koepelcursus toe te voegen (hiermee worden de aanmeldingen geïmporteerd)';
+$string['importmetacoursenote'] = 'Gebruik dit formulier om cursussen aan je overkoepelde cursus toe te voegen (hiermee worden de aanmeldingen geïmporteerd)';
 $string['inactive'] = 'Niet actief';
 $string['include'] = 'Voeg toe';
 $string['includeallusers'] = 'Voeg alle gebruikers toe';
@@ -629,8 +629,8 @@ $string['makeeditable'] = 'Als je \'$a\' bewerkbaar maakt door het proces op de 
 $string['manageblocks'] = 'Blokken';
 $string['managedatabase'] = 'Beheer de database';
 $string['managefilters'] = 'Filters';
-$string['managemeta'] = 'Is dit een koepelcursus?';
-$string['managemetadisabled'] = 'Deze optie is uitgeschakeld omdat deze cursus al in een koepelcursus zit';
+$string['managemeta'] = 'Is dit een overkoepelde cursus?';
+$string['managemetadisabled'] = 'Deze optie is uitgeschakeld omdat deze cursus al overkoepeld is.';
 $string['managemetaexplan'] = '(Dit betekent dat aanmeldingen overgeërfd worden van andere cursussen)';
 $string['managemodules'] = 'Modules';
 $string['markedthistopic'] = 'Dit onderwerp is geselecteerd als het huidige onderwerp';
@@ -642,11 +642,11 @@ $string['maximumupload'] = 'Maximale uploadgrootte';
 $string['maxsize'] = 'Maximale grootte: $a';
 $string['metaaddcourse'] = 'Voeg deze cursus toe';
 $string['metaalreadycourses'] = 'Cursussen zijn al toegewezen';
-$string['metaalreadyhascourses'] = 'Deze  koepelcursus bevat al onderliggende cursussen.';
-$string['metaalreadyhasenrolments'] = 'Deze cursus heeft al gewone aanmeldingen.';
-$string['metaalreadyinmeta'] = 'Deze cursus is al een onderliggende cursus van een koepelcursus.';
-$string['metaassigncourses'] = 'Wijs cursussen toe';
-$string['metacourse'] = 'Overkoepelende cursus';
+$string['metaalreadyhascourses'] = 'Deze koepelcursus bevat al onderliggende cursussen.';
+$string['metaalreadyhasenrolments'] = 'Deze cursus heeft al gewone aanmeldingen en kan dus geen overkoeepelde cursus meer wprden.';
+$string['metaalreadyinmeta'] = 'Deze cursus is al een overkoepelde cursus. Je kunt dus in deze cusus geen leerlingen meer toevoegen.';
+$string['metaassigncourses'] = 'Kies  overkoepelende cursussen';
+$string['metacourse'] = 'Overkoepelde cursus';
 $string['metanoalreadycourses'] = 'Er zijn nog geen cursussen toegewezen';
 $string['metanopotentialcourses'] = 'Er zijn geen cursussen beschikbaar';
 $string['metapotentialcourses'] = 'Beschikbare cursussen';
