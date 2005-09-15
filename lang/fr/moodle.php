@@ -825,6 +825,7 @@ $string['numweeks'] = '$a semaines';
 $string['numwords'] = '$a mots';
 $string['numyears'] = '$a ans';
 $string['ok'] = 'Ok';
+$string['oldpassword'] = 'Mot de passe actuel';
 $string['opentoguests'] = 'Accès invité';
 $string['optional'] = 'facultatif';
 $string['order'] = 'Ordre';
