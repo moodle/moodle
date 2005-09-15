@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.5.1 (2005060210)
+      // quiz.php - created with Moodle 1.5.2 (2005060220)
 
 
 $string['acceptederror'] = 'Margen de error';
@@ -390,6 +390,9 @@ $string['shuffleanswers'] = 'Barajar respuestas';
 $string['shufflequestions'] = 'Barajar preguntas';
 $string['significantfigures'] = 'con $a';
 $string['significantfiguresformat'] = 'dígitos significativos';
+$string['sortage'] = 'Ordenar por edad';
+$string['sortalpha'] = 'Ordenar alfabéticamente';
+$string['sortsubmit'] = 'Ordenar preguntas';
 $string['startagain'] = 'Comenzar de nuevo';
 $string['startedon'] = 'Comenzado el';
 $string['subneterror'] = 'Lo sentimos, este cuestionario ha sido bloqueado de modo que sólo es accesible desde ciertas direcciones. En este momento su ordenador no está autorizado para usar este cuestionario.';
