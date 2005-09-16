@@ -4,39 +4,28 @@
 
 class hotpot_report extends hotpot_default_report {
 
-	function display(&$hotpot, &$cm, &$course, &$users, &$attempts, &$questions) {
+	function display(&$hotpot, &$cm, &$course, &$users, &$attempts, &$questions, &$options) {
 	
-		global $download;
-		optional_variable($download, "");
+		$this->create_scores_table($hotpot, $course, $users, $attempts, $questions, $options, $tables=array());
 
-		$this->create_scores_table($users, $attempts, $questions, $s_table=NULL, $download, $course, $hotpot);
-
-		switch ($download) {
-			case 'txt':
-				$this->print_text($course, $hotpot, $s_table);
-				break;
-
-			case 'xls':
-				$this->print_excel($course, $hotpot, $s_table);
-				break;
-
-			default:
-				$this->print_html($cm, $s_table, 'simplestat');
-		}		
+		$this->print_report($course, $hotpot, $tables, $options);
 
 		return true;
 	}
 
-	function create_scores_table(&$users, &$attempts, &$questions, &$table, $download, $course, $hotpot) {
+	function create_scores_table(&$hotpot, &$course, &$users, &$attempts, &$questions, &$options, &$tables) {
 
 		global $CFG;
 
+		$download = ($options['reportformat']=='htm') ? false : true;
+		$is_html = ($options['reportformat']=='htm');
 		$blank = ($download ? '' : '&nbsp;');
 		$no_value = ($download ? '' : '-');
 
-		$allow_review = true; // (!$download && (isteacher($course->id) || $hotpot->review));
+		$allow_review = true; // ($options['reportformat']=='htm' && (isteacher($course->id) || $hotpot->review));
 
 		// start the table
+		unset($table);
 		$table->border = 1;
 
 		$table->head = array();
@@ -44,16 +33,16 @@ class hotpot_report extends hotpot_default_report {
 		$table->size = array();
 
 		// picture column, if required
-		if (!$download) {
-			$table->head = array('&nbsp;');
-			$table->align = array('center');
-			$table->size = array(10);
+		if ($is_html) {
+			$table->head[] = '&nbsp;';
+			$table->align[] = 'center';
+			$table->size[] = 10;
 		}		
 
 		// name, grade and attempt number
 		array_push($table->head, 
 			get_string("name"),
-			hotpot_grade_heading($hotpot, $download), 
+			hotpot_grade_heading($hotpot, $options), 
 			get_string("attempt", "quiz")
 		);
 		array_push($table->align, "left", "center", "center");
@@ -84,12 +73,8 @@ class hotpot_report extends hotpot_default_report {
 			$u = &$user->attempts[0];
 			
 			$picture = '';
-			if (function_exists("fullname")) {
-				$name = fullname($u);
-			} else {
-				$name = "$u->firstname $u->lastname";
-			}
-			if (!$download) { // html
+			$name = fullname($u);
+			if ($is_html) {
 				$picture = print_user_picture($u->userid, $course->id, $u->picture, false, true);
 				$name = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$u->userid.'&course='.$course->id.'">'.$name.'</a>';
 			}
@@ -104,33 +89,45 @@ class hotpot_report extends hotpot_default_report {
 				$grade = $no_value;
 			}
 
-			$br = '';			
+			$attemptcount = count($user->attempts);
+			if ($attemptcount>1) {
+				$text = $name;
+				$name = NULL;
+				$name->text = $text;
+				$name->rowspan = $attemptcount;
+
+				$text = $grade;
+				$grade = NULL;
+				$grade->text = $text;
+				$grade->rowspan = $attemptcount;
+			}
+
 			$data = array();
-			if (!$download) {
-				array_push($data, $picture);
+			if ($is_html) {
+				if ($attemptcount>1) {
+					$text = $picture;
+					$picture = NULL;
+					$picture->text = $text;
+					$picture->rowspan = $attemptcount;
+				}
+				$data[] = $picture;
 			}
 			array_push($data, $name, $grade);
-			$start_col = count($data);
-
-			$data[] = ''; // attempt number
-			foreach ($questions as $question) {
-				$data[] = '';
-			}
-			array_push($data, '', ''); // penalties and raw score
 
 			foreach ($user->attempts as $attempt) {
-				$col = $start_col;
-				$is_best_grade = (!$download && $attempt->score==$user->grade);
 
-				// attempt number
+				// set flag if this is best grade
+				$is_best_grade = ($is_html && $attempt->score==$user->grade);
+
+				// get attempt number
 				$attemptnumber= $attempt->attempt;
-				if ($allow_review) {
-						$attemptnumber = '<a href="review.php?hp='.$hotpot->id.'&attempt='.$attempt->id.'">'.$attemptnumber.'</a>';
+				if ($is_html && $allow_review) {
+					$attemptnumber = '<a href="review.php?hp='.$hotpot->id.'&attempt='.$attempt->id.'">'.$attemptnumber.'</a>';
 				}
 				if ($is_best_grade) {
 					$score = '<span class="highlight">'.$attemptnumber.'</span>';
 				}
-				$data[$col++] .= $br.$attemptnumber;
+				$data[] = $attemptnumber;
 
 				// get responses to questions in this attempt by this user
 				foreach ($questions as $question) {
@@ -152,7 +149,8 @@ class hotpot_report extends hotpot_default_report {
 					} else {
 						$score = $no_value;
 					}
-					$data[$col++] .= $br.$score;
+
+					$data[] = $score;
 				} // foreach $questions
 
 				if (isset($attempt->penalties)) {
@@ -167,6 +165,8 @@ class hotpot_report extends hotpot_default_report {
 				} else {
 					$penalties = $no_value;
 				}
+				$data[] = $penalties;
+
 				if (isset($attempt->score)) {
 					$score = $attempt->score;
 					if (is_numeric($score)) {
@@ -179,21 +179,25 @@ class hotpot_report extends hotpot_default_report {
 				} else {
 					$score = $no_value;
 				}
+				$data[] = $score;
 
-				$data[$col++] .= $br.$penalties;
-				$data[$col++] .= $br.$score;
-				$br = ($download) ? "\n" : '<br />';
+				// append data for this attempt
+				$table->data[] = $data;
+
+				// reset data array for next attempt, if any
+				$data = array();
 
 			} // end foreach $attempt
 
-			// append data for this user
-			$table->data[] = $data;
-
+			$table->data[] = 'hr';
 		} // end foreach $user
+
+		// remove final 'hr' from data rows
+		array_pop($table->data);
 
 		// add averages to foot of table
 		$averages = array();
-		if (!$download) {
+		if ($is_html) {
 			$averages[] = $blank;
 		}
 		array_push($averages, get_string('average', 'hotpot'));
@@ -236,6 +240,8 @@ class hotpot_report extends hotpot_default_report {
 			$col++;
 		}
 		$table->foot = array($averages);
+
+		$tables[] = &$table;
 	}
 
 } // end class

@@ -6,30 +6,27 @@
 	// This is the "graphical" structure of the hotpot mod:
 	//-----------------------------------------------------------
 	//
-	//                        hotpot
-	//                  (CL, pk->id, files)
+	//                         hotpot
+	//                      (CL, pk->id, 
+	//                   fk->course, files)
 	//                           |
-	//            +--------------+--------------+
-	//            |                             |
-	//            |                             |
-	//    hotpot_attempts                 hotpot_questions
-	//      (UL, pk->id,                    (UL, pk->id,
-	//       fk->hotpot)                  fk->hotpot, text)
-	//            |                             |        |
-	//            |                             |        |
-	//            +--------------+--------------+        |
-	//                           |                       |
-	//                           |                       |
-	//                   hotpot_responses                |
-	//                     (UL, pk->id,                  |
-	//                 fk->attempt, question,            |
-	//                correct, wrong, ignored)           |
-	//                           |                       |
-	//                           |                       |
-	//                           +-----------+-----------+
-	//                                       |
-	//                                hotpot_strings
-	//                                 (UL, pk->id)
+	//            +--------------+---------------+
+	//            |                              |
+	//      hotpot_attempts             hotpot_questions
+	//       (UL, pk->id,                 (UL, pk->id, 
+	//        fk->hotpot)               fk->hotpot, text)
+	//            |                              |    |
+	//            +-------------------+----------+    |
+	//            |                   |               |
+	//      hotpot_details     hotpot_responses       |
+	//       (UL, pk->id,        (UL, pk->id,         |
+	//       fk->attempt)    fk->attempt, question,   |
+	//                      correct, wrong, ignored)  |
+	//                                |               |
+	//                                +-------+-------+
+	//                                        |
+	//                                 hotpot_strings
+	//                                  (UL, pk->id)
 	//
 	// Meaning: pk->primary key field of the table
 	//          fk->foreign key to link with parent
@@ -39,38 +36,37 @@
 	//          files->table may have files
 	//
 	//-----------------------------------------------------------
-	// It is not necessary to backup "questions", "responses" 
-	// and "strings", because they can be restored from the 
-	// "details" field of the "attempts" records
-	//-----------------------------------------------------------
 
 	function hotpot_backup_mods($bf, $preferences) {
+		// $bf : resource id for b(ackup) f(ile)
+		// $preferences : object containing switches and settings for this backup
 
-		$level = 3;
+ 		$level = 3;
 		$status = true;
 
 		$table = 'hotpot';
-		$field = 'course';
-		$value = $preferences->backup_course;
-
-		$modtype = 'hotpot';
+		$select = "course=$preferences->backup_course";
 
 		$records_tag = '';
 		$records_tags = array();
 
 		$record_tag = 'MOD';
-		$record_tags = array('MODTYPE'=>$modtype);
+		$record_tags = array('MODTYPE'=>'hotpot');
 
 		$excluded_tags = array();
 
 		$more_backup = '';
-		if ($preferences->mods[$modtype]->userinfo) {
-			$more_backup .= $modtype.'_backup_attempts($bf, $record, $level, $status);';
+		if ($preferences->mods['hotpot']->userinfo) {
+			$more_backup .= '$GLOBALS["hotpot_backup_string_ids"] = array();';
+			$more_backup .= '$status = hotpot_backup_attempts($bf, $record, $level, $status);';
+			$more_backup .= '$status = hotpot_backup_questions($bf, $record, $level, $status);';
+			$more_backup .= '$status = hotpot_backup_strings($bf, $record, $level, $status);';
+			$more_backup .= 'unset($GLOBALS["hotpot_backup_string_ids"]);'; // tidy up
 		}
 
 		return hotpot_backup_records(
 			$bf, $status, $level, 
-			$table, $field, $value, 
+			$table, $select, 
 			$records_tag, $records_tags,
 			$record_tag, $record_tags,
 			$excluded_tags, $more_backup
@@ -80,8 +76,7 @@
 		// $parent is a reference to a hotpot record
 
 		$table = 'hotpot_attempts';
-		$field = 'hotpot';
-		$value = $parent->id;
+		$select = "hotpot=$parent->id";
 
 		$records_tag = 'ATTEMPT_DATA';
 		$records_tags = array();
@@ -90,25 +85,175 @@
 		$record_tags = array();
 
 		$more_backup = '';
-		$excluded_tags = array();
+		$more_backup .= 'hotpot_backup_details($bf, $record, $level, $status);';
+		$more_backup .= 'hotpot_backup_responses($bf, $record, $level, $status);';
+
+		$excluded_tags = array('hotpot');
 
 		return hotpot_backup_records(
 			$bf, $status, $level, 
-			$table, $field, $value, 
+			$table, $select, 
 			$records_tag, $records_tags,
 			$record_tag, $record_tags,
 			$excluded_tags, $more_backup
 		);
 	}
+	function hotpot_backup_details($bf, &$parent, $level, $status) {
+		// $parent is a reference to an attempt record
 
-	function hotpot_backup_records(&$bf, $status, $level, $table, $field, $value, $records_tag, $records_tags, $record_tag, $record_tags, $excluded_tags, $more_backup) {
+		$table = 'hotpot_details';
+		$select = "attempt=$parent->id";
+
+		$records_tag = '';
+		$records_tags = array();
+
+		$record_tag = '';
+		$record_tags = array();
+
+		$more_backup = '';
+		$excluded_tags = array('id','attempt');
+
+		return hotpot_backup_records(
+			$bf, $status, $level, 
+			$table, $select, 
+			$records_tag, $records_tags,
+			$record_tag, $record_tags,
+			$excluded_tags, $more_backup
+		);
+	}
+	function hotpot_backup_responses($bf, &$parent, $level, $status) {
+		// $parent is a reference to an attempt record
+
+		$table = 'hotpot_responses';
+		$select = "attempt=$parent->id";
+
+		$records_tag = 'RESPONSE_DATA';
+		$records_tags = array();
+
+		$record_tag = 'RESPONSE';
+		$record_tags = array();
+
+		$more_backup = 'hotpot_backup_string_ids($record, array("correct","wrong","ignored"));';
+		$excluded_tags = array('id','attempt');
+
+		return hotpot_backup_records(
+			$bf, $status, $level, 
+			$table, $select, 
+			$records_tag, $records_tags,
+			$record_tag, $record_tags,
+			$excluded_tags, $more_backup
+		);
+	}
+	function hotpot_backup_questions($bf, &$parent, $level, $status) {
+		// $parent is a reference to an hotpot record
+
+		$table = 'hotpot_questions';
+		$select = "hotpot=$parent->id";
+
+		$records_tag = 'QUESTION_DATA';
+		$records_tags = array();
+
+		$record_tag = 'QUESTION';
+		$record_tags = array();
+
+		$more_backup = 'hotpot_backup_string_ids($record, array("text"));';
+		$excluded_tags = array('hotpot');
+
+		return hotpot_backup_records(
+			$bf, $status, $level, 
+			$table, $select, 
+			$records_tag, $records_tags,
+			$record_tag, $record_tags,
+			$excluded_tags, $more_backup
+		);
+	}
+	function hotpot_backup_string_ids(&$record, $fields) {
+		// as the questions and responses tables are backed up
+		// this function is called to store the ids of strings.
+		// The string ids are used later by "hotpot_backup_strings"
+		// $GLOBALS['hotpot_backup_string_ids'] was initialized in "hotpot_backup_mods"
+	
+		// store the ids of strings used in this $record's $fields
+		foreach ($fields as $field) {
+			if (empty($record->$field)) {
+				// do nothing
+			} else {
+				$value = $record->$field;
+				$ids = explode(',', "$value");
+				foreach ($ids as $id) {
+					if (empty($id)) {
+						// do nothing
+					} else {
+						$GLOBALS['hotpot_backup_string_ids'][$id] = true;
+					}
+				}
+			}
+		}
+	}
+	function hotpot_backup_strings($bf, $record, $level, $status) {
+		// This functions backups the strings used 
+		// in the question and responses for a single hotpot activity
+		// The ids of the strings were stored by "hotpot_backup_string_ids" 
+		// $GLOBALS['hotpot_backup_string_ids'] was initialized in "hotpot_backup_mods"
+
+		// retrieve $ids of strings to be backed up
+		$ids = array_keys($GLOBALS['hotpot_backup_string_ids']);
+
+		if (empty($ids)) {
+			// no strings to backup
+		} else {
+
+			sort($ids);
+			$ids = implode(',', $ids);
+
+			$table = 'hotpot_strings';
+			$select = "id IN ($ids)";
+	
+			$records_tag = 'STRING_DATA';
+			$records_tags = array();
+	
+			$record_tag = 'STRING';
+			$record_tags = array();
+	
+			$more_backup = '';
+			$excluded_tags = array('');
+	
+			$status = hotpot_backup_records(
+				$bf, $status, $level, 
+				$table, $select, 
+				$records_tag, $records_tags,
+				$record_tag, $record_tags,
+				$excluded_tags, $more_backup
+			);
+		}
+		return $status;
+	}
+
+	function hotpot_backup_records(&$bf, $status, $level, $table, $select, $records_tag, $records_tags, $record_tag, $record_tags, $excluded_tags, $more_backup) {
+		// general purpose backup function
+		
+		// $bf     : resource id of backup file
+		// $status : current status of backup (true or false)
+		// $level  : current depth level in the backup XML tree
+
+		// $table  : table from which records will be selected and backed up
+		// $select : SQL selection string
+
+		// $records_tag  : optional XML tag which starts a group of records (and descends a level)
+		// $records_tags : optional XML tags to be inserted at the start of a group of records
+
+		// $record_tag   : optional XML tag which starts a record (and descends a level)
+		// $record_tags  : optional XML tags to be inserted at the start of a record
+
+		// $excluded_tags : fields which will NOT be backed up from the records
+		// $more_backup   : optional PHP code to be eval(uated) for each record
 
 		// If any of the "fwrite" statements fail, 
 		// no further "fwrite"s will be attempted
 		// and the function returns "false".
 		// Otherwise, the function returns "true".
 
-		if ($status && ($records = get_records($table, $field, $value, 'id'))) {
+		if ($status && ($records = get_records_select($table, $select, 'id'))) {
 
 			// start a group of records
 			if ($records_tag) {

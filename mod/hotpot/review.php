@@ -34,7 +34,7 @@
 	}
 
 	if (! $attempt = get_record("hotpot_attempts", "id", $attempt)) {
-		error("No such attempt ID exists");
+		error("Attempt ID was incorrect");
 	}
 
 	require_login($course->id);
@@ -70,45 +70,38 @@
 
 	print_header($title, $heading, $navigation, "", "", true, $button, navmenu($course, $cm));
 
-
-	echo '<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>'; // for overlib
+	print '<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>'; // for overlib
 
 	print_heading($hotpot->name);
 
-	// format attempt properties
-	if (!empty($attempt->timefinish)) {
-		$attempt->timecompleted = userdate($attempt->timefinish);
-		$attempt->timetaken = format_time($attempt->timefinish - $attempt->timestart);
-	} else {
-		$attempt->timecompleted = '-';
-		$attempt->timetaken = '-';
-	}
-	$attempt->score = hotpot_format_score($attempt);
+	hotpot_print_attempt_summary($hotpot, $attempt);
+	hotpot_print_review_buttons($course, $hotpot, $attempt);
 
-	$html  = '';
+	$action = isteacher($course->id) ? optional_param('action') : '';
+	if ($action) {
 
-	// start table
-	$html .= '<table width="100%" border="1" valign="top" align="center" cellpadding="2" cellspacing="2" class="generaltable">'."\n";
+		$xml = get_field('hotpot_details', 'details', 'attempt', $attempt->id);
 
-	// add attempt properties
-	$fields = array('attempt', 'score', 'penalties', 'timetaken', 'timecompleted');
-	foreach ($fields as $field) {
-		if (isset($attempt->$field)) {
-			$module = ($field=='penalties') ? 'hotpot' : 'quiz';
-			$html .= '<tr><th align="right" width="100" class="generaltableheader">'.get_string($field, $module).':</th><td class="generaltablecell">'.$attempt->$field.'</td></tr>';
+		print '<hr>';
+		switch ($action) {
+			case 'showxmltree':
+				print '<pre id="contents">';
+				$xml_tree = new hotpot_xml_tree($xml, "['hpjsresult']['#']");
+				print_r ($xml_tree->xml_value('fields'));
+				print '</pre>';
+				break;
+			case 'showxmlsource':
+				print htmlspecialchars($xml);
+				break;
+			default:
+				print "Action '$action' not recognized";
 		}
+		print '<hr>';
+
+	} else {
+		hotpot_print_attempt_details($hotpot, $attempt);
 	}
-
-	// finish table
-	$html .= '</table>';
-
-	print_simple_box_start("center", "80%", "#ffffff", 0);
-	print $html;
-	print_simple_box_end();
-
-	print_continue("report.php?id=$cm->id");
-	hotpot_print_attempt_details($hotpot, $attempt);
-	print_continue("report.php?id=$cm->id");
+	hotpot_print_review_buttons($course, $hotpot, $attempt);
 
 	print_footer($course);
 
@@ -116,6 +109,69 @@
 //    functions
 ///////////////////////////
 
+function hotpot_print_attempt_summary(&$hotpot, &$attempt) {
+	// start table
+	print_simple_box_start("center", "80%", "#ffffff", 0);
+	print '<table width="100%" border="1" valign="top" align="center" cellpadding="2" cellspacing="2" class="generaltable">'."\n";
+
+	// add attempt properties
+	$fields = array('attempt', 'score', 'penalties', 'status', 'timetaken', 'timerecorded');
+	foreach ($fields as $field) {
+		switch ($field) {
+			case 'score':
+				$value = hotpot_format_score($attempt);
+				break;
+			case 'status':
+				$value = hotpot_format_status($attempt);
+				break;
+			case 'timerecorded':
+				$value = empty($attempt->timefinish) ? '-' : userdate($attempt->timefinish); 
+				break;
+			case 'timetaken':
+				$value = empty($attempt->timefinish) ? '-' : format_time($attempt->timefinish - $attempt->timestart); 
+				break;
+			default:
+				$value = isset($attempt->$field) ? $attempt->$field : NULL;
+		}
+		if (isset($value)) {
+			switch ($field) {
+				case 'status':
+				case 'timerecorded':
+					$name = get_string('report'.$field, 'hotpot');
+					break;
+				case 'penalties':
+					$name = get_string('penalties', 'hotpot');
+					break;
+				default:
+					$name = get_string($field, 'quiz');
+			}
+			print '<tr><th align="right" width="100" class="generaltableheader">'.$name.':</th><td class="generaltablecell">'.$value.'</td></tr>';
+		}
+	}
+
+	// finish table
+	print '</table>';
+	print_simple_box_end();
+}
+function hotpot_print_review_buttons(&$course, &$hotpot, &$attempt) {
+	print "\n".'<table border="0" align="center" cellpadding="2" cellspacing="2" class="generaltable">';
+	print "\n<tr>\n".'<td align="center">';
+	print_single_button("report.php?hp=$hotpot->id", NULL, get_string('continue'), 'post');
+	if (isteacher($course->id) && record_exists('hotpot_details', 'attempt', $attempt->id)) {
+		print "</td>\n".'<td align="center">';
+		print_single_button("review.php?hp=$hotpot->id&attempt=$attempt->id&action=showxmlsource", NULL, get_string('showxmlsource', 'hotpot'), 'post');
+		print "</td>\n".'<td align="center">';
+		print_single_button("review.php?hp=$hotpot->id&attempt=$attempt->id&action=showxmltree", NULL, get_string('showxmltree', 'hotpot'), 'post');
+		$colspan = 3;
+	} else {
+		$colspan = 1;
+	}
+	print "</td>\n</tr>\n";
+	print '<tr><td colspan="'.$colspan.'">';
+	print_spacer(4, 1, false); // height=4, width=1, no <br>
+	print "</td></tr>\n";
+	print "</table>\n";
+}
 function hotpot_print_attempt_details(&$hotpot, &$attempt) {
 
 	// define fields to print
@@ -166,16 +222,19 @@ function hotpot_print_attempt_details(&$hotpot, &$attempt) {
 	}
 	$colspan = max(2, $colspan);
 
-	$html  = '';
-
 	// start table of questions and responses
-	$html .= '<table width="100%" border="1" valign="top" align="center" cellpadding="2" cellspacing="2" class="generaltable">'."\n";
+	print_simple_box_start("center", "80%", "#ffffff", 0);
+	print '<table width="100%" border="1" valign="top" align="center" cellpadding="2" cellspacing="2" class="generaltable">'."\n";
 
 	if (empty($q)) {
-		$html .= '<tr><td align="center" class="generaltablecell"><b>'.get_string("noresponses", "hotpot").'</b></td></tr>';
+		print '<tr><td align="center" class="generaltablecell"><b>'.get_string("noresponses", "hotpot")."</b></td></tr>\n";
 
 	} else {
-		foreach ($q as $question) {
+
+		// flag to ensure separators are only printed before the 2nd and subsequent questions
+		$printseparator = false;
+
+		foreach ($q as $i=>$question) {
 
 			// flag to ensure questions are only printed when there is at least one response
 			$printedquestion = false;
@@ -188,48 +247,44 @@ function hotpot_print_attempt_details(&$hotpot, &$attempt) {
 
 						// print question if necessary
 						if (!$printedquestion) {
-							$html .= '<tr><td colspan="'.$colspan.'" class="generaltablecell"><b>'.$question['name'].'</b></td></tr>';
+							if ($printseparator) {
+								print '<tr><td colspan="'.$colspan.'"><div class="tabledivider"></div></td></tr>'."\n";
+							}
+							$printseparator = true;
+
+							print '<tr><td colspan="'.$colspan.'" class="generaltablecell"><b>'.$question['name'].'</b></td></tr>'."\n";
 							$printedquestion = true;
 						}
 
 						// print response
-						$html .= '<tr><th align="right" width="100" class="generaltableheader">'.$f[$field]['name'].':</th><td colspan="'.($colspan-1).'" class="generaltablecell">'.$text.'</td></tr>';
+						print '<tr><th align="right" width="100" class="generaltableheader">'.$f[$field]['name'].':</th><td colspan="'.($colspan-1).'" class="generaltablecell">'.$text.'</td></tr>'."\n";
 					}
 				}
 			}
 	
 			// add row of numeric fields
-			$html .= '<tr>';
+			print '<tr>';
 			foreach ($numfields as $field) {
 				if ($f[$field]['count']) {
 
 					// print question if necessary
 					if (!$printedquestion) {
-						$html .= '<tr><td colspan="'.$colspan.'" class="generaltablecell"><b>'.$question['name'].'</b></td></tr>';
+						print '<td colspan="'.$colspan.'" class="generaltablecell"><b>'.$question['name']."</b></td></tr>\n<tr>";
 						$printedquestion = true;
 					}
 
 					// print numeric response
 					$value = isset($question[$field]) ? $question[$field] : '-';
-					$html .= '<th align="right" width="100" class="generaltableheader">'.$f[$field]['name'].':</th><td class="generaltablecell">'.$value.'</td>';
+					print '<th align="right" width="100" class="generaltableheader">'.$f[$field]['name'].':</th><td class="generaltablecell">'.$value.'</td>';
 				}
 			}
-			$html .= '</tr>';
-	
-			// add separator
-			if ($printedquestion) {
-				$html .= '<tr><td colspan="'.$colspan.'"><div class="tabledivider"></div></td></tr>';
-			}
-	
+			print "</tr>\n";
+
 		} // foreach $q
 	}
 
 	// finish table
-	$html .= '</table>';
-
-	print_simple_box_start("center", "80%", "#ffffff", 0);
-	print $html;
+	print "</table>\n";
 	print_simple_box_end();
 }
-
 ?>

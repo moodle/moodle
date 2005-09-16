@@ -1,5 +1,10 @@
-This is v2.0.8 of the HotPot module
-   It has been tested on Moodle 1.1 thru 1.5, MySQL and PostGres7 databases and PHP 4.1 thru 5.0.4
+This is v2.1.0 of the HotPot module
+   This module allows teachers to administer Hot Potatoes and TexToys quizzes via Moodle.
+   It has been tested on:
+      - Hot Potatoes 6
+      - Moodle 1.1 thru 1.5
+	  - PHP 4.1 thru 5.0.4
+	  - MySQL and PostgreSQL databases
 
    This module may be distributed under the terms of the General Public License
    (see http://www.gnu.org/licenses/gpl.txt for details)
@@ -9,7 +14,7 @@ This is v2.0.8 of the HotPot module
 ================
 IMPORTANT NOTICE
 ================
-* Please be sure to use Hot Potatoes according to the conditions of use which are listed at the end of this file. If you restrict use via a required Moodle login, you most likely can still meet the 'freely available' condition if you make the same material on a separate URL that permits free access.  Otherwise, please purchase a license.
+*  Please be sure to use Hot Potatoes according to the conditions of use which are listed at the end of this file. If you restrict use via a required Moodle login, you most likely can still meet the 'freely available' condition if you make the same material on a separate URL that permits free access.  Otherwise, please purchase a license.
 
 
 TO INSTALL OR UPDATE THIS MODULE
@@ -121,13 +126,13 @@ HOT POTATOES CONDITIONS OF USE
 **Reproduced from the Hot Potatoes site**
 
 Hot Potatoes is offered free to the educational community by the University of Victoria Humanities Computing and Media Centre (formerly the Language Centre), under certain conditions. Hot Potatoes is free for use by state educational institutions which are non-profit making, on the condition that the material produced using the program is freely available to anyone via the WWW. However, you need to purchase a licence under any of the following conditions:
-?   You do not work for a public sector educational establishment. 
-?   You charge money for access to the material you make with Hot Potatoes. 
-?   You restrict access to the material in some way. (The only exception here is if you have an account on www.hotpot.net, where you ARE allowed to use password restrictions.) 
-?   You want to use the Masher program included with the Hot Potatoes suite.
+*  You do not work for a public sector educational establishment. 
+*  You charge money for access to the material you make with Hot Potatoes. 
+*  You restrict access to the material in some way. (The only exception here is if you have an account on www.hotpot.net, where you ARE allowed to use password restrictions.) 
+*  You want to use the Masher program included with the Hot Potatoes suite.
 
 For more information on licences, and details on how to purchase one, check out our Website at:
-    http://www.halfbakedsoftware.com/hotpot/
+   http://www.halfbakedsoftware.com/hotpot/
 
 If you intend using the programs to generate more than a handful of exercises, please make sure you register. This costs you nothing -- see How to register for details.
 Martin Holmes, Half-Baked Software and the University of Victoria HCMC, 1998-2004.

@@ -5,30 +5,27 @@
 	// This is the "graphical" structure of the hotpot mod:
 	//-----------------------------------------------------------
 	//
-	//                        hotpot
-	//                  (CL, pk->id, files)
+	//                         hotpot
+	//                      (CL, pk->id, 
+	//                   fk->course, files)
 	//                           |
-	//            +--------------+--------------+
-	//            |                             |
-	//            |                             |
-	//    hotpot_attempts                 hotpot_questions
-	//      (UL, pk->id,                    (UL, pk->id,
-	//       fk->hotpot)                  fk->hotpot, text)
-	//            |                             |        |
-	//            |                             |        |
-	//            +--------------+--------------+        |
-	//                           |                       |
-	//                           |                       |
-	//                   hotpot_responses                |
-	//                     (UL, pk->id,                  |
-	//                 fk->attempt, question,            |
-	//                correct, wrong, ignored)           |
-	//                           |                       |
-	//                           |                       |
-	//                           +-----------+-----------+
-	//                                       |
-	//                                hotpot_strings
-	//                                 (UL, pk->id)
+	//            +--------------+---------------+
+	//            |                              |
+	//      hotpot_attempts             hotpot_questions
+	//       (UL, pk->id,                 (UL, pk->id, 
+	//        fk->hotpot)               fk->hotpot, text)
+	//            |                              |    |
+	//            +-------------------+----------+    |
+	//            |                   |               |
+	//      hotpot_details     hotpot_responses       |
+	//       (UL, pk->id,        (UL, pk->id,         |
+	//       fk->attempt)    fk->attempt, question,   |
+	//                      correct, wrong, ignored)  |
+	//                                |               |
+	//                                +-------+-------+
+	//                                        |
+	//                                 hotpot_strings
+	//                                  (UL, pk->id)
 	//
 	// Meaning: pk->primary key field of the table
 	//          fk->foreign key to link with parent
@@ -38,257 +35,438 @@
 	//          files->table may have files
 	//
 	//-----------------------------------------------------------
-	// It is not necessary to backup "questions", "responses" 
-	// and "strings", because they can be restored from the 
-	// "details" field of the "attempts" records
-	//-----------------------------------------------------------
 
-	require_once ("$CFG->dirroot/mod/hotpot/lib.php");
+require_once ("$CFG->dirroot/mod/hotpot/lib.php");
 
-	//This function executes all the restore procedure about this mod
-	function hotpot_restore_mods($mod, $restore) {
+//This function restores a single hotpot activity
+function hotpot_restore_mods($mod, $restore) {
 
-		// this function is called by "restore_create_modules" (in "backup/restorelib.php") 
-		// which is called by "backup/restore_execute.html" (included by "backup/restore.php")
+	// this function is called by "restore_create_modules" (in "backup/restorelib.php") 
+	// which is called by "backup/restore_execute.html" (included by "backup/restore.php")
 
-		// $mod is an object
-		// 	id           : id field in 'modtype' table
-		// 	modtype      : 'hotpot'
+	// $mod is an object
+	// 	id           : id field in 'modtype' table
+	// 	modtype      : 'hotpot'
 
-		// $restore is an object
-		// 	backup_unique_code : xxxxxxxxxx
-		// 	file         : '/full/path/to/backupfile.zip'
-		// 	mods         : an array of $modinfo's (see below)
-		// 	restoreto    : 0=existing course (replace), 1=existing course (append), 2=new course
-		// 	users        : 0=all, 1=course, 2=none
-		// 	logs         : 0=no, 1=yes
-		// 	user_files   : 0=no, 1=yes
-		// 	course_files : 0=no, 1=yes
-		// 	course_id    : id of course into which data is to be restored
-		// 	deleting     : true if 'restoreto'==0, otherwise false
-		// 	original_wwwroot : 'http://your.server.com/moodle'
+	// $restore is an object
+	// 	backup_unique_code : xxxxxxxxxx
+	// 	file         : '/full/path/to/backupfile.zip'
+	// 	mods         : an array of $modinfo's (see below)
+	// 	restoreto    : 0=existing course (replace), 1=existing course (append), 2=new course
+	// 	users        : 0=all, 1=course, 2=none
+	// 	logs         : 0=no, 1=yes
+	// 	user_files   : 0=no, 1=yes
+	// 	course_files : 0=no, 1=yes
+	// 	course_id    : id of course into which data is to be restored
+	// 	deleting     : true if 'restoreto'==0, otherwise false
+	// 	original_wwwroot : 'http://your.server.com/moodle'
 
-		// $modinfo is an array
-		//	'modname'    : array( 'restore'=> 0=no 1=yes, 'userinfo' => 0=no 1=yes)
+	// $modinfo is an array
+	//	'modname'    : array( 'restore'=> 0=no 1=yes, 'userinfo' => 0=no 1=yes)
 
-		$status = true;
+	$status = true;
 
-		//Get data record for this instance of the mod
-		$data = backup_getid($restore->backup_unique_code, $mod->modtype, $mod->id);
-		if ($data) {
+	// get course module data this hotpot activity
+	$data = backup_getid($restore->backup_unique_code, 'hotpot', $mod->id);
+	if ($data) {
 
-			// $data is an object
-			//	backup_code => xxxxxxxxxx,
-			//	table_name  => 'hotpot',
-			//	old_id      => xxx,
-			//	new_id      => NULL,
-			//	info        => array of info for this instance of the mod
-		
-			// short cut to xmlized info
-			$info = &$data->info['MOD']['#'];
+		// $data is an object
+		//	backup_code => xxxxxxxxxx,
+		//	table_name  => 'hotpot',
+		//	old_id      => xxx,
+		//	new_id      => NULL,
+		//	info        => xml tree array of info backed up for this hotpot activity
+	
+		$xml = &$data->info['MOD']['#'];
+		$table = 'hotpot';
+		$foreign_keys = array('course' => $restore->course_id);
 
-			// build the new record
-			$hotpot = NULL;
-			$hotpot->course = $restore->course_id;
+		$more_restore = '';
 
-			// don't include these fields in the hotpot record
-			$excluded_TAGS = array('MODTYPE', 'ID', 'COURSE', 'ATTEMPT_DATA');
+		// print a message after each hotpot is backed up
+		$more_restore .= 'print "<li>".get_string("modulename", "hotpot")." &quot;".$record->name."&quot;</li>";';
+		$more_restore .= 'backup_flush(300);';
 
-			// fill in the fields
-			$TAGS = array_keys($info);
-			foreach ($TAGS as $TAG) {
-
-				if (!in_array($TAG, $excluded_TAGS)) {
-					$tag = strtolower($TAG);
-					$hotpot->$tag = backup_todb($info[$TAG][0]['#']);
-				}
-			}
-
-			// insert the record
-			$hotpot->id = insert_record ('hotpot', $hotpot);
-			if (is_numeric($hotpot->id)) {
-
-				// Do some output
-				echo '<ul><li>'.get_string('modulename', 'hotpot').' &quot;'.$hotpot->name.'&quot;<br>';
-				backup_flush(300);
-
-				// save the new id (required for log retore later on)
-				backup_putid($restore->backup_unique_code, $mod->modtype, $mod->id, $hotpot->id);
-
-				// backup user info, if required
-				if ($restore->mods[$mod->modtype]->userinfo) {
-
-					// are we overwriting a course?
-					if ($restore->deleting) {
-
-						// remove previous attempts, questions and responses for this quiz
-						$select = "hotpot='$hotpot->id'";
-						if ($attempts = get_records_select('hotpot_attempts', $select)) {
-							$ids = implode(',', array_keys($attempts));
-							delete_records_select('hotpot_responses', "attempt IN ($ids)");
-						}
-						delete_records_select('hotpot_questions', $select);
-						delete_records_select('hotpot_attempts', $select);
-					}
-			
-					// don't transfer these fields to the attempt records
-					$excluded_TAGS = array('hotpot');
-
-					$i = 0;
-					while ($status && isset($info['ATTEMPT_DATA'][$i]['#'])) {
-
-						$ii = 0;
-						while ($status && isset($info['ATTEMPT_DATA'][$i]['#']['ATTEMPT'][$ii]['#'])) {
-
-							// shortcut to user info record
-							$info_record = &$info['ATTEMPT_DATA'][$i]['#']['ATTEMPT'][$ii]['#'];
-
-							$attempt = NULL;
-							$attempt->hotpot = $hotpot->id;
-		
-							$TAGS = array_keys($info_record);
-							foreach ($TAGS as $TAG) {
-		
-								if (!in_array($TAG, $excluded_TAGS)) {
-		
-									$value = backup_todb($info_record[$TAG][0]['#']);
-
-									if ($TAG=='USERID') {
-										$user = backup_getid($restore->backup_unique_code, 'user', $value);
-										if ($user) {
-											$value = $user->new_id;
-										} else {
-											$status = false; // this shouldn't happen
-										}
-									}
-		
-									$tag = strtolower($TAG);
-									$attempt->$tag = $value;
-								}
-							} // end foreach $TAGS
-
-							// store old attempt id
-							$attempt->old_id = $attempt->id;
-							unset($attempt->id);
-
-							// add the attempt record
-							$attempt->id = insert_record ('hotpot_attempts', $attempt);
-							if (is_numeric($attempt->id)) {
-
-								// save the new id (required for log retore later on)
-								backup_putid($restore->backup_unique_code, 'hotpot_attempts', $attempt->old_id, $attempt->id);
-
-								// remove slashes added by backup_todb(), otherwise xmlize() will complain
-								$attempt->details = stripslashes($attempt->details);
-
-								// add questions and responses in attempt $attempt->details
-								hotpot_add_attempt_details($attempt);
-
-							} else { // failed to insert $attempt record
-								$status = false;
-							}
-
-							// do some output, if required
-							if ($status) {
-								if ($ii%10==0) {
-									echo '.';
-									if ($ii%200==0) {
-										echo '<br>';
-										backup_flush(300);
-									}
-								}
-							}
-		
-							$ii++;
-						} // end while $info_record
-
-						$i++;
-					} // end while $info_records
-				}
-
-				// Finalize ul		
-				echo "</li></ul>";
-
+		if ($restore->mods['hotpot']->userinfo) {
+			if (isset($xml["STRING_DATA"]) && isset($xml["QUESTION_DATA"])) {
+				// HotPot v2.1+
+				$more_restore .= '$status = hotpot_restore_strings($restore, $status, $xml, $record);';
+				$more_restore .= '$status = hotpot_restore_questions($restore, $status, $xml, $record);';
+				$more_restore .= '$status = hotpot_restore_attempts($restore, $status, $xml, $record);';
 			} else {
-				// could not add hotpot record
-				$status = false;
+				// HotPot v2.0.x (regenerate questions, responses and strings from attempt details)
+				$more_restore .= '$status = hotpot_restore_attempts($restore, $status, $xml, $record, true);';
 			}
-
-		} else {
-			// could not get $data for this hotpot quiz
-			$status = false;
 		}
 
-		return $status;
+		$status = hotpot_restore_records(
+			$restore, $status, $xml, $table, $foreign_keys, $more_restore
+		);
+	}
+	return $status;
+}
+function hotpot_restore_strings(&$restore, $status, &$xml, &$record) {
+	// $xml is an XML tree for a hotpot record
+	// $record is the newly added hotpot record
+
+	return hotpot_restore_records(
+		$restore, $status, $xml, 'hotpot_strings', array(), '', 'STRING_DATA', 'STRING', 'string'
+	);
+}
+function hotpot_restore_questions(&$restore, $status, &$xml, &$record) {
+	// $xml is an XML tree for a hotpot record
+	// $record is the newly added hotpot record
+
+	$foreignkeys = array(
+		'hotpot'=>$record->id, 
+		'text'=>'hotpot_strings'
+	);
+
+	return hotpot_restore_records(
+		$restore, $status, $xml, 'hotpot_questions', $foreignkeys, '', 'QUESTION_DATA', 'QUESTION'
+	);
+}
+function hotpot_restore_attempts(&$restore, $status, &$xml, &$record, $hotpot_v20=false) {
+	// $xml is an XML tree for a hotpot record
+	// $record is the newly added hotpot record
+
+	$foreignkeys = array(
+		'userid'=>'user',
+		'hotpot'=>$record->id,
+	);
+
+	$more_restore = '';
+	$more_restore .= 'hotpot_restore_details($restore, $status, $xml, $record);';
+	if ($hotpot_v20) {
+		// HotPot v2.0.x (regenerate questions and responses from details)
+		$more_restore .= '$record->details=stripslashes($record->details);';
+		$more_restore .= 'hotpot_add_attempt_details($record);'; // see "hotpot/lib.php"
+	} else {
+		// HotPot v2.1+
+		$more_restore .= '$status = hotpot_restore_responses($restore, $status, $xml, $record);';
+
+		// save clickreportid (to be updated it later)
+		$more_restore .= 'if (isset($record->clickreportid)) {';
+		$more_restore .= '$GLOBALS["hotpot_backup_clickreportids"][$record->id]=$record->clickreportid;';
+		$more_restore .= '}';
+
+		// initialize global array to store clickreportids
+		$GLOBALS["hotpot_backup_clickreportids"] = array();
 	}
 
-	//This function returns a log record with all the necessay transformations
-	//done. It's used by restore_log_module() to restore modules log.
-	function hotpot_restore_logs($restore, $log) {
 
-		// assume the worst
-		$status = false;
+	$status = hotpot_restore_records(
+		$restore, $status, $xml, 'hotpot_attempts', $foreignkeys, $more_restore, 'ATTEMPT_DATA', 'ATTEMPT'
+	);
 
-		switch ($log->action) {
+	if ($hotpot_v20) {
+		if ($status) {
+			global $CFG;
+			// based on code in "mod/hotpot/db/update_to_v2.php"
+			execute_sql("UPDATE {$CFG->prefix}hotpot_attempts SET status=1 WHERE hotpot=$record->id AND timefinish=0 AND score IS NULL", false);
+			execute_sql("UPDATE {$CFG->prefix}hotpot_attempts SET status=3 WHERE hotpot=$record->id AND timefinish>0 AND score IS NULL", false);
+			execute_sql("UPDATE {$CFG->prefix}hotpot_attempts SET status=4 WHERE hotpot=$record->id AND timefinish>0 AND score IS NOT NULL", false);
+			execute_sql("UPDATE {$CFG->prefix}hotpot_attempts SET clickreportid=id WHERE hotpot=$record->id AND clickreportid IS NULL", false);
+		}
+	} else {
+		$status = hotpot_restore_clickreportids($restore, $status);
+		unset($GLOBALS["hotpot_backup_clickreportids"]); // tidy up
+	}
 
-			case "add":
-			case "update":
-			case "view":
-				if ($log->cmid) {
-					//Get the new_id of the module (to recode the info field)
-					$mod = backup_getid($restore->backup_unique_code, $log->module, $log->info);
-					if ($mod) {
-						$log->url = "view.php?id=".$log->cmid;
-						$log->info = $mod->new_id;
-						$status = true;
+	return $status;
+}
+function hotpot_restore_clickreportids(&$restore, $status) {
+	// update clickreport ids, if any
+	global $CFG;
+	$sql = '';
+	foreach ($GLOBALS["hotpot_backup_clickreportids"] as $id=>$clickreportid) {
+		if ($status) {
+			$attempt_record = backup_getid($restore->backup_unique_code, 'hotpot_attempts', $clickreportid);
+			if ($attempt_record) {
+				$new_clickreportid = $attempt_record->new_id;
+				$sql .= "UPDATE {$CFG->prefix}hotpot_attempts SET clickreportid=$new_clickreportid WHERE id=$id;\n";
+			} else {
+				// New clickreport id could not be found
+				print "<ul><li>New clickreportid could not be found: attempt id=$id, clickreportid=$clickreportid</li></ul>";
+				$status = false;
+			}
+		}
+	}
+	if ($status && $sql) {
+		if (execute_sql($sql, false)) {
+			// do nothing (update was ok :-)
+		} else {
+			print "<ul><li>Clickreportids could not be updated</li></ul>";
+			$status = false;
+		}
+	}
+	return $status;
+}
+function hotpot_restore_responses(&$restore, $status, &$xml, &$record) {
+	// $xml is an XML tree for an attempt record
+	// $record is the newly added attempt record
+
+	$foreignkeys = array(
+		'attempt'=>$record->id,
+		'question'=>'hotpot_questions',
+		'correct'=>'hotpot_strings',
+		'wrong'=>'hotpot_strings',
+		'ignored'=>'hotpot_strings'
+	);
+ 
+	return hotpot_restore_records(
+		$restore, $status, $xml, 'hotpot_responses', $foreignkeys, '', 'RESPONSE_DATA', 'RESPONSE'
+	);
+}
+function hotpot_restore_details(&$restore, $status, &$xml, &$record) {
+	// $xml is an XML tree for an attempt record
+	// $record is the newly added attempt record
+
+	if (empty($record->details)) {
+		$status = true;
+	} else {
+		unset($details);
+		$details->attempt = $record->id;
+		$details->details = $record->details;
+
+		if (insert_record('hotpot_details', $details)) {
+			$status = true;
+		} else {
+			print "<ul><li>Details record could not be updated: attempt=$record->attempt</li></ul>";
+			$status = false;
+		}
+	}
+	return $status;
+}
+function hotpot_restore_records(&$restore, $status, &$xml, $table, $foreign_keys, $more_restore='', $records_TAG='', $record_TAG='', $secondary_key='') {
+// general purpose function to restore a group of records
+
+	// $restore : (see "hotpot_restore_mods" above)
+
+	// $xml : an XML tree (or sub-tree)
+
+	// $records_TAG : (optional) the name of an XML tag which starts a block of records
+	//	If no $records_TAG is specified, $xml is assumed to be a block of records
+
+	// $record_TAG  : (optional) the name of an XML tag which starts a single record
+	//	If no $record_TAG is specified, the block of records is assumed to be a single record
+
+	// other parameters are explained in "hotpot_restore_record" below
+
+	$i = 0;
+	do {
+		unset($xml_records);
+		if ($records_TAG) {
+			if (isset($xml[$records_TAG][$i]['#'])) {
+				$xml_records = &$xml[$records_TAG][$i]['#'];
+			}
+		} else {
+			if ($i==0) {
+				$xml_records = &$xml;
+			}
+		}
+		if (empty($xml_records)) {
+			// do nothing
+		} else {
+			$ii = 0;
+			do {
+				unset($xml_record);
+				if ($record_TAG) {
+					if (isset($xml_records[$record_TAG][$ii]['#'])) {
+						$xml_record = &$xml_records[$record_TAG][$ii]['#'];
+					}
+				} else {
+					if ($ii==0) {
+						$xml_record = &$xml_records;
 					}
 				}
-			break;
+				if (empty($xml_record)) {
+					// do nothing
+				} else {
+					$status = hotpot_restore_record(
+						$restore, $status, $xml_record, $table, $foreign_keys, $more_restore, $secondary_key
+					);
+				}
+				$ii++;
+			} while ($status && isset($xml_record));
+		}
+		$i++;
+	} while ($status && isset($xml_records));
 
-			case "view all":
-				$log->url = "index.php?id=".$log->course;
-				$status = true;
-			break;
+	return $status;
+}
+function hotpot_restore_record(&$restore, $status, &$xml, $table, $foreign_keys, $more_restore, $secondary_key) {
+// general purpose function to restore a single record
+	
+	// $restore : (see "hotpot_restore_mods" above)
 
-			case "report":
-				if ($log->cmid) {
-					//Get the new_id of the module (to recode the info field)
-					$mod = backup_getid($restore->backup_unique_code,$log->module,$log->info);
-					if ($mod) {
-						$log->url = "report.php?id=".$log->cmid;
-						$log->info = $mod->new_id;
-						$status = true;
+	// $status : current status of backup (true or false)
+	// $xml    : XML tree of current record
+	// $table  : name of Moodle database table to restore to
+
+	// $foreign_keys : array of foreign keys, if any, specifed as $key=>$value
+	//	$key   : the name of a field in the current $record
+	//	$value : if $value is numeric, then $record->$key is set to $value.
+	//		Otherwise $value is assumed to be a table name and $record->$key 
+	//		is treated as a comma separated list of ids in that table
+
+	// $more_restore : optional PHP code to be eval(uated) for each record
+
+	// $secondary_key : 
+	//	the name of the secondary key field, if any, in the current $record.
+	//	If this field is specified, then the current record will only be added
+	//	if the $record->$secondarykey value does not already exist in $table
+
+	unset($record);
+
+	$TAGS = array_keys($xml);
+	foreach ($TAGS as $TAG) {
+
+		$value = $xml[$TAG][0]['#'];
+		if (is_string($value)) {
+
+			$tag = strtolower($TAG);
+			$record->$tag = backup_todb($value);
+		}
+	}
+
+	foreach ($foreign_keys as $key=>$value) {
+		if (is_numeric($value)) {
+			$record->$key = $value;
+		} else {
+			if (empty($record->$key)) {
+				$record->$key = NULL;
+			} else {
+				$key_table = $value;
+				$new_ids = array();
+				$old_ids = explode(',', $record->$key);
+				foreach ($old_ids as $old_id) {
+					$key_record = backup_getid($restore->backup_unique_code, $key_table, $old_id);
+					if ($key_record) {
+						$new_ids[] = $key_record->new_id;
+					} else {
+						// foreign key could not be updated
+						print "<ul><li>Foreign key could not be updated: table=$table, $key=".$record->$key."</li></ul>";
+						$status = false;
 					}
 				}
-			break;
+				$record->$key = implode(',', $new_ids);
+			}
+		}
+	}
 
-			case "attempt":
-			case "submit":
-			case "review": 
-				if ($log->cmid) {
-					//Get the new_id of the module (to recode the info field)
-					$mod = backup_getid($restore->backup_unique_code,$log->module,$log->info);
-					if ($mod) {
-						//Extract the attempt id from the url field
-						$attemptid = substr(strrchr($log->url,"="),1);
-						//Get the new_id of the attempt (to recode the url field)
-						$attempt = backup_getid($restore->backup_unique_code,"hotpot_attempts",$attemptid);
-						if ($attempt) { 
-							$log->url = "review.php?id=".$log->cmid."&attempt=".$attempt->new_id;
-							$log->info = $mod->new_id;
-							$status = true;
-						}
-					}
-				}
-			break;
+	// check everything is OK so far
+	if ($status && isset($record)) {
 
-			default:
-				// Oops, unknown $log->action
-				print "<p>action (".$log->module."-".$log->action.") unknown. Not restored</p>";
-			break;
+		// store old record id, if necessary
+		if (isset($record->id)) {
+			$record->old_id = $record->id;
+			unset($record->id);
+		}
 
-		} // end switch
+		// if there is a secondary key field  ...
+		if ($secondary_key) {
+			// check to see if a record with the same value already exists
+			$key_record = get_record($table, $secondary_key, $record->$secondary_key);
+			if ($key_record) {
+				// set new record id from already existing record
+				$record->id = $key_record->id;
+			}
+		}
+
+		if (empty($record->id)) {
+			// add the $record (and get new id)
+			$record->id = insert_record ($table, $record);
+		}
+
+		// check $record was added (or found)
+		if (is_numeric($record->id)) {
+
+			// if there was an old id, save a mapping to the new id
+			if (isset($record->old_id)) {
+				backup_putid($restore->backup_unique_code, $table, $record->old_id, $record->id);
+			}
+		} else { 
+			// failed to add (or find) $record
+			print "<ul><li>Record could not be added: table=$table</li></ul>";
+			$status = false;
+		}
 		
-		return $status ? $log : false;
+		// restore related records, if required
+		if ($more_restore) {
+			eval($more_restore);
+		}
 	}
+	return $status;
+}
+
+//This function returns a log record with all the necessay transformations
+//done. It's used by restore_log_module() to restore modules log.
+function hotpot_restore_logs($restore, $log) {
+
+	// assume the worst
+	$status = false;
+
+	switch ($log->action) {
+
+		case "add":
+		case "update":
+		case "view":
+			if ($log->cmid) {
+				//Get the new_id of the module (to recode the info field)
+				$mod = backup_getid($restore->backup_unique_code, $log->module, $log->info);
+				if ($mod) {
+					$log->url = "view.php?id=".$log->cmid;
+					$log->info = $mod->new_id;
+					$status = true;
+				}
+			}
+		break;
+
+		case "view all":
+			$log->url = "index.php?id=".$log->course;
+			$status = true;
+		break;
+
+		case "report":
+			if ($log->cmid) {
+				//Get the new_id of the module (to recode the info field)
+				$mod = backup_getid($restore->backup_unique_code,$log->module,$log->info);
+				if ($mod) {
+					$log->url = "report.php?id=".$log->cmid;
+					$log->info = $mod->new_id;
+					$status = true;
+				}
+			}
+		break;
+
+		case "attempt":
+		case "submit":
+		case "review": 
+			if ($log->cmid) {
+				//Get the new_id of the module (to recode the info field)
+				$mod = backup_getid($restore->backup_unique_code,$log->module,$log->info);
+				if ($mod) {
+					//Extract the attempt id from the url field
+					$attemptid = substr(strrchr($log->url,"="),1);
+					//Get the new_id of the attempt (to recode the url field)
+					$attempt = backup_getid($restore->backup_unique_code,"hotpot_attempts",$attemptid);
+					if ($attempt) { 
+						$log->url = "review.php?id=".$log->cmid."&attempt=".$attempt->new_id;
+						$log->info = $mod->new_id;
+						$status = true;
+					}
+				}
+			}
+		break;
+
+		default:
+			// Oops, unknown $log->action
+			print "<p>action (".$log->module."-".$log->action.") unknown. Not restored</p>";
+		break;
+
+	} // end switch
+	
+	return $status ? $log : false;
+}
 ?>

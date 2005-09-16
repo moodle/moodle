@@ -17,13 +17,14 @@
 
 class hotpot_default_report {
 
-	function display($cm, $course, $hotpot) {	 /// This function just displays the report
+	function display($hotpot, $cm, $course, $users, $attempts, $questions, $options) {	 
+		/// This function just displays the report
+		// it is replaced by the "display" functions in the scripts in the "report" folder
 		return true;
 	}
 
 	function add_question_headings(&$questions, &$table, $align='center', $size=50, $wrap=false, $fontsize=0) {
 		$count = count($questions);
-		$questionids = array_keys($questions);
 		for ($i=0; $i<$count; $i++) {
 			$table->head[] = get_string('questionshort', 'hotpot', $i+1);
 			if (isset($table->align)) {
@@ -42,6 +43,81 @@ class hotpot_default_report {
 
 	}
 
+	function set_legend(&$table, &$q, &$value, &$question) {
+
+		// check the legend is required
+		if (isset($table->legend) && isset($value)) {
+
+			// create question details array, if necessary
+			if (empty($table->legend[$q])) {
+				$table->legend[$q] = array(
+					'name' => hotpot_get_question_name($question),
+					'answers' => array()
+				);
+			}
+
+			// search for this $value in answers array for this $q(uestion)
+			$i_max = count($table->legend[$q]['answers']);
+			for ($i=0; $i<$i_max; $i++) {
+				if ($table->legend[$q]['answers'][$i]==$value) {
+					break;
+				}
+			}
+
+			// add $value to answers array, if it was not there
+			if ($i==$i_max) {
+				$table->legend[$q]['answers'][$i] = $value; 
+			}
+
+			// convert $value to alphabetic index (A, B ... AA, AB ...)
+			$value = $this->dec_to_ALPHA($i);
+		}
+	}
+	function create_legend_table(&$tables, &$table) {
+
+		if (isset($table->legend)) {
+
+			$legend->width = '*';
+			$legend->tablealign = '*';
+			$legend->border = isset($table->border) ? $table->border : NULL;
+			$legend->cellpadding = isset($table->cellpadding) ? $table->cellpadding : NULL;
+			$legend->cellspacing = isset($table->cellspacing) ? $table->cellspacing : NULL;
+			$legend->tableclass = isset($table->tableclass) ? $table->tableclass : NULL;
+
+			$legend->caption = get_string('reportlegend', 'hotpot');	
+			$legend->align = array('right', 'left');
+			$legend->statheadercols = array(0);
+
+			$legend->stat = array();
+
+			// put the questions in order
+			sort($table->legend);
+
+			foreach($table->legend as $q=>$question) {
+
+				$legend->stat[] = array(
+					get_string('questionshort', 'hotpot', $q+1), 
+					$question['name']
+				);
+				foreach($question['answers'] as $a=>$answer) {
+					$legend->stat[] = array(
+						$this->dec_to_ALPHA($a), 
+						$answer
+					);
+				}
+			}
+
+			unset($table->legend);
+			$tables[] = $legend;			
+		}
+	}
+	function dec_to_ALPHA($dec) {
+		if ($dec < 26) {
+			return chr(ord('A') + $dec);
+		} else {
+			return $this->dec_to_ALPHA(intval($dec/26)-1).$this->dec_to_ALPHA($dec % 26);
+		}
+	}
 	function remove_column(&$col, &$table) {
 
 		if (is_array($table)) {
@@ -106,6 +182,12 @@ class hotpot_default_report {
 //	 $table->head	 is an array of headings (all TH cells)
 //	 $table->data[]	 is an array of arrays containing the data (all TD cells)
 //			if a row is given as "hr", a "tabledivider" is inserted
+//			if a cell is a string, it is assumed to be the cell content
+//			a cell can also be an object, thus:
+//				$cell->text : the content of the cell
+//				$cell->rowspan : the row span of this cell
+//				$cell->colspan : the column span of this cell
+//			if rowspan or colspan are specified, neighboring cells are shifted accordingly
 //	 $table->stat[]	 is an array of arrays containing the statistics rows (TD and TH cells)
 //	 $table->foot[]	 is an array of arrays containing the footer rows (all TH cells)
 
@@ -113,45 +195,88 @@ class hotpot_default_report {
 
 
 //////////////////////////////////////////
-/// print an html report
+/// print a report
 
-	function print_html(&$cm, &$table, $mode, $tablename='') {
-
-		$this->print_html_table($table);
-		
-		// print buttons, if required	
-		if (isset($mode) && !empty($table)) {
-
-			// button options
-			$options = array(
-				'id'=>"$cm->id",
-				'mode'=>$mode,
-				'noheader'=>'yes'
-			);
-			if ($tablename) {
-				$options['tablename'] = $tablename;
-			}
-			
-			print '<table border="0" align="center"><tr>';
-			print '<td>';
-			
-			$options["download"] = "xls";
-			print_single_button("report.php", $options, get_string("downloadexcel"));
-			
-			print '</td><td>';
-			
-			$options["download"] = "txt";
-			print_single_button("report.php", $options, get_string("downloadtext"));
-			
-			print '</table>';
+	function print_report(&$course, &$hotpot, &$tables, &$options) {
+		switch ($options['reportformat']) {
+			case 'txt':
+				$this->print_text_report($course, $hotpot, $tables, $options);
+				break;
+			case 'xls':
+				$this->print_excel_report($course, $hotpot, $tables, $options);
+				break;
+			default: // 'htm' (and anything else)
+				$this->print_html_report($tables);
+				break;
 		}
 	}
-	function print_html_table($table) {
-		global $THEME;
 
-		// do nothing if the table is empty
-		if (empty($table) || $this->set_colspan($table)==0) return true;
-		
+	function print_report_start(&$course, &$hotpot, &$options, &$table) {
+		switch ($options['reportformat']) {
+			case 'txt':
+				$this->print_text_start($course, $hotpot, $options);
+				break;
+			case 'xls':
+				$this->print_excel_start($course, $hotpot, $options);
+				break;
+
+			case 'htm':
+				$this->print_html_start($course, $hotpot, $options);
+				break;
+		}
+	}
+
+	function print_report_cells(&$table, &$options, $zone) {
+		switch ($options['reportformat']) {
+			case 'txt':
+				$fmt = 'text';
+				break;
+			case 'xls':
+				$fmt = 'excel';
+				break;
+			default: // 'htm' (and anything else)
+				$fmt = 'html';
+				break;
+		}
+		$fn = "print_{$fmt}_{$zone}";
+		$this->$fn($table, $options);
+	}
+
+	function print_report_finish(&$course, &$hotpot, &$options) {
+		switch ($options['reportformat']) {
+			case 'txt' : 
+				// do nothing
+				break;
+			case 'xls':
+				$this->print_excel_finish($course, $hotpot, $options);
+				break;
+			case 'htm':
+				$this->print_html_finish($course, $hotpot, $options);
+				break;
+		}
+	}
+
+//////////////////////////////////////////
+/// print an html report
+
+	function print_html_report(&$tables) {
+		$count = count($tables);
+		foreach($tables as $i=>$table) {
+
+			$this->print_html_start($table);
+			$this->print_html_head($table);
+			$this->print_html_data($table);
+			$this->print_html_stat($table);
+			$this->print_html_foot($table);
+			$this->print_html_finish($table);
+
+			if (($i+1)<$count) {
+				print_spacer(30, 10, true);
+			}
+		}
+	}
+	function print_html_start(&$table) {
+
 		// default class for the table
 		if (empty($table->tableclass)) {
 			$table->tableclass = 'generaltable';
@@ -161,12 +286,24 @@ class hotpot_default_report {
 		$d = $table->tableclass.'cell';
 		$h = $table->tableclass.'header';
 		
-		$th_side = NULL;
-		$th_side->start = '<th valign="top" align="right" class="'.$h.'">';
-		$th_side->end   = '</th>'."\n";
+		$table->th_side = '<th valign="top" align="right" class="'.$h.'">';
 
-		$td = array();
-		$th_top = array();
+		$table->td = array();
+		$table->th_top = array();
+
+		if (empty($table->colspan)) {
+			if (isset($table->head)) {
+				$table->colspan = count($table->head);
+			} else if (isset($table->data)) {
+				$table->colspan = count($table->data[0]);
+			} else if (isset($table->stat)) {
+				$table->colspan = count($table->stat);
+			} else if (isset($table->foot)) {
+				$table->colspan = count($table->foot);
+			} else {
+				$table->colspan = 0;
+			}
+		}
 
 		for ($i=0; $i<$table->colspan; $i++) {
 
@@ -175,15 +312,12 @@ class hotpot_default_report {
 			$size  = empty($table->size[$i])  ? '' : ' width="'.$table->size[$i].'"';
 			$wrap  = empty($table->wrap[$i])  ? '' : ' nowrap="nowrap"';
 
-			$th_top[$i]->start = '<th align="center"'.$size.' class="'.$h.'" nowrap="nowrap">';
-			$th_top[$i]->end   = '</th>'."\n";
+			$table->th_top[$i] = '<th align="center"'.$size.' class="'.$h.'" nowrap="nowrap">';
 
-			$td[$i]->start = '<td valign="top"'.$align.$class.$wrap.'>';
-			$td[$i]->end   = '</td>'."\n";
+			$table->td[$i] = '<td valign="top"'.$align.$class.$wrap.'>';
 
 			if (!empty($table->fontsize[$i])) {
-					$td[$i]->start .= '<font size="'.$table->fontsize[$i].'">';
-					$td[$i]->end = '</font>'.$td[$i]->end;
+				$table->td[$i] .= '<font size="'.$table->fontsize[$i].'">';
 			}
 		}
 
@@ -199,135 +333,184 @@ class hotpot_default_report {
 		if (empty($table->width)) {
 			$table->width = "80%"; // actually the width of the "simple box"
 		}
+		if (empty($table->tablealign)) {
+			$table->tablealign = "center";
+		}
 
-		print_simple_box_start("center", "$table->width", "#ffffff", 0);
+		if (isset($table->start)) {
+			print $table->start."\n";
+		}
+
+		print_simple_box_start("$table->tablealign", "$table->width", "#ffffff", 0);
 		print '<table width="100%" border="'.$table->border.'" valign="top" align="center"  cellpadding="'.$table->cellpadding.'" cellspacing="'.$table->cellspacing.'" class="'.$table->tableclass.'">'."\n";
 
 		if (isset($table->caption)) {
 			print '<tr><td colspan="'.$table->colspan.'" class="'.$table->tableclass.'header"><b>'.$table->caption.'</b></td></tr>'."\n";
 		}
 
+	}
+	function print_html_head(&$table) {
 		if (isset($table->head)) {
-			print '<tr>'."\n";
-			foreach ($table->head as $i => $cell) {
-				print $th_top[$i]->start.$cell.$th_top[$i]->end;
+			print "<tr>\n";
+			foreach ($table->head as $i=>$cell) {
+				$th = $table->th_top[$i];
+				print $th.$cell."</th>\n";
 			}
-			print '</tr>'."\n";
+			print "</tr>\n";
 		}
-
+	}
+	function print_html_data(&$table) {
 		if (isset($table->data)) {
+			$skipcell = array();
 			foreach ($table->data as $cells) {
-				print '<tr>'."\n";
-				if (is_array($cells))	{
-					foreach ($cells as $i => $cell) {
-						print $td[$i]->start.$cell.$td[$i]->end;
-					}
-				} else if ($cells == 'hr') {
+				print "<tr>\n";
+				if (is_array($cells)) {
+					$i = 0; // index on $cells
+					$col = 0; // column index
+					while ($col<$table->colspan && isset($cells[$i])) {
+						if (empty($skipcell[$col])) {
+							$cell = &$cells[$i++]; 
+							$td = $table->td[$col];
+							if (is_object($cell)) {
+								$text = $cell->text;
+								if (isset($cell->rowspan) && is_numeric($cell->rowspan) && ($cell->rowspan>0)) {
+									$td = '<td rowspan="'.$cell->rowspan.'"'.substr($td, 3);
+									// skip cells below this one
+									$skipcell[$col] = $cell->rowspan-1;
+								}
+								if (isset($cell->colspan) && is_numeric($cell->colspan) && ($cell->colspan>0)) {
+									$td = '<td colspan="'.$cell->colspan.'"'.substr($td, 3);
+									// skip cells to the right of this one
+									for ($c=1; $c<$cell->colspan; $c++) {
+										if (empty($skipcell[$col+$c])) {
+											$skipcell[$col+$c] = 1;
+										} else {
+											$skipcell[$col+$c] ++;
+										}
+									}
+								}
+							} else { // $cell is a string
+								$text = $cell;
+							}
+							print $td.$text."</td>\n";
+						} else {
+							$skipcell[$col]--;
+						}
+						$col++;
+					} // end while
+				} else if ($cells=='hr') {
 					print '<td colspan="'.$table->colspan.'"><div class="tabledivider"></div></td>'."\n";
 				}
-				print '</tr>'."\n";
+				print "</tr>\n";
 			}
 		}
-
+	}
+	function print_html_stat(&$table) {
 		if (isset($table->stat)) {
 			if (empty($table->statheadercols)) {
 				$table->statheadercols = array();
 			}
 			foreach ($table->stat as $cells) {
-				print '<tr>'."\n";
+				print '<tr>';
 				foreach ($cells as $i => $cell) {
 					if (in_array($i, $table->statheadercols)) {
-						print $th_side->start.$cell.$th_side->end;
+						$th = $table->th_side;
+						print $th.$cell."</th>\n";
 					} else {
-						print $td[$i]->start.$cell.$td[$i]->end;
+						$td = $table->td[$i];
+						print $td.$cell."</td>\n";
 					}
 				}
-				print '</tr>'."\n";
+				print "</tr>\n";
 			}
 		}
-
+	}
+	function print_html_foot(&$table) {
 		if (isset($table->foot)) {
 			foreach ($table->foot as $cells) {
-				print '<tr>'."\n";
+				print "<tr>\n";
 				foreach ($cells as $i => $cell) {
 					if ($i==0) {
-						print $th_side->start.$cell.$th_side->end;
+						$th = $table->th_side;
+						print $th.$cell."</th>\n";
 					} else {
-						print $th_top[$i]->start.$cell.$th_top[$i]->end;
+						$th = $table->th_top[$i];
+						print $th.$cell."</th>\n";
 					}
 				}
-				print '</tr>'."\n";
+				print "</tr>\n";
 			}
 		}
-		print '</table>'."\n";
+	}
+	function print_html_finish(&$table) {
+		print "</table>\n";
 		print_simple_box_end();
 
-		return true;
-	}
-	function set_colspan(&$table) {
-		if (empty($table->colspan)) {
-			if (isset($table->head)) {
-				$table->colspan = count($table->head);
-			} else if (isset($table->data)) {
-				$table->colspan = count($table->data[0]);
-			} else if (isset($table->stat)) {
-				$table->colspan = count($table->stat);
-			} else if (isset($table->foot)) {
-				$table->colspan = count($table->foot);
-			} else {
-				$table->colspan = 0;
-			}
+		if (isset($table->finish)) {
+			print $table->finish."\n";
 		}
-		return $table->colspan;
 	}
 
 //////////////////////////////////////////
 /// print a text report
 
-	function print_text(&$course, &$hotpot, &$table) {
-		$this->print_text_headers($course, $hotpot);
-		$this->print_text_head($table);
-		$this->print_text_data($table);
-		$this->print_text_stat($table);
-		$this->print_text_foot($table);
+	function print_text_report(&$course, &$hotpot, &$tables, &$options) {
+		$this->print_text_start($course, $hotpot, $options);
+		foreach ($tables as $table) {
+			$this->print_text_head($table, $options);
+			$this->print_text_data($table, $options);
+			$this->print_text_stat($table, $options);
+			$this->print_text_foot($table, $options);
+		}
 	}
-	function print_text_headers($course, $hotpot) {
+	function print_text_start(&$course, &$hotpot, &$options) {
 		header("Content-Type: application/download\n"); 
-		header("Content-Disposition: attachment; filename=$course->shortname $hotpot->name.txt");
+		header("Content-Disposition: attachment; filename=$course->shortname-$hotpot->name.txt");
 		header("Expires: 0");
 		header("Cache-Control: must-revalidate, post-check=0,pre-check=0");
 		header("Pragma: public");
 	}
-	function print_text_head(&$table) {
+	function print_text_head(&$table, &$options) {
+		if (isset($table->caption)) {
+			$i = strlen($table->caption);
+			$data = array(
+				array(str_repeat('=', $i)),
+				array($table->caption),
+				array(str_repeat('=', $i)),
+			);
+			foreach($data as $cells) {
+				$this->print_text_cells($cells, $options);
+			}
+		}
 		if (isset($table->head)) {	
-			$this->print_text_cells($table->head);
+			$this->print_text_cells($table->head, $options);
 		}
 	}
-	function print_text_data(&$table) {
+	function print_text_data(&$table, &$options) {
 		if (isset($table->data)) {	
 			foreach ($table->data as $cells) {
-				$this->print_text_cells($cells);
+				$this->print_text_cells($cells, $options);
 			}
 		}
 	}		
-	function print_text_stat(&$table) {
+	function print_text_stat(&$table, &$options) {
 		if (isset($table->stat)) {	
 			foreach ($table->stat as $cells) {
-				$this->print_text_cells($cells);
+				$this->print_text_cells($cells, $options);
 			}
 		}
 	}
-	function print_text_foot(&$table) {
+	function print_text_foot(&$table, &$options) {
 		if (isset($table->foot)) {	
 			foreach ($table->foot as $cells) {
-				$this->print_text_cells($cells);
+				$this->print_text_cells($cells, $options);
 			}
 		}
 	}
-	function print_text_cells(&$cells) {
+	function print_text_cells(&$cells, &$options) {
 
 		// do nothing if there are no cells
-		if (empty($cells)) return;
+		if (empty($cells) || is_string($cells)) return;
 
 		// convert to tab-delimted string
 		$str = implode("\t", $cells);
@@ -349,55 +532,65 @@ class hotpot_default_report {
 //////////////////////////////////////////
 /// print an Excel report
 
-	function print_excel(&$course, &$hotpot, &$table) {
+	function print_excel_report(&$course, &$hotpot, &$tables, &$options) {
 		global $CFG;
 		require_once("$CFG->libdir/excel/Worksheet.php");
 		require_once("$CFG->libdir/excel/Workbook.php");
 
-		// array of format objects (one for each cell)
-		$fmt = array();
+		// send headers to browser
+		$this->print_excel_start($course, $hotpot, $options);
 
-		// Create a new workbook and worksheet
-		$wb = new Workbook("-");
-		$ws = &$wb->add_worksheet(get_string('reportsimplestat', 'quiz'));
-		
-		$this->print_excel_headers($course, $hotpot);
-		$this->print_excel_head($wb, $ws, $table, $fmt);
-		$this->print_excel_data($wb, $ws, $table, $fmt);
-		$this->print_excel_stat($wb, $ws, $table, $fmt);
-		$this->print_excel_foot($wb, $ws, $table, $fmt);
+		// Create a new workbook
+		$wb = new Workbook("-"); // $course->shortname
 
+		foreach($tables as $table) {
+			// create a worksheet for this table
+			unset($ws);
+			$ws = &$wb->add_worksheet(empty($table->caption) ? '' : strip_tags($table->caption)); 
+
+			$row = 0;
+			$this->print_excel_head($wb, $ws, $table, $row, $options);
+			$this->print_excel_data($wb, $ws, $table, $row, $options);
+			$this->print_excel_stat($wb, $ws, $table, $row, $options);
+			$this->print_excel_foot($wb, $ws, $table, $row, $options);
+		}
+
+		// close the workbook (and send it to the browser)
 		$wb->close();
 	}
-	function print_excel_headers(&$course, &$instance) {
+	function print_excel_start(&$course, &$hotpot, &$options) {
 		header("Content-type: application/vnd.ms-excel");
-		header("Content-Disposition: attachment; filename=$course->shortname $instance->name.xls" );
+		header("Content-Disposition: attachment; filename=$course->shortname $hotpot->name.xls" );
 		header("Expires: 0");
 		header("Cache-Control: must-revalidate, post-check=0,pre-check=0");
 		header("Pragma: public");
 	}
-	function print_excel_head(&$wb, &$ws, &$table, &$fmt) {
+	function print_excel_head(&$wb, &$ws, &$table, &$row, &$options) {
 
 		// format properties
-		$properties = array('bold'=>1, 'align'=>'center');
-
+		$properties = array(
+			'bold'=>1, 
+			'align'=>'center', 
+			'valign'=>'bottom',
+			'text_wrap'=>1
+		);
 		// print the headings
-		$this->print_excel_cells($wb, $ws, $table, $fmt, $properties, $table->head);
-	}		
-	function print_excel_data(&$wb, &$ws, &$table, &$fmt) {
+		$this->print_excel_cells($wb, $ws, $table, $row, $properties, $table->head, $options);
+	}
+	function print_excel_data(&$wb, &$ws, &$table, &$row, &$options) {
 
 		// do nothing if there are no cells
 		if (empty($table->data)) return;
 		
 		// format properties
-		$properties = array();
+		$properties = array('text_wrap' => (empty($options['reportwrapdata']) ? 0 : 1));
 
 		// print the data cells
 		foreach ($table->data as $cells) {
-			$this->print_excel_cells($wb, $ws, $table, $fmt, $properties, $cells, array());
+			$this->print_excel_cells($wb, $ws, $table, $row, $properties, $cells, $options);
 		}
-	}		
-	function print_excel_stat(&$wb, &$ws, &$table, &$fmt) {
+	}
+	function print_excel_stat(&$wb, &$ws, &$table, &$row, &$options) {
 
 		// do nothing if there are no cells
 		if (empty($table->stat)) return;
@@ -413,10 +606,10 @@ class hotpot_default_report {
 			$properties['bottom'] = ($i==($i_count-1)) ? 1 : 0;
 
 			// print this row of statistics
-			$this->print_excel_cells($wb, $ws, $table, $fmt, $properties, $cells, $table->statheadercols);
+			$this->print_excel_cells($wb, $ws, $table, $row, $properties, $cells, $options, $table->statheadercols);
 		}
-	}		
-	function print_excel_foot(&$wb, &$ws, &$table, &$fmt) {
+	}
+	function print_excel_foot(&$wb, &$ws, &$table, &$row, &$options) {
 
 		// do nothing if there are no cells
 		if (empty($table->foot)) return;
@@ -432,54 +625,87 @@ class hotpot_default_report {
 			$properties['bottom'] = ($i==($i_count-1)) ? 1 : 0;
 
 			// print this footer row
-			$this->print_excel_cells($wb, $ws, $table, $fmt, $properties, $cells);
+			$this->print_excel_cells($wb, $ws, $table, $row, $properties, $cells, $options);
 		}
-	}		
-	function print_excel_cells(&$wb, &$ws, &$table, &$fmt, &$properties, &$cells, $statheadercols=NULL) {
+	}
+
+	function print_excel_cells(&$wb, &$ws, &$table, &$row, &$properties, &$cells, &$options, $statheadercols=NULL) {
 
 		// do nothing if there are no cells
-		if (empty($cells)) return;
-
-		// next row
-		$row = count($fmt);
-
-		// initialize formats for this row
-		$fmt[$row] = array();
+		if (empty($cells) || is_string($cells)) return;
 
 		foreach($cells as $col => $cell) {
 
-			if ($row==0) {
-				// set column width (excel-width = web-width / 5)
-				$width = (isset($table->size[$col]) && is_numeric($table->size[$col])) ? ceil($table->size[$col]/5) : ($col==0 ? 30 : 15);
-				//$ws->set_column($col, $col, $width);
-			}
-			
-			// set text wrap if $cell is a string and contains a newline
-			if (is_string($cell) && preg_match("/\n/", $cell)) {
-				$properties['text_wrap'] = 1;
+			unset($fmt_properties);
+			$fmt_properties = $properties;
+
+			if (empty($fmt_properties['text_wrap'])) {
+				if (strlen("$cell")>=9) {
+					// long cell value
+					$fmt_properties['align'] = 'left';
+				}
 			} else {
-				$properties['text_wrap'] = 0;
+				if (strlen("$cell")<9 && strpos("$cell", "\n")===false) {
+					// short cell value (wrapping not required)
+					$fmt_properties['text_wrap'] = 0;
+				}
 			}
 
 			// set bold, if required (for stat)
 			if (isset($statheadercols)) {
-				$properties['bold'] = in_array($col, $statheadercols) ? 1 : 0;
-				$properties['align'] = in_array($col, $statheadercols) ? 'right' : $table->align[$col];
+				$fmt_properties['bold'] = in_array($col, $statheadercols) ? 1 : 0;
+				$fmt_properties['align'] = in_array($col, $statheadercols) ? 'right' : $table->align[$col];
 			}
 
-			// create (a reference to) a new format object
-			$fmt[$row][$col] = &$wb->add_format($properties);
-	
-			// set vertical alignment
-			$fmt[$row][$col]->set_align('top');
+			// set align, if required
+			if (isset($table->align[$col]) && empty($fmt_properties['align'])) {
+				$fmt_properties['align'] =  $table->align[$col];
+			}
+
+			// check to see that an identical format object has not already been created
+			unset($fmt);
+			foreach ($wb->formats as $id=>$format) {
+				if (isset($format->properties) && $format->properties==$fmt_properties) {
+					$fmt = &$wb->formats[$id];
+					break;
+				}
+			}
+
+			// create new format object, if necessary (to avoid "too many cell formats" error)
+			if (!isset($fmt)) {
+				$fmt = &$wb->add_format($fmt_properties);
+				$fmt->properties = &$fmt_properties;
+
+				// set vertical alignment
+				if (isset($fmt->properties['valign'])) {
+					$fmt->set_align($fmt->properties['valign']);
+				} else {
+					$fmt->set_align('top'); // default
+				}
+			}
 
 			// write cell
-			if (is_numeric($cell)) {
-				$ws->write_number($row, $col, $cell, $fmt[$row][$col]);
+			if (is_numeric($cell) && !preg_match("/^0./", $cell)) {
+				$ws->write_number($row, $col, $cell, $fmt);
 			} else {
-				$ws->write_string($row, $col, $cell, $fmt[$row][$col]);
+				if (!empty($options['reportencoding'])) {
+					$in_charset = '';
+					if (function_exists('mb_convert_encoding')) {
+						$in_charset = mb_detect_encoding($cell, 'auto');
+					}
+					if (empty($in_charset)) {
+						$in_charset = get_string('thischarset');
+					}
+					if ($in_charset != 'ASCII' && function_exists('mb_convert_encoding')) {
+						$cell = mb_convert_encoding($cell, $options['reportencoding'], $in_charset);
+					}
+				}
+				$ws->write_string($row, $col, $cell, $fmt);
 			}
-		}
+		} // end foreach $col
+
+		// increment $row
+		$row++;
 	}
 }
 

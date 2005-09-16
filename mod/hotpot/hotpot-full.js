@@ -171,9 +171,12 @@ if (window.JCloze==null) {
 	JCloze[1] = true;	// show student's correct answer
 	JCloze[2] = true;	// show other correct answer(s), if any
 	JCloze[3] = true;	// show wrong answer(s), if any (NOT available for v5)
-	JCloze[4] = true;	// show number of hints or penalties
-	JCloze[5] = true;	// show if clue was asked for or not
+	JCloze[4] = false;	// show number of hints + checks (legacy field, replaced by [7]+[9])
+	JCloze[5] = false;	// show if clue was asked for or not (legacy field, replaced by [8])
 	JCloze[6] = true;	// show clue
+	JCloze[7] = true;	// show number of hints (=next letter requests)
+	JCloze[8] = true;	// show number of clues
+	JCloze[9] = true;	// show number of checks
 }
 
 // JCloze quizzes use the global variables 'I' and 'State'
@@ -214,8 +217,15 @@ if (window.JCross==null) {
 	JCross[0] = true;	// show separator line between answers on email
 	JCross[1] = true;	// show number of penalties (hints or checks before complete)
 	JCross[2] = true;	// show number of letters
-	JCross[3] = true;	// show answers
+	JCross[3] = true;	// show correct answers
 	JCross[4] = true;	// show clues
+
+	JCross[5] = true;	// show wrong answers
+	JCross[6] = true;	// show if clue was asked for or not
+	JCross[7] = true;	// show number of hints (=next letter requests)
+	JCross[8] = true;	// show number of checks
+
+	// there are no "ignored" answers for JCross quizzes
 }
 
 // JCross quizzes use the following global variables: 
@@ -239,9 +249,14 @@ if (window.JCross==null) {
 if (window.JMatch==null) {
 	JMatch = new Array();
 	JMatch[0] = true;	// show separator line between answers on email
-	JMatch[1] = true;	// show number of attempts for each match
-	JMatch[2] = true;	// show LHS texts
-	JMatch[3] = true;	// show RHS texts
+	JMatch[1] = false;	// show number of penalties (= total number of checks)
+	JMatch[2] = true;	// show LHS texts (the question)
+	JMatch[3] = true;	// show correct answers
+	JMatch[4] = true;	// show wrong answers
+	JMatch[5] = true;	// show checks (per match) [empty or unchanged RHS are not counted]
+
+	// JMatch has no "clue" or "hint" buttons
+	// there cannot be any "ignored" answers
 }
 
 // v5 JMatch quizzes use the global variables 'I' and 'Status' (and 'RItems')
@@ -291,10 +306,12 @@ if (window.JMatch==null) {
 if (window.JMix==null) {
 	JMix = new Array();
 	JMix[0] = true;		// show separator line between answers on email
-	JMix[1] = true;		// show number of wrong guesses
+	JMix[1] = false;	// show number of wrong guesses (replaced by JMix[5])
 	JMix[2] = true;		// show right answer
 	JMix[3] = true;		// show wrong answer, if any
 	JMix[4] = false;	// show answer as text (false) or number (true)
+	JMix[5] = true;		// show number of checks
+	JMix[6] = true;		// show number of hints (=show next word)
 }
 
 // JMix quizzes use the global variables 
@@ -317,9 +334,9 @@ if (window.JQuiz==null) {
 	JQuiz[0] = true;	// show separator line between answers on email
 	JQuiz[1] = true;	// show question text
 	JQuiz[2] = true;	// show student's correct answer(s)
-	JQuiz[3] = true;	// show wrong and ignored answer(s)
+	JQuiz[3] = false;	// show wrong and ignored answer(s) (legacy field superceded by [8] & [9])
 	JQuiz[4] = true;	// show number of hints requested
-	JQuiz[5] = true;	// show number of checks of incorrect answers
+	JQuiz[5] = false;	// show number of checks of incorrect answers (legacy field superceded by [12])
 
 	// HP6 v6 quizzes only
 	JQuiz[6] = false;	// show answer value (false) or A,B,C... index (true)
@@ -328,6 +345,8 @@ if (window.JQuiz==null) {
 	JQuiz[9] = true;	// show ignored answers (not relevant for multi-select questions)
 	JQuiz[10] = true;	// show score weightings
 	JQuiz[11] = true;	// show question type
+	JQuiz[12] = true;	// show number of checks (if true, then JQuiz[5] of will be ignored)
+	JQuiz[13] = true;	// show number of times ShowAnswer button was pressed (usually 0 or 1)
 }
 
 // v5 JQuiz quizzes use the global variables 'I' and 'Status'
@@ -466,6 +485,40 @@ if (window.MSG==null) {
 		MSG[18] += '\n\n' + 'Tools->Pop-up Blocker->Turn Off Pop-up Blocker';
 	}
 }
+//if (window.FEEDBACK==null) {
+//	FEEDBACK = new Array();
+//	FEEDBACK[0] = ''; // url of feedback page/script
+
+//	FEEDBACK[1] = ''; // array of array('teachername', 'value');
+//	FEEDBACK[2] = ''; // 'student name' [formmail only]
+//	FEEDBACK[3] = ''; // 'email@somewhere.com>' [formmail only]
+
+//	FEEDBACK[4] = ''; // window width
+//	FEEDBACK[5] = ''; // window height
+
+//	FEEDBACK[6] = ''; // 'Send a message to teacher' [prompt/button text]
+//	FEEDBACK[7] = ''; // 'Title'
+//	FEEDBACK[8] = ''; // 'Teacher'
+//	FEEDBACK[8] = ''; // 'Message'
+//	FEEDBACK[10] = ''; // 'Close this window' [formmail only]
+//}
+
+// **********
+//  HP array
+// **********
+HP = new Array();
+for (var i=0; i<=7; i++) {
+	HP[i] = new Array();
+}
+// indexes for the HP array (makes the code further down easier to read)
+_score   = 0;
+_weight  = 1;
+_correct = 2;
+_wrong   = 3;
+_unused  = 4;
+_hints   = 5;
+_clues   = 6;
+_checks  = 7;
 
 // *************
 //  Server Fields
@@ -498,7 +551,7 @@ if (window.ServerFields==null) {
 // *********************
 
 function QuizLogin(LoginPrompt) {
-	if ((Login[0] || Login[1] || Login[2] || Login[3]) && !is_LMS()) {
+	if (!is_LMS() && (Login[0] || Login[1] || Login[2] || Login[3])) {
 		var html = ''
 			+ '<HTML>'
 			+ '<HEAD></HEAD>'
@@ -566,7 +619,7 @@ function QuizLogin(LoginPrompt) {
 					+ '<OPTION value=""></OPTION>'
 				;
 				for(var i=0; i<Login[0].length; i++) {
-					// convert name details to array if necesssary
+					// convert name details to array if nececount_cary
 					if (typeof(Login[0][i])=='string') {
 						Login[0][i] = Login[0][i].split(comma);
 					}
@@ -727,6 +780,8 @@ function goBack(w) {
 	if (w.history.length) w.history.back();
 }
 function openWindow(url, name, width, height, attributes, html) {
+	
+	// set height, width and attributes
 	if (window.screen && width && height) {
 		var W = screen.availWidth;
 		var H = screen.availHeight;
@@ -738,32 +793,56 @@ function openWindow(url, name, width, height, attributes, html) {
 		;
 	}
 
-	// workaround for "Access is denied" errors in IE when offline
-	// based on an idea seen at http://www.devshed.com/Client_Side/JavaScript/Mini_FAQ
-	var ie_offline = (document.all && location.protocol=='file:');
+	// create global hpWindows object, if necessary
+	if (!window.hpWindows) window.hpWindows = new Array();
 
-	// open the window
-	var w = window.open((ie_offline ? '' : url), name, attributes);
+	// initialize window object
+	var w = null;
 
-	// check window opened OK (user may have prevented popups)
-	if (w) {
-		// center the window
-		if (window.screen && width && height) {
-			w.moveTo((W-width)/2, (H-height)/2);
-		}
+	// has a window with this name been opened before?
+	if (name && hpWindows[name]) {
 
-		// add content, if required
-		if (html) {
-			with (w.document) {
-				clear();
-				open();
-				write(html);
-				close();
-			}
+		// http://www.webreference.com/js/tutorial1/exist.html
+		if (hpWindows[name].open && !hpWindows[name].closed) {
+			w = hpWindows[name];
+			w.focus();
 		} else {
-			if (ie_offline && url) w.location = url;
+			hpWindows[name] = null;
 		}
 	}
+
+	// check window is not already open
+	if (w==null) {
+
+		// workaround for "Access is denied" errors in IE when offline
+		// based on an idea seen at http://www.devshed.com/Client_Side/JavaScript/Mini_FAQ
+		var ie_offline = (document.all && location.protocol=='file:');
+	
+		// try and open the new window
+		w = window.open((ie_offline ? '' : url), name, attributes);
+	
+		// check window opened OK (user may have prevented popups)
+		if (w) {
+			// center the window
+			if (window.screen && width && height) {
+				w.moveTo((W-width)/2, (H-height)/2);
+			}
+	
+			// add content, if required
+			if (html) {
+				with (w.document) {
+					clear();
+					open();
+					write(html);
+					close();
+				}
+			} else if (url && ie_offline) {
+				w.location = url;
+			}
+			if (name) hpWindows[name] = w;
+		}
+	}
+
 	return w;
 }
 
@@ -792,7 +871,7 @@ function SendAllResults(Score) {
 		ResultForm = replaceLast('method="get"', 'method="post"', ResultForm);
 
 		// create results window and form
-		var w = openWindow('', '', 500, 400, 'RESIZABLE,SCROLLBARS,HOTPOT_LOCATION', ResultForm);
+		var w = openWindow('', '', 500, 400, 'RESIZABLE,SCROLLBARS,LOCATION', ResultForm);
 
 		// check window opened OK (user may have prevented popups)
 		if (w) {
@@ -887,13 +966,13 @@ function AddStudentDetailsToResultForm() {
 	var sDetails = '';
 	if (Login[0]) { // user name
 		// use 'realname' instead of a separate 'Name' field
-		// sDetails += makeHiddenField('Name', window.UserName);
+		// sDetails += hpHiddenField('Name', window.UserName);
 	}
 	if (Login[1]) { // user ID
-		sDetails += makeHiddenField('ID', window.UserID);
+		sDetails += hpHiddenField('ID', window.UserID);
 	}
 	if (Login[2]) { // user email
-		sDetails += makeHiddenField('email', window.UserEmail);
+		sDetails += hpHiddenField('email', window.UserEmail);
 	}
 	if (sDetails && window.RegExp) {
 		// insert sDetails before '<input...Score...></input>'
@@ -905,7 +984,7 @@ function AddStudentDetailsToResultForm() {
 		}
 	}
 	if (Login[3]) { // quiz password
-		sDetails += makeHiddenField('Password', window.Password);
+		sDetails += hpHiddenField('Password', window.Password);
 		ResultForm = replaceLast('</form>', sDetails + '</form>', ResultForm);
 	}
 }
@@ -936,10 +1015,10 @@ function AddDatabaseDetailsToResultForm() {
 		var ext = (DB[3] ? DB[3] : 'txt');
 		if (ext.charAt(0)!='.') ext = '.' + ext;
 
-		dbDetails += makeHiddenField('append_db', folder + file + ext);
-		dbDetails += makeHiddenField('db_fields', DB[4]);
-		dbDetails += makeHiddenField('db_delimiter', ''); // NS6+ requires this be set later
-		if (DB[6]) dbDetails += makeHiddenField('env_report', DB[6]);
+		dbDetails += hpHiddenField('append_db', folder + file + ext);
+		dbDetails += hpHiddenField('db_fields', DB[4]);
+		dbDetails += hpHiddenField('db_delimiter', ''); // NS6+ requires this be set later
+		if (DB[6]) dbDetails += hpHiddenField('env_report', DB[6]);
 
 		// insert dbDetails before the final </form> tag in the ResultForm
 		ResultForm = replaceLast('</form>', dbDetails + '</form>', ResultForm);
@@ -957,7 +1036,7 @@ function AddServerFieldsToResultForm() {
 				}
 			}
 			if (ServerFields[i][1]) {
-				s += makeHiddenField(ServerFields[i][0], ServerFields[i][1]);
+				s += hpHiddenField(ServerFields[i][0], ServerFields[i][1]);
 			}
 		} // end for
 		if (s) ResultForm = replaceLast('</form>', s + '</form>', ResultForm);
@@ -975,23 +1054,24 @@ function replaceLast(a, b, c) {
 // *************************
 
 function GetQuestionDetails() {
-	var t = get_quiz_type();
-	var v = get_quiz_version();
+	var hp = hpVersion();
+	var t = hpQuizType();
+	var v = hpQuizVersion();
 
-	return	(t==1) ? GetJbcQuestionDetails(v) : 
-		(t==2) ? GetJClozeQuestionDetails(v) : 
-		(t==3) ? GetJCrossQuestionDetails(v) : 
-		(t==4) ? GetJMatchQuestionDetails(v) : 
-		(t==5) ? GetJMixQuestionDetails(v) : 
-		(t==6) ? GetJQuizQuestionDetails(v) :
-		(t==7) ? GetRhubarbDetails(v) :
-		(t==8) ? GetSequiturDetails(v) : '';
+	return	(t==1) ? GetJbcQuestionDetails(hp, v) : 
+		(t==2) ? GetJClozeQuestionDetails(hp, v) : 
+		(t==3) ? GetJCrossQuestionDetails(hp, v) : 
+		(t==4) ? GetJMatchQuestionDetails(hp, v) : 
+		(t==5) ? GetJMixQuestionDetails(hp, v) : 
+		(t==6) ? GetJQuizQuestionDetails(hp, v) :
+		(t==7) ? GetRhubarbDetails(hp, v) :
+		(t==8) ? GetSequiturDetails(hp, v) : '';
 }
-function GetJbcQuestionDetails(v) {
+function GetJbcQuestionDetails(hp, v) {
 	qDetails = '';
 
 	// check the quiz version
-	if (v==5 || v==6) {
+	if (hp==5 || hp==6) {
 
 		// get question details 
 		for(var q=0; q<I.length; q++) {
@@ -1015,19 +1095,19 @@ function GetJbcQuestionDetails(v) {
 			if (JBC[0]) qDetails += makeSeparator(Q);
 
 			if (JBC[1]) { // number of attempts to answer question
-				qDetails += makeHiddenField(Q+'attempts', Status[q][2] + (Status[q][0]==1 ? 1 : 0));
+				qDetails += hpHiddenField(Q+'attempts', Status[q][2] + (Status[q][0]==1 ? 1 : 0));
 			}
 			if (JBC[2]) { // question text
-				qDetails += makeHiddenField(Q+'text', I[q][0]);
+				qDetails += hpHiddenField(Q+'text', I[q][0]);
 			}
 			if (JBC[3] && (DB[0] || aDetails[0].length>0)) { // right
-				qDetails += makeHiddenField(Q+'right', aDetails[0]);
+				qDetails += hpHiddenField(Q+'right', aDetails[0]);
 			}
 			if (JBC[4] && (DB[0] || aDetails[1].length>0)) { // wrong
-				qDetails += makeHiddenField(Q+'wrong', aDetails[1]);
+				qDetails += hpHiddenField(Q+'wrong', aDetails[1]);
 			}
 			if (JBC[5] && (DB[0] || aDetails[2].length>0)) { // ignored
-				qDetails += makeHiddenField(Q+'ignored', aDetails[2]);
+				qDetails += hpHiddenField(Q+'ignored', aDetails[2]);
 			}
 			// calculate score for this question, if required (for HP version < 5.5)
 			if (isNaN(Status[q][3])) {
@@ -1036,21 +1116,22 @@ function GetJbcQuestionDetails(v) {
 				Status[q][3] =  (a1<1 || a1<(a2-1)) ? 0 : ((a1 - (a2-1)) / a1);
 			}
 			// add 'score' for this question
-			qDetails += makeHiddenField(Q+'score', Math.floor(Status[q][3]*100)+'%');
+			qDetails += hpHiddenField(Q+'score', Math.floor(Status[q][3]*100)+'%');
 		} // end for
 	}
 	return qDetails;
 }
-function GetJClozeQuestionDetails(v) {
+function GetJClozeQuestionDetails(hp, v) {
 	var qDetails = '';
 
 	// check the quiz version
-	if (v==5 || v==6) {
+	if (hp==5 || hp==6) {
 
-		var hp5 = (State[0].Guesses==null);
+		var r = hpRottmeier();
 
 		// get details for each question
-		for (var q=0; q<State.length; q++) {
+		var q_max = (r==0) ? State.length :  GapList.length;
+		for (var q=0; q<q_max; q++) {
 
 			// format 'Q' (a padded, two-digit version of 'q')
 			var Q = getQ('JCloze', q);
@@ -1059,51 +1140,92 @@ function GetJClozeQuestionDetails(v) {
 			if (JCloze[0]) qDetails += makeSeparator(Q);
 
 			// score (as %)
-			var x = (hp5 ? State[q][3] : State[q].ItemScore);
-			qDetails += makeHiddenField(Q+'score', Math.floor(x*100)+'%');
+			var x = (hp==5) ? State[q][3] : (r==0) ? State[q].ItemScore : GapList[q][1].Score;
+			qDetails += hpHiddenField(Q+'score', Math.floor(x*100)+'%');
 
-			// shortcut to students correct answer
-			var correct = (hp5 ? State[q][5] : State[q].Guesses[State[q].Guesses.length-1]);
+			// create Guesses array for Rottmeier Find-it v3.1a
+			if (r==2 && GapList[q][1].Guesses==null) {
+					GapList[q][1].Guesses = new Array();
+					GapList[q][1].Guesses[0] = I[q][1][0][0];
+			}
+
+			// shortcut to guesses to this answer
+			var guesses = (hp==5) ? null : (r==0) ? State[q].Guesses : GapList[q][1].Guesses;
+
+			// is this question correctly answered yet?
+			var is_correct = (hp==5) ? State[q][4] : (r==0) ? State[q].AnsweredCorrectly : (r==1) ? GapList[q][1].GapLocked : (r==2) ? GapList[q][1].ErrorFound : true;
+	
+			// shortcut ot correct answer
+			var correct = '';
+			if (is_correct) {
+				correct = (hp==5) ? State[q][5] : guesses[guesses.length-1];
+			}
 
 			if (JCloze[1]) { // student's correct answer
-				qDetails += makeHiddenField(Q+'correct', correct);
+				qDetails += hpHiddenField(Q+'correct', correct);
 			}
 			if (JCloze[2]) { // other correct answers
 				var ignored = new Array();
-				for (var i=0, ii=0; i<I[q][1].length; i++) {
-					if (I[q][1][i][0] && (I[q][1][i][0].toUpperCase() != correct.toUpperCase())) {
-						ignored[ii++] = I[q][1][i][0];
+				if (r==0) {
+					for (var i=0, ii=0; i<I[q][1].length; i++) {
+						if (I[q][1][i][0] && (I[q][1][i][0].toUpperCase() != correct.toUpperCase())) {
+							ignored[ii++] = I[q][1][i][0];
+						}
 					}
+				} else if (r==1 || r==2) { // rottmeier quizzes
+					// do nothing
 				}
-				if (DB[0] || ignored.length>0) qDetails += makeHiddenField(Q+'ignored', ignored);
+				if (DB[0] || ignored.length>0) qDetails += hpHiddenField(Q+'ignored', ignored);
 			}
-			if (JCloze[3] && State[q].Guesses) {
-				var wrong = new Array();
-				for (var i=0, ii=0; i<State[q].Guesses.length-1; i++) {
-					wrong[ii++] = State[q].Guesses[i];
+			if (JCloze[3]) {
+				if (guesses) {
+					var wrong = new Array();
+					var i_max = guesses.length - (is_correct ? 1 : 0);
+					for (var i=0, ii=0; i<i_max; i++) {
+						if (guesses[i]) {
+							for (var iii=0; iii<ii; iii++) {
+								if (wrong[iii]==guesses[i]) break;
+							}
+							// add guess if it has not already been added
+							if (iii==ii) wrong[ii++] = guesses[i];
+						}
+					}
+					if (DB[0] || ii>0) qDetails += hpHiddenField(Q+'wrong', wrong);
 				}
-				if (DB[0] || ii>0) qDetails += makeHiddenField(Q+'wrong', wrong);
 			}
+
+			var HintsAndChecks = (hp==5) ? State[q][1] : (r==0) ? State[q].HintsAndChecks : (r==1) ?  GapList[q][1].NumOfTrials : (r==2) ?  GapList[q][1].HintsAndChecks : 0;
+			var Hints = (HP[_hints][q] ? HP[_hints][q] : 0);
+
 			if (JCloze[4]) { // number of penalties
-				var x = (hp5 ? State[q][1] : State[q].HintsAndChecks);
-				qDetails += makeHiddenField(Q+'penalties', x);
+				qDetails += hpHiddenField(Q+'penalties', HintsAndChecks);
 			}
 			if (JCloze[5]) { // clue shown?
-				var x = (hp5 ? State[q][0] : State[q].ClueGiven);
-				qDetails += makeHiddenField(Q+'clue_shown', (x ? 'HOTPOT_YES' : 'HOTPOT_NO'));
+				var x = (hp==5) ? State[q][0] : (r==0) ? State[q].ClueGiven: (r==1) ? GapList[q][1].ClueAskedFor : false;
+				qDetails += hpHiddenField(Q+'clue_shown', (x ? 'YES' : 'NO'));
 			}
 			if (JCloze[6]) { // clue text
-				qDetails += makeHiddenField(Q+'clue_text', I[q][2]);
+				qDetails += hpHiddenField(Q+'clue_text', I[q][2]);
+			}
+			if (JCloze[7]) { // number of hints
+				qDetails += hpHiddenField(Q+'hints', Hints);
+			}
+			if (JCloze[8]) { // number of clues
+				x = HP[_clues][q] ? HP[_clues][q] : 0;
+				qDetails += hpHiddenField(Q+'clues', x);
+			}
+			if (JCloze[9]) { // number of checks (including the final one for the correct answer)
+				qDetails += hpHiddenField(Q+'checks', HintsAndChecks - Hints + (is_correct ? 1 : 0));
 			}
 		} // end for
 	}
 	return qDetails;
 }
-function GetJCrossQuestionDetails(v) {
+function GetJCrossQuestionDetails(hp, v) {
 	var qDetails = '';
 
 	// check the quiz version
-	if (v==5 || v==6) {
+	if (hp==5 || hp==6) {
 
 		// inialize letter count
 		var letters = 0;
@@ -1116,13 +1238,13 @@ function GetJCrossQuestionDetails(v) {
 				if (L[row][col]) letters++; 
 
 				// show answers and clues, if required
-				var q = (v==5) ? C[row][col] : CL[row][col];
+				var q = (hp==5) ? C[row][col] : CL[row][col];
 				if (q) {
 					// format 'Q' (a padded, two-digit version of 'q')
 					var Q = getQ('JCross', q);
 
-					var clue_A = (v==5) ? A[q] : GetJCrossClue('Clue_A_' + q);
-					var clue_D = (v==5) ? D[q] : GetJCrossClue('Clue_D_' + q);
+					var clue_A = (hp==5) ? A[q] : GetJCrossClue('Clue_A_' + q);
+					var clue_D = (hp==5) ? D[q] : GetJCrossClue('Clue_D_' + q);
 
 					// add separator, if required
 					if (JCross[0] && (clue_A || clue_D)) {
@@ -1130,22 +1252,48 @@ function GetJCrossQuestionDetails(v) {
 					}
 
 					if (clue_A) { // across question
-						if (JCross[3]) qDetails += makeHiddenField(Q+'across', GetJCrossWord(G, row, col));
-						if (JCross[4]) qDetails += makeHiddenField(Q+'across_clue', clue_A);
+						if (JCross[3]) qDetails += hpHiddenField(Q+'across', GetJCrossWord(G, row, col));
+						if (JCross[4]) qDetails += hpHiddenField(Q+'across_clue', clue_A);
+						if (JCross[5]) {
+							var x = (HP[_wrong]['A'] && HP[_wrong]['A'][q]) ? HP[_wrong]['A'][q] : '';
+							qDetails += hpHiddenField(Q+'across_wrong', x);
+						}
+						if (JCross[6]) {
+							var x = HP[_clues][q] ? HP[_clues][q] : 0;
+							qDetails += hpHiddenField(Q+'across_clues', x);
+						}
+						if (JCross[7]) {
+							var x = (HP[_hints]['A'] && HP[_hints]['A'][q]) ? HP[_hints]['A'][q] : 0;
+							qDetails += hpHiddenField(Q+'across_hints', x);
+						}
+						if (JCross[8]) {
+							var x = (HP[_checks]['A'] && HP[_checks]['A'][q]) ? HP[_checks]['A'][q] : '';
+							qDetails += hpHiddenField(Q+'across_checks', x);
+						}
 					}
 					if (clue_D) { // down question
-						if (JCross[3]) qDetails += makeHiddenField(Q+'down', GetJCrossWord(G, row, col, true));
-						if (JCross[4]) qDetails += makeHiddenField(Q+'down_clue', clue_D);
+						if (JCross[3]) qDetails += hpHiddenField(Q+'down', GetJCrossWord(G, row, col, true));
+						if (JCross[4]) qDetails += hpHiddenField(Q+'down_clue', clue_D);
+						if (JCross[5]) qDetails += hpHiddenField(Q+'down_wrong', '');
+						if (JCross[6]) {
+							var x = HP[_clues][q] ? HP[_clues][q] : 0;
+							qDetails += hpHiddenField(Q+'across_clues', x);
+						}
+						if (JCross[7]) {
+							qDetails += hpHiddenField(Q+'down_hints', '');
+							var hints = (HP[_hints]['D'] && HP[_hints]['D'][q]) ? HP[_hints]['D'][q] : 0;
+						}
+						if (JCross[8]) qDetails += hpHiddenField(Q+'down_checks', '');
 					}
 				} // end if q
 			} // end for col
 		} // end for row
 
 		if (JCross[2]) { // show number of letters
-			qDetails = makeHiddenField('JCross_letters', letters) + qDetails;
+			qDetails = hpHiddenField('JCross_letters', letters) + qDetails;
 		}
 		if (JCross[1]) { // show penalties
-			qDetails = makeHiddenField('JCross_penalties', window.Penalties) + qDetails;
+			qDetails = hpHiddenField('JCross_penalties', window.Penalties) + qDetails;
 		}
 
 	}
@@ -1168,92 +1316,80 @@ function GetJCrossWord(a, r, c, goDown) {
 	}
 	return s;
 }
-function GetJMatchQuestionDetails(v) {
-	var qDetails = '';
 
-	// HP5.5 uses "I" for v5 and v6 JMatch quizzes
-	var hp5 = (window.I) ? true : false;
-
-	// check the quiz version
-	if (hp5 || v==6 || v==6.1) {
-
-		if (JMatch[1] && v==6.1) { // attempts
-			qDetails += makeHiddenField('JMatch_attempts', Penalties+1);
-		}
-
-		// get number of questions
-		var max_q = (hp5 || v==6) ? Status.length : F.length;
-
-		// get details for each question
-		for (var q=0; q<max_q; q++) {
-
-			// format 'Q' (a padded, two-digit version of 'q')
-			var Q = getQ('JMatch', q);
-
-			// add separator, if required
-			if (JMatch[0] && (JMatch[1] || JMatch[2] || JMatch[3])) {
-				qDetails += makeSeparator(Q);
-			}
-			if (JMatch[1] && (hp5 || v==6)) { // attempts
-				qDetails += makeHiddenField(Q+'attempts', Status[q][1]);
-			}
-			if (JMatch[2]) { // LHS text
-				var x = (hp5) ? I[q][0] : (v==6) ? GetJMatchText(q, 'LeftItem') : F[q][0];
-				qDetails += makeHiddenField(Q+'lhs', x);
-			}
-			if (JMatch[3]) { // RHS text
-				var x = (hp5) ? I[q][1] : (v==6) ? GetJMatchText(q, 'RightItem') : GetJMatchRHS(q);
-				qDetails += makeHiddenField(Q+'rhs', x);
-			}
-		} // end for
-	}
-	return qDetails;
-}
 function GetJMatchText(q, className) {
 	var obj = (document.getElementById) ? document.getElementById('Questions') : null;
 	return (obj) ? GetChildNodesText(obj.childNodes[q], className) : '';
 }
-function GetJMatchRHS(q) { // Drag-and-drop only (v==6.1)
-	var max_i = (window.F && window.D) ? F.length : 0;
-	for (var i=0; i<max_i; i++) {
-		if (D[i][2]==F[q][1]) break;
+function GetJMatchRHS(v, q, getCorrect) {
+	var rhs = '';
+
+	if (v==5.1 || v==6.1) { // Drag-and-drop
+
+		var max_i = (window.F && window.D) ? F.length : 0;
+		for (var i=0; i<max_i; i++) {
+			if (D[i][getCorrect ? 1 : 2]==F[q][1]) break;
+		}
+		if (i<max_i) rhs = D[i][0];
+
+	} else if (v==5 || v==6) { // drop-down list of options
+
+		var obj=document.getElementById(Status[q][2]);
+		if (obj) { // not correct yet
+			if (getCorrect) {
+				var k = GetKeyFromSelect(obj);
+				var i_max = obj.options.length;
+				for (var i=0; i<i_max; i++) {
+					if (obj.options[i].value==k) break;
+				}
+				if (i>=i_max) i = 0; // shouldn't happen
+			} else {
+				// get current guess, if any
+				var i = obj.selectedIndex;
+			}
+			if (i) rhs = obj.options[i].innerHTML;
+		} else { // correct
+			rhs = GetJMatchText(q, 'RightItem');
+		}
 	}
-	return (i<max_i) ? D[i][0] : '';
+	return rhs;
 }
-function GetJMixQuestionDetails(v) {
+function GetJMixQuestionDetails(hp, v) {
 	qDetails = '';
 
 	// check the quiz version
-	if (v==5 || v==6 || v==6.1) {
+	if (hp==5 || hp==6) {
 
-		var A = Answers.length;
-		for (var a=0; a<A; a++) {
-			var G = Answers[a].length;
-			for (var g=0; g<G; g++) {
-				if (Answers[a][g] != GuessSequence[g]) break;
-			}
-			if (g>=G) break; 
-		}
-		var isWrong = (a>=A);
+		var q = 0; // question number
 
 		// format 'Q' (a padded, two-digit version of 'q')
-		var Q = getQ('JMix', 0);
+		var Q = getQ('JMix', q);
 
 		// add separator, if required
 		if (JMix[0]) qDetails += makeSeparator(Q);
 
 		// add 'score' for this question
-		var score = isWrong ? 0 : ((Segments.length-Penalties)/Segments.length);
-		qDetails += makeHiddenField(Q+'score', Math.floor(score*100)+'%');
+		var score = HP[_correct]==null ? 0 : ((Segments.length-Penalties)/Segments.length);
+		qDetails += hpHiddenField(Q+'score', Math.floor(score*100)+'%');
 
 		if (JMix[1]) { // number of wrong guesses
-			qDetails += makeHiddenField(Q+'wrongGuesses', Penalties);
+			qDetails += hpHiddenField(Q+'wrongGuesses', Penalties);
 		}
 		if (JMix[2]) { // right answer
-			qDetails += makeHiddenField(Q+'right', GetJMixSequence(Answers[isWrong ? 0 : a]));
+			var x = (HP[_correct][q]) ? HP[_correct][q] : '';
+			qDetails += hpHiddenField(Q+'correct', x);
 		}
-		if (JMix[3] && isWrong) { // wrong answer
-			qDetails += makeHiddenField(Q+'wrong', GetJMixSequence(GuessSequence));
+		if (JMix[3]) { // wrong answer(s)
+			var x = (HP[_wrong][q]) ? HP[_wrong][q] : '';
+			qDetails += hpHiddenField(Q+'wrong', x);
+		}
+		if (JMix[5]) { // checks
+			var x = (HP[_checks][q]) ? HP[_checks][q] : 0;
+			qDetails += hpHiddenField(Q+'checks', x);
+		}
+		if (JMix[6]) { // hints
+			var x = (HP[_hints][q]) ? HP[_hints][q] : 0;
+			qDetails += hpHiddenField(Q+'hints', x);
 		}
 	}
 	return qDetails;
@@ -1272,14 +1408,14 @@ function GetJMixSegmentText(index){
 	}
 	return (i<i_max) ? Segments[i][0] : '';
 }
-function GetJQuizQuestionDetails(v) {
+function GetJQuizQuestionDetails(hp, v) {
 	var qDetails = '';
 
 	// HP5.5 uses "Status" for v5 and v6 JMatch quizzes (HP6 uses "State")
-	var hp =  (window.Status) ? 5 : (window.State) ? 6 : 0;
+	// var hp =  (window.Status) ? 5 : (window.State) ? 6 : 0;
 
 	// check the quiz version
-	if (hp) {
+	if (hp==5 || hp==6) {
 
 		// get details for each question
 		var max_q = (hp==5) ? Status.length : State.length;
@@ -1297,59 +1433,96 @@ function GetJQuizQuestionDetails(v) {
 			if (hp==6 && JQuiz[11]) { // question type
 				var x = parseInt(I[q][2]);
 				x = (x==0) ? 'multiple-choice' : (x==1) ? 'short-answer' : (x==2) ? 'hybrid' : (x==3) ? 'multi-select' : 'n/a';
-				qDetails += makeHiddenField(Q+'type', x);
+				qDetails += hpHiddenField(Q+'type', x);
 			}
 
 			// score (as %)
 			var x = (hp==5) ? Status[q][4]*10 : I[q][0]*State[q][0];
-			qDetails += makeHiddenField(Q+'score', Math.floor(x)+'%');
+			if (x<0) x = 0;
+			qDetails += hpHiddenField(Q+'score', Math.floor(x)+'%');
 
 			if (hp==6 && JQuiz[10]) { // weighting
-				qDetails += makeHiddenField(Q+'weighting', I[q][0]);
+				qDetails += hpHiddenField(Q+'weighting', I[q][0]);
 			}
 			if (JQuiz[1]) { // question text
 				var x = (hp==5) ? I[q][0] : (document.getElementById) ? GetChildNodesText(document.getElementById('Q_'+q), 'QuestionText') : '';
-				qDetails += makeHiddenField(Q+'question', x);
+				qDetails += hpHiddenField(Q+'question', x);
 			}
 			if (JQuiz[2]) { // student's correct answers
-				var x = (hp==5) ? Status[q][3] : GetJQuizAnswerDetails(q, 2);
-				qDetails += makeHiddenField(Q+'correct', x);
+				var x = HP[_correct][q];
+				qDetails += hpHiddenField(Q+'correct', x);
 			}
 			if (JQuiz[3]) { // ignored and wrong answers
-				var x = (hp==5) ? '' : GetJQuizAnswerDetails(q, 1);
+				var x = (hp==5) ? new Array() : GetJQuizAnswerDetails(q, 1);
 				if (hp==5) {
 					for (var i=0; i<I[q][1].length; i++) {
-						if (I[q][1][i][0] && (I[q][1][i][0].toUpperCase() != Status[q][3].toUpperCase())) {
-							x += ((x ? ',' : '') + I[q][1][i][0]);
+						var correct = HP[_correct][q] ? HP[_correct][q] : '';
+						if (I[q][1][i][0] && I[q][1][i][0].toUpperCase()!=correct.toUpperCase()) {
+							x[x.length] = I[q][1][i][0];
 						}
 					}
 				}
-				if (DB[0] || x) qDetails += makeHiddenField(Q+'other', x);
+				if (DB[0] || x) qDetails += hpHiddenField(Q+'other', x);
 			}
 			if (hp==6 && JQuiz[7]) { // all selected answers
 				var x = GetJQuizAnswerDetails(q, 0);
-				qDetails += makeHiddenField(Q+'selected', x);
+				qDetails += hpHiddenField(Q+'selected', x);
 			}
-			if (hp==6 && JQuiz[8]) { // wrong answers
-				var x = GetJQuizAnswerDetails(q, 3);
-				qDetails += makeHiddenField(Q+'wrong', x);
+			if (JQuiz[8]) { // wrong answers
+				if (hp==6) {
+					var x = GetJQuizAnswerDetails(q, 3);
+					var i_max = (State[q][6]==null) ? 0 : (State[q][6].length - (State[q][0]<0||x.length ? 0 : 1));
+					for (var i=0; i<i_max; i++) {
+						x[x.length] = State[q][6][i];
+					}
+				} else if (hp==5) {
+					var x = HP[_wrong][q];
+				}
+				qDetails += hpHiddenField(Q+'wrong', x);
 			}
 			if (hp==6 && JQuiz[9]) { // ignored answers
 				var x = GetJQuizAnswerDetails(q, 4);
-				qDetails += makeHiddenField(Q+'ignored', x);
+				qDetails += hpHiddenField(Q+'ignored', x);
 			}
 			if (JQuiz[4]) { // number of hints
-				var x = (hp==5) ? Status[q][2] : State[q][4];
-				qDetails += makeHiddenField(Q+'hints', x);
+				var x = (HP[_hints][q]) ? HP[_hints][q] : 0;
+				qDetails += hpHiddenField(Q+'hints', x);
 			}
-			if (JQuiz[5]) { // number of checks of incorrect answers
-				var x = (hp==5) ? Status[q][1] : (State[q][2]-1);
-				qDetails += makeHiddenField(Q+'checks', x);
+			if (JQuiz[5] || JQuiz[12]) { // number of checks
+				if (JQuiz[12]) { // strictly checks only
+					var x = (HP[_checks][q]) ? HP[_checks][q] : 0;
+				} else { // checks (+ hints in HP6)
+					var x = (hp==5) ? Status[q][1] : (State[q][2]-1);
+				}
+				qDetails += hpHiddenField(Q+'checks', x);
+			}
+			if (JQuiz[13]) { // ShowAnswer
+				var x = (HP[_clues][q]) ? HP[_clues][q] : 0;
+				qDetails += hpHiddenField(Q+'clues', x);
 			}
 		} // end for
 	} // end if
 
 	return qDetails;
+}
+function GetChildNodesText_NEW(obj, className) {
+	// search this node (obj) and its child nodes and 
+	// return all text under node with required classname
+	var txt = '';
+	if (obj) {
+		if (className && obj.className==className) {
+			className = '';
+		}
+		if (className=='') {
+			txt = obj.innerHTML;
+		}
+		if (obj.childNodes) {
+			for (var i=0; i<obj.childNodes.length; i++) {
+				txt += GetChildNodesText(obj.childNodes[i], className);
+			}
+		}
+	}
+	return txt;
 }
 function GetChildNodesText(obj, className) {
 	// search this node (obj) and its child nodes and 
@@ -1379,7 +1552,7 @@ function GetJQuizAnswerDetails(q, flag) {
 	//	3 : student's wrong answers
 	//	4 : ignored answers
 
-	var x = State[q][5];
+	var x = State[q][5]; //Sequence of answers chosen by number
 
 	if (I[q][2]=='3') { // multi-select
 
@@ -1440,6 +1613,8 @@ function GetJQuizAnswerDetails(q, flag) {
 				x[i] = I[q][3][ii][0];
 			}
 		}
+	} else {
+		x = new Array();
 	}
 	return x;
 }
@@ -1448,15 +1623,15 @@ function GetRhubarbDetails(v) {
 	if (v==6) {
 		var Q = getQ('Rhubarb', 0);
 		if (document.title) { // use quiz title as question name
-			qDetails += makeHiddenField(Q+'name', document.title);
+			qDetails += hpHiddenField(Q+'name', document.title);
 		}
 		if (Rhubarb[0]) { // correct words
-			qDetails += makeHiddenField(Q+'correct', Words.length+' words');
+			qDetails += hpHiddenField(Q+'correct', Words.length+' words');
 		}
 		if (Rhubarb[1]) { // incorrect words
 			// remove leading 'Wrong guesses: ' from Detail
 			var x = Detail.substring(15).split(' ');
-			qDetails += makeHiddenField(Q+'wrong', x);
+			qDetails += hpHiddenField(Q+'wrong', x);
 		}
 	}
 	return qDetails;
@@ -1464,6 +1639,366 @@ function GetRhubarbDetails(v) {
 function GetSequiturDetails(v) {
 	qDetails = '';
 	// there is no information available ... at the moment
+	return qDetails;
+}
+
+// *********************
+//	click event handlers
+// *********************
+
+function hpClick(x, args) {
+	// x is the button type
+	// args is either empty, a single argument, or an array of arguments
+	var btn = (x==1) ? 'Hint' : (x==2) ? 'Clue' : (x==3) ? 'Check' : (x==4)  ? 'Enter' : '';
+	if (btn) {
+
+		// convert args to array, if necessary
+		var t = typeof(args);
+		if (t=='object') {
+			// do nothing (args is already an array)
+		} else if (t=='undefined') {
+			args = new Array();
+		} else {
+			args = new Array(''+args);
+		}
+
+		// call handler for this kind of button
+		var x = eval('hpClick'+btn+'('+hpVersion()+','+hpQuizType()+','+hpQuizVersion()+',args);');
+	}
+}
+
+function hpClickHint(hp, t, v, args) {
+	if (t==2 || t==5 || t==6) { // JCloze, JMix or JQuiz
+		var q = args[0]; // clue/question number
+		if (!HP[_hints][q]) HP[_hints][q] = 0;
+		HP[_hints][q]++;
+	}
+	if (t==3) { // JCross
+		if (v==6 || v==5) {
+			var q = args[0]; // clue/question number
+			var AD = args[1]; // direction ('A' or 'D')
+			if (!HP[_hints][AD]) HP[_hints][AD] = new Array();
+			if (!HP[_hints][AD][q]) HP[_hints][AD][q] = 0;
+			HP[_hints][AD][q]++;
+		}
+	}
+	return true;
+}
+function hpClickClue(hp, t, v, args) {
+	if (t==2 || t==3 || t==6) { // JCloze or JCross, or JQuiz (ShowAnswer button)
+		var q = args[0]; // clue/question number
+		if (!HP[_clues][q]) HP[_clues][q] = 0;
+		HP[_clues][q]++;
+	}
+	return true;
+}
+function hpClickCheck(hp, t, v, args) {
+	if (t==3) { // JCross
+		if (v==5 || v==6) {
+			var q = args[0]; // clue/question number
+			for (var row=0; row<L.length; row++) {
+				for (var col=0; col<L[row].length; col++) {
+					var q = (v==5) ? C[row][col] : CL[row][col];
+					if (q) {
+						hpClickCheckJCrossV5V6(hp, v, 'A', q, row, col);
+						hpClickCheckJCrossV5V6(hp, v, 'D', q, row, col);
+					}
+				}
+			}
+		}
+	}
+	if (t==4) { // JMatch
+		var a = new Array();
+		var extra = ''; // extra js code to eval(uate)
+		var guess = ''; // js code to eval(uate) guess
+		var correct = ''; // js code to eval(uate) correct answer
+
+		if (window.D && window.F) {
+			// drag-and-drop, i.e. v5+ and v6+ (HP5 and HP6)
+			a = F;
+			guess = 'GetJMatchRHS(v,i)';
+			correct = 'GetJMatchRHS(v,i,true)';
+
+		} else  if (window.GetKeyFromSelect) {
+			// HP6 v6
+			a = Status;
+			guess = 'GetJMatchRHS(v,i)';
+			correct = 'GetJMatchRHS(v,i,true)';
+
+		} else if (window.GetAnswer) {
+			// HP5 v6,v5
+			a = I;
+			guess = "(I[i][2]==0||I[i][0]=='')?'':GetAnswer(i)";
+			correct = 'I[i][3])';
+			
+		} else if (window.Draggables) {
+			// HP5 v4
+			a = Draggables;
+			s = "Draggables[i].correct=='1'";
+
+		} else if (window.CorrectAnswers) {
+			// HP5 v3
+			a = CorrectAnswers;
+			guess = 'document.QuizForm.elements[i*2].selectedIndex';
+			correct = 'CorrectAnswers[i]';
+		}
+
+		for (var i=0; i<a.length; i++) {
+
+			// check this match has not already been finished
+			if (!HP[_correct][i]) {
+
+				// do extra setup, if necessary
+				if (extra) eval(extra);
+
+				// get the guess, if any
+				var g = ''+eval(guess);
+				if (g) {
+
+					// is the guess correct?
+					if (g==eval(correct)) {
+						HP[_correct][i] = g;
+
+					} else { // wrong answer
+
+						// initialize wrong guess array if necessary
+						if (!HP[_wrong][i]) HP[_wrong][i] = new Array();
+
+						// check to see if the guess is already in the guess array
+						var i_max = HP[_wrong][i].length;
+						for (var ii=0; ii<i_max; ii++) {
+							if (HP[_wrong][i][ii]==g) break;
+						}
+
+						// add the guess if it was not found
+						if (ii==i_max) {
+							HP[_wrong][i][ii]=g;
+						} else {
+							g = null; // this is not a new answer
+						}
+					}
+
+					// increment checks for this question, if necessary
+					if (g) {
+						if (!HP[_checks][i]) HP[_checks][i] = 0;
+						HP[_checks][i]++;
+					}
+				}
+			}
+		}
+	} // end if JMatch
+	
+	if (t==5) { // JMix
+	
+		// get question number (always 0)
+		var q = args[0];
+
+		// check question has not already been answered correctly
+		if (!HP[_correct][q]) {
+
+			// match current guess against possible correct answers
+			var a_max = Answers.length;
+			for (var a=0; a<a_max; a++) {
+				var i_max = Answers[a].length;
+				for (var i=0; i<i_max; i++) {
+					if (Answers[a][i] != GuessSequence[i]) break;
+				}
+				if (i==i_max) break; // correct answer was found
+			}
+			// at this point, (a==a_max) means guess is wrong
+
+			// get array of segment texts in this g(uess)
+			var g = GetJMixSequence(GuessSequence);
+
+			// convert g(uess) array and to a s(tring)
+			var s = '';
+			var i_max = g.length;
+			for (var i=0; i<i_max; i++) {
+				g[i] = trim(g[i]);
+				if (g[i]!='') {
+					s += (s=='' ? '' : '+') +  g[i];
+				}
+			}
+			if (s) {
+				if (a==a_max) { // wrong
+					if (!HP[_wrong][q]) HP[_wrong][q] = new Array();
+					var i = HP[_wrong][q].length;
+					HP[_wrong][q][i] = s;
+				} else { // correct
+					HP[_correct][q] = s;
+				}
+
+				// increment checks for this question
+				if (!HP[_checks][q]) HP[_checks][q] = 0;
+				HP[_checks][q]++;
+			}
+		}
+	}
+
+	if (t==6) { // JQuiz
+
+		if (hp==5 || hp==6) {
+			var q = args[0]; // clue/question number
+			
+			if (v==5) { // HP5 v5
+				var g = TrimString(eval('BottomFrame.document.QForm' + q + '.Guess').value);
+			} else if (v==6) {
+				var g = args[1]; // guess (ShortAnswer or Hybrid)
+				// var g = TrimString(eval('document.QForm.Guess').value);
+			}
+
+			// increment check count
+			if (!HP[_checks][q]) HP[_checks][q] = 0;
+			HP[_checks][q]++;
+
+			if (g) {
+				var G = g.toUpperCase();
+
+				var i_max = I[q][1].length;
+				for (var i=0; i<i_max; i++) {
+					if (CaseSensitive) {
+						if (g==I[q][1][i][0]) break;
+					} else {
+						if (G==I[q][1][i][0].toUpperCase()) break;
+					}
+				}
+				if (i==i_max) { // wrong answer
+					if (!HP[_wrong][q]) HP[_wrong][q] = new Array();
+					var i_max = HP[_wrong][q].length;
+					for (var i=0; i<i_max; i++) {
+						if (HP[_wrong][q]==g) break;
+					}
+					if (i==i_max) HP[_wrong][q][i] = g;
+				} else {
+					HP[_correct][q] = g;
+				}
+			}
+
+			// is there a guess? (ShortAnswer or Hybrid)
+			if (g) {
+
+				// initialize guess array if necessary
+				if (!State[q][6]) State[q][6] = new Array();
+
+				// check to see if the guess is already in the guess array
+				var i_max = State[q][6].length;
+				for (var i=0; i<i_max; i++) {
+					if (State[q][6][i]==g) break;
+				}
+
+				// add the guess if it was not found
+				if (i==i_max) State[q][6][i]=g;
+			}
+		}
+	}
+	return true;
+}
+function hpClickCheckJCrossV5V6(hp, v, AD, q, row, col) {
+	// v is the version of Hot Potatoes
+	// AD is the direction ('A' or 'D')
+
+	// make sure HP[_checks] and HP[_correct] are initialized
+	if (!HP[_checks][AD]) HP[_checks][AD] = new Array();
+	if (!HP[_correct][AD]) HP[_correct][AD] = new Array();
+
+	// get clue, if any
+	var clue = (hp==5) ? eval('window.'+AD) : GetJCrossClue('Clue_'+AD+'_' + q);
+
+	// is this a question that has not been answered correctly yet?
+	if (clue && !HP[_correct][AD][q]) {
+		
+
+		var check = false;
+		var guess = GetJCrossWord(G, row, col, (AD=='D'));
+		var correct = GetJCrossWord(L, row, col, (AD=='D'));
+
+		if (guess==correct) {
+			HP[_correct][AD][q] = correct;
+			check = true;
+
+		} else if (guess) {
+
+			// make sure HP[_wrong] is initialized
+			if (!HP[_wrong][AD]) HP[_wrong][AD] = new Array();
+			if (!HP[_wrong][AD][q]) HP[_wrong][AD][q] = new Array();
+
+			// check this guess has not been entered before
+			var i_max = HP[_wrong][AD][q].length;
+			for (var i=0; i<i_max; i++) {
+				if (HP[_wrong][AD][q]==guess) break;
+			}
+			// add the guess if it has not been entered before
+			if (i>=i_max) {
+				HP[_wrong][AD][q][i] = guess;
+				check = true;
+			}
+		}
+
+		// update HP[_checks], if necessary
+		if (check) {
+			if (!HP[_checks][AD]) HP[_checks][AD] = new Array();
+			if (!HP[_checks][AD][q]) HP[_checks][AD][q] = 0;
+			HP[_checks][AD][q]++;
+		}
+	}
+}
+function hpClickEnter(hp, t, v, args) {
+	if (t==3) { // JCross
+		var q = args[0]; // clue/question number
+		if (!HP[_enter][q]) HP[_enter][q] = 0;
+		HP[_enter][q]++;
+	}
+	return true;
+}
+function GetJMatchQuestionDetails(hp, v) {
+	var qDetails = '';
+
+	// HP5.5 uses "I" for v5 and v6 JMatch quizzes
+	// var hp5 = (window.I) ? true : false;
+
+	// check the quiz version
+	if (hp==5 || hp==6) {
+
+		if (JMatch[1] && v==6.1) { // attempts
+			qDetails += hpHiddenField('JMatch_attempts', Penalties+1);
+		}
+
+		// get number of questions
+		var max_q = (hp==5 || v==6) ? Status.length : F.length;
+
+		// get details for each question
+		for (var q=0; q<max_q; q++) {
+
+			// format 'Q' (a padded, two-digit version of 'q')
+			var Q = getQ('JMatch', q);
+
+			// add separator, if required
+			if (JMatch[0] && (JMatch[1] || JMatch[2] || JMatch[3])) {
+				qDetails += makeSeparator(Q);
+			}
+			if (JMatch[1] && (hp==5 || v==6)) { // attempts
+				qDetails += hpHiddenField(Q+'attempts', Status[q][1]);
+			}
+			if (JMatch[2]) { // LHS text
+				var x = (v==5) ? I[q][0] : (v==6) ? GetJMatchText(q, 'LeftItem') : F[q][0];
+				qDetails += hpHiddenField(Q+'lhs', x);
+			}
+			if (JMatch[3]) { // RHS text (correct answer)
+				//var x = (v==5) ? I[q][1] : (v==6) ? GetJMatchText(q, 'RightItem') : GetJMatchRHS(v, q);
+				//qDetails += hpHiddenField(Q+'rhs', x);
+				var x = HP[_correct][q] ? HP[_correct][q] : '';
+				qDetails += hpHiddenField(Q+'correct', x);
+			}
+			if (JMatch[4]) { // wrong answers
+				var x = HP[_wrong][q] ? HP[_wrong][q] : '';
+				qDetails += hpHiddenField(Q+'wrong', x);
+			}
+			if (JMatch[5]) { // checks
+				var x = HP[_checks][q] ? HP[_checks][q] : 0;
+				qDetails += hpHiddenField(Q+'checks', x);
+			}
+		} // end for
+	}
 	return qDetails;
 }
 
@@ -1481,25 +2016,26 @@ function getQ(section, q) {
 	return section + '_q' + (q<9 ? '0' : '') + (q+1) + '_';
 }
 function makeSeparator(Q) {
-	return 	is_LMS() ? '' : makeHiddenField(Q.substring(0, Q.length-1), '---------------------------------');
+	return 	is_LMS() ? '' : hpHiddenField(Q.substring(0, Q.length-1), '---------------------------------');
 }
-function makeHiddenField(name, value) {
+function hpHiddenField(name, value, comma, forceHTML) {
 	var field = '';
 	var t = typeof(value);
 	if (t=='string') {
 		value = encode_entities(value);
-	} else if (t=='object') {
+	} else if (t=='object') { // array
 		var values = value;
 		var i_max = values.length;
 		value = '';
+		if (comma==null) comma = ','; 
 		for (var i=0; i<i_max; i++) {
 			values[i] = trim(values[i]);
 			if (values[i]!='') {
-				value += (i==0 ? '' : ',') +  encode_entities(values[i]);
+				value += (i==0 ? '' : comma) +  encode_entities(values[i]);
 			}
 		}
 	}
-	if (is_LMS()) {
+	if (is_LMS() && !forceHTML) {
 		if (value && value.indexOf && value.indexOf('<')>=0 && value.indexOf('>')>=0) {
 			value = '<![CDATA[' + value + ']]>';
 		}
@@ -1527,11 +2063,12 @@ function encode_entities(s_in) {
 		var c = s_in.charCodeAt(i);
 		// 34 : double quote .......["] &amp;
 		// 38 : single quote .......['] &apos;
+		// 43 : plus sign ..........[+]
 		// 44 : comma ..............[,]
 		// 60 : left angle bracket .[<] &lt;
 		// 62 : right angle bracket [>] &gt;
 		// >=128 multibyte character
-		s_out += (c<128) ?  s_in.charAt(i) : ('&#x' + pad(c.toString(16), 4) + ';');
+		s_out += (c==43 || c==44 || c>=128) ? ('&#x' + pad(c.toString(16), 4) + ';') : s_in.charAt(i);
 	}
 	return s_out;
 }
@@ -1568,15 +2105,15 @@ function getTime(obj) {
 	return s;
 }
 
-function getFunction(fn) {
+function getFunc(fn) {
 	if (typeof(fn)=='string') {
 		fn = eval('window.' + fn);
 	}
 	return (typeof(fn)=='function') ? fn : null;
 }
-function getFunctionCode(fn, extra) {
+function getFuncCode(fn, extraCode, anchorCode, beforeAnchor) {
 	var s = '';
-	var obj = getFunction(fn);
+	var obj = getFunc(fn);
 	if (obj) {
 		s = obj.toString();
 		var i1 = s.indexOf('{')+1;
@@ -1585,27 +2122,63 @@ function getFunctionCode(fn, extra) {
 			s = s.substring(i1, i2);
 		}
 	}
-	return s + (extra ? extra : '');
-}
-function getFunctionArgs(fn) {
-	var a = new Array();
-	var obj = getFunction(fn);
-	if (obj) {
-		var s = obj.toString();
-		var i1 = s.indexOf('(')+1;
-		var i2 = s.indexOf(')');
-		if (i1>0 && i1<i2) {
-			a = s.substring(i1, i2).split(',');
+	if (extraCode) {
+		if (anchorCode) {
+			if (beforeAnchor) {
+				s = replaceLast(anchorCode, extraCode + anchorCode, s);
+			} else {
+				s = replaceLast(anchorCode, anchorCode + extraCode, s);
+			}
+		} else {
+			if (beforeAnchor) {
+				s = extraCode + s;
+			} else {
+				s = s + extraCode;
+			}
 		}
 	}
-	return (a.length) ? ('"'+ a.join('","') + '",') : '';
+	return s;
+}
+function getArgsStr(args) {
+	// make s(tring) version of function args array
+	var s = '';
+	var i_max = args.length;
+	for (var i=0; i<i_max; i++) {
+		s += '"' + args[i] + '",';
+	}
+	return s;
+}
+function getFuncArgs(fn, flag) {
+	// flag==0 : return args as string
+	// flag==1 ; return args as array
+
+	var i = 0;
+	var a = new Array();
+
+	var obj = getFunc(fn);
+	if (obj) {
+
+		var s = obj.toString();
+		var i1 = s.indexOf('(') + 1;
+		var i2 = s.indexOf(')', i1);
+
+		// add args to a(rray)
+		while (i1>0 && i1<i2) {
+			var i3 = s.indexOf(',', i1); // next comma
+			if (i3<0 || i3>i2) i3 = i2;
+			a[i++] = trim(s.substring(i1, i3));
+			i1 = i3+1;
+		}
+	}
+
+	return flag ? a : getArgsStr(a);
 }
 function getPrompt(fn) {
 	// the LoginPrompt is the text string in the first prompt(...) statement
 	//	v5 : in the StartUp function
 	//	v6 : in the GetUserName function
 	// Note: netscape uses double-quote as delimiter, others use single quote
-	var s = getFunctionCode(fn);
+	var s = getFuncCode(fn);
 	var i1 = s.indexOf('prompt') + 8;
 	var i2 = s.indexOf(s.charAt(i1-1), i1); 
 
@@ -1629,7 +2202,7 @@ function getStartUpCode(fn) {
 	//	     and the code after the 2nd subsequent '}'
 	//	v6 : the code before and after 'GetUserName();' 
 	//	     i.e. all the code except the call to 'GetUserName();'
-	var s = getFunctionCode(fn);
+	var s = getFuncCode(fn);
 	var i1 = s.indexOf('GetUserName();');
 	if (i1>=0) { // v6 
 		var i2 = i1 + 14;
@@ -1640,7 +2213,308 @@ function getStartUpCode(fn) {
 	return (0<i1 && i1<i2) ? s.substring(0, i1) + s.substring(i2) : '';
 }
 function is_LMS() {
-	return document.forms['store'] ? true : false;
+	if (!window.hpCheckedForm) {
+		window.hpCheckedForm = true;
+		window.hpFoundForm = hpFindForm('store') ? true : false;
+	}
+	return hpFoundForm;
+}
+
+function hpFeedback() {
+	if (FEEDBACK[0]) {
+		var url = '';
+		var html = '';
+
+		if (FEEDBACK[1] && FEEDBACK[2]) { // formmail
+			html += '<HTML><BODY>'
+				+ '<FORM action="' + FEEDBACK[0] + '" method="POST">'
+				+ '<TABLE border="0">'
+				+ '<TR><TH valign="top" align="right">' + FEEDBACK[7] + ':</TH><TD>' + document.title + '</TD></TR>'
+				+ '<TR><TH valign="top" align="right">' + FEEDBACK[8] + ': </TH><TD>'
+			;
+			if (typeof(FEEDBACK[1])=='string') {
+				html += FEEDBACK[1] + hpHiddenField('recipient', FEEDBACK[1], ',', true);
+
+			} else if (typeof(FEEDBACK[1])=='object') {
+
+				var i_max = FEEDBACK[1].length;
+				if (i_max==1) { // one teacher
+					html += FEEDBACK[1][0][0] + hpHiddenField('recipient', FEEDBACK[1][0][0]+' &lt;'+FEEDBACK[1][0][1]+'&gt;', ',', true);
+	
+				} else if (i_max>1) { // several teachers
+					html += '<SELECT name="recipient">';
+					for (var i=0; i<i_max; i++) {
+						html += '<OPTION value="'+FEEDBACK[1][i][1]+'">' + FEEDBACK[1][i][0] + '</OPTION>';
+					}
+					html += '</SELECT>';
+				}
+			}
+			html += '</TD></TR>'
+				+	'<TR><TH valign="top" align="right">' + FEEDBACK[9] + ':</TH>'
+				+	'<TD><TEXTAREA name="message" rows="10" cols="40"></TEXTAREA></TD></TR>'
+				+	'<TR><TD>&nbsp;</TD><TD><INPUT type="submit" value="' + FEEDBACK[6] + '">'
+				+ 	hpHiddenField('realname', FEEDBACK[2], ',', true)
+				+ 	hpHiddenField('email', FEEDBACK[3], ',', true)
+				+ 	hpHiddenField('subject', document.title, ',', true)
+				+ 	hpHiddenField('title', document.title, ',', true)
+				+ 	hpHiddenField('return_link_title', FEEDBACK[10], ',', true)
+				+ 	hpHiddenField('return_link_url', 'javascript:self.close()', ',', true)
+				+	'</TD></TR></TABLE></FORM></BODY></HTML>'
+			;
+		} else if (FEEDBACK[1]) { // url only
+
+			if (typeof(FEEDBACK[1])=='object') {
+				var i_max = FEEDBACK[1].length;
+				if (i_max>1) { // several teachers
+					html += '<HTML><BODY>'
+						+ '<FORM action="' + FEEDBACK[0] + '" method="POST" onsubmit="this.action+=this.recipient.options[this.recipient.selectedIndex].value">'
+						+ '<TABLE border="0">'
+						+ '<TR><TH valign="top" align="right">' + FEEDBACK[7] + ':</TH><TD>' + document.title + '</TD></TR>'
+						+ '<TR><TH valign="top" align="right">' + FEEDBACK[8] + ': </TH><TD>'
+					;
+					html += '<SELECT name="recipient">';
+					for (var i=0; i<i_max; i++) {
+						html += '<OPTION value="'+FEEDBACK[1][i][1]+'">' + FEEDBACK[1][i][0] + '</OPTION>';
+					}
+					html += '</SELECT>';
+					html += '</TD></TR>'
+						+	'<TR><TD>&nbsp;</TD><TD><INPUT type="submit" value="' + FEEDBACK[6] + '">'
+						+	'</TD></TR></TABLE></FORM></BODY></HTML>'
+					;
+				} else if (i_max==1) { // one teacher
+					url = FEEDBACK[0] + FEEDBACK[1][0][1];
+				}
+
+			} else if (typeof(FEEDBACK[1])=='string') {
+				url = FEEDBACK[0] + FEEDBACK[1];
+			}
+		} else {
+			url = FEEDBACK[0];
+		}
+		if (url || html) {
+			var w = openWindow(url, 'feedback', FEEDBACK[4], FEEDBACK[5], 'RESIZABLE,SCROLLBARS', html);
+			if (!w) {
+				 // unable to open popup window
+				alert(MSG[18]);
+			}
+		}
+	}
+}
+
+// ********************
+//	intercept clicks
+// ********************
+function hpInterceptFeedback() {
+	// modify the function which writes feedback
+	// 	v6: ShowMessage(Feedback)
+	//	v5: WriteFeedback(Feedback)
+	//	v4: WriteFeedback(Stuff)
+	//	v3: WriteFeedback(Feedback) [except JMatch]
+	//	v3: CheckAnswer()           [JMatch only]
+	var f = window.ShowMessage ? 'ShowMessage' : window.WriteFeedback ? 'WriteFeedback' : 'CheckAnswer';
+	var s = getFuncCode(f) + 'Finish();';
+	var a = getFuncArgs(f, true);
+	if (a[0] && window.FEEDBACK && FEEDBACK[0]) {
+		s = a[0] + "+='<BR><BR>" + '<A href="javascript:hpFeedback();">' + FEEDBACK[6] + "</A>';" + s;
+	}
+	eval('window.' + f + '=new Function(' + getArgsStr(a) + 's);');
+}
+function hpInterceptHints() {
+	// modify the function which shows hints
+	//	JBC:    none
+	//	JCloze  v3-v6: ShowHint()
+	//	JCross  v3: Cheat(), v4: ShowHint(), v5-v6[HP5]: ShowHint(Across,x,y,BoxName), v6[HP6]: ShowHint(Across,ClueNum,x,y,BoxId)
+	//	JMatch: none
+	//	JMix    v5-v6: CheckAnswer(CheckType=1)
+	//	JQuiz   v3: CheckAnswer(ShowHint=true, QNum), v4: CheckAnswer(ShowHint=true), v5-v6[HP5]: CheckAnswer(ShowHint=true,QNum), v6[HP6]: ShowHint(QNum)
+
+	var x = ''; // extra code, if any
+	
+	if (window.Cheat) {
+		// JCross v3 ?
+
+	} else if (window.ShowHint) {
+		var f = 'ShowHint';
+		var a = getFuncArgs(f, true);
+	
+		if (a.length==0) {
+			if (window.FindCurrent) {
+				// JCloze v3-v6
+				x = 'var q=window.Locked?-1:FindCurrent();if(q>=0&&GetHint(q))hpClick(1,q);';
+			} else {
+				// JCross v4
+				// work out which box would have a hint added
+				// work out which question that box is part of using GridMap and WinLetters
+			}
+	
+		} else if (a[0]=='Across') {
+			if (a[1]=='ClueNum') {
+				// JCross v6 [HP6]
+				x = "var args=new Array(ClueNum,Across?'A':'D');hpClick(1,args);";
+			} else if (a[1]=='x' && a[2]=='y') {
+				// JCross v5-v6 [HP5]
+				x = "var args=new Array(C[x][y],Across?'A':'D');hpClick(1,args);";
+			}
+	
+		} else if (a[0]=='QNum') {
+			// JQuiz v6[HP6]
+			x = 'hpClick(1,QNum);';
+		}
+	
+	} else if (window.CheckAnswer) {
+		var f = 'CheckAnswer';
+		var a = getFuncArgs(f, true);
+	
+		if (a[0]=='ShowHint') {
+			if (a[1]=='QNum') {
+				// JQuiz v3, v5-v6[HP5]
+				x = 'if(ShowHint)hpClick(1,QNum);'; 
+			} else {
+				// JQuiz v4
+				x = 'if(ShowHint)hpClick(1,QNum-1);'; // QNum is a global variable
+			}
+		} else if (a[0]=='CheckType') {
+			// JMix v5-v6
+			x = 'if(CheckType==1)hpClick(1,0);'; // question number is always 0;
+		}
+	}
+	// add the e(x)tra code, if any, to the start of the hint (f)unction
+	if (x) {
+		var s = getFuncCode(f, x, '', true);
+		eval('window.' + f + '=new Function(' + getArgsStr(a) + 's);');
+	}
+}
+function hpInterceptClues() {
+	// modify the function which shows clues (or ShowAnswers in JQuiz)
+	//	JBC:    none
+	//	JCloze  v3-v6: ShowClue(ItemNum)
+	//	JCross  v3-v4: ShowClue(ClueNum), v5-v6: ShowClue(ClueNum,x,y)
+	//	JMatch  none
+	//	JMix    none
+	//	JQuiz   ShowAnswers(QNum)
+
+	var x = ''; // extra code, if any
+
+	if (window.ShowClue) {
+		var f = 'ShowClue';
+		var a = getFuncArgs(f, true);
+
+		if (a[0]=='ItemNum') {
+			// JCloze (v3-v6)
+			x = 'if(!window.Locked)hpClick(2,ItemNum);'; // v6 [HP6] uses window.Locked
+
+		} else if (a[0]=='ClueNum') {
+			if (a[1]=='x' && a[2]=='y') {
+				if (window.A && window.D) {
+					// JCross v5-v6 [HP5]
+					x = 'if(A[ClueNum]||D[ClueNum])hpClick(2,ClueNum);';
+				} else if (document.getElementById) {
+					// JCross v6 [HP6]
+					x = "if(document.getElementById('Clue_A_' + ClueNum)||document.getElementById('Clue_D_' + ClueNum))hpClick(2,ClueNum);";
+				}
+			} else {
+				if (window.AClues && window.DClues) {
+					// JCross v3-v4
+					x = 'if(AClues[ClueNum]||DClues[ClueNum])hpClick(2,ClueNum);';
+				}
+			}
+		}
+	}
+	// JQuiz: there is no "ShowClue" function but there is a "ShowAnswer" function
+	if (window.ShowAnswers) {
+		var f = 'ShowAnswers';
+		var a = getFuncArgs(f, true);
+		if (window.State) {
+			if (window.ShowMessage) {
+				// JQuiz v6 [HP6]
+				x = 'if(State[QNum][0]<1)hpClick(2,QNum);';
+			} else if (window.WriteFeedback) {
+				// JQuiz v3-v4
+				x = 'if(State[QNum-1][0]<1)hpClick(2,QNum-1);';
+			}
+		} else if (window.Status) {
+			// JQuiz v5-v6 [HP5]
+			x = 'if(Status[QNum][0]<0)hpClick(5,QNum);';
+		}
+
+	}
+	// add the e(x)tra code, if any, to the start of the clue (f)unction
+	if (x) {
+		var s = getFuncCode(f, x, '', true);
+		eval('window.' + f + '=new Function(' + getArgsStr(a) + 's);');
+	}
+}
+function hpInterceptChecks() {
+	// modify the function which handles checks
+	//	JBC:    none
+	//	JCloze  none
+	//	JCross  none
+	//	JMatch  HP5 v3, v5, v6: CheckAnswer(), HP5 v4: CheckResults(), HP6: CheckAnswers()
+	//	JMix    CheckAnswer(CheckType)
+	//	JQuiz 
+	//		HP5: CheckAnswer(ShowHint, QNum)
+	//		HP6: CheckMCAnswer, CheckMultiSelAnswer, CheckShortAnswer
+	//	Sequitur CheckAnswer(Chosen, Btn)
+
+	// HP6 JQuiz has three "Check Answer" functions
+	var f = new Array('CheckMCAnswer', 'CheckMultiSelAnswer', 'CheckShortAnswer');
+	for (var i=0; i<f.length; i++) {
+		if (eval('window.' + f[i])) {
+			var a = getFuncArgs(f[i], true);
+			if (f[i]=='CheckShortAnswer') {
+				// get guess for ShortAnswer and Hydrid
+				x = "var g=(Finished||State[QNum].length==0||State[QNum][0]>-1)?'':document.getElementById('Q_'+QNum+'_Guess');";
+				x += "if(g){var args=new Array(QNum, g.value);hpClick(3,args)}";
+			} else {
+				x = "if(!Finished&&State[QNum].length&&State[QNum][0]<0)hpClick(3,QNum);";
+			}
+			var s = getFuncCode(f[i], x, '', true);
+			eval('window.' + f[i] + '=new Function(' + getArgsStr(a) + 's);');
+		}
+	}
+
+	if (window.CheckAnswer) {
+		var x = ''; // extra code, if any
+		var f = 'CheckAnswer';
+		var a = getFuncArgs(f, true);
+
+		if (a[0]=='ShowHint') {
+			if (a[1]=='QNum') {
+				// JQuiz v3, v5-v6[HP5]
+				x = 'if(!ShowHint&&Status[QNum][0]<1)hpClick(3,QNum);'; 
+			} else {
+				// JQuiz v4
+				x = 'if(!ShowHint&&State[QNum-1][0]<1)hpClick(3,QNum-1);'; // QNum is a global variable
+			}
+
+		} else if (a[0]=='CheckType') {
+			// JMix v5-v6
+			x = 'if(CheckType==0)hpClick(3,0);'; // question number is always 0;
+
+		} else if (a[0]=='Chosen') {
+			// Sequitur
+			// x = 'if(!(CurrentNumber==TotalSegments||AllDone||Btn.innerHTML==IncorrectIndicator||(CurrentCorrect==Chosen&&CurrentNumber>=(TotalSegments-1))))Finish()';
+		}
+
+		if (x) {
+			var s = getFuncCode(f, x, '', true);
+			eval('window.' + f + '=new Function(' + getArgsStr(a) + 's);');
+		}
+	}
+
+	// JMatch has three possible check functions, depending on the version
+	// (NB: other quiz types also have these functions)
+	var f = new Array('CheckAnswers', 'CheckAnswer', 'CheckResults');
+	for (var i=0; i<f.length; i++) {
+		if (eval('window.' + f[i])) {
+			var a = getFuncArgs(f[i], true);
+			if (a.length==0) {
+				var s = getFuncCode(f[i], "hpClick(3);", '', true);
+				eval('window.' + f[i] + '=new Function(' + getArgsStr(a) + 's);');
+				break; // out of the loop
+			}
+		}
+	}
 }
 
 
@@ -1734,9 +2608,20 @@ if (navigator.userAgent.indexOf("Netscape6")>=0 && window.ShowMessage) {
 //javascript:var s="";var x=document.forms.QForm.elements;for(var i=0;i<x.length;i++)s+=","+x[i].id;alert(s.substring(1))
 //javascript:var s="";var x=document.forms.QForm.elements;for(var i=0;i<x.length;i++)s+=","+x[i].name;alert(s.substring(1))
 
-function sniff_quiz() {
+function hpDetectQuiz() {
 	// "sniff" (=detect) the quiz's type and intended browser version
-	// and cache the values in a global variable caleld "quiz"
+	// and cache the values in a global variable called "quiz"
+
+	// Hot Potatoes version
+	//	5 : HP5.3 (mac) or HP5.5 (win)
+	//	6 : HP6.0 (mac) or HP6.0 (win)
+
+	// intended browser version
+	//	3   : ns3, ie3 (frames)
+	//	4   : ns4, ie4 (cross browser dhtml)
+	//	5   : ie5 (frames, send results via CGI)
+	//	6   : ie6, op7, gecko (w3 standards)
+	//	6.1 : "drag and drop" versions of JMatch and JMix v6
 
 	// quiz type
 	// 	0 : unknown
@@ -1748,38 +2633,49 @@ function sniff_quiz() {
 	//	6 : jquiz
 	//	7 : rhubarb (TexToys)
 	//	8 : Sequitur (TexToys)
+	
+	// rottmeier quiz type
+	//	1 : drop-down (JCloze)
+	//	2 : find-it (JCloze)
 
-	// intended browser version
-	//	3   : ns3, ie3 (frames)
-	//	4   : ns4, ie4 (cross browser dhtml)
-	//	5   : ie5 (frames, send results via CGI)
-	//	6   : ie6, op7, gecko (w3 standards)
-	//	6.1 : "drag and drop" versions of JMatch and JMix v6
+	// shortcut to window object
+	var w = window;
 
 	// create the global "quiz" object, if necessary
-	if (!window.quiz) window.quiz = new Object();
+	if (!w.quiz) w.quiz = new Object();
+
+	// Hot Potatoes version
+	// 	HP6 v6:    Client()
+	// 	HP5 v4-v5: BrowserCheck()
+	//	    v3:    WinStringToMac() [JCloze, JCross, JQuiz]
+	//	    v3:    winrightchar     [JBC, JMatch]
+	//	    v3:    DownTime()       [JBC, JCloze, JQuiz]
+	if (!quiz.hp) {
+		quiz.hp = (w.Client) ? 6 : (w.BrowserCheck) ? 5 : (w.WinStringToMac || w.winrightchar) ? 5 : -1;
+	}
 
 	// check the version and type are not already set
 	if (!quiz.v || !quiz.t) {
 
 		// initialize version and type
 		var v = 0;
-		var t = 0; 
+		var t = 0;
+		var r = 0;
 
 		// set shortcuts to DOM objects
 		var d = document;
 		var f = d.forms;
 
-		if (f.QuizForm && f.CheckForm && self.CorrectAnswers) {
+		if (f.QuizForm && f.CheckForm && w.CorrectAnswers) {
 			v = 3;
 			t = 4; // jmatch
 
-		} else if (self.FeedbackFrame && self.CodeFrame) {
-			v = 3;
+		} else if (w.FeedbackFrame && w.CodeFrame) {
+ 			v = 3;
 			f = CodeFrame.document.forms;
 			t = (f.QuizForm) ? 1 : (f.Cloze) ? 2 : (f.Crossword) ? 3 : (f.QForm1) ? 6 : 0;
 
-		} else if (self.DynLayer) {
+		} else if (w.DynLayer) {
 			v = 4;
 			if (d.layers) {
 				// for NS4, adjust "f" to point to a forms object in a layer
@@ -1788,56 +2684,204 @@ function sniff_quiz() {
 			}
 			t = (f.QForm && f.QForm.FB0) ? 1 : (f.Cloze) ? 2 : (f.Crossword) ? 3 : (f.ExCheck) ? 4 : (f.QForm && f.QForm.Answer) ? 6 : 0;
 
-		} else if (self.TopFrame && self.BottomFrame) {
+		} else if (w.TopFrame && w.BottomFrame) {
 			v = 5;
 			f = BottomFrame.document.forms;
-			t = (f.QForm && f.QForm.elements[0].name.substring(0,3)=='FB_') ? 1 : (f.Cloze) ? 2 : (self.GetAnswerOpener && GetAnswerOpener.indexOf('AnswerForm')>=0) ? 3 : (f.QForm && self.RItems) ? 4 : (f.ButtonForm) ? 5 : (f.QForm0 && f.Buttons0) ? 6 : 0;
+			t = (f.QForm && f.QForm.elements[0].name.substring(0,3)=='FB_') ? 1 : (f.Cloze) ? 2 : (w.GetAnswerOpener && GetAnswerOpener.indexOf('AnswerForm')>=0) ? 3 : (f.QForm && w.RItems) ? 4 : (f.ButtonForm) ? 5 : (f.QForm0 && f.Buttons0) ? 6 : 0;
 
-		} else if (GetObj(d, 'MainDiv')) {
+		} else if (hpObj(d, 'MainDiv')) {
 			v = 6;
 			var obj = (f.QForm) ? f.QForm.elements : null;
-			t = (obj && obj.length>0 && obj[0].id=='') ? 1 : (f.Cloze) ? 2 : (GetObj(d, 'GridDiv') || GetObj(d, 'Clues')) ? 3 : GetObj(d, 'MatchDiv') ? 4 : GetObj(d, 'SegmentDiv') ? 5 : ((f.QForm && f.QForm.Guess) || GetObj(d, 'Questions')) ? 6 : 0;
+			t = (obj && obj.length>0 && obj[0].id=='') ? 1 : (f.Cloze) ? 2 : (hpObj(d, 'GridDiv') || hpObj(d, 'Clues')) ? 3 : hpObj(d, 'MatchDiv') ? 4 : hpObj(d, 'SegmentDiv') ? 5 : ((f.QForm && f.QForm.Guess) || hpObj(d, 'Questions')) ? 6 : 0;
+	
+			// sniff Rottmeier quizzes
+			if (window.Create_StateArray) {
+				if (t==2) { // JCloze
+					var obj = new Create_StateArray();
+					if (typeof(obj.GapLocked)=='boolean') r = 1; // drop-down (v2.4)
+					else if (typeof(obj.ErrorFound)=='boolean') r = 2; // find-it (v3.1a + v3.1b)
+					obj = null; // prevents memory leakage on some versions of IE
+				}
+			}
 
-		} else if (GetObj(d, 'D0')) {
+		} else if (hpObj(d, 'D0')) {
 			v = 6.1; // drag and drop (HP5 and HP6)
-			t = (GetObj(d, 'F0')) ? 4 : (GetObj(d, 'Drop0')) ? 5 : 0;
+			t = (hpObj(d, 'F0')) ? 4 : (hpObj(d, 'Drop0')) ? 5 : 0;
 
-		} else if (window.Words && f.Rhubarb) {
+		} else if (w.Words && f.Rhubarb) {
 			v = 6;
 			t = 7; // rhubarb (TexToys)
 
-		} else if (window.Segments && GetObj(d, 'Story')) {
+		} else if (w.Segments && hpObj(d, 'Story')) {
 			v = 6;
 			t = 8; // sequitur (TexToys)
 
 		}
-
-		if (v) quiz.v = v; // intended browser version
-		if (t) quiz.t = t; // quiz type
+		quiz.v = v; // intended browser version
+		quiz.t = t; // quiz type
+		quiz.r = r; // rottmeier quiz type
 	}
 }
-function get_quiz_type() {
-	sniff_quiz();
+function hpRottmeier() {
+	hpDetectQuiz();
+	return quiz.r;
+}
+function hpVersion() {
+	hpDetectQuiz();
+	return quiz.hp;
+}
+function hpQuizType() {
+	hpDetectQuiz();
 	return quiz.t;
 }
-function get_quiz_version() {
-	sniff_quiz();
+function hpQuizVersion() {
+	hpDetectQuiz();
 	return quiz.v;
 }
+function hpScoreEngine(score_i, a, s, aa, ss, count_c, count_i) {
+	// calculate the score for the quiz so far
 
-function all_finished(a, s, aa, ss) {
+	// score_i : amount by which to increment "score"
+	// a  : outer array
+	// s  : condition, if any, on outer array (=a)
+	//      if true, the score will be incremented by "score_i"
+	// aa : inner array, if any
+	// ss : condition, if any, on inner array (=aa)
+	// count_c : condition, if any, on which "count" is to be incremented
+	// count_i : amount by which to increment "count"
+
+	// "a" and "aa" may be passed as arrays or strings containing the name of an array
+	// "s" and "ss" are strings containing an expression to be eval(uated)
+	// "score_i", "count_i" and "count_c" strings containing an expression to be eval(uated)
+
+	var score = 0;
+	var count = 0;
+
+	// set default condition to increment "count", and amount by which to increment the count
+	if (count_c==null) count_c = "true";
+	if (count_i==null) count_i = "1";
+
+	// set length of outer array. if any
+	var l = (typeof(a)=="string") ? eval(a + ".length") : a ? a.length : 0;
+
+	// loop through outer array
+	for (var i=0; i<l; i++) {
+
+		if (s==null && ss==null) {
+			score += eval(score_i);
+			if (eval(count_c)) count += eval(count_i);
+
+		} else if (s) {
+			score += eval(s) ? eval(score_i) : 0;
+			if (eval(count_c)) count += eval(count_i);
+
+		} else if (ss) {
+			// set length of inner array, if any
+			var ll = (typeof(aa)=="string") ? eval(aa + ".length") : aa ? aa.length : 0;
+
+			// loop through inner array. checking inner condition
+			for (var ii=0; ii<ll; ii++) {
+				score += eval(ss) ? eval(score_i) : 0;
+				if (eval(count_c)) count += eval(count_i);
+			}
+		}
+	}
+
+	// get p(enalties) for JCross and JMatch (and JMix ?)
+	var p = 0;
+	if (self.Penalties) {
+		p = Penalties - (hpFinished() ? 0 : 1);
+	}
+	if (count) {
+		score = Math.floor(100*(score-p)/count);
+	}
+	if (score<0) { // this shouldn't happen, but just in case
+		score = 0;
+	}
+
+	return score;
+}
+function hpScore() {
+
+	var x = ''; // score
+
+	var hp = hpVersion();
+	var t = hpQuizType();
+	var v = hpQuizVersion();
+
+	if (t==1) { // jbc
+
+		if (v==3) x = hpScoreEngine(1, DoneStatus, "i>0 && a[i]=='0'"); // doesn't work
+		else if (v==4) x = hpScoreEngine(1, DoneStatus, "a[i]==0");    // doesn't work
+		else if (v==5 || v==6) x = hpScoreEngine("a[i][3]", Status, "a[i][3]");
+
+
+	} else if (t==2) { // jcloze
+
+		if (v==3 || v==4) x = hpScoreEngine("a[i]", Scores);
+		else if (hp==5) x = hpScoreEngine("a[i][3]", State); // v==5 && v==6
+		else if (hp==6) {
+			var r = hpRottmeier();
+			if (r) x = hpScoreEngine("a[i][1].Score", GapList);
+			else x = hpScoreEngine("a[i].ItemScore", State);
+		}
+
+	} else if (t==3) { // jcross
+
+		if (v==3) x = hpScoreEngine(1, CorrectAnswers, "document.QuizForm.elements[i*2].selectedIndex==a[i]");
+		else if (v==4) x = hpScoreEngine(1, WinLetters, "ConvertCase(GetBoxValue(i),1).charAt(0)==a[i].charAt(0)");
+		else if (v==5 || v==6) x = hpScoreEngine(1, L, "", "L[i]", "L[i][ii] && L[i][ii]==G[i][ii]", "L[i][ii]");
+
+	} else if (t==4) { // jmatch
+
+		if (v==3) x = hpScoreEngine(1, CorrectAnswers, "document.QuizForm.elements[i*2].selectedIndex==a[i]");
+		else if (v==4) x = hpScoreEngine(1, Draggables, "a[i].correct=='1'");
+		else if (v==5) x = hpScoreEngine(1, I, "I[i][2]<1 && I[i][0].length>0 && Status[i][0]==1");
+		else if (v==6) x = hpScoreEngine("Math.min(score,(Status.length-Status[i][1])/Status.length)-score", Status, "true");
+		else if (v==5.1 || v==6.1) x = hpScoreEngine(1, D, "D[i][2]==D[i][1] && D[i][2]>0");
+
+	} else if (t==5) { // jmix
+
+		// there was no v3 or v4 of JMix
+		if (v==5 || v==6 || v==6.1) x = Math.floor(100*(Segments.length-Penalties)/Segments.length);
+
+	} else if (t==6) { // jquiz
+
+		if (hp==5) {
+			if (v==3 || v==4) x = hpScoreEngine("a[i][4]/10", State, "a[i][0]==1");
+			else if (v==5 || v==6) x = hpScoreEngine("a[i][4]/10", Status, "a[i][0]==1", "", "", "true", "1");
+
+		} else if (hp==6) {
+			if (v==6) x = hpScoreEngine("I[i][0]*a[i][0]", State, "a[i]&&a[i][0]>=0", "", "", "a[i]", "I[i][0]");
+		}
+
+	} else if (t==7) { // rhubarb
+		if (v==6) {
+			x = hpScoreEngine(1, DoneList, "a[i]==1");
+		}
+
+	} else if (t==8) { // sequitur
+		if (v==6) x = Math.floor(100*ScoredPoints/TotalPoints);
+	}
+
+	return x; // result
+}
+
+function hpFinishedEngine(a, s, aa, ss) {
 	// determine whether or not all quistions in a quiz are finished
 
 	// a  : outer array
 	// s  : condition, if any, on outer array
+	//      if true for any element in "a", the quiz is NOT finished
 	// aa : inner array, if any
 	// ss : condition, if any, on inner array
+	//      if true for any element in "aa", the quiz is NOT finished
 
 	// the arrays "a" and "aa" may be passed as arrays or strings to be eval(uated)
 	// the conditions "s" and "ss" are specified as strings to be eval(uated)
 
 	// assume a positive result
-	var r = true;
+	var x = true;
 
 	// set length of outer array. if any
 	var l = (typeof(a)=="string") ? eval(a + ".length") : a ? a.length : 0;
@@ -1846,73 +2890,87 @@ function all_finished(a, s, aa, ss) {
 	for (var i=0; i<l; i++) {
 
 		// do outer condition, if any
-		if (s && eval(s)) r = false;
+		if (s && eval(s)) x = false;
 
 		// set length of inner array, if any
 		var ll = (typeof(aa)=="string") ? eval(aa + ".length") : aa ? aa.length : 0;
 
 		// loop through inner array. checking inner condition
 		for (var ii=0; ii<ll; ii++) {
-			if (ss && eval(ss)) r = false;
+			if (ss && eval(ss)) x = false;
 		}
 	}
-	return r;
+	return x;
 }
 
-function is_finished() {
+function hpTimedOut() {
+	// v5 uses "min" and "sec"
+	// v6 uses Seconds
+	return (typeof(self.Seconds)=='number' && Seconds==0) || (typeof(self.min)=='number' && min==0 && typeof(self.sec)=='number' && sec==0);
+}
+
+function hpFinished() {
 
 	// assume false result
-	var r = false; 
+	var x = false; 
 
-	var t = get_quiz_type();
-	var v = get_quiz_version();
+	var hp = hpVersion();
+	var t = hpQuizType();
+	var v = hpQuizVersion();
 
 	if (t==1) { // jbc
 
-		if (v==3) r = all_finished(DoneStatus, "i>0 && a[i]=='0'");
-		else if (v==4) r = all_finished(DoneStatus, "a[i]==0");
-		else if (v==5 || v==6) r = all_finished(Status, "a[i][0]==0");
+		if (v==3) x = hpFinishedEngine(DoneStatus, "i>0 && a[i]=='0'");
+		else if (v==4) x = hpFinishedEngine(DoneStatus, "a[i]==0");
+		else if (v==5 || v==6) x = hpFinishedEngine(Status, "a[i][0]==0");
 
 
 	} else if (t==2) { // jcloze
 
-		if (v==3 || v==4 || v==5 || v==6) r = all_finished(I, "CheckAnswer(i)==-1");
-		// also:   else if (v==5 || v==6) r = all_finished(State, "a[i][4]!=1")
+		var r = hpRottmeier();
+		if (r==1) x = hpFinishedEngine(GapList, "a[i][1].GapLocked==false"); // drop-down
+		else if (r==2) x = hpFinishedEngine(GapList, "a[i][1].ErrorFound==false"); // find-it
+		else if (v==3 || v==4 || v==5 || v==6) x = hpFinishedEngine(I, "CheckAnswer(i)==-1");
+		// also:   else if (v==5 || v==6) x = hpFinishedEngine(State, "a[i][4]!=1")
 
 	} else if (t==3) { // jcross
 
-		if (v==3) r = all_finished(document.Crossword.elements, "ConvertCase(is.mac?unescape(MacStringToWin(a[i].value)):a[i].value,1)!=Letters[i]");
-		else if (v==4) r = all_finished(WinLetters, "ConvertCase(GetBoxValue(i),1).charAt(0) != a[i].charAt(0)");
-		else if (v==5) r = all_finished(L, "", "L[i]", "L[i][ii] && L[i][ii]!=G[i][ii]");
+		if (v==3) x = hpFinishedEngine(document.Crossword.elements, "ConvertCase(is.mac?unescape(MacStringToWin(a[i].value)):a[i].value,1)!=Letters[i]");
+		else if (v==4) x = hpFinishedEngine(WinLetters, "ConvertCase(GetBoxValue(i),1).charAt(0) != a[i].charAt(0)");
+		else if (v==5 || v==6) x = hpFinishedEngine(L, "", "L[i]", "L[i][ii] && L[i][ii]!=G[i][ii]");
 
 	} else if (t==4) { // jmatch
 
-		if (v==3) r = all_finished(CorrectAnswers, "document.QuizForm.elements[i*2].selectedIndex != a[i]");
-		else if (v==4) r = all_finished(Draggables, "a[i].correct!='1'");
-		else if (v==5) r = all_finished(I, "I[i][2]<1 && I[i][0].length>0 && Status[i][0]<1 && GetAnswer(i)!=I[i][3]");
-		else if (v==6) r = all_finished(D, "D[i][2]==0 || D[i][2]!=D[i][1]");
+		if (v==3) x = hpFinishedEngine(CorrectAnswers, "document.QuizForm.elements[i*2].selectedIndex != a[i]");
+		else if (v==4) x = hpFinishedEngine(Draggables, "a[i].correct!='1'");
+		else if (v==5) x = hpFinishedEngine(I, "I[i][2]<1 && I[i][0].length>0 && Status[i][0]<1 && GetAnswer(i)!=I[i][3]");
+		else if (v==6) x = hpFinishedEngine(Status, "Status[i][0]<1");
+		else if (v==5.1 || v==6.1) x = hpFinishedEngine(D, "D[i][2]==0 || D[i][2]!=D[i][1]");
 
 	} else if (t==5) { // jmix
 
 		// there was no v3 or v4 of JMix
-		if (v==5 || v==6) r = !all_finished(Answers, "a[i].join(',')=='" + GuessSequence.join(',') + "'");
+		if (v==5 || v==6 || v==6.1) x = !hpFinishedEngine(Answers, "a[i].join(',')=='" + GuessSequence.join(',') + "'");
 
 	} else if (t==6) { // jquiz
 
-		if (v==3 || v==4) r = all_finished(State, "a[i][0]==0");
-		else if (v==5 || v==6) r = all_finished(State, "a[i] && a[i][0]<0");
+		if (v==3 || v==4) x = hpFinishedEngine(State, "a[i][0]==0");
+		else if (v==5 || v==6) {
+			if (hp==5) x = hpFinishedEngine(Status, "a[i][0]<1");
+			else if (hp==6) x = hpFinishedEngine(State, "a[i] && a[i][0]<0");
+		}
 
 	} else if (t==7) { // rhubarb
-		if (v==6) r = all_finished(DoneList, "a[i]==1");
+		if (v==6) x = hpFinishedEngine(DoneList, "a[i]==1");
 
 	} else if (t==8) { // sequitur
-		if (v==6) r = (CurrentNumber==TotalSegments || AllDone);
+		if (v==6) x = (CurrentNumber==TotalSegments || AllDone);
 	}
 
-	return r; // result
+	return x;
 }
 
-function GetObj(d, id) {
+function hpObj(d, id) {
 	return d.getElementById ? d.getElementById(id) : d.all ? d.all[id] : d[id];
 }
 
@@ -1920,28 +2978,51 @@ function GetObj(d, id) {
 //  initialization
 // **************
 
-if (window.Finish==null) { // v3, v4 and v5
-	// modify the function which writes feedback to call Finish() if the quiz is finished
-	// 	usually this is the WriteFeedback()
-	// 	but v3 of JMatch uses CheckAnswer()
-	var f = window.WriteFeedback ? 'WriteFeedback' : 'CheckAnswer';
-	var s = getFunctionCode(f, 'if(is_finished())Finish();');
-	var a = getFunctionArgs(f);
-	eval('window.' + f + '=new Function(' + a + 's)');
-}
+hpInterceptFeedback();
+hpInterceptHints();
+hpInterceptClues();
+hpInterceptChecks();
 
-// the standard Finish() function
-// for v6, this overwrites the original function
-function Finish(){
-	var f = document.store;
-	if (f) {
-		// hotpot use "Score", TexToys use "FinalScore"
-		var mark = (window.Score ? Score : window.FinalScore ? FinalScore : 0);
-		f.starttime.value = getTime(Start_Time);
-		f.endtime.value = getTime();
-		f.mark.value = mark;
-		f.detail.value = '<?xml version="1.0"?><hpjsresult><fields>'+GetQuestionDetails()+'</fields></hpjsresult>';
-		f.submit();
+function hpFindForm(name, w) {
+	if (w==null) w = self;
+	var f = w.document.forms[name];
+	if (f==null && w.frames) {
+		for (var i=0; i<w.frames.length; i++) {
+				f = hpFindForm(name, w.frames[i]);
+				if (f) break;
+		}
+	}
+	return f;
+}
+function Finish(quizstatus) {
+	var mark = hpScore();
+
+	window.hpForm = hpFindForm('store')
+	if (hpForm) { // LMS
+		hpForm.starttime.value = getTime(Start_Time);
+		hpForm.endtime.value = getTime();
+		hpForm.mark.value = mark;
+		hpForm.detail.value = '<?xml version="1.0"?><hpjsresult><fields>'+GetQuestionDetails()+'</fields></hpjsresult>';
+		if (hpForm.status) {
+			if (!quizstatus) {
+				// 4=completed, 3=abandoned, 2=timed-out or 1=in-progress
+				quizstatus = hpFinished() ? 4 : hpTimedOut() ? 2 : 1;
+			}
+			hpForm.status.value = quizstatus;
+		}
+		if (!window.sentquizresults) {
+			if (hpForm.status && quizstatus==4) {
+				window.sentquizresults = true;
+			}
+			if (quizstatus==4) { // completed
+				// wait 2 seconds for student to see feedback
+				setTimeout("hpForm.submit();", 2000);
+			} else {
+				hpForm.submit();
+			}
+		}
+	} else if (hpFinished()) {
+		SendAllResults(mark);
 	}
 }
 
@@ -1950,14 +3031,14 @@ if (DB[7] && DB[8] && !is_LMS()) {
 	ResultForm = ''
 		+ '<html><body>'
 		+ '<form name="Results" action="" method="post" enctype="x-www-form-encoded">'
-		+ 	makeHiddenField('recipient', '')
-		+ 	makeHiddenField('subject', '')
-		+ 	makeHiddenField('Exercise', '')
-		+ 	makeHiddenField('realname', '')
-		+ 	makeHiddenField('Score', '')
-		+ 	makeHiddenField('Start_Time', '')
-		+ 	makeHiddenField('End_Time', '')
-		+ 	makeHiddenField('title', 'Thanks!')
+		+ 	hpHiddenField('recipient', '')
+		+ 	hpHiddenField('subject', '')
+		+ 	hpHiddenField('Exercise', '')
+		+ 	hpHiddenField('realname', '')
+		+ 	hpHiddenField('Score', '')
+		+ 	hpHiddenField('Start_Time', '')
+		+ 	hpHiddenField('End_Time', '')
+		+ 	hpHiddenField('title', 'Thanks!')
 		+ '</form>'
 		+ '</body></html>'
 	;
@@ -1967,7 +3048,8 @@ var p = getPrompt(window.GetUserName || window.StartUp);
 var c = getStartUpCode(window.StartUp);
 if (p && c) {
 	window.StartUp = new Function('QuizLogin("' + p + '")');
-	window.StartQuiz = new Function('if(!is_LMS()){' + c + '}');
+	window.StartQuiz = new Function(c);
+	// "QuizLogin" finshes by calling "StartQuiz"
 }
 
 // reassign the SendResults function

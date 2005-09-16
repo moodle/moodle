@@ -1,5 +1,4 @@
-<?PHP 
-	// $Id$
+<?PHP // $Id$
 
 	/// This page prints a hotpot quiz
 
@@ -8,7 +7,7 @@
 
 	$id = optional_param("id"); // Course Module ID, or
 	$hp = optional_param("hp"); // hotpot ID
-
+	
 	if ($id) {
 		if (! $cm = get_record("course_modules", "id", $id)) {
 			error("Course Module ID was incorrect");
@@ -50,8 +49,8 @@
 	$button = update_module_button($cm->id, $course->id, get_string("modulename", "hotpot").'" style="font-size:0.75em;');
 	$loggedinas = '<span class="logininfo">'.user_login_string($course, $USER).'</span>';
 
-
 	$time = time();
+	$hppassword = optional_param('hppassword');
 
 	if (!isteacher($course->id)) {
 		// check this quiz is available to this student
@@ -60,7 +59,7 @@
 		$error = '';
 
 		// check quiz is visible
-		if (!$cm->visible) {
+		if (!hotpot_is_visible($cm)) {
 			$error = get_string("activityiscurrentlyhidden");
 
 		// check network address
@@ -72,7 +71,7 @@
 			$error = get_string("nomoreattempts", "quiz");
 
 		// get password
-		} else if ($hotpot->password && empty($_POST['hppassword'])) {
+		} else if ($hotpot->password && empty($hppassword)) {
 
 			print_header($title, $heading, $navigation, "", "", true, $button, $loggedinas, false);
 			print_heading($hotpot->name);
@@ -104,7 +103,7 @@
 			exit;
 
 		// check password
-		} else if ($hotpot->password && strcmp($hotpot->password, $_POST['hppassword'])) {
+		} else if ($hotpot->password && strcmp($hotpot->password, $hppassword)) {
 			$error = get_string("passworderror", "quiz");
 			$nextpage = "view.php?id=$cm->id";
 
@@ -137,14 +136,35 @@
 		error("Quiz is unavailable at the moment");
 	}
 
-	$frameset = isset($_GET['frameset']) ? $_GET['frameset'] : '';
+	$get_js = optional_param('js');
+	$get_css = optional_param('css');
+	$framename = optional_param('framename');
+
+	// look for <FRAMESET> (v5)
+	$frameset = '';
+	$frameset_tags = '';
+	if (preg_match_all('|<frameset([^>]*)>(.*?)</frameset>|is', $hp->html, $matches)) {
+		$last = count($matches[0])-1;
+		$frameset = $matches[2][$last];
+		$frameset_tags = $matches[1][$last];
+	}
 
 	// if HTML is being requested ...
-	if (empty($_GET['js']) && empty($_GET['css'])) {
+	if (empty($get_js) && empty($get_css)) {
 
-		$n = $hotpot->navigation;
-		if (($n!=HOTPOT_NAVIGATION_FRAME && $n!=HOTPOT_NAVIGATION_IFRAME) || $frameset=='main') {
+		if (empty($frameset)) { 
+			// HP v6
+			if ($hotpot->navigation==HOTPOT_NAVIGATION_FRAME || $hotpot->navigation==HOTPOT_NAVIGATION_IFRAME) {
+				$get_html = ($framename=='main');
+			} else {
+				$get_html = true;
+			}
+		} else { 
+			// HP5 v5
+			$get_html = empty($framename);
+		}
 
+		if ($get_html) {
 			add_to_log($course->id, "hotpot", "view", "view.php?id=$cm->id", "$hotpot->id", "$cm->id");
 
 			$attemptid = hotpot_add_attempt($hotpot->id);
@@ -152,28 +172,125 @@
 				error('Could not insert attempt record: '.$db->ErrorMsg);
 			}
 	
-			if ($n!=HOTPOT_NAVIGATION_BUTTONS) {
-				$hp->remove_nav_buttons();
-			}
-
 			$hp->adjust_media_urls();
 
-			$hp->insert_submission_form($attemptid);
-	
-			if ($n==HOTPOT_NAVIGATION_GIVEUP) {
-				$hp->insert_giveup_form($attemptid);
+			if (empty($frameset)) {
+				// HP6 v6
+				if ($hotpot->navigation!=HOTPOT_NAVIGATION_BUTTONS) {
+					$hp->remove_nav_buttons();
+				}
+				if ($hotpot->navigation==HOTPOT_NAVIGATION_GIVEUP) {
+					$hp->insert_giveup_form($attemptid, '<!-- BeginTopNavButtons -->', '<!-- EndTopNavButtons -->');
+				}
+				$hp->insert_submission_form($attemptid, '<!-- BeginSubmissionForm -->', '<!-- EndSubmissionForm -->');
+
+			} else {
+				// HP5 v5
+				if ($hotpot->navigation!=HOTPOT_NAVIGATION_BUTTONS) {
+					$hp->html = preg_replace('#NavBar\+=(.*);#', '', $hp->html);
+				}
+				if ($hotpot->navigation==HOTPOT_NAVIGATION_GIVEUP) {
+				//	$hp->insert_giveup_form($attemptid, '<!-- BeginTopNavButtons -->', '<!-- EndTopNavButtons -->');
+				}
+				$hp->insert_submission_form($attemptid, "var NavBar='", "';");
 			}
 		}
+	}
+
+	//FEEDBACK = new Array();
+	//FEEDBACK[0] = ''; // url of feedback page/script
+	//FEEDBACK[1] = ''; // array of array('teachername', 'value');
+	//FEEDBACK[2] = ''; // 'student name' [formmail only]
+	//FEEDBACK[3] = ''; // 'student email' [formmail only]
+	//FEEDBACK[4] = ''; // window width
+	//FEEDBACK[5] = ''; // window height
+	//FEEDBACK[6] = ''; // 'Send a message to teacher' [prompt/button text]
+	//FEEDBACK[7] = ''; // 'Title'
+	//FEEDBACK[8] = ''; // 'Teacher'
+	//FEEDBACK[9] = ''; // 'Message'
+	//FEEDBACK[10] = ''; // 'Close this window'
+
+	$feedback = array();
+	switch ($hotpot->studentfeedback) {
+
+		case HOTPOT_FEEDBACK_NONE:
+			// do nothing
+			break;
+
+		case HOTPOT_FEEDBACK_WEBPAGE:
+			if (empty($hotpot->studentfeedbackurl)) {
+				$hotpot->studentfeedback = HOTPOT_FEEDBACK_NONE;
+			} else {
+				$feedback[0] = "'$hotpot->studentfeedbackurl'";
+			}
+			break;
+
+		case HOTPOT_FEEDBACK_FORMMAIL:
+			$teachers = hotpot_feedback_teachers($course, $hotpot);
+			if (empty($teachers) || empty($hotpot->studentfeedbackurl)) {
+				$hotpot->studentfeedback = HOTPOT_FEEDBACK_NONE;
+			} else {
+				$feedback[0] = "'$hotpot->studentfeedbackurl'";
+				$feedback[1] = $teachers;
+				$feedback[2] = "'".fullname($USER)."'";
+				$feedback[3] = "'".$USER->email."'";
+				$feedback[4] = 500; // width
+				$feedback[5] = 300; // height
+			}
+			break;
+
+		case HOTPOT_FEEDBACK_MOODLEFORUM:
+			$module = get_record('modules', 'name', 'forum');
+			$forums = get_records('forum', 'course', "$course->id");
+			if (empty($module) || empty($module->visible) || empty($forums)) {
+				$hotpot->studentfeedback = HOTPOT_FEEDBACK_NONE;
+			} else {
+				$feedback[0] = "'$CFG->wwwroot/mod/forum/index.php?id=$course->id'";
+			}
+			break;
+
+		case HOTPOT_FEEDBACK_MOODLEMESSAGING:
+			$teachers = hotpot_feedback_teachers($course, $hotpot);
+			if (empty($CFG->messaging) || empty($teachers)) {
+				$hotpot->studentfeedback = HOTPOT_FEEDBACK_NONE;
+			} else {
+				$feedback[0] = "'$CFG->wwwroot/message/discussion.php?id='";
+				$feedback[1] = $teachers;
+				$feedback[4] = 400; // width
+				$feedback[5] = 500; // height
+			}
+			break;
+			
+		default:
+			// do nothing
+	}
+
+	if ($hotpot->studentfeedback != HOTPOT_FEEDBACK_NONE) {
+		$feedback[6] = "'Send a message to teacher'";
+		$feedback[7] = "'Title'";
+		$feedback[8] = "'Teacher'";
+		$feedback[9] = "'Message'";
+		$feedback[10] = "'Close this window'";
+		$js = '';
+		foreach ($feedback as $i=>$str) {
+			$js .= 'FEEDBACK['.$i."] = $str;\n";
+		}
+		$js = '<script type="text/javascript" language="javascript">'."<!--\n"."FEEDBACK = new Array();\n".$js."//--></script>\n";
+		$hp->html = preg_replace('|</head>|i', "$js</head>", $hp->html, 1);
 	}
 
 	// insert hot-potatoes.js
 	$hp->insert_script(HOTPOT_JS);
 
-	// extract <head> tag
+	// extract <head> and <body> tags
 	$head = '';
-	$pattern = '|^(.*)<head([^>]*)>(.*?)</head>|is';
-	if (preg_match($pattern, $hp->html, $matches)) {
-		$head = $matches[3];
+	$pattern = '|<head([^>]*)>(.*?)</head>|is';
+	if (preg_match_all($pattern, $hp->html, $matches)) {
+		$last = count($matches[0])-1;
+		$head = $matches[2][$last];
+
+		// remove <title>
+		$head = preg_replace('|<title[^>]*>(.*?)</title>|is', '', $head);
 	}
 
 	// extract <style> tags
@@ -200,17 +317,47 @@
 
 	// extract <body> tags
 	$body = '';
-	$bodytags = '';
-	$pattern = '|^(.*)<body([^>]*)>(.*?)</body>|is';
-	if (preg_match($pattern, $hp->html, $matches)) {
-		$bodytags = $matches[2];
-		$body = $matches[3];
+	$body_tags = '';
+	$footer = '</html>';
+
+	if ($frameset) {
+		switch ($framename) {
+			case 'top':
+				print_header($title, $heading, $navigation, "", "", true, $button, $loggedinas);
+				print $footer;
+			break;
+
+			default:
+				// add a HotPot navigation frame at the top of the page
+				//$rows = empty($CFG->resource_framesize) ? 85 : $CFG->resource_framesize;
+				//$frameset = "\n\t".'<frame src="view.php?id='.$cm->id.'&framename=top" frameborder="0" name="top"></frame>'.$frameset;
+				//$frameset_tags = preg_replace('|rows="(.*?)"|', 'rows="'.$rows.',\\1"', $frameset_tags);
+		
+				// put navigation into var NavBar='';
+				// add form to TopFrame in "WriteFeedback" function
+				// OR add form to BottomFrame in "DisplayExercise" function
+				// submission form: '<!-- BeginSubmissionForm -->', '<!-- EndSubmissionForm -->'
+				// give up form: '<!-- BeginTopNavButtons -->', '<!-- EndTopNavButtons -->'
+
+				print "<HTML>\n";
+				print "<HEAD>\n<TITLE>$title</TITLE>\n$styles\n$scripts</HEAD>\n";
+				print "<FRAMESET$frameset_tags>$frameset</FRAMESET>\n";
+				print "</HTML>\n";
+			break;
+		} // end switch $frameset
+		exit;
+
+	// is there a <body> (HP6 and HP5: v6 and v4)
+	} else if (preg_match_all('|<body([^>]*)>(.*?)</body>|is', $hp->html, $matches)) {
+		$last = count($matches[0])-1;
+		$body = $matches[2][$last];
+		$body_tags = $matches[1][$last];
 
 		// workaround to ensure javascript onload routine for quiz is always executed
-		//	$bodytags will only be inserted into the <body ...> tag
+		//	$body_tags will only be inserted into the <body ...> tag
 		//	if it is included in the theme/$CFG->theme/header.html,
-		//	so some old or modified themes may not insert $bodytags
-		if (preg_match('/onload=("|\')(.*?)(\\1)/i', $bodytags, $matches)) {
+		//	so some old or modified themes may not insert $body_tags
+		if (preg_match('/onload=("|\')(.*?)(\\1)/i', $body_tags, $matches)) {
 			$body .= ""
 				.'<SCRIPT type="text/javascript">'."\n"
 				."<!--\n"
@@ -227,17 +374,17 @@
 				."</SCRIPT>\n"
 			;
 		}
-	}
 
-	$footer = '</body></html>';
+		$footer = '</body>'.$footer;
+	}
 
 	// print the quiz to the browser
 
-	if (isset($_GET['js'])) {
+	if ($get_js) {
 		print($scripts);
 		exit;
 	}
-	if (isset($_GET['css'])) {
+	if ($get_css) {
 		print($styles);
 		exit;
 	}
@@ -249,7 +396,7 @@
 			print_header(
 				$title, $heading, $navigation,
 				"", $head.$styles.$scripts, true, $button, 
-				$loggedinas, false, $bodytags
+				$loggedinas, false, $body_tags
 			);
 			if (!empty($available_msg)) {
 				notify($available_msg);
@@ -259,13 +406,9 @@
 
 		case HOTPOT_NAVIGATION_FRAME:
 
-			switch ($frameset) {
+			switch ($framename) {
 				case 'top':
-					print_header(
-						$title, $heading, $navigation, 
-						"", "", true, $button, 
-						$loggedinas
-					);
+					print_header($title, $heading, $navigation, "", "", true, $button, $loggedinas);
 					print $footer;
 				break;
 	
@@ -277,15 +420,12 @@
 				break;
 	
 				default:
-					// set frame height (default 85). Height can be changed by admin user
-					// (Administration->Configuration->Module, Resource->Settings)
-					$framesize = isset($CFG->resource_framesize) ? $CFG->resource_framesize : 85;
-
+					$rows = empty($CFG->resource_framesize) ? 85 : $CFG->resource_framesize;
 					print "<HTML>\n";
 					print "<HEAD><TITLE>$title</TITLE></HEAD>\n";
-					print "<FRAMESET rows=$framesize,*>\n";
-					print "<FRAME src=\"view.php?id=$cm->id&frameset=top\">\n";
-					print "<FRAME src=\"view.php?id=$cm->id&frameset=main\">\n";
+					print "<FRAMESET rows=$rows,*>\n";
+					print "<FRAME src=\"view.php?id=$cm->id&framename=top\">\n";
+					print "<FRAME src=\"view.php?id=$cm->id&framename=main\">\n";
 					print "</FRAMESET>\n";
 					print "</HTML>\n";
 				break;
@@ -295,20 +435,20 @@
 		case HOTPOT_NAVIGATION_IFRAME:
 
 			switch ($frameset) {
-				case 'main':
+				case 'main';
 					print $hp->html;
 				break;
 		
 				default:
 					$iframe_id = 'hotpot_iframe';
-					$bodytags = " onload=\"set_iframe_height('$iframe_id')\"";
+					$body_tags = " onload=\"set_iframe_height('$iframe_id')\"";
 	
 					$iframe_js = '<SCRIPT src="iframe.js" type="text/javascript" language="javascript">'."\n";
 	
 					print_header(
 						$title, $heading, $navigation, 
 						"", $head.$styles.$scripts.$iframe_js, true, $button, 
-						$loggedinas, false, $bodytags
+						$loggedinas, false, $body_tags
 					);
 					if (!empty($available_msg)) {
 						notify($available_msg);
@@ -333,4 +473,35 @@
 			print($hp->html);
 	}
 	
+///////////////////////////////////
+///	functions
+///////////////////////////////////
+
+function hotpot_feedback_teachers(&$course, &$hotpot) {
+	global $CFG;
+	$teachers = get_records_sql("
+		SELECT 
+			u.*
+		FROM 
+			{$CFG->prefix}user AS u, 
+			{$CFG->prefix}user_teachers AS t
+		WHERE 
+			t.userid = u.id
+			AND t.course = $course->id 
+	");
+
+	$str = '';
+	if (!empty($teachers)) {
+		foreach ($teachers as $teacher) {
+			if ($hotpot->studentfeedback==HOTPOT_FEEDBACK_MOODLEMESSAGING) {
+				$value = $teacher->id;
+			} else {
+				$value =$teacher->email;
+			}
+			$str .= (empty($str) ? '' : ',')."new Array('".fullname($teacher)."', '$value')";
+		}
+		$str = 'new Array('.$str.");\n";
+	}
+	return $str;
+}
 ?>

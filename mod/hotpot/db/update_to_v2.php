@@ -1,5 +1,124 @@
 <?PHP
 
+function hotpot_update_to_v2_1() {
+	global $CFG, $db;
+	$ok = true;
+	
+	// hotpot_questions: reduce size of "type" field to "4"
+	$ok = $ok && hotpot_db_update_field_type('hotpot_questions', 'type', 'type', 'INTEGER', 4,  'UNSIGNED', 'NULL');
+
+	// hotpot_questions: change type of "name" field to "text"
+	$ok = $ok && hotpot_db_update_field_type('hotpot_questions', 'name', 'name', 'TEXT',   '',  '', 'NOT NULL', '');
+	
+	// hotpot_questions: nullify empty and non-numeric (shouldn't be any) values in "text" field
+	switch (strtolower($CFG->dbtype)) {
+		case 'mysql' : 
+			$NOT_REGEXP = 'NOT REGEXP';
+		break;
+		case 'postgres7' :
+			$NOT_REGEXP = '!~';
+		break;
+		default:
+			$NOT_REGEXP = '';
+		break;
+	}
+	if ($NOT_REGEXP) {
+		$ok = $ok && execute_sql("UPDATE {$CFG->prefix}hotpot_questions SET text=NULL WHERE text $NOT_REGEXP '^[0-9]+$'");
+	}
+
+	// hotpot_questions: change type of "text" field to "INT(10)"
+	$ok = $ok && hotpot_db_update_field_type('hotpot_questions', 'text', 'text', 'INTEGER', 10, 'UNSIGNED', 'NULL');
+
+	// hotpot_attempts
+
+	// hotpot_attempts: create and set status field (1=in-progress, 2=timed-out, 3=abandoned, 4=completed)
+	$ok = $ok && hotpot_db_update_field_type('hotpot_attempts', '', 'status', 'INTEGER', 4, 'UNSIGNED', 'NOT NULL', 1);
+	$ok = $ok && execute_sql("UPDATE {$CFG->prefix}hotpot_attempts SET status=1 WHERE timefinish=0 AND SCORE IS NULL");
+	$ok = $ok && execute_sql("UPDATE {$CFG->prefix}hotpot_attempts SET status=3 WHERE timefinish>0 AND SCORE IS NULL");
+	$ok = $ok && execute_sql("UPDATE {$CFG->prefix}hotpot_attempts SET status=4 WHERE timefinish>0 AND SCORE IS NOT NULL");
+
+	// hotpot_attempts: create and set clickreport fields
+	$ok = $ok && hotpot_db_update_field_type('hotpot', '', 'clickreporting', 'INTEGER', 4, 'UNSIGNED', 'NOT NULL', 0);
+	$ok = $ok && hotpot_db_update_field_type('hotpot_attempts', '', 'clickreportid', 'INTEGER', 10, 'UNSIGNED', 'NULL');
+	$ok = $ok && execute_sql("UPDATE {$CFG->prefix}hotpot_attempts SET clickreportid=id WHERE clickreportid IS NULL");
+	
+	// hotpot_attempts: create and set studentfeedback field (0=none, 1=formmail, 2=moodleforum, 3=moodlemessaging)
+	$ok = $ok && hotpot_db_update_field_type('hotpot', '', 'studentfeedback', 'INTEGER', 4, 'UNSIGNED', 'NOT NULL', '0');
+	$ok = $ok && hotpot_db_update_field_type('hotpot', '', 'studentfeedbackurl', 'VARCHAR', 255, '', 'NULL');
+
+	// hotpot_attempts: move "details" to separate table
+	$table = 'hotpot_details';
+	if (hotpot_db_table_exists($table)) {
+		// do nothing
+	} else {
+		$ok = $ok && hotpot_create_table($table);
+		switch (strtolower($CFG->dbtype)) {
+			case 'mysql' : 
+			case 'postgres7' :
+				$sql = "
+					INSERT INTO {$CFG->prefix}$table (attempt, details) 
+					SELECT a.id AS attempt, a.details AS details
+						FROM {$CFG->prefix}hotpot_attempts AS a
+						WHERE 
+							a.details IS NOT NULL AND a.details <> ''
+							AND a.details LIKE '<?xml%' AND a.details LIKE '%</hpjsresult>'
+				";
+			break;
+			default:
+				$sql = '';
+			break;
+		}
+		if ($sql) {
+			$ok = $ok && execute_sql($sql);
+		}
+	}
+	
+	// hotpot_attempts: remove the "details" field
+	$ok = $ok && hotpot_db_remove_field('hotpot_attempts', 'details');
+	
+	// add indexes
+	$ok = $ok && hotpot_db_add_index('hotpot_attempts', 'hotpot');
+	$ok = $ok && hotpot_db_add_index('hotpot_attempts', 'userid');
+	$ok = $ok && hotpot_db_add_index('hotpot_details', 'attempt');
+	$ok = $ok && hotpot_db_add_index('hotpot_questions', 'name', 20);
+	$ok = $ok && hotpot_db_add_index('hotpot_questions', 'hotpot');	
+	$ok = $ok && hotpot_db_add_index('hotpot_responses', 'attempt');
+	$ok = $ok && hotpot_db_add_index('hotpot_responses', 'question');
+	$ok = $ok && hotpot_db_add_index('hotpot_strings', 'string', 20);
+
+	// hotpot_string: correct double-encoded HTML entities
+	$ok = $ok && execute_sql("
+		UPDATE {$CFG->prefix}hotpot_strings 
+		SET string = REPLACE(string, '&amp;','&') 
+		WHERE string LIKE '%&amp;#%' 
+		AND (string LIKE '<' OR string LIKE '>')
+	");
+
+	// hotpot_question: remove questions which refer to deleted hotpots
+	if ($ok) {
+		// try and get all hotpot records
+		if ($records = get_records('hotpot')) {
+			$ids = implode(',', array_keys($records));
+			$sql = "DELETE FROM {$CFG->prefix}hotpot_questions WHERE hotpot NOT IN ($ids)";
+		} else {
+			// remove all question records (because there are no valid hotpot ids)
+			$sql = "TRUNCATE {$CFG->prefix}hotpot_questions";
+		}
+		print "Removing unused question records ...";
+		execute_sql($sql);
+	}
+
+	if ($ok) {
+		// remove old 'v6' templates folder (replaced by 'template' folder)
+		$ds = DIRECTORY_SEPARATOR;
+		$dir = "mod{$ds}hotpot{$ds}v6";
+		print "removing old templates ($dir) ... ";
+		$ok = hotpot_rm("$CFG->dirroot{$ds}$dir", false);
+		print $ok ? get_string('success') : 'failed';
+	}
+
+	return $ok;
+}
 function hotpot_update_to_v2_from_v1() {
 	global $CFG;
 	$ok = true;
@@ -609,6 +728,104 @@ function hotpot_update_print_warning($field, $value, $table, $id) {
 //     database functions
 ///////////////////////////
 
+function hotpot_db_index_exists($table, $index, $feedback=false) {
+	global $CFG, $db;
+	$exists = false;
+	
+	// save and switch off SQL message echo
+	$debug = $db->debug;
+	$db->debug = $feedback;
+
+	switch (strtolower($CFG->dbtype)) {
+		case 'mysql' : 
+			$rs = $db->Execute("SHOW INDEX FROM `$table`");
+			if ($rs && $rs->RecordCount()>0) {
+				$records = $rs->GetArray();
+				foreach ($records as $record) {
+					if (isset($record['Key_name']) && $record['Key_name']==$index) {
+						$exists = true;
+						break;
+					}
+				}
+			}
+		break;
+		
+		case 'postgres7' :
+			$rs = $db->Execute("SELECT relname FROM pg_class WHERE relname = '$index' AND relkind='i'");
+			if ($rs && $rs->RecordCount()>0) {
+				$exists = true;
+			}
+		break;
+	}
+
+	// restore SQL message echo
+	$db->debug = $debug;
+
+	return $exists;
+}
+function hotpot_db_delete_index($table, $index, $feedback=false) {
+	global $CFG, $db;
+	$ok = true;
+	
+	// check index exists
+	if (hotpot_db_index_exists($table, $index)) {
+
+		switch (strtolower($CFG->dbtype)) {
+			case 'mysql' : 
+				$sql = "ALTER TABLE `$table` DROP INDEX `$index`";
+			break;
+			
+			case 'postgres7' :
+				$sql = "DROP INDEX $index";
+			break;
+			
+			default: // unknown database type
+				$sql = '';
+			break;
+		}
+		if ($sql) {	
+			// save and switch off SQL message echo
+			$debug = $db->debug;
+			$db->debug = $feedback;
+	
+			$ok = $db->Execute($sql) ? true : false;
+	
+			// restore SQL message echo
+			$db->debug = $debug;
+			
+		} else { // unknown database type
+			$ok = false;
+		}
+	}
+	return $ok;
+}
+function hotpot_db_add_index($table, $field, $length='') {
+	global $CFG, $db;
+
+	// expand $table and $index names
+	$table = "{$CFG->prefix}$table";
+	$index = "{$table}_{$field}_idx";
+
+	// delete $index if it already exists
+	$ok = hotpot_db_delete_index($table, $index);
+
+	switch (strtolower($CFG->dbtype)) {
+		case 'mysql' : 
+			$length = empty($length) ? '' : " ($length)";
+			$ok = $ok && $db->Execute("ALTER TABLE `$table` ADD INDEX `$index` (`$field`$length)");
+		break;
+		
+		case 'postgres7' :
+			$ok = $ok && $db->Execute("CREATE INDEX $index ON $table ($field)");
+		break;
+		
+		default: // unknown database type
+			$ok = false;
+		break;
+	}
+
+	return $ok;
+}
 function hotpot_db_table_exists($table, $feedback=false) {
 	return hotpot_db_object_exists($table, '', $feedback);
 }
@@ -766,7 +983,7 @@ function hotpot_db_update_field_type($table, $oldfield, $field, $type, $size, $u
 	}
 	if (empty($oldfield) && hotpot_db_field_exists($table, $field)) {
 		$oldfield = $field;
-	}
+	} 
 	if (is_string($unsigned)) {
 		$unsigned = (strtoupper($unsigned)=='UNSIGNED');
 	}
@@ -901,7 +1118,7 @@ function hotpot_db_update_field_type($table, $oldfield, $field, $type, $size, $u
 
 			// transfer $oldfield values, if necessary
 			if ( $oldfield != '""' ) {
-				execute_sql("UPDATE $table SET $tmpfield = $oldfield");
+				execute_sql("UPDATE $table SET $tmpfield = CAST ($oldfield AS $fieldtype)");
 				execute_sql("ALTER TABLE $table DROP COLUMN $oldfield");
 			}
 
@@ -963,5 +1180,39 @@ function hotpot_db_update_record($table, $record, $forcenull=false) {
 	}
 	return $ok;
 }
+function hotpot_rm($target, $output=true) {
+	$ok = true;
+	if (!empty($target)) {
+		if (is_file($target)) {
+			if ($output) {
+				print "removing file: $target ... ";
+			}
+			$ok = @unlink($target);
+	
+		} else if (is_dir($target)) {
+			$dir = dir($target);
+			while(false !== ($entry = $dir->read())) {
+				if ($entry!='.' && $entry!='..') {
+					$ok = $ok && hotpot_rm($target.DIRECTORY_SEPARATOR.$entry, $output);
+				}
+			}
+			$dir->close();
+			if ($output) {
+				print "removing folder: $target ... ";
+			}
+			$ok = $ok && @rmdir($target);
 
+		} else { // not a file or directory (probably doesn't exist)
+			$output = false;
+		}
+		if ($output) {
+			if ($ok) {
+				print '<font color="green">OK</font><br>';
+			} else {
+				print '<font color="red">Failed</font><br>';
+			}
+		}
+	}
+	return $ok;
+}
 ?>
