@@ -96,7 +96,7 @@
   </tr>
 
 <?php
-    for ($i=1; $i<=QUIZ_MAX_NUMBER_ANSWERS; $i++) {
+    for ($i=1; $i<=count($answers); $i++) {
         if (!isset($answers[$i-1]->fraction)) {
             $answers[$i-1]->answer = '';
             $answers[$i-1]->fraction = 0;

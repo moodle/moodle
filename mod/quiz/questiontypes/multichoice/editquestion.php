@@ -9,15 +9,19 @@
         $answersraw = get_records_list("quiz_answers", "id", $options->answers);
 
     }
-    for ($i=0 ; $i < QUIZ_MAX_NUMBER_ANSWERS ; $i++) {
-        $answers[] = "";   // Make answer slots, default as blank
-    }
+
+    $answers = array();
     if (!empty($answersraw)) {
-        $i=0;
         foreach ($answersraw as $answer) {
-            $answers[$i] = $answer;   // insert answers into slots
-            $i++;
+            $answers[] = $answer;   // insert answers into slots
         }
+    }
+
+    $i = count($answers);
+    $limit = QUIZ_MAX_NUMBER_ANSWERS;
+    $limit = $limit <= $i ? $i+1 : $limit;
+    for (; $i < $limit; $i++) {
+        $answers[] = "";   // Make answer slots, default as blank
     }
     print_heading_with_help(get_string("editingmultichoice", "quiz"), "multichoice", "quiz");
     require("$CFG->dirroot/mod/quiz/questiontypes/multichoice/multichoice.html");
