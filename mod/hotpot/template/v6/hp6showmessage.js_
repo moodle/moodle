@@ -1,0 +1,60 @@
+
+
+//CODE FOR HANDLING DISPLAY OF POPUP FEEDBACK BOX
+
+var topZ = 1000;
+
+function ShowMessage(Feedback){
+	var Output = Feedback + '<br /><br />';
+
+	var obj = document.getElementById('FeedbackContent');
+	if (obj) {
+		obj.innerHTML = Output;
+	}
+	var obj = document.getElementById('FeedbackDiv');
+	if (obj) {
+		topZ++;
+		obj.style.zIndex = topZ;
+		obj.style.top = TopSettingWithScrollOffset(30) + 'px';
+		obj.style.display = 'block';
+	}
+
+	ShowElements(false, 'input');
+	ShowElements(false, 'select');
+	ShowElements(false, 'object');
+
+//Focus the OK button
+	var obj = document.getElementById('FeedbackOKButton');
+	if (obj) {
+		setTimeout("document.getElementById('FeedbackOKButton').focus()", 50);
+	}
+	
+//[inclPreloadImages]
+//	RefreshImages();
+//[/inclPreloadImages]
+}
+
+function ShowElements(Show, TagName){
+//Special for IE bug -- hide all the form elements that will show through the popup
+	if (C.ie){
+		var Els = document.getElementsByTagName(TagName);
+		for (var i=0; i<Els.length; i++){
+			if (Show == true){
+				Els[i].style.display = 'inline';
+			}
+			else{
+				Els[i].style.display = 'none';
+			}
+		}
+	} 
+}
+
+function HideFeedback(){
+	document.getElementById('FeedbackDiv').style.display = 'none';
+	ShowElements(true, 'input');
+	ShowElements(true, 'select');
+	ShowElements(true, 'object');
+	if (Finished == true){
+		Finish();
+	}
+}
