@@ -100,7 +100,6 @@ class quiz_format_gift extends quiz_default_format {
     }
 
     function check_answer_count( $min, $answers, $text ) {
-      // max is always 10 of course!
       $countanswers = count($answers);
       if ($countanswers < $min) {
         if ($this->displayerrors) {
@@ -111,9 +110,9 @@ class quiz_format_gift extends quiz_default_format {
          return false;
        }
 
-       if ($countanswers>10) {
+       if ($countanswers>QUIZ_MAX_NUMBER_ANSWERS) {
          if ($this->displayerrors) {
-           $errormessage = get_string( 'importmax10error', 'quiz' );
+           $errormessage = get_string( 'importmaxerror', 'quiz' );
              echo "<p>$text</p>\n";
              echo "<p>$errormessage</p>";
            }
