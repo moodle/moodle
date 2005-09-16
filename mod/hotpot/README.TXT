@@ -1,4 +1,4 @@
-This is v2.0.8 of the HotPot module
+This is v2.0.9 of the HotPot module
    It has been tested on Moodle 1.1 thru 1.5, MySQL and PostGres7 databases and PHP 4.1 thru 5.0.4
 
    This module may be distributed under the terms of the General Public License
