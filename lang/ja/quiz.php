@@ -182,6 +182,7 @@ $string['illegalformulasyntax'] = '「 $a 」で始まる不正なシンタックスの式です。'
 $string['imagedisplay'] = '表示イメージ';
 $string['imagemissing'] = '$a 行のイメージが使用できません。ファイル名は無視されます。';
 $string['importmax10error'] = '問題にエラーがあります。10以上の答えを設定することはできません。';
+$string['importmaxerror'] = '問題にエラーがあります。答えが多すぎます。';
 $string['importminerror'] = '問題にエラーがあります。この問題タイプに必要な数の答えがありません。';
 $string['importquestions'] = 'ファイルから問題をインポートする';
 $string['incorrect'] = '不正解';
