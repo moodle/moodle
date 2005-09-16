@@ -335,7 +335,7 @@ function hotpot_print_recent_mod_activity($activity, $course, $detail=false) {
 		print '<img src="'.$src.'" height="16" width="16" alt="'.$activity->type.'" /> ';
 
 		// link to activity
-		$href = "$CFG->wwwroot/mod/hotpot/view.php?id=$activity->instance";
+		$href = "$CFG->wwwroot/mod/hotpot/view.php?hp=$activity->instance";
 		print '<a href="'.$href.'">'.$activity->name.'</a> - ';
 	}
 	if (isteacher($course)) {
