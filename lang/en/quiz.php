@@ -181,6 +181,7 @@ $string['illegalformulasyntax'] = 'Illegal formula syntax starting with \'$a\'';
 $string['imagedisplay'] = 'Image to display';
 $string['imagemissing'] = 'Image not available at line $a. The filename will be ignored';
 $string['importmax10error'] = 'There is an error in the question. You may not have more than ten answers';
+$string['importmaxerror'] = 'There is an error in the question. There are too many answers.';
 $string['importminerror'] = 'There is an error in the question. There are not enough answers for this question type';
 $string['importquestions'] = 'Import questions from file';
 $string['incorrect'] = 'Incorrect';
