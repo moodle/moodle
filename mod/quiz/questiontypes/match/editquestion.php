@@ -18,7 +18,7 @@
 
         $i = count($subquestions);
         $limit = QUIZ_MAX_NUMBER_ANSWERS;
-        $limit = $limit < $i ? $i+1 : $limit;
+        $limit = $limit <= $i ? $i+1 : $limit;
         for (; $i < $limit; $i++) {
             $subquestions[] = "";   // Make question slots, default as blank
             $subanswers[] = "";     // Make answer slots, default as blank
