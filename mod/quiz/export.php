@@ -5,14 +5,20 @@
     require_once("locallib.php");
 
     require_variable($category);
+    $courseid = required_param('course',PARAM_INT);
     optional_variable($format);
+    
 
     if (! $category = get_record("quiz_categories", "id", $category)) {
         error("This wasn't a valid category!");
     }
 
-    if (! $course = get_record("course", "id", $category->course)) {
+    if (! $categorycourse = get_record("course", "id", $category->course)) {
         error("This category doesn't belong to a valid course!");
+    }
+
+    if (! $course = get_record("course", "id", $courseid )) {
+        error("Course does not exist!");
     }
 
     require_login($course->id, false);
@@ -100,7 +106,7 @@
     print_heading_with_help($strexportquestions, "export", "quiz");
 
     print_simple_box_start("center");
-    echo "<form enctype=\"multipart/form-data\" method=\"post\" action=\"export.php\">";
+    echo "<form enctype=\"multipart/form-data\" method=\"post\" action=\"export.php?course=$courseid\">";
     echo "<table cellpadding=\"5\">";
 
     echo "<tr><td align=\"right\">";
