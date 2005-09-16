@@ -397,7 +397,7 @@ Dans la plupart des logiciels de messagerie, cette adresse devrait apparaître co
 
 Si vous avez besoin d\'aide, veuillez contacter l\'administrateur du site, $a->admin';
 $string['emailpasswordconfirmationsubject'] = '$a : confirmation du changement de mot de passe';
-$string['emailpasswordconfirmsent'] = '<p>Un message a été envoyé à votre adresse de courriel<strong>$a</strong>.</p><p>Ce message décrit la marche à suivre pour confirmer et terminer le changement de mot de passe.</p><p>En cas de difficulté, veuillez contacter l\'administrateur du site.</p>';
+$string['emailpasswordconfirmsent'] = '<p>Un message a été envoyé à votre adresse de courriel <strong>$a</strong>.</p><p>Ce message décrit la marche à suivre pour confirmer et terminer le changement de mot de passe.</p><p>En cas de difficulté, veuillez contacter l\'administrateur du site.</p>';
 $string['emailpasswordsent'] = '<p>Merci pour votre confirmation de changement de mot de passe.</p><p>Un message avec votre nouveau mot de passe a été envoyé à votre adresse <strong>$a->email</strong>.</p><p>Le nouveau mot de passe a été généré automatiquement. Vous pouvez <a href=\"$a->link\">le modifier</a> pour le rendre plus facile mémoriser.</p>';
 $string['enable'] = 'Activer';
 $string['encryptedcode'] = 'Code chiffré';
