@@ -1,0 +1,105 @@
+<STYLE type="text/css">
+<!--
+	DD {font-size:0.8em; margin-top:0.5em;}
+-->
+</STYLE>
+<P align="center">
+	<B>Report Content</B>
+</P>
+<P>
+	You can specify different content for the Hot Potatoes reports.
+</P>
+<DL>
+	<DT><B>Selecting the type of report</B></DT>
+	<DD><B>Overview</B><BR> 	
+		This report is a list of attempts at this quiz.
+		&quot;abandoned&quot; attempts are included,
+		but &quot;in progress&quot; attempts are not shown.
+
+		It shows the picture and name of each user, along with their
+		grade for the quiz and the score, time and duration of each attempt. 
+
+		Attempts may be selected and then deleted if required.
+	</DD>
+	<DD><B>Simple statistics</B><BR> 	
+		This report is a list of all completed attempts at this quiz.
+
+		Attempts marked as &quot;abandoned&quot; or 
+		&quot;in progress&quot; are not included.
+
+		It shows the picture and name of each user, along with their
+		grade for the quiz, and the score of each question in each attempt.
+
+		It also gives the average scores of the individual 
+		questions and the quiz as a whole.
+	</DD>
+	<DD><B>Detailed statistics</B><BR> 	
+		This report shows full details of all completed attempts at this quiz,
+
+		Attempts marked as &quot;abandoned&quot; or 
+		&quot;in progress&quot; are not included.
+
+		The report contains the following tables:
+		<UL>
+			<LI>
+				the <A href="help.php?module=hotpot&file=responsestable.html">responses table</A>, which shows how each user responded 
+				to each question in each of their attempts at the quiz.
+			</LI>
+			<LI>
+				the <A href="help.php?module=hotpot&file=analysistable.html">item analysis table</A>, which lists the responses to each 
+				question and the frequency of each response.
+			</LI>
+		</UL>
+	</DD>
+
+	<DD><B>Click trail report</B><BR> 
+		This report shows details of every click by every student during completed attempts at the Hot Potatoes quiz.
+		The report can be very large and is intended to be downloaded and viewed in a spreadsheet program, such as Microsoft Excel.
+		Details of the columns in this report are available in the 
+		<A href="help.php?module=hotpot&file=clickreporttable.html">click trail table</A>
+		help file
+	</DD>
+</DL>
+<DL>
+	<DT><B>Selecting a course</B></DT>
+
+	<DD><B>This course</B><BR> 
+		The report will show responses by participants in the current course
+	</DD>
+
+	<DD><B>All my courses</B><BR> 
+		The report will show responses by participants for all courses which 
+		use this quiz and in which you are a teacher. 
+		To be used in several courses, the quiz must be located in the Site 
+		files directory.
+		<B><I>This option is only available to site administrators.</I></B>
+	</DD>
+</DL>
+<DL>
+	<DT><B>Selecting users</B></DT>
+
+	<DD><B>Students</B><BR> 
+		The report will show responses by students taking this course. 
+		Teacher's responses will not be included in the report
+	</DD>
+
+	<DD><B>All participants</B><BR> 			
+		The report will show responses by students, teachers, course creators and administrators.
+		Responses by the &quot;guest&quot; user, if any, will also be included. 
+	</DD>
+</DL>
+<DL>
+	<DT><B>Selecting grades</B></DT>
+
+	<DD><B>All attempts</B><BR> 
+	The report will include the responses from all the attempts by each user</DD>
+
+	<DD><B>Best attempt</B><BR> 
+	The report will only include the responses from the highest scoring attempt by each user</DD>
+
+	<DD><B>First attempt</B><BR> 
+	The report will only include the responses from the first attempt by each user</DD>
+
+	<DD><B>Last attempt</B><BR> 
+	The report will only include the responses from the most recent attempt by each user</DD>
+</DL>
