@@ -110,14 +110,6 @@ class quiz_format_gift extends quiz_default_format {
          return false;
        }
 
-       if ($countanswers>QUIZ_MAX_NUMBER_ANSWERS) {
-         if ($this->displayerrors) {
-           $errormessage = get_string( 'importmaxerror', 'quiz' );
-             echo "<p>$text</p>\n";
-             echo "<p>$errormessage</p>";
-           }
-           return false;
-         }
        return true;
     }
 
