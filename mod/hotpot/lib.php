@@ -14,9 +14,8 @@ if (!isset($CFG->hotpot_excelencodings)) {
 //////////////////////////////////
 /// CONSTANTS and GLOBAL VARIABLES
 
-$ds = DIRECTORY_SEPARATOR;
-$CFG->hotpotroot = "$CFG->dirroot{$ds}mod{$ds}hotpot";
-$CFG->hotpottemplate = "$CFG->hotpotroot{$ds}template";
+$CFG->hotpotroot = "$CFG->dirroot/mod/hotpot";
+$CFG->hotpottemplate = "$CFG->hotpotroot/template";
 
 define("HOTPOT_JS", "$CFG->wwwroot/mod/hotpot/hotpot-full.js");
 
@@ -319,6 +318,9 @@ function hotpot_get_chain(&$cm) {
 		$hotpot_modules = array();
 	} else {
 		$hotpot_modules = get_records_select('course_modules', "id IN ($course_module_ids) AND module=$cm->module");
+		if (empty($hotpot_modules)) {
+			$hotpot_modules = array();
+		}
 	}
 
 	// get ids of hotpot modules in this section
@@ -405,7 +407,7 @@ function hotpot_add_chain(&$hp) {
 
 			// get titles
 			foreach ($hp->files as $i=>$file) {
-				$filepath = $xml_quiz->fileroot.DIRECTORY_SEPARATOR.$xml_quiz->filesubdir.$file;
+				$filepath = $xml_quiz->fileroot.'/'.$xml_quiz->filesubdir.$file;
 				hotpot_get_titles_and_next_ex($hp, $filepath);
 				$hp->titles[$i] = $hp->exercisetitle;
 			}
@@ -426,7 +428,7 @@ function hotpot_add_chain(&$hp) {
 			$hp->titles[] = $hp->exercisetitle;
 
 			if ($hp->nextexercise) {
-				$filepath = $xml_quiz->fileroot.DIRECTORY_SEPARATOR.$xml_quiz->filesubdir.$hp->nextexercise;
+				$filepath = $xml_quiz->fileroot.'/'.$xml_quiz->filesubdir.$hp->nextexercise;
 			} else {
 				$filepath = '';
 			}
@@ -629,6 +631,8 @@ function hotpot_get_all_instances_in_course($modulename, $course) {
 	global $CFG;
 	$instances = array();
 	
+	$hotpotmoduleid = get_field('modules', 'id', 'name', 'hotpot');
+
 	if ($modinfo = unserialize($course->modinfo)) {
 	
 		if (isset($CFG->release) && substr($CFG->release, 0, 3)>=1.2) {
@@ -667,6 +671,8 @@ function hotpot_get_all_instances_in_course($modulename, $course) {
 					if ($isteacher) {
 						$visible = true;
 					} else if ($mod->mod=='hotpot') {
+						$mod->coursemodule = $mod->cm;
+						$mod->module = $hotpotmoduleid;
 						$visible = hotpot_is_visible($mod);
 					} else {
 						$visible = $mod->visible;
@@ -1185,10 +1191,10 @@ function hotpot_string($id) {
 /// the class definitions to handle XML trees
 
 // get the standard XML parser supplied with Moodle
-require_once($CFG->libdir.DIRECTORY_SEPARATOR.'xmlize.php');
+require_once("$CFG->libdir/xmlize.php");
 
 // get the default class for hotpot quiz templates
-require_once($CFG->hotpottemplate.DIRECTORY_SEPARATOR.'default.php');
+require_once("$CFG->hotpottemplate/default.php");
 
 class hotpot_xml_tree {
 	function hotpot_xml_tree($str, $xml_root='') {
@@ -1364,11 +1370,11 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 			$this->filesubdir = '';
 		}
 		if ($this->filesubdir) {
-			$this->filesubdir .= DIRECTORY_SEPARATOR;
+			$this->filesubdir .= '/';
 		}
 		$this->filename = basename($this->reference);
-		$this->fileroot = $CFG->dataroot.DIRECTORY_SEPARATOR.$this->filedir;
-		$this->filepath = $this->fileroot.DIRECTORY_SEPARATOR.$this->reference;
+		$this->fileroot = "$CFG->dataroot/$this->filedir";
+		$this->filepath = "$this->fileroot/$this->reference";
 
 		// read the file, if required
 		if ($this->read_file) {
@@ -1488,8 +1494,8 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 					} else {
 						// set path(s) to template
 						$this->template_dir = $HOTPOT_OUTPUTFORMAT_DIR[$this->real_outputformat];
-						$this->template_dirpath = $CFG->hotpottemplate.DIRECTORY_SEPARATOR.$this->template_dir;
-						$this->template_filepath = $CFG->hotpottemplate.DIRECTORY_SEPARATOR.$this->template_dir.'.php';
+						$this->template_dirpath = $CFG->hotpottemplate.'/'.$this->template_dir;
+						$this->template_filepath = $CFG->hotpottemplate.'/'.$this->template_dir.'.php';
 			
 						// check template class exists
 						if (!file_exists($this->template_filepath) || !is_readable($this->template_filepath)) {
