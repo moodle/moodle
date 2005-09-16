@@ -27,7 +27,7 @@ class quiz_match_qtype extends quiz_default_questiontype {
         $answercount = 0;
         foreach ($question->subquestions as $key=>$questiontext) {
             $answertext = $question->subanswers[$key];
-            if (!empty($questiontext) and !empty($answertext)) {
+            if (!empty($questiontext) or !empty($answertext)) {
                 $answercount++;
             }
         }
@@ -42,7 +42,7 @@ class quiz_match_qtype extends quiz_default_questiontype {
         // Insert all the new question+answer pairs
         foreach ($question->subquestions as $key => $questiontext) {
             $answertext = $question->subanswers[$key];
-            if (!empty($questiontext) and !empty($answertext)) {
+            if (!empty($questiontext) or !empty($answertext)) {
                 if ($subquestion = array_shift($oldsubquestions)) {  // Existing answer, so reuse it
                     $subquestion->questiontext = $questiontext;
                     $subquestion->answertext   = $answertext;
