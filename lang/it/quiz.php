@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.6 development (2005060201)
+      // quiz.php - created with Moodle 1.6 development (2005081700)
 
 
 $string['acceptederror'] = 'Errore accettato';
@@ -10,7 +10,7 @@ $string['addingquestions'] = 'Questa parte della pagina é dove gestisci il tuo a
 $string['addquestions'] = 'Aggiungi domande';
 $string['addquestionstoquiz'] = 'Aggiungi domande al quiz attuale';
 $string['addrandom'] = 'Aggiungi $a domande casuali';
-$string['addrandom1'] = ' << Aggiungi ';
+$string['addrandom1'] = '<< Aggiungi';
 $string['addrandom2'] = 'domande casuali ';
 $string['addselectedtoquiz'] = 'Aggiungi selezione al quiz';
 $string['addtoquiz'] = 'Aggiungi al quiz';
@@ -139,7 +139,7 @@ $string['event2'] = 'Salvataggio';
 $string['event3'] = 'Valutazione';
 $string['event5'] = 'Validazione';
 $string['event6'] = 'Chiusura';
-$string['examview'] = 'Examview';
+$string['examview'] = 'Vista esame';
 $string['existingcategory1'] = 'Un letterale da un insieme di letterali esistenti è stato usato anche da altre domande in questa categoria';
 $string['existingcategory2'] = 'Un file da un insieme di file esistenti è stato  usato anche da altre domande in questa categoria ';
 $string['existingcategory3'] = 'Un collegamento da un insieme di collegamenti esistenti è stato usato anche da altre domande in questa categoria';
@@ -263,6 +263,7 @@ $string['numerical'] = 'Numerica';
 $string['optional'] = 'opzionale';
 $string['outof'] = ' su un massimo di ';
 $string['overdue'] = 'In ritardo';
+$string['pagesize'] = 'Tentativi mostrati per pagina:';
 $string['paragraphquestion'] = 'Domanda paragrafo non supportata alla linea $a. La domanda sarà ignorata';
 $string['parent'] = 'Superiore';
 $string['partiallycorrect'] = 'Parzialmente corretto';
@@ -331,6 +332,7 @@ $string['reportmulti_q_x_student'] = 'Scelte studente multiple';
 $string['reportmulti_resp'] = 'Risposte individuali';
 $string['reportoverview'] = 'Sommario';
 $string['reportregrade'] = 'Rivaluta tentativi';
+$string['reportresponses'] = 'Repliche dettagliate';
 $string['reports'] = 'Risultati';
 $string['reportsimplestat'] = 'Statistiche semplici';
 $string['requirepassword'] = 'Richiede password';
