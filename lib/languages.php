@@ -224,6 +224,8 @@ $LANGUAGES = array (
 
 "pa" => "Panjabi",
 
+"ph" => "Filipino",
+
 "pi" => "Pali",
 
 "pl" => "Polish",
