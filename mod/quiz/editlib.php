@@ -235,15 +235,15 @@ function quiz_print_question_list($quiz, $allowdelete=true, $showbreaks=true) {
                 echo '<td><hr noshade="noshade" /></td><td width="45">';
                 if ($count > 1) {
                     echo "<a title=\"$strmoveup\" href=\"edit.php?up=$count&amp;sesskey=$USER->sesskey\"><img
-                         src=\"../../pix/t/up.gif\" border=\"0\" alt=\"$strmoveup\" /></a>";
+                         src=\"$CFG->pixpath/t/up.gif\" border=\"0\" alt=\"$strmoveup\" /></a>";
                 }
                 echo '&nbsp;';
                 if ($count < $lastindex) {
                     echo "<a title=\"$strmovedown\" href=\"edit.php?down=$count&amp;sesskey=$USER->sesskey\"><img
-                         src=\"../../pix/t/down.gif\" border=\"0\" alt=\"$strmovedown\" /></a>";
+                         src=\"$CFG->pixpath/t/down.gif\" border=\"0\" alt=\"$strmovedown\" /></a>";
 
                     echo "<a title=\"$strremove\" href=\"edit.php?delete=$count&amp;sesskey=$USER->sesskey\">
-                          <img src=\"../../pix/t/delete.gif\" border=\"0\" alt=\"$strremove\" /></a>";
+                          <img src=\"$CFG->pixpath/t/delete.gif\" border=\"0\" alt=\"$strremove\" /></a>";
                 }
                 echo '</td></tr></table></td>';
                 echo '<td colspan="2">&nbsp;</td></tr>';
@@ -261,13 +261,13 @@ function quiz_print_question_list($quiz, $allowdelete=true, $showbreaks=true) {
         echo "<td>";
         if ($count != 0) {
             echo "<a title=\"$strmoveup\" href=\"edit.php?up=$count&amp;sesskey=$USER->sesskey\"><img
-                 src=\"../../pix/t/up.gif\" border=\"0\" alt=\"$strmoveup\" /></a>";
+                 src=\"$CFG->pixpath/t/up.gif\" border=\"0\" alt=\"$strmoveup\" /></a>";
         }
         echo "</td>";
         echo "<td>";
         if ($count < $lastindex-1) {
             echo "<a title=\"$strmovedown\" href=\"edit.php?down=$count&amp;sesskey=$USER->sesskey\"><img
-                 src=\"../../pix/t/down.gif\" border=\"0\" alt=\"$strmovedown\" /></a>";
+                 src=\"$CFG->pixpath/t/down.gif\" border=\"0\" alt=\"$strmovedown\" /></a>";
         }
         echo "</td>";
 
@@ -295,14 +295,14 @@ function quiz_print_question_list($quiz, $allowdelete=true, $showbreaks=true) {
         $context = $quiz->id ? '&amp;contextquiz='.$quiz->id : '';
         $quiz_id = $quiz->id ? '&amp;quizid=' . $quiz->id : '';
         echo "<a title=\"$strpreview\" href=\"javascript:void();\" onClick=\"openpopup('/mod/quiz/preview.php?id=$qnum$quiz_id','$strpreview','scrollbars=yes,resizable=yes,width=700,height=480', false)\">
-              <img src=\"../../pix/t/preview.gif\" border=\"0\" alt=\"$strpreview\" /></a>";
+              <img src=\"$CFG->pixpath/t/preview.gif\" border=\"0\" alt=\"$strpreview\" /></a>";
         if ($canedit) {
             echo "<a title=\"$stredit\" href=\"question.php?id=$qnum$context\">
-                  <img src=\"../../pix/t/edit.gif\" border=\"0\" alt=\"$stredit\" /></a>";
+                  <img src=\"$CFG->pixpath/t/edit.gif\" border=\"0\" alt=\"$stredit\" /></a>";
         }
         if ($allowdelete) {
             echo "<a title=\"$strremove\" href=\"edit.php?delete=$count&amp;sesskey=$USER->sesskey\">
-                  <img src=\"../../pix/t/removeright.gif\" border=\"0\" alt=\"$strremove\" /></a>";
+                  <img src=\"$CFG->pixpath/t/removeright.gif\" border=\"0\" alt=\"$strremove\" /></a>";
         }
 
         echo "</td>";
@@ -439,7 +439,7 @@ function quiz_print_category_form($course, $current, $recurse=1, $showhidden=fal
 */
 function quiz_print_cat_question_list($course, $categoryid, $quizid,
  $recurse=1, $page, $perpage, $showhidden=false, $sortorder='qtype, name ASC') {
-    global $QUIZ_QUESTION_TYPE, $USER;
+    global $QUIZ_QUESTION_TYPE, $USER, $CFG;
 
     $strcategory = get_string("category", "quiz");
     $strquestion = get_string("question", "quiz");
@@ -566,20 +566,20 @@ function quiz_print_cat_question_list($course, $categoryid, $quizid,
         echo "<tr>\n<td>\n";
         if ($quizid) {
             echo "<a title=\"$straddtoquiz\" href=\"edit.php?addquestion=$question->id&amp;sesskey=$USER->sesskey\"><img
-                  src=\"../../pix/t/moveleft.gif\" border=\"0\" alt=\"$straddtoquiz\" /></a>&nbsp;";
+                  src=\"$CFG->pixpath/t/moveleft.gif\" border=\"0\" alt=\"$straddtoquiz\" /></a>&nbsp;";
         }
         echo "<a title=\"$strpreview\" href=\"javascript:void();\" onClick=\"openpopup('/mod/quiz/preview.php?id=$question->id&quizid=$quizid','$strpreview','scrollbars=yes,resizable=yes,width=700,height=480', false)\"><img
-              src=\"../../pix/t/preview.gif\" border=\"0\" alt=\"$strpreview\" /></a>&nbsp;";
+              src=\"$CFG->pixpath/t/preview.gif\" border=\"0\" alt=\"$strpreview\" /></a>&nbsp;";
         if ($canedit) {
             echo "<a title=\"$stredit\" href=\"question.php?id=$question->id\"><img
-                 src=\"../../pix/t/edit.gif\" border=\"0\" alt=\"$stredit\" /></a>&nbsp;";
+                 src=\"$CFG->pixpath/t/edit.gif\" border=\"0\" alt=\"$stredit\" /></a>&nbsp;";
             // hide-feature
             if($question->hidden) {
                 echo "<a title=\"$strrestore\" href=\"question.php?id=$question->id&amp;hide=0&amp;sesskey=$USER->sesskey\"><img
-                     src=\"../../pix/t/restore.gif\" border=\"0\" alt=\"$strrestore\" /></a>";
+                     src=\"$CFG->pixpath/t/restore.gif\" border=\"0\" alt=\"$strrestore\" /></a>";
             } else {
                 echo "<a title=\"$strdelete\" href=\"question.php?id=$question->id&amp;delete=$question->id\"><img
-                     src=\"../../pix/t/delete.gif\" border=\"0\" alt=\"$strdelete\" /></a>";
+                     src=\"$CFG->pixpath/t/delete.gif\" border=\"0\" alt=\"$strdelete\" /></a>";
             }
         }
         echo "&nbsp;<input title=\"$strselect\" type=\"checkbox\" name=\"q$question->id\" value=\"1\" />";

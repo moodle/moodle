@@ -142,7 +142,7 @@
                 delete_records('quiz_rqp_types', 'id', $type->id);
             } else {
                 foreach ($servers as $server) {
-                    $actions = '<a title="' . $strinfo . '" href="types.php?info='.$server->id.'&amp;sesskey='.sesskey().'"><img src="../../../../pix/i/info.gif" border="0" alt="'.$strinfo.'" align="absbottom" /></a>&nbsp;<a title="'.$strdelete.'" href="types.php?delete='.$server->id.'&amp;sesskey='.sesskey().'"><img src="../../../../pix/t/delete.gif" border="0" alt="'.$strdelete.'" /></a>';
+                    $actions = '<a title="' . $strinfo . '" href="types.php?info='.$server->id.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/i/info.gif" border="0" alt="'.$strinfo.'" align="absbottom" /></a>&nbsp;<a title="'.$strdelete.'" href="types.php?delete='.$server->id.'&amp;sesskey='.sesskey().'"><img src="../../../../pix/t/delete.gif" border="0" alt="'.$strdelete.'" /></a>';
                     $serverurl = ($info == $server->id) ? '<b>'.$server->url.'</b>' : $server->url;
                     $table->add_data(array($type->name, $serverurl, $actions));
                 }
