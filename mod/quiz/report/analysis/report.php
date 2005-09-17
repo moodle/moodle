@@ -252,7 +252,7 @@ class quiz_report extends quiz_default_report {
 
         $table->define_columns($tablecolumns);
         $table->define_headers($tableheaders);
-        $table->define_baseurl($CFG->wwwroot.'/mod/quiz/report.php?q='.$quiz->id.'&mode=analysis');
+        $table->define_baseurl($CFG->wwwroot.'/mod/quiz/report.php?q='.$quiz->id.'&amp;mode=analysis');
 
         $table->sortable(true);
         $table->collapsible(true);
@@ -352,7 +352,7 @@ class quiz_report extends quiz_default_report {
             $dc = format_float($q['disc_coeff'],2);
             
             $response = array_shift($responses);
-            $table->add_data(array($qnumber."\n<br>".$qicon."\n ".$qreview, $qquestion, $response->text, $response->credit, $response->rcount, $response->rpercent, $facility, $qsd, $di, $dc));
+            $table->add_data(array($qnumber."\n<br />".$qicon."\n ".$qreview, $qquestion, $response->text, $response->credit, $response->rcount, $response->rpercent, $facility, $qsd, $di, $dc));
             foreach($responses as $response) {
                 $table->add_data(array('', '', $response->text, $response->credit, $response->rcount, $response->rpercent, '', '', '', ''));
             }
@@ -365,6 +365,7 @@ class quiz_report extends quiz_default_report {
 
         echo '<div id="tablecontainer">';
         $table->print_html();
+        echo '</div>';
 
         $this->print_options_form($quiz, $cm, $attemptselection, $lowmarklimit, $pagesize);
         return true;
