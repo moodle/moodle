@@ -161,7 +161,7 @@
             // update user's grade
             quiz_save_best_grade($quiz, $attempt->userid);
         }
-        print_string('changessaved', 'quiz');
+        notify(get_string('changessaved', 'quiz'));
     } else if ( ( !empty($attemptid) or !empty($gradeall) or !empty($userid)) and !empty($questionid) ) {  // need attemptid and questionid or gradeall and a questionid
         // this sql joins the attempts table and the user table
         $select = 'SELECT '.$db->Concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).' AS userattemptid, 
@@ -228,7 +228,7 @@
                 '<input type="hidden" name="stateids[]" value="'.$state->id.'">';
             echo '</div>';
         }
-        echo '<div align="center"><input type="submit" value="'.get_string('save', 'quiz').'"></div>'.
+        echo '<div align="center"><input type="submit" value="'.get_string('savechanges').'"></div>'.
             '</form>';
         print_footer($course);
         exit();
@@ -277,7 +277,7 @@
                     foreach ($attempts as $attempt) {
                         // grab the state then check if it is graded
                         if (!$neweststate = get_record('quiz_newest_states', 'attemptid', $attempt->uniqueid, 'questionid', $question->id)) {
-                            error("Can not find newest states for attempt $attempt->uniqueid for question $questionid");
+                            error("Can not find newest states for attempt $attempt->uniqueid for question $question->id");
                         }
                         if (!$questionstate = get_record('quiz_essay_states', 'stateid', $neweststate->newest)) {
                             error('Could not find question state');
