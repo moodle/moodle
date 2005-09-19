@@ -237,7 +237,11 @@ class configvarrss extends configvar {
     if (!empty($config->defaultallowedmodules)) {
         $allowedmodules = explode(',',$config->defaultallowedmodules);
     }
-    $mods = get_records("modules");
+
+//  On a fresh install of Moodle, this could be empty; prevent a warning on the following loop.
+    if (!$mods = get_records("modules")) {
+        $mods = array();
+    }
     $s = "selected=\"selected\"";
     $allowstr .= '<option value="0" '.((empty($allowedmodules)) ? $s : '').'>'.get_string('allownone').'</option>'."\n";
     foreach ($mods as $mod) {
