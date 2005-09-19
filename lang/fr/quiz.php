@@ -179,6 +179,7 @@ $string['illegalformulasyntax'] = 'Syntaxe de la formule incorrecte (l\'erreur c
 $string['imagedisplay'] = 'Image à afficher';
 $string['imagemissing'] = 'Image non disponible à la ligne $a. Le fichier sera ignoré';
 $string['importmax10error'] = 'Cette question comporte une erreur. Il est impossible d\'avoir plus de 10 réponses';
+$string['importmaxerror'] = 'Cette question comporte une erreur. Elle propose trop de réponses.';
 $string['importminerror'] = 'Cette question comporte une erreur. Il n\'y a pas assez de réponses pour ce type de question';
 $string['importquestions'] = 'Importer les questions d\'un fichier';
 $string['incorrect'] = 'Incorrect';
