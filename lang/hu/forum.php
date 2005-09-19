@@ -1,5 +1,6 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.4 (2004083100)
+      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
+
 
 
 $string['addanewdiscussion'] = 'Új vitatéma hozzáadása';
@@ -100,6 +101,7 @@ $string['nonews'] = 'Nincs még hír';
 $string['noposts'] = 'Nincs hozzászólás';
 $string['nopostscontaining'] = ' \'$a\' -t tartalmazó hozzászólás nem található';
 $string['nosubscribers'] = 'Még senki nincs feliratkozva erre a fórumra';
+$string['nothingnew'] = 'Semmi új $a kapcsán.';
 $string['notingroup'] = 'Ennek a fórumnak a megtekintéséhez csoporttagnak kell lennie.';
 $string['notrackforum'] = 'Olvasatlan üzeneteket ne kövessen nyomon';
 $string['nownotsubscribed'] = '$a->name NEM kap másolatot a \'$a->forum\'-ról e-mailben.';
@@ -112,6 +114,8 @@ $string['oldertopics'] = 'Régebbi témák';
 $string['openmode0'] = 'Nincsenek vitatémák, nincsenek válaszok';
 $string['openmode1'] = 'Nincsenek vitatémák, de válaszok megengedettek';
 $string['openmode2'] = 'Vitatémák és válaszok megengedettek';
+$string['overviewnumpostssince'] = '$a üzenet az utóbbi bejelentkezés óta';
+$string['overviewnumunread'] = '$a olvasatlan összesen';
 $string['parent'] = 'Elõzmény megjelenítése';
 $string['parentofthispost'] = 'A hozzászólás elõzménye';
 $string['postadded'] = 'A hozzászólást sikeresen hozzáadtuk.<br />Van $a a javításra, ha változtatni szeretné.';

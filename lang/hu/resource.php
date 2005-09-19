@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.4 (2004083100)
+      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005032600)
 
 
 $string['addresource'] = 'Tananyag hozzáadása';
@@ -86,9 +86,11 @@ $string['resourcetypedirectory'] = 'Könyvtár kijelzése';
 $string['resourcetypefile'] = 'Kapcsolás állományhoz vagy honlaphoz';
 $string['resourcetypehtml'] = 'Weboldal létrehozása';
 $string['resourcetypelabel'] = 'Címke beszúrása';
+$string['resourcetyperepository'] = 'Kapcsolás adattárbeli objektumhoz';
 $string['resourcetypetext'] = 'Szöveges oldal létrehozása';
 $string['searchweb'] = 'Weboldal keresése';
 $string['serverurl'] = 'Szerver URL-je ($a->wwwroot)';
+$string['showcourseblocks'] = 'Kurzusblokkok megjelenítése';
 $string['variablename'] = 'Változó neve';
 $string['vol'] = 'Vol';
 

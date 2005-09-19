@@ -1,6 +1,4 @@
-<?PHP // $Id$ 
-      // block_quiz_results.php - created with Moodle 1.4 (2004083100)
-
+<?php // $Id$      
 
 $string['bestgrade'] = 'Legmagasabb pontszám:';
 $string['bestgrades'] = 'A $a legmagasabb pontszámok:';
@@ -10,6 +8,10 @@ $string['config_format_absolute'] = 'Abszolút számok';
 $string['config_format_fraction'] = 'Törtek';
 $string['config_format_percentage'] = 'Százalékok';
 $string['config_grade_format'] = 'Pontszámok jelzése mint:';
+$string['config_name_format'] = 'Titkossági szint a kijelzett eredmények esetén:';
+$string['config_names_full'] = 'Teljes nevek kijelzése';
+$string['config_names_id'] = 'Csak azonosító számok kijelzése';
+$string['config_names_anon'] = 'Névtelen eredmények';
 $string['config_no_quizzes_in_course'] = 'Ebben a kurzusban nincsenek tesztek. Legalább egyet adjon hozzá, hogy a blokk megfelelõen mûködjön.';
 $string['config_select_quiz'] = 'Ez a blokk melyik teszt eredményeit mutassa?';
 $string['config_show_best'] = 'A legmagasabb pontszámok közül hány jelenjen meg (0 a kikapcsolás)?';

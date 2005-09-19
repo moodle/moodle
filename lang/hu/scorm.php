@@ -1,5 +1,4 @@
-<?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.4 (2004083100)
+<?php // $Id$
 
 
 $string['asset'] = 'Tudáselem';
@@ -34,6 +33,7 @@ $string['gradescoes'] = 'Tudásegység helyzete';
 $string['gradesum'] = 'Összes pont';
 $string['guestsno'] = 'Vendégek nem tekinthetnek meg Scorm-kurzusokat';
 $string['height'] = 'Magasság';
+$string['hidebrowse'] = 'Nyomtatási kép gombjának elrejtése';
 $string['incomplete'] = 'Nem teljes';
 $string['lastaccess'] = 'Utolsó hozzáférés';
 $string['missing_attribute'] = 'Hiányzó $a->attr attribútum a(z) $a->tag elemben';
@@ -53,9 +53,10 @@ $string['notattempted'] = 'Nem oldották meg';
 $string['organization'] = 'Szervezet';
 $string['organizations'] = 'Szervezetek';
 $string['packagedir'] = 'Fájlrendszerbeli hiba: nem lehet létrehozni a csomag könyvtárát';
+$string['packagefile'] = 'Nincs megadva csomagállomány';
 $string['passed'] = 'Sikerült';
 $string['php5'] = 'PHP 5 (DOMXML eredeti könyvtára)';
-$string['popup'] = 'Jelen SCO megnyitása új ablakban';
+$string['popup'] = 'SCO megnyitása új ablakban';
 $string['position_error'] = 'A(z) $a->tag elem nem lehet a(z) $a->parent elem gyermeke';
 $string['prev'] = 'Elõzõ';
 $string['regular'] = 'Szabványos tananyagleírás';
@@ -63,6 +64,27 @@ $string['report'] = 'Jelentés';
 $string['review'] = 'Ellenõrzés';
 $string['scoes'] = 'Tudásegységek';
 $string['score'] = 'Eredmény';
+$string['scormcourse'] = 'SCORM-kurzus';
+$string['advanced'] = 'Haladó';
+$string['window'] = 'Keret/ablak';
+$string['hidetoc'] = 'Kurzusszerkezet elrejtése a lejátszó ablaka elõl';
+$string['noprerequisites'] = 'Sajnos nem teljesít elegendõ elõfeltételt ezen tanulási objektum eléréséhez';
+$string['element'] = 'Elem';
+$string['value'] = 'Érték';
+$string['raw'] = 'Nyers pontszám';
+$string['min'] = 'Min. pontszám';
+$string['max'] = 'Max. pontszám';
+$string['status'] = 'Állapot';
+$string['time'] = 'Idõ';
+$string['general'] = 'Általános adatok';
+$string['identifier'] = 'Kérdésazonosító';
+$string['type'] = 'Típus';
+$string['result'] = 'Eredmény';
+$string['student_response'] = 'Válasz';
+$string['interactions'] = 'Interakciók';
+$string['objectives'] = 'Célok';
+$string['othertracks'] = 'Egyéb útvonalak';
+$string['stagesize'] = 'Keret/ablak mérete';
 $string['syntax'] = 'Szintaktikus hiba';
 $string['tag_error'] = 'Ismeretlen elem ($a->tag) ezzel a tartalommal: $a->value';
 $string['too_many_attributes'] = 'A(z) $a->tag elemnek túl sok az attribútuma';

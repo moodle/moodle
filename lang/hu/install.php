@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // install.php - created with Moodle 1.4 (2004083100)
+      // install.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005010100)
 
 
 $string['admindirerror'] = 'A megadott adminisztrátor-könyvtár hibás';
@@ -21,6 +21,13 @@ $string['databasesettings'] = 'Most be kell állítania azt az adatbázist, ahol Mo
 <b>Felhasználó:</b>az Ön adatbázishoz használt azonosítója<br />
 <b>Jelszó:</b> az Ön adatbázishoz használt jelszava<br />
 <b>Táblázat elõtagja:</b> opcionális elõtag az összes táblanévhez	';
+$string['databasecreationsettings'] = '    Most a Moodle adatainak tárolására szánt adatbázis beállításait kell elvégeznie.  
+Ezt az adatbázist a Moodle4Windows telepítõ automatikusan beállítja az alábbiak szerint.<br />
+    <br /> <br />
+       <b>Típus:</b> a telepítõ \"mysql\"-re állítja be<br />
+       <b>Gazdagép:</b> a telepítõ \"localhost\"-ra állítja<br />
+       <b>Név:</b> az adatbázis neve, pl. moodle<br />
+       <b>Felhasználó:</b> a telepítõ  \"root\"-ra állítja<br />';
 $string['dataroot'] = 'Adatkönyvtár';
 $string['datarooterror'] = 'A megadott \'Adatkönyvtár\' nem létezik vagy nem sikerült létrehozni. Módosítsa az útvonalat vagy hozza létre a könyvtárat.';
 $string['dbconnectionerror'] = 'Nem sikerült a megadott adatbázishoz csatlakozni. Ellenõrizze adatbázisának beállításait.';

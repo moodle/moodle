@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.4 (2004083100)
+      // lesson.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
 
 
 $string['accesscontrol'] = 'Hozzáférés szabályozása';
@@ -17,7 +17,7 @@ $string['addendofcluster'] = 'Tömb végének hozzáadása';
 $string['answer'] = 'Válasz';
 $string['answeredcorrectly'] = 'helyesen megválaszolva.';
 $string['answersfornumerical'] = 'A számjegyes kérdések válaszait minimális és maximális értékeket tartalmazó, egymáshoz illõ párok formájában kell megadni';
-$string['arrangebuttonshorizontally'] = 'ELégazási gombok vízszintesen legyenek elrendezve bemutató módban?';
+$string['arrangebuttonshorizontally'] = 'Elágazási gombok vízszintesen legyenek elrendezve bemutató módban?';
 $string['attempt'] = 'Próbálkozás: $a';
 $string['attempts'] = 'Próbálkozások';
 $string['available'] = 'Elérhetõ ekkortól:';
@@ -39,6 +39,9 @@ $string['clustertitle'] = 'Tömb';
 $string['comments'] = 'Megjegyzései';
 $string['commentswithname'] = '$a->firstname {$a->lastname} megjegyzései';
 $string['completed'] = 'Befejezve';
+$string['completederror'] = 'Lecke befejezése';
+$string['completethefollowingconditions'] = 'A következõket kell befejeznie a <b>$a</b> leckében, mielõtt továbbléphet.';
+$string['conditionsfordependency'] = 'A teljesítés feltétele(i)';
 $string['confirmdeletionofthispage'] = 'Oldal törlésének megerõsítése';
 $string['congratulations'] = 'Gratulálunk - elérte a lecke végét';
 $string['continue'] = 'Tovább';
@@ -53,6 +56,7 @@ $string['deleteattempts'] = 'Lecke hallgatói próbálkozásainak törlése (azonosító
 $string['deletedpage'] = 'Oldal törölve';
 $string['deleting'] = 'Törlés';
 $string['deletingpage'] = 'A(z) $a oldal törlése';
+$string['dependencyon'] = 'Függ ettõl';
 $string['description'] = 'Leírás';
 $string['detailedstats'] = 'Részletes statisztika';
 $string['didnotanswerquestion'] = 'Nem válaszolt erre a kérdésre';
@@ -89,6 +93,8 @@ $string['flowcontrol'] = 'Folyamat szabályozása';
 $string['general'] = 'Általános';
 $string['gobacktolesson'] = 'Vissza a leckéhez';
 $string['grade'] = 'Pont';
+$string['gradebetterthan'] = 'pontszám jobb mint (&#37;)'; // &#37; = %
+$string['gradebetterthanerror'] = '$a százaléknál jobb pontszám szerzése';
 $string['gradeessay'] = 'Esszékérdések pontozása';
 $string['gradeis'] = 'A pontszám: $a';
 $string['gradeoptions'] = 'Pontozási lehetõségek';
@@ -123,6 +129,8 @@ $string['maximumnumberofanswersbranches'] = 'Válaszok/elágazások maximális száma
 $string['maximumnumberofattempts'] = 'Próbálkozások maximális száma';
 $string['maxtime'] = 'Idõkorlát (perc)';
 $string['maxtimewarning'] = 'A lecke befejezésére $a perc áll rendelkezésére..';
+$string['mediafile'] = 'Médiafájl';
+$string['mediafilepopup'] = 'A lecke médiafájljának megtekintéséhez kattintson ide.';
 $string['minimumnumberofquestions'] = 'Kérdések minimális száma';
 $string['modattempts'] = 'Tanulói ellenõrzés engedélyezése';
 $string['modattemptsnoteacher'] = 'Tanulói ellenõrzést csak tanulók végezhetnek.';
@@ -224,6 +232,8 @@ $string['thefollowingpagesjumptothispage'] = 'A következõ oldalak erre az oldalr
 $string['thispage'] = 'Ez az oldal';
 $string['timed'] = 'Idõméréses';
 $string['timeremaining'] = 'Hátralévõ idõ';
+$string['timespenterror'] = 'Töltsön legalább $a percet a leckén';
+$string['timespentminutes'] = 'Eltöltött idõ (perc)';
 $string['timetaken'] = 'Elhasznált idõ';
 $string['topscorestitle'] = '$a->name lecke $a->maxhighscores legmagasabb pontszáma.';
 $string['treeview'] = 'Faszerkezetes nézet';

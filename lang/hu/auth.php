@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.4 (2004083100)
+// auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005010100)
 
 
 $string['alternatelogin'] = 'Ha itt URL-t ad meg, az lesz a portál bejelentkezõ oldala. Az oldalon egy ûrlap található, melyen a tevékenység tulajdonságának beállítása <strong>\'$a\'</strong> és a <strong>felhasználónév</strong> és a  <strong>jelszó</strong> mezõket adja vissza.<br />Ügyeljen az URL pontos megadására, ellenkezõ esetben kizárhatja magát errõl a portálról.<br />Az alapbeállítás szerinti bejelentkezõ oldal megtartásához hagyja a mezõt üresen.';
@@ -66,6 +66,7 @@ $string['auth_ldap_memberattribute'] = 'Adja meg a felhasználók adott csoporthoz
 $string['auth_ldap_objectclass'] = 'Felhasználók elnevezésének/keresésének a szûrõje. Általában objectClass=posixAccount értékre állítandó. Alapbeállítása objectClass=*, amivel az LDAP-bõl minden objektumot visszaad.';
 $string['auth_ldap_opt_deref'] = 'Meghatározza, hogy kereséskor a neveket hogyan kezelje a rendszer. A következõ értékek közül választhat: \"Nem\" (LDAP_DEREF_NEVER) vagy \"Igen\" (LDAP_DEREF_ALWAYS)';
 $string['auth_ldap_passwdexpire_settings'] = 'LDAP-jelszó lejáratának beállításai.';
+$string['auth_ldap_preventpassindb'] = 'Igen választása esetén a jelszavak nem kerülnek bele a Moodle adatbázisába.';
 $string['auth_ldap_search_sub'] = 'Írja be az <> 0 értékeket, ha az alkontextusokban is keresni kíván felhasználót.';
 $string['auth_ldap_server_settings'] = 'LDAP-szerver beállításai';
 $string['auth_ldap_update_userinfo'] = 'Felhasználói adatok (keresztnév, vezetéknév, cím...) frissítése LDAP-ból a Moodle-ba. Az információk szerkezetét lásd az /auth/ldap/attr_mappings.php állományban.';

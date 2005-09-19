@@ -1,6 +1,5 @@
-<?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.4 (2004083100)
-
+<?php // $Id$ 
+      // quiz.php - created with Moodle 1.5 ALPHA (2005050600)
 
 $string['acceptederror'] = 'Elfogadott hiba';
 $string['action'] = 'Lépés';
@@ -185,6 +184,7 @@ $string['illegalformulasyntax'] = 'Hibás szintaxisú képlet \'$a\' ponttól';
 $string['imagedisplay'] = 'Mutatandó kép';
 $string['imagemissing'] = 'A(z) $a soron nincs meg a kép. Az állomány neve kihagyva.';
 $string['importmax10error'] = 'Hiba a kérdésben. Tíznél több választ nem adhat meg.';
+$string['importmaxerror'] = 'Hiba a kérdésben. Túl sok a válasz.';
 $string['importminerror'] = 'Hiba a kérdésben. Kevés a válasz ehhez a kérdéstípushoz.';
 $string['importquestions'] = 'Kérdések importálása innen';
 $string['incorrect'] = 'Hibás';
@@ -267,6 +267,7 @@ $string['numerical'] = 'Számjegyes';
 $string['optional'] = 'választható';
 $string['outof'] = 'maximum közül';
 $string['overdue'] = 'Lejárt';
+$string['pagesize'] = 'Oldalankénti próbálkozások: ';
 $string['paragraphquestion'] = '$a soron a paragrafuskérdés nincs támogatva. A kérdés kihagyva';
 $string['parent'] = 'Szülõ';
 $string['partiallycorrect'] = 'Részben jó';
@@ -335,6 +336,7 @@ $string['reportmulti_q_x_student'] = 'Több tanuló választása';
 $string['reportmulti_resp'] = 'Egyéni feleletek';
 $string['reportoverview'] = 'Áttekintés';
 $string['reportregrade'] = 'Próbálkozások újrapontozása';
+$string['reportresponses'] = 'Részletes válaszok';
 $string['reports'] = 'Jelentések';
 $string['reportsimplestat'] = 'Egyszerû statisztika';
 $string['requirepassword'] = 'Jelszó kérése';
@@ -382,7 +384,7 @@ $string['showall'] = 'Minden kérdés egy oldalon látsszon';
 $string['showbreaks'] = 'Oldaltörések látsszanak';
 $string['showcorrectanswer'] = 'Visszajelzésben a jó válaszok megjelenjenek?';
 $string['showdetailedmarks'] = 'Jegy részleteinek jelzése';
-$string['showfeedback'] = 'After answering, show feedback?';
+$string['showfeedback'] = 'Válasz után visszajelzés megjelenjen?';
 $string['showhidden'] = 'Régi kérdések is látsszanak';
 $string['shownoattempts'] = 'Próbálkozás nélküli tanulók jelzése';
 $string['showteacherattempts'] = 'Tanári próbálkozások jelzése';
@@ -390,6 +392,9 @@ $string['shuffleanswers'] = 'Válaszok összekeverése';
 $string['shufflequestions'] = 'Kérdésel összekeverése';
 $string['significantfigures'] = '$a-val/-vel';
 $string['significantfiguresformat'] = 'szignifikáns számjegyek';
+$string['sortalpha'] = 'Rendezés ábécé szerint';
+$string['sortage']   = 'Rendezés kor szerint';
+$string['sortsubmit']   = 'Kérdések rendezése';
 $string['startagain'] = 'Újrakezdés';
 $string['startedon'] = 'Kezdés ideje';
 $string['subneterror'] = 'Sajnos a teszt zárolva van és csak egyes helyekrõl érhetõ el. Jelenleg számítógépérõl nem használhatja a tesztet.';
