@@ -348,6 +348,7 @@ function quiz_delete_course($course, $feedback=true) {
                         delete_records("quiz_shortanswer", "question", $question->id);
                         delete_records("quiz_truefalse", "question", $question->id);
                         delete_records("quiz_rqp", "question", $question->id);
+                        delete_records("quiz_essay", "question", $question->id);
                         delete_records("quiz_states", "question", $question->id);
                         delete_records("quiz_newest_states", "questionid", $question->id);
                         delete_records("quiz_question_versions", "oldquestion", $question->id);
