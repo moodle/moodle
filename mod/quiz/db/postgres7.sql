@@ -81,6 +81,7 @@ CREATE TABLE prefix_quiz_attemptonlast_datasets (
 
 CREATE TABLE prefix_quiz_attempts (
   id SERIAL PRIMARY KEY,
+  uniqueid integer NOT NULL default '0',
   quiz integer NOT NULL default '0',
   userid integer NOT NULL default '0',
   attempt integer NOT NULL default '0',

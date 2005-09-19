@@ -85,7 +85,8 @@ CREATE TABLE prefix_quiz_attemptonlast_datasets (
 
 CREATE TABLE prefix_quiz_attempts (
   id int(10) unsigned NOT NULL auto_increment,
-  quiz int(10) unsigned NOT NULL default '0',
+  uniqueid int(10) unsigned NOT NULL default '0',
+  quiz int(10) unsigned NOT NULL default '0', 
   userid int(10) unsigned NOT NULL default '0',
   attempt smallint(6) NOT NULL default '0',
   sumgrades varchar(10) NOT NULL default '0.0',
