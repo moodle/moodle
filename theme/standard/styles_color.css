@@ -738,6 +738,35 @@ body#mod-quiz-report table#attempts .r1 {
  *** Modules: Resource
  ***/
 
+.ims-nav-dimmed {
+  color: #AAAAAA;
+  text-decoration: none;
+}
+
+.ims-nav-button a:link,
+.ims-nav-button a:visited,
+.ims-nav-button a:hover {
+  color: #000;
+  text-decoration: none;
+}
+
+.ims-nav-dimmed,
+.ims-nav-button a:link,
+.ims-nav-button a:visited {
+  border-top: 1px solid #cecece;
+  border-bottom: 2px solid #4a4a4a;
+  border-left: 1px solid #cecece;
+  border-right: 2px solid #4a4a4a;
+}
+
+.ims-nav-button a:hover {
+  border-bottom: 1px solid #cecece;
+  border-top: 2px solid #4a4a4a;
+  border-right: 1px solid #cecece;
+  border-left: 2px solid #4a4a4a;
+}
+
+
 /***
  *** Modules: Scorm
  ***/

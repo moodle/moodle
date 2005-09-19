@@ -1482,6 +1482,18 @@ body#mod-quiz-report .controls {
  *** Modules: Resource
  ***/
 
+.ims-nav-bar {
+  position: absolute; 
+  top: 2px; 
+  left: 2px;
+}
+
+.ims-nav-button a,
+.ims-nav-dimmed {
+  padding-left:1em;
+  padding-right:1em;
+}
+
 /***
  *** Modules: Scorm
  ***/
