@@ -342,13 +342,13 @@ function quiz_delete_course($course, $feedback=true) {
                         delete_records("quiz_numerical", "question", $question->id);
                         delete_records("quiz_numerical_units", "question", $question->id);
                         delete_records("quiz_calculated", "question", $question->id);
-                        delete_records("quiz_datasets", "question", $question->id);
+                        delete_records("quiz_question_datasets", "question", $question->id);
                         delete_records("quiz_randomsamatch", "question", $question->id);
                         delete_records("quiz_shortanswer", "question", $question->id);
                         delete_records("quiz_truefalse", "question", $question->id);
                         delete_records("quiz_rqp", "question", $question->id);
                         delete_records("quiz_states", "question", $question->id);
-                        delete_records("quiz_newest_states", "question", $question->id);
+                        delete_records("quiz_newest_states", "questionid", $question->id);
                         delete_records("quiz_question_versions", "oldquestion", $question->id);
                         delete_records("quiz_question_versions", "newquestion", $question->id);
                     }
