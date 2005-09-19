@@ -137,6 +137,7 @@ function mimeinfo($element, $filename) {
 }
 
 function send_file($path, $filename, $lifetime=86400 , $filter=false, $pathisstring=false,$forcedownload=false) {
+    global $CFG;
 
     $mimetype     = $forcedownload ? 'application/x-forcedownload' : mimeinfo('type', $filename);
     $lastmodified = $pathisstring ? time() : filemtime($path);
@@ -153,12 +154,15 @@ function send_file($path, $filename, $lifetime=86400 , $filter=false, $pathisstr
         @header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .'GMT');
         @header('Pragma: ');
     } else {
-        // This part is tricky, displaying of MS Office documents in IE needs
-        // to store the file on disk, but no-cache may prevent it.
-        // HTTPS:// sites might have problems with following code in IE, tweak it yourself if needed ;-)
-        @header('Cache-Control: private, must-revalidate, pre-check=0, post-check=0, max-age=10');
-        @header('Expires: '. gmdate('D, d M Y H:i:s', 0) .'GMT');
-        @header('Pragma: no-cache');
+        if (strpos($CFG->wwwroot, 'https://') === 0) { //https sites - watch out for IE! KB812935 and KB316431
+            @header('Cache-Control: max-age=10');
+            @header('Expires: '. gmdate('D, d M Y H:i:s', 0) .'GMT');
+            @header('Pragma: ');
+        } else { //normal http - prevent caching at all cost
+            @header('Cache-Control: private, must-revalidate, pre-check=0, post-check=0, max-age=0');
+            @header('Expires: '. gmdate('D, d M Y H:i:s', 0) .'GMT');
+            @header('Pragma: no-cache');
+        }
     }
     @header('Accept-Ranges: none'); // Comment out if PDFs do not work...
 
