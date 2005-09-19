@@ -279,6 +279,8 @@
                     $status = quiz_restore_calculated($oldid,$newid,$que_info,$restore);
                 } else if ($question->qtype == "11") {
                     $status = quiz_restore_rqp($oldid,$newid,$que_info,$restore);
+                } else if ($question->qtype == "12") {
+                    $status = quiz_restore_essay($oldid,$newid,$que_info,$restore);
                 }
             } else {
                 //We are NOT creating the question, but we need to know every quiz_answers
@@ -1068,7 +1070,52 @@
 
         return $status;
     }
+    
+    function quiz_restore_essay ($old_question_id,$new_question_id,$info,$restore) {
 
+        global $CFG;
+
+        $status = true;
+
+        //Get the truefalse array
+        $essays = $info['#']['ESSAY'];
+
+        //Iterate over truefalse
+        for($i = 0; $i < sizeof($essays); $i++) {
+            $essay_info = $essays[$i];
+            //traverse_xmlize($tru_info);                                                                 //Debug
+            //print_object ($GLOBALS['traverse_array']);                                                  //Debug
+            //$GLOBALS['traverse_array']="";                                                              //Debug
+
+            //Now, build the QUIZ_TRUEFALSE record structure
+            $essay->question = $new_question_id;
+            $essay->answer = backup_todb($essay_info['#']['ANSWER']['0']['#']);
+
+            ////We have to recode the answer field
+            $answer = backup_getid($restore->backup_unique_code,"quiz_answers",$essay->answer);
+            if ($answer) {
+                $essay->answer = $answer->new_id;
+            }
+
+            //The structure is equal to the db, so insert the quiz_truefalse
+            $newid = insert_record ("quiz_essay",$essay);
+
+            //Do some output
+            if (($i+1) % 50 == 0) {
+                echo ".";
+                if (($i+1) % 1000 == 0) {
+                    echo "<br />";
+                }
+                backup_flush(300);
+            }
+
+            if (!$newid) {
+                $status = false;
+            }
+        }
+
+        return $status;
+    }
 
     function quiz_restore_numerical_units ($old_question_id,$new_question_id,$info,$restore) {
 
@@ -1440,6 +1487,8 @@
         return true;
 
         global $CFG;
+        
+        include($CFG->dirroot.'/mod/quiz/questionlib.php');
 
         $status = true;
 
@@ -1736,6 +1785,7 @@
                              $newid);
                 //Now process question type specific state information
                 $status = quiz_rqp_states_restore_mods($newid,$res_info,$restore);
+                $status = quiz_essay_states_restore_mods($newid,$res_info,$restore);
             } else {
                 $status = false;
             }
@@ -1758,20 +1808,20 @@
             $newest_state->sumpenalty = backup_todb($res_info['#']['SUMPENALTY']['0']['#']);
 
             //We have to recode the question field
-            $question = backup_getid($restore->backup_unique_code,"quiz_questions",$newest_state->question);
+            $question = backup_getid($restore->backup_unique_code,"quiz_questions",$newest_state->questionid);
             if ($question) {
-                $newest_state->question = $question->new_id;
+                $newest_state->questionid = $question->new_id;
             }
 
             //We have to recode the newest field
             $state = backup_getid($restore->backup_unique_code,"quiz_states",$newest_state->newest);
-            if ($staten) {
+            if ($state) {
                 $newest_state->newest = $state->new_id;
             }
 
             //We have to recode the newgraded field
             $state = backup_getid($restore->backup_unique_code,"quiz_states",$newest_state->newgraded);
-            if ($staten) {
+            if ($state) {
                 $newest_state->newgraded = $state->new_id;
             }
 
@@ -1805,6 +1855,30 @@
         }
 
     return $status;
+    }
+    
+    //This function restores the quiz_essay_states
+    function quiz_essay_states_restore_mods($state_id,$info,$restore) {
+
+        global $CFG;
+
+        $status = true;
+
+        //Get the quiz_essay_state
+        $essay_state = $info['#']['ESSAY_STATE']['0'];
+        if ($essay_state) {
+
+            //Now, build the ESSAY_STATES record structure
+            $state->stateid = $state_id;
+            $state->graded = backup_todb($essay_state['#']['GRADED']['0']['#']);
+            $state->fraction = backup_todb($essay_state['#']['FRACTION']['0']['#']);
+            $state->response = backup_todb($essay_state['#']['RESPONSE']['0']['#']);
+
+            //The structure is equal to the db, so insert the quiz_states
+            $newid = insert_record ("quiz_essay_states",$state);
+        }
+
+        return $status;
     }
 
     //This function restores the quiz_grades

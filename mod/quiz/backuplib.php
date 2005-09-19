@@ -297,6 +297,8 @@
                     $status = quiz_backup_calculated($bf,$preferences,$question->id);
                 } else if ($question->qtype == "11") {
                     $status = quiz_backup_rqp($bf,$preferences,$question->id);
+                } else if ($question->qtype == "12") {
+                    $status = quiz_backup_essay($bf,$preferences,$question->id);
                 }
                 //End question
                 $status =fwrite ($bf,end_tag("QUESTION",5,true));
@@ -560,6 +562,30 @@
                 fwrite ($bf,full_tag("MAXSCORE",7,false,$rqp->maxscore));
                 $status =fwrite ($bf,end_tag("RQP",6,true));
             }
+        }
+        return $status;
+    }
+    
+    //This function backups the data in an essay question (qtype=12) and its
+    //asociated data
+    function quiz_backup_essay($bf,$preferences,$question) {
+
+        global $CFG;
+
+        $status = true;
+
+        $essays = get_records('quiz_essay', 'question', $question, "id");
+        //If there are essays
+        if ($essays) {
+            //Iterate over each essay
+            foreach ($essays as $essay) {
+                $status = fwrite ($bf,start_tag("ESSAY",6,true));
+                //Print essay contents
+                fwrite ($bf,full_tag("ANSWER",7,false,$essay->answer));                
+                $status = fwrite ($bf,end_tag("ESSAY",6,true));
+            }
+            //Now print quiz_answers
+            $status = quiz_backup_answers($bf,$preferences,$question);
         }
         return $status;
     }
@@ -901,6 +927,7 @@
                 fwrite ($bf,full_tag("PENALTY",8,false,$state->penalty));
                 // now back up question type specific state information
                 $status = backup_quiz_rqp_state ($bf,$preferences,$state->id);
+                $status = backup_quiz_essay_state ($bf,$preferences,$state->id);
                 //End state
                 $status =fwrite ($bf,end_tag("STATE",7,true));
             }
@@ -953,9 +980,29 @@
         }
         return $status;
     }
+    
+    //Backup quiz_essay_state contents (executed from backup_quiz_states)
+    function backup_quiz_essay_state ($bf,$preferences,$state) {
 
+        global $CFG;
 
+        $status = true;
 
+        $essay_state = get_record("quiz_essay_states", "stateid", $state);
+        //If there is a state
+        if ($essay_state) {
+            //Write start tag
+            $status =fwrite ($bf,start_tag("ESSAY_STATE",8,true));
+            //Print state contents
+            fwrite ($bf,full_tag("GRADED",9,false,$essay_state->graded));
+            fwrite ($bf,full_tag("FRACTION",9,false,$essay_state->fraction));
+            fwrite ($bf,full_tag("RESPONSE",9,false,$essay_state->response));
+            //Write end tag
+            $status =fwrite ($bf,end_tag("ESSAY_STATE",8,true));
+        }
+        return $status;
+    }
+    
    ////Return an array of info (name,value)
    function quiz_check_backup_mods($course,$user_data=false,$backup_unique_code) {
         //Deletes data from mdl_backup_ids (categories section)
