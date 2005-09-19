@@ -1386,11 +1386,11 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 				}
 				return;
 			}
-	
+
 			// read in the XML source and close the file
 			$this->source = fread($fp, filesize($this->filepath));
 			fclose($fp);
-	
+
 			// convert relative URLs to absolute URLs
 			if ($this->convert_urls) {
 				$this->hotpot_convert_relative_urls($this->source);
@@ -1404,10 +1404,10 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 						$this->source = '<html>'.$this->source;
 					}
 				}
-		
+
 				// encode "gap fill" text in JCloze exercise
 				$this->encode_cdata($this->source, 'gap-fill');
-		
+
 				// convert source to xml tree
 				$this->hotpot_xml_tree($this->source);
 
@@ -1416,25 +1416,30 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 				$this->filetype = '';
 				$this->quiztype = '';
 				$this->outputformat = 0; // undefined
-		
+
 				// link <HTML> tag to <html>, if necessary
 				if (isset($this->xml['HTML'])) {
 					$this->xml['html'] = &$this->xml['HTML'];
 				}
-		
+
 				if (isset($this->xml['html'])) {
-		
+
 					$this->filetype = 'html';
 					$this->quiztype = '';
-		
+
 					// relative URLs in "PreloadImages(...);"
 					$search = '%'.'(?<='.'PreloadImages'.'\('.')'."([^)]+?)".'(?='.'\);'.')'.'%se';
 					$replace = "hotpot_convert_preloadimages_urls('".$this->get_baseurl()."','".$this->reference."','\\1')";
 					$this->source = preg_replace($search, $replace, $this->source);
 
+					// relative URLs in <button class="NavButton" ... onclick="location='...'">
+					$search = '%'.'(?<='.'onclick="'."location='".')'."([^']*)".'(?='."'; return false;".'")'.'%ise';
+					$replace = "hotpot_convert_navbutton_url('".$this->get_baseurl()."','".$this->reference."','\\1','".$this->course."')";
+					$this->source = preg_replace($search, $replace, $this->source);
+
 				} else {
 					$this->filetype = 'xml';
-		
+
 					$keys = array_keys($this->xml);
 					foreach ($keys as $key) {
 						if (preg_match('/^(hotpot|textoys)-(\w+)-file$/i', $key, $matches)) {
@@ -1529,12 +1534,11 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 		$quoteopen = '("|&quot;|&amp;quot;)'; // open quote
 		$quoteclose = '\\5'; //  close quote (to match open quote)
 
-		$url = '\S+?\.\S+?';
+		$url = '\S+?\.\S+?'; // '.*?'
 		$replace = "hotpot_convert_relative_url('".$this->get_baseurl()."', '".$this->reference."', '\\1', '\\6', '\\7')";
 
 		$tags = array('script'=>'src', 'link'=>'href', 'a'=>'href','img'=>'src','param'=>'value');
 		foreach ($tags as $tag=>$attribute) {
-
 			$search = "%($tagopen$tag$space$anychar$attribute=$quoteopen)($url)($quoteclose$anychar$tagclose)%ise";
 			$str = preg_replace($search, $replace, $str);
 		}
@@ -1607,51 +1611,51 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 			// make sure the Moodle media plugin is available
 			global $CFG;
 			include_once "$CFG->dirroot/filter/mediaplugin/filter.php";
-	
+
 			// exclude swf files from the filter
 			$CFG->filter_mediaplugin_ignore_swf = true;
-	
+
 			$s = '\s+'; // at least one space
 			$n = '[^>]*'; // any character inside a tag
 			$q = '["'."']?"; // single, double, or no quote
 			$Q = '[^"'."' >]*"; // any charater inside a quoted string
-	
+
 			// patterns to media files types and paths
 			$filetype = "avi|mpeg|mpg|mp3|mov|wmv";
 			$filepath = "$Q\.($filetype)";
-	
+
 			// pattern to match <param> tags which contain the file path
 			//	wmp        : url
 			//	quicktime  : src
 			//	realplayer : src
 			//	flash      : movie (doesn't need replacing)
 			$url_param = "/<param$s{$n}name=$q(src|url)$q$s{$n}value=$q($filepath)$q$n>/is";
-	
+
 			// pattern to match <a> tags which link to multimedia files (not swf)
 			$link = "/<a$s{$n}href=$q($filepath)$q$n>(.*?)<\/a>/is";
 			
 			// extract <object> tags
 			preg_match_all("|<object$n>(.*?)</object>|is", $this->html, $objects);
-	
+
 			$i_max = count($objects[0]);
 			for ($i=0; $i<$i_max; $i++) {
-	
+
 				$url = '';
 				if (preg_match($url_param, $objects[1][$i], $matches)) {
 					$url = $matches[2];
 				} else if (preg_match($link, $objects[1][$i], $matches)) {
 					$url = $matches[1];
 				}
-	
+
 				if ($url) {
 					$txt = trim(strip_tags($objects[1][$i]));
-	
+
 					// if url is in the query string, remove the leading characters
 					$url = preg_replace('/^[^?]*\?([^=]+=[^&]*&)*[^=]+=([^&]*)$/', '$2', $url, 1);
 
 					$new_object = mediaplugin_filter($this->filedir, '<a href="'.$url.'">'.$txt.'</a>');
 					$new_object = preg_replace("|(<a$n>.*<\/a>)(.*<object$n>.*<embed$n>.*)(</embed>.*</object>.*)$|is", '$2$1$3', $new_object);
-	
+
 					$this->html = str_replace($objects[0][$i], $new_object, $this->html);
 				}
 			}
@@ -1668,10 +1672,24 @@ function hotpot_convert_preloadimages_urls($baseurl, $reference, $urls) {
 	}
 	return implode(',',$urls);
 }
+function hotpot_convert_navbutton_url($baseurl, $reference, $url, $course) {
+	global $CFG;
+
+	$url = hotpot_convert_url($baseurl, $reference, $url);
+
+	// is this a $url for another hotpot in this course ?
+	if (preg_match("|^$baseurl(.*)$|", $url, $matches)) {
+		if ($records = get_records_select('hotpot', "course='$course' AND reference='".$matches[1]."'")) {
+			$ids = array_keys($records);
+			$url = "$CFG->wwwroot/mod/hotpot/view.php?hp=".$ids[0];
+		}
+	}
+
+	return $url;
+}
 
 function hotpot_convert_relative_url($baseurl, $reference, $opentag, $url, $closetag) {
 
-	// match a series of "name=value" pairs in a <PARAM ...> tag
 	if (preg_match('|^'.'\w+=[^&]+'.'([&]\w+=[^&]+)*'.'$|', $url)) {
 		$query = $url;
 		$url = '';
@@ -1740,9 +1758,9 @@ function hotpot_convert_url($baseurl, $reference, $url) {
 	if (preg_match('%^(http://|/|javascript:)%i', $url)) {
 		// do nothing
 
-	// has this url already been converted?
-	} else if (isset($HOTPOT_CONVERTED_URLS[$url])) {
-		$url = $HOTPOT_CONVERTED_URLS[$url];
+	// has this relative url already been converted?
+	} else if (isset($HOTPOT_RELATIVE_URLS[$url])) {
+		$url = $HOTPOT_RELATIVE_URLS[$url];
 
 	} else {
 		$relativeurl = $url;
@@ -1767,7 +1785,7 @@ function hotpot_convert_url($baseurl, $reference, $url) {
 		$url = "$baseurl$url";
 
 		// add url to cache
-		$HOTPOT_CONVERTED_URLS[$relativeurl] = $url;
+		$HOTPOT_RELATIVE_URLS[$relativeurl] = $url;
 	}
 	return $url;
 }

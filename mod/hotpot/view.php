@@ -155,13 +155,13 @@
 		if (empty($frameset)) { 
 			// HP v6
 			if ($hotpot->navigation==HOTPOT_NAVIGATION_FRAME || $hotpot->navigation==HOTPOT_NAVIGATION_IFRAME) {
-				$get_html = ($framename=='main');
+				$get_html = ($framename=='main') ? true : false;
 			} else {
 				$get_html = true;
 			}
 		} else { 
 			// HP5 v5
-			$get_html = empty($framename);
+			$get_html = empty($framename) ? true : false;
 		}
 
 		if ($get_html) {
@@ -176,7 +176,9 @@
 
 			if (empty($frameset)) {
 				// HP6 v6
-				if ($hotpot->navigation!=HOTPOT_NAVIGATION_BUTTONS) {
+				if ($hotpot->navigation==HOTPOT_NAVIGATION_BUTTONS) {
+					// convert URLs in nav buttons
+				} else {
 					$hp->remove_nav_buttons();
 				}
 				if ($hotpot->navigation==HOTPOT_NAVIGATION_GIVEUP) {
@@ -186,7 +188,10 @@
 
 			} else {
 				// HP5 v5
-				if ($hotpot->navigation!=HOTPOT_NAVIGATION_BUTTONS) {
+				if ($hotpot->navigation==HOTPOT_NAVIGATION_BUTTONS) {
+					// convert URLs in nav buttons
+				} else {
+					// remove navigation buttons
 					$hp->html = preg_replace('#NavBar\+=(.*);#', '', $hp->html);
 				}
 				if ($hotpot->navigation==HOTPOT_NAVIGATION_GIVEUP) {
@@ -285,9 +290,8 @@
 	// extract <head> and <body> tags
 	$head = '';
 	$pattern = '|<head([^>]*)>(.*?)</head>|is';
-	if (preg_match_all($pattern, $hp->html, $matches)) {
-		$last = count($matches[0])-1;
-		$head = $matches[2][$last];
+	if (preg_match($pattern, $hp->html, $matches)) {
+		$head = $matches[2]; // first <head>...</head> block
 
 		// remove <title>
 		$head = preg_replace('|<title[^>]*>(.*?)</title>|is', '', $head);
@@ -347,33 +351,31 @@
 		} // end switch $frameset
 		exit;
 
-	// is there a <body> (HP6 and HP5: v6 and v4)
-	} else if (preg_match_all('|<body([^>]*)>(.*?)</body>|is', $hp->html, $matches)) {
-		$last = count($matches[0])-1;
-		$body = $matches[2][$last];
-		$body_tags = $matches[1][$last];
+	// is there a <body> (HP6 and HP5: v6 and v4) 
+	} else if (preg_match('|<body'.'([^>]*'.'onLoad=(["\'])(.*?)(\\2)'.'[^>]*)'.'>(.*)</body>|is', $hp->html, $matches)) {
+	
+		$body = $matches[5]; // contents of first <body onload="StartUp()">...</body> block
+		$body_tags = $matches[1];
 
 		// workaround to ensure javascript onload routine for quiz is always executed
 		//	$body_tags will only be inserted into the <body ...> tag
 		//	if it is included in the theme/$CFG->theme/header.html,
 		//	so some old or modified themes may not insert $body_tags
-		if (preg_match('/onload=("|\')(.*?)(\\1)/i', $body_tags, $matches)) {
-			$body .= ""
-				.'<SCRIPT type="text/javascript">'."\n"
-				."<!--\n"
-				."	var s = (typeof(window.onload)=='function') ? onload.toString() : '';\n"
-				."	if (s.indexOf('".$matches[2]."')<0) {\n"
-				."		if (s=='') {\n" // no previous onload
-				."			window.onload = new Function('".$matches[2]."');\n"
-				."		} else {\n"
-				."			window.onload_hotpot = onload;\n"
-				."			window.onload = new Function('window.onload_hotpot();' + '".$matches[2]."');\n"
-				."		}\n"
-				."	 }\n"
-				."//-->\n"
-				."</SCRIPT>\n"
-			;
-		}
+		$body .= ""
+		.	'<SCRIPT type="text/javascript">'."\n"
+		.	"<!--\n"
+		.	"	var s = (typeof(window.onload)=='function') ? onload.toString() : '';\n"
+		.	"	if (s.indexOf('".$matches[3]."')<0) {\n"
+		.	"		if (s=='') {\n" // no previous onload
+		.	"			window.onload = new Function('".$matches[3]."');\n"
+		.	"		} else {\n"
+		.	"			window.onload_hotpot = onload;\n"
+		.	"			window.onload = new Function('window.onload_hotpot();'+'".$matches[3]."');\n"
+		.	"		}\n"
+		.	"	 }\n"
+		.	"//-->\n"
+		.	"</SCRIPT>\n"
+		;
 
 		$footer = '</body>'.$footer;
 	}

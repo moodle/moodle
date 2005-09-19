@@ -593,28 +593,42 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
 
 	// nav bar
 
-	function v6_expand_NavBar() {
+	function v6_expand_NavBar($navbarid='') {
+		$this->navbarid = $navbarid;
+
 		$tag = 'navbar';
 		$this->read_template('hp6navbar.ht_', $tag);
+		
+		unset($this->navbarid);
+
 		return $this->$tag;
 	}
 	function v6_expand_TopNavBar() {
-		return $this->v6_expand_NavBar();
+		return $this->v6_expand_NavBar('TopNavBar');
 	}
 	function v6_expand_BottomNavBar() {
-		return $this->v6_expand_NavBar();
-	}
-	function v6_expand_NextExURL() {
-		return $this->parent->xml_value('hotpot-config-file,'.$this->parent->quiztype.',next-ex-url');
+		return $this->v6_expand_NavBar('BottomNavBar');
 	}
 
 	// hp6navbar.ht_
 
 	function v6_expand_NavBarID() {
-		return ''; // what's this?;
+		// $this->navbarid is set in "$this->v6_expand_NavBar"
+		return empty($this->navbarid) ? '' : $this->navbarid;
 	}
 	function v6_expand_ContentsURL() {
-		return $this->parent->xml_value('hotpot-config-file,global,contents-url');
+		$url = $this->parent->xml_value('hotpot-config-file,global,contents-url');
+		if ($url) {
+			$url = hotpot_convert_navbutton_url($this->parent->get_baseurl(), $this->parent->reference, $url, $this->parent->course);
+		}
+		return $url;
+	}
+	function v6_expand_NextExURL() {
+		$url = $this->parent->xml_value('hotpot-config-file,'.$this->parent->quiztype.',next-ex-url');
+		if ($url) {
+			$url = hotpot_convert_navbutton_url($this->parent->get_baseurl(), $this->parent->reference, $url, $this->parent->course);
+		}
+		return $url;
 	}
 
 	// conditional blocks
