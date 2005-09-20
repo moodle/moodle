@@ -240,36 +240,7 @@ function hotpot_set_form_values(&$hp) {
 			break;
 		}
 	} else {
-		$xml_quiz = NULL;
-		
-		$textfields = array('name', 'summary');
-		foreach ($textfields as $textfield) {
-
-			$textsource = $textfield.'source';
-			if ($hp->$textsource==HOTPOT_TEXTSOURCE_QUIZ) {
-				if (empty($xml_quiz)) {
-					$xml_quiz = new hotpot_xml_quiz($hp, false, false, false, false, false);
-					hotpot_get_titles_and_next_ex($hp, $xml_quiz->filepath);
-				}
-				if ($textfield=='name') {
-					$hp->$textfield = $hp->exercisetitle;
-				} else if ($textfield=='summary') {
-					$hp->$textfield = $hp->exercisesubtitle;
-				}
-			}
-			switch ($hp->$textsource) {
-				case HOTPOT_TEXTSOURCE_FILENAME:
-					$hp->$textfield = basename($hp->reference);
-					break;
-				case HOTPOT_TEXTSOURCE_FILEPATH:
-					$hp->$textfield = '';
-					// continue to next lines
-				default:
-					if (empty($hp->$textfield)) {
-						$hp->$textfield = str_replace('/', ' ', $hp->reference);
-					}
-			} // end switch
-		} // end foreach
+		hotpot_set_name_summary_reference($hp);
 	}
 
 	switch ($hp->displaynext) {
@@ -387,6 +358,7 @@ function hotpot_add_chain(&$hp) {
 	$ok = true;
 	$hp->files = array();
 	$hp->titles = array();
+	$hp->subtitles = array();
 
 	$xml_quiz = new hotpot_xml_quiz($hp, false, false, false, false, false);
 
@@ -410,6 +382,7 @@ function hotpot_add_chain(&$hp) {
 				$filepath = $xml_quiz->fileroot.'/'.$xml_quiz->filesubdir.$file;
 				hotpot_get_titles_and_next_ex($hp, $filepath);
 				$hp->titles[$i] = $hp->exercisetitle;
+				$hp->subtitles[$i] = $hp->exercisesubtitle;
 			}
 			
 		} else {
@@ -426,6 +399,7 @@ function hotpot_add_chain(&$hp) {
 
 			$hp->files[] = substr($xml_quiz->filepath, $filerootlength);
 			$hp->titles[] = $hp->exercisetitle;
+			$hp->subtitles[] = $hp->exercisesubtitle;
 
 			if ($hp->nextexercise) {
 				$filepath = $xml_quiz->fileroot.'/'.$xml_quiz->filesubdir.$hp->nextexercise;
@@ -456,15 +430,16 @@ function hotpot_add_chain(&$hp) {
 		if (trim($hp->name)=='') {
 			$hp->name = get_string("modulename", $hp->modulename);
 		}
-		$hp->basename = $hp->name;
+		$hp->specificname = $hp->name;
+		$hp->specificsummary = $hp->summary;
 
 		// add all except last activity in chain
 
 		$i_max = count($hp->files)-1;
 		for ($i=0; $i<$i_max; $i++) {
 
-			$hp->name = addslashes($hp->titles[$i]);
-			$hp->reference = addslashes($hp->files[$i]);
+			hotpot_set_name_summary_reference($hp, $i);
+			$hp->reference = addslashes($hp->reference);
 
 			if (!$hp->instance = insert_record("hotpot", $hp)) {
 				error("Could not add a new instance of $hp->modulename", "view.php?id=$hp->course");
@@ -505,7 +480,7 @@ function hotpot_add_chain(&$hp) {
 		} // end for ($hp->files)
 
 		// settings for final activity in chain
-		$hp->name = addslashes($hp->titles[$i]);
+		hotpot_set_name_summary_reference($hp, $i);
 		$hp->reference = addslashes($hp->files[$i]);
 		$hp->shownextquiz = HOTPOT_NO;
 
@@ -517,6 +492,63 @@ function hotpot_add_chain(&$hp) {
 	} // end if $ok
 
 	return $ok;
+}
+function hotpot_set_name_summary_reference(&$hp, $chain_index=NULL) {
+
+	$xml_quiz = NULL;
+
+	$textfields = array('name', 'summary');
+	foreach ($textfields as $textfield) {
+
+		$textsource = $textfield.'source';
+
+		// are we adding a chain?
+		if (isset($chain_index)) {
+
+			switch ($hp->$textsource) {
+				case HOTPOT_TEXTSOURCE_QUIZ:
+					if ($textfield=='name') {
+						$hp->exercisetitle = addslashes($hp->titles[$chain_index]);
+					} else if ($textfield=='summary') {
+						$hp->exercisesubtitle = addslashes($hp->subtitles[$chain_index]);
+					}
+					break;
+				case HOTPOT_TEXTSOURCE_SPECIFIC:
+					$specifictext = 'specific'.$textfield;
+					if (empty($hp->$specifictext) && trim($hp->$specifictext)=='') {
+						$hp->$textfield = '';
+					} else {
+						$hp->$textfield = $hp->$specifictext.' ('.($chain_index+1).')';
+					}
+					break;
+			}
+			$hp->reference = $hp->files[$chain_index];
+		}
+
+		if ($hp->$textsource==HOTPOT_TEXTSOURCE_QUIZ) {
+			if (empty($xml_quiz) && !isset($chain_index)) {
+				$xml_quiz = new hotpot_xml_quiz($hp, false, false, false, false, false);
+				hotpot_get_titles_and_next_ex($hp, $xml_quiz->filepath);
+			}
+			if ($textfield=='name') {
+				$hp->$textfield = $hp->exercisetitle;
+			} else if ($textfield=='summary') {
+				$hp->$textfield = $hp->exercisesubtitle;
+			}
+		}
+		switch ($hp->$textsource) {
+			case HOTPOT_TEXTSOURCE_FILENAME:
+				$hp->$textfield = basename($hp->reference);
+				break;
+			case HOTPOT_TEXTSOURCE_FILEPATH:
+				$hp->$textfield = '';
+				// continue to next lines
+			default:
+				if (empty($hp->$textfield)) {
+					$hp->$textfield = str_replace('/', ' ', $hp->reference);
+				}
+		} // end switch
+	} // end foreach
 }
 function hotpot_get_titles_and_next_ex(&$hp, $filepath, $get_next=false) {
 
