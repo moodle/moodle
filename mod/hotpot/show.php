@@ -18,9 +18,6 @@
 		error("You are not allowed to view this page!");
 	}
 
-	// decode the reference (not usually necessary)
-	$params->reference = urldecode($params->reference);
-
 	if (isadmin()) {
 		$params->location = optional_param('location', HOTPOT_LOCATION_COURSEFILES);
 	} else {
