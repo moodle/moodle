@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.6 development (2005081700)
+      // resource.php - created with Moodle 1.6 development (2005090100)
 
 
 $string['addresource'] = 'リソースを追加する';
@@ -23,6 +23,7 @@ $string['configpopupwidth'] = '新しいポップアップウインドウのデフォルトの幅は?';
 $string['configsecretphrase'] = 'このシークレットワードは、リソースをパラメータとして送信する時に使用する暗号コードを生成するために使用されます。暗号コードは、ユーザのIPアドレスとシークレットワードを結びつけてmd5により生成されます。これにより、リソースが高度にセキュリティ対策をとられた通信を実現することができます。';
 $string['configwebsearch'] = 'URLをウェブページまたはリンクとして追加する時、このロケーションは、ユーザがURLを検索するためのヘルプとして提供されます。';
 $string['configwindowsettings'] = 'ここでは、新しいリソースを登録する際にフォームに表示されるウインドウ設定に関する値を登録します。最初にリソースを登録した後、この値は個々のユーザのデフォルトとなります。';
+$string['deploy'] = '配置';
 $string['directlink'] = 'このファイルをダイレクトリンクする';
 $string['directoryinfo'] = '選択したディレクトリの全ファイルが表示されます。';
 $string['display'] = 'ウインドウ';
@@ -47,6 +48,7 @@ $string['localfileselect'] = 'このファイルパスを選択';
 $string['maindirectory'] = 'メインファイルディレクトリ';
 $string['modulename'] = 'リソース';
 $string['modulenameplural'] = 'リソース';
+$string['navigationbuttons'] = 'ナビゲーションボタン';
 $string['neverseen'] = '未確認';
 $string['newdirectories'] = 'ディレクトリリンクを表示';
 $string['newfullscreen'] = '全画面表示';
@@ -64,6 +66,7 @@ $string['notallowedlocalfileaccess'] = '現在、ローカルファイルへのアクセスは停止
 $string['note'] = '注意';
 $string['notefile'] = 'さらにファイルをアップロード ( このリストに表示されます ) する場合、<a href=$a >File Manager</a> を利用してください。';
 $string['notypechosen'] = 'タイプを選択してください。「戻る」ボタンを押して再度入力してください。';
+$string['packagenotdeplyed'] = 'このIMS学習者情報パッケージは配置されません。';
 $string['pagedisplay'] = 'リソースを現在のウインドウに表示';
 $string['pagewindow'] = '同一ウインドウ';
 $string['pan'] = 'Pan';
@@ -84,12 +87,14 @@ $string['resourcetype9'] = 'ディレクトリ';
 $string['resourcetypedirectory'] = 'ディレクトリの表示';
 $string['resourcetypefile'] = 'ファイル・サイトにリンク';
 $string['resourcetypehtml'] = 'ウェブページの作成';
+$string['resourcetypeims'] = 'IMS学習者情報パッケージの配置';
 $string['resourcetypelabel'] = 'ラベルの挿入';
 $string['resourcetyperepository'] = 'リポジトリオブジェクトにリンク';
 $string['resourcetypetext'] = 'テキストページの作成';
 $string['searchweb'] = 'ウェブページを検索';
 $string['serverurl'] = 'サーバURL ($a->wwwroot)';
 $string['showcourseblocks'] = 'コースブロックを表示';
+$string['tableofcontents'] = '目次';
 $string['variablename'] = '変数名';
 $string['vol'] = 'Vol';
 
