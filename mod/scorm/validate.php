@@ -5,12 +5,13 @@ require_once("lib.php");
 
 require_login();
 
-if (confirm_sesskey()) {
-    $reference = clean_param($_POST["reference"], PARAM_PATH);
-    $courseid = $_POST["id"];
+$reference = required_param('reference', '', PARAM_PATH);
+$courseid = required_param('id', '', PARAM_INT);
+$scormid = optional_param('instance','', PARAM_INT);
+
+if (confirm_sesskey() && isteacher($courseid)) {
     $launch = 0;
-    if (isset($_POST["instance"])) {
-        $scormid = $_POST["instance"];
+    if (!empty($scormid)) {
         if (is_file($CFG->dataroot.'/'.$courseid.'/'.$reference)) {
             $fp = fopen($CFG->dataroot.'/'.$courseid.'/'.$reference,"r");
             $fstat = fstat($fp);
