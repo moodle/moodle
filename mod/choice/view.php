@@ -220,7 +220,7 @@
 
         echo "<center>";
         echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />";
-        if (isstudent($course->id) or isteacher($course->id, 0)) {
+        if (!isguest()) {
             echo "<input type=\"submit\" value=\"".get_string("savemychoice","choice")."\" />";
         } else {
             print_string('havetologin', 'choice');
