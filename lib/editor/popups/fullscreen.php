@@ -1,5 +1,6 @@
 <?php // $Id$
     include("../../../config.php");
+    $id = optional_param('id', 0, PARAM_INT);
 ?>
 <html>
 <head><title><?php print_string("fullscreen","editor");?></title>
@@ -9,7 +10,7 @@
 html, body {    margin: 0px; border: 0px; background-color: buttonface; } </style>
 
 
-<script type="text/javascript" src="../htmlarea.php<?php print($id != "")?"?id=$id":"";?>"></script>
+<script type="text/javascript" src="../htmlarea.php?id=<?php p($id); ?>"></script>
 <script type="text/javascript" src="../lang/en.php"></script>
 <script type="text/javascript" src="../dialog.js"></script>
 <script type="text/javascript" src="../plugins/TableOperations/table-operations.js"></script>
