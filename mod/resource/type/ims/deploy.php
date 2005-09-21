@@ -79,7 +79,7 @@
     if (!confirm_sesskey()) {
         error(get_string('confirmsesskeybad', 'error'));
     } else if (!isteacheredit($courseid)) {
-        error("Only editing teachers can deploy packages !");
+        error(get_string('onlyeditingteachers', 'error'));
     }
 
 ///
@@ -90,22 +90,22 @@
 
 /// Create directories
     if (!$resourcedir = make_upload_directory($courseid.'/'.$CFG->moddata.'/resource/'.$resource->id)) {
-        error (get_string('errorcreatingdirectory', 'error'));
+        error (get_string('errorcreatingdirectory', 'error', $CFG->moddata.'/resource/'.$resource->id));
     }
 
 /// Ensure it's empty
     if (!delete_dir_contents($resourcedir)) {
-        error (get_string('errorcleaningdirectory', 'error'));
+        error (get_string('errorcleaningdirectory', 'error', $resourcedir));
     }
     
 /// Copy files
     $origin = $CFG->dataroot.'/'.$courseid.'/'.$file;
     if (!is_file($origin)) {
-        error (get_string('filenotexists' , 'error', $file));
+        error (get_string('filenotfound' , 'error', $file));
     }
     $mimetype = mimeinfo("type", $file);
     if ($mimetype != "application/zip") {
-        error (get_string('errorincorrectextension', 'error'));
+        error (get_string('invalidfiletype', 'error', $file));
     }
     $resourcefile = $resourcedir.'/'.basename($origin);
     if (!backup_copy_file($origin, $resourcefile)) {
@@ -119,13 +119,25 @@
 
 /// Check for imsmanifest
     if (!file_exists($resourcedir.'/imsmanifest.xml')) {
-        error (get_string('filenotexists', 'error', 'imsmanifest.xml'));
+        error (get_string('filenotfound', 'error', 'imsmanifest.xml'));
     }
 
 /// Load imsmanifest to memory (instead of using a full parser,
 /// we are going to use xmlize intensively (because files aren't too big)
     if (!$imsmanifest = ims_file2var ($resourcedir.'/imsmanifest.xml')) {
         error (get_string ('errorreadingfile', 'error', 'imsmanifest.xml'));
+    }
+
+/// Check if the first line is a proper one, because I've seen some
+/// packages with some control characters at the beginning.
+    $inixml = strpos($imsmanifest, '<?xml ');
+    if ($inixml !== false) {
+        if ($inixml !== 0) {
+            //Strip strange chars before "<?xml "
+            $imsmanifest = substr($imsmanifest, $inixml);
+        }
+    } else {
+        error (get_string ('invalidxmlfile', 'error', 'imsmanifest.xml'));
     }
 
 /// xmlize the variable
@@ -137,12 +149,12 @@
 /// Parse XML-content package data
 /// First we select an organization an load all the items
     if (!$items = ims_process_organizations($data['manifest']['#']['organizations']['0'])) {
-        error (get_string('errornonmeaningfulcontent', 'error'));
+        error (get_string('nonmeaningfulcontent', 'error'));
     }
 
 /// Now, we load all the resources available (keys are identifiers)
     if (!$resources = ims_load_resources($data['manifest']['#']['resources']['0']['#']['resource'])) {
-        error (get_string('errornonmeaningfulcontent', 'error'));
+        error (get_string('nonmeaningfulcontent', 'error'));
     }
 ///Now we assign to each item, its resource (by identifier)
     foreach ($items as $key=>$item) {
@@ -155,18 +167,18 @@
 
 /// Create the INDEX (moodle_inx.ser - where the order of the pages are stored serialized) file
     if (!ims_save_serialized_file($resourcedir.'/moodle_inx.ser', $items)) {
-        error (get_string('errorgeneratingfile', 'error', 'moodle_inx.ser'));
+        error (get_string('errorcreatingfile', 'error', 'moodle_inx.ser'));
     }
 
 /// Create the HASH file (moodle_hash.ser - where the hash of the ims is stored serialized) file
     $hash = $resource_obj->calculatefilehash($resourcefile);
     if (!ims_save_serialized_file($resourcedir.'/moodle_hash.ser', $hash)) {
-        error (get_string('errorgeneratingfile', 'error', 'moodle_hash.ser'));
+        error (get_string('errorcreatingfile', 'error', 'moodle_hash.ser'));
     }
 
 /// End button (go to view mode)
     echo '<center>';
-    print_simple_box(get_string("imspackageloaded"),"center");
+    print_simple_box(get_string('imspackageloaded', 'resource'), 'center');
     $link = $CFG->wwwroot.'/mod/resource/view.php';
     $options['r'] = $resource->id;
     $label = get_string('viewims', 'resource');
@@ -189,6 +201,7 @@
      *   that is a perfect representation of the prefered organization
      */
     function ims_process_organizations($data) {
+
         global $CFG;
 
     /// Get the default organization
