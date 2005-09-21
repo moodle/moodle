@@ -39,6 +39,7 @@ $string['filtername'] = 'Resource Names Auto-linking';
 $string['frameifpossible'] = 'Put resource in a frame to keep site navigation visible';
 $string['fulltext'] = 'Full text';
 $string['htmlfragment'] = 'HTML fragment';
+$string['imspackageloaded'] = 'Package loaded.';
 $string['localfile'] = 'Local file';
 $string['localfilechoose'] = 'Choose a local file (CD-ROM)';
 $string['localfileinfo'] = '<p>Choose a local file from your computer. The file will not be uploaded to the web site, but Moodle will look for the same file on the computer of anyone viewing this resource.</p><p>This is mostly useful when you have large media files stored on a standard CD-ROM that you distribute to all participants.  Each participant is able to choose their own local path for such files, by <a href=\"$a\" target=\"_blank\">editing their user profile</a>.</p>';
@@ -66,6 +67,7 @@ $string['notallowedlocalfileaccess'] = 'Access to local files is currently disab
 $string['note'] = 'Note';
 $string['notefile'] = 'To upload more files into the course (so they appear in this list) use the <a href=\"$a\">File Manager</a>.';
 $string['notypechosen'] = 'You need to choose a type.  Use your back button to go back and retry.';
+$string['packagechanged'] = 'This IMS Content Package has changed.';
 $string['packagenotdeplyed'] = 'This IMS Content Package is not deployed.';
 $string['pagedisplay'] = 'Display this resource within the current window';
 $string['pagewindow'] = 'Same window';
@@ -96,6 +98,7 @@ $string['searchweb'] = 'Search for web page';
 $string['serverurl'] = 'Server URL ($a->wwwroot)';
 $string['tableofcontents'] = 'Table of Contents';
 $string['variablename'] = 'Variable name';
+$string['viewims'] = 'View IMS CP Package';
 $string['vol'] = 'Vol';
 
 ?>
