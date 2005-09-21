@@ -1,4 +1,4 @@
-This is v2.1.0 of the HotPot module
+This is v2.1.1 of the HotPot module
    This module allows teachers to administer Hot Potatoes and TexToys quizzes via Moodle.
    It has been tested on:
       - Hot Potatoes 6
@@ -44,7 +44,8 @@ TO INSTALL OR UPDATE THIS MODULE
    (c) upload the contents of the "hotpot/lang/en/help/hotpot" folder on your PC to the "moodle/lang/en/help/hotpot" folder on the Moodle site
    (d) repeat for other languages you require from the "moodle/mod/hotpot/lang" folder 
 
-3. [optional] copy and set up the file icons as follows:
+3. copy and set up the file icons
+   [This step is not required for Moodle 1.5 and later, and is optional for Moodle 1.1 to 1.4]
 
    (a) copy the files in the "mod/hotpot/pix/f" folder on your Moodle site to "moodle/pix/f"
    (b) open the "moodle/files/mimetypes.php" file on your Moodle site with a text editor
@@ -62,7 +63,8 @@ TO INSTALL OR UPDATE THIS MODULE
 
    (d) save the changes and close the file
 
-3. [optional] enable import from Hot Potatoes XML files to Moodle's Quiz module
+4. enable import from Hot Potatoes XML files to Moodle's Quiz module
+   [This step is not required for Moodle 1.5 and later, and is optional for Moodle 1.1 to 1.4]
 
    (a) create a folder called "hotpot" on your Moodle site in the "moodle/mod/quiz/format" folder
    (b) copy the "contents of the "moodle/mod/hotpot/quiz/format/hotpot" folder on your Moodle site to the "moodle/mod/quiz/format/hotpot" folder
@@ -83,7 +85,7 @@ TO INSTALL OR UPDATE THIS MODULE
 
    (g) save the changes and close the file
 
-4. Login to your Moodle site as an administrator. 
+5. Login to your Moodle site as an administrator. 
 
    a) If you are installing this module for the first time, you should see a report saying that the following (prefix)_hotpot tables have been successfuly created:
       hotpot
