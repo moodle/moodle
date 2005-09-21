@@ -64,7 +64,7 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
 <tr valign="top" class="required">
     <td align="right">ldap_host_url:</td>
     <td>
-        <input name="ldap_host_url" type="text" size="30" value="<?php echo $config->ldap_host_url?>">
+        <input name="ldap_host_url" type="text" size="30" value="<?php echo $config->ldap_host_url?>" />
     <?php  if (isset($err["ldap_host_url"])) formerr($err["ldap_host_url"]); ?>
     </td>
     <td>
@@ -110,7 +110,7 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
 <tr valign="top" class="required">
     <td align="right">ldap_bind_dn:</td>
     <td>
-    <input name="ldap_bind_dn" type="text" size="30" value="<?php echo $config->ldap_bind_dn?>">
+    <input name="ldap_bind_dn" type="text" size="30" value="<?php echo $config->ldap_bind_dn?>" />
     <?php  if (isset($err["ldap_bind_dn"])) formerr($err["ldap_bind_dn"]); ?>
     </td><td>
     <?php  print_string("auth_ldap_bind_dn","auth") ?>
@@ -120,7 +120,7 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
 <tr valign="top" class="required">
     <td align="right">ldap_bind_pw:</td>
     <td>
-    <input name="ldap_bind_pw" type="password" size="30" value="<?php echo $config->ldap_bind_pw?>">
+    <input name="ldap_bind_pw" type="password" size="30" value="<?php echo $config->ldap_bind_pw?>" />
     <?php  if (isset($err["ldap_bind_pw"])) formerr($err["ldap_bind_pw"]); ?>
     </td><td>
     <?php  print_string("auth_ldap_bind_pw","auth") ?>
@@ -147,7 +147,7 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
 <tr valign="top" class="required">
     <td align="right">ldap_contexts:</td>
     <td>
-    <input name="ldap_contexts" type="text" size="30" value="<?php echo $config->ldap_contexts?>">
+    <input name="ldap_contexts" type="text" size="30" value="<?php echo $config->ldap_contexts?>" />
     <?php  if (isset($err["ldap_contexts"])) formerr($err["ldap_contexts"]); ?>
     </td>
     <td>
@@ -190,7 +190,7 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
 <tr valign="top" class="required">
     <td align="right">ldap_user_attribute:</td>
     <td>
-    <input name="ldap_user_attribute" type="text" size="30" value="<?php echo $config->ldap_user_attribute?>">
+    <input name="ldap_user_attribute" type="text" size="30" value="<?php echo $config->ldap_user_attribute?>" />
     <?php  if (isset($err["ldap_user_attribute"])) formerr($err["ldap_user_attribute"]); ?>
     </td>
     <td>
@@ -201,7 +201,7 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
 <tr valign="top" class="required">
         <td align="right">ldap_memberattribute:</td>
         <td>
-    <input name="ldap_memberattribute" type="text" size="30" value="<?php echo $config->ldap_memberattribute?>">
+    <input name="ldap_memberattribute" type="text" size="30" value="<?php echo $config->ldap_memberattribute?>" />
     <?php  if (isset($err["ldap_memberattribute"])) formerr($err["ldap_memberattribute"]); ?>
     </td><td>
     <?php  print_string("auth_ldap_memberattribute","auth") ?>
@@ -211,7 +211,7 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
 <tr valign="top" class="required">
     <td align="right">ldap_objectclass:</td>
     <td>
-    <input name="ldap_objectclass" type="text" size="30" value="<?php echo $config->ldap_objectclass?>">
+    <input name="ldap_objectclass" type="text" size="30" value="<?php echo $config->ldap_objectclass?>" />
     <?php  if (isset($err["ldap_objectclass"])) formerr($err["ldap_objectclass"]); ?>
     </td>
     <td>
@@ -263,7 +263,8 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
 <tr valign="top" class="required">
     <td align="right" valign="top"><?php print_string('authchangepassword', 'auth') ?>:</td>
     <td>
-        <?php choose_from_menu( $yesno, 'auth_ldap_changepasswordurl', $config->auth_ldap_changepasswordurl ); ?>
+        <input name="auth_ldap_changepasswordurl" type="text" size="30" 
+            value="<?php echo $config->auth_ldap_changepasswordurl; ?>" />
     </td>
     <td align="left" valign="top"><?php print_string('authchangepassword_expl','auth'); ?></td>
 </tr>
@@ -293,7 +294,7 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
 <tr valign="top" class="required">
     <td align="right">ldap_expiration_warning:</td>
     <td>
-    <input name="ldap_expiration_warning" type="text" size="2" value="<?php echo $config->ldap_expiration_warning?>">
+    <input name="ldap_expiration_warning" type="text" size="2" value="<?php echo $config->ldap_expiration_warning?>" />
     <?php   if (isset($err["ldap_expiration_warning"])) formerr($err["ldap_expiration_warning"]); 
     ?>
     </td>
@@ -305,7 +306,7 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
 <tr valign="top" class="required">
     <td align="right">ldap_exprireattr:</td>
     <td>
-    <input name="ldap_expireattr" type="text" size="30" value="<?php echo $config->ldap_expireattr?>">
+    <input name="ldap_expireattr" type="text" size="30" value="<?php echo $config->ldap_expireattr?>" />
     <?php  if (isset($err["ldap_expireattr"])) formerr($err["ldap_expireattr"]); 
     ?>
     </td>
@@ -332,7 +333,7 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
 <tr valign="top" class="required">
     <td align="right">ldap_graceattr:</td>
     <td>
-    <input name="ldap_graceattr" type="text" size="30" value="<?php echo $config->ldap_graceattr?>">
+    <input name="ldap_graceattr" type="text" size="30" value="<?php echo $config->ldap_graceattr?>" />
     <?php   if (isset($err["ldap_graceattr"])) formerr($err["ldap_graceattr"]); 
     ?>
     </td>
@@ -353,7 +354,7 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
 <tr valign="top" class="required">
     <td align="right">ldap_create_context:</td>
     <td>
-    <input name="ldap_create_context" type="text" size="30" value="<?php echo $config->ldap_create_context?>">
+    <input name="ldap_create_context" type="text" size="30" value="<?php echo $config->ldap_create_context?>" />
     <?php  if (isset($err["ldap_create_context"])) formerr($err["ldap_create_context"]); ?>
     </td><td>
     <?php  print_string("auth_ldap_create_context","auth") ?>
@@ -370,7 +371,7 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
 <tr valign="top" class="required">
         <td align="right">ldap_creators:</td>
         <td>
-    <input name="ldap_creators" type="text" size="30" value="<?php echo $config->ldap_creators?>">
+    <input name="ldap_creators" type="text" size="30" value="<?php echo $config->ldap_creators?>" />
     <?php  if (isset($err["ldap_creators"])) formerr($err["ldap_creators"]); ?>
     </td><td>
     <?php  print_string("auth_ldap_creators","auth") ?>
