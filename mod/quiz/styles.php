@@ -140,3 +140,15 @@ body#mod-quiz-report table#responses .correct {
 body#mod-quiz-report table#responses .partialcorrect {
   color: orange;
 }
+
+#mod-quiz-attempt #timer .generalbox {
+  width:150px
+}
+#mod-quiz-attempt #timer {
+  position:fixed !important;
+  top:100px !important;
+  left:10px !important
+}
+* html #mod-quiz-attempt #timer {
+  position:absolute !important
+}
