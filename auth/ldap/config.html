@@ -1,29 +1,52 @@
 <?php
     // Initialize vars
-    optional_variable($config->ldap_host_url,             "");
-    optional_variable($config->ldap_contexts,             "");
-    optional_variable($config->ldap_user_type,    "");
-    optional_variable($config->ldap_user_attribute,    "");
-    optional_variable($config->ldap_search_sub,         "");
-    optional_variable($config->ldap_opt_deref,         "");
-    optional_variable($config->ldap_preventpassindb,       0); 
-    optional_variable($config->ldap_bind_dn,             "");
-    optional_variable($config->ldap_bind_pw,             "");
-    optional_variable($config->ldap_version,             "2");
-    optional_variable($config->ldap_objectclass,         "");
-    optional_variable($config->ldap_memberattribute,    "");
-    optional_variable($config->ldap_creators,             "");
-    optional_variable($config->ldap_create_context,     "");
-    optional_variable($config->ldap_expiration,         "");
-    optional_variable($config->ldap_expiration_warning,         "10");
-    optional_variable($config->ldap_expireattr,         "");
-    optional_variable($config->ldap_gracelogins,         "");
-    optional_variable($config->ldap_graceattr,         "");
-    optional_variable($config->auth_user_create,         "");
-    optional_variable($config->auth_user_create,         "");
-    optional_variable($config->auth_ldap_forcechangepassword,         "");
-    
-    optional_variable($config->auth_ldap_stdchangepassword,        false); 
+    if (!isset($config->ldap_host_url)) 
+        { $config->ldap_host_url = ''; }
+    if (!isset($config->ldap_contexts)) 
+        { $config->ldap_contexts = ''; }
+    if (!isset($config->ldap_user_type)) 
+        { $config->ldap_user_type = ''; }
+    if (!isset($config->ldap_user_attribute)) 
+        { $config->ldap_user_attribute = ''; }
+    if (!isset($config->ldap_search_sub)) 
+        { $config->ldap_search_sub = ''; }
+    if (!isset($config->ldap_opt_deref)) 
+        { $config->ldap_opt_deref = ''; }
+    if (!isset($config->ldap_preventpassindb)) 
+        { $config->ldap_preventpassindb = 0; } 
+    if (!isset($config->ldap_bind_dn)) 
+        {$config->ldap_bind_dn = ''; }
+    if (!isset($config->ldap_bind_pw)) 
+        {$config->ldap_bind_pw = ''; }
+    if (!isset($config->ldap_version)) 
+        {$config->ldap_version = '2'; }
+    if (!isset($config->ldap_objectclass)) 
+        {$config->ldap_objectclass = ''; }
+    if (!isset($config->ldap_memberattribute)) 
+        {$config->ldap_memberattribute = ''; }
+    if (!isset($config->ldap_creators)) 
+        {$config->ldap_creators = ''; }
+    if (!isset($config->ldap_create_context)) 
+        {$config->ldap_create_context = ''; }
+    if (!isset($config->ldap_expiration)) 
+        {$config->ldap_expiration = ''; }
+    if (!isset($config->ldap_expiration_warning)) 
+        {$config->ldap_expiration_warning = '10'; }
+    if (!isset($config->ldap_expireattr)) 
+        {$config->ldap_expireattr = ''; }
+    if (!isset($config->ldap_gracelogins)) 
+        {$config->ldap_gracelogins = ''; }
+    if (!isset($config->ldap_graceattr)) {$config->ldap_graceattr = ''; }
+    if (!isset($config->auth_user_create)) 
+        {$config->auth_user_create = ''; }
+    if (!isset($config->auth_ldap_forcechangepassword)) 
+        {$config->auth_ldap_forcechangepassword = false; }
+    if (!isset($config->auth_ldap_stdchangepassword))
+        {$config->auth_ldap_stdchangepassword = false; }
+    if (!isset($config->auth_ldap_changepasswordurl))
+        {$config->auth_ldap_changepasswordurl  = ''; } 
+
+    $yesno = array( get_string('no'), get_string('yes') );
     
 if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
     print '<tr><td><p align="center"><font color="red"><strong>Warning:
@@ -211,7 +234,7 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
             <?php  print_string("no")  ?></option>
         <option value="1" <?php echo ($config->auth_ldap_forcechangepassword ? 'selected="yes"' : '') ?> >
             <?php  print_string("yes") ?></option>
-    </select><br>
+    </select><br />
  
     </td>
     <td align="left" valign="top">
@@ -228,13 +251,21 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
             <?php  print_string("no")  ?></option>
         <option value="1" <?php echo ($config->auth_ldap_stdchangepassword ? 'selected="yes"' : '') ?> >
             <?php  print_string("yes") ?></option>
-    </select><br>
+    </select><br />
 
     </td>
     <td align="left" valign="top">
         <p><?php  print_string('stdchangepassword_expl', 'auth') ?></p>
         <p><?php  print_string('stdchangepassword_explldap', 'auth') ?></p>
     </td>
+</tr>
+
+<tr valign="top" class="required">
+    <td align="right" valign="top"><?php print_string('authchangepassword', 'auth') ?>:</td>
+    <td>
+        <?php choose_from_menu( $yesno, 'auth_ldap_changepasswordurl', $config->auth_ldap_changepasswordurl ); ?>
+    </td>
+    <td align="left" valign="top"><?php print_string('authchangepassword_expl','auth'); ?></td>
 </tr>
 
 <tr>
