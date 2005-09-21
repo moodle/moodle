@@ -41,3 +41,11 @@
 
 .mod-lesson .viewpos {
 }
+
+.mod-lesson .previousbutton {
+    
+}
+
+.mod-lesson .nextbutton {
+    
+}

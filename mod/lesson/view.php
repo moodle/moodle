@@ -830,7 +830,7 @@
                             // next 3 foreach loops print out the links in correct order
                             foreach ($nextprevious as $jump) {
                                 if ($jump->jumpto == LESSON_PREVIOUSPAGE) {
-                                    echo "<td align=\"left\"><input type=\"button\" onclick=\"document.answerform.jumpto.value=$jump->jumpto;document.answerform.submit();\"".
+                                    echo "<td align=\"left\"><input class=\"previousbutton\" type=\"button\" onclick=\"document.answerform.jumpto.value=$jump->jumpto;document.answerform.submit();\"".
                                          "value = \"$jump->answer\" /></td>";
                                 }
                             }
@@ -843,7 +843,7 @@
                             echo "</tr></table></td>";
                             foreach ($nextprevious as $jump) {
                                 if ($jump->jumpto == LESSON_NEXTPAGE) {
-                                    echo "<td align=\"right\"><input type=\"button\" onclick=\"document.answerform.jumpto.value=$jump->jumpto;document.answerform.submit();\"".
+                                    echo "<td align=\"right\"><input class=\"nextbutton\" type=\"button\" onclick=\"document.answerform.jumpto.value=$jump->jumpto;document.answerform.submit();\"".
                                          "value = \"$jump->answer\" /></td>";
                                 }
                             }
@@ -852,7 +852,7 @@
                             // next 3 foreach loops print out the links in correct order
                             foreach ($nextprevious as $jump) {
                                 if ($jump->jumpto == LESSON_NEXTPAGE) {
-                                    echo "<tr><td><input type=\"button\" onclick=\"document.answerform.jumpto.value=$jump->jumpto;document.answerform.submit();\"".
+                                    echo "<tr><td><input class=\"nextbutton\" type=\"button\" onclick=\"document.answerform.jumpto.value=$jump->jumpto;document.answerform.submit();\"".
                                          "value = \"$jump->answer\" /></td></tr>";
                                 }
                             }   
@@ -863,7 +863,7 @@
                             }
                             foreach ($nextprevious as $jump) {
                                 if ($jump->jumpto == LESSON_PREVIOUSPAGE) {
-                                    echo "<tr><td><input type=\"button\" onclick=\"document.answerform.jumpto.value=$jump->jumpto;document.answerform.submit();\"".
+                                    echo "<tr><td><input class=\"previousbutton\" type=\"button\" onclick=\"document.answerform.jumpto.value=$jump->jumpto;document.answerform.submit();\"".
                                          "value = \"$jump->answer\" /></td></tr>";
                                 }
                             }
