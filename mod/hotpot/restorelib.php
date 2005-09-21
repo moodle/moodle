@@ -146,7 +146,7 @@ function hotpot_restore_attempts(&$restore, $status, &$xml, &$record, $hotpot_v2
 		$more_restore .= '$status = hotpot_restore_responses($restore, $status, $xml, $record);';
 
 		// save clickreportid (to be updated it later)
-		$more_restore .= 'if (isset($record->clickreportid)) {';
+		$more_restore .= 'if (!empty($record->clickreportid)) {';
 		$more_restore .= '$GLOBALS["hotpot_backup_clickreportids"][$record->id]=$record->clickreportid;';
 		$more_restore .= '}';
 
@@ -178,26 +178,17 @@ function hotpot_restore_attempts(&$restore, $status, &$xml, &$record, $hotpot_v2
 function hotpot_restore_clickreportids(&$restore, $status) {
 	// update clickreport ids, if any
 	global $CFG;
-	$sql = '';
 	foreach ($GLOBALS["hotpot_backup_clickreportids"] as $id=>$clickreportid) {
 		if ($status) {
 			$attempt_record = backup_getid($restore->backup_unique_code, 'hotpot_attempts', $clickreportid);
 			if ($attempt_record) {
 				$new_clickreportid = $attempt_record->new_id;
-				$sql .= "UPDATE {$CFG->prefix}hotpot_attempts SET clickreportid=$new_clickreportid WHERE id=$id;\n";
+				$status = execute_sql("UPDATE {$CFG->prefix}hotpot_attempts SET clickreportid=$new_clickreportid WHERE id=$id", false);
 			} else {
 				// New clickreport id could not be found
 				print "<ul><li>New clickreportid could not be found: attempt id=$id, clickreportid=$clickreportid</li></ul>";
 				$status = false;
 			}
-		}
-	}
-	if ($status && $sql) {
-		if (execute_sql($sql, false)) {
-			// do nothing (update was ok :-)
-		} else {
-			print "<ul><li>Clickreportids could not be updated</li></ul>";
-			$status = false;
 		}
 	}
 	return $status;
@@ -213,7 +204,7 @@ function hotpot_restore_responses(&$restore, $status, &$xml, &$record) {
 		'wrong'=>'hotpot_strings',
 		'ignored'=>'hotpot_strings'
 	);
- 
+
 	return hotpot_restore_records(
 		$restore, $status, $xml, 'hotpot_responses', $foreignkeys, '', 'RESPONSE_DATA', 'RESPONSE'
 	);
