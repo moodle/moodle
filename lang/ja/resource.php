@@ -39,8 +39,9 @@ $string['filtername'] = 'リソース名オートリンク';
 $string['frameifpossible'] = 'ナビゲーションを表示したままにするため、リソースをフレーム内に表示する';
 $string['fulltext'] = '詳細';
 $string['htmlfragment'] = 'HTMLフラグメント';
+$string['imspackageloaded'] = 'パッケージがロードされました。';
 $string['localfile'] = 'ローカルファイル';
-$string['localfilechoose'] = 'ローカルファイルの選択 (CD-ROM)';
+$string['localfilechoose'] = 'ローカルファイルの選択 ( CD-ROM )';
 $string['localfilehelp'] = 'ローカルファイル表示に関するヘルプ';
 $string['localfileinfo'] = 'p>あなたのコンピュータからローカルファイルを選択してください。 ファイルはウェブサイトにアップロードされませんが、Moodleはこのリソースと同じファイル名のファイルをコンピュータ上から探します。</p><p>これは、全ての参加者に、CD-ROMに保存されている大容量メディアを配布した場合に最も便利です。それぞれの参加者は、このようなファイルのために、<a href=\"$a\" target=\"_blank\">ユーザプロフィールを編集</a>することで、独自のローカルパスを選択することができます。.</p> 	';
 $string['localfilepath'] = 'このリソースに独自のローカルパスを設定するには、リソースが存在するあなたのコンピュータのドライブ ( 通常はCD_ROM ) からファイルを選択してください。ファイルはアップロードされませんが、ドライブ情報は保存されます。この情報はローカルリソースの参照に使用されます。';
@@ -66,6 +67,7 @@ $string['notallowedlocalfileaccess'] = '現在、ローカルファイルへのアクセスは停止
 $string['note'] = '注意';
 $string['notefile'] = 'さらにファイルをアップロード ( このリストに表示されます ) する場合、<a href=$a >File Manager</a> を利用してください。';
 $string['notypechosen'] = 'タイプを選択してください。「戻る」ボタンを押して再度入力してください。';
+$string['packagechanged'] = 'IMS学習者情報パッケージが変更されました。';
 $string['packagenotdeplyed'] = 'このIMS学習者情報パッケージは配置されません。';
 $string['pagedisplay'] = 'リソースを現在のウインドウに表示';
 $string['pagewindow'] = '同一ウインドウ';
@@ -92,10 +94,11 @@ $string['resourcetypelabel'] = 'ラベルの挿入';
 $string['resourcetyperepository'] = 'リポジトリオブジェクトにリンク';
 $string['resourcetypetext'] = 'テキストページの作成';
 $string['searchweb'] = 'ウェブページを検索';
-$string['serverurl'] = 'サーバURL ($a->wwwroot)';
+$string['serverurl'] = 'サーバURL ( $a->wwwroot )';
 $string['showcourseblocks'] = 'コースブロックを表示';
 $string['tableofcontents'] = '目次';
 $string['variablename'] = '変数名';
+$string['viewims'] = 'IMS学習者情報パッケージの表示';
 $string['vol'] = 'Vol';
 
 ?>

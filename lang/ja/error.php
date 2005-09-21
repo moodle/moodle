@@ -1,19 +1,29 @@
 <?PHP // $Id$ 
-      // error.php - created with Moodle 1.6 development (2005072200)
+      // error.php - created with Moodle 1.6 development (2005090100)
 
 
 $string['adminprimarynoedit'] = '主Adminは他から編集することはできません。';
 $string['confirmsesskeybad'] = '申し訳ございません、あなたのセッションキーは、このアクションを実行するための確認をできませんでした。このセキュリティ機能は、あなたのユーザ名で重要な機能が不測または悪意により実行されることを防ぎます。本当にこの機能を実行したいか確認してください。';
 $string['coursegroupunknown'] = 'コースに関連するグループ $a が指定されていません。';
+$string['errorcleaningdirectory'] = 'ディレクトリ「 $a 」のクリーニングにエラーが発生しました。';
+$string['errorcopyingfiles'] = 'ファイルのコピーにエラーが発生しました。';
+$string['errorcreatingdirectory'] = 'ディレクトリ「 $a 」の作成にエラーが発生しました。';
+$string['errorcreatingfile'] = 'ファイル「 $a 」の作成にエラーが発生しました。';
 $string['erroronline'] = '$a 行にエラーがあります。';
+$string['errorreadingfile'] = 'ファイル「 $a 」の読み取りにエラーが発生しました。';
+$string['errorunzippingfiles'] = 'ファイルの解凍処理にエラーが発生しました。';
 $string['fieldrequired'] = '「 $a 」 は必須項目です。';
 $string['filenotfound'] = '申し訳ございません。ファイルが見つかりませんでした。';
 $string['groupalready'] = 'ユーザは既にグループ $a に属しています';
 $string['groupunknown'] = 'グループ $a は指定されたコースに関連していません。';
 $string['invalidfieldname'] = '「 $a 」 は正しいフィールド名ではありません。';
+$string['invalidfiletype'] = '「 $a 」は有効ファイルタイプではありません。';
+$string['invalidxmlfile'] = '「 $a 」は有効なXMLファイルではありません。';
 $string['missingfield'] = '「 $a 」 を入力してください。';
 $string['modulerequirementsnotmet'] = 'モジュール「 $a->modulename 」 ($a->moduleversion) をインストールできませんでした。このモジュールをインストールするためには新しいバージョンのMoodleをインストールする必要があります。(現在、あなたは $a->currentmoodle を使用しています。 $a->requiremoodle が必要です。)';
+$string['nonmeaningfulcontent'] = '意味の無いコンテンツです。';
 $string['notavailable'] = '現在利用できません';
+$string['onlyeditingteachers'] = '編集権を持った教師のみ処理可能です。';
 $string['onlyeditown'] = '他の人の情報は編集できません。';
 $string['processingstops'] = 'プロセスが停止しました。残りのレコードは無視されます。';
 $string['restricteduser'] = '申し訳ございません。あなたのアカウント「 $a 」では、この処理を行うことができません。';
