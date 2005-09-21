@@ -1,5 +1,10 @@
 This is v2.0.9 of the HotPot module
-   It has been tested on Moodle 1.1 thru 1.5, MySQL and PostGres7 databases and PHP 4.1 thru 5.0.4
+   This module allows teachers to administer Hot Potatoes and TexToys quizzes via Moodle.
+   It has been tested on:
+      - Hot Potatoes 6
+      - Moodle 1.1 thru 1.5
+	  - PHP 4.1 thru 5.0.4
+	  - MySQL and PostgreSQL databases
 
    This module may be distributed under the terms of the General Public License
    (see http://www.gnu.org/licenses/gpl.txt for details)
@@ -9,7 +14,7 @@ This is v2.0.9 of the HotPot module
 ================
 IMPORTANT NOTICE
 ================
-* Please be sure to use Hot Potatoes according to the conditions of use which are listed at the end of this file. If you restrict use via a required Moodle login, you most likely can still meet the 'freely available' condition if you make the same material on a separate URL that permits free access.  Otherwise, please purchase a license.
+*  Please be sure to use Hot Potatoes according to the conditions of use which are listed at the end of this file. If you restrict use via a required Moodle login, you most likely can still meet the 'freely available' condition if you make the same material on a separate URL that permits free access.  Otherwise, please purchase a license.
 
 
 TO INSTALL OR UPDATE THIS MODULE
@@ -39,7 +44,8 @@ TO INSTALL OR UPDATE THIS MODULE
    (c) upload the contents of the "hotpot/lang/en/help/hotpot" folder on your PC to the "moodle/lang/en/help/hotpot" folder on the Moodle site
    (d) repeat for other languages you require from the "moodle/mod/hotpot/lang" folder 
 
-3. [optional] copy and set up the file icons as follows:
+3. copy and set up the file icons
+   [This step is not required for Moodle 1.5 and later, and is optional for Moodle 1.1 to 1.4]
 
    (a) copy the files in the "mod/hotpot/pix/f" folder on your Moodle site to "moodle/pix/f"
    (b) open the "moodle/files/mimetypes.php" file on your Moodle site with a text editor
@@ -57,7 +63,8 @@ TO INSTALL OR UPDATE THIS MODULE
 
    (d) save the changes and close the file
 
-3. [optional] enable import from Hot Potatoes XML files to Moodle's Quiz module
+4. enable import from Hot Potatoes XML files to Moodle's Quiz module
+   [This step is not required for Moodle 1.5 and later, and is optional for Moodle 1.1 to 1.4]
 
    (a) create a folder called "hotpot" on your Moodle site in the "moodle/mod/quiz/format" folder
    (b) copy the "contents of the "moodle/mod/hotpot/quiz/format/hotpot" folder on your Moodle site to the "moodle/mod/quiz/format/hotpot" folder
@@ -67,8 +74,18 @@ TO INSTALL OR UPDATE THIS MODULE
         $string['hotpot'] = 'Hot Potatoes XML format';
 
    (d) save the changes and close the file
+   
+   Steps (e), (f) and (g) are only required on Moodle 1.4.5
 
-4. Login to your Moodle site as an administrator. 
+   (e) open the "moodle/mod/quiz/import.php" file on your Moodle site with a text editor 
+   (f) if necessary, add 'hotpot' to the "fileformats" array on lines 9-10:
+
+        $fileformats = array('aiken','aon','blackboard','coursetestmanager',
+          'gift','learnwise','missingword','webct','xml','hotpot' );
+
+   (g) save the changes and close the file
+
+5. Login to your Moodle site as an administrator. 
 
    a) If you are installing this module for the first time, you should see a report saying that the following (prefix)_hotpot tables have been successfuly created:
       hotpot
@@ -111,13 +128,13 @@ HOT POTATOES CONDITIONS OF USE
 **Reproduced from the Hot Potatoes site**
 
 Hot Potatoes is offered free to the educational community by the University of Victoria Humanities Computing and Media Centre (formerly the Language Centre), under certain conditions. Hot Potatoes is free for use by state educational institutions which are non-profit making, on the condition that the material produced using the program is freely available to anyone via the WWW. However, you need to purchase a licence under any of the following conditions:
-?   You do not work for a public sector educational establishment. 
-?   You charge money for access to the material you make with Hot Potatoes. 
-?   You restrict access to the material in some way. (The only exception here is if you have an account on www.hotpot.net, where you ARE allowed to use password restrictions.) 
-?   You want to use the Masher program included with the Hot Potatoes suite.
+*  You do not work for a public sector educational establishment. 
+*  You charge money for access to the material you make with Hot Potatoes. 
+*  You restrict access to the material in some way. (The only exception here is if you have an account on www.hotpot.net, where you ARE allowed to use password restrictions.) 
+*  You want to use the Masher program included with the Hot Potatoes suite.
 
 For more information on licences, and details on how to purchase one, check out our Website at:
-    http://www.halfbakedsoftware.com/hotpot/
+   http://www.halfbakedsoftware.com/hotpot/
 
 If you intend using the programs to generate more than a handful of exercises, please make sure you register. This costs you nothing -- see How to register for details.
 Martin Holmes, Half-Baked Software and the University of Victoria HCMC, 1998-2004.
