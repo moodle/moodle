@@ -403,6 +403,12 @@ function hotpot_add_chain(&$hp) {
 
 			if ($hp->nextexercise) {
 				$filepath = $xml_quiz->fileroot.'/'.$xml_quiz->filesubdir.$hp->nextexercise;
+
+				// check file is not already in chain
+				$file = substr($filepath, $filerootlength);
+				if (in_array($file, $hp->files)) {
+					$filepath = '';
+				}
 			} else {
 				$filepath = '';
 			}
@@ -412,7 +418,7 @@ function hotpot_add_chain(&$hp) {
 				$xml_quiz->filepath = false; // finish while loop
 			}
 		} // end while
-	
+
 	} else {
 		$ok = false;
 		$hp->errors['reference'] = get_string('error_notfileorfolder', 'hotpot', $hp->reference);
@@ -624,7 +630,7 @@ function hotpot_get_titles_and_next_ex(&$hp, $filepath, $get_next=false) {
 
 				$i = 0;
 				while (($div="[$i]") && $xml_tree->xml_value($tags, $div)) {
-				
+
 					$id = $xml_tree->xml_value($tags, $div."['@']['id']");
 					if (isset($id) && $id=='TopNavBar') {
 
@@ -641,7 +647,6 @@ function hotpot_get_titles_and_next_ex(&$hp, $filepath, $get_next=false) {
 					}
 					$i++; // increment DIV index
 				}
-
 			} else if ($xml_tree->filetype=='xml') {
 
 				$include = $xml_tree->xml_value('hotpot-config-file,global,include-next-ex');
