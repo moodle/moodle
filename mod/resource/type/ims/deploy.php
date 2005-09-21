@@ -226,7 +226,7 @@
     /*** This function gets the xmlized representation of the items
      *   and returns an array of items, ordered, with level and info
      */
-    function ims_process_items($items, $level = 1, &$id = 1, $parent = 0) {
+    function ims_process_items($items, $level = 1, $id = 1, $parent = 0) {
         global $CFG;
 
         $itemmap = array();
@@ -264,6 +264,8 @@
                         foreach ($subitemmap as $subitem) {
                         /// Add the subitem to the main items array
                             $itemmap[$subitem->id] = $subitem;
+                        /// Counters go up
+                            $id++;
                         }
                     }
                 }
