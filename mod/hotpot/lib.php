@@ -356,9 +356,9 @@ function hotpot_add_chain(&$hp) {
 	global $CFG, $course;
 
 	$ok = true;
-	$hp->files = array();
-	$hp->titles = array();
-	$hp->subtitles = array();
+	$hp->names = array();
+	$hp->summaries = array();
+	$hp->references = array();
 
 	$xml_quiz = new hotpot_xml_quiz($hp, false, false, false, false, false);
 
@@ -372,17 +372,17 @@ function hotpot_add_chain(&$hp) {
 		if ($dh = @opendir($xml_quiz->filepath)) {
 			while ($file = @readdir($dh)) {
 				if (preg_match('/\.(jbc|jcl|jcw|jmt|jmx|jqz|htm|html)$/', $file)) {
-					$hp->files[] = "$xml_quiz->reference/$file";
+					$hp->references[] = "$xml_quiz->reference/$file";
 				}
 			}
 			closedir($dh);
 
 			// get titles
-			foreach ($hp->files as $i=>$file) {
-				$filepath = $xml_quiz->fileroot.'/'.$xml_quiz->filesubdir.$file;
+			foreach ($hp->references as $i=>$reference) {
+				$filepath = $xml_quiz->fileroot.'/'.$xml_quiz->filesubdir.$reference;
 				hotpot_get_titles_and_next_ex($hp, $filepath);
-				$hp->titles[$i] = $hp->exercisetitle;
-				$hp->subtitles[$i] = $hp->exercisesubtitle;
+				$hp->names[$i] = $hp->exercisetitle;
+				$hp->summaries[$i] = $hp->exercisesubtitle;
 			}
 			
 		} else {
@@ -396,17 +396,16 @@ function hotpot_add_chain(&$hp) {
 
 		while ($xml_quiz->filepath) {
 			hotpot_get_titles_and_next_ex($hp, $xml_quiz->filepath, true);
-
-			$hp->files[] = substr($xml_quiz->filepath, $filerootlength);
-			$hp->titles[] = $hp->exercisetitle;
-			$hp->subtitles[] = $hp->exercisesubtitle;
+			$hp->names[] = $hp->exercisetitle;
+			$hp->summaries[] = $hp->exercisesubtitle;
+			$hp->references[] = substr($xml_quiz->filepath, $filerootlength);
 
 			if ($hp->nextexercise) {
 				$filepath = $xml_quiz->fileroot.'/'.$xml_quiz->filesubdir.$hp->nextexercise;
 
 				// check file is not already in chain
-				$file = substr($filepath, $filerootlength);
-				if (in_array($file, $hp->files)) {
+				$reference = substr($filepath, $filerootlength);
+				if (in_array($reference, $hp->references)) {
 					$filepath = '';
 				}
 			} else {
@@ -424,7 +423,7 @@ function hotpot_add_chain(&$hp) {
 		$hp->errors['reference'] = get_string('error_notfileorfolder', 'hotpot', $hp->reference);
 	}
 
-	if (empty($hp->files) && empty($hp->errors['reference'])) {
+	if (empty($hp->references) && empty($hp->errors['reference'])) {
 		$ok = false;
 		$hp->errors['reference'] = get_string('error_noquizzesfound', 'hotpot', $hp->reference);
 	}
@@ -441,7 +440,7 @@ function hotpot_add_chain(&$hp) {
 
 		// add all except last activity in chain
 
-		$i_max = count($hp->files)-1;
+		$i_max = count($hp->references)-1;
 		for ($i=0; $i<$i_max; $i++) {
 
 			hotpot_set_name_summary_reference($hp, $i);
@@ -483,11 +482,11 @@ function hotpot_add_chain(&$hp) {
 			// hide tail of chain
 			$hp->visible = HOTPOT_NO;
 			
-		} // end for ($hp->files)
+		} // end for ($hp->references)
 
 		// settings for final activity in chain
 		hotpot_set_name_summary_reference($hp, $i);
-		$hp->reference = addslashes($hp->files[$i]);
+		$hp->reference = addslashes($hp->references[$i]);
 		$hp->shownextquiz = HOTPOT_NO;
 
 		if (isset($hp->startofchain)) {
@@ -514,9 +513,9 @@ function hotpot_set_name_summary_reference(&$hp, $chain_index=NULL) {
 			switch ($hp->$textsource) {
 				case HOTPOT_TEXTSOURCE_QUIZ:
 					if ($textfield=='name') {
-						$hp->exercisetitle = addslashes($hp->titles[$chain_index]);
+						$hp->exercisetitle = addslashes($hp->names[$chain_index]);
 					} else if ($textfield=='summary') {
-						$hp->exercisesubtitle = addslashes($hp->subtitles[$chain_index]);
+						$hp->exercisesubtitle = addslashes($hp->summaries[$chain_index]);
 					}
 					break;
 				case HOTPOT_TEXTSOURCE_SPECIFIC:
@@ -528,7 +527,7 @@ function hotpot_set_name_summary_reference(&$hp, $chain_index=NULL) {
 					}
 					break;
 			}
-			$hp->reference = $hp->files[$chain_index];
+			$hp->reference = $hp->references[$chain_index];
 		}
 
 		if ($hp->$textsource==HOTPOT_TEXTSOURCE_QUIZ) {
@@ -1838,13 +1837,13 @@ function hotpot_add_attempt_details(&$attempt) {
 
 	$old = &$attempt->details; // shortcut to "old" details
 	$new = '';
-	$i = 0;
-	while (($ii = strpos($old, '<![CDATA[', $i)) && ($iii = strpos($old, ']]>', $ii))) {
-		$iii += 3;
-		$new .= str_replace('&', '&amp;', substr($old, $i, $ii-$i)).substr($old, $ii, $iii-$ii);
-		$i = $iii;
+	$str_start = 0;
+	while (($cdata_start = strpos($old, '<![CDATA[', $str_start)) && ($cdata_end = strpos($old, ']]>', $cdata_start))) {
+		$cdata_end += 3;
+		$new .= str_replace('&', '&amp;', substr($old, $str_start, $cdata_start-$str_start)).substr($old, $cdata_start, $cdata_end-$cdata_start);
+		$str_start = $cdata_end;
 	}
-	$new .= str_replace('&', '&amp;', substr($old, $i));
+	$new .= str_replace('&', '&amp;', substr($old, $str_start));
 	unset($old);
 
 	// parse the attempt details as xml
