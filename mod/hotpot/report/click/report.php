@@ -398,6 +398,12 @@ class hotpot_report extends hotpot_default_report {
 				break;
 
 			case 'totals':
+
+				$reportpercentscore =get_string('reportpercentscore', 'hotpot');
+				if (!function_exists('clean_getstring_data')) { // Moodle 1.4 (and less)
+					$reportpercentscore = str_replace('%', '%%', $reportpercentscore);
+				}
+
 				array_push($table->head, 
 					get_string('reportthisclick', 'hotpot', get_string('reportquestionstried', 'hotpot')),
 					get_string('reportsofar', 'hotpot', get_string('reportquestionstried', 'hotpot')),
@@ -417,14 +423,14 @@ class hotpot_report extends hotpot_default_report {
 
 					get_string('reportsofar', 'hotpot', get_string('reporthints', 'hotpot')),
 					get_string('reportsofar', 'hotpot', get_string($exercisetype=='JQuiz' ? 'reportshowanswer' : 'reportclues', 'hotpot')),
-					
+
 					get_string('reportthisclick', 'hotpot', get_string('reportrawscore', 'hotpot')),
 					get_string('reportthisclick', 'hotpot', get_string('reportmaxscore', 'hotpot')),
-					get_string('reportthisclick', 'hotpot', get_string('reportpercentscore', 'hotpot')),
+					get_string('reportthisclick', 'hotpot', $reportpercentscore),
 
 					get_string('reportsofar', 'hotpot', get_string('reportrawscore', 'hotpot')),
 					get_string('reportsofar', 'hotpot', get_string('reportmaxscore', 'hotpot')),
-					get_string('reportsofar', 'hotpot', get_string('reportpercentscore', 'hotpot')),
+					get_string('reportsofar', 'hotpot', $reportpercentscore),
 
 					get_string('reporthotpotscore', 'hotpot')
 				);
