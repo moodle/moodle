@@ -39,6 +39,7 @@ $string['filtername'] = 'Auto-enlace de recursos';
 $string['frameifpossible'] = 'Colocar el recurso en un marco para mantener visible la navegación por el sitio';
 $string['fulltext'] = 'Texto completo';
 $string['htmlfragment'] = 'Fragmento HTML';
+$string['imspackageloaded'] = 'Paquete cargado.';
 $string['localfile'] = 'Archivo local';
 $string['localfilechoose'] = 'Elija un archivo local (CD-ROM)';
 $string['localfilehelp'] = 'Ayuda mostrar archivos locales';
@@ -67,6 +68,7 @@ $string['note'] = 'Nota';
 $string['notefile'] = 'Para subir más de un archivo (y se puedan ver en la lista) utilice el 
 <A HREF=$a >Administrador de archivos</A>.';
 $string['notypechosen'] = 'Necesita elegir un texto. Regrese e inténtelo de nuevo.';
+$string['packagechanged'] = 'El Paquete de contenidos IMS ha cambiado.';
 $string['packagenotdeplyed'] = 'El Paquete de contenidos IMS no está desplegado.';
 $string['pagedisplay'] = 'Mostrar este recurso dentro de la ventana actual';
 $string['pagewindow'] = 'La misma ventana';
@@ -97,6 +99,7 @@ $string['serverurl'] = 'URL del servidor ($a->wwwroot)';
 $string['showcourseblocks'] = 'Mostrar los bloques del curso';
 $string['tableofcontents'] = 'Tabla de contenidos';
 $string['variablename'] = 'Nombre de la variable';
+$string['viewims'] = 'Ver Paquete IMS CP';
 $string['vol'] = 'Vol';
 
 ?>
