@@ -55,24 +55,16 @@
         </form>
 <?php } ?>
 
-<?php if (!empty($CFG->{'auth_'.$CFG->auth.'_stdchangepassword'})
-          || $CFG->changepassword 
-	  || is_internal_auth() ) {
-	  if (is_internal_auth() || !empty($CFG->{'auth_'.$CFG->auth.'_stdchangepassword'})) {
-              $changepassword = "forgot_password.php";
-              $changebuttonname = get_string("senddetails");
-          } else {
-              $changepassword = $CFG->changepassword;
-              $changebuttonname = get_string("passwordrecovery");
-          }
+<?php
+    $changebuttonname = get_string("passwordrecovery");
+    $sesskey = sesskey();
 ?>
       <hr width="80%" />
       <p><?php print_string("forgotten") ?></p> 
-        <form action="<?php p($changepassword) ?>" method="get" name="changepassword">
+        <form action="forgot_password.php" method="post" name="changepassword">
+          <input type="hidden" name="sesskey" value="<?php echo $sesskey; ?>" />
           <input type="submit" value="<?php p($changebuttonname) ?>" />
         </form>
-<?php } ?>
-
     </td>
 
 <?php if ($show_instructions) { ?>
