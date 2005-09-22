@@ -36,15 +36,14 @@
         {$config->ldap_expireattr = ''; }
     if (!isset($config->ldap_gracelogins)) 
         {$config->ldap_gracelogins = ''; }
-    if (!isset($config->ldap_graceattr)) {$config->ldap_graceattr = ''; }
+    if (!isset($config->ldap_graceattr)) 
+        {$config->ldap_graceattr = ''; }
     if (!isset($config->auth_user_create)) 
         {$config->auth_user_create = ''; }
     if (!isset($config->auth_ldap_forcechangepassword)) 
         {$config->auth_ldap_forcechangepassword = false; }
     if (!isset($config->auth_ldap_stdchangepassword))
         {$config->auth_ldap_stdchangepassword = false; }
-    if (!isset($config->auth_ldap_changepasswordurl))
-        {$config->auth_ldap_changepasswordurl  = ''; } 
 
     $yesno = array( get_string('no'), get_string('yes') );
     
@@ -258,15 +257,6 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
         <p><?php  print_string('stdchangepassword_expl', 'auth') ?></p>
         <p><?php  print_string('stdchangepassword_explldap', 'auth') ?></p>
     </td>
-</tr>
-
-<tr valign="top" class="required">
-    <td align="right" valign="top"><?php print_string('authchangepassword', 'auth') ?>:</td>
-    <td>
-        <input name="auth_ldap_changepasswordurl" type="text" size="30" 
-            value="<?php echo $config->auth_ldap_changepasswordurl; ?>" />
-    </td>
-    <td align="left" valign="top"><?php print_string('authchangepassword_expl','auth'); ?></td>
 </tr>
 
 <tr>
