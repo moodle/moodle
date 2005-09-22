@@ -114,6 +114,8 @@
 			if (is_array($guest_id)) {
 				$users = array_merge($users, $guest_id);
 			}
+			// add students next
+
 		case 'students':
 			$student_ids = get_records_select_menu('user_students', "course IN ($course_ids)", 'course', 'id, userid');
 			if (is_array($student_ids)) {
@@ -123,9 +125,11 @@
 			sort($user_ids);
 			$user_ids = join(',', array_unique($user_ids));
 			break;
-		case 'this':
-			$user_ids = $USER->id;
-			break;
+
+		default: // specific user
+			if (is_numeric($formdata['reportusers'])) {
+				$user_ids = $formdata['reportusers'];
+			}
 	}
 
 	if (empty($user_ids)) {
@@ -145,18 +149,22 @@
 		case 'best':
 			$function = 'MAX';
 			$fieldnames = array('score', 'id', 'clickreportid');
+			$defaultvalue = 0;
 			break;
 		case 'first':
 			$function = 'MIN';
-			$fieldnames = array('timestart', 'id', 'clickreportid');
+			$fieldnames = array('timefinish', 'id', 'clickreportid');
+			$default_value = time();
 			break;
 		case 'last':
 			$function = 'MAX';
-			$fieldnames = array('timestart', 'id', 'clickreportid');
+			$fieldnames = array('timefinish', 'id', 'clickreportid');
+			$defaultvalue = time();
 			break;
 		default: // 'all' and any others
 			$function = '';
 			$fieldnames = array();
+			$defaultvalue = '';
 			break;
 	}
 	if (empty($function) || empty($fieldnames)) {
@@ -423,9 +431,26 @@ function hotpot_print_report_selector(&$course, &$hotpot, &$formdata) {
 		);
 	}
 	$menus['reportusers'] = array(
-		'students' => get_string('students'),
-		'all' => get_string('allparticipants')
+		'all' => get_string('allparticipants'),
+		'students' => get_string('students')
 	);
+	$users = get_records_sql("
+		SELECT 
+			u.*
+		FROM 
+			{$CFG->prefix}user AS u,
+			{$CFG->prefix}user_students AS us
+		WHERE
+			u.id = us.userid AND us.course=$course->id
+		ORDER BY
+			u.lastname
+	");
+	if ($users) {
+		$menus['reportusers'][''] = '------'; // separator
+		foreach ($users as $id=>$user) {
+				$menus['reportusers']["$id"] = fullname($user);
+		}
+	}
 	$menus['reportattempts'] = array(
 		'all' => get_string('attemptsall', 'hotpot'),
 		'best' => get_string('attemptsbest', 'hotpot'),
@@ -537,6 +562,7 @@ function hotpot_get_report_users($course_ids, $formdata) {
 	return $users;
 }
 function hotpot_get_records_groupby($function, $fieldnames, $table, $select, $groupby) {
+	// $function is an SQL aggregate function (MAX or MIN)
 
 	global $CFG;
 
@@ -573,7 +599,7 @@ function hotpot_get_records_groupby($function, $fieldnames, $table, $select, $gr
 				$records[$id]->$fieldname = $formdata[$i];
 			}
 		}
-		unset($record->joinedvalues); // tidy up
+		unset($record->joinedvalues);
 	}
 
 	return $records;
