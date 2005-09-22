@@ -7,50 +7,6 @@ class hotpot_report extends hotpot_default_report {
 	function display(&$hotpot, &$cm, &$course, &$users, &$attempts, &$questions, &$options) {
 		global $CFG;
 
-		foreach ($attempts as $a=>$attempt) {
-			$attempts[$a]->responses = array();
-		}
-		foreach ($questions as $q=>$question) {
-			$questions[$q]->attempts = array();
-		}
-
-		// get reponses to these attempts
-		$attempt_ids = join(',',array_keys($attempts));
-		if (!$responses = get_records_sql("SELECT * FROM {$CFG->prefix}hotpot_responses WHERE attempt IN ($attempt_ids)")) {
-			$responses = array();
-		}
-
-		// ids of questions used in these responses
-		$questionids = array();
-
-		foreach ($responses as $response) {
-			// shortcuts to the attempt and question ids
-			$a = $response->attempt;
-			$q = $response->question;
-
-			// check the attempt and question objects exist 
-			// (if they don't exist, something is very wrong!)
-			if (isset($attempts[$a]) || isset($questions[$q])) {
-	
-				// add the response for this attempt
-				$attempts[$a]->responses[$q] = $response;
-	
-				// add a reference from the question to the attempt which includes this question
-				$questions[$q]->attempts[] = &$attempts[$a];
-
-				// flag this id as being used
-				$questionids[$q] = true;
-			}
-		}
-
-		// remove unused questions
-		$questionids = array_keys($questionids);
-		foreach ($questions as $id=>$question) {
-			if (!in_array($id, $questionids)) {
-				unset($questions[$id]);
-			}
-		}
-
 		// create the table
 		$this->create_clickreport_table($hotpot, $cm, $course, $users, $attempts, $questions, $options, $tables=array());
 

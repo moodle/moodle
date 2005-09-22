@@ -44,6 +44,8 @@ class hotpot_default_report {
 	}
 
 	function set_legend(&$table, &$q, &$value, &$question) {
+		// $q is the question number
+		// $value is the value (=text) of the answer
 
 		// check the legend is required
 		if (isset($table->legend) && isset($value)) {
@@ -118,10 +120,10 @@ class hotpot_default_report {
 			return $this->dec_to_ALPHA(intval($dec/26)-1).$this->dec_to_ALPHA($dec % 26);
 		}
 	}
-	function remove_column(&$col, &$table) {
+	function remove_column(&$table, $target_col) {
 
 		if (is_array($table)) {
-			unset($table[$col]);
+			unset($table[$target_col]);
 			$table = array_values($table);
 
 		} else if (is_object($table)) {
@@ -131,11 +133,43 @@ class hotpot_default_report {
 					case 'data' :
 					case 'stat' :
 					case 'foot' :
-						$array = &$table->$name;
-						$count = count($array);
-						for ($row=0; $row<$count; $row++) {
-							$this->remove_column($col, $array[$row]);
-						}
+						$skipcol = array();
+						$cells = &$table->$name;
+
+						$row_max = count($cells);
+						for ($row=0; $row<$row_max; $row++) {
+
+							$i = 0; // index on $cells[$row]
+							$col = 0;
+							while ($col<$target_col && isset($cells[$row][$i])) {
+							
+								if (empty($skipcol[$col])) {
+									$cell = $cells[$row][$i++];
+									if (is_object($cell)) {
+										if (isset($cell->rowspan) && is_numeric($cell->rowspan) && ($cell->rowspan>0)) {
+											// skip cells below this one
+											$skipcol[$col] = $cell->rowspan-1;
+										}
+										if (isset($cell->colspan) && is_numeric($cell->colspan) && ($cell->colspan>0)) {
+											// skip cells to the right of this one
+											for ($c=1; $c<$cell->colspan; $c++) {
+												if (empty($skipcol[$col+$c])) {
+													$skipcol[$col+$c] = 1;
+												} else {
+													$skipcol[$col+$c] ++;
+												}
+											}
+										}
+									}
+								} else {
+									$skipcol[$col]--;
+								}
+								$col++;
+							} // end while $col
+							if ($col==$target_col && isset($cells[$row][$i])) {
+								$this->remove_column($cells[$row], $i);
+							}
+						} // end for $row
 						break;
 					case 'head' :
 					case 'align' :
@@ -143,13 +177,13 @@ class hotpot_default_report {
 					case 'fontsize' :
 					case 'size' :
 					case 'wrap' :
-						$this->remove_column($col, $table->$name);
+						$this->remove_column($table->$name, $target_col);
 						break;
 					case 'statheadercols' :
 						$array = &$table->$name;
 						$count = count($array);
 						for ($i=0; $i<$count; $i++) {
-							if ($array[$i]>=$col) {
+							if ($array[$i]>=$target_col) {
 								$array[$i] --;
 							}
 						}
@@ -361,14 +395,14 @@ class hotpot_default_report {
 	}
 	function print_html_data(&$table) {
 		if (isset($table->data)) {
-			$skipcell = array();
+			$skipcol = array();
 			foreach ($table->data as $cells) {
 				print "<tr>\n";
 				if (is_array($cells)) {
 					$i = 0; // index on $cells
 					$col = 0; // column index
 					while ($col<$table->colspan && isset($cells[$i])) {
-						if (empty($skipcell[$col])) {
+						if (empty($skipcol[$col])) {
 							$cell = &$cells[$i++]; 
 							$td = $table->td[$col];
 							if (is_object($cell)) {
@@ -376,16 +410,16 @@ class hotpot_default_report {
 								if (isset($cell->rowspan) && is_numeric($cell->rowspan) && ($cell->rowspan>0)) {
 									$td = '<td rowspan="'.$cell->rowspan.'"'.substr($td, 3);
 									// skip cells below this one
-									$skipcell[$col] = $cell->rowspan-1;
+									$skipcol[$col] = $cell->rowspan-1;
 								}
 								if (isset($cell->colspan) && is_numeric($cell->colspan) && ($cell->colspan>0)) {
 									$td = '<td colspan="'.$cell->colspan.'"'.substr($td, 3);
 									// skip cells to the right of this one
 									for ($c=1; $c<$cell->colspan; $c++) {
-										if (empty($skipcell[$col+$c])) {
-											$skipcell[$col+$c] = 1;
+										if (empty($skipcol[$col+$c])) {
+											$skipcol[$col+$c] = 1;
 										} else {
-											$skipcell[$col+$c] ++;
+											$skipcol[$col+$c] ++;
 										}
 									}
 								}
@@ -394,7 +428,7 @@ class hotpot_default_report {
 							}
 							print $td.$text."</td>\n";
 						} else {
-							$skipcell[$col]--;
+							$skipcol[$col]--;
 						}
 						$col++;
 					} // end while

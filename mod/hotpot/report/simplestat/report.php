@@ -5,8 +5,11 @@
 class hotpot_report extends hotpot_default_report {
 
 	function display(&$hotpot, &$cm, &$course, &$users, &$attempts, &$questions, &$options) {
-	
-		$this->create_scores_table($hotpot, $course, $users, $attempts, $questions, $options, $tables=array());
+		global $CFG;
+
+		// create the table
+		$tables = array();
+		$this->create_scores_table($hotpot, $course, $users, $attempts, $questions, $options, $tables);
 
 		$this->print_report($course, $hotpot, $tables, $options);
 
@@ -130,21 +133,22 @@ class hotpot_report extends hotpot_default_report {
 				$data[] = $attemptnumber;
 
 				// get responses to questions in this attempt by this user
-				foreach ($questions as $question) {
-					$id = $question->id;
+				foreach ($questions as $id=>$question) {
 					if (!isset($q[$id])) {
 						$q[$id] = array('count'=>0, 'total'=>0);
 					}
 	
-					$score = get_field('hotpot_responses', 'score', 'attempt', $attempt->id, 'question', $question->id);
-	
-					if (isset($score)) {
+					if (isset($attempt->responses[$id])) {
+						$score = $attempt->responses[$id]->score;
 						if (is_numeric($score)) {
 							$q[$id]['count'] ++;
 							$q[$id]['total'] += $score;
-						}
-						if ($is_best_grade) {
-							$score = '<span class="highlight">'.$score.'</span>';
+
+							if ($is_best_grade) {
+								$score = '<span class="highlight">'.$score.'</span>';
+							}
+						} else if (empty($score)) {
+							$score = $no_value;
 						}
 					} else {
 						$score = $no_value;
@@ -179,6 +183,7 @@ class hotpot_report extends hotpot_default_report {
 				} else {
 					$score = $no_value;
 				}
+
 				$data[] = $score;
 
 				// append data for this attempt
@@ -206,7 +211,7 @@ class hotpot_report extends hotpot_default_report {
 
 		if (empty($q['grade']['count'])) {
 			// remove score $col from $table
-			$this->remove_column($col, $table);
+			$this->remove_column($table, $col);
 		} else {
 			$precision = ($hotpot->grademethod==HOTPOT_GRADEMETHOD_AVERAGE || $hotpot->grade<100) ? 1 : 0;
 			$averages[] = round($q['grade']['total'] / $q['grade']['count'], $precision);
@@ -219,25 +224,22 @@ class hotpot_report extends hotpot_default_report {
 		foreach ($questions as $id=>$question) {
 			if (empty($q[$id]['count'])) {
 				// remove this question $col from $table
-				$this->remove_column($col, $table);
+				$this->remove_column($table, $col);
 			} else {
-				$averages[] = round($q[$id]['total'] / $q[$id]['count']);
-				$col++;
+				$averages[$col++] = round($q[$id]['total'] / $q[$id]['count']);
 			}
 		}
 		if (empty($q['penalties']['count'])) {
 			// remove penalties $col from $table
-			$this->remove_column($col, $table);
+			$this->remove_column($table, $col);
 		} else {
-			$averages[] = round($q['penalties']['total'] / $q['penalties']['count']);
-			$col++;
+			$averages[$col++] = round($q['penalties']['total'] / $q['penalties']['count']);
 		}
 		if (empty($q['score']['count'])) {
 			// remove score $col from $table
-			$this->remove_column($col, $table);
+			$this->remove_column($table, $col);
 		} else {
-			$averages[] = round($q['score']['total'] / $q['score']['count']);
-			$col++;
+			$averages[$col++] = round($q['score']['total'] / $q['score']['count']);
 		}
 		$table->foot = array($averages);
 
