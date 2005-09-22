@@ -21,6 +21,7 @@
 
 /// If data submitted, then process and store.
 
+
     if ($config = data_submitted()) {
 
         $config = (array)$config;
@@ -73,6 +74,15 @@
     } else {
         $auth = $config->auth;
     }
+
+    // changepassword link replaced by individual auth setting
+    if (!empty($config->changepassword)) {
+        if (empty($config->{'auth_'.$auth.'_changepasswordurl'})) {
+            $config->{'auth_'.$auth.'_changepasswordurl'} = $config->changepassword;
+        }
+        set_config('changepassword','');
+    }
+
     $auth = clean_filename($auth);
     require_once("$CFG->dirroot/auth/$auth/lib.php"); //just to make sure that current authentication functions are loaded
     if (! isset($config->guestloginbutton)) {
@@ -86,6 +96,12 @@
     }
     if (! isset($config->changepassword)) {
         $config->changepassword = "";
+    }
+    if (! isset($config->{'auth_'.$auth.'_changepasswordurl'})) {
+        $config->{'auth_'.$auth.'_changepasswordurl'} = '';
+    }
+    if (! isset($config->{'auth_'.$auth.'_changepasswordhelp'})) {
+        $config->{'auth_'.$auth.'_changepasswordhelp'} = '';
     }
     $user_fields = array("firstname", "lastname", "email", "phone1", "phone2", "department", "address", "city", "country", "description", "idnumber", "lang");
 
@@ -136,15 +152,32 @@
     echo '<td/></tr>';
 
     if ($auth != "email" and $auth != "none" and $auth != "manual") {
+        // display box for URL to change password. NB now on a per-method basis (multiple auth)
         echo "<tr valign=\"top\">";
         echo "<td align=\"right\" nowrap=\"nowrap\">";
         print_string("changepassword", "auth");
         echo ":</td>";
         echo "<td>";
-        echo "<input type=\"text\" name=\"changepassword\" size=\"40\" value=\"$config->changepassword\" />";
+        $passurl = $config->{'auth_'.$auth.'_changepasswordurl'};
+        echo "<input type=\"text\" name=\"auth_{$auth}_changepasswordurl\" size=\"40\" value=\"$passurl\" />";
         echo "</td>";
         echo "<td>";
-        print_string("changepasswordhelp","auth");
+        print_string("auth_changepasswordurl_expl","auth",$auth);
+        echo "</td></tr>";
+
+        // display textbox for lost password help. NB now on a per-method basis (multiple auth)
+        echo "<tr valign=\"top\">";
+        echo "<td align=\"right\" nowrap=\"nowrap\">";
+        print_string("auth_changepasswordhelp", "auth");
+        echo ":</td>";
+        echo "<td>";
+        $passhelp = $config->{'auth_'.$auth.'_changepasswordhelp'};
+        echo "<textarea name=\"auth_{$auth}_changepasswordhelp\" cols=\"30\" rows=\"10\" wrap=\"virtual\">";
+        echo $passhelp;
+        echo "</textarea>\n";
+        echo "</td>";
+        echo "<td>";
+        print_string("auth_changepasswordhelp_expl","auth",$auth);
         echo "</td></tr>";
 
     }
