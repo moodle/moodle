@@ -152,8 +152,11 @@
         error (get_string('nonmeaningfulcontent', 'error'));
     }
 
+/// Detect if all the resources share a common xml:base tag
+    $resources_base = $data['manifest']['#']['resources']['0']['@']['xml:base'];
+  
 /// Now, we load all the resources available (keys are identifiers)
-    if (!$resources = ims_load_resources($data['manifest']['#']['resources']['0']['#']['resource'])) {
+    if (!$resources = ims_load_resources($data['manifest']['#']['resources']['0']['#']['resource'], $resources_base)) {
         error (get_string('nonmeaningfulcontent', 'error'));
     }
 ///Now we assign to each item, its resource (by identifier)
@@ -291,7 +294,7 @@
     /*** This function will load an array of resources to be used later. 
      *   Keys are identifiers
      */
-    function ims_load_resources($data) {
+    function ims_load_resources($data, $resources_base) {
         global $CFG;
 
         $resources = array();
@@ -303,17 +306,29 @@
         while ($current_resource < $count_resources) {
         /// Load resource 
             $resource = $data[$current_resource];
+
+        /// Create a new object resource
             $obj_resource = new stdClass;
             $obj_resource->identifier = $resource['@']['identifier'];
+            $obj_resource->resource_base = $resource['@']['xml:base'];
             $obj_resource->href = $resource['@']['href'];
             if (empty($obj_resource->href)) {
-                $obj_resource->href = $resource['#']['file'][0]['@']['href'];
+                $obj_resource->href = $resource['#']['file']['0']['@']['href'];
             }
+
         /// Only if the resource has everything
             if (!empty($obj_resource->identifier) &&
                 !empty($obj_resource->href)) {
             /// Add to resources (identifier as key)
-                $resources[$obj_resource->identifier] = $obj_resource->href;
+            /// Depending of the global $resources_base variable and the particular
+            /// $resource_base variable, build the correct href
+                $href_base = '';
+                if (!empty($obj_resource->resource_base)) {
+                    $href_base = $obj_resource->resource_base;
+                } else if (!empty($resources_base)) {
+                    $href_base = $resources_base;
+                }
+                $resources[$obj_resource->identifier] = $href_base.$obj_resource->href;
             }
         /// Counters go up
             $current_resource++;

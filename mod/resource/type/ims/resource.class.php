@@ -393,7 +393,14 @@ class resource_ims extends resource_base {
                     $fullurl = $viewurl.$page;
                 } else {
                 /// The page has href, then its own file contents
-                    $fullurl = $fileurl.'/'.$items[$page]->href;
+                /// but considering if it seems to be an external url or a internal one
+                    if (strpos($items[$page]->href, '//') !== false) {
+                    /// External URL
+                        $fullurl = $items[$page]->href;
+                    } else {
+                    /// Internal URL, use file.php
+                        $fullurl = $fileurl.'/'.$items[$page]->href;
+                    }
                 }
             }
 
