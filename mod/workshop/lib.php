@@ -1662,7 +1662,9 @@ function workshop_grade_assessments($workshop, $verbose=false) {
                 // ...if there are three or more assessments calculate the variance of each assessment.
                 // Use the variance to find the "best" assessment. (When there is only one or two assessments they 
                 // are not altered by this routine.)
-                if ($verbose) echo "Processing submission $submission->id ($nassessments asessments)...\n"; 
+                if ($verbose) {
+                    echo "Processing submission $submission->id ($nassessments asessments)...\n"; 
+                }
                 if ($nassessments > 2) {
                     $num = 0; // weighted number of assessments
                     for ($i = 0; $i < $workshop->nelements; $i++) {
@@ -1677,7 +1679,7 @@ function workshop_grade_assessments($workshop, $verbose=false) {
                                     // drop teacher's assessment as weight is zero
                                     continue;
                                 }
-                            } elseif ((!$assessment->gradinggrade and $assessment->timegraded) or 
+                            } else if ((!$assessment->gradinggrade and $assessment->timegraded) or 
                                     ($workshop->agreeassessments and !$assessment->timeagreed)) {
                                 // it's a duff assessment, or it's not been agreed
                                 continue;
@@ -1733,9 +1735,12 @@ function workshop_grade_assessments($workshop, $verbose=false) {
                         }
 
                         if (!$best = get_record("workshop_assessments", "id", $bestassessmentid)) {
-                            error("Workshop grade assessments: cannot find best assessment");
+                            notify("Workshop grade assessments: cannot find best assessment");
+                            continue;
                         }
-                        if ($verbose) echo "Best assessment is $bestassessmentid;\n";
+                        if ($verbose) {
+                            echo "Best assessment is $bestassessmentid;\n";
+                        }
                         foreach ($assessments as $assessment) {
                             // don't overwrite teacher's grade
                             if ($assessment->teachergraded) {
