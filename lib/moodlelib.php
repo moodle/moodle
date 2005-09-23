@@ -5314,13 +5314,12 @@ function check_php_version($version='4.1.0') {
           }
 
           // the proper string - Gecko/CCYYMMDD Vendor/Version
-          if (ereg("^([a-zA-Z]+)/([0-9]+\.[0-9]+) \((.*)\) (.*)$", $agent, $match)) {
-              if (ereg("^([Gecko]+)/([0-9]+)",$match[4], $reldate)) {
-                  if ($reldate[2] > $version) {
+          // Faster version and work-a-round No IDN problem.
+          if (preg_match("/Gecko\/([0-9]+)/i", $agent, $match)) {
+              if ($match[1] > $version) {
                       return true;
                   }
               }
-          }
           break;
 
 
@@ -6583,7 +6582,7 @@ function report_session_error() {
     } else {
         set_config('session_error_counter', 1);
     }
-    redirect($FULLME, get_string('sessionerroruser', 'error'), 2);
+    redirect($FULLME, get_string('sessionerroruser2', 'error'), 5);
 }
 
 

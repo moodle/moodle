@@ -309,7 +309,7 @@ $CFG->httpswwwroot = $CFG->wwwroot;
             $_SESSION['SESSION'] = new object;
             $_SESSION['SESSION']->session_test = random_string(10);
             if (!empty($_COOKIE['MoodleSessionTest'.$CFG->sessioncookie])) {
-                define('SESSION_HAS_TIMED_OUT', 'true');
+                $_SESSION['SESSION']->has_timed_out = true;
             }
             setcookie('MoodleSessionTest'.$CFG->sessioncookie, $_SESSION['SESSION']->session_test, 0, '/');
             $_COOKIE['MoodleSessionTest'.$CFG->sessioncookie] = $_SESSION['SESSION']->session_test;

@@ -4,6 +4,14 @@
 
     $loginguest = optional_param('loginguest', false); // determines whether visitors are logged in as guest automatically
 
+/// Check for timed out sessions
+    if (!empty($SESSION->has_timed_out)) {
+        $session_has_timed_out = true;
+        $SESSION->has_timed_out = false;
+    } else {
+        $session_has_timed_out = false;
+    }
+
     //HTTPS is potentially required in this page
     httpsrequired();
 
@@ -206,6 +214,10 @@
 
     if (empty($errormsg)) {
         $errormsg = '';
+    }
+    
+    if ($session_has_timed_out) {
+        $errormsg = get_string('sessionerroruser', 'error');
     }
 
     if (get_moodle_cookie() == '') {   
