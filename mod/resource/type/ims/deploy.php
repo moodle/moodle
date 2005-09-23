@@ -321,12 +321,13 @@
                 !empty($obj_resource->href)) {
             /// Add to resources (identifier as key)
             /// Depending of the global $resources_base variable and the particular
-            /// $resource_base variable, build the correct href
+            /// $resource_base variable, concatenate them to build the correct href
                 $href_base = '';
-                if (!empty($obj_resource->resource_base)) {
-                    $href_base = $obj_resource->resource_base;
-                } else if (!empty($resources_base)) {
+                if (!empty($resources_base)) {
                     $href_base = $resources_base;
+                }
+                if (!empty($obj_resource->resource_base)) {
+                    $href_base .= $obj_resource->resource_base;
                 }
                 $resources[$obj_resource->identifier] = $href_base.$obj_resource->href;
             }
