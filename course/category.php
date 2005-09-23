@@ -138,9 +138,14 @@
                     } else {
                         // figure out a sortorder that we can use in the destination category
                         $sortorder = get_field_sql('SELECT MIN(sortorder)-1 AS min
-                                                    FROM ' . $CFG->prefix . 'course WHERE sortorder > 2 AND category=' . $destcategory->id);
-                        if ($sortorder < 10) {
-                            $sortorder =  1000;
+                                                    FROM ' . $CFG->prefix . 'course AND category=' . $destcategory->id);
+                        if ($sortorder === false) {
+                            // the category is empty
+                            // rather than let the db default to 0
+                            // set it to > 100 and avoid extra work in fix_coursesortorder()                        
+                            $sortorder = 200;
+                        } else if ($sortorder < 10) {
+                            fix_course_sortorder($categoryid);
                         }
 
                         $newcourse = new stdClass;
