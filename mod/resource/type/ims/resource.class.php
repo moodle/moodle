@@ -628,18 +628,31 @@ class resource_ims extends resource_base {
      *   from an specified parent to be used in the view of the IMS
      */
     function ims_generate_toc($items, $resource, $page=0) {
-        global $CFG;
+        global $CFG,$SESSION;
 
         $contents = '';
 
     /// Configure links behaviour
         $fullurl = $CFG->wwwroot.'/mod/resource/view.php?r='.$resource->id.'&amp;frameset=ims&amp;page=';
 
+    /// Decide if we have to leave text in UTF-8, else convert to ISO-8859-1
+    /// (interim solution until everything was migrated to UTF-8). Then we'll
+    //  delete this hack.
+        $convert = true;
+        if ($SESSION->encoding == 'UTF-8') {
+            $convert = false;
+        }
+
     /// Iterate over items to build the menu
         $currlevel = 0;
         $currorder = 0;
         $endlevel  = 0;
         foreach ($items as $item) {
+        /// Convert text to ISO-8859-1 if specified (will remove this once utf-8 migration was complete- 1.6)
+        if ($convert) {
+            $item->title = utf8_decode($item->title);
+        }
+        
         /// Skip pages until we arrive to $page
             if ($item->id < $page) {
                 continue;
