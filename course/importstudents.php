@@ -66,14 +66,16 @@
         if (!empty($frm->add) and !empty($frm->addselect) and confirm_sesskey()) {
             $timestart = $timeend = 0;
             foreach ($frm->addselect as $addcourse) {
+                set_time_limit(10);
                 if (!add_to_metacourse($course->id,$addcourse)) {
                     error("Could not add the selected course to this meta course!");
                 }
             }
         } else if (!empty($frm->remove) and !empty($frm->removeselect) and confirm_sesskey()) {
             foreach ($frm->removeselect as $removecourse) {
+                set_time_limit(10);
                 if (! remove_from_metacourse($course->id,$removecourse)) {
-                    error("Could not remove the selected course to this meta course!");
+                    error("Could not remove the selected course from this meta course!");
                 }
             }
         } else if (!empty($frm->showall) and confirm_sesskey()) {
