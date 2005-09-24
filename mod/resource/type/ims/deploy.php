@@ -143,6 +143,9 @@
 /// xmlize the variable
     $data = xmlize($imsmanifest, 0);
 
+/// Detect if all the manifest share a common xml:base tag
+    $manifest_base = $data['manifest']['@']['xml:base'];
+
 /// Parse XML-metadata
     /// Skip this for now (until a proper METADATA container was created in Moodle).
 
@@ -156,7 +159,7 @@
     $resources_base = $data['manifest']['#']['resources']['0']['@']['xml:base'];
   
 /// Now, we load all the resources available (keys are identifiers)
-    if (!$resources = ims_load_resources($data['manifest']['#']['resources']['0']['#']['resource'], $resources_base)) {
+    if (!$resources = ims_load_resources($data['manifest']['#']['resources']['0']['#']['resource'], $manifest_base, $resources_base)) {
         error (get_string('nonmeaningfulcontent', 'error'));
     }
 ///Now we assign to each item, its resource (by identifier)
@@ -294,7 +297,7 @@
     /*** This function will load an array of resources to be used later. 
      *   Keys are identifiers
      */
-    function ims_load_resources($data, $resources_base) {
+    function ims_load_resources($data, $manifest_base, $resources_base) {
         global $CFG;
 
         $resources = array();
@@ -320,11 +323,14 @@
             if (!empty($obj_resource->identifier) &&
                 !empty($obj_resource->href)) {
             /// Add to resources (identifier as key)
-            /// Depending of the global $resources_base variable and the particular
+            /// Depending of $manifest_base, $resources_base and the particular
             /// $resource_base variable, concatenate them to build the correct href
                 $href_base = '';
+                if (!empty($manifest_base)) {
+                    $href_base = $manifest_base;
+                }
                 if (!empty($resources_base)) {
-                    $href_base = $resources_base;
+                    $href_base .= $resources_base;
                 }
                 if (!empty($obj_resource->resource_base)) {
                     $href_base .= $obj_resource->resource_base;
