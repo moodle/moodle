@@ -18,7 +18,7 @@
 
     $file = optional_param('file', '',PARAM_FILE);
     $text = optional_param('text', 'No text to display',PARAM_CLEAN);
-    $module = optional_param('module', 'moodle',PARAM_ALPHA);
+    $module = optional_param('module', 'moodle', PARAM_ALPHAEXT);
 
     print_header();
 
