@@ -2189,7 +2189,11 @@ function isstudent($courseid, $userid=0) {
     }
 
     if (!$userid) {
-        return (!empty($USER->student[$courseid]) and empty($USER->studentview));
+        if (empty($USER->studentview)) {
+            return (!empty($USER->student[$courseid]));
+        } else {
+            return(!empty($USER->teacher[$courseid]) or isadmin());
+        }
     }
 
   //  $timenow = time();   // todo:  add time check below
