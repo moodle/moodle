@@ -314,7 +314,7 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
         $state->raw_grade = 0;
         foreach($answers as $answer) {
             if($this->test_response($question, $state, $answer)) {
-                if (empty($state->raw_grade) && $state->raw_grade < $answer->fraction) {
+                if ($state->raw_grade < $answer->fraction) {
                     $state->raw_grade = $answer->fraction;
                 }
             }
