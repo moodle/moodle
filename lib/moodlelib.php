@@ -2037,15 +2037,12 @@ function isteacher($courseid=0, $userid=0, $includeadmin=true) {
         if (empty($USER) or empty($USER->id)) {     // not logged in so can't be a teacher
             return false;
         }
+        if (!empty($USER->studentview)) {
+            return false;
+        }
         if (!empty($USER->teacher) and $courseid) {   // look in session cache
             if (!empty($USER->teacher[$courseid])) {  // Explicitly a teacher, good
-                // normally return 'true', but override if 'studentview' on
-                if (!empty($USER->studentview)) {
-                    return false;
-                }
-                else {
-                    return true;
-                }
+                return true;
             }
         }
         $userid = $USER->id;                        // we need to make further checks
@@ -2192,7 +2189,7 @@ function isstudent($courseid, $userid=0) {
     }
 
     if (!$userid) {
-        return !empty($USER->student[$courseid]);
+        return (!empty($USER->student[$courseid]) and empty($USER->studentview));
     }
 
   //  $timenow = time();   // todo:  add time check below
