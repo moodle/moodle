@@ -1,7 +1,7 @@
 <?PHP
 
 function hotpot_update_to_v2_1_2() {
-	global $CFG;
+	global $CFG, $db;
 	$ok = true;
 	
 	// hotpot_attempts: make sure there is only one "in progress" attempt by each user on each hotpot (and it must be the most recent attempt)
@@ -12,43 +12,45 @@ function hotpot_update_to_v2_1_2() {
 	//	minstatus    : minimum status in the group
 	// (groups with only one attempt, or no "in progess" attempt are ignored)
 	$records = get_records_sql("
-		SELECT userid, hotpot, COUNT(*) as countrecords, MAX(timestart) AS maxtimestart, MIN(status) as minstatus
+		SELECT id, userid, hotpot, COUNT(*) as countrecords, MAX(timestart) AS maxtimestart, MIN(status) as minstatus
 		FROM {$CFG->prefix}hotpot_attempts
 		GROUP BY userid, hotpot
 		HAVING countrecords > 1 AND minstatus=1
 	");
 
-	// save and switch off SQL message echo
-	global $db;
-	$debug = $db->debug;
-	$db->debug = false;
-
 	if ($records) {
+
+		// save and switch off SQL message echo
+		$debug = $db->debug;
+		$db->debug = false;
+
 		print "adjusting status of ".count($records)." &quot;in progress&quot; attempts ... ";
 
 		foreach ($records as $record) {
-			// get all attempts (except the most recent one) by this user at this hotpot
+			// get all attempts by this user at this hotpot
 			$attempts = get_records_sql("
-				SELECT id, userid, hotpot, timestart, status 
+				SELECT id, userid, hotpot, score, timestart, timefinish, status 
 				FROM {$CFG->prefix}hotpot_attempts 
-				WHERE userid = $record->userid AND hotpot=$record->hotpot AND timestart<$record->maxtimestart
-				ORDER BY timestart DESC
+				WHERE userid = $record->userid AND hotpot=$record->hotpot
+				ORDER BY timestart DESC, id DESC
 			");
 
-			$previous_timestart = $record->maxtimestart;
-
-			// loop through the attempts and reset any "in progress" records to be "abandoned"
+			unset($previous_timestart);
 			foreach ($attempts as $attempt) {
-				if ($attempt->status==1) {   // in progress
-					$values = 'status=3'; // abandoned
+
+				// if this attempt has a status of "in progress" and is not 
+				// the most recent one in the group, set the status to "abandoned"
+				if ($attempt->status==1 && isset($previous_timestart)) {
+
+					$values = 'status=3';
 					if (empty($attempt->score)) {
 						$values .= ',score=0';
 					}
 					if (empty($attempt->timefinish)) {
 						$values .= ",timefinish=$previous_timestart";
 					}
-					$ok = $ok && execute_sql("UPDATE {$CFG->prefix}hotpot_attempts SET $values WHERE id=$attempt->id", false);
-					
+					execute_sql("UPDATE {$CFG->prefix}hotpot_attempts SET $values WHERE id=$attempt->id", false);
+
 					print ".";
 					hotpot_flush(300);
 				}
@@ -58,10 +60,10 @@ function hotpot_update_to_v2_1_2() {
 
 		print $ok ? get_string('success') : 'failed';
 		print "<br />\n";
-	}
 
-	// restore SQL message echo setting
-	$db->debug = $debug;
+		// restore SQL message echo setting
+		$db->debug = $debug;
+	}
 
 	return $ok;
 }
@@ -1051,6 +1053,7 @@ function hotpot_db_update_field_type($table, $oldfield, $field, $type, $size, $u
 		$oldfield = $field;
 	} 
 	if (is_string($unsigned)) {
+
 		$unsigned = (strtoupper($unsigned)=='UNSIGNED');
 	}
 	if (is_string($notnull)) {
