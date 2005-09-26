@@ -205,8 +205,11 @@ class quiz_calculated_qtype extends quiz_dataset_dependent_questiontype {
         $unit = $virtualqtype->get_default_numerical_unit($question);
         foreach ($question->options->answers as $key => $answer) {
             $answer = &$question->options->answers[$key]; // for PHP 4.x
-            $answer->answer = $this->substitute_variables($answer->answer,
-             $state->options->dataset);
+            $correctanswer = quiz_qtype_calculated_calculate_answer(
+                 $answer->answer, $state->options->dataset, $answer->tolerance,
+                 $answer->tolerancetype, $answer->correctanswerlength,
+                 $answer->correctanswerformat, $unit->unit);
+            $answer->answer = $correctanswer->answer;
         }
         $question->questiontext = parent::substitute_variables(
          $question->questiontext, $state->options->dataset);
