@@ -1,5 +1,70 @@
 <?PHP
 
+function hotpot_update_to_v2_1_2() {
+	global $CFG;
+	$ok = true;
+	
+	// hotpot_attempts: make sure there is only one "in progress" attempt by each user on each hotpot (and it must be the most recent attempt)
+
+	// get info about attempts (grouped by user and hotpot)
+	//	countrecords : number of attempts in the group
+	//	maxtimestart : most recent timestart in the group
+	//	minstatus    : minimum status in the group
+	// (groups with only one attempt, or no "in progess" attempt are ignored)
+	$records = get_records_sql("
+		SELECT userid, hotpot, COUNT(*) as countrecords, MAX(timestart) AS maxtimestart, MIN(status) as minstatus
+		FROM {$CFG->prefix}hotpot_attempts
+		GROUP BY userid, hotpot
+		HAVING countrecords > 1 AND minstatus=1
+	");
+
+	// save and switch off SQL message echo
+	global $db;
+	$debug = $db->debug;
+	$db->debug = false;
+
+	if ($records) {
+		print "adjusting status of ".count($records)." &quot;in progress&quot; attempts ... ";
+
+		foreach ($records as $record) {
+			// get all attempts (except the most recent one) by this user at this hotpot
+			$attempts = get_records_sql("
+				SELECT id, userid, hotpot, timestart, status 
+				FROM {$CFG->prefix}hotpot_attempts 
+				WHERE userid = $record->userid AND hotpot=$record->hotpot AND timestart<$record->maxtimestart
+				ORDER BY timestart DESC
+			");
+
+			$previous_timestart = $record->maxtimestart;
+
+			// loop through the attempts and reset any "in progress" records to be "abandoned"
+			foreach ($attempts as $attempt) {
+				if ($attempt->status==1) {   // in progress
+					$values = 'status=3'; // abandoned
+					if (empty($attempt->score)) {
+						$values .= ',score=0';
+					}
+					if (empty($attempt->timefinish)) {
+						$values .= ",timefinish=$previous_timestart";
+					}
+					$ok = $ok && execute_sql("UPDATE {$CFG->prefix}hotpot_attempts SET $values WHERE id=$attempt->id", false);
+					
+					print ".";
+					hotpot_flush(300);
+				}
+				$previous_timestart = $attempt->timestart;
+			} // end foreach $attempts
+		} // end foreach $records
+
+		print $ok ? get_string('success') : 'failed';
+		print "<br />\n";
+	}
+
+	// restore SQL message echo setting
+	$db->debug = $debug;
+
+	return $ok;
+}
 function hotpot_update_to_v2_1() {
 	global $CFG, $db;
 	$ok = true;
@@ -31,21 +96,6 @@ function hotpot_update_to_v2_1() {
 
 	// hotpot_attempts
 
-	// hotpot_attempts: create and set status field (1=in-progress, 2=timed-out, 3=abandoned, 4=completed)
-	$ok = $ok && hotpot_db_update_field_type('hotpot_attempts', '', 'status', 'INTEGER', 4, 'UNSIGNED', 'NOT NULL', 1);
-	$ok = $ok && execute_sql("UPDATE {$CFG->prefix}hotpot_attempts SET status=1 WHERE timefinish=0 AND SCORE IS NULL");
-	$ok = $ok && execute_sql("UPDATE {$CFG->prefix}hotpot_attempts SET status=3 WHERE timefinish>0 AND SCORE IS NULL");
-	$ok = $ok && execute_sql("UPDATE {$CFG->prefix}hotpot_attempts SET status=4 WHERE timefinish>0 AND SCORE IS NOT NULL");
-
-	// hotpot_attempts: create and set clickreport fields
-	$ok = $ok && hotpot_db_update_field_type('hotpot', '', 'clickreporting', 'INTEGER', 4, 'UNSIGNED', 'NOT NULL', 0);
-	$ok = $ok && hotpot_db_update_field_type('hotpot_attempts', '', 'clickreportid', 'INTEGER', 10, 'UNSIGNED', 'NULL');
-	$ok = $ok && execute_sql("UPDATE {$CFG->prefix}hotpot_attempts SET clickreportid=id WHERE clickreportid IS NULL");
-	
-	// hotpot_attempts: create and set studentfeedback field (0=none, 1=formmail, 2=moodleforum, 3=moodlemessaging)
-	$ok = $ok && hotpot_db_update_field_type('hotpot', '', 'studentfeedback', 'INTEGER', 4, 'UNSIGNED', 'NOT NULL', '0');
-	$ok = $ok && hotpot_db_update_field_type('hotpot', '', 'studentfeedbackurl', 'VARCHAR', 255, '', 'NULL');
-
 	// hotpot_attempts: move "details" to separate table
 	$table = 'hotpot_details';
 	if (hotpot_db_table_exists($table)) {
@@ -76,6 +126,21 @@ function hotpot_update_to_v2_1() {
 	// hotpot_attempts: remove the "details" field
 	$ok = $ok && hotpot_db_remove_field('hotpot_attempts', 'details');
 	
+	// hotpot_attempts: create and set status field (1=in-progress, 2=timed-out, 3=abandoned, 4=completed)
+	$ok = $ok && hotpot_db_update_field_type('hotpot_attempts', '', 'status', 'INTEGER', 4, 'UNSIGNED', 'NOT NULL', 1);
+	$ok = $ok && execute_sql("UPDATE {$CFG->prefix}hotpot_attempts SET status=1 WHERE timefinish=0 AND SCORE IS NULL");
+	$ok = $ok && execute_sql("UPDATE {$CFG->prefix}hotpot_attempts SET status=3 WHERE timefinish>0 AND SCORE IS NULL");
+	$ok = $ok && execute_sql("UPDATE {$CFG->prefix}hotpot_attempts SET status=4 WHERE timefinish>0 AND SCORE IS NOT NULL");
+
+	// hotpot_attempts: create and set clickreport fields
+	$ok = $ok && hotpot_db_update_field_type('hotpot', '', 'clickreporting', 'INTEGER', 4, 'UNSIGNED', 'NOT NULL', 0);
+	$ok = $ok && hotpot_db_update_field_type('hotpot_attempts', '', 'clickreportid', 'INTEGER', 10, 'UNSIGNED', 'NULL');
+	$ok = $ok && execute_sql("UPDATE {$CFG->prefix}hotpot_attempts SET clickreportid=id WHERE clickreportid IS NULL");
+	
+	// hotpot_attempts: create and set studentfeedback field (0=none, 1=formmail, 2=moodleforum, 3=moodlemessaging)
+	$ok = $ok && hotpot_db_update_field_type('hotpot', '', 'studentfeedback', 'INTEGER', 4, 'UNSIGNED', 'NOT NULL', '0');
+	$ok = $ok && hotpot_db_update_field_type('hotpot', '', 'studentfeedbackurl', 'VARCHAR', 255, '', 'NULL');
+
 	// add indexes
 	$ok = $ok && hotpot_db_add_index('hotpot_attempts', 'hotpot');
 	$ok = $ok && hotpot_db_add_index('hotpot_attempts', 'userid');
@@ -115,6 +180,7 @@ function hotpot_update_to_v2_1() {
 		print "removing old templates ($dir) ... ";
 		$ok = hotpot_rm("$CFG->dirroot{$ds}$dir", false);
 		print $ok ? get_string('success') : 'failed';
+		print "<br />\n";
 	}
 
 	return $ok;
@@ -1215,4 +1281,15 @@ function hotpot_rm($target, $output=true) {
 	}
 	return $ok;
 }
+
+function hotpot_flush($n=0, $time=false) {
+	if ($time) {
+		$t = strftime("%X",time());
+	} else {
+		$t = "";
+	}
+	echo str_repeat(" ", $n) . $t . "\n";
+	flush();
+}
+
 ?>
