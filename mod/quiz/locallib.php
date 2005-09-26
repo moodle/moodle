@@ -1531,7 +1531,7 @@ function quiz_regrade_question_in_attempt($question, $attempt, $quiz=false, $ver
              $attempt)) {
                 $verbose && notify("Couldn't regrade state #{$state->id}!");
             }
-            if ((float)$replaystate->raw_grade != (float)$states[$j]->raw_grade) {
+            if ((float)$replaystate->grade != (float)$states[$j]->grade) {
                 $changed++;
 
             }
