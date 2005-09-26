@@ -1,9 +1,13 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.6 development (2005060201)
+      // admin.php - created with Moodle 1.6 development (2005081700)
 
 
 $string['adminseesallevents'] = 'Gli Amministratori  visualizzano tutti gli eventi';
 $string['adminseesownevents'] = 'Gli Amministratori  sono come tutti gli altri utenti';
+$string['backgroundcolour'] = 'Colore Trasparente';
+$string['badwordsconfig'] = 'Inserire un elenco di parole censurate e separate da virgole';
+$string['badwordsdefault'] = 'Se l\'elenco personalizzato è vuoto, verrà utilizzato l\'elenco standard.';
+$string['badwordslist'] = 'Elenco personalizzato delle parole censurate';
 $string['blockinstances'] = 'Istanze';
 $string['blockmultiple'] = 'Multiplo';
 $string['cachetext'] = 'Durata cache del testo';
@@ -27,6 +31,7 @@ Se scegliete \'Tratta i files come virus\' e per qualche motivo Clam antivirus d
 $string['configcountry'] = 'Se scegliete uno stato qui, questo verrà proposto di default. Per obbligare un utente a scegliere il proprio stato, lasciatelo in bianco. ';
 $string['configdbsessions'] = 'Se attivata, questa opzione utilizzerà il database per memorizzare le informazioni sulle sessioni correnti. Ciò è particolarmente utile per siti molto grandi o con molto traffico o per siti costruiti su cluster di servers. Per la maggior parte dei siti questa impostazione dovrebbe probabilmente essere lasciata su disabled in modo da utilizzare il disco del server. Attenzione: cambiare questa impostazione provocherà il log-out dal sito di tutti gli utenti collegati, voi compresi.';
 $string['configdebug'] = 'Attivando questa opzione, verrà incrementata la reportistica di errore di PHP, aumentando i messaggi di errore. Questa opzione è utile solo per gli sviluppatori.';
+$string['configdefaultallowedmodules'] = 'Per i corsi che ricadono nella categoria sovrastante, quali moduli si vuole che vengano permessi <b>quando il corso è creato</b>?';
 $string['configdeleteunconfirmed'] = 'Se state usando l\'autenticazione e-mail, questo parametro imposta il periodo in cui sarà accettata la risposta dagli utenti. Dopo questo periodo, gli utenti non confermati vengono cancellati.';
 $string['configdenyemailaddresses'] = 'Per rifiutare indirizzi e-mail provenienti da domini particolari, inserirne il nome qui. Tutti gli altri indirizzi verranno accettati.';
 $string['configdigestmailtime'] = 'Agli utenti che hanno scelto la modalità \'invio e-mail come raccolta quotidiana\', verrà inviata quotidianamente la raccolte dei messaggi.  Questa impostazione regola l\'ora di invio della raccolta.(il cron attivo nell\'ora seguente a questa impostazione invierà i dati richiesti).';
@@ -114,6 +119,7 @@ $string['configzip'] = 'Indica il percorso del programma Zip di compressione dat
 Se specificato, questo programma si occuperà di creare archivi di files compressi lato server. Se lasciato in bianco, Moodle utilizzerà le proprie routine interne.';
 $string['confirmation'] = 'Conferma';
 $string['cronwarning'] = 'Lo  <a href=\"cron.php\">script della routine cron.php</a> non è stato lanciato nelle ultime 24 ore.  <br />La <a href=\"../doc/?frame=install.html?=cron\">documentazione di installazione</a> vi spiegherà come fare ad automatizzare questo processo.';
+$string['density'] = 'Densità';
 $string['edithelpdocs'] = 'Modifica documenti di Help';
 $string['editstrings'] = 'Modifica stringhe';
 $string['filterall'] = 'Filtra tute le stringhe';

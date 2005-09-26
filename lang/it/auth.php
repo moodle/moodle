@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.6 development (2005060201)
+      // auth.php - created with Moodle 1.6 development (2005081700)
 
 
 $string['alternatelogin'] = 'Se inserite un\'URL verso un file qui, verrà utilizzata come pagina di login del sito. La pagina dovrebbe contenere un modulo con le proprietà impostate su <strong>\'$a\'</strong> con i campi di <strong>login</strong> e <strong>password</strong>.<br/> Fate attenzione a non inserire un URL errato perchè potreste \"chiudervi fuori\" dal sito. <br/>
@@ -46,7 +46,7 @@ $string['auth_fcuserid'] = 'Nome utente di FirstClass con privilegi di \'Subadmi
 $string['auth_fieldlock'] = 'Blocca valore';
 $string['auth_fieldlock_expl'] = '<p><b>Blocca valore:</b>Se abilitato, impedirà agli utenti e agli amministratori di Moodle di modificare il campo direttamente. Utilizzare questa opzione se si sta gestendo questi dati in un sistema di autenticazione esterno.</p>';
 $string['auth_fieldlocks'] = 'Blocca campi utente';
-$string['auth_fieldlocks_help'] = '<p>&Egrave; possibile bloccare i campi relativi agli utenti. Questo può risultare utile per i siti dove i dati utente sono gestiti manualmente dagli amministratori modificando i record degli utenti e caricadoli utilizzando la funzione \'Importa utenti\'. Se si stanno bloccando dei campi richiesti da Moodle, accertatevi di fornirne i dati quando vengono registrati gli utenti &emdash; altrimenti la registrazione diventerebbe inutilizzabile.</p><p>Prendete in considerazione l\'utilizzo della modalità \'Libero se vuoto\' per evitare questo problema.</p>';
+$string['auth_fieldlocks_help'] = '<p>È possibile bloccare i campi relativi agli utenti. Questo può risultare utile per i siti dove i dati utente sono gestiti manualmente dagli amministratori modificando i record degli utenti e caricadoli utilizzando la funzione \'Importa utenti\'. Se si stanno bloccando dei campi richiesti da Moodle, accertatevi di fornirne i dati quando vengono registrati gli utenti &emdash; altrimenti la registrazione diventerebbe inutilizzabile.</p><p>Prendete in considerazione l\'utilizzo della modalità \'Libero se vuoto\' per evitare questo problema.</p>';
 $string['auth_imapdescription'] = 'Questo metodo usa un server IMAP per controllare se il nome utente e la password dati sono validi. ';
 $string['auth_imaphost'] = 'Indirizzo server IMAP. Usa il numero IP, non il nome DNS.';
 $string['auth_imapport'] = 'Porta server IMAP. Normalmente é 143o 993.';
@@ -72,6 +72,7 @@ $string['auth_ldap_opt_deref'] = 'Determina la maniera in cui vengono trattati g
 \"No\" (LDAP_DEREF_NEVER) <br/>
 \"Si\" (LDAP_DEREF_ALWAYS) ';
 $string['auth_ldap_passwdexpire_settings'] = 'Impostazione scadenza password LDAP';
+$string['auth_ldap_preventpassindb'] = 'Selezionare Si per prevenire il salvataggio delle password nella base dati di Moodle.';
 $string['auth_ldap_search_sub'] = 'Inserire un valore <> 0 se preferite cercare gli utenti da sottocontesti.';
 $string['auth_ldap_server_settings'] = 'Impostazioni server LDAP';
 $string['auth_ldap_update_userinfo'] = 'Aggiorna le informazioni utente (nome, cognome, indirizzo...) da LDAP a Moodle. Specifica le impostazioni di \"Data mapping\" come le volete. Guardate /auth/ldap/attr_mappings.php per le informazioni su mapping';

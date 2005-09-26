@@ -71,7 +71,7 @@ $string['aimid'] = 'AIM ID';
 $string['all'] = 'Tutto';
 $string['allactivities'] = 'Tutte le attività';
 $string['alldays'] = 'Tutti i giorni';
-$string['allfieldsrequired'] = 'La compilazione di tutti i campi è richiesta';
+$string['allfieldsrequired'] = 'E\' richiesta la compilazione di tutti i campi';
 $string['allgroups'] = 'Tutti i gruppi';
 $string['alllogs'] = 'Tutti i logs';
 $string['allow'] = 'Permettere';
@@ -79,7 +79,7 @@ $string['allowguests'] = 'Questo corso permette l\'accesso ad utenti ospiti';
 $string['allowinternal'] = 'Permetti anche i metodi interni';
 $string['allownot'] = 'Non permettere';
 $string['allparticipants'] = 'Tutti i partecipanti';
-$string['allteachers'] = 'Tutti gli insegnati';
+$string['allteachers'] = 'Tutti gli insegnanti';
 $string['alphabet'] = 'A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z';
 $string['alphanumerical'] = 'Puo\' contenere solo lettere dell\'alfabeto o numeri';
 $string['alreadyconfirmed'] = 'La registrazione è già stata confermata';
@@ -330,7 +330,6 @@ $string['emailactive'] = 'Email attivata';
 $string['emailagain'] = 'Indirizzo email (ripeti)';
 $string['emailconfirm'] = 'Conferma il tuo account';
 $string['emailconfirmation'] = 'Salve $a->firstname,
-
 Un nuovo account è stato richiesto a \'$a->sitename\' usando il tuo indirizzo di posta elettronica.
 Per confermare il tuo nuovo account, devi cliccare sul seguente link:
   $a->link
@@ -525,7 +524,7 @@ $string['helpindex'] = 'Indice di tutti i file di aiuto';
 $string['helppicture'] = 'Come trasferire una immagine';
 $string['helpquestions'] = 'Come compilare le domande';
 $string['helpreading'] = 'Leggi attentamente ciò che hai scritto';
-$string['helprichtext'] = 'Informazioni sul editor HTML';
+$string['helprichtext'] = 'Informazioni sull\'editor HTML';
 $string['helpsummaries'] = 'Informazioni sui commenti';
 $string['helptext'] = 'Come scrivere del testo';
 $string['helpwiki'] = 'Come scrivere del testo Wiki';
@@ -1033,7 +1032,7 @@ $string['todaylogs'] = 'Logs di oggi';
 $string['toeveryone'] = 'per tutti';
 $string['toomanybounces'] = 'Questo indirizzo di email ha subito troppi rimbalzi. <b>Devi cambiarlo</b> per poter continuare.';
 $string['toomanytoshow'] = 'Ci sono troppi utenti da visualizzare';
-$string['toonly'] = 'per $A solamente';
+$string['toonly'] = 'per $a solamente';
 $string['top'] = 'Alto';
 $string['topic'] = 'Argomento';
 $string['topichide'] = 'Nascondi questo argomento da $a';

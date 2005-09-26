@@ -2,15 +2,15 @@
       // assignment.php - created with Moodle 1.6 development (2005060201)
 
 
-$string['allowresubmit'] = 'Permettere di sottomettere più volte';
+$string['allowresubmit'] = 'Possibilità di sottomettere più volte';
 $string['assignmentdetails'] = 'Dettaglio compiti';
 $string['assignmentmail'] = '$a->teacher ha corretto il tuo compito per l\'esercizio \'$a->assignment\'.
 
-Puoi vedere la valutazione allegata al tuo compito:
+Puoi vedere la valutazione associata al tuo compito:
 
 $a->url ';
 $string['assignmentmailhtml'] = '$a->teacher ha corretto il tuo compito per l\'esercizio \'<i>$a->assignment\'</i>.<br /><br />
-Puoi vedere la valutazione allegata al tuo <a href=\"$a->url\">compito</a>';
+Puoi vedere la valutazione associata al tuo <a href=\"$a->url\">compito</a>';
 $string['assignmentname'] = 'Titolo del compito';
 $string['assignmenttype'] = 'Tipo di compito';
 $string['availabledate'] = 'Disponibile dal';
@@ -38,7 +38,7 @@ $string['feedbackupdated'] = 'Risposte alle consegne aggiornate per $a utenti';
 $string['guestnoupload'] = 'Spiacente, agli ospiti non è permesso inviare file.';
 $string['helpoffline'] = '<p>Questo è utile quando il compito è compilato al di fuori di Moodle. Potrebbe essere da qualche altra parte sul web o un\'attività in presenza/aula.</p><p>Gli studenti possono vedere una descrizione del compito ma non possono inviare file o altro. La valutazione funziona normalmente, e gli studenti riceveranno la notifica delle loro valutazioni.</p>';
 $string['helponline'] = '<p>Questo tipo di compito chiede agli utenti di compilare un testo, utilizzando i normali strumenti di modifica. Gli insegnanti possono valutarli online, e anche aggiungere dei commenti in linea o modifiche.</p>
-<p>(Se hia familiarità con le vecchie versioni di Moodle, questo tipo di compito permette di fare le stesse cose che il vecchio modulo Diario permetteva).</p>';
+<p>(Se hai familiarità con le vecchie versioni di Moodle, questo tipo di compito permette di fare le stesse cose del vecchio modulo Diario).</p>';
 $string['helpuploadsingle'] = '<p>Questo tipo di compito permette a tutti i partecipanti di inviare un file, di qualunque tipo.</p><p>Questo potrebbe essere un documento di testo, o un\'immagine, un sito web compresso, o qualunque cosa venga richiesto loro di sottomettere.</p>';
 $string['late'] = '$a ritardo';
 $string['maximumgrade'] = 'Voto massimo';

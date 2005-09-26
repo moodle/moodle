@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.5 ALPHA (2005051500)
+      // resource.php - created with Moodle 1.6 development (2005081700)
 
 
 $string['addresource'] = 'Aggiungi risorsa';
@@ -7,11 +7,11 @@ $string['chooseafile'] = 'Scegli o aggiorna un file';
 $string['chooseparameter'] = 'Scegli parametro';
 $string['configallowlocalfiles'] = 'Quando si crea una risorsa di tipo \"file\", questa impostazione consente di collegare file presenti sul lettore CD o sul disco fisso del computer dell\'utente. Può essere utile nelle classi dove gli studenti possono accedere ad un disco di rete condiviso oppure per accedere a file contenuti in un CD-ROM. L\'impiego di questa caratteristica potrebbe richiedere la modifica di impostazioni di sicurezza del browser.';
 $string['configdefaulturl'] = 'Questo valore è utilizzato come preimpostazione degli URL quando si crea una nuova risorsa con URL';
-$string['configfilterexternalpages'] = 'Abilitando questa impostazione tutti le risorse esterne (pagine web, file HTML inviati) saranno elaborati dai filtri attivati per il sito (come i collegamenti automatici del glossario, per esempio). Attivare questa opzione potrebbe rallentare il caricamento delle pagine del tuo corso in modo significativo - usalo con attenzione e solo se ti serve veramente.';
+$string['configfilterexternalpages'] = 'Abilitando questa impostazione tutte le risorse esterne (pagine web, file HTML inviati) saranno elaborate dai filtri attivati per il sito (come i collegamenti automatici del glossario, per esempio). Attivare questa opzione potrebbe rallentare il caricamento delle pagine del tuo corso in modo significativo - usalo con attenzione e solo se ti serve veramente.';
 $string['configframesize'] = 'Quando una pagina web  o un file é visualizzato in un frame, questa é la dimensione (in pixel) del frame superiore (che contiene la navigazione).';
 $string['configparametersettings'] = 'Questo stabilisce il valore standard per le impostazioni dei parametri nel modulo quando aggiungi una nuova risorsa. Dopo la prima volta, diventa una preferenza legata all\'utente.';
 $string['configpopup'] = 'Impostare automaticamente la visualizzazione della risorsa (se possibile) in una nuova finestra?';
-$string['configpopupdirectories'] = 'Le finestre di popup possono mostrare i collegamenti alla directory?';
+$string['configpopupdirectories'] = 'Le finestre di popup possono mostrare la directory dei collegamenti?';
 $string['configpopupheight'] = 'Altezza standard per le nuove finestre di popup';
 $string['configpopuplocation'] = 'Mostrare la barra dell\'indirizzo nelle finestre popup?';
 $string['configpopupmenubar'] = 'Le finestre popup possono mostrare la barra dei menu?';
@@ -20,7 +20,7 @@ $string['configpopupscrollbars'] = 'Le finestre popup possono avere la barra di 
 $string['configpopupstatus'] = 'Le finestre popup possono mostrare la barra di stato?';
 $string['configpopuptoolbar'] = 'Le finestre popup possono mostrare la barra strumenti?';
 $string['configpopupwidth'] = 'Larghezza standard per le nuove finestre di popup';
-$string['configsecretphrase'] = 'Questa frase segreta viene utilizzata per generare il codice criptato che viene spedito ad alcune risorse com parametro. Il codice criptato è generato da un valore md5 del indirizzo IP dell\'utente corrente concatenato con la frase segreta. es: code  = md5(IP.secretphrase). Questo permette al destinatario della risorsa di verificare la connessione per una maggiore sicurezza.';
+$string['configsecretphrase'] = 'Questa frase segreta viene utilizzata per generare il codice criptato che viene spedito ad alcune risorse com parametro. Il codice criptato è generato da un valore md5 dell\'indirizzo IP dell\'utente corrente concatenato con la frase segreta. Es: code  = md5(IP.secretphrase). Questo permette al destinatario della risorsa di verificare la connessione per una maggiore sicurezza.';
 $string['configwebsearch'] = 'Quando aggiungi un URL come una Pagina web o un Collegamento web, questo collegamento è offerto come un sito per aiutare gli utenti a cercare l\'URL che vogliono';
 $string['configwindowsettings'] = 'Questo imposta il valore standard per le impostazioni della finestra nel modulo quando aggiungi una nuova risorsa. Dopo la prima volta, diventa una preferenza legata all\'utente.';
 $string['directlink'] = 'Collegamento diretto a questo file';
@@ -48,7 +48,7 @@ $string['maindirectory'] = 'Cartella principale';
 $string['modulename'] = 'Risorsa';
 $string['modulenameplural'] = 'Risorse';
 $string['neverseen'] = 'Mai visto';
-$string['newdirectories'] = 'Mostra i collegamenti alla directory';
+$string['newdirectories'] = 'Mostra collegamenti';
 $string['newfullscreen'] = 'Tutto schermo';
 $string['newheight'] = 'Altezza standard della finestra (in pixel)';
 $string['newlocation'] = 'Mostra barra indirizzo';
@@ -89,9 +89,11 @@ $string['resourcetypedirectory'] = 'Mostra una cartella';
 $string['resourcetypefile'] = 'Collegamento a un file o a un sito';
 $string['resourcetypehtml'] = 'Componi una pagina web';
 $string['resourcetypelabel'] = 'Inserisci una etichetta';
+$string['resourcetyperepository'] = 'Collegamento a un archivio di oggetti';
 $string['resourcetypetext'] = 'Componi una pagina di testo';
 $string['searchweb'] = 'Cerca una pagina web';
 $string['serverurl'] = 'Indirizzo server ($a->wwwroot)';
+$string['showcourseblocks'] = 'Mostra i blocchi dei corsi';
 $string['variablename'] = 'Nome variabile';
 $string['vol'] = 'Volume';
 

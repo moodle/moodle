@@ -14,381 +14,305 @@
 </head>
 
 <body bgcolor="#FFFFFF">
-<h1>Note di Rilascio</h1>
+<h1>Ultime Note di Rilascio</h1>
 
 
-<h3> Moodle 1.4.2 (5 Novembre 2004)</h3>
+<h2>Moodle 1.5.2 (16 luglio 2005) </h2>
 
-<p>(In merito agli importanti miglioramenti di sicurezza che questa release contiene, 
-  raccomandiamo caldamente di effettuare l'aggiornamento a questa versione non 
-  appena possibile.)</p>
+<h3>Correzioni varie</h3>
+  <ul type="circle">
+  <li>L'aggiornamento Diario -> Compito ora funziona correttamente  :-/</li>
+  <li>I sottomoduli Compito ora si aggiornano come previsto</li>
+  <li>Corretti vari altri difetti coi nuovi Compiti</li>
+  <li>Il modulo Diario ora è disabilitato per default nelle nuove installazioni</li>
+  <li>La pagina di Login ora è 100% HTTPS se richiesto</li>
+  <li>Vari piccoli ritocchi al tema standard</li>
+  <li>Correzione nel modulo Quiz nel display delle risposte a corrispondenza recenti</li>
+  <li>Il language editor non crea più files vuoti quando non necessario (difetto nella lista dei paesi)</li>
+  <li>Corretti alcuni problemi nel parsing del manifesto nel modulo SCORM</li>
+  <li>Il filtro multilingue ora gestisce pack names che contengono numeri</li>
+  <li>I files ora sono scaricati in ogni caso (corregge problemi di IE e alcuni problemi di sicurezza)</li>
+  <li>E' evitato il relinking dell'output del debugging</li>
+  <lI>Il player di grossi files MP3 ora mostra le tag ID3 di nuovo correttamente</li>
+  <li>Alcuni miglioramenti nel daemon della Chat</li>
+  </ul>
 
-<ul>
-  <dl>
-    <dt>Alcuni importanti aggiornamenti di sicurezza</dt>
-    <dd> 
-      <ul>
-        <li>Migliorato il controllo/pulizia dei parametri degli script utilizzati 
-          in alcune aree di Moodle (un grazie a Petr Skoda per le sue recenti 
-          segnalazioni in proposito!)</li>
-        <li>Quotati alcuni parametri SQL nel modulo Glossario per prevenire potenziali 
-          attacchi basati su esecuzioni arbitrarie di codice SQL.</li>
-      </ul>
-    </dd>
-    <dt>Alcune piccole novit&agrave;</dt>
-    <dd> 
-      <ul>
-        <li>Nuova modulo di autenticazione PAM per una autenticazione diretta 
-          su sistemi Unix/Linux.</li>
-        <li>Anche i creatori di corsi possono adesso ripristinare un corso scegliendo 
-          se crearne uno nuovo o se sostituirne uno pre-esistente. </li>
-        <li>I messaggi di un forum includono adesso maggiori informazioni nelle 
-          intestazioni per permettere uan corretta informazione nei messaggi di 
-          posta elettronica.</li>
-      </ul>
-    </dd>
-    <dt>Una marea di piccole correzioni</dt>
-    <dd> 
-      <ul>
-        <li>La procedura di Backup &egrave; in grado adesso di gestire eventuali 
-          errori (dovuti per esempio ad una interruzione del backup) e di pulire 
-          i files incompleti. </li>
-        <li>Correzioni nell'autenticazione database contro un database PostgreSQL</li>
-        <li>Correzioni di alcune parti dell'installazione di PostgreSQL</li>
-        <li>Le linee di intestazione di un Forum vengono interrotte solo pi&ugrave; 
-          nella visualizzazione del modulo &quot;Attivit&agrave; recente...&quot;</li>
-        <li>Le iscrizioni da Database adesso funzionano :-)</li>
-        <li>Correzioni SQL nella creazione di RSS feeds da PostgreSQL</li>
-        <li>Aggiunto <strong>rtsp</strong> alla lista di protocolli permessi nella 
-          pulizia del testo HTML</li>
-        <li>Il profilo utente e il profilo edita pagina possono essere richiamati 
-          senza parametri</li>
-        <li>Aggiornamento della libreria<strong> xmlize</strong> alla ultima versione 
-          disponibile</li>
-        <li>Aggiornamento della libreria <strong>phpmailer</strong> alla ultima 
-          versione disponibile</li>
-        <li>Varie pulizie di picole parti di codice</li>
-        <li>Il menu Admin permette adesso il backup/ripristino del "corso del 
-          sito" (pagina principale)</li>
-        <li>Corretto un baco di visualizzazione nell'indice dei forum, visibile 
-          solo in php5</li>
-        <li>Highlighting function (eg after search) was stripping backslashes</li>
-        <li>Info dal LDAP viene ora decodificata da utf8</li>
-        <li>L'elenco dei corsi funziona meglio in caso di elenchi molto lunghi</li>
-        <li>Corretti due bachi SCORM (problemi riscontrati in una &quot;typo&quot; 
-          e in onbeforeunload)</li>
-        <li>Alcune pulizie durante la stampa del testo, nelle intestazioni e nelle 
-          variabili in Lezioni</li>
-        <li>Il Calendario funziona come ci si aspetta, anche se ci si collega 
-          come qualcun'altro</li>
-        <li>Corretti pochi restanti problemi in tag PHP</li>
-        <li>Migliorato il rimescolamento nelle domande casuali (correzione per 
-          bachi presenti nella versione 1.4)</li>
-        <li>quando viene rimosso un'insegnante da un corso, vengono ora rimpossi 
-          anche da tutti i gruppi di quel corso</li>
-        <li>Corretto il baco strip_pages bug in Wiki</li>
-        <li>Correzioni del riconoscimento caratteri durante i backups e nel filtro 
-          multilingua sotto PHP5</li>
-      </ul>
-    </dd>
-  </dl>
-</ul>
-
-<p>&nbsp;</p>
+<h3>Alcune cose nuove</h3>
+  <ul type="circle">
+  <li>Il tema Orangewhite ottimizzato per l'uso su PDA</li>
+  <li>La pagina dei post di un utente a un Forum può essere richiamata senza userid</li>
+  <li>Altavista BabelFish ora è ammesso come ospite quando lo è Google</li>
+  </ul>
 
 
-<h3> Moodle 1.4.1 (12 Settembre 2004)</h3>
+<hr />
+<h2>Moodle 1.5.1 (8 luglio 2005) </h2>
 
-<ul>
-  <dl>
-    <dt>Alcune piccole correzioni</dt>
-    <dd> 
-      <ul>
-        <li>Nuovo filtro di " Protezione Email" che offuscher&agrave; tutti gli 
-          indirizzi email all'interno di tutti i testi (per contribuire ad impedire 
-          raccolte automatizzate di indirizzi)</li>
-        <li>Indirizzi email autorizzati possono ora essere ristretti (vedi config-dist.php 
-          per dettagli)</li>
-        <li>Istruzioni extra per traduttori sono ora integrate nella interfaccia 
-          di traduzione </li>
-        <li>Nuova pagina di help per percorsi indicizzati.</li>
-      </ul>
-    </dd>
-    <dt>Qualche altra correzione</dt>
-    <dd> 
-      <ul>
-        <li>Migliorate le performance durante la visualizzazione dei log del sito</li>
-        <li>Migliorato il paging e le performance in glossary</li>
-        <li>Le voci di Glossario vengono ora correttamente mostrate se appartengono 
-          a categorie multiple</li>
-        <li>Non viene redichiarata auth_user_login dopo un login fallito</li>
-        <li>Aggiunte due icone mancanti nel tema cordoroyblue</li>
-        <li>Corretti due bottoni mancanti "Nuovo evento" nella pagina di Nuovi 
-          eventi </li>
-        <li>Vengono sempre aggiunti delgi addslashes sui messaggi di chat dagli 
-          utenti demoni prima di inserirli nel db</li>
-        <li>Correzioni nella gestione delle iscrizioni periodiche se questa impostazione 
-          &egrave; selezionata per un corso</li>
-        <li>L'ID del corso generale del sito (definita come SITEID) non deve pi&ugrave; 
-          essere per forza il numero 1.</li>
-        <li>I limiti prestabiliti di memoria (memory limits) sono stati aumentati 
-          a 16Mb, per aiutare Moodle a continuare a lavorare anche in caso di 
-          problemi non pianificati </li>
-        <li>Gli Smilies vengono ora renderizzati come immagini in formato Markdown</li>
-        <li>I Workshops funzionano di nuovo in &quot;Attivit&agrave; recenti&quot;</li>
-        <li>file.php pu&ograve; essere utilizzato per l'accesso ai dati dei corsi</li>
-        <li>Migliorati i comportamenti del blocco Calendario sulla home page </li>
-        <li>Sistemato un baco inerente le virgolette nelle specifiche del produttore 
-          del database PostgreSQL</li>
-        <li>Corretta la visualizzazione delle risposte giuste durante la revisione 
-          di un quiz</li>
-        <li>&lt;tt> e&lt;code> sono adesso tag permessi</li>
-        <li>I sommari di sezione, dei corsi e delle etichette sono di nuovo esenti 
-          da pulizie del javascript</li>
-        <li>Corretto un raro baco LDAP che poteva impedire la creazione di nuovi 
-          account </li>
-      </ul>
-    </dd>
-  </dl>
-</ul>
+<h3>Correzioni varie</h3>
+  <ul type="circle">
+  <li>Risolti diversi potenziali problemi di sicurezza</li>
+  <li>L'impostazione Allowobjectembed ora funziona correttamente</li>
+  <li>Risolto un problema di velocità su IE, causato da tab hover.</li>
+  <li>Il "tagla e copia" nell'editor su Firefox produce un messaggio di warning più significativo</li>
+  <li>Corretto un problema di sessione quando loggati come admin durante l'aggiornamento da versioni di Moodle molto vecchie</li>
+  <li>Corretto un problema di editing nel Menu principale del sito</li>
+  <li>Corretti difetti secondari nel display CSS in alcune aree</li>
+  <li>Corretta l'aggiunta di un singolo forum di discussione</li>
+  <li>Corretti difetti nel modulo Lezione nel calcolo delle valutazioni e nelle date</li>
+  <li>Corretti difetti nel modulo Lezione inserendo un cluster dopo una pagina</li>
+  <li>Il filtro di censura è stato corretto per funzionare meglio con i vecchi temi</li>
+  </ul>
 
-<p>&nbsp;</p>
-<h3> Moodle 1.4 (31 agosto 2004)</h3>
+<h3>Alcune cose nuove</h3>
+  <ul type="circle">
+  <li>Nuovo tema: Wood</li>
+  <li>Aggiornamento del tema Metal per la 1.5</li>
+  <li>Molti aggiornamenti nella maggior parte delle lingue, inclusa una nuova lingua: Khmer</li>
+  <li>Le classi Block possono ora eseguire codice utente quando un'istanza è creata/cancellata (questo è utile per blocchi che hanno necessità di impostare strutture dati non banali)</li>
+  <li>Il wizard per le Domande Calcolate nel modulo Quiz è stato riscritto</li>
+  <li>La selezione nel modulo Backup/Restore ora è migliore e più facile</li>
+  <li>Il modulo Backup/Restore ha un supporto di relinking molto migliore, ed è più veloce e più facile da implementare in nuovi moduli</li>
+  </ul>
 
-<ul>
-  <dl>
-    <dt>Nuove caratteristiche importanti </dt>
-    <dd> 
-      <ul>
-        <li>Compatibilit&agrave; con PHP 5</li>
-        <li>Nuova procedura guidata di installazione che aiuta nella configurazione 
-          iniziale del file config.php.</li>
-        <li>L'installazione &egrave; ora completamente localizzata nella tua lingua 
-          preferita. </li>
-        <li>Il modulo Risorsa &egrave; stato completamente rinnovato. Ora &egrave; 
-          pi&ugrave; semplice aggiungere nuove risorse e inviare loro dei dati.</li>
-        <li>Nuovo sistema di Registrazione che comprende moduli come il sistema 
-          di pagamento automatico PayPal, il flatfile scanning, o controllo esterno 
-          del Database.</li>
-        <li>I blocchi funzionano anche sulla Home Page; si pu&ograve; inoltre 
-          inserire una sezione Argomenti al di sopra della parte centrale della 
-          Home Page.</li>
-        <li>La Chat include ora un demone server-side (scritto in PHP) per una 
-          chat instantanea e scalabile.</li>
-        <li>Nuovo modulo Wiki</li>
-        <li>Nuovo supporto per l'editor di testo per chi utilizza il formato MarkDown.</li>
-        <li>Riparati vari altri bugs.</li>
-      </ul>
-    </dd>
-    <dt>Sotto il cappuccio</dt>
-    <dd> 
-      <ul>
-        <li>Il modulo Risorse &egrave; stato dotato di un menu &quot;Aggiungi&quot; 
-          che utilizza sotto-moduli basati sulle classi, facilitando l'inserimento 
-          di nuove attivit&agrave; di tipo Risorsa. </li>
-        <li>Il modulo Quiz &egrave; stato rifattorizzato in tipologie di domanda 
-          basate sulle classi. </li>
-        <li>Il processo di Iscrizione &egrave; stato rifattorizzato in tipologie 
-          iscrizioni basata sulle classi.</li>
-        <li>I formati di visualizzazione del Glossario sono ora basate sui nomi 
-          per facilitare l'inserimento.</li>
-        <li>Migliorato il comportamento di molti moduli quando vengono usati sulla 
-          pagina del sito.</li>
-        <li>La struttura dei Filtri &egrave; stata revisionata e resa compatibile 
-          con Turck MMcache.</li>
-        <li>E' ora consentita una maggior flessibilit&agrave; nell'inserimento 
-          delle attivit&agrave;, in merito ai campi lasciati vuoti.</li>
-        <li>Si possono alterare colonne di tipo PostgreSQL utilizzando table_column().</li>
-        <li>La generazione RSS &egrave; stata velocizzata notevolmente, decrementando 
-          il carico sul cron.</li>
-        <li>Alcuni moduli maggiori sono stati suddivisi tra lib.php a locallib.php 
-          per un minore utilizzo della memoria. </li>
-      </ul>
-    </dd>
-    <dt>Lingue e localizzazioni</dt>
-    <dd> 
-      <ul>
-        <li>Aggiornati i pacchetti di quasi tutte le lingue presenti.</li>
-        <li>Moodle pu&ograve; sovrascrivere il set predefinito dei caratteri in 
-          Apache, rendendo le lingue pi&ugrave; affidabili.</li>
-        <li>le lingue Multibyte sono correttamente inserite.</li>
-        <li>Migliorata la gestione delle localizzazioni e la codifica sui siti 
-          multilingua (come moodle.org)</li>
-        <li>Nuove lingue: Sloveno e Ebraico.</li>
-      </ul>
-    </dd>
-    <dt>Riparazioni di Sicurezza</dt>
-    <dd> 
-      <ul>
-        <li>Riparato un numero di possibili XSS punti di ingresso e path disclosures. 
-          Fixed a number of possible XSS entry points and path disclosures</li>
-        <li>Gli attributi del tag in HTML vengono ora maggiormente analizzati 
-          sintatticamente per controllare scripts disobbedienti. </li>
-        <li>Le pagine di profilo utenti non sono pi&ugrave; disponibili di default 
-          alla consultazione di utenti generici.</li>
-        <li>Tutto il testo viene ora ripulito in fase di output. (non pi&ugrave; 
-          solo in fase di input)</li>
-        <li>Gli indirizzi Email non vengono pi&ugrave; utilizzati nelle mail in 
-          uscita se l'utente non lo richiede.</li>
-        <li>I nuovi settaggi <strong>loginhttps</strong> utilizzano https sicuro 
-          per il login, per poi tornare ad http per il resto.</li>
-      </ul>
-    </dd>
-    <dt>Amministrazione</dt>
-    <dd> 
-      <ul>
-        <li>Nuove e meravigliose interfacce per aggiungere e rimuovere studenti, 
-          creatori e amministratori in un corso. </li>
-        <li>Le login fallite sono ora tracciate nei logs, e possono essere visualizzate 
-          dall'utente dopo aver effettuato con successo la login.</li>
-        <li>I Logs supportano ora la visualizzazione per gruppi e per errori.</li>
-        <li>I moduli sono ora pi&ugrave; gestibili dalla pagina principale del 
-          sito.</li>
-        <li>Gli studenti sulla pagina principale possono ora essere tutti gli 
-          utenti del sito, oppure tutti gli utenti di almeno uno dei corsi sul 
-          sito.</li>
-        <li>L'invio di Email pu&ograve; essere attivato o disattivato dalla pagina 
-          profilo di ogni utente.</li>
-      </ul>
-    </dd>
-    <dt>Autenticazione</dt>
-    <dd> 
-      <ul>
-        <li>Tutti i metodi di autenticazione coesisteranno da ora con gli account 
-          creati internamente. </li>
-        <li>Nuovo supporto di autenticazione contro server First Class. </li>
-        <li>Riparazioni per l'autenticazione POP3.</li>
-      </ul>
-    </dd>
-    <dt>Navigazione</dt>
-    <dd> 
-      <ul>
-        <li>I visitatori possono ora essere autenticati come Ospiti.</li>
-        <li>Il Jump menu mostra sempre la dicitura "Salta a" per aiutare nelle 
-          indicazioni su cosa fa.</li>
-        <li>Il Jump menu dispone ora di una maniera pi&ugrave; chiara nel raggruppare 
-          le attivit&agrave; in sezioni.</li>
-      </ul>
-    </dd>
-    <dt>Blocchi</dt>
-    <dd> 
-      <ul>
-        <li>Il sistema dei blocchi funziona ora anche nei corsi personalizzati.</li>
-        <li>Nuovo blocco Login permette di effettuare il login dalla pagina principale. 
-        </li>
-        <li>Il blocco Utenti online in Home Page mostra tutti gli utenti del sito.</li>
-      </ul>
-    </dd>
-    <dt>Editor</dt>
-    <dd> 
-      <ul>
-        <li>Nuovo pannello di configurazione per l'amministratore.</li>
-        <li>Nuovo supporto per tags di tipo &agrave;ncora nelle pagine.</li>
-        <li>Il Controllo ortografico viene supportato adesso dall'editor.</li>
-      </ul>
-    </dd>
-    <dt>Chat</dt>
-    <dd> 
-      <ul>
-        <li>La Chat include ora un demone server-side (in PHP) per una chat immediata 
-          e scalabile.</li>
-      </ul>
-    </dd>
-    <dt>Scelta</dt>
-    <dd> 
-      <ul>
-        <li>Rinnovamenti siginificativi per migliorarne il significato, con un 
-          maggior numero di opzioni. </li>
-      </ul>
-    </dd>
-    <dt>Forum</dt>
-    <dd> 
-      <ul>
-        <li>Molte riparazioni nella gestione dei gruppi. </li>
-        <li>Gli utenti possono scegliere di ricevere posts di un forum sotto forma 
-          di selezione giornaliera, selezione dei soggetti, o post completi.</li>
-        <li>Le liste di discussione sono ora impaginate.</li>
-        <li>Gli insegnanti hanno ora un totale controllo sulle iscrizioni di un 
-          forum, possono iscrivere chiunque vogliono. </li>
-        <li>La data dell'"Ultimo post" &egrave; stata accorciata e collegata al 
-          post precedente.</li>
-        <li>I forum adesso elencano la lista dei feeds RSS Forums sulla pagina 
-          index. </li>
-        <li>Migliorato l'aspetto dell'HTML utilizzando appieno gli stylesheets.</li>
-        <li>La posta di un Forum non viene inviata se &egrave; pi&ugrave; vecchia 
-          di 2 giorni (per prevenire floods indesiderati). </li>
-        <li>Le mail bloccate vengono loggate in modo da permettere agli insegnanti 
-          di vederle.</li>
-        <li>Porzioni di discussione possono essere estratte dalla discussione 
-          principale per formare una nuova discussione.</li>
-      </ul>
-    </dd>
-    <dt>Glossario</dt>
-    <dd> 
-      <ul>
-        <li>Inserimenti di Glossario possono essere definiti come &quot;sempre 
-          editabili&quot;. </li>
-        <li>I glossari elencano ora le liste di RSS feeds nella pagina index.</li>
-        <li>Molte altre riparazioni sparse.</li>
-      </ul>
-    </dd>
-    <dt>Quiz</dt>
-    <dd> 
-      <ul>
-        <li>nuovo conta-minuti flottante per quiz a tempo.</li>
-        <li>L'opzione tentativi permessi pu&ograve; essere assegnata ad un numero 
-          specifico di computers.</li>
-        <li>Si pu&ograve; impostare una password aggiuntiva alla sezione Quiz 
-          di un corso.</li>
-        <li>Nuova tipologia di domanda: domande calcolate.</li>
-        <li>Le domande numeriche ora supportano le unit&agrave;. 
-        <li>Le domande possono essere viste in anteprima gi&agrave; durante la 
-          compilazione.</li>
-        <li>Si possono esportare le domande in numerosi formati.</li>
-        <li>La gestione degli elenchi di categorie domanda sono state migliorate. 
-        </li>
-        <li>Nuovo (ancora incompleto) formato di esportazione in XML, fornir&agrave; 
-          un'elenco completo delle caratteristiche del quiz. </li>
-        <li>Risposte brevi consente ora l'inserimento di ogni sorta di caratteri 
-          speciali. </li>
-      </ul>
-    </dd>
-    <dt>Risorse</dt>
-    <dd> 
-      <ul>
-        <li>Aggiungi risorsa &egrave; ora un processo che si compie una volta 
-          sola, con maggiori controlli. </li>
-        <li>Pagine Web, Link Web, File trasferiti e risorse di programma sono 
-          tutti richiamabili dalla stessa tendina di scelta. </li>
-      </ul>
-    </dd>
-    <dt>SCORM</dt>
-    <dd> 
-      <ul>
-        <li>Numerose riparazioni e miglioramenti - funziona con un maggior numero 
-          di pacchetti software. </li>
-        <li>Verifica extra opzionale del file manifesto. 
-          <dl>
-            <dt>&nbsp; </dt>
-          </dl>
-        </li>
-      </ul>
-    </dd>
-  </dl>
-</ul>
 
-<div align="center" class="style1"><font size="+1">Infine, non scordatevi di guardare 
-alcuni dei <a href="http://moodle.org/download/modules/">molti moduli opzionali 
-in sviluppo</a>.</font></div> </dd> </dl> 
-<p align="center"><strong><font size="+1">Come sempre, se trovate errori in 
-    Moodle, per favore segnalateli al nostro <a href="http://moodle.org/bugs">Bug 
-    Tracker</a>! </font></strong></p>
+<hr />
+
+
+<h2>Moodle 1.5 (5 giugno 2005) </h2>
+
+<h3>Nuove principali Funzionalità</h3>
+  <ul type="circle">
+  <li> Le pagine Web sono conformi con XHTML Transitional 1.0</li>
+
+  <li> Migliorata <b>Accessibilità</b>, verso la conformità con WAI (W3C), SENDA (UK) e i criteri Section 508 (US).</li>
+  <li> <b>Nuovo sistema di Temi</b> molto stabile, che permette temi cascading, temi di utente, temi di corso, con un controllo molto preciso, via CSS, di ogni pagina in Moodle.</li>
+
+  <li> Funzione integrata di <b>Messaging</b> per una comunicazione diretta tra tutti gli utenti del sito, con finestre popup realtime, notifiche, copie email, bloccaggi, storico, editor WYSIWYG, ecc</li>
+  <li> Evidenza del tracciamento dei messaggi letti/non-letti dei Forum che permette di vedere a colpo d'occhio i nuovi messaggi e di controllare come questi sono mostrati (per forum, per utente o per sito).</li>
+  <li> Nuovo sistema di <b>Blocchi</b>, che permette più copie dei blocchi e una migliore configurazione degli stessi</li>
+
+  <li> Completo supporto per l'<b>Ora legale</b> in ogni paese del mondo, in modo tale che ognuno ha per ogni evento la propria corretta ora locale.</li>
+
+  <li> Nuovo <b>Registro di valutazioni ampliato</b> che permette valutazioni pesate delle diverse attività, l'impostazione di ulteriori valutazioni (o la sottrazione di alcune di esse) e opzioni migliorate per il display e l'ordinamento</li>
+
+  <li> Possibilità di richiedere agli utenti di essere d'accordo con la <b>Linea di condotta del Sito</b>  </li>
+  </ul>
+
+<h3>Altri miglioramenti di tipo generale</h3>
+<h4>Admin </h4>
+  <ul type="circle">
+  <li> Nuova "modalità di gestione" che permette all'amministratore di disabilitare temporaneamente un sito (durante gli aggiornamenti di versione, per esempio).</li>
+
+  <li> Moodle può automaticamente scaricare una nuova lista di "timezones" da moodle.org o da altre parti ed installarla nel database (sono supportati anche i files Olson)</li>
+  <li> Nuova versione del modulo Moodle MySQL Admin (disponibile separatamente)</li>
+
+  <li> Nuova pagina per le opzioni di calendario che permette all'utente di configurare il comportamento del calendario</li>
+  </ul>
+
+<h4>Autenticazione</h4>
+
+  <ul type="circle">
+  <li> Nuovo supporto per Shibboleth</li>
+  <li> Nuovo supporto per CAS</li>
+  <li> Nuovo supporto per PAM</li>
+  <li> Migliorata integrazione con LDAP, tale per cui, via LDAP, si può ora controllare la creazione di corsi, l'assegnazione ai gruppi. Migliorate prestazioni e scalabilità per la sincronizzazione degli utenti</li>
+
+  <li> Alcuni campi utente possono essere bloccati dall'amministratore quando si usa un'autenticazione esterna</li>
+  <li> Migliorata gestione delle sessioni che ora rileva e previene sessioni di "scambio" che abbiamo individuato in alcune installazioni di PHP difettose </li>
+  <li> Le sessioni possono ora essere memorizzate nel database (importante per le installazioni di tipo cluster!)</li>
+
+  <li> Gli utenti possono ora essere obbligati a modificare la propria password</li>
+  </ul>
+
+<h4>Files</h4>
+  <ul type="circle">
+  <li> File browsing standardizzato in tutte le aree</li>
+  <li> Migliorato il caricamento (upload), con support di Virus scanning automatizzato dei nuovi documenti tramite ClamAV.</li>
+  <li> Slasharguments ora funziona anche su IIS (per ISAPI necessario l'aggiornamento a PHP 4.3.11)  </li>
+  </ul>
+
+<h4>Filtri</h4>
+  <ul type="circle">
+  <li> Libreria standardizzata di filtri che rende banale scrivere nuovi filtri che richiedono ricerca e evidenziazione di testo</li>
+  <li> Enorme miglioramento dell'efficienza di filtri complessi come quello del Glossario</li>
+  <li> Nuovo filtro Tidy che usa il programma W3C Tidy per pulire (opzionalmente) tutti i testi introdotti dall'utente nel sito e convertirli in codice XHTML valido</li>
+  <li> Migliorato filtro di censura che ora controlla le parole usando gli stili e usa una lista di parole da censurare derivante dai language packs</li>
+  <li> Migliorato il player Flash MP3 che ora mostra la barra di avanzamento durante lo scarico e la riproduzione</li>
+  <li> Migliorato il filtro Multi-lingua che ora è più veloce, più indulgente con gli errori di sintassi e usa una nuova sintassi editor-friendly:  &lt;span lang="en"&gt;&lt;/span&gt;</li>
+  <li> I filtri di Auto-linking (glossario, attività) possono funzionare per linkare tutte le occorrenze (vecchio comportamento), una volta per ogni blocco di testo oppure una sola volta per l'intera pagina ($CFG-&gt;filtermatchonepertext, $CFG-&gt;filtermatchoneperpage).</li>
+  <li> Più testo può ora essere filtrato in Moodle, compresi i nomi delle attività, i titoli e altri simili brevi testi. Questo rende possibile progettare in Moodle siti completamente multi-lingua che appaiono nella sola lingua scelta dall'utente</li>
+  </ul>
+
+<h4>Temi</h4>
+  <ul type="circle">
+  <li> I moduli possono prevedere stili standard</li>
+  <li> I temi possono ignorare gli stili richiesti di altri temi</li>
+  <li> Gli utenti e i corsi possono scegliere il proprio tema se l'amministratore lo permette</li>
+  <li> Implementazione dell'interfaccia a linguette su molte pagine</li>
+  <li> I Moduli, i Blocchi e le Lingue possono definire i prorpri stili standard</li>
+  </ul>
+
+<h4> Editor HTML</h4>
+  <ul type="circle">
+  <li> I pulsanti presenti nella toolbar dell'editor ora sono configurabili dall'amministratore</li>
+  <li> Possibilità di Ricerca e Sostituzione di testo nell'area dell'editor (con uso opzionale di espressioni regolari)</li>
+  </ul>
+
+<h4> Gestione del Corso</h4>
+
+  <ul type="circle">
+  <li> Importazione trasparente di corsi Blackboard 5.5 (parziale supporto per 6.0)</li>
+  <li> I nuovi meta-corsi permettono di avere utenti automaticamente iscritti in un corso di tipo generale (il metacorso) quando gli stessi sono iscritti in uno dei corsi linkati al meta-corso</li>
+  <li> Nuovo strumento per copiare il contenuto da un corso all'altro</li>
+  </ul>
+
+<h4> Nuovi blocchi </h4>
+  <ul type="circle">
+  <li> Blocchi HTML: permettono di inserire contenuto arbitrario (testo, immagini, links) in ogni home page di corso</li>
+  <li> Remote RSS feed: permettono di mostrare canali di news esterni all'interno di un corso Moodle</li>
+  <li> Selezione dal Glossario: per scegliere e mostrare il contenuto di un glossario Moodle nella home page del corso</li>
+  </ul>
+
+<h4> Calendario</h4>
+  <ul type="circle">
+  <li> Importanti miglioramenti nella rapidità per i siti con un gran numero di corsi che usano i gruppi</li>
+  <li> Gli eventi periodici possono ora essere modificati o cancellati tutti insieme o uno per volta come prima</li>
+  <li> Nuova "impostazione del filtro di memoria" che permette ai filtri calendario di ricordare il loro stato tra un login e l'altro</li>
+  </ul>
+
+<h3> Miglioramenti nei Moduli Attività</h3>
+<h4>Compito</h4>
+  <ul type="circle">
+  <li> Completamente ristrutturato in un nuovo progetto basato sulle classi che può permettere nuovi plugin per nuovi tipi di compito</li>
+  <li> Nuovo tipo di compito "Testo Online" che non richiede l'invio di files e permette commenti online durante la valutazione - questo nuovo tipo, di fatto, rimpiazza il vecchio modulo Diario</li>
+  <li> Enorme miglioramento nell'interfaccia per la valutazioni quando si gestiscono classi numerose</li>
+  <li> Nuove opzioni di configurazione per impedire invii in ritardo e per segnalare via email agli insegnanti quando gli studenti inviano nuovi lavori</li>
+  </ul>
+
+<h4>Chat</h4>
+  <ul type="circle">
+  <li> Interfaccia più diretta che sembra più agevole, funziona più velocemente, anche senza usare il server opzionale</li>
+  <li> Blocchi possono ora essere aggiunti alle pagine di chat (per es. per ulteriori informazioni)</li>
+  </ul>
+
+<h4>Scelta</h4>
+  <ul type="circle">
+  <li> Riscritto il modulo per permettere un numero qualunque di scelte</li>
+  <li> Può essere limitato il numero di utenti che effettuano una scelta, per permettere di usare questo strumento anche come un mezzo per associare gli utenti a un insieme di opzioni</li>
+  <li> Ora i risultati di una scelta possono essere scaricati come file XLS o TXT</li>
+  </ul>
+
+<h4>Forum</h4>
+  <ul type="circle">
+
+  <li> Potente sistema di ricerca nei forum, come quello di Google</li>
+  <li> Tracciamento dei messaggi letti/non-letti - i messaggi  non letti sono evidenziati nella home page del corso, sulla pagina di tutti i forum, sull'elenco delle discussioni e sulla visualizzazione di una discussione</li>
+  <li> Il sistema di tracciamento può essere forzato attivo o disattivo o, opzionalmente, può essere abilitato/disabilitato sia dagli insegnanti che dagli studenti</li>
+  <li> Dalla pagina del profilo di un utente possono essere visualizzati tutti i messaggi inviati dallo stesso e tutte le discussioni iniziate</li>
+  <li> Quando l'amministratore modifica i messaggi di un utente, viene allegata una nota agli stessi</li>
+
+  <li> L'elenco delle discussioni mostra l'ultimo utente che ha inviato un messaggio in ogni discussione e quando lo ha inviato, con un link diretto allo stesso messaggio</li>
+  <li> Nei forum in cui sono previsti i gruppi, l'elenco delle discussioni mostra il gruppo a cui la discussione appartiene, con un link alla pagina descrittiva del gruppo</li>
+  </ul>
+
+<h4>Glossario</h4>
+  <ul type="circle">
+  <li> Nuove impostazioni per abilitare/disabilitare la visualizzazione per la stampa di ogni glossario</li>
+  <li> Nuovo sistema di ricerca che permette di cercare le parole dovunque (invece di ricercare frasi esatte)</li>
+  <li> Più informazioni scritte sui logs per tracciare meglio le attività</li>
+  </ul>
+
+<h4>Diario</h4>
+  <ul type="circle">
+  <li> Il modulo diario non è cambiato dalla versione 1.4, e il suo utilizzo è ora sconsigliato. La procedura di aggiornamento convertirà tutte le attività di tipo Diario in Compiti di tipo Online, nascondendo tutte le vecchie attività Diario. Se non si vuole che questo succeda, bisogna definire nel file config.php:  $CFG->noconvertjournals = true;</li>
+  </ul>
+
+<h4>Lezione</h4>
+
+  <ul type="circle">
+  <li> Ora sono possibili Lezioni a tempo</li>
+  <li> Possono essere create Lezioni per esercitazione (valutazioni non registrate)</li>
+  <li> Opzione per permettere agli studenti di vedere i punti ottenuti durante la lezione</li>
+  <li> Permesso per gli studenti di rivedere le proprie risposte prima di "inviare" una Lezione</li>
+  <li> Nuova modalità Diapositive (solo i rami di tabella sono visualizzabili come diapositive)</li>
+  <li> Nuovo Menu a sinistra (solo per i rami di tabella abilitati)</li>
+  <li> Possibilità di proteggere le Lezioni tramite password</li>
+  <li> Una visualizzazione ad albero può essere usata nella creazione della Lezione</li>
+  <li> Gli studenti possono trasmettere i loro punteggi migliori</li>
+  <li> Nuova opzione per salvare le impostazioni di una Lezione come default per le altre Lezioni nello stesso corso</li>
+  <li> Possono essere cancellati i tentativi di risposta di uno studente</li>
+  <li> Nuovi salti pagina a:
+    <ul type="circle">
+    <li> Pagina precedente</li>
+    <li> Domanda non ancora vista di un ramo</li>
+    <li> Domanda a caso di un ramo</li>
+    <li> Domanda non ancora vista di un cluster</li>
+    </ul>
+
+  </li>
+  <li> Aggiunta funzionalità per vedere le statistiche delle Lezioni</li>
+  <li> Nuovo tipo di domanda: Componimento di un testo. Gli insegnanti possono vedere ogni componimento e scrivere commenti, assegnare un voto, e spedire il tutto via email agli studenti</li>
+  <li> Nuova interfaccia per la creazione di domande</li>
+
+  </ul>
+
+<h4>Quiz</h4>
+
+  <ul type="circle">
+  <li> Possono ora essere gestite domande di tipo adattativo, cioè domande che permettono agli studenti di interagire con le stesse ripetutamente, nell'ambito dello stesso quiz e che possono cambiare in funzione delle risposte degli studenti</li>
+  <li> Agli studenti può essere permesso di riprovare subito una domanda nell'ambito dello stesso tentativo di risposta al quiz fino a ottenere la risposta corretta</li>
+  <li> E' stato introdotto un meccanismo di penalizzazione che sottrae una definita frazione di punteggio per ogni tentativo errato di risposta a un quiz</li>
+  <li> E' possibile produrre domande e ralativi punteggi esternamente (per es. da strumenti di valutazione di tipo matematico) e inserirli senza difficoltà tra i quiz di Moodle attraverso il protocollo degli RQP web services </li>
+  <li> Il modulo è predisposto per la gestione delle domande IMS QTI appena saranno disponibili i web services per le stesse</li>
+  <li> Nuova interfaccia a linguette per permettere all'insegnante di vedere un'anteprima, di modificare e rivedere i Quiz</li>
+  <li> Nuova modalità di "sicurezza" che mostra il quiz in una finestra separata a pieno schermo, con molte delle caratteristiche del browser disabilitate</li>
+  <li> I Quiz possono essere mostrati agli studenti su più pagine. Il numero di domande per pagina è impostabile da parte dell'insegnante</li>
+  <li> Blocchi possono ora essere aggiunti alle pagine di quiz (per mostrare tabelle di risultati, o ulteriori informazioni ecc.)</li>
+  <li> Migliore e più chiara interfaccia per la selezione e la gestione delle domande nel database. Le domande scelte possono essere aggiunte al quiz, spostate in altre categorie o cancellate in massa.</li>
+  <li> Le domande casuali sono ora aggiunte alla lista delle domande del quiz con un pulsante dedicato, lasciando una più chiara interfaccia solo per le domande del database senza "domande fantasma"</li>
+  <li> La valutazione finale può essere un numero frazionario, con il numero di cifre decimali definite dall'insegnante</li>
+  <li> Pagina dei risultati migliorata, con la possibilità di scegliere da parte dell'utente il display delle colonne, ordinamenti più chiari e nuove opzioni di visualizzazione dei voti</li>
+  <li> Le domande possono essere editate con un click a partire da una migliorata anteprima del quiz e dai pannelli di anteprima delle domande</li>
+  <li> Le domande possono essere copiate con un click, per permettere di creare facilmente variazioni di una stessa domanda</li>
+  <li> Struttura delle Categorie di domande e modalità di interfaccia riorganizzate</li>
+  <li> Le Categorie ora possono contenere sottocategorie nidificate e possono essere ri-ordinate</li>
+  <li> E' possibile scegliere se vanno mostrate le domande solo dalle categorie radice, o anche dalle relative sottocategorie sulla pagina di editing delle domande stesse</li>
+  <li> E' ora possibile decidere se aggiungere domande casuali solo da una categoria o dalla stessa categoria e dalle sue sottocategorie</li>
+  <li> I progettisti di quiz sono preavvertiti dal cambiare le domande di un quiz che hanno già avuto risposte dagli studenti</li>
+  <li> La rilevazione e l'eliminazione di domande doppioni/ridondanti sono state migliorate</li>
+  <li> Nell'editing delle domande, la visualizzazione delle domande dei quiz delle categorie più lunghe è ora paginata</li>
+  <li> Nuovi tipi di esportazione - IMS QTI (2.0), xhtml e Hot Potato. Miglioramenti e correzioni negli altri tipi.</li>
   
-<p>&nbsp;</p>
+  </ul>
+
+<h4>Scorm </h4>
+  <ul type="circle">
+  <li> Il modulo è ora completamente conforme con lo standard SCORM 1.2</li>
+  <li> Sono state migliorate la registrazione dei risultati degli utenti e la loro visualizzazione</li>
+  <li> Ora possono essere importati i package AICC </li>
+  </ul>
+
+<h4>Sondaggio</h4>
+  <ul type="circle">
+  <li> La produzione dei risultati grafici è stata migliorata (le diciture sono più leggibili)</li>
+  </ul>
+
+<h4>Wiki </h4>
+  <ul type="circle">
+  <li> Le modifiche alle pagine wiki sono ora monitorate e visualizzate nel blocco Attività Recente</li>
+  <li> Sono stati apportati diversi miglioramenti alle routine di backup/restore e altre per potenziare l'affidabilità dei documenti wiki</li>
+</ul>
+
+
+<br />
+<br />
+<div align="center" class="style1"><strong><font size="+1">Se trovate errori in questa release, segnalateli a <a href="http://moodle.org/bugs" target="_blank">moodle.org/bugs</a> in modo da poterli correggere nelle prossime release</font></strong></div>
+<br />
 <center>
-  <p> <a href="./?file=releaseold.html">Informazioni sulle versioni precedenti</a></p>
+  <p>
+<a href="./?file=releaseold.html">Informazioni sulle precedenti release</a>
+</p>
 </center>
-<p>&nbsp;</p>
-<p align="CENTER"><font size="1"><a href="../doc/" target="_top">Documentazione 
-  di Moodle</a></font></p>
-<p align="CENTER"><font size="1">Version: $Id$</font></p>
+<br />
+<p align="center"><font size="1"><a href="../doc/" target="_top">Documentazione di Moodle</a></font></p>
+<p align="center"><font size="1">Versione: $Id$</font></p>

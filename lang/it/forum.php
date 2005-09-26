@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.5 ALPHA (2005043000)
+      // forum.php - created with Moodle 1.6 development (2005081700)
 
 
 $string['addanewdiscussion'] = 'Aggiungi un nuovo argomento di discussione';
@@ -7,9 +7,9 @@ $string['addanewtopic'] = 'Aggiungi un nuovo argomento';
 $string['advancedsearch'] = 'Ricerca avanzata';
 $string['allforums'] = 'Tutti i forum';
 $string['allowchoice'] = 'Scegli';
-$string['allowdiscussions'] = 'Può $a scrivere in questo forum?';
+$string['allowdiscussions'] = 'Possibilità di un(o) $a di scrivere in questo forum';
 $string['allowratings'] = 'Permettere la valutazione dei messaggi?';
-$string['allowsdiscussions'] = 'Questo forum permette a ciscuna persona di dare inizio a una discussione.';
+$string['allowsdiscussions'] = 'Questo forum permette a tutti di iniziare una nuova discussione.';
 $string['anyfile'] = 'Qualunque file';
 $string['attachment'] = 'Allegato';
 $string['bynameondate'] = 'di $a->name - $a->date';
@@ -112,6 +112,8 @@ $string['oldertopics'] = 'Vecchi argomenti';
 $string['openmode0'] = 'Discussioni e risposte non permesse';
 $string['openmode1'] = 'Discussioni non permesse ma risposte consentite';
 $string['openmode2'] = 'Discussioni e risposte sono permesse';
+$string['overviewnumpostssince'] = '$a messaggio dall\'ultimo accesso';
+$string['overviewnumunread'] = '$a totale non letti';
 $string['parent'] = 'Mostra superiore';
 $string['parentofthispost'] = 'Padre di questo messaggio';
 $string['postadded'] = 'Il tuo messaggio è stato aggiunto con successo.<br />Hai $a  a disposizione se desideri apportare delle modifiche.';
