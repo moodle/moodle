@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5.2 + (2005060222)
+      // moodle.php - created with Moodle 1.5.2 + (2005060223)
 
 
 $string['action'] = 'Acció';
@@ -561,7 +561,7 @@ $string['htmleditordisabledbrowser'] = 'L\'editor HTML no està disponible perquè
 $string['htmlformat'] = 'Format HTML';
 $string['icqnumber'] = 'Número ICQ';
 $string['idnumber'] = 'Número ID';
-$string['importdata'] = 'Importa dades del curs';
+$string['importdata'] = 'Importa dades d\'un curs';
 $string['importdataexported'] = 'S\'han exportat amb èxit les dades del curs origen.<br /> Continueu per importar-les al curs de destinació.';
 $string['importdatafinished'] = 'S\'ha completat la importació. Aneu al vostre curs.';
 $string['importdatafrom'] = 'Seleccioneu un curs per importar-ne les dades:';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.5 Beta (2005052300)
+      // forum.php - created with Moodle 1.5.2 + (2005060223)
 
 
 $string['addanewdiscussion'] = 'Afegeix un nou tema de debat';
@@ -58,7 +58,7 @@ $string['forcesubscribeq'] = 'Imposeu que tothom estigui subscrit?';
 $string['forum'] = 'Fòrum';
 $string['forumintro'] = 'Introducció al fòrum';
 $string['forumname'] = 'Nom del fòrum';
-$string['forumposts'] = 'Missatges del fòrum';
+$string['forumposts'] = 'Missatges enviats';
 $string['forums'] = 'Fòrums';
 $string['forumtype'] = 'Tipus de fòrum';
 $string['generalforum'] = 'Fòrum estàndard per a ús general';
