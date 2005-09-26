@@ -203,40 +203,59 @@ class quiz_calculated_qtype extends quiz_dataset_dependent_questiontype {
         // virtual type for printing
         $virtualqtype = $this->get_virtual_qtype();
         $unit = $virtualqtype->get_default_numerical_unit($question);
+
+        // We modify the question to look like a numerical question
+        $numericalquestion = clone($question);
+        $numericalquestion->options = clone($question->options);
         foreach ($question->options->answers as $key => $answer) {
-            $answer = &$question->options->answers[$key]; // for PHP 4.x
+            $numericalquestion->options->answers[$key] = clone($answer);
+        }
+        foreach ($numericalquestion->options->answers as $key => $answer) {
+            $answer = &$numericalquestion->options->answers[$key]; // for PHP 4.x
             $correctanswer = quiz_qtype_calculated_calculate_answer(
                  $answer->answer, $state->options->dataset, $answer->tolerance,
                  $answer->tolerancetype, $answer->correctanswerlength,
                  $answer->correctanswerformat, $unit->unit);
             $answer->answer = $correctanswer->answer;
         }
-        $question->questiontext = parent::substitute_variables(
-         $question->questiontext, $state->options->dataset);
-        $virtualqtype->print_question_formulation_and_controls($question,
+        $numericalquestion->questiontext = parent::substitute_variables(
+         $numericalquestion->questiontext, $state->options->dataset);
+        $virtualqtype->print_question_formulation_and_controls($numericalquestion,
          $state, $quiz, $options);
     }
 
     function grade_responses(&$question, &$state, $quiz) {
         // Forward the grading to the virtual qtype
+
+        // We modify the question to look like a numerical question
+        $numericalquestion = clone($question);
+        $numericalquestion->options = clone($question->options);
         foreach ($question->options->answers as $key => $answer) {
-            $answer = &$question->options->answers[$key]; // for PHP 4.x
+            $numericalquestion->options->answers[$key] = clone($answer);
+        }
+        foreach ($numericalquestion->options->answers as $key => $answer) {
+            $answer = &$numericalquestion->options->answers[$key]; // for PHP 4.x
             $answer->answer = $this->substitute_variables($answer->answer,
              $state->options->dataset);
         }
-        return parent::grade_responses($question, $state, $quiz);
+        return parent::grade_responses($numericalquestion, $state, $quiz);
     }
 
     // ULPGC ecastro
     function check_response(&$question, &$state) {
         // Forward the checking to the virtual qtype
+        // We modify the question to look like a numerical question
+        $numericalquestion = clone($question);
+        $numericalquestion->options = clone($question->options);
         foreach ($question->options->answers as $key => $answer) {
-            $answer = &$question->options->answers[$key]; // for PHP 4.x
+            $numericalquestion->options->answers[$key] = clone($answer);
+        }
+        foreach ($numericalquestion->options->answers as $key => $answer) {
+            $answer = &$numericalquestion->options->answers[$key]; // for PHP 4.x
             $answer->answer = $this->substitute_variables($answer->answer,
              $state->options->dataset);
         }
-        //return false;
-        return parent::check_response($question, $state);
+        return parent::check_response($numericalquestion, $state);
     }
 
     // ULPGC ecastro
@@ -245,19 +264,26 @@ class quiz_calculated_qtype extends quiz_dataset_dependent_questiontype {
         // virtual type
         $virtualqtype = $this->get_virtual_qtype();
         $unit = $virtualqtype->get_default_numerical_unit($question);
+
+        // We modify the question to look like a numerical question
+        $numericalquestion = clone($question);
+        $numericalquestion->options = clone($question->options);
         foreach ($question->options->answers as $key => $answer) {
-            $answer = &$question->options->answers[$key]; // for PHP 4.x
+            $numericalquestion->options->answers[$key] = clone($answer);
+        }
+        foreach ($numericalquestion->options->answers as $key => $answer) {
+            $answer = &$numericalquestion->options->answers[$key]; // for PHP 4.x
             $answer->answer = $this->substitute_variables($answer->answer,
              $state->options->dataset);
             // apply_unit
         }
-        $question->questiontext = parent::substitute_variables(
-                                  $question->questiontext, $state->options->dataset);
-        $responses = $virtualqtype->get_all_responses($question, $state);
+        $numericalquestion->questiontext = parent::substitute_variables(
+                                  $numericalquestion->questiontext, $state->options->dataset);
+        $responses = $virtualqtype->get_all_responses($numericalquestion, $state);
         $response = reset($responses->responses);
         $correct = $response->answer.' : ';
 
-        $responses = $virtualqtype->get_actual_response($question, $state);
+        $responses = $virtualqtype->get_actual_response($numericalquestion, $state);
 
         foreach ($responses as $key=>$response){
             $responses[$key] = $correct.$response;
