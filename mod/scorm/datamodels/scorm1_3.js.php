@@ -37,7 +37,7 @@ function SCORMapi1_3() {
     CMIResult = '^correct$|^wrong$|^unanticipated$|^neutral$|^([0-9]{0,3})?(\.[0-9]{1,2})?$';
     NAVEvent = '^previous$|^continue$';
     // Children lists
-    cmi_children = 'comment_from_learner, comments_from_lms, completion_status, credit, entry, exit, interactions, launch_data, learner_id, learner_name, learner_preference, location, max_time_allowed, mode, objectives, progress_measure, scaled_passing_score, score, session_time, success_status, suspend_data, time_limit_action, total_time';
+    cmi_children = 'version, comment_from_learner, comments_from_lms, completion_status, credit, entry, exit, interactions, launch_data, learner_id, learner_name, learner_preference, location, max_time_allowed, mode, objectives, progress_measure, scaled_passing_score, score, session_time, success_status, suspend_data, time_limit_action, total_time';
     comments_children = 'comment, location, date_time';
     score_children = 'scaled, raw, min, max';
     objectives_children = 'id, score, success_status, completion_status, description';
@@ -53,7 +53,7 @@ function SCORMapi1_3() {
     // The SCORM 1.3 data model
     var datamodel =  {
         'cmi._children':{'defaultvalue':cmi_children, 'mod':'r'},
-        'cmi._version':{'defaultvalue':'1.0', 'mod':'r'},
+        'cmi.version':{'defaultvalue':'1.0', 'mod':'r'},
         'cmi.comments_from_learner._children':{'defaultvalue':comments_children, 'mod':'r'},
         'cmi.comments_from_learner._count':{'mod':'r', 'defaultvalue':'0'},
         'cmi.comments_from_learner.n.comment':{'format':CMIString4000, 'mod':'rw'},
