@@ -1531,10 +1531,13 @@ function quiz_regrade_question_in_attempt($question, $attempt, $quiz=false, $ver
              $attempt)) {
                 $verbose && notify("Couldn't regrade state #{$state->id}!");
             }
-            if ((float)$replaystate->grade != (float)$states[$j]->grade) {
-                $changed++;
 
+            // We need rounding here because grades in the DB get truncated
+            // e.g. 0.33333 != 0.3333333, but we want them to be equal here
+            if (round((float)$replaystate->grade, 5) != round((float)$states[$j]->grade, 5)) {
+                $changed++;
             }
+
             $replaystate->id = $states[$j]->id;
             $replaystate->update = true;
             quiz_save_question_session($question, $replaystate);
