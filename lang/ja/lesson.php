@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.6 development (2005081700)
+      // lesson.php - created with Moodle 1.6 development (2005090100)
 
 
 $string['accesscontrol'] = 'アクセスコントロール';
@@ -94,7 +94,7 @@ $string['flowcontrol'] = 'フローコントロール';
 $string['general'] = '一般設定';
 $string['gobacktolesson'] = 'レッスンに戻る';
 $string['grade'] = '評点';
-$string['gradebetterthan'] = '評点が上 (&#37;)';
+$string['gradebetterthan'] = '評点が上 (%%)';
 $string['gradebetterthanerror'] = '$a パーセントより多い評点が与えられています。';
 $string['gradeessay'] = '作文問題の評定';
 $string['gradeis'] = '評点は $a です';
@@ -255,7 +255,7 @@ $string['welldone'] = 'よくできました!';
 $string['whatdofirst'] = '最初に何をしますか?';
 $string['wronganswerjump'] = '誤答のジャンプ先';
 $string['wronganswerscore'] = '誤答のスコア';
-$string['wrongresponse'] = '誤答に対するフィードバック';
+$string['wrongresponse'] = '誤答に対するレスポンス';
 $string['youhavereceived'] = 'この作文問題で、 out of $a->outof 点中 $a->score 点を取りました。';
 $string['youhaveseen'] = 'あなたは既にこのレッスンを1ページ以上閲覧しました。<br />あなたが見た最後のページから始めますか?';
 $string['youmadehighscore'] = 'あなたはトップ $a ハイスコアリストに入りました。';
