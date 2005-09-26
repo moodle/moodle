@@ -1346,7 +1346,7 @@ function quiz_save_question_session(&$question, &$state) {
     if (strlen($state->raw_grade) > 10 && floatval($state->raw_grade) < 1) {
     	$state->raw_grade = strval(round($state->raw_grade,2));
     }
-    
+
     // Save the state
     if (isset($state->update)) {
         update_record('quiz_states', $state);
@@ -1547,7 +1547,7 @@ function quiz_regrade_question_in_attempt($question, $attempt, $quiz=false, $ver
             } else {
                 echo ' #'.$attempt->id;
             }
-            echo "\n"; flush(); ob_flush();
+            echo "\n"; @flush(); @ob_flush();
         }
 
         return true;
