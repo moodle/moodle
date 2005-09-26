@@ -41,6 +41,8 @@ class quiz_report extends quiz_default_report {
             foreach ($attempts as $attempt) {
                 set_time_limit(30);
                 quiz_regrade_question_in_attempt($question, $attempt, $quiz, true);
+                // Reload the question options in case they got altered during regrading
+                $QUIZ_QTYPES[$question->qtype]->get_question_options($question);
             }
             echo '<br/ >';
             // the following makes sure that the output is sent immediately.
