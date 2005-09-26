@@ -49,10 +49,10 @@ $HOTPOT_OUTPUTFORMAT = array (
 	HOTPOT_OUTPUTFORMAT_BEST    => get_string("outputformat_best", "hotpot"),
 	HOTPOT_OUTPUTFORMAT_V6_PLUS => get_string("outputformat_v6_plus", "hotpot"),
 	HOTPOT_OUTPUTFORMAT_V6      => get_string("outputformat_v6", "hotpot"),
-	HOTPOT_OUTPUTFORMAT_V5_PLUS => get_string("outputformat_v5_plus", "hotpot"),
-	 HOTPOT_OUTPUTFORMAT_V5      => get_string("outputformat_v5", "hotpot"),
-	 HOTPOT_OUTPUTFORMAT_V4      => get_string("outputformat_v4", "hotpot"),
-	 HOTPOT_OUTPUTFORMAT_V3      => get_string("outputformat_v3", "hotpot"),
+	// HOTPOT_OUTPUTFORMAT_V5_PLUS => get_string("outputformat_v5_plus", "hotpot"),
+	// HOTPOT_OUTPUTFORMAT_V5      => get_string("outputformat_v5", "hotpot"),
+	// HOTPOT_OUTPUTFORMAT_V4      => get_string("outputformat_v4", "hotpot"),
+	// HOTPOT_OUTPUTFORMAT_V3      => get_string("outputformat_v3", "hotpot"),
 	// HOTPOT_OUTPUTFORMAT_FLASH   => get_string("outputformat_flash", "hotpot"),
 	// HOTPOT_OUTPUTFORMAT_MOBILE  => get_string("outputformat_mobile", "hotpot"),
 );
@@ -2145,16 +2145,6 @@ function hotpot_string_id($str) {
 		}
 	}
 	return $id;
-}
-
-function hotpot_flush($n=0, $time=false) {
-	if ($time) {
-		$t = strftime("%X",time());
-	} else {
-		$t = "";
-	}
-	echo str_repeat(" ", $n) . $t . "\n";
-	flush();
 }
 
 if (!function_exists('html_entity_decode')) {
