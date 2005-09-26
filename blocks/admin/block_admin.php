@@ -55,11 +55,6 @@ class block_admin extends block_list {
             $this->content->items[] = '<a href="'.$CFG->wwwroot.'/course/log.php?id='.SITEID.'">'.get_string('logs').'</a>';
             $this->content->icons[] = '<img src="'.$CFG->pixpath.'/i/log.gif" height="16" width="16" alt="" />';
 
-            if (!empty($CFG->enablestats)) {
-                $this->content->items[] = '<a href="'.$CFG->wwwroot.'/course/stats.php?course='.SITEID.'">'.get_string('stats').'</a>';
-                $this->content->icons[] = '<img src="'.$CFG->pixpath.'/i/stats.gif" height="16" width="16" alt="" />';
-            }
-
             $this->content->items[] = '<a href="'.$CFG->wwwroot.'/files/index.php?id='.SITEID.'">'.get_string('sitefiles').'</a>';
             $this->content->icons[] = '<img src="'.$CFG->pixpath.'/i/files.gif" height="16" width="16" alt="" />';
 
@@ -91,9 +86,9 @@ class block_admin extends block_list {
             if ($isteacheredit) {
                 $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/edit.gif" height="16" width="16" alt="" />';
                 if (isediting($this->instance->pageid)) {
-                    $this->content->items[]='<a href="view.php?id='.$this->instance->pageid.'&amp;edit=off">'.get_string('turneditingoff').'</a>';
+                    $this->content->items[]='<a href="view.php?id='.$this->instance->pageid.'&amp;edit=off&amp;sesskey='.sesskey().'">'.get_string('turneditingoff').'</a>';
                 } else {
-                    $this->content->items[]='<a href="view.php?id='.$this->instance->pageid.'&amp;edit=on">'.get_string('turneditingon').'</a>';
+                    $this->content->items[]='<a href="view.php?id='.$this->instance->pageid.'&amp;edit=on&amp;sesskey='.sesskey().'">'.get_string('turneditingon').'</a>';
                 }
                 
                 $this->content->items[]='<a href="edit.php?id='.$this->instance->pageid.'">'.get_string('settings').'</a>';
@@ -145,11 +140,6 @@ class block_admin extends block_list {
 
                 $this->content->items[]='<a href="scales.php?id='.$this->instance->pageid.'">'.get_string('scales').'</a>';
                 $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/scales.gif" height="16" width="16" alt="" />';
-
-                if (!empty($CFG->enablestats)) {
-                    $this->content->items[] = '<a href="'.$CFG->wwwroot.'/course/stats.php?course='.$this->instance->pageid.'">'.get_string('stats').'</a>';
-                    $this->content->icons[] = '<img src="'.$CFG->pixpath.'/i/stats.gif" height="16" width="16" alt="" />';
-                }
             }
 
             $this->content->items[]='<a href="'.$CFG->wwwroot.'/grade/index.php?id='.$this->instance->pageid.'">'.get_string('grades').'</a>';
