@@ -592,6 +592,7 @@ $string['includenoneusers'] = '非ユーザを含む';
 $string['includeuserfiles'] = 'ユーザファイルを含む';
 $string['info'] = '情報';
 $string['institution'] = '所属組織';
+$string['instudentview'] = ': 学生モード使用中';
 $string['invalidemail'] = '不正なメールアドレスです。';
 $string['invalidlogin'] = '不正なログインです、再度ログインしてください。';
 $string['ip_address'] = 'IPアドレス';
