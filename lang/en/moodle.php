@@ -616,6 +616,7 @@ $string['includenoneusers'] = 'Include None Users';
 $string['includeuserfiles'] = 'Include User Files';
 $string['info'] = 'Information';
 $string['institution'] = 'Institution';
+$string['instudentview'] = 'in student view';
 $string['invalidemail'] = 'Invalid email address';
 $string['invalidlogin'] = 'Invalid login, please try again';
 $string['ip_address'] = 'IP Address';
