@@ -33,11 +33,30 @@
     if (empty($form->hidetoc)) {
         $form->hidetoc = "0";
     }
+    if (empty($form->hidenav)) {
+        $form->hidenav = "0";
+    }
     if (empty($form->width)) {
         $form->width = $CFG->scorm_framewidth;
     }
+    if ($form->width <= 100) {
+        $form->width .= '%';
+    }
     if (empty($form->height)) {
         $form->height = $CFG->scorm_frameheight;
+    }
+    if ($form->height <= 100) {
+        $form->height .= '%';
+    }
+    if (empty($form->options)) {
+        $form->options = $stdoptions;
+    }
+    $options = explode(',',$form->options);
+    $window = new stdClass();
+    foreach ($options as $option) {
+        list($element,$value) = explode('=',$option);
+        $element = trim($element);
+        $window->$element = trim($value)==1?'checked':''; 
     }
 
     $scormid = '';
@@ -55,6 +74,19 @@
 
     $strfilename = get_string("coursepacket", "scorm");
     $strchooseafile = get_string("chooseapacket", "scorm");
+    $striframe = get_string("iframe", "scorm");
+    $striframedisplay = get_string("iframedisplay", "scorm");
+    $strnewwindow = get_string("popup", "scorm");
+    $strnewwindowopen = get_string("popupopen", "scorm");
+    $strheight = get_string("height", "scorm");
+    $strwidth = get_string("width", "scorm");
+    $strresizable = get_string("resizable", "scorm");
+    $strscrollbars = get_string("scrollbars", "scorm");
+    $strdirectories = get_string("directories", "scorm");
+    $strlocation = get_string("location", "scorm");
+    $strmenubar = get_string("menubar", "scorm");
+    $strtoolbar = get_string("toolbar", "scorm");
+    $strstatus = get_string("statusbar", "scorm");
 ?>
 
 <script type="text/javascript" src="<?php p($CFG->wwwroot) ?>/mod/scorm/request.js" ></script>
@@ -220,7 +252,6 @@
                                 $options[0]=get_string("no");
                                 $options[1]=get_string("yes");
                                 choose_from_menu ($options, "auto", $form->auto,'');
-                                helpbutton("autocontinue", get_string("autocontinue", "scorm"), "scorm", true);
                             ?>
                             </td>
                         </tr>
@@ -232,7 +263,6 @@
                                 $options[0]=get_string("no");
                                 $options[1]=get_string("yes");
                                 choose_from_menu ($options, "hidebrowse", $form->hidebrowse, '');
-                                helpbutton("browsemode", get_string("hidebrowse", "scorm"), "scorm", true);
                             ?>
                             </td>
                         </tr>
@@ -244,7 +274,17 @@
                                 $options[0]=get_string("no");
                                 $options[1]=get_string("yes");
                                 choose_from_menu ($options, "hidetoc", $form->hidetoc, '');
-                                helpbutton("tocdisplay", get_string("hidetoc", "scorm"), "scorm", true);
+                            ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right"><b><?php print_string("hidenav","scorm") ?>:</b></td>
+                            <td>
+                            <?php
+                                $options = array();
+                                $options[0]=get_string("no");
+                                $options[1]=get_string("yes");
+                                choose_from_menu ($options, "hidenav", $form->hidenav, '');
                             ?>
                             </td>
                         </tr>
@@ -264,6 +304,59 @@
         <tr>
             <td colspan="2">
                 <div id="windowsettings">
+                    <table align="center">
+                        <tr valign="top">
+                            <td>
+                                <b><?php print_string('stagesize','scorm'); ?></b><br />
+                                <input name="width" type="text" size="4" value="<?php p($form->width) ?>" alt="<?php p($strwidth) ?>" />
+                                <label for="width"><?php p($strwidth) ?></label><br />
+                                <input name="height" type="text" size="4" value="<?php p($form->height) ?>" alt="<?php p($strheight) ?>" />
+                                <label for="height"><?php p($strheight) ?></label>
+                            </td>
+                        </tr>
+                        <tr valign="top">
+                            <td>
+                                <script type="text/javascript">
+                                    var popupitems = ["<?php echo implode('","',$SCORM_POPUP_OPTIONS); ?>"];
+                                </script>
+                                <br /><b><?php print_string('display','scorm'); ?>:</b><br />
+                                <input type="radio" 
+                                       name="popup"
+                                       value="0" alt="<?php p($striframe) ?>" 
+                                       <?php echo ($form->popup == 0) ? "checked=\"checked\"" : "" ?> 
+                                       onclick="return lockoptions('form', 'popup[1]', popupitems);"
+                                />
+                                <b title="<?php p($striframedisplay) ?>"><?php p($striframe) ?></b>
+                            </td>
+                        </tr>
+                        <tr valign="top">
+                            <td>
+                                <input name="popup" 
+                                       type="radio" 
+                                       value="1" 
+                                       alt="<?php p($strnewwindow)?>" 
+                                       <?php echo ($form->popup == 1) ? "checked=\"checked\"" : "" ?>
+                                       onclick="return lockoptions('form', 'popup[1]', popupitems);"
+                                />
+                                <b title="<?php p($strnewwindowopen) ?>"><?php p($strnewwindow) ?></b>
+                                <blockquote>
+                                    <?php
+                                        foreach ($window as $name => $value) {
+                                            echo "<input name=\"h$name\" type=\"hidden\" value=\"0\"/>\n";
+                                            echo "<input name=\"$name\" type=\"checkbox\" value=\"1\" ".$window->$name." alt=\"$name\" />\n";
+                                            $stringname = "str$name";
+                                            echo $$stringname."<br />\n";
+                                        }
+                                    ?>
+                                    <script type="text/javascript">
+                                        lockoptions('form','popup[1]', popupitems);
+                                    </script>
+                                </blockquote>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+<!--                <div id="windowsettings">
                     <table align="center">
                         <tr>
                             <td align="right"><b><?php print_string("popup","scorm") ?>:</b></td>
@@ -297,7 +390,7 @@
                             </td>
                         </tr>
                     </table>
-                </div>
+                </div> -->
                 <script language="javascript" type="text/javascript">
                     showhide('advancedsettings', true);
                     showhide('windowsettings', true);

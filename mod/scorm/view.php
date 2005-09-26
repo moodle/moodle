@@ -113,7 +113,7 @@
         print_simple_box_end();
  ?>
     <div class="center">
-        <form name="theform" method="post" action="playscorm.php?id=<?php echo $cm->id ?>"<?php echo $scorm->popup == 1?' target="newwin"':'' ?>>
+        <form name="theform" method="post" action="playscorm.php?id=<?php echo $cm->id ?>">
 <?php
     if ($scorm->hidebrowse == 0) {
         print_string("mode","scorm");

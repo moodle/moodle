@@ -34,7 +34,7 @@
     
     if (confirm_sesskey() && (!empty($scoid))) {
         $result = true;
-        if (isstudent($course->id)) {
+        if (isstudent($course->id) || (isteacher($course->id) && !isadmin()) {
             foreach ($_POST as $element => $value) {
                 if (substr($element,0,3) == 'cmi') {
                     $element = str_replace('__','.',$element);

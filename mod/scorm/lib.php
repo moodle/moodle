@@ -10,6 +10,15 @@ $SCORM_GRADE_METHOD = array (VALUESCOES => get_string('gradescoes', 'scorm'),
                              VALUEHIGHEST => get_string('gradehighest', 'scorm'),
                              VALUEAVERAGE => get_string('gradeaverage', 'scorm'),
                              VALUESUM => get_string('gradesum', 'scorm'));
+$SCORM_POPUP_OPTIONS = array('resizable', 'scrollbars', 'directories', 'location',
+                              'menubar', 'toolbar', 'status');
+$stdoptions = '';
+foreach ($SCORM_POPUP_OPTIONS as $popupopt) {
+    $stdoptions .= $popupopt.'=1';
+    if ($popupopt != 'status') {
+        $stdoptions .= ',';
+    }
+}
 
 /*if (!isset($CFG->scorm_validate)) {
     $scormvalidate = 'none';
@@ -41,10 +50,27 @@ if (!isset($CFG->scorm_framewidth)) {
 */
 function scorm_add_instance($scorm) {
 
+    global $CFG,$SCORM_POPUP_OPTIONS;
     $scorm->timemodified = time();
 
-    # May have to add extra stuff in here #
-    global $CFG;
+    if (isset($scorm->popup)) {
+        if ($scorm->popup) {
+            $optionlist = array();
+            foreach ($SCORM_POPUP_OPTIONS as $option) {
+                if (isset($scorm->$option)) {
+                    $optionlist[] = $option.'='.$scorm->$option;
+                } else {
+                    $optionlist[] = $option.'=0';
+                }
+            }       
+            $scorm->options = implode(',', $optionlist);
+        } else {
+            $scorm->options = '';
+        } 
+    } else {
+        $scorm->popup = 0;
+        $scorm->options = '';
+    }
 
     $id = insert_record('scorm', $scorm);
 
@@ -82,10 +108,29 @@ function scorm_add_instance($scorm) {
 */
 function scorm_update_instance($scorm) {
 
+    global $CFG,$SCORM_POPUP_OPTIONS;
+
     $scorm->timemodified = time();
     $scorm->id = $scorm->instance;
 
-    global $CFG;
+    if (isset($scorm->popup)) {
+        if ($scorm->popup) {
+            $optionlist = array();
+            foreach ($SCORM_POPUP_OPTIONS as $option) {
+                if (isset($scorm->$option)) {
+                    $optionlist[] = $option.'='.$scorm->$option;
+                } else {
+                    $optionlist[] = $option.'=0';
+                }       
+            }       
+            $scorm->options = implode(',', $optionlist);
+        } else {
+            $scorm->options = '';
+        } 
+    } else {
+        $scorm->popup = 0;
+        $scorm->options = '';
+    }
 
     // Check if scorm manifest needs to be reparsed
     if ($scorm->launch == 0) {
@@ -1466,6 +1511,7 @@ function scorm_get_toc($scorm,$liststyle,$currentorg='',$scoid='',$mode='normal'
             $sco->showprev = $showprev;
             $sco->shownext = $shownext;
             $result->sco = $sco;
+            $result->incomplete = $incomplete;
         } else {
             $result->incomplete = $incomplete;
         }

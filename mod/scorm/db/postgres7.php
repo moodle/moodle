@@ -210,6 +210,11 @@ function scorm_upgrade($oldversion) {
             }
         }
     }
+
+    if ($oldversion < 2005092500) {
+        table_column("scorm", "", "hidenav", "integer", "", "", "0", "NOT NULL", "hidetoc");
+        table_column("scorm", "", "options", "varchar", "255", "", "", "NOT NULL","popup");
+    }
     
     return true;
 }

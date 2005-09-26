@@ -13,8 +13,10 @@ CREATE TABLE prefix_scorm (
   summary text NOT NULL default '',
   hidebrowse integer NOT NULL default '0',
   hidetoc integer NOT NULL default '0',
+  hidenav integer NOT NULL default '0',
   auto integer NOT NULL default '0',
   popup integer NOT NULL default '0',
+  options varchar(255) NOT NULL default '',
   width integer NOT NULL default '800',
   height integer NOT NULL default '600',
   timemodified integer NOT NULL default '0'
