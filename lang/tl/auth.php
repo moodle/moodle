@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.5 ALPHA (2005051500)
+      // auth.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['alternatelogin'] = 'Kapag nagpasok ka ng URL dito, gagamitin ito bilang pahinang panglog-in para sa site na ito.  Dapat maglaman ang pahina ng isang form na ang action property ay nakatakda sa <strong>\'$a\'</strong> at mga  return field na <strong>username</strong> at <strong>password</strong>.<br />Ingatan na huwag makapagpasok ng maling URL, kundi\'y masasarhan kayo ng site na ito.<br />Iwanang blangko ang kaayusang ito upang gamitin ang default na pahinang panglog-in.';
@@ -17,6 +17,10 @@ $string['auth_cas_text'] = 'Ligtas na koneksiyon';
 $string['auth_cas_version'] = 'Bersiyon ng CAS';
 $string['auth_casdescription'] = 'Ang paraang ito ay gumagait ng CAS server (Central Authentication Service) upang ma-authenticate ang mga user sa isang Single Sign On environment (SSO). Maaari ka ring gumamit ng simpleng LDAP na pag-aauthenticate, kung ang ibinigay na username at password ay tanggap ayon sa CAS, lilikha ang Moodle ng bagong user entry sa database nito, gamit ang mga user attribute mula sa LDAP kung kinakailangan.  Sa mga susunod na paglog-in, tanging ang username at password ang tsetsekin.';
 $string['auth_castitle'] = 'Gumamit ng CAS server (SSO)';
+$string['auth_changepasswordhelp'] = 'Palitan ang pantulong sa password';
+$string['auth_changepasswordhelp_expl'] = 'Ipakita ang pantulong para sa nawawalang password sa mga user na nawala ang kanilang $a na password.  Ipapakita ito kasama na o kapalit ng <strong>Baguhin ang Password na URL</strong> o dili kaya\'y Internal na pagbabago ng password ng Moodle.';
+$string['auth_changepasswordurl'] = 'Baguhin ang URL ng password';
+$string['auth_changepasswordurl_expl'] = 'Itakda ang url na ipapadala sa mga user na naiwala ang kanilang $a password. Itakda ang <strong>Gamitin ang istandard na Baguhin ang Password na pahina</strong> sa <strong>Hindi</strong>.';
 $string['auth_common_settings'] = 'Kaayusang para sa lahat';
 $string['auth_data_mapping'] = 'Data mapping';
 $string['auth_dbdescription'] = 'Gumagamit ang paraang ito ng panlabas na database teybol upang masuri kung ang ibinigay na username at password ay tanggap.  Kung bago ang account, ang impormasyon sa iba pang field ay maaari ring kopyahin ng Moodle.';
@@ -66,6 +70,7 @@ $string['auth_ldap_memberattribute'] = 'Opsiyonal: Nananaig sa user member attri
 $string['auth_ldap_objectclass'] = 'Opsiyonal: Nananaig sa objectClass na ginagamit sa pagpapangalan/paghahanap ng mga user sa ldap_user_type.  Kadalasan ay hindi mo na kailangang baguhin ito.';
 $string['auth_ldap_opt_deref'] = 'Itinatakda kung paano hinahandle ang mga alias kapag naghahanap.  Piliin ang isa sa mga sumusunod na halaga:  \"Hindi\" (LDAP_DEREF_NEVER) o \"Oo\" (LDAP_DEREF_ALWAYS) ';
 $string['auth_ldap_passwdexpire_settings'] = 'LDAP password expiration settings.';
+$string['auth_ldap_preventpassindb'] = 'Piliin ang oo upang huwag maimbak ang mga password sa DB ng Moodle.';
 $string['auth_ldap_search_sub'] = 'Hanapin ang mga user mula sa subcontext.';
 $string['auth_ldap_server_settings'] = 'Kaayusan ng LDAP server';
 $string['auth_ldap_update_userinfo'] = 'Baguhin ang impormasyon ng user (unang pangalan, apelyido, tirahan..) mula LDAP hanggang Moodle.  Itakda ang kaayusan ng \"Data mapping\" alinsunod sa pangangailangan mo.';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.5 ALPHA (2005043000)
+      // resource.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['addresource'] = 'Magdagdag ng rekurso';
@@ -23,6 +23,7 @@ $string['configpopupwidth'] = 'Ano ang dapat maging default na laki ng bagong po
 $string['configsecretphrase'] = 'Ginagamit ang lihim na katagang ito sa paglikha ng halaga ng encrypted code na maipapadala sa ilang rekurso bilang parameter.  Nililikha ang encrypted code sa pamamagitan ng md5 na halaga ng current_users IP address na ikinoncatenate sa iyong lihim na kataga.  a.b. code = md5(IP.lihimnakataga).  Nabibigyan nito ng kakayanan ang pupuntahang rekurso na tiyakin ang koneksiyon para sa dagdag na seguridad.';
 $string['configwebsearch'] = 'Kapag nagdagdag ka ng URL bilang webpage o weblink, ihinahandog ang lokasyong ito bilang site na makatutulong sa user na hanapin ang URL na nais nila.';
 $string['configwindowsettings'] = 'Itinatakda nito ang default na halaga para sa parte ng form na pinag-aayusan ng Window, kapag nagdadagdag ka ng bagong rekurso.  Matapos ang unang pagkakataon, ang halagang ito ay kung ano ang ibigin ng indibidwal na user.';
+$string['deploy'] = 'Ilatag';
 $string['directlink'] = 'Direktang link papunta sa file na ito';
 $string['directoryinfo'] = 'Lahat ng file sa piniling direktoryo ay ipapakita.';
 $string['display'] = 'Window';
@@ -38,6 +39,7 @@ $string['filtername'] = 'Awto-link ng mga Pangalan ng Rekurso';
 $string['frameifpossible'] = 'Ilagay ang rekurso sa isang frame upang mapanatiling nakikita ang nabigasyon ng site';
 $string['fulltext'] = 'Buong teksto';
 $string['htmlfragment'] = 'Piraso ng HTML';
+$string['imspackageloaded'] = 'Nailowd na ang Pakete';
 $string['localfile'] = 'Local na file';
 $string['localfilechoose'] = 'Pumilì ng isang lokal na file (CD-ROM)';
 $string['localfilehelp'] = 'Tulong sa pagpapakita ng mga lokal na file';
@@ -47,6 +49,7 @@ $string['localfileselect'] = 'Piliin ang landas ng file na ito';
 $string['maindirectory'] = 'Punong direktoryo ng mga file';
 $string['modulename'] = 'Rekurso';
 $string['modulenameplural'] = 'Mga Rekurso';
+$string['navigationbuttons'] = 'Mga Buton na Pangnabigasyon';
 $string['neverseen'] = 'Hindi makikita';
 $string['newdirectories'] = 'Ipakita ang mga link ng direktoryo';
 $string['newfullscreen'] = 'Punuin ang buong screen';
@@ -64,6 +67,8 @@ $string['notallowedlocalfileaccess'] = 'Ang pagpasok sa mga lokal na file ay kas
 $string['note'] = 'Talâ';
 $string['notefile'] = 'Upang makapagaplowd ng marami pang file sa kurso (upang lumitaw ang mga ito sa listahan) gamitin ang <a href=\"$a\">Tagapamahala ng File</a>.';
 $string['notypechosen'] = 'Kailangan mong pumili ng uri.  Gamitin mo ang iyong back button para makabalik at makaulit.';
+$string['packagechanged'] = 'Nagbago ang IMS Content Package na ito.';
+$string['packagenotdeplyed'] = 'Hindi pa nailalatag ang IMS Content Package na ito.';
 $string['pagedisplay'] = 'Ipakita ang rekursong ito sa loob ng kasalukuyang window';
 $string['pagewindow'] = 'Sa window ring iyon';
 $string['pan'] = 'Pan';
@@ -84,11 +89,16 @@ $string['resourcetype9'] = 'Direktoryo';
 $string['resourcetypedirectory'] = 'Ipakita ang isang direktoryo';
 $string['resourcetypefile'] = 'Maglink sa file o web site';
 $string['resourcetypehtml'] = 'Gumawa ng web page';
+$string['resourcetypeims'] = 'Maglatag ng IMS Content Package';
 $string['resourcetypelabel'] = 'Magsingit ng etiketa';
+$string['resourcetyperepository'] = 'Link sa isang repository object';
 $string['resourcetypetext'] = 'Gumawa ng pahinang teksto';
 $string['searchweb'] = 'Maghanap ng pahinang pangweb';
 $string['serverurl'] = 'URL ng Server  ($a->wwwroot)';
+$string['showcourseblocks'] = 'Ipakita ang mga block ng kurso';
+$string['tableofcontents'] = 'Nilalaman';
 $string['variablename'] = 'Pangalan ng baryabol';
+$string['viewims'] = 'Tingnan ang IMS CP Package';
 $string['vol'] = 'Vol';
 
 ?>
