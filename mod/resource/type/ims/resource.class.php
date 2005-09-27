@@ -446,9 +446,9 @@ class resource_ims extends resource_base {
             print_header();
             $table = new stdClass;
             if (empty($page)) {
-                $table->head[] = $resource->name.'</b></p>';
+                $table->head[] = '<b>'.$resource->name.'</b>';
             } else {
-                $table->head[] = $items[$page]->title.'</b></p>';
+                $table->head[] = '<b>'.$items[$page]->title.'</b>';
             }
             $table->data[] = array(ims_generate_toc ($items, $resource, $page));
             $table->width = '60%';
