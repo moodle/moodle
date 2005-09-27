@@ -11,7 +11,11 @@
     }
 
     require_login($course->id);
-    
+
+    if (!isteacher($course->id)) {
+        error(get_string('notteachererror', 'grades'));
+    }
+
     $group = get_current_group($course->id);
     
     print_header("$course->shortname: ".get_string('grades'), "$course->fullname", grade_nav($course, $action));
@@ -56,9 +60,6 @@
             }
             $selectedgrade_item = $data->grade_itemid;
         }
-    }
-    if (isset($selectedgrade_item)) {
-        clean_param($selectedgrade_item, PARAM_CLEAN);
     }
 
 /// Calculate data ready to create the editing interface
@@ -124,7 +125,10 @@
     }
     
     if (empty($selectedgrade_item)) {    // Choose the first group by default
-        $selectedgrade_item = array_shift(array_keys($listgrade_items));
+        // doesn't work with php 5 :(
+        // $selectedgrade_item = array_shift(array_keys($listgrade_items));
+        $keys = array_keys($listgrade_items)
+        $selectedgrade_item = array_shift($keys);
     }
 
     include('exceptions.html');
