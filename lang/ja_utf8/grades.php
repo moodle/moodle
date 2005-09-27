@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // grades.php - created with Moodle 1.6 development (2005060201)
+      // grades.php - created with Moodle 1.6 development (2005090100)
 
 
 $string['addcategory'] = 'カテゴリの追加';
@@ -76,6 +76,7 @@ $string['nolettergrade'] = '評定文字がありません:';
 $string['nomode'] = 'NA';
 $string['nonnumericweight'] = '数値ではありません:';
 $string['nonweightedpct'] = '比重無し%%';
+$string['notteachererror'] = 'この機能は教師のみ使用できます。';
 $string['pctoftotalgrade'] = '評点合計の%%';
 $string['percent'] = 'パーセント';
 $string['percentascending'] = 'パーセントの昇順で並び替え';
