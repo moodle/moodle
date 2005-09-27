@@ -1,8 +1,24 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.5.2 + (2005072200)
+      // auth.php - created with Moodle 1.5.2 + (2005060223)
 
 
+$string['alternatelogin'] = 'Je¿eli wprowadzisz tutaj adres URL, to bêdzie u¿ywany jako strona logowania do tego serwisu. Strona powinna zawieraæ formularz o w³a¶ciwo¶ci action ustawionej na <strong>\'$a\'</strong> i zwracaæ pola <strong>username</strong> i <strong>password</strong>.
+<br /> B±d¼ ostro¿ny nie wprowadzaj niepoprawnego URL bo mo¿esz zablokowaæ sobie wej¶cie do tej strony. <br/>Pozostaw pole puste ¿eby u¿ywaæ domy¶lnej strony logowania.';
+$string['alternateloginurl'] = 'Alternatywny adres URL strony logowania';
+$string['auth_cas_baseuri'] = 'Adres URI serwer (nic je¿eli nie basuje na URI) Np, je¿eli CAS serwer odpowiada pod adresem: host.domaine.fr/CAS/ to<br />cas_baseuri = CAS/';
+$string['auth_cas_create_user'] = 'W³±cz to je¿eli chcesz u¿ytkowników uwierzytelnianych przez serwer CAS wstawiæ do bazy danych Moodle. Je¿eli nie w³±czysz to tylko u¿ytkownicy istniej±cy w bazie Moodle bêd± mogli siê logowaæ.';
+$string['auth_cas_enabled'] = 'W³±cz to je¿eli chcesz wykorzystywaæ autoryzacje serwer CAS';
+$string['auth_cas_hostname'] = 'Nazwa serwer CAS <br/> np:host.domain.fr';
+$string['auth_cas_invalidcaslogin'] = 'Niestety, Twój login jest b³êdny - autoryzacja nie powiod³a siê';
 $string['auth_cas_language'] = 'Wybierz jêzyk';
+$string['auth_cas_port'] = 'Na którym porcie nas³uchuje serwer CAS';
+$string['auth_cas_server_settings'] = 'Konfiguracja serwera cAS';
+$string['auth_cas_text'] = 'Bezpieczne po³±czenie';
+$string['auth_cas_version'] = 'Wersja CAS';
+$string['auth_casdescription'] = 'Metoda u¿ywa serwea CAS (Central Authentication Service) do uwierzytelnienia u¿ytkowników w ¶rodowisku Single Sign On (SSO). Mo¿esz te¿ u¿yæ uwierzytelniania LDAP. Je¿eli podana nazwa u¿ytkownika i has³o s± zgodne z CAS, Moodle utworzy nowego u¿ytkownika w swojej bazie danych, pobieraj±c wymagane atrybuty u¿ytkownika z LDAP. Przy nastêpnych logowaniach tylko nazwa u¿ytkownika i has³o bêd± sprawdzane.';
+$string['auth_castitle'] = 'U¿yj serwera CAS (SSO)';
+$string['auth_common_settings'] = 'Ustawienia wspólne';
+$string['auth_data_mapping'] = 'Mapuj dane';
 $string['auth_dbdescription'] = 'Metoda ta wykorzystuje tabelê zewnêtrznej bazy danych dla sprawdzenia czy podana nazwa u¿ytkownika i has³o s± poprawne. W przypadku nowego konta, informacje z innych pól równie¿ mog± zostaæ skopiowane do Moodle.';
 $string['auth_dbextrafields'] = 'Te pola s± opcjonalne. Mo¿esz wstêpnie wype³niæ niektóre pola dotycz±ce u¿ytkownika informacj± z <b>pól zewnêtrznej bazy danych</b>, które tutaj okre¶lasz. <br />Je¿eli nic w tym miejscu nie wpiszesz, u¿yte zostan± warto¶ci domy¶lne. <br /> W obu przypadkach, u¿ytkownik bêdzie móg³ dokonaæ edycji tych pól po zalogowaniu';
 $string['auth_dbfieldpass'] = 'Nazwa pola zawieraj±cego has³a';
@@ -24,6 +40,10 @@ $string['auth_fchost'] = 'Adres serwera FirstClass. Wpisz adres IP lub nazwê DNS
 $string['auth_fcpasswd'] = 'Has³o do powy¿szgo konta.';
 $string['auth_fctitle'] = 'U¿ywaj serwera FirstClass';
 $string['auth_fcuserid'] = 'ID u¿ytkownika dla konta FirstClass z prawami Subadministratora.';
+$string['auth_fieldlock'] = 'Zablokowane warto¶æ';
+$string['auth_fieldlock_expl'] = '<p><b>Zablokowana warto¶æ:</b>Je¿eli w³±czona, to bêdzie zapobiegaæ u¿ytkownikom Moodla i administratorom edycje bespo¶rednio tego pola. U¿ywaj tej opcji je¿eli zachowujecsz te dane w zewnêtrznym systemie autoryzacji. ';
+$string['auth_fieldlocks'] = 'Zablokuj dane u¿ytkownika';
+$string['auth_fieldlocks_help'] = '<p>Mo¿esz zablokowaæ pola z danymi u¿ytkownika. Jest to u¿yteczne gdy dane s± utrzymywane rêcznie przez administratora przez edycje profila u¿ytkownika lub uaktualniane/przesy³ane przez u¿ycie funkcjonalo¶ci\"prze¶lij u¿ytkowników\". Je¿eli zablokujesz pola wymagane prze Moodle, upewnij siê ¿e dostarczasz tych danych podczas tworzenia konta u¿ytkownika ; albo konta bêd± nie zdatne do u¿ytku.</p><p>Uwa¿aj ustawiaj±c blokady, \'zablokowanie pustych\' mo¿e powodowaæ problemy.';
 $string['auth_imapdescription'] = 'Metoda ta korzysta z serwera IMAP w celu sprawdzenia czy podana nazwa u¿ytkownika i has³o s± poprawne.';
 $string['auth_imaphost'] = 'Adres serwera IMAP. Nale¿y stosowaæ adres IP, a nie nazwê DNS.';
 $string['auth_imapport'] = 'Numer portu serwera IMAP, zwykle 142 lub 993.';
@@ -31,13 +51,23 @@ $string['auth_imaptitle'] = 'U¿yj serwera IMAP';
 $string['auth_imaptype'] = 'Typ serwera IMAP. Serwery IMAP mog± stosowaæ ró¿ne rodzaje uwierzytelniania i negocjacji.';
 $string['auth_ldap_bind_dn'] = 'Okre¶l tutaj czy chcesz skorzystaæ z funkcji bind-user do szukania u¿ytkowników, np. \'cn=ldapuser,ou=public,o=org\'';
 $string['auth_ldap_bind_pw'] = 'Has³o dla funkcji bind-user';
+$string['auth_ldap_bind_settings'] = 'utawienia BIND';
 $string['auth_ldap_contexts'] = 'Lista kontekstów, w których znajduj± siê u¿ytkownicy. Oddzielaj ró¿ne konteksty symbolem \';\', np. \'ou=users,o=org; ou=others,o=org\'';
 $string['auth_ldap_create_context'] = 'Je¿eli w³±czysz opcjê tworzenia u¿ytkowników z potwierdzeniem poczt± elektroniczn±, zdefiniuj kontekst, w którym tworzeni s± tacy u¿ytkownicy. Powinien byæ ró¿niæ siê od kontekstu innych u¿ytkowników w celu unikniêcia problemów zwi±zanych z bezpieczeñstwem. Nie musisz dodawaæ tego kontekstu do zmiennej ldap_context-variable - Moodle automatycznie wyszuka u¿ytkowników w tym kontek¶cie.';
 $string['auth_ldap_creators'] = 'Lista grup, których cz³onkowie mog± tworzyæ nowe kursy. Oddziel kolejne grupy symbolem \';\'. Przyk³adowa lista: \'cn=teachers,ou=staff,o=myorg\'';
-$string['auth_ldap_host_url'] = 'Okre¶l hosta LDAP za pomoc± adresu, np. URL\'ldap://ldap.myorg.com/\' lub \'ldaps://ldap.myorg.com/\'';
+$string['auth_ldap_expiration_desc'] = 'Wybierz NIE do wy³±czenia sprawdzania wa¿no¶ci has³a lub czytania przez LDAP (passwordexpiration time) czasu wa¿no¶ci has³a';
+$string['auth_ldap_expiration_warning_desc'] = 'Liczba dni przed wyga¶niêciem has³a kiedy jest wy¶wietlane ostrze¿enie.';
+$string['auth_ldap_expireattr_desc'] = 'Opcjonalnie: Uniewa¿nia atrybut LDAP (passwordExpiration Time) który przechowuje czas wa¿no¶ci has³a, ';
+$string['auth_ldap_graceattr_desc'] = 'Opcjonalnie: Uniewa¿nij atrybut gracelogin (jak czêsto uzytkownik mo¿e odmawiaæ zmiany wygas³ego has³a)';
+$string['auth_ldap_gracelogins_desc'] = 'W³±cza wspierania gracelogin w LDAP. Po wyga¶niêciu has³a u¿ytkownik mo¿e siê zalogowaæ  dopóki licznik nie zejdzie do zera W³±czaj±c tê funkcjê zostanie wy¶wietlony komunikat je¶li has³o wyga¶nie.
+';
+$string['auth_ldap_host_url'] = 'Okre¶l host LDAP za pomoc± adresu URL, np. \'ldap://ldap.myorg.com/\' lub \'ldaps://ldap.myorg.com/\'';
+$string['auth_ldap_login_settings'] = 'Opcje logowania';
 $string['auth_ldap_memberattribute'] = 'Okre¶l atrybut cz³onkostwa u¿ytkownika je¿eli u¿ytkownik nale¿y do grupy. Zazwyczaj jest to \'member\'';
 $string['auth_ldap_objectclass'] = 'Filtr wykorzystany do nazywania/szukania u¿ytkowników. Zwykle bêdzie to objectClass=posixAccount. Ustawienie objectClass=* zwróci wszystkie obiekty LDAP.';
+$string['auth_ldap_passwdexpire_settings'] = 'Ustawienia wa¿no¶ci has³a w LDAP';
 $string['auth_ldap_search_sub'] = 'Wpisz warto¶æ <> 0 je¿eli chcesz szukaæ u¿ytkowników z podkontekstów';
+$string['auth_ldap_server_settings'] = 'Ustawienia serwer LDAP';
 $string['auth_ldap_update_userinfo'] = 'Uaktualnij informacje o u¿ytkowniku (imiê, nazwisko, adres...) z LDAP do Moodle. Informacje na temat mapowania: /auth/ldap/attr_mappings.php';
 $string['auth_ldap_user_attribute'] = 'Atrybut u¿ywany do nazywania/szukania u¿ytkowników, zwykle \'cn\'.';
 $string['auth_ldap_version'] = 'Wersja protoko³u LDAP u¿ywana przez serwer.';
@@ -53,6 +83,8 @@ $string['auth_nntpport'] = 'Port serwera (najczê¶ciej 119)';
 $string['auth_nntptitle'] = 'U¿yj serwera NNTP';
 $string['auth_nonedescription'] = 'U¿ytkownicy mog± siê zarejestrowaæ i niezw³ocznie utworzyæ dzia³aj±ce konta, bez uwierzytelniania wzglêdem zewnêtrznego serwera i potwierdzenia e-mailem. Korzystaj z tej opcji ostro¿nie pamiêtaj±c o mo¿liwych problemach z bezpieczeñstwem i administracj±.';
 $string['auth_nonetitle'] = 'Brak uwierzytelniania';
+$string['auth_passwordisexpired'] = 'Twoje has³o traci wa¿no¶æ. Chcesz teraz zmieniæ has³o?';
+$string['auth_passwordwillexpire'] = 'Twoje has³o traci wa¿no¶æ za $a dni. Chcesz teraz zmieniæ has³o?';
 $string['auth_pop3description'] = 'Metoda ta wykorzystuje serwer POP3 w celu sprawdzenia czy podana nazwa u¿ytkownika i has³o s± poprawne.';
 $string['auth_pop3host'] = 'Adres serwera POP3. Nale¿y stosowaæ adres IP, a nie nazwê DNS.';
 $string['auth_pop3mailbox'] = 'Nazwa skrzynki pocztowej, z któr± mam próbowaæ siê ³±czyæ (zwykle INBOX).';
@@ -64,13 +96,27 @@ $string['auth_user_creation'] = 'Nowi (anonimowi) u¿ytkownicy mog± tworzyæ konta
 $string['auth_usernameexists'] = 'Wybrana nazwa u¿ytkownika ju¿ istnieje - proszê wybraæ inn±.';
 $string['authenticationoptions'] = 'Opcje uwierzytelniania';
 $string['authinstructions'] = 'Mo¿esz tutaj wprowadziæ instrukcje dla Twoich u¿ytkowników dotycz±ce nazwy u¿ytkownika i has³a, których powinni u¿ywaæ. Tekst wpisany w tym miejscu pojawi siê na stronie logowania. Je¿eli nic nie wpiszesz, nie zostan± wy¶wietlone ¿adne instrukcje.';
-$string['changepassword'] = 'Zmieñ adres URL has³a';
+$string['changepassword'] = 'Adres URL gdzie mo¿na zmiany has³a';
 $string['changepasswordhelp'] = 'Mo¿esz tutaj okre¶liæ miejsce, w którym Twoi u¿ytkownicy mog± odzyskaæ lub zmieniæ swoja nazwê u¿ytkownika/has³o, je¿eli ich zapomn±. Wybranie tej opcji spowoduje wy¶wietlenie przycisku na stronie logowania i stronach u¿ytkownika. Je¿eli nic nie wpiszesz, przycisk nie zostanie wy¶wietlony.';
 $string['chooseauthmethod'] = 'Wybierz sposób uwierzytelniania';
+$string['createchangepassword'] = 'Utwórz je¿eli opuszczone - wymu¶ zmianê';
+$string['createpassword'] = 'Utwórz je¿eli opuszczone';
+$string['forcechangepassword'] = 'Wymu¶ zmianê has³a';
+$string['forcechangepassword_help'] = 'Wymu¶ zmianê has³a przy nastêpnym logowaniu do systemu Moodle.';
+$string['forcechangepasswordfirst_help'] = 'Wymu¶ zmianê has³a przy pierwszym logowaniu do systemu Moodle.';
 $string['guestloginbutton'] = 'Przycisk logowania jako go¶æ';
+$string['infilefield'] = 'Pole wymagane w pliku';
 $string['instructions'] = 'Instrukcje';
+$string['locked'] = 'Zablokowano';
 $string['md5'] = 'Kodowanie MD5';
 $string['plaintext'] = 'Zwyk³y tekst';
 $string['showguestlogin'] = 'Mo¿esz ukryæ b±d¼ pokazaæ przycisk logowania jako go¶æ';
+$string['stdchangepassword'] = 'U¿yj standardowej strony zmiany has³a';
+$string['unlocked'] = 'Odblokuj';
+$string['unlockedifempty'] = 'Odblokuj je¿eli puste';
+$string['update_never'] = 'Nigdy';
+$string['update_oncreate'] = 'Po utworzeniu';
+$string['update_onlogin'] = 'Po ka¿dym logowaniu';
+$string['update_onupdate'] = 'Po uaktualnieniu';
 
 ?>
