@@ -203,7 +203,9 @@
             if ($return == STATS_RUN_COMPLETE) {
                 $return = stats_cron_monthly();
             }
-            stats_clean_old();
+            if ($return == STATS_RUN_COMPLETE) {
+                stats_clean_old();
+            }
             set_cron_lock('statsrunning',false);
             if (!empty($firsttime)) {
                 set_cron_lock('statsfirstrunlock',false);
