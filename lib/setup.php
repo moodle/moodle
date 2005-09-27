@@ -420,16 +420,26 @@ $CFG->httpswwwroot = $CFG->wwwroot;
 /// Apache log intergration. In apache conf file one can use ${MOODULEUSER}n in
 /// LogFormat to get the current logged in username in moodle.
     if ($USER && function_exists('apache_note') && !empty($CFG->apacheloguser)) {
+        $username = clean_filename($USER->username);
+        $name = clean_filename($USER->firstname. " ".$USER->lastname);
+        $id = $USER->id;
+        if (isset($USER->realuser)) {
+            if ($realuser = get_record('user', 'id', $USER->realuser)) {
+                $username = clean_filename($realuser->username." as ".$username);
+                $name = clean_filename($realuser->firstname." ".$realuser->lastname ." as ".$name);
+                $id = clean_filename($realuser->id." as ".$id);
+            }
+        }
         switch ($CFG->apacheloguser) {
             case 3:
-                $logname = clean_filename($USER->username);
+                $logname = $username;
                 break;
             case 2:
-                $logname = clean_filename($USER->firstname." ".$USER->lastname);
+                $logname = $name;
                 break;
             case 1:
             default:
-                $logname = $USER->id;
+                $logname = $id;
                 break;
         }
         apache_note('MOODLEUSER', $logname);
