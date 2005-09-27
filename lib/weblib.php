@@ -2477,6 +2477,7 @@ function print_user_picture($userid, $courseid, $picture, $size=0, $returnstring
     }
     if (empty($size)) {
         $file = 'f2';
+        $size = 35;
     } else if ($size === true or $size == 1) {
         $file = 'f1';
         $size = 100;
