@@ -150,17 +150,30 @@
 				if ($attempts = get_records_select('hotpot_attempts', $select)) {
 				
 					// start counter and timer
-					$count = 0;
 					$start = microtime();
-					foreach ($attempts as $attempt) {
-						$attempt->details = get_field('hotpot_details', 'details', 'attempt', "$attempt->id");
+					$count = 0;
+
+					// use while loop instead of foreach loop
+					// to allow the possibility of splitting a regrade 
+					// and so avoid "maximum script time exceeded" errors
+					$attemptids = array_keys($attempts);
+					$i_max = count($attemptids);
+					$i = 0;
+					while ($i<$i_max) {
+
+						$attemptid = $attemptids[$i];
+						$attempt =&$attempts[$attemptid];
+
+						$attempt->details = get_field('hotpot_details', 'details', 'attempt', $attemptid);
 						if ($attempt->details) {
+
 							hotpot_add_attempt_details($attempt);
 							if (! update_record('hotpot_attempts', $attempt)) {
 								error("Could not update attempt record: ".$db->ErrorMsg(), $next_url);
 							}
 						}
 						$count++;
+						$i++;
 					}
 					if ($count) {
 						notify(get_string('added', 'moodle', "$count x ".get_string('attempts', 'quiz')));
