@@ -198,10 +198,10 @@
             require_once($CFG->dirroot.'/lib/statslib.php');
             $return = stats_cron_daily();
             if ($return == STATS_RUN_COMPLETE) {
-                $return = stats_cron_weekly();
+                stats_cron_weekly();
             }
             if ($return == STATS_RUN_COMPLETE) {
-                $return = stats_cron_monthly();
+                stats_cron_monthly();
             }
             if ($return == STATS_RUN_COMPLETE) {
                 stats_clean_old();

@@ -57,19 +57,20 @@ function stats_cron_daily () {
     }
 
 
-    // check to make sure we're due to run, at least one day after last run
     $midnight = usergetmidnight(time());
     
-    if ($midnight <= $CFG->statslastdaily) {
+    // check to make sure we're due to run, at least one day after last run
+    if ((time() - 24*60*60) < $CFG->statslastdaily) {
         return;
     }
 
     //and we're not before our runtime
-    if ((date('G') <= $CFG->statsruntimestarthour) && (date('i') < $CFG->statsruntimestartminute)) {
+    $timetocheck = strtotime("$CFG->statsruntimestarthour:$CFG->statsruntimestartminute today");
+    if (time() < $timetocheck) {
         return;
     }
 
-    mtrace("Running daily statisics gathering...");
+    mtrace("Running daily statistics gathering...");
     set_config('statslastdaily',time());
 
 
@@ -201,16 +202,17 @@ function stats_cron_weekly () {
     // check to make sure we're due to run, at least one week after last run
     $sunday = stats_get_base_weekly(); 
 
-    if ($sunday <= $CFG->statslastweekly) {
+    if ((time() - (7*24*60*60)) <= $CFG->statslastweekly) {
         return;
     }
 
     //and we're not before our runtime
-    if ((date('G') <= $CFG->statsruntimestarthour) && (date('i') < $CFG->statsruntimestartminute)) {
+    $timetocheck = strtotime("$CFG->statsruntimestarthour:$CFG->statsruntimestartminute today");
+    if (time() < $timetocheck) {
         return;
     }
 
-    mtrace("Running weekly statisics gathering...");
+    mtrace("Running weekly statistics gathering...");
     set_config('statslastweekly',time());
 
     $return = STATS_RUN_COMPLETE; // optimistic
@@ -303,16 +305,17 @@ function stats_cron_monthly () {
     // check to make sure we're due to run, at least one month after last run
     $monthend = stats_get_base_monthly();
     
-    if ($monthend <= $CFG->statslastmonthly) {
+    if ((time() - (31*24*60*60)) <= $CFG->statslastmonthly) {
         return;
     }
     
     //and we're not before our runtime
-    if ((date('G') <= $CFG->statsruntimestarthour) && (date('i') < $CFG->statsruntimestartminute)) {
+    $timetocheck = strtotime("$CFG->statsruntimestarthour:$CFG->statsruntimestartminute today");
+    if (time() < $timetocheck) {
         return;
     }
 
-    mtrace("Running monthly statisics gathering...");
+    mtrace("Running monthly statistics gathering...");
     set_config('statslastmonthly',time());
 
     $return = STATS_RUN_COMPLETE; // optimistic
@@ -570,12 +573,16 @@ function stats_get_course_users($course,$timesql,&$students, &$teachers) {
 
     $sql = 'SELECT DISTINCT(l.userid) as userid,1 as roleid FROM '.$CFG->prefix.'log l JOIN '.$CFG->prefix
         .'user_students us ON us.userid = l.userid WHERE l.course = '.$course->id.' AND us.course = '.$course->id.' AND '.$timesql;
-    $students = get_records_sql($sql);
+    if (!$students = get_records_sql($sql)) {
+        $students = array(); // avoid warnings;
+    }
 
     $sql = str_replace('students','teachers',$sql);
     $sql = str_replace(',1',',2',$sql);
 
-    $teachers = get_records_sql($sql);
+    if (!$teachers = get_records_sql($sql)) {
+        $teachers = array(); // avoid warnings
+    }
 
 }
 
