@@ -1,5 +1,7 @@
 <?php // $Id$
 
+
+
 $string['absent'] = 'Absent';
 $string['accumulative'] = 'Cumulative';
 $string['action'] = 'Action';
@@ -285,9 +287,7 @@ $string['thegradeforthisassessmentis'] = 'La note donnée à cette évaluation est 
 $string['thegradeis'] = 'La note est $a';
 $string['thereisfeedbackfromtheteacher'] = 'Vous avez un feedback de la part de l\'enseignant';
 $string['theseasessmentsaregradedbytheteacher'] = 'Ces évaluations ont été notées par l\'enseignant';
-$string['thischarset'] = 'iso-8859-1';
 $string['thisisadroppedassessment'] = 'Cette évaluation a été rejetée.';
-$string['thislanguage'] = 'fr';
 $string['timeassessed'] = 'Date de l\'évaluation';
 $string['title'] = 'Titre du travail';
 $string['typeofscale'] = 'Type de barème';
