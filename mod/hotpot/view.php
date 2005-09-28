@@ -140,7 +140,7 @@
 	$get_css = optional_param('css');
 	$framename = optional_param('framename');
 
-	// look for <FRAMESET> (v5)
+	// look for <FRAMESET> (HP5 v5)
 	$frameset = '';
 	$frameset_tags = '';
 	if (preg_match_all('|<frameset([^>]*)>(.*?)</frameset>|is', $hp->html, $matches)) {
@@ -176,26 +176,30 @@
 
 			if (empty($frameset)) {
 				// HP6 v6
-				if ($hotpot->navigation==HOTPOT_NAVIGATION_BUTTONS) {
-					// convert URLs in nav buttons
-				} else {
-					$hp->remove_nav_buttons();
-				}
-				if ($hotpot->navigation==HOTPOT_NAVIGATION_GIVEUP) {
-					$hp->insert_giveup_form($attemptid, '<!-- BeginTopNavButtons -->', '<!-- EndTopNavButtons -->');
+				switch ($hotpot->navigation) {
+					case HOTPOT_NAVIGATION_BUTTONS:
+						// do nothing (i.e. leave buttons as they are)
+						break;
+					case HOTPOT_NAVIGATION_GIVEUP:
+						$hp->insert_giveup_form($attemptid, '<!-- BeginTopNavButtons -->', '<!-- EndTopNavButtons -->');
+						break;
+					default:
+						$hp->remove_nav_buttons();
 				}
 				$hp->insert_submission_form($attemptid, '<!-- BeginSubmissionForm -->', '<!-- EndSubmissionForm -->');
 
 			} else {
 				// HP5 v5
-				if ($hotpot->navigation==HOTPOT_NAVIGATION_BUTTONS) {
-					// convert URLs in nav buttons
-				} else {
-					// remove navigation buttons
-					$hp->html = preg_replace('#NavBar\+=(.*);#', '', $hp->html);
-				}
-				if ($hotpot->navigation==HOTPOT_NAVIGATION_GIVEUP) {
-				//	$hp->insert_giveup_form($attemptid, '<!-- BeginTopNavButtons -->', '<!-- EndTopNavButtons -->');
+				switch ($hotpot->navigation) {
+					case HOTPOT_NAVIGATION_BUTTONS:
+						// convert URLs in nav buttons
+						break;
+					case HOTPOT_NAVIGATION_GIVEUP:
+						//	$hp->insert_giveup_form($attemptid, '<!-- BeginTopNavButtons -->', '<!-- EndTopNavButtons -->');
+						break;
+					default:
+						// remove navigation buttons
+						$hp->html = preg_replace('#NavBar\+=(.*);#', '', $hp->html);
 				}
 				$hp->insert_submission_form($attemptid, "var NavBar='", "';");
 			}
@@ -325,6 +329,7 @@
 	$footer = '</html>';
 
 	if ($frameset) {
+		// HP5 v5
 		switch ($framename) {
 			case 'top':
 				print_header($title, $heading, $navigation, "", "", true, $button, $loggedinas);
@@ -348,7 +353,7 @@
 				print "<FRAMESET$frameset_tags>$frameset</FRAMESET>\n";
 				print "</HTML>\n";
 			break;
-		} // end switch $frameset
+		} // end switch $framename
 		exit;
 
 	// is there a <body> (HP6 and HP5: v6 and v4) 
@@ -431,12 +436,12 @@
 					print "</FRAMESET>\n";
 					print "</HTML>\n";
 				break;
-			} // end switch $frameset
+			} // end switch $framename
 		break;
 
 		case HOTPOT_NAVIGATION_IFRAME:
 
-			switch ($frameset) {
+			switch ($framename) {
 				case 'main';
 					print $hp->html;
 				break;
@@ -445,7 +450,7 @@
 					$iframe_id = 'hotpot_iframe';
 					$body_tags = " onload=\"set_iframe_height('$iframe_id')\"";
 	
-					$iframe_js = '<SCRIPT src="iframe.js" type="text/javascript" language="javascript">'."\n";
+					$iframe_js = '<SCRIPT src="iframe.js" type="text/javascript" language="javascript"></SCRIPT>'."\n";
 	
 					print_header(
 						$title, $heading, $navigation, 
@@ -455,13 +460,13 @@
 					if (!empty($available_msg)) {
 						notify($available_msg);
 					}
-					print "<IFRAME id=\"$iframe_id\" src=\"view.php?id=$cm->id&frameset=main\" height=\"100%\" width=\"100%\">";
-					print "<ILAYER name=\"$iframe_id\" src=\"view.php?id=$cm->id&frameset=main\" height=\"100%\" width=\"100%\">";
+					print "<IFRAME id=\"$iframe_id\" src=\"view.php?id=$cm->id&framename=main\" height=\"100%\" width=\"100%\">";
+					print "<ILAYER name=\"$iframe_id\" src=\"view.php?id=$cm->id&framename=main\" height=\"100%\" width=\"100%\">";
 					print "</ILAYER>\n";
 					print "</IFRAME>\n";
 					print $footer;
 				break;
-			} // end switch $frameset
+			} // end switch $framename
 		break;
 
 		default:

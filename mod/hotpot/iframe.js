@@ -16,16 +16,16 @@ function px(i) {
 	return i + "px";
 }
 function setSize(obj, w, h) {
-	if (is.n4) with (obj) {
-		if (w) width = w;
-		if (h) height = h;
-	} else if (is.opera) with (obj.style) {
+	if (is.n4) {
+		if (w) obj.width = w;
+		if (h) obj.height = h;
+	} else if (is.opera) {
 		// opera 5 needs pixelWidth/Height
-		if (w) pixelWidth = w;
-		if (h) pixelHeight = h;
-	} else with (obj.style) {
-		if (w) width = px(w);
-		if (h) height = px(h);
+		if (w) obj.style.pixelWidth = w;
+		if (h) obj.style.pixelHeight = h;
+	} else {
+		if (w) obj.style.width = px(w);
+		if (h) obj.style.height = px(h);
 	}
 }
 function getElement(id, lyr) {
@@ -37,13 +37,15 @@ is = new domSniffer();
 function set_iframe_height(id) {
 	var iframe = getElement(id);
 	if (iframe) {
-		obj = iframe.document;
-		if (obj.body) {
-			obj = obj.body;
-		}
-		var h = getContentH(obj);
-		if (h) {
-			setSize(iframe, 0, h);
+		var obj = iframe.document || iframe.contentDocument || null; // IE || FireFox
+		if (obj) {
+			if (obj.body) {
+				obj = obj.body;
+			}
+			var h = getContentH(obj);
+			if (h) {
+				setSize(iframe, 0, h);
+			}
 		}
 	}
 }

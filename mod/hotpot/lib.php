@@ -49,10 +49,10 @@ $HOTPOT_OUTPUTFORMAT = array (
 	HOTPOT_OUTPUTFORMAT_BEST    => get_string("outputformat_best", "hotpot"),
 	HOTPOT_OUTPUTFORMAT_V6_PLUS => get_string("outputformat_v6_plus", "hotpot"),
 	HOTPOT_OUTPUTFORMAT_V6      => get_string("outputformat_v6", "hotpot"),
-	// HOTPOT_OUTPUTFORMAT_V5_PLUS => get_string("outputformat_v5_plus", "hotpot"),
-	// HOTPOT_OUTPUTFORMAT_V5      => get_string("outputformat_v5", "hotpot"),
-	// HOTPOT_OUTPUTFORMAT_V4      => get_string("outputformat_v4", "hotpot"),
-	// HOTPOT_OUTPUTFORMAT_V3      => get_string("outputformat_v3", "hotpot"),
+	HOTPOT_OUTPUTFORMAT_V5_PLUS => get_string("outputformat_v5_plus", "hotpot"),
+	 HOTPOT_OUTPUTFORMAT_V5      => get_string("outputformat_v5", "hotpot"),
+	 HOTPOT_OUTPUTFORMAT_V4      => get_string("outputformat_v4", "hotpot"),
+	 HOTPOT_OUTPUTFORMAT_V3      => get_string("outputformat_v3", "hotpot"),
 	// HOTPOT_OUTPUTFORMAT_FLASH   => get_string("outputformat_flash", "hotpot"),
 	// HOTPOT_OUTPUTFORMAT_MOBILE  => get_string("outputformat_mobile", "hotpot"),
 );
@@ -1627,8 +1627,7 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 	}
 	function insert_form($startblock, $endblock, $form_name, $form_fields, $center=false) {
 		global $CFG;
-		$char = substr($endblock, 0, 1);
-		$search = '#(?<='.preg_quote($startblock).')'."[^$char]*".'(?='.preg_quote($endblock).')#';
+		$search = '#(?<='.preg_quote($startblock).')(.+?)(?='.preg_quote($endblock).')#s';
 		$replace = '<form action="'.$CFG->wwwroot.'/mod/hotpot/attempt.php" method="POST" name="'.$form_name.'" target="'.$CFG->framename.'">'.$form_fields.'</form>';
 		if ($center) {
 			$replace = '<div style="margin-left:auto; margin-right:auto; text-align: center;">'.$replace.'</div>';
