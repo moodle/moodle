@@ -32,6 +32,8 @@
         error("You need to be a teacher to use this page");
     }
 
+    stats_check_uptodate($course->id);
+
     $strheader = get_string('stats');
     $strnav = (($course->id != SITEID) ?  '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$courseid.'">'.$course->shortname.'</a> -> ' : '').$strheader;
     

@@ -24,6 +24,8 @@
         error("You need to be a teacher to use this page");
     }
 
+    stats_check_uptodate($course->id);
+
     $param = stats_get_parameters($time,$report);
 
     if (!empty($userid)) {

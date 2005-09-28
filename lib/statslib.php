@@ -799,5 +799,29 @@ function stats_check_runtime() {
         
 }
 
+function stats_check_uptodate($courseid=0) {
+    global $CFG;
+
+    if (empty($courseid)) {
+	$courseid = SITEID;
+    }
+
+    $latestday = stats_get_start_from('daily');
+
+    if ((time() - 60*60*24*2) < $lastday) { // we're ok
+        return true;
+    }
+
+    $a->daysdone = get_field_sql("SELECT count(distinct(timeend)) from {$CFG->prefix}stats_daily");
+
+    // how many days between the last day and now?
+    $a->dayspending = ceil((stats_get_base_daily() - $latestday)/(60*60*24));
+
+    if ($a->dayspending == 0 && $a->daysdone != 0) {
+        return true; // we've only just started...
+    }
+    error(get_string('statscatchupmode','error',$a),$CFG->wwwroot.'/course/view.php?id='.$courseid);
+}
+
 
 ?>
