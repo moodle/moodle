@@ -12,10 +12,7 @@ $string['description'] = 'คุณสามารถใช้ฐานข้อ
 $string['enrolname'] = 'ฐานข้อมูลนอก';
 $string['localcoursefield'] = 'ชื่อของฟิลด์ในตาราง course ที่ใช้เทียบกับฐานข้อมูลหลัก ( เช่น idnumber)';
 $string['localuserfield'] = 'ชื่อของฟิลด์ในตารางสมาชิกที่ใช้เปรียบเทียบกับฐานข้อมูลหลัก (เช่น idnumber)';
-$string['parentlanguage'] = 'en';
 $string['remotecoursefield'] = 'ฟิลด์ในฐานข้อมูลหลักที่มี  Course ID';
 $string['remoteuserfield'] = 'ฟิลด์ในฐานข้อมูลหลักที่มี user ID';
-$string['thischarset'] = 'TIS-620';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Thai';
+
 ?>

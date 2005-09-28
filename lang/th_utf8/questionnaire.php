@@ -13,7 +13,4 @@ $string['qmanagetitle'] = 'การจัดการแบบสำรวจ p
 $string['qtype'] = 'ประเภท';
 $string['questionnaireid'] = 'แบบสอบถาม';
 $string['respondenttype'] = 'ประเภทของผู้ตอบแบบสำรวจ';
-$string['thischarset'] = 'TIS-620';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Thai';
 ?>

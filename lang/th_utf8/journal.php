@@ -28,12 +28,8 @@ $string['noratinggiven'] = 'ไม่มีการให้คะแนน';
 $string['notopenuntil'] = 'บันทึกความก้าวหน้านี้จะเข้าอ่านไม่ได้ จนกว่า';
 $string['notstarted'] = 'คุณยังไม่ได้เริ่มเขียนบันทึกนี้';
 $string['overallrating'] = 'คะแนนโดยรวม';
-$string['parentlanguage'] = 'en';
 $string['rate'] = 'ให้คะแนน';
 $string['saveallfeedback'] = 'บันทึก feedback ทั้งหมด';
 $string['startoredit'] = 'เริ่มเขียนหรือ แก้ไขบันทึกความก้าวหน้า';
-$string['thischarset'] = 'TIS-620';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Thai';
 $string['viewallentries'] = 'ดู $a  บันทึกที่เข้าใหม่';
 ?>

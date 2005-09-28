@@ -17,8 +17,4 @@ $string['filelockedmailsubject'] = 'ไฟล์รายชื่อสมา�
 $string['location'] = 'ที่อยู่ของไฟล์';
 $string['mailadmin'] = 'แจ้งให้ผู้ดูแลระบบทราบทางอีเมล';
 $string['mailusers'] = 'แจ้งให้สมาชิกทราบทางอีเมล';
-$string['parentlanguage'] = 'en';
-$string['thischarset'] = 'TIS-620';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Thai';
 ?>

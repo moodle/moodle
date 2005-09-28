@@ -97,13 +97,10 @@ $string['forcechangepasswordfirst_help'] = 'บังคับให้สมา
 $string['guestloginbutton'] = 'ปุ่มล็อกอินในฐานะบุคคลทั่วไป';
 $string['instructions'] = 'วิธีใช้';
 $string['md5'] = 'เข้ารหัสแบบ MD5  ';
-$string['parentlanguage'] = 'en';
 $string['plaintext'] = 'ตัวหนังสือธรรมดา(Plain Text)';
 $string['showguestlogin'] = 'คุณสามารถซ่อนหรือแสดงปุ่มล็อกอินในฐานะบุคคลทั่วไปในหน้าล็อกอินเข้าสู่ระบบ';
 $string['stdchangepassword'] = 'ใช้หน้าปกติในการเปลี่ยนรหัสผ่าน';
 $string['stdchangepassword_expl'] = 'ในกรณีที่ใช้ระบบการอนุมัติจากภายนอกที่อนุญาตให้เปลี่ยนรหัสผ่าน moodle  ให้ตั้งค่านี้เป็น \"ใช่\" ค่านี้จะตั้งค่าทับกับลิงก์ \"เปลี่ยนรหัสผ่าน\"';
 $string['stdchangepassword_explldap'] = 'หมายเหตุ : ขอแนะนำให้ท่านใช้ LDAP ผ่านการเข้ารหัสแบบ SSL (ldaps://) ในกรณีที่ใช้ LDAP เซิร์ฟเวอร์เป็นหลัก';
-$string['thischarset'] = 'TIS-620';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Thai';
+
 ?>

@@ -61,7 +61,6 @@ $string['pagedisplay'] = 'แสดงแหล่งข้อมูลในห
 $string['pagewindow'] = 'หน้าต่างเดิม';
 $string['parameter'] = 'พารามิเตอร์';
 $string['parameters'] = 'พารามิเตอร์';
-$string['parentlanguage'] = 'en';
 $string['popupresource'] = 'แหล่งข้อมูลนี้ควรจะปรากฎในหน้าต่างถัดไป';
 $string['popupresourcelink'] = 'ถ้าไม่ปรากฏ  คลิกที่นี่ค่ะ: $a';
 $string['resourcetype'] = 'ประเภทของแหล่งข้อมูล';
@@ -80,8 +79,5 @@ $string['resourcetypehtml'] = 'หน้าเว็บเพจ';
 $string['resourcetypelabel'] = 'Label';
 $string['resourcetypetext'] = 'หน้าตัวหนังสือธรรมดา';
 $string['searchweb'] = 'ค้นหาเว็บเพจ';
-$string['thischarset'] = 'TIS-620';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Thai';
 $string['variablename'] = 'ชื่อตัวแปร';
 ?>

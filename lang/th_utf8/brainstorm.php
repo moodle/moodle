@@ -23,8 +23,4 @@ $string['savecategories'] = 'บันทึกประเภท';
 $string['savecategorisation'] = 'บันทึกการแยกประเภท';
 $string['savemyresponse'] = 'บันทึกคำตอบ';
 $string['select'] = 'เลือก';
-$string['thischarset'] = 'TIS-620';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Thai';
-$string['widthresponse'] = 'ความกว้าง';
 ?>
