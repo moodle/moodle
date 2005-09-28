@@ -217,6 +217,9 @@ function quiz_delete_instance($id) {
             if (! delete_records("quiz_states", "attempt", "$attempt->id")) {
                 $result = false;
             }
+            if (! delete_records("quiz_newest_states", "attemptid", "$attempt->id")) {
+                $result = false;
+            }
         }
     }
 
@@ -309,12 +312,12 @@ function quiz_delete_course($course, $feedback=true) {
                     $concatid = insert_record('quiz_categories', $concat);
 
                     //Fill feedback
-                    $feedbackdata[] = array($concat->name, $strcatcontainer);   
+                    $feedbackdata[] = array($concat->name, $strcatcontainer);
                 }
                 //Move the category to the container category in SITEID course
                 $category->course = SITEID;
                 //Assign to container if the category hasn't parent or if the parent is wrong (not belongs to the course)
-                if (!$category->parent || !isset($categories[$category->parent])) { 
+                if (!$category->parent || !isset($categories[$category->parent])) {
                     $category->parent = $concatid;
                 }
                 //If it's being used, its publish field should be 1
@@ -326,7 +329,7 @@ function quiz_delete_course($course, $feedback=true) {
                 $parentchanged[$category->id] = $category->parent;
 
                 //Fill feedback
-                $feedbackdata[] = array($category->name, $strcatmoved);   
+                $feedbackdata[] = array($category->name, $strcatmoved);
 
             } else {
                 //Category isn't being used so:
@@ -354,7 +357,7 @@ function quiz_delete_course($course, $feedback=true) {
                     }
                     delete_records("quiz_questions", "category", $category->id);
                 }
-                //delete the category 
+                //delete the category
                 delete_records('quiz_categories', 'id', $category->id);
 
                 //Save this parent change for future use
@@ -368,7 +371,7 @@ function quiz_delete_course($course, $feedback=true) {
                 set_field ('quiz_categories', 'parent', $parentchanged[$category->id], 'parent', $category->id);
 
                 //Fill feedback
-                $feedbackdata[] = array($category->name, $strcatdeleted);   
+                $feedbackdata[] = array($category->name, $strcatdeleted);
             }
         }
         //Inform about changes performed if feedback is enabled
