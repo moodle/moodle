@@ -765,20 +765,20 @@
     if (isset($USER->modattempts[$lesson->id])) {
         echo "<p align=\"center\">".
             get_string("savechangesandeol", "lesson")."<br /><br />".
-            "<input type=\"submit\" onClick='pageform.pageid.value=".LESSON_EOL.";' name=\"save\" value=\"".
-            get_string("savechanges", "lesson")."\"></p>\n";
+            "<div align=\"center\" class=\"lessonbutton standardbutton\"><a href=\"javascript:document.pageform.pageid.value=".LESSON_EOL.";document.pageform.submit();\">".
+            get_string("savechanges", "lesson")."</a></div></p>\n";
         echo "<p align=\"center\">".get_string("or", "lesson")."<br /><br />".
             get_string("continuetoanswer", "lesson")."</p>\n";
     }
 
     if ($lesson->review && !$correctanswer && !$noanswer && !$isessayquestion) {
-        echo "<p align=\"center\"><input type=\"submit\" onClick='pageform.pageid.value=$pageid;' name=\"review\" value=\"".
-            get_string("reviewquestionback", "lesson")."\"></p>\n";
-        echo "<p align=\"center\"><input type=\"submit\" name=\"continue\" value=\"".
-            get_string("reviewquestioncontinue", "lesson")."\"></p>\n";
+        echo "<p><div align=\"center\" class=\"lessonbutton standardbutton\"><a href=\"javascript:document.pageform.pageid.value=$pageid;document.pageform.submit();\">".
+            get_string("reviewquestionback", "lesson")."</a></div></p>\n";
+        echo "<p><div align=\"center\" class=\"lessonbutton standardbutton\"><a href=\"javascript:document.pageform.submit();\">".
+            get_string("reviewquestioncontinue", "lesson")."</a></div></p>\n";
     } else {
-        echo "<p align=\"center\"><input type=\"submit\" name=\"continue\" value=\"".
-            get_string("continue", "lesson")."\"></p>\n";
+        echo "<p><div align=\"center\" class=\"lessonbutton standardbutton\"><a href=\"javascript:document.pageform.submit();\">".
+            get_string("continue", "lesson")."</a></div></p>\n";
     }
     echo "</form>\n";
 

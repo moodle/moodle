@@ -644,9 +644,7 @@
             }
             echo "</div><br />";
             
-            if ($lesson->slideshow) {
-                echo format_text($page->contents);
-            } else {
+            if (!$lesson->slideshow) {
                 print_simple_box(format_text($page->contents), 'center');
             }
             echo "<br />\n";
@@ -670,7 +668,9 @@
                 echo "<input type=\"hidden\" name=\"pageid\" value=\"$pageid\" />";
                 echo "<input type=\"hidden\" name=\"sesskey\" value=\"".$USER->sesskey."\" />";
                 if (!$lesson->slideshow) {
-                    print_simple_box_start("center");
+                    if ($page->qtype != LESSON_BRANCHTABLE) {
+                        print_simple_box_start("center");
+                    }                    
                     echo '<table width="100%">';
                 }
                 switch ($page->qtype) {
@@ -685,8 +685,8 @@
                             ": <label for=\"answer\" class=\"hidden-label\">Answer</label><input type=\"text\" id=\"answer\" name=\"answer\" size=\"50\" maxlength=\"200\" $value />\n"; //CDC hidden label added.
                         echo '</table>';
                         print_simple_box_end();
-                        echo "<p align=\"center\"><input type=\"submit\" name=\"continue\" value=\"".
-                             get_string("pleaseenteryouranswerinthebox", "lesson")."\" /></p>\n";
+                        echo "<div align=\"center\" class=\"lessonbutton standardbutton\"><a href=\"javascript:document.answerform.submit();\">".
+                             get_string("pleaseenteryouranswerinthebox", "lesson")."</a></div></p>\n";
                         break;
                     case LESSON_TRUEFALSE :
                         shuffle($answers);
@@ -708,8 +708,8 @@
                         }
                         echo '</table>';
                         print_simple_box_end();
-                        echo "<p align=\"center\"><input type=\"submit\" name=\"continue\" value=\"".
-                            get_string("pleasecheckoneanswer", "lesson")."\" /></p>\n"; 
+                        echo "<div align=\"center\" class=\"lessonbutton standardbutton\"><a href=\"javascript:document.answerform.submit();\">".
+                            get_string("pleasecheckoneanswer", "lesson")."</a></div>\n"; 
                         break;
                     case LESSON_MULTICHOICE :
                         $i = 0;
@@ -738,6 +738,7 @@
                                 echo "<label for=\"answerid\" class=\"hidden-label\">answer id</label><input type=\"radio\" id=\"answerid\" name=\"answerid\" value=\"{$answer->id}\" $checked />"; //CDC hidden label added.
                             }
                             echo "</td><td>";
+                            $options = new stdClass;
                             $options->para = false; // no <p></p>
                             echo format_text(trim($answer->answer), FORMAT_MOODLE, $options); 
                             echo "</td></tr>";
@@ -749,11 +750,11 @@
                         echo '</table>';
                         print_simple_box_end();
                         if ($page->qoption) {
-                            echo "<p align=\"center\"><input type=\"submit\" name=\"continue\" value=\"".
-                                get_string("pleasecheckoneormoreanswers", "lesson")."\" /></p>\n";
+                            echo "<div align=\"center\" class=\"lessonbutton standardbutton\"><a href=\"javascript:document.answerform.submit();\">".
+                                get_string("pleasecheckoneormoreanswers", "lesson")."</a></div>\n";
                         } else {
-                            echo "<p align=\"center\"><input type=\"submit\" name=\"continue\" value=\"".
-                                get_string("pleasecheckoneanswer", "lesson")."\" /></p>\n";
+                            echo "<div align=\"center\" class=\"lessonbutton standardbutton\"><a href=\"javascript:document.answerform.submit();\">".
+                                get_string("pleasecheckoneanswer", "lesson")."</a></div>\n";
                         }
                         break;
                         
@@ -804,83 +805,80 @@
                         }
                         echo '</table></table>';
                         print_simple_box_end();
-                        echo "<p align=\"center\"><input type=\"submit\" name=\"continue\" value=\"".
-                            get_string("pleasematchtheabovepairs", "lesson")."\" /></p>\n";
+                        echo "<div align=\"center\" class=\"lessonbutton standardbutton\"><a href=\"javascript:document.answerform.submit();\">".
+                            get_string("pleasematchtheabovepairs", "lesson")."</a></div>\n";
                         break;
-                    case LESSON_BRANCHTABLE :
+                    case LESSON_BRANCHTABLE :                        
+                        $options = new stdClass;
+                        $options->para = false;
+                        $buttons = array('next' => '', 'prev' => '', 'other' => array());
+                        // seperate out next and previous jumps from the other jumps 
+                        foreach ($answers as $answer) {
+                            if ($answer->jumpto == LESSON_NEXTPAGE) {
+                                $buttons['next'] = '<div class="lessonbutton nextbutton"><a href="javascript:document.answerform.jumpto.value='.$answer->jumpto.';document.answerform.submit();">'.
+                                        strip_tags(format_text($answer->answer, FORMAT_MOODLE, $options)).'</a></div>';
+                            } else if ($answer->jumpto == LESSON_PREVIOUSPAGE) {
+                                $buttons['prev'] = '<div class="lessonbutton previousbutton"><a href="javascript:document.answerform.jumpto.value='.$answer->jumpto.';document.answerform.submit();">'.
+                                        strip_tags(format_text($answer->answer, FORMAT_MOODLE, $options)).'</a></div>';
+                            } else {
+                                $buttons['other'][] = '<div class="lessonbutton standardbutton"><a href="javascript:document.answerform.jumpto.value='.$answer->jumpto.';document.answerform.submit();">'.
+                                        strip_tags(format_text($answer->answer, FORMAT_MOODLE, $options)).'</a></div>';
+                            }
+                        }
+                        
                         if ($lesson->slideshow) {
+                            $px = $lesson->width - 30; // give us some breathing room
+                            $width = ' width="'.$px.'px"';
+                        } else {
+                            $width = ' width="100%"';
+                        }
+                        
+                        $fullbuttonhtml = '<div class="branchbuttoncontainer">'."\n";
+                        if ($page->layout) {
+                            // tried to do this with CSS, but couldnt get it to work in MacIE browser.  Using tables instead :(
+                            // don't care if empty or not because we want to keep the table structure
+                            $fullbuttonhtml .= '<table '.$width.' align="center"><tr><td align="left" width="20%">'.$buttons['prev']."</td>\n";
+                            $fullbuttonhtml .= '<td><table align="center"><tr><td>'.implode("</td>\n<td>", $buttons['other'])."</td></tr></table></td>\n";
+                            $fullbuttonhtml .= '<td align="right" width="20%">'.$buttons['next']."</td></tr></table>\n";
+                        } else {
+                            // care about emptyness here
+                            $temparray = array();
+                            if (!empty($buttons['next'])) {
+                                $temparray[] = $buttons['next'];
+                            }
+                            if (!empty($buttons['other'])) {
+                                $temparray = array_merge($temparray, $buttons['other']);
+                            }
+                            if (!empty($buttons['prev'])) {
+                                $temparray[] = $buttons['prev'];
+                            }
+                            $fullbuttonhtml .= '<table align="center" cellpadding="3px"><tr><td align="center">'.
+                                                implode("</td></tr>\n<tr><td align=\"center\">", $temparray).
+                                                "</td></tr></table>\n";
+                        }
+                        $fullbuttonhtml .= "</div>\n";
+                    
+                        if ($lesson->slideshow) {
+                            echo $fullbuttonhtml . '<br />';
+                            echo format_text($page->contents);
                             echo "</table></div><table cellpadding=\"5\" cellspacing=\"5\" align=\"center\">";
                         } else {
                             echo "<tr><td><table width=\"100%\">";
                         }
                         echo "<input type=\"hidden\" name=\"jumpto\" />";
-
-                        $nextprevious = array();
-                        $otherjumps = array();
-                        // seperate out next and previous jumps from the other jumps 
-                        foreach ($answers as $answer) {
-                            if($answer->jumpto == LESSON_NEXTPAGE || $answer->jumpto == LESSON_PREVIOUSPAGE) {
-                                $nextprevious[] = $answer;
-                            } else {
-                                $otherjumps[] = $answer;
-                            }
-                        }
-                        if ($page->layout) {
-                            echo "<tr>";
-                            // next 3 foreach loops print out the links in correct order
-                            foreach ($nextprevious as $jump) {
-                                if ($jump->jumpto == LESSON_PREVIOUSPAGE) {
-                                    echo "<td align=\"left\"><input class=\"previousbutton\" type=\"button\" onclick=\"document.answerform.jumpto.value=$jump->jumpto;document.answerform.submit();\"".
-                                         "value = \"$jump->answer\" /></td>";
-                                }
-                            }
-                            echo "<td align=\"center\"><table><tr>";
-                            $options->para=false;
-                            foreach ($otherjumps as $otherjump) {
-                                    echo "<td><input type=\"button\" onclick=\"document.answerform.jumpto.value=$otherjump->jumpto;document.answerform.submit();\"".
-                                         "value = \"".strip_tags(format_text($otherjump->answer,FORMAT_MOODLE,$options))."\" /></td>";
-                            }
-                            echo "</tr></table></td>";
-                            foreach ($nextprevious as $jump) {
-                                if ($jump->jumpto == LESSON_NEXTPAGE) {
-                                    echo "<td align=\"right\"><input class=\"nextbutton\" type=\"button\" onclick=\"document.answerform.jumpto.value=$jump->jumpto;document.answerform.submit();\"".
-                                         "value = \"$jump->answer\" /></td>";
-                                }
-                            }
-                            echo "</tr>";
-                        } else {
-                            // next 3 foreach loops print out the links in correct order
-                            foreach ($nextprevious as $jump) {
-                                if ($jump->jumpto == LESSON_NEXTPAGE) {
-                                    echo "<tr><td><input class=\"nextbutton\" type=\"button\" onclick=\"document.answerform.jumpto.value=$jump->jumpto;document.answerform.submit();\"".
-                                         "value = \"$jump->answer\" /></td></tr>";
-                                }
-                            }   
-                            $options->para = false;
-                            foreach ($otherjumps as $otherjump) {
-                                    echo "<tr><td><input type=\"button\" onclick=\"document.answerform.jumpto.value=$otherjump->jumpto;document.answerform.submit();\"".
-                                         "value = \"".strip_tags(format_text($otherjump->answer,FORMAT_MOODLE,$options))."\" /></td></tr>";
-                            }
-                            foreach ($nextprevious as $jump) {
-                                if ($jump->jumpto == LESSON_PREVIOUSPAGE) {
-                                    echo "<tr><td><input class=\"previousbutton\" type=\"button\" onclick=\"document.answerform.jumpto.value=$jump->jumpto;document.answerform.submit();\"".
-                                         "value = \"$jump->answer\" /></td></tr>";
-                                }
-                            }
-                        }
                         
-                       /* if(!$lesson->slideshow) {
-                            $options->para = false;
-                            foreach ($answers as $answer) {
-                                echo "<tr><td align=\"center\">";
-                                echo "<input type=\"button\" value=\"".strip_tags(format_text($answer->answer,FORMAT_MOODLE,$options))."\"";
-                                echo "onclick=\"document.answerform.jumpto.value=$answer->jumpto;document.answerform.submit();\" />";
-                                echo "</td></tr>";
-                            }
-                        }*/
                         if (!$lesson->slideshow) {
+                            if (!empty($buttons['next']) or !empty($buttons['prev'])) {
+                                print_simple_box_start("center", '100%');
+                            } else {
+                                print_simple_box_start("center");
+                            }
+                            
+                            echo $fullbuttonhtml;
                             echo '</table></table>';
                             print_simple_box_end();
+                        } else {
+                            echo $fullbuttonhtml;
                         }
                         break;
                     case LESSON_ESSAY :
@@ -894,8 +892,8 @@
                              "<label for=\"answer\" class=\"hidden-label\">Answer</label><textarea id=\"answer\" name=\"answer\" rows=\"15\" cols=\"60\">$value</textarea>\n"; //CDC hidden label added.
                         echo "</td></tr></table>";
                         print_simple_box_end();
-                        echo "<p align=\"center\"><input type=\"submit\" name=\"continue\" value=\"".
-                             get_string("pleaseenteryouranswerinthebox", "lesson")."\" /></p>\n";
+                        echo "<div align=\"center\" class=\"lessonbutton standardbutton\"><a href=\"javascript:document.answerform.submit();\">".
+                             get_string("pleaseenteryouranswerinthebox", "lesson")."</a></div>\n";
                         break;
                 }
                 echo "</form>\n"; 
