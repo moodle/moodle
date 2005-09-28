@@ -8,9 +8,5 @@ $string['description'] = 'แบบฟอร์มในการสมัครเป็นนักเรียน มีอยู่ด้วยกันสองแบบด้วย
 <li>ระบุรหัสผ่านสำหรับรายวิชานั้น ๆ สมาชิกที่ทราบรหัสดังกล่าวสามารถที่จะเข้าไปเป็นนักเรียนภายในรายวิชานั้นได้</li>
 </ul>';
 $string['enrolname'] = 'การเพิ่มสมาชิกภายใน';
-$string['parentlanguage'] = 'en';
-$string['thischarset'] = 'TIS-620';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Thai';
 
 ?>

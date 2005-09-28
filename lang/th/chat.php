@@ -41,7 +41,6 @@ $string['neverdeletemessages'] = 'ไม่มีการลบข้อความ';
 $string['nextsession'] = 'ตารางการสนทนาครั้งต่อไป';
 $string['noguests'] = 'บุคคลทั่วไปไม่สามารถเข้าสนทนาได้';
 $string['nomessages'] = 'ยังไม่มีข้อความ';
-$string['parentlanguage'] = 'en';
 $string['repeatdaily'] = 'เวลาเดียวกันนี้ทุกวัน';
 $string['repeatnone'] = 'ไม่มีการซ้ำหัวข้อเสวนา  เฉพาะเวลาที่ระบุเท่านั้น';
 $string['repeattimes'] = 'เสวนาเรื่องนี้ซ้ำ';
@@ -51,9 +50,6 @@ $string['seesession'] = 'ดูการเสวนาครั้งนี้';
 $string['sessions'] = 'การเสวนา';
 $string['strftimemessage'] = '%%H:%%M';
 $string['studentseereports'] = 'ทุกคนสามารถดูการเสวนาครั้งที่ผ่านมาได้';
-$string['thischarset'] = 'TIS-620';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Thai';
 $string['viewreport'] = 'ดูการเสวนาครั้งที่ผ่านมา';
 
 ?>
