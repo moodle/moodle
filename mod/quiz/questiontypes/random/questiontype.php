@@ -121,7 +121,7 @@ class quiz_random_qtype extends quiz_default_questiontype {
                 error("Can not find wrapped question {$state->responses['']}");
             }
             // In the old model the actual response was stored in a separate entry in
-            // the state table
+            // the state table and fortunately there was only a single state per question
             if (!$state->responses[''] = get_field('quiz_states', 'answer', 'attempt', $state->attempt, 'question', $wrappedquestion->id)) {
                 error("Wrapped state missing");
             }
@@ -129,7 +129,7 @@ class quiz_random_qtype extends quiz_default_questiontype {
             if (!$wrappedquestion = get_record('quiz_questions', 'id', $answerregs[1])) {
                 return false;
             }
-            $state->responses[''] = $answerregs[2];
+            $state->responses[''] = (false === $answerregs[2]) ? '' : $answerregs[2];
         }
 
         if (!$QUIZ_QTYPES[$wrappedquestion->qtype]
@@ -168,7 +168,7 @@ class quiz_random_qtype extends quiz_default_questiontype {
         $response = "random$realqid-$response";
 
         // ... and save it again.
-        if (!set_field('quiz_states', 'answer', $response, 'id', $state->id)) {
+        if (!set_field('quiz_states', 'answer', addslashes($response), 'id', $state->id)) {
             return false;
         }
 
