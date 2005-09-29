@@ -243,8 +243,18 @@
     $guest = get_guest();
     $exceptions[] = $guest->id;
 
-    $tablecolumns = array('picture', 'fullname', 'city', 'country', 'lastaccess','');
-    $tableheaders = array('', get_string('fullname'), get_string('city'), get_string('country'), get_string('lastaccess'), ($isteacher) ? get_string('select') : '');
+    $tablecolumns = array('picture', 'fullname', 'city', 'country', 'lastaccess');
+    $tableheaders = array('', get_string('fullname'), get_string('city'), get_string('country'), get_string('lastaccess'));
+
+    if ($course->enrolperiod) {
+       $tablecolumns[] = 'timeend';
+       $tableheaders[] = get_string('enrolmentend');
+    }
+
+    if ($isteacher) {
+       $tablecolumns[] = '';
+       $tableheaders[] = get_string('select');
+    }
 
     $table = new flexible_table('user-index-students');
 
@@ -277,6 +287,7 @@
     else {
         $select = 'SELECT u.id, u.username, u.firstname, u.lastname, u.email, u.city, u.country, 
                       u.picture, u.lang, u.timezone, u.emailstop, u.maildisplay, s.timeaccess AS lastaccess ';
+        $select .= $course->enrolperiod?', s.timeend ':'';
         $from   = 'FROM '.$CFG->prefix.'user u LEFT JOIN '.$CFG->prefix.'user_students s ON s.userid = u.id ';
         $where  = 'WHERE s.course = '.$course->id.' AND u.deleted = 0 ';
     }
@@ -332,9 +343,37 @@
     }
 
     if ($isteacher) {
-        echo '<form action="messageselect.php" method="post" name="messageselect">';
+        echo '
+<script Language="JavaScript">
+<!--
+function checksubmit(form) {
+    var destination = form.formaction.options[form.formaction.selectedIndex].value;
+    if (destination == "" || !checkchecked(form)) {
+        form.formaction.selectedIndex = 0;
+        return false;
+    } else {
+        return true;
+    }
+}
+
+function checkchecked(form) {
+    var inputs = document.getElementsByTagName(\'INPUT\');
+    var checked = false;
+    inputs = filterByParent(inputs, function() {return form;});
+    for(var i = 0; i < inputs.length; ++i) {
+        if(inputs[i].type == \'checkbox\' && inputs[i].checked) {
+            checked = true;
+        }
+    }
+    return checked;
+}
+//-->
+</script>
+';
+        echo '<form action="action_redir.php" method="get" name="studentsform" onSubmit="return checksubmit(this);">';
         echo '<input type="hidden" name="id" value="'.$id.'" />';
         echo '<input type="hidden" name="returnto" value="'.$_SERVER['REQUEST_URI'].'" />';
+        echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
     }
 
     if ($fullmode) {    // Print simple listing
@@ -400,6 +439,7 @@
     }
     else {
         $countrysort = (strpos($sort, 'country') !== false);
+        $timeformat = get_string('strftimedate');
         if (!empty($students))  {
             foreach ($students as $student) {
                 if ($student->lastaccess) {
@@ -420,15 +460,20 @@
                     }
                 }
 
-                $table->add_data(array (
+                $data = array (
                         //'<input type="checkbox" name="userid[]" value="'.$teacher->id.'" />',
                         print_user_picture($student->id, $course->id, $student->picture, false, true),
                         '<strong><a href="'.$CFG->wwwroot.'/user/view.php?id='.$student->id.'&amp;course='.$course->id.'">'.fullname($student).'</a></strong>',
                         $student->city,
                         $country,
-                        $lastaccess,
-                        ($isteacher ? '<input type="checkbox" name="email'.$student->id.'" />' : '')
-                        ));
+                        $lastaccess);
+                if ($course->enrolperiod) {
+                    $data[] = userdate($student->timeend, $timeformat);
+                }
+                if ($isteacher) {
+                    $data[] = '<input type="checkbox" name="user'.$student->id.'" />';
+                }
+                $table->add_data($data);
 
             }
         }
@@ -438,11 +483,15 @@
     }
 
     if ($isteacher) {
-        echo '<center>';
-        echo '<input type="button" onclick="checkall()" value="'.get_string('checkall').'" />';
-        echo '<input type="button" onclick="checknone()" value="'.get_string('checknone').'" />';
-        $displaylist[1] = get_string('messageselectadd');
-        choose_from_menu ($displaylist, "messageselect", "", get_string("withselectedusers"), "javascript:document.messageselect.submit()");
+        echo '<br /><center>';
+        echo '<input type="button" onclick="checkall()" value="'.get_string('checkall').'" /> ';
+        echo '<input type="button" onclick="checknone()" value="'.get_string('checknone').'" /> ';
+        $displaylist['messageselect.php'] = get_string('messageselectadd');
+        if ($course->enrolperiod) {
+            $displaylist['extendenrol.php'] = get_string('extendenrol');
+        }
+        choose_from_menu ($displaylist, "formaction", "", get_string("withselectedusers"), "this.form.submit();", "");
+        echo '<input type="submit" value="' . get_string('ok') . '"';
         echo '</center></form>';
     }
 

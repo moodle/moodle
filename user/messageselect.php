@@ -35,8 +35,8 @@
 
     $count = 0;
 
-    foreach ($_POST as $k => $v) {
-        if (preg_match('/email(\d+)/',$k,$m)) {
+    foreach ($_GET as $k => $v) {
+        if (preg_match('/^user(\d+)$/',$k,$m)) {
             if (!array_key_exists($m[1],$SESSION->emailto[$id])) {
                 if ($user = get_record_select('user','id = '.$m[1],'id,firstname,lastname,idnumber,email,emailstop,mailformat')) {
                     $SESSION->emailto[$id][$m[1]] = $user;
