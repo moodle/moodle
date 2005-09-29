@@ -37,16 +37,7 @@ class block_messages extends block_base {
         if (!empty($users)) {
             foreach ($users as $user) {
                 $this->content->text .= '<div style="text-align: left; font-size: 0.75em; padding-top: 5px;">';
-                if ($user->picture) {
-                    if ($CFG->slasharguments) {
-                        $imgtag = '<img src="'.$CFG->wwwroot.'/user/pix.php/'.$user->id.'/f2.jpg" style="height: 16px; width:16px; vertical-align: middle;" alt="" /> ';
-                    } else {
-                        $imgtag = '<img src="'.$CFG->wwwroot.'/user/pix.php?file=/'.$user->id.'/f2.jpg" style="height: 16px; width:16px; vertical-align: middle;" alt="" /> ';
-                    }
-                    $this->content->text .= $imgtag;
-                } else {
-                    $this->content->text .= '<img src="'.$CFG->pixpath.'/i/user.gif" style="height: 16px; width:16px; vertical-align: middle;" alt="" /> ';
-                }
+                $this->content->text .= print_user_picture($user->id, $this->instance->pageid, $user->picture, 16, true).' ';
                 $timeago = format_time(time() - $user->lastaccess);
                 $this->content->text .= '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$this->instance->pageid.'" title="'.$timeago.'">'.fullname($user).'</a>';
                 $this->content->text .= '&nbsp;<a target="message_'.$user->id.'" href="'.$CFG->wwwroot.'/message/discussion.php?id='.$user->id.'" onclick="return openpopup(\'/message/discussion.php?id='.$user->id.'\', \'message_'.$user->id.'\', \'menubar=0,location=0,scrollbars,status,resizable,width=400,height=500\', 0);"><img height="11" width="11" src="'.$CFG->pixpath.'/t/message.gif" alt="" />&nbsp;'.$user->count.'</a>';

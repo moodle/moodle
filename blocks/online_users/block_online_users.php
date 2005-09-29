@@ -105,16 +105,7 @@ class block_online_users extends block_base {
             foreach ($users as $user) {
                 $this->content->text .= '<div class="listentry">';
                 $timeago = format_time(time() - max($user->timeaccess, $user->lastaccess)); //bruno to calculate correctly on frontpage 
-                if ($user->picture) {
-                    if ($CFG->slasharguments) {
-                        $imgtag = '<img src="'.$CFG->wwwroot.'/user/pix.php/'.$user->id.'/f2.jpg" style="height: 16px; width:16px; vertical-align: middle;" alt="" /> ';
-                    } else {
-                        $imgtag = '<img src="'.$CFG->wwwroot.'/user/pix.php?file=/'.$user->id.'/f2.jpg" style="height: 16px; width:16px; vertical-align: middle;" alt="" /> ';
-                    }
-                    $this->content->text .= $imgtag;
-                } else {
-                    $this->content->text .= '<img src="'.$CFG->pixpath.'/i/user.gif" style="height: 16px; width:16px; vertical-align: middle;" alt="" /> ';
-                }
+                $this->content->text .= print_user_picture($user->id, $this->instance->pageid, $user->picture, 16, true).' ';
                 $this->content->text .= '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$this->instance->pageid.'" title="'.$timeago.'">'.$user->fullname.'</a>';
                 if (!empty($USER->id) and ($USER->id != $user->id) and !empty($CFG->messaging) and !isguest()) {  // Only when logged in
                     $this->content->text .= '&nbsp;<a target="message_'.$user->id.'" href="'.$CFG->wwwroot.'/message/discussion.php?id='.$user->id.'" onclick="return openpopup(\'/message/discussion.php?id='.$user->id.'\', \'message_'.$user->id.'\', \'menubar=0,location=0,scrollbars,status,resizable,width=400,height=500\', 0);"><img height="11" width="11" src="'.$CFG->pixpath.'/t/message.gif" alt="" /></a>';
