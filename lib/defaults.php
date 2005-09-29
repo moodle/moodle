@@ -63,6 +63,7 @@
        'notifyloginthreshold'     =>  10,
        'opentogoogle'             =>  false,
        'pathtoclam'               => '',
+       'pathtodu'                 => '',
        'prefix'                   => '',
        'proxyhost'                => '',
        'proxyport'                => '',
