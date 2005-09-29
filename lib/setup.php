@@ -429,12 +429,12 @@ $CFG->httpswwwroot = $CFG->wwwroot;
     if ($USER && function_exists('apache_note') && !empty($CFG->apacheloguser)) {
         $username = clean_filename($USER->username);
         $name = clean_filename($USER->firstname. " ".$USER->lastname);
-        $id = $USER->id;
+        $userid = $USER->id;
         if (isset($USER->realuser)) {
             if ($realuser = get_record('user', 'id', $USER->realuser)) {
                 $username = clean_filename($realuser->username." as ".$username);
                 $name = clean_filename($realuser->firstname." ".$realuser->lastname ." as ".$name);
-                $id = clean_filename($realuser->id." as ".$id);
+                $userid = clean_filename($realuser->id." as ".$userid);
             }
         }
         switch ($CFG->apacheloguser) {
@@ -446,7 +446,7 @@ $CFG->httpswwwroot = $CFG->wwwroot;
                 break;
             case 1:
             default:
-                $logname = $id;
+                $logname = $userid;
                 break;
         }
         apache_note('MOODLEUSER', $logname);
