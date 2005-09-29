@@ -1339,6 +1339,12 @@ function quiz_save_question_session(&$question, &$state) {
     if (!$state->changed && isset($state->id)) {
         return true;
     }
+
+    // addslashes that have been stripped in quiz_extract_response
+    foreach ($state->responses as $key => $response) {
+        $state->responses[$key] = addslashes($response);
+    }
+
     // Set the legacy answer field
     $state->answer = isset($state->responses['']) ? $state->responses[''] : '';
 
@@ -1389,6 +1395,12 @@ function quiz_save_question_session(&$question, &$state) {
      $question, $state)) {
         return false;
     }
+
+    // addslashes that have been stripped in quiz_extract_response
+    foreach ($state->responses as $key => $response) {
+        $state->responses[$key] = stripslashes($response);
+    }
+
     // Reset the changed flag
     $state->changed = false;
     return true;
@@ -1460,7 +1472,7 @@ function quiz_extract_responses($questions, $responses, $defaultevent) {
             }
 
             // Update the state with the new response
-            $actions[$quid]->responses[$key] = $response;
+            $actions[$quid]->responses[$key] = stripslashes($response);
         }
     }
     return $actions;
