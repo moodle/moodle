@@ -1,9 +1,13 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.6 development (2005060201)
+      // admin.php - created with Moodle 1.6 development (2005090100)
 
 
 $string['adminseesallevents'] = 'Beheerders zien alle gebeurtenissen';
 $string['adminseesownevents'] = 'Beheerders zien niet alle gebeurtenissen';
+$string['backgroundcolour'] = 'Transparant';
+$string['badwordsconfig'] = 'Geef je lijst te cencureren woorden in, gescheiden door komma\'s';
+$string['badwordsdefault'] = 'Je aangepaste lijst is leeg. Er zal een standaardlijst uit het talenpakket gebruikt worden';
+$string['badwordslist'] = 'Aangepaste lijst te cencureren woorden';
 $string['blockinstances'] = 'In gebruik';
 $string['blockmultiple'] = 'Meer';
 $string['cachetext'] = 'Hoelang mag tekst in cache blijven';
@@ -24,12 +28,16 @@ $string['configclamfailureonupload'] = 'Als je clam geconfigureerd hebt om geüpl
 $string['configcountry'] = 'Als je hier een land invult, wordt dit land als standaard geselecteerd bij nieuwe gebruikersaccounts. Laat dit veld gewoon leeg om gebruikers te dwingen een land te kiezen.';
 $string['configdbsessions'] = 'Als dit ingeschakeld is, dan zal de databank gebruikt worden om informatie over de sessies te bewaren. Dit is vooral nuttig op grote, veel gebruikte sites of sites op een cluster van servers.  Voor de meeste sites kan dit waarschijnlijk beter uitgeschakeld zijn zodat de server de informatie op schijf bewaart. Merk op dat het wijzigen van deze instelling alle gebruikers zal afmelden (jij inbegrepen).';
 $string['configdebug'] = 'Als je dit aan zet zullen er meer PHP-fouten op het scherm worden weergegeven. Dit is alleen maar handig voor ontwikkelaars van de applicatie.';
+$string['configdefaultallowedmodules'] = 'Voor de cursussen die in bovenstaande categorie horen moet je bepalen welke modules je standaard wil toelaten <b>als de cursus wordt aangemaakt</b>?';
+$string['configdefaultrequestedcategory'] = 'Standaardcategorie om aangevraagde cursussen te plaatsen nadat ze goedgekeurd zijn.';
 $string['configdeleteunconfirmed'] = 'Als je met e-mailauthenticatie werkt dan is dit de periode waarbinnen gebruikers moeten reageren op de bevestigingsmail voor de nieuwe account. Na deze periode zullen oude, niet-bevestigde accounts verwijderd worden.';
 $string['configdenyemailaddresses'] = 'Om e-mailadressen van bepaalde domeinen te weigeren, kun je ze hier op dezelfde manier opnemen. Alle andere domeinen zullen aanvaard worden. bv <strong>hotmail.com yahoo.co.uk</strong>';
 $string['configdigestmailtime'] = 'Gebruikers die ervoor kiezen dat de e-mails hun als samenvatting toegezonden worden, zullen dagelijks een e-mail ontvangen. Deze instelling controleert op welk moment van de dag deze dagelijkse mail verzonden wordt (de mail wordt verstuurd door de cron die volgt op het uur dat hier gekozen wordt)';
 $string['configdisplayloginfailures'] = 'Dit zal informatie tonen over mislukte aanmeldingen van de geselecteerde gebruikers';
+$string['configenablecourserequests'] = 'Hiermee kan elke gebruiker aanvragen om een nieuwe cursus aan te maken.';
 $string['configenablerssfeeds'] = 'Met deze instelling maak je RSS-feeds mogelijk voor heel de site. Om ze echt te kunnen gebruiken, moet je de RSS-feeds nog inschakelen voor elke module afzonderlijk - ga naar \'Beheer van de modules\' onder Beheer, Configuratie.';
 $string['configenablerssfeedsdisabled'] = 'Dit is niet beschikbaar omdat RSS voor heel de site is uitgeschakeld. Om RSS in te schakelen ga je naar Configureer variablen onder Beheer Configuratie.';
+$string['configenablestats'] = 'Als je hier \'ja\' kiest, zal de cron van Moodle de logbestanden verwerken en statistieken aanmaken. Afhankelijk van de hoeveelheid verkeer op je site, kan dit wel even duren. Als je dit inschakelt kun je interessante grafieken en statistieken zien over elke cursus of over de hele site.';
 $string['configerrorlevel'] = 'Kies hoeveel PHP-waarschuwingen je wilt dat Moodle laat zien. \'Normaal\' is meestal de beste keuze.';
 $string['configextendedusernamechars'] = 'Schakel deze optie in om het mogelijk te maken dat gelijk welke karakters in de gebruikersnaam gebruikt kunnen worden (merk op dat deze instelling geen invloed heeft op de voornaam of achternaam). De standaardinstelling is \"false\", wat ervoor zorgt dat alleen alfanumerieke tekens gebruikt kunnen worden.';
 $string['configfilterall'] = 'Filter alle strings: hoofdingen, titels, navigatiebalk enz. inbegrepen. Dit is meestal slechts nuttig wanneer je de multilang-filter gebruikt. Anders wal het alleen maar een extra belasting op je server veroorzaken zonder meerwaarde.';
