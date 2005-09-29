@@ -6407,6 +6407,10 @@ if(!function_exists('html_entity_decode')) {
  * simulates this behaviour for PHP < 5.0.0.
  * See also: http://mjtsai.com/blog/2004/07/15/php-5-object-references/
  *
+ * Modified 2005-09-29 by Eloy (from Julian Sedding proposal)
+ * Found a better implementation (more checks and possibilities) from PEAR:
+ * http://cvs.php.net/co.php/pear/PHP_Compat/Compat/Function/clone.php
+ * 
  * @param object $obj
  * @return object
  */
@@ -6414,6 +6418,20 @@ if(!check_php_version('5.0.0')) {
 // the eval is needed to prevent PHP 5 from getting a parse error!
 eval('
     function clone($obj) {
+    /// Sanity check
+        if (!is_object($obj)) {
+            user_error(\'clone() __clone method called on non-object\', E_USER_WARNING);
+            return;
+        }
+
+    /// Use serialize/unserialize trick to deep copy the object
+        $obj = unserialize(serialize($obj));
+
+    /// If there is a __clone method call it on the "new" class
+        if (method_exists($obj, \'__clone\')) {
+            $obj->__clone();
+        }
+
         return $obj;
     }
 ');
