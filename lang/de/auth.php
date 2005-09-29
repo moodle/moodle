@@ -65,6 +65,7 @@ $string['auth_ldap_memberattribute'] = 'Geben Sie die Mitgliedsoptionen an, wenn
 $string['auth_ldap_objectclass'] = 'Filter für die Suche nach Namen/Nutzern. Normalerweise tragen Sie ein objectClass=posixAccount . Defaults to objectClass=* what will return all objects from LDAP.';
 $string['auth_ldap_opt_deref'] = 'Legt fest wie Aliasbezeichnungen bei der Suche behandelt werden. Wählen Sie einen der folgenden Werte: \"No\" (LDAP_DEREF_NEVER) or \"Yes\" (LDAP_DEREF_ALWAYS)';
 $string['auth_ldap_passwdexpire_settings'] = 'LDAP Passwortablaufeinstellung';
+$string['auth_ldap_preventpassindb'] = 'Wählen Sie ja, um Passwörter <b>nicht</b> in der Datenbank zu speichern';
 $string['auth_ldap_search_sub'] = 'Wählen Sie <> 0 wenn Sie Nutzer aus Unterumgebungen suchen möchten.';
 $string['auth_ldap_server_settings'] = 'LDAP Server Einstellungen';
 $string['auth_ldap_update_userinfo'] = 'Nutzerdaten  (Vorname, Name, Adresse...) von LDAP zu Moodle aktualisieren. Weitere Informationen in /auth/ldap/attr_mappings.php';

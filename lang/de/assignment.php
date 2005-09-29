@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.5 + (2005060201)
+      // assignment.php - created with Moodle 1.6 development (2005090100)
 
 
 $string['allowresubmit'] = 'Erneutes Einreichen erlauben';
@@ -35,8 +35,9 @@ $string['emptysubmission'] = 'Sie haben noch nichts eingereicht';
 $string['existingfiledeleted'] = 'Die vorhandene Datei wurde gelöscht: $a';
 $string['failedupdatefeedback'] = 'Keine Aktualisierung der Rückmeldung für Benutzer $a';
 $string['feedback'] = 'Rückmeldung';
-$string['feedbackfromteacher'] = 'Feddback von $a';
+$string['feedbackfromteacher'] = 'Feedback von $a';
 $string['feedbackupdated'] = 'Rückmeldung aktualisiert für $a Teilnehmer/innen';
+$string['guestnoupload'] = 'Gäste dürfen keine Dateien hochladen.';
 $string['helpoffline'] = '<p>Dieser Aufgabentyp ist nützlich wenn die Erledigung der Aufgabe ausserhalb von moodle erfolgt.</p> <p>Die Teilnehmer/innen sehen die Aufgabenbeschreibung. Sie können jedoch keine Lösungsdatei hochladen. Die Bewertung erfolgt in dieser Aufgabe und die Teilnehmer/inenn können auch die Bewertung hier einsehen.</p>';
 $string['helponline'] = '<p>Dieser Aufgabentyp fordert die Teilnehmer/innen auf ihre Lösung im Editorfenster einzutragen. Der/die Trainer/in kann die Lösung online bewerten und im Textfenster direkt Kommentare eintragen oder Veränderungen vornehmen.</p> <p>In früheren moodle-Versionen wurde diese Funktion vom Journal-Modul wahrgenommen.</p>';
 $string['helpuploadsingle'] = '<p>Diese Aufgabenart ermöglicht den Upload einer beliebigen Datei für jede/n Teilnehmer/in</p><p>Dies kann eine Textdatei, eine Bilddatei, eine Zip-Datei oder eine Datei in einem Format, das Sie in der Aufgabenstellung definiert haben.</p>';
@@ -56,7 +57,7 @@ $string['saveallfeedback'] = 'Alle meine Rückmeldungen speichern';
 $string['submission'] = 'Aufgabenabgabe';
 $string['submissionfeedback'] = 'Rückmeldung zu den eingereichten Aufgaben';
 $string['submissions'] = 'Eingereichte Aufgaben';
-$string['submissionsaved'] = 'IhreVeränderungen wurden gespeichert';
+$string['submissionsaved'] = 'Ihre Veränderungen wurden gespeichert';
 $string['submitassignment'] = 'Tragen Sie Ihre Aufgabe unter Verwendung dieses Formulars ein';
 $string['submitted'] = 'Eingereicht';
 $string['typeoffline'] = 'Offline Aktivität ';

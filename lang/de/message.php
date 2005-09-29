@@ -55,14 +55,14 @@ $string['sendmessage'] = 'Mitteilungen senden';
 $string['sendmessageto'] = 'Mitteilungen an $a versenden';
 $string['settings'] = 'Einstellungen';
 $string['settingssaved'] = 'Ihre Einstellungen wurden gespeichert';
-$string['showmessagewindow'] = 'Mitteilungsfenster automatisch öffnen wenn eine neue Mitteilung ankommt (Pop-Up-Fenster dürfen für diese Funktion nicht geblockt werden)';
+$string['showmessagewindow'] = 'Mitteilungsfenster automatisch öffnen, wenn eine neue Mitteilung ankommt (Pop-Up-Fenster dürfen für diese Funktion nicht geblockt werden)';
 $string['strftimedaydatetime'] = '%%A, %%d %%B %%Y, %%I:%%M %%p';
 $string['timenosee'] = 'Minuten seit ich zuletzt online war';
 $string['timesent'] = 'Sendezeitpunkt';
 $string['unblockcontact'] = 'Kontakt aktivieren';
 $string['unreadmessages'] = '$a ungelesene Mitteilungen';
 $string['userisblockingyou'] = 'Diese/r Teilnehmer/innen hat Mitteilungen von Ihnen gesperrt';
-$string['userisblockingyounoncontact'] = 'Der/die Empfänger/in nimmt derzeit nur Nachrichten von Personen an, die in der Kontkatliste eingetragen sind. Sie sind derzeit dort nicht aufgeführt.';
+$string['userisblockingyounoncontact'] = 'Der/die Empfänger/in nimmt derzeit nur Nachrichten von Personen an, die in der Kontaktliste eingetragen sind. Sie sind derzeit dort nicht aufgeführt.';
 $string['userssearchresults'] = 'Suchergebniss(e): $a Nutzer/innen gefunden';
 
 ?>

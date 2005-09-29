@@ -1,5 +1,5 @@
-<?PHP // $Id$
-      // admin.php - created with Moodle 1.6 development (2005060201)
+<?PHP // $Id$ 
+      // admin.php - created with Moodle 1.6 development (2005090100)
 
 
 $string['adminseesallevents'] = 'Administrator/innen sehen alle Termine';
@@ -46,7 +46,7 @@ $string['configintroadmin'] = 'Auf dieser Seite sollten Sie den/die Hauptadminst
 $string['configintrosite'] = 'Diese Seite erlaubt es Ihnen, die Startseite und den Namen der neuen Site einzurichten. Sie können später über die Startseite (Konfiguration > Seiteneinstellungen) hierher zurückkehren und die Einstellungen jederzeit bearbeiten.';
 $string['configintrotimezones'] = 'Diese Seite sucht nach neuen Einstellungen für Zeitzonen, inkl. neue Regelungen für die Sommerzeit, und aktualisiert die Datenbank. Dabei werden die Orte geprüft: $a. Der Vorgang ist normalerweise sehr sicher und beeinträchtigt Ihre Installation nicht. Wollen Sie die Zeitzonen nun aktualisieren?';
 $string['configlang'] = 'Wählen Sie die Standard-Sprache für die gesamte Seite. Die Benutzer können diese später überschreiben.';
-$string['configlangcache'] = 'Speichern der Sprachmenus. Spart eine Menge Speicherund Prozessleistung. Mit der Aktivierung dauert es ein paar Minuten zur Aktualisierung wenn Sprachen gelöscht oder hinzugefügt wurden.';
+$string['configlangcache'] = 'Speichern der Sprachmenus. Spart eine Menge Speicher und Prozessleistung. Mit der Aktivierung dauert es ein paar Minuten zur Aktualisierung wenn Sprachen gelöscht oder hinzugefügt wurden.';
 $string['configlangdir'] = 'In den meisten Sprachen schreibt man von links nach rechts, aber in einigen anderen, wie Arabisch oder Hebräisch, schreibt man von rechts nach links.';
 $string['configlanglist'] = 'Lassen Sie dieses Feld leer, um allen Nutzern zu erlauben, aus jeder installierten Sprache auszuwählen. Sie können ebenso das Sprachmenü verkürzen, indem Sie eine durch Kommas getrennte Liste der Spachcodes angeben, die Sie für die Auswahl möchten. Zum Beispiel en, es_es, fr, it.';
 $string['configlangmenu'] = 'Wählen Sie aus, ob Sie generell das Sprach-Auswahlmenü auf Ihrer Startseite angezeigt haben möchten, auf der Anmeldungsseite etc. Dies betrifft nicht die Möglichkeit des Nutzers, seine bevorzugte Sprache in seinem Profil einzustellen.';
@@ -62,7 +62,7 @@ $string['confignoreplyaddress'] = 'Tragen Sie hier die E-Mail-Adresse ein, die a
 $string['confignotifyloginfailures'] = 'E-Mail Benachrichtigungen können versandt werden, wenn Login-Fehler aufgezeichnet wurden. Wer sollte die Nachrichten sehen?';
 $string['confignotifyloginthreshold'] = 'Nach wie vielen gescheiterten Anmeldeversuchen soll eine Benachrichtigung erfolgen (nur wenn diese auch aufgezeichnet werden)?';
 $string['configopentogoogle'] = 'Wenn Sie diese Option aktivieren, wird Google erlaubt, Ihre Seite als Gast zu besuchen. Außerdem werden Besucher, die über einen Link von Google kommen, automatisch als \'Gäste\' eingeloggt. Dies gilt natürlich nur für Kurse, die Gäste (ohne Schlüssel) zulassen.';
-$string['configpathtoclam'] = 'Pfad für Clam-AV. Zumeist /usr/bon/clamscan oder user/bin/clamdscan. Die Einstellung ist erforderlich, damit Clam-AV gefunden wird.';
+$string['configpathtoclam'] = 'Pfad für Clam-AV. Zumeist /usr/bin/clamscan oder user/bin/clamdscan. Die Einstellung ist erforderlich, damit Clam-AV gefunden wird.';
 $string['configproxyhost'] = 'Wenn dieser <B>Server</B> einen Proxy braucht (beispielsweise eine Firewall), um Internetzugriff zu bekommen, dann tragen Sie hier den Namen und den Port des Proxys ein. Anderenfalls lassen sie das Feld leer.';
 $string['configquarantinedir'] = 'Wenn Clam-AV infizierte Dateien in ein Quarantäne-Verzeichnis verschieben soll, definieren Sie das Verzeichnis hier. Wenn Sie den Eintrag leer lassen, das Verzeichnis ungültig ist oder nicht beschrieben werden kann, werden infizierte Dateien gelöscht. Tragen Sie keinen Slash am Ende ein.';
 $string['configrunclamonupload'] = 'Clam-AV für hochgeladene Dateien nutzen? Sie müssen zusätzlich einen Pfad zu Clam-AV in pathtoclam eintragen. Clam-Av ist ein freier Virenscanner (http.//www.clamav.net).';
@@ -96,7 +96,7 @@ $string['configvariables'] = 'Variablen konfigurieren';
 $string['configwarning'] = 'Vorsicht bei der Veränderung dieser Einstellungen, ungeeignete Werte können zu Problemen führen.';
 $string['configzip'] = 'Geben Sie hier den Pfad zum Programm zip an (nur Unix). Dieser wird für die Erstellung ZIP-Archiven auf dem Server benötigt.';
 $string['confirmation'] = 'Bestätigung';
-$string['cronwarning'] = 'Das <a href=\"cron.php\">Cron-Skript</ a> wurde in den letzten 24 Stunden nicht ausgeführt. <br />Die  <a href=\"../doc/?frame=install.html&sub=cron\">Installations Dokumentation</a> erläutert wie Sie diesen Vorgang automatisieren können.';
+$string['cronwarning'] = 'Das <a href=\"cron.php\">Cron-Skript</ a> wurde in den letzten 24 Stunden nicht ausgeführt. <br />Die  <a href=\"../doc/?frame=install.html&#8834;=cron\">Installations Dokumentation</a> erläutert wie Sie diesen Vorgang automatisieren können.';
 $string['edithelpdocs'] = 'Hilfedateien bearbeiten';
 $string['editstrings'] = 'Menutexte bearbeiten';
 $string['filterall'] = 'Alle Begriffe filtern';

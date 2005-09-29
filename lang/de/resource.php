@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
+      // resource.php - created with Moodle 1.6 development (2005090100)
 
 
 $string['addresource'] = 'Material hinzufügen';
@@ -63,7 +63,7 @@ $string['newwindow'] = 'Neues Fenster';
 $string['newwindowopen'] = 'Dieses Quelle in einem neuen Popup-Fenster anzeigen';
 $string['notallowedlocalfileaccess'] = 'Der Zugriff auf lokale Dateiressourcen ist zur Zeit nicht aktiviert. Daher sind die Materialien nicht verfügbar.';
 $string['note'] = 'Anmerkung';
-$string['notefile'] = 'Um mehr als eine Datei für diesen Kurs hochzuladen (damit dieses in der Liste erscheinen) benutzen Sie bitte den 
+$string['notefile'] = 'Um mehr als eine Datei für diesen Kurs hochzuladen (damit diese in der Liste erscheinen) benutzen Sie bitte den 
 <a href=\"$a\">Datei-Manager</a>.';
 $string['notypechosen'] = 'Sie müssen einen Typ auswählen. Verwenden Sie den Zurück-Knopf und probieren Sie es erneut';
 $string['pagedisplay'] = 'Zeigt das Arbeitsmaterial im derzeitigen Fenster';
@@ -88,6 +88,7 @@ $string['resourcetypefile'] = 'Link auf Datei oder Webseite';
 $string['resourcetypehtml'] = 'Erstellen einer Webseite';
 $string['resourcetypelabel'] = 'Bezeichnung einfügen';
 $string['resourcetypetext'] = 'Erstellen einer Textseite';
+$string['resourcetyperepository'] = 'Link auf ein Bibliotheksobjekt';
 $string['searchweb'] = 'Suche nach einer Webseite';
 $string['serverurl'] = 'Server URL ($a->wwwroot)';
 $string['variablename'] = 'Name der Variable';

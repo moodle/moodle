@@ -117,7 +117,7 @@ $string['overviewnumpostssince'] = '$a Beiträge seit Ihrem letzten Login';
 $string['overviewnumunread'] = '$a ungelesene Beiträge';
 $string['parent'] = 'Zeige den ersten Eintrag';
 $string['parentofthispost'] = 'Verfasser/in dieses Beitrags';
-$string['postadded'] = 'Ihr Eintrag wurde erfolgreich hinzugefügt. <P>Sie können den Beitrag $a Minuten bearbeiten, sofern Sie Änderungen vornehmen wollen.';
+$string['postadded'] = 'Ihr Eintrag wurde erfolgreich hinzugefügt. <P>Sie können den Beitrag $a bearbeiten, sofern Sie Änderungen vornehmen wollen.';
 $string['postincontext'] = 'Diesen Beitrag im Zusammenhang einsehen';
 $string['postmailinfo'] = 'Hiermit erhalten Sie die Kopie einer Mitteilung, die auf der Webseite $a eingetragen wurde.
 Um auf diese zu antworten, folgen Sie bitte diesem Link:';
