@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.5 ALPHA (2005043000)
+      // forum.php - created with Moodle 1.6 development (2005090100)
 
 
 $string['addanewdiscussion'] = 'Ein neues Diskussionsthema hinzufügen';
@@ -23,7 +23,7 @@ $string['configoldpostdays'] = 'Zahl der Tage, die eine neue ungelesene Nachrich
 $string['configreplytouser'] = 'Wenn ein Beitrag aus einem Forum per E-Mail versandt wird, soll er die E-Mail-Adresse des Teilnehmers/der Teilnehmerin enthalten, damit eine Antwort direkt gegeben werden kann und nicht über das Forum erfolgt? Wenn Sie \'Ja\' auswählen, können die Teilnehmer/innen in ihrem Profil festlegen, ob die E-Mail-Adresse veröffentlicht werden soll oder nicht.';
 $string['configshortpost'] = 'Jeder Beitrag (ohne HTML-Codierung), der kürzer ist, wird als kurz eingestuft.';
 $string['configtrackreadposts'] = 'Wählen Sie \'Ja\', damit die Einstellung gelesen/ungelesen für jede/n Nutzer/in zur Verfügung steht';
-$string['configusermarksread'] = 'Die \'Ja\'-Einstellung bewirkt, dass jede/r Nutzer/in eine Ncahricht manuell als gelesen markieren muß. Bei \'Nein\' wird eine Nachricht automatisch als \'gelesen\' markiert, wenn Sie aufgerufen/angezeigt wurde.';
+$string['configusermarksread'] = 'Die \'Ja\'-Einstellung bewirkt, dass jede/r Nutzer/in eine Nachricht manuell als gelesen markieren muß. Bei \'Nein\' wird eine Nachricht automatisch als \'gelesen\' markiert, wenn Sie aufgerufen/angezeigt wurde.';
 $string['couldnotadd'] = 'Ihr Eintrag konnte aufgrund eines unbekannten Fehlers nicht hinzugefügt werden';
 $string['couldnotdeleteratings'] = 'Der Eintrag kann nicht gelöscht werden, weil er schon bewertet wurde';
 $string['couldnotdeletereplies'] = 'Der Beitrag kann nicht gelöscht werden, weil darauf schon Anworten geschrieben wurden';
@@ -33,7 +33,7 @@ $string['deleteddiscussion'] = 'Das Thema ist gelöscht worden ';
 $string['deletedpost'] = 'Der Eintrag wurde gelöscht';
 $string['deletedposts'] = 'Diese Beiträge wurden gelöscht.';
 $string['deletesure'] = 'Möchten Sie diesen Eintrag wirklich löschen?';
-$string['deletesureplural'] = 'Sind Siesicher, dass Sie diese Beiträge und alle dazu gehörigen Antworten löschen wollen? ($a Beiträge)';
+$string['deletesureplural'] = 'Sind Sie sicher, dass Sie diese Beiträge und alle dazu gehörigen Antworten löschen wollen? ($a Beiträge)';
 $string['digestmailheader'] = 'Dies ist die tägliche Zusammenfassung (Digest) der Beiträge von $a->sitename. Sie können Ihre E-Mail-Einstellungen unter $a->userprefs abändern.';
 $string['digestmailprefs'] = 'Ihr Profil';
 $string['digestmailsubject'] = '$a: Zusammenfassung der Foren';
@@ -100,6 +100,7 @@ $string['nonews'] = 'Es wurden bisher keine Neuigkeiten gepostet';
 $string['noposts'] = 'Keine Beiträge';
 $string['nopostscontaining'] = 'Es wurden keine in \'$a\' enthaltenen Beiträge gefunden';
 $string['nosubscribers'] = 'Derzeit gibt es keine Teilnehmer/in in diesem Forum';
+$string['nothingnew'] = 'Keine Neuigkeiten für $a';
 $string['notingroup'] = 'Dieses Forum steht nur den Mitgliedern der Gruppe zur Verfügung.';
 $string['notrackforum'] = 'Ungelesene Beiträge nicht markieren';
 $string['nownotsubscribed'] = '$a->name wird künftig KEINE Kopien von \'$a->forum\' per E-Mail erhalten';
@@ -112,9 +113,11 @@ $string['oldertopics'] = 'Ältere Beiträge';
 $string['openmode0'] = 'Keine neuen Themen, keine Antworten';
 $string['openmode1'] = 'Keine neuen Themen, aber Antworten erlaubt';
 $string['openmode2'] = 'Neue Themen und Antworten erlaubt';
+$string['overviewnumpostssince'] = '$a Beiträge seit Ihrem letzten Login';
+$string['overviewnumunread'] = '$a ungelesene Beiträge';
 $string['parent'] = 'Zeige den ersten Eintrag';
 $string['parentofthispost'] = 'Verfasser/in dieses Beitrags';
-$string['postadded'] = 'Ihr Eintrag wurde erfolgreich hinzugefügt. <P>Sie haben $a zu bearbeiten, sofern Sie Änderungen machen möchten.';
+$string['postadded'] = 'Ihr Eintrag wurde erfolgreich hinzugefügt. <P>Sie können den Beitrag $a Minuten bearbeiten, sofern Sie Änderungen vornehmen wollen.';
 $string['postincontext'] = 'Diesen Beitrag im Zusammenhang einsehen';
 $string['postmailinfo'] = 'Hiermit erhalten Sie die Kopie einer Mitteilung, die auf der Webseite $a eingetragen wurde.
 Um auf diese zu antworten, folgen Sie bitte diesem Link:';
