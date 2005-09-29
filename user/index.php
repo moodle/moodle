@@ -304,13 +304,6 @@
         $sort = '';
     }
 
-    if($table->get_sql_sort()) {
-        $sort = ' ORDER BY '.$table->get_sql_sort();
-    }
-    else {
-        $sort = '';
-    }
-
     $matchcount = count_records_sql('SELECT COUNT(*) '.$from.$where);
 
     $table->initialbars($totalcount > $perpage);
