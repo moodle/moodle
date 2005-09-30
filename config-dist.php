@@ -279,7 +279,7 @@ $CFG->admin = 'admin';
 // If you are going to publish your log, or the output of your web stats analyzer
 // this will weaken the security of your website.
 // 
-
+// NOTE: if you are using custompix in your theme, see /fixpix.php.
 
 //=========================================================================
 // ALL DONE!  To continue installation, visit your main page with a browser
