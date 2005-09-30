@@ -1,0 +1,41 @@
+<p align="center"><b>Analiza przedmiotów</b></p>
+<p>
+Tabela pokazuje dane u¿yte do tworzenia quizu w sposób mo¿liwy do analizy i oceny ka¿dego z pytañ podczas procesu oceniania. U¿yte parametry statystyczne s± przeliczane i prezentowane jak w przypadku klasycznych testów.(ref.1)</p>
+
+<p><b>Indeks mo¿liwo¶ci (% poprawno¶ci)</b></p>
+
+<p>Jest on miar± trudno¶ci pytania dla uczestników quizu, jest obliczany jako:
+
+<br>FI=(X<sub>(¶rednie)</sub>/X<sub>max</sub> <br>
+gdzie X<sub>(¶rednie)</sub> jest ¶redni± zaliczeñ uzyskanych przez wszystkich u¿ytkowników odpowiadaj±cych na dane pytanie a X<sub>max</sub> jest maksimum zaliczeñ mo¿liwych dla tego pytania.
+<br>Je¶li pytania mog± zostaæ zaliczone dicotonically(równocze¶nie) do kategorii prawid³owe/nieprawid³owe, lecz parametr odpowiadaæ bêdzie procentowi u¿ytkowników którzy odpowiedzieli na pytanie prawid³owo.</p>
+</p>
+<p><b>Odchylenia standardowe (SD)</b</p>
+
+Ten parametr ukazuje rozk³ad odpowiedzi w ca³ej populacji. Je¶li wszyscy u¿ytkownicy odpowiedz± tak samo, wówczas SD=0. SD jest obliczane jako standardowe odchylenie statystyczne dla wyrywkowych lub u³amkowych wyników (osi±gniête/maksymalne)dla ka¿dego poszczególnego pytania.
+</p>
+
+<p><b>Wska¼nik dyskryminacji (DI)</b></p>
+<p>
+Ukazuje przybli¿ony wska¼nik wyniku ka¿dego pytania dla poszczególnego u¿ytkownika uwzglêdniaj±c stosunek poprawno¶ci jego odpowiedzi do odpowiedzi mniej poprawnych. Ten parametr jest liczony jako stosunek 1/3-ich odpowiedzi zawartych w ca³o¶ciowym wyniku dla danego quizu. Nastêpnie przeciêtny wynik dla analizowanych przedmiotów jest przeliczany dla grup wyników najlepszych i najgorszych natomiast wyniki przeciêtne s± odrzucane. Matematyczne wyja¶nienie jest nastêpuj±ce:
+
+<br/>DI=(X<sub>najlepszych</sub>-X<sub>najgorszych</sub>)/N
+<br>Gdzie X<sub>najlepszych</sub> jest sum± u³amkowych zaliczeñ (osi±gniête/maksymalne) uzyskanych na tym przedmiocie przez 1/3 u¿ytkowników maj±cych najwy¿sze wyniki w ca³ym quizie (np. liczba poprawnych odpowiedzi w tej grupie) a X<sub>najgorszych</sub> jest analogiczn± sum± dla u¿ytkowników z 1/3 najni¿szych wyników w ca³ym quizie.
+</p><p>
+Warto¶æ tego parametru mie¶ci siê pomiêdzy +1 i &#8211;1. je¶li wska¼nik spada poni¿ej 0,0 oznacza to, ¿e wiêkszo¶æ s³abszych uczniów odpowiada poprawniej ni¿eli lepsi uczniowie. Takie wyniki powinny zostaæ uznane za bezwarto¶ciowe. W rzeczywisto¶ci obni¿a to dok³adno¶æ ca³o¶ciowego wyniku w quizie.
+</p>
+<p><b>Wspó³czynnik dyskryminacji (DC)</b></p>
+<p>
+Jest to kolejna miara dla rozró¿nienia uczniów zdolnych od s³abszych.<br/>
+Wspó³czynnik dyskryminacji jest wspó³czynnikiem korelacji pomiêdzy wynikami z danego przedmiotu w stosunku do ca³ego quizu. Oto jak jest on liczony:
+<br/>
+DC=Sum(xy)/(N*S<sub>x</sub>*S<sub>y</sub>)
+<br/>
+Gdzie Sum(xy) jest sum± iloczynów odchylenia dla wyniku dla danego przedmiotu oraz wyników dla ca³ego quizu.<br/>
+N jest liczb± odpowiedzi udzielonych na dane pytanie.<br/>
+S<sub>x</sub> jest odchyleniem standardowym wyników u³amkowych dla danego pytania.<br/>
+S<sub>y</sub> jest odchyleniem standardowym wyników dla quizu jako ca³o¶ci.</p>
+<p>
+Warto¶æ tego parametru mie¶ci siê pomiêdzy +1 i &#8211;1. warto¶ci dodatnie wskazuj± przedmioty na które najlepiej odpowiadaj± zdolni uczniowie, podczas gdy ujemne wskazuj± przedmioty na które najlepiej odpowiadaj± uczniowie z najgorszymi wynikami. Przedmioty z ujemnymi DC nie zostaj± zaliczane przez do¶wiadczonych uczniów i w ten sposób mog± w rzeczywisto¶ci szkodziæ najzdolniejszym. Powinni oni unikaæ takich przedmiotów.<br/>
+Przewaga wspó³czynnika dyskryminacji nad wska¼nikiem dyskryminacji jest taka, ¿e ten pierwszy przedstawia informacje na temat ca³ej grupy ucz±cej siê, a nie tylko grupy jednej trzeciej najzdolniejszych i jednej trzeciej najmniej zdolnych. Dlatego te¿ ten parametr jest znacznie bardziej bezpieczny dla okre¶lenia jako¶ci przedmiotu.
+</p>
