@@ -1,0 +1,44 @@
+<p align="center"><b>Izvoz vprašanj iz kategorije</b></p>
+
+<p>Ta funkcija vam omogoča izvoz celotne kategorije vprašanj v datoteko z besedilom. </p> 
+
+<p>Vedite, da se v mnogih zapisih datotek nekatere informacije izgubijo ob izvozu vprašanj. To se zgodi zato, ker mnogi zapisi ne vsebujejo vseh možnosti, ki obstajajo v vprašanjih Moodle. Ne smete pričakovati, da bodo vprašanja identična, če jih izvozite in uvozite. Nekaterih vrst vprašanj se sploh ne da izvoziti. Priporočeno je, da izvožene podatke preverite, preden jih uporabite v delovnem okolju.</p>
+
+<p>Trenutno podprti zapisi so:</p>
+
+<p><b>Oblika zapisa GIFT</b></p>
+<ul>
+<p>GIFT je najbolj vsestranska oblika zapisa za izvoz in uvoz za izvoz vprašanj Moodle kviz v datoteko z besedilom.  Zasnovan je bil kot enostaven način s katerim lahko izvajalci pišejo vprašanja kot datoteko z besedilom. Podpira večkratno izbiro, drži - ne drži, kratek odgovor, ujemanje in številčna vprašanja, kakor tudi obliko za vstavljanje ____ za "manjkajoče besede".  Vedite, da trenutno vprašanja izpolnjevanja trenutno niso podprta. Različne vrste vprašanj so lahko mešane v eni datoteki besedila in oblika podpira tudi vrstice s komentarji, imena vprašanj, povratno informacijo in odstotke oz. utežene ocene.  Spodaj je nekaj primerov:</p>
+<pre>
+Kdo je pokopan v Grantovi grobnici?{~Grant ~Jefferson =nihče}
+
+Grant je {~pokopan =položen ~živ} v Grantovi grobnici.
+
+Grant je pokopan v Grantovi grobnici.{FALSE}
+
+Kdo je pokopan v Grantovi grobnici?{=nihče =nobeden}
+
+Kdaj je bil Ulysses S. Grant rojen?{#1822}
+</pre>
+
+<p align="right"><a href="help.php?file=formatgift.html&module=quiz">Več informacij o zapisu "GIFT"</a></p>
+</ul>
+
+
+<p><b>Oblika zapisa Moodle XML</b></p>
+<ul>
+<p>Oblika zapisa značilna za Moodle izvozi vprašanja kviza v preprost XML zapis. Uvoziti jih je možno v drugo kategorijo kviza ali uporabiti v kakem drugem procesu kot je preoblikovanje XSLT.</p>
+</ul>
+
+<p><b>IMS QTI 2.0</b></p>
+<ul>
+<p>Izvozi standardni zapis IMS QTI (različica 2.0). Vedite, da to ustvari skupino datotek v eni 'zip' datoteki.</p>
+<p align="right"><a href="http://www.imsglobal.org/question/" target="_qti">Več informacij na spletni strani IMS QTI</a> (zunanja spletna stran v novem oknu)</p>
+</ul>
+
+<p><b>XHTML</b></p>
+<ul>
+<p>Izvozi kategorijo kot eno stran v 'doslednem' XHTML. Vsako vprašanje je jasno postavljeno v lastno oznako &lt;div&gt;. Če želite uporabiti to stran tako kot je, boste morali urediti vsaj oznako &lt;form&gt; na začetku odseka &lt;body&gt;, da boste ponudili ustrezno dejanje (npt. 'mailto').</p>
+</ul>
+
+<p>Več zapisov bo še sledilo, vključno z WebCT in karkoli drugega bodo lahko prispevali uporabniki Moodle! </p>

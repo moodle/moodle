@@ -1,0 +1,260 @@
+<h2>Kako deluje Wiki</h2>
+
+<p>
+
+Wiki v okolju Moodle temelji na
+
+<a href="http://erfurtwiki.sourceforge.net/?id=ErfurtWiki" target="_blank">ErfurtWiki</a>,
+
+ki je izvedba 
+
+<a href="http://c2.com/cgi/wiki?WikiWikiWeb" target="_blank">WikiWikiWeb</a>
+
+hiperbesedilnega sistema. Omogoča enostavno urejanje s sodelovanjem in ustvarjanje spletnih strani.</p>
+
+<p>
+
+<ul>
+
+<li>naučite se kako <a href="#createpages">UstvaritiStrani</a></li>
+
+<li>samo kliknite na <img alt="uredi" src="pix/t/edit.gif" /> ali izberite "Uredi to stran" v meniju za spreminjanje vsebine strani</li>
+
+<li>svoje strani lahko oblikujete z <a href="#wikimarkup">Oznakami Wiki</a>, ali HTML (če je ta možnost vključena)</li>
+
+<li>IščiStrani ali pojdite na seznam NoveStrani</li>
+
+<li>obstajajo tudi seznami NajboljObiskaneStrani, NajboljPogostoSpremenjeneStrani in v zadnjem obdobju PosodobljeneStrani</li>
+
+</ul>
+
+</p>
+
+<p>
+
+<a name="createpages"></a><b>Ustvari strani</b>:<br />
+
+Stran lahko ustvarite tako, da jo poimenujete v besedilu obstoječe strani. Stran wiki je poimenovana s t.i.
+
+<a href="#camelcase">KameljimiZačetnicami</a> (CamelCase) ali obdana z oglatimi oklepaji ( [] ).</p>
+
+<p>
+
+Na primer:
+
+<ul>
+
+<li>MojaWikiStran (Kamelje Začetnice)</li>
+
+<li>[Moja Wiki Stran] (obdano z oglatimi oklepaji)</li>
+
+</ul></p>
+
+<p>
+
+Besedilu, ki mu je bilo dodeljeno ime wiki strani bo na koncu dodan vprašaj '?'. S klikom na '?', boste
+
+vstopili v način urejanja za to stran. Vnesite svoje besedilo, ga shranite in imeli boste novo wiki stran.</p>
+
+<p><a name="wikimarkup"></a><b>Oznake Wiki</b>:<br />
+
+Vsako stran v wikiju je možno enostavno urejati s pomočjo oznak wiki.
+
+</p>
+
+<h4> Odstavki</h4>
+
+  <ul type="circle">
+
+  <li> odstavke v besedilu ločite s praznimi vrsticami</li>
+
+  <li> uporabite tri znake za odstotek %%<em></em>% za vsiljen prelom vrstice</li>
+
+  <li> če pred besedilom dodate presledke ali tabulatorje bo besedilo zamaknjeno  </li>
+
+  </ul>
+
+
+
+<h4> !! Naslovi</h4>
+
+  <ul type="circle">
+
+  <li> uporabite znak za klicaj ! na začetku vrstice za ustvarjanje malega naslova</li>
+
+  <li> !! za srednjega</li>
+
+  <li> !!! za velike naslove  </li>
+
+  </ul>
+
+
+
+<h4> slog besedila</h4>
+
+  <ul type="circle">
+
+  <li> če želite <em>poudariti besedilo</em> ga obdajte z dvema enojnima narekovajema '' (po navadi izgleda ležeče)</li>
+
+  <li> <strong>besedilo postane krepko</strong> z dvema podčrtajema (ali obdano z dvema zvezdicama **)</li>
+
+  <li> za ustvarjanje <big>velikega besedila</big> ga obdajte z znakoma ## </li>
+
+  <li> podobno dobite <small> manjše besedilo </small> z uporabo "µµ"</li>
+
+  <li> a <tt>nabor znakov podoben pisalnemu stroju</tt> bo uporabljen, če obdate besedilo z dvema znakoma enakosti ==.  </li>
+
+  </ul>
+
+
+
+<h4> Seznami</h4>
+
+
+
+  <ul type="circle">
+
+  <li> začnite vrstico z zvezdico * za začetek seznama</li>
+
+  <li> namesto zvezdice uporabite # za oštevilčene sezname
+
+    <ol>
+
+    <li> ustvarite lahko podsezname</li>
+
+    <li> naslednje točke seznama se pričnejo z enako mešanico * in #    </li>
+
+    </ol>
+
+  </li>
+
+  </ul>
+
+
+
+<h4> HiperPovezave</h4>
+
+
+
+  <ul type="circle">
+
+  <li> za ustvarjanje nove HiperPovezave samo vnesite WikiBesedo s KameljimiZačetnicami v svojebesedilo</li>
+
+  <li> ali obdajte nekaj <b>besed z oglatimi oklepaji</b> za ustvarjanje HiperPovezave</li>
+
+  <li> vsak veljaven internetni naslov (ki se začne z <a href="http://">http://</a>) kot je http://www.example.com/  v besedilu bo samodejno povezan</li>
+
+  <li> obdajte www naslov ali WikiPovezavo z oglatimi oklepaji [<a href="http://www.moodle.org/">Moodle</a>] in ji dodelite lep naslov z oznakami narekovajev ali znakom |
+
+    <ul type="circle">
+
+    <li> [naslov | http://example.com]</li>
+
+    <li> [WikiBeseda "naslov"] ali ["naslov za" WikiPovezavo]    </li>
+
+    </ul>
+
+  </li>
+
+  <li> če ne želite, da bi WikiBeseda ali !http://www-naslov (ali [karkoli] v oglatih oklepajih) postalo HiperPovezava samo spredaj dodajte znak klicaja ali tildo
+
+    <ul type="circle">
+
+    <li> !NiHiperPovezava, ~NiHiperPovezava</li>
+
+    <li> ![ni hiperpovezava], !!http://nipovezave.org/    </li>
+
+    </ul>
+
+  </li>
+
+  </ul>
+
+
+
+<h4> Tabele z |</h4>
+
+<table cellpadding="2" border="1" cellspacing="0">
+
+<tr>
+
+<td> samo obdajte </td>
+
+<td> stvari z navpičnim </td>
+
+<td> znakom </td>
+
+</tr><tr>
+
+<td> za granjo </td>
+
+<td> strukture tabele  </td>
+
+</tr><tr>
+
+<td> brskalniki običajno </td>
+
+<td> izpustijo manjkajoče </td>
+
+<td> celice </td>
+
+</tr>
+
+</table>
+
+
+
+
+
+<p>
+
+Prosimo, vedno vstavite prazno vrstico pred in za tabelo, tako da se loči od drugega besedila v svojem lastnem odstavku.
+
+</p>
+
+
+
+<h4> Slike</h4>
+
+
+
+  <ul type="circle">
+
+  <li> za vključitev slike v stran obdajte njen absoluten www-naslov z oglatimi oklepaji, npr. [http://www.example.com/pics/image.png] </li>
+
+  <li> druga možnost je uporaba funkcije NalaganjeSlike</li>
+
+  </ul>
+
+
+
+<h4>Dodatno gradivo</h4>
+
+Obstaja več možnosti za označevanje Wiki. Preverite <a href="http://erfurtwiki.sourceforge.net" target="_blank">Domačo stran Wrfurt Wiki</a> za dodatne informacije.
+
+
+
+<p>
+
+<a name="camelcase"></a><b>Kamelje Začetnice</b>:<br />
+
+KameljeZačetnice (CamelCase) obisujejo kako izgleda WikiBeseda. Več besed združenih brez
+
+presledkov, ločenih s spremembami velikosti začetnic. Velike in
+
+male začetnice črk se prikažejo kot grbe kamel.</p>
+
+<p>
+
+Ta oblika povezovanja se pogosto imenuje tudi BumpyText (KotanjastoBesedilo).</p>
+
+<p>
+
+Čeprav jezikovni puristi sovražijo Wiki zaradi tega načina imenovanja, je zelo pogost v
+
+računalniškem svetu in dobro poznan večini programerjev.</p>
+
+
+
+
+

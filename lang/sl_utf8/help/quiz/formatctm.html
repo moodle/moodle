@@ -1,0 +1,35 @@
+<p align="center"><b>Uvažanje datotek "Course Test Manager"</b></p>
+
+<p>Course Test Manager je nekdanji programski paket podjetja Course Technology. Podjetje Course Technology ga ne razvija več aktivno.  Nadomestil ga je novi upravnik preiskusov z imenom ExamView.  Nikoli ni bilo selitvene možnosti, ki bi omogočila izvoz tega zapisa iz CTM zbirk preskusov v drug navaden zapis preskusov.  Zato je bil napisan ta modul.</p>
+
+<p> Da bi uvozili vprašanja iz CTM, morate imeti nameščen CTM na računalniku z okoljem Windows in dostop do podatkovnih datotek MS Access na tem računalniku.  Zahtevani sta dve podatkovni datoteki za dostop do podatkovnih datotek:</p>
+<ul><li>System.mda - Ta datoteka je vrhnji imenik vaše namestitve CTM in se v izrazoslovnju MS Access imenuje sistemska podatkovna zbirka (System Database).</li>
+<li>ctm.mdb - to je podatkovna zbirka, ki vsebuje vprašanja zbirke preskusov.  Za vsak predmet nameščen v CTM obstaja ena od teh podatkovnih zbirk.  Nahaja se v imeniku eno raven pod namestitvenim imenikom CTM.</li>
+</ul>
+
+</p>Postopek uvoza je delno različen glede na to ali uporabljate Moodle v okolju Windows ali Linux. Ne glede na to v katerem okolju teče Moodle, morate imeti sistem Windows (Windows 2000 ali Windows XP) v istem omrežju, kot je vaš sistem Moodle, za gostovanje podatkovne zbirke med uvažanje zbirk preskusov.</p>
+
+<p>Ta postopek je nekoliko lažji pri Moodle sistemih, ki tečejo v <b>okolju Windows</b>.  Za uporabo CTM uvoznega razreda morate samo:</p>
+
+<ol><li>naložite sistemsko podatkovno zbirko system.mda v Moodle s pomočjo upravnika datotek.  Ni pomembno v kateri predmet naložite datoteko system.mda.  Moodle jo bo našel ne glede na to.</li>
+<li>Ustvarite svoj kviz in začnite postopek "Uvoz vprašanj iz datoteke".  Naložite izbrano podatkovno zbirko ctm.mdb kot datoteko za uvoz.  Če ste to naredili pravilno, boste videli drug zaslon, ki vam omogoča izbiro podkategorije vprašanj za uvoz iz podatkovne zbirke. Razlog zakaj obstaja ta korak je v tem, da zbirke preskusov CTM pogosto vsebujejo veliko število kategoriziranih vprašanj temelječih na poglavjih knjig ali odsekov predmetov.</li>
+</ol>
+
+<p>Postopek na sistemih Moodle <b>v okolju Linux</b> vključuje dodatno programsko komponento, ki se imenuje <a href="http://odbcsock.sourceforge.net/" target="_new"><b>ODBC Socket Server</b></a>.  Da bi uvozili CTM podatkovne zbirke na Linuxu, morate najprej prenesti in namestiti ta mali mrežni program v okolju Windows, ki gosti vaše podatkovne zbirke CTM.  <b>Ne</b> sledite opisanim korakom namestitve v ODBC Socket Server Installation.  Navodila so bolj komplicirana, kot bi morala biti! Namesto tega, sledite korakom za nameščanje tega programa na vaš sistem Windows:</p>
+
+<ol><li>V okolju Windows razširite in namestite datoteko, ki ste jo prenesli <a href="http://odbcsock.sourceforge.net/" target="_new">s te strani</a> na sistem.</li>
+<li>Kopirajte program ODBCSocketServer.exe na stalno lokacijo, kot je npr. sistemski imenik (verjetno C:\WINNT\ ali C:\Windows) ali vaš imenik Program Files. </li>
+
+<li>Z naslednjim ukazom namestite v sistem ODBC Socket Server kot storitev:<br /> <b>&lt;pot na katero ste v gornjem koraku kopirali datoteko&gt;ODBCSocketServer.exe /Service</b><br /> To lahko naredite z vnosom ukaza iz Start-&gt;Run... dialog, ali iz ukazne vrstice.</li>
+
+<li>Odprite Service Manager bodisi s klikom na Start-&gt;Settings-&gt;Control Panels-&gt;Administrative Tools-&gt;Services ali z desnim klikom na <b>My Computer</b>, izborom <b>Manage</b>, nato izberete <b>Services and Applications-&gt;Services</b> iz desne plošče.  Do programa Service manager lahko pridete tudi z vnosom <b>services.msc</b> v pogovornem oknu Start-&gt;Run...</li>
+
+<li>V programu Service manager z desnim klikom na element ODBC Socket Server izberite element <b>Start</b>.  Ko to storite bi se njegovo stanje moralo spremeniti v "started". Vedite, da lahko pozaključenem postopku uvoza to storitev zaustavite ali popolnoma onemogočite.</li>
+
+<li>Preverite, da sta podatkovni datoteki system.mda in ctm.mdb na računalniku in je prisoten gonilnik MS Access ODBC.  Nameščen je v standarni namestitvi Windows.  Ugotovite lahko, če je nameščen z odprtjem elementa "Data Sources" pod "Administrative Tools" v zavihku "Drivers".  Ugotoviti boste morali, kje je nameščen CTM in poiskati datoteko system.mda in podatkovno zbirko ctm.mdb, iz katere želite uvoziti podatke.  Zabeležite si polne lokalne poti do teh datotek, kakor tudi IP naslov ali ime gostitelja strežnika Windows.  Za postopek uvoza boste potrebovali te informacije.</li>
+
+<li>Zdaj lahko uvozir zbirko preskusov v moodle. Ustvarite svoj kviz in začnite postopek "Uvoz vprašanj iz datoteke".  <b>TU SO STVARI DRUGAČNE ZA LINUX - </b> NAVESTI MORATE NAMIŠLJENO DATOTEKO V POLJU ZA NALAGANJE, DA SE ZAČNE POSTOPEK UVOZA.  TA DATOTEKA <b>NE BO</b> OBDELANA, JE SAMO OGRADA ZA OBRAZEC UVOZA.  NAPREJ BOSTE DOBILI PROSTOR ZA DOLOČITEV STREŽNIKA WINDOWS.  Nato boste videli zaslon, kjer lahko vpišete ime gostitelja Windows ODBC Socket Server, kakor tudi poti do sistemskih podatkovnih zbirk in zbirk preskusov.  Vpišite informacije, ki ste si jih v prejšnjem koraku zapisali in kliknite "Poveži s strežnikom". Če je bilo vse pravilno nastavljeno, boste prišli do drugega obrazca, ki vam bo omogočil izbiro podkategorije vprašanj za uvoz iz podatkovne zbirke. Razlog zakaj obstaja ta korak je v tem, da zbirke preskusov CTM pogosto vsebujejo veliko število kategoriziranih vprašanj temelječih na poglavjih knjig ali odsekov predmetov.  ČE PRIDETE DO TEGA KORAKA BREZ SPOROČIL O NAPAKI, STE NASTAVILI STREŽNIK SOCKET PRAVILNO IN BOSTE UVOZILI VPRAŠANJA V MOODLE"</li>
+</ol>
+
+<p>Če med tem postopkom dobite sporočila o napaki, vam lahko pomagajo ti tehnični podatki. ODBC Socket serber iporablja vrata 9628 za odpiranje vtičnice in mednjavo XML query  za tabelo XML rezultatov kot rezultate poizvedbe.  Razred uvoza razčlenjuje XML in uporablja, tako kot sam, lokalne poizvedbe za izvedbo uvoza.
+</p>

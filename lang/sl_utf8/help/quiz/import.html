@@ -1,0 +1,117 @@
+<p align="center"><b>Uvažanje novih vprašanj</b></p>
+
+<p>Ta funkcija vam omogoča uvoz vprašanj iz zunanje besedilne datoteke, naložene prek obrazca.  </p>
+
+<p>Podprta je vrsta zapisov:</p>
+
+<p><b>Oblika zapisa GIFT</b></p>
+<ul>
+<p>GIFT je najbolj vsestranska oblika zapisa za uvoz vprašanj Moodle kviz iz datoteke z besedilom.  Zasnovan je bil kot enostaven način s katerim lahko izvajalci pišejo vprašanja kot datoteko z besedilom. Podpira večkratno izbiro, drži - ne drži, kratek odgovor, ujemanje in številčna vprašanja, kakor tudi obliko za vstavljanje ____ za "manjkajoče besede".  Različne vrste vprašanj so lahko mešane v eni datoteki besedila in oblika podpira tudi vrstice s komentarji, imena vprašanj, povratno informacijo in odstotke oz. utežene ocene.  Spodaj je nekaj primerov:</p>
+<pre>
+Kdo je pokopan v Grantovi grobnici?{~Grant ~Jefferson =nihče}
+
+Grant je {~pokopan =položen ~živ} v Grantovi grobnici.
+
+Grant je pokopan v Grantovi grobnici.{FALSE}
+
+Kdo je pokopan v Grantovi grobnici?{=nihče =nobeden}
+
+Kdaj je bil Ulysses S. Grant rojen?{#1822}
+</pre>
+
+<p align="right"><a href="help.php?file=formatgift.html&module=quiz">Več informacij o zapisu "GIFT"</a></p>
+</ul>
+
+<p><b>Aiken zapis</b></p>
+<ul>
+<p>Zapis Aiken je zelo preprost način ustvarjanja vprašanj z večimi možnimi odgovori, ki uporablja jasen in berljiv zapis. Tu je primer zapisa:</p>
+<pre>
+Kaj je namen prve pomoči?
+A. Rešiti življenje, preprečiti dodatne poškodbe, ohraniti zdravje
+B. Ponuditi zdravniško oskrbo vsem poškodovanim ali ranjenim osebam
+C. Preprečiti dodatne poškodbe
+D. Pomagati žrtvam, ki iščejo pomoč
+ANSWER: O
+</pre>
+
+<p align="right"><a href="help.php?file=formataiken.html&module=quiz">Več informacij o zapisu "Aiken"</a></p>
+</ul>
+
+
+<p><b>Manjkajoča beseda</b></p>
+<ul>
+<p>Ta oblika zapisa podpira samo vprašanja z večimi izbori in vprašanja s kratkimi odgovori, odvisno od števila odgovorov. En odgovor ustvari vprašanje s kratkim odgovorom, dva ali več odgovorov ustvari vprašanje z večimi izbori. Vsak odgovor je ločen s tildo (~) in pravilni odgovor ima predpono znak enakosti (=).   Tu je primer vprašanja z večimi izbori:</p>
+
+<blockquote>Kakor hitro začnemo kot dojenčki raziskovati dele svojega telesa postanemo študenti {=anatomije in psihologije ~refleksologije ~znanosti ~eksperimenta} in na nek način to ostanemo celo življenje.
+</blockquote>
+
+<p>Tu je primer vprašanja s kratkim odgovorom:</p>
+
+<blockquote>Kakor hitro začnemo kot dojenčki raziskovati dele svojega telesa postanemo študenti {=anatomije in psihologije} in na nek način to ostanemo celo življenje.
+</blockquote>
+
+<p align="right"><a href="help.php?file=formatmissingword.html&module=quiz">Več informacij o zapisu "Manjkajoče besede"</a></p>
+</ul>
+
+
+<p><b>AON</b></p>
+<ul>
+<p>Ta zapis je enak zapisu manjkajoče besede s to razliko, da se po uvozu vprašanj vsa vprašanja kratkih odgovorov pretvorijo v vprašanja z ujemanjem po štiri hkrati.</p>
+<p>Dodatno se odgovori vprašanj z večimi izbirami naključno premešajo po uvozu.</p>
+<p>Imenuje se po organizaciji, ki je podprla razvoj mnogih možnosti kviza</p>
+</ul>
+
+
+<p><b>Blackboard</b></p>
+<ul>
+<p>Ta modul zna uvažati vprašanja shranjena v izvoznem zapisu programa Blackboard.  Temelji na XML funkcijah, ki jih mora podpirati vaš PHP.</p>
+
+<p align="right"><a href="help.php?file=formatblackboard.html&module=quiz">Več informacij o zapisu "Blackboard"</a></p>
+</ul>
+
+
+<p><b>WebCT</b></p>
+<ul>
+<p>Ta modul zna uvoziti vprašanja shranjena v besedilni obliki zapisa WebCT.</p>
+
+<p align="right"><a href="help.php?file=formatwebct.html&module=quiz">Več informacij o zapisu "WebCT"</a></p>
+</ul>
+
+
+<p><b>Course Test Manager</b></p>
+<ul>
+<p>Ta modul zna uvoziti vprašanja shranjena v zbirki testov Course Test Manager. Sloni na raznih načinih dostopa do baze testov, ki je v podatkovni zbirki Microsoft Access, odvisno od tega ali Moodle teče v okolju Windows ali Linux.</p>
+<p>V okolju Windows vam omogoča nalaganje podatkovne zbirke Access tako kot katerekoli druge datoteke s podatki za uvoz.</p>
+<p>V okolju Linux morate vzpostaviti Windows računalnik v istem omrežju kot je podatkovna zbirka Course Test Manager in programsko opremo z imenom ODBC Socket Server, ki uporablja XML za prenos podatkov v Moodle na strežniku Linux.</p>  
+<p>Prosimo, preberite celotno spodnjo datoteko s pomočjo preden uporabite ta razred za uvoz.</p>
+
+
+<p align="right"><a href="help.php?file=formatctm.html&module=quiz">Več informacij o zapisu "CTM"</a></p>
+</ul>
+
+
+
+<p><b>Vgnezdeni odgovori (izpolnjevanje)</b></p>
+<ul>
+<p>Ta zapis s posebnim namenom uvozi samo eno vrsto vprašanj - zapis Vgnezdenih odgovorov (poznano tudi kot izpolnjevanje).
+</p>
+
+<p align="right"><a href="help.php?file=multianswer.html&module=quiz">Več informacij o zapisu "Izpolnjevanja"</a></p>
+</ul>
+
+<p><b>Oblika zapisa Learnwise</b></p>
+<ul>
+<p>Ta zapis zna uvoziti vprašanja z večimi izbirami shranjena v zapisu Learnwise XML.</p>
+</ul>
+
+<p><b>Zapis Examview</b></p>
+<ul>
+<p>Ta zapis zna uvoziti iz datotek Examview 4 XML. Vedite, da starejše različice Examview niso podprte.</p>
+</ul>
+
+<p><b>Oblika zapisa Moodle XML</b></p>
+<ul>
+<p>Ta zapis značilen za Moodle uvozi vprašanja kviza, ki so bila pred tem izvožena v enak zapis. Zapis je jasen in se najboljše prikaže z izvozom kategorije v zapis Moodle XML.</p>
+</ul>
+
+<p>Več zapisov bo še sledilo, vključno z WebCT, IMS QTI in karkoli drugega bodo lahko prispevali uporabniki Moodle! </p>

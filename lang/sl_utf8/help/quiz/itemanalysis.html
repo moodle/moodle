@@ -1,0 +1,27 @@
+<p align="center"><b>Analiza elementov</b></p>
+
+<p>Ta tabela prikazuje obdelane podatke kviza na primeren način za analizo in presojo učinkovitosti vsakega vprašanja za namen ocenjevanja. Uporabljeni statistični parametri so izračunani kot je pojavnjeno v klasični teoriji preskusov (ref. 1)</p>
+
+<p><b>Kazalec težavnosti (% pravilno)</b></p>
+<p>To je mera, ki pove kako lahko ali zahtevno je vprašanje za osebe, ki odgovarjajo na kviz. Izračunan je kot: <br> FI = (X<sub>povprečje</sub>) / X<sub>maks</sub> <br>
+
+kjer je X<sub>povprečje</sub> povprečno prejete točke za vse uporabnike, ki so odgovarjali na vprašanje, <br> in X<sub>maks</sub> je najvišje možno število prejetih točk za element.<br> Če je možno vprašanja porazdeliti bifurkacijsko v kategoriji pravilno / nepravilno, se ta parameter sklada z odstotkom uporabnikov, ki so pravilno odgovorili na vprašanje. </p>
+
+</p>
+<p><b>Standardni odklon (SD)</b></p>
+<p>Ta parameter meri razpršenost odgovorov v populaciji odzivov. Če vsi uporabniki odgovorijo enako je SD=0. SD se izračuna kot statistični standardni odklon (deviacija) za vzorec ulomkov rezultatov (doseženo/največ) za vsako vprašanje ločeno.  
+</p>
+
+<p><b>Razmejitveni indeks (DI)</b></p>
+<p>To ponuja grob kazalec učinkovitosti posameznega elementa za ločevanje sposobnih <i>proti</i> manj-sposobnih uporabnikov. Ta parameter se izračuna tako, da se udeležence najprej razporedi v tretjine na osnovi celotnega rezultata kviza. Nato se izračuna povprečen rezultat analiziranega elementa za skupini najbolj in najmanj uspešnih ter razliko povprečnih rezultatov teh dveh skupin. Matematična formula je: <br/> DI = (X<sub>vrh</sub> - X<sub>dno</sub>)/ N <br/>
+
+kjer X<sub>vrh</sub> vsota ulomkov točk (doseženo/največ) doseženih pri tem elementu s strani 1/3 uporabnikov, ki so imeli najvišje ocene v celotnem kvizu (npr. število pravilnih odgovorov v tej skupini), <br/> in X<sub>dno</sub>) je analogna vsota uporabnikov z ocenami v spodnji 1/3 ocen za celoten kviz.</p> 
+
+<p>Ta parameter lahko doseže vrednosti med +1 in -1. Če se indeks spusti pod 0,0 to pomeni, da je več manj sposobnih udeležencev pravilno odgovorilo na ta element, kot bolj sposobnih. Takšni elementi bi morali biti zavrženi kot ničvredni.  Dejansko zmanjšujejo natančnost celotnega rezultata kviza. </p>
+
+<p><b>Razmejitveni koeficient (DC)</b></p>
+<p>To je drug način ločevanja moči elementa za prepoznavanje sposobnih udeležencev od šibkejših.<br/> Razmejitveni koeficient je korelacijski koeficient med rezultati za element in celoten kviz. Izračuna se tako:
+
+<br/> DC = Sum(xy)/ (N * s<sub>x</sub> * s<sub>y</sub>) <br/> kjer je Sum(xy) vsota zmnožkov odstopanj med rezultati elementa in skupnimi rezultati kviza, <br> N je število prejetih odgovorov za to vprašanje<br/> s<sub>x</sub> je standardni odklon ulomljenih rezultatov za to vprašanje in <br/> s<sub>y</sub> je standardni odklon rezultatov kviza kot celote.
+</p>
+<p>Tudi ta parameter lahko doseže vrednosti med +1 in -1. Pozitivne vrednosti označujejo elemente, ki razmejijo sposobne udeležence, med tem ko negativni kazalci označujejo elemente na katere so najbolje odgovarjali tisti z najslabšimi ocenami. Na elemente z negativnim DC so napačno odgovarjali zreli udeleženci in so tako dejansko odbitek za sposobne udeležence. Takšnim elementom se je potrebno izogibati.<br/> Prednost Razmejitvenega koeficienta v primerjavi z Razmejitvenim indeksom je v tem, da prvi uporabi informacije iz celotne populacije udeležencev in ne samo ekstremne zgornje in spodnje tretjine. Zato utegne biti ta parameter bolj občutljiv za prepoznavo učinkovitosti elementa.</p>

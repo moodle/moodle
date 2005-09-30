@@ -1,0 +1,147 @@
+<p align="center"><b>O urejevalniku obogatenega besedila HTML</b></p>
+
+<p>Razpoložljivost: <b><?php  if (!$CFG->htmleditor) { print_string("htmleditordisabledadmin"); } else if (!$USER->htmleditor) { print_string("htmleditordisabled"); } else if (!can_use_richtext_editor()) { print_string("htmleditordisabledbrowser"); } else { print_string("htmleditoravailable"); } ?></b></p>
+
+<p>Urejevalnik obogatenega besedila HTML ponuja vgrajen vmesnik urejevalnika besedil na vaši spletni strani in vam omogoča urejanje besedila na intuitiven način ter ustvari običajno HTML kodo.</p>
+
+<p>Poleg oblikovanja besedila, ta urejevalnik ponuja vrsto dodatnih koristnih možnosti.
+
+<p><b>Lepljenje besedila iz drugih aplikacij</b></p>
+<ul>
+<p>Obogateno besedilo lahko izrežete in prilepite neposredno v urejevalnik iz drugih aplikacij v okolju Windows, kot je na primer Microsoft Word in vaše oblikovanje bo ohranjeno.  Samo uporabite možnost Izreži in Prilepi iz menija v spletnem brskalniku (ali CTRL-C in CTRL-V).</p>
+</ul>
+
+<p><b>Vstavljanje slik <img alt="" border="0" hspace="10" src="lib/editor/images/ed_image.gif" /></b></p>
+<ul>
+<p>Če imate slike, ki so že objavljene na spletni strani in dostopne prek naslova URL, jih lahko vključite v vaša besedila z gumbom "Vstavi sliko".</p>
+</ul>
+
+<p><b>Vstavljanje tabel <img alt="" border="0" hspace="10" src="lib/editor/images/insert_table.gif" /></b></p>
+<ul>
+<p>Za dodajanje postavitve v vaša besedila, lahko uporabite gumb "Vstavi tabele" v orodni vrstici.  
+</ul>
+
+<p><b>Vstavljanje povezav <img alt="" border="0" hspace="10" src="lib/editor/images/ed_link.gif" /> /</b></p>
+<ul>
+<p>Za ustvarjanje nove povezave, najprej vpišite besedilo, ki ga želite povezati.  Nato izberite besedilo in kliknite gumb za povezave v orodni vrstici.  Vnesite URL, na katerega naj kaže povezava in povezava je narejena!</p>
+</ul>
+
+
+<p><b>Vstavljanje smeškov (ikon čustev) <img alt="" border="0" hspace="10" src="pix/s/smiley.gif" width="15" height="15" /></b></p>
+<ul>
+<p>Za vključevanje teh majhnih ikon v vaše besedilo, kliknite na ikono smeška v orodni vrstici.  Pojavilo se bo pogovorno okno, ki vam omogoča izbor izmed sledečih ikon smeškov. (Alternativno lahko vpišete ustrezno kodo neposredno v vaše besedilo in bo pozneja pretvorjena, ko bo besedilo prikazano.)</p>
+
+    <table border="1">
+      <tr valign="top">
+        <td>
+        <table border="0" align="center" cellpadding="10">
+          <tr>
+            <td><img alt="" border="0" hspace="10" src="pix/s/smiley.gif" width="15" height="15" /></td>
+            <td>smeško</td>
+            <td nowrap="nowrap"><font face="Courier">:-)</font></td>
+          </tr>
+          <tr>
+            <td><img alt="" border="0" hspace="10" src="pix/s/biggrin.gif" width="15" height="15" /></td>
+            <td>režanje</td>
+            <td nowrap="nowrap"><font face="Courier">:-D</font></td>
+          </tr>
+          <tr>
+            <td><img alt="" border="0" hspace="10" src="pix/s/wink.gif" width="15" height="15" /></td>
+            <td>pomežik</td>
+            <td nowrap="nowrap"><font face="Courier">;-)</font></td>
+          </tr>
+          <tr>
+            <td><img alt="" border="0" hspace="10" src="pix/s/mixed.gif" width="15" height="15" /></td>
+            <td>mešano</td>
+            <td nowrap="nowrap"><font face="Courier">:-/</font></td>
+          </tr>
+            <tr>
+              <td><img alt="" border="0" hspace="10" src="pix/s/thoughtful.gif" width="15" height="15" /></td>
+              <td>zamišljen</td>
+              <td nowrap="nowrap"><font face="Courier">V-.</font></td>
+            </tr>
+          <tr>
+            <td><img alt="" border="0" hspace="10" src="pix/s/tongueout.gif" width="15" height="15" /></td>
+            <td>kazanje jezika</td>
+            <td nowrap="nowrap"><font face="Courier">:-P</font></td>
+         </tr>
+          <tr>
+            <td><img alt="" border="0" hspace="10" src="pix/s/cool.gif" width="15" height="15" /></td>
+            <td>kul</td>
+            <td nowrap="nowrap"><font face="Courier">B-)</font></td>
+          </tr>
+            <tr>
+              <td><img alt="" border="0" hspace="10" src="pix/s/approve.gif" width="15" height="15" /></td>
+              <td>odobravanje</td>
+              <td nowrap="nowrap"><font face="Courier">^-)</font></td>
+            </tr>
+            <tr>
+              <td><img alt="" border="0" hspace="10" src="pix/s/wideeyes.gif" width="15" height="15" /></td>
+              <td>široke oči</td>
+              <td nowrap="nowrap"><font face="Courier">8-)</font></td>
+            </tr>
+            <tr>
+              <td><img alt="" border="0" hspace="10" src="pix/s/surprise.gif" width="15" height="15" /></td>
+              <td>presenečenje</td>
+              <td nowrap="nowrap"><font face="Courier">8-o</font></td>
+            </tr>
+        </table>
+        </td>
+        <td>
+        <table border="0" align="center" cellpadding="10">
+            <tr>
+              <td><img alt="" border="0" hspace="10" src="pix/s/sad.gif" width="15" height="15" /></td>
+              <td>žalosten</td>
+              <td nowrap="nowrap"><font face="Courier">:-(</font></td>
+            </tr>
+            <tr>
+              <td><img alt="" border="0" hspace="10" src="pix/s/shy.gif" width="15" height="15" /></td>
+              <td>sramežljiv</td>
+              <td nowrap="nowrap"><font face="Courier">8-.</font></td>
+            </tr>
+          <tr>
+            <td><img alt="" border="0" hspace="10" src="pix/s/blush.gif" width="15" height="15" /></td>
+            <td>zardeva</td>
+            <td nowrap="nowrap"><font face="Courier">:-I</font></td>
+          </tr>
+            <tr>
+              <td><img alt="" border="0" hspace="10" src="pix/s/kiss.gif" width="15" height="15" /></td>
+              <td>poljub</td>
+              <td nowrap="nowrap"><font face="Courier">:-X</font></td>
+            </tr>
+          <tr>
+            <td><img alt="" border="0" hspace="10" src="pix/s/clown.gif" width="15" height="15" /></td>
+            <td>klovn</td>
+            <td nowrap="nowrap"><font face="Courier">:o)</font></td>
+          </tr>
+          <tr>
+            <td><img alt="" border="0" hspace="10" src="pix/s/blackeye.gif" width="15" height="15" /></td>
+            <td>črno oko</td>
+            <td nowrap="nowrap"><font face="Courier">P-|</font></td>
+          </tr>
+            <tr>
+              <td><img alt="" border="0" hspace="10" src="pix/s/angry.gif" width="15" height="15" /></td>
+              <td>jezen</td>
+              <td nowrap="nowrap"><font face="Courier">8-[</font></td>
+            </tr>
+            <tr>
+              <td><img alt="" border="0" hspace="10" src="pix/s/dead.gif" width="15" height="15" /></td>
+              <td>mrtev</td>
+              <td nowrap="nowrap"><font face="Courier">xx-P</font></td>
+            </tr>
+            <tr>
+              <td><img alt="" border="0" hspace="10" src="pix/s/sleepy.gif" width="15" height="15" /></td>
+              <td>zaspan</td>
+              <td nowrap="nowrap"><font face="Courier">|-.</font></td>
+            </tr>
+          <tr>
+            <td><img alt="" border="0" hspace="10" src="pix/s/evil.gif" width="15" height="15" /></td>
+            <td>zloben</td>
+            <td nowrap="nowrap"><font face="Courier">}-]</font></td>
+          </tr>
+        </table>
+    </table>
+
+</ul>
+
+

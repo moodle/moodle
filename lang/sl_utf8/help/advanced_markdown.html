@@ -1,0 +1,130 @@
+<h2>Napredna raba Markdown</h2>
+
+<div id="Main">
+
+<div class="article">
+<p>Ta odsek dopolnjuje osnovne informacije podane v odseku z naslovom 'Poudarjanje besedila z Markdown', da bi tistim s posebnimi zahtevami ponudili potrebne informacije za najboljšo izrabo Markdown. Če ne prepoznate ali potrebujete spodaj naštetega oblikovanja, lahko brez skrbi preskočite ta odsek in se vrnete nanj ko in če ga boste potrebovali.</p>
+
+<ul>
+
+<li><a href="#linebreaks">Prelomi vrstice</a></li>
+<li><a href="#hr">Vodoravna ravnila</a></li>
+<li><a href="#image_links">Povezane slike</a></li>
+<li><a href="#embedded">Vključevanje HTML</a></li>
+<li><a href="#preformatted">Že oblikovana koda</a></li>
+<li><a href="#special_char">Uporaba posebnih znakov</a></li>
+<li><a href="#further">Dodatno branje</a></li>
+</ul>
+
+<h2><a id="linebreaks">Prelomi vrstic</a></h2>
+
+<p>V nekaterih besedilih, na primer v poeziji in verzih, je pogosto potrebno vstaviti prelom vrstice. Če to poskušate doseči s tipko "Enter" ne boste dosegli nameravanega učinka, saj bodo kot privzeto wrstice povezane skupaj v odstavek.</p>
+
+<p><strong><code>Od nekdaj lepe so Ljubljanke slovele<br /> al’ lepše od Urš’ ke bilo ni nobene<br /> nobene očem bilo bolj zaželene<br /> ob času nje cvetja, dekleta ne žene...</code></strong></p>
+
+<p>Zgornji vnos z uporabo tipke "Enter" za vnos preloma vrstic bo dal sledeč rezultat, saj so takšni prelomi prezrti:</p>
+
+<p>Od nekdaj lepe so Ljubljanke slovele al’ lepše od Urš’ ke bilo ni nobene nobene očem bilo bolj zaželene ob času nje cvetja, dekleta ne žene...</p>
+
+<p>Z zaključevanjem vsake vrstice z dvema presledkoma, lahko vsilite prelom vrstice kot sledi:</p>
+
+<p>Od nekdaj lepe so Ljubljanke slovele<br /> al’ lepše od Urš’ ke bilo ni nobene<br /> nobene očem bilo bolj zaželene<br /> ob času nje cvetja, dekleta ne žene...  </p>
+
+<h2><a id="hr">Vodoravna ravnila</a></h2>
+
+<p>Vodoravna ravnila je moč ustvariti z vnosom treh ali več zvezdic (*), vezajev (-) ali podčrtajev (_) v samostojno vrstico.</p>
+
+<p>To bo delovalo:</p>
+
+<p><strong><code>***</code></strong></p>
+
+<p>toda dodate lahko presledke ali dodatne znake, da v oknu urejanja besedila naredite prelom odseka bolj očiten npr.</p>
+
+<p><strong><code>* * * * *</code></strong></p>
+
+<p><strong><code>-------------------------</code></strong></p>
+
+<p><strong><code>_ _ _ _ _</code></strong></p>
+
+<p>Vsi ti načini bodo dali natančno enak rezultat:</p>
+
+<hr />
+
+<h2><a id="image_links">Slike s hiperpovezavo</a></h2>
+
+<p>Poudarjanje besedila z oznakami Markdown omogoča dokumentu, podajanje navodil za ustvarjanje spletnih povezav in vstavljanje slik. Morda ni očitno, da je moč ta dva pristopa združiti za ustvarjanje slik, ki so tudi povezave, ki delujejo na klik.</p>
+
+<p><strong><code>[iskalnik google][google]</code></strong></p>
+
+<p><strong><code>![logo google][logo]</code></strong></p>
+
+<p>Zgoraj sta prikazana standardna spletna povezava in slika. Z vmeščanjem slike v prostor, kjer bi bilo besedilo povezave, dobite tole:</p>
+
+<p><strong><code>[![logo google][logo]][google]</code></strong></p>
+
+<p>Ta zgornja vrstica je kombinacija s sledečimi definicijami povezav drugje v dokumentu:</p>
+
+<p><strong><code>[logo]: http://www.google.com/images/logo.gif</code></strong><br /> <strong><code>[google]: http://www.google.com/ "kliknite za obisk Google.com"</code></strong></p>
+
+<p>združitev ustvari sledečo sliko s povezavo delujočo na klik (z opisom, če z miško kazalec zadržite nad njo):</p>
+
+<p><a href="http://www.google.com/" title="kliknite za obisk Google.com"><img src="http://www.google.com/images/logo.gif" alt="logo google" /></a></p>
+
+<p>Primer, kje bi ta tehnika lahko bila priročna je povezovanje malih 'sličic' za prenos večjih slik.</p>
+
+<h2><a id="embedded">Vključevanje HTML</a></h2>
+
+<p>Če ste že spretni s kodo HTML, se lahko znajdete v situaciji, ko vam Markdown ne dovoljuje toliko nadzora, kot ste vajeni. Na srečo je Markdown zasnovan za takšne primere in dovoljuje neposredno vključevanje oznak HTML v Markdown oblikovano besedilo.</p>
+
+<p><strong><code>* &lt;small&gt;majhno besedilo&lt;/small&gt;</code></strong><br />
+
+<strong><code>* &lt;big&gt;veliko besedilo&lt;/big&gt;</code></strong> </p>
+
+<ul>
+<li><small>majhno besedilo</small>  </li>
+<li><big>veliko besedilo</big> </li>
+</ul>
+
+<p>Vedite, da je HTML označevanje združeno s kodo Markdown za označene sezname. To vas osvobodi mukotrpnega opravila pisanja kompleksne HTML kode za osnovno oblikovanje, kot so odstavki in seznami in vam kljub temu omogoča dostop do vse moči kode HTML v določenih primerih.</p>
+
+<h2><a id="preformatted">Prikaz HTML kode ali Že oblikovanega besedila</a></h2>
+
+<p>Če, nasprotno kot v zgornjem odseku, želite prikazati vnešeno HTML kodo natanko tako, kot ste jo vnesli in ne kot obdelani HTML, potem lahko pričnete vsako vrstico s štirimi znaki za presledek.</p>
+
+<pre><code>&lt;p&gt;Odstavek s kodo &lt;b&gt;HTML&lt;/b&gt; prikazan kot koda&lt;/p&gt;
+</code></pre>
+
+<p>To deluje tudi za prikaz računalniške kode:</p>
+
+<pre><code>print "Argumenti ukazne vrstice: (@ARGV)\n";
+</code></pre>
+
+<p>Ker je to oblikovanje pogosto uporabljeno za izpis računalniških programov in drugega besedila, ki verjetno vsebuje znake, ki jih Markdown uporablja za označevanje različnih vrst oblikovanja, se oblikovanje Markdown izključi za te vrstice:</p>
+
+<pre><code>Običajno bi bila ta beseda izpisana **krepko**.
+</code></pre>
+
+<p>Za vključevanje takih znakov v navadnem besedilu, si oglejte spodnji odsek.</p>
+
+<h2><a id="special_char">Uporaba posebnih znakov</a></h2>
+
+<p>Če želite uporabiti poljuben poseben znak, ki sproži oblikovanje Markdown, ne da bi se to zgodilo, preprosto pred njega vstavite znak poševnice nazaj (\). To je poznano kot ubežni znak (angl. escaping character, glagolska oblika 'escaping a character'). Poševnica nazaj ni prikazana in znak, ki ji neposredno sledi, je prikazan natančno tako kot je vnešen.</p>
+
+<p><strong><code>\*zvezdice, ne poudarki\*</code></strong></p>
+
+<p>postane</p>
+
+<p>*zvezdice, ne poudarki*</p>
+
+<p>namesto</p>
+
+<p><strong><code>*zvezdice, ne poudarki*</code></strong></p>
+
+<p>kar vrne</p>
+
+<p><em>zvezdice, ne poudarki</em></p>
+
+<h2><a id="further">Dodatno branje</a></h2>
+
+<p>Sistem Markdown ni značilen samo za Moodle in ga uporablja vse večje število orodij za spletno založništvo. O tem lahko zveste več na naslovu <a href="http://daringfireball.net/projects/markdown/">http://daringfireball.net/projects/markdown/</a></p>
+</div></div>

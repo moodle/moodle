@@ -1,0 +1,29 @@
+<p align="center"><b>Nalaganje uporabnikov</b></p>
+
+<p>Najprej opomba, <strong>da običajno ni potrebno množično uvažanje uporabnikov</strong>. Da bi zmanjšali potrebo po lastnem vzdrževanju preučite oblike preverjanja pristnosti, ki ne zahtevajo ročnega vzdrževanja, kot je povezava na obstoječe zunanje podatkovne zbirke ali omogočanje uporabnikom, da ustvarijo lasten uporabniški račun. Glejte poglavje o preverjanju pristnosti v skrbniških menijih.</p>
+<p>Če ste prepričani, da želite uvoziti več uporabniških računov iz datoteke z besedilom, morate oblikovati vaše besedilo, kot sledi:</p>
+
+<ul>
+  <li>Vsaka vrstica datoteke vsebuje en zapis</li>
+  <li>Vsak zapis je vrsta podatkov ločenih z vejicami</li>
+  <li>Prvi zapis datoteke je poseben in vsebuje seznam imen polij. Ta določa obliko drugega dela datoteke.
+    <blockquote>
+      <p><strong>Zahtevana imena polj:</strong> ta polja morajo biti vključena v prvem zapisu in določena za vsakega uporabnika</p>
+      <p></p>
+      <font color="#990000" face="Courier New, Courier, mono">username, password, firstname, lastname, email</font></p>
+</p>
+      <p><strong>Privzeta imena polj:</strong> ta so možna - če niso vključena bodo vrednosti prevzete iz nastavitev glavnega skrbnika</p>
+      <p><font color="#990000" face="Courier New, Courier, mono">institution, department, city, country, lang, auth, timezone</font> </p>
+      <p><strong>Možna imena polj: </strong> vsa ta imena so popolnoma izbirna. Imena predmetov so &quot;kratka imena&quot; predmetov - če so prisotna bo uporabnik prijavljen kot udeleženec v teh predmetih. Imena skupin morajo biti povezana z ustreznimi predmeti, npr. skupina1 s predmetom1 itn.</p>
+      <p> <font color="#990000" face="Courier New, Courier, mono">idnumber, icq, phone1, phone2, address, url, description, mailformat, maildisplay, htmleditor, autosubscribe, course1, course2, course3, course4, course5, group1, group2, group3, group4, group5</font></p>
+    </blockquote>
+    </li>
+  <li>Vejice v podatkih morajo biti predstavljene kodirano kot &amp;#44 - program bo samodejno odkodiral to oznako nazaj v vejice. </li>
+  <li>Za logična polja uporabite 0 za "ne" in 1 za "da". </li>
+  <li>Opomba: Če je uporabnik že registriran v podatkovni zbirki uporabnikov Moodle, bo program vrnil identifikacijsko številko uporabnika (userid - indeks podatkovne zbirke) za tega uporabnika in bo uporabnika prijavil kot udeleženca v navedene predmete BREZ posodabljanja drugih navedenih podatkov.</li>
+</ul>
+  
+  
+<p>Tu je primer veljavne datoteke za uvoz:</p>
+<p><font size="-1" face="Courier New, Courier, mono">username, password, firstname, lastname, email, lang, idnumber, maildisplay, course1, group1<br /> jonest, verysecret, Tom, Jones, jonest@someplace.edu, en, 3663737, 1, Intro101, Section 1<br /> reznort, somesecret, Trent, Reznor, reznort@someplace.edu, en_us, 6736733, 0, Advanced202, Section 3</font></p>
+

@@ -1,0 +1,198 @@
+<h2>Poudarjanje besedila Markdown</h2>
+
+<div id="Main">
+
+<div class="article">
+<p>Markdown razširja preprosto obliko vnosa besedila v Moodle z omogočanjem enostavnega dodajanja poudarkov (krepko, ležeče), strukture (označevanje s točkami in naslovi) in povezav (na slike ali druge spletne vire). Markdown lahko uporabljate na mnogih mestih v Moodle, preprosto ga izberete v spustnem seznamu <strong>oblikovanje</strong>, ki ga najdete pod področjem za vnos besedila, kjer imate to možnost.</p>
+
+<ul>
+<li><a href="#concepts">Osnovne zamisli</a></li>
+<li><a href="#emphasis">Poudarjanje besedila</a></li>
+<li><a href="#headings">Naslovi</a></li>
+<li><a href="#lists">Seznami</a></li>
+<li><a href="#quotes">Citirani odstavki</a></li>
+<li><a href="#links">Spletne povezave</a></li>
+<li><a href="#images">Slike</a></li>
+<li><a href="#advanced">Dodatne teme</a></li>
+</ul>
+
+<h2><a id="concepts">Osnovne zamisli</a></h2>
+
+<p>Za vnos besedila preprosto pišite besedilo v področje za vnos besedila in dvakrat pritisnite tipko "Enter" na koncu odstavka, da pustite med koncem enega in pričetkom drugega odstavka prazno vrstico.</p>
+
+<h2><a id="emphasis">Poudarjanje besedila</a></h2>
+
+<p>Markdown omogoča dodajanje treh ravni poudarjanja: <em>ležeče</em> besedilo, <strong>krepko</strong> besedilo ali <strong><em>krepko in ležeče</em></strong> besedilo. To dosežete z obdajanjem besedila, ki ga želite poudariti z zvezdicami npr.</p>
+
+<p><strong><code>*ležeče*</code></strong> -> <em>ležeče</em> <br /> <strong><code>**krepko**</code></strong> -> <strong>krepko</strong> <br /> <strong><code>***krepko ležeče***</code></strong> -> <strong><em>krepko ležeče</em></strong></p>
+
+<p>Poudarke lahko dodate posamezni besedi, vrsti besed ali celo delu besede:</p>
+
+<p><strong><code>ena *sama* beseda</code></strong> -> ena <em>sama</em> beseda <br /> <strong><code>***cela vrsta besed***</code></strong> -> <strong><em>cela vrsta besed</em></strong> <br /> <strong><code>ne**prepozna**vno</code></strong> -> ne<strong>prepozna</strong>vno</p>
+
+<p>V ta namen lahko uporabite podčrtaje (_) izmenjajoče z zvezdicami.</p>
+
+<h2><a id="headings">Naslovi</a></h2>
+
+<p>Markdown omogoča razdelitev besedila z naslovi. Na voljo je šest različnih ravni, čeprav je nenavadno, da bi navadno besedilo uporabljalo več kot tri. V besedilu, ki ga trenutno berete so na primer uporabljene tri ravni naslovov.</p>
+
+<p>Naslov lahko ustvarite tako, da začnete vrstico z enim ali večimi znaki #.  En znak # je največji in najpomembnejši naslov, šest znakov # pomeni najmanj pomemben oziroma najmanjši naslov.</p>
+
+<p><strong><code># naslov poglavja</code></strong> <br /> <strong><code>## naslov podpoglavja</code></strong> <br /> <strong><code>### podnaslov podpoglavja</code></strong> <br /> ipd.</p>
+
+<p>Dve ravni naslovov sta najpogostejši in ju je moč ustvariti na alternativne načine, da so bolj naslovi vidnejši v besedilni različici (čeprav je končni prikaz enak kot z gornjim načinom). Ta alternativa uporablja znake enakosti (=) ali vezaje (-) pod naslovom, kot sledi:</p>
+
+<p><strong><code>naslov poglavja</code></strong> <br /> <strong><code>===============</code></strong></p>
+
+<p><strong><code>naslov podpoglavja</code></strong> <br /> <strong><code>------------------</code></strong>   </p>
+
+<h2><a id="lists">Seznami</a></h2>
+
+<h3>seznami z oznakami</h3>
+
+<p>Sezname z oznakami lahko ustvarite z vpisom zvezdice na začetku vrstice, ki ji sledi presledek pred vsebino točke seznama. Vedite, da je presledek pomemben in nanj ne smete pozabiti.</p>
+
+<p><strong><code>* prva točka</code></strong> <br /> <strong><code>* druga točka</code></strong> <br /> <strong><code>* tretja točka</code></strong>  </p>
+
+<p>postane</p>
+
+<ul>
+<li>prva točka</li>
+<li>druga točka</li>
+<li>tretja točka</li>
+</ul>
+
+<h3>Oštevilčeni seznami</h3>
+
+<p>Podobno lahko ustvarite oštevilčene sezname z vpisom številke na začetku vrstice, ki ji sledi presledek in nato ustrezno besedilo. </p>
+
+<p><strong><code>1. prva točka</code></strong> <br /> <strong><code>2. druga točka</code></strong> <br /> <strong><code>3. tretja točka</code></strong></p>
+
+<p>postane</p>
+
+<ol>
+<li>prva točka</li>
+<li>druga točka</li>
+<li>tretja točka</li>
+</ol>
+
+<h3>Zamaknjeni seznami</h3>
+
+<p>Označene ali oštevilčene sezname lahko vgnezdite ali zamaknete in celo mešate označene in oštevilčene sezname v skupno strukturo: <b></p>
+
+<pre>
+    * vrhnja raven oznaka ena
+      * podoznaka  
+      * podoznaka 2 
+    * vrhnja raven oznaka dva  
+    1. oštevilčena točka ena
+       1. vgnezdena oštevilčena točka
+    2. oštevilčena točka dva
+</pre>
+
+<p></b> postane</p>
+
+<ul>
+<li>vrhnja raven oznaka ena
+<ul>
+<li>podoznaka</li>
+<li>podoznaka 2</li>
+</ul></li>
+<li>vrhnja raven oznaka dva
+<ol>
+<li>oštevilčena točka ena
+<ol>
+<li>vgnezdena oštevilčena točka  </li>
+</ol></li>
+<li>oštevilčena točka dva</li>
+</ol></li>
+</ul>
+
+<h2><a id="quotes">citirani odstavki</a></h2>
+
+<p>Citiran odsek besedila lahko označite, če začnete vrstico s kotnim zaklepajem (>). Ta znak je bil izbran, ker ga uporabljajo mnogi e-poštni programi za označevanje citiranih odsekov. Izpis bo praviloma zamaknil citiran odsek na obeh robovih.</p>
+
+<p><strong><code>&gt; To je citiran odstavek</code> <br /> <code>&gt; v dveh vrsticah</code></strong>  </p>
+
+<p>postane</p>
+
+<blockquote>
+  <p>To je citiran odstavek v dveh vrsticah</p>
+</blockquote>
+
+<p>Nekaj tipkanja si lahko prihranite, če uporabite samo en kotni zaklepaj na začetku prve vrstice odstavka</p>
+
+<p><strong><code>&gt; to je vse en sam citiran</code> <br /> <code>odstavek, čeprav se nadaljuje</code> <br /> <code>prek večih vrstic.</code></strong></p>
+
+<p>postane</p>
+
+<blockquote>
+  <p>to je vse en sam citiran odstavek, čeprav se nadaljuje prek večih vrstic.</p>
+</blockquote>
+
+<h2><a id="links">Spletne povezave</a></h2>
+
+<p>Obstajata dva načina za ustvarjanje povezav na spletne vire: Prvi je vključevanje povezave v besedilu, s postavitvijo besedila, na katerega naj bralci kliknejo v oglate oklepaje in URL naslova strani, na katero naj kaže povezave neposredno za tem v oklepaje brez presledkov ali lukenj med dvema paroma oklepajev. Dodate lahko tudi ime za povezavo v narekovarjih za URL naslovom.</p>
+
+<p><strong><code>To je [primer povezave](http://example.com/ "Dodatno ime") v stavku.</code></strong></p>
+
+<p>postane</p>
+
+<p>To je <a href="http://example.com/" title="Dodatno ime">primer povezave</a> v stavku.</p>
+
+<p>Ime, če je vnešeno, se prikaže kot 'opis', ki se pojavi, ko uporabnik zadrži kazalec miške nad besedilom povezave. Preizkusite to na povezavi, ki se pojavi zgoraj.</p>
+
+<p>Za daljše povezave se lahko izognete motenju poteka besedila z uporabo sloga sprotnih opomb, z dodajanjem kratkih prepoznavnih imen povezavi v drugem paru oglatih oklepajev (bodisi z uporabo kratkih pojasnjevalnih besed, fraze ali preprosto številke).</p>
+
+<p><strong><code>To je [primer povezave][pri] v stavku.</code></strong></p>
+
+<p>Nato nekje drugje v dokumentu, po možnosti bodisi neposredno za odstavkom s povezavo ali zbrano z drugimi URL naslovi povezav na dnu dokumenta, določite URL naslov povezan z identifikatorjem:</p>
+
+<p><strong><code>[pri]: http://example.com/  "Dodatno ime"</code></strong></p>
+
+<p>Izpis tega drugega primera se ne bi razlikoval od prvega. Gre zgolj za ohranjanje delovnega dokumenta urejeno organiziranega za lažje bodoče urejanje (še posebno, če sodelujete z drugimi).</p>
+
+<p>Končna bljižnjica, če želite, da je povezano besedilo enako kot URL naslov, je postavitev URL naslova v kotne oklepaje takole:</p>
+
+<p><strong><code>&lt;http://moodle.org/&gt;</code></strong></p>
+
+<p>kar postane</p>
+
+<p><a href="http://moodle.org">http://moodle.org</a></p>
+
+<h2><a id="images">Slike</a></h2>
+
+<p>Slike vključujete zelo podobno kot spletne povezave, vendar se začenjajo s klicajem. Alternativno besedilo oz. 'alt text' (<em>alt</em> pomeni <em>alternativno</em>) je ponujeno uporabnikom, ki ne morejo videti slik iz raznih vzrokov in zato naj bo besedilo smiselno brez vidnih namigov. S tem boste tudi zagotovili opomnik ali namig tistim, ki urejajo besedilo z oznakami Markdown, kakšen je namen te slike.</p>
+
+<p>Ime je prikazano v majhnem pojavnem opisu, ko uporabnik zadrži miško nad sliko in lahko tako ponuja dodatno informacijo.</p>
+
+<p><strong><code>![alternativno besedilo](/pot/img.jpg "Dodatno ime")</code></strong></p>
+
+<p>Podobno kot pri spletnih povezavah lahko organizirate vaš dokument s hranjenjem vseh URL naslovov skupaj v slogu sklicev 'opomb'. Sliki dajte kratko, enolično ime:</p>
+
+<p><strong><code>![alternativno besedilo][fotografija]</code></strong></p>
+
+<p>in nekje drugje v dokumentu povežite to ime z datoteko slike:</p>
+
+<p><strong><code>[fotografija]: /url/do/img.jpg "Dodatno ime"</code></strong></p>
+
+<p>Tu je primer, ki mu sledi njegov izpis:</p>
+
+<p><strong><code>![Logotip Google](http://www.google.com/images/logo.gif "Logotip iskalnika Google")</code></strong></p>
+
+<p><img src="http://www.google.com/images/logo.gif" alt="Logotip Google" title="Logotip iskalnika Google" /></p>
+
+<p>'Alternativno besedilo', ki je pomembno tudi zaradi dostopnosti, bo pogosto uporabljeno v brskalnikih, če so povezave do slik napačne ali trenutno nedostopne:</p>
+
+<p><strong><code>![alternativno besedilo za napačno sliko](http://example.com/intentionally.broken.link "Ta slika se ne bo nikoli prikazala")</code></strong></p>
+
+<p>postane (natančen prikaz je odvisen od vašega brskalnika)</p>
+
+<p><img src="http://example.com/intentionally.broken.link" alt="alternativno besedilo za napačno sliko" title="Ta slika se ne bo nikoli prikazala" /></p>
+
+<h2><a id="advanced">Dodatne teme</a></h2>
+
+<p>Ta kratek uvod pokriva možnosti Markdown, ki so uporabljane v veliki večini primerov. Možno je doseči veliko bolj kompleksne rezultate, še posebej, če že veste, kako pisati HTML, vendar je to obravnavano v ločenem dokumentu o Napredni rabi Markdown</p>
+<p align="right"><a href="help.php?file=advanced_markdown.html">Več o napredni rabi Markdown</a></p>
+</div>
+</div>
