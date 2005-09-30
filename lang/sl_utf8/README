@@ -1,7 +1,7 @@
 Slovenian Moodle language pack utf-8 encoding
 Translated by Tomaz Savodnik
 
-contact: tomaz@zid.si
+contact: tomaz@zid.si or http://moodle.zid.si
 
 Prevod programa Moodle v Slovenscino je plod prizadevanj Zavoda za informacijsko 
 druzbo, za razsiritev uporabe eUcenja. 
@@ -15,6 +15,7 @@ zID
 
 Dnevnik sprememb
 ---------------------------------------
+30.9.2005 Dodan je prevod datotek pomoci in nekaj drobnih tipkarskih napak
 27.8.2005	Prva razlicica prevoda v UTF-8 je dokoncana. Prevedeni so vsi izrazi 
 		za Moodle 1.5.2 razen dialogue.php (modul je umaknjen iz jedra programa)
 		in timezones.php. 
