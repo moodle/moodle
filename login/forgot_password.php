@@ -1,4 +1,5 @@
-<?php  // $Id
+<?php  
+// $Id$
 // forgot password routine. 
 // find the user and call the appropriate routine for their authentication
 // type.
