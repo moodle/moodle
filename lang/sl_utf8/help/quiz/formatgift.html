@@ -1,0 +1,157 @@
+<p align="center"><b>Uvažanje datotek zapisa "GIFT"</b></p>
+<p>GIFT je najbolj vsestranska oblika zapisa za uvoz vprašanj Moodle kviz iz datoteke z besedilom.  Podpira večkratno izbiro, drži - ne drži, kratek odgovor, ujemanje in številčna vprašanja, kakor tudi obliko za vstavljanje ____ za zapis Manjkajočeih besed.  Različne vrste vprašanj so lahko mešane v eni datoteki besedila in oblika podpira tudi vrstice s komentarji, imena vprašanj, povratno informacijo in odstotke oz. utežene ocene.</p>
+
+    <p>Kodiranje besedila datoteke z besedilom mora biti enako kot je vaša namestitev Moodle. Primer datoteke vprašanj z besedilom najdete tu: <a href="../../../../mod/quiz/format/gift/examples.txt">gift/examples.txt</a>.</p>
+
+
+<h3>VRSTE VPRAŠANJ</h3>
+
+<p><u>Večkratna izbira:</u><br /> Za vprašanja z večimi izbirami imajo napačni odgovori kot predpono tildo (~) in pravilni odgovori kot predpono uporabljajo znak enakosti (=).</p>
+    <pre>     Kdo je pokopan v Grantovi grobnici?{~Grant ~Jefferson =nihče}</pre>
+    <p>Oblika <b>Manjkajoče besede</b> samodejno vstavi prazno črto (kot to _____) na sredo stavka. Za uporabo zapisa Manjkajoče besede, vstavite odgovore kjer želite, da se v stavku pojavi črta.</p>
+    <pre>     Grant je {~pokopan =položen ~živ} v Grantovi grobnici.</pre>
+    <p>Če se odgovori pojavijo pred zaključnim ločilom pike, bo vstavljena vrstica za vpis vstavljena za obliko &quot;manjkajoče besede&quot;. Vse vrste vprašanj lahko napišete v zapisu Manjkajoče besede.</p>
+    <p>Med vprašanji mora biti ločilna prazna vrstice (dvojna nova vrstica). Za večjo preglednost, so lahko odgovori zapisani v ločenih vrsticah in celo zamaknjeni. Na primer:</p>
+    <pre>     Ameriški praznik Dan zahvalnosti se praznuje {
+         ~drugi
+         ~tretji
+         =četrti
+     } četrtek v novembru.
+     
+     Iz katere države prvotno izvirajo Japonski znaki? {
+         ~Indije
+         =Kitajske
+         ~Koreje
+         ~Egipta}</pre>
+
+<p><u>Kratek odgovor:</u><br /> Odgovori v vrsti vprašanja Kratkih odgovorov imajo vsi predpono znaka enakost (=) in nakazujejo, da so vsi odgovori pravilni. Odgovori ne smejo vsebovati tilde.</p>
+    <pre>     Kdo je pokopan v Grantovi grobnici?{=nihče =nobeden}
+
+     Dva plus dva je {=štiri =4}.</pre>
+    <p>Če je samo <u>en</u> pravilen Kratki odgovor, ga lahko zapišemo brez predpone znaka enakosti, če le ne more biti zamenjan za Drži-Ne drži.</p>
+
+<p><u>Drži/Ne drži:</u><br /> V tej vrsti vprašanja odgovor nakazuje ali je trditev pravilna ali napačna. Odgovor mora biti zapisan kot {TRUE} ali {FALSE}, oziroma okrajšano {T} ali {F}.</p>
+    <pre>     Grant je pokopan v Grantovi grobnici.{F}
+
+     Sonce vzide na vzhodu.{T}</pre>
+
+<p><u>Ujemanje:</u><br /> Pari za povezovanje se začnejo z znakom enakosti (=) in so ločeni s tem simbolom "->". Morajo biti vsaj trije pari za ujemanje.</p>
+    <pre>     Vprašanje ujemanja. {
+         =podvprašanje 1 -> pododgovor 1
+         =podvprašanje 2 -> pododgovor 2
+         =podvprašanje 3 -> pododgovor 3
+         }
+     
+     Poveži sledeče države z njihovimi glavnimi mesti. {
+         =Kanada -> Ottawa
+         =Italija -> Rim
+         =Japonska -> Tokio
+         =Indija  -> New Delhi
+         }</pre>
+    <p>Vprašanja ujemanja ne podpirajo povratne informacije ali uteži odgovorov v odstotkih.</p>
+
+<p><u>Številčno:</u><br /> Odsek odgovora za številčna vprašanja se mora pričeti z uveljavljenim znakom za število (#) oz. "lojtro". Številčni odgovori lahko vključujejo mejo napake, ki je zapisana za pravilnim odgovorom ločena z dvopičjem. Če je na primer pravilen odgovor karkoli med 1,5 in 2,5 potem bi bilo to zapisano kot sledi <u>{#2:0.5}</u>. To nakazuje, da je 2 znotraj meja napake 0,5 pravilno (npr. razpon od 1,5 do 2,5). Če meja napake ni navedena, se predvideva, da je nič.</p>
+    <pre>     Kdaj je bil rojen Ulysses S. Grant? {#1822}
+
+     Koliko je vrednost števila pi (na 3 decimalke)? {#3.1415:0.0005}.</pre>
+    <p>Dodatno so lahko številčni odgovori zapisani kot obseg v naslednji obliki {#<i>Najmanjša vrednost</i>..<i>Največja vrednost</i>}.</p>
+    <pre>     Koliko je vrednost števila pi (na 3 decimalke)? {#3.141..3.142}.</pre>
+    <p>Moodle vmesnik brskalnika ne podpira večkratnih številčnih odgovorov, a to zmore Moodle koda in tudi GIFT. To lahko uporabite za določanje številčnih večkratnih obsegov, kar je lahko posebej uporabno ob kombinaciji z odstotki uteži ocen. Če so uporabljeni večkratni odgovori, morajo biti ločeni z znakom enakosti, kot  vprašanja s kratkimi odgovori.</p>
+    <pre>     Kdaj je bil rojen Ulysses S. Grant? {#
+         =1822:0
+         =%50%1822:2}</pre>
+    <p>Vedite, da zato, ker Moodle brskalnikov uporabniški vmesnik ne podpira večih odgovorov za številčna vprašanja, ni nobenega načina, da bi jih videli ali uredili prek Moodle. Edini način za spremembo številčnega odgovora za prvim je, da izbrišete vprašanje in ga ponovno uvozite (ali kaj podobnega phpMyAdmin).</p>
+
+
+<h3>MOŽNOSTI</h3>
+    <p>Poleg teh osnovnih vrst vprašanj, ponuja ta filter naslednje možnosti: vrstice komentarjev, imena vprašanj, povratno informacijo in odstotek uteži vprašanja.</p>
+
+<p><u>Vrstice komentarjev:</u><br /> Komentarji, ki ne bodo uvoženi v Moodle, so lahko vključeni v datoteko z besedilom. To lahko uporabite za naslove ali dodatne informacije o vprašanjih. Vse vrstice, ki se začnejo z dvojno poševnico nazaj (ne štejejo tabulatorji ali presledki) bo filter prezrl.</p>
+    <pre>     // Podnaslov: Spodaj številčna vprašanja
+     Koliko je 2 plus 2? {#4}</pre>
+
+<p><u>Ime vprašanja:</u><br /> Ime vprašanja je možno določiti tako, da ga vmestite pred vprašanje in obdate z dvojnim dvopičjem.</p>
+    <pre>     ::Izvor pisave Kanji::Iz katere države prvotno izvirajo japonski znaki?
+ {=Kitajske}
+
+     ::Datum dneva zahvalnosti::Ameriški praznik Dan zahvalnosti se praznuje {~drugi ~tretji =četrti} četrtek v novembru.
+</pre>
+    <p>Če ime vprašanja ni določeno, bo kot privzeto za ime uporabljeno celotno vprašanje.</p>
+
+<p><u>Povratna informacija:</u><br /> Povratna informacija je lahko vključena za vsak odgovor z nadaljevanjem (po vprašanju) z znakom za število (# poznano tudi kot lojtra) in povratno informacijo.</p>
+    <pre>     Kakšen je odgovor na to vprašanje z večimi izbirami?{
+     ~napačen odgovor#povratna informacija za napačen odgovor
+     ~še en napačen odgovor#povratna informacija za ta napačen odgovor
+     =pravilen odgovor#Zelo dobro!}
+     
+     Kdo je pokopan v Grantovi grobnici?{
+     =nihče#izvrsten odgovor!
+     =nobeden$izvrsten odgovor!}
+     
+     Grant je pokopan v Grantovi grobnici.{FALSE#Nihče ni pokopan v Grantovi grobnici.}</pre>
+    <p>Za vprašanja z večimi možnostmi, je povratna informacija prikazana samo za odgovor, ki ga je udeleženec izbral. Za kratke odgovore je povratna informacija prikazana samo kadaj udeleženci vnesejo ustrezen pravilni odgovor. Za vprašanja Drži / Ne drži je uvožene povratna informacija shranjena tako, da bo prikazano, če idečeženec izbere napačen odgovor. Tako bi v gornjih primerih, udeleženeci videli povratno informacijo samo, če izbere TRUE kot odgovor.</p>
+
+<p><u>Uteži udstotkov in uteži:</u><br /> Uteži odgovorov v odstotkih so na voljo tako za vprašanja z večimi izbirami, kot kratkimi odgovori. Odstotki uteži za odgovor se lahko vključijo tako, da sledijo tildi (za več izbir) ali znaku enakosti (za kratek odgovor) z želenim odstotkom obdanim z znakoma za odstotek (npr. %50%). To možnost je mogoče kombinirati s komentarji povratne informacije.</p>
+    <pre>     Težko vprašanje.{~napačen odgovor ~%50%odgovor za pol točk =odgovor vreden vseh točk}
+          
+     ::Jezusov domači kraj::Domači kraj Jezusa Kristusa je bil {
+     ~Jeruzalem#To je bilo pomembno mest, a odgovor je napačen.
+     ~%25%Betlehem#Tam je bil rojen, a tam ni bil doma.
+     ~%50%Galileja#Morate biti bolj natančni.
+     =Nazaret#Da! To je pravilno!}.
+     
+     ::Jezusov domači kraj:: Domači kraj Jezusa Kristusa je bil {
+     =Nazaret#Da! To je pravilno!
+     =%75%Nazeret#Pravilno, a narobe črkovano!
+     =%25%Betlehem#Tam je bil rojen, a tam ni bil doma.}</pre>
+    <p>Vedite, da sta zadnja dva primera v bistvu enaki vprašanji, najprej je vprašanje z večimi izbirami in nato s kratkim odgovorom.</p>
+
+    <p><font size="-1">Vedite, da je možno določiti uteži za odgovore v odstotkih, ki NISO na voljo prek vmesnika spletnega pregledovalnika. Takšne uteži za odgovore bodo pravilno izračunane (glede na dodeljene vrednosti ob uvozu) in bodo prikazane udeležencem. Vendar take uteži ne bodo pravilno prikazane izvajalcem, ko jih bodo urejali prek Moodle vmesnika za urejanje vprašanja. Spustni meni omogoča samo določene fiksne vrednosti in če se utež popolnoma ne ujema z eno izmed vnaprej določenih vrednosti, ne bo prikazana pravilno. Če tako vprašanje urejate s spletnim vmesnikom, se bo utež odgovora spremenila v prikazano vrednost.</font></p>
+
+<p><u>Določanje oblikovanja besedila za vprašanje</u><br /> Besedila vprašanja imajo lahko dodatno določen zapis oblikovanja besedila. Trenutno so na voljo zapisi oblikovanja <b>moodle</b> (Moodle samodejno oblikovanje), <b>HTML</b> (oblika HTML), <b>golo</b> (oblika golega besedila) in <b>Markdown</b> (oblika Markdown). Oblika zapisa je določena v oglatih oklepajih neposredno pred besedilom vprašanja. <a href="help.php?file=textformat.html">Več informacij o oblikah besedil v okolju Moodle.</a></p>
+
+ <pre>[markdown]*Ameriški praznik Dan zahvalnosti* se praznuje {
+         ~drugi
+         ~tretji
+         =četrti
+     } četrtek v novembru.    </pre>
+
+
+<p><u>Več odgovorov:</u><br /> Možnost večih odgovorov se uporabi pri vprašanjih večih izbir, kjer morata biti izbrana dva ali več odgovorov, za osvojitev vseh točk. Možnost večih odgovorov se omogoči z dodelitvijo uteži delnega odgovora večim odgovorom in se nobenemu posameznemu odgovoru ne dodeli vseh točk.</p>
+    <pre>     Kateri dve osebi sta v Grantovi grobnici? {
+          ~Nihče
+          ~%50%Grant
+          ~%50%Grantova žena
+          ~Grantov oče }</pre>
+    <p>Bodite pozorni na to, da ni pred nobenim odgovorom znaka enakosti (=) in vsota odgovorov ne sme preseči 100%, sicer bo Moodle sporočil napako. Da bi se izognili teževi, da bi udeleženci samodejno prejeli 100 % s preprostim označevanjem vseh odgovorov, je najbolje vključiti nekativne uteži odgovorov za napačne odgovore.</p>
+    <pre>     Kateri dve osebi sta v Grantovi grobnici? {
+          ~%-50%Nihče
+          ~%50%Grant
+          ~%50%Grantova žena
+          ~%-50%Grantov oče }</pre>
+
+<p><u>Posebni znaki ~ = # { } :</u><br /> Ti simboli <b> ~ = # { } </b> nadzirajo operacije tega filtra in se jih ne sme uporabiti kot navadno besedilo v vprašanjih. Ker imajo ti simboli posebno vlogo v določanju operacij tega filtra se imenujejo "kontrolni znaki". Včasih boste želeli uporabiti katerega izmed teh znakov, na primer za prikaz matematične formule v vprašanju. Tej težavi se izognete z ubežnim znakom pred kontrolnimi znaki. To pomeni enostavno vstavljanje poševnice nazah (\) pred kontrolni znak, da bo filter vedel, da ga želite uporabiti dobesedno kot znak namesto njegove uporabe kot kontrolnega znaka. Na primer:</p>
+    <pre>     Kateri odgovor da 5? {
+          ~ \= 2 + 2
+          = \= 2 + 3
+          ~ \= 2 + 4  }
+
+     ::GIFT kontrolni znaki::
+     Kateri izmed naslednjih NI kontrolni znak v zapisu GIFT? {
+        ~ \~     # \~ je kontrolni znak.
+        ~ \=     # \= je kontrolni znak.
+        ~ \#     # \# je kontrolni znak.
+        ~ \{     # \{ je kontrolni znak.
+        ~ \}     # \} je kontrolni znak.
+        = \     # Pravilno! \ (poševnica nazaj) ni kontrolni znak. VENDAR,
+                   se uporablja kot ubežni znak za kontrolne znake.
+     }</pre>
+    <p>Ko se vprašanje obdeluje se poševnica nazaj odstrani in ni shranjena v Moodle.</p>
+
+<p><u>Druge možnosti:</u><br /> Vprašanja s kratkimi odgovori lahko razlikujejo velike in male črke, ke spremenite &quot;0&quot; v &quot;1&quot; v naslednji vrstici:<br /> <tt>$question-&gt;usecase = 0;  // ne razlikuj velikosti črk</tt></p>
+    <p>Druge možnosti so na voljo z urejanjem uvoznega filtra <b>gift/format.php</b>. </p>
+<p></p>
+
+<h3>ZASLUGE</h3>
+    <p>Ta filter je bil napisan v sodelovanju mnogih članov skupnosti Moodle. Izvorno je temeljil na zapisu manjkajoče besede, ki je vključeval programsko kodo, ki sta jo napisala Martin Dougiamas in Thomas Robb. Paul Tsuchido Shew je napisal ta filter decembra 2003 in vključil predloge skupnosti za zmoglivejši zapis vprašanj. Ime je bilo zamišljeno kot akronim za &quot;General Import Format Technology&quot; ali nekaj podobnega, vendar je to predolgo za tako preprost filter, zato preprosto GIFT.</p>
+    <p><font size="-1">GIFT filter in dokumentacija Paul Tsuchido Shew http://ac.shew.jp. Zadnja posodobitev 27 Feb 2004.</font></p>
