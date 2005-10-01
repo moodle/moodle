@@ -215,6 +215,9 @@
         if ($CFG->debug) print_object('default_organization: '.$default_organization);
 
     /// Iterate (reverse) over organizations until we find the default one
+        if (empty($data['#']['organization'])) {  /// Verify <organization> exists
+            return false;
+        }
         $count_organizations = count($data['#']['organization']);
         if ($CFG->debug) print_object('count_organizations: '.$count_organizations);
 
@@ -236,6 +239,9 @@
 
     /// Extract items map from organization
         $items = $organization['#']['item'];
+        if (empty($data['#']['item'])) {  /// Verify <item> exists
+            return false;
+        }
         if (!$itemmap = ims_process_items($items)) {
             return false;    //Error, no items found
         }
@@ -302,6 +308,9 @@
 
         $resources = array();
 
+        if (empty($data)) {  /// Verify <resource> exists
+            return false;
+        }
         $count_resources = count($data);
         if ($CFG->debug) print_object('count_resources: '.$count_resources);
 
