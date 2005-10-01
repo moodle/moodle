@@ -15,8 +15,8 @@
 html, body {    margin: 0px; border: 0px; background-color: buttonface; } </style>
 
 
-<script type="text/javascript" src="../htmlarea.php?id=<?php p($id); ?>" charset="<?php print_string('thischarset'); ?>"></script>
-<script type="text/javascript" src="../lang/en.php" charset="<?php print_string('thischarset'); ?>"></script>
+<script type="text/javascript" src="../htmlarea.php?id=<?php p($id); ?>"></script>
+<script type="text/javascript" src="../lang/en.php"></script>
 <script type="text/javascript" src="../dialog.js" charset="<?php print_string('thischarset'); ?>"></script>
 <script type="text/javascript" src="../plugins/TableOperations/table-operations.js" charset="<?php print_string('thischarset'); ?>"></script>
 <script type="text/javascript" src="../plugins/TableOperations/lang/en.js" charset="<?php print_string('thischarset'); ?>"></script>
