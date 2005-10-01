@@ -8,7 +8,8 @@
         ob_start("ob_gzhandler");
     }
 
-    header("Content-type: application/x-javascript");  // Correct MIME type
+    $charset = get_string('thischarset');
+    header("Content-type: application/x-javascript; charset: $charset");  // Correct MIME type
     header("Last-Modified: " . gmdate("D, d M Y H:i:s", $lastmodified) . " GMT");
     header("Expires: " . gmdate("D, d M Y H:i:s", time() + $lifetime) . " GMT");
     header("Cache-control: max_age = $lifetime");
@@ -678,7 +679,7 @@ HTMLArea.prototype.generate = function () {
         html += '"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">\n';
         html += "<html>\n";
         html += "<head>\n";
-        html += '<meta http-equiv="content-type" content="text/html; charset=<?php print_string("thischarset");?>" />\n';
+        html += '<meta http-equiv="content-type" content="text/html; charset=<?php echo $charset; ?>" />\n';
         if (editor.config.baseURL)
             html += '<base href="' + editor.config.baseURL + '" />';
         html += '<style type="text/css">\n' + editor.config.pageStyle + "td { border: 1px dotted gray; }</style>\n";
