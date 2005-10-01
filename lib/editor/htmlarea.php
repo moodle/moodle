@@ -4,6 +4,10 @@
     $lastmodified = filemtime("htmlarea.php");
     $lifetime = 1800;
 
+    if ( function_exists('ob_gzhandler') ) {
+        ob_start("ob_gzhandler");
+    }
+
     header("Content-type: application/x-javascript");  // Correct MIME type
     header("Last-Modified: " . gmdate("D, d M Y H:i:s", $lastmodified) . " GMT");
     header("Expires: " . gmdate("D, d M Y H:i:s", time() + $lifetime) . " GMT");
@@ -670,8 +674,11 @@ HTMLArea.prototype.generate = function () {
     // Generate iframe content
     var html = ""
     if (!editor.config.fullPage) {
-        html = "<html>\n";
+        html  = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" ';
+        html += '"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">\n';
+        html += "<html>\n";
         html += "<head>\n";
+        html += '<meta http-equiv="content-type" content="text/html; charset=<?php print_string("thischarset");?>" />\n';
         if (editor.config.baseURL)
             html += '<base href="' + editor.config.baseURL + '" />';
         html += '<style type="text/css">\n' + editor.config.pageStyle + "td { border: 1px dotted gray; }</style>\n";
