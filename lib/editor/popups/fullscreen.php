@@ -1,6 +1,11 @@
 <?php // $Id$
     include("../../../config.php");
     $id = optional_param('id', 0, PARAM_INT);
+
+    if ( function_exists('ob_gzhandler') ) {
+        ob_start("ob_gzhandler");
+    }
+
 ?>
 <html>
 <head><title><?php print_string("fullscreen","editor");?></title>
@@ -10,11 +15,11 @@
 html, body {    margin: 0px; border: 0px; background-color: buttonface; } </style>
 
 
-<script type="text/javascript" src="../htmlarea.php?id=<?php p($id); ?>"></script>
-<script type="text/javascript" src="../lang/en.php"></script>
-<script type="text/javascript" src="../dialog.js"></script>
-<script type="text/javascript" src="../plugins/TableOperations/table-operations.js"></script>
-<script type="text/javascript" src="../plugins/TableOperations/lang/en.js"></script>
+<script type="text/javascript" src="../htmlarea.php?id=<?php p($id); ?>" charset="<?php print_string('thischarset'); ?>"></script>
+<script type="text/javascript" src="../lang/en.php" charset="<?php print_string('thischarset'); ?>"></script>
+<script type="text/javascript" src="../dialog.js" charset="<?php print_string('thischarset'); ?>"></script>
+<script type="text/javascript" src="../plugins/TableOperations/table-operations.js" charset="<?php print_string('thischarset'); ?>"></script>
+<script type="text/javascript" src="../plugins/TableOperations/lang/en.js" charset="<?php print_string('thischarset'); ?>"></script>
 <script type="text/javascript">
 // load same scripts that were present in the opener page
 var scripts = opener.document.getElementsByTagName("script");
