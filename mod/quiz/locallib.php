@@ -639,7 +639,7 @@ class quiz_default_questiontype {
         attempt and displays the overall grade obtained counting all previous
         responses (and penalties) */
 
-        if (!empty($question->maxgrade)) {
+        if (!empty($question->maxgrade) && $options->scores) {
             if (!('' === $state->last_graded->grade)) {
                 // Display the grading details from the last graded state
                 $grade->cur = round($state->last_graded->grade, $quiz->decimalpoints);
@@ -1396,7 +1396,7 @@ function quiz_save_question_session(&$question, &$state) {
         return false;
     }
 
-    // addslashes that have been stripped in quiz_extract_response
+    // stripslashes again, that have been added at the top of this function
     foreach ($state->responses as $key => $response) {
         $state->responses[$key] = stripslashes($response);
     }
@@ -2582,7 +2582,7 @@ function quiz_get_renderoptions($quiz, $state) {
 
     // Always show responses and scores
     $options->responses = true;
-    $options->scores = true;
+    $options->scores = ($quiz->review & QUIZ_REVIEW_SCORES & QUIZ_REVIEW_IMMEDIATELY) ? 1 : 0;
 
     return $options;
 }
