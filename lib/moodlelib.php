@@ -116,12 +116,12 @@ define('PARAM_INTEGER',  0x0002);
 define('PARAM_ALPHA',    0x0004);
 
 /**
- * PARAM_INTEGER - an alias for PARAM_ALPHA
+ * PARAM_ACTION - an alias for PARAM_ALPHA
  */
 define('PARAM_ACTION',   0x0004);
 
 /**
- * PARAM_INTEGER - an alias for PARAM_ALPHA
+ * PARAM_FORMAT - an alias for PARAM_ALPHA
  */
 define('PARAM_FORMAT',   0x0004);
 
