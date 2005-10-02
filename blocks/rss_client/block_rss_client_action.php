@@ -27,12 +27,11 @@ if (isguest()) {
     error(get_string('noguestpost', 'forum'), $referrer);
 }
 
-$act            = optional_param('act', 'none' );
-$rssid          = optional_param('rssid', 'none' );
+$act            = optional_param('act', NULL, PARAM_ALPHA);
+$rssid          = optional_param('rssid', NULL, PARAM_INT);
 $id             = optional_param('id', SITEID, PARAM_INT);
-$url            = optional_param('url');
-$preferredtitle = optional_param('preferredtitle', '');
-$item           = optional_param('item');
+$url            = optional_param('url', NULL, PARAM_URL);
+$preferredtitle = optional_param('preferredtitle', '', PARAM_ALPHA);
 
 if (!defined('MAGPIE_OUTPUT_ENCODING')) {
     define('MAGPIE_OUTPUT_ENCODING', get_string('thischarset'));  // see bug 3107
@@ -67,21 +66,26 @@ if (!empty($course)) {
     $isteacher = isteacher($id);
 }
 
-$rss_record = get_record('block_rss_client', 'id', $rssid);
+if ($act == NULL) {
+    rss_display_feeds($id);
+    rss_print_form($act, $url, $rssid, $preferredtitle, $id);
+    print_footer();
+    die();
+}
+
+if ($rssid != NULL) {
+    $rss_record = get_record('block_rss_client', 'id', $rssid);
+}
 
 //if the user is an admin or course teacher then allow the user to
 //assign categories to other uses than personal
-if (!( isadmin() || $submitters == SUBMITTERS_ALL_ACCOUNT_HOLDERS || 
+if ($rss_record != NULL && !( isadmin() || $submitters == SUBMITTERS_ALL_ACCOUNT_HOLDERS || 
         ($submitters == SUBMITTERS_ADMIN_AND_TEACHER && $isteacher) || 
             ( ($act == 'rss_edit' || $act == 'delfeed' || $act == 'updfeed') && $USER->id == $rss_record->userid)  ) ) {
         error(get_string('noguestpost', 'forum').' You are not allowed to make modifications to this RSS feed at this time.', $referrer);
 }
 
-if ($act == 'none') {
-    rss_display_feeds($id);
-    rss_print_form($act, $url, $rssid, $preferredtitle, $id);
-
-} else if ($act == 'updfeed') {
+if ($act == 'updfeed') {
     if (empty($url)) {
         error( 'url not defined for rss feed' );
     }
@@ -164,7 +168,7 @@ if ($act == 'none') {
         rss_display_feeds($id);
         rss_print_form($act, $dataobject->url, $dataobject->id, $dataobject->preferredtitle, $id);
 */
-} else if ( $act == 'rss_edit') {
+} else if ( $rss_record != NULL && $act == 'rss_edit' ) {
 
     $preferredtitle = stripslashes_safe($rss_record->preferredtitle);
     if (empty($preferredtitle)) {
@@ -188,7 +192,7 @@ if ($act == 'none') {
 
     redirect($referrer, get_string('feeddeleted', 'block_rss_client') );
 
-} else if ($act == 'view') {
+} else if ( $rss_record != NULL && $act == 'view' ) {
     //              echo $sql; //debug
     //              print_object($res); //debug
     if (!$rss_record->id) {
@@ -241,6 +245,5 @@ if ($act == 'none') {
     rss_display_feeds($id);
     rss_print_form($act, $url, $rssid, $preferredtitle, $id);
 }
-
 print_footer();
 ?>
