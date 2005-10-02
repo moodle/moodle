@@ -321,9 +321,14 @@ function quiz_save_question_session(&$question, &$state) {
     // Set the legacy answer field
     $state->answer = isset($state->responses['']) ? $state->responses[''] : '';
 
+    // Round long grade
+    if (strlen($state->grade) > 10 && floatval($state->grade)) {
+        $state->grade = strval(round($state->grade,10-1-strlen(floor($state->grade))));
+    }
+
     // Round long raw_grade
-    if (strlen($state->raw_grade) > 10 && floatval($state->raw_grade) < 1) {
-        $state->raw_grade = strval(round($state->raw_grade,2));
+    if (strlen($state->raw_grade) > 10 && floatval($state->raw_grade)) {
+        $state->raw_grade = strval(round($state->raw_grade,10-1-strlen(floor($state->raw_grade))));
     }
 
     // Save the state
@@ -664,8 +669,8 @@ function quiz_process_responses(&$question, &$state, $action, $cmoptions, &$atte
     }
     $attempt->timemodified = $action->timestamp;
     // Round long sumgrades
-    if (strlen($attempt->sumgrades) > 10 && floatval($attempt->sumgrades) < 1) {
-       $attempt->sumgrades = strval(round($attempt->sumgrades,2));
+    if (strlen($attempt->sumgrades) > 10 && floatval($attempt->sumgrades)) {
+        $attempt->sumgrades = strval(round($attempt->sumgrades,10-1-strlen(floor($state->sumgrades))));
     }
 
     return true;
