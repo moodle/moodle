@@ -415,6 +415,7 @@ function rss_display_feeds($courseid='', $userid='', $rssid='') {
 
 }
 
+
 /**
  *   translates HTML special characters back to ASCII
  * RSS feeds may have encoded html commands which we want to translate properly
@@ -427,12 +428,15 @@ function rss_unhtmlentities($string) {
     return strtr ($string, $trans_tbl);
 }
 
+
 /**
  * Wrapper function for rss_get_form
  */
 function rss_print_form($act='none', $url='', $rssid='', $preferredtitle='', $courseid='') {
-	print rss_get_form($act, $url, $rssid, $preferredtitle, $courseid);
+    print rss_get_form($act, $url, $rssid, $preferredtitle, $courseid);
 }
+
+
 /**
  * Prints or returns a form for managing rss feed entries.
  * @param string $act The current action. If "rss_edit" then and "update" button is used, otherwise "add" is used.
