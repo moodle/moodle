@@ -6196,6 +6196,14 @@ function unzip_file ($zipfile, $destination = '', $showstatus = true) {
         return false;
     }
 
+    //Clear $zipfile
+    $zipfile = cleardoubleslashes($zipfile);
+
+    //Check zipfile exists
+    if (!file_exists($zipfile)) {
+        return false;
+    }
+
     //If no destination, passed let's go with the same directory
     if (empty($destination)) {
         $destination = $zippath;
