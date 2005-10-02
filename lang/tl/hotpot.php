@@ -3,7 +3,7 @@
 
 
 $string['abandoned'] = 'inabandona';
-$string['addquizchain'] = 'Magdadag ng quiz chain';
+$string['addquizchain'] = 'Magdadag ng kadena ng tanong';
 $string['allmycourses'] = 'lahat ng kurso ko';
 $string['alwaysopen'] = 'Palaging bukás';
 $string['attemptsall'] = 'Lahat ng pagkuha';
@@ -12,7 +12,7 @@ $string['attemptsfirst'] = 'Unang pagkuha';
 $string['attemptslast'] = 'Huling pagkuha';
 $string['average'] = 'Katamtaman';
 $string['checks'] = 'mga tsek';
-$string['clickreporting'] = 'Pahintulutan ang pag-ulat ng click';
+$string['clickreporting'] = 'Pahintulutan ang pag-ulat ng klik';
 $string['clues'] = 'mga clue';
 $string['completed'] = 'Nakumpleto na';
 $string['configexcelencodings'] = 'Listahan ng mga encoding, na pinaghihiwalay ng mga kuwit, na magagamit para maipilit ang isang takdang encoding sa mga halaga sa ulat, para sa mga program na spreadsheet.  Halimbawa, kailangan ng Microsoft Excel ng &quot;SJIS&quot; na encoding para sa Nihonggo.';
@@ -124,7 +124,7 @@ $string['textsourcequiz'] = 'Kunin mula sa pagsusulit';
 $string['textsourcespecific'] = 'Partikular na teksto';
 $string['thiscourse'] = 'ang kursong ito';
 $string['timedout'] = 'Nagtime-out';
-$string['updatequizchain'] = 'Gawing bago ang quiz chain';
+$string['updatequizchain'] = 'Gawing bago ang kadena ng tanong';
 $string['weighting'] = 'timbang';
 $string['wrong'] = 'Malî';
 
