@@ -73,7 +73,7 @@ $rss_record = get_record('block_rss_client', 'id', $rssid);
 //assign categories to other uses than personal
 if (!( isadmin() || $submitters == SUBMITTERS_ALL_ACCOUNT_HOLDERS || 
         ($submitters == SUBMITTERS_ADMIN_AND_TEACHER && $isteacher) || 
-            ( ($act == 'rss_edit' || $act == 'delfeed') && $USER->id == $rss_record->userid)  ) ) {
+            ( ($act == 'rss_edit' || $act == 'delfeed' || $act == 'updfeed') && $USER->id == $rss_record->userid)  ) ) {
         error(get_string('noguestpost', 'forum').' You are not allowed to make modifications to this RSS feed at this time.', $referrer);
 }
 

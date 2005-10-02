@@ -1,3 +1,4 @@
+# $Id$
 # This file contains a complete database schema for all the 
 # tables used by this module, written in SQL
 
