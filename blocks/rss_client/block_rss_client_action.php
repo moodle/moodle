@@ -45,26 +45,19 @@ if (!empty($id)) {
 
 $straddedit = get_string('feedsaddedit', 'block_rss_client');
 if ( isadmin() ) {
-    $stradmin = get_string('administration');
-    $strconfiguration = get_string('configuration');
-    $navigation = "<a href=\"$CFG->wwwroot/$CFG->admin/index.php\">$stradmin</a> -> ".
-    "<a href=\"$CFG->wwwroot/$CFG->admin/configure.php\">$strconfiguration</a> -> $straddedit";
+    $navigation = '<a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/index.php">'.get_string('administration').'</a> -> '.
+        '<a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/configure.php">'.get_string('configuration').'</a> -> '.$straddedit;
 } else if (!empty($course)) {
-    $navigation = "<a href=\"$CFG->wwwroot/course/view.php?id=$id\">$course->shortname</a> -> $straddedit";
+    $navigation = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$id.'">'.$course->shortname.'</a> -> '.$straddedit;
 } else {
     $navigation = $straddedit;
 }
 
-print_header(get_string('feedsaddedit', 'block_rss_client'),  
-                get_string('feedsaddedit', 'block_rss_client'), 
-                $navigation );
+print_header($straddedit, $straddedit, $navigation);
 
 //check to make sure that the user is allowed to post new feeds
 $submitters = $CFG->block_rss_client_submitters;
-$isteacher = false;
-if (!empty($course)) {
-    $isteacher = isteacher($id);
-}
+$isteacher  = empty($course) ? false : isteacher($id);
 
 if ($act == NULL) {
     rss_display_feeds($id);
@@ -79,7 +72,7 @@ if ($rssid != NULL) {
 
 //if the user is an admin or course teacher then allow the user to
 //assign categories to other uses than personal
-if ($rss_record != NULL && !( isadmin() || $submitters == SUBMITTERS_ALL_ACCOUNT_HOLDERS || 
+if (isset($rss_record) && !( isadmin() || $submitters == SUBMITTERS_ALL_ACCOUNT_HOLDERS || 
         ($submitters == SUBMITTERS_ADMIN_AND_TEACHER && $isteacher) || 
             ( ($act == 'rss_edit' || $act == 'delfeed' || $act == 'updfeed') && $USER->id == $rss_record->userid)  ) ) {
         error(get_string('noguestpost', 'forum').' You are not allowed to make modifications to this RSS feed at this time.', $referrer);
@@ -186,9 +179,7 @@ if ($act == 'updfeed') {
     }
 
     // echo "DEBUG: act = delfeed"; //debug
-    //Daryl Hawes note: convert this sql statement to a moodle function call
-    $sql = 'DELETE FROM '. $CFG->prefix .'block_rss_client WHERE id='. $rssid;
-    $res= $db->Execute($sql);
+    delete_records('block_rss_client', 'id', $rssid);
 
     redirect($referrer, get_string('feeddeleted', 'block_rss_client') );
 
