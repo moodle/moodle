@@ -1,3 +1,61 @@
-Moodle Japanese language pack UTF-8 version
-Created by Mitsuhiro Yoshida ( http://mitstek.com/ ).
-See /lang/ja/README for more information.
+MOODLE JAPANESE TRANSLATION
+----------------------------------------------------------------------
+STARTED                       : November 21, 2002
+LAST MODIFIED                 : October 2, 2005
+----------------------------------------------------------------------
+
+Mitsuhiro Yoshida ( http://mitstek.com/ ) - Moodle Partner
+ Translating whole ja and ja_utf8 files, translation management.
+
+Timothy Takemoto ( http://eigodaigaku.com )
+ Facilitator of "Japanese Moodle" ( http://moodle.org/course/view.php?id=14 )
+ Translation brushup
+
+Paul Shew ( http://ac.shew.jp )
+ Translation brushup
+ Translation: /lang/ja/help/quiz/formatgift.html
+
+Tatsuya Aoyagi
+ Translation brushup
+ Localization
+ Translation: /lang/ja/questionnaire.php
+ Translation: /lang/ja/help/questionnaire
+
+Masataka Nakaue ( http://ldt.stanford.edu/~mnakauye/ )
+ Translation: /lang/ja/book.php
+ Translation: /lang/ja/help/book
+
+Hiroto Kagotani ( http://www.infsys.cne.okayama-u.ac.jp/~kagotani/ )
+ Translation brushup
+ Translation: /lang/ja/help/*
+
+Thomas N. Robb ( http://www.kyoto-su.ac.jp/~trobb/ )
+ Translation brushup
+
+Toshihiro Kita ( http://t-kita.net/ )
+ Moodle RPM Package ( http://t-kita.net/rpm/moodle/ )
+ Translation brushup
+
+Takahiro Kagoya ( https://manabi.jin-ai.ac.jp/moodle/ )
+ Inventor of QUIZ results block, ranking system
+ Translation brushup
+ Localization
+
+Takahito Kashiwagi ( http://www.supertak.com/ )
+ Localization
+
+Naoko Ueda ( http://knowledgestudio.biz/ )
+ Translation brushup
+
+Haruhiko Okumura ( http://oku.edu.mie-u.ac.jp/~okumura/ )
+ Translation brushup
+
+----------------------------------------------------------------------
+Any suggestion for Japanese language packs, please do not hesitate
+to post your comments on moodle.org Japanese:
+http://moodle.org/course/view.php?id=14
+
+You can download latest Japanese language packs from:
+http://download.moodle.org/lang/
+
+
