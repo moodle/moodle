@@ -1375,6 +1375,16 @@ function main_upgrade($oldversion=0) {
          modify_database("","CREATE INDEX prefix_stats_user_monthly_timeend_idx ON prefix_stats_user_monthly (timeend);");
     }
     
+    if ($oldversion < 2005100300) {
+        table_column('course','','expirynotify','integer','1');
+        table_column('course','','expirythreshold','integer');
+        table_column('course','','notifystudents','integer','1');
+        $new = new stdClass();
+        $new->name = 'lastexpirynotify';
+        $new->value = 0;
+        insert_record('config', $new);
+    }
+    
     return $result;
 }
 

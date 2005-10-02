@@ -350,6 +350,60 @@ function cron() {
             remove_teacher($teacher->userid, $teacher->course);
         }
     }
+
+    // Notify teachers/students about students who's enrolment are going to expire
+    global $CFG;
+    if ($CFG->lastexpirynotify < date('Ymd') && ($courses = get_records_select('course', 'enrolperiod > 0 AND expirynotify > 0 AND expirythreshold > 0'))) {
+        $site = get_site();
+        $admin = get_admin();
+        $strexpirynotify = get_string('expirynotify');
+        foreach ($courses as $course) {
+            $a = new stdClass();
+            $a->course = $course->shortname .' '. $course->fullname;
+            $a->threshold = $course->expirythreshold / 86400;
+            $a->extendurl = $CFG->wwwroot . '/user/index.php?id=' . $course->id;
+            $a->current = array();
+            $a->past = array();
+            $a->current = $a->past = array();
+            $expiry = time() + $course->expirythreshold;
+            $sql = "SELECT * FROM {$CFG->prefix}user u INNER JOIN {$CFG->prefix}user_students s ON u.id=s.userid WHERE s.course = $course->id AND s.timeend > 0 AND s.timeend <= $expiry";
+            if ($students = get_records_sql($sql)) {
+                $teacher = get_teacher($course->id);
+                $strexpirynotifystudentsemail = get_string('expirynotifystudentsemail', '', $a);
+                foreach ($students as $student) {
+                    if ($student->timeend < ($expiry - 86400)) {
+                        $a->past[] = fullname($student) . " <$student->email>";
+                    } else {
+                        $a->current[] = fullname($student) . " <$student->email>";
+                        if ($course->notifystudents) {
+                            // Send this guy notice
+                            email_to_user($student, $teacher, $site->fullname .' '. $strexpirynotify, $strexpirynotifystudentsemail);
+                        }
+                    }
+                }
+            }
+            $a->current = implode("\n", $a->current);
+            $a->past = implode("\n", $a->past);
+            $strexpirynotifyemail = get_string('expirynotifyemail', '', $a);
+            if ($a->current || $a->past) {
+                $sql = "SELECT u.* FROM {$CFG->prefix}user u INNER JOIN {$CFG->prefix}user_teachers t ON u.id=t.userid WHERE t.course = $course->id";
+                if ($teachers = get_records_sql($sql)) {
+                    foreach ($teachers as $teacher) {
+                        email_to_user($teacher, $admin, $a->course .' '. $strexpirynotify, $strexpirynotifyemail);
+                    }
+                }
+            }
+            if ($lastexpirynotify = get_record('config', 'name', 'lastexpirynotify')) {
+                $lastexpirynotify->value = date('Ymd');
+                update_record('config', $lastexpirynotify);
+            } else {
+                $lastexpirynotify = new stdClass();
+                $lastexpirynotify->name = 'lastexpirynotify';
+                $lastexpirynotify->value = date('Ymd');
+                insert_record('config', $lastexpirynotify);
+            }
+        }
+    }
 }
 
 

@@ -1633,6 +1633,16 @@ function main_upgrade($oldversion=0) {
          
     }
 
+    if ($oldversion < 2005100300) {
+        table_column('course','','expirynotify','tinyint','1');
+        table_column('course','','expirythreshold','int','10');
+        table_column('course','','notifystudents','tinyint','1');
+        $new = new stdClass();
+        $new->name = 'lastexpirynotify';
+        $new->value = 0;
+        insert_record('config', $new);
+    }
+
     return $result;
 }
 

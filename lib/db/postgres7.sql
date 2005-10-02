@@ -49,7 +49,10 @@ CREATE TABLE prefix_course (
    timemodified integer NOT NULL default '0',
    metacourse integer NOT NULL default '0',
    requested integer NOT NULL default '0',
-   restrictmodules integer NOT NULL default '0'
+   restrictmodules integer NOT NULL default '0',
+   expirynotify integer NOT NULL default '0',
+   expirythreshold integer NOT NULL default '0',
+   notifystudents integer NOT NULL default '0'
 );
 
 CREATE UNIQUE INDEX prefix_course_category_sortorder_uk ON prefix_course (category,sortorder);

@@ -463,6 +463,28 @@ $string['existingcreators'] = 'Existing course creators';
 $string['existingstudents'] = 'Enrolled students';
 $string['existingteachers'] = 'Existing teachers';
 $string['explanation'] = 'Explanation';
+$string['expirynotify'] = 'Enrolment expiry notification';
+$string['expirynotifyemail'] = 'The following students in this course are expiring after exact $a->threshold days:
+
+$a->current
+
+
+The following students in this course are expiring in less than $a->threshold days:
+
+$a->past
+
+
+You may go to the following page to extend their enrolment period:
+$a->extendurl
+';
+$string['expirynotifystudents'] = 'Notify students';
+$string['expirynotifystudentsemail'] = 'Dear student:
+
+This is a notification that your enrolment for course $a->course will be expired in $a->threshold days.
+
+Please contact your tutor for any further enqiries.
+';
+$string['expirythreshold'] = 'Threshold';
 $string['extendenrol'] = 'Extend enrolment';
 $string['extendperiod'] = 'Extended period';
 $string['failedloginattempts'] = '$a->attempts failed logins since your last login';

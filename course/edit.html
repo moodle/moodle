@@ -18,6 +18,15 @@
     if (!isset($form->enrolperiod)) {
         $form->enrolperiod = 0;
     }
+    if (!isset($form->expirynotify)) {
+        $form->expirynotify = 1;
+    }
+    if (!isset($form->notifystudents)) {
+        $form->notifystudents = 0;
+    }
+    if (!isset($form->expirythreshold)) {
+        $form->expirythreshold = 10 * 86400;
+    }
     if (!isset($form->metacourse)) {
         $form->metacourse = 0;
     }
@@ -96,6 +105,33 @@
             }
             choose_from_menu ($periodmenu, "enrolperiod", "$form->enrolperiod", "");
             helpbutton("enrolperiod", get_string("enrolperiod"));
+        ?>
+    </td>
+</tr><tr valign="top">
+    <td align="right"><?php  print_string("expirynotify") ?>:</td>
+    <td>
+        <?php
+            unset($choices);
+            $choices["0"] = get_string("no");
+            $choices["1"] = get_string("yes");
+            choose_from_menu ($choices, "expirynotify", "$form->expirynotify", "");
+            helpbutton("expirynotify", get_string("expirynotify"));
+
+            echo '&nbsp;&nbsp;&nbsp;&nbsp;';
+            print_string('expirynotifystudents');
+            echo ': ';
+            choose_from_menu ($choices, "notifystudents", "$form->notifystudents", "");
+            helpbutton("expirynotifystudents", get_string("expirynotifystudents"));
+
+            echo '&nbsp;&nbsp;&nbsp;&nbsp;';
+            print_string('expirythreshold');
+            echo ': ';
+            for ($i=1; $i<=30; $i++) {
+                $seconds = $i * 86400;
+                $thresholdmenu[$seconds] = get_string('numdays', '', $i);
+            }
+            choose_from_menu ($thresholdmenu, "expirythreshold", "$form->expirythreshold", "");
+            helpbutton("expirythreshold", get_string("expirythreshold"));
         ?>
     </td>
 </tr>
