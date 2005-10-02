@@ -59,14 +59,14 @@ print_header($straddedit, $straddedit, $navigation);
 $submitters = $CFG->block_rss_client_submitters;
 $isteacher  = empty($course) ? false : isteacher($id);
 
-if ($act == NULL) {
+if ( !isset($act) ) {
     rss_display_feeds($id);
     rss_print_form($act, $url, $rssid, $preferredtitle, $id);
     print_footer();
     die();
 }
 
-if ($rssid != NULL) {
+if ( isset($rssid) ) {
     $rss_record = get_record('block_rss_client', 'id', $rssid);
 }
 
@@ -161,7 +161,7 @@ if ($act == 'updfeed') {
         rss_display_feeds($id);
         rss_print_form($act, $dataobject->url, $dataobject->id, $dataobject->preferredtitle, $id);
 */
-} else if ( $rss_record != NULL && $act == 'rss_edit' ) {
+} else if ( isset($rss_record) && $act == 'rss_edit' ) {
 
     $preferredtitle = stripslashes_safe($rss_record->preferredtitle);
     if (empty($preferredtitle)) {
@@ -183,7 +183,7 @@ if ($act == 'updfeed') {
 
     redirect($referrer, get_string('feeddeleted', 'block_rss_client') );
 
-} else if ( $rss_record != NULL && $act == 'view' ) {
+} else if ( isset($rss_record) && $act == 'view' ) {
     //              echo $sql; //debug
     //              print_object($res); //debug
     if (!$rss_record->id) {
