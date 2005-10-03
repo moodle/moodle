@@ -1108,7 +1108,7 @@ $a->action';
 $string['virusfoundsubject'] = '$a: Detectado um vírus!';
 $string['virusfounduser'] = 'O ficheiro $a->filename que enviou foi inspeccionado pelo detector de vírus e foi diagnosticado como infectado! O seu envio de ficheiro não teve sucesso.';
 $string['virusplaceholder'] = 'Foi detectado um vírus neste ficheiro que foi enviado; o ficheiro foi transferido ou apagado e o utilizador foi notificado.';
-$string['visibletostudents'] = 'Vissível para $a';
+$string['visibletostudents'] = 'Visível para $a';
 $string['webpage'] = 'Página Web';
 $string['week'] = 'Semana';
 $string['weekhide'] = 'Oculte esta semana a $a';
