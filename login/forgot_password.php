@@ -92,7 +92,7 @@ if ($param->action=='find' and confirm_sesskey()) {
 
         // use email user if username not used or located
         if (!empty($mailuser) and empty($user)) {
-            $user - $mailuser;
+            $user = $mailuser;
         }
     }
 
@@ -175,7 +175,7 @@ if (!empty($param->p) and !empty($param->s)) {
         reset_login_count();
         $page = 'emailsent';
        
-        $changepasswordurl = "{$CFG->httpswwwroot}/login/change_password.php";
+        $changepasswordurl = "{$CFG->httpswwwroot}/login/change_password.php?action=forgot";
         $a->email = $user->email;
         $a->link = $changepasswordurl;
         $txt->emailpasswordsent = get_string( 'emailpasswordsent', '', $a );
