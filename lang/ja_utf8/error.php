@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // error.php - created with Moodle 1.6 development (2005090100)
+      // error.php - created with Moodle 1.6 development (2005100300)
 
 
 $string['adminprimarynoedit'] = '主管理者は他から編集することはできません。';
@@ -30,6 +30,7 @@ $string['restricteduser'] = '申し訳ございません。あなたのアカウ
 $string['sessionerroruser'] = 'セッションがタイムアウトしました。再度ログインしてください。';
 $string['sessionerroruser2'] = 'あなたのログインセッションに影響を与えるサーバエラーが検知されました。再度ログインするかブラウザを再起動してください。';
 $string['sessionipnomatch'] = '申し訳ございません。あなたのIPアドレスは、最初のログインから変更されているようです。このセキュリティ機能は、あなたがサイトにログインしている間に、クラッカーから個人情報を盗むことを防いでいます。通常のユーザは、このメッセージを見ることはありません - 詳細はシステム管理者にお問合せください。';
+$string['statscatchupmode'] = '統計は現在キャッチアップモードです。今までのところ $a->daysdone 日分が処理され、$a->dayspending 日分が未処理です。すぐに確認してください!';
 $string['unknowncourse'] = '不明なコース名 「 $a 」';
 $string['usernotaddederror'] = 'ユーザ 「 $a 」 は追加されませんでした - 原因不明のエラー';
 $string['usernotaddedregistered'] = 'ユーザ 「 $a 」 は追加されませんでした - 登録済み';
