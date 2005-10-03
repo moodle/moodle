@@ -29,6 +29,7 @@ $string['restricteduser'] = 'Sorry, but your current account \"$a\" is restricte
 $string['sessionerroruser'] = 'Your session has timed out.  Please login again.';
 $string['sessionerroruser2'] = 'A server error that affects your login session was detected. Please login again or restart your browser.';
 $string['sessionipnomatch'] = 'Sorry, but your IP number seems to have changed from when you first logged in.  This security feature prevents crackers stealing your identity while logged in to this site.  Normal users should not be seeing this message - please ask the site administrator for help.';
+$string['statscatchupmode'] = 'Statistics is currently in catchup mode. So far $a->daysdone day(s) have been processed and $a->dayspending are pending. Check back soon!';
 $string['unknowncourse'] = 'Unknown course named \"$a\"';
 $string['usernotaddederror'] = 'User \"$a\" not added - unknown error';
 $string['usernotaddedregistered'] = 'User \"$a\" not added - already registered';
