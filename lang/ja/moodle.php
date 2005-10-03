@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.6 development (2005090100)
+      // moodle.php - created with Moodle 1.6 development (2005100300)
 
 
 $string['action'] = '操作';
@@ -444,6 +444,27 @@ $string['existingcoursedeleting'] = '既存のコース、最初に削除する';
 $string['existingcreators'] = 'コース作成者一覧';
 $string['existingstudents'] = '登録学生一覧';
 $string['existingteachers'] = '教師一覧';
+$string['expirynotify'] = '登録期間終了通知';
+$string['expirynotifyemail'] = 'このコースに関する次の学生の登録期間は $a->threshold 日で終了します:
+
+$a->current
+
+
+このコースに関する次の学生の登録期間は $a->threshold 日以内に終了します:
+
+$a->past
+
+
+学生の登録期間を延長するには、次のページにアクセスしてください:
+$a->extendurl';
+$string['expirynotifystudents'] = '学生に通知';
+$string['expirynotifystudentsemail'] = 'こんにちは。
+
+このメールは、あなたのコース「 $a->course 」に対する登録期間が、あと $a->threshold 日で終了するお知らせのために送信されました。
+
+詳細な情報は、あなたの先生に尋ねてください。
+';
+$string['expirythreshold'] = '登録期限';
 $string['explanation'] = '説明';
 $string['extendenrol'] = 'ユーザ登録期間延長';
 $string['extendperiod'] = '延長期間';
