@@ -236,7 +236,7 @@
 
 
     $internalpassword = false;
-    if (is_internal_auth() or (!empty($CFG->{'auth_'.$USER->auth.'_stdchangepassword'}))) {
+    if (is_internal_auth($USER->auth) or (!empty($CFG->{'auth_'.$USER->auth.'_stdchangepassword'}))) {
         if (empty($CFG->loginhttps)) {
             $internalpassword = "$CFG->wwwroot/login/change_password.php";
         } else {
