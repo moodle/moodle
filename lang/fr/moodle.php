@@ -434,6 +434,27 @@ $string['existingcoursedeleting'] = 'Cours existant, en le supprimant d\'abord';
 $string['existingcreators'] = 'Responsables de cours existants';
 $string['existingstudents'] = 'Étudiants inscrits';
 $string['existingteachers'] = 'Enseignants existants';
+$string['expirynotify'] = 'Notification d\'échéance de la période d\'inscription';
+$string['expirynotifyemail'] = 'L\'inscription des étudiants suivants à ce cours arrive à échéance dans exactement $a->threshold jours&nbsp;:
+
+$a->current
+
+
+Celle des étudiants suivants arrive à échéance dans moins de $a->threshold jours&nbsp;:
+
+$a->past
+
+La page suivante vous permet d\'étendre leur période d\'inscription&nbsp;:
+$a->extendurl
+';
+$string['expirynotifystudents'] = 'Rappel aux étudiants';
+$string['expirynotifystudentsemail'] = 'Cher étudiant,
+
+Ce message est un rappel concernant votre inscription au cours $a->course. Votre inscription arrivera à échéance dans $a->threshold jours.
+
+Pour plus d\'informations, veuillez contacter votre enseignant.
+';
+$string['expirythreshold'] = 'Délai';
 $string['explanation'] = 'Explication';
 $string['extendenrol'] = 'Étendre la période d\'inscription';
 $string['extendperiod'] = 'Période d\'inscription étendue';
