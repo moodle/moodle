@@ -78,11 +78,17 @@
                '<input type="hidden" name="return" value="true" />'.
                '<input type="submit" value="'. get_string('editlessonsettings', 'lesson') .'" /></form>';
         if ($action == 'navigation' && $pageid != LESSON_EOL) {
+            $currentpageid = $pageid;  // very important not to alter $pageid.
+            if (empty($currentpageid)) {
+                if (!$currentpageid = get_field('lesson_pages', 'id', 'lessonid', $lesson->id, 'prevpageid', 0)) {
+                    error('Navigation: first page not found');
+                }
+            }
             $button .= '</td><td>'.
                    '<form target="'. $CFG->framename .'" method="get" action="'. $CFG->wwwroot .'/mod/lesson/lesson.php">'.
                    '<input type="hidden" name="id" value="'. $cm->id .'" />'.
                    '<input type="hidden" name="action" value="editpage" />'.
-                   '<input type="hidden" name="pageid" value="'. $pageid .'" />'.
+                   '<input type="hidden" name="pageid" value="'. $currentpageid .'" />'.
                    '<input type="submit" value="'. get_string('editpagecontent', 'lesson') .'" /></form>';
         }
         $button .= '</td></tr></table>';
