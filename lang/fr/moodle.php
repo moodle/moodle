@@ -590,6 +590,7 @@ $string['includenoneusers'] = 'Ne pas inclure les utilisateurs';
 $string['includeuserfiles'] = 'Inclure les fichiers des utilisateurs';
 $string['info'] = 'Information';
 $string['institution'] = 'Institution';
+$string['instudentview'] = 'en affichage «&nbsp;étudiant&nbsp;»';
 $string['invalidemail'] = 'Adresse de courriel incorrecte';
 $string['invalidlogin'] = 'La connexion a échoué, merci d\'essayer de nouveau';
 $string['ip_address'] = 'Adresse IP';
