@@ -26,6 +26,7 @@ $string['onlyeditingteachers'] = 'Seuls les enseignants avec droit de modificati
 $string['processingstops'] = 'Le traitement s\'arrête ici. Les enregistrements restant ont été ignorés.';
 $string['restricteduser'] = 'Votre compte utilisateur «&nbsp;$a&nbsp;» ne vous permet pas d\'effectuer cette opération.';
 $string['sessionerroruser'] = 'Votre session est échue. Veuillez vous connecter à nouveau.';
+$string['sessionerroruser2'] = 'Une erreur du serveur affectant votre session de connexion a été détectée. Veuillez vous connecter à nouveau ou relancer votre navigateur.';
 $string['sessionipnomatch'] = 'Désolé, votre adresse IP semble avoir changé depuis votre première connexion. Ce réglage de sécurité empêche des pirates d\'usurper votre identité lorsque vous êtes connecté sur ce site. Les utilisateurs ne devraient en principe pas rencontrer ce message. Veuillez demander de l\'aide à l\'administrateur de ce site.';
 $string['unknowncourse'] = 'Le cours «&nbsp;$a&nbsp;» est inconnu';
 $string['usernotaddederror'] = 'L\'utilisateur «&nbsp;$a&nbsp;» n\'a pas été ajouté : erreur inconnue';
