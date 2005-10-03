@@ -53,12 +53,11 @@
 			$displaysection = 0;
 		}
 	}
-	
+
 	// Get all instances of this module
 	if (!$hotpots = hotpot_get_all_instances_in_course("hotpot", $course)) {
 		$hotpots = array();
 	}
-	
 
 	// if necessary, remove hotpots that are not in section0 or this $USER's display section
 	if ($displaysection) {
@@ -148,7 +147,7 @@
 				}
 
 				if ($attempts = get_records_select('hotpot_attempts', $select)) {
-				
+
 					// start counter and timer
 					$start = microtime();
 					$count = 0;
@@ -342,9 +341,9 @@
 		}
 
 		$class = ($hotpot->visible) ? '' : 'class="dimmed" ';
-		$quizname = '<A '.$class.'href="view.php?id='.$hotpot->coursemodule.'">'.$hotpot->name.'</A>';
+		$quizname = '<a '.$class.'href="view.php?id='.$hotpot->coursemodule.'">'.$hotpot->name.'</A>';
 		$quizclose = empty($hotpot->timeclose) ? $strneverclosed : userdate($hotpot->timeclose);
-		
+
 		// are there any totals for this hotpot?
 		if (empty($totals[$hotpot->id]->attemptcount)) {
 			$report = "&nbsp;";
@@ -368,7 +367,7 @@
 
 		if (isadmin()) {
 			if (in_array($hotpot->id, $regradehotpots)) {
-				$report .= ' <FONT color="red">'.$strregraderequired.'</FONT>';
+				$report .= ' <font color="red">'.$strregraderequired.'</font>';
 			}
 		}
 
@@ -418,5 +417,5 @@
 	print_table($table);
 
 	// Finish the page
-	print_footer($course);	
+	print_footer($course);
 ?>

@@ -40,7 +40,7 @@ class hotpot_report extends hotpot_default_report {
 			$table->head[] = '&nbsp;';
 			$table->align[] = 'center';
 			$table->size[] = 10;
-		}		
+		}
 
 		// name, grade and attempt number
 		array_push($table->head, 
@@ -74,7 +74,7 @@ class hotpot_report extends hotpot_default_report {
 
 			// shortcut to user info held in first attempt record
 			$u = &$user->attempts[0];
-			
+
 			$picture = '';
 			$name = fullname($u);
 			if ($is_html) {
@@ -137,7 +137,7 @@ class hotpot_report extends hotpot_default_report {
 					if (!isset($q[$id])) {
 						$q[$id] = array('count'=>0, 'total'=>0);
 					}
-	
+
 					if (isset($attempt->responses[$id])) {
 						$score = $attempt->responses[$id]->score;
 						if (is_numeric($score)) {
@@ -175,7 +175,7 @@ class hotpot_report extends hotpot_default_report {
 					$score = $attempt->score;
 					if (is_numeric($score)) {
 						$q['score']['total'] += $score;
-						$q['score']['count'] ++;	
+						$q['score']['count'] ++;
 					}
 					if ($is_best_grade) {
 						$score = '<span class="highlight">'.$score.'</span>';

@@ -7,14 +7,14 @@
 
 	$id = optional_param("id"); // Course Module ID, or
 	$hp = optional_param("hp"); // hotpot ID
-	
+
 	if ($id) {
 		if (! $cm = get_record("course_modules", "id", $id)) {
 			error("Course Module ID was incorrect");
 		}
 		if (! $course = get_record("course", "id", $cm->course)) {
 			error("Course is misconfigured");
-		}	
+		}
 		if (! $hotpot = get_record("hotpot", "id", $cm->instance)) {
 			error("Course module is incorrect");
 		}
@@ -109,11 +109,11 @@
 
 		// check quiz is open
 		} else if ($hotpot->timeopen && $hotpot->timeopen > $time) {
-			$error = get_string("quiznotavailable", "quiz", userdate($hotpot->timeopen))."<BR>\n";
+			$error = get_string("quiznotavailable", "quiz", userdate($hotpot->timeopen))."<br />\n";
 
 		// check quiz is not closed
 		} else if ($hotpot->timeclose && $hotpot->timeclose < $time) {
-			$error = get_string("quizclosed", "quiz", userdate($hotpot->timeclose))."<BR>\n";
+			$error = get_string("quizclosed", "quiz", userdate($hotpot->timeclose))."<br />\n";
 		}
 
 		if ($error) {
@@ -128,7 +128,7 @@
 	$available_msg = '';
 	if (!empty($hotpot->timeclose) && $hotpot->timeclose > $time) {
 		// quiz is available until 'timeclose'
-		$available_msg = get_string("quizavailable", "quiz", userdate($hotpot->timeclose))."<BR>\n";
+		$available_msg = get_string("quizavailable", "quiz", userdate($hotpot->timeclose))."<br />\n";
 	}
 
 	// open and parse the source file
@@ -140,7 +140,7 @@
 	$get_css = optional_param('css');
 	$framename = optional_param('framename');
 
-	// look for <FRAMESET> (HP5 v5)
+	// look for <frameset> (HP5 v5)
 	$frameset = '';
 	$frameset_tags = '';
 	if (preg_match_all('|<frameset([^>]*)>(.*?)</frameset>|is', $hp->html, $matches)) {
@@ -171,7 +171,7 @@
 			if (! is_numeric($attemptid)) {
 				error('Could not insert attempt record: '.$db->ErrorMsg);
 			}
-	
+
 			$hp->adjust_media_urls();
 
 			if (empty($frameset)) {
@@ -186,7 +186,13 @@
 					default:
 						$hp->remove_nav_buttons();
 				}
-				$hp->insert_submission_form($attemptid, '<!-- BeginSubmissionForm -->', '<!-- EndSubmissionForm -->');
+				switch ($hotpot->outputformat) {
+					case HOTPOT_OUTPUTFORMAT_MOBILE:
+						$hp->insert_submission_form($attemptid, '<!-- BeginSubmissionForm -->', '<!-- EndSubmissionForm -->', true);
+						break;
+					default:
+						$hp->insert_submission_form($attemptid, '<!-- BeginSubmissionForm -->', '<!-- EndSubmissionForm -->');
+				}
 
 			} else {
 				// HP5 v5
@@ -269,7 +275,7 @@
 				$feedback[5] = 500; // height
 			}
 			break;
-			
+
 		default:
 			// do nothing
 	}
@@ -291,17 +297,17 @@
 	// insert hot-potatoes.js
 	$hp->insert_script(HOTPOT_JS);
 
-	// extract <head> and <body> tags
+	// extract first <head> tag
 	$head = '';
 	$pattern = '|<head([^>]*)>(.*?)</head>|is';
 	if (preg_match($pattern, $hp->html, $matches)) {
-		$head = $matches[2]; // first <head>...</head> block
+		$head = $matches[2];
 
 		// remove <title>
 		$head = preg_replace('|<title[^>]*>(.*?)</title>|is', '', $head);
 	}
 
-	// extract <style> tags
+	// extract <style> tags (and remove from $head)
 	$styles = '';
 	$pattern = '|<style([^>]*)>(.*?)</style>|is';
 	if (preg_match_all($pattern, $head, $matches)) {
@@ -312,7 +318,7 @@
 		}
 	}
 
-	// extract <script> tags
+	// extract <script> tags (and remove from $head)
 	$scripts = '';
 	$pattern = '|<script([^>]*)>(.*?)</script>|is';
 	if (preg_match_all($pattern, $head, $matches)) {
@@ -328,37 +334,9 @@
 	$body_tags = '';
 	$footer = '</html>';
 
-	if ($frameset) {
-		// HP5 v5
-		switch ($framename) {
-			case 'top':
-				print_header($title, $heading, $navigation, "", "", true, $button, $loggedinas);
-				print $footer;
-			break;
+	// HP6 and some HP5 (v6 and v4) 
+	if (preg_match('|<body'.'([^>]*'.'onLoad=(["\'])(.*?)(\\2)'.'[^>]*)'.'>(.*)</body>|is', $hp->html, $matches)) {
 
-			default:
-				// add a HotPot navigation frame at the top of the page
-				//$rows = empty($CFG->resource_framesize) ? 85 : $CFG->resource_framesize;
-				//$frameset = "\n\t".'<frame src="view.php?id='.$cm->id.'&framename=top" frameborder="0" name="top"></frame>'.$frameset;
-				//$frameset_tags = preg_replace('|rows="(.*?)"|', 'rows="'.$rows.',\\1"', $frameset_tags);
-		
-				// put navigation into var NavBar='';
-				// add form to TopFrame in "WriteFeedback" function
-				// OR add form to BottomFrame in "DisplayExercise" function
-				// submission form: '<!-- BeginSubmissionForm -->', '<!-- EndSubmissionForm -->'
-				// give up form: '<!-- BeginTopNavButtons -->', '<!-- EndTopNavButtons -->'
-
-				print "<HTML>\n";
-				print "<HEAD>\n<TITLE>$title</TITLE>\n$styles\n$scripts</HEAD>\n";
-				print "<FRAMESET$frameset_tags>$frameset</FRAMESET>\n";
-				print "</HTML>\n";
-			break;
-		} // end switch $framename
-		exit;
-
-	// is there a <body> (HP6 and HP5: v6 and v4) 
-	} else if (preg_match('|<body'.'([^>]*'.'onLoad=(["\'])(.*?)(\\2)'.'[^>]*)'.'>(.*)</body>|is', $hp->html, $matches)) {
-	
 		$body = $matches[5]; // contents of first <body onload="StartUp()">...</body> block
 		$body_tags = $matches[1];
 
@@ -367,7 +345,7 @@
 		//	if it is included in the theme/$CFG->theme/header.html,
 		//	so some old or modified themes may not insert $body_tags
 		$body .= ""
-		.	'<SCRIPT type="text/javascript">'."\n"
+		.	'<script type="text/javascript">'."\n"
 		.	"<!--\n"
 		.	"	var s = (typeof(window.onload)=='function') ? onload.toString() : '';\n"
 		.	"	if (s.indexOf('".$matches[3]."')<0) {\n"
@@ -379,10 +357,43 @@
 		.	"		}\n"
 		.	"	 }\n"
 		.	"//-->\n"
-		.	"</SCRIPT>\n"
+		.	"</script>\n"
 		;
 
 		$footer = '</body>'.$footer;
+
+	} else if ($frameset) { // HP5 v5
+
+		switch ($framename) {
+			case 'top':
+				print_header($title, $heading, $navigation, "", "", true, $button, $loggedinas);
+				print $footer;
+			break;
+
+			default:
+				// add a HotPot navigation frame at the top of the page
+				//$rows = empty($CFG->resource_framesize) ? 85 : $CFG->resource_framesize;
+				//$frameset = "\n\t".'<frame src="view.php?id='.$cm->id.'&framename=top" frameborder="0" name="top"></frame>'.$frameset;
+				//$frameset_tags = preg_replace('|rows="(.*?)"|', 'rows="'.$rows.',\\1"', $frameset_tags);
+
+				// put navigation into var NavBar='';
+				// add form to TopFrame in "WriteFeedback" function
+				// OR add form to BottomFrame in "DisplayExercise" function
+				// submission form: '<!-- BeginSubmissionForm -->', '<!-- EndSubmissionForm -->'
+				// give up form: '<!-- BeginTopNavButtons -->', '<!-- EndTopNavButtons -->'
+
+				print "<html>\n";
+				print "<head>\n<title>$title</title>\n$styles\n$scripts</head>\n";
+				print "<frameset$frameset_tags>$frameset</frameset>\n";
+				print "</html>\n";
+			break;
+		} // end switch $framename
+		exit;
+
+	// other files (maybe not even a HotPots)
+	} else if (preg_match('|<body'.'([^>]*)'.'>(.*)</body>|is', $hp->html, $matches)) {
+		$body = $matches[2];
+		$body_tags = $matches[1];
 	}
 
 	// print the quiz to the browser
@@ -418,23 +429,23 @@
 					print_header($title, $heading, $navigation, "", "", true, $button, $loggedinas);
 					print $footer;
 				break;
-	
+
 				case 'main':
 					if (!empty($available_msg)) {
 						$hp->insert_message('<!-- BeginTopNavButtons -->', $available_msg);
 					}
 					print $hp->html;
 				break;
-	
+
 				default:
 					$rows = empty($CFG->resource_framesize) ? 85 : $CFG->resource_framesize;
-					print "<HTML>\n";
-					print "<HEAD><TITLE>$title</TITLE></HEAD>\n";
-					print "<FRAMESET rows=$rows,*>\n";
-					print "<FRAME src=\"view.php?id=$cm->id&framename=top\">\n";
-					print "<FRAME src=\"view.php?id=$cm->id&framename=main\">\n";
-					print "</FRAMESET>\n";
-					print "</HTML>\n";
+					print "<html>\n";
+					print "<head><title>$title</title></head>\n";
+					print "<frameset rows=$rows,*>\n";
+					print "<frame src=\"view.php?id=$cm->id&framename=top\">\n";
+					print "<frame src=\"view.php?id=$cm->id&framename=main\">\n";
+					print "</frameset>\n";
+					print "</html>\n";
 				break;
 			} // end switch $framename
 		break;
@@ -445,13 +456,13 @@
 				case 'main';
 					print $hp->html;
 				break;
-		
+
 				default:
 					$iframe_id = 'hotpot_iframe';
 					$body_tags = " onload=\"set_iframe_height('$iframe_id')\"";
-	
-					$iframe_js = '<SCRIPT src="iframe.js" type="text/javascript" language="javascript"></SCRIPT>'."\n";
-	
+
+					$iframe_js = '<script src="iframe.js" type="text/javascript" language="javascript"></script>'."\n";
+
 					print_header(
 						$title, $heading, $navigation, 
 						"", $head.$styles.$scripts.$iframe_js, true, $button, 
@@ -460,10 +471,10 @@
 					if (!empty($available_msg)) {
 						notify($available_msg);
 					}
-					print "<IFRAME id=\"$iframe_id\" src=\"view.php?id=$cm->id&framename=main\" height=\"100%\" width=\"100%\">";
-					print "<ILAYER name=\"$iframe_id\" src=\"view.php?id=$cm->id&framename=main\" height=\"100%\" width=\"100%\">";
-					print "</ILAYER>\n";
-					print "</IFRAME>\n";
+					print "<iframe id=\"$iframe_id\" src=\"view.php?id=$cm->id&framename=main\" height=\"100%\" width=\"100%\">";
+					print "<ilayer name=\"$iframe_id\" src=\"view.php?id=$cm->id&framename=main\" height=\"100%\" width=\"100%\">";
+					print "</ilayer>\n";
+					print "</iframe>\n";
 					print $footer;
 				break;
 			} // end switch $framename
@@ -473,13 +484,13 @@
 			// HOTPOT_NAVIGATION_BUTTONS
 			// HOTPOT_NAVIGATION_GIVEUP
 			// HOTPOT_NAVIGATION_NONE
-	
+
 			if (!empty($available_msg)) {
 				$hp->insert_message('<!-- BeginTopNavButtons -->', $available_msg);
 			}
 			print($hp->html);
 	}
-	
+
 ///////////////////////////////////
 ///	functions
 ///////////////////////////////////
@@ -497,18 +508,19 @@ function hotpot_feedback_teachers(&$course, &$hotpot) {
 			AND t.course = $course->id 
 	");
 
-	$str = '';
+	$teacherdetails = '';
 	if (!empty($teachers)) {
+		$details = array();
 		foreach ($teachers as $teacher) {
 			if ($hotpot->studentfeedback==HOTPOT_FEEDBACK_MOODLEMESSAGING) {
-				$value = $teacher->id;
+				$detail = $teacher->id;
 			} else {
-				$value =$teacher->email;
+				$detail =$teacher->email;
 			}
-			$str .= (empty($str) ? '' : ',')."new Array('".fullname($teacher)."', '$value')";
+			$details[] = "new Array('".fullname($teacher)."', '$detail')";
 		}
-		$str = 'new Array('.$str.");\n";
+		$teacherdetails = 'new Array('.implode(',', $details).");\n";
 	}
-	return $str;
+	return $teacherdetails;
 }
 ?>

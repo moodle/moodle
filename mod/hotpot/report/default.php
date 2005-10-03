@@ -1,7 +1,7 @@
 <?PHP  // $Id$ 
 
 ////////////////////////////////////////////////////////////////////
-/// Default class for report plugins							
+/// Default class for report plugins
 ///															   
 /// Doesn't do anything on it's own -- it needs to be extended.   
 /// This class displays quiz reports.  Because it is called from 
@@ -86,7 +86,7 @@ class hotpot_default_report {
 			$legend->cellspacing = isset($table->cellspacing) ? $table->cellspacing : NULL;
 			$legend->tableclass = isset($table->tableclass) ? $table->tableclass : NULL;
 
-			$legend->caption = get_string('reportlegend', 'hotpot');	
+			$legend->caption = get_string('reportlegend', 'hotpot');
 			$legend->align = array('right', 'left');
 			$legend->statheadercols = array(0);
 
@@ -110,7 +110,7 @@ class hotpot_default_report {
 			}
 
 			unset($table->legend);
-			$tables[] = $legend;			
+			$tables[] = $legend;
 		}
 	}
 	function dec_to_ALPHA($dec) {
@@ -142,7 +142,7 @@ class hotpot_default_report {
 							$i = 0; // index on $cells[$row]
 							$col = 0;
 							while ($col<$target_col && isset($cells[$row][$i])) {
-							
+
 								if (empty($skipcol[$col])) {
 									$cell = $cells[$row][$i++];
 									if (is_object($cell)) {
@@ -319,7 +319,7 @@ class hotpot_default_report {
 		// default classes for TD and TH
 		$d = $table->tableclass.'cell';
 		$h = $table->tableclass.'header';
-		
+
 		$table->th_side = '<th valign="top" align="right" class="'.$h.'">';
 
 		$table->td = array();
@@ -516,26 +516,26 @@ class hotpot_default_report {
 				$this->print_text_cells($cells, $options);
 			}
 		}
-		if (isset($table->head)) {	
+		if (isset($table->head)) {
 			$this->print_text_cells($table->head, $options);
 		}
 	}
 	function print_text_data(&$table, &$options) {
-		if (isset($table->data)) {	
+		if (isset($table->data)) {
 			foreach ($table->data as $cells) {
 				$this->print_text_cells($cells, $options);
 			}
 		}
-	}		
+	}
 	function print_text_stat(&$table, &$options) {
-		if (isset($table->stat)) {	
+		if (isset($table->stat)) {
 			foreach ($table->stat as $cells) {
 				$this->print_text_cells($cells, $options);
 			}
 		}
 	}
 	function print_text_foot(&$table, &$options) {
-		if (isset($table->foot)) {	
+		if (isset($table->foot)) {
 			foreach ($table->foot as $cells) {
 				$this->print_text_cells($cells, $options);
 			}
@@ -615,7 +615,7 @@ class hotpot_default_report {
 
 		// do nothing if there are no cells
 		if (empty($table->data)) return;
-		
+
 		// format properties
 		$properties = array('text_wrap' => (empty($options['reportwrapdata']) ? 0 : 1));
 

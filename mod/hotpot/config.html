@@ -1,25 +1,25 @@
 <form method="post" action="module.php" name="form">
-<input type="hidden" name="sesskey" value="<?php print isset($USER->sesskey) ? $USER->sesskey : '' ?>">
+<INPUT type="hidden" name="sesskey" value="<?PHP print isset($USER->sesskey) ? $USER->sesskey : '' ?>">
 
-<table cellpadding="9" cellspacing="0">
-	<tr valign="top">
-		<td align=right><p>hotpot_showtimes:</td>
-		<td><?php 
+<TABLE cellpadding="9" cellspacing="0">
+	<TR valign="top">
+		<TD align="right"><P>hotpot_showtimes:</TD>
+		<TD><?PHP 
 			unset($choices);
 			$choices["0"] = get_string("no");
 			$choices["1"] = get_string("yes");
 			choose_from_menu ($choices, "hotpot_showtimes", $CFG->hotpot_showtimes, "");
-		?></td>
-		<td><?php print_string("configshowtimes", "hotpot") ?></td>
-	</tr>
-	<tr valign=top>
-		<td align=right><p>hotpot_excelencodings:</td>
-		<td><input name=hotpot_excelencodings type=text size=30 value="<?php p($CFG->hotpot_excelencodings) ?>"></td>
-		<td><?php print_string("configexcelencodings", "hotpot") ?></td>
-	</tr>
-	<tr>
-		<td colspan="3" align="center"><input type="submit" value="<?php print_string("savechanges") ?>"></td>
-	</tr>
-</table>
+		?></TD>
+		<TD><?PHP print_string("configshowtimes", "hotpot") ?></TD>
+	</TR>
+	<TR valign=top>
+		<TD align="right"><P>hotpot_excelencodings:</TD>
+		<TD><INPUT name=hotpot_excelencodings type=text size=30 value="<?PHP p($CFG->hotpot_excelencodings) ?>"></TD>
+		<TD><?PHP print_string("configexcelencodings", "hotpot") ?></TD>
+	</TR>
+	<TR>
+		<TD colspan="3" align="center"><INPUT type="submit" value="<?PHP print_string("savechanges") ?>"></TD>
+	</TR>
+</TABLE>
 
-</form>
+</FORM>

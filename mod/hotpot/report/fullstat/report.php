@@ -87,7 +87,7 @@ class hotpot_report extends hotpot_default_report {
 
 			// shortcut to user info held in first attempt record
 			$u = &$user->attempts[0];
-			
+
 			if (function_exists("fullname")) {
 				$name = fullname($u);
 			} else {
@@ -99,7 +99,7 @@ class hotpot_report extends hotpot_default_report {
 			$grade = isset($user->grade) ? $user->grade : $blank;
 
 			foreach ($user->attempts as $attempt) {
-	
+
 				$attemptnumber = $attempt->attempt;
 				if ($allow_review) {
 					$attemptnumber = ' <a href="review.php?hp='.$hotpot->id.'&attempt='.$attempt->id.'">'.$attemptnumber.'</a>';
@@ -137,7 +137,7 @@ class hotpot_report extends hotpot_default_report {
 							$value = "($strnoresponse)";
 						}
 						$cell = $font_red.$value.$font_end;
-	
+
 						// wrong
 						if ($value = hotpot_strings($response->wrong)) {
 							if (isset($table->legend)) {
@@ -150,7 +150,7 @@ class hotpot_report extends hotpot_default_report {
 							}
 							$cell .= $br.$font_blue.$value.$font_end;
 						}
-	
+
 						// ignored
 						if ($value = hotpot_strings($response->ignored)) {
 							if (isset($table->legend)) {
@@ -163,7 +163,7 @@ class hotpot_report extends hotpot_default_report {
 							}
 							$cell .= $br.$font_brown.$value.$font_end;
 						}
-	
+
 						// numeric
 						if (is_numeric($response->score)) {
 							if (empty($table->caption)) {
@@ -189,7 +189,7 @@ class hotpot_report extends hotpot_default_report {
 			$table->data[] = 'hr';
 
 		} // end foreach $users
-		
+
 		// remove final 'hr' from data rows
 		array_pop($table->data);
 
@@ -211,7 +211,7 @@ class hotpot_report extends hotpot_default_report {
 
 		$q = array(); // statistics about the $q(uestions)
 		$f = array(); // statistics about the $f(ields)
-		
+
 		////////////////////////////////////////////
 		// compile the statistics about the questions
 		////////////////////////////////////////////
@@ -346,7 +346,7 @@ class hotpot_report extends hotpot_default_report {
 					unset($tables[0]->legend);
 				}
 			}
-	
+
 			// headings for name, attempt number and score/grade
 			$table->head = array($space);
 			$table->align = array('right');
@@ -386,7 +386,7 @@ class hotpot_report extends hotpot_default_report {
 						$button = $is_html ? hotpot_showhide_button($showhideid) : "";
 						$table->stat[0] = array(get_string('question', 'quiz').$button);
 					}
-	
+
 					// add the question name/text
 					$name = hotpot_get_question_name($questions[$id]);
 					$table->stat[$row++][$col+1] = $div_start.$bold_start.$name.$bold_end.$div_end.$space;

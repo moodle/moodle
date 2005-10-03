@@ -75,7 +75,7 @@ class hotpot_report extends hotpot_default_report {
 
 		// set align and wrap
 		$this->set_align_and_wrap($table);
-		
+
 		// is link to review allowed?
 		$allow_review = ($is_html && (isteacher($course->id) || $hotpot->review));
 
@@ -91,7 +91,7 @@ class hotpot_report extends hotpot_default_report {
 
 			unset($clickreportid);
 			foreach ($user->attempts as $attempt) {
-			
+
 				// initialize totals for
 				$click = array(
 					'qnumber' => array(),
@@ -134,7 +134,7 @@ class hotpot_report extends hotpot_default_report {
 
 					// was this question answered correctly?
 					if ($answer = hotpot_strings($response->correct)) {
-	
+
 						// mark the question as correctly answered
 						if (empty($clicks['correct'][$q])) {
 							$click['correct'][$q] = true;
@@ -147,7 +147,7 @@ class hotpot_report extends hotpot_default_report {
 						if (isset($clicks['wrong'][$q])) {
 							unset($clicks['wrong'][$q]);
 						}
-	
+
 					// otherwise, was the question answered wrongly?
 					} else if ($answer = hotpot_strings($response->wrong)) {
 
@@ -284,7 +284,7 @@ class hotpot_report extends hotpot_default_report {
 				$clickcount++;
 
 			} // end foreach $attempt
-			
+
 			 // insert 'tabledivider' between users
 			$table->data[] = 'hr';
 
@@ -440,7 +440,7 @@ class hotpot_report extends hotpot_default_report {
 	function set_align_and_wrap(&$table) {
 		$count = count($table->head);
 		for ($i=0; $i<$count; $i++) {
-	
+
 			if ($i==0 || $i==1 || $i==2 || $i==4 || $i==5 || $i>=7) {
 				// numeric (and short text) columns
 				$table->align[] = 'center';
@@ -467,10 +467,10 @@ class hotpot_report extends hotpot_default_report {
 	}
 	function set_data_user(&$options, &$course, &$user) {
 		global $CFG;
-		
+
 		// shortcut to first attempt record (which also hold user info)
 		$attempt = &$user->attempts[0];
-		
+
 		$idnumber = $attempt->idnumber;
 		if (empty($idnumber)) {
 			$idnumber = fullname($attempt);

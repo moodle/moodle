@@ -172,7 +172,7 @@
 		// this function is called to store the ids of strings.
 		// The string ids are used later by "hotpot_backup_strings"
 		// $GLOBALS['hotpot_backup_string_ids'] was initialized in "hotpot_backup_mods"
-	
+
 		// store the ids of strings used in this $record's $fields
 		foreach ($fields as $field) {
 			if (empty($record->$field)) {
@@ -208,16 +208,16 @@
 
 			$table = 'hotpot_strings';
 			$select = "id IN ($ids)";
-	
+
 			$records_tag = 'STRING_DATA';
 			$records_tags = array();
-	
+
 			$record_tag = 'STRING';
 			$record_tags = array();
-	
+
 			$more_backup = '';
 			$excluded_tags = array('');
-	
+
 			$status = hotpot_backup_records(
 				$bf, $status, $level, 
 				$table, $select, 
@@ -231,7 +231,7 @@
 
 	function hotpot_backup_records(&$bf, $status, $level, $table, $select, $records_tag, $records_tags, $record_tag, $record_tags, $excluded_tags, $more_backup) {
 		// general purpose backup function
-		
+
 		// $bf     : resource id of backup file
 		// $status : current status of backup (true or false)
 		// $level  : current depth level in the backup XML tree
@@ -309,21 +309,21 @@
 
 	////Return an array of info (name, value)
 	function hotpot_check_backup_mods($course, $user_data=false, $backup_unique_code) {
-	
+
 		// the course data
 		$info[0][0] = get_string('modulenameplural','hotpot');
 		$info[0][1] = count_records('hotpot', 'course', $course);
-		
+
 		// the user_data, if requested
 		if ($user_data) {
 			global $CFG;
 			$table = "{$CFG->prefix}hotpot h, {$CFG->prefix}hotpot_attempts a";
 			$select = "h.course = $course AND h.id = a.hotpot"; 
-			
+
 			$info[1][0] = get_string('attempts', 'quiz');
 			$info[1][1] = count_records_sql("SELECT COUNT(*) FROM $table WHERE $select");
 		}
-		
+
 		return $info;
 	}
 

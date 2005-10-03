@@ -50,28 +50,36 @@ $HOTPOT_OUTPUTFORMAT = array (
 	HOTPOT_OUTPUTFORMAT_V6_PLUS => get_string("outputformat_v6_plus", "hotpot"),
 	HOTPOT_OUTPUTFORMAT_V6      => get_string("outputformat_v6", "hotpot"),
 	HOTPOT_OUTPUTFORMAT_V5_PLUS => get_string("outputformat_v5_plus", "hotpot"),
-	 HOTPOT_OUTPUTFORMAT_V5      => get_string("outputformat_v5", "hotpot"),
-	 HOTPOT_OUTPUTFORMAT_V4      => get_string("outputformat_v4", "hotpot"),
-	 HOTPOT_OUTPUTFORMAT_V3      => get_string("outputformat_v3", "hotpot"),
-	// HOTPOT_OUTPUTFORMAT_FLASH   => get_string("outputformat_flash", "hotpot"),
-	// HOTPOT_OUTPUTFORMAT_MOBILE  => get_string("outputformat_mobile", "hotpot"),
+	HOTPOT_OUTPUTFORMAT_V5      => get_string("outputformat_v5", "hotpot"),
+	HOTPOT_OUTPUTFORMAT_V4      => get_string("outputformat_v4", "hotpot"),
+	HOTPOT_OUTPUTFORMAT_V3      => get_string("outputformat_v3", "hotpot"),
+	HOTPOT_OUTPUTFORMAT_FLASH   => get_string("outputformat_flash", "hotpot"),
+	HOTPOT_OUTPUTFORMAT_MOBILE  => get_string("outputformat_mobile", "hotpot"),
 );
-
 $HOTPOT_OUTPUTFORMAT_DIR = array (
 	HOTPOT_OUTPUTFORMAT_V6_PLUS => 'v6',
 	HOTPOT_OUTPUTFORMAT_V6      => 'v6',
-	// HOTPOT_OUTPUTFORMAT_V5      => 'v5',
-	// HOTPOT_OUTPUTFORMAT_V4      => 'v4',
-	// HOTPOT_OUTPUTFORMAT_V3      => 'v3',
-	// HOTPOT_OUTPUTFORMAT_FLASH   => 'flash',
-	// HOTPOT_OUTPUTFORMAT_MOBILE  => 'mobile',
+	HOTPOT_OUTPUTFORMAT_V5_PLUS => 'v5',
+	HOTPOT_OUTPUTFORMAT_V5      => 'v5',
+	HOTPOT_OUTPUTFORMAT_V4      => 'v4',
+	HOTPOT_OUTPUTFORMAT_V3      => 'v3',
+	HOTPOT_OUTPUTFORMAT_FLASH   => 'flash',
+	HOTPOT_OUTPUTFORMAT_MOBILE  => 'mobile',
 );
-
+foreach ($HOTPOT_OUTPUTFORMAT_DIR as $format=>$dir) {
+	if (is_file("$CFG->hotpottemplate/$dir.php") && is_dir("$CFG->hotpottemplate/$dir")) {
+		// do nothing ($format is available)
+	} else {
+		// $format is not available, so remove it
+		unset($HOTPOT_OUTPUTFORMAT[$format]);
+		unset($HOTPOT_OUTPUTFORMAT_DIR[$format]);
+	}
+}
 define("HOTPOT_NAVIGATION_BAR",     "1");
 define("HOTPOT_NAVIGATION_FRAME",   "2");
 define("HOTPOT_NAVIGATION_IFRAME",  "3");
 define("HOTPOT_NAVIGATION_BUTTONS", "4");
-define("HOTPOT_NAVIGATION_GIVEUP", "5");
+define("HOTPOT_NAVIGATION_GIVEUP",  "5");
 define("HOTPOT_NAVIGATION_NONE",    "6");
 
 $HOTPOT_NAVIGATION = array (
@@ -158,7 +166,7 @@ function hotpot_add_instance(&$hp) {
 /// (defined by the form in mod.html) this function 
 /// will create a new instance and return the id number 
 /// of the new instance.
-	
+
 	if (hotpot_set_form_values($hp)) {
 		$result = insert_record("hotpot", $hp);
 	} else {
@@ -313,7 +321,7 @@ function hotpot_get_chain(&$cm) {
 	// loop through course_modules in this section
 	$ids = explode(',', $course_module_ids);
 	foreach ($ids as $id) {
-	
+
 		// check this course_module is a hotpot activity
 		if (isset($hotpot_modules[$id])) {
 
@@ -352,7 +360,7 @@ function hotpot_is_visible(&$cm) {
 }
 function hotpot_add_chain(&$hp) {
 /// add a chain of hotpot actiivities
-	
+
 	global $CFG, $course;
 
 	$ok = true;
@@ -367,7 +375,7 @@ function hotpot_add_chain(&$hp) {
 		$ok = false;
 
 	} else if (is_dir($xml_quiz->filepath)) {
-	
+
 		// get list of hotpot files in this folder
 		if ($dh = @opendir($xml_quiz->filepath)) {
 			while ($file = @readdir($dh)) {
@@ -384,12 +392,12 @@ function hotpot_add_chain(&$hp) {
 				$hp->names[$i] = $hp->exercisetitle;
 				$hp->summaries[$i] = $hp->exercisesubtitle;
 			}
-			
+
 		} else {
 			$ok = false;
 			$hp->errors['reference'] = get_string('error_couldnotopenfolder', 'hotpot', $hp->reference);
 		}
-	
+
 	} else if (is_file($xml_quiz->filepath)) {
 
 		$filerootlength = strlen($xml_quiz->fileroot) + 1;
@@ -465,11 +473,11 @@ function hotpot_add_chain(&$hp) {
 			if (! $sectionid = add_mod_to_section($hp) ) {
 				error("Could not add the new course module to that section");
 			}
-			
+
 			if (! set_field("course_modules", "section", $sectionid, "id", $hp->coursemodule)) {
 				error("Could not update the course module with the correct section");
 			}   
-			
+
 			add_to_log($hp->course, "course", "add mod", 
 				"../mod/$hp->modulename/view.php?id=$hp->coursemodule", 
 				"$hp->modulename $hp->instance"
@@ -481,7 +489,7 @@ function hotpot_add_chain(&$hp) {
 
 			// hide tail of chain
 			$hp->visible = HOTPOT_NO;
-			
+
 		} // end for ($hp->references)
 
 		// settings for final activity in chain
@@ -567,110 +575,74 @@ function hotpot_get_titles_and_next_ex(&$hp, $filepath, $get_next=false) {
 		$source = fread($fp, filesize($filepath));
 		fclose($fp);
 
-		$xml_tree = new hotpot_xml_tree($source);
-		$xml_tree->filetype = '';
-
-		$keys = array_keys($xml_tree->xml);
-		foreach ($keys as $key) {
-
-			if ($key=='html' || $key=='HTML') {
-				$xml_tree->filetype = 'html';
-				$xml_tree->xml_root = "['$key']['#']";
-				break;
-			} else if (preg_match('/^(hotpot|textoys)-(\w+)-file$/i', $key, $matches)) {
-				$xml_tree->filetype = 'xml';
-				$xml_tree->xml_root = "['$key']['#']";
-				$xml_tree->quiztype = strtolower($matches[2]);
-				break;
-			}
-		}
-
-		$title = '';
-		if ($xml_tree->filetype=='html') {
-			$title = strip_tags($xml_tree->xml_value('head,title'));
-		} else if ($xml_tree->filetype=='xml') {
-			$title = strip_tags($xml_tree->xml_value('data,title'));
-		}
-		$hp->exercisetitle = (empty($title) || is_array($title)) ? basename($filepath) : $title;
-
-		$subtitle = '';
-		if ($xml_tree->filetype=='html') {
-			$tags = 'body,div';
-
-			$i = 0;
-			while (empty($subtitle) && ($div="[$i]") && $xml_tree->xml_value($tags, $div)) {
-			
-				$class = $xml_tree->xml_value($tags, $div."['@']['class']");
-				if (isset($class) && $class=='Titles') {
-
-					$ii = 0;
-					while (empty($subtitle) && ($h3=$div."['#']['h3'][$ii]") && $xml_tree->xml_value($tags, $h3)) {
-
-						$class = $xml_tree->xml_value($tags, $h3."['@']['class']");
-						if (isset($class) && $class=='ExerciseSubtitle') {
-							$subtitle = $xml_tree->xml_value($tags, $h3."['#']");
-						}
-
-						$ii++; // increment H3 index
-					}
-				}
-				$i++; // increment DIV index
-			}
-		} else if ($xml_tree->filetype=='xml') {
-			$subtitle = $xml_tree->xml_value('hotpot-config-file,'.$xml_tree->quiztype.',exercise-subtitle');
-		}
-		$hp->exercisesubtitle = (empty($subtitle) || is_array($subtitle)) ? $hp->exercisetitle : $subtitle;
-
 		$next = '';
-		if ($get_next) {
+		$title = '';
+		$subtitle = '';
 
-			if ($xml_tree->filetype=='html') {
-				$tags = 'body,div';
+		if (preg_match('|\.html?$|', $filepath)) {
+			// html file
+			if (preg_match('|<title[^>]*>(.*?)</title>|is', $source, $matches)) {
+				$title = trim(strip_tags($matches[1]));
+			}
 
-				$i = 0;
-				while (($div="[$i]") && $xml_tree->xml_value($tags, $div)) {
-
-					$id = $xml_tree->xml_value($tags, $div."['@']['id']");
-					if (isset($id) && $id=='TopNavBar') {
-
-						$ii = 0;
-						while (($button=$div."['#']['button'][$ii]") && $xml_tree->xml_value($tags, $button)) {
-
-							$onclick = $xml_tree->xml_value($tags, $button."['@']['onclick']");
-							if (isset($onclick) && preg_match("|location='(.*)'|", $onclick, $matches)) {
-								$next = $matches[1];
-							}
-
-							$ii++; // increment BUTTON index
-						}
+			if (preg_match('|<h3[^>]*class="ExerciseSubtitle"[^>]*>(.*?)</h3>|is', $source, $matches)) {
+				$subtitle = trim(strip_tags($matches[1]));
+			}
+			if ($get_next) {
+				if (preg_match('|<div[^>]*class="NavButtonBar"[^>]*>(.*?)</div>|is', $source, $matches)) {
+					$topnavbar = $matches[1];
+					if (preg_match_all('|<button[^>]*class="NavButton"[^>]*onclick="'."location='([^']*)'".'[^"]*"[^>]*>|is', $topnavbar, $matches)) {
+						$lastbutton = count($matches[0])-1;
+						$next = $matches[1][$lastbutton];
 					}
-					$i++; // increment DIV index
 				}
-			} else if ($xml_tree->filetype=='xml') {
+			}
 
-				$include = $xml_tree->xml_value('hotpot-config-file,global,include-next-ex');
-				if (!empty($include)) {
+		} else { 
+			// xml file (...maybe)
+			$xml_tree = new hotpot_xml_tree($source);
+			$xml_tree->filetype = '';
+	
+			$keys = array_keys($xml_tree->xml);
+			foreach ($keys as $key) {
+				if (preg_match('/^(hotpot|textoys)-(\w+)-file$/i', $key, $matches)) {
+					$xml_tree->filetype = 'xml';
+					$xml_tree->xml_root = "['$key']['#']";
+					$xml_tree->quiztype = strtolower($matches[2]);
+					break;
+				}
+			}
+			if ($xml_tree->filetype=='xml') {
 
-					$next = $xml_tree->xml_value("hotpot-config-file,$xml_tree->quiztype,next-ex-url");
-					if (is_array($next)) {
-						// workaround for the 'next-ex-url' tag being repeated (as it sometimes seems to be)
-						$next = $next[0];
+				$title = strip_tags($xml_tree->xml_value('data,title'));
+				$subtitle = $xml_tree->xml_value('hotpot-config-file,'.$xml_tree->quiztype.',exercise-subtitle');
+	
+				if ($get_next) {
+					$include = $xml_tree->xml_value('hotpot-config-file,global,include-next-ex');
+					if (!empty($include)) {
+						$next = $xml_tree->xml_value("hotpot-config-file,$xml_tree->quiztype,next-ex-url");
+						if (is_array($next)) {
+							$next = $next[0]; // in case "next-ex-url" was repeated in the xml file
+						}
 					}
 				}
 			}
 		}
+
 		$hp->nextexercise = $next;
+		$hp->exercisetitle = (empty($title) || is_array($title)) ? basename($filepath) : $title;
+		$hp->exercisesubtitle = (empty($subtitle) || is_array($subtitle)) ? $hp->exercisetitle : $subtitle;
 	}
 }
 function hotpot_get_all_instances_in_course($modulename, $course) {
 
 	global $CFG;
 	$instances = array();
-	
+
 	$hotpotmoduleid = get_field('modules', 'id', 'name', 'hotpot');
 
 	if ($modinfo = unserialize($course->modinfo)) {
-	
+
 		if (isset($CFG->release) && substr($CFG->release, 0, 3)>=1.2) {
 			$groupmode = 'cm.groupmode,';
 		} else {
@@ -699,7 +671,7 @@ function hotpot_get_all_instances_in_course($modulename, $course) {
 
 			// cache $isteacher setting
 			$isteacher = isteacher($course->id);
-			
+
 			foreach ($modinfo as $mod) {
 
 				$visible = false;
@@ -742,10 +714,10 @@ function hotpot_update_chain(&$hp) {
 			if ($hp->coursemodule==$hotpot_module->id) {
 				// don't need to update this hotpot
 
-			} else {	
+			} else {
 				// shortcut to hotpot record
 				$hotpot = &$hotpot_module->hotpot;
-	
+
 				// get a list of fields to update
 				if (empty($fields)) {
 					$fields = array_keys(get_object_vars($hotpot));
@@ -763,7 +735,7 @@ function hotpot_update_chain(&$hp) {
 						$hotpot->$field = $hp->$field;
 					}
 				}
-	
+
 				// update this $hotpot (if required)
 				if ($require_update && !update_record("hotpot", $hotpot)) {
 					error("Could not update the $hp->modulename", "view.php?id=$hp->course");
@@ -887,7 +859,7 @@ function hotpot_print_recent_activity($course, $isteacher, $timestart) {
 				AND a.starttime > $timestart
 			GROUP  BY 
 				h.id, h.name
-		");	
+		");
 		// note that PostGreSQL requires h.name in the GROUP BY clause
 
 		if($records) {
@@ -1253,8 +1225,8 @@ class hotpot_xml_tree {
 			// decode angle brackets
 			$value = strtr($value, array('&#x003C;'=>'<', '&#x003E;'=>'>'));
 
-			// remove white space between <TABLE>, <UL|OL|DL> and <OBJECT|EMBED> parts 
-			// (so it doesn't get converted to <BR>)
+			// remove white space between <table>, <ul|OL|DL> and <OBJECT|EMBED> parts 
+			// (so it doesn't get converted to <br />)
 			$htmltags = '('
 			.	'TABLE|/?CAPTION|/?COL|/?COLGROUP|/?TBODY|/?TFOOT|/?THEAD|/?TD|/?TH|/?TR'
 			.	'|OL|UL|/?LI'
@@ -1268,7 +1240,7 @@ class hotpot_xml_tree {
 			$search = '#(<'.$htmltags.'[^>]*'.'>)\s+'.'(?='.'<'.')#is';
 			$value = preg_replace($search, '\\1', $value);
 
-			// replace remaining newlines with <BR>
+			// replace remaining newlines with <br />
 			$value = str_replace("\n", '<br />', $value);
 
 			// encode unicode characters as HTML entities
@@ -1414,7 +1386,7 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 
 		// read the file, if required
 		if ($this->read_file) {
-		
+
 			if (!file_exists($this->filepath) || !$fp = fopen($this->filepath, 'r')) {
 				$this->error = get_string('error_couldnotopensourcefile', 'hotpot', $this->filepath);
 				if ($this->report_errors) {
@@ -1432,49 +1404,46 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 				$this->hotpot_convert_relative_urls($this->source);
 			}
 
-			if ($this->parse_xml) {
-			
+			$this->html = '';
+			$this->quiztype = '';
+			$this->outputformat = 0;
+
+			// is this an html file?
+			if (preg_match('|\.html?$|', $this->filename)) {
+
+				$this->filetype = 'html';
+				$this->html = &$this->source;
+
+				// relative URLs in "PreloadImages(...);"
+				$search = '%'.'(?<='.'PreloadImages'.'\('.')'."([^)]+?)".'(?='.'\);'.')'.'%se';
+				$replace = "hotpot_convert_preloadimages_urls('".$this->get_baseurl()."','".$this->reference."','\\1')";
+				$this->source = preg_replace($search, $replace, $this->source);
+
+				// relative URLs in <button class="NavButton" ... onclick="location='...'">
+				$search = '%'.'(?<='.'onclick="'."location='".')'."([^']*)".'(?='."'; return false;".'")'.'%ise';
+				$replace = "hotpot_convert_navbutton_url('".$this->get_baseurl()."','".$this->reference."','\\1','".$this->course."')";
+				$this->source = preg_replace($search, $replace, $this->source);
+
+				// remove leading <!DOCTYPE[^>]*>
+				// remove leading <?xml[^>]*>
+				// remove leading <!--[.*?]-->
+
 				// prepend initial <html> tag if required (JCloze HP5)
-				if (preg_match('|\.html?$|', $this->filename)) {
-					if (preg_match('|</html>\s*$|i', $this->source) && !preg_match('|^\s*<html>|i', $this->source)) {
-						$this->source = '<html>'.$this->source;
-					}
-				}
+				//if (preg_match('|</html>\s*$|i', $this->source) && !preg_match('|^<html[^>]*>|i', $this->source)) {
+				//	$this->source = '<html>'.$this->source;
+				//}
 
-				// encode "gap fill" text in JCloze exercise
-				$this->encode_cdata($this->source, 'gap-fill');
 
-				// convert source to xml tree
-				$this->hotpot_xml_tree($this->source);
+			} else {
+				if ($this->parse_xml) {
 
-				// initialize file type, quiz type and output format
-				$this->html = '';
-				$this->filetype = '';
-				$this->quiztype = '';
-				$this->outputformat = 0; // undefined
-
-				// link <HTML> tag to <html>, if necessary
-				if (isset($this->xml['HTML'])) {
-					$this->xml['html'] = &$this->xml['HTML'];
-				}
-
-				if (isset($this->xml['html'])) {
-
-					$this->filetype = 'html';
-					$this->quiztype = '';
-
-					// relative URLs in "PreloadImages(...);"
-					$search = '%'.'(?<='.'PreloadImages'.'\('.')'."([^)]+?)".'(?='.'\);'.')'.'%se';
-					$replace = "hotpot_convert_preloadimages_urls('".$this->get_baseurl()."','".$this->reference."','\\1')";
-					$this->source = preg_replace($search, $replace, $this->source);
-
-					// relative URLs in <button class="NavButton" ... onclick="location='...'">
-					$search = '%'.'(?<='.'onclick="'."location='".')'."([^']*)".'(?='."'; return false;".'")'.'%ise';
-					$replace = "hotpot_convert_navbutton_url('".$this->get_baseurl()."','".$this->reference."','\\1','".$this->course."')";
-					$this->source = preg_replace($search, $replace, $this->source);
-
-				} else {
 					$this->filetype = 'xml';
+
+					// encode "gap fill" text in JCloze exercise
+					$this->encode_cdata($this->source, 'gap-fill');
+
+					// convert source to xml tree
+					$this->hotpot_xml_tree($this->source);
 
 					$keys = array_keys($this->xml);
 					foreach ($keys as $key) {
@@ -1519,44 +1488,37 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 							$this->real_outputformat = HOTPOT_OUTPUTFORMAT_V6;
 						}
 					}
-			
+
 					if ($this->real_outputformat==HOTPOT_OUTPUTFORMAT_V6_PLUS) {
 						if ($this->quiztype=='jmatch' || $this->quiztype=='jmix') {
 							$this->draganddrop = 'd'; // prefix for templates (can also be "f" ?)
 						}
 						$this->real_outputformat = HOTPOT_OUTPUTFORMAT_V6;
 					}
-			
-					// set the output html
-					$this->html = '';
-					if ($this->filetype=='html') {
-						$this->html = &$this->source;
-			
-					} else {
-						// set path(s) to template
-						$this->template_dir = $HOTPOT_OUTPUTFORMAT_DIR[$this->real_outputformat];
-						$this->template_dirpath = $CFG->hotpottemplate.'/'.$this->template_dir;
-						$this->template_filepath = $CFG->hotpottemplate.'/'.$this->template_dir.'.php';
-			
-						// check template class exists
-						if (!file_exists($this->template_filepath) || !is_readable($this->template_filepath)) {
-							$this->error = get_string('error_couldnotopentemplate', 'hotpot', $this->template_dir);
-							if ($this->report_errors) {
-								error($this->error, $this->course_homeurl);
-							}
-							return;
+
+					// set path(s) to template
+					$this->template_dir = $HOTPOT_OUTPUTFORMAT_DIR[$this->real_outputformat];
+					$this->template_dirpath = $CFG->hotpottemplate.'/'.$this->template_dir;
+					$this->template_filepath = $CFG->hotpottemplate.'/'.$this->template_dir.'.php';
+
+					// check template class exists
+					if (!file_exists($this->template_filepath) || !is_readable($this->template_filepath)) {
+						$this->error = get_string('error_couldnotopentemplate', 'hotpot', $this->template_dir);
+						if ($this->report_errors) {
+							error($this->error, $this->course_homeurl);
 						}
-			
-						// get default and output-specfic template classes
-						include($this->template_filepath);
-			
-						// create html (using the template for the specified output format)
-						$this->template = new hotpot_xml_quiz_template($this);
-						$this->html = &$this->template->html;
+						return;
 					}
 
-				} // end $this->create_html	
-			} // end if $this->parse_xml
+					// get default and output-specfic template classes
+					include($this->template_filepath);
+
+					// create html (using the template for the specified output format)
+					$this->template = new hotpot_xml_quiz_template($this);
+					$this->html = &$this->template->html;
+
+				} // end $this->create_html
+			} // end if html/xml file
 		} // end if $this->read_file
 	} // end constructor function
 
@@ -1604,7 +1566,7 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 		$script = '<script src="'.$src.'" type="text/javascript" language="javascript"></script>'."\n";
 		$this->html = preg_replace('|</head>|i', $script.'</head>', $this->html, 1);
 	}
-	function insert_submission_form($attemptid, $startblock, $endblock) {
+	function insert_submission_form($attemptid, $startblock, $endblock, $keep_contents=false) {
 		$form_name = 'store';
 		$form_fields = ''
 		.	'<input type="hidden" name="attemptid" value="'.$attemptid.'" />'
@@ -1614,24 +1576,31 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 		.	'<input type="hidden" name="detail" value="" />'
 		.	'<input type="hidden" name="status" value="" />'
 		;
-		$this->insert_form($startblock, $endblock, $form_name, $form_fields);
+		$this->insert_form($startblock, $endblock, $form_name, $form_fields, $keep_contents);
 	}
-	function insert_giveup_form($attemptid, $startblock, $endblock) {
+	function insert_giveup_form($attemptid, $startblock, $endblock, $keep_contents=false) {
 		$form_name = 'giveup';
 		$form_fields = ''
-		.	'<input type="hidden" name="status" value="'.HOTPOT_STATUS_ABANDONED.'" />'
 		.	'<input type="hidden" name="attemptid" value="'.$attemptid.'" />'
+		.	'<input type="hidden" name="status" value="'.HOTPOT_STATUS_ABANDONED.'" />'
 		.	'<input type="submit" value="'.get_string('giveup', 'hotpot').'" class="FuncButton" onfocus="FuncBtnOver(this)" onblur="FuncBtnOut(this)" onmouseover="FuncBtnOver(this)" onmouseout="FuncBtnOut(this)" onmousedown="FuncBtnDown(this)" onmouseup="FuncBtnOut(this)" />'
 		;
-		$this->insert_form($startblock, $endblock, $form_name, $form_fields, true);
+		$this->insert_form($startblock, $endblock, $form_name, $form_fields, $keep_contents, true);
 	}
-	function insert_form($startblock, $endblock, $form_name, $form_fields, $center=false) {
+	function insert_form($startblock, $endblock, $form_name, $form_fields, $keep_contents, $center=false) {
 		global $CFG;
-		$search = '#(?<='.preg_quote($startblock).')(.+?)(?='.preg_quote($endblock).')#s';
-		$replace = '<form action="'.$CFG->wwwroot.'/mod/hotpot/attempt.php" method="POST" name="'.$form_name.'" target="'.$CFG->framename.'">'.$form_fields.'</form>';
+		$search = '#('.preg_quote($startblock).')(.*?)('.preg_quote($endblock).')#s';
+		$replace = $form_fields;
+		if ($keep_contents) {
+			$replace .= '\\2';
+		}
+		if ($form_name) {
+			$replace = '<form action="'.$CFG->wwwroot.'/mod/hotpot/attempt.php" method="POST" name="'.$form_name.'" target="'.$CFG->framename.'">'.$replace.'</form>';
+		}
 		if ($center) {
 			$replace = '<div style="margin-left:auto; margin-right:auto; text-align: center;">'.$replace.'</div>';
 		}
+		$replace = '\\1'.$replace.'\\3';
 		$this->html = preg_replace($search, $replace, $this->html, 1);
 	}
 	function insert_message($start_str, $message, $color='red', $align='center') {
@@ -1668,7 +1637,7 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 
 			// pattern to match <a> tags which link to multimedia files (not swf)
 			$link = "/<a$s{$n}href=$q($filepath)$q$n>(.*?)<\/a>/is";
-			
+
 			// extract <object> tags
 			preg_match_all("|<object$n>(.*?)</object>|is", $this->html, $objects);
 
@@ -1762,7 +1731,7 @@ function hotpot_convert_relative_url($baseurl, $reference, $opentag, $url, $clos
 		// loop through the arguments in the query string
 		$i_max = count($matches[0]);
 		for ($i=0; $i<$i_max; $i++) {
-		
+
 			$name = $matches[1][$i];
 			$value = $matches[2][$i];
 			// convert $value if it is a URL
@@ -1802,7 +1771,7 @@ function hotpot_convert_url($baseurl, $reference, $url) {
 
 		// get the subdirectory, $dir, of the quiz $reference
 		$dir = dirname($reference);
-	
+
 		// allow for leading "./" and "../"
 		while (preg_match('|^(\.{1,2})/(.*)$|', $url, $matches)) {
 			if ($matches[1]=='..') {
@@ -1812,7 +1781,7 @@ function hotpot_convert_url($baseurl, $reference, $url) {
 		}
 
 		// add subdirectory, $dir, to $baseurl, if necessary
-		if ($dir && $dir!='.') {
+		if ($dir && $dir<>'.') {
 			$baseurl .= "$dir/";
 		}
 
@@ -1864,22 +1833,20 @@ function hotpot_add_attempt_details(&$attempt) {
 		// parse the field name into $matches
 		//	[1] quiz type
 		//	[2] attempt detail name
-		if (preg_match('|^(\w+?)_(\w+)$|', $name, $matches)) {
+		if (preg_match('/^(\w+?)_(\w+)$/', $name, $matches)) {
 			$quiztype = strtolower($matches[1]);
 			$name = strtolower($matches[2]);
 
 			// parse the attempt detail $name into $matches
 			//	[1] question number
 			//	[2] question detail name
-
-			if (preg_match('|^q(\d+)_(\w+)$|', $name, $matches)) {
-				// question number and detail name
+			if (preg_match('/^q(\d+'.'(?:_(?:across|down))?'. ')_(\w+)$/', $name, $matches)) {
 				$num = $matches[1];
 				$name = strtolower($matches[2]);
 				$data = addslashes($data);
 
 				// is this a new question (or the first one)?
-				if ($q_num != $num) {
+				if ($q_num<>$num) {
 
 					// add previous question and response, if any
 					hotpot_add_response($attempt, $question, $response);
@@ -1911,13 +1878,13 @@ function hotpot_add_attempt_details(&$attempt) {
 					case 'text':
 						$question->$name = hotpot_string_id($data);
 						break;
-	
+
 					case 'correct':
 					case 'ignored':
 					case 'wrong':
 						$response->$name = hotpot_string_ids($data);
 						break;
-	
+
 					case 'score':
 					case 'weighting':
 					case 'hints':
@@ -1952,7 +1919,7 @@ function hotpot_add_response(&$attempt, &$question, &$response) {
 
 	$looping = isset($question) && isset($question->name) && isset($response);
 	while ($looping) {
-	
+
 		if ($loopcount==1) {
 			$questionname = $question->name;
 		}
@@ -1968,26 +1935,26 @@ function hotpot_add_response(&$attempt, &$question, &$response) {
 			// there is already a response to this question for this attempt
 			// probably because this quiz has two questions with the same text
 			//	e.g. Which one of these answers is correct?
-	
+
 			// To workaround this, we create new question names
 			//	e.g. Which one of these answers is correct? (2)
 			// until we get a question name for which there is no response yet on this attempt
-	
+
 			$loopcount++;
 			$question->name = "$questionname ($loopcount)";
-			
+
 			// This method fails to correctly identify questions in 
 			// quizzes which allow questions to be shuffled or omitted. 
 			// As yet, there is no workaround for such cases.
 
 		} else {
 			$response->question = $question->id;
-	
+
 			// add response record
 			if(!$response->id = insert_record('hotpot_responses', $response)) {
 				error("Could not add response record (attempt_id=$attempt->id, question_id=$question->id): ".$db->ErrorMsg(), $next_url);
 			}
-			
+
 			// we can stop looping now
 			$looping = false;
 		}
@@ -2024,22 +1991,14 @@ function hotpot_adjust_response_field($quiztype, &$question, &$num, &$name, &$da
 			break;
 		case 'jcross':
 			$question->type = HOTPOT_JCROSS;
+			$question->name = $num; // e.g. 01_across, 02_down
 			switch ($name) {
-				case 'across':
-				case 'down':
-					$question->name = $num.'_'.$name;
+				case '': // HotPot v2.0.x
 					$name = 'correct';
 					break;
-				case 'across_clue':
-				case 'down_clue':
+				case 'clue':
 					$name = 'text';
 					break;
-				default:
-					if (preg_match('/^(across|down)_(\w+)$/i', $name, $matches)) {
-						$name = $matches[2];
-					}
-					break;
-
 			}
 			break;
 		case 'jmatch':
@@ -2121,23 +2080,25 @@ function hotpot_string_ids($field_value) {
 	$ids = array();
 	$strings = explode(',', $field_value);
 	foreach($strings as $str) {
-		$ids[] = hotpot_string_id($str);
+		if ($id = hotpot_string_id($str)) {
+			$ids[] = $id;
+		}
 	}
 	return implode(',', $ids);
 }
 function hotpot_string_id($str) {
 	$id = '';
-	if ($str) {
+	if (isset($str) && $str<>'') {
 
 		// get the id from the table if it is already there
 		if (!$id = get_field('hotpot_strings', 'id', 'string', $str)) {
 
-			// create a string "object"
-			$string = NULL;
-			$string->string = $str;
+			// create a string record
+			$record = NULL;
+			$record->string = $str;
 
-			// try and add the new string to the table
-			if (!$id = insert_record('hotpot_strings', $string)) {
+			// try and add the new string record
+			if (!$id = insert_record('hotpot_strings', $record)) {
 				global $db;
 				error("Could not add string record for '".htmlspecialchars($str)."': ".$db->ErrorMsg());
 			}

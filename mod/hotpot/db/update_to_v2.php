@@ -3,7 +3,7 @@
 function hotpot_update_to_v2_1_2() {
 	global $CFG, $db;
 	$ok = true;
-	
+
 	// hotpot_attempts: make sure there is only one "in progress" attempt by each user on each hotpot (and it must be the most recent attempt)
 
 	// get info about attempts (grouped by user and hotpot)
@@ -70,13 +70,13 @@ function hotpot_update_to_v2_1_2() {
 function hotpot_update_to_v2_1() {
 	global $CFG, $db;
 	$ok = true;
-	
+
 	// hotpot_questions: reduce size of "type" field to "4"
 	$ok = $ok && hotpot_db_update_field_type('hotpot_questions', 'type', 'type', 'INTEGER', 4,  'UNSIGNED', 'NULL');
 
 	// hotpot_questions: change type of "name" field to "text"
 	$ok = $ok && hotpot_db_update_field_type('hotpot_questions', 'name', 'name', 'TEXT',   '',  '', 'NOT NULL', '');
-	
+
 	// hotpot_questions: nullify empty and non-numeric (shouldn't be any) values in "text" field
 	switch (strtolower($CFG->dbtype)) {
 		case 'mysql' : 
@@ -124,10 +124,10 @@ function hotpot_update_to_v2_1() {
 			$ok = $ok && execute_sql($sql);
 		}
 	}
-	
+
 	// hotpot_attempts: remove the "details" field
 	$ok = $ok && hotpot_db_remove_field('hotpot_attempts', 'details');
-	
+
 	// hotpot_attempts: create and set status field (1=in-progress, 2=timed-out, 3=abandoned, 4=completed)
 	$ok = $ok && hotpot_db_update_field_type('hotpot_attempts', '', 'status', 'INTEGER', 4, 'UNSIGNED', 'NOT NULL', 1);
 	$ok = $ok && execute_sql("UPDATE {$CFG->prefix}hotpot_attempts SET status=1 WHERE timefinish=0 AND SCORE IS NULL");
@@ -138,7 +138,7 @@ function hotpot_update_to_v2_1() {
 	$ok = $ok && hotpot_db_update_field_type('hotpot', '', 'clickreporting', 'INTEGER', 4, 'UNSIGNED', 'NOT NULL', 0);
 	$ok = $ok && hotpot_db_update_field_type('hotpot_attempts', '', 'clickreportid', 'INTEGER', 10, 'UNSIGNED', 'NULL');
 	$ok = $ok && execute_sql("UPDATE {$CFG->prefix}hotpot_attempts SET clickreportid=id WHERE clickreportid IS NULL");
-	
+
 	// hotpot_attempts: create and set studentfeedback field (0=none, 1=formmail, 2=moodleforum, 3=moodlemessaging)
 	$ok = $ok && hotpot_db_update_field_type('hotpot', '', 'studentfeedback', 'INTEGER', 4, 'UNSIGNED', 'NOT NULL', '0');
 	$ok = $ok && hotpot_db_update_field_type('hotpot', '', 'studentfeedbackurl', 'VARCHAR', 255, '', 'NULL');
@@ -148,7 +148,7 @@ function hotpot_update_to_v2_1() {
 	$ok = $ok && hotpot_db_add_index('hotpot_attempts', 'userid');
 	$ok = $ok && hotpot_db_add_index('hotpot_details', 'attempt');
 	$ok = $ok && hotpot_db_add_index('hotpot_questions', 'name', 20);
-	$ok = $ok && hotpot_db_add_index('hotpot_questions', 'hotpot');	
+	$ok = $ok && hotpot_db_add_index('hotpot_questions', 'hotpot');
 	$ok = $ok && hotpot_db_add_index('hotpot_responses', 'attempt');
 	$ok = $ok && hotpot_db_add_index('hotpot_responses', 'question');
 	$ok = $ok && hotpot_db_add_index('hotpot_strings', 'string', 20);
@@ -238,10 +238,10 @@ function hotpot_update_to_v2_from_hotpotatoes() {
 	if (empty($module) || $module->version<$minimum) {
 
 		if ($module) {
-			print ("<P>The update to the HotPotatoes module requires at least version $minimum of the HotPot module.</P>");
-			print ("<P>The current version of the HotPot module on this site is $module->version.</P>");
+			print ("<p>The update to the HotPotatoes module requires at least version $minimum of the HotPot module.</p>");
+			print ("<p>The current version of the HotPot module on this site is $module->version.</p>");
 		}
-		print ("<P>Please install the latest version of the HotPot module and then try the update again.</P>");
+		print ("<p>Please install the latest version of the HotPot module and then try the update again.</p>");
 		$ok = false;
 
 	} else {
@@ -292,15 +292,15 @@ function hotpot_update_to_v2_from_hotpotatoes() {
 		if ($ok && ($module = get_record("modules", "name", "hotpotatoes"))) {
 			set_field("modules", "visible", "0", "id", $module->id);
 
-			print '<P>All HotPotatoes activities have been imported to the HotPot module.<BR>'."\n";
-			print 'The HotPotatoes module has been hidden and can safely be deleted from this Moodle site.<BR>'."\n";
-			print ' &nbsp; &nbsp; <A href="'.$CFG->wwwroot.'/admin/modules.php">Configuration -> Modules</A>, then click &quot;Delete&quot; for &quot;Hot Potatoes XML Quiz&quot;</P>'."\n";
+			print '<p>All HotPotatoes activities have been imported to the HotPot module.<br />'."\n";
+			print 'The HotPotatoes module has been hidden and can safely be deleted from this Moodle site.<br />'."\n";
+			print ' &nbsp; &nbsp; <a href="'.$CFG->wwwroot.'/admin/modules.php">Configuration -> Modules</A>, then click &quot;Delete&quot; for &quot;Hot Potatoes XML Quiz&quot;</p>'."\n";
 		}
 	}
 
 	if ($ok) {
-		print '<P align="center">Thank you for using the HotPotatoes module.<br>';
-		print 'The HotPotatoes module has been replaced by<BR>version 2 of the HotPot module. Enjoy!</P>';
+		print '<p align="center">Thank you for using the HotPotatoes module.<br />';
+		print 'The HotPotatoes module has been replaced by<br />version 2 of the HotPot module. Enjoy!</p>';
 	}
 	return $ok;
 }
@@ -481,13 +481,13 @@ function hotpot_update_logs($oldmodulename, $modulename, $moduleid, &$new) {
 
 		// update foreign keys in all $records
 		foreach ($records as $record) {
-	
+
 			// update course module name
 			$record->module = $modulename;
-	
+
 			// check if module id was given (usually it is)
 			if ($record->cmid) {
-	
+
 				// update course module id, if necessary
 				if (isset($new[$modulename][$record->cmid])) {
 					$record->cmid = $new[$modulename][$record->cmid];
@@ -496,26 +496,26 @@ function hotpot_update_logs($oldmodulename, $modulename, $moduleid, &$new) {
 					$ok = hotpot_update_print_warning('cmid', $record->cmid, 'log', $record->id) && $ok;
 					unset($record->id);
 				}
-	
+
 				// update url and info
 				switch ($record->action) {
-	
+
 					case "add":
 					case "update":
 					case "view":
 						$record->url = "view.php?id=".$record->cmid;
 						$record->info = $moduleid;
 						break;
-	
+
 					case "view all":
 						// do nothing
 						break;
-	
+
 					case "report":
 						$record->url = "report.php?id=".$record->cmid;
 						$record->info = $moduleid;
 						break;
-	
+
 					case "attempt":
 					case "submit":
 					case "review": 
@@ -617,7 +617,7 @@ function hotpot_update_fields($table, $feedback=false) {
 
 					$ids = array_keys($records);
 					foreach ($ids as $i=>$id) {
-					
+
 						// reference to current record
 						$record = &$records[$id];
 
@@ -681,7 +681,7 @@ function hotpot_update_fields($table, $feedback=false) {
 							if (isset($coursemodules[$record->hotpotid])) {
 								$record->hotpot = $coursemodules[$record->hotpotid]->instance;
 								hotpot_db_update_record($table, $record, true);
-	
+
 							} else {
 								// hotpotid is invalid (shouldn't happen)
 								$ok = hotpot_update_print_warning('hotpotid', $record->hotpotid, $table, $record->id) && $ok;
@@ -782,9 +782,9 @@ function hotpot_update_print_progress($i) {
 }
 function hotpot_update_print_ok($ok) {
 	if ($ok) {
-		hotpot_update_print('<FONT color="green">'.get_string('success')."</FONT><BR>\n");
+		hotpot_update_print('<font color="green">'.get_string('success')."</font><br />\n");
  	} else {
-		hotpot_update_print('<FONT color="red">'.get_string('error')."</FONT><BR>\n");
+		hotpot_update_print('<font color="red">'.get_string('error')."</font><br />\n");
 	}
 }
 function hotpot_update_print_warning($field, $value, $table, $id) {
@@ -799,7 +799,7 @@ function hotpot_update_print_warning($field, $value, $table, $id) {
 function hotpot_db_index_exists($table, $index, $feedback=false) {
 	global $CFG, $db;
 	$exists = false;
-	
+
 	// save and switch off SQL message echo
 	$debug = $db->debug;
 	$db->debug = $feedback;
@@ -817,7 +817,7 @@ function hotpot_db_index_exists($table, $index, $feedback=false) {
 				}
 			}
 		break;
-		
+
 		case 'postgres7' :
 			$rs = $db->Execute("SELECT relname FROM pg_class WHERE relname = '$index' AND relkind='i'");
 			if ($rs && $rs->RecordCount()>0) {
@@ -834,7 +834,7 @@ function hotpot_db_index_exists($table, $index, $feedback=false) {
 function hotpot_db_delete_index($table, $index, $feedback=false) {
 	global $CFG, $db;
 	$ok = true;
-	
+
 	// check index exists
 	if (hotpot_db_index_exists($table, $index)) {
 
@@ -842,25 +842,25 @@ function hotpot_db_delete_index($table, $index, $feedback=false) {
 			case 'mysql' : 
 				$sql = "ALTER TABLE `$table` DROP INDEX `$index`";
 			break;
-			
+
 			case 'postgres7' :
 				$sql = "DROP INDEX $index";
 			break;
-			
+
 			default: // unknown database type
 				$sql = '';
 			break;
 		}
-		if ($sql) {	
+		if ($sql) {
 			// save and switch off SQL message echo
 			$debug = $db->debug;
 			$db->debug = $feedback;
-	
+
 			$ok = $db->Execute($sql) ? true : false;
-	
+
 			// restore SQL message echo
 			$db->debug = $debug;
-			
+
 		} else { // unknown database type
 			$ok = false;
 		}
@@ -882,11 +882,11 @@ function hotpot_db_add_index($table, $field, $length='') {
 			$length = empty($length) ? '' : " ($length)";
 			$ok = $ok && $db->Execute("ALTER TABLE `$table` ADD INDEX `$index` (`$field`$length)");
 		break;
-		
+
 		case 'postgres7' :
 			$ok = $ok && $db->Execute("CREATE INDEX $index ON $table ($field)");
 		break;
-		
+
 		default: // unknown database type
 			$ok = false;
 		break;
@@ -919,7 +919,7 @@ function hotpot_db_object_exists($table, $field='', $feedback=false) {
 				$sql = "SHOW COLUMNS FROM `$table` LIKE '$field'";
 			}
 		break;
-		
+
 		case 'postgres7' :
 			if (empty($field)) {
 				$sql = "SELECT relname FROM pg_class WHERE relname = '$table' AND relkind='r'";
@@ -976,7 +976,7 @@ function hotpot_db_append_table($oldtable, $table, $feedback=true) {
 			// expand table names
 			$table = "{$CFG->prefix}$table";
 			$oldtable = "{$CFG->prefix}$oldtable";
-		
+
 			// get field info
 			$fields = $db->MetaColumns($table);
 			$oldfields = $db->MetaColumns($oldtable);
@@ -1257,7 +1257,7 @@ function hotpot_rm($target, $output=true) {
 				print "removing file: $target ... ";
 			}
 			$ok = @unlink($target);
-	
+
 		} else if (is_dir($target)) {
 			$dir = dir($target);
 			while(false !== ($entry = $dir->read())) {
@@ -1276,9 +1276,9 @@ function hotpot_rm($target, $output=true) {
 		}
 		if ($output) {
 			if ($ok) {
-				print '<font color="green">OK</font><br>';
+				print '<font color="green">OK</font><br />';
 			} else {
-				print '<font color="red">Failed</font><br>';
+				print '<font color="red">Failed</font><br />';
 			}
 		}
 	}

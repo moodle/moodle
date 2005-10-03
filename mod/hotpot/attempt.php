@@ -5,7 +5,7 @@
 	$msg = '';
 	$next_url = "";
 	$quiz_is_finished = true;
-	
+
 	$attemptid = required_param("attemptid");
 	if (is_numeric($attemptid)) {
 
@@ -55,6 +55,10 @@
 		// set clickreportid, (for click reporting)
 		$attempt->clickreportid = $attempt->id;
 
+		if (empty($attempt->details)) { // "mobile" output format
+			hotpot_set_attempt_details($attempt);
+		}
+
 		if (empty($attempt->status)) {
 			if (empty($attempt->endtime)) {
 				$attempt->status = HOTPOT_STATUS_INPROGRESS;
@@ -62,12 +66,6 @@
 				$attempt->status = HOTPOT_STATUS_COMPLETED;
 			}
 		}
-
-		// for the rare case where a quiz was "in progress" during an update from hotpot v1 to v2
-		if (empty($attempt->timestart) && !empty($attempt->starttime)) {
-			$attempt->timestart = $attempt->starttime;
-		}
-
 
 		// check if this is the second (or subsequent) click
 		if (get_field("hotpot_attempts", "timefinish", "id", $attempt->id)) {
@@ -96,9 +94,8 @@
 						error("Could not insert attempt details record: ".$db->ErrorMsg(), $next_url);
 					}
 				}
-
 			} else {
-				// remove previous responses for this attempt
+				// remove previous responses for this attempt, if required
 				// (N.B. this does NOT remove the attempt record, just the responses)
 				$ok = delete_records("hotpot_responses", "attempt", $attempt->id);
 			}
@@ -187,5 +184,161 @@ function hotpot_get_next_cm(&$cm) {
 		}
 	}
 	return $next_mod;
+}
+function hotpot_set_attempt_details(&$attempt) {
+
+	$attempt->details = '';
+	$attempt->status = HOTPOT_STATUS_COMPLETED;
+
+	$buttons = array('clues', 'hints', 'checks');
+	$textfields = array('correct', 'wrong', 'ignored');
+
+	$quiztype = optional_param('quiztype', '', PARAM_ALPHA);
+
+	$q = 0;
+	while (($responsefield="q{$q}") && isset($_POST[$responsefield])) {
+		$responsevalue = optional_param($responsefield, '', PARAM_ALPHA);
+
+		// initialize $response object
+		$response = NULL;
+		$response->correct = '';
+		$response->wrong   = '';
+		$response->ignored = array();
+		$response->clues  = 0;
+		$response->hints  = 0;
+		$response->checks = 0;
+		$response->score  = 0;
+		$response->weighting  = 0;
+
+		foreach ($buttons as $button) {
+			if (($field = "q{$q}_{$button}_button") && isset($_POST[$field])) {
+				$value = optional_param($field, '', PARAM_RAW);
+				if (!empty($value)) {
+					$response->$button++;
+				}
+			}
+		}
+
+		// loop through possible answers to this question
+		$i = 0;
+		while (($correctfield="q{$q}_correct_{$i}") && isset($_POST[$correctfield])) {
+			$correctvalue = optional_param($correctfield, '', PARAM_RAW);
+
+			if ($responsevalue==$correctvalue) {
+				$response->correct = $responsevalue;
+			} else {
+				$response->ignored[] = $correctvalue;
+			}
+			$i++;
+		}
+
+		// if no correct answer was found, then this answer is wrong
+		if (empty($response->correct)) {
+			$response->wrong = $responsevalue;
+			$attempt->status = HOTPOT_STATUS_INPROGRESS;
+		}
+		
+		// convert "ignored" array to string
+		$response->ignored = implode(',', $response->ignored);
+
+		// get clue text, if any
+		if (($field="q{$q}_clue") && isset($_POST[$field])) {
+			$response->clue_text = optional_param($field, '', PARAM_RAW);
+		}
+
+		// get question name
+		$qq = sprintf('%02d', $q); // (a padded, two-digit version of $q)
+		if (($field="q{$q}_name") && isset($_POST[$field])) {
+			$questionname = optional_param($field, '', PARAM_RAW);
+		} else {
+			$questionname = $qq;
+		}
+
+		// get previous responses to this question (if any)
+		$question = get_record('hotpot_questions', 'name', $questionname, 'hotpot', $attempt->hotpot);
+		if ($question) {
+			$records = get_records_select('hotpot_responses', "attempt=$attempt->clickreportid AND question=$question->id");
+		} else {
+			$records = false;
+		}
+		if ($records) {
+
+			$max = array();
+			foreach ($buttons as $button) {
+				$max[$button] = 0;
+			}			
+			foreach ($textfields as $field) {
+				$response->$field = empty($response->$field) ? array() : explode(',', $response->$field);
+			}
+
+			foreach ($records as $record) {
+				foreach ($buttons as $button) {
+					$max[$button] = max($max[$button], $record->$button);
+				}
+				foreach ($textfields as $field) {
+					if ($record->$field) {
+						$values = explode(',', hotpot_strings($record->$field));
+						$response->$field = array_merge($response->$field, $values);
+					}
+				}
+			}
+
+			// remove "correct" and "wrong" values from "ignored" values
+			$response->ignored = array_diff($response->ignored, $response->correct, $response->wrong);
+ 
+			foreach ($buttons as $button) {
+				$response->$button += $max[$button];
+			}
+			foreach ($textfields as $field) {
+				$response->$field = array_unique($response->$field);
+				$response->$field = implode(',', $response->$field);
+			}
+
+		} // end if $records
+
+		// $response now holds amalgamation of all responses so far to this question
+		
+		// set score and weighting
+
+		// encode $response fields as XML
+		$vars = get_object_vars($response);
+		foreach($vars as $name=>$value) {
+			if (!empty($value)) {
+				$attempt->details .= "<field><fieldname>{$quiztype}_q{$qq}_{$name}</fieldname><fielddata>$value</fielddata></field>";
+			}
+		}
+
+		$q++;
+	}
+
+	if ($attempt->details) {
+		$attempt->details = '<?xml version="1.0"?><hpjsresult><fields>'.$attempt->details.'</fields></hpjsresult>';
+	}
+
+	// check there are no unattempted questions
+	if (($field="I_{$q}_correct_0") && isset($_POST[$field])) {
+		$attempt->status = HOTPOT_STATUS_INPROGRESS;
+	}	
+}
+function hotpot_XXX() {
+	$values = explode(',', $value);
+	foreach ($values as $value) {
+
+		$i_max =strlen($value);
+		for ($i=0; $i<$i_max; $i++) {
+
+			$char = $value{$i};
+			$ord = ord($char);
+			if ($ord==43 || $ord==44 || $ord>128) { // comma, plus-sign or multibyte char
+				$fielddata .= '&#x'.sprintf('%04X', $char).';';
+			} else {
+				$fielddata .= $char;
+			}
+		}
+	}
+
+	if (preg_match('#[<>]#', $fielddata)) {
+		$fielddata = '<![CDATA[' + $fielddata + ']]>';
+	}
 }
 ?>

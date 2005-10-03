@@ -553,10 +553,10 @@ if (window.ServerFields==null) {
 function QuizLogin(LoginPrompt) {
 	if (!is_LMS() && (Login[0] || Login[1] || Login[2] || Login[3])) {
 		var html = ''
-			+ '<HTML>'
-			+ '<HEAD></HEAD>'
-			+ '<BODY bgColor="#cccccc" onLoad="opener.setFocus(self)">'
-			+ '<FORM onSubmit="'
+			+ '<html>'
+			+ '<head></head>'
+			+ '<body bgColor="#cccccc" onLoad="opener.setFocus(self)">'
+			+ '<form onSubmit="'
 			+ 	'self.ok=true;'
 			+ 	'self.expiry=null;'
 		;
@@ -592,18 +592,18 @@ function QuizLogin(LoginPrompt) {
 			+	  'return false;'
 			+ '">'
 		;
-		html += '<TABLE>'
-			+ 	'<CAPTION>' + LoginPrompt + '</CAPTION>';
+		html += '<table>'
+			+ 	'<caption>' + LoginPrompt + '</caption>';
 		;
 		if (Login[0]) { // user name
 			var v = getCookie(self, 'UserName');
-			html += '<TR>'
-				+	'<TH align=right nowrap>' + MSG[0] + ' :</TH>'
-				+	'<TD>'
+			html += '<tr>'
+				+	'<th align=right nowrap>' + MSG[0] + ' :</th>'
+				+	'<td>'
 			;
 
 			if (typeof(Login[0])=='boolean') { // text box
-				html += '<INPUT type=text name=UserName value="' + v + '">';
+				html += '<input type=text name=UserName value="' + v + '">';
 
 			} else { // drop down menu of names
 
@@ -615,8 +615,8 @@ function QuizLogin(LoginPrompt) {
 					Login[0] = Login[0].split(comma);
 				}
 
-				html += '<SELECT name=UserName size=1>'
-					+ '<OPTION value=""></OPTION>'
+				html += '<select name=UserName size=1>'
+					+ '<option value=""></option>'
 				;
 				for(var i=0; i<Login[0].length; i++) {
 					// convert name details to array if nececount_cary
@@ -625,47 +625,47 @@ function QuizLogin(LoginPrompt) {
 					}
 					html += makeOption(Login[0][i][0], v, Login[0][i][1]);
 				}
-				html += '</SELECT>';
+				html += '</select>';
 			}
-			html += 	'</TD>'
-				+ '</TR>'
+			html += 	'</td>'
+				+ '</tr>'
 			;
 		}
 		if (Login[1]) { // user ID
 			var v = getCookie(self, 'UserID');
-			html += '<TR><TH align=right nowrap>' + MSG[1] + ' :</TH><TD><INPUT type=text name=UserID value="' + v + '"></TD></TR>';
+			html += '<tr><th align=right nowrap>' + MSG[1] + ' :</th><td><input type=text name=UserID value="' + v + '"></td></tr>';
 		}
 		if (Login[2]) { // user email
 			var v = getCookie(self, 'UserEmail');
-			html += '<TR><TH align=right nowrap>' + MSG[2] +' :</TH><TD><INPUT type=text name=UserEmail value="' + v + '"></TD></TR>';
+			html += '<tr><th align=right nowrap>' + MSG[2] +' :</th><td><input type=text name=UserEmail value="' + v + '"></td></tr>';
 		}
 		if (Login[3]) { // quiz password
 			var v = getCookie(self, 'Password');
-			html += '<TR><TH align=right nowrap>' + MSG[3] + ' :</TH><TD><INPUT type=password name=Password value="' + v + '"></TD></TR>';
+			html += '<tr><th align=right nowrap>' + MSG[3] + ' :</th><td><input type=password name=Password value="' + v + '"></td></tr>';
 		}
 		if (Login[4]) { // cookie lifespan
 			var v = getCookie(self, 'CookieExpiry');
-			html += '<TR>'
-				+ 	'<TH align=right nowrap>' + MSG[4] + ' :</TH>'
-				+ 	'<TD>'
-				+		'<SELECT name="CookieExpiry" size=1>'
+			html += '<tr>'
+				+ 	'<th align=right nowrap>' + MSG[4] + ' :</th>'
+				+ 	'<td>'
+				+		'<select name="CookieExpiry" size=1>'
 				+ 			makeOption('session', v, MSG[7])
 				+ 			makeOption('day', v, MSG[8])
 				+ 			makeOption('month', v, MSG[9])
 				+ 			makeOption('never', v, MSG[10])
-				+ 		'</SELECT>'
-				+ 	'</TD>'
-				+ '</TR>'
+				+ 		'</select>'
+				+ 	'</td>'
+				+ '</tr>'
 			;
 		}
-		html += 	'<TR>'
-			+		'<TH>&nbsp;</TH>'
-			+		'<TD nowrap>'
-			+			'<INPUT type=submit value="' + MSG[5] + '"> '
-			+ 			'<INPUT type=button value="' + MSG[6] + '" onClick="opener.goBack();self.close();">'
-			+		'</TD>'
-			+	'</TR>'
-			+ '</TABLE></FORM></BODY></HTML>'
+		html += 	'<tr>'
+			+		'<th>&nbsp;</th>'
+			+		'<td nowrap>'
+			+			'<input type=submit value="' + MSG[5] + '"> '
+			+ 			'<input type=button value="' + MSG[6] + '" onClick="opener.goBack();self.close();">'
+			+		'</td>'
+			+	'</tr>'
+			+ '</table></form></body></html>'
 		;
 
 		// set height of Login Window
@@ -685,7 +685,7 @@ function QuizLogin(LoginPrompt) {
 	return true;
 }
 function makeOption(value, v, txt) {
-	return '<OPTION value="' + value + '"' + (value==v ? ' SELECTED' : '') + '>' + (txt ? txt : value) + '</OPTION>';
+	return '<option value="' + value + '"' + (value==v ? ' SELECTED' : '') + '>' + (txt ? txt : value) + '</option>';
 }
 function setFocus(w) {
 	w.focus(); // bring window to the front
@@ -780,7 +780,7 @@ function goBack(w) {
 	if (w.history.length) w.history.back();
 }
 function openWindow(url, name, width, height, attributes, html) {
-	
+
 	// set height, width and attributes
 	if (window.screen && width && height) {
 		var W = screen.availWidth;
@@ -817,17 +817,17 @@ function openWindow(url, name, width, height, attributes, html) {
 		// workaround for "Access is denied" errors in IE when offline
 		// based on an idea seen at http://www.devshed.com/Client_Side/JavaScript/Mini_FAQ
 		var ie_offline = (document.all && location.protocol=='file:');
-	
+
 		// try and open the new window
 		w = window.open((ie_offline ? '' : url), name, attributes);
-	
+
 		// check window opened OK (user may have prevented popups)
 		if (w) {
 			// center the window
 			if (window.screen && width && height) {
 				w.moveTo((W-width)/2, (H-height)/2);
 			}
-	
+
 			// add content, if required
 			if (html) {
 				with (w.document) {
@@ -1046,7 +1046,7 @@ function replaceLast(a, b, c) {
 	// replace last occurrence of 'a' in 'c' with 'b'
 	var l = a.length;
 	var i = c.lastIndexOf(a);
-	return (i<0 || l==0) ? c : (c.substring(0, i) + b + c.substring(i+l));	
+	return (i<0 || l==0) ? c : (c.substring(0, i) + b + c.substring(i+l));
 }
 
 // *************************
@@ -1154,8 +1154,8 @@ function GetJClozeQuestionDetails(hp, v) {
 
 			// is this question correctly answered yet?
 			var is_correct = (hp==5) ? State[q][4] : (r==0) ? State[q].AnsweredCorrectly : (r==1) ? GapList[q][1].GapLocked : (r==2) ? GapList[q][1].ErrorFound : true;
-	
-			// shortcut ot correct answer
+
+			// shortcut to correct answer
 			var correct = '';
 			if (is_correct) {
 				correct = (hp==5) ? State[q][5] : guesses[guesses.length-1];
@@ -1449,7 +1449,7 @@ function GetJQuizQuestionDetails(hp, v) {
 				qDetails += hpHiddenField(Q+'question', x);
 			}
 			if (JQuiz[2]) { // student's correct answers
-				var x = HP[_correct][q];
+				var x = (HP[_correct][q]) ? HP[_correct][q] : '';
 				qDetails += hpHiddenField(Q+'correct', x);
 			}
 			if (JQuiz[3]) { // ignored and wrong answers
@@ -1469,15 +1469,7 @@ function GetJQuizQuestionDetails(hp, v) {
 				qDetails += hpHiddenField(Q+'selected', x);
 			}
 			if (JQuiz[8]) { // wrong answers
-				if (hp==6) {
-					var x = GetJQuizAnswerDetails(q, 3);
-					var i_max = (State[q][6]==null) ? 0 : (State[q][6].length - (State[q][0]<0||x.length ? 0 : 1));
-					for (var i=0; i<i_max; i++) {
-						x[x.length] = State[q][6][i];
-					}
-				} else if (hp==5) {
-					var x = HP[_wrong][q];
-				}
+				var x = (HP[_wrong][q]) ? HP[_wrong][q] : '';
 				qDetails += hpHiddenField(Q+'wrong', x);
 			}
 			if (hp==6 && JQuiz[9]) { // ignored answers
@@ -1496,7 +1488,7 @@ function GetJQuizQuestionDetails(hp, v) {
 				}
 				qDetails += hpHiddenField(Q+'checks', x);
 			}
-			if (JQuiz[13]) { // ShowAnswer
+			if (JQuiz[13]) { // ShowAnswer button
 				var x = (HP[_clues][q]) ? HP[_clues][q] : 0;
 				qDetails += hpHiddenField(Q+'clues', x);
 			}
@@ -1730,7 +1722,7 @@ function hpClickCheck(hp, t, v, args) {
 			a = I;
 			guess = "(I[i][2]==0||I[i][0]=='')?'':GetAnswer(i)";
 			correct = 'I[i][3])';
-			
+
 		} else if (window.Draggables) {
 			// HP5 v4
 			a = Draggables;
@@ -1787,9 +1779,9 @@ function hpClickCheck(hp, t, v, args) {
 			}
 		}
 	} // end if JMatch
-	
+
 	if (t==5) { // JMix
-	
+
 		// get question number (always 0)
 		var q = args[0];
 
@@ -1839,12 +1831,15 @@ function hpClickCheck(hp, t, v, args) {
 
 		if (hp==5 || hp==6) {
 			var q = args[0]; // clue/question number
-			
-			if (v==5) { // HP5 v5
-				var g = TrimString(eval('BottomFrame.document.QForm' + q + '.Guess').value);
-			} else if (v==6) {
-				var g = args[1]; // guess (ShortAnswer or Hybrid)
-				// var g = TrimString(eval('document.QForm.Guess').value);
+
+			if (hp==5) {
+				if (v==5) {
+					var g = TrimString(eval('BottomFrame.document.QForm' + q + '.Guess').value);
+				} else if (v==6) {
+					var g = TrimString(eval('document.QForm.Guess').value);
+				}
+			} else  { // HP 6
+				var g = args[1];
 			}
 
 			// increment check count
@@ -1852,17 +1847,32 @@ function hpClickCheck(hp, t, v, args) {
 			HP[_checks][q]++;
 
 			if (g) {
-				var G = g.toUpperCase();
+				var G = g.toUpperCase(); // used for shortanswer only
+				var correct_answer = ''; // used for multiselect only
 
-				var i_max = I[q][1].length;
+				// set index of answer array in question array
+				var ans = (hp==5) ? 1 : 3;
+
+				var i_max = I[q][ans].length;
 				for (var i=0; i<i_max; i++) {
-					if (CaseSensitive) {
-						if (g==I[q][1][i][0]) break;
-					} else {
-						if (G==I[q][1][i][0].toUpperCase()) break;
+
+					// is this a (possible) correct answer?
+					if (hp==5 || (hp==6 && I[q][ans][i][2])) {
+
+						if (hp==6 && I[q][2]==3) { // multiselect
+							correct_answer += (correct_answer  ? '&#43;' : '') + I[q][ans][i][0];
+
+						} else { // multichoice, shortanswer
+
+							if (window.CaseSensitive) {
+								if (g==I[q][ans][i][0]) break;
+							} else {
+								if (G==I[q][ans][i][0].toUpperCase()) break;
+							}
+						}
 					}
 				}
-				if (i==i_max) { // wrong answer
+				if (i==i_max && g!=correct_answer) { // wrong
 					if (!HP[_wrong][q]) HP[_wrong][q] = new Array();
 					var i_max = HP[_wrong][q].length;
 					for (var i=0; i<i_max; i++) {
@@ -1872,22 +1882,6 @@ function hpClickCheck(hp, t, v, args) {
 				} else {
 					HP[_correct][q] = g;
 				}
-			}
-
-			// is there a guess? (ShortAnswer or Hybrid)
-			if (g) {
-
-				// initialize guess array if necessary
-				if (!State[q][6]) State[q][6] = new Array();
-
-				// check to see if the guess is already in the guess array
-				var i_max = State[q][6].length;
-				for (var i=0; i<i_max; i++) {
-					if (State[q][6][i]==g) break;
-				}
-
-				// add the guess if it was not found
-				if (i==i_max) State[q][6][i]=g;
 			}
 		}
 	}
@@ -1906,7 +1900,6 @@ function hpClickCheckJCrossV5V6(hp, v, AD, q, row, col) {
 
 	// is this a question that has not been answered correctly yet?
 	if (clue && !HP[_correct][AD][q]) {
-		
 
 		var check = false;
 		var guess = GetJCrossWord(G, row, col, (AD=='D'));
@@ -2041,7 +2034,7 @@ function hpHiddenField(name, value, comma, forceHTML) {
 		}
 		field = '<field><fieldname>' + name + '</fieldname><fielddata>' + value + '</fielddata></field>';
 	} else {
-		field = '<INPUT type=hidden name="' + name + '" value="' + value + '">';
+		field = '<input type=hidden name="' + name + '" value="' + value + '">';
 	}
 	return field;
 }
@@ -2226,11 +2219,11 @@ function hpFeedback() {
 		var html = '';
 
 		if (FEEDBACK[1] && FEEDBACK[2]) { // formmail
-			html += '<HTML><BODY>'
-				+ '<FORM action="' + FEEDBACK[0] + '" method="POST">'
-				+ '<TABLE border="0">'
-				+ '<TR><TH valign="top" align="right">' + FEEDBACK[7] + ':</TH><TD>' + document.title + '</TD></TR>'
-				+ '<TR><TH valign="top" align="right">' + FEEDBACK[8] + ': </TH><TD>'
+			html += '<html><body>'
+				+ '<form action="' + FEEDBACK[0] + '" method="POST">'
+				+ '<table border="0">'
+				+ '<tr><th valign="top" align="right">' + FEEDBACK[7] + ':</th><td>' + document.title + '</td></tr>'
+				+ '<tr><th valign="top" align="right">' + FEEDBACK[8] + ': </th><td>'
 			;
 			if (typeof(FEEDBACK[1])=='string') {
 				html += FEEDBACK[1] + hpHiddenField('recipient', FEEDBACK[1], ',', true);
@@ -2240,46 +2233,46 @@ function hpFeedback() {
 				var i_max = FEEDBACK[1].length;
 				if (i_max==1) { // one teacher
 					html += FEEDBACK[1][0][0] + hpHiddenField('recipient', FEEDBACK[1][0][0]+' &lt;'+FEEDBACK[1][0][1]+'&gt;', ',', true);
-	
+
 				} else if (i_max>1) { // several teachers
-					html += '<SELECT name="recipient">';
+					html += '<select name="recipient">';
 					for (var i=0; i<i_max; i++) {
-						html += '<OPTION value="'+FEEDBACK[1][i][1]+'">' + FEEDBACK[1][i][0] + '</OPTION>';
+						html += '<option value="'+FEEDBACK[1][i][1]+'">' + FEEDBACK[1][i][0] + '</option>';
 					}
-					html += '</SELECT>';
+					html += '</select>';
 				}
 			}
-			html += '</TD></TR>'
-				+	'<TR><TH valign="top" align="right">' + FEEDBACK[9] + ':</TH>'
-				+	'<TD><TEXTAREA name="message" rows="10" cols="40"></TEXTAREA></TD></TR>'
-				+	'<TR><TD>&nbsp;</TD><TD><INPUT type="submit" value="' + FEEDBACK[6] + '">'
+			html += '</td></tr>'
+				+	'<tr><th valign="top" align="right">' + FEEDBACK[9] + ':</th>'
+				+	'<td><TEXTAREA name="message" rows="10" cols="40"></TEXTAREA></td></tr>'
+				+	'<tr><td>&nbsp;</td><td><input type="submit" value="' + FEEDBACK[6] + '">'
 				+ 	hpHiddenField('realname', FEEDBACK[2], ',', true)
 				+ 	hpHiddenField('email', FEEDBACK[3], ',', true)
 				+ 	hpHiddenField('subject', document.title, ',', true)
 				+ 	hpHiddenField('title', document.title, ',', true)
 				+ 	hpHiddenField('return_link_title', FEEDBACK[10], ',', true)
 				+ 	hpHiddenField('return_link_url', 'javascript:self.close()', ',', true)
-				+	'</TD></TR></TABLE></FORM></BODY></HTML>'
+				+	'</td></tr></table></form></body></html>'
 			;
 		} else if (FEEDBACK[1]) { // url only
 
 			if (typeof(FEEDBACK[1])=='object') {
 				var i_max = FEEDBACK[1].length;
 				if (i_max>1) { // several teachers
-					html += '<HTML><BODY>'
-						+ '<FORM action="' + FEEDBACK[0] + '" method="POST" onsubmit="this.action+=this.recipient.options[this.recipient.selectedIndex].value">'
-						+ '<TABLE border="0">'
-						+ '<TR><TH valign="top" align="right">' + FEEDBACK[7] + ':</TH><TD>' + document.title + '</TD></TR>'
-						+ '<TR><TH valign="top" align="right">' + FEEDBACK[8] + ': </TH><TD>'
+					html += '<html><body>'
+						+ '<form action="' + FEEDBACK[0] + '" method="POST" onsubmit="this.action+=this.recipient.options[this.recipient.selectedIndex].value">'
+						+ '<table border="0">'
+						+ '<tr><th valign="top" align="right">' + FEEDBACK[7] + ':</th><td>' + document.title + '</td></tr>'
+						+ '<tr><th valign="top" align="right">' + FEEDBACK[8] + ': </th><td>'
 					;
-					html += '<SELECT name="recipient">';
+					html += '<select name="recipient">';
 					for (var i=0; i<i_max; i++) {
-						html += '<OPTION value="'+FEEDBACK[1][i][1]+'">' + FEEDBACK[1][i][0] + '</OPTION>';
+						html += '<option value="'+FEEDBACK[1][i][1]+'">' + FEEDBACK[1][i][0] + '</option>';
 					}
-					html += '</SELECT>';
-					html += '</TD></TR>'
-						+	'<TR><TD>&nbsp;</TD><TD><INPUT type="submit" value="' + FEEDBACK[6] + '">'
-						+	'</TD></TR></TABLE></FORM></BODY></HTML>'
+					html += '</select>';
+					html += '</td></tr>'
+						+	'<tr><td>&nbsp;</td><td><input type="submit" value="' + FEEDBACK[6] + '">'
+						+	'</td></tr></table></form></body></html>'
 					;
 				} else if (i_max==1) { // one teacher
 					url = FEEDBACK[0] + FEEDBACK[1][0][1];
@@ -2315,7 +2308,7 @@ function hpInterceptFeedback() {
 	var s = getFuncCode(f) + 'Finish();';
 	var a = getFuncArgs(f, true);
 	if (a[0] && window.FEEDBACK && FEEDBACK[0]) {
-		s = a[0] + "+='<BR><BR>" + '<A href="javascript:hpFeedback();">' + FEEDBACK[6] + "</A>';" + s;
+		s = a[0] + "+='<br /><br />" + '<a href="javascript:hpFeedback();">' + FEEDBACK[6] + "</A>';" + s;
 	}
 	eval('window.' + f + '=new Function(' + getArgsStr(a) + 's);');
 }
@@ -2329,14 +2322,14 @@ function hpInterceptHints() {
 	//	JQuiz   v3: CheckAnswer(ShowHint=true, QNum), v4: CheckAnswer(ShowHint=true), v5-v6[HP5]: CheckAnswer(ShowHint=true,QNum), v6[HP6]: ShowHint(QNum)
 
 	var x = ''; // extra code, if any
-	
+
 	if (window.Cheat) {
 		// JCross v3 ?
 
 	} else if (window.ShowHint) {
 		var f = 'ShowHint';
 		var a = getFuncArgs(f, true);
-	
+
 		if (a.length==0) {
 			if (window.FindCurrent) {
 				// JCloze v3-v6
@@ -2346,7 +2339,7 @@ function hpInterceptHints() {
 				// work out which box would have a hint added
 				// work out which question that box is part of using GridMap and WinLetters
 			}
-	
+
 		} else if (a[0]=='Across') {
 			if (a[1]=='ClueNum') {
 				// JCross v6 [HP6]
@@ -2355,16 +2348,16 @@ function hpInterceptHints() {
 				// JCross v5-v6 [HP5]
 				x = "var args=new Array(C[x][y],Across?'A':'D');hpClick(1,args);";
 			}
-	
+
 		} else if (a[0]=='QNum') {
 			// JQuiz v6[HP6]
 			x = 'hpClick(1,QNum);';
 		}
-	
+
 	} else if (window.CheckAnswer) {
 		var f = 'CheckAnswer';
 		var a = getFuncArgs(f, true);
-	
+
 		if (a[0]=='ShowHint') {
 			if (a[1]=='QNum') {
 				// JQuiz v3, v5-v6[HP5]
@@ -2461,15 +2454,32 @@ function hpInterceptChecks() {
 	for (var i=0; i<f.length; i++) {
 		if (eval('window.' + f[i])) {
 			var a = getFuncArgs(f[i], true);
-			if (f[i]=='CheckShortAnswer') {
-				// get guess for ShortAnswer and Hydrid
-				x = "var g=(Finished||State[QNum].length==0||State[QNum][0]>-1)?'':document.getElementById('Q_'+QNum+'_Guess');";
-				x += "if(g){var args=new Array(QNum, g.value);hpClick(3,args)}";
-			} else {
-				x = "if(!Finished&&State[QNum].length&&State[QNum][0]<0)hpClick(3,QNum);";
+			var x = "";
+			if (f[i]=='CheckMCAnswer') {
+				x += "var args=new Array(QNum,I[QNum][3][ANum][0]);";
+
+			} else if (f[i]=='CheckShortAnswer') {
+				x += ""
+				+ "var obj=document.getElementById('Q_'+QNum+'_Guess');"
+				+ "var args=new Array(QNum,obj.value);"
+				;
+
+			} else if (f[i]=='CheckMultiSelAnswer') {
+				x += ""
+				+ "var g='';"
+				+ "for (var ANum=0; ANum<I[QNum][3].length; ANum++){"
+				+ 	"var obj=document.getElementById('Q_'+QNum+'_'+ANum+'_Chk');"
+				+ 	"if (obj.checked)g+=(g?'&#43;':'')+I[QNum][3][ANum][0];"
+				+ "}"
+				+ "var args=new Array(QNum,g);"
+				;
 			}
-			var s = getFuncCode(f[i], x, '', true);
-			eval('window.' + f[i] + '=new Function(' + getArgsStr(a) + 's);');
+			if (x) {
+				x = "if(!Finished&&State[QNum].length&&State[QNum][0]<0){" + x + "hpClick(3,args)}";
+
+				var s = getFuncCode(f[i], x, '', true);
+				eval('window.' + f[i] + '=new Function(' + getArgsStr(a) + 's);');
+			}
 		}
 	}
 
@@ -2633,7 +2643,7 @@ function hpDetectQuiz() {
 	//	6 : jquiz
 	//	7 : rhubarb (TexToys)
 	//	8 : Sequitur (TexToys)
-	
+
 	// rottmeier quiz type
 	//	1 : drop-down (JCloze)
 	//	2 : find-it (JCloze)
@@ -2693,7 +2703,7 @@ function hpDetectQuiz() {
 			v = 6;
 			var obj = (f.QForm) ? f.QForm.elements : null;
 			t = (obj && obj.length>0 && obj[0].id=='') ? 1 : (f.Cloze) ? 2 : (hpObj(d, 'GridDiv') || hpObj(d, 'Clues')) ? 3 : hpObj(d, 'MatchDiv') ? 4 : hpObj(d, 'SegmentDiv') ? 5 : ((f.QForm && f.QForm.Guess) || hpObj(d, 'Questions')) ? 6 : 0;
-	
+
 			// sniff Rottmeier quizzes
 			if (window.Create_StateArray) {
 				if (t==2) { // JCloze
@@ -2973,6 +2983,34 @@ function hpFinished() {
 function hpObj(d, id) {
 	return d.getElementById ? d.getElementById(id) : d.all ? d.all[id] : d[id];
 }
+
+function GetViewportHeight() {
+	var h = 0;
+	if (window.innerHeight) {
+		h =  innerHeight;
+	} else {
+		var is_strict = false;
+		var s = document.compatMode;
+		if (s && s=="CSS1Compat") {
+			is_strict = true; // ie6
+		} else {
+			var obj = document.doctype;
+			if (obj) {
+				var s = obj.systemId; // n6 (ie5mac uses obj.name)
+				if (s && s.indexOf("strict.dtd") >= 0) {
+					is_strict = true;
+				}
+			}
+		}
+		if (is_strict) {
+			h = document.documentElement.clientHeight;
+		} else {
+			h = document.body.clientHeight;
+		}
+	}
+	return h;
+}
+
 
 // **************
 //  initialization

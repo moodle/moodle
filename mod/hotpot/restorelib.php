@@ -76,7 +76,7 @@ function hotpot_restore_mods($mod, $restore) {
 		//	old_id      => xxx,
 		//	new_id      => NULL,
 		//	info        => xml tree array of info backed up for this hotpot activity
-	
+
 		$xml = &$data->info['MOD']['#'];
 		$table = 'hotpot';
 		$foreign_keys = array('course' => $restore->course_id);
@@ -288,7 +288,7 @@ function hotpot_restore_records(&$restore, $status, &$xml, $table, $foreign_keys
 }
 function hotpot_restore_record(&$restore, $status, &$xml, $table, $foreign_keys, $more_restore, $secondary_key) {
 // general purpose function to restore a single record
-	
+
 	// $restore : (see "hotpot_restore_mods" above)
 
 	// $status : current status of backup (true or false)
@@ -382,7 +382,7 @@ function hotpot_restore_record(&$restore, $status, &$xml, $table, $foreign_keys,
 			print "<ul><li>Record could not be added: table=$table</li></ul>";
 			$status = false;
 		}
-		
+
 		// restore related records, if required
 		if ($more_restore) {
 			eval($more_restore);
@@ -457,7 +457,7 @@ function hotpot_restore_logs($restore, $log) {
 		break;
 
 	} // end switch
-	
+
 	return $status ? $log : false;
 }
 ?>

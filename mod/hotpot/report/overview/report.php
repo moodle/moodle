@@ -15,7 +15,7 @@ class hotpot_report extends hotpot_default_report {
 	function create_overview_table(&$hotpot, &$cm, &$course, &$users, &$attempts, &$questions, &$options, &$tables) {
 
 		global $CFG;
-		
+
 		$strtimeformat = get_string('strftimedatetime');
 
 		$is_html = ($options['reportformat']=='htm');
@@ -39,7 +39,7 @@ class hotpot_report extends hotpot_default_report {
 			$table->align[] = 'center';
 			$table->size[] = 10;
 			$table->wrap[] = "nowrap";
-		}		
+		}
 
 		array_push($table->head, 
 			get_string("name"), 
@@ -60,7 +60,7 @@ class hotpot_report extends hotpot_default_report {
 
 			// shortcut to user info held in first attempt record
 			$u = &$user->attempts[0];
-			
+
 			$picture = '';
 			$name = fullname($u);
 			if ($is_html) {
@@ -130,7 +130,7 @@ class hotpot_report extends hotpot_default_report {
 					$timetaken,
 					$score
 				);
-	
+
 				$table->data[] = $data;
 
 				$data = array();

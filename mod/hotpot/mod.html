@@ -1,7 +1,7 @@
 <!-- This page defines the form to create or edit an instance of this module -->
 <!-- It is used from /course/mod.php.The whole instance is available as $form. -->
 
-<?php 
+<?PHP 
 
 $ds = DIRECTORY_SEPARATOR;
 require_once("$CFG->dirroot{$ds}mod{$ds}hotpot{$ds}lib.php");
@@ -9,7 +9,7 @@ require_once("$CFG->dirroot{$ds}mod{$ds}hotpot{$ds}lib.php");
 // set default values in form fields, if necessary
 set_form_fields($form);
 
-// commonly used array of <SELECT> options
+// commonly used array of <select> options
 $yes_no_options = array(
 	HOTPOT_NO => get_string("no"), 
 	HOTPOT_YES => get_string("yes")
@@ -21,68 +21,68 @@ $text_source_options = array(
 	HOTPOT_TEXTSOURCE_SPECIFIC => get_string("textsourcespecific", "hotpot")
 );
 ?>
-<CENTER>
-<FORM name="form" method="post" action="mod.php">
-<TABLE cellpadding="5">
-	<TR valign="top">
-		<TD align="right"><B><?php print_string("name") ?>:</B></TD>
-		<TD align="left"><?php
+<center>
+<form name="form" method="post" action="mod.php">
+<table cellpadding="5">
+	<tr valign="top">
+		<td align="right"><b><?PHP print_string("name") ?>:</b></td>
+		<td align="left"><?PHP
 			if ($form->mode=='add') {
 				choose_from_menu($text_source_options, "namesource", "$form->namesource", "");
 			} else {
-				print '<INPUT type="hidden" name="namesource" value="'.HOTPOT_TEXTSOURCE_SPECIFIC.'">';
+				print '<input type="hidden" name="namesource" value="'.HOTPOT_TEXTSOURCE_SPECIFIC.'">';
 			}
-			print '<SPAN id="nameSPAN">';
-			print '<INPUT type="text" name="name" size=40 value="'.$form->name.'">';
-			print '</SPAN>';
-		?></TD>
-	</TR>
-	<TR valign="top">
-		<TD align="right">
-			<B><?php 
+			print '<span id="nameSPAN">';
+			print '<input type="text" name="name" size=40 value="'.$form->name.'">';
+			print '</span>';
+		?></td>
+	</tr>
+	<tr valign="top">
+		<td align="right">
+			<b><?PHP 
 				print_string("summary") 
-			?>:</B><BR>
-			<FONT size="1"><?php
+			?>:</b><br />
+			<FONT size="1"><?PHP
 				helpbutton("summary", get_string("summary"), "resource", true, true);
-				echo '<BR />';
+				print '<br />';
 				helpbutton("writing", get_string("helpwriting"), "moodle", true, true);
-				echo '<BR />';
+				print '<br />';
 				if (isset($usehtmleditor) && $usehtmleditor) {
 					helpbutton("richtext", get_string("helprichtext"), "moodle", true, true);
-					echo '<BR />';
+					print '<br />';
 				} else {
 					helpbutton("text", get_string("helptext"), "moodle", true, true); 
-					echo '<BR />';
+					print '<br />';
 					emoticonhelpbutton("form", "description");
-					echo '<BR />';
+					print '<br />';
 				}
 			?></FONT>
-		</TD>
-		<TD align="left"><?php 
+		</td>
+		<td align="left"><?PHP 
 			if ($form->mode=='add') {
 				choose_from_menu($text_source_options, "summarysource", "$form->summarysource", "");
 			} else {
-				print '<INPUT type="hidden" name="summarysource" value="'.HOTPOT_TEXTSOURCE_SPECIFIC.'">';
+				print '<input type="hidden" name="summarysource" value="'.HOTPOT_TEXTSOURCE_SPECIFIC.'">';
 			}
-			print '<SPAN id="summarySPAN">';
+			print '<span id="summarySPAN">';
 			if (function_exists("print_textarea") && isset($usehtmleditor)) {
 				print_textarea($usehtmleditor, 10, 65, 680, 400, "summary", $form->summary);
 			} else {
 				// Moodle 1.1.1 (original size was rows="5" cols="50")
-				print '<TEXTAREA name="summary" rows="10" cols="65" wrap="virtual">'.$form->summary.'</TEXTAREA>';
+				print '<textarea name="summary" rows="10" cols="65" wrap="virtual">'.$form->summary.'</textarea>';
 			}
-			print '</SPAN>';
-		?></TD>
-	</TR>
-	<TR valign="top">
-		<TD align="right"><B><?php print_string("quizopen", "quiz") ?>:</B></TD>
-		<TD align="left"><?php
+			print '</span>';
+		?></td>
+	</tr>
+	<tr valign="top">
+		<td align="right"><b><?PHP print_string("quizopen", "quiz") ?>:</b></td>
+		<td align="left"><?PHP
 			$options = array(
 				HOTPOT_NO => get_string("alwaysopen", "hotpot"), 
 				HOTPOT_YES => get_string("specifictime", "hotpot")
 			);
 			choose_from_menu($options, "enabletimeopen", "$form->enabletimeopen", "");
-			print '<SPAN id="timeopenSPAN">';
+			print '<span id="timeopenSPAN">';
 			print ' &nbsp; ';
 			if (!$form->timeopen && $course->format == "weeks") {
 				$form->timeopen= $course->startdate + (($form->section - 1) * 608400);
@@ -91,18 +91,18 @@ $text_source_options = array(
 			print ' - ';
 			print_time_selector("openhour", "openminute", $form->timeopen);
 			helpbutton("timeopen", get_string("quizopen","quiz"), "quiz");
-			print '</SPAN>';
-		?></TD>
-	</TR>
-	<TR valign="top">
-		<TD align="right"><B><?php print_string("quizclose", "quiz") ?>:</B></TD>
-		<TD align="left"><?php
+			print '</span>';
+		?></td>
+	</tr>
+	<tr valign="top">
+		<td align="right"><b><?PHP print_string("quizclose", "quiz") ?>:</b></td>
+		<td align="left"><?PHP
 			$options = array(
 				HOTPOT_NO => get_string("neverclosed", "hotpot"), 
 				HOTPOT_YES => get_string("specifictime", "hotpot")
 			);
 			choose_from_menu($options, "enabletimeclose", "$form->enabletimeclose", "");
-			print '<SPAN id="timecloseSPAN">';
+			print '<span id="timecloseSPAN">';
 			print ' &nbsp; ';
 			if (!$form->timeclose && $course->format == "weeks") {
 				$form->timeclose= $course->startdate + (($form->section) * 608400);
@@ -111,14 +111,14 @@ $text_source_options = array(
 			print ' - ';
 			print_time_selector("closehour", "closeminute", $form->timeclose);
 			helpbutton("timeopen", get_string("quizclose","quiz"), "quiz");
-			print '</SPAN>';
-		?></TD>
-	</TR>
-	<TR valign="top">
-		<TD align="right" nowrap>
-			<B><?php echo get_string("location","hotpot") ?>:</B>
-		</TD>
-		<TD align="left"><?php
+			print '</span>';
+		?></td>
+	</tr>
+	<tr valign="top">
+		<td align="right" nowrap>
+			<b><?PHP print get_string("location","hotpot") ?>:</b>
+		</td>
+		<td align="left"><?PHP
 
 
 			if (isadmin()) {
@@ -136,8 +136,8 @@ $text_source_options = array(
 			}
 
 			if (array_key_exists($location, $HOTPOT_LOCATION)) {
-				echo '<INPUT type="hidden" name="location" value="'.$location.'" />';
-				echo '<i><font size="-1">'.$HOTPOT_LOCATION[$location].'</font></i> &nbsp; ';
+				print '<input type="hidden" name="location" value="'.$location.'" />';
+				print '<i><font size="-1">'.$HOTPOT_LOCATION[$location].'</font></i> &nbsp; ';
 
 			} else { // admin can select from "site" or "course" files
 				choose_from_menu($HOTPOT_LOCATION, "location", "$form->location", "");
@@ -161,15 +161,15 @@ $text_source_options = array(
 				$strchooseafile = get_string("chooseafile", "resource");
 				button_to_popup_window ($url, 'coursefiles', $strchooseafile, 500, 750, $strchooseafile);
 			}
-		?></TD>
-	</TR>
-	<TR valign="top">
-		<TD align="right" nowrap>
-			<B><?php print_string("filename", "resource") ?>:</B>
-		</TD>
-		<TD align="left"><?php
+		?></td>
+	</tr>
+	<tr valign="top">
+		<td align="right" nowrap>
+			<b><?PHP print_string("filename", "resource") ?>:</b>
+		</td>
+		<td align="left"><?PHP
 			if (function_exists("button_to_popup_window")) {
-				echo "<input name=\"reference\" size=\"50\" value=\"$form->reference\">&nbsp;";
+				print '<input name="reference" size="50" value="'.$form->reference.'">&nbsp;';
 
 			} else if (function_exists("get_directory_list")) {
 				// Moodle 1.1 (and perhaps some others)
@@ -182,88 +182,88 @@ $text_source_options = array(
 
 			} else {
 				// a very old Moodle (may be none left :-)
-				echo "<input name=\"reference\" size=\"50\" value=\"$form->reference\">&nbsp;";
+				print '<input name="reference" size="50" value="'.$form->reference.'">&nbsp;';
 			}
-			echo '<BR>';
+			print '<br />';
 			hotpot_print_show_links($form->course, $form->location, $form->reference, '', ' &nbsp; ', true);
-		?></TD>
-	</TR>
-	<TR valign="top">
-		<TD align="right"><B><?php 
+		?></td>
+	</tr>
+	<tr valign="top">
+		<td align="right"><b><?PHP 
 			$quizchain = "{$form->mode}quizchain";
 			print_string($quizchain, "hotpot"); 
-		?>:</B></TD>
-		<TD align="left"><?php
+		?>:</b></td>
+		<td align="left"><?PHP
 			choose_from_menu($yes_no_options, "quizchain", $form->quizchain, "");
 			helpbutton($quizchain, get_string($quizchain,"hotpot"), "hotpot");
-		?></TD>
-	</TR>
-	<TR valign="top">
-		<TD align="right"><B><?php print_string("outputformat", "hotpot") ?>:</B></TD>
-		<TD align="left"><?php
+		?></td>
+	</tr>
+	<tr valign="top">
+		<td align="right"><b><?PHP print_string("outputformat", "hotpot") ?>:</b></td>
+		<td align="left"><?PHP
 			choose_from_menu($HOTPOT_OUTPUTFORMAT, "outputformat", "$form->outputformat", "");
 			helpbutton("outputformat", get_string("outputformat","hotpot"), "hotpot");
-		?></TD>
-	</TR>
-	<TR valign="top">
-		<TD align="right"><B><?php print_string("navigation", "hotpot") ?>:</B></TD>
-		<TD align="left"><?php
+		?></td>
+	</tr>
+	<tr valign="top">
+		<td align="right"><b><?PHP print_string("navigation", "hotpot") ?>:</b></td>
+		<td align="left"><?PHP
 			choose_from_menu($HOTPOT_NAVIGATION, "navigation", "$form->navigation", "");
 			helpbutton("navigation", get_string("navigation","hotpot"), "hotpot");
-		?></TD>
-	</TR>
-	<TR valign="top">
-		<TD align="right"><B><?php print_string("studentfeedback", "hotpot") ?>:</B></TD>
-		<TD align="left"><?php
+		?></td>
+	</tr>
+	<tr valign="top">
+		<td align="right"><b><?PHP print_string("studentfeedback", "hotpot") ?>:</b></td>
+		<td align="left"><?PHP
 			choose_from_menu($HOTPOT_FEEDBACK, "studentfeedback", "$form->studentfeedback", "");
 			print "<input name=\"studentfeedbackurl\" size=\"50\" value=\"$form->studentfeedbackurl\">";
 			helpbutton("studentfeedback", get_string("studentfeedback","hotpot"), "hotpot");
-		?></TD>
-	</TR>
-	<TR valign="top">
-		<TD align="right"><B><?php print_string("forceplugins", "hotpot") ?>:</B></TD>
-		<TD align="left"><?php
+		?></td>
+	</tr>
+	<tr valign="top">
+		<td align="right"><b><?PHP print_string("forceplugins", "hotpot") ?>:</b></td>
+		<td align="left"><?PHP
 			choose_from_menu($yes_no_options, "forceplugins", "$form->forceplugins", "");
 			helpbutton("forceplugins", get_string("forceplugins","hotpot"), "hotpot");
-		?></TD>
-	</TR>
-	<TR valign="top">
-		<TD align="right"><B><?php print_string("shownextquiz", "hotpot") ?>:</B></TD>
-		<TD align="left"><?php
+		?></td>
+	</tr>
+	<tr valign="top">
+		<td align="right"><b><?PHP print_string("shownextquiz", "hotpot") ?>:</b></td>
+		<td align="left"><?PHP
 			choose_from_menu($yes_no_options, "shownextquiz", "$form->shownextquiz", "");
 			helpbutton("shownextquiz", get_string("shownextquiz","hotpot"), "hotpot");
-		?></TD>
-	</TR>
-	<TR valign="top">
-		<TD align="right"><B><?php print_string("allowreview", "quiz") ?>:</B></TD>
-		<TD align="left"><?php
+		?></td>
+	</tr>
+	<tr valign="top">
+		<td align="right"><b><?PHP print_string("allowreview", "quiz") ?>:</b></td>
+		<td align="left"><?PHP
 			choose_from_menu($yes_no_options, "review", "$form->review", "");
 			helpbutton("review", get_string("allowreview","quiz"), "quiz");
-		?></TD>
-	</TR>
-	<TR valign="top">
-		<TD align="right"><B><?php print_string("maximumgrade") ?>:</B></TD>
-		<TD align="left"><?php
+		?></td>
+	</tr>
+	<tr valign="top">
+		<td align="right"><b><?PHP print_string("maximumgrade") ?>:</b></td>
+		<td align="left"><?PHP
 			$options = array();
 			for ($i=100; $i>=1; $i--) {
 				$options[$i] = $i;
 			}
 			$options[0] = get_string("nograde");
-			
+
 			choose_from_menu($options, "grade", "$form->grade", "");
 			helpbutton("maxgrade", get_string("maximumgrade"), "quiz");
-		?></TD>
-	</TR>
-	<TR valign="top">
-		<TD align="right"><B><?php print_string("grademethod", "quiz") ?>:</B></TD>
-		<TD align="left"><?php
+		?></td>
+	</tr>
+	<tr valign="top">
+		<td align="right"><b><?PHP print_string("grademethod", "quiz") ?>:</b></td>
+		<td align="left"><?PHP
 			choose_from_menu($HOTPOT_GRADEMETHOD, "grademethod", "$form->grademethod", "");
 			helpbutton("grademethod", get_string("grademethod","quiz"), "quiz");
-		?></TD>
-	</TR>
-	<TR valign="top">
-		<TD align="right"><B><?php print_string("attemptsallowed", "quiz") ?>:</B></TD>
-		<TD align="left"><?php
+		?></td>
+	</tr>
+	<tr valign="top">
+		<td align="right"><b><?PHP print_string("attemptsallowed", "quiz") ?>:</b></td>
+		<td align="left"><?PHP
 			$options = array(
 				0 => get_string("attemptsunlimited", "quiz"),
 				1 => '1 '.strtolower(get_string("attempt", "quiz"))
@@ -273,36 +273,36 @@ $text_source_options = array(
 			}
 			choose_from_menu($options, "attempts", "$form->attempts", "");
 			helpbutton("attempts", get_string("attemptsallowed","quiz"), "quiz");
-		?></TD>
-	</TR>
-	<TR valign="top">
-		<TD align="right"><B><?php print_string("requirepassword", "quiz") ?>:</B></TD>
-		<TD align="left">
-			<INPUT type="text" name="password" size=40 value="<?php p($form->password) ?>">
-			<?php helpbutton("requirepassword", get_string("requirepassword", "quiz"), "quiz"); ?>
-		</TD>
-	</TR>
-	<TR valign="top">
-		<TD align="right"><B><?php print_string("requiresubnet", "quiz") ?>:</B></TD>
-		<TD align="left">
-			<INPUT type="text" name="subnet" size=40 value="<?php p($form->subnet) ?>">
-			<?php helpbutton("requiresubnet", get_string("requiresubnet", "quiz"), "quiz"); ?>
-		</TD>
-	</TR>
-	<TR valign="top">
-		<TD align="right"><B><?php print_string("clickreporting", "hotpot") ?>:</B></TD>
-		<TD align="left"><?php
+		?></td>
+	</tr>
+	<tr valign="top">
+		<td align="right"><b><?PHP print_string("requirepassword", "quiz") ?>:</b></td>
+		<td align="left">
+			<input type="text" name="password" size=40 value="<?PHP p($form->password) ?>">
+			<?PHP helpbutton("requirepassword", get_string("requirepassword", "quiz"), "quiz"); ?>
+		</td>
+	</tr>
+	<tr valign="top">
+		<td align="right"><b><?PHP print_string("requiresubnet", "quiz") ?>:</b></td>
+		<td align="left">
+			<input type="text" name="subnet" size=40 value="<?PHP p($form->subnet) ?>">
+			<?PHP helpbutton("requiresubnet", get_string("requiresubnet", "quiz"), "quiz"); ?>
+		</td>
+	</tr>
+	<tr valign="top">
+		<td align="right"><b><?PHP print_string("clickreporting", "hotpot") ?>:</b></td>
+		<td align="left"><?PHP
 			choose_from_menu($yes_no_options, "clickreporting", "$form->clickreporting", "");
 			helpbutton("clickreporting", get_string("clickreporting","hotpot"), "hotpot");
-		?></TD>
-	</TR>
-	<TR valign="top">
-		<TD align="right">&nbsp;</TD>
-		<TD align="left">
+		?></td>
+	</tr>
+	<tr valign="top">
+		<td align="right">&nbsp;</td>
+		<td align="left">
 			<!-- buttons -->
-			<INPUT type="submit" value="<?php print_string("savechanges") ?>"> &nbsp; &nbsp;
-			<INPUT type="submit" name="cancel" value="<?php print_string("cancel") ?>" /><BR />
-			<?php
+			<input type="submit" value="<?PHP print_string("savechanges") ?>"> &nbsp; &nbsp;
+			<input type="submit" name="cancel" value="<?PHP print_string("cancel") ?>" /><br />
+			<?PHP
 				if (isset($CFG->release) && substr($CFG->release, 0, 3)>=1.5) {
 					$options = array(
 						HOTPOT_DISPLAYNEXT_QUIZ => get_string("displayhotpotnext", "hotpot"),
@@ -311,27 +311,27 @@ $text_source_options = array(
 					);
 					choose_from_menu($options, "displaynext", "$form->displaynext", "");
 				} else {
-					print '<INPUT type="hidden" name="displaynext" value="'.HOTPOT_NO.'">'."\n";
+					print '<input type="hidden" name="displaynext" value="'.HOTPOT_NO.'">'."\n";
 				}
 			?>
-</TABLE>
+</table>
 
 <!-- hidden fields -->
-<INPUT type="hidden" name="course"        value="<?php p($form->course) ?>">
-<INPUT type="hidden" name="coursemodule"  value="<?php p($form->coursemodule) ?>">
-<INPUT type="hidden" name="section"       value="<?php p($form->section) ?>">
-<INPUT type="hidden" name="module"        value="<?php p($form->module) ?>">
-<INPUT type="hidden" name="modulename"    value="<?php p($form->modulename) ?>">
-<INPUT type="hidden" name="instance"      value="<?php p($form->instance) ?>">
-<INPUT type="hidden" name="mode"          value="<?php p($form->mode) ?>">
-<?php if (isset($USER->sesskey)) { ?>
-<INPUT type="hidden" name="sesskey"       value="<?php p($USER->sesskey) ?>">
-<?php } ?>
-		
-</FORM>
-</CENTER>
+<input type="hidden" name="course"        value="<?PHP p($form->course) ?>">
+<input type="hidden" name="coursemodule"  value="<?PHP p($form->coursemodule) ?>">
+<input type="hidden" name="section"       value="<?PHP p($form->section) ?>">
+<input type="hidden" name="module"        value="<?PHP p($form->module) ?>">
+<input type="hidden" name="modulename"    value="<?PHP p($form->modulename) ?>">
+<input type="hidden" name="instance"      value="<?PHP p($form->instance) ?>">
+<input type="hidden" name="mode"          value="<?PHP p($form->mode) ?>">
+<?PHP if (isset($USER->sesskey)) { ?>
+<input type="hidden" name="sesskey"       value="<?PHP p($USER->sesskey) ?>">
+<?PHP } ?>
 
-<SCRIPT type="" language="">
+</form>
+</center>
+
+<script type="text/javascript" language="javascript">
 <!--
 	function hpShowHideStudentFeedbackUrl() {
 		var frm = document.forms['form'];
@@ -405,8 +405,8 @@ function canfocus(f, name) {
 	return (obj==null || obj.type=='hidden' || obj.focus==null || (obj.style && obj.style.display=='none')) ? false : true;
 }
 //-->
-</SCRIPT>
-<?php
+</script>
+<?PHP
 
 // ======================
 //	functions

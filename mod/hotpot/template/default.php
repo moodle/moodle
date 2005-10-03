@@ -9,10 +9,8 @@ class hotpot_xml_template_default {
 
 		// try and open the template file
 		if (!file_exists($filepath) || !$fp = fopen($filepath, "r")) {
-			error(
-				'Could not open the '.$this->parent->template_dir.' template file &quot;'.$filepath.'&quot;',
-				$this->parent->course_homeurl
-			);
+			$msg = 'Could not open the '.$this->parent->template_dir.' template file &quot;'.$filepath.'&quot;';
+			error($msg, $this->parent->course_homeurl);
 		}
 
 		// read in the template and close the file
@@ -33,7 +31,7 @@ class hotpot_xml_template_default {
 	function expand_blocks($tag) {
 		// get block $names
 		//	[1] the full block name (including optional leading 'str' or 'incl')
-		//	[2] leading 'incl' or 'str'
+		//	[2] leading 'incl' or 'str', if any
 		//	[3] the real block name ([1] without [2])
 		$search = '/\[\/((incl|str)?(\w+))\]/';
 		preg_match_all($search, $this->$tag, $names);
@@ -52,12 +50,12 @@ class hotpot_xml_template_default {
 				$ii_max = count($blocks[0]);
 				for ($ii=0; $ii<$ii_max; $ii++) {
 
-					$replace = empty($value) ? '' : $blocks[1][$ii];	
+					$replace = empty($value) ? '' : $blocks[1][$ii];
 					$this->$tag = str_replace($blocks[0][$ii], $replace, $this->$tag);
 				}
 			} else {
-				error('Could not expand template block &quot;'.$matches[4][$i].'&quot;', $this->course_homeurl);
-				//print 'Could not expand template block &quot;'.$blockname.'&quot; for '.$tag."<BR>\n";
+				$msg = 'Template block expand method not found: &quot;'.$method.'&quot;';
+				error($msg, $this->parent->course_homeurl);
 			}
 		}
 	}
@@ -76,7 +74,7 @@ class hotpot_xml_template_default {
 
 				eval('$replace=$this->'.$method.'();');
 				$this->$tag = str_replace($matches[0][$i], $replace, $this->$tag);
-			}			
+			}
 		}
 	}
 
@@ -133,6 +131,5 @@ class hotpot_xml_template_default {
 		}
 		return $color;
 	}
-
 }
 ?>

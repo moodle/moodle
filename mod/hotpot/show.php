@@ -13,7 +13,7 @@
 	$params->reference = required_param('reference');
 
 	require_login($params->course);
-	
+
 	if (!isteacher($params->course)) {
 		error("You are not allowed to view this page!");
 	}
@@ -22,14 +22,14 @@
 		$params->location = optional_param('location', HOTPOT_LOCATION_COURSEFILES);
 	} else {
 		$params->location = HOTPOT_LOCATION_COURSEFILES;
-	}			
+	}
 
 	$title = get_string($params->action, 'hotpot').': '.$params->reference;
-	print_header($title, $title);		
+	print_header($title, $title);
 
 	hotpot_print_show_links($params->course, $params->location, $params->reference);
 ?>
-<SCRIPT>
+<script type="text/javascript" language="javascript">
 <!--
 	// http://www.krikkit.net/howto_javascript_copy_clipboard.html
 
@@ -46,12 +46,12 @@
 			alert('<? print_string('copiedtoclipboard', 'hotpot') ?>');
 		}
 	}
-	document.write('<span class="helplink"> &nbsp; <A href="javascript:copy_contents()"><? print_string('copytoclipboard', 'hotpot') ?></A></span>');
+	document.write('<span class="helplink"> &nbsp; <a href="javascript:copy_contents()"><? print_string('copytoclipboard', 'hotpot') ?></A></span>');
 -->
-</SCRIPT>
+</script>
 <?php
 	print_simple_box_start("center", "96%");
-	if($hp = new hotpot_xml_quiz($_GET)) {
+	if($hp = new hotpot_xml_quiz($params)) {
 		print '<pre id="contents">';
 		switch ($params->action) {
 			case 'showxmlsource':

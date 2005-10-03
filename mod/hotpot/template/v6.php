@@ -6,12 +6,15 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
 	function hotpot_xml_quiz_template(&$parent) {
 
 		$this->parent = &$parent;
+		
+		$get_js = optional_param('js', false);
+		$get_css = optional_param('css', false);
 
-		if (isset($_GET['css'])) {
+		if (!empty($get_css)) {
 			$this->css = '';
 			$this->read_template('hp6.cs_', 'css');
 
-		} else if (isset($_GET['js'])) {
+		} else if (!empty($get_js)) {
 			$this->js = '';
 			$this->read_template($this->parent->draganddrop.$this->parent->quiztype.'6.js_', 'js');
 
@@ -598,7 +601,7 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
 
 		$tag = 'navbar';
 		$this->read_template('hp6navbar.ht_', $tag);
-		
+
 		unset($this->navbarid);
 
 		return $this->$tag;
@@ -870,7 +873,7 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
 			// these characters must always be in the keypad
 			$chars = array();
 			$this->add_keypad_chars($chars, $this->parent->xml_value('hotpot-config-file,global,keypad-characters'));
-			
+
 			// append other characters used in the answers
 			$tags = '';
 			switch ($this->parent->quiztype) {
@@ -890,7 +893,7 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
 					} else {
 						$answers = $question;
 					}
-					
+
 					$a = 0;
 					while (($answer=$answers."['answer'][$a]['#']") && $this->parent->xml_value($tags, $answer)) {
 						$this->add_keypad_chars($chars, $this->parent->xml_value($tags,  $answer."['text'][0]['#']"));
@@ -1126,7 +1129,7 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
 					$question_type==HOTPOT_JQUIZ_HYBRID
 				) {
 					$str .= '<div class="ShortAnswer" id="Q_'.$q.'_SA"><form method="post" action="" onsubmit="return false;"><div>';
-					$str .= '<INPUT type="text" id="Q_'.$q.'_Guess" onfocus="TrackFocus('."'".'Q_'.$q.'_Guess'."'".')" onblur="LeaveGap()" class="ShortAnswerBox" size="9"></input><br /><br />';
+					$str .= '<input type="text" id="Q_'.$q.'_Guess" onfocus="TrackFocus('."'".'Q_'.$q.'_Guess'."'".')" onblur="LeaveGap()" class="ShortAnswerBox" size="9"></input><br /><br />';
 
 					$text = $this->v6_expand_CheckCaption();
 					$str .= $this->v6_expand_jquiz_button($text, "CheckShortAnswer($q)");
@@ -1149,14 +1152,14 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
 					$question_type==HOTPOT_JQUIZ_HYBRID ||
 					$question_type==HOTPOT_JQUIZ_MULTISELECT
 				) {
-		
+
 					switch ($question_type) {
 						case HOTPOT_JQUIZ_MULTICHOICE: 
 							$str .= '<ol class="MCAnswers">'."\n";
 						break;
 						case HOTPOT_JQUIZ_HYBRID:
 							$str .= '<ol class="MCAnswers" id="Q_'.$q.'_Hybrid_MC" style="display: none;">'."\n";
-						break;	
+						break;
 						case HOTPOT_JQUIZ_MULTISELECT:
 							$str .= '<ol class="MSelAnswers">'."\n";
 						break;
@@ -1177,8 +1180,8 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
 									}
 								break;
 								case HOTPOT_JQUIZ_MULTISELECT:
-									$str .= '<li id="Q_'.$q.'_'.$aa.'"><form method="post" action="" onsubmit="return false;"><div><INPUT type="checkbox" id="Q_'.$q.'_'.$aa.'_Chk" class="MSelCheckbox" />'.$text.'</div></form></li>'."\n";
-								break;	
+									$str .= '<li id="Q_'.$q.'_'.$aa.'"><form method="post" action="" onsubmit="return false;"><div><input type="checkbox" id="Q_'.$q.'_'.$aa.'_Chk" class="MSelCheckbox" />'.$text.'</div></form></li>'."\n";
+								break;
 							}
 							$aa++;
 						}

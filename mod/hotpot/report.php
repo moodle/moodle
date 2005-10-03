@@ -43,7 +43,7 @@
 		// students have no choice
 		$mode = 'overview';
 	}
-	
+
 	// assemble array of form data
 	$formdata = array(
 		'mode' => $mode,
@@ -239,7 +239,7 @@
 		}
 
 		$users[$userid]->attempts[] = &$attempts[$id];
-		
+
 		if ($mode=='click' && isset($cr_attempts[$id])) {
 			$attempts[$id]->cr_lastclick = $cr_attempts[$id]->id;
 			$attempts[$id]->cr_timefinish = $cr_attempts[$id]->timefinish;
@@ -255,36 +255,36 @@
 		foreach ($questions as $q=>$question) {
 			$questions[$q]->attempts = array();
 		}
-	
+
 		// get reponses to these attempts
 		$attempt_ids = join(',',array_keys($attempts));
 		if (!$responses = get_records_sql("SELECT * FROM {$CFG->prefix}hotpot_responses WHERE attempt IN ($attempt_ids)")) {
 			$responses = array();
 		}
-	
+
 		// ids of questions used in these responses
 		$questionids = array();
-	
+
 		foreach ($responses as $response) {
 			// shortcuts to the attempt and question ids
 			$a = $response->attempt;
 			$q = $response->question;
-	
+
 			// check the attempt and question objects exist
 			// (if they don't exist, something is very wrong!)
 			if (isset($attempts[$a]) || isset($questions[$q])) {
-	
+
 				// add the response for this attempt
 				$attempts[$a]->responses[$q] = $response;
-	
+
 				// add a reference from the question to the attempt which includes this question
 				$questions[$q]->attempts[] = &$attempts[$a];
-	
+
 				// flag this id as being used
 				$questionids[$q] = true;
 			}
 		}
-	
+
 		// remove unused questions
 		$questionids = array_keys($questionids);
 		foreach ($questions as $id=>$question) {
@@ -326,7 +326,7 @@ function hotpot_grade_heading($hotpot, $formdata) {
 		$grademethod = "$hotpot->grade x $grademethod/100";
 	}
 	if ($formdata['reportformat']=='htm') {
-		$grademethod = '<FONT size="1">'.$grademethod.'</FONT>';
+		$grademethod = '<font size="1">'.$grademethod.'</font>';
 	}
 	$nl = $formdata['reportformat']=='htm' ? '<br />' : "\n";
 	return get_string('grade')."$nl($grademethod)";
@@ -387,7 +387,7 @@ function hotpot_print_report_heading(&$course, &$cm, &$hotpot, &$mode) {
 			$module = "hotpot";
 		}
 		$navigation .= get_string("report$mode", $module);
-		
+
 	} else {
 		$navigation .= get_string("report", "quiz");
 	}
@@ -493,7 +493,7 @@ function hotpot_print_report_selector(&$course, &$hotpot, &$formdata) {
 		'1' => get_string('yes'),
 		'0'  => get_string('no'),
 	);
-	
+
 	print '<tr><td>';
 	helpbutton('reportformat', get_string('reportformat', 'hotpot'), 'hotpot');
 	print '</td>';

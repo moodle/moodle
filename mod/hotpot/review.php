@@ -20,7 +20,7 @@
 		if (! $hotpot = get_record("hotpot", "id", $cm->instance)) {
 			error("Course module is incorrect");
 		}
-	
+
 	} else {
 		if (! $hotpot = get_record("hotpot", "id", $hp)) {
 			error("Course module is incorrect");
@@ -168,7 +168,7 @@ function hotpot_print_review_buttons(&$course, &$hotpot, &$attempt) {
 	}
 	print "</td>\n</tr>\n";
 	print '<tr><td colspan="'.$colspan.'">';
-	print_spacer(4, 1, false); // height=4, width=1, no <br>
+	print_spacer(4, 1, false); // height=4, width=1, no <br />
 	print "</td></tr>\n";
 	print "</table>\n";
 }
@@ -238,7 +238,7 @@ function hotpot_print_attempt_details(&$hotpot, &$attempt) {
 
 			// flag to ensure questions are only printed when there is at least one response
 			$printedquestion = false;
-			
+
 			// add rows of text fields
 			foreach ($textfields as $field) {
 				if (isset($question[$field])) {
@@ -261,7 +261,7 @@ function hotpot_print_attempt_details(&$hotpot, &$attempt) {
 					}
 				}
 			}
-	
+
 			// add row of numeric fields
 			print '<tr>';
 			foreach ($numfields as $field) {
