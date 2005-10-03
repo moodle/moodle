@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.6 development (2005081700)
+      // auth.php - created with Moodle 1.6 development (2005090100)
 
 
 $string['alternatelogin'] = 'Se inserite un\'URL verso un file qui, verrà utilizzata come pagina di login del sito. La pagina dovrebbe contenere un modulo con le proprietà impostate su <strong>\'$a\'</strong> con i campi di <strong>login</strong> e <strong>password</strong>.<br/> Fate attenzione a non inserire un URL errato perchè potreste \"chiudervi fuori\" dal sito. <br/>
@@ -20,6 +20,10 @@ $string['auth_casdescription'] = 'Questo metodo utilizza un server CAS (Central 
 Potete anche utilizzare una semplice autenticazione LDAP. Se login e password fornite sono ritenute valide per CAS, Moodle creerà una nuova istanza nel database, prelevando gli attributi dell\'utente da LDAP, se necessario.
 Nei login successivi, verranno controllati solo più login e password.';
 $string['auth_castitle'] = 'Utilizza un server CAS (SSO)';
+$string['auth_changepasswordhelp'] = 'Aiuto cambiamento password';
+$string['auth_changepasswordhelp_expl'] = 'Mostra l\'aiuto per le password perse agli utenti che hanno perso la loro $a password. Questo verrà mostrato insieme a o al posto della <strong>Pagina cambiamento password</strong> o del sistema di cambiamento password interno di Moodle.';
+$string['auth_changepasswordurl'] = 'Pagina cambiamento password';
+$string['auth_changepasswordurl_expl'] = 'Indicare l\'URL in cui indirizzare gli utenti che hanno perso la loro $a password. Impostare <strong>Utilizza la pagina standard per il cambio della password</strong> a <strong>No</strong>';
 $string['auth_common_settings'] = 'Impostazioni tipiche';
 $string['auth_data_mapping'] = 'Mappatura dei dati';
 $string['auth_dbdescription'] = 'Questo metodo usa una tabella di una base di dati esterna per controllare se un dato username e password siano validi.  Se l\'utente è nuovo, allora le informazioni degli altri campi possono essere copiate in Moodle.';

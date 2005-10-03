@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.6 development (2005081700)
+      // quiz.php - created with Moodle 1.6 development (2005090100)
 
 
 $string['acceptederror'] = 'Errore accettato';
@@ -181,6 +181,7 @@ $string['illegalformulasyntax'] = 'Sintassi della formula che inizia con \'$a\' 
 $string['imagedisplay'] = 'Immagine da mostrare';
 $string['imagemissing'] = 'Immagine non disponibile alla linea $a. Il nome del file sarà ignorato';
 $string['importmax10error'] = 'C\'è un errore nella domanda. Non puoi avere più di dieci risposte';
+$string['importmaxerror'] = 'Cè un errore nella domanda. Ci sono troppe risposte.';
 $string['importminerror'] = 'C\'è un errore nella domanda. Non ci sono abbastanza risposte per questo tipo di domanda';
 $string['importquestions'] = 'Importa domande da file';
 $string['incorrect'] = 'Sbagliato';
@@ -388,6 +389,9 @@ $string['shuffleanswers'] = 'Risposte mischiate';
 $string['shufflequestions'] = 'Domande mischiate';
 $string['significantfigures'] = 'con $a';
 $string['significantfiguresformat'] = 'cifre significative';
+$string['sortage'] = 'Ordine temporale';
+$string['sortalpha'] = 'Ordine alfabetico';
+$string['sortsubmit'] = 'Ordina domande';
 $string['startagain'] = 'Ricomincia';
 $string['startedon'] = 'Iniziato';
 $string['subneterror'] = 'Spiacente, questo quiz è bloccato in modo da essere accessibile solo da certi indirizzi di rete. Attualmente i tuo computer non è abilitato all\'utilizzo di questo quiz. ';
