@@ -74,6 +74,7 @@ $string['nolettergrade'] = 'Pas de note lettre pour';
 $string['nomode'] = 'ND';
 $string['nonnumericweight'] = 'Valeur non numérique reçue pour ';
 $string['nonweightedpct'] = '%% non pondéré';
+$string['notteachererror'] = 'Vous devez être enseignant pour utiliser cette fonctionnalité.';
 $string['pctoftotalgrade'] = '%% de la note maximale';
 $string['percent'] = 'Pourcent';
 $string['percentascending'] = 'Tri croissant par pourcent';
