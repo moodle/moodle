@@ -449,11 +449,9 @@ $string['expirynotifyemail'] = 'このコースに関する次の学生の登録期間は $a->thres
 
 $a->current
 
-
 このコースに関する次の学生の登録期間は $a->threshold 日以内に終了します:
 
 $a->past
-
 
 学生の登録期間を延長するには、次のページにアクセスしてください:
 $a->extendurl';
@@ -462,8 +460,7 @@ $string['expirynotifystudentsemail'] = 'こんにちは。
 
 このメールは、あなたのコース「 $a->course 」に対する登録期間が、あと $a->threshold 日で終了するお知らせのために送信されました。
 
-詳細な情報は、あなたの先生に尋ねてください。
-';
+詳細な情報は、あなたの先生に尋ねてください。';
 $string['expirythreshold'] = '登録期限';
 $string['explanation'] = '説明';
 $string['extendenrol'] = 'ユーザ登録期間延長';
@@ -783,7 +780,8 @@ $string['new'] = '新規';
 $string['newaccount'] = '新しいアカウント';
 $string['newcourse'] = '新しいコース';
 $string['newpassword'] = '新しいパスワード';
-$string['newpasswordtext'] = '$a->firstname さんこんにちは、
+$string['newpasswordfromlost'] = '<strong>注意:</strong> 喪失パスワードリカバリ処理の一部として送信される2通のメールの<strong>2番目の</strong>メールで、あなたの<strong>現在のパスワード</strong>が送信されます。この画面を続ける前に、あなたの新しいパスワードが記載されたメールを受信したことをよく確かめてください。';
+$string['newpasswordtext'] = '$a->firstname さん こんにちは、
 
 「 $a->sitename 」のパスワードリセットおよび仮パスワードの作成が完了しました。
 
