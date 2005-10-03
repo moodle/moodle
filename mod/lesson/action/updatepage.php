@@ -33,9 +33,9 @@
     }
     /// CDC-FLAG ///        
     $page->title = clean_param($form->title, PARAM_CLEANHTML);
-    $page->contents = clean_param(trim($form->contents), PARAM_CLEANHTML);
+    $page->contents = trim($form->contents);
     $page->title = addslashes($page->title);
-    $page->contents = addslashes($page->contents);
+    
     if (!update_record("lesson_pages", $page)) {
         error("Update page: page not updated");
     }
@@ -72,18 +72,16 @@
         for ($i = 0; $i < $lesson->maxanswers; $i++) {
             // strip tags because the editor gives <p><br />...
             // also save any answers where the editor is (going to be) used
-            if (trim(strip_tags($form->answer[$i])) or $form->answereditor[$i] or $form->responseeditor[$i]) {
+            if (trim(strip_tags($form->answer[$i])) or isset($form->answereditor[$i]) or isset($form->responseeditor[$i])) {
                 if ($form->answerid[$i]) {
                     $oldanswer = new stdClass;
                     $oldanswer->id = clean_param($form->answerid[$i], PARAM_INT);
-                    $oldanswer->flags = clean_param($form->answereditor[$i], PARAM_INT) * LESSON_ANSWER_EDITOR +
-                        clean_param($form->responseeditor[$i], PARAM_INT) * LESSON_RESPONSE_EDITOR;
+                    $oldanswer->flags = optional_param("answereditor[$i]", 0, PARAM_INT) * LESSON_ANSWER_EDITOR +
+                        optional_param("responseeditor[$i]", 0, PARAM_INT) * LESSON_RESPONSE_EDITOR;
                     $oldanswer->timemodified = $timenow;
-                    $oldanswer->answer = clean_param(trim($form->answer[$i]), PARAM_CLEANHTML);
-                    $oldanswer->answer = addslashes($oldanswer->answer);
+                    $oldanswer->answer = trim($form->answer[$i]);
                     if (isset($form->response[$i])) {
-                        $oldanswer->response = clean_param(trim($form->response[$i]), PARAM_CLEANHTML);
-                        $oldanswer->response = addslashes($oldanswer->response);
+                        $oldanswer->response = trim($form->response[$i]);
                     } else {
                         $oldanswer->response = '';
                     }
@@ -101,14 +99,12 @@
                     $newanswer = new stdClass; // need to clear id if more than one new answer is ben added
                     $newanswer->lessonid = $lesson->id;
                     $newanswer->pageid = $page->id;
-                    $newanswer->flags = clean_param($form->answereditor[$i], PARAM_INT) * LESSON_ANSWER_EDITOR +
-                        clean_param($form->responseeditor[$i], PARAM_INT) * LESSON_RESPONSE_EDITOR;
+                    $newanswer->flags = optional_param("answereditor[$i]", 0, PARAM_INT) * LESSON_ANSWER_EDITOR +
+                        optional_param("responseeditor[$i]", 0, PARAM_INT) * LESSON_RESPONSE_EDITOR;
                     $newanswer->timecreated = $timenow;
-                    $newanswer->answer = clean_param(trim($form->answer[$i]), PARAM_CLEANHTML);
-                    $newanswer->answer = addslashes($newanswer->answer);
+                    $newanswer->answer = trim($form->answer[$i]);
                     if (isset($form->response[$i])) {
-                        $newanswer->response = clean_param(trim($form->response[$i]), PARAM_CLEANHTML);
-                        $newanswer->answer = addslashes($newanswer->answer);
+                        $newanswer->response = trim($form->response[$i]);
                     }
                     $newanswer->jumpto = clean_param($form->jumpto[$i], PARAM_INT);
                     /// CDC-FLAG ///
@@ -131,8 +127,8 @@
                     } else {
                         $oldanswer = new stdClass;
                         $oldanswer->id = clean_param($form->answerid[$i], PARAM_INT);
-                        $oldanswer->flags = clean_param($form->answereditor[$i], PARAM_INT) * LESSON_ANSWER_EDITOR +
-                            clean_param($form->responseeditor[$i], PARAM_INT) * LESSON_RESPONSE_EDITOR;
+                        $oldanswer->flags = optional_param("answereditor[$i]", 0, PARAM_INT) * LESSON_ANSWER_EDITOR +
+                        optional_param("responseeditor[$i]", 0, PARAM_INT) * LESSON_RESPONSE_EDITOR;
                         $oldanswer->timemodified = $timenow;
                         $oldanswer->answer = NULL;
                         if (!update_record("lesson_answers", $oldanswer)) {
@@ -148,6 +144,7 @@
             }
         }
     }
+
     if ($form->redisplay) {
         redirect("lesson.php?id=$cm->id&amp;action=editpage&amp;pageid=$page->id");
     } else {

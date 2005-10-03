@@ -41,9 +41,8 @@
         }
         /// CDC-FLAG ///
         $newpage->title = clean_param($form->title, PARAM_CLEANHTML);
-        $newpage->contents = clean_param(trim($form->contents), PARAM_CLEANHTML);
+        $newpage->contents = trim($form->contents);
         $newpage->title = addslashes($newpage->title);
-        $newpage->contents = addslashes($newpage->contents);
         $newpageid = insert_record("lesson_pages", $newpage);
         if (!$newpageid) {
             error("Insert page: new page not inserted");
@@ -86,9 +85,8 @@
             }                
             /// CDC-FLAG ///
             $newpage->title = clean_param($form->title, PARAM_CLEANHTML);
-            $newpage->contents = clean_param(trim($form->contents), PARAM_CLEANHTML);
+            $newpage->contents = trim($form->contents);
             $newpage->title = addslashes($newpage->title);
-               $newpage->contents = addslashes($newpage->contents);
             $newpageid = insert_record("lesson_pages", $newpage);
             if (!$newpageid) {
                 error("Insert page: new first page not inserted");
@@ -118,9 +116,8 @@
             }                
             /// CDC-FLAG ///
             $newpage->title = clean_param($form->title, PARAM_CLEANHTML);
-            $newpage->contents = clean_param(trim($form->contents), PARAM_CLEANHTML);
+            $newpage->contents = trim($form->contents);
             $newpage->title = addslashes($newpage->title);
-               $newpage->contents = addslashes($newpage->contents);
             $newpageid = insert_record("lesson_pages", $newpage);
             if (!$newpageid) {
                 error("Insert page: first page not inserted");
@@ -157,11 +154,9 @@
                 $newanswer->lessonid = $lesson->id;
                 $newanswer->pageid = $newpageid;
                 $newanswer->timecreated = $timenow;
-                $newanswer->answer = clean_param(trim($form->answer[$i]), PARAM_CLEANHTML);
-                $newanswer->answer = addslashes($newanswer->answer);
+                $newanswer->answer = trim($form->answer[$i]);
                 if (isset($form->response[$i])) {
-                    $newanswer->response = clean_param(trim($form->response[$i]), PARAM_CLEANHTML);
-                    $newanswer->response = addslashes($newanswer->response);
+                    $newanswer->response = trim($form->response[$i]);
                 }
                 if (isset($form->jumpto[$i])) {
                     $newanswer->jumpto = clean_param($form->jumpto[$i], PARAM_INT);

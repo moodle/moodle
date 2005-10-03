@@ -684,7 +684,9 @@
                     print_simple_box(get_string("secondpluswrong", "lesson"), "center");
                 }
             } else {
-                print_simple_box(format_text($response), 'center');
+                $options = new stdClass;
+                $options->noclean = true;
+                print_simple_box(format_text($response, FORMAT_MOODLE, $options), 'center');
             }
             echo "</td></tr></table>\n";
         }

@@ -651,7 +651,9 @@
             echo "</div><br />";
             
             if (!$lesson->slideshow) {
-                print_simple_box(format_text($page->contents), 'center');
+                $options = new stdClass;
+                $options->noclean = true;
+                print_simple_box(format_text($page->contents, FORMAT_MOODLE, $options), 'center');
             }
             echo "<br />\n";
             
@@ -705,7 +707,9 @@
                             } 
                             echo "<label for=\"answerid\" class=\"hidden-label\">Answer ID</label><input type=\"radio\" id=\"answerid\" name=\"answerid\" value=\"{$answer->id}\" $checked />"; //CDC hidden label added.
                             echo "</td><td>";
+                            $options = new stdClass;
                             $options->para = false; // no <p></p>
+                            $options->noclean = true;
                             echo format_text(trim($answer->answer), FORMAT_MOODLE, $options);
                             echo "</td></tr>";
                             if ($answer != end($answers)) {
@@ -746,6 +750,7 @@
                             echo "</td><td>";
                             $options = new stdClass;
                             $options->para = false; // no <p></p>
+                            $options->noclean = true;
                             echo format_text(trim($answer->answer), FORMAT_MOODLE, $options); 
                             echo "</td></tr>";
                             if ($answer != end($answers)) {
@@ -784,7 +789,9 @@
                         foreach ($answers as $answer) {
                             if ($answer->response != NULL) {
                                 echo "<tr><td align=\"right\">";
+                                $options = new stdClass;
                                 $options->para = false;
+                                $options->noclean = true;
                                 echo "<b>".format_text($answer->answer,FORMAT_MOODLE,$options).": </b></td><td valign=\"bottom\">";
                                 echo "<label for=\"response[$answer->id]\" class=\"hidden-label\">response[$answer->id]</label><select id=\"response[$answer->id]\" name=\"response[$answer->id]\">"; //CDC hidden label added.
                                 if (isset($USER->modattempts[$lesson->id])) {
@@ -866,7 +873,9 @@
                     
                         if ($lesson->slideshow) {
                             echo $fullbuttonhtml . '<br />';
-                            echo format_text($page->contents);
+                            $options = new stdClass;
+                            $options->noclean = true;
+                            echo format_text($page->contents, FORMAT_MOODLE, $options);
                             echo "</table></div><table cellpadding=\"5\" cellspacing=\"5\" align=\"center\">";
                         } else {
                             echo "<tr><td><table width=\"100%\">";
@@ -1410,7 +1419,9 @@
                 }
                 echo "</th></tr>\n";             
                 echo "<tr><td colspan=\"2\">\n";
-                print_simple_box(format_text($page->contents, FORMAT_HTML), "center");
+                $options = new stdClass;
+                $options->noclean = true;
+                print_simple_box(format_text($page->contents, FORMAT_MOODLE, $options), "center");
                 echo "</td></tr>\n";
                 // get the answers in a set order, the id order
                 if ($answers = get_records("lesson_answers", "pageid", $page->id, "id")) {
@@ -1472,27 +1483,30 @@
                                         echo "<b>".get_string("answer", "lesson")." $i:</b> \n";
                                     }
                                 }
-                                /// CDC-FLAG ///
+                                $options = new stdClass;
+                                $options->noclean = true;
                                 echo "</td><td width=\"80%\">\n";
-                                echo format_text($answer->answer);
+                                echo format_text($answer->answer, FORMAT_MOODLE, $options);
                                 echo "</td></tr>\n";
                                 echo "<tr><td align=\"right\" valign=\"top\"><b>".get_string("response", "lesson")." $i:</b> \n";
                                 echo "</td><td>\n";
-                                echo format_text($answer->response); 
+                                echo format_text($answer->response, FORMAT_MOODLE, $options); 
                                 echo "</td></tr>\n";
                                 break;                            
                             case LESSON_MATCHING:
+                                $options = new stdClass;
+                                $options->noclean = true;
                                 if ($n < 2) {
                                     if ($answer->answer != NULL) {
                                         if ($n == 0) {
                                             echo "<tr><td align=\"right\" valign=\"top\"><b>".get_string("correctresponse", "lesson").":</b> \n";
                                             echo "</td><td>\n";
-                                            echo format_text($answer->answer); 
+                                            echo format_text($answer->answer, FORMAT_MOODLE, $options); 
                                             echo "</td></tr>\n";
                                         } else {
                                             echo "<tr><td align=\"right\" valign=\"top\"><b>".get_string("wrongresponse", "lesson").":</b> \n";
                                             echo "</td><td>\n";
-                                            echo format_text($answer->answer); 
+                                            echo format_text($answer->answer, FORMAT_MOODLE, $options); 
                                             echo "</td></tr>\n";
                                         }
                                     }
@@ -1516,19 +1530,21 @@
                                         }
                                     }
                                     echo "</td><td width=\"80%\">\n";
-                                    echo format_text($answer->answer);
+                                    echo format_text($answer->answer, FORMAT_MOODLE, $options);
                                     echo "</td></tr>\n";
                                    echo "<tr><td align=\"right\" valign=\"top\"><b>".get_string("matchesanswer", "lesson")." $i:</b> \n";
                                     echo "</td><td>\n";
-                                    echo format_text($answer->response); 
+                                    echo format_text($answer->response, FORMAT_MOODLE, $options); 
                                     echo "</td></tr>\n";
                                 }
                                 break;
                             case LESSON_BRANCHTABLE:
+                                $options = new stdClass;
+                                $options->noclean = true;
                                 echo "<tr><td align=\"right\" valign=\"top\" width=\"20%\">\n";
                                 echo "<b>".get_string("description", "lesson")." $i:</b> \n";
                                 echo "</td><td width=\"80%\">\n";
-                                echo format_text($answer->answer);
+                                echo format_text($answer->answer, FORMAT_MOODLE, $options);
                                 echo "</td></tr>\n";
                                 break;
                         }
@@ -1786,7 +1802,9 @@
         
         
         $table->head = array(get_string("question", "lesson"));
-        $table->data[] = array(format_text($page->contents));
+        $options = new stdClass;
+        $options->noclean = true;
+        $table->data[] = array(format_text($page->contents, FORMAT_MOODLE, $options));
 
         print_table($table);
         echo "<br />";
@@ -1796,7 +1814,7 @@
 
         $studentname = $student->firstname." ".$student->lastname;
         $table->head = array(get_string("studentresponse", "lesson", $studentname));
-        $table->data[] = array(format_text($essayinfo->answer));
+        $table->data[] = array(format_text(stripslashes($essayinfo->answer)));
         
         print_table($table);
         echo "<br />";
@@ -1805,6 +1823,7 @@
 
         $table->head = array(get_string("comments", "lesson"));
         $table->data[] = array("<textarea id=\"answer\" name=\"response\" rows=\"15\" cols=\"60\">".$essayinfo->response."</textarea>\n");    
+        $options = array();
         if ($lesson->custom) {
             for ($i=$answer->score; $i>=0; $i--) {
                 $options[$i] = $i;
@@ -1850,7 +1869,7 @@
 
         $essayinfo->graded = 1;
         $essayinfo->score = clean_param($form->score, PARAM_INT);
-        $essayinfo->response = clean_param(stripslashes_safe($form->response), PARAM_CLEANHTML);
+        $essayinfo->response = stripslashes_safe($form->response);
         $essayinfo->sent = 0;
         if (!$lesson->custom && $essayinfo->score == 1) {
             $essay->correct = 1;
@@ -1883,7 +1902,7 @@
     elseif ($action == 'emailessay') {
         print_heading_with_help(format_string($lesson->name,true), "overview", "lesson");
    
-           confirm_sesskey();
+        confirm_sesskey();
     
         if (isset($_GET['userid'])) {
             $userid = clean_param($_GET['userid'], PARAM_INT);        
@@ -1913,19 +1932,22 @@
             error ("Could not find answer records.");
         }
 
+        $options = new stdClass;
+        $options->noclean = true;
+
         // NoticeFix  big fix, change $essay[]'s that use $USER to just $USER
         foreach ($essayattempts as $essay) {
             $essayinfo = unserialize($essay->useranswer);
-            if ($essayinfo->graded && !$essayinfo->sent) {
+            if ($essayinfo->graded && !$essayinfo->sent) {                
                 $subject = get_string('essayemailsubject', 'lesson', format_string($pages[$essay->pageid]->title,true));
                 $message = get_string('question', 'lesson').":<br>";
-                $message .= $pages[$essay->pageid]->contents;
+                $message .= format_text($pages[$essay->pageid]->contents, FORMAT_MOODLE, $options);
                 $message .= "<br><br>";
                 $message .= get_string('yourresponse', 'lesson').":<br>";
-                $message .= format_text($essayinfo->answer);
+                $message .= format_text(stripslashes($essayinfo->answer));
                 $message .= "<br><br>";
                 $message .= get_string('commentswithname', 'lesson', $USER).":<br>";
-                $message .= format_text($essayinfo->response);
+                $message .= format_text(stripslashes($essayinfo->response), FORMAT_MOODLE, $options);
                 $message .= "<br><br>";
                 $grades = get_records_select("lesson_grades", "lessonid = $lesson->id and userid = $essay->userid", "completed", "*", $essay->retry, 1);
                 $grade = current($grades);

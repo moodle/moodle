@@ -408,9 +408,12 @@
             $answerpage = new stdClass;
             $data ='';
             $answerdata = new stdClass;
-
+            
             $answerpage->title = format_string($page->title);
-            $answerpage->contents = format_text($page->contents);
+            
+            $options = new stdClass;
+            $options->noclean = true;
+            $answerpage->contents = format_text($page->contents, FORMAT_MOODLE, $options);
 
             // get the page qtype
             switch ($page->qtype) {
