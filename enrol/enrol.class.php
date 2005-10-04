@@ -393,15 +393,7 @@ function cron() {
                     }
                 }
             }
-            if ($lastexpirynotify = get_record('config', 'name', 'lastexpirynotify')) {
-                $lastexpirynotify->value = date('Ymd');
-                update_record('config', $lastexpirynotify);
-            } else {
-                $lastexpirynotify = new stdClass();
-                $lastexpirynotify->name = 'lastexpirynotify';
-                $lastexpirynotify->value = date('Ymd');
-                insert_record('config', $lastexpirynotify);
-            }
+            set_config('lastexpirynotify', date('Ymd'));
         }
     }
 }
