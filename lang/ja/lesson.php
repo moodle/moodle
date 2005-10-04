@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.6 development (2005090100)
+      // lesson.php - created with Moodle 1.6 development (2005100400)
 
 
 $string['accesscontrol'] = 'アクセスコントロール';
@@ -47,9 +47,9 @@ $string['confirmdeletionofthispage'] = 'このページを本当に削除してもよろしいです
 $string['congratulations'] = 'おめでとうございます - 最終レッスンに到達しました。';
 $string['continue'] = '続ける';
 $string['continuetoanswer'] = '続けて答えを変更する。';
-$string['correctanswerjump'] = '正答のジャンプ先';
-$string['correctanswerscore'] = '正答のスコア';
-$string['correctresponse'] = '正答に対するレスポンス';
+$string['correctanswerjump'] = '正解のジャンプ先';
+$string['correctanswerscore'] = '正解のスコア';
+$string['correctresponse'] = '正解に対するレスポンス';
 $string['customscoring'] = 'カスタムスコア';
 $string['deadline'] = 'レッスン終了';
 $string['defaultessayresponse'] = 'あなたの作文はコース教師によって評定されます。';
@@ -160,7 +160,7 @@ $string['notcompleted'] = '未了';
 $string['notdefined'] = '未定義';
 $string['nothighscore'] = 'あなたはトップ $a ハイスコアリストに入りませんでした。';
 $string['notitle'] = 'タイトル無し';
-$string['numberofcorrectanswers'] = '正答数: $a';
+$string['numberofcorrectanswers'] = '正解数: $a';
 $string['numberofcorrectmatches'] = '正しいマッチ数: $a';
 $string['numberofpagestoshow'] = 'ページ ( カード ) の表示数';
 $string['numberofpagesviewed'] = 'ページ閲覧数: $a';
