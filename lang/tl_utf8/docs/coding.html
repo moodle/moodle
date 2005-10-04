@@ -5,7 +5,7 @@
 <title>Moodle Doks: Alituntunin sa Pagcode</title>
 <link rel="stylesheet" href="docstyles.css" type="TEXT/CSS">
 <meta http-equiv="Content-Type" content="text/html;
-charset=iso-8859-15" />
+charset=utf-8" />
 </head>
 <body>
 <h1>Mga Alituntunin sa Pagcode ng Moodle</h1>
@@ -29,14 +29,14 @@ na sumunod sa mga istandard na ito hangga't maaari.
 .php.</li>
   <li class="spaced">Dapat gamitin ng lahat ng template file ang
 extensiong .html.</li>
-  <li class="spaced">Dapat gamitin ng lahat ng text file ang  Unix-style
+  <li class="spaced">Dapat gamitin ng lahat ng text file ang  estilong-Unix
 na text format (ang karamihang text editor ay may ganitong option).</li>
   <li class="spaced">Dapat 'full' tag ang gamitin ng lahat ng php tag
 tulad ng <font color="#339900">&lt;?php ?&gt;</font> ... sa halip
 na  'short' tag tulad ng <font color="#339900">&lt;? ?&gt;</font>. 
   </li>
 
-  <li class="spaced">Dapat panatilihin ang mga copyright notice.
+  <li class="spaced">Dapat panatilihin ang mga umiiral na copyright notice.
 Maaari kang magdagdag ng sarili mo kung kinakailangan.</li> 
 
 <li class="spaced">Dapat kasama ng bawat file ang main config.php file.</li>   
@@ -45,7 +45,7 @@ Maaari kang magdagdag ng sarili mo kung kinakailangan.</li>
 na-authenticate ng wasto, gamit ang require_login() at isadmin(),
 isteacher(), iscreator() o isstudent().</li>
 
-  <li class="spaced">Dapat gamitin ng lahat ng pagaccess sa mga database
+  <li class="spaced">Dapat gamitin ng lahat ng pag-access sa mga database
 ang mga function sa lib/datalib.php hangga't maaari - ginagawa nitong
 magkaroon ng compatibility sa maraming uri ng database.  Makikita mo na
 posible ang halos lahat ng gusto mong gawin sa pamamagitan ng mga
@@ -305,10 +305,63 @@ kasalukuyang timestamp na nakuha sa pamamgitan ng PHP
 <strong>time</strong>() function. </li>
 
 </ol>
-<hr />
-<p align="CENTER"><font size="1"><a href="." target="_top">
-Dokumentasyon ng Moodle</a></font></p>
-<p align="center"><font size="1">Version: $Id$</font></p>
 
+<p>&nbsp;</p>
+<h2>Mga Isyu hinggil sa Seguridad (at paghandle ng datos ng form at URL)
+</h2>
+<ol class="normaltext">
+
+  <li class="spaced">Huwag aasa sa 'register_globals'. <strong>Ang bawat</strong> variable ay dapat ininitialise nang wasto sa <strong>bawat</strong> code file. Kailangan ay kitang-kita kung saan nagmula ang variable</li>
+
+  <li class="spaced">Iinitialise ang lahat ng array at object, kahit walang lamant. <code>$a = array()</code>
+    o <code>$obj = new stdClass();</code>.</li>
+
+  <li class="spaced">Huwag gagamitin ang <code>optional_variable()</code> na function. Sa halip ay gamitin ang <code>optional_param()</code> na function.  Piliin ang wastong halaga na PARAM_XXXX para sa uri ng datos na inaasahan mo.  Para matsek at maiset ang isang opsiyonal na halaga para sa isang variable, gamitin ang function na <code>set_default()</code>.</li>
+
+  <li class="spaced">Huwag gagamitin ang function na <code>require_variable()</code>. Sa halip ay gamitin ang function na <code>required_param()</code>.  Piliin ang wastong halaga na 
+PARAM_XXXX para sa uri ng datos na inaasahan mo.</li>
+
+  <li class="spaced">Ingatan ang paggamit ng <code>data_submitted()</code>. Kailangan munang linisin ang datos bago gamitin</li>
+
+  <li class="spaced">Huwag gagamitin ang <code>$_GET</code>, <code>$_POST</code> o <code>$_REQUEST</code>. Gamitin ang angkop na <code>required_param()</code> o <code>optional_param()</code> na angkop sa pangangailangan mo.</li>
+
+  <li class="spaced">Huwag magtsek ng aksiyon sa pamamagitan ng tulad ng
+<code>if (isset($_GET['something']))</code>.   Gamitin ang e.g., <code>$something = optional_param( 'something',-1,PARAM_INT )</code> at pagkatapos ay gawin ang angkop na test para matiyak kung nasa inaasahang range ng value ito e.g., <code>if ($something>=0) {...</code>.</li>
+
+  <li class="spaced">Hangga't maaari, pangkatin ang lahat ng 
+ <code>required_param()</code>, <code>optional_param()</code> mo at iba pang pag-initialise ng variable sa simula ng bawat file, para madali silang matagpuan.</li>
+
+  <li class="spaced">Gumamit ng mekanismong
+'sesskey' upang maprotektahan ang mga form handling routine sa mga atake.
+Payak na halimbawa ng paggamit:  kapag nilikha ang form, isama ang <code>&lt;input type="hidden" name="sesskey" value="&lt;?php echo sesskey(); ?&gt;" /&gt;</code>.
+Kapag iprinoseso mo ang form tsekin sa pamamagitan ng <code>if (!confirm_sesskey()) {error('Bad Session Key');}</code>.</li> 
+
+  <li class="spaced">Kailangang 'linisin' ang lahat ng filename sa pamamagitan ng 
+function na <code>clean_filename()</code>, kung hindi pa ito nagagawa sa pamamagitan ng angkop na paggamit ng <code>required_param()</code> o <code>optional_param()</code>
+    </li>
+
+  <li class="spaced">Ang anumang datos na binasa mula sa database ay dapat idaan sa 
+<code>addslashes()</code> bago ito isulat pabalik sa database.  Maaaring tirahin ang isang buong object ng datos sa isang iglap sa pamamagitan ng <code>addslashes_object()</code>.</li>
+
+  <li class="spaced">Hangga't maaari, ang datos na iimbakin sa database ay kailangang manggaling sa 
+ <code>POST</code> data (mula sa isang fom na may <code>method="POST"</code>) sa halip na <code>GET</code> data (ab, datos mula sa URL line).</li>
+
+  <li class="spaced">Huwag gagamitin ang datos mula sa 
+<code>$_SERVER</code> hangga't maiiwasan.  May mga suliranin ito sa potability.
+</li>
+
+  <li class="spaced">Kung hindi pa nagagawa sa ibang lugar, tiyakin na ang lahat ng datos na isinulat sa database ay dumaan sa function na <code>clean_param()</code> sa pamamagitan ng angkop na PARAM_XXXX para sa uri ng datos.</li>
+
+  <li class="spaced">Kung magsusulat ka ng pasadyang SQL code, tiyakin na wasto ito.  Mag-ingat sa mga nawawalang quote sa palibot ng mga halaga.  Posibleng SQL 'injection' exploit.</li>
+
+  <li class="spaced">Tsekin ang lahat ng datos (lalo na ang isinusulat sa database) sa 
+<strong>bawat</strong> file na ginagamit ito.  Huwag asahan na gagawin ito sa ibang lugar.
+</li>
+
+  <li class="spaced">Ang mga bloke ng code na isasama ay dapat mayroong tiyak na balangkas na PHP (hal. class declaration, function definition atbp.) - ang straight na bloke ng code ay nagpopromote ng dinaiinitialise na paggamit ng variable.</li>
+</ol>
+<hr />
+<p align="center"><font size="1"><a href="." target="_top">Dokumentasyon ng Moodle</a></font></p>
+<p align="center"><font size="1">Version: $Id$</font></p>
 </body>
 </html>
