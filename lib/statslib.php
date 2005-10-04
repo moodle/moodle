@@ -49,11 +49,11 @@ function stats_cron_daily () {
     global $CFG;
 
     if (empty($CFG->enablestats)) {
-        return;
+        return STATS_RUN_ABORTED;
     }
 
     if (!$timestart = stats_get_start_from('daily')) {
-        return;
+        return STATS_RUN_ABORTED;
     }
 
 
@@ -61,18 +61,17 @@ function stats_cron_daily () {
     
     // check to make sure we're due to run, at least one day after last run
     if ((time() - 24*60*60) < $CFG->statslastdaily) {
-        return;
+        return STATS_RUN_ABORTED;
     }
 
     //and we're not before our runtime
     $timetocheck = strtotime("$CFG->statsruntimestarthour:$CFG->statsruntimestartminute today");
     if (time() < $timetocheck) {
-        return;
+        return STATS_RUN_ABORTED;
     }
 
     mtrace("Running daily statistics gathering...");
     set_config('statslastdaily',time());
-
 
     $return = STATS_RUN_COMPLETE; // optimistic
 
@@ -92,10 +91,11 @@ function stats_cron_daily () {
     $nextmidnight = $timestart + (60*60*24);
 
     if (!$courses = get_records('course','','','','id,1')) {
-        return;
+        return STATS_RUN_ABORTED;
     }
     
     $days = 0;
+    mtrace("starting at $timestart");
     while ($midnight >= $nextmidnight) {
 
         $timesql = " (l.time > $timestart AND l.time < $nextmidnight) ";
@@ -165,10 +165,10 @@ function stats_cron_daily () {
             stats_get_course_users($course,$timesql,$students,$teachers);
 
             foreach ($students as $user) {
-                stats_do_daily_user_cron($course,$user,1,$timesql,$nextmidnight,'daily',$daily_mods);
+                stats_do_daily_user_cron($course,$user,1,$timesql,$nextmidnight,'daily',$daily_modules);
             }
             foreach ($teachers as $user) {
-                stats_do_daily_user_cron($course,$user,2,$timesql,$nextmidnight,'daily',$daily_mods);
+                stats_do_daily_user_cron($course,$user,2,$timesql,$nextmidnight,'daily',$daily_modules);
             }
         }
         $timestart = $nextmidnight;
@@ -181,6 +181,7 @@ function stats_cron_daily () {
             break;
         }
     }
+    mtrace("got up to ".$timestart);
     mtrace("Completed $days days");
     return $return;
 
@@ -192,24 +193,24 @@ function stats_cron_weekly () {
     global $CFG;
 
     if (empty($CFG->enablestats)) {
-        return;
+        STATS_RUN_ABORTED;
     }
 
     if (!$timestart = stats_get_start_from('weekly')) {
-        return;
+        return STATS_RUN_ABORTED;
     }
     
     // check to make sure we're due to run, at least one week after last run
     $sunday = stats_get_base_weekly(); 
 
     if ((time() - (7*24*60*60)) <= $CFG->statslastweekly) {
-        return;
+        return STATS_RUN_ABORTED;
     }
 
     //and we're not before our runtime
     $timetocheck = strtotime("$CFG->statsruntimestarthour:$CFG->statsruntimestartminute today");
     if (time() < $timetocheck) {
-        return;
+        return STATS_RUN_ABORTED;
     }
 
     mtrace("Running weekly statistics gathering...");
@@ -233,10 +234,11 @@ function stats_cron_weekly () {
     $nextsunday = $timestart + (60*60*24*7);
 
     if (!$courses = get_records('course','','','','id,1')) {
-        return;
+        return STATS_RUN_ABORTED;
     }
     
     $weeks = 0;
+    mtrace("starting at $timestart");
     while ($sunday >= $nextsunday) {
 
         $timesql = " (timeend > $timestart AND timeend < $nextsunday) ";
@@ -268,11 +270,11 @@ function stats_cron_weekly () {
             stats_get_course_users($course,$timesql,$students,$teachers);
 
             foreach ($students as $user) {
-                stats_do_aggregate_user_cron($course,$user,1,$timesql,$nextsunday,'weekly',$weekly_mods);
+                stats_do_aggregate_user_cron($course,$user,1,$timesql,$nextsunday,'weekly',$weekly_modules);
             }
 
             foreach ($teachers as $user) {
-                stats_do_aggregate_user_cron($course,$user,2,$timesql,$nextsunday,'weekly',$weekly_mods);
+                stats_do_aggregate_user_cron($course,$user,2,$timesql,$nextsunday,'weekly',$weekly_modules);
             }
         }
 
@@ -286,6 +288,7 @@ function stats_cron_weekly () {
             break;
         }
     }
+    mtrace("got up to ".$timestart);
     mtrace("Completed $weeks weeks");
     return $return;
 }
@@ -295,24 +298,24 @@ function stats_cron_monthly () {
     global $CFG;
 
     if (empty($CFG->enablestats)) {
-        return;
+        return STATS_RUN_ABORTED;
     }
 
     if (!$timestart = stats_get_start_from('monthly')) {
-        return;
+        return STATS_RUN_ABORTED;
     }
     
     // check to make sure we're due to run, at least one month after last run
     $monthend = stats_get_base_monthly();
     
     if ((time() - (31*24*60*60)) <= $CFG->statslastmonthly) {
-        return;
+        return STATS_RUN_ABORTED;
     }
     
     //and we're not before our runtime
     $timetocheck = strtotime("$CFG->statsruntimestarthour:$CFG->statsruntimestartminute today");
     if (time() < $timetocheck) {
-        return;
+        return STATS_RUN_ABORTED;
     }
 
     mtrace("Running monthly statistics gathering...");
@@ -336,10 +339,11 @@ function stats_cron_monthly () {
     $nextmonthend = stats_get_next_monthend($timestart);
 
     if (!$courses = get_records('course','','','','id,1')) {
-        return;
+        return STATS_RUN_ABORTED;
     }
     
     $months = 0;
+    mtrace("starting from $timestart");
     while ($monthend >= $nextmonthend) {
 
         $timesql = " (timeend > $timestart AND timeend < $nextmonthend) ";
@@ -366,11 +370,11 @@ function stats_cron_monthly () {
             stats_get_course_users($course,$timesql,$students,$teachers);
             
             foreach ($students as $user) {
-                stats_do_aggregate_user_cron($course,$user,1,$timesql,$nextmonthend,'monthly',$monthly_mods);
+                stats_do_aggregate_user_cron($course,$user,1,$timesql,$nextmonthend,'monthly',$monthly_modules);
             }
             
             foreach ($teachers as $user) {
-                stats_do_aggregate_user_cron($course,$user,2,$timesql,$nextmonthend,'monthly',$monthly_mods);
+                stats_do_aggregate_user_cron($course,$user,2,$timesql,$nextmonthend,'monthly',$monthly_modules);
             }
         }
 
@@ -383,6 +387,7 @@ function stats_cron_monthly () {
             $return = STATS_RUN_ABORTED;
         }
     }
+    mtrace("got up to $timestart");
     mtrace("Completed $months months");
     return $return;
 }
@@ -444,6 +449,7 @@ function stats_get_next_monthend($lastmonth) {
 }
 
 function stats_clean_old() {
+    mtrace("Running stats cleanup tasks... ");
     // delete dailies older than 2 months (to be safe)
     $deletebefore = stats_get_next_monthend(strtotime('-2 months',time()));
     delete_records_select('stats_daily',"timeend < $deletebefore");
