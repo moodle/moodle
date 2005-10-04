@@ -1,4 +1,4 @@
-<?php
+<?php // $Id$
     // filter.php
     // Edit text filter settings
 
