@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.6 development (2005100300)
+      // moodle.php - created with Moodle 1.6 development (2005100400)
 
 
 $string['action'] = '操作';
@@ -411,6 +411,10 @@ $string['emailpasswordsent'] = 'パスワードの変更確認ありがとうございます。
 <p>新しいパスワードが記載されたメールがあなたのメールアドレス<br /><b>$a->email</b>に送信されました。<br />新しいパスワードは自動的に生成されたものです - <a href=\"$a->link\">パスワードの変更</a> で覚えやすいものに変更することができます。';
 $string['enable'] = 'Yes';
 $string['encryptedcode'] = '暗号化コード';
+$string['enroldate'] = '日付範囲';
+$string['enrolenddate'] = '終了日';
+$string['enrolenddaterror'] = '登録終了日が開始日よりも早く設定されています。';
+$string['enrollable'] = 'コース登録可能';
 $string['enrolledincourse'] = 'コース「 $a 」登録済';
 $string['enrolledincoursenot'] = 'コース「 $a 」未登録';
 $string['enrollfirst'] = 'サイト活動を利用するためには、事前にコースに登録を行ってください。';
@@ -428,6 +432,7 @@ $a';
 $string['enrolments'] = 'ユーザ登録方法';
 $string['enrolmentstart'] = 'ユーザ登録開始';
 $string['enrolperiod'] = '利用有効期間';
+$string['enrolstartdate'] = '開始日';
 $string['entercourse'] = 'コースに入るにはクリックしてください。';
 $string['enteremailaddress'] = 'パスワードをリセットして新しいパスワードを受け取るために、メールアドレスを入力してください。';
 $string['entries'] = 'エントリ';
@@ -840,6 +845,7 @@ $string['nostudentsyet'] = 'このコースにはまだ学生が参加していません。';
 $string['nosuchemail'] = 'そのようなメールアドレスは存在しません。';
 $string['notavailable'] = '利用できません。';
 $string['noteachersyet'] = 'このコースにはまだ教師が登録されていません。';
+$string['notenrollable'] = 'このコースは現在のところ登録できません。';
 $string['notenrolled'] = '$a はこのコースには参加していません。';
 $string['noteuserschangednonetocourse'] = '注意:ユーザデータをリストアする場合、コースユーザをリストアする必要があります。あなたの設定が変更されました。';
 $string['nothingnew'] = '最終ログインより更新されたものはありません。';
