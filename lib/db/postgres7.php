@@ -1384,6 +1384,12 @@ function main_upgrade($oldversion=0) {
         $new->value = 0;
         insert_record('config', $new);
     }
+
+    if ($oldversion < 2005100400) {
+        table_column('course','','enrollable','integer','1','unsigned','1');
+        table_column('course','','enrolstartdate','integer');
+        table_column('course','','enrolenddate','integer');
+    }
     
     return $result;
 }

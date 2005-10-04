@@ -60,6 +60,18 @@
 
         $form->startdate = make_timestamp($form->startyear, $form->startmonth, $form->startday);
 
+        if (empty($form->enrolstartdisabled)) {
+            $form->enrolstartdate = make_timestamp($form->enrolstartyear, $form->enrolstartmonth, $form->enrolstartday);
+        } else {
+            $form->enrolstartdate = 0;
+        }
+
+        if (empty($form->enrolenddisabled)) {
+            $form->enrolenddate = make_timestamp($form->enrolendyear, $form->enrolendmonth, $form->enrolendday);
+        } else {
+            $form->enrolenddate = 0;
+        }
+
         $form->format = optional_param('format', 'social', PARAM_ALPHA);
 
         validate_form($course, $form, $err);
@@ -266,6 +278,10 @@
 /// Functions /////////////////////////////////////////////////////////////////
 
 function validate_form($course, &$form, &$err) {
+
+    if (empty($form->enrolenddisabled) && $form->enrolenddate <= $form->enrolstartdate) {
+        $err["enroldate"] = get_string("enrolenddaterror");
+    }
 
     if (empty($form->fullname))
         $err["fullname"] = get_string("missingfullname");

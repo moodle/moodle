@@ -59,6 +59,15 @@
         }
     }
 
+/// Check if the course is enrollable
+    if (!$course->enrollable ||
+            ($course->enrollable == 2 && $course->enrolstartdate > 0 && $course->enrolstartdate > time()) ||
+            ($course->enrollable == 2 && $course->enrolenddate > 0 && $course->enrolenddate <= time())
+            ) {
+        print_header_simple();
+        notice(get_string('notenrollable'), $CFG->wwwroot);
+    }
+
 /// Check the submitted enrollment key if there is one
 
     if ($form = data_submitted()) {

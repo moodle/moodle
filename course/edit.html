@@ -15,6 +15,21 @@
     if (!isset($form->theme)) {
         $form->theme = '';
     }
+    if (!isset($form->enrollable)) {
+        $form->enrollable = 1;
+    }
+    if (!isset($form->enrolstartdate)) {
+        $form->enrolstartdate = 0;
+    }
+    if (!$form->enrolstartdate) {
+        $form->enrolstartdisabled = 1;
+    }
+    if (!isset($form->enrolenddate)) {
+        $form->enrolenddate = 0;
+    }
+    if (!$form->enrolenddate) {
+        $form->enrolenddisabled = 1;
+    }
     if (!isset($form->enrolperiod)) {
         $form->enrolperiod = 0;
     }
@@ -93,6 +108,46 @@
            print_date_selector("startday", "startmonth", "startyear", $form->startdate);
            helpbutton("coursestartdate", get_string("startdate"));
     ?></td>
+</tr>
+<tr valign="top">
+    <td align="right"><?php  print_string("enrollable") ?>:</td>
+    <td><?php
+            unset($choices);
+            $choices["0"] = get_string("no");
+            $choices["1"] = get_string("yes");
+            $choices["2"] = get_string("enroldate");
+            choose_from_radio ($choices, "enrollable", "$form->enrollable", "");
+            helpbutton("courseenrollable", get_string("enrollable"));
+    ?></td>
+</tr>
+<tr valign="top" id="daterange">
+    <td align="right"><?php  print_string("enroldate") ?>:</td>
+    <td>
+        <table cellpadding="0" cellspacing="0">
+            <tr>
+                <td align="right"><?php print_string('enrolstartdate') ?>: </td>
+                <td><?php
+                    print_date_selector("enrolstartday", "enrolstartmonth", "enrolstartyear", $form->enrolstartdate);
+                    print_string('disable');
+                    echo ': ';
+                    print_checkbox('enrolstartdisabled', 1, "$form->enrolstartdisabled");
+                    ?></td>
+            </tr>
+            <tr>
+                <td height="18" colspan="2"> </td>
+            </tr>
+            <tr>
+                <td align="right"><?php print_string('enrolenddate') ?>: </td>
+                <td><?php
+                    print_date_selector("enrolendday", "enrolendmonth", "enrolendyear", $form->enrolenddate);
+                    print_string('disable');
+                    echo ': ';
+                    print_checkbox('enrolenddisabled', 1, "$form->enrolenddisabled");
+                    if (isset($err["enroldate"])) formerr($err["enroldate"]);
+                    ?></td>
+            </tr>
+        </table>
+    </td>
 </tr>
 <tr valign="top">
     <td align="right"><?php  print_string("enrolperiod") ?>:</td>

@@ -1643,6 +1643,12 @@ function main_upgrade($oldversion=0) {
         insert_record('config', $new);
     }
 
+    if ($oldversion < 2005100400) {
+        table_column('course','','enrollable','tinyint','1','unsigned','1');
+        table_column('course','','enrolstartdate','int');
+        table_column('course','','enrolenddate','int');
+    }
+
     return $result;
 }
 
