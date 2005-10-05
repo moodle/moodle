@@ -1,10 +1,11 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
+      // resource.php - created with Moodle 1.5.2 + (2005060223)
 
 
 $string['addresource'] = 'Pøidat studijní materiál';
 $string['chooseafile'] = 'Vyberte nebo nahrejte soubor';
 $string['chooseparameter'] = 'Vyberte parametr';
+$string['configallowlocalfiles'] = 'Pøi vytváøení studijních materiálù ve formì odkazù na soubory lze povolit odkazy smìøující na lokální souborový systém, napø. CD mechaniky èi pevné disky. Tato mo¾nost mù¾e být u¾iteèná ve tøídách, kde mají v¹ichni studenti k dispozici stejnì namapované sí»ové disky nebo kdy¾ je potøeba pøistupovat k obsahu vlo¾ených CD. Tato mo¾nost si mù¾e vy¾ádat zmìnu nastavení zabezpeèení pou¾itých prohlí¾eèù.';
 $string['configdefaulturl'] = 'Tato hodnota je pou¾ita k vyplnìní pøedvolené hodnoty URL pøi vytváøení nového URL zdroje.';
 $string['configfilterexternalpages'] = 'Povolením tohoto nastavení docílíte toho, ¾e i externí studijní materiály (webové stránky, nahrané HTML soubory) budou zpracovány stávajícími aktivními filtry (napøíklad propojení se slovníkem). Zapnutí této volby mù¾e znatelnì zpomalit zobrazování stránek kurzù - proto ji pou¾ívejte s opatrností a jen v pøípadì, ¾e ji opravdu potøebujete.';
 $string['configframesize'] = 'Jsou-li Vlo¾ená webová stránka nebo Pøilo¾ený soubor zobrazovány uvnitø rámce, pak tato hodnota urèuje velikost (v pixelech) nadøazeného rámce (který obsahuje navigaèní pruh).';
@@ -37,6 +38,13 @@ $string['filtername'] = 'Automatické propojování materiálu';
 $string['frameifpossible'] = 'Umístit studijní materiál do rámce a ponechat tak na obrazovce navigaèní li¹tu';
 $string['fulltext'] = 'Full text';
 $string['htmlfragment'] = 'HTML fragment';
+$string['localfile'] = 'Lokální soubor';
+$string['localfilechoose'] = 'Vyberte lokální soubor (CD-ROM)';
+$string['localfilehelp'] = 'Nápovìda k zobrazování lokálních souborù';
+$string['localfileinfo'] = '<p>Vyberte lokální soubor na va¹em poèítaèi. Tento soubor nebude nahrán (uploadován) na server, ale Moodle se bude sna¾it najít stejný soubor na poèítaèi u¾ivatele, který si zdroj prohlí¾í.</p>
+<p>Tato funkce je u¾iteèná, pokud ve svých kurzech pou¾íváte velké soubory ulo¾ené na CD-ROM, které dáte úèastníkùm k dispozici. Ka¾dý u¾ivatel si mù¾e nastavit cestu k podobným lokálním souborùm <a href=\"$a\" target=\"_blank\">v úpravì svého profilu</a>.</p>';
+$string['localfilepath'] = 'K nastavení va¹í vlastní lokální cesty k tomuto zdroji mù¾ete vybrat libovolný soubor na dané jednotce (vìt¹inou CD-ROM) ve va¹em poèítaèi. Soubor nebude nahrán na server, ale informace o jeho umístìní bude ulo¾ena a pou¾ita jako cesta k va¹im lokálním studijním materiálùm.';
+$string['localfileselect'] = 'Vyberte cestu k tomuto souboru.';
 $string['maindirectory'] = 'Adresáø s hlavními soubory';
 $string['modulename'] = 'Studijní materiál';
 $string['modulenameplural'] = 'Studijní materiály';
@@ -53,6 +61,7 @@ $string['newtoolbar'] = 'Ukazovat pruh s nástroji';
 $string['newwidth'] = 'Výchozí ¹íøka okna (v pixelech)';
 $string['newwindow'] = 'Nové okno';
 $string['newwindowopen'] = 'Zobrazovat tento studijní materiál v novém oknì';
+$string['notallowedlocalfileaccess'] = 'Pøístup k lokálním souborùm je momentálnì zakázán, tak¾e tento studijní materiál není k dispozici.';
 $string['note'] = 'Poznámka';
 $string['notefile'] = 'K nahrání dal¹ích souborù do tohoto kurzu (aby se ukazovaly v tomto seznamu) pou¾ijte <a href=\"$a\">Správce souborù</a>.';
 $string['notypechosen'] = 'Musíte vybrat typ. Vra»te se pomocí tlaèítka \'Zpìt\' a zkuste to znovu.';
@@ -76,8 +85,10 @@ $string['resourcetypedirectory'] = 'Zobrazit adresáø';
 $string['resourcetypefile'] = 'Odkaz na soubor/web';
 $string['resourcetypehtml'] = 'Vytvoøit webovou stránku';
 $string['resourcetypelabel'] = 'Vytvoøit popisek';
+$string['resourcetyperepository'] = 'Odkaz na objekt v repozitáøi';
 $string['resourcetypetext'] = 'Vytvoøit stránku s textem';
 $string['searchweb'] = 'Hledat webovou stránku';
+$string['serverurl'] = 'URL serveru ($a->wwwroot)';
 $string['variablename'] = 'Název promìnné';
 
 ?>

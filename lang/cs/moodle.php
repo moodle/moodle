@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 + (2005060201)
+      // moodle.php - created with Moodle 1.5.2 + (2005060223)
 
 
 $string['action'] = 'Akce';
@@ -24,7 +24,7 @@ $string['addedtogroupnot'] = 'Nepøidán do skupiny $a';
 $string['addedtogroupnotenrolled'] = 'Nepøidán do skupiny $a, proto¾e není zapsán do kurzu';
 $string['addinganew'] = 'Pøidání nové èinnosti $a';
 $string['addinganewto'] = 'Pøidání nové èinnosti $a->what v $a->to';
-$string['addingdatatoexisting'] = 'Pøidání údajù ke stávajícím';
+$string['addingdatatoexisting'] = 'Pøidání údajù k existujícím';
 $string['addnewcategory'] = 'Pøidat novou kategorii';
 $string['addnewcourse'] = 'Pøidat nový kurz';
 $string['addnewuser'] = 'Pøidat nového u¾ivatele';
@@ -101,6 +101,7 @@ $string['autosubscribeyes'] = 'Ano: pokud po¹lu pøíspìvek, chci automaticky odeb
 $string['availability'] = 'Dostupnost';
 $string['availablecourses'] = 'Dostupné kurzy';
 $string['backup'] = 'Záloha';
+$string['backupcancelled'] = 'Zálohování pøeru¹eno';
 $string['backupcoursefileshelp'] = 'Je-li povoleno, budou do automatických záloh zahrnuty i soubory z kurzu';
 $string['backupdate'] = 'Datum zálohy';
 $string['backupdetails'] = 'Podrobnosti zálohy';
@@ -390,9 +391,9 @@ $string['everybody'] = 'V¹ichni';
 $string['executeat'] = 'Spustit v';
 $string['existing'] = 'Stávající';
 $string['existingadmins'] = 'Stávající správci';
-$string['existingcourse'] = 'Stávající kurz';
-$string['existingcourseadding'] = 'Stávající kurz, pøidávám do nìj údaje';
-$string['existingcoursedeleting'] = 'Stávající kurz, nejprve jej odstraòuji';
+$string['existingcourse'] = 'Existující kurz';
+$string['existingcourseadding'] = 'Existující kurz, pøidávám do nìj údaje';
+$string['existingcoursedeleting'] = 'Existující kurz, nejprve jej odstraòuji';
 $string['existingcreators'] = 'Stávající tvùrci kurzù';
 $string['existingstudents'] = 'Zapsaní studenti';
 $string['existingteachers'] = 'Stávající uèitelé';
@@ -424,6 +425,7 @@ $string['format'] = 'Uspoøádání';
 $string['formathtml'] = 'HTML formát';
 $string['formatmarkdown'] = 'Markdown formát ';
 $string['formatplain'] = 'Èistì textový formát';
+$string['formatscorm'] = 'SCORM formát';
 $string['formatsocial'] = 'Diskusní uspoøádání';
 $string['formattext'] = 'Moodle auto-formát';
 $string['formattexttype'] = 'Formátování';
@@ -488,6 +490,11 @@ $string['guestsnotallowed'] = 'Je mi líto, \'$a\' neumo¾òuje vstup pro hosty.';
 $string['guestsyes'] = 'Povolit hostùm i bez klíèe';
 $string['guestuser'] = 'Host';
 $string['guestuserinfo'] = 'Tomuto zvlá¹tnímu u¾ivateli je umo¾nìno vstupovat do nìkterých kurzù s pøístupovými právy ètenáøe.';
+$string['healthcenter'] = 'První pomoc';
+$string['healthproblemsdetected'] = 'Nalezeny problémy v instalaci!';
+$string['healthproblemsolution'] = 'Øe¹ení problému';
+$string['healthreturntomain'] = 'Pokraèovat';
+$string['healthsolution'] = 'Øe¹ení';
 $string['help'] = 'Nápovìda';
 $string['helpemoticons'] = 'Pou¾ívat emotikony';
 $string['helpformatting'] = 'O formátování textu';
@@ -676,6 +683,7 @@ $string['mustchangepassword'] = 'Nové heslo musí být odli¹né od stávajícího';
 $string['mustconfirm'] = 'Musíte potvrdit va¹e pøihlá¹ení';
 $string['mycourses'] = 'Moje kurzy';
 $string['name'] = 'Název';
+$string['namescorm'] = 'SCORM';
 $string['namesocial'] = 'sekce';
 $string['nametopics'] = 'téma';
 $string['nameweeks'] = 'týden';
@@ -1049,6 +1057,7 @@ $string['usethiscourse'] = 'Pou¾ij tento kurz';
 $string['usingexistingcourse'] = 'Pou¾ívám existující kurz';
 $string['version'] = 'Verze';
 $string['view'] = 'Prohlí¾ení';
+$string['viewsolution'] = 'zobrazit øe¹ení';
 $string['virusfound'] = 'Pozor! Clam AV nalezl virus v souboru nahrávaném u¾ivatelem $a->user v kurzu $a->course. Zde je výstup programu clamscan:';
 $string['virusfoundlater'] = 'V souboru $a->filename, který jste $a->date nahrávali do kurzu $a->course, byl nalezen virus. Zde je souhrn toho, co se stalo s va¹ím souborem:
 

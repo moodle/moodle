@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.5 + (2005060201)
+      // admin.php - created with Moodle 1.5.2 + (2005060223)
 
 
 $string['adminseesallevents'] = 'Správci vidí v¹echny události';
@@ -62,6 +62,7 @@ $string['confignotifyloginfailures'] = 'Pøi neúspì¹ném pøihlá¹ení mohou být zasí
 $string['confignotifyloginthreshold'] = 'Je-li aktivní upozoròování na neúspì¹ná pøihlá¹ení, po kolika neúspì¹ných pokusech na jednoho u¾ivatele nebo jednu IP adresu se má upozornìní rozeslat?';
 $string['configopentogoogle'] = 'Povolíte-li toto nastavení, umo¾níte vyhledávaèi Google, aby vstoupil na va¹e stránky jako host. Navíc lidé, kteøí se k vám dostanou pøes vyhledávání v Google, budou automaticky pøihlá¹ení jako host. Pov¹imnìte si, ¾e toto umo¾ní transparentní pøístup pouze do kurzù, které mají povolen vstup hostù.';
 $string['configpathtoclam'] = 'Cesta k antivirovému programu Clam AV. Pravdìpodobnì nìco jako /usr/bin/clamscan nebo /usr/bin/clamdscan. Toto musíte nastavit, chcete-li spou¹tet Clam AV.';
+$string['configpathtodu'] = 'Cesta k programu du (disk usage). Pravdìpodobnì nìco jako /usr/bin/du. Zadáním této cesty se urychlí generování stránek, které zobrazují obsah adresáøe s mnoha soubory.';
 $string['configproxyhost'] = 'Pokud tento <b>server</b> pou¾ívá proxy (napø. firewall) pro pøipojení k Internetu, zadejte hostname a port proxy. Jinak nechejte pole prázdné.';
 $string['configquarantinedir'] = 'Chcete-li, aby Clam AV pøesouval infikované soubory do karantény, vlo¾te sem adresáø, který bude tuto funkci zastávat. Webový server musí mít práva zápisu do tohoto adresáøe. Pokud necháte pole prázdné, popø. pokud nebude vlo¾ený adresáø existovat èi nebude zapisovatelný, budou infikované soubory odstranìny. Adresáø zapisujte bez koncového lomítka.';
 $string['configrunclamonupload'] = 'Spoustìt Clam AV na nahrávané soubory? Budete muset vlo¾it platnou pathtoclam. Clam AV je volnì ¹íøitelný antivirový program, který si mù¾ete stáhnout z http://clamav.net/';

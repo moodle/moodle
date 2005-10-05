@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.5 + (2005060201)
+      // assignment.php - created with Moodle 1.5.2 + (2005060223)
 
 
 $string['allowresubmit'] = 'Umo¾nit znovuodevzdání';
@@ -35,6 +35,7 @@ $string['failedupdatefeedback'] = 'Selhala aktualizace odpovìdi pro u¾ivatele $a
 $string['feedback'] = 'Odpovìï';
 $string['feedbackfromteacher'] = 'Odpovìï od: $a';
 $string['feedbackupdated'] = 'Aktualizovány odpovìdi pro $a u¾ivatelù';
+$string['guestnoupload'] = 'Je mi líto, hostùm není povoleno odevzdávat soubory.';
 $string['helpoffline'] = '<p>Tento typ je u¾iteèný, pakli¾e ke splnìní úkolu je potøeba vyu¾ít jiné prostøedky, ne¾ nabízí Moodle - napøíklad práce na webu, rozhovor tváøí v tváø apod.</p><p>Studenti vidí popis úkolu (zadání), ale nemohou odevzdávat ¾ádný soubor. Hodnocení funguje normálnì a studenti jsou o nìm informováni.</p>';
 $string['helponline'] = '<p>V tomto typu úkolu se od studentù oèekává úprava libovolného textu s pou¾itím bì¾ných editaèních nástrojù. Uèitelé mohou odevzdaný text hodnotit online a dokonce do nìj pøidávat komentáøe èi jej upravovat.</p>
 <p>Znáte-li star¹í verze Moodlu, plní tento typ úkolu stejnou funkci jako modul Poznámkový blok (orig. Journal).</p>';
