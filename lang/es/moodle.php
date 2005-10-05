@@ -424,6 +424,10 @@ $string['emailpasswordsent'] = 'Gracias por confirmar el cambio de contraseña.
 Le recomendamos que <a href=\"$a->link\">cambie su contraseña</a> por otra más fácil de recordar.</p>';
 $string['enable'] = 'Habilitar';
 $string['encryptedcode'] = 'Código encriptado';
+$string['enroldate'] = 'Rango de fechas';
+$string['enrolenddate'] = 'Fecha límite';
+$string['enrolenddaterror'] = 'La fecha límite de matriculación no puede ser anterior a la fecha de inicio';
+$string['enrollable'] = 'Curso abierto';
 $string['enrolledincourse'] = 'Inscritos en el curso ';
 $string['enrolledincoursenot'] = 'No inscritos en el curso ';
 $string['enrollfirst'] = 'Debe matricularse en uno de los cursos antes de poder acceder a las actividades del sitio';
@@ -442,6 +446,7 @@ $string['enrolmentnotyet'] = 'Lo sentimos, no puede acceder a este curso hasta <
 $string['enrolments'] = 'Matriculaciones';
 $string['enrolmentstart'] = 'Matriculación iniciada';
 $string['enrolperiod'] = 'Período de vigencia de la matrícula';
+$string['enrolstartdate'] = 'Fecha de inicio';
 $string['entercourse'] = 'Haga clic aquí para entrar al curso';
 $string['enteremailaddress'] = 'Escriba su dirección de correo electrónico.
 Le enviaremos una nueva contraseña.';
@@ -459,6 +464,26 @@ $string['existingcoursedeleting'] = 'Curso existente, borrando primero';
 $string['existingcreators'] = 'Creadores existentes';
 $string['existingstudents'] = 'Estudiantes inscritos';
 $string['existingteachers'] = 'Profesores existentes';
+$string['expirynotify'] = 'Notificación de fecha límite de matriculación';
+$string['expirynotifyemail'] = 'Los siguientes estudiantes quedarán desmatriculados en este curso después de exactamente $a->threshold días:
+
+$a->current
+
+
+Los siguientes estudiantes quedarán desmatriculados en este curso en menos de $a->threshold días:
+
+$a->past
+
+
+Puede ir a la siguiente página para ampliar su período de matriculación:
+$a->extendurl';
+$string['expirynotifystudents'] = 'Notificar a los estudiantes';
+$string['expirynotifystudentsemail'] = 'Estimado estudiante:
+
+Esta es una notificación de que su matriculación en el curso $a->course termina en $a->threshold días.
+
+Si tiene dudas, contacte por favor con su tutor.';
+$string['expirythreshold'] = 'Umbral';
 $string['explanation'] = 'Explicación';
 $string['extendenrol'] = 'Ampliar matriculación';
 $string['extendperiod'] = 'Período de ampliación';
@@ -780,6 +805,7 @@ $string['new'] = 'Nuevo';
 $string['newaccount'] = 'Nueva cuenta';
 $string['newcourse'] = 'Nuevo curso';
 $string['newpassword'] = 'Nueva contraseña';
+$string['newpasswordfromlost'] = '<strong>AVISO:</strong> Su <strong>contraseña actual</strong> se le ha mandado en el <strong>segundo</strong> de los dos correos que le hemos enviado como parte del proceso de recuperación de la contraseña perdida. Asegúrese de que ha recibido la nueva contraseña antes de continuar con esta pantalla.';
 $string['newpasswordtext'] = 'Hola, $a->firstname.
 
 La contraseña de su cuenta en \'$a->sitename\' se ha
@@ -843,6 +869,7 @@ $string['nostudentsyet'] = 'Aún no se ha matriculado ningún alumno en este curso
 $string['nosuchemail'] = 'No existe esa dirección de correo';
 $string['notavailable'] = 'No disponible';
 $string['noteachersyet'] = 'Aún no hay profesores en este curso';
+$string['notenrollable'] = 'Por el momento este curso no admite matriculaciones.';
 $string['notenrolled'] = '$a no está matriculado en este curso.';
 $string['noteuserschangednonetocourse'] = 'Nota: Los usuarios de los cursos deben ser restaurados cuando se restauran los datos de usuario (en actividades, archivos o mensajes). Esta configuración ha sido cambiada para usted.';
 $string['nothingnew'] = 'Sin novedades desde el último acceso';

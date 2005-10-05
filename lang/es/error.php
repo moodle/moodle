@@ -30,6 +30,7 @@ $string['restricteduser'] = 'Lo sentimos, su cuenta \"$a\" no puede hacer esto.'
 $string['sessionerroruser'] = 'Su sesión ha excedido el tiempo límite. Por favor, ingrese de nuevo.';
 $string['sessionerroruser2'] = 'Se ha detectado un error del servidor que afecta a su sesión de acceso. Por favor, acceda de nuevo o reinicie su navegador.';
 $string['sessionipnomatch'] = 'Lo sentimos, pero su número IP parece haber cambiado desde su primer acceso. Esta norma de seguridad previene que los crackers roben su identidad mientras usted está dentro de este sitio. Los usuarios normales no deberían ver este mensaje, así que por favor pida ayuda al administrador del sitio.';
+$string['statscatchupmode'] = 'Las estadísticas están en este momento en modo \'catchup\'. Hasta ahora se han procesado $a->daysdone día(s) y están pendientes $a->dayspending. ¡Vuelva a comprobarlo pronto!';
 $string['unknowncourse'] = 'No existe un curso llamado \"$a\"';
 $string['usernotaddederror'] = 'No se agregó el usuario \"$a\" - error desconocido';
 $string['usernotaddedregistered'] = 'No se agregó el usuario \"$a\" - ya está registrado';
