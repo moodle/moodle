@@ -490,7 +490,7 @@ function checkchecked(form) {
         if ($course->enrolperiod) {
             $displaylist['extendenrol.php'] = get_string('extendenrol');
         }
-        choose_from_menu ($displaylist, "formaction", "", get_string("withselectedusers"), "this.form.submit();", "");
+        choose_from_menu ($displaylist, "formaction", "", get_string("withselectedusers"), "if(checksubmit(this.form))this.form.submit();", "");
         echo '<input type="submit" value="' . get_string('ok') . '"';
         echo '</center></form>';
     }
