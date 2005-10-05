@@ -401,7 +401,7 @@ $string['enrolmentconfirmation'] = 'Prijavili se boste kot udeleženec tega pred
 $string['enrolmentkey'] = 'Ključ za prijavo';
 $string['enrolmentkeyfrom'] = 'Ta predmet zahteva \'ključ za prijavo\' - enkratno<br />
 geslo, ki bi ga vam moral posredovati $a';
-$string['enrolmentkeyhint'] = 'Vnešeni ključ za prijavo je nepravilen, poskusite znova<br />
+$string['enrolmentkeyhint'] = 'Vneseni ključ za prijavo je nepravilen, poskusite znova<br />
 (Namig - začne se na \'$a\')';
 $string['enrolmentnew'] = 'Nova prijava v $a';
 $string['enrolmentnewuser'] = '$a->user se je prijavil v predmet \"$a->course\"';
