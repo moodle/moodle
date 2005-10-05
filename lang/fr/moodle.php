@@ -769,6 +769,7 @@ $string['new'] = 'Nouveau';
 $string['newaccount'] = 'Nouveau compte';
 $string['newcourse'] = 'Nouveau cours';
 $string['newpassword'] = 'Nouveau mot de passe';
+$string['newpasswordfromlost'] = '<strong>Attention&nbsp;!</strong> Votre <strong>Mot de passe actuel</strong> vous a été envoyé dans le <strong>deuxième</strong> des deux courriels envoyés durant le processus de récupération de mot de passe. Veuillez vous assurer que vous avez bien reçu votre mot de passe de remplacement avant de continuer sur cette page.';
 $string['newpasswordtext'] = 'Bonjour $a->firstname,
 
 Le mot de passe de votre compte sur « $a->sitename » a été remplacé par un nouveau mot de passe temporaire.
