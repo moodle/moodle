@@ -484,8 +484,8 @@ function checkchecked(form) {
 
     if ($isteacher) {
         echo '<br /><center>';
-        echo '<input type="button" onclick="checkall()" value="'.get_string('checkall').'" /> ';
-        echo '<input type="button" onclick="checknone()" value="'.get_string('checknone').'" /> ';
+        echo '<input type="button" onclick="checkall()" value="'.get_string('selectall').'" /> ';
+        echo '<input type="button" onclick="checknone()" value="'.get_string('deselectall').'" /> ';
         $displaylist['messageselect.php'] = get_string('messageselectadd');
         if ($course->enrolperiod) {
             $displaylist['extendenrol.php'] = get_string('extendenrol');
