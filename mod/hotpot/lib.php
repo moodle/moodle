@@ -581,17 +581,21 @@ function hotpot_get_titles_and_next_ex(&$hp, $filepath, $get_next=false) {
 
 		if (preg_match('|\.html?$|', $filepath)) {
 			// html file
-			if (preg_match('|<title[^>]*>(.*?)</title>|is', $source, $matches)) {
+			if (preg_match('|<h2[^>]*class="ExerciseTitle"[^>]*>(.*?)</h2>|is', $source, $matches)) {
 				$title = trim(strip_tags($matches[1]));
 			}
-
+			if (empty($title)) {
+				if (preg_match('|<title[^>]*>(.*?)</title>|is', $source, $matches)) {
+					$title = trim(strip_tags($matches[1]));
+				}
+			}
 			if (preg_match('|<h3[^>]*class="ExerciseSubtitle"[^>]*>(.*?)</h3>|is', $source, $matches)) {
 				$subtitle = trim(strip_tags($matches[1]));
 			}
 			if ($get_next) {
 				if (preg_match('|<div[^>]*class="NavButtonBar"[^>]*>(.*?)</div>|is', $source, $matches)) {
-					$topnavbar = $matches[1];
-					if (preg_match_all('|<button[^>]*class="NavButton"[^>]*onclick="'."location='([^']*)'".'[^"]*"[^>]*>|is', $topnavbar, $matches)) {
+					$navbuttonbar = $matches[1];
+					if (preg_match_all('|<button[^>]*class="NavButton"[^>]*onclick="'."location='([^']*)'".'[^"]*"[^>]*>|is', $navbuttonbar, $matches)) {
 						$lastbutton = count($matches[0])-1;
 						$next = $matches[1][$lastbutton];
 					}
@@ -1840,10 +1844,19 @@ function hotpot_add_attempt_details(&$attempt) {
 			// parse the attempt detail $name into $matches
 			//	[1] question number
 			//	[2] question detail name
-			if (preg_match('/^q(\d+'.'(?:_(?:across|down))?'. ')_(\w+)$/', $name, $matches)) {
+			if (preg_match('/^q(\d+)_(\w+)$/', $name, $matches)) {
 				$num = $matches[1];
 				$name = strtolower($matches[2]);
 				$data = addslashes($data);
+
+				// adjust JCross question numbers
+				if (preg_match('/^(across|down)(.*)$/', $name, $matches)) {
+					$num .= '_'.$matches[1]; // e.g. 01_across, 02_down
+					$name = $matches[2]; 
+					if (substr($name, 0, 1)=='_') {
+						$name = substr($name, 1); // remove leading '_'
+					}
+				}
 
 				// is this a new question (or the first one)?
 				if ($q_num<>$num) {
@@ -1991,7 +2004,7 @@ function hotpot_adjust_response_field($quiztype, &$question, &$num, &$name, &$da
 			break;
 		case 'jcross':
 			$question->type = HOTPOT_JCROSS;
-			$question->name = $num; // e.g. 01_across, 02_down
+			$question->name = $num;
 			switch ($name) {
 				case '': // HotPot v2.0.x
 					$name = 'correct';

@@ -1240,51 +1240,44 @@ function GetJCrossQuestionDetails(hp, v) {
 				// show answers and clues, if required
 				var q = (hp==5) ? C[row][col] : CL[row][col];
 				if (q) {
-					// format 'Q' (a padded, two-digit version of 'q')
-					var Q = getQ('JCross', q);
 
-					var clue_A = (hp==5) ? A[q] : GetJCrossClue('Clue_A_' + q);
-					var clue_D = (hp==5) ? D[q] : GetJCrossClue('Clue_D_' + q);
+					for (var i=0; i<2; i++) { // 0==across, 1==down
 
-					// add separator, if required
-					if (JCross[0] && (clue_A || clue_D)) {
-						qDetails += makeSeparator(Q);
-					}
+						var AD = (i==0) ? 'A' : 'D';
+						var acrossdown = (i==0) ? 'across' : 'down';
+						
+						var clue = (hp==5) ? eval(AD+'['+q+']') : GetJCrossClue('Clue_'+AD+'_'+q);
+						if (clue) {
 
-					if (clue_A) { // across question
-						if (JCross[3]) qDetails += hpHiddenField(Q+'across', GetJCrossWord(G, row, col));
-						if (JCross[4]) qDetails += hpHiddenField(Q+'across_clue', clue_A);
-						if (JCross[5]) {
-							var x = (HP[_wrong]['A'] && HP[_wrong]['A'][q]) ? HP[_wrong]['A'][q] : '';
-							qDetails += hpHiddenField(Q+'across_wrong', x);
-						}
-						if (JCross[6]) {
-							var x = HP[_clues][q] ? HP[_clues][q] : 0;
-							qDetails += hpHiddenField(Q+'across_clues', x);
-						}
-						if (JCross[7]) {
-							var x = (HP[_hints]['A'] && HP[_hints]['A'][q]) ? HP[_hints]['A'][q] : 0;
-							qDetails += hpHiddenField(Q+'across_hints', x);
-						}
-						if (JCross[8]) {
-							var x = (HP[_checks]['A'] && HP[_checks]['A'][q]) ? HP[_checks]['A'][q] : '';
-							qDetails += hpHiddenField(Q+'across_checks', x);
-						}
-					}
-					if (clue_D) { // down question
-						if (JCross[3]) qDetails += hpHiddenField(Q+'down', GetJCrossWord(G, row, col, true));
-						if (JCross[4]) qDetails += hpHiddenField(Q+'down_clue', clue_D);
-						if (JCross[5]) qDetails += hpHiddenField(Q+'down_wrong', '');
-						if (JCross[6]) {
-							var x = HP[_clues][q] ? HP[_clues][q] : 0;
-							qDetails += hpHiddenField(Q+'across_clues', x);
-						}
-						if (JCross[7]) {
-							qDetails += hpHiddenField(Q+'down_hints', '');
-							var hints = (HP[_hints]['D'] && HP[_hints]['D'][q]) ? HP[_hints]['D'][q] : 0;
-						}
-						if (JCross[8]) qDetails += hpHiddenField(Q+'down_checks', '');
-					}
+							// format 'Q' (a padded, two-digit version of 'q')
+							var Q = getQ('JCross', q) + acrossdown + '_'; // e.g. JCross_01_across_
+		
+							if (JCross[0]) {
+								qDetails += makeSeparator(Q);
+							}
+							if (JCross[5]) {
+								var x = (HP[_correct][AD] && HP[_correct][AD][q]) ? HP[_correct][AD][q] : '';
+								qDetails += hpHiddenField(Q+'correct', x);
+							}
+							if (JCross[4]) qDetails += hpHiddenField(Q+'clue', clue);
+							if (JCross[5]) {
+								var x = (HP[_wrong][AD] && HP[_wrong][AD][q]) ? HP[_wrong][AD][q] : '';
+								qDetails += hpHiddenField(Q+'wrong', x);
+							}
+							if (JCross[6]) {
+								var x = HP[_clues][q] ? HP[_clues][q] : 0;
+								qDetails += hpHiddenField(Q+'clues', x);
+							}
+							if (JCross[7]) {
+								var x = (HP[_hints][AD] && HP[_hints][AD][q]) ? HP[_hints][AD][q] : 0;
+								qDetails += hpHiddenField(Q+'hints', x);
+							}
+							if (JCross[8]) {
+								var x = (HP[_checks][AD] && HP[_checks][AD][q]) ? HP[_checks][AD][q] : '';
+								qDetails += hpHiddenField(Q+'checks', x);
+							}
+						} // end for i
+					} // end if clue
 				} // end if q
 			} // end for col
 		} // end for row
@@ -1293,7 +1286,8 @@ function GetJCrossQuestionDetails(hp, v) {
 			qDetails = hpHiddenField('JCross_letters', letters) + qDetails;
 		}
 		if (JCross[1]) { // show penalties
-			qDetails = hpHiddenField('JCross_penalties', window.Penalties) + qDetails;
+			var x = (window.Penalties) ? Penalties : 0;
+			qDetails = hpHiddenField('JCross_penalties', x) + qDetails;
 		}
 
 	}
@@ -2403,7 +2397,7 @@ function hpInterceptClues() {
 					x = 'if(A[ClueNum]||D[ClueNum])hpClick(2,ClueNum);';
 				} else if (document.getElementById) {
 					// JCross v6 [HP6]
-					x = "if(document.getElementById('Clue_A_' + ClueNum)||document.getElementById('Clue_D_' + ClueNum))hpClick(2,ClueNum);";
+					x = "if(document.getElementById('clue_' + ClueNum)||document.getElementById('Clue_D_' + ClueNum))hpClick(2,ClueNum);";
 				}
 			} else {
 				if (window.AClues && window.DClues) {
@@ -2985,32 +2979,36 @@ function hpObj(d, id) {
 }
 
 function GetViewportHeight() {
-	var h = 0;
 	if (window.innerHeight) {
-		h =  innerHeight;
+		return innerHeight;
 	} else {
-		var is_strict = false;
+		if (hpIsStrict()) {
+			return document.documentElement.clientHeight;
+		} else {
+			return document.body.clientHeight;
+		}
+	}
+}
+function hpIsStrict() {
+	if (!window.hpStrictIsSet) {
+		window.hpStrictIsSet = true;
+
+		window.hpStrict = false;
 		var s = document.compatMode;
-		if (s && s=="CSS1Compat") {
-			is_strict = true; // ie6
+		if (s && s=="CSS1Compat") { // ie6
+			window.hpStrict = true;
 		} else {
 			var obj = document.doctype;
 			if (obj) {
-				var s = obj.systemId; // n6 (ie5mac uses obj.name)
+				var s = obj.systemId || obj.name; // n6 || ie5mac
 				if (s && s.indexOf("strict.dtd") >= 0) {
-					is_strict = true;
+					window.hpStrict = true;
 				}
 			}
 		}
-		if (is_strict) {
-			h = document.documentElement.clientHeight;
-		} else {
-			h = document.body.clientHeight;
-		}
 	}
-	return h;
+	return window.hpStrict;
 }
-
 
 // **************
 //  initialization
@@ -3021,12 +3019,12 @@ hpInterceptHints();
 hpInterceptClues();
 hpInterceptChecks();
 
-function hpFindForm(name, w) {
+function hpFindForm(formname, w) {
 	if (w==null) w = self;
-	var f = w.document.forms[name];
+	var f = w.document.forms[formname];
 	if (f==null && w.frames) {
 		for (var i=0; i<w.frames.length; i++) {
-				f = hpFindForm(name, w.frames[i]);
+				f = hpFindForm(formname, w.frames[i]);
 				if (f) break;
 		}
 	}
@@ -3048,9 +3046,9 @@ function Finish(quizstatus) {
 			}
 			hpForm.status.value = quizstatus;
 		}
-		if (!window.sentquizresults) {
+		if (!window.hpQuizResultsSent) {
 			if (hpForm.status && quizstatus==4) {
-				window.sentquizresults = true;
+				window.hpQuizResultsSent = true;
 			}
 			if (quizstatus==4) { // completed
 				// wait 2 seconds for student to see feedback
