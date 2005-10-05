@@ -1390,7 +1390,14 @@ function print_courses($category, $width="100%") {
             print_course($course, $width);
         }
     } else {
-        print_heading(get_string("nocoursesyet"));
+        print_heading(get_string('nocoursesyet'));
+        if (iscreator()) {
+            $options = array();
+            $options['category'] = $category->id;
+            echo '<div class="addcoursebutton" align="center">';
+            print_single_button($CFG->wwwroot.'/course/edit.php', $options, get_string('addnewcourse'));
+            echo '</div>';
+        }
     }
 
 }
