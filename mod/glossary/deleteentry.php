@@ -64,9 +64,11 @@
         // if it is an imported entry, just delete the relation
 
         if ( $entry->sourceglossaryid ) {
-            $entry->glossaryid = $entry->sourceglossaryid;
-            $entry->sourceglossaryid = 0;
-            if (! update_record("glossary_entries", $entry)) {
+            $dbentry = new stdClass;
+            $dbentry->id = $entry->id;
+            $dbentry->glossaryid = $entry->sourceglossaryid;
+            $dbentry->sourceglossaryid = 0;
+            if (! update_record('glossary_entries', $dbentry)) {
                 error("Could not update your glossary");
             }
 
