@@ -894,10 +894,12 @@ function lesson_print_tree_menu($lessonid, $pageid, $id, $showpages=false) {
     if(!$pages = get_records_select("lesson_pages", "lessonid = $lessonid")) {
         error("Error: could not find lesson pages");
     }
+    echo '<ul>';
     while ($pageid != 0) {
         lesson_print_tree_link_menu($pages[$pageid], $id, true);            
         $pageid = $pages[$pageid]->nextpageid;
     }
+    echo '</ul>';
 }
 
 /*******************************************************************/
@@ -918,28 +920,21 @@ function lesson_print_tree_link_menu($page, $id, $showpages=false) {
     
     // set up some variables  NoticeFix  changed whole function
     $output = "";
-    $close = false;
-    $link="id=$id&amp;action=navigation&amp;pageid=".$page->id;
-    
-    $output = "<li>";
+    $class = ' class="leftmenu_not_selected_link" ';
     
     if (isset($_REQUEST['pageid'])) {
         if($page->id == $_REQUEST['pageid']) { 
-            $close=true; 
-            $output.="<em>"; 
+            $class = ' class="leftmenu_selected_link" '; 
         } 
     }
     
-    $output .= "<a href=\"view.php?id=$id&amp;action=navigation&amp;pageid=$page->id\">".format_string($page->title,true)."</a>\n"; 
+    $output .= '<li>';
     
-    if($close) {
-        $output.="</em>";
-    }    
-    $output .= "</li>";
-    
-    
-    echo $output;
+    $output .= "<a $class href=\"view.php?id=$id&amp;action=navigation&amp;pageid=$page->id\">".format_string($page->title,true)."</a>\n"; 
+      
+    $output .= "</li>";     
 
+    echo $output;
 } 
 
 /*******************************************************************/

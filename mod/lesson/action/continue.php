@@ -6,20 +6,22 @@
     // left menu code
     if ($lesson->displayleft) {
        if($firstpageid = get_field('lesson_pages', 'id', 'lessonid', $lesson->id, 'prevpageid', 0)) {
-               echo '<table><tr valign="top"><td>';
             // print the pages
-            echo '<form name="lessonpages2" method="post" action="view.php">';
-            echo '<input type="hidden" name="id" value="'. $cm->id .'" />';
-            echo '<input type="hidden" name="action" value="navigation" />';
-            echo '<input type="hidden" name="pageid" />';
-                    echo "<table><tr><td valign=\"top\">";
-                    echo "<div class=\"leftmenutable\">".get_string('lessonmenu', 'lesson')."<br />";
-                    echo "<div class=\"main\">";
-                    echo "<a href=\"../../course/view.php?id=$course->id\">".get_string("mainmenu", "lesson")."</a><br />";                                    echo "</div>";
-                    echo '<div class="leftmenu">';
+            echo '<table><tr valign="top"><td>';
+            echo '<form name="lessonpages2" method="post" action="view.php">'."\n";
+            echo '<input type="hidden" name="id" value="'. $cm->id .'" />'."\n";
+            echo '<input type="hidden" name="action" value="navigation" />'."\n";
+            echo '<input type="hidden" name="pageid" />'."\n";
+                echo '<div class="leftmenu_container">'."\n";
+                    echo '<div class="leftmenu_title">'.get_string('lessonmenu', 'lesson').'</div>'."\n";
+                    echo '<div class="leftmenu_courselink">';
+                    echo "<a href=\"../../course/view.php?id=$course->id\">".get_string("mainmenu", "lesson")."</a>";
+                    echo '</div>'."\n";
+                    echo '<div class="leftmenu_links">'."\n";
                     lesson_print_tree_menu($lesson->id, $firstpageid, $cm->id);
-                    echo '</div></div></td></tr></table>'; //close lmlinks
-            echo '</form>';
+                    echo '</div>'."\n";
+                echo '</div>'."\n";
+            echo '</form>'."\n";
             echo '</td><td align="center" width="100%">';
         }
     }

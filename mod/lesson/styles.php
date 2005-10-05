@@ -10,28 +10,36 @@
  *** Left Menu Styles
  ***/
 
-.mod-lesson .leftmenutable {
+.mod-lesson .leftmenu_container {
   width:170px;
   height:400px;
-  overflow:auto;    
+  overflow:auto;
   vertical-align:top;
+  padding-bottom: 15px;  /* for the sake of MacIE5 only */
+}
+.mod-lesson .leftmenu_title {
+}
+.mod-lesson .leftmenu_courselink {
+    font-size:.9em;
+}
+.mod-lesson .leftmenu_links {
+    font-size:.85em;
+    font-style: none;
+}
+.mod-lesson .leftmenu_links ul {
+    list-style-type: none;
+    margin: 0px;
+    padding: 0px;
+    padding-top: 5px;
+    padding-left: 10px;
 }
 
-.mod-lesson .leftmenu a:link, 
-.mod-lesson .leftmenu a:active, 
-.mod-lesson .leftmenu a:visited, 
-.mod-lesson .leftmenu1 a:link, 
-.mod-lesson .leftmenu1 a:active, 
-.mod-lesson .leftmenu1 a:visited{
-  font-size:.7em;
-  vertical-align:top;
+.mod-lesson .leftmenu_selected_link {
+    
 }
 
-.mod-lesson .main a:link, 
-.mod-lesson .main a:active,
-.mod-lesson .main a:visited{
-  font-size:.9em; 
-  vertical-align:top;
+.mod-lesson .leftmenu_not_selected_link {
+    
 }
 
 
