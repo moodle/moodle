@@ -1134,6 +1134,7 @@ function hotpot_add_attempt($hotpotid) {
 			break;
 	}
 
+	// set all previous "in progress" attempts at this quiz to "abandoned"
 	$db->Execute("
 		UPDATE 
 			{$CFG->prefix}hotpot_attempts as a

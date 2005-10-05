@@ -2,39 +2,47 @@
 
 	/// This page prints a hotpot quiz
 
-	require_once("../../config.php");
-	require_once("lib.php");
-
-	$id = optional_param("id"); // Course Module ID, or
-	$hp = optional_param("hp"); // hotpot ID
-
-	if ($id) {
-		if (! $cm = get_record("course_modules", "id", $id)) {
-			error("Course Module ID was incorrect");
-		}
-		if (! $course = get_record("course", "id", $cm->course)) {
-			error("Course is misconfigured");
-		}
-		if (! $hotpot = get_record("hotpot", "id", $cm->instance)) {
-			error("Course module is incorrect");
-		}
+	if (defined('HOTPOT_FIRST_ATTEMPT') && HOTPOT_FIRST_ATTEMPT==false) {
+		// this script is being included (by attempt.php)
 
 	} else {
-		if (! $hotpot = get_record("hotpot", "id", $hp)) {
-			error("Course module is incorrect");
+		// this script is being called directly from the browser
+		define('HOTPOT_FIRST_ATTEMPT', true);
+
+		require_once("../../config.php");
+		require_once("lib.php");
+	
+		$id = optional_param("id"); // Course Module ID, or
+		$hp = optional_param("hp"); // hotpot ID
+	
+		if ($id) {
+			if (! $cm = get_record("course_modules", "id", $id)) {
+				error("Course Module ID was incorrect");
+			}
+			if (! $course = get_record("course", "id", $cm->course)) {
+				error("Course is misconfigured");
+			}
+			if (! $hotpot = get_record("hotpot", "id", $cm->instance)) {
+				error("Course module is incorrect");
+			}
+	
+		} else {
+			if (! $hotpot = get_record("hotpot", "id", $hp)) {
+				error("Course module is incorrect");
+			}
+			if (! $course = get_record("course", "id", $hotpot->course)) {
+				error("Course is misconfigured");
+			}
+			if (! $cm = get_coursemodule_from_instance("hotpot", $hotpot->id, $course->id)) {
+				error("Course Module ID was incorrect");
+			}
 		}
-		if (! $course = get_record("course", "id", $hotpot->course)) {
-			error("Course is misconfigured");
-		}
-		if (! $cm = get_coursemodule_from_instance("hotpot", $hotpot->id, $course->id)) {
-			error("Course Module ID was incorrect");
-		}
+
+		require_login($course->id);
 	}
 
 	// set nextpage (for error messages)
 	$nextpage = "$CFG->wwwroot/course/view.php?id=$course->id";
-
-	require_login($course->id);
 
 	// header strings
 	$title = strip_tags($course->shortname.': '.$hotpot->name);
@@ -52,7 +60,7 @@
 	$time = time();
 	$hppassword = optional_param('hppassword');
 
-	if (!isteacher($course->id)) {
+	if (HOTPOT_FIRST_ATTEMPT && !isteacher($course->id)) {
 		// check this quiz is available to this student
 
 		// error message, if quiz is unavailable
@@ -131,6 +139,7 @@
 		$available_msg = get_string("quizavailable", "quiz", userdate($hotpot->timeclose))."<br />\n";
 	}
 
+
 	// open and parse the source file
 	if(!$hp = new hotpot_xml_quiz($hotpot)) {
 		error("Quiz is unavailable at the moment");
@@ -165,11 +174,14 @@
 		}
 
 		if ($get_html) {
-			add_to_log($course->id, "hotpot", "view", "view.php?id=$cm->id", "$hotpot->id", "$cm->id");
-
-			$attemptid = hotpot_add_attempt($hotpot->id);
-			if (! is_numeric($attemptid)) {
-				error('Could not insert attempt record: '.$db->ErrorMsg);
+		
+			if (HOTPOT_FIRST_ATTEMPT) {
+				add_to_log($course->id, "hotpot", "view", "view.php?id=$cm->id", "$hotpot->id", "$cm->id");
+	
+				$attemptid = hotpot_add_attempt($hotpot->id);
+				if (! is_numeric($attemptid)) {
+					error('Could not insert attempt record: '.$db->ErrorMsg);
+				}
 			}
 
 			$hp->adjust_media_urls();
