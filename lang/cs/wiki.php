@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.4 (2004083100)
+      // wiki.php - created with Moodle 1.5 + (2005060201)
 
 
 $string['action'] = '-- Akce --';
@@ -159,6 +159,7 @@ $string['tabview'] = 'Èíst';
 $string['thanksforcontribution'] = 'Díky za vá¹ pøíspìvek!';
 $string['thispageisntlinkedfromanywhereelse'] = 'Tato stránka není odnikud odkazována.';
 $string['updatedpages'] = 'Aktualizované stránky';
+$string['updatedwikipages'] = 'Aktualizované wiki stránky';
 $string['uplerror'] = 'Omlouvám se, ale pøi nahrávání souboru se nìco pokazilo...';
 $string['uplinsect'] = 'Nahrát do';
 $string['uplnewnam'] = 'Ulo¾it s jiným názvem souboru';

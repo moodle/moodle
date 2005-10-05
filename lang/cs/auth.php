@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.5 + (2005060201)
+      // auth.php - created with Moodle 1.5.2 + (2005060223)
 
 
 $string['alternatelogin'] = 'Pokud sem vlo¾íte nìjaké URL, bude pou¾ito jako pøihla¹ovací stránka k tomuto systému. Tato va¹e stránka by mìla obsahovat formuláø s vlastností \'action\' nastavenou na <strong>\'$a\'</strong>, který vrací pole <strong>username</strong> a <strong>password</strong>.<br />Dbejte na to, abyste vlo¾ili platné URL! V opaèném pøípadì byste mohli komukoliv vèetnì sebe zamezit pøístupu k tìmto stránkám.<br />Chcete-li pou¾ívat standardní pøihla¹ovací stránku, nechejte toto pole prázdné.';
@@ -66,6 +66,7 @@ $string['auth_ldap_memberattribute'] = 'Volitelné: pøenastavuje název atributu è
 $string['auth_ldap_objectclass'] = 'Volitelné: parametr objectClass pou¾itý pøi pojmenovávání/vyhledávání u¾ivatelù. Vìt¹inou nemusíte mìnit.';
 $string['auth_ldap_opt_deref'] = 'Urèuje chování aliasù bìhem vyhledávání. Vyberte jednu z následujících hodnot: \"Ne\" (LDAP_DEREF_NEVER) nebo \"Ano\" (LDAP_DEREF_ALWAYS)';
 $string['auth_ldap_passwdexpire_settings'] = 'Nastavení vypr¹ení hesla LDAP';
+$string['auth_ldap_preventpassindb'] = 'Má se zabránit ukládání hesel v databázi Moodlu? Zvolíte-li \"ano\", nebudou hesla v databázi ukládána.';
 $string['auth_ldap_search_sub'] = 'Prohledávat u¾ivatele v subkontextech.';
 $string['auth_ldap_server_settings'] = 'Nastavení serveru LDAP';
 $string['auth_ldap_update_userinfo'] = 'Aktualizovat informace o u¾ivateli (pøíjmení, køestní jméno, adresa...) z LDAP serveru do Moodle. Dle potøeby definujte \'Mapování dat\'.';

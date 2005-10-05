@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // install.php - created with Moodle 1.5 + (2005060201)
+      // install.php - created with Moodle 1.5.2 + (2005060223)
 
 
 $string['admindirerror'] = 'Adresáø správy (admin) není urèen správnì';
@@ -12,7 +12,15 @@ $string['configfilenotwritten'] = 'Instalaèní skript nemohl automaticky vytvoøit
 $string['configfilewritten'] = 'config.php byl úspì¹nì vytvoøen';
 $string['configurationcomplete'] = 'Konfigurace hotová';
 $string['database'] = 'Databáze';
-$string['databasesettings'] = 'Nyní musíte nakonfigurovat spojení k databázi, kde si bude Moodle ukládat svá data. Tato databáze musí ji¾ existovat, stejnì jako musí být nastaveno u¾ivatelské jméno a heslo pro pøístup k ní.<br/>
+$string['databasecreationsettings'] = 'Nyní musíte nakonfigurovat spojení k databázi, kde si bude Moodle ukládat vìt¹inu svých dat. Tato databáze bude vytvoøena automaticky instalaèním programem Moodle4Windows s následujícím nastavením.<br/>
+<br /> <br />
+<b>Typ:</b>instalátor nastaví na \"mysql\"<br />
+<b>Hostitel:</b>instalátor nastaví na \"localhost\"<br />
+<b>Název:</b> název databáze, napø. moodle<br />
+<b>U¾ivatel:</b>instalátor nastaví na \"root\"<br />
+<b>Heslo:</b> heslo k tomuto úètu<br />
+<b>Pøedpona tabulek:</b> volitelná pøedpona, která se vlo¾í pøed názvy v¹ech tabulek (umo¾òuje mít jednu databázi pro více instalací Moodle)';
+$string['databasesettings'] = 'Nyní musíte nakonfigurovat spojení k databázi, kde si bude Moodle ukládat vìt¹inu svých dat. Tato databáze musí ji¾ existovat, stejnì jako musí být nastaveno u¾ivatelské jméno a heslo pro pøístup k ní.<br/>
 <br /> <br />
 <b>Typ:</b> mysql nebo postgres7<br />
 <b>Hostitel:</b> napø. localhost nebo db.naseskola.cz<br />
