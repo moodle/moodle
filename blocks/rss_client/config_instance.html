@@ -94,7 +94,7 @@ if ($currentaction == 'configblock') {
                     $addrsspage = $page->url_get_full(array('instanceid' => $this->instance->id, 
                                                       'sesskey' => $USER->sesskey, 'blockaction' => 'config', 
                                                       'currentaction' => 'managefeeds', 'id' => $id));
-                    print '&nbsp;<a href="'.$addrsspage.'"> '. get_string('editnewsfeeds', 'block_rss_client') .'</a><br />';
+                    print '&nbsp;<a href="'.$addrsspage.'">'. get_string('editnewsfeeds', 'block_rss_client') .'</a><br />';
                 }
             }
         ?>
