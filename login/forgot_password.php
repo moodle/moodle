@@ -12,6 +12,7 @@ httpsrequired();
 // GET PARAMS AND STRINGS
 //******************************
 
+// parameters from form
 $param = new StdClass;
 $param->action = optional_param( 'action','',PARAM_ALPHA );
 $param->email = optional_param( 'email','',PARAM_CLEAN );
@@ -19,12 +20,14 @@ $param->p = optional_param( 'p','',PARAM_CLEAN );
 $param->s = optional_param( 's','',PARAM_CLEAN );
 $param->username = optional_param( 'username','',PARAM_CLEAN );
 
+// setup text strings
 $txt = new StdClass;
 $txt->cancel = get_string('cancel');
 $txt->confirmednot = get_string('confirmednot');
 $txt->email = get_string('email');
 $txt->emailnotfound = get_string('emailnotfound');
 $txt->forgotten = get_string('passwordforgotten');
+$txt->forgottenduplicate = get_string('forgottenduplicate','moodle',get_admin() );
 $txt->forgotteninstructions = get_string('passwordforgotteninstructions');
 $txt->invalidemail = get_string('invalidemail');
 $txt->login = get_string('login');
@@ -76,6 +79,16 @@ if ($param->action=='find' and confirm_sesskey()) {
         // validate email address 1st
         if (!validate_email( $param->email )) {
             $errors[] = $txt->invalidemail;
+        }
+        elseif (count_records('user','email',$param->email) > 1) {
+            // (if there is more than one instance of the email then we
+            // cannot complete automated recovery)
+            $page = 'duplicateemail';
+
+            // just clear everything - we drop through to message page
+            unset( $user );
+            unset( $email );
+            $errors = array();
         }
         elseif (!$mailuser = get_complete_user_data('email',$param->email)) {
             $errors[] = $txt->emailnotfound;
@@ -222,6 +235,11 @@ elseif ($page=='external') {
 elseif ($page=='emailsent') {
     // mail sent with new password
     notice( $txt->emailpasswordsent, $changepasswordurl );
+}
+
+elseif ($page=='duplicateemail') {
+    // email address appears more than once
+    notice( $txt->forgottenduplicate, "{$CFG->wwwroot}/" );
 }
 
 else {
