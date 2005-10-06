@@ -387,7 +387,7 @@ function hotpot_add_chain(&$hp) {
 
 			// get titles
 			foreach ($hp->references as $i=>$reference) {
-				$filepath = $xml_quiz->fileroot.'/'.$xml_quiz->filesubdir.$reference;
+				$filepath = $xml_quiz->fileroot.'/'.$reference;
 				hotpot_get_titles_and_next_ex($hp, $filepath);
 				$hp->names[$i] = $hp->exercisetitle;
 				$hp->summaries[$i] = $hp->exercisesubtitle;
