@@ -149,11 +149,16 @@
 
     //Now, select the course if needed
     if (($restore->restoreto == 0 or $restore->restoreto == 1) and ($restore->course_id == 0) and (iscreator())) {
-        if ($courses = get_courses("all","c.fullname","c.id,c.fullname,c.shortname")) {
+        if ($courses = get_courses("all","c.fullname","c.id,c.fullname,c.shortname,c.visible")) {
             print_heading(get_string("choosecourse"));
             print_simple_box_start("center");
             foreach ($courses as $course) {
-                echo "<a href=\"restore.php?course_id=$course->id&launch=check&id=$id&file=$file\">$course->fullname ($course->shortname)</a><br />";
+                if (empty($course->visible)) {
+                    $optdimmed = ' class="dimmed" ';
+                } else {
+                    $optdimmed = '';
+                }
+                echo "<a $optdimmed href=\"restore.php?course_id=$course->id&launch=check&id=$id&file=$file\">$course->fullname ($course->shortname)</a><br />";
             }
             print_simple_box_end();
         } else {
