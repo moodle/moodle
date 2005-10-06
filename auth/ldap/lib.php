@@ -837,7 +837,7 @@ function auth_user_update($olduser, $newuser) {
                 $ambiguous = true;
                 $changed   = false;
                 if (!is_array($ldapkeys)) {
-                    $ldapkeys = $array($ldapkeys);
+                    $ldapkeys = array($ldapkeys);
                 }
                 if (count($ldapkeys) < 2) {
                     $ambiguous = false;
