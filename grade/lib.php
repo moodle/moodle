@@ -2480,7 +2480,7 @@ function grade_insert_category() {
     }
     
     // make sure the record isn't already there and insert if okay
-    if (record_exists('grade_category', 'name', $category->name, 'courseid', $category->course)) {
+    if (record_exists('grade_category', 'name', $category->name, 'courseid', $category->courseid)) {
             // category already exists
     }
     elseif ($category->name != ''){
