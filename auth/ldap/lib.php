@@ -68,7 +68,7 @@ function auth_user_login ($username, $password) {
         }
 
         // Try to bind with current username and password
-        $ldap_login = @ldap_bind($ldapconnection, $ldap_user_dn, $password);
+        $ldap_login = @ldap_bind($ldapconnection, $ldap_user_dn, stripslashes($password));
         ldap_close($ldapconnection);
         if ($ldap_login) {
             return true;
