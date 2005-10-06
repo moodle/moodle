@@ -2479,7 +2479,7 @@ function grade_insert_category() {
     }
     
     // make sure the record isn't already there and insert if okay
-    if (record_exists('grade_category', 'name', $category->name, 'courseid', $category->course)) {
+    if (record_exists('grade_category', 'name', $category->name, 'courseid', $category->courseid)) {
             // category already exists
     }
     elseif ($category->name != ''){
@@ -2797,7 +2797,7 @@ function grade_download_form($type='both') {
             echo '</td>';
         }
         echo '<td>';
-
+        
         $url = 'index.php?id='.$course->id;
         if (!empty($action)) {
             $url .= '&amp;action='.$action;
