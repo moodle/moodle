@@ -513,6 +513,7 @@ $string['forcepasswordchangehelp'] = 'Prompt user to change it on their next log
 $string['forcepasswordchangenotice'] = 'You must change your password to proceed.';
 $string['forcetheme'] = 'Force theme';
 $string['forgotten'] = 'Forgotten your username or password?';
+$string['forgottenduplicate'] = 'Automatic password recovery can not be completed as your email address appears in the database more than once. Please contact your administrator <a href=\"mailto:$a->email\">$a->firstname $a->lastname</a> .';
 $string['forgotaccount'] = 'Lost password?';
 $string['format'] = 'Format';
 $string['formathtml'] = 'HTML format';
