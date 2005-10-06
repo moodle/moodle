@@ -91,7 +91,10 @@ if ($currentaction == 'configblock') {
             } else {
                 print_string('nofeeds', 'block_rss_client');
                 if ( isadmin() ) {
-                    print '&nbsp;<a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?id='. $id .'"> '. get_string('editnewsfeeds', 'block_rss_client') .'</a><br />';
+                    $addrsspage = $page->url_get_full(array('instanceid' => $this->instance->id, 
+                                                      'sesskey' => $USER->sesskey, 'blockaction' => 'config', 
+                                                      'currentaction' => 'managefeeds', 'id' => $id));
+                    print '&nbsp;<a href="'.$addrsspage.'"> '. get_string('editnewsfeeds', 'block_rss_client') .'</a><br />';
                 }
             }
         ?>
