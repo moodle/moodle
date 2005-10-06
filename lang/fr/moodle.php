@@ -487,7 +487,8 @@ $string['forcepasswordchangehelp'] = 'Demande à l\'utilisateur de changer son mo
 $string['forcepasswordchangenotice'] = 'Vous devez changer votre mot de passe pour continuer.';
 $string['forcetheme'] = 'Imposer le thème';
 $string['forgotaccount'] = 'Mot de passe perdu&nbsp;?';
-$string['forgotten'] = 'Vous avez oublié votre nom d\'utilisateur et/ou votre mot de passe ?';
+$string['forgotten'] = 'Vous avez oublié votre nom d\'utilisateur et/ou votre mot de passe&nbsp;?';
+$string['forgottenduplicate'] = 'La récupération automatique du mot de passe ne peut pas continuer, car votre adresse de courriel figure plus d\'une fois dans la base de données. Veuillez contacter l\'administrateur de votre moodle, <a href=\"mailto:$a->email\">$a->firstname $a->lastname</a>.';
 $string['format'] = 'Format';
 $string['formathtml'] = 'Format HTML';
 $string['formatmarkdown'] = 'Format Markdown';
