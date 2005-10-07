@@ -16,6 +16,7 @@ if (!isset($CFG->hotpot_excelencodings)) {
 
 $CFG->hotpotroot = "$CFG->dirroot/mod/hotpot";
 $CFG->hotpottemplate = "$CFG->hotpotroot/template";
+$CFG->hotpotismobile = preg_match('/Alcatel|ATTWS|DoCoMo|Doris|Hutc3G|J-PHONE|Java|KDDI|KGT|LGE|MOT|Nokia|portalmmm|ReqwirelessWeb|SAGEM|SHARP|SIE-|SonyEricsson|Teleport|UP\.Browser|UPG1|Wapagsim/', $_SERVER['HTTP_USER_AGENT']);
 
 define("HOTPOT_JS", "$CFG->wwwroot/mod/hotpot/hotpot-full.js");
 
@@ -1456,27 +1457,14 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 						$this->real_outputformat==HOTPOT_OUTPUTFORMAT_BEST || 
 						empty($HOTPOT_OUTPUTFORMAT_DIR[$this->real_outputformat])
 					) {
-						// set the best output format for this browser
-						// see http://jp2.php.net/function.get-browser
-						if (function_exists('get_browser') && ini_get('browscap')) {
-							$b = get_browser();
-							// apparently get_browser is a slow 
-							// so we should store the results in $this->browser
-						} else {
-							$ua = $_SERVER['HTTP_USER_AGENT'];
-							$b = NULL;
-							// store the results in $this->browser
-							// [parent] => Firefox 0.9
-							// [platform] => WinXP
-							// [browser] => Firefox
-							// [version] => 0.9
-							// [majorver] => 0
-							// [minorver] => 9
-						}
-						if ($this->quiztype=='jmatch' || $this->quiztype=='jmix') {
-							$this->real_outputformat = HOTPOT_OUTPUTFORMAT_V6_PLUS;
-						} else {
-							$this->real_outputformat = HOTPOT_OUTPUTFORMAT_V6;
+						if ($CFG->hotpotismobile && isset($HOTPOT_OUTPUTFORMAT_DIR[HOTPOT_OUTPUTFORMAT_MOBILE])) {
+								$this->real_outputformat = HOTPOT_OUTPUTFORMAT_MOBILE;
+						} else { // PC
+							if ($this->quiztype=='jmatch' || $this->quiztype=='jmix') {
+								$this->real_outputformat = HOTPOT_OUTPUTFORMAT_V6_PLUS;
+							} else {
+								$this->real_outputformat = HOTPOT_OUTPUTFORMAT_V6;
+							}
 						}
 					}
 

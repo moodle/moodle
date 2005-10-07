@@ -198,12 +198,10 @@
 					default:
 						$hp->remove_nav_buttons();
 				}
-				switch ($hotpot->outputformat) {
-					case HOTPOT_OUTPUTFORMAT_MOBILE:
-						$hp->insert_submission_form($attemptid, '<!-- BeginSubmissionForm -->', '<!-- EndSubmissionForm -->', true);
-						break;
-					default:
-						$hp->insert_submission_form($attemptid, '<!-- BeginSubmissionForm -->', '<!-- EndSubmissionForm -->');
+				if ($CFG->hotpotismobile) {
+					$hp->insert_submission_form($attemptid, '<!-- BeginSubmissionForm -->', '<!-- EndSubmissionForm -->', true);
+				} else {
+					$hp->insert_submission_form($attemptid, '<!-- BeginSubmissionForm -->', '<!-- EndSubmissionForm -->');
 				}
 
 			} else {
