@@ -569,11 +569,8 @@ function hotpot_get_titles_and_next_ex(&$hp, $filepath, $get_next=false) {
 	$hp->exercisesubtitle = '';
 	$hp->nextexercise = '';
 
-	// open the quiz file
-	if ($fp = @fopen($filepath, 'r')) {
-
-		$source = fread($fp, filesize($filepath));
-		fclose($fp);
+	// read the quiz file source
+	if ($source = file_get_contents($filepath)) {
 
 		$next = '';
 		$title = '';
@@ -1392,7 +1389,7 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 		// read the file, if required
 		if ($this->read_file) {
 
-			if (!file_exists($this->filepath) || !$fp = fopen($this->filepath, 'r')) {
+			if (!file_exists($this->filepath) || !is_readable($this->filepath)) {
 				$this->error = get_string('error_couldnotopensourcefile', 'hotpot', $this->filepath);
 				if ($this->report_errors) {
 					error($this->error, $this->course_homeurl);
@@ -1400,9 +1397,8 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 				return;
 			}
 
-			// read in the XML source and close the file
-			$this->source = fread($fp, filesize($this->filepath));
-			fclose($fp);
+			// read in the XML source
+			$this->source = file_get_contents($this->filepath);
 
 			// convert relative URLs to absolute URLs
 			if ($this->convert_urls) {
@@ -1428,16 +1424,6 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 				$search = '%'.'(?<='.'onclick="'."location='".')'."([^']*)".'(?='."'; return false;".'")'.'%ise';
 				$replace = "hotpot_convert_navbutton_url('".$this->get_baseurl()."','".$this->reference."','\\1','".$this->course."')";
 				$this->source = preg_replace($search, $replace, $this->source);
-
-				// remove leading <!DOCTYPE[^>]*>
-				// remove leading <?xml[^>]*>
-				// remove leading <!--[.*?]-->
-
-				// prepend initial <html> tag if required (JCloze HP5)
-				//if (preg_match('|</html>\s*$|i', $this->source) && !preg_match('|^<html[^>]*>|i', $this->source)) {
-				//	$this->source = '<html>'.$this->source;
-				//}
-
 
 			} else {
 				if ($this->parse_xml) {
@@ -2121,6 +2107,16 @@ function hotpot_string_id($str) {
 	return $id;
 }
 
+if (!function_exists('file_get_contents')) {
+	// add this function for php version<4.3
+	function file_get_contents($filepath) {
+		$contents = file($filepath);
+		if (is_array($contents)) {
+			 $contents = implode('', $contents);
+		}
+		return $contents;
+	}
+}
 if (!function_exists('html_entity_decode')) {
 	// add this function for php version<4.3
 	function html_entity_decode($str) {
