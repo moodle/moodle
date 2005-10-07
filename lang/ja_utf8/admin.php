@@ -1,11 +1,11 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.6 development (2005090100)
+      // admin.php - created with Moodle 1.6 development (2005100400)
 
 
 $string['adminseesallevents'] = '管理者に全てのイベントを表示';
 $string['adminseesownevents'] = '管理者は他のユーザと同じ';
 $string['backgroundcolour'] = '透明色';
-$string['badwordsconfig'] = 'コンマで区切られた使用禁止用語を入力してください。';
+$string['badwordsconfig'] = 'カンマで区切られた使用禁止用語を入力してください。';
 $string['badwordsdefault'] = '使用禁止用語リストが空の場合、言語パックからデフォルトリストが使用されます。';
 $string['badwordslist'] = '特別使用禁止用語リスト';
 $string['blockinstances'] = 'インスタンス';
@@ -58,7 +58,7 @@ $string['configintrotimezones'] = 'ここでは世界のタイムゾーン情報
 $string['configlang'] = 'すべての画面に適用される言語を選択してください。利用者は後で設定を変更することができます。';
 $string['configlangcache'] = '言語メニューをキャッシュします。多くのメモリーおよびCPU処理能力を節約することができます。この設定を「Yes」にした場合、言語パッケージの追加または削除を行った後に数分間の更新時間を要します。';
 $string['configlangdir'] = 'ほとんどの言語は左から右に記述されますが、アラビア語やヘブライ語等は右から左に記述されます。';
-$string['configlanglist'] = 'ここを空白にすると、インストールしたMoodleに含まれる全ての言語をユーザが選択することができます。コンマで区切ることにより言語メニューを短くすることができます。例：ja_utf8,ja,en,es_es,fr,it';
+$string['configlanglist'] = 'ここを空白にすると、インストールしたMoodleに含まれる全ての言語をユーザが選択することができます。カンマで区切ることにより言語メニューを短くすることができます。例：ja_utf8,ja,en,es_es,fr,it';
 $string['configlangmenu'] = '言語選択メニューをホームページ、ログイン画面等に表示したい場合に選択してください。この設定はユーザプロフィールの表示言語設定に影響しません。';
 $string['configlocale'] = '全体に適用されるロケールを選択してください。これは日付の書式と言語に影響します。指定した言語が表示されるためには、OSに言語データがインストールされている必要があります。( 例 ja_JP.utf8、ja_JP.eucjp、en_US、es_ES ) もし分からない場合は、空白のままにしてください。';
 $string['configloginhttps'] = 'この設定をONにすることでMoodleは、ログインページのみでセキュアhttps接続 ( セキュアログイン ) を使用します。その後、一般的な速度を保つために通常のhttp URLに戻ります。警告: この設定を行うにはウェブサーバでhttpsを使用できるようにする必要があります。もし、httpsが使用できない状態でこの設定を行った場合、あなたのサイトに入ることができなくなります。';
@@ -106,7 +106,7 @@ $string['configstatsfirstrun'] = 'ここでは、cronジョブが<b>最初の</b
 $string['configstatsmaxruntime'] = '統計処理は、コンピュータに多大な負荷がかかる場合があります。このオプションと次のオプションの組み合わせで、「いつ」および「どれくらい」稼動させるか設定してください。';
 $string['configstatsruntimestart'] = '何時にcronジョブの統計処理を<b>開始</b>させますか?';
 $string['configteacherassignteachers'] = '一般の教師は他の教師をコース内に割当てる必要がありますか? 「No」の場合、コース作成者および管理者のみが教師の割当てを行うことができます。';
-$string['configthemelist'] = '空白にした場合、全てのテーマを使用することができます。テーマメニューを短くしたい場合は、コンマで区切ったテーマ名のリストを指定してください ( 空白を使用しないでください! )。例: standard,orangewhite';
+$string['configthemelist'] = '空白にした場合、全てのテーマを使用することができます。テーマメニューを短くしたい場合は、カンマで区切ったテーマ名のリストを指定してください ( 空白を使用しないでください! )。例: standard,orangewhite';
 $string['configtimezone'] = 'ここではデフォルトタイムゾーンの設定を行うことができます。これは日付表示のためのデフォルトタイムゾーンを設定するのみで、各ユーザはプロフィールの設定により、この設定を変更することができます。ここで設定する「サーバ時間」はオペレーティングシステムに対するMoodleのデフォルト設定です。これに対してユーザプロフィールの「サーバ時間」ではユーザが独自のデフォルトタイムゾーン設定を行います。';
 $string['configunzip'] = 'UNZIPプログラムの場所を指定してください ( Unixのみ、任意 )。指定した場合、zipファイルを解凍に使用されます。空白にした場合、Moodleは内部ルーチンを使用します。';
 $string['configvariables'] = '詳細設定';
