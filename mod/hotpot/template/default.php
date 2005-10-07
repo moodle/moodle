@@ -8,14 +8,13 @@ class hotpot_xml_template_default {
 		$filepath = $this->parent->template_dirpath.DIRECTORY_SEPARATOR.$filename;
 
 		// try and open the template file
-		if (!file_exists($filepath) || !$fp = fopen($filepath, "r")) {
+		if (!file_exists($filepath) || !is_readable($filepath)) {
 			$msg = 'Could not open the '.$this->parent->template_dir.' template file &quot;'.$filepath.'&quot;';
 			error($msg, $this->parent->course_homeurl);
 		}
 
 		// read in the template and close the file
-		$this->$tag = fread($fp, filesize($filepath));
-		fclose($fp);
+		$this->$tag = file_get_contents($filepath);
 
 		// expand the blocks and strings in the template
 		$this->expand_blocks($tag);
