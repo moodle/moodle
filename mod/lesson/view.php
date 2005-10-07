@@ -902,27 +902,14 @@
                     if (!$lesson->custom) {
                         $ncorrect = 0;                        
                         $temp = array();
-                        if ($pagesanswered = get_records_select("lesson_attempts",  "lessonid = $lesson->id AND 
-                                userid = $USER->id AND retry = $ntries order by timeseen")) {
-
-                            foreach ($pagesanswered as $pageanswered) {
-                                if (!array_key_exists($pageanswered->pageid, $temp)) {
-                                    $temp[$pageanswered->pageid] = array($pageanswered->correct, 1);
-                                } else {
-                                    if ($temp[$pageanswered->pageid][1] < $lesson->maxattempts) {
-                                        $n = $temp[$pageanswered->pageid][1] + 1;
-                                        $temp[$pageanswered->pageid] = array($pageanswered->correct, $n);
-                                    }
-                                }
+                        // count the number of distinct correct pages
+                        if ($correctpages = get_records_select("lesson_attempts",  "lessonid = $lesson->id AND
+                                userid = $USER->id AND retry = $ntries AND correct = 1")) {
+                            foreach ($correctpages as $correctpage) {
+                                $temp[$correctpage->pageid] = 1;
                             }
-                            foreach ($temp as $value => $key) {
-                                if ($key[0] == 1) {
-                                    $ncorrect += 1;
-                                }
-                            }
+                            $ncorrect = count($temp);
                         }
-                        $nviewed = count($temp); // this counts number of Questions the user viewed
-
                         echo "<p align=\"center\">".get_string("numberofpagesviewed", "lesson", $nviewed).
                             "</p>\n";
                         if ($lesson->minquestions) {
