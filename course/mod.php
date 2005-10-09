@@ -29,14 +29,29 @@
 
     if (isset($_POST["course"]) and confirm_sesskey()) {    // add or update form submitted
 
-        if (!$course = get_record("course", "id", $mod->course)) {
-            error("This course doesn't exist");
+        if (empty($mod->coursemodule)) { //add
+            if (! $course = get_record("course", "id", $mod->course)) {
+                error("This course doesn't exist");
+            }
+            $mod->instance = '';
+            $mod->coursemodule = '';
+        } else { //delete and update
+            if (! $cm = get_record("course_modules", "id", $mod->coursemodule)) {
+                error("This course module doesn't exist");
+            }
+
+            if (! $course = get_record("course", "id", $cm->course)) {
+                error("This course doesn't exist");
+            }
+            $mod->instance = $cm->instance;
+            $mod->coursemodule = $cm->id;
         }
 
         if (!isteacheredit($course->id)) {
             error("You can't modify this course!");
         }
-
+        
+        $mod->course = $course->id;
         $mod->modulename = clean_filename($mod->modulename);  // For safety
         $modlib = "$CFG->dirroot/mod/$mod->modulename/lib.php";
 
