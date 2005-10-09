@@ -254,6 +254,10 @@
             error("This course module doesn't exist");
         }
 
+        if (!isteacheredit($cm->course)) {
+            error("You can't modify this course!");
+        }
+
         $cm->indent += $_GET['indent'];
 
         if ($cm->indent < 0) {
