@@ -127,7 +127,7 @@
     if (empty($selectedgrade_item)) {    // Choose the first group by default
         // doesn't work with php 5 :(
         // $selectedgrade_item = array_shift(array_keys($listgrade_items));
-        $keys = array_keys($listgrade_items)
+        $keys = array_keys($listgrade_items);
         $selectedgrade_item = array_shift($keys);
     }
 
