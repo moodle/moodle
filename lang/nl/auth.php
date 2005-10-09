@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.6 development (2005060201)
+      // auth.php - created with Moodle 1.6 development (2005100400)
 
 
 $string['alternatelogin'] = 'Als je hier een URL ingeeft, dan zal die dienen als loginpagina voor deze site. De pagina moet een formulier bevatten met de actie ingesteld op <strong>\'$a\'</strong> en die de velden <strong>username</strong> en <strong>password</strong> teruggeeft.<br />Let er op dat je een juiste URL ingeeft. Zoniet sluit je jezelf uit de site.<br />Laat deze instelling leeg als je de standaard loginpagina wil gebruiken.';
@@ -17,6 +17,10 @@ $string['auth_cas_text'] = 'Veilige verbinding';
 $string['auth_cas_version'] = 'CAS-versie';
 $string['auth_casdescription'] = 'Deze methode gebruikt een CAS-server (Central Authentication Service) om gebruikers in een Single Sign On omgeving (SSO) te authenticeren. Als de ingegeven gebuikersnaam en wachtwoord volgens CAS kloppen, dan zal Moodle een nieuwe gebruiker in zijn databank maken en de gebruikersgegevens uit LDAP overnemen indien nodig. Bij volgende aanmeldingen worden dan enkel de gebruikersnaam en wachtwoord gecontroleerd.';
 $string['auth_castitle'] = 'Gebruik een CAS-server (SSO)';
+$string['auth_changepasswordhelp'] = 'Verander hulp voor wachtwoord';
+$string['auth_changepasswordhelp_expl'] = 'Toon hulp aan gebruikers die hun $a wachtwoord niet meer hebben. Deze tekst zal getoond worden ofwel in de plaats van, ofwel samen met de <strong>Wijzig wachtwoord</strong>-link of het interne Moodle-mechanisme om wachtwoorden te wijzigen. ';
+$string['auth_changepasswordurl'] = 'URL voor het wijzigen van het wachtwoord';
+$string['auth_changepasswordurl_expl'] = 'Specifieer de url waarnaar gebruikers gestuurd worden als ze hun $a wachtwoord verloren zijn. Verzet de instelling <strong>Gebruik standaard pagina voor wachtwoordwijziging</strong> naar <strong>Nee</strong>';
 $string['auth_common_settings'] = 'Algemene instellingen';
 $string['auth_data_mapping'] = 'Data mapping';
 $string['auth_dbdescription'] = 'Deze methode gebruikt een externe database om te controleren of een bepaalde gebruikersnaam en een bepaald wachtwoord geldig zijn. Als de account nieuw is dan kan informatie vanuit andere velden ook naar Moodle worden gekopieerd.';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // block_quiz_results.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
+      // block_quiz_results.php - created with Moodle 1.6 development (2005100400)
 
 
 $string['bestgrade'] = 'Het hoogste cijfer:';
@@ -10,6 +10,10 @@ $string['config_format_absolute'] = 'Absolute cijfers';
 $string['config_format_fraction'] = 'Breuken';
 $string['config_format_percentage'] = 'Percentages';
 $string['config_grade_format'] = 'Toon cijfers als:';
+$string['config_name_format'] = 'Privacy-niveau voor getoonde resultaten:';
+$string['config_names_anon'] = 'Anonieme resultaten';
+$string['config_names_full'] = 'Toon volledige namen';
+$string['config_names_id'] = 'Toon alleen id nummers';
 $string['config_no_quizzes_in_course'] = 'In deze cursus zitten nog geen testen. Je moet er minstens één toevoegen om dit blok juist te kunnen gebruiken.';
 $string['config_select_quiz'] = 'Van welke test wil je in dit blok de resultaten tonen?';
 $string['config_show_best'] = 'Hoeveel van de hoogste cijfers moeten getoond worden (0 om uit te schakelen)?';

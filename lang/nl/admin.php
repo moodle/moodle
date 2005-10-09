@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.6 development (2005090100)
+      // admin.php - created with Moodle 1.6 development (2005100400)
 
 
 $string['adminseesallevents'] = 'Beheerders zien alle gebeurtenissen';
@@ -65,13 +65,21 @@ $string['configlongtimenosee'] = 'Als het heel lang geleden is dat een leerling 
 $string['configmaxbytes'] = 'Dit bepaalt de maximumgrootte van geüploade bestanden in heel de site. De instelling is beperkt door de PHP-instelling upload_max_filesize en de Apache-instelling LimitRequestBody. Anderzijds beperkt maxbytes het bereik van groottes dat gekozen kan worden op cursus- of moduleniveau.';
 $string['configmaxeditingtime'] = 'Dit bepaalt hoe lang mensen de tijd hebben om hun forumbijdrage, feedback en dergelijke te wijzigen. Meestal is 30 minuten een goede tijd.';
 $string['configmessaging'] = 'Wil je dat het boodschappensysteem voor site-gebruikers ingeschakeld wordt?';
+$string['configmymoodleredirect'] = 'Deze instelling dwingt een verwijzing af naar de map /my voor niet-beheerders bij het aanmelden en vervangt het broodkruimelmenu door /my';
 $string['confignoreplyaddress'] = 'Soms verzendt Moodle e-mails voor een gebruiker (bijvoorbeeld bij forumberichten) Het e-mailadres dat je hier instelt wordt gebruikt als \"From\"-adres voor die gebruikers die ervoor gekozen hebben dat andere gebruikers niet rechtstreeks op hun mail mogen kunnen antwoorden (bijvoorbeeld wanneer een gebruiker zijn e-mailadres privé wil houden)';
 $string['confignotifyloginfailures'] = 'Als er mislukte aanmeldingen gelogd worden, dan kunnen er e-mailnotificaties verstuurd worden. Wie moet deze notificaties zien?';
 $string['confignotifyloginthreshold'] = 'Als notificaties over mislukte aanmeldingen verzonden moeten worden, hoeveel aanmeldingspogingen  door één gebruiker of vanaf één IP-adres zijn het melden waard?';
 $string['configopentogoogle'] = 'Als je deze instelling inschakelt, dan zal Google als gast toegelaten worden tot je site. Mensen die jouw site binnenkomen via Goodle zullen automatisch als gast aangemeld zijn. Merk op dat dit alleen toegang zal geven tot cursussen waar toegang voor gasten toegelaten is.';
 $string['configpathtoclam'] = 'Pad naar clam AV. Gewoonlijk iets als /usr/bin/clamscan of /usr/bin/clamdscan. Je hebt dit nodig om clam AV te laten lopen.';
-$string['configproxyhost'] = 'Als deze <B>server</B> een proxyserver (zoals bijvoorbeeld een firewall) nodig heeft om op het internet te komen, vul hier dan de hostname en de poort van de proxy in. Laat het veld leeg als dit niet het geval is.';
+$string['configpathtodu'] = 'Pad naar du. Waarschijnlijk iets als /usr/bin/du. Als je dit invult, dan zullen pagina\'s die mapinhoud tonen veel sneller openen bij mappen met veel bestanden in.';
+$string['configproxyhost'] = 'Als deze <b>server</b> een proxyserver (zoals bijvoorbeeld een firewall) nodig heeft om op het internet te komen, vul hier dan de hostname en de poort van de proxy in. Laat het veld leeg als dit niet het geval is.';
 $string['configquarantinedir'] = 'Als je wil dat clam AV besmette bestanden naar een quarantainemap verplaatst, zet het pad dan hier. Het moet beschrijfbaar zijn voor de webserver. Als je dit leeg laat of als je een map opgeeft die niet bestaat of niet beschrijfbaar is, dan zullen besmette bestanden verwijderd worden. Gebruik geen schuine streep achteraan het pad.';
+$string['configrequestedstudentname'] = 'Woord voor leerling, gebruikt in aangevraagde cursussen';
+$string['configrequestedstudentsname'] = 'Woord voor leerlingen, gebruikt in aangevraagde cursussen';
+$string['configrequestedteachername'] = 'Woord voor leraar, gebruikt in aangevraagde cursussen';
+$string['configrequestedteachersname'] = 'Woord voor leraren, gebruikt in aangevraagde cursussen';
+$string['configrestrictbydefault'] = 'Moeten nieuwe cursussen die in bovenstaande categorie zitten als standaardinstelling beperkte modules krijgen?';
+$string['configrestrictmodulesfor'] = 'Voor welke cursussen moet <b>ingesteld worden</b> om enkele modules uit te schakelen?';
 $string['configrunclamonupload'] = 'Clam AV laten lopen bij het uploaden van een bestand? Je hebt dan een juist pad nodig in pathtoclam om dit te laten werken. (Clam AV is een gratis virusscanner die je kunt downloaden van http://www.clamav.net/)';
 $string['configsectioninterface'] = 'Interface';
 $string['configsectionmail'] = 'E-mail';
@@ -79,7 +87,9 @@ $string['configsectionmaintenance'] = 'Onderhoud';
 $string['configsectionmisc'] = 'Varia';
 $string['configsectionoperatingsystem'] = 'Besturingssysteem';
 $string['configsectionpermissions'] = 'Rechten';
+$string['configsectionrequestedcourse'] = 'Cursusaanvragen';
 $string['configsectionsecurity'] = 'Beveiliging';
+$string['configsectionstats'] = 'Statistieken';
 $string['configsectionuser'] = 'Gebruiker';
 $string['configsecureforms'] = 'Moodle kan een extra beveiliging toepassen wanneer het gegevens aanneemt van webformulieren. Als je dit inschakelt, dan wordt de variable HTTP_REFERER vergeleken met het huidige formulieradres. In zeldzame gevallen kan dit problemen veroorzaken als de gebruiker een firewall gebruikt (zoals Zonealarm) die geconfigureerd is om HTTP_REFERER uit het webverkeer te filteren. Het symptoom is: vastgeraken op een formulier. Als je gebruikers problemen hebben met de inlogpagina (bijvoorbeeld) dan zou je kunnen overwegen om deze instelling uit te zetten, hoewel dit je site meer blootstelt aan brute kracht-aanvallen op je wachtwoord. Bij twijfel laat je deze instelling op \'ja\' staan.';
 $string['configsessioncookie'] = 'Met deze instelling kun je de naam van de cookie die gebruikt wordt voor Moodlesessies, aanpassen. Deze instelling is optioneel en enkel nuttig om te verhinderen dat cookies in conflict komen wanneer meer dan één exemplaar van Moodle binnen dezelfde website draait.';
@@ -90,6 +100,9 @@ $string['configsitepolicy'] = 'Als je een overeenkomst hebt voor het gebruik van
 $string['configslasharguments'] = 'Bestanden (afbeeldingen, uploads en dergelijke) worden via een script aangeleverd dat gebruik maakt van \'slash arguments\' (hier de tweede optie). Deze methode zorgt ervoor dat bestanden makkelijker in webbrowsers, proxyservers en dergelijke kunnen worden gecachet. Helaas staan sommige PHP-servers deze methode niet toe. Dus kies de eerste optie als je problemen hebt met het bekijken van geüploade bestanden of afbeeldingen (bijvoorbeeld afbeeldingen van gebruikers).';
 $string['configsmtphosts'] = 'Geef de volledige naam van één of meer lokale SMTP-servers die Moodle moet gebruiken om mail te versturen (bijvoorbeeld: \'mail.a.com\' of \'mail.a.com;mail.b.com\'). Als je dit veld leeg laat gebruikt Moodle de standaard PHP-methode voor het versturen van mail.';
 $string['configsmtpuser'] = 'Als je hierboven een SMTP-server hebt ingevuld en deze server authenticatie nodig heeft, vul hier dan de gebruikersnaam en het wachtwoord in.';
+$string['configstatsfirstrun'] = 'Hiermee stel je in hoever terug in de tijd dat de logs moeten herwerkt worden tijdens de <b>eerste keer</b> dat de crontaak de statistieken probeert te verwerken. Als je wel wat verkeer hebt en je server is een shared host, dan is het waarschijnlijk geen goed idee om te ver terug te gaan. Het erg zware proces zou wel eens lang kunnen lopen. (merk op voor deze instelling: 1 maand is 28 dagen. Op de grafieken en in de rapporten is een maand een kalendermaand.)';
+$string['configstatsmaxruntime'] = 'Het verwerken van statistieken is een erg belastende taak. Gebruik dus de combinatie van dit veld en het volgende om aan te geven wanneer en hoe lang het proces zal lopen.';
+$string['configstatsruntimestart'] = 'Op welk tijdstip moet de crontaak die de statistieken verwerk <b>starten</b>?';
 $string['configteacherassignteachers'] = 'Zou een gewone leraar een andere leraar moeten kunnen aanwijzen binnen de cursussen waarin hij les geeft? Als je dit op \'nee\' zet, dan kunnen alleen cursus-aanmakers en beheerders leraren aanwijzen.';
 $string['configthemelist'] = 'Laat dit leeg om gelijk welk geldig thema te gebruiken. Geef hier een door komma\'s gescheiden lijst met thema-namen als je het thema-menu wil inkorten. Bijvoorbeeld: standard,orangewhite. Let op: geen spaties!';
 $string['configtimezone'] = 'Hier kun je de standaardtijdzone instellen. Dit is slechts de STANDAARD tijdzone voor het tonen van datums - elke gebruiker kan deze instelling voor zichzelf wijzigen in zijn profiel. Op deze plaats zal de optie \"Servertijd\" de standaardtijd in Moodle gelijkzetten met de tijd van het besturingssysteem van de server, maar in het profiel van de gebruikers zal de instelling \"Servertijd\" de hier ingestelde tijdzone zijn.';
@@ -99,9 +112,12 @@ $string['configwarning'] = 'Wees voorzichtig met het veranderen van deze instell
 $string['configzip'] = 'Geef de locatie van je ZIP-programma (alleen voor UNIX). Dit is nodig om ZIP-archieven op de server te maken.';
 $string['confirmation'] = 'Bevestiging';
 $string['cronwarning'] = 'Het onderhoudsscript <a href=\"cron.php\">cron.php</a> heeft de laatste 24 uur niet gelopen. <br />Als je dit nog niet geconfigureerd hebt, lees dan het onderdeel <a href=\"../doc/?frame=install.html&#8834;=cron\">Cron configureren</a> bij de installatie-instructies.';
+$string['density'] = 'Dichtheid';
 $string['edithelpdocs'] = 'Bewerk helpbestanden';
 $string['editstrings'] = 'Bewerk strings';
 $string['filterall'] = 'Filter alle strings';
+$string['filtermatchoneperpage'] = 'Filter maakt één koppeling per pagina';
+$string['filtermatchonepertext'] = 'Filter maakt één koppeling per tekst';
 $string['filteruploadedfiles'] = 'Gebruik de filters in geüploade bestanden';
 $string['helpadminseesall'] = 'Zien beheerders alle gebeurtenissen in de kalender of alleen diegene die ze zelf nodig hebben?';
 $string['helpcalendarsettings'] = 'Configureer de kalender en datum/tijd-gerelateerde instellingen van Moodle';
@@ -115,7 +131,17 @@ $string['importtimezones'] = 'Update de volledige lijst van tijdzones';
 $string['importtimezonescount'] = '$a->count items geïmporteerd van $a->source';
 $string['importtimezonesfailed'] = 'Geen bronnen gevonden! (= slecht nieuws)';
 $string['incompatibleblocks'] = 'Niet-compatibele blokken';
+$string['latexsettings'] = 'LaTeX  renderer instellingen';
+$string['mediapluginavi'] = 'Gebruik .avi-filter';
+$string['mediapluginmov'] = 'Gebruik .mov-filter';
+$string['mediapluginmp3'] = 'Gebruik .mp3-filter';
+$string['mediapluginmpg'] = 'Gebruik .mpg-filter';
+$string['mediapluginswf'] = 'Gebruik .swf-filter';
+$string['mediapluginwmv'] = 'Gebruik .wmv-filter';
 $string['optionalmaintenancemessage'] = 'Optionele onderhoudsboodschap';
+$string['pathconvert'] = 'Pad van <i>convert</i> binary';
+$string['pathdvips'] = 'Pad van <i>dvips</i> binary';
+$string['pathlatex'] = 'Pad van <i>latex</i> binary';
 $string['pleaseregister'] = 'Registreer aub je site.  Op die manier kun je deze knop verwijderen.';
 $string['sitemaintenance'] = 'De site is in onderhoud en is op dit ogenblik niet beschikbaar';
 $string['sitemaintenancemode'] = 'Onderhoudsmodus';
