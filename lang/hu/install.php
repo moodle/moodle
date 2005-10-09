@@ -27,7 +27,9 @@ Ezt az adatbázist a Moodle4Windows telepítõ automatikusan beállítja az alábbiak 
        <b>Típus:</b> a telepítõ \"mysql\"-re állítja be<br />
        <b>Gazdagép:</b> a telepítõ \"localhost\"-ra állítja<br />
        <b>Név:</b> az adatbázis neve, pl. moodle<br />
-       <b>Felhasználó:</b> a telepítõ  \"root\"-ra állítja<br />';
+       <b>Felhasználó:</b> a telepítõ  \"root\"-ra állítja<br />
+       <strong>Jelszó:</strong> az Ön jelszava az adatbázishoz<br />
+       <b>Táblázat elõtagja:</b> opcionális elõtag az összes táblázatnévhez';
 $string['dataroot'] = 'Adatkönyvtár';
 $string['datarooterror'] = 'A megadott \'Adatkönyvtár\' nem létezik vagy nem sikerült létrehozni. Módosítsa az útvonalat vagy hozza létre a könyvtárat.';
 $string['dbconnectionerror'] = 'Nem sikerült a megadott adatbázishoz csatlakozni. Ellenõrizze adatbázisának beállításait.';
@@ -45,7 +47,7 @@ Adja meg a teljes webcímet, ahol a Moodle elérhetõ lesz. Ha portálja több URL-rõ
 Adja meg a telepítés teljes útvonalát. Ügyeljen a kis-/nagybetûk különbözésére.</p>
 
 <p><b>Adatkönyvtár:</b>
-Egy helyre lesz szüksége, ahova a Moodle a feltöltött állományokat menti. A könyvtárnak olvashatónak és a webszerver felhasználója által (ez általában \'nobody\' vagy \'apache\') ÍRHATÓNAK kell lennie, ugyanakkor nem legyen az Internetrõl közveltenül elérhetõ.</p>';
+Egy helyre lesz szüksége, ahova a Moodle a feltöltött állományokat menti. A könyvtárnak olvashatónak és a webszerver felhasználója által (ez általában \'nobody\' vagy \'apache\') ÍRHATÓNAK kell lennie, ugyanakkor ne legyen az Internetrõl közveltenül elérhetõ.</p>';
 $string['dirroot'] = 'Moodle-könyvtár';
 $string['dirrooterror'] = 'A \'Moodle-könyvtár\' beállítása feltehetõleg hibás - nem található alatta a Moodle telepítése. Az alábbi értéket visszaállítottuk.';
 $string['download'] = 'Letöltés';

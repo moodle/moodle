@@ -1,30 +1,47 @@
-<p align="center"><b>Felhaszn&aacute;l&oacute;k felt&ouml;lt&eacute;se</b></p>
+<p align="center"><strong>Felhaszn&aacute;l&oacute;k felt&ouml;lt&eacute;se</strong></p>
 
-<p>El&#337;sz&ouml;r is ne feledj&uuml;k, hogy <strong>rendszerint nincs sz&uuml;ks&eacute;g felhaszn&aacute;l&oacute;k t&ouml;meges import&aacute;l&aacute;s&aacute;ra</strong> - a karbantart&aacute;si munka m&eacute;rs&eacute;kl&eacute;se &eacute;rdek&eacute;ben el&#337;sz&ouml;r azokat a hiteles&iacute;t&eacute;si form&aacute;kat kell felder&iacute;ten&uuml;nk, amelyekhez nincs sz&uuml;ks&eacute;g k&eacute;zzel v&eacute;gzett karbantart&aacute;sra, mint amilyen a megl&eacute;v&#337; k&uuml;ls&#337; adatb&aacute;zisokhoz kapcsol&aacute;s vagy a  felhaszn&aacute;l&oacute;i hozz&aacute;f&eacute;r&eacute;s l&eacute;trehoz&aacute;s&aacute;nak a felhaszn&aacute;l&oacute;kra b&iacute;z&aacute;sa. L&aacute;sd a hiteles&iacute;t&eacute;sr&#337;l sz&oacute;l&oacute; r&eacute;szt a rendszergazda men&uuml;iben.</p>
-<p>Ha biztosak vagyunk abban, hogy egyszerre t&ouml;bb felhaszn&aacute;l&oacute;i hozz&aacute;f&eacute;r&eacute;st akarunk egy sz&ouml;veges &aacute;llom&aacute;nyb&oacute;l import&aacute;lni, akkor a sz&ouml;veges &aacute;llom&aacute;nyt az al&aacute;bbi m&oacute;don kell megform&aacute;zni:</p>
+<p>El&#337;sz&ouml;r is ne feledje, hogy <strong>rendszerint nincs sz&uuml;ks&eacute;g felhaszn&aacute;l&oacute;k t&ouml;meges 
+import&aacute;l&aacute;s&aacute;ra</strong> - a karbantart&aacute;si munka m&eacute;rs&eacute;kl&eacute;se &eacute;rdek&eacute;ben 
+el&#337;sz&ouml;r azokat a hiteles&iacute;t&eacute;si form&aacute;kat kell felder&iacute;teni, amelyekhez nincs sz&uuml;ks&eacute;g 
+k&eacute;zzel v&eacute;gzett karbantart&aacute;sra, mint amilyen a megl&eacute;v&#337; k&uuml;ls&#337; adatb&aacute;zisokhoz 
+kapcsol&aacute;s vagy a  felhaszn&aacute;l&oacute;i hozz&aacute;f&eacute;r&eacute;s l&eacute;trehoz&aacute;s&aacute;nak a 
+felhaszn&aacute;l&oacute;kra b&iacute;z&aacute;sa. L&aacute;sd a hiteles&iacute;t&eacute;sr&#337;l sz&oacute;l&oacute; r&eacute;szt a 
+rendszergazda men&uuml;iben.</p>
+<p>Ha biztos abban, hogy egyszerre t&ouml;bb felhaszn&aacute;l&oacute;i hozz&aacute;f&eacute;r&eacute;st akar egy sz&ouml;veges 
+&aacute;llom&aacute;nyb&oacute;l import&aacute;lni, akkor a sz&ouml;veges &aacute;llom&aacute;nyt az al&aacute;bbi m&oacute;don kell 
+megform&aacute;zni:</p>
 
 <ul>
   <li>Az &aacute;llom&aacute;ny minden egyes sora egy rekordot tartalmazzon.</li>
   <li>Minden rekord egym&aacute;st&oacute;l vessz&#337;vel elv&aacute;lasztott adatsort tartalmazzon.</li>
-  <li>Az &aacute;llom&aacute;ny els&#337; rekordja speci&aacute;lis bejegyz&eacute;s, amely a mez&#337;neveket tartalmazza. Ez hat&aacute;rozza meg az &aacute;llom&aacute;ny fennmarad&oacute; r&eacute;sz&eacute;nek a form&aacute;j&aacute;t. <blockquote>
-      <p><strong>Sz&uuml;ks&eacute;ges mez&#337;nevek:</strong> ezeket a mez&#337;ket az els&#337; rekordnak kell tartalmaznia - minden egyes felhaszn&aacute;l&oacute;ra vonatkoz&oacute;an</p>
-      <p></p>
-      <font color="#990000" face="Courier New, Courier, mono">username, password, firstname, lastname, email</font></p>
-</p>
-      <p><strong>Alapbe&aacute;ll&iacute;t&aacute;s szerinti mez&#337;nevek:</strong> ezek opcion&aacute;lisak - ha nem szerepelnek, &eacute;rt&eacute;keiket az els&#337;dleges rendszergazda adja.</p>
-      <p><font color="#990000" face="Courier New, Courier, mono">int&eacute;zm&eacute;ny, tansz&eacute;k, v&aacute;ros, orsz&aacute;g, nyelv, id&#337;z&oacute;na</font> </p>
-      <p><strong>Opcion&aacute;lis mez&#337;nevek: </strong>ezek mindegyike teljesen opcion&aacute;lis. A kurzusnevek a kurzusok "r&ouml;vid nevei" - ha meg van adva, a felhaszn&aacute;l&oacute; tanul&oacute;k&eacute;nt ker&uuml;l bele az adott kurzusba. A csoportneveket t&aacute;rs&iacute;tani kell a megfelel&#337; kurzussal, vagyis a csoport-1-et a kurzus-1-gyel stb.</p>
-      <p> <font color="#990000" face="Courier New, Courier, mono">idnumber, icq, phone1, phone2, address, url, description, mailformat, maildisplay, htmleditor, autosubscribe, course1, course2, course3, course4, course5, group1, group2, group3, group4, group5</font></p>
+  <li>Az &aacute;llom&aacute;ny els&#337; rekordja speci&aacute;lis bejegyz&eacute;s, amely a mez&#337;neveket tartalmazza. 
+  Ez hat&aacute;rozza meg az &aacute;llom&aacute;ny fennmarad&oacute; r&eacute;sz&eacute;nek a form&aacute;j&aacute;t. <blockquote>
+      <p><strong>Sz&uuml;ks&eacute;ges mez&#337;nevek:</strong> ezeket a mez&#337;ket az els&#337; rekordnak kell tartalmaznia - 
+      minden egyes felhaszn&aacute;l&oacute;ra vonatkoz&oacute;an</p>
+      <p><font color="#990000" face="Courier New, Courier, mono">username, password, firstname, lastname, email</font></p>
+      <p><strong>Alapbe&aacute;ll&iacute;t&aacute;s szerinti mez&#337;nevek:</strong> ezek opcion&aacute;lisak - ha nem 
+      szerepelnek, &eacute;rt&eacute;keiket az els&#337;dleges rendszergazda adja.</p>
+      <p><font color="#990000" face="Courier New, Courier, mono">int&eacute;zm&eacute;ny, tansz&eacute;k, v&aacute;ros, orsz&aacute;g, nyelv, 
+      id&#337;z&oacute;na</font> </p>
+      <p><strong>Opcion&aacute;lis mez&#337;nevek: </strong>ezek mindegyike teljesen opcion&aacute;lis. A kurzusnevek a kurzusok "r&ouml;vid nevei" 
+      - ha meg van adva, a felhaszn&aacute;l&oacute; tanul&oacute;k&eacute;nt ker&uuml;l bele az adott kurzusba. A csoportneveket 
+      t&aacute;rs&iacute;tani kell a megfelel&#337; kurzussal, vagyis a group1-et a course1-gyel stb.</p>
+      <p> <font color="#990000" face="Courier New, Courier, mono">idnumber, icq, phone1, phone2, address, url, description, mailformat, 
+      maildisplay, htmleditor, autosubscribe, course1, course2, course3, course4, course5, group1, group2, group3, group4, group5</font></p>
     </blockquote>
     </li>
-  <li>Az adatok k&ouml;z&ouml;tti vessz&#337;ket &amp;#44 form&aacute;ban kell megadni - a parancssor ezt automatikusan vissza&iacute;rja vessz&#337;v&eacute;. </li>
-  <li>Igen-nem t&iacute;pus&uacute; mez&#337;k eset&eacute;n 0-val jel&ouml;lj&uuml;k a hamis, 1-gyel az igaz &eacute;rt&eacute;ket. </li>
-  <li>Megjegyz&eacute;s: Ha egy felhaszn&aacute;l&oacute; m&aacute;r regisztr&aacute;lva van a Moodle felhaszn&aacute;l&oacute;i adatb&aacute;zis&aacute;ban, akkor ez a parancssor visszaadja a felhaszn&aacute;l&oacute;i azonos&iacute;t&oacute;sz&aacute;mot (adatb&aacute;zisbeli mutat&oacute;t) az adott felhaszn&aacute;l&oacute;hoz, &eacute;s tanul&oacute;k&eacute;nt fogja regisztr&aacute;lni a megadott kurzusok b&aacute;rmelyik&eacute;be AN&Eacute;LK&Uuml;L, hogy friss&iacute;ten&eacute; a t&ouml;bbi megadott adatot.</li>
+  <li>Az adatok k&ouml;z&ouml;tti vessz&#337;ket &amp;#44; form&aacute;ban kell megadni - a parancssor ezt automatikusan vissza&iacute;rja 
+  vessz&#337;v&eacute;. </li>
+  <li>Igen-nem t&iacute;pus&uacute; mez&#337;k eset&eacute;n 0-val jel&ouml;lje a hamis, 1-gyel az igaz &eacute;rt&eacute;ket. </li>
+  <li>Megjegyz&eacute;s: Ha egy felhaszn&aacute;l&oacute; m&aacute;r regisztr&aacute;lva van a Moodle felhaszn&aacute;l&oacute;i 
+  adatb&aacute;zis&aacute;ban, akkor ez a parancssor visszaadja a felhaszn&aacute;l&oacute;i azonos&iacute;t&oacute;sz&aacute;mot 
+  (adatb&aacute;zisbeli mutat&oacute;t) az adott felhaszn&aacute;l&oacute;hoz, &eacute;s tanul&oacute;k&eacute;nt fogja regisztr&aacute;lni 
+  a megadott kurzusok b&aacute;rmelyik&eacute;be AN&Eacute;LK&Uuml;L, hogy friss&iacute;ten&eacute; a t&ouml;bbi megadott adatot.</li>
 </ul>
   
   
 <p>&Iacute;me egy p&eacute;lda egy &eacute;rv&eacute;nyes import&aacute;l&aacute;si &aacute;llom&aacute;nyra:</p>
-<p><font size="-1" face="Courier New, Courier, mono">username, password, firstname, lastname, email, lang, idnumber, maildisplay, course1, group1<br />
+<p><font size="-1" face="Courier New, Courier, mono">username, password, firstname, lastname, email, lang, idnumber, 
+maildisplay, course1, group1<br />
 jonest, verysecret, Tom, Jones, jonest@someplace.edu, en, 3663737, 1, Intro101, Section 1<br />
 reznort, somesecret, Trent, Reznor, reznort@someplace.edu, en_us, 6736733, 0, Advanced202, Section 3</font></p>
-
