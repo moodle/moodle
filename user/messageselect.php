@@ -33,6 +33,12 @@
         }
     }
 
+    if (empty($SESSION->emailselect[$id]) || $messagebody) {
+        $SESSION->emailselect[$id] = array('messagebody' => $messagebody);
+    }
+
+    $messagebody = $SESSION->emailselect[$id]['messagebody'];
+
     $count = 0;
 
     foreach ($_GET as $k => $v) {
@@ -66,14 +72,14 @@
         print_heading($heading);
     }
 
-    if (!empty($messagebody) && !$edit && !$deluser) {
+    if (!empty($messagebody) && !$edit && !$deluser && ($preview || $send)) {
         if (count($SESSION->emailto[$id])) {
             if ($preview) {
                 echo '<form method="post" action="messageselect.php" style="margin: 0 20px;">
 <input type="hidden" name="returnto" value="'.stripslashes($returnto).'">
 <input type="hidden" name="id" value="'.$id.'">
 <input type="hidden" name="format" value="'.$format.'">
-<input type="hidden" name="messagebody" value="'.htmlentities(stripslashes($messagebody)).'">';
+';
                 echo "<br/><h3>".get_string('previewhtml')."</h3><div class=\"messagepreview\">\n".format_text(stripslashes($messagebody),$format)."\n</div>";
                 echo "\n<p align=\"center\"><input type=\"submit\" name=\"send\" value=\"Send\" /> <input type=\"submit\" name=\"edit\" value=\"Edit\" /></p>\n</form>";
             } elseif ($send) {
@@ -84,6 +90,7 @@
                 if ($good) {
                     print_heading(get_string('messagedselectedusers'));
                     unset($SESSION->emailto[$id]);
+                    unset($SESSION->emailselect[$id]);
                 } else {
                     print_heading(get_string('messagedselectedusersfailed'));
                 }
