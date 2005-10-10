@@ -472,7 +472,7 @@ function stats_get_parameters($time,$report) {
         // number of weeks to go back = time - 10 * 4 (weeks) + base week
         $param->limit = ($time - 10) * 4;
         $param->table = 'weekly';
-        $param->timeafter = strtotime("-".($time - 10)." weeks",stats_get_base_weekly());
+        $param->timeafter = strtotime("-".(($time - 10)*4)." weeks",stats_get_base_weekly());
     } else { // monthlies.
         // number of months to go back = time - 20 * months + base month
         $param->limit = $time - 20;
@@ -749,12 +749,15 @@ function stats_get_report_options($courseid,$mode) {
 
 function stats_fix_zeros($stats,$timeafter,$timestr,$line2=true,$line3=false) {
 
-    $now = time();
     $timestr = str_replace('user_','',$timestr); // just in case.
+    $fun = 'stats_get_base_'.$timestr;
+
+    $now = $fun();
 
     $times = array();
     // add something to timeafter since it is our absolute base
-    $timeafter += 60*60*24;
+    $actualtimes = array_keys($stats);
+    $timeafter = $actualtimes[0];
     while ($timeafter < $now) {
         $times[] = $timeafter;
         if ($timestr == 'daily') {
