@@ -64,12 +64,6 @@ function stats_cron_daily () {
         return STATS_RUN_ABORTED;
     }
 
-    //and we're not before our runtime
-    $timetocheck = strtotime("$CFG->statsruntimestarthour:$CFG->statsruntimestartminute today");
-    if (time() < $timetocheck) {
-        return STATS_RUN_ABORTED;
-    }
-
     mtrace("Running daily statistics gathering...");
     set_config('statslastdaily',time());
 
@@ -78,6 +72,7 @@ function stats_cron_daily () {
     static $daily_modules;
     
     if (empty($daily_modules)) {
+        $daily_modules = array();
         $mods = get_records("modules");
         foreach ($mods as $mod) {
             require_once($CFG->dirroot.'/mod/'.$mod->name.'/lib.php');
@@ -207,12 +202,6 @@ function stats_cron_weekly () {
         return STATS_RUN_ABORTED;
     }
 
-    //and we're not before our runtime
-    $timetocheck = strtotime("$CFG->statsruntimestarthour:$CFG->statsruntimestartminute today");
-    if (time() < $timetocheck) {
-        return STATS_RUN_ABORTED;
-    }
-
     mtrace("Running weekly statistics gathering...");
     set_config('statslastweekly',time());
 
@@ -221,6 +210,7 @@ function stats_cron_weekly () {
     static $weekly_modules;
     
     if (empty($weekly_modules)) {
+        $weekly_modules = array();
         $mods = get_records("modules");
         foreach ($mods as $mod) {
             require_once($CFG->dirroot.'/mod/'.$mod->name.'/lib.php');
@@ -262,6 +252,13 @@ function stats_cron_weekly () {
             
             $stat->courseid = $course->id;
             $stat->timeend = $nextsunday;
+
+            foreach (array_keys((array)$stat) as $key) {
+                if (!isset($stat->$key)) {
+                    $stat->key = 0; // we don't want nulls , so avoid them.
+                }
+            }
+
             insert_record('stats_weekly',$stat,false); // don't worry about the return id, we don't need it.
 
             $students = array();
@@ -312,12 +309,6 @@ function stats_cron_monthly () {
         return STATS_RUN_ABORTED;
     }
     
-    //and we're not before our runtime
-    $timetocheck = strtotime("$CFG->statsruntimestarthour:$CFG->statsruntimestartminute today");
-    if (time() < $timetocheck) {
-        return STATS_RUN_ABORTED;
-    }
-
     mtrace("Running monthly statistics gathering...");
     set_config('statslastmonthly',time());
 
@@ -326,6 +317,7 @@ function stats_cron_monthly () {
     static $monthly_modules;
     
     if (empty($monthly_modules)) {
+        $monthly_modules = array();
         $mods = get_records("modules");
         foreach ($mods as $mod) {
             require_once($CFG->dirroot.'/mod/'.$mod->name.'/lib.php');
@@ -362,6 +354,13 @@ function stats_cron_monthly () {
             
             $stat->courseid = $course->id;
             $stat->timeend = $nextmonthend;
+
+            foreach (array_keys((array)$stat) as $key) {
+                if (!isset($stat->$key)) {
+                    $stat->key = 0; // we don't want nulls , so avoid them.
+                }
+            }
+
             insert_record('stats_monthly',$stat,false); // don't worry about the return id, we don't need it.
 
             $students = array();
@@ -814,7 +813,7 @@ function stats_check_uptodate($courseid=0) {
 
     $latestday = stats_get_start_from('daily');
 
-    if ((time() - 60*60*24*2) < $lastday) { // we're ok
+    if ((time() - 60*60*24*2) < $latestday) { // we're ok
         return true;
     }
 
