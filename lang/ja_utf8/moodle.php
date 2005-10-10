@@ -1245,10 +1245,9 @@ $string['weekshow'] = '$a にこの週を表示する';
 $string['welcometocourse'] = '$a へようこそ';
 $string['welcometocoursetext'] = '$a->coursename へようこそ!
 
-受講している皆さんのことを知ることができるように、
-まず最初にプロフィールのページに個人情報を入力してください。
+まだプロフィールの編集が終わっていない場合は、私達が受講している皆さんのことを知ることができるように、コースの中でプロフィールページを編集してください:
 
-  $a->profileurl';
+ $a->profileurl';
 $string['whattocallzip'] = 'Zipファイルの名称は?';
 $string['withchosenfiles'] = '選択したものを';
 $string['withoutuserdata'] = 'ユーザデータを除く';
