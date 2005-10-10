@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.6 development (2005081700)
+      // moodle.php - created with Moodle 1.6 development (2005100400)
 
 
 $string['action'] = 'Eylem';
@@ -151,14 +151,12 @@ $string['categoryduplicate'] = '\'$a\' isminde bir kategori zaten var!';
 $string['changedpassword'] = 'Þifre deðiþti';
 $string['changepassword'] = 'Þifre deðiþtir';
 $string['changessaved'] = 'Deðiþiklikler kaydedildi';
-$string['checkall'] = 'Tümünü seç';
 $string['checkingbackup'] = 'Yedek kontrol ediliyor';
 $string['checkingcourse'] = 'Kurs kontrol ediliyor';
 $string['checkingforbbexport'] = 'BlackBoard çýkarmasý için kontrol ediliyor';
 $string['checkinginstances'] = 'Tekrarlarý kontrol ediliyor';
 $string['checkingsections'] = 'Bölümler kontrol ediliyor';
 $string['checklanguage'] = 'Dili kontrol et';
-$string['checknone'] = 'Hiçbirini seçme';
 $string['childcoursenotfound'] = 'Alt kurs bulunamadý';
 $string['choose'] = 'Seç';
 $string['choosecourse'] = 'Bir kurs seçiniz';
@@ -416,11 +414,16 @@ $string['emailpasswordsent'] = 'Þifre deðiþimini onayladýðýnýz için teþekkür ede
 <p>Yeni þifreniz otomatik olarak oluþturulmuþtur ve isterseniz <a href=$a->link>þifre deðiþim sayfasýný</a> kullanarak hatýrlayacaðýnýz bir þifre oluþturabilirsiniz.';
 $string['enable'] = 'Etkinleþtir';
 $string['encryptedcode'] = 'Þifrelenmiþ kod';
+$string['enroldate'] = 'Tarih aralýðý';
+$string['enrolenddate'] = 'Bitiþ tarihi';
+$string['enrolenddaterror'] = 'Kayýt bitiþ tarihi kayýt baþlangýç tarihinden önce olamaz';
+$string['enrollable'] = 'Kursa kayýt olunabilir';
 $string['enrolledincourse'] = '\"$a\" kursuna kayýt yapýldý';
 $string['enrolledincoursenot'] = '\"$a\" kursuna kayýt yapýlmadý';
 $string['enrollfirst'] = 'Site etkinliklerini görebilmeniz için derslerden en az bir tanesine kaydolmak durumundasýnýz.';
 $string['enrolme'] = 'Beni bu kursa kaydet';
 $string['enrolmentconfirmation'] = 'Bu kursa kendi kendinizi kaydetmek üzereseniz. <br /> Bunu yapmak istediðinizden emin misiniz?';
+$string['enrolmentend'] = 'Kayýt Bitiþi';
 $string['enrolmentkey'] = 'Kayýt anahtarý';
 $string['enrolmentkeyfrom'] = 'Bu kurs kaydý için bir defalýðýna kullanacaðýnýz özel bir \'Kayýt Anahtarý\' gerekmektedir.<br />
 Eðer bu anahtarý bilmiyorsanýz bu kiþiden isteyebilirsiniz: $a';
@@ -431,7 +434,9 @@ $string['enrolmentnewuser'] = '$a->user, \"$a->course\" dersine kaydoldu';
 $string['enrolmentnointernal'] = 'Manual olarak yapýlan kayýtlar þu anda etkin deðil';
 $string['enrolmentnotyet'] = 'Üzgünüz, bu derse þu tarihe kadar eriþemezsiniz <br /> $a';
 $string['enrolments'] = 'Ders kayýtlarý';
+$string['enrolmentstart'] = 'Kayýt Baþlangýcý';
 $string['enrolperiod'] = 'Kayýt süresi';
+$string['enrolstartdate'] = 'Baþlangýç tarihi';
 $string['entercourse'] = 'Bu derse girmek için týklayýnýz';
 $string['enteremailaddress'] = 'Þifrenizi sýfýrlamak ve yeni þifrenizi
 epostayla göndermek için eposta adresinizi yazýnýz.';
@@ -449,7 +454,17 @@ $string['existingcoursedeleting'] = 'Var olan kurs, önceki dersi sil';
 $string['existingcreators'] = 'Mevcut kurs oluþturucular';
 $string['existingstudents'] = 'Kayýtlý öðrenci';
 $string['existingteachers'] = 'Mevcut eðitmenler';
+$string['expirynotify'] = 'Kayýt bitiþ onayý';
+$string['expirynotifystudents'] = 'Öðrencileri bilgilendir';
+$string['expirynotifystudentsemail'] = 'Sevgili öðrenci:
+
+Bu uyarý $a->threshold gün içinde kayýt süresinin biteceði $a->course kursuna kaydýnýz hakkýndadýr.
+
+Lütfen daha fazla bilgi için eðitimcinizle iletiþim kurunuz.';
+$string['expirythreshold'] = 'Aralýk';
 $string['explanation'] = 'Açýklama';
+$string['extendenrol'] = 'Kaydý uzat';
+$string['extendperiod'] = 'Uzatýlan süre';
 $string['failedloginattempts'] = 'Son giriþinizden beri $a->attempts hatalý giriþ yapýldý';
 $string['failedloginattemptsall'] = '$a->accounts hesap için $a->attempts hatalý giriþ yapýldý';
 $string['feedback'] = 'Geribildirim';
@@ -596,6 +611,7 @@ $string['includenoneusers'] = 'Hiçbir kullanýcýyý dahil etme';
 $string['includeuserfiles'] = 'Kullanýcý dosyalarýný dahil et';
 $string['info'] = 'Bilgi';
 $string['institution'] = 'Kurum';
+$string['instudentview'] = '(öðrenci görünümü)';
 $string['invalidemail'] = 'Geçersiz eposta adresi';
 $string['invalidlogin'] = 'Geçersiz giriþ, tekrar deneyin';
 $string['ip_address'] = 'IP Adresi';
@@ -783,6 +799,7 @@ $string['newusers'] = 'Yeni Kullanýcýlar';
 $string['next'] = 'Sonraki';
 $string['no'] = 'Hayýr';
 $string['nobody'] = 'Hiçkimse';
+$string['nochange'] = 'Deðiþiklik yok';
 $string['nocoursesfound'] = 'Bu kelimeyle ilgili bir ders bulunamadý \'$a\'';
 $string['nocoursesyet'] = 'Bu kategoride ders yoktur';
 $string['nodstpresets'] = 'Yönetici Yaz Saati Uygulamasýný desteðini etkinleþtirmedi.';
@@ -815,6 +832,7 @@ $string['nostudentsyet'] = 'Bu derse henüz bir öðrenci kaydolmadý';
 $string['nosuchemail'] = 'Böyle bir eposta adresi yoktur';
 $string['notavailable'] = 'Ulaþýlamaz';
 $string['noteachersyet'] = 'Bu derste henüz bir eðitmen yoktur';
+$string['notenrollable'] = 'Bu kursa þu anda kayýt olunamaz.';
 $string['notenrolled'] = '$a bu derse kaydolmadý.';
 $string['noteuserschangednonetocourse'] = 'Dikkat: Kullanýcý verisini geri yüklerken kurs kullanýcýlarýnýn da geri yüklenmesi gerekiyor (etkinlikler, dosyalar, mesajlardaki). Bu ayar sizin için deðiþtirildi.';
 $string['nothingnew'] = 'Son giriþinizden beri yeni bir þey yok';
