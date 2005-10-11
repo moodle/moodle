@@ -160,10 +160,10 @@ function stats_cron_daily () {
             stats_get_course_users($course,$timesql,$students,$teachers);
 
             foreach ($students as $user) {
-                stats_do_daily_user_cron($course,$user,1,$timesql,$nextmidnight,'daily',$daily_modules);
+                stats_do_daily_user_cron($course,$user,1,$timesql,$nextmidnight,$daily_modules);
             }
             foreach ($teachers as $user) {
-                stats_do_daily_user_cron($course,$user,2,$timesql,$nextmidnight,'daily',$daily_modules);
+                stats_do_daily_user_cron($course,$user,2,$timesql,$nextmidnight,$daily_modules);
             }
         }
         $timestart = $nextmidnight;
@@ -255,7 +255,7 @@ function stats_cron_weekly () {
 
             foreach (array_keys((array)$stat) as $key) {
                 if (!isset($stat->$key)) {
-                    $stat->key = 0; // we don't want nulls , so avoid them.
+                    $stat->$key = 0; // we don't want nulls , so avoid them.
                 }
             }
 
@@ -345,6 +345,8 @@ function stats_cron_monthly () {
             $sql = 'SELECT ceil(avg(students)) as students, ceil(avg(teachers)) as teachers, ceil(avg(activestudents)) as activestudents,ceil(avg(activeteachers)) as activeteachers,
                        sum(studentreads) as studentreads, sum(studentwrites) as studentwrites, sum(teacherreads) as teacherreads, sum(teacherwrites) as teacherwrites,
                        sum(logins) as logins FROM '.$CFG->prefix.'stats_daily WHERE courseid = '.$course->id.' AND '.$timesql;
+
+            $stat = get_record_sql($sql);
             
             $stat->uniquelogins = 0;
             if ($course->id == SITEID) {
@@ -357,7 +359,7 @@ function stats_cron_monthly () {
 
             foreach (array_keys((array)$stat) as $key) {
                 if (!isset($stat->$key)) {
-                    $stat->key = 0; // we don't want nulls , so avoid them.
+                    $stat->$key = 0; // we don't want nulls , so avoid them.
                 }
             }
 
@@ -635,7 +637,7 @@ function stats_do_aggregate_user_cron($course,$user,$roleid,$timesql,$timeend,$t
     $stat->timeend  = $timeend;
 
     $sql = 'SELECT sum(reads) as reads, sum(writes) as writes FROM '.$CFG->prefix.'stats_user_daily WHERE courseid = '.$course->id.' AND '.$timesql
-        ." AND roleid=2 AND userid = ".$stat->userid." AND stattype='activity'"; // add on roleid in case they have teacher and student records.
+        ." AND roleid=".$roleid." AND userid = ".$stat->userid." AND stattype='activity'"; // add on roleid in case they have teacher and student records.
     
     $r = get_record_sql($sql);
     $stat->reads = (empty($r->reads)) ? 0 : $r->reads;
@@ -645,7 +647,7 @@ function stats_do_aggregate_user_cron($course,$user,$roleid,$timesql,$timeend,$t
 
     if ($course->id == SITEID) {
         $sql = 'SELECT sum(reads) as reads, sum(writes) as writes FROM '.$CFG->prefix.'stats_user_daily WHERE courseid = '.$course->id.' AND '.$timesql
-            ." AND roleid=2 AND userid = ".$stat->userid." AND stattype='logins'"; // add on roleid in case they have teacher and student records.
+            ." AND roleid=".$roleid." AND userid = ".$stat->userid." AND stattype='logins'"; // add on roleid in case they have teacher and student records.
         
         $r = get_record_sql($sql);
         $stat->reads = (empty($r->reads)) ? 0 : $r->reads;
@@ -751,7 +753,7 @@ function stats_fix_zeros($stats,$timeafter,$timestr,$line2=true,$line3=false) {
 
     $timestr = str_replace('user_','',$timestr); // just in case.
     $fun = 'stats_get_base_'.$timestr;
-
+	
     $now = $fun();
 
     $times = array();

@@ -95,8 +95,9 @@
             $sql =  'SELECT DISTINCT s.userid,s.roleid,u.firstname,u.lastname,u.idnumber,u.nickname FROM '.$CFG->prefix.'stats_user_'.$param->table.' s JOIN '.$CFG->prefix.'user u ON u.id = s.userid '
                 .'WHERE courseid = '.$course->id.' AND timeend > '.$param->timeafter  . ((!empty($param->stattype)) ? ' AND stattype = \''.$param->stattype.'\'' : '');
             if (!isadmin()) {
-                $sql .= ' AND s.roleid = 1 OR s.userid = '.$USER->id;
+                $sql .= ' AND (s.roleid = 1 OR s.userid = '.$USER->id .")";
             }
+            $sql .= " ORDER BY s.roleid ";
         } else {
             $sql = 'SELECT s.userid,u.firstname,u.lastname,u.idnumber,u.nickname,1 AS roleid FROM '.$CFG->prefix.'user_students s JOIN '.$CFG->prefix.'user u ON u.id = s.userid WHERE course = '.$course->id;
         }
