@@ -1,11 +1,11 @@
 <?PHP // $Id$ 
-      // choice.php - created with Moodle 1.6 development (2005060201)
+      // choice.php - created with Moodle 1.6 development (2005090100)
 
 
 $string['addmorechoices'] = '선택사항을 더 추가하시오';
 $string['allowupdate'] = '선택한 것을 수정할 수 있도록 허용합니다.';
 $string['answered'] = '응답함';
-$string['choice'] = '선택지 $a';
+$string['choice'] = '선택지';
 $string['choiceclose'] = '까지';
 $string['choicename'] = '조사명';
 $string['choiceopen'] = '열기';
@@ -21,7 +21,7 @@ $string['modulename'] = '선택';
 $string['modulenameplural'] = '선택지';
 $string['mustchooseone'] = '저장하기전에 답을 선택하여야 합니다. 저장되지 않았습니다.';
 $string['notanswered'] = '아직 답을 제출하지 않았습니다';
-$string['notopenyet'] = '죄송합니다만, 이 활동은 $a까지 활용될 수 없습니다.';
+$string['notopenyet'] = '죄송합니다만, 이 활동은 $a까지는 이용할 수 없습니다.';
 $string['privacy'] = '결과의 정보보호';
 $string['publish'] = '결과를 공개합니다';
 $string['publishafteranswer'] = '학생들이 응답한 후 학생들에게 결과를 공개한다.';
@@ -38,7 +38,7 @@ $string['spaceleft'] = '이용가능한 공간';
 $string['spacesleft'] = '이용가능한 공간들';
 $string['taken'] = '선택';
 $string['timerestrict'] = '이 기간중에 답하는 것을 제한합니다.';
-$string['viewallresponses'] = '학생들의 응답 보고 피드백 쓰기';
+$string['viewallresponses'] = '$a 에대한 학생들의 응답 보고 피드백 쓰기';
 $string['yourselection'] = '당신의 선택';
 
 ?>

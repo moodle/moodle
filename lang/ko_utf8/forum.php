@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.6 development (2005081700)
+      // forum.php - created with Moodle 1.6 development (2005090100)
 
 
 $string['addanewdiscussion'] = '새 토론 주제 추가하기';
@@ -100,6 +100,7 @@ $string['nonews'] = '아직 뉴스가 게시되지 않았습니다.';
 $string['noposts'] = '게시물 없음';
 $string['nopostscontaining'] = '\'$a\' 를 포함하는 게시물이 없습니다.';
 $string['nosubscribers'] = '이 포럼의 구독자가 아직 없습니다.';
+$string['nothingnew'] = '새로운일이 없습니다.';
 $string['notingroup'] = '죄송합니다. 이 포럼을 보기위해서는 그룹안에 속해있어야 합니다. ';
 $string['notrackforum'] = '읽지 않은 메시지는 경로 추적하지 마시오.';
 $string['nownotsubscribed'] = '$a->name 께서는 이메일로 \'$a->forum\' 의 복사본을 받으실 수 없게 됩니다.';
@@ -192,7 +193,7 @@ $string['trackingtype'] = '이 포럼의 글타래 추적을 하시겠습니까?
 $string['unread'] = '읽지 않음';
 $string['unreadposts'] = '읽지 않은 글';
 $string['unreadpostsnumber'] = '$a 개의 읽지 않은 글';
-$string['unreadpostsone'] = '하나의 읽지 않은 글';
+$string['unreadpostsone'] = '1 읽지 않은 글';
 $string['unsubscribe'] = '이 포럼을 이메일로 구독하지 않기';
 $string['unsubscribed'] = '이메일로 구독 않함';
 $string['unsubscribeshort'] = '이메일로 구독하지 않는다';

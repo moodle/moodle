@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>무들문서: Apache, PHP, MySQL 설치</title>
+	<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+
+<body>
+<h1>Apache, MySQL, PHP의 설치</h1>
+<blockquote>
+  <p>무들은 PHP라 불리는 스크립트 언어로 작성되어 있으며 대부분의 자료들은 데이터 베이스에 저장되어 있습니다. 우리가 추천하는 데이터베이스는 MySQL입니다. 무들을 설치하기 전 컴퓨터가 원할하게 웹 서비스를 하기위해서는 반드시 PHP 및 데이터베이스가 설치되어 작동하고 있어야 합니다. 이러한 패키지를 설치하는 것은 일반 컴퓨터 사용자들에게는 꽤 까다로운 일이어서, 여기에서는 다양한 구동환경 하에서 이러한 패키지들을 가능한 쉽게 설치하는 방법을 안내하려고 합니다.</p>
+  <ul>
+    <li><a href="#host" class="questionlink">서버 임대</a></li>
+    <li><a href="#mac" class="questionlink">Mac OS X</a></li>
+    <li><a href="#redhat" class="questionlink">Redhat Linux</a></li>
+    <li><a href="#windows" class="questionlink">Windows</a></li>
+  </ul>
+  <p class="questionlink">&nbsp;</p>
+  <h3 class="sectionheading"><a name="host" id="host"></a>서버 임대</h3>
+  <blockquote>
+    <p>불행하게도 임대 서비스는 다양해서 어떤 환경에서 구동되는지 알 길이 없다. 어떤 곳에서는 여러분을 위해 무들을 설치해 주는 곳도 있다.</p>
+    <p>대부분은 여러분의 사이트를 조정하고, 데이터베이스를 생성해 주며 cron을 조정할 수 있도록 웹기반의 조절판을 제공할 것이다. 또 어떤 곳에서는 ssh 등을 통한 터미널 접근도 허용해서 여러가지 일들을 명령어 쉘로 처리할 수 있게도 한다.</p>
+    <p>여러분 스스로 <a href="./?file=install.html">설치 안내</a>에 의해서 작업을 진행해야 하며 한번에 하나씩 차근 차근 해 나가야 한다. 만일 난관에 부딛히면 임대 서버 관리자에게 도움을 요청하기 바랍니다. </p>
+    <p>&nbsp;</p>
+  </blockquote>
+  <h3 class="sectionheading"><a name="mac" id="mac"></a>Mac OS X</h3>
+  <blockquote>
+    <p>가장 손쉬운 방법은 Apple사에서 제공하는 Apache 서버를, PHP와 MySQL은 Marc Liyanage가 손봐놓은 꾸러미를 사용하는 것입니다. 아래에 나와있는 것들은 모두 우리가 함부로 복제할 수 없는 아주 좋은 설명서들 입니다.</p>
+    <blockquote>
+      <p><strong>PHP</strong>: 이곳에서 내려 받으세요: <a href="http://www.entropy.ch/software/macosx/php/" target="_top">http://www.entropy.ch/software/macosx/php/</a></p>
+      <p><strong>MySQL</strong>:  이곳에서 내려 받으세요: <a href="http://www.entropy.ch/software/macosx/mysql/" target="_top">http://www.entropy.ch/software/macosx/mysql/</a></p>
+    </blockquote>
+    <p>일단 위의 설치가 끝나면 <a href="./?file=install.html">무들 설치 안내서</a>를 이용하여 무들 설치에 바로 들어갈 수 있습니다.</p>
+    <p>좀 더 자세한 내용을 살펴보려면 <a href="http://moodle.org/wiki/index.php/InstallingMoodle">http://moodle.org/wiki/index.php/InstallingMoodle</a>을 참조하세요</p>
+    <p>&nbsp;</p>
+  </blockquote>
+  <h3 class="sectionheading"><a name="redhat"></a>Redhat Linux</h3>
+  <blockquote>
+    <p>적절한 Apache, PHP, MySQL의 RPM 패키지를 가져다 설치하십시요. 사람들이 자주 빼먹는 것 중 하나는 php-mysql 패키지인데 이게 있어야 PHP와 MySQL이 연동됩니다.</p>
+    <p>일단 이것들의 설치가 끝나면 <a href="./?file=install.html">무들 설치 안내서</a>를 이용하여  무들 설치에 바로 들어갈 수 있습니다.</p>
+    <p>좀 더 자세한 내용을 살펴보려면 <a href="http://moodle.org/wiki/index.php/InstallingMoodle">http://moodle.org/wiki/index.php/InstallingMoodle</a>을 참조하세요</p>
+  </blockquote>
+  <p>&nbsp;</p>
+  <h3 class="sectionheading"><a name="windows" id="windows"></a>윈도그즈</h3>
+  <blockquote>
+    <p>가장 손쉬운 방법은  <a href="http://www.easyphp.org/" target="_blank">EasyPHP</a>에 접속하여 여러분이 필요로 하는 소프트웨어 묶음을 가져와 설치하는 것입니다. 하나하나 순서대로 보여드리겠습니다.</p>
+    <ol>
+      <li> 우선 이전에 MySQL을 설치했던 적이 있다면, 모두 "프로그램 제거(uninstall)"를 실행하여 제거한 후, 모든 MySQL 파일을 지우고 반드시 <strong>c:\my.cnf</strong> 와 <strong>c:\windows\my.ini</strong>을 삭제합니다. 아마 <strong>my.cnf</strong> 또는 <strong>my.ini</strong>라고 되어있는 것은 모두 "찾아 삭제하기"를 해야 할 것입니다.</li>
+      <li> 또 이전에 PHP를 설치했던 적이 있다면, 윈도그 디렉토리 어딘가 처박혀있는 <strong>php4ts.dll</strong>을 찾아 삭제하고, <strong>php.ini</strong> 역시 찾아 삭제합니다.</li>
+      <li> 다음을 클릭하여 EasyPHP 를 내려 받습니다. <a href="http://www.easyphp.org/telechargements/dn.php?F=easyphp1-7">http://www.easyphp.org/telechargements/dn.php?F=easyphp1-7</a> 
+      (approx 10 Mb)</li>
+      <li> 내려 받은 <strong>easyphp1-7_setup.exe</strong>를 실행시킵니다. 설치 과정은 프랑스어로 되어 있는데 여느 윈도그즈 프로그램 설치와 마찬가지 입니다. 웬만하면 기본 설정은 그냥 넘어가면 설치가 됩니다. 참고로 프랑스어로 &quot;Suivant&quot; 는 다음(Next) 이란 의미고   &quot;Oui&quot; 는 예(Yes)란 뜻입니다.</li>
+      <li>설치 마지막에는 &quot;Lancer EasyPHP&quot; (EasyPHP 시작)을 선택한 후  'Terminer&quot; 버튼을 누릅니다. 그러면 안내 화면이 나오는데 무시해도 좋습니다.</li>
+      <li>모든 게 잘 진행됐으면.. 축하합니다! Apache, PHP, MySQL 이 설치되었고 잘 돌아갈 것입니다.
+툴바에 검은 E자를 볼 수 있을 것입니다. 오른쪽 마우스 클릭으로 메뉴를 볼 수 있고 이를 통해서 실행되는 프로그램을 조정할 수 있습니다.</li>
+      <li>아무래도 불어보다는 영어가 낫겠죠?(아쉽게도 한글판은 없군요). 이 파일은 <a href="http://www.easyphp.org/telechargements/dn.php?F=indexUS_1.7">http://www.easyphp.org/telechargements/dn.php?F=indexUS_1.7</a> 에서 받을 수 있는데, 이것은 기존 EasyPHP1-7 폴더 안에 있는 윈도우상의 웹디렉토리와 홈폴더의 불어명칭을 영어로 바꾸어주는 것입니다.</li>
+      <li>다음은 무들을 이용하기 위한 데이터베이스 설정입니다. 툴바의 검은 E자에 커서를 가져다 놓고 오른쪽 마우스 클릭을 하여 관리(Administration)를 선택한 후 DB Management (PHPMyAdmin옆)를 클릭합니다.</li>
+      <li>사용자명을 요청하면, &quot;<strong>root</strong>&quot; 치고 비밀번호는 <strong>빈칸으로 둡니다</strong>. 그러면 phpMyAdmin이 뜨고 이를 통해 새로운 데이터베이스와 사용자 계정을 생성할 수 있습니다. </li>
+      <li>데이터베이스 난에  &quot;moodle&quot; 을 써 넣고  &quot;Create&quot; 버튼을 눌러 새로운 데이터베이스를 생성합니다. 아주 쉽죠!</li>
+      <li>데이터베이스 관리자 계정을 만드는 것도 비슷한 방법으로 할 수 있습니다. 하지만 초심자에게는 다소 까다롭기 때문에 일단 무들의 config 에 기존 사용자인 &quot;root&quot; 를 비밀번호 없이 사용하기로 하고, 나중에 다시 고치기로 합시다.</li>
+      <li> 이제 무들을 설치할 준비가 되었습니다!  <a href="http://moodle.org/download" target="_blank">http://moodle.org/download</a>에서 최신판 무들을 내려받은 후, 압축을 풉니다.</li>
+      <li>무들 파일들을 <strong>C:\Program Files\EasyPHP\www. </strong>에 옮깁니다. 즉 전체 무들 디렉토리를 복사해 넣을 수도 있고(예: C:\Program Files\EasyPHP\www\moodle), 아니면 무들 디렉토리 내에 있는 <em>내용들</em>을 C:\Program Files\EasyPHP\www 에 복사해 넣을 수도 있습니다. 두번째 방법을 사용하게 되면 무들 홈페이지를 접속할 때 http://localhost/moodle/ 대신 http://localhost/ 를 쓸 수 있게 됩니다.</li>
+      <li> 전송된(uploaded) 파일들을 저장하기 위한 빈 폴더(예를들어 <strong>C:\moodledata</strong>)를 만들어 놓습니다.</li>
+      <li> 무들 폴더로 들어가서 config-dist.php를  config.php란 이름으로 복사하여 놓습니다.</li>
+      <li> 문서 편집기를 이용하여 config.php를 고칩니다. (메모장이 쓸만한데, 마지막 줄에 쓸 데 없는 빈칸이 들어가지 않도록 주의하세요) </li>
+      <li>다음과 같이 새로운 데이터베이스의 정보를 입력합니다.<br />
+      $CFG-&gt;dbtype = 'mysql';<br />
+      $CFG-&gt;dbhost = 'localhost';<br />
+      $CFG-&gt;dbname = 'moodle';<br />
+      $CFG-&gt;dbuser = 'root'; <br />
+      $CFG-&gt;dbpass = '';<br />
+      $CFG-&gt;dbpersist = true;<br />
+      $CFG-&gt;prefix = 'mdl_';</li>
+      <li>그다음 파일 경로 정보를 집어 넣습니다.<br />
+      $CFG-&gt;wwwroot = 'http://localhost/moodle'; // URL을 정확히 안다면 그 정보를 쓰세요.<br />
+      $CFG-&gt;dirroot = 'C:\Program Files\EasyPHP\www\moodle'; <br />
+      $CFG-&gt;dataroot = 'C:\moodledata';</li>
+      <li>나머지 내용들은 있는 그대로 두어도 됩니다. - config.php를 저장합니다.</li>
+      <li>자, 거의 다 되었습니다! 이제 나머지는 웹브라우저로 접속하여 설정해야 합니다. 웹브라우저의 주소창에  <a href="http://localhost/moodle/admin/" target="_blank">http://localhost/moodle/admin/</a>를 친 후에 엔터를 쳐서 설정을 계속하세요.</li>
+      <li>무들과 함께 zip파일들을 사용하기 위해서는(무들은 백업을 할 때 zip을 쓴다),  &quot;zlib&quot;를 활성화 시켜 놓을 필요가 있습니다. 이를 위해서는 EasyPHP 디렉토리(<strong>C:\Program Files\EasyPHP</strong>)로 가서 거기에 있는  phpini.exe 파일을 실행시킵니다.  &quot;zlib.dll&quot;옆에 있는 박스에 체크를 합니다. 화면을 닫고 툴바에 있는 검은 E자에서 오른쪽 마우스를 클릭하여 메뉴가 나타나면 &quot;Restart&quot; 를 선택합니다.</li>
+      <li>마지막으로 cron 을 손보면 됩니다. 이 내용에 대해서는 <a href="./?file=install.html">설치 안내</a>를 보면 자세히 나와 있습니다.</li>
+    </ol>
+    <p>만일 EasyPHP를 쓸 형편이 안된다면, 문제를 피하고 PHP를 정확히 설정할 수 있는 몇 가지 팁을 제시해 드리겠습니다.</p>
+    <ul>
+      <li>무들이 그림을 처리할 수 있게끔 GD 모듈을 확실하게 활성화 시켜 놓는다 - 이는  php.ini 파일 안에서 'extension=php_gd2.dll' 앞에 있는 주석 표시(;)를 제거하면 됩니다.</li>
+      <li>무들이 zip파일을 묶거나 풀 수 있게끔 Zlib 모듈을 활성화 시켜 놓습니다.</li>
+      <li>세션이 확실히 작동하도록 만른다. -  php.ini 속의 <strong>session.save_path</strong>를 확실하게 지정하여 줍니다. "/tmp"를 쓰지 말고 윈도우의 정확한 디렉토리명 "c:/temp"를 쓰십시오.</li>
+    </ul>
+    <p>&nbsp;</p>
+  </blockquote>
+</blockquote>
+<p align="center"><font size="1"><a href="." target="_top">Moodle Documentation</a></font></p>
+<p align="center"><font size="1">Version: $Id$</font></p>
+
+</body>
+</html>

@@ -1,0 +1,343 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    
+<title>무들 문서: 기본 설치</title>
+  
+<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS" />
+    
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<style type="text/css">
+<!--
+.style3 {color: #660000}
+-->
+</style>
+</head>
+
+<body>
+<h1>무들의 설치</h1>
+<h2>겁먹지 마세요! <img src="http://moodle.org/pix/s/smiley.gif" /></h2>
+<blockquote>
+  <p>이 지침서는 무들을 처음 대하는 분들에게 설치방법을 안내해 줍니다. 설치 과정의 대부분이 웹 서버의 설정에 대해 자세히 언급하고 있어서, 본 문서가 매우 복잡하고 길게 보이실 겁니다. 겁먹지 마세요. 일단 어떻게 하는지만 알게되면 무들 설치는 단번에 끝납니다! </p>
+  <p>일단 문제가 생기면, 이 문서를 찬찬히 읽어보십시오. 대부분의 일반적인 문제들은 이 곳에 해답이 나와 있습니다. 그래도 여전히 해결이 않되면 <a target="_blank" href="http://moodle.org/help">무들 도움말</a>에서 도움을 얻을 수 있습니다.</p>
+  <p>또 다른 방법으로는 여러분을 완벽히 지원해 줄 수 있는 <a target="_blank" href="http://moodle.com/hosting/">웹 호스팅 업체</a>에 접속하셔서 설치문제는 제껴두고 바로 교수-학습을 제공하는 방안이 있습니다!</p>
+  <p>&nbsp;  </p>
+  <p>본 문서의 차례:</p>
+  <ol>
+    <li><a href="#requirements">설치 기반</a></li>
+    <li><a href="#downloading">파일 내려받아 풀어놓기</a> </li>
+    <li><a href="#site">사이트 얼개(구조)</a></li>
+    <li><a href="#installer">config.php를 생성하기 위한 설치 스크립트의 실행 </a>
+        <ul>
+        <li><a href="#webserver">웹서버 설정 점검</a></li>
+        <li><a href="#database">데이터베이스 생성</a></li>
+        <li><a href="#data">데이타 경로 생성</a></li>
+        </ul>
+    </li>
+    <li><a href="#admin">관리자 화면에서 설정 계속하기</a></li>
+    <li><a href="#cron">Set up cron</a></li>
+    <li><a href="#course">새 배움터 만들기</a></li>
+     </ol>
+  <p>&nbsp;</p>
+</blockquote>
+<h3 class="sectionheading"><a name="requirements"></a>1. 설치 기반</h3>
+<blockquote> 
+  <p>무들은 원래 리눅스에 Apache, MySQL 그리고 PHP가 설치된 시스템(가끔 LAMP platform 이라고 불리기도 함)에서 개발되었습니다. 하지만 PostgreSQL 디비, Windows XP, Mac OS X 그리고 Netware 6 운영체제에서 원활히 돌아가도록 하기 위해 정기적으로 작동 점검을 하고 있습니다.</p>
+  <p>무들을 운영하기 위한 초기 환경은 다음과 같습니다:</p>
+  <ol>
+    <li>웹 서버 : 대다수의 사람들은 <a href="http://www.apache.org/" target="_blank">Apache</a>를 사용합니다, 하지만 무들은 PHP를 지원하는 어떤 웹 서버(예를들어 윈도우 기반의 ISS 등)하에서도 아주 잘 작동합니다.</li>
+    <li><a href="http://www.php.net/" target="_blank">PHP</a>(4.1.0 판 이후) : Moodle 1.4는 PHP 5도 지원합니다. </li>
+    <li>데이터베이스 서버 : <a href="http://www.mysql.com/" target="_blank">MySQL</a> 혹은 
+    <a href="http://www.postgresql.org/" target="_blank">PostgreSQL</a>이 완벽하게 지원하며 이 둘 중 하나를 추천합니다.</li>
+  </ol>
+  <p>대다수의 웹 호스트들은 위의 모든 프로그램을 기본으로 제공하지만, 만일 여러분이 이런 기능을 제공하지 않는 곳과 계약을 했다면 그 이유를 묻어보고 여러분의 사이트를 다른 곳으로 옮겨야 할지를 신중히 고려해야 합니다.</p>
+  <p>만일 무들을 자신의 컴퓨터에서 운영하고자 하면, 좀 까다롭기는 하겠지만 우리가 제공하는  <a href="http://moodle.org/doc/?file=installamp.html">Apache, MySQL, PHP 설치하기</a>를 보기 바랍니다. 여기에서는 위에서 언급한 서버프로그램을 여러 운영체제에 설치하는 방법을 조목 조목 설명해 놓고 있습니다.</p>
+  <p>&nbsp;</p>
+</blockquote>
+<h3 class="sectionheading"><a name="downloading"></a>2. 파일 내려받아 풀어놓기 </h3>
+<blockquote>
+  <p>무들을 얻는 방법에는 압축된 파일로 얻는 법과 CVS를 통해 얻는 법 이렇게 두 가지가 있습니다.
+ 이에 대한 자세한 설명은 <a href="http://moodle.org/download/" target="_blank">http://moodle.org/download/</a>에 나와 있습니다.</p>
+  <p>압축파일을 내려 받아 압축을 해제한 후 혹은 CVS를 통해 파일들을 점검한 후에 보면 &quot;moodle&quot; 이란 경로가 생겨 있고 그 속에 많은 파일과 폴더가 들어 있음을 알 수 있습니다.</p>
+  <p>이 &quot;moodle&quot; 디렉토리를 여러분 자신의 웹 문서 경로에 몽땅 옮기면 되는 데, 이렇게 하면 무들은 <b>http://yourwebserver.com/moodle</b>에 놓이게 됩니다. 만일 moodle 디렉토리 안의 모든 내용을 메인 서버의 웹 디렉토리로 옮기게 되면 무들의 경로는 <b>http://yourwebserver.com</b>이 됩니다.</p>
+  <p>만일 여러분이 무들을 자신의 컴퓨터에 내려받은 다음 자신의 웹 사이트에 올리려고 한다면, 압축되어 있는 채로 올린 후에 웹서버에서 압축을 푸는 것이 낫습니다. 대개의 웹 호스팅업체에서는 압축된 파일을 풀 수 있게 허용하고 있습니다.</p>
+</blockquote>
+<p>&nbsp;</p>
+<h3 class="sectionheading"><a name="site"></a>3. 사이트의 얼개(구조)</h3>
+<blockquote>
+  <p>이 부분은 건너 뛰어도 되지만, 만일을 위해서 무들 폴더 안의 내용에 대해 간단히 요약해 놓았습니다.</p>
+  <blockquote>
+    <table><tr>
+      <td width="130" valign="top">config.php</td>
+      <td valign="top">-</td>
+      <td valign="top">
+        기본 설정 파일. 무들에는 들어 있지 않음 - 여러분 스스로 만들 것. </td>
+    </tr>
+      <tr>
+        <td valign="top">install.php</td>
+        <td valign="top">-</td>
+        <td valign="top">config.php를 만들기 위해 실행시킬 스크립트 </td>
+      </tr>
+      <tr><td valign="top">version.php</td>
+      <td valign="top">-</td>
+      <td valign="top">
+        설치된 무들 프로그램의 판 정보
+      </td></tr>
+      <tr><td valign="top">index.php</td>
+      <td valign="top">-</td>
+      <td valign="top">
+        사이트의 대문 페이지
+      </td></tr></table>
+    <ul>
+      <li>admin/ - 서버 전체에 대한 관리 </li>
+      <li>auth/ - 사용자 인증에 관련된 플러그인 모듈 </li>
+      <li>blocks/ - 좌우 양쪽에 나타나는 블록에 관련된 플러그인 모듈</li>
+      <li>calendar/ - 달력의 출력 및 관리에 관한 파일들 </li>
+      <li>course/ - 배움터에 관련된 프로그램들 </li>
+      <li>doc/ - 무들의 도움말 문서(현재 보여여지는 문서 등)</li>
+      <li>files/ - 업로드된 파일과 관련된 코드들</li>
+      <li>lang/ - 다양한 나라의 언어팩 </li>
+      <li>lib/ - 핵심 무들 코드의 라이브러리 </li>
+      <li>login/ - 로그인 및 계정 생성 관련 코드 </li>
+      <li>mod/ - 모들의 배움터 모듈 관련 </li>
+      <li>pix/ - 사이트 쓰이는 일반적 그림들 </li>
+      <li>theme/ - 테마/스킨 </li>
+      <li>user/ - 사용자 관리 및 출력 관련 코드 </li>
+    </ul>
+    <p>&nbsp;</p>
+  </blockquote>
+</blockquote>
+<h3 class="sectionheading"><a name="installer"></a>4. config.php를 생성하기 위한 설치 스크립트의 실행 </h3>
+<blockquote>
+  <p>설치 스크립트 (install.php)를 실행하기 위해서는, 웹브라우저를 이용하여 자신의 무들이 설치되어 있는 URL 에 접속하거나 <strong>http://yourserver/install.php</strong> 를 직접 접속하면 됩니다. </p>
+  <p>(이 때 설치 스크립트는 세션 쿠키를 실행하려고 한다. 만일 화면에 경고 창이 뜨면, 쿠키실행을 반드시 허용해야만 한다!) </p>
+  <p>무들은 초기 상태를 점검하고 <strong>config.php</strong> 파일을 생성하기 위한 몇 단계를 거칩니다. 마지막 과정으로 적절한 위치에 파일을 생성하려고 하거나, 아니면 내려받을 수 있는 버튼을 제시해서 나중에 서버의 적당한 위치에 초기파일(config.php)을 올릴 수 있도록 합니다. </p>
+  <p>이러한 과정 중에 설치파일은 서버 환경을 점검하고 문제점이 발견되면 고칠 수 있는 방법을 제시합니다. 
+대개의 경우 이 때 제시되는 내용으로 충분하지만, 만일 계속 문제가 생기면 아래에 제시된 해결 방안을 참고하기 바랍니다.<br />
+  </p>
+</blockquote>
+<blockquote>
+
+<h3 class="sectionheading"><a name="webserver" id="webserver"></a>4.1 웹 서버의 설정 </h3>
+  <blockquote>
+    <p>우선, 여러분의 웹서버가 index.php를 초기 웹 문서로 인식하게 설정하십시오.(대개는 index.html 이나 htm을 기본으로 인식하게 되어 있을 수도 있다).</p>
+    <p>Apache에서는 이 설정을 httpd.conf 속에 있는 DirectoryIndex 에 파라메터로 설정하게 되어 있습니다. 내 경우에는 다음과 같이 되어 있습니다.</p>
+    <blockquote>
+      <pre><strong>DirectoryIndex</strong> index.php index.html index.htm </pre>
+    </blockquote>
+    <p>가급적이면 index.php 가 목록의 제일 처음에 나오도록 하는 것이 바람직합니다.</p>
+    <p>두번째로, <b>만일 Apache 2를 사용한다면</b>, <i>AcceptPathInfo</i>를 활성화 시켜야합니다. 그래야  http://server/file.php/arg1/arg2. 형태의 구문을 해석할 수 있기 때문입니다. 이렇게 해야 자료 사이의 상대 경로를 받아들일 수 있고, 사용자들이 제대로 무들 사이트의 결과를 얻을 수 있게되기 때문이다. 이것은 httpd.conf에 다음과 같은 내용 한 줄을 첨가하면 됩니다.</p>
+    <blockquote>
+      <pre><strong>AcceptPathInfo</strong> on </pre>
+    </blockquote>
+    <p>셋째로, PHP가 제대로 작동하게 하기위하여 몇 개의 조절이 필요합니다. 
+<b>대개의 서버에서는 이미 이 기능이 기본 설정으로 되어 있을 것입니다.</b> 하지만 어떤 PHP서버의 경우( 대개 최신판 PHP의 경우)에는 다르게 되어 있을 수도 있습니다. 이들은 PHP의 설정 파일(보통 php.ini 파일)에 정의 되어 있습니다.</p>
+    <blockquote>
+      <pre>magic_quotes_gpc = 1    (추천)
+magic_quotes_runtime = 0    (필수)
+file_uploads = 1
+session.auto_start = 0
+session.bug_compat_warn = 0
+  </pre>
+    </blockquote>
+    <p>만일 여러분이 웹 서버의 httpd.conf 나 php.ini 에 접근할 수 없거나, 무들이 탑재되어 있는 서버가 다르게 설정되어 있다고 해도, 걱정하지 마십시오. 여러분은 종종 기본 설정에 대해 "OVERRIDE" 할 수 있는 가능성이 있기 때문입니다. </p>
+    <p>그렇게 하기 위해서는 아래와 같은 내용을 담은 소위 <b>.htaccess</b>라는 파일을 무들이 설치되어 있는 경로에 만들어 넣어 주어야 합니다. 단 이것은 아파치 서버에 국한된 것이고 웹 서버가 "OVERRIDE"를 허용할 때 한해서 작동합니다.</p>
+    <blockquote>
+      <pre>
+DirectoryIndex index.php index.html index.htm
+
+&lt;IfDefine APACHE2>
+     <b>AcceptPathInfo</b> on
+&lt;/IfDefine>
+
+php_flag magic_quotes_gpc 1
+php_flag magic_quotes_runtime 0
+php_flag file_uploads 1
+php_flag session.auto_start 0
+php_flag session.bug_compat_warn 0</pre>
+    </blockquote>
+    <p>아래와 같이 하여 올리는 파일의 최대 크기를 지정할 수 있습니다.</p>
+    <blockquote>
+      <pre>
+LimitRequestBody 0
+php_value upload_max_filesize 2M
+php_value post_max_size 2M
+     </pre>
+    </blockquote>
+    <p>가장 손쉬운 방법은 <strong>lib/htaccess</strong>에 있는 예제 파일을 복사하고 이를 여러분의 용도에 맞게 수정하여 설치하는 것입니다. 이 속에는 종더 자세한 설명이 첨가되어 있습니다. Unix 명령으로는 다음과 같이 하면 됩니다.
+   </p>
+    <blockquote>
+      <pre>cp lib/htaccess .htaccess</pre>
+    </blockquote>
+  </blockquote>
+<p>&nbsp;</p>
+<h3 class="sectionheading"><a name="database"></a>4.2 데이터베이스 생성</h3>
+
+  <blockquote>
+    <p>데이터베이스를 관리할 수 있는 유저(예: "moodleuser")에게 권한을 준 비어있는 데이터베이스(예:"<em>moodle</em>")를 만들 필요가 있습니다. 연습삼아 "root" 를 데이터베이스의 유저로 지정할 수 있지만, 실제 운영하려는 시스템에서는 권하지 않습니다. 만일 악의적인 해커가 비밀번호를 알게되면 무들 데이타 뿐만 아니라 여러분의 데이터베이스 전체가 위험에 처할 수도 있기 때문입니다.</p>
+    <p>만약 웹을 호스팅해서 쓰고 있다면, 그쪽에서는 여러분이 자신만의 데이터베이스를 생성할 수 있도록 웹기반의 조정판을 제공해 줄 것입니다.</p>
+    <p><strong>Cpanel</strong> 시스템은 그런 일반적 기능을 제공합니다. Cpanel에서 데이터베이스를 생성하려면,  </p>
+    <ol>
+      <li>&quot;<strong>MySQL Databases</strong>&quot; 아이콘을 누른다.</li>
+      <li>데이터베이스 칸에 &quot;moodle&quot; 이라고 적어넣고 &quot;<strong>Add Database</strong>&quot; 를 누른다.</li>
+      <li> 주어진 각각의 칸에 사용자명과 (다른 곳에서는 쓰지 않는)비밀번호를 적어 넣은 다음 &quot;<strong>Add User</strong>&quot; 를 클릭한다.</li>
+      <li> 다음 &quot;<strong>Add User to Database</strong>&quot; 버튼을 사용하여 새로 생성한 데이터베이스의 &quot;<strong>모든</strong>&quot; 권한을  이 새 사용자에게 준다.</li>
+      <li>사용자이름과 데이터베이스의 이름은 Cpanel에 등록해 놓은 당신의 계정에 등재될 것임에 유의하실시오. 무들 설치자로 이 정보에 접근할 때는 여러분의 온전한 이름을 이용하세요.</li>
+    </ol>
+    <p>만약 유닉스 명령 모드로 접속 가능하다면, 여러분은 동일한 절차를 다음과 같은 명령어로 해결할 수 있습니다.</p>
+    <p>다음은 유닉스 상에서 가능한 MySQL 구동 예를 보인 것입니다. </p>
+    <pre>
+   # mysql -u root -p
+   > CREATE DATABASE moodle; 
+   > GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,INDEX,ALTER ON moodle.* 
+           TO moodleuser@localhost IDENTIFIED BY 'yourpassword'; 
+   > quit 
+   # mysqladmin -p reload
+    </pre>
+    <p>PostgreSQL에서는 다음과 같이 입력하면 됩니다. </p>
+    <pre>
+   # su - postgres
+   > psql -c "create user moodleuser createdb;" template1
+   > psql -c "create database moodle;" -U moodleuser template1
+   > psql -c "alter user moodleuser nocreatedb;" template1</pre>
+  </blockquote>
+  <p>&nbsp;</p>
+  
+<h3 class="sectionheading"><a name="data"></a>4.3 데이타 경로 생성 </h3>
+
+  <blockquote>
+    <p>사용자의 사진이나 배움터 문서 등의 전송받은 파일들을 저장하기 위하여 서버의 하드디스크에 저장공간을 확보해 놓아야 합니다.</p>
+    <p>무들 설치프로그램은 이러한 공간을 생성해 놓으려고 애를 쓰지만, 실패할 경우 여러분이 손수 저장 공간을 생성해 주어야만 합니다. </p>
+    <p>보안을 위해서는 웹이 직접 접근할 수 없는 경로로 지정하는 것이 최선입니다. 가장 손쉬운 방법은 이 공간을 웹 디렉토리 "바깥"에 설정하는 것이지만 만일 웹 디렉토리 안에 놓아야만 한다면 아래와 같은 내용을 담은 .htaccess 를 데이터 디렉토리에 넣어둠으로서 자료를 보호할 수 있습니다. </p>
+    <blockquote>
+      <pre>deny from all</pre>
+    </blockquote>
+    <p>무들이 이 경로에 자료를 올려받아 저장하게 하기 위해서는 반드시 웹서버(아파치 등)가 읽고, 쓰고, 실행시킬 수 있는 권한을 얻어야 합니다.</p>
+    <p>유닉스 운영체제의 경우 이는 디렉토리의 소유자가 &quot;nobody&quot; 또는 &quot;apache&quot; 등이 되어야 하고, 또 이 소유자들에게 디렉토리를 읽고, 쓰고, 실행시킬 권한이 주어짐을 의미합니다.</p>
+    <p>Cpanel 시스템하에서 &quot;File Manager&quot; 를 사용하여 경로(폴더)를 찾고 &quot;Change Permissions&quot; 을 클릭하여 권한을 변경합니다. 많은 호스팅 서버에서는 (웹 호스팅을 해서 쓰는 다른 고객들이 여러분의 파일을 보거나 훼손하는 것을 방지하기 위해) 여러분이 속한 "group"의 파일에 대해 접근 권한을 제한하여 놓을 것인데 이 경우에는 모든 읽고 쓰기 기능을 완전히 해제해야 합니다. 즉 웹서버로 하여금 여러분의 파일에 접근하여 읽고 쓸 수 있게 허용해야 하는 것입니다. </p>
+    <p>여러분이 안전하게 설정을 하지 못하겠으면 서버 관리자에게 요청하기 바랍니다. 특히 &quot;Safe Mode&quot; PHP를 쓰는 사이트라면 서버 관리자에게 여러분을 위해 적절히 이 경로를 만들어 달라고 <em>부탁</em>해야 할 것입니다.</p>
+  </blockquote>
+
+</blockquote>
+
+<h3 class="sectionheading"><a name="admin"></a>5. 관리자 화면에서 설정 계속하기</h3>
+<blockquote> 
+  <p>일단 위에 제시한 순서대로 <strong>config.php</strong>를 제대로 만들었다면, 남은 설정을 마치기위해 웹브라우저에서 설정 초기화면인 &quot;admin&quot; 에 접속해야 합니다.(http://무들이.설치된.주소/moodle/admin) </p>
+  <p>일단 관리자 화면에 접속하게 되면 바로 GPL &quot;shrinkwrap&quot; 규약이 나타나고, 반드시 이 규약에 <strong>동의</strong>해야만 나머지 설정을 계속할 수 있습니다.</p>
+  <p>이제 무들은 여러분의 데이터베이스를 설정하고 자료를 저장하기 위한 테이블을 생성할 것입니다. 우선 핵심 데이터베이스 테이블이 생성됩니다. 이 때 여러분은 아래와 같은 SQL 문장과 함께 (녹색 혹은 붉은 색의) 메시지를 보게될 것입니다.</p>
+  <blockquote> 
+    <p>CREATE TABLE course ( id int(10) unsigned NOT NULL auto_increment, category 
+      int(10) unsigned NOT NULL default '0', password varchar(50) NOT NULL default 
+      '', fullname varchar(254) NOT NULL default '', shortname varchar(15) NOT 
+      NULL default '', summary text NOT NULL, format tinyint(4) NOT NULL default 
+      '1', teacher varchar(100) NOT NULL default 'Teacher', startdate int(10) 
+      unsigned NOT NULL default '0', enddate int(10) unsigned NOT NULL default 
+      '0', timemodified int(10) unsigned NOT NULL default '0', PRIMARY KEY (id)) 
+      TYPE=MyISAM</p>
+    <p><font color="#006600">SUCCESS</font></p>
+  </blockquote>
+  <p><font color="#006600">Main databases set up 
+      successfully.</font> 에 이어 여러 문구를 볼 수 있을 것입니다. </p>
+  <blockquote>
+    <p class="style3">만일 여러분이 이러한 문구들을 볼 수 없다면, 데이터베이스나 config.php의 설정에 어떤 문제가 있는 것입니다. 혹시 PHP가 "Safe Mode"(대개의 상용 호스트에서는 안전모드로 실행합니다)는 아닌지 점검해 보십시요. PHP 변수들을 점검하기 위해서는 <strong>&lt;?php phpinfo() ?&gt;</strong> 를 집어넣은 파일을 올리셔서 이를 웹브라우저로 읽어들여 보면 됩니다. 이들을 점검하신 후에 다시 Admin페이지를 구동시켜 보십시오.</p>
+  </blockquote>
+  <p>화면 맨 아래까지 가서 &quot;계속&quot; 를 클릭합니다.</p>
+  <p>이제 언어나 SMTP 서버 등에 대한 자세한 입력을 할 수 있는 입력화면을 볼 수 있을 것입니다. 처음부터 모든 걸 완벽하게 설정하려고 애쓰지 마십시오. 나중에라도 관리자 기능을 이용하여 다시 불러내 고칠 수 있습니다. 기본 설정으로도 대개의 사이트에서는 안전하고 유용하게 작동할 수 있도록 설계되어 있습니다. 화면 맨 아래까지 가서 &quot;변경사항 저장&quot;를 클릭합니다 .</p>  
+  <blockquote>
+    <p class="style3">그럴리는 없겠지만 만일 앞의 화면에서 멈추어 더이상 진행을 하지 않는다면, 아마 여러분의 서버는 소위 "참조오류(buggy referrer)"라 부르는 문제를 일으킨 것입니다. 이 경우 조처는 간단합니다. &quot;secureforms&quot; 기능을 끈 후에 다시 시도해 보기 바랍니다.</p>
+  </blockquote>
+  <p>다음에는 좀 더 많은 화면을 만나게 되는 데, 여기에는 각종 무들의 모듈에서 필요로 하는 상황 변수들이 표시됩니다. 앞에서처럼 <font color="#006600">녹색</font>글자로 나타납니다.</p>
+  <p>다시 화면 맨 아래까지 가서 &quot;계속&quot; 를 클릭합니다.</p>
+  <p>이번에는 무들 사이트 대문에 대한 자세한 변수 즉 사이트의 이름이나 형식, 개요 등을 설정하는 화면입니다. 모두 채워넣고 나서 (이 화면 역시 언제든 다시 와서 고칠 수 있습니다) &quot;변경사항 저장&quot;를 누룹니다.</p>
+  <p>마지막으로 후에 관리자 화면에 접근하기 위한 최상위 관리자를 생성할 것을 요구할 것입니다. 여러분의 이름, 이메일주소 등을 꼼꼼히 적은 후에 &quot;변경사항 저장&quot;를 누릅니다. 모든 항목을 다 기재할 필요는 없지만 필수 항목을 빠뜨린 경우에는 재입력을 요구할 것입니다.</p>
+  <blockquote> 
+    <blockquote> 
+      <blockquote> 
+        <blockquote> 
+          <blockquote> 
+            <p><strong>관리자 계정으로 등록한 사용자명과 비밀번호는 추후에 관리자 화면에 접속하기 위해서는 꼭 필요하므로 잃어버리지 않도록 반드시 기억하기 바랍니다.</strong></p>
+          </blockquote>
+        </blockquote>
+      </blockquote>
+    </blockquote>
+    <p class="style3">(만일 어떤 이유에서건 설치중에 갑자기 멈추거나 시스템 오류에 의해 자신이 설정한 관리자 계정으로 접속하지 못하게 되었을 경우에는, 사용자 이름 &quot;<strong>admin</strong>&quot;, 비밀번호  &quot;<strong>admin</strong>&quot; 로 언제든 접속할 수 있습니다.)</p>
+  </blockquote>
+  <p>모든 과정을 성공적으로 마치면, 여러분의 새 무들 사이트로 진입하게 됩니다! 화면 왼쪽 하단에 나타나는 관리난(이 항목은 분리된 관리화면으로 나타납니다)에 주목하기 바랍니다. 이 항목은 여러분이 현재 관리자로 무들에 접속됐기 때문에 보이는 것입니다. 앞으로 여러분은 무들을 다음과 같은 메뉴를 이용하여 관리할 수 있습니다.</p>
+  <ul>
+    <li>배움터 생성과 삭제</li>
+    <li>사용자의 생성과 변경</li>
+    <li>선생님 계정 관리</li>
+    <li>테마 변경 등과 같은 사이트 설정</li>
+  </ul>
+  <p>그러나 지금 변경하려 하지 마십시오! 아직 한 가지 더 매우 중요한 일이 남아 있습니다.(cron 설정에 대한 다음 장을 보십시오). </p>
+</blockquote>
+<p>&nbsp;</p>
+<h3 class="sectionheading"><a name="cron"></a>6. cron의 설정 -- 중요! </h3>
+<blockquote> 
+  <p>대부분 무들의 모듈은 작업을 수행하기 위해 지속적으로 점검을 행합니다. 예를 들어 포럼에 등재된 내용을 받아보고 싶어하는 사람들에게 그 내용을 이메일로 발송하기 위하여 올라온 기사를 점검할 필요가 있습니다.</p>
+  <p>이러한 기능을 하는 스크립트는 관리자 디렉토리에 위치하며 이것이 cron.php입니다. 하지만 이 파일은 스스로 작동하지 못하며 이를 정기적(예를 들어 5분 혹은 10분 단위로)으로 구동되게 하기위해서는 기계적인 설정이 필요합니다. 이는 소위 &quot;heartbeat&quot;를 제공하여 스크립트가 개개의 모듈이 지정한 시각에 자신의 일을 수행하게 하는 기능을 합니다. 이런 주기적인 기능을 <strong>cron service</strong>라고 합니다. </p>
+  <p>이러한 cron의 설치는 꼭 무들이 작동되는 <b>동일한 서버가 아니라도 된다</b>는 점을 유념해 주십시오.
+예를 들어 여러분이 cron 서비스를 받지 못하는 제한된 웹 호스팅 서비스를 받는 경우, cron service를 할 수 있는 다른 서버를 이용하거나 혹은 여러분 자신의 컴퓨터를 이용할 수도 있다는 것입니다. 문제가 되는 것은 단지 cron.php 파일이 주기적으로 가동되게 해야 한다는 것 뿐입니다.</p>
+  <p>이 스크립트가 주는 부하는 그리 크지 않기 때문에 대개 5분 정도면 적당하지만, 15분 혹은 30분 정도의 시간 간격을 주려고 한다면 시간 간격 조정에 대해 고려해 볼 점이 있습니다. 시간 간격을 너무 길게 하지 않는 것이 최선인데, 이유는 배움터 과정안에서의 이메일 전송등의 활동이 그 시간만큼 지연되기 때문입니다.</p>
+  <p>우선, 다음과 같이 웹브러우저 상에서 스크립트를 직접 구동해 점검해 봅니다.</p>
+  <blockquote> 
+    <pre>http://무들이.설치된.서버주소/moodle/admin/cron.php</pre>
+  </blockquote>
+  <p>이제, 스크립트가 정기적으로 구동되도록 다양한 방법으로 설정할 필요가 있습니다.</p>
+  <p><b>윈도우즈 시스템 하에서</b></p>
+  <blockquote>
+    <p>가장 간단한 방법은 다음의 파일을 내려받아 설치하는 것입니다. <a href="http://moodle.org/download/modules/moodle-cron-for-windows.zip" title="Click to download this package (150k)" target="_blank"><strong>moodle-cron-for-windows.zip</strong></a> 이것은 윈도우 서버에 설치되어 필요로 하는 모든 기능을 수행해 줍니다. 이를 실행하면 모든게 끝!</p>
+  </blockquote>
+  <p><strong>웹 서버를 임대해 쓰는 경우</strong></p>
+  <blockquote>
+    <p> 여러분에게 제공되는 웹화면 중에는 여러분이 직접 cron 을 조작할 수 있는 화면이 있을 수도 있습니다. 예를 들어 Cpanel system 같은 곳에서는 &quot;Cron jobs&quot; 같은 버튼을 두어 조작하게 합니다. 이 경우 아래의 Unix 명령을 이용하여 조정하면 됩니다. </p>
+  </blockquote>
+  <h4> Unix 명령어 이용 </h4>
+  <blockquote>
+    <p>UNIX 명령어 모드 상에서 불러다 쓸 수 있는 편집 프로그램은 무척 다양합니다. 하지만 서버에 따라 쓸 수 있는 프로그램은 한정되어 있습니다.</p>
+    <p>여기에서는 Unix 유틸리티인 'wget'을 가지고 해 봅시다</p>
+    <blockquote>
+      <pre>wget -q -O /dev/null http://example.com/moodle/admin/cron.php</pre>
+    </blockquote>
+    <p>이 경우 결과는 ( /dev/null) 로 보내짐을 주의하세요.</p>
+    <p>같은 방법으로 lynx 를 이용할 때는</p>
+    <blockquote>
+      <pre>lynx -dump http://example.com/moodle/admin/cron.php &gt; /dev/null</pre>
+    </blockquote>
+    <p>또 다른 방법으로 단독 실행 PHP 명령어 모드에서 이용할 수도 있습니다. 이 때의 장점은 여러분의 웹 서버로그가 cron.php에 의해 사용되는 여러 변수로 채워지지 않는다는 점이고, 단점은 PHP 유틸리티를 구동하여 직접 php 명령어 모드로 들어가야 한다는 점입니다.</p>
+    <blockquote>
+      <pre>/opt/bin/php /web/moodle/admin/cron.php 
+      </pre>
+    </blockquote>
+  </blockquote>
+  <h4>Unix 상의 crontab 프로그램 이용 </h4>
+  <blockquote>
+    <p> Cpanel에서는 웹 인터페이스로 crontab이라고 불리는 유닉스 유틸리티를 제공합니다. 명령어 모드로 진입하게 되면 다음과 같은 방법으로 crontab을 설정할 수 있습니다.</p>
+    <blockquote>
+      <pre>crontab -e</pre>
+   </blockquote>
+   <p>그 다음 아래의 한 줄을 첨가합니다.</p>
+    <blockquote>
+      <pre>*/5 * * * * wget -q -O /dev/null http://example.com/moodle/admin/cron.php</pre>
+    </blockquote>
+    <p>대개 "crontab" 명령은 'vi' 편집기를 이용하게 됩니다. "삽입 모드"로 들어가려면 "i"를 치면 되고, 그 상태에서 위에 적은 한 줄을 삽입해 넣습니다. 삽입모드에서 나오려면 자판의 ESC 키를 누르면 됩니다. 그 다음 이를 저장하고 나오려면 ":wq"를 칩니다. 만일 저장을 하고 싶지 않으면 ":q!"를 치면 끝납니다.(따옴표는 빼고 치세요!).</p>
+  </blockquote>
+  <p>&nbsp;</p>
+</blockquote>
+<h3 class="sectionheading"><a name="course"></a>7. 새 배움터 만들기</h3>
+<blockquote>
+  <p>자 이제 무들은 제대로 돌아갈 것입니다. 시범적으로 새로운 배움터를 생성해 볼 수 있습니다.</p>
+  <p>관리 화면에서(혹은 관리자계정으로 들어가서) &quot;새 배움터 생성&quot;를 선택합니다.</p>
+  <p>배움터 유형에 특별히 유의하면서 기재사항을 채워 넣습니다. 나중에 선생님 권한으로 다시 고칠 수 있기 때문에 이 과정에서 너무 세세히 모든 것을 채워 넣으려고 고민하지 마십시오. 언제 어디서든지 노란색 도움말 아이콘을 누르면 상세한 도움말이 뜬다는 점을 기억해 두십시오. </p>
+  <p> &quot;변경사항 저장&quot; 를 누르면 배움터의 선생님을 지정하는 화면이 나타납니다. 여기에서는 이미 기존에 사용자 등록을 마친 사람만을 지정할 수 있기 때문에 새로 선생님 계정을 만들어야 하는데, 다른 선생님들로 하여금 계정을 만들 것을 요청하거나(로그인창 이용), 여러분 스스로 관리자 화면에서 &quot;새 사용자 추가&quot; 명령을 이용하여 선생님들의 계정을 만들어 주어야 합니다.</p>
+  <p>일단 위의 과정이 끝나면, 여러분의 구미에 맞게 배움터를 꾸밀 준비가 되며 홈페이지의 &quot;배움터&quot; 항목을 이용할 수 있게 됩니다.</p>
+  <p>강좌 개설에 대한 자세한 내용은 &quot;<a href="./?file=teacher.html">교사 지침서</a>&quot;를 참조하기 바랍니다.</p>
+  <p>&nbsp;</p>
+  <p align="center"><strong>즐거운 탐색, 즐거운 Moodling이 되길 빕니다!</strong></p>
+  <p align="center"><strong>만일 여러분이 진정으로 무들을 좋아하신다면, 경비를 지원하는 입장에서 신중하게 <a href="http://moodle.org/donations/" target="_blank">기증</a>해 주시길 부탁드립니다! </strong></p>
+</blockquote>
+<p>&nbsp;</p>
+<p align="center"><font size="1"><a href="." target="_top">Moodle Documentation</a></font></p>
+<p align="center"><font size="1">Version: $Id$</font></p>
+</body>
