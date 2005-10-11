@@ -2,7 +2,7 @@
       // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
 
 
-$string['action'] = 'Hành động';
+$string['action'] = 'Thực hiện';
 $string['active'] = 'Hoạt động';
 $string['activities'] = 'Các hoạt động';
 $string['activity'] = 'Hoạt động';
@@ -124,7 +124,6 @@ $string['blocksetup'] = 'Thiết lập các bảng khối';
 $string['blocksuccess'] = '$a bảng vừa được thiết lập đúng';
 $string['bycourseorder'] = 'Theo thứ tự cua học';
 $string['byname'] = 'bởi $a';
-$string['cachecontrols'] = 'Điều khiển cache';
 $string['cancel'] = 'Huỷ';
 $string['categories'] = 'Các danh mục cua học';
 $string['category'] = 'Danh mục';
@@ -259,7 +258,6 @@ $string['deletingexistingcoursedata'] = 'Xoá dữ liệu cua học đã tồn t
 $string['deletingolddata'] = 'Xoá dữ liệu cũ';
 $string['department'] = 'Phòng ban';
 $string['description'] = 'Mô tả';
-$string['deselectall'] = 'Huỷ bỏ lựa chọn';
 $string['detailedless'] = 'Ít chi tiết';
 $string['detailedmore'] = 'Chi tiết hơn';
 $string['directorypaths'] = 'Các đường dẫn thư mục';
@@ -449,7 +447,7 @@ $string['gd1'] = 'GD 1.x được cài đặt';
 $string['gd2'] = 'GD 2.x được cài đặt';
 $string['gdneed'] = 'GD phải được cài đặt để xem đồ thị này';
 $string['gdnot'] = 'GD chưa được cài đặt';
-$string['go'] = 'Go';
+$string['go'] = 'Xem';
 $string['gpl'] = 'Bản quyền của (C) 1999-2004  Martin Dougiamas  (http://dougiamas.com)
 
 Chương trình này là phần mềm miễn phí; bạn có thể phân phối lại nó hoặc thay đổi nó 
@@ -658,7 +656,7 @@ $string['moveup'] = 'Di chuyển lên';
 $string['mustchangepassword'] = 'Mật khẩu mới phải khác mật khẩu hiện hành';
 $string['mustconfirm'] = 'Bạn cần xác nhận việc đăng nhập của bạn';
 $string['mycourses'] = 'Các cua học của tôi';
-$string['name'] = ' Tên';
+$string['name'] = ' Tiêu đề';
 $string['namesocial'] = 'phần';
 $string['nametopics'] = 'chủ đề';
 $string['nameweeks'] = 'tuần';
@@ -791,6 +789,7 @@ $string['publicdirectory1'] = 'Chỉ công bố tên site';
 $string['publicdirectory2'] = 'Công bố tên site với một đường link';
 $string['publicsitefileswarning'] = 'Chú ý: vị trí các file ở đây có thể bị truy cập bởi bất kỳ ai';
 $string['question'] = 'Câu hỏi';
+$string['questionbank'] = 'Ngân hàng câu hỏi';
 $string['readinginfofrombackup'] = 'Đọc thông tin từ bản sao dự phòng';
 $string['readme'] = 'Đọc tôi';
 $string['recentactivity'] = 'Hoạt động gần đây';
@@ -853,7 +852,6 @@ $string['section'] = 'Mục';
 $string['sections'] = 'Các mục';
 $string['select'] = 'Lựa chọn';
 $string['selectacountry'] = 'Chọn một quốc gia ';
-$string['selectall'] = 'Chọn tất';
 $string['selectednowmove'] = '$a file được chọn để di chuyển. Bây giờ đi tới đích và nhấn  \'di chuyển các file tới đây\'';
 $string['senddetails'] = 'Gửi thông tin tài khoản qua Email';
 $string['separateandconnected'] = 'Separate and Connected ways of knowing';
@@ -919,8 +917,6 @@ $string['stringsnotset'] = 'Chuỗi ký tự sau không được định nghĩa 
 $string['studentnotallowed'] = 'Xin lỗi bạn, nhưng bạn không thể vào cua học này như là \'$a\'';
 $string['students'] = 'Học viên';
 $string['studentsandteachers'] = 'Các học viên và các giáo viên';
-$string['studentviewoff'] = 'Kích hoạt khung nhìn của học viên';
-$string['studentviewon'] = 'Ngừng kích hoạt khung nhìn của học viên';
 $string['subcategories'] = 'Các danh mục con';
 $string['success'] = 'Thành công';
 $string['summary'] = 'Tổng kết';
@@ -1033,6 +1029,7 @@ $a->action';
 $string['virusfoundsubject'] = '$a: Virút tìm thấy!';
 $string['virusfounduser'] = 'File mà bạn vừa tải lên, $a->filename, được kiểm tra bởi một người kiểm tra virút và tìm thấy bị nhiễm virút! File của bạn tải lên không thành công.';
 $string['virusplaceholder'] = 'Tìm thấy một virút trong file vừa được tải lên và nó được di chuyển hoặc bị xoá và người dùng được thông báo.';
+$string['visibletostudents'] = 'Cho $a nhìn thấy';
 $string['webpage'] = ' Trang Web';
 $string['week'] = 'Tuần';
 $string['weekhide'] = 'Ẩn tuần này từ $a';
