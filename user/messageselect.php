@@ -3,14 +3,14 @@
     require_once('../config.php');
     require_once($CFG->dirroot.'/message/lib.php');
 
-    $id = required_param('id');
-    $messagebody = optional_param('messagebody',null,false);
-    $send = optional_param('send',null);
-    $returnto = optional_param('returnto',null);
-    $preview = optional_param('preview',null);
-    $format = optional_param('format',FORMAT_MOODLE);
-    $edit = optional_param('edit',null);
-    $deluser = optional_param('deluser',null);
+    $id = required_param('id',PARAM_INT);
+    $messagebody = optional_param('messagebody','',PARAM_CLEANHTML);
+    $send = optional_param('send','',PARAM_ALPHA);
+    $returnto = optional_param('returnto','',PARAM_LOCALURL);
+    $preview = optional_param('preview','',PARAM_ALPHA);
+    $format = optional_param('format',FORMAT_MOODLE,PARAM_INT);
+    $edit = optional_param('edit','',PARAM_ALPHA);
+    $deluser = optional_param('deluser',0,PARAM_INT);
 
     if (!$course = get_record('course','id',$id)) {
         error("Invalid course id");
@@ -80,7 +80,7 @@
 <input type="hidden" name="id" value="'.$id.'">
 <input type="hidden" name="format" value="'.$format.'">
 ';
-                echo "<br/><h3>".get_string('previewhtml')."</h3><div class=\"messagepreview\">\n".format_text(stripslashes($messagebody),$format)."\n</div>";
+                echo "<h3>".get_string('previewhtml')."</h3><div class=\"messagepreview\">\n".format_text(stripslashes($messagebody),$format)."\n</div>";
                 echo "\n<p align=\"center\"><input type=\"submit\" name=\"send\" value=\"Send\" /> <input type=\"submit\" name=\"edit\" value=\"Edit\" /></p>\n</form>";
             } elseif ($send) {
                 $good = 1;
