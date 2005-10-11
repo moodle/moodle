@@ -1,0 +1,83 @@
+﻿한국어
+------
+
+무들의 한국어 번역 프로젝트가 한남대학교의 티모시 알렌 교수님의 지시하에  이끌어 지고 있습니다.
+
+무들 안에 두가지의 한국 언어팩이 있는데 : 그중 하나는 "ko" 이고 그리고 EUC-KR 인코딩 입니다. 이 두가지의 언어팩은 한국어나 대부분이 한국어인 문서에서는 잘 보여지지만 
+
+대부분의 교육과정은 2개나 그 이상의 언어를 사용합니다.
+
+그래기에 우리는 무들의 언어팩을 모든 사이트에서 잘 보여지는  "ko-utf8" (UTF-8을 포함하는)로 대체하려고 합니다.
+
+"ko_utf8" 언어팩은 앞으로 한국어 무들의 기본 언어로 설정될것이고 모든 사용자들에게 이용을 권장할것입니다.
+
+
+프로젝트 참여자 목록
+-----------------------------
+티모시 알랜 (조정자)
+김귀인
+박민정
+박왕규
+이영근
+이찬영 (번역자)
+(그외 다수)
+
+프로젝트의 현재 진행 상황
+-----------------------------
+마침내 화면에 보여지는 메뉴들이 사실상 100% 완료 되었습니다. 다음 작업중 가장 우선순위는 현재 번역에서 잘못된 부분을 찾아내서 올바르게 고치고 남아있는 도움문서와 문서파일 번역을 끝내는 것입니다. 
+
+이 작업은 언제나 협력자를 필요로 합니다. 만약 당신이 자발적으로 도움을 주시면 번역이 빠른 시일안에 완료됩니다. 주저하지 말고 도움을 주십시오. (도움에 관한 상세한 내용은 아래에 있습니다)
+
+관련사이트
+----------
+한국어 무들 커뮤니티 : http://moodle.org/course/view.php?id=21  (이 커뮤니티에 꼭 가입하시고 한국어 무들을 더욱 활동적으로 만들어 주십시오!)
+
+한국어 무들 번역 프로젝트 홈페이지 : http://tim.hannam.ac.kr/
+
+만약 질문이 있거나, 번역상에 오류를 발견하셨다면 scop@hannam.ac.kr 이나 http://tim.hannam.ac.kr/ 로 알려주시기 바랍니다.
+
+
+Korean
+------
+
+The Korean Moodle Translation Project is a collaborative effort led by Timothy  Allen of Hannam University. 
+
+There are two Korean language packs in Moodle: this one is "ko" and has an EUC-KR encoding.  
+
+It would be appropriate for courses in which Korean is the only or the predominant language, 
+
+but not for courses with a lot of text in two or more languages.  
+
+Due to the planned shift of Moodle to unicode this language will soon be superseded 
+
+by the "ko_utf8" pack which has a unicode (UTF-8) encoding and which is appropriate for all kinds of sites.  
+
+"ko_utf8" is now the default language pack for Korean Moodle and users are encouraged to use it rather than this one.
+
+
+Project Contributors include:
+-----------------------------
+ Timothy Allen (co-ordinator)
+ Kui In Keem
+ Park Wang Kyu
+ Lee Yong-keun 
+ Lee Chan-young (translators)
+ (and more)
+
+Current state of the project:
+-----------------------------
+Finally the screen interface is virtually 100% complete.  
+
+The next priority is to correct errors in the completed translation and to finish translating the help and documentation files.  
+
+There is always a need for collaborators.  
+
+If you have any time to volunteer to help finish the translation as soon as possible please do not hesitate to contact me! (contact details below)  
+
+Resources:
+----------
+Korean Moodle community: http://moodle.org/course/view.php?id=21 (please join this community and make Korean Moodle more active!)
+Korean Moodle Translation Project website:  http://tim.hannam.ac.kr/
+
+If you have any questions or comments about the translation, including bugs,
+please contact me at scop@hannam.ac.kr or http://tim.hannam.ac.kr/

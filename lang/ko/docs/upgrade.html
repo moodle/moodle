@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Moodle Docs: Upgrading</title>
+	<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+
+<body>
+<h1>무들의 판올림(Upgrade)</h1>
+
+<blockquote>
+  <p>무들은 이전 판으로부터 새 판으로 판올림하는 데 있어 명확하게 설계되어 있습니다.</p>
+  <p>무들의 판올림 설치는 다음과 같은 단계를 거쳐야만 합니다.</p>
+  <h3 class="sectionheading">1. 중요한 자료의 백업</h3>
+  <blockquote>
+    <p>비록 꼭 필요한 것은 아니지만, 판올림 하기전에 운용되고 있는 시스템을 백업해 두는 것은 상당히 좋은 습관인데, 어떤 이유에서든 예전 판으로 되돌려야 할 필요가 있을 수 있기 때문 입니다.  사실 매일 무들을 자동으로 백업해 놓도록 하는 것은 매우 훌륭한 아이디어인데, 이렇게 해 놓았을 경우는 이 과정을 건너 뛰어도 좋습니다.</p>
+    <p>백업을 해 두어야 할 분야는 세 부분이 있습니다</p>
+    <blockquote>
+      <p><strong>1. 무들이 설치된 디렉토리 전부</strong></p>
+      <blockquote>
+        <p>판올림 하기 전 무들 디렉토리에 있는 파일 전부를 복사해 두어야 합니다. 이렇게 해야만 여러분의 config.php와 여러분이 첨가한 테마 그리고 언어팩 등을 다시 가져다 쓸 수 있기 때문입니다.<strong><br />
+        </strong></p>
+      </blockquote>
+      <p><strong>2. 자료가 저장된 디렉토리</strong></p>
+      <blockquote>
+        <p>이 곳에는 전송되어 저장된 자료들(배움터 자료, 학생들의 숙제 등)이 있어, 무슨 일이 있어도 꼭 백업해 두어야 합니다. 가끔 판올림시 데이터 디렉토리에 있는 내용을 옮기거나 이름을 바꾸는 경우도 있을 수 있습니다.<strong><br />
+        </strong></p>
+      </blockquote>
+      <p><strong>3. 여러분의 데이터베이스</strong></p>
+      <blockquote>
+        <p>대개 판올림을 할 경우에는 데이터베이스의 테이블을 바꾸고 항목(field)을 바꾸거나 첨가합니다. 데이터베이스 엔진의 종류에 따라 백업을 하는 방법이 다릅니다. MySQL 데이터를 백업하는 방법 중 하나는 'dump' 명령을 이용하는 것입니다. 다음에 보인 예시는 유닉스 명령 하에서 이름이 &quot;moodle&quot;인 데이터베이스를 백업하는 것입니다.</p>
+        <blockquote>
+          <p><font face="Courier New, Courier, mono">mysqldump moodle &gt; moodle-backup-2002-10-26.sql</font></p>
+        </blockquote>
+        <p>또, 관리화면의 무들 옵션인  &quot;자료&quot; 항목에 있는  &quot;내보내기&quot; 기능을 이용하여도 구동 기반에 관계없이 동일한 효과를 얻을 수 있습니다.</p>
+        <p>&nbsp;</p>
+      </blockquote>
+    </blockquote>
+  </blockquote>
+  <h3 class="sectionheading">2. 새로운 판의 무들 설치</h3>
+  <blockquote>
+    <p><strong>받아온 묶음 파일 이용</strong></p>
+    <blockquote>
+      <p>뭐가 뭔지도 모른 채 무조건 엣날 판에다 새 판을 덮어 씌우지 마십시오. 어떤 때는 예전에 있던 파일 때문에 설치에 문제가 생길 수도 있습니다. 가장 좋은 방법은 아래처럼 기존 무들의 디렉토리를 다른 이름으로 바꾸어 놓은 다음 새로 구한 무들 패키지를 이전의 위치에서 풀어 놓는 것입니다.</p>
+      <blockquote>
+        <p><font face="Courier New, Courier, mono">mv moodle moodle.backup<br />
+        tar xvzf moodle-x.x.tgz</font></p>
+      </blockquote>
+      <p>그 다음 옛 판에 있던 config.php와 여러분이 만든 테마 등의 플러그인을 복사해 넣으면 됩니다.</p>
+      <blockquote>
+        <p><font face="Courier New, Courier, mono">cp moodle.backup/config.php moodle<br />
+        cp -pr moodle.backup/theme/mytheme&nbsp;moodle/theme/mytheme</font></p>
+      </blockquote>
+    </blockquote>
+    <p><strong>CVS의 이용</strong></p>
+    <blockquote>
+      <p>만일 CVS를 이용하고 있으면, 무들 디렉토리로 가서 다음과 같은 명령으로 새 판으로 업데이트 합니다.</p>
+      <blockquote>
+        <p><font face="Courier New, Courier, mono">cvs update -dP</font></p>
+      </blockquote>
+      <p>이 때, 혹시 필요할 경우 새로운 디렉토리를 생성할 수 있도록 &quot;d&quot, 빈 디렉토리는 옮기지 않도록 &quot;P&quot; 파라메타를 사용하는 것에 유의하기 바랍니다.</p>
+      <p>만일 여러분이 무들의 파일을 직접 수정한 적이 있다면, 혹시 충돌이 일어나지 않는지 주의깊게 메시지를 살펴봐야 합니다. 이 때 여러분이 만든 테마나 표준으로 쓰이지 않는 프러그인 등은 영향을 받지 않습니다.</p>
+    </blockquote>
+    <p>&nbsp;</p>
+  </blockquote>
+  <h3 class="sectionheading">3. 판올림 마무리</h3>
+  <blockquote>
+    <p>마지막 과정은 무들 내부의 갱신 과정을 시작하게 하는 것입니다.</p>
+    <p>이 것은 다음과 같이 <a target="_top" href="../admin/index.php">관리 화면 접속</a>만으로 이루어 집니다.</p>
+    <blockquote>
+      <p><font face="Courier New, Courier, mono">http://무들이.설치된.사이트/moodle/admin</font></p>
+    </blockquote>
+    <p>이 과정은 여러분이 관리자로 접속하든지,  다른 사용자로 접속하든지에 관계가 없습니다.</p>
+    <p>일단 관리화면으로 접속하면 무들은 자동적으로 새로운 판을 인식하고 필요한 모든 데이터베이스나 파일 시스템을 갱신합니다. 만일 (거의 드믈지만) 자동으로 갱신이 이루어지지 못하면, 무들은 여러분이 해야할 일을 화면에 보여줄 것입니다.</p>
+  </blockquote>
+  <p>&nbsp; </p>
+  <p> 아무런 오류 메시지 없이 모든 것이 순조롭게 진행됐다면, 여러분은 무들의 새 판을 사용할 수 있게 되었으며 새로운 기능을 만끽하실 수 있을 것입니다!</p>
+  <p>만일 판올림에 곤란을 격는다면, <a target="_top" href="http://moodle.org/">moodle.org</a>를 방문하셔서 Using Moodle 과정의 <a target="_top" href="http://moodle.org/mod/forum/view.php?id=28">Installation 
+  Support Forum</a>에 질의해 보시기 바랍니다.</p>
+</blockquote>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p align="center"><font size="1"><a href="." target="_top">Moodle Documentation</a></font></p>
+<p align="center"><font size="1">Version: $Id$</font></p>
+
+</body>
+</html>

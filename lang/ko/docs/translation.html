@@ -1,0 +1,151 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>무들의 번역 지침</title>
+  <link rel="stylesheet" href="docstyles.css" type="TEXT/CSS" />
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+
+<body>
+
+<h1>무들의 번역 지침</h1>
+
+<p>무들의 번역은 그리 어려운 일은 아닙니다만, 번역을 시작하기 전에 몇 가지 알아두면 좋을 것들이 있습니다.</p>
+
+<p>&nbsp;</p>
+
+<h2>무들 언어팩의 구조</h2>
+
+<p style="margin-left: 40px;">무들의 모든 언어팩들은 lang 디렉토리에 각 나라 고유의 언어를 나타내는 두 문자로 된 폴더(예: en, fr, nl, es ...)에 있습니다.</p>
+
+<p style="margin-left: 40px;">이 폴더 속에 .php 확장자를 가진 주요한 모든 파일들(예: moodle.php, resource.php 등)이 들어 있습니다.&nbsp; 이러한 파일들 속에는 짧은 문장들, 소위 "<span style="font-style: italic;">문자열</span>"이 포함되어 있습니다.</p>
+
+<p style="margin-left: 40px;">또 어떤 폴더에는 .html 확장자를 갖는 웹 문서가 있는 경우도 있습니다.</p>
+
+<ul style="margin-left: 40px;">
+
+<li><strong>help</strong>: 내용과 관련한 도움말 파일이 들어 있으며, 무들 내의 도움말 아이콘을 누르면 팝업창으로 나타나는 문서들 입니다. 
+</li><li><strong>docs</strong>: (현재 보고 있는 문서처럼) 기본적인 문서들이 들어 있습니다.<br />
+</li>
+</ul>
+
+<p>&nbsp;</p>
+
+<h2>새로운 언어팩 만들기</h2>
+
+<p style="margin-left: 40px;">만일 여러분이 쓰고 있는 언어를 아직 무들이 지원하고 있지 않거나, 기존 번역이 마음에 안들어 여러분의 사이트 인터페이스에 맞게 적절히 고치고 싶다면, 새로 번역을 하고 싶을 것입니다.</p>
+
+<p style="margin-left: 40px;">이 때 여러분이 할 일은 먼저 여러분들의 언어팩을 위한 2자로된 폴더를 lang 디렉토리에 만드는 것입니다. 이를 위한 표준 코드는  lib/languages.php 에서 찾아 볼 수 있습니다. 만일 언어팩의 변형을 만들고 싶다면, 위에서 말한 2자의 국가코드에 밑줄(_)을 덧붙힌 후 의미있는 문자를 더 쓰면 됩니다. (예를 들면 포르트갈어를 위한 <span style="font-style: italic;">pt </span>에다가 밑줄(_)을 붙인 후, 브라질사람들을 위한 변형을 뜻하는 br, 즉  <span style="font-style: italic;">pt_br</span>처럼 이름을 붙이면 됩니다. 만일 한국어의 Unicode 판을 만들고 싶다면 국가코드 ko 뒤에 <span style="font-weight: bold;">_utf8</span>를 더 붙여서, <span style="font-weight: bold;">ko_utf8</span>처럼 명명합니다.)<br />
+</p>
+
+<p style="margin-left: 40px;">다음에는 새 언어팩 폴더에 다음과 같은 줄을 포함하는 &quot;moodle.php&quot;를 만들거나, 다른 언어팩으로 부터  moodle.php 파일을 복사해 올 차례입니다.<br /><br />
+<code>
+&lt;?PHP <br />
+$string['thischarset'] = 'iso-8859-1';<br />
+$string['thisdirection'] = 'ltr';<br />
+$string['thislanguage'] = 'new language pack';<br />
+?>
+</code>
+<br /><br />
+다른 언어팩에서 복사해 올 때는 "en" 폴더에서 가져오는 것이 가장 좋지만, 아무래도 재 작성해야 한다면 문제가 될 것입니다. 초기 상태에서 <span style="font-weight: bold;">완전히 새로운 언어팩을 만들 때</span>는 여러분 스스로 moodle.php를 만드는 편이  유리합니다.<br />
+</p>
+
+<p style="margin-left: 40px;">이제 여러분의 언어를 이용하여 새로운 문자열을 넣을 차례입니다. 다음을 차근 차근 읽어보세요.</p>
+
+<p style="margin-left: 40px;">새 언어팩을 만들기 위해 해야할 제일 첫 단계는 moodle.php 안에 있는 "thischarset" 문자열을 정의하는 일입니다. 여기에는 반드시 웹에서 통용되는 정확한 언어코드를 넣어줘야 합니다. 이 문자열을 바꾼 다음, moodle.php를 저장하고 화면을 <span style="font-weight: bold;">새로고침</span>을 해 줍니다. 그래야 나머지 문자열들을 고쳐 나갈 수 있습니다.</p>
+<p>&nbsp;</p>
+
+<h2>기존 언어팩의 편집</h2>
+
+<h3 style="margin-left: 40px;">조금만 고쳐서 쓰기 편하게 만들기<br />
+</h3>
+
+<p style="margin-left: 80px;">만약 여러분이 여러분들의 사이트의 인터페이스에 맞게 몇 가지만 고쳐서 쓰고자 한다면, <span style="font-weight: bold;">표준 언어팩 전체를 고치려고 하지 마십시오</span>.&nbsp; 만약 그렇게 하면, 다음 번 새로운 무들의 판올림을 할 때 문제가 발생할 수 있습니다.<br />
+</p>
+<p style="margin-left: 80px;">그 대신, 위에서 말한 새로운 언어팩 만들기를 적용해서, 여러분이 쓰고있는 언어를 이용하여 여러분만의 언어팩을 설치(moodle.php 안에)하기를 바랍니다.&nbsp; 한 예로, 한글을 쓰는 경우  모국어는  "<span style="font-style: italic;">ko</span>" 또는  "<span style="font-style: italic;">ko_utf8</span>" 이 되지만, 여러분만의 언어팩 "<span style="font-style: italic;">ko_local</span>"을 새로 만드는 것입니다.</p>
+<p style="margin-left: 80px;">만일 여러분이 이 새로운 언어팩을 <span style="font-weight: bold;">관리 &gt;&gt; 환경설정 &gt;&gt; 변화</span>을 통해 사이트의 전용 언어팩으로 지정해 놓으면, 여러분의 사이트를 방문하는 모든 사람은 이 언어팩을 통해 보게됨을 유의하시기 바랍니다.<br />
+<br />
+</p>
+
+<h3 style="margin-left: 40px;">무들 인터페이스 언어 파일("문자열" 파일) 번역<br />
+</h3>
+  
+  <ol  style="margin-left: 80px;">
+    <li>무들 서버에 관리자로 접속합니다. </li>
+    <li><span style="font-weight: bold;">관리 &gt;&gt; 환경설정 &gt;&gt; 언어</span>를 클릭하여, 언어를 관리할 수 있는 페이지로 들어갑니다.</li>
+    <li>"현재의 언어" 난에서 고치고자 하는 언어팩을 선택하고, "문자열을 편집하다" 를 클릭합니다.</li>
+    <li>그러면 편집할 수 있는 파일들이 보이면서, 편집할 수 있는 항목들이 나타납니다. 수정할 수 있는 상태가 아니라면 먼저 파일의 읽고 쓰기 권한을 변경하여 "쓰기 가능"으로 만들어 놓아야 합니다.</li>
+    <li>편집틀은 세 부분으로 되어 있는데, 첫째는 각 문자열의 명칭, 두번째는 영문, 마지막이 현재 쓰고 있는 언어로 번역해야 할 부분입니다.</li>
+    <li>개개의 파일에서 빠진 문자열(색깔로 강조되어 있음)을 편집하고, 맨 마지막에 있는 "변경사항 저장"을 반드시 눌러줘야 합니다.</li>
+    <li>만일 이 때 문자열을 빈 채로 두게되면, 무들은 자동적으로 기존의 모국어를 사용하게 됩니다. 모국어는 moodle.php 안에서 정의할 수 있으며, 이를 정의해 놓지 않으면 자동적으로 영어를 사용하게 되어 있습니다.</li>
+    <li>빠진 문자열을 손쉽게 찾는 방법은 "빠진 문자들을 확인하세요" 버튼을 이용하는 것입니다. 문자열을 하나도 바꾸지 않은 채 놓아둔 완전히 빈 문서의 경우에는, 이 기능이 작동하지 않을 것입니다.<br />
+      <br />
+    </li>
+</ol>
+
+<h3 style="margin-left: 40px;">도움말 및 기타 문서 파일의 번역</h3>
+
+<p style="margin-left: 80px;">무들에 아직 도움말 파일을 자동으로 번역해 주는 내장 편집기가 없습니만, 그리 어려운 일은 아닐 것이라고 생각합니다. 중요한 것은 표준 언어로  <span style="font-weight: bold;">en</span> 언어팩을 사용하는 것입니다. 영어 언어팩에 있는 도움말 파일을 복사하여 여러분의 언어팩의 같은 위치에 복사해 넣습니다. 그 다음 평범한 문서 편집기를 이용하여 (HTML 태그등) 중요한 코드는 그대로 둔 채로 파일을 번역합니다. (단 이 때 전문 워드프로세서는 쓰지 마시기 바랍니다. 이런 프로그램은 너무 많은 코드를 삽입하기 때문입니다)
+<br /><b>여러분의 언어팩에 번역되지 않은 도움말 파일은 두지 마십시오.</b></p>
+
+<p style="margin-left: 80px;">도움말 번역시 아래와 같은 XHTML 문법 호환규칙에 유념하십시오.</p>
+<ul style="margin-left: 80px;">
+  <li>모든 태그는 닫혀져야 한다: <span style="color:rgb(255, 0, 0);" >&lt;p&gt;</span>lalala<span style="color:rgb(255, 0, 0);" >&lt;/p&gt;</span></li>
+  <li>모든 요소는 잘 구조화 되어야 한다: <span style="color:rgb(255, 0, 0);" >&lt;p&gt;</span> lalala <span style="color:rgb(0, 0, 255);" >&lt;em&gt;</span>lalala<span style="color:rgb(0, 0, 255);" >&lt;/em&gt;</span> <span style="color:rgb(255, 0, 0);" >&lt;/p&gt;</span></li>
+  <li>모든 태그와 부가 요소는 소문자로 기재되어야 한다.</li>
+  <li>모든 부가 요소들은 완전하게 그리고 따옴표로 마감되어야 한다 : <span style="color:rgb(255, 0, 0);" >&lt;p align=&quot;right&quot;&gt;</span> lalala &lt;/p&gt;</li>
+  <li>공백 요소들은 반드시 /&gt;: 로 끝나야 한다. <span style="color:rgb(255, 0, 0);" >&lt;br /&gt; &lt;hr /&gt;</span>. 반드시  "/" 기호 앞에 빈칸 하나를 더 첨부해야 한다.</li>
+  <li><span style="color:rgb(255, 0, 0);" >&lt;img alt="" src="picture.gif" /></span>에서 보는 바와 같이 &lt;img 태그는 반드시 alt="" (따로 지정하지 않은 경우)를 넣어야 하며 다른 공백 요소처럼 빈칸에   /&gt; 로 마감해야 한다.</li>
+  <li>PHP 선언문 <span style="color:rgb(255, 0, 0);" >&lt;?=</span> 와 <span style="color:rgb(255, 0, 0);" >&lt;?</span> 는 반드시 <span style="color:rgb(255, 0, 0);" >&lt;?php</span>로 써야 한다.</li>
+  <li>폰트 태그는 전혀 쓰지 말아야 한다. 언어팩에 있는 파일들은 <span style="color:rgb(255, 0, 0);" > &lt;p&gt;&lt;em&gt; &lt;h1&gt; &lt;h2&gt;</span> 만으로도 충분하다.</li>
+  <li>언어팩에서 쓰는 일반적인 언어의 명칭(moodle.php 안의 $string['thislanguage'] )은 가급적 "유니코드 숫자형 문자 레퍼런스(NCR)"에 의거하여 명명되어야 하며, 그래야만 그어떤 모국어 환경에서도 쓸 수 있다. (중국어팩 참조)</li>
+</ul>
+<p style="margin-left: 80px;">help 폴더안에 있는 그 어떤 파일에도 웹문서 초기선언인  doc-type, html, body, head opening and closing tags 등이 필요 없습니다. 이러한 내용들은 이미 help.php에 들어 있기 때문입니다. 즉 HTML의 융통성을 제대로 발휘할 여지가 없다는 의미입니다. 영어 도움말의 예시를 충실히 따르기 바랍니다.</p>
+<p style="margin-left: 80px;">docs 폴더에 있는 문서들도 문서 유형, 헤더 등을 포함해 완벽히 XHTML 호환규칙을 따라야만 합니다.</p>
+ 
+<p style="margin-left: 80px;">언어 관리 화면에서 "빠진 문자들을 확인하세요"를 누르면 누락된 파일들을 볼 수 있습니다. 만약 누락된 파일들을 가지고 있어 무들이 모국어 파일을 대신 쓰게 될 경우,  <strong>번역되지 않은</strong> 도움말 파일이 여러분의 언어팩에 그대로 있게 되면, 도움말이 뜨지 않습니다.</p>
+
+<p>&nbsp;</p>
+
+<h2>무들 프로젝드에 언어팩 제공하기</h2>
+
+<p style="margin-left: 40px;">무들에 여러분이 번역한 내용을 제공하게 되면, 여러분은 같은 모국어를 쓰는 다른 사람들에게 공헌하는 것입니다. 여러분이 번역한 언어는 무들의 다음판에 반영될 수 있습니다.<br />
+</p>
+
+<p style="margin-left: 40px;">간단히 여러분의 새 언어팩 디렉토리를 <span style="font-weight: bold;">zip</span> 파일로 묶어서 <a href="m&#97&#105&#108&#116&#111:tra%6es%6ca%74%69o%6e%40%6d%6f%6f%64%6c%65.org">&#116&#114a&#110&#115&#108&#97t&#105on&#64&#109o&#111&#100&#108e&#46o&#114&#103</a>로 보내면 됩니다.<br />
+</p>
+<p style="margin-left: 40px;">다음은 좀 더 자세한 내용입니다.<br />
+</p>
+
+<p  style="margin-left: 40px;">보내시기 전에 확인해야 할 내용입니다.</p>
+<ul type="circle" style="margin-left: 80px;">
+<li>빈 파일은 아닌가?</li>
+<li>번역되지 않은 파일이나 문자열은 없는가?</li>
+<li>도움말 파일이 워드프로세서로 편집되지는 않았나?</li>
+<li>README 파일에 번역한 언어, 번역자의 이름이나 이메일 주소가 누락되어 있지는 않은가?</li>
+<li>폴더의 명칭이 정확한 언어코드로 쓰여졌는가?(moodle\lib\languages.php 참조)</li>
+<li>만든 언어팩이 실험 사이트에서 오류없이 잘 작동하였는가?</li>
+<li> "thislanguage"가 "iso-8859-1" 문자셋이 아니라면 NCR의 기준에 맞게 작성되었는가?</li>
+<li>문자열과 파일들이 XHTML 규약에 맞게 작성되었는가?</li>
+</ul>
+
+<h2>표준 언어팩의 유지 관리<br />
+</h2>
+
+<p style="margin-left: 40px;">만일 여러분이 무들의 언어팩 관리자로 승인을 받는다면, <a href="?file=cvs.html">Moodle CVS</a>를 이용하여 최신판의 무들을 갱신해, 무들 프로젝트의 변경사항을 그 때 그 때 "점검"해 보는 것이 최선일 것입니다. 만약 여러분이 설정하는데 어려움을 겪는다면  <a href="m&#97&#105&#108&#116&#111:tra%6es%6ca%74%69o%6e%40%6d%6f%6f%64%6c%65.org">&#116&#114a&#110&#115&#108&#97t&#105on&#64&#109o&#111&#100&#108e&#46o&#114&#103</a> 에게 요청해 보십시오. <br />
+</p>
+
+<p style="margin-left: 40px;">또 반드시 <a target="_top" href="http://moodle.org/mod/forum/view.php?id=43">Languages Forum</a>에 가입하여 번역에 영향을 주는 문제들에 대해 논의하거나 새로운 소식을 얻어야 합니다.<br />
+</p>
+
+<p style="margin-left: 40px;">마지막으로 프로젝트의 시시각각 갱신되는 내용을 지속적으로 살펴보기 위해서는 <a href="http://sourceforge.net/mail/?group_id=30935" target="_top">CVS 메일링 리스트</a>에 가입하는 것이 매우 좋습니다.&nbsp;
+이는 여러분의 번역이 가능한한 영문 내용과 가장 근접하게 유지되도록 도울 것입니다.<br />
+</p>
+<p style="margin-left: 40px;"><br />
+</p>
+
+<p align="center"><font size="1"><a href="." target="_top">Moodle Documentation</a></font></p>
+<p align="center"><font size="1">Version: $Id$</font></p>
+
+</body></html>
