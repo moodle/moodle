@@ -99,47 +99,47 @@
                 unset($glossary);
                 $glossary->name = addslashes(utf8_decode($xmlglossary['NAME'][0]['#']));
                 $glossary->course = $course->id;
-                $glossary->globalglossary = $xmlglossary['GLOBALGLOSSARY'][0]['#'];
+                $glossary->globalglossary = addslashes($xmlglossary['GLOBALGLOSSARY'][0]['#']);
                 $glossary->intro = addslashes(utf8_decode($xmlglossary['INTRO'][0]['#']));
-                $glossary->showspecial = $xmlglossary['SHOWSPECIAL'][0]['#'];
-                $glossary->showalphabet = $xmlglossary['SHOWALPHABET'][0]['#'];
-                $glossary->showall = $xmlglossary['SHOWALL'][0]['#'];
+                $glossary->showspecial = addslashes($xmlglossary['SHOWSPECIAL'][0]['#']);
+                $glossary->showalphabet = addslashes($xmlglossary['SHOWALPHABET'][0]['#']);
+                $glossary->showall = addslashes($xmlglossary['SHOWALL'][0]['#']);
                 $glossary->timecreated = time();
                 $glossary->timemodified = time();
 
                 // Setting the default values if no values were passed
                 if ( isset($xmlglossary['STUDENTCANPOST'][0]['#']) ) {
-                    $glossary->studentcanpost = $xmlglossary['STUDENTCANPOST'][0]['#'];
+                    $glossary->studentcanpost = addslashes($xmlglossary['STUDENTCANPOST'][0]['#']);
                 } else {
                     $glossary->studentcanpost = $CFG->glossary_studentspost;
                 }
                 if ( isset($xmlglossary['ENTBYPAGE'][0]['#']) ) {
-                    $glossary->entbypage = $xmlglossary['ENTBYPAGE'][0]['#'];
+                    $glossary->entbypage = addslashes($xmlglossary['ENTBYPAGE'][0]['#']);
                 } else {
                     $glossary->entbypage = $CFG->glossary_entbypage;
                 }
                 if ( isset($xmlglossary['ALLOWDUPLICATEDENTRIES'][0]['#']) ) {
-                    $glossary->allowduplicatedentries = $xmlglossary['ALLOWDUPLICATEDENTRIES'][0]['#'];
+                    $glossary->allowduplicatedentries = addslashes($xmlglossary['ALLOWDUPLICATEDENTRIES'][0]['#']);
                 } else {
                     $glossary->allowduplicatedentries = $CFG->glossary_dupentries;
                 }
                 if ( isset($xmlglossary['DISPLAYFORMAT'][0]['#']) ) {
-                    $glossary->displayformat = $xmlglossary['DISPLAYFORMAT'][0]['#'];
+                    $glossary->displayformat = addslashes($xmlglossary['DISPLAYFORMAT'][0]['#']);
                 } else {
                     $glossary->displayformat = 2;
                 }
                 if ( isset($xmlglossary['ALLOWCOMMENTS'][0]['#']) ) {
-                    $glossary->allowcomments = $xmlglossary['ALLOWCOMMENTS'][0]['#'];
+                    $glossary->allowcomments = addslashes($xmlglossary['ALLOWCOMMENTS'][0]['#']);
                 } else {
                     $glossary->allowcomments = $CFG->glossary_allowcomments;
                 }
                 if ( isset($xmlglossary['USEDYNALINK'][0]['#']) ) {
-                    $glossary->usedynalink = $xmlglossary['USEDYNALINK'][0]['#'];
+                    $glossary->usedynalink = addslashes($xmlglossary['USEDYNALINK'][0]['#']);
                 } else {
                     $glossary->usedynalink = $CFG->glossary_linkentries;
                 }
                 if ( isset($xmlglossary['DEFAULTAPPROVAL'][0]['#']) ) {
-                    $glossary->defaultapproval = $xmlglossary['DEFAULTAPPROVAL'][0]['#'];
+                    $glossary->defaultapproval = addslashes($xmlglossary['DEFAULTAPPROVAL'][0]['#']);
                 } else {
                     $glossary->defaultapproval = $CFG->glossary_defaultapproval;
                 }
@@ -213,7 +213,7 @@
             $newentry->concept = addslashes(trim(utf8_decode($xmlentry['#']['CONCEPT'][0]['#'])));
             $newentry->definition = addslashes(utf8_decode($xmlentry['#']['DEFINITION'][0]['#']));
             if ( isset($xmlentry['#']['CASESENSITIVE'][0]['#']) ) {
-                $newentry->casesensitive    = $xmlentry['#']['CASESENSITIVE'][0]['#'];
+                $newentry->casesensitive    = addslashes($xmlentry['#']['CASESENSITIVE'][0]['#']);
             } else {
                 $newentry->casesensitive      = $CFG->glossary_casesensitive;
             }
@@ -244,18 +244,18 @@
                 $newentry->approved         = 1;
                 $newentry->userid           = $USER->id;
                 $newentry->teacherentry     = 1;
-                $newentry->format           = $xmlentry['#']['FORMAT'][0]['#'];
+                $newentry->format           = addslashes($xmlentry['#']['FORMAT'][0]['#']);
                 $newentry->timecreated      = time();
                 $newentry->timemodified     = time();
 
                 // Setting the default values if no values were passed
                 if ( isset($xmlentry['#']['USEDYNALINK'][0]['#']) ) {
-                    $newentry->usedynalink      = $xmlentry['#']['USEDYNALINK'][0]['#'];
+                    $newentry->usedynalink      = addslashes($xmlentry['#']['USEDYNALINK'][0]['#']);
                 } else {
                     $newentry->usedynalink      = $CFG->glossary_linkentries;
                 }
                 if ( isset($xmlentry['#']['FULLMATCH'][0]['#']) ) {
-                    $newentry->fullmatch        = $xmlentry['#']['FULLMATCH'][0]['#'];
+                    $newentry->fullmatch        = addslashes($xmlentry['#']['FULLMATCH'][0]['#']);
                 } else {
                     $newentry->fullmatch      = $CFG->glossary_fullmatch;
                 }
@@ -285,7 +285,7 @@
                             unset($newcat);
 
                             $newcat->name = addslashes(utf8_decode($xmlcat['#']['NAME'][0]['#']));
-                            $newcat->usedynalink = $xmlcat['#']['USEDYNALINK'][0]['#'];
+                            $newcat->usedynalink = addslashes($xmlcat['#']['USEDYNALINK'][0]['#']);
                             if ( !$category = get_record("glossary_categories","glossaryid",$glossary->id,"name",$newcat->name) ) {
                                 // Create the category if it does not exist
                                 unset($category);
