@@ -101,6 +101,17 @@ define("HOTPOT_JQUIZ",  "6");
 define("HOTPOT_TEXTOYS_RHUBARB",   "7");
 define("HOTPOT_TEXTOYS_SEQUITUR",  "8");
 
+$HOTPOT_QUIZTYPE = array(
+	HOTPOT_JCB    => 'JCB',
+	HOTPOT_JCLOZE => 'JCloze',
+	HOTPOT_JCROSS => 'JCross',
+	HOTPOT_JMATCH => 'JMatch',
+	HOTPOT_JMIX   => 'JMix',
+	HOTPOT_JQUIZ  => 'JQuiz',
+	HOTPOT_TEXTOYS_RHUBARB  => 'Rhubarb',
+	HOTPOT_TEXTOYS_SEQUITUR => 'Sequitur'
+);
+
 define("HOTPOT_JQUIZ_MULTICHOICE", "1");
 define("HOTPOT_JQUIZ_SHORTANSWER", "2");
 define("HOTPOT_JQUIZ_HYBRID",      "3");
@@ -1511,11 +1522,15 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 		$quoteopen = '("|&quot;|&amp;quot;)'; // open quote
 		$quoteclose = '\\5'; //  close quote (to match open quote)
 
-		$url = '\S+?\.\S+?'; // '.*?'
 		$replace = "hotpot_convert_relative_url('".$this->get_baseurl()."', '".$this->reference."', '\\1', '\\6', '\\7')";
 
 		$tags = array('script'=>'src', 'link'=>'href', 'a'=>'href','img'=>'src','param'=>'value');
 		foreach ($tags as $tag=>$attribute) {
+			if ($tag=='param') {
+				$url = '\S+?\.\S+?'; // must include a filename and have no spaces
+			} else {
+				$url = '.*?';
+			}
 			$search = "%($tagopen$tag$space$anychar$attribute=$quoteopen)($url)($quoteclose$anychar$tagclose)%ise";
 			$str = preg_replace($search, $replace, $str);
 		}
@@ -1673,6 +1688,7 @@ function hotpot_convert_navbutton_url($baseurl, $reference, $url, $course) {
 
 function hotpot_convert_relative_url($baseurl, $reference, $opentag, $url, $closetag) {
 
+	// catch <PARAM name="FlashVars" value="TheSound=soundfile.mp3">
 	if (preg_match('|^'.'\w+=[^&]+'.'([&]\w+=[^&]+)*'.'$|', $url)) {
 		$query = $url;
 		$url = '';
