@@ -128,7 +128,8 @@ CREATE TABLE prefix_course_request (
    shortname varchar(15) NOT NULL default '',
    summary text NOT NULL default '',
    reason text NOT NULL default '',
-   requester INTEGER NOT NULL default 0
+   requester INTEGER NOT NULL default 0,
+   password NOT NULL default ''
 );
 
 CREATE INDEX prefix_course_request_shortname_idx ON prefix_course_request (shortname);

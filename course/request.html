@@ -15,6 +15,9 @@ if (empty($form->reason)) {
 if (empty($usehtmleditor)) {
     $usehtmleditor = 0;
 }
+if (empty($form->password)) {
+    $form->password = '';
+}
 ?>
 <form method="post" action="request.php" name="request">
 <table cellpadding="9" cellspacing="0" >
@@ -48,6 +51,13 @@ if (empty($usehtmleditor)) {
         helpbutton("text", get_string("helptext"));
         if (isset($err["reason"])) formerr($err["reason"]);
     ?>
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right"><?php  print_string("enrolmentkey") ?>:</td>
+    <td><input type="text" name="password" size="25" value="<?php  p($form->password) ?>" alt="<?php  print_string("enrolmentkey") ?>" />
+    <?php  helpbutton("enrolmentkey", get_string("enrolmentkey")) ?>
+    <?php  if (isset($err["password"])) formerr($err["password"]); ?>
     </td>
 </tr>
 <tr>

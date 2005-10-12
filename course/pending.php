@@ -109,9 +109,10 @@
         // loop through
         $table->cellpadding = 4;
         $table->cellspacing = 3;
-        $table->align = array('center','center','center','center','center','center');
-        $table->head = array(get_string('shortname'),get_string('fullname'),get_string('requestedby'),get_string('summary'),
+        $table->align = array('center','center','center','center','center','center','center');
+        $table->head = array('&nbsp',get_string('shortname'),get_string('fullname'),get_string('requestedby'),get_string('summary'),
                                get_string('requestreason'),'');
+        $strrequireskey = get_string('requireskey');
         foreach ($pending as $course) {
             $requester = get_record('user','id',$course->requester);
             // check here for shortname collisions and warn about them.
@@ -119,7 +120,9 @@
                 $course->shortname .= ' [*]';
                 $collision = 1;
             }
-            $table->data[] = array($course->shortname,$course->fullname,fullname($requester),
+            $table->data[] = array(((!empty($course->password)) ? 
+                                    '<img hspace="1" alt="'.$strrequireskey.'" height="16" width="16" border="0" src="'.$CFG->pixpath.'/i/key.gif" />' : ''),
+                                   $course->shortname,$course->fullname,fullname($requester),
                                    $course->summary,$course->reason,
                                    '<a href="pending.php?approve='.$course->id.'">'.get_string('approve').'</a> | '
                                    .'<a href="pending.php?reject='.$course->id.'">'.get_string('reject').'</a>');

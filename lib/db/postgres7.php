@@ -1390,6 +1390,10 @@ function main_upgrade($oldversion=0) {
         table_column('course','','enrolstartdate','integer');
         table_column('course','','enrolenddate','integer');
     }
+
+    if ($oldversion < 2005101200) { # add enrolment key to course_request.
+        table_column('course_request','','password','text');
+    }
     
     return $result;
 }
