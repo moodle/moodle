@@ -181,6 +181,7 @@ function hotpot_get_next_cm(&$cm) {
 	return $next_mod;
 }
 function hotpot_set_attempt_details(&$attempt) {
+	global $HOTPOT_QUIZTYPE;
 
 	$attempt->details = '';
 	$attempt->score = 0;
@@ -189,7 +190,7 @@ function hotpot_set_attempt_details(&$attempt) {
 	$buttons = array('clues', 'hints', 'checks');
 	$textfields = array('correct', 'wrong', 'ignored');
 
-	$quiztype = optional_param('quiztype', '', PARAM_ALPHA);
+	$quiztype = HOTPOT_JCLOZE; // optional_param('quiztype', HOTPOT_JCLOZE, PARAM_INT);
 
 	$q = 0;
 	while (($responsefield="q{$q}") && isset($_POST[$responsefield])) {
@@ -197,14 +198,21 @@ function hotpot_set_attempt_details(&$attempt) {
 
 		// initialize $response object
 		$response = NULL;
-		$response->correct = '';
-		$response->wrong   = '';
+		$response->correct = array();
+		$response->wrong   = array();
 		$response->ignored = array();
 		$response->clues  = 0;
 		$response->hints  = 0;
 		$response->checks = 0;
 		$response->score  = 0;
 		$response->weighting  = 0;
+		
+		// create another empty object to hold all previous responses (from database)
+		$oldresponse = NULL;
+		$vars = get_object_vars($response);
+		foreach($vars as $name=>$value) {
+			$oldresponse->$name = $value;
+		}
 
 		foreach ($buttons as $button) {
 			if (($field = "q{$q}_{$button}_button") && isset($_POST[$field])) {
@@ -217,8 +225,8 @@ function hotpot_set_attempt_details(&$attempt) {
 
 		// loop through possible answers to this question
 		$firstcorrectvalue = '';
-		$i = 0;
-		while (($correctfield="q{$q}_correct_{$i}") && isset($_POST[$correctfield])) {
+		$a = 0;
+		while (($correctfield="q{$q}_correct_{$a}") && isset($_POST[$correctfield])) {
 			$correctvalue = optional_param($correctfield, '', PARAM_RAW);
 
 			if (empty($firstcorrectvalue)) {
@@ -226,16 +234,16 @@ function hotpot_set_attempt_details(&$attempt) {
 			}
 
 			if ($responsevalue==$correctvalue) {
-				$response->correct = $responsevalue;
+				$response->correct[] = $responsevalue;
 			} else {
 				$response->ignored[] = $correctvalue;
 			}
-			$i++;
+			$a++;
 		}
 
 		// if no correct answer was found, then this answer is wrong
 		if (empty($response->correct)) {
-			$response->wrong = $responsevalue;
+			$response->wrong[] = $responsevalue;
 			$attempt->status = HOTPOT_STATUS_INPROGRESS;
 
 			// give a hint, if necessary
@@ -247,6 +255,7 @@ function hotpot_set_attempt_details(&$attempt) {
 				$correctlen = strlen($firstcorrectvalue);
 				$responselen = strlen($responsevalue);
 
+				// check how many letters are the same
 				$i = 0;
 				while ($i<$responselen && $i<$correctlen && $responsevalue{$i}==$firstcorrectvalue{$i}) {
 					$i++;
@@ -262,24 +271,12 @@ function hotpot_set_attempt_details(&$attempt) {
 				}
 				$_POST[$responsefield] = $responsevalue;
 				$response->hints++;
-			}
-		}
-
-		// convert "ignored" array to string
-		$response->ignored = implode(',', $response->ignored);
+			} // end if hint
+		} // end if not correct
 
 		// get clue text, if any
 		if (($field="q{$q}_clue") && isset($_POST[$field])) {
 			$response->clue_text = optional_param($field, '', PARAM_RAW);
-		}
-
-		$oldresponse = NULL;
-		foreach ($buttons as $button) {
-			$oldresponse->$button = 0;
-		}			
-		foreach ($textfields as $field) {
-			$oldresponse->$field = array();
-			$response->$field = empty($response->$field) ? array() : explode(',', $response->$field);
 		}
 
 		// get question name
@@ -303,31 +300,34 @@ function hotpot_set_attempt_details(&$attempt) {
 					$oldresponse->$button = max($oldresponse->$button, $record->$button);
 				}
 				foreach ($textfields as $field) {
-					if ($record->$field) {
+					if ($record->$field && ($field=='correct' || $field=='wrong')) {
 						$values = explode(',', hotpot_strings($record->$field));
 						$oldresponse->$field = array_merge($oldresponse->$field, $values);
 					}
 				}
 			}
 		}
+
 		// remove "correct" and "wrong" values from "ignored" values
-		$response->ignored = array_diff(
-			$response->ignored, 
+		$response->ignored = array_diff($response->ignored, 
 			$response->correct, $response->wrong, $oldresponse->correct, $oldresponse->wrong
 		);
+
 		foreach ($buttons as $button) {
 			$response->$button += $oldresponse->$button;
 		}
+
 		$value_has_changed = false;
 		foreach ($textfields as $field) {
+
 			$response->$field = array_merge($response->$field, $oldresponse->$field);
 			$response->$field = array_unique($response->$field);
 			$response->$field  = implode(',', $response->$field);
 
-			$oldresponse->$field = array_unique($oldresponse->$field);
-			$oldresponse->$field  = implode(',', $oldresponse->$field);
-
 			if ($field=='correct' || $field=='wrong') {
+				$array = $oldresponse->$field;
+				$array = array_unique($array);
+				$oldresponse->$field  = implode(',', $array);		
 				if ($response->$field<>$oldresponse->$field) {
 					$value_has_changed = true;
 				}
@@ -339,26 +339,56 @@ function hotpot_set_attempt_details(&$attempt) {
 
 		// $response now holds amalgamation of all responses so far to this question
 		
-		// set score and weighting
+		// set question score and weighting
 		if ($response->correct) {
-			$strlen = strlen($response->correct);
-			$response->score = 100*($strlen-($response->checks-1))/$strlen;
-			$attempt->score += $response->score;
+			switch ($quiztype) {
+				case HOTPOT_JCB:
+					break;
+				case HOTPOT_JCLOZE:
+					$strlen = strlen($response->correct);
+					$response->score = 100*($strlen-($response->checks-1))/$strlen;
+					$attempt->score += $response->score;
+					break;
+				case HOTPOT_JCROSS:
+					break;
+				case HOTPOT_JMATCH:
+					break;
+				case HOTPOT_JMIX:
+					break;
+				case HOTPOT_JQUIZ:
+					break;
+			}
 		}
 
 		// encode $response fields as XML
 		$vars = get_object_vars($response);
 		foreach($vars as $name=>$value) {
 			if (!empty($value)) {
-				$attempt->details .= "<field><fieldname>{$quiztype}_q{$qq}_{$name}</fieldname><fielddata>$value</fielddata></field>";
+				$fieldname = $HOTPOT_QUIZTYPE[$quiztype]."_q{$qq}_{$name}";
+				$attempt->details .= "<field><fieldname>$fieldname</fieldname><fielddata>$value</fielddata></field>";
 			}
 		}
 
 		$q++;
-	}
+	} // end main loop through $q(uestions)
 
+	// set attempt score
 	if ($q>0) {
-		$attempt->score = floor($attempt->score / $q);
+		switch ($quiztype) {
+			case HOTPOT_JCB:
+				break;
+			case HOTPOT_JCLOZE:
+				$attempt->score = floor($attempt->score / $q);
+				break;
+			case HOTPOT_JCROSS:
+				break;
+			case HOTPOT_JMATCH:
+				break;
+			case HOTPOT_JMIX:
+				break;
+			case HOTPOT_JQUIZ:
+				break;
+		}
 	}
 
 	if ($attempt->details) {
@@ -370,4 +400,5 @@ function hotpot_set_attempt_details(&$attempt) {
 		$attempt->status = HOTPOT_STATUS_INPROGRESS;
 	}	
 }
+
 ?>
