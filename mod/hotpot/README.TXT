@@ -12,8 +12,12 @@ This is v2.1.4 of the HotPot module
    This software is provided "AS IS" without a warranty of any kind.
 
    Sponsors who have generously contributed to the development of this software:
-      - AGAUR (Catalan, Spain)
-      - Paul Allum (Rikyo Univeristy, Japan)
+
+      - Agencia de Gestio d'Ajuts Universitaris i de Recerca (AGAUR), 
+        Autonomous Government of Catalonia, Spain 
+        (via Josep M. Fontana, Universitat Pompeu Fabra)
+
+      - Rikkyo Univeristy, Japan (via Paul Allum)
 
 
 ================
