@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // hotpot.php - created with Moodle 1.6 development (2005090100)
+      // hotpot.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['abandoned'] = '放棄';
@@ -57,7 +57,7 @@ $string['navigation_give_up'] = 'ギブアップボタン';
 $string['navigation_iframe'] = '埋め込み ＜IFRAME＞';
 $string['navigation_none'] = '無し';
 $string['neverclosed'] = '終了無し';
-$string['noactivity'] = '活動なし';
+$string['noactivity'] = '活動無し';
 $string['noresponses'] = '問題と解答に関する情報が見つかりませんでした。';
 $string['outputformat'] = '表示形式';
 $string['outputformat_best'] = 'best';
@@ -111,13 +111,17 @@ $string['reportnottried'] = '未受験';
 $string['reportnottriedsymbol'] = '-';
 $string['reportnumberofquestions'] = '問題数';
 $string['reportpercentscore'] = '%% スコア';
+$string['reportquestionstried'] = '受験';
 $string['reportrawscore'] = '生スコア';
 $string['reportright'] = '正解';
 $string['reportsectionnumber'] = 'セクション';
 $string['reportshowanswer'] = '答えの表示';
-$string['reportshowlegend'] = '説明文の表示';
+$string['reportshowlegend'] = '問題の表示';
+$string['reportsofar'] = '$a 総数';
 $string['reportstatus'] = 'ステータス';
 $string['reportstudentid'] = '学生ID';
+$string['reportthisclick'] = '$a 今回';
+$string['reporttimerecorded'] = 'レスポンス記録';
 $string['reportwrapdata'] = 'データの折り返し';
 $string['reportwrong'] = '不正解';
 $string['reportwrongsymbol'] = 'X';
