@@ -84,8 +84,8 @@ function workshop_upgrade($oldversion) {
         execute_sql("ALTER TABLE {$CFG->prefix}workshop DROP COLUMN includeteachersgrade");
         execute_sql("ALTER TABLE {$CFG->prefix}workshop DROP COLUMN biasweight");
         execute_sql("ALTER TABLE {$CFG->prefix}workshop DROP COLUMN reliabilityweight");
-        execute_sql("ALTER TABLE {$CFG->prefix}workshop DROP COLUMN teacherloading");
-        execute_sql("ALTER TABLE {$CFG->prefix}workshop DROP COLUMN assessmentstodrop");
+        execute_sql("ALTER TABLE {$CFG->prefix}workshop DROP COLUMN teacherloading",false); //silent
+        execute_sql("ALTER TABLE {$CFG->prefix}workshop DROP COLUMN assessmentstodrop",false); //silent
     }
 
     if ($oldversion < 2004092400) {
