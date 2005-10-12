@@ -34,9 +34,6 @@
             } else if ($edit == "off") {
                 $USER->categoriessearchediting = false;
             }
-
-            print_paging_bar($totalcount, $page, $perpage, "search.php?search=$search&perpage=$perpage&");
-
         }
 
         $creatorediting = !empty($USER->categoriessearchediting);
@@ -110,6 +107,14 @@
 
         print_heading("$strsearchresults: $totalcount");
 
+        print_paging_bar($totalcount, $page, $perpage, "search.php?search=$search&amp;perpage=$perpage&amp;",'page',($perpage == 99999));
+
+        if ($perpage != 99999 && $totalcount > $perpage) {
+            echo "<center><p>";
+            echo "<a href=\"search.php?search=$search&perpage=99999\">".get_string("showall", "", $totalcount)."</a>";
+            echo "</p></center>";
+        }
+
         if (!$adminediting) {
             foreach ($courses as $course) {
                 $course->fullname = highlight("$search", $course->fullname);
@@ -123,14 +128,6 @@
             }
         } else { // slightly more sophisticated
 
-            $oldperpage = ($adminediting) ? 30 : 10;
-            print_paging_bar($totalcount, $page, $oldperpage, "search.php?search=$search&perpage=$perpage&",($perpage == 99999));
-
-            if ($perpage != 99999 && $totalcount > $perpage) {
-                echo "<center><p>";
-                echo "<a href=\"search.php?search=$search&perpage=99999\">".get_string("showall", "", $totalcount)."</a>";
-                echo "</p></center>";
-            }
             echo "<form name=\"movecourses\" action=\"search.php\" method=\"post\">";
             echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\">";
             echo "<input type=\"hidden\" name=\"search\" value=\"$search\">";
@@ -185,19 +182,15 @@
             echo "</td></tr>";
             echo "</table>";
 
-            print_paging_bar($totalcount, $page, $oldperpage, "search.php?search=$search&perpage=30&",($perpage == 99999));
-
-
-            if ($perpage != 99999 && $totalcount > $perpage) {
-                echo "<center><p>";
-                echo "<a href=\"search.php?search=$search&perpage=99999\">".get_string("showall", "", $totalcount)."</a>";
-                echo "</p></center>";
-            }
-
         }
 
+        print_paging_bar($totalcount, $page, $perpage, "search.php?search=$search&amp;perpage=$perpage&amp;",'page',($perpage == 99999));
 
-
+        if ($perpage != 99999 && $totalcount > $perpage) {
+            echo "<center><p>";
+            echo "<a href=\"search.php?search=$search&perpage=99999\">".get_string("showall", "", $totalcount)."</a>";
+            echo "</p></center>";
+        }
 
     } else {
         print_heading(get_string("nocoursesfound", "", $search));
