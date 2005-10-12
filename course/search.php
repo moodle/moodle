@@ -34,6 +34,10 @@
             } else if ($edit == "off") {
                 $USER->categoriessearchediting = false;
             }
+            // If the edit mode we are leaving has higher per page than the one we are entering,
+            // with pages, chances are you will get a no courses found error. So when we are switching
+            // modes, set page to 0.
+            $page = 0;
         }
 
         $creatorediting = !empty($USER->categoriessearchediting);
