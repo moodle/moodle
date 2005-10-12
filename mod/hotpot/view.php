@@ -198,7 +198,7 @@
 					default:
 						$hp->remove_nav_buttons();
 				}
-				if ($CFG->hotpotismobile) {
+				if (isset($hp->real_outputformat) && $hp->real_outputformat==HOTPOT_OUTPUTFORMAT_MOBILE) {
 					$hp->insert_submission_form($attemptid, '<!-- BeginSubmissionForm -->', '<!-- EndSubmissionForm -->', true);
 				} else {
 					$hp->insert_submission_form($attemptid, '<!-- BeginSubmissionForm -->', '<!-- EndSubmissionForm -->');
