@@ -40,6 +40,29 @@
         $adminediting = (isadmin() and $creatorediting);
     }
 
+/// Editing functions
+
+    if ($adminediting) {
+
+    /// Hide or show a course
+
+        if ((isset($hide) or isset($show)) and confirm_sesskey()) {
+            if (isset($hide)) {
+                $course = get_record("course", "id", $hide);
+                $visible = 0;
+            } else {
+                $course = get_record("course", "id", $show);
+                $visible = 1;
+            }
+            if ($course) {
+                if (! set_field("course", "visible", $visible, "id", $course->id)) {
+                    notify("Could not update that course!");
+                }
+            }
+        }
+
+    }
+
     if ($adminediting && $perpage != 99999) {
         $perpage = 30;
     }
@@ -160,10 +183,10 @@
                 echo "<a title=\"".get_string("delete")."\" href=\"delete.php?id=$course->id\"><img".
                     " src=\"$pixpath/t/delete.gif\" height=\"11\" width=\"11\" border=\"0\"></a> ";
                 if (!empty($course->visible)) {
-                    echo "<a title=\"".get_string("hide")."\" href=\"category.php?id=$course->category&hide=$course->id&amp;sesskey=$USER->sesskey\"><img".
+                    echo "<a title=\"".get_string("hide")."\" href=\"search.php?search=$search&amp;perpage=$perpage&amp;page=$page&amp;hide=$course->id&amp;sesskey=$USER->sesskey\"><img".
                         " src=\"$pixpath/t/hide.gif\" height=\"11\" width=\"11\" border=\"0\"></a> ";
                 } else {
-                    echo "<a title=\"".get_string("show")."\" href=\"category.php?id=$course->category&show=$course->id&amp;sesskey=$USER->sesskey\"><img".
+                    echo "<a title=\"".get_string("show")."\" href=\"search.php?search=$search&amp;perpage=$perpage&amp;page=$page&amp;show=$course->id&amp;sesskey=$USER->sesskey\"><img".
                         " src=\"$pixpath/t/show.gif\" height=\"11\" width=\"11\" border=\"0\"></a> ";
                 }
                 
