@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // grades.php - created with Moodle 1.5 ALPHA (2005051500)
+      // grades.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['addcategory'] = 'Magdagdag ng Kategoriya';
@@ -31,8 +31,8 @@ $string['excluded'] = 'Iniliban';
 $string['extracredit'] = 'Dagdag na Marka';
 $string['extracreditwarning'] = 'Tandaan: Kapag itinakda mong maging dagdag na marka ang lahat ng aytem ng isang kategoriya, matatanggal ang mga ito sa kuwentahan ng marka.  Dahil walang magiging kabuuang puntos.';
 $string['forstudents'] = 'Para sa mga Mag-aaral';
-$string['gradebook'] = 'Markáhan';
-$string['gradebookhiddenerror'] = 'Kasalukuyang nakatakda ang markáhan na itago ang lahat sa mga mag-aaral.';
+$string['gradebook'] = 'MarkÃ¡han';
+$string['gradebookhiddenerror'] = 'Kasalukuyang nakatakda ang markÃ¡han na itago ang lahat sa mga mag-aaral.';
 $string['gradecategoryhelp'] = 'Tulong sa Kategoriya ng Marka';
 $string['gradeexceptions'] = 'Mga Eksepsiyon ng Marka';
 $string['gradeexceptionshelp'] = 'Tulong sa mga Eksepsiyon ng Marka';
@@ -50,11 +50,11 @@ $string['gradepreferenceshelp'] = 'Tulong sa Mas-ibig para sa Marka';
 $string['grades'] = 'Mga Marka';
 $string['gradeweighthelp'] = 'Tulong sa May-timbang na Marka';
 $string['hideadvanced'] = 'Itago ang mga Abanteng Katangian';
-$string['hidecategory'] = 'Nakatagò';
+$string['hidecategory'] = 'NakatagÃ²';
 $string['highgradeascending'] = 'Pagsunud-sunurin ayon sa pinakamataas na marka pataas';
 $string['highgradedescending'] = 'Pagsunud-sunurin ayon sa pinakamataas na marka pababa';
 $string['highgradeletter'] = 'Mataas';
-$string['incorrectcourseid'] = 'Malî ang ID ng Kurso';
+$string['incorrectcourseid'] = 'MalÃ® ang ID ng Kurso';
 $string['item'] = 'Aytem';
 $string['items'] = 'Mga Aytem';
 $string['lettergrade'] = 'Titik na Marka';
@@ -76,6 +76,7 @@ $string['nolettergrade'] = 'Walang titik na marka para sa ';
 $string['nomode'] = 'NA';
 $string['nonnumericweight'] = 'Nakatanggap ng di-bilang na halaga para sa ';
 $string['nonweightedpct'] = 'walang-timbang %%';
+$string['notteachererror'] = 'Dapat ay guro ka para magamit ang katangiang ito.';
 $string['pctoftotalgrade'] = '%% ng kabuuang marka';
 $string['percent'] = 'Bahagdan';
 $string['percentascending'] = 'Pagsunud-sunurin ayon sa bahagdan pataas';

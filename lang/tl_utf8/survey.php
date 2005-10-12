@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // survey.php - created with Moodle 1.5 ALPHA (2005043000)
+      // survey.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['actual'] = 'Aktuwal';
@@ -52,7 +52,7 @@ $string['attls9'] = 'Kadalasan ay nauuwi ako sa pakikipagtalo sa mga may-akda ng
 $string['attls9short'] = 'makipagtalo sa mga may-akda';
 $string['attlsintro'] = 'Ang layunin ng tanongan na ito ay upang matulungan kaming iebalweyt ang  iyong aktitud sa pag-iisip at pag-aaral.
 
-Walang \'tama\'o \'malî\' na sagot; interesado lamang kami sa inyong opinyon.  Makatitiyak kayo na ang mga sagot ninyo ay pananatilihing lihim, at hindi makka-apekto sa marka ninyo.';
+Walang \'tama\'o \'malî\' na sagot; interesado lamang kami sa inyong opinyon.  Makatitiyak kayo na ang mga sagot ninyo ay pananatilihing lihim, at hindi makaka-apekto sa marka ninyo.';
 $string['attlsm1'] = 'Mga Aktitud hinggil sa Pag-iisip at Pag-aaral';
 $string['attlsm2'] = 'Konektadong Pag-aaral';
 $string['attlsm3'] = 'Hiwalay na Pag-aaral';

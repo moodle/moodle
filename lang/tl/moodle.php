@@ -150,14 +150,12 @@ $string['categoryduplicate'] = 'Mayroon nang kategoryang may pangalang \'$a\' !'
 $string['changedpassword'] = 'Binago ang password';
 $string['changepassword'] = 'Baguhin ang password';
 $string['changessaved'] = 'Nai-save na ang mga pagbabago';
-$string['checkall'] = 'Tsekan ang lahat';
 $string['checkingbackup'] = 'Sinusuri ang  bak-ap';
 $string['checkingcourse'] = 'Sinusuri ang kurso';
 $string['checkingforbbexport'] = 'Sinusuri ang iniluwas na BlackBoard';
 $string['checkinginstances'] = 'Sinusuri ang mga pag-iral';
 $string['checkingsections'] = 'Sinusuri ang mga seksiyon';
 $string['checklanguage'] = 'Suriin ang wikà';
-$string['checknone'] = 'Walang lagyan ng tsek';
 $string['childcoursenotfound'] = 'Hindi matagpuan ang anak na kurso!';
 $string['choose'] = 'Piliin';
 $string['choosecourse'] = 'Pumilì ng kurso';
@@ -245,7 +243,7 @@ $string['createfolder'] = 'Lumikha ng folder sa $a';
 $string['createuserandpass'] = 'Lumikha ng bagong username at password na ipanlalog-in';
 $string['createziparchive'] = 'Lumikha ng zip archive';
 $string['creatingblocks'] = 'Lumilikha ng mga block';
-$string['creatingcategoriesandquestions'] = 'Lumilikha ng mga kategoriya ng kurso at mga tanong';
+$string['creatingcategoriesandquestions'] = 'Lumilikha ng mga kategoriya at tanong';
 $string['creatingcoursemodules'] = 'Lumilikha ng mga modyul ng kurso';
 $string['creatingevents'] = 'Lumilikha ng mga okasyon';
 $string['creatinggradebook'] = 'Lumilikha ng markahan';
@@ -427,11 +425,16 @@ Ang bagong password ay awtomatikong nilikha - baka mas gusto mong
 <a href=\"$a->link\">baguhin ang iyong password</a> sa isang mas madaling matandaan.';
 $string['enable'] = 'Buhayin';
 $string['encryptedcode'] = 'Naka-encrypt na code';
+$string['enroldate'] = 'Agwat ng petsa';
+$string['enrolenddate'] = 'Katapusang petsa';
+$string['enrolenddaterror'] = 'Hindi puwedeng mas maaga ang katapusang petsa sa simulang petsa';
+$string['enrollable'] = 'Makapag-eenrol sa kurso';
 $string['enrolledincourse'] = 'Nakaenrol sa kursong \"$a\"';
 $string['enrolledincoursenot'] = 'Hindi nakaenrol sa kursong \"$a\"';
 $string['enrollfirst'] = 'Kailangan mo munang mag-enrol sa isa man lamang sa mga kurso bago mo magamit ang mga aktibidad sa site';
 $string['enrolme'] = 'Ienrol mo ako sa kursong ito';
 $string['enrolmentconfirmation'] = 'Ieenrol mo ang sarili mo bilang kasapi ng kursong ito.<br />Talaga bang nais mo itong gawin?';
+$string['enrolmentend'] = 'Tapos na pag-eenrol';
 $string['enrolmentkey'] = 'Susi sa pag-eenrol';
 $string['enrolmentkeyfrom'] = 'Kailangan ng \'susi sa pageenrol\' ng kursong ito - ang susi ay minsan lamang gagamitin na password na dapat ay nakuha mo mula kay $a';
 $string['enrolmentkeyhint'] = 'Hindi tama ang susi sa pageenrol, pakiulit<br />
@@ -441,7 +444,9 @@ $string['enrolmentnewuser'] = '$a->user ay nag-enrol sa kursong \"$a->course\"';
 $string['enrolmentnointernal'] = 'Hindi gumagana sa kasalukuyan ang mano-manong pag-eenrol';
 $string['enrolmentnotyet'] = 'Paumanhin, nguni\'t hindi mo mapapasok ang kursong ito hanggang hindi sumasapit ang<br /> $a';
 $string['enrolments'] = 'Pag-eenrol';
+$string['enrolmentstart'] = 'Simula ng Pag-eenrol';
 $string['enrolperiod'] = 'Panahon ng pag-eenrol';
+$string['enrolstartdate'] = 'Simulang petsa';
 $string['entercourse'] = 'Iklik para makapasok sa kursong ito';
 $string['enteremailaddress'] = 'Ilagay ang email address mo upang mareset ang 
   password at makapagpadala ng bagong password sa iyo sa pamamagitan ng email.';
@@ -459,7 +464,30 @@ $string['existingcoursedeleting'] = 'Kasalukuyang kurso, binubura muna';
 $string['existingcreators'] = 'Mga tagalikha ng kurso natin';
 $string['existingstudents'] = 'Mga naka-enrol na mag-aaral';
 $string['existingteachers'] = 'Mga gurò natin';
+$string['expirynotify'] = 'Patalastas ng pagkapasó ng pag-eenrol';
+$string['expirynotifyemail'] = 'Mapapasó na ang sumusunod na mag-aaral pagkatapos ng eksaktong $a->threshold araw:
+
+$a->current
+
+Mapapasó na ang sumusunod na mag-aaral sa hindi bababa sa $a->threshold araw:
+
+$a->past
+
+Maaari kang pumunta sa sumusunod na pahina upang mapahaba ang takdang panahon nila ng pag-eenrol:
+
+$a->extendurl';
+$string['expirynotifystudents'] = 'Patalastasan ang mga mag-aaral';
+$string['expirynotifystudentsemail'] = 'Mabuhay mag-aaral:
+
+Ito ay isang patalastas na ang iyong pag-eenrol sa kursong $a->course ay mapapasó na sa $a->threshold araw.
+
+Pakikontak ang iyong guro para sa karagdagang impormasyon.
+
+';
+$string['expirythreshold'] = 'Taning';
 $string['explanation'] = 'Pagpapaliwanag';
+$string['extendenrol'] = 'Pahabain ang pag-eenrol';
+$string['extendperiod'] = 'Pinahaba ang panahon';
 $string['failedloginattempts'] = '$a->attempts bigong log-in simula nang huli kang maglog-in';
 $string['failedloginattemptsall'] = '$a->attempts bigong log-in para sa $a->accounts account';
 $string['feedback'] = 'Puna';
@@ -484,6 +512,7 @@ $string['forcepasswordchangenotice'] = 'Kailangan mong palitan ang password mo p
 $string['forcetheme'] = 'Ipilit ang tema';
 $string['forgotaccount'] = 'Naiwala mo ba ang password mo?';
 $string['forgotten'] = 'Nakalimutan mo ba ang iyong username o password?';
+$string['forgottenduplicate'] = 'Ang awtomatikong pagbawi ng password ay hindi nakumpleto dahil higit sa isang beses lumitaw ang email address mo sa database.  Pakikontak ang administrador mo <a href=\"mailto:$a->email\">$a->firstname $a->lastname</a> .';
 $string['format'] = 'Format';
 $string['formathtml'] = 'Format na HTML';
 $string['formatmarkdown'] = 'Format na Markdown';
@@ -615,6 +644,7 @@ $string['includenoneusers'] = 'Isama ang mga Hindi User';
 $string['includeuserfiles'] = 'Isama ang mga File ng User';
 $string['info'] = 'Impormasyon';
 $string['institution'] = 'Institusyon';
+$string['instudentview'] = 'nasa tanaw na pangmag-aaral';
 $string['invalidemail'] = 'Di-tanggap na email address';
 $string['invalidlogin'] = 'Di-tanggap na log-in, pakipasok mulì';
 $string['ip_address'] = 'IP Address';
@@ -775,6 +805,7 @@ $string['new'] = 'Bago';
 $string['newaccount'] = 'Bagong  account';
 $string['newcourse'] = 'Bagong kurso';
 $string['newpassword'] = 'Bagong password';
+$string['newpasswordfromlost'] = '<strong>PATALASTAS:</strong> Ang <strong>Kasalukuyan mong Password</strong> ay maaaring ipinadala sa iyo sa <strong>ikalawa</strong> ng dalawang email na ipinadala bilang bahagi ng proseso ng pagbawi sa nawawalang password.  Tiyakin mo na natanggap mo na ang pamalit mong password bago magpatuloy sa screen na ito.';
 $string['newpasswordtext'] = 'Hi $a->firstname,
 
 Ang password ng account mo sa \'$a->sitename\' ay inireset
@@ -802,6 +833,7 @@ $string['newusers'] = 'Mga bagong user';
 $string['next'] = 'Susunod';
 $string['no'] = 'Hindi';
 $string['nobody'] = 'Walang sinuman';
+$string['nochange'] = 'Walang pagbabago';
 $string['nocoursesfound'] = 'Walang natagpuang kurso na may salitang \'$a\'';
 $string['nocoursesyet'] = 'Walang kurso sa kategoriyang ito';
 $string['nodstpresets'] = 'Hindi binuhay ng administrador ang suporta sa Daylight Savings Time';
@@ -836,6 +868,7 @@ $string['nostudentsyet'] = 'Wala pang mag-aaral na naka-enrol sa kursong ito';
 $string['nosuchemail'] = 'Walang ganyang email address';
 $string['notavailable'] = 'Hindi magagamit';
 $string['noteachersyet'] = 'Wala pang gurò sa kursong ito';
+$string['notenrollable'] = 'Hindi maaaring mag-enrol sa kursong ito sa kasalukuyan';
 $string['notenrolled'] = 'Si $a ay hindi naka-enrol sa kursong ito.';
 $string['noteuserschangednonetocourse'] = 'Tandaan: ang mga user ng kurso ay kailangang ibalik kapag ibinabalik ang datos ng user.  Binago na ang kaayusang ito para sa iyo.';
 $string['nothingnew'] = 'Walang bago simula nang huli kang maglog-in';
