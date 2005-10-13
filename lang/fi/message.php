@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // message.php - created with Moodle 1.5.2 + (2005060222)
+      // message.php - created with Moodle 1.5.2 + (2005060223)
 
 
 $string['addcontact'] = 'Lisää kontakti';
@@ -22,7 +22,7 @@ $string['discussion'] = 'Keskustelu';
 $string['emailmessages'] = 'Lähetä viesit sähköpostilla jos olen poissa sivultolta';
 $string['emailtagline'] = 'Tämä on kopio vististä sivustolla \"$a\"';
 $string['emptysearchstring'] = 'Sinun pitää määritellä jokin hakuehto';
-$string['formorethan'] = 'Useampi kuin';
+$string['formorethan'] = 'Enemmän kuin';
 $string['includeblockedusers'] = 'sisällytä estetyt käyttäjät';
 $string['incomingcontacts'] = 'Tulevat kontaktit';
 $string['keywords'] = 'Avainsanat';
