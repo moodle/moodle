@@ -1,10 +1,10 @@
 <?PHP // $Id$ 
-      // block_course_list.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
+      // block_course_list.php - created with Moodle 1.5.2 + (2005060223)
 
 
-$string['allcourses'] = 'Ylläpitäjä näkee kaikki kurssit';
+$string['allcourses'] = 'Kaikki kurssit';
 $string['blockname'] = 'Kurssilista';
-$string['configadminview'] = 'kokoonpanon ylläpitäjän näkymä';
-$string['owncourses'] = 'Ylläpitäjä näkee omat kursssit';
+$string['configadminview'] = 'Mitä ylläpitäjälle näytetään kurssit-lohkossa?';
+$string['owncourses'] = 'Omat kursssit';
 
 ?>

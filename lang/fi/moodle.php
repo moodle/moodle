@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5.2 + (2005060222)
+      // moodle.php - created with Moodle 1.5.2 + (2005060223)
 
 
 $string['action'] = 'Tapahtuma';
@@ -309,6 +309,7 @@ $string['editcoursesettings'] = 'Muokkaa kurssin asetuksia';
 $string['editfiles'] = 'Muokkaa tiedostoja';
 $string['editgroupprofile'] = 'Muokkaa ryhm‰n profiilia';
 $string['editinga'] = 'Muokataan $a';
+$string['editingteachershort'] = 'Muutosoikeus';
 $string['editlock'] = 'T‰t‰ arvoa ei voi muokata';
 $string['editmyprofile'] = 'Muokkaa tietoja';
 $string['editorbgcolor'] = 'Taustav‰ri';
@@ -778,10 +779,10 @@ $string['notenrolled'] = '$a ei ole t‰ll‰ kursilla.';
 $string['noteuserschangednonetocourse'] = 'Huom: Kurssin k‰ytt‰j‰t tulee palauttaa kun k‰ytt‰j‰tietoja palautetaan. T‰m‰ asetus on muutettu sinun kohdaltasi.';
 $string['nothingnew'] = 'Ei uutisia edellisen k‰yntisi j‰lkeen';
 $string['nothingtodisplay'] = 'Ei n‰ytett‰v‰‰';
-$string['noticenewerbackup'] = 'T‰m‰ varmuuskopio on luoto Moodlen versiolla $a->backuprelease ($a->backupversion) ja se on uudempi kuin k‰ytt‰m‰llesi palvelimelle asennttu versio $a->serverrelease ($a->serverversion). T‰m‰ saattaa aiheuttaa palauttaessa joitain yhteensopivuusongelmia, koska varmuukopioiden alasp‰in yhteensopivuutta ei voida taata.';
+$string['noticenewerbackup'] = 'T‰m‰ varmuuskopio on luotu Moodlen versiolla $a->backuprelease ($a->backupversion) joka on uudempi kuin k‰ytt‰m‰llesi palvelimelle asennttu versio $a->serverrelease ($a->serverversion). T‰m‰ saattaa aiheuttaa palauttaessa joitain yhteensopivuusongelmia, koska varmuukopioiden alasp‰in yhteensopivuutta ei voida taata.';
 $string['notifyloginfailuresmessage'] = '$a->time, IP: $a->ip, K‰ytt‰j‰: $a->info';
 $string['notifyloginfailuresmessageend'] = 'Voit katsella n‰it‰ tapahtumia osoitteessa $a/course/log.php?id=1&chooselog=1&modid=site_errors. 	';
-$string['notifyloginfailuresmessagestart'] = 'T‰ss‰ on lista ep‰onnistuneista kirjautumisyrityksist‰ $a edellisen ilmoituksen j‰lkeen';
+$string['notifyloginfailuresmessagestart'] = 'Lista ep‰onnistuneista kirjautumisyrityksist‰ $a edellisen ilmoituksen j‰lkeen';
 $string['notifyloginfailuressubject'] = '$ :: Ep‰onnistuneiden kirjautumisyritysten ilmoitus';
 $string['notincluded'] = 'Ei  mukana';
 $string['notingroup'] = 'Sinun pit‰‰ olla ryhm‰n j‰sen n‰hd‰ksesi t‰m‰n aktiviteetin.';
