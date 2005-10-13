@@ -91,9 +91,9 @@
 
     if ($mode == STATS_MODE_DETAILED) {
         if (!empty($time)) {
-            $param = stats_get_parameters($time,null); // we only care about the table and the time string.
+            $param = stats_get_parameters($time,null,$course->id); // we only care about the table and the time string.
             $sql =  'SELECT DISTINCT s.userid,s.roleid,u.firstname,u.lastname,u.idnumber,u.nickname FROM '.$CFG->prefix.'stats_user_'.$param->table.' s JOIN '.$CFG->prefix.'user u ON u.id = s.userid '
-                .'WHERE courseid = '.$course->id.' AND timeend > '.$param->timeafter  . ((!empty($param->stattype)) ? ' AND stattype = \''.$param->stattype.'\'' : '');
+                .'WHERE courseid = '.$course->id.' AND timeend >= '.$param->timeafter  . ((!empty($param->stattype)) ? ' AND stattype = \''.$param->stattype.'\'' : '');
             if (!isadmin()) {
                 $sql .= ' AND (s.roleid = 1 OR s.userid = '.$USER->id .")";
             }
@@ -153,14 +153,18 @@
         if ($report == STATS_REPORT_LOGINS && $course->id != SITEID) {
             error("This type of report is only available for the site course");
         }
-        $param = stats_get_parameters($time,$report);
+        $param = stats_get_parameters($time,$report,$course->id);
         if ($mode == STATS_MODE_DETAILED) {
             $param->table = 'user_'.$param->table;
         }
-        $sql = 'SELECT timeend,'.$param->fields.',id FROM '.$CFG->prefix.'stats_'.$param->table.' WHERE courseid = '.$course->id.((!empty($userid)) ? ' AND userid = '.$userid : '')
-            . ((!empty($param->stattype)) ? ' AND stattype = \''.$param->stattype.'\'' : '')
-            .' AND timeend > '.$param->timeafter
+        $sql = 'SELECT timeend,'.$param->fields.' FROM '.$CFG->prefix.'stats_'.$param->table.' WHERE '
+            .(($course->id == SITEID) ? '' : ' courseid = '.$course->id.' AND ')
+            .((!empty($userid)) ? ' userid = '.$userid.' AND ' : '')
+            . ((!empty($param->stattype)) ? ' stattype = \''.$param->stattype.'\' AND ' : '')
+            .' timeend >= '.$param->timeafter
+            .$param->extras
             .' ORDER BY timeend DESC';
+
         $stats = get_records_sql($sql);
 
         if (empty($stats)) {

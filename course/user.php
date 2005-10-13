@@ -107,20 +107,30 @@
             }
 
             // use the earliest.
-            $time = array_pop($timeoptions);
-            
-            echo '<center><img src="'.$CFG->wwwroot.'/course/statsgraph.php?course='.$course->id.'&time='.$time.'&report='.STATS_REPORT_USER_VIEW.'&userid='.$user->id.'" /></center>';
+            $time = array_pop(array_keys($timeoptions));
 
-            $param = stats_get_parameters($time,STATS_REPORT_USER_VIEW);
+            $param = stats_get_parameters($time,STATS_REPORT_USER_VIEW,$course->id);
 
             $param->table = 'user_'.$param->table;
         
-            $sql = 'SELECT timeend,'.$param->fields.',id FROM '.$CFG->prefix.'stats_'.$param->table.' WHERE courseid = '.$course->id.' AND userid = '.$user->id
+            $sql = 'SELECT timeend,'.$param->fields.' FROM '.$CFG->prefix.'stats_'.$param->table.' WHERE '
+            .(($course->id == SITEID) ? '' : ' courseid = '.$course->id.' AND ')
+                .' userid = '.$user->id
                 .' AND stattype = \''.$param->stattype.'\''
-                .' AND timeend > '.$param->timeafter
+                .' AND timeend >= '.$param->timeafter
+                .$param->extras
                 .' ORDER BY timeend DESC';
+
             $stats = get_records_sql($sql);
+
+            if (empty($stats)) {
+                error(get_string('nostatstodisplay'), $CFG->wwwroot.'/course/user.php?id='.$course->id.'&user='.$user->id.'&mode=outline');
+            }
             
+            echo '<center><img src="'.$CFG->wwwroot.'/course/statsgraph.php?course='.$course->id.'&time='.$time.'&report='.STATS_REPORT_USER_VIEW.'&userid='.$user->id.'" /></center>';
+            
+            $stats = stats_fix_zeros($stats,$param->timeafter,$param->table,(!empty($param->line2)),(!empty($param->line3)));
+
             $table = new object();
             $table->align = array('left','center','center','center');
             $param->table = str_replace('user_','',$param->table);

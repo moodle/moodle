@@ -26,15 +26,18 @@
 
     stats_check_uptodate($course->id);
 
-    $param = stats_get_parameters($time,$report);
+    $param = stats_get_parameters($time,$report,$course->id);
 
     if (!empty($userid)) {
         $param->table = 'user_'.$param->table;
     }
 
-    $sql = 'SELECT timeend,'.$param->fields.',id FROM '.$CFG->prefix.'stats_'.$param->table.' WHERE courseid = '.$course->id.((!empty($userid)) ? ' AND userid = '.$userid : '')
-     . ((!empty($param->stattype)) ? ' AND stattype = \''.$param->stattype.'\'' : '')
-     .' AND timeend > '.$param->timeafter
+    $sql = 'SELECT timeend,'.$param->fields.' FROM '.$CFG->prefix.'stats_'.$param->table.' WHERE '
+     . (($course->id == SITEID) ? '' : ' courseid = '.$course->id.' AND ')
+     . ((!empty($userid)) ? ' userid = '.$userid.' AND ' : '')
+     . ((!empty($param->stattype)) ? ' stattype = \''.$param->stattype.'\' AND ' : '')
+     .' timeend >= '.$param->timeafter
+     .$param->extras
      .' ORDER BY timeend DESC';
     $stats = get_records_sql($sql);
 

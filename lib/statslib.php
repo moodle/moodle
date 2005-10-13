@@ -464,23 +464,22 @@ function stats_clean_old() {
     // don't delete monthlies
 }
 
-function stats_get_parameters($time,$report) {
+function stats_get_parameters($time,$report,$courseid) {
     if ($time < 10) { // dailies
         // number of days to go back = 7* time
-        $param->limit = 7*$time;
         $param->table = 'daily';
         $param->timeafter = strtotime("-".($time*7)." days",stats_get_base_daily());
     } elseif ($time < 20) { // weeklies
         // number of weeks to go back = time - 10 * 4 (weeks) + base week
-        $param->limit = ($time - 10) * 4;
         $param->table = 'weekly';
         $param->timeafter = strtotime("-".(($time - 10)*4)." weeks",stats_get_base_weekly());
     } else { // monthlies.
         // number of months to go back = time - 20 * months + base month
-        $param->limit = $time - 20;
         $param->table = 'monthly';
         $param->timeafter = strtotime("-".($time - 20)." months",stats_get_base_monthly());
     }
+
+    $param->extras = '';
 
     switch ($report) {
     case STATS_REPORT_LOGINS:
@@ -536,6 +535,11 @@ function stats_get_parameters($time,$report) {
         $param->line3 = get_string('statsuseractivity');
         $param->stattype = 'activity';
         break;
+    }
+
+    if ($courseid == SITEID) { // just aggregate all courses.
+        $param->fields = preg_replace('/([a-zA-Z0-9+_]*)\W+as\W+([a-zA-Z0-9_]*)/','sum($1) as $2',$param->fields);
+        $param->extras = ' GROUP BY timeend';
     }
     
     return $param;
@@ -750,6 +754,10 @@ function stats_get_report_options($courseid,$mode) {
 }
 
 function stats_fix_zeros($stats,$timeafter,$timestr,$line2=true,$line3=false) {
+
+    if (empty($stats)) {
+        return;
+    }
 
     $timestr = str_replace('user_','',$timestr); // just in case.
     $fun = 'stats_get_base_'.$timestr;
