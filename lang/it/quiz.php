@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.6 development (2005090100)
+      // quiz.php - created with Moodle 1.6 development (2005081700)
 
 
 $string['acceptederror'] = 'Errore accettato';
@@ -74,7 +74,7 @@ $string['confirmclose'] = 'Stai per completare questo tentativo. Una volta chius
 $string['confirmserverdelete'] = 'Sei sicuro di voler rimuovere il server <b>$a</b> dalla lista?';
 $string['confirmstartattempt'] = 'Il quiz ha un tempo limite. Sei sicuro di voler iniziare?';
 $string['containercategorycreated'] = 'Questa categoria è stata creata per contenere tutte le originali categorie spostate a livello di sito a causa di quanto sotto specificato.';
-$string['continueattemptquiz'] = 'Continua l\'ultimo tentativo';
+$string['continueattemptquiz'] = 'Riprendi ultimo tentativo';
 $string['copyingfrom'] = 'Creazione di una copia della domanda \'$a\'';
 $string['copyingquestion'] = 'Copia di una domanda';
 $string['correct'] = 'Giusto';
