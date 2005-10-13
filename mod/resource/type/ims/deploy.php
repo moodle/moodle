@@ -239,7 +239,7 @@
 
     /// Extract items map from organization
         $items = $organization['#']['item'];
-        if (empty($data['#']['item'])) {  /// Verify <item> exists
+        if (empty($organization['#']['item'])) {  /// Verify <item> exists
             return false;
         }
         if (!$itemmap = ims_process_items($items)) {
