@@ -195,7 +195,7 @@ CREATE TABLE `prefix_course_request`  (
   `summary` text NOT NULL,
   `reason` text NOT NULL,
   `requester` int(10) NOT NULL default 0,
-  `password` text NOT NULL default '',
+  `password` varchar(50) NOT NULL default '',
   PRIMARY KEY (`id`),
   KEY `shortname` (`shortname`)
 ) TYPE=MyISAM;

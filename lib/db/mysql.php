@@ -1650,7 +1650,7 @@ function main_upgrade($oldversion=0) {
     }
 
     if ($oldversion < 2005101200) { # add enrolment key to course_request.
-        table_column('course_request','','password','text');
+        table_column('course_request','','password','varchar',50);
     }
 
     return $result;
