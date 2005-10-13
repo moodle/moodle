@@ -87,12 +87,13 @@
         }
     }
     add_to_log($course->id, 'scorm', 'view', "playscorm.php?id=$cm->id&scoid=$sco->id", "$scorm->id");
-    if ($scorm->popup == 0) {
-        $scoidstring = '&amp;scoid='.$sco->id;
-        $modestring = '&amp;mode='.$mode;
-    } else {
-        $scoidstring = '&scoid='.$sco->id;
-        $modestring = '&mode='.$mode;
+    $scoidstr = '&amp;scoid='.$sco->id;
+    $scoidpop = '&scoid='.$sco->id;
+    $modestr = '&amp;mode='.$mode;
+    $modepop = '&mode='.$mode;
+    if (!$result->incomplete) {
+        $attemptstr = '&amp;attempt=new';
+        $attemptpop = '&attempt=new';
     }
 
     $SESSION->scorm_scoid = $sco->id;
@@ -112,7 +113,7 @@
                  '', '', true, $exitbutton.update_module_button($cm->id, $course->id, $strscorm), '', false, $bodyscript);
 ?>
     <script language="JavaScript" type="text/javascript" src="request.js"></script>
-    <script language="JavaScript" type="text/javascript" src="api.php?id=<?php echo $cm->id.$scoidstring.$modestring ?>"></script>
+    <script language="JavaScript" type="text/javascript" src="api.php?id=<?php echo $cm->id.$scoidstr.$modestr.$attemptstr ?>"></script>
 
     <table class="fullscreen">
     <tr>
@@ -161,14 +162,14 @@
                             class="scoframe" 
                             width="<?php echo $scorm->width<=100 ? $scorm->width.'%' : $scorm->width ?>" 
                             height="<?php echo $scorm->height<=100 ? $scorm->height.'%' : $scorm->height ?>" 
-                            src="loadSCO.php?id=<?php echo $cm->id.$scoidstring.$modestring ?>">
+                            src="loadSCO.php?id=<?php echo $cm->id.$scoidstr.$modestr.$attemptstr ?>">
                     </iframe>
 <?php
         } else {
 ?>
                     <script lanuguage="javascript">
                         function openpopup(url,name,options,width,height) {
-                            fullurl = "http://tiger.local/develop/mod/scorm/" + url;
+                            fullurl = "<?php echo $CFG->wwwroot.'/mod/scorm/' ?>" + url;
                             windowobj = window.open(fullurl,name,options);
                             if ((width==100) && (height==100)) {
                                 // Fullscreen
@@ -185,7 +186,7 @@
                             return windowobj;
                         }
 
-                        url = "loadSCO.php?id=<?php echo $cm->id.$scoidstring.$modestring ?>";
+                        url = "loadSCO.php?id=<?php echo $cm->id.$scoidpop.$modepop.$attemptpop ?>";
                         width = <?php p($scorm->width) ?>;
                         height = <?php p($scorm->height) ?>;
                         var main = openpopup(url, "<?php p($scorm->name) ?>", "<?php p($scorm->options) ?>", width, height);
