@@ -101,7 +101,7 @@ function s($var) {
     if ($var == '0') {  // for integer 0, boolean false, string '0'
         return '0';
     }
-    return preg_replace("/&amp;(\w+|#\d+);/i", "&$1;", htmlspecialchars(stripslashes_safe($var)));
+    return preg_replace("/&amp;(#\d+);/i", "&$1;", htmlspecialchars(stripslashes_safe($var)));
 }
 
 /**
@@ -3008,7 +3008,11 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
     }
 
     echo '<textarea id="edit-'. $name .'" name="'. $name .'" rows="'. $rows .'" cols="'. $cols .'">';
-    p($value);
+    if ($usehtmleditor) {
+        echo htmlspecialchars(stripslashes_safe($value)); // needed for editing of cleaned text!
+    } else {
+        p ($value);
+    }
     echo '</textarea>'."\n";
 }
 
