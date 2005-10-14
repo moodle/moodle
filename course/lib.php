@@ -1600,6 +1600,22 @@ function move_section($course, $section, $move) {
     if (isset($USER->display[$course->id]) and ($USER->display[$course->id] == $section)) {
         course_set_display($course->id, $sectiondest);
     }
+
+    // Check for duplicates.
+    // There is a very rare case that some sections in the same course have the same section id.
+    if (($count_section = count_records('course_sections', 'course', $course->id) - 1) != $course->numsections) {
+        $sections = get_records_select('course_sections', "course = $course->id AND section > 0", 'section ASC');
+        $n = 1;
+        foreach ($sections as $section) {
+            if (!set_field('course_sections', 'section', $n, 'id', $section->id)) {
+                return false;
+            }
+            $n++;
+        }
+        if (!set_field('course', 'numsections', $count_section, 'id', $course->id)) {
+            return false;
+        }
+    }
     return true;
 }
 
