@@ -28,6 +28,8 @@
 
     if ($course->category) {
         $navigation = '<a href="../../course/view.php?id='. $course->id .'">'. $course->shortname .'</a> ->';
+    } else {
+        $navigation = '';
     }
 
     $strlessons = get_string('modulenameplural', 'lesson');
