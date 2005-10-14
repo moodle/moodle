@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.5 unstable development (2004091700)
+      // glossary.php - created with Moodle 1.5.2 + (2005060223)
 
 
 $string['addcomment'] = 'Afegeix un comentari';
@@ -10,6 +10,7 @@ $string['allcategories'] = 'Totes les categories';
 $string['allentries'] = 'TOTES';
 $string['allowcomments'] = 'Permeteu comentaris en les entrades?';
 $string['allowduplicatedentries'] = 'Permeteu entrades duplicades?';
+$string['allowprintview'] = 'Permeteu visualització per a imprimir?';
 $string['allowratings'] = 'Permeteu valorar les entrades?';
 $string['answer'] = 'Resposta';
 $string['approve'] = 'D\'acord';
@@ -130,6 +131,7 @@ $string['notcategorised'] = 'No categoritzat';
 $string['numberofentries'] = 'Nombre d\'entrades';
 $string['onebyline'] = '(una per línia)';
 $string['printerfriendly'] = 'Versió per imprimir';
+$string['printviewnotallowed'] = 'La visualització per a impressora no està autoritzada';
 $string['question'] = 'Qüestió';
 $string['rate'] = 'Valoració';
 $string['rating'] = 'S\'està valorant';
@@ -146,9 +148,9 @@ $string['rsssubscriberss'] = 'Visualitza l\'RSS \'$a\'';
 $string['searchindefinition'] = 'Cerca en tot el text';
 $string['secondaryglossary'] = 'Glossari secundari';
 $string['sendinratings'] = 'Envia les meves darreres valoracions';
-$string['showall'] = 'Mostra l\'enllaç ';
+$string['showall'] = 'Mostra l\'enllaç \'Tot\'';
 $string['showalphabet'] = 'Mostra l\'alfabet';
-$string['showspecial'] = 'Mostra l\'enllaç ';
+$string['showspecial'] = 'Mostra l\'enllaç \'Especial\'';
 $string['sortby'] = 'Ordena per';
 $string['sortbycreation'] = 'Per data de creació';
 $string['sortbylastupdate'] = 'Per l\'última actualització';

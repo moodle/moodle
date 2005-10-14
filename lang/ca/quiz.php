@@ -183,6 +183,7 @@ $string['illegalformulasyntax'] = 'Sintaxi il·legal en la fòrmula començant ';
 $string['imagedisplay'] = 'Imatge que es visualitzarà';
 $string['imagemissing'] = 'La imatge de la línia $a no està disponible. S\'ha ignorat el nom del fitxer.';
 $string['importmax10error'] = 'Hi ha un error en aquesta pregunta. No podeu tenir més de 10 respostes.';
+$string['importmaxerror'] = 'Hi ha un error en aquesta pregunta. Teniu massa respostes.';
 $string['importminerror'] = 'Hi ha un error en aquesta pregunta. No teniu prou respostes per al tipus de pregunta. ';
 $string['importquestions'] = 'Importa preguntes des d\'un fitxer';
 $string['incorrect'] = 'Incorrecta';
