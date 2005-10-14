@@ -76,6 +76,7 @@ $string['nolettergrade'] = 'Nincs pontozási betû ehhez';
 $string['nomode'] = 'Nem érvényes';
 $string['nonnumericweight'] = 'Nem számjegyes érték érkezett ehhez';
 $string['nonweightedpct'] = 'súlyozatlan %%';
+$string['notteachererror'] = 'Ennek a használatához tanárnak kell lennie.';
 $string['pctoftotalgrade'] = '%%-a az összpontszámnak';
 $string['percent'] = 'Százalék';
 $string['percentascending'] = 'Rendezés növekvõ százalék szerint';

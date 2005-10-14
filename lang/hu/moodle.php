@@ -150,14 +150,12 @@ $string['categoryduplicate'] = '\'$a\' nevû kategória már létezik!';
 $string['changedpassword'] = 'Megváltozott jelszó';
 $string['changepassword'] = 'Jelszó megváltoztatása';
 $string['changessaved'] = 'Változások mentve';
-$string['checkall'] = 'Mind bejelölése';
 $string['checkingbackup'] = 'Biztonsági mentés ellenõrzése';
 $string['checkingcourse'] = 'Kurzus ellenõrzése';
 $string['checkingforbbexport'] = 'BlackBoard exportálásának ellenõrzése';
 $string['checkinginstances'] = 'Példányok ellenõrzése';
 $string['checkingsections'] = 'Szekciók ellenõrzése';
 $string['checklanguage'] = 'Nyelv ellenõrzése';
-$string['checknone'] = 'Mind bejelöletlenül hagyva';
 $string['childcoursenotfound'] = 'Alkurzust nem találtam!';
 $string['choose'] = 'Válasszon';
 $string['choosecourse'] = 'Válasszon kurzust';
@@ -380,6 +378,7 @@ $string['emailformat'] = 'E-mail formátuma';
 $string['emailmustbereal'] = 'Megjegyzés: az e-mail címnek valódinak kell lennie';
 $string['emailnotallowed'] = 'Ezeken a doméneken e-mail címek nem használhatók  ($a)';
 $string['emailonlyallowed'] = 'Ez az e-mail nincs az engedélyezettek között ($a)';
+$string['emailnotfound'] = 'Ez az e-mail cím nem található az adatbázisban';
 $string['emailpasswordconfirmation'] = 'Üdvözöljük, $a->firstname. Valaki (feltehetõleg Ön) egy új jelszó létrehozását igényelte a(z) $a->sitename oldalon az Ön azonosítójának a felhasználásával. Ennek megerõsítéséhez és a jelszónak az Ön e-mail címére való elküldéséhez térjen át erre a webes címre: $a->link. Általában a levelezõ programokban ez kék ugrópontként jelenik meg, amelyre csak kattintania kell. Ha ez nem mûködik, másolja ki a böngészõablak tetején lévõ címsorba. Ha segítségre van szüksége, lépjen kapcsolatba a portál rendszergazdájával: $a->admin.';
 $string['emailpasswordconfirmationsubject'] = '$a: jelszómódosítás visszaigazolása';
 $string['emailpasswordconfirmsent'] = '<p>Egy e-mailt kellett kapnia az Ön <b>$a</b> címére.</p> <p>A levél a regisztráció kitöltéséhez szükséges egyszerû teendõket tartalmazza. </p> <p>Ha továbbra is nehézségekbe ütközik, lépjen kapcsolatba a portál rendszergazdájával.</p>';
@@ -390,11 +389,14 @@ $string['messageselect'] = 'A felhasználó e-mail címzettként való kiválasztása';
 $string['messageselectadd'] = 'Üzenet beszúrása  / elküldése';
 $string['enable'] = 'Bekapcsolás';
 $string['encryptedcode'] = 'Titkosított kód';
+$string['enroldate'] = 'Idõtartam';
+$string['enrollable'] = 'A kurzus felvehetõ';
 $string['enrolledincourse'] = 'A(z) \"$a\" kurzusra beíratva';
 $string['enrolledincoursenot'] = 'A(z) \"$a\" kurzusra nincs beiratkozva';
 $string['enrollfirst'] = 'A portál tevékenységeibe való bekapcsolódás elõtt fel kell iratkoznia valamely kurzusra.';
 $string['enrolme'] = 'Írasson be erre a kurzusra';
 $string['enrolmentconfirmation'] = 'Kurzustagként fogja magát beíratni.<br />Biztosan ezt kívánja tenni?';
+$string['enrolmentend'] = 'Beiratkozás véget ér';
 $string['enrolmentkey'] = 'Beiratkozási kód';
 $string['enrolmentkeyfrom'] = 'Ez a kurzus egy \'beiratkozási kódot\' igényel - amely egy egyszeri<br />jelszó, melyet $a -tól kellett megkapnia ';
 $string['enrolmentkeyhint'] = 'Ez a beiratkozási kód nem megfelelõ, próbálja újra<br />(Segítségként: \'$a\' -val kezdõdik)';
@@ -403,7 +405,11 @@ $string['enrolmentnewuser'] = '$a->user beiratkozott a(z) \"$a->course\" kurzusr
 $string['enrolmentnointernal'] = 'Jelenleg kézi úton nem lehet beiratkozni';
 $string['enrolmentnotyet'] = 'Sajnos a kurzus nem elérhetõ eddig <br /> $a';
 $string['enrolments'] = 'Beiratkozások';
+$string['enrolmentstart'] = 'Beiratkozás elkezdõdött';
 $string['enrolperiod'] = 'Beiratkozási idõszak';
+$string['enrolenddate'] = 'Befejezési idõpont';
+$string['enrolenddaterror'] = 'A beiratkozás befejezési idõpontja nem lehet korábban, mint a kezdési idõpont';
+$string['enrolstartdate'] = 'Kezdési idõpont';
 $string['entercourse'] = 'Kattintással lépjen be a kurzusba';
 $string['enteremailaddress'] = 'Jelszavának törléséhez és új jelszavának e-mailen történõ elküldéséhez írja be az e-mail címét.';
 $string['entries'] = 'Bejegyzések';
@@ -421,6 +427,30 @@ $string['existingcreators'] = 'Létezõ kurzusszerzõk';
 $string['existingstudents'] = 'Beiratkozott tanulók';
 $string['existingteachers'] = 'Létezõ tanárok';
 $string['explanation'] = 'Magyarázat';
+$string['expirynotify'] = 'Enrolment expiry notification';
+$string['expirynotifyemail'] = 'Az alábbi tanulók kurzusban való szereplése pontosan $a->threshold nap múlva lejár:
+
+$a->current
+
+
+Az alábbi tanulók kurzusban való szereplése $a->threshold napnál rövidebb ideig érvényes:
+
+$a->past
+
+
+A beiratkozási idõszak meghosszabbításához áttérhet a következõ oldalra:
+$a->extendurl
+';
+$string['expirynotifystudents'] = 'Tanulók értesítése';
+$string['expirynotifystudentsemail'] = 'Dear studentKedves Tanuló!
+
+Értewsítjük, hogy a(z) $a->course -ra vonatkozó beiratkozása $a->threshold napon belül lejár.
+
+Ha további kérdése van, vegye fel a kapcsolatot a tanárával.
+';
+$string['expirythreshold'] = 'Küszöb';
+$string['extendenrol'] = 'Beiratkozás meghosszabbítása';
+$string['extendperiod'] = 'Meghosszabbított idõszak';
 $string['failedloginattempts'] = '$a->attempts sikertelen bejelentkezés utolsó bejelentkezése óta';
 $string['failedloginattemptsall'] = '$a->attempts sikertelen bejelentkezés $a->accounts esetén';
 $string['feedback'] = 'Visszajelzés';
@@ -445,6 +475,7 @@ $string['forcepasswordchangenotice'] = 'Továbblépéshez módosítsa a jelszót.';
 $string['forcetheme'] = 'Téma elõírása';
 $string['forgotaccount'] = 'Elveszítette a jelszavát?';
 $string['forgotten'] = 'Elfelejtette nevét vagy jelszavát?';
+$string['forgottenduplicate'] = 'Automatikus jelszóvisszanyerésre nincs lehetõség, mert e-mail címe egynél többször szerepel az adatbázisban. Forduljon a rendszergazdához <a href=\"mailto:$a->email\">$a->firstname $a->lastname</a> .';
 $string['format'] = 'Forma';
 $string['formathtml'] = 'HTML-forma';
 $string['formatmarkdown'] = 'Markdown-forma';
@@ -564,6 +595,7 @@ $string['includenoneusers'] = 'Nincs felhasználó-felvétel';
 $string['includeuserfiles'] = 'Felhasználói állományok felvétele';
 $string['info'] = 'Információ';
 $string['institution'] = 'Intézmény';
+$string['instudentview'] = 'tanulói nézetben';
 $string['invalidemail'] = 'Érvénytelen e-mail cím';
 $string['invalidlogin'] = 'Érvénytelen bejelentkezés, próbálja újra';
 $string['ip_address'] = 'IP-cím';
@@ -596,6 +628,7 @@ $string['loggedinasguest'] = 'Jelenleg vendégként van bejelentkezve.';
 $string['loggedinnot'] = 'Nincs bejelentkezve.';
 $string['login'] = 'Bejelentkezés';
 $string['login_failure_logs'] = 'Sikertelen bejelentkezések naplója';
+$string['loginalready'] = 'Már bejelentkezett';
 $string['loginas'] = 'Bejelentkezés mint';
 $string['loginguest'] = 'Bejelentkezés vendégként';
 $string['loginsite'] = 'Belépés a portálra';
@@ -712,6 +745,7 @@ $string['new'] = 'Új';
 $string['newaccount'] = 'Új felhasználó';
 $string['newcourse'] = 'Új kurzus';
 $string['newpassword'] = 'Új jelszó';
+$string['newpasswordfromlost'] = '<strong>FIGYELEM:</strong> A <strong>jelenlegi jelszavát</strong> az elküldendõ két e-mail közül a <strong>másodikban</strong> küldjük el a jelszóvisszanyerés folyamata során. A képernyõn való továbblépés elõtt ellenõrizze, megkapta-e pótjelszavát.';
 $string['newpasswordtext'] = 'Üdvözöljük, $a->firstname! Az Ön jelszava az \'$a->sitename\' portálon megváltozott és egy új ideiglenes jelszót kapott. A jelenlegi bejelentkezési információi: név: $a->username, jelszó: $a->newpassword. Kérjük, látogasson a következõ oldalra a jelszó megváltoztatásához: $a->link. Általában a levelezõ programokban ez kék ugrópontként jelenik meg, amelyre csak kattintania kell. Ha ez nem mûködik, másolja ki a címet böngészõablak tetején lévõ címsorba. Üdvözlettel: \'$a->sitename\' rendszergazda, $a->signoff';
 $string['newpicture'] = 'Új kép';
 $string['newsitem'] = 'hír';
@@ -722,6 +756,7 @@ $string['newusers'] = 'Új felhasználók';
 $string['next'] = 'Következõ';
 $string['no'] = 'Nem';
 $string['nobody'] = 'Senki';
+$string['nochange'] = 'Nincs változás';
 $string['nocoursesfound'] = 'A \'$a\' szavakkal nincsenek kurzusok';
 $string['nocoursesyet'] = 'Ebben a kategóriában nincsenek kurzusok';
 $string['nodstpresets'] = 'A rendszergazda nem kapcsolta be a nappali mentési idõpont támogatását.';
@@ -754,6 +789,7 @@ $string['nostudentsyet'] = 'Ebbe a kurzusba még nem iratkoztak be tanulók';
 $string['nosuchemail'] = 'Nincs ilyen e-mail cím';
 $string['notavailable'] = 'Nem elérhetõ';
 $string['noteachersyet'] = 'Ehhez a kurzushoz még nincsenek tanárok';
+$string['notenrollable'] = 'Erre a kurzusra most nem lehet jelentkezni.';
 $string['notenrolled'] = '$a nem iratkozott fel erre a kurzusra.';
 $string['noteuserschangednonetocourse'] = 'Megjegyzés: a kurzus felhasználói azonosítóit a felhasználói adatok helyreállítása során úgyszintén helyre kell állítani. Ezt a beállítást megváltoztattuk Önnek.';
 $string['nothingnew'] = 'Semmi hír az utolsó belépés óta';
@@ -797,6 +833,10 @@ $string['participants'] = 'Résztvevõk';
 $string['password'] = 'Jelszó';
 $string['passwordchanged'] = 'A jelszó megváltozott';
 $string['passwordconfirmchange'] = 'Jelszóváltoztatás megerõsítése';
+$string['passwordextlink'] = 'Elveszett jelszavának visszanyeréséhez az alábbi ugrópont áll rendelkezésre. Ezzel kilép a Moodle-ból.';
+$string['passwordforgotten'] = 'Elfelejtett jelszó';
+$string['passwordforgotteninstructions'] = 'Adatainak szerepelni kell a felhasználói adatbázisban. Az adott mezõben adja meg <strong>vagy</strong> a Moodle-felhasználói nevét, vagy a rögzített e-mail címét. Mindkettõt nem kell megadnia.';
+$string['passwordnohelp'] = 'Nem lehet visszanyerni elveszett jelszavát. Forduljon a Moodle rendszergazdájához.';
 $string['passwordrecovery'] = 'Igen, kérek segítséget a belépéshez';
 $string['passwordsdiffer'] = 'A jelszavak nem megfelelõek';
 $string['passwordsent'] = 'A jelszó elküldve';
@@ -1104,8 +1144,11 @@ $string['userdeleted'] = 'Ez a felhasználó törölve lett';
 $string['userdescription'] = 'Leírás';
 $string['userfiles'] = 'Felhasználó állományai';
 $string['userlist'] = 'Felhasználók felsorolása';
+$string['usernameemailmatch'] = 'A felhasználónév és az e-mail cím más-más felhasználóé';
+$string['usernameexists'] = 'A felhasználónév már létezik, válasszon másikat';
 $string['username'] = 'Felhasználónév';
 $string['usernameexists'] = 'A felhasználónév már létezik, válasszon másikat';
+$string['usernamenotfound'] = 'The username was not found in the database';
 $string['usernotconfirmed'] = '$a nem volt megerõsíthetõ';
 $string['userprofilefor'] = 'Felhasználói profil $a számára';
 $string['users'] = 'Felhasználó';
