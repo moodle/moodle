@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.6 development (2005060201)
+      // auth.php - created with Moodle 1.6 development (2005090100)
 
 
 $string['alternatelogin'] = 'Wenn Sie hier eine URL eingeben, wird diese als alternative Login-Seite  verwandt. Die Seite sollte ein Aktionsfeld (Button)auf <strong>\'$a\'</strong> enthalten und Eingabefelder für den <strong>Anmeldenamen</strong> und das <strong>Passwort</strong>.<br />Seien Sie sorgfältig bei der Eingabe der URL. Mit einer falschen URL schließen Sie sich selber vom Zugriff zur Seite aus.<br />Lassen Sie das Feld leer, um die Standardanmeldeseite zu verwenden.';
@@ -17,6 +17,10 @@ $string['auth_cas_text'] = 'Sichere Verbindung';
 $string['auth_cas_version'] = 'CAS Version';
 $string['auth_casdescription'] = 'Dieses Verfahren verwendet einen CAS Server (Central Authentification Service) zur Authentifizierung von Nutzer/innen in einer Single-Sign-On Umgebung (SSO). Sie können jedoch auch eine einfache LDAP Authentifizierung verwenden. Wenn der verwandte Nutzername und das Passwort auf CAS als gültig erkannt werden, erstellt moodle einen neuen Nutzereintrag in seiner Datenbank und weitere Nutzerdaten von LDAP, falls erforderlich. Bei späteren Logins werden nur Nutzername und Passwort geprüft.';
 $string['auth_castitle'] = 'CAS Server (SSO) verwenden';
+$string['auth_changepasswordhelp'] = 'Hilfe für Passwortänderung';
+$string['auth_changepasswordhelp_expl'] = 'Nutzer/innen Hilfe für vergessene $a Passwörter anzeigen. Diese wird neben oder statt der <strong>URL zur Passwortänderung</strong> oder der moodle internen Passwortänderung angezeigt.';
+$string['auth_changepasswordurl'] = 'URL zur Passwortänderung';
+$string['auth_changepasswordurl_expl'] = 'Tragen Sie hier eine URL ein unter der Nutzer/innen ein neues Passwort anfordern können. Wenn Sie diese Option nutzen, sollten Sie die Standardeinstellung zur Passwortänderung auf \"Nein\" setzen.';
 $string['auth_common_settings'] = 'Gemeinsame Einstellungen';
 $string['auth_data_mapping'] = 'Data mapping';
 $string['auth_dbdescription'] = 'Diese Methode benutzt eine externe Datenbank-Tabelle, um die Gültigkeit eines angegebenen Nutzernamens und Kennwort zu überprüfen, Wenn der Zugang neu ist, werden die Informationen der übrigen Felder ebenso zu Moodle hinüberkopiert.';
@@ -43,6 +47,8 @@ $string['auth_fctitle'] = 'Verwendet einen Referenz-Server';
 $string['auth_fcuserid'] = 'Nutzer-ID auf dem Referenz-Server mit der bevorzugten \'Subadmin\'-Einstellung';
 $string['auth_fieldlock'] = 'Sperrwert';
 $string['auth_fieldlock_expl'] = '<p><b>Sperrwert:</b> Wenn Sie die Funktion aktivieren, verhindert moodle die Bearbeitung des Feldes durch Nutzer und Admins. Dies ist sinnvoll, wenn die Daten in einer externen Datenbank gepflegt werden. </p>';
+$string['auth_fieldlocks'] = 'Nutzerdatenfelder sperren';
+$string['auth_fieldlocks_help'] = '<p>Sie könenn Datenfelder der Nutzer sperren. Dies ist u.U. sinnvoll wenn die Nutzerdaten von der Administration gepflegt werden, manuell angelegt oder im Bulkupload (Hochladen über Textdatei) hochgeladen werden. Wenn Sie Felder sperren, die von moodle benötigt werden, müssen Sie sicher stellen, dass diese beim Anlegen der Nutzerzugänge unbrauchbar(?) sind.</p><p>Achten Sie darauf, dass die Einstellung auf \"Bearbeitbar wenn Feld leer\" gesetzt ist, um Probleme zu vermeiden.</p>';
 $string['auth_imapdescription'] = 'Diese Methode verwendet einen IMAP-Server, um zu prüfen, ob der angegebener Nutzername und das Passwort gültig sind.';
 $string['auth_imaphost'] = 'IMAP Server-Adresse. Benutzen Sie die IP, nicht den DNS-Namen';
 $string['auth_imapport'] = 'IMAP Serverport-Nummer. Normalerweise ist das 143 oder 993.';
@@ -120,13 +126,17 @@ $string['authinstructions'] = 'Hier können Sie Ihren Nutzern Anweisungen geben, 
 $string['changepassword'] = 'Passwort-URL ändern';
 $string['changepasswordhelp'] = 'Hier können Sie eine Adresse angeben, unter der die Nutzer ihren Nutzernamen/Passwort ändern können, sofern Sie dies vergessen haben. Diese Option wird den Nutzern als Schaltfläche auf der Anmeldungsseite angeboten. Wenn Sie dieses Feld leer lassen, wird er nicht angezeigt.';
 $string['chooseauthmethod'] = 'Wählen Sie eine Authentifizierungsmethode: ';
+$string['createchangepassword'] = 'Fehlenden Wert anlegen - Änderung verbindlich einfordern';
+$string['createpassword'] = 'Fehlenden Wert anlegen';
 $string['forcechangepassword'] = 'Verbindliche Änderung des Passwortes';
 $string['forcechangepassword_help'] = 'Nutzer werden aufgefordert Ihr Passwort beim nächsten Login zu ändern';
 $string['forcechangepasswordfirst_help'] = 'Nutzer werden aufgefordert Ihr Passwort beim ersten Login zu ändern';
 $string['guestloginbutton'] = 'Gast-Login Schaltfläche';
+$string['infilefield'] = 'Erforderliches Feld in Datei';
 $string['instructions'] = 'Anweisungen';
 $string['locked'] = 'Gesperrt';
 $string['md5'] = 'MD5-Verschlüsselung';
+$string['passwordhandling'] = 'Nutzung des Passwortfeldes';
 $string['plaintext'] = 'Reiner Text';
 $string['showguestlogin'] = 'Sie können die Gast-Login Schaltfläche auf der Anmeldeseite anzeigen oder verbergen.';
 $string['stdchangepassword'] = 'Standardseite zur Passwortänderung nutzen';

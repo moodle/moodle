@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
+      // wiki.php - created with Moodle 1.6 development (2005090100)
 
 
 $string['action'] = '--- Aktion ---';
@@ -144,6 +144,7 @@ $string['safehtml'] = 'Sicheres HTML';
 $string['save'] = 'Speichern';
 $string['searchwiki'] = 'Wiki durchsuchen';
 $string['setpageflags'] = 'Seiteneinstellungen setzen';
+$string['showversions'] = 'Versionen anzeigen:';
 $string['sitemap'] = 'Sitemap';
 $string['smfor'] = 'Sitemap für';
 $string['status'] = 'Status';
