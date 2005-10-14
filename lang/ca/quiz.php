@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.5.2 + (2005060222)
+      // quiz.php - created with Moodle 1.5.2 + (2005060223)
 
 
 $string['acceptederror'] = 'Error acceptat';
@@ -384,6 +384,9 @@ $string['shuffleanswers'] = 'Barreja respostes';
 $string['shufflequestions'] = 'Barreja preguntes';
 $string['significantfigures'] = 'amb $a';
 $string['significantfiguresformat'] = 'xifres significatives';
+$string['sortage'] = 'Ordena per temps';
+$string['sortalpha'] = 'Ordena alfabèticament';
+$string['sortsubmit'] = 'Ordena les preguntes';
 $string['startagain'] = 'Comença de nou';
 $string['startedon'] = 'Començat el';
 $string['subneterror'] = 'Aquest qüestionari ha estat bloquejat i només és accessible des de certes ubicacions. A hores d\'ara el vostre ordinador no és un dels que han estat autoritzats.';
