@@ -115,55 +115,49 @@
     <script language="JavaScript" type="text/javascript" src="request.js"></script>
     <script language="JavaScript" type="text/javascript" src="api.php?id=<?php echo $cm->id.$scoidstr.$modestr.$attemptstr ?>"></script>
 
-    <table class="fullscreen">
-    <tr>
+    <div id="scormpage">
 <?php  
     if ($scorm->hidetoc == 0) {
 ?>
-	    <td class="top">
-            <table class='generalbox'>
-               <tr>
-                   <td class="structurehead"><?php print_string('coursestruct','scorm') ?></td>
-               </tr>
-               <tr>
-                   <td><?php echo $result->toc; ?></td>
-               </tr>
-            </table>
-        </td>
+        <div id="tocbox" class="generalbox">
+            <div id="tochead" class="header"><?php print_string('coursestruct','scorm') ?></div>
+            <div id="toctree"><?php echo $result->toc; ?></div>
+        </div>
 <?php
     }
 ?>
-        <td class="top">
-            <table class="fullscreen">
-                <tr>
-                    <?php echo $mode == 'browse' ? '<td class="left">'.get_string('browsemode','scorm')."</td>\n" : ''; ?>
-                    <td class="right">       
-                        <form name="navform" method="post" action="playscorm.php?id=<?php echo $cm->id ?>" target="_top">
-                            <input name="scoid" type="hidden" />
-                            <input name="currentorg" type="hidden" value="<?php echo $currentorg ?>" />
-                            <input name="mode" type="hidden" value="<?php echo $mode ?>" />
+        <div id="scormbox">
+            <div id="scormtop">
+                <?php echo $mode == 'browse' ? '<div id="scormbrowse" class="left">'.get_string('browsemode','scorm')."</div>\n" : ''; ?>
+                <div id="scormnav" class="right">       
+                   <form name="navform" method="post" action="playscorm.php?id=<?php echo $cm->id ?>" target="_top">
+                        <input name="scoid" type="hidden" />
+                        <input name="currentorg" type="hidden" value="<?php echo $currentorg ?>" />
+                        <input name="mode" type="hidden" value="<?php echo $mode ?>" />
 <?php
     if ($scorm->hidenav == 0) {
 ?>
-                            <input name="prev" type="<?php if (($sco->prev == 0) || ($sco->showprev == 1)) { echo 'hidden'; } else { echo 'button'; } ?>" value="<?php print_string('prev','scorm') ?>" onClick="prevSCO();" />
-                            <input name="next" type="<?php if (($sco->next == 0) || ($sco->shownext == 1)) { echo 'hidden'; } else { echo 'button'; } ?>" value="<?php print_string('next','scorm') ?>" onClick="nextSCO();" />
+                        <input name="prev" type="<?php if (($sco->prev == 0) || ($sco->showprev == 1)) { echo 'hidden'; } else { echo 'button'; } ?>" value="<?php print_string('prev','scorm') ?>" onClick="prevSCO();" />
+                        <input name="next" type="<?php if (($sco->next == 0) || ($sco->shownext == 1)) { echo 'hidden'; } else { echo 'button'; } ?>" value="<?php print_string('next','scorm') ?>" onClick="nextSCO();" />
 <?php
     }
 ?>
-                        </form>
-                    </td>
-                </tr>
-                <tr><td <?php echo $mode=='browse'?'colspan="2" ':'' ?>class="right">
+                    </form>
+                </div>
+            </div>
+            <div id="scormobject" class="right">
 <?php
     if ($result->prerequisites) {
         if ($scorm->popup == 0) {
 ?>
-                    <iframe name="main" 
+                    <object id="main" 
                             class="scoframe" 
                             width="<?php echo $scorm->width<=100 ? $scorm->width.'%' : $scorm->width ?>" 
                             height="<?php echo $scorm->height<=100 ? $scorm->height.'%' : $scorm->height ?>" 
-                            src="loadSCO.php?id=<?php echo $cm->id.$scoidstr.$modestr.$attemptstr ?>">
-                    </iframe>
+                            data="loadSCO.php?id=<?php echo $cm->id.$scoidstr.$modestr.$attemptstr ?>"
+                            type="text/html">
+                         Add object support to your browser
+                    </object>
 <?php
         } else {
 ?>
@@ -197,11 +191,9 @@
         print_simple_box(get_string('noprerequisites','scorm'),'center');
     }
 ?>
-                </td></tr>
-            </table>
-         </td>
-    </tr>
-    </table>
+            </div> <!-- SCORM object -->
+        </div> <!-- SCORM box  -->
+    </div> <!-- SCORM content -->
 
     <script language="javascript" type="text/javascript">
     <!--
