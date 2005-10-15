@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------
-// PclZip 2.4-RC1 - readme.txt
+// PclZip 2.4 - readme.txt
 // --------------------------------------------------------------------------------
 // License GNU/LGPL - November 2004
 // Vincent Blavet - vincent@phpconcept.net
@@ -31,7 +31,15 @@
 2 - What's new
 ==============
 
-  Version 2.4-RC1 :
+  Version 2.4 :
+    - Code improvment : try to speed up the code by removing unusefull call to pack()
+    - Correct bug in delete() : delete() should be called with no argument. This was not
+      the case in 2.3. This is corrected in 2.4.
+    - Correct a bug in path_inclusion function. When the path has several '../../', the
+      result was bad.
+    - Add a check for magic_quotes_runtime configuration. If enabled, PclZip will 
+      disable it while working and det it back to its original value.
+      This resolve a lots of bad formated archive errors.
     - Bug correction : PclZip now correctly unzip file in some specific situation,
       when compressed content has same size as uncompressed content.
     - Bug correction : When selecting option 'PCLZIP_OPT_REMOVE_ALL_PATH', 
