@@ -128,7 +128,7 @@ $string['blockdeleteconfirm'] = 'Popolnoma boste izbrisali blok \'$a\'.  To bo p
 $string['blockdeletefiles'] = 'Vsi podatki povezani z blokom \'$a->module\' so bili izbrisani iz podatkovne zbirke.  Za dokončanje brisanja (in preprečitev ponovne namestitve samega bloka), morate zdaj izbrisati sledeč imenik na vašem strežniku: $a->directory';
 $string['blocks'] = 'Bloki';
 $string['blocksaddedit'] = 'Dodaj ali uredi bloke';
-$string['blockseditoff'] = 'Urejanje blokov izklučeno';
+$string['blockseditoff'] = 'Urejanje blokov izključeno';
 $string['blocksediton'] = 'Urejanje blokov vključeno';
 $string['blocksetup'] = 'Nastavitev tabel bloka';
 $string['blocksuccess'] = '$a tabele so bile nastavljene pravilno';
@@ -855,7 +855,7 @@ $string['people'] = 'Osebe';
 $string['personalprofile'] = 'Osebni profil';
 $string['phone'] = 'Telefon';
 $string['phpinfo'] = 'PHP Informacije';
-$string['policyagree'] = 'Za nadaljno uporabo tega spletnega mesta se morate strinjati s temi pravili.  Ali se strinjate?';
+$string['policyagree'] = 'Za nadaljnjo uporabo tega spletnega mesta se morate strinjati s temi pravili.  Ali se strinjate?';
 $string['policyagreement'] = 'Dogovor o pravilih spletnega mesta';
 $string['policyagreementclick'] = 'Kliknite tu, da bi prebrali dogovor o pravilih spletnega mesta';
 $string['popupwindow'] = 'Odpri datoteko v novem oknu';
@@ -888,7 +888,7 @@ $string['registrationcontactyes'] = 'Da, ponudi obrazec za morebitne Moodlerje z
 $string['registrationemail'] = 'E-poštna obvestila';
 $string['registrationinfo'] = '<p>Ta stran vam omogoča registracijo vaše Moodle strani pri moodle.org.  Registracija je brezplačna.
 Glavna ugodnost registracije je, da boste dodani v poštni  seznam z nizkim obsegom
-za pomembna obvetila kot so varnostna opozorila in nove izdaje Moodle.</p>
+za pomembna obvestila kot so varnostna opozorila in nove izdaje Moodle.</p>
 <p>Kot privzeto bodo vaše informacije ohranjene zasebno in ne bodo nikoli prodane ali posredovane komurkoli drugemu.  Edini
    namen zbiranja teh informacij je podpora in pomoč pri ustvarjanju statistične
    podobe skupnosti Moodle kot celote.</p>

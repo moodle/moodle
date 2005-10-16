@@ -79,7 +79,7 @@ $string['auth_ldapdescription'] = 'Ta način omogoča preverjanje pristnosti na 
 
                                   v podatkovni zbirki. Ta modul lahko prebere uporabnikove lastnosti iz LDAP-a in vnaprej izpolni
 
-                                  želena polja v Moodlu.  Za nadaljne prijave se preverita samo uporabniško ime in
+                                  želena polja v Moodlu.  Za nadaljnje prijave se preverita samo uporabniško ime in
 
                                   geslo.';
 $string['auth_ldapextrafields'] = 'Ta polja niso obvezna.  Odločite se lahko in nekatera uporabniška polja vnaprej izpolnite s podatki iz <b>LDAP polij</b>, ki jih tu določite. <p>Če pustite ta polja prazna, ne bo nič prenešeno iz LDAP-a in bodo namesto tega uporabljene Moodle privzete vrednosti.</p><p>V obeh primerih bo uporabnik lahko uredil vsa ta polja po prijavi.</p>';
