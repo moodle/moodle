@@ -1016,6 +1016,7 @@
                 $preferencescount = count_records ('backup_ids', 'backup_code', $restore->backup_unique_code, 'table_name', 'grade_preferences');
                 $letterscount = count_records ('backup_ids', 'backup_code', $restore->backup_unique_code, 'table_name', 'grade_letter');
                 $categoriescount = count_records ('backup_ids', 'backup_code', $restore->backup_unique_code, 'table_name', 'grade_category');
+
                 if ($preferencescount || $letterscount || $categoriescount) {
                     //Start ul
                     echo '<ul>';
@@ -1056,7 +1057,7 @@
                                 foreach ($recs as $rec) {
                                     //Get the full record from backup_ids
                                     $data = backup_getid($restore->backup_unique_code,'grade_preferences',$rec->old_id);
-                                   if ($data) {
+                                    if ($data) {
                                         //Now get completed xmlized object
                                         $info = $data->info;
                                         //traverse_xmlize($info);                            //Debug
@@ -1072,16 +1073,16 @@
                                         if (!$prerec = get_record('grade_preferences','courseid',$dbrec->courseid,'preference',$dbrec->preference)) {
                                             $status = insert_record('grade_preferences',$dbrec);
                                         }
-
-                                        //Do some output
-                                        $counter++;
-                                        if ($counter % 1 == 0) {
-                                            echo ".";
-                                            if ($counter % 20 == 0) {
-                                                echo "<br />";
-                                            }
-                                            backup_flush(300);
+                                    }
+                                    //Increment counters
+                                    $counter++;
+                                    //Do some output
+                                    if ($counter % 1 == 0) {
+                                        echo ".";
+                                        if ($counter % 20 == 0) {
+                                            echo "<br />";
                                         }
+                                        backup_flush(300);
                                     }
                                 }
                             }
@@ -1092,7 +1093,7 @@
                     //If destination course has letters, skip restoring letters
                     $hasletters = get_records('grade_letter', 'courseid', $restore->course_id);
 
-                    if ($preferencescount && $continue && !$hasletters) {
+                    if ($letterscount && $continue && !$hasletters) {
                         echo '<li>'.get_string('letters','grades').'</li>';
                         $counter = 0;
                         while ($counter < $letterscount) {
@@ -1106,7 +1107,7 @@
                                 foreach ($recs as $rec) {
                                     //Get the full record from backup_ids
                                     $data = backup_getid($restore->backup_unique_code,'grade_letter',$rec->old_id);
-                                   if ($data) {
+                                    if ($data) {
                                         //Now get completed xmlized object
                                         $info = $data->info;
                                         //traverse_xmlize($info);                            //Debug
@@ -1120,16 +1121,16 @@
 
                                         //Structure is equal to db, insert record
                                         $status = insert_record('grade_letter',$dbrec);
-
-                                        //Do some output
-                                        $counter++;
-                                        if ($counter % 1 == 0) {
-                                            echo ".";
-                                            if ($counter % 20 == 0) {
-                                                echo "<br />";
-                                            }
-                                            backup_flush(300);
+                                    }
+                                    //Increment counters
+                                    $counter++;
+                                    //Do some output
+                                    if ($counter % 1 == 0) {
+                                        echo ".";
+                                        if ($counter % 20 == 0) {
+                                            echo "<br />";
                                         }
+                                        backup_flush(300);
                                     }
                                 }
                             }
@@ -1146,13 +1147,13 @@
                             $recs = get_records_select("backup_ids","table_name = 'grade_category' AND backup_code = '$restore->backup_unique_code'",
                                                        "old_id",
                                                        "old_id, old_id",
-                                                       $counter,
+                                                       $countercat,
                                                        $recordset_size);
                             if ($recs) {
                                 foreach ($recs as $rec) {
                                     //Get the full record from backup_ids
                                     $data = backup_getid($restore->backup_unique_code,'grade_category',$rec->old_id);
-                                   if ($data) {
+                                    if ($data) {
                                         //Now get completed xmlized object
                                         $info = $data->info;
                                         //traverse_xmlize($info);                            //Debug
@@ -1253,16 +1254,18 @@
                                                 $order++;
                                             }
                                         }
-                                        //Do some output
-                                        $countercat++;
-                                        if ($countercat % 1 == 0) {
-                                            echo ".";
-                                            if ($countercat % 20 == 0) {
-                                                echo "<br />";
-                                            }
-                                            backup_flush(300);
-                                        }
                                     }
+                                    //Increment counters
+                                    $countercat++;
+                                    //Do some output
+                                    if ($countercat % 1 == 0) {
+                                        echo ".";
+                                        if ($countercat % 20 == 0) {
+                                            echo "<br />";
+                                        }
+                                        backup_flush(300);
+                                    }
+
                                 }
                             }
                         }
