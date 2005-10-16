@@ -15,6 +15,12 @@
     define('STATS_REPORT_USER_LOGINS',9);
     define('STATS_REPORT_USER_VIEW',10);  // this is the report you see on the user profile.
 
+    // admin only ranking stats reports
+    define('STATS_REPORT_ACTIVE_COURSES',11);
+    define('STATS_REPORT_ACTIVE_COURSES_WEIGHTED',12);
+    define('STATS_REPORT_PARTICIPATORY_COURSES',13);
+    define('STATS_REPORT_PARTICIPATORY_COURSES_RW',14);
+
     // start after 0 = show dailies.
     define('STATS_TIME_LASTWEEK',1);
     define('STATS_TIME_LAST2WEEKS',2);
@@ -40,6 +46,7 @@
     // different modes for what reports to offer
     define('STATS_MODE_GENERAL',1);
     define('STATS_MODE_DETAILED',2);
+    define('STATS_MODE_RANKED',3); // admins only - ranks courses
 
     // return codes - whether to rerun
     define('STATS_RUN_COMPLETE',1);
@@ -94,7 +101,7 @@ function stats_cron_daily () {
     while ($midnight >= $nextmidnight) {
 
         $timesql = " (l.time > $timestart AND l.time < $nextmidnight) ";
-            
+        begin_sql();
         foreach ($courses as $course) {
 
             $stat->students = count_records('user_students','course',$course->id);
@@ -141,7 +148,7 @@ function stats_cron_daily () {
 
             // now do logins.
             if ($course->id == SITEID) {
-                $sql = 'SELECT count(l.id) as count,l.userid FROM '.$CFG->prefix.'log l WHERE action = \'login\' AND '.$timesql.' GROUP BY userid';
+                $sql = 'SELECT l.userid,count(l.id) as count FROM '.$CFG->prefix.'log l WHERE action = \'login\' AND '.$timesql.' GROUP BY userid';
                 
                 $logins = get_records_sql($sql);
                 foreach ($logins as $l) {
@@ -166,6 +173,7 @@ function stats_cron_daily () {
                 stats_do_daily_user_cron($course,$user,2,$timesql,$nextmidnight,$daily_modules);
             }
         }
+        commit_sql();
         $timestart = $nextmidnight;
         $nextmidnight = $nextmidnight + (60*60*24);
         $days++;
@@ -232,7 +240,7 @@ function stats_cron_weekly () {
     while ($sunday >= $nextsunday) {
 
         $timesql = " (timeend > $timestart AND timeend < $nextsunday) ";
-
+        begin_sql();
         foreach ($courses as $course) {
             
             $sql = 'SELECT ceil(avg(students)) as students, ceil(avg(teachers)) as teachers, 
@@ -273,8 +281,10 @@ function stats_cron_weekly () {
             foreach ($teachers as $user) {
                 stats_do_aggregate_user_cron($course,$user,2,$timesql,$nextsunday,'weekly',$weekly_modules);
             }
-        }
 
+        }
+        stats_do_aggregate_user_login_cron($timesql,$nextsunday,'weekly');
+        commit_sql();
         $timestart = $nextsunday;
         $nextsunday = $nextsunday + (60*60*24*7);
         $weeks++;
@@ -339,7 +349,7 @@ function stats_cron_monthly () {
     while ($monthend >= $nextmonthend) {
 
         $timesql = " (timeend > $timestart AND timeend < $nextmonthend) ";
-
+        begin_sql();
         foreach ($courses as $course) {
 
             $sql = 'SELECT ceil(avg(students)) as students, ceil(avg(teachers)) as teachers, ceil(avg(activestudents)) as activestudents,ceil(avg(activeteachers)) as activeteachers,
@@ -378,7 +388,8 @@ function stats_cron_monthly () {
                 stats_do_aggregate_user_cron($course,$user,2,$timesql,$nextmonthend,'monthly',$monthly_modules);
             }
         }
-
+        stats_do_aggregate_user_login_cron($timesql,$nextmonthend,'monthly');
+        commit_sql();
         $timestart = $nextmonthend;
         $nextmonthend = stats_get_next_monthend($timestart);
         $months++;
@@ -464,7 +475,7 @@ function stats_clean_old() {
     // don't delete monthlies
 }
 
-function stats_get_parameters($time,$report,$courseid) {
+function stats_get_parameters($time,$report,$courseid,$mode) {
     if ($time < 10) { // dailies
         // number of days to go back = 7* time
         $param->table = 'daily';
@@ -535,9 +546,46 @@ function stats_get_parameters($time,$report,$courseid) {
         $param->line3 = get_string('statsuseractivity');
         $param->stattype = 'activity';
         break;
+    case STATS_REPORT_ACTIVE_COURSES: 
+        $param->fields = 'sum(studentreads+studentwrites+teacherreads+teacherwrites) AS line1';
+        $param->orderby = 'line1 DESC';
+        $param->line1 = get_string('activity');
+        $param->graphline = 'line1';
+        break;
+    case STATS_REPORT_ACTIVE_COURSES_WEIGHTED:
+        $param->fields = 'sum(studentreads+studentwrites+teacherreads+teacherwrites) AS line1,'
+            .'sum(students+teachers) AS line2,'
+            .'sum(studentreads+studentwrites+teacherreads+teacherwrites)::real/sum(students+teachers)::real AS line3';
+        $param->extras = 'HAVING sum(students+teachers) != 0';
+        $param->orderby = 'line3 DESC';
+        $param->line1 = get_string('activity');
+        $param->line2 = get_string('users');
+        $param->line3 = get_string('activityweighted');
+        $param->graphline = 'line3';
+        break;
+    case STATS_REPORT_PARTICIPATORY_COURSES:
+        $param->fields = 'sum(students+teachers) as line1,sum(activestudents+activeteachers) AS line2,'
+            .'sum(activestudents+activeteachers)::real/sum(students+teachers)::real AS line3';
+        $param->extras = 'HAVING sum(students+teachers) != 0';
+        $param->orderby = 'line3 DESC';
+        $param->line1 = get_string('users');
+        $param->line2 = get_string('activeusers');
+        $param->line3 = get_string('participationratio');
+        $param->graphline = 'line3';
+        break;
+    case STATS_REPORT_PARTICIPATORY_COURSES_RW:
+        $param->fields = 'sum(studentreads+teacherreads) as line1,sum(studentwrites+teacherwrites) AS line2,'
+            .'sum(studentwrites+teacherwrites)::real/sum(studentreads+teacherreads)::real AS line3';
+        $param->extras = 'HAVING sum(studentreads+teacherreads) != 0';
+        $param->orderby = 'line3 DESC';
+        $param->line1 = get_string('views');
+        $param->line2 = get_string('posts');
+        $param->line3 = get_string('participationratio');
+        $param->graphline = 'line3';
+        break;
     }
 
-    if ($courseid == SITEID) { // just aggregate all courses.
+    if ($courseid == SITEID && $mode != STATS_MODE_RANKED) { // just aggregate all courses.
         $param->fields = preg_replace('/([a-zA-Z0-9+_]*)\W+as\W+([a-zA-Z0-9_]*)/','sum($1) as $2',$param->fields);
         $param->extras = ' GROUP BY timeend';
     }
@@ -625,7 +673,7 @@ function stats_do_daily_user_cron($course,$user,$roleid,$timesql,$timeend,$mods)
     // now ask the modules if they want anything.
     foreach ($mods as $mod => $fname) {
         mtrace('  doing daily statistics for '.$mod->name);
-        $fname($course,$user,$timeend,($roleid == 'student') ? 1 : 2);
+        $fname($course,$user,$timeend,$roleid);
     }
 }
 
@@ -649,25 +697,29 @@ function stats_do_aggregate_user_cron($course,$user,$roleid,$timesql,$timeend,$t
     
     insert_record('stats_user_'.$timestr,$stat,false);
 
-    if ($course->id == SITEID) {
-        $sql = 'SELECT sum(reads) as reads, sum(writes) as writes FROM '.$CFG->prefix.'stats_user_daily WHERE courseid = '.$course->id.' AND '.$timesql
-            ." AND roleid=".$roleid." AND userid = ".$stat->userid." AND stattype='logins'"; // add on roleid in case they have teacher and student records.
-        
-        $r = get_record_sql($sql);
-        $stat->reads = (empty($r->reads)) ? 0 : $r->reads;
-        $stat->writes = (empty($r->writes)) ? 0 : $r->writes;
-        
-        $stat->stattype = 'logins';
-        
-        insert_record('stats_user_'.$timestr,$stat,false);
-    }
- 
     // now ask the modules if they want anything.
     foreach ($mods as $mod => $fname) {
         mtrace('  doing '.$timestr.' statistics for '.$mod->name);
-        $fname($course,$user,$timeend,($roleid == 'student') ? 1 : 2);
+        $fname($course,$user,$timeend,$roleid);
     }
 }
+
+function stats_do_aggregate_user_login_cron($timesql,$timeend,$timestr) {
+    global $CFG;
+    
+    $sql = 'SELECT userid,roleid,sum(reads) as reads, sum(writes) as writes FROM '.$CFG->prefix.'stats_user_daily WHERE stattype = \'logins\' AND '.$timesql.' GROUP BY userid,roleid';
+    
+    $users = get_records_sql($sql);
+    
+    foreach ($users as $stat) {
+        $stat->courseid = SITEID;
+        $stat->timeend = $timeend;
+        $stat->stattype = 'logins';
+
+        insert_record('stats_user_'.$timestr,$stat,false);
+    }
+}
+
 
 function stats_get_time_options($now,$lastweekend,$lastmonthend,$earliestday,$earliestweek,$earliestmonth) {
 
@@ -748,6 +800,15 @@ function stats_get_report_options($courseid,$mode) {
             $site = get_site();
             $reportoptions[STATS_REPORT_USER_LOGINS] = get_string('statsreport'.STATS_REPORT_USER_LOGINS);
         }
+        break;
+    case STATS_MODE_RANKED:
+        if (isadmin()) {
+            $reportoptions[STATS_REPORT_ACTIVE_COURSES] = get_string('statsreport'.STATS_REPORT_ACTIVE_COURSES);
+            $reportoptions[STATS_REPORT_ACTIVE_COURSES_WEIGHTED] = get_string('statsreport'.STATS_REPORT_ACTIVE_COURSES_WEIGHTED);
+            $reportoptions[STATS_REPORT_PARTICIPATORY_COURSES] = get_string('statsreport'.STATS_REPORT_PARTICIPATORY_COURSES);
+            $reportoptions[STATS_REPORT_PARTICIPATORY_COURSES_RW] = get_string('statsreport'.STATS_REPORT_PARTICIPATORY_COURSES_RW);
+        }
+     break;
     }
   
     return $reportoptions;
@@ -767,7 +828,8 @@ function stats_fix_zeros($stats,$timeafter,$timestr,$line2=true,$line3=false) {
     $times = array();
     // add something to timeafter since it is our absolute base
     $actualtimes = array_keys($stats);
-    $timeafter = $actualtimes[0];
+    $timeafter = array_pop($actualtimes);
+
     while ($timeafter < $now) {
         $times[] = $timeafter;
         if ($timestr == 'daily') {

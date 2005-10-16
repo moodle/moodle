@@ -4,10 +4,11 @@
     require_once($CFG->dirroot.'/lib/statslib.php');
     require_once($CFG->dirroot.'/lib/graphlib.php');
 
-    $courseid = required_param('course',PARAM_INT);
-    $report = required_param('report',PARAM_INT);
-    $time = required_param('time',PARAM_INT);
+    $courseid = required_param('course',0,PARAM_INT);
+    $report = required_param('report',0,PARAM_INT);
+    $time = required_param('time',0,PARAM_INT);
     $userid = optional_param('userid',0,PARAM_INT);
+    $mode = required_param('mode',STATS_MODE_GENERAL,PARAM_INT);
 
     if (!$course = get_record("course","id",$courseid)) {
         error("That's an invalid course id");
@@ -26,7 +27,7 @@
 
     stats_check_uptodate($course->id);
 
-    $param = stats_get_parameters($time,$report,$course->id);
+    $param = stats_get_parameters($time,$report,$course->id,$mode);
 
     if (!empty($userid)) {
         $param->table = 'user_'.$param->table;
@@ -43,7 +44,7 @@
 
     $stats = stats_fix_zeros($stats,$param->timeafter,$param->table,(!empty($param->line2)),(!empty($param->line3)));
 
-     $stats = array_reverse($stats);
+    $stats = array_reverse($stats);
 
     $graph = new graph(750,400);
 

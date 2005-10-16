@@ -17,6 +17,10 @@
         $courseid = SITEID; //override
     }
 
+    if ($mode == STATS_MODE_RANKED) {
+        redirect($CFG->wwwroot.'/admin/reports.php?time='.$time);
+    }
+
     if (!$course = get_record("course","id",$courseid)) {
         error("That's an invalid course id");
     }
@@ -75,6 +79,9 @@
     $options = array();
     $options[STATS_MODE_GENERAL] = get_string('statsmodegeneral');
     $options[STATS_MODE_DETAILED] = get_string('statsmodedetailed');
+    if (isadmin()) {
+        $options[STATS_MODE_RANKED] = get_string('reports');
+    }
 
     $menu = choose_from_menu($options,'mode',$mode,'','this.form.submit();',0,true);
 
@@ -91,7 +98,7 @@
 
     if ($mode == STATS_MODE_DETAILED) {
         if (!empty($time)) {
-            $param = stats_get_parameters($time,null,$course->id); // we only care about the table and the time string.
+            $param = stats_get_parameters($time,null,$course->id,$mode); // we only care about the table and the time string.
             $sql =  'SELECT DISTINCT s.userid,s.roleid,u.firstname,u.lastname,u.idnumber,u.nickname FROM '.$CFG->prefix.'stats_user_'.$param->table.' s JOIN '.$CFG->prefix.'user u ON u.id = s.userid '
                 .'WHERE courseid = '.$course->id.' AND timeend >= '.$param->timeafter  . ((!empty($param->stattype)) ? ' AND stattype = \''.$param->stattype.'\'' : '');
             if (!isadmin()) {
@@ -101,16 +108,18 @@
         } else {
             $sql = 'SELECT s.userid,u.firstname,u.lastname,u.idnumber,u.nickname,1 AS roleid FROM '.$CFG->prefix.'user_students s JOIN '.$CFG->prefix.'user u ON u.id = s.userid WHERE course = '.$course->id;
         }
+
         $us = get_records_sql($sql);
+        $admins = get_admins();
         foreach ($us as $u) {
             $role = $course->student;
             if ($u->roleid == 2) {
                 $role = $course->teacher;
             }
-            if (isadmin($u->userid)) {
+            if (array_key_exists($u->userid,$admins)) {
                 $role = get_string('admin');
             }
-            $users[$u->userid] = $role.' - '.fullname($u,isteacher($course->id));
+            $users[$u->userid] = $role.' - '.fullname($u,true);
         }
         if (empty($time)) {
             if (isadmin()) {
@@ -120,7 +129,7 @@
                     $users[$u->userid] = $course->teacher .' - '.fullname($u,true);
                 }
             } else {
-                $users[$USER->id] = $course->teacher.' - '.fullname($USER);
+                $users[$USER->id] = $course->teacher.' - '.fullname($USER,true);
             }
         }
 
@@ -153,7 +162,7 @@
         if ($report == STATS_REPORT_LOGINS && $course->id != SITEID) {
             error("This type of report is only available for the site course");
         }
-        $param = stats_get_parameters($time,$report,$course->id);
+        $param = stats_get_parameters($time,$report,$course->id,$mode);
         if ($mode == STATS_MODE_DETAILED) {
             $param->table = 'user_'.$param->table;
         }
@@ -173,15 +182,15 @@
 
         $stats = stats_fix_zeros($stats,$param->timeafter,$param->table,(!empty($param->line2)));
 
-        print_heading($course->shortname.' - '.get_string('statsreport'.$report).((!empty($user)) ? ' '.get_string('statsreportforuser').' ' .fullname($user,isteacher($course->id)) : ''));
+        print_heading($course->shortname.' - '.get_string('statsreport'.$report).((!empty($user)) ? ' '.get_string('statsreportforuser').' ' .fullname($user,true) : ''));
 
         if (empty($CFG->gdversion)) {
             echo "(".get_string("gdneed").")";
         } else {
             if ($mode == STATS_MODE_DETAILED) {
-                echo '<center><img src="'.$CFG->wwwroot.'/course/statsgraph.php?course='.$course->id.'&time='.$time.'&report='.$report.'&userid='.$userid.'" /></center>';
+                echo '<center><img src="'.$CFG->wwwroot.'/course/statsgraph.php?mode='.$mode.'&course='.$course->id.'&time='.$time.'&report='.$report.'&userid='.$userid.'" /></center>';
             } else {
-                echo '<center><img src="'.$CFG->wwwroot.'/course/statsgraph.php?course='.$course->id.'&time='.$time.'&report='.$report.'" /></center>';
+                echo '<center><img src="'.$CFG->wwwroot.'/course/statsgraph.php?mode='.$mode.'&course='.$course->id.'&time='.$time.'&report='.$report.'" /></center>';
             }
         }
 

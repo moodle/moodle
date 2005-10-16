@@ -86,7 +86,7 @@
 
             require_once($CFG->dirroot.'/lib/statslib.php');
 
-	    stats_check_uptodate($course->id);
+            stats_check_uptodate($course->id);
 
             $earliestday = get_field_sql('SELECT timeend FROM '.$CFG->prefix.'stats_user_daily ORDER BY timeend LIMIT 1');
             $earliestweek = get_field_sql('SELECT timeend FROM '.$CFG->prefix.'stats_user_weekly ORDER BY timeend LIMIT 1');
@@ -108,29 +108,27 @@
 
             // use the earliest.
             $time = array_pop(array_keys($timeoptions));
-
-            $param = stats_get_parameters($time,STATS_REPORT_USER_VIEW,$course->id);
+            
+            $param = stats_get_parameters($time,STATS_REPORT_USER_VIEW,$course->id,STATS_MODE_DETAILED);
 
             $param->table = 'user_'.$param->table;
-        
+
             $sql = 'SELECT timeend,'.$param->fields.' FROM '.$CFG->prefix.'stats_'.$param->table.' WHERE '
             .(($course->id == SITEID) ? '' : ' courseid = '.$course->id.' AND ')
                 .' userid = '.$user->id
-                .' AND stattype = \''.$param->stattype.'\''
                 .' AND timeend >= '.$param->timeafter
                 .$param->extras
                 .' ORDER BY timeend DESC';
-
             $stats = get_records_sql($sql);
 
             if (empty($stats)) {
                 error(get_string('nostatstodisplay'), $CFG->wwwroot.'/course/user.php?id='.$course->id.'&user='.$user->id.'&mode=outline');
             }
-            
-            echo '<center><img src="'.$CFG->wwwroot.'/course/statsgraph.php?course='.$course->id.'&time='.$time.'&report='.STATS_REPORT_USER_VIEW.'&userid='.$user->id.'" /></center>';
-            
-            $stats = stats_fix_zeros($stats,$param->timeafter,$param->table,(!empty($param->line2)),(!empty($param->line3)));
 
+            echo '<center><img src="'.$CFG->wwwroot.'/course/statsgraph.php?mode='.STATS_MODE_DETAILED.'&course='.$course->id.'&time='.$time.'&report='.STATS_REPORT_USER_VIEW.'&userid='.$user->id.'" /></center>';
+
+            $stats = stats_fix_zeros($stats,$param->timeafter,$param->table,(!empty($param->line2)),(!empty($param->line3)));
+            
             $table = new object();
             $table->align = array('left','center','center','center');
             $param->table = str_replace('user_','',$param->table);
