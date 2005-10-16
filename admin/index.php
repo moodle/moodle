@@ -417,6 +417,11 @@
         $table->data[] = array("<font size=\"+1\"><b><a href=\"$CFG->dbtype/frame.php\">".get_string("managedatabase")."</a></b></font>",
                                "<font size=\"+1\">&nbsp;</font>".get_string("adminhelpmanagedatabase"));
     }
+    if (!empty($CFG->enablestats)) {
+        $table->data[] = array("<font size=\"+1\"><b><a href=\"reports.php\">".get_string('reports')."</a></b>",
+                               "<font size=\"+1\">&nbsp;</font>".get_string("adminhelpreports"));
+    }
+
 
     print_table($table);
 
