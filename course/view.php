@@ -54,7 +54,7 @@
     }
 
     $PAGE = page_create_object(PAGE_COURSE_VIEW, $course->id);
-    $pageblocks = blocks_setup($PAGE);
+    $pageblocks = blocks_setup($PAGE,BLOCKS_PINNED_BOTH);
 
     if (!isset($USER->editing)) {
         $USER->editing = false;

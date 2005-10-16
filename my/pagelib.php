@@ -12,23 +12,17 @@ class page_my_moodle extends page_base {
 
     function user_allowed_editing() {
         page_id_and_class($id,$class);
-        if (isadmin() && $id == PAGE_ADMIN_MY_MOODLE) {
+        if ($id == PAGE_MY_MOODLE) {
             return true;
-        } elseif ($id == PAGE_MY_MOODLE) {
+        } else if (isadmin() && defined('ADMIN_STICKYBLOCKS')) {
             return true;
         }
         return false;
     }
 
-    function edit_always() {
-        page_id_and_class($id,$class);
-        return ($id == PAGE_ADMIN_MY_MOODLE && isadmin());
-    }
-    
     function user_is_editing() {
         global $USER;
-        page_id_and_class($id,$class);
-        if (isadmin() && $id == PAGE_ADMIN_MY_MOODLE) {
+        if (isadmin() && defined('ADMIN_STICKYBLOCKS')) {
             return true;
         }
         return (!empty($USER->editing));
@@ -51,10 +45,17 @@ class page_my_moodle extends page_base {
     
     function url_get_path() {
         page_id_and_class($id,$class);
-        if ($id == PAGE_ADMIN_MY_MOODLE) {
-            return $GLOBALS['CFG']->wwwroot.'/admin/mymoodle.php';
+        if ($id == PAGE_MY_MOODLE) {
+            return $GLOBALS['CFG']->wwwroot.'/my/index.php';
+        } elseif (defined('ADMIN_STICKYBLOCKS')){
+            return $GLOBALS['CFG']->wwwroot.'/admin/stickyblocks.php';
         }
-        return $GLOBALS['CFG']->wwwroot.'/my/index.php';
+    }
+
+    function url_get_parameters() {
+        if (defined('ADMIN_STICKYBLOCKS')) {
+            return array('pt' => ADMIN_STICKYBLOCKS);
+        }
     }
        
     function blocks_default_position() {
@@ -81,13 +82,8 @@ class page_my_moodle extends page_base {
 
 
 define('PAGE_MY_MOODLE',   'my-index');
-define('PAGE_ADMIN_MY_MOODLE', 'admin-mymoodle');
 define('MY_MOODLE_FORMAT', 'my'); //doing this so we don't run into problems with applicable formats.
 
 page_map_class(PAGE_MY_MOODLE, 'page_my_moodle');
-page_map_class(PAGE_ADMIN_MY_MOODLE,'page_my_moodle');
-
-
-
 
 ?>

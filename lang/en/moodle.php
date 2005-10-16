@@ -61,6 +61,7 @@ $string['adminhelpmymoodle'] = 'Configure the my moodle blocks for users';
 $string['adminhelpreports'] = 'Ranking of courses for various criteria';
 $string['adminhelpsitefiles'] = 'For publishing general files or uploading external backups';
 $string['adminhelpsitesettings'] = 'Define how the front page of the site looks';
+$string['adminhelpstickyblocks'] = 'Configure moodle wide sticky blocks';
 $string['adminhelpthemes'] = 'Choose how the site looks (colours, fonts etc)';
 $string['adminhelpuploadusers'] = 'Import new user accounts from a text file';
 $string['adminhelpusers'] = 'Define your users and set up authentication';
