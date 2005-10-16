@@ -1,0 +1,217 @@
+<h2>Textformatierung mit Markdown</h2>
+
+<div id="Main">
+
+<div class="article">
+<p>Markdown erlaubt Ihnen über die einfache Eingabe von Text in moodle hinausauf eine recht einfache weise Hervorhebungen (fett, kursiv), Strukturierungen (Aufzählungen oder Überschriften) vorzunehmen und Links (zu Bildern oder Webquellen) anzulegen. Markdown-Formatierungen können Sie an vielen Stellen in moodle verwenden. Wählen Sie dazu "Markdown" im Eingabebildschirm  aus dem <strong>Formatierungs-Dropdown-Fenster.</strong></p>
+
+<ul>
+<li><a href="#concepts">Grundlagen</a></li>
+<li><a href="#emphasis">Text hervorheben</a></li>
+<li><a href="#headings">Überschriften</a></li>
+<li><a href="#lists">Aufzählungen</a></li>
+<li><a href="#quotes">Zitierte Absätze</a></li>
+<li><a href="#links">Weblinks</a></li>
+<li><a href="#images">Bilder</a></li>
+<li><a href="#advanced">Weitere Funktionen</a></li>
+</ul>
+
+<h2><a id="concepts">Grundlagen</a></h2>
+
+<p>Geben Sie Ihren Text einfach wie gewohnt ein. Klicken Sie zweimal auf die Absatztaste, um einen Absatz zu erzeugen.</p>
+
+<h2><a id="emphasis">Text hervorheben</a></h2>
+
+<p>Sie können drei verschiedeneHervorhebungen von Text mit Markdown erzeugen, <em>kursiver</em> Text, <strong>fetter</strong> Text, oder <strong><em>fetter undkursiver</em></strong> Text. Sie erzielen diesen Effekt indem Sie den zu formatierenden mit ein, zwei oder drei Sternchen umgeben</p>
+
+<p><strong><code>*kursiv*</code></strong> -> <em>kursiv</em> <br />
+<strong><code>**fett**</code></strong> -> <strong>fett</strong> <br />
+<strong><code>***fett kursiv***</code></strong> -> <strong><em>fett kursiv</em></strong></p>
+
+<p>Hervorhebungen könenn sie so für einzelne Wörter, mehrere Wörter oder Wortbestandteile vornehmen:</p>
+
+<p><strong><code>ein *einzelnes* Wort</code></strong> -> ein <em>einzelnes</em> Wort <br />
+<strong><code>***eine Reihe von Wörtern***</code></strong> -> <strong><em>eine Reihe von Wörtern</em></strong> <br />
+<strong><code>Wort**bestand**teil</code></strong> -> Wort<strong>bestand</strong>teil</p>
+
+<p>Unterstriche (_) können abwechselnd mit Sternchen verwandt werden.</p>
+
+<h2><a id="headings">Überschriften</a></h2>
+
+<p>Mit Markdown können Sie auch Überschriften zur Strukturierung anlegen; sechs verschiedene Ebenen können Sie anlegen. Mehr als drei Ebenen sind für die meisten Texte aber nicht erforderlich. In dem Text, den Sie gerade lesen werden drei verschiedene Überschriften-Ebenenverwandt</p>
+
+<p>Eine Überschrift erzeugen Sie wenn sie eine Zeile mit einem oder mehreren Rautenzeichen (#) beginnen.  Eine Raute steht für die größte Überschrift. Mit sechs Rauten beginnen Sie das kleinste Überschriftenformat.</p>
+
+<p><strong><code># Überschrift</code></strong> <br />
+<strong><code>## Unterüberschrift</code></strong> <br />
+<strong><code>### Unter-Unterüberschrift</code></strong> <br />
+etc.</p>
+
+<p>Die ersten beiden Übercshriftenformate könenn alternativ auch folgendermassen angelegt werden: Schreiben Sie in dier Zeile nach der Überschrift eine Reihe von Gleichheitszeichen (=) als Hauptüberschrift oder Bindestrichen (-) für eine Unterüberschrift.</p>
+
+<p><strong><code>Überschrift</code></strong> <br />
+<strong><code>===============</code></strong></p>
+
+<p><strong><code>Unterüberschrift</code></strong> <br />
+<strong><code>------------------</code></strong>   </p>
+
+<h2><a id="lists">Aufzählungen</a></h2>
+
+<h3>Aufzählungspunkte</h3>
+
+<p>Beginnen Sie jede Zeile mit einem Sternchen, gefolgt von einem Leerzeichen vor dem Inhalt. Das Leerzeichen ist wichtig.</p>
+
+<p><strong><code>* erster Punkt</code></strong> <br />
+<strong><code>* zweiter Punkt</code></strong> <br />
+<strong><code>* dritter Punk</code></strong>  </p>
+
+<p>wird zu </p>
+
+<ul>
+<li>erster Punkt</li>
+<li>zweiter Punkt</li>
+<li>dritter Punkt</li>
+</ul>
+
+<h3>Nummerierte Liste</h3>
+
+<p>Die nummerierte Liste wird ganz ähnlich durch die Zahl, einem Leerzeichen und dem Text erstellt. </p>
+
+<p><strong><code>1. erster Punkt</code></strong> <br />
+<strong><code>2. zweiter Punkt</code></strong> <br />
+<strong><code>3. dritterPunkt</code></strong></p>
+
+<p>wird zu </p>
+
+<ol>
+<li>erster Punkt</li>
+<li>zweiter Punkt</li>
+<li>dritter Punkt</li>
+</ol>
+
+<h3>Eingerückte Listen</h3>
+
+<p>Sie können beide Listenformate auch einrücken oder miteinander vermischen:
+<b></p>
+
+<pre>
+    * Erster Aufzählungspunkt
+      * Unterpunkt  
+      * Unterpunkt 2 
+    * Zweiter Aufzählungspunkt (Hauptebene)  
+    1. Nummerierter Punkt 1
+       1. eingerückter nummerierter Punkt   
+    2. nummerierter Punkt 2
+</pre>
+
+<p></b>
+wird zu</p>
+
+<ul>
+<li>Erster Aufzählungspunkt
+<ul>
+<li>Unterpunkt</li>
+<li>Unterpunkt 2</li>
+</ul></li>
+<li>Zweiter Aufzählungspunkt (Hauptebene)
+<ol>
+<li>Nummerierter Punkt 1
+<ol>
+<li>eingerückter nummerierter Punkt  </li>
+</ol></li>
+<li>nummerierter Punkt 2</li>
+</ol></li>
+</ul>
+
+<h2><a id="quotes">Zitierte Absätze</a></h2>
+
+<p>Sie können einen zitierten Text einrücken und kennzeichnen indem Sie an jeden Zeilenanfang eine spitze Klammer setzen (>). Dieses Zeichen wurde gewählt, weil viele E-Mailprogramme es nutzen, um zitierte Texte zu kennzeichnen. Der Text wird vom linken und vom rechten Rand her eingerückt.</p>
+
+<p><strong><code>&gt; This is a quoted paragraph</code> <br />
+<code>&gt; spread over two lines</code></strong>  </p>
+
+<p>wird zu </p>
+
+<blockquote>
+  <p>This is a quoted paragraph
+  spread over two lines</p>
+</blockquote>
+
+<p>Sie können sich Tipparbeit ersparen indem Sie nur die erste Zeile des Zitates so kennzeichnen</p>
+
+<p><strong><code>&gt; this is all one single quoted</code> <br />
+<code>paragraph even though it is spread</code> <br />
+<code>over several lines.</code></strong></p>
+
+<p>wird zu </p>
+
+<blockquote>
+  <p>this is all one single quoted
+  paragraph even though it is spread over
+  several lines.</p>
+</blockquote>
+
+<h2><a id="links">Weblinks</a></h2>
+
+<p>Sie können auf zwei verschiedenen Wegen Links zu Webquellen anlegen: Schreiben Sie den Text der mit einem Link versehen werden soll in eckige Klammern, schreiben Sie direkt (ohne Leerzeichen) in runden Klammern dahinter die URL-Adresse. Sie können auf Wunsch auch noch einen alternativen Text in Anführungsstrichen angeben.</p>
+
+<p><strong><code>An [example link](http://example.com/ "Optional Title") in a sentence.</code></strong></p>
+
+<p>wird zu </p>
+
+<p>An <a href="http://example.com/" title="Optional Title">example link</a> in a sentence.</p>
+
+<p>Der alternative Text wird als Tooltipp  angezeigt wenn Sie mit der Maus über den Link fahren. Versuchen Sie es in diesem Text.</p>
+
+<p>Für längere Links oder mehrfach in einem Text vorkommende Links können Sie einen anderen Weg wählen. Schreiben Sie den Text, der verlingt werden soll in eckigen Klammern. Direkt dahinter  ohne Leerzeichen und wieder in eckigen Klammern schreiben Sie ein Kürzel oder eineNummer für die URL-Adresse.</p>
+
+<p><strong><code>An [example link][ex] in a sentence.</code></strong></p>
+
+<p>An einer anderen Stelle im Dokument können Sie dann die URL definieren. Dazu schreiben Sie das Kürzel in eckigen Klammern gefolgt von einem Doppelpunkt und der URL und dem alternativen Text.</p>
+
+<p><strong><code>[ex]: http://example.com/  "Optional Title"</code></strong></p>
+
+<p>Das Ergebnis unterscheidet sich nicht vom ersten Vorgehen.</p>
+
+<p>Eine URL-Adresse, die im Text angezeigt und verlinkt wird, erzielen Sie mit dieser Schreibweise:</p>
+
+<p><strong><code>&lt;http://moodle.org/&gt;</code></strong></p>
+
+<p>daraus wird</p>
+
+<p><a href="http://moodle.org">http://moodle.org</a></p>
+
+<h2><a id="images">Bilder</a></h2>
+
+<p>Bilder werden in ganz ähnlicher Weise eingebunden. Am Anfnag steht jedoch ein Ausrufezeichen. Für Leser mit eingeschränkten Sehfähigkeiten kann hier wieder ein alternativer Text eingegeben werden, der zum Beispiel durch Vorlese-Funktionen des Browsers ausgegeben wird. </p>
+
+<p><strong><code>![alt text](/path/img.jpg "Optional Title")</code></strong></p>
+
+<p>Auch hier kann die URL des Bildes wieder an einer anderen Stelle des Textes definiert werden:</p>
+
+<p><strong><code>![alt text][photo]</code></strong></p>
+
+<p>und an einer anderen Stelle wird dann die URL festgelegt:</p>
+
+<p><strong><code>[photo]: /url/to/img.jpg "Optional Title"</code></strong></p>
+
+<p>Hier ein Beispiel und das Ergebnis:</p>
+
+<p><strong><code>![Google logo](http://www.google.com/images/logo.gif "The Google logo")</code></strong></p>
+
+<p><img src="http://www.google.com/images/logo.gif" alt="Google logo" title="The Google logo" /></p>
+
+<p>Der alternative Text ist auch dann sinnvoll, wenn der Link  zu dem Bild defekt ist. Der Text gibt dann Informationen was in dem Bild gezeigt worden wäre:</p>
+
+<p><strong><code>![alt text for broken image](http://example.com/intentionally.broken.link "This image will never display")</code></strong></p>
+
+<p>wird zu (kann je nach Browser etwas anders dargestellt werden)</p>
+
+<p><img src="http://example.com/intentionally.broken.link" alt="alternativer Text an Stelle des Bildes" title="Dieses Bild wird nicht angezeigt" /></p>
+
+<h2><a id="advanced">Weitere Funktionen</a></h2>
+
+<p>Diese kurze Einführung deckt die meist gebrauchten Formatierungen mit Markdown ab. Komplexere Forjmatierungen könenn sie z.B. mit HTML-Formatierungen  erzielen. Weitere Formatierungsmöglichkeiten mit Markdown finden Sie in diesem Text:</p>
+<p align="right"><a href="help.php?file=advanced_markdown.html">Weitere Funktionen im Markdown-Format</a></p>
+</div>
+</div>

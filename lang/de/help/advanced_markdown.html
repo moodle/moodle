@@ -1,0 +1,138 @@
+<h2>Weitere Funktionen im Markdown-Format</h2>
+
+<div id="Main">
+
+<div class="article">
+<p>Dieser Abschnitt gibt Ihnen weitere Formatierungshinweise. Grundlage sind die Erläuterungen im Kapitel 'Textformatierung mit Markdown'. Wenn Sie diese Formatierungen derzeit nicht benötigen können Sie den Abschnitt überspringen oder später erneut aufrufen.</p>
+
+<ul>
+
+<li><a href="#linebreaks">Zeilenünbrüche</a></li>
+<li><a href="#hr">Horizontale Linien</a></li>
+<li><a href="#image_links">Verlinkte Bilder</a></li>
+<li><a href="#embedded">HTML-Code einfügen</a></li>
+<li><a href="#preformatted">HTML-Code oder vorformatierten Text im Original anzeigen</a></li>
+<li><a href="#special_char">Sonderzeichen verwenden</a></li>
+<li><a href="#further">Weitere Quellen</a></li>
+</ul>
+
+<h2><a id="linebreaks">Zeilenumbrüche</a></h2>
+
+<p>In einigen Texten wollen Sie vielleicht Zeilenumbrüche an festgelegten Stellen definieren (z.B. bei Gedichten). Wenn Sie einfgach einen Absatz eingeben wird dieser jedoch ignoriert.</p>
+
+<p><strong><code>The best laid schemes o' Mice an' Men,<br />
+Gang aft agley,<br />
+An' lea'e us nought but grief an' pain,<br />
+For promis'd joy!</code></strong></p>
+
+<p>Wenn Sie bei dem obigen Beispiel am Zeilenende jeweils ein Absatzzeichen eingeben, erhalten Sie folgendes Ergebnis:</p>
+
+<p>The best laid schemes o' Mice an' Men,
+Gang aft agley,
+An' lea'e us nought but grief an' pain,
+For promis'd joy!</p>
+
+<p>Die Absatzzeichen werden einfach ignoriert. Wenn Sie am Ende jeder Zeile jedoch zwei Leerzeichen eingeben wird eine Zeilenschaltung vorgenommen:</p>
+
+<p>The best laid schemes o' Mice an' Men,<br />
+Gang aft agley,<br />
+An' lea'e us nought but grief an' pain,<br />
+For promis'd joy!  </p>
+
+<h2><a id="hr">Horizontale Linien</a></h2>
+
+<p>Horizontale Linien werden angezeigt wenn Sie drei oder mehr Sternchen (*), Bindestriche (-) oder Unterstriche (_) in einer Zeile nacheinander eingeben.</p>
+
+<p>So geht es:</p>
+
+<p><strong><code>***</code></strong></p>
+
+<p>aber Sie können auch Leerzeichen dazwiscehnsetzen oder andere Zeichen verwenden, um einen Abschnitt durch eine Linie zu verdeutlichen.</p>
+
+<p><strong><code>* * * * *</code></strong></p>
+
+<p><strong><code>-------------------------</code></strong></p>
+
+<p><strong><code>_ _ _ _ _</code></strong></p>
+
+<p>Alle diese Methoden führen zum gleichen Ergebnis:</p>
+
+<hr />
+
+<h2><a id="image_links">Verlinkte Bilder</a></h2>
+
+<p>Sie können auch Weblinks oder Bilder einfügen oder anklickbare Bilder im Markdown-Format anlegen.</p>
+
+<p><strong><code>[the google search engine][google]</code></strong></p>
+
+<p><strong><code>![the google logo][logo]</code></strong></p>
+
+<p>Oben finden Sie einen Standard Weblink und ein eingefügtes Bild. Ersetzen Sie nun den Bildtext mit der Quelle des Bildes:</p>
+
+<p><strong><code>[![the google logo][logo]][google]</code></strong></p>
+
+<p>Geben Sie nun irgendwo im Dokument Definitionen für die Begriffe in eckigen Klammern ein:</p>
+
+<p><strong><code>[logo]: http://www.google.com/images/logo.gif</code></strong><br />
+<strong><code>[google]: http://www.google.com/ "click to visit Google.com"</code></strong></p>
+
+<p>Zusammen erahlten Sie eine darstellung des Logos mit einem Tooltipp wenn Sie mit der Maus über das Bild gehen.</p>
+
+<p><a href="http://www.google.com/" title="click to visit Google.com"><img src="http://www.google.com/images/logo.gif" alt="the google logo" /></a></p>
+
+<p>Ein Beispiel für die Anwendung ist die Anzeige einer verkleinerten Bildansicht (Thumbnail) und der Download des größeren Originalbildes beim Anklicken des Bildes.</p>
+
+<h2><a id="embedded">HTML-Code einfügen</a></h2>
+
+<p>Wenn Sie es gewöhnt sind, HTML-Code zu schreiben, werden Sie sicher in manchen Situationen die erweiterten Funktionen von HTML direkt nutzen wollen. Sie können dazu HTML-Code direkt in Markdown-Texte eingeben.</p>
+
+<p><strong><code>* &lt;small&gt;small text&lt;/small&gt;</code></strong><br />
+
+<strong><code>* &lt;big&gt;big text&lt;/big&gt;</code></strong> </p>
+
+<ul>
+<li><small>small text</small>  </li>
+<li><big>big text</big> </li>
+</ul>
+
+<p>Die HTML Formate können direkt neben Markdown-Code für Aufzählungen verwandt werden. Damit können Sie die vereinfgcahte Formatierung von Markdown für aufzählungen und Absätze nutzen und zugleich komplexe HTML-Formatierungen in HTML-Code eingeben.</p>
+
+<h2><a id="preformatted">HTML-Code oder vorformatierten Text im Original anzeigen</a></h2>
+
+<p>Wenn Sie HTML-Code in seiner Originalform anzeigen wollen und dieser nicht interpretiert und umgewandelt werden soll, beginnen sie jede Zeile mit vier Leerzeichen.</p>
+
+<pre><code>&lt;p&gt;A paragraph in &lt;b&gt;HTML&lt;/b&gt; displayed as code&lt;/p&gt;
+</code></pre>
+
+<p>Das funktioniert auch für anderen Programmiercode:</p>
+
+<pre><code>print "Command-line arguments: (@ARGV)\n";
+</code></pre>
+
+<p>Programmiercode Listings oder andere Texte können dann jedoch Markdown-Formatierungen nicht mehr verwenden. Die Markdown-Formatierung wird für diese Zeilen deaktiviert.</p>
+
+<pre><code>Normally this word would be **bold**.
+</code></pre>
+
+<h2><a id="special_char">Sonderzeichen verwenden</a></h2>
+
+<p>Wenn Sie Sonderzeichen verwenden wollen, die auch von Markdown zur Formatierung verwendet werden, ohne dass sie von markdown umformatiert werden, müssen Sie diese zwischen Backslashes (\). Dies wird als Zeichen zum Ignorieren der Funktion interpretiert. Der Backslash wird nicht angezeigt, dafür das Zeichen, direkt hinter dem Backslash.</p>
+
+<p><strong><code>\*Sternchen, nicht hervorgehoben\*</code></strong></p>
+
+<p>ergibt</p>
+
+<p>*Sternchen, nicht hervorgehoben*</p>
+
+<p>statt</p>
+
+<p><strong><code>*Sternchen, nicht hervorgehoben*</code></strong></p>
+
+<p>das zu folgender Darstellung führt</p>
+
+<p><em>Sternchen, nicht hervorgehoben</em></p>
+
+<h2><a id="further">Weitere Quellen</a></h2>
+
+<p>Das Markdown-System wird nicht nur in moodle genutzt. Eineganze Reihe anderer Webpublishingtools verwenden es. Weitere Informationen finden Sie unter 0<a href="http://daringfireball.net/projects/markdown/">http://daringfireball.net/projects/markdown/</a></p>
+</div></div>

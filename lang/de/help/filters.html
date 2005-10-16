@@ -1,0 +1,65 @@
+<p align="center"><b>Filter Verwaltung</b></p>
+
+<p>In der Filterverwaltung legen Sie fest welche Filter bei der Anzeige von Seiteninhalten und in welche Reihenfolge angewandt werden. Für einige Filter stehen hier zusätzliche Einstellungsoptionen zur Verfügung. Die Filter beeinflussen die Darstellung der meisten Textseite kurz bevor Sie an den Browser der Nutzer/inenn übergeben werden.</p>
+
+<p>Filter sind erweiterbare Ressourcen. Unter 
+   <a href="http://download.moodle.org/modules/filters.php">
+   http://download.moodle.org/modules/filters.php</a> finden Sie eine Reihe weiterer Filter für Ihr System.</p>
+
+<p>Wählen Sie Filter aus indem Sie das Augensymbol anklicken und auf (sichtbar=geöffnetes Auge) klicken. Wenn Sie mehr als einen Filter aktiviert haben, können Sie die Reihenfolge der Filter mit den Aufwärts- und Abwäörtspfeilen festlegen.</p> 
+   
+<p><b>TeX Filter</b></p>
+
+<ul>
+  <p>TeX Beschreibungen werden vorwiegend zur Darstellung mathematischer Formeln innerhalb von moodle verwandt. Z.B. $$ sqrt(a+b) $$ (die $$ sind die Kennzeichnung von Anfang und Ende des Formats).</p>
+  <p>Moodle verwendet externe Programme, um aus diesen Zeichen ein Bild zu erzeugen. Der Filter sucht zunächst einen LaTeX Umwandler ( wie Ghostscript), wenn dieser nicht zur Verfügung steht, verwendet er ein einfacheres Programm <i>miktex</i>, das in moodle integriert ist. LaTex ermöglicht alle Funktionen zu verwenden, miktex unterstützt nur die mathematische Zeichendarstellung.</p>
+  <p>Auf der Einstellungsseite können Sie die Pfade zu den LaTeX- und Ghostscript-Programmen beschreiben, zusammen mit LaTeX Vorzeichen.</p>
+  <p><b>Weitere Informationen</b></p>
+  <p><a href="http://www.miktex.org/">MiKTeX</a><br/>
+     <a href="http://www.latex-project.org/">LaTeX</a><br/>
+     <a href="http://www.ghostscript.com/">ghostscript</a></p>
+</ul>
+
+<p><b>Wortzensur</b></p>
+
+<ul>
+  <p>Der Wortzensurfilter durchsucht die Texte nach Tabu-Wörtern von einer vordefinierten Liste. Diese steht im Sprcahpaket für jede Sprache separat zur Verfügung und kann individuell gestaltew werden. Auf der Einstellungsseite können Sie Ihre eigene Liste zusammenstellen. Nutzer/innen sehen diese Begriffe als schwarzen Block. Der Originalbegriff wird per Mouseover angezeigt.</p>
+</ul>
+
+<p><b>Automatische Verlinkung von Titeln der Arbeitsmaterialien</b></b>
+
+<ul>
+  <p>Der Filter durchsucht die Texte nach Titeln von Arbeitsmaterialien des Kurses. Gefundene Begriffe werden hervorgehoben und mit einem Link zu dem Arbeitsmaterial versehen. </p>
+</ul>
+
+<p><b>Automatische Verlinkung für Lernaktivitäten</b></b>
+
+<ul>
+  <p>Die gleiche Funktion für die Namen von Lernaktivitäten.</p>
+</ul>
+
+<p><b>Automatische Verlinkung mit dem Glossar</b></p>
+
+<ul>
+  <p>Der Filter durchsucht Texte nach Schlüsselbegriffe in Glossaren und verlinkt auf die Begriffserklärung.
+  </p>
+</ul>
+
+<p><b>E-Mail Schutz</b></p>
+
+<ul>
+  <p>Der E-Mailschutzfilter durchsucht den Text nach E-Mailadressen. Gefundene E-Mailadressen werden so verborgen, das Programme, die systenatisch Internettexte nach E-Mailadressen durchforsten, diesenicht erkennen. Diese Funktion reduziert das SPAM-Risiko auf moodle-Seiten, die öffentlich zugängig sind.</p>
+</ul>
+
+<p><b>Tidy</b></p>
+
+<ul>
+  <p>Der Tidy-Filter prüft Texte auf HTML-Code Elemente. Gefundene HTML-Codes werden geprüft und so ergänzt, dass sie gültigen HTML-Code enthalten. Die tidy-Funktion muss für diesen Filter in Ihrem PHP-System aktiviert sein.</p>
+</ul>
+
+<p><b>Multi-Language-Filter</b></p>
+
+<ul>
+  <p>Dieser Filter erlaubt es, Texte in verschiedenen Sprachen anzuzueigen. Es wird die Sprache angezeigt, die von dem/der Nutzer/in als bevorzugte Sprache im Nutzerprofil eingetragen ist. Erstellen Sie für die Verwendung dieses Filters ihre Texte zunächst in mehreren Sprachen im gleichen Dokument. Danach schließen Sie jede Sprache mit dem folgenden tag ein:   <pre>      &lt;lang lang="XX"&gt;Ihr_Inhalt&lt;/lang&gt;</pre>
+  </p>
+</ul>

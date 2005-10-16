@@ -1,0 +1,546 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    
+<title>Moodle Dokumentation: Ältere Versionen</title>
+	
+<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS" />
+    
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    
+<style type="text/css">
+       dt {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; font-weight: bold;}
+       dd {margin-bottom:1em;}
+       dl {margin-left: 40px} 
+    </style>
+</head>
+
+<body>
+
+<h1>Old Release notes</h1>
+
+<h3>Moodle 1.4.3 (17. Dezember 2004)</h3>
+<p>(Diese Version enth&auml;lt wichtige
+Sicherheitsverbesserungen. Wir empfehlen alle Seiten, die
+fr&uuml;here Versionen nutzen, so schnell wie m&ouml;glich zu
+aktualisieren.)</p>
+<div style="margin-left: 2em">
+<dl>
+<dt>Wichtige Sicherheitsverbesserungen</dt>
+<dd>
+<ul>
+<li>Bessere Pr&uuml;fung/Bereinigung von Cookie-Daten</li>
+<li>Vorbeugender Abgleich der Daten f&uuml;r Sessions
+Speicherung</li>
+<li>Bessre Pr&uuml;fung/Bereinigung der Parameter f&uuml;r
+RSS-Feeds, Ip Atlas Parameter, W&ouml;rterbuch, Foren, Theme
+Auswahl, SCORM Modul, Dokumentenansicht</li>
+<li>Neuer Schutz bei der Ansicht hochgeladener Dateien</li>
+<li>Neuer Schutz gegen Verzeichnis traversal</li>
+<li>Fix der Variable $FULLME, die f&uuml;r Cron ben&ouml;tigt
+wird</li>
+<li>Schutz gegen&uuml;ber einem direkten Aufruf interner
+Bibliotheken.</li>
+<li>Schutz beim Aufruf von W&ouml;rterb&uuml;chern, die verborgen
+wurden</li>
+<li>Verborgene Abschnitte werden vor Teilnehmern verborgen, die
+fr&uuml;here Aktivit&auml;ten bearbeiten.</li>
+<li>Fixed Problem bei Gastnutzern, die Termine im Kalender
+einsehen konnten</li>
+<li>Fixed encoding von TEX Ausdr&uuml;cken</li>
+</ul>
+</dd>
+<dt>Einige neue Dinge</dt>
+<dd>
+<ul>
+<li>Eindeutige Anmeldung wird erzwungen
+(Leistungsverbesserung).</li>
+<li>hHinzugef&uuml;gt: Transaktions Unzerst&uuml;tzung f&uuml;r
+PostgreSQL</li>
+<li>Logging in und logging out werden nun geloggt</li>
+<li>Wiki und SCORM nutzen nun beide den neuen Zip-Code</li>
+<li>Neues Seitenmodell f&uuml;r W&ouml;rterb&uuml;cher</li>
+<li>Nutzerinformationen von LDAP gek&uuml;rzt, um Dtaenverlust zu
+vermeiden</li>
+<li>pclzip aktualisiert auf neue Version</li>
+<li>Memory_limit kann von einer h&ouml;heren Einstellung in der
+php.ini &uuml;berschrieben werden, commandline, httpd.conf,
+.htaccess</li>
+<li>Neue &Uuml;bersetzungen wurden gestartet f&uuml;r: Maori,
+Kanada, Albanisch und Vietnamesisch</li>
+<li>Viele Erg&auml;nzungen in anderen Sprachpaketen</li>
+<li>Trainer/innen k&ouml;nnen nun jederzeit Tests erproben, auch
+wenn sie noch nicht freigegeben wurden.</li>
+<li>Druckformat der W&ouml;rterb&uuml;cher ist nun f&uuml;r jedes
+Format angepasst.</li>
+<li>W&ouml;rterbuch-Suche ber&uuml;cksichtigt jetzt auch
+alias-Begriffe</li>
+<li>Deutliche Verbesserungen im multilang Filter mit einer
+'nachsichtigeren' Syntax</li>
+</ul>
+</dd>
+<dt>Leistungsverbesserungen</dt>
+<dd>
+<ul>
+<li>Headers werden besser gespeichert. Damit kann auf allen
+Seiten der 'zur&uuml;ck-Button' genutzt werden</li>
+<li>Datenbankindeizes an vielen Stellen erg&auml;nzt. Dies
+f&uuml;hrt zu Leistungsverbesserungen bei gro&szlig;en
+Anwendungen</li>
+<li>Leistungsverbesserungen bei der Auflistung der Kurse.</li>
+<li>VerschiedeneVerbesserungen beim Entfernen nicht mehr
+ben&ouml;tigter Datenbankeintr&auml;ge und Sortierungen.</li>
+</ul>
+</dd>
+<dt>Weitere Fehlerkorrekturen</dt>
+<dd>
+<ul>
+<li>Problem bei der Wiederherstellung von Kursen in neuen Kursen
+mit der ID-Nummer</li>
+<li>Verschiedene kleine Werte bei Postgres korrigiert</li>
+<li>Verschiedene nicht ben&ouml;tigte Eintr&auml;ge im 'debug
+on'-Modus</li>
+<li>Einige PHP5 Eintr&auml;ge</li>
+<li>Unterst&uuml;tzung von Apostrophs, Anf&uuml;hrungszeichen und
+Backslashes in LDAP Nutzerdaten</li>
+<li>Fix f&uuml;r Paginierung der Sucherergebnisse f&uuml;r Kurse
+bei Postgres</li>
+<li>Fixed Bug mit Leerzeichen in der Nutzersuche</li>
+<li>Fixed Chatroom Bug mit der Anzeige aller Chatnutzer wenn
+mehrere Chatrooms zugleich genutzt werden</li>
+<li>Fix f&uuml;r Installationsscript Bug</li>
+<li>Gro&szlig;-/Kleinschreibung von Nutzernamen beim Bulk-Import
+von Nutzern fixed</li>
+<li>Fixed Bug nach Bewertung von Forenbeitr&auml;gen mit
+R&uuml;ckg&auml;ngig-Funktion</li>
+<li>Fixed Bug in Test mit Zuordnungsfragen</li>
+<li>Fixed Bug in Testvorschau</li>
+<li>Fixed Bug in der Sprachbearbeitung</li>
+<li>Verschiedene kleine Anpassungen im SCORM Modul</li>
+<li>SCORM Modul zeigt Nutzerbilder richtig</li>
+<li>Aktivit&auml;tennamen im Aktivit&auml;ten Filter nach Titelnn
+sortierbar</li>
+<li>W&ouml;rterbuchsuche ber&uuml;cksichtigt
+Alias-Bezeichnungen</li>
+<li>Einige RSS Fehler werden in einem g&uuml;ltigen RSS
+Fehlerfile angezeigt, statt in ung&uuml;ltigem RSS.</li>
+<li>Fixed Problem mit SCORM Paketpr&uuml;fung und PHP5</li>
+<li>Fixed Problem mit Backup/Restore und leeren Kategorien</li>
+<li>Besseres XHTML in Wikis</li>
+<li>Bug fix in Chat Berichten der ersten Chatsitzung</li>
+<li>Fix eines Problem mit SCORM beim L&ouml;schen einer
+gro&szlig;en Zahl von Dateien oder bei gro&szlig;en Dateien</li>
+<li>Fix einiger Probleme im Enzyklop&auml;die-Format des
+W&ouml;rterbuchs</li>
+<li>Fixe eines Fehlers bei der SCORM Integration mit
+Zip-Code</li>
+<li>Fix eines Fehlers bei E-Mail-Benachrichtigung von Dialogen
+mit Textformat</li>
+<li>Fix von fehlenden sesskey-Variablen im Block Gemeinsame
+Aktivit&auml;ten(social activity block)</li>
+<li>&Uuml;berfl&uuml;ssige Abschnitte f&uuml;r einen Kurs werden
+nun im Navigationsmenu versteckt</li>
+<li>Zeitumstellung f&uuml;r Kalender</li>
+<li>F&uuml;r den ersten Test in einem neuen Kurs wird eine
+Default-Kategorie angezeigt</li>
+<li>Fix eines Fehlers im Paypal-Modul bei der Akzeptanz des
+Zahlungsbetrages</li>
+<li>Fix eines Fehlers in der Anzeige der Kursdateien</li>
+</ul>
+</dd>
+</dl>
+</div>
+<p> </p>
+<br>
+<h3>Moodle 1.4.2 (Oktober 2004)</h3>
+<div style="margin-left: 2em">
+<dl>
+<dt>Einige kleine Neuerungen</dt>
+<dd>
+<ul>
+<li>Neue PAM Authentifikationsmodule f&uuml;r die direkte
+Authentifikation auf Unix/Linux</li>
+<li>Kursersteller/innen k&ouml;nnen nun auch Kurse in
+neue/bestehende Kurse wiederherstellen</li>
+<li>Forumsbeitr&auml;ge erhalten nun detaillierte Header zur
+richtigen Darstellung der Threads in Mailclients</li>
+</ul>
+</dd>
+<dt>Einige wichtige Sicherheitsfixes</dt>
+<dd>
+<ul>
+<li>Bessere Pr&uuml;fung/Bereinigung von Script Parametern in
+einigen Bereichen von moodle (ein gro&szlig;er Dank an Petr Skoda
+f&uuml;r seine fr&uuml;heren Hinweise zu Verbesserung der
+Sicherheit)</li>
+<li>Berichtigung einiger SQL Parameter im Glossar-Modul, um
+m&ouml;gliche Angriffe zu vermeiden</li>
+</ul>
+</dd>
+<dt>Und ein B&uuml;ndel anderer Bug-Fixes</dt>
+<dd>
+<ul>
+<li>Backup ist nun besser in der Lage mit Fehlermeldungen
+umzugehen (z.B. wenn das Backup unterbrochen wurde) und erkennt
+selber unvollst&auml;ndige Dateien</li>
+<li>Fix f&uuml;r Databank Authentifikation mit einer PostgreSQL
+Datenbank</li>
+<li>Fixes f&uuml;r einige Teile der Installation mit
+PostgreSQL</li>
+<li>Forums&uuml;berschriften werden nun nur noch in der
+Aktivit&auml;tenansicht umgebrochen</li>
+<li>Datenbank basierte Anmeldung funktioniert nun
+tats&auml;chlich :-)</li>
+<li>SQL Fixes f&uuml;r die Erstellung von RSS Feeds von
+PostgreSQL</li>
+<li>rtsp zur Liste der erlaubten Protokolle bei reinem HTML-Text
+hinzugef&uuml;gt</li>
+<li>Nutzerprofile und die Seite zur Bearbeitung der Profile kann
+ohne Parameter aufgerufen werden</li>
+<li>xmlize Bibliothek auf aktuellste Version upgedatet</li>
+<li>Upgrade der phpmailer Bibliothek auf aktuellste Version</li>
+<li>Verschiedene kleine Code Bereinigungen</li>
+<li>Adminmenu erlaubt nun Backup/Restore des Kurses auf der
+Startseite</li>
+<li>Fix einer Fehlermeldung im Forumsindex (nur in PHP 5
+augetreten)</li>
+<li>Hervorhebungsfunktion (z.B. nach der Suche) entfernte
+Backslashes</li>
+<li>Info von LDAP ist nun decoded von utf8</li>
+<li>Kurs&uuml;bersicht kann nun besser mit sehr umfangreichen
+Kurs&uuml;bersichten umgehen</li>
+<li>Zwei SCORM Bugs fixed (eine Typo und ein Problem mit
+onbeforeunload)</li>
+<li>Einige Cleanups beim Druck von Texten, &Uuml;berschriften und
+Variablen in Lektionen</li>
+<li>Kalendar funktioniert nun wie erwartet, wenn man in der Rolle
+einer anderen Person sich einloggt(als Trainer)</li>
+<li>Fix einiger &uuml;briggebliebener kurzer PHP Tags</li>
+<li>Bessere Zufallssteuerung f&uuml;r zufallssgesteuerte Tests
+(Fehler aus Version 1.4)</li>
+<li>Wenn ein Trainer aus einem Kurs entfernt wird, wird er jetzt
+auch aus allen Gruppen des Kurses entfernt.</li>
+<li>Fix des strip_pages Bug im Wiki</li>
+<li>Fixes f&uuml;r charset detection in backups und multilang
+filter unter PHP5</li>
+</ul>
+</dd>
+</dl>
+</div>
+<p> </p>
+<h3>Moodle 1.4.1 (12. September 2004)</h3>
+<div style="margin-left: 2em">
+<dl>
+<dt>Einige wenige kleine Neuerungen</dt>
+<dd>
+<ul>
+<li>Neuer "Email Protection" Filter verbirgt alle Emailadressen
+in allen Texten und vermeidet damit autoamtische
+E-Mial-Adresssammlung</li>
+<li>Zugelassene EMailAdressen k&ouml;nnen nun begrenzt werden
+(Details in config-dist.php)</li>
+<li>Extra Anweisungen f&uuml;r &Uuml;bersetzer
+hinzugef&uuml;gt</li>
+<li>Neue Hilfedatei f&uuml;r Verzeichnispfade</li>
+</ul>
+</dd>
+<dt>Und einige Bug-Fixes</dt>
+<dd>
+<ul>
+<li>Leistungsverbesserungen bei der Ansicht von Logseiten</li>
+<li>Verbesserte Seiten und Leistungen im Glossar</li>
+<li>Glossareintr&auml;ge werden richtig angezeigt wenn sie zu
+mehreren Kategrorien zugeordnet sind</li>
+<li>Kein redeclare bei gescheiterten auth_user_login</li>
+<li>Fix von zwei fehlenden Icons im cordoroyblue Theme</li>
+<li>Fix fehlender "New event" Button auf der Seite k&uuml;nftige
+Events</li>
+<li>Erg&auml;nzung von addslashes bei Chatnachrichten von daemon
+Nutzern vor Eintrag in die Datenbank.</li>
+<li>Fix f&uuml;rdie Handhabung festgelegter Anmeldetermine
+f&uuml;r Kurse</li>
+<li>Site course ID (definiert als SITEID) ist nicht mehr als 1
+fetgelegt</li>
+<li>Default Memory Grenzen auf 16 MB erh&ouml;ht worden. Damit
+kann moodle bei unerwarteten Speicherprobelmen besser weiter
+arbeiten</li>
+<li>Smilies sind nun auch als Bilder in Markdown formatierten
+Texten verf&uuml;gbar</li>
+<li>Workshops werden unter derzeitige Aktivit&auml;ten wieder
+angezeigt</li>
+<li>file.php kann nun nur verwandt werden, um auf Dateien
+innerhalb von Kursen zuzugreifen</li>
+<li>Verbesserung des Kalenderblocks auf der Startseite</li>
+<li>Fix von Bugs mit PostgreSQL Datenbankeinstellungen des
+Installers</li>
+<li>Fix der manchmal fehlenden Anzeige richtiger Antworten bei
+Tests</li>
+<li>&lt;tt&gt; und &lt;code&gt; sind nun zugelassene Tags</li>
+<li>Einf&uuml;hrungstexte, Kursbeschreibungen und Labels
+enthalten jetzt auch Java Script</li>
+<li>Fix seltner LDAP Bugs, bei denen keine neuen Accounts
+angelegt werden konnten</li>
+</ul>
+</dd>
+</dl>
+</div>
+<p> </p>
+<h3>Moodle 1.4 (31. August 2004)</h3>
+<div style="margin-left: 2em">
+<dl>
+<dt>Wichtige Neuerungen</dt>
+<dd>
+<ul>
+<li>Kompatibel mit PHP 5</li>
+<li>Neuer einfacher Installer f&uuml;hrt Sie durch die Erstellung
+der config.php-Datei</li>
+<li>Installation erfolgt jetzt vollst&auml;ndig in der
+ausgew&auml;hlten Sprache</li>
+<li>Vollst&auml;ndig aufgem&ouml;beltes Arbeitsmaterialien-Modul
+erleichtert es neue Materialien hinzuzuf&uuml;gen und sie zu
+steuern</li>
+<li>Neues Anmeldesystem unterst&uuml;tzt automatische Bezahlung
+&uuml;ber PayPal , Flatfilescanning oder externe
+Datenbankkontrolle</li>
+<li>Blocks funktionieren nun auch auf der Startseite, und eine
+Themen&uuml;bersicht kann im mittleren Abschnitt gesetzt
+werden</li>
+<li>Chat erm&ouml;glicht nun einen server-side daemon (in PHP)
+f&uuml;r skalierbare, instant Chats</li>
+<li>Neues Wikimodul!</li>
+<li>Markdown Formatierung von Texten wird unterst&uuml;tzt</li>
+<li>Viele Fehlerkorrekturen in allen Bereichen</li>
+</ul>
+</dd>
+<dt>Und im Hintergrund</dt>
+<dd>
+<ul>
+<li>Arbeitsmaterialien-Modul hat nun ein eigenes
+Hinzuf&uuml;gen-Menu und nutzt Klassen f&uuml;r Submodule. Damit
+k&ouml;nnen leichter zus&auml;tzliche Ressourcentypen
+hinzugef&uuml;gt werden</li>
+<li>Testmodul wurde zerlegt in class-based questiontype
+plugins.</li>
+<li>Anmeldeprozess wurde zerlegt in class-based enrolement
+plugins.</li>
+<li>Glossar Anzeigen sind nun namensbasiert. Das erleichtert das
+Einf&uuml;gen neuer Anzeigen.</li>
+<li>Verbesserte Funktion verschiedener Module auf der
+Startseite.</li>
+<li>&Uuml;berarbeitete Filterstruktur ist schneller und
+kompatibel mit Turck MMcache.</li>
+<li>Beim Hinzuf&uuml;gen von Aktivit&auml;ten ist die Toleranz
+bei leeren Feldern erh&ouml;ht</li>
+<li>PostgreSQL Tabellen k&ouml;nenn nun abge&auml;ndert werden
+(Nutzung von table_column() )</li>
+<li>RSS Erstellung ist nun wesentlich schneller und belastet den
+cron Prozess nicht mehr so stark</li>
+<li>Einige umfangreiche Module haben nun geteilte lib.php (in
+locallib.php) damit der Speicherbedarf sinkt</li>
+</ul>
+</dd>
+<dt>Sprachen und Lokalisierungen</dt>
+<dd>
+<ul>
+<li>Updates in fast jedem Sprachpaket</li>
+<li>Moodle kann den eingestellten Zeichensatz in Apache
+&uuml;berschreiben, damit wird die Sprachsteuerung
+vereinfacht</li>
+<li>Multibyte Sprachen werden genauer umgesetzt</li>
+<li>Bessere Steuerung der locales und encodings auf
+mehrsprachigen Seiten (wie moodle.org)</li>
+<li>Neue Sprachen: Slowenisch und Hebr&auml;isch!</li>
+</ul>
+</dd>
+<dt>Sicherheits Fixes</dt>
+<dd>
+<ul>
+<li>Fix der Zahl m&ouml;glicher XSS Eintragspunkte und
+Pfadeeintr&auml;ge</li>
+<li>Attribute der Tags in HTML werden nun durch kleine Scripts
+geparst</li>
+<li>Profilseiten k&ouml;nnen von aussen nicht mehr eingesehen
+werden</li>
+<li>All text is now cleaned on output (not just input)</li>
+<li>Email Addressen werden auf ausgehenden Mails nicht angezeigt,
+wenn der Nutzer es nicht will</li>
+<li>Neue Einstellung <strong>loginhttps</strong> verwendet
+sicheren https zum login, und switcht dann zur&uuml;ck auf
+http</li>
+</ul>
+</dd>
+<dt>Administration</dt>
+<dd>
+<ul>
+<li>Sch&ouml;ne neue Oberfl&auml;che zum Hinzugen/Entfernen von
+Teilnehmern, Kurserstellern und Admins</li>
+<li>Gescheiterte Logins werden nun logged und k&ouml;nnen
+eingesehen werden bis ein login erfolgeich war</li>
+<li>Logs unterst&uuml;tzen die Anzeige der Gruppen und von
+Fehlern</li>
+<li>Module nun auf der Startseite integriert</li>
+<li>Teilnehmer auf der Startseite k&ouml;nnen jetzt alle
+eingetragenen Nutzer oder alle Nutzer, die mindestenst in einem
+Kurs eingettragen sind, sein</li>
+<li>Email-Zustellung kann jetzt auf jeder Profilseite der Nutzer
+aktiviert/deaktiviert werden</li>
+</ul>
+</dd>
+<dt>Authentifizierungen</dt>
+<dd>
+<ul>
+<li>Alle Authentifikationsmethoden arbeietn jetzt mit intern
+erstellen Accounts zusammen</li>
+<li>Unterst&uuml;tzung der Authentifikation gegen&uuml;ber First
+Class Servern</li>
+<li>Fixes f&uuml;r POP3 Authentifikation</li>
+</ul>
+</dd>
+<dt>Navigation</dt>
+<dd>
+<ul>
+<li>Besucher werden automatisch als Gast eingeloogt</li>
+<li>Jump-Menu zeigt nun immer "Sprung zu" als Unterst&uuml;tzung
+was getan werden kann</li>
+<li>Jump-Menu verf&uuml;gt jetzt &uuml;ber eindeutigen weg zur
+Gruppierung von Aktivit&auml;ten in Abschnitten</li>
+</ul>
+</dd>
+<dt>Bl&ouml;cke</dt>
+<dd>
+<ul>
+<li>Blocksystem bew&auml;ltigt nun auch ge&auml;nderte
+Kursformate</li>
+<li>Neuer Loginblock erm&ouml;glicht jetzt Anmeldung auf der
+Startseite</li>
+<li>Online Nutzerblock zeigt Nutzer auf der ganzen Seite</li>
+</ul>
+</dd>
+<dt>Editor</dt>
+<dd>
+<ul>
+<li>Neuer Editor Konfigurationsscreen f&uuml;r Admins</li>
+<li>Neuer Support f&uuml;r Anker in Seiten</li>
+<li>Spell-checking is now supported in the editor, it uses aspell
+on your server operating system</li>
+</ul>
+</dd>
+<dt>Chat</dt>
+<dd>
+<ul>
+<li>Chat nutzt jetzt server-side daemon (in PHP) f&uuml;r
+skalierbaren instant Chat</li>
+</ul>
+</dd>
+<dt>Abstimmungen</dt>
+<dd>
+<ul>
+<li>Viele neue Optionen</li>
+</ul>
+</dd>
+<dt>Forum</dt>
+<dd>
+<ul>
+<li>Verschiedene Verbesserungen mit Gruppen</li>
+<li>Nutzer w&auml;hlen Bezug derNcahrichten als Digest mit
+vollst&auml;ndigen Text oder nur &Uuml;berschriften</li>
+<li>Discussion listing is now paged</li>
+<li>Trainer haben jetzt kompletten Zugriff auf die
+Forumseintragung der Teilnehmer und k&ouml;nnen alle automatisch
+eintragen</li>
+<li>"Letzte Nachricht" Anzeige ist jetzt verk&uuml;rzt und zur
+letzten Nachricht verlinkt</li>
+<li>Foren zeigen RSS Feed auf der Index-Seite</li>
+<li>HTML mail optisch verbessert</li>
+<li>Forumsmail &auml;lter als zwei Tage werden nicht mehr
+versendet (um Flut von alten Mails zu verhindern)</li>
+<li>Blockierte Mails werden geloggt, damit Trainer sie einsehen
+k&ouml;nnen</li>
+<li>Diskussionszweige k&ouml;nnen geteilt werden, um sie einer
+neuen Diskussion zuzuordnen</li>
+</ul>
+</dd>
+<dt>Glossar</dt>
+<dd>
+<ul>
+<li>Glossareintr&auml;ge k&ouml;nenn als immer bearbeitbar
+deklariert werden</li>
+<li>Glossare listen RSS_Feeds auf der Indexseite</li>
+<li>Manche weitere Fixes</li>
+</ul>
+</dd>
+<dt>Test</dt>
+<dd>
+<ul>
+<li>Neue r&uuml;ckw&auml;rts laufende Uhr f&uuml;r zeitbegrenzte
+Tests</li>
+<li>Zugriffe k&ouml;nnen nun auf bestimmte Rechner begrenzt
+werden</li>
+<li>Tests k&ouml;nnen nun mit einem Passwort gesch&uuml;tzt
+werden</li>
+<li>Neuer Fragentyp f&uuml;r berechnete Fragen</li>
+<li>Nummerische Fragen unterst&uuml;tzten nun units</li>
+<li>Vorschau f&uuml;r Fragen auf der Bearbeitungsseite</li>
+<li>Fragen k&ouml;nenn nun in unterschiedliche Formate exportiert
+werden</li>
+<li>Mehr Gestaltungsm&ouml;glichkeiten mit Kategorien bei der
+Bearbeitung von Fragen</li>
+<li>Neues (und unvollst&auml;ndiges) XML Exportformat</li>
+<li>Kurzantworten k&ouml;nenn nun alle Zeichen enthalten</li>
+</ul>
+</dd>
+<dt>Arbeitsmaterialien</dt>
+<dd>
+<ul>
+<li>Arbeitsmaterialien hinzuf&uuml;gen erfolgt nun in einem
+Arbeitsschritt mit zus&auml;tzlichen
+Kontrollm&ouml;glichkeiten</li>
+<li>Webseiten, Weblinks, Uploaded von Dateien und
+Programmressourcen sind alle in eiem Typ kombiniert!</li>
+<li>Programmressourcen durch Parameter ersetzt, die eine ganze
+Reihe von Interaktionen mit externen Ressourcen erlauben, sowohl
+remote, als auch upload nach moodle.</li>
+<li>Aufklappbare Formulare f&uuml;r speicherbare Einstellungen
+die f&uuml;r Anf&auml;nger leichter zu nutzen sind und dennoch
+erfahrenen Anwendern viele Gestaltungssm&ouml;glichkeiten
+er&ouml;ffnen.</li>
+</ul>
+</dd>
+<dt>SCORM</dt>
+<dd>
+<ul>
+<li>Einige Fixes und Verbesserungen - arbeitet nun mit einer
+gr&ouml;&szlig;eren Anzahl von Paketen zusammen</li>
+<li>Optionale Zusatzverifikation der Manifest-Datei</li>
+</ul>
+</dd>
+</dl>
+<p> </p>
+<dl>
+<dd>
+<div class="style1" align="center"></div>
+</dd>
+<dd>
+<div class="style1" align="center"><font size="+1">Letztlich,
+gibt es weitere <a href="http://moodle.org/download/modules/"
+target="_blank">Ver&auml;nderungen bei den vielen optionalen
+Modulen, die sich in der Entwicklung befinden.</a>.</font></div>
+</dd>
+</dl>
+<p align="center"><strong><font size="+1">Wenn Sie irgendwelche
+Fehler in dieser Version entdecken, geben Sie bitte eine
+R&uuml;ckmeldung unter <a href="http://moodle.org/bugs" target=
+"_blank">moodle.org/bugs</a> damit wir sie so schnell wie
+m&ouml;glich in der n&auml;chsten Version beheben
+k&ouml;nnen.</font></strong></p>
+<p> </p>
+</div>
+<p> </p>
+<p><br></p>
+<center>
+<p>Informationen zu älteren Versionen finden Sie unter: <a href="http://moodle.org/mod/forum/view.php?f=1">Moodle.org announcement forum</a>.
+
+<p>&nbsp;</p>
+<p align="center"><font size="1"><a href="../doc/" target="_top">Moodle Documentation</a></font></p>
+<p align="center"><font size="1">Version: $Id$</font></p>
