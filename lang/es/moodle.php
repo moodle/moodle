@@ -5,6 +5,7 @@
 $string['action'] = 'Acción';
 $string['actions'] = 'Acciones';
 $string['active'] = 'Activa';
+$string['activeusers'] = 'Usuarios activos';
 $string['activities'] = 'Actividades';
 $string['activity'] = 'Actividad';
 $string['activityclipboard'] = 'Moviendo la actividad: <b>$a</b>';
@@ -14,6 +15,7 @@ $string['activityreport'] = 'Informe de actividades';
 $string['activityreports'] = 'Informes de actividad';
 $string['activityselect'] = 'Seleccionar esta actividad para moverla';
 $string['activitysince'] = 'Actividad desde $a';
+$string['activityweighted'] = 'Actividad por usuario';
 $string['add'] = 'Agregar';
 $string['addactivity'] = 'Agregar actividad...';
 $string['addadmin'] = 'Agregar administrador';
@@ -56,8 +58,10 @@ $string['adminhelpmanagedatabase'] = 'Acceder directamente a la base de datos (¡
 $string['adminhelpmanagefilters'] = 'Seleccionar filtros de texto y su configuración';
 $string['adminhelpmanagemodules'] = 'Administrar los módulos instalados y sus configuraciones';
 $string['adminhelpmymoodle'] = 'Configurar los bloques \'mi moodle\' para usuarios';
+$string['adminhelpreports'] = 'Clasificación de cursos por distintos criterios';
 $string['adminhelpsitefiles'] = 'Publicar archivos en general o subir copias de seguridad externas';
 $string['adminhelpsitesettings'] = 'Definir el aspecto de la página principal';
+$string['adminhelpstickyblocks'] = 'Configurar bloques \'sticky\' a través de Moodle';
 $string['adminhelpthemes'] = 'Elegir el estilo del sitio (colores, fuentes, etc.)';
 $string['adminhelpuploadusers'] = 'Importar usuarios desde un archivo de texto';
 $string['adminhelpusers'] = 'Definir los usuarios y configurar la autenticación';
@@ -150,14 +154,12 @@ $string['categoryduplicate'] = 'Ya existe una categoría llamada \'$a\'.';
 $string['changedpassword'] = 'Contraseña actualizada';
 $string['changepassword'] = 'Cambiar contraseña';
 $string['changessaved'] = 'Cambios actualizados';
-$string['checkall'] = 'Revisar todo';
 $string['checkingbackup'] = 'Revisando la copia de seguridad';
 $string['checkingcourse'] = 'Revisando el curso';
 $string['checkingforbbexport'] = 'Comprobando exportación a Blackboard';
 $string['checkinginstances'] = 'Revisando casos';
 $string['checkingsections'] = 'Revisando secciones';
 $string['checklanguage'] = 'Revisar el idioma';
-$string['checknone'] = 'No revisar';
 $string['childcoursenotfound'] = '¡Curso secundario no encontrado!';
 $string['choose'] = 'Elegir';
 $string['choosecourse'] = 'Seleccione un curso';
@@ -469,11 +471,9 @@ $string['expirynotifyemail'] = 'Los siguientes estudiantes quedarán desmatricula
 
 $a->current
 
-
 Los siguientes estudiantes quedarán desmatriculados en este curso en menos de $a->threshold días:
 
 $a->past
-
 
 Puede ir a la siguiente página para ampliar su período de matriculación:
 $a->extendurl';
@@ -511,6 +511,7 @@ $string['forcepasswordchangenotice'] = 'Para continuar, deberá cambiar su contra
 $string['forcetheme'] = 'Forzar tema';
 $string['forgotaccount'] = '¿Ha extraviado la contraseña?';
 $string['forgotten'] = '¿Olvidó su nombre de usuario o contraseña?';
+$string['forgottenduplicate'] = 'La recuperación automática de la contraseña no puede completarse puesto que la dirección de su correo aparece en la base de datos más de una vez. Por favor, contacte con su administrador <a href=\"mailto:$a->email\">$a->firstname $a->lastname</a> .';
 $string['format'] = 'Formato';
 $string['formathtml'] = 'Formato HTML';
 $string['formatmarkdown'] = 'Formado Markdown';
@@ -910,6 +911,7 @@ $string['parentcoursenotfound'] = '¡Curso raíz no encontrado!';
 $string['parentcoursenotmetacourse'] = '¡El curso raíz no es un metacurso!';
 $string['parentfolder'] = 'Directorio raíz';
 $string['participants'] = 'Participantes';
+$string['participationratio'] = 'Ratio de participación';
 $string['password'] = 'Contraseña';
 $string['passwordchanged'] = 'La contraseña ha cambiado';
 $string['passwordconfirmchange'] = 'Confirmar cambio de contraseña';
@@ -939,6 +941,7 @@ $string['policyagree'] = 'Usted deberá estar de acuerdo con estas condiciones an
 $string['policyagreement'] = 'Acuerdo con las Conciciones del Sitio';
 $string['policyagreementclick'] = 'Haga clic aquí para leer el Acuerdo con las Condiciones del Sitio';
 $string['popupwindow'] = 'Abrir el archivo en una ventana nueva';
+$string['posts'] = 'Mensajes';
 $string['potentialadmins'] = 'Administradores potenciales';
 $string['potentialcreators'] = 'Creadores potenciales';
 $string['potentialstudents'] = 'Estudiantes potenciales';
@@ -986,6 +989,7 @@ $string['removestudent'] = 'Quitar estudiante';
 $string['removeteacher'] = 'Quitar profesor';
 $string['rename'] = 'Renombrar';
 $string['renamefileto'] = ' Renombrar <b>$a</b> a';
+$string['reports'] = 'Informes';
 $string['requestcourse'] = 'Solicitar un curso';
 $string['requestedby'] = 'Solicitado por';
 $string['requestreason'] = 'Razón para solicitar el curso';
@@ -1095,6 +1099,10 @@ $string['statsnodata'] = 'No hay datos disponibles para esa combinación de curso
 $string['statsnodatauser'] = 'No hay datos disponibles para esa combinación de curso, usuario y período de tiempo.';
 $string['statsreport1'] = 'Accesos';
 $string['statsreport10'] = 'Actividad del usuario';
+$string['statsreport11'] = 'Cursos más activos';
+$string['statsreport12'] = 'Cursos más activos (ponderados)';
+$string['statsreport13'] = 'Cursos con más participación (matriculaciones)';
+$string['statsreport14'] = 'Cursos con más participación (vistas/mensajes)';
 $string['statsreport2'] = 'Vistas (profesor y estudiante)';
 $string['statsreport3'] = 'Mensajes (profesor y estudiante)';
 $string['statsreport4'] = 'Toda la actividad (profesor y estudiante)';
@@ -1247,6 +1255,7 @@ $string['usethiscourse'] = 'Usar este curso';
 $string['usingexistingcourse'] = 'Usando un curso existente';
 $string['version'] = 'Versión';
 $string['view'] = 'Vista';
+$string['views'] = 'Vistas';
 $string['viewsolution'] = 'ver solución';
 $string['virusfound'] = '¡Atención, administrador! Clam AV ha encontrado un virus en el archivo subido por el usuario $a->user en el curso $a->course. Éste es el output de clamscan:';
 $string['virusfoundlater'] = 'Un archivo que usted subió el $a->date denominado $a->filename en el curso $a->course contiene un virus. He aquí un resumen de lo que ha ocurrido con el archivo:
