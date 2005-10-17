@@ -30,7 +30,7 @@ class quiz_report extends quiz_default_report {
         quiz_get_question_options($questions);
 
     /// Print heading
-        print_heading(get_string('regradingquiz', 'quiz', $quiz));
+        print_heading(get_string('regradingquiz', 'quiz', $quiz->name));
         echo '<center>';
         print_string('regradedisplayexplanation', 'quiz');
         echo '<center>';
