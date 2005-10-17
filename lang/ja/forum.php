@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.6 development (2005100400)
+      // forum.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['addanewdiscussion'] = 'ディスカッショントピックを追加';
@@ -13,12 +13,12 @@ $string['allowsdiscussions'] = 'このフォーラムでは1人1件のトピックを開始すること
 $string['anyfile'] = '全てのファイル';
 $string['attachment'] = '添付ファイル';
 $string['bynameondate'] = '$a->date - $a->name の投稿';
-$string['configcleanreadtime'] = '古い投稿を「既読」表からクリアする時刻(時)';
+$string['configcleanreadtime'] = '古い投稿を「既読」表からクリアする時刻 ( 時 )';
 $string['configdisplaymode'] = '表示モードが設定されていない場合のデフォルト表示モードです。';
 $string['configenablerssfeeds'] = 'ここでは全フォーラムのRSS使用設定を行います。ここの設定をしても、各フォーラムでRSSフィードの設定を手動で行う必要があります。';
 $string['configlongpost'] = 'この文字長以上の長さ ( HTMLは含まない ) は長いと考えられます。サイトの表紙、ソーシャルフォーマットコースページ、ユーザプロフィールに表示される投稿内容は、forum_shortpostとforum_longpostの値の間に短くされます。';
 $string['configmanydiscussions'] = 'フォーラムページに表示されるディスカッションの最大数';
-$string['configmaxbytes'] = '全てのフォーラム添付ファイルに関するデフォルトの最大サイズ(コース制限および他のローカル設定に従います)';
+$string['configmaxbytes'] = '全てのフォーラム添付ファイルに関するデフォルトの最大サイズ ( コース制限および他のローカル設定に従います )';
 $string['configoldpostdays'] = '古い投稿を既読とする日数';
 $string['configreplytouser'] = 'フォーラムの投稿がメール送信される場合、受信者がフォーラムを通さずに個人的に返信できるように、メールにユーザメールアドレスを表示した方が良いですか?　「Yes」に設定した場合でも、ユーザはプロフィール内のメールアドレスを隠すことができます。';
 $string['configshortpost'] = 'この文字長以下の長さ ( HTMLは含まない ) は短いと考えられます ( 下記参照 )。';
@@ -33,7 +33,7 @@ $string['deleteddiscussion'] = 'ディスカッショントピックが削除されました。';
 $string['deletedpost'] = '投稿が削除されました。';
 $string['deletedposts'] = '投稿が削除されました。';
 $string['deletesure'] = 'この投稿を削除してもよろしいですか?';
-$string['deletesureplural'] = 'この投稿および全ての返信を削除してもよろしいですか? (投稿数 $a)';
+$string['deletesureplural'] = 'この投稿および全ての返信を削除してもよろしいですか? ( 投稿数 $a )';
 $string['digestmailheader'] = 'これは、 $a->sitename フォーラムに投稿された内容のデイリーダイジェストです。メールアドレスを変更する場合は、 $a->userprefs にて設定してください。 ';
 $string['digestmailprefs'] = 'ユーザプロフィール';
 $string['digestmailsubject'] = '$a: フォーラムダイジェスト';
