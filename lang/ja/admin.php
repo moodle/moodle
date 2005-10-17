@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.6 development (2005100400)
+      // admin.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['adminseesallevents'] = '管理者に全てのイベントを表示';
@@ -151,6 +151,11 @@ $string['sitemaintenancemode'] = 'メンテナンスモード';
 $string['sitemaintenanceoff'] = 'メンテナンスモードが解除されました。サイトは正常に動作しています。';
 $string['sitemaintenanceon'] = 'あなたのサイトは現在メンテナンスモードで運用されています ( 管理者のみログインまたはサイトを利用することができます ) 。';
 $string['sitemaintenancewarning'] = 'あなたのサイトは現在メンテナンスモードで運用されています ( 管理者のみログインできます ) 。通常運用に戻すには、<a href=\"maintenance.php\">メンテナンスモードを解除</a> してください。';
+$string['stickyblocks'] = 'スティッキーブロック';
+$string['stickyblockscourseview'] = 'コースページ';
+$string['stickyblocksduplicatenotice'] = 'ここで特定のページに追加したブロックが既に存在する場合、重複することになります。<br />固定されたブロックのみが編集不可で、重複したブロックは編集可能です。';
+$string['stickyblocksmymoodle'] = 'マイ moodle';
+$string['stickyblockspagetype'] = '設定するページタイプ';
 $string['tabselectedtofront'] = 'タグ付きのテーブルで、現在選択されているタグの列を最前面に表示する。';
 $string['therewereerrors'] = 'データにエラーがあります。';
 $string['timezoneforced'] = 'サイト管理者によって強制されています。';
