@@ -1,0 +1,188 @@
+<?php
+
+# $Id$
+
+// Written by James Flemer
+// For eGrad2000.com
+// <jflemer@alum.rpi.edu>
+
+?>
+<a name="top"></a>
+<table bgcolor="#ffffff" border=2 width="98%"><tr><td>
+<p align="center"><b>アンケートの編集</b></p>
+<ul>
+	<li><a href="#new">新しい調査の作成</a></li>
+	<li><a href="#types">回答タイプ例</a></li>
+	<li><a href="#analysis">クロス分析</a></li>
+	<li><a href="#tabulation">クロス表</a></li>
+</ul>
+
+<hr>
+
+<ul>
+<li><h3><a name="new">新しい調査の作成</a></h3>
+	<ol>
+	<li><b>質問タブ:</b>
+		<p><b>質問</b>ボックスに質問のテキストを入力してください ( 例 <em>あなたの好きな色は何ですか?</em> )
+		 状況に応じて質問の<b>フィールド名</b>を入力してください。空白にした場合、1つのフィールド名が自動生成されます。</p>
+
+		<p>質問をユーザに答えさせたい場合、<b>必須</b>フィールドで「<b>yes</b>」を選択してください。</p>
+
+		<p>質問の<b>回答タイプ</b>を選択してください。[ <a href="#types">サンプル</a>は、ここをクリックしてください。 ]
+		それぞれのタイプには、どのように動作させるかによりパラメータがあります。<b>長さ</b>および<b>精度</b>フィールドの使用に関して、下記の表をご覧ください。</p>
+
+		<table border="0">
+		  <tr><th align="left">タイプ</th><th align="left">長さ</th><th align="left">精度</th></tr>
+		  <tr><td colspan="3"><hr size="0" noshadow="true"></td></tr>
+		  <tr><td>Yes/No</td><td>n/a</td><td>n/a</td></tr>
+		  <tr><td>テキスト</td><td>長さ</td><td>最大長</td></tr>
+		  <tr><td>作文</td><td>列</td><td>行</td></tr>
+		  <tr><td>ラジオボタン</td><td>n/a</td><td>n/a</td></tr>
+		  <tr><td>チェックボックス</td><td>最小 #</td><td>最大 # <em>( 未実装 )</em></td></tr>
+		  <tr><td>ドロップダウン</td><td>n/a</td><td>n/a</td></tr>
+		  <tr><td>レート</td><td>1..N</td><td>N/Aを使用</td></tr>
+		  <tr><td>日付</td><td>n/a</td><td>n/a</td></tr>
+		  <tr><td>数値</td><td>長さ</td><td>精度</td></tr>
+		</table>
+
+		<p>回答オプションのある回答タイプを選択した場合、フォームの下半分にある入力欄に1行あたり1つの答えを入力してください。
+		更に入力欄が必要な場合は<b>新しい行を追加</b>をクリックしてください。[ 回答オプションのある質問タイプ: チェックボックス、
+		ドロップダウンボックス、ラジオボタン、レート ] チェックボックスおよびラジオボタンの場合、書き込みオプションを作成するには
+		<tt>「 !other 」</tt>と入力してください。「Other」ボックスにはデフォルトで<em>Other: </em>と表示されますが、下記のフォーマットを
+		使用して変更することができます:
+		<br /><center><tt>!other=prompt text</tt></center></p>
+
+		<p><b>新しい質問</b>ボタンをクリックすることで、更に質問を追加することができます。登録済みの質問を編集/表示するには、フォーム上部の
+		質問番号をクリックしてください。<p>
+
+	</li>
+	<li><b>順番タブ:</b>
+		<p>このタブでは、質問の順番変更、削除、および<b>セクション</b>ブレークを挿入することができます。
+		セクションブレークは、調査を複数ページ ( 長い調査に適しています ) に分割します。</p>
+	</li>
+	<li><b>プレビュータブ:</b>
+		<p>調査のプレビューを表示します。調査がどのように表示されるか見るために、いつでもこのタブをクリックすることができます。
+		調査を変更したい場合、適切なタブに戻って変更してください。調査に満足した場合、<b>終了</b>タブをクリックするか、ページ下部のボタンをクリックしてください。</p>
+
+		<p><b>次ページ</b>および<b>調査の送信</b>ボタンは、プレビューモードでは利用できません。</p>
+	</li>
+	</ol>
+
+	<p><a href="#top">トップに戻る</a></p>
+</li>
+<li><h3><a name="types">回答タイプ</h3></a>
+	<ul>
+	<li>Yes/No<br />
+		<input type="radio" name="bool">Yes<br />
+		<input type="radio" name="bool">No
+	</li>
+	<li>1行テキスト入力<br />
+		<input type="text" size=30>
+	</li>
+	<li>作文<br />
+		<textarea cols="40" rows="4"></textarea>
+	</li>
+	<li>ラジオボタン<br />
+		<input type="radio" name="radio">オプション 1<br />
+		<input type="radio" name="radio">オプション 2<br />
+	</li>
+	<li>チェックボックス<br />
+		<input type="checkbox">オプション 1<br />
+		<input type="checkbox">オプション 2<br />
+	</li>
+	<li>ドロップダウンボックス<br />
+		<select>
+			<option></option>
+			<option>オプション 1</option>
+			<option>オプション 2</option>
+		</select>
+	</li>
+	<li>レート ( 尺度 1..N )
+	<blockquote>
+		<table border="0" cellspacing="1" cellpadding="0">
+			<tr>
+				<td></td>
+				<td width="40" align="center" bgcolor="#eeeeee">1</td>
+				<td width="40" align="center" bgcolor="#dddddd">2</td>
+				<td width="40" align="center" bgcolor="#eeeeee">3</td>
+				<td width="40" align="center" bgcolor="#dddddd">4</td>
+				<td width="40" align="center" bgcolor="#eeeeee">5</td>
+				<td width="40" align="center" bgcolor="#dddddd">N/A</td>
+			</tr>
+			<tr>
+				<td>オプション 1</td>
+				<td width="40" align="center" bgcolor="#eeeeee"><input type="radio" name="118_124" value="1"></td>
+				<td width="40" align="center" bgcolor="#dddddd"><input type="radio" name="118_124" value="2"></td>
+				<td width="40" align="center" bgcolor="#eeeeee"><input type="radio" name="118_124" value="3"></td>
+				<td width="40" align="center" bgcolor="#dddddd"><input type="radio" name="118_124" value="4"></td>
+				<td width="40" align="center" bgcolor="#eeeeee"><input type="radio" name="118_124" value="5"></td>
+				<td width="40" align="center" bgcolor="#dddddd"><input type="radio" name="118_124" value="N/A"></td>
+			</tr>
+			<tr>
+				<td>オプション 2</td>
+				<td width="40" align="center" bgcolor="#eeeeee"><input type="radio" name="118_125" value="1"></td>
+				<td width="40" align="center" bgcolor="#dddddd"><input type="radio" name="118_125" value="2"></td>
+				<td width="40" align="center" bgcolor="#eeeeee"><input type="radio" name="118_125" value="3"></td>
+				<td width="40" align="center" bgcolor="#dddddd"><input type="radio" name="118_125" value="4"></td>
+				<td width="40" align="center" bgcolor="#eeeeee"><input type="radio" name="118_125" value="5"></td>
+				<td width="40" align="center" bgcolor="#dddddd"><input type="radio" name="118_125" value="N/A"></td>
+			</tr>
+			<tr>
+				<td>オプション 3</td>
+				<td width="40" align="center" bgcolor="#eeeeee"><input type="radio" name="118_126" value="1"></td>
+				<td width="40" align="center" bgcolor="#dddddd"><input type="radio" name="118_126" value="2"></td>
+				<td width="40" align="center" bgcolor="#eeeeee"><input type="radio" name="118_126" value="3"></td>
+				<td width="40" align="center" bgcolor="#dddddd"><input type="radio" name="118_126" value="4"></td>
+				<td width="40" align="center" bgcolor="#eeeeee"><input type="radio" name="118_126" value="5"></td>
+				<td width="40" align="center" bgcolor="#dddddd"><input type="radio" name="118_126" value="N/A"></td>
+			</tr>
+		</table>
+	</blockquote>
+	</li>
+	<li>日付<br />
+	<input type="text" name="date" size="10"> <em>( 例 2002/4/21 )</em>
+	</li>
+	<li>数値<br />
+	<input type="text" name="numeric" size="10">
+	</li>
+	</ul>
+	<p><a href="#top">トップに戻る</a></p>
+</li>
+
+<li><h3><a name="analysis">クロス分析</h3></a>
+	調査のクロス分析を行うには、質問を選択して、左にある適切なラジオボタンをチェックすることで質問を選択してください。
+	そして、選択した質問の下部にある適切なチェックボックスをチェックすることで、質問の選択肢を選択する必要があります。
+	あなたが選択した基準を元に調査の全体的な結果を表示します。現在、クロス分析は単一の質問に制限されています。
+	<p><img src="<?php echo($ESPCONFIG['image_url']);?>cross_analysis.jpg" width="700" height="262"><br />
+	<br />
+	これは下記の結果を作成します:<br />
+	<br />
+	<img src="<?php echo($ESPCONFIG['image_url']);?>cross_analysis_result.jpg" width="700" height="284"><br />
+	<br />
+	結果として、質問1で「Yes」が選択された回答全てが表示されます。
+<p><a href="#top">トップに戻る</a></p>
+</li>
+<li><h3><a name="tabulation">クロス表</h3></a>
+	クロス表は、選択した2つの質問を基に結果を表示します。
+	これは、どの質問オプションがクロス表の行または列を形作るか選択することで実現されます。
+	質問の右側にある赤いボックス内のラジオボタンを選択することは行の選択を示し、質問の右側にある青いボックス内のラジオボタンを選択することは列の選択を示します。</p>
+	<p><img src="<?php echo($ESPCONFIG['image_url']);?>cross_tabulate.jpg" width="700" height="273"></p>
+	<p>上の例では、質問1および質問4をクロス表に選択しています。質問1は行の選択、そして質問4は列の選択です。
+	これは下記の結果を作成します:<br />
+	<br />
+	<img src="<?php echo($ESPCONFIG['image_url']);?>cross_tabulate_result1.jpg" width="700" height="187"><br />
+	代わりに同じ質問をクロス表に選択しながら、下記に表示されるように問題4を行の選択、問題1を列の選択にすることができます:
+	<br />
+	<br />
+	<img src="<?php echo($ESPCONFIG['image_url']);?>cross_tabulate2.jpg" width="700" height="271"><br />
+	<br />
+	これは下記の結果を作成します:<br />
+	<br />
+	<img src="<?php echo($ESPCONFIG['image_url']);?>cross_tabulate_result2.jpg" width="700" height="274"> </p>
+<p><a href="#top">トップに戻る</a></p>
+</li>
+</ul>
+
+</td>
+</tr>
+</table>
