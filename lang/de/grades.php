@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // grades.php - created with Moodle 1.5 ALPHA (2005051500)
+      // grades.php - created with Moodle 1.6 development (2005090100)
 
 
 $string['addcategory'] = 'Kategorie hinzufügen';
@@ -31,7 +31,7 @@ $string['excluded'] = 'Nicht berücksichtigt';
 $string['extracredit'] = 'Extrapunkte';
 $string['extracreditwarning'] = 'Anmerkung: Wenn für alle Kategorien Extra Punkte vergeben werden, werden sie bei der Gesamtbewertung nicht berücksichtigt. Es wird keine Gesamtpunktzahl ermittelt.';
 $string['forstudents'] = 'Für Teilnehmer/innen';
-$string['gradebook'] = 'Notenübersicht';
+$string['gradebook'] = 'Bewertungen';
 $string['gradebookhiddenerror'] = 'Die Bewertungen sind zur Zeit für die Teilnehmer/innen nicht sichtbar.';
 $string['gradecategoryhelp'] = 'Hilfe für Bewertungskategorien';
 $string['gradeexceptions'] = 'Keine Bewertung für ...';
@@ -70,20 +70,21 @@ $string['mode'] = 'Modus';
 $string['no'] = 'Nein';
 $string['nocategories'] = 'Kategorien konnten nicht angelegt oder nicht gefunden werden.';
 $string['nocategoryview'] = 'Keine Kategorie zum Anzeigen für';
-$string['nogradeletters'] = 'Kein Notenwert definiert';
-$string['nogradesreturned'] = 'Keine Note gemeldet';
+$string['nogradeletters'] = 'Keine Bewertung definiert';
+$string['nogradesreturned'] = 'Keine Bewertung gemeldet';
 $string['nolettergrade'] = 'Keine Bewertung für';
 $string['nomode'] = 'NA';
 $string['nonnumericweight'] = 'Nicht numerischen Wert erhalten für';
 $string['nonweightedpct'] = 'nicht gewichtet %%';
+$string['notteachererror'] = 'Diese Funktionen können nur Trainer/innen nutzen';
 $string['pctoftotalgrade'] = '%% der Gesamtbewertung';
 $string['percent'] = 'Prozent';
 $string['percentascending'] = 'sortieren %% aufsteigend';
 $string['percentdescending'] = 'sortieren %% absteigend';
 $string['percentshort'] = '%%';
 $string['points'] = 'Punkte';
-$string['pointsascending'] = 'sortieren Punkte aufsteigend';
-$string['pointsdescending'] = 'sortieren Punkte absteigend';
+$string['pointsascending'] = 'sortieren, Punkte aufsteigend';
+$string['pointsdescending'] = 'sortieren, Punkte absteigend';
 $string['preferences'] = 'Grundeinstellungen';
 $string['rawpct'] = 'Rohwert %%';
 $string['reprintheaders'] = 'Kopfzeilen wiederholen';
