@@ -20,7 +20,7 @@
     // get values from page
     $params = new Object;
     $params->action = optional_param( 'action','',PARAM_ALPHA );
-    $params->filterpath = optional_param( 'filterpath', '' );
+    $params->filterpath = optional_param( 'filterpath', '',PARAM_PATH );
     $params->cachetext = optional_param( 'cachetext','0',PARAM_INT );
     $params->filteruploadedfiles = optional_param( 'filteruploadedfiles','',PARAM_ALPHA );
     $params->filterall = optional_param( 'filterall','',PARAM_ALPHA );
