@@ -202,14 +202,14 @@
         $upath = urlencode( $path );
         // get hide/show link
         if (in_array( $path, $installedfilters )) {
-            $hideshow = "<a href=\"$myurl&amp;action=hide&amp;filterpath=$path\">";
-            $hideshow .= "<img src=\"$img/hide.gif\" alt=\"hide\"></a>";
+            $hideshow = "<a href=\"$myurl&amp;action=hide&amp;filterpath=$upath\">";
+            $hideshow .= "<img src=\"$img/hide.gif\" alt=\"hide\" /></a>";
             $hidden = false;
             $displayname = "<span>$name</span>";
         }
         else {
-            $hideshow = "<a href=\"$myurl&amp;action=show&amp;filterpath=$path\">";
-            $hideshow .= "<img src=\"$img/show.gif\" alt=\"show\"></a>";
+            $hideshow = "<a href=\"$myurl&amp;action=show&amp;filterpath=$upath\">";
+            $hideshow .= "<img src=\"$img/show.gif\" alt=\"show\" /></a>";
             $hidden = true;
             $displayname = "<span class=\"dimmed_text\">$name</span>";
         }
@@ -218,18 +218,18 @@
         $updown = '';
         if (!$hidden) {
             if ($updowncount>1) {
-                $updown .= "<a href=\"$myurl&amp;action=up&amp;filterpath=$path\">";
-                $updown .= "<img src=\"$img/up.gif\" alt=\"up\"></a>&nbsp;";
+                $updown .= "<a href=\"$myurl&amp;action=up&amp;filterpath=$upath\">";
+                $updown .= "<img src=\"$img/up.gif\" alt=\"up\" /></a>&nbsp;";
             }
             else {
-                $updown .= "<img src=\"$CFG->pixpath/spacer.gif\" height=\"16\" width=\"16\" alt=\"\">&nbsp;";
+                $updown .= "<img src=\"$CFG->pixpath/spacer.gif\" height=\"16\" width=\"16\" alt=\"\" />&nbsp;";
             }
             if ($updowncount<$installedfilterscount) {
-                $updown .= "<a href=\"$myurl&amp;action=down&amp;filterpath=$path\">";
-                $updown .= "<img src=\"$img/down.gif\" alt=\"down\"></a>";
+                $updown .= "<a href=\"$myurl&amp;action=down&amp;filterpath=$upath\">";
+                $updown .= "<img src=\"$img/down.gif\" alt=\"down\" /></a>";
             }
             else {
-                $updown .= "<img src=\"$CFG->pixpath/spacer.gif\" height=\"16\" width=\"16\" alt=\"\">";
+                $updown .= "<img src=\"$CFG->pixpath/spacer.gif\" height=\"16\" width=\"16\" alt=\"\" />";
             }
             ++$updowncount;
         }
