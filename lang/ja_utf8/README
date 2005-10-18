@@ -1,7 +1,7 @@
 MOODLE JAPANESE TRANSLATION
 ----------------------------------------------------------------------
 STARTED                       : November 21, 2002
-LAST MODIFIED                 : October 18, 2005
+LAST MODIFIED                 : October 19, 2005
 ----------------------------------------------------------------------
 
 Mitsuhiro Yoshida ( http://mitstek.com/ ) - Moodle Partner
@@ -12,22 +12,22 @@ Timothy Takemoto ( http://eigodaigaku.com )
  Translation brushup
 
 Paul Shew ( http://ac.shew.jp )
- Translation brushup
  Translation: /lang/ja/help/quiz/formatgift.html
+ Translation brushup
 
 Tatsuya Aoyagi
- Translation brushup
- Localization
  Translation: /lang/ja/questionnaire.php
  Translation: /lang/ja/help/questionnaire
+ Translation brushup
+ Localization
 
 Masataka Nakaue ( http://ldt.stanford.edu/~mnakauye/ )
  Translation: /lang/ja/book.php
  Translation: /lang/ja/help/book
 
 Hiroto Kagotani ( http://www.infsys.cne.okayama-u.ac.jp/~kagotani/ )
- Translation brushup
  Translation: /lang/ja/help/*
+ Translation brushup
 
 Thomas N. Robb ( http://www.kyoto-su.ac.jp/~trobb/ )
  Translation brushup

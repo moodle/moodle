@@ -468,7 +468,7 @@ $string['expirynotifystudentsemail'] = 'こんにちは。
 このメールは、あなたのコース「 $a->course 」に対する登録期間が、あと $a->threshold 日で終了するお知らせのために送信されました。
 
 詳細な情報は、あなたの先生に尋ねてください。';
-$string['expirythreshold'] = '登録期限';
+$string['expirythreshold'] = '閾値';
 $string['explanation'] = '説明';
 $string['extendenrol'] = 'ユーザ登録期間延長';
 $string['extendperiod'] = '延長期間';
