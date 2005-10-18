@@ -75,6 +75,7 @@ global $HTTPSPAGEREQUIRED;
 
 
     if (!isset($CFG->wwwroot)) {
+        trigger_error('Fatal: $CFG->wwwroot is not configured! Exiting.');
         die;
     }
 
