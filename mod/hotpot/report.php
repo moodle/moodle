@@ -126,7 +126,11 @@
 			$user_ids = join(',', array_unique($user_ids));
 			break;
 
-		default: // specific user
+		case 'this': // current user only
+			$user_ids = $USER->id;
+			break;
+
+		default: // specific user selected by teacher
 			if (is_numeric($formdata['reportusers'])) {
 				$user_ids = $formdata['reportusers'];
 			}
