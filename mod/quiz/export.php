@@ -106,7 +106,7 @@
     print_heading_with_help($strexportquestions, "export", "quiz");
 
     print_simple_box_start("center");
-    echo "<form enctype=\"multipart/form-data\" method=\"post\" action=\"export.php?course=$courseid\">";
+    echo "<form enctype=\"multipart/form-data\" method=\"post\" action=\"export.php?course={$course->id}\">";
     echo "<table cellpadding=\"5\">";
 
     echo "<tr><td align=\"right\">";
