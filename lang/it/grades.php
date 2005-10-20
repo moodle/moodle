@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // grades.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031700)
+      // grades.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['addcategory'] = 'Aggiungi Categoria';
@@ -31,11 +31,6 @@ $string['excluded'] = 'Esclusi';
 $string['extracredit'] = 'Credito Extra';
 $string['extracreditwarning'] = 'Nota: L\'impostazione Credito Extra per tutte le attività di una categoria di fatto le rimuove dal calcolo della valutazione, per cui non ci sarà il punteggio totale.';
 $string['forstudents'] = 'Per Studenti';
-$string['gradeitemaddusers'] = 'Escludi dalle Valutazioni';
-$string['gradeitemmembersselected'] = 'Esclusi dalle Valutazioni';
-$string['gradeitemnonmembers'] = 'Inclusi nelle Valutazioni';
-$string['gradeitemremovemembers'] = 'Includi nelle Valutazioni';
-$string['gradeitems'] = 'Attività valutabili';
 $string['gradebook'] = 'Registro Valutazioni';
 $string['gradebookhiddenerror'] = 'Al momento il registro è impostato in modo da non mostrare alcuna attività agli studenti.';
 $string['gradecategoryhelp'] = 'Help Categorie per Valutazioni';
@@ -43,6 +38,11 @@ $string['gradeexceptions'] = 'Eccezioni';
 $string['gradeexceptionshelp'] = 'Help Eccezioni nelle Valutazioni';
 $string['gradehelp'] = 'Help Valutazioni';
 $string['gradeitem'] = 'Attività';
+$string['gradeitemaddusers'] = 'Escludi dalle Valutazioni';
+$string['gradeitemmembersselected'] = 'Esclusi dalle Valutazioni';
+$string['gradeitemnonmembers'] = 'Inclusi nelle Valutazioni';
+$string['gradeitemremovemembers'] = 'Includi nelle Valutazioni';
+$string['gradeitems'] = 'Attività valutabili';
 $string['gradeletter'] = 'Lettera';
 $string['gradeletterhelp'] = 'Help Valutazioni Alfabetiche';
 $string['gradeletternote'] = 'Per cancellare una lettera eliminare il contenuto di <br /> una delle tre aree di testo e salvare le modifiche.';
@@ -76,6 +76,7 @@ $string['nolettergrade'] = 'Nessuna valutazione alfabetica per';
 $string['nomode'] = 'NA';
 $string['nonnumericweight'] = 'Ricevuto un valore non numerico per ';
 $string['nonweightedpct'] = '%% non pesata';
+$string['notteachererror'] = 'È necessario essere docente per utilizzare questa caratteristica.';
 $string['pctoftotalgrade'] = '%% del voto finale';
 $string['percent'] = 'Percentuale';
 $string['percentascending'] = 'Ordina per percentuale crescente';

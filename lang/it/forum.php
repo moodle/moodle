@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.6 development (2005081700)
+      // forum.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['addanewdiscussion'] = 'Aggiungi un nuovo argomento di discussione';
@@ -100,6 +100,7 @@ $string['nonews'] = 'Nessuna News é stata ancora spedita';
 $string['noposts'] = 'Nessun messaggio';
 $string['nopostscontaining'] = 'Nessun messaggio contenente \'$a\' è stato trovato';
 $string['nosubscribers'] = 'Non ci sono ancora iscritti per questo forum';
+$string['nothingnew'] = 'Niente di nuovo per $a';
 $string['notingroup'] = 'Spiacente, ma devi appartenere ad un gruppo per poter vedere questo forum.';
 $string['notrackforum'] = 'non tracciare i messaggi non letti';
 $string['nownotsubscribed'] = '$a->name NON riceverà copie di \'$a->forum\' via email.';
