@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.6 development (2005081700)
+      // scorm.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['advanced'] = 'Avanzate';
@@ -16,6 +16,7 @@ $string['coursepacket'] = 'Pacchetto del corso';
 $string['coursestruct'] = 'Struttura del corso';
 $string['datadir'] = 'Errore Filesystem: non è possibile creare la directory dei dati';
 $string['details'] = 'Dettagli tracciamento';
+$string['directories'] = 'Mostra collegamenti';
 $string['display'] = 'Visualizzazione pacchetto';
 $string['domxml'] = 'Libreria esterna DOMXML';
 $string['element'] = 'Elemento';

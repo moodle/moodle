@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.6 development (2005081700)
+      // resource.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['addresource'] = 'Aggiungi risorsa';
@@ -47,6 +47,7 @@ $string['localfileselect'] = 'Scegliere il percorso del file.';
 $string['maindirectory'] = 'Cartella principale';
 $string['modulename'] = 'Risorsa';
 $string['modulenameplural'] = 'Risorse';
+$string['navigationbuttons'] = 'Pulsanti di navigazione';
 $string['neverseen'] = 'Mai visto';
 $string['newdirectories'] = 'Mostra collegamenti';
 $string['newfullscreen'] = 'Tutto schermo';
@@ -68,6 +69,8 @@ corso (come quelli che compaiono in questa lista) usa il <a href=\"$a\" >File Ma
 $string['notypechosen'] = 'È necessario che tu scelga un tipo. Usa il
 
 pulsante indietro per ritornare alla pagina precedente e riprovare.';
+$string['packagechanged'] = 'Questo pacchetto IMS è cambiato';
+$string['packagenotdeplyed'] = 'Questo pacchetto IMS non è utilizzato';
 $string['pagedisplay'] = 'Mostra questa risorsa nella finestra corrente';
 $string['pagewindow'] = 'Stessa finestra';
 $string['pan'] = 'Bilanciamento';
@@ -88,13 +91,16 @@ $string['resourcetype9'] = 'Cartella';
 $string['resourcetypedirectory'] = 'Mostra una cartella';
 $string['resourcetypefile'] = 'Collegamento a un file o a un sito';
 $string['resourcetypehtml'] = 'Componi una pagina web';
+$string['resourcetypeims'] = 'Utilizza un pacchetto IMS';
 $string['resourcetypelabel'] = 'Inserisci una etichetta';
 $string['resourcetyperepository'] = 'Collegamento a un archivio di oggetti';
 $string['resourcetypetext'] = 'Componi una pagina di testo';
 $string['searchweb'] = 'Cerca una pagina web';
 $string['serverurl'] = 'Indirizzo server ($a->wwwroot)';
 $string['showcourseblocks'] = 'Mostra i blocchi dei corsi';
+$string['tableofcontents'] = 'Indice';
 $string['variablename'] = 'Nome variabile';
+$string['viewims'] = 'Visualizza pachetto IMS';
 $string['vol'] = 'Volume';
 
 ?>
