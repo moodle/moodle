@@ -24,7 +24,15 @@ $filename = optional_param('filename',0,PARAM_INT);
         error("You need to be a teacher or an admin to use this page");
     }
 
+    // if we're not a course creator , we can only import from our own courses.
+    if (iscreator()) {
+        $creator = true;
+    }
+
     if ($from = get_record("course","id",$fromcourse)) {
+        if (!isteacheredit($fromcourse)) {
+            error("You need to be a course creator, or a teacher in the course you are importing data from, as well");
+        }
         if (!empty($filename) && file_exists($CFG->dataroot.'/'.$filename) && !empty($SESSION->import_preferences)) {
             $restore = backup_to_restore_array($SESSION->import_preferences);
             $restore->restoreto = 1;
@@ -44,7 +52,9 @@ $filename = optional_param('filename',0,PARAM_INT);
     print_header("$course->fullname: $strimport", "$course->fullname: $strimport", "$course->shortname");
 
     $taught_courses = get_my_courses($USER->id,"visible DESC,sortorder ASC",0,1);
-    $cat_courses = get_courses($course->category);
+    if (!empty($creator)) {
+        $cat_courses = get_courses($course->category);
+    }
     print_heading(get_string("importdatafrom"));
 
     $options = array();
@@ -78,11 +88,14 @@ $filename = optional_param('filename',0,PARAM_INT);
                                choose_from_menu($options,"fromcourse","","choose","","0",true),
                                $submit);
     }
-    $table->data[] = array($fm.'<b>'.get_string('searchcourses').'</b>',
-                           '<input type="text" name="fromcoursesearch" />',
-                           '<input type="submit" value="'.get_string('searchcourses').'" />');
 
-    if (!empty($fromcoursesearch)) {
+    if (!empty($creator)) {
+        $table->data[] = array($fm.'<b>'.get_string('searchcourses').'</b>',
+                               '<input type="text" name="fromcoursesearch" />',
+                               '<input type="submit" value="'.get_string('searchcourses').'" />');
+    }
+
+    if (!empty($fromcoursesearch) && !empty($creator)) {
         $totalcount = 0;
         $courses = get_courses_search(explode(" ",$fromcoursesearch),"fullname ASC",$page,50,$totalcount);
         if (is_array($courses) and count($courses) > 0) {
