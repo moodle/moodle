@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.6 development (2005090100)
+      // workshop.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['absent'] = '欠席';
@@ -18,7 +18,7 @@ $string['alreadyinphase'] = '既にフェーズ $a　に達しています。';
 $string['amendassessmentelements'] = '評価要素を更新する';
 $string['amendtitle'] = 'タイトルの更新';
 $string['analysis'] = '分析';
-$string['analysisofassessments'] = '評価の分析';
+$string['analysisofassessments'] = '評価分析';
 $string['assess'] = '評価する';
 $string['assessedon'] = '$a に対する評価';
 $string['assessment'] = '評価';
@@ -189,7 +189,7 @@ $string['on'] = '$a';
 $string['openassignment'] = '課題を開く';
 $string['optionaladjustment'] = 'オプション調整';
 $string['optionforpeergrade'] = '相互評定オプション';
-$string['optionsusedinanalysis'] = '分析に使用されるオプション';
+$string['optionsusedinanalysis'] = '分析に使用するオプション';
 $string['overallgrade'] = '総合的な評点';
 $string['overallocation'] = 'オーバーアロケーション';
 $string['overallpeergrade'] = '総合的な相互評点： $a';
