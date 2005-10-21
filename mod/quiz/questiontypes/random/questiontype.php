@@ -163,7 +163,7 @@ class quiz_random_qtype extends quiz_default_questiontype {
         if(false === $response) {
             return false;
         }
-
+        $response = addslashes($response);
         // Prefix the answer field...
         $response = "random$realqid-$response";
 
