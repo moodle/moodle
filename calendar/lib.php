@@ -1128,10 +1128,10 @@ function calendar_get_default_courses($ignoreref = false) {
         }
     }
     if(isset($USER->student) && is_array($USER->student)) {
-        $courses = $USER->student;
+        $courses = $courses + $USER->student;
     }
     if(isset($USER->teacher) && is_array($USER->teacher)) {
-        $courses = $USER->teacher;
+        $courses = $courses + $USER->teacher;
     }
     return $courses;
 }
