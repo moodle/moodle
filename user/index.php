@@ -136,7 +136,7 @@
         $tablecolumns = array('picture', 'fullname', 'city', 'country', 'lastaccess');
         $tableheaders = array('', get_string('fullname'), get_string('city'), get_string('country'), get_string('lastaccess'));
 
-        $table = new flexible_table('user-index-teachers');
+        $table = new flexible_table('user-index-teachers-'.$course->id);
 
         $table->define_columns($tablecolumns);
         $table->define_headers($tableheaders);
@@ -246,7 +246,7 @@
     $tablecolumns = array('picture', 'fullname', 'city', 'country', 'lastaccess');
     $tableheaders = array('', get_string('fullname'), get_string('city'), get_string('country'), get_string('lastaccess'));
 
-    $table = new flexible_table('user-index-students');
+    $table = new flexible_table('user-index-students-'.$course->id);
 
     $table->define_columns($tablecolumns);
     $table->define_headers($tableheaders);
