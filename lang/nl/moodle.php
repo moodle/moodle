@@ -1,10 +1,11 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.6 development (2005090100)
+      // moodle.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['action'] = 'Actie';
 $string['actions'] = 'Acties';
 $string['active'] = 'Actief';
+$string['activeusers'] = 'Actieve gebruikers';
 $string['activities'] = 'Activiteiten ';
 $string['activity'] = 'Activiteit';
 $string['activityclipboard'] = 'Verplaats deze activiteit: <b>$a</b>';
@@ -14,6 +15,7 @@ $string['activityreport'] = 'Activiteitenrapport';
 $string['activityreports'] = 'Activiteitenrapporten';
 $string['activityselect'] = 'Selecteer deze activiteit om ze te verplaatsen';
 $string['activitysince'] = 'Activiteit sinds $a';
+$string['activityweighted'] = 'Activiteit per gebruiker';
 $string['add'] = 'Voeg toe';
 $string['addactivity'] = 'Activiteit toevoegen';
 $string['addadmin'] = 'Voeg beheerder toe';
@@ -56,8 +58,10 @@ $string['adminhelpmanagedatabase'] = 'Gebruik/beheer de database op directe wijz
 $string['adminhelpmanagefilters'] = 'Kies tekstfilters en daarmee samenhangende instellingen';
 $string['adminhelpmanagemodules'] = 'Beheer de geïnstalleerde modules en hun instellingen';
 $string['adminhelpmymoodle'] = 'Configureer het blok Mijn Moodle voor de gebruikers';
+$string['adminhelpreports'] = 'Rangschikken van cursussen volgens verschillende criteria';
 $string['adminhelpsitefiles'] = 'Voor het publiceren van algemene bestanden of het uploaden van externe backups';
 $string['adminhelpsitesettings'] = 'Definieer hoe de voorpagina van de site eruit ziet';
+$string['adminhelpstickyblocks'] = 'Configureer permanent zichtbare blokken in heel Moodle';
 $string['adminhelpthemes'] = 'Kies hoe de site eruit ziet (kleuren, lettertypen, etc.)';
 $string['adminhelpuploadusers'] = 'Importeer nieuwe gebruikersaccounts vanuit een tekstbestand';
 $string['adminhelpusers'] = 'Definieer je gebruikers en stel de authenticatie in';
@@ -151,14 +155,12 @@ $string['categoryduplicate'] = 'Er bestaat al een categorie met de naam \'$a\'!'
 $string['changedpassword'] = 'Het wachtwoord is veranderd';
 $string['changepassword'] = 'Verander wachtwoord  ';
 $string['changessaved'] = 'De veranderingen zijn bewaard';
-$string['checkall'] = 'Controleer alles';
 $string['checkingbackup'] = 'Backup controleren';
 $string['checkingcourse'] = 'Cursus controleren';
 $string['checkingforbbexport'] = 'Controleren voor export naar BlackBoard';
 $string['checkinginstances'] = 'Instanties controleren';
 $string['checkingsections'] = 'Secties controleren';
 $string['checklanguage'] = 'Controleer taal';
-$string['checknone'] = 'Controleer niemand';
 $string['childcoursenotfound'] = 'Onderliggende cursus niet gevonden!';
 $string['choose'] = 'Kies';
 $string['choosecourse'] = 'Kies een cursus';
@@ -413,6 +415,10 @@ Er is een e-mail met je nieuw wachtwoord naar <br /><b>$a->email</b><br /> gestu
 Het nieuwe wachtwoord werd automatisch gegenereerd. Misschien wil je het <a href=\"$a->link\">wachtwoord veranderen</a> in iets wat je gemakkelijker kunt onthouden.';
 $string['enable'] = 'Schakel in';
 $string['encryptedcode'] = 'Geëncrypteerde code';
+$string['enroldate'] = 'Aanmeldperiode';
+$string['enrolenddate'] = 'Einddatum';
+$string['enrolenddaterror'] = 'De einddatum van de aanmelding in je cursus kan niet voor de startdatum zijn';
+$string['enrollable'] = 'Aanmelden in de cursus mogelijk';
 $string['enrolledincourse'] = 'Aangemeld in cursus  \"$a\"';
 $string['enrolledincoursenot'] = 'Niet aangemeld in cursus  \"$a\"';
 $string['enrollfirst'] = 'Je moet aangemeld zijn bij één van de cursussen voor je de siteactiviteiten kunt gebruiken.';
@@ -431,6 +437,7 @@ $string['enrolmentnotyet'] = 'Je hebt geen toegang tot deze cursus tot <br/> $a'
 $string['enrolments'] = 'Aanmeldingen';
 $string['enrolmentstart'] = 'Aanmelding gestart';
 $string['enrolperiod'] = 'Aanmeldingsperiode';
+$string['enrolstartdate'] = 'Startdatum';
 $string['entercourse'] = 'Klik om deze cursus binnen te gaan';
 $string['enteremailaddress'] = 'Typ je e-mailadres om je wachtwoord te resetten en via e-mail een nieuw wachtwoord te ontvangen.';
 $string['entries'] = 'Invoer';
@@ -447,6 +454,18 @@ $string['existingcoursedeleting'] = 'Bestaande cursus eerst verwijderen';
 $string['existingcreators'] = 'Bestaande cursus-aanmakers';
 $string['existingstudents'] = 'Aangemelde leerlingen';
 $string['existingteachers'] = 'Bestaande leraren';
+$string['expirynotify'] = 'Verwittig voor het beïndigen van de aanmelding';
+$string['expirynotifyemail'] = 'De aanmelding in deze cursus zal voor volgende leerlingen beëindigen binnen $a->threshold dagen:
+
+$a->current
+
+De aanmelding van volgende leerlingen zal beëindigen binnen minder dan $a->threshold dagen:
+
+$a->past
+
+Op volgende pagina kun je hun aanmeldingsperiode verlengen: 
+$a->extendurl';
+$string['expirynotifystudents'] = 'Verwittig leerlingen';
 $string['explanation'] = 'Verklaring';
 $string['extendenrol'] = 'Verleng aanmelding';
 $string['extendperiod'] = 'Verlengde periode';
