@@ -4,7 +4,7 @@
 // Provides a counter that keeps track how much
 // time user have left to check in started quiz.
 //
-function countdown_clock() {
+function countdown_clock(theTimer) {
     var timeout_id = null;
     quizTimerValue = quizTimerValue - 1;
 
@@ -32,14 +32,14 @@ function countdown_clock() {
     if(hours == 0 && minutes == 0 && seconds <= 15) {
         //go from fff0f0 to ffe0e0 to ffd0d0...ff2020, ff1010, ff0000 in 15 steps
         var hexascii = "0123456789ABCDEF";
-        var col = 'ff' + hexascii.charAt(seconds) + '0' + hexascii.charAt(seconds) + 0;
-        changecolor(col);
+        var col = '#' + 'ff' + hexascii.charAt(seconds) + '0' + hexascii.charAt(seconds) + 0;
+        theTimer.style.backgroundColor = col;
     }
     document.forms['clock'].time.value = t.toString();
-    timeout_id = setTimeout("countdown_clock()", 1000);
+    timeout_id = setTimeout("countdown_clock(theTimer)", 1000);
 }
 
-function movecounter() {
+function movecounter(timerbox) {
 
     var pos;
 
@@ -57,22 +57,17 @@ function movecounter() {
         pos += 100;
     }
     if (pos == old) {
-        this.style.top = pos;
+        timerbox.style.top = pos + 'px';
     }
     old = pos;
-    temp = setTimeout('movecounter()',100);
+    temp = setTimeout('movecounter(timerbox)',100);
 }
 
-function getObjectById (name) {
-
-    if (document.getElementById) {
-        this.obj = document.getElementById(name);
-        this.style = document.getElementById(name).style;
-    } else if (document.all) {
-        this.obj = document.all[name];
-        this.style = document.all[name].style;
-    } else if (document.layers) {
-        this.obj = document.layers[name];
-        this.style = document.layers[name];
-    }
+function xGetElementById(e)
+{
+  if(typeof(e)!='string') return e;
+  if(document.getElementById) e=document.getElementById(e);
+  else if(document.all) e=document.all[e];
+  else e=null;
+  return e;
 }

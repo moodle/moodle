@@ -145,10 +145,7 @@ body#mod-quiz-report table#responses .partialcorrect {
   width:150px
 }
 #mod-quiz-attempt #timer {
-  position:fixed !important;
-  top:100px !important;
-  left:10px !important
-}
-* html #mod-quiz-attempt #timer {
-  position:absolute !important
+  position:absolute;
+  /*top:100px; is set by js*/
+  left:10px
 }
