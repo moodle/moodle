@@ -15,7 +15,7 @@ parseInt(quizTimerValue);
 // -->
 </script>
 <script language="javascript" type="text/javascript" src="timer.js"></script>
-<div id="timer" style="position: absolute; top: 100; left: 10;">
+<div id="timer">
 <!--EDIT BELOW CODE TO YOUR OWN MENU-->
 <table class="generalbox" border="0" cellpadding="0" cellspacing="0" width="150">
 <tr>
@@ -39,17 +39,14 @@ parseInt(quizTimerValue);
 </div>
 <script language="javascript" type="text/javascript">
 <!--
-function changecolor(col) {
-    // Changes the timers background color
-    var d = document.getElementById('QuizTimer');
-    d.style.backgroundColor = col;
-}
 
-var timerbox = getObjectById('timer');
+var timerbox = xGetElementById('timer');
+var theTimer = xGetElementById('QuizTimer');
 var theTop = 100;
 var old = theTop;
-movecounter(this);
 
-document.onload = countdown_clock();
+movecounter(timerbox);
+
+document.onload = countdown_clock(theTimer);
 // -->
 </script>
