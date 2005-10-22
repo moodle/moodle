@@ -59,6 +59,7 @@ $string['adminhelpmymoodle'] = 'Configurer les blocs de «&nbsp;Mon moodle&nbsp;»
 $string['adminhelpreports'] = 'Classement des cours suivant divers critères';
 $string['adminhelpsitefiles'] = 'Publier des fichiers ou télécharger des copies de sauvegarde externes';
 $string['adminhelpsitesettings'] = 'Définir l\'aspect de la page d\'accueil de ce site';
+$string['adminhelpstickyblocks'] = 'Configurer les blocs fixes pour tout ce moodle';
 $string['adminhelpthemes'] = 'Choisir une interface graphique pour le site (couleurs, polices, etc.)';
 $string['adminhelpuploadusers'] = 'Importer de nouveaux comptes utilisateurs';
 $string['adminhelpusers'] = 'Définir vos utilisateurs et l\'authentification';
