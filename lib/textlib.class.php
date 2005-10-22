@@ -73,8 +73,7 @@ function textlib_get_instance () {
 /**
 * This class is used to manipulate strings under Moodle 1.6 an later. As
 * utf-8 text become mandatory a pool of safe functions under this encoding
-* become necessary. All of them are static methods that will be called from
-* Moodle code with the :: syntax. The name of the methods is exactly the
+* become necessary. The name of the methods is exactly the
 * same than their PHP originals.
 * 
 * A big part of this class acts as a wrapper over the Typo3 charset library,
