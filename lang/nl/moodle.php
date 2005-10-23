@@ -395,6 +395,7 @@ $string['emailexists'] = 'Dit e-mailadres is al geregistreerd.';
 $string['emailformat'] = 'E-mailopmaak';
 $string['emailmustbereal'] = 'N.B. je e-mailadres moet een bestaand en werkend adres zijn';
 $string['emailnotallowed'] = 'E-mailadressen van deze domeinen zijn niet toegelaten ($a)';
+$string['emailnotfound'] = 'Het emailadres is niet teruggevonden in de databank';
 $string['emailonlyallowed'] = 'Dit e-mailadres behoort tot een domein dat niet toegelaten is ($a)';
 $string['emailpasswordconfirmation'] = 'Beste $a->firstname,
 
@@ -466,6 +467,12 @@ $a->past
 Op volgende pagina kun je hun aanmeldingsperiode verlengen: 
 $a->extendurl';
 $string['expirynotifystudents'] = 'Verwittig leerlingen';
+$string['expirynotifystudentsemail'] = 'Beste,
+
+Dit is een automatische verwittiging dat je aanmelding voor het vak $a->course zal verlopen binnen $a->treshold dagen.
+
+Wanneer je hierbij vragen hebt, neem dan contact op met je leraar.';
+$string['expirythreshold'] = 'Drempelwaarde';
 $string['explanation'] = 'Verklaring';
 $string['extendenrol'] = 'Verleng aanmelding';
 $string['extendperiod'] = 'Verlengde periode';
@@ -493,6 +500,7 @@ $string['forcepasswordchangenotice'] = 'Je moet je wachtwoord wijzigen om verder
 $string['forcetheme'] = 'Leg dit thema op';
 $string['forgotaccount'] = 'Wachtwoord vergeten?';
 $string['forgotten'] = 'Heb je je gebruikersnaam of wachtwoord vergeten?';
+$string['forgottenduplicate'] = 'Het automatisch ophalen van je wachtwoord kan niet omdat je e-mailadres blijkbaar meer dan één keer voorkomt in de databank. Contacteer, <a href=\"mailto:$a->email\">$a->firstname $a->lastname</a>, je systeembeheerder.';
 $string['format'] = 'Format';
 $string['formathtml'] = 'HTML-opmaak';
 $string['formatmarkdown'] = 'Markdown-opmaak';
@@ -775,6 +783,7 @@ $string['new'] = 'Nieuw';
 $string['newaccount'] = 'Nieuwe account';
 $string['newcourse'] = 'Nieuwe cursus';
 $string['newpassword'] = 'Nieuw wachtwoord';
+$string['newpasswordfromlost'] = '<strong>OPMERKING:</strong> Je <strong>huidige wachtwoord</strong> zal je toegestuurd worden in de <strong>tweede</strong> van de twee e-mails die je toegestuurd worden voor het terugkrijgen van je wachtwoord. Zorg er voor dat je je nieuwe wachtwoord gekregen hebt voor je verder gaat met dit scherm.';
 $string['newpasswordtext'] = 'Beste $a->firstname,
 
 Het wachtwoord voor je account op \'$a->sitename\' is gereset en je hebt een nieuw tijdelijk wachtwoord gekregen.
@@ -838,6 +847,7 @@ $string['nostudentsyet'] = 'Er zijn nog geen leerlingen lid van deze cursus';
 $string['nosuchemail'] = 'Dit e-mailadres is hier niet bekend';
 $string['notavailable'] = 'Niet beschikbaar';
 $string['noteachersyet'] = 'Er zijn nog geen leraren voor deze cursus';
+$string['notenrollable'] = 'Je kunt je nu niet aanmelden in deze cursus';
 $string['notenrolled'] = '$a is geen lid van deze cursus.';
 $string['noteuserschangednonetocourse'] = 'Let op: de gebruikers van een cursus moeten worden hersteld op het moment dat je gebruikersdata aan het terugzetten bent. Deze instelling is voor je veranderd.';
 $string['nothingnew'] = 'Niets nieuws sinds je laatste log in';
@@ -879,6 +889,7 @@ $string['parentcoursenotmetacourse'] = 'Bovenliggende cursus is geen overkoepele
 $string['parentfolder'] = 'Bovenliggende map';
 $string['parentlanguage'] = 'VERTALERS: Als bepaalde teksten ontbreken in een taalpakket, zal Moodle deze uit een ander taalpakket gebruiken. Geef hier de juiste aanduiding daarvan aan, bijv. nl. Als je niets invult, wordt standaard het Engelse taalpakket gebruikt.';
 $string['participants'] = 'Deelnemers';
+$string['participationratio'] = 'Deelnemersratio';
 $string['password'] = 'Wachtwoord';
 $string['passwordchanged'] = 'Het wachtwoord is veranderd';
 $string['passwordconfirmchange'] = 'Bevestig de wijziging van het wachtwoord';
@@ -907,6 +918,7 @@ $string['policyagree'] = 'Je moet akkoord gaan met deze overeenkomst voor je ver
 $string['policyagreement'] = 'Overeenkomst voor  het gebruik van deze site';
 $string['policyagreementclick'] = 'Klik hier om de overeenkomst voor het gebruik van deze site te lezen';
 $string['popupwindow'] = 'Open het bestand in een nieuw venster';
+$string['posts'] = 'Berichten';
 $string['potentialadmins'] = 'Mogelijke beheerders';
 $string['potentialcreators'] = 'Mogelijke cursus-aanmakers';
 $string['potentialstudents'] = 'Mogelijke leerlingen';
@@ -952,6 +964,7 @@ $string['removestudent'] = 'Verwijder leerling';
 $string['removeteacher'] = 'Verwijder leraar';
 $string['rename'] = 'Hernoem';
 $string['renamefileto'] = 'Hernoem <b>$a</b> naar';
+$string['reports'] = 'Rapporten';
 $string['requestcourse'] = 'Vraag een nieuwe cursus';
 $string['requestedby'] = 'Gevraagd door';
 $string['requestreason'] = 'Motivatie voor de vraag';
@@ -1062,6 +1075,10 @@ $string['statsnodata'] = 'Er zijn geen gegevens voor die combinatie van cursus e
 $string['statsnodatauser'] = 'Er zijn geen gegevens voor die combinatie van vak, gebruiker en tijdsperiode.';
 $string['statsreport1'] = 'Login';
 $string['statsreport10'] = 'Gebruikersactiviteit';
+$string['statsreport11'] = 'Meest actieve cursussen';
+$string['statsreport12'] = 'Meest actieve cursussen (gewogen)';
+$string['statsreport13'] = 'Meest deelnemende cursus (aanmeldingen)';
+$string['statsreport14'] = 'Meest deelnemende cursus (bekeken pagina\'s/berichten)';
 $string['statsreport2'] = 'Pagina\'s (leraar en leerling)';
 $string['statsreport3'] = 'Berichten (leraar en leerling)';
 $string['statsreport4'] = 'Alle activiteiten (leraar en leerling)';
@@ -1214,6 +1231,7 @@ $string['usethiscourse'] = 'Gebruik deze cursus';
 $string['usingexistingcourse'] = 'Gebruik bestaande cursus';
 $string['version'] = 'Versie';
 $string['view'] = 'Zien';
+$string['views'] = 'Bekeken pagina\'s';
 $string['viewsolution'] = 'Bekijk oplossing';
 $string['virusfound'] = 'Opgelet beheerder! Clam AV vond een virus in een bestand, geüpload door $a->user voor de cursus $a->course. Hier is de boodschap van clamscan:';
 $string['virusfoundlater'] = 'Een bestand dat geüpload werd op $a->date met als bestandsnaam $a->filename voor de cursus $a->course is  besmet met een virus. Hier is een samenvatting van wat er met je bestand gebeurd is:

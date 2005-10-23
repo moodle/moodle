@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.6 development (2005060201)
+      // quiz.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['acceptederror'] = 'Geaccepteerde fout';
@@ -189,6 +189,7 @@ $string['illegalformulasyntax'] = 'De syntax van de formule is fout, beginnend m
 $string['imagedisplay'] = 'Weer te geven afbeelding';
 $string['imagemissing'] = 'Afbeelding niet beschikbaar op lijn $a. De bestandsnaam zal genegeerd worden';
 $string['importmax10error'] = 'Er zit een fout in de vraag. Je mag niet meer dan tien mogelijke antwoorden geven.';
+$string['importmaxerror'] = 'ER is een fout in de vraag. Er zijn te veel antwoorden.';
 $string['importminerror'] = 'Er zit een fout in de vraag. Je hebt niet genoeg mogelijke antwoorden gegeven voor dit type vraag.';
 $string['importquestions'] = 'Importeer vragen uit bestand';
 $string['incorrect'] = 'Niet juist';
@@ -271,6 +272,7 @@ $string['numerical'] = 'Numeriek';
 $string['optional'] = 'optioneel';
 $string['outof'] = ' uit een maximum van ';
 $string['overdue'] = 'Te laat';
+$string['pagesize'] = 'Aantal te tonen pogingen per pagina';
 $string['paragraphquestion'] = 'Vraagparagraaf niet ondersteund op lijn $a. De vraag wordt genegeerd';
 $string['parent'] = 'bovenliggend';
 $string['partiallycorrect'] = 'Gedeeltelijk juist';
@@ -339,6 +341,7 @@ $string['reportmulti_q_x_student'] = 'Overzicht keuzes van alle leerlingen';
 $string['reportmulti_resp'] = 'Individuele reacties';
 $string['reportoverview'] = 'Overzicht';
 $string['reportregrade'] = 'Herwaarderen van de pogingen';
+$string['reportresponses'] = 'Antwoorddetails';
 $string['reports'] = 'Rapporten';
 $string['reportsimplestat'] = 'Eenvoudige statistieken';
 $string['requirepassword'] = 'Wachtwoord nodig';
@@ -394,6 +397,9 @@ $string['shuffleanswers'] = 'Mix de antwoorden';
 $string['shufflequestions'] = 'Mix de vragen';
 $string['significantfigures'] = 'met $a';
 $string['significantfiguresformat'] = 'beduidende cijfers';
+$string['sortage'] = 'Sorteer op datum';
+$string['sortalpha'] = 'Sorteer alfabetisch';
+$string['sortsubmit'] = 'Sorteer vragen';
 $string['startagain'] = 'Start opnieuw';
 $string['startedon'] = 'Gestart op';
 $string['subneterror'] = 'Deze test is zo beveiligd dat hij alleen toegankelijk is vanop bepaalde plaatsen. Jouw computer staat niet in de lijst met toegelaten machines om deze test te maken.';

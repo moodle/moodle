@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.5 ALPHA (2005042400)
+      // forum.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['addanewdiscussion'] = 'Voeg een nieuw onderwerp voor discussie toe';
@@ -100,6 +100,7 @@ $string['nonews'] = 'Er zijn nog geen nieuwsberichten';
 $string['noposts'] = 'Geen berichten';
 $string['nopostscontaining'] = 'Er zijn geen berichten met \'$a\' gevonden';
 $string['nosubscribers'] = 'Er is nog niemand lid van dit forum';
+$string['nothingnew'] = 'Niets nieuw voor $a';
 $string['notingroup'] = 'Sorry, je moet bij een groep horen om dit forum te kunnen zien.';
 $string['notrackforum'] = 'Schakel opvolgen van ongelezen berichten uit';
 $string['nownotsubscribed'] = '$a->name zal via e-mail GEEN bijdragen aan \'$a->forum\' ontvangen.';
@@ -112,6 +113,8 @@ $string['oldertopics'] = 'Oudere onderwerpen';
 $string['openmode0'] = 'Geen nieuwe discussies, geen antwoorden';
 $string['openmode1'] = 'Geen nieuwe discussies mogelijk, maar antwoorden zijn toegestaan';
 $string['openmode2'] = 'Nieuwe discussies en antwoorden zijn toegestaan';
+$string['overviewnumpostssince'] = '$a berichten sinds je laatste login';
+$string['overviewnumunread'] = 'Totaal $a berichten nog niet gelezen';
 $string['parent'] = 'Toon discussiestart';
 $string['parentofthispost'] = 'Discussiestart van dit bericht';
 $string['postadded'] = 'Je bericht is gepost.<p> Je hebt $a de tijd om dit bericht te wijzigen als je nog iets wilt veranderen.';

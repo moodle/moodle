@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005033100)
+      // resource.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['addresource'] = 'Bron toevoegen';
@@ -23,6 +23,7 @@ $string['configpopupwidth'] = 'Hoe breed zou een popup-venster standaard moeten 
 $string['configsecretphrase'] = 'Deze geheime zin wordt gebruikt om de geëncrypteerde code te genereren die naar sommige bronnen als een parameter kan meegestuurd worden. De geëncrypteerde code wordt gemaakt met een md5-waarde van het IP-adress van de huidige gebruiker samen met je geheime zin. ie code = md5(IP.secretphrase). Dit laat de bron op de bestemming toe de connectie te controleren voor extra veiligheid.';
 $string['configwebsearch'] = 'Wanneer je een URL als webpagina of link toevoegt, wordt deze plaats aangeboden als een site om de gebruiker te helpen de URL te zoeken.';
 $string['configwindowsettings'] = 'Dit stelt de standaardwaarden voor het \"Venster\" instellingspaneel van het formulier voor het invoeren van nieuwe bronnen. De voorkeur van de individuele gebruiker wordt na een eerste toegang verder gebruikt.';
+$string['deploy'] = 'Verdeel';
 $string['directlink'] = 'Rechtstreekse link naar dit bestand';
 $string['directoryinfo'] = 'Alle bestanden in de gekozen map zullen getoond worden.';
 $string['display'] = 'Venster';
@@ -38,6 +39,7 @@ $string['filtername'] = 'Automatisch linken van bronnen';
 $string['frameifpossible'] = 'Toon de bron in een frame, zodat de navigatie zichtbaar blijft';
 $string['fulltext'] = 'Volledige tekst';
 $string['htmlfragment'] = 'HTML-fragment';
+$string['imspackageloaded'] = 'Pakket geladen';
 $string['localfile'] = 'Lokaal bestand';
 $string['localfilechoose'] = 'Kies een lokaal bestand (CD-ROM)';
 $string['localfilehelp'] = 'Help bij het tonen van lokale bestanden';
@@ -47,6 +49,7 @@ $string['localfileselect'] = 'Kies dit bestandspad';
 $string['maindirectory'] = 'Hoofdmap';
 $string['modulename'] = 'Bron';
 $string['modulenameplural'] = 'Bronnen';
+$string['navigationbuttons'] = 'Navigatieknoppen';
 $string['neverseen'] = 'Nooit bekeken';
 $string['newdirectories'] = 'Toon de links naar de mappen';
 $string['newfullscreen'] = 'Vul het volledige scherm';
@@ -64,6 +67,8 @@ $string['notallowedlocalfileaccess'] = 'Toegang tot lokale bestanden is op dit m
 $string['note'] = 'Aantekening';
 $string['notefile'] = 'Gebruik <a href=\"$a\">Bestandsbeheer</a> om meer bestanden naar de cursus te uploaden (zodat ze in deze lijst verschijnen).';
 $string['notypechosen'] = 'Je moet een soort kiezen. Gebruik de \'Back\'-knop om terug te gaan en het opnieuw te proberen.';
+$string['packagechanged'] = 'Dit IMS-pakket is gewijzigd.';
+$string['packagenotdeplyed'] = 'Dit IMS-pakket is niet verdeeld.';
 $string['pagedisplay'] = 'Toon deze bron in het huidige venster';
 $string['pagewindow'] = 'Zelfde venster';
 $string['pan'] = 'Pan';
@@ -84,11 +89,16 @@ $string['resourcetype9'] = 'Map';
 $string['resourcetypedirectory'] = 'Map tonen';
 $string['resourcetypefile'] = 'Bestand/website linken';
 $string['resourcetypehtml'] = 'Webpagina maken';
+$string['resourcetypeims'] = 'Verdeel een IMS-pakket';
 $string['resourcetypelabel'] = 'Label toevoegen';
+$string['resourcetyperepository'] = 'Link naar een opslagobject';
 $string['resourcetypetext'] = 'Tekstpagina maken';
 $string['searchweb'] = 'Zoek webpagina\'s';
 $string['serverurl'] = 'Server URL ($a->wwwroot)';
+$string['showcourseblocks'] = 'Toon de cursusblokken';
+$string['tableofcontents'] = 'Inhoudstafel';
 $string['variablename'] = 'Variable naam';
+$string['viewims'] = 'Toon IMS-pakket';
 $string['vol'] = 'Vol';
 
 ?>

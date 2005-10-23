@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.6 development (2005100400)
+      // admin.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['adminseesallevents'] = 'Beheerders zien alle gebeurtenissen';
@@ -41,6 +41,8 @@ $string['configenablestats'] = 'Als je hier \'ja\' kiest, zal de cron van Moodle
 $string['configerrorlevel'] = 'Kies hoeveel PHP-waarschuwingen je wilt dat Moodle laat zien. \'Normaal\' is meestal de beste keuze.';
 $string['configextendedusernamechars'] = 'Schakel deze optie in om het mogelijk te maken dat gelijk welke karakters in de gebruikersnaam gebruikt kunnen worden (merk op dat deze instelling geen invloed heeft op de voornaam of achternaam). De standaardinstelling is \"false\", wat ervoor zorgt dat alleen alfanumerieke tekens gebruikt kunnen worden.';
 $string['configfilterall'] = 'Filter alle strings: hoofdingen, titels, navigatiebalk enz. inbegrepen. Dit is meestal slechts nuttig wanneer je de multilang-filter gebruikt. Anders wal het alleen maar een extra belasting op je server veroorzaken zonder meerwaarde.';
+$string['configfiltermatchoneperpage'] = 'Automatische link-filters zullen slechts één link per pagina genereren, namelijk de eerste overeenkomst die gevonden wordt op de hele pagina. Alle andere overeenkomsten worden genegeerd.';
+$string['configfiltermatchonepertext'] = 'Automatische link-filters zullen slechts één link per tekstonderdeel  (bron, blok) genereren. Alle andere overeenkomsten worden genegegeerd. Deze instelling wordt genegeerd als de instelling één per pagina op <i>ja</i> staat.';
 $string['configfilteruploadedfiles'] = 'Door deze optie in te schakelen gaat Moodle alle geüploade HTML- en tekstbestanden door de gekozen filters halen voor ze getoond worden';
 $string['configforcelogin'] = 'Standaard kunnen de startpagina van de site en de lijst van cursussen (maar niet de cursussen zelf) bekeken worden door iedereen, zonder zich aan te melden op de site. Als je wil afdwingen dat er moet aangemeld worden voor er maar iets van de site te zien is, dan kan dat door deze instelling aan te zetten.';
 $string['configforceloginforprofiles'] = 'Schakel deze optie in om gebruikers te dwingen zich aan te melden met een echte (niet gast-) account voor ze de pagina\'s met gebruikersprofielen kunnen zien. Standaard staat deze instelling uit (\"false\") zodat leerlingen op prospectie de profielen van de leraren bij elke cursus kunnen lezen. Dit heeft als gevolg dat ook zoekrobots deze informatie kunnen lezen.';
@@ -131,6 +133,7 @@ $string['importtimezones'] = 'Update de volledige lijst van tijdzones';
 $string['importtimezonescount'] = '$a->count items geïmporteerd van $a->source';
 $string['importtimezonesfailed'] = 'Geen bronnen gevonden! (= slecht nieuws)';
 $string['incompatibleblocks'] = 'Niet-compatibele blokken';
+$string['latexpreamble'] = 'LaTeX inleiding';
 $string['latexsettings'] = 'LaTeX  renderer instellingen';
 $string['mediapluginavi'] = 'Gebruik .avi-filter';
 $string['mediapluginmov'] = 'Gebruik .mov-filter';
@@ -148,6 +151,11 @@ $string['sitemaintenancemode'] = 'Onderhoudsmodus';
 $string['sitemaintenanceoff'] = 'De onderhoudsmodus is uitgeschakeld en de site loopt nu terug normaal';
 $string['sitemaintenanceon'] = 'Je site is nu in onderhoudsmodus (alleen beheerders kunnen inloggen of gebruik maken van de site)';
 $string['sitemaintenancewarning'] = 'Je site is nu in onderhoudsmodus (alleen beheerders kunnen inloggen of gebruik maken van de site). Om terug te keren naar normale werking: <a href=\"maintenance.php\">onderhoudsmodus uitschakelen</a>';
+$string['stickyblocks'] = 'Klevende blokken';
+$string['stickyblockscourseview'] = 'Cursuspagina';
+$string['stickyblocksduplicatenotice'] = 'Als je hier een blok toevoegd dat al op een bepaalde pagina staat, krijg je er twee.<br />Alleen het vastgezette blok zul je niet kunnen bewerken, het tweede zul je wel kunnen bewerken.';
+$string['stickyblocksmymoodle'] = 'Mijn Moodle';
+$string['stickyblockspagetype'] = 'Te configureren paginatype';
 $string['tabselectedtofront'] = 'Moet bij tabellen met tabs de nu geselecteerde tab vooraan gezet worden?';
 $string['therewereerrors'] = 'Er waren fouten in je gegevens';
 $string['timezoneforced'] = 'Dit is opgelegd door de sitebeheerder';
