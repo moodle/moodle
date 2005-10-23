@@ -676,7 +676,7 @@ $string['loginstepsnone'] = 'Guten Tag!
 Für den vollen Zugang zu den Kursen müssen Sie sich einen Zugang anlegen.
 Alles, was Sie tun müssen, ist einen Benutzernamen und ein  Kennwort zu wählen, das Sie im Formular auf dieser Seite eintragen!
 Sofern jemand anderes bereits Ihren Benutzernamen gewählt hat, müssen Sie einen anderen Benutzernamen verwenden.';
-$string['loginto'] = 'Angemeldet bei $a';
+$string['loginto'] = 'Anmeldung zum Kurs \'$a\'';
 $string['loginusing'] = 'Bitte beachten Sie, dass es notwendig ist, sich vor dem ersten Login einmalig zu registrieren';
 $string['logout'] = 'LogOut';
 $string['logs'] = 'Statistiken';
