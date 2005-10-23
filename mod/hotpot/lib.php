@@ -1524,7 +1524,7 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 
 		$replace = "hotpot_convert_relative_url('".$this->get_baseurl()."', '".$this->reference."', '\\1', '\\6', '\\7')";
 
-		$tags = array('script'=>'src', 'link'=>'href', 'a'=>'href','img'=>'src','param'=>'value');
+		$tags = array('script'=>'src', 'link'=>'href', 'a'=>'href','img'=>'src','param'=>'value', 'embed'=>'src');
 		foreach ($tags as $tag=>$attribute) {
 			if ($tag=='param') {
 				$url = '\S+?\.\S+?'; // must include a filename and have no spaces
