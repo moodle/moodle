@@ -494,17 +494,20 @@ function chat_update_chat_times($chatid=0) {
 
 
 function chat_format_message_manually($message, $courseid, $sender, $currentuser, $chat_lastrow=NULL) {
-    global $CFG;
+    global $CFG, $USER;
 
     $output = New stdClass;
     $output->beep = false;       // by default
     $output->refreshusers = false; // by default
 
-    // Get some additional info
+    // Use get_user_timezone() to find the correct timezone for displaying this message:
+    // It's either the current user's timezone or else decided by some Moodle config setting
+    $tz = get_user_timezone($currentuser->timezone);
 
-    // But before that :-) let's override get_user_timezone_offset() for this call... messy stuff...
-    // TODO - FIX THIS TO MANAGE NEW TIMEZONES
-    $tz = ($currentuser->timezone == 99) ? $CFG->timezone : $currentuser->timezone;
+    // Before formatting the message time string, set $USER->timezone to the above.
+    // This will allow dst_offset_on (called by userdate) to work correctly, otherwise the
+    // message times appear off because DST is not taken into account when it should be.
+    $USER->timezone = $tz;
     $message->strtime = userdate($message->timestamp, get_string('strftimemessage', 'chat'), $tz);
 
     $message->picture = print_user_picture($sender->id, 0, $sender->picture, false, true, false);
