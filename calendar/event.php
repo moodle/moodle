@@ -211,8 +211,7 @@
                     $eventid = insert_record('event', $form, true);
 
                     /// Log the event entry.
-                    $form->name = stripslashes($form->name);  //To avoid double-slashes
-                    add_to_log($form->courseid, 'calendar', 'add', 'event.php?action=edit&amp;id='.$eventid, $form->name);
+                    add_to_log($form->courseid, 'calendar', 'add', 'event.php?action=edit&amp;id='.$eventid, stripslashes($form->name));
 
                     if ($form->repeat) {
                         for($i = 1; $i < $form->repeats; $i++) {
@@ -226,9 +225,9 @@
 
                             /// Get the event id for the log record.
                             $eventid = insert_record('event', $form, true);
+
                             /// Log the event entry.
-                            $form->name = stripslashes($form->name);  //To avoid double-slashes
-                            add_to_log($form->courseid, 'calendar', 'add', 'event.php?action=edit&amp;id='.$eventid, $form->name);
+                            add_to_log($form->courseid, 'calendar', 'add', 'event.php?action=edit&amp;id='.$eventid, stripslashes($form->name));
                         }
                     }
 
