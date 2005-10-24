@@ -1128,7 +1128,7 @@ function usertimezone($timezone=99) {
  *
  * @uses $CFG
  * @uses $USER
- * @param float $tz The user's timezone
+ * @param float $tz If this value is provided and not equal to 99, it will be returned as is and no other settings will be checked
  * @return int
  */
 function get_user_timezone_offset($tz = 99) {
@@ -1149,12 +1149,15 @@ function get_user_timezone_offset($tz = 99) {
 }
 
 /**
- * ?
+ * Returns a float or a string which denotes the user's timezone
+ * A float value means that a simple offset from GMT is used, while a string (it will be the name of a timezone in the database)
+ * means that for this timezone there are also DST rules to be taken into account
+ * Checks various settings and picks the most dominant of those which have a value
  *
  * @uses $USER
  * @uses $CFG
- * @param int $tz ?
- * @return int
+ * @param float $tz If this value is provided and not equal to 99, it will be returned as is and no other settings will be checked
+ * @return mixed
  */
 function get_user_timezone($tz = 99) {
     global $USER, $CFG;
