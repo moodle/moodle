@@ -1,10 +1,11 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.6 development (2005060201)
+      // moodle.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['action'] = 'Aksiyon';
 $string['actions'] = 'Mga Aksiyon';
 $string['active'] = 'Aktibo';
+$string['activeusers'] = 'Mga aktibong user';
 $string['activities'] = 'Mga Aktibidad';
 $string['activity'] = 'Aktibidad';
 $string['activityclipboard'] = 'Inililipat ang aktibidad na ito: <b>$a</b>';
@@ -14,6 +15,7 @@ $string['activityreport'] = 'Ulat ng aktibidad';
 $string['activityreports'] = 'Mga Ulat ng aktibidad';
 $string['activityselect'] = 'Piliin ang aktibidad na ito para mailipat ng lugar';
 $string['activitysince'] = 'Ang aktibidad na naganap hanggang $a';
+$string['activityweighted'] = 'Aktibidad bawat user';
 $string['add'] = 'Magdagdag';
 $string['addactivity'] = 'Magdagdag ng aktibidad...';
 $string['addadmin'] = 'Magdagdag ng admin';
@@ -56,8 +58,10 @@ $string['adminhelpmanagedatabase'] = 'Pasukin ang database nang direkta (mag-ing
 $string['adminhelpmanagefilters'] = 'Pumilì ng mga text filter at kaugnay nitong áyos';
 $string['adminhelpmanagemodules'] = 'Pamahalaan ang mga naka-instol na modyul at áyos nito';
 $string['adminhelpmymoodle'] = 'Isaayos ang mga \"aking moodle\" na block para sa mga user';
+$string['adminhelpreports'] = 'Ranggo ng mga kurso ayon sa iba\'t-ibang pamantayan';
 $string['adminhelpsitefiles'] = 'Para sa paglalathala ng pangkalahatang file o pag-aplowd ng bak-ap mula sa labas';
 $string['adminhelpsitesettings'] = 'Itakda ang itsura ng harapáng pahina ng site';
+$string['adminhelpstickyblocks'] = 'Isaayos ang madidikit na block para sa buong moodle';
 $string['adminhelpthemes'] = 'Pumilì ng magiging itsura ng site (kulay, font atbp.)';
 $string['adminhelpuploadusers'] = 'Mag-importa ng mga bagong user accounts mula sa isang text file';
 $string['adminhelpusers'] = 'Itakda ang mga user mo at iayos ang pag-aauthenticate';
@@ -481,9 +485,7 @@ $string['expirynotifystudentsemail'] = 'Mabuhay mag-aaral:
 
 Ito ay isang patalastas na ang iyong pag-eenrol sa kursong $a->course ay mapapasó na sa $a->threshold araw.
 
-Pakikontak ang iyong guro para sa karagdagang impormasyon.
-
-';
+Pakikontak ang iyong guro para sa karagdagang impormasyon.';
 $string['expirythreshold'] = 'Taning';
 $string['explanation'] = 'Pagpapaliwanag';
 $string['extendenrol'] = 'Pahabain ang pag-eenrol';
@@ -909,6 +911,7 @@ $string['parentcoursenotfound'] = 'Walang natagpuang magulang na kurso!';
 $string['parentcoursenotmetacourse'] = 'Magulang na kurso, hindi metakurso!';
 $string['parentfolder'] = 'Magulang na folder';
 $string['participants'] = 'Mga Kalahok';
+$string['participationratio'] = 'Ratio ng paglahok';
 $string['password'] = 'Password';
 $string['passwordchanged'] = 'Binago na ang password';
 $string['passwordconfirmchange'] = 'Kumpirmahin ang pagbabago ng password';
@@ -938,6 +941,7 @@ $string['policyagree'] = 'Kailangan mo munang sumang-ayon sa patakarang ito bago
 $string['policyagreement'] = 'Kasunduan hinggil sa Patakaran ng Site';
 $string['policyagreementclick'] = 'Iklik ito upang mabasa ang Kasunduan hinggil sa Patakaran ng Site';
 $string['popupwindow'] = 'Buksan ang file sa bagong window';
+$string['posts'] = 'Mga posts';
 $string['potentialadmins'] = 'Mga posibleng admin';
 $string['potentialcreators'] = 'Mga posibleng tagalikha ng kurso';
 $string['potentialstudents'] = 'Mga posibleng mag-aaral';
@@ -982,6 +986,7 @@ $string['removestudent'] = 'Tanggalin ang mag-aaral';
 $string['removeteacher'] = 'Tanggalin ang guro';
 $string['rename'] = 'Palitan ang Pangalan';
 $string['renamefileto'] = 'Palitan ang pangalan ng <b>$a</b> nang';
+$string['reports'] = 'Mga ulat';
 $string['requestcourse'] = 'Humiling ng kurso';
 $string['requestedby'] = 'Hiniling ni';
 $string['requestreason'] = 'Dahilan sa paghiling ng kurso';
@@ -1094,6 +1099,10 @@ $string['statsnodata'] = 'Walang magagamit na datos para sa kombinasyon ng kurso
 $string['statsnodatauser'] = 'Walang magagamit na datos para sa kombinasyon ng kurso, user at panahong iyan.';
 $string['statsreport1'] = 'Mga Paglog-in';
 $string['statsreport10'] = 'Aktibidad ng user';
+$string['statsreport11'] = 'Pinakaaktibong kurso';
+$string['statsreport12'] = 'Pinakaaktibong kurso (may timbang)';
+$string['statsreport13'] = 'Pinakanilalahukang kurso (pag-eenrol)';
+$string['statsreport14'] = 'Pinakanilalahukang kurso (tanaw/post)';
 $string['statsreport2'] = 'Mga tanaw (guro at mag-aaral)';
 $string['statsreport3'] = 'Mga post (guro at mag-aaral)';
 $string['statsreport4'] = 'Lahat ng aktibidad (guro at mag-aaral)';
@@ -1246,6 +1255,7 @@ $string['usethiscourse'] = 'Gamitin ang kursong ito';
 $string['usingexistingcourse'] = 'Ginagamit ang kasalukuyang kurso';
 $string['version'] = 'Bersiyon';
 $string['view'] = 'Tingnan';
+$string['views'] = 'Mga Tanaw';
 $string['viewsolution'] = 'tingnan ang lunas';
 $string['virusfound'] = 'Administrador, mahalaga ito!  May nakitang virus ang Clam AV sa file na inaplowd ni $a->user para sa kursong $a->course. Narito ang inilabas ng  clamscan:';
 $string['virusfoundlater'] = 'Ang file na inaplowd mo noong $a->date na may file name na $a->filename para sa kursong $a->course ay natagpuang may virus.  Narito ang buod ng nangyari sa file mo:

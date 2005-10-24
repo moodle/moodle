@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.6 development (2005060201)
+      // admin.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['adminseesallevents'] = 'Nakikita ng mga Administrador ang lahat ng okasyon';
@@ -28,7 +28,7 @@ $string['configclamfailureonupload'] = 'Kapag isinaayos mo ang clam na i-scan an
 $string['configcountry'] = 'Kapag itinakda mo ang bansâ dito, ang bansang ito ang magiging default para sa mga bagong account ng user.  Upang mapilit ang mga user na pumilì ng bansâ, pabayaan lamang itong hindi nakatakda.';
 $string['configdbsessions'] = 'Kapag binuhay ito, gagamitin ng kaayusang ito ang database sa pag-iimbak ng mga impormasyon hinggil sa kasalukuyang sesyon.  Kapakipakinabang ito sa malalaki/abalang site o mga site na binuo sa cluster ng mga server.  Para sa karaniwang site malamang na mas mabuting patayin na ito upang gamitin na lamang ang server disk.  Tandaan na ang pagbabago ng kaayusang ito ngayon ay maglalog-out sa lahat ng kasalukuyang user (kasama ka).';
 $string['configdebug'] = 'Kung bubuhayin ninyo ito, tataas ang lebel ng error_reporting ng PHP kaya\'t mas maraming babala ang malalathala.  Kapakipakinabang lamang ito sa mga debeloper.';
-$string['configdefaultallowedmodules'] = 'Para sa mga kurso na nasa loob ng kategoriya sa itaas, alin bang mga modyul ang nais mong pahintulutan bilang default<b>kapag nilikha na ang kurso</b>?';
+$string['configdefaultallowedmodules'] = 'Para sa mga kurso na nasa loob ng kategoriya sa itaas, alin bang mga modyul ang nais mong pahintulutan bilang default <b>kapag nilikha na ang kurso</b>?';
 $string['configdefaultrequestedcategory'] = 'Default na kategoriya na paglalagyan ng mga hiniling na kurso, kapag naaprubahan na ang mga ito.';
 $string['configdeleteunconfirmed'] = 'Kung gumagamit ka ng email authentication, ito ang takdang panahon na tatanggapin ang tugon ng mga user.  Kapag lumagpas na ang taning na ito, ang mga hindi nakumpirmang account ay buburahin.';
 $string['configdenyemailaddresses'] = 'Upang mahadlangan ang mga email adress mula sa ilang partikular na domain, ilista ang mga ito rito sa parehong paraan.  Lahat ng iba pang domain ay tatanggapin, hal. <strong>hotmail.com yahoo.co.uk</strong>';
@@ -37,7 +37,7 @@ $string['configdisplayloginfailures'] = 'Magpapakita ito ng impormasyon sa ilang
 $string['configenablecourserequests'] = 'Pahihintulutan nito na humiling ang sinumang user na   likhain ang isang bagong kurso.';
 $string['configenablerssfeeds'] = 'Nabubuhay sa swits na ito ang RSS feed sa buong site.  Upang makakita ng pagbabago, kailangan mong ring buhayin ang RSS feed sa indibidwal na modyul - pumunta sa mga kaayusan ng Modyul sa loob ng Kaayusang Pang-admin.';
 $string['configenablerssfeedsdisabled'] = ' Hindi ito magagamit dahil ang RSS feed ay pinatay sa kabuuan ng Site.  Para mabuhay ang mga ito, tumungo sa kaayusan ng mga Baryabol sa loob ng Kaayusang Pang-admin.';
-$string['configenablestats'] = 'Kapag pinilì mo ang \'oo\'rito, ipoproseso ng cronjob ng Moodle ang mga log at mangangalap ito ng ilang estadistika.  Depende sa laki ng trapik sa site mo, maaari itong magtagal.  Kapag binuhay mo ito, makakakita ka ng ilang interesanteng graph at estadistika hinggil sa bawat kurso mo, o hinggil sa kabuuang site.';
+$string['configenablestats'] = 'Kapag pinilì mo ang \'oo\' rito, ipoproseso ng cronjob ng Moodle ang mga log at mangangalap ito ng ilang estadistika.  Depende sa laki ng trapik sa site mo, maaari itong magtagal.  Kapag binuhay mo ito, makakakita ka ng ilang interesanteng graph at estadistika hinggil sa bawat kurso mo, o hinggil sa kabuuang site.';
 $string['configerrorlevel'] = 'Pumilì ng dami ng babala ng PHP ang nais mong maipakita.  Normal ang karaniwan na pinakamaiging piliin.';
 $string['configextendedusernamechars'] = 'Buhayin ang kaayusang ito upang mapahintulutan ang mga mag-aaral na gumamit ng anumang titik sa kanilang username (tandaan na walâ itong epekto sa tunay nilang pangalan).  Ang default ay \"ditotoo\" na nagsasabing tanging alphanumeric na titik lamang ang puwedeng gamitin sa username';
 $string['configfilterall'] = 'Ifilter ang lahat ng string, kabilang ang mga heading, pamagat, nabigasyon bar at gayon ng gayon.  Kapakipakinabang ito kapag ginagamit ang multilang na filter, kundi ay lilikha lamang ito ng dagdag na trabaho sa site mo nang walang gaanong benepisyo.';
@@ -81,7 +81,7 @@ $string['configrequestedstudentsname'] = 'Salita para sa mga mag-aaral na ginami
 $string['configrequestedteachername'] = 'Salita para sa guro na ginamit sa mga hiniling na kurso';
 $string['configrequestedteachersname'] = 'Salita para sa mga guro na ginamit sa mga hiniling na kurso';
 $string['configrestrictbydefault'] = 'Dapat bang limitahan ang mga modyul bilang default ng mga bagong kurso na nilikha, na napapaloob sa kategoriya sa itaas.';
-$string['configrestrictmodulesfor'] = 'Aling kurso ang dapat may <>b>kaayusan</b> para sa pagpatay ng ilang modyul ng aktibidad?';
+$string['configrestrictmodulesfor'] = 'Aling kurso ang dapat may <b>kaayusan</b> para sa pagpatay ng ilang modyul ng aktibidad?';
 $string['configrunclamonupload'] = 'Patatakbuhin ba ang clam AV sa tuwing may mag-aplowd ng file?   Kailangan mo ng wastong path tungo sa pathtoclam upang gumana ito.  (Ang Clam AV ay isang libreng virus scanner na makukuha mo sa http://www.clamav.net/)';
 $string['configsectioninterface'] = 'Interface';
 $string['configsectionmail'] = 'Liham';
@@ -113,7 +113,7 @@ $string['configvariables'] = 'Mga Baryabol';
 $string['configwarning'] = 'Mag-ingat sa pagbabago ng mga kaayusang ito - ang dikilalang halaga ay maaaring magdulot ng problema.';
 $string['configzip'] = 'Isulat ang lokasyon ng zip program mo (pang-Unix lamang, opsiyonal).  Kung itinakda, gagamitin ito sa paglikha ng zip archive sa server.  Kung pabayaan mo itong blangko, gagamitin ng Moodle ang mga internal na routine.';
 $string['confirmation'] = 'Kumpirmasyon';
-$string['cronwarning'] = 'Ang <a href=\"cron.php\">cron.php maintenance script</a> ay hindi pinatakbo sa loob ng 24 na oras. <br />Ipinapaliwanag ng <a href=\"../doc/?frame=install.html&sub=cron\">dokumentasyon sa pag-iinstol</a>kung paano mo mapapatakbo ng auwtomatiko ito.';
+$string['cronwarning'] = 'Ang <a href=\"cron.php\">cron.php maintenance script</a> ay hindi pinatakbo sa loob ng 24 na oras. <br />Ipinapaliwanag ng <a href=\"../doc/?frame=install.html&#8834;=cron\"> dokumentasyon sa pag-iinstol</a> kung paano mo mapapatakbo ng awtomatiko ito.';
 $string['density'] = 'Kasiksikan';
 $string['edithelpdocs'] = 'Iedit ang mga tulong na dokumento';
 $string['editstrings'] = 'Iedit ang mga string';
@@ -152,6 +152,11 @@ $string['sitemaintenanceoff'] = 'Pinatay ang mode na pangmentina at tumatakbo na
 $string['sitemaintenanceon'] = 'Ang site mo ay kasalukuyang nasa mode na pangmentina (tanging ang mga admin ang makakapaglog-in o makagagamit ng site).';
 $string['sitemaintenancewarning'] = 'Ang site mo ay kasalukuyang nasa mode na pangmentina (tanging mga admin ang makakapaglog-in).  Upang maibalik ang site na ito sa normal na operasyon, <a href=\"maintenance.php\">patayin ang mode na pangmentina
 </a>.';
+$string['stickyblocks'] = 'Madidikit na block';
+$string['stickyblockscourseview'] = 'Pangkursong pahina';
+$string['stickyblocksduplicatenotice'] = 'Kapag nagdagdag ka rito ng block na nasa isang patikular na pahina na, magreresulta ito sa isang kadoble. <br /> Tanging ang idinikit na block ang hindi maieedit, ang kadoble ay maeedit pa rin.';
+$string['stickyblocksmymoodle'] = 'Aking moodle';
+$string['stickyblockspagetype'] = 'Uri ng pahina na isasaayos';
 $string['tabselectedtofront'] = 'Sa mga teybol na may tab, dapat bang ilagay sa unahan ang hanay na may kasalukuyang piniling tag';
 $string['therewereerrors'] = 'May mga error sa datos mo';
 $string['timezoneforced'] = 'Ipinilit ito ng administrador ng site';
