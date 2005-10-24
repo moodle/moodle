@@ -282,6 +282,11 @@ function lesson_upgrade($oldversion) {
         table_column('lesson', '', 'dependency', 'INT', '8', 'unsigned', '0', 'not null', 'usepassword');
         table_column('lesson', '', 'conditions', 'text', '', '', '', 'not null', 'dependency');
     }
+    
+    if ($oldversion < 2005101900) {
+        table_column('lesson', '', 'progressbar', 'INT', '3', 'unsigned', '0', 'not null', 'displayleft');
+        table_column('lesson', '', 'displayleftif', 'INT', '3', 'unsigned', '0', 'not null', 'displayleft');
+    }
 
    return true;
 }

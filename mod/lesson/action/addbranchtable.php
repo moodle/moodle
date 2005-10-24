@@ -11,7 +11,6 @@
     $jump = array();
     $jump[0] = get_string("thispage", "lesson");
     $jump[LESSON_NEXTPAGE] = get_string("nextpage", "lesson");
-    //// CDC-FLAG /////
     $jump[LESSON_PREVIOUSPAGE] = get_string("previouspage", "lesson");
     if (!isset($_GET['firstpage'])) {        
         $jump[LESSON_EOL] = get_string("endoflesson", "lesson");
@@ -29,7 +28,6 @@
             }
         }
      }
-    //// CDC-FLAG /////
     // give teacher a blank proforma
     print_heading_with_help(get_string("addabranchtable", "lesson"), "overview", "lesson");
     ?>
@@ -42,14 +40,13 @@
     <center><table class="generalbox" cellpadding=5 border=1>
     <tr valign="top">
     <td><b><?php print_string("pagetitle", "lesson"); ?>:</b><br />
-    <!-- //CDC hidden-label added.--><label for="title" class="hidden-label">Title</label><input type="text" id="title" name="title" size="80" maxsize="255" value="" /></td></tr>
+    <!-- hidden-label added.--><label for="title" class="hidden-label">Title</label><input type="text" id="title" name="title" size="80" maxsize="255" value="" /></td></tr>
     <?PHP
     echo "<tr><td><b>";
     echo get_string("pagecontents", "lesson").":</b><br />\n";
     print_textarea($usehtmleditor, 25,70, 630, 400, "contents");
     use_html_editor("contents");
     echo "</td></tr>\n";
-    /// CDC-FLAG /// 6/16/04
     echo "<tr><td>\n";
     echo "<center><input name=\"layout\" type=\"checkbox\" value=\"1\" checked=\"checked\" />";
     echo get_string("arrangebuttonshorizontally", "lesson")."\n";
@@ -57,7 +54,6 @@
     echo get_string("displayinleftmenu", "lesson");
     echo "</center>\n";
     echo "</td></tr>\n";
-    /// CDC-FLAG ///                
     for ($i = 0; $i < $lesson->maxanswers; $i++) {
         $iplus1 = $i + 1;
         echo "<tr><td><b>".get_string("description", "lesson")." $iplus1:</b><br />\n";

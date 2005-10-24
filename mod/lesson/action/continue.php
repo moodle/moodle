@@ -4,6 +4,8 @@
     confirm_sesskey();
 
     // left menu code
+    // check to see if the user can see the left menu
+    $lesson->displayleft = lesson_displayleftif($lesson);
     if ($lesson->displayleft) {
        if($firstpageid = get_field('lesson_pages', 'id', 'lessonid', $lesson->id, 'prevpageid', 0)) {
             // print the pages
@@ -26,7 +28,7 @@
         }
     }
 
-    /// CDC-FLAG /// 6/21/04  This is the warning msg for teachers to inform them that cluster and unseen does not work while logged in as a teacher
+    // This is the warning msg for teachers to inform them that cluster and unseen does not work while logged in as a teacher
     if(isteacher($course->id)) {
         if (execute_teacherwarning($lesson->id)) {
             $warningvars->cluster = get_string("clusterjump", "lesson");
@@ -34,9 +36,8 @@
             echo "<p align=\"center\">".get_string("teacherjumpwarning", "lesson", $warningvars)."</p>";
         }
     }        
-    /// CDC-FLAG ///
 
-    /// CDC-FLAG /// 6/14/04 -- This is the code updates the lesson time for a timed test
+    // This is the code updates the lesson time for a timed test
     // get time information for this user
     if (!isteacher($course->id)) {
         if (!$timer = get_records_select('lesson_timer', "lessonid = $lesson->id AND userid = $USER->id", 'starttime')) {
@@ -84,7 +85,6 @@
             error("Error: could not update lesson_timer table");
         }
     }
-    /// CDC-FLAG ///            
 
     // record answer (if necessary) and show response (if none say if answer is correct or not)
     if (empty($_POST['pageid'])) {
@@ -101,7 +101,6 @@
     $isessayquestion = false; // use this to turn off review button on essay questions
     $newpageid = 0; // stay on the page
     switch ($page->qtype) {
-        /// CDC-FLAG ///
          case LESSON_ESSAY :
             $isessayquestion = true;
             if (!$useranswer = $_POST['answer']) {
@@ -209,7 +208,6 @@
             if (lesson_iscorrect($pageid, $answer->jumpto)) {
                 $correctanswer = true;
             }
-            /* CDC-FLAG */  
             if ($lesson->custom) {
                 if ($answer->score > 0) {
                     $correctanswer = true;
@@ -217,7 +215,6 @@
                     $correctanswer = false;
                 }
             }
-            /// CDC-FLAG 6/21/04 ///
             $newpageid = $answer->jumpto;
             if (!$response = trim($answer->response)) {
                 if ($correctanswer) {
@@ -250,7 +247,7 @@
                 $nhits = 0;
                 $correctresponse = '';
                 $wrongresponse = '';
-                /// CDC-FLAG /// 6/11/04 this is for custom scores.  If score on answer is positive, it is correct                    
+                // this is for custom scores.  If score on answer is positive, it is correct                    
                 if ($lesson->custom) {
                     $ncorrect = 0;
                     $nhits = 0;
@@ -315,7 +312,6 @@
                         }
                     }
                 }
-                /// CDC-FLAG ///
                 if ((count($useranswers) == $ncorrect) and ($nhits == $ncorrect)) {
                     $correctanswer = true;
                     if (!$response = $correctresponse) {
@@ -341,7 +337,6 @@
                 if (lesson_iscorrect($pageid, $answer->jumpto)) {
                     $correctanswer = true;
                 }
-                /* CDC-FLAG */
                 if ($lesson->custom) {
                     if ($answer->score > 0) {
                         $correctanswer = true;
@@ -349,7 +344,6 @@
                         $correctanswer = false;
                     }
                 }
-                /// CDC-FLAG ///
                 $newpageid = $answer->jumpto;
                 if (!$response = trim($answer->response)) {
                     if ($correctanswer) {
@@ -360,8 +354,6 @@
                 }
             }
             break;
-        
-        /// CDC-FLAG /// 6/14/04  -- added responses    
         case LESSON_MATCHING :
             if (isset($_POST['response']) && is_array($_POST['response'])) { // only arrays should be submitted
                 $response = array();
@@ -417,7 +409,6 @@
                         break;
                     }
                 }
-                // NoticeFix
                 if (isset($correctpageid)) {
                     $newpageid = $correctpageid;
                 }
@@ -441,7 +432,6 @@
                 $answerid = $wronganswerid;
             }
             break;
-            /// CDC-FLAG ///
 
         case LESSON_NUMERICAL :
             // set defaults
@@ -475,7 +465,6 @@
                     if (lesson_iscorrect($pageid, $newpageid)) {
                         $correctanswer = true;
                     }
-                    /// CDC-FLAG ///
                     if ($lesson->custom) {
                         if ($answer->score > 0) {
                             $correctanswer = true;
@@ -484,7 +473,6 @@
                             $correctanswer = false;
                         }
                     }
-                    /// CDC-FLAG ///
                     break;
                 }
             }
@@ -502,7 +490,7 @@
         case LESSON_BRANCHTABLE:
             $noanswer = false;
             $newpageid = optional_param('jumpto', NULL, PARAM_INT);
-            /// CDC-FLAG /// 6/15/04 going to insert into lesson_branch                
+            // going to insert into lesson_branch                
             if ($newpageid == LESSON_RANDOMBRANCH) {
                 $branchflag = 1;
             } else {
@@ -525,17 +513,15 @@
             if (!insert_record("lesson_branch", $branch)) {
                 error("Error: could not insert row into lesson_branch table");
             }
-            /// CDC-FLAG ///
 
-            /// CDC-FLAG ///  this is called when jumping to random from a branch table
+            //  this is called when jumping to random from a branch table
             if($newpageid == LESSON_UNSEENBRANCHPAGE) {
                 if (isteacher($course->id)) {
                      $newpageid = LESSON_NEXTPAGE;
                 } else {
-                     $newpageid = lesson_unseen_question_jump($lesson->id, $USER->id, $pageid);  // this may return 0 //CDC Chris Berri.....this is where it sets the next page id for unseen?
+                     $newpageid = lesson_unseen_question_jump($lesson->id, $USER->id, $pageid);  // this may return 0
                 }
             }
-            /// CDC-FLAG 6/15/04 ///
             // convert jumpto page into a proper page id
             if ($newpageid == 0) {
                 $newpageid = $pageid;
@@ -544,14 +530,13 @@
                     // no nextpage go to end of lesson
                     $newpageid = LESSON_EOL;
                 }
-    /* CDC-FLAG */  } elseif ($newpageid == LESSON_PREVIOUSPAGE) {
+            } elseif ($newpageid == LESSON_PREVIOUSPAGE) {
                 $newpageid = $page->prevpageid;
             } elseif ($newpageid == LESSON_RANDOMPAGE) {
                 $newpageid = lesson_random_question_jump($lesson->id, $pageid);
-            } elseif ($newpageid == LESSON_RANDOMBRANCH) {  // 6/15/04
+            } elseif ($newpageid == LESSON_RANDOMBRANCH) {
                 $newpageid = lesson_unseen_branch_jump($lesson->id, $USER->id);
             }
-            /// CDC-FLAG ///
             // no need to record anything in lesson_attempts            
             redirect("view.php?id=$cm->id&amp;action=navigation&amp;pageid=$newpageid");
             print_footer($course);
@@ -577,7 +562,7 @@
                 $attempt->useranswer = $userresponse;
             }
             $attempt->timeseen = time();
-            /// CDC-FLAG /// -- dont want to insert the attempt if they ran out of time
+            // dont want to insert the attempt if they ran out of time
             if (!$outoftime) {
                 // if allow modattempts, then update the old attempt record, otherwise, insert new answer record
                 if (isset($USER->modattempts[$lesson->id])) {
@@ -587,7 +572,6 @@
                     error("Continue: attempt not inserted");
                 }
             }
-            /// CDC-FLAG ///
             if (!$correctanswer and ($newpageid == 0)) {
                 // wrong answer and student is stuck on this page - check how many attempts 
                 // the student has had at this page/question
@@ -657,7 +641,7 @@
             }
         }
     
-        /// CDC-FLAG 6/21/04 ///  this calculates the ongoing score
+        // this calculates the ongoing score
         if ($lesson->ongoing) {
             if (isteacher($course->id)) {
                 echo "<div align=\"center\">".get_string("teacherongoingwarning", "lesson")."</div><br>";
@@ -669,7 +653,6 @@
                 lesson_calculate_ongoing_score($lesson, $USER->id, $ntries);
             }
         }
-        /// CDC-FLAG ///
 
         // display response (if there is one - there should be!)
         if ($response) {
@@ -694,7 +677,7 @@
         }
     }
 
-    /// CDC-FLAG 6/18/04 ///  - this is where some jump numbers are interpreted
+    // this is where some jump numbers are interpreted
     if($outoftime) {
         $newpageid = LESSON_EOL;  // ran out of time for the test, so go to eol
     } elseif (isset($USER->modattempts[$lesson->id])) {
@@ -761,6 +744,7 @@
         }
     }
 
+    // NOTE:  Should this code be coverted from form/javascript to just longer links with the variables in the url?
     echo "<form name=\"pageform\" method =\"post\" action=\"view.php\">\n";
     echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\">\n";
     echo "<input type=\"hidden\" name=\"action\" value=\"navigation\">\n";

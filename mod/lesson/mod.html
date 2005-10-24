@@ -47,7 +47,6 @@ if ($form->mode == "add") {
         $currentdate = usergetdate(time());
         $form->deadline = gmmktime($currentdate["hours"], $currentdate["minutes"], $currentdate["seconds"], $currentdate["mon"]+1, $currentdate["mday"], $currentdate["year"]);
     }
-    /// CDC-FLAG ///
     if (!isset($form->usepassword)) {
         $form->usepassword = 0;
     }
@@ -80,6 +79,12 @@ if ($form->mode == "add") {
     }
     if (!isset($form->displayleft)) {
         $form->displayleft = 0;
+    }
+    if (!isset($form->displayleftif)) {
+        $form->displayleftif = 0;
+    }
+    if (!isset($form->progressbar)) {
+        $form->progressbar = 0;
     }
     if (!isset($form->highscores)) {
         $form->highscores = 0;
@@ -118,7 +123,6 @@ if ($form->mode == "add") {
     
     $form->deleteattempts = "";
 
-    /// CDC-FLAG ///
 ?>
 <div class="mod-lesson">
 <form name="form" method="post" action="mod.php">
@@ -135,7 +139,7 @@ if ($form->mode == "add") {
 <tr valign="top">
     <td align="right"><b><?php  print_string("name") ?>:</b></td>
     <td>
-        <!-- //CDC hidden label added. --><label for="name" class="hidden-label">Name</label><input type="text" id="name" name="name" size="30" value="<?php  p($form->name) ?>" />
+        <!-- hidden label added. --><label for="name" class="hidden-label">Name</label><input type="text" id="name" name="name" size="30" value="<?php  p($form->name) ?>" />
     </td>
 </tr>
 
@@ -381,11 +385,31 @@ if ($form->mode == "add") {
 <tr>
     <td align="right"><b><?php  print_string("displayleftmenu", "lesson"); ?>:</b></td>
     <td>
-    <?PHP 
+    <?php 
         $options = array();
         $options[0] = get_string("no"); $options[1] = get_string("yes");
         choose_from_menu($options, "displayleft", $form->displayleft, "");
+        
+        echo ' ';
+        print_string("displayleftif", "lesson", $course->student);
+        $options = array();
+        for($i = 100; $i >= 0; $i--) {
+            $options[$i] = $i.'%';
+        }
+        choose_from_menu($options, "displayleftif", $form->displayleftif, "");
         helpbutton("displayleft", get_string("displayleftmenu", "lesson"), "lesson");
+    ?>
+    </td>
+</tr>
+
+<tr>
+    <td align="right"><b><?php  print_string("progressbar", "lesson"); ?>:</b></td>
+    <td>
+    <?php 
+        $options = array();
+        $options[0] = get_string("no"); $options[1] = get_string("yes");
+        choose_from_menu($options, "progressbar", $form->progressbar, "");
+        helpbutton("progressbar", get_string("progressbar", "lesson"), "lesson");
     ?>
     </td>
 </tr>

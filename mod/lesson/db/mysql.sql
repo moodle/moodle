@@ -34,6 +34,8 @@ CREATE TABLE `prefix_lesson` (
   `height` INT(10) UNSIGNED NOT NULL DEFAULT '480',
   `bgcolor` CHAR(7) NOT NULL DEFAULT '#FFFFFF',
   `displayleft` TINYINT(3) UNSIGNED NOT NULL DEFAULT '0',
+  `displayleftif` INT(3) UNSIGNED NOT NULL DEFAULT '0',
+  `progressbar` TINYINT(3) UNSIGNED NOT NULL DEFAULT '0',
   `highscores` TINYINT(3) UNSIGNED NOT NULL DEFAULT '0',
   `maxhighscores` INT(10) UNSIGNED NOT NULL DEFAULT '0',
   `available` int(10) unsigned NOT NULL default '0',

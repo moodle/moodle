@@ -1,4 +1,25 @@
 /***
+ *** Style for page contents (display to student)
+ ***/
+ 
+.mod-lesson .contents {
+    text-align: left;
+}
+
+/***
+ *** Slide show Style
+ ***/
+
+/* NOTE: background color, height and width are set in the lesson settings */
+.mod-lesson .slideshow {  
+    overflow: auto;
+    padding-right: 16px; /* for the benefit of macIE5 only */ 
+    /* \ commented backslash hack - recover from macIE5 workarounds, it will ignore the following rule */
+    padding-right: 0;
+    padding: 15px;
+}
+
+/***
  *** Hide Label Class
  ***/
 
@@ -95,4 +116,71 @@
 /*  branchbuttoncontainer wraps around branch table buttons */
 .mod-lesson .branchbuttoncontainer {
     text-align: center;
+}
+
+/*  branchslidetop and branchslidebottom classes are wrapped around the branch buttons (branchslidetop around 
+    top ones and branchslidebottom around the bottom ones)
+    that are printed out with the branch table in slide show mode. */
+.mod-lesson .branchslidetop {
+    /*  You could float them out of the slide
+    position: absolute;
+    top: 60px;*/
+    /*  You may choose to not show them at all
+    display: none;*/
+}
+
+.mod-lesson .branchslidebottom {
+    /*  You may choose to not show them at all
+    display: none;*/
+}
+
+/***
+ *** Lesson Progress Bar
+ ***    Default styles for this are very basic right now.
+ ***    User is supposed to configure this to their liking (like using pictures)
+ ***/
+
+.mod-lesson .progress_bar {
+    padding: 20px;
+}
+
+.mod-lesson .progress_bar_table {
+    width: 80%;
+    padding: 0px;
+    margin: 0px;
+}
+
+.mod-lesson .progress_bar_completed {
+    /*  Example Use of Image
+    background-image: url(<?php echo $CFG->wwwroot ?>/mod/lesson/completed.gif);
+    background-position: center;
+    background-repeat: repeat-x;
+    */
+    background-color: green;
+    padding: 0px;
+    margin: 0px;    
+}
+
+.mod-lesson .progress_bar_todo {
+    /*  Example Use of Image
+    background-image: url(<?php echo $CFG->wwwroot ?>/mod/lesson/todo.gif);
+    background-repeat: repeat-x;
+    background-position: center;
+    */
+    background-color: red;
+    text-align: left;
+    padding: 0px;
+    margin: 0px;
+}
+
+.mod-lesson .progress_bar_token {
+    /*  Example Use of Image
+    background-image: url(<?php echo $CFG->wwwroot ?>/mod/lesson/token.gif);
+    background-repeat: repeat-none;
+    */
+    background-color: #000000;
+    height: 20px;
+    width: 5px;
+    padding: 0px;
+    margin: 0px;
 }

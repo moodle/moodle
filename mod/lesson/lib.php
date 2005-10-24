@@ -1,5 +1,5 @@
 <?PHP  // $Id$ 
-        // modified by mnielsen @ CDC
+        // modified by mnielsen
         /// Update:  The lib.php now contains only the functions that are
         /// used outside of the lesson module.  All functions (I hope) that are only local
         /// are now in locallib.php.
@@ -429,7 +429,7 @@ function lesson_grades($lessonid) {
     }
     
     // convert grades from percentages and tidy the numbers
-    if (!$lesson->practice) {  // dont display practice lessons CDC-FLAG
+    if (!$lesson->practice) {  // dont display practice lessons
         if ($grades) {
             foreach ($grades as $userid => $grade) {
                 $return->grades[$userid] = number_format($grade * $lesson->grade / 100.0, 1);

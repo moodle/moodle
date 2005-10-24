@@ -13,7 +13,6 @@
     $jump = array();
     $jump[0] = get_string("thispage", "lesson");
     $jump[LESSON_NEXTPAGE] = get_string("nextpage", "lesson");
-    //// CDC-FLAG 6/18/04 /////
     $jump[LESSON_PREVIOUSPAGE] = get_string("previouspage", "lesson");
     if(lesson_display_branch_jumps($lesson->id, $pageid)) {
         $jump[LESSON_UNSEENBRANCHPAGE] = get_string("unseenpageinbranch", "lesson");
@@ -22,7 +21,6 @@
     if(lesson_display_cluster_jump($lesson->id, $pageid)) {
         $jump[LESSON_CLUSTERJUMP] = get_string("clusterjump", "lesson");
     }
-    /// CDC-FLAG ///
     if (!isset($_GET['firstpage'])) {
         $linkadd = "";      
         $jump[LESSON_EOL] = get_string("endoflesson", "lesson");
@@ -67,7 +65,7 @@
                 } else {
                     echo "<b>".get_string("multianswer", "lesson").":</b> \n";
                 }
-                echo " <label for=\"qoption\" class=\"hidden-label\">Question Option</label><input type=\"checkbox\" id=\"qoption\" name=\"qoption\" value=\"1\"/>"; //CDC hidden label added.
+                echo " <label for=\"qoption\" class=\"hidden-label\">Question Option</label><input type=\"checkbox\" id=\"qoption\" name=\"qoption\" value=\"1\"/>";
                 helpbutton("questionoption", get_string("questionoption", "lesson"), "lesson");
                 echo '</p>';
             }
@@ -75,14 +73,14 @@
             lesson_qtype_menu($LESSON_QUESTION_TYPE, LESSON_MULTICHOICE, 
                               "lesson.php?id=$cm->id&action=addpage&pageid=".$pageid.$linkadd);
             echo "<br><br><b>".get_string("multianswer", "lesson").":</b> \n";
-            echo " <label for=\"qoption\" class=\"hidden-label\">Question Option</label><input type=\"checkbox\" id=\"qoption\" name=\"qoption\" value=\"1\"/>"; //CDC hidden label added.
+            echo " <label for=\"qoption\" class=\"hidden-label\">Question Option</label><input type=\"checkbox\" id=\"qoption\" name=\"qoption\" value=\"1\"/>";
             helpbutton("questionoption", get_string("questionoption", "lesson"), "lesson");
         }
     ?>
     <table cellpadding="5" class="generalbox" border="1">
     <tr valign="top">
     <td><b><?php print_string("pagetitle", "lesson"); ?>:</b><br />
-    <!-- //CDC hidden-label added.--><label for="title" class="hidden-label">Title</label><input type="text" id="title" name="title" size="80" maxsize="255" value=""></td></tr>
+    <!-- hidden-label added --><label for="title" class="hidden-label">Title</label><input type="text" id="title" name="title" size="80" maxsize="255" value=""></td></tr>
     <?PHP
     echo "<tr><td><b>";
     echo get_string("pagecontents", "lesson").":</b><br />\n";
@@ -109,7 +107,6 @@
                         lesson_choose_from_menu($jump, "jumpto[$i]", LESSON_NEXTPAGE, "");
                     }
                     helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
-                    /// CDC-FLAG ///
                     if($lesson->custom) {
                         if ($i) {
                             echo get_string("score", "lesson")." $iplus1: <input type=\"text\" name=\"score[$i]\" value=\"0\" size=\"5\">";
@@ -117,7 +114,6 @@
                             echo get_string("score", "lesson")." $iplus1: <input type=\"text\" name=\"score[$i]\" value=\"1\" size=\"5\">";
                         }
                     }
-                    /// CDC-FLAG ///
                     echo "</td></tr>\n";
                 }
                 break;
@@ -189,7 +185,6 @@
                         lesson_choose_from_menu($jump, "jumpto[$i]", LESSON_NEXTPAGE, "");
                     }
                     helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
-                    /// CDC-FLAG ///
                     if($lesson->custom) {
                         if ($i) {
                             echo get_string("score", "lesson")." $iplus1: <input type=\"text\" name=\"score[$i]\" value=\"0\" size=\"5\">";
@@ -197,7 +192,6 @@
                             echo get_string("score", "lesson")." $iplus1: <input type=\"text\" name=\"score[$i]\" value=\"1\" size=\"5\">";
                         }
                     }
-                    /// CDC-FLAG ///
                     echo "</td></tr>\n";
                 }
                 break;
@@ -220,7 +214,6 @@
                 lesson_choose_from_menu($jump, "jumpto[$i]", LESSON_NEXTPAGE, "");
             }
             helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
-            /// CDC-FLAG ///
             if($lesson->custom) {
                 if ($i) {
                     echo get_string("score", "lesson")." $iplus1: <input type=\"text\" name=\"score[$i]\" value=\"0\" size=\"5\">";
@@ -228,7 +221,6 @@
                     echo get_string("score", "lesson")." $iplus1: <input type=\"text\" name=\"score[$i]\" value=\"1\" size=\"5\">";
                 }
             }
-            /// CDC-FLAG ///
             echo "</td></tr>\n";
         }
     }

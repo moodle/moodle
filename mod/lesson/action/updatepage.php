@@ -20,7 +20,6 @@
     } else {
         $page->qoption = 0;
     }
-    /// CDC-FLAG /// 6/16/04
     if (isset($form->layout)) {
         $page->layout = clean_param($form->layout, PARAM_INT);
     } else {
@@ -31,7 +30,6 @@
     } else {
         $page->display = 0;
     }
-    /// CDC-FLAG ///        
     $page->title = clean_param($form->title, PARAM_CLEANHTML);
     $page->contents = trim($form->contents);
     $page->title = addslashes($page->title);
@@ -86,11 +84,9 @@
                         $oldanswer->response = '';
                     }
                     $oldanswer->jumpto = clean_param($form->jumpto[$i], PARAM_INT);
-                    /// CDC-FLAG ///
                     if ($lesson->custom) {
                         $oldanswer->score = clean_param($form->score[$i], PARAM_INT);
                     }
-                    /// CDC-FLAG ///
                     if (!update_record("lesson_answers", $oldanswer)) {
                         error("Update page: answer $i not updated");
                     }
@@ -107,9 +103,7 @@
                         $newanswer->response = trim($form->response[$i]);
                     }
                     $newanswer->jumpto = clean_param($form->jumpto[$i], PARAM_INT);
-                    /// CDC-FLAG ///
                     $newanswer->score = clean_param($form->score[$i], PARAM_INT);
-                    /// CDC-FLAG ///
                     $newanswerid = insert_record("lesson_answers", $newanswer);
                     if (!$newanswerid) {
                         error("Update page: answer record not inserted");

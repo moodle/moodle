@@ -28,7 +28,6 @@
         } else {
             $newpage->qoption = 0;
         }
-        /// CDC-FLAG /// 6/16/04
         if (isset($form->layout)) {
             $newpage->layout = clean_param($form->layout, PARAM_INT);
         } else {
@@ -39,7 +38,6 @@
         } else {
             $newpage->display = 0;
         }
-        /// CDC-FLAG ///
         $newpage->title = clean_param($form->title, PARAM_CLEANHTML);
         $newpage->contents = trim($form->contents);
         $newpage->title = addslashes($newpage->title);
@@ -72,7 +70,6 @@
             } else {
                 $newpage->qoption = 0;
             }
-            /// CDC-FLAG /// 6/16/04                
             if (isset($form->layout)) {
                 $newpage->layout = clean_param($form->layout, PARAM_INT);
             } else {
@@ -83,7 +80,6 @@
             } else {
                 $newpage->display = 0;
             }                
-            /// CDC-FLAG ///
             $newpage->title = clean_param($form->title, PARAM_CLEANHTML);
             $newpage->contents = trim($form->contents);
             $newpage->title = addslashes($newpage->title);
@@ -103,7 +99,6 @@
             } else {
                 $newpage->qoption = 0;
             }
-            /// CDC-FLAG /// 6/16/04
             if (isset($form->layout)) {
                 $newpage->layout = clean_param($form->layout, PARAM_INT);
             } else {
@@ -114,7 +109,6 @@
             } else {
                 $newpage->display = 0;
             }                
-            /// CDC-FLAG ///
             $newpage->title = clean_param($form->title, PARAM_CLEANHTML);
             $newpage->contents = trim($form->contents);
             $newpage->title = addslashes($newpage->title);
@@ -129,7 +123,6 @@
         }
     }
     // now add the answers
-    /// CDC-FLAG 6/16/04 added new code to handle essays
     if ($form->qtype == LESSON_ESSAY) {
         $newanswer->lessonid = $lesson->id;
         $newanswer->pageid = $newpageid;
@@ -161,13 +154,11 @@
                 if (isset($form->jumpto[$i])) {
                     $newanswer->jumpto = clean_param($form->jumpto[$i], PARAM_INT);
                 }
-                /// CDC-FLAG ///
                 if ($lesson->custom) {
                     if (isset($form->score[$i])) {
                         $newanswer->score = clean_param($form->score[$i], PARAM_INT);
                     }
                 }
-                /// CDC-FLAG ///
                 $newanswerid = insert_record("lesson_answers", $newanswer);
                 if (!$newanswerid) {
                     error("Insert Page: answer record $i not inserted");
@@ -189,6 +180,6 @@
             }
         }
     }
-    /// CDC-FLAG ///
+
     redirect("view.php?id=$cm->id", get_string('insertedpage', 'lesson'));
 ?>

@@ -35,7 +35,7 @@
     $strlessons = get_string('modulenameplural', 'lesson');
     $strlesson  = get_string('modulename', 'lesson');
     
-    /// CDC-FLAG moved the action up because I needed to know what the action will be before the header is printed
+    // moved the action up because I needed to know what the action will be before the header is printed
     if (empty($action)) {
         if (isteacher($course->id)) {
             $action = 'teacherview';
@@ -47,7 +47,7 @@
             print_simple_box_start('center');
             echo '<div align="center">';
             echo get_string('lessonopen', 'lesson', userdate($lesson->available)).'<br />';
-            echo '<a href="../../course/view.php?id='. $course->id .'">'. get_string('returnmainmenu', 'lesson') .'</a>';
+            echo '<div class="lessonbutton standardbutton" style="padding: 5px;"><a href="../../course/view.php?id='. $course->id .'">'. get_string('returnmainmenu', 'lesson') .'</a></div>';
             echo '</div>';
             print_simple_box_end();
             print_footer($course);
@@ -59,7 +59,7 @@
             print_simple_box_start('center');
             echo '<div align="center">';
             echo get_string('lessonclosed', 'lesson', userdate($lesson->deadline)) .'<br />';
-            echo '<a href="../../course/view.php?id='. $course->id. '">'. get_string('returnmainmenu', 'lesson') .'</a>';
+            echo '<div class="lessonbutton standardbutton" style="padding: 5px;"><a href="../../course/view.php?id='. $course->id. '">'. get_string('returnmainmenu', 'lesson') .'</a></div>';
             echo '</div>';
             print_simple_box_end();
             print_footer($course);
@@ -71,7 +71,7 @@
         }
     } 
 
-    /// CDC-FLAG changed the update_module_button and added another button when a teacher is checking the navigation of the lesson
+    // changed the update_module_button and added another button when a teacher is checking the navigation of the lesson
     if (isteacheredit($course->id)) {
         $button = '<table><tr><td>';
         $button .= '<form target="'. $CFG->framename .'" method="get" action="'. $CFG->wwwroot .'/course/mod.php">'.
@@ -109,7 +109,7 @@
 
     /************** navigation **************************************/
     if ($action == 'navigation') {
-        /// CDC-FLAG /// password protected lesson code
+        // password protected lesson code
         if ($lesson->usepassword && !isteacher($course->id)) {
             $correctpass = false;
             if (isset($_POST['userpassword'])) {
@@ -134,8 +134,8 @@
                 echo '<tr align="center"><td>'. get_string('enterpassword', 'lesson').' <input type="password" name="userpassword" /></td></tr>';
                         
                 echo '<tr align="center"><td>';
-                echo '<input type="button" value="'. get_string('cancel', 'lesson') .'" onclick="parent.location=\'../../course/view.php?id='. $course->id .'\';" />  ';
-                echo '<input type="button" value="'. get_string('continue', 'lesson') .'" onclick="document.password.submit();" />';
+                echo '<span class="lessonbutton standardbutton"><a href="'.$CFG->wwwroot.'/course/view.php?id='. $course->id .'">'. get_string('cancel', 'lesson') .'</a></span> ';
+                echo ' <span class="lessonbutton standardbutton"><a href="javascript:document.password.submit();">'. get_string('continue', 'lesson') .'</a></span>';
                 echo '</td></tr></table>';
                 print_simple_box_end();
                 exit();
@@ -288,40 +288,33 @@
                             'prevpageid', 0)) {
                     error('Navigation: first page not found');
                 }
-                /// CDC-FLAG ///
                 if ($lesson->timed) {
                     if ($lesson->retake) {
-                        echo '<form name="queryform" method ="post" action="view.php">' . "\n";
-                        echo '<input type="hidden" name="id" value="'. $cm->id .'" />' . "\n";
-                        echo '<input type="hidden" name="action" value="navigation" />' . "\n";
-                        echo '<input type="hidden" name="pageid" />' . "\n";
-                        echo '<input type="hidden" name="startlastseen" />' . "\n";  /// CDC-FLAG added this line
                         print_simple_box('<p align="center">'. get_string('leftduringtimed', 'lesson') .'</p>', 'center');
-                        echo '<p align="center"><input type="button" value="'. get_string('continue', 'lesson').
-                            "\" onclick=\"document.queryform.pageid.value='$firstpageid';document.queryform.startlastseen.value='no';document.queryform.submit();\" /></p>\n";  /// CDC-FLAG added document.queryform.startlastseen.value='yes'
-                        echo '</form>' . "\n"; 
-                        echo '</div></div>';///CDC Chris Berri added close div tag
+                        echo '<div align="center" class="lessonbutton standardbutton">'.
+                                  '<a href="view.php?id='.$cm->id.'&amp;action=navigation&amp;pageid='.$firstpageid.'&amp;startlastseen=no">'.
+                                    get_string('continue', 'lesson').'</a></div>';
                     } else {
                         print_simple_box_start('center');
                         echo '<div align="center">';
                         echo get_string('leftduringtimednoretake', 'lesson');
-                        echo '<br /><br /><a href="../../course/view.php?id='. $course->id .'">'. get_string('returntocourse', 'lesson') .'</a>';
+                        echo '<br /><br /><div class="lessonbutton standardbutton"><a href="../../course/view.php?id='. $course->id .'">'. get_string('returntocourse', 'lesson') .'</a></div>';
                         echo '</div>';
                         print_simple_box_end();
                     }
                     
                 } else {
-                    echo "<form name=\"queryform\" method =\"post\" action=\"view.php\">\n";
-                    echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />\n";
-                    echo "<input type=\"hidden\" name=\"action\" value=\"navigation\" />\n";
-                    echo "<input type=\"hidden\" name=\"pageid\" />\n";
-                    echo "<input type=\"hidden\" name=\"startlastseen\" />\n";  /// CDC-FLAG added this line
                     print_simple_box("<p align=\"center\">".get_string('youhaveseen','lesson').'</p>',
                             "center");
-                    echo "<p align=\"center\"><input type=\"button\" value=\"".get_string('yes').
-                        "\" onclick=\"document.queryform.pageid.value='$lastpageseen';document.queryform.startlastseen.value='yes';document.queryform.submit();\" />&nbsp;&nbsp;&nbsp;<input type=\"button\" value=\"".get_string("no").  /// CDC-FLAG 6/11/04 ///
-                        "\" onclick=\"document.queryform.pageid.value='$firstpageid';document.queryform.startlastseen.value='no';document.queryform.submit();\" /></p>\n";  /// CDC-FLAG added document.queryform.startlastseen.value='yes'
-                    echo "</form>\n"; echo "</div></div>";///CDC Chris Berri added close div tag
+                    
+                    echo '<div align="center">';
+                    echo '<span class="lessonbutton standardbutton">'.
+                            '<a href="view.php?id='.$cm->id.'&amp;action=navigation&amp;pageid='.$lastpageseen.'&amp;startlastseen=yes">'.
+                            get_string('yes').'</a></span>&nbsp;&nbsp;&nbsp;';
+                    echo '<span class="lessonbutton standardbutton">'.
+                            '<a href="view.php?id='.$cm->id.'&amp;action=navigation&amp;pageid='.$firstpageid.'&amp;startlastseen=no">'.
+                            get_string('no').'</a></div>';
+                    echo '</span>';
                 }
                 print_footer($course);
                 exit();
@@ -336,7 +329,7 @@
                     print_simple_box_start('center');
                     echo "<div align=\"center\">";
                     echo get_string("noretake", "lesson");
-                    echo "<br /><br /><a href=\"../../course/view.php?id=$course->id\">".get_string('returntocourse', 'lesson').'</a>';
+                    echo "<br /><br /><div class=\"lessonbutton standardbutton\"><a href=\"../../course/view.php?id=$course->id\">".get_string('returntocourse', 'lesson').'</a></div>';
                     echo "</div>";
                     print_simple_box_end();
                     print_footer($course);
@@ -385,15 +378,14 @@
         
         if ($pageid != LESSON_EOL) {
             /// This is the code updates the lessontime for a timed test
-            if (isset($_POST['startlastseen'])) {  /// this deletes old records  not totally sure if this is necessary anymore
-                if ($_POST['startlastseen'] == 'no') {
+            if ($startlastseen = optional_param('startlastseen', '', PARAM_ALPHA)) {  /// this deletes old records  not totally sure if this is necessary anymore
+                if ($startlastseen == 'no') {
                     if ($grades = get_records_select('lesson_grades', "lessonid = $lesson->id AND userid = $USER->id",
                                 'grade DESC')) {
                         $retries = count($grades);
                     } else {
                         $retries = 0;
                     }
-                    // NoticeFix  big fix on the two delete_records
                     if (!delete_records('lesson_attempts', 'userid', $USER->id, 'lessonid', $lesson->id, 'retry', $retries)) {
                         error('Error: could not delete old attempts');
                     }
@@ -433,6 +425,10 @@
                 redirect("view.php?id=$cm->id&amp;action=navigation&amp;pageid=$nextpageid", get_string('endofclustertitle', 'lesson'));
             }
             
+            
+            // check to see if the user can see the left menu
+            $lesson->displayleft = lesson_displayleftif($lesson);
+            
             // start of left menu
             if ($lesson->displayleft) {
                echo '<table><tr valign="top"><td>';
@@ -465,15 +461,10 @@
 
             // starts the slideshow div
             if($lesson->slideshow && $page->qtype == LESSON_BRANCHTABLE) { 
-                echo "<div style=\"
+                echo "<div class=\"slideshow\" style=\"
                         background-color: $lesson->bgcolor;
                         height: ".$lesson->height."px;
                         width: ".$lesson->width."px;
-                        overflow: auto;
-                        padding-right: 16px; /* for the benefit of macIE5 only */ 
-                        /* \ commented backslash hack - recover from macIE5 workarounds, it will ignore the following rule */
-                        padding-right: 0;
-                        padding: 15px;
                         \">\n";
                 echo "<table align=\"center\" width=\"100%\" border=\"0\"><tr><td>\n";
             } else {
@@ -569,7 +560,6 @@
                     // print_heading(get_string('endofbranch', 'lesson'));
                     foreach ($answers as $answer) {
                         // just need the first answer
-                        /// CDC-FLAG 6/21/04 ///
                         if ($answer->jumpto == LESSON_RANDOMBRANCH) {
                             $answer->jumpto = lesson_unseen_branch_jump($lesson->id, $USER->id);
                         } elseif ($answer->jumpto == LESSON_CLUSTERJUMP) {
@@ -582,10 +572,18 @@
                                     $answer->jumpto = $page->nextpageid;
                                 }
                             }
+                        } else if ($answer->jumpto = LESSON_NEXTPAGE) {
+                            if ($page->nextpageid == 0) {  
+                                $answer->jumpto = LESSON_EOL;
+                            } else {
+                                $answer->jumpto = $page->nextpageid;
+                            }
+                        } else if ($answer->jumpto = 0) {
+                            $answer->jumpto = $page->id;
+                        } else if ($answer->jumpto = LESSON_PREVIOUSPAGE) {
+                            $answer->jumpto = $page->prevpageid;                            
                         }
-                        /// CDC-FLAG ///
-                        redirect("view.php?id=$cm->id&amp;action=navigation&amp;pageid=$answer->jumpto",
-                                get_string("endofbranch", "lesson"));
+                        redirect("view.php?id=$cm->id&amp;action=navigation&amp;pageid=$answer->jumpto");// REMOVED: , get_string("endofbranch", "lesson")
                         break;
                     } 
                     print_footer($course);
@@ -661,7 +659,9 @@
             if (!$lesson->slideshow) {
                 $options = new stdClass;
                 $options->noclean = true;
-                print_simple_box(format_text($page->contents, FORMAT_MOODLE, $options), 'center');
+                print_simple_box('<div class="contents">'.
+                                format_text($page->contents, FORMAT_MOODLE, $options).
+                                '</div>', 'center');
             }
             echo "<br />\n";
             
@@ -698,7 +698,7 @@
                             $value = "";
                         }       
                         echo "<tr><td align=\"center\">".get_string("youranswer", "lesson").
-                            ": <label for=\"answer\" class=\"hidden-label\">Answer</label><input type=\"text\" id=\"answer\" name=\"answer\" size=\"50\" maxlength=\"200\" $value />\n"; //CDC hidden label added.
+                            ": <label for=\"answer\" class=\"hidden-label\">Answer</label><input type=\"text\" id=\"answer\" name=\"answer\" size=\"50\" maxlength=\"200\" $value />\n";
                         echo '</table>';
                         print_simple_box_end();
                         echo "<div align=\"center\" class=\"lessonbutton standardbutton\"><a href=\"javascript:document.answerform.submit();\">".
@@ -713,7 +713,7 @@
                             } else {
                                 $checked = "";
                             } 
-                            echo "<label for=\"answerid\" class=\"hidden-label\">Answer ID</label><input type=\"radio\" id=\"answerid\" name=\"answerid\" value=\"{$answer->id}\" $checked />"; //CDC hidden label added.
+                            echo "<label for=\"answerid\" class=\"hidden-label\">Answer ID</label><input type=\"radio\" id=\"answerid\" name=\"answerid\" value=\"{$answer->id}\" $checked />";
                             echo "</td><td>";
                             $options = new stdClass;
                             $options->para = false; // no <p></p>
@@ -745,7 +745,7 @@
                                     }
                                 }
                                 // more than one answer allowed 
-                                echo "<label for=\"answer[$i]\" class=\"hidden-label\">answer[$i]</label><input type=\"checkbox\" id=\"answer[$i]\" name=\"answer[$i]\" value=\"{$answer->id}\" $checked />"; //CDC hidden label added.
+                                echo "<label for=\"answer[$i]\" class=\"hidden-label\">answer[$i]</label><input type=\"checkbox\" id=\"answer[$i]\" name=\"answer[$i]\" value=\"{$answer->id}\" $checked />";
                             } else {
                                 if (isset($USER->modattempts[$lesson->id]) && $answer->id == $attempt->answerid) {
                                     $checked = "checked=\"checked\"";
@@ -753,7 +753,7 @@
                                     $checked = "";
                                 } 
                                 // only one answer allowed
-                                echo "<label for=\"answerid\" class=\"hidden-label\">answer id</label><input type=\"radio\" id=\"answerid\" name=\"answerid\" value=\"{$answer->id}\" $checked />"; //CDC hidden label added.
+                                echo "<label for=\"answerid\" class=\"hidden-label\">answer id</label><input type=\"radio\" id=\"answerid\" name=\"answerid\" value=\"{$answer->id}\" $checked />";
                             }
                             echo "</td><td>";
                             $options = new stdClass;
@@ -777,7 +777,6 @@
                         }
                         break;
                         
-                    /// CDC-FLAG /// 6/14/04  --- changed how matching works    
                     case LESSON_MATCHING :
                         echo "<tr><td><table width=\"100%\">";
                         // don't suffle answers (could be an option??)
@@ -801,7 +800,7 @@
                                 $options->para = false;
                                 $options->noclean = true;
                                 echo "<b>".format_text($answer->answer,FORMAT_MOODLE,$options).": </b></td><td valign=\"bottom\">";
-                                echo "<label for=\"response[$answer->id]\" class=\"hidden-label\">response[$answer->id]</label><select id=\"response[$answer->id]\" name=\"response[$answer->id]\">"; //CDC hidden label added.
+                                echo "<label for=\"response[$answer->id]\" class=\"hidden-label\">response[$answer->id]</label><select id=\"response[$answer->id]\" name=\"response[$answer->id]\">";
                                 if (isset($USER->modattempts[$lesson->id])) {
                                     $selected = trim($answers[$useranswers[$t]]->response);                                    
                                     echo "<option value=\"".htmlspecialchars($response)."\" selected=\"selected\">$selected</option>";
@@ -880,10 +879,10 @@
                         $fullbuttonhtml .= "</div>\n";
                     
                         if ($lesson->slideshow) {
-                            echo $fullbuttonhtml . '<br />';
+                            echo '<div class="branchslidetop">' . $fullbuttonhtml . '</div>';
                             $options = new stdClass;
                             $options->noclean = true;
-                            echo format_text($page->contents, FORMAT_MOODLE, $options);
+                            echo '<div class="contents">'.format_text($page->contents, FORMAT_MOODLE, $options).format_text($page->contents).'</div>';;
                             echo "</table></div><table cellpadding=\"5\" cellspacing=\"5\" align=\"center\">";
                         } else {
                             echo "<tr><td><table width=\"100%\">";
@@ -901,7 +900,7 @@
                             echo '</table></table>';
                             print_simple_box_end();
                         } else {
-                            echo $fullbuttonhtml;
+                            echo '<div class="branchslidebottom">' . $fullbuttonhtml . '</div>';
                         }
                         break;
                     case LESSON_ESSAY :
@@ -912,7 +911,7 @@
                             $value = "";
                         }
                         echo "<tr><td align=\"center\" valign=\"top\" nowrap>".get_string("youranswer", "lesson").":</td><td>".
-                             "<label for=\"answer\" class=\"hidden-label\">Answer</label><textarea id=\"answer\" name=\"answer\" rows=\"15\" cols=\"60\">$value</textarea>\n"; //CDC hidden label added.
+                             "<label for=\"answer\" class=\"hidden-label\">Answer</label><textarea id=\"answer\" name=\"answer\" rows=\"15\" cols=\"60\">$value</textarea>\n";
                         echo "</td></tr></table>";
                         print_simple_box_end();
                         echo "<div align=\"center\" class=\"lessonbutton standardbutton\"><a href=\"javascript:document.answerform.submit();\">".
@@ -974,10 +973,10 @@
                      get_string("continue", "lesson")."\" /></p>\n";
                 echo "</form>\n";
             }
+            lesson_print_progress_bar($lesson, $course);
             echo "</table>\n"; 
         } else {
             // end of lesson reached work out grade
-            /// CDC-FLAG ///
             if ($lesson->timed && !isteacher($course->id)) {
                 if (isset($_GET["outoftime"])) {
                     if ($_GET["outoftime"] == "normal") {
@@ -1011,7 +1010,6 @@
             if (isstudent($course->id)) {
                 if ($nviewed = count_records("lesson_attempts", "lessonid", $lesson->id, "userid", 
                         $USER->id, "retry", $ntries)) {
-                    /// CDC-FLAG /// 6/11/04
                     if (!$lesson->custom) {
                         $ncorrect = 0;                        
                         $temp = array();
@@ -1111,7 +1109,6 @@
                             " (".get_string("outof", "lesson", $lesson->grade).")</p>\n";
 
                     }
-                    /// CDC-FLAG ///                        
                     $grade->lessonid = $lesson->id;
                     $grade->userid = $USER->id;
                     $grade->grade = $thegrade;
@@ -1169,7 +1166,7 @@
                 redirect($CFG->wwwroot.'/course/view.php?id='.$course->id);
             }
 
-            ///CDC-FLAG /// high scores code
+            // high scores code
             if ($lesson->highscores && !isteacher($course->id) && !$lesson->practice) {
                 echo "<div align=\"center\"><br>";
                 if (!$grades = get_records_select("lesson_grades", "lessonid = $lesson->id", "completed")) {
@@ -1177,8 +1174,8 @@
                     echo "<a href=\"view.php?id=$cm->id&amp;action=nameforhighscores\">".get_string("clicktopost", "lesson")."</a><br>";
                 } else {
                     if (!$highscores = get_records_select("lesson_high_scores", "lessonid = $lesson->id")) {
-                        echo get_string("youmadehighscore", "lesson", $lesson->maxhighsores)."<br>";
-                        echo "<a href=\"view.php?id=$cm->id&amp;action=nameforhighscores\">".get_string("clicktopost", "lesson")."</a><br>";
+                        echo get_string("youmadehighscore", "lesson", $lesson->maxhighscores)."<br>";
+                        echo "<div class=\"lessonbutton standardbutton\"><a href=\"view.php?id=$cm->id&amp;action=nameforhighscores\">".get_string("clicktopost", "lesson")."</a></div><br/>";
                     } else {
                         // get all the high scores into an array
                         foreach ($highscores as $highscore) {
@@ -1191,16 +1188,16 @@
                         
                         if ($thegrade >= $lowscore || count($topscores) <= $lesson->maxhighscores) {
                             echo get_string("youmadehighscore", "lesson", $lesson->maxhighscores)."<br>";
-                            echo "<a href=\"view.php?id=$cm->id&amp;action=nameforhighscores\">".get_string("clicktopost", "lesson")."</a><br>";
+                            echo "<div class=\"lessonbutton standardbutton\"><a href=\"view.php?id=$cm->id&amp;action=nameforhighscores\">".get_string("clicktopost", "lesson")."</a></div><br />";
                         } else {
                             echo get_string("nothighscore", "lesson", $lesson->maxhighscores)."<br>";
                         }
                     }
                 }
-                echo "<br><a href=\"view.php?id=$cm->id&amp;action=highscores&link=1\">".get_string("viewhighscores", "lesson")."</a>";
+                echo "<br /><div style=\"padding: 5px;\" class=\"lessonbutton standardbutton\"><a href=\"view.php?id=$cm->id&amp;action=highscores&link=1\">".get_string("viewhighscores", "lesson").'</a></div>';
                 echo "</div>";                            
             }
-            /// CDC-FLAG ///            
+
             if ($lesson->modattempts && !isteacher($course->id)) {
                 // make sure if the student is reviewing, that he/she sees the same pages/page path that he/she saw the first time
                 // look at the attempt records to find the first QUESTION page that the user answered, then use that page id
@@ -1215,15 +1212,12 @@
                 // sure that the student can leave the lesson via pushing the continue button.
                 $lastattempt = end($attempts);
                 $USER->modattempts[$lesson->id] = $lastattempt->pageid;
-                echo "<form name=\"reviewform\" method=\"post\" action=\"view.php?id=$cm->id\">";
-                echo "<input type=\"hidden\" name=\"pageid\" value=\"$pageid\" />";
-                echo "</form>";
-                echo "<p align=\"center\"><a href=\"javascript:document.reviewform.submit();\">".get_string("reviewlesson", "lesson")."</a></p>\n"; 
+                echo "<div align=\"center\" style=\"padding: 5px;\" class=\"lessonbutton standardbutton\"><a href=\"view.php?id=$cm->id&amp;pageid=$pageid\">".get_string("reviewlesson", "lesson")."</a></div>\n"; 
             } elseif ($lesson->modattempts && isteacher($course->id)) {
                 echo "<p align=\"center\">".get_string("modattemptsnoteacher", "lesson")."</p>";                
             }
-            echo "<p align=\"center\"><a href=\"../../course/view.php?id=$course->id\">".get_string("mainmenu", "lesson")."</a></p>\n"; //CDC Back to the menu (course view).
-            echo "<p align=\"center\"><a href=\"../../grade/index.php?id=$course->id\">".get_string("viewgrades", "lesson")."</a></p>\n"; //CDC view grades
+            echo "<div align=\"center\" style=\"padding: 5px;\" class=\"lessonbutton standardbutton\"><a href=\"../../course/view.php?id=$course->id\">".get_string("mainmenu", "lesson")."</a></div>\n"; // Back to the menu (course view).
+            echo "<div align=\"center\" style=\"padding: 5px;\" class=\"lessonbutton standardbutton\"><a href=\"../../grade/index.php?id=$course->id\">".get_string("viewgrades", "lesson")."</a></div>\n"; //view grades
         }
 
         if ($lesson->displayleft || $lesson->slideshow) {  // this ends the table cell and table for the leftmenu or for slideshow
@@ -1234,7 +1228,7 @@
 
     /*******************teacher view **************************************/
     elseif ($action == 'teacherview') {
-        /// CDC-FLAG /// link to grade essay questions and to report
+        // link to grade essay questions and to report
         if ($userattempts = get_records("lesson_attempts", "lessonid", $lesson->id)) { // just check to see if anyone has answered any questions.
             $usercount = array();
             foreach ($userattempts as $userattempts) {
@@ -1300,7 +1294,6 @@
         }
 
         if (!$page = get_record_select("lesson_pages", "lessonid = $lesson->id AND prevpageid = 0")) {
-            /// CDC-FLAG ///
             // if there are no pages give teacher the option to create a new page or a new branch table
             echo "<div align=\"center\">";
             if (isteacheredit($course->id)) {
@@ -1316,8 +1309,7 @@
                     "</a></td></tr></table>\n");
             }
             print_simple_box_end();
-            echo "</div>"; //CDC Chris Berri added.
-            /// CDC-FLAG ///        
+            echo "</div>";
         } else {
             print_heading("<a href=\"view.php?id=$cm->id&amp;action=navigation\">".get_string("checknavigation",
                 "lesson")."</a>\n");
@@ -1326,8 +1318,6 @@
             echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />\n";
             echo "<input type=\"hidden\" name=\"action\" value=\"navigation\" />\n";
             echo "<input type=\"hidden\" name=\"pageid\" />\n";
-            /// CDC-FLAG /// tree code - in final release, will use lang file for all text output.
-            // NoticeFix next two lines and bowth viewAlls
             $branch = false;
             $singlePage = false;
             if($lesson->tree && !isset($_GET['display']) && !isset($_GET['viewAll'])) {  
@@ -1365,7 +1355,6 @@
                     echo "<a href=\"view.php?id=$id\">".get_string("backtreeview", "lesson")."</a><br />\n";
                     echo "<table cellpadding=\"5\" border=\"0\" width=\"80%\">\n";
                     if (isteacheredit($course->id)) {
-                        /// CDC-FLAG 6/16/04 ///                    
                         echo "<tr><td align=\"left\"><small><a href=\"import.php?id=$cm->id&amp;pageid=$page->prevpageid\">".
                             get_string("importquestions", "lesson")."</a> | ".
                             "<a href=\"lesson.php?id=$cm->id&amp;sesskey=".$USER->sesskey."&amp;action=addcluster&amp;pageid=$page->prevpageid\">".
@@ -1377,7 +1366,6 @@
                             "<a href=\"lesson.php?id=$cm->id&amp;action=addpage&amp;pageid=$page->prevpageid\">".
                             get_string("addaquestionpage", "lesson")." ".get_string("here","lesson").
                             "</a></small></td></tr>\n";
-                        /// CDC-FLAG ///                            
                     }                  
                 } else {
                     if($lesson->tree) {
@@ -1385,7 +1373,6 @@
                     }    
                     echo "<table align=\"center\" cellpadding=\"5\" border=\"0\" width=\"80%\">\n";
                     if (isteacheredit($course->id)) {
-                        /// CDC-FLAG 6/16/04 ///
                         echo "<tr><td align=\"left\"><small><a href=\"import.php?id=$cm->id&amp;pageid=0\">".
                             get_string("importquestions", "lesson")."</a> | ".
                             "<a href=\"lesson.php?id=$cm->id&amp;sesskey=".$USER->sesskey."&amp;action=addcluster&amp;pageid=0\">".
@@ -1395,10 +1382,9 @@
                             "<a href=\"lesson.php?id=$cm->id&amp;action=addpage&amp;pageid=0\">".
                             get_string("addaquestionpage", "lesson")." ".get_string("here","lesson").
                             "</a></small></td></tr>\n";
-                        /// CDC-FLAG ///
                     }
                 }
-                /// CDC-FLAG /// end tree code    (note, there is an "}" below for an else above)
+                /// end tree code    (note, there is an "}" below for an else above)
             while (true) {
                 echo "<tr><td>\n";
                 echo "<table width=\"100%\" border=\"1\" class=\"generalbox\"><tr><th colspan=\"2\">".format_string($page->title)."&nbsp;&nbsp;\n";
@@ -1422,7 +1408,7 @@
                 if ($answers = get_records("lesson_answers", "pageid", $page->id, "id")) {
                     echo "<tr><td colspan=\"2\" align=\"center\"><b>\n";
                     switch ($page->qtype) {
-                        case LESSON_ESSAY :  /// CDC-FLAG /// 6/16/04  this line and the next
+                        case LESSON_ESSAY :
                             echo $LESSON_QUESTION_TYPE[$page->qtype];
                             break;
                         case LESSON_SHORTANSWER :
@@ -1462,7 +1448,6 @@
                             case LESSON_SHORTANSWER:
                             case LESSON_NUMERICAL:
                                 echo "<tr><td align=\"right\" valign=\"top\" width=\"20%\">\n";
-                                /// CDC-FLAG /// 6/11/04
                                 if ($lesson->custom) {
                                     // if the score is > 0, then it is correct
                                     if ($answer->score > 0) {
@@ -1549,8 +1534,8 @@
                             $jumptitle = get_string("nextpage", "lesson");
                         } elseif ($answer->jumpto == LESSON_EOL) {
                             $jumptitle = get_string("endoflesson", "lesson");
-/* CDC-FLAG 6/17/04 */    } elseif ($answer->jumpto == LESSON_UNSEENBRANCHPAGE) {
-                            $jumptitle = get_string("unseenpageinbranch", "lesson");  // a better way is get_string("unseenbranchpage", "lesson");  and define in lang file 
+                        } elseif ($answer->jumpto == LESSON_UNSEENBRANCHPAGE) {
+                            $jumptitle = get_string("unseenpageinbranch", "lesson");
                         } elseif ($answer->jumpto == LESSON_PREVIOUSPAGE) {
                             $jumptitle = get_string("previouspage", "lesson");
                         } elseif ($answer->jumpto == LESSON_RANDOMPAGE) {
@@ -1558,14 +1543,13 @@
                         } elseif ($answer->jumpto == LESSON_RANDOMBRANCH) {
                             $jumptitle = get_string("randombranch", "lesson");
                         } elseif ($answer->jumpto == LESSON_CLUSTERJUMP) {
-                            $jumptitle = get_string("clusterjump", "lesson");        /// CDC-FLAG ///                                                            
+                            $jumptitle = get_string("clusterjump", "lesson");
                         } else {
                             if (!$jumptitle = get_field("lesson_pages", "title", "id", $answer->jumpto)) {
                                 $jumptitle = "<b>".get_string("notdefined", "lesson")."</b>";
                             }
                         }
                         $jumptitle = format_string($jumptitle,true);
-                        /// CDC-FLAG ///
                         if ($page->qtype == LESSON_MATCHING) {
                             if ($i == 1) {
                                 echo "<tr><td align=\"right\" width=\"20%\"><b>".get_string("correctanswerscore", "lesson").":";
@@ -1594,7 +1578,7 @@
                         }
                         $i++;
                     }
-                    // print_simple_box_end();  /// CDC-FLAG /// not sure if i commented this out... hehe
+                    // print_simple_box_end();  // not sure if i commented this out... hehe
                     echo "<tr><td colspan=\"2\" align=\"center\">";
                     if ($page->qtype != LESSON_ENDOFBRANCH) {
                         echo "<input type=\"button\" value=\"";
@@ -1610,7 +1594,6 @@
                 }
                 echo "</table></td></tr>\n";
                 if (isteacheredit($course->id)) {
-                    /// CDC-FLAG /// 6/16/04                
                     echo "<tr><td align=\"left\"><small><a href=\"import.php?id=$cm->id&amp;pageid=$page->id\">".
                         get_string("importquestions", "lesson")."</a> | ".    
                          "<a href=\"lesson.php?id=$cm->id&amp;sesskey=".$USER->sesskey."&amp;action=addcluster&amp;pageid=$page->id\">".
@@ -1619,7 +1602,6 @@
                          get_string("addendofcluster", "lesson")."</a> | ".
                          "<a href=\"lesson.php?id=$cm->id&amp;action=addbranchtable&amp;pageid=$page->id\">".
                         get_string("addabranchtable", "lesson")."</a><br />";
-                    /// CDC-FLAG ///                    
                     // the current page or the next page is an end of branch don't show EOB link
                     $nextqtype = 0; // set to anything else EOB
                     if ($page->nextpageid) {
@@ -1648,12 +1630,11 @@
                 }
                 $prevpageid = $page->id;
                 // move to next page
-                /// CDC-FLAG ///
                 if($singlePage) {  // this will make sure only one page is displayed if needed
                     break;
                 } elseif($branch && $page->qtype == LESSON_ENDOFBRANCH) {  // this will display a branch table and its contents
                     break;
-                } elseif ($page->nextpageid) {  /// CDC-FLAG ///
+                } elseif ($page->nextpageid) {
                     if (!$page = get_record("lesson_pages", "id", $page->nextpageid)) {
                         error("Teacher view: Next page not found!");
                     }
@@ -1662,18 +1643,15 @@
                     break;
                 }
             }
-        } /// CDC-FLAG /// end of else from above tree code!!!
+        } // end of else from above tree code!!!
         
             echo "</table></form>\n";
-            /// CDC-FLAG ///
-            // NoticeFix both viewAll's
             if(isset($_GET['display']) && !isset($_GET['viewAll'])) {
                 echo "<center><a href=\"view.php?id=$id&amp;viewAll=1\">".get_string("viewallpages", "lesson")."</a><br />\n";
             }
             if($lesson->tree && (isset($_GET['display']) || isset($_GET['viewAll']))) {
                 echo "<center><a href=\"view.php?id=$id\">".get_string("backtreeview", "lesson")."</a><br /></center>\n";
             }
-            /// CDC-FLAG ///            
             print_heading("<a href=\"view.php?id=$cm->id&amp;action=navigation\">".get_string("checknavigation",
                         "lesson")."</a>\n");
         } 
@@ -2017,9 +1995,10 @@
             echo "</table>";
         }
         if (isset($_GET['link'])) {
-            echo "<br><a href=\"../../course/view.php?id=$course->id\">".get_string("returntocourse", "lesson")."</a>";
+            echo "<br /><div class=\"lessonbutton standardbutton\"><a href=\"../../course/view.php?id=$course->id\">".get_string("returntocourse", "lesson")."</a></div>";
         } else {
-            echo "<br><a href=\"../../course/view.php?id=$course->id\">".get_string("cancel", "lesson")."</a> | <a href=\"view.php?id=$cm->id&amp;action=navigation\">".get_string("startlesson", "lesson")."</a>";
+            echo "<br /><span class=\"lessonbutton standardbutton\"><a href=\"../../course/view.php?id=$course->id\">".get_string("cancel", "lesson").'</a></span> '.
+                " <span class=\"lessonbutton standardbutton\"><a href=\"view.php?id=$cm->id&amp;action=navigation\">".get_string("startlesson", "lesson").'</a></span>';
         }
         echo "</div>";
             

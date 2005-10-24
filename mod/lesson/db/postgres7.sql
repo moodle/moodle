@@ -28,6 +28,8 @@ CREATE TABLE prefix_lesson (
   height INT8  NOT NULL DEFAULT '480',
   bgcolor VARCHAR(7) NOT NULL DEFAULT '#FFFFFF',
   displayleft INT  NOT NULL DEFAULT '0',
+  displayleftif INT  NOT NULL DEFAULT '0',
+  progressbar INT  NOT NULL DEFAULT '0',
   highscores INT  NOT NULL DEFAULT '0',
   maxhighscores INT8  NOT NULL DEFAULT '0',
   available INT8  NOT NULL default '0',
