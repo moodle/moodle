@@ -1,19 +1,19 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.6 development (2005100400)
+      // lesson.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['accesscontrol'] = 'アクセスコントロール';
 $string['actionaftercorrectanswer'] = '正解後のアクション';
-$string['addabranchtable'] = '分岐表を追加';
-$string['addanendofbranch'] = '分岐終了を追加';
-$string['addaquestionpage'] = '問題ページを追加';
-$string['addcluster'] = 'クラスタを追加';
+$string['addabranchtable'] = '分岐表の追加';
+$string['addanendofbranch'] = '分岐終了の追加';
+$string['addaquestionpage'] = '問題ページの追加';
+$string['addcluster'] = 'クラスタの追加';
 $string['addedabranchtable'] = '分岐表が追加されました。';
 $string['addedanendofbranch'] = '分岐終了が追加されました。';
 $string['addedaquestionpage'] = '問題ページが追加されました。';
 $string['addedcluster'] = 'クラスタが追加されました。';
 $string['addedendofcluster'] = 'クラスタ終了が追加されました。';
-$string['addendofcluster'] = '終了クラスタを追加';
+$string['addendofcluster'] = 'クラスタ終了の追加';
 $string['and'] = 'AND';
 $string['answer'] = '選択肢';
 $string['answeredcorrectly'] = '正常に解答されました。';
@@ -64,6 +64,7 @@ $string['didnotanswerquestion'] = 'この問題に答えていません。';
 $string['didnotreceivecredit'] = '承認無し';
 $string['displayhighscores'] = 'ハイスコアを表示';
 $string['displayinleftmenu'] = '左メニューに表示しますか?';
+$string['displayleftif'] = '$a が次の評点より高い場合のみ表示:';
 $string['displayleftmenu'] = '左メニューを表示';
 $string['displayofgrade'] = '評価を表示する ( 学生に対してのみ )';
 $string['displayreview'] = 'レビューボタンを表示';
@@ -187,6 +188,8 @@ $string['pointsearned'] = '獲得点数';
 $string['postsuccess'] = '正常に投稿されました。';
 $string['practice'] = '練習レッスン';
 $string['previouspage'] = '前ページ';
+$string['progressbar'] = 'プログレスバー';
+$string['progressbarteacherwarning'] = 'プログレスバーは $a に表示されません。';
 $string['question'] = '問題';
 $string['questionoption'] = '問題';
 $string['questiontype'] = '問題タイプ';
