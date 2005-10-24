@@ -1,7 +1,6 @@
 <?PHP // $Id$ 
       // lesson.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
 
-
 $string['accesscontrol'] = 'Access control';
 $string['actionaftercorrectanswer'] = 'Action after correct answer';
 $string['addabranchtable'] = 'Add a Branch Table';
@@ -64,6 +63,7 @@ $string['didnotanswerquestion'] = 'Did not answer this question.';
 $string['didnotreceivecredit'] = 'Did not receive credit';
 $string['displayhighscores'] = 'Display high scores';
 $string['displayinleftmenu'] = 'Display in left menu?';
+$string['displayleftif'] = 'and only display if $a has grade greater than: ';
 $string['displayleftmenu'] = 'Display left menu';
 $string['displayofgrade'] = 'Display of grade (for students only)';
 $string['displayreview'] = 'Display review button';
@@ -187,6 +187,8 @@ $string['pointsearned'] = 'Points earned';
 $string['postsuccess'] = 'Post successful';
 $string['practice'] = 'Practice lesson';
 $string['previouspage'] = 'Previous page';
+$string['progressbar'] = 'Progress Bar';
+$string['progressbarteacherwarning'] = 'Progress Bar does not display for $a';
 $string['question'] = 'Question';
 $string['questionoption'] = 'Question ';
 $string['questiontype'] = 'Question type';
@@ -264,6 +266,7 @@ $string['yourcurrentgradeis'] = 'Your current grade is $a';
 $string['yourgradeisnow'] = 'Your grade for the lesson has been changed to $a';
 $string['yourresponse'] = 'Your response';
 $string['youshouldview'] = 'You should view at least: $a';
+
 
 
 
