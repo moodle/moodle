@@ -10,59 +10,58 @@
 </p> 
    
 <p><b>TeX-notatie</b></p>
-
-<ul>
-  <p>TeX notatie wordt vooral gebruikt om wiskundeformules te maken in Moodle bronnen. Bijvoorbeeld $$ sqrt(a+b) $$ (the $$ is de 'tag' om deze opmaak te starten en te beëindigen).</p>
+<div class="indent">
+  <p>TeX notatie wordt vooral gebruikt om wiskundeformules te maken in Moodle bronnen. Bijvoorbeeld $$ sqrt(a+b) $$ (de $$ is de 'tag' om deze opmaak te starten en te beëindigen).</p>
   <p>Moodle gebruikt externe programmatuur om deze afbeeldingen te genereren. Het is mogelijk dat er daarom wat extra instellingen aan je systeem moeten gebeuren. De filter zal eerst zoeken naar de LaTeX renderer (Ghostscript is ook nodig voor deze methode) en als dat mislukt zal het de eenvoudigere <i>miktex</i> gebruiken die mee met de Moodle-distributie geleverd wordt. Met LaTex kan het hele gamma van de syntax getoond worden, terwijl miktex alleen de wiskunde subset ondersteunt.</p>
   <p>Met de instellingenpagina kunnen de paden van de LaTeX en Ghostscript bestanden ingesteld worden, samen met de LaTeX inleiding.</p>
   <p><b>Meer info</b></p>
   <p><a href="http://www.miktex.org/">MiKTeX</a><br/>
      <a href="http://www.latex-project.org/">LaTeX</a><br/>
      <a href="http://www.ghostscript.com/">ghostscript</a></p>
-</ul>
+</div>
 
 <p><b>Woordcensuur</b></p>
 
-<ul>
+<div class="indent">
   <p>Woordcensuur scanr tekst naar 'vieze woorden' uit een voorgedefinieerde lijst. 
   Elk taalpakket heeft zijn eigen standaardlijst, maar je kunt je eigen lijst aanmaken. Om je lijst te maken ga je naar de instellingenpagina en geef je jouw lijst met te censureren woorden in. De gebruiker zal de woorden verborgen met een zwarte box zien, al zal het originele woord verschijnen wanneer de gebruiker er met zijn muisaanwijzer overgaat.</p>
-</ul>
+</div>
 
-<p><b>Automatisch linken van bronnen</b></b>
+<p><b>Automatisch linken van bronnen</b></p>
 
-<ul>
+<div class="indent">
   <p>Automatisch linken van bronnen scant tekst naar brontitels die in dezelfde cursus voorkomen. Wanneer die gevonden worden, zal een link ernaar gemaakt worden. Merk op dat je, wanneer je dit wil gebruiken, beschrijvende titels moet gebruiken. Zo zal bijvoorbeeld een titel als 'Introductie' niet goed zijn, omdat <b>elke</b> keer het woord 'Introductie' in de tekst als link zal verschijnen, ongeacht waarop dit woord slaat.</p>
-</ul>
+</div>
 
-<p><b>Automatisch linken van activiteiten</b></b>
+<p><b>Automatisch linken van activiteiten</b></p>
 
-<ul>
+<div class="indent">
   <p>Automatisch linken van activiteiten scant teksten naar titels van activiteiten die bestaan in dezelfde cursus. Waar die gevonden worden zal er een link naar die activiteiten gemaakt worden. Merk op dat dit enkel goed kan werken als je goede beschrijvende titels gebruikt. Zo zal bijvoorbeeld een titel als 'test' niet goed zijn, omdat <b>elke</b> keer het woord 'test' in de tekst gebruikt wordt, er een link naar gemaakt zal worden, ongeacht naarwaar dat woord verwijst.</p>
-</ul>
+</div>
 
 <p><b>Automatisch links maken van de woordenlijst</b></p>
 
-<ul>
+<div class="indent">
   <p>Deze filter scant de tekst naar sleutelwoorden die in de woordenlijsten van een cursus gebruikt worden. Merk op dat bij elke woordenlijst afzonderlijk het automatisch linken moet ingeschakeld worden. Als er woorden uit de woordenlijst gevonden worden in de tekst, dan zal er automatisch een link gemaakt worden.
   </p>
-</ul>
+</div>
 
 <p><b>E-mailbescherming</b></p>
 
-<ul>
+<div class="indent">
   <p>De e-mailbeschermingfilter scant de tekst naar e-mailadressen. Waar die gevonden worden, worden die versleuteld om te verhinderen dat automatische e-mailverzamelsystemen de adressen oogsten uit je systeem. Dit kan het risico op spam verminderen als delen van je Moodlesite open staan.</p>
-</ul>
+</div>
 
 <p><b>Tidy</b></p>
 
-<ul>
+<div class="indent">
   <p>Tidy scant naar HTML-fouten in teksten. Waar HTML voorkomt, gaat het regels toepassen om te proberen geldige HTML te maken. Merk op dat de tidy-functionaliteit moet geconfigureerd zijn in je PHP-installatie om dit te doen werken</p>
-</ul>
+</div>
 
 <p><b>Meertalige inhoud</b></p>
 
-<ul>
-  <p>Deze filter maakt het mogelijk om bronnen aan te maken in meerdere talen. De taal van de bron zal dan veranderen als de gebruiker een andere taal in Moodle kiest. Om deze functie te kunnen gebruiken moet je je inhoud in meerdere talen maken (binnen dezelfde bron). Sluit dan elk taalblok in tussen volgende tags:
+<div class="indent">
+  <p>Deze filter maakt het mogelijk om bronnen aan te maken in meerdere talen. De taal van de bron zal dan veranderen als de gebruiker een andere taal in Moodle kiest. Om deze functie te kunnen gebruiken moet je je inhoud in meerdere talen maken (binnen dezelfde bron). Sluit dan elk taalblok in tussen volgende tags:</p>
   <pre>      &lt;lang lang="XX"&gt;jouw_inhoud_hier&lt;/lang&gt;</pre>
-  </p>
-</ul>
+  
+</div>
