@@ -675,9 +675,7 @@ HTMLArea.prototype.generate = function () {
     // Generate iframe content
     var html = ""
     if (!editor.config.fullPage) {
-        html  = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" ';
-        html += '"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">\n';
-        html += "<html>\n";
+        html = "<html>\n";
         html += "<head>\n";
         html += '<meta http-equiv="content-type" content="text/html; charset=<?php echo $charset; ?>" />\n';
         if (editor.config.baseURL)
