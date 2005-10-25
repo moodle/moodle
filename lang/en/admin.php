@@ -137,6 +137,7 @@ $string['incompatibleblocks'] = 'Incompatible Blocks';
 $string['latexpreamble'] = 'LaTeX Preamble';
 $string['latexsettings'] = 'LaTeX Renderer Settings';
 $string['mediapluginavi'] = 'Enable .avi filter';
+$string['mediapluginflv'] = 'Enable .flv filter';
 $string['mediapluginmov'] = 'Enable .mov filter';
 $string['mediapluginmp3'] = 'Enable .mp3 filter';
 $string['mediapluginmpg'] = 'Enable .mpg filter';
