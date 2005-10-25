@@ -49,4 +49,12 @@
             set_config( 'filter_mediaplugin_enable_avi', 1 );
         }
     }
+    if (!isset($CFG->filter_mediaplugin_enable_flv)) {
+        if (isset($CFG->filter_mediaplugin_ignore_flv)) {
+            set_config( 'filter_mediaplugin_enable_flv', !$CFG->filter_mediaplugin_ignore_flv );
+        }
+        else {
+            set_config( 'filter_mediaplugin_enable_flv', 1 );
+        }
+    }
 ?>

@@ -1,0 +1,7 @@
+The FLV player is by Jeroen Wijering - www.jeroenwijering.com 
+produced under the creative commons license 
+
+(exact terms: http://creativecommons.org/licenses/by-nc-sa/2.5/)
+
+We are currently waiting for clearance from him to include this 
+in Moodle under the GPL ... it will be removed if he says no.

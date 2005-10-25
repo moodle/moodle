@@ -69,6 +69,27 @@ function mediaplugin_filter($courseid, $text) {
     
         $text = preg_replace($search, $replace, $text);
     }
+    
+    if ($CFG->filter_mediaplugin_enable_flv) {
+        $search = '/<a(.*?)href=\"([^<]+)\.flv\"([^>]*)>(.*?)<\/a>/is';
+            
+        $replace  = '\\0&nbsp;<object class="mediaplugin flv" classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"';
+        $replace .= ' codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,0,0" ';
+        $replace .= ' width="480" height="360" id="flvplayer">';
+        $replace .= " <param name=\"movie\" value=\"$CFG->wwwroot/filter/mediaplugin/flvplayer.swf?file=\\2.flv\" />";
+        $replace .= ' <param name="quality" value="high" />';
+        $replace .= ' <param name="bgcolor" value="#FFFFFF" />';
+        $replace .= ' <param name="flashvars" value="'.$c.'" />';
+        $replace .= " <embed src=\"$CFG->wwwroot/filter/mediaplugin/flvplayer.swf?file=\\2.flv\" ";
+        $replace .= "  quality=\"high\" bgcolor=\"#FFFFFF\" width=\"480\" height=\"360\" name=\"flvplayer\" ";
+        $replace .= ' type="application/x-shockwave-flash" ';
+        $replace .= ' flashvars="'.$c.'" ';
+        $replace .= ' pluginspage="http://www.macromedia.com/go/getflashplayer">';
+        $replace .= '</embed>';
+        $replace .= '</object>&nbsp;';
+    
+        $text = preg_replace($search, $replace, $text);
+    }
 
     if ($CFG->filter_mediaplugin_enable_mov) {
         $search = '/<a(.*?)href=\"([^<]+)\.mov\"([^>]*)>(.*?)<\/a>/is';
