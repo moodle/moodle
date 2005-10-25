@@ -136,6 +136,7 @@ $string['incompatibleblocks'] = '互換性がないブロック';
 $string['latexpreamble'] = 'LaTeXプリアンブル';
 $string['latexsettings'] = 'LaTeXレンダ設定';
 $string['mediapluginavi'] = '.aviフィルタを有効にする';
+$string['mediapluginflv'] = '.flvフィルタを有効にする';
 $string['mediapluginmov'] = '.movフィルタを有効にする';
 $string['mediapluginmp3'] = '.mp3フィルタを有効にする';
 $string['mediapluginmpg'] = '.mpgフィルタを有効にする';
