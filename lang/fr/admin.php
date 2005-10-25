@@ -135,6 +135,7 @@ $string['incompatibleblocks'] = 'Blocs incompatibles';
 $string['latexpreamble'] = 'Préambule LaTeX';
 $string['latexsettings'] = 'Réglages de LaTeX Renderer';
 $string['mediapluginavi'] = 'Activer le filtre .avi';
+$string['mediapluginflv'] = 'Activer le filtre .flv';
 $string['mediapluginmov'] = 'Activer le filtre .mov';
 $string['mediapluginmp3'] = 'Activer le filtre .mp3';
 $string['mediapluginmpg'] = 'Activer le filtre .mpg';
