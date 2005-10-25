@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.6 development (2005081700)
+      // admin.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['adminseesallevents'] = 'Gli Amministratori  visualizzano tutti gli eventi';
@@ -19,7 +19,7 @@ $string['configallowobjectembed'] = 'Come misura di sicurezza standard, agli ute
 $string['configallowunenroll'] = 'Se impostato su \"Si\", gli studenti saranno autorizzati a revocarsi autonomamente da un corso in qualunque momento. In caso contrario non verranno autorizzati a farlo, demandando a docenti e amministratori questa possibilità.';
 $string['configallowuserblockhiding'] = 'Si desidera permettere agli utenti di mostrare/nascondere i blocchi laterali di tutto il sito? <br>Questa caratteristica utilizza Javascript e i cookies per ricordare lo stato di ogni blocco, e influenza solo la vista personale dell\'utente.';
 $string['configallowuserthemes'] = 'Se abilitato, ogni utente potrà ad impostare un proprio tema personale. I temi personali dell\'utente sovrascrivono i temi del sito. (ma non i temi di un corso).';
-$string['configallusersaresitestudents'] = 'Ai fini delle attività poste sulla pagina principale del sito, tutti gli utenti devono essere considerati studenti? Se si risponde \"Si\" allora ogni account utente confermato sarà abilitato a partecipare come studente a queste attività. Se si risponde \"No\", allora solo gli utenti che sono anche studenti iscritti almeno ad un corso saranno abilitati a partecipare a queste attività presenti nella pagina principale. Solo gli Amministratori e i Docenti creatori di corso potranno comportarsi come insegnanti per queste attività della pagina principale.';
+$string['configallusersaresitestudents'] = 'Ai fini delle attività poste sulla pagina principale del sito, tutti gli utenti devono essere considerati studenti? Se si risponde \"Si\" allora ogni account utente confermato sarà abilitato a partecipare come studente a queste attività. Se si risponde \"No\", allora solo gli utenti che sono anche studenti iscritti almeno ad un corso saranno abilitati a partecipare a queste attività presenti nella pagina principale. Solo gli amministratori e i docenti speciali assegnati potranno comportarsi come docenti per queste attività della pagina principale.';
 $string['configautologinguests'] = 'Abilitare automaticamente i vistatori occasionali a visitare i corsi (aperti agli ospiti) con accesso Ospite?';
 $string['configcachetext'] = 'Per siti molto ampi o siti che utilizzano filtri di testo, queste impostazioni possono davvero velocizzare molto la navigazione. Le copie dei testi saranno mantenute nella loro forma originaria per il tempo specificato qui. Impostazioni con valori di spazio molto ridotto potrebbero provocare un rallentamento generale, mentre Impostazioni con valori di spazio troppo ampii potrebbe portare a tempi troppo lunghi nel refresh dei testi principali (in caso di nuovi collegamenti, per esempio)';
 $string['configclamactlikevirus'] = 'Tratta i files come virus';
@@ -32,18 +32,23 @@ $string['configcountry'] = 'Se scegliete uno stato qui, questo verrà proposto di
 $string['configdbsessions'] = 'Se attivata, questa opzione utilizzerà il database per memorizzare le informazioni sulle sessioni correnti. Ciò è particolarmente utile per siti molto grandi o con molto traffico o per siti costruiti su cluster di servers. Per la maggior parte dei siti questa impostazione dovrebbe probabilmente essere lasciata su disabled in modo da utilizzare il disco del server. Attenzione: cambiare questa impostazione provocherà il log-out dal sito di tutti gli utenti collegati, voi compresi.';
 $string['configdebug'] = 'Attivando questa opzione, verrà incrementata la reportistica di errore di PHP, aumentando i messaggi di errore. Questa opzione è utile solo per gli sviluppatori.';
 $string['configdefaultallowedmodules'] = 'Per i corsi che ricadono nella categoria sovrastante, quali moduli si vuole che vengano permessi <b>quando il corso è creato</b>?';
+$string['configdefaultrequestedcategory'] = 'Categoria in cui mettere i corsi che sono stato richiesti, se vengono approvati.';
 $string['configdeleteunconfirmed'] = 'Se state usando l\'autenticazione e-mail, questo parametro imposta il periodo in cui sarà accettata la risposta dagli utenti. Dopo questo periodo, gli utenti non confermati vengono cancellati.';
 $string['configdenyemailaddresses'] = 'Per rifiutare indirizzi e-mail provenienti da domini particolari, inserirne il nome qui. Tutti gli altri indirizzi verranno accettati.';
 $string['configdigestmailtime'] = 'Agli utenti che hanno scelto la modalità \'invio e-mail come raccolta quotidiana\', verrà inviata quotidianamente la raccolte dei messaggi.  Questa impostazione regola l\'ora di invio della raccolta.(il cron attivo nell\'ora seguente a questa impostazione invierà i dati richiesti).';
 $string['configdisplayloginfailures'] = 'Visualizza informazioni sul mancato login degli utenti selezionati.';
+$string['configenablecourserequests'] = 'Questa impostazione permette a qualunque utente di richiedere la creazione di un corso.';
 $string['configenablerssfeeds'] = 'Questa impostazione attiva l\'alimentatore RSS (RSS Feeds) nel sito. Per visualizzare i cambiamenti bisognerà attivare l\'alimentatore RSS anche nei moduli individuali: per farlo, andate in \'configurazione moduli\' nel pannello di Amministrazione.';
 $string['configenablerssfeedsdisabled'] = 'Non è attiva poichè l\'alimentatore RSS è disabilitato in tutto il sito. Per attivarlo, andate in \'configura variabili\' nel pannello di Amministrazione.';
+$string['configenablestats'] = 'Se qui viene scelto \'Si\'. All\'esecuzione del cron Moodle elaborerà i log e genererà alcune statistiche. La durata di questa operazione dipende dal traffico del vostro sito. Se viene abititata questa impostazione sarete in grado di visualizzare alcuni grafici interessanti su ogni corso, o su tutto il sito.';
 $string['configerrorlevel'] = 'Scegliete l\'ammontare di messaggi di errore di PHP che si desidera visualizzare. \'Normale\' è solitamente l\'opzione migliore.';
 $string['configextendedusernamechars'] = 'Attivate questa opzione per permettere agli studenti di utilizzare qualsiasi carattere nel loro nome utente (da notare che questo non influisce sui loro nomi attuali).
 L\'impostazione predefinita limita l\'uso dei caratteri ai soli alfanumerici (esclude quindi caratteri speciali, caratteri accentati, ecc).';
 $string['configfilterall'] = 'Filtra tutte le stringhe, incluse le intestazioni, titoli, barre di navigazione ecc.
 Questo è particolarmente utile se si usa il filtro multilingua; altrimenti creerà soltanto traffico supplementare sul sito senza un guadagno apprezzabile. ';
-$string['configfilteruploadedfiles'] = 'Attivando questa opzione, Moodle processerà tutti i files di testo e HTML mediante il filtro, prima di visualizzarli.';
+$string['configfiltermatchoneperpage'] = 'Il filtro di creazione automatica dei collegamenti (auto-collegamento) genererà solo il collegamento alla prima occorrenza del testo che viene trovata in una pagina. Tutte le altre sono ignorate.';
+$string['configfiltermatchonepertext'] = 'Il filtro di creazione automatica dei collegamenti (auto-collegamento) genererà solo il collegamento alla prima occorrenza del testo trovata in ogni elemento di testo (es. risorsa, blocco) della pagina. Tutti gli altri sono ignorati. Questa impostazione non viene considerata se l\'impostazione uno per pagina è <i>si</i>.';
+$string['configfilteruploadedfiles'] = 'Attivando questa opzione, Moodle elaborerà tutti i file di testo e HTML mediante il filtro, prima di visualizzarli.';
 $string['configforcelogin'] = 'Normalmente, la pagina principale del sito e la lista dei corsi (ma non i corsi) vengono visualizzate senza dover effettuare il login al sito. Se si desidera forzare i visitatori alla registrazione prima che sia possibile fare QUALUNQUE cosa sul sito, scegliere questa opzione.';
 $string['configforceloginforprofiles'] = 'Attivando questa impostazione si forza il visitatore al login come utente reale (non come ospite) per poter visualizzare i profili di altri utenti. L\'opzione predefinita abilita questa possibilità, in modo che anche i potenziali studenti possano leggere i profili degli docenti di ogni corso.
 Da tenere presente che anche i motori di ricerca web potranno visualizzare i profili.';
@@ -81,14 +86,22 @@ $string['configmaxbytes'] = 'Specifica il limite massimo dei file da trasferire 
 In alternativa, la dimensione massima può essere scelta a livello dei corsi o dei moduli. ';
 $string['configmaxeditingtime'] = 'Questo parametro specifica il tempo complessivo che gli utenti hanno a disposizione per modificare i loro messaggi sui forums, sul diario, per il feedback, ecc. Normalmente, 30 è un buon valore. ';
 $string['configmessaging'] = 'Attivare il sistema di messaggistica interna?';
+$string['configmymoodleredirect'] = 'Questa impostazione forza la ridirezione a /my all\'accesso per i non amministratori e sostituisce collegamento alla pagina principale del sito con /my';
 $string['confignoreplyaddress'] = 'Le mail a volte sono spedite a nome di un utente (per esempio, i messaggi dei forum). L\'indirizzo mail qui specificato sarà utilizzato come l\'indirizzo \"Da\" cui proviene il messaggio,nei casi in cui il ricevente non è in grado di replicare direttamente all\'utente (per esempio, quando un utente decide di mantenere il suo indirizzo privato). ';
 $string['confignotifyloginfailures'] = 'Se sono stati registrati accessi falliti, una mail di notifica può essere spedita. Chi deve ricevere queste notifiche? ';
 $string['confignotifyloginthreshold'] = 'Se la notifica sugli accessi falliti è attiva, dopo quanti tentativi falliti per utente o per indirizzo IP la notifica deve essere inviata? ';
 $string['configopentogoogle'] = 'Se abilitate questa impostazione, Google potrà entrare nel vostro sito come Ospite. Inoltre, chi arriverà al vostro sito tramite Google verrà automaticamente autenticato come Ospite. Nota che questa impostazione fornisce un accesso trasparente solo ai corsi che già permettono l\'accesso agli ospiti. ';
 $string['configpathtoclam'] = 'Percorso a Clam antivirus. Probabilmente, sarà usr/bin/clamscan oppure /usr/bin/clamdscan.
 Questo percorso consente a Clam di funzionare.';
+$string['configpathtodu'] = 'Percorso a du. Probabilmente sarà usr/bin/du. Se questo campo viene definito, le pagine che mostrano il contenuto delle cartelle con molti file verranno elaborate più velocemente.';
 $string['configproxyhost'] = 'Se questo <b>server</b> necessita di un proxy (ad esempio un firewall) per accedere a Internet, allora indicare qui il nome del server (hostname) e il numero della porta di accesso. In caso contrario, lasciate vuoto questo campo. ';
 $string['configquarantinedir'] = 'Se desiderate che Clam antivirus sposti eventuali file infetti in una cartella di quarantena, inseritene il percorso qui. La cartella deve avere i permessi di scrittura da parte del server web. Se lasciate in bianco, o se configurate una directory inesistente o senza i permessi di scrittura necessari, i files infetti saranno cancellati. Non inserite slash di percorso.';
+$string['configrequestedstudentname'] = 'Termine per \'studente\' da utilizzare nel corsi richiesti';
+$string['configrequestedstudentsname'] = 'Termine per \'studenti\' da utilizzare nel corsi richiesti';
+$string['configrequestedteachername'] = 'Termine per \'docente\' da utilizzare nel corsi richiesti';
+$string['configrequestedteachersname'] = 'Termine per \'docenti\' da utilizzare nel corsi richiesti';
+$string['configrestrictbydefault'] = 'I nuovi corsi che vengono creati nella categoria soprastante devono avere restrizioni sui loro moduli?';
+$string['configrestrictmodulesfor'] = 'Quali corsi devono avere la <b>possibilità</b> di disabilitare alcuni moduli?';
 $string['configrunclamonupload'] = 'Attivare Clam antivirus sui file in trasferimento? Avrete bisogno di configurare correttamente il percorso nella variabile \'pathtoclam\' per farlo funzionare. (Clam è un antivirus gratuito che si può ottenere dal sito: http://www.clamav.net/)';
 $string['configsectioninterface'] = 'Interfaccia';
 $string['configsectionmail'] = 'Posta';
@@ -96,7 +109,9 @@ $string['configsectionmaintenance'] = 'Mantenimento';
 $string['configsectionmisc'] = 'Miscellanea';
 $string['configsectionoperatingsystem'] = 'Sistema Operativo';
 $string['configsectionpermissions'] = 'Permessi';
+$string['configsectionrequestedcourse'] = 'Richiesta corsi';
 $string['configsectionsecurity'] = 'Sicurezza';
+$string['configsectionstats'] = 'Statistiche';
 $string['configsectionuser'] = 'Utente';
 $string['configsecureforms'] = 'Moodle può utilizzare un livello aggiuntivo di sicurezza nell\'accettazione di dati provenienti da moduli web. Se attivata, la variabile HTTP_REFERER del browser é confrontata con l\'indirizzo del form attuale. In alcuni rari casi questo può causare problemi se l\'utente sta utilizzando un firewall (ad esempio Zonealarm) configurato per rimuovere HTTP_REFERER dal suo traffico web. Uno dei sintomi é rimanere \'bloccato\' su di un form. Se i vostri utenti dovessero avere problemi con la pagina di login (per esempio), potreste disabilitare questa impostazione, anche se questo può esporre il  sito ad attacchi con forzature di password. Se siete in dubbio, lasciate l\'impostazione su \'Si\'. ';
 $string['configsessioncookie'] = 'Questa impostazione personalizza il nome del cookie usato per le sessioni di Moodle. Questa impostazione è opzionale ed è utile solo se più di una copia di Moodle viene eseguita sullo stesso sito web. ';
@@ -109,6 +124,9 @@ Questo metodo permette una migliore gestione dei files nella cache del browser o
 Sfortunantamente alcuni server PHP non autorizzano questo metodo, perciò se avete problemi nel visualizzare files e/o immagini trasferiti (ad esempio le immagini del profilo utente), impostate la variabile con la prima opzione. ';
 $string['configsmtphosts'] = 'Impostare il nome intero di uno o più servers locali SMTP che Moodle dovrebbe usare (per esempio \'mail.a.com\' oppure \'mail.a.com;mail.b.com\'). Se lasciato in bianco, Moodle utilizzerà il metodo di spedizione della posta predefinito in PHP. ';
 $string['configsmtpuser'] = 'Se avete specificato un server SMTP che richiede l\'autenticazione, indicate qui l\'username e la password relativi.';
+$string['configstatsfirstrun'] = 'Questa impostazione definisce, per la <b>prima elaborazione</b> delle statistiche dei log, da quanto indietro nel tempo devono essere elaborati i log. Se avete molto traffico e non avete un server dedicato, probabilmente non è una buona idea tornare troppo indietro nel tempo, l\'elaborazione potrebbe essere abbastanza lunga ed esosa in termini di risorse necessarie. (Notare che nell\'impostazione , 1 mese = 28 giorni. Nei grafici e nei rapporti generati, 1 mese = 1 mese del calendario.) ';
+$string['configstatsmaxruntime'] = 'L\'elaborazione delle statistiche può essere abbastanza lunga. Utilizzate una combinazione di questo e del prossimo campo per definire quando farla partire e per quanto tempo.';
+$string['configstatsruntimestart'] = 'A che ora il cron deve far <b>iniziare</b> l\'elaborazione delle statistiche?';
 $string['configteacherassignteachers'] = 'Possono i docenti assegnare altri docenti ai corsi in cui insegnano? Se \'No\', gli unici che possono assegnare docenti sono i creatori di corsi e gli amministratori. ';
 $string['configthemelist'] = 'Lasciate in bianco se volete permettere l\'utilizzo di un qualunque tema valido. Se desiderate invece abbreviare il menu dei temi, specificate un\'elenco di temi disponibili, separato da virgole. Per esempio: standard,orangewhite.';
 $string['configtimezone'] = 'Qui potete impostare il fuso orario standard. Questo è l\'unico fuso orario standard per la visualizzazione delle date - ogni utente può scegliere la propria impostazione nel suo profilo. Impostando \"Server time\", si farà coincidere l\'ora con quella impostata nel sistema operativo del server, mentre impostandolo nel profilo utente corrisponderà a impostarlo a questo valore.';
@@ -122,13 +140,15 @@ $string['cronwarning'] = 'Lo  <a href=\"cron.php\">script della routine cron.php
 $string['density'] = 'Densità';
 $string['edithelpdocs'] = 'Modifica documenti di Help';
 $string['editstrings'] = 'Modifica stringhe';
-$string['filterall'] = 'Filtra tute le stringhe';
+$string['filterall'] = 'Filtra tutte le stringhe';
+$string['filtermatchoneperpage'] = 'Filtra occorrenze una volta per pagina';
+$string['filtermatchonepertext'] = 'Filtra occorrenze una volta per testo';
 $string['filteruploadedfiles'] = 'Applica filtro sui file inviati';
 $string['helpadminseesall'] = 'Gli amministratori visualizzano tutti gli eventi calendario o solo quelli a loro stessi collegati?';
 $string['helpcalendarsettings'] = 'Configura vari aspetti in Moodle relativi al calendario, alle date, alle durate.';
 $string['helpforcetimezone'] = 'Potete autorizzare gli utenti a selezionare individualmente il fuso orario, oppure impoore un fuso orario a tutti gli utenti.';
 $string['helpsitemaintenance'] = 'Per aggiornamenti e altro lavoro.';
-$string['helpstartofweek'] = 'In quale giorno volete fare partire la settimana nel calendario?';
+$string['helpstartofweek'] = 'Da quale giorno inizia la settimana nel calendario?';
 $string['helpupcominglookahead'] = 'Valore predefinito della frequenza con cui il calendario cerca eventi imminenti. (valore espresso in giorni futuri).';
 $string['helpupcomingmaxevents'] = 'Quanti (valore massimo) eventi imminenti vengono mostrati agli utenti?';
 $string['helpweekenddays'] = 'Quali giorni della settimana devono essere considerati come festivi e mostrati con un colore diverso?';
@@ -136,13 +156,29 @@ $string['importtimezones'] = 'Aggiorna la lista completa dei fusi orari';
 $string['importtimezonescount'] = '$a->conta entries importate da $a->source';
 $string['importtimezonesfailed'] = 'Non è stata trovata sorgente! (brutte notizie)';
 $string['incompatibleblocks'] = 'Blocchi non compatibili';
+$string['latexpreamble'] = 'Preambolo LaTex';
+$string['latexsettings'] = 'Impostazioni di elaborazione LaTex';
+$string['mediapluginavi'] = 'Abilita filtro .avi';
+$string['mediapluginmov'] = 'Abilita filtro .mov';
+$string['mediapluginmp3'] = 'Abilita filtro .mp3';
+$string['mediapluginmpg'] = 'Abilita filtro .mpg';
+$string['mediapluginswf'] = 'Abilita filtro .swf';
+$string['mediapluginwmv'] = 'Abilita filtro .wmv';
 $string['optionalmaintenancemessage'] = 'Messaggio di mantenimento opzionale';
+$string['pathconvert'] = 'Percorso per l\'eseguibile <i>convert</i>';
+$string['pathdvips'] = 'Percorso per l\'eseguibile <i>dvips</i>';
+$string['pathlatex'] = 'Percorso per l\'eseguibile <i>latex</i>';
 $string['pleaseregister'] = 'Registrando il vostro sito questo pulsante verrà rimosso';
 $string['sitemaintenance'] = 'Il sito è sottoposto a mantenimento e non è attualmente disponibile';
 $string['sitemaintenancemode'] = 'Modalità di mantenimento';
 $string['sitemaintenanceoff'] = 'La modalità di mantenimento è stata disattivata e il sito è nuovamente operativo.';
 $string['sitemaintenanceon'] = 'Il sito è attualmente in modalità di mantenimento (solo gli amministratori possono collegarsi o utilizzare il sito).';
 $string['sitemaintenancewarning'] = 'Il sito è attualmente in modalità di mantenimento (solo gli amministratori possono collegarsi o utilizzare il sito). Per tornare in modalità normale, <a href=\"maintenance.php\">disattivare la modalità di mantenimento</a>.';
+$string['stickyblocks'] = 'Blocchi \"pinzati\"';
+$string['stickyblockscourseview'] = 'Pagina del Corso';
+$string['stickyblocksduplicatenotice'] = 'Se un blocco aggiunto qui esiste già in una particolare pagina, risulterà duplicato.<br />Solo i blocchi \"pinzati\" non saranno modificabili, il duplicato continuerà ad essere modificabile.';
+$string['stickyblocksmymoodle'] = 'Moodle Mio';
+$string['stickyblockspagetype'] = 'Tipo di pagina da configurare';
 $string['tabselectedtofront'] = 'Nelle tabelle con etichetta, si deve posizionare davanti la riga con il tag corrente selezionato? ';
 $string['therewereerrors'] = 'Si sono verificati errori nei vostri dati';
 $string['timezoneforced'] = 'Questa viene forzata dall\'amministratore?';

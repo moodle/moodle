@@ -23,6 +23,7 @@ $string['configpopupwidth'] = 'Larghezza standard per le nuove finestre di popup
 $string['configsecretphrase'] = 'Questa frase segreta viene utilizzata per generare il codice criptato che viene spedito ad alcune risorse com parametro. Il codice criptato è generato da un valore md5 dell\'indirizzo IP dell\'utente corrente concatenato con la frase segreta. Es: code  = md5(IP.secretphrase). Questo permette al destinatario della risorsa di verificare la connessione per una maggiore sicurezza.';
 $string['configwebsearch'] = 'Quando aggiungi un URL come una Pagina web o un Collegamento web, questo collegamento è offerto come un sito per aiutare gli utenti a cercare l\'URL che vogliono';
 $string['configwindowsettings'] = 'Questo imposta il valore standard per le impostazioni della finestra nel modulo quando aggiungi una nuova risorsa. Dopo la prima volta, diventa una preferenza legata all\'utente.';
+$string['deploy'] = 'Pubblicare';
 $string['directlink'] = 'Collegamento diretto a questo file';
 $string['directoryinfo'] = 'Tutti i file nella cartella scelta verranno mostrati.';
 $string['display'] = 'Finestra';
@@ -38,6 +39,7 @@ $string['filtername'] = 'Auto-collegamento alla risorsa';
 $string['frameifpossible'] = 'Inserisci la risorsa in un frame per mantere la navigazione del sito visibile';
 $string['fulltext'] = 'Testo integrale';
 $string['htmlfragment'] = 'Codice HTML';
+$string['imspackageloaded'] = 'Pacchetto caricato.';
 $string['localfile'] = 'File locale';
 $string['localfilechoose'] = 'Scegliere un file locale (CD-ROM)';
 $string['localfilehelp'] = 'Aiuto per la visualizzazione di file locali';
@@ -70,7 +72,7 @@ $string['notypechosen'] = 'È necessario che tu scelga un tipo. Usa il
 
 pulsante indietro per ritornare alla pagina precedente e riprovare.';
 $string['packagechanged'] = 'Questo pacchetto IMS è cambiato';
-$string['packagenotdeplyed'] = 'Questo pacchetto IMS non è utilizzato';
+$string['packagenotdeplyed'] = 'Questo pacchetto IMS non è pubblicato';
 $string['pagedisplay'] = 'Mostra questa risorsa nella finestra corrente';
 $string['pagewindow'] = 'Stessa finestra';
 $string['pan'] = 'Bilanciamento';
@@ -91,7 +93,7 @@ $string['resourcetype9'] = 'Cartella';
 $string['resourcetypedirectory'] = 'Mostra una cartella';
 $string['resourcetypefile'] = 'Collegamento a un file o a un sito';
 $string['resourcetypehtml'] = 'Componi una pagina web';
-$string['resourcetypeims'] = 'Utilizza un pacchetto IMS';
+$string['resourcetypeims'] = 'Pubblicare un pacchetto IMS';
 $string['resourcetypelabel'] = 'Inserisci una etichetta';
 $string['resourcetyperepository'] = 'Collegamento a un archivio di oggetti';
 $string['resourcetypetext'] = 'Componi una pagina di testo';

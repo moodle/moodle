@@ -1,6 +1,5 @@
 <?PHP // $Id$ 
-      // block_quiz_results.php - created with Moodle 1.5 ALPHA (2005043000)
-	  // traduzione a cura di Luca Arese - Università di Torino
+      // block_quiz_results.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['bestgrade'] = 'Il voto più alto';
@@ -11,6 +10,10 @@ $string['config_format_absolute'] = 'Numeri assoluti';
 $string['config_format_fraction'] = 'Frazioni';
 $string['config_format_percentage'] = 'Percentuali';
 $string['config_grade_format'] = 'Mostra i voti come:';
+$string['config_name_format'] = 'Livello di privacy per i risultati mostrati:';
+$string['config_names_anon'] = 'Risultati anonimi';
+$string['config_names_full'] = 'Mostra nome completo';
+$string['config_names_id'] = 'Mostra solo matricola';
 $string['config_no_quizzes_in_course'] = 'Questo corso non contiene nessuna attività Quiz. Bisogna aggiungerne almeno una prima di poter utilizzare correttamente il modulo.';
 $string['config_select_quiz'] = 'Di quale quiz bisogna mostrare i risultati in questo blocco?';
 $string['config_show_best'] = 'Quanti fra i voti migliori devono essere visualizzati? (da 0 a disabilita)';
