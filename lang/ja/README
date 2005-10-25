@@ -1,17 +1,18 @@
 MOODLE JAPANESE TRANSLATION
 ----------------------------------------------------------------------
 STARTED                       : November 21, 2002
-LAST MODIFIED                 : October 25, 2005
+LAST MODIFIED                 : October 26, 2005
 ----------------------------------------------------------------------
 
 Mitsuhiro Yoshida ( http://mitstek.com/ ) - Moodle Partner
  Translating whole ja and ja_utf8 files, translation management.
 
-Timothy Takemoto ( http://eigodaigaku.com )
+Timothy Takemoto ( http://eigodaigaku.com/ )
  Facilitator of "Japanese Moodle" ( http://moodle.org/course/view.php?id=14 )
  Translation brushup
 
-Paul Shew ( http://ac.shew.jp )
+ Paul Tsuchido Shew ( http://shew.jp/ )
+ Quiz module GIFT import filter development
  Translation: /lang/ja/help/quiz/formatgift.html
  Translation brushup
 
