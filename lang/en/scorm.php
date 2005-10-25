@@ -1,15 +1,15 @@
 <?php // $Id$
 
 #------------------------------------------------------------
-$string['modulename'] = 'SCORM';
-$string['modulenameplural'] = 'SCORMs';
+$string['modulename'] = 'SCORM/AICC';
+$string['modulenameplural'] = 'SCORMs/AICCs';
 #------------------------------------------------------------
 
 $string['asset'] = 'Asset';
 $string['autocontinue'] = 'Auto-Continue';
 $string['browse'] = 'Preview';
 $string['browsed'] = 'Browsed';
-$string['browsemode'] = 'Browse Mode';
+$string['browsemode'] = 'Preview Mode';
 $string['chooseapacket'] = 'Choose or update a package';
 $string['completed'] = 'Completed';
 $string['coursestruct'] = 'Course structure';
@@ -21,7 +21,6 @@ $string['gradehighest'] = 'Highest grade';
 $string['grademethod'] = 'Grading method';
 $string['gradescoes'] = 'Scoes situation';
 $string['gradesum'] = 'Sum grade';
-$string['guestsno'] = 'Guests can not view scorm courses';
 $string['incomplete'] = 'Incomplete';
 $string['next'] = 'Continue';
 $string['noreports'] = 'No report to display';
@@ -34,29 +33,33 @@ $string['passed'] = 'Passed';
 $string['prev'] = 'Previous';
 $string['report'] = 'Report';
 $string['review'] = 'Review';
-$string['scoes'] = 'Scoes';
+$string['scoes'] = 'Learning Objects';
 $string['score'] = 'Score';
 $string['viewallreports'] = 'View reports for $a attempts';
-$string['display'] = 'Display';
+$string['display'] = 'Display package';
 $string['expcoll'] = 'Expand/Collide';
-$string['exit'] = 'Exit from SCORM course';
-$string['details'] = 'SCO track details';
-$string['hidebrowse'] = 'Hide preview mode button';
-$string['frameheight'] = 'This preference set the default height of SCO frame';
-$string['framewidth'] = 'This preference set the default width of SCO frame';
-$string['stagesize'] = 'Frame/Window size';
+$string['exit'] = 'Exit from course';
+$string['details'] = 'Track details';
+$string['hidebrowse'] = 'Disable preview mode';
+$string['frameheight'] = 'This preference set the default height for stage frame or window';
+$string['framewidth'] = 'This preference set the default width for stage frame or window';
+$string['stagesize'] = 'Stage size';
 $string['width'] = 'Width';
 $string['height'] = 'Height';
 $string['trackingloose'] = 'WARNING: The tracking data of this package will be lost!';
-$string['popup'] = 'Open Learning Objects in a new window';
+$string['iframe'] = 'Current window';
+$string['iframedisplay'] = 'Open package in the current window';
+$string['popup'] = 'New window';
+$string['popupopen'] = 'Open package in a new window';
 $string['totaltime'] = 'Time';
 $string['noactivity'] = 'Nothing to report';
 $string['firstaccess'] = 'First access';
 $string['lastaccess'] = 'Last access';
-$string['scormcourse'] = 'SCORM Course';
+$string['scormcourse'] = 'Learning Course';
 $string['advanced'] = 'Advanced';
-$string['window'] = 'Frame/Window';
-$string['hidetoc'] = 'Hide course structure from player window';
+$string['window'] = 'Window';
+$string['hidetoc'] = 'Hide course structure (TOC)';
+$string['hidenav'] = 'Hide navigation buttons';
 $string['noprerequisites'] = 'Sorry but you don\'t reach enough prerequisites to access this learning object';
 $string['element'] = 'Element';
 $string['value'] = 'Value';
@@ -73,6 +76,14 @@ $string['student_response'] = 'Response';
 $string['interactions'] = 'Interactions';
 $string['objectives'] = 'Objectives';
 $string['othertracks'] = 'Other Tracks';
+$string['directories'] = 'Show the directory links';
+$string['fullscreen'] = 'Fill the whole screen';
+$string['location'] = 'Show the location bar';
+$string['menubar'] = 'Show the menu bar';
+$string['resizable'] = 'Allow the window to be resized';
+$string['scrollbars'] = 'Allow the window to be scrolled';
+$string['statusbar'] = 'Show the status bar';
+$string['toolbar'] = 'Show the toolbar';
 
 
 // Validation
