@@ -115,7 +115,7 @@
                 error("Continue: No answers found");
             }
             $correctanswer = false;
-            $response = "Your essay will be graded by the course instructor.";
+            $response = get_string('defaultessayresponse', 'lesson');
             foreach ($answers as $answer) {
                 $answerid = $answer->id;
                 $newpageid = $answer->jumpto;
