@@ -855,8 +855,7 @@
                             $width = ' width="100%"';
                         }
                         
-                        //$fullbuttonhtml = '<div class="branchbuttoncontainer">'."\n";
-                        $fullbuttonhtml = '';
+                        $fullbuttonhtml = '<div class="branchbuttoncontainer">'."\n";
                         if ($page->layout) {
                             // tried to do this with CSS, but couldnt get it to work in MacIE browser.  Using tables instead :(
                             // don't care if empty or not because we want to keep the table structure
@@ -879,7 +878,7 @@
                                                 implode("</td></tr>\n<tr><td align=\"center\">", $temparray).
                                                 "</td></tr></table>\n";
                         }
-                        //$fullbuttonhtml .= "</div>\n";
+                        $fullbuttonhtml .= "</div>\n";
                     
                         if ($lesson->slideshow) {
                             echo '<div class="branchslidetop">' . $fullbuttonhtml . '</div>';
@@ -899,7 +898,7 @@
                                 print_simple_box_start("center");
                             }
                             
-                            echo '<div class="branchbuttoncontainer">' . $fullbuttonhtml . '</div>';
+                            echo $fullbuttonhtml;
                             echo '</table></table>';
                             print_simple_box_end();
                         } else {
