@@ -31,13 +31,15 @@ class block_login extends block_base {
             $signup = $wwwroot . '/login/signup.php';
             $forgot = $wwwroot . '/login/forgot_password.php';
         } else {
-            if (!empty($CFG->changepassword)) {
-                $forgot = $CFG->changepassword;
-            } else {
-                $forgot = '';
-            }
-            if (!empty($CFG->auth_user_create)) {
-                $signup = $wwwroot . '/login/index.php';  // to see instructions!
+            if (!empty($CFG->{'auth_'.$CFG->auth.'_stdchangepassword'})
+                || $CFG->changepassword 
+                || is_internal_auth() ) {
+                if (is_internal_auth() || !empty($CFG->{'auth_'.$CFG->auth.'_stdchangepassword'})) {
+                    $forgot =  $wwwroot . '/login/forgot_password.php';
+                }
+                else {
+                    $changepassword = $CFG->changepassword;
+                }
             }
         }
 
