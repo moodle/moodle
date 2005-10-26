@@ -1117,6 +1117,7 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
 
     $output  = '<div style="text-align: right">';
     if (course_allowed_module($course,'resource')) {
+        $resourceallowed = true;
         $output .= popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$section&amp;sesskey=$USER->sesskey&amp;add=",
                               $resources, "ressection$section", "", $straddresource, 'resource/types', $straddresource, true);
     }
