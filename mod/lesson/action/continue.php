@@ -5,7 +5,9 @@
 
     // left menu code
     // check to see if the user can see the left menu
-    $lesson->displayleft = lesson_displayleftif($lesson);
+    if (!isteacher($course->id)) {
+        $lesson->displayleft = lesson_displayleftif($lesson);
+    }
     if ($lesson->displayleft) {
        if($firstpageid = get_field('lesson_pages', 'id', 'lessonid', $lesson->id, 'prevpageid', 0)) {
             // print the pages

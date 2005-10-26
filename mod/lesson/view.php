@@ -427,7 +427,9 @@
             
             
             // check to see if the user can see the left menu
-            $lesson->displayleft = lesson_displayleftif($lesson);
+            if (!isteacher($course->id)) {
+                $lesson->displayleft = lesson_displayleftif($lesson);
+            }
             
             // start of left menu
             if ($lesson->displayleft) {
@@ -853,7 +855,8 @@
                             $width = ' width="100%"';
                         }
                         
-                        $fullbuttonhtml = '<div class="branchbuttoncontainer">'."\n";
+                        //$fullbuttonhtml = '<div class="branchbuttoncontainer">'."\n";
+                        $fullbuttonhtml = '';
                         if ($page->layout) {
                             // tried to do this with CSS, but couldnt get it to work in MacIE browser.  Using tables instead :(
                             // don't care if empty or not because we want to keep the table structure
@@ -876,7 +879,7 @@
                                                 implode("</td></tr>\n<tr><td align=\"center\">", $temparray).
                                                 "</td></tr></table>\n";
                         }
-                        $fullbuttonhtml .= "</div>\n";
+                        //$fullbuttonhtml .= "</div>\n";
                     
                         if ($lesson->slideshow) {
                             echo '<div class="branchslidetop">' . $fullbuttonhtml . '</div>';
@@ -896,7 +899,7 @@
                                 print_simple_box_start("center");
                             }
                             
-                            echo $fullbuttonhtml;
+                            echo '<div class="branchbuttoncontainer">' . $fullbuttonhtml . '</div>';
                             echo '</table></table>';
                             print_simple_box_end();
                         } else {
