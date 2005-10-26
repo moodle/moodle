@@ -2489,7 +2489,7 @@ function grade_insert_category() {
     }
 }
 
-function grade_category_select($id_selected) {
+function grade_category_select($id_selected = 0) {
     /// prints out a select box containing categories.
     global $CFG;
     global $course;
