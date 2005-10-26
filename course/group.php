@@ -51,11 +51,20 @@
                     $group->picture = 1;
                 }
             }
-            $group->name        = clean_text($form->name);
-            $group->description = clean_text($form->description);
-            $group->hidepicture = $form->hidepicture;
-            $group->password    = $form->password;
-            if (!update_record("groups", $group)) {
+
+            // Setting a new object in order to avoid updating other columns for the record,
+            // which could lead to SQL injection vulnerabilities.
+
+            // Be VERY sure to sanitize all parameters that go into $dataobj!
+
+            $dataobj = new stdClass;
+            $dataobj->id          = $group->id;
+            $dataobj->name        = clean_text($form->name);
+            $dataobj->description = clean_text($form->description);
+            $dataobj->hidepicture = empty($form->hidepicture) ? 0 : 1;
+            $dataobj->password    = required_param('password', PARAM_ALPHANUM);
+
+            if (!update_record('groups', $dataobj)) {
                 notify("A strange error occurred while trying to save");
             } else {
                 notify(get_string('changessaved'));

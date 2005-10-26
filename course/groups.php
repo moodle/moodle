@@ -47,6 +47,12 @@
 
     if ($data = data_submitted() and confirm_sesskey()) {
 
+        // Clean ALL incoming parameters which go in SQL queries here for good measure
+        $data->id      = required_param('id', PARAM_INT);
+        $data->groups  = optional_param('groups', 0, PARAM_INT);
+        $data->groupid = optional_param('groupid', 0, PARAM_INT);
+        $data->members = optional_param('members', array(), PARAM_INT);
+
         if (!empty($data->nonmembersadd)) {            /// Add people to a group
             if (!empty($data->nonmembers) and !empty($data->groupid)) {
                 $groupmodified = false;
@@ -76,6 +82,9 @@
 
         } else if (!empty($data->groupsremove)) {      /// Remove a group, all members become nonmembers
             if (!empty($data->groups)) {
+                if(!isset($groups[$data->groups])) {
+                    error("This is not a valid group to remove");
+                }
                 delete_records("groups", "id", $data->groups);
                 delete_records("groups_members", "groupid", $data->groups);
                 unset($groups[$data->groups]);
@@ -102,8 +111,8 @@
             if (!empty($data->members) and !empty($data->groupid)) {
                 foreach ($data->members as $userid) {
                     delete_records('groups_members', 'userid', $userid, "groupid", $data->groupid);
-                    set_field('groups', 'timemodified', time(), 'id', $data->groupid);
                 }
+                set_field('groups', 'timemodified', time(), 'id', $data->groupid);
             }
             $selectedgroup = $data->groupid;
 
