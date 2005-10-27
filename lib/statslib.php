@@ -64,7 +64,7 @@ function stats_cron_daily () {
     }
 
 
-    $midnight = usergetmidnight(time());
+    $midnight = stats_usergetmidnight(time());
     
     // check to make sure we're due to run, at least one day after last run
     if ((time() - 24*60*60) < $CFG->statslastdaily) {
@@ -90,7 +90,7 @@ function stats_cron_daily () {
         }
     }
 
-    $nextmidnight = $timestart + (60*60*24);
+    $nextmidnight = stats_get_next_dayend($timestart);
 
     if (!$courses = get_records('course','','','','id,1')) {
         return STATS_RUN_ABORTED;
@@ -175,7 +175,7 @@ function stats_cron_daily () {
         }
         commit_sql();
         $timestart = $nextmidnight;
-        $nextmidnight = $nextmidnight + (60*60*24);
+        $nextmidnight = stats_get_next_dayend($nextmidnight);
         $days++;
 
         if (!stats_check_runtime()) {
@@ -229,7 +229,7 @@ function stats_cron_weekly () {
         }
     }
 
-    $nextsunday = $timestart + (60*60*24*7);
+    $nextsunday = stats_get_next_weekend($timestart);
 
     if (!$courses = get_records('course','','','','id,1')) {
         return STATS_RUN_ABORTED;
@@ -286,7 +286,7 @@ function stats_cron_weekly () {
         stats_do_aggregate_user_login_cron($timesql,$nextsunday,'weekly');
         commit_sql();
         $timestart = $nextsunday;
-        $nextsunday = $nextsunday + (60*60*24*7);
+        $nextsunday = stats_get_next_weekend($nextsunday);
         $weeks++;
 
         if (!stats_check_runtime()) {
@@ -419,7 +419,7 @@ function stats_get_start_from($str) {
             return $function(get_field_sql('SELECT time FROM '.$CFG->prefix.'log ORDER BY time LIMIT 1'));
             break;
         case 'none'; 
-            return $function(time()-(60*60*24));
+            return $function('-1 day',time());
             break;
         default:
             if (is_numeric($CFG->statsfirstrun)) {
@@ -434,7 +434,7 @@ function stats_get_base_daily($time=0) {
     if (empty($time)) {
         $time = time();
     }
-    return usergetmidnight($time);
+    return stats_usergetmidnight($time);
 }
 
 function stats_get_base_weekly($time=0) {
@@ -446,18 +446,26 @@ function stats_get_base_weekly($time=0) {
     if (date('D',$time) == 'Mon')
         $str = 'now';
 
-    return usergetmidnight(strtotime($str,$time));
+    return stats_usergetmidnight(strtotime($str,$time));
 }
 
 function stats_get_base_monthly($time=0) {
     if (empty($time)) {
         $time = time();
     }
-    return usergetmidnight(strtotime(date('1-M-Y',$time)));
+    return stats_usergetmidnight(strtotime(date('1-M-Y',$time)));
 }
 
 function stats_get_next_monthend($lastmonth) {
-    return usergetmidnight(strtotime(date('1-M-Y',$lastmonth).' + 1 month'));
+    return stats_usergetmidnight(strtotime(date('1-M-Y',$lastmonth).' + 1 month'));
+}
+
+function stats_get_next_weekend($lastweek) {
+    return stats_usergetmidnight(strtotime('+1 week',$lastweek));
+}
+
+function stats_get_next_dayend($lastday) {
+    return stats_usergetmidnight(strtotime('+1 day',$lastday));
 }
 
 function stats_clean_old() {
@@ -476,6 +484,7 @@ function stats_clean_old() {
 }
 
 function stats_get_parameters($time,$report,$courseid,$mode) {
+    global $CFG;
     if ($time < 10) { // dailies
         // number of days to go back = 7* time
         $param->table = 'daily';
@@ -491,6 +500,12 @@ function stats_get_parameters($time,$report,$courseid,$mode) {
     }
 
     $param->extras = '';
+
+    // compatibility - if we're in postgres, cast to real for some reports.
+    $real = '';
+    if ($CFG->dbtype == 'postgres7') {
+        $real = '::real';
+    }
 
     switch ($report) {
     case STATS_REPORT_LOGINS:
@@ -555,7 +570,7 @@ function stats_get_parameters($time,$report,$courseid,$mode) {
     case STATS_REPORT_ACTIVE_COURSES_WEIGHTED:
         $param->fields = 'sum(studentreads+studentwrites+teacherreads+teacherwrites) AS line1,'
             .'sum(students+teachers) AS line2,'
-            .'sum(studentreads+studentwrites+teacherreads+teacherwrites)::real/sum(students+teachers)::real AS line3';
+            .'sum(studentreads+studentwrites+teacherreads+teacherwrites)'.$real.'/sum(students+teachers)'.$real.' AS line3';
         $param->extras = 'HAVING sum(students+teachers) != 0';
         $param->orderby = 'line3 DESC';
         $param->line1 = get_string('activity');
@@ -565,7 +580,7 @@ function stats_get_parameters($time,$report,$courseid,$mode) {
         break;
     case STATS_REPORT_PARTICIPATORY_COURSES:
         $param->fields = 'sum(students+teachers) as line1,sum(activestudents+activeteachers) AS line2,'
-            .'sum(activestudents+activeteachers)::real/sum(students+teachers)::real AS line3';
+            .'sum(activestudents+activeteachers)'.$real.'/sum(students+teachers)'.$real.' AS line3';
         $param->extras = 'HAVING sum(students+teachers) != 0';
         $param->orderby = 'line3 DESC';
         $param->line1 = get_string('users');
@@ -575,7 +590,7 @@ function stats_get_parameters($time,$report,$courseid,$mode) {
         break;
     case STATS_REPORT_PARTICIPATORY_COURSES_RW:
         $param->fields = 'sum(studentreads+teacherreads) as line1,sum(studentwrites+teacherwrites) AS line2,'
-            .'sum(studentwrites+teacherwrites)::real/sum(studentreads+teacherreads)::real AS line3';
+            .'sum(studentwrites+teacherwrites)'.$real.'/sum(studentreads+teacherreads)'.$real.' AS line3';
         $param->extras = 'HAVING sum(studentreads+teacherreads) != 0';
         $param->orderby = 'line3 DESC';
         $param->line1 = get_string('views');
@@ -901,6 +916,16 @@ function stats_check_uptodate($courseid=0) {
         return true; // we've only just started...
     }
     error(get_string('statscatchupmode','error',$a),$CFG->wwwroot.'/course/view.php?id='.$courseid);
+}
+
+
+// copied from usergetmidnight, but we ignore dst.
+function stats_usergetmidnight($date, $timezone=99) {
+    $timezone = get_user_timezone_offset($timezone);
+    $userdate = usergetdate($date, $timezone);
+    
+    // Time of midnight of this user's day, in GMT
+    return make_timestamp($userdate['year'], $userdate['mon'], $userdate['mday'], 0, 0, 0, $timezone,false ); // ignore dst for this.
 }
 
 
