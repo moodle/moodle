@@ -91,7 +91,7 @@
             // Email user to let them know. Email admin.
 
             if ($data->payment_status == "Pending" and $data->pending_reason != "echeck") {
-                email_to_user($user, getadmin(), "Moodle: Paypal payment", "Your Paypal payment is pending.");
+                email_to_user($user, get_admin(), "Moodle: Paypal payment", "Your Paypal payment is pending.");
                 email_paypal_error_to_admin("Payment pending", $data);
                 die;
             }
