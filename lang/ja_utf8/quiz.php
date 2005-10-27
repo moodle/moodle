@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.6 development (2005090100)
+      // quiz.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['acceptederror'] = 'エラー範囲';
@@ -18,7 +18,7 @@ $string['affectedstudents'] = '影響を受ける $a';
 $string['aiken'] = 'Aikenフォーマット';
 $string['allattempts'] = '全ての受験';
 $string['allinone'] = '無制限';
-$string['allowreview'] = '復習を許可する';
+$string['allowreview'] = 'レビューを許可する';
 $string['alreadysubmitted'] = '既に解答されています。';
 $string['alternativeunits'] = '代替単位';
 $string['alwaysavailable'] = '常時利用可能';
@@ -252,8 +252,8 @@ $string['noquestionintext'] = '問題テキストが埋め込み問題を含ん�
 $string['noquestions'] = '問題が追加されていません。';
 $string['noquestionsfound'] = '問題が見つかりませんでした。';
 $string['noresponse'] = '解答無し';
-$string['noreview'] = 'この小テストの復習を許可されていません。';
-$string['noreviewuntil'] = '$a までこの小テストの復習はできません。';
+$string['noreview'] = 'この小テストのレビューを許可されていません。';
+$string['noreviewuntil'] = '$a までこの小テストのレビューはできません。';
 $string['noscript'] = '続けるにはJavaスクリプトを使用可にしてください!';
 $string['notavailable'] = '申し訳御座いません、このクイズはまだ利用できません。';
 $string['notavailabletostudents'] = '注意: この小テストは現在あなたの学生は利用できません。';
@@ -350,9 +350,9 @@ $string['reviewbefore'] = '小テスト実施中にレビューを許可する';
 $string['reviewclosed'] = '小テスト終了後';
 $string['reviewimmediately'] = '受験後すぐに';
 $string['reviewnever'] = 'レビューを許可しない';
-$string['reviewofattempt'] = '$a の受験をレビューする。';
+$string['reviewofattempt'] = '$a 回の受験結果をレビュー';
 $string['reviewopen'] = '後で、クイズが開いている最中';
-$string['reviewoptions'] = '学生のレビュー';
+$string['reviewoptions'] = '学生にレビューさせる';
 $string['reviewresponse'] = '解答のレビュー';
 $string['rqp'] = 'リモート問題';
 $string['rqps'] = 'リモート問題';
