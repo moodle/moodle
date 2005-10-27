@@ -524,7 +524,6 @@ $string['order'] = 'Порядок';
 $string['other'] = 'Інші';
 $string['outline'] = 'Структура';
 $string['page'] = 'Сторінка';
-$string['parentlanguage'] = 'en';
 $string['participants'] = 'Учасники';
 $string['password'] = 'Пароль';
 $string['passwordchanged'] = 'Пароль було змінено';

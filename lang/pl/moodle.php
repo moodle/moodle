@@ -777,7 +777,6 @@ $string['pageheaderconfigablock'] = 'Skonfiguruj blok %%fullname%%';
 $string['parentcoursenotfound'] = 'Nie znaleziono kursu!';
 $string['parentcoursenotmetacourse'] = 'Nie jest kursem nadrzêdnym';
 $string['parentfolder'] = 'Katalog nadrzêdny';
-$string['parentlanguage'] = '<<TRANSLATOR: Je¿eli twój jêzyk ma pakiet jêzykowy to Moodle powinien go u¿ywaæ, kiedy jaki¶ ³añcuch znaków jest nieprzet³umaczony, tutaj mo¿esz go przet³umaczyæ. Je¿eli pozostawisz puste pole wtedy bêdzie u¿yty komunikat w jêzyku angielskim.';
 $string['participants'] = 'Uczestnicy';
 $string['password'] = 'Has³o';
 $string['passwordchanged'] = 'Has³o zosta³o zmienione';

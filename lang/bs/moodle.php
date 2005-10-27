@@ -808,7 +808,6 @@ $string['other'] = 'Ostali';
 $string['outline'] = 'Kratak pregled';
 $string['page'] = 'Stranica';
 $string['pageheaderconfigablock'] = 'Konfigurišite sekcije u %%fullname%%';
-$string['parentlanguage'] = '';
 $string['participants'] = 'Uèesnici';
 $string['password'] = 'Lozinka';
 $string['passwordchanged'] = 'Lozinka je promijenjena';

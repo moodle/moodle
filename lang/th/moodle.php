@@ -803,7 +803,6 @@ $string['pageheaderconfigablock'] = 'ตั้งค่าบล็อคใน%%fullname%%';
 $string['parentcoursenotfound'] = 'ไม่พบคอร์สที่เหนือกว่า';
 $string['parentcoursenotmetacourse'] = 'คอร์สที่อยู่เหนือกว่าไม่ใช่คอร์สต้นแบบ';
 $string['parentfolder'] = 'แฟ้มที่อยู่เหนือกว่า';
-$string['parentlanguage'] = 'en';
 $string['participants'] = 'นักเรียนและผู้สนใจ';
 $string['password'] = 'รหัสผ่าน';
 $string['passwordchanged'] = 'เปลี่ยนรหัสผ่านเรียบร้อยแล้วค่ะ';

@@ -887,7 +887,6 @@ $string['pageheaderconfigablock'] = 'Blok configureren in %%fullname%%';
 $string['parentcoursenotfound'] = 'Bovenliggende cursus niet gevonden';
 $string['parentcoursenotmetacourse'] = 'Bovenliggende cursus is geen overkoepelende cursus!';
 $string['parentfolder'] = 'Bovenliggende map';
-$string['parentlanguage'] = 'VERTALERS: Als bepaalde teksten ontbreken in een taalpakket, zal Moodle deze uit een ander taalpakket gebruiken. Geef hier de juiste aanduiding daarvan aan, bijv. nl. Als je niets invult, wordt standaard het Engelse taalpakket gebruikt.';
 $string['participants'] = 'Deelnemers';
 $string['participationratio'] = 'Deelnemersratio';
 $string['password'] = 'Wachtwoord';

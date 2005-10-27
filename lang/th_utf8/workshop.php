@@ -163,7 +163,6 @@ $string['overallocation'] = 'ค่าสมดุลในการกระจ
 $string['overallpeergrade'] = 'คะแนนทั้งหมดที่ผู้อื่นประเมิน: $a';
 $string['overallteachergrade'] = 'คะแนนทั้งหมดที่อาจารย์ประเมิน: $a';
 $string['ownwork'] = 'เจ้าของงาน';
-$string['parentlanguage'] = 'en';
 $string['passwordprotectedworkshop'] = 'ห้องปฎิบัติการต้องใช้รหัสผ่าน';
 $string['percentageofassessments'] = 'เปอร์เซ็นต์ของการประเมินที่จะถูกคัดออก';
 $string['phase'] = 'ขั้นตอน';

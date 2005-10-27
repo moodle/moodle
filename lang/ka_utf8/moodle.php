@@ -759,7 +759,6 @@ $string['pageheaderconfigablock'] = '%%fullname%% %%სრული_სახე
 $string['parentcoursenotfound'] = 'მშობლიური კურსი არ არის შექმნილი';
 $string['parentcoursenotmetacourse'] = 'მშობლიური კურსი არ არის მეტაკურსი';
 $string['parentfolder'] = 'მშობლიური საქაღალდე';
-$string['parentlanguage'] = '<< TRANSLATORS: თუ შენს ენას აქვს სხვა მშობლიური ენა, რომელიც შეუძლია გამოიყენოს Moodle-მა, როდესაც შენი ენის ნაკრებიდან დაკარგულია სტრინგები, მაშინ აქ მიუთითე მისი კოდი. თუ ამას დატოვებ შეუვსებლად, მაშინ სანაცვლოდ გამოყენებული იქნება ინგლისური ენა. მაგ:nl >>';
 $string['participants'] = 'მონაწილეები';
 $string['password'] = 'პაროლი';
 $string['passwordchanged'] = 'პაროლი შეიცვალა';

@@ -630,7 +630,6 @@ $string['order'] = '次序';
 $string['other'] = '其他';
 $string['outline'] = '外觀';
 $string['page'] = '頁';
-$string['parentlanguage'] = '';
 $string['participants'] = '課程參與者';
 $string['password'] = '密碼';
 $string['passwordchanged'] = '密碼已經被修改';

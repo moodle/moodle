@@ -656,7 +656,6 @@ $string['order'] = 'Kàrtïba';
 $string['other'] = 'Citi';
 $string['outline'] = 'Struktþra';
 $string['page'] = 'Lapa';
-$string['parentlanguage'] = 'en';
 $string['participants'] = 'Dalïbnieki';
 $string['password'] = 'Parole';
 $string['passwordchanged'] = 'Parole ir mainïta';
