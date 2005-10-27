@@ -99,14 +99,14 @@
     if ($mode == STATS_MODE_DETAILED) {
         if (!empty($time)) {
             $param = stats_get_parameters($time,null,$course->id,$mode); // we only care about the table and the time string.
-            $sql =  'SELECT DISTINCT s.userid,s.roleid,u.firstname,u.lastname,u.idnumber,u.nickname FROM '.$CFG->prefix.'stats_user_'.$param->table.' s JOIN '.$CFG->prefix.'user u ON u.id = s.userid '
+            $sql =  'SELECT DISTINCT s.userid,s.roleid,u.firstname,u.lastname,u.idnumber  FROM '.$CFG->prefix.'stats_user_'.$param->table.' s JOIN '.$CFG->prefix.'user u ON u.id = s.userid '
                 .'WHERE courseid = '.$course->id.' AND timeend >= '.$param->timeafter  . ((!empty($param->stattype)) ? ' AND stattype = \''.$param->stattype.'\'' : '');
             if (!isadmin()) {
                 $sql .= ' AND (s.roleid = 1 OR s.userid = '.$USER->id .")";
             }
             $sql .= " ORDER BY s.roleid ";
         } else {
-            $sql = 'SELECT s.userid,u.firstname,u.lastname,u.idnumber,u.nickname,1 AS roleid FROM '.$CFG->prefix.'user_students s JOIN '.$CFG->prefix.'user u ON u.id = s.userid WHERE course = '.$course->id;
+            $sql = 'SELECT s.userid,u.firstname,u.lastname,u.idnumber,1 AS roleid FROM '.$CFG->prefix.'user_students s JOIN '.$CFG->prefix.'user u ON u.id = s.userid WHERE course = '.$course->id;
         }
 
         $us = get_records_sql($sql);
@@ -123,7 +123,7 @@
         }
         if (empty($time)) {
             if (isadmin()) {
-                $sql = 'SELECT t.userid,u.firstname,u.lastname,u.idnumber,u.nickname,1 AS roleid FROM '.$CFG->prefix.'user_teachers t JOIN '.$CFG->prefix.'user u ON u.id = t.userid WHERE course = '.$course->id;
+                $sql = 'SELECT t.userid,u.firstname,u.lastname,u.idnumber,1 AS roleid FROM '.$CFG->prefix.'user_teachers t JOIN '.$CFG->prefix.'user u ON u.id = t.userid WHERE course = '.$course->id;
                 $moreusers = get_records_sql($sql);
                 foreach ($moreusers as $u) {
                     $users[$u->userid] = $course->teacher .' - '.fullname($u,true);
