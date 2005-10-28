@@ -884,7 +884,7 @@
                             echo '<div class="branchslidetop">' . $fullbuttonhtml . '</div>';
                             $options = new stdClass;
                             $options->noclean = true;
-                            echo '<div class="contents">'.format_text($page->contents, FORMAT_MOODLE, $options).format_text($page->contents).'</div>';;
+                            echo '<div class="contents">'.format_text($page->contents, FORMAT_MOODLE, $options).'</div>';;
                             echo "</table></div><table cellpadding=\"5\" cellspacing=\"5\" align=\"center\">";
                         } else {
                             echo "<tr><td><table width=\"100%\">";
