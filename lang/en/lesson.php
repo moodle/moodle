@@ -1,6 +1,7 @@
 <?PHP // $Id$ 
       // lesson.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
 
+
 $string['accesscontrol'] = 'Access control';
 $string['actionaftercorrectanswer'] = 'Action after correct answer';
 $string['addabranchtable'] = 'Add a Branch Table';
@@ -130,8 +131,11 @@ $string['maximumnumberofanswersbranches'] = 'Maximum number of answers/branches'
 $string['maximumnumberofattempts'] = 'Maximum number of attempts';
 $string['maxtime'] = 'Time limit (minutes)';
 $string['maxtimewarning'] = 'You have $a minute(s) to finish the lesson.';
-$string['mediafile'] = 'Media File';
+$string['mediaclose'] = 'Show close button: ';
+$string['mediafile'] = 'Pop-up to file or web page';
 $string['mediafilepopup'] = 'Click here to view this lesson\'s media file.';
+$string['mediaheight'] = 'Window height: ';
+$string['mediawidth'] = ' width: ';
 $string['minimumnumberofquestions'] = 'Minimum number of questions';
 $string['modattempts'] = 'Allow student review';
 $string['modattemptsnoteacher'] = 'Student review only works for students.';
@@ -266,6 +270,7 @@ $string['yourcurrentgradeis'] = 'Your current grade is $a';
 $string['yourgradeisnow'] = 'Your grade for the lesson has been changed to $a';
 $string['yourresponse'] = 'Your response';
 $string['youshouldview'] = 'You should view at least: $a';
+
 
 
 
