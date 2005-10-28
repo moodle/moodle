@@ -1,16 +1,13 @@
 <p align="center"><b>穴埋め問題 (Cloze)</b></p>
 
 <p>穴埋め問題は、テキスト内(Moodleフォーマット)に多肢選択問題、記述問題、数値問題を挿入することができる非常に柔軟な問題です。</p>
-
 <p>この非常に柔軟な問題タイプは、Clozeフォーマットとして知られている人気のフォーマットに似ています。</p>
-   
 <p>穴埋め問題は、多肢選択問題、記述問題、数値問題の答えを埋め込まれたテキスト(Moodleフォーマット)で構成されます。</p>
-
 <p>現在、問題を作成するためのグラフィカルインターフェースは用意されていません。テキストボックスに問題フォーマットを入力するか、外部ファイルをインポートしてください。</p>
    
-<p>穴埋め問題を指定するテキストの入力サンプルです:
+<p>穴埋め問題を指定するテキストの入力サンプルです:</p>
 
-<form>
+<form action="">
 <center>
 <textarea rows="15" cols="60" wrap="virtual">この問題は、テキストと次のような埋め込まれた答え{1:MULTICHOICE:間違った答え#この答えに対するフィードバック~もう1つの間違った答え#この答えに対するフィードバック~=正しい答え#この答えに対するフィードバック~%50%半分正しい答え#この答えに対するフィードバック}、記述式の入力欄 {1:SHORTANSWER:間違った答え#この答えに対するフィードバック~=正しい答え#この答えに対するフィードバック~%50%半分正しい答え#この答えに対するフィードバック}、そして最後に浮動小数点の入力欄 {2:NUMERICAL:=23.8:0.1#正しい答えに対するフィードバック 23.8~%50%N/A#半分正しい答えに対するフィードバック}から成ります。
 
@@ -25,14 +22,13 @@
 
 <p>このサンプルは学生に次のように表示されます:</p>
 
-
-<form>
+<form action="">
 <table align="center" width="90%" class="generalbox" border="0" cellpadding="5" cellspacing="0"><tr><td bgcolor="#FFFFFF" class="generalboxcontent"><table width="100%" cellspacing="10"><tr><td nowrap width="100" valign="top"><p align="center"><b>3</b></p><p align="center"><font size="1">8 Marks</font></p><img height="1" width="100" src="pix/spacer.gif" alt=""><br />
 </td><td valign="top"><p>この問題は、テキストと次のような埋め込まれた答え<select   name="q4ma1" ><option></option><option value="4" >間違った答え</option><option value="5" >もう1つの間違った答え</option><option value="6" >正しい答え</option><option value="7" >半分正しい答え</option></select>、記述式の入力欄<input   name="q4ma2"  value="" type="TEXT" size="8"/>、そして最後に浮動小数点の入力欄<input   name="q4ma3"  value="" type="TEXT" size="8"/>から成ります。<br />
 
 <br />
 
-このようなアドレス <a href="http://www.moodle.org" target="newpage">www.moodle.org</a> およびスマイリー <img border="0" src="pix/s/smiley.gif" width="15" height="15"> は全て通常通りに動作します:<br />
+このようなアドレス <a href="http://www.moodle.org" target="newpage">www.moodle.org</a> およびスマイリー <img alt=""  border="0" src="pix/s/smiley.gif" width="15" height="15" /> は全て通常通りに動作します:<br />
 
 a) これは良いですか?  <select   name="q4ma4" ><option></option><option value="13" >はい</option><option value="14" >いいえ</option></select> <br />
 
@@ -42,5 +38,3 @@ b) これに何点をつけますか?  <input   name="q4ma5"  value="" type="TEX
 
 グッドラック!</p></td></tr></table></td></tr></table>
 </form>
-
-<br />

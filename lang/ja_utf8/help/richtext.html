@@ -1,7 +1,17 @@
 <p align="center"><b>リッチテキストHTMLエディタに関して</b></p>
 
 <p>利用可能な機能: <b>
-HTMLエディタは利用可能です</b></p>
+<?php  if (!$CFG->htmleditor) {
+       print_string("htmleditordisabledadmin");
+   } else if (!$USER->htmleditor) {
+       print_string("htmleditordisabled");
+   } else if (!can_use_richtext_editor()) {
+       print_string("htmleditordisabledbrowser");
+   } else {
+       print_string("htmleditoravailable");
+   }
+?>
+</b></p>
 
 <p>リッチテキストHTMLエディタはブラウザ上でワードプロセッサの機能を実現します。ここでは直感的にテキストを編集することが可能で、通常のHTMLコードが自動生成されます。
 
