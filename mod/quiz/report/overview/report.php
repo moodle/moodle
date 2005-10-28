@@ -234,8 +234,8 @@ class quiz_report extends quiz_default_report {
                 $headers[] = get_string('grade', 'quiz').'/'.$quiz->grade;
             }
             if($detailedmarks) {
-                foreach ($questions as $question) {
-                    $headers[] = '#'.$question->number;
+                foreach ($questionids as $key=>$id) {
+                    $headers[] = '#'.$questions[$id]->number;
                 }
             }
             $colnum = 0;
