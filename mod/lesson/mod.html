@@ -107,6 +107,15 @@ if ($form->mode == "add") {
     if (!isset($form->mediafile)) {
         $form->mediafile = '';
     }
+    if (!isset($form->mediaheight)) {
+        $form->mediafile = 100;
+    }
+    if (!isset($form->mediawidth)) {
+        $form->mediafile = 650;
+    }
+    if (!isset($form->mediaclose)) {
+        $form->mediafile = 0;
+    }
     if (!isset($form->dependency)) {
         $form->dependency = 0;
     }
@@ -536,6 +545,17 @@ if ($form->mode == "add") {
         button_to_popup_window ("/files/index.php?id=$course->id&choose=form.mediafile", "coursefiles", $strchooseafile, 500, 750, $strchooseafile);
         helpbutton("mediafile", get_string("mediafile", "lesson"), "lesson");
     ?>
+    <br /><br />
+        <?php 
+            print_string("mediaclose", "lesson"); 
+            $options = array();
+            $options[0] = get_string("no"); $options[1] = get_string("yes");
+            choose_from_menu($options, "mediaclose", $form->mediaclose, "");
+        ?>
+        -&nbsp;<?php print_string("mediaheight", "lesson"); ?>
+        <input type="text" name="mediaheight" maxlength="7" size="4" value="<?php  p($form->mediaheight) ?>" />px,
+        <?php print_string("mediawidth", "lesson"); ?>
+        <input type="text" name="mediawidth" maxlength="7" size="4" value="<?php  p($form->mediawidth) ?>" />px    
     </td>
 </tr>
 

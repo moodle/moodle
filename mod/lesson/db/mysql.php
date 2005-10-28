@@ -206,6 +206,12 @@ function lesson_upgrade($oldversion) {
         table_column('lesson', '', 'progressbar', 'tinyint', '3', 'unsigned', '0', 'not null', 'displayleft');
         table_column('lesson', '', 'displayleftif', 'int', '3', 'unsigned', '0', 'not null', 'displayleft');
     }
+    
+    if ($oldversion < 2005102800) {
+        table_column('lesson', '', 'mediaclose', 'tinyint', '3', 'unsigned', '0', 'not null', 'mediafile');
+        table_column('lesson', '', 'mediaheight', 'int', '10', 'unsigned', '100', 'not null', 'mediafile');
+        table_column('lesson', '', 'mediawidth', 'int', '10', 'unsigned', '650', 'not null', 'mediafile');
+    }
          
     return true;
 }

@@ -130,8 +130,8 @@
 }
 
 .mod-lesson .branchslidebottom {
-    /*  You may choose to not show them at all
-    display: none;*/
+    /*  You may choose to not show them at all 
+    display: none; */
 }
 
 /***

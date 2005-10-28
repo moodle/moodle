@@ -8,6 +8,7 @@
     require_once($CFG->libdir.'/filelib.php');
     
     $id = required_param('id', PARAM_INT);    // Course Module ID
+    $printclose = optional_param('printclose', 0, PARAM_INT);
     
     if (! $cm = get_record('course_modules', 'id', $id)) {
         error('Course Module ID was incorrect');
@@ -20,14 +21,25 @@
     if (! $lesson = get_record('lesson', 'id', $cm->instance)) {
         error('Course module is incorrect');
     }
+    
+    if ($printclose) {  // this is for framesets
+        if ($lesson->mediaclose) {
+        echo '<center>
+            <form>
+            <input type="button" onclick="top.close();" value="'.get_string("closewindow").'" />
+            </form>
+            </center>';
+        }
+        exit();
+    }
 
     require_login($course->id, false, $cm);
     
     // get the mimetype
-    $path_parts = pathinfo($lesson->mediafile);
-    $mimetype = mimeinfo("type", $path_parts['basename']);
+    //$path_parts = pathinfo('http://www.apple.com');  //$lesson->mediafile
+    $mimetype = mimeinfo("type", $lesson->mediafile);  //$path_parts['basename']
 
-    print_header($path_parts['basename']);  // or should it pass "Media File" and not the name?
+    //print_header();
 
     if (substr_count($lesson->mediafile, '//') == 1) {
         // OK, taking a leap of faith here.  We are assuming that teachers are cool
@@ -42,6 +54,8 @@
         }
         $fullurl = "$CFG->wwwroot$relativeurl";
     }
+    
+    
 
     // find the correct type and print it out
     if ($mimetype == "audio/mp3") {    // It's an MP3 audio file
@@ -133,7 +147,43 @@
         echo '<noembed></noembed>';
         echo '</object>';
 
+    } else if (is_url($lesson->mediafile) or $mimetype == 'text/html' or $mimetype == 'text/plain') {
+        // might be dangerous to handle all of these in the same fasion.  It is being set by a teacher though.
+        echo "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Frameset//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd\">\n";
+        echo "<html dir=\"ltr\">\n";
+        echo '<head>';
+        echo '<meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />';
+        echo "<title>{$course->shortname}</title></head>\n";
+        if ($lesson->mediaclose) {
+            echo "<frameset rows=\"90%,*\">";
+            echo "<frame src=\"$fullurl\" />";
+            echo "<frame src=\"mediafile.php?id=$cm->id&printclose=1\" />";
+            echo "</frameset>";
+        } else {
+            echo "<frameset rows=\"100%\">";
+            echo "<frame src=\"$fullurl\" />";
+            echo "</frameset>";        
+        }
+        exit();
+
     } else {
         error('Unsupported mime type: '.$mimetype);
+    }
+    
+    function is_url($test_url) {
+        // the following is barrowed from resource code.  Thanks!
+        if (strpos($test_url, '://')) {     // eg http:// https:// ftp://  etc
+            return true;
+        }
+        if (strpos($test_url, '/') === 0) { // Starts with slash
+            return true;
+        }
+        return false;
+    }
+
+    if ($lesson->mediaclose) {
+       echo '<p>';
+       close_window_button();
+       echo '</p>';
     }
 ?>
