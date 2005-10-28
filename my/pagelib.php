@@ -32,6 +32,13 @@ class page_my_moodle extends page_base {
 
         global $USER;
 
+        $replacements = array(
+                              '%fullname%' => get_string('mymoodle','my')
+        );
+        foreach($replacements as $search => $replace) {
+            $title = str_replace($search, $replace, $title);
+        }
+
         $site = get_site();
 
         $button = update_mymoodle_icon($USER->id);

@@ -2250,7 +2250,8 @@ function print_navigation ($navigation) {
            $site->shortname = get_string('home');
        }
        $navigation = str_replace('->', '&raquo;', $navigation);
-       echo '<a target="'. $CFG->framename .'" href="'. $CFG->wwwroot.((!isadmin() && !empty($USER->id) && !empty($CFG->mymoodleredirect)) ? '/my' : '') .'/">'. $site->shortname .'</a> &raquo; '. $navigation;
+       echo '<a target="'. $CFG->framename .'" href="'. $CFG->wwwroot.((!isadmin() && !empty($USER->id) && !empty($CFG->mymoodleredirect) && !isguest())
+                                                                       ? '/my' : '') .'/">'. $site->shortname .'</a> &raquo; '. $navigation;
 
    }
 }
