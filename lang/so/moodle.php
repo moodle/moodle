@@ -802,7 +802,6 @@ $string['pageheaderconfigablock'] = 'Isku dubariyada \"block\' ku jira%%fullname
 $string['parentcoursenotfound'] = 'Koorsada waalidka u ahlama helin!';
 $string['parentcoursenotmetacourse'] = 'Waalid koorsadu ma ah koorso-weyne!';
 $string['parentfolder'] = 'Khaanadda waalidka u ah';
-$string['parentlanguage'] = '<< TURJUMAANNADA: Haddii luqaddaadu leedahay Luqad Waalid ay Moodle tahay in ay isticmaasho marka tixo ay ka maqan yihiin boqshadda luqaddaada, markaa ku qor koodhka halkan. Haddad madhini kan kaga tagato INgriisi ayaa la isticmaali. Tusaale:nl>>';
 $string['participants'] = 'Ka qayb-qaatayaasha';
 $string['password'] = 'Isgarad-erey';
 $string['passwordchanged'] = 'Isgarad-ereygii waa la baddeley';
