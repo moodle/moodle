@@ -316,6 +316,11 @@ class quiz_report extends quiz_default_report {
                 $sort = ' ORDER BY '.implode(', ', $newsort);
             }
 
+            // Fix some wired sorting
+            if (empty($sort)) {
+                $sort = ' ORDER BY uniqueid';
+            }
+
             // Now it is time to page the data
             if (!isset($pagesize)  || ((int)$pagesize < 1) ) {
                 $pagesize = 10;
