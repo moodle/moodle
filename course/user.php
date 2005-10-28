@@ -134,7 +134,7 @@
             $param->table = str_replace('user_','',$param->table);
             $table->head = array(get_string('periodending','moodle',$param->table),$param->line1,$param->line2,$param->line3);
             foreach  ($stats as $stat) {
-                $a = array(userdate($stat->timeend),$stat->line1);
+                $a = array(userdate($stat->timeend,get_string('strftimedate'),$CFG->timezone),$stat->line1);
                 $a[] = $stat->line2;
                 $a[] = $stat->line3;
                 $table->data[] = $a;

@@ -204,7 +204,7 @@
         $table->head[] = get_string('logs');
         
         foreach  ($stats as $stat) {
-            $a = array(userdate($stat->timeend),$stat->line1);
+            $a = array(userdate($stat->timeend,get_string('strftimedate'),$CFG->timezone),$stat->line1);
             if (isset($stat->line2)) {
                 $a[] = $stat->line2;
             }

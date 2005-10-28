@@ -54,7 +54,7 @@
     $graph->parameter['title'] = false; // moodle will do a nicer job.
 
     foreach ($stats as $stat) {
-        $graph->x_data[] = userdate($stat->timeend, "%a %d %b %y");
+        $graph->x_data[] = userdate($stat->timeend,get_string('strftimedate'),$CFG->timezone);
         $graph->y_data['line1'][] = $stat->line1;
         if (isset($stat->line2)) {
             $graph->y_data['line2'][] = $stat->line2;
