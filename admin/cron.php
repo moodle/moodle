@@ -35,6 +35,8 @@
         unset($_SESSION['SESSION']);
         unset($SESSION);
         $USER = get_admin();      /// Temporarily, to provide environment for this script
+        // we need to override the admin timezone to the moodle timezone!
+        $USER->timezone = $CFG->timezone;
     }
 
     //unset test cookie, user must login again anyway
