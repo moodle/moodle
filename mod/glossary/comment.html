@@ -1,3 +1,15 @@
+<?php //$Id$
+    if (!isset($form->format)) {
+        $form->format = $defaultformat;
+    }
+    if ($usehtmleditor) { //clean and convert before editing
+        $options = new object();
+        $options->smiley = false;
+        $options->filter = false;
+        $form->text = format_text($form->text, $form->format, $options);
+        $form->format = FORMAT_HTML;
+    }
+?>
 <form name="form" method="post" action="comment.php">
 <table  class="generalbox">
 <tr valign="top">
@@ -30,9 +42,6 @@
             print_string('formathtml');
             echo '<input type="hidden" name="format" value="'.FORMAT_HTML.'" />';
         } else {
-            if (!isset($form->format)) {
-                $form->format = $defaultformat;
-            }
             choose_from_menu(format_text_menu(), "format", $form->format, "");
         }
         helpbutton("textformat", get_string("helpformatting"));

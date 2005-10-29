@@ -1,3 +1,15 @@
+<?php //$Id$
+    if (!isset($newentry->format)) {
+        $newentry->format = $defaultformat;
+    }
+    if ($usehtmleditor) { //clean and convert before editing
+        $options = new object();
+        $options->smiley = false;
+        $options->filter = false;
+        $newentry->definition = format_text($newentry->definition, $newentry->format, $options);
+        $newentry->format = FORMAT_HTML;
+    }
+?>
 <form name="form" method="post" action="edit.php" enctype="multipart/form-data">
 <table border="0" cellpadding="5">
 <?php
@@ -137,9 +149,6 @@ if (isset($errors)) {
             print_string('formathtml');
             echo '<input type="hidden" name="format" value="'.FORMAT_HTML.'" />';
         } else {
-            if (!isset($newentry->format)) {
-                $newentry->format = $defaultformat;
-            }
             choose_from_menu(format_text_menu(), "format", $newentry->format, "");
         }
         helpbutton("textformat", get_string("helpformatting"));
