@@ -4,10 +4,11 @@
     require_once("$CFG->libdir/graphlib.php");
     require_once("lib.php");
 
-    $id = required_param('id',PARAM_INT);    // Course Module ID
-    $type = required_param('type',PARAM_CLEAN);  // Graph Type
+    $id    = required_param('id', PARAM_INT);    // Course Module ID
+    $type  = required_param('type', PARAM_FILE);  // Graph Type
     $group = optional_param('group', 0, PARAM_INT);  // Group ID
-    $sid = optional_param('sid', 0, PARAM_INT);  // Student ID
+    $sid   = optional_param('sid', false, PARAM_INT);  // Student ID
+    $qid   = optional_param('qid', 0, PARAM_INT);  // Group ID
 
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");
@@ -111,6 +112,9 @@
        $graph->parameter['y_decimal_left']  = 0;
        $graph->parameter['x_axis_angle']    = 20;
        $graph->parameter['shadow']          = 'none';
+
+       $graph->y_tick_labels = null;
+       $graph->offset_relation = null;
 
        $graph->draw_stack();
 

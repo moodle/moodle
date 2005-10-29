@@ -5,9 +5,10 @@
 
 // Check that all the parameters have been provided.
 
-    $id = required_param('id', PARAM_INT);           // Course Module ID
-    $action = optional_param('action', '');  // What to look at
-    $qid = optional_param('qid', 0, PARAM_INT);    // Question id
+    $id      = required_param('id', PARAM_INT);    // Course Module ID
+    $action  = optional_param('action', '', PARAM_ALPHA);  // What to look at
+    $qid     = optional_param('qid', 0, PARAM_INT);  // Group ID
+    $student = optional_param('student', 0, PARAM_INT);  // Student ID
 
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");
