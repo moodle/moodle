@@ -11,6 +11,7 @@
     require_login();
    
     $disable_meta = false;
+    $focus = "";
 
     if ($id) {
         if (! $course = get_record("course", "id", $id)) {
@@ -59,6 +60,7 @@
         }
 
         $form->startdate = make_timestamp($form->startyear, $form->startmonth, $form->startday);
+        $form->category = clean_param($form->category, PARAM_INT);
 
         if (empty($form->enrolstartdisabled)) {
             $form->enrolstartdate = make_timestamp($form->enrolstartyear, $form->enrolstartmonth, $form->enrolstartday);
@@ -205,10 +207,6 @@
                 $form->students = get_string("defaultcoursestudents");
             }
         }
-    }
-
-    if (empty($focus)) {
-        $focus = "";
     }
 
     $form->categories = get_records_select_menu("course_categories", "", "name", "id,name");
