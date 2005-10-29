@@ -1,5 +1,7 @@
 <?php  // $Id$
 
+    die; //must be fixed before enabling again, see SC#971
+
     // All of this is standard Moodle fixtures
 
     require_once('../config.php');
