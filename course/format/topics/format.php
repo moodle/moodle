@@ -14,12 +14,10 @@
     define('BLOCK_R_MIN_WIDTH', 100);
     define('BLOCK_R_MAX_WIDTH', 210);
 
-    set_default($preferred_width_left,  blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]));
-    set_default($preferred_width_right, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]));
-    $preferred_width_left = min($preferred_width_left, BLOCK_L_MAX_WIDTH);
-    $preferred_width_left = max($preferred_width_left, BLOCK_L_MIN_WIDTH);
-    $preferred_width_right = min($preferred_width_right, BLOCK_R_MAX_WIDTH);
-    $preferred_width_right = max($preferred_width_right, BLOCK_R_MIN_WIDTH);
+    $preferred_width_left  = bounded_number(BLOCK_L_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]),  
+                                            BLOCK_L_MAX_WIDTH);
+    $preferred_width_right = bounded_number(BLOCK_R_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]), 
+                                            BLOCK_R_MAX_WIDTH);
 
     if (isset($topic)) {
         $displaysection = course_set_display($course->id, $topic);
