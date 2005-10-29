@@ -1070,12 +1070,20 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
 
     global $CFG, $course;
 
-    if (!empty($CFG->cachetext)) {
-        $time = time() - $CFG->cachetext;
-        $md5key = md5($text);
-        if ($cacheitem = get_record_select('cache_text', "md5key = '$md5key' AND timemodified > '$time'")) {
-            return $cacheitem->formattedtext;
-        }
+    if (!isset($options->noclean)) {
+        $options->noclean=false;
+    }
+    if (!isset($options->smiley)) {
+        $options->smiley=true;
+    }
+    if (!isset($options->filter)) {
+        $options->filter=true;
+    }
+    if (!isset($options->para)) {
+        $options->para=true;
+    }
+    if (!isset($options->newlines)) {
+        $options->newlines=true;
     }
 
     if (empty($courseid)) {
@@ -1084,19 +1092,31 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
         }
     }
 
+    if (!empty($CFG->cachetext)) {
+        $time = time() - $CFG->cachetext;
+        $md5key = md5($text.'-'.$courseid.$options->noclean.$options->smiley.$options->filter.$options->para.$options->newlines);
+        if ($cacheitem = get_record_select('cache_text', "md5key = '$md5key' AND timemodified > '$time'")) {
+            return $cacheitem->formattedtext;
+        }
+    }
+
     $CFG->currenttextiscacheable = true;   // Default status - can be changed by any filter
 
     switch ($format) {
         case FORMAT_HTML:
-            replace_smilies($text);
-            if (!isset($options->noclean)) {
+            if (!empty($options->smiley)) {
+                replace_smilies($text);
+            }
+            if (empty($options->noclean)) {
                 $text = clean_text($text, $format);
             }
-            $text = filter_text($text, $courseid);
+            if (!empty($options->filter)) {
+                $text = filter_text($text, $courseid);
+            }
             break;
 
         case FORMAT_PLAIN:
-            $text = htmlentities($text);
+            $text = s($text); 
             $text = rebuildnolinktag($text);
             $text = str_replace('  ', '&nbsp; ', $text);
             $text = nl2br($text);
@@ -1107,33 +1127,30 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
             $text = '<p>NOTICE: Wiki-like formatting has been removed from Moodle.  You should not be seeing
                      this message as all texts should have been converted to Markdown format instead.
                      Please post a bug report to http://moodle.org/bugs with information about where you
-                     saw this message.</p>'.$text;
+                     saw this message.</p>'.s($text);
             break;
 
         case FORMAT_MARKDOWN:
             $text = markdown_to_html($text);
-            if (!isset($options->noclean)) {
+            if (!empty($options->smiley)) {
+                replace_smilies($text);
+            }
+            if (empty($options->noclean)) {
                 $text = clean_text($text, $format);
             }
-            replace_smilies($text);
-            $text = filter_text($text, $courseid);
+            if (!empty($options->filter)) {
+                $text = filter_text($text, $courseid);
+            }
             break;
 
         default:  // FORMAT_MOODLE or anything else
-            if (!isset($options->smiley)) {
-                $options->smiley=true;
-            }
-            if (!isset($options->para)) {
-                $options->para=true;
-            }
-            if (!isset($options->newlines)) {
-                $options->newlines=true;
-            }
             $text = text_to_html($text, $options->smiley, $options->para, $options->newlines);
-            if (!isset($options->noclean)) {
+            if (empty($options->noclean)) {
                 $text = clean_text($text, $format);
             }
-            $text = filter_text($text, $courseid);
+            if (!empty($options->filter)) {
+                $text = filter_text($text, $courseid);
+            }
             break;
     }
 
