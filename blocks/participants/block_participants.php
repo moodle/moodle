@@ -48,10 +48,6 @@ class block_participants extends block_list {
         return array('all' => true, MY_MOODLE_FORMAT => false);
     }
 
-    function applicable_formats() {
-        require_once($GLOBALS['CFG']->dirroot.'/my/pagelib.php');
-        return array('all' => true, MY_MOODLE_FORMAT => false);
-    }
 }
 
 ?>
