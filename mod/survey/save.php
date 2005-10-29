@@ -14,7 +14,7 @@
         error("Guests are not allowed to answer surveys", $_SERVER["HTTP_REFERER"]);
     }
 
-    require_variable($id);    // Course Module ID
+    $id = required_param('id', PARAM_INT);    // Course Module ID
 
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");

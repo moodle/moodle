@@ -4,9 +4,9 @@
 
 // Check that all the parameters have been provided.
 
-    require_variable($id);    // Course Module ID
-    optional_variable($type, "xls");
-    optional_variable($group, 0);
+    $id    = required_param('id', PARAM_INT);    // Course Module ID
+    $type  = optional_param('type', 'xls', PARAM_ALPHA);
+    $group = optional_param('group', 0, PARAM_INT);
 
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");
@@ -106,7 +106,7 @@
 
     foreach ($aaa as $a) {
         if (!$group or isset($users[$a->userid])) {
-            if (!$results["$a->userid"]) { // init new array
+            if (empty($results["$a->userid"])) { // init new array
                 $results["$a->userid"]["time"] = $a->time;
                 foreach ($order as $key => $qid) {
                     $results["$a->userid"]["$qid"]["answer1"] = "";
