@@ -306,6 +306,7 @@ table.flexible .r1 {
 #calendar .maincalendar,
 #calendar .sidecalendar {
   border-color: #DDDDDD;
+  background-color:#FFFFFF;
 }
 
 #calendar .maincalendar table.calendarmonth th {
