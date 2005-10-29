@@ -271,7 +271,7 @@
                     $status = execute_sql("INSERT INTO {$CFG->prefix}backup_files
                                                (backup_code, file_type, path, old_id)
                                            VALUES
-                                               ('$backup_unique_code','user','$dir','$userid')",false);
+                                               ('$backup_unique_code','user','".addslashes($dir)."','$userid')",false);
                 }
                 //Do some output
                 backup_flush(30);
