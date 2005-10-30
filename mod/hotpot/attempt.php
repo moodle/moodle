@@ -190,7 +190,23 @@ function hotpot_set_attempt_details(&$attempt) {
 	$buttons = array('clues', 'hints', 'checks');
 	$textfields = array('correct', 'wrong', 'ignored');
 
-	$quiztype = HOTPOT_JCLOZE; // optional_param('quiztype', HOTPOT_JCLOZE, PARAM_INT);
+	$ok = false;
+	$quiztype = optional_param('quiztype', 0, PARAM_ALPHANUM);
+	if ($quiztype) {
+		if (is_numeric($quiztype)) {
+			$ok = array_key_exists($quiztype, $HOTPOT_QUIZTYPE);
+		} else {
+			$quiztype = array_search($quiztype, $HOTPOT_QUIZTYPE);
+			$ok = is_numeric($quiztype);
+		}
+	}
+	if (!$ok) {
+		error('Quiz type is missing or invalid');
+		// error(get_string('error_invalidquiztype', 'hotpot'));
+		//
+		// script finishes here if quiztype is invalid
+		//
+	}
 
 	$q = 0;
 	while (($responsefield="q{$q}") && isset($_POST[$responsefield])) {
