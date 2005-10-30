@@ -150,16 +150,17 @@ function stats_cron_daily () {
             if ($course->id == SITEID) {
                 $sql = 'SELECT l.userid,count(l.id) as count FROM '.$CFG->prefix.'log l WHERE action = \'login\' AND '.$timesql.' GROUP BY userid';
                 
-                $logins = get_records_sql($sql);
-                foreach ($logins as $l) {
-                    $stat->reads = $l->count;
-                    $stat->userid = $l->userid;
-                    $stat->timeend = $nextmidnight;
-                    $stat->courseid = SITEID;
-                    $stat->writes = 0;
-                    $stat->stattype = 'logins';
-                    $stat->roleid = 1; 
-                    insert_record('stats_user_daily',$stat,false);
+                if ($logins = get_records_sql($sql)) {
+                    foreach ($logins as $l) {
+                        $stat->reads = $l->count;
+                        $stat->userid = $l->userid;
+                        $stat->timeend = $nextmidnight;
+                        $stat->courseid = SITEID;
+                        $stat->writes = 0;
+                        $stat->stattype = 'logins';
+                        $stat->roleid = 1; 
+                        insert_record('stats_user_daily',$stat,false);
+                    }
                 }
             }
 
@@ -724,14 +725,14 @@ function stats_do_aggregate_user_login_cron($timesql,$timeend,$timestr) {
     
     $sql = 'SELECT userid,roleid,sum(reads) as reads, sum(writes) as writes FROM '.$CFG->prefix.'stats_user_daily WHERE stattype = \'logins\' AND '.$timesql.' GROUP BY userid,roleid';
     
-    $users = get_records_sql($sql);
-    
-    foreach ($users as $stat) {
-        $stat->courseid = SITEID;
-        $stat->timeend = $timeend;
-        $stat->stattype = 'logins';
-
-        insert_record('stats_user_'.$timestr,$stat,false);
+    if ($users = get_records_sql($sql)) {
+        foreach ($users as $stat) {
+            $stat->courseid = SITEID;
+            $stat->timeend = $timeend;
+            $stat->stattype = 'logins';
+            
+            insert_record('stats_user_'.$timestr,$stat,false);
+        }
     }
 }
 
