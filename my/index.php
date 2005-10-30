@@ -18,7 +18,7 @@
 
         print_header($mymoodlestr);
         notice_yesno(get_string('noguest', 'my').'<br /><br />'.get_string('liketologin'),
-                     $wwwroot, $_SERVER['HTTP_REFERER']);
+                     $wwwroot, $CFG->wwwroot);
         print_footer();
         die();
     }
