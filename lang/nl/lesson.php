@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.6 development (2005060201)
+      // lesson.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['accesscontrol'] = 'Toegangscontrole';
@@ -64,6 +64,7 @@ $string['didnotanswerquestion'] = 'Deze vraag niet beantwoord';
 $string['didnotreceivecredit'] = 'Geen cijfers gekregen';
 $string['displayhighscores'] = 'Toon hoogste cijfers';
 $string['displayinleftmenu'] = 'Toon in linkermenu?';
+$string['displayleftif'] = 'en toon alleen als het cijfer van $a groter is dan:';
 $string['displayleftmenu'] = 'Toon linkermenu';
 $string['displayofgrade'] = 'Tonen van het cijfer (voor de leerling)';
 $string['displayreview'] = 'Toon herwerkknop';
@@ -130,8 +131,11 @@ $string['maximumnumberofanswersbranches'] = 'Maximumaantal antwoorden/vertakking
 $string['maximumnumberofattempts'] = 'Maximumaantal pogingen';
 $string['maxtime'] = 'Tijdslimiet (minuten)';
 $string['maxtimewarning'] = 'Je hebt $a minuten om de les af te werken.';
+$string['mediaclose'] = 'Toon knop om te sluiten';
 $string['mediafile'] = 'Mediabestand';
 $string['mediafilepopup'] = 'Klik hier om het mediabestand van deze les te bekijken';
+$string['mediaheight'] = 'Hoogte venster:';
+$string['mediawidth'] = 'breedte:';
 $string['minimumnumberofquestions'] = 'Minimumaantal vragen';
 $string['modattempts'] = 'Laat leerling nalezen';
 $string['modattemptsnoteacher'] = 'Nalezen werkt alleen voor leerlingen';
