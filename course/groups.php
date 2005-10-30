@@ -185,7 +185,7 @@
     natcasesort($nonmembers);
 
     if (empty($selectedgroup)) {    // Choose the first group by default
-        if ($selectedgroup = array_shift(array_keys($listgroups))) {
+        if ($selectedgroup = array_shift($temparr = array_keys($listgroups))) {
             $members = $listmembers[$selectedgroup];
         }
     } else {
