@@ -152,9 +152,10 @@ $HOTPOT_FEEDBACK = array (
 	HOTPOT_FEEDBACK_WEBPAGE => get_string("feedbackwebpage",  "hotpot"),
 	HOTPOT_FEEDBACK_FORMMAIL => get_string("feedbackformmail", "hotpot"),
 	HOTPOT_FEEDBACK_MOODLEFORUM => get_string("feedbackmoodleforum", "hotpot"),
+	HOTPOT_FEEDBACK_MOODLEMESSAGING = get_string("feedbackmoodlemessaging", "hotpot"),
 );
-if (!empty($CFG->messaging)) { // Moodle 1.5+
-	$HOTPOT_FEEDBACK[HOTPOT_FEEDBACK_MOODLEMESSAGING] = get_string("feedbackmoodlemessaging", "hotpot");
+if (empty($CFG->messaging)) { // Moodle 1.4 (and less)
+	unset($HOTPOT_FEEDBACK[HOTPOT_FEEDBACK_MOODLEMESSAGING]);
 }
 
 define("HOTPOT_DISPLAYNEXT_QUIZ",   "0");
@@ -2134,6 +2135,7 @@ if (!function_exists('html_entity_decode')) {
 if (!defined('PARAM_RAW')) define('PARAM_RAW', 0x0000);
 if (!defined('PARAM_INT'))  define('PARAM_INT', 0x0002);
 if (!defined('PARAM_ALPHA')) define('PARAM_ALPHA', 0x0004);
+if (!defined('PARAM_ALPHANUM')) define('PARAM_ALPHANUM', 0x0400);
 
 if (!function_exists('required_param')) {
 	// add this function for Moodle version<1.4.2
