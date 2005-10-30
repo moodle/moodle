@@ -1460,11 +1460,6 @@ function main_upgrade($oldversion=0) {
         execute_sql("DROP TABLE {$CFG->prefix}currencies",false); // drop silently
     }
 
-    if ($oldversion < 2005103100) { // Repair enrol field in user_students/user_teacher table
-        execute_sql("UPDATE {$CFG->prefix}user_students SET enrol='manual' WHERE enrol='' OR enrol='internal'");
-        execute_sql("UPDATE {$CFG->prefix}user_teachers SET enrol='manual' WHERE enrol=''");
-    }
-
     return $result;
 }
 
