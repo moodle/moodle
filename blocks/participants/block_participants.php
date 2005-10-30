@@ -44,8 +44,7 @@ class block_participants extends block_list {
     
     // my moodle can only have SITEID and it's redundant here, so take it away
     function applicable_formats() {
-        require_once($GLOBALS['CFG']->dirroot.'/my/pagelib.php');
-        return array('all' => true, MY_MOODLE_FORMAT => false);
+        return array('all' => true, 'my' => false);
     }
 
 }

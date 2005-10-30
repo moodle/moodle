@@ -33,8 +33,7 @@ class block_recent_activity extends block_base {
     }
 
     function applicable_formats() {
-        require_once($GLOBALS['CFG']->dirroot.'/my/pagelib.php');
-        return array('all' => true, MY_MOODLE_FORMAT => false);
+        return array('all' => true, 'my' => false);
     }
 }
 ?>
