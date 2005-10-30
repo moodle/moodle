@@ -29,6 +29,7 @@ $string['enterafilename'] = 'ファイル名を入力してください。';
 $string['error_couldnotopenfolder'] = 'フォルダ「 $a 」にアクセスできませんでした。';
 $string['error_couldnotopensourcefile'] = 'ソースファイル「 $a 」をオープンできませんでした。';
 $string['error_couldnotopentemplate'] = '「 $a 」フォーマットのテンプレートをオープンできませんでした。';
+$string['error_invalidquiztype'] = 'クイズタイプが見つからないか、正しくありません。';
 $string['error_nocourseorfilename'] = 'XMLツリーを作成できませんでした。コースまたはファイル名がありません。';
 $string['error_nofeedbackurlformmail'] = 'フォーム処理スクリプトのURLを入力してください。';
 $string['error_nofeedbackurlwebpage'] = 'ウェブページのURLを入力してください。';
