@@ -136,6 +136,7 @@ $string['incompatibleblocks'] = 'Niet-compatibele blokken';
 $string['latexpreamble'] = 'LaTeX inleiding';
 $string['latexsettings'] = 'LaTeX  renderer instellingen';
 $string['mediapluginavi'] = 'Gebruik .avi-filter';
+$string['mediapluginflv'] = 'Gebruik .flv-filter';
 $string['mediapluginmov'] = 'Gebruik .mov-filter';
 $string['mediapluginmp3'] = 'Gebruik .mp3-filter';
 $string['mediapluginmpg'] = 'Gebruik .mpg-filter';
