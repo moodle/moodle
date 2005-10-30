@@ -1,6 +1,6 @@
 <?php /// $Id$
 
-$string['filtername'] = "Các plugin Multimedia";
+$string['filtername'] = "Các ch??ng trình b? sung ?a ph??ng ti?n";
 
 ?>
 
