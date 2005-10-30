@@ -194,4 +194,7 @@ $string['error_couldnotopentemplate'] = 'Could not open template for &quot;$a&qu
 $string['error_noquizzesfound'] = 'No Hot Potatoes quizzes found';
 $string['error_nofeedbackurlwebpage'] = 'Please enter a URL for the webpage';
 $string['error_nofeedbackurlformmail'] = 'Please enter a URL for the form processing script';
+
+// error messages (attempt.php)
+$string['error_invalidquiztype'] = 'Quiz type is missing or invalid';
 ?>
