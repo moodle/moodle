@@ -8,6 +8,22 @@
 
     require_login();
 
+    $mymoodlestr = get_string('mymoodle','my');
+
+    if (isguest()) {
+        $wwwroot = $CFG->wwwroot.'/login/index.php';
+        if (!empty($CFG->loginhttps)) {
+            $wwwroot = str_replace('http','https', $wwwroot);
+        }
+
+        print_header($mymoodlestr);
+        notice_yesno(get_string('noguest', 'my').'<br /><br />'.get_string('liketologin'),
+                     $wwwroot, $_SERVER['HTTP_REFERER']);
+        print_footer();
+        die();
+    }
+
+
     $edit        = optional_param('edit', '');
     $blockaction = optional_param('blockaction');
 
@@ -23,7 +39,7 @@
         }
     }
 
-    $PAGE->print_header(get_string('mymoodle','my'));
+    $PAGE->print_header($mymoodlestr);
 
     echo '<table border="0" cellpadding="3" cellspacing="0" width="100%" id="layout-table">';
     echo '<tr valign="top">';
