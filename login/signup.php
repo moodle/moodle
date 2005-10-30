@@ -53,7 +53,7 @@
     }
 
     if (!empty($err)) {
-        $focus = "form.".array_shift(array_flip(get_object_vars($err)));
+        $focus = "form.".array_shift($temparr = array_flip(get_object_vars($err)));
     } else {
         $focus = "";
     }
