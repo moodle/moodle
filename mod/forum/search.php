@@ -39,7 +39,7 @@
     if ($timetorestrict) {
         $dateto = make_timestamp($toyear, $tomonth, $today, $tohour, $tominute);
     } else {
-        $dateto = optional_param('datefrom', 0, PARAM_INT);      // Ending date
+        $dateto = optional_param('dateto', 0, PARAM_INT);      // Ending date
     }
 
 
