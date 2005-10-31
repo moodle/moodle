@@ -29,6 +29,7 @@ $string['enterafilename'] = 'Por favor, introduzca un nombre de archivo';
 $string['error_couldnotopenfolder'] = 'No se pudo acceder al directorio \"$a\"';
 $string['error_couldnotopensourcefile'] = 'No se puedo abrir el archivo fuente \"$a\"';
 $string['error_couldnotopentemplate'] = 'No se puedo abrir plantilla para formato \"$a\"';
+$string['error_invalidquiztype'] = 'El tipo de cuestionario falta o no es válido';
 $string['error_nocourseorfilename'] = 'No se pudo crear árbol XML: falta el curso o el nombre del archivo';
 $string['error_nofeedbackurlformmail'] = 'Por favor, escriba una URL para el script de procesamiento del formulario';
 $string['error_nofeedbackurlwebpage'] = 'Por favor, escriba una URL para la página web';

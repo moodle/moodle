@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.5 Beta (2005052300)
+      // lesson.php - created with Moodle 1.5.2 (2005060220)
 
 
 $string['accesscontrol'] = 'Control de Acceso';
@@ -64,6 +64,7 @@ $string['didnotanswerquestion'] = 'No ha contestado a esta pregunta.';
 $string['didnotreceivecredit'] = 'No ha recibido crédito';
 $string['displayhighscores'] = 'Mostrar mejores puntuaciones';
 $string['displayinleftmenu'] = '¿Mostrar en menú de la izquierda?';
+$string['displayleftif'] = 'y mostrar sólo si $a tiene una calificación superior a:';
 $string['displayleftmenu'] = 'Mostrar menú de la izquierda';
 $string['displayofgrade'] = 'Mostrar calificación (sólo para estudiantes)';
 $string['displayreview'] = 'Mostrar botón Revisar';
@@ -94,7 +95,7 @@ $string['flowcontrol'] = 'Control de Flujo';
 $string['general'] = 'General';
 $string['gobacktolesson'] = 'Volver a la Lección';
 $string['grade'] = 'Calificación';
-$string['gradebetterthan'] = 'Calificación superior a (&#37;)';
+$string['gradebetterthan'] = 'Calificación superior a (%%)';
 $string['gradebetterthanerror'] = 'Obtener una calificación superior al $a por ciento';
 $string['gradeessay'] = 'Calificar preguntas de ensayo ($a->notgradedcount no calificadas y $a->notsentcount no enviadas)';
 $string['gradeis'] = 'La calificación es $a';
@@ -130,8 +131,11 @@ $string['maximumnumberofanswersbranches'] = 'Número máximo de respuestas/ramific
 $string['maximumnumberofattempts'] = 'Número máximo de intentos';
 $string['maxtime'] = 'Límite de tiempo (minutos)';
 $string['maxtimewarning'] = 'Dispone de $a minuto(s) para terminar la lección.';
+$string['mediaclose'] = 'Mostrar botón de cierre:';
 $string['mediafile'] = 'Archivo multimedia';
 $string['mediafilepopup'] = 'Haga clic aquí para ver el archivo multimedia de esta lección';
+$string['mediaheight'] = 'Altura de la ventana:';
+$string['mediawidth'] = 'anchura:';
 $string['minimumnumberofquestions'] = 'Número mínimo de preguntas';
 $string['modattempts'] = 'Permitir revisión al estudiante';
 $string['modattemptsnoteacher'] = 'La revisión del estudiante sólo está disponible para los estudiantes.';
@@ -187,6 +191,8 @@ $string['pointsearned'] = 'Puntos ganados';
 $string['postsuccess'] = 'Mensaje exitoso';
 $string['practice'] = 'Lección de práctica';
 $string['previouspage'] = 'Página anterior';
+$string['progressbar'] = 'Barra de progreso';
+$string['progressbarteacherwarning'] = 'La barra de progreso no muestra $a';
 $string['question'] = 'Pregunta';
 $string['questionoption'] = 'Opción de pregunta';
 $string['questiontype'] = 'Tipo de pregunta';
