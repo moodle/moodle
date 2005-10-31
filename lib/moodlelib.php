@@ -185,6 +185,14 @@ function clean_param($param, $options) {
 
     global $CFG;
 
+    if (is_array($param)) {              // Let's loop
+        $newparam = array();
+        foreach ($param as $key => $value) {
+            $newparam[$key] = clean_param($value, $options);
+        }
+        return $newparam;
+    }
+
     if (!$options) {
         return $param;                   // Return raw value
     }
