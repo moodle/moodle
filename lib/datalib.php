@@ -1131,18 +1131,25 @@ function delete_records_select($table, $select='') {
 function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
 
     global $db, $CFG;
+    static $empty_rs_cache;
 
     if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
 
-/// Execute a dummy query to get an empty recordset
-    if (!$rs = $db->Execute('SELECT * FROM '. $CFG->prefix . $table .' WHERE '. $primarykey  .' = \'-1\'')) {
-        return false;
+    /// Get an empty recordset. Cache for multiple inserts.
+
+    if (empty($empty_rs_cache[$table])) {
+
+        /// Execute a dummy query to get an empty recordset
+        if (!$empty_rs_cache[$table] = $db->Execute('SELECT * FROM '. $CFG->prefix . $table .' WHERE '. $primarykey  .' = \'-1\'')) {
+            return false;
+        }
+
+        /// In Moodle we always use auto-numbering fields for the primary ID
+        /// so let's unset it now before it causes any trouble
+        unset($dataobject->{$primarykey});
     }
 
-/// In Moodle we always use auto-numbering fields for the primary ID
-/// so let's unset it now before it causes any trouble
-
-    unset($dataobject->id);
+    $rs = $empty_rs_cache[$table];
 
     /// Postgres doesn't have the concept of primary key built in
     /// and will return the OID which isn't what we want.
