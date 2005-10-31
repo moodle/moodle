@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.6 development (2005090100)
+      // auth.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['alternatelogin'] = 'ここにURLを入力した場合、このサイトのログインページとして使用されます。ログインページでは、action属性に<strong>「 $a 」</strong>をセットして、 <strong>username</strong>フィールドおよび<strong>password</strong>フィールドを適切にMoodleに渡す必要があります。<br />間違ったURLを設定すると、あなたのサイトから締め出されることになりますので注意してください。<br />デフォルトのログイン画面を使用する場合は、空白のままにしてください。';
@@ -86,7 +86,7 @@ $string['auth_manualtitle'] = '手動アカウント作成のみ';
 $string['auth_multiplehosts'] = '複数のホストまたはアドレスを設定できます ( 例 host1.com;host2.com;host3.com ) または ( 例 xxx.xxx.xxx.xxx;xxx.xxx.xxx.xxx )';
 $string['auth_nntpdescription'] = 'ユーザ名とパスワードを確認するためにNNTPサーバを使用します。';
 $string['auth_nntphost'] = 'NNTPサーバアドレスです。IPアドレスではなくドメイン名を使用してください。';
-$string['auth_nntpport'] = 'サーバポート ( 119が一般的です )';
+$string['auth_nntpport'] = 'サーバポート ( 119が最も一般的です )';
 $string['auth_nntptitle'] = 'NNTPサーバを使用';
 $string['auth_nonedescription'] = 'ユーザはログインして外部サーバおよびメールによる認証無しにアカウントを直ちに作成できます。このオプションを使用するときは十分に注意してください - セキュリティーおよび管理上の問題が発生するかもしれないことを考えてください。';
 $string['auth_nonetitle'] = '認証無し';
@@ -97,7 +97,7 @@ $string['auth_passwordwillexpire'] = 'あなたのパスワードの有効期限
 $string['auth_pop3description'] = 'ユーザ名とパスワードを確認するためにPOP3サーバを使用します。';
 $string['auth_pop3host'] = 'POP3サーバアドレスです。IPアドレスではなくドメイン名を使用してください。';
 $string['auth_pop3mailbox'] = '接続を試みるメールボックス名 ( 通常は受信ボックス )';
-$string['auth_pop3port'] = 'サーバポート ( 110が一般的です )';
+$string['auth_pop3port'] = 'サーバポート ( 110は最も一般的、995は一般的なSSL用です。 )';
 $string['auth_pop3title'] = 'POP3サーバを使用';
 $string['auth_pop3type'] = 'サーバタイプです。もし認証が必要な場合はpop3certを選択してください。';
 $string['auth_shib_convert_data'] = 'データ修正API';
@@ -137,6 +137,9 @@ $string['locked'] = 'ロックする';
 $string['md5'] = 'MD5暗号化';
 $string['passwordhandling'] = 'パスワードフィールド取り扱い';
 $string['plaintext'] = 'テキスト';
+$string['shib_no_attributes_error'] = 'あなたはShibbolethによる認証を行ったようですが、Moodleはユーザ属性を受信していません。Moodleが稼動しているプロバイダへ必要な属性 ( $a ) を発行するアイデンティティ・プロバイダを確認するか、このサーバの管理者に連絡してください。';
+$string['shib_not_all_attributes_error'] = 'あなたの場合、存在していないShibboleth属性をMoodleは必要とします。属性は次の通りです: $a<br/>このサーバの管理者またはアイデンティティ・プロバイダにご連絡ください。';
+$string['shib_not_set_up_error'] = 'Shibboleth認証が正しく設定されていないようです。Shibboleth認証の設定に関する更なる情報は、<a href=\"README.txt\">README</a>をご覧ください。';
 $string['showguestlogin'] = 'ログインページのゲストログインボタンを表示／非表示にできます。';
 $string['stdchangepassword'] = '標準パスワード変更ページを使用';
 $string['stdchangepassword_expl'] = '外部認証システムがMoodleにパスワードの変更を許可する場合、この設定を「Yes」にしてください。この設定は、「Change Password URL」をオーバーライドします。';

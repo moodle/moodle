@@ -221,6 +221,7 @@ $string['coursegrades'] = 'コース評定';
 $string['coursehidden'] = '現在、学生はこのコースを利用できません。';
 $string['courseinfo'] = 'コース情報';
 $string['coursemessage'] = 'コースユーザにメッセージを送信';
+$string['coursenotaccessible'] = 'このコースには一般からのアクセスはできません。';
 $string['coursereject'] = 'コースリクエストを拒否';
 $string['courserejected'] = 'コースは拒否され、リクエスタに通知メールが送信されました。';
 $string['courserejectemail'] = '申し訳ございません。あなたがリクエストしたコースは拒否されました。拒否理由は下記の通りです。
