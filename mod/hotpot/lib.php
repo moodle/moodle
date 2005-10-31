@@ -152,7 +152,7 @@ $HOTPOT_FEEDBACK = array (
 	HOTPOT_FEEDBACK_WEBPAGE => get_string("feedbackwebpage",  "hotpot"),
 	HOTPOT_FEEDBACK_FORMMAIL => get_string("feedbackformmail", "hotpot"),
 	HOTPOT_FEEDBACK_MOODLEFORUM => get_string("feedbackmoodleforum", "hotpot"),
-	HOTPOT_FEEDBACK_MOODLEMESSAGING = get_string("feedbackmoodlemessaging", "hotpot"),
+	HOTPOT_FEEDBACK_MOODLEMESSAGING => get_string("feedbackmoodlemessaging", "hotpot"),
 );
 if (empty($CFG->messaging)) { // Moodle 1.4 (and less)
 	unset($HOTPOT_FEEDBACK[HOTPOT_FEEDBACK_MOODLEMESSAGING]);
