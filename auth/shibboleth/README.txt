@@ -12,6 +12,7 @@ Changes:
 - 05. 2005: Various extensions and fixes by Lukas Haemmerle
 - 06. 2005: Adaptions to new field locks and plugin config structures by Marting
             Langhoff and Lukas Haemmerle
+- 10. 2005: Added better error messages and moved text to language directories
 
 Moodle Configuration with Dual login
 -------------------------------------------------------------------------------
@@ -151,7 +152,6 @@ Example file:
         // institution, street, zipcode, city and country
         $address = $_SERVER[$pluginconfig->field_map_address];
         list($institution, $street, $zip_city) = split('\$', $address);
-        
         ereg(' (.+)',$zip_city, $regs);
         $city = $regs[1];
         
@@ -168,8 +168,7 @@ Example file:
 
 Bugs
 --------------------------------------------------------------------------------
-The current implementation has not yet been extensively tested. So there may be
-bugs. Please send bug reports concerning the Shibboleth part to 
+Please send bug reports concerning the Shibboleth part to 
 Lukas Haemmerle <haemmerle@switch.ch>
 
 --------------------------------------------------------------------------------

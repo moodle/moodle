@@ -26,7 +26,6 @@ function auth_get_userinfo($username) {
 // reads user information from shibboleth attributes and return it in array()
     global $CFG;
 
-    $config = (array)$CFG;
     $pluginconfig   = get_config('auth/shibboleth');
 
     // Check whether we have got all the essential attributes
@@ -36,7 +35,7 @@ function auth_get_userinfo($username) {
         || empty($_SERVER[$pluginconfig->field_map_lastname])
         || empty($_SERVER[$pluginconfig->field_map_email])
         ) {
-        error("Moodle needs certain Shibboleth attributes which are not present in your case. The attributes are: '".$pluginconfig->shib_user_attribute."' ('".$_SERVER[$pluginconfig->shib_user_attribute]."'), '".$pluginconfig->field_map_firstname."' ('".$_SERVER[$pluginconfig->field_map_firstname]."'), '".$pluginconfig->field_map_lastname."' ('".$_SERVER[$pluginconfig->field_map_lastname]."') and '".$pluginconfig->field_map_email."' ('".$_SERVER[$pluginconfig->field_map_email]."')<br>Please contact your Identity Service Provider.");
+        error(get_string( 'shib_not_all_attributes_error', 'auth' , "'".$pluginconfig->shib_user_attribute."' ('".$_SERVER[$pluginconfig->shib_user_attribute]."'), '".$pluginconfig->field_map_firstname."' ('".$_SERVER[$pluginconfig->field_map_firstname]."'), '".$pluginconfig->field_map_lastname."' ('".$_SERVER[$pluginconfig->field_map_lastname]."') and '".$pluginconfig->field_map_email."' ('".$_SERVER[$pluginconfig->field_map_email]."')"));
     }
 
     $attrmap = auth_shib_attributes();
@@ -47,18 +46,18 @@ function auth_get_userinfo($username) {
     foreach ($attrmap as $key=>$value) {
         $result[$key]=utf8_decode($_SERVER[$value]);
     }
-    
+
      // Provide an API to modify the information to fit the Moodle internal
     // data representation
     if (   
-          $config["shib_convert_data"] 
-          && $config["shib_convert_data"] != ''
-          && is_readable($config["shib_convert_data"])
+          $pluginconfig->convert_data 
+          && $pluginconfig->convert_data != ''
+          && is_readable($pluginconfig->convert_data)
         ){
         
         // Include a custom file outside the Moodle dir to
         // modify the variable $moodleattributes
-        include($config["shib_convert_data"]);
+        include($pluginconfig->convert_data);
     }
     
     return $result;
@@ -68,7 +67,6 @@ function auth_shib_attributes(){
 //returns array containg attribute mappings between Moodle and shibboleth
 	global $CFG;
 
-    $config = (array)$CFG;
     $pluginconfig   = get_config('auth/shibboleth');
     $pluginconfig   = (array) $pluginconfig;
 
@@ -82,7 +80,7 @@ function auth_shib_attributes(){
             $moodleattributes[$field] = $pluginconfig["field_map_$field"];
         }
     }
-    $moodleattributes['username']=$config["shib_user_attribute"];
+    $moodleattributes['username']=$pluginconfig["shib_user_attribute"];
 
 	return $moodleattributes;
 }
