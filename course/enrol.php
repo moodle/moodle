@@ -19,6 +19,12 @@
         error("Could not find a site!");
     }
 
+/// Check if the course is a meta course
+    if ($course->metacourse) {
+        print_header_simple();
+        notice(get_string('coursenotaccessible'), $CFG->wwwroot);
+    }
+
     check_for_restricted_user($USER->username);
 
     $enrol = new enrolment_plugin();

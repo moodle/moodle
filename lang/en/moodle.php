@@ -206,6 +206,7 @@ $string['coursefiles'] = 'Course files';
 $string['courseformats'] = 'Course formats';
 $string['coursegrades'] = 'Course grades';
 $string['courseinfo'] = 'Course info';
+$string['coursenotaccessible'] = 'This course does not allow public access';
 $string['courserestore'] = 'Course restore';
 $string['courses'] = 'Courses';
 $string['coursestaught'] = 'Courses I have taught';
