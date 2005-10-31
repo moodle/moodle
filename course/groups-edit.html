@@ -10,7 +10,7 @@
         foreach ($listmember as $userid => $username) {
             $count++;
             $useridstring .= "\"$userid\"";
-            $usernamestring .= "\"$username\"";
+            $usernamestring .= '"'.addslashes($username).'"';
             if ($count < $max) {
                 $useridstring .= ', ';
                 $usernamestring .= ', ';
