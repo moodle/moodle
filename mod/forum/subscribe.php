@@ -38,7 +38,7 @@
         $user = $USER;
     }
 
-    require_course_login($course, false, $cm);
+    require_login($course->id, false, $cm);
 
     if (isguest()) {   // Guests can't subscribe
         $wwwroot = $CFG->wwwroot.'/login/index.php';
