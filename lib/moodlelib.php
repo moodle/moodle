@@ -2241,9 +2241,8 @@ function isguest($userid=0) {
  * @return bool
  */
 function isediting($courseid, $user=NULL) {
-    global $USER;
     if (!$user){
-        $user = $USER;
+        global $USER;
     }
     if (empty($user->editing)) {
         return false;
