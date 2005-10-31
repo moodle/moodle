@@ -1,6 +1,6 @@
 ﻿<?php /// $Id$
 
-$string['filtername'] = "Các chương trình bổ sung đa phương tiện";
+$string['filtername'] = "Các chương trình bổ sung hỗ trợ đa phương tiện";
 
 ?>
 
