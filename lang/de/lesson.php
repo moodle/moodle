@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
+      // lesson.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['accesscontrol'] = 'Zugriffskonrolle';
@@ -64,6 +64,7 @@ $string['didnotanswerquestion'] = 'Hat diese Frage nicht beantwortet.';
 $string['didnotreceivecredit'] = 'Hat keine Punkte erhalten';
 $string['displayhighscores'] = 'Punktetabelle anzeigen';
 $string['displayinleftmenu'] = 'Anzeige im linken Menu?';
+$string['displayleftif'] = 'und nur anzeigen wenn $a eine höhere Bewertung hat als:';
 $string['displayleftmenu'] = 'Anzeige linkes Menu';
 $string['displayofgrade'] = 'Anzeige der Bewertungen für Teilnehmer/innen:';
 $string['displayreview'] = 'Button für Rückschau anzeigen';
@@ -94,7 +95,7 @@ $string['flowcontrol'] = 'Ablaufkontrolle';
 $string['general'] = 'Generell';
 $string['gobacktolesson'] = 'Zurück zur Lektion';
 $string['grade'] = 'Bewertung';
-$string['gradebetterthan'] = 'Bewertung besser als (&#37)'; // &#37 = %
+$string['gradebetterthan'] = 'Bewertung besser als (%%)';
 $string['gradebetterthanerror'] = 'Bewertung muß besser als $a Prozent sein';
 $string['gradeessay'] = 'Bewertung Textfragen';
 $string['gradeis'] = 'Ihre Note ist $a';
@@ -130,8 +131,11 @@ $string['maximumnumberofanswersbranches'] = 'Höchstzahl der Antworten/Verzweigun
 $string['maximumnumberofattempts'] = 'Höchstzulässige Zahl der Versuche';
 $string['maxtime'] = 'Zeitbegrenzung (Minuten)';
 $string['maxtimewarning'] = 'Sie haben $a Minute(n), um die Lektion zu beenden.';
+$string['mediaclose'] = 'Button zum Beenden anzeigen';
 $string['mediafile'] = 'Media-Dateien';
 $string['mediafilepopup'] = 'Hier drücken, um Media-Datei(en) dieser Lektion einzusehen';
+$string['mediaheight'] = 'Fensterhöhe:';
+$string['mediawidth'] = 'Breite:';
 $string['minimumnumberofquestions'] = 'Mindestzahl der Fragen';
 $string['modattempts'] = 'Teilnehmer/innen können überprüfen';
 $string['modattemptsnoteacher'] = 'Überprüfung durch Teilnehmer/innen nur für Teilnehmer/innen möglich.';
@@ -187,6 +191,8 @@ $string['pointsearned'] = 'Erreichte Punkte';
 $string['postsuccess'] = 'Erfolgreich übertragen';
 $string['practice'] = 'Übungslektion';
 $string['previouspage'] = 'Vorherige Seite';
+$string['progressbar'] = 'Fortschrittsbalken';
+$string['progressbarteacherwarning'] = 'Fortschrittsbalken für $a nicht anzeigen';
 $string['question'] = 'Frage';
 $string['questionoption'] = 'Zusatzoption aktivieren <br />(bei Multiple-Choice: mehrere richtige Antworten; <br />bei Kurzantwortfrage: Groß-/Kleinschreibung berücksichtigen)';
 $string['questiontype'] = 'Fragentyp';
