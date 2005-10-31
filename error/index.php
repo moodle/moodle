@@ -2,7 +2,7 @@
 
     require('../config.php');
 
-    if (isset($text)) {    // form submitted
+    if (!empty($text)) {    // form submitted
         if (!$admin = get_admin() ) {
             error('Could not find the admin user to mail to!');
         }
@@ -14,10 +14,12 @@
     }
 
     $site = get_site();
+    $redirecturl = empty($_SERVER['REDIRECT_URL']) ? '' : $_SERVER['REDIRECT_URL'];
+    $httpreferer = empty($_SERVER['HTTP_REFERER']) ? '' : $_SERVER['HTTP_REFERER'];
+    $requesturi  = empty($_SERVER['REQUEST_URI'])  ? '' : $_SERVER['REQUEST_URI'];
     
     print_header($site->fullname .':Error', $site->fullname .': Error 404', '', 'form.text');
-
-    print_simple_box('An unusual error occurred (tried to reach a page that doesn\'t exist).<p align="center">'. $REDIRECT_URL, 'center', '', $THEME->cellheading);
+    print_simple_box('<p align="center">An unusual error occurred (tried to reach a page that doesn\'t exist).<br />'.s($redirecturl).'</p>', 'center');
   
 ?>
   
@@ -26,8 +28,8 @@
      to do when the error occurred:
   <p><form action="<?php echo $CFG->wwwroot ?>/error/index.php" name="form" method="post">
      <textarea rows="3" cols="50" name="text"></textarea><br />
-     <input type="hidden" name="referer" value="<?php echo $HTTP_REFERER ?>">
-     <input type="hidden" name="requested" value="<?php echo $REQUEST_URI ?>">
+     <input type="hidden" name="referer" value="<?php p($httpreferer) ?>">
+     <input type="hidden" name="requested" value="<?php p($requesturi) ?>">
      <input type="submit" value="Send this off">
      </form>
 <?php
