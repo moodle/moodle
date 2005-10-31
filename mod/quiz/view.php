@@ -133,7 +133,7 @@
             $wwwroot = str_replace('http','https', $wwwroot);
         }
 
-        notice_yesno(get_string('guestno', 'quiz').'<br /><br />'.get_string('liketologin'),
+        notice_yesno(get_string('guestsno', 'quiz').'<br /><br />'.get_string('liketologin'),
                      $wwwroot, $_SERVER['HTTP_REFERER']);
         print_footer($course);
         echo '</td></tr></table>';
