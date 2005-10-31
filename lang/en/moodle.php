@@ -217,6 +217,7 @@ $string['coursecategories'] = 'Course categories';
 $string['coursecategory'] = 'Course category';
 $string['coursecreators'] = 'Course creators';
 $string['coursemessage'] = 'Message course users';
+$string['coursenotaccessible'] = 'This course does not allow public access';
 $string['coursefiles'] = 'Course files';
 $string['courseformats'] = 'Course formats';
 $string['coursegrades'] = 'Course grades';
