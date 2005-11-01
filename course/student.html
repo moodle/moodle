@@ -2,7 +2,7 @@
 <form name="studentform" id="studentform" method="post" action="student.php">
 <input type="hidden" name="previoussearch" value="<?php echo $previoussearch ?>" />
 <input type="hidden" name="sesskey" value="<?php echo $sesskey ?>" />
-<input type="hidden" name="id" value="<?php echo $id?>" />
+<input type="hidden" name="id" value="<?php echo $course->id ?>" />
   <table align="center" border="0" cellpadding="5" cellspacing="0">
     <tr>
       <td valign="top">
@@ -72,7 +72,7 @@
           ?>
          </select>
          <br />
-         <input type="text" name="searchtext" size="30" value="<?php echo $searchtext ?>" 
+         <input type="text" name="searchtext" size="30" value="<?php echo p($searchtext) ?>" 
                   onFocus ="document.studentform.add.disabled=true;
                             document.studentform.remove.disabled=true;
                             document.studentform.removeselect.selectedIndex=-1;
