@@ -44,7 +44,7 @@ class quiz_report extends quiz_default_report {
             }
             echo '<br/ >';
             // the following makes sure that the output is sent immediately.
-            flush();ob_flush();
+            @flush();@ob_flush();
         }
 
     /// Loop through all questions and recalculate $attempt->sumgrade
