@@ -2996,7 +2996,7 @@ function ewiki_author($defstr="") {
    $author = @$GLOBALS["ewiki_author"];
    ($ip = getremoteaddr()) or ($ip = "127.0.0.0");
    ($port = $_SERVER["REMOTE_PORT"]) or ($port = "null");
-   $hostname = gethostbyaddr($ip);
+   $hostname = $ip;
    $remote = (($ip != $hostname) ? $hostname . " " : "")
            . $ip . ":" . $port;
 
