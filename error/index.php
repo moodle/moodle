@@ -19,7 +19,7 @@
     $requesturi  = empty($_SERVER['REQUEST_URI'])  ? '' : $_SERVER['REQUEST_URI'];
     
     print_header($site->fullname .':Error', $site->fullname .': Error 404', '', 'form.text');
-    print_simple_box('<p align="center">An unusual error occurred (tried to reach a page that doesn\'t exist).<br />'.s($redirecturl).'</p>', 'center');
+    print_simple_box('<p align="center">An unusual error occurred (tried to reach a page that doesn\'t exist).<br />'.s($requesturi).'</p>', 'center');
   
 ?>
   
