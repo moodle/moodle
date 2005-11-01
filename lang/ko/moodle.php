@@ -838,7 +838,6 @@ $string['pageheaderconfigablock'] = '블록을 %%완전한이름%% 으로 배열중';
 $string['parentcoursenotfound'] = '상위 과정이 개설되지 않았습니다.';
 $string['parentcoursenotmetacourse'] = '상위 과정은 메타 코스가 아닙니다';
 $string['parentfolder'] = '상위 폴더';
-$string['parentlanguage'] = 'ko_utf8';
 $string['participants'] = '참여자';
 $string['password'] = '비밀번호';
 $string['passwordchanged'] = '비밀번호가 변경되었습니다.';
