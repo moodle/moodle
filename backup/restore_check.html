@@ -153,6 +153,9 @@
             print_heading(get_string("choosecourse"));
             print_simple_box_start("center");
             foreach ($courses as $course) {
+                if (!isteacheredit($course->id)) {
+                    continue;
+                }
                 if (empty($course->visible)) {
                     $optdimmed = ' class="dimmed" ';
                 } else {
@@ -167,6 +170,12 @@
         }
     //Checks everything and execute restore
     } else if ((($restore->restoreto == 0 or $restore->restoreto == 1) and ($restore->course_id != 0)) or ($restore->restoreto == 2)) {
+        //Final access control check
+        if ($restore->course_id == 0 and !iscreator()) {
+            error("You need to be a creator or admin to restore into new course!");
+        } else if ($restore->course_id != 0 and !isteacheredit($restore->course_id)) {
+            error("You need to be an edit teacher or admin to restore into selected course!");
+        }
         $show_continue_button = true;
         //Check if we've selected any mod's user info and restore->users 
         //is set to none. Change it to course and inform.
