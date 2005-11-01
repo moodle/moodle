@@ -222,6 +222,7 @@ $string['coursegrades'] = 'Cursuscijfers';
 $string['coursehidden'] = 'Deze cursus is nu niet beschikbaar voor leerlingen';
 $string['courseinfo'] = 'Cursusinformatie';
 $string['coursemessage'] = 'Bericht voor de gebruikers van de cursus';
+$string['coursenotaccessible'] = 'Deze cursus is niet publiek toegankelijk';
 $string['coursereject'] = 'Verwerp een cursusaanvraag';
 $string['courserejected'] = 'De cursusaanvraag is niet goedgekeurd en de aanvrager is daarvan op de hoogte gebracht.';
 $string['courserejectemail'] = 'Sorry, maar je aanvraag voor een nieuwe cursus, is niet goedgekeurd. De opgegeven reden is:
