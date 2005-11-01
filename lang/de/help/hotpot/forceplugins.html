@@ -1,82 +1,27 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-  <style type="text/css">
-<!--
-	DD {font-size:0.8em; margin-top:0.5em;}
--->
-  </style>
-</head>
-<body>
-<p align="center"> <b>Selecting a Report</b></p>
-<p>Sie k&ouml;nnen unterschiedliche Auswahlkriterien festlegen und
-unterschiedliche Formate f&uuml;r den Hot Potatoes-Bericht
-ausw&auml;hlen.&nbsp;</p>
-<?php if (isadmin()) { // only admins can select a course ?>
+<p align="center"><b>Automatische Verwendung eines moodle-kompatiblen Mediaplayers</b></p>
+
 <dl>
-  <dt><b>Einen Kurs ausw&auml;hlen</b></dt>
-  <dd> <b>Dieser Kurs</b><br>
-Dieser Bericht zeigt die Antworten der Teilnehmer eines Kurses </dd>
-  <dd> <b>Alle meine Kurse</b><br>
-Dieser Bericht zeigt die Antworten der Teilnehmer aller Kurse, in
-denen Sie Lehrer sind. Damit der Test in mehreren Kursen benutzt werden
-kann, m&uuml;ssen die Dateien im Dateiverzeichnis der Site liegen.
-Diese M&ouml;glichkeit gibt es nur f&uuml;r den Administrator. </dd>
+
+	<dt><b>Nein</b></dt>
+
+	<dd>Moodle verändert die Einstellungen für den Mediaplayer im Hotpot-Test nicht.</dd>
+
 </dl>
-<?php } ?>
+
 <dl>
-  <dt><b>User ausw&auml;hlen</b></dt>
-  <dd> <b>Lernende</b><br>
-Der Bericht wird die Antworten der Lernenden anzeigen, die an dem Kurs
-teilnehmen. Die Antorten der Lehrer sind nicht im Bericht enthalten. <b><br>
-    <br>
-Alle Teilnehmer</b><br>
-Der Bericht wird die Antworten der Lernenden, Lehrer, Kursersteller und
-Administratoren anzeigen. Auch die Antworten von G&auml;sten werden
-ber&uuml;cksichtigt und angezeigt.&nbsp; </dd>
+
+	<dt><b>Ja</b></dt>
+
+	<dd>Moodle überschreibt die Einstellungen zur Nutzung des Mediaplayers. Es wird ein moodle kompatibler Mediaplayer genutzt, wie z.B.:
+
+	<ul><li>avi</li><li>mpeg</li><li>mpg</li><li>mp3</li><li>mov</li><li>wmv</li></ul></dd>
+
 </dl>
-<dl>
-  <dt><b>Bewertungen ausw&auml;hlen</b></dt>
-  <dd> <b>Bester Versuch</b><br>
-Der Bericht wird nur die Antworten des besten Versuchs eines Users
-anzeigen.&nbsp; </dd>
-  <dd> <b>Alle Versuche</b><br>
-Der Bericht wird Antworten aller Versuche eines Users anzeigen.&nbsp; </dd>
-</dl>
-<dl>
-  <dt><b>Ausgabeformat ausw&auml;hlen</b></dt>
-  <dd> <b>&Uuml;berblick</b><br>
-Dieser Bericht listet die Versuche zu diesem Test auf. "Leer
-gelassene" Versuche werden ber&uuml;cksichtigt, aber Versuche, die "in
-Bearbeitung" sind, werden nicht gezeigt. Es wird das Bild, der Name
-und die beste Punktzahl jedes Nutzers dargestellt. Weiterhin kann man
-dem Bericht die Punktzahl, die Bearbeitungszeit und die Zeit eines
-jeden Versuchs entnehmen. Versuche k&ouml;nnen ausgew&auml;hlt und dann
-auf Wunsch gel&ouml;scht werden. </dd>
-  <dd> <b>Einfache Statistik</b><br>
-Dieser Bericht listet alle volst&auml;ndigen Versuche eines Tests aus.
-Versuche, die als "leer gelassene" oder als "in Bearbeitung"
-gekennzeichnet sind, werden nicht ber&uuml;cksichtigt. Der Bericht
-zeigt den Namen und die H&ouml;chstpunktzahl eines jeden Users an und
-die erreichte Punktzahl eines jeden Versuchs. Ferner wird die
-durchschnittliche Punktzahl zu jeder einzelnen Frage und zum gesamten
-Quiz angezeigt. Details zu den Versuchen k&ouml;nnen im Excel- oder
-Textformat heruntergeladen werden.&nbsp; </dd>
-  <dd> <b>Detailierte Statistik</b><br>
-Dieser Bericht zeigt alle Details zu allen vollst&auml;ndigen Tests.
-Versuche, die als "leer gelassene" oder als "in Bearbeitung"
-gekennzeichnet sind, werden nicht ber&uuml;cksichtigt. Der Bericht
-enth&auml;lt folgende Tabellen:&nbsp;
-    <ul>
-      <li>die <span style="font-weight: bold;">Antworten Tabelle</span>,
-die die Antworten eines jeden Users in Verbindung zu den Fragen eines
-Tests darstellt.&nbsp;&nbsp; </li>
-      <li>die <span style="font-weight: bold;">Begriff-Analysetabelle</span>,
-die die Antworten zu jeder Frage und die H&auml;ufigkeit jeder Antwort
-auflistet. </li>
-    </ul>
-Die Detailinformationen kann man als Excel- oder Textformat
-herunterladen. </dd>
-</dl>
-</body>
-</html>
+
+<p>
+
+	Weitere Ínformationen: 
+
+	<a href="help.php?module=hotpot&amp;file=mediaplayers.html">Relative URLs, Mediaplayer und Hot Potatoes</a>
+
+</p>
