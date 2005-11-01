@@ -145,33 +145,29 @@
     <p>Each theme is in a subdirectory of the &quot;theme&quot; directory, and 
       contains at least the following files:</p>
     <ul>
-      <li><strong>config.php</strong>: defines the theme colours used throughout 
-        the site</li>
-      <li><strong>styles.php</strong>: the style sheet, containing CSS definitions 
-        for standard HTML elements as well as many Moodle elements.</li>
+      <li><strong>config.php</strong>: to configure how the CSS files work together. You can build your theme onto the standard or onto any parent theme, can include or exclude several CSS files.</li>
+      <li><strong>styles.php</strong>: Builds the bridge to the CSS files. You don't need to edit anything.</li>
       <li><strong>header.html</strong>: Included at the top of each page. This 
         is what you need to edit to add a logo at the top of pages, for example.</li>
       <li><strong>footer.html</strong>: Included at the bottom of each page.</li>
+      <li><strong>styles_color.css</strong>: CSS styles for all colour properties.</li>
+      <li><strong>styles_fonts.css</strong>: CSS styles for fonts, font-size, line-height etc.</li>
+      <li><strong>styles_layout.css</strong>: CSS styles for the page layout, positioning etc.</li>
+      <li><strong>styles_moz.css</strong>: CSS styles for Mozilla special rounded corners.</li>
     </ul>
-    <p>To create your own themes for current versions of Moodle:</p>
+    <p>To create your own themes for the current versions of Moodle:</p>
     <ol>
       <li>Copy one of the existing theme folders to one with a new name. I recommend 
         starting with one of the standard themes. </li>
-      <li>Edit config.php and insert your own colours. </li>
-      <li>Edit styles.php and change your CSS styles. </li>
+      <li>Edit config.php to meet your demands. </li>
+      <li>Edit the CSS files with your styles. </li>
       <li>Edit header.html and footer.html to add new logos, or change the layout. 
       </li>
     </ol>
-    <p>Note that all these steps are optional - you can make a radically different 
-      look to your site simply by editing the colours in config.php</p>
     <p>Note also that Moodle upgrades <em>may</em> break themes slightly, so check 
       the release notes carefully if you are using a custom theme.</p>
-    <p>In particular, Moodle 2.0 will have a completely new display system, probably 
-      based on XSL transformations of XML output from Moodle. It is likely that 
-      the themes for this will be a completely different format, but the advantage 
-      will be a much higher possible degree of customisation (including moving 
-      elements around the page).</p>
-    <p>More discussion about this in the <a target="_top" href="http://moodle.org/mod/forum/view.php?id=46">Themes 
+    <p>Please read the detailed description of Moodle themes in the Themes documentation in <a href="http://docs.moodle.org/wiki/Themes">Moodle Docs</a>.</p>
+    <p>More discussion about themes in the <a target="_top" href="http://moodle.org/mod/forum/view.php?id=46">Themes 
       forum on Using Moodle</a>. If you create a nice theme that you think others 
       might want to use, please post your zip file on the themes forum!<br />
     </p>
