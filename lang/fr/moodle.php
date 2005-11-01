@@ -877,7 +877,6 @@ $string['pageheaderconfigablock'] = 'Configuration d\'un bloc dans %%fullname%%'
 $string['parentcoursenotfound'] = 'Le cours parent n\'a pas été trouvé&nbsp;!';
 $string['parentcoursenotmetacourse'] = 'Le cours parent n\'est pas un méta-cours&nbsp;!';
 $string['parentfolder'] = 'Dossier parent';
-$string['parentlanguage'] = '';
 $string['participants'] = 'Participants';
 $string['participationratio'] = 'Proportion de participation';
 $string['password'] = 'Mot de passe';
