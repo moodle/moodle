@@ -488,6 +488,7 @@ $string['files'] = 'Dateien';
 $string['filesfolders'] = 'Dateien/Ordner';
 $string['filloutallfields'] = 'Bitte füllen Sie alle Formularfelder aus';
 $string['findmorecourses'] = 'Weitere Kurse finden...';
+$string['firstdayofweek'] = '0';
 $string['firstname'] = 'Vorname';
 $string['firsttime'] = 'Sind Sie das erste Mal hier?<br />Bitte registrieren Sie sich:';
 $string['followingoptional'] = 'Die folgenden Angaben sind optional';
