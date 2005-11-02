@@ -5,11 +5,11 @@
     require_once("../config.php");
     require_once("lib.php");
 
-    $search = optional_param('search', '', PARAM_CLEAN);    // search words
-    $page = optional_param('page', 0, PARAM_INT);     // which page to show
+    $search  = optional_param('search', '', PARAM_RAW);  // search words
+    $page    = optional_param('page', 0, PARAM_INT);     // which page to show
     $perpage = optional_param('perpage', 10, PARAM_INT); // how many per page
 
-    $search = trim(strip_tags($search));
+    $search = trim(strip_tags($search)); // trim & clean raw searched string
 
     if ($search) {
         $searchterms = explode(" ", $search);    // Search for words independently
@@ -42,6 +42,9 @@
 
         $creatorediting = !empty($USER->categoriessearchediting);
         $adminediting = (isadmin() and $creatorediting);
+    } else {
+        $creatorediting = false;
+        $adminediting = false;
     }
 
 /// Editing functions
@@ -126,7 +129,7 @@
  
 
     print_header("$site->fullname : $strsearchresults", $site->fullname, 
-                 "<a href=\"index.php\">$strcourses</a> -> <a href=\"search.php\">$strsearch</a> -> '$search'", "", "", "", $searchform);
+                 "<a href=\"index.php\">$strcourses</a> -> <a href=\"search.php\">$strsearch</a> -> '".s($search)."'", "", "", "", $searchform);
 
 
     $lastcategory = -1;
@@ -134,11 +137,12 @@
 
         print_heading("$strsearchresults: $totalcount");
 
-        print_paging_bar($totalcount, $page, $perpage, "search.php?search=$search&amp;perpage=$perpage&amp;",'page',($perpage == 99999));
+        $encodedsearch = urlencode(stripslashes($search));
+        print_paging_bar($totalcount, $page, $perpage, "search.php?search=$encodedsearch&amp;perpage=$perpage&amp;",'page',($perpage == 99999));
 
         if ($perpage != 99999 && $totalcount > $perpage) {
             echo "<center><p>";
-            echo "<a href=\"search.php?search=$search&perpage=99999\">".get_string("showall", "", $totalcount)."</a>";
+            echo "<a href=\"search.php?search=$encodedsearch&perpage=99999\">".get_string("showall", "", $totalcount)."</a>";
             echo "</p></center>";
         }
 
@@ -157,7 +161,7 @@
 
             echo "<form name=\"movecourses\" action=\"search.php\" method=\"post\">";
             echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\">";
-            echo "<input type=\"hidden\" name=\"search\" value=\"$search\">";
+            echo "<input type=\"hidden\" name=\"search\" value=\"".s($search)."\">";
             echo "<input type=\"hidden\" name=\"page\" value=\"$page\">";
             echo "<input type=\"hidden\" name=\"perpage\" value=\"$perpage\">";
             echo "<table align=\"center\" border=0 cellspacing=2 cellpadding=4 class=\"generalbox\"><tr>";
@@ -187,10 +191,10 @@
                 echo "<a title=\"".get_string("delete")."\" href=\"delete.php?id=$course->id\"><img".
                     " src=\"$pixpath/t/delete.gif\" height=\"11\" width=\"11\" border=\"0\"></a> ";
                 if (!empty($course->visible)) {
-                    echo "<a title=\"".get_string("hide")."\" href=\"search.php?search=$search&amp;perpage=$perpage&amp;page=$page&amp;hide=$course->id&amp;sesskey=$USER->sesskey\"><img".
+                    echo "<a title=\"".get_string("hide")."\" href=\"search.php?search=$encodedsearch&amp;perpage=$perpage&amp;page=$page&amp;hide=$course->id&amp;sesskey=$USER->sesskey\"><img".
                         " src=\"$pixpath/t/hide.gif\" height=\"11\" width=\"11\" border=\"0\"></a> ";
                 } else {
-                    echo "<a title=\"".get_string("show")."\" href=\"search.php?search=$search&amp;perpage=$perpage&amp;page=$page&amp;show=$course->id&amp;sesskey=$USER->sesskey\"><img".
+                    echo "<a title=\"".get_string("show")."\" href=\"search.php?search=$encodedsearch&amp;perpage=$perpage&amp;page=$page&amp;show=$course->id&amp;sesskey=$USER->sesskey\"><img".
                         " src=\"$pixpath/t/show.gif\" height=\"11\" width=\"11\" border=\"0\"></a> ";
                 }
                 
@@ -211,16 +215,16 @@
 
         }
 
-        print_paging_bar($totalcount, $page, $perpage, "search.php?search=$search&amp;perpage=$perpage&amp;",'page',($perpage == 99999));
+        print_paging_bar($totalcount, $page, $perpage, "search.php?search=$encodedsearch&amp;perpage=$perpage&amp;",'page',($perpage == 99999));
 
         if ($perpage != 99999 && $totalcount > $perpage) {
             echo "<center><p>";
-            echo "<a href=\"search.php?search=$search&perpage=99999\">".get_string("showall", "", $totalcount)."</a>";
+            echo "<a href=\"search.php?search=$encoededsearch&perpage=99999\">".get_string("showall", "", $totalcount)."</a>";
             echo "</p></center>";
         }
 
     } else {
-        print_heading(get_string("nocoursesfound", "", $search));
+        print_heading(get_string("nocoursesfound", "", s($search)));
     }
 
     echo "<br /><br />";
