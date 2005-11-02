@@ -148,19 +148,27 @@ Moodle conserve tous les fichiers d'un cours dans le même dossier sur le serveur
 
 <blockquote>
 
-<p>Les thèmes (ou « skins&nbsp;») définissent l'aspect d'un site. Quelques thèmes simples sont fournis dans la distribution de Moodle. Vous pouvez aussi créer votre propre thème avec vos couleurs, logo, styles et graphiques préférés.</p>
+<p>Les thèmes (ou «&nbsp;skins&nbsp;») définissent l'aspect d'un site. Quelques thèmes simples sont fournis dans la distribution de Moodle. Vous pouvez aussi créer votre propre thème avec vos couleurs, logo, styles et graphiques préférés.</p>
 
 <p>Chaque thème est placé dans un sous-dossier «&nbsp;theme&nbsp;» qui contient au moins les fichiers suivants&nbsp;:</p>
 
 <ul>
 
-<li><strong>config.php</strong>&nbsp;: définit les couleurs du thème qui seront utilisées dans le site.</li>
+<li><strong>config.php</strong>&nbsp;: permet de configurer la façon dont les fichiers CSS interagissent. Vous pouvez construire votre thème à partir du thème standard ou de n'importe quelle thème parent, ainsi qu'inclure ou exclure plusieurs fichiers CSS.</li>
 
-<li><strong>styles.php</strong>&nbsp;: la feuille de style contenant les définitions des éléments standard HTML et de nombreux éléments de Moodle.</li>
+<li><strong>styles.php</strong>&nbsp;: fait le relais vers les fichiers CSS. Aucune modification n'est nécessaire.</li>
 
 <li><strong>header.html</strong>&nbsp;: le fichier incorporé au début de chaque page. Pour ajouter un logo au sommet de chaque page, c'est ce fichier qui devra être modifié.</li>
 
 <li><strong>footer.html</strong>&nbsp;: le fichier incorporé à la fin de chaque page.</li>
+
+<li><strong>styles_color.css</strong>: feuille de styles CSS pour toutes les propriétés de couleur.</li>
+
+<li><strong>styles_fonts.css</strong>: feuille de styles CSS pour le choix des polices, corps, hauteurs de ligne, etc.</li>
+
+<li><strong>styles_layout.css</strong>: feuille de styles CSS pour la mise en page, le positionnement, etc.</li>
+
+<li><strong>styles_moz.css</strong>: feuille de styles CSS pour les coins arrondis de Mozilla et autres navigateurs à moteur Gecko.</li>
 
 </ul>
 
@@ -170,17 +178,15 @@ Moodle conserve tous les fichiers d'un cours dans le même dossier sur le serveur
 
 <li>Copiez le dossier d'un des thèmes existant et donner un nouveau nom à la copie. Il est recommandé de commencer avec l'un des thèmes standard.</li>
 
-<li>Ouvrez config.php et insérez-y vos couleurs préférées.</li>
+<li>Modifiez le fichier config.php en y insérant les réglages nécessaires à vos besoins.</li>
 
-<li>Ouvrez styles.php et changez les styles CSS.</li>
+<li>Modifier les fichiers CSS (voir ci-dessus) avec vos propres styles.</li>
 
 <li>Ouvrez header.html et footer.html pour y ajouter les nouveaux logos ou pour modifier la mise en page.</li> </ol>
 
-<p>Toutes ces étapes sont optionnelles. Vous pouvez obtenir un aspect complètement différent en modifiant uniquement les couleurs dans config.php.</p>
-
 <p>Il est à noter que les mises à jour de Moodle <em>pourraient</em> empêcher le fonctionnement correct d'un thème personnalisé. Vérifiez les notes de mise à jour si vous utilisez un tel thème.</p>
 
-<p>En particulier, Moodle 2.0 aura un système d'affichage complètement différent, probablement basé sur la transformation XSL du code XML de Moodle. Il est vraisemblable que les thèmes auront alors un format totalement différent, avec en contrepartie une liberté bien plus grande pour la personnalisation (y compris le déplacement des éléments sur la page).</p>
+<p>Veuillez lire attentivement la description détaillée des thèmes de Moodle dans la <a href="http://docs.moodle.org/wiki/Themes">documentation sur les thèmes Moodle</a>.</p>
 
 <p>Pour en savoir plus, participez à la discussion sur le forum <a target="_top" href="http://moodle.org/mod/forum/view.php?id=46">Themes</a> dans le cours «&nbsp;Using Moodle&nbsp;». Si vous créez un joli thème susceptible d'intéresser d'autres utilisateurs, merci de poster votre fichier zip sur ce même forum.<br /> </p>
 
