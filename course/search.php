@@ -5,11 +5,11 @@
     require_once("../config.php");
     require_once("lib.php");
 
-    optional_variable($search, "");    // search words
-    optional_variable($page, "0");     // which page to show
-    optional_variable($perpage, "10"); // how many per page
+    $search  = optional_param('search', '', PARAM_RAW);  // search words
+    $page    = optional_param('page', 0, PARAM_INT);     // which page to show
+    $perpage = optional_param('perpage', 10, PARAM_INT); // how many per page
 
-    $search = trim(strip_tags($search));
+    $search = trim(strip_tags($search)); // trim & clean raw searched string
 
     if ($search) {
         $searchterms = explode(" ", $search);    // Search for words independently
@@ -55,7 +55,7 @@
     $searchform = print_course_search($search, true, "navbar");
 
     print_header("$site->fullname : $strsearchresults", $site->fullname, 
-                 "<a href=\"index.php\">$strcourses</a> -> <a href=\"search.php\">$strsearch</a> -> '$search'", "", "", "", $searchform);
+                 "<a href=\"index.php\">$strcourses</a> -> <a href=\"search.php\">$strsearch</a> -> '".s($search)."'", "", "", "", $searchform);
 
 
     $lastcategory = -1;
@@ -64,7 +64,8 @@
 
         print_heading("$strsearchresults: $totalcount");
 
-        print_paging_bar($totalcount, $page, $perpage, "search.php?search=$search&amp;perpage=$perpage&");
+        $encodedsearch = urlencode(stripslashes($search));
+        print_paging_bar($totalcount, $page, $perpage, "search.php?search=$encodedsearch&amp;perpage=$perpage&");
 
         foreach ($courses as $course) {
             $course->fullname = highlight("$search", $course->fullname);
@@ -77,7 +78,7 @@
             print_spacer(5,5);
         }
 
-        print_paging_bar($totalcount, $page, $perpage, "search.php?search=$search&amp;perpage=$perpage&");
+        print_paging_bar($totalcount, $page, $perpage, "search.php?search=$encodedsearch&amp;perpage=$perpage&");
 
     } else {
         print_heading(get_string("nocoursesfound", "", $search));
