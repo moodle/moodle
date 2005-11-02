@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005042100)
+      // calendar.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['calendar'] = 'カレンダー';
@@ -12,7 +12,7 @@ $string['dayview'] = '1日分表示';
 $string['daywithnoevents'] = 'イベントがありません。';
 $string['default'] = 'デフォルト';
 $string['deleteevent'] = 'イベントの削除';
-$string['detailedmonthview'] = '月毎表示詳細';
+$string['detailedmonthview'] = '詳細な月表示';
 $string['durationminutes'] = '期間 ( 分 )';
 $string['durationnone'] = '期間無し';
 $string['durationuntil'] = '終了日:';
@@ -50,7 +50,7 @@ $string['hidden'] = '非表示中';
 $string['manyevents'] = '$a イベント';
 $string['mon'] = '月';
 $string['monday'] = '月曜日';
-$string['monthlyview'] = '月毎表示';
+$string['monthlyview'] = '月表示';
 $string['newevent'] = '新しいイベント';
 $string['noupcomingevents'] = '直近のイベントはありません';
 $string['oneevent'] = '1 イベント';
