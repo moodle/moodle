@@ -103,7 +103,7 @@ function get_user_courses(&$user, $type) {
                    }
                 } else if ($type === 'teacher') {
                       error_log("Enrolling teacher $user->id ($user->username) in course $course_obj->id ($course_obj->shortname)");
-                    add_teacher($user->id, $course_obj->id, 1, 0, 0,'ldap');
+                    add_teacher($user->id, $course_obj->id, 1, '', 0, 0,'ldap');
                 }
                 $CFG->debug=0;
             }
