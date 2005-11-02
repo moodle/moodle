@@ -54,6 +54,8 @@ $filename = optional_param('filename',0,PARAM_INT);
     $taught_courses = get_my_courses($USER->id,"visible DESC,sortorder ASC",0,1);
     if (!empty($creator)) {
         $cat_courses = get_courses($course->category);
+    } else {
+        $cat_courses = array();
     }
     print_heading(get_string("importdatafrom"));
 
