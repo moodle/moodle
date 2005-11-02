@@ -458,7 +458,7 @@ function stats_get_base_monthly($time=0) {
 }
 
 function stats_get_next_monthend($lastmonth) {
-    return stats_usergetmidnight(strtotime(date('1-M-Y',$lastmonth).' + 1 month'));
+    return stats_usergetmidnight(strtotime(date('1-M-Y',$lastmonth).' +1 month'));
 }
 
 function stats_get_next_weekend($lastweek) {
