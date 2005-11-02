@@ -81,7 +81,7 @@
         print_paging_bar($totalcount, $page, $perpage, "search.php?search=$encodedsearch&amp;perpage=$perpage&");
 
     } else {
-        print_heading(get_string("nocoursesfound", "", $search));
+        print_heading(get_string("nocoursesfound", "", s($search)));
     }
 
     echo "<br /><br />";
