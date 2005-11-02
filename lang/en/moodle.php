@@ -221,6 +221,7 @@ $string['coursenotaccessible'] = 'This course does not allow public access';
 $string['coursefiles'] = 'Course files';
 $string['courseformats'] = 'Course formats';
 $string['coursegrades'] = 'Course grades';
+$string['courseimportnotaught'] = 'You don\'t seem to be an editing teacher in any other courses, there are no courses for you to import from.';
 $string['courseinfo'] = 'Course info';
 $string['coursereject'] = 'Reject a course request';
 $string['courserejected'] = 'Course has been rejected and the requester has been notified.';

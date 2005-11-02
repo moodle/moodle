@@ -51,13 +51,29 @@ $filename = optional_param('filename',0,PARAM_INT);
 
     print_header("$course->fullname: $strimport", "$course->fullname: $strimport", "$course->shortname");
 
-    $taught_courses = get_my_courses($USER->id,"visible DESC,sortorder ASC",0,1);
+    print_heading(get_string("importdatafrom"));
+
+    $tcourseids = '';
+
+    if ($teachers = get_records('user_teachers', 'userid', $USER->id, '', 'id, course')) {
+        foreach ($teachers as $teacher) {
+            if ($teacher->course != $course->id && $teacher->course != $site->id){
+                $tcourseids .= $teacher->course.',';
+            }
+        }
+    }
+
+    $taught_courses = array();
+    if (!empty($tcourseids)) {
+        $tcourseids = substr($tcourseids,0,-1);
+        $taught_courses = get_records_list('course', 'id', $tcourseids);
+    } 
+
     if (!empty($creator)) {
         $cat_courses = get_courses($course->category);
     } else {
         $cat_courses = array();
     }
-    print_heading(get_string("importdatafrom"));
 
     $options = array();
     foreach ($taught_courses as $tcourse) {
@@ -65,6 +81,13 @@ $filename = optional_param('filename',0,PARAM_INT);
             $options[$tcourse->id] = $tcourse->fullname;
         }
     }
+
+    if (empty($options) && empty($creator)) {
+        error(get_string('courseimportnotaught'),$CFG->wwwroot.'/course/view.php?id='.$course->id);
+        print_footer();
+        die();
+    }
+
 
     $fm = '<form method="post" action="'.$CFG->wwwroot.'/course/import.php"><input type="hidden" name="id" value="'.$course->id.'" />';
     $submit = '<input type="submit" value="'.get_string('usethiscourse').'" /></form>';
