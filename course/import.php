@@ -55,7 +55,7 @@ $filename = optional_param('filename',0,PARAM_INT);
 
     $tcourseids = '';
 
-    if ($teachers = get_records('user_teachers', 'userid', $USER->id, '', 'id, course')) {
+    if ($teachers = get_records_select('user_teachers', "userid = $USER->id AND editall = 1",'','id,course')) {
         foreach ($teachers as $teacher) {
             if ($teacher->course != $course->id && $teacher->course != $site->id){
                 $tcourseids .= $teacher->course.',';
