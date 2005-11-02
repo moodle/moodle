@@ -1,17 +1,14 @@
-ABOUT THIS DIRECTORY
+このディレクトリに関して
 --------------------
 
-DO NOT CHANGE, RENAME OR MOVE ANY OF THE FILES 
-IN THIS DIRECTORY unless you REALLY know what 
-you are doing.  
+あなたが何を行っているか明確に理解している以外、このディレクトリ内の
+どのファイルも変更、リネーム、移動を行わないでください。
 
-Changing these files could mess up your course.
+これらのファイルを変更することで、コースに障害が発生する場合があります。
 
-This directory contains files uploaded to your 
-course within particular modules (mostly by 
-students), such as assignment submissions and 
-forum attachments.
+このディレクトリには、あなたのコース内の課題提出やフォーラム添付等の
+特定のモジュールで ( 主に学生によって ) アップロードされたファイルが含
+まれています。
 
-The names of the directories and files within 
-this directory are very specific and are 
-automatically maintained by Moodle.
+このディレクトリ内のディレクトリ名およびファイル名は非常に特有なもので、
+Moodleによって自動的に管理されています。

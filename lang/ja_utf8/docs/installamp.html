@@ -1,10 +1,13 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title>Moodle Docs: Installing PHP and MySQL</title>
-	<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS">
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 
-<body bgcolor="#FFFFFF">
+<body>
 <h1>Apache、MySQLおよびPHPのインストール</h1>
 <blockquote>
   <p>Moodleはと呼ばれるスクリプト言語によって作成され、ほとんどのデータはデータベースに保存されます。Moodleを使用する上での推奨データーベースはMySQLです。 Before installing Moodleをインストールする前に稼動中のウェブサーバ上でPHPとデータベースが動作するようにしてください。これらのパッケージは平均的なコンピュータユーザにとって難しい設定が必要です。このページでは異なるプラットフォームでも 設定を行うことができるように、できる限りシンプルに説明を記述しています。</p>
@@ -46,7 +49,7 @@
     を使用することです。以下に全てのステップに関して説明します:</p>
     <ol>
       <li>最初に、MySQLをインストールしている場合は(別のパッケージをインストールしている場合でも)、
-      全てをアンインストールしてください。さらにMySQLのファイルおよび<strong>c:\my.cnf</strong>、<strong>c:\windows\my.ini</strong>
+      全てをアンインストールしてください。さらにMySQLのファイルおよび<strong>c:my.cnf</strong>、<strong>c:windowsmy.ini</strong>
       を削除してください。<strong>my.cnf</strong>という名称のファイルを検索して削除されることをお勧めします。</li>
       <li>PHPをインストールしている場合は、Windowsディレクトリより<strong>php4ts.dll</strong>および<strong>php.ini</strong>という名称のファイルを削除してください。</li>
       <li>EasyPHPをこちらよりダウンロードしてください: <a href="http://www.easyphp.org/telechargements/dn.php?F=easyphp1-7">http://www.easyphp.org/telechargements/dn.php?F=easyphp1-7</a>(約10Mb)</li>
@@ -61,8 +64,8 @@
       <li>入力欄に&quot;moodle&quot;と入力後、&quot;Create&quot;ボタンをクリックして新しいデータベースを作成してください。簡単だったでしょう!</li>
       <li>データベースにアクセスできるユーザを作成することもできます。初めての方には、この作業は若干難しいと思いますので、Moodleの設定には既に作成されているユーザ&quot;root&quot;をパスワード無しで使用してください。Moodleの設定は後で変更可能です。</li>
       <li>Moodleをインストールする準備ができました! 最新版のMoodleを<a href="http://moodle.org/download" target="_blank">http://moodle.org/download</a>よりダウンロードして、圧縮ファイルを解凍してください。</li>
-      <li>Moodleファイルを<strong>C:\Program Files\EasyPHP\www</strong>にコピーしてください。Moodleの全ディレクトリ(例 C:\Program Files\EasyPHP\www\moodle)をコピーすることもできますし、Moodleディレクトリの<em>コンテンツ</em>をコピーすることもできます。2番目の方法を取った場合、     Moodleホームページにhttp://localhost/moodle/とアクセスする代わりに、http://localhost/とアクセスする事ができます。</li>
-      <li>Moodleでアップロードファイルを保存するための空のフォルダを作成してください。例:<strong>C:\moodledata</strong></li>
+      <li>Moodleファイルを<strong>C:Program FilesEasyPHPwww</strong>にコピーしてください。Moodleの全ディレクトリ(例 C:Program FilesEasyPHPwwwmoodle)をコピーすることもできますし、Moodleディレクトリの<em>コンテンツ</em>をコピーすることもできます。2番目の方法を取った場合、     Moodleホームページにhttp://localhost/moodle/とアクセスする代わりに、http://localhost/とアクセスする事ができます。</li>
+      <li>Moodleでアップロードファイルを保存するための空のフォルダを作成してください。例:<strong>C:moodledata</strong></li>
       <li>Moodleフォルダに入ってください。フォルダ内のconfig-dist.phpをconfig.phpにコピーしてください。</li>
       <li>config.phpをテキストエディタで編集してください(ノートパッドで編集できますが、末尾にスペースが入らないように気をつけてください)。</li>
       <li>新しいデータベースに関して全ての情報を入力してください:<br />
@@ -75,11 +78,11 @@
       $CFG-&gt;prefix = 'mdl_';</li>
       <li>そして全てのファイルパスを入力してください:<br />
       $CFG-&gt;wwwroot = 'http://localhost/moodle'; // 知っている場合は外部アドレスを使ってください。<br />
-      $CFG-&gt;dirroot = 'C:\Program Files\EasyPHP\www\moodle'; <br />
-      $CFG-&gt;dataroot = 'C:\moodledata';</li>
+      $CFG-&gt;dirroot = 'C:Program FilesEasyPHPwwwmoodle'; <br />
+      $CFG-&gt;dataroot = 'C:moodledata';</li>
       <li>config.phpを保存してください - 他に設定がある場合は無視して結構です。</li>
       <li>もうすぐ終わりです! 残りはウェブベースの設定です。 ブラウザで設定を続けるために<a href="http://localhost/moodle/admin/" target="_blank">http://localhost/moodle/admin/</a>にアクセスしてください。</li>
-      <li>Moodleでzipファイル(例えばバックアップにzipを使う場合)を使用するために&quot;zlib&quot;を使用してください。EasyPHPディレクトリ(<strong>C:\Program Files\EasyPHP</strong>)内のphpini.exeを実行しても同じ設定を行うこともできます。&quot;zlib.dll&quot;の隣にあるチェックボックスをチェックしてください。 ウィンドウを閉じて、ツールバーにある黒いEに戻ります。右クリックをしてメニューより&quot;Restart&quot;を選択してください。</li>
+      <li>Moodleでzipファイル(例えばバックアップにzipを使う場合)を使用するために&quot;zlib&quot;を使用してください。EasyPHPディレクトリ(<strong>C:Program FilesEasyPHP</strong>)内のphpini.exeを実行しても同じ設定を行うこともできます。&quot;zlib.dll&quot;の隣にあるチェックボックスをチェックしてください。 ウィンドウを閉じて、ツールバーにある黒いEに戻ります。右クリックをしてメニューより&quot;Restart&quot;を選択してください。</li>
       <li>最後に、cronを設定する必要があります。詳細は<a href="./?file=install.html">インストールガイド</a>をご覧ください。</li>
     </ol>
     <p>EasyPHPを使えない場合、PHPが正常に設定されているか確認して一般的な問題を回避する方法があります:</p>
@@ -92,7 +95,7 @@
     <p>&nbsp;</p>
   </blockquote>
 </blockquote>
-<p align="center"><font size="1"><a href="." target="_top">Moodle文書</a></font></p>
+<p align="center"><font size="1"><a href="." target="_top">Moodleドキュメンテーション</a></font></p>
 <p align="center"><font size="1">Version: $Id$</font></p>
 
 </body>
