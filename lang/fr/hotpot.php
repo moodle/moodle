@@ -197,4 +197,7 @@ $string['error_noquizzesfound'] = 'Aucun test Hot Potatoes trouvé';
 $string['error_nofeedbackurlwebpage'] = 'Veuillez saisir une URL pour la page web';
 $string['error_nofeedbackurlformmail'] = 'Veuillez saisir une URL pour le script de traitement du formulaire';
 
+  	 // error messages (attempt.php)
+$string['error_invalidquiztype'] = 'Ce type de test est manquant ou n\'est pas valide';
+
 ?>
