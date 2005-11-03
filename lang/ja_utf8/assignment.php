@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.6 development (2005071700)
+      // assignment.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['allowresubmit'] = '再提出を許可する';
@@ -54,7 +54,9 @@ $string['noattempts'] = 'この課題には提出物がありません。';
 $string['notgradedyet'] = '未評価';
 $string['notsubmittedyet'] = '未提出';
 $string['overwritewarning'] = '注意: 再度アップロードすることにより現在の提出物は置き換えられます。';
+$string['pagesize'] = '1ページあたりの提出物数';
 $string['preventlate'] = '提出期限後の提出を許可しない';
+$string['quickgrade'] = 'クイック評定を許可';
 $string['saveallfeedback'] = 'フィードバックを保存する';
 $string['submission'] = '提出';
 $string['submissionfeedback'] = '提出のフィードバック';

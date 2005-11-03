@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005011000)
+      // glossary.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['addcomment'] = 'コメントの追加';
@@ -76,7 +76,7 @@ $string['editalways'] = '常に編集を許可';
 $string['editcategories'] = 'カテゴリの編集';
 $string['editentry'] = 'エントリの編集';
 $string['editingcomment'] = 'コメントの編集';
-$string['entbypage'] = '1ページあたりの表示エントリ数';
+$string['entbypage'] = '1ページあたりのエントリ数';
 $string['entries'] = 'エントリ';
 $string['entrieswithoutcategory'] = 'カテゴリ無しのエントリ';
 $string['entry'] = 'エントリ';

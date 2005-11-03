@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // block_rss_client.php - created with Moodle 1.5 ALPHA (2005051500)
+      // block_rss_client.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['addfeed'] = 'ニュースフィードURLを追加:';
@@ -8,13 +8,13 @@ $string['addnew'] = 'RSSの追加';
 $string['choosefeedlabel'] = 'このブロックで使用するフィードを選択してください:';
 $string['clientchannellink'] = 'ソースサイト ...';
 $string['clientnumentries'] = 'ブロックに表示するRSSリンク数';
-$string['clientshowchannellinklabel'] = 'オリジナルサイト ( チャンネルリンク ) のリンクを表示しますか? ( ニュースフィードにリンクが提供されていない場合、リンクは表示されません。 )';
+$string['clientshowchannellinklabel'] = 'オリジナルサイト ( チャンネルリンク ) のリンクを表示しますか? ( ニュースフィードにリンクが提供されていない場合、リンクは表示されませんので注意してください。 )';
 $string['clientshowimagelabel'] = '利用可能な場合、チャンネルイメージを表示する:';
 $string['configblock'] = 'このブロックの設定';
 $string['couldnotfindfeed'] = '指定されたIDのフィードが見つかりませんでした。';
-$string['customtitlelabel'] = 'カスタムタイトル ( フィードより提供されたタイトルを使用する場合は空白 )';
+$string['customtitlelabel'] = 'カスタムタイトル ( フィードより提供されたタイトルを使用する場合は空白 ):';
 $string['deletefeedconfirm'] = '本当にこのフィードを削除してもよろしいですか?';
-$string['displaydescriptionlabel'] = '各リンクの説明を表示しますか?';
+$string['displaydescriptionlabel'] = '各リンクの内容を表示しますか?';
 $string['editfeeds'] = 'RSS/Atomニュースフィードの購読登録、解除の編集';
 $string['editnewsfeeds'] = 'ニュースフィードの編集';
 $string['editrssblock'] = 'RSSヘッドラインブロックの編集';
