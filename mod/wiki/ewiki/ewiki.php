@@ -1504,7 +1504,7 @@ function ewiki_data_update(&$data, $author="") {
 
 #-- edit <textarea>
 function ewiki_page_edit_form(&$id, &$data, &$hidden_postdata) {
-   global $ewiki_plugins, $ewiki_config;   
+   global $ewiki_plugins, $ewiki_config, $moodle_format;   
 
    $o='';
       
@@ -1550,7 +1550,15 @@ function ewiki_page_edit_form(&$id, &$data, &$hidden_postdata) {
      ob_start();
      $usehtmleditor = can_use_html_editor();
      echo '<table><tr><td>';
-     print_textarea($usehtmleditor, $rows, $cols, 680, 400, "content", ewiki_format($data["content"]));
+     if ($usehtmleditor) { //clean and convert before editing
+         $options = new object();
+         $options->smiley = false;
+         $options->filter = false;
+         $oldtext = format_text(ewiki_format($data["content"]), $moodle_format, $options);
+     } else {
+         $oldtext = ewiki_format($data["content"]);
+     }
+     print_textarea($usehtmleditor, $rows, $cols, 680, 400, "content", $oldtext);
      echo '</td></tr></table>';
      if ($usehtmleditor) {
          use_html_editor("content");

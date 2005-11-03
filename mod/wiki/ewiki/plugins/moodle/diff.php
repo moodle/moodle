@@ -13,7 +13,7 @@
 
 
  function ewiki_page_stupid_diff($id, $data, $action) {
-    global $wiki;
+    global $wiki, $moodle_format;
 
     if ($uu=$GLOBALS["ewiki_diff_versions"]) {
        list($new_ver, $old_ver) = $uu;
@@ -34,10 +34,17 @@
 
     # Different handling for html: closes Bug #1530 - Wiki diffs useless when using HTML editor    
     if($wiki->htmlmode==2) {
+        /// first do the formatiing to get normal display format without filters
+        $options = new object();
+        $options->smiley = false;
+        $options->filter = false;
+        $content0 = format_text($data0['content'], $moodle_format, $options);
+        $content = format_text($data['content'], $moodle_format, $options);
+
         /// Remove all new line characters. They will be placed at HTML line breaks.
-        $content0 = preg_replace('/\n|\r/i', ' ', $data0['content']);
+        $content0 = preg_replace('/\n|\r/i', ' ', $content0);
         $content0 = preg_replace('/(\S)\s+(\S)/', '$1 $2', $content0); // Remove multiple spaces.
-        $content = preg_replace('/\n|\r/i', ' ', $data['content']);
+        $content = preg_replace('/\n|\r/i', ' ', $content);
         $content = preg_replace('/(\S)\s+(\S)/', '$1 $2', $content);
 
         /// Replace <p>&nbsp;</p>
@@ -59,54 +66,46 @@
     }
     $txt0 = preg_split("+\s*\n+", trim($content0));
     $txt2 = preg_split("+\s*\n+", trim($content));
-    ///print "<pre>\n";
-    ///print "\$data0[content]:\n $data0[content]\n";
-    ///print "\n\n-----------\n\n";
-    ///print "\$data[content]:\n $data[content]\n";
-    ///print "\n\n-----------\n\n";
-    ///print "\$content0:\n $content0\n";
-    ///print "\n\n-----------\n\n";
-    ///print "\$content:\n $content\n";
-    ///print "\n\n-----------\n\n";    
-    ///print "</pre>";
-    ///exit;
 
     $diff0 = array_diff($txt0, $txt2);
     $diff2 = array_diff($txt2, $txt0);
 
     foreach ($txt2 as $i => $line) {
-//       if($wiki->htmlmode != 2) {
-//         $line = htmlentities($line);
-//       }
        $i2 = $i;
        while ($rm = $diff0[$i2++]) {          
           if($wiki->htmlmode == 2) {
-            $o .= "<b>-</b><font color=\"#990000\">$rm</font><br />\n";
+            if ($rm == '<br />') { //ugly hack to fix line breaks
+                $rm = '';
+            }
+            $o .= "<b>-</b><font color=\"#990000\">".format_text($rm, $moodle_format, $options)."</font><br />\n";
           } else {
-            $o .= "<b>-</b><font color=\"#990000\"><tt>$rm</tt></font><br />\n";
+            $o .= "<b>-</b><font color=\"#990000\"><tt>".s($rm)."</tt></font><br />\n";
           }
           unset($diff0[$i2-1]);
        }
 
        if (in_array($line, $diff2)) {
           if($wiki->htmlmode == 2) {
-            $o .= "<b>+</b><font color=\"#009900\">$line</font><br />\n";
+            if ($line == '<br />') { //ugly hack to fix line breaks
+                $line = '';
+            }
+            $o .= "<b>+</b><font color=\"#009900\">".format_text($line, $moodle_format, $options)."</font><br />\n";
           } else {
-            $o .= "<b>+</b><font color=\"#009900\"><tt>$line</tt></font><br />\n";
+            $o .= "<b>+</b><font color=\"#009900\"><tt>".s($line)."</tt></font><br />\n";
           }
        }
        else {
           if($wiki->htmlmode == 2) {
-            $o .= "$line\n";
+            $o .= format_text($line, $moodle_format, $options)."\n";
           } else {
-            $o .= "&nbsp; $line<br />\n";
+            $o .= "&nbsp; ".s($line)."<br />\n";
           }
        }
 
     }
 
     foreach ($diff0 as $rm) {
-       $o .= "<b>-</b><font color=\"#990000\"> <tt>$rm</tt></font><br />\n";
+       $o .= "<b>-</b><font color=\"#990000\"> <tt>".s($rm)."</tt></font><br />\n";
     }
 
     return($o);

@@ -4,15 +4,13 @@
     require_once("../../config.php");
     require_once("lib.php");
 
-    optional_variable($id);    // Course Module ID, or
-    optional_variable($a);     // wiki ID
-    optional_variable($page, false);    // Pagename
-    optional_variable($confirm, "");
-    optional_variable($action,"");    // Admin Action
-    optional_variable($userid, 0);     // User wiki.
-    optional_variable($groupid, 0);    // Group wiki.
-
-    $action = clean_text($action);
+    $id      = optional_param('id', '', PARAM_INT);        // Course Module ID, or
+    $a       = optional_param('a', '', PARAM_INT);         // wiki ID
+    $page    = optional_param('page', false, PARAM_CLEAN); // Pagename
+    $confirm = optional_param('confirm', '', PARAM_RAW);
+    $action  = optional_param('action', '', PARAM_ACTION); // Admin Action
+    $userid  = optional_param('userid', 0, PARAM_INT);     // User wiki.
+    $groupid = optional_param('groupid', 0, PARAM_INT);    // Group wiki.
 
     if ($id) {
         if (! $cm = get_record("course_modules", "id", $id)) {
