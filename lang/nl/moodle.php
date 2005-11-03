@@ -220,6 +220,7 @@ $string['coursefiles'] = 'Cursusbestanden';
 $string['courseformats'] = 'Cursusformats';
 $string['coursegrades'] = 'Cursuscijfers';
 $string['coursehidden'] = 'Deze cursus is nu niet beschikbaar voor leerlingen';
+$string['courseimportnotaught'] = 'Het lijkt er op dat je geen leraar bent met het recht op het bewerken van een andere cursus dan deze. Er zijn daarom geen cursussen waaruit jij kunt importeren.';
 $string['courseinfo'] = 'Cursusinformatie';
 $string['coursemessage'] = 'Bericht voor de gebruikers van de cursus';
 $string['coursenotaccessible'] = 'Deze cursus is niet publiek toegankelijk';
