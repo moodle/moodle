@@ -105,6 +105,7 @@ $string['configsmtpuser'] = 'If you have specified an SMTP server above, and the
 $string['configstatsfirstrun'] = 'This specifies how far back the logs should be processed <b>the first time</b> the cronjob wants to process statistics. If you have a lot of traffic and are on shared hosting, it\'s probably not a good idea to go too far back, as it could take a long time to run and be quite resource intensive. (Note that for this setting, 1 month = 28 days. In the graphs and reports generated, 1 month = 1 calendar month.)';
 $string['configstatsmaxruntime'] = 'Stats processing can be quite intensive, so use a combination of this field and the next one to specify when it will run and how long for.';
 $string['configstatsruntimestart'] = 'What time should the cronjob that does the stats processing <b>start</b>?';
+$string['configstatsuserthreshold'] = 'If you enter a non-zero,  non numeric value here, for ranking courses, courses with less than this number of enrolled users (students + teachers) will be ignored';
 $string['configteacherassignteachers'] = 'Should ordinary teachers be allowed to assign other teachers within courses they teach?  If \'No\', then only course creators and admins can assign teachers.';
 $string['configthemelist'] = 'Leave this blank to allow any valid theme to be used.  If you want to shorten the theme menu, you can specify a comma-separated list of names here (Don\'t use spaces!).  
 For example:  standard,orangewhite.';

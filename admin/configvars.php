@@ -578,7 +578,9 @@ class configvarrss extends configvar {
     $stats['statsruntimestart'] = new configvar (get_string('configstatsruntimestart','admin'),
       print_time_selector("statsruntimestarthour","statsruntimestartminute",make_timestamp(2000,1,1,$config->statsruntimestarthour,$config->statsruntimestartminute),5,true) );
 
-
+    $stats['statsuserthreshold'] = new configvar (get_string('configstatsuserthreshold','admin'),
+      '<input type="text" name="statsuserthreshold" size="4" value="'.$config->statsuserthreshold.'" />');
+                                              
 
 ////////////////////////////////////////////////////////////////////
 
