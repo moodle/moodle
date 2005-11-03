@@ -8,7 +8,6 @@ class assignment_online extends assignment_base {
 
     function assignment_online($cmid=0) {
         parent::assignment_base($cmid);
-
     }
 
     function view() {
@@ -32,9 +31,9 @@ class assignment_online extends assignment_base {
         if ($data = data_submitted()) {      // No incoming data?
             if ($editable && $this->update_submission($data)) {
                 //TODO fix log actions - needs db upgrade
-	            add_to_log($this->course->id, 'assignment', 'upload', 
-	                    'view.php?a='.$this->assignment->id, $this->assignment->id, $this->cm->id);
-	            $this->email_teachers($submission);
+                add_to_log($this->course->id, 'assignment', 'upload', 
+                        'view.php?a='.$this->assignment->id, $this->assignment->id, $this->cm->id);
+                $this->email_teachers($submission);
                 //redirect to get updated submission date and word count
                 redirect('view.php?id='.$this->cm->id.'&saved=1');
             } else {
@@ -171,12 +170,19 @@ class assignment_online extends assignment_base {
             return false;
         }       
         
+        ///For save and next, we need to know the userid to save, and the userid to go...
+        ///We use a new hidden field in the form, and set it to -1. If it's set, we use this
+        ///as the userid to store...
+        if ((int)$feedback->saveuserid !== -1){
+            $feedback->userid = $feedback->saveuserid;
+        }
+        
         if (!empty($feedback->cancel)) {          // User hit cancel button
             return false;
         }       
         
         $newsubmission = $this->get_submission($feedback->userid, true);  // Get or make one
-                
+            
         $newsubmission->grade      = $feedback->grade;
         $newsubmission->comment    = $feedback->comment;
         $newsubmission->format     = $feedback->format;
@@ -198,9 +204,8 @@ class assignment_online extends assignment_base {
                  
     }   
 
-    function print_user_files($userid, $return=false) {
+    function print_student_answer($userid, $return=false){
         global $CFG;
-    
         if (!$submission = $this->get_submission($userid)) {
             return '';
         }
@@ -210,11 +215,44 @@ class assignment_online extends assignment_base {
                   $submission->userid, 'file'.$userid, shorten_text(trim(strip_tags(format_text($submission->data1,$submission->data2))), 15), 450, 580, 
                   get_string('submission', 'assignment'), 'none', true).
                   '</div>';
-
-        if ($return) {
-            return $output;
+                  return $output;
+    }
+    
+    function print_user_files($userid, $return=false) {
+        global $CFG;
+    
+        if (!$submission = $this->get_submission($userid)) {
+            return '';
         }
-        echo $output;
+        
+        $output = '<div class="files">'.
+                  '<img align="middle" src="'.$CFG->pixpath.'/f/html.gif" height="16" width="16" alt="html" />'.
+                  link_to_popup_window ('/mod/assignment/type/online/file.php?id='.$this->cm->id.'&amp;userid='.
+                  $submission->userid, 'file'.$userid, shorten_text(trim(strip_tags(format_text($submission->data1,$submission->data2))), 15), 450, 580, 
+                  get_string('submission', 'assignment'), 'none', true).
+                  '</div>';
+
+        ///Stolen code from file.php
+        
+        print_simple_box_start('center', '', '', '', 'generalbox', 'wordcount');
+        echo '<table>';
+        //if ($assignment->timedue) {
+        //    echo '<tr><td class="c0">'.get_string('duedate','assignment').':</td>';
+        //    echo '    <td class="c1">'.userdate($assignment->timedue).'</td></tr>';
+        //}
+        echo '<tr>';//<td class="c0">'.get_string('lastedited').':</td>';
+        echo '    <td class="c1">';//.userdate($submission->timemodified);
+        echo ' ('.get_string('numwords', '', count_words(format_text($submission->data1, $submission->data2))).')</td></tr>';
+        echo '</table>';
+        print_simple_box_end();
+        print_simple_box(format_text($submission->data1, $submission->data2), 'center', '100%');
+        
+        ///End of stolen code from file.php
+        
+        if ($return) {
+            //return $output;
+        }
+        //echo $output;
     }
 
     function preprocess_submission(&$submission) {
