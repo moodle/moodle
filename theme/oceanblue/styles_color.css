@@ -754,6 +754,9 @@ body#mod-quiz-report table#attempts .r1 {
  *** Modules: Resource
  ***/
 
+#mod-resource-view table {
+  background-color: #FFFFFF;
+
 .ims-nav-dimmed {
   color: #AAAAAA;
   text-decoration: none;
