@@ -570,9 +570,9 @@ function stats_get_parameters($time,$report,$courseid,$mode) {
         break;
     case STATS_REPORT_ACTIVE_COURSES_WEIGHTED:
         $param->fields = 'sum(studentreads+studentwrites+teacherreads+teacherwrites) AS line1,'
-            .'sum(students+teachers) AS line2,'
-            .'sum(studentreads+studentwrites+teacherreads+teacherwrites)'.$real.'/sum(students+teachers)'.$real.' AS line3';
-        $param->extras = 'HAVING sum(students+teachers) != 0';
+            .'max(students+teachers) AS line2,'
+            .'sum(studentreads+studentwrites+teacherreads+teacherwrites)'.$real.'/max(students+teachers)'.$real.' AS line3';
+        $param->extras = 'HAVING max(students+teachers) != 0';
         $param->orderby = 'line3 DESC';
         $param->line1 = get_string('activity');
         $param->line2 = get_string('users');
@@ -580,9 +580,9 @@ function stats_get_parameters($time,$report,$courseid,$mode) {
         $param->graphline = 'line3';
         break;
     case STATS_REPORT_PARTICIPATORY_COURSES:
-        $param->fields = 'sum(students+teachers) as line1,sum(activestudents+activeteachers) AS line2,'
-            .'sum(activestudents+activeteachers)'.$real.'/sum(students+teachers)'.$real.' AS line3';
-        $param->extras = 'HAVING sum(students+teachers) != 0';
+        $param->fields = 'max(students+teachers) as line1,max(activestudents+activeteachers) AS line2,'
+            .'max(activestudents+activeteachers)'.$real.'/max(students+teachers)'.$real.' AS line3';
+        $param->extras = 'HAVING max(students+teachers) != 0';
         $param->orderby = 'line3 DESC';
         $param->line1 = get_string('users');
         $param->line2 = get_string('activeusers');
