@@ -218,6 +218,7 @@ $string['coursefiles'] = 'Fichiers du cours';
 $string['courseformats'] = 'Formats de cours';
 $string['coursegrades'] = 'Notes du cours';
 $string['coursehidden'] = 'Ce cours n\'est actuellement pas disponible pour les étudiants';
+$string['courseimportnotaught'] = 'Vous n\'êtes enseignant avec droit d\'édition dans aucun cours. Vous ne pouvez donc importer des ressources d\'aucun cours.';
 $string['courseinfo'] = 'Informations du cours';
 $string['coursemessage'] = 'Message aux participants du cours';
 $string['coursenotaccessible'] = 'Ce cours n\'est pas accessible au public';
