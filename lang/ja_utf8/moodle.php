@@ -219,6 +219,7 @@ $string['coursefiles'] = 'コースファイル';
 $string['courseformats'] = 'コースフォーマット';
 $string['coursegrades'] = 'コース評定';
 $string['coursehidden'] = '現在、学生はこのコースを利用できません。';
+$string['courseimportnotaught'] = 'あなたは他のどのコースでも編集権限のある教師ではないようです。インポートできるコースはありません。';
 $string['courseinfo'] = 'コース情報';
 $string['coursemessage'] = 'コースユーザにメッセージを送信';
 $string['coursenotaccessible'] = 'このコースには一般からのアクセスはできません。';
