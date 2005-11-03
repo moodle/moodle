@@ -93,6 +93,7 @@
        'smtpuser'                 => '',
        'statsfirstrun'            => 'none',
        'statsmaxruntime'          =>  0,
+       'statsuserthreshold'       =>  0,
        'style'                    => 'default',
        'tabselectedtofront'       =>  false,
        'teacherassignteachers'    =>  true,
