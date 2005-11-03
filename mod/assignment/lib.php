@@ -734,7 +734,7 @@ class assignment_base {
         $this->preprocess_submission($submission);
 
         echo '<br />';
-        print_textarea($this->usehtmleditor, 12, 58, 0, 0, 'comment', $submission->comment, $this->course->id);
+        print_textarea($this->usehtmleditor, 14, 58, 0, 0, 'comment', $submission->comment, $this->course->id);
 
         if ($this->usehtmleditor) { 
             echo '<input type="hidden" name="format" value="'.FORMAT_HTML.'" />';
@@ -1002,7 +1002,7 @@ class assignment_base {
                                    
                 ///No more buttons, we use popups ;-).
                 $button = link_to_popup_window ('/mod/assignment/submissions.php?id='.$this->cm->id.'&amp;userid='.$auser->id.'&amp;mode=single'.'&amp;offset='.$offset++.'&amp;tsort='.$ssort, 
-                                                'grade'.$auser->id, $buttontext, 450, 700, $buttontext, 'none', true, 'button'.$auser->id);
+                                                'grade'.$auser->id, $buttontext, 500, 780, $buttontext, 'none', true, 'button'.$auser->id);
 
                 $status  = '<div id="up'.$auser->id.'" class="s'.$auser->status.'">'.$button.'</div>';
                 
