@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.6 development (2005060201)
+      // assignment.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['allowresubmit'] = 'Sta herhaald insturen toe';
@@ -51,7 +51,9 @@ $string['noattempts'] = 'Er heeft nog niemand zijn opdracht ingestuurd';
 $string['notgradedyet'] = 'Nog niet beoordeeld';
 $string['notsubmittedyet'] = 'Nog niet ingestuurd';
 $string['overwritewarning'] = 'Waarschuwing: als je opnieuw een opdracht instuurt OVERSCHRIJFT deze de huidige ingestuurde opdracht';
+$string['pagesize'] = 'Aantal te tonen inzendingen per pagina';
 $string['preventlate'] = 'Blokkeer te laat insturen';
+$string['quickgrade'] = 'Snel verbeteren';
 $string['saveallfeedback'] = 'Bewaar al mijn feedback';
 $string['submission'] = 'Ingestuurde opdracht';
 $string['submissionfeedback'] = 'Feedback op de ingestuurde opdracht';
