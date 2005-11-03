@@ -117,7 +117,8 @@ $string['overviewnumpostssince'] = '最終ログインより $a 件の投稿';
 $string['overviewnumunread'] = '合計未読記事 $a 件';
 $string['parent'] = '親記事を表示する';
 $string['parentofthispost'] = 'この投稿の親記事';
-$string['postadded'] = '投稿が追加されました。<p>更新したい場合は $a 編集できます。';
+$string['postadded'] = '<p>あなたの投稿が追加されました。</p>
+<p>内容を変更したい場合は $a 編集できます。</p>';
 $string['postincontext'] = '関連した投稿を表示する';
 $string['postmailinfo'] = 'これは $a ウェブサイトに投稿された記事のコピーです。
 返信をウェブサイト経由で追加する場合は、このリンクをクリックしてください:';
