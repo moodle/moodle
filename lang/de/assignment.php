@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.6 development (2005090100)
+      // assignment.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['allowresubmit'] = 'Erneutes Einreichen erlauben';
@@ -52,7 +52,9 @@ $string['noattempts'] = 'Bisher wurden keine Arbeiten eingereicht.';
 $string['notgradedyet'] = 'Noch nicht bewertet';
 $string['notsubmittedyet'] = 'Noch nichts eingereicht';
 $string['overwritewarning'] = 'Hinweis: erneutes hochladen ERSETZT Ihren gegenwärtigen Eintrag ';
+$string['pagesize'] = 'Zahl der abgegebenen Aufgaben pro Seite';
 $string['preventlate'] = 'Verhindert verspätete Abgaben';
+$string['quickgrade'] = 'Schnelle Bewertung zulassen';
 $string['saveallfeedback'] = 'Alle meine Rückmeldungen speichern';
 $string['submission'] = 'Aufgabenabgabe';
 $string['submissionfeedback'] = 'Rückmeldung zu den eingereichten Aufgaben';

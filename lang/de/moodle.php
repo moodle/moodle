@@ -219,8 +219,10 @@ $string['coursefiles'] = 'Kursdateien';
 $string['courseformats'] = 'Kursformat';
 $string['coursegrades'] = 'Kursbenotung';
 $string['coursehidden'] = 'Der Kurs steht für Teilnehmer/innen zur Zeit nicht zur Verfügung.';
+$string['courseimportnotaught'] = 'Sie sind in keinem anderen Kurs Trainer/in mit Bearbeitungsrecht. Es gibt daher keinen Kurs aus dem Sie Daten importieren können.';
 $string['courseinfo'] = 'Kursinformation';
 $string['coursemessage'] = 'Mitteilung an Kursteilnehmer/innen';
+$string['coursenotaccessible'] = 'Dieser Kurs ist nicht öffentlich zugänglich.';
 $string['coursereject'] = 'Ablehnen einer Kursanfrage';
 $string['courserejected'] = 'Die Einrichtung des Kurses wurde abgelehnt. Eine Benachrichtigung ist erfolgt.';
 $string['courserejectemail'] = 'Der von Ihnen zur Einrichtung vorgeschlagene Kurs wurde als folgendem Grund nicht angelegt: 
@@ -649,6 +651,7 @@ $string['list'] = 'Auflisten';
 $string['listfiles'] = 'Liste der Dateien in $a';
 $string['listofallpeople'] = 'Liste aller Nutzer/innen';
 $string['livelogs'] = 'Aktuelle Statistiken der letzten Stunde';
+$string['locale'] = 'en';
 $string['location'] = 'Ort';
 $string['loggedinas'] = 'Sie sind angemeldet als $a';
 $string['loggedinasguest'] = 'Sie verwenden zur Zeit den Gastzugang';
@@ -981,7 +984,9 @@ $string['rss'] = 'RSS';
 $string['rssarticles'] = 'Zahl der neuesten RSS-Artikel';
 $string['rsserror'] = 'Fehler beim Lesen der RSS-Daten';
 $string['rsstype'] = 'RSS-Feed für diese Aktivität';
+$string['saveandnext'] = 'Speichern und nächste anzeigen';
 $string['savechanges'] = 'Änderungen speichern';
+$string['savepreferences'] = 'Einstellungen speichern';
 $string['saveto'] = 'Speichern bei';
 $string['scale'] = 'Bewertungsskala';
 $string['scales'] = 'Bewertungsskalen';
@@ -1251,7 +1256,7 @@ $string['weekhide'] = 'Diese Woche vor $a verbergen';
 $string['weeklyoutline'] = 'Themen für jede Woche';
 $string['weekshow'] = 'Diese Woche für $a anzeigen';
 $string['welcometocourse'] = 'Willkommen zu $a';
-$string['welcometocoursetext'] = 'Willkommen zu $a->coursename!
+$string['welcometocoursetext'] = 'Willkommen im Kurs \'$a->coursename\'!
 
 Damit die anderen Nutzer/innen mehr über Sie wissen, sollten Sie Ihre persönliche Profilseite erstellen oder prüfen. Mit diesem Link gelangen Sie direkt in Ihr Profil:
 $a->profileurl';
