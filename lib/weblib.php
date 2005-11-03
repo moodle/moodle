@@ -651,7 +651,8 @@ function close_window($delay=0) {
  * @param    type description
  * @todo Finish documenting this function
  */
-function choose_from_menu ($options, $name, $selected='', $nothing='choose', $script='', $nothingvalue='0', $return=false, $disabled=false) {
+function choose_from_menu ($options, $name, $selected='', $nothing='choose', $script='', 
+                           $nothingvalue='0', $return=false, $disabled=false, $tabindex=0) {
 
     if ($nothing == 'choose') {
         $nothing = get_string('choose') .'...';
@@ -660,6 +661,10 @@ function choose_from_menu ($options, $name, $selected='', $nothing='choose', $sc
     $attributes = ($script) ? 'onchange="'. $script .'"' : '';
     if ($disabled) {
         $attributes .= ' disabled="disabled"';
+    }
+
+    if ($tabindex) {
+        $attributes .= ' tabindex="'.$tabindex.'"';
     }
 
     $output = '<select id="menu'.$name.'" name="'. $name .'" '. $attributes .'>' . "\n";
