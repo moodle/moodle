@@ -5,6 +5,39 @@
  *
  */
 class assignment_uploadsingle extends assignment_base {
+    
+
+    function print_student_answer($userid, $return=false){
+           global $CFG, $USER;
+       
+        $filearea = $this->file_area_name($userid);
+
+        $output = '';
+    
+        if ($basedir = $this->file_area($userid)) {
+            if ($files = get_directory_list($basedir)) {
+                
+                foreach ($files as $key => $file) {
+                    require_once($CFG->libdir.'/filelib.php');
+                    
+                    $icon = mimeinfo('icon', $file);
+                    
+                    if ($CFG->slasharguments) {
+                        $ffurl = "$CFG->wwwroot/file.php/$filearea/$file";
+                    } else {
+                        $ffurl = "$CFG->wwwroot/file.php?file=/$filearea/$file";
+                    }
+                    //died right here
+                    //require_once($ffurl);                
+                    $output = '<img align="middle" src="'.$CFG->pixpath.'/f/'.$icon.'" height="16" width="16" alt="'.$icon.'" />'.
+                            '<a href="'.$ffurl.'" >'.$file.'</a><br />';
+                }
+            }
+        }
+
+        $output = '<div class="files">'.$output.'</div>';
+        return $output;    
+    }
 
     function assignment_uploadsingle($cmid=0) {
         parent::assignment_base($cmid);
@@ -127,9 +160,16 @@ class assignment_uploadsingle extends assignment_base {
     function process_feedback() {                 
                 
         global $USER;
-                    
+         
         if (!$feedback = data_submitted()) {      // No incoming data?
             return false;
+        }     
+                          
+        ///For save and next, we need to know the userid to save, and the userid to go...
+        ///We use a new hidden field in the form, and set it to -1. If it's set, we use this
+        ///as the userid to store...
+        if ((int)$feedback->saveuserid !== -1){
+            $feedback->userid = $feedback->saveuserid;
         }       
         
         if (!empty($feedback->cancel)) {          // User hit cancel button

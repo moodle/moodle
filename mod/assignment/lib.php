@@ -10,7 +10,6 @@ if (!isset($CFG->assignment_maxbytes)) {
     set_config("assignment_maxbytes", 1024000);  // Default maximum size for all assignments
 }
 
-
 /*
  * Standard base class for all assignment submodules (assignment types).
  *
@@ -74,7 +73,6 @@ class assignment_base {
                              "", "", true, '', navmenu($this->course, $this->cm));
                 notice(get_string("activityiscurrentlyhidden"), "$CFG->wwwroot/course/view.php?id={$this->course->id}");
             }
-
             $this->currentgroup = get_current_group($this->course->id);
         }
 
@@ -84,7 +82,6 @@ class assignment_base {
         } else {
             $this->defaultformat = FORMAT_MOODLE;
         }
-
     }
 
     /*
@@ -170,7 +167,6 @@ class assignment_base {
         print_footer($this->course);
     }
 
-
     function view_feedback($submission=NULL) {
         global $USER;
 
@@ -184,7 +180,6 @@ class assignment_base {
 
     /// We need the teacher info
         if (! $teacher = get_record('user', 'id', $submission->teacher)) {
-            print_object($submission);
             error('Could not find the teacher');
         }
 
@@ -224,8 +219,6 @@ class assignment_base {
 
         echo '</table>';
     }
-
-
 
     /* 
      * Returns a link with info about the state of the assignment submissions
@@ -451,13 +444,19 @@ class assignment_base {
         return $returnid;
     }
 
-
-
     /*
      * Top-level function for handling of submissions called by submissions.php
      *  
      */
     function submissions($mode) {
+        ///The main switch is changed to facilitate
+        ///1) Batch fast grading
+        ///2) Skip to the next one on the popup
+        ///3) Save and Skip to the next one on the popup
+        
+        //make user global so we can use the id
+        global $USER;
+        
         switch ($mode) {
             case 'grade':                         // We are in a popup window grading
                 if ($submission = $this->process_feedback()) {
@@ -474,36 +473,124 @@ class assignment_base {
             case 'all':                           // Main window, display everything
                 $this->display_submissions();
                 break;
+            case 'fastgrade':
+                    
+                ///do the fast grading stuff
+                ///this process should work for all 3 subclasses
+                foreach ($_POST['comment'] as $id => $commentvalue){
+                    
+                    $grade = $_POST['menu'][$id];
+                    $newsubmission = $this->get_submission($id, true);  // Get or make one
+                           
+                    //for fast grade, we need to check if any changes take place
+                       $duplicate = ($newsubmission->grade == $grade && $newsubmission->comment == stripslashes($commentvalue));
+            
+                    $newsubmission->grade      = $grade;
+                       $newsubmission->comment    = $commentvalue;
+                       $newsubmission->format     = $this->format;
+                    $newsubmission->teacher    = $USER->id;
+                    $newsubmission->mailed     = $duplicate?$newsubmission->mailed:0;//only change if it's a duplicate
+                    $newsubmission->timemarked = time();
+                    unset($newsubmission->data1);  // Don't need to update this.
+                    unset($newsubmission->data2);  // Don't need to update this.        
+                    
+                    if (empty($submission->timemodified)) {   // eg for offline assignments
+                           $newsubmission->timemodified = time();
+                    }
+
+                    //if it is a duplicate, we don't change the last modified time etc.
+                    //this will also not write into database if no comment and grade is entered.
+                    
+                    if (!$duplicate){
+                        if (!update_record('assignment_submissions', $newsubmission)) {
+                               return false;
+                        }            
+                        //add to log only if not a duplicate
+                        add_to_log($this->course->id, 'assignment', 'update grades', 
+                        'submissions.php?id='.$this->assignment->id.'&user='.$newsubmission->userid, $newsubmission->userid, $this->cm->id);             
+                    }
+                        
+                }                    
+                $this->display_submissions();            
+                break;
+                
+            
+            case 'next':
+                /// We are currently in pop up, but we want to skip to next one without saving.
+                ///    This turns out to be similar to a single case
+                /// The URL used is for the next submission.
+                
+                $this->display_submission();
+                break;
+                
+            case 'saveandnext':
+                ///We are in pop up. save the current one and go to the next one.
+                //first we save the current changes
+                if ($submission = $this->process_feedback()) {
+                    //print_heading(get_string('changessaved'));
+                    $this->update_main_listing($submission);
+                }
+                
+                //then we display the next submission
+                $this->display_submission();
+                break;
+            
+            default:
+                echo "something seriously is wrong!!";
+                break;                    
         }
     }
-
+    
+    //function that updates the listing on the main script from popup using javascript
     function update_main_listing($submission) {
         global $SESSION;
+        
+        $perpage = get_user_preferences('assignment_perpage', 10);
 
+        $quickgrade = get_user_preferences('assignment_quickgrade', 0);
+        
         /// Run some Javascript to try and update the parent page
         echo '<script type="text/javascript">'."\n<!--\n";
-        if (empty($SESSION->flextable['mod-assignment-submissions']->collapse['grade'])) {
-            echo 'opener.document.getElementById("g'.$submission->userid.
-                 '").innerHTML="'.$this->display_grade($submission->grade)."\";\n";
-        }
         if (empty($SESSION->flextable['mod-assignment-submissions']->collapse['comment'])) {
-            echo 'opener.document.getElementById("com'.$submission->userid.
-                 '").innerHTML="'.shorten_text(trim(strip_tags($submission->comment)), 15)."\";\n";
+            if ($quickgrade){
+                echo 'opener.document.getElementById("comment['.$submission->userid.']").value="'
+                .trim($submission->comment).'";'."\n";
+             } else {
+                echo 'opener.document.getElementById("com'.$submission->userid.
+                '").innerHTML="'.shorten_text(trim(strip_tags($submission->comment)), 15)."\";\n";
+            }
         }
+
+        if (empty($SESSION->flextable['mod-assignment-submissions']->collapse['grade'])) {
+            //echo optional_param('menuindex');
+            if ($quickgrade){
+                echo 'opener.document.getElementById("menumenu['.$submission->userid.
+                ']").selectedIndex="'.optional_param("menuindex").'";'."\n";
+            } else {
+                echo 'opener.document.getElementById("g'.$submission->userid.'").innerHTML="'.
+                $this->display_grade($submission->grade)."\";\n";
+            }            
+        }    
+        //need to add student's assignments in there too.
         if (empty($SESSION->flextable['mod-assignment-submissions']->collapse['timemodified']) &&
             $submission->timemodified) {
             echo 'opener.document.getElementById("ts'.$submission->userid.
-                 '").innerHTML="'.userdate($submission->timemodified)."\";\n";
+                 '").innerHTML="'.addslashes($this->print_student_answer($submission->userid)).userdate($submission->timemodified)."\";\n";
         }
+        
         if (empty($SESSION->flextable['mod-assignment-submissions']->collapse['timemarked']) &&
             $submission->timemarked) {
             echo 'opener.document.getElementById("tt'.$submission->userid.
                  '").innerHTML="'.userdate($submission->timemarked)."\";\n";
         }
+        
         if (empty($SESSION->flextable['mod-assignment-submissions']->collapse['status'])) {
-            echo 'opener.document.getElementById("up'.$submission->userid.'").className="s1";';
-            echo 'opener.document.getElementById("button'.$submission->userid.'").value="'.get_string('update').' ...";';
-        }
+           echo 'opener.document.getElementById("up'.$submission->userid.'").className="s1";';
+            $buttontext = get_string('update');
+            $button = link_to_popup_window ('/mod/assignment/submissions.php?id='.$this->cm->id.'&amp;userid='.$submission->userid.'&amp;mode=single'.'&amp;offset='.optional_param('offset').'&amp;tsort='.optional_param('tsort'), 
+                      'grade'.$submission->userid, $buttontext, 450, 700, $buttontext, 'none', true, 'button'.$submission->userid);
+               echo 'opener.document.getElementById("up'.$submission->userid.'").innerHTML="'.addslashes($button).'";';               
+        }        
         echo "\n-->\n</script>";
         flush();
     }
@@ -539,8 +626,12 @@ class assignment_base {
      *  
      */
     function display_submission() {
+    
+        global $CFG;//need prefix
         
         $userid = required_param('userid');
+        $offset = required_param('offset');//offset for where to start looking for student.
+        $sort = required_param('tsort');//getting the sorting order
 
         if (!$user = get_record('user', 'id', $userid)) {
             error('No such user!');
@@ -556,26 +647,55 @@ class assignment_base {
             $subtype = 'assignmentold';
         }
 
+        ///construct SQL, using current offset to find the data of the next student
+        $course     = $this->course;
+        $assignment = $this->assignment;
+        $cm         = $this->cm;
+    
+        if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
+            $currentgroup = setup_and_print_groups($course, $groupmode, 'submissions.php?id='.$this->cm->id);
+        } else {
+            $currentgroup = false;
+        }
+        $limit = " LIMIT ".($offset+1).", 1";
+
+    /// Get all teachers and students
+        if ($currentgroup) {
+            $users = get_group_users($currentgroup);
+        } else {
+            $users = get_course_users($course->id);
+        }
+    
+        $select = 'SELECT u.id, u.id, u.firstname, u.lastname, u.picture, s.id AS submissionid, s.grade, s.comment, s.timemodified, s.timemarked, ((s.timemarked > 0) AND (s.timemarked >= s.timemodified)) AS status ';
+        $sql = 'FROM '.$CFG->prefix.'user u '.
+               'LEFT JOIN '.$CFG->prefix.'assignment_submissions s ON u.id = s.userid AND s.assignment = '.$this->assignment->id.' '.
+               'WHERE '.$where.'u.id IN ('.implode(',', array_keys($users)).') ';
+        if (($ausers = get_records_sql($select.$sql.$sort.$limit)) !== false) {
+            foreach ($ausers as $auser => $val){
+                $nextid = $val->id;
+            }
+        }
         print_header(get_string('feedback', 'assignment').':'.fullname($user, true).':'.format_string($this->assignment->name));
 
-
+        ///SOme javascript to help with setting up >.>
+        
+        echo '<script language="javascript">'."\n";
+        echo 'function setNext(){'."\n";
+        echo 'document.submitform.mode.value=\'next\';'."\n";
+        echo 'document.submitform.userid.value="'.$nextid.'";'."\n";
+        echo '}'."\n";
+        
+        echo 'function saveNext(){'."\n";
+        echo 'document.submitform.mode.value=\'saveandnext\';'."\n";
+        echo 'document.submitform.userid.value="'.$nextid.'";'."\n";
+        echo 'document.submitform.saveuserid.value="'.$userid.'";'."\n";
+        echo 'document.submitform.menuindex.value = document.submitform.grade.selectedIndex;'."\n";
+        echo '}'."\n";
+            
+        echo '</script>'."\n";
         echo '<table cellspacing="0" class="feedback '.$subtype.'" >';
 
-        echo '<tr>';
-        echo '<td width="35" valign="top" class="picture user">';
-        print_user_picture($user->id, $this->course->id, $user->picture);
-        echo '</td>';
-        echo '<td class="topic">';
-        echo '<div class="from">';
-        echo '<div class="fullname">'.fullname($user, true).'</div>';
-        if ($submission->timemodified) {
-            echo '<div class="time">'.userdate($submission->timemodified).
-                                     $this->display_lateness($submission->timemodified).'</div>';
-        }
-        echo '</div>';
-        $this->print_user_files($user->id);
-        echo '</td>';
-        echo '</tr>';
+        ///Start of teacher info row
 
         echo '<tr>';
         echo '<td width="35" valign="top" class="picture teacher">';
@@ -588,11 +708,14 @@ class assignment_base {
         print_user_picture($teacher->id, $this->course->id, $teacher->picture);
         echo '</td>';
         echo '<td class="content">';
-
-        echo '<form action="submissions.php" method="post">';
+        echo '<form name="submitform" action="submissions.php?id='.$this->cm->id.'&amp;userid='.$nextid.'&amp;mode=single&amp;offset='.++$offset.'&amp;tsort='.$sort.'" method="post">';
         echo '<input type="hidden" name="userid" value="'.$userid.'">';
         echo '<input type="hidden" name="id" value="'.$this->cm->id.'">';
         echo '<input type="hidden" name="mode" value="grade">';
+        echo '<input type="hidden" name="menuindex" value="0">';//selected menu index
+        
+        //new hidden field, initialized to -1.
+        echo '<input type="hidden" name="saveuserid" value="-1">';
         if (!$submission->grade and !$submission->timemarked) {
             $submission->grade = -1;   /// Hack to stop zero being selected on the menu below (so it shows 'no grade')
         }
@@ -622,16 +745,39 @@ class assignment_base {
             echo '</div>';
         }
 
+        ///Print Buttons in Single View
         echo '<div class="buttons" align="center">';
-        echo '<input type="submit" name="submit" value="'.get_string('savechanges').'" />';
+        echo '<input type="submit" name="submit" value="'.get_string('savechanges').'" onClick = "document.submitform.menuindex.value = document.submitform.grade.selectedIndex" />';
         echo '<input type="submit" name="cancel" value="'.get_string('cancel').'" />';
+        //if there are more to be graded.
+        if ($nextid){
+            echo '<input type="submit" name="saveandnext" value="'.get_string('saveandnext').'" onClick="saveNext()" />';
+            echo '<input type="submit" name="next" value="'.get_string('next').'" onClick="setNext();" />';
+        }
         echo '</div>';
-
         echo '</form>';
-
         echo '</td></tr>';
+        
+        ///End of teacher info row, Start of student info row
+        echo '<tr>';
+        echo '<td width="35" valign="top" class="picture user">';
+        print_user_picture($user->id, $this->course->id, $user->picture);
+        echo '</td>';
+        echo '<td class="topic">';
+        echo '<div class="from">';
+        echo '<div class="fullname">'.fullname($user, true).'</div>';
+        if ($submission->timemodified) {
+            echo '<div class="time">'.userdate($submission->timemodified).
+                                     $this->display_lateness($submission->timemodified).'</div>';
+        }
+        echo '</div>';
+        $this->print_user_files($user->id);
+        echo '</td>';
+        echo '</tr>';
+        
+        ///End of student info row
+        
         echo '</table>';
-
 
         if ($this->usehtmleditor) {
             use_html_editor();
@@ -651,13 +797,27 @@ class assignment_base {
      */
     function display_submissions() {
 
-        global $CFG, $db;
+        global $CFG, $db, $USER;
 
+        /* first we check to see if the form has just been submitted
+         * to request user_preference updates
+         */
+         
+        if (isset($_POST['updatepref'])){
+            $perpage = (int)optional_param('perpage',10);
+            $perpage = ($perpage <= 0) ? 10 : $perpage ;
+            set_user_preference('assignment_perpage', $perpage);
+            set_user_preference('assignment_quickgrade', (string)optional_param('quickgrade','0'));
+        }
+
+        /* next we get perpage and quickgrade (allow quick grade) params 
+         * from database
+         */
+        $perpage    = get_user_preferences('assignment_perpage', 10);
+        $quickgrade = get_user_preferences('assignment_quickgrade', 0);
+        
         $teacherattempts = true; /// Temporary measure
-
         $page    = optional_param('page', 0);
-        $perpage = optional_param('perpage', 10);
-
         $strsaveallfeedback = get_string('saveallfeedback', 'assignment');
 
     /// Some shortcuts to make the code read better
@@ -665,16 +825,15 @@ class assignment_base {
         $course     = $this->course;
         $assignment = $this->assignment;
         $cm         = $this->cm;
-
+        
+        $tabindex = 1; //tabindex for quick grading tabbing; Not working for dropdowns yet
 
         add_to_log($course->id, 'assignment', 'view submission', 'submissions.php?id='.$this->assignment->id, $this->assignment->id, $this->cm->id);
         
         print_header_simple(format_string($this->assignment->name,true), "", '<a href="index.php?id='.$course->id.'">'.$this->strassignments.'</a> -> <a href="view.php?a='.$this->assignment->id.'">'.format_string($this->assignment->name,true).'</a> -> '. $this->strsubmissions, '', '', true, update_module_button($cm->id, $course->id, $this->strassignment), navmenu($course, $cm));
 
-
         $tablecolumns = array('picture', 'fullname', 'grade', 'comment', 'timemodified', 'timemarked', 'status');
         $tableheaders = array('', get_string('fullname'), get_string('grade'), get_string('comment', 'assignment'), get_string('lastmodified').' ('.$course->student.')', get_string('lastmodified').' ('.$course->teacher.')', get_string('status'));
-
 
         require_once($CFG->libdir.'/tablelib.php');
         $table = new flexible_table('mod-assignment-submissions');
@@ -707,15 +866,12 @@ class assignment_base {
         // Start working -- this is necessary as soon as the niceties are over
         $table->setup();
 
-
-
     /// Check to see if groups are being used in this assignment
         if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
             $currentgroup = setup_and_print_groups($course, $groupmode, 'submissions.php?id='.$this->cm->id);
         } else {
             $currentgroup = false;
         }
-
 
     /// Get all teachers and students
         if ($currentgroup) {
@@ -739,7 +895,6 @@ class assignment_base {
             return true;
         }
 
-
     /// Construct the SQL
 
         if ($where = $table->get_sql_where()) {
@@ -756,12 +911,11 @@ class assignment_base {
             $sort = ' ORDER BY '.implode(', ', $newsort);
         }
 
-
         $select = 'SELECT u.id, u.id, u.firstname, u.lastname, u.picture, s.id AS submissionid, s.grade, s.comment, s.timemodified, s.timemarked, ((s.timemarked > 0) AND (s.timemarked >= s.timemodified)) AS status ';
         $sql = 'FROM '.$CFG->prefix.'user u '.
                'LEFT JOIN '.$CFG->prefix.'assignment_submissions s ON u.id = s.userid AND s.assignment = '.$this->assignment->id.' '.
                'WHERE '.$where.'u.id IN ('.implode(',', array_keys($users)).') ';
-
+    
         $table->pagesize($perpage, count($users));
         
         if($table->get_page_start() !== '' && $table->get_page_size() !== '') {
@@ -770,7 +924,11 @@ class assignment_base {
         else {
             $limit = '';
         }
-
+    
+        $ssort = "$sort";//sorting order to allow replication of SQL statement
+        ///offset used to calculate index of student in that particular query, needed for the pop up to know who's next
+        $offset = $page * $perpage;
+        
         $strupdate = get_string('update');
         $strgrade  = get_string('grade');
         $grademenu = make_grades_menu($this->assignment->grade);
@@ -779,28 +937,61 @@ class assignment_base {
             
             foreach ($ausers as $auser) {
                 $picture = print_user_picture($auser->id, $course->id, $auser->picture, false, true);
+                
+                if (!$auser->grade and !$auser->timemarked and $quickgrade) {
+                    $auser->grade = -1;//Martin's hack to prevent 0 showing up and select no grade instead.
+                }
+                    
                 if (!empty($auser->submissionid)) {
-                    if ($auser->timemodified > 0) {
-                        $studentmodified = '<div id="ts'.$auser->id.'">'.userdate($auser->timemodified).'</div>';
+                ///Prints student answer and student modified date
+                ///attach file or print link to student answer, depending on the type of the assignment.
+                ///Refer to print_student_answer in inherited classes.     
+                    if ($auser->timemodified > 0) {            
+                        $studentmodified = '<div id="ts'.$auser->id.'">'.$this->print_student_answer($auser->id).userdate($auser->timemodified).'</div>';
                     } else {
                         $studentmodified = '<div id="ts'.$auser->id.'">&nbsp;</div>';
                     }
+                ///Print grade, dropdown or text
                     if ($auser->timemarked > 0) {
                         $teachermodified = '<div id="tt'.$auser->id.'">'.userdate($auser->timemarked).'</div>';
-                        $grade = '<div id="g'.$auser->id.'">'.$this->display_grade($auser->grade).'</div>';
+                        
+                        if ($quickgrade) {
+                            $grade = '<div id="g'.$auser->id.'">'.choose_from_menu(make_grades_menu($this->assignment->grade), 
+                            'menu['.$auser->id.']', $auser->grade, get_string('nograde'),'',0,true,false,$tabindex++).'</div>';
+                        } else {
+                            $grade = '<div id="g'.$auser->id.'">'.$this->display_grade($auser->grade).'</div>';
+                        }
+
                     } else {
                         $teachermodified = '<div id="tt'.$auser->id.'">&nbsp;</div>';
-                        $grade = '<div id="g'.$auser->id.'"></div>';
+                        if ($quickgrade){                    
+                            $grade = '<div id="g'.$auser->id.'">'.choose_from_menu(make_grades_menu($this->assignment->grade), 
+                            'menu['.$auser->id.']', $auser->grade, get_string('nograde'),'',0,true,false,$tabindex++).'</div>';
+                        } else {
+                            $grade = '<div id="g'.$auser->id.'">'.$this->display_grade($auser->grade).'</div>';
+                        }
                     }
-                    
-                    $comment = '<div id="com'.$auser->id.'">'.shorten_text(strip_tags($auser->comment), 15).'</div>';
-
+                ///Print Comment
+                    if ($quickgrade){
+                        $comment = '<div id="com'.$auser->id.'"><textarea tabindex="'.$tabindex++.'" name="comment['.$auser->id.']" id="comment['.$auser->id.']">'.($auser->comment).'</textarea></div>';
+                    } else {
+                        $comment = '<div id="com'.$auser->id.'">'.shorten_text(strip_tags($auser->comment),15).'</div>';
+                    }
                 } else {
                     $studentmodified = '<div id="ts'.$auser->id.'">&nbsp;</div>';
                     $teachermodified = '<div id="tt'.$auser->id.'">&nbsp;</div>';
-                    $status          = '<div id="st'.$auser->id.'"></div>';
-                    $grade           = '<div id="g'.$auser->id.'">&nbsp;</div>';
-                    $comment         = '<div id="com'.$auser->id.'">&nbsp;</div>';
+                    $status          = '<div id="st'.$auser->id.'">&nbsp;</div>';
+                    if ($quickgrade){   // allow editing
+                        $grade = '<div id="g'.$auser->id.'">'.choose_from_menu(make_grades_menu($this->assignment->grade), 
+                                 'menu['.$auser->id.']', $auser->grade, get_string('nograde'),'',0,true,false,$tabindex++).'</div>';
+                    } else {
+                        $grade = '<div id="g'.$auser->id.'">&nbsp;</div>';
+                    }
+                    if ($quickgrade){
+                        $comment = '<div id="com'.$auser->id.'"><textarea tabindex="'.$tabindex++.'" name="comment['.$auser->id.']" id="comment['.$auser->id.']">'.($auser->comment).'</textarea></div>';
+                    } else {
+                        $comment = '<div id="com'.$auser->id.'">&nbsp;</div>';
+                    }
                 }
 
                 if ($auser->status === NULL) {
@@ -808,24 +999,62 @@ class assignment_base {
                 }
 
                 $buttontext = ($auser->status == 1) ? $strupdate : $strgrade;
-
-                $button = button_to_popup_window ('/mod/assignment/submissions.php?id='.$this->cm->id.'&amp;userid='.$auser->id.'&amp;mode=single', 
-                        'grade'.$auser->id, $buttontext, 450, 700, $buttontext, 'none', true, 'button'.$auser->id);
+                                   
+                ///No more buttons, we use popups ;-).
+                $button = link_to_popup_window ('/mod/assignment/submissions.php?id='.$this->cm->id.'&amp;userid='.$auser->id.'&amp;mode=single'.'&amp;offset='.$offset++.'&amp;tsort='.$ssort, 
+                                                'grade'.$auser->id, $buttontext, 450, 700, $buttontext, 'none', true, 'button'.$auser->id);
 
                 $status  = '<div id="up'.$auser->id.'" class="s'.$auser->status.'">'.$button.'</div>';
-
+                
                 $row = array($picture, fullname($auser), $grade, $comment, $studentmodified, $teachermodified, $status);
                 $table->add_data($row);
             }
         }
-
+        
+        ///NEW addition to print forms to do fast grading.
+        echo '<form action="submissions.php" name="fastg" method="post">';
+        echo '<input type="hidden" name="userid" value="'.$userid.'">';
+        echo '<input type="hidden" name="id" value="'.$this->cm->id.'">';
+        echo '<input type="hidden" name="mode" value="fastgrade">';
         $table->print_html();
-
+        if ($quickgrade){
+            echo '<p align="center"><input type="submit" name="fastg" value="'.get_string('saveallfeedback', 'assignment').'" /></p>';
+        }
+        echo '</form>';
+        ///End of fast grading form
+        
+        ///Mini form for setting user preference
+        echo '<br />';
+        echo '<form name="options" action="submissions.php?id='.$this->cm->id.'" method="post">';
+        echo '<table id="optiontable" align="center">';
+        echo '<tr align="right"><td>';
+        echo '<label for="perpage">'.get_string('pagesize','assignment').'</label>';
+        echo ':</td>';
+        echo '<input type="hidden" id="updatepref" name="updatepref" value="1" />';
+        echo '<td align="left">';
+        echo '<input type="text" id="perpage" name="perpage" size="1" value="'.$perpage.'" />';
+        helpbutton('pagesize', get_string('pagesize','assignment'), 'assignment');
+        echo '</td></tr>';
+        echo '<tr align="right">';
+        echo '<td>';
+        print_string('quickgrade','assignment');
+        echo ':</td>';
+        echo '<td align="left">';
+        if ($quickgrade){
+            echo '<input type="checkbox" name="quickgrade" value="1" checked="checked" />';
+        } else {
+            echo '<input type="checkbox" name="quickgrade" value="1" />';
+        }
+        helpbutton('quickgrade', get_string('quickgrade', 'assignment'), 'assignment').'</p></div>';
+        echo '</td></tr>';
+        echo '<tr>';
+        echo '<td colspan="2" align="right">';
+        echo '<input type="submit" value="'.get_string('savepreferences').'" />';
+        echo '</td></tr></table>';
+        echo '</form>';
+        ///End of mini form
         print_footer($this->course);
-
     }
-
-
 
     /*
      *  Display and process the submissions 
@@ -836,6 +1065,13 @@ class assignment_base {
 
         if (!$feedback = data_submitted()) {      // No incoming data?
             return false;
+        }
+
+        ///For save and next, we need to know the userid to save, and the userid to go
+        ///We use a new hidden field in the form, and set it to -1. If it's set, we use this
+        ///as the userid to store
+        if ((int)$feedback->saveuserid !== -1){
+            $feedback->userid = $feedback->saveuserid;
         }
 
         if (!empty($feedback->cancel)) {          // User hit cancel button
@@ -868,7 +1104,6 @@ class assignment_base {
         return $newsubmission;
 
     }
-
 
     function get_submission($userid=0, $createnew=false) {
         global $USER;
@@ -999,7 +1234,6 @@ class assignment_base {
         return $posttext;
     }
 
-
     function email_teachers_html($info) {
         global $CFG;
         $posthtml  = '<p><font face="sans-serif">'.
@@ -1012,11 +1246,9 @@ class assignment_base {
         return $posthtml;
     }
 
-
     function print_user_files($userid=0, $return=false) {
-    
         global $CFG, $USER;
-
+    
         if (!$userid) {
             if (!isloggedin()) {
                 return '';
@@ -1030,17 +1262,20 @@ class assignment_base {
     
         if ($basedir = $this->file_area($userid)) {
             if ($files = get_directory_list($basedir)) {
+                
                 foreach ($files as $key => $file) {
                     require_once($CFG->libdir.'/filelib.php');
+                    
                     $icon = mimeinfo('icon', $file);
+                    
                     if ($CFG->slasharguments) {
                         $ffurl = "$CFG->wwwroot/file.php/$filearea/$file";
                     } else {
                         $ffurl = "$CFG->wwwroot/file.php?file=/$filearea/$file";
                     }
-    
+                
                     $output = '<img align="middle" src="'.$CFG->pixpath.'/f/'.$icon.'" height="16" width="16" alt="'.$icon.'" />'.
-                              '<a href="'.$ffurl.'" >'.$file.'</a><br />';
+                            '<a href="'.$ffurl.'" >'.$file.'</a><br />';
                 }
             }
         }
@@ -1111,12 +1346,8 @@ class assignment_base {
     
             print_simple_box_start();
             echo get_string("lastmodified").": ";
-            if (empty($submission->timemodified)) {
-                print_string('never');
-            } else {
-                echo userdate($submission->timemodified);
-                echo $this->display_lateness($submission->timemodified);
-            }
+            echo userdate($submission->timemodified);
+            echo $this->display_lateness($submission->timemodified);
     
             $this->print_user_files($user->id);
     
@@ -1305,9 +1536,9 @@ function assignment_cron () {
     return true;
 }
 
+//check this
 function assignment_grades($assignmentid) {
 /// Must return an array of grades, indexed by user, and a max grade.
-
 
     if (!$assignment = get_record("assignment", "id", $assignmentid)) {
         return NULL;
@@ -1372,7 +1603,6 @@ function assignment_get_participants($assignmentid) {
     //Return students array (it contains an array of unique users)
     return ($students);
 }
-
 
 function assignment_scale_used ($assignmentid,$scaleid) {
 //This function returns if a scale is being used by one assignment
