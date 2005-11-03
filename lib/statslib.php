@@ -420,7 +420,7 @@ function stats_get_start_from($str) {
             return $function(get_field_sql('SELECT time FROM '.$CFG->prefix.'log ORDER BY time LIMIT 1'));
             break;
         case 'none'; 
-            return $function('-1 day',time());
+            return $function(strtotime('-1 day',time()));
             break;
         default:
             if (is_numeric($CFG->statsfirstrun)) {

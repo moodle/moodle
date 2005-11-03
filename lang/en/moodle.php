@@ -669,6 +669,7 @@ $string['lastedited'] = 'Last edited';
 $string['lastlogin'] = 'Last Login';
 $string['lastmodified'] = 'Last modified';
 $string['lastname'] = 'Surname';
+$string['lastyear'] = 'Last year';
 $string['latestlanguagepack'] = 'Check for latest language pack on moodle.org';
 $string['latestnews'] = 'Latest News';
 $string['leavetokeep'] = 'Leave blank to keep current password';
