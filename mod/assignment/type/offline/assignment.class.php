@@ -13,6 +13,9 @@ class assignment_offline extends assignment_base {
     function display_lateness($timesubmitted) {
         return '';
     }
+    function print_student_answer($studentid){
+        return '';//does nothing!
+    }
 
 }
 
