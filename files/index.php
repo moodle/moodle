@@ -222,8 +222,8 @@
                     print_simple_box_end();
                     echo "<br />";
                     notice_yesno (get_string("deletecheckfiles"), 
-                                "index.php?id=$id&amp;wdir=$wdir&amp;action=delete&amp;confirm=1&amp;sesskey=$USER->sesskey",
-                                "index.php?id=$id&amp;wdir=$wdir&amp;action=cancel");
+                                "index.php?id=$id&amp;wdir=$wdir&amp;action=delete&amp;confirm=1&amp;sesskey=$USER->sesskey&amp;choose=$choose",
+                                "index.php?id=$id&amp;wdir=$wdir&amp;action=cancel&amp;choose=$choose");
                 } else {
                     displaydir($wdir);
                 }
