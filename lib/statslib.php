@@ -573,6 +573,9 @@ function stats_get_parameters($time,$report,$courseid,$mode) {
             .'max(students+teachers) AS line2,'
             .'sum(studentreads+studentwrites+teacherreads+teacherwrites)'.$real.'/max(students+teachers)'.$real.' AS line3';
         $param->extras = 'HAVING max(students+teachers) != 0';
+        if (!empty($CFG->statsuserthreshold) && is_numeric($CFG->statsuserthreshold)) {
+            $param->extras .= ' AND max(students+teachers) > '.$CFG->statsuserthreshold;
+        }
         $param->orderby = 'line3 DESC';
         $param->line1 = get_string('activity');
         $param->line2 = get_string('users');
