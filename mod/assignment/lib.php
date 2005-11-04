@@ -630,7 +630,7 @@ class assignment_base {
      */
     function display_submission() {
     
-        global $CFG;//need prefix
+        global $CFG;
         
         $userid = required_param('userid');
         $offset = required_param('offset');//offset for where to start looking for student.
@@ -669,10 +669,12 @@ class assignment_base {
             $users = get_course_users($course->id);
         }
     
-        $select = 'SELECT u.id, u.id, u.firstname, u.lastname, u.picture, s.id AS submissionid, s.grade, s.comment, s.timemodified, s.timemarked, ((s.timemarked > 0) AND (s.timemarked >= s.timemodified)) AS status ';
+        $select = 'SELECT u.id, u.id, u.firstname, u.lastname, u.picture,'.
+                  's.id AS submissionid, s.grade, s.comment, s.timemodified, s.timemarked, ((s.timemarked > 0) AND (s.timemarked >= s.timemodified)) AS status ';
         $sql = 'FROM '.$CFG->prefix.'user u '.
                'LEFT JOIN '.$CFG->prefix.'assignment_submissions s ON u.id = s.userid AND s.assignment = '.$this->assignment->id.' '.
                'WHERE u.id IN ('.implode(',', array_keys($users)).') ';
+        $nextid = 0;
         if (($ausers = get_records_sql($select.$sql.$sort.$limit)) !== false) {
             foreach ($ausers as $auser => $val){
                 $nextid = $val->id;
@@ -711,7 +713,7 @@ class assignment_base {
         print_user_picture($teacher->id, $this->course->id, $teacher->picture);
         echo '</td>';
         echo '<td class="content">';
-        echo '<form name="submitform" action="submissions.php?id='.$this->cm->id.'&amp;userid='.$nextid.'&amp;mode=single&amp;offset='.++$offset.'&amp;tsort='.$sort.'" method="post">';
+        echo '<form name="submitform" action="submissions.php?id='.$this->cm->id.'&amp;mode=single&amp;offset='.++$offset.'&amp;tsort='.$sort.'" method="post">';
         echo '<input type="hidden" name="userid" value="'.$userid.'">';
         echo '<input type="hidden" name="id" value="'.$this->cm->id.'">';
         echo '<input type="hidden" name="mode" value="grade">';
@@ -752,7 +754,7 @@ class assignment_base {
         echo '<input type="submit" name="submit" value="'.get_string('savechanges').'" onClick = "document.submitform.menuindex.value = document.submitform.grade.selectedIndex" />';
         echo '<input type="submit" name="cancel" value="'.get_string('cancel').'" />';
         //if there are more to be graded.
-        if ($nextid){
+        if ($nextid) {
             echo '<input type="submit" name="saveandnext" value="'.get_string('saveandnext').'" onClick="saveNext()" />';
             echo '<input type="submit" name="next" value="'.get_string('next').'" onClick="setNext();" />';
         }
