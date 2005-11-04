@@ -641,6 +641,7 @@ $string['lastedited'] = '最終編集日時';
 $string['lastlogin'] = '最終ログイン';
 $string['lastmodified'] = '最終更新日時';
 $string['lastname'] = '姓';
+$string['lastyear'] = '昨年';
 $string['latestlanguagepack'] = '最新の言語パックをmoodle.orgで確認する';
 $string['latestnews'] = '最新ニュース';
 $string['leavetokeep'] = ' 現在のパスワードを使う場合は空白にしてください。 ';
