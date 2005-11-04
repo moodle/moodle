@@ -134,7 +134,7 @@ function display() {
         echo $filesize;
         echo '</td>';
         echo '<td align="right" nowrap="nowrap" class="date">';
-        echo userdate(filectime("$CFG->dataroot/$relativepath/$file"), $strftime);
+        echo userdate(filemtime("$CFG->dataroot/$relativepath/$file"), $strftime);
         echo '</td>';
         echo '</tr>';
     }
