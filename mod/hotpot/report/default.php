@@ -139,35 +139,38 @@ class hotpot_default_report {
 						$row_max = count($cells);
 						for ($row=0; $row<$row_max; $row++) {
 
-							$i = 0; // index on $cells[$row]
 							$col = 0;
-							while ($col<$target_col && isset($cells[$row][$i])) {
+							$col_max = count($cells[$row]);
 
-								if (empty($skipcol[$col])) {
-									$cell = $cells[$row][$i++];
+							$current_col = 0;
+							while ($current_col<$target_col && $col<$col_max) {
+
+								if (empty($skipcol[$current_col])) {
+
+									$cell = $cells[$row][$col++];
 									if (is_object($cell)) {
 										if (isset($cell->rowspan) && is_numeric($cell->rowspan) && ($cell->rowspan>0)) {
 											// skip cells below this one
-											$skipcol[$col] = $cell->rowspan-1;
+											$skipcol[$current_col] = $cell->rowspan-1;
 										}
 										if (isset($cell->colspan) && is_numeric($cell->colspan) && ($cell->colspan>0)) {
 											// skip cells to the right of this one
 											for ($c=1; $c<$cell->colspan; $c++) {
-												if (empty($skipcol[$col+$c])) {
-													$skipcol[$col+$c] = 1;
+												if (empty($skipcol[$current_col+$c])) {
+													$skipcol[$current_col+$c] = 1;
 												} else {
-													$skipcol[$col+$c] ++;
+													$skipcol[$current_col+$c] ++;
 												}
 											}
 										}
 									}
 								} else {
-									$skipcol[$col]--;
+									$skipcol[$current_col]--;
 								}
-								$col++;
-							} // end while $col
-							if ($col==$target_col && isset($cells[$row][$i])) {
-								$this->remove_column($cells[$row], $i);
+								$current_col++;
+							}
+							if ($current_col==$target_col && $col<$col_max) {
+								$this->remove_column($cells[$row], $col);
 							}
 						} // end for $row
 						break;
