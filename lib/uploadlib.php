@@ -64,8 +64,9 @@ class upload_manager {
      * @param int $modbytes Max bytes for this module - this and $course->maxbytes are used to get the maxbytes from {@link get_max_upload_file_size()}.
      * @param boolean $silent Whether to notify errors or not.
      * @param boolean $allownull Whether we care if there's no file when we've set the input name.
+     * @param boolean $allownullmultiple Whether we care if there's no files AT ALL  when we've got multiples. This won't complain if we have file 1 and file 3 but not file 2, only for NO FILES AT ALL.
      */
-    function upload_manager($inputname='', $deleteothers=false, $handlecollisions=false, $course=null, $recoverifmultiple=false, $modbytes=0, $silent=false, $allownull=false) {
+    function upload_manager($inputname='', $deleteothers=false, $handlecollisions=false, $course=null, $recoverifmultiple=false, $modbytes=0, $silent=false, $allownull=false, $allownullmultiple=true) {
         
         global $CFG;
         
@@ -80,7 +81,7 @@ class upload_manager {
         $this->course = $course;
         $this->inputname = $inputname;
         if (empty($this->inputname)) {
-            $this->config->allownull = true;
+            $this->config->allownull = $allownullmultiple;
         }
     }
     
@@ -101,7 +102,7 @@ class upload_manager {
                 $file['originalname'] = $file['name']; // do this first for the log.
                 $this->files[$name] = $file; // put it in first so we can get uploadlog out in print_upload_log.
                 $this->status = $this->validate_file($this->files[$name]); // default to only allowing empty on multiple uploads.
-                if (!$this->status && ($this->files[$name]['error'] == 0 || $this->files[$name]['error'] == 4) && $this->config->allownull) {
+                if (!$this->status && ($this->files[$name]['error'] == 0 || $this->files[$name]['error'] == 4) && ($this->config->allownull || empty($this->inputname))) {
                     // this shouldn't cause everything to stop.. modules should be responsible for knowing which if any are compulsory.
                     continue; 
                 }
@@ -230,8 +231,11 @@ class upload_manager {
                 $this->delete_other_files($destination, $exceptions);
             }
         }
-        if (!$savedsomething) {
+        if (empty($savedsomething)) {
             $this->status = false;
+            if ((empty($this->config->allownull) && !empty($this->inputname)) || empty($this->config->allownullmultiple)) {
+                notify(get_string('uploadnofilefound'));
+            }
             return false;
         }
         return $this->status;
@@ -369,8 +373,11 @@ class upload_manager {
      * prints a log of everything that happened (of interest) to each file in _FILES
      * @param $return - optional, defaults to false (log is echoed)
      */
-    function print_upload_log($return=false) {
+    function print_upload_log($return=false,$skipemptyifmultiple=false) {
         foreach (array_keys($this->files) as $i => $key) {
+            if (count($this->files) > 1 && !empty($skipemptyifmultiple) && $this->files[$key]['error'] == 4) {
+                continue;
+            }
             $str .= '<strong>'. get_string('uploadfilelog', 'moodle', $i+1) .' '
                 .((!empty($this->files[$key]['originalname'])) ? '('.$this->files[$key]['originalname'].')' : '')
                 .'</strong> :'. nl2br($this->files[$key]['uploadlog']) .'<br />';
