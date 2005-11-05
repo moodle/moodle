@@ -21,11 +21,20 @@
         error("User ID was incorrect");
     }
 
+/// Select encoding
+    if (!empty($CFG->unicode)) {
+        $encoding = 'utf-8';
+    } else {
+        $encoding = get_string('thischarset');
+    }
 /// Print frameset to contain all the various panes
 ?>
-
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
     <html>
-     <head><title><?php echo get_string('discussion', 'message').': '.fullname($user) ?></title></head>
+     <head>
+       <meta http-equiv="content-type" content="text/html; charset=<?php echo $encoding ?>" />
+       <title><?php echo get_string('discussion', 'message').': '.fullname($user) ?></title>
+     </head>
      <frameset rows="110,*,0,200" border="0" marginwidth="2" marginheight="1">
        <frame src="user.php?id=<?php p($user->id)?>&amp;frame=user"     name="user"     
               scrolling="no"  marginwidth="0" marginheight="">

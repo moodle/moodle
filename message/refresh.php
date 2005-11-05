@@ -14,6 +14,13 @@
         error("Messaging is disabled on this site");
     }
 
+/// Select encoding
+    if (!empty($CFG->unicode)) {
+        $encoding = 'utf-8';
+    } else {
+        $encoding = get_string('thischarset');
+    }
+
 /// Script parameters
     $userid       = required_param('id', PARAM_INT);
     $userfullname = strip_tags(required_param('name', PARAM_RAW));
@@ -31,6 +38,7 @@
 
     echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'."\n";
     echo '<html><head><title> </title>';
+    echo '<meta http-equiv="content-type" content="text/html; charset='.$encoding.'" />';
     echo '<script type="text/javascript">'."\n";
     echo '<!--'."\n";
     echo 'if (parent.messages.document.getElementById("messagestarted") == null) {'."\n";
