@@ -19,7 +19,22 @@
         $stylesheetshtml .= '<link rel="stylesheet" type="text/css" href="'.$stylesheet.'" />';
     }
 
-    echo '<head>';
+/// Select encoding
+    if (!empty($CFG->unicode)) {
+        $encoding = 'utf-8';
+    } else {
+        $encoding = get_string('thischarset');
+    }
+/// Select direction
+    if ( get_string('thisdirection') == 'rtl' ) {
+        $direction = ' dir="rtl"';
+    } else {
+        $direction = ' dir="ltr"';
+    }
+
+    echo "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Frameset//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd\">\n";
+    echo "<html $direction>\n<head>\n";
+    echo '<meta http-equiv="content-type" content="text/html; charset='.$encoding.'" />';
     echo $stylesheetshtml;
 
 /// Script parameters
