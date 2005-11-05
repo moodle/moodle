@@ -1,0 +1,24 @@
+<?php
+
+    $streditmyprofile = get_string("editmyprofile");
+    $stradministration = get_string("administration");
+    $strchoose = get_string("choose");
+    $struser = get_string("user");
+    $strusers = get_string("users");
+    $strusersnew = get_string("usersnew");
+    $strimportgroups = get_string("importgroups");
+
+    print_heading_with_help($strimportgroups, 'uploadgroups');
+    $maxuploadsize = get_max_upload_file_size();
+    echo '<p align="center">';
+    print_simple_box_start('center','80%');
+    echo '<form method="post" enctype="multipart/form-data" action="'.$CFG->wwwroot.'/course/import/groups/index.php?id='.$id.'">'.
+         $strchoose.':<input type="hidden" name="MAX_FILE_SIZE" value="'.$maxuploadsize.'">'.
+         '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'">'.
+         '<input type="file" name="userfile" size="30">'.
+         '<input type="submit" value="'.$strimportgroups.'">'.
+         '</form></br>';
+    print_simple_box_end();
+    echo '</p>';
+    
+?>
