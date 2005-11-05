@@ -4,8 +4,9 @@
 /// Returns list of users with their user ids
 
     require_once("../config.php");
+    require_once("../mod/forum/lib.php");
 
-    $numusers = optional_param('numusers', 0, PARAM_INT);
+    optional_variable($numusers, 0);
 
     require_login();
 
@@ -47,14 +48,14 @@
         $csv_delimiter2 = ",";
     }
 
-/// Print the header
+    /// Print the header
 
     print_header("$site->shortname: $struploadusers", $site->fullname, 
-                 "<a href=\"index.php\">$stradministration</a> -> 
-                  <a href=\"users.php\">$strusers</a> -> $struploadusers");
+            "<a href=\"index.php\">$stradministration</a> -> 
+            <a href=\"users.php\">$strusers</a> -> $struploadusers");
 
 
-/// If a file has been uploaded, then process it
+    /// If a file has been uploaded, then process it
 
 
     require_once($CFG->dirroot.'/lib/uploadlib.php');
@@ -73,206 +74,254 @@
 
         // make arrays of valid fields for error checking
         $required = array("username" => 1, 
-                          "password" => 1, 
-                          "firstname" => 1, 
-                          "lastname" => 1,
-                          "email" => 1);
+                "password" => 1, 
+                "firstname" => 1, 
+                "lastname" => 1,
+                "email" => 1);
         $optionalDefaults = array("institution" => 1, 
-                                  "department" => 1, 
-                                  "city" => 1, 
-                                  "country" => 1,
-                                  "lang" => 1,
-                                  "auth" => 1,
-                                  "timezone" => 1);
+                "department" => 1, 
+                "city" => 1, 
+                "country" => 1,
+                "lang" => 1,
+                "auth" => 1,
+                "timezone" => 1);
         $optional = array("idnumber" => 1, 
-                          "icq" => 1, 
-                          "phone1" => 1, 
-                          "phone2" => 1,
-                          "address" => 1, 
-                          "url" => 1,
-                          "description" => 1, 
-                          "mailformat" => 1, 
-                          "maildisplay" => 1, 
-                          "htmleditor" => 1, 
-                          "autosubscribe" => 1,
-                          "idnumber" => 1, 
-                          "icq" => 1, 
-                          "course1" => 1, 
-                          "course2" => 1,
-                          "course3" => 1, 
-                          "course4" => 1, 
-                          "course5" => 1,
-                          "group1" => 1,
-                          "group2" => 1,
-                          "group3" => 1,
-                          "group4" => 1,
-                          "group5" =>1);
+                "icq" => 1, 
+                "phone1" => 1, 
+                "phone2" => 1,
+                "address" => 1, 
+                "url" => 1,
+                "description" => 1, 
+                "mailformat" => 1, 
+                "maildisplay" => 1, 
+                "htmleditor" => 1, 
+                "autosubscribe" => 1,
+                "idnumber" => 1, 
+                "icq" => 1, 
+                "course1" => 1, 
+                "course2" => 1,
+                "course3" => 1, 
+                "course4" => 1, 
+                "course5" => 1,
+                "group1" => 1,
+                "group2" => 1,
+                "group3" => 1,
+                "group4" => 1,
+                "group5" =>1,
+                "type1" => 1,
+                "type2" => 1,
+                "type3" => 1,
+                "type4" => 1,
+                "type5" => 1);
 
-        // --- get header (field names) ---
-        $header = split($csv_delimiter, fgets($fp,1024));
-        // check for valid field names
-        foreach ($header as $i => $h) {
-            $h = trim($h); $header[$i] = $h; // remove whitespace
-            if (!($required[$h] or $optionalDefaults[$h] or $optional[$h])) {
-                error(get_string('invalidfieldname', 'error', $h), 'uploaduser.php?sesskey='.$USER->sesskey);
-            }
-            if ($required[$h]) {
-                $required[$h] = 2;
-            }
-        }
-        // check for required fields
-        foreach ($required as $key => $value) {
-            if ($value < 2) {
-                error(get_string('fieldrequired', 'error', $key), 'uploaduser.php?sesskey='.$USER->sesskey);
-            }
-        }
-        $linenum = 2; // since header is line 1
-
-        while (!feof ($fp)) {
-            foreach ($optionalDefaults as $key => $value) {
-                $user->$key = addslashes($adminuser->$key);
-            }
-           //Note: commas within a field should be encoded as &#44 (for comma separated csv files)
-           //Note: semicolon within a field should be encoded as &#59 (for semicolon separated csv files)
-            $line = split($csv_delimiter, fgets($fp,1024));
-            foreach ($line as $key => $value) {
-                //decode encoded commas
-                $record[$header[$key]] = preg_replace($csv_encode,$csv_delimiter2,trim($value));
-            }
-            if ($record[$header[0]]) {
-                // add a new user to the database
-
-                // add fields to object $user
-                foreach ($record as $name => $value) {
-                    // check for required values
-                    if ($required[$name] and !$value) {
-                        error(get_string('missingfield', 'error', $name). " ".
-                              get_string('erroronline', 'error', $linenum) .". ".
-                              get_string('processingstops', 'error'), 
-                              'uploaduser.php?sesskey='.$USER->sesskey);
+                // --- get header (field names) ---
+                $header = split($csv_delimiter, fgets($fp,1024));
+                // check for valid field names
+                foreach ($header as $i => $h) {
+                    $h = trim($h); $header[$i] = $h; // remove whitespace
+                    if (!($required[$h] or $optionalDefaults[$h] or $optional[$h])) {
+                        error(get_string('invalidfieldname', 'error', $h), 'uploaduser.php?sesskey='.$USER->sesskey);
                     }
-                    // password needs to be encrypted
-                    else if ($name == "password") {
-                        $user->password = md5($value);
-                    }
-                    else if ($name == "username") {
-                        $user->username = addslashes(moodle_strtolower($value));
-                    }
-                    // normal entry
-                    else {
-                        $user->{$name} = addslashes($value);
+                    if ($required[$h]) {
+                        $required[$h] = 2;
                     }
                 }
-                $user->confirmed = 1;
-                $user->timemodified = time();
-                $linenum++;
-                $username = $user->username;
-                $addcourse[0] = $user->course1;
-                $addcourse[1] = $user->course2;
-                $addcourse[2] = $user->course3;
-                $addcourse[3] = $user->course4;
-                $addcourse[4] = $user->course5;
-                $addgroup[0] = $user->group1;
-                $addgroup[1] = $user->group2;
-                $addgroup[2] = $user->group3;
-                $addgroup[3] = $user->group4;
-                $addgroup[4] = $user->group5;
-                $courses = get_courses("all",'c.sortorder','c.id,c.shortname,c.fullname,c.sortorder');
-                for ($i=0; $i<5; $i++) {
-                    $courseid[$i]=0;
+                // check for required fields
+                foreach ($required as $key => $value) {
+                    if ($value < 2) {
+                        error(get_string('fieldrequired', 'error', $key), 'uploaduser.php?sesskey='.$USER->sesskey);
+                    }
                 }
-                foreach ($courses as $course) {
-                    for ($i=0; $i<5; $i++) {
-                        if ($course->shortname == $addcourse[$i]) {
-                            $courseid[$i] = $course->id;
+                $linenum = 2; // since header is line 1
+
+                while (!feof ($fp)) {
+                    foreach ($optionalDefaults as $key => $value) {
+                        $user->$key = addslashes($adminuser->$key);
+                    }
+                    //Note: commas within a field should be encoded as &#44 (for comma separated csv files)
+                    //Note: semicolon within a field should be encoded as &#59 (for semicolon separated csv files)
+                    $line = split($csv_delimiter, fgets($fp,1024));
+                    foreach ($line as $key => $value) {
+                        //decode encoded commas
+                        $record[$header[$key]] = preg_replace($csv_encode,$csv_delimiter2,trim($value));
+                    }
+                    if ($record[$header[0]]) {
+                        // add a new user to the database
+                        optional_variable($newuser, ""); 
+
+                        // add fields to object $user
+                        foreach ($record as $name => $value) {
+                            // check for required values
+                            if ($required[$name] and !$value) {
+                                error(get_string('missingfield', 'error', $name). " ".
+                                        get_string('erroronline', 'error', $linenum) .". ".
+                                        get_string('processingstops', 'error'), 
+                                        'uploaduser.php?sesskey='.$USER->sesskey);
+                            }
+                            // password needs to be encrypted
+                            else if ($name == "password") {
+                                $user->password = md5($value);
+                            }
+                            else if ($name == "username") {
+                                $user->username = addslashes(moodle_strtolower($value));
+                            }
+                            // normal entry
+                            else {
+                                $user->{$name} = addslashes($value);
+                            }
                         }
-                    }
-                }
-                if (get_record("user","username",$username) || !($user->id = insert_record("user", $user))) {
-                    if (!$user = get_record("user", "username", "changeme")) {   // half finished user from another time
-                        //Record not added - probably because user is already registered
-                        //In this case, output userid from previous registration
-                        //This can be used to obtain a list of userids for existing users
-                        if ($user = get_record("user","username",$username)) {
-                            notify("$user->id ".get_string('usernotaddedregistered', 'error', $username));
-                        } else {
-                            notify(get_string('usernotaddederror', 'error', $username));
-                        } 
-                    }
-                } else if ($user->username != "changeme") {
-                    notify("$struser: $user->id = $user->username");
-                    $numusers++;
-                }
-                for ($i=0; $i<5; $i++) {
-                    if ($addcourse[$i] && !$courseid[$i]) {
-                        notify(get_string('unknowncourse', 'error', $addcourse[$i]));
-                    }
-                }
-                for ($i=0; $i<5; $i++) {
-                  $groupid[$i] = 0;
-                  if ($addgroup[$i]) {
-                    if (!$courseid[$i]) {
-                        notify(get_string('coursegroupunknown','error',$addgroup[$i]));
-                    } else {
-                      if ($group = get_record("groups","courseid",$courseid[$i],"name",$addgroup[$i])) {
-                        $groupid[$i] = $group->id;
-                      } else {
-                        notify(get_string('groupunknown','error',$addgroup[$i]));
-                      }
-                    }
-                  }
-                }
-                for ($i=0; $i<5; $i++) {
-                    if ($courseid[$i]) {
-                        if (enrol_student($user->id, $courseid[$i])) {
-                            notify('-->'. get_string('enrolledincourse', '', $addcourse[$i]));
-                        } else {
-                            notify('-->'.get_string('enrolledincoursenot', '', $addcourse[$i]));
-                        }
-                    }
-                }
-                for ($i=0; $i<5; $i++) {
-                  if ($courseid[$i] && $groupid[$i]) {
-                    if (record_exists("user_students","userid",$user->id,"course",$courseid[$i])) {
-                      $usergroup = user_group($courseid[$i],$user->id);
-                      if ($usergroup) {
-                        notify('-->' . get_string('groupalready','error',$usergroup->name));
-                      } else {
-                        $group_member->groupid = $groupid[$i];
-                        $group_member->userid = $user->id;
-                        $group_member->timeadded = time();
-                        if (insert_record("groups_members",$group_member)) {
-                          notify('-->' . get_string('addedtogroup','',$addgroup[$i]));
-                        } else {
-                          notify('-->' . get_string('addedtogroupnot','',$addgroup[$i]));
-                        }
-                      }
-                    } else {
-                        notify('-->' . get_string('addedtogroupnotenrolled','',$addgroup[$i]));
-                    }
-                  }
-                }
+                        $user->confirmed = 1;
+                        $user->timemodified = time();
+                        $linenum++;
+                        $username = $user->username;
+                        $addcourse[0] = $user->course1;
+                        $addcourse[1] = $user->course2;
+                        $addcourse[2] = $user->course3;
+                        $addcourse[3] = $user->course4;
+                        $addcourse[4] = $user->course5;
+                        $addgroup[0] = $user->group1;
+                        $addgroup[1] = $user->group2;
+                        $addgroup[2] = $user->group3;
+                        $addgroup[3] = $user->group4;
+                        $addgroup[4] = $user->group5;
 
-                unset ($user);
-            }
-        }
-        fclose($fp);
-        notify("$strusersnew: $numusers");
+                        $addtype[0] = $user->type1;
+                        $addtype[1] = $user->type2;
+                        $addtype[2] = $user->type3;
+                        $addtype[3] = $user->type4;
+                        $addtype[4] = $user->type5;
 
-        echo '<hr />';
+                        $courses = get_courses("all",'c.sortorder','c.id,c.shortname,c.fullname,c.sortorder');
+                        for ($i=0; $i<5; $i++) {
+                            $courseid[$i]=0;
+                        }
+                        foreach ($courses as $course) {
+                            for ($i=0; $i<5; $i++) {
+                                if ($course->shortname == $addcourse[$i]) {
+                                    $courseid[$i] = $course->id;
+                                }
+                            }
+                        }
+
+                        //adding users to the user database
+                        if (get_record("user","username",$username) || !($user->id = insert_record("user", $user))) {
+                            if (!$user = get_record("user", "username", "changeme")) {   // half finished user from another time
+                                //Record not added - probably because user is already registered
+                                //In this case, output userid from previous registration
+                                //This can be used to obtain a list of userids for existing users
+                                if ($user = get_record("user","username",$username)) {
+                                    notify("$user->id ".get_string('usernotaddedregistered', 'error', $username));
+                                } else {
+                                    notify(get_string('usernotaddederror', 'error', $username));
+                                } 
+                            }
+                        } else if ($user->username != "changeme") {
+                            notify("$struser: $user->id = $user->username");
+                            $numusers++;
+                        }
+
+                        //course validity checking
+                        for ($i=0; $i<5; $i++) {
+                            if ($addcourse[$i] && !$courseid[$i]) {
+                                notify(get_string('unknowncourse', 'error', $addcourse[$i]));
+                            }
+                        }
+
+                        //huh?
+                        for ($i=0; $i<5; $i++) {
+                            $groupid[$i] = 0;
+                            if ($addgroup[$i]) {
+                                if (!$courseid[$i]) {
+                                    notify(get_string('coursegroupunknown','error',$addgroup[$i]));
+                                } else {
+                                    if ($group = get_record("groups","courseid",$courseid[$i],"name",$addgroup[$i])) {
+                                        $groupid[$i] = $group->id;
+                                    } else {
+                                        notify(get_string('groupunknown','error',$addgroup[$i]));
+                                    }
+                                }
+                            }
+                        }
+                        //automatically enroll students and teachers
+                        //add students to user_student database and forum database
+                        //add teachers to user_teacher database and forum database
+                        //here we check to see the type, and perform accordingly
+
+                        for ($i=0; $i<5; $i++) {
+                            if ($courseid[$i]) {
+                                switch ((string)$addtype[$i]){
+                                    //need a vaid course!
+                                    case '3'://non editting teacher case
+
+                                        if (!add_teacher($user->id, $courseid[$i], 0)){
+                                            notify(get_string('couldnotinsertteacher'));
+                                        }
+                                        //add to forum
+                                        forum_add_user($teacher->userid, $courseid[$i]);																
+                                        break;
+                                    case '2'://editting teacher
+
+                                        if (!add_teacher($user->id, $courseid[$i], 1)){
+                                            notify(get_string('couldnotinsertteacher'));
+                                        }
+
+                                        //add to forum
+                                        forum_add_user($teacher->userid, $courseid[$i]);												
+                                        break;																																			
+                                    default: //student case
+
+                                        if (enrol_student($user->id, $courseid[$i])) {
+                                            notify('-->'. get_string('enrolledincourse', '', $addcourse[$i]));
+                                        } else {
+                                            notify('-->'.get_string('enrolledincoursenot', '', $addcourse[$i]));
+                                        }
+
+                                        break;
+                                }//close if($courseid[$i])
+                            }//close switch
+                        }
+                        for ($i=0; $i<5; $i++) {
+                            if ($courseid[$i] && $groupid[$i]) {
+                                if (record_exists("user_students","userid",$user->id,"course",$courseid[$i])) {
+                                    $usergroup = user_group($courseid[$i],$user->id);
+                                    if ($usergroup) {
+                                        notify('-->' . get_string('groupalready','error',$usergroup->name));
+                                    } else {
+                                        $group_member->groupid = $groupid[$i];
+                                        $group_member->userid = $user->id;
+                                        $group_member->timeadded = time();
+                                        if (insert_record("groups_members",$group_member)) {
+                                            notify('-->' . get_string('addedtogroup','',$addgroup[$i]));
+                                        } else {
+                                            notify('-->' . get_string('addedtogroupnot','',$addgroup[$i]));
+                                        }
+                                    }
+                                } else {
+                                    notify('-->' . get_string('addedtogroupnotenrolled','',$addgroup[$i]));
+                                }
+                            }
+                        }
+
+                        unset ($user);
+                    }
+                }
+                fclose($fp);
+                notify("$strusersnew: $numusers");
+
+                echo '<hr />';
     }
 
-/// Print the form
+    /// Print the form
     print_heading_with_help($struploadusers, 'uploadusers');
 
     $maxuploadsize = get_max_upload_file_size();
     echo '<center>';
     echo '<form method="post" enctype="multipart/form-data" action="uploaduser.php">'.
-         $strchoose.':<input type="hidden" name="MAX_FILE_SIZE" value="'.$maxuploadsize.'">'.
-         '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'">'.
-         '<input type="file" name="userfile" size="30">'.
-         '<input type="submit" value="'.$struploadusers.'">'.
-         '</form></br>';
+        $strchoose.':<input type="hidden" name="MAX_FILE_SIZE" value="'.$maxuploadsize.'">'.
+        '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'">'.
+        '<input type="file" name="userfile" size="30">'.
+        '<input type="submit" value="'.$struploadusers.'">'.
+        '</form></br>';
     echo '</center>';
 
     print_footer($course);
