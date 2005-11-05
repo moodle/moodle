@@ -346,12 +346,26 @@ class resource_ims extends resource_base {
 
         if (empty($frameset)) {
 
+        /// Select encoding
+            if (!empty($CFG->unicode)) {
+                $encoding = 'utf-8';
+            } else {
+                $encoding = get_string('thischarset');
+            }
+
+        /// Select direction
+            if (get_string('thisdirection') == 'rtl') {
+                $direction = ' dir="rtl"';
+            } else {
+                $direction = ' dir="ltr"';
+            }
+
         /// The frameset output starts
 
             echo "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Frameset//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd\">\n";
-            echo "<html dir=\"ltr\">\n";
+            echo "<html$direction>\n";
             echo '<head>';
-            echo '<meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />';
+            echo '<meta http-equiv="content-type" content="text/html; charset='.$encoding.'" />';
             echo "<title>{$course->shortname}: ".strip_tags(format_string($resource->name,true))."</title></head>\n";
             echo "<frameset rows=\"$CFG->resource_framesize,*\">"; //Main frameset
             echo "<frame src=\"view.php?id={$cm->id}&amp;type={$resource->type}&amp;frameset=top\" />"; //Top frame
@@ -404,13 +418,26 @@ class resource_ims extends resource_base {
                 }
             }
 
+        /// Select encoding
+            if (!empty($CFG->unicode)) {
+                $encoding = 'utf-8';
+            } else {
+                $encoding = get_string('thischarset');
+            }
+
+        /// Select direction
+            if (get_string('thisdirection') == 'rtl') {
+                $direction = ' dir="rtl"';
+            } else {
+                $direction = ' dir="ltr"';
+            }
 
         /// The frameset output starts
 
             echo "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Frameset//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd\">\n";
-            echo "<html dir=\"ltr\">\n";
+            echo "<html$direction>\n";
             echo '<head>';
-            echo '<meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />';
+            echo '<meta http-equiv="content-type" content="text/html; charset='.$encoding.'" />';
             echo "<title>{$course->shortname}: ".strip_tags(format_string($resource->name,true))."</title></head>\n";
             if (!empty($this->parameters->navigationbuttons)) {
                 echo "<frameset rows=\"20,*\" border=\"0\">"; //Ims frameset with navigation buttons
