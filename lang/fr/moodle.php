@@ -643,6 +643,7 @@ $string['lastedited'] = 'Modifié le';
 $string['lastlogin'] = 'Dernière connexion';
 $string['lastmodified'] = 'Modifié le';
 $string['lastname'] = 'Nom';
+$string['lastyear'] = 'Année passée';
 $string['latestlanguagepack'] = 'Vérifier les derniers fichiers de langue sur moodle.org';
 $string['latestnews'] = 'Dernières nouvelles';
 $string['leavetokeep'] = 'Laisser vide pour ne pas changer le mot de passe';
