@@ -71,7 +71,7 @@ $string['configmymoodleredirect'] = 'この設定は管理者以外のログインを /my に強制
 $string['confignoreplyaddress'] = 'Moodleでは、メールがユーザに送信される場合があります ( 例 フォーラムの投稿 )。ここで設定するメールアドレスは、「From」に使用され、受信者が直接送信者に返信できないようにします ( 例 ユーザが個人のメールアドレスを隠したい場合 )。';
 $string['confignotifyloginfailures'] = 'ログインに失敗した場合、メールによる通知を行うことができます。誰がメール通知を受け取りますか?';
 $string['confignotifyloginthreshold'] = 'ログイン失敗通知が有効の場合、同一ユーザまたはIPアドレスが何回ログインに失敗するとメール通知しますか?';
-$string['configopentogoogle'] = 'この設定を行った場合、Googleはあなたのサイトにゲストとして入ることができます。加えて、Googleがゲストとして自動的に記録したデータを元に、他の人があなたのサイトにアクセスできます。これは既にゲストアクセスを許可している場合の透過アクセスのみを提供します。';
+$string['configopentogoogle'] = 'この設定を「Yes」にした場合、Googleはあなたのサイトにゲストとして入ることができます。更にGoogleがゲストとして自動的に記録したデータを元に、他の人があなたのサイトにアクセスできます。これは既にゲストアクセスを許可している場合の透過アクセスのみを提供します。';
 $string['configpathtoclam'] = 'clam AVのパス。恐らく /usr/bin/clamscan or /usr/bin/clamdscan のようになります。clam AVを正常に動作させるために、この設定を行う必要があります。';
 $string['configpathtodu'] = 'duのパス。恐らく /usr/bin/du のようになります。この設定を行った場合、ディレクトリコンテンツを表示するページの表示速度は、多くのファイルを含んだディレクトリに関して、はるかに速くなります。';
 $string['configproxyhost'] = '<b>サーバ</b>のインターネットアクセスにプロクシ ( 例 ファイアーウォール ) が必要な場合は、プロクシのホスト名とポート番号を入力してください。必要でない場合は空白にしてください。';
@@ -114,7 +114,7 @@ $string['configvariables'] = '詳細設定';
 $string['configwarning'] = '間違った設定はトラブルの原因になりますので、これらの設定を変更する場合は注意してください。';
 $string['configzip'] = 'ZIPプログラムの場所を指定してください ( UNIXのみ、任意 )。これはZIP書庫をサーバ内で作成するために必要です。空白にした場合、Moodleは内部ルーチンを使用します';
 $string['confirmation'] = '確認';
-$string['cronwarning'] = '<a href=\"cron.php\">cron.phpメンテナンススクリプト</a>が少なくとも24時間稼動していません。<br />cron.phpの自動化に関して<a href=\"../doc/?frame=install.html&amp;sub=cron\">インストールドキュメント</a>をご覧ください。';
+$string['cronwarning'] = '<a href=\"cron.php\">cron.phpメンテナンススクリプト</a>が少なくとも24時間稼動していません。<br />cron.phpの自動化に関して<a href=\"../doc/?frame=install.html&sub=cron\">インストールドキュメント</a>をご覧ください。';
 $string['density'] = '密度';
 $string['edithelpdocs'] = 'ヘルプ文書の編集';
 $string['editstrings'] = '翻訳ストリングの編集';
