@@ -124,15 +124,9 @@
     case 'search': /// looking for terms containing certain word(s)
         $tab = GLOSSARY_STANDARD_VIEW;
 
-        $searchterms = trim(strip_tags($hook));
+        //Clean a bit the search string
+        $hook = trim(strip_tags($hook));
 
-        $searchterms = explode(' ', $searchterms); // Search for words independently
-        foreach ($searchterms as $key => $searchterm) {
-            if (strlen($searchterm) < 2) {
-                unset($searchterms[$key]);
-            }
-        }
-        $hook = trim(implode(' ', $searchterms));
     break;
 
     case 'entry':  /// Looking for a certain entry id
@@ -368,6 +362,10 @@
                         unset($searchterms[$key]);
                     } else {
                         $searchterms[$key] = preg_replace('/^\+/','',$searchterm);
+                    }
+                    //Avoid highlight of <2 len strings. It's a well known hilight limitation.
+                    if (strlen($searchterm) < 2) {
+                        unset($searchterms[$key]);
                     }
                 }
                 $strippedsearch = implode(' ', $searchterms);    // Rebuild the string
