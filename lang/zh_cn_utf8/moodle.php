@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 Beta + (2005060201)
+      // moodle.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['action'] = '动作';
@@ -391,6 +391,9 @@ $string['emailpasswordsent'] = '谢谢您对更改密码做了确认。
 这个新密码是自动生成的——您最好<a href=\"$a->link\">修改<a>一个更容易记住的密码。';
 $string['enable'] = '使用';
 $string['encryptedcode'] = '加密代码';
+$string['enroldate'] = '时间段';
+$string['enrolenddate'] = '结束日期';
+$string['enrollable'] = '课程可被选';
 $string['enrolledincourse'] = '加入课程“{$a}”';
 $string['enrolledincoursenot'] = '退出课程“{$a}”';
 $string['enrollfirst'] = '在使用此站点前您必须选择某课程。';
@@ -408,6 +411,7 @@ $string['enrolmentnointernal'] = '手工选课目前并未激活';
 $string['enrolmentnotyet'] = '对不起，在{$a}之前您不能访问此课程';
 $string['enrolments'] = '选课';
 $string['enrolperiod'] = '选课时间';
+$string['enrolstartdate'] = '开始日期';
 $string['entercourse'] = '点击进入该课程';
 $string['enteremailaddress'] = '输入您的E-mail地址以重设密码，
 新密码将送到您的信箱中。';
@@ -425,6 +429,8 @@ $string['existingcoursedeleting'] = '现有课程,先删除它';
 $string['existingcreators'] = '现有的课程管理员';
 $string['existingstudents'] = '注册的学生';
 $string['existingteachers'] = '现有教师';
+$string['expirynotify'] = '选课期满通知';
+$string['expirynotifystudents'] = '提醒学生';
 $string['explanation'] = '解释';
 $string['failedloginattempts'] = '从您上次登录后共有{$a->attempts}次失败的登录尝试。';
 $string['failedloginattemptsall'] = '帐号{$a->accounts}共有{$a->attempts}次失败的登录尝试。';
@@ -453,6 +459,7 @@ $string['format'] = '格式';
 $string['formathtml'] = 'HTML格式';
 $string['formatmarkdown'] = 'Markdown格式';
 $string['formatplain'] = '纯文本格式';
+$string['formatscorm'] = 'SCORM格式';
 $string['formatsocial'] = '社区格式';
 $string['formattext'] = 'Moodle自动格式';
 $string['formattexttype'] = '格式';
@@ -476,7 +483,7 @@ $string['gd1'] = 'GD 1.x已经安装';
 $string['gd2'] = 'GD 2.x已经安装';
 $string['gdneed'] = '要看到该图必须安装GD';
 $string['gdnot'] = 'GD没有安装';
-$string['gpl'] = '版权所有 (C) 2001-2002  Martin Dougiamas  (http://moodle.com)
+$string['gpl'] = '版权所有 (C) 1999-2005  Martin Dougiamas  (http://moodle.com)
 
 该系统是自由软件；您可以按照自由软件基金会所公布的GNU通用公共许可证(GPL)进行修改或重新发布；许可证可以是第2版或更新的版本。
 
@@ -567,6 +574,7 @@ $string['includenoneusers'] = '包括None用户';
 $string['includeuserfiles'] = '包括用户的文件';
 $string['info'] = '信息';
 $string['institution'] = '机构';
+$string['instudentview'] = '在学生视图';
 $string['invalidemail'] = 'E-mail地址无效';
 $string['invalidlogin'] = '登录无效，请重试';
 $string['ip_address'] = 'IP地址';
@@ -774,7 +782,7 @@ $string['nostudentsfound'] = '未找到$a';
 $string['nostudentsingroup'] = '在这个组中尚未有学生';
 $string['nostudentsyet'] = '尚无学生选择此课程';
 $string['nosuchemail'] = '没有这样的E-mail地址';
-$string['notavailable'] = '不可得';
+$string['notavailable'] = '不可用';
 $string['noteachersyet'] = '此课程尚无教师';
 $string['notenrolled'] = '$a 没有选修该课程。';
 $string['noteuserschangednonetocourse'] = '恢复用户资料后课程资料也需要恢复';
@@ -895,6 +903,7 @@ $string['rssarticles'] = 'RSS最新文章数目';
 $string['rsserror'] = '读取RSS数据错误';
 $string['rsstype'] = '此活动的RSS种子';
 $string['savechanges'] = '保存更改';
+$string['savepreferences'] = '保存使用偏好';
 $string['saveto'] = '保存到';
 $string['scale'] = '等级';
 $string['scales'] = '等级';
@@ -932,7 +941,7 @@ $string['showallcourses'] = '显示所有课程';
 $string['showalltopics'] = '显示所有主题';
 $string['showallusers'] = '显示所有用户';
 $string['showallweeks'] = '显示所有周安排';
-$string['showgrades'] = '显示等级';
+$string['showgrades'] = '显示成绩';
 $string['showlistofcourses'] = '显示课程列表';
 $string['showonlytopic'] = '只显示第{$a}个主题';
 $string['showonlyweek'] = '只显示第{$a}周安排';
@@ -1015,7 +1024,7 @@ $string['toomanytoshow'] = '要显示的用户太多';
 $string['toonly'] = '只给{$a}';
 $string['top'] = '置顶';
 $string['topic'] = '主题';
-$string['topichide'] = '从{$a}隐藏该主题';
+$string['topichide'] = '向{$a}隐藏该主题';
 $string['topicoutline'] = '主题目录';
 $string['topicshow'] = '显示该主题于$a';
 $string['total'] = '总计';
