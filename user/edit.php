@@ -57,9 +57,10 @@
 
 
     // load the relevant auth libraries
-    if ($user->auth) { 
+    if (!empty($user->auth)) { 
         $auth = $user->auth;
         if (!file_exists("$CFG->dirroot/auth/$auth/lib.php")) {
+            trigger_error("Can't find auth module $auth , default to internal.");
             $auth = "manual";    // Can't find auth module, default to internal
         }
         require_once("$CFG->dirroot/auth/$auth/lib.php");
