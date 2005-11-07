@@ -233,7 +233,7 @@ class upload_manager {
         }
         if (empty($savedsomething)) {
             $this->status = false;
-            if ((empty($this->config->allownull) && !empty($this->inputname)) || empty($this->config->allownullmultiple)) {
+            if ((empty($this->config->allownull) && !empty($this->inputname)) || (empty($this->inputname) && empty($this->config->allownullmultiple))) {
                 notify(get_string('uploadnofilefound'));
             }
             return false;
