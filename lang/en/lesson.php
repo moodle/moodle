@@ -4,6 +4,8 @@
 
 $string['accesscontrol'] = 'Access control';
 $string['actionaftercorrectanswer'] = 'Action after correct answer';
+$string['activitylink'] = 'Link to an activity';
+$string['activitylinkname'] = 'Go to: $a';
 $string['addabranchtable'] = 'Add a Branch Table';
 $string['addanendofbranch'] = 'Add an End of Branch';
 $string['addaquestionpage'] = 'Add a Question Page';
@@ -270,10 +272,5 @@ $string['yourcurrentgradeis'] = 'Your current grade is $a';
 $string['yourgradeisnow'] = 'Your grade for the lesson has been changed to $a';
 $string['yourresponse'] = 'Your response';
 $string['youshouldview'] = 'You should view at least: $a';
-
-
-
-
-
 
 ?>
