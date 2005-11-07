@@ -4,6 +4,8 @@
 
 $string['accesscontrol'] = 'アクセスコントロール';
 $string['actionaftercorrectanswer'] = '正解後のアクション';
+$string['activitylink'] = '活動にリンクする';
+$string['activitylinkname'] = '$a へ移動';
 $string['addabranchtable'] = '分岐表の追加';
 $string['addanendofbranch'] = '分岐終了の追加';
 $string['addaquestionpage'] = '問題ページの追加';
