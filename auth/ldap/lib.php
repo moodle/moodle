@@ -826,10 +826,19 @@ function auth_user_update($olduser, $newuser) {
     if ($user_info_result){
 
         $user_entry = auth_ldap_get_entries($ldapconnection, $user_info_result);
+        if (count($user_entry)) {
+            trigger_error("ldap: Strange! More than one user record found in ldap. Only using the first one.");
+        }
+        $user_entry = $user_entry[0];
+
         //error_log(var_export($user_entry) . 'fpp' );
         
         foreach ($attrmap as $key=>$ldapkeys){
-            if (!empty($pcfg->{'field_updateremote_'. $key})) {
+
+            // only process if the moodle field ($key) has changed and we
+            // are set to update LDAP with it
+            if ($olduser->$key !== $newuser->$key &&
+                !empty($pcfg->{'field_updateremote_'. $key})) {
 
                 // for ldap values that could be in more than one 
                 // ldap key, we will do our best to match 
@@ -844,26 +853,35 @@ function auth_user_update($olduser, $newuser) {
                 }
                  
                 foreach ($ldapkeys as $ldapkey) {
+                    $ldapkey   = strtolower($ldapkey);
+                    $ldapvalue = $user_entry[$ldapkey][0];
                     if (!$ambiguous) {
                         // skip update if the values already match
-                        if( !($newuser->$key === $user_entry[0][strtolower($ldapkey)][0]) ){
+                        if( !($newuser->$key === $ldapvalue) ){
                             ldap_modify($ldapconnection, $user_dn, array($ldapkey => $newuser->$key));
                         } else { 
                     error_log("Skip updating field $key for entry $user_dn: it seems to be already same on LDAP. " . 
                                       "  old moodle value: '" . $olduser->$key . 
                                       "' new value '" . $newuser->$key . 
-                                      "' current value in ldap entry " . $user_entry[0][strtolower($ldapkey)][0]);
+                                      "' current value in ldap entry " . $ldapvalue);
                         }
                     } else { // ambiguous
-                        // check the old values match
-                        //error_log("keys $key $ldapkey");
-                        //error_log("olduser " . $olduser->$key);
-                        //error_log("ldapuser " . $user_entry[0][strtolower($ldapkey)][0]);
-                        if (   !empty($olduser->$key) 
-                            && !empty($user_entry[0][strtolower($ldapkey)][0]) 
-                            && $olduser->$key === $user_entry[0][strtolower($ldapkey)][0] ) {
-                            // we found which value to update!
-                            error_log("Matched: ". $olduser->$key . " === " . $user_entry[0][strtolower($ldapkey)][0]);
+                        // value empty before in Moodle (and LDAP) - use 1st ldap candidate field
+                        // no need to guess
+                        if (empty($olduser->$key)) { // value empty before - use 1st ldap candidate
+                            if(ldap_modify($ldapconnection, $user_dn, array($ldapkey => $newuser->$key))){
+                                $changed=true;
+                                last;
+                            } else {
+                                error ('Error updating LDAP record. Error code: ' 
+                                  . ldap_errno($ldapconnection) . '; Error string : '
+                                  . ldap_err2str(ldap_errno($ldapconnection)));                                
+                            }
+                        }
+
+                        // we found which ldap key to update!                            
+                        if ( !empty($ldapvalue) && $olduser->$key === $ldapvalue ) {
+                            // error_log("Matched: ". $olduser->$key . " === " . $ldapvalue);
                             if(ldap_modify($ldapconnection, $user_dn, array($ldapkey => $newuser->$key))){
                                 $changed=true;
                                 last;
