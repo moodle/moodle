@@ -28,6 +28,7 @@ CREATE TABLE `prefix_lesson` (
   `maxtime` INT(10) UNSIGNED NOT NULL DEFAULT '0',
   `retake` int(3) unsigned NOT NULL default '1',
   `tree` TINYINT(3) UNSIGNED NOT NULL DEFAULT '0',
+  `activitylink` INT(10) UNSIGNED NOT NULL DEFAULT '0',
   `mediafile` varchar(255) NOT NULL default '',
   `mediaheight` INT(10) UNSIGNED NOT NULL DEFAULT '100',
   `mediawidth` INT(10) UNSIGNED NOT NULL DEFAULT '650',

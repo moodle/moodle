@@ -212,6 +212,10 @@ function lesson_upgrade($oldversion) {
         table_column('lesson', '', 'mediaheight', 'int', '10', 'unsigned', '100', 'not null', 'mediafile');
         table_column('lesson', '', 'mediawidth', 'int', '10', 'unsigned', '650', 'not null', 'mediafile');
     }
+
+	if ($oldversion < 2005110200) {
+        table_column('lesson', '', 'activitylink', 'int', '10', 'unsigned', '0', 'not null', 'tree');
+	}
          
     return true;
 }

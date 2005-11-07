@@ -1216,6 +1216,18 @@
             } elseif ($lesson->modattempts && isteacher($course->id)) {
                 echo "<p align=\"center\">".get_string("modattemptsnoteacher", "lesson")."</p>";                
             }
+			
+			if ($lesson->activitylink) {
+				if ($module = get_record('course_modules', 'id', $lesson->activitylink)) {
+					if ($modname = get_field('modules', 'name', 'id', $module->module))
+						if ($instance = get_record($modname, 'id', $module->instance)) {
+				            echo "<div align=\"center\" style=\"padding: 5px;\" class=\"lessonbutton standardbutton\">".
+									"<a href=\"$CFG->wwwroot/mod/$modname/view.php?id=$instance->id\">".
+									get_string('activitylinkname', 'lesson', $instance->name)."</a></div>\n";
+						}
+				}
+			}
+
             echo "<div align=\"center\" style=\"padding: 5px;\" class=\"lessonbutton standardbutton\"><a href=\"../../course/view.php?id=$course->id\">".get_string("mainmenu", "lesson")."</a></div>\n"; // Back to the menu (course view).
             echo "<div align=\"center\" style=\"padding: 5px;\" class=\"lessonbutton standardbutton\"><a href=\"../../grade/index.php?id=$course->id\">".get_string("viewgrades", "lesson")."</a></div>\n"; //view grades
         }

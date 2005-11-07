@@ -129,6 +129,9 @@ if ($form->mode == "add") {
         $form->completed = $conditions->completed;
         $form->gradebetterthan = $conditions->gradebetterthan;
     }
+    if (!isset($form->activitylink)) {
+        $form->activitylink = 0;
+    }
     
     $form->deleteattempts = "";
 
@@ -532,6 +535,51 @@ if ($form->mode == "add") {
         $options[0] = get_string("no"); $options[1] = get_string("yes");
         choose_from_menu($options, "tree", $form->tree, "");
         helpbutton("tree", get_string("treeview", "lesson"), "lesson");
+    ?>
+    </td>
+</tr>
+
+<tr>
+    <td align="right"><b><?php print_string("activitylink", "lesson"); ?>:</b></td>
+    <td>
+    <?php
+        // get the modules
+        $mods = get_course_mods($form->course);
+        $modinstances = array();
+        foreach ($mods as $mod) {
+            if ($mod->instance == $form->instance) {  // don't add this lesson
+                continue;
+            }
+            // get the module name and then store it in a new array
+            if ($module = get_coursemodule_from_instance($mod->modname, $mod->instance, $form->course)) {
+                $modinstances[$mod->modname][$module->id] = $module->name;
+            }
+        }
+        ksort($modinstances); // sort by module name
+
+        // print out a select dropdown with optgroups
+        echo '<select id="menuactivitylink" name="activitylink">';
+        if ($form->activitylink == 0) {
+            echo '<option selected="selected" value="0">'.get_string('none')."</option>\n";
+        } else {
+            echo '<option value="0">'.get_string('none')."</option>\n";
+        }
+        foreach ($modinstances as $module => $instances) {
+            echo '<optgroup label="'.get_string('modulename', $module).'">'."\n";
+            
+            asort($instances);
+            foreach ($instances as $modid => $instance) {
+                if ($form->activitylink == $modid) {  // check for being selected
+                    echo '<option selected="selected" value="'.$modid.'">'.$instance."</option>\n";
+                } else {
+                    echo '<option value="'.$modid.'">'.$instance."</option>\n";
+                }
+            }
+            echo "</optgroup>\n";
+        }
+        echo "</select>\n";
+        
+        helpbutton("activitylink", get_string("activitylink", "lesson"), "lesson");
     ?>
     </td>
 </tr>
