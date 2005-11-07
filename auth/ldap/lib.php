@@ -1063,7 +1063,7 @@ function auth_ldap_getdefaults(){
                         'rfc2307' => 'member',
                         'rfc2307bis' => 'member',
                         'samba' => 'member',
-                        'ad' => 'member', //is this right?
+                        'ad' => 'memberOf', 
                         'default' => 'member'
                         );
     $default['ldap_memberattribute_isdn'] = array(
