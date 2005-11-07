@@ -49,9 +49,17 @@
     $currenttab = $mode;
     include($CFG->dirroot.'/user/tabs.php');   /// Prints out tabs as part of user page
 
-    $isseparategroups = ($course->groupmode == SEPARATEGROUPS and
+    //look for any forum that is in separate group mode, if there is one, we need to pass groupid
+    //for student and non-editting teacher
+
+    $isseparategroups = /*(($course->groupmode == SEPARATEGROUPS and
                          $course->groupmodeforce and
-                         !isteacheredit($course->id));
+                         !isteacheredit($course->id))*/forum_get_separate_modules($course->id);
+                         
+    //editting teacher can view everything so do not pass in groupid
+    if (isteacheredit ($course->id)){
+        $isseparategroups = false;
+    }
 
     $groupid = $isseparategroups ? get_current_group($course->id) : NULL;
 

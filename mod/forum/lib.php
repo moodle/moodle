@@ -2572,7 +2572,6 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
                                         $currentgroup=-1, $groupmode=-1, $page=-1) {
     global $CFG, $USER;
 
-
 /// Sort out some defaults
 
     if ((!$maxdiscussions) && ($displayformat == 'plain')) {
@@ -3595,5 +3594,24 @@ function forum_discussion_update_last_post($discussionid) {
 /// or we couldn't update the discussion record (weird x2)
     return false;
 }
+
+
+///this function returns all the separate forum ids, given a courseid
+//@ param int $courseid
+//@ return array
+function forum_get_separate_modules($courseid) {
+
+    global $CFG,$db;
+    $forummodule = get_record("modules", "name", "forum");
+
+    $sql = 'SELECT f.id, f.id FROM '.$CFG->prefix.'forum f, '.$CFG->prefix.'course_modules cm WHERE
+           f.id = cm.instance AND cm.module ='.$forummodule->id.' AND cm.visible = 1 AND cm.course = '.$courseid.'
+           AND cm.groupmode ='.SEPARATEGROUPS;
+           
+    return get_records_sql($sql);
+
+}
+
+
          
 ?>
