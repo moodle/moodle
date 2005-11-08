@@ -1,0 +1,191 @@
+<h2>Migliorare i testi con Markdown</h2>
+<div id="Main">
+<div class="article">
+<p>Markdown consente di migliorare la gestione di semplici testi disponibile in Moodle consentendo di inserire in modo semplice formattazioni (grassetto, corsivo), struttura del testo (elenchi, intestazioni) e link (a immagini o altre risorse web). E' possibile usare Markdown in diversi punti in Moodle, selezionandolo dal menu a tendina <strong>Formattazione</strong> presente sotto all'area di inserimento del testo della risorsa.</p>
+<p></p>
+<ul>
+<li><a href="#concepts">Concetti base </a></li>
+<li><a href="#emphasis">Stile del testo </a></li>
+<li><a href="#headings">Titoli</a></li>
+<li><a href="#lists">Elenchi puntati e numerati </a></li>
+<li><a href="#quotes">Paragrafi virgolettati </a></li>
+<li><a href="#links">Web Link</a></li>
+<li><a href="#images">Immagini</a></li>
+<li><a href="#advanced">Funzioni avanzate</a></li>
+</ul>
+
+<h2><a id="concepts">Concetti base </a></h2>
+
+<p>Per inserire il testo basta semplicemente digitarlo nell'area di inserimento del testo, premendo due volte il tasto INVIO alla fine del paragrafo per lasciare una linea bianca tra un paragrafo e il successivo.</p>
+<p></p>
+<h2><a id="emphasis">Stile del testo</a></h2>
+
+<p>Con Markdown possono essere inseriti tre tipi di stili del testo, il <em>corsivo</em>, il <strong>grassetto</strong> e il <em><strong>grassetto</strong></em><strong> <em>corsivo</em>.</strong> I diversi stili si ottengono, circondando il testo da enfatizzare con asterischi, nel modo seguente:</p>
+
+<p><strong><code>*corsivo*</code></strong> -> <em>corsivo</em> <br />
+<strong><code>**grassetto**</code></strong> -> <strong>grassetto</strong> <br />
+<strong><code>***grassetto corsivo***</code></strong> -> <strong><em>grassetto corsivo </em></strong></p>
+
+<p>Lo stile pu&ograve; essere attribuito a singole parole, frasi o parti di una parola::</p>
+
+<p><strong><code>una *singola* parola </code></strong> -> una <em>singola</em> parola <br />
+<strong><code>***una intera frase***</code></strong> -> <strong><em>una intera frase</em></strong> <br />
+<strong><code>in**distinguibile**</code></strong> -> in<strong>distinguibile</strong></p>
+
+<p>Il trattino di sottolineatura (_) pu&ograve; essere utilizzato al posto degli asterischi.</p>
+
+<h2><a id="headings">Intestazioni</a></h2>
+
+<p>Markdown permette di strutturare il testo attraverso la definizione di sei diversi livelli di intestazioni (generalmente se ne usano al massimo tre in un normale testo, come il presente help). </p>
+<p>Le intestazioni si creano iniziando la riga di testo con uno o pi&ugrave; caratteri 'cancelletto' (#).  Un 'cancelletto' &egrave; l'intestazione pi&ugrave; importante, di pi&ugrave; alto livello, sei 'cancelletti' rappresentano quella di pi&ugrave; basso livello.</p>
+<p><strong><code># intestazione di sezione</code></strong> <br />
+<strong><code>## intestazione di sotto-sezione</code></strong> <br />
+<strong><code>### intestazione di sotto-sotto-sezione</code></strong> <br />
+ecc.</p>
+
+<p>I primi due livelli di intesazione sono i pi&ugrave; comuni e possono essere creati in modi alternativi per farli risaltare maggiormente nella versione testuale (l'output sar&agrave; comunque uguale). Si possono quindi usare, in alternativa, una linea di 'uguale' (=) o di trattini (-) posizionate sotto il testo::</p>
+
+<p><strong><code>Intestazione di sezione </code></strong> <br />
+<strong><code>=======================</code></strong></p>
+
+<p><strong><code>Intestazione di sotto-sezione </code></strong><br />
+<strong><code>-----------------------------</code></strong></p>
+
+<h2><a id="lists">Elenchi </a></h2>
+
+<h3>Elenchi puntati </h3>
+
+<p>Gli elenchi puntati possono essere creati iniziando ogni riga con un asterisco seguito da uno spazio (* ) prima del contenuto. Lo spazio dopo l'asterisco &egrave; importante e non pu&ograve; essere omesso.</p>
+
+<p><strong><code>* primo punto </code></strong> <br />
+<strong><code>* secondo punto </code></strong> <br />
+<strong><code>* terzo punto</code></strong>  </p>
+
+<p>diventa</p>
+
+<ul>
+<li>primo punto </li>
+<li>secondo punto </li>
+<li>terzo punto </li>
+</ul>
+
+<h3>Elenchi numerati </h3>
+
+<p>Allo stesso modo, gli elenchi puntati sono creati iniziando ogni riga con un numero seguito da uno spazio.</p>
+
+<p><strong><code>1. primo punto</code></strong> <br />
+<strong><code>2. secondo punto </code></strong> <br />
+<strong><code>3. terzo punto </code></strong></p>
+
+<p>diventa</p>
+
+<ol>
+<li>primo punto </li>
+<li>secondo punto </li>
+<li>terzo punto </li>
+</ol>
+
+<h3>Elenchi rientrati </h3>
+
+<p>E' possibile creare elenchi rientrati, utilizzando anche nella stessa struttura, punti elenco e numeri:</p>
+
+<pre>
+    * Punto di primo livello
+      * primo punto di secondo livello  
+      * secondo punto di secondo livello 
+    * Secondo punto di primo livello  
+    1. Primo punto numerato
+       1. Punto numerato di secondo livello  
+    2. Secondo punto numerato</pre>
+
+<p> diventa
+</p>
+
+<ul>
+<li>Punto di primo livello
+  <ul>
+<li>primo punto di secondo livello </li>
+<li>secondo punto di secondo livello </li>
+</ul></li>
+<li>Secondo punto di primo livello
+  <ol>
+<li>Primo punto numerato
+  <ol>
+<li>Punto numerato di secondo livello </li>
+</ol></li>
+<li>Secondo punto numerato</li>
+</ol></li>
+</ul>
+
+<h2><a id="quotes">Paragrafi virgolettati </a></h2>
+
+<p>Una sezione del testo pu&ograve; essere marcata come 'citazione' o 'testo virgolettato' iniziando la riga con il segno di 'maggiore' (>), lo stesso carattere utilizzato nella maggior parte dei programmi per la gestione di email per indicare la citazione del testo del mittente. L'output generalmente si presenta con testo rientrato da entrambi i margini.</p>
+
+<p><strong><code>&gt; Questa &egrave; una citazione</code> <br />
+<code>&gt; divisa su due righe </code></strong></p>
+
+<p>diventa</p>
+
+<blockquote>
+  <p>Questa &egrave; una citatzione divisa su due righe </p>
+</blockquote>
+
+<p>E' anche possibile usare un solo &gt; all'inizio della prima riga del paragrafo </p>
+<p><strong><code>&gt; Solo la prima riga di questo </code> <br />
+    <code>paragrafo inizia con &gt; anche se la citazione </code> <br />
+    <code>&egrave; su pi&ugrave; righe </code></strong></p>
+<p>diventa</p>
+
+<blockquote>
+  <p>Solo la prima riga di questo paragrafo inizia con &gt; anche se la citazione &egrave; su pi&ugrave; righe</p>
+</blockquote>
+
+<h2><a id="links">Web Link</a></h2>
+
+<p>Ci sono due modi per creare link a risorse web: il primo consiste nell'includere il link nel testo, posizionando il testo linkato tra parentesi quadre, e l'URL corrispondente immediatamente dopo, tra parentesi tonde, senza spazi tra i due elementi tra parentesi. E' possibile inserire anche un titolo per il link, tra doppi apici dopo l'URL). </p>
+<p><strong><code>Un [link esempio](http://example.com/ "Titolo opzionale") in una frase.</code></strong></p>
+<p>diventa</p>
+
+<p>An <a href="http://example.com/" title="Optional Title">link esempio</a> in una frase.</p>
+
+<p>Il titolo, se inserito, sar&agrave; visualizzato come 'tooltip' quando l'utente posizioner&agrave; il puntatore del mouse, prima di cliccare. </p>
+<p>Per link pi&ugrave; lunghi &egrave; possibile evitare di alterare il flusso del testo e inserirli come nota a pi&egrave; di pagina. In questo caso si inserisce un identificativo, subito dopo il primo elemento tra parentesi quadre. </p>
+<p><strong><code>Un [link esempio][ex] in una frase.</code></strong></p>
+<p>A questo punto si pu&ograve; definire l'URL associata in qualsiasi punto nel documento, ma preferibilmente dopo il paragrafo contenente il link oppure tutti insieme alla fine del documento, come una bibliografia:</p>
+<p><strong><code>[ex]: http://example.com/  "Titolo opzionale"</code></strong></p>
+
+<p>Il risultato finale del secondo esempio &egrave; identico al primo. E' solo un modo per organizzare i link all'interno del documento in modo pi&ugrave; ordinato. </p>
+<p>Una ulteriore modalit&agrave;, pi&ugrave; rapida, nel caso l'URL coincida con il testo da linkare, consiste nell'inserire direttamente l'URL tra parentesi angolari (&lt; &gt;):</p>
+<p><strong><code>&lt;http://moodle.org/&gt;</code></strong></p>
+<p>che diventa </p>
+
+<p><a href="http://moodle.org">http://moodle.org</a></p>
+
+<h2><a id="images">Immagini</a></h2>
+
+<p>Le immagini si inseriscono in modo molto simile ai web link, ma sono precedute dal punto esclamativo (!). Il testo alternativo (ovvero il tag 'alt') viene visualizzato per gli utenti che non sono in grado di vedere le immagini per svariate ragioni. .</p>
+<p>Il titolo &egrave; visualizzato in una piccola finestra popup quando l'utente posizioner&agrave; il puntatore del mouse sull'immagine, dando modo di fornire ulteriori informazioni. </p>
+<p><strong><code>![testo alt](/path/img.jpg "Titolo opzionale")</code></strong></p>
+<p>Come per i web link, &egrave; possibile utilizzare gli identificativi per organizzare le URL delle immagini come note a pi&egrave; di pagina:</p>
+<p><strong><code>![testo alt][foto1]</code></strong></p>
+
+<p>In qualsiasi punto del documento, si associa l'identificativo con l'URL dell'immagine:</p>
+<p><strong><code>[foto1]: /url/to/img.jpg "Titolo opzionale"</code></strong></p>
+<p>Un esempio seguito dalla visualizzazione reale:</p>
+
+<p><strong><code>![logo di Google](http://www.google.com/images/logo.gif "Il logo di Google")</code></strong></p>
+
+<p><img src="http://www.google.com/images/logo.gif" alt="logo di Google" title="Il logo di Google" /></p>
+
+<p>Il testo 'alt', che &egrave; importante anche per ragioni di accessibilit&agrave;, &egrave; spesso usato dai browser quando i link alle immagini non sono validi o temporaneamente non disponibili:</p>
+<p><strong><code>![testo alternativo per immagine non disponibile](http://example.com/immagine_non_esistente "Questa immagine non si visualizza ")</code></strong></p>
+<p>diventa:</p>
+
+<p><img src="http://example.com/immagine_non_esistente" alt="testo alternativo per immagine non disponibile" title="Questa immagine non si visualizza" /></p>
+
+<h2><a id="advanced">Funzioni avanzate </a></h2>
+
+<p>Questa breve introduzione ha illustrato le principali funzioni di Markdown, utilizzate nella maggior parte dei casi. E' possibile ottenere risultati molto pi&ugrave; complessi, in particolare se si ha una conoscenza di HTML, ma queste funzioni sono spiegate in un documento separato sull'Uso avanzato di Markdown.</p>
+<p align="right"><a href="help.php?file=advanced_markdown.html">Maggiori informazioni sull'uso avanzato di Markdown</a></p>
+</div>
+</div>

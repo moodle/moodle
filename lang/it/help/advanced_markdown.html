@@ -1,0 +1,128 @@
+<h2>Uso avanzato di Markdown</h2>
+
+<div id="Main">
+
+<div class="article">
+<p>Questa sezione espande quanto esposto come documentazione di base nel documento 'Migliorare i testi con Markdown'. Se il contenuto di questo documento non ti &egrave; chiaro, dovresti leggere prima il documento citato. </p>
+<ul>
+
+<li><a href="#linebreaks">Ritorni a capo </a></li>
+<li><a href="#hr">Linee orizzontali</a></li>
+<li><a href="#image_links">Immagini linkate </a></li>
+<li><a href="#embedded">Inserire codice HTML</a></li>
+<li><a href="#preformatted">Codice pre-formattato </a></li>
+<li><a href="#special_char">Usare i caratteri speciali </a></li>
+<li><a href="#further">Ulteriori informazioni </a></li>
+</ul>
+
+<h2><a id="linebreaks">Ritorni a capo </a></h2>
+
+<p>In molti testi, ad esempio nelle poesie, &egrave; spesso necessario inserire dei ritorni a capo. Cercare di inserirli con tasto INVIO non dar&agrave; l'effetto sperato perch&egrave; le righe sono automaticamente attaccate l'una all'altra per formare un paragrafo.</p>
+<p><strong><code>The best laid schemes o' Mice an' Men,<br />
+Gang aft agley,<br />
+An' lea'e us nought but grief an' pain,<br />
+For promis'd joy!</code></strong></p>
+<p>Il testo precedente, ottenuto premendo INVIO alla fine di ogni riga, produce il seguente risultanto, dove si nota come i ritorni a capo siano stati ignorati::</p>
+
+<p>The best laid schemes o' Mice an' Men,
+Gang aft agley,
+An' lea'e us nought but grief an' pain,
+For promis'd joy!</p>
+
+<p>Inserendo alla fine di ogni riga due spazi, si forza un ritorno a capo:</p>
+
+<p>The best laid schemes o' Mice an' Men,<br />
+Gang aft agley,<br />
+An' lea'e us nought but grief an' pain,<br />
+For promis'd joy!  </p>
+
+<h2><a id="hr">Linee orizzontali </a></h2>
+
+<p>Per inserire linee orizzontali si devono utilizzare tre o pi&ugrave; asterischi (*), trattini (-) o trattini di sottolineatura(_), con o senza spaziature. </p>
+<p>Tutti i seguenti testi producono il medesimo risultato: </p>
+<p><strong><code>***</code></strong></p>
+
+<p><strong><code>* * * * *</code></strong></p>
+
+<p><strong><code>-------------------------</code></strong></p>
+
+<p><strong><code>_ _ _ _ _</code></strong></p>
+
+<p>che &egrave;: </p>
+
+<hr />
+
+<h2><a id="image_links">Immagini linkate</a></h2>
+
+<p>Il testo introduttivo su Markdown dava informazioni su come creare web link e inserire immagini. Le due cose possono essere combinate per creare immagini che sono anche link cliccabili.</p>
+<p><strong><code>[Il motore di ricerca Google][google]</code></strong></p>
+<p><strong><code>![Il logo di Google][logo]</code></strong></p>
+
+<p>I due esempi sopra riportati mostrano un link e un'immagine. Posizionando l'immagine al posto del testo del link::</p>
+
+<p><strong><code>[![Il logo di Google][logo]][google]</code></strong></p>
+
+<p>In qualsiasi punto del documento, si inseriranno le seguenti due righe, riportanti gli identificativi del link e dell'immagine:</p>
+
+<p><strong><code>[logo]: http://www.google.com/images/logo.gif</code></strong><br />
+<strong><code>[google]: http://www.google.com/ "clicca qui per aprire Google.com"</code></strong></p>
+
+<p>Il risultato finale &egrave; la seguente immagine cliccabile, con relativo tooltip:</p>
+
+<p><a href="http://www.google.com/" title="clicca qui per aprire Google.com"><img src="http://www.google.com/images/logo.gif" alt="il logo di google" /></a></p>
+
+<p>Un esempio di uso di questa tecnica &egrave; la visualizzazione di miniature (thumbnail) come link alle foto in formato pi&ugrave; grande.</p>
+
+<h2><a id="embedded">Inserire codice HTML</a></h2>
+
+<p>Se la tua conoscenza di HTML &egrave; sufficiente, puoi inserire direttamente tag HTML, per avere un maggiore controllo sulla visualizzazione finale del testo. </p>
+<p><strong><code>* &lt;small&gt;testo piccolo&lt;/small&gt;</code></strong><br />
+
+  <strong><code>* &lt;big&gt;testo grande &lt;/big&gt;</code></strong> </p>
+<ul>
+<li><small>testo piccolo</small>  </li>
+<li><big>testo grande </big> </li>
+</ul>
+
+<p>Si noti come la sintassi HTML coesista con il codice Markdown per gli elenchi puntati. E' possibile quindi inserire un mix di comandi Markdown e HTML, in modo da combinare la semplicit&agrave; del primo con la completezza del secondo.</p>
+<h2><a id="preformatted">Visualizzare il codice HTML o testo preformattato</a></h2>
+
+<p>Se, a differenza di quanto esposto nella sezione precedente, si desidera che il codice HTML sia visualizzato esattamente come scritto e non processato dal browser, la riga deve iniziare con quattro spazi. </p>
+<p><code>&lt;p&gt;Un paragrafo in &lt;b&gt;HTML&lt;/b&gt; visualizzato come codice &lt;/p&gt;
+</code></p>
+
+
+<p>Si usa lo stesso sistema per visualizzare parti di programma::</p>
+
+<pre><code>print "Command-line arguments: (@ARGV)\n";
+</code></pre>
+
+<p>Questa modalit&agrave; &egrave; spesso usata per visualizzare programmi e altri testi che potrebbero contenere caratteri che Markdown usa come indicatori di diversi tipi di formattazione. La formattazione Markdown &egrave; pertanto abolita automaticamente in questo tipo di righe::</p>
+
+<pre><code>Normalmente questa parola sarebbe in **grassetto**.
+</code></pre>
+
+<p>Per includere i caratteri speciali nel testo normale, vedi il paragrafo seguente.</p>
+
+<h2><a id="special_char">Usare i caratteri speciali</a></h2>
+
+<p>Per usare i caratteri speciali che fanno parte della 'sintassi' di Markdown, si deve precederli da un carattere 'backslash' (\). Il backslash non sar&agrave; visualizzato ma il carattere seguente sar&agrave; mostrato cos&igrave; come inserito, senza dar luogo a un 'comando' per Markdown:</p>
+
+<p><strong><code>\* asterischi, non corsivo \*</code></strong></p>
+
+<p>becomes</p>
+
+<p>* asterischi, non corsivo *</p>
+
+<p>piuttosto che </p>
+
+<p><strong><code>*corsivo, non asterischi*</code></strong></p>
+
+<p>che produce </p>
+
+<p><em>corsivo, non asterischi </em></p>
+
+<h2><a id="further">Ulteriori informazioni </a></h2>
+
+<p>Il sistema Markdown non &egrave; specifico di Moodle ma &egrave; usato in un numero crescente di strumenti di web publishing. Ulteriori informazioni su Markdown sono disponibili su <a href="http://daringfireball.net/projects/markdown/">http://daringfireball.net/projects/markdown/</a></p>
+</div></div>

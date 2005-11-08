@@ -1,0 +1,86 @@
+<p align="center"><b>Amministrazione Filtri</b></p>
+
+<p>La pagina di amministrazione dei Filtri consente di specificare quali filtri
+devono essere applicati al testo visualizzato e in quale ordine. Da questa stessa pagina si pu&ograve; accedere
+alle pagine di impostazioni specifiche dei singoli filtri(se previste).
+I Filtri sono applicati alla maggior parte dei testi inseriti dagli utenti in Moodle prima che essi siano
+visualizzati. Consentono quindi 'modifiche dell'ultimo minuto' del testo.</p>
+
+<p>Ulteriori Filtri sono inseribili. I filtri disponibili sono elencati alla pagina
+   <a href="http://download.moodle.org/modules/filters.php">
+   http://download.moodle.org/modules/filters.php</a>.</p>
+
+<p>Seleziona i filtri desiderati rimuovendo l'icona di 'nascosto' (l'icona con l'occhio).
+Se si ha pi&ugrave; di un filtro attivo si pu&ograve; cambiare l'ordine con cui essi sono applicati, mediante
+le frecce.</p>
+
+<p><b>Notazione TeX</b></p>
+
+<div class="indent">
+  <p>La notazione TeX è usata principalmente per generale formule matematiche all'interno del testo delle risorse.
+Ad esempio: $$ sqrt(a+b) $$ ($$ è il 'tag'
+  di inizio e fine del formato TeX).</p>
+  <p>Moodle usa programmi esterni per il rendering delle immagini corrispondenti alle formule. Questo applicativi
+  esterni potrebbero dover essere impostati sul tuo sistema. Il filtro cerca per primo un renderizzatore LaTeX (per questo metodo
+  è richiesta anche la presenza di Ghostscript). In mancanza di questo sarà utilizzato il più semplice programma
+ <i>miktex</i>
+ incluso nella distribuzione di Moodle.
+ LaTeX consente l'uso dell'intera gamma dei simboli sintattici, mentre miktext ne supporta soltanto un sottoinsieme.</p>
+  <p>La pagina di impostazioni consente di configurare il percorso degli eseguibili di LaTeX e Ghostscript, insieme al preambolo
+  di LaTeX.</p>
+  <p><b>Per maggiori informazioni:</b></p>
+  <p><a href="http://www.miktex.org/">MiKTeX</a><br/>
+     <a href="http://www.latex-project.org/">LaTeX</a><br/>
+     <a href="http://www.ghostscript.com/">ghostscript</a></p>
+</div>
+
+<p><b>Censura parola</b></p>
+
+<div class="indent">
+  <p>Censura parola esamina il testo alla ricerca di 'parole proibite' inserita in una lista predefinita.
+  Ogni package di lingua ha la sua specifica lista predefinita, ma è anche possibile definirne una personalizzata.
+  Per definire una lista personalizzata entra nella pagina delle impostazioni e specifica la lista delle parole.
+  L'utente vedrà le parole 'censurate' oscurate da un blocco nero, muovendosi con il mouse sopra la parola apparirà la parola
+  originale in una finestra popup.</p>
+</div>
+
+<p><b>Auto-collegamento alla risorsa</b></p>
+
+<div class="indent">
+  <p>Auto-collegamento alla risorsa esamina il testo alla ricerca di titoli di risorse esistenti nello stesso corso.
+  Se trovate, le parole sono evidenziate e viene creato automaticamente anche un link alla risorsa.
+  N.B.: per un uso efficace di questa funzione dovrebbero essere usati titoli descrittivi per le risorse. Ad esempio un titolo generico
+  'Introduzione' &egrave; poco significativo perch&eacute; <strong>ogni</strong> uso della parola 'introduzione' nel testo sar&agrave; linkata, indipendentemente da ci&ograve; a cui si riferisce.
+</p>
+</div>
+
+<p><b>Auto-collegamento Nomi Attività</b></p>
+
+<div class="indent">
+  <p>
+  Auto-collegamento Nomi Attitiv&agrave; esamina il testo alla ricerca di titoli di attivit&agrave; esistenti nello stesso corso. Se trovate, le parole sono evidenziate e viene creato automaticamente un link all'attivit&agrave;. N.B.: per un uso efficace di questa funzione dovrebbero essere usati titoli descrittivi nelle attitiv&agrave;. Ad esempio un titolo generico
+  di un'attivit&agrave; come 'Quiz' &egrave; poco significativo perch&eacute; <strong>ogni</strong> uso della parola 'quiz' nel testo sar&agrave; linkata, indipendentemente da ci&ograve; a cui si riferisce.</p>
+</div>
+
+<p><b>Auto-collegamento al glossario</b></p>
+
+<div class="indent">
+  <p>Questo filtro esamina il testo alla ricerca di parole presenti in ogni glossario del corso, a patto che il glossario abbia attivato il collegamento automatico. Se trovate, le parole presenti nei glossari sono evidenziate e linkate automaticamente. </p>
+  <p><b>Protezione email</b></p>
+</div>
+
+<div class="indent">
+  <p>Il filtro Protezione email esamina il testo alla ricerca di indirizzi email. Se nel testo sono presenti, essi sono 'offuscati' per prevenire il recupero automatico di indirizzi email da parte di sistemi di raccolta automatica. In questo modo &egrave; possibile ridurre il rischio di spamming.</p>
+  <p><b>Tidy</b></p>
+</div>
+
+<div class="indent">
+  <p>Tidy esamina il testo alla ricerca di costrutti HTML. Se trovati, il filtro applica le regole che cercano di validare il contenuto HTML. N.B.: la funzionalit&agrave; tidy deve essere configurata a livello della installazione del PHP.</p>
+  <p><b>Contenuto multi-lingua</b></p>
+</div>
+
+<div class="indent">
+  <p>Questo filtro consente di creare risorse utilizzando lingue multiple. La lingua nella quale &egrave; espressa la risorsa cambier&agrave; automaticamente se l'utente seleziona una lingua diversa in Moodle. Per usare questa funzione, prima di tutto occorre creare il contenuto in lingue diverse inserendo i diversi testi in un'unica risorsa. Ogni blocco di lingua dovr&agrave; essere contenuto entro i seguenti tag: </p>
+  <p> &lt;lang lang="XX"&gt;contenuto in lingua XX &lt;/lang&gt;</p>
+  
+</div>
