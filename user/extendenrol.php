@@ -53,7 +53,7 @@ $table->align = array ('left', 'center', 'center', 'center');
 $table->width = "600";
 $timeformat = get_string('strftimedate');
 $nochange = get_string('nochange');
-foreach ($_GET as $k => $v) {
+foreach ($_POST as $k => $v) {
     if (preg_match('/^user(\d+)$/',$k,$m)) {
         if (!($user = get_record_sql("SELECT * FROM {$CFG->prefix}user u INNER JOIN {$CFG->prefix}user_students s ON u.id=s.userid WHERE u.id={$m[1]}"))) {
             continue;

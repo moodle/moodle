@@ -370,7 +370,7 @@ function checkchecked(form) {
 //-->
 </script>
 ';
-        echo '<form action="action_redir.php" method="get" name="studentsform" onSubmit="return checksubmit(this);">';
+        echo '<form action="action_redir.php" method="post" name="studentsform" onSubmit="return checksubmit(this);">';
         echo '<input type="hidden" name="id" value="'.$id.'" />';
         echo '<input type="hidden" name="returnto" value="'.$_SERVER['REQUEST_URI'].'" />';
         echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';

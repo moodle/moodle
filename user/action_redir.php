@@ -4,7 +4,7 @@
  */
 require_once("../config.php");
 
-if (empty($_GET) || empty($_GET['formaction']) || empty($_GET['id'])) {
+if (empty($_POST) || empty($_POST['formaction']) || empty($_POST['id'])) {
     die();
 }
 
@@ -14,7 +14,7 @@ $actions = array(
         'extendenrol.php'
     );
 
-if (array_search($_GET['formaction'], $actions) === false) {
+if (array_search($_POST['formaction'], $actions) === false) {
     die();
 }
 
@@ -22,13 +22,5 @@ if (!confirm_sesskey()) {
     die();
 }
 
-$pass = false;
-foreach ($_GET as $k => $v) {
-    $pass = $pass || preg_match('/^user(\d+)$/',$k);
-}
-if (!$pass) {
-    die();
-}
-
-header("Location: $CFG->wwwroot/user/" . $_GET['formaction'] . '?' . $_SERVER['QUERY_STRING']);
+require_once($_POST['formaction']);
 ?>
