@@ -61,9 +61,9 @@
 
 	// if necessary, remove hotpots that are not in section0 or this $USER's display section
 	if ($displaysection) {
-		foreach ($hotpots as $cmid=>$hotpot) {
+		foreach ($hotpots as $coursemodule=>$hotpot) {
 			if ($hotpot->section!=0 && $hotpot->section!=$displaysection) {
-				unset($hotpots[$cmid]);
+				unset($hotpots[$coursemodule]);
 			}
 		}
 	}

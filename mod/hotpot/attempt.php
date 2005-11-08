@@ -45,6 +45,8 @@
 	// set clickreportid, (for click reporting)
 	$attempt->clickreportid = $attempt->id;
 
+	$quiztype = optional_param('quiztype', 0, PARAM_INT);
+
 	if (empty($attempt->details)) {
 		hotpot_set_attempt_details($attempt);
 		$javascript_is_off = true;
@@ -181,7 +183,7 @@ function hotpot_get_next_cm(&$cm) {
 	return $next_mod;
 }
 function hotpot_set_attempt_details(&$attempt) {
-	global $HOTPOT_QUIZTYPE;
+	global $CFG, $HOTPOT_QUIZTYPE;
 
 	$attempt->details = '';
 	$attempt->score = 0;
@@ -201,7 +203,8 @@ function hotpot_set_attempt_details(&$attempt) {
 		}
 	}
 	if (!$ok) {
-		error('Quiz type is missing or invalid');
+		return;
+		// error('Quiz type is missing or invalid');
 		// error(get_string('error_invalidquiztype', 'hotpot'));
 		//
 		// script finishes here if quiztype is invalid
@@ -242,24 +245,38 @@ function hotpot_set_attempt_details(&$attempt) {
 		// loop through possible answers to this question
 		$firstcorrectvalue = '';
 		$a = 0;
-		while (($correctfield="q{$q}_correct_{$a}") && isset($_POST[$correctfield])) {
-			$correctvalue = optional_param($correctfield, '', PARAM_RAW);
+		while (($valuefield="q{$q}_a{$a}_text") && isset($_POST[$valuefield])) {
+			$value = optional_param($valuefield, '', PARAM_RAW);
 
-			if (empty($firstcorrectvalue)) {
-				$firstcorrectvalue = $correctvalue;
+			if (($correctfield="q{$q}_a{$a}_correct") && isset($_POST[$correctfield])) {
+				$correct = optional_param($correctfield, '', PARAM_INT);
+			} else {
+				$correct = false;
 			}
 
-			if ($responsevalue==$correctvalue) {
-				$response->correct[] = $responsevalue;
+			if ($correct && empty($firstcorrectvalue)) {
+				$firstcorrectvalue = $value;
+			}
+
+			if ($responsevalue==$value) {
+				if ($correct) {
+					$response->correct[] = $value;
+				} else {
+					$response->wrong[] = $value;
+				}
 			} else {
-				$response->ignored[] = $correctvalue;
+				$response->ignored[] = $value;
 			}
 			$a++;
 		}
 
-		// if no correct answer was found, then this answer is wrong
-		if (empty($response->correct)) {
+		// if response did not match any answer, then this response is wrong
+		if (empty($response->correct) && empty($response->wrong)) {
 			$response->wrong[] = $responsevalue;
+		}
+
+		// if this question has not been answered correctly, quiz is still in progress
+		if (empty($response->correct)) {
 			$attempt->status = HOTPOT_STATUS_INPROGRESS;
 
 			// give a hint, if necessary
@@ -304,12 +321,23 @@ function hotpot_set_attempt_details(&$attempt) {
 		}
 
 		// get previous responses to this question (if any)
-		$question = get_record('hotpot_questions', 'name', $questionname, 'hotpot', $attempt->hotpot);
-		if ($question) {
-			$records = get_records_select('hotpot_responses', "attempt=$attempt->clickreportid AND question=$question->id");
-		} else {
-			$records = false;
-		}
+		$records = get_records_sql("
+			SELECT
+				r.*
+			FROM
+				{$CFG->prefix}hotpot_attempts AS a,
+				{$CFG->prefix}hotpot_questions AS q,
+				{$CFG->prefix}hotpot_responses AS r
+			WHERE
+				a.clickreportid = $attempt->clickreportid AND
+				a.id = r.attempt AND
+				r.question = q.id AND
+				q.name = $questionname AND
+				q.hotpot = $attempt->hotpot
+			ORDER BY
+				a.timefinish
+		");
+
 		if ($records) {
 			foreach ($records as $record) {
 				foreach ($buttons as $button) {
@@ -335,8 +363,7 @@ function hotpot_set_attempt_details(&$attempt) {
 
 		$value_has_changed = false;
 		foreach ($textfields as $field) {
-
-			$response->$field = array_merge($response->$field, $oldresponse->$field);
+			$response->$field = array_merge($oldresponse->$field, $response->$field);
 			$response->$field = array_unique($response->$field);
 			$response->$field  = implode(',', $response->$field);
 
@@ -354,7 +381,7 @@ function hotpot_set_attempt_details(&$attempt) {
 		}
 
 		// $response now holds amalgamation of all responses so far to this question
-		
+
 		// set question score and weighting
 		if ($response->correct) {
 			switch ($quiztype) {

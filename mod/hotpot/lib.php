@@ -174,12 +174,18 @@ define("HOTPOT_DISPLAYNEXT_INDEX",  "2");
 //  true (or non-zero number):
 //		continue to $hp->redirect (if set) OR hotpot/view.php (to displsay quiz)
 
-function hotpot_add_instance(&$hp) {
-/// Given an object containing all the necessary data, 
-/// (defined by the form in mod.html) this function 
-/// will create a new instance and return the id number 
-/// of the new instance.
+// $hp is an object containing the values of the form in mod.html
+// i.e. all the fields in the 'hotpot' table, plus the following:
+//    $hp->course       : an id in the 'course' table
+//    $hp->coursemodule : an id in the 'course_modules' table
+//    $hp->section      : an id in the 'course_sections' table
+//    $hp->module       : an id in the 'modules' table
+//    $hp->modulename   : always 'hotpot'
+//    $hp->instance     : an id in the 'hotpot' table
+//    $hp->mode         : 'add' or 'update'
+//    $hp->sesskey      : unique string required for Moodle's session management
 
+function hotpot_add_instance(&$hp) {
 	if (hotpot_set_form_values($hp)) {
 		$result = insert_record("hotpot", $hp);
 	} else {
@@ -188,12 +194,7 @@ function hotpot_add_instance(&$hp) {
 	return $result;
 }
 
-
 function hotpot_update_instance(&$hp) {
-/// Given an object containing all the necessary data, 
-/// (defined by the form in mod.html) this function 
-/// will update an existing instance with new data.
-
 	if (hotpot_set_form_values($hp)) {
 		$hp->id = $hp->instance;
 		$result = update_record("hotpot", $hp);
@@ -274,7 +275,8 @@ function hotpot_set_form_values(&$hp) {
 			$hp->redirect = true;
 			$hp->redirecturl = "../mod/hotpot/index.php?id=$hp->course";
 			break;
-		// otherwise go on to display quiz
+		default:
+			// use Moodle default action (i.e. go on to display the hotpot quiz)
 	}
 
 	// if ($ok && $hp->setdefaults) {
@@ -303,7 +305,6 @@ function hotpot_set_form_values(&$hp) {
 	return $ok;
 }
 function hotpot_get_chain(&$cm) {
-
 	// get details of course_modules in this section
 	$course_module_ids = get_field('course_sections', 'sequence', 'id', $cm->section);
 	if (empty($course_module_ids)) {
@@ -344,8 +345,14 @@ function hotpot_get_chain(&$cm) {
 			$chain[$id]->hotpot = &$hotpots[$hotpot_id];
 
 			// set $found, if this is the course module we're looking for
-			if ($id==$cm->coursemodule) {
-				$found = true;
+			if (isset($cm->coursemodule)) {
+				if ($id==$cm->coursemodule) {
+					$found = true;
+				}
+			} else {
+				if ($id==$cm->id) {
+					$found = true;
+				}
 			}
 
 			// is this the end of a chain
@@ -363,10 +370,23 @@ function hotpot_get_chain(&$cm) {
 	return $found ? $chain : false;
 }
 function hotpot_is_visible(&$cm) {
-	$visible = HOTPOT_YES;
-	if (empty($cm->visible)) {
-		if ($chain = hotpot_get_chain($cm)) {
-			$visible = $chain[0]->visible;
+	if (!isset($cm->sectionvisible)) {
+		if ($section = get_record('course_sections', 'id', $cm->section)) {
+			$cm->sectionvisible = $section->visible;
+		} else {
+			error('Course module record contains invalid section');
+		}
+	}
+
+	if (empty($cm->sectionvisible)) {
+		$visible = HOTPOT_NO;
+	} else {
+		$visible = HOTPOT_YES;
+		if (empty($cm->visible)) {
+			if ($chain = hotpot_get_chain($cm)) {
+				$startofchain = array_shift($chain);
+				$visible = $startofchain->visible;
+			}
 		}
 	}
 	return $visible;
@@ -451,7 +471,6 @@ function hotpot_add_chain(&$hp) {
 
 	if ($ok) {
 		$hp->visible = HOTPOT_YES;
-		$hp->shownextquiz = HOTPOT_YES;
 
 		if (trim($hp->name)=='') {
 			$hp->name = get_string("modulename", $hp->modulename);
@@ -501,8 +520,9 @@ function hotpot_add_chain(&$hp) {
 			);
 
 			// hide tail of chain
-			$hp->visible = HOTPOT_NO;
-
+			if ($hp->shownextquiz==HOTPOT_YES) {
+				$hp->visible = HOTPOT_NO;
+			}
 		} // end for ($hp->references)
 
 		// settings for final activity in chain
@@ -649,67 +669,80 @@ function hotpot_get_titles_and_next_ex(&$hp, $filepath, $get_next=false) {
 	}
 }
 function hotpot_get_all_instances_in_course($modulename, $course) {
+/// called from index.php
 
 	global $CFG;
 	$instances = array();
 
-	$hotpotmoduleid = get_field('modules', 'id', 'name', 'hotpot');
-
-	if ($modinfo = unserialize($course->modinfo)) {
-
-		if (isset($CFG->release) && substr($CFG->release, 0, 3)>=1.2) {
-			$groupmode = 'cm.groupmode,';
-		} else {
-			$groupmode = '';
-		}
-		$query = "
-			SELECT 
-				cm.id AS coursemodule, 
-				cm.visible AS visible,
-				$groupmode
-				cs.section,
-				m.*
-			FROM 
-				{$CFG->prefix}course_modules AS cm,
-				{$CFG->prefix}course_sections AS cs,
-				{$CFG->prefix}modules AS md,
-				{$CFG->prefix}$modulename AS m
-			WHERE 
-				cm.course = '$course->id' AND
-				cm.instance = m.id AND
-				cm.section = cs.id AND
-				md.name = '$modulename' AND
-				md.id = cm.module
-		";
-		if ($rawmods = get_records_sql($query)) {
-
-			// cache $isteacher setting
-			$isteacher = isteacher($course->id);
-
-			foreach ($modinfo as $mod) {
-
-				$visible = false;
-				if ($mod->mod == $modulename) {
-					if ($isteacher) {
-						$visible = true;
-					} else if ($mod->mod=='hotpot') {
-						$mod->coursemodule = $mod->cm;
-						$mod->module = $hotpotmoduleid;
-						$visible = hotpot_is_visible($mod);
-					} else {
-						$visible = $mod->visible;
-					}
-				}
-				if ($visible) {
-					$instance = $rawmods[$mod->cm];
-					if (!empty($mod->extra)) {
-						$instance->extra = $mod->extra;
-					}
-					$instances[] = $instance;
-				}
-			} // end foreach $modinfo
-		}
+	if (isset($CFG->release) && substr($CFG->release, 0, 3)>=1.2) {
+		$groupmode = 'cm.groupmode,';
+	} else {
+		$groupmode = '';
 	}
+
+	$query = "
+		SELECT 
+			cm.id AS coursemodule, 
+			cm.course AS course,
+			cm.module AS module,
+			cm.instance AS instance,
+			## cm.section AS section,
+			cm.visible AS visible,
+			$groupmode
+			## cs.section AS sectionnumber,
+			cs.section AS section,
+			cs.sequence AS sequence,
+			cs.visible AS sectionvisible,
+			thismodule.*
+		FROM 
+			{$CFG->prefix}course_modules AS cm,
+			{$CFG->prefix}course_sections AS cs,
+			{$CFG->prefix}modules AS m,
+			{$CFG->prefix}$modulename AS thismodule
+		WHERE 
+			m.name = '$modulename' AND
+			m.id = cm.module AND
+			cm.course = '$course->id' AND
+			cm.section = cs.id AND
+			cm.instance = thismodule.id
+	";
+	if ($rawmods = get_records_sql($query)) {
+
+		// cache $isteacher setting
+		$isteacher = isteacher($course->id);
+
+		$explodesection = array();
+		$order = array();
+	
+		foreach ($rawmods as $rawmod) {
+
+			if (empty($explodesection[$rawmod->section])) {
+				$explodesection[$rawmod->section] = true;
+
+				$coursemodules = explode(',', $rawmod->sequence);
+				foreach ($coursemodules as $i=>$coursemodule) {
+					$order[$coursemodule] = sprintf('%d.%04d', $rawmod->section, $i);
+				}
+			}
+
+			if ($isteacher) {
+				$visible = true;
+			} else if ($rawmod->thismodule=='hotpot') {
+				$visible = hotpot_is_visible($rawmod);
+			} else {
+				$visible = $rawmod->visible;
+			}
+
+			if ($visible) {
+				$instances[$order[$rawmod->coursemodule]] = $rawmod;
+			}
+
+		} // end foreach $modinfo
+			
+		ksort($instances);
+		$instances = array_values($instances);
+	}
+
 	return $instances;
 }
 
@@ -725,14 +758,14 @@ function hotpot_update_chain(&$hp) {
 
 		foreach ($hotpot_modules as $hotpot_module) {
 
-			if ($hp->coursemodule==$hotpot_module->id) {
+			if ($hp->instance==$hotpot_module->id) {
 				// don't need to update this hotpot
 
 			} else {
 				// shortcut to hotpot record
 				$hotpot = &$hotpot_module->hotpot;
 
-				// get a list of fields to update
+				// get a list of fields to update (first time only)
 				if (empty($fields)) {
 					$fields = array_keys(get_object_vars($hotpot));
 				}
@@ -750,7 +783,7 @@ function hotpot_update_chain(&$hp) {
 					}
 				}
 
-				// update this $hotpot (if required)
+				// update this $hotpot, if required
 				if ($require_update && !update_record("hotpot", $hotpot)) {
 					error("Could not update the $hp->modulename", "view.php?id=$hp->course");
 				}
@@ -1525,7 +1558,7 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 
 		$replace = "hotpot_convert_relative_url('".$this->get_baseurl()."', '".$this->reference."', '\\1', '\\6', '\\7')";
 
-		$tags = array('script'=>'src', 'link'=>'href', 'a'=>'href','img'=>'src','param'=>'value', 'embed'=>'src');
+		$tags = array('script'=>'src', 'link'=>'href', 'a'=>'href','img'=>'src','param'=>'value', 'object'=>'data', 'embed'=>'src');
 		foreach ($tags as $tag=>$attribute) {
 			if ($tag=='param') {
 				$url = '\S+?\.\S+?'; // must include a filename and have no spaces
@@ -1628,10 +1661,10 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 			//	quicktime  : src
 			//	realplayer : src
 			//	flash      : movie (doesn't need replacing)
-			$url_param = "/<param$s{$n}name=$q(src|url)$q$s{$n}value=$q($filepath)$q$n>/is";
+			$param_url = "/<param$s{$n}name=$q(src|url)$q$s{$n}value=$q($filepath)$q$n>/is";
 
 			// pattern to match <a> tags which link to multimedia files (not swf)
-			$link = "/<a$s{$n}href=$q($filepath)$q$n>(.*?)<\/a>/is";
+			$link_url = "/<a$s{$n}href=$q($filepath)$q$n>(.*?)<\/a>/is";
 
 			// extract <object> tags
 			preg_match_all("|<object$n>(.*?)</object>|is", $this->html, $objects);
@@ -1640,9 +1673,9 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 			for ($i=0; $i<$i_max; $i++) {
 
 				$url = '';
-				if (preg_match($url_param, $objects[1][$i], $matches)) {
+				if (preg_match($param_url, $objects[1][$i], $matches)) {
 					$url = $matches[2];
-				} else if (preg_match($link, $objects[1][$i], $matches)) {
+				} else if (preg_match($link_url, $objects[1][$i], $matches)) {
 					$url = $matches[1];
 				}
 
@@ -1651,9 +1684,11 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 
 					// if url is in the query string, remove the leading characters
 					$url = preg_replace('/^[^?]*\?([^=]+=[^&]*&)*[^=]+=([^&]*)$/', '$2', $url, 1);
+					$link = '<a href="'.$url.'">'.$txt.'</a>';
 
-					$new_object = mediaplugin_filter($this->filedir, '<a href="'.$url.'">'.$txt.'</a>');
-					$new_object = preg_replace("|(<a$n>.*<\/a>)(.*<object$n>.*<embed$n>.*)(</embed>.*</object>.*)$|is", '$2$1$3', $new_object);
+					$new_object = mediaplugin_filter($this->filedir, $link);
+					$new_object = str_replace($link, '', $new_object);
+					$new_object = str_replace('&amp;', '&', $new_object);
 
 					$this->html = str_replace($objects[0][$i], $new_object, $this->html);
 				}
