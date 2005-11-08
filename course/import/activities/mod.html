@@ -9,8 +9,23 @@
     }
 
     $strimport = get_string("importdata");
+ 
+    $tcourseids = '';
+  	 
+    if ($teachers = get_records_select('user_teachers', "userid = $USER->id AND editall = 1",'','id,course')) {
+        foreach ($teachers as $teacher) {
+            if ($teacher->course != $course->id && $teacher->course != $site->id){
+                $tcourseids .= $teacher->course.',';
+            }
+        }
+    }
 
-    $taught_courses = get_my_courses($USER->id,"visible DESC,sortorder ASC",0,1);
+    $taught_courses = array();
+  	if (!empty($tcourseids)) {
+        $tcourseids = substr($tcourseids,0,-1);
+        $taught_courses = get_records_list('course', 'id', $tcourseids);
+    }
+
     if (!empty($creator)) {
         $cat_courses = get_courses($course->category);
     } else {
@@ -24,6 +39,11 @@
         if ($tcourse->id != $course->id && $tcourse->id != SITEID){
             $options[$tcourse->id] = $tcourse->fullname;
         }
+    }
+
+    if (empty($options) && empty($creator)) {
+        notify(get_string('courseimportnotaught'));
+        return; // yay , this will pass control back to the file that included or required us.
     }
 
     $fm = '<form method="post" action="'.$CFG->wwwroot.'/course/import/activities/index.php"><input type="hidden" name="id" value="'.$course->id.'" />';
