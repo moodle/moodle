@@ -107,12 +107,28 @@
         $oneweek = $timenow - ($CFG->deleteunconfirmed * 3600);
         if ($users = get_users_unconfirmed($oneweek)) {
             foreach ($users as $user) {
-                if (delete_records("user", "id", $user->id)) {
+                if (delete_records('user', 'id', $user->id)) {
                     mtrace("Deleted unconfirmed user for ".fullname($user, true)." ($user->id)");
                 }
             }
         }
         flush();
+
+
+
+        /// Delete users who haven't completed profile within required period
+
+        $oneweek = $timenow - ($CFG->deleteunconfirmed * 3600);
+        if ($users = get_users_not_fully_set_up($oneweek)) {
+            foreach ($users as $user) {
+                if (delete_records('user', 'id', $user->id)) {
+                    mtrace("Deleted not fully setup user $user->username ($user->id)");
+                }
+            }
+        }
+        flush();
+
+
     
         /// Delete old logs to save space (this might need a timer to slow it down...)
     
