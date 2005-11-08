@@ -1,4 +1,4 @@
-<?PHP //$Id$
+<?php //$Id$
     //This file contains all the general function needed (file manipulation...)
     //not directly part of the backup/restore utility
 
@@ -289,7 +289,8 @@
             //$perms=fileperms($from_file);
             //return copy($from_file,$to_file) && chmod($to_file,$perms);
             umask(0000);
-            if (copy($from_file,$to_file) && chmod($to_file,$CFG->directorypermissions)) {
+            if (copy($from_file,$to_file)) {
+                chmod($to_file,$CFG->directorypermissions);
                 if (!empty($log_clam)) {
                     clam_log_upload($to_file,null,true);
                 }
