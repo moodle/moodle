@@ -660,7 +660,7 @@ class assignment_base {
         } else {
             $currentgroup = false;
         }
-        $limit = " LIMIT ".($offset+1).", 1";
+        $limit = sql_paging_limit($offset+1, 1);
 
     /// Get all teachers and students
         if ($currentgroup) {
@@ -1558,9 +1558,11 @@ function assignment_grades($assignmentid) {
                                $assignment->id, '', 'userid,grade');
 
     if ($assignment->grade > 0) {
-        foreach ($grades as $userid => $grade) {
-            if ($grade == -1) {
-                $grades[$userid] = '-';
+        if ($grades) {
+            foreach ($grades as $userid => $grade) {
+                if ($grade == -1) {
+                    $grades[$userid] = '-';
+                }
             }
         }
         $return->grades = $grades;
