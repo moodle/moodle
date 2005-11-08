@@ -380,6 +380,6 @@
         }
         error_log($filename);
         $SESSION->import_preferences = $preferences;
-        print_continue($CFG->wwwroot.'/course/import.php?id='.$to.'&fromcourse='.$id.'&filename='.$filename);
+        print_continue($CFG->wwwroot.'/course/import/activities/index.php?id='.$to.'&fromcourse='.$id.'&filename='.$filename);
     }
 ?>
