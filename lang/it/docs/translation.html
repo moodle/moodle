@@ -1,0 +1,201 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Moodle translation guide</title>
+<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS" />
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+</head>
+<body>
+<h1>Guida alla Traduzione di Moodle</h1>
+<p>Tradurre Moodle non &egrave; affatto difficile, ma prima di cominciare &egrave; bene
+  conoscere alcune cose.</p>
+<h2>Struttura di un language pack di Moodle</h2>
+<p style="margin-left: 40px;">Tutti i language pack di Moodle si trovano nella
+  cartella <span style="font-style: italic;">lang</span>, e ciascuno in una sottocartella
+  chiamata col nome breve della lingua (en, it, fr,&nbsp;es ...). </p>
+<p style="margin-left: 40px;">Tutti i file principali sono in tale cartella,
+  con estensione .php (per es. moodle.php, resource.php etc). Questi file contengono
+  brevi frasi, spesso dette "<span style="font-style: italic;">stringhe</span>". </p>
+<p style="margin-left: 40px;">Ci possono anche essere le seguenti cartelle contenenti
+  pagine web .html: </p>
+<ul style="margin-left: 40px;">
+  <li><strong>help</strong>: contenente i file di help contestuale che si aprono
+    in una finestra&nbsp;pop-up quando si clicca su una delle icone di help presente
+    in Moodle </li>
+  <li><strong>docs</strong>: contenente le pagine di documentazione di base (come
+  questa qua!)</li>
+</ul>
+<h2>Creazione di un nuovo language pack</h2>
+<p style="margin-left: 40px;">Se la propria lingua non &egrave; ancora supportata
+  da Moodle, o se si vuole semplicemente inserire qualche personalizzazione nell'interfaccia
+  del proprio sito, si pu&ograve; decidere di iniziare una nuova traduzione. </p>
+<p style="margin-left: 40px;">Tutto quello che &egrave; necessario fare consiste
+  nel creare una nuova sottocartella nella cartella lang usando una codifica
+  di 2 lettere per la propria lingua. Queste codifiche standard possono essere
+  trovate in lib/languages.php. Se si vuole invece creare una variazione locale
+  di una lingua esistente, usare la codifica di quella lingua seguita da un carattere
+  di sottolineatura e altre due lettere significative (per es. <span style="font-style: italic;">pt </span>per
+  il Portoghese e <span style="font-style: italic;">pt_br</span> per la variazione
+  Brasiliana del language pack Portoghese).&nbsp; Se si sta realizzando una versione
+  Unicode aggiungere <span style="font-weight: bold;">_utf8</span> alla fine
+  (ad es.&nbsp;<span style="font-style: italic;">sr_utf8</span>).<br />
+</p>
+<p style="margin-left: 40px;">Subito dopo, bisogna creare nella cartella della
+  nuova lingua il file&nbsp;"moodle.php", contenete le seguenti righe:<br />
+  <br />
+  <code> &lt;?PHP <br />
+  $string['thischarset'] = 'iso-8859-1';<br />
+  $string['thisdirection'] = 'ltr';<br />
+  $string['thislanguage'] = 'nuovo language pack';<br />
+  ?&gt; </code><br />
+  <br />
+  oppure copiare&nbsp;moodle.php da un'altra lingua nella nuova cartella. Quello
+  dalla cartella "en" di solito &egrave; il migliore, ma non &egrave; molto importante
+  in quanto dovr&agrave; essere riscritto. Creare un proprio moodle.php ha il
+  vantaggio di cominciare con un language pack pulito e vuoto.<br />
+</p>
+<p style="margin-left: 40px;">Si &egrave; ora pronti a inserire nuove stringhe
+  nella propria lingua... leggere il seguito per sapere come si fa.</p>
+<p style="margin-left: 40px;">Nel caso di un nuovo language pack, la prima modifica
+  da fare riguarda la stringa chiamata "thischarset" in moodle.php. Questa deve
+  contenere un set di caratteri web valido per la propria lingua. Dopo la modifica
+  di tale stringa, salvare il file moodle.php file, quindi <span style="font-weight: bold;">ricaricare
+  la pagina</span>. Dopo di ci&ograve; si pu&ograve; continuare con il resto
+  delle stringhe. </p>
+<h2>Modifica di un language pack esistente</h2>
+<h3 style="margin-left: 40px;">Piccole personalizzazioni<br />
+</h3>
+<p style="margin-left: 80px;">Se si vogliono cambiare solo poche parole dell'interfaccia
+  per migliorare solo l'aspetto del proprio sito, <span style="font-weight: bold;">non
+  modificare uno dei language pack standard</span>, altrimenti i propri cambiamenti
+  saranno soprascritti la prossima volta che Moodle verr&agrave; aggiornato a
+  una nuova versione.<br />
+</p>
+<p style="margin-left: 80px;">Invece, utilizzare le istruzioni gi&agrave; date
+  per creare un nuovo language pack, e impostare il&nbsp;parent language (in
+  moodle.php) alla lingua pi&ugrave; simile alla propria. Per esempio, un nome
+  possibile per una versione italiana locale potrebbe essere "<span style="font-style: italic;">it_local</span>",
+  e il&nbsp;parent language sar&agrave; "<span style="font-style: italic;">it</span>".</p>
+<p style="margin-left: 80px;">Da notare che affich&eacute; tutti gli utenti del
+  poprio sito vedano il nuovo language pack, bisogner&agrave; selezionare lo
+  stesso come lingua del sito e limitare le lingue disponibili in&nbsp; <span style="font-weight: bold;">Amministrazione &gt;&gt; Configurazione &gt;&gt; Variabili</span>.<br />
+  <br />
+</p>
+<h3 style="margin-left: 40px;">Traduzione dei file di interfaccia di Moodle (i
+  file di&nbsp;"stringhe")<br />
+</h3>
+<ol style="margin-left: 80px;">
+  <li>Fare Login sul proprio server Moodle come amministratore. </li>
+  <li>Andare ad <span style="font-weight: bold;">Administrazione &gt;&gt; Configurazione &gt;&gt; Lingua</span>,
+    che &egrave; la pagina di amministrazione della lingua. </li>
+  <li>Su questa pagina si pu&ograve; scegliere la propria lingua dal menu, e
+    poi "Modifica stringhe".</li>
+  <li>Si dovrebbero vedere dei form editabili per ogni file. Se non &egrave; cos&igrave;,
+    ci si deve assicurare che i file siano scrivibili - probabilmente si&nbsp;devono
+    modificare i permessi di utilizzo dei file.</li>
+  <li>I form sono composti da tre colonne, la prima contiene il nome di ogni
+    stringa, la seconda riporta la stringa in Inglese e l'ultima contiene la
+    traduzione nella lingua corrente. </li>
+  <li>Inserire le stringhe mancanti in ogni file (evidenziate a colori), ricordandosi
+    di cliccare il pulsante "Salva modifiche" alla fine di ogni form.</li>
+  <li>E' possibile lasciare stringhe vuote - Moodle utilizzer&agrave; per queste
+    stringhe le corrispondenti presenti nel parent language. Il parent language
+    pu&ograve; essere definito in moodle.php, altrimenti sar&agrave; utilizzato
+    l'Inglese come default. </li>
+  <li>Per vedere direttamente tutte le stringhe mancanti si pu&ograve; cliccare
+    sul pulsante "Controllo per le stringhe mancanti". Lasciare le stringhe che
+    non si traducono completamente vuote altrimenti questa utile funzione non
+    dar&agrave; risultati corretti.<br />
+    <br />
+  </li>
+</ol>
+<h3 style="margin-left: 40px;">Traduzione dei file di help e di documentazione</h3>
+<p style="margin-left: 80px;">Non c'&egrave; ancora un apposito editor in Moodle
+  per tradurre i file di help, ma questa operazione non &egrave; affatto difficile.
+  E' importante usare il language pack <span style="font-weight: bold;">en</span> come
+  lingua di riferimento. Copiare un file di help dal language pack en e metterlo
+  nella corrispondente posizione del proprio language pack. Quindi utilizzare
+  un editor di testo per tradurre il file, stando attenti a non modificare parti
+  di codice nel file (ma normalmente non c'&egrave; codice, solo tag HTML). (NON
+  USARE UN WORDPROCESSOR per scrivere i file di help in quanto questi programmi
+  aggiungono troppi caratteri interni di controllo ai file). <br />
+  <b>Non lasciate file di help da tradurre nel vostro language pack.</b></p>
+<p style="margin-left: 80px;">Abbiate cura di scrivere i file di help conformi
+  a XHTML. Questo significa in breve:</p>
+<ul style="margin-left: 80px;">
+  <li>Tutte le tag devono essere chiuse: <span style="color: rgb(255, 0, 0);">&lt;p&gt;</span>lalala<span style="color: rgb(255, 0, 0);">&lt;/p&gt;</span></li>
+  <li>Tutti gli elementi devono essere nidificati: <span style="color: rgb(255, 0, 0);">&lt;p&gt;</span> lalala <span style="color: rgb(0, 0, 255);">&lt;em&gt;</span>lalala<span style="color: rgb(0, 0, 255);">&lt;/em&gt;</span> <span style="color: rgb(255, 0, 0);">&lt;/p&gt;</span></li>
+  <li>Tutti gli elementi e gli attributi devono essere minuscoli</li>
+  <li>Tutti gli attributi devono essere scritti per esteso e con apici: <span style="color: rgb(255, 0, 0);">&lt;p
+      align="right"&gt;</span> lalala &lt;/p&gt;</li>
+  <li>Gli elementi vuoti devono terminare con&nbsp;/&gt;: <span style="color: rgb(255, 0, 0);">&lt;br
+      /&gt; &lt;hr /&gt;</span>. Bisogna aggiungere uno spazio prima del simbolo "/".</li>
+  <li>Una &lt;img deve avere un&nbsp;alt="" (pu&ograve; anche essere vuoto) e
+    deve essere chiuso come altri elementi vuoti con uno spazio e una /&gt; come <span style="color: rgb(255, 0, 0);">&lt;img
+    alt="" src="picture.gif" /&gt;</span></li>
+  <li><span style="color: rgb(255, 0, 0);">&lt;?=</span> e <span style="color: rgb(255, 0, 0);">&lt;?</span> devono
+    essere scritti come <span style="color: rgb(255, 0, 0);">&lt;?php</span></li>
+  <li>Non ci deve essere ALCUN tag font. <span style="color: rgb(255, 0, 0);"> &lt;p&gt;&lt;em&gt; &lt;h1&gt; &lt;h2&gt;</span> ecc.
+    devono essere sufficienti per i file del language pack ...</li>
+  <li>Il nome della lingua nel language pack ($string['thislanguage'] in moodle.php)
+    dovrebbe normalmente usare, se possibile, le Numeric Character References
+    (NCR), perch&eacute; questo permette al nome di funzionare in TUTTI i contesti
+    di codifica (si veda ad esempio il pack&nbsp;Cinese).</li>
+</ul>
+<p style="margin-left: 80px;">Nessuno dei file nella cartella help ha bisogno
+  di tag di apertura e chiusura per doc type, html, body, head - questi file
+  sono inclusi in help.php. Lo script provveder&agrave; alla creazione delle
+  pagine. Questo significa anche che non c'&egrave; molto spazio per la creativit&agrave; HTML!
+  Attenersi all'esempio in Inglese.</p>
+<p style="margin-left: 80px;">I file nella cartella doc devono essere completamente
+  conformi a XHTML inclusi&nbsp;doc type, header etc.</p>
+<p style="margin-left: 80px;">Cliccando sul pulsante "Controllo per le stringhe
+  mancanti" sul pannello di amministrazione della lingua saranno mostrati anche
+  i file mancanti. Per i file mancanti Moodle user&agrave; il parent language,
+  per cui non bisogna lasciare copie di file <span style="font-weight: bold;">non
+  tradotti</span> nel proprio language pack o questo utile strumento non funzioner&agrave;.</p>
+<p>&nbsp;</p>
+<h2>Invio del proprio language pack al progetto&nbsp;Moodle </h2>
+<p style="margin-left: 40px;">Condividere la propria traduzione con Moodle assicurer&agrave; l'aiuto
+  ad altre persone che parlano la stessa lingua. L'interfaccia tradotta sar&agrave; disponibile
+  anche nelle future versioni di Moodle.<br />
+</p>
+<p style="margin-left: 40px;">Bisogna semplicemente salvare l'intera cartella
+  della nuova lingua come file&nbsp;<span style="font-weight: bold;">zip</span> e
+  inviarlo via email a <a href="mailto:tra%6es%6ca%74%69o%6e%40%6d%6f%6f%64%6c%65.org">translation@moodle.org</a>.<br />
+</p>
+<p style="margin-left: 40px;">Sar&agrave; inviata una risposta con ulteriori
+  dettagli.<br />
+</p>
+<p style="margin-left: 40px;">Checklist da usare prima di effettuare l'invio:</p>
+<ul style="margin-left: 80px;" type="circle">
+  <li>File vuoti?</li>
+  <li>Files o stringhe non tradotti?</li>
+  <li>File di Help modificati con un wordprocessor?</li>
+  <li>Il file README contiene la lingua, il nome e l'email del traduttore?</li>
+  <li>Il nome della cartella ha il corretto codice della lingua&nbsp;(controllare
+    moodle\lib\languages.php)?</li>
+  <li>Il language pack &egrave; senza errori su un sito di test?</li>
+  <li>Quando "thislanguage" contiene altre lettere&nbsp;oltre quelle latine, &egrave; scritto
+    nella notazione NCR?</li>
+  <li>Le stringhe e i files sono conformi XHTML?</li>
+</ul>
+<h2>Manutenzione di un language pack standard</h2>
+<p style="margin-left: 40px;">Se si &egrave; deciso di manutenere una lingua
+  in Moodle, la cosa migliore &egrave; usare&nbsp;<a href="?file=cvs.html">Moodle
+  CVS</a> in modo da avere sempre una versione aggiornata di Moodle e poter facilmente
+  inserire i propri cambiamenti direttamente nel progetto centrale. Contattare <a href="mailto:tra%6es%6ca%74%69o%6e%40%6d%6f%6f%64%6c%65.org">translation@moodle.org</a> se
+si ha bisogno di aiuto per impostare correttamente questo sistema.</p>
+<p style="margin-left: 40px;">Bisogna anche iscriversi al&nbsp;<a target="_top" href="http://moodle.org/mod/forum/view.php?id=43">Languages
+    Forum</a> per avere le ultime novit&agrave; e seguire le discussioni sugli
+argomenti che riguardano le traduzioni.</p>
+<p style="margin-left: 40px;">Infine, per essere aggiornati sui cambiamenti nel
+  progetto giorno per giorno, &egrave; un'ottima idea iscriversi alla&nbsp;<a href="http://sourceforge.net/mail/?group_id=30935" target="_top">CVS
+  mailing list</a>.&nbsp; Questo sar&agrave; di aiuto per mantenere la propria
+  traduzione pi&ugrave; aderente possibile alla versione originale in Inglese.<br />
+</p>
+<p align="center"><font size="1"><a href="." target="_top">Moodle Documentation</a></font></p>
+<p align="center"><font size="1">Version: $Id: translation.html,v 1.12 2005/02/10
+    11:18:32 koenr Exp $</font></p>
+</body>
+</html>
