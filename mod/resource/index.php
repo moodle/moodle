@@ -73,12 +73,12 @@
         if (!$resource->visible) {      // Show dimmed if the mod is hidden
            $table->data[] = array ($printsection, 
                 "<a class=\"dimmed\" $extra href=\"view.php?id=$resource->coursemodule\">".format_string($resource->name,true)."</a>",
-                format_text($resource->summary, FORMAT_MOODLE, $options) );
+                format_text($resource->summary, FORMAT_HTML, $options) );
 
         } else {                        //Show normal if the mod is visible
            $table->data[] = array ($printsection, 
                 "<a $extra href=\"view.php?id=$resource->coursemodule\">".format_string($resource->name,true)."</a>",
-                format_text($resource->summary, FORMAT_MOODLE, $options) );
+                format_text($resource->summary, FORMAT_HTML, $options) );
         }
     }
 
