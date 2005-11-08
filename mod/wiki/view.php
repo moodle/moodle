@@ -19,8 +19,6 @@
 
 /// Only want to add edit log entries if we have made some changes ie submitted a form
     $editsave = optional_param('thankyou');
-    
-
 
     if ($id) {
         if (! $cm = get_record("course_modules", "id", $id)) {
@@ -37,6 +35,7 @@
 
     } else {
         if (! $wiki = get_record("wiki", "id", $wid)) {
+echo "here?";
             error("Course module is incorrect");
         }
         if (! $course = get_record("course", "id", $wiki->course)) {
@@ -62,9 +61,8 @@
 
 /// Globally disable CamelCase, if the option is selected for this wiki.
     $moodle_disable_camel_case = ($wiki->disablecamelcase == 1);
-
+    
     if (($wiki_entry = wiki_get_default_entry($wiki, $course, $userid, $groupid))) {
-
 ///     ################# EWIKI Part ###########################
 ///     The wiki_entry->pagename is set to the specified value of the wiki,
 ///     or the default value in the 'lang' file if the specified value was empty.
@@ -215,6 +213,7 @@
     else {
         $content = '';
         $content2 = '<div align="center">'.get_string('nowikicreated', 'wiki').'</div>';
+        
     }
 
     # Group wiki, ...: No page and no ewiki_title
@@ -250,10 +249,11 @@
     /// Print Page
     echo '    <div id="wikiPageActions">
     ';
-
     /// The top row contains links to other wikis, if applicable.
     if ($wiki_list = wiki_get_other_wikis($wiki, $USER, $course, $wiki_entry->id)) {
+        //echo "wiki list ";print_r($wiki_list);
         $selected="";
+        
         if (isset($wiki_list['selected'])) {
             $selected = $wiki_list['selected'];
             unset($wiki_list['selected']);

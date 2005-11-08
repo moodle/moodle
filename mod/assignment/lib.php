@@ -660,7 +660,7 @@ class assignment_base {
         } else {
             $currentgroup = false;
         }
-        $limit = " LIMIT ".($offset+1).", 1";
+        $limit = sql_paging_limit($offset+1, 1);
 
     /// Get all teachers and students
         if ($currentgroup) {
@@ -835,6 +835,20 @@ class assignment_base {
         add_to_log($course->id, 'assignment', 'view submission', 'submissions.php?id='.$this->assignment->id, $this->assignment->id, $this->cm->id);
         
         print_header_simple(format_string($this->assignment->name,true), "", '<a href="index.php?id='.$course->id.'">'.$this->strassignments.'</a> -> <a href="view.php?a='.$this->assignment->id.'">'.format_string($this->assignment->name,true).'</a> -> '. $this->strsubmissions, '', '', true, update_module_button($cm->id, $course->id, $this->strassignment), navmenu($course, $cm));
+    
+    ///Position swapped
+        if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
+            $currentgroup = setup_and_print_groups($course, $groupmode, 'submissions.php?id='.$this->cm->id);
+        } else {
+            $currentgroup = false;
+        }
+
+    /// Get all teachers and students
+        if ($currentgroup) {
+            $users = get_group_users($currentgroup);
+        } else {
+            $users = get_course_users($course->id);
+        }
 
         $tablecolumns = array('picture', 'fullname', 'grade', 'comment', 'timemodified', 'timemarked', 'status');
         $tableheaders = array('', get_string('fullname'), get_string('grade'), get_string('comment', 'assignment'), get_string('lastmodified').' ('.$course->student.')', get_string('lastmodified').' ('.$course->teacher.')', get_string('status'));
@@ -844,7 +858,7 @@ class assignment_base {
                         
         $table->define_columns($tablecolumns);
         $table->define_headers($tableheaders);
-        $table->define_baseurl($CFG->wwwroot.'/mod/assignment/submissions.php?id='.$this->cm->id);
+        $table->define_baseurl($CFG->wwwroot.'/mod/assignment/submissions.php?id='.$this->cm->id.'&amp;currentgroup='.$currentgroup);
                 
         $table->sortable(true);
         $table->collapsible(true);
@@ -871,19 +885,7 @@ class assignment_base {
         $table->setup();
 
     /// Check to see if groups are being used in this assignment
-        if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
-            $currentgroup = setup_and_print_groups($course, $groupmode, 'submissions.php?id='.$this->cm->id);
-        } else {
-            $currentgroup = false;
-        }
 
-    /// Get all teachers and students
-        if ($currentgroup) {
-            $users = get_group_users($currentgroup);
-        } else {
-            $users = get_course_users($course->id);
-        }
-            
         if (!$teacherattempts) {
             $teachers = get_course_teachers($course->id);
             if (!empty($teachers)) {
@@ -1558,9 +1560,11 @@ function assignment_grades($assignmentid) {
                                $assignment->id, '', 'userid,grade');
 
     if ($assignment->grade > 0) {
-        foreach ($grades as $userid => $grade) {
-            if ($grade == -1) {
-                $grades[$userid] = '-';
+        if ($grades) {
+            foreach ($grades as $userid => $grade) {
+                if ($grade == -1) {
+                    $grades[$userid] = '-';
+                }
             }
         }
         $return->grades = $grades;

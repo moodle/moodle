@@ -838,7 +838,8 @@ function forum_print_recent_activity($course, $isteacher, $timestart) {
                     $groupmode[$post->forum] = groupmode($course, $cm[$post->forum]);
                 }
                 if ($groupmode[$post->forum]) {
-                    if ($mygroupid != $post->groupid) {
+                    //hope i didn't break anything
+                    if (!@in_array($mygroupid, $post->groupid))/*$mygroupid != $post->groupid*/{
                         continue;
                     }
                 }
@@ -990,7 +991,7 @@ function forum_scale_used ($forumid,$scaleid) {
 
     $rec = get_record("forum","id","$forumid","scale","-$scaleid");
 
-    if (!empty($rec)  && !empty($scaleid)) {
+    if (!empty($rec) && !empty($scaleid)) {
         $return = true;
     }
 
@@ -1053,8 +1054,13 @@ function forum_search_posts($searchterms, $courseid, $page=0, $recordsperpage=50
         if ($groupid) {
             $separategroups = SEPARATEGROUPS;
             $selectgroup = " AND ( NOT (cm.groupmode='$separategroups'".
-                                      " OR (c.groupmode='$separategroups' AND c.groupmodeforce='1') )".
-                                 " OR d.groupid = '$groupid')";
+                                      " OR (c.groupmode='$separategroups' AND c.groupmodeforce='1') )";//.
+            foreach ($groupid as $index => $value){
+                $selectgroup .= " OR d.groupid = '$value'";
+            }
+            $selectgroup .= ")";
+
+                               //  " OR d.groupid = '$groupid')";
             $selectcourse = " AND d.course = '$courseid' AND c.id='$courseid'";
             $coursetable = ", {$CFG->prefix}course c";
         } else {
@@ -1383,7 +1389,6 @@ function forum_get_user_discussions($courseid, $userid, $groupid=0) {
                                AND d.forum = f.id $groupselect
                           ORDER BY p.created DESC");
 }
-
 
 function forum_subscribed_users($course, $forum, $groupid=0) {
 /// Returns list of user objects that are subscribed to this forum
@@ -1881,7 +1886,7 @@ function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring=""
         if (!empty($group->picture) and empty($group->hidepicture)) {
             print_group_picture($group, $forum->course, false, false, true);
         } else if (isset($group->id)) {
-            echo '<a href="'.$CFG->wwwroot.'/course/group.php?id='.$forum->course.'&amp;group='.$group->id.'">'.$group->name.'</a>';
+            echo '<a href="'.$CFG->wwwroot.'/user/index.php?id='.$forum->course.'&amp;group='.$group->id.'">'.$group->name.'</a>';
         }
         echo "</td>\n";
     }
@@ -2570,9 +2575,9 @@ function forum_user_has_posted_discussion($forumid, $userid) {
     }
 }
 
-function forum_user_can_post_discussion($forum, $currentgroup=false) {
+function forum_user_can_post_discussion($forum, $currentgroup=false, $groupmode='') {
 // $forum is an object
-    global $USER;
+    global $USER, $SESSION;
 
     if ($forum->type == "eachuser") {
         return (! forum_user_has_posted_discussion($forum->id, $USER->id));
@@ -2583,7 +2588,13 @@ function forum_user_can_post_discussion($forum, $currentgroup=false) {
     } else if (isteacher($forum->course)) {
         return true;
     } else {
-        return ($forum->open == 2);
+        //else it might be group 0 in visible mode
+        if ($groupmode == VISIBLEGROUPS){
+            return ($forum->open == 2 AND ismember($currentgroup));
+        }
+        else {
+            return ($forum->open == 2);
+        }
     }
 }
 
@@ -2623,7 +2634,6 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
                                         $currentgroup=-1, $groupmode=-1, $page=-1) {
     global $CFG, $USER;
 
-
 /// Sort out some defaults
 
     if ((!$maxdiscussions) && ($displayformat == 'plain')) {
@@ -2659,8 +2669,8 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
     }
 
 /// If the user can post discussions, then this is a good place to put the button for it
-
-    if (forum_user_can_post_discussion($forum, $currentgroup)) {
+    //add group mode in there, to test for visible group
+    if (forum_user_can_post_discussion($forum, $currentgroup, $groupmode)) {
         echo '<div class="singlebutton forumaddnew">';
         echo "<form name=\"newdiscussionform\" method=\"get\" action=\"$CFG->wwwroot/mod/forum/post.php\">";
         echo "<input type=\"hidden\" name=\"forum\" value=\"$forum->id\" />";
@@ -3608,9 +3618,7 @@ function forum_tp_clean_read_records() {
             delete_records('forum_read', 'id', $oldreadpost->id);
         }
     }
-
 }    
-
 
 /**
  * Sets the last post for a given discussion
@@ -3651,6 +3659,22 @@ function forum_get_view_actions() {
 
 function forum_get_post_actions() {
     return array('add discussion','add post','delete discussion','delete post','move discussion','prune post','update post');
+}
+
+///this function returns all the separate forum ids, given a courseid
+//@ param int $courseid
+//@ return array
+function forum_get_separate_modules($courseid) {
+
+    global $CFG,$db;
+    $forummodule = get_record("modules", "name", "forum");
+    
+    $sql = 'SELECT f.id, f.id FROM '.$CFG->prefix.'forum f, '.$CFG->prefix.'course_modules cm WHERE
+           f.id = cm.instance AND cm.module ='.$forummodule->id.' AND cm.visible = 1 AND cm.course = '.$courseid.'
+           AND cm.groupmode ='.SEPARATEGROUPS;
+
+    return get_records_sql($sql);
+
 }
 
 ?>

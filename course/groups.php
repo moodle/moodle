@@ -1,5 +1,28 @@
 <?php // $Id$
 
+///////////////////////////////////////////////////////////////////////////
+//                                                                       //
+// NOTICE OF COPYRIGHT                                                   //
+//                                                                       //
+// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
+//          http://moodle.org                                            //
+//                                                                       //
+// Copyright (C) 1999-2004  Martin Dougiamas  http://dougiamas.com       //
+//                                                                       //
+// This program is free software; you can redistribute it and/or modify  //
+// it under the terms of the GNU General Public License as published by  //
+// the Free Software Foundation; either version 2 of the License, or     //
+// (at your option) any later version.                                   //
+//                                                                       //
+// This program is distributed in the hope that it will be useful,       //
+// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
+// GNU General Public License for more details:                          //
+//                                                                       //
+//          http://www.gnu.org/copyleft/gpl.html                         //
+//                                                                       //
+///////////////////////////////////////////////////////////////////////////
+
 /// Editing interface to edit all the groups in a course
 
     require_once('../config.php');
@@ -42,7 +65,6 @@
                  "-> $strgroups", "", "", true, '', user_login_string($course, $USER));
 
 
-
 /// First, process any inputs there may be.
 
     if ($data = data_submitted() and confirm_sesskey()) {
@@ -57,7 +79,8 @@
             if (!empty($data->nonmembers) and !empty($data->groupid)) {
                 $groupmodified = false;
                 foreach ($data->nonmembers as $userid) {
-                    if (!user_group($course->id, $userid)) {  // Just to make sure (another teacher could be editing)
+                    //since we allow people to be in more than 1 group, this has to go.
+                    if (!ismember($data->groupid,$userid)) {// Just to make sure (another teacher could be editing)
                         $record->groupid = $data->groupid;
                         $record->userid = $userid;
                         $record->timeadded = time();
@@ -172,7 +195,9 @@
             if ($groupusers = get_group_users($group->id)) {
                 foreach ($groupusers as $groupuser) {
                     $listmembers[$group->id][$groupuser->id] = $nonmembers[$groupuser->id];
-                    unset($nonmembers[$groupuser->id]);
+                    //we do not remove people from $nonmembers, everyone is displayed
+                    //this is to enable people to be registered in multiple groups
+                    //unset($nonmembers[$groupuser->id]);
                     $countusers++;
                 }
                 natcasesort($listmembers[$group->id]);

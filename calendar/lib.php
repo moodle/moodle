@@ -341,6 +341,7 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
     }
 
     if($events !== false) {
+
         foreach($events as $event) {
 
             if($processed >= $display->maxevents) {
@@ -1082,7 +1083,10 @@ function calendar_set_filters(&$courses, &$group, &$user, $courseeventsfrom = NU
 
                 // Otherwise (not editing teacher) show events from the group he is a member of
                 else if(isset($USER->groupmember[$courseid])) {
-                    $grouparray[] = $USER->groupmember[$courseid];
+                    //changed to 2D array
+                    foreach ($USER->groupmember[$courseid] as $groupid){
+                        $grouparray[] = $groupid;
+                    }
                 }
             }
             if(empty($grouparray)) {

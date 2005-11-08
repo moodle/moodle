@@ -340,12 +340,11 @@
         $currentgroup = get_and_set_current_group($course, $groupmode, $changegroup);
 
         /// Allow the teacher to change groups (for this session)
-        if ($groupmode) {
-            if ($groups = get_records_menu("groups", "courseid", $course->id, "name ASC", "id,name")) {
-                print_group_menu($groups, $groupmode, $currentgroup, "view.php?id=$cm->id");
-            }
-        }
 
+        if ($groupmode){
+            $currentgroup = setup_and_print_groups($course, $groupmode, 'view.php?id='.$cm->id);
+        }
+        
         print_heading_with_help(get_string("managingassignment", "exercise"), "managing", "exercise");
 
         exercise_print_assignment_info($exercise);

@@ -1915,6 +1915,27 @@ function get_users_unconfirmed($cutofftime=2000000000) {
 
 
 /**
+ * Full list of bogus accounts that are probably not ever going to be used
+ *
+ * @uses $CFG
+ * @param string $cutofftime ?
+ * @return object  {@link $USER} records
+ * @todo Finish documenting this function
+ */
+
+function get_users_not_fully_set_up($cutofftime=2000000000) {
+    global $CFG;
+    return get_records_sql("SELECT *
+                             FROM {$CFG->prefix}user
+                            WHERE confirmed = 1
+                             AND lastaccess > 0
+                             AND lastaccess < '$cutofftime'
+                             AND deleted = 0
+                             AND (lastname = '' OR firstname = '' OR email = '')");
+}
+
+
+/**
  * shortdesc (optional)
  *
  * longdesc
@@ -2009,25 +2030,38 @@ function get_users_not_in_group($courseid) {
  * Returns an array of user objects
  *
  * @uses $CFG
- * @param int $groupid The group in question.
+ * @param int $groupid The group(s) in question.
  * @param string $sort How to sort the results
- * @return object
+ * @return object (changed to groupids)
  */
-function get_group_students($groupid, $sort='u.lastaccess DESC') {
+function get_group_students($groupids, $sort='u.lastaccess DESC') {
+
     global $CFG;
+
+    if (is_array($groupids)){
+        $groups = $groupids;
+        $groupstr = '(m.groupid = '.array_shift($groups);
+        foreach ($groups as $index => $value){
+            $groupstr .= ' OR m.groupid = '.$value;
+        }
+        $groupstr .= ')';
+    }
+    else {
+        $groupstr = 'm.groupid = '.$groupids;
+    }
+
     return get_records_sql("SELECT DISTINCT u.*
                               FROM {$CFG->prefix}user u,
                                    {$CFG->prefix}groups_members m,
                                    {$CFG->prefix}groups g,
                                    {$CFG->prefix}user_students s
-                             WHERE m.groupid = '$groupid'
+                             WHERE $groupstr
                                AND m.userid = u.id
                                AND m.groupid = g.id
                                AND g.courseid = s.course
                                AND s.userid = u.id
                           ORDER BY $sort");
 }
-
 
 /**
  * Returns list of all the teachers who can access a group
@@ -2060,18 +2094,20 @@ function get_group_teachers($courseid, $groupid) {
  * @uses $CFG
  * @param int $courseid The course in question.
  * @param int $userid The id of the user as found in the 'user' table.
+ * @param int $groupid The id of the group the user is in.
  * @return object
  * @todo Finish documenting this function
  */
 function user_group($courseid, $userid) {
     global $CFG;
 
-    return get_record_sql("SELECT g.*
+    return get_records_sql("SELECT g.*
                              FROM {$CFG->prefix}groups g,
                                   {$CFG->prefix}groups_members m
                              WHERE g.courseid = '$courseid'
                                AND g.id = m.groupid
-                               AND m.userid = '$userid'");
+                               AND m.userid = '$userid'
+                               ORDER BY name ASC");
 }
 
 

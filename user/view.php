@@ -55,7 +55,17 @@
     if (groupmode($course) == SEPARATEGROUPS and !isteacheredit($course->id)) {   // Groups must be kept separate
         require_login();
 
-        if (!$currentuser && !isteacheredit($course->id, $user->id) && !ismember(mygroupid($course->id), $user->id)) {
+        ///this is changed because of mygroupid
+        $gtrue = false;
+        if ($mygroups = mygroupid($course->id)){
+            foreach ($mygroups as $group){
+                if (ismember($group, $user->id)){
+                    $gtrue = true;
+                }
+            }
+        }
+        
+        if (!$currentuser && !isteacheredit($course->id, $user->id) && !$gtrue) {
             print_header("$personalprofile: ", "$personalprofile: ",
                          "<a href=\"../course/view.php?id=$course->id\">$course->shortname</a> ->
                           <a href=\"index.php?id=$course->id\">$participants</a>",
@@ -107,8 +117,6 @@
 ///     /course/user.php
     $currenttab = 'profile';
     include('tabs.php');
-
-
 
     echo "<table width=\"80%\" align=\"center\" border=\"0\" cellspacing=\"0\" class=\"userinfobox\">";
     echo "<tr>";
@@ -216,7 +224,12 @@
             $courselisting = '';
             foreach ($mycourses as $mycourse) {
                 if ($mycourse->visible and $mycourse->category) {
-                    $courselisting .= "<a href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$mycourse->id\">$mycourse->fullname</a>, ";
+                    if ($mycourse->id != $course->id){
+                        $courselisting .= "<a href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$mycourse->id\">$mycourse->fullname</a>, ";
+                    }
+                    else {
+                        $courselisting .= "$mycourse->fullname, ";
+                    }
                 }
             }
             print_row(get_string('courses').':', rtrim($courselisting,', '));
@@ -230,10 +243,22 @@
     }
     print_row(get_string("lastaccess").":", $datestring);
 
+    $groupstr = '';
+
+    ///printing groups
+    if (isteacher($course->id)){
+        if ($mygroups = user_group($course->id, $user->id)){
+            foreach ($mygroups as $group){
+                $groupstr .= link_to_popup_window('/user/index.php?id='.$course->id.'&amp;group='.$group->id,'popup',$group->name,400,500,'edit group','none',true).", ";
+            }
+        }
+    print_row(get_string("group").":", rtrim($groupstr, ', '));
+    }
+    ///End of printing groups
+
     echo "</table>";
 
     echo "</td></tr></table>";
-
 
     $internalpassword = false;
     if (is_internal_auth($USER->auth) or (!empty($CFG->{'auth_'.$USER->auth.'_stdchangepassword'}))) {
@@ -301,7 +326,6 @@
     }
     echo "<td></td>";
     echo "</tr></table></div>\n";
-
 
     print_footer($course);
 

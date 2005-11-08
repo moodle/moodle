@@ -2708,7 +2708,8 @@ function get_complete_user_data($field, $value) {
     if ($groups = get_records('groups_members', 'userid', $user->id)) {
         foreach ($groups as $groupmember) {
             $courseid = get_field('groups', 'courseid', 'id', $groupmember->groupid);
-            $user->groupmember[$courseid] = $groupmember->groupid;
+            //change this to 2D array so we can put multiple groups in a course
+            $user->groupmember[$courseid][] = $groupmember->groupid;
         }
     }
 
@@ -3358,8 +3359,6 @@ function remove_course_userdata($courseid, $showfeedback=true,
 
 }
 
-
-
 /// GROUPS /////////////////////////////////////////////////////////
 
 
@@ -3377,20 +3376,37 @@ function ismember($groupid, $userid=0) {
     if (!$groupid) {   // No point doing further checks
         return false;
     }
-
+    //if groupid is supplied in array format
     if (!$userid) {
         if (empty($USER->groupmember)) {
             return false;
         }
+        //changed too for multiple groups
         foreach ($USER->groupmember as $courseid => $mgroupid) {
-            if ($mgroupid == $groupid) {
+            //need to loop one more time...
+            foreach ($mgroupid as $index => $mygroupid)
+                if ($mygroupid == $groupid) {
+                    return true;
+                }
+            }
+            return false;
+    }
+
+    if (is_array($groupid)){
+        foreach ($groupid as $index => $val){
+            if (record_exists('groups_members', 'groupid', $val, 'userid', $userid)){
                 return true;
             }
         }
-        return false;
     }
+    else {
+        return record_exists('groups_members', 'groupid', $groupid, 'userid', $userid);
+    }
+    return false;
 
-    return record_exists('groups_members', 'groupid', $groupid, 'userid', $userid);
+    //else group id is in single format
+
+    //return record_exists('groups_members', 'groupid', $groupid, 'userid', $userid);
 }
 
 /**
@@ -3418,10 +3434,10 @@ function add_user_to_group ($groupid, $userid) {
  */
 function mygroupid($courseid) {
     global $USER;
-
     if (empty($USER->groupmember[$courseid])) {
         return 0;
     } else {
+        //this is an array of ids >.<
         return $USER->groupmember[$courseid];
     }
 }
@@ -3469,12 +3485,14 @@ function set_current_group($courseid, $groupid) {
  */
 function get_current_group($courseid, $full=false) {
     global $SESSION, $USER;
-
+    
     if (!isset($SESSION->currentgroup[$courseid])) {
         if (empty($USER->groupmember[$courseid]) or isteacheredit($courseid)) {
+            
             return 0;
         } else {
-            $SESSION->currentgroup[$courseid] = $USER->groupmember[$courseid];
+            //trying to add a hack >.<, always first select the first one in list
+            $SESSION->currentgroup[$courseid] = $USER->groupmember[$courseid][0];
         }
     }
 
@@ -3516,12 +3534,25 @@ function get_and_set_current_group($course, $groupmode, $groupid=-1) {
             if (isteacheredit($course->id)) {          // Sets current default group
                 $currentgroupid = set_current_group($course->id, $group->id);
 
-            } else if ($groupmode == VISIBLEGROUPS) {  // All groups are visible
-                $currentgroupid = $group->id;
+            } else if ($groupmode == VISIBLEGROUPS) {
+                  // All groups are visible
+                //if (ismember($group->id)){
+                    $currentgroupid = set_current_group($course->id, $group->id);//set this since he might post
+                /*)}else {
+                    $currentgroupid = $group->id;*/
+            } else if ($groupmode == SEPARATEGROUPS) { // student in separate groups switching
+                if (ismember($group->id)){//check if is a member
+                    $currentgroupid = set_current_group($course->id, $group->id); //might need to set_current_group?
+                }
+                else {
+                    echo ($group->id);
+                    notify('you do not belong to this group!',error);
+                }
             }
         }
     } else {             // When groupid = 0 it means show ALL groups
-        if (isteacheredit($course->id)) {          // Sets current default group
+        //this is changed, non editting teacher needs access to group 0 as well, for viewing work in visible groups (need to set current group for multiple pages)
+        if (isteacheredit($course->id) OR (isteacher($course->id) AND ($groupmode == VISIBLEGROUPS))) {          // Sets current default group
             $currentgroupid = set_current_group($course->id, 0);
 
         } else if ($groupmode == VISIBLEGROUPS) {  // All groups are visible
@@ -3550,6 +3581,8 @@ function get_and_set_current_group($course, $groupmode, $groupid=-1) {
  */
 function setup_and_print_groups($course, $groupmode, $urlroot) {
 
+    global $USER, $SESSION; //needs his id, need to hack his groups in session
+    
     if (isset($_GET['group'])) {
         $changegroup = $_GET['group'];  /// 0 or higher
     } else {
@@ -3557,21 +3590,46 @@ function setup_and_print_groups($course, $groupmode, $urlroot) {
     }
 
     $currentgroup = get_and_set_current_group($course, $groupmode, $changegroup);
-
     if ($currentgroup === false) {
         return false;
     }
 
     if ($groupmode == SEPARATEGROUPS and !isteacheredit($course->id) and !$currentgroup) {
-        print_heading(get_string('notingroup'));
-        print_footer($course);
-        exit;
+        //we are in separate groups and the current group is group 0, as last set.
+        //this can mean that either, this guy has no group
+        //or, this guy just came from a visible all forum, and he left when he set his current group to 0 (show all)
+        
+        //for the second situation, we need to perform the trick and get him a group.
+        $courseid = $course->id;
+        if (!empty($USER->groupmember[$courseid])){
+            $currentgroup = get_and_set_current_group($course, $groupmode, $USER->groupmember[$courseid][0]);
+        }
+        else {//else he has no group in this course
+            print_heading(get_string('notingroup'));
+            print_footer($course);
+            exit;
+        }
     }
 
     if ($groupmode == VISIBLEGROUPS or ($groupmode and isteacheredit($course->id))) {
         if ($groups = get_records_menu('groups', 'courseid', $course->id, 'name ASC', 'id,name')) {
             echo '<div align="center">';
             print_group_menu($groups, $groupmode, $currentgroup, $urlroot);
+            echo '</div>';
+        }
+    }//added code here to allow non-editting teacher to swap in-between his own groups
+    //added code for students in separategrous to swtich groups
+    else if ($groupmode == SEPARATEGROUPS and (isteacher($course->id) or isstudent($course->id))) {
+        $validgroups = array();
+        //get all the groups this guy is in in this course
+        if ($p = user_group($course->id,$USER->id)){
+            //extract the name and id for the group
+            foreach ($p as $index => $object){
+                $validgroups[$object->id] = $object->name;
+            }
+            echo '<div align="center">';
+            //print them in the menu
+            print_group_menu($validgroups, $groupmode, $currentgroup, $urlroot,0);
             echo '</div>';
         }
     }

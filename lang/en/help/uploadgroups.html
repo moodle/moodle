@@ -1,0 +1,34 @@
+<p align="center"><b>Upload groups</b></p>
+
+<p>This facility allows the batch upload of groups into Moodle.</p>
+
+
+<ul>
+  <li>Each line of the file contains one record</li>
+  <li>Each record is a series of data separated by commas</li>
+  <li>The first record of the file is special, and contains a list of fieldnames. This defines the format of the rest of the file.
+    <blockquote>
+      <p><strong>Required fieldnames:</strong> these fields must be included in the first record, and defined for each user</p>
+      <p></p>
+      <font color="#990000" face="Courier New, Courier, mono">groupname</font></p>
+</p>
+      <p><strong>Default fieldnames:</strong> these are optional - if they are not included then the values are taken from the current language and current course</p>
+      <p><font color="#990000" face="Courier New, Courier, mono">idnumber, coursename, lang</font> </p>
+      <p><strong>Optional fieldnames: </strong>all of these are completely optional. </p>
+      <p> <font color="#990000" face="Courier New, Courier, mono">description, picture, hidepicture</font></p>
+    </blockquote>
+    </li>
+  <li>Commas within the data should be encoded as &amp;#44 - the script will automatically decode these back to commas. </li>
+  <li>For Boolean fields, use 0 for false and 1 for true. </li>
+  <li>Either idnumber or coursename can be used to identify the course. Idnumber overrides coursename. If neither is specified, the groups will be added to the current course.
+  <li>Coursename is the course shortname.</li>
+  <li>Note: If a group is already registered in the Moodle database for a particular course, this script will return the 
+      group name for that group. Teachers are only allowed to upload groups in courses they are authorized to edit.</li>
+</ul>
+   
+<p>Here is an example of a valid import file:</p>
+<p><font size="-1" face="Courier New, Courier, mono"></font>groupname,idnumber,lang,description,picture <br />
+group1, Phil101, en, this group requires extra attention!, 0 <br />
+group2, Math243, , ,
+</font></p>
+

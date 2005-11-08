@@ -3319,12 +3319,15 @@ function update_groups_button($courseid) {
  * @param int $groupmode ?
  * @param string $currentgroup ?
  * @param string $urlroot ?
+ * @param boolean $showall: if set to 0, it is a student in separate groups, do not display all participants
  * @todo Finish documenting this function
  */
-function print_group_menu($groups, $groupmode, $currentgroup, $urlroot) {
+function print_group_menu($groups, $groupmode, $currentgroup, $urlroot, $showall=1) {
 
 /// Add an "All groups" to the start of the menu
-    $groupsmenu[0] = get_string('allparticipants');
+    if ($showall){
+        $groupsmenu[0] = get_string('allparticipants');
+    }
     foreach ($groups as $key => $groupname) {
         $groupsmenu[$key] = $groupname;
     }
@@ -4227,7 +4230,7 @@ function print_side_block_start($heading='', $attributes = array()) {
 /**
  * Print table ending tags for a side block box.
  */
-function print_side_block_end($attributes) {
+function print_side_block_end($attributes = array()) {
     global $CFG;
 
     echo '</div></div>';
@@ -4354,6 +4357,10 @@ function page_id_and_class(&$getid, &$getclass) {
         if (empty($path) || $path == 'index') {
             $id    = 'site-index';
             $class = 'course';
+        } else if (substr($path, 0, 5) == 'admin') {
+            $id    = str_replace('/', '-', $path);
+            $id    = str_replace('admin2', 'admin', $id);
+            $class = 'admin';
         } else {
             $id    = str_replace('/', '-', $path);
             $class = explode('-', $id);

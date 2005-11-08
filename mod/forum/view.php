@@ -90,8 +90,9 @@
     } else {
         $groupmode = groupmode($course, $cm);   // Groups are being used
     }
+    
     $currentgroup = get_and_set_current_group($course, $groupmode, $changegroup);
-
+    
     if ($groupmode and ($currentgroup === false) and !isteacheredit($course->id)) {
         print_heading(get_string("notingroup", "forum"));
         print_footer($course);
@@ -103,7 +104,14 @@
 
     echo '<table width="100%" border="0" cellpadding="3" cellspacing="0"><tr valign="top">';
 
+    ///2 ways to do this, 1. we can changed the setup_and_print_groups functions
+    ///in moodlelib, taking in 1 more parameter, and tell the function when to
+    ///allow student menus, 2, we can just use this code to explicitly print this
+    ///menu for students in forums.
+
+    //now we need a menu for separategroups as well!
     if ($groupmode == VISIBLEGROUPS or ($groupmode and isteacheredit($course->id))) {
+        //the following query really needs to change
         if ($groups = get_records_menu("groups", "courseid", $course->id, "name ASC", "id,name")) {
             echo '<td>';
             print_group_menu($groups, $groupmode, $currentgroup, "view.php?id=$cm->id");
@@ -111,6 +119,23 @@
         }
     }
 
+    //only print menus the student is in any course
+    else if ($groupmode == SEPARATEGROUPS){
+        $validgroups = array();
+        //get all the groups this guy is in in this course
+
+        if ($p = user_group($course->id,$USER->id)){
+            //extract the name and id for the group
+            foreach ($p as $index => $object){
+                $validgroups[$object->id] = $object->name;
+            }
+            //print_r($validgroups);
+            echo '<td>';
+            //print them in the menu
+            print_group_menu($validgroups, $groupmode, $currentgroup, "view.php?id=$cm->id",0);
+            echo '</td>';
+        }
+     }
 
     if (!empty($USER->id)) {
         echo '<td align="right" class="subscription">';
@@ -248,6 +273,8 @@
             } else {
                 forum_print_latest_discussions($course, $forum, $CFG->forum_manydiscussions, 'header', '', $currentgroup, $groupmode, $page);
             }
+            
+            
             break;
     }
 
