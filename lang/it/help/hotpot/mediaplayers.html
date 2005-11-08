@@ -1,0 +1,17 @@
+<p align="center"><strong>URL relativi, lettori multimediali e Hot Potatoes</strong></p>
+<p><strong>Definizioni</strong></p>
+<dl>
+  <dt><em>URL</em></dt>  
+  <dd>l'indirizzo di una risorsa internet, come una pagina web, un file di una immagine o di un suono.</dd> 
+  <dt><em> URL assoluto</em></dt>
+  <dd>un URL che inizia con &quot;http://&quot; &egrave; detto URL assoluto. Ovunque &egrave; utilizzato, si riferisce sempre alla stessa risorsa.</dd>  
+  <dt><em>URL relativo</em></dt>
+  <dd>un URL che non inizia con &quot;http://&quot; &egrave; detto URL relativo. Pu&ograve; essere combinato con un URL assoluto di una pagina &quot;base&quot; per diventare l'URL assoluto di una risorsa.</dd>
+</dl>
+<p><strong> URL relativi nei quiz  Hot Potatoes</strong></p>
+<p> Gli URL relativi sono  un modo conveniente per specificare immagini, suoni e video in un quiz Hot Potatoes, dato che permettono al quiz di essere visualizzato e testato su un pc locale, prima di essere caricato su un sito Moodle. Quando il quiz viene caricato in un sito Moodle, devono essere caricati anche i file multimediali  per essere disponibili quando il quiz viene amministrato da Moodle.</p>
+<p>Per ragioni di sicurezza, Moodle non permette un accesso diretto a file del corso. Tutte le richieste relative ai file di un corso passano attraverso uno script di controllo che verifica che chi richiede il file sia iscritto al corso. Tuttavia questo meccanismo distrugge i link relativi usati nel quiz, dato che le normali regole di derivazione di un URL assoluto da un URL relativo non funzionano.</p>
+<p>La soluzione &egrave;  semplice: <font color="#FF0000"><strong>tutti gli URL relativi devono essere convertiti in URL assoluti</strong></font> nel momento in cui il quiz arriva al browser. Nel caso di quiz Hot Potatoes, l'URL verr&agrave; convertito da Moodle, risparmiando molti noiosi errori ai creatori dei contenuti.</p>
+<p><strong>Lettori multimediali nei quiz Hot Potatoes</strong></p>
+<p>Alcuni lettori multimediali non accettano  che il file multimediale provenga da uno script che controlla i file del corso. In questa situazione &egrave; necessario sostituire il lettore multimediale con uno compatibile con Moodle. Ci&ograve; pu&ograve; essere fatto modificando il riferimento al lettore multimediale nel quiz, o forzando che sia Moodle a farlo  impostando, <strong>&quot;Si&quot; </strong>in &quot;Cambiare le impostazioni dei lettori multimediali&quot;.
+</p>
