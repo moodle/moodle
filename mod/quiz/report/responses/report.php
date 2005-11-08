@@ -54,11 +54,11 @@ class quiz_report extends quiz_default_report {
 /// Now the tricky part: if there are people with attempts but they have been unenrolled
 /// since making those attempts, count them in as well. DO NOT count course teachers.
 
-    $userswithattempts = get_records_sql('SELECT DISTINCT qa.userid AS id, qa.userid FROM '.$CFG->prefix.'quiz_attempts qa LEFT JOIN '.$CFG->prefix.'user_teachers ut ON qa.userid = ut.userid AND ut.course = '.$course->id.' WHERE ut.id IS NULL AND quiz = '.$quiz->id);
-    if(!empty($userswithattempts)) {
-        $unenrolledusers = array_diff(array_keys($userswithattempts), $users);
-        $users = array_merge($users, $unenrolledusers);
-    }
+    //$userswithattempts = get_records_sql('SELECT DISTINCT qa.userid AS id, qa.userid FROM '.$CFG->prefix.'quiz_attempts qa LEFT JOIN '.$CFG->prefix.'user_teachers ut ON qa.userid = ut.userid AND ut.course = '.$course->id.' WHERE ut.id IS NULL AND quiz = '.$quiz->id);
+    //if(!empty($userswithattempts)) {
+        //$unenrolledusers = array_diff(array_keys($userswithattempts), $users);
+        //$users = array_merge($users, $unenrolledusers);
+    //}
 
         if(empty($users)) {
             print_heading($strnoattempts);
@@ -285,11 +285,11 @@ class quiz_report extends quiz_default_report {
                 if (!$download) {    
                     $picture = print_user_picture($attempt->userid, $course->id, $attempt->picture, false, true);
     
-                    if(in_array($attempt->userid, $unenrolledusers)) {
-                        $userlink = '<a class="dimmed" href="'.$CFG->wwwroot.'/user/view.php?id='.$attempt->userid.'&amp;course='.$course->id.'">'.fullname($attempt).'</a>';
-                    } else {
+                   // if(in_array($attempt->userid, $unenrolledusers)) {
+                   //     $userlink = '<a class="dimmed" href="'.$CFG->wwwroot.'/user/view.php?id='.$attempt->userid.'&amp;course='.$course->id.'">'.fullname($attempt).'</a>';
+                   // } else {
                         $userlink = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$attempt->userid.'&amp;course='.$course->id.'">'.fullname($attempt).'</a>';
-                    }
+                   // }
 
                     $rowdata = array(
                                   $picture,
