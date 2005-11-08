@@ -197,6 +197,7 @@ class quiz_match_qtype extends quiz_default_questiontype {
         $answers        = array();
         $responses      = &$state->responses;
 
+
         foreach ($subquestions as $subquestion) {
             foreach ($subquestion->options->answers as $sub) {
                 $answers[$sub->id] = $sub->answer;
@@ -224,7 +225,8 @@ class quiz_match_qtype extends quiz_default_questiontype {
             echo '</td>';
 
             /// Drop-down list:
-            $menuname = $nameprefix.$subquestion->id;
+            ///added rc4encrypt here
+            $menuname = $nameprefix.rc4encrypt($subquestion->id);
             $response = isset($state->responses[$subquestion->id])
                         ? $state->responses[$subquestion->id] : '0';
             if ($options->readonly
@@ -236,7 +238,7 @@ class quiz_match_qtype extends quiz_default_questiontype {
                 $class = '';
             }
             echo "<td align=\"right\" valign=\"top\" $class>";
-
+            
             choose_from_menu($answers, $menuname, $response, 'choose', '', 0,
              false, $options->readonly);
 

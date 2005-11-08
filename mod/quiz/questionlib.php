@@ -429,16 +429,19 @@ function quiz_extract_responses($questions, $responses, $defaultevent) {
             }
 
             // Remove the name prefix from the name
-            $key = substr($key, strlen($questions[$quid]->name_prefix));
+            //decrypt trying
+            $key = rc4decrypt(substr($key, strlen($questions[$quid]->name_prefix)));
             if (false === $key) {
                 $key = '';
             }
-
             // Check for question validate and mark buttons & set events
-            if ($key === 'validate') {
+            /// added encryption
+            if (rc4encrypt($key) === 'validate') {
                 $actions[$quid]->event = QUIZ_EVENTVALIDATE;
-            } else if ($key === 'mark') {
+                $key = 'validate';
+            } else if (rc4encrypt($key) === 'mark') {
                 $actions[$quid]->event = QUIZ_EVENTGRADE;
+                $key = 'mark';
             } else {
                 $actions[$quid]->event = $defaultevent;
             }
