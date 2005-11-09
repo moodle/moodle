@@ -81,10 +81,6 @@
 
     /// Print upload form
 
-    if (!$categories = quiz_get_category_menu($course->id, false)) {
-        error("No categories!");
-    }
-
     // get list of available import formats
     $fileformatnames = get_import_export_formats( 'import' );
 

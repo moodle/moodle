@@ -93,10 +93,6 @@
 
     /// Print upload form
 
-    if (!$categories = quiz_get_category_menu($course->id, false)) {
-        error("No categories!");
-    }
-
     // get valid formats to generate dropdown list
     $fileformatnames = get_import_export_formats( "export" );
 
