@@ -1072,7 +1072,8 @@ class assignment_base {
 
         global $USER;
 
-        if (!$feedback = data_submitted()) {      // No incoming data?
+        //disable referer check because submission form has GET parameters in action URL!
+        if (!$feedback = data_submitted('nomatch')) {      // No incoming data?
             return false;
         }
 
