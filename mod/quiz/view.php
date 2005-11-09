@@ -11,7 +11,6 @@
     $q           = optional_param('q',  0, PARAM_INT);  // quiz ID
     $edit        = optional_param('edit', '');
 
-
     if ($id) {
         if (! $cm = get_record("course_modules", "id", $id)) {
             error("There is no coursemodule with id $id");
@@ -65,7 +64,10 @@
         }
     }
 
-    $PAGE->print_header($course->shortname.': %fullname%');
+    //only check pop ups if the user is not a teacher, and popup is set
+    
+    $bodytags = (isteacher($course->id) or !$quiz->popup)?'':'onload="popupchecker(\'This section of the test is in secure mode, this means that you need to take the quiz in a secure window. Please turn off your popup blocker. Thank you.\');"';
+    $PAGE->print_header($course->shortname.': %fullname%','',$bodytags);
 
     echo '<table id="layout-table"><tr>';
 
@@ -166,7 +168,6 @@
 /// Now print table with existing attempts
 
     if ($numattempts) {
-
     /// prepare table header
         if ($quiz->grade and $quiz->sumgrades) { // Grades used so have more columns in table
             if ($quiz->grade <> $quiz->sumgrades) {
@@ -280,6 +281,7 @@
         print_heading(get_string("noquestions", "quiz"));
     } else {
         if ($numattempts < $quiz->attempts or !$quiz->attempts) {
+          
             if ($available) {
                 $options["id"] = $cm->id;
                 if ($numattempts and $quiz->grade) {
