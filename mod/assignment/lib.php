@@ -600,7 +600,7 @@ class assignment_base {
      */
     function display_grade($grade) {
 
-        static $scalegrades;   // Cached because we only have one per assignment
+        static $scalegrades = array();   // Cache scales for each assignment - they might have different scales!!
 
         if ($this->assignment->grade >= 0) {    // Normal number
             if ($grade == -1) {
@@ -610,15 +610,15 @@ class assignment_base {
             }
 
         } else {                                // Scale
-            if (empty($scalegrades)) {
+            if (empty($scalegrades[$this->assignment->id])) {
                 if ($scale = get_record('scale', 'id', -($this->assignment->grade))) {
-                    $scalegrades = make_menu_from_list($scale->scale);
+                    $scalegrades[$this->assignment->id] = make_menu_from_list($scale->scale);
                 } else {
                     return '-';
                 }
             }
-            if (isset($scalegrades[$grade])) {
-                return $scalegrades[$grade];
+            if (isset($scalegrades[$this->assignment->id][$grade])) {
+                return $scalegrades[$this->assignment->id][$grade];
             }
             return '';
         }
