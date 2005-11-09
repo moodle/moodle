@@ -120,14 +120,14 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
     // [pj] I was just reading through this and realized that I when writing this code I was probably
     // asking for trouble, as all these time manipulations seem to be unnecessary and a simple
     // make_timestamp would accomplish the same thing. So here goes a test:
-    $test_start = make_timestamp($y, $m, 1);
-    $test_end   = make_timestamp($y, $m, $display->maxdays, 23, 59, 59);
-    if($test_start != usertime($display->tstart) - dst_offset_on($display->tstart)) {
-        notify('Failed assertion in calendar/lib.php line 126; display->tstart = '.$display->tstart.', dst_offset = '.dst_offset_on($display->tstart).', usertime = '.usertime($display->tstart).', make_t = '.$test_start);
-    }
-    if($test_end != usertime($display->tend) - dst_offset_on($display->tend)) {
-        notify('Failed assertion in calendar/lib.php line 130; display->tend = '.$display->tend.', dst_offset = '.dst_offset_on($display->tend).', usertime = '.usertime($display->tend).', make_t = '.$test_end);
-    }
+    //$test_start = make_timestamp($y, $m, 1);
+    //$test_end   = make_timestamp($y, $m, $display->maxdays, 23, 59, 59);
+    //if($test_start != usertime($display->tstart) - dst_offset_on($display->tstart)) {
+        //notify('Failed assertion in calendar/lib.php line 126; display->tstart = '.$display->tstart.', dst_offset = '.dst_offset_on($display->tstart).', usertime = '.usertime($display->tstart).', make_t = '.$test_start);
+    //}
+    //if($test_end != usertime($display->tend) - dst_offset_on($display->tend)) {
+        //notify('Failed assertion in calendar/lib.php line 130; display->tend = '.$display->tend.', dst_offset = '.dst_offset_on($display->tend).', usertime = '.usertime($display->tend).', make_t = '.$test_end);
+    //}
 
 
     // Get the events matching our criteria. Don't forget to offset the timestamps for the user's TZ!
