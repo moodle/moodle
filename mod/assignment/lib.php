@@ -1577,7 +1577,7 @@ function assignment_grades($assignmentid) {
             if ($scale = get_record('scale', 'id', $scaleid)) {
                 $scalegrades = make_menu_from_list($scale->scale);
                 foreach ($grades as $userid => $grade) {
-                    if (empty($scalegrades[$userid])) {
+                    if (empty($scalegrades[$grade])) {
                         $grades[$userid] = '';
                     } else {
                         $grades[$userid] = $scalegrades[$grade];
