@@ -1915,7 +1915,7 @@ function grade_view_all_grades($view_by_student) {
         else {
             $header = '</tr>';
         }
-        $header1 = '<tr">';
+        $header1 = '<tr>';
         
         $rowcount = 0;
         $oddrow = true;
