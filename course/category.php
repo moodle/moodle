@@ -6,8 +6,8 @@
     require_once("../config.php");
     require_once("lib.php");
 
-    $id = required_param('id',PARAM_INT);    // Category id
-    $page = optional_param('page', 0, PARAM_INT);     // which page to show
+    $id      = required_param('id', PARAM_INT);          // Category id
+    $page    = optional_param('page', 0, PARAM_INT);     // which page to show
     $perpage = optional_param('perpage', 20, PARAM_INT); // how many per page
     $edit = optional_param('edit','',PARAM_ALPHA);
     $hide = optional_param('hide',0,PARAM_INT);
@@ -282,10 +282,20 @@
         $count = 0;
         $abletomovecourses = false;  // for now
 
+        // Checking if we are at the first or at the last page, to allow courses to
+        // be moved up and down beyond the paging border
+        if ($totalcount > $perpage) {
+            $atfirstpage = ($page == 0);
+            $atlastpage = (($page + 1) == ceil($totalcount / $perpage));
+        } else {
+            $atfirstpage = true;
+            $atlastpage = true;
+        }
+
         foreach ($courses as $acourse) {
             $count++;
-            $up = ($count == 1) ? false : true;
-            $down = ($count == $numcourses) ? false : true;
+            $up = ($count > 1 || !$atfirstpage);
+            $down = ($count < $numcourses || !$atlastpage);
 
             $linkcss = $acourse->visible ? "" : ' class="dimmed" ';
             echo '<tr>';
@@ -303,11 +313,11 @@
                          '<img src="'.$CFG->pixpath.'/t/delete.gif" height="11" width="11" border="0" alt="" /></a> ';
                     if (!empty($acourse->visible)) {
                         echo '<a title="'.$strhide.'" href="category.php?id='.$category->id.'&amp;page='.$page.
-                             '&amp;hide='.$acourse->id.'&amp;sesskey='.$USER->sesskey.'">'.
+                             '&amp;perpage='.$perpage.'&amp;hide='.$acourse->id.'&amp;sesskey='.$USER->sesskey.'">'.
                              '<img src="'.$CFG->pixpath.'/t/hide.gif" height="11" width="11" border="0" alt="" /></a> ';
                     } else {
                         echo '<a title="'.$strshow.'" href="category.php?id='.$category->id.'&amp;page='.$page.
-                             '&amp;show='.$acourse->id.'&amp;sesskey='.$USER->sesskey.'">'.
+                             '&amp;perpage='.$perpage.'&amp;show='.$acourse->id.'&amp;sesskey='.$USER->sesskey.'">'.
                              '<img src="'.$CFG->pixpath.'/t/show.gif" height="11" width="11" border="0" alt="" /></a> ';
                     }
 
@@ -320,7 +330,7 @@
 
                     if ($up) {
                         echo '<a title="'.$strmoveup.'" href="category.php?id='.$category->id.'&amp;page='.$page.
-                             '&amp;moveup='.$acourse->id.'&amp;sesskey='.$USER->sesskey.'">'.
+                             '&amp;perpage='.$perpage.'&amp;moveup='.$acourse->id.'&amp;sesskey='.$USER->sesskey.'">'.
                              '<img src="'.$CFG->pixpath.'/t/up.gif" height="11" width="11" border="0" alt="" /></a> ';
                     } else {
                         echo '<img src="'.$CFG->wwwroot.'/pix/spacer.gif" height="11" width="11" border="0" alt="" /> ';
@@ -328,7 +338,7 @@
 
                     if ($down) {
                         echo '<a title="'.$strmovedown.'" href="category.php?id='.$category->id.'&amp;page='.$page.
-                             '&amp;movedown='.$acourse->id.'&amp;sesskey='.$USER->sesskey.'">'.
+                             '&amp;perpage='.$perpage.'&amp;movedown='.$acourse->id.'&amp;sesskey='.$USER->sesskey.'">'.
                              '<img src="'.$CFG->pixpath.'/t/down.gif" height="11" width="11" border="0" alt="" /></a> ';
                     } else {
                         echo '<img src="'.$CFG->wwwroot.'/pix/spacer.gif" height="11" width="11" border="0" alt="" /> ';
