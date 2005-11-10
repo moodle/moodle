@@ -287,7 +287,8 @@
       } else {
           echo ((empty($form->metacourse)) ? get_string("no") : get_string("yes"));
           echo " - $disable_meta ";
-      } ?>
+      }
+      helpbutton("metacourse", get_string("metacourse")); ?>
     </td>
 </tr>
 <tr>
