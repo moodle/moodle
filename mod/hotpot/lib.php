@@ -727,7 +727,7 @@ function hotpot_get_all_instances_in_course($modulename, $course) {
 
 			if ($isteacher) {
 				$visible = true;
-			} else if ($rawmod->thismodule=='hotpot') {
+			} else if ($modulename=='hotpot') {
 				$visible = hotpot_is_visible($rawmod);
 			} else {
 				$visible = $rawmod->visible;
