@@ -1145,6 +1145,7 @@ function forum_get_ratings($postid, $sort="u.firstname ASC") {
 function forum_get_unmailed_posts($starttime, $endtime) {
 /// Returns a list of all new posts that have not been mailed yet
     global $CFG;
+    $now = time();
     return get_records_sql("SELECT p.*, d.course
                               FROM {$CFG->prefix}forum_posts p,
                                    {$CFG->prefix}forum_discussions d
@@ -1152,6 +1153,8 @@ function forum_get_unmailed_posts($starttime, $endtime) {
                                AND p.created >= '$starttime'
                                AND p.created < '$endtime'
                                AND p.discussion = d.id
+                               AND ((d.timestart = 0 OR d.timestart <= '$now')
+                               AND (d.timeend = 0 OR d.timeend > '$now'))
                           ORDER BY p.modified ASC");
 }
 
@@ -1298,7 +1301,18 @@ function forum_count_unrated_posts($discussionid, $userid) {
 function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
                                $user=0, $fullpost=true, $visiblegroups=-1, $limit=0, $userlastmodified=false) {
 /// Get all discussions in a forum
-    global $CFG;
+    global $CFG, $USER;
+
+    if ((isadmin() and !empty($CFG->admineditalways)) || isteacher(get_field('forum', 'course', 'id', $forum))) {
+        $timelimit = '';
+    } else {
+        $now = time();
+        $timelimit = " AND ((d.timestart = 0 OR d.timestart <= '$now') AND (d.timeend = 0 OR d.timeend > '$now')";
+        if (!empty($USER->id)) {
+            $timelimit .= " OR d.userid = '$USER->id'";
+        }
+        $timelimit .= ')';
+    }
 
     if ($user) {
         $userselect = " AND u.id = '$user' ";
@@ -1345,7 +1359,7 @@ function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
                                    $umtable
                              WHERE d.forum = '$forum'
                                AND p.parent = 0
-                                   $groupselect $userselect 
+                                   $timelimit $groupselect $userselect 
                           ORDER BY $forumsort $limit");
     } else {
         return get_records_sql("SELECT $postdata, d.name, d.timemodified, d.usermodified, d.groupid,
@@ -1357,7 +1371,8 @@ function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
                              WHERE d.forum = '$forum'
                                AND p.discussion = d.id
                                AND p.parent = 0
-                               AND p.userid = u.id $groupselect $userselect 
+                               AND p.userid = u.id
+                                   $timelimit $groupselect $userselect 
                           ORDER BY $forumsort $limit");
     }
 }
@@ -1750,6 +1765,12 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
     }
 
     $age = time() - $post->created;
+    /// Hack for allow to edit news posts those are not displayed yet until they are displayed
+    if (!$post->parent
+        && get_field('forum', 'type', 'id', $post->forum) == 'news'
+        && get_field_sql("SELECT id FROM {$CFG->prefix}forum_discussions WHERE id = $post->discussion AND timestart > ".time())) {
+        $age = 0;
+    }
     if ($ownpost or $adminedit) {
         if (($age < $CFG->maxeditingtime) or $adminedit) {
             $commands[] =  '<a href="'.$CFG->wwwroot.'/mod/forum/post.php?edit='.$post->id.'">'.$stredit.'</a>';

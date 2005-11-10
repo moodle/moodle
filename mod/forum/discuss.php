@@ -32,6 +32,15 @@
             error("You must be a $course->teacher to view this forum");
         }
 
+    } elseif ($forum->type == "news") {
+        if (!((isadmin() and !empty($CFG->admineditalways))
+            || isteacher($course->id)
+            || $USER->id == $discussion->userid
+            || (($discussion->timestart == 0 || $discussion->timestart <= time())
+            && ($discussion->timeend == 0 || $discussion->timeend > time())))) {
+            error('Discussion ID was incorrect or no longer exists', "$CFG->wwwroot/mod/forum/view.php?f=$forum->id");
+        }
+
     } else {
         if (! $cm = get_coursemodule_from_instance("forum", $discussion->forum, $course->id)) {
             error("Course Module ID was incorrect");

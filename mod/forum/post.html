@@ -92,6 +92,41 @@
 <?php } ?>
 
 
+<?php if ($forum->type == 'news' && !$post->parent) {  //  This is the first post of a discussion in news forum  ?>
+
+<tr valign="top">
+    <td align="right"><b><?php print_string("displayperiod", "forum") ?>:<br />(<?php print_string("optional") ?>)&nbsp;</b></td>
+    <td>
+        <table cellpadding="0" cellspacing="0">
+            <tr>
+                <td align="right"><?php print_string('displaystart', "forum") ?>: </td>
+                <td><?php
+                    print_date_selector("timestartday", "timestartmonth", "timestartyear", $discussion->timestart);
+                    print_string('disable');
+                    echo ': ';
+                    print_checkbox('timestartdisabled', 1, empty($discussion->timestart));
+                    helpbutton("displayperiod", get_string("displayperiod", "forum"), "forum");
+                    ?></td>
+            </tr>
+            <tr>
+                <td height="18" colspan="2"> </td>
+            </tr>
+            <tr>
+                <td align="right"><?php print_string('displayend', "forum") ?>: </td>
+                <td><?php
+                    print_date_selector("timeendday", "timeendmonth", "timeendyear", $discussion->timeend);
+                    print_string('disable');
+                    echo ': ';
+                    print_checkbox('timeenddisabled', 1, empty($discussion->timeend));
+                    ?></td>
+            </tr>
+        </table>
+    </td>
+</tr>
+
+<?php } ?>
+
+
 <tr>
     <td align="center" colspan="2">
     <input type="hidden" name="course"     value="<?php p($post->course) ?>" />

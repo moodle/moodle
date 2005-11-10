@@ -95,6 +95,26 @@
         } else if ($post->edit) {           // Updating a post
             $post->id = $post->edit;
             $message = '';
+            if (get_field('forum', 'type', 'id', $forum) == 'news' && !$post->parent) {
+                $updatediscussion->id = $post->discussion;
+                if (empty($post->timestartdisabled)) {
+                    $updatediscussion->timestart = make_timestamp($post->timestartyear, $post->timestartmonth, $post->timestartday);
+                } else {
+                    $updatediscussion->timestart = 0;
+                }
+                if (empty($post->timeenddisabled)) {
+                    $updatediscussion->timeend = make_timestamp($post->timeendyear, $post->timeendmonth, $post->timeendday);
+                } else {
+                    $updatediscussion->timeend = 0;
+                }
+                if (empty($post->timeenddisabled) && $updatediscussion->timeend <= $updatediscussion->timestart) {
+                    $post->error = get_string('timestartenderror', 'forum');
+                } elseif (!update_record('forum_discussions', $updatediscussion)) {
+                    error(get_string("couldnotupdate", "forum"), $errordestination);
+                }
+            }
+            if (!isset($post->error)) {
+
             if (forum_update_post($post,$message)) {
 
                 add_to_log($course->id, "forum", "update post",
@@ -116,6 +136,7 @@
             }
             exit;
 
+            }
         } else if ($post->discussion) { // Adding a new post to an existing discussion
             $message = '';
             if ($post->id = forum_add_new_post($post,$message)) {
@@ -144,6 +165,24 @@
             $discussion = $post;
             $discussion->name  = $post->subject;
             $discussion->intro = $post->message;
+            $newstopic = false;
+            if (get_field('forum', 'type', 'id', $forum) == 'news' && !$post->parent) {
+                $newstopic = true;
+            }
+            if ($newstopic && empty($post->timestartdisabled)) {
+                $discussion->timestart = make_timestamp($post->timestartyear, $post->timestartmonth, $post->timestartday);
+            } else {
+                $discussion->timestart = 0;
+            }
+            if ($newstopic && empty($post->timeenddisabled)) {
+                $discussion->timeend = make_timestamp($post->timeendyear, $post->timeendmonth, $post->timeendday);
+            } else {
+                $discussion->timeend = 0;
+            }
+            if ($newstopic && empty($post->timeenddisabled) && $discussion->timeend <= $discussion->timestart) {
+                $post->error = get_string('timestartenderror', 'forum');
+            } else {
+
             $message = '';
             if ($discussion->id = forum_add_discussion($discussion,$message)) {
 
@@ -165,7 +204,9 @@
             } else {
                 error(get_string("couldnotadd", "forum"), $errordestination);
             }
+
             exit;
+            }
         }
     }
 
@@ -297,9 +338,6 @@
         if (($post->userid <> $USER->id) and !$adminedit) {
             error("You can't edit other people's posts!");
         }
-        if (((time() - $post->created) > $CFG->maxeditingtime) and !$adminedit) {
-            error( get_string("maxtimehaspassed", "forum", format_time($CFG->maxeditingtime)) );
-        }
         if ($post->parent) {
             if (! $parent = forum_get_post_full($post->parent)) {
                 error("Parent post ID was incorrect ($post->parent)");
@@ -310,6 +348,11 @@
         }
         if (! $forum = get_record("forum", "id", $discussion->forum)) {
             error("The forum number was incorrect ($discussion->forum)");
+        }
+        if (!($forum->type == 'news' && !$post->parent && $discussion->timestart > time())) {
+            if (((time() - $post->created) > $CFG->maxeditingtime) and !$adminedit) {
+                error( get_string("maxtimehaspassed", "forum", format_time($CFG->maxeditingtime)) );
+            }
         }
         if (! $course = get_record("course", "id", $discussion->course)) {
             error("The course number was incorrect ($discussion->course)");
@@ -456,6 +499,8 @@
             $newdiscussion->groupid = $discussion->groupid;
             $newdiscussion->assessed = $discussion->assessed;
             $newdiscussion->usermodified = $post->userid;
+            $newdiscussion->timestart = $discussion->timestart;
+            $newdiscussion->timeend = $discussion->timeend;
 
             if (!$newid = insert_record('forum_discussions', $newdiscussion)) {
                 error('Could not create new discussion');
