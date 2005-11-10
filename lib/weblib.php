@@ -275,7 +275,7 @@ function match_referer($goodreferer = '') {
 
     $referer = get_referer();
 
-    return (($referer == $goodreferer) or ($referer == $CFG->wwwroot .'/'));
+    return (($referer == $goodreferer) or ($referer == $CFG->wwwroot .'/') or ($referer == $CFG->wwwroot .'/index.php'));
 }
 
 /**
