@@ -4,7 +4,8 @@
     require_once("../config.php");
     require_once("lib.php");
 
-    $id = required_param('id',0,PARAM_INT);
+    $id   = required_param('id', PARAM_INT);
+    $page = optional_param('page', 0, PARAM_INT);     // which page to show
 
     require_login();
 
@@ -33,7 +34,7 @@
     $user=0;
     $date=time() - 3600;
 
-    print_log($course, $user, $date, "l.time DESC", 0, 500, 
+    print_log($course, $user, $date, "l.time DESC", $page, 500,
               "loglive.php?id=$course->id&amp;user=$user&amp;date=$date");
 
     print_footer($course);
