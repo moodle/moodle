@@ -1,7 +1,7 @@
 <?php
 
 /* 
-V4.60 24 Jan 2005  (c) 2000-2005 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.66 28 Sept 2005  (c) 2000-2005 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. See License.txt. 
@@ -42,14 +42,14 @@ class perf_postgres extends adodb_perf{
 			"select case when count(*)=3 then 'TRUE' else 'FALSE' end from pg_settings where (name='stats_block_level' or name='stats_row_level' or name='stats_start_collector') and setting='on' ",
 			'Value must be TRUE to enable hit ratio statistics (<i>stats_start_collector</i>,<i>stats_row_level</i> and <i>stats_block_level</i> must be set to true in postgresql.conf)'),
 		'data cache hit ratio' => array('RATIO',
-			"select case when blks_hit=0 then 0 else (1-blks_read::float/blks_hit)*100 end from pg_stat_database where datname='\$DATABASE'",
+			"select case when blks_hit=0 then 0 else round( ((1-blks_read::float/blks_hit)*100)::numeric, 2) end from pg_stat_database where datname='\$DATABASE'",
 			'=WarnCacheRatio'),
 	'IO',
 		'data reads' => array('IO',
 		'select sum(heap_blks_read+toast_blks_read) from pg_statio_user_tables',
 		),
 		'data writes' => array('IO',
-		'select sum(n_tup_ins/4.0+n_tup_upd/8.0+n_tup_del/4.0)/16 from pg_stat_user_tables',
+		'select round((sum(n_tup_ins/4.0+n_tup_upd/8.0+n_tup_del/4.0)/16)::numeric,2) from pg_stat_user_tables',
 		'Count of inserts/updates/deletes * coef'),
 
 	'Data Cache',
@@ -66,8 +66,9 @@ class perf_postgres extends adodb_perf{
 		"select setting::integer*8192 from pg_settings where name='effective_cache_size'",
 			'(effective cache size)' ),
 	'Memory Usage',
-		'sort buffer size' => array('CACHE',
-			"select setting::integer*1024 from pg_settings where name='sort_mem'",
+	# Postgres 7.5 changelog: Rename server parameters SortMem and VacuumMem to work_mem and maintenance_work_mem;
+		'sort/work buffer size' => array('CACHE',
+			"select setting::integer*1024 from pg_settings where name='sort_mem' or name = 'work_mem' order by name",
 			'Size of sort buffer (per query)' ),
 	'Connections',
 		'current connections' => array('SESS',

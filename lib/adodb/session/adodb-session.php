@@ -2,7 +2,7 @@
 
 
 /*
-V4.01 23 Oct 2003  (c) 2000-2005 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.66 28 Sept 2005  (c) 2000-2005 John Lim (jlim@natsoft.com.my). All rights reserved.
          Contributed by Ross Smith (adodb@netebb.com). 
   Released under both BSD license and Lesser GPL library license.
   Whenever there is any discrepancy between the two licenses,
@@ -53,6 +53,57 @@ function adodb_unserialize( $serialized_string )
 	return( $variables );
 }
 
+/*
+	Thanks Joe Li. See http://phplens.com/lens/lensforum/msgs.php?id=11487&x=1
+	Since adodb 4.61.
+*/
+function adodb_session_regenerate_id() 
+{
+	$conn =& ADODB_Session::_conn();
+	if (!$conn) return false;
+
+	$old_id = session_id();
+	if (function_exists('session_regenerate_id')) {
+		session_regenerate_id();
+	} else {
+		session_id(md5(uniqid(rand(), true)));
+		$ck = session_get_cookie_params();
+		setcookie(session_name(), session_id(), false, $ck['path'], $ck['domain'], $ck['secure']);
+		//@session_start();
+	}
+	$new_id = session_id();
+	$ok =& $conn->Execute('UPDATE '. ADODB_Session::table(). ' SET sesskey='. $conn->qstr($new_id). ' WHERE sesskey='.$conn->qstr($old_id));
+	
+	/* it is possible that the update statement fails due to a collision */
+	if (!$ok) {
+		session_id($old_id);
+		if (empty($ck)) $ck = session_get_cookie_params();
+		setcookie(session_name(), session_id(), false, $ck['path'], $ck['domain'], $ck['secure']);
+		return false;
+	}
+	
+	return true;
+}
+
+/*
+    Generate database table for session data
+    @see http://phplens.com/lens/lensforum/msgs.php?id=12280
+    @return 0 if failure, 1 if errors, 2 if successful.
+	@author Markus Staab http://www.public-4u.de
+*/
+function adodb_session_create_table($schemaFile=null,$conn = null)
+{
+    // set default values
+    if ($schemaFile===null) $schemaFile = ADODB_SESSION . '/session_schema.xml';
+    if ($conn===null) $conn =& ADODB_Session::_conn();
+
+	if (!$conn) return 0;
+
+    $schema = new adoSchema($conn);
+    $schema->ParseSchema($schemaFile);
+    return $schema->ExecuteSchema();
+}
+
 /*!
 	\static
 */
@@ -60,7 +111,17 @@ class ADODB_Session {
 	/////////////////////
 	// getter/setter methods
 	/////////////////////
-
+	
+	/*
+	
+	function Lock($lock=null)
+	{
+	static $_lock = false;
+	
+		if (!is_null($lock)) $_lock = $lock;
+		return $lock;
+	}
+	*/
 	/*!
 	*/
 	function driver($driver = null) {
@@ -493,12 +554,10 @@ class ADODB_Session {
 		Close the connection
 	*/
 	function close() {
+/*
 		$conn =& ADODB_Session::_conn();
-
-		if ($conn) {
-			$conn->Close();
-		}
-
+		if ($conn) $conn->Close();
+*/
 		return true;
 	}
 
@@ -519,9 +578,16 @@ class ADODB_Session {
 
 		$qkey = $conn->quote($key);
 		$binary = $conn->dataProvider === 'mysql' ? '/*! BINARY */' : '';
-
+	
 		$sql = "SELECT $data FROM $table WHERE $binary sesskey = $qkey AND expiry >= " . time();
-		$rs =& $conn->Execute($sql);
+		/* Lock code does not work as it needs to hold transaction within whole page, and we don't know if 
+		  developer has commited elsewhere... :(
+		 */
+		#if (ADODB_Session::Lock())
+		#	$rs =& $conn->RowLock($table, "$binary sesskey = $qkey AND expiry >= " . time(), $data);
+		#else
+		
+			$rs =& $conn->Execute($sql);
 		//ADODB_Session::_dumprs($rs);
 		if ($rs) {
 			if ($rs->EOF) {
@@ -562,11 +628,12 @@ class ADODB_Session {
 		$filter			= ADODB_Session::filter();
 		$lifetime		= ADODB_Session::lifetime();
 		$table			= ADODB_Session::table();
-
+	
 		if (!$conn) {
 			return false;
 		}
-
+		$qkey = $conn->qstr($key);
+	
 		assert('$table');
 
 		$expiry = time() + $lifetime;
@@ -623,7 +690,7 @@ class ADODB_Session {
 					$lob_value = 'null';
 					break;
 			}
-
+			
 			// do we insert or update? => as for sesskey
 			$rs =& $conn->Execute("SELECT COUNT(*) AS cnt FROM $table WHERE $binary sesskey = $qkey");
 			ADODB_Session::_dumprs($rs);
@@ -670,7 +737,10 @@ class ADODB_Session {
 					$rs->Close();
 				}
 			}
-		}
+		}/*
+		if (ADODB_Session::Lock()) {
+			$conn->CommitTrans();
+		}*/
 		return $rs ? true : false;
 	}
 
@@ -764,11 +834,19 @@ class ADODB_Session {
 				$conn->CommitTrans();
 			}
 		} else {
-			$sql = "DELETE FROM $table WHERE expiry < $time";
-			$rs =& $conn->Execute($sql);
-			ADODB_Session::_dumprs($rs);
-			if ($rs) {
-				$rs->Close();
+		
+			if (1) {
+				$sql = "SELECT sesskey FROM $table WHERE expiry < $time";
+				$arr =& $conn->GetAll($sql);
+				foreach ($arr as $row) {
+					$sql2 = "DELETE FROM $table WHERE sesskey='$row[0]'";
+					$conn->Execute($sql2);
+				}
+			} else {
+				$sql = "DELETE FROM $table WHERE expiry < $time";
+				$rs =& $conn->Execute($sql);
+				ADODB_Session::_dumprs($rs);
+				if ($rs) $rs->Close();
 			}
 			if ($debug) {
 				ADOConnection::outp("<p><b>Garbage Collection</b>: $sql</p>");
@@ -807,10 +885,9 @@ class ADODB_Session {
 				$t = time();
 
 				if (abs($dbt - $t) >= $sync_seconds) {
-					global $HTTP_SERVER_VARS;
 					$msg = __FILE__ .
-						": Server time for webserver {$HTTP_SERVER_VARS['HTTP_HOST']} not in synch with database: " .
-						" database=$dbt ($dbts), webserver=$t (diff=". (abs($dbt - $t) / 3600) . ' hours)';
+						": Server time for webserver {$_SERVER['HTTP_HOST']} not in synch with database: " .
+						" database=$dbt ($dbts), webserver=$t (diff=". (abs($dbt - $t) / 60) . ' minutes)';
 					error_log($msg);
 					if ($debug) {
 						ADOConnection::outp("<p>$msg</p>");
@@ -821,7 +898,6 @@ class ADODB_Session {
 
 		return true;
 	}
-
 }
 
 ADODB_Session::_init();

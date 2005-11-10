@@ -23,6 +23,9 @@
     <query platform="mysql">
       insert into mytable ( row1, row2 ) values ( 12, 'mysql stuff' )
     </query>
+	<query platform="mssql">
+      insert into mytable ( row1, row2 ) values ( 12, 'Microsoft stuff' )
+    </query>
   </sql>
   <table name="obsoletetable">
     <DROP/>

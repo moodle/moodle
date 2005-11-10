@@ -22,8 +22,7 @@ $ADODB_LANG_ARRAY = array (
             DB_ERROR_SYNTAX             => 'error de sintaxis',
             DB_ERROR_UNSUPPORTED        => 'no soportado',
             DB_ERROR_VALUE_COUNT_ON_ROW => 'la cantidad de columnas no corresponden a la cantidad de valores',
-            DB_ERROR_INVALID_DSN
-        => 'DSN invalido',
+            DB_ERROR_INVALID_DSN        => 'DSN invalido',
             DB_ERROR_CONNECT_FAILED     => 'fallo la conexion',
             0	                       => 'sin error', // DB_OK
             DB_ERROR_NEED_MORE_DATA     => 'insuficientes datos',

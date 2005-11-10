@@ -1,6 +1,6 @@
 <?php
 /*
- V4.60 24 Jan 2005  (c) 2000-2005 John Lim (jlim#natsoft.com.my). All rights reserved.
+ V4.66 28 Sept 2005  (c) 2000-2005 John Lim (jlim#natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -28,6 +28,7 @@ class ADODB_postgres7 extends ADODB_postgres64 {
 		if (ADODB_ASSOC_CASE !== 2) {
 			$this->rsPrefix .= 'assoc_';
 		}
+		$this->_bindInputArray = PHP_VERSION >= 5.1;
 	}
 
 	
@@ -35,8 +36,8 @@ class ADODB_postgres7 extends ADODB_postgres64 {
 	// which makes obsolete the LIMIT limit,offset syntax
 	 function &SelectLimit($sql,$nrows=-1,$offset=-1,$inputarr=false,$secs2cache=0) 
 	 {
-		 $offsetStr = ($offset >= 0) ? " OFFSET $offset" : '';
-		 $limitStr  = ($nrows >= 0)  ? " LIMIT $nrows" : '';
+		 $offsetStr = ($offset >= 0) ? " OFFSET ".((integer)$offset) : '';
+		 $limitStr  = ($nrows >= 0)  ? " LIMIT ".((integer)$nrows) : '';
 		 if ($secs2cache)
 		  	$rs =& $this->CacheExecute($secs2cache,$sql."$limitStr$offsetStr",$inputarr);
 		 else
@@ -56,40 +57,68 @@ class ADODB_postgres7 extends ADODB_postgres64 {
  	*/
 
 	// from  Edward Jaramilla, improved version - works on pg 7.4
-function MetaForeignKeys($table, $owner=false, $upper=false)
-{
-	$sql = 'SELECT t.tgargs as args
-	FROM
-	pg_trigger t,pg_class c,pg_proc p
-	WHERE
-	t.tgenabled AND
-	t.tgrelid = c.oid AND
-	t.tgfoid = p.oid AND
-	p.proname = \'RI_FKey_check_ins\' AND
-	c.relname = \''.strtolower($table).'\'
-	ORDER BY
-		t.tgrelid';
-	
-	$rs = $this->Execute($sql);
-	
-	if ($rs && !$rs->EOF) {
-		$arr =& $rs->GetArray();
-		$a = array();
-		foreach($arr as $v)
-		{
-			$data = explode(chr(0), $v['args']);
-			if ($upper) {
-				$a[strtoupper($data[2])][] = strtoupper($data[4].'='.$data[5]);
-			} else {
-			$a[$data[2]][] = $data[4].'='.$data[5];
+	function MetaForeignKeys($table, $owner=false, $upper=false)
+	{
+		$sql = 'SELECT t.tgargs as args
+		FROM
+		pg_trigger t,pg_class c,pg_proc p
+		WHERE
+		t.tgenabled AND
+		t.tgrelid = c.oid AND
+		t.tgfoid = p.oid AND
+		p.proname = \'RI_FKey_check_ins\' AND
+		c.relname = \''.strtolower($table).'\'
+		ORDER BY
+			t.tgrelid';
+		
+		$rs =& $this->Execute($sql);
+		
+		if ($rs && !$rs->EOF) {
+			$arr =& $rs->GetArray();
+			$a = array();
+			foreach($arr as $v)
+			{
+				$data = explode(chr(0), $v['args']);
+				if ($upper) {
+					$a[strtoupper($data[2])][] = strtoupper($data[4].'='.$data[5]);
+				} else {
+				$a[$data[2]][] = $data[4].'='.$data[5];
+				}
 			}
+			return $a;
 		}
-		return $a;
+		return false;
 	}
-	return false;
-}
 
-
+	function _query($sql,$inputarr)
+	{
+		if (! $this->_bindInputArray) {
+			// We don't have native support for parameterized queries, so let's emulate it at the parent
+			return ADODB_postgres64::_query($sql, $inputarr);
+		}
+		// -- added Cristiano da Cunha Duarte
+		if ($inputarr) {
+			$sqlarr = explode('?',trim($sql));
+			$sql = '';
+			$i = 1;
+			foreach($sqlarr as $v) {
+				$sql .= $v.' $'.$i;
+				$i++;
+			}
+			$rez = pg_query_params($this->_connectionID,substr($sql, 0, strlen($sql)-2), $inputarr);
+		} else {
+			$rez = pg_query($this->_connectionID,$sql);
+		}
+		// check if no data returned, then no need to create real recordset
+		if ($rez && pg_numfields($rez) <= 0) {
+			if (is_resource($this->_resultid) && get_resource_type($this->_resultid) === 'pgsql result') {
+				pg_freeresult($this->_resultid);
+			}
+			$this->_resultid = $rez;
+			return true;
+		}		
+		return $rez;
+	}
 	
  	 // this is a set of functions for managing client encoding - very important if the encodings
 	// of your database and your output target (i.e. HTML) don't match

@@ -25,7 +25,7 @@ include('../tohtml.inc.php');
 
 
 $conn = &ADONewConnection("mssql");  // create a connection
-$conn->Connect('localhost','sa','natsoft','northwind') or die('Fail');
+$conn->Connect('127.0.0.1','adodb','natsoft','northwind') or die('Fail');
 
 $conn->debug =1;
 $query = 'select * from products';

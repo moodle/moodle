@@ -1,6 +1,6 @@
 <?php
 /* 
-V4.60 24 Jan 2005  (c) 2000-2005 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.66 28 Sept 2005  (c) 2000-2005 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -341,7 +341,7 @@ class ADORecordSet_ado extends ADORecordSet {
 
 
 	// returns the field object
-	function FetchField($fieldOffset = -1) {
+	function &FetchField($fieldOffset = -1) {
 		$off=$fieldOffset+1; // offsets begin at 1
 		
 		$o= new ADOFieldObject();
@@ -561,8 +561,11 @@ class ADORecordSet_ado extends ADORecordSet {
 			case 135: // timestamp
 				if (!strlen((string)$f->value)) $this->fields[] = false;
 				else {
-					if (!is_numeric($f->value)) $val = variant_date_to_timestamp($f->value);
-					else $val = $f->value;
+					if (!is_numeric($f->value)) # $val = variant_date_to_timestamp($f->value);
+						// VT_DATE stores dates as (float) fractional days since 1899/12/30 00:00:00
+						$val= (float) variant_cast($f->value,VT_R8)*3600*24-2209161600;
+					else 
+						$val = $f->value;
 					$this->fields[] = adodb_date('Y-m-d H:i:s',$val);
 				}
 				break;			

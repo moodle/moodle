@@ -1,7 +1,7 @@
 <?php
 
 /*
-	V4.60 24 Jan 2005  (c) 2000-2005 John Lim (jlim@natsoft.com.my). All rights reserved.
+	V4.66 28 Sept 2005  (c) 2000-2005 John Lim (jlim@natsoft.com.my). All rights reserved.
 	  Released under both BSD license and Lesser GPL library license. 
 	  Whenever there is any discrepancy between the two licenses, 
 	  the BSD license will take precedence. 
@@ -57,10 +57,10 @@ class ADODB_Pager {
 	//
 	function ADODB_Pager(&$db,$sql,$id = 'adodb', $showPageLinks = false)
 	{
-	global $HTTP_SERVER_VARS,$PHP_SELF,$HTTP_SESSION_VARS,$HTTP_GET_VARS;
+	global $PHP_SELF;
 	
 		$curr_page = $id.'_curr_page';
-		if (empty($PHP_SELF)) $PHP_SELF = $HTTP_SERVER_VARS['PHP_SELF'];
+		if (empty($PHP_SELF)) $PHP_SELF = $_SERVER['PHP_SELF'];
 		
 		$this->sql = $sql;
 		$this->id = $id;
@@ -69,12 +69,12 @@ class ADODB_Pager {
 		
 		$next_page = $id.'_next_page';	
 		
-		if (isset($HTTP_GET_VARS[$next_page])) {
-			$HTTP_SESSION_VARS[$curr_page] = $HTTP_GET_VARS[$next_page];
+		if (isset($_GET[$next_page])) {
+			$_SESSION[$curr_page] = $_GET[$next_page];
 		}
-		if (empty($HTTP_SESSION_VARS[$curr_page])) $HTTP_SESSION_VARS[$curr_page] = 1; ## at first page
+		if (empty($_SESSION[$curr_page])) $_SESSION[$curr_page] = 1; ## at first page
 		
-		$this->curr_page = $HTTP_SESSION_VARS[$curr_page];
+		$this->curr_page = $_SESSION[$curr_page];
 		
 	}
 	

@@ -1,6 +1,6 @@
 <?php
 /*
-  V4.60 24 Jan 2005  (c) 2000-2005 John Lim (jlim#natsoft.com.my). All rights reserved.
+  V4.66 28 Sept 2005  (c) 2000-2005 John Lim (jlim#natsoft.com.my). All rights reserved.
  
   First cut at the Netezza Driver by Josh Eldridge joshuae74#hotmail.com
  Based on the previous postgres drivers.
