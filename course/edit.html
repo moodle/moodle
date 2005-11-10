@@ -385,7 +385,8 @@
       } else {
           echo ((empty($form->metacourse)) ? get_string("no") : get_string("yes"));
           echo " - $disable_meta ";
-      } ?>
+      }
+      helpbutton("metacourse", get_string("metacourse"));?>
     </td>
 </tr>
 <?php if (isadmin() && ((!empty($course->requested) && $CFG->restrictmodulesfor == 'requested') || $CFG->restrictmodulesfor == 'all')) { ?>
