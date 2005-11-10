@@ -1413,6 +1413,8 @@ function assignment_delete_instance($id){
 function assignment_update_instance($assignment){
     global $CFG;
 
+    $assignment->assignmenttype = clean_filename($assignment->assignmenttype);
+
     require_once("$CFG->dirroot/mod/assignment/type/$assignment->assignmenttype/assignment.class.php");
     $assignmentclass = "assignment_$assignment->assignmenttype";
     $ass = new $assignmentclass();
@@ -1422,6 +1424,8 @@ function assignment_update_instance($assignment){
 
 function assignment_add_instance($assignment) {
     global $CFG;
+
+    $assignment->assignmenttype = clean_filename($assignment->assignmenttype);
 
     require_once("$CFG->dirroot/mod/assignment/type/$assignment->assignmenttype/assignment.class.php");
     $assignmentclass = "assignment_$assignment->assignmenttype";
