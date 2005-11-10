@@ -322,8 +322,6 @@ class assignment_base {
         // will create a new instance and return the id number
         // of the new instance.
 
-        $assignment->assignmenttype = clean_param($assignment->assignmenttype, PARAM_SAFEDIR);
-
         $assignment->timemodified = time();
         if (empty($assignment->dueenable)) {
             $assignment->timedue = 0;
@@ -386,8 +384,6 @@ class assignment_base {
         // (defined by the form in mod.html) this function
         // will create a new instance and return the id number
         // of the new instance.
-
-        $assignment->assignmenttype = clean_param($assignment->assignmenttype, PARAM_SAFEDIR);
 
         $assignment->timemodified = time();
         $assignment->timemodified = time();
@@ -1413,7 +1409,7 @@ function assignment_delete_instance($id){
 function assignment_update_instance($assignment){
     global $CFG;
 
-    $assignment->assignmenttype = clean_filename($assignment->assignmenttype);
+    $assignment->assignmenttype = clean_param($assignment->assignmenttype, PARAM_SAFEDIR);
 
     require_once("$CFG->dirroot/mod/assignment/type/$assignment->assignmenttype/assignment.class.php");
     $assignmentclass = "assignment_$assignment->assignmenttype";
@@ -1425,7 +1421,7 @@ function assignment_update_instance($assignment){
 function assignment_add_instance($assignment) {
     global $CFG;
 
-    $assignment->assignmenttype = clean_filename($assignment->assignmenttype);
+    $assignment->assignmenttype = clean_param($assignment->assignmenttype, PARAM_SAFEDIR);
 
     require_once("$CFG->dirroot/mod/assignment/type/$assignment->assignmenttype/assignment.class.php");
     $assignmentclass = "assignment_$assignment->assignmenttype";
