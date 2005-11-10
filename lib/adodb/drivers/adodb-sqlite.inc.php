@@ -1,6 +1,6 @@
 <?php
 /*
-V4.60 24 Jan 2005  (c) 2000-2005 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.66 28 Sept 2005  (c) 2000-2005 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -76,6 +76,49 @@ class ADODB_sqlite extends ADOConnection {
 		if ($this->transCnt>0)$this->transCnt -= 1;
 		return !empty($ret);
 	}
+	
+	// mark newnham
+	function &MetaColumns($tab)
+	{
+	  global $ADODB_FETCH_MODE;
+	  $false = false;
+	  $save = $ADODB_FETCH_MODE;
+	  $ADODB_FETCH_MODE = ADODB_FETCH_ASSOC;
+	  if ($this->fetchMode !== false) $savem = $this->SetFetchMode(false);
+	  $rs = $this->Execute("PRAGMA table_info('$tab')");
+	  if (isset($savem)) $this->SetFetchMode($savem);
+	  if (!$rs) {
+	    $ADODB_FETCH_MODE = $save; 
+	    return $false;
+	  }
+	  $arr = array();
+	  while ($r = $rs->FetchRow()) {
+	    $type = explode('(',$r['type']);
+	    $size = '';
+	    if (sizeof($type)==2)
+	    $size = trim($type[1],')');
+	    $fn = strtoupper($r['name']);
+	    $fld = new ADOFieldObject;
+	    $fld->name = $r['name'];
+	    $fld->type = $type[0];
+	    $fld->max_length = $size;
+	    $fld->not_null = $r['notnull'];
+	    $fld->default_value = $r['dflt_value'];
+	    $fld->scale = 0;
+	    if ($save == ADODB_FETCH_NUM) $arr[] = $fld;	
+	    else $arr[strtoupper($fld->name)] = $fld;
+	  }
+	  $rs->Close();
+	  $ADODB_FETCH_MODE = $save;
+	  return $arr;
+	}
+	
+	function _init($parentDriver)
+	{
+	
+		$parentDriver->hasTransactions = false;
+		$parentDriver->hasInsertID = true;
+	}
 
 	function _insertid()
 	{
@@ -134,6 +177,7 @@ class ADODB_sqlite extends ADOConnection {
 	function _connect($argHostname, $argUsername, $argPassword, $argDatabasename)
 	{
 		if (!function_exists('sqlite_open')) return null;
+		if (empty($argHostname) && $argDatabasename) $argHostname = $argDatabasename;
 		
 		$this->_connectionID = sqlite_open($argHostname);
 		if ($this->_connectionID === false) return false;
@@ -145,6 +189,7 @@ class ADODB_sqlite extends ADOConnection {
 	function _pconnect($argHostname, $argUsername, $argPassword, $argDatabasename)
 	{
 		if (!function_exists('sqlite_open')) return null;
+		if (empty($argHostname) && $argDatabasename) $argHostname = $argDatabasename;
 		
 		$this->_connectionID = sqlite_popen($argHostname);
 		if ($this->_connectionID === false) return false;
@@ -234,7 +279,7 @@ class ADODB_sqlite extends ADOConnection {
 		return @sqlite_close($this->_connectionID);
 	}
 
-	function &MetaIndexes ($table, $primary = FALSE, $owner=false)
+	function &MetaIndexes($table, $primary = FALSE, $owner=false)
 	{
 		$false = false;
 		// save old fetch mode

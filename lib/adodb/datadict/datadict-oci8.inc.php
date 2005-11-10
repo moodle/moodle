@@ -1,7 +1,7 @@
 <?php
 
 /**
-  V4.60 24 Jan 2005  (c) 2000-2005 John Lim (jlim@natsoft.com.my). All rights reserved.
+  V4.66 28 Sept 2005  (c) 2000-2005 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -21,6 +21,8 @@ class ADODB2_oci8 extends ADODB_DataDict {
 	var $dropTable = "DROP TABLE %s CASCADE CONSTRAINTS";
 	var $trigPrefix = 'TRIG_';
 	var $alterCol = ' MODIFY ';
+	var $typeX = 'VARCHAR(4000)';
+	var $typeXL = 'CLOB';
 	
 	function MetaType($t,$len=-1)
 	{
@@ -70,8 +72,8 @@ class ADODB2_oci8 extends ADODB_DataDict {
 	{
 		switch($meta) {
 		case 'C': return 'VARCHAR';
-		case 'X': return 'VARCHAR(4000)';
-		case 'XL': return 'CLOB';
+		case 'X': return $this->typeX;
+		case 'XL': return $this->typeXL;
 		
 		case 'C2': return 'NVARCHAR';
 		case 'X2': return 'NVARCHAR(2000)';

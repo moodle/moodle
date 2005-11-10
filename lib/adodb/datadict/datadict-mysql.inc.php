@@ -1,7 +1,7 @@
 <?php
 
 /**
-  V4.60 24 Jan 2005  (c) 2000-2005 John Lim (jlim@natsoft.com.my). All rights reserved.
+  V4.66 28 Sept 2005  (c) 2000-2005 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -80,8 +80,8 @@ class ADODB2_mysql extends ADODB_DataDict {
 	{
 		switch(strtoupper($meta)) {
 		case 'C': return 'VARCHAR';
-		case 'XL':
-		case 'X': return 'LONGTEXT';
+		case 'XL':return 'LONGTEXT';
+		case 'X': return 'TEXT';
 		
 		case 'C2': return 'VARCHAR';
 		case 'X2': return 'LONGTEXT';

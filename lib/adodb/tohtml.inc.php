@@ -1,6 +1,6 @@
 <?php 
 /*
-  V4.60 24 Jan 2005  (c) 2000-2005 John Lim (jlim@natsoft.com.my). All rights reserved.
+  V4.66 28 Sept 2005  (c) 2000-2005 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -9,8 +9,9 @@
 */ 
   
 // specific code for tohtml
-GLOBAL $gSQLMaxRows,$gSQLBlockRows;
-	 
+GLOBAL $gSQLMaxRows,$gSQLBlockRows,$ADODB_ROUND;
+
+$ADODB_ROUND=4; // rounding
 $gSQLMaxRows = 1000; // max no of rows to download
 $gSQLBlockRows=20; // max no of rows per table block
 
@@ -35,10 +36,12 @@ $gSQLBlockRows=20; // max no of rows per table block
 //	$rs->Close();
 //
 // RETURNS: number of rows displayed
+
+
 function rs2html(&$rs,$ztabhtml=false,$zheaderarray=false,$htmlspecialchars=true,$echo = true)
 {
 $s ='';$rows=0;$docnt = false;
-GLOBAL $gSQLMaxRows,$gSQLBlockRows;
+GLOBAL $gSQLMaxRows,$gSQLBlockRows,$ADODB_ROUND;
 
 	if (!$rs) {
 		printf(ADODB_BAD_RS,'rs2html');
@@ -52,11 +55,15 @@ GLOBAL $gSQLMaxRows,$gSQLBlockRows;
 	$hdr = "<TABLE COLS=$ncols $ztabhtml><tr>\n\n";
 	for ($i=0; $i < $ncols; $i++) {	
 		$field = $rs->FetchField($i);
-		if ($zheaderarray) $fname = $zheaderarray[$i];
-		else $fname = htmlspecialchars($field->name);	
-		$typearr[$i] = $rs->MetaType($field->type,$field->max_length);
- 		//print " $field->name $field->type $typearr[$i] ";
-			
+		if ($field) {
+			if ($zheaderarray) $fname = $zheaderarray[$i];
+			else $fname = htmlspecialchars($field->name);	
+			$typearr[$i] = $rs->MetaType($field->type,$field->max_length);
+ 			//print " $field->name $field->type $typearr[$i] ";
+		} else {
+			$fname = 'Field '.($i+1);
+			$typearr[$i] = 'C';
+		}
 		if (strlen($fname)==0) $fname = '&nbsp;';
 		$hdr .= "<TH>$fname</TH>";
 	}
@@ -77,15 +84,22 @@ GLOBAL $gSQLMaxRows,$gSQLBlockRows;
 			$type = $typearr[$i];
 			switch($type) {
 			case 'D':
-				if (!strpos($v,':')) {
+				if (empty($v)) $s .= "<TD> &nbsp; </TD>\n";
+				else if (!strpos($v,':')) {
 					$s .= "	<TD>".$rs->UserDate($v,"D d, M Y") ."&nbsp;</TD>\n";
-					break;
 				}
+				break;
 			case 'T':
-				$s .= "	<TD>".$rs->UserTimeStamp($v,"D d, M Y, h:i:s") ."&nbsp;</TD>\n";
+				if (empty($v)) $s .= "<TD> &nbsp; </TD>\n";
+				else $s .= "	<TD>".$rs->UserTimeStamp($v,"D d, M Y, h:i:s") ."&nbsp;</TD>\n";
 			break;
-			case 'I':
+			
 			case 'N':
+				if (abs($v) - round($v,0) < 0.00000001)
+					$v = round($v);
+				else
+					$v = round($v,$ADODB_ROUND);
+			case 'I':
 				$s .= "	<TD align=right>".stripslashes((trim($v))) ."&nbsp;</TD>\n";
 			   	
 			break;

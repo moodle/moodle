@@ -1,6 +1,6 @@
 <?php
 /*
-V4.60 24 Jan 2005  (c) 2000-2005 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.66 28 Sept 2005  (c) 2000-2005 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -9,6 +9,10 @@ V4.60 24 Jan 2005  (c) 2000-2005 John Lim (jlim@natsoft.com.my). All rights rese
   Currently unsupported: MetaDatabases, MetaTables and MetaColumns, and also inputarr in Execute.
   Native types have been converted to MetaTypes.
   Transactions not supported yet.
+  
+  Limitation of url length. For IIS, see MaxClientRequestBuffer registry value.
+  
+	  http://support.microsoft.com/default.aspx?scid=kb;en-us;260694
 */ 
 
 // security - hide paths

@@ -1,6 +1,6 @@
 <?php
 /* 
-V4.60 24 Jan 2005  (c) 2000-2005 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.66 28 Sept 2005  (c) 2000-2005 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -128,10 +128,10 @@ class ADODB_DB2 extends ADODB_odbc {
 		return $this->GetOne($this->identitySQL);
 	}
 	
-	function RowLock($tables,$where)
+	function RowLock($tables,$where,$flds='1 as ignore')
 	{
 		if ($this->_autocommit) $this->BeginTrans();
-		return $this->GetOne("select 1 as ignore from $tables where $where for update");
+		return $this->GetOne("select $flds from $tables where $where for update");
 	}
 	
 	function &MetaTables($ttype=false,$showSchema=false, $qtable="%", $qschema="%")
@@ -274,6 +274,7 @@ class ADODB_DB2 extends ADODB_odbc {
 	
 	function &SelectLimit($sql,$nrows=-1,$offset=-1,$inputArr=false)
 	{
+		$nrows = (integer) $nrows;
 		if ($offset <= 0) {
 		// could also use " OPTIMIZE FOR $nrows ROWS "
 			if ($nrows >= 0) $sql .=  " FETCH FIRST $nrows ROWS ONLY ";
