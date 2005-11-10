@@ -74,7 +74,7 @@ if ( isset($rssid) ) {
 //assign categories to other uses than personal
 if (isset($rss_record) && !( isadmin() || $submitters == SUBMITTERS_ALL_ACCOUNT_HOLDERS || 
         ($submitters == SUBMITTERS_ADMIN_AND_TEACHER && $isteacher) || 
-            ( ($act == 'rss_edit' || $act == 'delfeed' || $act == 'updfeed') && $USER->id == $rss_record->userid)  ) ) {
+            ( ($act == 'rssedit' || $act == 'delfeed' || $act == 'updfeed') && $USER->id == $rss_record->userid)  ) ) {
         error(get_string('noguestpost', 'forum').' You are not allowed to make modifications to this RSS feed at this time.', $referrer);
 }
 
@@ -121,6 +121,14 @@ if ($act == 'updfeed') {
     $dataobject->userid = $USER->id;
     $dataobject->description = '';
     $dataobject->title = '';
+
+    // attempting to replace feed and rss url types with http
+    // it appears that the rss feed validator will validate these url types but magpie will not load them
+    $url = str_replace ("feed://", "http://", "$url");
+    $url = str_replace ("FEED://", "http://", "$url");
+    $url = str_replace ("rss://", "http://", "$url");
+    $url = str_replace ("RSS://", "http://", "$url");
+
     $dataobject->url = addslashes($url);
     $dataobject->preferredtitle = addslashes($preferredtitle);
 
@@ -161,7 +169,7 @@ if ($act == 'updfeed') {
         rss_display_feeds($id);
         rss_print_form($act, $dataobject->url, $dataobject->id, $dataobject->preferredtitle, $id);
 */
-} else if ( isset($rss_record) && $act == 'rss_edit' ) {
+} else if ( isset($rss_record) && $act == 'rssedit' ) {
 
     $preferredtitle = stripslashes_safe($rss_record->preferredtitle);
     if (empty($preferredtitle)) {
