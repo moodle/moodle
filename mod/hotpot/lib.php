@@ -1009,6 +1009,9 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 	function v6_expand_Hint() {
 		return $this->xml_value("hotpot-config-file,$this->quiztype,include-hint");
 	}
+	function v6_expand_ClueCaption() {
+		return $this->xml_value('hotpot-config-file,global,clue-caption');
+	}
 	function v6_expand_HintCaption() {
 		return $this->xml_value('hotpot-config-file,global,hint-caption');
 	}
@@ -1718,7 +1721,8 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 		while ($text = $this->xml_value($tags, "[0]['#'][$q]")) {
 			$str .= $text;
 			if (($question="[$q]['#']") && $this->xml_value("$tags,question-record", $question)) {
-				$str .= '<span class="GapSpan" id="GapSpan'.$q.'"><INPUT type="text" id="Gap'.$q.'" onfocus="TrackFocus('.$q.')" onblur="LeaveGap()" class="GapBox" size="6"></input><button style="line-height: 1.0" class="FuncButton" onfocus="FuncBtnOver(this)" onmouseover="FuncBtnOver(this)" onblur="FuncBtnOut(this)" onmouseout="FuncBtnOut(this)" onmousedown="FuncBtnDown(this)" onmouseup="FuncBtnOut(this)" onclick="ShowClue('.$q.')">[?]</button></span>';
+				$caption = $this->v6_expand_ClueCaption();
+				$str .= '<span class="GapSpan" id="GapSpan'.$q.'"><INPUT type="text" id="Gap'.$q.'" onfocus="TrackFocus('.$q.')" onblur="LeaveGap()" class="GapBox" size="6"></input><button style="line-height: 1.0" class="FuncButton" onfocus="FuncBtnOver(this)" onmouseover="FuncBtnOver(this)" onblur="FuncBtnOut(this)" onmouseout="FuncBtnOut(this)" onmousedown="FuncBtnDown(this)" onmouseup="FuncBtnOut(this)" onclick="ShowClue('.$q.')">['.$caption.']</button></span>';
 			}
 			$q++;
 		}
@@ -2288,7 +2292,7 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 		$url = '\S+?\.\S+?';
 		$replace = "hotpot_convert_relative_url('".$this->get_baseurl()."', '".$this->reference."', '\\1', '\\6', '\\7')";
 
-		$tags = array('a'=>'href','img'=>'src','param'=>'value');
+		$tags = array('script'=>'src', 'link'=>'href', 'a'=>'href','img'=>'src','param'=>'value');
 		foreach ($tags as $tag=>$attribute) {
 
 			$search = "%($tagopen$tag$space$anychar$attribute=$quoteopen)($url)($quoteclose$anychar$tagclose)%ise";
