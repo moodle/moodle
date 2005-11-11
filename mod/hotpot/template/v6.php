@@ -70,6 +70,9 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
 	function v6_expand_ClickToAdd() {
 		return $this->parent->xml_value('hotpot-config-file,'.$this->parent->quiztype.',click-to-add');
 	}
+	function v6_expand_ClueCaption() {
+		return $this->parent->xml_value('hotpot-config-file,global,clue-caption');
+	}
 	function v6_expand_Clues() {
 		return $this->int_value('hotpot-config-file,'.$this->parent->quiztype.',include-clues');
 	}
@@ -809,7 +812,8 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
 					$str .= '<input type="text" id="Gap'.$q.'" onfocus="TrackFocus('.$q.')" onblur="LeaveGap()" class="GapBox" size="6"></input>';
 				}
 				if ($this->v6_expand_Clues()) {
-					$str .= '<button style="line-height: 1.0" class="FuncButton" onfocus="FuncBtnOver(this)" onmouseover="FuncBtnOver(this)" onblur="FuncBtnOut(this)" onmouseout="FuncBtnOut(this)" onmousedown="FuncBtnDown(this)" onmouseup="FuncBtnOut(this)" onclick="ShowClue('.$q.')">[?]</button>';
+					$caption = $this->v6_expand_ClueCaption();
+					$str .= '<button style="line-height: 1.0" class="FuncButton" onfocus="FuncBtnOver(this)" onmouseover="FuncBtnOver(this)" onblur="FuncBtnOut(this)" onmouseout="FuncBtnOut(this)" onmousedown="FuncBtnDown(this)" onmouseup="FuncBtnOut(this)" onclick="ShowClue('.$q.')">['.$caption.']</button>';
 				}
 				$str .= '</span>';
 			}
@@ -1131,17 +1135,17 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
 					$str .= '<div class="ShortAnswer" id="Q_'.$q.'_SA"><form method="post" action="" onsubmit="return false;"><div>';
 					$str .= '<input type="text" id="Q_'.$q.'_Guess" onfocus="TrackFocus('."'".'Q_'.$q.'_Guess'."'".')" onblur="LeaveGap()" class="ShortAnswerBox" size="9"></input><br /><br />';
 
-					$text = $this->v6_expand_CheckCaption();
-					$str .= $this->v6_expand_jquiz_button($text, "CheckShortAnswer($q)");
+					$caption = $this->v6_expand_CheckCaption();
+					$str .= $this->v6_expand_jquiz_button($caption, "CheckShortAnswer($q)");
 
 					if ($this->v6_expand_Hint()) {
-						$text = $this->v6_expand_HintCaption();
-						$str .= $this->v6_expand_jquiz_button($text, "ShowHint($q)");
+						$caption = $this->v6_expand_HintCaption();
+						$str .= $this->v6_expand_jquiz_button($caption, "ShowHint($q)");
 					}
 
 					if ($this->v6_expand_ShowAnswer()) {
-						$text = $this->v6_expand_ShowAnswerCaption();
-						$str .= $this->v6_expand_jquiz_button($text, "ShowAnswers($q)");
+						$caption = $this->v6_expand_ShowAnswerCaption();
+						$str .= $this->v6_expand_jquiz_button($caption, "ShowAnswers($q)");
 					}
 
 					$str .= '</div></form></div>';
@@ -1191,8 +1195,8 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
 					$str .= '</ol>';
 
 					if ($question_type==HOTPOT_JQUIZ_MULTISELECT) {
-						$text = $this->v6_expand_CheckCaption();
-						$str .= $this->v6_expand_jquiz_button($text, "CheckMultiSelAnswer($q)");
+						$caption = $this->v6_expand_CheckCaption();
+						$str .= $this->v6_expand_jquiz_button($caption, "CheckMultiSelAnswer($q)");
 					}
 				}
 
@@ -1206,8 +1210,8 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
 		return $str;
 	}
 
-	function v6_expand_jquiz_button($text, $onclick) {
-		return '<button class="FuncButton" onfocus="FuncBtnOver(this)" onblur="FuncBtnOut(this)" onmouseover="FuncBtnOver(this)" onmouseout="FuncBtnOut(this)" onmousedown="FuncBtnDown(this)" onmouseup="FuncBtnOut(this)" onclick="'.$onclick.'">'.$text.'</button>';
+	function v6_expand_jquiz_button($caption, $onclick) {
+		return '<button class="FuncButton" onfocus="FuncBtnOver(this)" onblur="FuncBtnOut(this)" onmouseover="FuncBtnOver(this)" onmouseout="FuncBtnOut(this)" onmousedown="FuncBtnDown(this)" onmouseup="FuncBtnOut(this)" onclick="'.$onclick.'">'.$caption.'</button>';
 	}
 
 	// jquiz.js_
