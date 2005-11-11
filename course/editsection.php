@@ -58,9 +58,7 @@
         $strsummaryof = get_string('summaryof', '', " $sectionname $form->section");
     }
 
-    print_header("$course->shortname: $stredit", "$course->fullname", 
-                 "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> 
-                  -> $stredit");
+    print_header_simple($stredit, '', $stredit);
 
     print_heading($strsummaryof);
     print_simple_box_start('center');
