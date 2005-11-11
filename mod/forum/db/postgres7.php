@@ -150,6 +150,11 @@ function forum_upgrade($oldversion) {
       modify_database('','ALTER TABLE prefix_forum ALTER trackingtype SET NOT NULL');
   }
 
+  if ($oldversion < 2005111100) {
+      table_column('forum_discussions','','timestart','integer');
+      table_column('forum_discussions','','timeend','integer');
+  }
+
   return true;
 
 }

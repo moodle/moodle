@@ -39,7 +39,9 @@ CREATE TABLE prefix_forum_discussions (
   groupid integer NOT NULL default '0',
   assessed integer NOT NULL default '1',
   timemodified integer NOT NULL default '0',
-  usermodified integer NOT NULL default '0'
+  usermodified integer NOT NULL default '0',
+  timestart integer NOT NULL default '0',
+  timeend integer NOT NULL default '0'
 );
 
 CREATE INDEX prefix_forum_discussions_forum_idx ON prefix_forum_discussions (forum);

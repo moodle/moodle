@@ -41,6 +41,8 @@ CREATE TABLE prefix_forum_discussions (
   assessed tinyint(1) NOT NULL default '1',
   timemodified int(10) unsigned NOT NULL default '0',
   usermodified int(10) unsigned NOT NULL default '0',
+  timestart int(10) unsigned NOT NULL default '0',
+  timeend int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (id),
   KEY prefix_forum_discussions_forum_idx (forum),
   KEY prefix_forum_discussions_userid_idx (userid)

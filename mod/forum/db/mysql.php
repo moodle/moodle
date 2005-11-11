@@ -205,6 +205,10 @@ function forum_upgrade($oldversion) {
       table_column('forum','','trackingtype','tinyint','2', 'unsigned', '1', '', 'forcesubscribe');
   }
 
+  if ($oldversion < 2005111100) {
+      table_column('forum_discussions','','timestart','integer');
+      table_column('forum_discussions','','timeend','integer');
+  }
 
   return true;
   
