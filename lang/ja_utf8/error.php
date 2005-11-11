@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // error.php - created with Moodle 1.6 development (2005100300)
+      // error.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['adminprimarynoedit'] = '主管理者は他から編集することはできません。';
@@ -23,7 +23,7 @@ $string['missingfield'] = '「 $a 」 を入力してください。';
 $string['modulerequirementsnotmet'] = 'モジュール「 $a->modulename 」 ($a->moduleversion) をインストールできませんでした。このモジュールをインストールするためには新しいバージョンのMoodleをインストールする必要があります。(現在、あなたは $a->currentmoodle を使用しています。 $a->requiremoodle が必要です。)';
 $string['nonmeaningfulcontent'] = '意味の無いコンテンツです。';
 $string['notavailable'] = '現在利用できません';
-$string['onlyeditingteachers'] = '編集権を持った教師のみ処理可能です。';
+$string['onlyeditingteachers'] = '編集権限を持った教師のみ処理可能です。';
 $string['onlyeditown'] = '他の人の情報は編集できません。';
 $string['processingstops'] = 'プロセスが停止しました。残りのレコードは無視されます。';
 $string['restricteduser'] = '申し訳ございません。あなたのアカウント「 $a 」では、この処理を行うことができません。';
