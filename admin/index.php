@@ -320,7 +320,7 @@
     }
 
     if (ini_get_bool('register_globals') && !ini_get_bool('magic_quotes_gpc')) {
-        print_simple_box(get_string('globalsquoteswarning', 'admin', 'center'));
+        print_simple_box(get_string('globalsquoteswarning', 'admin'), 'center');
     }
 
 
