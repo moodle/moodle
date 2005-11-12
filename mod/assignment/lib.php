@@ -628,9 +628,9 @@ class assignment_base {
     
         global $CFG;
         
-        $userid = required_param('userid');
-        $offset = required_param('offset');//offset for where to start looking for student.
-        $sort = required_param('tsort');//getting the sorting order
+        $userid = required_param('userid', PARAM_INT);
+        $offset = required_param('offset', PARAM_INT);//offset for where to start looking for student.
+        $sort = required_param('tsort', PARAM_ALPHA);//getting the sorting order
 
         if (!$user = get_record('user', 'id', $userid)) {
             error('No such user!');
