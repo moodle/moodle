@@ -97,6 +97,7 @@ $string['edithelpdocs'] = 'Edit help documents';
 $string['editstrings'] = 'Edit strings';
 $string['filterall'] = 'Filter all strings';
 $string['filteruploadedfiles'] = 'Filter uploaded files';
+$string['globalsquoteswarning'] = '<strong>Security Warning</strong>: to operate securely, Moodle requires that you make certain changes to your current PHP settings. You <em>must</em> set <code>magic_quotes_gpc=on</code>. If possible, you should also set <code>register_globals=off</code> to improve security. These settings are controlled editing your <code>php.ini</code>, Apache/IIS configuration or <code>.htaccess</code> file.';
 $string['helpadminseesall'] = 'Do admins see all calendar events or just those that apply to themselves?';
 $string['helpcalendarsettings'] = 'Configure various calendar and date/time-related aspects of Moodle';
 $string['helpforcetimezone'] = 'You can allow users to individually select their timezone, or force a timezone for everyone.';

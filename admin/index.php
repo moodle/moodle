@@ -319,6 +319,11 @@
         print_spacer(10,10);
     }
 
+    if (ini_get_bool('register_globals') && !ini_get_bool('magic_quotes_gpc')) {
+        print_simple_box(get_string('globalsquoteswarning', 'admin', 'center'));
+    }
+
+
 /// If no recently cron run
     $lastcron = get_field_sql('SELECT max(lastcron) FROM ' . $CFG->prefix . 'modules');
     if (time() - $lastcron > 3600 * 24) {

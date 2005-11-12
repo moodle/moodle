@@ -74,6 +74,9 @@ class configvar {
     $misc['debug'] = new configvar (get_string('configdebug', 'admin'),
         choose_from_menu ($options, 'debug', $config->debug, '', '', '', true) );
 
+    $misc['perfdebug'] = new configvar (get_string('configperfdebug', 'admin'),
+        choose_from_menu ($options, 'perfdebug', $config->perfdebug, '', '', '', true) );
+
 /// enablerssfeeds
 class configvarrss extends configvar {
     function display_warning() {
