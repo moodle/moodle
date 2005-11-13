@@ -902,13 +902,7 @@ class assignment_base {
         }
 
         if ($sort = $table->get_sql_sort()) {
-            $sortparts = explode(',', $sort);
-            $newsort   = array();
-            foreach ($sortparts as $sortpart) {
-                $sortpart = trim($sortpart);
-                $newsort[] = $sortpart;
-            }
-            $sort = ' ORDER BY '.implode(', ', $newsort);
+            $sort = ' ORDER BY '.$sort;
         }
 
         $select = 'SELECT u.id, u.id, u.firstname, u.lastname, u.picture, s.id AS submissionid, s.grade, s.comment, s.timemodified, s.timemarked, ((s.timemarked > 0) AND (s.timemarked >= s.timemodified)) AS status ';
