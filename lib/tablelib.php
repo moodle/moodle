@@ -287,13 +287,26 @@ class flexible_table {
         $this->setup = true;
     }
 
-    function get_sql_sort() {
-        if(!$this->setup) {
-            return false;
+    function get_sql_sort($uniqueid = NULL) {
+        if($uniqueid === NULL) {
+            // "Non-static" function call
+            if(!$this->setup) {
+               return false;
+            }
+            $sess = &$this->sess;
         }
-        if(!empty($this->sess->sortby)) {
+        else {
+            // "Static" function call
+            global $SESSION;
+            if(empty($SESSION->flextable[$uniqueid])) {
+               return '';
+            }
+            $sess = &$SESSION->flextable[$uniqueid];
+        }
+
+        if(!empty($sess->sortby)) {
             $sortstring = '';
-            foreach($this->sess->sortby as $column => $order) {
+            foreach($sess->sortby as $column => $order) {
                 if(!empty($sortstring)) {
                     $sortstring .= ', ';
                 }
