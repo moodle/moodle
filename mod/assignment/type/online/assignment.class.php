@@ -234,7 +234,7 @@ class assignment_online extends assignment_base {
 
         ///Stolen code from file.php
         
-        print_simple_box_start('center', '', '', '', 'generalbox', 'wordcount');
+        print_simple_box_start('center', '', '', 0, 'generalbox', 'wordcount');
         echo '<table>';
         //if ($assignment->timedue) {
         //    echo '<tr><td class="c0">'.get_string('duedate','assignment').':</td>';

@@ -680,7 +680,7 @@ class assignment_base {
 
         ///SOme javascript to help with setting up >.>
         
-        echo '<script language="javascript">'."\n";
+        echo '<script type="text/javascript">'."\n";
         echo 'function setNext(){'."\n";
         echo 'document.submitform.mode.value=\'next\';'."\n";
         echo 'document.submitform.userid.value="'.$nextid.'";'."\n";
@@ -710,13 +710,13 @@ class assignment_base {
         echo '</td>';
         echo '<td class="content">';
         echo '<form name="submitform" action="submissions.php?id='.$this->cm->id.'&amp;mode=single&amp;offset='.++$offset.'&amp;tsort='.$sort.'" method="post">';
-        echo '<input type="hidden" name="userid" value="'.$userid.'">';
-        echo '<input type="hidden" name="id" value="'.$this->cm->id.'">';
-        echo '<input type="hidden" name="mode" value="grade">';
-        echo '<input type="hidden" name="menuindex" value="0">';//selected menu index
+        echo '<input type="hidden" name="userid" value="'.$userid.'" />';
+        echo '<input type="hidden" name="id" value="'.$this->cm->id.'" />';
+        echo '<input type="hidden" name="mode" value="grade" />';
+        echo '<input type="hidden" name="menuindex" value="0" />';//selected menu index
         
         //new hidden field, initialized to -1.
-        echo '<input type="hidden" name="saveuserid" value="-1">';
+        echo '<input type="hidden" name="saveuserid" value="-1" />';
         if (!$submission->grade and !$submission->timemarked) {
             $submission->grade = -1;   /// Hack to stop zero being selected on the menu below (so it shows 'no grade')
         }
@@ -747,7 +747,7 @@ class assignment_base {
 
         ///Print Buttons in Single View
         echo '<div class="buttons" align="center">';
-        echo '<input type="submit" name="submit" value="'.get_string('savechanges').'" onClick = "document.submitform.menuindex.value = document.submitform.grade.selectedIndex" />';
+        echo '<input type="submit" name="submit" value="'.get_string('savechanges').'" onclick = "document.submitform.menuindex.value = document.submitform.grade.selectedIndex" />';
         echo '<input type="submit" name="cancel" value="'.get_string('cancel').'" />';
         //if there are more to be graded.
         if ($nextid) {
@@ -1031,11 +1031,11 @@ class assignment_base {
         /// Mini form for setting user preference
         echo '<br />';
         echo '<form name="options" action="submissions.php?id='.$this->cm->id.'" method="post">';
+        echo '<input type="hidden" id="updatepref" name="updatepref" value="1" />';
         echo '<table id="optiontable" align="center">';
         echo '<tr align="right"><td>';
         echo '<label for="perpage">'.get_string('pagesize','assignment').'</label>';
         echo ':</td>';
-        echo '<input type="hidden" id="updatepref" name="updatepref" value="1" />';
         echo '<td align="left">';
         echo '<input type="text" id="perpage" name="perpage" size="1" value="'.$perpage.'" />';
         helpbutton('pagesize', get_string('pagesize','assignment'), 'assignment');
