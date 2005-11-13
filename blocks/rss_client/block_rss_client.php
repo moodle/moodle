@@ -23,7 +23,7 @@ define('BLOCK_RSS_SECONDARY_CACHE_ENABLED', true);
 
     function init() {
         $this->title = get_string('feedstitle', 'block_rss_client');
-        $this->version = 2004112000;
+        $this->version = 2005111400;
     }
 
     function preferred_width() {
@@ -194,9 +194,9 @@ define('BLOCK_RSS_SECONDARY_CACHE_ENABLED', true);
             }
 
             if (empty($rss_record->preferredtitle)) {
-                $feedtitle = stripslashes_safe(rss_unhtmlentities($rss->channel['title']));
+                $feedtitle = $this->format_title(stripslashes_safe(rss_unhtmlentities($rss->channel['title'])));
             } else {
-                $feedtitle = stripslashes_safe($rss_record->preferredtitle);
+                $feedtitle = $this->format_title(stripslashes_safe($rss_record->preferredtitle));
             }
 //            print_object($rss);
             if (isset($this->config) && 
@@ -269,5 +269,15 @@ define('BLOCK_RSS_SECONDARY_CACHE_ENABLED', true);
         $this->instance_config_save($this->config);
         return $returnstring;
     }
+
+     // just strips the title down and adds ... for excessively long titles.
+     function format_title($title,$max=64) {
+         if (strlen($title) <= $max) {
+             return $title;
+         }
+         else {
+             return substr($title,0,$max-3).'...';
+         }
+     }
 }
 ?>
