@@ -582,7 +582,7 @@ class assignment_base {
         if (empty($SESSION->flextable['mod-assignment-submissions']->collapse['status'])) {
            echo 'opener.document.getElementById("up'.$submission->userid.'").className="s1";';
             $buttontext = get_string('update');
-            $button = link_to_popup_window ('/mod/assignment/submissions.php?id='.$this->cm->id.'&amp;userid='.$submission->userid.'&amp;mode=single'.'&amp;offset='.optional_param('offset').'&amp;tsort='.optional_param('tsort'), 
+            $button = link_to_popup_window ('/mod/assignment/submissions.php?id='.$this->cm->id.'&amp;userid='.$submission->userid.'&amp;mode=single'.'&amp;offset='.optional_param('offset'), 
                       'grade'.$submission->userid, $buttontext, 450, 700, $buttontext, 'none', true, 'button'.$submission->userid);
                echo 'opener.document.getElementById("up'.$submission->userid.'").innerHTML="'.addslashes($button).'";';               
         }        
@@ -630,7 +630,6 @@ class assignment_base {
         
         $userid = required_param('userid', PARAM_INT);
         $offset = required_param('offset', PARAM_INT);//offset for where to start looking for student.
-        $sort = required_param('tsort', PARAM_ALPHA);//getting the sorting order
 
         if (!$user = get_record('user', 'id', $userid)) {
             error('No such user!');
@@ -656,7 +655,7 @@ class assignment_base {
         } else {
             $currentgroup = false;
         }
-        $limit = sql_paging_limit($offset+1, 1);
+        $limit = ' '.sql_paging_limit($offset+1, 1);
 
     /// Get all teachers and students
         if ($currentgroup) {
@@ -707,7 +706,8 @@ class assignment_base {
         print_user_picture($teacher->id, $this->course->id, $teacher->picture);
         echo '</td>';
         echo '<td class="content">';
-        echo '<form name="submitform" action="submissions.php?id='.$this->cm->id.'&amp;mode=single&amp;offset='.++$offset.'&amp;tsort='.$sort.'" method="post">';
+        echo '<form name="submitform" action="submissions.php" method="post">';
+        echo '<input type="hidden" name="offset" value="'.++$offset.'">';
         echo '<input type="hidden" name="userid" value="'.$userid.'" />';
         echo '<input type="hidden" name="id" value="'.$this->cm->id.'" />';
         echo '<input type="hidden" name="mode" value="grade" />';
@@ -1001,7 +1001,7 @@ class assignment_base {
                 $buttontext = ($auser->status == 1) ? $strupdate : $strgrade;
                                    
                 ///No more buttons, we use popups ;-).
-                $button = link_to_popup_window ('/mod/assignment/submissions.php?id='.$this->cm->id.'&amp;userid='.$auser->id.'&amp;mode=single'.'&amp;offset='.$offset++.'&amp;tsort='.$ssort, 
+                $button = link_to_popup_window ('/mod/assignment/submissions.php?id='.$this->cm->id.'&amp;userid='.$auser->id.'&amp;mode=single'.'&amp;offset='.$offset++, 
                                                 'grade'.$auser->id, $buttontext, 500, 780, $buttontext, 'none', true, 'button'.$auser->id);
 
                 $status  = '<div id="up'.$auser->id.'" class="s'.$auser->status.'">'.$button.'</div>';
@@ -1066,8 +1066,7 @@ class assignment_base {
 
         global $USER;
 
-        //disable referer check because submission form has GET parameters in action URL!
-        if (!$feedback = data_submitted('nomatch')) {      // No incoming data?
+        if (!$feedback = data_submitted()) {      // No incoming data?
             return false;
         }
 
