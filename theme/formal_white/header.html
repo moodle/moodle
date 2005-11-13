@@ -1,45 +1,45 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html<?php echo $direction ?>>
-<head>
-    <?php echo $meta ?>
-    <meta name="keywords" content="moodle, <?php echo $title ?> " />
-    <title><?php echo $title ?></title>
-    <link rel="shortcut icon" href="<?php echo "$CFG->wwwroot/theme/$CFG->theme" ?>/favicon.ico" />
-    <?php include("$CFG->javascript"); ?>
-</head>
-
-<body<?php
-    echo " $bodytags";
-    if ($focus) {
-        echo " onload=\"setfocus()\"";
-    }
-    ?>>
-    
-<div id="page">
-
-<?php if ($home) {  // This is what gets printed on the home page only  
-?>
-    <div id="header-home">
-        <div class="headermain"><img src='<?php echo "$CFG->wwwroot/theme/$CFG->theme" ?>/logo.jpg' /></div>
-        <div class="headermenu"><?php echo $menu ?></div>
-    </div>
-<?php } else if ($heading) {  // This is what gets printed on any other page with a heading 
-?>
-    <div id="header">
-        <div class="headermain"><img src='<?php echo "$CFG->wwwroot/theme/$CFG->theme" ?>/logo_small.jpg' /></div>
-        <div class="headermenu"><?php echo $menu ?></div>
-    </div>
-<?php } ?>
-    <div class="clearer">&nbsp;</div>
-<?php if ($navigation) { // This is the navigation table with breadcrumbs  ?>
-    <div class="navbar">
-        <div class="breadcrumb"><?php print_navigation("$navigation"); ?></div>
-        <div class="navbutton"><?php echo $button; ?></div>
-    </div>
-<?php } else if ($heading) { // If no navigation, but a heading, then print a line  
-?>
-        <hr size="1" noshade="noshade" />
-<?php } ?>
-    <div class="clearer">&nbsp;</div>
-    <!-- END OF HEADER -->
-    <div id="content">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html<?php echo $direction ?>>
+<head>
+    <?php echo $meta ?>
+    <meta name="keywords" content="moodle, <?php echo $title ?> " />
+    <title><?php echo $title ?></title>
+    <link rel="shortcut icon" href="<?php echo $CFG->wwwroot.'/theme/'.current_theme() ?>/favicon.ico" />
+    <?php include("$CFG->javascript"); ?>
+</head>
+
+<body<?php
+    echo " $bodytags";
+    if ($focus) {
+        echo " onload=\"setfocus()\"";
+    }
+    ?>>
+    
+<div id="page">
+
+<?php if ($home) {  // This is what gets printed on the home page only  
+?>
+    <div id="header-home">
+        <div class="headermain"><img src='<?php echo $CFG->wwwroot.'/theme/'.current_theme() ?>/logo.jpg' /></div>
+        <div class="headermenu"><?php echo $menu ?></div>
+    </div>
+<?php } else if ($heading) {  // This is what gets printed on any other page with a heading 
+?>
+    <div id="header">
+        <div class="headermain"><img src='<?php echo $CFG->wwwroot.'/theme/'.current_theme() ?>/logo_small.jpg' /></div>
+        <div class="headermenu"><?php echo $menu ?></div>
+    </div>
+<?php } ?>
+    <div class="clearer">&nbsp;</div>
+<?php if ($navigation) { // This is the navigation table with breadcrumbs  ?>
+    <div class="navbar">
+        <div class="breadcrumb"><?php print_navigation("$navigation"); ?></div>
+        <div class="navbutton"><?php echo $button; ?></div>
+    </div>
+<?php } else if ($heading) { // If no navigation, but a heading, then print a line  
+?>
+        <hr size="1" noshade="noshade" />
+<?php } ?>
+    <div class="clearer">&nbsp;</div>
+    <!-- END OF HEADER -->
+    <div id="content">

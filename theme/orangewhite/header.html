@@ -4,7 +4,7 @@
     <?php echo $meta ?>
     <meta name="keywords" content="moodle, <?php echo $title ?> " />
     <title><?php echo $title ?></title>
-    <link rel="shortcut icon" href="<?php echo "$CFG->wwwroot/theme/$CFG->theme" ?>/favicon.ico" />
+    <link rel="shortcut icon" href="<?php echo $CFG->wwwroot.'/theme/'.current_theme() ?>/favicon.ico" />
     <?php include("$CFG->javascript"); ?>
 </head>
 
@@ -13,7 +13,7 @@
     if ($focus) {
         echo " onload=\"setfocus()\"";
     };
-    ?>
+    ?>>
     
 <div id="page">
 
