@@ -655,7 +655,6 @@ class assignment_base {
         } else {
             $currentgroup = false;
         }
-        $limit = ' '.sql_paging_limit($offset+1, 1);
 
     /// Get all teachers and students
         if ($currentgroup) {
@@ -669,6 +668,14 @@ class assignment_base {
         $sql = 'FROM '.$CFG->prefix.'user u '.
                'LEFT JOIN '.$CFG->prefix.'assignment_submissions s ON u.id = s.userid AND s.assignment = '.$this->assignment->id.' '.
                'WHERE u.id IN ('.implode(',', array_keys($users)).') ';
+               
+        require_once($CFG->libdir.'/tablelib.php');
+        if($sort = flexible_table::get_sql_sort('mod-assignment-submissions')) {
+            $sort = 'ORDER BY '.$sort.' ';
+        }
+
+        $limit = sql_paging_limit($offset+1, 1);
+
         $nextid = 0;
         if (($auser = get_record_sql($select.$sql.$sort.$limit)) !== false) {
             $nextid = $auser->id;
@@ -900,13 +907,7 @@ class assignment_base {
         }
 
         if ($sort = $table->get_sql_sort()) {
-            $sortparts = explode(',', $sort);
-            $newsort   = array();
-            foreach ($sortparts as $sortpart) {
-                $sortpart = trim($sortpart);
-                $newsort[] = $sortpart;
-            }
-            $sort = ' ORDER BY '.implode(', ', $newsort);
+            $sort = ' ORDER BY '.$sort;
         }
 
         $select = 'SELECT u.id, u.id, u.firstname, u.lastname, u.picture, s.id AS submissionid, s.grade, s.comment, s.timemodified, s.timemarked, ((s.timemarked > 0) AND (s.timemarked >= s.timemodified)) AS status ';
@@ -923,7 +924,6 @@ class assignment_base {
             $limit = '';
         }
     
-        $ssort = "$sort";//sorting order to allow replication of SQL statement
         ///offset used to calculate index of student in that particular query, needed for the pop up to know who's next
         $offset = $page * $perpage;
         
