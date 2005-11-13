@@ -664,17 +664,15 @@ class assignment_base {
         } else {
             $users = get_course_users($course->id);
         }
-    
+
         $select = 'SELECT u.id, u.id, u.firstname, u.lastname, u.picture,'.
                   's.id AS submissionid, s.grade, s.comment, s.timemodified, s.timemarked, ((s.timemarked > 0) AND (s.timemarked >= s.timemodified)) AS status ';
         $sql = 'FROM '.$CFG->prefix.'user u '.
                'LEFT JOIN '.$CFG->prefix.'assignment_submissions s ON u.id = s.userid AND s.assignment = '.$this->assignment->id.' '.
                'WHERE u.id IN ('.implode(',', array_keys($users)).') ';
         $nextid = 0;
-        if (($ausers = get_records_sql($select.$sql.$sort.$limit)) !== false) {
-            foreach ($ausers as $auser => $val){
-                $nextid = $val->id;
-            }
+        if (($auser = get_record_sql($select.$sql.$sort.$limit)) !== false) {
+            $nextid = $auser->id;
         }
         print_header(get_string('feedback', 'assignment').':'.fullname($user, true).':'.format_string($this->assignment->name));
 
@@ -751,8 +749,8 @@ class assignment_base {
         echo '<input type="submit" name="cancel" value="'.get_string('cancel').'" />';
         //if there are more to be graded.
         if ($nextid) {
-            echo '<input type="submit" name="saveandnext" value="'.get_string('saveandnext').'" onClick="saveNext()" />';
-            echo '<input type="submit" name="next" value="'.get_string('next').'" onClick="setNext();" />';
+            echo '<input type="submit" name="saveandnext" value="'.get_string('saveandnext').'" onclick="saveNext()" />';
+            echo '<input type="submit" name="next" value="'.get_string('next').'" onclick="setNext();" />';
         }
         echo '</div>';
         echo '</form>';
