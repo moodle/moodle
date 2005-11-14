@@ -476,40 +476,6 @@ function confirm_sesskey($sesskey=NULL) {
     return ($USER->sesskey === $sesskey);
 }
 
-/**
- * Unregister globals - emulates register_globals=off
- * for additional security
- * NOTE - needs some tweaking/thinking before use!!!
- * Borrowed from Mambo
- */
-function unregister_globals () {
-    $REQUEST = $_REQUEST;
-    $GET = $_GET;
-    $POST = $_POST;
-    $COOKIE = $_COOKIE;
-    if (isset ( $_SESSION )) {
-        $SESSION = $_SESSION;
-    }
-    $FILES = $_FILES;
-    $ENV = $_ENV;
-    $SERVER = $_SERVER;
-    foreach ($GLOBALS as $key => $value) {
-        if ( $key != 'GLOBALS' ) {
-            unset ( $GLOBALS [ $key ] );
-        }
-    }
-    $_REQUEST = $REQUEST;
-    $_GET = $GET;
-    $_POST = $POST;
-    $_COOKIE = $COOKIE;
-    if (isset ( $SESSION )) {
-        $_SESSION = $SESSION;
-    }
-    $_FILES = $FILES;
-    $_ENV = $ENV;
-    $_SERVER = $SERVER;
-}
-
 
 /**
  * Ensure that a variable is set

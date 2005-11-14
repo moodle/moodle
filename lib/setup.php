@@ -74,6 +74,12 @@ global $THEME;
 global $HTTPSPAGEREQUIRED;
 
 
+/// First try to detect some attacks on older buggy PHP versions
+	if (isset($_REQUEST['GLOBALS']) || isset($_COOKIE['GLOBALS']) || isset($_FILES['GLOBALS'])) {
+        die('Fatal: Illegal GLOBALS overwrite attempt detected!');
+    }
+
+
     if (!isset($CFG->wwwroot)) {
         trigger_error('Fatal: $CFG->wwwroot is not configured! Exiting.');
         die;
@@ -251,6 +257,7 @@ $CFG->httpswwwroot = $CFG->wwwroot;
 
 
 /// A hack to get around magic_quotes_gpc being turned off
+/// It is strongly recommended to enable "magic_quotes_gpc"!
 
     if (!ini_get_bool('magic_quotes_gpc') ) {
         function addslashes_deep($value) {
@@ -262,28 +269,60 @@ $CFG->httpswwwroot = $CFG->wwwroot;
         $_POST = array_map('addslashes_deep', $_POST);
         $_GET = array_map('addslashes_deep', $_GET);
         $_COOKIE = array_map('addslashes_deep', $_COOKIE);
+        $_REQUEST = array_map('addslashes_deep', $_REQUEST);
+        if (!empty($_SERVER['REQUEST_URI'])) {
+            $_SERVER['REQUEST_URI'] = addslashes($_SERVER['REQUEST_URI']);
+        }
+        if (!empty($_SERVER['QUERY_STRING'])) {
+            $_SERVER['QUERY_STRING'] = addslashes($_SERVER['QUERY_STRING']);
+        }
+        if (!empty($_SERVER['HTTP_REFERER'])) {
+            $_SERVER['HTTP_REFERER'] = addslashes($_SERVER['HTTP_REFERER']);
+        }
+       if (!empty($_SERVER['PATH_INFO'])) {
+            $_SERVER['PATH_INFO'] = addslashes($_SERVER['PATH_INFO']);
+        }
+        if (!empty($_SERVER['PHP_SELF'])) {
+            $_SERVER['PHP_SELF'] = addslashes($_SERVER['PHP_SELF']);
+        }
+        if (!empty($_SERVER['PATH_TRANSLATED'])) {
+            $_SERVER['PATH_TRANSLATED'] = addslashes($_SERVER['PATH_TRANSLATED']);
+        }
     }
 
 
 /// The following is a hack to get around the problem of PHP installations
 /// that have "register_globals" turned off (default since PHP 4.1.0).
-/// Eventually I'll go through and upgrade all the code to make this unnecessary
+/// This hack will be removed in 1.6.
+/// It is strongly recommended to disable "register_globals"!
 /// $CFG->disableglobalshack=true in config.php will override this (for dev testing)
 
     if (empty($CFG->disableglobalshack)) {
-      if (isset($_GET)) {
-          extract($_GET, EXTR_SKIP);    // Skip existing variables, ie CFG
-      }
-      if (isset($_POST)) {
-          extract($_POST, EXTR_SKIP);   // Skip existing variables, ie CFG
-      }
-      if (isset($_SERVER)) {
-          extract($_SERVER);
-      }
-    }
-    else {
-      // remove globals if they are set in the server.
-      // unregister_globals();
+	    if (!empty($CFG->detect_unchecked_vars)) {
+	        global $UNCHECKED_VARS;
+	        $UNCHECKED_VARS->url = $_SERVER['PHP_SELF'];
+	        $UNCHECKED_VARS->vars = array();
+	    }
+	
+	    if (isset($_GET)) {
+	        extract($_GET, EXTR_SKIP);    // Skip existing variables, ie CFG
+	        if (!empty($CFG->detect_unchecked_vars)) {
+	            foreach ($_GET as $key => $val) {
+	                $UNCHECKED_VARS->vars[$key]=$val;
+	            }
+	        }
+	    }
+	    if (isset($_POST)) {
+	        extract($_POST, EXTR_SKIP);   // Skip existing variables, ie CFG
+	        if (!empty($CFG->detect_unchecked_vars)) {
+	            foreach ($_POST as $key => $val) {
+	                $UNCHECKED_VARS->vars[$key]=$val;
+	            }
+	        }
+	    }
+	    if (isset($_SERVER)) {
+	        extract($_SERVER);
+	    }
     }
 
 
