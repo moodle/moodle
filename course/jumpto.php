@@ -7,11 +7,12 @@
 
     require('../config.php');
 
-    $jump = optional_param('jump', '');
+//TODO: fix redirect before enabling - SC#189
+/*    $jump = optional_param('jump', '');
 
     if ($jump) {
         redirect(urldecode($jump));
-    }
+    }*/
 
     redirect($_SERVER['HTTP_REFERER']);
 
