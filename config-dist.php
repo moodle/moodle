@@ -143,12 +143,6 @@ $CFG->admin = 'admin';
 // This is especially useful for demonstration teacher accounts
 //      $CFG->restrictusers = 'teacher,fred,jim';
 //
-// Turning this on will make Moodle filter more than usual, including
-// forum subjects, activity names and so on (in ADDITION to the normal
-// texts like forum postings, journals etc).  This is mostly only useful
-// when using the multilang filter.   This feature may not be complete.
-//      $CFG->filterall = true;
-//
 // Setting this to true will enable admins to edit any post at any time
 //      $CFG->admineditalways = true;
 //
