@@ -243,6 +243,7 @@ function upgrade_activity_modules($return) {
 
     if (!empty($updated_modules)) {
         print_continue($return);
+        print_footer();
         die;
     }
 }
