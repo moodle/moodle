@@ -2861,7 +2861,7 @@ function hpScore() {
 
 	} else if (t==7) { // rhubarb
 		if (v==6) {
-			x = hpScoreEngine(1, DoneList, "a[i]==1");
+			x = Math.floor(100*Correct/TotalWords);
 		}
 
 	} else if (t==8) { // sequitur
