@@ -134,6 +134,13 @@ define('PAGE_COURSE_VIEW', 'course-view');
  */
 function required_param($varname, $options=PARAM_CLEAN) {
 
+    // detect_unchecked_vars addition
+    global $CFG;
+    if (!empty($CFG->detect_unchecked_vars)) {
+        global $UNCHECKED_VARS;
+        unset ($UNCHECKED_VARS->vars[$varname]);
+    }
+
     if (isset($_POST[$varname])) {       // POST has precedence
         $param = $_POST[$varname];
     } else if (isset($_GET[$varname])) {
@@ -160,6 +167,13 @@ function required_param($varname, $options=PARAM_CLEAN) {
  * @return mixed
  */
 function optional_param($varname, $default=NULL, $options=PARAM_CLEAN) {
+
+    // detect_unchecked_vars addition
+    global $CFG;
+    if (!empty($CFG->detect_unchecked_vars)) {
+        global $UNCHECKED_VARS;
+        unset ($UNCHECKED_VARS->vars[$varname]);
+    }
 
     if (isset($_POST[$varname])) {       // POST has precedence
         $param = $_POST[$varname];

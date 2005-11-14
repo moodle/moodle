@@ -1924,6 +1924,18 @@ function print_header_simple($title='', $heading='', $navigation='', $focus='', 
 function print_footer($course=NULL, $usercourse=NULL) {
     global $USER, $CFG, $THEME;
 
+    if (!empty($CFG->detect_unchecked_vars)) {
+        global $UNCHECKED_VARS;
+        if (!empty($UNCHECKED_VARS->vars)) {
+            foreach($UNCHECKED_VARS->vars as $key => $value) {
+                if(!empty($CFG->detect_unchecked_vars_to_mdl_log)) {
+                    add_to_log(SITEID, 'dev', 'unchecked vars', $UNCHECKED_VARS->url, $key);
+                }
+            }
+            error_log('unchecked vars ['.$UNCHECKED_VARS->url.'] : ' . join(' ', array_keys($UNCHECKED_VARS->vars));
+        }
+    }
+
 /// Course links
     if ($course) {
         if ($course == 'none') {          // Don't print any links etc

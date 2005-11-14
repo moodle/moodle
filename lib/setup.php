@@ -269,11 +269,26 @@ $CFG->httpswwwroot = $CFG->wwwroot;
 /// that have "register_globals" turned off (default since PHP 4.1.0).
 /// Eventually I'll go through and upgrade all the code to make this unnecessary
 
+    if (!empty($CFG->detect_unchecked_vars)) {
+        global $UNCHECKED_VARS;
+        $UNCHECKED_VARS->url = $_SERVER['PHP_SELF'];
+    }
+
     if (isset($_GET)) {
         extract($_GET, EXTR_SKIP);    // Skip existing variables, ie CFG
+        if (!empty($CFG->detect_unchecked_vars)) {
+            foreach ($_GET as $key => $val) {
+                $UNCHECKED_VARS->vars[$key]=$val;
+            }
+        }
     }
     if (isset($_POST)) {
         extract($_POST, EXTR_SKIP);   // Skip existing variables, ie CFG
+        if (!empty($CFG->detect_unchecked_vars)) {
+            foreach ($_POST as $key => $val) {
+                $UNCHECKED_VARS->vars[$key]=$val;
+            }
+        }
     }
     if (isset($_SERVER)) {
         extract($_SERVER);
