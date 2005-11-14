@@ -206,6 +206,7 @@ $string['coursefiles'] = 'Course files';
 $string['courseformats'] = 'Course formats';
 $string['coursegrades'] = 'Course grades';
 $string['courseinfo'] = 'Course info';
+$string['courseimportnotaught'] = 'You don\'t seem to be an editing teacher in any other courses, there are no courses for you to import from.';
 $string['coursenotaccessible'] = 'This course does not allow public access';
 $string['courserestore'] = 'Course restore';
 $string['courses'] = 'Courses';
