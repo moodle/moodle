@@ -333,9 +333,9 @@ define('MAGPIE_CACHE_ON', true); //might want to expose as an admin config optio
 define('MAGPIE_CACHE_FRESH_ONLY', false); //should be exposed as an admin config option
 define('MAGPIE_CACHE_AGE', $CFG->block_rss_timeout);
 if ($CFG->debug) {
-    define('MAGPIE_DEBUG', true);
+    define('MAGPIE_DEBUG', $CFG->debug); // magpie, like moodle, takes an integer debug
 } else {
-    define('MAGPIE_DEBUG', false);
+    define('MAGPIE_DEBUG', 0); // 0 is DEBUG off for magpie
 }
 
 // defines for config var block_rss_client_submitters
@@ -357,12 +357,12 @@ function rss_display_feeds($courseid='', $userid='', $rssid='') {
     $select = '';
 
     if (!isadmin()) {
-     	$userid = $USER->id;
+        $userid = $USER->id;
     }
 
     if ($userid != '' && is_numeric($userid)) {
-	    // if a user is specified and not an admin then only show their own feeds
-	    $select = 'userid='. $userid;
+        // if a user is specified and not an admin then only show their own feeds
+        $select = 'userid='. $userid;
     } else if ($rssid != ''){
         $select = 'id='. $rssid;
     }
@@ -393,19 +393,18 @@ function rss_display_feeds($courseid='', $userid='', $rssid='') {
 
             if ($feed->userid == $USER->id || isadmin()) {
                 
-                $feedicons = '<a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?id='. $courseid .'&amp;act=rss_edit&amp;rssid='. $feed->id .'&blogid='. $blogid .'">'.
+                $feedicons = '<a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?id='. $courseid .'&amp;act=rssedit&amp;rssid='. $feed->id .'&blogid='. $blogid .'">'.
                              '<img src="'. $CFG->pixpath .'/t/edit.gif" alt="'. get_string('edit').'" title="'. get_string('edit') .'" /></a>&nbsp;'.
                              
                              '<a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?id='. $courseid .'&amp;act=delfeed&amp;rssid='. $feed->id.'&amp;blogid='. $blogid .'" 
-				onclick="return confirm(\''. get_string('deletefeedconfirm', 'block_rss_client') .'\');">'.
+                onclick="return confirm(\''. get_string('deletefeedconfirm', 'block_rss_client') .'\');">'.
                              '<img src="'. $CFG->pixpath .'/t/delete.gif" alt="'. get_string('delete').'" title="'. get_string('delete') .'" /></a>';
             }
             else {
                 $feedicons = '';
             }
 
-            $feedinfo = '<div class="title"><a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?id='. $courseid .'&amp;act=view&rssid='.$feed->id .'&blogid='. $blogid .'">'
-                        .$feedtitle .'</a></div><div class="url"><a href="'. $feed->url .'">'. $feed->url .'</a></div><div class="description">'.$feed->description.'</div>';
+            $feedinfo = '<div class="title"><a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?id='. $courseid .'&amp;act=view&rssid='.$feed->id .'&blogid='. $blogid .'">'. $feedtitle .'</a></div><div class="url"><a href="'. $feed->url .'">'. $feed->url .'</a></div><div class="description">'.$feed->description.'</div>';
             
             $table->add_data(array($feedinfo, $feedicons));
         }
@@ -434,7 +433,7 @@ function rss_print_form($act='none', $url='', $rssid='', $preferredtitle='', $co
 }
 /**
  * Prints or returns a form for managing rss feed entries.
- * @param string $act The current action. If "rss_edit" then and "update" button is used, otherwise "add" is used.
+ * @param string $act The current action. If "rssedit" then and "update" button is used, otherwise "add" is used.
  * @param string $url The url of the feed that is being updated or NULL
  * @param int $rssid The dataabse id of the feed that is being updated or NULL
  * @param int $id The id of the course that is currently being viewed if applicable
@@ -451,36 +450,37 @@ function rss_get_form($act='none', $url='', $rssid='', $preferredtitle='', $cour
     $returnstring = '<table align="center"><tbody><tr><td>'."\n";    
     $returnstring .= '<form action="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php" method="POST" name="block_rss">'."\n";
 
-    if ($act == 'rss_edit') {
+    if ($act == 'rssedit') {
         $returnstring .= $strupdatefeed; 
     } else { 
         $returnstring .= $straddfeed; 
     }
 
     $returnstring .= "\n".'<br /><input type="text" size="60" maxlength="256" name="url" value="';
-    if ($act == 'rss_edit') { 
+    if ($act == 'rssedit') { 
         $returnstring .= $url; 
     }
 
     $returnstring .= '" />'."\n";
     $returnstring .= '<br />'. get_string('customtitlelabel', 'block_rss_client');
-    $returnstring .= '<br /><input type="text" size="60" maxlength="64" name="preferredtitle" value="';
+//    $returnstring .= '<br /><input type="text" size="60" maxlength="64" name="preferredtitle" value="';
+    $returnstring .= '<br /><input type="text" size="60" maxlength="128" name="preferredtitle" value="';
 
-    if ($act == 'rss_edit') { 
+    if ($act == 'rssedit') { 
         $returnstring .= $preferredtitle; 
     }
 
     $returnstring .= '" />'."\n";
     $returnstring .= '<input type="hidden" name="act" value="';
 
-    if ($act == 'rss_edit') {
+    if ($act == 'rssedit') {
         $returnstring .= 'updfeed';
     } else {
         $returnstring .= 'addfeed';
     }
 
     $returnstring .= '" />'."\n";
-    if ($act == 'rss_edit') { 
+    if ($act == 'rssedit') { 
         $returnstring .= '<input type="hidden" name="rssid" value="'. $rssid .'" />'. "\n"; 
     }
 
@@ -491,7 +491,7 @@ function rss_get_form($act='none', $url='', $rssid='', $preferredtitle='', $cour
     $validatestring = "<a href=\"#\" 
 onClick=\"window.open('http://feedvalidator.org/check.cgi?url='+document.block_rss.elements['url'].value,'validate','width=640,height=480,scrollbars=yes,status=yes,resizable=yes');return true;\">". get_string('validatefeed', 'block_rss_client')."</a>";
 
-    if ($act == 'rss_edit') {
+    if ($act == 'rssedit') {
         $returnstring .= $stredit;
     } else {
         $returnstring .= $stradd;
