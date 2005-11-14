@@ -272,6 +272,7 @@ $CFG->httpswwwroot = $CFG->wwwroot;
     if (!empty($CFG->detect_unchecked_vars)) {
         global $UNCHECKED_VARS;
         $UNCHECKED_VARS->url = $_SERVER['PHP_SELF'];
+        $UNCHECKED_VARS->vars = array();
     }
 
     if (isset($_GET)) {
@@ -293,7 +294,6 @@ $CFG->httpswwwroot = $CFG->wwwroot;
     if (isset($_SERVER)) {
         extract($_SERVER);
     }
-
 
 /// Load up global environment variables
 

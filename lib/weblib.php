@@ -1932,7 +1932,7 @@ function print_footer($course=NULL, $usercourse=NULL) {
                     add_to_log(SITEID, 'dev', 'unchecked vars', $UNCHECKED_VARS->url, $key);
                 }
             }
-            error_log('unchecked vars ['.$UNCHECKED_VARS->url.'] : ' . join(' ', array_keys($UNCHECKED_VARS->vars));
+            error_log('unchecked vars ['.$UNCHECKED_VARS->url.'] : ' . join(' ', array_keys($UNCHECKED_VARS->vars)));
         }
     }
 
