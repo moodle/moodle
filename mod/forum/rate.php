@@ -36,6 +36,7 @@
                 continue;
             }
 
+            $postid = (int)$postid;
             $lastpostid = $postid;
 
             if ($oldrating = get_record("forum_ratings", "userid", $USER->id, "post", $postid)) {
