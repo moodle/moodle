@@ -86,10 +86,55 @@
     <li> Big and small optimizations to tracking of read/unread messages, specially for PostgreSQL</li>
     <li> Fixed some PostgreSQL bugs</li>
     <li> Settings for tracking of unread messages are now covered by backup/restore, see <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3852">bug 3582</a></li>
-    <li> Now message forum RSS feeds are including category data &emdash; useful under some RSS agregators able to group messages,
-  credits go to Dmitry Pupinin   <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3654" target="_blank">Bug 3654</a></li>
+    <li> Now message forum RSS feeds are including category data -- useful under some RSS agregators able to group messages, see <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3654" target="_blank">bug 3654</a></li>
     <li> Fixed paging on forum search</li>
 </ul>
+
+<h4>Blocks</h4>
+  <ul type="circle">
+  <li> Several performance improvements </li>
+  <li> Fixes to the upgrade process, including PostgreSQL syntax and lower memory usage</li>
+  <li> Brought in several bugfixes from 1.6dev</li>
+  <li> Fixed <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3478" target="_blank">bug 3478</a>: Cannot add RSS feed as course creator</li>
+<li>  Fixed  <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3793" target="_blank">bug 3793</a>:
+  Prevent warning message when configuring a glossary_random block in
+ a course which has no glossaries</li>
+
+</ul>
+
+<h4>Quiz</h4>
+  <ul type="circle">
+  <li> Some CSS style fixes</li>
+  <li> Better compatibility with themes that contain forms in the headers</li>
+  <li> Highlighting of correct answers can now be turned off</li>
+  <li> Fixed <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3986" target="_blank">bug 3986</a>: Too many random questions. 
+  (mindforge)</li>
+  <li> Fixed 
+ <a href="http://moodle.org/mod/forum/discuss.php?d=28466#139179">missing action icons</a></li>
+  <li> Fixed <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3899" target="_blank">bug 3899</a> and removed some 'missing
+ course object' messages</li>
+  <li>  Fixed  <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3950" target="_blank">bug 3950</a>: Ee-attempt button inconsistency for multi-attempt quizzes</li>
+
+  <li> Fixed <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3953" target="_blank">bug 3953</a>: Quiz/report.php pagesize can be set to 0, credits to Jean-Michel</li>
+
+  <li> Fixed potential data data corruption <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3915" target="_blank">bug 3915</a></li>
+
+  <li> Fixed  <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3884" target="_blank">bug 3884</a>: Quiz correct highlights missing for 2 of 3 options.</li>
+
+
+  <li> Fix for the <a href="http://moodle.org/mod/forum/discuss.php?d=26526">Student review highlight doesn't seem to work</a> bug</li>
+
+
+  <li> Fixed <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3804" target="_blank">bug 3804</a>: Differences in question types between 1.5 and 1.6</li>
+ <li>  Fixed  <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3822" target="_blank">bug 3822</a>: don't count previews as attempts</li>
+  <li> Fixed <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3807" target="_blank">bug 3807</a>:  Question numbering issue</li>
+  <li> Fixes for the <a href="http://moodle.org/mod/forum/discuss.php?d=27553" target="_blank">item analysis
+ plug-in</a>, assembled by Jean-Michel</li>
+  <li> Now we reset the timeout counter to <a href="http://moodle.org/mod/forum/discuss.php?d=24790#129431" target="_blank">avoid timeouts</a></li>
+ <li>  Several  <a href="http://moodle.org/mod/forum/discuss.php?d=27766" target="_blank">improvements</a> contributed by Jean-Michel Vedrine. You can now change the number of attempts per page displayed on screen, and download results to Excel/text file, including detailed grades</li>
+  <li> Fixed export bug with non-English languages</li>
+  </ul>
+
 
 
 
