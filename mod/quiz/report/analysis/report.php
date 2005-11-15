@@ -40,19 +40,6 @@ class quiz_report extends quiz_default_report {
             $currentgroup = false;
         }
 
-    /// Get all users: students
-        if ($currentgroup) {
-            $users = get_group_students($currentgroup);
-        }
-        else {
-            $users = get_course_students($course->id);
-        }
-
-        if(empty($users)) {
-            print_heading($strnoattempts);
-            return true;
-        }
-        
         // set Table and Analysis stats options
         if(!isset($SESSION->quiz_analysis_table)) {
             $SESSION->quiz_analysis_table = array('attemptselection' => 0, 'lowmarklimit' => 0, 'pagesize' => 10);
@@ -96,9 +83,12 @@ class quiz_report extends quiz_default_report {
         }
 
         $sql = 'SELECT  qa.* FROM '.$CFG->prefix.'user u '.
-               'LEFT JOIN '.$CFG->prefix.'quiz_attempts qa ON u.id = qa.userid '.
-               'WHERE u.id IN ('.implode(',', array_keys($users)).') AND ( qa.quiz = '.$quiz->id.') '. // ULPGC ecastro
-               ' AND ( qa.sumgrades >= '.$scorelimit.' ) ';
+            'JOIN '.$CFG->prefix.'quiz_attempts qa ON u.id = qa.userid ';
+            if (!empty($currentgroup)) {
+                $sql .= ' JOIN '.$CFG->prefix.'groups_members gm ON u.id = gm.userid AND gm.groupid = '.$currentgroup;
+            }
+            $sql .= ' WHERE qa.quiz = '.$quiz->id.  // ULPGC ecastro
+                ' AND ( qa.sumgrades >= '.$scorelimit.' ) ';
                                                                                    // ^^^^^^ es posible seleccionar aquí TODOS los quizzes, como quiere Jussi,
                                                                                    // pero habría que llevar la cuenta ed cada quiz para restaura las preguntas (quizquestions, states)
         /// Fetch the attempts
