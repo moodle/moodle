@@ -472,21 +472,48 @@ class assignment_base {
 
             case 'fastgrade':
                 ///do the fast grading stuff  - this process should work for all 3 subclasses
-                foreach ($_POST['comment'] as $id => $commentvalue){
+                $grading = false;
+                $commenting = false;
+                if (isset($_POST['comment'])) {
+                    $arr = 'comment';
+                    $commenting = true;
+                }
+                if (isset($_POST['menu'])) {
+                    $arr = 'menu';
+                    $grading = true;
+                }
+                if (!$grading && !$commenting) {
+                    //both comment and grade hidden..
+	                $this->display_submissions();            
+                    break;
+                }
+                foreach ($_POST[$arr] as $id => $unusedvalue){
                     
-                    $grade = $_POST['menu'][$id];
                     $newsubmission = $this->get_submission($id, true);  // Get or make one
-                           
-                    //for fast grade, we need to check if any changes take place
-                    $duplicate = ($newsubmission->grade == $grade && $newsubmission->comment == stripslashes($commentvalue));
-            
-                    $newsubmission->grade      = $grade;
-                    $newsubmission->comment    = $commentvalue;
-                    $newsubmission->teacher    = $USER->id;
-                    $newsubmission->mailed     = $duplicate?$newsubmission->mailed:0;//only change if it's a duplicate
-                    $newsubmission->timemarked = time();
                     unset($newsubmission->data1);  // Don't need to update this.
                     unset($newsubmission->data2);  // Don't need to update this.        
+
+                    //for fast grade, we need to check if any changes take place
+                    $updatedb = false;
+
+                    if ($grading) {
+                        $grade = $_POST['menu'][$id];
+                        $updatedb = $updatedb || ($newsubmission->grade != $grade);
+                        $newsubmission->grade = $grade;
+                    } else {
+                        unset($newsubmission->grade);  // Don't need to update this.        
+                    }
+                    if ($commenting) {
+                        $commentvalue = $_POST['comment'][$id];
+                        $updatedb = $updatedb || ($newsubmission->comment != stripslashes($commentvalue));
+                        $newsubmission->comment = $commentvalue;
+                    } else {
+                        unset($newsubmission->comment);  // Don't need to update this.        
+                    }
+                           
+                    $newsubmission->teacher    = $USER->id;
+                    $newsubmission->mailed     = !$updatedb?$newsubmission->mailed:0;//only change if it's a duplicate
+                    $newsubmission->timemarked = time();
                     
                     if (empty($newsubmission->timemodified)) {   // eg for offline assignments
                         $newsubmission->timemodified = time();
@@ -495,7 +522,7 @@ class assignment_base {
                     //if it is a duplicate, we don't change the last modified time etc.
                     //this will also not write into database if no comment and grade is entered.
                     
-                    if (!$duplicate){
+                    if ($updatedb){
                         if (!update_record('assignment_submissions', $newsubmission)) {
                             return false;
                         }            
@@ -560,7 +587,7 @@ class assignment_base {
             //echo optional_param('menuindex');
             if ($quickgrade){
                 echo 'opener.document.getElementById("menumenu['.$submission->userid.
-                ']").selectedIndex="'.optional_param("menuindex").'";'."\n";
+                ']").selectedIndex="'.optional_param('menuindex', 0, PARAM_INT).'";'."\n";
             } else {
                 echo 'opener.document.getElementById("g'.$submission->userid.'").innerHTML="'.
                 $this->display_grade($submission->grade)."\";\n";
@@ -582,7 +609,7 @@ class assignment_base {
         if (empty($SESSION->flextable['mod-assignment-submissions']->collapse['status'])) {
            echo 'opener.document.getElementById("up'.$submission->userid.'").className="s1";';
             $buttontext = get_string('update');
-            $button = link_to_popup_window ('/mod/assignment/submissions.php?id='.$this->cm->id.'&amp;userid='.$submission->userid.'&amp;mode=single'.'&amp;offset='.optional_param('offset'), 
+            $button = link_to_popup_window ('/mod/assignment/submissions.php?id='.$this->cm->id.'&amp;userid='.$submission->userid.'&amp;mode=single'.'&amp;offset='.optional_param('offset', '', PARAM_INT), 
                       'grade'.$submission->userid, $buttontext, 450, 700, $buttontext, 'none', true, 'button'.$submission->userid);
                echo 'opener.document.getElementById("up'.$submission->userid.'").innerHTML="'.addslashes($button).'";';               
         }        
@@ -809,10 +836,10 @@ class assignment_base {
          */
          
         if (isset($_POST['updatepref'])){
-            $perpage = (int)optional_param('perpage',10);
+            $perpage = optional_param('perpage', 10, PARAM_INT);
             $perpage = ($perpage <= 0) ? 10 : $perpage ;
             set_user_preference('assignment_perpage', $perpage);
-            set_user_preference('assignment_quickgrade', (string)optional_param('quickgrade','0'));
+            set_user_preference('assignment_quickgrade', optional_param('quickgrade',0, PARAM_BOOL));
         }
 
         /* next we get perpage and quickgrade (allow quick grade) params 
@@ -822,7 +849,7 @@ class assignment_base {
         $quickgrade = get_user_preferences('assignment_quickgrade', 0);
         
         $teacherattempts = true; /// Temporary measure
-        $page    = optional_param('page', 0);
+        $page    = optional_param('page', 0, PARAM_INT);
         $strsaveallfeedback = get_string('saveallfeedback', 'assignment');
 
     /// Some shortcuts to make the code read better
@@ -1016,6 +1043,7 @@ class assignment_base {
             echo '<form action="submissions.php" name="fastg" method="post">';
             echo '<input type="hidden" name="id" value="'.$this->cm->id.'">';
             echo '<input type="hidden" name="mode" value="fastgrade">';
+            echo '<input type="hidden" name="page" value="'.$page.'">';
         }
 
         $table->print_html();  /// Print the whole table
@@ -1125,6 +1153,7 @@ class assignment_base {
         $newsubmission->assignment = $this->assignment->id;
         $newsubmission->userid = $userid;
         $newsubmission->timecreated = time();
+        $newsubmission->grade = -1;
         if (!insert_record("assignment_submissions", $newsubmission)) {
             error("Could not insert a new empty submission");
         }
