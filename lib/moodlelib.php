@@ -238,7 +238,14 @@ function clean_param($param, $options) {
     }
 
     if ($options & PARAM_BOOL) {         // Convert to 1 or 0
-        $param = empty($param) ? 0 : 1;
+        $tempstr = strtolower($param);
+        if ($tempstr == 'on') {
+            $param = 1;
+        } else if ($tempstr == 'off') {
+            $param = 0;
+        } else {
+            $param = empty($param) ? 0 : 1;
+        }
     }
 
     if ($options & PARAM_NOTAGS) {       // Strip all tags completely
