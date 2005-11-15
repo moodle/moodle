@@ -14,7 +14,7 @@
 <?php echo $loggedinas ?>
 
 
-<?php if ($CFG->debug > 7) { 
+<?php if ($CFG->debug > 7 || !empty($CFG->perfdebug)) { 
           echo $performanceinfo;
 ?>
           <br />
