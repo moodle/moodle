@@ -24,6 +24,75 @@
 
 <h1>Latest Release notes</h1>
 
+<h2>Moodle 1.5.3 (11th November, 2005) </h2>
+
+<p>(Because this release contains important security fixes, we highly advise 
+   that sites using any previous version of Moodle upgrade to this version 
+   as soon as possible.)</p>
+<h3>A few new things</h3>
+  <ul type="circle">
+
+  </ul>
+
+
+<h3>Various fixes</h3>
+
+<h4>General</h4>
+  <ul type="circle">
+  <li> Backups now run a lot faster on medium/large installs. A slowdown related to the new messaging infrastructure has been resolved</li>
+  <li> Listing of directory sizes can be made <em>much</em> faster on Linux/Unix servers, thanks to a performance fix you can enable from Admin-&gt;Variables: "path_to_du"</li>
+  <li> Upgrade scripts have been refined and work much better for PostgreSQL installations</li>
+  <li> PostgreSQL port code cleanup</li>
+  <li> We now log more meaningful IP addresses when working behind a proxy</li>
+  </ul>
+
+<h4>Authentication</h4>
+  <ul type="circle">
+  <li> Fixes to change password/forgotten password with external auth</li>
+  <li> Data fetched from external DB or LDAP is now truncated correctly</li>  
+  <li> Better support for utf-8 user data from external auth</li>
+  <li> LDAP: General fixes covering sync_users script and logging of errors</li>
+  <li> LDAP: Fixed  <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3141" target="_blank">bug 3141</a> - Can't update external data
+ with LDAP authentication</li>
+
+  <li> LDAP: Fixed  <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3992" target="_blank">bug 3992</a> - LDAP password including a
+ quote does not work - credits go to Kita</li>
+  <li> LDAP: Better support for ActiveDirectory.</li> 
+  <li> LDAP: Fixed <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3594" target="_blank">bug #3594</a></li> 
+  <li> LDAP: Better handling of multi-source field mapping</li>
+  <li> LDAP: Fix for using DN as idnumber - thanks fo Jeff Graham - <a href="http://moodle.org/mod/forum/discuss.php?d=28840" target="_blank">http://moodle.org/mod/forum/discuss.php?d=28840</a>
+</li>
+</ul>
+<h4>Enrolment & Metacourses</h4>
+  <ul type="circle">
+  <li> Metacourses: Prevent normal users to gain access to meta courses via manual enrolment</li>
+  <li> Metacourses: better support for MySQL v3.23.x</li>
+  <li> DB: Enrolment lookups now work reliably with Moodle on MySQL and Postgres</li>
+  <li> DB: Non-MySQL databases work again as external enrolment databases</li>
+  <li> LDAP: Fixed a wrong call to add_teacher in LDAP plugi.</li>
+  <li> LDAP: Servers being down or unavailable no longer prevent logins</li>
+  <li> LDAP: Course auto-creation works again</li>
+  <li> LDAP: Fixed several bugs reported by Jeff Graham and Barron Koralesky -- including bugs 3912 and 3974</li>
+  <li> LDAP: We can now bind non-anonymously to LDAP</li>
+  </ul>
+
+<h4>Resources</h4>
+  <ul type="circle">
+  <li> Bugfix: Avoid linking to empty or unlinkable activity names</li>
+  </ul>
+
+<h4>Forums</h4>
+  <ul type="circle">
+    <li> Big and small optimizations to tracking of read/unread messages, specially for PostgreSQL</li>
+    <li> Fixed some PostgreSQL bugs</li>
+    <li> Settings for tracking of unread messages are now covered by backup/restore, see <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3852">bug 3582</a></li>
+    <li> Now message forum RSS feeds are including category data &emdash; useful under some RSS agregators able to group messages,
+  credits go to Dmitry Pupinin   <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3654" target="_blank">Bug 3654</a></li>
+    <li> Fixed paging on forum search</li>
+</ul>
+
+
+
 <h2>Moodle 1.5.2 (16th July, 2005) </h2>
 
 <h3>Various fixes</h3>
