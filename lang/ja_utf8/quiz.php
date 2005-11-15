@@ -385,6 +385,7 @@ $string['showdetailedmarks'] = '評点の詳細を表示';
 $string['showfeedback'] = '解答後にフィードバックを表示しますか?';
 $string['showhidden'] = '隠された問題も表示する';
 $string['shownoattempts'] = '未受験の学生を表示';
+$string['shownoattemptsonly'] = '未受験の学生のみを表示';
 $string['showteacherattempts'] = '教師の受験を表示';
 $string['shuffleanswers'] = '答えをシャッフルする';
 $string['shufflequestions'] = '問題をシャッフルする';
