@@ -31,7 +31,7 @@
    as soon as possible.)</p>
 <h3>A few new things</h3>
   <ul type="circle">
-  <li> We now support SCORM 1.3 (SCORM 2004)!</li>
+  <li> We now have SCORM 1.3 (SCORM 2004) support!</li>
   <li> A new Single-Sign-On API is available</li>
   </ul>
 
@@ -53,13 +53,17 @@
   <li> We now send away bots (like Googlebot) from that try mangled URLs, see <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3958" target="_blank">bug 3958</a></li>
   <li> Better  <a href="http://moodle.org/mod/forum/discuss.php?d=29564" target="_blank">DST support for non-logged-in users</a></li>
   <li> Better  DST support for repeat events in Calendar</li>
-  <li> Several fixes to the lesson module</li>
+  <li> Small fixes to the lesson, choice and grade modules</li>
+  <li> Minor CSS improvements to formal_white and orangewhite themes</li>
+  <li> Better pagination in course listing and loglive pages</li>
+  <li> Fixed an IE-only bug related to HTMLArea content where user-edited tables could float and hide part of the UI.</li>
   </ul>
 
 <h4>Authentication</h4>
   <ul type="circle">
   <li> Fixes to change password/forgotten password with external auth</li>
-  <li> Data fetched from external DB or LDAP is now truncated correctly</li>  
+  <li> Data fetched from external DB or LDAP is now truncated correctly</li> 
+  <li> Fixed <a href="http://moodle.org/bugs/bug.php?op=show&bugid=4305" target="_blank">bug 4305</a> -- better login block behaviour when using secureforms</li>
   <li> Better support for utf-8 user data from external auth</li>
   <li> LDAP: General fixes covering sync_users script and logging of errors</li>
   <li> LDAP: Fixed  <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3141" target="_blank">bug 3141</a> - Can't update external data
@@ -169,6 +173,7 @@
  important words by mistake (eg Dickens) and there needs to be some
  way to recover the meaning</li>
   </ul>
+
 
 
 <h2>Moodle 1.5.2 (16th July, 2005) </h2>
