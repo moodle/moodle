@@ -263,10 +263,7 @@ function optional_param($varname, $default=NULL, $options=PARAM_CLEAN) {
 }
 
 /**
- * Convenience function to test if a parameter is set
- *
- * @param string $varname The name of the parameter being checked
- * @return bool Returns true if the parameter set, otherwise false
+ * HACK ALERT! Do not use this function, it will be removed soon!!
  */
 function isset_param($varname) {
   if (isset($_GET[$varname])) {
@@ -538,11 +535,7 @@ function optional_variable(&$var, $default=0) {
 
 
 /**
- * If a variable is empty set it to the default
- * otherwise leave it alone
- * @param mixed $var the variable to test
- * @param mixed $default the default value
- * @return bool true if variable has changed
+ * HACK ALERT! Do not use this function, it will be removed soon!!
  */
 function set_default( &$var, $default ) {
   if (empty($var)) {
