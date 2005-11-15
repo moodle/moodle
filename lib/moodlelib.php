@@ -386,19 +386,6 @@ function confirm_sesskey($sesskey=NULL) {
 
 
 /**
- * Improved ensure a variable is set
- * Issue a (custom) error message if not
- * @param mixed $var the variable
- * @param string $error optional additional error message
- */
-function assert_var_set( $var, $error='' ) {
-  if (! isset($var)) {
-    error( "a required variable is not set - $error" );
-  }
-}
-
-
-/**
  * Ensure that a variable is set
  *
  * If $var is undefined throw an error, otherwise return $var.
