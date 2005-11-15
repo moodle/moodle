@@ -3,13 +3,14 @@
 // This script uses installed report plugins to print quiz reports
 
     require_once("../../config.php");
-    require_once("lib.php");
+    require_once('locallib.php');
 
-    optional_variable($id);    // Course Module ID, or
-    optional_variable($b);     // SCO ID
-    optional_variable($user);  // User ID
+    optional_param($id, 0, PARAM_NUM);    // Course Module ID, or
+    optional_param($a, 0, PARAM_NUM);     // SCORM ID
+    optional_param($b, 0, PARAM_NUM);     // SCO ID
+    optional_param($user, 0, PARAM_NUM);  // User ID
 
-    if ($id) {
+    if (!empty($id)) {
         if (! $cm = get_record("course_modules", "id", $id)) {
             error("Course Module ID was incorrect");
         }
@@ -19,18 +20,23 @@
         if (! $scorm = get_record("scorm", "id", $cm->instance)) {
             error("Course module is incorrect");
         }
-    } else if (isset($b)) {
-        if (! $sco = get_record("scorm_scoes", "id", $b)) {
-            error("Scorm activity is incorrect");
+    } else {
+        if (!empty($b)) {
+            if (! $sco = get_record("scorm_scoes", "id", $b)) {
+                error("Scorm activity is incorrect");
+            }
+            $a = $sco->scorm;
         }
-        if (! $scorm = get_record("scorm", "id", $sco->scorm)) {
-            error("Course module is incorrect");
-        }
-        if (! $course = get_record("course", "id", $scorm->course)) {
-            error("Course is misconfigured");
-        }
-        if (! $cm = get_coursemodule_from_instance("scorm", $scorm->id, $course->id)) {
-            error("Course Module ID was incorrect");
+        if (!empty($a)) {
+            if (! $scorm = get_record("scorm", "id", $a)) {
+                error("Course module is incorrect");
+            }
+            if (! $course = get_record("course", "id", $scorm->course)) {
+                error("Course is misconfigured");
+            }
+            if (! $cm = get_coursemodule_from_instance("scorm", $scorm->id, $course->id)) {
+                error("Course Module ID was incorrect");
+            }
         }
     }
 
@@ -54,7 +60,7 @@
         $strscorm  = get_string("modulename", "scorm");
         $strreport  = get_string("report", "scorm");
         $strname  = get_string('name');
-        if (!empty($id)) {
+        if (empty($b)) {
             print_header("$course->shortname: ".format_string($scorm->name), "$course->fullname",
                      "$navigation <a href=\"index.php?id=$course->id\">$strscorms</a>
                       -> <a href=\"view.php?id=$cm->id\">".format_string($scorm->name,true)."</a> -> $strreport",
@@ -68,7 +74,7 @@
         }
         print_heading(format_string($scorm->name));
     }
-    if (!empty($id)) {
+    if (empty($b) ) {
         if ($scoes = get_records_select("scorm_scoes","scorm='$scorm->id' ORDER BY id")) {
             if ($scousers=get_records_select("scorm_scoes_track", "scormid='$scorm->id' GROUP BY userid,scormid", "", "userid,scormid")) {
                 $table = new stdClass();

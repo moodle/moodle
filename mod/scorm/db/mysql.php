@@ -197,11 +197,17 @@ function scorm_upgrade($oldversion) {
         }
     }
 
-
     if ($oldversion < 2005092500) {
         table_column("scorm", "", "hidenav", "TINYINT", "1", "UNSIGNED", "0", "NOT NULL", "hidetoc"); 
         table_column("scorm", "", "options", "VARCHAR", "255", "", "", "NOT NULL","popup");
     }
+
+    if ($oldversion < 2005092600) {
+        table_column("scorm_scoes_track", "", "attempt", "INT", "10", "UNSIGNED", "1", "NOT NULL", "scoid"); 
+        execute_sql("ALTER TABLE {$CFG->prefix}scorm_scoes_track DROP INDEX track");
+        modify_database('','ALTER TABLE prefix_scorm_scoes_track ADD UNIQUE track (userid,scormid,scoid,attempt,element);');
+    }
+
     return true;
 }
 ?>

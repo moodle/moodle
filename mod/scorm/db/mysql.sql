@@ -54,6 +54,7 @@ CREATE TABLE prefix_scorm_scoes_track (
   userid int(10) unsigned NOT NULL default '0',
   scormid int(10) NOT NULL default '0',
   scoid int(10) unsigned NOT NULL default '0',
+  attempt int(10) unsigned NOT NULL default '1',
   element varchar(255) NOT NULL default '',
   value longtext NOT NULL default '',
   timemodified int(10) unsigned NOT NULL default '0',
@@ -61,8 +62,8 @@ CREATE TABLE prefix_scorm_scoes_track (
   KEY userid (userid),
   KEY scormid (scormid),
   KEY scoid (scoid),
-  KEY elemeny (element),
-  UNIQUE track (userid, scormid, scoid, element)
+  KEY element (element),
+  UNIQUE track (userid, scormid, scoid, attempt, element)
 ) TYPE=MyISAM;
 
 #

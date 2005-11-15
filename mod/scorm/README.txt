@@ -54,7 +54,7 @@ view.php
    ||
    ||
    \/
-playscorm.php -- load --> request.js
+player.php -- load --> request.js
    ||                     api.php -- include --> datamodels/(SCORM1_2.js.php || SCORM1_3.js.php || AICC.js.php)
    ||                       /\
  iframe                     ||

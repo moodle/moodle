@@ -1,6 +1,6 @@
 <?php
     require_once('../../config.php');
-    require_once('lib.php');
+    require_once('locallib.php');
 
     $command = required_param('command', '', PARAM_ALPHA);
     $sessionid = required_param('session_id', '', PARAM_ALPHANUM);
@@ -24,6 +24,22 @@
         if (isset($SESSION->scorm_status)) {
             $status = $SESSION->scorm_status;
         }
+        if (isset($SESSION->newattempt)) {
+            $newattempt = $SESSION->newattempt;
+            $SESSION->newattempt = '';
+        } else {
+            $newattempt = '';
+        }
+        if ($lastattempt = get_record('scorm_sco_tracks', 'user', $USER->id, 'scorm', $scorm->id, 'sco', $scoid,'max(attempt) as a')) {
+            if ($newattempt == 'new') {
+                $attempt = $lastattempt['a']+1;
+            } else {
+                $attempt = $lastattempt['a'];
+            }
+        } else {
+            $attempt = 1;
+        }
+
         if ($sco = get_record('scorm_scoes','id',$scoid)) {
             if (!$scorm = get_record('scorm','id',$sco->scorm)) {
                 error('Invalid script call');
@@ -152,7 +168,7 @@
                                         $element = $datamodel[$element];
                                         switch ($element) {
                                             case 'cmi.core.lesson_location':
-                                                $id = scorm_insert_track($USER->id, $scorm->id, $sco->id, $element, $value);
+                                                $id = scorm_insert_track($USER->id, $scorm->id, $sco->id, $attempt, $element, $value);
                                             break;
                                             case 'cmi.core.lesson_status':
                                                 $statuses = array(
@@ -187,12 +203,12 @@
                                                 }
                                                 if (empty($value) || isset($exites[$value])) {
                                                     $subelement = 'cmi.core.exit';
-                                                    $id = scorm_insert_track($USER->id, $scorm->id, $sco->id, $subelement, $value);
+                                                    $id = scorm_insert_track($USER->id, $scorm->id, $sco->id, $attempt, $subelement, $value);
                                                 }
                                                 $value = trim(strtolower($values[0]));
                                                 if (isset($statuses[$value]) && ($mode == 'normal')) {
                                                     $value = $statuses[$value];
-                                                    $id = scorm_insert_track($USER->id, $scorm->id, $sco->id, $element, $value);
+                                                    $id = scorm_insert_track($USER->id, $scorm->id, $sco->id, $attempt, $element, $value);
                                                 }
                                                 $lessonstatus = $value;
                                             break;
@@ -201,18 +217,18 @@
                                                  if ((count($values) > 1) && ($values[1] >= $values[0]) && is_numeric($values[1])) {
                                                      $subelement = 'cmi.core.score.max';
                                                      $value = trim($values[1]);
-                                                     $id = scorm_insert_track($USER->id, $scorm->id, $sco->id, $subelement, $value);
+                                                     $id = scorm_insert_track($USER->id, $scorm->id, $sco->id, $attempt, $subelement, $value);
                                                      if ((count($values) == 3) && ($values[2] <= $values[0]) && is_numeric($values[2])) {
                                                          $subelement = 'cmi.core.score.min';
                                                          $value = trim($values[2]);
-                                                         $id = scorm_insert_track($USER->id, $scorm->id, $sco->id, $subelement, $value);
+                                                         $id = scorm_insert_track($USER->id, $scorm->id, $sco->id, $attempt, $subelement, $value);
                                                      }
                                                  }
                                               
                                                  $value = '';
                                                  if (is_numeric($values[0])) {
                                                      $value = trim($values[0]);
-                                                     $id = scorm_insert_track($USER->id, $scorm->id, $sco->id, $element, $value);
+                                                     $id = scorm_insert_track($USER->id, $scorm->id, $sco->id, $attempt, $element, $value);
                                                  }
                                                  $score = $value;
                                             break;
@@ -229,13 +245,13 @@
                                             $value .= $datarow;
                                             next($datarows);
                                         }
-                                        $id = scorm_insert_track($USER->id, $scorm->id, $sco->id, $element, $value);
+                                        $id = scorm_insert_track($USER->id, $scorm->id, $sco->id, $attempt, $element, $value);
                                     }
                                 }                               
                             }
                             if (($mode == 'browse') && ($initlessonstatus == 'not attempted')){
                                 $lessonstatus = 'browsed';
-                                $id = scorm_insert_track($USER->id, $scorm->id, $sco->id, 'cmi.core.lesson_status', 'browsed');
+                                $id = scorm_insert_track($USER->id, $scorm->id, $sco->id, $attempt, 'cmi.core.lesson_status', 'browsed');
                             }
                             if ($mode == 'normal') {
                                 if ($lessonstatus == 'completed') {
@@ -244,7 +260,7 @@
                                     } else {
                                         $lessonstatus = 'failed';
                                     }
-                                    $id = scorm_insert_track($USER->id, $scorm->id, $sco->id, 'cmi.core.lesson_status', $lessonstatus);
+                                    $id = scorm_insert_track($USER->id, $scorm->id, $sco->id, $attempt, 'cmi.core.lesson_status', $lessonstatus);
                                 }
                             }                  
                         }

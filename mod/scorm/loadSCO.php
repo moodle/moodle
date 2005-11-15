@@ -1,6 +1,6 @@
 <?php
     require_once("../../config.php");
-    require_once("lib.php");
+    require_once('locallib.php');
 
     $id = optional_param('id', '', PARAM_INT);       // Course Module ID, or
     $a = optional_param('a', '', PARAM_INT);         // scorm ID
@@ -112,6 +112,9 @@
             setTimeout('document.location = "<?php echo $result ?>";',1000);
         -->
         </script>
+        <noscript>
+            <meta http-equiv="refresh" content="1;url=<?php echo $result ?>" />
+        </noscript> 
     </head>
     <body>
         &nbsp;

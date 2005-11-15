@@ -4,7 +4,7 @@
 /// (Replace scorm with the name of your module)
 
     require_once("../../config.php");
-    require_once("lib.php");
+    require_once('locallib.php');
 
     $id = optional_param('id', '', PARAM_INT);       // Course Module ID, or
     $a = optional_param('a', '', PARAM_INT);         // scorm ID
@@ -94,6 +94,9 @@
 		        <?php print_string('organizations','scorm') ?>
                 <form name='changeorg' method='post' action='view.php?id=<?php echo $cm->id ?>'>
                     <?php choose_from_menu($orgs, 'organization', "$organization", '','submit()') ?>
+                    <noscript>
+                        <input type="submit" value="&gt;" />
+                    </noscript>
                 </form>
             </div>
 <?php
@@ -113,7 +116,7 @@
         print_simple_box_end();
  ?>
     <div class="center">
-        <form name="theform" method="post" action="playscorm.php?id=<?php echo $cm->id ?>">
+        <form name="theform" method="post" action="player.php?id=<?php echo $cm->id ?>">
 <?php
     if ($scorm->hidebrowse == 0) {
         print_string("mode","scorm");

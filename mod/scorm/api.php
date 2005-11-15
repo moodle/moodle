@@ -1,12 +1,13 @@
 <?php
 
     require_once("../../config.php");
-    require_once("lib.php");
+    require_once('locallib.php');
 
     $id = optional_param('id', '', PARAM_INT);       // Course Module ID, or
     $a = optional_param('a', '', PARAM_INT);         // scorm ID
     $scoid = required_param('scoid', '', PARAM_INT);  // sco ID
     $mode = optional_param('mode', '', PARAM_ALPHA); // navigation mode
+    $attempt = optional_param('attempt', '', PARAM_ALPHA); // new attempt
 
     if (!empty($id)) {
         if (! $cm = get_record("course_modules", "id", $id)) {
@@ -38,10 +39,10 @@
         $userdata = $usertrack;
     } else {
         $userdata->status = '';
-        $userdata->scorre_raw = '';
+        $userdata->score_raw = '';
     }
-    $userdata->student_id = $USER->username;
-    $userdata->student_name = $USER->lastname .', '. $USER->firstname;
+    $userdata->student_id = addslashes($USER->username);
+    $userdata->student_name = addslashes($USER->lastname .', '. $USER->firstname);
     $userdata->mode = 'normal';
     if (isset($mode)) {
         $userdata->mode = $mode;

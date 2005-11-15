@@ -1,3 +1,12 @@
+.structlist  {
+  list-style-type: none;
+  white-space: nowrap;
+  font-size: small;
+}
+.orgtitle {
+  font-weight: bold;
+  font-size: small;
+}
 .mod-scorm .top {
   vertical-align: top;
 }
@@ -13,60 +22,57 @@
 .mod-scorm .scoframe {
 
 }
-.mod-scorm #scormpage {
+
+#mod-scorm-player #scormpage {
   position: relative;
   width: 100%;
 }
-.mod-scorm #tocbox {
+#mod-scorm-player #tocbox {
   position: absolute;
   left: 0px;
   top: 0px;
-  width: 30% 
+  width: 19%;
 }
-.mod-scorm #tochead {
+#mod-scorm-player #tochead {
   text-align: center;
   font-weight: bold;
 }
-.mod-scorm #scormbox {
+#mod-scorm-player #scormbox {
   position: absolute;
   right: 0px;
   top: 0px;
-  width: 70%;
-  margin-left: 30%; 
 }
-.mod-scorm #scormtop {
+#mod-scorm-player .toc {
+  width: 80%; 
+  margin-left: 20%; 
+}
+#mod-scorm-player .no-toc {
+  width: 100%;
+}
+#mod-scorm-player #scormobject {
+ /* border: 1px solid black; */
+}
+#mod-scorm-player #scormtop {
   position: relative;
   width: 100%;
   height: 30px;
 }
-.mod-scorm #scormbrowse {
+#mod-scorm-player #scormbrowse {
   position: absolute;
   left: 5px;
   top: 0px;
 }
-.mod-scorm #scormnav {
+#mod-scorm-player #scormnav {
   position: absolute;
   right: 5px;
   top: 0px;
 }
-.structlist  {
-  list-style-type: none;
-  white-space: nowrap;
-  font-size: small;
-}
-.orgtitle {
-  font-weight: bold;
-  font-size: small;
-}
-
-#mod-scorm-playscorm .structurehead {
-  float: left;
-}
-#mod-scorm-playscorm .structurelist {
+#mod-scorm-player .structurelist {
   list-style-type: none;
   text-indent:-4ex;
   font-size: small;
 }
+
 #mod-scorm-view .structurehead {
   font-weight: bold;
   text-align: center;

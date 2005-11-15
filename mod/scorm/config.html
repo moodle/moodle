@@ -1,9 +1,9 @@
 <?php
     if (empty($CFG->scorm_frameheight)) {
-        $CFG->scorm_frameheight = 600;
+        $CFG->scorm_frameheight = '500';
     }
     if (empty($CFG->scorm_framewidth)) {
-        $CFG->scorm_structurewidth = 800;
+        $CFG->scorm_framewidth = '100%';
     }
 ?>
 
@@ -33,7 +33,7 @@
 <tr valign="top">
     <td align="right">scorm_framewidth:</td>
     <td>
-        <input type="text" name="scorm_framewidth" value="<?php echo $CFG->scorm_framewidth ?>" size="3" />
+        <input type="text" name="scorm_framewidth" value="<?php echo $CFG->scorm_framewidth ?>" size="5" />
     </td>
     <td>
         <?php print_string("framewidth", "scorm") ?>
@@ -42,7 +42,7 @@
 <tr valign="top">
     <td align="right">scorm_frameheight:</td>
     <td>
-        <input type="text" name="scorm_frameheight" value="<?php echo $CFG->scorm_frameheight ?>" size="4" />
+        <input type="text" name="scorm_frameheight" value="<?php echo $CFG->scorm_frameheight ?>" size="5" />
     </td>
     <td>
         <?php print_string("frameheight", "scorm") ?>
