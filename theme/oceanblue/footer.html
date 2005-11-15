@@ -13,9 +13,11 @@
 
 <?php echo $loggedinas ?>
 
-
-<?php if ($CFG->debug > 7) { 
+<?php if (!empty($performanceinfo)) {
           echo $performanceinfo;
+} ?>
+
+<?php if ($CFG->debug > 7) {
 ?>
           <br />
           <hr size="1" noshade="noshade" />
