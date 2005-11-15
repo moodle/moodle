@@ -27,8 +27,8 @@
         redirect("$CFG->wwwroot/course/student.php?id=$course->id");
     }
 
-    if (!isadmin()) {
-        error("You must be an admin");
+    if (!isadmin() || !isteacheredit($course->id)) {
+        error("You must be an admin or a teacher of this course");
     }
 
 

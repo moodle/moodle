@@ -200,7 +200,7 @@ class block_admin extends block_list {
                 $this->content->items[]='<a href="'.$CFG->changepassword.'">'.get_string('changepassword').'</a>';
                 $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/user.gif" height="16" width="16" alt="" />';
             }
-            if ($CFG->allowunenroll) {
+            if ($CFG->allowunenroll && !$course->metacourse) {
                 $this->content->items[]='<a href="unenrol.php?id='.$this->instance->pageid.'">'.get_string('unenrolme', '', $course->shortname).'</a>';
                 $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/user.gif" height="16" width="16" alt="" />';
             }
