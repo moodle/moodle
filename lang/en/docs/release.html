@@ -31,7 +31,8 @@
    as soon as possible.)</p>
 <h3>A few new things</h3>
   <ul type="circle">
-
+  <li> We now support SCORM 1.3 (SCORM 2004)!</li>
+  <li> A new Single-Sign-On API is available</li>
   </ul>
 
 
@@ -39,11 +40,20 @@
 
 <h4>General</h4>
   <ul type="circle">
-  <li> Backups now run a lot faster on medium/large installs. A slowdown related to the new messaging infrastructure has been resolved</li>
+  <li> Backups now runs a lot faster medium/large installs. Many issues fixed in this area </li>
   <li> Listing of directory sizes can be made <em>much</em> faster on Linux/Unix servers, thanks to a performance fix you can enable from Admin-&gt;Variables: "path_to_du"</li>
+  <li> We now log more meaningful IP addresses when the server or the clients are working behind a proxy</li>
+  <li> Fixed some issues with PHP accelerators</li>
   <li> Upgrade scripts have been refined and work much better for PostgreSQL installations</li>
-  <li> PostgreSQL port code cleanup</li>
-  <li> We now log more meaningful IP addresses when working behind a proxy</li>
+  <li> General PostgreSQL port code cleanup</li>
+  <li> Upgrading to 1.5.3 will fix any legacy Journal to Online Assignment upgrade issues</li>
+  <li> RSS libraries now support <em>RSS 2.0 categories</em>, see  <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3654" target="_blank">bug 3654</a></li>
+  <li> Better accesibilty in file uploads, see  <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3662" target="_blank">bug 3662</a></li>
+  <li> Better support for site-wide HTTPS, see <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3848" target="_blank">bug 3848</a></li>
+  <li> We now send away bots (like Googlebot) from that try mangled URLs, see <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3958" target="_blank">bug 3958</a></li>
+  <li> Better  <a href="http://moodle.org/mod/forum/discuss.php?d=29564" target="_blank">DST support for non-logged-in users</a></li>
+  <li> Better  DST support for repeat events in Calendar</li>
+  <li> Several fixes to the lesson module</li>
   </ul>
 
 <h4>Authentication</h4>
@@ -74,6 +84,7 @@
   <li> LDAP: Course auto-creation works again</li>
   <li> LDAP: Fixed several bugs reported by Jeff Graham and Barron Koralesky -- including bugs 3912 and 3974</li>
   <li> LDAP: We can now bind non-anonymously to LDAP</li>
+  <li> Authorize.net: several fixes</li>
   </ul>
 
 <h4>Resources</h4>
@@ -135,7 +146,29 @@
   <li> Fixed export bug with non-English languages</li>
   </ul>
 
+<h4>SCORM</h4>
+  <ul type="circle">
+  <li> We now support SCORM 1.3 (SCORM 2004)!</li>
+  <li> Fixed a bug with next and prev SCO search</li>
+  <li> Fixed bugs related to masteryscore</li>
+  <li> Fixed a problem in AICC course tracking</li>
+  </ul>
 
+<h4>Wiki</h4>
+  <ul type="circle">
+  <li> Now paging of older versions is showed
+ and working properly, see <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3750" target="_blank">bug 3750</a></li>
+  
+  </ul>
+
+<h4>Filters</h4>
+  <ul type="circle">
+  <li> Mediaplugin filter now <a href="http://moodle.org/mod/forum/discuss.php?d=27630" target="_blank"> finds multi-line links in HTML code</a></li>
+  <li> Censor filter: Added original word as title to the
+ blacked-out version.  The filter can obscure actual
+ important words by mistake (eg Dickens) and there needs to be some
+ way to recover the meaning</li>
+  </ul>
 
 
 <h2>Moodle 1.5.2 (16th July, 2005) </h2>
