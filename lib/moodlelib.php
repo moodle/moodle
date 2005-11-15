@@ -210,6 +210,13 @@ define('PAGE_COURSE_VIEW', 'course-view');
  */
 function required_param($varname, $options=PARAM_CLEAN) {
 
+    // detect_unchecked_vars addition
+    global $CFG;
+    if (!empty($CFG->detect_unchecked_vars)) {
+        global $UNCHECKED_VARS;
+        unset ($UNCHECKED_VARS->vars[$varname]);
+    }
+
     if (isset($_POST[$varname])) {       // POST has precedence
         $param = $_POST[$varname];
     } else if (isset($_GET[$varname])) {
@@ -236,6 +243,13 @@ function required_param($varname, $options=PARAM_CLEAN) {
  * @return mixed
  */
 function optional_param($varname, $default=NULL, $options=PARAM_CLEAN) {
+
+    // detect_unchecked_vars addition
+    global $CFG;
+    if (!empty($CFG->detect_unchecked_vars)) {
+        global $UNCHECKED_VARS;
+        unset ($UNCHECKED_VARS->vars[$varname]);
+    }
 
     if (isset($_POST[$varname])) {       // POST has precedence
         $param = $_POST[$varname];
@@ -337,7 +351,14 @@ function clean_param($param, $options) {
     }
 
     if ($options & PARAM_BOOL) {         // Convert to 1 or 0
-        $param = empty($param) ? 0 : 1;
+        $tempstr = strtolower($param);
+        if ($tempstr == 'on') {
+            $param = 1;
+        } else if ($tempstr == 'off') {
+            $param = 0;
+        } else {
+            $param = empty($param) ? 0 : 1;
+        }
     }
 
     if ($options & PARAM_NOTAGS) {       // Strip all tags completely
