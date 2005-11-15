@@ -3,32 +3,37 @@
 
     require_once("../config.php");
 
+    $topframe    = optional_param('topframe', false, PARAM_BOOL);
+    $bottomframe = optional_param('bottomframe', false, PARAM_BOOL);
+
     require_login();
 
     if (!isadmin()) {
         error("Only the admin can use this page");
     }
 
-    if (isset($topframe)) {
+    if (!$topframe && !$bottomframe) {
+        ?>
+
+        <head>
+        <title>PHP info</title>
+        </head>
+
+        <frameset rows="80,*">
+           <frame src="phpinfo.php?topframe=true&amp;sesskey=<?php echo $USER->sesskey ?>">
+           <frame src="phpinfo.php?bottomframe=true&amp;sesskey=<?php echo $USER->sesskey ?>">
+        </frameset>
+
+        <?php
+    } else if ($topframe && confirm_sesskey()) {
         $stradministration = get_string("administration");
         $site = get_site();
-    
-        print_header("$site->shortname: phpinfo", "$site->fullname", 
+
+        print_header("$site->shortname: phpinfo", "$site->fullname",
                      "<a target=\"$CFG->framename\" href=\"index.php\">$stradministration</a> -> PHP info");
         exit;
-    }
-
-    if (isset($bottomframe)) {
+    } else if ($bottomframe && confirm_sesskey()) {
         phpinfo();
         exit;
     }
-
 ?>
-<head>
-<title>PHP info</title>
-</head>
-
-<frameset rows="80,*">
-   <frame src="phpinfo.php?topframe=true">
-   <frame src="phpinfo.php?bottomframe=true">
-</frameset>
