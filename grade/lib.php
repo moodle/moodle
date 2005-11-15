@@ -2141,7 +2141,7 @@ function grade_set_grade_weights() {
     $categories = get_records('grade_category', 'courseid', $course->id);
     if ($categories) {
         foreach ($categories as $category) {
-            $form_catname = str_replace(' ', '_', $category->name);
+            $form_catname = preg_replace('/[.| ]/', '_', $category->name);
 
             $submitted_category = optional_param($form_catname);    
             if (is_numeric($submitted_category)) {
