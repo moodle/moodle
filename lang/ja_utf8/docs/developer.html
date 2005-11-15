@@ -1,0 +1,204 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Moodle Docs: Developers Manual</title>
+<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+
+<body>
+<h1>開発者マニュアル</h1>
+<blockquote>
+  <p>このドキュメントはMoodleデザインのいくつか、およびあなたがどのように貢献できるかに関して説明したものです。</p>
+  <p>現在、内容が十分なものではありません - 最終的により良いドキュメンテーションが作成されます!</p>
+  <p>このドキュメントのセクション:</p>
+  <ol>
+    <li><a href="#architecture">Moodleアーキテクチャ</a></li>
+    <li><a href="#contribute">どのように貢献できるか</a> 
+      <ul>
+        <li><a href="#activities">学習活動</a></li>
+        <li><a href="#themes">テーマ</a></li>
+        <li><a href="#languages">言語</a></li>
+        <li><a href="#database">データベーススキーマ</a></li>
+        <li><a href="#courseformats">コースフォーマット</a></li>
+        <li><a href="#doc">ドキュメンテーションおよび記事</a></li>
+        <li><a href="#bugs">バグ・トラッカーへの参加</a></li>
+      </ul>
+    </li>
+  </ol>
+</blockquote>
+<p>&nbsp;</p>
+<h2><a name="architecture"></a>1. Moodleアーキテクチャ</h2>
+<blockquote>
+  <p>システム管理者の観点から、Moodleは下記の基準に従って設計されています。</p>
+  <ol>
+    <li><strong>Moodleは最大範囲のプラットフォームで動作すべきである。</strong><br />
+      <br />
+      ほとんどのプラットフォームで動作するウェブアプリケーションは、PHPとMySQLを使用したものです。そしてMoodleは、この環境で開発 ( Linux、WindowsおよびMac OS X上で ) されています。また、Moodleはデータベース・アブストラクションにADOdbライブラリを使用していますので、<a href="http://php.weblogs.com/ADOdb_manual#drivers">10種類以上の異なるデータベースブランド</a> を利用することができます ( 残念ながら、まだこれらのデータベースに関して<em><strong>テーブルのセットアップ</strong></em>を行うことができません - 将来的に対応する予定です )。 <br />
+      <br />
+    </li>
+    <li><strong>Moodleは簡単にインストール、学習および修正することができるべきである。</strong><br />
+      <br />
+      Moodleの最初のプロトタイプ ( 1999 ) は、<a target="_top" href="http://www.zope.org/">Zope</a> - 先進的なオブジェクト指向ウェブアプリケーションサーバを使用して開発されました。残念なことに、技術的には非常に素晴らしいのですが、学習曲線がとても険しく、システム管理に関して柔軟性に欠けていました。他方で、PHPスクリプト言語は非常に簡単に習得することができます ( 特に、あなたが他のスクリプト言語を使ってプログラミングの経験がある場合 )。早い段階で、クラス指向デザインの使用を避けること - さらに初心者にも簡単に理解できるようにすることを決定しました。代わりにコードの再利用は、明確に名前をつけられた関数および一貫性のあるスクリプトファイルのレイアウトによって実現されています。また、PHPはインストール ( バイナリはあらゆるプラットフォームで利用可能 ) が簡単で、ほとんどのウェブホスティングサービスが標準的に提供しているため、幅広く利用可能です。<br />
+      <br />
+    </li>
+    <li><strong>1つのバージョンから次のバージョンに簡単にアップグレードできるべきである。</strong><br />
+      <br />
+      Moodleは自身のバージョンを理解することができ ( 同様にプラグインモジュールのバージョンも ) 、Moodleが適切に新しいバージョンにアップグレードできるような仕組みが組み込んであります ( 例えば、データベースのリネームまたは新しいフィールドの追加を行うことができます )。例えば、UnixでCVSを使用している場合、「 cvs  update -d 」を実行して、サイトホームページにアクセスすることで、アップグレードを完了することができます。<br />
+      <br />
+    </li>
+    <li><strong>発達のためにモジュールであるべきである。</strong><br />
+      <br />
+      Moodleには、テーマ、活動、インターフェース言語、データベーススキーマ、およびコースフォーマットを含む数多くのモジュールがあります。このことにより、メインのコードベースに機能を追加したり、モジュールを独立して配布することができます。詳細は下記にある次のセクションをご覧ください。<br />
+      <br />
+    </li>
+    <li><strong>他のシステムと結合して使用できるべきである。</strong><br />
+      <br />
+      Moodleが行う1つのことに、1コースの全てのファイルをサーバの単一標準ディレクトリに保存することがあります。このことによりシステム管理者は、Appletalk、SMB、NFS、FTP、WebDAV等のシームレスなファイルレベルのアクセスを教師に提供することができます。認証モジュールにより、MoodleはLDAP、IMAP、POP3、NNTPおよび他のデータベースをユーザ情報のソースとして使用することができます。他に行われていない開発作業があります。Moodleの将来のバージョンで計画されている機能は:  ( IMSおよびSCORMを含む ) XMLベースのフォーマットを使用したインポートおよびエクスポート、および ( 他のウェブサイトと視覚的に統合できるように ) インターフェースフォーマットにおけるスタイルシートの更なる利用です。</li>
+  </ol>
+</blockquote>
+<p>&nbsp;</p>
+<h2><a name="contribute" id="contribute"></a>2. どのように貢献できるか</h2>
+<blockquote>
+  <p>先に述べたように、Moodleにはモジュールとして数多くの機能があります。プログラマーではなくても、あなたが変えること、手伝うことがあります。</p>
+  <h3><a name="activities" id="activities"></a>学習活動</h3>
+  <blockquote>
+    <p>非常に重要なモジュールは「mod」ディレクトリの中に入っています。 
+      数多くのデフォルトモジュールがあります: 課題、投票、フォーラム、小テスト、調査、Wiki等です。各モジュールは個別のサブディレクトリに格納され、次の必須要素を含みます ( 加えて各モジュール特有の特別なスクリプト ):</p>
+    <ul>
+      <li>mod.html: 設定、またはモジュールのインスタンスを更新するためのフォーム</li>
+      <li>version.php: メタ情報の定義およびアップグレードコードの提供</li>
+      <li>icon.gif: モジュールの16x16アイコン</li>
+      <li>db/: 全ての必要なテーブルおよびデータのSQLダンプ ( 各データベースタイプ用 )</li>
+      <li>index.php: コースの全てのインスタンスを一覧表示するページ</li>
+      <li>view.php: 特定のインスタンスを表示するページ</li>
+      <li>lib.php: モジュールで定義された全ての関数はここに記述されます。 
+        モジュールがwidget ( ウィジェット ) から呼ばれる場合、必要な関数が含まれます: 
+        <ul>
+          <li>widget_add_instance() - widgetの新しいインスタンスを追加するコード</li>
+          <li>widget_update_instance() - 既存のインスタンスを更新するコード</li>
+          <li>widget_delete_instance() - インスタンスを削除するコード</li>
+          <li>widget_user_outline() - インスタンスを渡すと、ユーザのコントリビューションに関する要約を返す</li>
+          <li>widget_user_complete() - インスタンスを渡すと、ユーザのコントリビューションに関する詳細を返す<br />
+          </li>
+          <li>可能性のあるコンフリクトを避けるため、全てのモジュール関数のネーミングは先頭にwidget_を付け、定数は先頭にWIDGET_ を付けるべきです。</li>
+        </ul>
+      </li>
+      <li>最後に、各モジュールはモジュールのストリングを含んだいくつかの言語ファイルを持ちます。下記をご覧ください。</li>
+    </ul>
+    <p>新しい学習活動モジュールの開発を開始する一番簡単な方法は、
+      <strong><a href="http://moodle.org/mod/newmodule_template.zip">mod/newmodule_template.zip</a></strong> のテンプレートを使用することです。 
+      解凍して、中に入っているREADMEに従ってください。</p>
+    <p>最初に、<a href="http://moodle.org/mod/forum/view.php?id=44" target="_top">Using Moodleの活動モジュールフォーラム</a> に投稿するのも良いでしょう。</p>
+    <p>&nbsp;</p>
+  </blockquote>
+  <h3><a name="themes" id="themes"></a>テーマ</h3>
+  <blockquote>
+    <p>テーマ ( またはスキン ) はサイトの外観を定義します。メインディストリビューションでは数多くのシンプルなテーマが提供されています。しかし、独自のテーマを独自の色、ロゴ、スタイルおよび画像を使用して作成することができます。</p>
+    <p>各テーマはサブディレクトリ「theme」の中にあり、少なくとも下記のファイルを含んでいます:</p>
+    <ul>
+      <li><strong>config.php</strong>: CSSファイルが、どのように連携して動作するか定義します。スタンダードまたは他の親テーマ上に、いくつかのCSSファイルを含む、または含まない独自のテーマを作成することができます。</li>
+      <li><strong>styles.php</strong>: CSSファイルへのブリッジを構築します。このファイルを編集する必要はありません。</li>
+      <li><strong>header.html</strong>: 各ページのトップを含みます。例えば、ページのトップにロゴを追加したい場合に編集する必要があります。</li>
+      <li><strong>footer.html</strong>: 各ページのボトムを含みます。</li>
+      <li><strong>styles_color.css</strong>: 全てのカラー属性に関するCSSスタイルです。</li>
+      <li><strong>styles_fonts.css</strong>: フォント、フォントサイズ、テキストの高さ等に関するCSSスタイルです。</li>
+      <li><strong>styles_layout.css</strong>: ページレイアウト、位置等に関するCSSスタイルです。</li>
+      <li><strong>styles_moz.css</strong>: Mozillaの特別な曲線コーナーに関するCSSスタイルです。</li>
+    </ul>
+    <p>現バージョンのMoodleに独自のテーマを作成するには:</p>
+    <ol>
+      <li>既存のテーマフォルダの1つを新しいフォルダ名でコピーしてください。スタンダードテーマで開始されることをお勧めします。</li>
+      <li>必要に応じてconfig.phpを編集してください。</li>
+      <li>あなたのスタイルにCSSファイルを編集してください。</li>
+      <li>新しいロゴを追加、またはレイアウトを変更するために、header.htmlおよびfooter.htmlを編集してください。</li>
+    </ol>
+    <p>Moodleのアップグレードは、少しだけテーマを壊す<em>可能性があります</em>ので、カスタムテーマを使用している場合はリリースノートを注意深く確認してください。</p>
+    <p>Moodleテーマに関する詳細な説明は、<a href="http://docs.moodle.org/wiki/Themes">Moodle Docs</a> をお読みください。</p>
+    <p>テーマに関する更なるディスカッションは、<a target="_top" href="http://moodle.org/mod/forum/view.php?id=46">Themes forum on Using Moodle</a> をご覧ください。他の人が使いたくなるような素晴らしいテーマをあなたが作成した場合、zipファイルをテーマフォーラムに投稿してください!<br />
+    </p>
+  </blockquote>
+  <h3><a name="languages" id="languages"></a>言語</h3>
+  <blockquote>
+    <p>Moodleは国際化対応として設計されています。インターフェースの一部として表示されるテキストの各「ストリング」または「ページ」は、一連の言語ファイルより出力されます。各言語はディレクトリ「lang」のサブディレクトリに入ります。 
+      言語ディレクトリの構造は下記のとおりです:</p>
+    <p><strong>lang/en</strong> - 1つの言語の全てのファイルを含むディレクトリ ( 例 英語 )</p>
+    <ul>
+      <li>moodle.php - メインインターフェースのストリング</li>
+      <li>assignment.php - 課題モジュールのストリング</li>
+      <li>choice.php - 投票モジュールのストリング</li>
+      <li>forum.php - フォーラムモジュールのストリング</li>
+      <li>quiz.php - 小テストモジュールのストリング</li>
+      <li>resource.php - リソースモジュールのストリング</li>
+      <li>survey.php - 調査モジュールのストリング</li>
+      <li>.... ある場合は、加えて他のモジュールのストリング<br />
+        <br />
+        これらのファイルから呼ばれるストリングは、 <strong><em>get_string()</em></strong> または <em><strong>print_string()</strong></em> 関数を使用します。   
+        それぞれのストリングは異なる言語での変数の利用を実現するため、変数の置換をサポートします。<em><br />
+        <br />
+        </em>例 $strdueby = get_string(&quot;assignmentdueby&quot;, &quot;assignment&quot;, 
+        userdate($date)); <br />
+        <br />
+        特定の言語でストリングが存在しない場合、代わりに同等の英語ストリングが自動的に使用されます。</li>
+    </ul>
+    <p><strong>lang/en/help</strong> - 全てのヘルプページ ( 文脈依存のポップアップヘルプ用 )</p>
+    <blockquote>
+      <p>メインのヘルプページはここにあり、各モジュールのヘルプページはモジュール名のサブディレクトリ内にあります。</p>
+      <p>ヘルプボタン機能と共に、ページにヘルプボタンを挿入することができます。</p>
+      <p>例 helpbutton(&quot;text&quot;, &quot;テキストに関するヘルプはここをクリック&quot;);</p>
+      <p>モジュールにも挿入することができます:</p>
+      <p>helpbutton(&quot;forumtypes&quot;, &quot;Forum types&quot;, &quot;forum&quot;);</p>
+    </blockquote>
+    <p>「言語設定」内の管理ウェブツールを使用して、オンライン上で言語ファイルを編集することができます。
+      このツールは新しい言語ファイルを作成するだけではなく、既存の言語ファイルに磨きをかけることもできます。
+      新しい言語ファイルの作成を開始する場合、<a target="_top" href="http://dougiamas.com/">Martin Dougiamas</a> にご連絡ください。</p>
+    <p>また、<a target="_top" href="http://moodle.org/mod/forum/view.php?id=43">Using MoodleのLanguageフォーラム</a> にも投稿することができます。</p>
+    <p>あなたが進行中の言語ファイルを整備している場合、直接ファイルを整備できるように <a href="?file=cvs.html">MoodleソースコードのCVS書き込み権</a> を与えることができます。</p>
+  </blockquote>
+  <h3><a name="database" id="database"></a>データベーススキーマ</h3>
+  <blockquote>
+    <p>テーブルが定義されたデータベースにおいて、Moodleで使用されるシンプルなSQLは幅広い種類のデータベースブランドで快適に動作します。</p>
+    <p>Moodleが最初のインストールで試みる、データベースに新しいテーブルを<strong>自動的作成</strong>する処理に問題があります。
+      全てのデータベースは非常に異なり、まだ単独のプラットフォームで処理する方法が無いからです。各データベースで、この自動処理をサポートするには、データベースにMoodleテーブルを作成するための必要なSQLを記載するスキーマを作成することができます。これらのファイルは、<strong>lib/db</strong> および 各モジュールの<strong>db</strong>サブディレクトリ内にあります。</p>
+    <p>現在、この方法に関してMySQLおよびPostgreSQLが完全にサポートされています ( 他のデータベースブランドに関しては誰もスキーマを書いていません )。</p>
+    <p>Moodle 1.2では、これらの方法を必要としない、新しい方法であるデータベース独自のXMLスキーマを使用します。</p>
+  </blockquote>
+  <p>&nbsp;</p>
+  <h3><a name="courseformats" id="courseformats"></a>コースフォーマット</h3>
+  <blockquote>
+    <p>現在、Moodleはウィークリー、トピックおよびソーシャルの3つの異なるコースフォーマットをサポートしています。</p>
+    <p>コードの後に少しだけしか追加 (  従って「追加可能」余地が少ない ) できませんが、新しいコースフォーマットを簡単に追加することができます。</p>
+    <p>あなたが追加したい異なるコースフォーマットにアイディアがある場合、またはあなたが見たい場合、私にご連絡ください。それらのコースフォーマットが将来的なリリースで利用できるよう最善を尽くします。</p>
+  </blockquote>
+  <p>&nbsp;</p>
+  <h3><a name="doc" id="doc"></a>ドキュメンテーションおよび論文</h3>
+  <blockquote>
+    <p>あなたがMoodleのチュートリアル、論文、学術論文を書きたいと思う場合は、どうぞお書きください! </p>
+    <p>執筆したものをウェブサイトに置いて、間違いなく次の行を入れてください: <a target="_top" href="http://moodle.org/">http://moodle.org/</a></p>
+  </blockquote>
+  <p>&nbsp;</p>
+  <h3><a name="bugs" id="bugs"></a>バグ・トラッカーへの参加</h3>
+  <blockquote>
+    <p>最後に、あなたが見つけたバグを投稿して、恐らく議論および修正に参加することができるように、「バグ・トラッカー」 ( <a target="_top" href="http://moodle.org/bugs/">http://moodle.org/bugs</a> ) への登録をお勧めします。</p>
+    <p>「バグ」は、現在のバージョンのMoodleに含まれているソフトウェアバグだけではなく、新しいアイディア、機能のリクエストおよび既存の機能に対する建設的な批評を意味します。オープンソースの美しさは、誰でも独自の方法で参加して、私達全てが楽しむことができるように、より良いプロダクトの開発を支援できることにあります。このプロジェクトでは、あなたの投稿を心より歓迎いたします!</p>
+  </blockquote>
+</blockquote>
+<p>&nbsp;</p>
+<blockquote> 
+  <blockquote> 
+    <blockquote> 
+      <p align="center">Moodleをご利用頂きましてありがとうございます!<br />
+        <br />
+        <a target="_top" href="http://dougiamas.com/">Martin Dougiamas</a>, Lead Developer </p>
+    </blockquote>
+  </blockquote>
+</blockquote>
+<p>&nbsp;</p>
+<blockquote> 
+  <p>&nbsp;</p>
+</blockquote>
+<p align="center"><font size="1"><a href="." target="_top">Moodleドキュメンテーション</a></font></p>
+<p align="center"><font size="1">Version: $Id$</font></p>
+</body>
+</html>
