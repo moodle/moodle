@@ -77,35 +77,6 @@ class quiz_report extends quiz_default_report {
             $currentgroup = false;
         }
 
-    /// Get all students
-        if ($currentgroup) {
-            $users = get_group_students($currentgroup);
-        }
-        else {
-            $users = get_course_students($course->id);
-        }
-
-        if($users === false) {
-            $users = array();
-        }
-        else {
-            $users = array_keys($users);
-        }
-
-        // Uncomment the following if desired: if there are people with attempts but they have been unenrolled
-        // since making those attempts, count them in as well. DO NOT count course teachers.
-        // Problem with this code: includes users from ALL groups, see bug 3995
-        //$userswithattempts = get_records_sql('SELECT DISTINCT qa.userid AS id, qa.userid FROM '.$CFG->prefix.'quiz_attempts qa LEFT JOIN '.$CFG->prefix.'user_teachers ut ON qa.userid = ut.userid AND ut.course = '.$course->id.' WHERE ut.id IS NULL AND quiz = '.$quiz->id);
-        //if(!empty($userswithattempts)) {
-        //    $unenrolledusers = array_diff(array_keys($userswithattempts), $users);
-        //    $users = array_merge($users, $unenrolledusers);
-        //}
-
-        if(empty($users)) {
-            print_heading($strnoattempts);
-            return true;
-        }
-
     /// Set table options
         if(!isset($SESSION->quiz_overview_table)) {
             $SESSION->quiz_overview_table = array('noattempts' => false, 'detailedmarks' => false, 'pagesize' => 10);
@@ -177,7 +148,6 @@ class quiz_report extends quiz_default_report {
 
             $table->sortable(true);
             $table->collapsible(true);
-            $table->initialbars(count($users)>20);
 
             $table->column_suppress('picture');
             $table->column_suppress('fullname');
@@ -269,24 +239,48 @@ class quiz_report extends quiz_default_report {
 
 
         // Construct the SQL
-
-        $select = 'SELECT '.$db->Concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).' AS uniqueid, qa.id AS attempt, u.id AS userid, u.firstname, u.lastname, u.picture, '.
-                  'qa.sumgrades, qa.timefinish, qa.timestart, qa.timefinish - qa.timestart AS duration ';
-        $from   = 'FROM '.$CFG->prefix.'user u LEFT JOIN '.$CFG->prefix.'quiz_attempts qa ON (u.id = qa.userid AND qa.quiz = '.$quiz->id.') ';
-        $where  = 'WHERE u.id IN ('.implode(',', $users).') ';
-
-        // Add extra limits if we 're not interested in students without attempts
-        if(!$noattempts) {
-            $where .= 'AND '.$db->IfNull('qa.attempt', '0').' != 0 ';
+        $select = 'SELECT '.$db->Concat('u.id', '\'#\'', $db->IfNull('qa.guestemail','\'\''), '\'#\'', $db->IfNull('qa.attempt', '0')).' AS uniqueid, '.
+            'qa.id AS attempt, u.id AS userid, u.firstname, u.lastname, u.picture, '.
+            'qa.sumgrades, qa.timefinish, qa.timestart, qa.timefinish - qa.timestart AS duration, qa.guestemail ';
+        if ($course->id != SITEID) { // this is too complicated, so just do it for each of the four cases.
+            if (!empty($currentgroup) && empty($noattempts)) {
+                $from  = 'FROM '.$CFG->prefix.'user u JOIN '.$CFG->prefix.'user_students us ON us.userid = u.id JOIN '.$CFG->prefix.'groups_members gm ON u.id = gm.userid '.
+                    'JOIN '.$CFG->prefix.'quiz_attempts qa ON u.id = qa.userid AND qa.quiz = '.$quiz->id;
+                $where = ' WHERE  us.course = '.$course->id.' AND gm.groupid = '.$currentgroup;                
+            } else if (!empty($currentgroup) && !empty($noattempts)) {
+                $from  = 'FROM '.$CFG->prefix.'user u JOIN '.$CFG->prefix.'user_students us ON us.userid = u.id JOIN '.$CFG->prefix.'groups_members gm ON u.id = gm.userid '.
+                    'LEFT JOIN '.$CFG->prefix.'quiz_attempts qa ON u.id = qa.userid AND qa.quiz = '.$quiz->id;
+                $where = ' WHERE us.course = '.$course->id.' AND gm.groupid = '.$currentgroup.' AND qa.userid IS NULL';
+            } else if (empty($currentgroup) && empty($noattempts)) {
+                $from  = 'FROM '.$CFG->prefix.'user u JOIN '.$CFG->prefix.'quiz_attempts qa ON u.id = qa.userid ';
+                $where = ' WHERE qa.quiz = '.$quiz->id;
+            } else if (empty($currentgroup) && !empty($noattempts)) {
+                $from  = 'FROM '.$CFG->prefix.'user u JOIN '.$CFG->prefix.'user_students us ON us.userid = u.id LEFT JOIN '.$CFG->prefix.'quiz_attempts qa ON u.id = qa.userid AND qa.quiz = '.$quiz->id;
+                $where = ' WHERE us.course = '.$course->id.' AND qa.userid IS NULL';
+            }
+            $countsql = 'SELECT COUNT(DISTINCT('.$db->Concat('u.id', '\'#\'', $db->IfNull('qa.guestemail','\'\''), '\'#\'', $db->IfNull('qa.attempt', '0')).')) '.$from.$where;
+        } else {
+            if (empty($noattempts)) {
+                $from   = 'FROM '.$CFG->prefix.'user u JOIN '.$CFG->prefix.'quiz_attempts qa ON u.id = qa.userid ';
+                $where = ' WHERE qa.quiz = '.$quiz->id;
+                $countsql = 'SELECT COUNT(DISTINCT('.$db->Concat('u.id', '\'#\'', 'qa.guestemail', '\'#\'', $db->IfNull('qa.attempt', '0')).')) '.$from.$where;
+            }
         }
         if (!$download) {
             // Add extra limits due to initials bar
             if($table->get_sql_where()) {
-                $where .= 'AND '.$table->get_sql_where();
+                $where .= ' AND '.$table->get_sql_where();
             }
 
             // Count the records NOW, before funky question grade sorting messes up $from
-            $total  = count_records_sql('SELECT COUNT(DISTINCT('.$db->Concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).')) '.$from.$where);
+            if (!empty($countsql)) {
+                $totalinitials = count_records_sql($countsql);
+                if ($table->get_sql_where()) {
+                    $countsql .= ' AND '.$table->get_sql_where();
+                }
+                $total  = count_records_sql($countsql);
+                
+            }
 
             // Add extra limits due to sorting by question grade
             if($sort = $table->get_sql_sort()) {
@@ -335,11 +329,18 @@ class quiz_report extends quiz_default_report {
         }
 
     /// Fetch the attempts
-        $attempts = get_records_sql($select.$from.$where.$sort.$limit);
+        if (!empty($from)) { // if we're in the site course and displaying no attempts, it makes no sense to do the query.
+            $attempts = get_records_sql($select.$from.$where.$sort.$limit);
+        } else {
+            $attempts = array();
+        }
 
     /// Build table rows
 
-        if(!empty($attempts)) {
+        if (!$download) {
+            $table->initialbars($totalinitials>20);
+        }
+        if(!empty($attempts) || !empty($noattempts)) {
 
             foreach ($attempts as $attempt) {
 
@@ -433,19 +434,19 @@ class quiz_report extends quiz_default_report {
                 $table->print_html();
 
     /// Print "Select all" etc.
-
-                echo '<table id="commands">';
-                echo '<tr><td>';
-                echo '<a href="javascript:select_all_in(\'DIV\',null,\'tablecontainer\');">'.get_string('selectall', 'quiz').'</a> / ';
-                echo '<a href="javascript:deselect_all_in(\'DIV\',null,\'tablecontainer\');">'.get_string('selectnone', 'quiz').'</a> ';
-                echo '&nbsp;&nbsp;';
-                $options = array('delete' => get_string('delete'));
-                echo choose_from_menu($options, 'action', '', get_string('withselected', 'quiz'), 'if(this.selectedIndex > 0) submitFormById(\'attemptsform\');', '', true);
-                echo '<noscript id="noscriptmenuaction" style="display: inline;">';
-                echo '<input type="submit" value="'.get_string('go').'" /></noscript>';
-                echo '<script type="text/javascript">'."\n<!--\n".'document.getElementById("noscriptmenuaction").style.display = "none";'."\n-->\n".'</script>';
-                echo '</td></tr></table>';
-
+                if (!empty($attempts)) {
+                    echo '<table id="commands">';
+                    echo '<tr><td>';
+                    echo '<a href="javascript:select_all_in(\'DIV\',null,\'tablecontainer\');">'.get_string('selectall', 'quiz').'</a> / ';
+                    echo '<a href="javascript:deselect_all_in(\'DIV\',null,\'tablecontainer\');">'.get_string('selectnone', 'quiz').'</a> ';
+                    echo '&nbsp;&nbsp;';
+                    $options = array('delete' => get_string('delete'));
+                    echo choose_from_menu($options, 'action', '', get_string('withselected', 'quiz'), 'if(this.selectedIndex > 0) submitFormById(\'attemptsform\');', '', true);
+                    echo '<noscript id="noscriptmenuaction" style="display: inline;">';
+                    echo '<input type="submit" value="'.get_string('go').'" /></noscript>';
+                    echo '<script type="text/javascript">'."\n<!--\n".'document.getElementById("noscriptmenuaction").style.display = "none";'."\n-->\n".'</script>';
+                    echo '</td></tr></table>';
+                }
     /// Close form
                 echo '</form></div>';
     /// Print display options
@@ -463,10 +464,10 @@ class quiz_report extends quiz_default_report {
                 echo '<td><input type="text" id="pagesize" name="pagesize" size="1" value="'.$pagesize.'" /></td>';
                 echo '</tr>';
 	            echo '<tr align="left">';
-                echo '<td colspan="2"><input type="checkbox" id="checknoattempts" name="noattempts" '.($noattempts?'checked="checked" ':'').'value="1" /> <label for="checknoattempts">'.get_string('shownoattempts', 'quiz').'</label> ';
+                echo '<td colspan="2"><input type="checkbox" id="checknoattempts" name="noattempts" '.($noattempts?'checked="checked" ':'').'value="1" /> <label for="checknoattempts">'.get_string('shownoattemptsonly', 'quiz').'</label> ';
 	            echo '</td></tr>';
 	            echo '<tr align="left">';
-                echo '<td colspan="2"><input type="checkbox" id="checkdetailedmarks" name="detailedmarks" '.($detailedmarks?'checked="checked" ':'').'value="1" /> <label for="checkdetailedmarks">'.get_string('showdetailedmarks', 'quiz').'</label> ';
+                echo '<td colspan="2"><input type="checkbox" id="checkdetailedmarks" name="detailedmarks" '.($detailedmarks?'checked="checked" ':'').'value="1" '.(($course->id == SITEID) ? ' disabled="disabled"' : '') .' /> <label for="checkdetailedmarks">'.get_string('showdetailedmarks', 'quiz').'</label> ';
 	            echo '</td></tr>';
                 echo '<tr><td colspan="2" align="center">';
                 echo '<input type="submit" value="'.get_string('go').'" />';
@@ -474,26 +475,28 @@ class quiz_report extends quiz_default_report {
                 echo '</form>';
                 echo '</div>';
                 echo "\n";
-
-                echo '<table align="center"><tr>';
-                unset($options);
-                $options["id"] = "$cm->id";
-                $options["q"] = "$quiz->id";
-                $options["mode"] = "overview";
-                $options['sesskey'] = sesskey();
-                $options["noheader"] = "yes";
-                echo '<td>';
-                $options["download"] = "Excel";
-                print_single_button("report.php", $options, get_string("downloadexcel"));
-                echo "</td>\n";
-                echo '<td>';
-                $options["download"] = "CSV";
-                print_single_button('report.php', $options, get_string("downloadtext"));
-                echo "</td>\n";
-                echo "<td>";
-                helpbutton("download", get_string("download","quiz"), "quiz");
-                echo "</td>\n";
-                echo '</tr></table>';
+                
+                if (!empty($attempts)) {
+                    echo '<table align="center"><tr>';
+                    unset($options);
+                    $options["id"] = "$cm->id";
+                    $options["q"] = "$quiz->id";
+                    $options["mode"] = "overview";
+                    $options['sesskey'] = sesskey();
+                    $options["noheader"] = "yes";
+                    echo '<td>';
+                    $options["download"] = "Excel";
+                    print_single_button("report.php", $options, get_string("downloadexcel"));
+                    echo "</td>\n";
+                    echo '<td>';
+                    $options["download"] = "CSV";
+                    print_single_button('report.php', $options, get_string("downloadtext"));
+                    echo "</td>\n";
+                    echo "<td>";
+                    helpbutton("download", get_string("download","quiz"), "quiz");
+                    echo "</td>\n";
+                    echo '</tr></table>';
+                }
             }
             elseif ($download == 'Excel') {
                 $workbook->close();
