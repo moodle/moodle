@@ -738,6 +738,10 @@ table.calendar-controls .next {
   border-right:0px;
 }
 
+* html #course-view .section .content .commands {
+  clear: both;
+}
+
 #course-view .section .side {
   padding:5px;
   border-style:solid;
