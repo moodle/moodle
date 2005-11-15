@@ -24,7 +24,7 @@
         error("You must be a teacher with editing rights to do this");
     }
 
-    if ($user->id == $USER->id and !$CFG->allowunenroll) {
+    if ($user->id == $USER->id and !$CFG->allowunenroll or $course->metacourse) {
         error("You are not allowed to unenroll");
     }
 
