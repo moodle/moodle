@@ -11,8 +11,8 @@
     $edit        = optional_param('edit');
     $idnumber    = optional_param('idnumber');
 
-    if (empty($id) && empty($name)) {
-        error("Must specify course id or short name");
+    if (empty($id) && empty($name) && empty($idnumber)) {
+        error("Must specify course id, short name or idnumber");
     }
 
     if (!empty($name)) {
