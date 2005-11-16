@@ -855,9 +855,9 @@ function stats_fix_zeros($stats,$timeafter,$timestr,$line2=true,$line3=false) {
     while ($timeafter < $now) {
         $times[] = $timeafter;
         if ($timestr == 'daily') {
-            $timeafter += (60*60*24) ;
+            $timeafter = stats_get_next_dayend($timeafter);
         } else if ($timestr == 'weekly') {
-            $timeafter += (60*60*24*7);
+            $timeafter = stats_get_next_weekend($timeafter);
         } else if ($timestr == 'monthly') {
             $timeafter = stats_get_next_monthend($timeafter);
         } else {
