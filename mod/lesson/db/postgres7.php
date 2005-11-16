@@ -60,7 +60,7 @@ function lesson_upgrade($oldversion) {
                         foreach ($answers as $answer) {
                             $answer->timecreated = $time;
                             $answer->timemodified = 0;
-                            insert_record('lesson_answers', $answer);
+                            insert_record('lesson_answers', (object) array_map('addslashes', (array)$answer));
                         }
                     }
                 }

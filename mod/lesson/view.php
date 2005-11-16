@@ -433,6 +433,8 @@
             // start of left menu
             if ($lesson->displayleft) {
                echo '<table><tr valign="top"><td>';
+               // skip navigation link
+               echo '<a href="#maincontent" class="skip">'.get_string('skip', 'lesson').'</a>';
                if($firstpageid = get_field('lesson_pages', 'id', 'lessonid', $lesson->id, 'prevpageid', 0)) {
                         // print the pages
                         echo '<form name="lessonpages2" method="post" action="view.php">'."\n";
@@ -456,6 +458,8 @@
                     $width = ' width="100%" ';
                 }
                 echo '</td><td align="center" '.$width.'>';
+                // skip to anchor
+                echo '<a name="maincontent" id="maincontent" title="'.get_string('anchortitle', 'lesson').'"></a>';
             } elseif ($lesson->slideshow && $page->qtype == LESSON_BRANCHTABLE) {
                 echo '<table align="center"><tr><td>';  // only want this if no left menu
             }
@@ -689,6 +693,10 @@
                     }                    
                     echo '<table width="100%">';
                 }
+                // default format text options
+                $options = new stdClass;
+                $options->para = false; // no <p></p>
+                $options->noclean = true;
                 switch ($page->qtype) {
                     case LESSON_SHORTANSWER :
                     case LESSON_NUMERICAL :
@@ -697,8 +705,8 @@
                         } else {
                             $value = "";
                         }       
-                        echo "<tr><td align=\"center\">".get_string("youranswer", "lesson").
-                            ": <label for=\"answer\" class=\"hidden-label\">Answer</label><input type=\"text\" id=\"answer\" name=\"answer\" size=\"50\" maxlength=\"200\" $value />\n";
+                        echo '<tr><td align="center"><label for="answer">'.get_string('youranswer', 'lesson').'</label>'.
+                            ": <input type=\"text\" id=\"answer\" name=\"answer\" size=\"50\" maxlength=\"200\" $value />\n";
                         echo '</table>';
                         print_simple_box_end();
                         echo "<div align=\"center\" class=\"lessonbutton standardbutton\"><a href=\"javascript:document.answerform.submit();\">".
@@ -706,23 +714,22 @@
                         break;
                     case LESSON_TRUEFALSE :
                         shuffle($answers);
+                        $i = 0;
                         foreach ($answers as $answer) {
-                            echo "<tr><td valign=\"top\">";
+                            echo '<tr><td valign="top">';
                             if (isset($USER->modattempts[$lesson->id]) && $answer->id == $attempt->answerid) {
-                                $checked = "checked=\"checked\"";
+                                $checked = 'checked="checked"';
                             } else {
-                                $checked = "";
+                                $checked = '';
                             } 
-                            echo "<label for=\"answerid\" class=\"hidden-label\">Answer ID</label><input type=\"radio\" id=\"answerid\" name=\"answerid\" value=\"{$answer->id}\" $checked />";
+                            echo "<input type=\"radio\" id=\"answerid$i\" name=\"answerid\" value=\"{$answer->id}\" $checked />";
                             echo "</td><td>";
-                            $options = new stdClass;
-                            $options->para = false; // no <p></p>
-                            $options->noclean = true;
-                            echo format_text(trim($answer->answer), FORMAT_MOODLE, $options);
-                            echo "</td></tr>";
+                            echo "<label for=\"answerid$i\">".format_text(trim($answer->answer), FORMAT_MOODLE, $options).'</label>';
+                            echo '</td></tr>';
                             if ($answer != end($answers)) {
                                 echo "<tr><td><br></td></tr>";                            
-                            } 
+                            }
+                            $i++;
                         }
                         echo '</table>';
                         print_simple_box_end();
@@ -732,37 +739,35 @@
                     case LESSON_MULTICHOICE :
                         $i = 0;
                         shuffle($answers);
+
                         foreach ($answers as $answer) {
-                            echo "<tr><td valign=\"top\">";
+                            echo '<tr><td valign="top">';
                             if ($page->qoption) {
-                                $checked = "";
+                                $checked = '';
                                 if (isset($USER->modattempts[$lesson->id])) {
                                     $answerids = explode(",", $attempt->useranswer);
                                     if (in_array($answer->id, $answerids)) {
-                                        $checked = "checked=\"checked\"";
+                                        $checked = ' checked="checked"';
                                     } else {
-                                        $checked = "";
+                                        $checked = '';
                                     }
                                 }
                                 // more than one answer allowed 
-                                echo "<label for=\"answer[$i]\" class=\"hidden-label\">answer[$i]</label><input type=\"checkbox\" id=\"answer[$i]\" name=\"answer[$i]\" value=\"{$answer->id}\" $checked />";
+                                echo "<input type=\"checkbox\" id=\"answerid$i\" name=\"answer[$i]\" value=\"{$answer->id}\"$checked />";
                             } else {
                                 if (isset($USER->modattempts[$lesson->id]) && $answer->id == $attempt->answerid) {
-                                    $checked = "checked=\"checked\"";
+                                    $checked = ' checked="checked"';
                                 } else {
-                                    $checked = "";
+                                    $checked = '';
                                 } 
                                 // only one answer allowed
-                                echo "<label for=\"answerid\" class=\"hidden-label\">answer id</label><input type=\"radio\" id=\"answerid\" name=\"answerid\" value=\"{$answer->id}\" $checked />";
+                                echo "<input type=\"radio\" id=\"answerid$i\" name=\"answerid\" value=\"{$answer->id}\"$checked />";
                             }
-                            echo "</td><td>";
-                            $options = new stdClass;
-                            $options->para = false; // no <p></p>
-                            $options->noclean = true;
-                            echo format_text(trim($answer->answer), FORMAT_MOODLE, $options); 
-                            echo "</td></tr>";
+                            echo '</td><td>';
+                            echo "<label for=\"answerid$i\" >".format_text(trim($answer->answer), FORMAT_MOODLE, $options).'</label>'; 
+                            echo '</td></tr>';
                             if ($answer != end($answers)) {
-                                echo "<tr><td><br></td></tr>";                            
+                                echo '<tr><td><br></td></tr>';
                             } 
                             $i++;
                         }
@@ -778,7 +783,7 @@
                         break;
                         
                     case LESSON_MATCHING :
-                        echo "<tr><td><table width=\"100%\">";
+                        echo '<tr><td><table width="100%">';
                         // don't suffle answers (could be an option??)
                         foreach ($answers as $answer) {
                             // get all the response
@@ -788,38 +793,33 @@
                         }
                         shuffle($responses);
                         $responses = array_unique($responses);
-
+                        
+                        $responseoptions = array();
+                        foreach ($responses as $response) {
+                            $responseoptions[htmlspecialchars(trim($response))] = $response;
+                        }
+                        
                         if (isset($USER->modattempts[$lesson->id])) {
-                            $useranswers = explode(",", $attempt->useranswer);
+                            $useranswers = explode(',', $attempt->useranswer);
                             $t = 0;
                         }
                         foreach ($answers as $answer) {
                             if ($answer->response != NULL) {
-                                echo "<tr><td align=\"right\">";
-                                $options = new stdClass;
-                                $options->para = false;
-                                $options->noclean = true;
-                                echo "<b>".format_text($answer->answer,FORMAT_MOODLE,$options).": </b></td><td valign=\"bottom\">";
-                                echo "<label for=\"response[$answer->id]\" class=\"hidden-label\">response[$answer->id]</label><select id=\"response[$answer->id]\" name=\"response[$answer->id]\">";
+                                echo '<tr><td align="right">';
+                                echo "<b><label for=\"menuresponse[$answer->id]\">".
+                                        format_text($answer->answer,FORMAT_MOODLE,$options).
+                                        '</label>: </b></td><td valign="bottom">';
+
                                 if (isset($USER->modattempts[$lesson->id])) {
-                                    $selected = trim($answers[$useranswers[$t]]->response);                                    
-                                    echo "<option value=\"".htmlspecialchars($response)."\" selected=\"selected\">$selected</option>";
-                                    foreach ($responses as $response) {
-                                        if (trim($answers[$useranswers[$t]]->response) != $response) {
-                                            echo "<option value=\"".htmlspecialchars($response)."\">$response</option>";
-                                        }
-                                    }
+                                    $selected = htmlspecialchars(trim($answers[$useranswers[$t]]->response));  // gets the user's previous answer
+                                    choose_from_menu ($responseoptions, "response[$answer->id]", $selected);
                                     $t++;
                                 } else {
-                                    echo "<option value=\"0\" selected=\"selected\">Choose...</option>";
-                                    foreach ($responses as $response) {
-                                        echo "<option value=\"".htmlspecialchars($response)."\">$response</option>";
-                                    }
+                                    choose_from_menu ($responseoptions, "response[$answer->id]");
                                 }
-                                echo "</select>";
-                                echo "</td></tr>";
+                                echo '</td></tr>';
                                 if ($answer != end($answers)) {
-                                    echo "<tr><td><br></td></tr>";                            
+                                    echo '<tr><td><br /></td></tr>';
                                 } 
                             }
                         }
@@ -883,11 +883,11 @@
                             $options = new stdClass;
                             $options->noclean = true;
                             echo '<div class="contents">'.format_text($page->contents, FORMAT_MOODLE, $options).'</div>';;
-                            echo "</table></div><table cellpadding=\"5\" cellspacing=\"5\" align=\"center\">";
+                            echo '</table></div><table cellpadding="5" cellspacing="5" align="center">';
                         } else {
-                            echo "<tr><td><table width=\"100%\">";
+                            echo '<tr><td><table width="100%">';
                         }
-                        echo "<input type=\"hidden\" name=\"jumpto\" />";
+                        echo '<input type="hidden" name="jumpto" />';
                         
                         if (!$lesson->slideshow) {
                             if (!empty($buttons['next']) or !empty($buttons['prev'])) {
@@ -910,11 +910,11 @@
                         } else {
                             $value = "";
                         }
-                        echo "<tr><td align=\"center\" valign=\"top\" nowrap>".get_string("youranswer", "lesson").":</td><td>".
-                             "<label for=\"answer\" class=\"hidden-label\">Answer</label><textarea id=\"answer\" name=\"answer\" rows=\"15\" cols=\"60\">$value</textarea>\n";
-                        echo "</td></tr></table>";
+                        echo '<tr><td align="center" valign="top" nowrap><label for="answer">'.get_string("youranswer", "lesson").'</label>:</td><td>'.
+                             '<textarea id="answer" name="answer" rows="15" cols="60">'.$value."</textarea>\n";
+                        echo '</td></tr></table>';
                         print_simple_box_end();
-                        echo "<div align=\"center\" class=\"lessonbutton standardbutton\"><a href=\"javascript:document.answerform.submit();\">".
+                        echo '<div align="center" class="lessonbutton standardbutton"><a href="javascript:document.answerform.submit();">'.
                              get_string("pleaseenteryouranswerinthebox", "lesson")."</a></div>\n";
                         break;
                 }

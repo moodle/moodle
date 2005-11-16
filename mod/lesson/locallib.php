@@ -1159,71 +1159,74 @@ function lesson_print_progress_bar($lesson, $course) {
         notify(get_string('progressbarteacherwarning', 'lesson', $course->teachers));
         return false;
     }
-    
-    // all of the lesson pages
-    if (!$pages = get_records('lesson_pages', 'lessonid', $lesson->id)) {
-        return false;
-    } else {
-        foreach ($pages as $page) {
-            if ($page->prevpageid == 0) {
-                $pageid = $page->id;  // find the first page id
-                break;
+    if (!isset($USER->modattempts[$lesson->id])) {
+        // all of the lesson pages
+        if (!$pages = get_records('lesson_pages', 'lessonid', $lesson->id)) {
+            return false;
+        } else {
+            foreach ($pages as $page) {
+                if ($page->prevpageid == 0) {
+                    $pageid = $page->id;  // find the first page id
+                    break;
+                }
             }
         }
-    }
     
-    // current attempt number
-    if (!$ntries = count_records("lesson_grades", "lessonid", $lesson->id, "userid", $USER->id)) {
-        $ntries = 0;  // may not be necessary
-    }
+        // current attempt number
+        if (!$ntries = count_records("lesson_grades", "lessonid", $lesson->id, "userid", $USER->id)) {
+            $ntries = 0;  // may not be necessary
+        }
     
-    $viewedpageids = array();
+        $viewedpageids = array();
     
-    // collect all of the correctly answered questions
-    if ($viewedpages = get_records_select("lesson_attempts", "lessonid = $lesson->id AND userid = $USER->id AND retry = $ntries AND correct = 1", 'timeseen DESC', 'pageid, id')) {
-        $viewedpageids = array_keys($viewedpages);
-    }
-    // collect all of the branch tables viewed
-    if ($viewedbranches = get_records_select("lesson_branch", "lessonid = $lesson->id AND userid = $USER->id AND retry = $ntries", 'timeseen DESC', 'pageid, id')) {
-        $viewedpageids = array_merge($viewedpageids, array_keys($viewedbranches));
-    }
+        // collect all of the correctly answered questions
+        if ($viewedpages = get_records_select("lesson_attempts", "lessonid = $lesson->id AND userid = $USER->id AND retry = $ntries AND correct = 1", 'timeseen DESC', 'pageid, id')) {
+            $viewedpageids = array_keys($viewedpages);
+        }
+        // collect all of the branch tables viewed
+        if ($viewedbranches = get_records_select("lesson_branch", "lessonid = $lesson->id AND userid = $USER->id AND retry = $ntries", 'timeseen DESC', 'pageid, id')) {
+            $viewedpageids = array_merge($viewedpageids, array_keys($viewedbranches));
+        }
 
-    // Filter out the following pages:
-    //      End of Cluster
-    //      End of Branch
-    //      Pages found inside of Clusters
-    // Do not filter out Cluster Page(s) because we count a cluster as one.
-    // By keeping the cluster page, we get our 1
-    $validpages = array(); 
-    while ($pageid != 0) {
-        if ($pages[$pageid]->qtype == LESSON_CLUSTER) {
-            $clusterpageid = $pageid; // copy it
-            $validpages[$clusterpageid] = 1;  // add the cluster page as a valid page
-            $pageid = $pages[$pageid]->nextpageid;  // get next page
+        // Filter out the following pages:
+        //      End of Cluster
+        //      End of Branch
+        //      Pages found inside of Clusters
+        // Do not filter out Cluster Page(s) because we count a cluster as one.
+        // By keeping the cluster page, we get our 1
+        $validpages = array(); 
+        while ($pageid != 0) {
+            if ($pages[$pageid]->qtype == LESSON_CLUSTER) {
+                $clusterpageid = $pageid; // copy it
+                $validpages[$clusterpageid] = 1;  // add the cluster page as a valid page
+                $pageid = $pages[$pageid]->nextpageid;  // get next page
             
-            // now, remove all necessary viewed paged ids from the viewedpageids array.
-            while ($pages[$pageid]->qtype != LESSON_ENDOFCLUSTER and $pageid != 0) {
-                if (in_array($pageid, $viewedpageids)) {
-                    unset($viewedpageids[array_search($pageid, $viewedpageids)]);  // remove it
-                    // since the user did see one page in the cluster, add the cluster pageid to the viewedpageids
-                    if (!in_array($clusterpageid, $viewedpageids)) { 
-                        $viewedpageids[] = $clusterpageid;
+                // now, remove all necessary viewed paged ids from the viewedpageids array.
+                while ($pages[$pageid]->qtype != LESSON_ENDOFCLUSTER and $pageid != 0) {
+                    if (in_array($pageid, $viewedpageids)) {
+                        unset($viewedpageids[array_search($pageid, $viewedpageids)]);  // remove it
+                        // since the user did see one page in the cluster, add the cluster pageid to the viewedpageids
+                        if (!in_array($clusterpageid, $viewedpageids)) { 
+                            $viewedpageids[] = $clusterpageid;
+                        }
                     }
+                    $pageid = $pages[$pageid]->nextpageid;
                 }
+            } elseif ($pages[$pageid]->qtype == LESSON_ENDOFCLUSTER or $pages[$pageid]->qtype == LESSON_ENDOFBRANCH) {
+                // dont count these, just go to next
+                $pageid = $pages[$pageid]->nextpageid;
+            } else {
+                // a counted page
+                $validpages[$pageid] = 1;
                 $pageid = $pages[$pageid]->nextpageid;
             }
-        } elseif ($pages[$pageid]->qtype == LESSON_ENDOFCLUSTER or $pages[$pageid]->qtype == LESSON_ENDOFBRANCH) {
-            // dont count these, just go to next
-            $pageid = $pages[$pageid]->nextpageid;
-        } else {
-            // a counted page
-            $validpages[$pageid] = 1;
-            $pageid = $pages[$pageid]->nextpageid;
-        }
-    }
+        }    
     
-    // progress calculation as a percent
-    $progress = round(count($viewedpageids)/count($validpages), 2) * 100; 
+        // progress calculation as a percent
+        $progress = round(count($viewedpageids)/count($validpages), 2) * 100; 
+    } else {
+        $progress = 100;
+    }
 
     // print out the Progress Bar.  Attempted to put as much as possible in the style sheets.
     echo '<div class="progress_bar" align="center">';

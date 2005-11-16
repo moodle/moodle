@@ -12,6 +12,8 @@
        if($firstpageid = get_field('lesson_pages', 'id', 'lessonid', $lesson->id, 'prevpageid', 0)) {
             // print the pages
             echo '<table><tr valign="top"><td>';
+            // skip navigation link
+            echo '<a href="#maincontent" class="skip">'.get_string('skip', 'lesson').'</a>';
             echo '<form name="lessonpages2" method="post" action="view.php">'."\n";
             echo '<input type="hidden" name="id" value="'. $cm->id .'" />'."\n";
             echo '<input type="hidden" name="action" value="navigation" />'."\n";
@@ -27,6 +29,8 @@
                 echo '</div>'."\n";
             echo '</form>'."\n";
             echo '</td><td align="center" width="100%">';
+            // skip to anchor
+            echo '<a name="maincontent" id="maincontent" title="'.get_string('anchortitle', 'lesson').'"></a>';
         }
     }
 

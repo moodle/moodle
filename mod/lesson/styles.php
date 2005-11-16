@@ -63,6 +63,12 @@
     
 }
 
+.mod-lesson .skip {
+    position: absolute;
+    left: -1000em;
+    width: 20em;
+}
+
 
 /***
  *** Lesson Buttons
