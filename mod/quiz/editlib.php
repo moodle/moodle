@@ -555,7 +555,7 @@ function quiz_print_cat_question_list($course, $categoryid, $quizid,
     $sortoptions = array('qtype, name ASC' => $strsortalpha,
                          'id ASC' => $strsortage);
     $orderselect  = choose_from_menu ($sortoptions, 'sortorder', $sortorder, false, 'this.form.submit();', '0', true);
-    $orderselect .= '<noscript><input type="submit" value="$strsortsubmit" /></noscript>';
+    $orderselect .= '<noscript><input type="submit" value="'.$strsortsubmit.'" /></noscript>';
     echo "<th width=\"100%\" align=\"left\" nowrap=\"nowrap\" class=\"header\">$strquestionname $orderselect</th>
     <th nowrap=\"nowrap\" class=\"header\">$strtype</th>";
     echo "</tr>\n";
