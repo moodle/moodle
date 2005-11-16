@@ -4,6 +4,8 @@
 
 $string['accesscontrol'] = 'Control de Acceso';
 $string['actionaftercorrectanswer'] = 'Acción posterior a la respuesta correcta';
+$string['activitylink'] = 'Enlace a una actividad';
+$string['activitylinkname'] = 'Ir a: $a';
 $string['addabranchtable'] = 'Añadir una tabla de ramificaciones';
 $string['addanendofbranch'] = 'Añadir un final de ramificación';
 $string['addaquestionpage'] = 'Añadir una página de preguntas';

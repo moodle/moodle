@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.5 Beta (2005052300)
+      // assignment.php - created with Moodle 1.5.2 (2005060220)
 
 
 $string['allowresubmit'] = 'Permitir reenvío';
@@ -53,7 +53,9 @@ $string['noattempts'] = 'No se ha intentado realizar esta tarea';
 $string['notgradedyet'] = 'No calificado aún';
 $string['notsubmittedyet'] = 'Aún no ha enviado esta tarea';
 $string['overwritewarning'] = 'Advertencia: Si envía un nuevo archivo REEMPLAZARÁ al anterior';
+$string['pagesize'] = 'Envíos mostrados por página';
 $string['preventlate'] = 'Impedir envíos retrasados';
+$string['quickgrade'] = 'Permitir calificación rápida';
 $string['saveallfeedback'] = 'Guardar todos mis comentarios';
 $string['submission'] = 'Envío';
 $string['submissionfeedback'] = 'Comentario sobre la tarea';
