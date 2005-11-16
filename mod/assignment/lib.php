@@ -488,7 +488,8 @@ class assignment_base {
                     break;
                 }
                 foreach ($_POST[$arr] as $id => $unusedvalue){
-                    
+
+                    $id = (int)$id; //clean parameter name
                     $newsubmission = $this->get_submission($id, true);  // Get or make one
                     unset($newsubmission->data1);  // Don't need to update this.
                     unset($newsubmission->data2);  // Don't need to update this.        
