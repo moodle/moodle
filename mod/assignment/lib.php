@@ -456,6 +456,8 @@ class assignment_base {
         switch ($mode) {
             case 'grade':                         // We are in a popup window grading
                 if ($submission = $this->process_feedback()) {
+                    //IE needs proper header with encoding
+                    print_header(get_string('feedback', 'assignment').':'.format_string($this->assignment->name));
                     print_heading(get_string('changessaved'));
                     $this->update_main_listing($submission);
                 }
