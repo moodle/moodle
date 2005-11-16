@@ -1,7 +1,6 @@
 <?PHP // $Id$
       // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005010100)
 
-
 $string['action'] = 'Action';
 $string['actions'] = 'Actions';
 $string['active'] = 'Active';
@@ -523,6 +522,7 @@ $string['forgottenduplicate'] = 'Automatic password recovery can not be complete
 $string['forgotaccount'] = 'Lost password?';
 $string['format'] = 'Format';
 $string['formathtml'] = 'HTML format';
+$string['formatlams'] = 'LAMS course format';
 $string['formatmarkdown'] = 'Markdown format';
 $string['formatplain'] = 'Plain text format';
 $string['formatscorm'] = 'SCORM format';
@@ -804,6 +804,7 @@ $string['mustchangepassword'] = 'The new password must be different than the cur
 $string['mustconfirm'] = 'You need to confirm your login';
 $string['mycourses'] = 'My courses';
 $string['name'] = 'Name';
+$string['namelams'] = 'LAMS';
 $string['namescorm'] = 'SCORM';
 $string['namesocial'] = 'section';
 $string['nametopics'] = 'topic';
