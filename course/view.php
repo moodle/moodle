@@ -13,8 +13,8 @@
     $topic       = optional_param('topic',0,PARAM_INT);
     $studentview = optional_param('studentview','',PARAM_ALPHA);
 
-    if (empty($id) && empty($name)) {
-        error("Must specify course id or short name");
+    if (empty($id) && empty($name) && empty($idnumber)) {
+        error("Must specify course id, short name or idnumber");
     }
 
     if (!empty($name)) {
