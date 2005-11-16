@@ -4,9 +4,9 @@ To Install it:
     - Enable if from "Administration/Filters".
   
 To Use it:
-    - Create your contents into multiple languages.
+    - Create your contents in multiple languages.
     - Enclose every language content between:
-        <span lang="XX>your_content_here</span>
+        <span lang="XX">your_content_here</span>
     - Test it (by changing your language).
 
 How it works:
@@ -20,7 +20,7 @@ How it works:
 
 Definition of "lang block":
     Is a collection of lang tags separated only by whitespace chars (space,
-    tab, linefeed or return chars). For each detected lang 
+    tab, linefeed or return chars).
 
 One example in action:
     - This text:
@@ -33,7 +33,7 @@ One example in action:
         This text is common for every language because it's out from any lang block.
         Bye!
 
-    - And, in Spanih, it will print:
+    - And, in Spanish, it will print:
         Hola!
         This text is common for every language because it's out from any lang block.
         Bye!
