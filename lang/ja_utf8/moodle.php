@@ -501,6 +501,7 @@ $string['forgotten'] = 'ユーザ名またはパスワードを忘れました�
 $string['forgottenduplicate'] = 'あなたのメールアドレスが1件以上データベースに見つかりましたので、自動パスワードリカバリは完了しませんでした。管理者の <a href=\"mailto:$a->email\"> $a->lastname $a->firstname</a> にご連絡ください。';
 $string['format'] = 'フォーマット';
 $string['formathtml'] = 'HTMLフォーマット';
+$string['formatlams'] = 'LAMSコースフォーマット';
 $string['formatmarkdown'] = 'Markdownフォーマット';
 $string['formatplain'] = 'プレインテキストフォーマット';
 $string['formatscorm'] = 'SCORMフォーマット';
@@ -783,6 +784,7 @@ $string['mustchangepassword'] = '新しいパスワードは現在のパスワ�
 $string['mustconfirm'] = 'ログイン情報を確認してください。';
 $string['mycourses'] = 'マイ　コース';
 $string['name'] = '名称';
+$string['namelams'] = 'LAMS';
 $string['namescorm'] = 'SCORM';
 $string['namesocial'] = 'セクション';
 $string['nametopics'] = 'トピック';

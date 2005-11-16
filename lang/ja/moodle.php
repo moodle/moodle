@@ -501,6 +501,7 @@ $string['forgotten'] = '¥æ¡¼¥¶Ì¾¤Þ¤¿¤Ï¥Ñ¥¹¥ï¡¼¥É¤òËº¤ì¤Þ¤·¤¿¤«?';
 $string['forgottenduplicate'] = '¤¢¤Ê¤¿¤Î¥á¡¼¥ë¥¢¥É¥ì¥¹¤¬1·ï°Ê¾å¥Ç¡¼¥¿¥Ù¡¼¥¹¤Ë¸«¤Ä¤«¤ê¤Þ¤·¤¿¤Î¤Ç¡¢¼«Æ°¥Ñ¥¹¥ï¡¼¥É¥ê¥«¥Ð¥ê¤Ï´°Î»¤·¤Þ¤»¤ó¤Ç¤·¤¿¡£´ÉÍý¼Ô¤Î <a href=\"mailto:$a->email\"> $a->lastname $a->firstname</a> ¤Ë¤´Ï¢Íí¤¯¤À¤µ¤¤¡£';
 $string['format'] = '¥Õ¥©¡¼¥Þ¥Ã¥È';
 $string['formathtml'] = 'HTML¥Õ¥©¡¼¥Þ¥Ã¥È';
+$string['formatlams'] = 'LAMS¥³¡¼¥¹¥Õ¥©¡¼¥Þ¥Ã¥È';
 $string['formatmarkdown'] = 'Markdown¥Õ¥©¡¼¥Þ¥Ã¥È';
 $string['formatplain'] = '¥×¥ì¥¤¥ó¥Æ¥­¥¹¥È¥Õ¥©¡¼¥Þ¥Ã¥È';
 $string['formatscorm'] = 'SCORM¥Õ¥©¡¼¥Þ¥Ã¥È';
@@ -783,6 +784,7 @@ $string['mustchangepassword'] = '¿·¤·¤¤¥Ñ¥¹¥ï¡¼¥É¤Ï¸½ºß¤Î¥Ñ¥¹¥ï¡¼¥É¤È°Û¤Ê¤ë¤â¤Î¤
 $string['mustconfirm'] = '¥í¥°¥¤¥ó¾ðÊó¤ò³ÎÇ§¤·¤Æ¤¯¤À¤µ¤¤¡£';
 $string['mycourses'] = '¥Þ¥¤¡¡¥³¡¼¥¹';
 $string['name'] = 'Ì¾¾Î';
+$string['namelams'] = 'LAMS';
 $string['namescorm'] = 'SCORM';
 $string['namesocial'] = '¥»¥¯¥·¥ç¥ó';
 $string['nametopics'] = '¥È¥Ô¥Ã¥¯';
