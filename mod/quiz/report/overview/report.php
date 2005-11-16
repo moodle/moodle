@@ -464,10 +464,10 @@ class quiz_report extends quiz_default_report {
                 echo '<td><input type="text" id="pagesize" name="pagesize" size="1" value="'.$pagesize.'" /></td>';
                 echo '</tr>';
 	            echo '<tr align="left">';
-                echo '<td colspan="2"><input type="checkbox" id="checknoattempts" name="noattempts" '.($noattempts?'checked="checked" ':'').'value="1" /> <label for="checknoattempts">'.get_string('shownoattemptsonly', 'quiz').'</label> ';
+                echo '<td colspan="2"><input type="checkbox" id="checknoattempts" name="noattempts" '.($noattempts?'checked="checked" ':'').'value="1" '.(($course->id == SITEID) ? ' disabled="disabled"' : '') .' /> <label for="checknoattempts">'.get_string('shownoattemptsonly', 'quiz').'</label> ';
 	            echo '</td></tr>';
 	            echo '<tr align="left">';
-                echo '<td colspan="2"><input type="checkbox" id="checkdetailedmarks" name="detailedmarks" '.($detailedmarks?'checked="checked" ':'').'value="1" '.(($course->id == SITEID) ? ' disabled="disabled"' : '') .' /> <label for="checkdetailedmarks">'.get_string('showdetailedmarks', 'quiz').'</label> ';
+                echo '<td colspan="2"><input type="checkbox" id="checkdetailedmarks" name="detailedmarks" '.($detailedmarks?'checked="checked" ':'').'value="1" /> <label for="checkdetailedmarks">'.get_string('showdetailedmarks', 'quiz').'</label> ';
 	            echo '</td></tr>';
                 echo '<tr><td colspan="2" align="center">';
                 echo '<input type="submit" value="'.get_string('go').'" />';
