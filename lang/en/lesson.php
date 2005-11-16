@@ -1,7 +1,6 @@
 <?PHP // $Id$ 
       // lesson.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
 
-
 $string['accesscontrol'] = 'Access control';
 $string['actionaftercorrectanswer'] = 'Action after correct answer';
 $string['activitylink'] = 'Link to an activity';
@@ -16,6 +15,7 @@ $string['addedaquestionpage'] = 'Added a Question Page';
 $string['addedcluster'] = 'Added a Cluster';
 $string['addedendofcluster'] = 'Added an End of Cluster';
 $string['addendofcluster'] = 'Add an End of Cluster';
+$string['anchortitle'] = 'Start of main content';
 $string['and'] = 'AND';
 $string['answer'] = 'Answer';
 $string['answeredcorrectly'] = 'answered correctly.';
@@ -221,6 +221,7 @@ $string['secondpluswrong'] = 'Not quite.  Would you like to try again?';
 $string['showanunansweredpage'] = 'Show an unanswered Page';
 $string['showanunseenpage'] = 'Show an Unseen Page';
 $string['singleanswer'] = 'Single Answer';
+$string['skip'] = 'Skip navigation';
 $string['slideshow'] = 'Slide Show';
 $string['slideshowbgcolor'] = 'Slide show background color';
 $string['slideshowheight'] = 'Slide show height';
