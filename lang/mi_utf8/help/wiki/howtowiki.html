@@ -1,0 +1,130 @@
+<h2>How To Wiki</h2>
+<p>
+Moodle's wiki is based on
+<a href="http://erfurtwiki.sourceforge.net/?id=ErfurtWiki" target="_blank">ErfurtWiki</a>,
+which is an implementation of the 
+<a href="http://c2.com/cgi/wiki?WikiWikiWeb" target="_blank">WikiWikiWeb</a>
+hypertext system. It allows simple collaborative editing and creation of web pages.</p>
+<p>
+<ul>
+<li>learn how to <a href="#createpages">CreatePages</a></li>
+<li>just click on <img src="pix/t/edit.gif"> or select "Edit this page" from the drop down menu to change the contents of a page</li>
+<li>you can format your pages wth <a href="#wikimarkup">Wiki Markup</a>, or with HTML (if the wiki has been given that option)</li>
+<li>SearchPages or go to the list of NewestPages</li>
+<li>there are also lists of the MostVisitedPages, MostOftenChangedPages and recently UpdatedPages</li>
+</ul>
+</p>
+<p>
+<a name="createpages"></a><b>Create Pages</b>:<br />
+You create a page by naming it in the text of an existing page. A wiki page is named using
+<a href="#camelcase">CamelCase</a> or by enclosing it in square brackets ( [] ).</p>
+<p>
+For example:
+<ul>
+<li>MyWikiPage (Camel Case)</li>
+<li>[My Wiki Page] (enclosed in square brackets)</li>
+</ul></p>
+<p>
+Text that has been given a wiki page name will have a '?' after it. Clicking on the '?', will
+enter edit mode for that page. Enter your text, save and you have a new wiki page.</p>
+<p><a name="wikimarkup"></a><b>Wiki Markup</b>:<br />
+Each page inside a Wiki can be edited easily, using wiki markup.
+</p>
+<h4> Paragraphs</h4>
+  <ul type="circle">
+  <li> separate paragraphs inside the text with empty lines</li>
+  <li> use three percent signs %%<em></em>% to enforce a line break</li>
+  <li> if you prepend text with spaces or tabs it will get indented  </li>
+  </ul>
+
+<h4> !! Headlines</h4>
+  <ul type="circle">
+  <li> use an exclamation mark ! at the beginning of a line to create a small headline</li>
+  <li> !! for medium</li>
+  <li> !!! for large headlines  </li>
+  </ul>
+
+<h4> text style</h4>
+  <ul type="circle">
+  <li> if you want to <em>emphasize text</em> enclose it in two single-quotes '' (usually looks italic)</li>
+  <li> <strong>text gets bold</strong> with two underscores __ (or if enclosed with two asterisks **)</li>
+  <li> to make <big>text big</big> enclose it in hash characters ##</li>
+  <li> you can get <small> smaller text </small> using "µµ" likewise</li>
+  <li> a <tt>typewrite like font</tt> will be used if you enclose text in two equal == signs  </li>
+  </ul>
+
+<h4> Lists</h4>
+
+  <ul type="circle">
+  <li> start a line with an asterisk * to begin a list</li>
+  <li> use # instead for numerated lists
+    <ol>
+    <li> you can create sublists</li>
+    <li> subsequent list points should start with the same mix of * and #    </li>
+    </ol>
+  </li>
+  </ul>
+
+<h4> HyperLinks</h4>
+
+  <ul type="circle">
+  <li> just enter a CamelCase WikiWord inside your text to create a new HyperLink</li>
+  <li> or, enclose some <b>words in square brackets</b> to create a HyperLink</li>
+  <li> any valid internet address (starting with <a href="http://">http://</a>) like http://www.example.com/ inside the text will be made clickable automagically</li>
+  <li> enclose a www address or a WikiLink inside square brackets [<a href="http://www.moodle.org/">Moodle</a>] and assign it a neat title using quotation marks or the | character
+    <ul type="circle">
+    <li> [title | http://example.com]</li>
+    <li> [WikiWord "title"] or ["title for" WikiLink]    </li>
+    </ul>
+  </li>
+  <li> if you don't want a WikiWord or a !http://www-address (or [anything] inside square brackets) to become a HyperLink then just prepend it with a exclamation mark or a tilde
+    <ul type="circle">
+    <li> !NoHyperLink, ~NoHyperLink</li>
+    <li> ![no hyperlink], !!http://nolink.org/    </li>
+    </ul>
+  </li>
+  </ul>
+
+<h4> Tables with |</h4>
+<table cellpadding="2" border="1" cellspacing="0">
+<tr>
+<td> just enclose </td>
+<td> things with the dash </td>
+<td> character </td>
+</tr><tr>
+<td> to build a </td>
+<td> table structure  </td>
+</tr><tr>
+<td> browsers usually </td>
+<td> leave out the missing </td>
+<td> cells </td>
+</tr>
+</table>
+
+
+<p>
+Please always put an empty line before and after a table, so it stands out from other text in its own paragraph.
+</p>
+
+<h4> Pictures</h4>
+
+  <ul type="circle">
+  <li> to include an image into a page enclose its absolute www-address in square brackets, like [http://www.example.com/pics/image.png] </li>
+  <li> alternatively you could use the ImageUploading function</li>
+  </ul>
+
+<h4>Further readings</h4>
+There are more possibilities for Wiki mark-up. Please consult the <a href="http://erfurtwiki.sourceforge.net" target=_new>Erfurt Wiki Homepage</a> for more information.
+
+<p>
+<a name="camelcase"></a><b>Camel Case</b>:<br />
+CamelCase describes what WikiWords look like. Multiple words, joined together without
+spaces, separated by changes in case. The uppercase and
+lowercase letters show up like the humps of camels.</p>
+<p>
+This linking scheme is often also called BumpyText.</p>
+<p>
+While language purists hate Wikis for that naming scheme, it is very common in the 
+computing world and well known to most programmers.</p>
+
+

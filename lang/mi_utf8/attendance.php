@@ -1,0 +1,72 @@
+<?PHP // $Id$ 
+      // attendance.php - created with Moodle 1.4.1 (2004083101)
+
+
+$string['absentlong'] = 'Tam&#333;';
+$string['absentshort'] = 'A';
+$string['addingmultiple'] = 'Adding Multiple Attendance Rolls';
+$string['addmultiple'] = 'Add Multiple Attendance Rolls';
+$string['allmodulename'] = 'R&#257;rangi Ingoa Katoa';
+$string['auto'] = 'auto';
+$string['autoattend'] = 'Automatically take attendance based on user activity logs';
+$string['autoattendmulti'] = 'Automatically take attendance for all rolls based on user activity logs';
+$string['autoattendshort'] = 'Automatic from logs';
+$string['choosedays'] = 'Days of each week to take attendance';
+$string['dayofroll'] = 'Date to take roll for';
+$string['defaultautoattend'] = 'Whether to take attendance based on user activity logs by default';
+$string['defaultdynamicsection'] = 'Whether to move attendance rolls to the correct week by default';
+$string['defaultgrade'] = ' Whether to make attendance rolls gradeable by default';
+$string['defaulthoursinclass'] = 'How many hours there should be in a default attendance roll';
+$string['defaultmaxgrade'] = 'What the default maximum grade value for full attendance should be';
+$string['defaultstudentstatus'] = 'The default student attendance status on new attendance rolls';
+$string['downloadexcelfull'] = 'Download Full Excel Spreadsheet';
+$string['downloadexceltotals'] = 'Download Summary Excel Spreadsheet';
+$string['downloadtextfull'] = 'Download Full Text Report';
+$string['downloadtexttotals'] = 'Download Summary Text Report';
+$string['dynamicsection'] = 'Determine week for attendance based on this date';
+$string['dynamicsectionmulti'] = 'Place rolls in their weekly section automatically';
+$string['dynsectionshort'] = 'Dynamically moved to section';
+$string['endbeforestart'] = 'The end date is before the start date';
+$string['endmulti'] = 'Date for last attendance roll';
+$string['for'] = 'm&#333;';
+$string['friday'] = 'Paraire';
+$string['gradeshort'] = 'I M&#257;ka';
+$string['gradevalue'] = 'Make this roll gradeable';
+$string['gradevaluemulti'] = 'Make these rolls gradeable';
+$string['hoursinclass'] = 'Ng&#257; h&#257;ora t&#333; ia w&#257;hanga akomanga';
+$string['hoursineachclass'] = 'Ng&#257; h&#257;ora t&#333; ia w&#257;hanga akomanga';
+$string['hoursinfullreport'] = 'The maximum number of hours of attendance that should be displayed on a single page of a report';
+$string['maxgradeshort'] = 'M&#257;ka Mutunga Rawa';
+$string['maxgradevalue'] = 'Maximum grade value for full attendance';
+$string['modulename'] = 'Te Taenga Mai';
+$string['modulenameplural'] = 'R&#257;rangi Ingoa';
+$string['monday'] = 'Mane';
+$string['norolls'] = 'K&#257;ore ng&#257; r&#257;rangi ingoa ki t&#275;nei w&#257;nanga';
+$string['notes'] = 'Exceptional information';
+$string['notesfor'] = 'Exceptional information for';
+$string['noviews'] = 'Sorry, there is no data for your account here';
+$string['of'] = 'i / o';
+$string['pages'] = 'Ng&#257; Wh&#257;rangi';
+$string['presentlong'] = 'I / Ki K&#333;nina';
+$string['presentshort'] = 'P';
+$string['saturday'] = 'R&#257;horoi';
+$string['startafterend'] = 'Kei muri i te mutunga o te w&#257;nanga ko te r&#257; t&#299;matanga';
+$string['startmulti'] = 'R&#257; o te r&#257;rangi ingoa tuatahi';
+$string['sunday'] = 'R&#257;tapu';
+$string['takeroll'] = 'Me mahia he r&#257;rangi ingoa i t&#275;neki r&#257;?';
+$string['tardiesperabsence'] = 'How many tardies should count as one absence';
+$string['tardylong'] = 'T&#333;muri';
+$string['tardyshort'] = 'T';
+$string['teacheredit'] = 'M&#257;hia he R&#257;rangi Ingoa';
+$string['thursday'] = 'R&#257;pare';
+$string['tuesday'] = 'R&#257;t&#363;';
+$string['viewall'] = 'Whakaatu ng&#257; R&#257;rangi Ingoa Katoa';
+$string['viewmulti'] = 'Whakaatu ko te R&#299;poata he Wh&#257;rangi Maha';
+$string['viewone'] = 'Whakaatu ng&#257; Wh&#257;rangi Katoa o te R&#299;poata';
+$string['viewsection'] = 'Whakaatu ng&#257; R&#257;rangi Ingoa mai i t&#275;neki W&#257;hanga';
+$string['viewtable'] = 'Whakaatu ko te R&#299;poata he Momo Ripanga (H&#333;tuku)';
+$string['viewweek'] = 'Whakaatuhia ng&#257; R&#257;rangi Ingoa Katoa mai i te Maramataka';
+$string['wednesday'] = 'R&#257;apa';
+$string['weekmodulename'] = 'Ng&#257; R&#257;rangi Ingoa n&#333; te Wiki Whakamutunga';
+
+?>

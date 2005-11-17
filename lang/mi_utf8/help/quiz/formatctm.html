@@ -1,0 +1,83 @@
+<p align=center><b>Importing "Course Test Manager" files</b></p>
+
+<p>Course Test Manager is an "End of Lifetime" software package from Course Technology. 
+It is no longer being actively developed by Course Technology.  It has been replaced by 
+a new test manager called ExamView.  However, there has never been a migration path to allow
+this format to be exported from CTM testbanks to any other common test format.  This is why this
+module has been written.</p>
+
+<p> In order to import questions from CTM, you must have CTM installed on a Windows machine, and 
+have access to the MS Access data files on that machine.  Two data files are required in order to
+access the data files:</p>
+<ul><li>System.mda - This file is in the top directory of your CTM installation, and is referred to
+in MS access parlance as the "System Database".</li>
+<li>ctm.mdb - this is the database that contains the test bank questions.  There is one of these databases
+for each course installed in CTM.  It is located in a directory one level bellow your CTM installation 
+directory.</li>
+</ul>
+
+</p>The import process is somewhat different based on whether you're running moodle on Windows or Linux. 
+Regardless of what platfom moodle is running on, you must have a Windows system (Windows 2000 or Windows XP)
+on the same network as your moodle system in order to host the Access database while importing test banks.</p>
+
+<p>The process is somewhat easier on a <b>Windows-based</b> moodle system.  All you need to do to use the CTM import
+class is:</p>
+
+<ol><li>upload the system.mda system database to moodle using the file manager.  It doesn't matter what course you
+upload the system.mda file to.  Moodle will find it regardless.</li>
+<li>Crete your quiz and go into the "import questions from file" process.  Upload your chosen ctm.mdb 
+database as the file to import.  If you did this correctly, you will see another screen that allows you 
+to choose the sub-category of questions to import from the database. The reason this step is here is that 
+CTM test banks often contain a large number of categorized questions, based on the chapters of the book or 
+sections of the course.</li>
+</ol>
+
+<p>The process on a <b>Linux-based</b> moodle system includes a third-party software component called the
+<a href="http://odbcsock.sourceforge.net/" target="_new"><b>ODBC Socket Server</b></a>.  In order to import CTM databases on Linux, you must first download and install
+this small network program on the Windows system that hosts your CTM databases.  <b>Do not</b> follow the installation
+steps outlined in the ODBC Socket Server Installation.  They're more complicated than they need to be! 
+Instead, follow these steps to install this program on your Windows system:</P>
+
+<ol><li>Go to the windows system and unzip the install file you downloaded from 
+<a href="http://odbcsock.sourceforge.net/" target="_new">this site</a> on the system.</li>
+<li>Copy the binary ODBCSocketServer.exe to a permanent location, such as your system directory 
+(probably C:\WINNT\ or C:\Windows) or your Program Files directory. </li> 
+
+<li>Install the ODBC Socket Server as a Service on the system with this command:<br />
+<b>&lt;path you copied the file to in the step above&gt;ODBCSocketServer.exe /Service</b><br />
+You may do this by typing this command from Start-&gt;Run... dialog, or from a command prompt.</li>
+
+<li>Open the Service Manager by either going to 
+Start-&gt;Settings-&gt;Control Panels-&gt;Administrative Tools-&gt;Services or by right-clicking on
+<b>My Computer</b>, choosing <b>Manage</b>, then choosing <B>Services and Applications-&gt;Services</b> from 
+the right panel.  You may also access the Service manager by typing <b>services.msc</b> in the Start-&gt;Run... 
+dialog</li>
+
+<li>In the Service manager, right-click the ODBC Socket Server item and choose the <b>Start</b> item.  It's status 
+should change to "started" when you do this. Note that you may stop and/or disable this service completely after
+you've completed the import process.</li>
+
+<li>Make sure that the system.mda and ctm.mdb access data files are on the machine, 
+and that the MS Access ODBC driver is present.  It is installed in a standard Windows installation.  You can
+determine if it installed by opening the "Data Sources" item in "Administrative Tools" and referring to the "Drivers"
+tab.  You're going to have to determine where CTM is installed and locate the system.mda file and the ctm.mdb database 
+or databases you're interested in importing data from.  Make note of the full local paths to these files as well 
+as the IP address or hostname of the Windows server.  You're going to need this information for the import process.</li>
+
+<li>Now you may import the testbank or testbanks into moodle. Crete your quiz and go into the 
+"import questions from file" process.  <B>NOW HERE'S WHERE THINGS ARE DIFFERENT FOR LINUX - </B>
+YOU MUST SPECIFY A DUMMY FILE IN THE UPLOAD FIELD TO GET THE IMPORT PROCESS STARTED.  THIS FILE <b>WILL NOT</b>
+BE PROCESSED, IT'S JUST A PLACEHOLDER FOR THE IMPORT FORM.  YOU WILL GET A PLACE TO SPECIFY THE WINDOWS SERVER
+INFORMATION NEXT.  Next, you will get a screen where you can type in the hostname for the Windows ODBC Socket Server
+machine as well as the paths to the system and testbank databases.  Type in the information you wrote down from the 
+previous step here and click "Connect to Server". If everything was set up correctly, you'll get another form to allow
+you to choose the sub-category of questions to import from the database. The reason this step is here is that 
+CTM test banks often contain a large number of categorized questions, based on the chapters of the book or 
+sections of the course.  IF YOU GET TO THIS STEP WITHOUT ERROR MESSAGES, YOU HAVE SET UP THE SOCKET SERVER CORRECTLY
+AND YOU'RE ABOUT TO IMPORT QUESTIONS TO MOODLE!</li>
+</ol>
+
+<P>If you received error messages during this process, you may find this technical information useful. 
+The ODBC Socket server uses port 9628 to open a socket and trade and XML query for an XML result table of 
+the query results.  The import class parses that XML and use it just like I use a local query to do the importing. 
+</p>

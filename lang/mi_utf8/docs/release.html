@@ -1,0 +1,269 @@
+<head>
+    
+<title>Moodle Docs: Current Release notes</title>
+	
+<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS">
+    
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    
+<style type="text/css">
+<!--       dt {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; font-weight: bold;}
+       dd {margin-bottom:1em;} 
+.style1 {font-weight: bold}
+-->
+</style>
+</head>
+
+<body bgcolor="#FFFFFF">
+<h1>Latest Release notes</h1>
+
+<h3> Moodle 1.4.1   (12th September, 2004)</h3>
+
+<ul><dl>
+    <dt>A few little new things</dt>
+    <dd> 
+      <ul>
+        <li>New "Email Protection" filter will obfuscate all email addresses within all texts 
+            (to help prevent automated address-harvesting)</li>
+        <li>Allowed email addresses can now be restricted (see config-dist.php for details)</li>
+        <li>Extra instructions for translators embedded in translation interface</li>
+        <li>New help page for Directory Paths</li>
+      </ul>
+    </dd>
+    <dt>And some bug fixes</dt>
+    <dd> 
+      <ul>
+        <li>Improved performance when viewing site logs</li>
+        <li>Improved paging and performance in glossary</li>
+        <li>Glossary entries are now shown correctly if they belong to multiple categories</li>
+        <li>Do not redeclare auth_user_login upon failed login</li>
+        <li>Fixed two missing icons in the cordoroyblue theme</li>
+        <li>Fixed missing "New event" button on Upcoming Events page</li>
+        <li>Always addslashes on chat messages from daemon users before inserting into db.</li>
+        <li>Fixes for handling of fixed enrollment periods when this is set for a course</li>
+        <li>Site course ID (defined as SITEID) is no longer assumed to be always 1</li>
+        <li>Default memory limits are increased beyond 16M, to help Moodle continue 
+            working even when there is some unplanned memory problem</li>
+        <li>Smilies are now rendered as pictures in Markdown format texts</li>
+        <li>Workshops work under Recent Activity again</li>
+        <li>file.php can now only be used to access data within courses</li>
+        <li>Improved behaviour of calendar blocks on home page</li>
+        <li>Fixed quotes bug with PostgreSQL database specification produced by installer</li>
+        <li>Fixed sometimes-missing display of correct answers during quiz review</li>
+        <li>&lt;tt> and &lt;code> are now allowed tags</li>
+        <li>Section summaries, course summaries and labels are again no longer cleaned of Javascript</li>
+        <li>Fixed a rare LDAP bug that could cause new accounts not to be created </li>
+      </ul>
+    </dd>
+  </dl>
+</ul>
+
+<p>&nbsp;</p>
+
+
+<h3> Moodle 1.4   (31st August, 2004)</h3>
+
+<ul><dl>
+    <dt>Headlines</dt>
+    <dd> 
+      <ul>
+        <li>Compatibility with PHP 5</li>
+        <li>New easy installer wizard leads you through the creation of the initial config.php file</li>
+        <li>Installation is now completely localised to your preferred language</li>
+        <li>Completely revamped Resource module make it easier to add new resources and to send data to them.</li>
+        <li>New Enrolment system featuring modules such as completely automated Paypal payments, 
+            flatfile scanning, or external database control.</li>
+        <li>Blocks now work on the front page, plus you can put a topic section above the middle part</li>
+        <li>Chat now includes a server-side daemon (in PHP) for scalable, instant chat</li>
+        <li>New Wiki module!</li>
+        <li>New support for editing text using the Markdown format</li>
+        <li>Many bug fixes in all areas</li>
+      </ul>
+    </dd>
+
+    <dt>Under the hood</dt>
+    <dd> 
+      <ul>
+        <li>Resource module has its own Add menu now, and uses class-based submodules, making it much 
+            easier now to add new resource types to this menu</li>
+        <li>Quiz module has been refactored into class-based questiontype plugins.</li>
+        <li>Enrolment process has been refactored into class-based enrolment plugins.</li>
+        <li>Glossary display formats are now name-based, and it's easier to plugin new ones.</li>
+        <li>Improved behaviour of many modules when they are used on the site page.</li>
+        <li>Revised Filter structure is faster and now compatible with Turck MMcache.</li>
+        <li>Adding activities is now more forgiving of fields left empty</li>
+        <li>We can now alter PostgreSQL columns at will using table_column()</li>
+        <li>RSS generation has been sped up tremendously, putting much less load on cron</li>
+        <li>Some bigger modules have split lib.php into locallib.php for less memory usage</li>
+      </ul>
+    </dd>
+
+    <dt>Languages and localisation</dt>
+    <dd> 
+      <ul>
+        <li>Updates to nearly every language pack</li>
+        <li>Moodle can override the default character set in Apache, making languages more reliable</li>
+        <li>Multibyte languages now wrap properly</li>
+        <li>Better handling of locales and encodings on very multilingual sites (like moodle.org)</li>
+        <li>New languages: Slovenian and Hebrew! </li>
+      </ul>
+    </dd>
+
+    <dt>Security Fixes</dt>
+    <dd> 
+      <ul>
+        <li>Fixed a number of possible XSS entry points and path disclosures</li>
+        <li>Attributes of tags in HTML are now parsed even more thoroughly for naughty scripts</li>
+        <li>User profile pages are no longer available by default to strangers</li>
+        <li>All text is now cleaned on output (not just input)</li>
+        <li>Email addresses are not used on outgoing mail if the user requests that</li>
+        <li>New setting <strong>loginhttps</strong> will use secure https for the login, then switch back to http</li>
+      </ul>
+    </dd>
+
+    <dt>Administration</dt>
+    <dd> 
+      <ul>
+        <li>Spiffy new interfaces for adding/removing students, creators and admins</li>
+        <li>Failed logins are now logged, and can be displayed to users upon a successful login</li>
+        <li>Logs now support viewing by group, and by errors</li>
+        <li>Modules now behave more consistently on the site front page</li>
+        <li>Front page &quot;students&quot; can be all users on site, or all users in at least one course on the site </li>
+        <li>Email-sending can now be enabled/disabled on any user's profile page</li>
+      </ul>
+    </dd>
+
+    <dt>Authentication</dt>
+    <dd> 
+      <ul>
+        <li>All authentication methods will now co-exist with internally-created accounts</li>
+        <li>New support for authenticating against First Class servers</li>
+        <li>Fixes for POP3 authentication</li>
+      </ul>
+    </dd>
+
+    <dt>Navigation</dt>
+    <dd> 
+      <ul>
+        <li>Visitors can be automatically logged in as guest</li>
+        <li>Jump menu now always shows "Jump to" to help distribute clues about what it does</li>
+        <li>Jump menu now has a much clearer way of grouping activities into sections</li>
+      </ul>
+    </dd>
+
+    <dt>Blocks</dt>
+    <dd> 
+      <ul>
+        <li>Block system can now cope with custom course formats and changes in format</li>
+        <li>New login block allows login from site front page</li>
+        <li>Online users block on home page shows users from the whole site</li>
+      </ul>
+    </dd>
+
+    <dt>Editor</dt>
+    <dd> 
+      <ul>
+        <li>New editor configuration screen for the admin</li>
+        <li>New support for anchors within pages</li>
+        <li>Spell-checking is now supported in the editor, it uses aspell on your server operating system</li>
+      </ul>
+    </dd>
+
+    <dt>Chat</dt>
+    <dd> 
+      <ul>
+        <li>Chat now includes a server-side daemon (in PHP) for scalable, instant chat</li>
+      </ul>
+    </dd>
+
+    <dt>Choice</dt>
+    <dd> 
+      <ul>
+        <li>Significantly revamped to make a lot more sense, with more option</li>
+      </ul>
+    </dd>
+
+    <dt>Forum</dt>
+    <dd> 
+      <ul>
+        <li>Several fixes when dealing with groups</li>
+        <li>Users can choose to receive forum posts as daily digests of subject lines or whole posts.</li>
+        <li>Discussion listing is now paged</li>
+        <li>Teachers now have complete control over forum subscriptions, and can subscribe anyone at will</li>
+        <li>"Last post" date is shortened and linked to the last post</li>
+        <li>Forums now list RSS feeds on the index page</li>
+        <li>Better-looking HTML mail using the full stylesheet</li>
+        <li>Forum mail older than two days is never sent out (to prevent unwanted floods)</li>
+        <li>Blocked mail is logged so that teachers can see it</li>
+        <li>Discussion branches can be "split" from the main discussion, into a new discussion</li>
+      </ul>
+    </dd>
+
+    <dt>Glossary</dt>
+    <dd> 
+      <ul>
+        <li>Glossary entries can be defined as "always editable"</li>
+        <li>Glossaries now list RSS feeds on the index page</li>
+        <li>Many fixes throughout</li>
+      </ul>
+    </dd>
+
+    <dt>Quiz</dt>
+    <dd> 
+      <ul>
+        <li>New floating timer for timed quizzes</li>
+        <li>Attempts may now be restricted to specific computers</li>
+        <li>Quizzes can now require a special password</li>
+        <li>New question type for Calculated Questions</li>
+        <li>Numerical questions now support units<li>Questions can be previewed in the editing pages</li>
+        <li>Questions can now be exported in several formats</li>
+        <li>More intelligent handling of category listing when editing questions</li>
+        <li>New (and incomplete) XML export format, will eventually be quiz-feature-complete</li>
+        <li>Shortanswers can now contain all sorts of strange characters</li>
+      </ul>
+    </dd>
+
+    <dt>Resource</dt>
+    <dd> 
+      <ul>
+        <li>Adding resources is now a one-step process with more control</li>
+        <li>Web page, Web link, Uploaded file and Program resource all combined into one type!</li>
+        <li>Program resources replaced by Parameters that allow a lot of of interesting interaction with external resources, both remote and uploaded into Moodle. </li>
+        <li>Collapsible forms with memory to make forms less daunting for beginners without slowing down experienced users </li>
+      </ul>
+    </dd>
+
+    <dt>SCORM</dt>
+    <dd> 
+      <ul>
+        <li>Many fixes and improvements - works with an even wider variety of packages</li>
+        <li>Optional extra verification of the manifest file </li>
+      </ul>
+    </dd>
+    </dl>
+  <p>&nbsp;</p>
+  <dl>
+    <dt>
+      <div align="center" class="style1"></div>
+    </dt>
+    <dd>&nbsp;</dd>
+    <dt>&nbsp; </dt>
+    <dd>
+      <div align="center" class="style1"><font size="+1">Finally, don't forget to look at some of the <a href="http://moodle.org/download/modules/" target="_blank">many optional and innovative modules under development</a>.</font></div>
+    </dd>
+  </dl>
+  <p align="center"><strong><font size="+1">If you experience any bugs in this release, please report them <a href="http://moodle.org/bugs" target="_blank">moodle.org/bugs</a> so we can fix them in the next release.</font></strong></p>
+  <p>&nbsp;</p>
+</ul>
+
+<p>&nbsp;</p>
+<p><br />
+</p>
+<center>
+  <p>
+<a href="./?file=releaseold.html">Old release information</a>
+</p>
+</center>
+<p>&nbsp;</p>
+<p align="CENTER"><font size="1"><a href="../doc/" target="_top">Moodle Documentation</a></font></p>
+<p align="CENTER"><font size="1">Version: $Id$</font></p>
