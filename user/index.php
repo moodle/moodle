@@ -84,7 +84,7 @@
     }
 
     // Should use this variable so that we don't break stuff every time a variable is added or changed.
-    $baseurl = $CFG->wwwroot.'/user/index.php?id='.$course->id.'&amp;group='.$currentgroup.'&amp;perpage='.$perpage.'&amp;teachers='.$showteachers.'&amp;accesssince='.$accesssince.'&search='.$search;
+    $baseurl = $CFG->wwwroot.'/user/index.php?id='.$course->id.'&amp;group='.$currentgroup.'&amp;perpage='.$perpage.'&amp;teachers='.$showteachers.'&amp;accesssince='.$accesssince.'&amp;search='.$search;
 
 /// Print headers
 
