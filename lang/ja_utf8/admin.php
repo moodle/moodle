@@ -123,6 +123,7 @@ $string['filterall'] = '全ての文字をフィルタする';
 $string['filtermatchoneperpage'] = 'ページあたり1回フィルタマッチする';
 $string['filtermatchonepertext'] = 'テキストあたり1回フィルタマッチする';
 $string['filteruploadedfiles'] = 'アップロードファイルをフィルタする';
+$string['globalsquoteswarning'] = '<p><strong>セキュリティ警告</strong>: Moodleを適切に動作させるため、<br />現在のPHP設定を変更する必要があります。<p/><p><code>register_globals=off</code> および/または <code>magic_quotes_gpc=on</code> の<em>設定を行って</em>ください。<br />可能でしたら、一般的なサーバセキュリティを改善するため、<code>register_globals=off</code> の設定を行ってください。<br />また、<code>magic_quotes_gpc=on</code> の設定も推奨いたします。<p/><p>これらの設定は、<code>php.ini</code>、Apache/IIS <br />設定、または <code>.htaccess</code> ファイルの設定により管理されます。</p>';
 $string['helpadminseesall'] = '管理者は全てのカレンダーイベントを閲覧または自分自身のイベントとすることができますか?';
 $string['helpcalendarsettings'] = 'Moodleのカレンダーおよび日付/時間に関する様々な設定を行います。';
 $string['helpforcetimezone'] = 'ユーザに独自のタイムゾーンを選択させることができます。または、タイムゾーンを強制します。';

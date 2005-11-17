@@ -7,6 +7,7 @@ $string['editSequence'] = '選択したシーケンスの編集';
 $string['error'] = '申し訳ございません。不明なエラーが発生しました。';
 $string['introduction'] = 'イントロダクション';
 $string['lams'] = '-- LAMS - Learning Activity Management System --';
+$string['lamsoutline'] = 'LAMSアウトライン';
 $string['lesson'] = '学習セッション';
 $string['modulename'] = 'LAMS';
 $string['modulenameplural'] = 'LAMS';
@@ -22,7 +23,7 @@ $string['serverkey'] = '<a href=http://www.lamsinternational.com target=_blank>L
 $string['serverurl'] = 'LAMSサーバにアクセスするためのURLを入力してください。例: http://localhost:8080/lams';
 $string['useSequence'] = '選択したシーケンスを使用';
 $string['visibletostudents'] = '活動を学生に表示する';
-$string['wikistartederror'] = 'Wikiは既に登録データがあります - 変更できません。';
+$string['wikistartederror'] = '既にWikiの登録データがあります - 変更できません。';
 $string['workspace'] = 'ワークスペースの選択';
 $string['wrongversionrange'] = '$a は正しい範囲ではありません!';
 
