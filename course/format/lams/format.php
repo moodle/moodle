@@ -70,7 +70,7 @@ if (blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $editing) {
 /// Start main column
 echo '<td id="middle-column">';
 
-print_heading_block(get_string('lamsoutline'), 'outline');
+print_heading_block(get_string('lamsoutline','lams'), 'outline');
 
 echo '<table class="topics" width="100%" height="100%">';
 
