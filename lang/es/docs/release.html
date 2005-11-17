@@ -24,6 +24,250 @@
 
 <h1>Notas sobre las &uacute;ltima versi&oacute;n </h1>
 
+<h2>Moodle 1.5.3 (11 de Noviembre de 2005) </h2>
+
+<p>(Como esta versi&oacute;n contiene importantes soluciones a problemas de seguridad,
+  es altamente recomendable para todo el mundo utilizando versiones anteriores
+  de Moodle, actualizarse tan pronto como sea posible)</p>
+
+<h3>Unas pocas cosas nuevas</h3>
+  <ul type="circle">
+  <li> Soporte para  SCORM 1.3 (SCORM 2004) a&ntilde;adido!</li>
+  <li> Una nueva API para funcionar en sistemas Single-Sign-On est&aacute; disponible.</li>
+  </ul>
+
+
+<h3>Problemas solucionados</h3>
+
+<h4>General</h4>
+  <ul type="circle">
+  <li> A&ntilde;adidos avisos para el administrador cuando Moodle es ejecutado bajo
+    una configuraci&oacute;n de PHP que se considera insegura.</li>
+  <li> Contiene soluciones a algunos problemas de seguridad recientemente encontrados
+    (ver <a href="http://security.moodle.org/">security.moodle.org</a>).</li>
+  <li> Las copias de seguridad ahora se realizan mucho m&aacute;s r&aacute;pido en instalaciones
+    medianas y grandes. Muchos problemas han sido solucionados en este &aacute;rea.</li>
+  <li>El listado de tama&ntilde;o de los directorios ahora puede ser realizado mucho
+    m&aacute;s r&aacute;pido en servidores  Linux/Unix, gracias a una variable que
+    se puede activar en Administraci&oacute;n-&gt;Variables: "path_to_du".</li>
+  <li> Las IPs registradas en la actividad de Moodle cuando el servidor o los
+    clientes est&aacute;n detr&aacute;s de un proxy son ahora mucho m&aacute;s exactas.</li>
+  <li> Solucionados problemas con algunos aceleradores de PHP.</li>
+  <li> Los guiones de actualizaci&oacute;n han sido mejorados y ahora funcionan mucho
+    mejor en instalaciones  PostgreSQL.</li>
+  <li>Mejoras varias en el c&oacute;digo espec&iacute;fico de la versi&oacute;n PostgreSQL.</li>
+  <li>La actualizaci&oacute;n a Moodle 1.5.3 soluciona algunos problemas causados en
+    anteriores actualizaciones del m&oacute;dulo Diario y Tarea online.</li>
+  <li> Las librer&iacute;as RSS ahora soportan categor&iacute;as <em>RSS 2.0</em>,
+    ver <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3654" target="_blank">bug
+      3654</a>.</li>
+  <li> Mejorada la accesibilidad en la subida de archivos, ver <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3662" target="_blank">bug
+      3662</a>.</li>
+  <li> Mejorado el funcionamiento de todo el sitio bajo HTTPS,
+    ver <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3848" target="_blank">bug
+      3848</a>.</li>
+  <li>Los accesos de los robots de b&uacute;squeda, (como Googlebot)
+    son ahora controlados, evitando el acceso a URLs incorrectas, ver <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3958" target="_blank">bug
+      3958</a>.</li>
+  <li> Mejor soporte <a href="http://moodle.org/mod/forum/discuss.php?d=29564" target="_blank">de
+      zonas horarias para usuarios no conectados.</a></li>
+  <li> Mejor soporte de zonas horarias para eventos repetitivos en el calendario.</li>
+  <li> Peque&ntilde;as mejoras en los m&oacute;dulos lecci&oacute;n, consulta y calificaciones.</li>
+  <li> Mejoras CSS en los temas  &quot;formal_white&quot; y &quot;orangewhite&quot;.</li>
+  <li> Mejorada la paginaci&oacute;n en el listado de cursos y en la visualizaci&oacute;n de
+    registros.</li>
+  <li>Solucionado un bug relacionado con IE por el que el editor HTMLArea era
+    ocultado por otras partes del entorno.</li>
+  </ul>
+
+<h4>Autenticaci&oacute;n</h4>
+  <ul type="circle">
+  <li> Solucionados problemas en el cambio y p&eacute;rdida de passwords con autenticaciones
+    externas.</li>
+  <li>La informaci&oacute;n recibidad desde BD externas o desde LDAP ahora es truncada
+    correctamente.</li> 
+  <li> Solucionado el <a href="http://moodle.org/bugs/bug.php?op=show&bugid=4305" target="_blank">bug
+      4305</a> -- mejor funcionamiento de la p&aacute;gina de login con las formas seguras
+      activadas (secureforms).</li>
+  <li> Mejorado el funcionamiento de datos utf-8 en las autenticaciones externas.</li>
+  <li> LDAP: Solucionados problemas en los guiones de sincronizaci&oacute;n y registro
+    de usuarios.</li>
+  <li> LDAP: Solucionado el <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3141" target="_blank">bug
+      3141</a> - No era posible actualizar la informaci&oacute;n con autenticaci&oacute;n LDAP.</li>
+
+  <li> LDAP: Solucionado el <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3992" target="_blank">bug
+      3992</a> - Las contrase&ntilde;as con comillas ahora funcionan - cr&eacute;ditos para
+      Kita.</li>
+  <li> LDAP: Mejorado el soporte de ActiveDirectory.</li> 
+  <li> LDAP: Solucionado el <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3594" target="_blank">bug
+      #3594</a>.</li> 
+  <li> LDAP: Mejor manejo de campos m&uacute;ltiples.</li>
+  <li> LDAP: Solucionado el problema existente al utilizar el DN de LDAP como
+    idnumber - gracias a Jeff Graham - <a href="http://moodle.org/mod/forum/discuss.php?d=28840" target="_blank">http://moodle.org/mod/forum/discuss.php?d=28840</a>
+</li>
+</ul>
+<h4>Matriculaci&oacute;n y Metacursos</h4>
+  <ul type="circle">
+  <li> Metacursos: Ahora no es posible conseguir acceso a metacursos mediante
+    la matriculaci&oacute;n manual.</li>
+  <li> Metacursos:  MySQL v3.23.x es soportada sin problemas.</li>
+  <li> DB: Las b&uacute;squedas de matriculados funcionan perfectamente con Moodle en
+    MySQL y Postgres.</li>
+  <li> DB: Bases de datos externas (no MySQL) ahora pueden ser utilizadas como
+    bases de datos de matriculaci&oacute;n.</li>
+  <li> LDAP: Solucionada una llamada incorrecta a &quot;add_teacher&quot;
+    en LDAP.</li>
+  <li> LDAP: Servidores ca&iacute;dos o no accesibles ya no evitan el acceso a Moole.</li>
+  <li> LDAP: La autocreaci&oacute;n de cursos vuelve a funcionar.</li>
+  <li> LDAP: Solucionados varios problemas enviados por Jeff Graham y Barron
+    Koralesky -- incluyendo los bugs 3912 y 3974.</li>
+  <li> LDAP: Es posible establecer conexiones no an&oacute;nimas a LDAP.</li>
+  <li> Authorize.net: Varios problemas solucionados.</li>
+  </ul>
+
+<h4>Recursos</h4>
+  <ul type="circle">
+  <li> Problema resuelto: Evitado el enlace a actividades vac&iacute;as o no-existentes.</li>
+  </ul>
+
+<h4>Foros</h4>
+  <ul type="circle">
+    <li> Optimizaciones de todos los tipos al sistema de seguimiento de mensajes
+      le&iacute;dos/no le&iacute;dos, especialmente para PostgreSQL.</li>
+    <li> Solucionados algunos problemas con PostgreSQL.</li>
+    <li> Algunas aciones nuevas son ahora soportadas por la copia de seguridad
+      y restauraci&oacute;n al procesar registros,
+      ver <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3852">bug
+      3582</a>.</li>
+    <li> Los mensajes de los foros publicados con canales RSS ahora soportan
+      informaci&oacute;n de categor&iacute;a de forma que algunos agregadores de RSS son capaces
+      de agrupar los mensajes,ver <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3654" target="_blank">bug
+      3654</a>.</li>
+    <li> Mejorada la visualizaci&oacute;n en p&aacute;ginas de las b&uacute;squedas en los foros.</li>
+</ul>
+
+<h4>Bloques</h4>
+  <ul type="circle">
+  <li> Mejoras de rendimiento.</li>
+  <li> Solucionados problemas en el proceso de actualizaci&oacute;n, incluyendo mejoras
+    en PostgreSQL y en el uso de memoria.</li>
+  <li> Solucionado el <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3478" target="_blank">bug
+      3478</a>: No era posible crear canales RSS como creador de cursos.</li>
+<li>  Solucionado el <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3793" target="_blank">bug
+    3793</a>: Evitada la visualizaci&oacute;n de un mensaje de aviso de PHP en el bloque
+    de elementos de glosario cuando un curso no ten&iacute;a glosarios definidos.</li>
+
+</ul>
+
+<h4>Cuestionario</h4>
+  <ul type="circle">
+  <li>Mejoras en los estilos CSS.</li>
+  <li> Mejorada la compatibilidad con temas que contienen formularios en la cabecera.</li>
+  <li> El resaltado de las respuestas correctas ahora puede ser desactivado.</li>
+  <li> Solucionado el <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3986" target="_blank">bug
+      3986</a>: Demasiadas preguntas aleatorias. 
+  (mindforge)</li>
+  <li> Arreglados <a href="http://moodle.org/mod/forum/discuss.php?d=28466#139179">los
+      iconos sin acci&oacute;n.</a></li>
+  <li> Solucionado el <a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=3986" target="_blank"></a><a href="http://moodle.org/bugs/bug.php?op=show&bugid=3899" target="_blank">bug
+      3899</a> y eliminados algunos mensajes de error.</li>
+  <li>  Solucionado el <a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=3986" target="_blank"></a><a href="http://moodle.org/bugs/bug.php?op=show&bugid=3950" target="_blank">bug
+      3950</a>: Solucionada inconsistencia en los cuestionarios con m&uacute;ltiples
+      intentos.</li>
+
+  <li> Solucionado el <a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=3986" target="_blank"></a><a href="http://moodle.org/bugs/bug.php?op=show&bugid=3953" target="_blank">bug
+      3953</a>: El tama&ntilde;o de la p&aacute;gina de informe puede ser ajustada a 0, cr&eacute;ditos
+      para  Jean-Michel.</li>
+
+  <li> Solucionada una potencial situaci&oacute;n de p&eacute;rdida de informaci&oacute;n, ver <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3915" target="_blank">bug
+      3915</a>.</li>
+
+  <li> Solucionado el <a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=3986" target="_blank"></a><a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=3953" target="_blank"></a><a href="http://moodle.org/bugs/bug.php?op=show&bugid=3884" target="_blank">bug
+      3884</a>: El resaltado de preguntas con 2 &oacute; 3 respuestas es ahora correcto.</li>
+
+
+  <li> Soluci&oacute;n para el problema que evitaba que <a href="http://moodle.org/mod/forum/discuss.php?d=26526">los
+      alumnos pudieran visualizar las respuestas correctas resaltadas.</a></li>
+
+
+  <li> Solucionado el <a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=3986" target="_blank"></a><a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=3953" target="_blank"></a><a href="http://moodle.org/bugs/bug.php?op=show&bugid=3804" target="_blank">bug
+      3804</a>:  Incompatibilidades entre preguntas en las versiones 1.5 y 1.6.</li>
+ <li>  Solucionado el <a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=3986" target="_blank"></a><a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=3953" target="_blank"></a><a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=3804" target="_blank"></a><a href="http://moodle.org/bugs/bug.php?op=show&bugid=3822" target="_blank">bug
+     3822</a>: Las previsualizaciones ahora no cuentan como intentos.</li>
+  <li> Solucionado el <a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=3986" target="_blank"></a><a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=3953" target="_blank"></a><a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=3804" target="_blank"></a><a href="http://moodle.org/bugs/bug.php?op=show&bugid=3807" target="_blank">bug
+      3807</a>:  Problemas en la numeraci&oacute;n de las preguntas.</li>
+  <li> Mejoras en el <a href="http://moodle.org/mod/forum/discuss.php?d=27553" target="_blank">plugin
+      de an&aacute;lisis de items</a>,
+    realizado por  Jean-Michel.</li>
+  <li> Ahora el cron&oacute;metro es reseteado para <a href="http://moodle.org/mod/forum/discuss.php?d=24790#129431" target="_blank">evitar
+      finalizaciones anticipadas.</a></li>
+ <li>  Varias <a href="http://moodle.org/mod/forum/discuss.php?d=27766" target="_blank">mejoras</a> aportadas
+   por Jean-Michel Vedrine. Ahora se puede modificar el n&uacute;mero de intentos por
+   p&aacute;gina mostrados en pantalla y descargar los resultados a Excel o fichero
+   de texto, incluyendo las calificaciones detalladas.</li>
+  <li> Solucionado problema de exportaci&oacute;n en idiomas distintos del ingl&eacute;s.</li>
+  </ul>
+
+<h4>SCORM</h4>
+  <ul type="circle">
+  <li> Ahora se soporta SCORM 1.3 (SCORM 2004)!</li>
+  <li> Solucionados problemas con la b&uacute;squeda del anterior y siguiente SCO.</li>
+  <li> Solucionados problemas relacionados con el &quot;masteryscore&quot;.</li>
+  <li> Solucionado un problema con el seguimiento de cursos AICC.</li>
+  </ul>
+
+<h4>Wiki</h4>
+  <ul type="circle">
+  <li> La visualizaci&oacute;n de la historia de una p&aacute;gina ahora es mostrada y funciona
+    correctamente,ver <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3750" target="_blank">bug
+ 3750</a>.</li>
+  
+  </ul>
+
+<h4>Filtros</h4>
+  <ul type="circle">
+  <li> El filtro multimedia ahora encuentra <a href="http://moodle.org/mod/forum/discuss.php?d=27630" target="_blank"> m&uacute;ltiples
+      enlaces en el c&oacute;digo HTML.</a></li>
+  <li> Filtro censor: A&ntilde;adida una palabra como t&iacute;tulo para las versiones tachadas.
+    El filtro puede ocultar palabras importantes por error (p. ej. putativo)
+    y debe existir alguna forma de recuperar el significado original.</li>
+  </ul>
+
+<!-- Roll of honour for the 1.5.3 release 
+     (computed very roughly)
+
+  <li>Committers and number of commits:</li>  <ul>
+
+    <li>adamtpaw: 7</li>
+    <li>bobopinna: 7</li>
+    <li>danmarsden: 1</li>
+    <li>defacer: 14</li>
+    <li>dhawes: 2</li>
+    <li>dlnsk: 1</li>
+    <li>ethem: 2</li>
+    <li>gbateson: 6</li>
+    <li>gustav_delius: 13</li>
+    <li>ikawhero: 5</li>
+    <li>julmis: 8</li>
+    <li>martignoni: 20</li>
+    <li>martinlanghoff: 35</li>
+    <li>michaelpenne: 12</li>
+    <li>mindforge: 26</li>
+    <li>mjollnir_: 39</li>
+    <li>moodler: 67</li>
+    <li>mudrd8mz: 6</li>
+    <li>paca70: 5</li>
+    <li>patrickslee: 24</li>
+    <li>skodak: 36</li>
+    <li>stronk7: 32</li>
+    <li>thepurpleblob: 18</li>
+    <li>urs_hunkler: 7</li>
+  </ul>
+
+-->
+
+<hr />
+
 <h2>Moodle 1.5.2 (16 de Julio de 2005) </h2>
 
 <h3>Problemas solucionados</h3>
