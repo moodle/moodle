@@ -38,7 +38,7 @@ class block_login extends block_base {
                     $forgot =  $wwwroot . '/login/forgot_password.php';
                 }
                 else {
-                    $changepassword = $CFG->changepassword;
+                    $forgot = $CFG->changepassword;
                 }
             }
         }
