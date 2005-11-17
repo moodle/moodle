@@ -1,10 +1,10 @@
 <?PHP // $Id$ 
-      // install.php - created with Moodle 1.6 development (2005072200)
+      // install.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['admindirerror'] = '設定されたadminディレクトリが間違っています。';
 $string['admindirname'] = 'Adminディレクトリ';
-$string['admindirsetting'] = '稀に、/adminディレクトリをコントロールパネルまたはその他の管理ツールにアクセスするためのURLとして使用しているウェブホストがあります。残念ながら、これはMoodle管理ページの標準的なロケーションと衝突します。インストールする時にadminディレクトリをリネームすることが可能です。ここに新しいディレクトリ名を入力してください。例: <br/> <br /><b>moodleadmin</b><br /> <br />
+$string['admindirsetting'] = '稀に、コントロールパネルまたはその他の管理ツールにアクセスするためのURLとして/adminディレクトリを使用しているウェブホストがあります。残念ながら、これはMoodle管理ページの標準的なロケーションと衝突します。インストールする時にadminディレクトリをリネームすることが可能です。ここに新しいディレクトリ名を入力してください。例: <br/> <br /><b>moodleadmin</b><br /> <br />
 これはMoodleのadminリンクを変更します。';
 $string['caution'] = '警告';
 $string['chooselanguage'] = '言語を選択してください。';
@@ -65,6 +65,16 @@ $string['gdversionhelp'] = '<p>あなたのサーバには、GDがインスト�
 <p>Unix環境下で、GDをPHPにインストールするには、PHPを --with-gd パラメータでコンパイルしてください。</p>
 
 <p>Windows環境下では、php.iniでlibgd.dllを参照している行のコメントアウトを取り除いてください。</p>';
+$string['globalsquotes'] = 'Globalsのハンドリングが安全ではありません。';
+$string['globalsquoteserror'] = 'PHP設定を修正してください: register_globalsを「Off」および/またはmagic_quotes_gpcを「On」';
+$string['globalsquoteshelp'] = '<p>Magic Quotes GPCの無効化およびRegister Globalsの有効化の同時設定お勧めできません。</p>
+
+<p>php.iniに関する推奨設定は <b>magic_quotes_gpc = On</b> および <b>register_globals = Off</b> です。</p>
+
+<p>あなたが php.ini にアクセスできない場合、Moodleディレクトリの中に .htaccess という名称のファイルを次のように記述することができます:
+<blockquote>php_value magic_quotes_gpc On</blockquote>
+<blockquote>php_value register_globals Off</blockquote>
+</p> ';
 $string['installation'] = 'インストレーション';
 $string['magicquotesruntime'] = 'Magic Quotesランタイム';
 $string['magicquotesruntimeerror'] = 'これは無効にしてください。';
@@ -75,8 +85,8 @@ $string['magicquotesruntimehelp'] = '<p>Moodleを正常に動作させるため�
 <p>php.iniファイルにアクセスできない場合は、Moodleディレクトリの.htaccessファイルに次の行を追加してください:
 <blockquote>php_value magic_quotes_runtime Off</blockquote>
 </p>';
-$string['memorylimit'] = 'メモリー制限';
-$string['memorylimiterror'] = 'PHPのメモリー制限が低すぎます ... 後で問題が発生する可能性があります。';
+$string['memorylimit'] = 'Memory Limit';
+$string['memorylimiterror'] = 'PHPのmemory limitが低すぎます ... 後で問題が発生する可能性があります。';
 $string['memorylimithelp'] = '<p>現在、サーバのPHPメモリー制限が $a に設定されています。</p>
 <p>この設定では、Moodleのメモリーに関わるトラブルが発生します。 特に多くのモジュールを使用したり、多くのユーザがMoodleを使用する場合に、トラブルが発生します。</p>
 <p>可能でしたら、PHPのメモリー制限上限を16M以上に設定されることをお勧めします。この設定を実現するために、幾つかの方法があります:
@@ -102,7 +112,7 @@ $string['safemodehelp'] = '<p>セーフモードが有効にされている場�
 <p>セーフモード環境下で、インストール作業を続けることも可能ですが、後でいくつかの問題が発生することが予想されます。</p>';
 $string['sessionautostart'] = 'セッション自動スタート';
 $string['sessionautostarterror'] = 'これは無効にしてください。';
-$string['sessionautostarthelp'] = '<p>Moodleはセッションサポートを必要とします。また、セッションサポート無しでは動作しません。.</p>
+$string['sessionautostarthelp'] = '<p>Moodleはセッションサポートを必要とします。また、セッションサポート無しでは動作しません。</p>
 <p>セッションは、php.iniファイルで使用可にすることができます ... session.auto_startパラメータを探してください。</p>';
 $string['wwwroot'] = 'ウェブアドレス';
 $string['wwwrooterror'] = 'ウェブアドレスが間違っています - インストール済みMoodleはここに表示されません。';

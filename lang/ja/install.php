@@ -1,10 +1,10 @@
 <?PHP // $Id$ 
-      // install.php - created with Moodle 1.6 development (2005072200)
+      // install.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['admindirerror'] = 'ÀßÄê¤µ¤ì¤¿admin¥Ç¥£¥ì¥¯¥È¥ê¤¬´Ö°ã¤Ã¤Æ¤¤¤Þ¤¹¡£';
 $string['admindirname'] = 'Admin¥Ç¥£¥ì¥¯¥È¥ê';
-$string['admindirsetting'] = 'µ©¤Ë¡¢/admin¥Ç¥£¥ì¥¯¥È¥ê¤ò¥³¥ó¥È¥í¡¼¥ë¥Ñ¥Í¥ë¤Þ¤¿¤Ï¤½¤ÎÂ¾¤Î´ÉÍý¥Ä¡¼¥ë¤Ë¥¢¥¯¥»¥¹¤¹¤ë¤¿¤á¤ÎURL¤È¤·¤Æ»ÈÍÑ¤·¤Æ¤¤¤ë¥¦¥§¥Ö¥Û¥¹¥È¤¬¤¢¤ê¤Þ¤¹¡£»ÄÇ°¤Ê¤¬¤é¡¢¤³¤ì¤ÏMoodle´ÉÍý¥Ú¡¼¥¸¤ÎÉ¸½àÅª¤Ê¥í¥±¡¼¥·¥ç¥ó¤È¾×ÆÍ¤·¤Þ¤¹¡£¥¤¥ó¥¹¥È¡¼¥ë¤¹¤ë»þ¤Ëadmin¥Ç¥£¥ì¥¯¥È¥ê¤ò¥ê¥Í¡¼¥à¤¹¤ë¤³¤È¤¬²ÄÇ½¤Ç¤¹¡£¤³¤³¤Ë¿·¤·¤¤¥Ç¥£¥ì¥¯¥È¥êÌ¾¤òÆþÎÏ¤·¤Æ¤¯¤À¤µ¤¤¡£Îã: <br/> <br /><b>moodleadmin</b><br /> <br />
+$string['admindirsetting'] = 'µ©¤Ë¡¢¥³¥ó¥È¥í¡¼¥ë¥Ñ¥Í¥ë¤Þ¤¿¤Ï¤½¤ÎÂ¾¤Î´ÉÍý¥Ä¡¼¥ë¤Ë¥¢¥¯¥»¥¹¤¹¤ë¤¿¤á¤ÎURL¤È¤·¤Æ/admin¥Ç¥£¥ì¥¯¥È¥ê¤ò»ÈÍÑ¤·¤Æ¤¤¤ë¥¦¥§¥Ö¥Û¥¹¥È¤¬¤¢¤ê¤Þ¤¹¡£»ÄÇ°¤Ê¤¬¤é¡¢¤³¤ì¤ÏMoodle´ÉÍý¥Ú¡¼¥¸¤ÎÉ¸½àÅª¤Ê¥í¥±¡¼¥·¥ç¥ó¤È¾×ÆÍ¤·¤Þ¤¹¡£¥¤¥ó¥¹¥È¡¼¥ë¤¹¤ë»þ¤Ëadmin¥Ç¥£¥ì¥¯¥È¥ê¤ò¥ê¥Í¡¼¥à¤¹¤ë¤³¤È¤¬²ÄÇ½¤Ç¤¹¡£¤³¤³¤Ë¿·¤·¤¤¥Ç¥£¥ì¥¯¥È¥êÌ¾¤òÆþÎÏ¤·¤Æ¤¯¤À¤µ¤¤¡£Îã: <br/> <br /><b>moodleadmin</b><br /> <br />
 ¤³¤ì¤ÏMoodle¤Îadmin¥ê¥ó¥¯¤òÊÑ¹¹¤·¤Þ¤¹¡£';
 $string['caution'] = '·Ù¹ð';
 $string['chooselanguage'] = '¸À¸ì¤òÁªÂò¤·¤Æ¤¯¤À¤µ¤¤¡£';
@@ -65,6 +65,16 @@ $string['gdversionhelp'] = '<p>¤¢¤Ê¤¿¤Î¥µ¡¼¥Ð¤Ë¤Ï¡¢GD¤¬¥¤¥ó¥¹¥È¡¼¥ë¤µ¤ì¤Æ¤¤¤Ê¤¤¤
 <p>Unix´Ä¶­²¼¤Ç¡¢GD¤òPHP¤Ë¥¤¥ó¥¹¥È¡¼¥ë¤¹¤ë¤Ë¤Ï¡¢PHP¤ò --with-gd ¥Ñ¥é¥á¡¼¥¿¤Ç¥³¥ó¥Ñ¥¤¥ë¤·¤Æ¤¯¤À¤µ¤¤¡£</p>
 
 <p>Windows´Ä¶­²¼¤Ç¤Ï¡¢php.ini¤Çlibgd.dll¤ò»²¾È¤·¤Æ¤¤¤ë¹Ô¤Î¥³¥á¥ó¥È¥¢¥¦¥È¤ò¼è¤ê½ü¤¤¤Æ¤¯¤À¤µ¤¤¡£</p>';
+$string['globalsquotes'] = 'Globals¤Î¥Ï¥ó¥É¥ê¥ó¥°¤¬°ÂÁ´¤Ç¤Ï¤¢¤ê¤Þ¤»¤ó¡£';
+$string['globalsquoteserror'] = 'PHPÀßÄê¤ò½¤Àµ¤·¤Æ¤¯¤À¤µ¤¤: register_globals¤ò¡ÖOff¡×¤ª¤è¤Ó/¤Þ¤¿¤Ïmagic_quotes_gpc¤ò¡ÖOn¡×';
+$string['globalsquoteshelp'] = '<p>Magic Quotes GPC¤ÎÌµ¸ú²½¤ª¤è¤ÓRegister Globals¤ÎÍ­¸ú²½¤ÎÆ±»þÀßÄê¤ª´«¤á¤Ç¤­¤Þ¤»¤ó¡£</p>
+
+<p>php.ini¤Ë´Ø¤¹¤ë¿ä¾©ÀßÄê¤Ï <b>magic_quotes_gpc = On</b> ¤ª¤è¤Ó <b>register_globals = Off</b> ¤Ç¤¹¡£</p>
+
+<p>¤¢¤Ê¤¿¤¬ php.ini ¤Ë¥¢¥¯¥»¥¹¤Ç¤­¤Ê¤¤¾ì¹ç¡¢Moodle¥Ç¥£¥ì¥¯¥È¥ê¤ÎÃæ¤Ë .htaccess ¤È¤¤¤¦Ì¾¾Î¤Î¥Õ¥¡¥¤¥ë¤ò¼¡¤Î¤è¤¦¤Ëµ­½Ò¤¹¤ë¤³¤È¤¬¤Ç¤­¤Þ¤¹:
+<blockquote>php_value magic_quotes_gpc On</blockquote>
+<blockquote>php_value register_globals Off</blockquote>
+</p> ';
 $string['installation'] = '¥¤¥ó¥¹¥È¥ì¡¼¥·¥ç¥ó';
 $string['magicquotesruntime'] = 'Magic Quotes¥é¥ó¥¿¥¤¥à';
 $string['magicquotesruntimeerror'] = '¤³¤ì¤ÏÌµ¸ú¤Ë¤·¤Æ¤¯¤À¤µ¤¤¡£';
@@ -75,8 +85,8 @@ $string['magicquotesruntimehelp'] = '<p>Moodle¤òÀµ¾ï¤ËÆ°ºî¤µ¤»¤ë¤¿¤á¤Ë¤Ï¡¢Magic 
 <p>php.ini¥Õ¥¡¥¤¥ë¤Ë¥¢¥¯¥»¥¹¤Ç¤­¤Ê¤¤¾ì¹ç¤Ï¡¢Moodle¥Ç¥£¥ì¥¯¥È¥ê¤Î.htaccess¥Õ¥¡¥¤¥ë¤Ë¼¡¤Î¹Ô¤òÄÉ²Ã¤·¤Æ¤¯¤À¤µ¤¤:
 <blockquote>php_value magic_quotes_runtime Off</blockquote>
 </p>';
-$string['memorylimit'] = '¥á¥â¥ê¡¼À©¸Â';
-$string['memorylimiterror'] = 'PHP¤Î¥á¥â¥ê¡¼À©¸Â¤¬Äã¤¹¤®¤Þ¤¹ ... ¸å¤ÇÌäÂê¤¬È¯À¸¤¹¤ë²ÄÇ½À­¤¬¤¢¤ê¤Þ¤¹¡£';
+$string['memorylimit'] = 'Memory Limit';
+$string['memorylimiterror'] = 'PHP¤Îmemory limit¤¬Äã¤¹¤®¤Þ¤¹ ... ¸å¤ÇÌäÂê¤¬È¯À¸¤¹¤ë²ÄÇ½À­¤¬¤¢¤ê¤Þ¤¹¡£';
 $string['memorylimithelp'] = '<p>¸½ºß¡¢¥µ¡¼¥Ð¤ÎPHP¥á¥â¥ê¡¼À©¸Â¤¬ $a ¤ËÀßÄê¤µ¤ì¤Æ¤¤¤Þ¤¹¡£</p>
 <p>¤³¤ÎÀßÄê¤Ç¤Ï¡¢Moodle¤Î¥á¥â¥ê¡¼¤Ë´Ø¤ï¤ë¥È¥é¥Ö¥ë¤¬È¯À¸¤·¤Þ¤¹¡£ ÆÃ¤ËÂ¿¤¯¤Î¥â¥¸¥å¡¼¥ë¤ò»ÈÍÑ¤·¤¿¤ê¡¢Â¿¤¯¤Î¥æ¡¼¥¶¤¬Moodle¤ò»ÈÍÑ¤¹¤ë¾ì¹ç¤Ë¡¢¥È¥é¥Ö¥ë¤¬È¯À¸¤·¤Þ¤¹¡£</p>
 <p>²ÄÇ½¤Ç¤·¤¿¤é¡¢PHP¤Î¥á¥â¥ê¡¼À©¸Â¾å¸Â¤ò16M°Ê¾å¤ËÀßÄê¤µ¤ì¤ë¤³¤È¤ò¤ª´«¤á¤·¤Þ¤¹¡£¤³¤ÎÀßÄê¤ò¼Â¸½¤¹¤ë¤¿¤á¤Ë¡¢´ö¤Ä¤«¤ÎÊýË¡¤¬¤¢¤ê¤Þ¤¹:
@@ -102,7 +112,7 @@ $string['safemodehelp'] = '<p>¥»¡¼¥Õ¥â¡¼¥É¤¬Í­¸ú¤Ë¤µ¤ì¤Æ¤¤¤ë¾ì¹ç¡¢Moodle¤Ë¤ÏÍÍ¡¹
 <p>¥»¡¼¥Õ¥â¡¼¥É´Ä¶­²¼¤Ç¡¢¥¤¥ó¥¹¥È¡¼¥ëºî¶È¤òÂ³¤±¤ë¤³¤È¤â²ÄÇ½¤Ç¤¹¤¬¡¢¸å¤Ç¤¤¤¯¤Ä¤«¤ÎÌäÂê¤¬È¯À¸¤¹¤ë¤³¤È¤¬Í½ÁÛ¤µ¤ì¤Þ¤¹¡£</p>';
 $string['sessionautostart'] = '¥»¥Ã¥·¥ç¥ó¼«Æ°¥¹¥¿¡¼¥È';
 $string['sessionautostarterror'] = '¤³¤ì¤ÏÌµ¸ú¤Ë¤·¤Æ¤¯¤À¤µ¤¤¡£';
-$string['sessionautostarthelp'] = '<p>Moodle¤Ï¥»¥Ã¥·¥ç¥ó¥µ¥Ý¡¼¥È¤òÉ¬Í×¤È¤·¤Þ¤¹¡£¤Þ¤¿¡¢¥»¥Ã¥·¥ç¥ó¥µ¥Ý¡¼¥ÈÌµ¤·¤Ç¤ÏÆ°ºî¤·¤Þ¤»¤ó¡£.</p>
+$string['sessionautostarthelp'] = '<p>Moodle¤Ï¥»¥Ã¥·¥ç¥ó¥µ¥Ý¡¼¥È¤òÉ¬Í×¤È¤·¤Þ¤¹¡£¤Þ¤¿¡¢¥»¥Ã¥·¥ç¥ó¥µ¥Ý¡¼¥ÈÌµ¤·¤Ç¤ÏÆ°ºî¤·¤Þ¤»¤ó¡£</p>
 <p>¥»¥Ã¥·¥ç¥ó¤Ï¡¢php.ini¥Õ¥¡¥¤¥ë¤Ç»ÈÍÑ²Ä¤Ë¤¹¤ë¤³¤È¤¬¤Ç¤­¤Þ¤¹ ... session.auto_start¥Ñ¥é¥á¡¼¥¿¤òÃµ¤·¤Æ¤¯¤À¤µ¤¤¡£</p>';
 $string['wwwroot'] = '¥¦¥§¥Ö¥¢¥É¥ì¥¹';
 $string['wwwrooterror'] = '¥¦¥§¥Ö¥¢¥É¥ì¥¹¤¬´Ö°ã¤Ã¤Æ¤¤¤Þ¤¹ - ¥¤¥ó¥¹¥È¡¼¥ëºÑ¤ßMoodle¤Ï¤³¤³¤ËÉ½¼¨¤µ¤ì¤Þ¤»¤ó¡£';
