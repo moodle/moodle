@@ -4,6 +4,8 @@
 
 $string['accesscontrol'] = 'Toegangscontrole';
 $string['actionaftercorrectanswer'] = 'Actie na juist antwoord';
+$string['activitylink'] = 'Link naar een activiteit';
+$string['activitylinkname'] = 'Ga naar: $a';
 $string['addabranchtable'] = 'Voeg een vertakkingstabel toe';
 $string['addanendofbranch'] = 'Voeg het einde van een tak toe';
 $string['addaquestionpage'] = 'Voeg een vragenpagina toe';
@@ -14,6 +16,7 @@ $string['addedaquestionpage'] = 'Vragenpagina toegevoegd';
 $string['addedcluster'] = 'Cluster toegevoegd';
 $string['addedendofcluster'] = 'Einde van een cluster toegevoegd';
 $string['addendofcluster'] = 'Voeg het einde van een cluster toe';
+$string['anchortitle'] = 'Begin van de hoofdinhoud';
 $string['and'] = 'EN';
 $string['answer'] = 'Antwoord';
 $string['answeredcorrectly'] = 'juist geantwoord.';
@@ -219,6 +222,7 @@ $string['secondpluswrong'] = 'Niet echt. Wil je nog eens proberen?';
 $string['showanunansweredpage'] = 'Toon een onbeantwoorde pagina';
 $string['showanunseenpage'] = 'Toon een ongeziene pagina';
 $string['singleanswer'] = 'Eén antwoord';
+$string['skip'] = 'Sla navigatie over';
 $string['slideshow'] = 'Diavoorstelling';
 $string['slideshowbgcolor'] = 'Diavoorstelling: achtergrondkleur';
 $string['slideshowheight'] = 'Diavoorstelling: hoogte';

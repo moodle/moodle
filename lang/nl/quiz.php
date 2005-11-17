@@ -392,6 +392,7 @@ $string['showdetailedmarks'] = 'beoordelingsdetails';
 $string['showfeedback'] = 'Feedback laten zien na het beantwoorden?';
 $string['showhidden'] = 'Toon ook oude vragen';
 $string['shownoattempts'] = 'leerlingen die de test nog niet gemaakt hebben';
+$string['shownoattemptsonly'] = 'Toon enkel leerlingen zonder pogingen';
 $string['showteacherattempts'] = 'Toon de pogingen van de leraar';
 $string['shuffleanswers'] = 'Mix de antwoorden';
 $string['shufflequestions'] = 'Mix de vragen';
