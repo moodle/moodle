@@ -10,7 +10,7 @@ CREATE TABLE prefix_lams (
   name varchar(255) NOT NULL default '',
   introduction text NOT NULL default '',
   learning_session_id integer NOT NULL default '0',
-  timemodified integer NOT NULL default '0',
+  timemodified integer NOT NULL default '0'
 );  
 
 CREATE INDEX prefix_lams_course_idx ON prefix_lams (course);
