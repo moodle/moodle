@@ -1,6 +1,8 @@
 <?php
     include("../../config.php");
 
+    $id = optional_param('id', 0, PARAM_INT);
+
     $lastmodified = filemtime("htmlarea.php");
     $lifetime = 1800;
 

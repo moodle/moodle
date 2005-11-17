@@ -2,7 +2,7 @@
 
     include("../../../config.php");
 
-    require_variable($id);
+    $id = required_param('id', PARAM_INT);
 
     if (!$course = get_record("course", "id", $id)) {
         $course->fullname = "";   // Just to keep display happy, though browsing may fail
