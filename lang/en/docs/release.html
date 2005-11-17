@@ -24,6 +24,189 @@
 
 <h1>Latest Release notes</h1>
 
+<h2>Moodle 1.5.3 (11th November, 2005) </h2>
+
+<p>(Because this release contains important security fixes, we highly advise 
+   that sites using any previous version of Moodle upgrade to this version 
+   as soon as possible.)</p>
+<h3>A few new things</h3>
+  <ul type="circle">
+  <li> We now have SCORM 1.3 (SCORM 2004) support!</li>
+  <li> A new Single-Sign-On API is available</li>
+  </ul>
+
+
+<h3>Various fixes</h3>
+
+<h4>General</h4>
+  <ul type="circle">
+  <li> Backups now runs a lot faster medium/large installs. Many issues fixed in this area </li>
+  <li> Listing of directory sizes can be made <em>much</em> faster on Linux/Unix servers, thanks to a performance fix you can enable from Admin-&gt;Variables: "path_to_du"</li>
+  <li> We now log more meaningful IP addresses when the server or the clients are working behind a proxy</li>
+  <li> Fixed some issues with PHP accelerators</li>
+  <li> Upgrade scripts have been refined and work much better for PostgreSQL installations</li>
+  <li> General PostgreSQL port code cleanup</li>
+  <li> Upgrading to 1.5.3 will fix any legacy Journal to Online Assignment upgrade issues</li>
+  <li> RSS libraries now support <em>RSS 2.0 categories</em>, see  <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3654" target="_blank">bug 3654</a></li>
+  <li> Better accesibilty in file uploads, see  <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3662" target="_blank">bug 3662</a></li>
+  <li> Better support for site-wide HTTPS, see <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3848" target="_blank">bug 3848</a></li>
+  <li> We now send away bots (like Googlebot) from that try mangled URLs, see <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3958" target="_blank">bug 3958</a></li>
+  <li> Better  <a href="http://moodle.org/mod/forum/discuss.php?d=29564" target="_blank">DST support for non-logged-in users</a></li>
+  <li> Better  DST support for repeat events in Calendar</li>
+  <li> Small fixes to the lesson, choice and grade modules</li>
+  <li> Minor CSS improvements to formal_white and orangewhite themes</li>
+  <li> Better pagination in course listing and loglive pages</li>
+  <li> Fixed an IE-only bug related to HTMLArea content where user-edited tables could float and hide part of the UI.</li>
+  </ul>
+
+<h4>Authentication</h4>
+  <ul type="circle">
+  <li> Fixes to change password/forgotten password with external auth</li>
+  <li> Data fetched from external DB or LDAP is now truncated correctly</li> 
+  <li> Fixed <a href="http://moodle.org/bugs/bug.php?op=show&bugid=4305" target="_blank">bug 4305</a> -- better login block behaviour when using secureforms</li>
+  <li> Better support for utf-8 user data from external auth</li>
+  <li> LDAP: General fixes covering sync_users script and logging of errors</li>
+  <li> LDAP: Fixed  <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3141" target="_blank">bug 3141</a> - Can't update external data
+ with LDAP authentication</li>
+
+  <li> LDAP: Fixed  <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3992" target="_blank">bug 3992</a> - LDAP password including a
+ quote does not work - credits go to Kita</li>
+  <li> LDAP: Better support for ActiveDirectory.</li> 
+  <li> LDAP: Fixed <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3594" target="_blank">bug #3594</a></li> 
+  <li> LDAP: Better handling of multi-source field mapping</li>
+  <li> LDAP: Fix for using DN as idnumber - thanks fo Jeff Graham - <a href="http://moodle.org/mod/forum/discuss.php?d=28840" target="_blank">http://moodle.org/mod/forum/discuss.php?d=28840</a>
+</li>
+</ul>
+<h4>Enrolment & Metacourses</h4>
+  <ul type="circle">
+  <li> Metacourses: Prevent normal users to gain access to meta courses via manual enrolment</li>
+  <li> Metacourses: better support for MySQL v3.23.x</li>
+  <li> DB: Enrolment lookups now work reliably with Moodle on MySQL and Postgres</li>
+  <li> DB: Non-MySQL databases work again as external enrolment databases</li>
+  <li> LDAP: Fixed a wrong call to add_teacher in LDAP plugin.</li>
+  <li> LDAP: Servers being down or unavailable no longer prevent logins</li>
+  <li> LDAP: Course auto-creation works again</li>
+  <li> LDAP: Fixed several bugs reported by Jeff Graham and Barron Koralesky -- including bugs 3912 and 3974</li>
+  <li> LDAP: We can now bind non-anonymously to LDAP</li>
+  <li> Authorize.net: several fixes</li>
+  </ul>
+
+<h4>Resources</h4>
+  <ul type="circle">
+  <li> Bugfix: Avoid linking to empty or unlinkable activity names</li>
+  </ul>
+
+<h4>Forums</h4>
+  <ul type="circle">
+    <li> Big and small optimizations to tracking of read/unread messages, specially for PostgreSQL</li>
+    <li> Fixed some PostgreSQL bugs</li>
+    <li> Some more actions are now supported by backup/restore when processing log records, see <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3852">bug 3582</a></li>
+    <li> Now message forum RSS feeds are including category data -- useful under some RSS agregators able to group messages, see <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3654" target="_blank">bug 3654</a></li>
+    <li> Fixed paging on forum search</li>
+</ul>
+
+<h4>Blocks</h4>
+  <ul type="circle">
+  <li> Several performance improvements </li>
+  <li> Fixes to the upgrade process, including PostgreSQL syntax and lower memory usage</li>
+  <li> Brought in several bugfixes from 1.6dev</li>
+  <li> Fixed <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3478" target="_blank">bug 3478</a>: Cannot add RSS feed as course creator</li>
+<li>  Fixed  <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3793" target="_blank">bug 3793</a>:
+  Prevent warning message when configuring a glossary_random block in
+ a course which has no glossaries</li>
+
+</ul>
+
+<h4>Quiz</h4>
+  <ul type="circle">
+  <li> Some CSS style fixes</li>
+  <li> Better compatibility with themes that contain forms in the headers</li>
+  <li> Highlighting of correct answers can now be turned off</li>
+  <li> Fixed <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3986" target="_blank">bug 3986</a>: Too many random questions. 
+  (mindforge)</li>
+  <li> Fixed 
+ <a href="http://moodle.org/mod/forum/discuss.php?d=28466#139179">missing action icons</a></li>
+  <li> Fixed <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3899" target="_blank">bug 3899</a> and removed some 'missing
+ course object' messages</li>
+  <li>  Fixed  <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3950" target="_blank">bug 3950</a>: Ee-attempt button inconsistency for multi-attempt quizzes</li>
+
+  <li> Fixed <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3953" target="_blank">bug 3953</a>: Quiz/report.php pagesize can be set to 0, credits to Jean-Michel</li>
+
+  <li> Fixed potential data data corruption <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3915" target="_blank">bug 3915</a></li>
+
+  <li> Fixed  <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3884" target="_blank">bug 3884</a>: Quiz correct highlights missing for 2 of 3 options.</li>
+
+
+  <li> Fix for the <a href="http://moodle.org/mod/forum/discuss.php?d=26526">Student review highlight doesn't seem to work</a> bug</li>
+
+
+  <li> Fixed <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3804" target="_blank">bug 3804</a>: Differences in question types between 1.5 and 1.6</li>
+ <li>  Fixed  <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3822" target="_blank">bug 3822</a>: don't count previews as attempts</li>
+  <li> Fixed <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3807" target="_blank">bug 3807</a>:  Question numbering issue</li>
+  <li> Fixes for the <a href="http://moodle.org/mod/forum/discuss.php?d=27553" target="_blank">item analysis
+ plug-in</a>, assembled by Jean-Michel</li>
+  <li> Now we reset the timeout counter to <a href="http://moodle.org/mod/forum/discuss.php?d=24790#129431" target="_blank">avoid timeouts</a></li>
+ <li>  Several  <a href="http://moodle.org/mod/forum/discuss.php?d=27766" target="_blank">improvements</a> contributed by Jean-Michel Vedrine. You can now change the number of attempts per page displayed on screen, and download results to Excel/text file, including detailed grades</li>
+  <li> Fixed export bug with non-English languages</li>
+  </ul>
+
+<h4>SCORM</h4>
+  <ul type="circle">
+  <li> We now support SCORM 1.3 (SCORM 2004)!</li>
+  <li> Fixed a bug with next and prev SCO search</li>
+  <li> Fixed bugs related to masteryscore</li>
+  <li> Fixed a problem in AICC course tracking</li>
+  </ul>
+
+<h4>Wiki</h4>
+  <ul type="circle">
+  <li> Now paging of older versions is showed
+ and working properly, see <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3750" target="_blank">bug 3750</a></li>
+  
+  </ul>
+
+<h4>Filters</h4>
+  <ul type="circle">
+  <li> Mediaplugin filter now <a href="http://moodle.org/mod/forum/discuss.php?d=27630" target="_blank"> finds multi-line links in HTML code</a></li>
+  <li> Censor filter: Added original word as title to the
+ blacked-out version.  The filter can obscure actual
+ important words by mistake (eg Dickens) and there needs to be some
+ way to recover the meaning</li>
+  </ul>
+
+<!-- Roll of honour for the 1.5.3 release 
+     (computed very roughly)
+
+  <li>Committers and number of commits:</li>  <ul>
+
+    <li>adamtpaw: 7</li>
+    <li>bobopinna: 7</li>
+    <li>danmarsden: 1</li>
+    <li>defacer: 14</li>
+    <li>dhawes: 2</li>
+    <li>dlnsk: 1</li>
+    <li>ethem: 2</li>
+    <li>gbateson: 6</li>
+    <li>gustav_delius: 13</li>
+    <li>ikawhero: 5</li>
+    <li>julmis: 8</li>
+    <li>martignoni: 20</li>
+    <li>martinlanghoff: 35</li>
+    <li>michaelpenne: 12</li>
+    <li>mindforge: 26</li>
+    <li>mjollnir_: 39</li>
+    <li>moodler: 67</li>
+    <li>mudrd8mz: 6</li>
+    <li>paca70: 5</li>
+    <li>patrickslee: 24</li>
+    <li>skodak: 36</li>
+    <li>stronk7: 32</li>
+    <li>thepurpleblob: 18</li>
+    <li>urs_hunkler: 7</li>
+  </ul>
+
+-->
+
 <h2>Moodle 1.5.2 (16th July, 2005) </h2>
 
 <h3>Various fixes</h3>
