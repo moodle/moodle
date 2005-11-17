@@ -385,6 +385,7 @@ $string['showdetailedmarks'] = 'Afficher le détail des points';
 $string['showfeedback'] = 'Après le test, afficher le feedback ?';
 $string['showhidden'] = 'Afficher également les anciennes questions';
 $string['shownoattempts'] = 'Afficher les étudiants sans tentative';
+$string['shownoattemptsonly'] = 'N\'afficher que les étudiants sans tentative';
 $string['showteacherattempts'] = 'Afficher les tentatives des enseignants';
 $string['shuffleanswers'] = 'Mélanger les réponses';
 $string['shufflequestions'] = 'Mélanger les questions';
