@@ -16,6 +16,9 @@
     $mode         = optional_param('mode', NULL);                             // '0' for less details, '1' for more
     $showteachers = optional_param('teachers', 1, PARAM_INT);                 // do we want to see the teacher list?
     $accesssince  = optional_param('accesssince',0,PARAM_INT);               // filter by last access. -1 = never
+    $search       = optional_param('search','',PARAM_TEXT);
+
+    $showteachers = $showteachers && empty($search); // if we're searching, we just want students.
 
     if (! $course = get_record('course', 'id', $id)) {
         error("Course ID is incorrect");
@@ -35,6 +38,10 @@
     add_to_log($course->id, 'user', 'view all', 'index.php?id='.$course->id, '');
 
     $isteacher = isteacher($course->id);
+
+    if (empty($isteacher)) {
+        $search = false;
+    }
 
     $countries = get_list_of_countries();
 
@@ -77,7 +84,7 @@
     }
 
     // Should use this variable so that we don't break stuff every time a variable is added or changed.
-    $baseurl = $CFG->wwwroot.'/user/index.php?id='.$course->id.'&amp;group='.$currentgroup.'&amp;perpage='.$perpage.'&amp;teachers='.$showteachers.'&amp;accesssince='.$accesssince;
+    $baseurl = $CFG->wwwroot.'/user/index.php?id='.$course->id.'&amp;group='.$currentgroup.'&amp;perpage='.$perpage.'&amp;teachers='.$showteachers.'&amp;accesssince='.$accesssince.'&search='.$search;
 
 /// Print headers
 
@@ -342,6 +349,13 @@
 
     $where .= get_lastaccess_sql($accesssince);
 
+    if (!empty($search)) {
+        $LIKE = sql_ilike();
+        $fullname  = sql_fullname('u.firstname','u.lastname');
+        $wheresearch .= ' AND ('. $fullname .' '. $LIKE .'\'%'. $search .'%\' OR email '. $LIKE .'\'%'. $search .'%\' OR nickname '.$LIKE.' \'%'.$search.'%\' OR idnumber '.$LIKE.' \'%'.$search.'%\') ';
+
+    }
+
     if ($currentgroup) {    // Displaying a group by choice
         // FIX: TODO: This will not work if $currentgroup == 0, i.e. "those not in a group"
         $from  .= 'LEFT JOIN '.$CFG->prefix.'groups_members gm ON u.id = gm.userid ';
@@ -365,7 +379,7 @@
         $sort = '';
     }
 
-    $matchcount = count_records_sql('SELECT COUNT(*) '.$from.$where);
+    $matchcount = count_records_sql('SELECT COUNT(*) '.$from.$where.$wheresearch);
 
     $table->initialbars($totalcount > $perpage);
     $table->pagesize($perpage, $matchcount);
@@ -377,7 +391,7 @@
         $limit = '';
     }    
     
-    $students = get_records_sql($select.$from.$where.$sort.$limit);
+    $students = get_records_sql($select.$from.$where.$wheresearch.$sort.$limit);
 
     $a->count = $totalcount;
     $a->items = $totalcount == 1 ? $course->student : $course->students;
@@ -543,6 +557,11 @@ function checkchecked(form) {
         choose_from_menu ($displaylist, "formaction", "", get_string("withselectedusers"), "if(checksubmit(this.form))this.form.submit();", "");
         echo '<input type="submit" value="' . get_string('ok') . '"';
         echo '</center></form>';
+    }
+
+    if ($isteacher && $totalcount > ($perpage*3)) {
+        echo '<form action="index.php"><p align="center"><input type="hidden" name="id" value="'.$course->id.'" />'.get_string('search').':&nbsp;'."\n";
+        echo '<input type="text" name="search" value="'.$search.'" />&nbsp;<input type="submit" value="'.get_string('search').'" /></p></form>'."\n";
     }
 
     if ($perpage == 99999) {
