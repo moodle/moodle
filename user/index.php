@@ -184,10 +184,49 @@
     $exceptions = array(); // This will be an array of userids that are shown as teachers and thus
                            // do not have to be shown as users as well. Only relevant on site course.
 
+    if ($isteacher) {
+        echo '
+<script Language="JavaScript">
+<!--
+function checksubmit(form) {
+    var destination = form.formaction.options[form.formaction.selectedIndex].value;
+    if (destination == "" || !checkchecked(form)) {
+        form.formaction.selectedIndex = 0;
+        return false;
+    } else {
+        return true;
+    }
+}
+
+function checkchecked(form) {
+    var inputs = document.getElementsByTagName(\'INPUT\');
+    var checked = false;
+    inputs = filterByParent(inputs, function() {return form;});
+    for(var i = 0; i < inputs.length; ++i) {
+        if(inputs[i].type == \'checkbox\' && inputs[i].checked) {
+            checked = true;
+        }
+    }
+    return checked;
+}
+//-->
+</script>
+';
+        echo '<form action="action_redir.php" method="post" name="studentsform" onSubmit="return checksubmit(this);">';
+        echo '<input type="hidden" name="id" value="'.$id.'" />';
+        echo '<input type="hidden" name="returnto" value="'.$_SERVER['REQUEST_URI'].'" />';
+        echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
+    }
+
     if($showteachers) {
 
         $tablecolumns = array('picture', 'fullname', 'city', 'country', 'lastaccess');
         $tableheaders = array('', get_string('fullname'), get_string('city'), get_string('country'), get_string('lastaccess'));
+
+        if ($isteacher) {
+            $tablecolumns[] = '';
+            $tableheaders[] = get_string('select');
+        }
 
         $table = new flexible_table('user-index-teachers-'.$course->id);
 
@@ -221,7 +260,10 @@
             $whereclause .= 'groupid = '.$currentgroup.' AND ';
         }
 
-        $teachersql .= 'WHERE '.$whereclause.' t.course = '.$course->id.' AND u.deleted = 0 AND u.confirmed = 1 AND t.authority > 0';
+        $teachersql .= 'WHERE '.$whereclause.' t.course = '.$course->id.' AND u.deleted = 0 AND u.confirmed = 1';
+        if (!$isteacher) {
+            $teachersql .= ' AND t.authority > 0';
+        }
 
         $teachersql .= get_lastaccess_sql($accesssince);
 
@@ -246,7 +288,7 @@
 
             if ($fullmode) {
                 foreach ($teachers as $key => $teacher) {
-                    print_user($teacher, $course);
+                    print_user($teacher, $course, true);
                 }
             } else {
                 $countrysort = (strpos($sortclause, 'country') !== false);
@@ -270,13 +312,17 @@
                         }
                     }
         
-                    $table->add_data(array (
+                    $data = array (
                                     //'<input type="checkbox" name="userid[]" value="'.$teacher->id.'" />',
                                     print_user_picture($teacher->id, $course->id, $teacher->picture, false, true),
-                                    '<strong><a href="'.$CFG->wwwroot.'/user/view.php?id='.$teacher->id.'&amp;course='.$course->id.'">'.fullname($teacher, $isteacher).'</a></strong>',
+                                    '<strong><a'.($teacher->authority?'':' class="dimmed"').' href="'.$CFG->wwwroot.'/user/view.php?id='.$teacher->id.'&amp;course='.$course->id.'">'.fullname($teacher, $isteacher).'</a></strong>',
                                     $teacher->city,
                                     $country,
-                                    $lastaccess));
+                                    $lastaccess);
+                    if ($isteacher) {
+                        $data[] = '<input type="checkbox" name="teacher'.$teacher->id.'" />';
+                    }
+                    $table->add_data($data);
                 }
                 
                 $table->print_html();
@@ -404,40 +450,6 @@
 
     if ($CFG->longtimenosee > 0 && $CFG->longtimenosee < 1000 && $totalcount > 0) {
         echo '<p id="longtimenosee">('.get_string('unusedaccounts', '', $CFG->longtimenosee).')</p>';
-    }
-
-    if ($isteacher) {
-        echo '
-<script Language="JavaScript">
-<!--
-function checksubmit(form) {
-    var destination = form.formaction.options[form.formaction.selectedIndex].value;
-    if (destination == "" || !checkchecked(form)) {
-        form.formaction.selectedIndex = 0;
-        return false;
-    } else {
-        return true;
-    }
-}
-
-function checkchecked(form) {
-    var inputs = document.getElementsByTagName(\'INPUT\');
-    var checked = false;
-    inputs = filterByParent(inputs, function() {return form;});
-    for(var i = 0; i < inputs.length; ++i) {
-        if(inputs[i].type == \'checkbox\' && inputs[i].checked) {
-            checked = true;
-        }
-    }
-    return checked;
-}
-//-->
-</script>
-';
-        echo '<form action="action_redir.php" method="post" name="studentsform" onSubmit="return checksubmit(this);">';
-        echo '<input type="hidden" name="id" value="'.$id.'" />';
-        echo '<input type="hidden" name="returnto" value="'.$_SERVER['REQUEST_URI'].'" />';
-        echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
     }
 
     if ($fullmode) {    // Print simple listing

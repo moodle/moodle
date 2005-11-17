@@ -2629,7 +2629,13 @@ function print_user($user, $course, $messageselect=false) {
     echo '<a href="'. $CFG->wwwroot .'/user/view.php?id='. $user->id .'&amp;course='. $course->id .'">'. $string->fullprofile .'...</a>';
 
     if (!empty($messageselect) && $isteacher) {
-        echo '<br /><input type="checkbox" name="email'.$user->id.'" /> ';
+        echo '<br /><input type="checkbox" name="';
+        if (isteacher($course->id, $user->id)) {
+            echo 'teacher';
+        } else {
+            echo 'user';
+        }
+        echo $user->id.'" /> ';
     }
 
     echo '</td></tr></table>';

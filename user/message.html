@@ -52,15 +52,21 @@
 <table align="center"><tr><th colspan="4"><? print_string('currentlyselectedusers'); ?></th></tr>
 <?php
     if (count($SESSION->emailto[$id])) {
+        if (!$course->teacher) {
+            $course->teacher = get_string('defaultcourseteacher');
+        }
         foreach ($SESSION->emailto[$id] as $user) {
             echo '<tr><td>'.fullname($user,true).'</td><td>'.$user->email.'</td><td>';
+            if ($user->teacher) {
+                echo '<img src="'.$CFG->pixpath.'/t/user.gif" alt="'.$course->teacher.'" title="'.$course->teacher.'"/>';
+            }
             if ($user->emailstop) {
                 $error = get_string('emaildisable');
             } elseif (empty($user->email)) {
                 $error = get_string('emailempty');
             }
             if (!empty($error)) {
-                echo '<img src="'.$CFG->wwwroot.'/pix/t/emailno.gif" alt="'.$error.'" title="'.$error.'"/>';
+                echo '<img src="'.$CFG->pixpath.'/t/emailno.gif" alt="'.$error.'" title="'.$error.'"/>';
                 unset($error);
             }
             echo '</td><td><input type="submit" onClick="this.form.deluser.value='.$user->id.';" value="remove" /></td></tr>';

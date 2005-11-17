@@ -42,10 +42,11 @@
     $count = 0;
 
     foreach ($_POST as $k => $v) {
-        if (preg_match('/^user(\d+)$/',$k,$m)) {
-            if (!array_key_exists($m[1],$SESSION->emailto[$id])) {
-                if ($user = get_record_select('user','id = '.$m[1],'id,firstname,lastname,idnumber,email,emailstop,mailformat')) {
-                    $SESSION->emailto[$id][$m[1]] = $user;
+        if (preg_match('/^(user|teacher)(\d+)$/',$k,$m)) {
+            if (!array_key_exists($m[2],$SESSION->emailto[$id])) {
+                if ($user = get_record_select('user','id = '.$m[2],'id,firstname,lastname,idnumber,nickname,email,emailstop,mailformat')) {
+                    $SESSION->emailto[$id][$m[2]] = $user;
+                    $SESSION->emailto[$id][$m[2]]->teacher = ($m[1] == 'teacher');
                     $count++;
                 }
             }
@@ -84,13 +85,22 @@
                 echo "\n<p align=\"center\"><input type=\"submit\" name=\"send\" value=\"Send\" /> <input type=\"submit\" name=\"edit\" value=\"Edit\" /></p>\n</form>";
             } elseif ($send) {
                 $good = 1;
+                $teachers = array();
                 foreach ($SESSION->emailto[$id] as $user) {
                     $good = $good && message_post_message($USER,$user,$messagebody,$format,'direct');
+                    if ($user->teacher) {
+                        $teachers[] = $user->id;
+                    }
                 }
                 if ($good) {
                     print_heading(get_string('messagedselectedusers'));
                     unset($SESSION->emailto[$id]);
                     unset($SESSION->emailselect[$id]);
+                    if (count($teachers)) {
+                        foreach ($teachers as $teacher) {
+                            forum_subscribe($teacher, $forum->id);
+                        }
+                    }
                 } else {
                     print_heading(get_string('messagedselectedusersfailed'));
                 }
