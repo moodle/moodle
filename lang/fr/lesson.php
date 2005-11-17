@@ -2,6 +2,8 @@
 
 $string['accesscontrol'] = 'Autorisations d\'accès';
 $string['actionaftercorrectanswer'] = 'Action après réponse correcte';
+$string['activitylink'] = 'Lien vers une activité';
+$string['activitylinkname'] = 'Allez à&nbsp; $a';
 $string['addabranchtable'] = 'Ajouter une table de branchement';
 $string['addanendofbranch'] = 'Ajouter une fin de branchement';
 $string['addaquestionpage'] = 'Ajouter une page question';
