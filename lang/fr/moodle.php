@@ -496,6 +496,7 @@ $string['forgotten'] = 'Vous avez oublié votre nom d\'utilisateur et/ou votre mo
 $string['forgottenduplicate'] = 'La récupération automatique du mot de passe ne peut pas continuer, car votre adresse de courriel figure plus d\'une fois dans la base de données. Veuillez contacter l\'administrateur de votre moodle, <a href=\"mailto:$a->email\">$a->firstname $a->lastname</a>.';
 $string['format'] = 'Format';
 $string['formathtml'] = 'Format HTML';
+$string['formatlams'] = 'Format de cours LAMS';
 $string['formatmarkdown'] = 'Format Markdown';
 $string['formatplain'] = 'Format texte';
 $string['formatscorm'] = 'Format SCORM';
@@ -773,6 +774,7 @@ $string['mustchangepassword'] = 'Le nouveau mot de passe doit être différent du 
 $string['mustconfirm'] = 'Vous devez confirmer votre enregistrement';
 $string['mycourses'] = 'Mes cours';
 $string['name'] = 'Nom';
+$string['namelams'] = 'LAMS';
 $string['namescorm'] = 'SCORM';
 $string['namesocial'] = 'section';
 $string['nametopics'] = 'thème';
