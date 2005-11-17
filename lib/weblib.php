@@ -3846,18 +3846,21 @@ function notice_yesno ($message, $linkyes, $linkno) {
  */
 function redirect($url, $message='', $delay='0') {
 
-    $url     = clean_text($url);
+    //$url     = clean_text($url);
     $message = clean_text($message);
 
     $url = html_entity_decode($url); // for php < 4.3.0 this is defined in moodlelib.php
     $url = str_replace(array("\n", "\r"), '', $url); // some more cleaning
     $encodedurl = htmlentities($url);
+    $tmpstr = clean_text('<a href="'.$encodedurl.'" />'); //clean encoded URL
+    $encodedurl = substr($tmpstr, 9, strlen($tmpstr)-13);
+    $url = addslashes(html_entity_decode($encodedurl));
 
     if (empty($message)) {
         echo '<meta http-equiv="refresh" content="'. $delay .'; url='. $encodedurl .'" />';
         echo '<script type="text/javascript">'. "\n" .'<!--'. "\n". "location.replace('$url');". "\n". '//-->'. "\n". '</script>';   // To cope with Mozilla bug
     } else {
-        
+
         if (empty($delay)) {
             $delay = 3;  // There's no point having a message with no delay
         }
