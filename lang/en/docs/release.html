@@ -29,6 +29,7 @@
 <p>(Because this release contains important security fixes, we highly advise 
    that sites using any previous version of Moodle upgrade to this version 
    as soon as possible.)</p>
+
 <h3>A few new things</h3>
   <ul type="circle">
   <li> We now have SCORM 1.3 (SCORM 2004) support!</li>
@@ -40,6 +41,8 @@
 
 <h4>General</h4>
   <ul type="circle">
+  <li> Contains warnings when Moodle is used on an PHP configuration known to be insecure</li>
+  <li> Contains fixes for some recently reported security problems (see <a href="http://security.moodle.org/">security.moodle.org)</a>)</li>
   <li> Backups now runs a lot faster medium/large installs. Many issues fixed in this area </li>
   <li> Listing of directory sizes can be made <em>much</em> faster on Linux/Unix servers, thanks to a performance fix you can enable from Admin-&gt;Variables: "path_to_du"</li>
   <li> We now log more meaningful IP addresses when the server or the clients are working behind a proxy</li>
