@@ -10,14 +10,12 @@
 
     $jump = optional_param('jump', '', PARAM_RAW);
 
-    if (strpos($jump, $CFG->wwwroot) === 0) {
+    if (strpos($jump, $CFG->wwwroot) === 0) {            // Anything on this site
         redirect(urldecode($jump));
-    } else {
-        if (preg_match('/^[a-z]+\.php\?/', $jump)) {
-            redirect(urldecode($jump));
-        } else {
-            redirect($_SERVER['HTTP_REFERER']);
-        }
+    } else if (preg_match('/^[a-z]+\.php\?/', $jump)) { 
+        redirect(urldecode($jump));
     }
+
+    redirect($_SERVER['HTTP_REFERER']);   // Return to sender, just in case
 
 ?>
