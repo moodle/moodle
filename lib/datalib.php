@@ -42,7 +42,7 @@ if ($SITE = get_site()) {
 function execute_sql($command, $feedback=true) {
 /// Completely general function - it just runs some SQL and reports success.
 
-    global $db;
+    global $db, $CFG;
 
     $olddebug = $db->debug;
 
