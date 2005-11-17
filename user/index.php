@@ -15,6 +15,7 @@
     $perpage      = optional_param('perpage', DEFAULT_PAGE_SIZE, PARAM_INT);  // how many per page
     $mode         = optional_param('mode', NULL);                             // '0' for less details, '1' for more
     $showteachers = optional_param('teachers', 1, PARAM_INT);                 // do we want to see the teacher list?
+    $accesssince  = optional_param('accesssince',0,PARAM_INT);               // filter by last access. -1 = never
 
     if (! $course = get_record('course', 'id', $id)) {
         error("Course ID is incorrect");
@@ -76,7 +77,7 @@
     }
 
     // Should use this variable so that we don't break stuff every time a variable is added or changed.
-    $baseurl = $CFG->wwwroot.'/user/index.php?id='.$course->id.'&amp;group='.$currentgroup.'&amp;perpage='.$perpage.'&amp;teachers='.$showteachers;
+    $baseurl = $CFG->wwwroot.'/user/index.php?id='.$course->id.'&amp;group='.$currentgroup.'&amp;perpage='.$perpage.'&amp;teachers='.$showteachers.'&amp;accesssince='.$accesssince;
 
 /// Print headers
 
@@ -99,6 +100,51 @@
             print_group_menu($groups, $groupmode, $currentgroup, $baseurl);
             echo '</td>';
         }
+    }
+
+    // get minimum lastaccess for this course and display a dropbox to filter by lastaccess going back this far.
+    $minlastaccess = get_field_sql('SELECT min(timeaccess) FROM '.$CFG->prefix.'user_students WHERE course = '.$course->id.' AND timeaccess != 0');
+
+    $lastaccess0exists = record_exists('user_students','course',$course->id,'timeaccess',0);
+    $now = usergetmidnight(time());
+    $timeaccess = array();
+
+    // makes sense for this to go first.
+    $timeoptions[0] = get_string('selectperiod');
+
+    // days
+    for ($i = 1; $i < 7; $i++) {
+        if (strtotime('-'.$i.' days',$now) >= $minlastaccess) {
+            $timeoptions[strtotime('-'.$i.' days',$now)] = get_string('numdays','moodle',$i);
+        }
+    }
+    // weeks
+    for ($i = 1; $i < 10; $i++) {
+        if (strtotime('-'.$i.' weeks',$now) >= $minlastaccess) {
+            $timeoptions[strtotime('-'.$i.' weeks',$now)] = get_string('numweeks','moodle',$i);
+        }
+    }
+    // months 
+    for ($i = 2; $i < 12; $i++) {
+        if (strtotime('-'.$i.' months',$now) >= $minlastaccess) {
+            $timeoptions[strtotime('-'.$i.' months',$now)] = get_string('nummonths','moodle',$i);
+        }
+    }
+    // try a year
+    if (strtotime('-1 year',$now) >= $minlastaccess) {
+        $timeoptions[strtotime('-1 year',$now)] = get_string('lastyear');
+    }
+
+    if (!empty($lastaccess0exists)) {
+        $timeoptions[-1] = get_string('never');
+    } 
+
+    if (count($timeoptions) > 1) {
+        echo '<td class="left">';
+        echo get_string('usersnoaccesssince').': ';
+        $baseurl = preg_replace('/&amp;accesssince='.$accesssince.'/','',$baseurl);
+        echo popup_form($baseurl.'&amp;accesssince=',$timeoptions,'timeoptions',$accesssince,'','','',true);
+        echo '</td>';
     }
 
     echo '<td class="right">';
@@ -169,6 +215,8 @@
         }
 
         $teachersql .= 'WHERE '.$whereclause.' t.course = '.$course->id.' AND u.deleted = 0 AND u.confirmed = 1 AND t.authority > 0';
+
+        $teachersql .= get_lastaccess_sql($accesssince);
 
         if($sortclause = $table->get_sql_sort()) {
             $teachersql .= ' ORDER BY '.$sortclause;
@@ -291,6 +339,8 @@
         $from   = 'FROM '.$CFG->prefix.'user u LEFT JOIN '.$CFG->prefix.'user_students s ON s.userid = u.id ';
         $where  = 'WHERE s.course = '.$course->id.' AND u.deleted = 0 ';
     }
+
+    $where .= get_lastaccess_sql($accesssince);
 
     if ($currentgroup) {    // Displaying a group by choice
         // FIX: TODO: This will not work if $currentgroup == 0, i.e. "those not in a group"
@@ -503,5 +553,17 @@ function checkchecked(form) {
     }
     
     print_footer($course);
+
+
+function get_lastaccess_sql($accesssince='') {
+    if (empty($accesssince)) {
+        return '';
+    }
+    if ($accesssince == -1) { // never
+        return ' AND timeaccess = 0';
+    } else {
+        return ' AND timeaccess != 0 AND timeaccess < '.$accesssince;
+    }
+}
 
 ?>
