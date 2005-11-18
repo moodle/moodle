@@ -239,9 +239,9 @@ class quiz_report extends quiz_default_report {
 
 
         // Construct the SQL
-        $select = 'SELECT '.$db->Concat('u.id', '\'#\'', $db->IfNull('qa.guestemail','\'\''), '\'#\'', $db->IfNull('qa.attempt', '0')).' AS uniqueid, '.
+        $select = 'SELECT '.$db->Concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).' AS uniqueid, '.
             'qa.id AS attempt, u.id AS userid, u.firstname, u.lastname, u.picture, '.
-            'qa.sumgrades, qa.timefinish, qa.timestart, qa.timefinish - qa.timestart AS duration, qa.guestemail ';
+            'qa.sumgrades, qa.timefinish, qa.timestart, qa.timefinish - qa.timestart AS duration ';
         if ($course->id != SITEID) { // this is too complicated, so just do it for each of the four cases.
             if (!empty($currentgroup) && empty($noattempts)) {
                 $from  = 'FROM '.$CFG->prefix.'user u JOIN '.$CFG->prefix.'user_students us ON us.userid = u.id JOIN '.$CFG->prefix.'groups_members gm ON u.id = gm.userid '.
@@ -258,12 +258,12 @@ class quiz_report extends quiz_default_report {
                 $from  = 'FROM '.$CFG->prefix.'user u JOIN '.$CFG->prefix.'user_students us ON us.userid = u.id LEFT JOIN '.$CFG->prefix.'quiz_attempts qa ON u.id = qa.userid AND qa.quiz = '.$quiz->id;
                 $where = ' WHERE us.course = '.$course->id.' AND qa.userid IS NULL';
             }
-            $countsql = 'SELECT COUNT(DISTINCT('.$db->Concat('u.id', '\'#\'', $db->IfNull('qa.guestemail','\'\''), '\'#\'', $db->IfNull('qa.attempt', '0')).')) '.$from.$where;
+            $countsql = 'SELECT COUNT(DISTINCT('.$db->Concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).')) '.$from.$where;
         } else {
             if (empty($noattempts)) {
                 $from   = 'FROM '.$CFG->prefix.'user u JOIN '.$CFG->prefix.'quiz_attempts qa ON u.id = qa.userid ';
                 $where = ' WHERE qa.quiz = '.$quiz->id;
-                $countsql = 'SELECT COUNT(DISTINCT('.$db->Concat('u.id', '\'#\'', 'qa.guestemail', '\'#\'', $db->IfNull('qa.attempt', '0')).')) '.$from.$where;
+                $countsql = 'SELECT COUNT(DISTINCT('.$db->Concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).')) '.$from.$where;
             }
         }
         if (!$download) {
