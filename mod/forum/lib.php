@@ -1040,7 +1040,7 @@ function forum_search_posts($searchterms, $courseid, $page=0, $recordsperpage=50
 /// Returns a list of posts found using an array of search terms
 /// eg   word  +word -word
 ///
-    global $CFG;
+    global $CFG, $USER;
     require_once($CFG->libdir.'/searchlib.php');
 
     if (!isteacher($courseid)) {
@@ -1076,6 +1076,12 @@ function forum_search_posts($searchterms, $courseid, $page=0, $recordsperpage=50
         } else {
             $selectcourse = " AND d.course = '$courseid'";
         }
+    }
+
+    $timelimit = '';
+    if (!((isadmin() and !empty($CFG->admineditalways)) || isteacher($courseid))) {
+        $now = time();
+        $timelimit = " AND (d.userid = $USER->id || ((d.timestart = 0 || d.timestart <= $now) && (d.timeend = 0 || d.timeend > $now))";
     }
 
     $limit = sql_paging_limit($page, $recordsperpage);
@@ -1119,7 +1125,7 @@ function forum_search_posts($searchterms, $courseid, $page=0, $recordsperpage=50
                   {$CFG->prefix}user u $onlyvisibletable $coursetable
              WHERE ($messagesearch)
                AND p.userid = u.id
-               AND p.discussion = d.id $selectcourse $notteacherforum $onlyvisible $selectgroup $extrasql";
+               AND p.discussion = d.id $selectcourse $notteacherforum $onlyvisible $selectgroup $timelimit $extrasql";
 
     $totalcount = count_records_sql("SELECT COUNT(*) FROM $selectsql");
 

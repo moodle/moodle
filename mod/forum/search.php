@@ -187,16 +187,6 @@
             error("Could not find forum $discussion->forum");
         }
 
-        if ($forum->type == "news") {   // Skip if is hidden
-            if (!((isadmin() and !empty($CFG->admineditalways))
-                || isteacher($course->id)
-                || $USER->id == $discussion->userid
-                || (($discussion->timestart == 0 || $discussion->timestart <= time())
-                && ($discussion->timeend == 0 || $discussion->timeend > time())))) {
-                continue;
-            }
-        }
-
         $post->subject = highlight($strippedsearch, $post->subject);
         $discussion->name = highlight($strippedsearch, $discussion->name);
 
