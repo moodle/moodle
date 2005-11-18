@@ -2012,12 +2012,16 @@ function hotpot_adjust_response_field($quiztype, &$question, &$num, &$name, &$da
 			break;
 		case 'jcloze':
 			$question->type = HOTPOT_JCLOZE;
-			$question->name = $num;
+			if (is_numeric($num)) {
+				$question->name = $num;
+			}
 			switch ($name) {
 				case 'penalties':
-					$name = 'checks';
-					if (is_numeric($data)) {
-						$data++;
+					if (is_numeric($num)) {
+						$name = 'checks';
+						if (is_numeric($data)) {
+							$data++;
+						}
 					}
 					break;
 				case 'clue_shown':
