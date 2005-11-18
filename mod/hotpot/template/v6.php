@@ -813,7 +813,7 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
 				}
 				if ($this->v6_expand_Clues()) {
 					$caption = $this->v6_expand_ClueCaption();
-					$str .= '<button style="line-height: 1.0" class="FuncButton" onfocus="FuncBtnOver(this)" onmouseover="FuncBtnOver(this)" onblur="FuncBtnOut(this)" onmouseout="FuncBtnOut(this)" onmousedown="FuncBtnDown(this)" onmouseup="FuncBtnOut(this)" onclick="ShowClue('.$q.')">['.$caption.']</button>';
+					$str .= '<button style="line-height: 1.0" class="FuncButton" onfocus="FuncBtnOver(this)" onmouseover="FuncBtnOver(this)" onblur="FuncBtnOut(this)" onmouseout="FuncBtnOut(this)" onmousedown="FuncBtnDown(this)" onmouseup="FuncBtnOut(this)" onclick="ShowClue('.$q.')">'.$caption.'</button>';
 				}
 				$str .= '</span>';
 			}
