@@ -474,72 +474,82 @@ class assignment_base {
 
             case 'fastgrade':
                 ///do the fast grading stuff  - this process should work for all 3 subclasses
-                $grading = false;
+                $grading    = false;
                 $commenting = false;
+                $col        = false;
                 if (isset($_POST['comment'])) {
-                    $arr = 'comment';
+                    $col = 'comment';
                     $commenting = true;
                 }
                 if (isset($_POST['menu'])) {
-                    $arr = 'menu';
+                    $col = 'menu';
                     $grading = true;
                 }
-                if (!$grading && !$commenting) {
-                    //both comment and grade hidden..
-	                $this->display_submissions();            
+                if (!$col) {
+                    //both comment and grade columns collapsed..
+                    $this->display_submissions();            
                     break;
                 }
-                foreach ($_POST[$arr] as $id => $unusedvalue){
+                foreach ($_POST[$col] as $id => $unusedvalue){
 
                     $id = (int)$id; //clean parameter name
-                    $newsubmission = $this->get_submission($id, true);  // Get or make one
-                    unset($newsubmission->data1);  // Don't need to update this.
-                    unset($newsubmission->data2);  // Don't need to update this.        
+                    if (!$submission = $this->get_submission($id)) {
+                        $submission = $this->prepare_new_submission($id);
+                        $newsubmission = true;
+                    } else {
+                        $newsubmission = false;
+                    }
+                    unset($submission->data1);  // Don't need to update this.
+                    unset($submission->data2);  // Don't need to update this.
 
                     //for fast grade, we need to check if any changes take place
                     $updatedb = false;
 
                     if ($grading) {
                         $grade = $_POST['menu'][$id];
-                        $updatedb = $updatedb || ($newsubmission->grade != $grade);
-                        $newsubmission->grade = $grade;
+                        $updatedb = $updatedb || ($submission->grade != $grade);
+                        $submission->grade = $grade;
                     } else {
-                        unset($newsubmission->grade);  // Don't need to update this.        
+                        if (!$newsubmission) {
+                            unset($submission->grade);  // Don't need to update this.
+                        }
                     }
                     if ($commenting) {
-                        $commentvalue = $_POST['comment'][$id];
-                        $updatedb = $updatedb || ($newsubmission->comment != stripslashes($commentvalue));
-                        $newsubmission->comment = $commentvalue;
+                        $commentvalue = trim($_POST['comment'][$id]);
+                        $updatedb = $updatedb || ($submission->comment != stripslashes($commentvalue));
+                        $submission->comment = $commentvalue;
                     } else {
-                        unset($newsubmission->comment);  // Don't need to update this.        
-                    }
-                           
-                    $newsubmission->teacher    = $USER->id;
-                    $newsubmission->mailed     = !$updatedb?$newsubmission->mailed:0;//only change if it's a duplicate
-                    $newsubmission->timemarked = time();
-                    
-                    if (empty($newsubmission->timemodified)) {   // eg for offline assignments
-                        $newsubmission->timemodified = time();
+                        unset($submission->comment);  // Don't need to update this.
                     }
 
-                    //if it is a duplicate, we don't change the last modified time etc.
+                    $submission->teacher    = $USER->id;
+                    $submission->mailed     = $updatedb?0:$submission->mailed;//only change if it's an update
+                    $submission->timemarked = time();
+
+                    //if it is not an update, we don't change the last modified time etc.
                     //this will also not write into database if no comment and grade is entered.
-                    
+
                     if ($updatedb){
-                        if (!update_record('assignment_submissions', $newsubmission)) {
-                            return false;
+                        if ($newsubmission) {
+                            if (!insert_record('assignment_submissions', $submission)) {
+                                return false;
+                            }
+                        } else {
+                            if (!update_record('assignment_submissions', $submission)) {
+                                return false;
+                            }
                         }            
-                        //add to log only if not a duplicate
+                        //add to log only if updating
                         add_to_log($this->course->id, 'assignment', 'update grades', 
-                                   'submissions.php?id='.$this->assignment->id.'&user='.$newsubmission->userid, 
-                                   $newsubmission->userid, $this->cm->id);             
+                                   'submissions.php?id='.$this->assignment->id.'&user='.$submission->userid, 
+                                   $submission->userid, $this->cm->id);             
                     }
                         
                 }                    
                 $this->display_submissions();            
                 break;
-                
-            
+
+
             case 'next':
                 /// We are currently in pop up, but we want to skip to next one without saving.
                 ///    This turns out to be similar to a single case
@@ -646,7 +656,7 @@ class assignment_base {
             if (isset($scalegrades[$this->assignment->id][$grade])) {
                 return $scalegrades[$this->assignment->id][$grade];
             }
-            return '';
+            return '-';
         }
     }
 
@@ -665,8 +675,8 @@ class assignment_base {
             error('No such user!');
         }
 
-        if (!$submission = $this->get_submission($user->id, true)) {  // Get one or make one
-            error('Could not find submission!');
+        if (!$submission = $this->get_submission($user->id)) {
+            $submission = $this->prepare_new_submission($userid);
         }
 
         if ($submission->timemodified > $submission->timemarked) {
@@ -752,9 +762,6 @@ class assignment_base {
         
         //new hidden field, initialized to -1.
         echo '<input type="hidden" name="saveuserid" value="-1" />';
-        if (!$submission->grade and !$submission->timemarked) {
-            $submission->grade = -1;   /// Hack to stop zero being selected on the menu below (so it shows 'no grade')
-        }
         if ($submission->timemarked) {
             echo '<div class="from">';
             echo '<div class="fullname">'.fullname($teacher, true).'</div>';
@@ -966,8 +973,8 @@ class assignment_base {
             foreach ($ausers as $auser) {
                 $picture = print_user_picture($auser->id, $course->id, $auser->picture, false, true);
                 
-                if (!$auser->grade and !$auser->timemarked and $quickgrade) {
-                    $auser->grade = -1;//Martin's hack to prevent 0 showing up and select no grade instead.
+                if (empty($auser->submissionid)) {
+                    $auser->grade = -1; //no submission yet
                 }
                     
                 if (!empty($auser->submissionid)) {
@@ -1013,7 +1020,7 @@ class assignment_base {
                         $grade = '<div id="g'.$auser->id.'">'.choose_from_menu(make_grades_menu($this->assignment->grade), 
                                  'menu['.$auser->id.']', $auser->grade, get_string('nograde'),'',-1,true,false,$tabindex++).'</div>';
                     } else {
-                        $grade = '<div id="g'.$auser->id.'">&nbsp;</div>';
+                        $grade = '<div id="g'.$auser->id.'">-</div>';
                     }
                     if ($quickgrade){
                         $comment = '<div id="com'.$auser->id.'"><textarea tabindex="'.$tabindex++.'" name="comment['.$auser->id.']" id="comment['.$auser->id.']">'.($auser->comment).'</textarea></div>';
@@ -1149,17 +1156,31 @@ class assignment_base {
         if ($submission || !$createnew) {
             return $submission;
         }
-
-        $newsubmission = new Object;
-        $newsubmission->assignment = $this->assignment->id;
-        $newsubmission->userid = $userid;
-        $newsubmission->timecreated = time();
-        $newsubmission->grade = -1;
+        $newsubmission = $this->prepare_new_submission($userid);
         if (!insert_record("assignment_submissions", $newsubmission)) {
             error("Could not insert a new empty submission");
         }
 
         return get_record('assignment_submissions', 'assignment', $this->assignment->id, 'userid', $userid);
+    }
+
+    
+    function prepare_new_submission($userid) {
+        $submission = new Object; 
+        $submission->assignment   = $this->assignment->id;
+        $submission->userid       = $userid;
+        $submission->timecreated  = time();
+        $submission->timemodified = $submission->timecreated;
+        $submission->numfiles     = 0;
+        $submission->data1        = '';
+        $submission->data2        = '';
+        $submission->grade        = -1;
+        $submission->comment      = '';
+        $submission->format       = 0;
+        $submission->teacher      = 0;
+        $submission->timemarked   = 0;
+        $submission->mailed       = 0;
+        return $submission;
     }
 
 
@@ -1356,10 +1377,8 @@ class assignment_base {
 
     function user_outline($user) {
         if ($submission = $this->get_submission($user->id)) {
-    
-            if ($submission->grade) {
-                $result->info = get_string('grade').': '.$this->display_grade($submission->grade);
-            }
+
+            $result->info = get_string('grade').': '.$this->display_grade($submission->grade);
             $result->time = $submission->timemodified;
             return $result;
         }
@@ -1605,7 +1624,7 @@ function assignment_grades($assignmentid) {
                 $scalegrades = make_menu_from_list($scale->scale);
                 foreach ($grades as $userid => $grade) {
                     if (empty($scalegrades[$grade])) {
-                        $grades[$userid] = '';
+                        $grades[$userid] = '-';
                     } else {
                         $grades[$userid] = $scalegrades[$grade];
                     }

@@ -103,7 +103,8 @@ class assignment_uploadsingle extends assignment_base {
 
         if ($this->isopen() && (!$filecount || $this->assignment->resubmit)) {
             if ($submission = $this->get_submission($USER->id)) {
-                if ($submission->grade and !$this->assignment->resubmit) {
+                //TODO: change later to ">= 0", to prevent resubmission when graded 0
+                if (($submission->grade > 0) and !$this->assignment->resubmit) {
                     notify(get_string('alreadygraded', 'assignment'));
                 }
             }
@@ -129,11 +130,8 @@ class assignment_uploadsingle extends assignment_base {
                         notify(get_string("uploadfailnoupdate", "assignment"));
                     }
                 } else {
-                    $newsubmission->assignment   = $this->assignment->id;
-                    $newsubmission->userid       = $USER->id;
-                    $newsubmission->timecreated  = time();
-                    $newsubmission->timemodified = time();
-                    $newsubmission->numfiles     = 1;
+                    $newsubmission = $this->prepare_new_submission($USER->id);
+                    $newsubmission->numfiles = 1;
                     if (insert_record('assignment_submissions', $newsubmission)) {
                         add_to_log($this->course->id, 'assignment', 'upload', 
                                 'view.php?a='.$this->assignment->id, $this->assignment->id, $this->cm->id);
