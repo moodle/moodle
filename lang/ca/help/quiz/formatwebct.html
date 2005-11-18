@@ -1,0 +1,57 @@
+<p align="center"><b>Importació de fitxers amb "Format de qüestionari WebCT"</b></p>
+
+<p>El filtre d'importació WebCT està en desenvolupament i no permet l'ús de tots els tipus de pregunta de WebCT.</p>
+
+<p>A hores d'ara només permet l'ús de preguntes d'Opcions múltiples i de Resposta breu.</p>
+
+<p>Aquí teniu alguns exemples d'aquestes preguntes en un fitxer de text:</p>
+
+<pre>
+# Start of question: Short Answer Question
+:TYPE:S:
+:TITLE:Short Answer Question
+:QUESTION:H
+Quin és el nom del WebCT Learning Hub?
+&lt;br />
+:IMAGE:dotcomLogoc.gif
+:ANSWERS:1
+:CASE:0
+:ANSWER1:WebCT.com:100:0:20:0
+:FEEDBACK1:H
+Assegureu-vos de visitar el Learning Hub\: www.WebCT.com
+:CAT:Default
+# End of question: Short Answer Question
+
+# Start of question: Multiple Choice Question
+:TYPE:MC:1:0:C
+:TITLE:Multiple Choice Question
+:FEEDBACK
+Darwin inventà la teoria de l'evolució i creà el Darwinisme.
+:QUESTION:H
+On es troba el Darwin Research Center?
+:IMAGE:
+:LAYOUT:vertical
+:ANSWER1:0:H
+Menlo Park, California
+:REASON1:H
+No és correcte!
+:ANSWER2:0:H
+Vancouver, Canadà
+:REASON2:H
+No és correcte!
+:ANSWER3:100:H
+Illes Galápagos, Equador
+:REASON3:H
+Resposta correcta!
+:ANSWER4:0:H
+Londres, Anglaterra
+:REASON4:H
+No és correcte!
+:ANSWER5:0:H
+Sidney, Austràlia
+:REASON5:H
+No és correcte!
+:CAT:Default
+# End of question: Multiple Choice Question
+
+</pre>
