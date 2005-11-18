@@ -254,6 +254,8 @@
 
 /// Otherwise fill and print the form.
 
+    $usehtmleditor = can_use_html_editor();
+
     $streditmyprofile = get_string("editmyprofile");
     $strparticipants = get_string("participants");
     $strnewuser = get_string("newuser");
@@ -346,6 +348,10 @@
     }
 
     print_simple_box_end();
+
+    if ($usehtmleditor) {
+        use_html_editor("description");
+    }
 
     if (!isset($USER->newadminuser)) {
         print_footer($course);

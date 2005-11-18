@@ -192,6 +192,12 @@ table.formtable tbody th
   padding: 5px;
 }
 
+table.formtable tbody .htmlarea td,
+table.formtable tbody .htmlarea th
+{
+  padding: 0px;
+}
+
 .paging {
   text-align: center;
   margin: 10px 0px 10px 0px;

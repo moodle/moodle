@@ -240,7 +240,7 @@ if (isadmin()) {
             formerr($err["description"]);
             echo "<br />";
         }
-        print_textarea(false, 10, 50, 50, 10, 'description', "$user->description");
+        print_textarea($usehtmleditor, 10, 50, 50, 10, 'description', "$user->description");
         helpbutton("text", get_string("helptext"));
     ?>
     </td>
