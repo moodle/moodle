@@ -1,3 +1,11 @@
+<?php
+if (!isset($discussion->timestart)) {
+    $discussion->timestart = 0;
+}
+if (!isset($discussion->timeend)) {
+    $discussion->timeend = 0;
+}
+?>
 <form name="theform" method="post" action="post.php" enctype="multipart/form-data">
 <table border="0" cellpadding="5">
 <tr valign="top">
