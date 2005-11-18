@@ -1,0 +1,33 @@
+<p align="center"><b>Subir grupos</b></p>
+
+<p>Esta opción permite subir grupos a Moodle.</p>
+
+
+<ul>
+  <li>Cada línea del archivo contiene un registro</li>
+  <li>Cada registro es una serie de datos separados por comas</li>
+  <li>El primer registro del archivo es especial, y contiene una lista con los nombres de campo. Este registro define el formato del resto del archivo.
+    <blockquote>
+      <p><strong>Campos necesarios:</strong> estos campos deben incluirse en el primer registro, y deberán ser definidos por cada usuario</p>
+      <p></p>
+      <font color="#990000" face="Courier New, Courier, mono">groupname</font></p>
+</p>
+      <p><strong>Nombres de campo por defecto:</strong> son opcionales - si no se incluyen, los valores se toman del idioma y curso actuales</p>
+      <p><font color="#990000" face="Courier New, Courier, mono">idnumber, coursename, lang</font> </p>
+      <p><strong>Nombres de campo opcionales: </strong>todos son completamente opcionales. </p>
+      <p> <font color="#990000" face="Courier New, Courier, mono">description, picture, hidepicture</font></p>
+    </blockquote>
+    </li>
+  <li>Las comas deberían codificarse como &amp;#44 - el script automáticamente convertirá dichos códigos en comas. </li>
+  <li>En campos booleanos, use 0 para falso y 1 para verdadero. </li>
+  <li>Para identificar el curso se usará bien idnumber, bien coursename. Idnumber prevalece sobre coursename. Si no se especifica nada, los grupos se agregarán al curso actual.
+  <li>Coursename es el nombre corto del curso.</li>
+  <li>Nota: Si un grupo ya está registrado en la base de datos de Moodle en un curso particular, este script devolverá el nombre de grupo de ese grupo. Los profesores sólo podrán subir grupos a cursos para los que tienen permiso de edición.</li>
+</ul>
+   
+<p>He aquí un ejemplo de archivo válido:</p>
+<p><font size="-1" face="Courier New, Courier, mono"></font>groupname,idnumber,lang,description,picture <br />
+group1, Phil101, es, ¡Este grupo requiere atención extra!, 0 <br />
+group2, Math243, , ,
+</font></p>
+
