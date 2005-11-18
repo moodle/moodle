@@ -1152,7 +1152,7 @@ function forum_get_unmailed_posts($starttime, $endtime) {
                                AND p.discussion = d.id
                                AND ((d.timestart = 0 OR d.timestart <= '$now')
                                AND (d.timeend = 0 OR d.timeend > '$now'))
-                          ORDER BY p.modified ASC");
+                          ORDER BY p.modified ASC");/**/
 }
 
 function forum_mark_old_posts_as_mailed($endtime) {
@@ -1299,8 +1299,10 @@ function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
                                $user=0, $fullpost=true, $visiblegroups=-1, $limit=0, $userlastmodified=false) {
 /// Get all discussions in a forum
     global $CFG, $USER;
-
-    if ((isadmin() and !empty($CFG->admineditalways)) || isteacher(get_field('forum', 'course', 'id', $forum))) {
+    //fix for bug #4336
+    $thisforum = get_record('forum','id',$forum);
+    //fix for bug #4336
+    if ((isadmin() and !empty($CFG->admineditalways)) || isteacher(get_field('forum', 'course', 'id', $forum)) || $thisforum->type == 'news') {
         $timelimit = '';
     } else {
         $now = time();
@@ -1356,8 +1358,8 @@ function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
                                    $umtable
                              WHERE d.forum = '$forum'
                                AND p.parent = 0
-                                   $timelimit $groupselect $userselect 
-                          ORDER BY $forumsort $limit");
+                                    $timelimit $groupselect $userselect
+                          ORDER BY $forumsort $limit");/**/
     } else {
         return get_records_sql("SELECT $postdata, d.name, d.timemodified, d.usermodified, d.groupid,
                                    u.firstname, u.lastname, u.email, u.picture $umfields
@@ -1369,8 +1371,8 @@ function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
                                AND p.discussion = d.id
                                AND p.parent = 0
                                AND p.userid = u.id
-                                   $timelimit $groupselect $userselect 
-                          ORDER BY $forumsort $limit");
+                                    $timelimit $groupselect $userselect
+                          ORDER BY $forumsort $limit");/**/
     }
 }
 
@@ -1763,6 +1765,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
 
     $age = time() - $post->created;
     /// Hack for allow to edit news posts those are not displayed yet until they are displayed
+    
     if (!$post->parent
         && get_field('forum', 'type', 'id', $post->forum) == 'news'
         && get_field_sql("SELECT id FROM {$CFG->prefix}forum_discussions WHERE id = $post->discussion AND timestart > ".time())) {
