@@ -1081,7 +1081,7 @@ function forum_search_posts($searchterms, $courseid, $page=0, $recordsperpage=50
     $timelimit = '';
     if (!((isadmin() and !empty($CFG->admineditalways)) || isteacher($courseid))) {
         $now = time();
-        $timelimit = " AND (d.userid = $USER->id || ((d.timestart = 0 || d.timestart <= $now) && (d.timeend = 0 || d.timeend > $now))";
+        $timelimit = " AND (d.userid = $USER->id OR ((d.timestart = 0 OR d.timestart <= $now) AND (d.timeend = 0 OR d.timeend > $now))";
     }
 
     $limit = sql_paging_limit($page, $recordsperpage);
