@@ -146,7 +146,7 @@
 
         if (!empty($displaysection) and $displaysection != $section) {
             if ($showsection) {
-                $strsummary = ' - '.strip_tags($thissection->summary);
+                $strsummary = strip_tags(format_string($thissection->summary,true));
                 if (strlen($strsummary) < 57) {
                     $strsummary = ' - '.$strsummary;
                 } else {
