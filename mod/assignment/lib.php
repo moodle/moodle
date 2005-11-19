@@ -717,9 +717,10 @@ class assignment_base {
         $limit = sql_paging_limit($offset+1, 1);
 
         $nextid = 0;
-        if (($auser = get_record_sql($select.$sql.$sort.$limit)) !== false) {
+        if (($auser = get_record_sql($select.$sql.$sort.$limit, false, true)) !== false) {
             $nextid = $auser->id;
         }
+
         print_header(get_string('feedback', 'assignment').':'.fullname($user, true).':'.format_string($this->assignment->name));
 
         ///SOme javascript to help with setting up >.>
