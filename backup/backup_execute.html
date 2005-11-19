@@ -190,7 +190,7 @@
         echo "</ul></li>";
 
         //User info
-        if ($status && $preferences->backup_users) {
+        if ($status) {
             echo "<li>".get_string("writinguserinfo").'</li>';
             if (!$status = backup_user_info($backup_file,$preferences)) {
                 notify("An error occurred while backing up user info");
