@@ -3,6 +3,10 @@
 
 <div id="footer">
 <hr size="1" noshade="noshade" />
+<?php if ($CFG->perfdebug && !empty($performanceinfo)) {
+    echo $performanceinfo;
+}
+?>
 <?php echo $loggedinas ?>
 <?php echo $homelink ?>
 
