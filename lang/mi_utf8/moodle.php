@@ -109,7 +109,7 @@ $string['backuplogshelp'] = 'Ki te &#257;hei, pupuritia ng&#257; rangitaki o te 
 $string['backupnameformat'] = '%%Y%%m%%d-%%H%%M';
 $string['backupnoneusersinfo'] = 'He Noti:  Whiriwhiria \"te kore\" o ng&#257; kaiwhakauru.  N&#257; t&#275;r&#257;, ka whakawhiti ng&#257; k&#333;wae t&#257;rua katoa \"k&#257;hore he kaiwhakauru t&#257;rua\".  K&#257;ore e taea ng&#257; k&#333;wae \"te mahi\" me \"ng&#257; papa mahi\" te mahi p&#275;r&#257;, kua whakangoikorea i ng&#275;r&#257; k&#333;wae.';
 $string['backuporiginalname'] = 'He Ingoa T&#257;rua';
-$string['backupsavetohelp'] = 'Te ara roa ki te r&#257;rangi k&#333;paki hei tiaki i te k&#333;nae t&#257;rua<br>(waiho he w&#257;hi w&#257;tea hei tiaki i &#333;na r&#257;rangi k&#333;paki e aunoa ana ki te w&#257;nanga)';
+$string['backupsavetohelp'] = 'Te ara roa ki te r&#257;rangi k&#333;paki hei tiaki i te k&#333;nae t&#257;rua<br />(waiho he w&#257;hi w&#257;tea hei tiaki i &#333;na r&#257;rangi k&#333;paki e aunoa ana ki te w&#257;nanga)';
 $string['backupuserfileshelp'] = 'T&#299;pakohia, ka whakauru ng&#257; k&#333;nae k&#333;rero ki roto i ng&#257; t&#257;rua?';
 $string['backupusershelp'] = 'T&#299;pakohia &#257;u kaiwhakauru, ng&#257; kaiwhakauru wh&#257;iti r&#257;nei ki te rorohiko tuku.';
 $string['backupversion'] = 'Te Kape T&#257;rua';
@@ -154,50 +154,6 @@ Ki te kore whakaae, k&#257;ore e taea e ng&#257; kaiwhakauru te whakamahi ng&#27
 $string['configautologinguests'] = 'Ka noho ng&#257; t&#257;ngata e whakauru ana hei manuhiri?';
 $string['configcachetext'] = 'For larger sites or sites that use text filters, this setting can really speed things up.  Copies of texts will be retained in their processed form for the time specified here.  Setting this too small may actually slow things down slightly,  but setting it too large may mean texts take too long to refresh (with new links, for example).';
 $string['configcountry'] = 'ki te tipakohia he whenua, ka huri ia hei whenua aunoa mo te katoa…Waiho ki te tukukore…ki te taikaha nga kaiwhakuru.';
-$string['configdebug'] = 'If you turn this on, then PHP\'s error_reporting will be increased so that more warnings are printed.  This is only useful for developers.';
-$string['configdeleteunconfirmed'] = 'If you are using email authentication, this is the period within which a response will be accepted from users.  After this period, old unconfirmed accounts are deleted.';
-$string['configdigestmailtime'] = 'People who choose to have emails sent to them in digest form will be emailed the digest daily. This setting controls which time of day the daily mail will be sent (the next cron that runs after this hour will send it).';
-$string['configdisplayloginfailures'] = 'This will display information to selected users about previous failed logins.';
-$string['configenablerssfeeds'] = 'This switch will enable RSS feeds from across the site.  To actually see any change you will need to enable RSS feeds in the individual modules too - go to the Modules settings under Admin Configuration.';
-$string['configenablerssfeedsdisabled'] = ' It is not available because RSS feeds are disabled in all the Site. To enable them, go to the Variables settings under Admin Configuration.';
-$string['configerrorlevel'] = 'Choose the amount of PHP warnings that you want to be displayed.  Normal is usually the best choice.';
-$string['configextendedusernamechars'] = 'Enable this setting to allow students to use any characters in their usernames (note this does not affect their actual names).  The default is \"false\" which restricts usernames to be alphanumeric characters only';
-$string['configfilteruploadedfiles'] = 'Enabling this setting will cause Moodle to process all uploaded HTML and text files with the filters before displaying them.';
-$string['configforcelogin'] = 'Normally, the front page of the site and the course listings (but not courses) can be read by people without logging in to the site.  If you want to force people to log in before they do ANYTHING on the site, then you should enable this setting.';
-$string['configforceloginforprofiles'] = 'Enable this setting to force people to login as a real (non-guest) account before being allowed to see the user profile pages.  By default this is disabled (\"false\") so that prospective students can read about the teachers of each course, but this also means that web search engines can see them.';
-$string['configframename'] = 'If you are embedding Moodle within a web frame, then put the name of this frame here.  Otherwise this value should remain as \'_top\'';
-$string['configfullnamedisplay'] = 'This defines how names are shown when they are displayed in full. For most mono-lingual sites the most efficient setting is the default \"Given names + Surname\", but you may choose to hide surnames altogether, or to leave it up to the current language pack to decide (some languages have different conventions).';
-$string['configgdversion'] = 'Indicate the version of GD that is installed.  The version shown by default is the one that has been auto-detected.  Don\'t change this unless you really know what you\'re doing.';
-$string['confightmleditor'] = 'Choose whether or not to allow use of the embedded HTML text editor. Even if you choose allow, this editor will only appear when the user is using a compatible web browser.  Users can also choose not to use it.';
-$string['configidnumber'] = 'This option specifies whether (a) Users are not be asked for an ID number at all, (b) Users are asked for an ID number but can leave it blank or (c) Users are asked for an ID Number and cannot leave it blank. If given the User\'s ID number is displayed in their Profile.';
-$string['configintro'] = 'On this page you can specify a number of configuration variables that help make Moodle work properly on your server.  Don\'t worry too much about it - the defaults will usually work fine and you can always come back to this page later and change these settings.';
-$string['configintroadmin'] = 'On this page you should configure your main administrator account which will have complete control over the site. Make sure you give it a secure username and password as well as a valid email address.  You can create more admin accounts later on.';
-$string['configintrosite'] = 'This page allows you to configure the front page and name of this new site.  You can come back here later to change these settings any time using the \'Site Settings\' link on the home page.';
-$string['configlang'] = 'Choose a default language for the whole site.  Users can override this setting later.';
-$string['configlangdir'] = 'Most languages are printed left-to-right, but some, like Arabic and Hebrew, are printed right-to-left.';
-$string['configlanglist'] = 'Leave this blank to allow users to choose from any language you have in this installation of Moodle.  However, you can shorten the language menu by entering a comma-separated list of language codes that you want.  For example:  en,es_es,fr,it';
-$string['configlangmenu'] = 'Choose whether or not you want to display the general-purpose language menu on the home page, login page etc.  This does not affect the user\'s ability to set the preferred language in their own profile.';
-$string['configlocale'] = 'Choose a sitewide locale - this will affect the format and language of dates. You need to have this locale data installed on your operating system.  (eg en_US or es_ES).  If you don\'t know what to choose leave it blank.';
-$string['configloginhttps'] = 'Turning this on will make Moodle use a secure https connection just for the login page (providing a secure login), and then afterwards revert back to the normal http URL for general speed.  CAUTION: this setting REQUIRES https to be specifically enabled on the web server - if it is not then YOU COULD LOCK YOURSELF OUT OF YOUR SITE.';
-$string['configloglifetime'] = 'This specifies the length of time you want to keep logs about user activity.  Logs that are older than this age are automatically deleted.  It is best to keep logs as long as possible, in case you need them, but if you have a very busy server and are experiencing performance problems, then you may want to lower the log lifetime.';
-$string['configlongtimenosee'] = 'If students haven\'t logged in for a very long time, then they are automatically unsubscribed from courses.  This parameter specifies that time limit.';
-$string['configmaxbytes'] = 'This specifies a maximum size that uploaded files can be throughout the whole site.  This setting is limited by the PHP setting upload_max_filesize and the Apache setting LimitRequestBody.  In turn, maxbytes limits the range of sizes that can be chosen at course level or module level.';
-$string['configmaxeditingtime'] = 'This specifies the amount of time people have to re-edit forum postings, journal feedback etc.  Usually 30 minutes is a good value.';
-$string['confignoreplyaddress'] = 'Emails are sometimes sent out on behalf of a user (eg forum posts). The email address you specify here will be used as the \"From\" address in those cases when the recipients should not be able to reply directly to the user (eg when a user chooses to keep their address private).';
-$string['confignotifyloginfailures'] = 'If login failures have been recorded, email notifications can be sent out.  Who should see these notifications?';
-$string['confignotifyloginthreshold'] = 'If notifications about failed logins are active, how many failed login attempts by one user or one IP address is it worth notifying about?';
-$string['configopentogoogle'] = 'If you enable this setting, then Google will be allowed to enter your site as a Guest.  In addition, people coming in to your site via a Google search will automatically be logged in as a Guest.  Note that this only provides transparent access to courses that already allow guest access.';
-$string['configproxyhost'] = 'If this <B>server</B> needs to use a proxy computer (eg a firewall) to access the Internet, then provide the proxy hostname and port here.  Otherwise leave it blank.';
-$string['configsecureforms'] = 'Moodle can use an additional level of security when accepting data from web forms. If this is enabled, then the browser\'s HTTP_REFERER variable is checked against the current form address.  In a very few cases this can cause problems if the user is using a firewall (eg Zonealarm) configured to strip HTTP_REFERER from their web traffic.  Symptoms are getting \'stuck\' on a form. If your users are having problems with the login page (for example) you might want to disable this setting, although it might leave your site more open to brute-force password attacks.  If in doubt, leave this set to \'Yes\'.';
-$string['configsessioncookie'] = 'This setting customises the name of the cookie used for Moodle sessions.  This is optional, and only useful to avoid cookies being confused when there is more than one copy of Moodle running within the same web site.';
-$string['configsessiontimeout'] = 'If people logged in to this site are idle for a long time (without loading pages) then they are automatically logged out (their session is ended).  This variable specifies how long this time should be.';
-$string['configshowsiteparticipantslist'] = 'All of these site students and site teachers will be listed on the site participants list. Who shall be allowed to see this site participants list?';
-$string['configslasharguments'] = 'Files (images, uploads etc) are provided via a script using \'slash arguments\' (the second option here). This method allows files to be more easily cached in web browsers, proxy servers etc.  Unfortunately, some PHP servers don\'t allow this method, so if you have trouble viewing uploaded files or images (eg user pictures), set this variable to the first option';
-$string['configsmtphosts'] = 'Give the full name of one or more local SMTP servers that Moodle should use to send mail (eg \'mail.a.com\' or \'mail.a.com;mail.b.com\'). If you leave it blank, Moodle will use the PHP default method of sending mail.';
-$string['configsmtpuser'] = 'If you have specified an SMTP server above, and the server requires authentication, then enter the username and password here.';
-$string['configteacherassignteachers'] = 'Should ordinary teachers be allowed to assign other teachers within courses they teach?  If \'No\', then only course creators and admins can assign teachers.';
-$string['configtimezone'] = 'You can set the default timezone here.  This is the only the DEFAULT timezone for displaying dates - each user can override this by setting their own in their profile. \"Server time\" here will make Moodle default to the server\'s operating system setting, but \"Server time\" in the user profile will make the user default to this timezone setting.';
-$string['configunzip'] = 'Indicate the location of your unzip program (Unix only, optional).  If specified, this will be used to unpack zip archives on the server.  If you leave this blank, then Moodle will use internal routines.';
 $string['configuration'] = 'Ng&#257; Whakaraupapatanga';
 $string['configvariables'] = 'Ng&#257; T&#257;ute';
 $string['configwarning'] = 'Kia t&#363;pato ki te whakarerek&#275; ng&#257; whakaritenga. N&#257; ng&#257; tikanga hou ka whakaputa ng&#257; raruraru.';
@@ -255,8 +211,6 @@ $string['currentlocaltime'] = 't&#257;u ake w&#257;taka on&#257;ianei';
 $string['currentpicture'] = 'Pikitia on&#257;ianei';
 $string['currentrelease'] = 'Ng&#257; Whakaaturanga on&#257;ianei';
 $string['currentversion'] = 'Te Whakaaturanga o t&#275;nei w&#257;';
-$string['databasechecking'] = 'Upgrading Moodle database from version $a->oldversion to $a->newversion...';
-$string['databaseperformance'] = 'Database performance';
 $string['databasesetup'] = 'Te Whakakaupapa o te Putunga H&#333;tuku';
 $string['databasesuccess'] = 'I whakapai ake te Putunga H&#333;tuku';
 $string['databaseupgradebackups'] = 'I whai mana te purua ki $a';
@@ -310,12 +264,6 @@ $string['doyouagree'] = 'Kua p&#257;nui ng&#275;nei ture, ar&#257;, te whakam&#2
 $string['duplicate'] = 'T&#257;ruarua';
 $string['duplicatinga'] = 'T&#257;ruarua: $a';
 $string['duplicatingain'] = 'T&#257;ruarua $a->what i $a->in';
-$string['edhelpbgcolor'] = 'Define edit area\'s background-color.<br />Valid values are for example: #ffffff or white';
-$string['edhelpcleanword'] = 'This setting enables or disables Word specific format filtering.';
-$string['edhelpenablespelling'] = 'Enable or disable spellchecking. When enabled, <strong>aspell</strong> must be installed on the server.';
-$string['edhelpfontfamily'] = 'The font-family property is a list of font family names and/or generic family names. Family names must be seperated with comma.';
-$string['edhelpfontlist'] = 'Define the fonts used on editors dropdown menu.';
-$string['edhelpfontsize'] = 'The default font-size sets the size of a font. <br />Valid values are for example: medium, large, smaller, larger, 10pt, 11px.';
 $string['edit'] = 'Whakatika $a';
 $string['editcoursesettings'] = 'Whakatikahia ng&#257; T&#363;ranga W&#257;nanga';
 $string['editfiles'] = 'Whakatikahia ng&#257; K&#333;nae';
@@ -352,9 +300,6 @@ M&#333; te nuinga o ng&#257; mahi im&#275;ra, whakaatu he hononga kikorangi, a, 
 Toro atu ki te kaiwhakahaere o te pae,
 $a->kaiwhakahaere hei tiaki.';
 $string['emailconfirmationsubject'] = '$a: Tatai Whakamana';
-$string['emailconfirmsent'] = '   <P>An email should have been sent to your address at <B>$a</B>
-   <P>It contains easy instructions to complete your registration.
-   <P>If you continue to have difficulty, contact the site administrator.';
 $string['emaildigest'] = 'Momo P&#363;rongo K&#333;rero Im&#275;ra';
 $string['emaildigestcomplete'] = 'Kua oti (ng&#257; im&#275;ra me ng&#257; tuku k&#333;rero ia r&#257;)';
 $string['emaildigestoff'] = 'K&#257;ore he P&#363;rongo K&#333;rero (t&#275;tehi im&#275;ra t&#333; ia tuku k&#333;rero)';
@@ -385,24 +330,10 @@ M&#333; te nuinga o ng&#257; mahi im&#275;ra, ka whakaatu he hononga e kikorangi
 Mena ka whai tiakitanga, tono atu ki te kaiwhakahaere o te pae,
 $a->admin';
 $string['emailpasswordconfirmationsubject'] = '$a: te t&#363;turutanga o ng&#257; tini kupu whakauru';
-$string['emailpasswordconfirmsent'] = 'An email should have been sent to your address at <b>$a</b>.
-<p>It contains easy instructions to confirm and complete this password change.
-If you continue to have difficulty, contact the site administrator.';
-$string['emailpasswordsent'] = 'Thank you for confirming the change of password.
-<p>An email containing your new password has been sent to your address at <b>$a->email</b>.
-<p>The new password was automatically generated - you might like to
-<a href=$a->link>change your password</a> to something easier to remember.';
 $string['enable'] = 'Whakamana';
-$string['encryptedcode'] = 'Encrypted code';
 $string['enrolledincourse'] = 'Puka Whakauru ki te w&#257;nanga \"$a\"';
 $string['enrolledincoursenot'] = 'K&#257;ore i te Puka Whakauru ki t&#275; w&#257;nanga \"$a\"';
-$string['enrollfirst'] = 'You have to enroll in one of the courses before you can use the site activities';
-$string['enrolmentconfirmation'] = 'You are about to enroll yourself as a member of this course.<br />Are you sure you wish to do this?';
 $string['enrolmentkey'] = 'Te P&#257;tuhi Puka Whakauru';
-$string['enrolmentkeyfrom'] = 'This course requires an \'enrolment key\' - a one-time<BR>
-password that you should have received from $a';
-$string['enrolmentkeyhint'] = 'That enrolment key was incorrect, please try again<BR>
-(Here\'s a hint - it starts with \'$a\')';
 $string['enrolmentnew'] = 'Puka Whakauru Hou i $a';
 $string['enrolmentnewuser'] = 'Kua whakauru puka a $a->user ki te \"$a->course\"';
 $string['enrolmentnointernal'] = 'K&#257;ore an&#333; ng&#257; puka-&#257;-ringa kia whakamana';
@@ -410,8 +341,6 @@ $string['enrolmentnotyet'] = 'Manawa p&#257;, k&#257;ore e taea e koe te kuhuna 
 $string['enrolments'] = 'Ng&#257; Whakaurunga';
 $string['enrolperiod'] = 'Te W&#257; Whakaurunga';
 $string['entercourse'] = 'P&#257;toa k&#333;nina ki te whakauru i t&#275;neki w&#257;nanga';
-$string['enteremailaddress'] = 'Enter in your email address to reset your
-   password and have the new password sent to you via email.';
 $string['entries'] = 'Ng&#257; Urunga';
 $string['error'] = 'He hapa';
 $string['errortoomanylogins'] = 'Manawa p&#257;, nui ake ng&#257; nama kia whakauru. T&#299;mata an&#333; i t&#333; matapihi ipurangi.';
@@ -466,23 +395,6 @@ $string['fullname'] = 'Ingoa Katoa';
 $string['fullnamedisplay'] = '$a->firstname $a->lastname';
 $string['fullprofile'] = 'Puka K&#333;rero Katoa';
 $string['fullsitename'] = 'Ingoa Pae Whakaata';
-$string['gd1'] = 'GD 1.x is installed';
-$string['gd2'] = 'GD 2.x is installed';
-$string['gdneed'] = 'GD must be installed to see this graph';
-$string['gdnot'] = 'GD is not installed';
-$string['gpl'] = 'Copyright (C) 1999-2004  Martin Dougiamas  (http://dougiamas.com)
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details:
-
-http://www.gnu.org/copyleft/gpl.html';
 $string['grade'] = 'M&#257;ka';
 $string['grades'] = 'Ng&#257; M&#257;ka';
 $string['group'] = 'R&#333;p&#363;';
@@ -499,7 +411,6 @@ $string['groupmodeforce'] = 'R&#333;p&#363; Taikaha ';
 $string['groupmy'] = 'T&#333;ku r&#333;p&#363;';
 $string['groupnonmembers'] = 'Tangata k&#257;ore e whakar&#333;p&#363;tia';
 $string['groupnotamember'] = 'K&#257;ore he mema o r&#333;p&#363; koe';
-$string['grouprandomassign'] = 'Randomly assign all to groups';
 $string['groupremove'] = 'Mukua te r&#333;p&#363; tauwh&#257;iti';
 $string['groupremovemembers'] = 'Mukua ng&#257; mema tauwh&#257;iti';
 $string['groups'] = 'Ng&#257; r&#333;p&#363;';
@@ -511,7 +422,6 @@ $string['guestsno'] = 'Kaua e whakaurua ng&#257; manuhiri';
 $string['guestsnotallowed'] = 'K&#257;ore e taea ng&#257; tauhou te whakauru i \'$a\'';
 $string['guestsyes'] = 'Whakaaea ng&#257; tauhou k&#257;ore e kawea he k&#299;';
 $string['guestuser'] = 'Tauhou';
-$string['guestuserinfo'] = 'This user is a special user that allows read-only access to some courses.';
 $string['help'] = '&#256;whina';
 $string['helpemoticons'] = 'Mahia ng&#257; Tohu Ng&#257;kau';
 $string['helpformatting'] = 'E p&#257; ana ki te takotoranga tuhi';
@@ -526,8 +436,6 @@ $string['helptext'] = 'Mahi Tuhi';
 $string['helpwiki'] = 'P&#275;hea te tuhi tuhinga &#333;rite ki Wiki';
 $string['helpwriting'] = '&#256;ta Tuhituhi';
 $string['hiddensections'] = 'Ng&#257; W&#257;hanga Huna';
-$string['hiddensectionscollapsed'] = 'Hidden sections are shown in collapsed form';
-$string['hiddensectionsinvisible'] = 'Hidden sections are completely invisible';
 $string['hide'] = 'Huna';
 $string['hidepicture'] = 'Huna Pikitia';
 $string['hidesettings'] = 'Huna ng&#257; Ritenga';
@@ -541,8 +449,6 @@ $string['howtomakethemes'] = 'P&#275;hea te hanga kaupapa hou';
 $string['htmleditor'] = 'Whakamahi te &#274;tita HTML (ng&#275;tehi Raupapa P&#257;nui Ipurangi anahe)';
 $string['htmleditoravailable'] = 'Kei te w&#257;tea te &#274;tita HTML';
 $string['htmleditordisabled'] = 'Kua tineia te &#274;tita HTML i roto i t&#333; k&#333;rero whakauru';
-$string['htmleditordisabledadmin'] = 'The administrator has disabled the HTML editor on this site';
-$string['htmleditordisabledbrowser'] = 'The HTML editor is unavailable because your web browser is not compatible';
 $string['htmlformat'] = 'HTML Takototanga Pai';
 $string['icqnumber'] = 't&#257;tai ICQ ';
 $string['idnumber'] = 't&#257;tai  ID ';
@@ -589,28 +495,6 @@ $string['login_failure_logs'] = 'Ng&#257; Rangitaki Whakuru H&#275;';
 $string['loginas'] = 'Whakauru ko';
 $string['loginguest'] = 'Whakauru hei tauhou';
 $string['loginsite'] = 'Whakauru ki te Pae';
-$string['loginsteps'] = 'Hi! For full access to courses you\'ll need to take
-   a minute to create a new account for yourself on this web site.
-   Each of the individual courses may also have a one-time
-   \"enrolment key\", which you won\'t need until later. Here are
-   the steps:
-   <ol size=\"2\">
-   <li>Fill out the <a href=\"$a\">New Account</a> form with your details.</li>
-   <li>An email will be immediately sent to your email address.</li>
-   <li>Read your email, and click on the web link it contains.</li>
-   <li>Your account will be confirmed and you will be logged in.</li>
-   <li>Now, select the course you want to participate in.</li>
-   <li>If you are prompted for a \"enrolment key\" - use the one
-   that your teacher has given you. This will \"enrol\" you in the
-   course.</li>
-   <li>You can now access the full course. From now on you will only need
-   to enter your personal username and password (in the form on this page)
-   to log in and access any course you have enrolled in.</li>
-   </ol>';
-$string['loginstepsnone'] = '<p>Kiaora!</p>
-<p>For full access to courses you\'ll need to create yourself an account.</p>
-<p>All you need to do is make up a username and password and use it in the form on this page!</p>
-<p>If someone else has already chosen your username then you\'ll have to try again using a different username.</p>';
 $string['loginto'] = 'Whakauru ki $a';
 $string['loginusing'] = 'Whakamahia t&#333; Ingoa Whakauru me t&#333; Kupu Whakauru kei k&#333;nina';
 $string['logout'] = 'Whakaputa';
@@ -620,13 +504,10 @@ $string['mailstudents'] = 'Whakam&#333;hio ng&#257; Tauira';
 $string['mailteachers'] = 'Whakam&#333;hio ng&#257; Kaiako';
 $string['mainmenu'] = 'R&#257;rangi Tuatahi';
 $string['makeafolder'] = 'Waihanga K&#333;nae';
-$string['makeeditable'] = 'If you make \'$a\' editable by the web server process (eg apache) then you could edit this file directly from this page';
 $string['manageblocks'] = 'Tini Roro Hangarau';
 $string['managedatabase'] = 'Raraunga Puna K&#333;rero';
 $string['managefilters'] = 'Ng&#257; T&#257;tari';
 $string['managemodules'] = 'Ng&#257; K&#333;wae';
-$string['markedthistopic'] = 'This topic is highlighted as the current topic';
-$string['markthistopic'] = 'Highlight this topic as the current topic';
 $string['maximumchars'] = 'Rahinga o  $a characters';
 $string['maximumgrade'] = 'M&#257;ka Mutunga Rawa';
 $string['maximumshort'] = 'Te Nuinga';
@@ -657,8 +538,6 @@ $string['missingteacher'] = 'T&#299;pakohia t&#275;tehi';
 $string['missingurl'] = 'E Ngaro Ana te URL';
 $string['missingusername'] = 'E Ngaro Ana te Ingoa Whakauru';
 $string['modified'] = 'Whakarerek&#275;tanga';
-$string['moduledeleteconfirm'] = 'You are about to completely delete the module \'$a\'.  This will completely delete everything in the database associated with this activity module.  Are you SURE you want to continue?';
-$string['moduledeletefiles'] = 'All data associated with the module \'$a->module\' has been deleted from the database.  To complete the deletion (and prevent the module re-installing itself), you should now delete this directory from your server: $a->directory';
 $string['modulesetup'] = 'Ritenga R&#257;rangi K&#333;wae';
 $string['modulesuccess'] = 'Tika ng&#257; r&#257;rangi $a';
 $string['moodleversion'] = 'Te Whakaaturanga Moodle';
@@ -689,25 +568,6 @@ $string['new'] = 'Hou';
 $string['newaccount'] = 'He Kaute Hou';
 $string['newcourse'] = 'W&#257;nanga Hou';
 $string['newpassword'] = 'Kupu Whakauru Hou';
-$string['newpasswordtext'] = 'Hi $a->firstname,
-
-Your account password at \'$a->sitename\' has been reset
-and you have been issued with a new temporary password.
-
-Your current login information is now:
-   username: $a->username
-   password: $a->newpassword
-
-Please go to this page to change your password:
-   $a->link
-
-In most mail programs, this should appear as a blue link
-which you can just click on.  If that doesn\'t work,
-then cut and paste the address into the address
-line at the top of your web browser window.
-
-Cheers from the \'$a->sitename\' administrator,
-$a->signoff';
 $string['newpicture'] = 'Pikitia Hou';
 $string['newsitem'] = 'Take P&#363;rongo';
 $string['newsitems'] = 'Ng&#257; Take P&#363;rongo';
@@ -719,7 +579,6 @@ $string['no'] = 'Kao';
 $string['nobody'] = 'K&#257;hore Tangata';
 $string['nocoursesfound'] = 'K&#257;ore i kitea ng&#257; w&#257;nanga me ng&#257; kupu \'$a\'';
 $string['nocoursesyet'] = 'K&#257;ore ng&#257; W&#257;nanga ki t&#275;nei W&#257;hanga';
-$string['noexistingadmins'] = 'No existing admins, this is a serious error and you should never have seen this message.';
 $string['noexistingcreators'] = 'K&#257;ore he Kaihanga';
 $string['noexistingstudents'] = 'K&#257;ore he Tauira';
 $string['noexistingteachers'] = 'K&#257;ore he Kaiako';
@@ -743,17 +602,10 @@ $string['noteachersyet'] = 'K&#257;ore an&#333; ng&#257; kaiako kia whakauru i t
 $string['notenrolled'] = 'K&#257;ore a $a i puka whakauru i t&#275;neki w&#257;nanga.';
 $string['noteuserschangednonetocourse'] = 'Note: course users need to be restored when restoring user data. This setting has been changed for you.';
 $string['nothingnew'] = 'K&#257;ore an&#333; ng&#257; mea hou kia puta mai i t&#333; urunga whakamutunga';
-$string['noticenewerbackup'] = 'This backup file has been created with Moodle $a->backuprelease ($a->backupversion) and it\'s newer than your currently installed Moodle $a->serverrelease ($a->serverversion). This could cause some inconsistencies because backwards compatibility of backup files cannot be guaranteed.';
-$string['notifyloginfailuresmessage'] = '$a->time, IP: $a->ip, Kaiwhakauru: $a->info';
-$string['notifyloginfailuresmessageend'] = 'You can view these logs at $a/course/log.php?id=1&chooselog=1&modid=site_errors.';
-$string['notifyloginfailuresmessagestart'] = 'Here is a list of failed login attempts at $a since you were last notified ';
-$string['notifyloginfailuressubject'] = '$a :: Failed logins notification';
 $string['notincluded'] = 'K&#257;ore i roto';
-$string['notingroup'] = 'Sorry, but you need to be part of a group to see this activity.';
 $string['nousersmatching'] = 'K&#257;ore i kitea e ng&#257; kaiwhakauru taurite ki \'$a\'';
 $string['nousersyet'] = 'K&#257;ore an&#333; ng&#257; t&#257;ngata kia uru';
 $string['now'] = 'N&#257;ianei';
-$string['numattempts'] = '$a failed login attempt(s) ';
 $string['numberweeks'] = 'Nama o ng&#257; wiki / kaupapa';
 $string['numdays'] = '$a ng&#257; r&#257;';
 $string['numhours'] = '$a ng&#257; h&#257;ora';
@@ -777,15 +629,9 @@ $string['passwordconfirmchange'] = 'Whakaaetia te tinihanga o te kupu whakauru';
 $string['passwordrecovery'] = 'Ae, tukuna t&#333;ku urunga';
 $string['passwordsdiffer'] = 'K&#257;ore ng&#257; kupu whakauru e taurite ana';
 $string['passwordsent'] = 'Kua tukuna te kupu whakauru';
-$string['passwordsenttext'] = '   <P>An email has been sent to your address at $a->email.
-   <P><B>Please check your email for your new password</B>
-   <P>The new password was automatically generated, so you might like to
-   <A HREF=$a->link>change it to something easier to remember</A>.';
 $string['pathnotexists'] = 'kaore te ara I roto I to rorohiko tuku';
 $string['pathslasherror'] = 'kaua e whakaoti ma te ritaha (slash)!';
-$string['paymentinstant'] = 'Use the button below to pay and be enrolled within minutes!';
 $string['paymentrequired'] = 'Utua te whakauru ki te w&#257;nanga.';
-$string['paymentsorry'] = 'Thank you for your payment!  Unfortunately your payment has not yet been fully processed, and you are not yet registered to enter the course \"$a->fullname\".  Please try continuing to the course in a few seconds, but if you continue to have trouble then please alert the $a->teacher or the site administrator';
 $string['paymentthanks'] = 'T&#275;n&#257; koa m&#333; te utunga!  Kua Puka Whakauru koe ki t&#333;u ake w&#257;nanga:<br />\"$a\"';
 $string['people'] = 'Ng&#257; t&#257;ngata';
 $string['personalprofile'] = 'K&#333;nae Matawhaiora';
@@ -804,7 +650,6 @@ $string['publicdirectory'] = 'K&#333;paki T&#363;matanui';
 $string['publicdirectory0'] = 'Kaua e t&#257;ngia t&#275;neki Pae';
 $string['publicdirectory1'] = 'T&#257;ngia te Ingoa Pae anahe.';
 $string['publicdirectory2'] = 'T&#257;ngia te Ingoa Pae me t&#275;tehi hononga';
-$string['publicsitefileswarning'] = 'Note: files placed here can be accessed by anyone';
 $string['question'] = 'P&#257;tai';
 $string['readinginfofrombackup'] = 'P&#257;nuitia whakaaturanga pura';
 $string['readme'] = 'P&#256;NUITIA';
@@ -813,17 +658,6 @@ $string['recentactivityreport'] = 'R&#299;poata Katoa';
 $string['refreshingevents'] = 'Whakaora Heip&#363; (Mahi)';
 $string['registration'] = 'R&#275;hita  Moodle';
 $string['registrationemail'] = 'Tohu Im&#275;ra';
-$string['registrationinfo'] = '<p>This page allows you to register your Moodle site with moodle.org.  Registration is free.
-The main benefit of registering is that you will be added to a low-volume mailing list
-for important notifications such as security alerts and new releases of Moodle.
-<p>By default, your information will be kept private, and will never be sold or passed on to anyone else.  The only
-   reason for collecting this information is for support purposes, and to help build up a statistical
-   picture of the Moodle community as a whole.
-<p>If you choose, you can allow your site name, country and URL to be added to the public list of Moodle Sites.
-<p>All new registrations are verified manually before they are added to the list, but once you are added you can update your registration (and your entry on the public list) at any time by resubmitting this form.';
-$string['registrationno'] = 'No, I do not want to receive email';
-$string['registrationsend'] = 'Send registration information to moodle.org';
-$string['registrationyes'] = 'Yes, please notify me about important issues';
 $string['removeadmin'] = 'mukua te kaiwhakahaere';
 $string['removecreator'] = 'Mukua Kaihanga &#333; te W&#257;nanga';
 $string['removestudent'] = 'Mukua te tauira';
@@ -831,8 +665,6 @@ $string['removeteacher'] = 'Mukua te kaiako';
 $string['rename'] = 'Ingoatia an&#333;';
 $string['renamefileto'] = 'Whakaingoa an&#333; ko / te <b>$a</b> ki';
 $string['required'] = 'Tonoa';
-$string['requireskey'] = 'This course requires an enrolment key';
-$string['requirespayment'] = 'This course requires payment for access';
 $string['resortcoursesbyname'] = 'Whakaraupapa an&#333; ng&#257; w&#257;nanga m&#257; te ingoa';
 $string['resources'] = 'Rauemi';
 $string['restore'] = 'Whakahokia';
@@ -844,8 +676,6 @@ $string['returningtosite'] = 'Whakahokia ki t&#275;nei pae tukutuku?';
 $string['revert'] = 'hurihia';
 $string['role'] = 'T&#363;ranga';
 $string['rss'] = 'RSS';
-$string['rssarticles'] = 'Number of RSS recent articles';
-$string['rsstype'] = 'RSS feed for this activity';
 $string['savechanges'] = 'Tiakina';
 $string['saveto'] = 'Tiakina ki';
 $string['scale'] = '&#256;whata';
@@ -854,13 +684,11 @@ $string['scalescustom'] = '&#256;whata Waihanga';
 $string['scalescustomcreate'] = 'T&#257;piri he &#257;whata hou';
 $string['scalescustomno'] = 'kaore ano nga awhata kia waihangatia';
 $string['scalesstandard'] = '&#256;whata Takoto';
-$string['scalestip'] = 'To create custom scales, use the \'Scales...\' link in your course administration menu.';
 $string['schedule'] = 'purongo w&#257;';
 $string['scheduledbackupstatus'] = 'purongo purua papa';
 $string['search'] = 'Rapua';
 $string['searchagain'] = 'Rapu an&#333;';
 $string['searchcourses'] = 'Rapua ng&#257; w&#257;nanga';
-$string['searchhelp'] = 'You can search for multiple words at once.<p>word : find any match of this word within the text.<br>+word : only exact matching words will be found.<br>-word : don\'t include results containing this word.';
 $string['searchresults'] = 'rapunga rangahau';
 $string['sec'] = 'H&#275;kona';
 $string['secs'] = 'Ng&#257; H&#275;kona';
@@ -868,9 +696,7 @@ $string['section'] = 'W&#257;hanga';
 $string['sections'] = 'Ng&#257; W&#257;hanga';
 $string['select'] = 'T&#299;pako';
 $string['selectacountry'] = 'T&#299;pakotia he whenua';
-$string['selectednowmove'] = '$a files selected for moving. Now go to the destination and press \'Move files to here\'';
 $string['senddetails'] = 'tukuna aku t&#257;nga moka m&#257; te im&#275;ra';
-$string['separateandconnected'] = 'Separate and Connected ways of knowing';
 $string['serverlocaltime'] = 'Server\'s local time';
 $string['settings'] = 'Ng&#257; Whakat&#363;ringa';
 $string['shortname'] = 'Ingoa Poto';
@@ -897,8 +723,6 @@ $string['siteerrors'] = 'Ng&#257; Pae H&#275;';
 $string['sitefiles'] = 'K&#333;nae Pae';
 $string['sitelogs'] = 'Rangitaki Pae';
 $string['sitenews'] = 'Pae Rongo K&#333;rero';
-$string['sitepartlist0'] = 'You must be a site teacher to be allowed to see the site participants list';
-$string['sitepartlist1'] = 'You must be a teacher to be allowed to see the site participants list';
 $string['sites'] = 'Ng&#257; Paenga';
 $string['sitesection'] = 'T&#257;piria he w&#257;hanga kaupapa';
 $string['sitesettings'] = 'Whakaaturanga Pae';
@@ -908,7 +732,6 @@ $string['sizeb'] = 'bytes';
 $string['sizegb'] = 'Gb';
 $string['sizekb'] = 'Kb';
 $string['sizemb'] = 'Mb';
-$string['socialheadline'] = 'Social forum - latest topics';
 $string['someallowguest'] = 'Ka taea e ng&#275;tehi w&#257;nanga te whakauru ng&#257; tauhou';
 $string['someerrorswerefound'] = 'I ngaro, i raru pai r&#257;nei ng&#275;tehi o ng&#257; whakaaturanga. Tirohia ki raro m&#333; ng&#257; k&#333;rero.';
 $string['sortby'] = 'Whakaraupapa mai i te';
@@ -936,7 +759,6 @@ $string['subcategories'] = 'W&#257;hanga Kaupapa K&#333;rero';
 $string['success'] = 'Angit&#363;';
 $string['summary'] = 'Whakap&#333;poto';
 $string['summaryof'] = 'Whakar&#257;popotonga o / a $a';
-$string['supplyinfo'] = 'Please supply some information about yourself';
 $string['teacheronly'] = 'm&#333; te $a anahe';
 $string['teacherroles'] = 'ng&#257; t&#363;ranga $a ';
 $string['teachers'] = 'Ng&#257; Kaiako';
@@ -967,14 +789,11 @@ $string['turneditingon'] = 'K&#257;ngia te P&#257;tene Whakatika';
 $string['undecided'] = '&#256;wangawanga';
 $string['unenrol'] = 'Whakakorengia Puka Whakauru';
 $string['unenrolallstudents'] = 'Whakakore ng&#257; Puka Whakauru Katoa o ng&#257; Tauira ';
-$string['unenrolallstudentssure'] = 'Are you sure you want to completely unenrol all students from this course?';
 $string['unenrolme'] = 'Whakakore taku Urunga ki $a';
-$string['unenrolsure'] = 'Are you sure you want to unenrol $a from this course?';
 $string['unknowncategory'] = 'Kaupapa K&#333;rero k&#257;ore e m&#333;hio';
 $string['unlimited'] = 'Kore Mutunga';
 $string['unpacking'] = 'Wherawhera $a';
 $string['unsafepassword'] = 'He Kupu M&#333;rearea - Whakam&#257;tau an&#333;';
-$string['unusedaccounts'] = 'Accounts unused for more than $a days are automatically unenrolled';
 $string['unzip'] = 'Wherawhera ';
 $string['unzippingbackup'] = 'Puru Wherawhera';
 $string['up'] = 'Ki Runga';
@@ -989,15 +808,11 @@ $string['updatingain'] = 'Whakahoungia  $a->what i roto $a->in';
 $string['upload'] = 'Tuku atu';
 $string['uploadafile'] = 'Tuku atu he k&#333;nae';
 $string['uploadedfileto'] = 'I tuku atu $a->file ki $a->directory';
-$string['uploadformlimit'] = 'Uploaded file exceeded the maximum size limit set by the form';
 $string['uploadnofilefound'] = 'K&#257;ore i kitea te k&#333;nae - i t&#299;pako tikatia e koe?';
 $string['uploadnotallowed'] = 'K&#257;ore e taea te tuku atu';
 $string['uploadpartialfile'] = 'He itinga i tukua o te k&#333;nae';
-$string['uploadproblem'] = 'An unknown problem occurred while uploading the file \'$a\' (perhaps it was too large?)';
-$string['uploadserverlimit'] = 'Uploaded file exceeded the maximum size limit set by the server';
 $string['uploadthisfile'] = 'Tukua t&#275;neki k&#333;nae';
 $string['uploadusers'] = 'Tukua ng&#257; Kaiwhakauru';
-$string['usedinnplaces'] = 'Used in $a places';
 $string['user'] = 'Kaiwhakauru';
 $string['userconfirmed'] = 'I whakamanatia $a';
 $string['userdata'] = 'R&#257;raunga Kaiwhakauru';
@@ -1012,7 +827,6 @@ $string['userprofilefor'] = 'Te Matawhaiora a $a';
 $string['users'] = 'Ng&#257; Kaiwhakauru';
 $string['usersnew'] = 'Ng&#257; Kaiwhakauru Hou';
 $string['userzones'] = 'Ng&#257; Rohe  Kaiwhakauru';
-$string['usingexistingcourse'] = 'Using existing course';
 $string['version'] = 'Whakaaturanga';
 $string['view'] = 'Tirohanga';
 $string['webpage'] = 'Wh&#257;rangi TAW (Tukutuku Ao Wh&#257;nui)';
@@ -1021,12 +835,6 @@ $string['weekhide'] = 'Hunua t&#275;neki wiki ki a $a';
 $string['weeklyoutline'] = 'Whakapotonga Wiki';
 $string['weekshow'] = 'Whakaaturia  t&#275;nei wiki ki $a';
 $string['welcometocourse'] = 'Nau mai ki $a';
-$string['welcometocoursetext'] = 'Nau mai ki $a->coursename!
-
-If you have not done so already, you should edit your profile page
-within the course so that we can learn more about you:
-
-  $a->profileurl';
 $string['whattocallzip'] = 'Ka tapaina e koe te k&#333;nae wherawhera ko ...?';
 $string['withchosenfiles'] = 'me ng&#257; k&#333;nae wh&#257;iti';
 $string['withoutuserdata'] = 'K&#257;ore he h&#333;tuku kaiwhakauru';

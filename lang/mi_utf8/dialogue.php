@@ -5,23 +5,12 @@
 $string['addmynewentries'] = 'T&#257;piria aku tuhinga hou';
 $string['addmynewentry'] = 'T&#257;piria taku tuhinga hou';
 $string['addsubject'] = 'T&#257;piria he Kaupapa';
-$string['allowmultiple'] = 'Allow more than one Dialogue with the same person';
 $string['allowstudentdialogues'] = 'Whakaae ng&#257; k&#333;rero Tauira ki Tauira';
 $string['close'] = 'Katia';
 $string['closed'] = 'I Katia';
-$string['confirmclosure'] = 'You are about to close a dialogue with $a. Closed dialogues cannot be reopened. If you close this dialogue you can view it but not add to it, and you will have to start another dialogue to contnue \"talking\" this person.<br /><br />Are you sure you want to close this dialogue?';
 $string['deleteafter'] = 'Whakakorengia ng&#257; Whakawhiti K&#333;rero a muri (ng&#257; r&#257;)';
 $string['dialogueclosed'] = 'Whakawhiti Whakaaro Aukati';
 $string['dialogueintro'] = 'Whakataki Whakawhiti Whakaaro';
-$string['dialoguemail'] = '$a->userfrom has posted a new entry in your
-dialogue entry for \'$a->dialogue\'
-
-You can see it appended to your dialogue entry:
-
-    $a->url';
-$string['dialoguemailhtml'] = '$a->userfrom has posted a new entry in your
-dialogue entry for \'<i>$a->dialogue</i>\'<br /><br />
-You can see it appended to your <a href=\"$a->url\">dialogue</a>.';
 $string['dialoguename'] = 'Ingoa Whakawhiti Whakaaro';
 $string['dialogueopened'] = 'I t&#363;whera he whakawhiti whakaaro ki $a';
 $string['dialoguewith'] = 'Whakawhiti Whakaaro ki $a';
@@ -58,7 +47,6 @@ $string['pane2one'] = '1 Whakawhiti Whakaaro e tatari ana m&#333; ng&#257; whaka
 $string['pane3'] = '$a Whakawhiti K&#333;rero i Aukati';
 $string['pane3one'] = '1 Whakawhiti K&#333;rero i Aukati';
 $string['seen'] = 'I kitea i te / ng&#257; $a i mua';
-$string['sendmailmessages'] = 'Send Mail Messages about my new entries';
 $string['status'] = 'T&#363;nga';
 $string['studenttostudent'] = 'Tauira ki Tauira';
 $string['subject'] = 'Kaupapa';

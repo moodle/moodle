@@ -13,7 +13,6 @@ $string['assignmentmailhtml'] = 'Kua tukuna mai a $a->teacher ng&#257; urupare m
 Ka kite koe ng&#257; rarau ki t&#257;u <a href=\"$a->url\">assignment submission</a>.';
 $string['assignmentname'] = 'Ingoa Taumahi';
 $string['assignmenttype'] = 'Momo Taumahi';
-$string['configmaxbytes'] = 'Default maximum assignment size for all assignments on the site (subject to course limits and other local settings)';
 $string['description'] = 'Whakaaturanga';
 $string['duedate'] = 'R&#257; Aukati';
 $string['duedateno'] = 'K&#257;ore he R&#257; Aukati';

@@ -26,7 +26,6 @@ $string['delete'] = 'Whakakore';
 $string['deleteddiscussion'] = 'Kua whakakorengia te kaupapa o te whakatwhitwhiti k&#333;rero';
 $string['deletedpost'] = 'Kua whakakorengia te tuku k&#333;rero';
 $string['deletesure'] = 'Kei te whai tonu koe kia whakakore t&#275;neki tuku k&#333;rero?';
-$string['digestmailheader'] = 'This is your daily digest of new posts from the $a->sitename forums. To change your forum email preferences, go to $a->userprefs.';
 $string['digestmailprefs'] = 'T&#257;u K&#333;rero Matawhaiora';
 $string['digestmailsubject'] = '$a: P&#363;rongo K&#333;rero o ng&#257; huihui-&#257;-ipurangi';
 $string['digestsentusers'] = 'I tuku atu pai ng&#257; p&#363;rongo k&#333;rero-&#257;-im&#275;ra ki a / ng&#257;  kaiwhakauru $a';
@@ -125,8 +124,6 @@ $string['repliesmany'] = '$a ng&#257; whakautu ';
 $string['repliesone'] = '$a ng&#257; whakautu i n&#257;ianei';
 $string['reply'] = 'Whakautu';
 $string['replyforum'] = 'Whakautu ki te huinga';
-$string['rsssubscriberssdiscussions'] = 'Display the RSS feed for \'$a\' discussions';
-$string['rsssubscriberssposts'] = 'Display the RSS feed for \'$a\' posts';
 $string['search'] = 'Rapu';
 $string['searchforums'] = 'Rangahaua ng&#257; huinga';
 $string['searcholderposts'] = 'Rangahaua ng&#257; tuku k&#333;rero tawhito';
@@ -154,5 +151,4 @@ $string['yesinitially'] = 'Ae, m&#333; t&#275;neki w&#257;';
 $string['youratedthis'] = 'N&#257;u t&#275;neki i whakatau';
 $string['yournewtopic'] = 'T&#257;u kaupapa tuku k&#333;rero hou';
 $string['yourreply'] = 'T&#257;u whakautu';
-
 ?>

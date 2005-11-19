@@ -1,7 +1,6 @@
 <?PHP // $Id$ 
       // exercise.php - created with Moodle 1.4.1 (2004083101)
 
-
 $string['absent'] = 'Matangaro';
 $string['accumulative'] = 'Whakahiato';
 $string['action'] = 'Mahia';
@@ -18,7 +17,6 @@ $string['assessmentform'] = 'Puka Aromatawai';
 $string['assessmentmadebythe'] = 'Aromatawai n&#257; $a';
 $string['assessmentofthissubmission'] = 'Aromatawai o t&#275;nei tukunga';
 $string['assessments'] = 'Ng&#257; Aromatawai';
-$string['atthisstageyou'] = 'At this stage you have completed an assessment.<br />You may want to revise your work in the light of that assessment.<br /> If you do that please remember to also revise your assessment.<br /> You can do this by clicking on the Re-assess link given below.';
 $string['awaitingassessmentbythe'] = 'Ka tatari m&#333; te Aromatawai n&#257; $a';
 $string['clearlateflag'] = 'Whakaw&#257;tea te Haki T&#333;muri';
 $string['comment'] = 'K&#333;rero';
@@ -30,14 +28,10 @@ $string['criterion'] = 'Ng&#257; Paearu';
 $string['deadline'] = 'R&#257; Aukati';
 $string['deadlineis'] = 'R&#257; Aukati: $a';
 $string['delete'] = 'Whakakore';
-$string['deletesubmissionwarning'] = 'Warning: there $a assessments associated with this submission.<br />
-    It is strongly suggested that this submission is NOT deleted.';
 $string['deleting'] = 'Whakakorenga';
 $string['description'] = 'Whakaaturanga';
-$string['descriptionofexercise'] = 'In an Exercise Assignment the description of the exercise or task to be done by the $a is put into a Word document or HTML file. This file is uploaded into the exercise before the assignment is opened up to the $a. It is also possible to create a set of variants on the same exercise or task, again as Word documents or HTML files, and upload these into the exercise before it is opened up to the $a.';
 $string['detailsofassessment'] = 'Ng&#257; Whakaaturanga Aromatawai';
 $string['displayoffinalgrades'] = 'Whakaaturanga of ng&#257; M&#257;ka Whakamutunga';
-$string['doubleupload'] = 'Warning: this submission has probably been sent twice. Go to the Administration page, check for two submissions from this user within a short time period. Delete one of these submissions before proceeding.';
 $string['duedate'] = 'R&#257; Aukati';
 $string['edit'] = 'Whakatika $a';
 $string['editingassessmentelements'] = 'Whakatikahia ng&#257; W&#257;hanga Aromatawai';
@@ -86,19 +80,8 @@ $string['noexercisedescriptionssubmitted'] = 'K&#257;ore te Whakaaturanga Mahi e
 $string['nosubmissions'] = 'Ng&#257; Tukunga';
 $string['notassessedyet'] = 'K&#257;ore An&#333; Kia Whakam&#257;tautau';
 $string['notavailable'] = 'W&#257;tea Kore';
-$string['noteonassessmentelements'] = 'Note that grading is broken down into a number of \'Assessment Elements\'.<br />
-	This makes the grading easier and more consistent. As teacher you must add these <br />
-	Elements before making the assignment available to students. This is done by<br />
-	clicking on the assignment in the course, if no elements are present you will be asked<br />
-	to add them. You can change the number of elements using the Edit Assignment screen,<br />
-	the elements themselves can be amended from the \"Managing Assignment\" screen. ';
-$string['noteongradinggrade'] = 'This grade is a measure of how well your assessment agrees with the assessment of <br />
-    your work by the $a. The higher the grade the closer the agreement.';
-$string['noteonstudentassessments'] = '{Grade from student / Grading Grade for assessment}';
 $string['notgraded'] = 'K&#257;ore i M&#257;ka';
 $string['notitlegiven'] = 'K&#257;ore he Taitara';
-$string['numberofassessmentelements'] = 'Number of Comments, Assessment Elements, Grade Bands, Criterion Statments or Categories in a Rubric';
-$string['numberofcriterionelements'] = 'Number of Criterion Elements must be greater than one.';
 $string['numberofentries'] = 'Ng&#257; Nama Tuhinga';
 $string['numberofentriesinleaguetable'] = 'Ng&#257; Nama Tuhinga i roto i te T&#275;pu Ripanga';
 $string['numberofnegativeresponses'] = 'Ng&#257; &#256;huatanga he k&#257;ore';
@@ -109,23 +92,16 @@ $string['passwordprotectedexercise'] = 'He Mahi Kupu Whakauru e &#256;rai ana';
 $string['phase'] = 'W&#257;hanga';
 $string['phase1'] = 'Mahi Whakakaupapa';
 $string['phase1short'] = 'Whakakaupapa';
-$string['phase2'] = 'Allow $a Assessments and Submissions';
 $string['phase2short'] = 'T&#363;whera';
 $string['phase3'] = 'Whakaatu ng&#257; M&#257;ka Nuinga me te R&#257;rangi';
 $string['phase3short'] = 'Whakaatu';
-$string['pleasegradetheassessment'] = 'Please Grade the Assessment of this Piece of Work by $a';
-$string['pleasemakeyourownassessment'] = 'Please make your own Assessment of the Piece of Work from $a. <br />Note that the Assessment Form is initially displayed with the Student\'s assessment.<br /> You should make any amendments you think necessary and then click on one <br />of the buttons at the foot of the page.';
 $string['pleasesubmityourwork'] = 'Tukuna Mai te Taumahi m&#257;i i t&#275;nei Puka';
-$string['pleaseusethisform'] = 'Please complete this form when you have <br />finished the instructions in the exercise shown below.';
-$string['pleaseviewtheexercise'] = 'Please view the exercise given below by clicking on it\'s title.<br />You should follow the instructions in this exercise. <br/>When you are happy that you have completed the exercise<br /> successfully you should click on Assess (or Re-assess) link in <br />the box below. When you have done this assessment you will <br />be shown further instructions on submitting your work.';
 $string['poor'] = 'P&#333;hara';
 $string['present'] = 'i / ki k&#333;nei; i / ki reira';
 $string['reasonforadjustment'] = 'He K&#333;rero / Whakaaro o te Whakaritenga';
 $string['reassess'] = 'Whakam&#257;tautau An&#333;';
 $string['regradestudentassessments'] = 'M&#257;ka An&#333; i ng&#257; Aromatawai-&#257;-Tauira';
 $string['resubmissionfor'] = 'Tukuna An&#333; n&#257; $a';
-$string['resubmitnote'] = '* means that the $a is allowed to redo this submission. <br /> This flag can be given to any submission by re-assessing it and clicking <br />on the <b>Allow $a to Re-submit</b> button. <br />The student can resubmit when this flag is present on <b>any</b> of their submissions.';
-$string['rubric'] = 'Rubric';
 $string['savedok'] = 'Kua Tiaki Pai';
 $string['saveentries'] = 'Tiaki ng&#257; Urunga';
 $string['savemyassessment'] = 'Tiaki i taku Aromatawai';
@@ -133,24 +109,13 @@ $string['saveweights'] = 'Tiaki ng&#257; Taumaha';
 $string['scale10'] = 'Piro ki te 10';
 $string['scale100'] = 'Piro ki te 100';
 $string['scale20'] = 'Piro ki te 20';
-$string['scalecorrect'] = '2 point Correct/Incorrect scale';
-$string['scaleexcellent4'] = '4 point Excellent/Very Poor scale';
-$string['scaleexcellent5'] = '5 point Excellent/Very Poor scale';
-$string['scaleexcellent7'] = '7 point Excellent/Very Poor scale';
-$string['scalegood3'] = '3 point Good/Poor scale';
-$string['scalepresent'] = '2 point Present/Absent scale';
-$string['scaleyes'] = '2 point Yes/No scale';
-$string['specimenassessmentform'] = 'Specimen Assessment Form';
-$string['standarddeviation'] = 'Standard Deviation';
 $string['strict'] = 'P&#257;kaha';
 $string['studentallowedtoresubmit'] = 'Kia riro m&#257; $a e tukua an&#333;';
 $string['studentassessments'] = '$a Aromatawai';
-$string['studentnotallowed'] = '$a NOT allowed to re-submit (or not needed)';
 $string['studentsubmissions'] = '$a Ng&#257; Tukunga';
 $string['studentsubmissionsforassessment'] = '$a Ng&#257; Aromatawai-&#257;-Tauira m&#333; te Tukunga';
 $string['submission'] = 'Tukunga';
 $string['submissions'] = 'Ng&#257; Tukunga';
-$string['submissionsnowclosed'] = 'Submissions now closed - Submission deadline has passed';
 $string['submitexercisedescription'] = 'Tukuna Mai te Whakaaturanga o te Ngohe';
 $string['submitted'] = 'I Tukuna Atu';
 $string['submittedby'] = 'I Tukuna Atu i te / n&#257;';
@@ -162,7 +127,6 @@ $string['theexercise'] = 'Te Mahi';
 $string['theexerciseandthesubmissionby'] = 'Te Mahi me te Tukunga n&#257; $a';
 $string['thegradeis'] = 'Ko te M&#257;ka: $a';
 $string['thereisfeedbackfromthe'] = 'Ng&#257; Whakahoki K&#333;rero n&#257; te $a';
-$string['thisisaresubmission'] = 'This is a Re-submission by $a.<br />Your assessment of their previous submission is shown. <br />After looking at the new submission, please Amend this assessment<br /> and click on one of the buttons at the foot of the page.';
 $string['title'] = 'Taitara';
 $string['typeofscale'] = 'Momo &#256;whata';
 $string['unassessed'] = '$a k&#257;ore he whakam&#257;tautau';
@@ -175,7 +139,6 @@ $string['verypoor'] = 'Tino P&#333;hara';
 $string['verystrict'] = 'Tino P&#257;kaha';
 $string['view'] = 'Tirohanga Wh&#257;nui';
 $string['viewteacherassessment'] = 'Titiro $a Aromatawai';
-$string['warningonamendingelements'] = 'WARNING: There are submitted assessments. <br />Do NOT change the number of elements, the scale types or the element weights.';
 $string['weightederrorcount'] = 'Tau o te Taumata H&#275;: $a';
 $string['weightforgradingofassessments'] = 'Taumata m&#333; ng&#257; M&#257;ka o ng&#257; Aromatawai';
 $string['weightforteacherassessments'] = 'Taumata m&#333; ng&#257; $a Aromatawai';
@@ -186,5 +149,4 @@ $string['wrongpassword'] = 'T&#275; Kupu Whakauru m&#333; t&#275;nei Mahi';
 $string['yourassessment'] = 'T&#257;u Aromatawai';
 $string['yourfeedbackgoeshere'] = 'T&#257;u Whakahoki K&#333;rero ki k&#333;nei';
 $string['yoursubmission'] = 'T&#257;u Tukunga';
-
 ?>

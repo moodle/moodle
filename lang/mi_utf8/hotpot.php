@@ -7,6 +7,5 @@ $string['deleteall'] = 'Whakakore te katoa';
 $string['modulename'] = 'Hot Potatoes Quiz';
 $string['modulenameplural'] = 'Hot Potatoes Quizzes';
 $string['really'] = 'Ka whai tonu koe kia whakakore ng&#257; whakataunga katoa m&#333; t&#275;nei p&#257;kiki?';
-$string['strattemptlabel'] = 'Attempts: Score, Date Time (Duration), [Penalties]';
 
 ?>

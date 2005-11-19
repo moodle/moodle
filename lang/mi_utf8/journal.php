@@ -9,15 +9,6 @@ $string['editingended'] = 'Kua whakamutua te w&#257;hanga whakatika';
 $string['editingends'] = 'Kua mutu te w&#257;hanga whakatika';
 $string['entries'] = 'Ng&#257; Urunga';
 $string['feedbackupdated'] = 'Ng&#257; Whakahoki K&#333;rero m&#333; ng&#257; urunga $a ';
-$string['journalmail'] = '$a->teacher has posted some feedback on your
-journal entry for \'$a->journal\'
-
-You can see it appended to your journal entry:
-
-    $a->url';
-$string['journalmailhtml'] = '$a->teacher has posted some feedback on your
-journal entry for \'<i>$a->journal</i>\'<br /><br />
-You can see it appended to your <a href=\"$a->url\">journal entry</a>.';
 $string['journalname'] = 'Ingoa Hautaka';
 $string['journalquestion'] = 'Hautaka P&#257;taitai';
 $string['journalrating1'] = 'K&#257;ore e t&#363;tuki ';

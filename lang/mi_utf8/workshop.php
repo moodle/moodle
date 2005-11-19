@@ -22,7 +22,6 @@ $string['assessmentby'] = 'Aromatawai n&#257; $a';
 $string['assessmentdropped'] = 'Aromatawai whakakorenga';
 $string['assessmentgrade'] = 'M&#257;ka Aromatawai: $a';
 $string['assessmentnotyetagreed'] = 'Aromatawai k&#257;ore an&#333; kia whakaaetia';
-$string['assessmentofresubmission'] = 'This is an Assessment of a revised piece of the work. <br />The form here has been filled with your previous grades and comments. <br />Please amend these after looking at the revised work.';
 $string['assessmentofthissubmission'] = 'Aromatawai a-Tukunga';
 $string['assessments'] = 'Ng&#257; Aromatawai';
 $string['assessmentsareok'] = 'E pai ana ng&#257; Aromatawai';
@@ -42,7 +41,6 @@ $string['calculationoffinalgrades'] = 'T&#257;taitanga M&#257;ka Whakamutunga';
 $string['closeassignment'] = 'Katia te Aromatawai';
 $string['comment'] = 'K&#333;rerohia';
 $string['commentby'] = 'K&#333;rero n&#257;';
-$string['comparisonofassessments'] = 'Comparison of Assessments';
 $string['confirmdeletionofthisitem'] = 'Whakamanahia te whakakorenga o t&#275;nei $a';
 $string['correct'] = 'Tika';
 $string['count'] = 'Kaute';
@@ -127,11 +125,11 @@ $string['nosubmission'] = 'Ng&#257; Tukunga Kore';
 $string['nosubmissionsavailableforassessment'] = 'K&#257;ore ng&#257; Tukunga K&#333;rero kia Aromatawaia';
 $string['notavailable'] = 'W&#257;tea Kore';
 $string['notenoughexamplessubmitted'] = 'K&#257;ore i nui ng&#257; tauira t&#257;pae';
-$string['noteonassessmentelements'] = 'Note that grading is broken down into a number of \'Assessment Elements\'.<BR>
-	This makes the grading easier and more consistent. As teacher you must add these <BR>
-	Elements before making the assignment available to students. This is done by<BR>
-	clicking on the assignment in the course, if no elements are present you will be asked<BR>
-	to add them. You can change the number of elements using the Edit Assignment screen,<BR>
+$string['noteonassessmentelements'] = 'Note that grading is broken down into a number of \'Assessment Elements\'.<br />
+	This makes the grading easier and more consistent. As teacher you must add these <br />
+	Elements before making the assignment available to students. This is done by<br />
+	clicking on the assignment in the course, if no elements are present you will be asked<br />
+	to add them. You can change the number of elements using the Edit Assignment screen,<br />
 	the elements themselves can be amended from the \"Managing Assessment\" screen. ';
 $string['noteonstudentassessments'] = '{M&#257;ka-&#257;-Tauira / Raupapa M&#257;ka m&#333; te Whakam&#257;tautau}';
 $string['notgraded'] = 'K&#257;ore i M&#257;ka';
@@ -186,23 +184,11 @@ $string['saveleaguetableoptions'] = 'Tiakina Ng&#257; Ripanga H&#333;tuku';
 $string['savemyassessment'] = 'Tiaki i taku Aromatawai';
 $string['savemycomment'] = 'Tiaki i taku k&#333;rero';
 $string['savemygrading'] = 'Tiaki i taku M&#257;ka';
-$string['saveoverallocation'] = 'Save Over Allocation Level';
-$string['scale10'] = 'Score out of 10';
-$string['scale100'] = 'Score out of 100';
-$string['scale20'] = 'Score out of 20';
-$string['scalecorrect'] = '2 point Correct/Incorrect scale';
-$string['scaleexcellent4'] = '4 point Excellent/Very Poor scale';
-$string['scaleexcellent5'] = '5 point Excellent/Very Poor scale';
-$string['scaleexcellent7'] = '7 point Excellent/Very Poor scale';
-$string['scalegood3'] = '3 point Good/Poor scale';
-$string['scalepresent'] = '2 point Present/Absent scale';
-$string['scaleyes'] = '2 point Yes/No scale';
 $string['select'] = 'T&#299;pako';
 $string['selfassessment'] = 'Aromatawai Whaiaro';
 $string['showgrades'] = 'Whakaatu ngä mäka';
 $string['specimenassessmentform'] = 'He Tauira o te Puka Aromatawai';
 $string['standarddeviation'] = 'Kotiti Paerewa';
-$string['standarddeviationnote'] = 'Elements with standard deviations of zero or very small values can distort the analysis.<br /> This Element has been excluded from the analysis.';
 $string['standarddeviationofelement'] = 'Kotiti Paerewa o te Hu&#257;nga $a:';
 $string['strict'] = 'P&#257;kaha';
 $string['studentassessments'] = 'Ng&#257; Aromatawai $a ';
@@ -240,8 +226,6 @@ $string['verystrict'] = 'Tino P&#257;kaha';
 $string['view'] = 'Whakaatu';
 $string['viewassessmentofteacher'] = 'Whakaatu te Aromatawai a $a';
 $string['viewotherassessments'] = 'Whakaatu ng&#257; Aromatawai';
-$string['warningonamendingelements'] = 'WARNING: There are submitted assessments. <BR>Do NOT change the number
- of elements, the scale types or the element weights.';
 $string['weight'] = 'Taumata';
 $string['weightederrorcount'] = 'Taumata o ng&#257; taute h&#275;: $a';
 $string['weightforbias'] = 'Aro Taumata';
