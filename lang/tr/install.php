@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // install.php - created with Moodle 1.5 + (2005060201)
+      // install.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['admindirerror'] = 'Belirtilen yönetici dizini hatalý';
@@ -84,6 +84,18 @@ Moodle GD olmadan da çalýþýr, ancak yukarýda bahsedilen
 <p>Unix altýnda PHP\'ye GD desteðini saðlamak için, PHP\'yi --with-gd parametresiyle derleyin.</p>
 
 <p>Windows altýnda php.ini dosyasýný düzenler ve libgd.dll\'yi referans eden satýrdaki yorumlarý kaldýrýrsýnýz.</p>';
+$string['globalsquotes'] = 'Güvensiz Global Deðiþkenler';
+$string['globalsquoteserror'] = 'PHP ayarlarýnýzý düzeltin. register_globals\'ý kapalý ve/veya magic_quotes_gpc açýk tutun.';
+$string['globalsquoteshelp'] = '<p>Pasifleþtirilmiþ Magic Quotes GPC ve etkinleþtirilmiþ Register Globals\'ýn bir arada kullanýmý tavsiye edilmez.</p>
+
+<p>Php.ini\'deki tavsiye edilen ayar <b>magic_quotes_gpc = On</b> ve <b>register_globals = Off</b></p>
+
+<p>Php.ini\'ye eriþim hakkýnýz yoksa Moodle dizinindeki .htaccess dosyasýna þu satýrlarý ekleyebilirsiniz:
+<blockquote>php_value magic_quotes_gpc On</blockquote>
+<blockquote>php_value register_globals Off</blockquote>
+</p> 
+
+';
 $string['installation'] = 'Kurulum';
 $string['magicquotesruntime'] = 'Magic Quotes Run Time';
 $string['magicquotesruntimeerror'] = 'Bu kapalý olmalý';

@@ -1,9 +1,11 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.6 development (2005081700)
+      // lesson.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['accesscontrol'] = 'Eriþim Kontrolü';
 $string['actionaftercorrectanswer'] = 'Doðru yanýttan sonra yapýlacak iþlem';
+$string['activitylink'] = 'Bir etkinliðe baðlantý';
+$string['activitylinkname'] = 'Git: $a';
 $string['addabranchtable'] = 'Konu Anlatýmý Ekle';
 $string['addanendofbranch'] = 'Konu Bitiþi Ekle';
 $string['addaquestionpage'] = 'Soru Sayfasý Ekle';
@@ -14,6 +16,7 @@ $string['addedaquestionpage'] = 'Soru Sayfasý Eklendi';
 $string['addedcluster'] = 'Küme Eklendi';
 $string['addedendofcluster'] = 'Küme Sonu Eklendi';
 $string['addendofcluster'] = 'Bir Küme Sonu Ekle';
+$string['anchortitle'] = 'Ana içeriðin baþlangýcý';
 $string['and'] = 'VE';
 $string['answer'] = 'Yanýt';
 $string['answeredcorrectly'] = 'doðru yanýtlandý.';
@@ -130,8 +133,11 @@ $string['maximumnumberofanswersbranches'] = 'Cevap sayýsý (max)';
 $string['maximumnumberofattempts'] = 'Maximum uygulama sayýsý';
 $string['maxtime'] = 'Zaman Sýnýrý (dakika)';
 $string['maxtimewarning'] = 'Bu dersi bitirmeniz için $a dakikanýz var.';
+$string['mediaclose'] = 'Kapat düðmesini göster:';
 $string['mediafile'] = 'Çokluortam Dosyasý';
 $string['mediafilepopup'] = 'Bu dersin çokluortam dosyalarýný görün';
+$string['mediaheight'] = 'Pencere yüksekliði:';
+$string['mediawidth'] = 'geniþlik:';
 $string['minimumnumberofquestions'] = 'En az soru sayýsý';
 $string['modattempts'] = 'Öðrenci deðerlendirmesine izin ver';
 $string['modattemptsnoteacher'] = 'Öðrenci deðerlendirmesi sadece öðrenciler için çalýþýr';
@@ -187,6 +193,8 @@ $string['pointsearned'] = 'Kazanýlan puan';
 $string['postsuccess'] = 'Gönderme Baþarýlý';
 $string['practice'] = 'Uygulama Dersi';
 $string['previouspage'] = 'Önceki Sayfa';
+$string['progressbar'] = 'Ýlerleme Çubuðu';
+$string['progressbarteacherwarning'] = 'Ýlerleme Çubuðu $a için gösterilmiyor';
 $string['question'] = 'Soru';
 $string['questionoption'] = 'Soru';
 $string['questiontype'] = 'Soru Tipi';
@@ -213,6 +221,7 @@ $string['secondpluswrong'] = 'Tam deðil. Tekrar denemek ister misiniz?';
 $string['showanunansweredpage'] = 'Cevaplanmamýþ bir sayfa göster';
 $string['showanunseenpage'] = 'Görülmemiþ bir Sayfa göster';
 $string['singleanswer'] = 'Tek Yanýt';
+$string['skip'] = 'Gezinmeyi atla';
 $string['slideshow'] = 'Slayt Gösterisi';
 $string['slideshowbgcolor'] = 'Slayt Arkaplan Rengi';
 $string['slideshowheight'] = 'Slayt Yüksekliði';

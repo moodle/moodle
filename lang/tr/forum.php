@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.6 development (2005081700)
+      // forum.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['addanewdiscussion'] = 'Yeni tartýþma konusu ekle';
@@ -35,6 +35,9 @@ $string['discussions'] = 'Tartýþmalar';
 $string['discussionsstartedby'] = '$a tarafýndan baþlatýlan tartýþmalar';
 $string['discussionsstartedbyrecent'] = '$a tarafýndan yakýnda baþlatýlan tartýþmalar';
 $string['discussthistopic'] = 'Bu konuyu tartýþ';
+$string['displayend'] = 'Bitiþi göster';
+$string['displayperiod'] = 'Süreyi göster';
+$string['displaystart'] = 'Baþlangýcý göster';
 $string['eachuserforum'] = 'Bu tartýþmaya herkes tek mesaj gönderebilir';
 $string['edit'] = 'Düzelt';
 $string['editedby'] = 'Düzenleyen: $a->name - $a->date';
@@ -173,6 +176,7 @@ $string['subscribestart'] = 'Bu foruma gönderilen mesajlarýn kopyasýný emailime 
 $string['subscribestop'] = 'Bu foruma gönderilen mesajlarýn kopyasýný istemiyorum';
 $string['subscription'] = 'Abonelik';
 $string['subscriptions'] = 'Abonelikler';
+$string['timestartenderror'] = 'Gösterme baþlangýç tarihi baþlangýç tarihinden küçük olamaz';
 $string['trackforum'] = 'Okunmamýþ mesajlarý izle';
 $string['tracking'] = 'Ýzle';
 $string['trackingoff'] = 'Kapalý';
