@@ -16,7 +16,7 @@
     $mode         = optional_param('mode', NULL);                             // '0' for less details, '1' for more
     $showteachers = optional_param('teachers', 1, PARAM_INT);                 // do we want to see the teacher list?
     $accesssince  = optional_param('accesssince',0,PARAM_INT);               // filter by last access. -1 = never
-    $search       = optional_param('search','',PARAM_TEXT);
+    $search       = optional_param('search','',PARAM_CLEAN);
 
     $showteachers = $showteachers && empty($search); // if we're searching, we just want students.
 
@@ -394,6 +394,7 @@ function checkchecked(form) {
     }
 
     $where .= get_lastaccess_sql($accesssince);
+    $wheresearch = '';
 
     if (!empty($search)) {
         $LIKE = sql_ilike();
