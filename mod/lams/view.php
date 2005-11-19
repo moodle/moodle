@@ -42,8 +42,8 @@ print_heading(format_string($lams->name));
 //$strlams  = get_string("modulename", "lams");
 
 //print_header("$course->shortname: $lams->name", "$course->fullname",
-//             "$navigation <A HREF=index.php?id=$course->id>$strlamss</A> -> $lams->name", 
-//              "", "", true, update_module_button($cm->id, $course->id, $strlams), 
+//             "$navigation <A HREF=index.php?id=$course->id>$strlamss</A> -> $lams->name",
+//              "", "", true, update_module_button($cm->id, $course->id, $strlams),
 //              navmenu($course, $cm));
 
 /// Print the main part of the page

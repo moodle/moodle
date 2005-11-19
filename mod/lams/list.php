@@ -10,7 +10,7 @@ if(is_string($result)){//some exception happened!
     $server_not_found_exception = "ServerNotFoundException";
     if(strpos($result,$auth_exception)){//found AuthenticationException in the error message
         header("HTTP/1.1 401 Unauthenticated");
-        die;        
+        die;
     }else if (strpos($result,$server_not_found_exception)){
         header("HTTP/1.1 417 Expectation Failed");
         die;
@@ -19,7 +19,7 @@ if(is_string($result)){//some exception happened!
         die;
     }else{
         header("HTTP/1.1 502 Bad Gateway");
-        echo $result;        
+        echo $result;
         die;
     }
 }

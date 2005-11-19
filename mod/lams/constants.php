@@ -1,4 +1,4 @@
-<?php  /// LAMS constants 
+<?php  /// LAMS constants
 
 unset($LAMSCONSTANTS);
 

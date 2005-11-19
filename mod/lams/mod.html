@@ -39,17 +39,17 @@ if (!isset($form->create_sequence_url)) {
 <table cellpadding="5">
 <tr valign=top>
 <td align=right><b><?php print_string("workspace", "lams") ?>:</b></td>
-<td>  
+<td>
 <select id="workspace" name="workspace"></select>
 </td>
 </tr>
-<tr>    
+<tr>
 <td align="right"><b><?php  print_string("sequence","lams") ?>:</b></td>
 <td>
 <select id="sequence" name="sequence"></select>
 </td>
 </tr>
-<tr>    
+<tr>
 <td align="right"><b><?php  print_string("name") ?>:</b></td>
 <td>
 <input type="text" id="name" name="name" size="30">
@@ -62,17 +62,17 @@ if (!isset($form->create_sequence_url)) {
 if ($usehtmleditor) {
     helpbutton("richtext", get_string("helprichtext"), "moodle", true, true);
 } else {
-    helpbutton("text", get_string("helptext"), "moodle", true, true); 
+    helpbutton("text", get_string("helptext"), "moodle", true, true);
     echo '<br />';
     emoticonhelpbutton("form", "introduction");
     echo '<br />';
-} 
+}
 ?>
 <br />
 </font>
 </td>
 <td>
-<?php 
+<?php
 print_textarea($usehtmleditor, 20, 50, 680, 400, "introduction", $form->introduction);
 ?>
 </td>
@@ -229,7 +229,7 @@ function refreshLists(){
     dol = new DynamicOptionList("workspace","sequence");
     dol.setFormName("form");
 
-    url = "../mod/lams/list.php?courseid="+document.form.course.value;       
+    url = "../mod/lams/list.php?courseid="+document.form.course.value;
     if (window.XMLHttpRequest) { // Non-IE browsers
         req = new XMLHttpRequest();
         req.onreadystatechange = processStateChange;
@@ -287,25 +287,25 @@ function processStateChange() {
                 }
             }
             initDynamicOptionLists(); //construct the list
-            document.getElementById("message").innerHTML = 
+            document.getElementById("message").innerHTML =
                 "<p>Select an existing sequence or create a new sequence.</p>";
         }else if(req.status == 504){//gateway timeout. probabaly LAMS server is not available.
-            document.getElementById("message").innerHTML = 
+            document.getElementById("message").innerHTML =
                 '<table align="center" width="57%"  class="noticebox" border="0" cellpadding="15" cellspacing="0"><tr><td bgcolor="#FFAAAA" class="noticeboxcontent"><h4   class="main">It seems the LAMS server is not available!<BR> Please contact your administrator.</h4></td></tr></table>';
         }else if(req.status == 401){//AuthenticationException thrown by LAMS server.
-            document.getElementById("message").innerHTML = 
+            document.getElementById("message").innerHTML =
                 '<table align="center" width="57%"  class="noticebox" border="0" cellpadding="15" cellspacing="0"><tr><td bgcolor="#FFAAAA" class="noticeboxcontent"><h4   class="main">This moodle server is not authenticated by LAMS!<BR> Please contact your administrator.</h4></td></tr></table>';
         }else if(req.status == 502){//Unknow exception thrown by LAMS server
-            document.getElementById("message").innerHTML = 
+            document.getElementById("message").innerHTML =
                 '<table align="center" width="57%"  class="noticebox" border="0" cellpadding="15" cellspacing="0"><tr><td bgcolor="#FFAAAA" class="noticeboxcontent"><h4   class="main">An unexpected error returned from LAMS server:'+req.responseText+'! Please contact your administrator.</h4></td></tr></table>';
         }else if(req.status == 417){//ServerNotFound exception thrown by LAMS server
-            document.getElementById("message").innerHTML = 
+            document.getElementById("message").innerHTML =
                 '<table align="center" width="57%"  class="noticebox" border="0" cellpadding="15" cellspacing="0"><tr><td bgcolor="#FFAAAA" class="noticeboxcontent"><h4   class="main">This moodle server has not registered in LAMS!<BR> Please contact your administrator.</h4></td></tr></table>';
-        }else if(req.status == 402){//All LAMS module settings have not not been set up 
-            document.getElementById("message").innerHTML = 
+        }else if(req.status == 402){//All LAMS module settings have not not been set up
+            document.getElementById("message").innerHTML =
                 '<table align="center" width="57%"  class="noticebox" border="0" cellpadding="15" cellspacing="0"><tr><td bgcolor="#FFAAAA" class="noticeboxcontent"><h4   class="main">All the LAMS module settings have not been set up!<BR> Please contact your administrator.</h4></td></tr></table>';
         }else{//this error should come from moodle server itself
-            document.getElementById("message").innerHTML = 
+            document.getElementById("message").innerHTML =
                 '<table align="center" width="57%"  class="noticebox" border="0" cellpadding="15" cellspacing="0"><tr><td bgcolor="#FFAAAA" class="noticeboxcontent"><h4   class="main">It should be a moodle server error:'+req.status + ' ' + req.statusText+'! Please contact your administrator.</h4></td></tr></table>';
         }
     }
@@ -321,7 +321,7 @@ function initDynamicOptionLists() {
         var dol = dynamicOptionListObjects[i];
 
         // Find the form associated with this list
-        if (dol.formName!=null) { 
+        if (dol.formName!=null) {
             dol.form = document.forms[dol.formName];
         }
         else if (dol.formIndex!=null) {
@@ -374,11 +374,11 @@ function initDynamicOptionLists() {
             }
         }
     }
-    // Set the preselectd options on page load 
+    // Set the preselectd options on page load
     resetDynamicOptionLists();
 }
 
-// This function populates lists with the preselected values. 
+// This function populates lists with the preselected values.
 // It's pulled out into a separate function so it can be hooked into a 'reset' button on a form
 // Optionally passed a form object which should be the only form reset
 function resetDynamicOptionLists(theform) {
@@ -419,7 +419,7 @@ function DynamicOptionList() {
     this.fieldIndexes = new Object();// Hold the index within the list where fields exist
     this.selectFirstOption = true;// Whether or not to select the first option by default if no options are default or preselected, otherwise set the selectedIndex = -1
     this.numberOfOptions = new Array();// Store the max number of options for a given option list
-    this.longestString = new Array();// Store the longest possible string 
+    this.longestString = new Array();// Store the longest possible string
     this.values = new Object(); // Will hold the preselected values for fields, by field name
 
     // Method mappings
@@ -513,7 +513,7 @@ function DOL_addNewOptionToList(a, text, value, defaultSelected) {
     if (a==null) { a = new Array(); }
     for (var i=0; i<a.length; i++) {
         if (a[i].text==o.text && a[i].value==o.value) {
-            if (o.selected) { 
+            if (o.selected) {
                 a[i].selected=true;
             }
             if (o.defaultSelected) {
@@ -593,7 +593,7 @@ function DOL_setDefaultOptions() {
 
 // Set the options which should be selected when the page loads. This is different than the default value and ONLY applies when the page LOADS
 function DOL_setValues() {
-    if (this.currentField==null) { 
+    if (this.currentField==null) {
         alert("Can't call setValues() without using forField() first!");
         return;
     }
@@ -623,7 +623,7 @@ function DOL_printOptions(name) {
         var index = this.fieldIndexes[name];
         var ret = "";
         if (typeof(this.numberOfOptions[index])!="undefined") {
-            for (var i=0; i<this.numberOfOptions[index]; i++) { 
+            for (var i=0; i<this.numberOfOptions[index]; i++) {
                 ret += "<OPTION>";
             }
         }
@@ -698,7 +698,7 @@ function DOL_change(obj, usePreselected) {
                     }
                 }
             }
-            if (!atLeastOneSelected) {    
+            if (!atLeastOneSelected) {
                 this.selectChildOptions(child,usePreselected);
             }
         }

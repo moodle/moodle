@@ -4,7 +4,7 @@ Testing web service...
   require("../../config.php");
   require($CFG->dirroot.'/lib/nusoap/nusoap.php');
 
-    $wsdl = "http://137.111.229.11:8080/lams/services/UserManagementService?wsdl";    
+    $wsdl = "http://137.111.229.11:8080/lams/services/UserManagementService?wsdl";
     $s = new soapclient($wsdl,true,false,false,false,false,2,3);
     $server_id = "http://chalk:8080";
   $server_key = "3dPartyKEY";
@@ -41,7 +41,7 @@ Testing web service...
     }
     unset($s);
 
-?> 
+?>
 <BR>
 End
 

@@ -7,9 +7,9 @@ require_once($CFG->dirroot.'/lib/nusoap/nusoap.php');
 
 
 function lams_add_instance($lams) {
-/// Given an object containing all the necessary data, 
-/// (defined by the form in mod.html) this function 
-/// will create a new instance and return the id number 
+/// Given an object containing all the necessary data,
+/// (defined by the form in mod.html) this function
+/// will create a new instance and return the id number
 /// of the new instance.
     global $USER;
     $lams->timemodified = time();
@@ -19,8 +19,8 @@ function lams_add_instance($lams) {
 
 
 function lams_update_instance($lams) {
-/// Given an object containing all the necessary data, 
-/// (defined by the form in mod.html) this function 
+/// Given an object containing all the necessary data,
+/// (defined by the form in mod.html) this function
 /// will update an existing instance with new data.
     //echo "enter lams_update_instance<BR>";
   $lams->timemodified = time();
@@ -35,7 +35,7 @@ function lams_update_instance($lams) {
     //echo $lams->sequence."<BR>";
     //echo $lams->course."<BR>";
     //echo $lams->name."<BR>";
-    //echo $lams->introduction."<BR>";  
+    //echo $lams->introduction."<BR>";
     //echo $lams->learning_session_id."<BR>";
     //echo "exit lams_update_instance<BR>";
   return update_record("lams", $lams);
@@ -43,9 +43,9 @@ function lams_update_instance($lams) {
 
 
 function lams_delete_instance($id) {
-/// Given an ID of an instance of this module, 
-/// this function will permanently delete the instance 
-/// and any data that depends on it.  
+/// Given an ID of an instance of this module,
+/// this function will permanently delete the instance
+/// and any data that depends on it.
 
   if (! $lams = get_record("lams", "id", "$id")) {
       return false;
@@ -63,7 +63,7 @@ function lams_delete_instance($id) {
 }
 
 function lams_user_outline($course, $user, $mod, $lams) {
-/// Return a small object with summary information about what a 
+/// Return a small object with summary information about what a
 /// user has done with a given particular instance of this module
 /// Used for user activity reports.
 /// $return->time = the time they did it
@@ -73,26 +73,26 @@ function lams_user_outline($course, $user, $mod, $lams) {
 }
 
 function lams_user_complete($course, $user, $mod, $lams) {
-/// Print a detailed representation of what a  user has done with 
+/// Print a detailed representation of what a  user has done with
 /// a given particular instance of this module, for user activity reports.
 
   return true;
 }
 
 function lams_print_recent_activity($course, $isteacher, $timestart) {
-/// Given a course and a time, this module should find recent activity 
-/// that has occurred in lams activities and print it out. 
+/// Given a course and a time, this module should find recent activity
+/// that has occurred in lams activities and print it out.
 /// Return true if there was output, or false is there was none.
 
   global $CFG;
 
-  return false;  //  True if anything was printed, otherwise false 
+  return false;  //  True if anything was printed, otherwise false
 }
 
 function lams_cron () {
 /// Function to be run periodically according to the moodle cron
-/// This function searches for things that need to be done, such 
-/// as sending out mail, toggling flags etc ... 
+/// This function searches for things that need to be done, such
+/// as sending out mail, toggling flags etc ...
 
   global $CFG;
 
@@ -100,7 +100,7 @@ function lams_cron () {
 }
 
 function lams_grades($lamsid) {
-/// Must return an array of grades for a given instance of this module, 
+/// Must return an array of grades for a given instance of this module,
 /// indexed by user.  It also returns a maximum allowed grade.
 ///
 ///    $return->grades = array of grades;
@@ -125,7 +125,7 @@ function lams_scale_used ($lamsid,$scaleid) {
 //it it has support for grading and scales. Commented code should be
 //modified if necessary. See forum, glossary or journal modules
 //as reference.
-   
+
   $return = false;
 
   //$rec = get_record("lams","id","$lamsid","scale","-$scaleid");
@@ -133,22 +133,22 @@ function lams_scale_used ($lamsid,$scaleid) {
   //if (!empty($rec)  && !empty($scaleid)) {
   //    $return = true;
   //}
-   
+
   return $return;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
-/// Any other lams functions go here.  Each of them must have a name that 
+/// Any other lams functions go here.  Each of them must have a name that
 /// starts with lams_
 
 function lams_get_soap_client($relativeurl) {
-    global $CFG; 
+    global $CFG;
     if(!isset($CFG->lams_serverurl))
     {
         return NULL;
     }
-    $wsdl = $CFG->lams_serverurl.$relativeurl;    
-    $s = new soapclient($wsdl,true,false,false,false,false,2,3);    
+    $wsdl = $CFG->lams_serverurl.$relativeurl;
+    $s = new soapclient($wsdl,true,false,false,false,false,2,3);
     return $s;
 }
 
@@ -156,7 +156,7 @@ function lams_get_soap_client($relativeurl) {
  * Get sequences(learning designs) for the user in LAMS
  *
  * @param string $username The username of the user. Set this to "" if you would just like to get sequences for the currently logged in user.
- * @return Array sequence array 
+ * @return Array sequence array
  * @TODO complete the documentation of this function
  */
 function lams_get_sequences($username,$courseid) {
@@ -166,7 +166,7 @@ function lams_get_sequences($username,$courseid) {
         return get_string("notsetup", "lams");
     }
     $relativeurl="/services/LearningDesignService?wsdl";
-    $s = lams_get_soap_client($relativeurl);    
+    $s = lams_get_soap_client($relativeurl);
     if(is_null($s)){
         return NULL;
     }
@@ -195,12 +195,12 @@ function lams_get_sequences($username,$courseid) {
  * Get learning session(lesson) id from LAMS
  *
  * @param string $username The username of the user. Set this to "" if you would just like the currently logged in user to create the lesson
- * @param int $ldid The id of the learning design that the lesson is based on 
- * @param int $courseid The id of the course that the lesson is associated with. 
+ * @param int $ldid The id of the learning design that the lesson is based on
+ * @param int $courseid The id of the course that the lesson is associated with.
  * @param string $title The title of the lesson
  * @param string $desc The description of the lesson
- * @param string $type The type of the lesson. Two types: normal, preview 
- * @return int lesson id 
+ * @param string $type The type of the lesson. Two types: normal, preview
+ * @return int lesson id
  */
 function lams_get_lesson($username,$ldid,$courseid,$title,$desc,$type) {
     //echo "enter lams_get_lesson<BR>";
@@ -239,7 +239,7 @@ function lams_get_lesson($username,$ldid,$courseid,$title,$desc,$type) {
  * Delete learning session(lesson) from LAMS
  *
  * @param string $username The username of the user. Set this to "" if you would just like the currently logged in user to create the lesson
- * @param int $lsid The id of the learning session(lesson) 
+ * @param int $lsid The id of the learning session(lesson)
  * @return true or false
  */
 function lams_delete_lesson($username,$lsid) {
@@ -274,8 +274,8 @@ function lams_delete_lesson($username,$lsid) {
 
 /**
  * Get class in LAMS
- * @param int courseid    
- * @return int class id 
+ * @param int courseid
+ * @return int class id
  * @TODO complete the documentation of this function
  */
  /*
@@ -305,7 +305,7 @@ function lams_get_class($courseid) {
        $lams_course->course = $courseid;
        $lams_course->classid = $result;
         insert_record("lams_course",$lams_course);
-        //echo "exit lams_get_class"."<BR>"; 
+        //echo "exit lams_get_class"."<BR>";
          return $result;
   }else{
       //echo "exit lams_get_class"."<BR>";
@@ -316,7 +316,7 @@ function lams_get_class($courseid) {
 /**
  * Get organisation in LAMS
  *
- * @return int organisation id 
+ * @return int organisation id
  * @TODO complete the documentation of this function
  */
  /*
@@ -424,7 +424,7 @@ function lams_get_user_roles($userid=0, $courseid){
         $roles = "auhtor"."|"."staff";
     }else if(isteacher($courseid,$userid)){
         $roles = "staff";
-    }    
+    }
     if(isstudent($courseid,$userid)){
         if(empty($roles)){
             $roles = "learner";
@@ -433,7 +433,7 @@ function lams_get_user_roles($userid=0, $courseid){
         }
     }
     //echo $roles."<BR>";
-    return $roles;    
+    return $roles;
 }
 */
 
