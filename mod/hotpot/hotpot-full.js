@@ -432,6 +432,8 @@ if (window.Rhubarb==null) {
 
 if (window.Sequitur==null) {
 	Sequitur = new Array();
+	Sequitur[0] = true;  // show count of correct button clicks
+	Sequitur[1] = true;  // show count of wrong button clicks
 }
 
 // **********
@@ -1591,6 +1593,7 @@ function GetRhubarbDetails(v) {
 	if (v==6) {
 		var q = 0; // always zero
 		var Q = getQ('Rhubarb', q);
+
 		if (document.title) { // use quiz title as question name
 			qDetails += hpHiddenField(Q+'name', document.title);
 		}
@@ -1626,7 +1629,23 @@ function GetRhubarbDetails(v) {
 }
 function GetSequiturDetails(v) {
 	qDetails = '';
-	// there is no information available ... at the moment
+	if (v==6) {
+		var q = 0; // always zero
+		var Q = getQ('Sequitur', q);
+
+		if (document.title) { // use quiz title as question name
+			qDetails += hpHiddenField(Q+'name', document.title);
+		}
+
+		if (Sequitur[0]) { // number of correct buttons chosen
+			var x = (HP[_correct][q]) ? HP[_correct][q] : '';
+			qDetails += hpHiddenField(Q+'correct', x);
+		}
+		if (Sequitur[1]) { // number of wrong buttons chosen
+			var x = (HP[_wrong][q]) ? HP[_wrong][q] : '';
+			qDetails += hpHiddenField(Q+'wrong', x);
+		}
+	}
 	return qDetails;
 }
 
@@ -1977,6 +1996,18 @@ function hpClickCheck(hp, t, v, args) {
 					if (i==i_max) HP[_wrong][q][i] = g;
 				}
 			}
+		}
+	}
+	if (t==8) { // Sequitur
+		if (hp==6) {
+			var q = 0; // question number (always zero)
+			if (CurrentCorrect==args[0]) { // correct button chosen
+				if (!HP[_correct][q]) HP[_correct][q] = 0;
+				HP[_correct][q]++;
+			} else {
+				if (!HP[_wrong][q]) HP[_wrong][q] = 0;
+				HP[_wrong][q]++;
+			}			
 		}
 	}
 	return true;
@@ -2400,13 +2431,24 @@ function hpInterceptFeedback() {
 	//	v4: WriteFeedback(Stuff)
 	//	v3: WriteFeedback(Feedback) [except JMatch]
 	//	v3: CheckAnswer()           [JMatch only]
-	var f = window.CheckWord ? 'CheckFinished' : window.ShowMessage ? 'ShowMessage' : window.WriteFeedback ? 'WriteFeedback' : 'CheckAnswer';
-	var s = getFuncCode(f) + 'Finish();';
-	var a = getFuncArgs(f, true);
-	if (a[0] && window.FEEDBACK && FEEDBACK[0]) {
-		s = a[0] + "+='<br /><br />" + '<a href="javascript:hpFeedback();">' + FEEDBACK[6] + "</A>';" + s;
+	var f = '';
+	if (window.CheckWord) { // Rhubarb
+		f = 'CheckFinished';
+		window.FEEDBACK = null;
+	} else if (window.ShowText) { // Sequitur
+		f = 'CheckAnswer';
+		window.FEEDBACK = null;
+	} else { // JBC, JCloze, JCross, JMatch, JMix, JQuiz
+		f = window.ShowMessage ? 'ShowMessage' : window.WriteFeedback ? 'WriteFeedback' : 'CheckAnswer';
 	}
-	eval('window.' + f + '=new Function(' + getArgsStr(a) + 's);');
+	if (f) {
+		var s = getFuncCode(f) + 'Finish();';
+		var a = getFuncArgs(f, true);
+		if (a[0] && window.FEEDBACK && FEEDBACK[0]) {
+			s = a[0] + "+='<br /><br />" + '<a href="javascript:hpFeedback();">' + FEEDBACK[6] + "</A>';" + s;
+		}
+		eval('window.' + f + '=new Function(' + getArgsStr(a) + 's);');
+	}
 }
 function hpInterceptHints() {
 	// modify the function which shows hints
@@ -2607,7 +2649,7 @@ function hpInterceptChecks() {
 
 		} else if (a[0]=='Chosen') {
 			// Sequitur
-			// x = 'if(!(CurrentNumber==TotalSegments||AllDone||Btn.innerHTML==IncorrectIndicator||(CurrentCorrect==Chosen&&CurrentNumber>=(TotalSegments-1))))Finish()';
+			x = 'if (!(CurrentNumber==TotalSegments||AllDone||Btn.innerHTML==IncorrectIndicator))hpClick(3,Chosen);';
 		}
 
 	} else if (window.CheckWord) { 
@@ -3010,7 +3052,10 @@ function hpScore() {
 		}
 
 	} else if (t==8) { // sequitur
-		if (v==6) x = Math.floor(100*ScoredPoints/TotalPoints);
+		if (v==6) {
+			var myTotalPoints = TotalPoints - (hpFinished() ? 0 : (OptionsThisQ-1));
+			x = Math.floor(100*ScoredPoints/myTotalPoints);
+		}
 	}
 
 	return x; // result
