@@ -97,6 +97,13 @@
                      get_string('participants'), "", "", true, "&nbsp;", navmenu($course));
     }
 
+/// Get the hidden field list
+    if ($isteacher || isadmin()) {
+        $hiddenfields = array();  // teachers and admins are allowed to see everything
+    } else {
+        $hiddenfields = array_flip(explode(',', $CFG->hiddenuserfields));
+    }
+
 /// Print settings and things in a table across the top
 
     echo '<table class="controls" cellspacing="0"><tr>';
@@ -220,8 +227,20 @@ function checkchecked(form) {
 
     if($showteachers) {
 
-        $tablecolumns = array('picture', 'fullname', 'city', 'country', 'lastaccess');
-        $tableheaders = array('', get_string('fullname'), get_string('city'), get_string('country'), get_string('lastaccess'));
+        $tablecolumns = array('picture', 'fullname');
+        $tableheaders = array('', get_string('fullname'));
+        if (!isset($hiddenfields['city'])) {
+            $tablecolumns[] = 'city';
+            $tableheaders[] = get_string('city');
+        }
+        if (!isset($hiddenfields['country'])) {
+            $tablecolumns[] = 'country';
+            $tableheaders[] = get_string('country');
+        }
+        if (!isset($hiddenfields['lastaccess'])) {
+            $tablecolumns[] = 'lastaccess';
+            $tableheaders[] = get_string('lastaccess');
+        }
 
         if ($isteacher) {
             $tablecolumns[] = '';
@@ -313,12 +332,17 @@ function checkchecked(form) {
                     }
         
                     $data = array (
-                                    //'<input type="checkbox" name="userid[]" value="'.$teacher->id.'" />',
                                     print_user_picture($teacher->id, $course->id, $teacher->picture, false, true),
-                                    '<strong><a'.($teacher->authority?'':' class="dimmed"').' href="'.$CFG->wwwroot.'/user/view.php?id='.$teacher->id.'&amp;course='.$course->id.'">'.fullname($teacher, $isteacher).'</a></strong>',
-                                    $teacher->city,
-                                    $country,
-                                    $lastaccess);
+                                    '<strong><a'.($teacher->authority?'':' class="dimmed"').' href="'.$CFG->wwwroot.'/user/view.php?id='.$teacher->id.'&amp;course='.$course->id.'">'.fullname($teacher, $isteacher).'</a></strong>');
+                    if (!isset($hiddenfields['city'])) {
+                        $data[] = $teacher->city;
+                    }
+                    if (!isset($hiddenfields['country'])) {
+                        $data[] = $country;
+                    }
+                    if (!isset($hiddenfields['lastaccess'])) {
+                        $data[] = $lastaccess;
+                    }
                     if ($isteacher) {
                         $data[] = '<input type="checkbox" name="teacher'.$teacher->id.'" />';
                     }
@@ -344,8 +368,20 @@ function checkchecked(form) {
     $guest = get_guest();
     $exceptions[] = $guest->id;
 
-    $tablecolumns = array('picture', 'fullname', 'city', 'country', 'lastaccess');
-    $tableheaders = array('', get_string('fullname'), get_string('city'), get_string('country'), get_string('lastaccess'));
+    $tablecolumns = array('picture', 'fullname');
+    $tableheaders = array('', get_string('fullname'));
+    if (!isset($hiddenfields['city'])) {
+        $tablecolumns[] = 'city';
+        $tableheaders[] = get_string('city');
+    }
+    if (!isset($hiddenfields['country'])) {
+        $tablecolumns[] = 'country';
+        $tableheaders[] = get_string('country');
+    }
+    if (!isset($hiddenfields['lastaccess'])) {
+        $tablecolumns[] = 'lastaccess';
+        $tableheaders[] = get_string('lastaccess');
+    }
 
     if ($course->enrolperiod) {
        $tablecolumns[] = 'timeend';
@@ -538,12 +574,17 @@ function checkchecked(form) {
                 }
 
                 $data = array (
-                        //'<input type="checkbox" name="userid[]" value="'.$teacher->id.'" />',
                         print_user_picture($student->id, $course->id, $student->picture, false, true),
-                        '<strong><a href="'.$CFG->wwwroot.'/user/view.php?id='.$student->id.'&amp;course='.$course->id.'">'.fullname($student).'</a></strong>',
-                        $student->city,
-                        $country,
-                        $lastaccess);
+                        '<strong><a href="'.$CFG->wwwroot.'/user/view.php?id='.$student->id.'&amp;course='.$course->id.'">'.fullname($student).'</a></strong>');
+                if (!isset($hiddenfields['city'])) {
+                    $data[] = $student->city;
+                }
+                if (!isset($hiddenfields['country'])) {
+                    $data[] = $country;
+                }
+                if (!isset($hiddenfields['lastaccess'])) {
+                    $data[] = $lastaccess;
+                }
                 if ($course->enrolperiod) {
                     $data[] = userdate($student->timeend, $timeformat);
                 }

@@ -109,6 +109,12 @@
         print_heading(get_string("userdeleted"));
     }
 
+/// Get the hidden field list
+    if (isteacher($course->id) || isadmin()) {
+        $hiddenfields = array();  // teachers and admins are allowed to see everything
+    } else {
+        $hiddenfields = array_flip(explode(',', $CFG->hiddenuserfields));
+    }
 
 /// Print tabs at top
 /// This same call is made in:
@@ -126,7 +132,7 @@
 
     // Print the description
 
-    if ($user->description) {
+    if ($user->description && !isset($hiddenfields['description'])) {
         echo format_text($user->description, FORMAT_MOODLE)."<hr />";
     }
 
@@ -134,9 +140,19 @@
 
     echo '<table border="0" cellpadding="0" cellspacing="0" class="list">';
 
-    if ($user->city or $user->country) {
-        $countries = get_list_of_countries();
-        print_row(get_string("location").":", "$user->city, ".$countries["$user->country"]);
+    if (($user->city or $user->country) and (!isset($hiddenfields['city']) or !isset($hiddenfields['country']))) {
+        $location = '';
+        if ($user->city && !isset($hiddenfields['city'])) {
+            $location .= $user->city;
+        }
+        if (!empty($countries[$user->country]) && !isset($hiddenfields['country'])) {
+            if ($user->city && !isset($hiddenfields['country'])) {
+                $location .= ', ';
+            }
+            $countries = get_list_of_countries();
+            $location .= $countries[$user->country];
+        }
+        print_row(get_string("location").":", $location);
     }
 
     if (isteacher($course->id)) {
@@ -198,24 +214,24 @@
         print_row(get_string("email").":", obfuscate_mailto($user->email, '', $user->emailstop)."$emailswitch");
     }
 
-    if ($user->url) {
+    if ($user->url && !isset($hiddenfields['webpage'])) {
         print_row(get_string("webpage").":", "<a href=\"$user->url\">$user->url</a>");
     }
 
-    if ($user->icq) {
+    if ($user->icq && !isset($hiddenfields['icqnumber'])) {
         print_row(get_string('icqnumber').':',"<a href=\"http://web.icq.com/wwp?uin=$user->icq\">$user->icq <img src=\"http://web.icq.com/whitepages/online?icq=$user->icq&amp;img=5\" width=\"18\" height=\"18\" border=\"0\" alt=\"\" /></a>");
     }
 
-    if ($user->skype) {
+    if ($user->skype && !isset($hiddenfields['skypeid'])) {
         print_row(get_string('skypeid').':','<a href="callto:'.urlencode($user->skype).'">'.s($user->skype).'</a>');
     }
-    if ($user->yahoo) {
+    if ($user->yahoo && !isset($hiddenfields['yahooid'])) {
         print_row(get_string('yahooid').':', '<a href="http://edit.yahoo.com/config/send_webmesg?.target='.s($user->yahoo).'&amp;.src=pg">'.s($user->yahoo).'</a>');
     }
-    if ($user->aim) {
+    if ($user->aim && !isset($hiddenfields['aimid'])) {
         print_row(get_string('aimid').':', '<a href="aim:goim?screenname='.s($user->aim).'">'.s($user->aim).'</a>');
     }
-    if ($user->msn) {
+    if ($user->msn && !isset($hiddenfields['msnid'])) {
         print_row(get_string('msnid').':', s($user->msn));
     }
 
@@ -236,12 +252,14 @@
         }
     }
 
-    if ($user->lastaccess) {
-        $datestring = userdate($user->lastaccess)."&nbsp; (".format_time(time() - $user->lastaccess).")";
-    } else {
-        $datestring = get_string("never");
+    if (!isset($hiddenfields['lastaccess'])) {
+        if ($user->lastaccess) {
+            $datestring = userdate($user->lastaccess)."&nbsp; (".format_time(time() - $user->lastaccess).")";
+        } else {
+            $datestring = get_string("never");
+        }
+        print_row(get_string("lastaccess").":", $datestring);
     }
-    print_row(get_string("lastaccess").":", $datestring);
 
     $groupstr = '';
 

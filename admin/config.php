@@ -37,6 +37,13 @@
                 if ($name == "defaultallowedmodules") {
                     $value = implode(',',$value);
                 }
+                if ($name == 'hiddenuserfields') {
+                    if (in_array('none', $value)) {
+                        $value = '';
+                    } else {
+                        $value = implode(',',$value);
+                    }
+                }
                 unset($conf);
                 $conf->name  = $name;
                 $conf->value = $value;

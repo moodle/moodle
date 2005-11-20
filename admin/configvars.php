@@ -375,6 +375,22 @@ class configvarrss extends configvar {
     $user['autologinguests'] = new configvar (get_string('configautologinguests', 'admin'),
         choose_from_menu ($noyesoptions, 'autologinguests', $config->autologinguests, '', '', '', true) );
 
+/// hiddenuserfields
+    $fields = array('none', 'description', 'city', 'country', 'webpage', 'icqnumber', 'skypeid', 'yahooid', 'aimid', 'msnid', 'lastaccess');
+    if (empty($config->hiddenuserfields)) {
+        $config->hiddenuserfields = 'none';
+    }
+    $configfields = array_flip(explode(',', $config->hiddenuserfields));
+    foreach ($fields as $value) {
+        $fieldoptions .= '<option value="'.$value.'"';
+        if (isset($configfields[$value])) {
+            $fieldoptions .= ' selected="selected"';
+        }
+        $fieldoptions .= '>'.get_string($value).'</option>';
+    }
+
+    $user['hiddenuserfields'] = new configvar (get_string('confighiddenuserfields', 'admin'),
+        '<select id="menuhiddenuserfields" name="hiddenuserfields[]" size="10" multiple="multiple">'.$fieldoptions.'</select>' );
 
 
 

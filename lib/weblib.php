@@ -2578,6 +2578,13 @@ function print_user($user, $course, $messageselect=false) {
         $isadmin   = isadmin();
     }
 
+/// Get the hidden field list
+    if ($isteacher || $isadmin) {
+        $hiddenfields = array();
+    } else {
+        $hiddenfields = array_flip(explode(',', $CFG->hiddenuserfields));
+    }
+
     echo '<table class="userinfobox">';
     echo '<tr>';
     echo '<td class="left side">';
@@ -2592,24 +2599,26 @@ function print_user($user, $course, $messageselect=false) {
     if ($user->maildisplay == 1 or ($user->maildisplay == 2 and $course->category and !isguest()) or $isteacher) {
         echo $string->email .': <a href="mailto:'. $user->email .'">'. $user->email .'</a><br />';
     }
-    if ($user->city or $user->country) {
+    if (($user->city or $user->country) and (!isset($hiddenfields['city']) or !isset($hiddenfields['country']))) {
         echo $string->location .': ';
-        if ($user->city) {
+        if ($user->city && !isset($hiddenfields['city'])) {
             echo $user->city;
         }
-        if (!empty($countries[$user->country])) {
-            if ($user->city) {
+        if (!empty($countries[$user->country]) && !isset($hiddenfields['country'])) {
+            if ($user->city && !isset($hiddenfields['city'])) {
                 echo ', ';
             }
             echo $countries[$user->country];
         }
         echo '<br />';
     }
-    if ($user->lastaccess) {
-        echo $string->lastaccess .': '. userdate($user->lastaccess);
-        echo '&nbsp ('. format_time(time() - $user->lastaccess, $datestring) .')';
-    } else {
-        echo $string->lastaccess .': '. $string->never;
+    if (!isset($hiddenfields['lastaccess'])) {
+        if ($user->lastaccess) {
+            echo $string->lastaccess .': '. userdate($user->lastaccess);
+            echo '&nbsp ('. format_time(time() - $user->lastaccess, $datestring) .')';
+        } else {
+            echo $string->lastaccess .': '. $string->never;
+        }
     }
     echo '</div></td><td class="links">';
 
