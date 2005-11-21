@@ -239,7 +239,11 @@ class page_base {
         }
 
         $params = $this->url_get_parameters();
-        $params = array_merge($params, $extraparams);
+        if (!empty($params)) {
+            $params = array_merge($params, $extraparams);
+        } else {
+            $params = $extraparams;
+        }
 
         if(empty($params)) {
             return $path;
