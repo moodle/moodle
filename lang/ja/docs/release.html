@@ -23,6 +23,169 @@
 
 <h1>最新リリースノート</h1>
 
+<h2>Moodle 1.5.3 ( 2005年11月11日 )</h2>
+
+<p>( このリリースには、重要なセキュリティに関する修正が行われていますので、前のバージョンのMoodleをご利用の方はこのバージョンに可能な限り早くアップグレードされますことをお勧めいたします。 )</p>
+
+<h3>新機能</h3>
+  <ul type="circle">
+  <li> SCORM 1.3 ( SCORM 2004 ) をサポートします!</li>
+  <li> シングルサインオンAPIを利用することができます。</li>
+  </ul>
+
+<h3>各種修正</h3>
+
+<h4>全体</h4>
+  <ul type="circle">
+  <li> Moodleが安全ではないPHP設定を使用している場合、警告を表示します。</li>
+  <li> 最近報告されたセキュリティに関する問題を修正しました。 ( <a href="http://security.moodle.org/">security.moodle.org</a> を参照 )</li>
+  <li> バックアップは中規模/大規模のインストールで非常に速く動作します。バックアップに関する多くの問題が修正されました。</li>
+  <li> Linux/Unixサーバのディレクトリサイズのリスティングを、<em>非常に</em>速く行うことができます。パフォーマンス修正に感謝。管理-&gt;詳細設定: 「path_to_du」で設定することができます。</li>
+  <li> サーバまたはクライアントがプロクシの背後で動作している場合、更に分かりやすいIPアドレスを記録します。</li>
+  <li> PHP acceleratorsに関する問題を修正しました。</li>
+  <li> アップグレードスクリプトが洗練され、PostgreSQLのインストール時に更に良く動作します。</li>
+  <li> 一般的なPostgreSQLポートコードのクリーンアップを行いました。</li>
+  <li> 1.5.3にアップグレードすることで、古い日誌をオンライン課題へアップグレードします。</li>
+  <li> RSSライブラリは、<em>RSS 2.0カテゴリ</em> をサポートします。詳細は、<a href="http://moodle.org/bugs/bug.php?op=show&bugid=3654" target="_blank">bug 3654</a> をご覧ください。</li>
+  <li> ファイルのアップロードに関するアクセシビリティの改善を行いました。詳細は、<a href="http://moodle.org/bugs/bug.php?op=show&bugid=3662" target="_blank">bug 3662</a> をご覧ください。</li>
+  <li> サイト全体のHTTPSに関するサポートの改善を行いました。詳細は、<a href="http://moodle.org/bugs/bug.php?op=show&bugid=3848" target="_blank">bug 3848</a> をご覧ください。</li>
+  <li> bot ( Googlebotのような ) を排除することができます。詳細は、 <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3958" target="_blank">bug 3958</a> をご覧ください。</li>
+  <li> 未ログインユーザに対する <a href="http://moodle.org/mod/forum/discuss.php?d=29564" target="_blank">DSTサポート</a> を改善しました。</li>
+  <li> カレンダーの繰り返しイベントに対するDSTサポートを改善しました。</li>
+  <li> レッスン、投票、評定モジュールに関する細かな修正を行いました。</li>
+  <li> formal_white および orangewhiteテーマに関するCSSの小規模な改善を行いました。</li>
+  <li> コース一覧およびログページのページングを改善しました。</li>
+  <li> UIの一部でユーザ編集テーブルをフロートおよび非表示にできるHTMLAreaコンテンツに関するIEのバグを修正しました。</li>
+  </ul>
+
+<h4>認証</h4>
+  <ul type="circle">
+  <li> 外部認証のパスワードの変更/パスワード忘れに関する修正を行いました。</li>
+  <li> 外部DBまたはLDAPから取得されたデータが正常にトランケートされます。</li> 
+  <li> <a href="http://moodle.org/bugs/bug.php?op=show&bugid=4305" target="_blank">bug 4305</a> を修正 -- セキュアフォームを使用する場合のログインブロックの動作を改善しました。</li>
+  <li> 外部認証からのutf-8ユーザデータのサポートを改善しました。</li>
+  <li> LDAP: sync_usersスクリプトのカバーおよびロギングエラーに関する全体的な修正を行いました。</li>
+  <li> LDAP: <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3141" target="_blank">bug 3141</a> を修正しました- LDAP認証時の外部データを更新できない。</li>
+
+  <li> LDAP: <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3992" target="_blank">bug 3992</a> を修正しました - quoteを含むLDAPパスワードが動作しないバグ - 喜多先生に感謝。</li>
+  <li> LDAP: ActiveDirectoryディレクトリのサポートを改善しました。</li> 
+  <li> LDAP: <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3594" target="_blank">bug #3594</a> を修正しました。</li> 
+  <li> LDAP: マルチソースフィールドのマッピング処理を改善しました。</li>
+  <li> LDAP: idナンバーにDNを使用する場合の修正 - Jeff Graham氏に感謝 - <a href="http://moodle.org/mod/forum/discuss.php?d=28840" target="_blank">http://moodle.org/mod/forum/discuss.php?d=28840</a>
+</li>
+</ul>
+<h4>登録 & メタコース</h4>
+  <ul type="circle">
+  <li> メタコース: 一般ユーザが手動登録でメタコースに登録できないようにしまいた。</li>
+  <li> メタコース: MySQL v3.23.xのサポートを改善しました。</li>
+  <li> DB: Moodleのユーザ登録に関する検査が、MySQLおよびPostgresで確実に動作します。</li>
+  <li> DB: 再度、MySQL以外のデータベースが外部のユーザ登録データベースとして動作します。</li>
+  <li> LDAP: LDAPプラグインのadd_teacherに関する間違ったコールを修正しました。</li>
+  <li> LDAP: 停止または利用不可のサーバが、ログインを抑制することはありません。</li>
+  <li> LDAP: 再度、コース自動作成が動作します。</li>
+  <li> LDAP: Jeff GrahamおよびBarron Koraleskyによりレポートされたバグを修正しました -- バグ3912および3974を含みます。</li>
+  <li> LDAP: 匿名では無くLDAPに接続することができます。</li>
+  <li> Authorize.net: いくつかの修正を行いました。</li>
+  </ul>
+
+<h4>リソース</h4>
+  <ul type="circle">
+  <li> バグ修正: 空またはリンク不可の活動へのリンクを回避。</li>
+  </ul>
+
+<h4>フォーラム</h4>
+  <ul type="circle">
+    <li> 特にPostgreSQLに関して、既読/未読メッセージのトラッキングに関する大規模および小規模の最適化を行いました。</li>
+    <li> いくつかのPostgreSQLに関するバグを修正しました。</li>
+    <li> ログレコードの処理時のバックアップ/リストアによる更なる処理がサポートされます。詳細は、<a href="http://moodle.org/bugs/bug.php?op=show&bugid=3852">bug 3582</a> をご覧ください。</li>
+    <li> フォーラムメッセージのRSSフィードはカテゴリデータを含みます -- メッセージのグループ化を行うことができるRSSアグリゲータに便利です。詳細は、<a href="http://moodle.org/bugs/bug.php?op=show&bugid=3654" target="_blank">bug 3654</a> をご覧ください。</li>
+    <li> フォーラム検索のページングを修正しました。</li>
+</ul>
+
+<h4>ブロック</h4>
+  <ul type="circle">
+  <li> いくつかのパフォーマンス改善を行いました。</li>
+  <li> PostgreSQLシンタックスを含むアップグレードプロセスの修正およびメモリ使用の縮小を行いました。</li>
+  <li> いくつかのバグ修正を1.6devより適用しました。</li>
+  <li> <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3478" target="_blank">bug 3478</a> を修正しました: コース作成者としてRSSフィードを追加できない。</li>
+<li>  <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3793" target="_blank">bug 3793</a> を修正しました: コースのランダム用語集ブロックが用語を持っていない場合に表示される警告メッセージを停止。</li>
+
+</ul>
+
+<h4>小テスト</h4>
+  <ul type="circle">
+  <li> CSSスタイルを修正しました。</li>
+  <li> ヘッダにフォームを含んでいるテーマの互換性を改善しました。</li>
+  <li> 正解のハイライトを停止することができます。</li>
+  <li> <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3986" target="_blank">bug 3986</a> を修正しました: 多くなりすぎるランダム問題 ( mindforge )。</li>
+  <li> <a href="http://moodle.org/mod/forum/discuss.php?d=28466#139179">アクションアイコンの欠落</a> を修正しました。</li>
+  <li> <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3899" target="_blank">bug 3899</a> の修正および「missing course object」メッセージの削除を行いました。</li>
+  <li> <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3950" target="_blank">bug 3950</a> を修正しました: 複数回受験可能な小テストにおける再受験ボタンの矛盾。</li>
+  <li> <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3953" target="_blank">bug 3953</a> を修正しました: Quiz/report.phpページサイズでゼロを設定できます。Jean-Michel氏に感謝。</li>
+  <li> 潜在的なデータのコラプション <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3915" target="_blank">bug 3915</a> を修正しました。</li>
+  <li> <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3884" target="_blank">bug 3884</a> を修正しました: 小テスト正解ハイライトが3つのオプションの中で2つが欠けている。</li>
+  <li> <a href="http://moodle.org/mod/forum/discuss.php?d=26526">学生レビューのハイライトが動作しない</a>bugを修正しました。</li>
+  <li> <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3804" target="_blank">bug 3804</a> を修正しました: 1.5と1.6の問題タイプの違い。</li>
+  <li> <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3822" target="_blank">bug 3822</a> を修正しました: プレビューを受験回数としてカウントしない。</li>
+  <li> <a href="http://moodle.org/bugs/bug.php?op=show&bugid=3807" target="_blank">bug 3807</a> を修正しました:  問題ナンバリングに関して。</li>
+  <li> <a href="http://moodle.org/mod/forum/discuss.php?d=27553" target="_blank">アイテム分析プラグイン</a> に関して修正しました。Jean-Michel氏によって。</li>
+  <li> <a href="http://moodle.org/mod/forum/discuss.php?d=24790#129431" target="_blank">タイムアウトを避けるために</a>タイムアウトカウンタをリセットすることができます。</li>
+  <li> Jean-Michel Vedrine氏によるいくつかの<a href="http://moodle.org/mod/forum/discuss.php?d=27766" target="_blank">改善</a>を行いました。ページあたりに表示する受験数、Excel/テキストファイルのダウンロード結果、評定の詳細を変更することができます。</li>
+  <li> 英語以外の言語でのエクスポートに関するバグを修正しました。</li>
+  </ul>
+
+<h4>SCORM</h4>
+  <ul type="circle">
+  <li> SCORM 1.3 ( SCORM 2004 ) をサポートします!</li>
+  <li> SCO検索の「次の」「前の」に関するバグを修正しました。</li>
+  <li> masteryscoreに関するバグを修正しました。</li>
+  <li> AICCコーストラッキングの問題を修正しました。</li>
+  </ul>
+
+<h4>Wiki</h4>
+  <ul type="circle">
+  <li> 古いバージョンのページングは、現在正常に表示・動作します。詳細は、<a href="http://moodle.org/bugs/bug.php?op=show&bugid=3750" target="_blank">bug 3750</a> をご覧ください。</li>
+  </ul>
+
+<h4>フィルタ</h4>
+  <ul type="circle">
+  <li> マルチメディアプラグインは、<a href="http://moodle.org/mod/forum/discuss.php?d=27630" target="_blank"> HTMLコード中の複数行リンク</a> を見つけることができます。</li>
+  <li> センサーフィルタ: オリジナルの単語をブラックアウトバージョンのタイトルとして追加しました。 フィルタは間違って重要な単語 ( 例 Dickens ) を隠す場合があります。その場合、復旧する方法が必要です。</li>
+  </ul>
+
+<!-- Roll of honour for the 1.5.3 release 
+     (computed very roughly)
+
+  <li>Committers and number of commits:</li>  <ul>
+
+    <li>adamtpaw: 7</li>
+    <li>bobopinna: 7</li>
+    <li>danmarsden: 1</li>
+    <li>defacer: 14</li>
+    <li>dhawes: 2</li>
+    <li>dlnsk: 1</li>
+    <li>ethem: 2</li>
+    <li>gbateson: 6</li>
+    <li>gustav_delius: 13</li>
+    <li>ikawhero: 5</li>
+    <li>julmis: 8</li>
+    <li>martignoni: 20</li>
+    <li>martinlanghoff: 35</li>
+    <li>michaelpenne: 12</li>
+    <li>mindforge: 26</li>
+    <li>mjollnir_: 39</li>
+    <li>moodler: 67</li>
+    <li>mudrd8mz: 6</li>
+    <li>paca70: 5</li>
+    <li>patrickslee: 24</li>
+    <li>skodak: 36</li>
+    <li>stronk7: 32</li>
+    <li>thepurpleblob: 18</li>
+    <li>urs_hunkler: 7</li>
+  </ul>
+
+-->
+
 <h2>Moodle 1.5.2 (  2005年7月16日 ) </h2>
 
 <h3>各種修正</h3>
