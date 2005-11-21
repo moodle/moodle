@@ -166,7 +166,7 @@
             }
 
             $introoptions->para=false;
-            $forum->intro = format_text(shorten_text(trim($forum->intro), $CFG->forum_shortpost), FORMAT_HTML, $introoptions);
+            $forum->intro = shorten_text(trim(format_text($forum->intro, FORMAT_HTML, $introoptions)), $CFG->forum_shortpost);
 
             if ($forum->visible) {
                 $forumlink = "<a href=\"view.php?f=$forum->id\">".format_string($forum->name,true)."</a>";
@@ -306,7 +306,7 @@
                 }
 
                 $introoptions->para=false;
-                $forum->intro = format_text(shorten_text(trim($forum->intro), $CFG->forum_shortpost), FORMAT_HTML, $introoptions);
+                $forum->intro = shorten_text(trim(format_text($forum->intro, FORMAT_HTML, $introoptions)), $CFG->forum_shortpost);
 
                 if ($forum->section != $currentsection) {
                     $printsection = $forum->section;
