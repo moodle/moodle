@@ -136,173 +136,173 @@
             foreach ($optionalDefaults as $key => $value) {
                 $user->$key = addslashes($adminuser->$key);
             }
-        //Note: commas within a field should be encoded as &#44 (for comma separated csv files)
-        //Note: semicolon within a field should be encoded as &#59 (for semicolon separated csv files)
-        $line = split($csv_delimiter, fgets($fp,1024));
-        foreach ($line as $key => $value) {
-            //decode encoded commas
-            $record[$header[$key]] = preg_replace($csv_encode,$csv_delimiter2,trim($value));
-        }
-        if ($record[$header[0]]) {
-            // add a new user to the database
-            optional_variable($newuser, "");
-
-            // add fields to object $user
-            foreach ($record as $name => $value) {
-                // check for required values
-                if ($required[$name] and !$value) {
-                    error(get_string('missingfield', 'error', $name). " ".
-                          get_string('erroronline', 'error', $linenum) .". ".
-                          get_string('processingstops', 'error'),
-                          'uploaduser.php?sesskey='.$USER->sesskey);
-                }
-                // password needs to be encrypted
-                else if ($name == "password") {
-                    $user->password = md5($value);
-                }
-                else if ($name == "username") {
-                    $user->username = addslashes(moodle_strtolower($value));
-                }
-                // normal entry
-                else {
-                    $user->{$name} = addslashes($value);
-                }
+            //Note: commas within a field should be encoded as &#44 (for comma separated csv files)
+            //Note: semicolon within a field should be encoded as &#59 (for semicolon separated csv files)
+            $line = split($csv_delimiter, fgets($fp,1024));
+            foreach ($line as $key => $value) {
+                //decode encoded commas
+                $record[$header[$key]] = preg_replace($csv_encode,$csv_delimiter2,trim($value));
             }
-            $user->confirmed = 1;
-            $user->timemodified = time();
-            $linenum++;
-            $username = $user->username;
-            $addcourse[0] = $user->course1;
-            $addcourse[1] = $user->course2;
-            $addcourse[2] = $user->course3;
-            $addcourse[3] = $user->course4;
-            $addcourse[4] = $user->course5;
-            $addgroup[0] = $user->group1;
-            $addgroup[1] = $user->group2;
-            $addgroup[2] = $user->group3;
-            $addgroup[3] = $user->group4;
-            $addgroup[4] = $user->group5;
+            if ($record[$header[0]]) {
+                // add a new user to the database
+                optional_variable($newuser, "");
 
-            $addtype[0] = $user->type1;
-            $addtype[1] = $user->type2;
-            $addtype[2] = $user->type3;
-            $addtype[3] = $user->type4;
-            $addtype[4] = $user->type5;
+                // add fields to object $user
+                foreach ($record as $name => $value) {
+                    // check for required values
+                    if ($required[$name] and !$value) {
+                        error(get_string('missingfield', 'error', $name). " ".
+                              get_string('erroronline', 'error', $linenum) .". ".
+                              get_string('processingstops', 'error'),
+                              'uploaduser.php?sesskey='.$USER->sesskey);
+                    }
+                    // password needs to be encrypted
+                    else if ($name == "password") {
+                        $user->password = md5($value);
+                    }
+                    else if ($name == "username") {
+                        $user->username = addslashes(moodle_strtolower($value));
+                    }
+                    // normal entry
+                    else {
+                        $user->{$name} = addslashes($value);
+                    }
+                }
+                $user->confirmed = 1;
+                $user->timemodified = time();
+                $linenum++;
+                $username = $user->username;
+                $addcourse[0] = $user->course1;
+                $addcourse[1] = $user->course2;
+                $addcourse[2] = $user->course3;
+                $addcourse[3] = $user->course4;
+                $addcourse[4] = $user->course5;
+                $addgroup[0] = $user->group1;
+                $addgroup[1] = $user->group2;
+                $addgroup[2] = $user->group3;
+                $addgroup[3] = $user->group4;
+                $addgroup[4] = $user->group5;
 
-            $courses = get_courses("all",'c.sortorder','c.id,c.shortname,c.fullname,c.sortorder');
-            for ($i=0; $i<5; $i++) {
-                $courseid[$i]=0;
-            }
-            foreach ($courses as $course) {
+                $addtype[0] = $user->type1;
+                $addtype[1] = $user->type2;
+                $addtype[2] = $user->type3;
+                $addtype[3] = $user->type4;
+                $addtype[4] = $user->type5;
+
+                $courses = get_courses("all",'c.sortorder','c.id,c.shortname,c.fullname,c.sortorder');
                 for ($i=0; $i<5; $i++) {
-                    if ($course->shortname == $addcourse[$i]) {
-                        $courseid[$i] = $course->id;
-                    }
+                    $courseid[$i]=0;
                 }
-            }
-
-            //adding users to the user database
-            if (get_record("user","username",$username) || !($user->id = insert_record("user", $user))) {
-                if (!$user = get_record("user", "username", "changeme")) {   // half finished user from another time
-                    //Record not added - probably because user is already registered
-                    //In this case, output userid from previous registration
-                    //This can be used to obtain a list of userids for existing users
-                    if ($user = get_record("user","username",$username)) {
-                        notify("$user->id ".get_string('usernotaddedregistered', 'error', $username));
-                    } else {
-                        notify(get_string('usernotaddederror', 'error', $username));
-                    }
-                }
-            } else if ($user->username != "changeme") {
-                notify("$struser: $user->id = $user->username");
-                $numusers++;
-            }
-
-            //course validity checking
-            for ($i=0; $i<5; $i++) {
-                if ($addcourse[$i] && !$courseid[$i]) {
-                    notify(get_string('unknowncourse', 'error', $addcourse[$i]));
-                }
-            }
-
-            for ($i=0; $i<5; $i++) {
-                $groupid[$i] = 0;
-                if ($addgroup[$i]) {
-                    if (!$courseid[$i]) {
-                        notify(get_string('coursegroupunknown','error',$addgroup[$i]));
-                    } else if ($group = get_record("groups","courseid",$courseid[$i],"name",$addgroup[$i])) {
-                        $groupid[$i] = $group->id;
-                    } else {
-                        notify(get_string('groupunknown','error',$addgroup[$i]));
-                    }
-                }
-            }
-        }
-        //automatically enroll students and teachers
-        //add students to user_student database and forum database
-        //add teachers to user_teacher database and forum database
-        //here we check to see the type, and perform accordingly
-
-        for ($i=0; $i<5; $i++) {
-            if ($courseid[$i]) {
-                switch ((string)$addtype[$i]){
-                //need a vaid course!
-                case '3':    //non editting teacher case
-
-                    if (!add_teacher($user->id, $courseid[$i], 0)){
-                        notify(get_string('couldnotinsertteacher'));
-                        forum_add_user($teacher->userid, $courseid[$i]);//add to forum
-                    }
-                    else {
-                        notify('-->'. get_string('enrolledincourse', '', $addcourse[$i]));
-                    }
-
-                    break;
-                case '2':    //editting teacher
-
-                    if (!add_teacher($user->id, $courseid[$i], 1)){
-                        notify(get_string('couldnotinsertteacher'));
-                        forum_add_user($teacher->userid, $courseid[$i]);
-                    }
-                    else {
-                        notify('-->'. get_string('enrolledincourse', '', $addcourse[$i]));
-                    }
-
-                    break;
-                default:    //student case
-
-                    if (enrol_student($user->id, $courseid[$i])) {
-                        notify('-->'. get_string('enrolledincourse', '', $addcourse[$i]));
-                    } else {
-                        notify('-->'.get_string('enrolledincoursenot', '', $addcourse[$i]));
-                    }
-
-                    break;
-                }    //close if($courseid[$i])
-            }    //close switch
-        }
-        for ($i=0; $i<5; $i++) {
-            if ($courseid[$i] && $groupid[$i]) {
-                if (record_exists("user_students","userid",$user->id,"course",$courseid[$i]) OR
-                    record_exists("user_teachers","userid",$user->id,"course",$courseid[$i])){
-
-                        if (ismember($groupid[$i],$user->id)) {
-                            notify('-->' . get_string('groupalready','error',$usergroup->name));
-                        } else {
-                            $group_member->groupid = $groupid[$i];
-                            $group_member->userid = $user->id;
-                            $group_member->timeadded = time();
-                            if (insert_record("groups_members",$group_member)) {
-                                notify('-->' . get_string('addedtogroup','',$addgroup[$i]));
-                            } else {
-                                notify('-->' . get_string('addedtogroupnot','',$addgroup[$i]));
-                            }
+                foreach ($courses as $course) {
+                    for ($i=0; $i<5; $i++) {
+                        if ($course->shortname == $addcourse[$i]) {
+                            $courseid[$i] = $course->id;
                         }
-                } else {
-                    notify('-->' . get_string('addedtogroupnotenrolled','',$addgroup[$i]));
+                    }
+                }
+
+                //adding users to the user database
+                if (get_record("user","username",$username) || !($user->id = insert_record("user", $user))) {
+                    if (!$user = get_record("user", "username", "changeme")) {   // half finished user from another time
+                        //Record not added - probably because user is already registered
+                        //In this case, output userid from previous registration
+                        //This can be used to obtain a list of userids for existing users
+                        if ($user = get_record("user","username",$username)) {
+                            notify("$user->id ".get_string('usernotaddedregistered', 'error', $username));
+                        } else {
+                            notify(get_string('usernotaddederror', 'error', $username));
+                        }
+                    }
+                } else if ($user->username != "changeme") {
+                    notify("$struser: $user->id = $user->username");
+                    $numusers++;
+                }
+
+                //course validity checking
+                for ($i=0; $i<5; $i++) {
+                    if ($addcourse[$i] && !$courseid[$i]) {
+                        notify(get_string('unknowncourse', 'error', $addcourse[$i]));
+                    }
+                }
+
+                for ($i=0; $i<5; $i++) {
+                    $groupid[$i] = 0;
+                    if ($addgroup[$i]) {
+                        if (!$courseid[$i]) {
+                            notify(get_string('coursegroupunknown','error',$addgroup[$i]));
+                        } else if ($group = get_record("groups","courseid",$courseid[$i],"name",$addgroup[$i])) {
+                            $groupid[$i] = $group->id;
+                        } else {
+                            notify(get_string('groupunknown','error',$addgroup[$i]));
+                        }
+                    }
                 }
             }
-        }
+            //automatically enroll students and teachers
+            //add students to user_student database and forum database
+            //add teachers to user_teacher database and forum database
+            //here we check to see the type, and perform accordingly
+
+            for ($i=0; $i<5; $i++) {
+                if ($courseid[$i]) {
+                    switch ((string)$addtype[$i]){
+                    //need a vaid course!
+                    case '3':    //non editting teacher case
+
+                        if (!add_teacher($user->id, $courseid[$i], 0)){
+                            notify(get_string('couldnotinsertteacher'));
+                            forum_add_user($teacher->userid, $courseid[$i]);//add to forum
+                        }
+                        else {
+                            notify('-->'. get_string('enrolledincourse', '', $addcourse[$i]));
+                        }
+
+                        break;
+                    case '2':    //editting teacher
+
+                        if (!add_teacher($user->id, $courseid[$i], 1)){
+                            notify(get_string('couldnotinsertteacher'));
+                            forum_add_user($teacher->userid, $courseid[$i]);
+                        }
+                        else {
+                            notify('-->'. get_string('enrolledincourse', '', $addcourse[$i]));
+                        }
+
+                        break;
+                    default:    //student case
+
+                        if (enrol_student($user->id, $courseid[$i])) {
+                            notify('-->'. get_string('enrolledincourse', '', $addcourse[$i]));
+                        } else {
+                            notify('-->'.get_string('enrolledincoursenot', '', $addcourse[$i]));
+                        }
+
+                        break;
+                    }    //close if($courseid[$i])
+                }    //close switch
+            }
+            for ($i=0; $i<5; $i++) {
+                if ($courseid[$i] && $groupid[$i]) {
+                    if (record_exists("user_students","userid",$user->id,"course",$courseid[$i]) OR
+                        record_exists("user_teachers","userid",$user->id,"course",$courseid[$i])){
+
+                            if (ismember($groupid[$i],$user->id)) {
+                                notify('-->' . get_string('groupalready','error',$usergroup->name));
+                            } else {
+                                $group_member->groupid = $groupid[$i];
+                                $group_member->userid = $user->id;
+                                $group_member->timeadded = time();
+                                if (insert_record("groups_members",$group_member)) {
+                                    notify('-->' . get_string('addedtogroup','',$addgroup[$i]));
+                                } else {
+                                    notify('-->' . get_string('addedtogroupnot','',$addgroup[$i]));
+                                }
+                            }
+                    } else {
+                        notify('-->' . get_string('addedtogroupnotenrolled','',$addgroup[$i]));
+                    }
+                }
+            }
 
         unset ($user);
         }
