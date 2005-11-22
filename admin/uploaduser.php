@@ -251,24 +251,29 @@
                             if ($courseid[$i]) {
                                 switch ((string)$addtype[$i]){
                                     //need a vaid course!
-                                    case '3'://non editting teacher case
+                                    case '3':    //non editting teacher case
 
                                         if (!add_teacher($user->id, $courseid[$i], 0)){
                                             notify(get_string('couldnotinsertteacher'));
+                                            forum_add_user($teacher->userid, $courseid[$i]);//add to forum
                                         }
-                                        //add to forum
-                                        forum_add_user($teacher->userid, $courseid[$i]);																
+                                        else {
+                                            notify('-->'. get_string('enrolledincourse', '', $addcourse[$i]));
+                                        }
+
                                         break;
-                                    case '2'://editting teacher
+                                    case '2':    //editting teacher
 
                                         if (!add_teacher($user->id, $courseid[$i], 1)){
                                             notify(get_string('couldnotinsertteacher'));
+                                            forum_add_user($teacher->userid, $courseid[$i]);
+                                        }
+                                        else {
+                                            notify('-->'. get_string('enrolledincourse', '', $addcourse[$i]));
                                         }
 
-                                        //add to forum
-                                        forum_add_user($teacher->userid, $courseid[$i]);												
                                         break;																																			
-                                    default: //student case
+                                    default:    //student case
 
                                         if (enrol_student($user->id, $courseid[$i])) {
                                             notify('-->'. get_string('enrolledincourse', '', $addcourse[$i]));
@@ -277,14 +282,15 @@
                                         }
 
                                         break;
-                                }//close if($courseid[$i])
-                            }//close switch
+                                }    //close if($courseid[$i])
+                            }    //close switch
                         }
                         for ($i=0; $i<5; $i++) {
                             if ($courseid[$i] && $groupid[$i]) {
-                                if (record_exists("user_students","userid",$user->id,"course",$courseid[$i])) {
-                                    $usergroup = user_group($courseid[$i],$user->id);
-                                    if ($usergroup) {
+                                if (record_exists("user_students","userid",$user->id,"course",$courseid[$i]) OR
+                                    record_exists("user_teachers","userid",$user->id,"course",$courseid[$i])){
+
+                                    if (ismember($groupid[$i],$user->id)) {
                                         notify('-->' . get_string('groupalready','error',$usergroup->name));
                                     } else {
                                         $group_member->groupid = $groupid[$i];
