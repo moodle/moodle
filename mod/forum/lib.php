@@ -1153,7 +1153,7 @@ function forum_get_unmailed_posts($starttime, $endtime) {
                               FROM {$CFG->prefix}forum_posts p,
                                    {$CFG->prefix}forum_discussions d
                              WHERE p.mailed = 0
-                               AND p.created >= '$starttime'
+                               AND (p.created >= '$starttime' OR  OR d.timestart > 0)
                                AND p.created < '$endtime'
                                AND p.discussion = d.id
                                AND ((d.timestart = 0 OR d.timestart <= '$now')
@@ -1164,9 +1164,25 @@ function forum_get_unmailed_posts($starttime, $endtime) {
 function forum_mark_old_posts_as_mailed($endtime) {
 /// Marks posts before a certain time as being mailed already
     global $CFG;
+/// Find out posts those are not showing immediately so we can exclude them
+    $now = time();
+    $delayed_posts = get_records_sql("SELECT p.id, p.discussion
+                                        FROM {$CFG->prefix}forum_posts p,
+                                             {$CFG->prefix}forum_discussions d
+                                       WHERE p.mailed = 0
+                                         AND p.discussion = d.id
+                                         AND d.timestart > '$now'");
+    $delayed_ids = array();
+    if ($delayed_posts) {
+        foreach ($delayed_posts as $post) {
+            $delayed_ids[] = $post->id;
+        }
+    } else {
+        $delayed_ids[] = 0;
+    }
     return execute_sql("UPDATE {$CFG->prefix}forum_posts
                            SET mailed = '1'
-                         WHERE created < '$endtime' AND mailed ='0'");
+                         WHERE id NOT IN (".implode(',',$delayed_ids).") AND created < '$endtime' AND mailed ='0'");
 }
 
 function forum_get_user_posts($forumid, $userid) {
