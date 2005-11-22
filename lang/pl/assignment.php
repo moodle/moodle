@@ -17,7 +17,7 @@ $string['duedate'] = 'Termin oddawania zadania';
 $string['duedateno'] = 'Brak terminu oddania pracy';
 $string['early'] = '$a przed terminem';
 $string['editmysubmission'] = 'Edytuj zadanie';
-$string['emailteachermail'] = 'a->username  przes³a³ zadanie $a->assigment
+$string['emailteachermail'] = '$a->username  przes³a³ zadanie $a->assigment
 Zadanie jest dostêpne tutaj:
 $a->url';
 $string['emailteachermailhtml'] = '$a->username  przes³a³ zadanie <i>\'$a->assignment\'</i><br /><br />
