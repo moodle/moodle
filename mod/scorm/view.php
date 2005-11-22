@@ -137,7 +137,7 @@
             <br />
             <input type="hidden" name="scoid" />
             <input type="hidden" name="currentorg" value="<?php echo $orgidentifier ?>" />
-            <input type="submit" value="<? print_string('entercourse','scorm') ?>" />
+            <input type="submit" value="<?php print_string('entercourse','scorm') ?>" />
         </form>
     </div>
 <script language="javascript" type="text/javascript">
