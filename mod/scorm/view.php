@@ -6,8 +6,8 @@
     require_once("../../config.php");
     require_once("lib.php");
 
-    optional_variable($id);    // Course Module ID, or
-    optional_variable($a);     // scorm ID
+    $id = optional_param('id');    // Course Module ID, or
+    $a  = optional_param('a');     // scorm ID
 
     if ($id) {
         if (! $cm = get_record("course_modules", "id", $id)) {
@@ -135,7 +135,7 @@
             <br />
             <input type="hidden" name="scoid" />
             <input type="hidden" name="currentorg" value="<?php echo $orgidentifier ?>" />
-            <input type="submit" value="<? print_string('entercourse','scorm') ?>" />
+            <input type="submit" value="<?php print_string('entercourse','scorm') ?>" />
         </form>
     </div>
 <script language="javascript" type="text/javascript">
