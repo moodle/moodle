@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5.2 + (2005060223)
+      // moodle.php - created with Moodle 1.5.3+ (2005060230)
 
 
 $string['action'] = 'Acció';
@@ -206,7 +206,9 @@ $string['coursefiles'] = 'Fitxers del curs';
 $string['courseformats'] = 'Formats de curs';
 $string['coursegrades'] = 'Qualificacions del curs';
 $string['coursehidden'] = 'Aquest curs no està disponible actualment per als estudiants';
+$string['courseimportnotaught'] = 'No sou professor/a de cap altre curs i per tant no disposeu de cursos d\'on importar.';
 $string['courseinfo'] = 'Informació del curs';
+$string['coursenotaccessible'] = 'Aquest curs no permet accés públic';
 $string['courserestore'] = 'Restauració del curs';
 $string['courses'] = 'Cursos';
 $string['coursescategory'] = 'Cursos de la mateixa categoria';
@@ -892,7 +894,7 @@ $string['restore'] = 'Restaura';
 $string['restorecancelled'] = 'S\'ha cancel·lat la restauració';
 $string['restorecoursenow'] = 'Restaura aquest curs ara';
 $string['restorefinished'] = 'La restauració s\'ha completat amb èxit';
-$string['restoreto'] = 'Restaura a';
+$string['restoreto'] = 'Restaura en';
 $string['returningtosite'] = 'Torneu a aquest lloc?';
 $string['revert'] = 'Torna';
 $string['role'] = 'Rol';
@@ -900,7 +902,9 @@ $string['rss'] = 'RSS';
 $string['rssarticles'] = 'Nombre d\'articles RSS recents';
 $string['rsserror'] = 'Error en la lectura de les dades RSS';
 $string['rsstype'] = 'RSS d\'aquesta activitat';
+$string['saveandnext'] = 'Desa i mostra el següent';
 $string['savechanges'] = 'Desa els canvis';
+$string['savepreferences'] = 'Desa les preferències';
 $string['saveto'] = 'Desa en';
 $string['scale'] = 'Escala';
 $string['scales'] = 'Escales';

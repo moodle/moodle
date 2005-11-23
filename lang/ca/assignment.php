@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.5.2 + (2005060222)
+      // assignment.php - created with Moodle 1.5.3+ (2005060230)
 
 
 $string['allowresubmit'] = 'Permet tornar a trametre';
@@ -51,7 +51,9 @@ $string['noattempts'] = 'No s\'han fet intents en aquesta tasca';
 $string['notgradedyet'] = 'No s\'ha qualificat encara';
 $string['notsubmittedyet'] = 'No s\'ha tramès encara';
 $string['overwritewarning'] = 'Avís: si torneu a penjar un fitxer REEMPLAÇAREU la tramesa existent';
+$string['pagesize'] = 'Trameses mostrades per pàgina';
 $string['preventlate'] = 'Impedeix trameses fora de termini';
+$string['quickgrade'] = 'Permet qualificació ràpida';
 $string['saveallfeedback'] = 'Desa tota la meva retroacció';
 $string['submission'] = 'Tramesa';
 $string['submissionfeedback'] = 'Retroacció per a la tramesa';

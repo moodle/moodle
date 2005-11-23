@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.5.2 + (2005060223)
+      // quiz.php - created with Moodle 1.5.3+ (2005060230)
 
 
 $string['acceptederror'] = 'Error acceptat';
@@ -380,6 +380,7 @@ $string['showdetailedmarks'] = 'Mostra detalls dels punts';
 $string['showfeedback'] = 'Voleu mostrar la retroacció després de contestar?';
 $string['showhidden'] = 'Mostra també preguntes antigues';
 $string['shownoattempts'] = 'Mostra els estudiants sense intents';
+$string['shownoattemptsonly'] = 'Mostra només els estudiants que no tinguin intents';
 $string['showteacherattempts'] = 'Mostra els intents del professorat';
 $string['shuffleanswers'] = 'Barreja respostes';
 $string['shufflequestions'] = 'Barreja preguntes';

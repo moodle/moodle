@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.5.2 + (2005060222)
+      // admin.php - created with Moodle 1.5.3+ (2005060230)
 
 
 $string['adminseesallevents'] = 'Els administradors veuen tots els esdeveniments';
@@ -63,6 +63,7 @@ $string['confignotifyloginthreshold'] = 'Si s\'han activat les notificacions d\'
 $string['configopentogoogle'] = 'Si habiliteu aquest paràmetre, es permetrà que Google entri en el vostre lloc com a visitant. A més a més, la gent que entri al vostre lloc a través d\'una cerca de Google, hi entrarà automàticament com a visitant. Teniu en compte que això proporciona un accés transparent als cursos que permeten l\'accés de visitants.';
 $string['configpathtoclam'] = 'Camí del clam AV. Probablement quelcom semblant a /usr/bin/clamscan o /usr/bin/clamdscan. Necessari per fer funcionar el clam AV.';
 $string['configpathtodu'] = 'Camí de du. Probablement /usr/bin/du o alguna cosa semblant. Si definiu aquest paràmetre, les pàgines que visualitzen el contingut d\'un directori amb molts fitxers funcionaran més ràpides.';
+$string['configperfdebug'] = 'Si activeu aquesta opció, la informació de rendiment s\'inclourà en el peu de pàgina del tema estàndard.';
 $string['configproxyhost'] = 'Si aquest <b>servidor</b> necessita usar un ordinador intermediari (p. ex. un tallafocs) per accedir a Internet, introduïu aquí el nom i el port de l\'intermediari. Si no, deixeu-lo en blanc.';
 $string['configquarantinedir'] = 'Si voleu que clam AV mogui els fitxers infectats a un directori de quarantena, definiu el directori aquí. El servidor web ha de tenir permís d\'escriptura en aquest directori. Si el deixeu en blanc, o introduïu un directori que no existeix, o no s\'hi pot escriure, lllavors els fitxers infectats se suprimiran. No inclogueu una barra final.';
 $string['configrunclamonupload'] = 'Voleu executar el clam AV quan es pugin fitxers? Proporcioneu un camí correcte en pathtoclam perquè funcioni. (Clam AV és un escanejador de virus lliure que podeu obtenir en http://www.clamav.net/)';
@@ -96,6 +97,7 @@ $string['edithelpdocs'] = 'Edita documents d\'ajuda';
 $string['editstrings'] = 'Edita cadenes';
 $string['filterall'] = 'Filtra totes les cadenes';
 $string['filteruploadedfiles'] = 'Filtrar fitxers penjats';
+$string['globalsquoteswarning'] = '<p><strong>Avís de seguretat</strong>: per operar adequadament, Moodle necessita <br />que feu certs canvis en els paràmetres actuals del PHP.<p/><p><em>Cal</em> que definiu <code>register_globals=off</code> i/o <code>magic_quotes_gpc=on</code>. <br />Si és possible, heu de definir <code>register_globals=off</code> per millorar la seguretat <br />general del servidor. També s\'aconsella definir <code>magic_quotes_gpc=on</code>.<p/><p>Aquests paràmetres es defineixen en el fitxer <code>php.ini</code>, en la configuració d\'Apache/IIS <br />o en el fitxer <code>.htaccess</code>.</p>';
 $string['helpadminseesall'] = 'Veuen els administradors tots els esdeveniments o només aquells que se\'ls hi apliquin?';
 $string['helpcalendarsettings'] = 'Configureu diversos aspectes de Moodle relatius al calendari i a les dates i horaris.';
 $string['helpforcetimezone'] = 'Podeu permetre que els usuaris seleccionen individualment la seva zona horària, o imposar una zona horària a tothom.';

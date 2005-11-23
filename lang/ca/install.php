@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // install.php - created with Moodle 1.5.2 + (2005060222)
+      // install.php - created with Moodle 1.5.3+ (2005060230)
 
 
 $string['admindirerror'] = 'El directori d\'administració especificat és incorrecte';
@@ -66,6 +66,16 @@ $string['gdversionhelp'] = '<p>Sembla que el vostre servidor no té instal·lat el
 <p>Per afegir GD al PHP en Unix, compileu el PHP amb el paràmetre --with-gd.</p>
 
 <p>En Windows generalment es pot editar el fitxer php.ini i treure el comentari de la línia que porti la referència a libgd.dll.</p>';
+$string['globalsquotes'] = 'Gestió insegura dels globals';
+$string['globalsquoteserror'] = 'Arregleu els paràmetres del vostre PHP: inhabiliteu register_globals i/o habiliteu magic_quotes_gpc';
+$string['globalsquoteshelp'] = '<p>No s\'aconsella tenir inhabilitat Magic Quotes GPC i tenir alhora habilitat Register Globals.</p>
+
+<p>La configuració recomanada és <b>magic_quotes_gpc = On</b> i <b>register_globals = Off</b> en el fitxer php.ini</p>
+
+<p>Si no teniu accés al php.ini, potser podreu afegir les línies següents en un fitxer anomenat .htaccess dins del directori Moodle:
+<blockquote>php_value magic_quotes_gpc On</blockquote>
+<blockquote>php_value register_globals Off</blockquote>
+</p> ';
 $string['installation'] = 'Instal·lació';
 $string['magicquotesruntime'] = 'Magic Quotes Run Time';
 $string['magicquotesruntimeerror'] = 'Hauria d\'estar desactivat';
