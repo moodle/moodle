@@ -227,7 +227,10 @@ class flexible_table {
         }
 
         // If we didn't sort just now, then use the default sort order if one is defined and the column exists
-        if(empty($this->sess->sortby) && !empty($this->sort_default_column) && isset($this->columns[$this->sort_default_column])) {
+        if(empty($this->sess->sortby) && !empty($this->sort_default_column) && (isset($this->columns[$this->sort_default_column])
+                                                                                || (in_array('fullname',$this->columns)
+                                                                                    && in_array($this->sort_default_column,
+                                                                                                array('firstname','lastname')))))  {
             $this->sess->sortby = array ($this->sort_default_column => ($this->sort_default_order == SORT_DESC ? SORT_DESC : SORT_ASC));
         }
 
