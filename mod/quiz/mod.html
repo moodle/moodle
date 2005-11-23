@@ -124,7 +124,7 @@
     </td>
 </tr>
 
-<tr valign=top>
+<tr valign="top">
    <td align="right"><b><?php print_string("availabledate","assignment") ?>:</b></td>
     <td align="left">
         <input name="availableenable" type="checkbox" value="1" alt="<?php print_string('availabledate', 'assignment') ?>" onclick="return lockoptions('form', 'availableenable', availableitems)" <?php if ($form->timeopen) echo 'checked="checked"' ?> />
@@ -132,6 +132,7 @@
            print_date_selector("availableday", "availablemonth", "availableyear", $form->timeopen);
            echo "&nbsp;-&nbsp;";
            print_time_selector("availablehour", "availableminute", $form->timeopen);
+           helpbutton('timeopen', get_string('quizopens', 'quiz'), 'quiz');
      ?>
         <input type="hidden" name="havailableday"    value="0" />
         <input type="hidden" name="havailablemonth"  value="0" />
@@ -141,7 +142,7 @@
     </td>
 </tr>
 
-<tr valign=top>
+<tr valign="top">
     <td align="right"><b><?php print_string("duedate", "assignment") ?>:</b></td>
     <td align="left">
         <input name="dueenable" type="checkbox" value="1" alt="<?php print_string('duedate', 'assignment') ?>" onclick="return lockoptions('form', 'dueenable', dueitems)" <?php if ($form->timeclose) echo 'checked="checked"' ?> />
@@ -149,7 +150,7 @@
            print_date_selector("dueday", "duemonth", "dueyear", $form->timeclose);
            echo "&nbsp;-&nbsp;";
            print_time_selector("duehour", "dueminute", $form->timeclose);
-           helpbutton('timeopen', get_string('timeopen', 'quiz'), 'quiz');
+           helpbutton('timeopen', get_string('quizcloses', 'quiz'), 'quiz');
      ?>
         <input type="hidden" name="hdueday"    value="0" />
         <input type="hidden" name="hduemonth"  value="0" />
