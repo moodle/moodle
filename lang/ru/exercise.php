@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // exercise.php - created with Moodle 1.5.1 (2005060210)
+      // exercise.php - created with Moodle 1.5.2 + (2005060223)
 
 
 $string['absent'] = 'Отсутствует';
@@ -26,7 +26,7 @@ $string['comparisonofassessments'] = 'Сравнение оценок';
 $string['confirmdeletionofthisitem'] = 'Подтвердите удаление этого $a';
 $string['correct'] = 'Правильно';
 $string['count'] = 'Считать';
-$string['criterion'] = 'по критерию';
+$string['criterion'] = 'По критерию';
 $string['deadline'] = 'Крайний срок';
 $string['deadlineis'] = 'Крайний срок - $a';
 $string['delete'] = 'Удалить';
@@ -38,19 +38,19 @@ $string['detailsofassessment'] = 'Оцениваемые элементы';
 $string['displayoffinalgrades'] = 'Итоговые оценки';
 $string['doubleupload'] = 'Предупреждение: это сообщение возможно было послано дважды. Перейдите к странице Администрирования, проверьте было ли послано два сообщения одному и тому же пользователю за короткий период времени. Удалите одно из таких сообщений.';
 $string['duedate'] = 'Срок сдачи до';
-$string['edit'] = 'Редактировать';
+$string['edit'] = 'Редактировать оценку';
 $string['editingassessmentelements'] = 'Редактировать оцениваемые элементы';
 $string['element'] = 'Элемент';
 $string['elementweight'] = 'Вес элемента';
 $string['enterpassword'] = 'Введите пароль';
 $string['entriessaved'] = 'Сохраненные входы';
-$string['errorbanded'] = 'по сумме ошибок';
+$string['errorbanded'] = 'По сумме ошибок';
 $string['excellent'] = 'Превосходно';
 $string['exerciseassessments'] = 'Оценки Упражнения';
 $string['exercisefeedback'] = 'Отзывы по Упражнению';
 $string['exercisesubmissions'] = 'Сообщения по Упражнению';
 $string['fair'] = 'Честно';
-$string['generalcomment'] = 'Главный комментарий ';
+$string['generalcomment'] = 'Основной комментарий ';
 $string['good'] = 'Хорошо';
 $string['gradeassessment'] = 'Шкала оценок';
 $string['gradeforassessment'] = 'Собственная оценка работы';
@@ -90,7 +90,7 @@ $string['noteongradinggrade'] = 'Эта оценка показывает, насколько ваша оценка со
 $string['noteonstudentassessments'] = '{Оценка студента/Оценка от преподавателя}';
 $string['notgraded'] = 'Без оценки';
 $string['notitlegiven'] = 'Нет названия';
-$string['numberofassessmentelements'] = 'Число комментариев, оцениваемых элементов,погрешностей оценивания, критериев оценивания или категорий в рубриках ';
+$string['numberofassessmentelements'] = 'Число комментариев, оцениваемых элементов, погрешностей оценивания, критериев оценивания или категорий в рубриках ';
 $string['numberofcriterionelements'] = 'Критериев должно быть несколько.';
 $string['numberofentries'] = 'Число записей';
 $string['numberofentriesinleaguetable'] = 'Число записей в Рейтинговой Таблице';
@@ -118,10 +118,10 @@ $string['reassess'] = 'Оценить заново';
 $string['regradestudentassessments'] = 'Заново оценить студенческие работы';
 $string['resubmissionfor'] = 'Повторная попытка $a';
 $string['resubmitnote'] = '* означает, что $a может переделать свою работу .<br /> Этот флажок можно устанавливать для любой работы путём её повторной оценки и нажатия кнопки <br /> \"$a может переделать работу\". <br /> Студент может снова отправить выполненную работу, когда флажок установлен для <b>любой</b> из его работ.';
-$string['rubric'] = 'по рубрикам';
+$string['rubric'] = 'По рубрикам';
 $string['savedok'] = 'Изменения сохранены';
 $string['saveentries'] = 'Сохранить записи';
-$string['savemyassessment'] = 'Запомнить мою оценку';
+$string['savemyassessment'] = 'Сохранить самооценку';
 $string['saveweights'] = 'Запомнить веса';
 $string['scale10'] = 'счет до 10';
 $string['scale100'] = 'счет до 100';
@@ -149,7 +149,7 @@ $string['submitted'] = 'Отправлено';
 $string['submittedby'] = 'Отправитель:';
 $string['suggestedgrade'] = 'Предложенная оценка';
 $string['teacherassessment'] = '$a Оценка';
-$string['teacherassessmenttable'] = 'Таблица , отображающая число оценок, которые выставил каждый $a';
+$string['teacherassessmenttable'] = 'Таблица, отображающая число оценок, которые выставил каждый $a';
 $string['teacherscomment'] = 'Комментарий преподавателя';
 $string['theexercise'] = 'Упражнение';
 $string['theexerciseandthesubmissionby'] = 'Упражнение и Работа $a';
@@ -176,8 +176,8 @@ $string['weights'] = 'Веса';
 $string['weightssaved'] = 'Веса сохранены';
 $string['weightsusedforoverallgrade'] = 'Веса используются для расчёта итоговой оценки';
 $string['wrongpassword'] = 'Неверный пароль для этого упражнения';
-$string['yourassessment'] = 'Ваша оценка';
+$string['yourassessment'] = 'Самооценка';
 $string['yourfeedbackgoeshere'] = 'Ваш отзыв будет направлен сюда';
-$string['yoursubmission'] = 'Ваше сообщение';
+$string['yoursubmission'] = 'Ваша работа';
 
 ?>
