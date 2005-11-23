@@ -149,7 +149,7 @@
            print_date_selector("dueday", "duemonth", "dueyear", $form->timeclose);
            echo "&nbsp;-&nbsp;";
            print_time_selector("duehour", "dueminute", $form->timeclose);
-           helpbutton("timeopen", get_string("timeclose","quiz"), "quiz");
+           helpbutton('timeopen', get_string('timeopen', 'quiz'), 'quiz');
      ?>
         <input type="hidden" name="hdueday"    value="0" />
         <input type="hidden" name="hduemonth"  value="0" />
@@ -186,7 +186,7 @@
             $perpage[0] = get_string('allinone', 'quiz');
 
             choose_from_menu($perpage, 'questionsperpage', $form->questionsperpage, '');
-            helpbutton('questionsperpage', get_string('questionsperpage'), 'quiz');
+            helpbutton('questionsperpage', get_string('questionsperpage', 'quiz'), 'quiz');
          ?>
         </td>
     </tr>
