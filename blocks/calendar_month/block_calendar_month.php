@@ -25,28 +25,24 @@ class block_calendar_month extends block_base {
         $this->content->text = '';
         $this->content->footer = '';
 
-        if (empty($this->instance)) { // Overrides: use no course at all
+        // [pj] To me it looks like this if would never be needed, but Penny added it 
+        // when committing the /my/ stuff. Reminder to discuss and learn what it's about.
+        // It definitely needs SOME comment here!
+        if (!empty($this->instance->pageid)) {
+            $courseshown = $this->instance->pageid;
+        }
+        else {
+            $courseshown = SITEID;
+        }
 
-            $courseshown = false;
-            $filtercourse = array();
-
-        } else {
-            if (!empty($this->instance->pageid)) {
-                $courseshown = $this->instance->pageid;
-            }
-            else {
-                $courseshown = SITEID;
-            }
-
-            if($courseshown == SITEID) {
-                // Being displayed at site level. This will cause the filter to fall back to auto-detecting
-                // the list of courses it will be grabbing events from.
-                $filtercourse = NULL;
-            }
-            else {
-                // Forcibly filter events to include only those from the particular course we are in.
-                $filtercourse = array($courseshown => 1);
-            }
+        if($courseshown == SITEID) {
+            // Being displayed at site level. This will cause the filter to fall back to auto-detecting
+            // the list of courses it will be grabbing events from.
+            $filtercourse = NULL;
+        }
+        else {
+            // Forcibly filter events to include only those from the particular course we are in.
+            $filtercourse = array($courseshown => 1);
         }
 
         // We 'll need this later
