@@ -383,7 +383,7 @@
                 if ($mod) {
                     //Rebuild the url, extracting the type (txt, xls)
                     $filetype = substr($log->url,-3);
-                    $log->url = "download.php?id=".$log->cmid."&amp;type=".$filetype;
+                    $log->url = "download.php?id=".$log->cmid."&type=".$filetype;
                     $log->info = $mod->new_id;
                     $status = true;
                 }
