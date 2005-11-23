@@ -35,7 +35,7 @@
             unset($SESSION->returnpage);
             redirect($return);
         } else {
-            redirect("view.php?id=$mod->course#$sectionreturn");
+            redirect("view.php?id=$mod->course#section-$sectionreturn");
         }
     }
 
@@ -215,7 +215,7 @@
             unset($SESSION->returnpage);
             redirect($return);
         } else {
-            redirect("view.php?id=$course->id#$sectionreturn");
+            redirect("view.php?id=$course->id#section-$sectionreturn");
         }
         exit;
     }
@@ -260,7 +260,7 @@
         if (SITEID == $section->course) {
             redirect($CFG->wwwroot);
         } else {
-            redirect("view.php?id=$section->course#$sectionreturn");
+            redirect("view.php?id=$section->course#section-$sectionreturn");
         }
 
     } else if (isset_param('indent') and confirm_sesskey()) {
@@ -288,7 +288,7 @@
         if (SITEID == $cm->course) {
             redirect($CFG->wwwroot);
         } else {
-            redirect("view.php?id=$cm->course#$sectionreturn");
+            redirect("view.php?id=$cm->course#section-$sectionreturn");
         }
         exit;
 
@@ -309,7 +309,7 @@
         if (SITEID == $cm->course) {
             redirect($CFG->wwwroot);
         } else {
-            redirect("view.php?id=$cm->course#$sectionreturn");
+            redirect("view.php?id=$cm->course#section-$sectionreturn");
         }
         exit;
 
@@ -339,7 +339,7 @@
         if (SITEID == $cm->course) {
             redirect($CFG->wwwroot);
         } else {
-            redirect("view.php?id=$cm->course#$sectionreturn");
+            redirect("view.php?id=$cm->course#section-$sectionreturn");
         }
         exit;
 
@@ -362,7 +362,7 @@
         if (SITEID == $cm->course) {
             redirect($CFG->wwwroot);
         } else {
-            redirect("view.php?id=$cm->course#$sectionreturn");
+            redirect("view.php?id=$cm->course#section-$sectionreturn");
         }
         exit;
 
@@ -392,7 +392,7 @@
         $USER->activitycopycourse = $cm->course;
         $USER->activitycopyname = $instance->name;
 
-        redirect("view.php?id=$cm->course#$sectionreturn");
+        redirect("view.php?id=$cm->course#section-$sectionreturn");
 
     } else if (isset_param('cancelcopy') and confirm_sesskey()) { // value = course module
 
@@ -402,7 +402,7 @@
         unset($USER->activitycopycourse);
         unset($USER->activitycopyname);
 
-        redirect("view.php?id=$courseid#$sectionreturn");
+        redirect("view.php?id=$courseid#section-$sectionreturn");
 
     } else if (isset_param('delete') and confirm_sesskey()) {   // value = course module
 
