@@ -102,6 +102,7 @@ function quiz_add_instance($quiz) {
         $event->timestart    = $quiz->timeclose;
         $event->eventtype    = 'close';
         $event->timeduration = 0;
+        add_event($event);
     }
 
     return $quiz->id;
