@@ -763,7 +763,7 @@
                     //Get the post record from database
                     $dbpos = get_record("forum_posts","id","$pos->new_id");
                     if ($dbpos) {
-                        $log->url = "discuss.php?d=".$dbpos->discussion."&amp;parent=".$pos->new_id;
+                        $log->url = "discuss.php?d=".$dbpos->discussion."&parent=".$pos->new_id;
                         $log->info = $pos->new_id;
                         $status = true;
                     }
@@ -793,7 +793,7 @@
                     //Get the post record from database
                     $dbpos = get_record("forum_posts","id","$pos->new_id");
                     if ($dbpos) {
-                        $log->url = "discuss.php?d=".$dbpos->discussion."&amp;parent=".$pos->new_id;
+                        $log->url = "discuss.php?d=".$dbpos->discussion."&parent=".$pos->new_id;
                         $log->info = $pos->new_id;
                         $status = true;
                     }
@@ -813,7 +813,7 @@
             }
             break;
         case "search":
-            $log->url = "search.php?id=".$log->course."&amp;search=".urlencode($log->info);
+            $log->url = "search.php?id=".$log->course."&search=".urlencode($log->info);
             $status = true;
             break;
         default:

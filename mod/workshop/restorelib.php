@@ -910,7 +910,7 @@
                 //Get the new_id of the workshop assessments
                 $ass = backup_getid($restore->backup_unique_code,"workshop_assessments",$log->info);
                 if ($ass) {
-                    $log->url = "assessments.php?action=viewassessment&amp;id=".$log->cmid."&amp;aid=".$ass->new_id;
+                    $log->url = "assessments.php?action=viewassessment&id=".$log->cmid."&aid=".$ass->new_id;
                     $log->info = $ass->new_id;
                     $status = true;
                 }
@@ -921,7 +921,7 @@
                 //Get the new_id of the workshop assessments
                 $ass = backup_getid($restore->backup_unique_code,"workshop_assessments",$log->info);
                 if ($ass) {
-                    $log->url = "assessments.php?action=viewassessment&amp;id=".$log->cmid."&amp;aid=".$ass->new_id;
+                    $log->url = "assessments.php?action=viewassessment&id=".$log->cmid."&aid=".$ass->new_id;
                     $log->info = $ass->new_id;
                     $status = true;
                 }

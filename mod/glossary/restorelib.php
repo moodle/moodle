@@ -806,7 +806,7 @@
                 //Get the new_id of the glossary_entry (to recode the info and url field)
                 $ent = backup_getid($restore->backup_unique_code,"glossary_entries",$log->info);
                 if ($ent) {
-                    $log->url = "view.php?id=".$log->cmid."&amp;mode=entry&amp;hook=".$ent->new_id;
+                    $log->url = "view.php?id=".$log->cmid."&mode=entry&hook=".$ent->new_id;
                     $log->info = $ent->new_id;
                     $status = true;
                 }
