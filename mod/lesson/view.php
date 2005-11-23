@@ -1320,8 +1320,7 @@
                     get_string("addaquestionpage", "lesson")." ".get_string("here","lesson").
                     "</a></td></tr></table>\n");
             }
-            print_simple_box_end();
-            echo "</div>";
+            echo '</div>';
         } else {
             print_heading("<a href=\"view.php?id=$cm->id&amp;action=navigation\">".get_string("checknavigation",
                 "lesson")."</a>\n");
