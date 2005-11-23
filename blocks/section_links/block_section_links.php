@@ -70,7 +70,7 @@ class block_section_links extends block_base {
         } else {
             $link = '#';
         }
-        $text = '<font size="-1">';
+        $text = '';
         for ($i = $inc; $i <= $course->numsections; $i += $inc) {
             $isvisible = get_field('course_sections', 'visible', 'course', $this->instance->pageid, 'section', $i);
             if (!$isvisible and !isteacher($this->instance->pageid)) {
