@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.6 development (2005090100)
+      // forum.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['addanewdiscussion'] = 'Ein neues Diskussionsthema hinzufügen';
@@ -130,9 +130,9 @@ $string['postupdated'] = 'Ihr Beitrag wurde aktualisiert';
 $string['potentialsubscribers'] = 'Potenzielle Abonnenten';
 $string['processingdigest'] = 'Verarbeitung der E-Mail-Zusammenfassung für $a';
 $string['processingpost'] = 'Bearbeite Beitrag $a';
-$string['prune'] = 'Beenden';
-$string['prunedpost'] = 'Eine neue Diskussion wurde begonnen';
-$string['pruneheading'] = 'Die Diskussion an diesem Thema abschließen und in einem neuen Thema fortführen';
+$string['prune'] = 'Thema splitten';
+$string['prunedpost'] = 'Die Diskussion zu diesem Thema wurde aufgesplittet. ';
+$string['pruneheading'] = 'Diskussion an dieser Stelle aufsplitten und in einem neuen Thema fortführen.';
 $string['rate'] = 'Bewerte';
 $string['rating'] = 'Bewertung';
 $string['ratingeveryone'] = 'Jede/r kann Beiträge bewerten';

@@ -1,3 +1,7 @@
+<<<<<<< moodle.php
+<?PHP // $Id$ 
+      // moodle.php - created with Moodle 1.6 development (2005101200)
+=======
 <?PHP // $Id$ 
       // moodle.php - created with Moodle 1.6 development (2005101200)
 
@@ -824,7 +828,7 @@ $string['nograde'] = 'Keine Note';
 $string['noimagesyet'] = 'Bislang wurden keine Grafiken für Ihren Kurs hochgeladen';
 $string['nomorecourses'] = 'Keine weiteren entsprechenden Kurse gefunden';
 $string['nomoreidnumber'] = 'Verwenden Sie keine idnumber, um Probleme zu vermeiden.';
-$string['none'] = 'Nichts';
+$string['none'] = 'Niemand';
 $string['nopendingcourses'] = 'Zur Zeit liegt keine Bitte um Einrichtung eines Kurses vor.';
 $string['nopotentialadmins'] = 'Keine potenziellen Administrator/innen vorhanden';
 $string['nopotentialcreators'] = 'Keine potenziellen Kursverwalter/innen vorhanden ';
