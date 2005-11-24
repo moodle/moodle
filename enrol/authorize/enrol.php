@@ -136,13 +136,12 @@ class enrolment_plugin extends enrolment_base {
                 $this->ccerrormsg = get_string("allfieldsrequired");
                 return;
         }
-
+        
+        $this->check_paid();
         $exp_date = ($form->ccexpiremm < 10) ? strval('0'.$form->ccexpiremm) : strval($form->ccexpiremm);
         $exp_date .= $form->ccexpireyyyy;
         $valid_cc = CCVal($form->cc, $form->cctype, $exp_date);
         $curcost = $this->get_course_cost($course);
-        $userfirstname = empty($form->ccfirstname) ? $USER->firstname : $form->ccfirstname;
-        $userlastname = empty($form->cclastname) ? $USER->lastname : $form->cclastname;
         $useripno = getremoteaddr(); // HTTP_CLIENT_IP, HTTP_X_FORWARDED_FOR, REMOTE_ADDR
 
         if (!$valid_cc) {
@@ -155,7 +154,7 @@ class enrolment_plugin extends enrolment_base {
         $datanew->cclastfour = substr($form->cc, -4);
         $datanew->ccexp = $exp_date;
         $datanew->cvv = $form->cvv;
-        $datanew->ccname = $userfirstname . " " . $userlastname;
+        $datanew->ccname = $form->ccfirstname . " " . $form->cclastname;
         $datanew->courseid = $course->id;
         $datanew->userid = $USER->id;
         $datanew->avscode = 'P';
@@ -168,8 +167,7 @@ class enrolment_plugin extends enrolment_base {
             $this->ccerrormsg = "Insert record error. Admin has been notified!";
             return;
         }
-
-        $this->check_paid();
+        
         $formdata = array (
             'x_version'         => '3.1',
             'x_delim_data'      => 'True',
@@ -180,8 +178,8 @@ class enrolment_plugin extends enrolment_base {
             'x_test_request'    => (!empty($CFG->an_test)) ? 'True' : 'False',
             'x_type'            => 'AUTH_CAPTURE',
             'x_method'          => 'CC',
-            'x_first_name'      => $userfirstname,
-            'x_last_name'       => $userlastname,
+            'x_first_name'      => $form->ccfirstname,
+            'x_last_name'       => $form->cclastname,
             'x_address'         => $USER->address,
             'x_city'            => $USER->city,
             'x_zip'             => $form->cczip,
@@ -291,23 +289,32 @@ class enrolment_plugin extends enrolment_base {
                 if (!empty($CFG->enrol_mailstudents)) {
                     $a->coursename = "$course->fullname";
                     $a->profileurl = "$CFG->wwwroot/user/view.php?id=$USER->id";
-                    email_to_user($USER, $teacher, get_string("enrolmentnew", '', $course->shortname), get_string('welcometocoursetext', '', $a));
+                    email_to_user($USER,
+                                  $teacher,
+                                  get_string("enrolmentnew", '', $course->shortname),
+                                  get_string('welcometocoursetext', '', $a));
                 }
                 if (!empty($CFG->enrol_mailteachers)) {
                     $a->course = "$course->fullname";
                     $a->user = fullname($USER);
-                    email_to_user($teacher, $USER, get_string("enrolmentnew", '', $course->shortname), get_string('enrolmentnewuser', '', $a));
+                    email_to_user($teacher,
+                                  $USER,
+                                  get_string("enrolmentnew", '', $course->shortname),
+                                  get_string('enrolmentnewuser', '', $a));
                 }
                 if (!empty($CFG->enrol_mailadmins)) {
                     $a->course = "$course->fullname";
                     $a->user = fullname($USER);
                     $admins = get_admins();
                     foreach ($admins as $admin) {
-                        email_to_user($admin, $USER, get_string("enrolmentnew", '', $course->shortname), get_string('enrolmentnewuser', '', $a));
+                        email_to_user($admin,
+                                      $USER,
+                                      get_string("enrolmentnew", '', $course->shortname),
+                                      get_string('enrolmentnewuser', '', $a));
                     }
                 }
             } else {
-                $this->email_to_admin("Error while trying to enrol ". fullname($USER) ." in '$course->fullname'", $response);
+                $this->email_to_admin("Error while trying to enrol ".fullname($USER)." in '$course->fullname'", $response);
             }
 
             if ($SESSION->wantsurl) {
@@ -413,7 +420,7 @@ class enrolment_plugin extends enrolment_base {
             }
             
             // ******************* AUTOCAPTURE *******************
-            if (!(empty($frm->an_review) || $frm->an_review_day==0)) {
+            if (!(empty($frm->an_review) || $frm->an_review_day < 1)) {
                 // ++ENABLED++
                 // Cron must be runnig!!! Check last cron...
                 $lastcron = get_field_sql('SELECT max(lastcron) FROM ' . $CFG->prefix . 'modules');
@@ -485,7 +492,8 @@ class enrolment_plugin extends enrolment_base {
         } else {
             // review enabled.
             $review_day_val = optional_param('an_review_day', 5, PARAM_INT);
-            if ($review_day_val > 29) $review_day_val = 29;
+            if ($review_day_val < 0) $review_day_val = 0;
+            elseif ($review_day_val > 29) $review_day_val = 29;
             if ($review_day_val > 0) {
                 // cron is required.
                 $lastcron = get_field_sql('SELECT max(lastcron) FROM ' . $CFG->prefix . 'modules');
@@ -498,7 +506,7 @@ class enrolment_plugin extends enrolment_base {
             set_config('an_review_day', $review_day_val);
         }
         
-        return true;     
+        return true;
     }
 
     function email_to_admin($subject, $data) {
@@ -541,7 +549,7 @@ class enrolment_plugin extends enrolment_base {
         }
         
         // (review not enabled) || (AUTOCAPTURE disabled = admin, teacher review it manually)
-        if ( empty($CFG->an_review) || empty($CFG->an_review_day) || $CFG->an_review_day==0 ) return;
+        if ( empty($CFG->an_review) || empty($CFG->an_review_day) || $CFG->an_review_day < 1 ) return;
 
         // :: TO DO ::
         // AUTO CAPTURE
