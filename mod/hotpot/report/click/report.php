@@ -1,97 +1,67 @@
 <?php  // $Id$
-
 /// Overview report just displays a big table of all the attempts
-
 class hotpot_report extends hotpot_default_report {
-
 	function display(&$hotpot, &$cm, &$course, &$users, &$attempts, &$questions, &$options) {
 		global $CFG;
-
 		// create the table
 		$this->create_clickreport_table($hotpot, $cm, $course, $users, $attempts, $questions, $options, $tables=array());
-
 		// print the table
 		$this->print_report($course, $hotpot, $tables, $options);
-
-
 		return true;
 	}
-
 	function create_clickreport_table(&$hotpot, &$cm, &$course, &$users, &$attempts, &$questions, &$options, &$tables) {
-
 		global $CFG;
-
 		$is_html = ($options['reportformat']=='htm');
-
 		// time and date format strings		// date format strings
 		$strftimetime = '%H:%M:%S';
 		$strftimedate = get_string('strftimedate');
-
 		// get the current time and max execution time
 		$start_report_time = microtime();
 		$max_execution_time = ini_get('max_execution_time');
-
 		$correct = get_string('reportcorrectsymbol', 'hotpot');
 		$wrong = get_string('reportwrongsymbol', 'hotpot');
 		$nottried = get_string('reportnottriedsymbol', 'hotpot');
-
 		// shortcuts for font tags
 		$blank = $is_html ? '&nbsp;' : "";
-
 		// store question count
 		$questioncount = count($questions);
-
 		// array to map columns onto question ids ($col => $id)
 		$questionids = array_keys($questions);
-
 		// store exercise type
 		$exercisetype = $this->get_exercisetype($questions, $questionids, $blank);
-
 		// initialize details ('events' must go last)
 		$details = array('checks', 'status', 'answers', 'changes', 'hints', 'clues', 'events');
-
 		// initialize $table
 		unset($table);
 		$table->border = 1;
 		$table->width = '100%';
-
 		// initialize legend, if necessary
 		if (!empty($options['reportshowlegend'])) {
 			$table->legend = array();
 		}
-
 		// start $table headings
 		$this->set_head($options, $table, 'exercise');
 		$this->set_head($options, $table, 'user');
 		$this->set_head($options, $table, 'attempt');
 		$this->set_head($options, $table, 'click');
-
 		// store clicktype column number
 		$clicktype_col = count($table->head)-1;
-
 		// finish $table headings
 		$this->set_head($options, $table, 'details', $exercisetype, $details, $questioncount);
 		$this->set_head($options, $table, 'totals', $exercisetype);
-
 		// set align and wrap
 		$this->set_align_and_wrap($table);
-
 		// is link to review allowed?
 		$allow_review = ($is_html && (isteacher($course->id) || $hotpot->review));
-
 		// initialize array of data values
 		$this->data = array();
-
 		// set exercise data values
 		$this->set_data_exercise($cm, $course, $hotpot, $questions, $questionids, $questioncount, $blank);
-
 		// add details of users' responses
 		foreach ($users as $user) {
 			$this->set_data_user($options, $course, $user);
-
 			unset($clickreportid);
 			foreach ($user->attempts as $attempt) {
-
 				// initialize totals for
 				$click = array(
 					'qnumber' => array(),
@@ -107,34 +77,26 @@ class hotpot_report extends hotpot_default_report {
 					'weighting' => array()
 				);
 				$clicktypes = array();
-
 				// is the start of a new attempt?
 				// (clicks in the same attempt have the same clickreportid)
 				if (!isset($clickreportid) || $clickreportid != $attempt->clickreportid) {
-
 					$clickcount = 1;
 					$clickreportid = $attempt->clickreportid;
-
 					// initialize totals for all clicks in this attempt
 					$clicks = $click; // $click has just been initialized
-
 					$this->set_data_attempt($attempt, $strftimedate, $strftimetime, $blank);
 				}
 				$cells = array();
 				$this->set_data($cells, 'exercise');
 				$this->set_data($cells, 'user');
 				$this->set_data($cells, 'attempt');
-
 				// get responses to questions in this attempt
 				foreach ($attempt->responses as $response) {
-
 					// set $q(uestion number)
 					$q = array_search($response->question, $questionids);
 					$click['qnumber'][$q] = true;
-
 					// was this question answered correctly?
 					if ($answer = hotpot_strings($response->correct)) {
-
 						// mark the question as correctly answered
 						if (empty($clicks['correct'][$q])) {
 							$click['correct'][$q] = true;
@@ -147,27 +109,21 @@ class hotpot_report extends hotpot_default_report {
 						if (isset($clicks['wrong'][$q])) {
 							unset($clicks['wrong'][$q]);
 						}
-
 					// otherwise, was the question answered wrongly?
 					} else if ($answer = hotpot_strings($response->wrong)) {
-
 						// mark the question as wrongly answered
 						$click['wrong'][$q] = true;
 						$clicks['wrong'][$q] = true;
-
 					} else { // not correct or wrong (curious?!)
 						unset($answer);
 					}
-
 					if (!empty($click['correct'][$q]) || !empty($click['wrong'][$q])) {
 						$click['score'][$q] = $response->score;
 						$clicks['score'][$q] = $response->score;
-
 						$weighting = isset($response->weighting) ? $response->weighting : 100;
 						$click['weighting'][$q] = $weighting;
 						$clicks['weighting'][$q] =$weighting;
 					}
-
 					foreach($details as $detail) {
 						switch ($detail) {
 							case 'answers':
@@ -186,14 +142,10 @@ class hotpot_report extends hotpot_default_report {
 								break;
 						}
 					} // end foreach $detail
-
 				} // end foreach $response
-
 				$click['types'] = array();
 				$this->data['details'] = array();
-
 				foreach($details as $detail) {
-
 					for ($q=0; $q<$questioncount; $q++) {
 						switch ($detail) {
 							case 'status':
@@ -266,7 +218,6 @@ class hotpot_report extends hotpot_default_report {
 						} // end switch
 					} // for $q
 				} // foreach $detail
-
 				// set data cell values for
 				$this->set_data_click(
 					$allow_review ? '<a href="review.php?hp='.$hotpot->id.'&attempt='.$attempt->id.'">'.$clickcount.'</a>' : $clickcount,
@@ -276,34 +227,24 @@ class hotpot_report extends hotpot_default_report {
 				);
 				$this->set_data($cells, 'click');
 				$this->set_data($cells, 'details');
-
 				$this->set_data_totals($click, $clicks, $questioncount, $blank, $attempt);
 				$this->set_data($cells, 'totals');
-
 				$table->data[] = $cells;
 				$clickcount++;
-
 			} // end foreach $attempt
-
 			 // insert 'tabledivider' between users
 			$table->data[] = 'hr';
-
 		} // end foreach $user
-
 		// remove final 'hr' from data rows
 		array_pop($table->data);
-
 		if ($is_html && $CFG->hotpot_showtimes) {
 			$count = count($users);
 			$duration = sprintf("%0.3f", microtime_diff($start_report_time, microtime()));
 			print "$count users processed in $duration seconds (".sprintf("%0.3f", $duration/$count).' secs/user)<hr size="1" noshade="noshade" />'."\n";
 		}
-
 		$tables[] = &$table;
 		$this->create_legend_table($tables, $table);
-
 	} // end function
-
 	function get_exercisetype(&$questions, &$questionids, &$blank) {
 		if (empty($questions)) {
 			$type = $blank;
@@ -340,12 +281,10 @@ class hotpot_report extends hotpot_default_report {
 		return $type;
 	}
 	function set_head(&$options, &$table, $zone, $exercisetype='', $details=array(), $questioncount=0) {
-
 		if (empty($table->head)) {
 			$table->head = array();
 		}
 		switch ($zone) {
-
 			case 'exercise':
 				array_push($table->head,
 					get_string('reportcoursename', 'hotpot'),
@@ -378,15 +317,12 @@ class hotpot_report extends hotpot_default_report {
 					get_string('reportclicktype', 'hotpot')
 				);
 				break;
-
 			case 'details':
 				foreach($details as $detail) {
-
 					if ($exercisetype=='JQuiz' && $detail=='clues') {
 						$detail = 'showanswer';
 					}
 					$detail = get_string("report$detail", 'hotpot');
-
 					for ($i=0; $i<$questioncount; $i++) {
 						$str = get_string('questionshort', 'hotpot', $i+1);
 						if ($i==0 || $options['reportformat']!='htm') {
@@ -396,42 +332,32 @@ class hotpot_report extends hotpot_default_report {
 					}
 				}
 				break;
-
 			case 'totals':
-
 				$reportpercentscore =get_string('reportpercentscore', 'hotpot');
 				if (!function_exists('clean_getstring_data')) { // Moodle 1.4 (and less)
 					$reportpercentscore = str_replace('%', '%%', $reportpercentscore);
 				}
-
 				array_push($table->head, 
 					get_string('reportthisclick', 'hotpot', get_string('reportquestionstried', 'hotpot')),
 					get_string('reportsofar', 'hotpot', get_string('reportquestionstried', 'hotpot')),
-
 					get_string('reportthisclick', 'hotpot', get_string('reportright', 'hotpot')),
 					get_string('reportthisclick', 'hotpot', get_string('reportwrong', 'hotpot')),
 					get_string('reportthisclick', 'hotpot', get_string('reportnottried', 'hotpot')),
-
 					get_string('reportsofar', 'hotpot', get_string('reportright', 'hotpot')),
 					get_string('reportsofar', 'hotpot', get_string('reportwrong', 'hotpot')),
 					get_string('reportsofar', 'hotpot', get_string('reportnottried', 'hotpot')),
-
 					get_string('reportthisclick', 'hotpot', get_string('reportanswers', 'hotpot')),
 					get_string('reportthisclick', 'hotpot', get_string('reporthints', 'hotpot')),
 					get_string('reportthisclick', 'hotpot', get_string($exercisetype=='JQuiz' ? 'reportshowanswer' : 'reportclues', 'hotpot')),
 					get_string('reportthisclick', 'hotpot', get_string('reportevents', 'hotpot')),
-
 					get_string('reportsofar', 'hotpot', get_string('reporthints', 'hotpot')),
 					get_string('reportsofar', 'hotpot', get_string($exercisetype=='JQuiz' ? 'reportshowanswer' : 'reportclues', 'hotpot')),
-
 					get_string('reportthisclick', 'hotpot', get_string('reportrawscore', 'hotpot')),
 					get_string('reportthisclick', 'hotpot', get_string('reportmaxscore', 'hotpot')),
 					get_string('reportthisclick', 'hotpot', $reportpercentscore),
-
 					get_string('reportsofar', 'hotpot', get_string('reportrawscore', 'hotpot')),
 					get_string('reportsofar', 'hotpot', get_string('reportmaxscore', 'hotpot')),
 					get_string('reportsofar', 'hotpot', $reportpercentscore),
-
 					get_string('reporthotpotscore', 'hotpot')
 				);
 				break;
@@ -440,7 +366,6 @@ class hotpot_report extends hotpot_default_report {
 	function set_align_and_wrap(&$table) {
 		$count = count($table->head);
 		for ($i=0; $i<$count; $i++) {
-
 			if ($i==0 || $i==1 || $i==2 || $i==4 || $i==5 || $i>=7) {
 				// numeric (and short text) columns
 				$table->align[] = 'center';
@@ -452,7 +377,6 @@ class hotpot_report extends hotpot_default_report {
 			}
 		}
 	}
-
 	function set_data_exercise(&$cm, &$course, &$hotpot, &$questions, &$questionids, &$questioncount, &$blank) {
 		// get exercise details (course name, section number, activity number, quiztype and question count)
 		$record = get_record("course_sections", "id", $cm->section);
@@ -467,10 +391,8 @@ class hotpot_report extends hotpot_default_report {
 	}
 	function set_data_user(&$options, &$course, &$user) {
 		global $CFG;
-
 		// shortcut to first attempt record (which also hold user info)
 		$attempt = &$user->attempts[0];
-
 		$idnumber = $attempt->idnumber;
 		if (empty($idnumber)) {
 			$idnumber = fullname($attempt);
@@ -482,17 +404,14 @@ class hotpot_report extends hotpot_default_report {
 			'idnumber' => $idnumber,
 		);
 	}
-
 	function set_data_attempt(&$attempt, &$strftimedate, &$strftimetime, &$blank) {
 		global $CFG;
-
 		$records = get_records_sql_menu("
 			SELECT userid, MAX(time) AS logintime
 			FROM {$CFG->prefix}log
 			WHERE userid=$attempt->userid AND action='login' AND time<$attempt->timestart
 			GROUP BY userid
 		");
-
 		if (empty($records)) {
 			$logindate = $blank;
 			$logintime = $blank;
@@ -501,33 +420,27 @@ class hotpot_report extends hotpot_default_report {
 			$logindate = trim(userdate($logintime, $strftimedate));
 			$logintime = trim(userdate($logintime, $strftimetime));
 		}
-
 		$records = get_records_sql_menu("
 			SELECT userid, MIN(time) AS logouttime
 			FROM {$CFG->prefix}log
 			WHERE userid=$attempt->userid AND action='logout' AND time>$attempt->cr_timefinish 
 			GROUP BY userid
 		");
-
 		if (empty($records)) {
 			$logouttime = $blank;
 		} else {
 			$logouttime = $records[$attempt->userid];
 			$logouttime = trim(userdate($logouttime, $strftimetime));
 		}
-
-
 		$this->data['attempt'] = array(
 			'logindate'  => $logindate,
 			'logintime'  => $logintime,
 			'logouttime' => $logouttime,
-
 			'number' => $attempt->attempt,
 			'start'  => trim(userdate($attempt->timestart, $strftimetime)),
 			'finish' => trim(userdate($attempt->cr_timefinish, $strftimetime)),
 		);
 	}
-
 	function set_data_click($number, $time, $exercisetype, $click) {
 		$types = array();
 		foreach (array_keys($click['types']) as $type) {
@@ -540,14 +453,12 @@ class hotpot_report extends hotpot_default_report {
 			// $types[] = get_string($type, 'hotpot');
 			$types[] = $type;
 		}
-
 		$this->data['click'] = array(
 			'number' => $number,
 			'time'   => $time,
 			'type'   => empty($types) ? '??' : implode(',', $types)
 		);
 	}
-
 	function set_data_totals(&$click, &$clicks, &$questioncount, &$blank, &$attempt) {
 		$count= array(
 			'click' => array(
@@ -570,11 +481,9 @@ class hotpot_report extends hotpot_default_report {
 				'maxscore' => array_sum($clicks['weighting']),
 			)
 		);
-
 		foreach ($count as $period=>$values) {
 			$count[$period]['nottried'] = $questioncount - ($values['correct'] + $values['wrong']);
 			$count[$period]['percent'] = empty($values['maxscore']) ? $blank : round(100 * $values['score'] / $values['maxscore'], 0);
-
 			// blank out zero click values
 			if ($period=='click') {
 				foreach ($values as $detail=>$value) {
@@ -586,9 +495,7 @@ class hotpot_report extends hotpot_default_report {
 				}
 			}
 		}
-
 		$this->data['totals'] = array(
-
 			$count['click']['answers'],   // "q's tried"
 			$count['clicks']['answers'],  // "q's tried so far"
 			$count['click']['correct'],   // "right"
@@ -597,27 +504,21 @@ class hotpot_report extends hotpot_default_report {
 			$count['clicks']['correct'],  // "right so far"
 			$count['clicks']['wrong'],    // "wrong so far"
 			$count['clicks']['nottried'], // "not tried so far"
-
 			$count['click']['answers'],   // "answers",
 			$count['click']['hints'],     // "hints",
 			$count['click']['clues'],     // "clues",
 			$count['click']['events'],    // "answers",
-
 			$count['clicks']['hints'],    // "hints so far",
 			$count['clicks']['clues'],    // "clues so far",
-
 			$count['click']['score'],     // 'raw score',
 			$count['click']['maxscore'],  // 'max score',
 			$count['click']['percent'],   // '% score'
-
 			$count['clicks']['score'],    // 'raw score,
 			$count['clicks']['maxscore'], // 'max score,
 			$count['clicks']['percent'],  // '% score
-
 			$attempt->score               // 'hotpot score'
 		);
 	}
-
 	function update_event_count(&$click, $detail, $q) {
 		if ($detail=='checks' || $detail=='hints' || $detail=='clues') {
 			$click['types'][$detail] = true;
@@ -629,7 +530,6 @@ class hotpot_report extends hotpot_default_report {
 			$click['changes'][$q] = isset($click['changes'][$q]) ? $click['changes'][$q]+1 : 1;
 		}
 	}
-
 	function set_data(&$cells, $zone) {
 		foreach ($this->data[$zone] as $name=>$value) {
 			$cells[] = $value;

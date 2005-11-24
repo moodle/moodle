@@ -1,38 +1,29 @@
 <?php // $Id$
-
 	require_once("../../config.php");
 	require_once("lib.php");
-
 	require_login();
-
 	// fetch and clean the required $_GET parameters
 	// (script stops here if any parameters are missing)
 	unset($params);
 	$params->action = required_param('action');
 	$params->course = required_param('course');
 	$params->reference = required_param('reference');
-
 	require_login($params->course);
-
 	if (!isteacher($params->course)) {
 		error("You are not allowed to view this page!");
 	}
-
 	if (isadmin()) {
 		$params->location = optional_param('location', HOTPOT_LOCATION_COURSEFILES);
 	} else {
 		$params->location = HOTPOT_LOCATION_COURSEFILES;
 	}
-
 	$title = get_string($params->action, 'hotpot').': '.$params->reference;
 	print_header($title, $title);
-
 	hotpot_print_show_links($params->course, $params->location, $params->reference);
 ?>
 <script type="text/javascript" language="javascript">
 <!--
 	// http://www.krikkit.net/howto_javascript_copy_clipboard.html
-
 	function copy_contents(id) {
 		if (id==null) {
 			id = 'contents';
@@ -71,7 +62,6 @@
 	} else {
 		print_simple_box("Could not open Hot Potatoes XML file", "center", "", "#FFBBBB");
 	}
-
 	print_simple_box_end();
 	print '<br />';
 	close_window_button();

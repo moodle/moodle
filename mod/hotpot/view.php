@@ -1,14 +1,10 @@
 <?PHP // $Id$
-
 	/// This page prints a hotpot quiz
-
 	if (defined('HOTPOT_FIRST_ATTEMPT') && HOTPOT_FIRST_ATTEMPT==false) {
 		// this script is being included (by attempt.php)
-
 	} else {
 		// this script is being called directly from the browser
 		define('HOTPOT_FIRST_ATTEMPT', true);
-
 		require_once("../../config.php");
 		require_once("lib.php");
 	
@@ -37,93 +33,70 @@
 				error("Course Module ID was incorrect");
 			}
 		}
-
 		require_login($course->id);
 	}
-
 	// set nextpage (for error messages)
 	$nextpage = "$CFG->wwwroot/course/view.php?id=$course->id";
-
 	// header strings
 	$title = strip_tags($course->shortname.': '.$hotpot->name);
 	$heading = "$course->fullname";
-
 	$target = empty($CFG->framename) ? '' : ' target="'.$CFG->framename.'"'; 
 	$navigation = '<a'.$target.' href="'.$CFG->wwwroot.'/mod/hotpot/index.php?id='.$course->id.'">'.get_string("modulenameplural", "hotpot")."</a> -> $hotpot->name";
 	if ($course->category) {
 		$navigation = '<a'.$target.' href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.$course->shortname.'</a> -> '.$navigation;
 	}
-
 	$button = update_module_button($cm->id, $course->id, get_string("modulename", "hotpot").'" style="font-size:0.75em;');
 	$loggedinas = '<span class="logininfo">'.user_login_string($course, $USER).'</span>';
-
 	$time = time();
 	$hppassword = optional_param('hppassword');
-
 	if (HOTPOT_FIRST_ATTEMPT && !isteacher($course->id)) {
 		// check this quiz is available to this student
-
 		// error message, if quiz is unavailable
 		$error = '';
-
 		// check quiz is visible
 		if (!hotpot_is_visible($cm)) {
 			$error = get_string("activityiscurrentlyhidden");
-
 		// check network address
 		} else if ($hotpot->subnet && !address_in_subnet($_SERVER['REMOTE_ADDR'], $hotpot->subnet)) {
 			$error = get_string("subneterror", "quiz");
-
 		// check number of attempts
 		} else if ($hotpot->attempts && $hotpot->attempts <= count_records('hotpot_attempts', 'hotpot', $hotpot->id, 'userid', $USER->id)) {
 			$error = get_string("nomoreattempts", "quiz");
-
 		// get password
 		} else if ($hotpot->password && empty($hppassword)) {
-
 			print_header($title, $heading, $navigation, "", "", true, $button, $loggedinas, false);
 			print_heading($hotpot->name);
-
 			$boxalign = 'center';
 			$boxwidth = 500;
-
 			if (trim(strip_tags($hotpot->summary))) {
 				print_simple_box_start($boxalign, $boxwidth);
 				print '<div align="center">'.format_text($hotpot->summary)."</div>\n";
 				print_simple_box_end();
 				print "<br />\n";
 			}
-
 			print '<form name="passwordform" method="post" action="view.php?id='.$cm->id.'">'."\n";
 			print_simple_box_start($boxalign, $boxwidth);
-
 			print '<div align="center">';
 			print get_string('requirepasswordmessage', 'quiz').'<br /><br />';
 			print '<b>'.get_string('password').':</b> ';
 			print '<input name="hppassword" type="password" value=""> ';
 			print '<input type="submit" value="'.get_string("ok").'"> ';
 			print "</div>\n";
-
 			print_simple_box_end();
 			print "</form>\n";
-
 			print_footer();
 			exit;
-
 		// check password
 		} else if ($hotpot->password && strcmp($hotpot->password, $hppassword)) {
 			$error = get_string("passworderror", "quiz");
 			$nextpage = "view.php?id=$cm->id";
-
 		// check quiz is open
 		} else if ($hotpot->timeopen && $hotpot->timeopen > $time) {
 			$error = get_string("quiznotavailable", "quiz", userdate($hotpot->timeopen))."<br />\n";
-
 		// check quiz is not closed
 		} else if ($hotpot->timeclose && $hotpot->timeclose < $time) {
 			$error = get_string("quizclosed", "quiz", userdate($hotpot->timeclose))."<br />\n";
 		}
-
 		if ($error) {
 			print_header($title, $heading, $navigation, "", "", true, $button, $loggedinas, false);
 			notice($error, $nextpage);
@@ -132,23 +105,18 @@
 			//
 		}
 	}
-
 	$available_msg = '';
 	if (!empty($hotpot->timeclose) && $hotpot->timeclose > $time) {
 		// quiz is available until 'timeclose'
 		$available_msg = get_string("quizavailable", "quiz", userdate($hotpot->timeclose))."<br />\n";
 	}
-
-
 	// open and parse the source file
 	if(!$hp = new hotpot_xml_quiz($hotpot)) {
 		error("Quiz is unavailable at the moment");
 	}
-
 	$get_js = optional_param('js');
 	$get_css = optional_param('css');
 	$framename = optional_param('framename');
-
 	// look for <frameset> (HP5 v5)
 	$frameset = '';
 	$frameset_tags = '';
@@ -157,10 +125,8 @@
 		$frameset = $matches[2][$last];
 		$frameset_tags = $matches[1][$last];
 	}
-
 	// if HTML is being requested ...
 	if (empty($get_js) && empty($get_css)) {
-
 		if (empty($frameset)) { 
 			// HP v6
 			if ($hotpot->navigation==HOTPOT_NAVIGATION_FRAME || $hotpot->navigation==HOTPOT_NAVIGATION_IFRAME) {
@@ -172,7 +138,6 @@
 			// HP5 v5
 			$get_html = empty($framename) ? true : false;
 		}
-
 		if ($get_html) {
 		
 			if (HOTPOT_FIRST_ATTEMPT) {
@@ -183,9 +148,7 @@
 					error('Could not insert attempt record: '.$db->ErrorMsg);
 				}
 			}
-
 			$hp->adjust_media_urls();
-
 			if (empty($frameset)) {
 				// HP6 v6
 				switch ($hotpot->navigation) {
@@ -203,7 +166,6 @@
 				} else {
 					$hp->insert_submission_form($attemptid, '<!-- BeginSubmissionForm -->', '<!-- EndSubmissionForm -->');
 				}
-
 			} else {
 				// HP5 v5
 				switch ($hotpot->navigation) {
@@ -221,7 +183,6 @@
 			}
 		}
 	}
-
 	//FEEDBACK = new Array();
 	//FEEDBACK[0] = ''; // url of feedback page/script
 	//FEEDBACK[1] = ''; // array of array('teachername', 'value');
@@ -234,14 +195,11 @@
 	//FEEDBACK[8] = ''; // 'Teacher'
 	//FEEDBACK[9] = ''; // 'Message'
 	//FEEDBACK[10] = ''; // 'Close this window'
-
 	$feedback = array();
 	switch ($hotpot->studentfeedback) {
-
 		case HOTPOT_FEEDBACK_NONE:
 			// do nothing
 			break;
-
 		case HOTPOT_FEEDBACK_WEBPAGE:
 			if (empty($hotpot->studentfeedbackurl)) {
 				$hotpot->studentfeedback = HOTPOT_FEEDBACK_NONE;
@@ -249,7 +207,6 @@
 				$feedback[0] = "'$hotpot->studentfeedbackurl'";
 			}
 			break;
-
 		case HOTPOT_FEEDBACK_FORMMAIL:
 			$teachers = hotpot_feedback_teachers($course, $hotpot);
 			if (empty($teachers) || empty($hotpot->studentfeedbackurl)) {
@@ -263,7 +220,6 @@
 				$feedback[5] = 300; // height
 			}
 			break;
-
 		case HOTPOT_FEEDBACK_MOODLEFORUM:
 			$module = get_record('modules', 'name', 'forum');
 			$forums = get_records('forum', 'course', "$course->id");
@@ -273,7 +229,6 @@
 				$feedback[0] = "'$CFG->wwwroot/mod/forum/index.php?id=$course->id'";
 			}
 			break;
-
 		case HOTPOT_FEEDBACK_MOODLEMESSAGING:
 			$teachers = hotpot_feedback_teachers($course, $hotpot);
 			if (empty($CFG->messaging) || empty($teachers)) {
@@ -285,11 +240,9 @@
 				$feedback[5] = 500; // height
 			}
 			break;
-
 		default:
 			// do nothing
 	}
-
 	if ($hotpot->studentfeedback != HOTPOT_FEEDBACK_NONE) {
 		$feedback[6] = "'Send a message to teacher'";
 		$feedback[7] = "'Title'";
@@ -303,20 +256,16 @@
 		$js = '<script type="text/javascript" language="javascript">'."<!--\n"."FEEDBACK = new Array();\n".$js."//--></script>\n";
 		$hp->html = preg_replace('|</head>|i', "$js</head>", $hp->html, 1);
 	}
-
 	// insert hot-potatoes.js
 	$hp->insert_script(HOTPOT_JS);
-
 	// extract first <head> tag
 	$head = '';
 	$pattern = '|<head([^>]*)>(.*?)</head>|is';
 	if (preg_match($pattern, $hp->html, $matches)) {
 		$head = $matches[2];
-
 		// remove <title>
 		$head = preg_replace('|<title[^>]*>(.*?)</title>|is', '', $head);
 	}
-
 	// extract <style> tags (and remove from $head)
 	$styles = '';
 	$pattern = '|<style([^>]*)>(.*?)</style>|is';
@@ -327,7 +276,6 @@
 			$head = str_replace($matches[0][$i], '', $head);
 		}
 	}
-
 	// extract <script> tags (and remove from $head)
 	$scripts = '';
 	$pattern = '|<script([^>]*)>(.*?)</script>|is';
@@ -338,18 +286,14 @@
 			$head = str_replace($matches[0][$i], '', $head);
 		}
 	}
-
 	// extract <body> tags
 	$body = '';
 	$body_tags = '';
 	$footer = '</html>';
-
 	// HP6 and some HP5 (v6 and v4) 
 	if (preg_match('|<body'.'([^>]*'.'onLoad=(["\'])(.*?)(\\2)'.'[^>]*)'.'>(.*)</body>|is', $hp->html, $matches)) {
-
 		$body = $matches[5]; // contents of first <body onload="StartUp()">...</body> block
 		$body_tags = $matches[1];
-
 		// workaround to ensure javascript onload routine for quiz is always executed
 		//	$body_tags will only be inserted into the <body ...> tag
 		//	if it is included in the theme/$CFG->theme/header.html,
@@ -369,29 +313,23 @@
 		.	"//-->\n"
 		.	"</script>\n"
 		;
-
 		$footer = '</body>'.$footer;
-
 	} else if ($frameset) { // HP5 v5
-
 		switch ($framename) {
 			case 'top':
 				print_header($title, $heading, $navigation, "", "", true, $button, $loggedinas);
 				print $footer;
 			break;
-
 			default:
 				// add a HotPot navigation frame at the top of the page
 				//$rows = empty($CFG->resource_framesize) ? 85 : $CFG->resource_framesize;
 				//$frameset = "\n\t".'<frame src="view.php?id='.$cm->id.'&framename=top" frameborder="0" name="top"></frame>'.$frameset;
 				//$frameset_tags = preg_replace('|rows="(.*?)"|', 'rows="'.$rows.',\\1"', $frameset_tags);
-
 				// put navigation into var NavBar='';
 				// add form to TopFrame in "WriteFeedback" function
 				// OR add form to BottomFrame in "DisplayExercise" function
 				// submission form: '<!-- BeginSubmissionForm -->', '<!-- EndSubmissionForm -->'
 				// give up form: '<!-- BeginTopNavButtons -->', '<!-- EndTopNavButtons -->'
-
 				print "<html>\n";
 				print "<head>\n<title>$title</title>\n$styles\n$scripts</head>\n";
 				print "<frameset$frameset_tags>$frameset</frameset>\n";
@@ -399,15 +337,12 @@
 			break;
 		} // end switch $framename
 		exit;
-
 	// other files (maybe not even a HotPots)
 	} else if (preg_match('|<body'.'([^>]*)'.'>(.*)</body>|is', $hp->html, $matches)) {
 		$body = $matches[2];
 		$body_tags = $matches[1];
 	}
-
 	// print the quiz to the browser
-
 	if ($get_js) {
 		print($scripts);
 		exit;
@@ -416,9 +351,7 @@
 		print($styles);
 		exit;
 	}
-
 	switch ($hotpot->navigation) {
-
 		case HOTPOT_NAVIGATION_BAR:
 			//update_module_button($cm->id, $course->id, $strmodulename.'" style="font-size:0.8em')
 			print_header(
@@ -431,22 +364,18 @@
 			}
 			print $body.$footer;
 		break;
-
 		case HOTPOT_NAVIGATION_FRAME:
-
 			switch ($framename) {
 				case 'top':
 					print_header($title, $heading, $navigation, "", "", true, $button, $loggedinas);
 					print $footer;
 				break;
-
 				case 'main':
 					if (!empty($available_msg)) {
 						$hp->insert_message('<!-- BeginTopNavButtons -->', $available_msg);
 					}
 					print $hp->html;
 				break;
-
 				default:
 					$rows = empty($CFG->resource_framesize) ? 85 : $CFG->resource_framesize;
 					print "<html>\n";
@@ -459,20 +388,15 @@
 				break;
 			} // end switch $framename
 		break;
-
 		case HOTPOT_NAVIGATION_IFRAME:
-
 			switch ($framename) {
 				case 'main';
 					print $hp->html;
 				break;
-
 				default:
 					$iframe_id = 'hotpot_iframe';
 					$body_tags = " onload=\"set_iframe_height('$iframe_id')\"";
-
 					$iframe_js = '<script src="iframe.js" type="text/javascript" language="javascript"></script>'."\n";
-
 					print_header(
 						$title, $heading, $navigation, 
 						"", $head.$styles.$scripts.$iframe_js, true, $button, 
@@ -489,22 +413,18 @@
 				break;
 			} // end switch $framename
 		break;
-
 		default:
 			// HOTPOT_NAVIGATION_BUTTONS
 			// HOTPOT_NAVIGATION_GIVEUP
 			// HOTPOT_NAVIGATION_NONE
-
 			if (!empty($available_msg)) {
 				$hp->insert_message('<!-- BeginTopNavButtons -->', $available_msg);
 			}
 			print($hp->html);
 	}
-
 ///////////////////////////////////
 ///	functions
 ///////////////////////////////////
-
 function hotpot_feedback_teachers(&$course, &$hotpot) {
 	global $CFG;
 	$teachers = get_records_sql("
@@ -517,7 +437,6 @@ function hotpot_feedback_teachers(&$course, &$hotpot) {
 			t.userid = u.id
 			AND t.course = $course->id 
 	");
-
 	$teacherdetails = '';
 	if (!empty($teachers)) {
 		$details = array();
