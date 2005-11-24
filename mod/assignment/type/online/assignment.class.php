@@ -51,7 +51,7 @@ class assignment_online extends assignment_base {
         } else {
             if ($submission) {
                 echo format_text($submission->data1, $submission->data2);
-            } else {
+            } else if ($this->isopen()){    //fix for #4206
                 echo '<center>'.get_string('emptysubmission', 'assignment').'</center>';
             }
             if ($editable) {
