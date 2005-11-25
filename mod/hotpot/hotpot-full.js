@@ -1138,9 +1138,9 @@ function GetJMatchText(q, className) {
 function GetJMatchRHS(v, q, getCorrect) {
 	var rhs = '';
 	if (v==5.1 || v==6.1) { // Drag-and-drop
-		var max_i = (window.F && window.D) ? F.length : 0;
+		var max_i = (window.F && window.D) ? D.length : 0;
 		for (var i=0; i<max_i; i++) {
-			if (D[i][getCorrect ? 1 : 2]==F[q][1]) break;
+			if (F[q][1]==D[i][getCorrect ? 1 : 2]) break;
 		}
 		if (i<max_i) rhs = D[i][0];
 	} else if (v==5 || v==6) { // drop-down list of options
@@ -1841,17 +1841,15 @@ function GetJMatchQuestionDetails(hp, v) {
 			if (JMatch[1] && (hp==5 || v==6)) { // attempts
 				qDetails += hpHiddenField(Q+'attempts', Status[q][1]);
 			}
-			if (JMatch[2]) { // LHS text
+			if (JMatch[2]) { // LHS text (the question)
 				var x = (v==5) ? I[q][0] : (v==6) ? GetJMatchText(q, 'LeftItem') : F[q][0];
 				qDetails += hpHiddenField(Q+'lhs', x);
 			}
-			if (JMatch[3]) { // RHS text (correct answer)
-				//var x = (v==5) ? I[q][1] : (v==6) ? GetJMatchText(q, 'RightItem') : GetJMatchRHS(v, q);
-				//qDetails += hpHiddenField(Q+'rhs', x);
+			if (JMatch[3]) { // correct answer (if any)
 				var x = HP[_correct][q] ? HP[_correct][q] : '';
 				qDetails += hpHiddenField(Q+'correct', x);
 			}
-			if (JMatch[4]) { // wrong answers
+			if (JMatch[4]) { // wrong answers (if any)
 				var x = HP[_wrong][q] ? HP[_wrong][q] : '';
 				qDetails += hpHiddenField(Q+'wrong', x);
 			}
@@ -2669,7 +2667,7 @@ function hpScore() {
 		else if (v==4) x = hpScoreEngine(1, Draggables, "a[i].correct=='1'");
 		else if (v==5) x = hpScoreEngine(1, I, "I[i][2]<1 && I[i][0].length>0 && Status[i][0]==1");
 		else if (v==6) x = hpScoreEngine(1, Status, "Status[i][0]==1");
-		else if (v==5.1 || v==6.1) x = hpScoreEngine(1, D, "D[i][2]==D[i][1] && D[i][2]>0");
+		else if (v==5.1 || v==6.1) x = hpScoreEngine(1, D, "D[i][2]==D[i][1] && D[i][2]>0", "", "", "i<F.length");
 	} else if (t==5) { // jmix
 		// there was no v3 or v4 of JMix
 		if (v==5 || v==6 || v==6.1) x = Math.floor(100*(Segments.length-Penalties)/Segments.length);
@@ -2750,7 +2748,7 @@ function hpFinished() {
 		else if (v==4) x = hpFinishedEngine(Draggables, "a[i].correct!='1'");
 		else if (v==5) x = hpFinishedEngine(I, "I[i][2]<1 && I[i][0].length>0 && Status[i][0]<1 && GetAnswer(i)!=I[i][3]");
 		else if (v==6) x = hpFinishedEngine(Status, "Status[i][0]<1");
-		else if (v==5.1 || v==6.1) x = hpFinishedEngine(D, "D[i][2]==0 || D[i][2]!=D[i][1]");
+		else if (v==5.1 || v==6.1) x = hpFinishedEngine(D, "", F, "F[ii][1]==D[i][1]&&D[i][1]!=D[i][2]");
 	} else if (t==5) { // jmix
 		// there was no v3 or v4 of JMix
 		if (v==5 || v==6 || v==6.1) x = !hpFinishedEngine(Answers, "a[i].join(',')=='" + GuessSequence.join(',') + "'");
