@@ -717,6 +717,7 @@ $string['maximumgrade'] = '最大評点';
 $string['maximumshort'] = '最大';
 $string['maximumupload'] = '最大アップロードサイズ';
 $string['maxsize'] = '最大サイズ: $a';
+$string['memberincourse'] = 'コースに属する人';
 $string['messagebody'] = 'メッセージ本文';
 $string['messagedselectedusers'] = '選択したユーザにメール送信され、受信者リストがリセットされました。';
 $string['messagedselectedusersfailed'] = '選択したユーザへのメッセージ送信時に問題が発生しました。何名かはメールを受信しています。';
