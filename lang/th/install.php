@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // install.php - created with Moodle 1.6 development (2005072200)
+      // install.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['admindirerror'] = 'ไดเรกทอรี admin ที่ระบุไม่ถูกต้อง';
@@ -82,6 +82,15 @@ $string['gdversionhelp'] = '<p>เซิร์ฟเวอร์ของคุณยังไม่มีการติดตั้ง GD </p>
 <p> การติดตั้ง GD ใน PHP ภายใต้ยูนิกซ์เซิร์ฟเวอร์นั้น ใช้ตัวเปร  --with-gd</p>
 
 <p>ส่วนภายใต้การใช้งานวินโดว์คุณสามารถติดตั้งโดยการแก้ไขไฟล์  php.ini และเอาเครื่องหมายคอมเมนต์ด้านหน้า libgd.dll ออก</p>';
+$string['globalsquotes'] = 'การใช้งานแบบ Globals ยังไม่ปลอดภัย';
+$string['globalsquoteserror'] = 'แก้ไขค่า PHP ของท่านโดยปิดการใช้งาน register_globals และ/หรือ เปิดการใช้งาน magic_quotes_gpc';
+$string['globalsquoteshelp'] = '<p>ไม่แนะนำให้เปิดการใช้งาน Magic Quotes GPC และ  Register Globals  ในเวลาเดียวกัน</p>
+<p>แนะนำให้ใช้ค่าต่อไปนี้ใน php.ini <b>magic_quotes_gpc = On</b> และ <b>register_globals = Off</b></p>
+<p> ถ้าหากท่านไม่สามารถเข้าทำการแก้ไขไฟล์ php.ini ได้สามารถทำการสร้างไฟล์ .httaccess ขึ้นมาโดยสร้างไฟล์ดังนี้ 
+<blockquote>php_value magic_quotes_gpc On</blockquote>
+<blockquote>php_value register_globals Off</blockquote> แล้วอัพโหลดขึ้นไปไว้ในไดเรกทอรี moodle 
+</p> 
+';
 $string['installation'] = 'การติดตั้ง';
 $string['magicquotesruntime'] = 'Magic Quotes Run Time';
 $string['magicquotesruntimeerror'] = 'ควรจะปิด (off)';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // block_quiz_results.php - created with Moodle 1.6 development (2005072200)
+      // block_quiz_results.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['bestgrade'] = 'คะแนนสูงสุด :';
@@ -10,6 +10,10 @@ $string['config_format_absolute'] = 'คะแนนดิบ';
 $string['config_format_fraction'] = 'เศษส่วน';
 $string['config_format_percentage'] = 'เปอร์เซ็นต์';
 $string['config_grade_format'] = 'แสดงคะแนนแบบ :';
+$string['config_name_format'] = 'ระดับความเป็นส่วนตัวในการแสดงผล';
+$string['config_names_anon'] = 'ผลสอบที่ไม่แสดงชื่อ';
+$string['config_names_full'] = 'แสดงชื่อเต็ม';
+$string['config_names_id'] = 'แสดงเฉพาะหมายเลขประจำตัว';
 $string['config_no_quizzes_in_course'] = 'รายวิชานี้ไม่มีแบบทดสอบท่านต้องเพิ่มแบบทดสอบอย่างน้อย 1 อันหากต้องการให้บล็อคนี้แสดงผลได้อย่างถูกต้อง';
 $string['config_select_quiz'] = 'แบบทดสอบใดที่ต้องการแสดงผลในบล็อค';
 $string['config_show_best'] = 'ต้องการแสดงคะแนนสูงสุดกี่ลำดับแรก ( เลือก 0 เพื่อปิดการใช้งาน)';

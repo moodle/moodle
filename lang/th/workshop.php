@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.4.4 (2004083140)
+      // workshop.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['absent'] = 'ไม่มี';
@@ -167,6 +167,7 @@ $string['noteonstudentassessments'] = 'คะแนนจากนักเรียน/การให้คะแนนการประเมิน';
 $string['notgraded'] = 'ไม่มีการให้คะแนน';
 $string['notitle'] = 'ไม่มีหัวข้อ';
 $string['notitlegiven'] = 'ไม่ได้ใส่ชื่อเรื่อง';
+$string['notsubmittedyet'] = 'ยังไม่มีการส่งงานค่ะ';
 $string['nowork'] = 'หมดเขตการรับงานแล้วค่ะ คุณยังไม่ได้ส่งงาน';
 $string['numberofassessmentelements'] = 'จำนวนข้อเสนอแนะ,องค์ประกอบการประเมิน,ระดับการให้คะแนน,เกณฑ์การให้คะแนน, ประเภทใน Rubric';
 $string['numberofassessments'] = 'จำนวนการประเมิน';
@@ -206,8 +207,6 @@ $string['phase4'] = 'ให้$a ประเมินผล';
 $string['phase4short'] = 'การประเมิน';
 $string['phase5'] = 'คำนวณคะแนนสุดท้าย';
 $string['phase5short'] = 'คำนวณคะแนน';
-$string['phase6'] = 'แสดงคะแนนสุดท้าย';
-$string['phase6short'] = 'แสดงคะแนน';
 $string['pleaseassesstheseexamplesfromtheteacher'] = 'โปรดประเมินตัวอย่างเหล่านี้จาก $a';
 $string['pleaseassessthesestudentsubmissions'] = 'โปรดประเมิน$a ด้วย';
 $string['pleaseassessyoursubmissions'] = 'กรุณาประเมินงานที่ส่งมา';
@@ -242,7 +241,6 @@ $string['scalepresent'] = 'สเกล 2 ระดับ มี/ไม่มี';
 $string['scaleyes'] = 'สเกล 2 ระดับ ไช่/ไม่ใช่';
 $string['select'] = 'เลือก';
 $string['selfassessment'] = 'การประเมินตนเอง';
-$string['setoverallocation'] = 'การตั้งค่าความสมดุลในการกระจายงาน';
 $string['sgrade'] = 'คะแนนงานที่ส่ง';
 $string['showdescription'] = 'แสดงรายละเอียดห้องปฏิบัติการ';
 $string['showgrades'] = 'แสดงคะแนน';

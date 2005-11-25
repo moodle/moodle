@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.6 development (2005072200)
+      // forum.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['addanewdiscussion'] = 'ตั้งกระทู้';
@@ -45,6 +45,9 @@ $string['discussions'] = 'กระทู้ทั้งหมด';
 $string['discussionsstartedby'] = 'ตั้งกระทู้โดย $a';
 $string['discussionsstartedbyrecent'] = 'ตั้งกระทู้ล่าสุดโดย';
 $string['discussthistopic'] = 'ตอบกระทู้';
+$string['displayend'] = 'หมดเวลาแสดง';
+$string['displayperiod'] = 'ช่วงเวลาที่แสดง';
+$string['displaystart'] = 'เริ่มแสดง';
 $string['eachuserforum'] = 'หนึ่งคนหนึ่งกระทู้';
 $string['edit'] = 'แก้ไข';
 $string['editedby'] = 'แก้ไขโดย $a->name - $a->date';
@@ -100,6 +103,7 @@ $string['nonews'] = 'ยังไม่มีข่าว';
 $string['noposts'] = 'ไม่มีโพสต์';
 $string['nopostscontaining'] = 'ไม่มีโพสต์ที่มีคำว่า \'$a\' ';
 $string['nosubscribers'] = 'ยังไม่มีสมาชิกในกระดาน';
+$string['nothingnew'] = 'ยังไม่มีอะไรใหม่สำหรับ $a';
 $string['notingroup'] = 'ขออภัยค่ะคุณต้องเป็นสมาชิกในกลุ่มนี้ก่อนจึงจะเข้าไปในกระดานเสวนานี้ได้';
 $string['notrackforum'] = 'อย่าทำเครื่องหมายในข้อความที่ยังไม่ได้อ่าน';
 $string['nownotsubscribed'] = '$a->name ไม่รับสำเนาจาก \'$a->forum\' ทางอีเมล';
@@ -112,6 +116,8 @@ $string['oldertopics'] = 'หัวข้อเก่า';
 $string['openmode0'] = 'ตั้งกระทู้ไม่ได้ ตอบไม่ได้';
 $string['openmode1'] = 'ตั้งกระทู้ไม่ได้ ตอบได้';
 $string['openmode2'] = 'ตั้งกระทู้ได้ ตอบได้';
+$string['overviewnumpostssince'] = '$a โพสต์หลังจากเข้าสู่ระบบครั้งล่าสุด';
+$string['overviewnumunread'] = '$a  โพสต์ยังไม่ได้อ่าน';
 $string['parent'] = 'ความเห็นก่อนหน้า';
 $string['parentofthispost'] = 'โพสต์ที่คุณเขียนตอบ';
 $string['postadded'] = 'เพิ่มโพสต์ของคุณแล้ว<P>คุณมีเวลา $a หากต้องการแก้ไข';
@@ -181,6 +187,7 @@ $string['subscribestart'] = 'ต้องสำเนาโพสต์ในกระทู้นี้ทางอีเมล';
 $string['subscribestop'] = 'ไม่ต้องการสำเนาโพสต์ทางอีเมล';
 $string['subscription'] = 'การเป็นสมาชิก';
 $string['subscriptions'] = 'การเป็นสมาชิก';
+$string['timestartenderror'] = 'วันสิ้นสุดต้องไม่สามารถมาก่อนวันเริ่มต้นได้';
 $string['trackforum'] = 'ติดตามการอ่านข้อความ';
 $string['tracking'] = 'ติดตาม';
 $string['trackingoff'] = 'ปิด';
@@ -188,8 +195,8 @@ $string['trackingon'] = 'เปิด';
 $string['trackingoptional'] = 'ตัวเลือก';
 $string['trackingtype'] = 'อ่านการติดตามการอ่านข้อความของกระดานนี้หรือไม่';
 $string['unread'] = 'ยังไม่ได้อ่าน';
-$string['unreadposts'] = 'กระทู้ที่ยังไม่ได้อ่าน';
-$string['unreadpostsnumber'] = '$a  กระทู้ที่ยังไม่ได้อ่าน';
+$string['unreadposts'] = 'โพสต์ที่ยังไม่ได้อ่าน';
+$string['unreadpostsnumber'] = '$a  โพสต์ที่ยังไม่ได้อ่าน';
 $string['unreadpostsone'] = 'ยังไม่ได้อ่าน 1 ความเห็น';
 $string['unsubscribe'] = 'ต้องการออกจากการเป็นสมาชิกกระดาน';
 $string['unsubscribed'] = 'ไม่ได้เป็นสมาชิก';

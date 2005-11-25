@@ -1,9 +1,11 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.6 development (2005072200)
+      // lesson.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['accesscontrol'] = 'ควบคุมการเข้าใข้';
 $string['actionaftercorrectanswer'] = 'เมื่อตอบคำถามถูกให้';
+$string['activitylink'] = 'ลิงก์ไปยังกิจกรรม';
+$string['activitylinkname'] = 'ไปยัง  $a';
 $string['addabranchtable'] = 'เพิ่มสารบาญ';
 $string['addanendofbranch'] = 'เพิ่มหน้าจบหัวข้อ';
 $string['addaquestionpage'] = 'เพิ่มหน้าคำถาม';
@@ -14,6 +16,7 @@ $string['addedaquestionpage'] = 'เพิ่มหน้าคำถามแล้ว';
 $string['addedcluster'] = 'เพิ่มบทใหม่แล้ว';
 $string['addedendofcluster'] = 'เพิ่มหน้าจบบทแล้ว';
 $string['addendofcluster'] = 'เพิ่มหน้าจบของบท';
+$string['anchortitle'] = 'เริ่มเนื้อหาหลัก';
 $string['and'] = 'และ';
 $string['answer'] = 'ตัวเลือกที่';
 $string['answeredcorrectly'] = 'ตอบได้ถูกต้อง';
@@ -64,6 +67,7 @@ $string['didnotanswerquestion'] = 'ยังไม่ได้ตอบคำถามนี้';
 $string['didnotreceivecredit'] = 'ไม่ได้เครดิต';
 $string['displayhighscores'] = 'แสดงคะแนนสูงสุด';
 $string['displayinleftmenu'] = 'แสดงในเมนูซ้ายหรือไม่';
+$string['displayleftif'] = 'และแสดงเฉพาะกรณีที่  $a ได้คะแนนมากกว่า ';
 $string['displayleftmenu'] = 'แสดงเมนูซ้าย';
 $string['displayofgrade'] = 'แสดงคะแนน (สำหรับนักเรียน)';
 $string['displayreview'] = 'แสดงปุ่มแสดงความเห็น';
@@ -94,7 +98,7 @@ $string['flowcontrol'] = 'ควบคุมการใช้งานบทเรียนสำเร็จรูป';
 $string['general'] = 'ทั่วไป';
 $string['gobacktolesson'] = 'กลับไปยังบทเรียนสำเร็จรูป';
 $string['grade'] = 'คะแนน';
-$string['gradebetterthan'] = 'คะแนนดีกว่า(&#37;)';
+$string['gradebetterthan'] = 'คะแนนดีกว่า(%%)';
 $string['gradebetterthanerror'] = 'ได้คะแนนดีกว่า $a เปอร์เซ็นต์';
 $string['gradeessay'] = 'ให้คะแนนคำถามความเรียง';
 $string['gradeis'] = 'คะแนนที่ได้คือ $a ';
@@ -130,8 +134,11 @@ $string['maximumnumberofanswersbranches'] = 'จำนวนคำตอบ/ทางเลือกสูงสุด';
 $string['maximumnumberofattempts'] = 'จำนวนครั้งที่ตอบสูงสุด';
 $string['maxtime'] = 'เวลาที่ใช้(นาที)';
 $string['maxtimewarning'] = 'คุณเหลือเวลา $a นาทีในการทำบทเรียน';
+$string['mediaclose'] = 'แสดงปุ่มปิด';
 $string['mediafile'] = 'ไฟล์มีเดีย';
 $string['mediafilepopup'] = 'คลิกที่นี่เมื่อดูไฟล์มีเดีย';
+$string['mediaheight'] = 'ความสูงของหน้าต่าง';
+$string['mediawidth'] = 'ความกว้าง';
 $string['minimumnumberofquestions'] = 'จำนวนคำถามต่ำสุด';
 $string['modattempts'] = 'อนุญาตให้นักเรียนแสดงความคิดเห็น';
 $string['modattemptsnoteacher'] = 'นักเรียนสามารถให้ความเห็นเฉพาะงานสำหรับนักเรียน';
@@ -187,6 +194,8 @@ $string['pointsearned'] = 'คะแนนที่ได้';
 $string['postsuccess'] = 'โพสต์สำเร็จแล้ว';
 $string['practice'] = 'ทดลองทำบทเรียนสำเร็จรูป';
 $string['previouspage'] = 'หน้าก่อน';
+$string['progressbar'] = 'แถบแสดงความคืบหน้า';
+$string['progressbarteacherwarning'] = 'แถบแสดงความคืบหน้าไม่แสดงสำหรับ  $a';
 $string['question'] = 'คำถาม';
 $string['questionoption'] = 'เช็คที่นี่สำหรับคำถามหลายคำตอบ/ ต้องการให้ระบบแยกตัวพิมพ์ใหญ่เล็กเป็นคนละตัว';
 $string['questiontype'] = 'ประเภทของคำถาม';
@@ -213,6 +222,7 @@ $string['secondpluswrong'] = 'ยังไม่ถูกต้อง ต้องการทำอีกครั้งหรือเปล่าคะ';
 $string['showanunansweredpage'] = 'แสดงหน้าที่ยังไม่ได้ตอบ';
 $string['showanunseenpage'] = 'แสดงหน้าที่ยังไม่ได้เข้าไปศึกษา';
 $string['singleanswer'] = 'คำตอบเดียว';
+$string['skip'] = 'ข้าม navigation';
 $string['slideshow'] = 'สไลด์โชว์';
 $string['slideshowbgcolor'] = 'สีของสไลด์โชว์';
 $string['slideshowheight'] = 'ความสูงของสไลด์';
