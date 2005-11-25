@@ -148,6 +148,7 @@
 
 /// Calculate data ready to create the editing interface
 
+    $strmemberincourse = get_string('memberincourse');
     $strgroupnonmembers = get_string('groupnonmembers');
     $strgroupmembersselected = get_string('groupmembersselected');
     $strgroupremovemembers = get_string('groupremovemembers');

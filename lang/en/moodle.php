@@ -741,6 +741,7 @@ $string['maximumgrade'] = 'Maximum grade';
 $string['maximumshort'] = 'Max';
 $string['maximumupload'] = 'Maximum upload size';
 $string['maxsize'] = 'Max size: $a';
+$string['memberincourse'] = 'People in the course';
 $string['messagebody'] = 'Message body';
 $string['metaassigncourses'] = 'Assign courses';
 $string['metaalreadycourses'] = 'Courses already assigned';
