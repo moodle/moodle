@@ -1,7 +1,3 @@
-<<<<<<< moodle.php
-<?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.6 development (2005101200)
-=======
 <?PHP // $Id$ 
       // moodle.php - created with Moodle 1.6 development (2005101200)
 
