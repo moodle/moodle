@@ -89,6 +89,17 @@
         } else if ($post->edit) {           // Updating a post
             $post->id = $post->edit;
             $message = '';
+            
+            //fix for bug #4314
+            if (!$realpost = get_record('forum_posts','id',$post->id)){
+                $realpost = new object;
+                $realpost->userid = -1;
+            }
+            
+            if ($realpost->userid <> $USER->id && !isadmin()){
+                error ("you can not update this post");
+            }
+            
             if (forum_update_post($post,$message)) {
 
                 add_to_log($course->id, "forum", "update post",
