@@ -95,6 +95,17 @@
         } else if ($post->edit) {           // Updating a post
             $post->id = $post->edit;
             $message = '';
+
+            //fix for bug #4314
+            if (!$realpost = get_record('forum_posts','id',$post->id)){
+                $realpost = new object;
+                $realpost->userid = -1;
+            }
+
+            if ($realpost->userid <> $USER->id && !isadmin()){
+                error ("you can not update this post");
+            }
+
             if (get_field('forum', 'type', 'id', $forum) == 'news' && !$post->parent) {
                 $updatediscussion->id = $post->discussion;
                 if (empty($post->timestartdisabled)) {
