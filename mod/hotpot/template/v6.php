@@ -671,13 +671,19 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
 	}
 
 	function get_jmatch_items(&$l_items, &$r_items) {
+		$tags = 'data,matching-exercise,pair';
 		$i = 0;
-		while(
-			($l_item = $this->parent->xml_value('data,matching-exercise,pair',"[$i]['#']['left-item'][0]['#']")) &&
-			($r_item = $this->parent->xml_value('data,matching-exercise,pair',"[$i]['#']['right-item'][0]['#']"))
-		) {
-			$l_items[] = $l_item;
-			$r_items[] = $r_item;
+		while($item = $this->parent->xml_value($tags,"[$i]['#']['left-item'][0]['#']")) {
+			if (!empty($item['text'][0]['#'])) {
+				$l_items[] = $item;
+			}
+			$i++;
+		}
+		$i = 0;
+		while($item = $this->parent->xml_value($tags,"[$i]['#']['right-item'][0]['#']")) {
+			if (!empty($item['text'][0]['#'])) {
+				$r_items[] = $item;
+			}
 			$i++;
 		}
 	}
