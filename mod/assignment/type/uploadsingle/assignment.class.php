@@ -64,7 +64,7 @@ class assignment_uploadsingle extends assignment_base {
             }
         }
 
-        if ($this->isopen() && (!$filecount || $this->assignment->resubmit)) {
+        if ($this->isopen() && (!$filecount || $this->assignment->resubmit || !$submission->timemarked)) {
             $this->view_upload_form();
         }
 
@@ -100,8 +100,8 @@ class assignment_uploadsingle extends assignment_base {
         $this->view_header(get_string('upload'));
 
         $filecount = $this->count_user_files($USER->id);
-
-        if ($this->isopen() && (!$filecount || $this->assignment->resubmit)) {
+        $submission = $this->get_submission($USER->id);
+        if ($this->isopen() && (!$filecount || $this->assignment->resubmit || !$submission->timemarked)) {
             if ($submission = $this->get_submission($USER->id)) {
                 //TODO: change later to ">= 0", to prevent resubmission when graded 0
                 if (($submission->grade > 0) and !$this->assignment->resubmit) {
