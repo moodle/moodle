@@ -17,9 +17,8 @@
     if (!$forcepassword) {  // Don't redirect if they just got sent here
         require_login($id);
     }
-    
-    if ($frm = data_submitted()) {
 
+    if ($frm = data_submitted()) {
         validate_form($frm, $err);
 
         check_for_restricted_user($frm->username);
@@ -147,9 +146,18 @@ function validate_form($frm, &$err) {
         if (!isadmin() and empty($frm->password)){
             $err->password = get_string('missingpassword');
         } else {  
-            //require non adminusers to give valid password
-            if (!isadmin() && !authenticate_user_login($frm->username, $frm->password)){
-                $err->password = get_string('wrongpassword');
+            if (!isadmin()) {
+                //require non adminusers to give valid password
+                if(!authenticate_user_login($frm->username, $frm->password)) {
+                    $err->password = get_string('wrongpassword');
+                }
+            }
+            else {
+                // don't allow anyone to change the primary admin's password
+                $mainadmin = get_admin();
+                if($frm->username == $mainadmin->username) {
+                    $err->password = get_string('adminprimarynoedit');
+                }
             }
         }
     }
