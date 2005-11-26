@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5.2 (2005060220)
+      // moodle.php - created with Moodle 1.5.3+ (2005060230)
 
 
 $string['action'] = 'Acción';
@@ -206,7 +206,7 @@ $string['costdefault'] = 'Costo por defecto';
 $string['counteditems'] = '$a->count $a->items';
 $string['country'] = 'País';
 $string['course'] = 'Curso';
-$string['courseapprovedemail'] = 'El curso que ha solicitado, $a->name, ha sido aprobado y usted figura como $a->teacher. Para acceder al nuevo curso, visite $a->url';
+$string['courseapprovedemail'] = 'El curso que ha solicitado, $a->name, y usted ha sido nombrado $a->teacher. Para acceder a su nuevo curso, vaya a $a->url';
 $string['courseapprovedfailed'] = '¡No se ha podido guardar su curso como aprobado!';
 $string['courseapprovedsubject'] = '¡Su curso ha sido aprobado!';
 $string['courseavailable'] = 'Este curso está disponible para los estudiantes';
@@ -219,23 +219,23 @@ $string['coursefiles'] = 'Archivos del curso';
 $string['courseformats'] = 'Formatos de curso';
 $string['coursegrades'] = 'Calificaciones del curso';
 $string['coursehidden'] = 'Este curso no es accesible de momento a los estudiantes';
-$string['courseimportnotaught'] = 'No existen cursos de los que pueda importar (no tiene permiso de edición en ningún otro curso).';
+$string['courseimportnotaught'] = 'No parece tener permiso de edición en otros cursos (no hay cursos de los que pueda importar).';
 $string['courseinfo'] = 'Información del curso';
 $string['coursemessage'] = 'Mensaje a usuarios de curso';
 $string['coursenotaccessible'] = 'Este curso no permite acceso público';
 $string['coursereject'] = 'Rechazar solicitud de curso';
-$string['courserejected'] = 'El curso ha sido rechazado y así se ha comunicado al solicitante.';
-$string['courserejectemail'] = 'Lo sentimos, pero el curso solicitado ha sido rechazado por la siguiente razón:
+$string['courserejected'] = 'El curso ha sido rechazado y así se ha notificado al solicitante.';
+$string['courserejectemail'] = 'Lo sentimos, el curso solicitado ha sido rechazado por la siguiente razón:
 
 $a';
-$string['courserejectreason'] = 'Escriba las razones para rechazar este curso<br />(se enviarán por correo electrónico al solicitante)';
+$string['courserejectreason'] = 'Escriba sus razones para rechazar este curso<br />(serán enviadas al solicitante)';
 $string['courserejectsubject'] = 'Su curso ha sido rechazado';
 $string['courserequest'] = 'Solicitud de curso';
-$string['courserequestdisabled'] = 'Lo sentimos, pero el administrador ha desactivado la solicitud de cursos';
-$string['courserequestfailed'] = 'Por alguna razón su solicitud de curso no ha sido guardada';
-$string['courserequestintro'] = 'Utilice este formulario para solicitar que se crée un curso para usted.<br />Proporcione toda la información que le sea posible<br />a fin de que el administrador entienda sus razones para solicitar el curso.';
+$string['courserequestdisabled'] = 'Lo sentimos, la solicitud de cursos ha sido deshabilitada por el administrador';
+$string['courserequestfailed'] = 'Por alguna razón desconocida, su solicitud de curso no ha podido guardarse';
+$string['courserequestintro'] = 'Utilice este formulario para solcitar la creación de un curso.<br />Suministre toda la información posible para facilitar<br />a los administradores la comprensión de las razones por las que solicita el curso.';
 $string['courserequestreason'] = 'Razones para solicitar el curso';
-$string['courserequestsuccess'] = 'Se ha guardado correctamente su solicitud de curso. En unos días recibirá el resultado por correo electrónico.';
+$string['courserequestsuccess'] = 'La solicitud de curso se ha guardado con éxito. Dentro de unos días se le notificará el resultado por correo electrónico';
 $string['courserestore'] = 'Restaurar curso';
 $string['courses'] = 'Cursos';
 $string['coursescategory'] = 'Cursos de la misma categoría';
@@ -327,7 +327,7 @@ $string['donotask'] = 'No preguntar';
 $string['down'] = 'Abajo';
 $string['downloadexcel'] = 'Descargar en formato Excel';
 $string['downloadtext'] = 'Descargar en formato de texto';
-$string['doyouagree'] = '¿Ha leído y comprendido estas condiciones?';
+$string['doyouagree'] = '¿Ha leído y comprendido los términos y condiciones?';
 $string['duplicate'] = 'Duplicar';
 $string['duplicatinga'] = 'Duplicando: $a';
 $string['duplicatingain'] = 'Duplicando $a->what en $a->in';
@@ -430,10 +430,10 @@ $string['enable'] = 'Habilitar';
 $string['encryptedcode'] = 'Código encriptado';
 $string['enroldate'] = 'Rango de fechas';
 $string['enrolenddate'] = 'Fecha límite';
-$string['enrolenddaterror'] = 'La fecha límite de matriculación no puede ser anterior a la fecha de inicio';
+$string['enrolenddaterror'] = 'La fecha final de matriculación no puede ser anterior a la fecha inicial';
 $string['enrollable'] = 'Curso abierto';
-$string['enrolledincourse'] = 'Inscritos en el curso ';
-$string['enrolledincoursenot'] = 'No inscritos en el curso ';
+$string['enrolledincourse'] = 'Inscritos en el curso \"$a\"';
+$string['enrolledincoursenot'] = 'No inscritos en el curso \"$a\"';
 $string['enrollfirst'] = 'Debe matricularse en uno de los cursos antes de poder acceder a las actividades del sitio';
 $string['enrolme'] = 'Matricularme en este curso';
 $string['enrolmentconfirmation'] = 'Está a punto de inscribirse como alumno de este curso <br />¿Está seguro de que desea hacerlo?';
@@ -469,22 +469,22 @@ $string['existingcreators'] = 'Creadores existentes';
 $string['existingstudents'] = 'Estudiantes inscritos';
 $string['existingteachers'] = 'Profesores existentes';
 $string['expirynotify'] = 'Notificación de fecha límite de matriculación';
-$string['expirynotifyemail'] = 'Los siguientes estudiantes quedarán desmatriculados en este curso después de exactamente $a->threshold días:
+$string['expirynotifyemail'] = 'La matrícula en este curso de los siguientes estudiantes expira exactamente después de $a->threshold días:
 
 $a->current
 
-Los siguientes estudiantes quedarán desmatriculados en este curso en menos de $a->threshold días:
+La matrícula en este curso de los siguientes estudiantes expira en menos de $a->threshold días:
 
 $a->past
 
-Puede ir a la siguiente página para ampliar su período de matriculación:
+Para ampliar el período de matrícula, puede ir a esta página:
 $a->extendurl';
 $string['expirynotifystudents'] = 'Notificar a los estudiantes';
-$string['expirynotifystudentsemail'] = 'Estimado estudiante:
+$string['expirynotifystudentsemail'] = 'Estimado alumno:
 
-Esta es una notificación de que su matriculación en el curso $a->course termina en $a->threshold días.
+Le informo de que su matrícula en el curso $a->course expira en $a->threshold días.
 
-Si tiene dudas, contacte por favor con su tutor.';
+Por favor, contacte con su tutor para más información.';
 $string['expirythreshold'] = 'Umbral';
 $string['explanation'] = 'Explicación';
 $string['extendenrol'] = 'Ampliar matriculación';
@@ -513,7 +513,7 @@ $string['forcepasswordchangenotice'] = 'Para continuar, deberá cambiar su contra
 $string['forcetheme'] = 'Forzar tema';
 $string['forgotaccount'] = '¿Ha extraviado la contraseña?';
 $string['forgotten'] = '¿Olvidó su nombre de usuario o contraseña?';
-$string['forgottenduplicate'] = 'La recuperación automática de la contraseña no puede completarse puesto que la dirección de su correo aparece en la base de datos más de una vez. Por favor, contacte con su administrador <a href=\"mailto:$a->email\">$a->firstname $a->lastname</a> .';
+$string['forgottenduplicate'] = 'La recuperación automática de la contraseña no puede completarse, dado que su dirección de correo electrónico aparece más de una vez en la base de datos. Por favor, contacte con su administrador <a href=\"mailto:$a->email\">$a->firstname $a->lastname</a>';
 $string['format'] = 'Formato';
 $string['formathtml'] = 'Formato HTML';
 $string['formatlams'] = 'Formato de curso LAMS';
@@ -676,7 +676,7 @@ $string['list'] = 'Lista';
 $string['listfiles'] = 'Lista de archivos en $a';
 $string['listofallpeople'] = 'Lista total de personas';
 $string['livelogs'] = 'Registros en vivo';
-$string['locale'] = 'es';
+$string['locale'] = 'es_ES';
 $string['location'] = 'Ubicación';
 $string['loggedinas'] = 'Usted está en el sistema como $a';
 $string['loggedinasguest'] = 'En este momento está usando el acceso para invitados';
@@ -689,7 +689,7 @@ $string['loginguest'] = 'Entrar como invitado';
 $string['loginsite'] = 'Entrar al sitio';
 $string['loginsteps'] = 'Hola. Para acceder al sistema tómese un minuto para
 crear una cuenta.
-Cada curso puede disponer de una \"contraseña\"
+Cada curso puede disponer de una \"clave de acceso\"
 que sólo tendrá que usar la primera vez.
 Estos son los pasos:
 <ol>
@@ -735,9 +735,10 @@ $string['maximumgrade'] = 'Calificación máxima';
 $string['maximumshort'] = 'Máx.';
 $string['maximumupload'] = 'Tamaño máximo para archivos cargados por usuarios';
 $string['maxsize'] = 'Tamaño máximo: $a';
+$string['memberincourse'] = 'Personas en el curso';
 $string['messagebody'] = 'Cuerpo del mensaje';
-$string['messagedselectedusers'] = 'Se ha enviado el mensaje a los usuarios seleccionados y se ha reajustado la lista de receptores.';
-$string['messagedselectedusersfailed'] = 'Algo ha fallado al enviar el mensaje a los usuarios seleccionados. Algunos pueden haber recibido el mensaje.';
+$string['messagedselectedusers'] = 'Se ha enviado un mensaje a los usuarios seleccionados y se ha reajustado la lista de receptores.';
+$string['messagedselectedusersfailed'] = 'Algo ha ido mal al enviar mensajes a los usuarios seleccionados. Algunos pueden haber recibido el mensaje.';
 $string['messageselect'] = 'Seleccionar este usuario como receptor de mensaje';
 $string['messageselectadd'] = 'Agregar/enviar mensaje';
 $string['metaaddcourse'] = 'Añadir este curso';
@@ -814,7 +815,7 @@ $string['new'] = 'Nuevo';
 $string['newaccount'] = 'Nueva cuenta';
 $string['newcourse'] = 'Nuevo curso';
 $string['newpassword'] = 'Nueva contraseña';
-$string['newpasswordfromlost'] = '<strong>AVISO:</strong> Su <strong>contraseña actual</strong> se le ha mandado en el <strong>segundo</strong> de los dos correos que le hemos enviado como parte del proceso de recuperación de la contraseña perdida. Asegúrese de que ha recibido la nueva contraseña antes de continuar con esta pantalla.';
+$string['newpasswordfromlost'] = '<strong>AVISO:</strong> Su<strong>Contraseña actual</strong> ha sido enviada en el <strong>segundo</strong> de los dos correos electrónicos enviados como parte del proceso de recuperación de la contraseña perdida. Asegúrese de que ha recibido la nueva contraseña antes de continuar con esta pantalla.';
 $string['newpasswordtext'] = 'Hola, $a->firstname.
 
 La contraseña de su cuenta en \'$a->sitename\' se ha
@@ -871,7 +872,7 @@ $string['noreplyname'] = 'No contestar a este correo';
 $string['noresults'] = 'No hay resultados';
 $string['normal'] = 'Normal';
 $string['normalfilter'] = 'Búsqueda normal';
-$string['nostatstodisplay'] = 'Lo sentimos, no hay datos disponibles para mostrar. Si sólo ha activado las estadísticas y ha decidido que la primera ejecución sea en este momento, quizás deba esperar una semana antes de que haya datos suficientes para mostrar.';
+$string['nostatstodisplay'] = 'Lo sentimos, no hay datos disponibles que mostrar.';
 $string['nostudentsfound'] = 'No se encuentra $a';
 $string['nostudentsingroup'] = 'Aún no hay estudiantes en este grupo';
 $string['nostudentsyet'] = 'Aún no se ha matriculado ningún alumno en este curso';
@@ -923,10 +924,10 @@ $string['participationratio'] = 'Ratio de participación';
 $string['password'] = 'Contraseña';
 $string['passwordchanged'] = 'La contraseña ha cambiado';
 $string['passwordconfirmchange'] = 'Confirmar cambio de contraseña';
-$string['passwordextlink'] = 'El siguiente enlace se ha proporcionado para permitirle recuperar su contraseña perdida. Lo desconectará de Moodle.';
+$string['passwordextlink'] = 'Este enlace sirve para recuperar su contraseña perdida y requiere salir de Moodle.';
 $string['passwordforgotten'] = 'Contraseña olvidada';
-$string['passwordforgotteninstructions'] = 'Deberemos encontrar primero sus detalles en la base de datos de ususarios. Por favor, escriba <strong>bien</strong> su nombre de usuario, <strong>bien</strong> su dirección email en la casilla apropiada. No es preciso introducir ambos.';
-$string['passwordnohelp'] = 'No se dispone de ayuda para encontrar su contraseña perdida. Por favor, contacte con su administrador Moodle.';
+$string['passwordforgotteninstructions'] = 'Sus detalles deben encontrarse primero en la base de datos del usuario. Por favor, escriba <strong>o bien</strong> su nombre de usuario o bien su dirección registrada de correo electrónico en el recuadro apropiado. No es necesario escribir ambos.';
+$string['passwordnohelp'] = 'No es posible encontrar su contraseña perdida. Por favor, póngase en contacto con el administrador de Moodle.';
 $string['passwordrecovery'] = 'Sí, ayúdeme a entrar';
 $string['passwordsdiffer'] = 'Las contraseñas son diferentes';
 $string['passwordsent'] = 'Se ha enviado la contraseña';
@@ -958,7 +959,7 @@ $string['preferredlanguage'] = 'Idioma preferido';
 $string['preferredtheme'] = 'Tema preferido';
 $string['preview'] = 'Vista previa';
 $string['previewhtml'] = 'Vista previa formato HTML';
-$string['previeworchoose'] = 'Vista previa o elección de un tema';
+$string['previeworchoose'] = 'Prever o elegir un tema';
 $string['previous'] = 'Anterior';
 $string['profile'] = 'Perfil';
 $string['publicdirectory'] = 'Directorio público';
@@ -1047,12 +1048,13 @@ $string['select'] = 'Seleccionar';
 $string['selectacountry'] = 'Seleccione su país';
 $string['selectall'] = 'Seleccionar todo';
 $string['selectednowmove'] = '$a archivos seleccionados. Ahora vaya al destino y pulse \'Colocar archivos aquí\'';
+$string['selectperiod'] = 'Seleccionar período';
 $string['senddetails'] = 'Enviar detalles por correo electrónico';
 $string['separateandconnected'] = 'Vías de conocimiento separadas y conectadas';
 $string['serverlocaltime'] = 'Hora local del servidor';
 $string['settings'] = 'Configuración';
 $string['shortname'] = 'Nombre corto';
-$string['shortnamecollisionwarning'] = '[*] = Este nombre corto ya está asignado a un curso y deberá modifarse hasta su aprobación';
+$string['shortnamecollisionwarning'] = '[*] = Este nombre corto ya está en uso por un curso, y necesita cambiarse hasta que se apruebe';
 $string['shortnametaken'] = 'Este nombre corto ya está en uso en otro curso ($a)';
 $string['shortsitename'] = 'Nombre corto para el sitio (una palabra)';
 $string['show'] = 'Mostrar';
@@ -1105,8 +1107,8 @@ $string['stats'] = 'Estadísticas';
 $string['statslogins'] = 'Accesos';
 $string['statsmodedetailed'] = 'Vista detallada (usuario)';
 $string['statsmodegeneral'] = 'Vista general';
-$string['statsnodata'] = 'No hay datos disponibles para esa combinación de curso y período de tiempo.';
-$string['statsnodatauser'] = 'No hay datos disponibles para esa combinación de curso, usuario y período de tiempo.';
+$string['statsnodata'] = 'No existen datos disponibles para esa combinación de curso y período de tiempo.';
+$string['statsnodatauser'] = 'No existen datos disponibles para esa combinación de curso, usuario y período de tiempo.';
 $string['statsreport1'] = 'Accesos';
 $string['statsreport10'] = 'Actividad del usuario';
 $string['statsreport11'] = 'Cursos más activos';
@@ -1244,7 +1246,7 @@ $string['uploadserverlimit'] = 'El archivo subido sobrepasa el límite de tamaño 
 $string['uploadthisfile'] = 'Subir este archivo';
 $string['uploadusers'] = 'Subir usuarios';
 $string['usedinnplaces'] = 'Usado en lugares $a';
-$string['usemessageform'] = 'o usar el formulario de más abajo para enviar un mensaje a los estudiantes seleccionados';
+$string['usemessageform'] = 'o utilice el formulario de más abajo para enviar un mensaje a los estudiantes seleccionados';
 $string['user'] = 'Usuario';
 $string['userconfirmed'] = 'Confirmado $a';
 $string['userdata'] = 'Datos de Usuario';
@@ -1253,13 +1255,14 @@ $string['userdescription'] = 'Descripción';
 $string['userfiles'] = 'Archivos del usuario';
 $string['userlist'] = 'Lista de usuarios';
 $string['username'] = 'Nombre de usuario';
-$string['usernameemailmatch'] = 'El nombre de usuario y la dirección email no se refieren al mismo usuario';
+$string['usernameemailmatch'] = 'El nombre de usuario y la dirección de correo electrónico no se refieren al mismo usuario';
 $string['usernameexists'] = 'Este nombre de usuario ya existe. Por favor, seleccione otro.';
 $string['usernamenotfound'] = 'No se ha encontrado el nombre de usuario en la base de datos';
 $string['usernotconfirmed'] = 'No se pudo confirmar $a';
 $string['userprofilefor'] = 'Información personal de $a';
 $string['users'] = 'Usuarios';
 $string['usersnew'] = 'Usuarios nuevos';
+$string['usersnoaccesssince'] = 'Mostrar usuarios que han estado inactivos durante más de';
 $string['userzones'] = 'Zonas de usuarios';
 $string['usethiscourse'] = 'Usar este curso';
 $string['usingexistingcourse'] = 'Usando un curso existente';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // install.php - created with Moodle 1.5.1 (2005060210)
+      // install.php - created with Moodle 1.5.3+ (2005060230)
 
 
 $string['admindirerror'] = 'El directorio especificado para admin es incorrecto';
@@ -7,7 +7,7 @@ $string['admindirname'] = 'Directorio Admin';
 $string['admindirsetting'] = '<p>Muy pocos servidores web usan /admin como URL especial para permitirle acceder a un panel de control o similar. Desgraciadamente, esto entra en conflicto con la ubicación estándar de las páginas de administración de Moodle Usted puede corregir esto renombrando el directorio admin en su instalación, y poniendo aquí ese nuevo nombre. Por ejemplo: <blockquote> moodleadmin</blockquote>.
 Así se corregirán los enlaces admin en Moodle.</p>';
 $string['caution'] = 'Precaución';
-$string['chooselanguage'] = 'Seleccione un idioma';
+$string['chooselanguage'] = 'Seleccionar idioma';
 $string['compatibilitysettings'] = 'Comprobando sus ajustes PHP...';
 $string['configfilenotwritten'] = 'El script instalador no ha podido crear automáticamente un archivo config.php con las especificaciones elegidas. Por favor, copie el siguiente código en un archivo llamado config.php y coloque ese archivo en el directorio raíz de Moodle.';
 $string['configfilewritten'] = 'config.php se ha creado con éxito';
@@ -64,6 +64,16 @@ $string['gdversionhelp'] = '<p>Su servidor parece no tener el GD instalado.</p>
 <p>Para agregar GD a PHP en entorno Unix, compile PHP usando el parámetro --with-gd.</p>
 
 <p>En un entorno Windows, puede editar php.ini y quitar los comentarios de la línea referida a libgd.dll.</p>';
+$string['globalsquotes'] = 'Manejo Inseguro de Ajustes Globales';
+$string['globalsquoteserror'] = 'Fije sus ajustes PHP: deshabilite register_globals y/o habilite magic_quotes_gpc';
+$string['globalsquoteshelp'] = '<p>No se recomienda la combinación simultánea de Magic Quotes GPC desactivado y Register Globals activado.</p>
+
+<p>El ajuste recomendado es <b>magic_quotes_gpc = On</b> and <b>register_globals = Off</b> en su php.ini</p>
+
+<p>Si no tiene acceso al php.ini, debería poder escribir la siguiente línea en un archivo denominado .htaccess dentro de su directorio Moodle:
+<blockquote>php_value magic_quotes_gpc On</blockquote>
+<blockquote>php_value register_globals Off</blockquote>
+</p>';
 $string['installation'] = 'Instalación';
 $string['magicquotesruntime'] = 'Magic Quotes Run Time';
 $string['magicquotesruntimeerror'] = 'Debe estar desactivado';

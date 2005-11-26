@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.5.2 (2005060220)
+      // lesson.php - created with Moodle 1.5.3+ (2005060230)
 
 
 $string['accesscontrol'] = 'Control de Acceso';
@@ -16,6 +16,7 @@ $string['addedaquestionpage'] = 'Añadida página de preguntas';
 $string['addedcluster'] = 'Añadido cluster';
 $string['addedendofcluster'] = 'Añadido final de cluster';
 $string['addendofcluster'] = 'Añadir un final de cluster';
+$string['anchortitle'] = 'Comienzo del contenido principal';
 $string['and'] = 'Y';
 $string['answer'] = 'Respuesta';
 $string['answeredcorrectly'] = 'respondidas correctamente.';
@@ -66,7 +67,7 @@ $string['didnotanswerquestion'] = 'No ha contestado a esta pregunta.';
 $string['didnotreceivecredit'] = 'No ha recibido crédito';
 $string['displayhighscores'] = 'Mostrar mejores puntuaciones';
 $string['displayinleftmenu'] = '¿Mostrar en menú de la izquierda?';
-$string['displayleftif'] = 'y mostrar sólo si $a tiene una calificación superior a:';
+$string['displayleftif'] = 'y mostrar sólo si $a tiene una calificación mayor que:';
 $string['displayleftmenu'] = 'Mostrar menú de la izquierda';
 $string['displayofgrade'] = 'Mostrar calificación (sólo para estudiantes)';
 $string['displayreview'] = 'Mostrar botón Revisar';
@@ -221,6 +222,7 @@ $string['secondpluswrong'] = 'No. ¿Desea probar de nuevo?';
 $string['showanunansweredpage'] = 'Mostrar una página no respondida';
 $string['showanunseenpage'] = 'Mostrar una página no vista';
 $string['singleanswer'] = 'Una sola respuesta';
+$string['skip'] = 'Pasar por alto la navegación';
 $string['slideshow'] = 'Pase de diapositivas';
 $string['slideshowbgcolor'] = 'Color de fondo del pase de diapositivas';
 $string['slideshowheight'] = 'Altura del pase de diapositivas';

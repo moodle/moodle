@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.5.2 (2005060220)
+      // quiz.php - created with Moodle 1.5.3+ (2005060230)
 
 
 $string['acceptederror'] = 'Margen de error';
@@ -183,7 +183,8 @@ $string['illegalformulasyntax'] = 'Sintaxis de fórmula ilegal que comienza con \
 $string['imagedisplay'] = 'Imagen a mostrar';
 $string['imagemissing'] = 'Imagen no disponible en la línea $a. El archivo no se tendrá en cuenta';
 $string['importmax10error'] = 'Hay un error en la pregunta. Usted no puede tener más de diez respuestas';
-$string['importmaxerror'] = 'Error: la pregunta tiene demasiadas respuestas.';
+$string['importmaxerror'] = 'Hay un error en la pregunta.
+Hay demasiadas respuestas.';
 $string['importminerror'] = 'Hay un error en la pregunta. No hay suficientes respuestas para este tipo de pregunta.';
 $string['importquestions'] = 'Importar preguntas de un archivo';
 $string['incorrect'] = 'Incorrecto';
@@ -276,7 +277,7 @@ $string['penaltyfactor'] = 'Factor de penalización';
 $string['penaltyscheme'] = 'Aplicar penalizaciones';
 $string['percentcorrect'] = 'Porcentaje correcto';
 $string['pleaseclose'] = 'Su petición ha sido procesada. Puede ahora cerrar la ventana';
-$string['popup'] = 'Mostrar el cuestionario en una ventana &quot;segura&quot;';
+$string['popup'] = 'Mostrar el cuestionario en una ventana \"segura\"';
 $string['popupnotice'] = 'Los estudiantes verán este cuestionario en una ventana segura';
 $string['preview'] = 'Vista previa';
 $string['previewquestion'] = 'Ver pregunta';

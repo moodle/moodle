@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.5.2 (2005060220)
+      // auth.php - created with Moodle 1.5.3+ (2005060230)
 
 
 $string['alternatelogin'] = 'Si introduce aquí una URL, se usará como página de acceso al sitio. La página debería contener un formulario cuya propiedad de acción está ajustada a <strong>\'$a\'</strong> y devuelve los campos <strong>nombre de usuario</strong> y <strong>contraseña</strong>.<br />Procure no introducir una URL incorrecta puesto que hacerlo supondrá su expulsión del sitio.<br />Deje el ajuste en blanco para utilizar la página de acceso por defecto.';
@@ -17,10 +17,6 @@ $string['auth_cas_text'] = 'Conexión segura';
 $string['auth_cas_version'] = 'Versión de CAS';
 $string['auth_casdescription'] = 'Este método utiliza un servidor CAS (Central Authentication Service) para autentificar a los usuarios en un contexto SSO (Single Sign On). Usted puede también usar una autenticación simple LDAP. Si el nombre de usuario y la contraseña son válidos de acuerdo con CAS, Moodle crea una entrada de nuevo usuario en su base de datos, tomando de LDAP los atributos del usuario si fuera preciso. En los siguientes accesos sólo se comprueban el nombre de usuario y la contraseña.';
 $string['auth_castitle'] = 'Usar un servidor CAS (SSO)';
-$string['auth_changepasswordhelp'] = 'Ayuda sobre cambio de contraseña';
-$string['auth_changepasswordhelp_expl'] = 'Mostrar ayuda sobre contraseñas perdidas a los usuarios que han perdido su contraseña $a. Esto puede mostrarse además o en lugar de <strong>URL Cambio de Contraseña</strong> o cambio de contraseña interno de Moodle.';
-$string['auth_changepasswordurl'] = 'URL Cambio de contraseña';
-$string['auth_changepasswordurl_expl'] = 'Especifique la URL a la que enviar a los usuarios que han perdido su contraseña $a. Seleccione la opción <strong>No</strong> en <strong>Usar página estándar de cambio de contraseña</strong>.';
 $string['auth_common_settings'] = 'Ajustes comunes';
 $string['auth_data_mapping'] = 'Mapeado de datos';
 $string['auth_dbdescription'] = 'Este método utiliza una tabla de una base de datos externa para comprobar si un determinado usuario y contraseña son válidos. Si la cuenta es nueva, la información de otros campos puede también ser copiada en Moodle.';
@@ -139,9 +135,6 @@ $string['locked'] = 'Bloqueado';
 $string['md5'] = 'Encriptación MD5';
 $string['passwordhandling'] = 'Gestión de campos con contraseña';
 $string['plaintext'] = 'Texto plano';
-$string['shib_no_attributes_error'] = 'Usted parece autentificado por Shibboleth, pero Moodle no recibió ningún atributo de usuario. Por favor, compruebe que su Proveedor de Identidad envíe los atributos necesarios ($a) al proveedor de servicios en el que Moodle se está ejecutando, o bien que informe al webmaster de dicho servidor.';
-$string['shib_not_all_attributes_error'] = 'Moodle necesita ciertos atributos de Shibboleth de los que no dispone en su caso. Los atributos son: $a<br />Por favor, contacte con el webmaster del servidor o con su Proveedor de Identidad.';
-$string['shib_not_set_up_error'] = 'La autentificación de Shibboleth no parece correcta. Por favor, consulte <a href=\"README.txt\">README</a> para informarse sobre el modo de configurar la autentificación Shibboleth.';
 $string['showguestlogin'] = 'Puede ocultar o mostrar el botón de entrada para invitados en la página de acceso.';
 $string['stdchangepassword'] = 'Utilizar Página de cambio de contraseña estándar';
 $string['stdchangepassword_expl'] = 'Si el sistema de autenticación externa permite cambios de contraseña en Moodle, seleccione Sí. Este ajuste pasa por alto \'Cambiar contraseña URL\'.';
