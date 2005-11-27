@@ -2284,17 +2284,20 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 		$tagclose = '(?(2)>|(?(3)&gt;|(?(4)&amp;#x003E;)))'; //  right angle bracket (to match left angle bracket)
 
 		$space = '\s+'; // at least one space
- 		$anychar = '(?:.*?)'; // any character
+ 		$anychar = '(?:[^>]*?)'; // any character
 
 		$quoteopen = '("|&quot;|&amp;quot;)'; // open quote
 		$quoteclose = '\\5'; //  close quote (to match open quote)
 
-		$url = '\S+?\.\S+?';
 		$replace = "hotpot_convert_relative_url('".$this->get_baseurl()."', '".$this->reference."', '\\1', '\\6', '\\7')";
 
-		$tags = array('script'=>'src', 'link'=>'href', 'a'=>'href','img'=>'src','param'=>'value');
+		$tags = array('script'=>'src', 'link'=>'href', 'a'=>'href','img'=>'src','param'=>'value', 'object'=>'data', 'embed'=>'src');
 		foreach ($tags as $tag=>$attribute) {
-
+			if ($tag=='param') {
+				$url = '\S+?\.\S+?'; // must include a filename and have no spaces
+			} else {
+				$url = '.*?';
+			}
 			$search = "%($tagopen$tag$space$anychar$attribute=$quoteopen)($url)($quoteclose$anychar$tagclose)%ise";
 			$str = preg_replace($search, $replace, $str);
 		}
@@ -2315,62 +2318,85 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 
 function hotpot_convert_relative_url($baseurl, $reference, $opentag, $url, $closetag) {
 
-	// try and parse the $url into $matches
+	// catch <PARAM name="FlashVars" value="TheSound=soundfile.mp3">
+	if (preg_match('|^'.'\w+=[^&]+'.'([&]\w+=[^&]+)*'.'$|', $url)) {
+		$query = $url;
+		$url = '';
+		$fragment = '';
+
+	// parse the $url into $matches
 	//	[1] path
 	//	[2] query string, if any
 	//	[3] anchor fragment, if any
-	if (preg_match('|^([^?]*)((?:\\?[^#]*)?)((?:#.*)?)$|', $url, $matches)) {
+	} else if (preg_match('|^'.'([^?]*)'.'((?:\\?[^#]*)?)'.'((?:#.*)?)'.'$|', $url, $matches)) {
 		$url = $matches[1];
 		$query = $matches[2];
 		$fragment = $matches[3];
+
+	// these appears to be no query or fragment in this url
 	} else {
 		$query = '';
 		$fragment = '';
 	}
 
-	$url = hotpot_convert_url($baseurl, $reference, $url);
+	if ($url) {
+		$url = hotpot_convert_url($baseurl, $reference, $url);
+	}
 
 	// try and parse the query string arguments into $matches
 	//	[1] names
 	//	[2] values
-	if ($query && preg_match_all('|([^=]+)=([^&]*)|', substr($query, 1), $matches)) {
+	if ($query && preg_match_all('|([^=]+)=([^&]*)|', substr($query, empty($url) ? 0 : 1), $matches)) {
 
 		$query = array();
 
 		// the values of the following arguments are considered to be URLs
-		$url_names = array('src');
+		$url_names = array('src','thesound'); // lowercase
 
 		// loop through the arguments in the query string
 		$i_max = count($matches[0]);
 		for ($i=0; $i<$i_max; $i++) {
-		
+
 			$name = $matches[1][$i];
 			$value = $matches[2][$i];
-
 			// convert $value if it is a URL
 			if (in_array(strtolower($name), $url_names)) {
 				$value = hotpot_convert_url($baseurl, $reference, $value);
+			} else {
 			}
 
 			$query[] = "$name=$value";
 		}
-
-		$query = '?'.implode('&', $query);
+		$query = (empty($url) ? '' : '?').implode('&', $query);
 	}
 
 	// remove the slashes that were added by the "e" modifier of preg_replace
-	$url = stripslashes("$opentag$url$query$fragment$closetag");
+	$url = stripslashes($opentag.$url.$query.$fragment.$closetag);
+	// N.B. 'e' does not appear to add slashes to single quotes, 
+	// so javascript backslashes may get messed up at this point
 
 	return $url;
 }
 
 function hotpot_convert_url($baseurl, $reference, $url) {
-	// exclude absolute urls
-	if (!preg_match('%^(http://|/)%i', $url)) {
+
+	// maintain a cache of converted urls
+	static $HOTPOT_RELATIVE_URLS = array();
+
+	// is this an absolute url? (or javascript pseudo url)
+	if (preg_match('%^(http://|/|javascript:)%i', $url)) {
+		// do nothing
+
+	// has this relative url already been converted?
+	} else if (isset($HOTPOT_RELATIVE_URLS[$url])) {
+		$url = $HOTPOT_RELATIVE_URLS[$url];
+
+	} else {
+		$relativeurl = $url;
 
 		// get the subdirectory, $dir, of the quiz $reference
 		$dir = dirname($reference);
-	
+
 		// allow for leading "./" and "../"
 		while (preg_match('|^(\.{1,2})/(.*)$|', $url, $matches)) {
 			if ($matches[1]=='..') {
@@ -2380,12 +2406,15 @@ function hotpot_convert_url($baseurl, $reference, $url) {
 		}
 
 		// add subdirectory, $dir, to $baseurl, if necessary
-		if ($dir && $dir!='.') {
+		if ($dir && $dir<>'.') {
 			$baseurl .= "$dir/";
 		}
 
 		// prefix $url with $baseurl
 		$url = "$baseurl$url";
+
+		// add url to cache
+		$HOTPOT_RELATIVE_URLS[$relativeurl] = $url;
 	}
 	return $url;
 }
