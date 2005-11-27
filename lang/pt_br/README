@@ -1,6 +1,12 @@
 Tradução para o português brasileiro
 coordenador: Paula de Waal
 
+ATENÇÃO:
+ESTE PACOTE DE LINGUAS MUITAS VEZES É MAIS ATUALIZADO DO QUE O PACOTE QUE SE ENCONTRA NO INSTALLER DE MOODLE
+SUBSTITUA OS ARQUIVOS CORRESPONDENTES ANTES DE COMEÇAR A INSTALAÇÃO OU DEPOIS E MANTENHA-SE INFORMADO SOBRE ATUALIZAÇÕES NO FORUM DA COMUNIDADE BRASILEIRA.
+ALGUMAS VEZES O ZIP PRODUZIDO AUTOMATICAMENTE PELO CVS NÃO INCLUI AS MUDANÇAS MAIS RECENTES. VERIFIQUE SE NA PAGINA PRINCIPAL DO FORUM BRASILEIRO EXISTEM PACOTES OFICIAIS COM DATAS MAIS RECENTES
+
+
 Para participar do projeto de tradução ou indicar erros por favor contatar paula@dynamiclab.com ou participar do fórum Moodle Brasileiro em Moodle.org:
 http://moodle.org/course/view.php?id=35
 
@@ -8,9 +14,17 @@ Estamos precisando de muuuita ajuda para a tradução da documentação técnica!
 
 Agradecemos a todos os moodlers brasileiros que estão sugerindo soluções para melhorar a tradução da interface nos fóruns da comunidade
 
+
+27/11/2005
+-------------------------------------
+Pacote oficial atualizado por Paula de Waal depois do lançamento da versão 1.5.2 de Moodle.
+Os arquivos PHP estão completos
+faltam alguns arquivos de ajuda, mas continuamos reunindo esforços
+
+
 20/08/2005
 -------------------------------------
-19 de agosto de 2005 -  Pacote oficial atualizado por Paula de Waal depois do lançamento da versão 1.5.2 de Moodle.
+Pacote oficial atualizado por Paula de Waal depois do lançamento da versão 1.5.2 de Moodle.
 O seguinte arquivo é provisório e incompleto: currencies.php
 Agradecemos a participação dos seguintes voluntários, que estão trabalhando para que a tradução da documentação de Moodle possa continuar a ser traduzidaÇ
 Ricardo Praciano, Edgar Amorim, Fabio Herculano, Rubens Serafim, Sadao
@@ -19,7 +33,7 @@ Ricardo Praciano, Edgar Amorim, Fabio Herculano, Rubens Serafim, Sadao
 20/06/2005
 -------------------------------------
 
-19 de junho de 2005 - Pacote oficial atualizado por Paula de Waal depois da revisão de conformidade com xhtml feita por Koen Roegemas 
+Pacote oficial atualizado por Paula de Waal depois da revisão de conformidade com xhtml feita por Koen Roegemas 
 Os seguintes arquivos foram comparados aos arquivos da UNB (universidade de Brasilia) 
 e incluiram algumas das modificações sugeridas: editor.php, resource.php, lesson.php, forum.php, moodle.php
 
