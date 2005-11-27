@@ -1,0 +1,19 @@
+<p align="center"><b> Modo Adaptativo</b></p>
+
+<p>Se você escolher SIM para esta opção então serão permitidas ao estudante respostas múltiplas para uma pergunta até mesmo dentro da mesma tentativa do questionário. 
+Assim, por exemplo, se a resposta do estudante estiver marcada como incorreta será permitido tentar novamente imediatamente. Contudo uma penalidade geralmente será subtraída da pontuação do estudante
+para cada tentativa errada (o valor da penalidade é determinado pelo fator de penalidade configurado na próxima opção).</p>
+
+<p>Este modo também permite perguntas adaptativas que podem se alterar de acordo com a resposta do estudante. Em seguida veja como a especificação IMS QTI define perguntas adaptativas (itens):</p>
+
+<blockquote>
+Um item adaptativo é um item que se adapta o em sua aparência, em sua pontuação (Processamento da Resposta) ou em ambos de acordo com cada tentativa do candidato.
+Por exemplo, um item adaptativo pode iniciar disponibilizando ao candidato um campo para uma entrada de texto livre mas, recebendo uma resposta insatisfatória,
+apresentar uma interação de escolha simples e conceder pontua&ccedil;'ao inferior para a identificação subsequente da resposta correta. A adapta&ccedil;&atilde;o permite aos autores criar itens utilizados em situações formais que ajudam a guiar os candidatos a uma dada tarefa
+e também provêm um resultado que leva em consideração o caminho seguido.
+</blockquote>
+
+<p>No modo adaptativo um botão adicional <?php print_string('mark', 'quiz') ?> é mostrado para cada pergunta.
+Se o estudante clicar neste botão então a resposta a esta pergunta particular será submetida à pontuação e a nota obtida
+será mostrada na tela. Se a pergunta for uma pergunta adaptativa então será mostrado seu novo estado que leva em consideração
+ a resposta do estudante com a apresenta&ccedil;&atilde;o de um novo formato de pergunta. Nas perguntas adaptativas mais simples este novo estado pode representar simplesmente um testo de feedback que convida o estudante a fazer uma nova tentativa; em perguntas mais complicadas, o texto da pergunta e até mesmo os elementos de interação podem ser mudados.</p>

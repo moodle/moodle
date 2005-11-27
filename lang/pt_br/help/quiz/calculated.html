@@ -1,0 +1,78 @@
+<p align="center"><b>Questões de Cálculo</b></p>
+As questões de cálculo oferecem um modo de criar questões numéricas individuais através do uso de curingas que são substituídos com valores individuais quando o questionário é preenchido.
+<br />
+Abaixo segue uma vista de uma parte da página principal de edição com alguns exemplos de entradas:<br />
+
+<table><tbody>
+<tr valign="top">
+    <td align="right"><p><b>Questão:</b></p>
+    </td>
+    <td>
+        <textarea id="questiontext" name="questiontext" rows="5" cols="40" wrap="virtual">Quanto é {a} + {b} ?</textarea>
+</td>
+</tr>
+<tr valign="top">
+    <td align="right"><p><b>Imagem para mostrar na tela:</b></p></td>
+    <td>
+      <select name="image">
+        <option value="" selected="selected">Nenhuma</option>
+        <option value="grevture.gif">grevture.gif</option>
+      </select>
+</td>
+</tr>
+
+<tr valign="top">
+<td align="right"><p><b>F&oacute;rmula da Resposta Correta:</b></p></td>
+    <td>
+      <input align="left" type="text" id="formula0" name="answer[]" size="20" value="{a} + {b}">&nbsp;&nbsp;    
+      <input type="hidden" name="fraction[]" value="1.0">    </td>
+</tr>
+<tr valign="top">
+    <td align="right"><p><b>Tolerância:</b></p></td>
+    <td>
+    <input align="left" type="text" id="tolerance0&quot;" name="tolerance[]" size="15" value="0.01">±
+    </td>
+</tr>
+<tr valign="top">
+<td align="right"><p><b>Tipo de Tolerância:</b></p></td>
+    <td>
+    <select name="tolerancetype[]"><option value="1" selected="selected">Relativa</option><option value="2">Nominal</option><option value="3">Geométrica</option></select>
+    </td>
+</tr>
+<tr valign="top">
+<td align="right"><p><b>Val&ocirc;res Significativos:</b></p></td>
+    <td>
+    <select name="correctanswerlength[]"><option value="1">1</option><option value="2" selected="selected">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select>
+    </td>
+</tr>
+</tbody></table>
+
+<br />
+Na entrada do texto da pergunta e em "Fórmula da Resposta Correta" {a} e {b} podem ser visualizados. Estes e qualquer outro {nome} podem ser utilizados como um curinga que é substituído por algum valor quando o questionário é preenchido. Também, a resposta correta é calculada quando o questionário é submetido utilizando-se a expressão em "Fórmula da Resposta Correta", que é calculada como uma expresão numérica depois da substituição dos curingas. Os valores possíveis de curingas são configurados ou gerados na página posterior no "assistente de edição" para questões de cálculo...
+<br/>
+A fórmula exemplo utiliza o operador +. Outros operadores aceitos são -*/ e % onde % é o operador módulo. Também é possível utilizar algumas funções matemáticas no estilo PHP. Dentre elas existem 24 funções de argumentos simples:<br /><b>
+abs, acos, acosh, asin, asinh, atan, atanh, ceil, cos, cosh, deg2rad, exp, expm1, floor, log, log10, log1p, rad2deg, round, sin, sinh, sprt, tan, tanh
+</b><br />e duas funções de dois argumentos<br /><b>
+atan2, pow
+</b><br />
+e as funções <b>min</b> e <b>max</b> que podem ter dois ou mais argumentos. Também é possível utilizar a função <b>pi</b> que não tem argumento mas não se deve esquecer do uso dos parêntesis - o uso correto é <b>pi()</b>. Similarmente a outra função deve ter seu(s) argumento(s) dentro de parêntesis. Um possível uso é, por exemplo, <b>sin({a}) + cos({b}) * 2</b>. Não ser&aacute; problema utilizar funções dentro de outras como <b>cos(deg2rad({a} + 90))</b> etc.
+<br />
+Mais detalhes de como utilizar estas funções no estilo PHP podem ser encontrados na documentação <a target="phpmathdoc" href="http://www.php.net/manual/en/ref.math.php"> no website PHP</a>
+<br />
+<br />
+Como nas questões numéricas é possível permitir uma margem dentro da qual todas as respostas são aceitas como corretas. O campo "Tolerância" é utilizado para isto. Contudo, existem diferentes tipos de tolerâncias. Estes são <b>Relativa, Nominal e Geométrica</b>. Se nós dissermos que a resposta correta dentro do tempo do questionário é calculada em 200 e a tolerância for configurada em 0,5 então os diferentes tipos de tolerância ficam da seguinte forma:
+<br />
+<br /><b>Relativa:</b> Um intervalo de tolerância é calculado multiplicando-se a resposta correta por 0,5, isto é, neste caso conseguiremos 100 e assim para esta tolerância a resposta correta deve estar entre 100 e 300.  (200 ± 100)<br />
+Isto é útil se a magnitude da resposta correta pode diferenciar largamente entre diferentes valores curingas.
+<br />
+<br /><b>Nominal:</b>  Este é o tipo de tolerância mais simples mas não muito poderoso. A resposta correta deve estar entre 199,5 e 200,5 (200 ± 0,5)<br />
+Este tipo de tolerância pode ser útil se as diferenças entre diferentes respostas corretas forem pequenas.
+<br /><br /><b>Geométrica:</b> O limite superior do intervalo de tolerância é calculado com 200 + 0,5*200 e é o mesmo para o caso de tolerância relativa. O limite inferior é calculado como 200/(1 + 0,5). A resposta correta deve estar então entre 133,33 e 300.<br />
+Isto é útil para cálculos complexos que devem ter grandes tolerâncias onde as tolerâncias relativas de 1 ou mais seriam utilizadas para o limite superior mas claramente não aceitáveis para o limite inferior porque o zero seria transformado na resposta correta para todos os casos.
+<br />
+<br />
+O campo <b>Val&ocirc;res Significativos</b> diz respeito a como a resposta correta deve ser apresentada na revisão ou nos relatórios. Exemplos: se estiver configurado com 3 então a resposta correta 13,333 seria apresentada como 13,3; 1236 seria apresentado como 1240; 23 seria apresentado como 23,0 etc.
+<br />
+<br />
+O campo de feedback e os campos de unidades opcionais funcionam exatamente como nas questões numéricas.
+<br />
