@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // client.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005033100)
+      // block_rss_client.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['addfeed'] = 'Tilføj RSS service';
@@ -10,6 +10,7 @@ $string['clientchannellink'] = 'Kilde site...';
 $string['clientnumentries'] = 'Antallet af nyhedspunkter pr nyhedsservice';
 $string['clientshowchannellinklabel'] = 'Skal der vises et link til sitet der leverer nyhedsservices? (Note: Hvis RSS services ikke leverer noget link tilbage vil der ikke blive vist noget link)';
 $string['clientshowimagelabel'] = 'Vis nyhedskanalens ikon hvis den findes';
+$string['configblock'] = 'Konfigurer denne blok';
 $string['couldnotfindfeed'] = 'Kunne ikke finde services med id';
 $string['customtitlelabel'] = 'Brugerbestemt titel (lad feltet være blankt for at benyttet titlen fra RSS servicen)';
 $string['deletefeedconfirm'] = 'Er du sikker på at du vil slette denne nyhedsservice';
@@ -20,11 +21,13 @@ $string['editrssblock'] = 'Ret RSS overskrifts blok';
 $string['feed'] = 'Nyhedsservice';
 $string['feedadded'] = 'Nyhedsservice tilføjet';
 $string['feeddeleted'] = 'Nyhedsservice slettet';
-$string['feedupdated'] = 'Nyhedsservice opdateret';
 $string['feeds'] = 'Nyhedsservices';
 $string['feedsaddedit'] = 'Tilføj / Ret services';
+$string['feedsconfigurenewinstance'] = 'Tryk her for at konfigurere denne blok til at vise RSS services.';
 $string['feedstitle'] = 'Andre RSS services';
+$string['feedupdated'] = 'Nyhedsservice opdateret';
 $string['findmorefeeds'] = 'Find flere RSS services';
+$string['managefeeds'] = 'Kontroller alle mine RSS services';
 $string['nofeeds'] = 'Der er ikke defineret nogle RSS services for dette site';
 $string['pickfeed'] = 'Vælg en nyhedsservice';
 $string['remotenewsfeed'] = 'Andre nyhedsservices';
