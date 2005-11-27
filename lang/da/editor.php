@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005033100)
+      // editor.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['about'] = 'Om denne editor';
@@ -29,6 +29,7 @@ $string['createanchor'] = 'Lav anker';
 $string['createfolder'] = 'Lav mappe';
 $string['createlink'] = 'Indsæt weblink';
 $string['cut'] = 'Klip markeret tekst';
+$string['cutpastemozilla'] = 'Du kan desværre ikke benytte de almindelige genvejstaster til at kopiere tekst ind i denne online editor. Dette skyldes en sikkerhedsfunktion der der i nogle versioner af Mozilla og Firefox browsere.<br /><br />Der er tre måder du kan prøve at omgå det på:<br /> (1) Istedet for CTRL-v, benyt SHIFT-insert<br /> (2) Brug Edit->Paste menuen i browseren.<br /> (3) Ret konfigurationen i browseren ved at ret i user.js filen.<br /><br />Tryk på OK knappen nedenfor for mere hjælp, eller Cancel for at returnere til editoren.';
 $string['delete'] = 'Slet';
 $string['filebrowser'] = 'Fil-browser';
 $string['findwhat'] = 'Find';
