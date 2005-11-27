@@ -1,11 +1,16 @@
 <?PHP // $Id$ 
-// editor.php - created with Moodle 1.3 development (2004032800)
+      // editor.php - created with Moodle 1.5 + (2005060201)
+
+
 $string['about'] = '關於此編輯器';
 $string['absbottom'] = '正底部';
-$string['middle'] = '正中';
 $string['address'] = '地址';
+$string['alertnoselectedtext'] = '您必須先選擇文字';
 $string['alignment'] = '位置';
 $string['alternatetext'] = '提示文字';
+$string['anchorhelp'] = '此功能協助您建立一個超連結,你仍然需要手動建立一個連結';
+$string['anchorname'] = '連結名稱';
+$string['anchors'] = '連結';
 $string['baseline'] = '基準線';
 $string['bold'] = '粗體';
 $string['borderthickness'] = '邊框線';
@@ -17,14 +22,26 @@ $string['cellspacing'] = '邊距';
 $string['choosechar'] = '選擇字元';
 $string['chooseicon'] = '選擇要插入的表情符';
 $string['close'] = '關閉';
+$string['closeafterreplace'] = '替換後關閉';
 $string['cols'] = '列';
 $string['copy'] = '複製所選項目';
+$string['createanchor'] = '建立超連結';
 $string['createfolder'] = '建立資料夾';
 $string['createlink'] = '插入鏈結';
 $string['cut'] = '剪下所選項目';
+$string['cutpastemozilla'] = '抱歉,您目前不能在線上編輯器使用鍵盤的快速鍵(即使貼上的功能),這是因為內建在Mozilla and Firefox 瀏覽器的限制<br /><br />有幾個已知的方法您可以試試看:
+<br/>(1)使用SHIFT-Insert,不要使用 CTRL-v<br/>
+<br/>(2)使用瀏覽器中,編輯/貼上 選單<br/>
+<br/>(3)編輯瀏覽器中user.js檔案設定<br/>
+按確定按鈕以取得更多說明,或按取消回到編輯器中';
 $string['delete'] = '刪除';
 $string['filebrowser'] = '檔案瀏覽';
+$string['findwhat'] = '搜尋';
+$string['fontname'] = '字型名稱';
+$string['fontsize'] = '字型大小';
 $string['forecolor'] = '字型顏色';
+$string['formatblock'] = '格式';
+$string['fullscreen'] = '全螢幕編輯';
 $string['heading'] = '頂部';
 $string['height'] = '高度';
 $string['hilitecolor'] = '背景顏色';
@@ -39,12 +56,14 @@ $string['insertlink'] = '插入超連結';
 $string['insertsmile'] = '插入表情符號';
 $string['inserttable'] = '插入表格';
 $string['italic'] = '斜體字';
+$string['itemsreplaced'] = '項目已替換!';
 $string['justifycenter'] = '置中';
 $string['justifyfull'] = '分散對齊';
 $string['justifyleft'] = '靠左對齊';
 $string['justifyright'] = '靠右對齊';
 $string['layout'] = '版面格式';
 $string['left'] = '左';
+$string['lefttoright'] = '方向由左到右';
 $string['linkproperties'] = '連結屬性';
 $string['linktarget'] = '目標框架';
 $string['linktargetblank'] = '新增視窗';
@@ -54,12 +73,16 @@ $string['linktargetself'] = '相同框架';
 $string['linktargettop'] = '相同視窗';
 $string['linktitle'] = '標題';
 $string['linkurl'] = 'URL';
+$string['matchcase'] = '符合大小寫';
 $string['middle'] = '中央';
+$string['minimize'] = '編輯器最小化';
 $string['move'] = '移動';
+$string['nolink'] = '取消自動連結功能';
 $string['normal'] = '標準的';
 $string['notimage'] = '所選取的檔案不是影像檔。請選擇一個影像檔';
 $string['notset'] = '未設定';
 $string['ok'] = '確定';
+$string['options'] = '選項';
 $string['orderedlist'] = '列表編號';
 $string['outdent'] = '減少縮排';
 $string['paste'] = '從剪貼簿貼上';
@@ -71,10 +94,17 @@ $string['preformatted'] = '預設段落字體';
 $string['preview'] = '預覽';
 $string['properties'] = '屬性';
 $string['redo'] = '重作最後一項操作';
+$string['regularexpressions'] = '使用正常表示式';
 $string['removelink'] = '移除超連結';
 $string['rename'] = '更名';
+$string['replaceall'] = '全部替換';
+$string['replacewith'] = '替換';
 $string['right'] = '右';
+$string['righttoleft'] = '方向由右到左';
 $string['rows'] = '行';
+$string['searchandreplace'] = '搜尋並替換';
+$string['searchnotfound'] = '找不到搜尋的字串!';
+$string['selectcolor'] = '選擇顏色';
 $string['selection'] = '選擇';
 $string['showhelp'] = '編輯器使用幫助';
 $string['size'] = '大小';
@@ -93,5 +123,7 @@ $string['unorderedlist'] = '專案符號';
 $string['upload'] = '上傳';
 $string['vertical'] = '垂直位置';
 $string['width'] = '寬度';
+$string['wordclean'] = '清除word的html標籤';
 $string['zip'] = '壓縮';
+
 ?>

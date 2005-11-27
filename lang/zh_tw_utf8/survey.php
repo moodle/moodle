@@ -1,5 +1,7 @@
 <?PHP // $Id$ 
-// survey.php - created with Moodle 1.2 Beta (2004022400)
+      // survey.php - created with Moodle 1.5 (2005060201)
+
+
 $string['actual'] = '實際的';
 $string['actualclass'] = '課程實際的';
 $string['actualstudent'] = '$a 實際的';
@@ -56,10 +58,15 @@ $string['attlsm3'] = '獨立性學 習';
 $string['attlsmintro'] = '討論中 ...';
 $string['attlsname'] = '20項學習與思考態度問卷';
 $string['ciq1'] = '什麼時候你學習最投入？';
+$string['ciq1short'] = '最投入';
 $string['ciq2'] = '什麼時候你學習最不投入？';
+$string['ciq2short'] = '最疏離';
 $string['ciq3'] = '論壇上的人們的何種行為最讓你感覺值得確信或有幫助？';
+$string['ciq3short'] = '有幫助的時刻';
 $string['ciq4'] = '論壇上的人們的何種行為最讓你感覺困惑。';
+$string['ciq4short'] = '困惑的時刻';
 $string['ciq5'] = '什麼事件讓你最吃驚？';
+$string['ciq5short'] = '最吃驚的時刻';
 $string['ciqintro'] = '想想本班上周發生的事情，回答以下問題。';
 $string['ciqname'] = '關鍵事件';
 $string['clicktocontinue'] = '按此處繼續';
@@ -120,7 +127,7 @@ $string['collesaintro'] = '本問卷主要在幫助我們了解本線上課程�
 非常謝謝你的合作!';
 $string['collesaname'] = '學習環境問卷(實際的感覺)';
 $string['collesapintro'] = '本問卷的目的是為了瞭解本線上學習單元到底對你的學習有怎樣的幫助. 
-以下的24個問題將同時詢問你<b>所期待的收穫</b>與<b>實際使用後的感覺</b>.
+以下的24個問題將同時詢問你<B>所期待的收穫</B>與<B>實際使用後的感覺</B>.
 沒有所謂對錯的答案; 我們有興趣的是你的觀點與想法.
 可以保證的是你的回答會被守密而且和學期成績絕對無關.
 你的認真回答將有助於我們改善本線上課程,使得未來使用時更加有功效!
@@ -189,4 +196,5 @@ $string['surveytype'] = '問卷型態';
 $string['thanksforanswers'] = '謝謝你回答本問卷, $a';
 $string['time'] = '時間';
 $string['viewsurveyresponses'] = '檢視 $a 問卷結果';
+
 ?>

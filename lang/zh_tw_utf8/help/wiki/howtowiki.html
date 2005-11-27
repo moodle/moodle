@@ -1,0 +1,113 @@
+<h2>如何使用 Wiki</h2>
+　　
+<p>Moodle的Wiki是在<a href="http://erfurtwiki.sourceforge.net/?id=ErfurtWiki" target="_blank">ErfurtWiki</aa>的基礎上做的，後者實現了<a href="http://c2.com/cgi/wiki?WikiWikiWeb" target="_blank">WikiWikiWeb</a>超文件編輯系統。它允許以簡單的方式合作編輯和建立網頁。</p>
+　　
+<p><ul>
+<li>學習如何<a href="#createpages">建立頁面</a></li>
+　　
+<li>點擊<img alt="edit" src="pix/t/edit.gif" />或者在下拉功能表中選擇「編輯這個頁面」，可以修改一個頁面的內容。</li>
+　　
+<li>透過<a href="#wikimarkup">Wiki標籤</a>可以格式化文件，或者用HTML(如果Wiki設定了相應選項)也可以</li>
+　　
+<li>搜索頁面或跳轉到最新頁面列表</li>
+　　
+<li>還有一些最經常瀏覽的頁面、最經常修改的頁面和最近上傳的頁面</li>
+</ul></p>
+　　
+<p><a name="createpages"></a><b>建立頁面</b>:<br />
+　　
+<p>透過在一個已有頁面上給新頁面命名就可以建立新頁面了。Wiki頁面使用<a href="#camelcase">CamelCase</a>或方括號([])來命名。</p>
+　　
+<p>例如：
+<ul>
+<li>MyWikiPage (CamelCase)</li>
+　　
+<li>[我的Wiki頁面] (放在方括號中)</li>
+　　
+</ul></p>
+　　
+<p>之後，作為Wiki頁面名稱的文字後會有一個問號「?」，點擊它便進入到相應頁面的編輯模式了。在其中輸入文字並保存，新的Wiki頁面便完成了。</p>
+　　
+<p><a name="wikimarkup"></a><b>Wiki標記</b>：<br />
+　　
+<p>Wiki頁面修改起來非常簡單，它們使用Wiki標記。</p>
+　　
+<h4>段落</h4>
+<ul type="circle">
+<li>用空白行分割文章中不同的段</li>
+<li>使用三個百分號「%%%」可產生一個換行</li>
+<li>如果文件前有空格或跳位字元，則會進行相應縮進</li>
+</ul>
+
+<h4> !! 標題行</ali></h4>
+<ul type="circle">
+ <li> 透過在行首加入一個驚嘆號「!」來建立一個小標題行。</li>
+ <li> 兩個驚嘆號「!!」表示中標題 </li>
+ <li> 三個驚嘆號「!!!」表示大標題</li>
+</ul>
+　　
+<h4>文件樣式</h4>
+<ul>
+  <li>如果希望<em>強調</em>效果，則將文件寫在兩個單引號「''」中，強調效果通常是採用斜體表示。</li>
+  <li><strong>粗體字</strong>用兩個下劃線「__」表示(或者用兩個星號「**」表示)</li>
+  <li>要產生<big>較大的字</big>，則將其放在兩個井號「##」中</li>
+  <li>也可以產生<small>小些的字</small>，用兩個雙引號「""」就可以了</li>
+  <li><tt>等寬效果的字</tt>是用兩個等號「==」來表達</li>
+</ul>
+　　
+<h4>列表</h4>
+<ul>
+  <li>一行以星號「*」開始，則會產生列表</li>
+  <li>是用「#」則產生數位列表
+    <ol>
+    <li>可以建立子列表</li>
+    <li>子列表中的內容也要以相同的*和#開始</li>
+    </ol>
+</li>
+</ul>
+　　
+<h4>超連結</h4>
+<ul>
+ <li>在文件中輸入WikiWord就會建立一個新的超連結</li>
+ <li>在[方括號]中加入內容也可以建立超連結，這種超連結可以並非由WikiWord組成</li>
+ <li>文字中的互聯網位址(以http:/開頭)如http://www.example.com/會自動成為連結</li>
+ <li>在方括號中放入連結位址或WikiLink，然後透過引號或者豎線「|」可以給它一個名字：
+<ul>
+  <li> [title | http://example.com]</li>
+  <li> [WikiWord "title"] 或者 ["title for" WikiLink]    </li>
+</ul>
+  </li>
+  <li>如果您希望一個WikiWord或超連結(或其他任何在方括號中的內容)不會變成超連結，則在它前面加一個嘆號或波浪號
+   <ul>
+   <li> !NoHyperLink, ~NoHyperLink</li>
+   <li> ![no hyperlink], !http://nolink.org/ </li>
+   </ul>
+  </li>
+ </ul>
+　　
+<h4>用「|」產生表格</h4>
+
+　　| 將內容 | 包含在 | 豎線符號中 <br />
+　　| 會建立 | 一個表格結構 <br />
+　　| 流覽器通常會忽略 | 丟失的 | 表格單元 <br />
+　　
+<p>請在表格前後加空行，這樣它們才能和其他的段落分開。</p>
+　　
+<h4>圖片</h4>
+<ul>
+ <li>要在頁面中嵌入一副圖片，只需直接將它的絕對位址放在方括號中，如[http://www.example.com/pics/image.png]</li>
+ <li>另外，您還可以是用圖像上傳功能</li>
+</ul>
+　　
+<h4>更多材料</h4>
+<p>還有很多關於Wiki標記的材料，請查詢<a href="http://erfurtwiki.sourceforge.net" target="_new">Erfurt Wiki Homepage</a>以獲得更多資訊。</p>
+<p><a name="camelcase"></a><b>CamelCase</b>：<br />
+<p>CamelCase描述的是WikiWord的樣子。多個單字連接在一起，中間沒有空格，透過大小寫來區分。大小寫的起伏就好像駝峰。</p>　
+<p>這種連結模式也經常被稱為BumpyText。</p>
+<p>單純搞語言的人可能會不喜歡這種命名模式，但這對於大多數程式師來說都是很普通的事情。</p>
+　　
+　　
+　　
+　　
+　　
+　　

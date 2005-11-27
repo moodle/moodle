@@ -1,1 +1,138 @@
-<?PHP // $Id$ // admin.php - created with Moodle 1.3 development (2004032800)$string['cachetext'] = '文字快取保留時間';$string['filteruploadedfiles'] = '過濾上傳檔案';$string['upgradelogs'] = '要瞭解更多資訊，請升級日誌. <a href=\"$a\">詳細資訊</a>';$string['upgradelogsinfo'] = '網站的變動記錄保存在日誌中.升級它以便查看最新的完整記錄。升級較大規模網站的日誌檔或許費時較長，耐心一些，升級過程中不要關閉流覽器--升級會順利的，它不會影響升級後使用者的訪問<br /><br />打算升級日誌檔嗎?';$string['upgradinglogs'] = '升級日誌';?>
+<?PHP // $Id$ 
+      // admin.php - created with Moodle 1.5.3+ (2005060230)
+
+
+$string['adminseesallevents'] = '系統管理者可檢視所有事件';
+$string['adminseesownevents'] = '系統管理者視同其他使用者';
+$string['blockinstances'] = '區塊';
+$string['blockmultiple'] = '多重區塊';
+$string['cachetext'] = '文字快取保留時間';
+$string['calendarsettings'] = '行事曆';
+$string['change'] = '變更';
+$string['configallowcoursethemes'] = '啟動本選項時,課程可以設定單獨的佈景主題,課程佈景主題的設定會優先於其它佈景設定(網站,使用者等)';
+$string['configallowemailaddresses'] = '如果您想限制只收特定網域的電子郵件,請將之列出,以空白分開.所有其它網域的電子郵件將會被拒絕,例如:<strong>course.moodle.idv.tw</strong>';
+$string['configallowobjectembed'] = '預設的安全設定中,一般使用者並不能在html中用EMBED和OBJECT標籤嵌入多媒體(如flash),如果您想允許這些標籤功能,啟用此選項';
+$string['configallowunenroll'] = '啟動此選項時,允許學生可以自行退選課程,否則是不允許的,這個程序通常只由教師或系統管理者控制';
+$string['configallowuserblockhiding'] = '您要讓學生可以在瀏覽時隱藏/顯示側邊區塊嗎?這個功能使用javascript和cookies記憶學生的設定,只會影響學生瀏覽本站時的外觀';
+$string['configallowuserthemes'] = '啟動此選項時,使用者可以選擇自訂的佈景主題.使用者的佈景主題會蓋過網站的佈景(但非課程佈景)';
+$string['configallusersaresitestudents'] = '為了網站首頁活動的設定,所有的使用者都要當做學生嗎?如果您選擇\"是\",所有經確認的使用者帳號都會被允許參加學生的活動,如果您選擇\"否\",只有至少選擇一門課的使用者才能參與首頁的活動.只有系統管理者可以指定教師以參與首頁的活動.';
+$string['configautologinguests'] = '訪客要自動登入為旁聽生嗎?';
+$string['configcachetext'] = '大型的網站或使用文字過濾器的網站,這個功能可以加快網站速度.文字快取可以從設定的時間內開始保留,當這個值設太小時,可能會稍微拖慢處理速度,但設太大時,可能網頁資料的更新但趕不上(例如有新連結時)';
+$string['configclamactlikevirus'] = '把檔案當做病毒';
+$string['configclamdonothing'] = '把檔案當做正常';
+$string['configclamfailureonupload'] = '如果您設定CLAM掃描上傳的檔案,但設定錯誤或因為一些未知的原因無法正常運作時,應該如何處理?如果您選擇\"把檔案當做病毒\",它們就會被移到隔離區,或被刪除.如果您選擇\"把檔案當做正常\",檔案會被移到它的目錄中,或,系統管理者會被通知CLAM失效,如果您選擇\"把檔案當做病毒\",而CLAM無法正常運作,所有上傳的檔案會被移到隔離區或刪除,請小心設定.';
+$string['configcountry'] = '如果您在此設定國家,就會成為(新)使用者的預設國家,要強制使用者選擇一個國家,就不要設定';
+$string['configdbsessions'] = '啟用時,此設定將會使用資料庫儲存目前sessions資訊,此設定尤其對大型/流量大的網站或在叢集伺服器上特別有用，對大部分網站最好不要啟動此功能，所以就會使用伺服器磁碟．注意！變更此設定會將所有使用者登出（包括您自己）．';
+$string['configdebug'] = '如果您啟用此功能，PHP的錯誤回報會增加，所以會列出更多的警告．此功能只對系統開發者有用．';
+$string['configdeleteunconfirmed'] = '如果您使用電子郵件認證，此期間內使用者回應才會受理，此期間後，未確認的帳號將刪除．';
+$string['configdenyemailaddresses'] = '要擋下特殊網域的郵件，將它們列在此，其它的都會被接受．
+例如：<strong>hotmail.com yahoo.co.uk</strong>';
+$string['configdigestmailtime'] = '選擇收到摘要的使用者會每天收到摘要郵件，此設定控制每天什麼時候開始寄信（下次cron執行時間）';
+$string['configdisplayloginfailures'] = '這將會顯示所選擇的使用者,之前登入錯誤的使用者資訊';
+$string['configenablerssfeeds'] = '這將會啟動網站的RSS新聞功能,要檢視任何變更,您必須在個別模組同時啟動RSS功能,請到系統設定下模組設定選單進行設定';
+$string['configenablerssfeedsdisabled'] = '因為網站RSS連結未啟動,所以目前無法使用,要啟動此功能,請到系統設定中變數設定進行設定.';
+$string['configerrorlevel'] = '選擇PHP警告的最大值,正常通常是最佳選擇.';
+$string['configextendedusernamechars'] = '啟動此功能將允許學生使用任何字元註冊(注意此功能並不會影響他們的真正姓名),當設為\"不啟動時\"使用者名稱將被限制只能用英文字母和數字.';
+$string['configfilterall'] = '過濾所有字串,包含標題,導覽列,諸如此類.當使用多國語系過濾時此功能特別有用,而它只會增加系統少量負擔.';
+$string['configfilteruploadedfiles'] = '啟動此功能是會強迫MOODLE顯示所有HTML和文字前先以過濾器處理.';
+$string['configforcelogin'] = '正常來說,網站和課程列表的首頁(不包含課程),並不需要使用者登入.如果您要強制使用者登入才能瀏覽,請啟用此功能.';
+$string['configforceloginforprofiles'] = '啟用此設定會強迫所有的使用者登入(不能使用訪客帳號)才能檢視個人資料頁.預設值是不啟用,所以潛在的(未來的)學生可以看到每堂課的教師資料,但也表示搜尋引擎可以看到這些資料.';
+$string['configframename'] = '如果您將moodle包含在某個頁框中,請將該頁框的名稱在此輸入,不然就讓它為\"_top\"';
+$string['configfullnamedisplay'] = '定義使用者名稱如何顯示,在大多數單一語系的站台中,最有效率的設定是預設 \"名 + 姓\",但您可能也會選擇隱藏姓,或留白由語系包決定(有一些語系有不同的慣例)';
+$string['configgdversion'] = '指出系統安裝的GD版本,此處顯示的版本是系統自動偵測值,除非您知道您在幹什麼,否則不要亂更改設定.';
+$string['confightmleditor'] = '選擇使用者是否允許在文字編輯器中嵌入HTML程式碼.即使您選擇允許,編輯器只會在相容的瀏覽器正常顯示,使用者也可以選擇不使用此功能.';
+$string['configidnumber'] = '此選項指定(a)使用者不會被系統要求身份ID,(b)使用者會被系統要求身份ID,但可以留白,(c)使用者會被系統要求身份ID,而且不可以留白.當使用者ID顯示在個人資料頁中.';
+$string['configintro'] = '在此頁面中,您可以設定相關的參數以使Moodle在您的伺服器中正常運作,通常預設值就可以讓您的系統正常運作,而且您可以隨時回來變更設定.';
+$string['configintroadmin'] = '此頁面中,您可以設定您的主要系統管理員帳號,此帳號可以完全掌控您的網站.請確認此帳號的帳號名稱與密碼,而且有一個有效的電子郵件位址.您可以在稍後建立更多系統管理帳號.';
+$string['configintrosite'] = '此頁面允許您設定新網站的首頁和名稱,您可以稍後使用\"網站設定\"來更改這些設定';
+$string['configintrotimezones'] = '此頁將會搜尋世界時區的新資訊(包含日光節約時間的規定)而且更新您當地資料庫,這些地區將會以:$a的順序排列.此程序一般來說非常安全,而且不會中斷正常的安裝程序.您要現在更新您的時區嗎?';
+$string['configlang'] = '選擇網站的預設語言,使用者稍後也可以自行設定.';
+$string['configlangcache'] = '快取語言選單,可省去大量的記憶體和系統操作負擔.當啟動時,可能在您新增或移除一個新語系時會花一點時間更新';
+$string['configlangdir'] = '大部分的語言是由左至右排列,但像阿拉伯和希伯來文是由右到左.';
+$string['configlanglist'] = '留白以允許使用者可以選擇您已安裝的語系.然而,您可以使用逗號來縮短語言選單,如:en,es_es,fr,it';
+$string['configlangmenu'] = '選擇是否在首頁或登入頁...等顯示語系選擇選單,此設定不會影響使用者設定個人化的語系選擇.';
+$string['configlocale'] = '選擇網站語系-此設定會影響語言的日期和格式,您必須在您的系統上安裝有語系資料(例如:en_US 或 es_ES),如果您不知道要選什麼,就讓它留白.';
+$string['configloginhttps'] = '啟用此選項會使Moodle在登入頁使用比較安全的https方法連接傳送資料(提供安全的登入),然後在稍後改用正常的http連接以恢復到一般速度.<b>注意</b>:此設定需要在web伺服器啟動https功能才可以使用,否則您自己可能會被鎖在站台之外,無法登入.';
+$string['configloglifetime'] = '此選指定您記錄的使用者log檔的時間.比這段時間更舊的logs會自動被刪除.最好盡可能保留logs愈久愈好,以備不時之需,但如果您的伺服器負擔很重,而且有效能上的問題,那您可以設定比較短的記錄時間.';
+$string['configlongtimenosee'] = '如果學生很久一段時間內沒有登入,就可以自動將學生自課程中退選,這個參數就是設定這個時間期限.';
+$string['configmaxbytes'] = '此值設定整個網站可以上傳的檔案大小,這個值受到 PHP 中 upload_max_filesize 參數與 Apache 中LimitRequestBody兩個參數限制.另一方面,檔案的最大值可以在課程層次或模組層次中進行設定.';
+$string['configmaxeditingtime'] = '此值設定討論區中,使用者可以再度編輯留言的時間.通常30分鐘是建議值.';
+$string['configmessaging'] = '要啟動網站使用者間的簡訊系統?';
+$string['confignoreplyaddress'] = '有時候會寄送電子郵件給使用者(如:討論區的討論),您指定的郵件位址將會用來做為寄信人地址,以便收信人無法直接回應另外一位使用者時可以回應到這個位址來(如:當一個使用者選擇要對郵件保密時)';
+$string['confignotifyloginfailures'] = '如果登入失敗被記錄,可以電子郵件通知,要將此通知訊息寄給誰呢?';
+$string['confignotifyloginthreshold'] = '如果登入失敗通知啟動時,多少次的登入失敗才要進行通知呢?';
+$string['configopentogoogle'] = '如果啟動此設定,google可以訪客身份登入您的網站.此外,從google搜尋進入您網站的訪客會自動登入成旁聽訪客.注意此功能僅提供允許訪客登入設定的網站.';
+$string['configpathtoclam'] = 'clam AV的路徑,可能是像 usr/bin/clamscan 或 /usr/bin/clamdscan之類的,您需要指定,以便正常執行clam AV .';
+$string['configpathtodu'] = 'du 指令的路徑，一般可能是 /usr/bin/du ；如果您使用這個設定，顯示大量資料夾內容的頁面顯示會快一點。';
+$string['configperfdebug'] = '如果您啟用了這個項目，標準的佈景底部會列印關於執行效能的資訊';
+$string['configproxyhost'] = '如果<b>伺服器</b>需要使用代理伺服器(如:防火牆)以存取網際網路,請在此輸入代理伺服器的位址與埠號,否則留白即可.';
+$string['configquarantinedir'] = '如果您要clam AV移動受病毒感染的檔案到隔離的資料夾,將它輸入在此.它必須能讓webserver有寫入權限,如果留白,或您輸入一個不存在或無法寫入的資料夾,受感染的檔案就會被刪除,而且記住不要加最後的斜線(/)';
+$string['configrunclamonupload'] = '檔案上傳時執行clam AV?您需要指定確實的程式路徑以正常執行(clam AV是一個免費的病毒掃瞄程式,您可以在http://www.clamav.net取得)';
+$string['configsectioninterface'] = '介面';
+$string['configsectionmail'] = '郵件';
+$string['configsectionmaintenance'] = '維護';
+$string['configsectionmisc'] = '其它';
+$string['configsectionoperatingsystem'] = '作業系統';
+$string['configsectionpermissions'] = '權限';
+$string['configsectionsecurity'] = '安全性';
+$string['configsectionuser'] = '使用者';
+$string['configsecureforms'] = 'Moodle在接收表單資料時可以使用更高安全層級的方式.如果啟動此選項,瀏覽器會檢查目前表單的HTTP_REFERER變數,在某些狀況下可能會引起一些小問題,如使用防火牆(像zonealarm)設定過濾網路的HTTP_REFERER 封包時,症狀是整個表單上傳資料時會\"卡\"住.如果您的使用者有遇到這樣的問題時您可能要取消此設定,即使它會讓您的網站遭遇到字典攻擊,如果還是有疑慮的話,還是讓它設為\"yes\".';
+$string['configsessioncookie'] = '此設定可以個別化Moodle sessions的cookie名稱.這是選擇性的,通常只有在同一部伺服器跑了不同的moodle站台,為了避免混淆才需要設定.';
+$string['configsessiontimeout'] = '如果使用者登入一段時間沒有動作(讀取網頁),就會被自動登出(session被終止),此變數可以設定此時間值.';
+$string['configshowblocksonmodpages'] = '部分模組支援在頁面中顯示區塊,如果您啟動此選項,教師可以在這些模組中加入區塊功能,否則介面中就不會顯示此功能.';
+$string['configshowsiteparticipantslist'] = '所有的網站學生和教師都會被列在網站使用者列表中,哪些人可以瀏覽此列表?';
+$string['configsitepolicy'] = '如果您有網站政策,需要使用者使用本站前同意的話,請在此指定該URL,否則留白即可.該URL可以指定到任何地方,最方便的是指定到您網站的一個檔案,如http://yoursite/file.php/1/policy.html';
+$string['configslasharguments'] = '檔案(圖片,上傳的檔案等)使用\'slash arguments\'(第二個選項)方式,這個方式允許檔案在瀏覽器或代理伺服器中更容易快取;但是,有一些PHP伺服器不允許這種方式,所以如果您在檢視上傳檔案或圖片(如:使用者照片),請將此參數設為第一個選項.';
+$string['configsmtphosts'] = '指定一個或多個Moodle 用來寄送郵件的SMTP伺服器(如:mail.a.com等).留白時,Moodle 會用PHP預設的方式寄郵郵件.';
+$string['configsmtpuser'] = '如果您在上面指定一個SMTP伺服器,而伺服器需要認證時,將帳號密碼輸入在此.';
+$string['configteacherassignteachers'] = '一般教師可以允許在他們的課程中指定其他教師嗎?如果設為\"否\",那只有課程和系統管理員可以指定教師.';
+$string['configthemelist'] = '留白以允許任何可用的佈景主題,如果您要縮短選單的話,您可以用逗號分隔(不要使用空白!),如:standard,orangewhite.';
+$string['configtimezone'] = '您可以在此設定預設的時區,這是顯示預設時區的時間,每位使用者可以在他們的個人設定中自行設定時區,此處的\"伺服器時間\"預設為伺服器的時間,但使用者的個人設定時間中\"伺服器時間\"會依他們選擇的時區設定.';
+$string['configunzip'] = '指定您的ZIP壓縮程式位址(適用UNIX,選擇性)如果您指定了,這將會做為您在伺服器上解壓縮的預設程式,如果您留白,Moodle 將會使用內部的壓縮程序.';
+$string['configvariables'] = '變數設定';
+$string['configwarning'] = '請小心變更這些設定-奇怪的參數可能會發生問題.';
+$string['configzip'] = '指定您的ZIP壓縮程式位置(只適用UNIX,選擇性的),當指定時,此程式將會被伺服器用來產生壓縮檔,如果您留白,MOODLE會用它內部的程序.';
+$string['confirmation'] = '確認';
+$string['cronwarning'] = ' <a href=\"cron.php\">cron.php維護程序</a>已至少24小時未執行了.<br />The <a href=\"../doc/?frame=install.html⊂=cron\">安裝文件</a>有如何將此工作自動化的說明.';
+$string['edithelpdocs'] = '編輯線上說明文件';
+$string['editstrings'] = '編輯字串';
+$string['filterall'] = '過濾所有字串';
+$string['filteruploadedfiles'] = '過濾上傳檔案';
+$string['globalsquoteswarning'] = '<p><strong>安全警告</strong>：如果希望正常操作， Moodle需要 <br /> 您修改目前的 PHP 設定。<p/><p>您<em>必須</em>設定 <code>register_globals=off</code> 而且/或 <code>magic_quotes_gpc=on</code>，<br />如果能夠修改設定，<code>register_globals=off</code>可以加強一般伺服器的安全性，而也建議設定<code>magic_quotes_gpc=on</code>。<p/><p>這些設定由<code>php.ini</code>控制，或是Apache/IIS 的 <code>.htaccess</code> 檔案。</p>';
+$string['helpadminseesall'] = '系統管理員可以檢視所有行事曆事件或那些個人化的事件?';
+$string['helpcalendarsettings'] = '設定moodle的行事曆與日期,時間參數';
+$string['helpforcetimezone'] = '您可以允許使用者選擇自己的時區,或強制一個時區';
+$string['helpsitemaintenance'] = '升級或其它工作專用';
+$string['helpstartofweek'] = '哪一天是日曆天的第一天?';
+$string['helpupcominglookahead'] = '預設行事曆顯示多少天內的未來事件呢?';
+$string['helpupcomingmaxevents'] = '預設要顯示多少未來事件?';
+$string['helpweekenddays'] = '哪些天是\"周末\"而且以預設的顏色顯示?';
+$string['importtimezones'] = '更新時區列表';
+$string['importtimezonescount'] = '從$a->source匯入$a->count筆資料';
+$string['importtimezonesfailed'] = '找不到資料來源!(壞消息)';
+$string['incompatibleblocks'] = '不相容的區塊';
+$string['optionalmaintenancemessage'] = '額外的維護訊息';
+$string['pleaseregister'] = '請註冊您的網站以移除此按鈕';
+$string['sitemaintenance'] = '網站目前維護中,暫時無法連線';
+$string['sitemaintenancemode'] = '維護模式';
+$string['sitemaintenanceoff'] = '取消維護模式,網站再度正常運作';
+$string['sitemaintenanceon'] = '您的網站目前在維護模式中,只有系統管理者可以登入使用此站';
+$string['sitemaintenancewarning'] = '您的網站目前處於維護模式(只有系統管理者能登入).要將網站切換到正常運作,請按<a href=\"maintenance.php\">取消維護模式</a>連結.';
+$string['tabselectedtofront'] = '在資料表中,目前選擇的列要移到最前面嗎?';
+$string['therewereerrors'] = '您的資料中發生錯誤';
+$string['timezoneforced'] = '由網站管理員強制設定';
+$string['timezoneisforcedto'] = '強迫所有的使用者使用';
+$string['timezonenotforced'] = '使用者可以選擇自己的時區';
+$string['upgradeforumread'] = 'Moodle 1.5加入一個的新功能,可追蹤論壇的文件為已讀或未讀..<br />要使用這個功能您必須按下<a href=\"$a\">更新資料表</a>.';
+$string['upgradeforumreadinfo'] = 'Moodle 1.5加入一個的新功能,可追蹤論壇的文件為已讀或未讀,要使用這個功能您必須更新您的資料表,以追蹤目前的文章.依您網站文章的多寡,這個步驟可能會花一點時間,而且對資料庫可能會造成蠻大的負擔,所以最好在比較少人上線的時間做這個動作.
+然而,您的網站在更新期間仍能正常運作,使用者不會受影響,一旦您開始這個動作,您必須等待到它操作完成(勿關閉瀏覽器).如果您不小心關閉了,中止操作,沒關係.您可以再重來一次,所以您現在要啟動更新程序嗎?';
+$string['upgradelogs'] = '要瞭解更多資訊，請升級日誌. <a href=$a>詳細資訊</a>';
+$string['upgradelogsinfo'] = '網站的變動記錄保存在日誌中.升級它以便查看最新的完整記錄。升級較大規模網站的日誌檔或許費時較長，耐心一些，升級過程中不要關閉流覽器--升級會順利的，它不會影響升級後使用者的訪問<br /><br />打算升級日誌檔嗎?';
+$string['upgradesure'] = '你的 Moodle 檔案已經變更, 系統將會自動更新你的伺服器到這個版本:
+<p><b>$a</b></p>
+<p>一旦你進行更新就無法回復.</p> 
+<p>你確定要更新到這個版本嗎?</p>';
+$string['upgradingdata'] = '升級資料';
+$string['upgradinglogs'] = '升級日誌';
+
+?>

@@ -1,0 +1,66 @@
+<p align="center"><b>鑲嵌答案題(克漏字)</b></p>
+
+<p>這是變通性很大的題型，類似語文測驗上常見的克漏字題型。</p>
+
+<p>所有試題是包含在一篇文章裡(以 Moodle 格式)，而且有各種答案鑲嵌在裡面，包括選擇題，簡答題，和數字題。</p>
+
+<p>目前還沒有圖形介面來新建這種試題--您需要以文字編輯器編輯出這種試題格式，或從外在檔案匯入這種試題。</p>
+
+<p>以下是輸入文字的範例，用以說明此種試題:</p>
+
+<form action="">
+<center>
+<textarea rows="15" cols="60" wrap="virtual">這一試題包含幾段文章，並有答案鑲嵌在這裡 
+{1:MULTICHOICE:錯誤答案#這一錯誤答案的回饋
+~另一錯誤答案#另一錯誤答案的回饋
+~=正確答案#正確答案的回饋
+~%50%只給一半分數的答案#只給一半分數的答案的回饋}
+且在這之後您要處理這個簡答題{1:SHORTANSWER:錯誤答案#Feedback for this wrong answer
+~=正確答案#Feedback for correct answer
+~%50%只給一半分數的答案#Feedback for half credit answer} 
+且最後有一浮點數字 {2:NUMERICAL:=23.8:0.1#正確答案的回饋 23.8
+~%50%23.8:2#一半分數答案的回饋，在正確答案附近}.
+
+注意，網址像 www.moodle.org 和表情符號 :-) 都跟平常一樣可以使用:
+ a) 它是否很棒? {:MULTICHOICE:=是#答對了~否#唉，我們有不同意見}
+ b) 您會給它幾分? {3:NUMERICAL:=3:2}
+
+祝幸運!
+</textarea>
+</center>
+</form>
+
+<p>這一範例將顯示成下列模樣給學生看:</p>
+
+<form action="">
+<table align="center" width="90%" class="generalbox" border="0" cellpadding="5" cellspacing="0"><tr><td bgcolor="#FFFFFF" class="generalboxcontent"><table width="100%" cellspacing="10"><tr><td nowrap="nowrap" width="100" valign="top"><p align="center"><b>3</b></p><p align="center"><font size="1">8 分</font></p><img height="1" width="100" src="pix/spacer.gif" alt="" /><br />
+</td><td valign="top"><p>這一試題包含幾段文章，並有答案鑲嵌在這裡 <select   name="q4ma1" ><option>&nbsp;</option><option value="4" >錯誤答案</option><option value="5" >另一錯誤答案</option><option value="6" >正確答案</option><option value="7" >只給一半分數的答案</option></select>  且在這之後您要處理這個簡答題  <input   name="q4ma2"  value="" type="text" size="8"/> 且最後有一浮點數字 <input   name="q4ma3"  value="" type="text" size="8"/> 。<br />
+
+<br />
+
+注意，網址像 <a href="http://www.moodle.org" target="_blank">www.moodle.org</a> 和表情符號 <img alt=""  border="0" src="pix/s/smiley.gif" width="15" height="15" /> 都跟平常一樣可以使用:<br />
+
+a) 它是否很棒?  <select   name="q4ma4" ><option>&nbsp;</option><option value="13" >是</option><option value="14" >否</option></select> <br />
+
+b) 您會給它幾分?  <input   name="q4ma5"  value="" type="text" size="8"/> <br />
+
+<br />
+
+祝幸運!</p></td></tr></table></td></tr></table>
+</form>
+<hr>
+(由翻譯者補充)
+
+在編輯框輸入文字時，各符號所代表的意義
+<p>{ }&nbsp;表示大括弧裡面都是鑲嵌的答案</p>
+<p>:&nbsp; 用來把大括弧內容分成三段(選擇題，簡答題)或四段(數字題)，
+<br> 第一段是該題的配分(數字)，如果沒數字表示是1分；
+<br> 第二段是題型說明(大寫英文)；
+<br> 第三段是幾個選項，各選項之間用~分開；
+<br> 第四段是數字答案獨有的"容許誤差"(數字)。</p>
+<p>~&nbsp; 用來分隔不同的選項</p>
+<p>%50%&nbsp; 放在~之後，表示在使用選項加權計分時，該選項的分數權重
+<p>=&nbsp; 放在選項前面，表示該選項是正確答案，可得到完整分數，即%100%</p>
+<p>#&nbsp; 緊接在選項內容之後，是選答該選項後會出現的回饋</p>
+
+

@@ -1,5 +1,7 @@
 <?PHP // $Id$ 
-// dialogue.php - created with Moodle 1.2 Beta (2004022400)
+      // dialogue.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112900)
+
+
 $string['addmynewentries'] = '添加我的話題';
 $string['addmynewentry'] = '添加我的新項目';
 $string['addsubject'] = '添加主題';
@@ -12,7 +14,7 @@ $string['deleteafter'] = '刪除關閉的對話(天)';
 $string['dialogueclosed'] = '對話關閉';
 $string['dialogueintro'] = '對話簡介';
 $string['dialoguemail'] = '$a->userfrom 向你的對話條目發佈了一個 $a->dialogue 條目.你可以在你的對話條目中看到他: $a->url ';
-$string['dialoguemailhtml'] = '$a->userfrom 向你的對話條目發佈了一個 <i>$a->dialogue</i>條目<br /><br /> 你可以在你的對話條目中看到<a href="$a->url">它</a>.';
+$string['dialoguemailhtml'] = '$a->userfrom 向你的對話條目發佈了一個 <i>$a->dialogue</i>條目<br /><br /> 你可以在你的對話條目中看到<a href=\"$a->url\">它</a>.';
 $string['dialoguename'] = '對話名稱';
 $string['dialogueopened'] = '$a 開啟了對話';
 $string['dialoguewith'] = '與 $a 對話';
@@ -20,6 +22,7 @@ $string['everybody'] = '所有人';
 $string['furtherinformation'] = '補充資訊';
 $string['lastentry'] = '最近的項目';
 $string['maildefault'] = '預設郵件信箱';
+$string['mailnotification'] = '郵件通知';
 $string['modulename'] = '對話';
 $string['modulenameplural'] = '對話';
 $string['namehascloseddialogue'] = '$a 關閉了對話';
@@ -59,4 +62,5 @@ $string['typefollowup'] = '繼續輸入';
 $string['typeofdialogue'] = '對話類別';
 $string['typereply'] = '在此輸入回覆';
 $string['viewallentries'] = '查看 $a 對話項目';
+
 ?>

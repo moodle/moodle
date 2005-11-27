@@ -1,7 +1,9 @@
 <?PHP // $Id$ 
-// attendance.php - created with Moodle 1.3 development (2004041800)
+      // attendance.php - created with Moodle 1.5.2 (2005060220)
+
+
 $string['absentlong'] = '缺席';
-$string['absentshort'] = '曠  ';
+$string['absentshort'] = '缺席';
 $string['addingmultiple'] = '增加多樣性的出點名單';
 $string['addmultiple'] = '增加點名單';
 $string['allmodulename'] = '所有點名單';
@@ -55,6 +57,7 @@ $string['takeroll'] = '這天要點名嗎? ';
 $string['tardiesperabsence'] = '遲到多久，當成曠課';
 $string['tardylong'] = '今日';
 $string['tardyshort'] = '今日';
+$string['teacheredit'] = '點名take attendance';
 $string['thursday'] = '星期四';
 $string['tuesday'] = '星期二';
 $string['viewall'] = '觀看所有的點記錄 ';
@@ -65,4 +68,5 @@ $string['viewtable'] = '使用單一表格來觀看結果';
 $string['viewweek'] = '從行事曆觀看所有的點名記錄';
 $string['wednesday'] = '星期三';
 $string['weekmodulename'] = '最後一星期的所有點名記錄';
+
 ?>

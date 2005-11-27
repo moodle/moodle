@@ -1,0 +1,30 @@
+<p align="center"><b>上傳帳號</b></p>
+<p>首先，要注意的是，<strong>通常是沒有必要大量上傳帳號的</strong> - 要讓您自己的維護工作變得比較輕鬆，應當先看一下是否有合適的，無需手工維護的認證模式，
+如連結到已有的外部資料庫，或讓帳號自己建立他們自己的帳號。請看一下管理功能表中的認證部分。</p>
+<p>如果您確定要從文字檔案中匯入多個帳號帳號時，您應當將該檔案以下列格式儲存：</p>
+<ul>
+  <li>檔案中的每一行只能包含一筆記錄</li>
+  <li>每筆記錄都是一系列以逗號分隔的資料</li>
+  <li>檔案的第一筆記錄很特殊，它是包含著欄位名稱的清單。它定義了檔案中剩下部分的格式。
+    <blockquote>
+    <p><strong>必需的欄位名稱：</strong>這些欄位名稱必須包含在第一筆記錄中，並且每個帳號都需要有。</p>
+      <p></p>
+      <font color="#990000" face="Courier New, Courier, mono">username, password, firstname, lastname, email</font></p>
+</p>
+      <p><strong>預設的欄位名稱：</strong>這些是可選的——如果並未包含它們，則會使用主管理員的值作為預設值。</p>
+      <p><font color="#990000" face="Courier New, Courier, mono">institution, department, city, country, lang, auth, timezone</font> </p>
+      <p><strong>可選的欄位名稱：</strong>所有這些都是可選的。課程名稱是課程的「簡稱」——如果存在，則帳號會自動選該課程。小組名稱是和課程對應的，例如course1中的group1。</p>
+      <p> <font color="#990000" face="Courier New, Courier, mono">idnumber, icq, phone1, phone2, address, url, description, mailformat, maildisplay, htmleditor, autosubscribe, course1, course2, course3, course4, course5, group1, group2, group3, group4, group5</font></p>
+    </blockquote>
+    </li>
+  <li>為避免與分隔用的逗號相混淆，資料中的逗號應當重新編碼為&amp;#44——系統會自動將其解碼。</li>
+  <li>對於布林欄位，是用0表示假、1表示真。</li>
+  <li>注意：如果帳號已經在帳號資料庫中註冊，系統會返回帳號已有的 userid 號(資料庫中的索引)，以及將他加入到相應的課程中，但不會更新其他的資料。</li>
+</ul>
+  
+  
+<p>以下是一個合法的匯入檔：</p>
+<p><font size="-1" face="Courier New, Courier, mono">username, password, firstname, lastname, email, lang, idnumber, maildisplay, course1, group1<br />
+jonest, verysecret, Tom, Jones, jonest@someplace.edu, en, 3663737, 1, Intro101, Section 1<br />
+reznort, somesecret, Trent, Reznor, reznort@someplace.edu, en_us, 6736733, 0, Advanced202, Section 3</font></p>
+　　

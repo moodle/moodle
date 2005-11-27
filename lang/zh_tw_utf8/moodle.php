@@ -1,6 +1,9 @@
 <?PHP // $Id$ 
-// moodle.php - created with Moodle 1.3 development (2004041800)
+      // moodle.php - created with Moodle 1.6 development (2005101200)
+
+
 $string['action'] = '課程活動';
+$string['actions'] = '課程活動';
 $string['active'] = '啟動';
 $string['activities'] = '課程活動分類';
 $string['activity'] = '瀏覽線上活動紀錄';
@@ -8,9 +11,11 @@ $string['activityclipboard'] = '移動這個活動：<b>$a</b>';
 $string['activityiscurrentlyhidden'] = '抱歉，這個教學活動目前隱藏中';
 $string['activitymodule'] = '啟動模組';
 $string['activityreport'] = '使用紀錄';
+$string['activityreports'] = '使用紀錄';
 $string['activityselect'] = '選擇這個活動來移動位置';
 $string['activitysince'] = '從 $a 啟用';
 $string['add'] = '新增';
+$string['addactivity'] = '新增活動...';
 $string['addadmin'] = '新增管理者';
 $string['addcreator'] = '新增開課教師';
 $string['added'] = '新增 $a';
@@ -23,6 +28,7 @@ $string['addingdatatoexisting'] = '新增資料來離開';
 $string['addnewcategory'] = '增加新課程類別';
 $string['addnewcourse'] = '新增一個課程';
 $string['addnewuser'] = '新增一個使用者';
+$string['addresource'] = '新資線上資源...';
 $string['address'] = '地址';
 $string['addstudent'] = '新增學生';
 $string['addteacher'] = '新增教師';
@@ -37,7 +43,10 @@ $string['adminhelpbackup'] = '設定自動備份和自動備份時程表';
 $string['adminhelpconfiguration'] = '設定站臺的外觀和操作方式';
 $string['adminhelpconfigvariables'] = '設定影響站臺一般操作參數';
 $string['adminhelpcourses'] = '定義課程和類別，並安排參與課程人員';
+$string['adminhelpeditorsettings'] = '定義HTML編輯器的基本設定';
 $string['adminhelpedituser'] = '瀏覽帳號名單來編輯基本資料';
+$string['adminhelpenrolments'] = '選擇內部或外部認證的方式控制選課';
+$string['adminhelpfailurelogs'] = '瀏覽登入錯誤記錄';
 $string['adminhelplanguage'] = '為了檢查和編輯現在的語言套件';
 $string['adminhelplogs'] = '瀏覽對本站臺所有活動的存取記錄';
 $string['adminhelpmanageblocks'] = '管理已安裝區塊和相關設定';
@@ -52,8 +61,13 @@ $string['adminhelpusers'] = '定義使用者和認證方式';
 $string['administration'] = '系統管理';
 $string['administrator'] = '網站管理員';
 $string['administrators'] = '網站管理員';
+$string['administratorsall'] = '所有管理者';
+$string['administratorsandteachers'] = '管理者和教師';
+$string['advanced'] = '進階';
 $string['advancedfilter'] = '進階過濾';
+$string['advancedsettings'] = '進階設定';
 $string['again'] = '再次';
+$string['aimid'] = 'AIM帳號';
 $string['all'] = '所有';
 $string['allactivities'] = '所有教學活動';
 $string['alldays'] = '所有日期';
@@ -62,8 +76,11 @@ $string['allgroups'] = '所有群組';
 $string['alllogs'] = '所有紀錄';
 $string['allow'] = '允許 ';
 $string['allowguests'] = '本課程允許無帳號者進入';
+$string['allowinternal'] = '允許內部的方法';
 $string['allownot'] = '不允許 ';
 $string['allparticipants'] = '所有參加者';
+$string['allteachers'] = '所有教師';
+$string['alphabet'] = 'A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z';
 $string['alphanumerical'] = '只允許輸入英文字母或數字';
 $string['alreadyconfirmed'] = '確認完成註冊手續';
 $string['always'] = '總是';
@@ -84,22 +101,39 @@ $string['autosubscribeyes'] = '要，當我發表文章時，訂閱該討論區�
 $string['availability'] = '可使用的';
 $string['availablecourses'] = '可使用課程';
 $string['backup'] = '課程備份';
+$string['backupcancelled'] = '備份已取消';
 $string['backupcoursefileshelp'] = '如果核選，該課程的檔案將被包含在自動備份檔中';
 $string['backupdate'] = '備份資料';
 $string['backupdetails'] = '備份細目';
+$string['backupfailed'] = '您的部份課程未儲存';
 $string['backupfilename'] = 'backup';
 $string['backupfinished'] = '備份完全成功 ';
 $string['backupincludemoduleshelp'] = '選擇在自動備份中，是否包含課程模組和使用者資料';
 $string['backupkeephelp'] = '你要保留幾份這門課程的備份資料(超過保留份數的舊資料將被取代)';
+$string['backuplogdetailed'] = '詳細執行的log';
+$string['backuploglaststatus'] = '最後執行的log';
 $string['backuplogshelp'] = '如果被選取，課程存取記錄將被包含在自動備份檔中';
+$string['backupmetacoursehelp'] = '啟動時,後設課程(metacourse)資訊(inherited enrolments)將會被包含在自動備份檔中';
+$string['backupnameformat'] = '%%Y%%m%%d-%%H%%M';
+$string['backupnoneusersinfo'] = '注意:您選擇備份時不備份\'使用者\',所以所有模組將切換到\'不包含使用者資料\'的備份模式.特別注意,\'作業活動(exercise)\'和\'工作坊(workshop)\'模組並不支援此種備份功能';
 $string['backuporiginalname'] = '備份檔名';
 $string['backupsavetohelp'] = '請提供完整的路徑名稱，來儲存你的備份檔案(若留白，將使用課程預設的目錄)';
+$string['backuptakealook'] = '您的備份記錄檔在:$a';
 $string['backupuserfileshelp'] = '選擇是否將使用者個人檔案(例如：人頭像)包含在自動備份檔中';
 $string['backupusershelp'] = '選擇是否要包含所有使用者或是只有參與該課程的使用者';
 $string['backupversion'] = '備份版本';
+$string['blockconfiga'] = '設定$a 區塊';
+$string['blockconfigbad'] = '此區塊並未正確設定,所以無法提供設定界面';
+$string['blockdeleteconfirm'] = '您選擇刪除$a\'區塊.這會將資料庫中與此區塊相關的資料刪除,您\'確定\'要繼續?';
+$string['blockdeletefiles'] = '所有與\'$a->block\' 區塊相關的資料將會從資料庫刪除.要完成刪除動作(避免區塊自動重新安裝)你應該現在從伺服器刪除: $a->directory 資料夾';
+$string['blocks'] = '區塊';
+$string['blocksaddedit'] = '新增/編輯區塊';
+$string['blockseditoff'] = '關閉區塊編輯';
+$string['blocksediton'] = '開啟區塊編輯';
 $string['blocksetup'] = '建立區塊表單';
 $string['blocksuccess'] = '$a 表單被正確建立';
 $string['bycourseorder'] = '依課程順序';
+$string['byname'] = '由$a';
 $string['cancel'] = '取消';
 $string['categories'] = '課程類別';
 $string['category'] = '類別';
@@ -111,53 +145,54 @@ $string['changepassword'] = '修改密碼';
 $string['changessaved'] = '修改已被儲存';
 $string['checkingbackup'] = '檢查備份';
 $string['checkingcourse'] = '檢查課程';
+$string['checkingforbbexport'] = ' BlackBoard匯出檢查';
 $string['checkinginstances'] = '檢查元件';
 $string['checkingsections'] = '檢查細目';
 $string['checklanguage'] = '檢查語言替換文字';
+$string['childcoursenotfound'] = '未發現子課程';
 $string['choose'] = '選擇';
 $string['choosecourse'] = '選擇課程';
+$string['chooseenrolmethod'] = '選課的最主要方式';
 $string['chooselivelogs'] = '或者觀看目前使用紀錄';
 $string['chooselogs'] = '選擇你所想瀏覽的紀錄';
 $string['choosereportfilter'] = '選擇回報過濾';
 $string['choosetheme'] = '選擇佈景主題 ';
 $string['chooseuser'] = '選擇一位使用者';
 $string['city'] = '市/鄉鎮';
+$string['clambroken'] = '您的系統管理者啟用病毒掃瞄,但設定有誤<br />您上傳檔案的動作未成功,您的系統管理者會收到修復通知<br />請稍後再試著上傳檔案';
+$string['clamdeletedfile'] = '檔案已刪除';
+$string['clamdeletedfilefailed'] = '檔案無法刪除';
+$string['clamemailsubject'] = '$a ::Clam AV通知';
+$string['clamfailed'] = 'Clam AV執行錯誤,錯誤碼為$a.以下為Clam所輸出:';
+$string['clamlost'] = 'moodle被設為成檔案上傳時執行Clam AV,但輸入的Clam AV路徑, $a,不存在';
+$string['clamlostandactinglikevirus'] = '另外,moodle被設定成當,clam AV執行錯誤時,上傳的檔案會被視為病毒,這表示在您修正這個錯誤前學生無法上傳檔案';
+$string['clammovedfile'] = '檔案已經被移至您指定的隔離目錄,新的路徑為$a';
+$string['clammovedfilebasic'] = '檔案已經被移至隔離目錄';
+$string['clamquarantinedirfailed'] = '無法移動檔案至您指定的隔離目錄, $a. 您必須修復這個問題以免刪除未被感染的檔案';
+$string['clamunknownerror'] = 'Clam AV發生未知的錯誤';
 $string['cleaningtempdata'] = '清除暫存資料';
 $string['clicktochange'] = '點選來變更';
 $string['closewindow'] = '關閉本視窗';
 $string['comparelanguage'] = '比較並編輯替代文字';
 $string['complete'] = '完成';
-$string['configallowunenroll'] = '如果設定這個選項，當學生不想修課時，將被允許退出該課程。否則的話，他們將不被允出退出課程，學生退出課程將由教師或管理者來決定。';
-$string['configcountry'] = 'If you set a country here, then this country will be selected by default on new user accounts.  To force users to choose a country, just leave this unset.';
-$string['configdebug'] = '啟動本功能, 則系統執行錯誤時會顯示更多訊息,主要用於開發系統程式之用.';
-$string['configerrorlevel'] = 'Choose the amount of PHP warnings that you want to be displayed.  Normal is usually the best choice.';
-$string['configgdversion'] = 'Indicate the version of GD that is installed.  The version shown by default is the one that has been auto-detected.  Dont change this unless you really know what you are doing.';
-$string['confightmleditor'] = 'Choose whether or not to allow use of the embedded HTML text editor. Even if you choose allow, this editor will only appear when the user is using a compatible browser (IE 5.5 or later).  Users can also choose not to use it.';
-$string['configintro'] = 'On this page you can specify a number of configuration variables that help make Moodle work properly on your server.  Do not worry too much about it - the defaults will usually work fine and you can always come back to this page later and change these settings.';
-$string['configlang'] = 'Choose a default language for the whole site.  Users can override this setting later.';
-$string['configlangdir'] = 'Most languages are printed left-to-right, but some, like Arabic and Hebrew, are printed right-to-left.';
-$string['configlocale'] = 'Choose a sitewide locale - this will affect the format and language of dates. You need to have this locale data installed on your operating system.  (eg en_US or es_ES).  If you do not know what to choose leave it blank.';
-$string['configlongtimenosee'] = 'If students have not logged in for a very long time, then they are automatically unsubscribed from courses.  This parameter specifies that time limit.';
-$string['configmaxeditingtime'] = 'This specifies the amount of time people have to re-edit forum postings, journal feedback etc.  Usually 30 minutes is a good value.';
-$string['configproxyhost'] = 'If this <b>server</b> needs to use a proxy computer (eg a firewall) to access the Internet, then provide the proxy hostname and port here.  Otherwise leave it blank.';
-$string['configslasharguments'] = 'Files (images, uploads etc) are provided via a script using slash arguments (the second option here). This method allows files to be more easily cached in web browsers, proxy servers etc.  Unfortunately, some PHP servers do not allow this method, so if you have trouble viewing uploaded files or images (eg user pictures), set this variable to the first option';
-$string['configsmtphosts'] = 'Give the full name of one or more local SMTP servers that Moodle should use to send mail.). If you leave it blank, Moodle will use the PHP default method of sending mail.';
-$string['configsmtpuser'] = 'If you have specified an SMTP server above, and the server requires authentication, then enter the username and password here.';
-$string['configunzip'] = 'Indicate the location of your unzip program (Unix only).  This is needed to unpack zip archives on the server.';
+$string['completereport'] = '完整報告';
 $string['configuration'] = '系統設定';
-$string['configvariables'] = '改變系統參數';
-$string['configwarning'] = '請小心變更這些設定(不熟悉的設定值，可能會造成問題)';
-$string['configzip'] = 'Indicate the location of your zip program (Unix only).  This is needed to create zip archives on the server.';
 $string['confirm'] = '確認';
 $string['confirmed'] = '你的註冊資訊被確認';
 $string['confirmednot'] = '你的註冊資訊未被確認';
 $string['continue'] = '下一頁';
+$string['continuetocourse'] = '按這裏進入你的課程';
+$string['convertingwikitomarkdown'] = '轉換 Wiki 到Markdown';
 $string['cookiesenabled'] = '瀏覽器必須啟動 Cookies 功能';
+$string['cookiesnotenabled'] = '抱歉,您目前的瀏覽器未啟動cookie功能';
 $string['copy'] = '複製';
 $string['copyingcoursefiles'] = '複製課程檔案';
 $string['copyinguserfiles'] = '複製使用者檔案';
 $string['copyingzipfile'] = '複製壓縮檔 ';
 $string['copyrightnotice'] = '智慧財產權聲明';
+$string['cost'] = '費用';
+$string['costdefault'] = '預設費用';
+$string['counteditems'] = '$a->count $a->items';
 $string['country'] = '國家';
 $string['course'] = '課程';
 $string['courseavailable'] = '這個課程是可以使用的';
@@ -169,9 +204,14 @@ $string['coursecreators'] = '開課教師';
 $string['coursefiles'] = '課程檔案';
 $string['courseformats'] = '課程顯示格式';
 $string['coursegrades'] = '修課成績';
+$string['coursehidden'] = '此課程尚未對學生開放';
+$string['courseimportnotaught'] = '您可能不是編輯任何課程中的教師，所以您無法匯入任何課程。';
 $string['courseinfo'] = '課程資訊';
+$string['coursenotaccessible'] = '這個課程並未開放';
 $string['courserestore'] = '課程回存';
 $string['courses'] = '課程';
+$string['coursescategory'] = '同類別中的課程';
+$string['coursestaught'] = '我開設的課程';
 $string['courseupdates'] = '更新課程';
 $string['courseuploadlimit'] = '課程上傳限制';
 $string['create'] = '建立';
@@ -179,21 +219,27 @@ $string['createaccount'] = '建立新帳號';
 $string['createfolder'] = '在 $a 建立一個新資料夾';
 $string['createuserandpass'] = '請輸入使用者名稱(可用中文)和密碼以便建立帳號';
 $string['createziparchive'] = '產生壓縮檔';
+$string['creatingblocks'] = '建立區塊';
 $string['creatingcategoriesandquestions'] = '建立問題類別和題目';
 $string['creatingcoursemodules'] = '建立課程模組';
 $string['creatingevents'] = '建立事件';
+$string['creatinggradebook'] = '產生成績單';
 $string['creatinggroups'] = '新增群組';
 $string['creatinglogentries'] = '建立存取記錄';
+$string['creatingmessagesinfo'] = '產生訊息資料';
+$string['creatingmetacoursedata'] = '產生後設課程資訊';
 $string['creatingnewcourse'] = '開設新的課程';
 $string['creatingscales'] = '建立成績量尺';
 $string['creatingsections'] = '建立';
 $string['creatingtemporarystructures'] = '建立暫存區結構';
 $string['creatingusers'] = '建立使用者';
 $string['creatingxmlfile'] = '建立XML 檔案 ';
+$string['currency'] = '使用貨幣';
 $string['currentcourseadding'] = '增加資料至目前課程';
 $string['currentcoursedeleting'] = '刪除目前課程';
 $string['currentlanguage'] = '選定語言';
 $string['currentlocaltime'] = '當地時間';
+$string['currentpicture'] = '個人照';
 $string['currentrelease'] = '目前版本釋放資訊';
 $string['currentversion'] = '目前版本';
 $string['databasechecking'] = '升級 Moodle 資料庫，從版本  $a-> 舊版本... 到 $a-> 新版本...';
@@ -203,10 +249,13 @@ $string['databasesuccess'] = '資料庫升級成功 ';
 $string['databaseupgradebackups'] = '目前的備份版本為 $a';
 $string['databaseupgradeblocks'] = '區塊模組目前版本為 $a';
 $string['databaseupgrades'] = '升級資料庫';
+$string['date'] = '日期';
 $string['datemostrecentfirst'] = '時間日期 -- 最新的優先顯示';
 $string['datemostrecentlast'] = '時間日期 -- 過期的優先顯示';
 $string['day'] = '日';
 $string['days'] = '日';
+$string['decodinginternallinks'] = '內部連結解碼';
+$string['default'] = '預設';
 $string['defaultcoursefullname'] = '課程全名';
 $string['defaultcourseshortname'] = 'cs001';
 $string['defaultcoursestudent'] = '學生';
@@ -216,6 +265,7 @@ $string['defaultcourseteacher'] = '教師';
 $string['defaultcourseteachers'] = '教師們';
 $string['delete'] = '刪除';
 $string['deleteall'] = '全部刪除';
+$string['deletecategorycheck'] = '您確定要完全刪除類別<b>\'$a\'</b>?<br />這將會所有課程移到上層目錄';
 $string['deletecheck'] = '刪除 $a ?';
 $string['deletecheckfiles'] = '你確定要刪除這些檔案???';
 $string['deletecheckfull'] = '你確定要完全刪除 $a 嗎 ?';
@@ -233,7 +283,10 @@ $string['deletingexistingcoursedata'] = '刪除已存在的課程資料';
 $string['deletingolddata'] = '刪除過期資料';
 $string['department'] = '系所';
 $string['description'] = '說明';
-$string['disable'] = '取消功 能';
+$string['detailedless'] = '簡略';
+$string['detailedmore'] = '詳細';
+$string['directorypaths'] = '資料夾路徑';
+$string['disable'] = '取消';
 $string['displayingfirst'] = '只有第一個 $a->count $a->things 被顯示';
 $string['displayingrecords'] = '顯示 $a 紀錄';
 $string['displayingusers'] = '顯示使用者 $a->start  到  $a->end';
@@ -243,58 +296,113 @@ $string['down'] = '往下';
 $string['downloadexcel'] = '以 Excel 格式下載';
 $string['downloadtext'] = '以 文字檔格式下載';
 $string['doyouagree'] = '你是否已經閱覽以上說明條件並且同意所有內容?';
+$string['duplicate'] = '複製';
+$string['duplicatinga'] = '複製: $a';
+$string['duplicatingain'] = '複製 $a->what 到 $a->in';
+$string['edhelpaspellpath'] = '要在編輯器中使用拼字檢查,您<strong>必須</strong>在系統上安裝<strong>aspell 0.50</strong>或以上的版本,而且必須指定到aspell的程式路徑.在Unix/Linux 系統中,通常是在<strong>/usr/bin/aspell</strong>下,當然也可能在其它路徑中. ';
+$string['edhelpbgcolor'] = '定義編輯區背景顏色,.<br />可用的參數,例如: #FFFFFF or white';
+$string['edhelpcleanword'] = '這個設定可啟用或取消word格式過濾';
+$string['edhelpenablespelling'] = '啟動或取消拼字檢查,啟動時您<strong>必須</strong>在伺服器上安裝<strong>aspell 0.50</strong>或以上的版本,第二個參數是<strong>預設字典</strong>.如果aspell找不到屬於您語系的字典就會用這個.';
+$string['edhelpfontfamily'] = '字型屬性是一連串的字型名稱,或一般的字型名稱.字型名稱必須以逗號分開.';
+$string['edhelpfontlist'] = '定義編輯器下拉選單的字型';
+$string['edhelpfontsize'] = '預設字型大小可以設定字型的大小<br />可用的參數如:medium, large, smaller, larger, 10pt, 11px.';
 $string['edit'] = '編輯 $a';
 $string['editcoursesettings'] = '編輯課程設定';
+$string['editfiles'] = '檔案編輯';
 $string['editgroupprofile'] = '編輯群組說明檔';
 $string['editinga'] = '編輯一份 $a  ';
+$string['editingteachershort'] = '編輯器';
+$string['editlock'] = '無法編輯這個數值';
 $string['editmyprofile'] = '個人資料';
+$string['editorbgcolor'] = '背景顏色';
+$string['editorcleanonpaste'] = '貼上時清除word 的HTML';
+$string['editorcommonsettings'] = '一般設定';
+$string['editordefaultfont'] = '預設字型';
+$string['editorenablespelling'] = '啟動拼字檢查';
+$string['editorfontlist'] = '字型清單';
+$string['editorfontsize'] = '預設字型大小';
+$string['editorresettodefaults'] = '重設成預設值';
+$string['editorsettings'] = '編輯器設定';
 $string['editsummary'] = '編輯總結';
 $string['editthisactivity'] = '編輯本教學活動';
 $string['editthiscategory'] = '編輯類別';
 $string['edituser'] = '編輯使用者帳號';
 $string['email'] = '電子郵件';
+$string['emailactive'] = '使用電子郵件';
 $string['emailagain'] = '電子郵件(再次輸入)';
 $string['emailconfirm'] = '確認你的帳號';
 $string['emailconfirmation'] = '你好 $a->firstname,
+
 有人在 $a->sitename 網站以你的郵件地址登記了帳號申請
+
 如果要確認帳號確實是你所申請的, 請到以下連結:
+
   $a->link
 
 對大多數電子郵件而言,你只要按下以上網址即可
-
 如果並未出現連結 請用剪貼的方式 啟動瀏覽器進入以上網址網頁.
 
 歡迎你的加入 $a->sitename 系統管理員
-
 $a->admin 敬上,';
 $string['emailconfirmationsubject'] = '$a :帳號資訊';
-$string['emailconfirmsent'] = '   <p>本系統已經送出電子郵件到 <b>$a</b>
-</p>
-<p>訊息內容包含如何完成註冊手續.
-</p>
-<p>請閱覽你的私人郵件 按下確認連結後 便可登入本系統, 若是有問題請和系統管理者連絡.</p>';
+$string['emailconfirmsent'] = '   <p>本系統已經送出電子郵件到 <b>$a</b></p>
+   <p>訊息內容包含如何完成註冊手續.</p>
+   <p>請閱覽你的私人郵件 按下確認連結後 便可登入本系統, 若是有問題請和系統管理者連絡.</p>';
+$string['emaildigest'] = '電子郵件摘要型式';
+$string['emaildigestcomplete'] = '完整(每日郵寄完整貼文)';
+$string['emaildigestoff'] = '無摘要(單獨寄送論壇完整貼文)';
+$string['emaildigestsubjects'] = '主題(每日郵寄主旨)';
 $string['emaildisable'] = '這個電子郵件信箱無法使用';
-$string['emaildisplay'] = '電子郵件訊息';
+$string['emaildisableclick'] = '點選此處,取消所有寄到這個位址的郵件';
+$string['emaildisplay'] = '電子郵件顯示';
 $string['emaildisplaycourse'] = '僅允許其他修課成員觀看我的電子郵件';
 $string['emaildisplayno'] = '隱藏我的電子郵件,任何人都不能觀看';
 $string['emaildisplayyes'] = '允許所有人觀看我的電子郵件';
 $string['emailenable'] = '這個電子郵件信箱可使用';
+$string['emailenableclick'] = '點選此處,重新啟動寄到這個位址的郵件';
 $string['emailexists'] = '所輸入電子郵件的使用者已經申請過帳號.';
 $string['emailformat'] = '電子郵件格式';
 $string['emailmustbereal'] = '注意: 沒有輸入電子郵件者,僅能進入需要密碼的課程<br />一旦忘記密碼需找課程教師重新設定密碼';
+$string['emailnotallowed'] = '這些網域中的電子郵件不被允許($a)';
+$string['emailonlyallowed'] = '此郵件不在允許的網域清單($a)中';
+$string['emailpasswordconfirmation'] = '嗨!$a->firstname,
+有人(您)在$a->sitename\'以您的名義要求了一組新密碼.
+
+為了確認能將新密碼寄到您的郵件中,請到以下連結進行確認.
+
+$a->link
+
+在大部分的電子郵件程式中,上面的連結會設成藍色連結,所以您可以直接點選.如果沒有產生連結,您可以直接將上面連結直接複製以在瀏覽器中貼上即可.
+
+如果需要協助的話,請連絡網站管理員,$a->admin';
 $string['emailpasswordconfirmationsubject'] = '$a :變更密碼資訊';
+$string['emailpasswordconfirmsent'] = '電子郵件已寄到您的電子信箱<b>$a</b>中';
+$string['emailpasswordsent'] = '感謝您確認密碼變更!
+含有密碼的信件已經寄型您的郵件信箱<br /><b>$a->email</b>.<br />
+新密碼是由系統自動產生,您可以按<a href=\"$a->link\">變更密碼</a>變更設定 ';
 $string['enable'] = '啟動';
+$string['encryptedcode'] = '加密';
 $string['enrolledincourse'] = '加入課程!!  $a !!';
 $string['enrolledincoursenot'] = '未加入課程 !! $a !!';
+$string['enrollfirst'] = '瀏覽課程前,您必須先完成選課動作';
+$string['enrolme'] = '選這門課';
 $string['enrolmentconfirmation'] = '你即將加入成為課程的成員。 <b>你確定要這樣做嗎??</b>';
 $string['enrolmentkey'] = '課程專屬密碼';
 $string['enrolmentkeyfrom'] = '本課程需要 課程專屬密碼 - 僅需輸入一次<br />密碼請向開課教師 $a 索取';
 $string['enrolmentkeyhint'] = '所輸入的課程專屬密碼不正確, 請重新輸入<br />(提示 - 以 $a  起始)';
+$string['enrolmentnew'] = '$a 新加入的成員';
+$string['enrolmentnewuser'] = '$a->user 加入 \"$a->course\"';
+$string['enrolmentnointernal'] = '手動加入課程未啟用';
+$string['enrolmentnotyet'] = '抱歉,$a前您無法使用這個課程';
+$string['enrolments'] = '選課';
+$string['enrolperiod'] = '選課期限';
 $string['entercourse'] = '按下以進入課程';
 $string['enteremailaddress'] = '請輸入註冊登記的電子郵件 以便系統重新設定個人密嗎 並送到你的電子郵件信箱.';
+$string['entries'] = '文章';
 $string['error'] = '錯誤';
 $string['errortoomanylogins'] = '抱歉, 已經超過允許的重複輸入次數. 請重新啟動瀏覽器 否則無效.';
 $string['errorwhenconfirming'] = '目前尚未被認可，因為有些錯誤發生。';
+$string['everybody'] = '所有人';
 $string['executeat'] = '執行於';
 $string['existing'] = '目前';
 $string['existingadmins'] = '目前管理者';
@@ -304,13 +412,17 @@ $string['existingcoursedeleting'] = '刪除現有課程';
 $string['existingcreators'] = '現有開課教師';
 $string['existingstudents'] = '加入學員';
 $string['existingteachers'] = '具本課程教師權限者';
+$string['explanation'] = '說明';
+$string['failedloginattempts'] = '$a->attempts 從您上次登入後登入失敗';
+$string['failedloginattemptsall'] = '帳號$a->accounts發入失敗$a->attempts次 ';
 $string['feedback'] = '回饋';
+$string['file'] = '檔案';
 $string['filemissing'] = '缺少了 $a ';
 $string['files'] = '檔案';
 $string['filesfolders'] = '檔案或目錄';
 $string['filloutallfields'] = '請輸入表格內所有內容的對應資料';
 $string['findmorecourses'] = '搜尋更多課程...';
-$string['firstdayofweek'] = '0';
+$string['firstdayofweek'] = '1';
 $string['firstname'] = '姓';
 $string['firsttime'] = '是否需要申請帳號?';
 $string['followingoptional'] = '以下是選擇性輸入區';
@@ -319,10 +431,16 @@ $string['force'] = '強制';
 $string['forcedmode'] = '強制模式';
 $string['forcelanguage'] = '強制使用顯示語言';
 $string['forceno'] = '不強制';
+$string['forcepasswordchange'] = '強制變更密碼';
+$string['forcepasswordchangehelp'] = '下次登入時變更';
+$string['forcetheme'] = '強制佈景主題';
+$string['forgotaccount'] = '忘記密碼?';
 $string['forgotten'] = '忘記帳號名稱或密碼嗎?';
 $string['format'] = '格式';
 $string['formathtml'] = 'HTML 網頁格式';
+$string['formatmarkdown'] = 'Markdown 格式';
 $string['formatplain'] = '純文字模式';
+$string['formatscorm'] = 'SCORM 格式';
 $string['formatsocial'] = '討論區格式';
 $string['formattext'] = '系統自訂格式';
 $string['formattexttype'] = '處理方式';
@@ -335,26 +453,23 @@ $string['frontpagecourselist'] = '顯示課程清單';
 $string['frontpagedescription'] = '頭版 說明';
 $string['frontpageformat'] = '頭版 格式';
 $string['frontpagenews'] = '顯示新項目';
+$string['frontpagetopiconly'] = '顯示arbitrary HTML或活動(主題區)';
 $string['fulllistofcourses'] = '所有課程';
 $string['fullname'] = '名稱';
 $string['fullnamedisplay'] = '$a->lastname $a->firstname';
 $string['fullprofile'] = '個人完整資料';
 $string['fullsitename'] = '網站名稱';
+$string['functiondisabled'] = '此功能目前未啟動';
 $string['gd1'] = 'GD 1.x 已安裝';
 $string['gd2'] = 'GD 2.x 已安裝';
 $string['gdneed'] = '必須安裝　GD 以便顯示本圖片';
 $string['gdnot'] = 'GD未安裝';
+$string['go'] = '到';
 $string['gpl'] = 'Copyright (C) 2001-2002  Martin Dougiamas  (http://dougiamas.com)
 
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
+本軟體是自由軟體; 你可以依自由軟體聯明(FSF)的 GNU General Public License版權規定下重新包裝/修改本軟體
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details:
+本軟體的發行希望能對您有用,但不提供任何使用上的保證,詳見GNU General Public License :
 
 http://www.gnu.org/copyleft/gpl.html';
 $string['grade'] = '分數';
@@ -362,9 +477,12 @@ $string['grades'] = '分數';
 $string['group'] = '群組';
 $string['groupadd'] = '新增新的群組';
 $string['groupaddusers'] = '將選擇的目標，加入群組';
+$string['groupfor'] = '群組到';
 $string['groupinfo'] = '所選取的群組資訊';
+$string['groupinfoedit'] = '編輯群組設定';
 $string['groupinfomembers'] = '所選取的成員資訊';
 $string['groupinfopeople'] = '所選取的人員資訊';
+$string['groupmembers'] = '群組成員';
 $string['groupmemberssee'] = '觀看群組成員';
 $string['groupmembersselected'] = '所選擇的群組成員';
 $string['groupmode'] = '群組模式';
@@ -385,6 +503,11 @@ $string['guestsnotallowed'] = '報歉, $a 不允許未註冊者進入.';
 $string['guestsyes'] = '本課程完全不設限(所有人均可進入)';
 $string['guestuser'] = '旁聽帳號';
 $string['guestuserinfo'] = '本使用者在某些課程僅有閱覽權限 無法輸入資料.';
+$string['healthcenter'] = '系統健診中心';
+$string['healthproblemsdetected'] = '偵測到問題!';
+$string['healthproblemsolution'] = '問題解決方案';
+$string['healthreturntomain'] = '繼續';
+$string['healthsolution'] = '解決方案';
 $string['help'] = '說明';
 $string['helpemoticons'] = '使用情緒圖臉';
 $string['helpformatting'] = '關於格式化文件';
@@ -398,8 +521,13 @@ $string['helpsummaries'] = '關於這個總結';
 $string['helptext'] = '如何寫相關說明文字';
 $string['helpwiki'] = '如何編寫 Wiki 文件';
 $string['helpwriting'] = '請認真填寫';
+$string['hiddensections'] = '隱藏的文章';
+$string['hiddensectionscollapsed'] = '隱藏的文章以可展開的方式呈現';
+$string['hiddensectionsinvisible'] = '隱藏的文章設為不可見';
 $string['hide'] = '隱藏';
+$string['hideadvancedsettings'] = '隱藏進階設定';
 $string['hidepicture'] = '隱藏人頭像';
+$string['hidesettings'] = '隱藏設定';
 $string['hits'] = '提示';
 $string['hitsoncourse'] = '$a->username 進入 $a->coursename 的紀錄 ';
 $string['hitsoncoursetoday'] = '今日$a->username 進入 $a->coursename 的紀錄 ';
@@ -415,6 +543,11 @@ $string['htmleditordisabledbrowser'] = '線上編輯介面的功能無效 因為
 $string['htmlformat'] = '網頁顯示格式';
 $string['icqnumber'] = 'ICQ 號碼';
 $string['idnumber'] = '學號';
+$string['importdata'] = '匯入課程資料';
+$string['importdataexported'] = '從課程\'from\' 匯出資料成功.<br /> 繼續匯入資料到您的\'to\'課程 ';
+$string['importdatafinished'] = '匯入完成!請繼續';
+$string['importdatafrom'] = '尋找要匯入的課程';
+$string['importmetacoursenote'] = '使用此表單新增課程到您的後設課程中(會匯入選課資料)';
 $string['inactive'] = '暫停使用';
 $string['include'] = '包含';
 $string['includeallusers'] = '包含所有使用者';
@@ -424,10 +557,14 @@ $string['included'] = '包含';
 $string['includelogentries'] = '包含存取記錄';
 $string['includemodules'] = '包含模組';
 $string['includeneededusers'] = '包含所需的使用者';
+$string['includenoneusers'] = '不包含使用者';
 $string['includeuserfiles'] = '包含使用者檔案';
+$string['info'] = '資訊';
 $string['institution'] = '制度';
 $string['invalidemail'] = '錯誤的電子郵件';
 $string['invalidlogin'] = '登入錯誤, 請重試';
+$string['ip_address'] = 'IP位址';
+$string['jump'] = '跳到';
 $string['jumpto'] = '前往...';
 $string['keep'] = '保留';
 $string['langltr'] = '語言呈現由左至右';
@@ -443,6 +580,7 @@ $string['latestlanguagepack'] = '檢查最新的語言套件';
 $string['latestnews'] = '最新訊息';
 $string['leavetokeep'] = '不要填則保留原來密碼';
 $string['license'] = 'GPL 執照';
+$string['liketologin'] = '您要現在登入為使用者?';
 $string['list'] = '清單';
 $string['listfiles'] = '$a 中的檔案清單';
 $string['listofallpeople'] = '顯示所有人員';
@@ -450,46 +588,44 @@ $string['livelogs'] = '最近一小時使用紀錄';
 $string['locale'] = 'zh_TW.utf8';
 $string['location'] = '地區';
 $string['loggedinas'] = '以 $a 身分登入';
+$string['loggedinasguest'] = '您目前是使用訪客帳號登入';
 $string['loggedinnot'] = '尚未登入.';
 $string['login'] = '登入';
+$string['login_failure_logs'] = '登入錯誤記錄檔';
 $string['loginas'] = '以該學生身分登入';
 $string['loginguest'] = '以 訪客 身分登入';
 $string['loginsite'] = '登入本網站';
 $string['loginsteps'] = '你好! 若要使用本網站功能你必須先在本網站註冊.
-
    部分課程可能還需要開課教師所設定的專屬密碼
-
    請遵循以下步驟:
-
    <ol>
-
-   <li>請於 <a href=\"$a\">申請新帳號</a> 表格中輸入個人相關資料.
-</li>
+   <li>請於 <A HREF=$a>申請新帳號</A> 表格中輸入個人相關資料.
    <li>依據指示完成註冊手續,進行登入動作.
-</li>
    <li>登入後請選擇想要參加的課程.
-</li>
    <br />部分課程開課教師可能會設定專屬密碼, 則需要取得專屬密碼後才能進入(僅需初次進入課程時輸入)
-
    進入課程後 未來只需要登入便可再次進入課程, 不需要再輸入課程專屬密碼
-</li>
    </ol>';
-
-$string['loginstepsnone'] = '<p>嗨!<p>需要完成註冊手續才可能進入本課程.
-</p>
-<p>你需要申請一個 帳號名稱和密碼 以便進行登入系統的動作!</p><p>
-
-假如你所選定 帳號名稱已經有人先登記 則需要輸入新的名稱.</p>';
+$string['loginstepsnone'] = '嗨!<p>需要完成註冊手續才可能進入本課程.
+<p>你需要申請一個 帳號名稱和密碼 以便進行登入系統的動作!<p>
+假如你所選定 帳號名稱已經有人先登記 則需要輸入新的名稱.';
 $string['loginto'] = '登入 $a';
 $string['loginusing'] = '請輸入 帳號名稱與密碼 進行登入';
 $string['logout'] = '登出';
 $string['logs'] = '紀錄';
+$string['logtoomanycourses'] = '[<a href=\"$a->url\">更多</a> ]';
+$string['logtoomanyusers'] = '[<a href=\"$a->url\">更多</a> ]';
+$string['mailadmins'] = '通知管理者';
+$string['mailstudents'] = '通知學生';
+$string['mailteachers'] = '通知教師';
 $string['mainmenu'] = '主選單';
 $string['makeafolder'] = '新增子目錄';
 $string['makeeditable'] = '假如你選擇讓 $a 成為可編輯則你需要線上直接編輯本網頁';
 $string['manageblocks'] = '區塊模組';
 $string['managedatabase'] = '資料庫管理';
 $string['managefilters'] = '文字過濾';
+$string['managemeta'] = '這是一門後設(meta)課程嗎?';
+$string['managemetadisabled'] = '此功能已鎖定,因為這是一門後設(meta)課程';
+$string['managemetaexplan'] = '(這表示選課資料會從其他課程繼承過來)';
 $string['managemodules'] = '教學模組';
 $string['markedthistopic'] = '這個主題被強化為目前的主要議題';
 $string['markthistopic'] = '將本主題設定為 目前教學主題';
@@ -498,8 +634,20 @@ $string['maximumgrade'] = '最高分數';
 $string['maximumshort'] = '最大';
 $string['maximumupload'] = '最大上傳檔案大小';
 $string['maxsize'] = '檔案最大容量: $a';
+$string['metaaddcourse'] = '新增此課程';
+$string['metaalreadycourses'] = '課程已指定';
+$string['metaalreadyhascourses'] = '後設課程已有子課程';
+$string['metaalreadyhasenrolments'] = '課程已有人選修';
+$string['metaalreadyinmeta'] = '此課程已是後設課程的一部分';
+$string['metaassigncourses'] = '指定課程';
+$string['metacourse'] = '後設課程';
+$string['metanoalreadycourses'] = '尚無指定之課程';
+$string['metanopotentialcourses'] = '目前沒有可用課程';
+$string['metapotentialcourses'] = '可用課程';
+$string['metaremovecourse'] = '移除此課程';
 $string['min'] = '分鐘';
 $string['mins'] = '分鐘';
+$string['minutes'] = '分';
 $string['miscellaneous'] = '其它';
 $string['missingcategory'] = '你需要選定一個 課程類別';
 $string['missingcity'] = '缺 市/鄉鎮 資料';
@@ -523,9 +671,12 @@ $string['missingteacher'] = '至少須選擇某功能';
 $string['missingurl'] = '缺少 URL';
 $string['missingusername'] = '缺少 帳號名稱';
 $string['modified'] = '最後修改時間';
-$string['modulesetup'] = 'Setting up module tables';
-$string['modulesuccess'] = '$a tables have been set up correctly';
+$string['moduledeleteconfirm'] = '您將完全刪除\'$a\'模組,這將會完全刪除資料庫中與此模組相關的資料.您確定您要繼續?';
+$string['moduledeletefiles'] = '所有與\'$a->module\' 模組相關的資料已從資料庫中刪除,要完成刪除動作(避免模組自動重新安裝),請將伺服器中模組$a->directory 資料夾移除';
+$string['modulesetup'] = '設定模組資表';
+$string['modulesuccess'] = '$a 資料表已正確設定';
 $string['moodleversion'] = 'Moodle 版本';
+$string['more'] = '更多';
 $string['mostrecently'] = '最近';
 $string['move'] = '搬移';
 $string['movecategoryto'] = '搬移類別到：';
@@ -539,11 +690,14 @@ $string['moveright'] = '往右搬移';
 $string['moveselectedcoursesto'] = '搬移所選取的課程到...';
 $string['movetoanotherfolder'] = '移到別的目錄';
 $string['moveup'] = '往上移';
+$string['msnid'] = 'MSN帳號';
+$string['mustchangepassword'] = '新的密碼必須與目前設定不同';
 $string['mustconfirm'] = '你必須先完成登入動作';
 $string['mycourses'] = '個人所參與的課程';
 $string['name'] = '名稱';
+$string['namescorm'] = 'SCORM';
 $string['namesocial'] = '週次';
-$string['nametopics'] = '主題topic';
+$string['nametopics'] = '主題';
 $string['nameweeks'] = '週次';
 $string['needed'] = '必需的';
 $string['never'] = '從不';
@@ -557,9 +711,7 @@ $string['newpasswordtext'] = '嗨 $a->firstname,$a->lastname
 你於 $a->sitename 的帳號已經被要求重新設定一個 臨時密碼
 
 請按下以下連結 以便確認系統將登入時所需輸入的最新資訊設定如下:
-
    $a->link
-
 
    帳號名稱username: $a->username
    密碼: $a->newpassword
@@ -567,14 +719,10 @@ $string['newpasswordtext'] = '嗨 $a->firstname,$a->lastname
 若是你並未提出重新設定要求 則可能是網友弄錯 請忽略以上訊息
 
 對大多數電子郵件而言,你只要按下以上網址即可
-
 如果並未出現連結 請用剪貼的方式 啟動瀏覽器進入以上網址網頁.
 
-
 歡迎使用本系統 $a->sitename 管理者,
-
 $a->signoff 敬上';
-
 $string['newpicture'] = '新圖片';
 $string['newsitem'] = '新選項';
 $string['newsitems'] = '新選項';
@@ -583,8 +731,10 @@ $string['newuser'] = '新的加入者';
 $string['newusers'] = '新加入者';
 $string['next'] = '下一個';
 $string['no'] = '否';
+$string['nobody'] = '無';
 $string['nocoursesfound'] = '包含* $a * 這個關鍵字的課程，未被找到 ';
 $string['nocoursesyet'] = '本區尚未有課程';
+$string['nodstpresets'] = '系統管理者並未啟用日光節約時間設定';
 $string['noexistingadmins'] = '沒有管理者, 這種訊息不應該會出現的.';
 $string['noexistingcreators'] = '目前沒有開課人員';
 $string['noexistingstudents'] = '目前沒有學員';
@@ -594,14 +744,20 @@ $string['nofilesyet'] = '本課程尚未上載過任何檔案';
 $string['nograde'] = '沒有成績紀錄';
 $string['noimagesyet'] = '本課程從未上載過任何圖片';
 $string['nomorecourses'] = '沒有合適的課程被找到';
+$string['nomoreidnumber'] = '不使用ID序號避免衝突';
 $string['none'] = '無';
 $string['nopotentialadmins'] = '缺乏適當的管理者';
 $string['nopotentialcreators'] = '沒有可能的開課教師';
 $string['nopotentialstudents'] = '沒有可能的學員';
 $string['nopotentialteachers'] = '無適當的教師';
+$string['noreplybouncemessage'] = '您已回應到一個no-reply 電子郵件.如果您要對論壇作出回應,請改用$a 論壇';
+$string['noreplybouncesubject'] = '$a - 退回的信件';
+$string['noreplyname'] = '請勿回覆此信件';
+$string['noresults'] = '沒有結果';
 $string['normal'] = '正常';
 $string['normalfilter'] = '一般過濾';
 $string['nostudentsfound'] = '$a 未被找到';
+$string['nostudentsingroup'] = '群組中還沒有學生';
 $string['nostudentsyet'] = '本課程還沒有學生登入';
 $string['nosuchemail'] = '查無此電子郵件';
 $string['notavailable'] = '無法使用';
@@ -609,11 +765,19 @@ $string['noteachersyet'] = '本課程尚未設定教師';
 $string['notenrolled'] = '$a 並未登記本課程.';
 $string['noteuserschangednonetocourse'] = '注意：當回存使用者資料時，課程使用者必須被回存。 ';
 $string['nothingnew'] = '前次登入至今尚未添加新的課程內容';
+$string['nothingtodisplay'] = '無顯示事項';
+$string['noticenewerbackup'] = '由MOODLE產生的備份檔$a->backuprelease ($a->backupversion)已產生,而且比您目前安裝的MOODLE$a->serverrelease ($a->serverversion)還新,這可能會產生一些不連續的問題,因為不保證往後回復的功能正常';
+$string['notifyloginfailuresmessage'] = '$a->time, IP: $a->ip,使用者: $a->info';
+$string['notifyloginfailuresmessageend'] = '您可以檢視這些LOG.$a/course/log.php?id=1&chooselog=1&modid=site_errors.';
+$string['notifyloginfailuresmessagestart'] = '以下為您上次接到通知後在$a的登入失敗次數 ';
+$string['notifyloginfailuressubject'] = '$a :: 登入錯誤警告';
 $string['notincluded'] = '未包括';
 $string['notingroup'] = '抱歉，你必須是群組的成員才能看到這個活動';
+$string['notpublic'] = '未公開!';
 $string['nousersmatching'] = '沒有符合 * $a *的使用者被找到';
 $string['nousersyet'] = '本課程還沒有學生登入';
 $string['now'] = '現在';
+$string['numattempts'] = '$a 登入錯誤嘗試';
 $string['numberweeks'] = '週/主題 總數';
 $string['numdays'] = '$a 日';
 $string['numhours'] = '$a 時';
@@ -623,13 +787,18 @@ $string['numviews'] = '$a 瀏覽';
 $string['numweeks'] = '$a 週';
 $string['numwords'] = '$a 字數';
 $string['numyears'] = '$a 年';
-$string['ok'] = 'OK';
+$string['ok'] = '確定';
 $string['opentoguests'] = '訪客 權限';
 $string['optional'] = '選項';
 $string['order'] = '次序';
 $string['other'] = '其他';
 $string['outline'] = '外觀';
+$string['outlinereport'] = '摘要報告';
 $string['page'] = '頁';
+$string['pageheaderconfigablock'] = '設定 %%fullname%% 區塊';
+$string['parentcoursenotfound'] = '未發現上層課程';
+$string['parentcoursenotmetacourse'] = '上層課程非後設課程';
+$string['parentfolder'] = '上層目錄';
 $string['participants'] = '課程參與者';
 $string['password'] = '密碼';
 $string['passwordchanged'] = '密碼已經被修改';
@@ -637,24 +806,34 @@ $string['passwordconfirmchange'] = '密碼變更確認';
 $string['passwordrecovery'] = '請協助我登入';
 $string['passwordsdiffer'] = '密碼不相符';
 $string['passwordsent'] = '已經送出密碼';
-
 $string['passwordsenttext'] = '   <p>系統以電子郵件送出資訊到 $a->email.
-   </p><p><b>請閱覽你的郵件以獲得新設定的臨時密碼</b>
-   </p><p>重新登入後可以進入
-   <a href=\"$a->link\"> 修改為你個人偏好的密碼</a>.</p>';
+   <p><b>請閱覽你的郵件以獲得新設定的臨時密碼</b>
+   <p>重新登入後可以進入
+   <a href=\'$a->link\'> 修改為你個人偏好的密碼</a>.';
+$string['pathnotexists'] = '指定的路徑不存在您的伺服器上';
+$string['pathslasherror'] = '路徑最後不能有斜線';
+$string['paymentinstant'] = '按下面按鈕進行付費以登入課程!';
+$string['paymentrequired'] = '此課程需要付費';
+$string['paymentsorry'] = '感謝您付費!但付費過程可能未完成,以致於您還不能登入課程:\"$a->fullname\". 請稍後再試一次,如果還是有問題請聯繫您的教師 $a->teacher 或系統管理員';
+$string['paymentthanks'] = '感謝您付費!您現在可以登入課程::<br />\"$a\"';
 $string['people'] = '使用者';
 $string['personalprofile'] = '個人紀錄';
 $string['phone'] = '電話';
 $string['phpinfo'] = 'PHP 設定資訊 ';
+$string['policyagree'] = '您必須同意本站的政策才能繼續,您要同意嗎?';
+$string['policyagreement'] = '網站政策';
+$string['policyagreementclick'] = '點選此處閱讀Site Policy Agreement(網站政策同意書)';
 $string['popupwindow'] = '在新的視窗開啟檔案';
 $string['potentialadmins'] = '可能的管理者 ';
 $string['potentialcreators'] = '可能的開課教師';
 $string['potentialstudents'] = '可能的上課學員';
 $string['potentialteachers'] = '可能的教師們';
 $string['preferredlanguage'] = '預設語言';
+$string['preferredtheme'] = '預設佈景主題';
 $string['preview'] = '預覽';
 $string['previeworchoose'] = '預覽或選擇網頁呈現方式';
 $string['previous'] = '前';
+$string['profile'] = '個人檔案';
 $string['publicdirectory'] = '公開目錄';
 $string['publicdirectory0'] = '請勿公開這個站臺';
 $string['publicdirectory1'] = '僅公開這個站臺的名稱';
@@ -665,9 +844,17 @@ $string['readinginfofrombackup'] = '讀取備份資訊';
 $string['readme'] = '讀我';
 $string['recentactivity'] = '最近活動紀錄';
 $string['recentactivityreport'] = '最近的活動報告';
+$string['recreatedcategory'] = '重新建立類別$a';
 $string['refreshingevents'] = '更新事件';
 $string['registration'] = 'Moodle 註冊';
+$string['registrationcontact'] = '公開聯絡表單';
+$string['registrationcontactno'] = '不,我不要在網站列表中顯示聯絡表單';
+$string['registrationcontactyes'] = '是,顯示聯絡表單讓其他使用者可以聯絡我';
 $string['registrationemail'] = '電子郵件通知 ';
+$string['registrationinfo'] = '<p>本頁面允許您在moodle.org註冊您的MOODLE站台,此註冊是免費的,最主要的好處是註冊後您就會被加入到MOODLE郵件清單中,以收到最新改版訊息或其它重要通知.</p>
+<p>預設,您的資料會予以保密,而且不會被賣出或流出做其它用途,收集這些資料的目的最主要是在協助建立一個MOODLE社群的統計圖像.</p>
+<p>如果您選擇的話,您可以允許您的網站名稱,國家和URL加到MOODLE站台中.</p>
+<p>所有新的註冊在加入前都會經過人工確認,但一旦加入後您可以隨時透過這個表單更新註冊.</p>';
 $string['registrationno'] = '不，我不要收到電子郵件';
 $string['registrationsend'] = '傳送註冊資訊到Moodle主站';
 $string['registrationyes'] = '是的，請提醒我有關的重要事件';
@@ -679,6 +866,7 @@ $string['rename'] = '改名';
 $string['renamefileto'] = '更改名稱， <b> $a </b> 到';
 $string['required'] = '必須的';
 $string['requireskey'] = '本課程需要專屬密碼';
+$string['requirespayment'] = '這個課程需要付費';
 $string['resortcoursesbyname'] = '依課程名稱重新排列';
 $string['resources'] = '資源';
 $string['restore'] = '課程回存';
@@ -689,7 +877,13 @@ $string['restoreto'] = '回存至';
 $string['returningtosite'] = '登入本網站 ?';
 $string['revert'] = '重設';
 $string['role'] = '角色';
+$string['rss'] = 'RSS';
+$string['rssarticles'] = 'RSS連結文章數設定';
+$string['rsserror'] = '讀取RSS資料發生錯誤';
+$string['rsstype'] = '此活動的RSS連結';
+$string['saveandnext'] = '儲存後顯示下一筆';
 $string['savechanges'] = '儲存修正的資料';
+$string['savepreferences'] = '儲存設定';
 $string['saveto'] = '儲存到';
 $string['scale'] = '量尺';
 $string['scales'] = '量尺';
@@ -700,6 +894,7 @@ $string['scalesstandard'] = '標準量尺';
 $string['scalestip'] = '使用管理選單上的 *量尺*設定，來新增自訂量尺。';
 $string['schedule'] = '時程';
 $string['scheduledbackupstatus'] = '備份時程狀態';
+$string['screenshot'] = '螢幕快照';
 $string['search'] = '搜尋';
 $string['searchagain'] = '重複搜尋';
 $string['searchcourses'] = '搜尋課程';
@@ -707,7 +902,7 @@ $string['searchhelp'] = '你可以一次搜尋數個片語，使用+號或-號�
 $string['searchresults'] = '搜尋結果';
 $string['sec'] = '秒';
 $string['secs'] = '秒';
-$string['section'] = 'Section';
+$string['section'] = '文章';
 $string['sections'] = '段落';
 $string['select'] = '選取';
 $string['selectacountry'] = '選擇國別';
@@ -720,6 +915,7 @@ $string['shortname'] = '課程簡稱/代碼';
 $string['shortnametaken'] = '該課程簡稱已有其他課程使用';
 $string['shortsitename'] = '課程簡稱)';
 $string['show'] = '顯示';
+$string['showadvancedsettings'] = '顯示進階設定';
 $string['showall'] = '顯示所有的 $a';
 $string['showallcourses'] = '顯示所有開設課程';
 $string['showalltopics'] = '顯示所有主題';
@@ -729,29 +925,56 @@ $string['showgrades'] = '顯示成績';
 $string['showlistofcourses'] = '顯示課程內容';
 $string['showonlytopic'] = '僅顯示主題 $a';
 $string['showonlyweek'] = '僅顯示第 $a 週';
+$string['showperpage'] = '每頁顯示$a 筆';
 $string['showrecent'] = '顯示最近活動紀錄';
-$string['showreports'] = '顯非活動記錄報告';
+$string['showreports'] = '顯示活動記錄報告';
+$string['showsettings'] = '顯示設定';
 $string['showtheselogs'] = '顯示這些紀錄資料';
 $string['since'] = '自從';
+$string['sincelast'] = '從上自登入後';
 $string['site'] = '網站';
+$string['sitedefault'] = '網站預設值';
+$string['siteerrors'] = '網站錯誤記錄';
 $string['sitefiles'] = '網站檔案';
 $string['sitelogs'] = '網站紀錄';
 $string['sitenews'] = '最新消息';
+$string['sitepartlist0'] = '您必須是網站教師才能瀏覽學生清單';
+$string['sitepartlist1'] = '您必須是教師才能瀏覽學生清單';
 $string['sites'] = '網站';
+$string['sitesection'] = '包含主題區塊';
 $string['sitesettings'] = '網站設定';
+$string['siteteachers'] = '網站教師';
 $string['size'] = '大小';
 $string['sizeb'] = '位元組';
+$string['sizegb'] = 'GB';
+$string['sizekb'] = 'KB';
+$string['sizemb'] = 'MB';
+$string['skypeid'] = 'Skype 帳號';
 $string['socialheadline'] = '討論區格式 - 依照最後留言次序顯示';
 $string['someallowguest'] = '部分課程允許以 訪客 身分瀏覽';
 $string['someerrorswerefound'] = '缺乏部分資料或不完整. 請觀看以下訊息.';
 $string['sortby'] = '排序依據';
+$string['specifyname'] = '您必須指定一個名稱';
 $string['startdate'] = '課程開始日期';
 $string['startsignup'] = '申請一個使用者帳號!';
 $string['state'] = '州或省';
+$string['statistics'] = '統計';
 $string['status'] = '狀態';
+$string['strftimedate'] = '%%d %%B %%Y';
+$string['strftimedateshort'] = '%%d %%B';
+$string['strftimedatetime'] = '%%d %%B %%Y, %%I:%%M %%p';
+$string['strftimedaydate'] = '%%A, %%d %%B %%Y';
+$string['strftimedaydatetime'] = '%%A, %%d %%B %%Y, %%I:%%M %%p';
+$string['strftimedayshort'] = '%%A, %%d %%B';
+$string['strftimedaytime'] = '%%a, %%H:%%M';
+$string['strftimemonthyear'] = '%%B %%Y';
+$string['strftimerecent'] = '%%d %%b, %%H:%%M';
+$string['strftimerecentfull'] = '%%a, %%d %%b %%Y, %%I:%%M %%p';
+$string['strftimetime'] = '%%I:%%M %%p';
 $string['stringsnotset'] = '以下的字串未被定義在  $a';
 $string['studentnotallowed'] = '抱歉, 你無法以 $a 身分進入本課程';
-$string['students'] = '學員';
+$string['students'] = '學生';
+$string['studentsandteachers'] = '學生和教師';
 $string['subcategories'] = '子類別';
 $string['success'] = '成功 ';
 $string['summary'] = '摘要';
@@ -769,26 +992,37 @@ $string['themes'] = '佈景主題';
 $string['themesaved'] = '儲存新的顯示格式';
 $string['thischarset'] = 'UTF-8';
 $string['thisdirection'] = 'ltr';
-$string['thislanguage'] = '&#27491;&#39636;&#20013;&#25991;';
+$string['thislanguage'] = '&#32321;&#39636;&#20013;&#25991;';
 $string['time'] = '時間';
 $string['timezone'] = '時區';
 $string['to'] = '到';
 $string['today'] = '今日';
 $string['todaylogs'] = '今日的紀錄';
+$string['toeveryone'] = '給每個人';
+$string['toomanybounces'] = '郵件位址有太多bounces,您<b>必須</b>變更才能繼續 ';
 $string['toomanytoshow'] = '可顯示的使用者太多';
+$string['toonly'] = '只有 $a';
 $string['top'] = '最上層';
 $string['topic'] = '主題';
 $string['topichide'] = '隱藏這個主題從 $a';
 $string['topicoutline'] = '主題大綱';
 $string['topicshow'] = '顯示這個主題到 $a';
 $string['total'] = '總共';
+$string['trackforums'] = '追蹤討論區';
+$string['trackforumsno'] = '否: 不要追蹤我閱讀過的文章';
+$string['trackforumsyes'] = '是: 為我標出未讀文章';
+$string['trysearching'] = '改用搜尋';
 $string['turneditingoff'] = '關閉 編輯模式';
 $string['turneditingon'] = '啟動 編輯模式';
 $string['undecided'] = '尚未決定';
 $string['unenrol'] = '退出課程';
+$string['unenrolallstudents'] = '退選所有學生';
+$string['unenrolallstudentssure'] = '您確定要把所有的學生退出這個課程?';
 $string['unenrolme'] = '將我從 $a 課程中退出';
 $string['unenrolsure'] = '你確定要將 [ $a ] 退出課程嗎?';
+$string['unfinished'] = '未完成';
 $string['unknowncategory'] = '不知名的類別';
+$string['unlimited'] = '無限制';
 $string['unpacking'] = '解開套件 $a';
 $string['unsafepassword'] = '不夠保險的密碼 - 請輸入其他密碼';
 $string['unusedaccounts'] = '當使用者 $a 日未曾進入本課程則自動退出';
@@ -805,18 +1039,32 @@ $string['updatinga'] = '更新 $a';
 $string['updatingain'] = '編修 $a->in 內的 $a->what ';
 $string['upload'] = '上載';
 $string['uploadafile'] = '上載檔案';
+$string['uploadedfile'] = '檔案上傳成功';
 $string['uploadedfileto'] = '上載 $a->file 到 $a->directory　目錄下';
+$string['uploadedfiletoobig'] = '抱歉,檔案太大(上傳限制是 $a 位元)';
+$string['uploadfailednotrecovering'] = '以下的檔案上傳失敗, $a->name.<br />
+問題記錄如下::<br />$a->problem<br />尚未回復';
+$string['uploadfilelog'] = '$a 的檔案上傳log';
+$string['uploadformlimit'] = '上傳的檔案大小超過論壇限制';
+$string['uploadlabel'] = '標題:';
 $string['uploadnofilefound'] = '缺乏檔案 - 你確定選擇了上載檔案了嗎?';
 $string['uploadnotallowed'] = '上傳動作不被允許';
+$string['uploadoldfilesdeleted'] = '您在上傳區的舊檔案已被刪除';
+$string['uploadpartialfile'] = '檔案僅部分上傳';
 $string['uploadproblem'] = '上載檔案 $a 時發生不知名錯誤  (是否檔案過大?)';
+$string['uploadrenamedchars'] = '檔案從$a->oldname 變更為$a->newname,含有無效字元.';
+$string['uploadrenamedcollision'] = '檔案從$a->oldname 變更為$a->newname,檔名發生衝突.';
+$string['uploadserverlimit'] = '上傳的檔案大小超過伺服器限制';
 $string['uploadthisfile'] = '上載本檔案';
 $string['uploadusers'] = '上傳使用者';
+$string['usedinnplaces'] = '使用空間 $a ';
 $string['user'] = '使用者';
 $string['userconfirmed'] = '確認 $a';
 $string['userdata'] = '使用者資料';
 $string['userdeleted'] = '本使用者帳號已被刪除';
-$string['userdescription'] = '個人簡介：<br />學生請寫:<br />學校/年級/班別<br />老師請寫:<br />畢業學校系級與<br />任教學校及科目';
+$string['userdescription'] = '個人簡介：<br />學生請寫:<br />學校/年級/班別<p>老師請寫:<br />畢業學校系級與<br />任教學校及科目';
 $string['userfiles'] = '使用者檔案';
+$string['userlist'] = '使用者列表';
 $string['username'] = '帳號名稱';
 $string['usernameexists'] = '帳號名稱重複(已被使用), 請另選新的名稱';
 $string['usernotconfirmed'] = '無法確認 $a';
@@ -824,15 +1072,33 @@ $string['userprofilefor'] = ' $a 的個人設定';
 $string['users'] = '帳號名稱';
 $string['usersnew'] = '新使用者';
 $string['userzones'] = '使用者時區';
+$string['usethiscourse'] = '使用本課程';
 $string['usingexistingcourse'] = '使用現有課程';
 $string['version'] = '版本';
 $string['view'] = '觀看';
+$string['viewsolution'] = '檢視解決方案';
+$string['virusfound'] = '系統管理者注意!
+Clam AV 發現使用者$a->user 在a->course課程上傳的檔案 $a->filename 疑似感染毒.以下為clamscan輸出結果:';
+$string['virusfoundlater'] = '$a->date 您在a->course課程上傳的檔案 $a->filename 疑似感染毒.
+以下為moodle的處理摘要:
+$a->action
+如果這是一份作業的話,請清除病毒後重新上傳,以便讓教學者評分';
+$string['virusfoundlateradmin'] = '系統管理者注意!$a->date 由使用者$a->user 在a->course課程上傳的檔案 $a->filename 疑似感染毒.
+以下為moodle的處理摘要:
+$a->action';
+$string['virusfoundlateradminnolog'] = '系統管理者注意!
+上傳的檔案,$a->filename,發現感染病毒,moodle無法將它傳回給原上傳者.
+以下為moodle的處理摘要:
+$a->action';
+$string['virusfoundsubject'] = '$a:發現病毒';
+$string['virusfounduser'] = '您上傳的檔案, $a->filename,已經感染病毒!上傳失敗';
+$string['virusplaceholder'] = '上傳的檔案發現含有病毒,已經移除或通知原使用者';
+$string['visibletostudents'] = '對 $a 開放';
 $string['webpage'] = '網頁';
 $string['week'] = '週次';
 $string['weekhide'] = '從$a 畫面，隱藏這個星期';
 $string['weeklyoutline'] = '本週大綱';
 $string['weekshow'] = '顯示本周到 $a';
-
 $string['welcometocourse'] = '歡迎到 $a';
 $string['welcometocoursetext'] = '歡迎進入 $a->coursename!
 
@@ -855,13 +1121,16 @@ $string['writingcategoriesandquestions'] = '寫入類別和問題資訊';
 $string['writingcoursedata'] = '寫入課程資料';
 $string['writingeventsinfo'] = '寫入事件資訊';
 $string['writinggeneralinfo'] = '寫入一般資訊';
+$string['writinggradebookinfo'] = '寫入成績資訊';
 $string['writinggroupsinfo'] = '寫入群組資訊';
 $string['writingheader'] = '寫入檔案標頭';
 $string['writingloginfo'] = '寫入存取記錄';
+$string['writingmessagesinfo'] = '寫入訊息';
 $string['writingmoduleinfo'] = '寫入模組資訊';
 $string['writingscalesinfo'] = '寫入量尺資訊';
 $string['writinguserinfo'] = '寫入使用者資訊';
 $string['wrongpassword'] = '密碼與帳號名稱不符';
+$string['yahooid'] = 'Yahoo 帳號';
 $string['yes'] = '是';
 $string['youareabouttocreatezip'] = '你即將建立打包壓縮';
 $string['youaregoingtorestorefrom'] = '你即將啟動回存動作';
@@ -869,4 +1138,5 @@ $string['yourlastlogin'] = '你最後登入的時間';
 $string['yourself'] = '你自己';
 $string['yourteacher'] = '你的教師 $a';
 $string['zippingbackup'] = '壓縮備份檔';
+
 ?>

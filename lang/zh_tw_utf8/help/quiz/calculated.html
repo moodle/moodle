@@ -1,0 +1,118 @@
+<p align=center style='text-align:center'><b>計算題</b></p>
+
+<p>計算題提供了一種自動建立個別數字題的方法。題目裡可以使用通配符號，答題時通配符號會被數值所替換。 
+下面是主要編輯頁面的大致樣子，其中有一些簡單的輸入範例： </p>
+
+<table class=MsoNormalTable border=0 cellspacing=3 cellpadding=0
+ style='mso-cellspacing:1.5pt'>
+ <tr style='mso-yfti-irow:0'>
+  <td valign=top style='padding:.75pt .75pt .75pt .75pt'>
+  <p align=right style='text-align:right'><b>問題：</b><span lang=EN-US><o:p></o:p></span></p>
+  </td>
+  <td valign=top style='padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><span lang=EN-US><TEXTAREA ROWS="6" COLS="40" WRAP="virtual" NAME="questiontext"
+  id=questiontext>{a} + {b} 是多少？</TEXTAREA></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:1'>
+  <td valign=top style='padding:.75pt .75pt .75pt .75pt'>
+  <p align=right style='text-align:right'><b>要顯示的圖片：</b></p>
+  </td>
+  <td valign=top style='padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><SELECT NAME="image">
+<OPTION SELECTED VALUE="">無
+<OPTION VALUE="grevture.gif">grevture.gif
+</SELECT></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:2'>
+  <td valign=top style='padding:.75pt .75pt .75pt .75pt'>
+  <p align=right style='text-align:right'><b>正確答案公式：</b><span lang=EN-US><o:p></o:p></span></p>
+  </td>
+  <td valign=top style='padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><INPUT TYPE="text" SIZE="20" NAME="answer[]" VALUE="{a} + {b}"
+  id=formula0>&nbsp;&nbsp; <span style='display:none;mso-hide:all'><INPUT TYPE="hidden" NAME="fraction[]" VALUE="1.0"></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:3'>
+  <td valign=top style='padding:.75pt .75pt .75pt .75pt'>
+  <p align=right style='text-align:right'><b>容許誤差：</b><o:p></o:p></span></p>
+  </td>
+  <td valign=top style='padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><INPUT TYPE="text" SIZE="15" NAME="tolerance[]" VALUE="0.01"
+  id="tolerance0&quot;">± </span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:4'>
+  <td valign=top style='padding:.75pt .75pt .75pt .75pt'>
+  <p align=right style='text-align:right'><b>誤差類型：</b></p>
+  </td>
+  <td valign=top style='padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><span lang=EN-US><SELECT NAME="tolerancetype[]">
+<OPTION SELECTED VALUE="1">相對誤差
+<OPTION VALUE="2">額定誤差
+<OPTION VALUE="3">幾何誤差
+</SELECT></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:5;mso-yfti-lastrow:yes'>
+  <td valign=top style='padding:.75pt .75pt .75pt .75pt'>
+  <p align=right style='text-align:right'><b>有效數字：</b></p>
+  </td>
+  <td valign=top style='padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><SELECT NAME="correctanswerlength[]">
+<OPTION VALUE="1">1
+<OPTION SELECTED VALUE="2">2
+<OPTION VALUE="3">3
+<OPTION VALUE="4">4
+<OPTION VALUE="5">5
+<OPTION VALUE="6">6
+<OPTION VALUE="7">7
+<OPTION VALUE="8">8
+<OPTION VALUE="9">9
+<OPTION VALUE="10">10
+</SELECT></span></p>
+  </td>
+ </tr>
+</table>
+
+<p>在試題題幹和「正確答案公式」中可以看到 {a} 和 {b} 。任何 {name} 都可以用作通配符，在答題時被某個值替換。並且，在題目提交時，替換了「正確答案公式」裡的通配符後，公式被當做數值運算式，用來計算正確答案。通配符的取值在後面的計算題「編輯嚮導」頁裡生成或設定……
+<br>
+上面的公式例子使用了運算符「+」。其他可用的運算符包括「- * /」和「%」(%是求餘運算）。
+<br>
+您也可以使用一些PHP格式的數學運算函數。
+其中有24個單參數運算函數：<br>
+<b>abs, acos, acosh, asin, asinh, atan, atanh, ceil, cos, cosh, deg2rad, exp,
+expm1, floor, log, log10, log1p, rad2deg, round, sin, sinh, sprt, tan, tanh </b><br>
+和兩個雙參數運算函數：<br>
+<b>atan2, pow </b><br>
+和函數<b>min</b>與<b>max</b>可以有兩個或更多參數。<br>
+也可以使用函數<b>pi</b>，它沒有任何參數，但不要忘了使用括弧——正確的用法是<b>pi()</b>。<br>
+類似的其他函數必須把參數放到括弧中。例如：<b>sin({a}) + cos({b}) * 2</b>。<br>
+嵌套調用函數也是毫無問題的，例如：<b>cos(deg2rad({a} + 90))</b>等。 <br>
+如何使用PHP格式函數的更多細節，可以在<a href="http://www.php.net/manual/zh/ref.math.php"
+target=phpmathdoc>PHP主頁上的文檔</a>中找到。 <br>
+<br>
+對數字問題來說，教師可以為正確答案設定一個範圍，在此範圍內的答案都可以算作正確。「容許誤差」就是用來處理這種問題的。不過，這裡有三種不同的誤差類型，它們是<b>相對誤差、額定誤差和幾何誤差</b>。<br>
+如果正確答案的計算結果是200，誤差被設為0.5，那麼不同的誤差類型的工作方式為：
+<br>
+<br>
+<b>相對誤差：</b>誤差區間是由正確答案乘以0.5得到，也就是說，在此例中，我們得到100。因此正確的解答必須在100到300之間(200 ± 100)。<br>
+當正確答案的數值，因不同的通配值而變化很大時，這種方式是很有用的。 <br>
+<br>
+<b>額定誤差：</b>這是最簡單的誤差類型，但是能力有限。正確的解答必須在199.5和200.5之間(200 ± 0.5)。<br>
+當不同的正確答案相差很小時，這種方式可以被使用。 <br>
+<br>
+<b>幾何誤差：</b> 誤差的上限計算為200 + 0.5*200，和相對誤差一樣。下限計算為200/(1 + 0.5)。正確的解答必須在133.33和300之間。<br>
+複變微積分的誤差上限可以是1或更多，但很明顯下限不能這麼多，因為可能所有情況下的正確答案都是0。這種方式就發揮作用了。 <br>
+<br>
+「<b>有效數字</b>」只影響在回顧和報告時，正確答案的顯示。例如：如果它被設為3，那麼正確答案13.333會被顯示為13.3；1236會被顯示為1240；而23會被顯示為23.0等等。
+<br>
+<br>
+迴饋和可選用的單位，其功能與數字題裡的完全一致。 </span></p>
+
+</div>
+
+</body>
+
+</html>

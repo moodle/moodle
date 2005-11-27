@@ -1,1 +1,8 @@
-<?PHP // $Id$ // block_course_summary.php - created with Moodle 1.3 development (2004041800)$string['blockname'] = '課程摘要';?>
+<?PHP // $Id$ 
+      // block_course_summary.php - created with Moodle 1.5 (2005060201)
+
+
+$string['coursesummary'] = '課程摘要';
+$string['pagedescription'] = '課程/網站描述';
+
+?>

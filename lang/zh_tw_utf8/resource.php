@@ -1,10 +1,15 @@
 <?PHP // $Id$ 
-// resource.php - created with Moodle 1.2 Beta (2004022400)
+      // resource.php - created with Moodle 1.5.2 (2005060220)
+
+
 $string['addresource'] = '新增資源';
 $string['chooseafile'] = '選擇或上傳一個檔';
+$string['chooseparameter'] = '選擇參數';
+$string['configallowlocalfiles'] = '當建立新檔案資源時，允許在本機檔案系統建立連結，例如一個光驅或者一個硬碟驅動的文件的聯結。 這可能在同一間教室裡全部學生存取相同的網路磁碟或在CD光碟機上的檔案時特別有用，這個功能的使用可能要求變更您的瀏覽器安全設定。 ';
 $string['configdefaulturl'] = '這個值被使用來提示URL，當建立一個新的URL資源連結時';
 $string['configfilterexternalpages'] = '啟用這個設定，將導致所有外部資源被現有的網站過濾設定所處理。啟用這個選項可能導致系統效能降低。請小心使用，並確定你真的有這個需求。';
 $string['configframesize'] = '當網頁或上載的檔案在框架中顯示，這個設定值決定了框架大小。';
+$string['configparametersettings'] = '這設定了當新增一些新資源時表單中參數設定頁的預設值,第一次後，將成為個別的用戶偏好設定。 ';
 $string['configpopup'] = '當新增一個新資源時，這個資源是否要採用彈出式視窗，以提供閱讀。這個選項預設是啟用的。';
 $string['configpopupdirectories'] = '彈出視窗是否顯示預設目錄鏈結？';
 $string['configpopupheight'] = '新視窗預設高度？';
@@ -15,18 +20,31 @@ $string['configpopupscrollbars'] = '彈出視窗是否可滾動？';
 $string['configpopupstatus'] = '彈出視窗是否顯示狀態欄？';
 $string['configpopuptoolbar'] = '彈出視窗是否顯示工具欄？';
 $string['configpopupwidth'] = '新視窗預設寬度？';
+$string['configsecretphrase'] = '這個祕密的片語用來產生可傳送給部分資源作為參數的加密值。經加密的密碼由目前使用者ip位址與您的密語連結後經md5加密。例如密碼 = md5(IP.secretphrase)。 這允許目標網站資源確認額外的安全連接。 ';
 $string['configwebsearch'] = '當加入一個超連結時，這個連結位址提供一個網站來幫助使用者搜尋你要的相關網址';
+$string['configwindowsettings'] = '這設定了當新增一些新資源時表單中視窗設定頁的預設值,第一次後，將成為個別的用戶偏好設定。 ';
 $string['directlink'] = '直接連結這個檔案';
+$string['directoryinfo'] = '所選資料夾內的檔案將會顯示';
+$string['display'] = '視窗';
 $string['editingaresource'] = '編輯資源';
+$string['encryptedcode'] = '加密';
 $string['example'] = '範例';
-$string['examplereference'] = 'Tobin, K. & Tippins, D (1993) Constructivism as a Referent for Teaching and Learning. In: K. Tobin (Ed) The Practice of Constructivism in Science Education, pp 3-21, Lawrence-Erlbaum, Hillsdale, NJ.';
-$string['exampleurl'] = '網址 http://fire.tkvs.ylc.edu.tw/moodle';
+$string['exampleurl'] = '網址 http://course.moodle.idv.tw';
 $string['fetchclienterror'] = '網頁存取錯誤，你可能提供了錯誤的網址';
 $string['fetcherror'] = '存取網頁發生錯誤';
 $string['fetchservererror'] = '當存取遠端網頁時，有錯誤發生。可能是程式執行錯誤';
 $string['filename'] = '檔案名稱';
+$string['filtername'] = '資源名稱 自動連結';
+$string['frameifpossible'] = '將線上資源放在頁框中';
 $string['fulltext'] = '文字內容';
 $string['htmlfragment'] = '網頁片段';
+$string['localfile'] = '本地檔案';
+$string['localfilechoose'] = '選擇本地檔案 (CD-ROM)';
+$string['localfilehelp'] = '顯示本地檔案說明';
+$string['localfileinfo'] = '< p > 從你的電腦中挑選一個本地檔案。該檔案將不會被上載到網站，但是Moodle 將在電腦中尋找檢視此資源的人的相同檔案。 < /p > < p >當你有大的媒體檔案儲存在標準CD-ROM 上而且要分送給全部參加者時，這特別有用。每個參加者對類似的檔案也能選擇同樣的方式分享他們自己的檔案路徑，以 <a href=\"$a\" target=\"_blank\">編輯個別用戶設定< /a > . < /p > ';
+$string['localfilepath'] = '要設定這個資源的路徑，從磁碟機中(通常是CD_ROM)中挑選任何儲存在您電腦中的資源。文件將不會被上載，但是磁碟訊息將被儲存並用于任何本地文件資源. ';
+$string['localfileselect'] = '選擇此檔案路徑';
+$string['maindirectory'] = '主檔案目錄';
 $string['modulename'] = '線上資源';
 $string['modulenameplural'] = '線上資源';
 $string['neverseen'] = '無人閱覽';
@@ -42,9 +60,15 @@ $string['newtoolbar'] = '顯示工具列';
 $string['newwidth'] = '預設視窗寬度(像素)';
 $string['newwindow'] = '開新視窗';
 $string['newwindowopen'] = '在新視窗打開';
+$string['notallowedlocalfileaccess'] = '目前無法存取本地檔案,所以資源目前不存在';
 $string['note'] = '提示';
-$string['notefile'] = '請利用 <a href=\"$a\" >檔案管理</a>上載檔案. 上載的檔案都會顯示在選單中';
+$string['notefile'] = '請利用 <A HREF=$a >檔案管理</A>上載檔案. 上載的檔案都會顯示在選單中';
 $string['notypechosen'] = '請先選擇資源型態. 請回前頁重試一次.';
+$string['pagedisplay'] = '在目前視窗顯示';
+$string['pagewindow'] = '同一個視窗';
+$string['pan'] = 'Pan';
+$string['parameter'] = '參數';
+$string['parameters'] = '參數';
 $string['popupresource'] = '這個資源應顯示在彈出視窗';
 $string['popupresourcelink'] = '如果未生效，請點選這裡： $a';
 $string['resourcetype'] = '資源型態';
@@ -56,4 +80,16 @@ $string['resourcetype5'] = '外部網頁連結';
 $string['resourcetype6'] = '網頁文件';
 $string['resourcetype7'] = '執行程式';
 $string['resourcetype8'] = 'Wiki 文件';
+$string['resourcetype9'] = '目錄';
+$string['resourcetypedirectory'] = '顯示目錄';
+$string['resourcetypefile'] = '連結到檔案或網站';
+$string['resourcetypehtml'] = '編輯網頁';
+$string['resourcetypelabel'] = '插入標籤';
+$string['resourcetyperepository'] = '連結到儲存物件';
+$string['resourcetypetext'] = '編輯文字頁';
+$string['searchweb'] = '搜尋網頁';
+$string['serverurl'] = '伺服器URL ($a->wwwroot)';
+$string['variablename'] = '變數名稱';
+$string['vol'] = 'Vol';
+
 ?>
