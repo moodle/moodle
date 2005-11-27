@@ -102,7 +102,7 @@ $string['auth_shib_convert_data_description'] = 'Você pode usar este API para mo
 $string['auth_shib_convert_data_warning'] = 'Este campo não existe ou não é legível com o processo do servidor web!';
 $string['auth_shib_instructions'] = 'Use o <a href=\"$a\">login Shibboleth</a> para acessar por Shibboleth quando a sua instituição suporta isto.<br />Em caso contrário, utilize o método normal indicado aqui.';
 $string['auth_shib_instructions_help'] = 'Explique o uso de Shibboleth aos seus usuários. Este texto será publicado na página de login. É necessário incluir um link a um recurso protegido pelo Shibboleth que faça o enderaçamento a \"<b>$a</b>\" em modo que os usuários de Shibboleth possam fazer o login em Moodle. Deixando este campo vazio, serão utilizadas as instruções padrão.';
-$string['auth_shib_only'] = 'Shibboleth apenas';
+$string['auth_shib_only'] = 'Apenas Shibboleth';
 $string['auth_shib_only_description'] = 'Selecionar esta opção para utilizar uma autenticação Shibboleth ';
 $string['auth_shib_username_description'] = 'Nome da variãvel do servidor Shibboleth que deve ser usada come nome de usuãrio em Moodle';
 $string['auth_shibboleth_login'] = 'Login Shibboleth';

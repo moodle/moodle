@@ -64,6 +64,19 @@ $string['gdversionhelp'] = '<p>parece que o seu servidor não tem o GD instalado.
 <p>GD é uma library de PHP necessária à elaboração de imagens como os fotos do perfil do usuário e os gráficos de estatísticas. Moodle funciona sem o GD mas a elaboração de imagens não será possível.</p>
 <p>para adicionar o GD ao PHP emUnix, compile o PHP usando o parâmetro --with-gd .</p>
 <p>Em Windows edite php.ini and cancele o comentário à linha que se refere a libgd.dll.</p>';
+$string['globalsquotes'] = 'Tratamento de Globais sem Segurança';
+$string['globalsquoteserror'] = 'Corrija a configuração do seu PHP: desabilitar register_globals e/ou habilitar magic_quotes_gpc';
+$string['globalsquoteshelp'] = '<p>Não é aconselhável habilitar Register Globals e desabilitar Magic Quotes GPC ao mesmo tempo.</p>
+
+<p>A configuração aconselhada é
+<b>magic_quotes_gpc = On</b> e
+<b>register_globals = Off</b> no seu php.ini</p>
+
+<p>Se você não tem acesso ao seu php.ini, adicione a seguinte linha de código no arquivo .htaccess do diretório principal do seu Moodle:
+<blockquote>php_value magic_quotes_gpc On</blockquote>
+<blockquote>php_value register_globals Off</blockquote>
+</p> 
+';
 $string['installation'] = 'Instalação';
 $string['magicquotesruntime'] = 'Run Time Magic Quotes ';
 $string['magicquotesruntimeerror'] = 'Isto deve estar desativado';
@@ -90,7 +103,7 @@ Com esta operação Moodle será capaz de configurar o limite de memória sózinho.</
 <p>Alguns servidores não aceitam este procedimento e <b>todas</b> as páginas PHP do servidor ficam bloqueadas ou imprimem mensagens de erro. Neste caso será necessário cancelar o arquivo .htaccess .</p>
 </li></ol> ';
 $string['mysqlextensionisnotpresentinphp'] = 'O pHP não foi configurado corretamente com a extensão MySQL e não pode comunicar com a base de dados. Controle o seu php.ini ou faça a recompilação do PHP.';
-$string['pass'] = 'Passe';
+$string['pass'] = 'OK';
 $string['phpversion'] = 'Versão do PHP';
 $string['phpversionerror'] = 'A versão do PHP não deve ser inferior a 4.1.0';
 $string['phpversionhelp'] = '<p>Moodle requer a versão 4.1.0 de PHP ou posterior.</p>

@@ -72,6 +72,7 @@ $string['confignotifyloginthreshold'] = 'Se as notificações sobre falhas de aces
 $string['configopentogoogle'] = 'Se habilitar esta opção, o Google poderá entrar nest site como \'visitante\'. Além disto, as pessoas que chegarem no site através de uma busca no Google, serão automaticamente registradas como \'visitantes\'. Note que o acesso será possível somente nos cursos que já permitem o acesso de visitantes.';
 $string['configpathtoclam'] = 'Caminho para o Clam AV. Provavelmente algo como /usr/local/bin/clamscan ou /usr/bin/clamdscan. Isto é necessário para que o Clam AV seja utilizado.';
 $string['configpathtodu'] = 'Caminho para o du. Algo como /usr/bin/du. Configurando esta opção, as páginas que mostram conteúdos de diretórios serão mais velozes.';
+$string['configperfdebug'] = 'Ativando esta opção, im indicador de performance será visualizado no fim da página no tema padrão';
 $string['configproxyhost'] = 'Se este <b>servidor</b> precisa usar um proxy (por exemplo, um firewall) para acessar a Internet, indique o nome do proxy e a porta correspondente. Em outros casos, deixe em branco.';
 $string['configquarantinedir'] = 'Indique um diretório de quarentena se quiser que o Clam AV mova os arquivos infectados para lá. Ele deve permitir a escritura pelo servidor. Se deixar em branco ou se especificar um diretório que não existe ou que não permite a escritura, os arquivos infectados serão apagados. Não inclua a barra final no percurso.';
 $string['configrequestedstudentname'] = 'Palavra para definir o estudante usada em pedidos de cursos';
@@ -117,6 +118,7 @@ $string['edithelpdocs'] = 'Editar documentos de ajuda';
 $string['editstrings'] = 'Editar as expressões';
 $string['filterall'] = 'Filtrar todas as expressões';
 $string['filteruploadedfiles'] = 'Filtrar arquivos enviados ao servidor';
+$string['globalsquoteswarning'] = '<p><strong>Aviso de Segurança</strong>: para funcionar corretamente é necessário <br />modificar algumas configurações do seu PHP.<p/><p>Você <em>deve</em> configurar <code>register_globals=off</code> e/ou<code>magic_quotes_gpc=on</code>. <br />Se possível, configurar <code>register_globals=off</code> para melhorar <br /> a segurança do servidor, configurar <code>magic_quotes_gpc=on</code> também é aconselhável.<p/><p>Para configurar estas variáveis você deve editar o arquivo <code>php.ini</code>,  a configuração<br /> de Apache/IIS ou o arquivo<code>.htaccess</code></p>';
 $string['helpadminseesall'] = 'Os administradores devem ver todos os eventos do calendário ou apenas os seus próprios eventos?';
 $string['helpcalendarsettings'] = 'Configura vários aspectos do calendário e de outras funções associadas a datas e orários';
 $string['helpforcetimezone'] = 'Você pode permitir que os usuários selecionem seus fusos horários ou forçar um único fuso para todos.';
