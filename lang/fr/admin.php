@@ -122,6 +122,7 @@ $string['filterall'] = 'Filtrer toutes les chaînes de caractères';
 $string['filtermatchoneperpage'] = 'Filtrer une occurence par page';
 $string['filtermatchonepertext'] = 'Filtrer une occurence par élément';
 $string['filteruploadedfiles'] = 'Filtrer les fichiers déposés';
+$string['globalsquoteswarning'] = '<p><strong>Notification de sécurité</strong>&nbsp;: pour fonctionner correctement, Moodle nécessite <br />certaines modifications de vos réglages PHP actuels.<p/><p>Vous <em>devez</em> effectuer les réglages <code>register_globals=off</code> et/ou <code>magic_quotes_gpc=on</code>.<br />Si possible, veuillez effectuer le réglage <code>register_globals=off</code>, afin d\'augmenter la sécurité globale <br /> de votre serveur. L\'activation de l\'option <code>magic_quotes_gpc=on</code> est aussi recommandée.<p/><p>Ces réglages sont effectués en modifiant votre fichier <code>php.ini</code>, la configuration<br />de Apache/IIS ou du fichier <code>.htaccess</code>.</p>';
 $string['helpadminseesall'] = 'Les administrateurs voient-ils tous les événements du calendrier ou seulement leurs propres événements&nbsp;?';
 $string['helpcalendarsettings'] = 'Configurer le calendrier de Moodle';
 $string['helpforcetimezone'] = 'Vous pouvez autoriser les utilisateurs à choisir leur fuseau horaire ou imposer le même fuseau horaire pour tous.';
