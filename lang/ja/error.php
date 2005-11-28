@@ -3,6 +3,7 @@
 
 
 $string['adminprimarynoedit'] = '主管理者は他から編集することはできません。';
+$string['cmunknown'] = 'このコースモジュールがありません。';
 $string['confirmsesskeybad'] = '申し訳ございません、あなたのセッションキーは、このアクションを実行するための確認をできませんでした。このセキュリティ機能は、あなたのユーザ名で重要な機能が不測または悪意により実行されることを防ぎます。本当にこの機能を実行したいか確認してください。';
 $string['coursegroupunknown'] = 'コースに関連するグループ $a が指定されていません。';
 $string['errorcleaningdirectory'] = 'ディレクトリ「 $a 」のクリーニングにエラーが発生しました。';
@@ -16,11 +17,15 @@ $string['fieldrequired'] = '「 $a 」 は必須項目です。';
 $string['filenotfound'] = '申し訳ございません。ファイルが見つかりませんでした。';
 $string['groupalready'] = 'ユーザは既にグループ $a に属しています';
 $string['groupunknown'] = 'グループ $a は指定されたコースに関連していません。';
+$string['invalidcourse'] = '無効なコース';
 $string['invalidfieldname'] = '「 $a 」 は正しいフィールド名ではありません。';
 $string['invalidfiletype'] = '「 $a 」は有効ファイルタイプではありません。';
 $string['invalidxmlfile'] = '「 $a 」は有効なXMLファイルではありません。';
 $string['missingfield'] = '「 $a 」 を入力してください。';
+$string['modulemissingcode'] = 'モジュール $a が、この機能を実行するためのコードがありません。';
 $string['modulerequirementsnotmet'] = 'モジュール「 $a->modulename 」 ($a->moduleversion) をインストールできませんでした。このモジュールをインストールするためには新しいバージョンのMoodleをインストールする必要があります。(現在、あなたは $a->currentmoodle を使用しています。 $a->requiremoodle が必要です。)';
+$string['mustbeteacher'] = 'このページは教師のみ閲覧可能です。';
+$string['noinstances'] = 'このコースに $a のインスタンスがありません!';
 $string['nonmeaningfulcontent'] = '意味の無いコンテンツです。';
 $string['notavailable'] = '現在利用できません';
 $string['onlyeditingteachers'] = '編集権限を持った教師のみ処理可能です。';
