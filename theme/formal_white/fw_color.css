@@ -72,6 +72,15 @@ div.header {
   background-color:#FFFFFF;
 }
 
+.highlight {
+  background-color:#C6BDA8;
+}
+
+.highlight2 {
+  color:#C6BDA8; /* highlight missing terms in forum search */
+}
+
+
 
 /***
  *** Header
