@@ -1,11 +1,12 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.6 development (2005072200)
+      // admin.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['adminseesallevents'] = 'Yöneticiler bütün olaylarý görür';
 $string['adminseesownevents'] = 'Yöneticiler diðer kullanýcýlar gibidir';
 $string['backgroundcolour'] = 'Arkaplan Rengi';
 $string['badwordsconfig'] = 'Kötü kelimeleri virgülle ayýrarak girin';
+$string['badwordsdefault'] = 'Belirtilen liste boþsa, dil paketinde geçen kelimeler kullanýlacaktýr.';
 $string['badwordslist'] = 'Kötü Kelime Listesi';
 $string['blockinstances'] = 'Kullaným';
 $string['blockmultiple'] = 'Çoklu';
@@ -41,7 +42,9 @@ $string['configsectionmaintenance'] = 'Bakým';
 $string['configsectionmisc'] = 'Çeþitli';
 $string['configsectionoperatingsystem'] = 'Ýþletim Sistemi';
 $string['configsectionpermissions'] = 'Ýzinler';
+$string['configsectionrequestedcourse'] = 'Kurs istekleri';
 $string['configsectionsecurity'] = 'Güvenlik';
+$string['configsectionstats'] = 'Ýstatistikler';
 $string['configsectionuser'] = 'Kullanýcý';
 $string['configsessioncookie'] = 'Bu seçenek Moodle oturumlarý için kullanýlan çerezlerin adýný ayarlar. Bu seçenek isteðe baðlýdýr, ancak ayný anda ayný web sitesi birden çok moodle kopyasý ile çalýþýyorsa bu seçenek oluþan karýþýklýðý ortadan kaldýrýr.';
 $string['configsessiontimeout'] = 'Bu siteye giriþ yapan kullanýcýlar uzun süre iþlem yapmazlarsa (sayfalarý gezinmezse) ne kadar süre içinde oturum sona erecek?';
@@ -72,6 +75,7 @@ $string['incompatibleblocks'] = 'Uyumsuz Bloklar';
 $string['latexpreamble'] = 'LaTeX Önsözü';
 $string['latexsettings'] = 'LaTeX Göstericisi Ayarlarý';
 $string['mediapluginavi'] = '.AVI filtresini etkinleþtir';
+$string['mediapluginflv'] = '.FLV filtresini etkinleþtir';
 $string['mediapluginmov'] = '.MOV filtresini etkinleþtir';
 $string['mediapluginmp3'] = '.MP3 filtresini etkinleþtir';
 $string['mediapluginmpg'] = '.MPG filtresini etkinleþtir';
@@ -87,6 +91,10 @@ $string['sitemaintenancemode'] = 'Bakým modu';
 $string['sitemaintenanceoff'] = 'Bakým modu pasifleþtirildi ve site þu anda tekrar normal çalýþýyor';
 $string['sitemaintenanceon'] = 'Siteniz þu anda bakým modunda (sadece yöneticiler girþ yapabilir ve siteyi kullanabilir)';
 $string['sitemaintenancewarning'] = 'Siteniz þu anda bakým modunda (sadece yöneticiler girþ yapabilir). Bu siteyi normal haline döndürmek için <a href=\"maintenance.php\">bakým modunu pasifleþtirin</a>.';
+$string['stickyblocks'] = 'Sabit bloklar';
+$string['stickyblockscourseview'] = 'Kurs sayfasý';
+$string['stickyblocksmymoodle'] = 'Kiþisel Moodle';
+$string['stickyblockspagetype'] = 'Yapýlandýrýlacak sayfa tipi';
 $string['therewereerrors'] = 'Verinizde hatalar var';
 $string['timezoneforced'] = 'Bu site yöneticisi tarafýndan zorunlu tutuldu';
 $string['timezoneisforcedto'] = 'Bütün kullanýcýlarý kullanmaya zorunlu tut';

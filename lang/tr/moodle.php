@@ -458,11 +458,23 @@ $string['existingcoursedeleting'] = 'Var olan kurs, önceki dersi sil';
 $string['existingcreators'] = 'Mevcut kurs oluþturucular';
 $string['existingstudents'] = 'Kayýtlý öðrenci';
 $string['existingteachers'] = 'Mevcut eðitmenler';
-$string['expirynotify'] = 'Kayýt bitiþ onayý';
-$string['expirynotifystudents'] = 'Öðrencileri bilgilendir';
+$string['expirynotify'] = 'Kayýt bitiþ bildirisi';
+$string['expirynotifyemail'] = 'Kursa kayýtlý aþaðýdaki öðrencilerin tam $a->threshold gün sonra süreleri bitiyor:
+
+$a->current
+
+Aþaðýdaki öðrencilerin ise $a->threshold günden daha az süresi kaldý.
+
+$a->past
+
+Aþaðýdaki adrese gidip kayýt sürelerini uzatabilrsiniz:
+
+$a->extendurl
+';
+$string['expirynotifystudents'] = 'Öðrencilere bildir';
 $string['expirynotifystudentsemail'] = 'Sevgili öðrenci:
 
-Bu uyarý $a->threshold gün içinde kayýt süresinin biteceði $a->course kursuna kaydýnýz hakkýndadýr.
+Bu bildiri $a->threshold gün içinde kayýt süresinin biteceði $a->course kursuna kaydýnýz hakkýndadýr.
 
 Lütfen daha fazla bilgi için eðitimcinizle iletiþim kurunuz.';
 $string['expirythreshold'] = 'Aralýk';
@@ -703,6 +715,7 @@ $string['maximumgrade'] = 'En yüksek not';
 $string['maximumshort'] = 'Max';
 $string['maximumupload'] = 'En fazla yükleme boyutu';
 $string['maxsize'] = 'En çok: $a';
+$string['memberincourse'] = 'Kurstaki Kiþiler';
 $string['messagebody'] = 'Mesaj içeriði';
 $string['messagedselectedusers'] = 'Seçili kullanýcýlara mesaj gönderildi ve alýcý listesi temizlendi.';
 $string['messagedselectedusersfailed'] = 'Seçili kullanýcýlara mesaj gönderilirken bazý þeyler yanlýþ gitti. Bazýlarý emaili almýþ olabilir.';
