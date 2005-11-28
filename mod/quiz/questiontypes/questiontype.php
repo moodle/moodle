@@ -560,12 +560,15 @@ class quiz_default_questiontype {
                 $grade->raw = round($state->last_graded->raw_grade, $cmoptions->decimalpoints);
 
                 // let student know wether the answer was correct
-                echo '<div class="correctness">';
+                echo '<div class="correctness ';
                 if ($state->last_graded->raw_grade >= $question->maxgrade) {
+                    echo ' correct">';
                     print_string('correct', 'quiz');
                 } else if ($state->last_graded->raw_grade > 0) {
+                    echo ' partiallycorrect">';
                     print_string('partiallycorrect', 'quiz');
                 } else {
+                    echo ' incorrect">';
                     print_string('incorrect', 'quiz');
                 }
                 echo '</div>';
