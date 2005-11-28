@@ -110,7 +110,7 @@ print '
 
 <!-- your head tags here -->
 <link rel="Stylesheet" href="ip-atlas.css">
-</head><body bgcolor="'.$THEME->body.'">
+</head><body>
 
 
 <a name="map"></a>
