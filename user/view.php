@@ -63,9 +63,9 @@
             error(get_string("groupnotamember"), "../course/view.php?id=$course->id");
         }
     }
-
+  
     if ($course->id == SITEID and !$currentuser) {  // To reduce possibility of "browsing" userbase at site level
-        if (!isteacherinanycourse() and !isteacherinanycourse($user->id) ) {  // Teachers can browse and be browsed at site level
+        if ($CFG->forceloginforprofiles and !isteacherinanycourse() and !isteacherinanycourse($user->id)) {  // Teachers can browse and be browsed at site level. If not forceloginforprofiles, allow access (bug #4366)
             print_header("$personalprofile: ", "$personalprofile: ",
                           "<a href=\"index.php?id=$course->id\">$participants</a>",
                           "", "", true, "&nbsp;", navmenu($course));
