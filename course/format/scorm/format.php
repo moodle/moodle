@@ -4,7 +4,7 @@
 
     require_once("$CFG->dirroot/mod/forum/lib.php");
 
-    require_once($CFG->dirroot.'/mod/scorm/lib.php');
+    require_once($CFG->dirroot.'/mod/scorm/locallib.php');
     $organization = optional_param('organization', '', PARAM_INT);
 
     // Bounds for block widths
@@ -13,12 +13,10 @@
     define('BLOCK_R_MIN_WIDTH', 100);
     define('BLOCK_R_MAX_WIDTH', 210);
 
-    optional_variable($preferred_width_left,  blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]));
-    optional_variable($preferred_width_right, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]));
-    $preferred_width_left = min($preferred_width_left, BLOCK_L_MAX_WIDTH);
-    $preferred_width_left = max($preferred_width_left, BLOCK_L_MIN_WIDTH);
-    $preferred_width_right = min($preferred_width_right, BLOCK_R_MAX_WIDTH);
-    $preferred_width_right = max($preferred_width_right, BLOCK_R_MIN_WIDTH);
+    $preferred_width_left  = bounded_number(BLOCK_L_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]),  
+                                            BLOCK_L_MAX_WIDTH);
+    $preferred_width_right = bounded_number(BLOCK_R_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]), 
+                                            BLOCK_R_MAX_WIDTH);
 
     $strgroups  = get_string('groups');
     $strgroupmy = get_string('groupmy');
@@ -93,13 +91,13 @@
                     $orgidentifier = $org->organization;
                 }
             }
-            $result = scorm_get_toc($scorm,'structlist',$orgidentifier);
+            $result = scorm_get_toc($USER,$scorm,'structlist',$orgidentifier);
             $incomplete = $result->incomplete;
             echo $result->toc;
             print_simple_box_end();
          ?>
               <div class="center">
-              <form name="theform" method="post" action="<?php echo $CFG->wwwroot ?>/mod/scorm/playscorm.php?id=<?php echo $cm->id ?>"<?php echo $scorm->popup == 1?' target="newwin"':'' ?>>
+              <form name="theform" method="post" action="<?php echo $CFG->wwwroot ?>/mod/scorm/player.php?id=<?php echo $cm->id ?>"<?php echo $scorm->popup == 1?' target="newwin"':'' ?>>
               <?php
                   if ($scorm->hidebrowse == 0) {
                       print_string("mode","scorm");
@@ -125,11 +123,6 @@
           </div>
           <script language="javascript" type="text/javascript">
           <!--
-              function playSCO(scoid) {
-                  document.theform.scoid.value = scoid;
-                  document.theform.submit();
-              }
-
               function expandCollide(which,list) {
                   var nn=document.ids?true:false
                   var w3c=document.getElementById?true:false
