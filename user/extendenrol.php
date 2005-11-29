@@ -45,7 +45,7 @@ for ($i=1; $i<=365; $i++) {
 }
 
 print_heading(get_string('extendenrol'));
-echo "<form method=\"post\" action=\"{$_SERVER['PHP_SELF']}\" name=\"form\">\n";
+echo "<form method=\"post\" action=\"extendenrol.php\" name=\"form\">\n";
 echo '<input type="hidden" name="id" value="'.$course->id.'" />';
 echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
 $table->head  = array (get_string('fullname'), get_string('enrolmentstart'), get_string('enrolmentend'), get_string('extendperiod'));
@@ -55,7 +55,7 @@ $timeformat = get_string('strftimedate');
 $nochange = get_string('nochange');
 foreach ($_POST as $k => $v) {
     if (preg_match('/^user(\d+)$/',$k,$m)) {
-        if (!($user = get_record_sql("SELECT * FROM {$CFG->prefix}user u INNER JOIN {$CFG->prefix}user_students s ON u.id=s.userid WHERE u.id={$m[1]}"))) {
+        if (!($user = get_record_sql("SELECT * FROM {$CFG->prefix}user u INNER JOIN {$CFG->prefix}user_students s ON u.id=s.userid WHERE u.id={$m[1]} AND s.course=$course->id"))) {
             continue;
         }
         $table->data[] = array(
