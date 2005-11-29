@@ -65,24 +65,48 @@
             $scorm->summary = backup_todb($info['MOD']['#']['SUMMARY']['0']['#']);
             $scorm->hidebrowse = backup_todb($info['MOD']['#']['HIDEBROWSE']['0']['#']);
             $scorm->hidetoc = backup_todb($info['MOD']['#']['HIDETOC']['0']['#']);
+            $scorm->hidenav = backup_todb($info['MOD']['#']['HIDENAV']['0']['#']);
             $scorm->auto = backup_todb($info['MOD']['#']['AUTO']['0']['#']);
             if ($restore->backup_version < 2005040200) {
                 $oldpopup = backup_todb($info['MOD']['#']['POPUP']['0']['#']);
                 if (!empty($oldpopup)) {
                     $scorm->popup = 1;
+                    // Parse old popup field
+                    $options = array();
+                    $oldoptions = explode(',',$scorm->popup);
+                    foreach ($oldoptions as $oldoption) {
+                        list($element,$value) = explode('=',$oldoption);
+                        $element = trim($element);
+                        $value = trim($value); 
+                        switch ($element) {
+                            case 'width':
+                                $scorm->width = $value;
+                            break;
+                            case 'height':
+                                $scorm->height = $value;
+                            break;
+                            default:
+                                $options[] = $element.'='.$value;
+                            break;
+                        }
+                    }
+                    $scorm->options = implode($options,',');
                 } else {
                     $scorm->popup = 0;
+                    $scorm->options = '';
+                    $scorm->width = '100%';
+                    $scorm->height = 500;
                 }
             } else {
                 $scorm->popup = backup_todb($info['MOD']['#']['POPUP']['0']['#']);
-            }
-            $scorm->width = backup_todb($info['MOD']['#']['WIDTH']['0']['#']);
-            if ($scorm->width == 0) {
-                $scorm->width = 800;
-            }
-            $scorm->height = backup_todb($info['MOD']['#']['HEIGHT']['0']['#']);
-            if ($scorm->height == 0) {
-                $scorm->height = 600;
+                $scorm->width = backup_todb($info['MOD']['#']['WIDTH']['0']['#']);
+                if ($scorm->width == 0) {
+                    $scorm->width = '100%';
+                }
+                $scorm->height = backup_todb($info['MOD']['#']['HEIGHT']['0']['#']);
+                if ($scorm->height == 0) {
+                    $scorm->height = 500;
+                }
             }
             $scorm->timemodified = time();
 

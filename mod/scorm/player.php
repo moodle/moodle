@@ -77,7 +77,7 @@
     //
     // TOC processing
     //
-    $result = scorm_get_toc($scorm,'structurelist',$currentorg,$scoid,$mode,true);
+    $result = scorm_get_toc($USER,$scorm,'structurelist',$currentorg,$scoid,$mode,true);
     $sco = $result->sco;
 
     if (($mode == 'browse') && ($scorm->hidebrowse == 1)) {
@@ -97,9 +97,9 @@
     $scoidpop = '&scoid='.$sco->id;
     $modestr = '&amp;mode='.$mode;
     $modepop = '&mode='.$mode;
+    $attemptstr = '';
     if ((!$result->incomplete) && ($result->attemptleft > 0)) {
         $attemptstr = '&amp;attempt=new';
-        $attemptpop = '&attempt=new';
     }
 
     $SESSION->scorm_scoid = $sco->id;
@@ -195,7 +195,7 @@
 ?>
             </div>
 <?php
-    } // The end of the very test
+    } // The end of the very big test
 ?>
             <div id="scormobject" class="right">
 <?php

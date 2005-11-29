@@ -5,10 +5,10 @@
     require_once("../../config.php");
     require_once('locallib.php');
 
-    optional_param($id, 0, PARAM_NUM);    // Course Module ID, or
-    optional_param($a, 0, PARAM_NUM);     // SCORM ID
-    optional_param($b, 0, PARAM_NUM);     // SCO ID
-    optional_param($user, 0, PARAM_NUM);  // User ID
+    $id = optional_param('id', '', PARAM_INT);    // Course Module ID, or
+    $a = optional_param('a', '', PARAM_INT);     // SCORM ID
+    $b = optional_param('b', '', PARAM_INT);     // SCO ID
+    $user = optional_param('user', '', PARAM_INT);  // User ID
 
     if (!empty($id)) {
         if (! $cm = get_record("course_modules", "id", $id)) {

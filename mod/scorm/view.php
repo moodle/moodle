@@ -110,7 +110,7 @@
                 $orgidentifier = $org->organization;
             }
         }
-        $result = scorm_get_toc($scorm,'structurelist',$orgidentifier);
+        $result = scorm_get_toc($USER,$scorm,'structurelist',$orgidentifier);
         $incomplete = $result->incomplete;
         echo $result->toc;
         print_simple_box_end();

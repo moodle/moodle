@@ -384,8 +384,8 @@ function scorm_count_launchable($scormid,$organization) {
     return count_records_select('scorm_scoes',"scorm=$scormid AND organization='$organization' AND launch<>''");
 }
 
-function scorm_get_toc($scorm,$liststyle,$currentorg='',$scoid='',$mode='normal',$play=false) {
-    global $USER, $CFG;
+function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='normal',$play=false) {
+    global $CFG;
 
     $strexpand = get_string('expcoll','scorm');
     
@@ -403,16 +403,20 @@ function scorm_get_toc($scorm,$liststyle,$currentorg='',$scoid='',$mode='normal'
     }
     if ($scoes = get_records_select('scorm_scoes',"scorm='$scorm->id' $organizationsql order by id ASC")){
         $usertracks = array();
+        $maxattempt = 0;
         foreach ($scoes as $sco) {
             if (!empty($sco->launch)) {
-                if ($usertrack=scorm_get_tracks($sco->id,$USER->id)) {
+                if ($usertrack=scorm_get_tracks($sco->id,$user->id)) {
                     if ($usertrack->status == '') {
                         $usertrack->status = 'notattempted';
                     }
+                    $attempt = scorm_get_last_attempt($sco->id, $user->id);
+                    $maxattempt = $attempt > $maxattempt ? $attempt : $maxattempt;
                     $usertracks[$sco->identifier] = $usertrack;
                 }
             }
         }
+        $result->attemptleft = $scorm->maxattempt - $maxattempt;
 
         $level=0;
         $sublist=1;
@@ -539,14 +543,22 @@ function scorm_get_toc($scorm,$liststyle,$currentorg='',$scoid='',$mode='normal'
     return $result;
 }
 
+function scorm_get_last_attempt($scoid, $userid) {
+/// Find the last attempt number for the given user id and sco
+    if ($lastattempt = get_record('scorm_scoes_track', 'userid', $userid, 'scoid', $scoid, '', '', 'max(attempt) as a')) {
+        if (empty($lastattempt->a)) {
+            return '1';
+        } else {
+            return $lastattempt->a;
+        }
+    }
+}
+
 function scorm_get_tracks($scoid,$userid) {
 /// Gets all tracks of specified sco and user
     global $CFG;
 
-    $attemptsql = '';
-    if ($lastattempt = get_record('scorm_sco_tracks', 'user', $USER->id, 'scorm', $scorm->id, '', '', 'max(attempt) as a')) {
-        $attemptsql = ' AND attempt='.$lastattempt;
-    }
+    $attemptsql = ' AND attempt=' . scorm_get_last_attempt($scoid, $userid);
     if ($tracks = get_records_select('scorm_scoes_track',"userid=$userid AND scoid=$scoid".$attemptsql,'element ASC')) {
         $usertrack->userid = $userid;
         $usertrack->scoid = $scoid; 

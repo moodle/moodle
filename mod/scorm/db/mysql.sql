@@ -10,6 +10,7 @@ CREATE TABLE prefix_scorm (
   version varchar(9) NOT NULL default '',
   maxgrade float(3) NOT NULL default '0',
   grademethod tinyint(2) NOT NULL default '0',
+  maxattempt int(10) NOT NULL default '1',
   launch int(10) unsigned NOT NULL default '0',
   summary text NOT NULL,
   hidebrowse tinyint(1) NOT NULL default '0',

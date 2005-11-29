@@ -30,11 +30,11 @@
         } else {
             $newattempt = '';
         }
-        if ($lastattempt = get_record('scorm_sco_tracks', 'user', $USER->id, 'scorm', $scorm->id, 'sco', $scoid,'max(attempt) as a')) {
+        if ($lastattempt = get_record('scorm_scoes_track', 'userid', $USER->id, 'scorm', $scorm->id, 'scoid', $scoid,'max(attempt) as a')) {
             if ($newattempt == 'new') {
-                $attempt = $lastattempt['a']+1;
+                $attempt = $lastattempt->a + 1;
             } else {
-                $attempt = $lastattempt['a'];
+                $attempt = $lastattempt->a;
             }
         } else {
             $attempt = 1;

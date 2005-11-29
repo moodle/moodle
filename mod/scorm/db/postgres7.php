@@ -216,6 +216,14 @@ function scorm_upgrade($oldversion) {
         table_column("scorm", "", "options", "varchar", "255", "", "", "NOT NULL","popup");
     }
     
+    if ($oldversion < 2005092600) {
+        table_column("scorm_scoes_track", "", "attempt", "integer", "", "UNSIGNED", "1", "NOT NULL", "scoid"); 
+        execute_sql("DROP INDEX {$CFG->prefix}scorm_scoes_track_scormid_idx", false);
+        modify_database('','ALTER TABLE prefix_scorm_scoes_track ADD UNIQUE track (userid,scormid,scoid,attempt,element);');
+    }
+
+    if ($oldversion < 2005102800) {
+        table_column("scorm", "", "maxattempt", "integer", "", "UNSIGNED", "1", "NOT NULL", "maxgrade"); 
     return true;
 }
 ?>

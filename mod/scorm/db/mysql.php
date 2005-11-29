@@ -208,6 +208,10 @@ function scorm_upgrade($oldversion) {
         modify_database('','ALTER TABLE prefix_scorm_scoes_track ADD UNIQUE track (userid,scormid,scoid,attempt,element);');
     }
 
+    if ($oldversion < 2005102800) {
+        table_column("scorm", "", "maxattempt", "INT", "10", "UNSIGNED", "1", "NOT NULL", "maxgrade"); 
+    }
+
     return true;
 }
 ?>
