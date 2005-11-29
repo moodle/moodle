@@ -1,6 +1,7 @@
 <?php // $Id$ 
 
 $string['adminprimarynoedit'] = 'Le compte de l\'administrateur principal ne peut pas être modifié par les autres administrateurs';
+$string['cmunknown'] = 'Ce module de cours n\'a pas pu être trouvé';
 $string['coursegroupunknown'] = 'Cours correspondant au groupe $a non indiqué';
 $string['confirmsesskeybad'] = 'Désolé, votre identifiant de session n\'a pas pu être confirmé pour exécuter cette action. Cette sécurité vous protège contre l\'exécution accidentelle ou malfaisante en votre nom de fonctions essentielles. Veuillez vérifier que vous avez vraiment voulu effectuer cette action.';
 $string['errorcleaningdirectory'] = 'Erreur lors du nettoyage du dossier «&nbsp;$a&nbsp;»';
@@ -14,11 +15,15 @@ $string['fieldrequired'] = 'Le champ «&nbsp;$a&nbsp;» est obligatoire';
 $string['filenotfound'] = 'Le fichier demandé n\'a pas été trouvé';
 $string['groupalready'] = 'L\'utilisateur appartient déjà au groupe $a';
 $string['groupunknown'] = 'Le groupe $a n\'est pas associé au groupe indiqué';
+$string['invalidcourse'] = 'Cours non valide';
 $string['invalidfieldname'] = '«&nbsp;$a&nbsp;» n\'est pas un nom de champ valide';
 $string['invalidfiletype'] = '«&nbsp;$a&nbsp;» n\'est pas un type de fichier valide';
 $string['invalidxmlfile'] = '«&nbsp;$a&nbsp;» n\'est pas un fichier XML valide';
 $string['missingfield'] = 'Le champ «&nbsp;$a&nbsp;» est manquant';
-$string['modulerequirementsnotmet'] = 'Le module « $a->modulename » ($a->moduleversion) n\'a pas pu être installé. Il requiert une version plus récente de Moodle (votre version actuelle est $a->currentmoodle, vous avez besoin de la version $a->requiremoodle).';
+$string['modulemissingcode'] = 'Le module $a ne possède pas le code source permettant d\'effectuaer cette fonction';
+$string['modulerequirementsnotmet'] = 'Le module «&nbsp;$a->modulename&nbsp;» ($a->moduleversion) n\'a pas pu être installé. Il requiert une version plus récente de Moodle (votre version actuelle est $a->currentmoodle, vous avez besoin de la version $a->requiremoodle).';
+$string['mustbeteacher'] = 'Vous devez être enseignant pour voir cette page';
+$string['noinstances'] = 'Il n\'a y aucune instance de $a dans ce cours&nbsp;! ';
 $string['nonmeaningfulcontent'] = 'Le contenu ne fait pas de sens';
 $string['notavailable'] = 'Ceci n\'est actuellement pas disponible';
 $string['onlyeditown'] = 'Vous ne pouvez modifier que vos propres informations';
