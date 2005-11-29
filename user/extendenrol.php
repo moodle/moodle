@@ -53,16 +53,30 @@ $table->align = array ('left', 'center', 'center', 'center');
 $table->width = "600";
 $timeformat = get_string('strftimedate');
 $nochange = get_string('nochange');
+$notavailable = get_string('notavailable');
+$unlimited = get_string('unlimited');
 foreach ($_POST as $k => $v) {
     if (preg_match('/^user(\d+)$/',$k,$m)) {
         if (!($user = get_record_sql("SELECT * FROM {$CFG->prefix}user u INNER JOIN {$CFG->prefix}user_students s ON u.id=s.userid WHERE u.id={$m[1]} AND s.course=$course->id"))) {
             continue;
         }
+        if ($user->timestart) {
+            $timestart = userdate($user->timestart, $timeformat);
+        } else {
+            $timestart = $notavailable;
+        }
+        if ($user->timeend) {
+            $timeend = userdate($user->timeend, $timeformat);
+            $checkbox = choose_from_menu($periodmenu, "extendperiod[{$m[1]}]", "0", $nochange, '', '0', true);
+        } else {
+            $timeend = $unlimited;
+            $checkbox = '<input type="hidden" name="extendperiod['.$m[1].']" value="0" />'.$nochange;
+        }
         $table->data[] = array(
         fullname($user, true),
-        userdate($user->timestart, $timeformat),
-        userdate($user->timeend, $timeformat),
-        '<input type="hidden" name="userid['.$m[1].']" value="'.$m[1].'" >'.choose_from_menu($periodmenu, "extendperiod[{$m[1]}]", "0", $nochange, '', '0', true)
+        $timestart,
+        $timeend,
+        '<input type="hidden" name="userid['.$m[1].']" value="'.$m[1].'" />'.$checkbox
         );
     }
 }

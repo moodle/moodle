@@ -586,7 +586,11 @@ function checkchecked(form) {
                     $data[] = $lastaccess;
                 }
                 if ($course->enrolperiod) {
-                    $data[] = userdate($student->timeend, $timeformat);
+                    if ($student->timeend) {
+                        $data[] = userdate($student->timeend, $timeformat);
+                    } else {
+                        $data[] = get_string('unlimited');
+                    }
                 }
                 if ($isteacher) {
                     $data[] = '<input type="checkbox" name="user'.$student->id.'" />';
