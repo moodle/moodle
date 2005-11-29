@@ -140,6 +140,8 @@
                 fwrite ($bf,full_tag("ASSESSED",6,false,$for_dis->assessed));
                 fwrite ($bf,full_tag("TIMEMODIFIED",6,false,$for_dis->timemodified));
                 fwrite ($bf,full_tag("USERMODIFIED",6,false,$for_dis->usermodified));
+                fwrite ($bf,full_tag("TIMESTART",6,false,$for_dis->timestart));
+                fwrite ($bf,full_tag("TIMEEND",6,false,$for_dis->timeend));
                 //Now print posts to xml
                 $status = backup_forum_posts($bf,$preferences,$for_dis->id);
                 //End discussion
