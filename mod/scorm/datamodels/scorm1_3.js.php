@@ -562,10 +562,10 @@ function SCORMapi1_3() {
         } else {
             datastring = CollectData(data,'cmi');
         }
-        datastring += '&amp;scoid=<?php echo $sco->id ?>';
+        datastring += '&scoid=<?php echo $sco->id ?>';
         //popupwin(datastring);
         var myRequest = NewHttpReq();
-        result = DoRequest(myRequest,"<?php p($CFG->wwwroot) ?>/mod/scorm/datamodel.php","id=<?php p($id) ?>&amp;sesskey=<?php p($USER->sesskey) ?>"+datastring);
+        result = DoRequest(myRequest,"<?php p($CFG->wwwroot) ?>/mod/scorm/datamodel.php","id=<?php p($id) ?>&sesskey=<?php p($USER->sesskey) ?>"+datastring);
         results = result.split('\n');
         errorCode = results[1];
         return results[0];
