@@ -3,6 +3,7 @@
 
 
 $string['adminprimarynoedit'] = 'Het profiel van de beheerder met het kleinste gebruikersnummer kan door de andere beheerders niet gewijzigd worden';
+$string['cmunknown'] = 'Kon deze cursusmodule niet vinden';
 $string['confirmsesskeybad'] = 'Je sessiesleutel om deze actie uit te voeren kon niet bevestigd worden. Deze beveiligingsfunctie verhindert dat er per ongeluk of met verkeerde bedoelingen belangrijke functies in jouw naam uitgevoerd kunnen worden. Bedenk goed of je deze opdracht wel echt wou uitvoeren.';
 $string['coursegroupunknown'] = 'De cursus die met groep $a overeenkomt is niet gespecifieerd';
 $string['errorcleaningdirectory'] = 'Fout bij het opkuisen van map \"$a\"';
@@ -16,11 +17,15 @@ $string['fieldrequired'] = '\"$a\" is een vereist veld';
 $string['filenotfound'] = 'Het gevraagde bestand is niet gevonden';
 $string['groupalready'] = 'Deze gebruiker behoort al tot groep $a';
 $string['groupunknown'] = 'Groep $a is niet geassocieerd met de gespecifieerde groep';
+$string['invalidcourse'] = 'Ongeldige cursus';
 $string['invalidfieldname'] = '\"$a\" is geen geldige veldnaam';
 $string['invalidfiletype'] = '\"$a\" is geen geldig bestandstype';
 $string['invalidxmlfile'] = '\"$a\" is geen geldig XML-bestand';
 $string['missingfield'] = 'Veld \"$a\" ontbreekt';
+$string['modulemissingcode'] = 'De code die nodig is om deze functie uit te voeren ontbreekt in module $a.';
 $string['modulerequirementsnotmet'] = 'De module \"$a->modulename\" ($a->moduleversion) kon niet geïnstalleerd worden. Een nieuwere versie van Moodle is vereist (je gebruikt nu $a->currentmoodle en je hebt $a->requiremoodle nodig).';
+$string['mustbeteacher'] = 'Je moet leraar zijn om deze pagina te mogen bekijken.';
+$string['noinstances'] = 'Er is niets te vinden van $a in deze cursus!';
 $string['nonmeaningfulcontent'] = 'Geen zinnige inhoud';
 $string['notavailable'] = 'Dat is nu niet beschikbaar';
 $string['onlyeditingteachers'] = 'Alleen leraren met het recht om te wijzigen kunnen dit doen';
