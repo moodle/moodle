@@ -246,7 +246,7 @@
 
 //  Print other functions
     echo '<div class="buttons"><table align="center"><tr>';
-    if ($currentuser and !isguest()) {
+    if ($currentuser and !isguest() and is_restricted_user($currentuser->username)) {
         if ($internalpassword ) {
             echo "<td nowrap=\"nowrap\"><form action=\"$internalpassword\" method=\"get\">";
             echo "<input type=\"hidden\" name=\"id\" value=\"$course->id\" />";
