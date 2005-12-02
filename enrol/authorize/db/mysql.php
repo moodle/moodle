@@ -22,8 +22,14 @@ function authorize_upgrade($oldversion=0) {
         execute_sql(" ALTER TABLE `{$CFG->prefix}enrol_authorize` ADD INDEX userid(userid) ");
     }
 
-    return $result;
+    if ($oldversion < 2005071602) {
+        notify("<b>AUTHORIZE.NET WARNING:</b><br />
+                login_https is required in version 2005071601 for security reasons. <br />
+                Your registered users can't pay for course if you don't setup this. <br />
+                Please don't forget to set up this in section Admin/Variables/Security.");
+    }
 
+    return $result;
 }
 
 ?>

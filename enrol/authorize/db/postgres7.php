@@ -20,6 +20,13 @@ function authorize_upgrade($oldversion=0) {
         modify_database('',"CREATE INDEX prefix_enrol_authorize_courseid_idx ON prefix_enrol_authorize (courseid);");
         modify_database('',"CREATE INDEX prefix_enrol_authorize_userid_idx ON prefix_enrol_authorize (userid);");
     }
+
+    if ($oldversion < 2005071602) {
+        notify("<b>AUTHORIZE.NET WARNING:</b><br />
+                login_https is required in version 2005071601 for security reasons. <br />
+                Your registered users can't pay for course if you don't setup this. <br />
+                Please don't forget to set up this in section Admin/Variables/Security.");
+    }
     
     return $result;
 }
