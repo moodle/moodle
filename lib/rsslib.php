@@ -159,6 +159,7 @@ function rss_standard_header($title = NULL, $link = NULL, $description = NULL) {
         $result .= rss_full_tag('title', 2, false, $title);
         $result .= rss_full_tag('link', 2, false, $link);
         $result .= rss_full_tag('description', 2, false, $description);
+        $result .= rss_full_tag('generator', 2, false, 'Moodle');
         if (!empty($USER->lang)) {
             $result .= rss_full_tag('language', 2, false, substr($USER->lang,0,2));
         }
@@ -220,6 +221,7 @@ function rss_add_items($items) {
                 $item->description = get_string('byname','',$item->author).'. &nbsp;<p />'.$item->description.'</p>';
             }
             $result .= rss_full_tag('description',3,false,$item->description);
+            $result .= rss_add_enclosures($item);
             $result .= rss_end_tag('item',2,true);
 
         }
@@ -506,4 +508,57 @@ onClick=\"window.open('http://feedvalidator.org/check.cgi?url='+document.block_r
     $returnstring .= '</td></tr></tbody></table>'."\n";
     return $returnstring;
 }
-?>
+
+
+/**
+* Adds RSS Media Enclosures for "podcasting" by examining links to media files
+* 
+* @param    $item     object representing an RSS item
+* @return   string    RSS enclosure tags
+* @author   Hannes Gassert <hannes@mediagonal.ch>
+*/
+function rss_add_enclosures($item){
+
+    $returnstring = '';
+    $rss_text = $item->description;
+    
+    // take into account attachments (e.g. from forum)
+    if (isset($item->attachments) && is_array($item->attachments)) {
+        foreach ($item->attachments as $attachment){
+            $rss_text .= " <a href='$attachment'/>"; //just to make sure the regexp groks it
+        }
+    }
+    
+    // list of media file extensions and their respective mime types
+    // could/should we put this to some more central place?
+    $mediafiletypes = array(
+        'mp3'  => 'audio/mpeg',
+        'm3u'  => 'audio/x-mpegurl',
+        'pls'  => 'audio/x-mpegurl',
+        'ogg'  => 'application/ogg',
+        'm4b'  => 'audio/x-m4b',
+        'mpeg' => 'video/mpg',
+        'mpg'  => 'video/mpg',
+        'mov'  => 'video/quicktime',
+        'avi'  => 'video/x-msvideo',
+        'wmv'  => 'video/x-msvideo'
+    );
+
+    // regular expression (hopefully) matching all links to media files
+    $medialinkpattern = '@href\s*=\s*(\'|")(\S+(' . implode('|', array_keys($mediafiletypes)) . '))\1@Usie';
+
+    if (!preg_match_all($medialinkpattern, $rss_text, $matches)){
+        return $returnstring;
+    }
+
+    // loop over matches of regular expression 
+    for ($i = 0; $i < count($matches[2]); $i++){
+        $url = htmlspecialchars($matches[2][$i]);
+        $type = $mediafiletypes[strtolower($matches[3][$i])];               
+
+        // the rss_*_tag functions can't deal with methods, unfortunately
+        $returnstring .= "\n<enclosure url='$url' type='$type' />\n";
+    }
+    
+    return $returnstring;
+}
