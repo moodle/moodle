@@ -1642,6 +1642,18 @@ function check_for_restricted_user($username=NULL, $redirect='') {
     }
 }
 
+function is_restricted_user($username){
+    global $CFG;
+    
+    if (!empty($CFG->restrictusers)) {
+        $names = explode(',', $CFG->restrictusers);
+        if (in_array($username, $names)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 function sync_metacourses() {
 
     global $CFG;
@@ -2541,7 +2553,7 @@ function set_login_session_preferences() {
     // Restore the calendar filters, if saved
     if (intval(get_user_preferences('calendar_persistflt', 0))) {
         include_once($CFG->dirroot.'/calendar/lib.php');
-        calendar_set_filters_status(get_user_preferences('calendar_savedflt', 0xff));
+        calendar_set_filters_status(get_user_preferences('calendav_savedflt', 0xff));
     }
 }
 
