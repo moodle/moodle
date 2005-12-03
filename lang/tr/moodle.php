@@ -32,6 +32,7 @@ $string['addingdatatoexisting'] = 'Veri varolana ekleniyor';
 $string['addnewcategory'] = 'Yeni kategori ekle';
 $string['addnewcourse'] = 'Yeni kurs ekle';
 $string['addnewuser'] = 'Yeni kullanýcý ekle';
+$string['addnousersrecip'] = 'Bu $a\'a eriþmeyen kiþileri alýcý listesine ekle';
 $string['addresource'] = 'Yeni kaynak ekle...';
 $string['address'] = 'Adres';
 $string['addstudent'] = 'Öðrenci ekle';
@@ -75,6 +76,7 @@ $string['advancedsettings'] = 'Geliþmiþ ayarlar';
 $string['again'] = 'tekrarla';
 $string['aimid'] = 'AIM ID';
 $string['all'] = 'Tümü';
+$string['allactions'] = 'Tüm eylemler';
 $string['allactivities'] = 'Tüm etkinlikler';
 $string['alldays'] = 'Bütün günler';
 $string['allfieldsrequired'] = 'Tüm alanlar zorunludur';
@@ -469,8 +471,7 @@ $a->past
 
 Aþaðýdaki adrese gidip kayýt sürelerini uzatabilrsiniz:
 
-$a->extendurl
-';
+$a->extendurl';
 $string['expirynotifystudents'] = 'Öðrencilere bildir';
 $string['expirynotifystudentsemail'] = 'Sevgili öðrenci:
 
@@ -897,6 +898,7 @@ $string['parentcoursenotmetacourse'] = 'Üstteki kurs, bir metakurs deðildir!';
 $string['parentfolder'] = 'Ana klasör';
 $string['participants'] = 'Katýlýmcýlar';
 $string['participationratio'] = 'Katýlým oraný';
+$string['participationreport'] = 'Katýlým raporu';
 $string['password'] = 'Þifre';
 $string['passwordchanged'] = 'Þifre deðiþtirildi';
 $string['passwordconfirmchange'] = 'Þifre deðiþimini onaylayýn';
@@ -926,6 +928,7 @@ $string['policyagree'] = 'Bu siteyi kullanmaya devam etmek için bu sözleþmeyi ka
 $string['policyagreement'] = 'Site Kullaným Sözleþmesi';
 $string['policyagreementclick'] = 'Site Kullaným Sözleþmesini okumak için burayý týklayýn';
 $string['popupwindow'] = 'Dosyayý yeni bir pencerede aç';
+$string['post'] = 'Gönderi';
 $string['posts'] = 'Gönderiler';
 $string['potentialadmins'] = 'Potansiyel yöneticiler';
 $string['potentialcreators'] = 'Potansiyel kurs açýcýlar';
@@ -970,6 +973,7 @@ $string['removestudent'] = 'Öðrenciyi çýkar';
 $string['removeteacher'] = 'Eðitmeni çýkar';
 $string['rename'] = 'Ad deðiþtir';
 $string['renamefileto'] = '<b>$a</b> deðiþtir:';
+$string['report'] = 'Rapor';
 $string['reports'] = 'Raporlar';
 $string['requestcourse'] = 'Bir kurs iste';
 $string['requestedby'] = 'Ýsteyen';
@@ -1019,7 +1023,9 @@ $string['seealsostats'] = 'Ayrýca bakýnýz: istatistikler';
 $string['select'] = 'Seç';
 $string['selectacountry'] = 'Ülke seç';
 $string['selectall'] = 'Tümünü seç';
+$string['selectamodule'] = 'Lütfen bir etkinlik modülü seçin';
 $string['selectednowmove'] = '$a dosya taþýnmak için seçildi. Þimdi taþýmak istediðiniz yere gidin ve \'Dosyalarý buraya taþý\'ya basýn';
+$string['selectnos'] = 'Tüm \'hayýr\'larý seç';
 $string['selectperiod'] = 'Süre seçiniz';
 $string['senddetails'] = 'Bilgilerimi epostayla gönder';
 $string['separateandconnected'] = 'Ayrý ve Birleþtirilmiþ bilgi yollarý';
@@ -1030,6 +1036,7 @@ $string['shortnamecollisionwarning'] = '[*] = Bu kýsa ad baþka bir kurs tarafýnd
 $string['shortnametaken'] = 'Bu kýsa ad baþka bir ders için kullanýlýyor ($a)';
 $string['shortsitename'] = 'Sitenin kýsa adý (tek sözcük)';
 $string['show'] = 'Göster';
+$string['showactions'] = 'Eylemleri göster';
 $string['showadvancedsettings'] = 'Geliþmiþ ayarlarý göster';
 $string['showall'] = 'Tümünü göster: $a';
 $string['showallcourses'] = 'Tüm kurslarý göster';
@@ -1038,6 +1045,7 @@ $string['showallusers'] = 'Tüm kullanýcýlarý göster';
 $string['showallweeks'] = 'Tüm haftalarý göster';
 $string['showgrades'] = 'Notlarý göster';
 $string['showlistofcourses'] = 'Ders listesini göster';
+$string['showonly'] = 'Sadece göster';
 $string['showonlytopic'] = 'Sadece $a. konuyu göster';
 $string['showonlyweek'] = 'Sadece $a. haftayý göster';
 $string['showperpage'] = 'Her sayfada $a göster';
