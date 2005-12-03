@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.4.3 (2004083130)
+      // glossary.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['addcomment'] = 'Kommentar einfügen';
@@ -146,7 +146,7 @@ $string['rejectedentries'] = 'Abgelehnte Einträge';
 $string['rejectionrpt'] = 'Übersicht über abgelegte Beiträge';
 $string['rsssubscriberss'] = 'Anzeige von RSS Feed für \'$a\' -Konzepte';
 $string['searchindefinition'] = 'Volltextsuche';
-$string['secondaryglossary'] = 'Zweites Glossar';
+$string['secondaryglossary'] = 'Standardglossar (nicht kursübergreifend)';
 $string['sendinratings'] = 'Einsenden meiner letzten Bewertungen';
 $string['showall'] = 'Alle Beiträge anzeigen';
 $string['showalphabet'] = 'Anzeige nach Alphabet.';

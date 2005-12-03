@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.5 ALPHA (2005043000)
+      // calendar.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['calendar'] = 'Kalender';
@@ -43,9 +43,9 @@ $string['explain_startwday'] = 'Diese Einstellung legt die Art der Monatsdarstel
 $string['explain_timeformat'] = 'Mit dieser Einstellung wählen Sie das Format der Zeitanzeige (12/24-Stunden-Anzeige). Die Default-Einstellung übernimmt das Format der Zeitanzeige aus der Sprachversion, die Sie für Ihre Seite gewählt haben.';
 $string['fri'] = 'Fr';
 $string['friday'] = 'Freitag';
-$string['globalevents'] = 'Globale Termine';
+$string['globalevents'] = 'Allgemeine Termine';
 $string['gotocalendar'] = 'Zum Kalender';
-$string['groupevents'] = 'Gruppen- termine';
+$string['groupevents'] = 'Termine meiner Gruppen';
 $string['hidden'] = 'versteckt';
 $string['manyevents'] = '$a Termine';
 $string['mon'] = 'Mo';
@@ -91,11 +91,11 @@ $string['tt_showuser'] = 'Teilnehmertermine werden verborgen (klicken Sie hier, 
 $string['tue'] = 'Di';
 $string['tuesday'] = 'Dienstag';
 $string['typecourse'] = 'Kurstermine';
-$string['typegroup'] = 'Gruppentermine';
-$string['typesite'] = 'Seitentermine';
-$string['typeuser'] = 'Teilnehmerterm.';
+$string['typegroup'] = 'Termine meiner Gruppen';
+$string['typesite'] = 'Allgemeine Termine';
+$string['typeuser'] = 'persönliche Termine';
 $string['upcomingevents'] = 'Bald aktuell ...';
-$string['userevents'] = 'Teilnehmer- termine';
+$string['userevents'] = 'Persönliche Termine';
 $string['wed'] = 'Mi';
 $string['wednesday'] = 'Mittwoch';
 $string['yesterday'] = 'Gestern';

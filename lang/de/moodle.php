@@ -370,6 +370,8 @@ unter Verwendung der E-Mail-Adresse ist ein neuer Zugang zum Lernmanagementsyste
 
   $a->link
 
+Kontrollieren Sie bitte zunächst, ob alle Zeichen der obigen Zeile in dem Link enthalten sind. Falls  im Anmeldenamen ein Leerzeichen enthalten ist, kann der Link unterbrochen sein. Klicken Sie dann auf den Link und ergänzen Sie im Browser in der URL-Adresse am Ende das Leerzeichen und die restlichen Zeichen des Anmeldenamens.
+
 Hinweise: In den meisten E-Mail-Programmen erscheint dieser Link blau, so dass Sie diesen anklicken können. Sofern dies nicht funktioniert, kopieren Sie bitte die komplette Adresse in die obere Zeile des Browser-Fensters.
 Wenn nicht innerhalb einer Woche der vorbereitet Zugang bestätigt werden sollte, wird dieser wieder gelöscht. Sie müssten sich dann nochmal neu registrieren. 
 
@@ -436,7 +438,7 @@ $string['enrolme'] = 'Tragen Sie mich in diesem Kurs ein.';
 $string['enrolmentconfirmation'] = 'Sie sind dabei, sich in diesen Kurs einzutragen.<br />Sind Sie sicher?';
 $string['enrolmentend'] = 'Anmeldeende';
 $string['enrolmentkey'] = 'Zugangsschlüssel';
-$string['enrolmentkeyfrom'] = 'Für diesen Kurs benötigen Sie einen \'Zugangsschlüssel\' - ein einmaliges Kennwort,<br />, dass Sie von $a bekommen haben sollten.<br />';
+$string['enrolmentkeyfrom'] = 'Für diesen Kurs benötigen Sie einen \'Zugangsschlüssel\' - ein einmaliges Kennwort,<br />dass Sie von $a bekommen haben sollten.<br />';
 $string['enrolmentkeyhint'] = 'Der Zugangsschlüssel war falsch, bitte versuchen Sie es erneut<br /> (Hier ist ein Hinweis: Er startet mit \'$a\')';
 $string['enrolmentnew'] = 'Neue Anmeldungen in $a';
 $string['enrolmentnewuser'] = '$a->user wurde im Kurs \"$a->course\" angemeldet.';

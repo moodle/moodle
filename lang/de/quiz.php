@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.6 development (2005090100)
+      // quiz.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['acceptederror'] = 'Akzeptierter Fehler';
@@ -24,9 +24,9 @@ $string['alternativeunits'] = 'Alternative Einheiten';
 $string['alwaysavailable'] = 'Immer verfügbar';
 $string['analysisoptions'] = 'Analyseoptionen';
 $string['analysistitle'] = 'Tabelle der Fragenanalyse';
-$string['answer'] = 'Antwort';
+$string['answer'] = 'richtige Lösung';
 $string['answerhowmany'] = 'Eine oder mehrere Antworten?';
-$string['answers'] = 'Antworten';
+$string['answers'] = '|richtige   <br />Lösungen';
 $string['answersingleno'] = 'Mehrere Antworten erlaubt';
 $string['answersingleyes'] = 'Nur eine Antwort';
 $string['answerswithacceptederrormarginmustbenumeric'] = 'Antworten mit akzeptiertem Fehler müssen numerisch sein';
@@ -96,7 +96,7 @@ $string['datasetdefinitions'] = 'Wiederverwendbare Datensatzdefinitionen für Kat
 $string['datasetnumber'] = 'Anzahl';
 $string['daysavailable'] = 'Tage verfügbar';
 $string['decimalformat'] = 'Dezimalen';
-$string['decimalpoints'] = 'Dezimalpunkte';
+$string['decimalpoints'] = 'Dezimalstellen';
 $string['decimals'] = 'mit $a';
 $string['default'] = 'Standard';
 $string['defaultgrade'] = 'Standard-Note der Frage';
@@ -148,7 +148,7 @@ $string['exportname'] = 'Dateiname';
 $string['exportnameformat'] = '%%J%%M%%T-%%H%%M';
 $string['exportquestions'] = 'Fragen in Datei exportieren';
 $string['false'] = 'Falsch';
-$string['feedback'] = 'Rückmeldung';
+$string['feedback'] = '| Feedback';
 $string['file'] = 'Datei';
 $string['fileformat'] = 'Dateiformat';
 $string['fillcorrect'] = 'Korrektur eintragen';
@@ -283,7 +283,7 @@ $string['penaltyfactor'] = 'Abzugsfaktor';
 $string['penaltyscheme'] = 'Abzüge festlegen';
 $string['percentcorrect'] = 'Richtig in Prozent';
 $string['pleaseclose'] = 'Ihre Anfrage wurde bearbeitet. Sie können das Fenster jetzt schließen';
-$string['popup'] = 'Test in einem &quot;sicheren&quot; Fenster zeigen';
+$string['popup'] = 'Test in einem \"sicheren\" Fenster zeigen';
 $string['popupnotice'] = 'Teilnehmer/innen sehen den Test in einem sicheren Fenster';
 $string['preview'] = 'Vorschau';
 $string['previewquestion'] = 'Vorschau der Frage';
@@ -348,8 +348,8 @@ $string['reportsimplestat'] = 'Einfache Statistik';
 $string['requirepassword'] = 'Erfordert Passwort';
 $string['requirepasswordmessage'] = 'Zur Teilnahme am Test benötigen Sie ein Passwort';
 $string['requiresubnet'] = 'Netzwerk-Adresse erforderlich';
-$string['response'] = 'Antwort';
-$string['responses'] = 'Antworten';
+$string['response'] = 'Lösung TN';
+$string['responses'] = 'Lösungen  |<br />TN';
 $string['reuseifpossible'] = 'Wiederverwendung kürzlich entfernt';
 $string['review'] = 'Bericht';
 $string['reviewafter'] = 'Rückschau zulassen, wenn der Test abgeschlossen ist';
@@ -360,7 +360,7 @@ $string['reviewimmediately'] = 'Direkt nach dem Versuch';
 $string['reviewnever'] = 'Rückschau nicht zu lassen';
 $string['reviewofattempt'] = 'Rückblick auf Versuch $a';
 $string['reviewopen'] = 'Später, während der Test noch geöffnet ist';
-$string['reviewoptions'] = 'Teilnehmer/innen dürfen zurückblicken';
+$string['reviewoptions'] = 'Was sollen die Teilnehmer/innen <br />zu welchem Zeitpunkt sehen?';
 $string['reviewresponse'] = 'Antworten wieder anzeigen';
 $string['rqp'] = 'Remote Frage';
 $string['rqps'] = 'Remote Fragen';

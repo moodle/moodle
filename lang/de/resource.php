@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.6 development (2005090100)
+      // resource.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['addresource'] = 'Material hinzufügen';
@@ -90,11 +90,11 @@ $string['resourcetype8'] = 'Wiki-Text';
 $string['resourcetype9'] = 'Verzeichnis';
 $string['resourcetypedirectory'] = 'Ein Verzeichnis anzeigen';
 $string['resourcetypefile'] = 'Link auf Datei oder Webseite';
-$string['resourcetypehtml'] = 'Erstellen einer Webseite';
-$string['resourcetypeims'] = ' IMS Contentpaket verwenden';
-$string['resourcetypelabel'] = 'Bezeichnung einfügen';
+$string['resourcetypehtml'] = 'Erstellen einer Textseite (mit Editor)';
+$string['resourcetypeims'] = 'IMS Contentpaket verwenden';
+$string['resourcetypelabel'] = 'Überschrift/Text auf Kursseite einfügen';
 $string['resourcetyperepository'] = 'Link auf ein Bibliotheksobjekt';
-$string['resourcetypetext'] = 'Erstellen einer Textseite';
+$string['resourcetypetext'] = 'Erstellen einer Textseite (ohne Editor)';
 $string['searchweb'] = 'Suche nach einer Webseite';
 $string['serverurl'] = 'Server URL ($a->wwwroot)';
 $string['showcourseblocks'] = 'Kursblöcke anzeigen';
