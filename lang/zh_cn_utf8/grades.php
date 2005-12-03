@@ -119,8 +119,8 @@ $string['viewgrades'] = '查看成绩';
 $string['weight'] = '权重';
 $string['weightedascending'] = '加权百分比升序';
 $string['weighteddescending'] = '加权百分比降序';
-$string['weightedpct'] = '加权后%%';
-$string['weightedpctcontribution'] = '加权后%%贡献';
+$string['weightedpct'] = '加权%%';
+$string['weightedpctcontribution'] = '加权%%份额';
 $string['writinggradebookinfo'] = '写成绩簿设置';
 $string['yes'] = '是';
 
