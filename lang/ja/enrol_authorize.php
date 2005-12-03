@@ -1,7 +1,11 @@
 <?PHP // $Id$ 
-      // enrol_authorize.php - created with Moodle 1.6 development (2005090100)
+      // enrol_authorize.php - created with Moodle 1.6 development (2005101200)
 
 
+$string['adminauthorizeccapture'] = 'オーダーレビュー&オートキャプチャ設定';
+$string['adminauthorizeemail'] = 'メール送信設定';
+$string['adminauthorizesettings'] = 'Authorize.net 設定';
+$string['adminauthorizewide'] = 'サイト全体の設定';
 $string['adminreview'] = 'クレジットカード情報が取得される前に注文を検査する。';
 $string['anlogin'] = 'Authorize.net: ログイン名';
 $string['anpassword'] = 'Authorize.net: パスワード ( 不要 )';
