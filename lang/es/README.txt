@@ -1,6 +1,6 @@
 Español Internacional
 
-Versión:  1.6dev
+Versión:  1.5.3+
 
 Coordinadores de traducción:
 
@@ -26,6 +26,7 @@ Colaboradores:
 	Facundo Ortiz (facundooz@fibertel.com.ar)
 	Raúl Vernengo 
 	Sergio Zúñiga (szuniga@vtr.net)
+	Juan David Martinez Pavony (juanmp@familia.com.co) 
 
 La traducción de Moodle al español se actualiza prácticamente cada día, inmediatamente después de aparecer los correspondientes cambios en el original en inglés, o cada vez que se advierte cualquier error o expresión incorrectamente traducida. Puede conseguir la última versión en http://download.moodle.org/download.php/lang/es.zip
 
