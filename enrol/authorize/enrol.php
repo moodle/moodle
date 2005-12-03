@@ -388,15 +388,6 @@ class enrolment_plugin extends enrolment_base {
     function config_form($frm) {
         global $CFG;
 
-        $vars = array('an_login', 'an_tran_key', 'an_password', 'an_referer', 'an_test', 'an_review', 'an_review_day',
-                      'enrol_cost', 'enrol_currency', 'enrol_mailstudents', 'enrol_mailteachers', 'enrol_mailadmins');
-
-        foreach ($vars as $var) {
-            if (!isset($frm->$var)) {
-                $frm->$var = '';
-            }
-        }
-
         if (!$this->check_openssl_loaded()) {
             notify('PHP must be compiled with SSL support (--with-openssl)');
         }
