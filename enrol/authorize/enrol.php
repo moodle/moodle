@@ -67,12 +67,6 @@ class enrolment_plugin extends enrolment_base {
             }
         }
 
-        $CCTYPES = array(
-            'mcd' => 'Master Card', 'vis' => 'Visa',        'amx' => 'American Express',
-            'dsc' => 'Discover',    'dnc' => 'Diners Club', 'jcb' => 'JCB',
-            'swi' => 'Switch',      'dlt' => 'Delta',       'enr' => 'EnRoute'
-        );
-
         $formvars = array('password','ccfirstname','cclastname','cc','ccexpiremm','ccexpireyyyy','cctype','cvv','cczip');
         foreach ($formvars as $var) {
             if (!isset($form->$var)) {
