@@ -158,7 +158,7 @@ class enrolment_plugin extends enrolment_base {
                   "Host: " . AN_HOST . "\r\n" .
                   $anrefererheader .
                   "Content-type: application/x-www-form-urlencoded\r\n" .
-                  "Connection: close\r\n\r\n" .
+                  "Connection: close\r\n" .
                   "Content-length: " . strlen($poststring) . "\r\n" .
                   $poststring . "\r\n\r\n"
             );
