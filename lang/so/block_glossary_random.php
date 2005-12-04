@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // block_glossary_random.php - created with Moodle 1.5 (2005060201)
+      // block_glossary_random.php - created with Moodle 1.5.2 (2005060220)
 
 
 $string['addentry'] = 'Ku dar odhaahyadaada aad ugu jeceshahay';

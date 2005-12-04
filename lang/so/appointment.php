@@ -1,12 +1,12 @@
 <?PHP // $Id$ 
-      // appointment.php - created with Moodle 1.5 (2005060201)
+      // appointment.php - created with Moodle 1.5.2 (2005060220)
 
 
 $string['allowresubmit'] = 'U oggolow dib-u-dhiibid';
-$string['appointmentdetails'] = 'Faahfaahinta ballan-qoondeyn';
-$string['appointmentlocation'] = 'Goobta ballan-qoondeynta';
-$string['appointmentname'] = 'Magaca ballanta-qoon';
-$string['date'] = 'Taariikhda ballan-qoondeyn';
+$string['appointmentdetails'] = 'Faahfaahinta ballan';
+$string['appointmentlocation'] = 'Goob ballan';
+$string['appointmentname'] = 'Magaca ballanta';
+$string['date'] = 'Taariikhda ballanta';
 $string['description'] = 'Qeexitaanka';
 $string['early'] = '$a horey';
 $string['failedupdatefeedback'] = 'Waxa dhicisowbey cusbooneysiin keenid wax-ku-kordhintii isticmaale $a';
@@ -17,10 +17,10 @@ $string['maximumgrade'] = 'Darajada ugu sareysa';
 $string['maximumsize'] = 'Le\'ekaanshaha ugu sareya';
 $string['modulename'] = 'Ballan';
 $string['modulenameplural'] = 'Ballamo';
-$string['newsubmissions'] = 'Ballammaha-qoondeyn la dhiibey';
+$string['newsubmissions'] = 'Ballammaha la dhiibey';
 $string['notgradedyet'] = 'Wali lama sixin(darajo lama siin)';
 $string['notsubmittedyet'] = 'Wali aan la dhiibin';
-$string['overwritewarning'] = 'Dignniin: Ko-u dhaamin mra kale waxay MEESHA KA QAADANEYSAA wax dhiibitaankaaga hadda jira.';
+$string['overwritewarning'] = 'Dignniin: Kor-u dhaamin mar kale waxay MEESHA KA QAADANEYSAA wax dhiibitaankaaga hadda jira.';
 $string['saveallfeedback'] = 'Keydi giddi ra\'yi-celiskaaga';
 $string['submissionfeedback'] = 'Dhiibitaanka ra\'yi-celis';
 $string['submissions'] = 'Dhiibitaanno';

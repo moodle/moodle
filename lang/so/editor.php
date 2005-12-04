@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.5 (2005060201)
+      // editor.php - created with Moodle 1.5.2 (2005060220)
 
 
 $string['about'] = 'Ku saabsan tafatirahan';
@@ -24,6 +24,7 @@ $string['fontsize'] = 'Le\'ekaansho-font';
 $string['forecolor'] = 'Midab-font';
 $string['heading'] = 'Qoraal-madax';
 $string['height'] = 'Dharar';
+$string['horizontal'] = 'Hoos-siman';
 $string['imageurl'] = 'Muqaal URL';
 $string['insertlink'] = 'Dhex gali Xidhiidh';
 $string['insertsmile'] = 'Dhex gali Doola-cadeeye';
@@ -42,17 +43,19 @@ $string['nolink'] = 'Ka ilaali ku xidhiidhin ootamaatik ah';
 $string['normal'] = 'Caadi';
 $string['ok'] = 'OK';
 $string['rename'] = 'Dib-ugu-magac-bixi';
+$string['replaceall'] = 'Dhammaan ku-beddel';
 $string['replacewith'] = 'Beddel';
 $string['right'] = 'Midig';
 $string['searchandreplace'] = 'Raadi oo beddel';
 $string['selection'] = 'Xulasho';
 $string['showhelp'] = 'Gacan-siin isticmaalka tafatire';
-$string['size'] = 'Le'ekaan';
+$string['size'] = 'Le ekaansho';
 $string['spacing'] = 'kala durkin';
 $string['strikethrough'] = 'Xariiq-ku-dhex-marin';
 $string['top'] = 'Guudka';
 $string['type'] = 'Nooc';
 $string['upload'] = 'Kor u dhaammin';
+$string['vertical'] = 'Gudban';
 $string['wordclean'] = 'Nadiifi Word HTML';
 $string['zip'] = 'Zip';
 
