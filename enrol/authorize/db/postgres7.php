@@ -22,10 +22,8 @@ function authorize_upgrade($oldversion=0) {
     }
 
     if ($oldversion < 2005071602) {
-        notify("<b>AUTHORIZE.NET WARNING:</b><br />
-                login_https is required in version 2005071601 for security reasons. <br />
-                Your registered users can't pay for course if you don't setup this. <br />
-                Please don't forget to set up this in section Admin/Variables/Security.");
+        notify("If you are using the authorize.net enrolment plugin for credit card 
+                handling, please ensure that you have turned loginhttps ON in Admin >> Variables >> Security.");
     }
     
     return $result;
