@@ -71,6 +71,7 @@ $string['administrator'] = '管理者';
 $string['administrators'] = '管理者';
 $string['administratorsall'] = '全ての管理者';
 $string['administratorsandteachers'] = '管理者および教師';
+$string['adminprimarynoedit'] = '主管理者のパスワードは変更できません。';
 $string['advanced'] = '高度な';
 $string['advancedfilter'] = '検索オプション';
 $string['advancedsettings'] = '高度な設定';
