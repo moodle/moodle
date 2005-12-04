@@ -37,6 +37,7 @@ $string['addstudent'] = 'Add student';
 $string['addteacher'] = 'Add teacher';
 $string['addnousersrecip'] = 'Add users who haven\'t accessed this $a to recipient list';
 $string['admin'] = 'Admin';
+$string['adminprimarynoedit'] = 'You may not change the primary admin\'s password';
 $string['adminhelpaddnewuser'] = 'To manually create a new user account';
 $string['adminhelpassignadmins'] = 'Admins can do anything and go anywhere in the site';
 $string['adminhelpassigncreators'] = 'Creators can create new courses and teach in them';

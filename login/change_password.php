@@ -140,6 +140,10 @@
  *****************************************************************************/
 function validate_form($frm, &$err) {
 
+    global $USER;
+
+    $validpw = authenticate_user_login($frm->username, $frm->password);
+
     if (empty($frm->username)){
         $err->username = get_string('missingusername');
     } else {
@@ -148,15 +152,15 @@ function validate_form($frm, &$err) {
         } else {  
             if (!isadmin()) {
                 //require non adminusers to give valid password
-                if(!authenticate_user_login($frm->username, $frm->password)) {
+                if(!$validpw) {
                     $err->password = get_string('wrongpassword');
                 }
             }
             else {
                 // don't allow anyone to change the primary admin's password
                 $mainadmin = get_admin();
-                if($frm->username == $mainadmin->username) {
-                    $err->password = get_string('adminprimarynoedit');
+                if($frm->username == $mainadmin->username && $mainadmin->id != $USER->id) { // the primary admin can change their own password!
+                    $err->username = get_string('adminprimarynoedit');
                 }
             }
         }
