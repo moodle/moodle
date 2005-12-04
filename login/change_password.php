@@ -137,6 +137,10 @@
  *****************************************************************************/
 function validate_form($frm, &$err) {
 
+    // we always need to call this because it handles the
+    // loading of the auth libraries, and we need that for later.
+    $validatepw = authenticate_user_login($frm->username, $frm->password);
+
     if (empty($frm->username)){
         $err->username = get_string('missingusername');
     } else {
@@ -145,7 +149,7 @@ function validate_form($frm, &$err) {
         } else {  
             if (!isadmin()) {
                 //require non adminusers to give valid password
-                if(!authenticate_user_login($frm->username, $frm->password)) {
+                if(!$validatepw) {
                     $err->password = get_string('wrongpassword');
                 }
             }
