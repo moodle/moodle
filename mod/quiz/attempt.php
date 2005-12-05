@@ -132,7 +132,7 @@
             }
             echo "<br />\n";
 
-            echo "<form name=\"passwordform\" method=\"post\" action=\"attempt.php?id=$cm->id\">\n";
+            echo "<form name=\"passwordform\" method=\"post\" action=\"attempt.php?id=$cm->id\" autocomplete=\"off\">\n";
             print_simple_box_start("center");
 
             echo "<div align=\"center\">\n";
@@ -401,7 +401,7 @@
         ?>
         <script language="javascript" type="text/javascript">
         <!--
-            document.write("<form name=\"responseform\" method=\"post\" action=\"attempt.php\">\n");
+            document.write("<form name=\"responseform\" method=\"post\" action=\"attempt.php\" autocomplete=\"off\">\n");
         // -->
         </script>
         <noscript>
@@ -409,7 +409,7 @@
         </noscript>
         <?php
     } else {
-        echo "<form name=\"responseform\" method=\"post\" action=\"attempt.php\">\n";
+        echo "<form name=\"responseform\" method=\"post\" action=\"attempt.php\" autocomplete=\"off\">\n";
     }
 
     // Add a hidden field with the quiz id
