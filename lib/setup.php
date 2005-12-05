@@ -330,16 +330,23 @@ $CFG->httpswwwroot = $CFG->wwwroot;
 
     class object {};
 
-    unset(${'MoodleSession'.$CFG->sessioncookie});
-    unset($_GET['MoodleSession'.$CFG->sessioncookie]);
-    unset($_POST['MoodleSession'.$CFG->sessioncookie]);
-
+    if (empty($CFG->usesid) && !empty($_COOKIE['MoodleSession'.$CFG->sessioncookie])  )
+    {
+        unset(${'MoodleSession'.$CFG->sessioncookie});
+        unset($_GET['MoodleSession'.$CFG->sessioncookie]);
+        unset($_POST['MoodleSession'.$CFG->sessioncookie]);
+    }
     //compatibility hack for Moodle Cron, cookies not deleted, but set to "deleted"
     if (!empty($_COOKIE['MoodleSession'.$CFG->sessioncookie]) && $_COOKIE['MoodleSession'.$CFG->sessioncookie] == "deleted") {
         unset($_COOKIE['MoodleSession'.$CFG->sessioncookie]);
     }
     if (!empty($_COOKIE['MoodleSessionTest'.$CFG->sessioncookie]) && $_COOKIE['MoodleSessionTest'.$CFG->sessioncookie] == "deleted") {
         unset($_COOKIE['MoodleSessionTest'.$CFG->sessioncookie]);
+    }
+    if (!empty($CFG->usesid) && empty($_COOKIE['MoodleSessionTest'.$CFG->sessioncookie]))
+    {
+        require_once("$CFG->dirroot/lib/cookieless.php");
+        sid_start_ob();
     }
 
     if (!isset($nomoodlecookie)) {
@@ -404,10 +411,13 @@ $CFG->httpswwwroot = $CFG->wwwroot;
 
 /// now do a session test to prevent random user switching
     if ($SESSION != NULL) {
-        if (empty($_COOKIE['MoodleSessionTest'.$CFG->sessioncookie])) {
-            report_session_error();
-        } else if (isset($SESSION->session_test) && $_COOKIE['MoodleSessionTest'.$CFG->sessioncookie] != $SESSION->session_test) {
-            report_session_error();
+        //only do test if MoodleSessionTest cookie is set and usesid is on, or when usesid is off
+        if ((!empty($_COOKIE['MoodleSessionTest'.$CFG->sessioncookie]) && !empty($CFG->usesid))||empty($CFG->usesid) ) {
+            if (empty($_COOKIE['MoodleSessionTest'.$CFG->sessioncookie])) {
+                report_session_error();
+            } else if (isset($SESSION->session_test) && $_COOKIE['MoodleSessionTest'.$CFG->sessioncookie] != $SESSION->session_test) {
+                report_session_error();
+            }
         }
     }
 

@@ -11,9 +11,16 @@
 <?php } ?>
   <tr>
     <td width="50%" align="center" valign="top" class="content left">
-      <p><?php print_string("loginusing") ?>:<br />
-        (<?php print_string("cookiesenabled");?>) 
-         <?php helpbutton("cookies", get_string("cookiesenabled"))?><br /><?php formerr($errormsg) ?>
+      <p><?php print_string("loginusing") ?>:
+        <?php
+        if (empty($CFG->usesid))
+        {
+            echo "<br />(";
+            print_string("cookiesenabled");
+            echo ")";
+            helpbutton("cookies", get_string("cookiesenabled"));
+        }
+        ?><br /><?php formerr($errormsg) ?>
       </p>
       <form action="index.php" method="post" name="login" id="login">
         <table border="0" align="center">

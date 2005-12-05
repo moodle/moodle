@@ -91,11 +91,11 @@
 
 /// Check if the user has actually submitted login data to us
 
-    if ($frm and (get_moodle_cookie() == '') and ($frm->username!='guest') and !$user and empty($CFG->alternateloginurl)) {    // Login without cookie
+    if (empty($CFG->usesid) and $frm and (get_moodle_cookie() == '') and ($frm->username!='guest') and !$user and empty($CFG->alternateloginurl)) {    // Login without cookie
 
         $errormsg = get_string("cookiesnotenabled");
 
-    } else if ($frm) {                             // Login WITH cookies
+    } else  if ($frm) {                             // Login WITH cookies
 
         $frm->username = trim(moodle_strtolower($frm->username));
 

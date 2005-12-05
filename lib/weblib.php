@@ -844,7 +844,14 @@ function popup_form($common, $options, $formname, $selected='', $nothing='choose
             continue;
 
         } else {
-            $optstr = '   <option value="' . $common . $value . '"';
+           if (!empty($CFG->usesid) && !isset($_COOKIE[session_name()]))
+            {
+                $url=sid_process_url( $common . $value );
+            } else
+            {
+                $url=$common . $value;
+            }
+            $optstr = '   <option value="' . $url . '"';
 
             if ($value == $selected) {
                 $optstr .= ' selected="selected"';
@@ -3947,7 +3954,13 @@ function notice_yesno ($message, $linkyes, $linkno) {
  */
 function redirect($url, $message='', $delay='0') {
 
+    global $CFG;
     //$url     = clean_text($url);
+   if (!empty($CFG->usesid) && !isset($_COOKIE[session_name()]))
+    {
+       $url=sid_process_url($url);
+    }
+
     $message = clean_text($message);
 
     $url = html_entity_decode($url); // for php < 4.3.0 this is defined in moodlelib.php
