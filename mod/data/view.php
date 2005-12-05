@@ -205,16 +205,15 @@
 
     if ($search){    //if in search mode, only search text fields
 
-        $sql = 'SELECT DISTINCT c.* FROM '.$CFG->prefix.'data_content c LEFT JOIN '
+        $sql = 'SELECT DISTINCT c.recordid, c.recordid FROM '.$CFG->prefix.'data_content c LEFT JOIN '
                .$CFG->prefix.'data_fields f on c.fieldid = f.id WHERE f.dataid = '
-               .$data->id.' AND c.content LIKE "%'.$search.'%" ';/*" AND f.type="text" ';*/
+               .$data->id.' AND c.content LIKE "%'.$search.'%" ';
 
         $sqlcount = 'SELECT COUNT(DISTINCT c.recordid) FROM '.$CFG->prefix
                     .'data_content c LEFT JOIN '.$CFG->prefix
                     .'data_fields f on c.fieldid = f.id WHERE f.dataid = '
-                    .$data->id.' AND c.content LIKE "%'.$search.'%" ';/* AND f.type="text"';*/
+                    .$data->id.' AND c.content LIKE "%'.$search.'%" ';
     }
-    
     else {  //else get everything
 
         $sql = 'SELECT * FROM '.$CFG->prefix.'data_records WHERE dataid ='.$data->id.' ORDER BY id ASC ';
@@ -256,7 +255,7 @@
             notify(get_string('nosingletemplate','data'));
         }
     }
-  
+
     print_paging_bar($totalcount, $page, $perpage, $baseurl, $pagevar='page');
     
     //for each record we find, we do a string replacement for tags.
