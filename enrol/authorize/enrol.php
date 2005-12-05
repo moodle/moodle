@@ -155,12 +155,11 @@ class enrolment_plugin extends enrolment_base {
             //send the server request
             fputs($fp,
                   "POST " . AN_PATH . " HTTP/1.0\r\n" .
-                  "Host: " . AN_HOST . "\r\n" .
-                  $anrefererheader .
+                  "Host: " . AN_HOST . "\r\n" . $anrefererheader .
                   "Content-type: application/x-www-form-urlencoded\r\n" .
                   "Connection: close\r\n" .
-                  "Content-length: " . strlen($poststring) . "\r\n" .
-                  $poststring . "\r\n\r\n"
+                  "Content-length: " . strlen($poststring) . "\r\n\r\n" .
+                  $poststring . "\r\n"
             );
 
             //Get the response header from the server
