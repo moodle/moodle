@@ -696,10 +696,10 @@ function data_print_template($records, $data, $search, $listmode){
  ************************************************************************/
 function data_print_preference_form($data, $perpage, $search){
     echo '<br />';
-    echo '<form name="options" action="view.php?d='.$data->id.'&amp;search='.$search.'" method="post">';
+    echo '<form name="options" action="view.php?d='.$data->id.'&amp;search='.s($search).'" method="post">';
     echo '<table id="optiontable" align="center">';
     echo '<tr><td>'.get_string('search').'</td>';
-    echo '<td><input type="text" size = "16" name="search" value="'.$search.'" />';
+    echo '<td><input type="text" size = "16" name="search" value="'.s($search).'" />';
     echo '</td></tr>';
     echo '<tr align="right"><td>';
     echo '<label for="perpage">'.get_string('pagesize','data').'</label>';
