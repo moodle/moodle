@@ -249,14 +249,10 @@ function update_instance($resource) {
 }
 
 
-function delete_instance($id) {
-// Given an ID of an instance of this module,
+function delete_instance($resource) {
+// Given an object containing the resource data
 // this function will permanently delete the instance
 // and any data that depends on it.
-
-    if (! $resource = get_record("resource", "id", "$id")) {
-        return false;
-    }
 
     $result = true;
 
@@ -310,7 +306,7 @@ function resource_delete_instance($id) {
     $resourceclass = "resource_$resource->type";
     $res = new $resourceclass();
 
-    return $res->delete_instance($id);
+    return $res->delete_instance($resource);
 }
 
 
