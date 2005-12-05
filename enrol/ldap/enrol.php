@@ -363,65 +363,99 @@ function config_form($frm) {
 /// Override the base process_config() function
 function process_config($config) {
 
-    optional_variable($config->enrol_ldap_host_url, '');
+    if (!isset ($config->enrol_ldap_host_url)) {
+        $config->enrol_ldap_host_url = '';
+    }
     set_config('enrol_ldap_host_url', $config->enrol_ldap_host_url);
 
-    optional_variable($config->enrol_ldap_version, '');
+    if (!isset ($config->enrol_ldap_version)) {
+        $config->enrol_ldap_version = '';
+    }
     set_config('enrol_ldap_version', $config->enrol_ldap_version);
     
-    optional_variable($config->enrol_ldap_bind_dn, '');
+    if (!isset ($config->enrol_ldap_bind_dn)) {
+        $config->enrol_ldap_bind_dn = '';
+    }
     set_config('enrol_ldap_bind_dn', $config->enrol_ldap_bind_dn);
-    
-    optional_variable($config->enrol_ldap_bind_pw, '');
+
+    if (!isset ($config->enrol_ldap_bind_pw)) {
+        $config->enrol_ldap_bind_pw = '';
+    }
     set_config('enrol_ldap_bind_pw', $config->enrol_ldap_bind_pw);    
     
-    optional_variable($config->enrol_ldap_student_contexts, '');
+    if (!isset ($config->enrol_ldap_student_contexts)) {
+         $config->enrol_ldap_student_contexts = '';
+    }
     set_config('enrol_ldap_student_contexts', $config->enrol_ldap_student_contexts);    
     
-    optional_variable($config->enrol_ldap_student_memberattribute, '');
+    if (!isset ($config->enrol_ldap_student_memberattribute)) {
+         $config->enrol_ldap_student_memberattribute = '';
+    }
     set_config('enrol_ldap_student_memberattribute', $config->enrol_ldap_student_memberattribute);    
-    
-    optional_variable($config->enrol_ldap_teacher_contexts, '');
+    if (!isset ($config->enrol_ldap_teacher_contexts)) {
+         $config->enrol_ldap_teacher_contexts = '';
+    }
     set_config('enrol_ldap_teacher_contexts', $config->enrol_ldap_teacher_contexts);   
     
-    optional_variable($config->enrol_ldap_teacher_memberattribute, '');
+    if (!isset ($config->enrol_ldap_teacher_memberattribute)) {
+         $config->enrol_ldap_teacher_memberattribute = '';
+    }
     set_config('enrol_ldap_teacher_memberattribute', $config->enrol_ldap_teacher_memberattribute);    
-    
-    optional_variable($config->enrol_ldap_objectclass, '');
+    if (!isset ($config->enrol_ldap_objectclass)) {
+        $config->enrol_ldap_objectclass = '';
+    }
     set_config('enrol_ldap_objectclass', $config->enrol_ldap_objectclass);    
     
-    optional_variable($config->enrol_ldap_category, '');
+    if (!isset ($config->enrol_ldap_category)) {
+        $config->enrol_ldap_category  = '';
+    }
     set_config('enrol_ldap_category', $config->enrol_ldap_category);    
     
-    optional_variable($config->enrol_ldap_template, '');
+    if (!isset ($config->enrol_ldap_template)) {
+        $config->enrol_ldap_template = '';
+    }
     set_config('enrol_ldap_template', $config->enrol_ldap_template);    
     
-    optional_variable($config->enrol_ldap_course_fullname, '');
+    if (!isset ($config->enrol_ldap_course_fullname)) {
+        $config->enrol_ldap_course_fullname = '';
+    }
     set_config('enrol_ldap_course_fullname', $config->enrol_ldap_course_fullname);    
 
-    optional_variable($config->enrol_ldap_course_shortname, '');
+    if (!isset ($config->enrol_ldap_course_shortname)) {
+        $config->enrol_ldap_course_shortname = '';
+    }
     set_config('enrol_ldap_course_shortname', $config->enrol_ldap_course_shortname);    
-        
-    optional_variable($config->enrol_ldap_course_summary, '');
+    
+    if (!isset ($config->enrol_ldap_course_summary)) {
+        $config->enrol_ldap_course_summary = '';
+    }
     set_config('enrol_ldap_course_summary', $config->enrol_ldap_course_summary);    
     
-    optional_variable($config->enrol_ldap_course_idnumber, '');
+    if (!isset ($config->enrol_ldap_course_idnumber)) {
+        $config->enrol_ldap_course_idnumber = '';
+    }
     set_config('enrol_ldap_course_idnumber', $config->enrol_ldap_course_idnumber); 
     
-    optional_variable($config->enrol_localcoursefield, '');
+    if (!isset ($config->enrol_localcoursefield)) {
+        $config->enrol_localcoursefield = '';
+    }
     set_config('enrol_localcoursefield', $config->enrol_localcoursefield);
     
-    optional_variable($config->enrol_ldap_user_memberfield, '');
+    if (!isset ($config->enrol_ldap_user_memberfield)) {
+        $config->enrol_ldap_user_memberfield = '';
+    }
     set_config('enrol_ldap_user_memberfield', $config->enrol_ldap_user_memberfield); 
     
-    optional_variable($config->enrol_ldap_search_sub, '0');
+    if (!isset ($config->enrol_ldap_search_sub)) {
+        $config->enrol_ldap_search_sub = '0';
+    }
     set_config('enrol_ldap_search_sub', $config->enrol_ldap_search_sub); 
     
-    optional_variable($config->enrol_ldap_autocreate, '0');
+    if (!isset ($config->enrol_ldap_autocreate)) {
+        $config->enrol_ldap_autocreate = '0';
+    }
     set_config('enrol_ldap_autocreate', $config->enrol_ldap_autocreate);                 
-    
-    
-
+   
     if (!isset($config->enrol_allowinternal)) {
         $config->enrol_allowinternal = '';
     }
