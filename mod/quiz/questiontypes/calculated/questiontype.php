@@ -57,7 +57,7 @@ class quiz_calculated_qtype extends quiz_dataset_dependent_questiontype {
         global $CFG;
         if (!$oldanswers = get_records_sql(
             "SELECT a.*, c.tolerance, c.tolerancetype,
-                    c.correctanswerlength, c.id calcid
+                    c.correctanswerlength, c.id AS calcid
                FROM {$CFG->prefix}quiz_answers a,
                     {$CFG->prefix}quiz_calculated c
               WHERE c.question = $question->id AND a.id = c.answer")) {
