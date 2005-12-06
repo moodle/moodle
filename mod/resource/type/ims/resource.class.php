@@ -297,7 +297,7 @@ class resource_ims extends resource_base {
             print_simple_box_start('center', '60%');
             echo '<p align="center">'.$errortext.'</p>';
         /// If errors were 3 or 4 and isteacheredit(), show the deploy button
-            if (isteacheredit($course->id) && ($errorcode = 3 || $errorcode ==4)) {
+            if (isteacheredit($course->id) && ($errorcode == 3 || $errorcode == 4)) {
                 $link = 'type/ims/deploy.php';
                 $options['courseid'] = $course->id;
                 $options['cmid'] = $cm->id;
