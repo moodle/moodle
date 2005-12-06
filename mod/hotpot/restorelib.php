@@ -132,7 +132,7 @@
 					}
 			
 					// don't transfer these fields to the attempt records
-					$excluded_TAGS = array('hotpot');
+					$excluded_TAGS = array('HOTPOT');
 
 					$i = 0;
 					while ($status && isset($info['ATTEMPT_DATA'][$i]['#'])) {
