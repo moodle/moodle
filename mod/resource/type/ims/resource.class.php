@@ -221,8 +221,10 @@ class resource_ims extends resource_base {
 
      /// Delete moddata resource dir completely
          $resource_dir = $CFG->dataroot.'/'.$resource->course.'/'.$CFG->moddata.'/resource/'.$resource->id;
-         if (!$status = fulldelete($resource_dir)) {
-             return false;
+         if (file_exists($resource_dir)) {
+             if (!$status = fulldelete($resource_dir)) {
+                 return false;
+             }
          }
 
          return parent::delete_instance($resource);
