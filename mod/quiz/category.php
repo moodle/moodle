@@ -456,7 +456,7 @@ class quiz_category_object {
         echo '<p><form action="category.php" method="post">';
         echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
         echo '<input type="hidden" name="id" value="'. $this->course->id . '" />';
-        echo '<input type="hidden" name="updateid" value=' . $category->id . '" />';
+        echo '<input type="hidden" name="updateid" value="' . $category->id . '" />';
         print_table($edittable);
         echo '</form></p>';
     }
