@@ -279,9 +279,9 @@ class resource_ims extends resource_base {
             } else {
             /// Depending of the error, show different messages and pages
                 if ($errorcode ==1) {
-                    $errortext = get_string('invalidfiletype','resource');
+                    $errortext = get_string('invalidfiletype','error', $resource->reference);
                 } else if ($errorcode == 2) {
-                    $errortext = get_string('filenotexists','resource');
+                    $errortext = get_string('filenotfound','error', $resource->reference);
                 } else if ($errorcode == 3) {
                     $errortext = get_string('packagenotdeplyed','resource');
                 } else if ($errorcode == 4) {
