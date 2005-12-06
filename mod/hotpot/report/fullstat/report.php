@@ -10,8 +10,8 @@ class hotpot_report extends hotpot_default_report {
 
 		// retrieve form variables, if any
 		global $download, $tablename;
-		optional_variable($download, "");
-		optional_variable($tablename, "");
+		optional_param($download, "");
+		optional_param($tablename, "");
 		
 		$strbestgrade  = "highest"; // $QUIZ_GRADE_METHOD[$hotpot->grademethod];
 		

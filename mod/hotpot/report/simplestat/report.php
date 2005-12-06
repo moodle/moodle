@@ -7,7 +7,7 @@ class hotpot_report extends hotpot_default_report {
 	function display(&$hotpot, &$cm, &$course, &$users, &$attempts, &$questions) {
 	
 		global $download;
-		optional_variable($download, "");
+		optional_param($download, "");
 
 		$this->create_scores_table($users, $attempts, $questions, $s_table=NULL, $download, $course, $hotpot);
 
