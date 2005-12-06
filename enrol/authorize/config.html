@@ -1,116 +1,135 @@
-<?php //  $Id$
-
-optional_variable($frm->enrol_cost, '5');
-optional_variable($frm->enrol_currency, 'USD');
-optional_variable($frm->enrol_mailstudents, false);
-optional_variable($frm->enrol_mailteachers, false);
-optional_variable($frm->enrol_mailadmins, false);
-
-optional_variable($frm->an_login, '');
-optional_variable($frm->an_tran_key, '');
-optional_variable($frm->an_password, '');
-optional_variable($frm->an_referer, 'http://');
-optional_variable($frm->an_test, false);
-optional_variable($frm->an_review, false);
-optional_variable($frm->an_review_day, 5);
-
-?>
-
 <table cellspacing="0" cellpadding="5" border="0" align="center">
-
-<tr valign="top"><td colspan="3"><h4><?php print_string("adminauthorizewide", "enrol_authorize") ?></h4></td></tr>
 
 <tr valign="top">
     <td align="right">enrol_cost:</td>
-    <td><input type="text" size="5" name="enrol_cost" value="<?php p($frm->enrol_cost) ?>" /></td>
-    <td><?php print_string("costdefault") ?></td>
+    <td>
+       <input type="text" size="5" name="enrol_cost" value="<?php p($frm->enrol_cost) ?>" />
+    </td>
+    <td>
+    <?php  print_string("costdefault") ?>
+    </td>
 </tr>
 
 <tr valign="top">
     <td align="right">enrol_currency:</td>
-    <td><?php choose_from_menu(get_list_of_currencies(), "enrol_currency", $frm->enrol_currency, "","", "") ?></td>
-    <td><?php print_string("currency") ?>
+    <td>
+    <?php
+      $ancurrencies = array(
+        'USD' => 'US Dollars',
+        'EUR' => 'Euros',
+        'JPY' => 'Japanese Yen',
+        'GBP' => 'British Pounds',
+        'CAD' => 'Canadian Dollars'
+      );
+     choose_from_menu ($ancurrencies, "enrol_currency", $frm->enrol_currency, "","", "") ?>
+    </td>
+    <td>
+    <?php  print_string("currency") ?>
     </td>
 </tr>
 
 <tr valign="top">
     <td align="right">loginhttps:</td>
-    <td><?php echo (empty($CFG->loginhttps) ? "<font color=\"red\">off</font>" : "<font color=\"green\">on</font>") ?></td>
-    <td><?php
-    $a->url = "$CFG->wwwroot/$CFG->admin/config.php#configsectionsecurity";
-    print_string("logindesc", "enrol_authorize", $a)
-    ?></td>
+    <td>
+    <?php  echo (empty($CFG->loginhttps) ? "<font color=\"red\">off</font>" : "<font color=\"green\">on</font>") ?>
+    </td>
+    <td>
+    <?php
+     $a->url = "$CFG->wwwroot/$CFG->admin/config.php#configsectionsecurity";
+     print_string("logindesc", "enrol_authorize", $a)
+    ?>
+    </td>
 </tr>
 
-<tr valign="top"><td colspan="3"><h4><?php print_string("adminauthorizesettings", "enrol_authorize") ?></h4></td></tr>
+<tr valign="top"><td colspan="3"><hr noshade="noshade" size="1"></td></tr>
 
 <tr valign="top">
     <td align="right">an_login:</td>
-    <td><input type="text" name="an_login" value="<?php p($frm->an_login) ?>" /></td>
-    <td><?php print_string("anlogin", "enrol_authorize") ?></td>
+    <td>
+        <input type="text" name="an_login" value="<?php p($frm->an_login) ?>" />
+    </td>
+    <td>
+    <?php  print_string("anlogin", "enrol_authorize") ?>
+    </td>
 </tr>
 
 <tr valign="top">
-    <td align="right">#&nbsp;</td>
-    <td colspan="2"><?php print_string("chooseone", "enrol_authorize") ?></td>
+    <td align="right"></td>
+    <td colspan="2">
+    <?php  print_string("chooseone", "enrol_authorize") ?>
+    </td>
 </tr>
 
 <tr valign="top">
     <td align="right">an_tran_key:</td>
-    <td><input type="text" name="an_tran_key" value="<?php p($frm->an_tran_key) ?>" /></td>
-    <td><?php print_string("antrankey", "enrol_authorize") ?></td>
+    <td>
+        <input type="text" name="an_tran_key" value="<?php p($frm->an_tran_key) ?>" />
+    </td>
+    <td>
+    <?php  print_string("antrankey", "enrol_authorize") ?>
+    </td>
 </tr>
 
 <tr valign="top">
     <td align="right">an_password:</td>
-    <td><input type="text" name="an_password" value="<?php p($frm->an_password) ?>" /></td>
-    <td><?php print_string("anpassword", "enrol_authorize") ?></td>
+    <td>
+        <input type="password" name="an_password" value="<?php p($frm->an_password) ?>" />
+    </td>
+    <td>
+    <?php  print_string("anpassword", "enrol_authorize") ?>
+    </td>
 </tr>
 
 <tr valign="top">
     <td align="right">an_referer:</td>
-    <td><input type="text" name="an_referer" value="<?php p($frm->an_referer) ?>" /></td>
-    <td><?php print_string("anreferer", "enrol_authorize") ?></td>
+    <td>
+        <input type="text" name="an_referer" value="<?php p($frm->an_referer) ?>" />
+    </td>
+    <td>
+    <?php  print_string("anreferer", "enrol_authorize") ?>
+    </td>
 </tr>
 
 <tr valign="top">
     <td align="right">an_test:</td>
-    <td><input type="checkbox" value="1" name="an_test" <?php if (!empty($frm->an_test)) echo "checked=\"true\"" ?> /></td>
-    <td><?php print_string("antestmode", "enrol_authorize") ?></td>
+    <td>
+        <input type="checkbox" value="1" name="an_test" <?php if (!empty($frm->an_test)) echo "checked=\"true\"" ?> />
+    </td>
+    <td>
+    <?php  print_string("antestmode", "enrol_authorize") ?>
+    </td>
 </tr>
 
-<tr valign="top"><td colspan="3"><h4><?php print_string("adminauthorizeccapture", "enrol_authorize") ?></h4></td></tr>
-
-<tr valign="top">
-    <td align="right">an_review:</td>
-    <td><input type="checkbox" value="1" name="an_review" <?php if (!empty($frm->an_review)) echo "checked=\"true\"" ?> /></td>
-    <td><?php print_string("adminreview", "enrol_authorize") ?></td>
-</tr>
-
-<tr valign="top">
-    <td align="right">an_review_day:</td>
-    <td><input type="text" name="an_review_day" size="2" maxlength="2" value="<?php p($frm->an_review_day) ?>" /></td>
-    <td><?php print_string("reviewday", "enrol_authorize", $frm->an_review_day) ?></td>
-</tr>
-
-<tr valign="top"><td colspan="3"><h4><?php print_string("adminauthorizeemail", "enrol_authorize") ?></h4></td></tr>
+<tr valign="top"><td colspan="3"><hr noshade="noshade" size="1"></td></tr>
 
 <tr valign="top">
     <td align="right">enrol_mailstudents:</td>
-    <td><input type="checkbox" value=1 name="enrol_mailstudents" <?php if (!empty($frm->enrol_mailstudents)) echo "checked=\"true\"" ?> /></td>
-    <td><?php print_string("mailstudents") ?></td>
+    <td>
+        <input type="checkbox" value=1 name="enrol_mailstudents" <?php if (!empty($frm->enrol_mailstudents)) echo "checked=\"true\"" ?> />
+    </td>
+    <td>
+    <?php  print_string("mailstudents") ?>
+    </td>
 </tr>
 
 <tr valign="top">
     <td align="right">enrol_mailteachers:</td>
-    <td><input type="checkbox" value=1 name="enrol_mailteachers" <?php if (!empty($frm->enrol_mailteachers)) echo "checked=\"true\"" ?> /></td>
-    <td><?php print_string("mailteachers") ?></td>
+    <td>
+        <input type="checkbox" value=1 name="enrol_mailteachers" <?php if (!empty($frm->enrol_mailteachers)) echo "checked=\"true\"" ?> />
+    </td>
+    <td>
+    <?php  print_string("mailteachers") ?>
+    </td>
 </tr>
 
 <tr valign="top">
     <td align="right">enrol_mailadmins:</td>
-    <td><input type="checkbox" value=1 name="enrol_mailadmins" <?php if (!empty($frm->enrol_mailadmins)) echo "checked=\"true\"" ?> /></td>
-    <td><?php print_string("mailadmins") ?></td>
+    <td>
+        <input type="checkbox" value=1 name="enrol_mailadmins" <?php if (!empty($frm->enrol_mailadmins)) echo "checked=\"true\"" ?> />
+    </td>
+    <td>
+    <?php  print_string("mailadmins") ?>
+    </td>
 </tr>
 
 </table>
