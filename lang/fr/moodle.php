@@ -69,6 +69,7 @@ $string['administrator'] = 'Administrateur';
 $string['administrators'] = 'Administrateurs';
 $string['administratorsall'] = 'Tous les administrateurs';
 $string['administratorsandteachers'] = 'Administrateurs et enseignants';
+$string['adminprimarynoedit'] = 'Il n\'est pas possible de modifier le mot de passe de l\'administrateur principal';
 $string['advanced'] = 'Avancé';
 $string['advancedfilter'] = 'Plus de critères';
 $string['advancedsettings'] = 'Réglages avancés';
