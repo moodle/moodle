@@ -143,6 +143,17 @@
 /// xmlize the variable
     $data = xmlize($imsmanifest, 0);
 
+/// Extract every manifest present in the imsmanifest file.
+/// Returns a tree structure.
+    if (!$manifests = ims_extract_manifests($data)) {
+        error (get_string('nonmeaningfulcontent', 'error'));
+    }
+
+/// Process every manifest found in inverse order so every one 
+/// will be able to use its own submanifests. Not perfect because
+/// teorically this will allow some manifests to use other non-childs
+/// but this is supposed to be
+
 /// Detect if all the manifest share a common xml:base tag
     $manifest_base = $data['manifest']['@']['xml:base'];
 
@@ -202,6 +213,59 @@
 ///
 /// Common and useful functions used by the body of the script
 ///
+
+    /*** This function will return a tree of manifests (xmlized) as they are
+     *   found and extracted from one manifest file. The first manifest in the
+     *   will be the main one, while the rest will be submanifests. In the
+     *   future (when IMS CP suppors it, external submanifest will be detected
+     *   and retrieved here too). See IMS specs for more info.
+     */
+    function ims_extract_manifests($data) {
+
+        $manifest = new stdClass;    //To store found manifests in a tree structure
+
+    /// If there are some manifests
+        if (!empty($data['manifest'])) {
+        /// Add manifest to results array
+            $manifest->data = $data['manifest'];
+        /// Look for submanifests
+            $submanifests = ims_extract_submanifests($data['manifest']['#']);
+        /// Add them as child
+            if (!empty($submanifests)) {
+                $manifest->childs = $submanifests;
+            }
+        }
+    /// Return tree of manifests found
+        return $manifest;
+    }
+
+    /* This function will search recursively for submanifests returning an array
+     * containing them (xmlized) following a tree structure.
+     */
+    function ims_extract_submanifests($data) {
+
+        $submanifests = array();  //To store found submanifests
+
+    /// If there are some manifests
+        if (!empty($data['manifest'])) {
+        /// Get them
+            foreach ($data['manifest'] as $submanifest) {
+            /// Create a new submanifest object
+                $submanifest_object = new stdClass;
+                $submanifest_object->data = $submanifest;
+            /// Look for more submanifests recursively
+                $moresubmanifests = ims_extract_submanifests($submanifest['#']);
+            /// Add them to results array
+                if (!empty($moresubmanifests)) {
+                    $submanifest_object->childs = moresubmanifests;
+                }
+            /// Add submanifest object to results array
+                $submanifests[] = $submanifest_object;
+            }
+        }
+    /// Return array of manifests found
+        return $submanifests;
+    }
 
     /*** This function will return an ordered and nested array of items
      *   that is a perfect representation of the prefered organization
