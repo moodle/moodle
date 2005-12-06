@@ -1,14 +1,27 @@
 <?php
     require_once('languages.php');
     // Initialize vars
-    optional_variable($config->cas_hostname,"");
-    optional_variable($config->cas_port,"");
-    optional_variable($config->cas_version,"");
-    optional_variable($config->cas_baseuri,"");
-    optional_variable($config->cas_language,"");
-    optional_variable($config->cas_use_cas,"");
-    optional_variable($config->cas_create_user,"0");
-    optional_variable($config->cas_logout,"");
+    if (!isset ($config->cas_hostname)) {
+        $config->cas_hostname = "";
+    }
+    if (!isset ($config->cas_port)) {
+        $config->cas_port = "";
+    }
+    if (!isset ($config->cas_version)) {
+        $config->cas_version = "";
+    }
+    if (!isset ($config->cas_baseuri)) {
+        $config->cas_baseuri = "";
+    }
+    if (!isset ($config->cas_language)) {
+        $config->cas_language = "";
+    }
+    if (!isset ($config->cas_use_cas)) {
+        $config->cas_use_cas = "";
+    }
+    if (!isset ($config->cas_create_user)) {
+        $config->cas_create_user = "0";
+    }
 ?>
 
 
@@ -93,20 +106,6 @@
        choose_from_menu ($options, "cas_create_user", $config->cas_create_user, "");?>
     </td><td>
     <?php  print_string("auth_cas_create_user","auth") ?>
-    </td>
-</tr>
-
-<tr valign="top"  class="required">
-    <td align="right">cas_logout:</td>
-    <td>
-    <?php
-       unset($options);
-       $options[0] = get_string("no");
-       $options[1] = get_string("yes");
-
-       choose_from_menu ($options, "cas_logout", $config->cas_logout, "");?>
-    </td><td>
-    <?php  print_string("auth_cas_logout","auth") ?>
     </td>
 </tr>
 
