@@ -74,6 +74,7 @@ $string['parameter'] = 'Paramètre';
 $string['parameters'] = 'Paramètres';
 $string['popupresource'] = 'Cette ressource apparaîtra dans une fenêtre pop-up';
 $string['popupresourcelink'] = 'Dans le cas contraire, cliquez ici&nbsp;: $a';
+$string['redeploy'] = 'Déployer à nouveau';
 $string['resourcetype'] = 'Type de ressource';
 $string['resourcetypedirectory'] = 'Afficher le contenu d\'un dossier';
 $string['resourcetypefile'] = 'Lien vers un fichier ou un site web';
