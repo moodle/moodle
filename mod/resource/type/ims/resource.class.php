@@ -24,6 +24,8 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
+include_once ($CFG->libdir.'/filelib.php');
+
 /**
 * Extend the base resource class for ims resources
 */
@@ -207,6 +209,24 @@ class resource_ims extends resource_base {
 
         return parent::update_instance($resource);
     }
+
+    /** Delete instance of IMS-CP resource
+     *
+     * Delete all the moddata files for the resource
+     * @param    resource object
+     */
+     function delete_instance($resource) {
+
+         global $CFG;
+
+     /// Delete moddata resource dir completely
+         $resource_dir = $CFG->dataroot.'/'.$resource->course.'/'.$CFG->moddata.'/resource/'.$resource->id;
+         if (!$status = fulldelete($resource_dir)) {
+             return false;
+         }
+
+         return parent::delete_instance($resource);
+     }
 
 
     /**
