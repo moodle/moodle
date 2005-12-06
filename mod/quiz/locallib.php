@@ -1713,7 +1713,7 @@ function quiz_process_responses(&$question, &$state, $action, $quiz, &$attempt) 
     $attempt->timemodified = $action->timestamp;
     // Round long sumgrades
     if (strlen($attempt->sumgrades) > 10 && floatval($attempt->sumgrades)) {
-       $attempt->sumgrades = strval(round($attempt->sumgrades,10-1-strlen(floor($state->sumgrades))));
+       $attempt->sumgrades = strval(round($attempt->sumgrades,10-1-strlen(floor($attempt->sumgrades))));
     }
 
     return true;
