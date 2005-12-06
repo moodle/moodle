@@ -87,9 +87,6 @@
         echo 'parent.messages.scroll(1,5000000);';
         echo "\n-->\n</script>\n\n";
 
-        $date = usergetdate($message->timecreated);
-        $datestring = $date['year'].$date['mon'].$date['mday'];
-
         add_to_log(SITEID, 'message', 'write', 'history.php?user1='.$user->id.'&amp;user2='.$USER->id.'#m'.$messageid, $user->id);
     }
 
