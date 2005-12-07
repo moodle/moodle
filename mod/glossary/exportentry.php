@@ -2,12 +2,12 @@
     require_once('../../config.php');
     require_once('lib.php');
 
-    require_variable($id);    // course module ID
-    require_variable($entry);    // Entry ID
-    optional_variable($confirm);     // confirmation
+    $id    = required_param('id', PARAM_INT);           // course module ID
+    $entry = required_param('entry', 0, PARAM_INT);     // Entry ID
+    $confirm = optional_param('confirm', 0, PARAM_INT); // confirmation
 
-    $hook = optional_param('hook');
-    $mode = optional_param('mode');
+    $hook = optional_param('hook', '', PARAM_ALPHANUM);
+    $mode = optional_param('mode', '', PARAM_ALPHA);
         
     global $USER, $CFG;
 

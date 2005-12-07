@@ -3,12 +3,12 @@
     require_once("../../config.php");
     require_once("lib.php");
 
-    require_variable($id);    // course module ID
-    optional_variable($confirm);  // commit the operation?
-    optional_variable($entry);  // entry id
+    $id      = required_param('id', PARAM_INT);          // course module ID
+    $confirm = optional_param('confirm', 0, PARAM_INT);  // commit the operation?
+    $entry   = optional_param('entry', 0, PARAM_INT);    // entry id
 
     $prevmode = required_param('prevmode');
-    $hook = optional_param('hook');
+    $hook = optional_param('hook', '', PARAM_CLEAN);
 
     $strglossary = get_string("modulename", "glossary");
     $strglossaries = get_string("modulenameplural", "glossary");

@@ -4,7 +4,7 @@
     require_once("../../config.php");
     require_once("lib.php");
 
-    require_variable($id);
+    $id = required_param('id', PARAM_INT);
     global $USER;
     
     if (! $entry = get_record("glossary_entries", "id", $id)) {
