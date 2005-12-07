@@ -127,7 +127,7 @@ class block_admin extends block_list {
                     $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/users.gif" height="16" width="16" alt="" />';
                 } else {
                     $this->content->items[]='<a href="importstudents.php?id='.$this->instance->pageid.'">'.$course->students.'</a>';
-                    $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/users.gif" height="16" width="16" alt="">';
+                    $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/users.gif" height="16" width="16" alt="" />';
                 }
                 if ($course->groupmode || !$course->groupmodeforce) {
                     $strgroups = get_string('groups');
