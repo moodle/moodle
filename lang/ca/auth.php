@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.5.2 + (2005060223)
+      // auth.php - created with Moodle 1.5.3+ (2005060230)
 
 
 $string['alternatelogin'] = 'Si introduïu un URL aquí, s\'utilitzarà com a pàgina d\'entrada d\'aquest lloc. Aquesta pàgina hauria de contenir un formulari, amb la propietat \'action\' igual a <strong>$a</strong> i que retornés els camps <strong>username</strong> i <strong>password</strong>.<br />Tingueu cura de no escriure un URL incorrecte, ja que podríeu impedir l\'entrada dels usuaris en aquest lloc.<br />Si deixeu en blanc aquest paràmetre s\'utilitzarà la pàgina d\'entrada per defecte.';
@@ -49,8 +49,8 @@ $string['auth_imaphost'] = 'L\'adreça del servidor IMAP. Ha de ser el número IP,
 $string['auth_imapport'] = 'El número de port del servidor IMAP. Generalment és el 143 o el 993.';
 $string['auth_imaptitle'] = 'Utilitza un servidor IMAP';
 $string['auth_imaptype'] = 'Tipus de servidor IMAP. Els servidors IMAP poden tenir diferents tipus d\'autenticació i negociació.';
-$string['auth_ldap_bind_dn'] = 'Si voleu utilitzar l\'usuari de vinculació (<i>bind-user</i>) per cercar usuaris, especifiqueu-ho aquí. Una cosa semblant a \'cn=ldapuser,ou=public,o=org\'';
-$string['auth_ldap_bind_pw'] = 'Contrasenya del <i>bind-user</i>.';
+$string['auth_ldap_bind_dn'] = 'Si voleu utilitzar el bind-user per cercar usuaris, especifiqueu-ho aquí. Per exemple \'cn=ldapuser,ou=public,o=org\'';
+$string['auth_ldap_bind_pw'] = 'Contrasenya del bind-user.';
 $string['auth_ldap_bind_settings'] = 'Paràmetres de vinculació';
 $string['auth_ldap_contexts'] = 'Llista de contextos en què estan ubicats els usuaris. Separeu els contextos amb \';\'. Per exemple: \'ou=users,o=org; ou=others,o=org\'';
 $string['auth_ldap_create_context'] = 'Si activeu la creació d\'usuaris mitjançant confirmació per correu electrònic, especifiqueu en quin context s\'han de crear els usuaris. Aquest context ha de ser diferent del d\'altres usuaris per tal de prevenir problemes de seguretat. No cal afegir aquest context a ldap_context-variable. Moodle cercarà els usuaris en aquest context automàticament.';
@@ -101,9 +101,9 @@ $string['auth_pop3type'] = 'Tipus de servidor. Si el vostre servidor utilitza se
 $string['auth_shibbolethdescription'] = 'Amb aquest mètode us podeu connectar a un servidor Shibboleth per verificar i crear nous comptes';
 $string['auth_shibbolethtitle'] = 'Shibboleth';
 $string['auth_updatelocal'] = 'Actualitza dades locals';
-$string['auth_updatelocal_expl'] = '<p><b>Actualitza dades locals:</b> si habiliteu aquesta opció, el camp s\'actualitzarà (amb les dades externes d\'autenticació) cada vegada que l\'usuari entri o quan es faci una sincronització d\'usuaris. Els camps definits per actualitzar-se localment haurien d\'estar bloquejats.</p>';
+$string['auth_updatelocal_expl'] = '<p><b>Actualitza dades locals:</b> si habiliteu aquesta opció, el camp s\'actualitzarà (amb les dades externes d\'autenticació) cada vegada que l\'usuari entri o quan es faci una sincronització d\'usuaris. Els camps definits per actualitzar-se localment haurien d\'estar blocats.</p>';
 $string['auth_updateremote'] = 'Actualitza dades externes';
-$string['auth_updateremote_expl'] = '<p>Actualitza dades externes:</b> si habiliteu aquesta opció, les dades externes d\'autenticació s\'actualitzaran quan s\'actualitzi el registre de l\'usuari. Els camps s\'haurien de desbloquejar per permetre l\'edició.</p>';
+$string['auth_updateremote_expl'] = '<p>Actualitza dades externes:</b> si habiliteu aquesta opció, les dades externes d\'autenticació s\'actualitzaran quan s\'actualitzi el registre de l\'usuari. Els camps s\'haurien de desblocar per permetre l\'edició.</p>';
 $string['auth_updateremote_ldap'] = '<p><b>Nota:</b> actualitzar dades LDAP externes requreix definir binddn i dindpw amb un bind-user que tingui privilegis d\'edició en tots els registres d\'usuari. Actualment no preserva valors múltiples en els atributs i suprimeix els valors extra quan es fa l\'actualització.</p>';
 $string['auth_user_create'] = 'Habilita la creació d\'usuaris';
 $string['auth_user_creation'] = 'Els nous usuaris (anònims) poden crear comptes d\'usuari en la font d\'autenticació externa i confirmar-los via correu electrònic. Si habiliteu aquesta opció, recordeu de configurar també opcions específiques del mòdul per a la creació d\'usuaris.';
