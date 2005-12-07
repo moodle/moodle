@@ -1098,9 +1098,6 @@ function grade_nav($course, $action='grades') {
 function grade_download($download, $id) {
     global $CFG;
 
-    require_variable($id);              // course id
-    optional_variable($download, "");   // to download data 
-
     require_login();
 
     if (! $course = get_record("course", "id", $id)) {
@@ -1300,6 +1297,9 @@ function grade_download($download, $id) {
     
         exit;
     
+    }else if ($download == '' and confirm_sesskey()) {
+        error("No file type specified");
+        exit;
     }
 }
 
@@ -1331,7 +1331,16 @@ function grade_get_stats($category='all') {
                 // populate the overall sum,items and totalpoints 
                 foreach($stats as $cur_category=>$info) {
                     if($cur_category != 'all' && $cur_category != 'student_data') {
-                        if (isset($stats['all'])) {
+                        
+                        if ($stats[$cur_category]['totalpoints'] == get_string('excluded', 'grades')) {
+                            $stats[$cur_category]['totalpoints'] = 1;
+                            $stats['all']['sum'] = $stats['all']['sum'] + $stats[$cur_category]['sum'];
+                            $stats['all']['items']  = $stats['all']['items'] + $stats[$cur_category]['items'];
+                            $stats['all']['totalpoints'] = $stats['all']['totalpoints'] + $stats[$cur_category]['totalpoints'];
+                            $stats['all']['weighted_sum'] = $stats['all']['weighted_sum'] + ($stats[$cur_category]['sum']/($stats[$cur_category]['totalpoints']))*$stats[$cur_category]['weight'];
+                        }
+                        
+                        else if (isset($stats['all'])) {
                             $stats['all']['sum'] = $stats['all']['sum'] + $stats[$cur_category]['sum'];
                             $stats['all']['items']  = $stats['all']['items'] + $stats[$cur_category]['items'];
                             $stats['all']['totalpoints'] = $stats['all']['totalpoints'] + $stats[$cur_category]['totalpoints'];
@@ -1342,6 +1351,7 @@ function grade_get_stats($category='all') {
                             $stats['all']['items']  = $stats[$cur_category]['items'];
                             $stats['all']['totalpoints'] = $stats[$cur_category]['totalpoints'];
                             $stats['all']['weighted_sum'] = ($stats[$cur_category]['sum']/($stats[$cur_category]['totalpoints']))*$stats[$cur_category]['weight'];
+
                         }
                     } 
                 }
@@ -1920,7 +1930,6 @@ function grade_view_all_grades($view_by_student) {
         $rowcount = 0;
         $oddrow = true;
         $colcount = 0;
-        
         foreach($grades_by_student as $student => $categories) {
             $totalpoints = 0;
             $totalgrade = 0;
