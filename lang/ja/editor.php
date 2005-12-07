@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.6 development (2005072200)
+      // editor.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['about'] = 'エディタに関して';
@@ -62,11 +62,11 @@ $string['left'] = '左';
 $string['lefttoright'] = '左→右';
 $string['linkproperties'] = 'リンク属性';
 $string['linktarget'] = 'ターゲット';
-$string['linktargetblank'] = '新しいウインドウ';
+$string['linktargetblank'] = '新しいウィンドウ';
 $string['linktargetnone'] = '無し';
 $string['linktargetother'] = 'その他';
 $string['linktargetself'] = '同一フレーム';
-$string['linktargettop'] = '同一ウインドウ';
+$string['linktargettop'] = '同一ウィンドウ';
 $string['linktitle'] = 'タイトル';
 $string['linkurl'] = 'URL';
 $string['matchcase'] = '大文字・小文字を区別する';

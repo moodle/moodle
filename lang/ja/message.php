@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // message.php - created with Moodle 1.6 development (2005072200)
+      // message.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['addcontact'] = 'コンタクトリストに追加';
@@ -55,7 +55,7 @@ $string['sendmessage'] = 'メッセージの送信';
 $string['sendmessageto'] = '$a にメッセージを送信';
 $string['settings'] = '設定';
 $string['settingssaved'] = '設定が保存されました。';
-$string['showmessagewindow'] = 'メッセージが届いたら自動的にウインドウを表示する。 ( ブラウザのポップアップブロックを解除してください )';
+$string['showmessagewindow'] = 'メッセージが届いたら自動的にウィンドウを表示する。 ( ブラウザのポップアップブロックを解除してください )';
 $string['strftimedaydatetime'] = '%%Y/%%m/%%d (%%a) %%I:%%M %%p';
 $string['timenosee'] = 'オンライン表示期間 ( 分 )';
 $string['timesent'] = '送信回数';
