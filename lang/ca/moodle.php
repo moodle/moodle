@@ -63,6 +63,7 @@ $string['administrator'] = 'Administrador';
 $string['administrators'] = 'Administradors';
 $string['administratorsall'] = 'Tots els administradors';
 $string['administratorsandteachers'] = 'Administradors i professors';
+$string['adminprimarynoedit'] = 'No podeu canviar la contrasenya de l\'administrador primari';
 $string['advanced'] = 'Avançat';
 $string['advancedfilter'] = 'Cerca avançada';
 $string['advancedsettings'] = 'Paràmetres avançats';
@@ -1159,5 +1160,9 @@ $string['yourlastlogin'] = 'La vostra darrera entrada va ser';
 $string['yourself'] = 'vós mateix';
 $string['yourteacher'] = 'el vostre $a';
 $string['zippingbackup'] = 'S\'està comprimint la còpia de seguretat';
+
+$string['formatlams'] = 'Format LAMS';
+$string['lamsoutline'] = 'Esquema de curs LAMS';
+$string['namelams'] = 'LAMS';
 
 ?>
