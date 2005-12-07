@@ -7,7 +7,7 @@
     require_once("lib.php");
 
 
-    require_variable($id);  // The course these ratings are part of
+    $id = required_param('id', PARAM_INT);  // The course these ratings are part of
 
     if (! $course = get_record("course", "id", $id)) {
         error("Course ID was incorrect");

@@ -6,19 +6,21 @@
 
     require_once("../../config.php");
     require_once("lib.php");
-#    require_once("$CFG->dirroot/course/lib.php"); // For side-blocks
+    #require_once("$CFG->dirroot/course/lib.php"); // For side-blocks
 
-    optional_variable($ewiki_action,"");     // Action on Wiki-Page
-    optional_variable($id);     // Course Module ID, or
-    optional_variable($wid);    // Wiki ID
-    optional_variable($page, false);     // Wiki Page Name
-    optional_variable($q,"");    // Search Context
-    optional_variable($userid, 0);     // User wiki.
-    optional_variable($groupid, 0);    // Group wiki.
-    optional_variable($canceledit,"");    // Editing has been cancelled
+    $ewiki_action = optional_param('ewiki_action', '', PARAM_ALPHA);     // Action on Wiki-Page
+    $id           = optional_param('id', 0, PARAM_INT);                  // Course Module ID, or
+    $wid          = optional_param('wid', 0, PARAM_INT);                 // Wiki ID
+    $page         = optional_param('page', false, PARAM_ALPHANUM);       // Wiki Page Name
+    $q            = optional_param('q',"", PARAM_ALPHANUM);              // Search Context
+    $userid       = optional_param('userid', 0, PARAM_INT);              // User wiki.
+    $groupid      = optional_param('groupid', 0, PARAM_INT);             // Group wiki.
+    $canceledit   = optional_param('canceledit','', PARAM_INT);          // Editing has been cancelled
 
-/// Only want to add edit log entries if we have made some changes ie submitted a form
-    $editsave = optional_param('thankyou');
+    // Only want to add edit log entries if we have made some changes ie submitted a form
+    $editsave = optional_param('thankyou', '', PARAM_INT);
+    
+
 
     if ($id) {
         if (! $cm = get_record("course_modules", "id", $id)) {

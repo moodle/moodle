@@ -5,8 +5,7 @@
     require_once("lib.php");
     global $CFG;
 
-    require_variable($id);
-
+    $id = required_param('id', PARAM_INT);
     $mode = optional_param('mode');
 
     require_login();

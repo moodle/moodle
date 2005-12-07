@@ -4,10 +4,10 @@
     require_once("lib.php");
     global $CFG, $USER;
 
-    require_variable($id);           // Course Module ID
+    $id = required_param('id', PARAM_INT);      // Course Module ID
 
-    optional_variable($l,"");
-    optional_variable($cat,0);
+    $l   = optional_param('l','', PARAM_ALPHANUM);
+    $cat = optional_param('cat',0, PARAM_ALPHANUM);
 
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");

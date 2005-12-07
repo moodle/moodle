@@ -6,8 +6,8 @@
 
     require_once("$CFG->dirroot/config.php");
 
-    require_variable($category);
-    optional_variable($question);
+    $category = required_param('category', PARAM_ALPHANUM);
+    $question = optional_param('question', '', PARAM_INT);
 
     if (! $category = get_record("quiz_categories", "id", $category)) {
         error("This wasn't a valid category!");

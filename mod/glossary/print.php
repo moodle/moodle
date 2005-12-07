@@ -5,14 +5,14 @@
     require_once("../../config.php");
     require_once("lib.php");
 
-    require_variable($id);                         // Course Module ID
-    optional_variable($sortorder,"asc");           // Sorting order
-    optional_variable($offset,0,PARAM_INT);        // number of entries to bypass
-    optional_variable($displayformat,-1);
+    $id            = required_param('id', PARAM_INT);                     // Course Module ID
+    $sortorder     = optional_param('sortorder', 'asc', PARAM_ALPHA);     // Sorting order
+    $offset        = optional_param('offset', 0, PARAM_INT);              // number of entries to bypass
+    $displayformat = optional_param('displayformat',-1, PARAM_INT);
 
-    $mode    = required_param('mode');             // mode to show the entries
-    $hook    = optional_param('hook','ALL');       // what to show
-    $sortkey = optional_param('sortkey','UPDATE'); // Sorting key
+    $mode    = required_param('mode', PARAM_ALPHA);             // mode to show the entries
+    $hook    = optional_param('hook','ALL', PARAM_ALPHANUM);   // what to show
+    $sortkey = optional_param('sortkey','UPDATE', PARAM_ALPHA); // Sorting key
 
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");

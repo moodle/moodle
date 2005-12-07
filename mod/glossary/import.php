@@ -5,15 +5,15 @@
     require_once("$CFG->dirroot/course/lib.php");
     global $CFG, $USER;
 
-    require_variable($id);           // Course Module ID
+    $id = required_param('id', PARAM_INT);    // Course Module ID
 
-    optional_variable($step,0);
-    optional_variable($dest,"current");   // current | new
-    optional_variable($file);             // file to import
-    optional_variable($catsincl,0);       // Import Categories too?
+    $step     = optional_param('step', 0, PARAM_INT);
+    $current  = optional_param('dest', 'current', PARAM_ALPHA);   // current | new
+    $file     = optional_param('file', '', PARAM_FILE);         // file to import
+    $catsincl = optional_param('catsincl', 0, PARAM_INT);         // Import Categories too?
 
-    optional_variable($mode,'letter');
-    optional_variable($hook,"ALL");
+    $mode     = optional_param('mode', 'letter', PARAM_ALPHA );
+    $hook     = optional_param('hook', 'ALL', PARAM_ALPHANUM);
 
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");
