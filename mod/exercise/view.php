@@ -19,7 +19,7 @@
     require("lib.php");
     require("locallib.php");
 
-    require_variable($id);    // Course Module ID
+    $id = required_param('id', PARAM_INT);    // Course Module ID
 
     // get some esential stuff...
     if (! $cm = get_record("course_modules", "id", $id)) {
@@ -49,7 +49,7 @@
 
     // ...and if necessary set default action
 
-    optional_variable($action);
+    $action = optional_param('action', '', PARAM_ALPHA);
     if (isteacher($course->id)) {
         if (empty($action)) { // no action specified, either go straight to elements page else the admin page
             // has the assignment any elements
@@ -340,11 +340,12 @@
         $currentgroup = get_and_set_current_group($course, $groupmode, $changegroup);
 
         /// Allow the teacher to change groups (for this session)
-
-        if ($groupmode){
-            $currentgroup = setup_and_print_groups($course, $groupmode, 'view.php?id='.$cm->id);
+        if ($groupmode) {
+            if ($groups = get_records_menu("groups", "courseid", $course->id, "name ASC", "id,name")) {
+                print_group_menu($groups, $groupmode, $currentgroup, "view.php?id=$cm->id");
+            }
         }
-        
+
         print_heading_with_help(get_string("managingassignment", "exercise"), "managing", "exercise");
 
         exercise_print_assignment_info($exercise);
