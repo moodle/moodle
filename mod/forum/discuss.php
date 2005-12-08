@@ -146,6 +146,8 @@
         $groupmode = groupmode($course, $cm);
     }
 
+                                       
+    
     if ($groupmode and !isteacheredit($course->id)) {   // Groups must be kept separate
         //change this to ismember
         $mygroupid = mygroupid($course->id);//only useful if 0, otherwise it's an array now
@@ -166,6 +168,14 @@
             $canreply = ((empty($mygroupid) and $discussion->groupid == -1) || (ismember($discussion->groupid) || $mygroupid == $discussion->groupid));
         }
     }
+
+    //if forum is hidden then only teacher and admin can see it
+    if ($forum->visible == 0 and !isadmin() and !isteacher($course->id)) {
+        print_heading("Sorry, you don't have permission to see this discussion");
+        print_footer($course);
+        die;
+    }
+
 
 
 /// Print the controls across the top
