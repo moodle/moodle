@@ -63,9 +63,11 @@
                           .'<optgroup label="'.get_string('trysearching').'"><option></option></optgroup>'."\n";
                   }
                   else {
-                      foreach ($users as $user) {
-                          $fullname = fullname($user, true);
-                          echo "<option value=\"$user->id\">".$fullname.", ".$user->email."</option>\n";
+                      if ($usercount > 0) {    //fix for bug#4455
+                          foreach ($users as $user) {
+                              $fullname = fullname($user, true);
+                              echo "<option value=\"$user->id\">".$fullname.", ".$user->email."</option>\n";
+                          }
                       }
                   }
               }
