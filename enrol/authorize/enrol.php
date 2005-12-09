@@ -14,22 +14,36 @@ define('AN_ENCAP', '"');
 /**
  * New order. No transaction was made.
  */
-define('AN_STATUS_NONE',    0x0);
+define('AN_STATUS_NONE',    0x00);
 
 /**
  * Authorized.
  */
-define('AN_STATUS_AUTH',    0x1);
+define('AN_STATUS_AUTH',    0x01);
 
 /**
  * Captured.
  */
-define('AN_STATUS_CAPTURE', 0x2);
+define('AN_STATUS_CAPTURE', 0x02);
+
+/**
+ * Expired.
+ */
+define('AN_STATUS_EXPIRED', 0x10);
+
+
+
+
 
 require_once("$CFG->dirroot/enrol/enrol.class.php");
 
-class enrolment_plugin extends enrolment_base {
 
+/**
+ * enrolment_plugin_authorize
+ *
+ */
+class enrolment_plugin extends enrolment_base
+{
     /**
      * Credit card error message.
      *
@@ -42,18 +56,19 @@ class enrolment_plugin extends enrolment_base {
      * Shows a credit card form for registration.
      *
      * @param object $course Course info
+     * @access public
      */
-    function print_entry($course) {
+    function print_entry($course)
+    {
         global $CFG, $USER, $form;
 
-        if ($this->zero_cost($course) || isguest()) {
-            // No money for guests ;)
+        if ($this->zero_cost($course) || isguest()) { // No money for guests ;)
             parent::print_entry($course);
             return;
         }
 
         // check payment
-        $this->check_paid();
+        $this->prevent_double_paid($course);
 
         // I want to paid on SSL.
         if (empty($_SERVER['HTTPS'])) {
@@ -96,13 +111,14 @@ class enrolment_plugin extends enrolment_base {
 
         print_footer();
     }
-    
-    
+
+
     /**
      * Checks form params.
      *
      * @param object $form Form parameters
      * @param object $course Course info
+     * @access public
      */
     function check_entry($form, $course) {
         if ($this->zero_cost($course) || isguest() || (!empty($form->password))) {
@@ -112,6 +128,7 @@ class enrolment_plugin extends enrolment_base {
         }
     }
 
+    
     /**
      * Credit card number mode.
      * Send to authorize.net.
@@ -120,9 +137,11 @@ class enrolment_plugin extends enrolment_base {
      * @param object $course Course info
      * @access private
      */
-    function cc_submit($form, $course) {
+    function cc_submit($form, $course)
+    {
         global $CFG, $USER, $SESSION;
         require_once($CFG->dirroot . '/enrol/authorize/ccval.php');
+        require_once($CFG->dirroot . '/enrol/authorize/action.php');
 
         if (empty($form->ccfirstname) || empty($form->cclastname) ||
             empty($form->cc) || empty($form->cvv) || empty($form->cctype) ||
@@ -131,7 +150,8 @@ class enrolment_plugin extends enrolment_base {
                 return;
         }
         
-        $this->check_paid();
+        $this->prevent_double_paid($course);
+        
         $exp_date = ($form->ccexpiremm < 10) ? strval('0'.$form->ccexpiremm) : strval($form->ccexpiremm);
         $exp_date .= $form->ccexpireyyyy;
         $valid_cc = CCVal($form->cc, $form->cctype, $exp_date);
@@ -143,136 +163,77 @@ class enrolment_plugin extends enrolment_base {
             return;
         }
         
-        // NEW ORDER ID
-        $datanew = new stdClass();
-        $datanew->cclastfour = substr($form->cc, -4);
-        $datanew->ccexp = $exp_date;
-        $datanew->cvv = $form->cvv;
-        $datanew->ccname = $form->ccfirstname . " " . $form->cclastname;
-        $datanew->courseid = $course->id;
-        $datanew->userid = $USER->id;
-        $datanew->avscode = 'P';
-        $datanew->status = AN_STATUS_NONE; // it will be changed...
-        $datanew->timeupdated = 0; // cron changes this.
-        $datanew->timecreated = time();
-        $datanew->id = insert_record("enrol_authorize", $datanew);
-        if (!$datanew->id) {
-            $this->email_to_admin("Error while trying to insert new data", $datanew);
+        // NEW ORDER
+        $timenow = time();
+        $order = new stdClass();
+        $order->cclastfour = substr($form->cc, -4);
+        $order->ccexp = $exp_date;
+        $order->cvv = $form->cvv;
+        $order->ccname = $form->ccfirstname . " " . $form->cclastname;
+        $order->courseid = $course->id;
+        $order->userid = $USER->id;
+        $order->avscode = 'P';
+        $order->status = AN_STATUS_NONE; // it will be changed...
+        $order->timeupdated = 0; // cron changes this.
+        $order->timecreated = $timenow;
+        $order->id = insert_record("enrol_authorize", $order);
+        if (!$order->id) {
+            $this->email_to_admin("Error while trying to insert new data", $order);
             $this->ccerrormsg = "Insert record error. Admin has been notified!";
             return;
         }
         
-        $formdata = array (
-            'x_version'         => '3.1',
-            'x_delim_data'      => 'True',
-            'x_delim_char'      => AN_DELIM,
-            'x_encap_char'      => AN_ENCAP,
-            'x_relay_response'  => 'False',
-            'x_login'           => $CFG->an_login,
-            'x_test_request'    => (!empty($CFG->an_test)) ? 'True' : 'False',
-            'x_type'            => 'AUTH_CAPTURE',
-            'x_method'          => 'CC',
-            'x_first_name'      => $form->ccfirstname,
-            'x_last_name'       => $form->cclastname,
-            'x_address'         => $USER->address,
-            'x_city'            => $USER->city,
-            'x_zip'             => $form->cczip,
-            'x_country'         => $USER->country,
-            'x_state'           => '',
-            'x_card_num'        => $form->cc,
-            'x_card_code'       => $form->cvv,
-            'x_currency_code'   => $curcost['currency'],
-            'x_amount'          => $curcost['cost'],
-            'x_exp_date'        => $exp_date,
-            'x_email'           => $USER->email,
-            'x_email_customer'  => 'False',
-            'x_cust_id'         => $USER->id,
-            'x_customer_ip'     => $useripno,
-            'x_phone'           => '',
-            'x_fax'             => '',
-            'x_invoice_num'     => $datanew->id,
-            'x_description'     => $course->shortname
-        );
+        $extra = new stdClass();
+        $extra->x_first_name = $form->ccfirstname;
+        $extra->x_last_name = $form->cclastname;
+        $extra->x_address = $USER->address;
+        $extra->x_city = $USER->city;
+        $extra->x_zip = $form->cczip;
+        $extra->x_country = $USER->country;
+        $extra->x_state = '';
+        $extra->x_card_num = $form->cc;
+        $extra->x_card_code = $form->cvv;
+        $extra->x_currency_code = $curcost['currency'];
+        $extra->x_amount = $curcost['cost'];
+        $extra->x_exp_date = $exp_date;
+        $extra->x_email = $USER->email;
+        $extra->x_email_customer = 'TRUE';
+        $extra->x_cust_id = $USER->id;
+        $extra->x_customer_ip = $useripno;
+        $extra->x_phone = '';
+        $extra->x_fax = '';
+        $extra->x_invoice_num = $order->id;
+        $extra->x_description = $course->shortname;
         
-        // build the post string
-        $poststring = '';
-        foreach($formdata as $k => $v) {
-            $poststring .= $k . "=" . urlencode($v) . "&";
-        }
-        $poststring .= (!empty($CFG->an_tran_key)) ?
-                        "x_tran_key" . "=" . urlencode($CFG->an_tran_key): 
-                        "x_password" . "=" . urlencode($CFG->an_password);
+        $message = null;
+        $an_review = !empty($CFG->an_review);
+        $action = $an_review ? AN_ACTION_AUTH_ONLY : AN_ACTION_AUTH_CAPTURE;     
+        $success = authorizenet_action($order, $message, $action, $extra);
 
-        // referer
-        $anrefererheader = '';
-        if (!(empty($CFG->an_referer) || $CFG->an_referer == "http://" || $CFG->an_referer == "https://")) {
-            $anrefererheader = "Referer: " . $CFG->an_referer . "\r\n";
-        }
-    
-        $response = array();
-        $connect_host = empty($CFG->an_test) ? AN_HOST : AN_HOST_TEST;
-        $fp = fsockopen("ssl://" . $connect_host, AN_PORT, $errno, $errstr, 60);
-        if (!$fp) {
-            $this->ccerrormsg =  "$errstr ($errno)";
-            delete_records("enrol_authorize", "id", $datanew->id); // no connection
-            return;
-        } else {
-            fputs($fp,
-                "POST " . AN_PATH . " HTTP/1.0\r\n" .
-                "Host: $connect_host\r\n" .
-                $anrefererheader .
-                "Content-type: application/x-www-form-urlencoded\r\n" .
-                "Content-length: " . strlen($poststring) . "\r\n" .
-                "Connection: close\r\n\r\n" .
-                $poststring . "\r\n\r\n"
-            );
-
-            $str = '';
-            while(!feof($fp) && !stristr($str, 'content-length')) {
-                $str = fgets($fp, 4096);
-            }
-            // If didnt get content-lenght, something is wrong.
-            if (!stristr($str, 'content-length')) {
-                $this->ccerrormsg =  "content-length error";
-                @fclose($fp);
-                return;
-            }
-            // Get length of data to be received.
-            $length = trim(substr($str,strpos($str,'content-length') + 15));
-            // Get buffer (blank data before real data)
-            fgets($fp, 4096);
-            // Get real data
-            $data = fgets($fp, $length);
-            @fclose($fp);
-            $response = explode(AN_ENCAP.AN_DELIM.AN_ENCAP, $data);
-            if ($response === false) {
-                $this->ccerrormsg = "response error";
-                return;
-            }
-            $rcount = count($response) - 1;
-            if ($response[0]{0} == AN_ENCAP) {
-                $response[0] = substr($response[0], 1);
-            }
-            if (substr($response[$rcount], -1) == AN_ENCAP) {
-                $response[$rcount] = substr($response[$rcount], 0, -1);
-            }
-        }
-
-        if ($response[0] == AN_APPROVED) {
+        if ($success) {
             $SESSION->ccpaid = 1; // security check: don't duplicate payment
-            $datanew->authcode = strval($response[4]); // Authorization or Approval code
-            $datanew->avscode = strval($response[5]); // Address Verification System code
-            $datanew->transid = strval($response[6]); // TransactionID
-            $datanew->status = AN_STATUS_AUTH | AN_STATUS_CAPTURE; // AUTH_CAPTURE
-            $datanew->timeupdated = time(); // captured, so change it.
-            if (!update_record("enrol_authorize", $datanew)) {
+            if ($an_review) { // review enabled, inform admin and redirect to main page the user.
+                $order->timeupdated = 0; //no time() - REVIEW: cron or admin will change this.
+                if (update_record("enrol_authorize", $order)) {
+                    // notification: new transaction (AUTH_ONLY)
+                }
+                else {
+                    $this->email_to_admin("Error while trying to update data. Please edit manually this record: " .
+                                          "ID=$order->id in enrol_authorize table.", $order);
+                }
+                redirect($CFG->wwwroot, get_string("emailnotify", "enrol_authorize"), '60');
+                return;
+            }
+            
+            // credit card captured, ENROL...      
+            if (!update_record("enrol_authorize", $order)) {
                 $this->email_to_admin( "Error while trying to update data. Please edit manually this record: " .
-                "ID=$datanew->id in enrol_authorize table." , $datanew);
+                "ID=$order->id in enrol_authorize table.", $order);
                 // no error occured??? enrol student??? return??? Database busy???
             }
 
             if ($course->enrolperiod) {
-                $timestart = time();
+                $timestart = $timenow;
                 $timeend = $timestart + $course->enrolperiod;
             } else {
                 $timestart = $timeend = 0;
@@ -308,7 +269,7 @@ class enrolment_plugin extends enrolment_base {
                     }
                 }
             } else {
-                $this->email_to_admin("Error while trying to enrol ".fullname($USER)." in '$course->fullname'", $response);
+                $this->email_to_admin("Error while trying to enrol ".fullname($USER)." in '$course->fullname'", $order);
             }
 
             if ($SESSION->wantsurl) {
@@ -320,27 +281,44 @@ class enrolment_plugin extends enrolment_base {
             redirect($destination);
 
         } else {
-            $this->ccerrormsg = isset($response[3]) ? $response[3] : 'unknown error';
+            $this->ccerrormsg = $message;
         }
     }
 
+    
+    /**
+     * zero_cost
+     *
+     * @param unknown_type $course
+     * @return number
+     * @access private
+     */
     function zero_cost($course) {
         $curcost = $this->get_course_cost($course);
         return (abs($curcost['cost']) < 0.01);
     }
-
-    function get_course_cost($course) {
+    
+    
+    /**
+     * get_course_cost
+     *
+     * @param unknown_type $course
+     * @return unknown
+     * @access private
+     */
+    function get_course_cost($course)
+    {
         global $CFG;
+        
         $cost = (float)0;
-
-        if (!empty($course->cost)) {
-            $cost = (float)(((float)$course->cost) < 0) ? $CFG->enrol_cost : $course->cost;
-        }
-
         $currency = (!empty($course->currency))
                      ? $course->currency :( empty($CFG->enrol_currency)
                                             ? 'USD' : $CFG->enrol_currency );
 
+        if (!empty($course->cost)) {
+            $cost = (float)(((float)$course->cost) < 0) ? $CFG->enrol_cost : $course->cost;
+        }
+     
         $cost = format_float($cost, 2);
         $ret = array('cost' => $cost, 'currency' => $currency);
 
@@ -353,6 +331,7 @@ class enrolment_plugin extends enrolment_base {
      *
      * @param object $course
      * @return string
+     * @access public
      */
     function get_access_icons($course) {
 
@@ -384,8 +363,10 @@ class enrolment_plugin extends enrolment_base {
      * Shows config form & errors
      *
      * @param object $frm
+     * @access public
      */
-    function config_form($frm) {
+    function config_form($frm)
+    {
         global $CFG;
 
         if (!$this->check_openssl_loaded()) {
@@ -420,10 +401,10 @@ class enrolment_plugin extends enrolment_base {
                 // Cron will NOT run anymore, because autocapture runs with cron.
                 // Transactions with AN_STATUS_AUTH will be cancelled and we can display this warning to admin!
                 // Admin can check (Accept|Deny) new transactions manually.
-                // :: TO DO ::
-                //if ($count = count_records('enrol_authorize', 'status', AN_STATUS_AUTH)) {
-                //    notify('CRON DISABLED. TRANSACTIONS WITH AN_STATUS_AUTH WILL BE CANCELLED UNLESS YOU CHECK IT. TOTAL $count');
-                //}
+
+                if ($count = count_records('enrol_authorize', 'status', AN_STATUS_AUTH)) {
+                    notify("CRON DISABLED. TRANSACTIONS WITH AN_STATUS_AUTH WILL BE CANCELLED UNLESS YOU CHECK IT. TOTAL $count");
+                }
             }
             // ***************************************************
         }
@@ -437,8 +418,10 @@ class enrolment_plugin extends enrolment_base {
      *
      * @param object $config
      * @return bool true if it will be saved.
+     * @access public
      */
-    function process_config($config) {
+    function process_config($config)
+    {
         global $CFG;
         
         // ENROL config
@@ -463,8 +446,8 @@ class enrolment_plugin extends enrolment_base {
         if (empty($login_val)) return false;
         set_config('an_login', $login_val);
 
-        $password_val = optional_param('an_password', '');
         $tran_val = optional_param('an_tran_key', '');
+        $password_val = optional_param('an_password', '');
         if (empty($tran_val) && empty($password_val)) return false;
         set_config('an_password', $password_val);
         set_config('an_tran_key', $tran_val);
@@ -494,9 +477,18 @@ class enrolment_plugin extends enrolment_base {
         return true;
     }
 
+    
+    /**
+     * email_to_admin
+     *
+     * @param string $subject
+     * @param mixed $data
+     * @access private
+     */
     function email_to_admin($subject, $data) {
         $admin = get_admin();
         $site = get_site();
+        $data = (array)$data;
 
         $message = "$site->fullname:  Transaction failed.\n\n$subject\n\n";
         foreach ($data as $key => $value) {
@@ -504,42 +496,114 @@ class enrolment_plugin extends enrolment_base {
         }
         email_to_user($admin, $admin, "CC ERROR: ".$subject, $message);
     }
-
-    function check_paid() {
-        global $CFG, $SESSION;
+    
+ 
+    /**
+     * prevent_double_paid
+     *
+     * @param object $course
+     * @access private
+     */
+    function prevent_double_paid($course)
+    {
+        global $CFG, $SESSION, $USER;
 
         if (isset($SESSION->ccpaid)) {
             unset($SESSION->ccpaid);
             redirect($CFG->wwwroot . '/login/logout.php');
-            exit;
+            return;
+        }
+        
+        if ($rec = get_record('enrol_authorize', 'userid',$USER->id, 'courseid',$course->id, 'status',AN_STATUS_AUTH, 'id')) {
+            $a->orderid = $rec->id;
+            redirect($CFG->wwwroot, get_string("paymentproggress", "enrol_authorize", $a), '20');
+            return;
         }
     }
 
+    
+    /**
+     * check_openssl_loaded
+     *
+     * @return bool
+     * @access private
+     */
     function check_openssl_loaded() {
         return extension_loaded('openssl');
     }
 
-    function cron() {
+    
+    /**
+     * cron
+     * @access public
+     */
+    function cron()
+    {
         global $CFG;
         parent::cron();
-        
+
+        srand((double)microtime() * 10000000);
+        $random100 = rand(0, 100);
         $timenow = time();
-        // delete very old records: status=AN_STATUS_NONE & timecreated=-60day.
-        // no credit card transaction is made in status AN_STATUS_NONE.
-        $timediff = $timenow - (60 * 3600 * 24);
-        $select = "(status = '" . AN_STATUS_NONE . "') AND (timecreated < '$timediff')";
-        if (count_records_select('enrol_authorize', $select)) {
-            mtrace("Deleting records in authorize table older than 60 days (status=AN_STATUS_NONE).");
-            delete_records_select('enrol_authorize', $select);
+        $timediff30 = $timenow - (30 * 3600 * 24);
+
+        if ($random100 < 15) { // delete very old records: status=AN_STATUS_NONE & timecreated=-60day.
+            // no credit card transaction is made in status AN_STATUS_NONE.
+            $timediff60 = $timenow - (60 * 3600 * 24);
+            $select = "(status = '" .AN_STATUS_NONE. "') AND (timecreated < '$timediff60')";
+            if (count_records_select('enrol_authorize', $select)) {
+                mtrace("Deleting records in authorize table older than 60 days (status=AN_STATUS_NONE).");
+                delete_records_select('enrol_authorize', $select);
+            }
         }
         
-        // (review not enabled) || (AUTOCAPTURE disabled = admin, teacher review it manually)
-        if ( empty($CFG->an_review) || empty($CFG->an_review_day) || $CFG->an_review_day < 1 ) return;
+        if ($random100 > 80) { // EXPIRED: Transactions with auth_only will be expired 30 days later.
+            $select = "(status = '" .AN_STATUS_AUTH. "') AND (timeupdated = '0') AND (timecreated < '$timediff30')";
+            execute_sql("UPDATE {$CFG->prefix}enrol_authorize SET timeupdated = '$timenow', status = '" .AN_STATUS_EXPIRED. "' WHERE $select", false);
+        }
 
-        // :: TO DO ::
-        // AUTO CAPTURE
-        
+        if (empty($CFG->an_review) || empty($CFG->an_review_day) || $CFG->an_review_day < 1) {
+            // AUTOCAPTURE disabled. admin, teacher review it manually
+            return;           
+        }
+
+        // AUTO-CAPTURE: it must be captured within 30 days. Otherwise it will expired.
+        $timediffcnf = $timenow - (intval($CFG->an_review_day) * 3600 * 24);
+        $select = "(status = '" . AN_STATUS_AUTH . "') AND (timeupdated = '0') AND (timecreated < '$timediffcnf') AND (timecreated > '$timediff30')";
+        if ($orders = get_records_select('enrol_authorize', $select)) {
+            require_once("$CFG->dirroot/enrol/authorize/action.php");
+            $this->log = "AUTHORIZE.NET AUTOCAPTURE CRON: " . userdate($timenow) . "\n";
+            $message = null;
+            foreach ($orders as $order) {
+                $success = authorizenet_action($order, $message, AN_ACTION_PRIOR_AUTH_CAPTURE);
+                if ($success) {
+                    if (!update_record("enrol_authorize", $order)) {
+                        $this->email_to_admin("Error while trying to update data. Please edit manually this record: " .
+                                              "ID=$order->id in enrol_authorize table.", $order);
+                    }
+                    $timestart = $timeend = 0;
+                    if ($course = get_record_sql("SELECT enrolperiod FROM {$CFG->prefix}course WHERE id='$order->courseid'")) {
+                        if ($course->enrolperiod) {
+                            $timestart = $timenow;
+                            $timeend = $timestart + $course->enrolperiod;
+                        }
+                    }
+                    if (enrol_student($order->userid, $order->courseid, $timestart, $timeend, 'authorize')) {
+                        $this->log .= "user($order->userid) enrolled to course($order->courseid)\n";
+                    }
+                    else {
+                        $this->email_to_admin("Error while trying to enrol ".fullname($USER)." in '$course->fullname'", $order);
+                   }
+                }
+                else { // not success
+                    $this->log .= $message . "\n";
+                }
+            }
+            $this->log .= "AUTHORIZE.NET CRON FINISHED: " . userdate(time());
+            if (!empty($CFG->enrol_mailadmins)) {
+                email_to_user(get_admin(), get_admin(), "AUTHORIZE.NET CRON LOG", $this->log);
+            }
+        }
     }
-
-} // end of class definition
+}
 ?>
