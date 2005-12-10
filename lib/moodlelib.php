@@ -264,6 +264,7 @@ function optional_param($varname, $default=NULL, $options=PARAM_CLEAN) {
 
 /**
  * HACK ALERT! Do not use this function, it will be removed soon!!
+ * @todo Remove this function soon!
  */
 function isset_param($varname) {
   if (isset($_GET[$varname])) {
@@ -536,6 +537,7 @@ function optional_variable(&$var, $default=0) {
 
 /**
  * HACK ALERT! Do not use this function, it will be removed soon!!
+ * @todo Remove this function soon!
  */
 function set_default( &$var, $default ) {
   if (empty($var)) {
