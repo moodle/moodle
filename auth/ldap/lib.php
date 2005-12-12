@@ -1063,7 +1063,7 @@ function auth_ldap_getdefaults(){
                         'rfc2307' => 'member',
                         'rfc2307bis' => 'member',
                         'samba' => 'member',
-                        'ad' => 'memberOf', 
+                        'ad' => 'member', 
                         'default' => 'member'
                         );
     $default['ldap_memberattribute_isdn'] = array(
@@ -1071,7 +1071,7 @@ function auth_ldap_getdefaults(){
                         'rfc2307' => '0',
                         'rfc2307bis' => '1',
                         'samba' => '0', //is this right?
-                        'ad' => '0', //is this right?
+                        'ad' => '1',
                         'default' => '0'
                         );
     $default['ldap_expireattr'] = array (
