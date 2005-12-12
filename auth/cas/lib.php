@@ -136,7 +136,7 @@ function cas_automatic_authenticate ($user="") {
    global $CFG;
    if (!$cas_validate){
         $cas_validate=true;
-        phpCAS::client($CFG->cas_version,$CFG->cas_hostname,(Integer)$CFG->cas_port,$CFG->cas_baseuri);
+        phpCAS::client($CFG->cas_version,$CFG->cas_hostname,(int)$CFG->cas_port,$CFG->cas_baseuri);
         phpCAS::setLang($CFG->cas_language);
         if (!phpCAS::isAuthenticated() && !$CFG->guestloginbutton){
            phpCAS::authenticateIfNeeded();
