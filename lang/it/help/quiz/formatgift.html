@@ -1,5 +1,5 @@
-<p align=center><b>Importazione di files in formato "GIFT"</b></p>
-<p>GIFT &egrave; il più completo formato di importazione disponibile per caricare le domande di un quiz da un file di testo. Supporta i vari tipi di domande a Risposta multipla, Vero/Falso, Risposta breve, Corrispondenze, Numeriche e anche l'inserimento di un _____ per il formato "parola mancante".
+<p align=center><b>Importazione di files in formato &quot;GIFT&quot;</b></p>
+<p>GIFT &egrave; il pi&ugrave; completo formato di importazione disponibile per caricare le domande di un quiz da un file di testo. Supporta i vari tipi di domande a Risposta multipla, Vero/Falso, Risposta breve, Corrispondenze, Numeriche e anche l'inserimento di un _____ per il formato &quot;parola mancante&quot;.
 Differenti tipi di domanda possono essere mischiati in un unico file di testo, e il formato supporta anche righe di commento, nomi di domande, feedback, e voti pesati su base percentuale. Seguono alcuni esempi:</p>
 
 <p>La codifica del file di testo deve essere simile a quella del file di installazione di Moodle. 
@@ -12,7 +12,7 @@ Un esempio di file di domande si trova al seguente link:
 <p><u>Risposta multipla:</u><br />
 Per le domande a risposta multipla, le risposte errate sono precedute dal carattere tilde (~), mentre le risposte giuste sono precedute dal segno uguale (=).</p>
 <pre>     In quale isola &egrave; morto Napoleone? {~Elba ~Corsica =Sant'Elena}</pre>
-<p>Il formato<b>"Parola mancante"</b> automaticamente inserisce degli spazi da riepire (come questo _____) in mezzo alla frase. Per usare questo formato, si possono mettere le risposte dove si vuole che gli spazi appaiano nella frase.</p>
+<p>Il formato<b>&quot;Parola mancante&quot;</b> automaticamente inserisce degli spazi da riepire (come questo _____) in mezzo alla frase. Per usare questo formato, si possono mettere le risposte dove si vuole che gli spazi appaiano nella frase.</p>
 <pre>     Napoleone &egrave; stato esiliato all'isola di {~Corsica =Sant'Elena ~Elba} dove &egrave; morto.</pre>
 <p>Se le risposte vengono prima del punto di chiusura della frase, degli spazi da riempire saranno inseriti come formato &quot;parola mancante&quot;. In questo formato si possono scrivere tutti i tipi di domanda.</p>
 <p>Si deve inserire una riga vuota (doppio invio) per separare le domande. 
@@ -21,7 +21,7 @@ Per chiarezza, le risposte possono essere scritte su righe separate e anche inde
          ~secondo
          ~terzo
          =quarto
-     } Giovedì di Novembre.
+     } Gioved&igrave; di Novembre.
      
      Da quale paese di origine deriva il carattere dei Giapponesi? {
          ~India
@@ -33,8 +33,8 @@ Per chiarezza, le risposte possono essere scritte su righe separate e anche inde
     Le risposte alle domande del tipo Risposta breve sono tutte precedute dal segno uguale (=), che indica che tutte le risposte sono giuste. Le risposte non devono contenere il carattere tilde (~).</p>
     <pre>     Dove &egrave; morto Napoleone?{=in un'isola =a Sant'Elena}
 
-     Due più due uguale {=quattro =4}.</pre>
-    <p>Se c'&egrave; solamente <u>una</u> Risposta breve giusta, questa può essere scritta senza essere preceduta dal segno uguale, purch&eacute; non possa essere confusa con una risposta Vero-Falso.
+     Due pi&ugrave; due uguale {=quattro =4}.</pre>
+    <p>Se c'&egrave; solamente <u>una</u> Risposta breve giusta, questa pu&ograve; essere scritta senza essere preceduta dal segno uguale, purch&eacute; non possa essere confusa con una risposta Vero-Falso.
     
 <p><u>Vero-Falso:</u><br />
     In questo tipo di domanda la risposta indica se l'affermazione &egrave; vera o falsa. 
@@ -44,36 +44,36 @@ Per chiarezza, le risposte possono essere scritte su righe separate e anche inde
      Il sole sorge a est.{T}</pre>
 
 <p><u>Corrispondenze:</u><br />
-    Le coppie di corrispondenze cominciano con un segno uguale (=) e sono separate dal simbolo "->". Ci devono essere almeno tre coppie di corrispondenze.</p>
+    Le coppie di corrispondenze cominciano con un segno uguale (=) e sono separate dal simbolo &quot;-&gt;&quot;. Ci devono essere almeno tre coppie di corrispondenze.</p>
     <pre>     Domanda a corrispondenze. {
-         =sotto-domanda1 -> sotto-risposta1
-         =sotto-domanda2 -> sotto-risposta2
-         =sotto-domanda3 -> sotto-risposta3
+         =sotto-domanda1 -&gt; sotto-risposta1
+         =sotto-domanda2 -&gt; sotto-risposta2
+         =sotto-domanda3 -&gt; sotto-risposta3
          }
      
      Accoppia i seguenti paesi con le corrispondenti capitali. {
-         =Canada -> Ottava
-         =Italia  -> Roma
-         =Giappone  -> Tokio
-         =India  -> Nuova Delhi
+         =Canada -&gt; Ottava
+         =Italia  -&gt; Roma
+         =Giappone  -&gt; Tokio
+         =India  -&gt; Nuova Delhi
          }</pre>
     <p>Le domande a corrispondenza non supportano feedback o risposte a pesi percentuali.</p>
 
 <p><u>Numerica:</u><br />
     La parte Risposta delle domande Numeriche deve cominciare con il simbolo cancelletto (#). 
-    Le risposte numeriche possono prevedere un margine di errore, che &egrave; scritto di seguito alla risposta corretta, separato da una virgola. Così, ad esempio, se la risposta corretta &egrave; un valore compreso tra 1.5 e 2.5, si dovr&agrave; scrivere <u>{#2:0.5}</u>. Questo indica che il risultato corretto &egrave; 2 con un margine di errore di 0.5 (e cio&egrave; l'intervallo da 1.5 a 2.5).
+    Le risposte numeriche possono prevedere un margine di errore, che &egrave; scritto di seguito alla risposta corretta, separato da una virgola. Cos&igrave;, ad esempio, se la risposta corretta &egrave; un valore compreso tra 1.5 e 2.5, si dovr&agrave; scrivere <u>{#2:0.5}</u>. Questo indica che il risultato corretto &egrave; 2 con un margine di errore di 0.5 (e cio&egrave; l'intervallo da 1.5 a 2.5).
     Se il margine di errore non &egrave; specificato, si assume essere uguale a zero.</p>
     <pre>     Quando &egrave; morto Napoleone? {#1821}
 
      Quale &egrave; il valore di pi greco (con max 3 cifre decimali)? {#3.1415:0.0005}.</pre>
     <p>Opzionalmente, le risposte numeriche possono essere scritte come intervallo, nel seguente formato {#<i>ValoreMinimo</i>..<i>Valore Massimo</i>}.</p>
     <pre>     Quale &egrave; il valore di pi greco (con max 3 cifre decimali)? {#3.141..3.142}.</pre>
-    <p>L'interfaccia tramite browser di Moodle non supporta risposte numeriche multiple, ma sia i programmi di Moodle sia il formato GIFT lo possono. Questo può essere usato per specificare più intervalli numerici, e può essere particolarmente utile se combinato con voti pesati percentualmente.
-    Se sono utilizzate più risposte, queste possono essere separate da un segno uguale, come per le domande a risposte brevi.</p>
+    <p>L'interfaccia tramite browser di Moodle non supporta risposte numeriche multiple, ma sia i programmi di Moodle sia il formato GIFT lo possono. Questo pu&ograve; essere usato per specificare pi&ugrave; intervalli numerici, e pu&ograve; essere particolarmente utile se combinato con voti pesati percentualmente.
+    Se sono utilizzate pi&ugrave; risposte, queste possono essere separate da un segno uguale, come per le domande a risposte brevi.</p>
     <pre>     Quando &egrave; morto Napoleone? {#
          =1821:0
          =%50%1821:2}</pre>
-    <p>Da notare che poich&eacute; l'interfaccia GUI del browser non permette più risposte per le domande numeriche, non c'&egrave; modo per vederle o editarle direttamente tramite Moodle. L'unico modo per gestire più di una risposta numerica &egrave; quello di cancellare la domanda e re-importarla (o usare qualcosa tipo phpMyAdmin).</p>
+    <p>Da notare che poich&eacute; l'interfaccia GUI del browser non permette pi&ugrave; risposte per le domande numeriche, non c'&egrave; modo per vederle o editarle direttamente tramite Moodle. L'unico modo per gestire pi&ugrave; di una risposta numerica &egrave; quello di cancellare la domanda e re-importarla (o usare qualcosa tipo phpMyAdmin).</p>
 
 
 <h3>OPZIONI</h3>
@@ -81,13 +81,13 @@ Per chiarezza, le risposte possono essere scritte su righe separate e anche inde
     commenti, nome domanda, feedback e risposte pesate.</p>
 
 <p><u>Commenti:</u><br />
-    Sul file di testo si possono aggiungere commenti che non saranno importati dentro Moodle. Questo può servire  per inserire delle testate o altre informazioni relative alle domande.
+    Sul file di testo si possono aggiungere commenti che non saranno importati dentro Moodle. Questo pu&ograve; servire  per inserire delle testate o altre informazioni relative alle domande.
 	Tutte le righe che cominciano con una doppia barra (senza contare eventuali spazi o caratteri di tabulazione precedenti) saranno ignorate dal filtro.</p>
     <pre>     // Sotto-testata: seguono le Domande Numeriche
      Quanto fa 2 + 2? {#4}</pre>
 
 <p><u>Nome domanda:</u><br />
-    Un nome domanda può essere specificato inserendolo prima della domanda e chiudendolo tra due coppie di (:).</p>
+    Un nome domanda pu&ograve; essere specificato inserendolo prima della domanda e chiudendolo tra due coppie di (:).</p>
     <pre>     ::Origini dei Giapponesi::Da quale paese deriva il carattere Giapponese? {=China}
 
      ::Giorno del Thanksgiving::
@@ -95,11 +95,11 @@ Per chiarezza, le risposte possono essere scritte su righe separate e anche inde
          ~secondo
          ~terzo
          =quarto
-     } Giovedì di Novembre.</pre>
+     } Gioved&igrave; di Novembre.</pre>
     <p>Se non &egrave; specificato alcun nome domanda, la domanda stessa sar&agrave; usata come nome per default.</p>
 
 <p><u>Feedback:</u><br />
-    Un feedback può essere associato ad ogni risposta facendo seguire la risposta stessa da un carattere cancelletto (#, detto anche hash mark) e dal feedback.</p>
+    Un feedback pu&ograve; essere associato ad ogni risposta facendo seguire la risposta stessa da un carattere cancelletto (#, detto anche hash mark) e dal feedback.</p>
     <pre>     Qual'&egrave; la risposta a questa domanda a risposte multiple?{
      ~risposta sbagliata#commento feedback alla risposta sbagliata
      ~un'altra risposta sbagliata#commento feedback a questa risposta sbagliata
@@ -113,24 +113,24 @@ Per chiarezza, le risposte possono essere scritte su righe separate e anche inde
     <p>Per le domande a risposta multipla, il feedback &egrave; mostrato solamante per la risposta che lo studente ha selezionato. 
     Per le risposte brevi, il feedback &egrave; mostrato solamente quando lo studente immette la risposta corretta corrispondente. 
     Per le domande Vero-Falso, il feedback importato &egrave; salvato e sar&agrave; mostrato solo se lo studente sceglie la risposta sbagliata. 
-    Così, nell'ultimo esempio riportato, lo studente vedr&agrave; il feedback solamente se sceglie VERO come risposta.</p>
+    Cos&igrave;, nell'ultimo esempio riportato, lo studente vedr&agrave; il feedback solamente se sceglie VERO come risposta.</p>
 
 <p><u>Risposte pesate:</u><br />
     Le risposte pesate sono previste sia nelle domande a risposta multipla sia nelle domande a risposta breve.
 	I pesi delle risposte possono essere inseriti dopo il segno tilde (per le risposte multiple) o dopo il segno uguale (per le risposte brevi) con la percentuale di voto desiderata chiusa tra i segni percento (ad esempio, %50%).
-	Questa opzione può essere combinata con i commenti di feedback.</p>
+	Questa opzione pu&ograve; essere combinata con i commenti di feedback.</p>
     <pre>     Domanda difficile.{~risposta sbagliata  ~%50%risposta da met&agrave; punteggio  =risposta da pieno punteggio}
           
-     ::Dove &egrave; cresciuto Gesù::Gesù Cristo veniva da {
+     ::Dove &egrave; cresciuto Ges&ugrave;::Ges&ugrave; Cristo veniva da {
      ~Gerusalemme#Questa &egrave; un'importante citt&agrave;, ma la risposta &egrave; sbagliata.
-     ~%25%Bethlemme#Gesù &egrave; nato qui, ma non vi &egrave; cresciuto.
-     ~%50%Galilea#Devi essere più specifico.
+     ~%25%Bethlemme#Ges&ugrave; &egrave; nato qui, ma non vi &egrave; cresciuto.
+     ~%50%Galilea#Devi essere pi&ugrave; specifico.
      =Nazareth#Si! Giusto!}.
      
-     ::Dove &egrave; cresciuto Gesù::Gesù Cristo veniva da {
+     ::Dove &egrave; cresciuto Ges&ugrave;::Ges&ugrave; Cristo veniva da {
      =Nazareth#Si! Giusto!
      =%75%Nazereth#Giusto, ma scritto male.
-     =%25%Bethlemme#Gesù &egrave; nato qui, ma non vi &egrave; cresciuto.}</pre>
+     =%25%Bethlemme#Ges&ugrave; &egrave; nato qui, ma non vi &egrave; cresciuto.}</pre>
     <p>Notare che i due ultimi esempi sono essenzialmente la stessa domanda, la prima a risposte multiple, la seconda a risposta breve.</p>
 
     <p><font size="-1">Notare che &egrave; possibile specificare pesi delle risposte che NON &egrave; possibile specificare attraverso l'interfaccia del browser.
@@ -139,7 +139,7 @@ Per chiarezza, le risposte possono essere scritte su righe separate e anche inde
 	</font></p>
 
 <p><u>Risposte multiple:</u><br />
-    L'opzione Risposte multiple &egrave; usata per le domande a risposta multipla, quando due o più risposte devono essere scelte per ottenere un punteggio pieno. Questa opzione si attiva assegnando pesi parziali a più risposte, e non permettendo che alcuna risposta abbia il punteggio pieno.</p>
+    L'opzione Risposte multiple &egrave; usata per le domande a risposta multipla, quando due o pi&ugrave; risposte devono essere scelte per ottenere un punteggio pieno. Questa opzione si attiva assegnando pesi parziali a pi&ugrave; risposte, e non permettendo che alcuna risposta abbia il punteggio pieno.</p>
     <pre>     Quali sono i nomi dei fratelli Bandiera? {
           ~Nessuno
           ~%50%Attilio
@@ -155,8 +155,8 @@ Per chiarezza, le risposte possono essere scritte su righe separate e anche inde
 
 <p><u>Caratteri speciali ~ = # { } :</u><br />
     Questi simboli <b> ~ = # { } </b> controllano l'esecuzione di questo programma filtro e non possono essere utilizzati nelle domande come testo normale.
-    Poich&eacute; essi hanno un ruolo speciale nel determinare l'operazione del filtro, sono chiamati "caratteri di controllo".
-    Ma può succedere che si ha bisogno di usare uno di questi caratteri, per esempio per mostrare una formula matematica all'interno di una domanda. La scappatoia per aggirare questo problema &egrave; quella di "evitare" i caratteri di controllo, con un carattere di "escape". E' sufficiente anteporre una barra rovesciata (\) al carattere in questione, in modo da dire al filtro che il carattere che segue deve essere usato come un carattere normale e non come un carattere di controllo.
+    Poich&eacute; essi hanno un ruolo speciale nel determinare l'operazione del filtro, sono chiamati &quot;caratteri di controllo&quot;.
+    Ma pu&ograve; succedere che si ha bisogno di usare uno di questi caratteri, per esempio per mostrare una formula matematica all'interno di una domanda. La scappatoia per aggirare questo problema &egrave; quella di &quot;evitare&quot; i caratteri di controllo, con un carattere di &quot;escape&quot;. E' sufficiente anteporre una barra rovesciata (\) al carattere in questione, in modo da dire al filtro che il carattere che segue deve essere usato come un carattere normale e non come un carattere di controllo.
 	Per esempio:</p>
     <pre>     Quale risposta &egrave; uguale a 5? {
           ~ \= 2 + 2
@@ -182,7 +182,7 @@ Per chiarezza, le risposte possono essere scritte su righe separate e anche inde
 
 <h3>RINGRAZIAMENTI</h3>
     <p>Questo programma filtro &egrave; stato scritto attraverso la collaborazione di numerosi membri della comunit&agrave; Moodle.
-	Si &egrave; basato in origine sul formato a "parola mancante", che comprendeva codice scritto da Martin Dougiamas e Thomas Robb.
-	Paul Tsuchido Shew ha scritto questo filtro a Dicembre 2003 incorporando i suggerimenti della comunit&agrave; per realizzare un formato di domande sempre più robusto. 
-    Il nome &egrave; l'acronimo di &quot;General Import Format Technology&quot; o qualcosa del genere, ma &egrave; troppo lungo per un semplice filtro come questo, così usiamo solo GIFT.</p>
+	Si &egrave; basato in origine sul formato a &quot;parola mancante&quot;, che comprendeva codice scritto da Martin Dougiamas e Thomas Robb.
+	Paul Tsuchido Shew ha scritto questo filtro a Dicembre 2003 incorporando i suggerimenti della comunit&agrave; per realizzare un formato di domande sempre pi&ugrave; robusto. 
+    Il nome &egrave; l'acronimo di &quot;General Import Format Technology&quot; o qualcosa del genere, ma &egrave; troppo lungo per un semplice filtro come questo, cos&igrave; usiamo solo GIFT.</p>
     <p><font size="-1">Il filtro GIFT e la documentazione di Paul Tsuchido Shew http://ac.shew.jp. Ultimo aggiornamneto 27 Feb 2004.</font></p>

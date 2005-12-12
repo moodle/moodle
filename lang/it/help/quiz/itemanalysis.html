@@ -17,20 +17,20 @@ Se le domande possono essere distribuite dicotomicamente tra categorie corrette/
 <p>Questo parametro misura la dispersione dell'insieme delle risposte. Se tutti i candidati danno la stessa risposta, allora DS=0. DS &egrave; calcolata come la deviazione standard statistica dei punteggi per ogni domanda particolare.</p>
 
 <p><b>Indice di Discriminazione (ID)</b></p>
-<p>Questo indicatore fornisce la capacit&agrave; di massima di ogni domanda di distinguere i candidati più capaci da quelli meno capaci.
+<p>Questo indicatore fornisce la capacit&agrave; di massima di ogni domanda di distinguere i candidati pi&ugrave; capaci da quelli meno capaci.
 Il parametro &egrave; calcolato dividendo dapprima tutti i candidati in tre gruppi sulla base del punteggio complessivo ottenuto.
 Quindi &egrave; calcolata la media dei punteggi del gruppo migliore e la media di quelli del gruppo peggiore e calcolata la differenza delle medie.
 L'espressione matematica &egrave;:
 <br/>
 ID = (X<sub>migliori</sub> - X<sub>peggiori</sub>)/ N 
 <br/>
-dove X<sub>migliori</sub> &egrave; la somma del credito parziale (risultato-ottenuto/massimo-ottenibile) ottenuto per questa domanda dal terzo di studenti che hanno avuto i punteggi più alti all'intero quiz (cio&egrave; il numero di risposte corrette in questo gruppo), <br/>
-e X<sub>peggiori</sub> &egrave; l'analoga somma per gli studenti del terzo con i punteggi più bassi.</p> 
+dove X<sub>migliori</sub> &egrave; la somma del credito parziale (risultato-ottenuto/massimo-ottenibile) ottenuto per questa domanda dal terzo di studenti che hanno avuto i punteggi pi&ugrave; alti all'intero quiz (cio&egrave; il numero di risposte corrette in questo gruppo), <br/>
+e X<sub>peggiori</sub> &egrave; l'analoga somma per gli studenti del terzo con i punteggi pi&ugrave; bassi.</p> 
 
-<p>Questo parametro può avere valori tra +1 e -1. Se l'indice va sotto 0.0 significa che hanno risposto correttamente alla domanda più studenti deboli che studenti forti. Queste domande dovrebbero essere scartate perch&eacute; poco significative. Infatti riducono l'accuratezza del punteggio complessivo del quiz.</p>
+<p>Questo parametro pu&ograve; avere valori tra +1 e -1. Se l'indice va sotto 0.0 significa che hanno risposto correttamente alla domanda pi&ugrave; studenti deboli che studenti forti. Queste domande dovrebbero essere scartate perch&eacute; poco significative. Infatti riducono l'accuratezza del punteggio complessivo del quiz.</p>
 
 <p><b>Coefficiente di Discriminazione (CD)</b></p>
-<p>Questa &egrave; un'altra misura del potere di separazione che può avere una domanda per distinguere studenti forti e deboli.<br/>
+<p>Questa &egrave; un'altra misura del potere di separazione che pu&ograve; avere una domanda per distinguere studenti forti e deboli.<br/>
 Il coefficiente di discriminazione rappresenta la correlazione tra i punteggi della domanda e quelli dell'intero quiz. E' calcolato come:
 <br/>
 CD = Somma(xy)/ (N * s<sub>x</sub> * s<sub>y</sub>) 
@@ -40,5 +40,5 @@ N &egrave; il numero di risposte date a questa domanda<br/>
 s<sub>x</sub> &egrave; la deviazione standard del credito parziale per questa domanda e, <br/>
 s<sub>y</sub> &egrave; la deviazione standard dei punteggi del quiz nel loro complesso.</p>
 
-<p>Ancora, questo parametro può avere valori tra +1 e -1. Valori positivi sono indice di domande che evidenziano gli studenti migliori, mentre valori negativi indicano domande che sono risposte meglio da studenti con un punteggio più basso. Domande con un CD negativo hanno più risposte sbagliate da studenti stagionali e così sono effettivamente una penalit&agrave; contro gli studenti migliori. Queste domande dovrebbero essere evitate.<br/>
-Il vantaggio del Coefficiente di Discriminazione rispetto all'Indice di Discriminazione &egrave; che il primo usa informazioni raccolte dall'intera popolazione degli studenti, e non solamente dal terzo migliore e dal terzo peggiore. Così questo parametro può essere più significativo per determinare il valore di una domanda.</p>
+<p>Ancora, questo parametro pu&ograve; avere valori tra +1 e -1. Valori positivi sono indice di domande che evidenziano gli studenti migliori, mentre valori negativi indicano domande che sono risposte meglio da studenti con un punteggio pi&ugrave; basso. Domande con un CD negativo hanno pi&ugrave; risposte sbagliate da studenti stagionali e cos&igrave; sono effettivamente una penalit&agrave; contro gli studenti migliori. Queste domande dovrebbero essere evitate.<br/>
+Il vantaggio del Coefficiente di Discriminazione rispetto all'Indice di Discriminazione &egrave; che il primo usa informazioni raccolte dall'intera popolazione degli studenti, e non solamente dal terzo migliore e dal terzo peggiore. Cos&igrave; questo parametro pu&ograve; essere pi&ugrave; significativo per determinare il valore di una domanda.</p>

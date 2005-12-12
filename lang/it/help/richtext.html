@@ -2,15 +2,15 @@
 
 <P>Disponibilit&agrave;: <B>
 <?php  if (!$CFG->htmleditor) {
-       print_string("htmleditordisabledadmin");
-   } else if (!$USER->htmleditor) {
-       print_string("htmleditordisabled");
+       print_string(&quot;htmleditordisabledadmin&quot;);
+   } else if (!$USER-&gt;htmleditor) {
+       print_string(&quot;htmleditordisabled&quot;);
    } else if (!can_use_richtext_editor()) {
-       print_string("htmleditordisabledbrowser");
+       print_string(&quot;htmleditordisabledbrowser&quot;);
    } else {
-       print_string("htmleditoravailable");
+       print_string(&quot;htmleditoravailable&quot;);
    }
-?>
+?&gt;
 </B></P>
 
 <P>L'editor HTML mette a disposizione una interfaccia
