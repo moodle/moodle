@@ -35,7 +35,7 @@
     
     if (confirm_sesskey() && (!empty($scoid))) {
         $result = true;
-        if (isstudent($course->id) || (isteacher($course->id) && !isadmin()) {
+        if (isstudent($course->id) || (isteacher($course->id) && !isadmin())) {
             if ($lastattempt = get_record('scorm_scoes_track', 'userid', $USER->id, 'scorm', $scorm->id, 'scoid', $scoid,'max(attempt) as a')) {
                 if ($newattempt == 'new') {
                     $attempt = $lastattempt->a + 1;

@@ -224,6 +224,7 @@ function scorm_upgrade($oldversion) {
 
     if ($oldversion < 2005102800) {
         table_column("scorm", "", "maxattempt", "integer", "", "UNSIGNED", "1", "NOT NULL", "maxgrade"); 
+    }
     return true;
 }
 ?>
