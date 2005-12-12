@@ -99,11 +99,21 @@
 
         $frm->username = trim(moodle_strtolower($frm->username));
 
+        if ($CFG->auth == 'none' && empty($CFG->extendedusernamechars)) {
+            $string = eregi_replace("[^(-\.[:alnum:])]", "", $frm->username);
+            if (strcmp($frm->username, $string)) {
+                $errormsg = get_string('username').': '.get_string("alphanumerical");
+                $user = null;
+            }
+        } 
+        
         if (($frm->username == 'guest') and empty($CFG->guestloginbutton)) {
             $user = false;    /// Can't log in as guest if guest button is disabled
             $frm = false;
         } else if (!$user) {
-            $user = authenticate_user_login($frm->username, $frm->password);
+            if (empty($errormsg)) {
+                $user = authenticate_user_login($frm->username, $frm->password);
+            }
         }
         update_login_count();
 
@@ -186,7 +196,9 @@
             exit;
     
         } else {
-            $errormsg = get_string("invalidlogin");
+            if (empty($errormsg)) {
+                $errormsg = get_string("invalidlogin");
+            }
         }
     }
 
