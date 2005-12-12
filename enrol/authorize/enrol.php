@@ -176,6 +176,8 @@ class enrolment_plugin extends enrolment_base
         $order->status = AN_STATUS_NONE; // it will be changed...
         $order->timeupdated = 0; // cron changes this.
         $order->timecreated = $timenow;
+        $order->amount = $curcost['cost'];
+        $order->currency = $curcost['currency'];
         $order->id = insert_record("enrol_authorize", $order);
         if (!$order->id) {
             $this->email_to_admin("Error while trying to insert new data", $order);
