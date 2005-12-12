@@ -36,6 +36,30 @@ function authorize_upgrade($oldversion=0) {
         execute_sql(" UPDATE {$CFG->prefix}enrol_authorize SET timecreated='$timenow', timeupdated='$timenow', status='$status' ", false);
     }
 
+    if ($oldversion < 2005121200) {
+        // new fields for refund and sales reports.
+        $defaultcurrency = empty($CFG->enrol_currency) ? 'USD' : $CFG->enrol_currency;
+        table_column('enrol_authorize', '', 'amount', 'varchar', '10', '', '0', 'not null', 'timeupdated');
+        table_column('enrol_authorize', '', 'currency', 'char', '3', '', $defaultcurrency, 'not null', 'amount');
+        modify_database("","CREATE TABLE prefix_enrol_authorize_refunds (
+          `id` int(10) unsigned NOT NULL auto_increment,
+          `orderid` int(10) unsigned NOT NULL default 0,
+          `refundtype` int(1) unsigned NOT NULL default 0,
+          `amount` varchar(10) NOT NULL default '',
+          `transid` int(10) unsigned NULL default 0,
+          PRIMARY KEY (`id`),
+          KEY `orderid` (`orderid`)
+          );");
+        // defaults.
+        if ($courses = get_records_select('course', '', '', 'id, cost, currency')) {
+            foreach ($courses as $course) {
+                execute_sql("UPDATE {$CFG->prefix}enrol_authorize
+                             SET amount = '$course->cost', currency = '$course->currency'
+                             WHERE courseid = '$course->id'", false);
+            }
+        }
+    }
+
     return $result;
 }
 

@@ -15,28 +15,28 @@ define('AN_ENCAP', '"');
  * New order. No transaction was made.
  */
 define('AN_STATUS_NONE',    0x00);
-
 /**
  * Authorized.
  */
 define('AN_STATUS_AUTH',    0x01);
-
 /**
  * Captured.
  */
 define('AN_STATUS_CAPTURE', 0x02);
-
+/**
+ * Refunded.
+ */
+define('AN_STATUS_CREDIT', 0x04);
+/**
+ * Voided.
+ */
+define('AN_STATUS_VOID', 0x08);
 /**
  * Expired.
  */
-define('AN_STATUS_EXPIRED', 0x10);
-
-
-
-
+define('AN_STATUS_EXPIRE', 0x10);
 
 require_once("$CFG->dirroot/enrol/enrol.class.php");
-
 
 /**
  * enrolment_plugin_authorize
@@ -51,7 +51,7 @@ class enrolment_plugin extends enrolment_base
      */
     var $ccerrormsg;
 
-    
+
     /**
      * Shows a credit card form for registration.
      *
@@ -128,7 +128,7 @@ class enrolment_plugin extends enrolment_base
         }
     }
 
-    
+
     /**
      * Credit card number mode.
      * Send to authorize.net.
@@ -149,9 +149,9 @@ class enrolment_plugin extends enrolment_base
                 $this->ccerrormsg = get_string("allfieldsrequired");
                 return;
         }
-        
+
         $this->prevent_double_paid($course);
-        
+
         $exp_date = ($form->ccexpiremm < 10) ? strval('0'.$form->ccexpiremm) : strval($form->ccexpiremm);
         $exp_date .= $form->ccexpireyyyy;
         $valid_cc = CCVal($form->cc, $form->cctype, $exp_date);
@@ -162,7 +162,7 @@ class enrolment_plugin extends enrolment_base
             $this->ccerrormsg = get_string( (($valid_cc===0) ? 'ccexpired' : 'ccinvalid'), 'enrol_authorize' );
             return;
         }
-        
+
         // NEW ORDER
         $timenow = time();
         $order = new stdClass();
@@ -182,7 +182,7 @@ class enrolment_plugin extends enrolment_base
             $this->ccerrormsg = "Insert record error. Admin has been notified!";
             return;
         }
-        
+
         $extra = new stdClass();
         $extra->x_first_name = $form->ccfirstname;
         $extra->x_last_name = $form->cclastname;
@@ -204,10 +204,10 @@ class enrolment_plugin extends enrolment_base
         $extra->x_fax = '';
         $extra->x_invoice_num = $order->id;
         $extra->x_description = $course->shortname;
-        
+
         $message = null;
         $an_review = !empty($CFG->an_review);
-        $action = $an_review ? AN_ACTION_AUTH_ONLY : AN_ACTION_AUTH_CAPTURE;     
+        $action = $an_review ? AN_ACTION_AUTH_ONLY : AN_ACTION_AUTH_CAPTURE;
         $success = authorizenet_action($order, $message, $action, $extra);
 
         if ($success) {
@@ -221,11 +221,11 @@ class enrolment_plugin extends enrolment_base
                     $this->email_to_admin("Error while trying to update data. Please edit manually this record: " .
                                           "ID=$order->id in enrol_authorize table.", $order);
                 }
-                redirect($CFG->wwwroot, get_string("emailnotify", "enrol_authorize"), '60');
+                redirect($CFG->wwwroot, get_string("reviewnotify", "enrol_authorize"), '60');
                 return;
             }
-            
-            // credit card captured, ENROL...      
+
+            // credit card captured, ENROL...
             if (!update_record("enrol_authorize", $order)) {
                 $this->email_to_admin( "Error while trying to update data. Please edit manually this record: " .
                 "ID=$order->id in enrol_authorize table.", $order);
@@ -285,7 +285,7 @@ class enrolment_plugin extends enrolment_base
         }
     }
 
-    
+
     /**
      * zero_cost
      *
@@ -297,8 +297,8 @@ class enrolment_plugin extends enrolment_base
         $curcost = $this->get_course_cost($course);
         return (abs($curcost['cost']) < 0.01);
     }
-    
-    
+
+
     /**
      * get_course_cost
      *
@@ -309,7 +309,7 @@ class enrolment_plugin extends enrolment_base
     function get_course_cost($course)
     {
         global $CFG;
-        
+
         $cost = (float)0;
         $currency = (!empty($course->currency))
                      ? $course->currency :( empty($CFG->enrol_currency)
@@ -318,7 +318,7 @@ class enrolment_plugin extends enrolment_base
         if (!empty($course->cost)) {
             $cost = (float)(((float)$course->cost) < 0) ? $CFG->enrol_cost : $course->cost;
         }
-     
+
         $cost = format_float($cost, 2);
         $ret = array('cost' => $cost, 'currency' => $currency);
 
@@ -358,7 +358,7 @@ class enrolment_plugin extends enrolment_base
         return $str;
     }
 
-    
+
     /**
      * Shows config form & errors
      *
@@ -384,7 +384,7 @@ class enrolment_plugin extends enrolment_base
             if (empty($CFG->loginhttps)) {
                 notify("\$CFG->loginhttps must be ON");
             }
-            
+
             // ******************* AUTOCAPTURE *******************
             if (!(empty($frm->an_review) || $frm->an_review_day < 1)) {
                 // ++ENABLED++
@@ -412,7 +412,7 @@ class enrolment_plugin extends enrolment_base
         include($CFG->dirroot.'/enrol/authorize/config.html');
     }
 
-    
+
     /**
      * process_config
      *
@@ -423,7 +423,7 @@ class enrolment_plugin extends enrolment_base
     function process_config($config)
     {
         global $CFG;
-        
+
         // ENROL config
         set_config('enrol_cost', optional_param('enrol_cost', 5, PARAM_INT) );
         set_config('enrol_currency', optional_param('enrol_currency', 'USD', PARAM_ALPHA) );
@@ -432,7 +432,7 @@ class enrolment_plugin extends enrolment_base
         set_config('enrol_mailadmins', optional_param('enrol_mailadmins', '') );
 
         // AUTHORIZE.NET config
-        
+
         // not required!
         set_config('an_test', optional_param('an_test', '') );
         set_config('an_referer', optional_param('an_referer', 'http://', PARAM_URL) );
@@ -473,11 +473,11 @@ class enrolment_plugin extends enrolment_base
             set_config('an_review', $review_val);
             set_config('an_review_day', $review_day_val);
         }
-        
+
         return true;
     }
 
-    
+
     /**
      * email_to_admin
      *
@@ -496,8 +496,8 @@ class enrolment_plugin extends enrolment_base
         }
         email_to_user($admin, $admin, "CC ERROR: ".$subject, $message);
     }
-    
- 
+
+
     /**
      * prevent_double_paid
      *
@@ -513,15 +513,15 @@ class enrolment_plugin extends enrolment_base
             redirect($CFG->wwwroot . '/login/logout.php');
             return;
         }
-        
+
         if ($rec = get_record('enrol_authorize', 'userid',$USER->id, 'courseid',$course->id, 'status',AN_STATUS_AUTH, 'id')) {
             $a->orderid = $rec->id;
-            redirect($CFG->wwwroot, get_string("paymentproggress", "enrol_authorize", $a), '20');
+            redirect($CFG->wwwroot, get_string("paymentpending", "enrol_authorize", $a), '20');
             return;
         }
     }
 
-    
+
     /**
      * check_openssl_loaded
      *
@@ -532,7 +532,7 @@ class enrolment_plugin extends enrolment_base
         return extension_loaded('openssl');
     }
 
-    
+
     /**
      * cron
      * @access public
@@ -556,21 +556,22 @@ class enrolment_plugin extends enrolment_base
                 delete_records_select('enrol_authorize', $select);
             }
         }
-        
+
         if ($random100 > 80) { // EXPIRED: Transactions with auth_only will be expired 30 days later.
             $select = "(status = '" .AN_STATUS_AUTH. "') AND (timeupdated = '0') AND (timecreated < '$timediff30')";
-            execute_sql("UPDATE {$CFG->prefix}enrol_authorize SET timeupdated = '$timenow', status = '" .AN_STATUS_EXPIRED. "' WHERE $select", false);
+            execute_sql("UPDATE {$CFG->prefix}enrol_authorize SET timeupdated = '$timenow', status = '" .AN_STATUS_EXPIRE. "' WHERE $select", false);
         }
 
         if (empty($CFG->an_review) || empty($CFG->an_review_day) || $CFG->an_review_day < 1) {
             // AUTOCAPTURE disabled. admin, teacher review it manually
-            return;           
+            return;
         }
 
         // AUTO-CAPTURE: it must be captured within 30 days. Otherwise it will expired.
         $timediffcnf = $timenow - (intval($CFG->an_review_day) * 3600 * 24);
         $select = "(status = '" . AN_STATUS_AUTH . "') AND (timeupdated = '0') AND (timecreated < '$timediffcnf') AND (timecreated > '$timediff30')";
         if ($orders = get_records_select('enrol_authorize', $select)) {
+            set_time_limit(0);
             require_once("$CFG->dirroot/enrol/authorize/action.php");
             $this->log = "AUTHORIZE.NET AUTOCAPTURE CRON: " . userdate($timenow) . "\n";
             $message = null;

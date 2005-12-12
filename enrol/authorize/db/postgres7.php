@@ -20,7 +20,7 @@ function authorize_upgrade($oldversion=0) {
         modify_database('',"CREATE INDEX prefix_enrol_authorize_courseid_idx ON prefix_enrol_authorize (courseid);");
         modify_database('',"CREATE INDEX prefix_enrol_authorize_userid_idx ON prefix_enrol_authorize (userid);");
     }
-    
+
     if ($oldversion < 2005112100) {
         include_once("$CFG->dirroot/enrol/authorize/enrol.php");
 
@@ -34,6 +34,29 @@ function authorize_upgrade($oldversion=0) {
         $timenow = time();
         $status = AN_STATUS_AUTH | AN_STATUS_CAPTURE;
         execute_sql(" UPDATE {$CFG->prefix}enrol_authorize SET timecreated='$timenow', timeupdated='$timenow', status='$status' ", false);
+    }
+
+    if ($oldversion < 2005121200) {
+        // new fields for refund and sales reports.
+        $defaultcurrency = empty($CFG->enrol_currency) ? 'USD' : $CFG->enrol_currency;
+        table_column('enrol_authorize', '', 'amount', 'varchar', '10', '', '0', 'not null', 'timeupdated');
+        table_column('enrol_authorize', '', 'currency', 'char', '3', '', $defaultcurrency, 'not null', 'amount');
+        modify_database("","CREATE TABLE prefix_enrol_authorize_refunds (
+           id SERIAL PRIMARY KEY,
+           orderid INTEGER NOT NULL default 0,
+           refundtype INTEGER NOT NULL default 0,
+           amount varchar(10) NOT NULL default '',
+           transid INTEGER NULL default 0
+         );");
+        modify_database("","CREATE INDEX prefix_enrol_authorize_refunds_orderid_idx ON prefix_enrol_authorize_refunds (orderid);");
+        // defaults.
+        if ($courses = get_records_select('course', '', '', 'id, cost, currency')) {
+            foreach ($courses as $course) {
+                execute_sql("UPDATE {$CFG->prefix}enrol_authorize
+                             SET amount = '$course->cost', currency = '$course->currency'
+                             WHERE courseid = '$course->id'", false);
+            }
+        }
     }
     
     return $result;
