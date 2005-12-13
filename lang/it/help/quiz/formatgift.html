@@ -1,14 +1,11 @@
 <p align=center><b>Importazione di files in formato &quot;GIFT&quot;</b></p>
 <p>GIFT &egrave; il pi&ugrave; completo formato di importazione disponibile per caricare le domande di un quiz da un file di testo. Supporta i vari tipi di domande a Risposta multipla, Vero/Falso, Risposta breve, Corrispondenze, Numeriche e anche l'inserimento di un _____ per il formato &quot;parola mancante&quot;.
 Differenti tipi di domanda possono essere mischiati in un unico file di testo, e il formato supporta anche righe di commento, nomi di domande, feedback, e voti pesati su base percentuale. Seguono alcuni esempi:</p>
-
 <p>La codifica del file di testo deve essere simile a quella del file di installazione di Moodle. 
 Un esempio di file di domande si trova al seguente link:
 <a href="mod/quiz/format/gift/examples.txt">gift/examples.txt</a>.</p>
 
-
 <h3>TIPI DI DOMANDE</h3>
-
 <p><u>Risposta multipla:</u><br />
 Per le domande a risposta multipla, le risposte errate sono precedute dal carattere tilde (~), mentre le risposte giuste sono precedute dal segno uguale (=).</p>
 <pre>     In quale isola &egrave; morto Napoleone? {~Elba ~Corsica =Sant'Elena}</pre>
@@ -28,11 +25,9 @@ Per chiarezza, le risposte possono essere scritte su righe separate e anche inde
          =Cina
          ~Corea
          ~Egitto}</pre>
-
 <p><u>Risposta breve:</u><br />
     Le risposte alle domande del tipo Risposta breve sono tutte precedute dal segno uguale (=), che indica che tutte le risposte sono giuste. Le risposte non devono contenere il carattere tilde (~).</p>
     <pre>     Dove &egrave; morto Napoleone?{=in un'isola =a Sant'Elena}
-
      Due pi&ugrave; due uguale {=quattro =4}.</pre>
     <p>Se c'&egrave; solamente <u>una</u> Risposta breve giusta, questa pu&ograve; essere scritta senza essere preceduta dal segno uguale, purch&eacute; non possa essere confusa con una risposta Vero-Falso.
     
@@ -40,9 +35,7 @@ Per chiarezza, le risposte possono essere scritte su righe separate e anche inde
     In questo tipo di domanda la risposta indica se l'affermazione &egrave; vera o falsa. 
     La risposta dovr&agrave; essere scritta {TRUE} o {FALSE}, o, in forma abbreviata, {T} o {F}.</p>
     <pre>     Napoleone &egrave; morto all'isola d'Elba.{F}
-
      Il sole sorge a est.{T}</pre>
-
 <p><u>Corrispondenze:</u><br />
     Le coppie di corrispondenze cominciano con un segno uguale (=) e sono separate dal simbolo &quot;-&gt;&quot;. Ci devono essere almeno tre coppie di corrispondenze.</p>
     <pre>     Domanda a corrispondenze. {
@@ -58,13 +51,11 @@ Per chiarezza, le risposte possono essere scritte su righe separate e anche inde
          =India  -&gt; Nuova Delhi
          }</pre>
     <p>Le domande a corrispondenza non supportano feedback o risposte a pesi percentuali.</p>
-
 <p><u>Numerica:</u><br />
     La parte Risposta delle domande Numeriche deve cominciare con il simbolo cancelletto (#). 
     Le risposte numeriche possono prevedere un margine di errore, che &egrave; scritto di seguito alla risposta corretta, separato da una virgola. Cos&igrave;, ad esempio, se la risposta corretta &egrave; un valore compreso tra 1.5 e 2.5, si dovr&agrave; scrivere <u>{#2:0.5}</u>. Questo indica che il risultato corretto &egrave; 2 con un margine di errore di 0.5 (e cio&egrave; l'intervallo da 1.5 a 2.5).
     Se il margine di errore non &egrave; specificato, si assume essere uguale a zero.</p>
     <pre>     Quando &egrave; morto Napoleone? {#1821}
-
      Quale &egrave; il valore di pi greco (con max 3 cifre decimali)? {#3.1415:0.0005}.</pre>
     <p>Opzionalmente, le risposte numeriche possono essere scritte come intervallo, nel seguente formato {#<i>ValoreMinimo</i>..<i>Valore Massimo</i>}.</p>
     <pre>     Quale &egrave; il valore di pi greco (con max 3 cifre decimali)? {#3.141..3.142}.</pre>
@@ -75,21 +66,17 @@ Per chiarezza, le risposte possono essere scritte su righe separate e anche inde
          =%50%1821:2}</pre>
     <p>Da notare che poich&eacute; l'interfaccia GUI del browser non permette pi&ugrave; risposte per le domande numeriche, non c'&egrave; modo per vederle o editarle direttamente tramite Moodle. L'unico modo per gestire pi&ugrave; di una risposta numerica &egrave; quello di cancellare la domanda e re-importarla (o usare qualcosa tipo phpMyAdmin).</p>
 
-
 <h3>OPZIONI</h3>
     <p>In aggiunta ai suddetti tipi di domande base, il programma filtro che gestisce il formato GIFT offre le seguenti opzioni: 
     commenti, nome domanda, feedback e risposte pesate.</p>
-
 <p><u>Commenti:</u><br />
     Sul file di testo si possono aggiungere commenti che non saranno importati dentro Moodle. Questo pu&ograve; servire  per inserire delle testate o altre informazioni relative alle domande.
 	Tutte le righe che cominciano con una doppia barra (senza contare eventuali spazi o caratteri di tabulazione precedenti) saranno ignorate dal filtro.</p>
     <pre>     // Sotto-testata: seguono le Domande Numeriche
      Quanto fa 2 + 2? {#4}</pre>
-
 <p><u>Nome domanda:</u><br />
     Un nome domanda pu&ograve; essere specificato inserendolo prima della domanda e chiudendolo tra due coppie di (:).</p>
     <pre>     ::Origini dei Giapponesi::Da quale paese deriva il carattere Giapponese? {=China}
-
      ::Giorno del Thanksgiving::
 	 La festa Americana del Thanksgiving si celebra il {
          ~secondo
@@ -97,7 +84,6 @@ Per chiarezza, le risposte possono essere scritte su righe separate e anche inde
          =quarto
      } Gioved&igrave; di Novembre.</pre>
     <p>Se non &egrave; specificato alcun nome domanda, la domanda stessa sar&agrave; usata come nome per default.</p>
-
 <p><u>Feedback:</u><br />
     Un feedback pu&ograve; essere associato ad ogni risposta facendo seguire la risposta stessa da un carattere cancelletto (#, detto anche hash mark) e dal feedback.</p>
     <pre>     Qual'&egrave; la risposta a questa domanda a risposte multiple?{
@@ -114,7 +100,6 @@ Per chiarezza, le risposte possono essere scritte su righe separate e anche inde
     Per le risposte brevi, il feedback &egrave; mostrato solamente quando lo studente immette la risposta corretta corrispondente. 
     Per le domande Vero-Falso, il feedback importato &egrave; salvato e sar&agrave; mostrato solo se lo studente sceglie la risposta sbagliata. 
     Cos&igrave;, nell'ultimo esempio riportato, lo studente vedr&agrave; il feedback solamente se sceglie VERO come risposta.</p>
-
 <p><u>Risposte pesate:</u><br />
     Le risposte pesate sono previste sia nelle domande a risposta multipla sia nelle domande a risposta breve.
 	I pesi delle risposte possono essere inseriti dopo il segno tilde (per le risposte multiple) o dopo il segno uguale (per le risposte brevi) con la percentuale di voto desiderata chiusa tra i segni percento (ad esempio, %50%).
@@ -132,12 +117,10 @@ Per chiarezza, le risposte possono essere scritte su righe separate e anche inde
      =%75%Nazereth#Giusto, ma scritto male.
      =%25%Bethlemme#Ges&ugrave; &egrave; nato qui, ma non vi &egrave; cresciuto.}</pre>
     <p>Notare che i due ultimi esempi sono essenzialmente la stessa domanda, la prima a risposte multiple, la seconda a risposta breve.</p>
-
     <p><font size="-1">Notare che &egrave; possibile specificare pesi delle risposte che NON &egrave; possibile specificare attraverso l'interfaccia del browser.
 	Questi pesi saranno calcolati correttamente (secondo il valore assegnato al momento dell'importazione), e appariranno normalmente agli studenti che fanno il test. Ma gli stessi pesi non appariranno normalmente agli insegnanti che li editano attraverso l'interfaccia delle domande di Moodle. Il menu a tendina ammette solo certi valori fissi e se il peso da assegnare non corrisponde ad alcuno di tali valori, non potr&agrave; essere visualizzato correttamente.
 	Se si edita una tale domanda attraverso l'interfaccia del browser, il peso della risposta cambier&agrave; in quello visualizzato.
 	</font></p>
-
 <p><u>Risposte multiple:</u><br />
     L'opzione Risposte multiple &egrave; usata per le domande a risposta multipla, quando due o pi&ugrave; risposte devono essere scelte per ottenere un punteggio pieno. Questa opzione si attiva assegnando pesi parziali a pi&ugrave; risposte, e non permettendo che alcuna risposta abbia il punteggio pieno.</p>
     <pre>     Quali sono i nomi dei fratelli Bandiera? {
@@ -152,7 +135,6 @@ Per chiarezza, le risposte possono essere scritte su righe separate e anche inde
           ~%50%Attilio
           ~%50%Emilio
           ~-%50%Antonio }</pre>
-
 <p><u>Caratteri speciali ~ = # { } :</u><br />
     Questi simboli <b> ~ = # { } </b> controllano l'esecuzione di questo programma filtro e non possono essere utilizzati nelle domande come testo normale.
     Poich&eacute; essi hanno un ruolo speciale nel determinare l'operazione del filtro, sono chiamati &quot;caratteri di controllo&quot;.
@@ -162,7 +144,6 @@ Per chiarezza, le risposte possono essere scritte su righe separate e anche inde
           ~ \= 2 + 2
           = \= 2 + 3
           ~ \= 2 + 4  }
-
      ::Caratteri di controllo GIFT::
      Quale dei seguenti NON &egrave; un carattere di controllo nel formato di importazione GIFT? {
         ~ \~     # \~ &egrave; un carattere dicontrollo.
@@ -173,13 +154,11 @@ Per chiarezza, le risposte possono essere scritte su righe separate e anche inde
         = \      # Giusto! \ la barra rovesciata (backslash) non &egrave; un carattere di controllo. MA,
                    &egrave; usata per aggirare i caratteri di controllo.}</pre>
     <p>Quando la domanda &egrave; elaborata la barra rovesciata &egrave; eliminata e non &egrave; salvata in Moodle.</p>
-
 <p><u>Altre opzioni:</u><br />
     Le domande a risposta breve possono essere rese sensibili alla presenza delle maiuscole cambiando &quot;0&quot; in &quot;1&quot; nella seguente riga:<br />
     <tt>$question-&gt;usecase = 0;  // Ignora le maiuscole</tt></p>
     <p>Altre opzioni sono disponibili attraverso l'editing del filtro di importazione <b>gift/format.php</b>. </p>
 <p></p>
-
 <h3>RINGRAZIAMENTI</h3>
     <p>Questo programma filtro &egrave; stato scritto attraverso la collaborazione di numerosi membri della comunit&agrave; Moodle.
 	Si &egrave; basato in origine sul formato a &quot;parola mancante&quot;, che comprendeva codice scritto da Martin Dougiamas e Thomas Robb.
