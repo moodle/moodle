@@ -11,7 +11,7 @@
  */
 
 /**
- * short description (optional)
+ * upgrade_enrol_plugins
  *
  * long description
  *
@@ -250,6 +250,12 @@ function upgrade_activity_modules($return) {
 
 /** 
  * This function will return FALSE if the lock fails to be set (ie, if it's already locked)
+ *
+ * @param string  $name ?
+ * @param bool  $value ?
+ * @param int  $staleafter ?
+ * @param bool  $clobberstale ?
+ * @todo Finish documenting this function
  */
 function set_cron_lock($name,$value=true,$staleafter=7200,$clobberstale=false) {
 
