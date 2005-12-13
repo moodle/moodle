@@ -2218,13 +2218,19 @@ function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c
  */
 function get_my_courses($userid, $sort='visible DESC,sortorder ASC') {
 
-    global $CFG;
+    global $CFG, $USER;
 
     $course = array();
 
     if ($students = get_records('user_students', 'userid', $userid, '', 'id, course')) {
         foreach ($students as $student) {
             $course[$student->course] = $student->course;
+        }
+    }
+    $courses = get_records_list('course', 'id', implode(',', $course));
+    foreach ($courses as $k => $c) {
+        if (empty($USER->admin) && (!$c->visible || !course_parent_visible($c))) {
+            unset($course[$c->id]);
         }
     }
     if ($teachers = get_records('user_teachers', 'userid', $userid, '', 'id, course')) {
@@ -2318,7 +2324,7 @@ function get_courses_search($searchterms, $sort='fullname ASC', $page=0, $record
 
     if ($courses) {  /// Remove unavailable courses from the list
         foreach ($courses as $key => $course) {
-            if (!$course->visible) {
+            if (!$course->visible || !course_parent_visible($course)) {
                 if (!isteacher($course->id)) {
                     unset($courses[$key]);
                     $totalcount--;
@@ -2349,7 +2355,7 @@ function get_categories($parent='none', $sort='sortorder ASC') {
     if ($categories) {  /// Remove unavailable categories from the list
         $creator = iscreator();
         foreach ($categories as $key => $category) {
-            if (!$category->visible) {
+            if (!$category->visible || !category_parent_visible($category->parent)) {
                 if (!$creator) {
                     unset($categories[$key]);
                 }

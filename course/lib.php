@@ -1875,4 +1875,18 @@ function print_visible_setting($form, $course=NULL) {
     echo '</td></tr>';
 } 
 
+function course_parent_visible($course = null) {
+    return category_parent_visible($course->category);
+}
+
+function category_parent_visible($parent = 0) {
+    while ($parent && ($category = get_record('course_categories', 'id', $parent))) {
+        $parent = $category->parent;
+        if (!$category->visible) {
+            return false;
+        }
+    }
+    return true;
+}
+
 ?>
