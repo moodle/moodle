@@ -4,6 +4,8 @@
 
 $string['accesscontrol'] = 'Hozzáférés szabályozása';
 $string['actionaftercorrectanswer'] = 'Helyes válasz utáni lépés';
+$string['activitylink'] = 'Kapcsolás tevékenységhez';
+$string['activitylinkname'] = 'Ugrás ide: $a';
 $string['addabranchtable'] = 'Elágazási táblázat hozzáadása';
 $string['addanendofbranch'] = 'Elágazás végének hozzáadása';
 $string['addaquestionpage'] = 'Kérdésoldal hozzáadása';
@@ -14,6 +16,7 @@ $string['addedaquestionpage'] = 'Kérdésoldal hozzáadva';
 $string['addedcluster'] = 'Tömb hozzáadva';
 $string['addedendofcluster'] = 'Tömb vége hozzáadva';
 $string['addendofcluster'] = 'Tömb végének hozzáadása';
+$string['anchortitle'] = 'A fõ tartalom kezdete';
 $string['answer'] = 'Válasz';
 $string['answeredcorrectly'] = 'helyesen megválaszolva.';
 $string['answersfornumerical'] = 'A számjegyes kérdések válaszait minimális és maximális értékeket tartalmazó, egymáshoz illõ párok formájában kell megadni';
@@ -212,6 +215,7 @@ $string['secondpluswrong'] = 'Nem pontos. Próbálkozna újra?';
 $string['showanunansweredpage'] = 'Mégválaszolatlan oldal megjelenítése';
 $string['showanunseenpage'] = 'Kihagyott oldal megjelenítése';
 $string['singleanswer'] = 'Egy válasz';
+$string['skip'] = 'Navigálás kihagyása';
 $string['slideshow'] = 'Bemutató';
 $string['slideshowbgcolor'] = 'Bemutató háttérszíne';
 $string['slideshowheight'] = 'Bemutató magassága';

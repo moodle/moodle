@@ -1,7 +1,10 @@
 <?PHP // $Id$ 
-      // enrol_authorize.php - created with Moodle 1.6 development (2005081700)
+      // enrol_authorize.php - created with Moodle 1.6 development (2005101200)
 
-
+$string['adminauthorizeccapture'] = 'Megrendelés ellenõrzése és beállítások automatikus rögzítése';
+$string['adminauthorizeemail'] = 'E-mail küldésének beállításai';
+$string['adminauthorizesettings'] = 'Authorize.net beállításai';
+$string['adminauthorizewide'] = 'Portálra érvényes beállítások';
 $string['adminreview'] = 'Rendelés ellenõrzése a hitelkártya használata elõtt.';
 $string['anlogin'] = 'Authorize.net: felhasználónév';
 $string['anpassword'] = 'Authorize.net: jelszó (nem szükséges)';

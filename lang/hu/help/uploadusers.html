@@ -27,13 +27,19 @@ megform&aacute;zni:</p>
       - ha meg van adva, a felhaszn&aacute;l&oacute; tanul&oacute;k&eacute;nt ker&uuml;l bele az adott kurzusba. A csoportneveket 
       t&aacute;rs&iacute;tani kell a megfelel&#337; kurzussal, vagyis a group1-et a course1-gyel stb.</p>
       <p> <font color="#990000" face="Courier New, Courier, mono">idnumber, icq, phone1, phone2, address, url, description, mailformat, 
-      maildisplay, htmleditor, autosubscribe, course1, course2, course3, course4, course5, group1, group2, group3, group4, group5</font></p>
+      maildisplay, htmleditor, autosubscribe, course1, course2, course3, course4, course5, group1, group2, group3, group4, group5,
+      type1, type2, type3, type4, type5</font></p>
     </blockquote>
     </li>
   <li>Az adatok k&ouml;z&ouml;tti vessz&#337;ket &amp;#44; form&aacute;ban kell megadni - a parancssor ezt automatikusan vissza&iacute;rja 
   vessz&#337;v&eacute;. </li>
   <li>Igen-nem t&iacute;pus&uacute; mez&#337;k eset&eacute;n 0-val jel&ouml;lje a hamis, 1-gyel az igaz &eacute;rt&eacute;ket. </li>
-  <li>Megjegyz&eacute;s: Ha egy felhaszn&aacute;l&oacute; m&aacute;r regisztr&aacute;lva van a Moodle felhaszn&aacute;l&oacute;i 
+  <li>A t&iacute;pusok jelzik a Moodle sz&aacute;m&aacute;ra, hogy egy megfelel&#337; kurzus megl&eacute;te eset&eacute;n egy adott 
+  felhaszn&aacute;l&oacute; tanuló, avagy tanár (pl. a type2 a course2-nek felel meg). 1 = tanul&oacute;, 2 = szerkeszt&eacute;sre jogosult 
+  tan&aacute;r, 3 = szerkeszt&eacute;sre nem jogosult tan&aacute;r. Ha egy t&iacute;pus &uuml;resen van hagyva, illetve ha 
+  nincs megadva kurzus, akkor a felhaszn&aacute;l&oacute; alapbe&aacute;ll&iacute;t&aacute;sban tanul&oacute; lesz. </li>
+  <li>Kurzusok megad&aacute;s&aacute;hoz haszn&aacute;lja azok r&ouml;vid megnevez&eacute;s&eacute;t.</li>
+    <li>Megjegyz&eacute;s: Ha egy felhaszn&aacute;l&oacute; m&aacute;r regisztr&aacute;lva van a Moodle felhaszn&aacute;l&oacute;i 
   adatb&aacute;zis&aacute;ban, akkor ez a parancssor visszaadja a felhaszn&aacute;l&oacute;i azonos&iacute;t&oacute;sz&aacute;mot 
   (adatb&aacute;zisbeli mutat&oacute;t) az adott felhaszn&aacute;l&oacute;hoz, &eacute;s tanul&oacute;k&eacute;nt fogja regisztr&aacute;lni 
   a megadott kurzusok b&aacute;rmelyik&eacute;be AN&Eacute;LK&Uuml;L, hogy friss&iacute;ten&eacute; a t&ouml;bbi megadott adatot.</li>
@@ -41,7 +47,6 @@ megform&aacute;zni:</p>
   
   
 <p>&Iacute;me egy p&eacute;lda egy &eacute;rv&eacute;nyes import&aacute;l&aacute;si &aacute;llom&aacute;nyra:</p>
-<p><font size="-1" face="Courier New, Courier, mono">username, password, firstname, lastname, email, lang, idnumber, 
-maildisplay, course1, group1<br />
-jonest, verysecret, Tom, Jones, jonest@someplace.edu, en, 3663737, 1, Intro101, Section 1<br />
-reznort, somesecret, Trent, Reznor, reznort@someplace.edu, en_us, 6736733, 0, Advanced202, Section 3</font></p>
+<p><font size="-1" face="Courier New, Courier, mono">username, password, firstname, lastname, email, lang, idnumber, maildisplay, course1, group1, type1<br />
+jonest, verysecret, Tom, Jones, jonest@someplace.edu, en, 3663737, 1, Intro101, Section 1, 1<br />
+reznort, somesecret, Trent, Reznor, reznort@someplace.edu, en_us, 6736733, 0, Advanced202, Section 3, 3</font></p>

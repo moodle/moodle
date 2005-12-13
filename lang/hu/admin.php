@@ -1,6 +1,5 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.4 (2004083100)
-
+      // admin.php - created with Moodle 1.6 development (2005053000)
 
 $string['adminseesallevents'] = 'A rendszergazdák minden eseményt látnak';
 $string['adminseesownevents'] = 'A rendszergazdák nem különböznek a többi felhasználótól';
@@ -49,6 +48,7 @@ $string['configforceloginforprofiles'] = 'Ezzel a beállítással érhetõ el, hogy a
 $string['configframename'] = 'Ha a Moodle-t keretben helyezi el, itt adja meg a keret nevét. Ellenkezõ esetben ennek \'_top\' értéket kell adni.';
 $string['configfullnamedisplay'] = 'Itt adható meg a teljesen megjelenõ nevek száma. Az egynyelvû portálok esetén a legmegfelelõbb beállítás az alapértelmezett \"Utónév + Vezetéknév\", de dönthet úgy, hogy a vezetéknevek egyáltalán ne jelenjenek meg, vagy dönthet errõl az adott nyelvi csomag alapján is (egyes nyelvekben ettõl eltérõ az elrendezés).';
 $string['configgdversion'] = 'Itt kell megadni a telepített GD változatát. A rendszer az alapértékként megadott változatot észlelte. Ne módosítsa, ha nem teljesen biztos annak következményében!';
+$string['confighiddenuserfields'] = 'Válassza ki, mely információt tartalmazó mezõket kíván elrejteni a tanárokon/rendszergazdákon kívül minden egyéb felhasználó elõl. Ezzel növelheti a tanulók adatainak titkosságát. A CTRL-billentyû lenyomásával egyszerre több mezõt választhat.';
 $string['confightmleditor'] = 'Itt dönthet a beépített HTML-szerkesztõ használatának engedélyezésérõl. Engedélyezése esetén is csak akkor jelenik meg, ha a felhasználó ezzel kompatibilis böngészõt használ. A felhasználók eltekinthetnek a használatától.';
 $string['configidnumber'] = 'Ezzel az opcióval adható meg, hogy (a) a felhasználóktól kell-e egyáltalán azonosítószámot kérni, (b) a felhasználóktól kér a rendszer azonosítószámot, de üresen hagyhatják, illetve (c) a felhasználóktól a rendszer azonosítószámot kér, és õk ezt nem hagyhatják üresen. Ha meg van adva, a felhasználói azonosítószám megjelenik profiljukban.';
 $string['configintro'] = 'Ezen az oldalon adhatók meg olyan beállítási változók, amelyekkel a Moodle megfelelõen mûködhet az adott szerveren. Nem szükséges a beállítással sokat veszõdni, az alapbeállítások rendszerint megfelelnek, emellett bármikor vissza lehet térni erre az oldalra és módosítani lehet a beállításokon.';
@@ -75,6 +75,7 @@ $string['confignotifyloginthreshold'] = 'Ha a sikertelen bejelentkezésekrõl szól
 $string['configopentogoogle'] = 'Ezen beállítás bekapcsolásakor a Google a portálra beléphet mint vendég. Emellett a portálra a Google keresésén keresztül eljutók automatikusan vendégként jelentkeznek be. Ne feledje, hogy ez csak azon kurzusokhoz biztosít követhetõ hozzáférést, amelyek engedélyezik a vendégek bekapcsolódását.';
 $string['configpathtoclam'] = 'Útvonal az AV vírusölõhöz. Feltehetõleg egy /usr/bin/clamscan vagy /usr/bin/clamdscan jellegû útvonal. Erre az AV vírusölõ mûködéséhez van szükség.';
 $string['configpathtodu'] = 'Útvonal a du-hoz. Például /usr/bin/du. Megadásakor a könyvtártartalmakat mutató oldalak sokkal gyorsabban futtathatók olyan könyvtárak esetén, amelyekben sok állomány van.';
+$string['configperfdebug'] = 'Bekapcsolása esetén a teljesítménnyel kapcsolatos információk megjelennek a standard téma lábrészében.';
 $string['configproxyhost'] = 'Ha ennek a <b>szervernek</b> proxyszámítógépet (például tûzfal) kell használni az Internet eléréséhez, akkor a proxygazdagép nevét és portszámát itt kell megadni. Ellenkezõ esetben hagyja üresen.';
 $string['configquarantinedir'] = 'Ha azt szeretné, hogy az AV vírusölõ a fertõzött állományokat karanténkönyvtárba helyezze, azt itt adja meg. A könyvtárnak a webszerver számára írhatónak kell lenni. Ha ezt üresen hagyja, illetve olyan könyvtárat ad meg, amely nem létezik vagy nem írható, akkor a rendszer törölni fogja a fertõzött állományokat. Lezáró perjelet ne használjon.';
 $string['configrequestedteachername'] = 'A tanár megnevezése a kért kurzusokban';
@@ -122,6 +123,7 @@ $string['filterall'] = 'Minden szövegsor szûrése';
 $string['filtermatchoneperpage'] = 'Oldalanként egy találat kiszûrése';
 $string['filtermatchonepertext'] = 'Szövegenként egy találat kiszûrése';
 $string['filteruploadedfiles'] = 'Feltöltött fájlok szûrése';
+$string['globalsquoteswarning'] = '<p><span style="font-weight: bold;">Biztonsági figyelmeztetés</span>: a  Moodle megfelelõ mûködéséhez <br />a PHP adott beállításain néhány változtatást kell végrehajtani.<p/><p>A <code>register_globals=off</code> és/vagy a <code>magic_quotes_gpc=on</code> beállítást <em>kell</em> alkalmazni. <br />Ha lehet, a szerver fokozott biztonsága érdekében válassza a <code>register_globals=off</code> beállítást <br />, emellett ajánlott a <code>magic_quotes_gpc=on</code> beállítása is.<p/><p>Ezeket a beállításokat a <code>php.ini</code>, az Apache/IIS <br />konfigurációs állomány vagy a <code>.htaccess</code> fájl szerkesztésével állíthatja be.</p>';
 $string['helpadminseesall'] = 'A rendszergazdák minden naptáreseményt lássanak, vagy csak a rájuk vonatkozókat?';
 $string['helpcalendarsettings'] = 'A Moodle különféle, naptárral és dátummal/idõvel kapcsolatos dolgainak beállítása ';
 $string['helpforcetimezone'] = 'A felhasználók számára lehetõvé tehetjük, hogy egyenként válasszák ki a saját idõzónájukat, vagy dönthetünk úgy, hogy mindenkinek egyetlen idõzóna álljon rendelkezésére.';

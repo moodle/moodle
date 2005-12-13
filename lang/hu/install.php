@@ -64,6 +64,17 @@ $string['gdversionhelp'] = '<p>Feltehetõleg szerverén nincs telepítve a GD.</p>
 <p>A GD a PHP számára szükséges könyvtár, mellyel a Moodle képeket (például flehasználói ikonokat) tud feldolgozni és újakat tud készíteni (például naplódiagramokat). A Moodle mûködik GD nélkül is - csak ezek a lehetõség nem lesznek az Ön számára elérhetõk.</p>
 <p>A GD Unix alatti PHP-hez való hozzáadásához a PHP-t fordítsa a --with-gd paraméterrel.</p>
 <p>Windows alatt szerkesztheti a php.ini-t: el kell távolítani a megjegyzésjelet a libgd.dll-re hivatkozó sor elejérõl.</p>';
+$string['globalsquotes'] = 'Globális változók nem biztonságos kezelése';
+$string['globalsquoteserror'] = 'Javítsa ki a PHP beállításait: kapcsoolja ki a disable register_globals és/vagy az enable magic_quotes_gpc opciókat';
+$string['globalsquoteshelp'] = '<p>Nem ajánlottt egyszerre kikapcsolni a Magic Quotes GPC-t és bekapcsolni a Register Globals-t.</p>
+
+<p>Az ajánlott beállítás <b>magic_quotes_gpc = On</b> és <b>register_globals = Off</b> a php.ini-ben.</p>
+
+<p>Ha nem tudja szerkeszteni a php.ini állományt, esetleg megpróbálhatja az alábbi sort beszúrni a Moodle-könyvtárban egy .htaccess állományba:
+   <blockquote>php_value magic_quotes_gpc On</blockquote>
+   <blockquote>php_value register_globals Off</blockquote>
+</p>   
+   ';
 $string['installation'] = 'Telepítés';
 $string['magicquotesruntime'] = 'Futásidejû Magic Quotes';
 $string['magicquotesruntimeerror'] = 'Kikapcsolva kell lennie';
@@ -75,6 +86,7 @@ $string['magicquotesruntimehelp'] = '<p>A futásidejû Magic Quotes-nak kikapcsolv
 called .htaccess within your Moodle directory:
 </p><blockquote>php_value magic_quotes_runtime Off</blockquote>
 ';
+
 $string['memorylimit'] = 'Memóriakorlát';
 $string['memorylimiterror'] = 'A PHP memóriakorlátja túl alacsonyra van állítva... ez a késõbbiekben gondot okozhat.';
 $string['memorylimithelp'] = '<p>Szerverén a PHP memóriakorlátja jelenleg $a.</p>
