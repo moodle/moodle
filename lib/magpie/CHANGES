@@ -1,0 +1,41 @@
+Version 0.72
+-----------
+    - fix security exploit: http://www.sec-consult.com/216.html
+    
+Version 0.7
+-----------
+    - support for input and output charset encoding
+      based on the work in FoF, uses iconv or mbstring if available
+    -
+
+Version 0.6
+-----------
+    - basic support for Atom syndication format
+      including support for Atom content constructs
+    - fixed support for private feeds (HTTP Auth and SSL)
+      (thanks to silverorange.com for providing test feeds)
+	- support for some broken webservers
+
+Version 0.52
+-----------
+    - support GZIP content negoiation
+    - PHP 4.3.2 support
+
+Version 0.4
+-----------
+	- improved error handling, better access for script authors
+	- included example scripts of working with MagpieRSS
+	- new Smarty plugin for RSS date parsing
+
+Version 0.3
+-----------
+	- added support for conditional gets (Last-Modified, ETag)
+	- now use Snoopy to handle fetching RSS files
+	
+Version 0.2
+-----------
+	- MAJOR CLEAN UP
+	- removed kludgy $options array in favour of constants
+	- phased out returning arrays
+	- added better error handling
+	- re-worked comments
