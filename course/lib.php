@@ -2038,24 +2038,4 @@ function move_courses ($courseids, $categoryid) {
     return true;
 }
 
-function course_parent_visible($course = null) {
-    return category_parent_visible($course->category);
-}
-
-function category_parent_visible($parent = 0) {
-    if (!$parent) {
-        return true;
-    }
-    $category = get_record('course_categories', 'id', $parent);
-    $list = explode('/', preg_replace('/^\/(.*)$/', '$1', $category->path));
-    $list[] = $parent;
-    $parents = get_records_list('course_categories', 'id', implode(',', $list), 'depth DESC');
-    foreach ($parents as $parent) {
-        if (!$parent->visible) {
-            return false;
-        }
-    }
-    return true;
-}
-
 ?>
