@@ -107,8 +107,8 @@
  *
  * Functions nearly working on UTF-8 strings:
  *
- * - strlen: returns the length in BYTES, if you need the length in CHARACTERS use utf_strlen
- * - trim/ltrim/rtrim: the second parameter 'charlist' won't work for characters not contained 7-bit ASCII
+ * - strlen: returns the length in BYTES, if you need the length in CHARACTERS use utf8_strlen
+ * - trim/ltrim/rtrim: the second parameter 'charlist' won't work for characters not contained in 7-bit ASCII
  * - strpos/strrpos: they return the BYTE position, if you need the CHARACTER position use utf8_strpos/utf8_strrpos
  * - htmlentities: charset support for UTF-8 only since PHP 4.3.0
  *
@@ -1352,13 +1352,28 @@ class t3lib_cs {
 				// cannot omit $len, when specifying charset
 			if ($len==null)	{
 				$enc = mb_internal_encoding();	// save internal encoding
-				mb_internal_encoding('utf-8');
+				mb_internal_encoding($charset);
 				$str = mb_substr($string,$start);
 				mb_internal_encoding($enc);	// restore internal encoding
 
 				return $str;
 			}
-			else	return mb_substr($string,$start,$len,'utf-8');
+			else {
+				return mb_substr($string,$start,$len,$charset);
+			}
+		} elseif ($GLOBALS['TYPO3_CONF_VARS']['SYS']['t3lib_cs_utils'] == 'iconv')	{
+				// cannot omit $len, when specifying charset
+			if ($len==null)	{
+				$enc = iconv_get_encoding('internal_encoding');	// save internal encoding
+				iconv_set_encoding('internal_encoding',$charset);
+				$str = iconv_substr($string,$start);
+				iconv_set_encoding('internal_encoding',$enc);	// restore internal encoding
+
+				return $str;
+			}
+			else {
+				return iconv_substr($string,$start,$len,$charset);
+			}
 		} elseif ($charset == 'utf-8')	{
 			return $this->utf8_substr($string,$start,$len);
 		} elseif ($this->eucBasedSets[$charset])	{
@@ -1386,6 +1401,8 @@ class t3lib_cs {
 	function strlen($charset,$string)	{
 		if ($GLOBALS['TYPO3_CONF_VARS']['SYS']['t3lib_cs_utils'] == 'mbstring')	{
 			return mb_strlen($string,$charset);
+		} elseif ($GLOBALS['TYPO3_CONF_VARS']['SYS']['t3lib_cs_utils'] == 'iconv')	{
+			return iconv_strlen($string,$charset);
 		} elseif ($charset == 'utf-8')	{
 			return $this->utf8_strlen($string);
 		} elseif ($this->eucBasedSets[$charset])	{
@@ -1501,9 +1518,9 @@ class t3lib_cs {
 	function conv_case($charset,$string,$case)	{
 		if ($GLOBALS['TYPO3_CONF_VARS']['SYS']['t3lib_cs_utils'] == 'mbstring' && (float)phpversion() >= 4.3)	{
 			if ($case == 'toLower')	{
-				return mb_strtolower($string,'utf-8');
+				return mb_strtolower($string,$charset);
 			} else {
-				return mb_strtoupper($string,'utf-8');
+				return mb_strtoupper($string,$charset);
 			}
 		} elseif ($charset == 'utf-8')	{
 			return $this->utf8_char_mapping($string,'case',$case);
@@ -1698,6 +1715,8 @@ class t3lib_cs {
 	function utf8_strpos($haystack,$needle,$offset=0)	{
 		if ($GLOBALS['TYPO3_CONF_VARS']['SYS']['t3lib_cs_utils'] == 'mbstring')	{
 			return mb_strpos($haystack,$needle,$offset,'utf-8');
+		} elseif ($GLOBALS['TYPO3_CONF_VARS']['SYS']['t3lib_cs_utils'] == 'iconv')	{
+			return iconv_strpos($haystack,$needle,$offset,'utf-8');
 		}
 
 		$byte_offset = $this->utf8_char2byte_pos($haystack,$offset);
@@ -1721,6 +1740,8 @@ class t3lib_cs {
 	function utf8_strrpos($haystack,$needle)	{
 		if ($GLOBALS['TYPO3_CONF_VARS']['SYS']['t3lib_cs_utils'] == 'mbstring')	{
 			return mb_strrpos($haystack,$needle,'utf-8');
+		} elseif ($GLOBALS['TYPO3_CONF_VARS']['SYS']['t3lib_cs_utils'] == 'iconv')	{
+			return iconv_strrpos($haystack,$needle,$offset,'utf-8');
 		}
 
 		$byte_pos = strrpos($haystack,$needle);
