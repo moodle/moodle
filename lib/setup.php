@@ -12,9 +12,9 @@
 
 ////// DOCUMENTATION IN PHPDOC FORMAT FOR MOODLE GLOBALS AND COMMON OBJECT TYPES /////////////
 /**
- * This global variable is read in from the 'config' table.
+ * $USER is a global instance of a typical $user record.
  *
- * Some typical settings in the $CFG global:
+ * Items found in the user record:
  *  - $USER->emailstop - Does the user want email sent to them?
  *  - $USER->email - The user's email address.
  *  - $USER->id - The unique integer identified of this user in the 'user' table.
@@ -29,9 +29,9 @@
  */
 global $USER;
 /**
- * $USER is a global instance of a typical $user record.
+ * This global variable is read in from the 'config' table.
  *
- * Items found in the user record:
+ * Some typical settings in the $CFG global:
  *  - $CFG->wwwroot - Path to moodle index directory in url format.
  *  - $CFG->dataroot - Path to moodle index directory on server's filesystem.
  *  - $CFG->libroot  - Path to moodle's library folder on server's filesystem.
@@ -75,7 +75,7 @@ global $HTTPSPAGEREQUIRED;
 
 
 /// First try to detect some attacks on older buggy PHP versions
-	if (isset($_REQUEST['GLOBALS']) || isset($_COOKIE['GLOBALS']) || isset($_FILES['GLOBALS'])) {
+    if (isset($_REQUEST['GLOBALS']) || isset($_COOKIE['GLOBALS']) || isset($_FILES['GLOBALS'])) {
         die('Fatal: Illegal GLOBALS overwrite attempt detected!');
     }
 
@@ -298,31 +298,31 @@ $CFG->httpswwwroot = $CFG->wwwroot;
 /// $CFG->disableglobalshack=true in config.php will override this (for dev testing)
 
     if (empty($CFG->disableglobalshack)) {
-	    if (!empty($CFG->detect_unchecked_vars)) {
-	        global $UNCHECKED_VARS;
-	        $UNCHECKED_VARS->url = $_SERVER['PHP_SELF'];
-	        $UNCHECKED_VARS->vars = array();
-	    }
-	
-	    if (isset($_GET)) {
-	        extract($_GET, EXTR_SKIP);    // Skip existing variables, ie CFG
-	        if (!empty($CFG->detect_unchecked_vars)) {
-	            foreach ($_GET as $key => $val) {
-	                $UNCHECKED_VARS->vars[$key]=$val;
-	            }
-	        }
-	    }
-	    if (isset($_POST)) {
-	        extract($_POST, EXTR_SKIP);   // Skip existing variables, ie CFG
-	        if (!empty($CFG->detect_unchecked_vars)) {
-	            foreach ($_POST as $key => $val) {
-	                $UNCHECKED_VARS->vars[$key]=$val;
-	            }
-	        }
-	    }
-	    if (isset($_SERVER)) {
-	        extract($_SERVER);
-	    }
+        if (!empty($CFG->detect_unchecked_vars)) {
+            global $UNCHECKED_VARS;
+            $UNCHECKED_VARS->url = $_SERVER['PHP_SELF'];
+            $UNCHECKED_VARS->vars = array();
+        }
+    
+        if (isset($_GET)) {
+            extract($_GET, EXTR_SKIP);    // Skip existing variables, ie CFG
+            if (!empty($CFG->detect_unchecked_vars)) {
+                foreach ($_GET as $key => $val) {
+                    $UNCHECKED_VARS->vars[$key]=$val;
+                }
+            }
+        }
+        if (isset($_POST)) {
+            extract($_POST, EXTR_SKIP);   // Skip existing variables, ie CFG
+            if (!empty($CFG->detect_unchecked_vars)) {
+                foreach ($_POST as $key => $val) {
+                    $UNCHECKED_VARS->vars[$key]=$val;
+                }
+            }
+        }
+        if (isset($_SERVER)) {
+            extract($_SERVER);
+        }
     }
 
 
@@ -514,16 +514,15 @@ $CFG->httpswwwroot = $CFG->wwwroot;
     }
 
 
-/***
- *** init_performance_info() {
- ***
- *** Initializes our performance info early.
- *** 
- *** Pairs up with get_performance_info() which is actually
- *** in moodlelib.php. This function is here so that we can 
- *** call it before all the libs are pulled in. 
- ***
- **/
+/**
+ * Initializes our performance info early.
+ *
+ * Pairs up with get_performance_info() which is actually
+ * in moodlelib.php. This function is here so that we can 
+ * call it before all the libs are pulled in. 
+ *
+ * @uses $PERF
+ */
 function init_performance_info() {
 
     global $PERF;
