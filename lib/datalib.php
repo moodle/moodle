@@ -3002,5 +3002,19 @@ function check_db_compat() {
     return true;
 }
 
+function course_parent_visible($course = null) {
+    return category_parent_visible($course->category);
+}
+
+function category_parent_visible($parent = 0) {
+    while ($parent && ($category = get_record('course_categories', 'id', $parent))) {
+        $parent = $category->parent;
+        if (!$category->visible) {
+            return false;
+        }
+    }
+    return true;
+}
+
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
 ?>
