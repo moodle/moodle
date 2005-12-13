@@ -5,7 +5,7 @@
 Snoopy - the PHP net client
 Author: Monte Ohrt <monte@ispi.net>
 Copyright (c): 1999-2000 ispi, all rights reserved
-Version: 1.2
+Version: 1.01
 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -48,7 +48,7 @@ class Snoopy
 	var $proxy_user		=	"";					// proxy user to use
 	var $proxy_pass		=	"";					// proxy password to use
 	
-	var $agent			=	"Snoopy v1.2";		// agent we masquerade as
+	var $agent			=	"Snoopy v1.2.3";	// agent we masquerade as
 	var	$referer		=	"";					// referer info to pass
 	var $cookies		=	array();			// array of cookies to pass
 												// $cookies["username"]="joe";
@@ -61,7 +61,7 @@ class Snoopy
 	var $maxframes		=	0;					// frame content depth maximum. 0 = disallow
 	var $expandlinks	=	true;				// expand links to fully qualified URLs.
 												// this only applies to fetchlinks()
-												// or submitlinks()
+												// submitlinks(), and submittext()
 	var $passcookies	=	true;				// pass set cookies back through redirects
 												// NOTE: this currently does not respect
 												// dates, domains or paths.
@@ -140,7 +140,7 @@ class Snoopy
 		if (empty($URI_PARTS["path"]))
 			$URI_PARTS["path"] = '';
 				
-		switch($URI_PARTS["scheme"])
+		switch(strtolower($URI_PARTS["scheme"]))
 		{
 			case "http":
 				$this->host = $URI_PARTS["host"];
@@ -292,7 +292,7 @@ class Snoopy
 		if (empty($URI_PARTS["path"]))
 			$URI_PARTS["path"] = '';
 
-		switch($URI_PARTS["scheme"])
+		switch(strtolower($URI_PARTS["scheme"]))
 		{
 			case "http":
 				$this->host = $URI_PARTS["host"];
@@ -442,7 +442,8 @@ class Snoopy
 	{
 		if ($this->fetch($URI))
 		{			
-
+			if($this->lastredirectaddr)
+				$URI = $this->lastredirectaddr;
 			if(is_array($this->results))
 			{
 				for($x=0;$x<count($this->results);$x++)
@@ -522,6 +523,8 @@ class Snoopy
 	{
 		if($this->submit($URI,$formvars, $formfiles))
 		{			
+			if($this->lastredirectaddr)
+				$URI = $this->lastredirectaddr;
 			if(is_array($this->results))
 			{
 				for($x=0;$x<count($this->results);$x++)
@@ -554,6 +557,8 @@ class Snoopy
 	{
 		if($this->submit($URI,$formvars, $formfiles))
 		{			
+			if($this->lastredirectaddr)
+				$URI = $this->lastredirectaddr;
 			if(is_array($this->results))
 			{
 				for($x=0;$x<count($this->results);$x++)
@@ -743,14 +748,19 @@ class Snoopy
 
 		$match = preg_replace("|/[^\/\.]+\.[^\/\.]+$|","",$match[0]);
 		$match = preg_replace("|/$|","",$match);
+		$match_part = parse_url($match);
+		$match_root =
+		$match_part["scheme"]."://".$match_part["host"];
 				
 		$search = array( 	"|^http://".preg_quote($this->host)."|i",
-							"|^(?!http://)(\/)?(?!mailto:)|i",
+							"|^(\/)|i",
+							"|^(?!http://)(?!mailto:)|i",
 							"|/\./|",
 							"|/[^\/]+/\.\./|"
 						);
 						
 		$replace = array(	"",
+							$match_root."/",
 							$match."/",
 							"/",
 							"/"
@@ -783,8 +793,12 @@ class Snoopy
 		$headers = $http_method." ".$url." ".$this->_httpversion."\r\n";		
 		if(!empty($this->agent))
 			$headers .= "User-Agent: ".$this->agent."\r\n";
-		if(!empty($this->host) && !isset($this->rawheaders['Host']))
-			$headers .= "Host: ".$this->host."\r\n";
+		if(!empty($this->host) && !isset($this->rawheaders['Host'])) {
+			$headers .= "Host: ".$this->host;
+			if(!empty($this->port))
+				$headers .= ":".$this->port;
+			$headers .= "\r\n";
+		}
 		if(!empty($this->accept))
 			$headers .= "Accept: ".$this->accept."\r\n";
 		if(!empty($this->referer))
@@ -853,7 +867,7 @@ class Snoopy
 			if(preg_match("/^(Location:|URI:)/i",$currentHeader))
 			{
 				// get URL portion of the redirect
-				preg_match("/^(Location:|URI:)[ ]+(.*)/",chop($currentHeader),$matches);
+				preg_match("/^(Location:|URI:)[ ]+(.*)/i",chop($currentHeader),$matches);
 				// look for :// in the Location header to see if hostname is included
 				if(!preg_match("|\:\/\/|",$matches[2]))
 				{
@@ -945,7 +959,10 @@ class Snoopy
 		if(!empty($this->agent))
 			$headers[] = "User-Agent: ".$this->agent;
 		if(!empty($this->host))
-			$headers[] = "Host: ".$this->host;
+			if(!empty($this->port))
+				$headers[] = "Host: ".$this->host.":".$this->port;
+			else
+				$headers[] = "Host: ".$this->host;
 		if(!empty($this->accept))
 			$headers[] = "Accept: ".$this->accept;
 		if(!empty($this->referer))
@@ -982,8 +999,10 @@ class Snoopy
 		if(!empty($this->user) || !empty($this->pass))	
 			$headers[] = "Authorization: BASIC ".base64_encode($this->user.":".$this->pass);
 			
-		for($curr_header = 0; $curr_header < count($headers); $curr_header++)
-			$cmdline_params .= " -H \"".$headers[$curr_header]."\"";
+		for($curr_header = 0; $curr_header < count($headers); $curr_header++) {
+			$safer_header = strtr( $headers[$curr_header], "\"", " " );
+			$cmdline_params .= " -H \"".$safer_header."\"";
+		}
 		
 		if(!empty($body))
 			$cmdline_params .= " -d \"$body\"";
@@ -1041,7 +1060,7 @@ class Snoopy
 
 		// check if there is a a redirect meta tag
 		
-		if(preg_match("'<meta[\s]*http-equiv[^>]*?content[\s]*=[\s]*[\"\']?\d+;[\s]+URL[\s]*=[\s]*([^\"\']*?)[\"\']?>'i",$results,$match))
+		if(preg_match("'<meta[\s]*http-equiv[^>]*?content[\s]*=[\s]*[\"\']?\d+;[\s]*URL[\s]*=[\s]*([^\"\']*?)[\"\']?>'i",$results,$match))
 		{
 			$this->_redirectaddr = $this->_expandlinks($match[1],$URI);	
 		}
