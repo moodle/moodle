@@ -1288,7 +1288,9 @@ function print_category_info($category, $depth) {
 
     $catlinkcss = $category->visible ? '' : ' class="dimmed" ';
 
-    if ($CFG->frontpage == FRONTPAGECOURSELIST) {
+    $frontpage = explode(',', $CFG->frontpage);
+    $frontpage = $frontpage?array_flip($frontpage):array();
+    if (isset($frontpage[FRONTPAGECOURSELIST])) {
         $catimage = '<img src="'.$CFG->pixpath.'/i/course.gif" width="16" height="16" border="0" alt="" />';
     } else {
         $catimage = "&nbsp";
@@ -1296,7 +1298,7 @@ function print_category_info($category, $depth) {
 
     echo "\n\n".'<table border="0" cellpadding="3" cellspacing="0" width="100%">';
 
-    if ($CFG->frontpage == FRONTPAGECOURSELIST) {
+    if (isset($frontpage[FRONTPAGECOURSELIST])) {
         $courses = get_courses($category->id, 'c.sortorder ASC', 'c.id,c.sortorder,c.visible,c.fullname,c.shortname,c.password,c.summary,c.guest,c.cost,c.currency');
 
         echo "<tr>";

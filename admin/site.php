@@ -25,8 +25,13 @@
 
         if (count($err) == 0) {
 
+            $form->frontpage = array_flip($form->frontpage);
+            unset($form->frontpage[0]);
+            $form->frontpage = array_flip($form->frontpage);
+            asort($form->frontpage);
+            $form->frontpage = implode(',',array_flip($form->frontpage));
             set_config("frontpage", $form->frontpage);
-            if ($form->frontpage == FRONTPAGETOPICONLY) {
+            if (!$form->frontpage) {
                 $form->numsections = 1;    // Force the topic display for this format
             }
 

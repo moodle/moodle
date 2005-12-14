@@ -29,19 +29,34 @@
 </tr>
 <tr valign="top">
         <td align="right"><?php print_string("frontpageformat") ?>:</td>
-        <td><?php
+        <td>
+          <table width="100%" cellpadding="0" cellspacing="0" border="0">
+            <td>
+        <?php
            $options = array(FRONTPAGENEWS           =>  get_string("frontpagenews"),
                             FRONTPAGECOURSELIST     =>  get_string("frontpagecourselist"),
                             FRONTPAGECATEGORYNAMES  =>  get_string("frontpagecategorynames"),
-                            FRONTPAGETOPICONLY      =>  get_string("frontpagetopiconly"));
+                            );
+           $values = array(get_string('hide'), 1, 2);
+           $seq = array_flip(explode(',',$form->frontpage));
+           foreach ($seq as $k => $s) {
+               $seq[$k]++;
+           }
            if (count_records("course") > 200) {
-               unset($options[1]);
-               if ($form->frontpage == 1) {
+               unset($options[FRONTPAGECOURSELIST]);
+               if (isset($seq[FRONTPAGECOURSELIST])) {
                    $form->frontpage = 2;
                }
+           } else {
+               $values[] = 3;
            }
-           choose_from_menu ($options, "frontpage", "$form->frontpage", "");
+           foreach ($options as $key => $option) {
+               echo "<td>$option<br />";
+               choose_from_menu ($values, "frontpage[$key]", isset($seq[$key])?$seq[$key]:0, "");
+           }
         ?>
+            </tr>
+          </table>
         </td>
 </tr>
 <tr valign="top">
