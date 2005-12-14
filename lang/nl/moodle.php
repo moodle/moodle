@@ -71,6 +71,7 @@ $string['administrator'] = 'Beheerder';
 $string['administrators'] = 'Beheerders';
 $string['administratorsall'] = 'Alle beheerders';
 $string['administratorsandteachers'] = 'Beheerders en leraren';
+$string['adminprimarynoedit'] = 'Je mag het primaire beheerderswachtwoord niet wijzigen';
 $string['advanced'] = 'Geavanceerd';
 $string['advancedfilter'] = 'Geavanceerd zoeken';
 $string['advancedsettings'] = 'Geavanceerde instellingen';

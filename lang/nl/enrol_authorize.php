@@ -2,6 +2,10 @@
       // enrol_authorize.php - created with Moodle 1.6 development (2005101200)
 
 
+$string['adminauthorizeccapture'] = 'Bestellingsoverzicht & instellingen automatische ontvangsten';
+$string['adminauthorizeemail'] = 'Instellingen e-mail';
+$string['adminauthorizesettings'] = 'Instellingen Authorize.net';
+$string['adminauthorizewide'] = 'Instellingen voor heel de site';
 $string['adminreview'] = 'Controleer de bestelling voor het aanvaarden van de kredietkaart';
 $string['anlogin'] = 'Authorize.net: Login naam';
 $string['anpassword'] = 'Authorize.net: Wachtwoord (niet vereistà';
@@ -26,6 +30,7 @@ Je kunt de optie <a href=\"$a->url\">loginhttps</a> instellen in de sectie Varia
 <br /><br />
 Door die instelling te gebruiken zal Moodle een veilige https-connectie maken voor de aanmelding- en betalingspagina\'s.';
 $string['nameoncard'] = 'Naam op de kaart';
+$string['paymentpending'] = 'Je betaling voor deze cursus wordt verwerkt met dit bestelnummer: $a->orderid.';
 $string['reviewday'] = 'Vraag het kredietkaartnummer automatisch, tenzij een leraar of beheer de bestelling herziet binnen de <b>$a</b> dagen. CRON MOET INGESCHAKELD ZIJN.<br />
 <0 dagen = schakel automatisch vragen uit = leraar of beheerder herzien de bestelling manueel. De transactie zal niet doorgaan als je automatisch kredietkaart vragen uitschakelt tenzij je ze goedkeurt binnen de 30 dagen.)';
 $string['reviewnotify'] = 'Je betaling zal bekeken worden. Verwacht binnen enkele dagen een e-mail van je leraar.';

@@ -76,6 +76,7 @@ $string['parameter'] = 'Parameter';
 $string['parameters'] = 'Parameters';
 $string['popupresource'] = 'Deze bron zou in een popup-venster moeten verschijnen';
 $string['popupresourcelink'] = 'Als ze dat niet deed, klik hier: $a';
+$string['redeploy'] = 'Opnieuw verdelen';
 $string['resourcetype'] = 'Soort bron';
 $string['resourcetype1'] = 'Verwijzing';
 $string['resourcetype2'] = 'Webpagina';
