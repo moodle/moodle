@@ -31,8 +31,11 @@ require_once( MAGPIE_DIR . 'rss_parse.inc' );
 require_once( MAGPIE_DIR . 'rss_cache.inc' );
 
 // for including 3rd party libraries
-define('MAGPIE_EXTLIB', MAGPIE_DIR . 'extlib' . DIR_SEP);
-require_once( MAGPIE_EXTLIB . 'Snoopy.class.inc');
+// for including 3rd party libraries
+//define('MAGPIE_EXTLIB', MAGPIE_DIR . 'extlib' . DIR_SEP);
+//require_once( MAGPIE_EXTLIB . 'Snoopy.class.inc');
+// Modified by Daryl Hawes for Moodle integration - use Snoopy file in moodle/lib/snoopy
+require_once( $CFG->libdir .'/snoopy/Snoopy.class.inc');
 
 
 /* 
@@ -90,7 +93,7 @@ function fetch_rss ($url) {
     init();
     
     if ( !isset($url) ) {
-        error("fetch_rss called without a url");
+        do_error("fetch_rss called without a url");
         return false;
     }
     
@@ -102,7 +105,7 @@ function fetch_rss ($url) {
             return _response_to_rss( $resp );
         }
         else {
-            error("Failed to fetch $url and cache is off");
+            do_error("Failed to fetch $url and cache is off");
             return false;
         }
     } 
@@ -117,7 +120,7 @@ function fetch_rss ($url) {
         $cache = new RSSCache( MAGPIE_CACHE_DIR, MAGPIE_CACHE_AGE );
         
         if (MAGPIE_DEBUG and $cache->ERROR) {
-            debug($cache->ERROR, E_USER_WARNING);
+            do_debug($cache->ERROR, E_USER_WARNING);
         }
         
         
@@ -142,7 +145,7 @@ function fetch_rss ($url) {
                 // should be cache age
                 $rss->from_cache = 1;
                 if ( MAGPIE_DEBUG > 1) {
-                    debug("MagpieRSS: Cache HIT", E_USER_NOTICE);
+                    do_debug("MagpieRSS: Cache HIT", E_USER_NOTICE);
                 }
                 return $rss;
             }
@@ -165,7 +168,7 @@ function fetch_rss ($url) {
           if ($resp->status == '304' ) {
                 // we have the most current copy
                 if ( MAGPIE_DEBUG > 1) {
-                    debug("Got 304 for $url");
+                    do_debug("Got 304 for $url");
                 }
                 // reset cache on 304 (at minutillo insistent prodding)
                 $cache->set($cache_key, $rss);
@@ -175,7 +178,7 @@ function fetch_rss ($url) {
                 $rss = _response_to_rss( $resp );
                 if ( $rss ) {
                     if (MAGPIE_DEBUG > 1) {
-                        debug("Fetch successful");
+                        do_debug("Fetch successful");
                     }
                     // add object to cache
                     $cache->set( $cache_key, $rss );
@@ -207,13 +210,13 @@ function fetch_rss ($url) {
         // attempt to return cached object
         if ($rss) {
             if ( MAGPIE_DEBUG ) {
-                debug("Returning STALE object for $url");
+                do_debug("Returning STALE object for $url");
             }
             return $rss;
         }
         
         // else we totally failed
-        error( $errormsg ); 
+        do_error( $errormsg ); 
         
         return false;
         
@@ -224,8 +227,9 @@ function fetch_rss ($url) {
     Function:   error
     Purpose:    set MAGPIE_ERROR, and trigger error
 \*=======================================================================*/
-
-function error ($errormsg, $lvl=E_USER_WARNING) {
+//Daryl Hawes note: had to rename this function from error to do_error for moodle
+// due to conflict with existing moodle function name
+function do_error ($errormsg, $lvl=E_USER_WARNING) {
         global $MAGPIE_ERROR;
         
         // append PHP's error message if track_errors enabled
@@ -239,7 +243,8 @@ function error ($errormsg, $lvl=E_USER_WARNING) {
         }
 }
 
-function debug ($debugmsg, $lvl=E_USER_NOTICE) {
+//Daryl Hawes note: renamed this function from debug to do_debug for moodle
+function do_debug ($debugmsg, $lvl=E_USER_NOTICE) {
     trigger_error("MagpieRSS [debug] $debugmsg", $lvl);
 }
             
@@ -319,7 +324,7 @@ function _response_to_rss ($resp) {
         if ($rss) {
             $errormsg .= " (" . $rss->ERROR . ")";
         }
-        error($errormsg);
+        do_error($errormsg);
         
         return false;
     } // end if ($rss and !$rss->error)
