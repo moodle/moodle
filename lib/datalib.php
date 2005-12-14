@@ -2227,10 +2227,12 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC') {
             $course[$student->course] = $student->course;
         }
     }
-    $courses = get_records_list('course', 'id', implode(',', $course));
-    foreach ($courses as $k => $c) {
-        if (empty($USER->admin) && (!$c->visible || !course_parent_visible($c))) {
-            unset($course[$c->id]);
+    if (count($courses) > 0) {
+        $courses = get_records_list('course', 'id', implode(',', $course));
+        foreach ($courses as $k => $c) {
+            if (empty($USER->admin) && (!$c->visible || !course_parent_visible($c))) {
+                unset($course[$c->id]);
+            }
         }
     }
     if ($teachers = get_records('user_teachers', 'userid', $userid, '', 'id, course')) {
