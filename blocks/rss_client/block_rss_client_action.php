@@ -27,10 +27,21 @@ if (isguest()) {
     error(get_string('noguestpost', 'forum'), $referrer);
 }
 
+
+if (!empty($url)) {
+    // attempting to replace feed and rss url types with http
+    // it appears that the rss feed validator will validate these url types but magpie will not load them    $url = str_replace ("feed://", "http://", "$url");
+    // Shifting this forward since PARAM_URL rejects these feed types as invalid entries!
+    $url = str_replace ("feed://", "http://", "$url");
+    $url = str_replace ("FEED://", "http://", "$url");
+    $url = str_replace ("rss://", "http://", "$url");
+    $url = str_replace ("RSS://", "http://", "$url");
+}
+
 $act            = optional_param('act', NULL, PARAM_ALPHA);
 $rssid          = optional_param('rssid', NULL, PARAM_INT);
 $id             = optional_param('id', SITEID, PARAM_INT);
-$url            = optional_param('url', NULL, PARAM_URL);
+$url            = clean_param($url, PARAM_URL);
 $preferredtitle = optional_param('preferredtitle', '', PARAM_ALPHA);
 
 if (!defined('MAGPIE_OUTPUT_ENCODING')) {
@@ -121,14 +132,6 @@ if ($act == 'updfeed') {
     $dataobject->userid = $USER->id;
     $dataobject->description = '';
     $dataobject->title = '';
-
-    // attempting to replace feed and rss url types with http
-    // it appears that the rss feed validator will validate these url types but magpie will not load them
-    $url = str_replace ("feed://", "http://", "$url");
-    $url = str_replace ("FEED://", "http://", "$url");
-    $url = str_replace ("rss://", "http://", "$url");
-    $url = str_replace ("RSS://", "http://", "$url");
-
     $dataobject->url = addslashes($url);
     $dataobject->preferredtitle = addslashes($preferredtitle);
 
