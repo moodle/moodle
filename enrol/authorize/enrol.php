@@ -48,8 +48,17 @@ class enrolment_plugin extends enrolment_base
      * Credit card error message.
      *
      * @var string
+     * @access public
      */
     var $ccerrormsg;
+
+    /**
+     * Cron log.
+     *
+     * @var string
+     * @access public
+     */
+    var $log;
 
 
     /**
@@ -70,7 +79,7 @@ class enrolment_plugin extends enrolment_base
         // check payment
         $this->prevent_double_paid($course);
 
-        // I want to paid on SSL.
+        // I want to pay on SSL.
         if (empty($_SERVER['HTTPS'])) {
             if (empty($CFG->loginhttps)) {
                 error(get_string("httpsrequired", "enrol_authorize"));
@@ -207,7 +216,7 @@ class enrolment_plugin extends enrolment_base
         $extra->x_invoice_num = $order->id;
         $extra->x_description = $course->shortname;
 
-        $message = null;
+        $message = NULL;
         $an_review = !empty($CFG->an_review);
         $action = $an_review ? AN_ACTION_AUTH_ONLY : AN_ACTION_AUTH_CAPTURE;
         $success = authorizenet_action($order, $message, $action, $extra);
@@ -405,7 +414,7 @@ class enrolment_plugin extends enrolment_base
                 // Admin can check (Accept|Deny) new transactions manually.
 
                 if ($count = count_records('enrol_authorize', 'status', AN_STATUS_AUTH)) {
-                    notify("CRON DISABLED. TRANSACTIONS WITH AN_STATUS_AUTH WILL BE CANCELLED UNLESS YOU CHECK IT. TOTAL $count");
+                    notify("CRON DISABLED. TRANSACTIONS WITH A STATUS OF AN_STATUS_AUTH WILL BE CANCELLED UNLESS YOU CHECK IT. TOTAL $count");
                 }
             }
             // ***************************************************
@@ -573,10 +582,10 @@ class enrolment_plugin extends enrolment_base
         $timediffcnf = $timenow - (intval($CFG->an_review_day) * 3600 * 24);
         $select = "(status = '" . AN_STATUS_AUTH . "') AND (timeupdated = '0') AND (timecreated < '$timediffcnf') AND (timecreated > '$timediff30')";
         if ($orders = get_records_select('enrol_authorize', $select)) {
-            set_time_limit(0);
             require_once("$CFG->dirroot/enrol/authorize/action.php");
+            @set_time_limit(0);
             $this->log = "AUTHORIZE.NET AUTOCAPTURE CRON: " . userdate($timenow) . "\n";
-            $message = null;
+            $message = NULL;
             foreach ($orders as $order) {
                 $success = authorizenet_action($order, $message, AN_ACTION_PRIOR_AUTH_CAPTURE);
                 if ($success) {
