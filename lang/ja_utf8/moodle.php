@@ -881,6 +881,7 @@ $string['numattempts'] = 'ログイン失敗回数 $a';
 $string['numberweeks'] = '週/トピックの表示数';
 $string['numdays'] = '$a 日';
 $string['numhours'] = '$a 時間';
+$string['numletters'] = '$a 文字';
 $string['numminutes'] = '$a 分';
 $string['nummonths'] = '$a ヶ月';
 $string['numseconds'] = '$a 秒';
