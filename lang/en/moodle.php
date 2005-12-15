@@ -903,6 +903,7 @@ $string['numattempts'] = '$a failed login attempt(s) ';
 $string['numberweeks'] = 'Number of weeks/topics';
 $string['numdays'] = '$a days';
 $string['numhours'] = '$a hours';
+$string['numletters'] = '$a letters';
 $string['numminutes'] = '$a minutes';
 $string['numseconds'] = '$a seconds';
 $string['numviews'] = '$a views';
