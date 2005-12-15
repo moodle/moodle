@@ -9,9 +9,7 @@ $string['assignmentmail'] = '$a->teacher дмдвд╩д┐д╬▓▌┬ъб╓ $a->assignment б╫д╦┬╨д
 е╒егб╝е╔е╨е├епд╧двд╩д┐д╬─є╜╨▓▌┬ъд╦─╔▓├д╡дьд╞ддд▐д╣:
 
 $a->url';
-$string['assignmentmailhtml'] = '$a->teacher дмдвд╩д┐д╬▓▌┬ъб╓ <i>$a->assignment</i> б╫ д╦┬╨д╣ды─є╜╨▓▌┬ъд╦е╒егб╝е╔е╨е├епдЄ┼╨╧┐д╖д▐д╖д┐бг
-<br /><br />
-е╒егб╝е╔е╨е├епд╧двд╩д┐д╬<a href=\"$a->url\">─є╜╨▓▌┬ъ</a>д╦─╔▓├д╡дьд╞ддд▐д╣бг';
+$string['assignmentmailhtml'] = '$a->teacher дмдвд╩д┐д╬▓▌┬ъб╓ <i>$a->assignment</i> б╫ д╦┬╨д╣ды─є╜╨▓▌┬ъд╦е╒егб╝е╔е╨е├епдЄ┼╨╧┐д╖д▐д╖д┐бг<br /><br />е╒егб╝е╔е╨е├епд╧двд╩д┐д╬<a href=\"$a->url\">─є╜╨▓▌┬ъ</a>д╦─╔▓├д╡дьд╞ддд▐д╣бг';
 $string['assignmentname'] = '▓▌┬ъ╠╛';
 $string['assignmenttype'] = '▓▌┬ъе┐еде╫';
 $string['availabledate'] = '─є╜╨│л╗╧╞№╗■';
@@ -78,6 +76,6 @@ $string['uploadnotregistered'] = 'б╓ $a б╫д╧└╡╛яд╦еве├е╫еэб╝е╔д╡дьд▐д╖д┐дм┼╨╧┐д╡
 $string['uploadsuccess'] = 'б╓ $a б╫д╬еве├е╫еэб╝е╔дм┤░╬╗д╖д▐д╖д┐бг';
 $string['viewfeedback'] = '▓▌┬ъд╬╔╛▓┴д╚е╒егб╝е╔е╨е├епдЄ│╬╟зд╣ды';
 $string['viewsubmissions'] = '$a ╖яд╬─є╜╨▓▌┬ъдЄ│╬╟зд╣ды';
-$string['yoursubmission'] = 'двд╩д┐д╬─є╜╨╩к';
+$string['yoursubmission'] = 'двд╩д┐д╬─є╜╨▓▌┬ъ';
 
 ?>

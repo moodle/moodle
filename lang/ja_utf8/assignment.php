@@ -9,9 +9,7 @@ $string['assignmentmail'] = '$a->teacher があなたの課題「 $a->assignment
 フィードバックはあなたの提出課題に追加されています:
 
 $a->url';
-$string['assignmentmailhtml'] = '$a->teacher があなたの課題「 <i>$a->assignment</i> 」 に対する提出課題にフィードバックを登録しました。
-<br /><br />
-フィードバックはあなたの<a href=\"$a->url\">提出課題</a>に追加されています。';
+$string['assignmentmailhtml'] = '$a->teacher があなたの課題「 <i>$a->assignment</i> 」 に対する提出課題にフィードバックを登録しました。<br /><br />フィードバックはあなたの<a href=\"$a->url\">提出課題</a>に追加されています。';
 $string['assignmentname'] = '課題名';
 $string['assignmenttype'] = '課題タイプ';
 $string['availabledate'] = '提出開始日時';
@@ -78,6 +76,6 @@ $string['uploadnotregistered'] = '「 $a 」は正常にアップロードされ
 $string['uploadsuccess'] = '「 $a 」のアップロードが完了しました。';
 $string['viewfeedback'] = '課題の評価とフィードバックを確認する';
 $string['viewsubmissions'] = '$a 件の提出課題を確認する';
-$string['yoursubmission'] = 'あなたの提出物';
+$string['yoursubmission'] = 'あなたの提出課題';
 
 ?>
