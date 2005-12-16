@@ -61,7 +61,7 @@ define('AN_ACTION_VOID', 0x08);
  * @uses $CFG
  * @todo cut-off time
  */
-function authorizenet_action(&$order, &$message, $action=AN_ACTION_NONE, $extra = NULL, &$reason = 0)
+function authorizenet_action(&$order, &$message, $action=AN_ACTION_NONE, $extra = NULL)
 {
     global $CFG;
     static $conststring;
