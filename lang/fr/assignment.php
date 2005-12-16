@@ -15,6 +15,7 @@ $string['assignmenttype'] = 'Type du devoir';
 $string['availabledate'] = 'Disponible dès le';
 $string['comment'] = 'Commentaire';
 $string['commentinline'] = 'Commentaire dans le texte';
+$string['configitemstocount'] = 'Nature des éléments à compter comme devoirs remis dans les devoirs en ligne.';
 $string['configmaxbytes'] = 'Taille maximale par défaut de tous les devoirs du site (sujet aux limites des cours et autres réglages locaux)';
 $string['description'] = 'Description';
 $string['duedate'] = 'À rendre jusqu\'au';
