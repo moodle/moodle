@@ -16,6 +16,7 @@ $string['assignmenttype'] = 'Tipo de tarea';
 $string['availabledate'] = 'Disponible en';
 $string['comment'] = 'Comentario';
 $string['commentinline'] = 'Comentario en línea';
+$string['configitemstocount'] = 'Naturaleza de los ítems a contar en los envíos de los estudiantes en tareas fuera de línea.';
 $string['configmaxbytes'] = 'Tamaño máximo permitido por defecto para todas las tareas del sitio (sujeto a los límites del curso y otras variables del servidor)';
 $string['description'] = 'Descripción';
 $string['duedate'] = 'Fecha de entrega';
