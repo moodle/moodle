@@ -870,6 +870,7 @@ $string['numattempts'] = '$a tentatives de connexions infructueuses';
 $string['numberweeks'] = 'Nombre de semaines ou de thèmes';
 $string['numdays'] = '$a jours';
 $string['numhours'] = '$a heures';
+$string['numletters'] = '$a caractères';
 $string['numminutes'] = '$a minutes';
 $string['nummonths'] = '$a mois';
 $string['numseconds'] = '$a secondes';
