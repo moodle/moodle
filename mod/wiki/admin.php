@@ -70,9 +70,10 @@
       error(get_string("notadministratewiki","wiki"));
     }
 
+    $canedit = wiki_can_edit_entry($wiki_entry, $wiki, $USER, $course);
     # Check for dangerous events (hacking) !
     if(in_array($action,array("removepages","strippages","revertpages"))) {
-      if(!($wiki->wtype=="student" || isteacher($course->id))) {
+      if(!($wiki->wtype=="student" || ($wiki->wtype=="group" and $canedit) || isteacher($course->id))) {
         add_to_log($course->id, "wiki", "hack", "", $wiki->name.": Tried to trick admin.php with action=$action.");
         error("Hack attack detected !");
       }
