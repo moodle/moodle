@@ -83,11 +83,11 @@ function get_class_constructor($classname) {
 }
 
 //This function retrieves a method-defined property of a class WITHOUT instantiating an object
-function block_method_result($blockname, $method) {
+function block_method_result($blockname, $method, $param = NULL) {
     if(!block_load_class($blockname)) {
         return NULL;
     }
-    return call_user_func(array('block_'.$blockname, $method));
+    return call_user_func(array('block_'.$blockname, $method), $param);
 }
 
 //This function creates a new object of the specified block class
@@ -417,8 +417,14 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid,
             // Create the object WITHOUT instance data.            
             $blockobject = block_instance($block->name);
             if ($blockobject === false) {
-                continue;
+                break;
             }
+
+            // First of all check to see if the block wants to be edited
+            if(!$blockobject->user_can_edit()) {
+                break;
+            }
+
             // Now get the title and AFTER that load up the instance
             $blocktitle = $blockobject->get_title();
             $blockobject->_load_instance($instance);
@@ -587,12 +593,17 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid,
 
             if(empty($block) || !$block->visible) {
                 // Only allow adding if the block exists and is enabled
-                return false;
+                break;
             }
 
             if(!$block->multiple && blocks_find_block($blockid, $pageblocks) !== false) {
                 // If no multiples are allowed and we already have one, return now
-                return false;
+                break;
+            }
+
+            if(!block_method_result($block->name, 'user_can_addto', $page)) {
+                // If the block doesn't want to be added...
+                break;
             }
 
             $newpos = $page->blocks_default_position();
@@ -777,6 +788,9 @@ function blocks_print_adminblock(&$page, &$pageblocks) {
             $block = blocks_get_record($blockid);
             $blockobject = block_instance($block->name);
             if ($blockobject === false) {
+                continue;
+            }
+            if(!$blockobject->user_can_addto($page)) {
                 continue;
             }
             $menu[$block->id] = $blockobject->get_title();

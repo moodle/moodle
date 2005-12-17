@@ -288,7 +288,7 @@ class block_base {
         $movebuttons .= '<a class="icon hide" title="'. $title .'" href="'.$script.'&amp;blockaction=toggle">' .
                         '<img src="'. $CFG->pixpath.$icon .'" alt="'.$title.'" /></a>';
 
-        if ($options & BLOCK_CONFIGURE) {
+        if ($options & BLOCK_CONFIGURE && $this->user_can_edit()) {
             $movebuttons .= '<a class="icon edit" title="'. $this->str->configure .'" href="'.$script.'&amp;blockaction=config">' .
                             '<img src="'. $CFG->pixpath .'/t/edit.gif" alt="'. $this->str->configure .'" /></a>';
         }
@@ -399,8 +399,6 @@ class block_base {
      * @return boolean
      */
     function config_save($data) {
-        // Default behavior: save all variables as $CFG properties
-        // You don't need to override this if you 're satisfied with the above
         foreach ($data as $name => $value) {
             set_config($name, $value);
         }
@@ -423,7 +421,6 @@ class block_base {
      * @return int
      */
     function preferred_width() {
-        // Default case: the block wants to be 180 pixels wide
         return 180;
     }
     
@@ -432,17 +429,15 @@ class block_base {
      * @return boolean
      */
     function hide_header() {
-        //Default, false--> the header is shown
         return false;
     }
 
     /**
-     * Default case: just an id for the block, with our name in it
+     * Default case: an id with the instance and a class with our name in it
      * @return array
      * @todo finish documenting this function
      */
     function html_attributes() {
-        // Default case: an id with the instance and a class with our name in it
         return array('id' => 'inst'.$this->instance->id, 'class' => 'block_'. $this->name());
     }
     
@@ -570,6 +565,32 @@ class block_base {
      * @todo finish documenting this function
      */
     function instance_delete() {
+        return true;
+    }
+
+     /**
+     * Allows the block class to have a say in the user's ability to edit (i.e., configure) blocks of this type.
+     * The framework has first say in whether this will be allowed (e.g., no editing allowed unless in edit mode)
+     * but if the framework does allow it, the block can still decide to refuse.
+     * @return boolean
+     * @todo finish documenting this function
+     */
+    function user_can_edit() {
+        return true;
+    }
+
+     /**
+     * Allows the block class to have a say in the user's ability to create new instances of this block.
+     * The framework has first say in whether this will be allowed (e.g., no adding allowed unless in edit mode)
+     * but if the framework does allow it, the block can still decide to refuse.
+     * This function has access to the complete page object, the creation related to which is being determined.
+     * @return boolean
+     * @todo finish documenting this function
+     */
+    function user_can_addto(&$page) {
+        if(empty($page)) {
+            die('a');
+        }
         return true;
     }
 
