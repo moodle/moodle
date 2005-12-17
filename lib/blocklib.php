@@ -83,13 +83,11 @@ function get_class_constructor($classname) {
 }
 
 //This function retrieves a method-defined property of a class WITHOUT instantiating an object
-//It seems that the only way to use the :: operator with variable class names is eval() :(
-//For caveats with this technique, see the PHP docs on operator ::
 function block_method_result($blockname, $method) {
     if(!block_load_class($blockname)) {
         return NULL;
     }
-    return eval('return block_'.$blockname.'::'.$method.'();');
+    return call_user_func(array('block_'.$blockname, $method));
 }
 
 //This function creates a new object of the specified block class
@@ -110,15 +108,19 @@ function block_instance($blockname, $instance = NULL) {
 function block_load_class($blockname) {
     global $CFG;
 
-    if (empty($blockname)) {
+    if(empty($blockname)) {
         return false;
     }
 
-    require_once($CFG->dirroot.'/blocks/moodleblock.class.php');
     $classname = 'block_'.$blockname;
+
+    if(class_exists($classname)) {
+        return true;
+    }
+
+    require_once($CFG->dirroot.'/blocks/moodleblock.class.php');
     include_once($CFG->dirroot.'/blocks/'.$blockname.'/block_'.$blockname.'.php');
 
-    // After all this, return value indicating success or failure
     return class_exists($classname);
 }
 
