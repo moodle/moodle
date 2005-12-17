@@ -588,9 +588,6 @@ class block_base {
      * @todo finish documenting this function
      */
     function user_can_addto(&$page) {
-        if(empty($page)) {
-            die('a');
-        }
         return true;
     }
 
