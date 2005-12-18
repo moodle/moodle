@@ -14,6 +14,7 @@ $string['assignmenttype'] = 'Soort opdracht';
 $string['availabledate'] = 'Beschikbaar vanaf';
 $string['comment'] = 'Commentaar';
 $string['commentinline'] = 'Commentaar invoegen';
+$string['configitemstocount'] = 'Wat er moet geteld worden wanneer leerlingen hun on line opdracht ingestuurd hebben.';
 $string['configmaxbytes'] = 'Standaard maximumgrootte voor alle opdrachten op de site (afhankelijk de limiet van de cursus en van andere lokale instellingen)';
 $string['description'] = 'Beschrijving  ';
 $string['duedate'] = 'Uiterste inleverdatum';

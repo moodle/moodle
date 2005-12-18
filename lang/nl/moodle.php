@@ -880,6 +880,7 @@ $string['numattempts'] = '$a mislukte aanmeldingspogingen';
 $string['numberweeks'] = 'Aantal weken/onderwerpen';
 $string['numdays'] = '$a dagen';
 $string['numhours'] = '$a uren';
+$string['numletters'] = '$a letters';
 $string['numminutes'] = '$a minuten';
 $string['nummonths'] = '$a maanden';
 $string['numseconds'] = '$a seconden';
