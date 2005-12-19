@@ -992,6 +992,7 @@ $string['rssarticles'] = 'Numero di ultimi articoli RSS';
 $string['rsserror'] = 'Errore nella lettura dei dati RSS';
 $string['rsstype'] = 'RSS per questa attività';
 $string['savechanges'] = 'Salva modifiche';
+$string['savepreferences'] = 'Salva impostazioni';
 $string['saveto'] = 'Salva in';
 $string['scale'] = 'Scala di valutazione';
 $string['scales'] = 'Scale di valutazione';
