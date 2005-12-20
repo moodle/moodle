@@ -50,8 +50,11 @@
                             'journal','lesson','questionnaire','quiz','resource','scorm',
                             'survey','wiki','workshop'); // some don't make sense here - eg 'label'
 
-    $modules = get_records_sql('SELECT DISTINCT module,name FROM '.$CFG->prefix.'course_modules cm JOIN '.
-                               $CFG->prefix.'modules m ON cm.module = m.id WHERE course = '.$course->id);
+    if (!$modules = get_records_sql('SELECT DISTINCT module,name FROM '.$CFG->prefix.'course_modules cm JOIN '.
+                                    $CFG->prefix.'modules m ON cm.module = m.id WHERE course = '.$course->id)) {
+        print_error('participationreportnocoursemodules',$CFG->wwwroot.'/course/view.php?id='.$course->id);
+    }
+
 
     $modoptions = array();
     foreach ($modules as $m) {

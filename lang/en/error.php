@@ -29,6 +29,7 @@ $string['nonmeaningfulcontent'] = 'Non meaningful content';
 $string['notavailable'] = 'That is not currently available';
 $string['onlyeditown'] = 'You can only edit your own information';
 $string['onlyeditingteachers'] = 'Only editing teachers can do that.';
+$string['participationreportnocoursemodules'] = 'Sorry, but you have no participatory course modules to report on.';
 $string['processingstops'] = 'Processing stops here. Remaining records ignored.';
 $string['restricteduser'] = 'Sorry, but your current account \"$a\" is restricted from doing that.';
 $string['sessionerroruser'] = 'Your session has timed out.  Please login again.';
