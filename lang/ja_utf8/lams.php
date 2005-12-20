@@ -4,7 +4,7 @@
 
 $string['createSequence'] = '新しいシーケンスの作成';
 $string['editSequence'] = '選択したシーケンスの編集';
-$string['error'] = '申し訳ございません。不明なエラーが発生しました。';
+$string['error'] = '申し訳ございません、不明なエラーが発生しました。';
 $string['introduction'] = 'イントロダクション';
 $string['lams'] = '-- LAMS - Learning Activity Management System --';
 $string['lamsoutline'] = 'LAMSアウトライン';
