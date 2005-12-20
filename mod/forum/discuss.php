@@ -102,6 +102,11 @@
         $parent = $discussion->firstpost;
         $navtail = format_string($discussion->name);
     }
+    
+    //check if user can view this post
+    if (!forum_user_can_view_post($parent)){
+        error ('you can not view this post');
+    }
 
     if (! $post = forum_get_post_full($parent)) {
         error("Discussion no longer exists", "$CFG->wwwroot/mod/forum/view.php?f=$forum->id");
