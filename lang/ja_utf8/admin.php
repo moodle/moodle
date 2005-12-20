@@ -119,7 +119,7 @@ $string['configzip'] = 'zipプログラムの場所を指定してください (
 $string['confirmation'] = '確認';
 $string['cronwarning'] = '<a href=\"cron.php\">cron.phpメンテナンススクリプト</a>が少なくとも24時間稼動していません。<br />cron.phpの自動化に関して<a href=\"../doc/?frame=install.html&sub=cron\">インストールドキュメント</a>をご覧ください。';
 $string['density'] = '密度';
-$string['edithelpdocs'] = 'ヘルプ文書の編集';
+$string['edithelpdocs'] = 'ヘルプドキュメントの編集';
 $string['editstrings'] = '翻訳ストリングの編集';
 $string['filterall'] = '全ての文字をフィルタする';
 $string['filtermatchoneperpage'] = 'ページあたり1回フィルタマッチする';
