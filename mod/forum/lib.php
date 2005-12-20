@@ -3761,21 +3761,4 @@ function forum_get_separate_modules($courseid) {
 
 }
 
-///this function returns all the separate forum ids, given a courseid
-//@ param int $courseid
-//@ return array
-function forum_get_separate_modules($courseid) {
-
-    global $CFG,$db;
-    $forummodule = get_record("modules", "name", "forum");
-
-    $sql = 'SELECT f.id, f.id FROM '.$CFG->prefix.'forum f, '.$CFG->prefix.'course_modules cm WHERE
-           f.id = cm.instance AND cm.module ='.$forummodule->id.' AND cm.visible = 1 AND cm.course = '.$courseid.'
-           AND cm.groupmode ='.SEPARATEGROUPS;
-           
-    return get_records_sql($sql);
-
-}
-
-  
 ?>
