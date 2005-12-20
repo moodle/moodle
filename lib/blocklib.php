@@ -723,6 +723,8 @@ function blocks_get_pinned($page) {
 
     foreach($blocks as $block) {
         $block->pinned = true; // so we know we can't move it.
+        // make up an instanceid if we can..
+        $block->pageid = $page->get_id();
         $arr[$block->position][$block->weight] = $block;
     }
 
