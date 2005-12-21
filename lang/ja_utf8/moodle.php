@@ -850,7 +850,7 @@ $string['noreplybouncemessage'] = 'あなたは no-reply アドレスにメー�
 
 あなたのメール本文は下記の通りです:';
 $string['noreplybouncesubject'] = '$a -宛先不明メール';
-$string['noreplyname'] = 'このメールに返信しないでください。';
+$string['noreplyname'] = 'このメールアドレス宛に返信しないでください';
 $string['noresults'] = '該当データがありません。';
 $string['normal'] = '普通';
 $string['normalfilter'] = '通常検索';

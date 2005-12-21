@@ -850,7 +850,7 @@ $string['noreplybouncemessage'] = '¤¢¤Ê¤¿¤Ï no-reply ¥¢¥É¥ì¥¹¤Ë¥á¡¼¥ëÊÖ¿®¤·¤Ş¤·¤
 
 ¤¢¤Ê¤¿¤Î¥á¡¼¥ëËÜÊ¸¤Ï²¼µ­¤ÎÄÌ¤ê¤Ç¤¹:';
 $string['noreplybouncesubject'] = '$a -°¸ÀèÉÔÌÀ¥á¡¼¥ë';
-$string['noreplyname'] = '¤³¤Î¥á¡¼¥ë¤ËÊÖ¿®¤·¤Ê¤¤¤Ç¤¯¤À¤µ¤¤¡£';
+$string['noreplyname'] = '¤³¤Î¥á¡¼¥ë¥¢¥É¥ì¥¹°¸¤ËÊÖ¿®¤·¤Ê¤¤¤Ç¤¯¤À¤µ¤¤';
 $string['noresults'] = '³ºÅö¥Ç¡¼¥¿¤¬¤¢¤ê¤Ş¤»¤ó¡£';
 $string['normal'] = 'ÉáÄÌ';
 $string['normalfilter'] = 'ÄÌ¾ï¸¡º÷';
