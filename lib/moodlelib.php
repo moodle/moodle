@@ -4672,6 +4672,14 @@ function get_string($identifier, $module='', $a=NULL) {
 /// First check all the normal locations for the string in the current language
 
     foreach ($locations as $location) {
+        $locallangfile = $location.$lang.'_local'.'/'.$module.'.php';    //first, see if there's a local file
+        if (file_exists($locallangfile)) {
+            if ($result = get_string_from_file($identifier, $locallangfile, "\$resultstring")) {
+                eval($result);
+                return $resultstring;
+            }
+        }
+        //if local directory not found, or particular string does not exist in local direcotry
         $langfile = $location.$lang.'/'.$module.'.php';
         if (file_exists($langfile)) {
             if ($result = get_string_from_file($identifier, $langfile, "\$resultstring")) {
@@ -4694,6 +4702,17 @@ function get_string($identifier, $module='', $a=NULL) {
             if ($result = get_string_from_file('parentlanguage', $langfile, "\$parentlang")) {
                 eval($result);
                 if (!empty($parentlang)) {   // found it!
+
+                    //first, see if there's a local file for parent
+                    $locallangfile = $location.$parentlang.'_local'.'/'.$module.'.php';    
+                    if (file_exists($locallangfile)) {
+                        if ($result = get_string_from_file($identifier, $locallangfile, "\$resultstring")) {
+                            eval($result);
+                            return $resultstring;
+                        }
+                    }
+
+                    //if local directory not found, or particular string does not exist in local direcotry
                     $langfile = $location.$parentlang.'/'.$module.'.php';
                     if (file_exists($langfile)) {
                         if ($result = get_string_from_file($identifier, $langfile, "\$resultstring")) {
@@ -4709,8 +4728,16 @@ function get_string($identifier, $module='', $a=NULL) {
 /// Our only remaining option is to try English
 
     foreach ($locations as $location) {
-        $langfile = $location.'en/'.$module.'.php';
+        $locallangfile = $location.'en_local/'.$module.'.php';    //first, see if there's a local file
+        if (file_exists($locallangfile)) {
+            if ($result = get_string_from_file($identifier, $locallangfile, "\$resultstring")) {
+                eval($result);
+                return $resultstring;
+            }
+        }
 
+        //if local_en not found, or string not found in local_en
+        $langfile = $location.'en/'.$module.'.php';
         if (file_exists($langfile)) {
             if ($result = get_string_from_file($identifier, $langfile, "\$resultstring")) {
                 eval($result);
@@ -4771,7 +4798,7 @@ function get_strings($array, $module='') {
 
 /**
  * Returns a list of language codes and their full names
- *
+ * hides the _local files from everyone.
  * @uses $CFG
  * @return array An associative array with contents in the form of LanguageCode => LanguageName
  */
@@ -4797,7 +4824,7 @@ function get_list_of_languages() {
     if (!empty($CFG->langlist)) {       // use admin's list of languages
         $langlist = explode(',', $CFG->langlist);
         foreach ($langlist as $lang) {
-            if (file_exists($CFG->dirroot .'/lang/'. $lang .'/moodle.php')) {
+            if (file_exists($CFG->dirroot .'/lang/'. $lang .'/moodle.php') and strstr('_local',$lang)!==false) {
                 include($CFG->dirroot .'/lang/'. $lang .'/moodle.php');
                 $languages[$lang] = $string['thislanguage'].' ('. $lang .')';
                 unset($string);
@@ -4807,13 +4834,44 @@ function get_list_of_languages() {
         if (!$langdirs = get_list_of_plugins('lang')) {
             return false;
         }
+
+        //add langs from $CFG->moddata/lang
+        $ilangdirs = get_list_of_plugins('lang','',1);
+        foreach ($ilangdirs as $ilang){
+            $langdirs[] = $ilang;
+        }
+
+        asort($langdirs);    //sort by value
+
         foreach ($langdirs as $lang) {
-            if (file_exists($CFG->dirroot .'/lang/'. $lang .'/moodle.php')) {
+
+            ///check if the current lang is the right version
+            ///i.e. CFG->unicodedb set, 1.6 packs
+            ///CFG->unicode not set. 1.5 packs
+            $unicodepack = file_exists($CFG->dirroot .'/lang/'. $lang .'/langconfig.php') OR
+                           file_exists($CFG->dataroot .'/lang/'. $lang .'/langconfig.php');
+
+            //if db is unicode, pack is not unicode, or db is not unicode, but pack is, we skip it
+            if ((!empty($CFG->unicodedb) && !$unicodepack) or (empty($CFG->unicodedb) && $unicodepack)){
+                continue;
+            }
+
+            if (file_exists($CFG->dirroot .'/lang/'. $lang .'/moodle.php') and strstr($lang,'_local')===false) {
                 include($CFG->dirroot .'/lang/'. $lang .'/moodle.php');
+                @include($CFG->dirroot .'/lang/'. $lang .'/langconfig.php');
+                $languages[$lang] = $string['thislanguage'] .' ('. $lang .')';
+                unset($string);
+            }
+            
+            if (file_exists($CFG->dataroot .'/lang/'. $lang .'/moodle.php') and strstr($lang,'_local')===false) {
+                include($CFG->dataroot .'/lang/'. $lang .'/moodle.php');
+                @include($CFG->dataroot .'/lang/'. $lang .'/langconfig.php');
                 $languages[$lang] = $string['thislanguage'] .' ('. $lang .')';
                 unset($string);
             }
         }
+       
+
     }
     if ( defined('FULLME') && FULLME === 'cron' && !empty($CFG->langcache)) {
         if ($file = fopen($CFG->dataroot .'/cache/languages', 'w')) {
@@ -4823,7 +4881,6 @@ function get_list_of_languages() {
             fclose($file);
         } 
     }
-
 
     return $languages;
 }
@@ -5321,17 +5378,22 @@ function show_event($event) {
  * @return array
  * @todo Finish documenting this function
  */
-function get_list_of_plugins($plugin='mod', $exclude='') {
+function get_list_of_plugins($plugin='mod', $exclude='', $dirmode='0') {
 
     global $CFG;
-
-    $basedir = opendir($CFG->dirroot .'/'. $plugin);
+    if ($dirmode == 0){
+        $rootdir = $CFG->dirroot;
+    }
+    else {
+        $rootdir = $CFG->dataroot;
+    }
+    $basedir = opendir($rootdir .'/'. $plugin);
     while (false !== ($dir = readdir($basedir))) {
         $firstchar = substr($dir, 0, 1);
         if ($firstchar == '.' or $dir == 'CVS' or $dir == '_vti_cnf' or $dir == $exclude) {
             continue;
         }
-        if (filetype($CFG->dirroot .'/'. $plugin .'/'. $dir) != 'dir') {
+        if (filetype($rootdir .'/'. $plugin .'/'. $dir) != 'dir') {
             continue;
         }
         $plugins[] = $dir;
