@@ -12,8 +12,9 @@
 
     include('../config.php');
     $mode = optional_param('mode',0,PARAM_INT);    //phase
-    $pack = optional_param('pack',PARAM_ALPHAEXT);    //pack to install
-    $displaylang = optional_param('displaylang',PARAM_ALPHA);    //display language
+    $pack = optional_param('pack','',PARAM_ALPHAEXT);    //pack to install
+    $displaylang = optional_param('displaylang','',PARAM_ALPHA);    //display language
+    $uninstalllang = optional_param('uninstalllang','',PARAM_ALPHA);
     require_login();
 
     if (!isadmin()) {
@@ -32,7 +33,7 @@
         
         print_simple_box_start('center','100%');
         echo '<div align="center">';
-        echo '<form name="langform" action="languages.php?mode=3" method="POST">';
+        echo '<form name="langform" action="langimport.php?mode=3" method="POST">';
         echo '<input name="pack" type="hidden" value="'.$pack.'" />';
         echo '<input name="displaylang" type="hidden" value="'.$displaylang.'" />';
         print_heading(get_string('confirm').'&nbsp;'.$displaylang,2);
@@ -58,7 +59,9 @@
                 fclose($file);
                 
                 ///recursively remove the whole directory since unzip does not overwrites anything
-                remove_dir($destination.$pack.'/');
+                if (file_exists($destination.$pack)){
+                    @remove_dir($destination.$pack.'/');
+                }
                 //unpack the zip
                 if (unzip_file($langpack, $destination, false)){
                     print_heading(get_string('success'));
@@ -71,14 +74,47 @@
                 }
                 fclose($file);
                 @unlink ($langpack);    //remove the zip file
-                echo '<div align="center"><form action="languages.php" method="POST">';
+                echo '<div align="center"><form action="langimport.php" method="POST">';
                 echo '<input type="submit" value="'.get_string('ok').'" />';
                 echo '</form></div>';
             }
         }
         
         break;
+        case 4:
 
+        if (!optional_param('confirm')){
+            echo $uninstalllang;
+            print_simple_box_start('center','100%');
+            echo '<div align="center">';
+            echo '<form name="langform" action="langimport.php?mode=4" method="POST">';
+            echo '<input name="uninstalllang" type="hidden" value="'.$uninstalllang.'" />';
+            echo '<input name="confirm" type="hidden" value="1" />';
+            print_heading(get_string('confirm').'&nbsp;'.get_string('uninstall').$uninstalllang,2);
+            echo '<input type="submit" value="'.get_string('ok').'"/>';
+            echo '&nbsp;<input type="button" value="'.get_string('cancel').'" onclick="javascript:history.go(-1)" />';
+            echo '</form>';
+            echo '</div>';
+            print_simple_box_end();
+        }
+        else {
+            $dest1 = $CFG->dataroot.'/lang/'.$uninstalllang;
+            $dest2 = $CFG->dirroot.'/lang/'.$uninstalllang;
+            if (file_exists($dest1)){
+                @remove_dir($dest1);
+            }
+            if (file_exists($dest2)){
+                @remove_dir($dest2);
+            }
+            //delete the direcotries
+            echo '<div align="center">';
+            print_string('langpackremoved');
+            echo '<form action="langimport.php" method="POST">';
+            echo '<input type="submit" value="'.get_string('ok').'" />';
+            echo '</form></div>';
+        }
+        break;
+        
         default:    //display choice mode
 
             $source = 'http://download.moodle.org/lang/list.txt';
@@ -108,19 +144,20 @@
             echo get_string('availablelangs');
             echo '</td></tr>';
             echo '<tr><td align="right" valign="top">';
+            echo '<form action="langimport.php?mode=4" method="POST">';
             $installedlangs = get_list_of_languages();    ///THIS FUNCTION NEEDS TO BE CHANGED
             /// display nstalled Components here
-            echo '<select disabled="disabled" size="15">';
+            echo '<select name="uninstalllang" size="15">';
             
-            foreach ($installedlangs as $ilang){
-                echo '<option>'.$ilang.'</option>';
+            foreach ($installedlangs as $clang =>$ilang){
+                echo '<option value="'.$clang.'">'.$ilang.'</option>';
             }
             echo '</select>';
-
-            echo '</td><td align="center">';
+            echo '<input type="submit" value="'.get_string('uninstall').'" />';
+            echo '</form></td><td align="center">';
 
             /// display to be installed Components here
-            echo '<form name="langform" action="languages.php?mode=2" method="POST">';
+            echo '<form name="langform" action="langimport.php?mode=2" method="POST">';
             echo '<input name="pack" type="hidden" value="" />';
             echo '<input name="displaylang" type="hidden" value="" />';
             echo '<table>';    //availabe langs table
@@ -150,7 +187,6 @@
 
             echo '</table>';    //close available langs table
             echo '<form>';
-
             echo '</td></tr></table>';
             print_simple_box_end();
 
@@ -164,7 +200,7 @@
     //this is for site that can't perform fopen
     function get_local_list_of_languages(){
         global $CFG;
-        $source = $CFG->wwwroot.'/blah.txt';
+        $source = $CFG->wwwroot.'/lib/languages.txt';
         $availablelangs = array();
         if ($fp = fopen($source, 'r')){
             while(!feof ($fp)) {
