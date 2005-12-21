@@ -12,9 +12,9 @@
 
     include('../config.php');
     $mode = optional_param('mode',0,PARAM_INT);    //phase
-    $pack = optional_param('pack','',PARAM_ALPHAEXT);    //pack to install
+    $pack = optional_param('pack','',PARAM_NOTAGS);    //pack to install
     $displaylang = optional_param('displaylang','',PARAM_ALPHA);    //display language
-    $uninstalllang = optional_param('uninstalllang','',PARAM_ALPHA);
+    $uninstalllang = optional_param('uninstalllang','',PARAM_NOTAGS);
     require_login();
 
     if (!isadmin()) {
@@ -48,7 +48,7 @@
         
         @mkdir ($CFG->dataroot.'/temp/');
         @mkdir ($CFG->dataroot.'/lang/');
-        $source = 'http://download.moodle.org/lang/'.$pack.'.zip';
+        $source = 'http://download.moodle.org/lang16/'.$pack.'.zip';
         $langpack = $CFG->dataroot.'/temp/'.$pack.'.zip';
         $destination = $CFG->dataroot.'/lang/';
         if ($contents = file_get_contents($source)) {    // Grab whole page
@@ -117,7 +117,7 @@
         
         default:    //display choice mode
 
-            $source = 'http://download.moodle.org/lang/list.txt';
+            $source = 'http://download.moodle.org/lang16/languages.md5';
             $remote = 0;    //flag for reading from remote or local
             if ($fp = fopen($source, 'r')){    /// attempt to get the list from Moodle.org.
                 while(!feof ($fp)) {
@@ -144,11 +144,10 @@
             echo get_string('availablelangs');
             echo '</td></tr>';
             echo '<tr><td align="right" valign="top">';
-            echo '<form action="langimport.php?mode=4" method="POST">';
+            echo '<form name="uninstallform" action="langimport.php?mode=4" method="POST">';
             $installedlangs = get_list_of_languages();    ///THIS FUNCTION NEEDS TO BE CHANGED
             /// display nstalled Components here
             echo '<select name="uninstalllang" size="15">';
-            
             foreach ($installedlangs as $clang =>$ilang){
                 echo '<option value="'.$clang.'">'.$ilang.'</option>';
             }
@@ -157,9 +156,9 @@
             echo '</form></td><td align="center">';
 
             /// display to be installed Components here
-            echo '<form name="langform" action="langimport.php?mode=2" method="POST">';
-            echo '<input name="pack" type="hidden" value="" />';
-            echo '<input name="displaylang" type="hidden" value="" />';
+            //echo '<form name="langform" action="langimport.php?mode=2" method="POST">';
+            //echo '<input name="pack" type="hidden" value="" />';
+            //echo '<input name="displaylang" type="hidden" value="" />';
             echo '<table>';    //availabe langs table
 
             $empty = 1;    //something to pring
@@ -169,14 +168,16 @@
             ///Don't know if the version is current
 
             foreach ($availablelangs as $alang){
-                if (!is_installed_lang(trim($alang[1]), $alang[2])){    //if not already installed
+                if (!is_installed_lang($alang[0], $alang[1])){    //if not already installed
+                    echo '<form method="POST" action="langimport.php?mode=2&pack='.$alang[0].'&displaylang='.$alang[2].'">';
                     if ($remote){
-                        echo '<tr><td>'.$alang[0].'&nbsp;'.$alang[1].'</td><td><input type="submit" value="'.get_string('install').'" onclick="javascript:langform.pack.value=\''.trim($alang[1]).'\';langform.displaylang.value=\''.$alang[0].'\'"></td></tr>';
+                        echo '<tr><td>'.$alang[2].'&nbsp;'.$alang[0].'</td><td><input type="submit" value="'.get_string('install').'"></td></tr>';
                     }
                     else {    //print list in local format, and instruction to install
-                        echo '<tr><td>'.$alang[0].'</td><td><a href="http://download.moodle.org/lang/'.trim($alang[1]).'.zip">'.get_string('download').'</a>';
+                        echo '<tr><td>'.$alang[2].'</td><td><a href="http://download.moodle.org/lang/'.$alang[0].'.zip">'.get_string('download').'</a>';
                     }
                     $empty = 0;
+                    echo '</form>';
                 }
             }
             if ($empty){
@@ -213,10 +214,11 @@
     //checks the md5 of the zip file, grabbed from download.moodle.org, and
     function is_installed_lang($lang, $md5check){
         global $CFG;
-        $md5file = $CFG->dataroot.'/lang/'.$lang.'/'.$lang.'.m5d';
+        $md5file = $CFG->dataroot.'/lang/'.$lang.'/'.$lang.'.md5';
         if (file_exists($md5file)){
             return (file_get_contents($md5file) == $md5check);
         }
+
         return false;
     }
     
