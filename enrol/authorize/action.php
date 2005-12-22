@@ -175,7 +175,7 @@ function authorizenet_action(&$order, &$message, &$reason, &$extra, $action=AN_A
             $timediff = $timenowsettle - (30 * 3600 * 24);
             $timecreatedsettle = getsettletime($order->timecreated);
             if ($timecreatedsettle < $timediff) {
-                $order->status = AN_STATUS_EXPIRED;
+                $order->status = AN_STATUS_EXPIRE;
                 $message = "Transaction must be captured within 30 days. EXPIRED!";
                 return false;
             }
@@ -225,7 +225,7 @@ function authorizenet_action(&$order, &$message, &$reason, &$extra, $action=AN_A
                 $timecreatedsettle = getsettletime($order->timecreated);
                 if ($timecreatedsettle < $timediff) {
                     $message = "Auth_only transaction must be voided within 30 days. EXPIRED!";
-                    $order->status = AN_STATUS_EXPIRED;
+                    $order->status = AN_STATUS_EXPIRE;
                     return false;
                 }
             }
