@@ -1,4 +1,4 @@
-<?PHP  //$Id$
+them<?PHP  //$Id$
 
 // MySQL commands for upgrading this enrolment module
 
@@ -56,6 +56,23 @@ function authorize_upgrade($oldversion=0) {
                 execute_sql("UPDATE {$CFG->prefix}enrol_authorize
                              SET amount = '$course->cost', currency = '$course->currency'
                              WHERE courseid = '$course->id'", false);
+            }
+        }
+    }
+
+    if ($oldversion < 2005122200) { // settletime
+        include_once("$CFG->dirroot/enrol/authorize/enrol.php");
+
+        table_column('enrol_authorize_refunds', 'refundtype', 'status', 'integer', '1', 'unsigned', '0', 'not null');
+        table_column('enrol_authorize_refunds', '', 'settletime', 'integer', '10', 'unsigned', '0', 'not null', 'transid');
+
+        table_column('enrol_authorize', 'timeupdated', 'settletime', 'integer', '10', 'unsigned', '0', 'not null');
+        $status = AN_STATUS_AUTH | AN_STATUS_CAPTURE;
+        if ($settlements = get_records_select('enrol_authorize', "status='$status'", '', 'id, settletime')) {
+            include_once("$CFG->dirroot/enrol/authorize/action.php");
+            foreach ($settlements as $settlement) {
+                execute_sql("UPDATE {$CFG->prefix}enrol_authorize SET settletime = '" .
+                getsettletime($settlement->settletime) . "' WHERE id = '$settlement->id'", false);
             }
         }
     }

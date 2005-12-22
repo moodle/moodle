@@ -42,50 +42,90 @@ define('AN_ACTION_CREDIT', 0x04);
  * - Also used to cancel existing transaction with a status of
  *   settled/refunded. Credited mistakenly, so cancel it
  *   and return funds to our account.
- *
- * @todo cut-off time
  */
 define('AN_ACTION_VOID', 0x08);
 
 
+define('AN_REASON_NONE', 0);
+define('AN_REASON_TRAN_NOT_FOUND', 16);
+
+/**
+ * Gets settlement date and time
+ *
+ * @param int $time Processed time, usually now.
+ * @return int Settlement date
+ */
+function getsettletime($time)
+{
+    global $CFG;
+
+    $hrs = intval($CFG->an_cutoff_hour);
+    $mins = intval($CFG->an_cutoff_min);
+    $cutofftime = strtotime("$hrs:$mins", $time);
+
+    if ($cutofftime < $time) {
+        $cutofftime = strtotime("$hrs:$mins", $time + (24 * 3600));
+    }
+
+    return $cutofftime;
+}
+
+/**
+ * Is order settled? Status must be auth_captured or credited.
+ *
+ * @param object $order Order details
+ * @return bool true, if settled, false otherwise.
+ */
+function settled($order)
+{
+    global $CFG;
+    static $timenow;
+
+    if (!isset($timenow)) {
+    	$timenow = time();
+    }
+
+    return (($order->status == AN_STATUS_AUTHCAPTURE || $order->status == AN_STATUS_CREDIT)
+            && $order->settletime < $timenow && $order->settletime > 0);
+}
+
 /**
  * Performs an action on authorize.net
  *
- * @param &object $order Which transaction data will be send. See enrol_authorize table.
- * @param &string $message Information about error messages.
+ * @param object &$order Which transaction data will be send. See enrol_authorize table.
+ * @param string &$message Information about error messages.
+ * @param int &$reason Reason subcode
+ * @param object &$extra Extra transaction data.
  * @param int $action Which action will be performed. See AN_ACTION_*
- * @param object $extra Extra transaction data.
- * @param &int $reason Response reason code.
  * @return bool true, transaction was successful, false otherwise.
  * @author Ethem Evlice <ethem a.t evlice d.o.t com>
  * @uses $CFG
- * @todo cut-off time
  */
-function authorizenet_action(&$order, &$message, $action=AN_ACTION_NONE, $extra = NULL)
+function authorizenet_action(&$order, &$message, &$reason, &$extra, $action=AN_ACTION_NONE)
 {
     global $CFG;
     static $conststring;
 
     $an_test = !empty($CFG->an_test);
 
-    if (empty($conststring)) {
-        $consdata = array (
-            'x_version'         => '3.1',
-            'x_delim_data'      => 'True',
-            'x_delim_char'      => AN_DELIM,
-            'x_encap_char'      => AN_ENCAP,
-            'x_relay_response'  => 'False',
-            'x_method'          => 'CC',
-            'x_login'           => $CFG->an_login,
-            'x_test_request'    => $an_test ? 'TRUE' : 'FALSE'
+    if (!isset($conststring)) {
+        $consdata = array(
+             'x_version'         => '3.1',
+             'x_delim_data'      => 'True',
+             'x_delim_char'      => AN_DELIM,
+             'x_encap_char'      => AN_ENCAP,
+             'x_relay_response'  => 'False',
+             'x_method'          => 'CC',
+             'x_login'           => $CFG->an_login,
+             'x_test_request'    => $an_test ? 'TRUE' : 'FALSE'
         );
         $str = '';
         foreach($consdata as $ky => $vl) {
             $str .= $ky . '=' . urlencode($vl) . '&';
         }
         $str .= (!empty($CFG->an_tran_key)) ?
-                "x_tran_key" . "=" . urlencode($CFG->an_tran_key):
-                "x_password" . "=" . urlencode($CFG->an_password);
+                'x_tran_key=' . urlencode($CFG->an_tran_key):
+                'x_password=' . urlencode($CFG->an_password);
 
         $conststring = $str;
     }
@@ -97,12 +137,14 @@ function authorizenet_action(&$order, &$message, $action=AN_ACTION_NONE, $extra 
         $message = "check order->id!";
         return false;
     }
-    elseif ($action <= AN_ACTION_NONE || $action > AN_ACTION_CREDIT) {
+    elseif ($action <= AN_ACTION_NONE || $action > AN_ACTION_VOID) {
         $message = "no action taken!";
         return false;
     }
 
     $poststring = $conststring;
+    $timenowsettle = getsettletime(time());
+
     switch ($action) {
         case AN_ACTION_AUTH_ONLY:
         case AN_ACTION_AUTH_CAPTURE:
@@ -116,10 +158,10 @@ function authorizenet_action(&$order, &$message, $action=AN_ACTION_NONE, $extra 
                 return false;
             }
             $ext = (array)$extra;
-            $poststring .= "&" . "x_type=" . ($action==AN_ACTION_AUTH_ONLY ?
-                                              "AUTH_ONLY" : "AUTH_CAPTURE");
+            $poststring .= '&x_type=' . ($action==AN_ACTION_AUTH_ONLY ?
+                                         'AUTH_ONLY' : 'AUTH_CAPTURE');
             foreach($ext as $k => $v) {
-                $poststring .= "&" . $k . "=" . urlencode($v);
+                $poststring .= '&' . $k . '=' . urlencode($v);
             }
             break;
         }
@@ -130,27 +172,36 @@ function authorizenet_action(&$order, &$message, $action=AN_ACTION_NONE, $extra 
                 $message = "order->status must be AN_STATUS_AUTH!";
                 return false;
             }
-            // 30 days. +1 = cut-off time
-            $timediff = time() - (31 * 3600 * 24);
-            if ($order->timecreated < $timediff) {
+            $timediff = $timenowsettle - (30 * 3600 * 24);
+            $timecreatedsettle = getsettletime($order->timecreated);
+            if ($timecreatedsettle < $timediff) {
+                $order->status = AN_STATUS_EXPIRED;
                 $message = "Transaction must be captured within 30 days. EXPIRED!";
                 return false;
             }
-            $poststring .= "&" . "x_type=PRIOR_AUTH_CAPTURE";
-            $poststring .= "&" . "x_trans_id=" . urlencode($order->transid);
+            $poststring .= '&x_type=PRIOR_AUTH_CAPTURE&x_trans_id=' . urlencode($order->transid);
             break;
         }
 
         case AN_ACTION_CREDIT:
         {
-            if ($order->status != (AN_STATUS_AUTH | AN_STATUS_CAPTURE)) {
-                $message = "order->status must be AN_STATUS_AUTH & AN_STATUS_CAPTURE!";
+            if ($order->status != AN_STATUS_AUTHCAPTURE) {
+                $message = "order->status must be AN_STATUS_AUTHCAPTURE!";
+                return false;
+            }
+            if (!settled($order)) {
+                $message = "Order wasn't settled, try VOID. Check Cut-Off time if it fails!";
                 return false;
             }
             // 120 days
-            $timediff = time() - (120 * 3600 * 24);
-            if ($order->timecreated < $timediff) {
+            $timediff = $timenowsettle - (120 * 3600 * 24);
+            if ($order->settletime < $timediff) {
                 $message = "Order can be credited within 120 days!";
+                return false;
+            }
+            // extra fields
+            if (empty($extra)) {
+                $message = "need extra fields for CREDIT!";
                 return false;
             }
             // up to original amount
@@ -159,50 +210,37 @@ function authorizenet_action(&$order, &$message, $action=AN_ACTION_NONE, $extra 
                 $message = "Can be credited up to original amount.";
                 return false;
             }
-            $poststring .= "&" . "x_type=CREDIT";
-            $poststring .= "&" . "x_trans_id=" . urlencode($order->transid);
-            $poststring .= "&" . "x_card_num=" . sprintf("%04d", intval($order->cclastfour));
-            $poststring .= "&" . "x_currency_code=" . urlencode($extra->currency);
-            $poststring .= "&" . "x_amount=" . urlencode($extra->amount);
+            $poststring .= '&x_type=CREDIT&x_trans_id=' . urlencode($order->transid);
+            $poststring .= '&x_card_num=' . sprintf("%04d", intval($order->cclastfour));
+            $poststring .= '&x_currency_code=' . urlencode($order->currency);
+            $poststring .= '&x_amount=' . urlencode($extra->amount);
             break;
         }
 
         case AN_ACTION_VOID:
         {
-            // only: authonly, authcapture, credit
-            if ($order->status != AN_STATUS_AUTH &&
-                $order->status != (AN_STATUS_AUTH | AN_STATUS_CAPTURE) &&
-                $order->status != AN_STATUS_CREDIT) {
-                $message = "order->status must be AUTH, AUTH_CAPTURE or CREDIT!";
-                return false;
-            }
-
             if ($order->status == AN_STATUS_AUTH) {
-                // 30 days for authonly, make it expired (***********timeupdated)
-                $timediff = time() - (30 * 3600 * 24);
-                if ($order->timecreated < $timediff) {
-                    $message = "Auth_only transaction can be voided within 30 days!";
+                // 30 days for authonly, make it expired (**settletime**)
+                $timediff = $timenowsettle - (30 * 3600 * 24);
+                $timecreatedsettle = getsettletime($order->timecreated);
+                if ($timecreatedsettle < $timediff) {
+                    $message = "Auth_only transaction must be voided within 30 days. EXPIRED!";
                     $order->status = AN_STATUS_EXPIRED;
                     return false;
                 }
-            } elseif ($order->status == (AN_STATUS_AUTH | AN_STATUS_CAPTURE)) {
-                // 1 day. Cancel pending settlement.
-                $timediff = time() - (2 * 3600 * 24); // TO DO: Cut-off time
-                if ($order->timecreated < $timediff) {
-                    $message = "Settled transaction cannot be voided. Try REFUND!";
-                    return false;
-                }
-            } elseif ($order->status == AN_STATUS_CREDIT) {
-                // 120 days for credit
-                $timediff = time() - (120 * 3600 * 24);
-                if ($order->timecreated < $timediff) {
-                    $message = "Ops! Settled transaction must be credited within 120 days!";
+            }
+            elseif ($order->status == AN_STATUS_AUTHCAPTURE || $order->status == AN_STATUS_CREDIT) {
+                if (settled($order)) {
+                    $message = "Settled transaction cannot be voided. Check Cut-Off time!";
                     return false;
                 }
             }
-            // OK.
-            $poststring .= "&" . "x_type=VOID";
-            $poststring .= "&" . "x_trans_id=" . urlencode($order->transid);
+            else {
+                $message = "order->status must be AUTH, AUTH_CAPTURE or CREDIT!";
+                return false;
+            }
+            $poststring .= '&x_type=VOID&x_trans_id=' . urlencode($order->transid);
+            break;
         }
 
         default: { // ???
@@ -213,8 +251,8 @@ function authorizenet_action(&$order, &$message, $action=AN_ACTION_NONE, $extra 
 
     // referer
     $anrefererheader = '';
-    if (!(empty($CFG->an_referer) || $CFG->an_referer == "http://")) {
-          $anrefererheader = "Referer: " . $CFG->an_referer . "\r\n";
+    if (! (empty($CFG->an_referer) || $CFG->an_referer == "http://")) {
+        $anrefererheader = "Referer: " . $CFG->an_referer . "\r\n";
     }
 
     $response = array();
@@ -225,13 +263,12 @@ function authorizenet_action(&$order, &$message, $action=AN_ACTION_NONE, $extra 
         return false;
     }
 
-    fputs($fp,
-        "POST " . AN_PATH . " HTTP/1.0\r\n" .
-        "Host: $connect_host\r\n" . $anrefererheader .
-        "Content-type: application/x-www-form-urlencoded\r\n" .
-        "Connection: close\r\n" .
-        "Content-length: " . strlen($poststring) . "\r\n\r\n" .
-        $poststring . "\r\n"
+    fwrite($fp, "POST " . AN_PATH . " HTTP/1.0\r\n" .
+                "Host: $connect_host\r\n" . $anrefererheader .
+                "Content-type: application/x-www-form-urlencoded\r\n" .
+                "Connection: close\r\n" .
+                "Content-length: " . strlen($poststring) . "\r\n\r\n" .
+                $poststring . "\r\n"
     );
 
     $tmpstr = '';
@@ -243,7 +280,7 @@ function authorizenet_action(&$order, &$message, $action=AN_ACTION_NONE, $extra 
         @fclose($fp);
         return false;
     }
-    $length = trim(substr($tmpstr,strpos($tmpstr,'content-length') + 15));
+    $length = trim(substr($tmpstr, strpos($tmpstr,'content-length')+15));
     fgets($fp, 4096);
     $data = fgets($fp, $length);
     @fclose($fp);
@@ -262,37 +299,46 @@ function authorizenet_action(&$order, &$message, $action=AN_ACTION_NONE, $extra 
 
     $reason = intval($response[2]);
 
-    if ($response[0] == AN_APPROVED) {
-        $order->transid = strval($response[6]); // TransactionID.
-        $order->timeupdated = time();
+    if ($response[0] == AN_APPROVED)
+    {
         switch ($action) {
             case AN_ACTION_AUTH_ONLY:
             case AN_ACTION_AUTH_CAPTURE:
-            $order->authcode = strval($response[4]); // Authorization or Approval code
-            $order->avscode = strval($response[5]); // Address Verification System code
-            if ($action == AN_ACTION_AUTH_ONLY) {
-                $order->status = AN_STATUS_AUTH;
-            }
-            else {
-                $order->status = AN_STATUS_AUTH | AN_STATUS_CAPTURE;
-            }
-            break;
-
             case AN_ACTION_PRIOR_AUTH_CAPTURE:
-            $order->status = AN_STATUS_AUTH | AN_STATUS_CAPTURE;
-            break;
-
-            case AN_ACTION_CREDIT: // generates new TransactionID
-            $order->status = AN_STATUS_CREDIT;
-            break;
-
+            {
+                $order->transid = strval($response[6]); // TransactionID
+                $order->avscode = strval($response[5]); // Address Verification System code
+                $order->authcode = strval($response[4]); // Authorization or Approval code
+                if ($action == AN_ACTION_AUTH_ONLY) {
+                    $order->status = AN_STATUS_AUTH;
+                    // dont't update settletime
+                } else {
+                    $order->status = AN_STATUS_AUTHCAPTURE;
+                    $order->settletime = getsettletime(time());
+                }
+                break;
+            }
+            case AN_ACTION_CREDIT:
+            {
+                // Credit generates new transaction id.
+                // So, $extra must be updated, not $order.
+                $extra->status = AN_STATUS_CREDIT;
+                $extra->transid = strval($response[6]);
+                $extra->settletime = getsettletime(time());
+                break;
+            }
             case AN_ACTION_VOID:
-            $order->status = AN_STATUS_VOID;
-            break;
+            {
+                $order->status = AN_STATUS_VOID;
+                // dont't update settletime
+                break;
+            }
+            default: return false;
         }
         return true;
     }
-    else {
+    else
+    {
         $message = isset($response[3]) ? $response[3] : 'unknown error';
         return false;
     }
