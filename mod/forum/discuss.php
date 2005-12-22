@@ -104,8 +104,8 @@
     }
     
     //check if user can view this post
-    if (!forum_user_can_view_post($parent)){
-        error ('you can not view this post');
+    if (!forum_user_can_view_post($parent,$course)){
+        error('You do not have permissions to view this post');
     }
 
     if (! $post = forum_get_post_full($parent)) {

@@ -2658,7 +2658,7 @@ function forum_user_can_post($forum, $user=NULL) {
 }
 
 //checks to see if a user can view a particular post
-function forum_user_can_view_post($post, $user=NULL){
+function forum_user_can_view_post($post, $course, $user=NULL){
 
     global $CFG, $USER;
 
@@ -2684,7 +2684,9 @@ function forum_user_can_view_post($post, $user=NULL){
     }
 
     //first of all, the user must be in this course
-    if (!(isstudent($forumcourse->course) or isteacher($forumcourse->course))){
+    if (!(isstudent($forumcourse->course) or 
+          isteacher($forumcourse->course) or 
+          (isguest() && $course->guest) )){
         return false;
     }
 
