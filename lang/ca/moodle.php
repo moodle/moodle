@@ -1,5 +1,6 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5.3+ (2005060230)
+      // moodle.php - created with Moodle 1.5 Beta (2005052300)
+
 
 
 $string['action'] = 'Acció';
