@@ -94,7 +94,7 @@
             if (ismoving($SITE->id)) {
                 $stractivityclipboard = strip_tags(get_string('activityclipboard', '', addslashes($USER->activitycopyname)));
                 echo '<p><font size="2">';
-                echo "$stractivityclipboard&nbsp;&nbsp;(<a href=\"course/mod.php?cancelcopy=true\">". get_string('cancel') .'</a>)';
+                echo "$stractivityclipboard&nbsp;&nbsp;(<a href=\"course/mod.php?cancelcopy=true&amp;sesskey=$USER->sesskey\">". get_string('cancel') .'</a>)';
                 echo '</font></p>';
             }
 
