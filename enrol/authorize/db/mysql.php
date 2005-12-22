@@ -1,4 +1,4 @@
-them<?PHP  //$Id$
+<?PHP  //$Id$
 
 // MySQL commands for upgrading this enrolment module
 
