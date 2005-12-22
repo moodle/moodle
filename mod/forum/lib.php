@@ -3738,6 +3738,7 @@ function forum_discussion_update_last_post($discussionid) {
     return false;
 }
 
+
 function forum_get_view_actions() {
     return array('view discussion','search','forum','forums','subscribers');
 }
