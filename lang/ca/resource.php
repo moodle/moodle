@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.5.2 + (2005060222)
+      // resource.php - created with Moodle 1.5.3+ (2005060230)
 
 
 $string['addresource'] = 'Afegeix un recurs';

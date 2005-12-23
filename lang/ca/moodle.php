@@ -1,6 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 Beta (2005052300)
-
+      // moodle.php - created with Moodle 1.5.3+ (2005060230)
 
 
 $string['action'] = 'Acció';
@@ -1161,9 +1160,5 @@ $string['yourlastlogin'] = 'La vostra darrera entrada va ser';
 $string['yourself'] = 'vós mateix';
 $string['yourteacher'] = 'el vostre $a';
 $string['zippingbackup'] = 'S\'està comprimint la còpia de seguretat';
-
-$string['formatlams'] = 'Format LAMS';
-$string['lamsoutline'] = 'Esquema de curs LAMS';
-$string['namelams'] = 'LAMS';
 
 ?>

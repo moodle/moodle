@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5.2 + (2005060222)
+      // moodle.php - created with Moodle 1.5.3+ (2005060230)
 
 
 $string['action'] = 'Действие';
@@ -99,8 +99,8 @@ $string['autosubscribe'] = 'Авто подписка на форум';
 $string['autosubscribeno'] = 'Нет (не подписывайте меня автоматически на форумы)';
 $string['autosubscribeyes'] = 'Да (когда я отправляю сообщение, я хочу, чтобы меня автоматически подписывали на форум)';
 $string['availability'] = 'Доступность';
-$string['availablecourses'] = 'Курсы';
-$string['backup'] = 'Резервная копия';
+$string['availablecourses'] = 'Доступные курсы';
+$string['backup'] = 'Резервное копирование';
 $string['backupcancelled'] = 'Резервировное копирование отменено';
 $string['backupcoursefileshelp'] = 'Если разрешено, то файлы данного курса, автоматически войдут в резервную копию';
 $string['backupdate'] = 'Дата копии';
@@ -295,7 +295,7 @@ $string['editcoursesettings'] = 'Редактировать настройки курса';
 $string['editfiles'] = 'Редактировать файлы';
 $string['editgroupprofile'] = 'Редактировать профиль группы';
 $string['editinga'] = 'Редактирование $a';
-$string['editingteachershort'] = 'Редактировать курс';
+$string['editingteachershort'] = 'Может редактировать';
 $string['editlock'] = 'Значение не может быть изменено!';
 $string['editmyprofile'] = 'Редактировать информацию';
 $string['editorbgcolor'] = 'Цвет фонв';
@@ -368,7 +368,7 @@ $string['enrolmentnotyet'] = 'Извините, данный курс вам недоступен пока не <br /
 $string['enrolments'] = 'Регистрации';
 $string['enrolperiod'] = 'Продолжительность обучения';
 $string['entercourse'] = 'Нажмите для входа в курс';
-$string['enteremailaddress'] = 'Введите ваш e-mail, чтобы обнулить пароль и получить новый';
+$string['enteremailaddress'] = 'Введите e-mail указанный в вашем профиле, чтобы анулировать старый пароль и получить новый пароль по электронной почте.';
 $string['entries'] = 'Секции';
 $string['error'] = 'Ошибка';
 $string['errortoomanylogins'] = 'Вы превысили максимально разрешенное количество попыток для входа в систему. Перезапустите Ваш браузер.';
@@ -403,7 +403,7 @@ $string['forcelanguage'] = 'Принудительный  язык';
 $string['forceno'] = 'не вынужденный ';
 $string['forcepasswordchange'] = 'Принудительная смена пароля';
 $string['forgotaccount'] = 'Забыли пароль?';
-$string['forgotten'] = 'Забыли пользовательское имя или пароль?';
+$string['forgotten'] = 'Забыли логин или пароль?';
 $string['format'] = 'Формат';
 $string['formathtml'] = 'HTML-формат';
 $string['formatmarkdown'] = 'Markdown формат';
@@ -537,14 +537,14 @@ $string['list'] = 'Список';
 $string['listfiles'] = 'Список файлов в $a';
 $string['listofallpeople'] = 'Список участников';
 $string['livelogs'] = 'Логи за последний час';
-$string['locale'] = 'en';
+$string['locale'] = 'ru_RU.CP1251';
 $string['location'] = 'Размещение';
 $string['loggedinas'] = 'Вы зашли под именем $a ';
 $string['loggedinasguest'] = 'Вы используете гостевой доступ';
 $string['loggedinnot'] = 'Вы не прошли идентификацию';
 $string['login'] = 'Вход';
 $string['login_failure_logs'] = 'Журнал неудачных попыток входа';
-$string['loginas'] = 'Зайти под именем...';
+$string['loginas'] = 'Зайти под этим именем';
 $string['loginguest'] = 'Зайти гостем';
 $string['loginsite'] = 'Зайти на сайт';
 $string['loginsteps'] = 'Для доступа к курсу Вам необходимо создать учетную запись на сайте. <br />Пошаговая инструкция: 
@@ -557,7 +557,11 @@ $string['loginsteps'] = 'Для доступа к курсу Вам необходимо создать учетную запи
 <li>Если для записи на курс требуется знание кодового слова, учитель сообщит его Вам.</li>
 <li>Итак у Вас появился полный доступ к курсу: с этого момента Вы будете пользоваться своим пользовательским именем и паролем, чтобы попасть на него.</li>
 </ol>';
-$string['loginstepsnone'] = '<p>Для доступа к курсу Вам необходимо создать новую учетную запись.</p><p>Все что Вам нужно - это задать логин и пароль, для использования на этом сайте!</p><p>Если кто-то другой уже выбрал этот логин, Вам необходимо его сменить</p>';
+$string['loginstepsnone'] = '<p>Чтобы участвовать в жизни сайта, <b>представьтесь, пожалуйста, системе</b>.</p>
+<p>Для этого сообщите ей свой <b>Логин</b>. Логин - это Ваше имя для системы, и оно может содержать только латинские буквы, арабские цифры и знак подчёркивания. Его можно придумать, а можно вспомнить, как Вы представляетесь другим сайтам.</p>
+<p>Для того, чтобы от Вашего имени никто не мог высказывать свои мнения, придумайте себе <b>Пароль</b>.</p>
+<p>Если у Вас есть любимый пароль, можете использовать его – он станет известен только системе, и система его никому не сообщит.</p>
+<p>Если Вы уже входили сюда, но забыли Пароль или Логин – система может прислать Вам их на Ваш почтовый ящик – см. слева нижнюю кнопку.</p>';
 $string['loginto'] = 'Войти на $a';
 $string['loginusing'] = 'Войти на сайт';
 $string['logout'] = 'Выход';
@@ -631,7 +635,7 @@ $string['moveup'] = 'Переместить вверх';
 $string['msnid'] = 'MSN ID';
 $string['mustchangepassword'] = 'Новый пароль должен отличаться от текущего';
 $string['mustconfirm'] = 'Подтвердите учетную запись';
-$string['mycourses'] = 'Доступные курсы';
+$string['mycourses'] = 'Мои курсы';
 $string['name'] = 'Название';
 $string['namescorm'] = 'SCORM';
 $string['namesocial'] = 'Раздел';
@@ -645,10 +649,10 @@ $string['newaccount'] = 'Новая учетная запись';
 $string['newcourse'] = 'Новый курс';
 $string['newpassword'] = 'Новый пароль';
 $string['newpasswordtext'] = 'Здравствуйте, $a->firstname.
-Ваша учетная запись на сайте \'$a->sitename\' была обнулена, и был присвоен новый (временный) пароль. 
-Ваша текущая учетная запись: 
-пользователь: $a->username 
-пароль: $a->newpassword.
+Пароль Вашей учетной записи на сайте \'$a->sitename\' был анулирован, и Вам был присвоен новый (временный) пароль. 
+Сейчас Вы на сайт можете зайти так: 
+Логин: $a->username 
+Пароль: $a->newpassword.
 В целях безопасности, зайдите на наш сайт и измените пароль: $a->link 
 C уважением, администратор $a->signoff';
 $string['newpicture'] = 'Фотография';
@@ -700,7 +704,7 @@ $string['numhours'] = '$a ч';
 $string['numminutes'] = '$a мин';
 $string['numseconds'] = '$a секунд';
 $string['numviews'] = 'просмотров - $a';
-$string['numweeks'] = '$a нед';
+$string['numweeks'] = '$a нед.';
 $string['numwords'] = 'всего слов - $a';
 $string['numyears'] = '$a лет';
 $string['ok'] = 'OK';
@@ -722,7 +726,7 @@ $string['passwordconfirmchange'] = 'Подтверждение изменения пароля';
 $string['passwordrecovery'] = 'Помогите попасть на сайт';
 $string['passwordsdiffer'] = 'Пароль не удовлетворяет требованиям безопасности';
 $string['passwordsent'] = 'Пароль был отправлен';
-$string['passwordsenttext'] = 'На адрес $a->emai было отправлено письмо с новым паролем. 
+$string['passwordsenttext'] = 'На адрес $a->emai было отправлено письмо с Вашим логином и новым паролем. 
  Если вам захочется изменить автоматически созданный пароль на более запоминающийся, проследуйте по ссылке 
 <a href=\"$a->link\"></a>.';
 $string['pathnotexists'] = 'Путь на сервере не найден!';
@@ -838,7 +842,7 @@ $string['showgrades'] = 'Показывать оценки';
 $string['showlistofcourses'] = 'Показать список курсов';
 $string['showonlytopic'] = 'Показать только раздел $a';
 $string['showonlyweek'] = 'Показать только неделю $a';
-$string['showperpage'] = 'Показывать $a на странице';
+$string['showperpage'] = 'Показать по $a на странице';
 $string['showrecent'] = 'Показать последние новости';
 $string['showreports'] = 'Показать отчет о действиях';
 $string['showsettings'] = 'Показать настройки';
@@ -880,7 +884,7 @@ $string['strftimedaydate'] = '%%A %%d %%B %%Y';
 $string['strftimedaydatetime'] = '%%A %%d %%B %%Y, %%H:%%M';
 $string['strftimedayshort'] = '%%A %%d %%B';
 $string['strftimedaytime'] = '%%a, %%H:%%M';
-$string['strftimemonthyear'] = '%%B %%y';
+$string['strftimemonthyear'] = '%%B %%Y';
 $string['strftimerecent'] = '%%d %%b %%H:%%M';
 $string['strftimerecentfull'] = '%%a %%d %%b %%Y, %%H:%%M';
 $string['strftimetime'] = '%%H:%%M';
@@ -920,6 +924,9 @@ $string['topichide'] = 'Не показывать эти разделы $a';
 $string['topicoutline'] = 'Заголовки тем';
 $string['topicshow'] = 'Показывать эти разделы $a';
 $string['total'] = 'Итог';
+$string['trackforums'] = 'Слежение за форумами';
+$string['trackforumsno'] = 'Нет, не отслеживать новые сообщения';
+$string['trackforumsyes'] = 'Да, выделять новые сообщения';
 $string['turneditingoff'] = 'Закончить редактирование';
 $string['turneditingon'] = 'Редактировать';
 $string['undecided'] = 'Нерешено';
@@ -947,9 +954,9 @@ $string['updatinga'] = 'Обновление $a';
 $string['updatingain'] = 'Обновление $a->what в $a->in';
 $string['upload'] = 'Закачивание';
 $string['uploadafile'] = 'Закачать файл';
-$string['uploadedfile'] = 'Файл загружен';
+$string['uploadedfile'] = 'Файл успешно закачан';
 $string['uploadedfileto'] = 'Закачать $a->file в $a->directory';
-$string['uploadedfiletoobig'] = 'Извините, но файл слшишком велик (ограничение - $a байт)';
+$string['uploadedfiletoobig'] = 'Извините, файл слишком велик (превышает $a байт)';
 $string['uploadformlimit'] = 'Загруженный файл исчерпал ограничение на максимальный размер данных, передаваемых через форму';
 $string['uploadlabel'] = 'Заголовок:';
 $string['uploadnofilefound'] = 'Файл не был найден. Убедитесь, что вы его выбрали';
@@ -1006,11 +1013,11 @@ $string['writingcategoriesandquestions'] = 'Запись категорий и вопросов';
 $string['writingcoursedata'] = 'Запись данных курса';
 $string['writingeventsinfo'] = 'Запись информации о событиях';
 $string['writinggeneralinfo'] = 'Запись общей информации';
-$string['writinggradebookinfo'] = 'Writing gradebook info';
+$string['writingmessagesinfo'] = 'Запись информации об оценках';
 $string['writinggroupsinfo'] = 'Запись информации о группах';
 $string['writingheader'] = 'Запись заголовка';
 $string['writingloginfo'] = 'Запись логов';
-$string['writingmessagesinfo'] = 'Writing messages info';
+$string['writingmessagesinfo'] = 'Запись информации о сообщениях';
 $string['writingmoduleinfo'] = 'Запись информации по модулям';
 $string['writingscalesinfo'] = 'Информация по шкале';
 $string['writinguserinfo'] = 'Запись данных о пользователях';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz_analysis.php - created with Moodle 1.5.2 + (2005060223)
+      // quiz_analysis.php - created with Moodle 1.5.3+ (2005060230)
 
 
 $string['analysisoptions'] = 'Opcions d\'anàlisi';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // block_quiz_results.php - created with Moodle 1.5.2 + (2005060223)
+      // block_quiz_results.php - created with Moodle 1.5.3+ (2005060230)
 
 
 $string['bestgrade'] = 'La qualificació més alta:';

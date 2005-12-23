@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
+      // wiki.php - created with Moodle 1.5.3+ (2005060230)
 
 
 $string['action'] = '-- Acció --';
