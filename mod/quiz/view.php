@@ -200,6 +200,11 @@
                 $strconfirmstartattempt = addslashes(get_string("confirmstartattempt","quiz"));
                 $datecompleted  = "\n".'<script language="javascript" type="text/javascript">';
                 $datecompleted .= "\n<!--\n"; // -->
+                if (!empty($CFG->usesid)) {
+                    $attempturl=sid_process_url("attempt.php?id=$cm->id");
+                } else {
+                    $attempturl="attempt.php?id=$cm->id";
+                };
                 if (!empty($quiz->popup)) {
                     $datecompleted .= "var windowoptions = 'left=0, top=0, height='+window.screen.height+
                      ', width='+window.screen.width+', channelmode=yes, fullscreen=yes, scrollbars=yes, '+
@@ -209,9 +214,9 @@
                     if ($quiz->timelimit) {
                         $jslink .=  "if (confirm('$strconfirmstartattempt')) ";
                     }
-                    $jslink .= "var popup = window.open(\\'attempt.php?id=$cm->id\\', \\'quizpopup\\', windowoptions);";
+                    $jslink .= "var popup = window.open(\\'$attempturl\\', \\'quizpopup\\', windowoptions);";
                 } else {
-                    $jslink = "attempt.php?id=$cm->id";
+                    $jslink = $attempturl;
                 }
 
                 $linktext = get_string('continueattemptquiz', 'quiz');
