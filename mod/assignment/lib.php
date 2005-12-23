@@ -545,7 +545,8 @@ class assignment_base {
                                    $submission->userid, $this->cm->id);             
                     }
                         
-                }                    
+                } 
+                print_heading(get_string('changessaved'));
                 $this->display_submissions();            
                 break;
 
