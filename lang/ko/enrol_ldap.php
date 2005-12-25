@@ -2,21 +2,17 @@
 
 
 
-$string['description'] = '<p>LDAP서버를 이용하여 당신은 등록자를 관리 할수 있습니다. . 
+$string['description'] = '<p>LDAP서버를 이용하여 당신은 등록자를 관리 할수 있습니다. 
 LDAP목차는 과목 내용(map)의 
 그룹을 포함하고 있고. 각각의 그룹/강좌은 학생들용 내용(mpa)의 회원제 접속허가를 가지고 있다고 가정할수 있다.<p>
-<p>또한 각 강좌는 LDAP의 구분에 의하여 나누어지고 각 그룹은 여려개의 활동영혁을 가지게 된다(<em>member</em> or <em>memberUid</em>) 그것은 각 유저마다 서로 다른 ID를 가지게 한다.</p>
-<p>LDAP등록을 이용하려면 사용자들은 <strong>꼭!</strong> 
-유요한 ID값을 가지고 있어야 한다. 
+<p>또한 각 강좌는 LDAP의 구분에 의하여 나누어지고 각 그룹은 여러 개의 활동영역을 가지게 된다(<em>member</em> 혹은 <em>memberUid</em>) 그것은 각 유저마다 서로 다른 ID를 가지게 한다.</p>
+<p>LDAP등록을 이용하려면 사용자들은 <strong>꼭!</strong> 유효한 ID값을 가지고 있어야 한다. 
 또한 LDAP그룹은 과목으로의 등록을 위해서 각 사용자의 영역에 맞는 ID값을 가지고 있어야 한다. 
-만약 LDAP 인증을 사용하고 있다면 이러한 것들은 잘 작동될것이다. 
-.</p>
+만약 LDAP 인증을 사용하고 있다면 이러한 것들은 잘 작동될것이다.</p>
 <p>등록은 사용자가 로그인할때 업데이트 된다.
 또한 등록 서류를 싱크시키기 위해서 스크립트를 사용할수도 있다. 
-다음 파일을 참고 하라 
-<em>enrol/ldap/enrol_ldap_sync.php</em>.</p>
-<p>이 플러그인은 새 그룹이 LDAP에 들옥되면 자동적으로 새 강좌를 생성한다.
-</p>';
+다음 파일을 참고 하라 <em>enrol/ldap/enrol_ldap_sync.php</em></p>
+<p>이 플러그인은 새 그룹이 LDAP에 들옥되면 자동적으로 새 강좌를 생성한다.</p>';
 $string['enrol_ldap_autocreate'] = '만일 Moodle에 들록되지 않은 코스가 등록되면 자동으로 그 코스를 생성할 것이다. ';
 $string['enrol_ldap_autocreation_settings'] = '자동 생성 코스 설정';
 $string['enrol_ldap_bind_dn'] = '만일 각 search사용자들에 대해 bind-user 를 사용하고 싶다면 다음을 설정하십시오. ex) \'cn=ldapuser,ou=public,o=org\' ';
