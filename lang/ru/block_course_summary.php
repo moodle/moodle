@@ -1,8 +1,8 @@
 <?PHP // $Id$ 
-      // block_course_summary.php - created with Moodle 1.4 development (2004070800)
+      // block_course_summary.php - created with Moodle 1.5.3+ (2005060230)
 
 
-$string['blockname'] = 'Краткая аннотация курса';
-$string['siteinfo'] = 'Информация по сайту';
+$string['coursesummary'] = 'Описание курса';
+$string['pagedescription'] = 'Описание курса/сайта';
 
 ?>
