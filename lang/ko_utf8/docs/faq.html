@@ -1,0 +1,311 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Moodle Docs: Frequently Asked Questions (FAQ)</title>
+<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+
+<body>
+<h1>자주 묻는 질문들(FAQ)</h1>
+<p class="normaltext">이 페이지는 사람들이 무들을 설치하면서 자주 묻는 질문에 대한 답변을 모아놓은 곳입니다. 여러분이 <a href="./?file=install.html">설치 안내서</a>를 따라 하는데도 여전히 문제에 부딛친다면 이 페이지가 가장 좋은 해결책을 제시할 수 있을 것입니다.</p>
+
+<p class="normaltext">만역 여기에서도 해결책을 찾지 못한다면 moodle.org에 있는 <a href="http://moodle.org/mod/forum/index.php?id=5" target="_top">Using 
+  Moodle</a>에서 찾아보기 바랍니다. 핵심단어를 가지고 포럼을 검색해 보면, 대체로 여러분이 격는 문제는 이미 논의가 되어 있을 것입니다. 만일 그래도 해결책을 찾지 못하시면 적절한 포럼에 여러분의 질문을 게재해 주시기 바랍니다. 아마 누군가는 여러분을 도와 줄 수 있을 것입니다.</p>
+
+<p class="normaltext">여러분이 방화벽 뒤에서 운영하고 있고, 여러 방법을 다 시도해 보았는데도 여전히 잘 안된다고 한다면, 방화벽이 필요한 통신 혹은 기능들을 막고 있지는 않은지 확인하기 위해 방화벽을 다시 설정해 볼 것을 권합니다. 아주 드믈게 방화벽 자체가 무들 운영에 문제를 일으키는 원인이 되기도 합니다만 대개는 방화벽 설정을 잘못해서 무들에 필요한 기능을 제한함으로서 야기되는 것이 많습니다.
+
+<p class="normaltext">나열된 항목을 클릭하면 답변이 있는 곳으로 이동합니다.</p>
+
+<p class="questionlink"><a href="#filenotfound">내가 업로드한 파일을 보려고 하거나 접근을 하려고 하면 &quot;File not Found&quot;의 오류메시지가 뜹니다.</a></p>
+
+<p class="questionlink"><a href="#php">PHP가 설치되었는지, 설치되었다면 어떤 버전인지 알 수 있을까요?</a></p>
+
+<p class="questionlink"><a href="#blankpages">왜 화면에 아무것도 표시되지 않지요?</a></p>
+
+<p class="questionlink"><a href="#errorgetstring">화면에 다음과 같은 치명적 오류가 발생했대요 : call to undefined function: get_string()</a></p>
+
+<p class="questionlink"><a href="#headerssent">왜 자꾸 &quot;headers already sent&quot;란 오류메시지가 나오죠?</a></p>
+
+<p class="questionlink"><a href="#failedopen">Failed opening required '/web/moodle/lib/setup.php'란 메시지가 계속 뜹니다.</a></p>
+
+<p class="questionlink"><a href="#quotes">홑따옴표(') 혹은 겹따옴표(&quot;)가 들어있는 문장을 첨가하면 오류가 발생하거나 슬래쉬가 붙어나옵니다.</a></p>
+
+<p class="questionlink"><a href="#sessiontmp">session_start 에 대한 에러메시지가 계속 뜹니다.</a></p>
+
+<p class="questionlink"><a href="#fixdirroot">관리자 페이지로 가기만 하면, dirroot를 빈칸으로 만들라고 합니다!</a></p>
+
+<p class="questionlink"><a href="#loginsetting">로그인 했는데 화면도 안 바뀌고.. 벌써 로그인 됐다고 하며, 맘대로 돌아다닐 수 있네요.</a></p>
+
+<p class="questionlink"><a href="#resource1">자원(resource)을 첨가하려고 할 때 에러메시지가 뜹니다.</a></p>
+
+<p class="questionlink"><a href="#noadmin">초기 설정 과정에서 관리자 계정을 생성하라는 요청을 받은 적이 없어요!</a></p>
+
+<p class="questionlink"><a href="#nologin">전혀 로그인 할 수 없습니다. 로그인 화면에서 범추고 말아요.</a></p>
+
+<p class="questionlink"><a href="#backup">어떻게 내 무들 사이트를 백업할 수 있지요?</a></p>
+
+<p class="questionlink"><a href="#locale">왜 내 무들사이트는 날짜와 시간이 제대로 표시되지 않는거죠?</a></p>
+
+<p class="questionlink"><a href="#cron">내 포럼에서 이메일이 발송이 되지 않아요.</a></p>
+
+<p class="questionlink">&nbsp;</p>
+
+<h3><a name="filenotfound"></a>내가 업로드한 파일을 보려고 하거나 접근을 하려고 하면 &quot;File not Found&quot;의 오류메시지가 뜹니다.</h3>
+
+<p class="answer">예: Not Found: The requested URL /moodle/file.php/2/myfile.jpg 
+
+  was not found on this server. </p>
+
+<p class="answer">여러분의 웹 서버에서 스크립트를 실행할 수 있도록 URL 다음에 나오는 스크립트의 이름을 받아들이도록 설정해야 할 필요가 있습니다. 이러한 사항은 아파치1에서는 별 문제 없지만, 아파치2에서는 기본적으로 이를 막게 되어있습니다. 이 기능을 가능하게 하기 위해서는 다음과 같은 줄을 여러분의 httpd.conf 혹은 .htaccess 파일에 첨가하여야 합니다.(좀 더 자세한 내용을 보고 싶으면 <a href="./?file=install.html#webserver">설치 문서</a>를 참고하세요)</p>
+
+<p class="answercode"><b>AcceptPathInfo</b> on</p>
+
+<p class="answer">참고로, 이것은 아파치 2.x 버전대에서만 작동함을 유의하십시오.</p>
+
+<p class="answer">만일 여러분이 아파치 2를 쓰지 않거나, 그렇게 했는데도 여전히 문제가 있다면, 아래와 같은 대안으로 무들을 바꿀 수 있습니다. 이 때는 다소 작동이 느려지며, 또한 여러분이나 사용자 모두 HTML 자원내에서 상대경로를 쓸 수 없다는 단점이 있습니다. </p>
+
+<p class="answer">대안 : 관리자로 로그인하여 "변수의 설정"항목으로 들어간 다음,  "<b>slasharguments</b>"의 변수를 변경하여 줍니다. 그러면 업로드 파일의 접근이 가능해질 것입니다.</p>
+
+<p class="answer">&nbsp;</p>
+
+  
+
+  <h3><a name="php"></a>PHP가 설치되었는지, 설치되었다면 어떤 버전인지 알 수 있을까요?</h3>
+
+  <p class="answer">여러분의 웹사이트에 아래 문장을 포함하는 새로운 이름의 info.php를 만들어 넣은 후, 이를 브라우저에서 불러봅니다.</p>
+
+    
+
+  <p class="answercode">&lt;?PHP phpinfo() ?&gt;</p>
+
+<p class="answer">만일 아무 것도 화면에 표시되지 않는다면, PHP가 설치되지 않은 것입니다. 어디서 내려받고 어떻게 설치하는지에 대한 설치 안내서를 참고하여 주시기 바랍니다.</p>
+
+<p class="answer">&nbsp;</p>
+
+<h3><a name="blankpages"></a>왜 화면에 아무것도 표시되지 않지요?</h3> 
+
+<p class="answer">config.php에 있는 dirroot 변수를 점검해 보시기 바랍니다. 여기에 완전한 절대경로를 사용해야만 합니다. 다음은 기록 예입니다.</p>
+
+<p class="answercode"> $CFG->dirroot = "d:\inetpub\sites\www.yoursite.com\web\moodle";</p>
+
+<p>&nbsp; </p>
+
+<p class="answer">레드햇 리눅스 기반인 경우는 <a href="http://moodle.org/doc/?file=installamp.html">Redhat Linux</a>를 참고하세요.</p>
+
+<p>&nbsp; </p>
+
+<h3><a name="errorgetstring"></a>화면에 다음과 같은 치명적 오류가 발생했대요 : call to undefined function: get_string()</h3>
+
+<p class="answer">만약 다음과 같은 오류가 발생하면 :</p>
+
+<p class="answercode">Parse error: parse error, unexpected T_VARIABLE in c:\program 
+
+  files\easyphp\www\moodle\config.php on line 94 <br />
+
+  Fatal error: Call to undefined function: get_string() in c:\program files\easyphp\www\moodle\mod\resource\lib.php 
+
+  on line 11</p>
+
+<p class="answer">config.php의 94번째 앞에 있는 줄에서 세미콜론이나 따옴표 등의 기호를 누락시켰을 것입니다.</p>
+
+<p class="answer">또 다른 이유는 config.php를 고칠 때 적절한 텍스트편집기를 사용하지 않고, Word와 같은 문서편집기로 불러들여 고쳐서 웹페이지에 써 넣은 경우입니다.</p>
+
+<p>&nbsp;</p>
+
+<h3><a name="headerssent"></a>왜 자꾸 &quot;headers already sent&quot;란 오류메시지가 나오죠?</h3>
+
+<p class="answer">만약 다음과 같은 오류가 발생하면 :</p>
+
+<p class="answercode">Warning: Cannot add header information - headers already 
+
+  sent by (output started at /webs/moodle/config.php:87) in /webs/moodle/lib/moodlelib.php 
+
+  on line 1322 </p>
+
+<p class="answercode"> Warning: Cannot add header information - headers already 
+
+  sent by (output started at /webs/moodle/config.php:87) in /webs/moodle/lib/moodlelib.php 
+
+  on line 1323 </p>
+
+<p class="answercode"> Warning: Cannot add header information - headers already 
+
+  sent by (output started at /webs/moodle/config.php:87) in /webs/moodle/login/index.php 
+
+  on line 54 </p>
+
+<p class="answer">config.php 파일의 마지막 ?> 이후에 빈 줄이나 공백이 들어가 있기 때문일 것입니다. 가끔 텍스트 에디터도(한 예로 윈도우의 메모장) 마지막 줄에 공백을 넣는 경우가 있습니다. 따라서 이러한 공백이나 빈 줄을 완전히 제거하려면 다른 문서 편집기를 찾아 써야만 합니다.</p>
+
+<p class="answer">&nbsp;</p>
+
+<h3><a name="failedopen"></a>Failed opening required '/web/moodle/lib/setup.php'란 메시지가 계속 뜹니다.</h3>
+
+<p class="answer">여러분의 config.php 파일 안에 쓰는 dirroot의 경로는, 반드시 <strong>서버 하드의 절대 경로</strong>를 적어주어야 합니다.</p>
+
+<p class="answer">가끔 사람들은 자신들의 홈 디렉토리의 경로를 적거나, 웹 서버 디렉토리의 상대 경로를 적는 경우가 있습니다.</p>
+
+<p class="answer">&nbsp;</p>
+
+<h3><a name="quotes" id="quotes"></a>홑따옴표(') 혹은 겹따옴표(&quot;)가 들어있는 문장을 첨가하면 오류가 발생하거나 슬래쉬가 붙어나옵니다.</h3>
+
+<p class="answer">따옴표 때문에 생기는 문제들은 대개 잘못된 &quot;magic quotes&quot; 설정 때문입니다. 무들은 (대개 기본으로 설정되어 있지만) 다음과 같은 설정이 필요합니다.</p>
+
+<p class="answercode">magic_quotes_gpc = On<br />
+
+  magic_quotes_runtime = Off</p>
+
+<p class="answer">좀 더 자세한 사항을 알고 싶으면 설치문서의 <a href="./?file=install.html#webserver">웹 서버의 설정</a>을 참고하기 바랍니다.</p>
+
+<p class="answer">&nbsp;</p>
+
+<h3><a name="sessiontmp"></a>session_start 에 대한 에러메시지가 계속 뜹니다</h3>
+
+<p class="answer">만약 다음과 같은 에러메시지를 보게된다면, </p>
+
+<p class="answercode">Warning: session_start() [function.session-start]: open(/tmp\sess_d40f380d37d431fc1516e9a895ad9ce0, O_RDWR) failed: No such file or directory (2) in G:\web\moodle\lib\setup.php on line 123</p>
+
+<p class="answercode">Warning: session_start() [function.session-start]: open(/tmp\sess_d40f380d37d431fc1516e9a895ad9ce0, O_RDWR) failed: No such file or directory (2) in G:\web\moodle\lib\setup.php on line 123</p>
+
+<p class="answercode">Warning: session_start() [function.session-start]: Cannot send session cache limiter - headers already sent (output started at G:\web\moodle\lib\setup.php:1) in G:\web\moodle\lib\setup.php on line 123</p>
+
+<p class="answer">... 이러한 것들은 PHP가 여러분의 하드디스크 속(소위 /tmp라 부르는)에 있는 "session" 파일을 제대로 저장하지 못하기 때문에 생깁니다. 대개 여러분의 컴퓨터에 /tmp 디렉토리가 없기 때문에 일어납니다. 또 보통은 Windows 운영체제에 무들을 설치할 경우에 많이 격는 일입니다.
+<p class="answer">해결 방법은 PHP 설정을 실제 경로를 가리키도록 조정하면 됩니다. 이는 여러분의 php.ini 파일의 내용을 다음과 같이 고치면 됩니다.</p>
+
+<p class="answercode">session.save_path = C:\temp</p>
+
+<p class="answer">아니면, 여러분의 메인 무들디렉토리에 있는 .htaccess 파일을 다음과 같이 고쳐도 됩니다.</p>
+
+<p class="answercode">php_value session.save_path "/home/moodle/sessions"</p>
+
+<p class="answercode">&nbsp;</p>
+
+<h3><a name="fixdirroot"></a>관리자 페이지로 가기만 하면, dirroot를 빈칸으로 만들라고 합니다!</h3>
+
+<p class="answer">혹시 무들 1.0.9판에서는 다음과 같은 에러메시지를 볼 수 있을 겁니다.</p>
+
+<table class="generalbox" cellspacing="0" cellpadding="5" align="center" border="0">
+
+<tbody>
+
+<tr>
+
+<td bgcolor=#ffbbbb>Please fix your settings in config.php: 
+
+<p>You have: 
+
+<p>$CFG-&gt;dirroot = "/home/users/fred/public_html/moodle"; 
+
+<p>but it should be: 
+
+<p>$CFG-&gt;dirroot = "";</p></td></tr></tbody></table>
+
+<p class="answer">그리고는 서버에 따라 약간의 버그를 맞게 됩니다. 이것은 실제 여러분의 경로에 문제가 있는 것이 아니라 오류점검 코드의 문제 때문에 생기는 것입니다. 이를 바로잡기 위해서는 admin/index.php 속에 있는 66번째 줄을 고쳐주면 됩니다.</p>
+
+<p class="answercode">if ($dirroot != $CFG->dirroot) {</p>
+
+<p class="answer">위처럼 나와 있는 것을 다음과 같이 고쳐줍니다.</p>
+
+<p class="answercode">if (!empty($dirroot) and $dirroot != $CFG->dirroot) {</p>
+
+<p class="answercode">&nbsp;</p>
+
+<h3><a name="loginsetting"></a>로그인 했는데 화면도 안 바뀌고.. 벌써 로그인 됐다고 하며, 맘대로 돌아다닐 수 있네요.</h3>
+
+<p class="answer">congig.php 파일 안 $CFG->wwwroot 의 설정을 실제 여러분이 접속하는 URL로 정확히 써 넣었는지를 확인합니다.</p>
+
+<p class="answer">&nbsp;</p>
+
+<h3><a name="resource1"></a>자원(resource)을 첨가하려고 할 때 에러메시지가 뜹니다.</h3>
+
+<p class="answer">웹 서버로 아파치를 사용한다고 한다면, 이는 분명 config.php 안의 $CFG->wwwroot 설정이 실제 여러분이 접속하는 URL과 다르게 설정되어 있을 것입니다. 아니면 관리자 설정에서 "<b>secureforms</b>" 항목을 꺼 보십시오.</p>
+
+<p class="answer">&nbsp;</p>
+
+<h3><a name="noadmin"></a>초기 설정 과정에서 관리자 계정을 생성하라는 요청을 받은 적이 없어요!</h3>
+
+<p class="answer">이것은 무들1.0.9 판까지 이미 알려졌던 버그였지만 1.1판 이후로는 고쳐졌습니다.</p>
+
+<p class="answer">일반 사용자들에게는 별 영향이 없지만, 소위 "user", "admin", 또는 "teacher"라는 이름으로 동일한 사이트에서 다른 프로그램으로부터 획득한 쿠키를 가지고 무들을 설치할 때 생기게 됩니다.</p>
+
+<p class="answer">가장 손쉬운 방법은 여러분의 부라우저에서 무들을 설치하기 전에 모든 쿠키를 삭제하는 것이고, 또 하나는 다른 부라우저를 쓰는 것, 혹은 다음과 같은 내용을 moodle/admin/user.php 파일 상단에 삽입해 주면 됩니다.</p>
+
+<p class="answercode">unset($user);<br />unset($admin);<br />unset($teacher);</p>
+
+<p class="answer">이러한 수정을 실행하고 나서 여러분의 데이터베이스에서 테이블을 삭제하고 다시 설치하는 것이 바람직합니다.</p>
+
+<p class="answer">&nbsp;</p>
+
+<h3><a name="nologin"></a>전혀 로그인 할 수 없습니다. 로그인 화면에서 범추고 말아요.</h3>
+
+<p class="answer">대개 여러분이 집에서 쓰는 컴퓨터(무들서버가 아님)가 브라우저의 정보 참조를 막는 방화벽이 설치되어 있는 경우에 발생하게 됩니다. <a href="http://service1.symantec.com/SUPPORT/nip.nsf/46f26a2d6dafb0a788256bc7005c3fa3/b9b47ad7eddd343b88256c6b006a85a8?OpenDocument&amp;src=bar_sch_nam">Norton firewall products</a>에서 제공하는 안내를 따라 수정해 보십시오.</p>
+
+<p class="answer">서버 관리자 역시 다른 사람들을 위해 무들 설정페이지에서 "<b>secureforms</b>"를 "아니오"로 설정함으로서 문제를 해결할 수 있습니다.</p>
+
+<p class="answer">또 서버의 세션이 바르게 설정되지 못해서 일어날 수도 있습니다. 이 경우는 http://여러분의서버/moodle/lib/session-test.php 를 실행시켜 문제를 확인해 볼 수 있습니다.</p>
+
+<p class="answer">&nbsp;</p>
+
+<h3><a name="backup"></a>어떻게 내 무들 사이트를 백업할 수 있지요?</h3>
+
+<p class="answer">두 가지 중요한 - 데이터베이스와 업로드된 파일 - 백업을 받아 놓아야 할 것이 있습니다. 항상 새로운 무들판으로 갱신해 놓는다면, 무들 프로그램 자체의 백업은 그리 중요하지 않을 수도 있습니다.</p>
+
+<p class="answer">백업을 하는 방법은 많이 있습니다. 다음은 유닉스상에서 간단한 스크립트로 데이터베이스 백업을 받는 방법을 요약한 것입니다.(cron으로 매일 작업하도록 해도 아주 잘 작동합니다)</p>
+
+<p class="answercode">cd /my/backup/directory</p>
+
+<p class="answercode">mv moodle-database.sql.gz moodle-database-old.sql.gz</p>
+
+<p class="answercode">mysqldump -h example.com -u myusername --password=mypassword -C -Q -e -a mydatabasename > moodle-database.sql</p>
+
+<p class="answercode">gzip moodle-database.sql</p>
+
+<p class="answer">백업된 파일들은, 다른 호스트 컴퓨터에 변경된 사항을 주기적으로 복사하도록 rsync 를 사용할 수 있습니다.</p>
+
+<p class="answercode">rsync -auvtz --delete -e ssh mysshusername@example.com:/my/server/directory 
+
+  /my/backup/directory/</p>
+
+<p class="answercode">&nbsp;</p>
+
+<h3><a name="locale"></a>왜 내 무들사이트는 날짜와 시간이 제대로 표시되지 않는거죠?</h3>
+
+<p class="answer">언어는 날짜와 시간을 바르게 표시하기 위하여 (<strong>locale</strong>코드 라고 불리는) 고유의 언어 코드를 필요로 합니다. 각 언어팩에는 표준이 되는 코드들을 포함하고 있지마는, 가끔 이것이 윈도우즈 서버상에서 작동하지 않는 경우도 있습니다.</p>
+
+<p class="answer">윈도우즈를 위한 제대로된 locale은 다음의 두 자료에서 찾을 수 있습니다.
+: <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vclib/html/_crt_language_strings.asp" target="_blank">Language 
+  codes</a> 및 <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vclib/html/_crt_country_strings.asp" target="_blank">Country/region 
+  codes</a>.(예: 스페인어는 &quot;esp_esp&quot;)</p>
+
+<p class="answer">이러한 새 로게일 코드는 관리 -&gt; 설정 -&gt; 변수 로 가서 현재 쓰고 있는 언어팩에 덮어쓰면 됩니다.</p>
+
+<p class="answer">&nbsp;</p>
+
+<h3><a name="cron"></a>내 포럼에서 이메일이 발송이 되지 않아요</h3>
+
+<p class="answer">우선 먼저 포럼이나 숙제 등에서 자동적으로 이메일을 발송하게 하려면 <strong>반드시</strong> cron을 적절하게 설정해야 합니다. 이 과정은 인증되지 않은 사용자의 주기적 삭제, 등록하고 출석하지 않는 학생들의 탈퇴 등 자동적으로 행해야 하는 여러 작업을 수행할 때에도 필수적인 사항입니다.</p>
+
+<p class="answer">기본적으로, 주기적으로 http://여러분의사이트/admin/cron.php를 실행시킬 수 있도록 설정해야 합니다. 이 사항은 <a href="./?file=install.html#cron">설치문서의 cron 설정 항목</a>을 참조하기 바랍니다.</p>
+
+<p class="answer">팁: 무들 변수 조절창의 기본설정만으로 실행해 보십시오. smtphost를 빈킨으로 두십시오. 대개의 경우는 문제없이 작동할 것입니다.
+<p class="answer">&nbsp;
+<p class="answer">&nbsp;
+
+<hr />
+
+<p align="center" class="normaltext"><a href='ma&#105&#108t&#111:ma%72%74in@%6d%6fo%64%6c%65.o%72g' title='mar&#116&#105n@&#109oo&#100&#108&#101&#46&#111&#114g'>새 자주묻는 질문을 제안해 주세요</a> (해결책도 함께 보내 주세요!)</p>
+
+<hr />
+
+<p align="right"><strong><em>본 자주묻는 질문을 조정관리해 주시는 John Eyre님께 감사드립니다.</em></strong></p>
+
+<p align="center"><font size="1"><a href="." target="_top">Moodle Documentation</a></font></p>
+
+<p align="center"><font size="1">Version: $Id: faq.html,v 1.6 2003/03/30 13:54:28 
+
+  moodler Exp $</font></p>
+
+</body>
+
+</html>
