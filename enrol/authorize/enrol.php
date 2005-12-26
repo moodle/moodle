@@ -163,6 +163,11 @@ class enrolment_plugin extends enrolment_base
                 return;
         }
 
+        if (!empty($CFG->an_test)) {
+            error("Credit card module cannot be present because of test mode");
+            return;
+        }
+
         $this->prevent_double_paid($course);
 
         $exp_date = ($form->ccexpiremm < 10) ? strval('0'.$form->ccexpiremm) : strval($form->ccexpiremm);
@@ -221,21 +226,40 @@ class enrolment_plugin extends enrolment_base
         $extra->x_description = $course->shortname;
 
         $message = '';
-        $reason = AN_REASON_NONE;
         $an_review = !empty($CFG->an_review);
         $action = $an_review ? AN_ACTION_AUTH_ONLY : AN_ACTION_AUTH_CAPTURE;
-        $success = authorizenet_action($order, $message, $reason, $extra, $action);
+        $success = authorizenet_action($order, $message, $extra, $action);
         if (!$success) {
             $this->email_to_admin($message, $order);
             $this->ccerrormsg = $message;
             return;
         }
 
+        if (intval($order->transid) == 0) { // I know it is test mode. :)
+            error("Credit card module cannot be present because of test mode");
+            return;
+        }
+
         $SESSION->ccpaid = 1; // security check: don't duplicate payment
         if ($an_review) { // review enabled, inform admin and redirect to main page.
             if (update_record("enrol_authorize", $order)) {
-                // notification: new transaction (AUTH_ONLY)
-                // see order details: index.php?order=$order->id
+                $a->url = "$CFG->wwwroot/enrol/authorize/index.php?order=$order->id";
+                $a->orderid = $order->id;
+                $a->transid = $order->transid;
+                $a->amount = "$order->currency $order->amount";
+                $a->expireon = getsettletime($timenow + (30 * 3600 * 24));
+                $a->captureon = getsettletime($timenow + (intval($CFG->an_review_day) * 3600 * 24));
+                $a->course = $course->fullname;
+                $a->user = fullname($USER);
+                $a->acstatus = ($CFG->an_review_day > 0) ? get_string('yes') : get_string('no');
+                $emailmessage = get_string('adminneworder', 'enrol_authorize', $a);
+                $a->course = $course->shortname;
+                $a->orderid = $order->id;
+                $emailsubject = get_string('adminnewordersubject', 'enrol_authorize', $a);
+                $admins = get_admins();
+                foreach ($admins as $admin) {
+                    email_to_user($admin, $USER, $emailsubject, $emailmessage);
+                }
             }
             else {
                 $this->email_to_admin("Error while trying to update data. Please edit manually this record: " .
@@ -404,7 +428,8 @@ class enrolment_plugin extends enrolment_base
             if (!(empty($frm->an_review) || $frm->an_review_day < 1)) {
                 // ++ENABLED++
                 // Cron must be runnig!!! Check last cron...
-                $lastcron = get_field_sql('SELECT max(lastcron) FROM ' . $CFG->prefix . 'modules');
+                $mconfig = get_config('enrol/authorize');
+                $lastcron = intval($mconfig->an_lastcron);
                 if (time() - $lastcron > 3600 * 24) {
                     // Cron must be enabled if you want to use autocapture feature.
                     // Setup cron or disable an_review again...
@@ -480,8 +505,9 @@ class enrolment_plugin extends enrolment_base
             if ($review_day_val < 0) $review_day_val = 0;
             elseif ($review_day_val > 29) $review_day_val = 29;
             if ($review_day_val > 0) {
-                // cron is required.
-                $lastcron = get_field_sql('SELECT max(lastcron) FROM ' . $CFG->prefix . 'modules');
+                // Cron must change an_lastcron. :))
+                $mconfig = get_config('enrol/authorize');
+                $lastcron = intval($mconfig->an_lastcron);
                 if (time() - $lastcron > 3600 * 24) {
                     // No!!! I am not lucky. No changes please...
                     return false;
@@ -525,15 +551,14 @@ class enrolment_plugin extends enrolment_base
     {
         global $CFG, $SESSION, $USER;
 
+        if ($rec = get_record('enrol_authorize', 'userid', $USER->id, 'courseid', $course->id, 'status', AN_STATUS_AUTH, 'id')) {
+            $a->orderid = $rec->id;
+            redirect($CFG->wwwroot, get_string("paymentpending", "enrol_authorize", $a), '20');
+            return;
+        }
         if (isset($SESSION->ccpaid)) {
             unset($SESSION->ccpaid);
             redirect($CFG->wwwroot . '/login/logout.php');
-            return;
-        }
-
-        if ($rec = get_record('enrol_authorize', 'userid',$USER->id, 'courseid',$course->id, 'status',AN_STATUS_AUTH, 'id')) {
-            $a->orderid = $rec->id;
-            redirect($CFG->wwwroot, get_string("paymentpending", "enrol_authorize", $a), '20');
             return;
         }
     }
@@ -560,77 +585,105 @@ class enrolment_plugin extends enrolment_base
         parent::cron();
         require_once("$CFG->dirroot/enrol/authorize/action.php");
 
-        srand((double)microtime() * 10000000);
-        $random100 = rand(0, 100);
         $timenow = time();
         $timenowsettle = getsettletime($timenow);
         $timediff30 = $timenowsettle - (30 * 3600 * 24);
+        // These 2 lines must be HERE and must be EXUCUTED. See process_config.
+        // We use an_lastcron when processing AUTOCAPTURE feature.
+        // Order is important. 1. get_config 2. set_config
+        $mconfig = get_config('enrol/authorize'); // MUST be 1st.
+        set_config('an_lastcron', $timenow, 'enrol/authorize'); // MUST be 2nd.
 
-        if ($random100 < 15) { // delete very old records: status=AN_STATUS_NONE & timecreated=-60day.
-            // no credit card transaction is made in status AN_STATUS_NONE.
+        $random100 = mt_rand(0, 100);
+
+        if ($random100 < 33) {
+            $select = "(status = '" .AN_STATUS_NONE. "') AND (timecreated < '$timediff30')";
+            delete_records_select('enrol_authorize', $select);
+        }
+        elseif ($random100 > 66) {
+            $select = "(status = '" .AN_STATUS_AUTH. "') AND (timecreated < '$timediff30')";
+            execute_sql("UPDATE {$CFG->prefix}enrol_authorize SET status = '" .AN_STATUS_EXPIRE. "' WHERE $select", false);
+        }
+        else {
             $timediff60 = $timenowsettle - (60 * 3600 * 24);
-            $select = "(status = '" .AN_STATUS_NONE. "') AND (timecreated < '$timediff60')";
-            if (count_records_select('enrol_authorize', $select)) {
-                mtrace("Deleting records in authorize table older than 60 days (status=AN_STATUS_NONE).");
-                delete_records_select('enrol_authorize', $select);
-            }
-        }
-        elseif ($random100 > 80) { // EXPIRED: Transactions with auth_only will be expired 30 days later.
-            $select = "(status = '" .AN_STATUS_AUTH. "') AND (settletime = '0') AND (timecreated < '$timediff30')";
-            execute_sql("UPDATE {$CFG->prefix}enrol_authorize SET settletime = '$timenowsettle', status = '" .AN_STATUS_EXPIRE. "' WHERE $select", false);
+            $select = "(status = '" .AN_STATUS_EXPIRE. "') AND (timecreated < '$timediff60')";
+            delete_records_select('enrol_authorize', $select);
         }
 
+        if (!empty($CFG->an_test)) {
+            return; // AUTOCAPTURE doesn't work in test mode.
+        }
         if (empty($CFG->an_review) || empty($CFG->an_review_day) || $CFG->an_review_day < 1) {
-            // AUTOCAPTURE disabled. admin, teacher review it manually
+            return; // AUTOCAPTURE disabled. admin, teacher review it manually
+        }
+
+        // AUTO-CAPTURE: Transaction must be captured within 30 days. Otherwise it will expired.
+        $timediffcnf = $timenowsettle - (intval($CFG->an_review_day) * 3600 * 24);
+        $select = "status = '" .AN_STATUS_AUTH. "' AND timecreated < '$timediffcnf' AND timecreated > '$timediff30'";
+        if (!$orders = get_records('enrol_authorize', $select)) {
             return;
         }
 
-        // AUTO-CAPTURE: it must be captured within 30 days. Otherwise it will expired.
-        $timediffcnf = $timenowsettle - (intval($CFG->an_review_day) * 3600 * 24);
-        $select = "(status = '" . AN_STATUS_AUTH . "') AND (settletime = '0') AND (timecreated < '$timediffcnf') AND (timecreated > '$timediff30')";
-        if ($orders = get_records_select('enrol_authorize', $select)) {
-            $this->log = "AUTHORIZE.NET AUTOCAPTURE CRON: " . userdate($timenow) . "\n";
-            @set_time_limit(0);
-            $faults = '';
-            foreach ($orders as $order) {
-                $message = NULL;
-                $extra = NULL;
-                $reason = AN_REASON_NONE;
-                $success = authorizenet_action($order, $message, $reason, $extra, AN_ACTION_PRIOR_AUTH_CAPTURE);
-                if ($success) {
-                    if (!update_record("enrol_authorize", $order)) {
-                        $this->email_to_admin("Error while trying to update data. Please edit manually this record: " .
-                        "ID=$order->id in enrol_authorize table.", $order);
-                    }
-                    $timestart = $timeend = 0;
-                    if ($course = get_record_sql("SELECT enrolperiod FROM {$CFG->prefix}course WHERE id='$order->courseid'")) {
-                        if ($course->enrolperiod) {
-                            $timestart = $timenow;
-                            $timeend = $timestart + $course->enrolperiod;
-                        }
-                    }
-                    if (enrol_student($order->userid, $order->courseid, $timestart, $timeend, 'authorize')) {
-                        $this->log .= "User($order->userid) has been enrolled to course($order->courseid).\n";
-                    }
-                    else {
-                        $faults .= "Error while trying to enrol ".fullname($USER)." in '$course->fullname' \n";
-                        foreach ($order as $okey => $ovalue) {
-                            $faults .= "   $okey = $ovalue\n";
-                        }
+        // Calculate connection speed for each transaction. Default: 3 secs.
+        $everyconnection = empty($mconfig->an_eachconnsecs) ? 3 : intval($mconfig->an_eachconnsecs);
+        $ordercount = count((array)$orders);
+        $maxsecs = $everyconnection * $ordercount;
+        if ($maxsecs + intval($mconfig->an_lastcron) > $timenow) {
+            return; // autocapture runs every eachconnsecs*count.
+        }
+
+        $faults = '';
+        $elapsed = time();
+        @set_time_limit(0);
+        $this->log = "AUTHORIZE.NET AUTOCAPTURE CRON: " . userdate($timenow) . "\n";
+        foreach ($orders as $order) {
+            $message = '';
+            $extra = NULL;
+            $oldstatus = $order->status;
+            $success = authorizenet_action($order, $message, $extra, AN_ACTION_PRIOR_AUTH_CAPTURE);
+            if ($success) {
+                if (!update_record("enrol_authorize", $order)) {
+                    $this->email_to_admin("Error while trying to update data. Please edit manually this record: " .
+                    "ID=$order->id in enrol_authorize table.", $order);
+                }
+                $timestart = $timeend = 0;
+                if ($course = get_record_sql("SELECT enrolperiod FROM {$CFG->prefix}course WHERE id='$order->courseid'")) {
+                    if ($course->enrolperiod) {
+                        $timestart = $timenow;
+                        $timeend = $timestart + $course->enrolperiod;
                     }
                 }
-                else { // not success
-                    $this->log .= $message . "\n";
+                if (enrol_student($order->userid, $order->courseid, $timestart, $timeend, 'authorize')) {
+                    $this->log .= "User($order->userid) has been enrolled to course($order->courseid).\n";
+                }
+                else {
+                    $faults .= "Error while trying to enrol ".fullname($USER)." in '$course->fullname' \n";
+                    foreach ($order as $okey => $ovalue) {
+                        $faults .= "   $okey = $ovalue\n";
+                    }
                 }
             }
-            $this->log .= "AUTHORIZE.NET CRON FINISHED: " . userdate(time());
-            $adminuser = get_admin();
-            if (!empty($faults)) {
-                email_to_user($adminuser, $adminuser, "AUTHORIZE.NET CRON FAULTS", $faults);
+            else { // not success
+                $this->log .= "Order $order->id: " . $message . "\n";
+                if ($order->status != $oldstatus) { //expired
+                    update_record("enrol_authorize", $order);
+                }
             }
-            if (!empty($CFG->enrol_mailadmins)) {
-                email_to_user($adminuser, $adminuser, "AUTHORIZE.NET CRON LOG", $this->log);
-            }
+        }
+
+        $timenow = time();
+        $elapsed = $timenow - $elapsed;
+        $everyconnection = ceil($elapsed / $ordercount);
+        set_config('an_eachconnsecs', $everyconnection, 'enrol/authorize');
+
+        $this->log .= "AUTHORIZE.NET CRON FINISHED: " . userdate($timenow);
+
+        $adminuser = get_admin();
+        if (!empty($faults)) {
+            email_to_user($adminuser, $adminuser, "AUTHORIZE.NET CRON FAULTS", $faults);
+        }
+        if (!empty($CFG->enrol_mailadmins)) {
+            email_to_user($adminuser, $adminuser, "AUTHORIZE.NET CRON LOG", $this->log);
         }
     }
 }

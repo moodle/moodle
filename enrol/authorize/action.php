@@ -46,9 +46,6 @@ define('AN_ACTION_CREDIT', 0x04);
 define('AN_ACTION_VOID', 0x08);
 
 
-define('AN_REASON_NONE', 0);
-define('AN_REASON_TRAN_NOT_FOUND', 16);
-
 /**
  * Gets settlement date and time
  *
@@ -82,11 +79,11 @@ function settled($order)
     static $timenow;
 
     if (!isset($timenow)) {
-    	$timenow = time();
+        $timenow = time();
     }
 
     return (($order->status == AN_STATUS_AUTHCAPTURE || $order->status == AN_STATUS_CREDIT)
-            && $order->settletime < $timenow && $order->settletime > 0);
+            && $order->settletime > 0 && $order->settletime < $timenow );
 }
 
 /**
@@ -94,14 +91,13 @@ function settled($order)
  *
  * @param object &$order Which transaction data will be send. See enrol_authorize table.
  * @param string &$message Information about error messages.
- * @param int &$reason Reason subcode
  * @param object &$extra Extra transaction data.
  * @param int $action Which action will be performed. See AN_ACTION_*
  * @return bool true, transaction was successful, false otherwise.
  * @author Ethem Evlice <ethem a.t evlice d.o.t com>
  * @uses $CFG
  */
-function authorizenet_action(&$order, &$message, &$reason, &$extra, $action=AN_ACTION_NONE)
+function authorizenet_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE)
 {
     global $CFG;
     static $conststring;
@@ -297,10 +293,11 @@ function authorizenet_action(&$order, &$message, &$reason, &$extra, $action=AN_A
         $response[$rcount] = substr($response[$rcount], 0, -1);
     }
 
-    $reason = intval($response[2]);
-
     if ($response[0] == AN_APPROVED)
     {
+        if ($an_test || intval($response[6]) == 0) {
+            return true; // don't update original transaction in test mode.
+        }
         switch ($action) {
             case AN_ACTION_AUTH_ONLY:
             case AN_ACTION_AUTH_CAPTURE:
