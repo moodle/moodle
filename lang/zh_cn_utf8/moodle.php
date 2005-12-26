@@ -1136,7 +1136,7 @@ $string['usethiscourse'] = '使用这个课程';
 $string['usingexistingcourse'] = '使用现有课程';
 $string['version'] = '版本';
 $string['view'] = '浏览';
-$string['virusfound'] = '管理员请注意! Clam AV发现用户{$a->user}在课程{$a->course}中山川的文件有病毒。以下是clamscan的输出:';
+$string['virusfound'] = '管理员请注意! Clam AV发现用户{$a->user}在课程{$a->course}中上传的文件有病毒。以下是clamscan的输出:';
 $string['virusfoundlater'] = '您于{$a->date}在课程{$a->course}中上传的文件{$a->filename}有病毒。以下是关于该文件的汇总:
 
 $a->action
