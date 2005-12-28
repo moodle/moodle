@@ -330,8 +330,9 @@ $CFG->httpswwwroot = $CFG->wwwroot;
 
     class object {};
 
-    if (empty($CFG->usesid) && !empty($_COOKIE['MoodleSession'.$CFG->sessioncookie])  )
-    {
+    //discard session ID from POST, GET and globals to tighten security,
+    //this session fixation prevention can not be used in cookieless mode
+    if (empty($CFG->usesid)) {
         unset(${'MoodleSession'.$CFG->sessioncookie});
         unset($_GET['MoodleSession'.$CFG->sessioncookie]);
         unset($_POST['MoodleSession'.$CFG->sessioncookie]);
@@ -343,8 +344,7 @@ $CFG->httpswwwroot = $CFG->wwwroot;
     if (!empty($_COOKIE['MoodleSessionTest'.$CFG->sessioncookie]) && $_COOKIE['MoodleSessionTest'.$CFG->sessioncookie] == "deleted") {
         unset($_COOKIE['MoodleSessionTest'.$CFG->sessioncookie]);
     }
-    if (!empty($CFG->usesid) && empty($_COOKIE['MoodleSessionTest'.$CFG->sessioncookie]))
-    {
+    if (!empty($CFG->usesid) && empty($_COOKIE['MoodleSession'.$CFG->sessioncookie])) {
         require_once("$CFG->dirroot/lib/cookieless.php");
         sid_start_ob();
     }
@@ -409,10 +409,10 @@ $CFG->httpswwwroot = $CFG->wwwroot;
 
     theme_setup();  // Sets up theme global variables
 
-/// now do a session test to prevent random user switching
-    if ($SESSION != NULL) {
-        //only do test if MoodleSessionTest cookie is set and usesid is on, or when usesid is off
-        if ((!empty($_COOKIE['MoodleSessionTest'.$CFG->sessioncookie]) && !empty($CFG->usesid))||empty($CFG->usesid) ) {
+/// now do a session test to prevent random user switching - observed on some PHP/Apache combinations,
+/// disable checks when working in cookieless mode
+    if (empty($CFG->usesid) || !empty($_COOKIE['MoodleSession'.$CFG->sessioncookie])) {
+        if ($SESSION != NULL) {
             if (empty($_COOKIE['MoodleSessionTest'.$CFG->sessioncookie])) {
                 report_session_error();
             } else if (isset($SESSION->session_test) && $_COOKIE['MoodleSessionTest'.$CFG->sessioncookie] != $SESSION->session_test) {
