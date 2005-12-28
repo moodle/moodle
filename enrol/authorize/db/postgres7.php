@@ -76,6 +76,13 @@ function authorize_upgrade($oldversion=0) {
         }
     }
 
+    if ($oldversion < 2005122800) { // no need anymore some fields.
+        execute_sql("ALTER TABLE {$CFG->prefix}enrol_authorize DROP ccexp", false);
+        execute_sql("ALTER TABLE {$CFG->prefix}enrol_authorize DROP cvv", false);
+        execute_sql("ALTER TABLE {$CFG->prefix}enrol_authorize DROP avscode", false);
+        execute_sql("ALTER TABLE {$CFG->prefix}enrol_authorize DROP authcode", false);
+    }
+
     return $result;
 }
 

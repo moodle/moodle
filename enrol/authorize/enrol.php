@@ -185,12 +185,9 @@ class enrolment_plugin extends enrolment_base
         $timenow = time();
         $order = new stdClass();
         $order->cclastfour = substr($form->cc, -4);
-        $order->ccexp = $exp_date;
-        $order->cvv = $form->cvv;
         $order->ccname = $form->ccfirstname . " " . $form->cclastname;
         $order->courseid = $course->id;
         $order->userid = $USER->id;
-        $order->avscode = 'P';
         $order->status = AN_STATUS_NONE; // it will be changed...
         $order->settletime = 0; // cron changes this.
         $order->timecreated = $timenow;
@@ -619,8 +616,13 @@ class enrolment_plugin extends enrolment_base
 
         // AUTO-CAPTURE: Transaction must be captured within 30 days. Otherwise it will expired.
         $timediffcnf = $timenowsettle - (intval($CFG->an_review_day) * 3600 * 24);
-        $select = "status = '" .AN_STATUS_AUTH. "' AND timecreated < '$timediffcnf' AND timecreated > '$timediff30'";
-        if (!$orders = get_records('enrol_authorize', $select)) {
+        $sql = "SELECT E.*, C.fullname, C.enrolperiod " .
+               "FROM {$CFG->prefix}enrol_authorize E " .
+               "INNER JOIN {$CFG->prefix}course C ON C.id = E.courseid " .
+               "WHERE (status = '" .AN_STATUS_AUTH. "') " .
+               "  AND (E.timecreated < '$timediffcnf') AND (E.timecreated > '$timediff30')";
+
+        if (!$orders = get_records_sql($sql)) {
             return;
         }
 
@@ -647,11 +649,9 @@ class enrolment_plugin extends enrolment_base
                     "ID=$order->id in enrol_authorize table.", $order);
                 }
                 $timestart = $timeend = 0;
-                if ($course = get_record_sql("SELECT enrolperiod FROM {$CFG->prefix}course WHERE id='$order->courseid'")) {
-                    if ($course->enrolperiod) {
-                        $timestart = $timenow;
-                        $timeend = $timestart + $course->enrolperiod;
-                    }
+                if ($order->enrolperiod) {
+                    $timestart = $timenow;
+                    $timeend = $order->settletime + $order->enrolperiod;
                 }
                 if (enrol_student($order->userid, $order->courseid, $timestart, $timeend, 'authorize')) {
                     $this->log .= "User($order->userid) has been enrolled to course($order->courseid).\n";

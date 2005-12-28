@@ -28,7 +28,7 @@ $strs = get_strings(array('user', 'status', 'action', 'delete', 'time',
 $authstrs = get_strings(array('paymentmanagement', 'orderid', 'void', 'capture', 'refund',
                       'authorizedpendingcapture','capturedpendingsettle', 'capturedsettled',
                       'settled', 'refunded', 'cancelled', 'expired', 'tested',
-                      'transid', 'settlementdate', 'notsettled', 'returns', 'noreturns', 'amount',
+                      'transid', 'settlementdate', 'notsettled', 'amount',
                       'howmuch', 'captureyes', 'unenrolstudent'), 'enrol_authorize');
 
 print_header("$site->shortname: $authstr->paymentmanagement", "$site->fullname", "<a href=\"index.php\">$authstr->paymentmanagement</a>", "");
@@ -97,7 +97,7 @@ function authorize_orders()
         foreach ($records as $record) {
             $actionstatus = get_order_status_desc($record);
             $actions = '&nbsp;';
-               foreach ($actionstatus->actions as $value) {
+            foreach ($actionstatus->actions as $value) {
                 $actions .= "&nbsp;&nbsp;<a href='index.php?$value=yes&amp;order=$record->id'>{$authstrs->$value}</a> ";
             }
             $table->add_data(array(
@@ -130,7 +130,7 @@ function authorize_order_details($orderno) {
     $table->size = array('30%', '70%');
     $table->align = array('right', 'left');
 
-    $sql = "SELECT E.*, C.shortname " .
+    $sql = "SELECT E.*, C.shortname, C.enrolperiod " .
     "FROM {$CFG->prefix}enrol_authorize E " .
     "INNER JOIN {$CFG->prefix}course C ON C.id = E.courseid " .
     "WHERE E.id = '$orderno'";
@@ -176,15 +176,24 @@ function authorize_order_details($orderno) {
             else {
                 if (empty($CFG->an_test)) {
                     $timestart = $timeend = 0;
-                    if ($course = get_record_sql("SELECT enrolperiod FROM {$CFG->prefix}course WHERE id='$order->courseid'")) {
-                        if ($course->enrolperiod) {
-                            $timestart = $order->settletime;
-                            $timeend = $timestart + $course->enrolperiod;
-                        }
+                    if ($order->enrolperiod) {
+                        $timestart = time(); // early start
+                        $timeend = $order->settletime + $order->enrolperiod; // lately end
                     }
-                    enrol_student($order->userid, $order->courseid, $timestart, $timeend, 'authorize');
-                    // To do: inform user. You will access to course on date $order->settletime
-                    redirect("index.php?order=$order->id");
+                    if (enrol_student($order->userid, $order->courseid, $timestart, $timeend, 'authorize')) {
+                        $user = get_record('user', 'id', $order->userid);
+                        $teacher = get_teacher($order->courseid);
+                        $a->coursename = $order->shortname;
+                        $a->profileurl = "$CFG->wwwroot/user/view.php?id=$user->id";
+                        email_to_user($user, $teacher,
+                                      get_string("enrolmentnew", '', $order->shortname),
+                                      get_string('welcometocoursetext', '', $a));
+                        redirect("index.php?order=$order->id");
+                    }
+                    else {
+                         $table->data[] = array("<b><font color=red>$strs->error:</font></b>",
+                         "Error while trying to enrol ".fullname($user)." in '$order->shortname'");
+                    }
                 }
                 else {
                     $table->data[] = array(get_string('testmode', 'enrol_authorize'), get_string('capturetestwarn', 'enrol_authorize'));
@@ -348,7 +357,7 @@ function authorize_order_details($orderno) {
         $table->data[] = array("<b>$strs->action</b>", $actions);
         print_table($table);
         if ($settled) { // show refunds.
-            echo "<h4>$authstrs->returns</h4>\n";
+            echo "<h4>" . get_string('returns', 'enrol_authorize') . "</h4>\n";
             $table2->size = array('15%', '15%', '20%', '35%', '15%');
             $table2->align = array('right', 'right', 'right', 'left', 'right');
             $table2->head = array($authstrs->transid, $authstrs->amount, $strs->status, $authstrs->settlementdate, $strs->action);
@@ -369,7 +378,7 @@ function authorize_order_details($orderno) {
                 }
             }
             else {
-                $table2->data[] = array($authstrs->noreturns);
+                $table2->data[] = array(get_string('noreturns', 'enrol_authorize'));
             }
             print_table($table2);
         }

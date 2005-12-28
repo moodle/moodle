@@ -304,8 +304,6 @@ function authorizenet_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE
             case AN_ACTION_PRIOR_AUTH_CAPTURE:
             {
                 $order->transid = strval($response[6]); // TransactionID
-                $order->avscode = strval($response[5]); // Address Verification System code
-                $order->authcode = strval($response[4]); // Authorization or Approval code
                 if ($action == AN_ACTION_AUTH_ONLY) {
                     $order->status = AN_STATUS_AUTH;
                     // dont't update settletime
