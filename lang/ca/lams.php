@@ -2,12 +2,13 @@
       // lams.php - created with Moodle 1.5.3+ (2005060230)
 
 
-$string['activityname'] = 'Activitat LAMS';
 $string['createSequence'] = 'Crea nova seqüència';
 $string['editSequence'] = 'Edita la seqüència seleccionada';
 $string['error'] = 'S\'ha produït un error desconegut';
 $string['introduction'] = 'Introducció';
 $string['lams'] = '-- LAMS - Learning Activity Management System --';
+$string['lamsoutline'] = 'Esquema LAMS';
+$string['lesson'] = 'sessió d\'aprenentatge';
 $string['modulename'] = 'LAMS';
 $string['modulenameplural'] = 'LAMS';
 $string['notsetup'] = 'NOT_SET_UP';
@@ -20,7 +21,6 @@ $string['sequence'] = 'Seleccioneu una seqüència';
 $string['serverid'] = 'Introduïu l\'ID del servidor LAMS.';
 $string['serverkey'] = 'Introduïu la clau del servidor LAMS.';
 $string['serverurl'] = 'Introduïu l\'URL base que s\'utilitzarà per accedir al servidor LAMS, p. ex. http://localhost:8080/lams';
-$string['update'] = 'Actualitza aquesta activitat';
 $string['useSequence'] = 'Utilitza la seqüència seleccionada';
 $string['visibletostudents'] = 'Mostra activitat als estudiants';
 $string['wikistartederror'] = 'El wiki ja té entrades. No es pot canviar.';

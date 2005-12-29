@@ -16,6 +16,7 @@ $string['assignmenttype'] = 'Tipus de tasca';
 $string['availabledate'] = 'Disponible des de';
 $string['comment'] = 'Comentari';
 $string['commentinline'] = 'Comentari inserit';
+$string['configitemstocount'] = 'Naturalesa dels elements que cal comptar en les trameses de les tasques en línia.';
 $string['configmaxbytes'] = 'Mida màxima per defecte de la tasca per a totes les tasques del lloc (subjecta als límits del curs i a altres paràmetres locals)';
 $string['description'] = 'Descripció';
 $string['duedate'] = 'Data de venciment';
