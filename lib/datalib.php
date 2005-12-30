@@ -2227,7 +2227,7 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC') {
             $course[$student->course] = $student->course;
         }
     }
-    if (count($courses) > 0) {
+    if (count($course) > 0) {
         $courses = get_records_list('course', 'id', implode(',', $course));
         foreach ($courses as $k => $c) {
             if (empty($USER->admin) && (!$c->visible || !course_parent_visible($c))) {
