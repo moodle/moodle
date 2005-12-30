@@ -89,19 +89,22 @@ define('DAYMINS', 1440);
  */
 define('HOURMINS', 60);
 
-/// Parameter constants - if set then the parameter is cleaned of scripts etc. ///
+/// Parameter constants - every call to optional_param(), required_param()  ///
+/// or clean_param() should have a specified type of parameter.  //////////////
+
 /**
- * PARAM_RAW specifies a parameter that should contain:
+ * PARAM_RAW specifies a parameter that is not cleaned/processed in any way.
  */
 define('PARAM_RAW',      0x0000);
 
 /**
- * PARAM_CLEAN specifies a parameter that should contain:
+ * PARAM_CLEAN - obsoleted, please try to use more specific type of parameter.
+ * It was one of the first types, that is why it is abused so much ;-)
  */
 define('PARAM_CLEAN',    0x0001);
 
 /**
- * PARAM_INT  specifies a parameter that should contain an integer value only.
+ * PARAM_INT - integers only, use when expecting only numbers.
  */
 define('PARAM_INT',      0x0002);
 
@@ -111,77 +114,85 @@ define('PARAM_INT',      0x0002);
 define('PARAM_INTEGER',  0x0002);
 
 /**
- * PARAM_ALPHA  specifies a parameter that should contain a string type (?).
+ * PARAM_ALPHA - contains only english letters.
  */
 define('PARAM_ALPHA',    0x0004);
 
 /**
- * PARAM_ACTION - an alias for PARAM_ALPHA
+ * PARAM_ACTION - an alias for PARAM_ALPHA, use for various actions in formas and urls
+ * @TODO: should we alias it to PARAM_ALPHANUM ?
  */
 define('PARAM_ACTION',   0x0004);
 
 /**
- * PARAM_FORMAT - an alias for PARAM_ALPHA
+ * PARAM_FORMAT - an alias for PARAM_ALPHA, use for names of plugins, formats, etc.
+ * @TODO: should we alias it to PARAM_ALPHANUM ?
  */
 define('PARAM_FORMAT',   0x0004);
 
 /**
- * PARAM_NOTAGS specifies a parameter that should contain:
+ * PARAM_NOTAGS - all html tags are stripped from the text. Do not abuse this type.
  */
 define('PARAM_NOTAGS',   0x0008);
 
 /**
- * PARAM_FILE specifies a parameter that should contain:
+ * PARAM_FILE - safe file name, all dangerous chars are stripped, protects against XSS, SQL injections and directory traversals
  */
 define('PARAM_FILE',     0x0010);
 
 /**
- * PARAM_PATH specifies a parameter that should contain:
+ * PARAM_PATH - safe relative path name, all dangerous chars are stripped, protects against XSS, SQL injections and directory traversals
+ * note: the leading slash is not removed, window drive letter is not allowed
  */
 define('PARAM_PATH',     0x0020);
 
 /**
- * PARAM_HOST specifies a parameter that should contain a fully qualified domain name (FQDN) or an IPv4 dotted quad (IP address)
+ * PARAM_HOST - expected fully qualified domain name (FQDN) or an IPv4 dotted quad (IP address)
  */
 define('PARAM_HOST',     0x0040);
 
 /**
- * PARAM_URL specifies a parameter that should contain a string in the form of a properly formatted URL.
+ * PARAM_URL - expected properly formatted URL.
  */
 define('PARAM_URL',      0x0080);
 
 /**
- * PARAM_LOCALURL specifies a parameter that should contain a string in the form of a properly formatted URL as well as one that refers to the local server itself. (NOT orthogonal to the others! Implies PARAM_URL!)
+ * PARAM_LOCALURL - expected properly formatted URL as well as one that refers to the local server itself. (NOT orthogonal to the others! Implies PARAM_URL!)
  */
 define('PARAM_LOCALURL', 0x0180);
 
 /**
- * PARAM_CLEANFILE specifies a parameter that should contain:
+ * PARAM_CLEANFILE - safe file name, all dangerous and regional chars are removed,
+ * use when you want to store a new file submitted by students
+ * @TODO: fix clean_filename() to handle UTF8 properly
  */
 define('PARAM_CLEANFILE',0x0200);
 
 /**
- * PARAM_ALPHANUM specifies a parameter that should contain either numbers or letters only.
+ * PARAM_ALPHANUM - expected numbers and letters only.
  */
 define('PARAM_ALPHANUM', 0x0400);
 
 /**
- * PARAM_BOOL specifies a parameter that should contain a 0 or 1 boolean value only. It will convert to value 1 or 0 using empty()
+ * PARAM_BOOL - converts input into 0 or 1, use for switches in forms and urls.
  */
 define('PARAM_BOOL',     0x0800);
 
 /**
- * PARAM_CLEANHTML specifies a parameter that should contain actual HTML code that you want cleaned and slashes removed
+ * PARAM_CLEANHTML - cleans submitted HTML code and removes slashes
+ * note: do not forget to addslashes() before storing into database!
  */
 define('PARAM_CLEANHTML',0x1000);
 
 /**
- * PARAM_ALPHAEXT specifies a parameter that should contain the same contents as PARAM_ALPHA plus the chars in quotes: "/-_" allowed
+ * PARAM_ALPHAEXT the same contents as PARAM_ALPHA plus the chars in quotes: "/-_" allowed,
+ * suitable for include() and require()
+ * @TODO: should we rename this function to PARAM_SAFEDIRS??
  */
 define('PARAM_ALPHAEXT', 0x2000);
 
 /**
- * PARAM_SAFEDIR specifies a parameter that should contain a safe directory name, suitable for include() and require()
+ * PARAM_SAFEDIR - safe directory name, suitable for include() and require()
  */
 define('PARAM_SAFEDIR',  0x4000);
 
