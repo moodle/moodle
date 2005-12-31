@@ -65,41 +65,99 @@ class quiz_format_hotpot extends quiz_default_format {
 
 function process_jcloze(&$xml, &$questions) {
 
+	static $moodle_14;
+	
+	if (!isset($moodle_14)) {
+		global $CFG, $db;
+		$moodle_14 = false;
+		if ($columns = $db->MetaColumns("{$CFG->prefix}quiz_multianswers")) {
+			foreach ($columns as $column) {
+				if ($column->name=='answers' || $column->name=='positionkey' || $column->name=='answertype' || $column->name=='norm') {
+					$moodle_14 = true;
+				}
+			}
+		}
+	}
+
     $x = 0;
     while ($exercise = &$xml['#']['data'][0]['#']['gap-fill'][$x]['#']) {
         // there is usually only one exercise in a file
 
-        $question = NULL;
+        $question = new stdClass();
 
         $question->qtype = MULTIANSWER;
         $question->defaultgrade = 1;
         $question->usecase = 0; // Ignore case
         $question->image = "";  // No images with this format
-        $question->name = get_hotpotatoes_title($xml, $x);
 
+        $question->name = get_hotpotatoes_title($xml, $x);
         $question->questiontext = get_hotpotatoes_reading($xml);
 
-        $q = 0;
-        $question->answers = array();
-        while ($question_record = &$exercise['question-record'][$q]['#']) {
+		if ($moodle_14) {
+			// Moodle 1.4 (or earlier)
+			$question->answers = array();
+		} else {
+			// Moodle 1.5 (or greater)
+			global $course; // set in mod/quiz/import.php
+			$question->course = $course->id;
+			$question->options = new stdClass();
+			$question->options->questions = array(); // one for each gap
+		}
 
+        $q = 0;
+        while ($question_record = &$exercise['question-record'][$q]['#']) {
+			$positionkey = $q+1;
             if (isset($exercise[$q])) {
                 $question->questiontext .= addslashes($exercise[$q]);
             }
-            $question->questiontext .= '{#'.($q+1).'}';
-
-            $question->answers[$q]->positionkey = ($q+1);
-            $question->answers[$q]->answertype = SHORTANSWER;
-            $question->answers[$q]->norm = 1;
+            $question->questiontext .= '{#'.$positionkey.'}';
+			
+			if ($moodle_14) {
+				// Moodle 1.4 (or earlier)
+				$question->answers[$q]->positionkey = $positionkey;
+				$question->answers[$q]->answertype = SHORTANSWER;
+				$question->answers[$q]->norm = 1;
+				$question->answers[$q]->alternatives = array();
+			} else {
+				// Moodle 1.5 (or greater)
+				$wrapped = new stdClass();
+				$wrapped->qtype = SHORTANSWER;
+				$wrapped->usecase = 0;
+				$wrapped->defaultgrade = 1;
+				$wrapped->questiontextformat = 0;
+				$wrapped->answer = array();
+				$wrapped->fraction = array();
+				$wrapped->feedback = array();
+				$answers = array();
+			}
 
             $a = 0;
-            $question->answers[$q]->alternatives = array();
             while ($answer = &$question_record['answer'][$a]['#']) {
-                $question->answers[$q]->alternatives[$a]->answer = addslashes($answer['text'][0]['#']);
-                $question->answers[$q]->alternatives[$a]->fraction = $answer['correct'][0]['#'] ? 1 : 0;
-                $question->answers[$q]->alternatives[$a]->feedback = addslashes($answer['feedback'][0]['#']);
+				$text = addslashes($answer['text'][0]['#']);
+				$fraction = empty($answer['correct'][0]['#']) ? 0 : 1;
+				$feedback = addslashes($answer['feedback'][0]['#']);
+				if ($moodle_14) {
+					// Moodle 1.4 (or earlier)
+					$question->answers[$q]->alternatives[$a] = new stdClass();
+					$question->answers[$q]->alternatives[$a]->answer = $text;
+					$question->answers[$q]->alternatives[$a]->fraction = $fraction;
+					$question->answers[$q]->alternatives[$a]->feedback = $feedback;
+				} else {
+					// Moodle 1.5 (or greater)
+					$wrapped->answer[] = $text;
+					$wrapped->fraction[] = $fraction;
+					$wrapped->feedback[] = $feedback;
+					$answers[] = (empty($fraction) ? '' : '=').$text.(empty($feedback) ? '' : ('#'.$feedback));
+				}
                 $a++;
             }
+			if ($moodle_14) {
+				// Moodle 1.4 (or earlier)
+			} else {
+				// Moodle 1.5 (or greater)
+				$wrapped->questiontext = '{'.$positionkey.':SHORTANSWER:'.implode('~', $answers).'}';
+				$question->options->questions[] = $wrapped;
+			}
             $q++;
         }
         if (isset($exercise[$q])) {
@@ -119,7 +177,7 @@ function process_jcross(&$xml, &$questions) {
         $answer = $item['word'][0]['#'];
 
         if ($text && $answer) {
-            $question = NULL;
+            $question = new stdClass();
             $question->qtype = SHORTANSWER;
             $question->usecase = 0; // Ignore case
             $question->image = "";  // No images with this format
@@ -142,7 +200,7 @@ function process_jmatch(&$xml, &$questions) {
     while ($exercise = &$xml['#']['data'][0]['#']['matching-exercise'][$x]['#']) {
         // there is usually only one exercise in a file
 
-        $question = NULL;
+        $question = new stdClass();
 
         $question->qtype = MATCH;
         $question->defaultgrade = 1;
@@ -170,7 +228,7 @@ function process_jmix(&$xml, &$questions) {
     while ($exercise = &$xml['#']['data'][0]['#']['jumbled-order-exercise'][$x]['#']) {
         // there is usually only one exercise in a file
 
-        $question = NULL;
+        $question = new stdClass();
         $question->qtype = SHORTANSWER;
         $question->usecase = 0; // Ignore case
         $question->image = "";  // No images with this format
@@ -214,8 +272,9 @@ function process_jquiz(&$xml, &$questions) {
         $q = 0;
         while ($question_record = &$exercise['question-record'][$q]['#']) {
 
-            $question = NULL;
+            $question= new stdClass();
             $question->defaultgrade = 1;
+            $question->usecase = 0; // Ignore case
             $question->image = "";  // No images with this format
             $question->name = get_hotpotatoes_title($xml, $q, true);
 
