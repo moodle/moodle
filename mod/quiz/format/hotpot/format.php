@@ -64,8 +64,10 @@ class quiz_format_hotpot extends quiz_default_format {
 } // end class
 
 function process_jcloze(&$xml, &$questions) {
+    // define default grade (per cloze gap)
+    $defaultgrade = 1;
 
-    // sniff early Moodles
+    // detect old Moodles (1.4 and earlier)
     global $CFG, $db;
     $moodle_14 = false;
     if ($columns = $db->MetaColumns("{$CFG->prefix}quiz_multianswers")) {
@@ -83,7 +85,6 @@ function process_jcloze(&$xml, &$questions) {
         $question = new stdClass();
 
         $question->qtype = MULTIANSWER;
-        $question->defaultgrade = 1;
         $question->usecase = 0; // Ignore case
         $question->image = "";  // No images with this format
 
@@ -112,13 +113,13 @@ function process_jcloze(&$xml, &$questions) {
             if ($moodle_14) {
                 $question->answers[$q]->positionkey = $positionkey;
                 $question->answers[$q]->answertype = SHORTANSWER;
-                $question->answers[$q]->norm = 1;
+                $question->answers[$q]->norm = $defaultgrade;
                 $question->answers[$q]->alternatives = array();
             } else {
                 $wrapped = new stdClass();
                 $wrapped->qtype = SHORTANSWER;
                 $wrapped->usecase = 0;
-                $wrapped->defaultgrade = 1;
+                $wrapped->defaultgrade = $defaultgrade;
                 $wrapped->questiontextformat = 0;
                 $wrapped->answer = array();
                 $wrapped->fraction = array();
@@ -150,14 +151,17 @@ function process_jcloze(&$xml, &$questions) {
             if ($moodle_14) {
                 // do nothing
             } else {
-                $wrapped->questiontext = '{:SHORTANSWER:'.implode('~', $answers).'}';
+                $wrapped->questiontext = '{'.$defaultgrade.':SHORTANSWER:'.implode('~', $answers).'}';
                 $question->options->questions[] = $wrapped;
             }
             $q++;
         }
+        // add trailing text, if any
         if (isset($exercise[$q])) {
             $question->questiontext .= addslashes($exercise[$q]);
         }
+        // define total grade for this exercise
+        $question->defaultgrade = $q * $defaultgrade;
 
         $questions[] = $question;
         $x++;
