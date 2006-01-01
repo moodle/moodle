@@ -77,7 +77,7 @@ $string['allparticipants'] = 'Tất cả những người tham gia';
 $string['allteachers'] = 'Tất cả giáo viên';
 $string['alphabet'] = 'A,Ă,Â,B,C,D,Đ,E,Ê,F,G,H,I,J,K,L,M,N,O,Ô,Ơ,P,Q,R,S,T,U,Ư,V,W,X,Y,Z';
 $string['alphanumerical'] = 'Chỉ chứa các ký tự của bảng chữ cái hoặc các số ';
-$string['alreadyconfirmed'] = 'Việc đăng ký vừa được xác nhận';
+$string['alreadyconfirmed'] = 'Đăng ký vừa được xác nhận';
 $string['always'] = 'Luôn luôn';
 $string['answer'] = 'Trả lời';
 $string['areyousuretorestorethis'] = 'Bạn có muốn tiếp tục ? ';
@@ -94,14 +94,14 @@ $string['autosubscribe'] = 'Tham gia tự động diễn đàn';
 $string['autosubscribeno'] = 'Không:không tự động cho phép tôi tham gia vào diễn đàn';
 $string['autosubscribeyes'] = 'Có: khi tôi gửi thông báo, cho phép tôi tham gia diễn đàn đó';
 $string['availability'] = 'Có hiệu lực';
-$string['availablecourses'] = 'Các cua học có sẵn';
+$string['availablecourses'] = 'Các khóa học hiện có';
 $string['backup'] = 'Sao lưu';
 $string['backupcoursefileshelp'] = 'Nếu có thể thì các tài liệu cua học sẽ bao gồm cẳ những bản sao dự phòng tự động';
 $string['backupdate'] = 'Ngày sao lưu';
 $string['backupdetails'] = 'Chi tiết sao lưu';
 $string['backupfailed'] = 'Một số cua học của bạn không được lưu!!';
 $string['backupfilename'] = 'sao lưu';
-$string['backupfinished'] = 'Việc sao lưu đã được hoàn thành một cách thành công';
+$string['backupfinished'] = 'Sao lưu đã được hoàn thành một cách thành công';
 $string['backupincludemoduleshelp'] = 'Chọn khi nào bạn muốn bao gồm cả các môđun cua học, có hoặc không có dữ liệu người dùng, trong các bản sao dự phòng một cách tự động';
 $string['backupkeephelp'] = 'Bao nhiêu bản sao lưu dự phòng gần đây cho mỗi cua học bạn muốn giũ lại? (Các bản sao lưu cũ hơn sẽ bị xoá một cách tự động )';
 $string['backuplogdetailed'] = 'Bản ghi thể hiện một cách chi tiết';
@@ -321,9 +321,9 @@ thì bạn có thể cut và paste địa chỉ đó vào trong dòng
 Nếu bạn cần sự trợ giúp, vui lòng liên lạc với quản trị viên của site,
 $a->admin';
 $string['emailconfirmationsubject'] = '$a: xác nhận tài khoản';
-$string['emailconfirmsent'] = '   <p> Một Email nên được gửi tới địa chỉ của bạn ở <b>$a</b></p>
-   <p>Nó chứa các lời hướng dẫn dễ sử dụng để hoàn thành việc đăng ký của bạn.</p>
-   <p>Nếu bạn gặp khó khăn, liên lạc lại với quản trị viên của site.</p>';
+$string['emailconfirmsent'] = '   <p> Một Email được gửi tới địa chỉ của bạn tại <b>$a</b></p>
+   <p>Nó chứa các hướng dẫn để hoàn thành việc đăng ký của bạn.</p>
+   <p>Nếu bạn gặp khó khăn, hãy liên lạc  với quản trị của site.</p>';
 $string['emaildigest'] = 'Kiểu phân loại Email ';
 $string['emaildigestcomplete'] = 'Đầy đủ (email hằng ngày với các thông báo gửi lên đầy đủ)';
 $string['emaildigestoff'] = 'Không phân loại (chỉ có một email cho việc gửi thông báo lên diễn đàn)';
@@ -405,7 +405,7 @@ $string['failedloginattemptsall'] = '$a->attempts đăng nhập bị thất bạ
 $string['feedback'] = 'Thông tin phản hồi';
 $string['file'] = 'File';
 $string['filemissing'] = ' thiếu $a ';
-$string['files'] = 'các tài liệu';
+$string['files'] = 'Các tài liệu';
 $string['filesfolders'] = 'Files/folders';
 $string['filloutallfields'] = 'Vui lòng điền đầy các trường trong biểu mẫu này';
 $string['findmorecourses'] = 'Tìm nhiều cua học hơn...';
@@ -420,6 +420,7 @@ $string['forcelanguage'] = 'Ngôn ngữ bắt buộc';
 $string['forceno'] = 'Không bắt buộc';
 $string['forcepasswordchange'] = 'Thay đổi mật khẩu bắt buộc';
 $string['forcepasswordchangehelp'] = 'Từ dấu nhắc người dùng để thay đổi nó dựa vào lần đăng nhập tiếp theo của họ';
+$string['forgotaccount'] = 'Quên mật khẩu?';
 $string['forgotten'] = 'Ban quên tên đăng nhập hoặc mật khẩu ?';
 $string['format'] = 'Định dạng';
 $string['formathtml'] = 'Định dạng HTML';
@@ -522,6 +523,7 @@ $string['htmleditordisabledbrowser'] = 'Trình soạn thảo HTML không dùng �
 $string['htmlformat'] = 'Định dạng HTML';
 $string['icqnumber'] = ' Số ICQ ';
 $string['idnumber'] = ' Số ID ';
+$string['importdata'] = 'Nhập dữ liệu khóa học';
 $string['inactive'] = 'Không hoạt động';
 $string['include'] = 'Bao gồm';
 $string['includeallusers'] = 'Bao gồm tất cả người dùng';
@@ -559,7 +561,7 @@ $string['listofallpeople'] = 'Danh sách tất cả mọi người';
 $string['livelogs'] = 'Các thông tin lưu nóng hổi trong giờ vừa qua';
 $string['locale'] = 'en';
 $string['location'] = 'Địa chỉ';
-$string['loggedinas'] = '$a đăng nhập ';
+$string['loggedinas'] = '$a đã đăng nhập ';
 $string['loggedinnot'] = 'Bạn chưa đăng nhập.';
 $string['login'] = 'Đăng nhập';
 $string['login_failure_logs'] = 'Các thông tin lưu đăng nhập thất bại';
@@ -751,6 +753,8 @@ $string['outline'] = 'Những nét chính yếu';
 $string['page'] = 'Trang';
 $string['pageheaderconfigablock'] = 'Cấu hình một khối trong %%fullname%%';
 $string['participants'] = 'Danh sách lớp';
+$string['participationratio'] = 'Tỉ lệ tham gia lớp học';
+$string['participationreport'] = 'Báo cáo việc đi học';
 $string['password'] = 'Mật khẩu';
 $string['passwordchanged'] = 'Mật khẩu được thay đổi';
 $string['passwordconfirmchange'] = 'Xác nhận mật khẩu thay đổi';
@@ -899,8 +903,8 @@ $string['someerrorswerefound'] = 'Một số thông tin bị thiếu hoặc khô
 $string['sortby'] = 'Sắp xếp theo ';
 $string['specifyname'] = 'Bạn phải chỉ ra một tên.';
 $string['startdate'] = 'Ngày bắt đầu cua học';
-$string['startsignup'] = 'Bắt đầu bằng cách tạo một tài khoản mới!';
-$string['state'] = 'State/Province';
+$string['startsignup'] = 'Tạo một tài khoản mới!';
+$string['state'] = 'Tỉnh/Thành phố';
 $string['status'] = 'Trạng thái';
 $string['strftimedate'] = '%%d %%B %%Y';
 $string['strftimedateshort'] = '%%d %%B';
@@ -914,6 +918,8 @@ $string['strftimerecent'] = '%%d/%%m/%%Y, %%H:%%M';
 $string['strftimerecentfull'] = '%%a, %%d %%b %%Y, %%I:%%M %%p';
 $string['strftimetime'] = '%%I:%%M %%p';
 $string['stringsnotset'] = 'Chuỗi ký tự sau không được định nghĩa trong $a';
+$string['studentviewoff'] = 'Xem khóa học như là giáo viên';
+$string['studentviewon'] = 'Xem khóa học như là học viên';
 $string['studentnotallowed'] = 'Xin lỗi bạn, nhưng bạn không thể vào cua học này như là \'$a\'';
 $string['students'] = 'Học viên';
 $string['studentsandteachers'] = 'Các học viên và các giáo viên';
@@ -1033,13 +1039,13 @@ $string['visibletostudents'] = 'Cho $a nhìn thấy';
 $string['webpage'] = ' Trang Web';
 $string['week'] = 'Tuần';
 $string['weekhide'] = 'Ẩn tuần này từ $a';
-$string['weeklyoutline'] = 'Những nét chính hàng tuần';
+$string['weeklyoutline'] = 'Học theo tuần';
 $string['weekshow'] = 'Hiện tuần này tới $a';
 $string['welcometocourse'] = 'Chào mừng bạn đến với $a';
 $string['welcometocoursetext'] = 'Chào mừng bạn đến với $a->coursename!
 
 Nếu bạn chưa làm nó, bạn nên soạn thảo trang hồ sơ cá nhân của bạn 
-trong cua học để chúng tôi có thể biết nhiều hơn về bạn:
+trong khóa học để chúng tôi có thể biết nhiều hơn về bạn:
 
   $a->profileurl';
 $string['whattocallzip'] = 'What do you want to call the zip file?';
