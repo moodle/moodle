@@ -366,7 +366,7 @@ $string['emailpasswordsent'] = 'Cám ơn bạn đã xác nhận việc thay đ�
 Một email chứa mật khẩu mới của bạn vừa được gửi tới địa chỉ của bạn ở <br /><b>$a->email</b>.<br />
 Mật khẩu mới được tự động tạo ra - bạn có muốn
 <a href=\"$a->link\">thay đổi mật khẩu của bạn</a> thành một cái gì đó dễ nhớ hơn.';
-$string['enable'] = 'Có khả năng';
+$string['enable'] = 'Kích hoạt';
 $string['encryptedcode'] = 'Mã được mã hoá';
 $string['enrolledincourse'] = 'Được tham gia vào cua học \"$a\"';
 $string['enrolledincoursenot'] = 'Không được tham gia vào cua học \"$a\"';
