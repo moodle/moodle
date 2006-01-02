@@ -34,31 +34,33 @@ class quiz_format_hotpot extends quiz_default_format {
                 break;
             }
         }
-        if (empty($xml->quiztype)) {
-            notice("Input file not recognized as a Hot Potatoes XML file");
-        } else {
-            $questions = array();
-            switch ($xml->quiztype) {
-                case 'jcloze':
-                    process_jcloze($xml, $questions);
-                    break;
-                case 'jcross':
-                    process_jcross($xml, $questions);
-                    break;
-                case 'jmatch':
-                    process_jmatch($xml, $questions);
-                    break;
-                case 'jmix':
-                    process_jmix($xml, $questions);
-                    break;
-                case 'jquiz':
-                    process_jquiz($xml, $questions);
-                    break;
-                default:
-                    notice("Unknown quiz type '$quiztype'");
-                    break;
-            } // end switch
-        }
+
+        // convert xml to questions array
+        $questions = array();
+        switch ($xml->quiztype) {
+            case 'jcloze':
+                process_jcloze($xml, $questions);
+                break;
+            case 'jcross':
+                process_jcross($xml, $questions);
+                break;
+            case 'jmatch':
+                process_jmatch($xml, $questions);
+                break;
+            case 'jmix':
+                process_jmix($xml, $questions);
+                break;
+            case 'jbc':
+            case 'jquiz':
+                process_jquiz($xml, $questions);
+                break;
+            default:
+                if (empty($xml->quiztype)) {
+                    notice("Input file not recognized as a Hot Potatoes XML file");
+                } else {
+                    notice("Unknown quiz type '$xml->quiztype'");
+                }
+        } // end switch
         return $questions;
     }
 } // end class
@@ -137,6 +139,7 @@ function process_jcloze(&$xml, &$questions) {
                     $answers = array();
                 }
     
+                // add answers
                 $a = 0;
                 while (($answer=$question_record."['answer'][$a]['#']") && $xml->xml_value($tags, $answer)) {
                     $text = addslashes($xml->xml_value($tags,  $answer."['text'][0]['#']"));
@@ -180,8 +183,9 @@ function process_jcloze(&$xml, &$questions) {
 }
 
 function process_jcross(&$xml, &$questions) {
-    // xml tags to the start of the crossword exercise items
+    // xml tags to the start of the crossword exercise clue items
     $tags = 'data,crossword,clues,item';
+
     $x = 0;
     while (($item = "[$x]['#']") && $xml->xml_value($tags, $item)) {
 
@@ -207,8 +211,11 @@ function process_jcross(&$xml, &$questions) {
 }
 
 function process_jmatch(&$xml, &$questions) {
+    // define default grade (per matched pair)
     $defaultgrade = 1;
     $match_count = 0;
+
+    // xml tags to the start of the matching exercise
     $tags = 'data,matching-exercise';
 
     $x = 0;
@@ -245,9 +252,13 @@ function process_jmatch(&$xml, &$questions) {
 }
 
 function process_jmix(&$xml, &$questions) {
+    // define default grade (per segment)
     $defaultgrade = 1;
     $segment_count = 0;
+
+    // xml tags to the start of the jumbled order exercise
     $tags = 'data,jumbled-order-exercise';
+
     $x = 0;
     while (($exercise = "[$x]['#']") && $xml->xml_value($tags, $exercise)) {
         // there is usually only one exercise in a file
@@ -283,7 +294,8 @@ function process_jmix(&$xml, &$questions) {
             $question->answer[$a] = $answer;
             $question->fraction[$a] = 1;
             $question->feedback[$a] = '';
-            $answer = addslashes($xml->xml_value($tags, $exercise."['alternate'][$a++]['#']"));
+            $answer = addslashes($xml->xml_value($tags, $exercise."['alternate'][$a]['#']"));
+            $a++;
         }
         $question->defaultgrade = $segment_count * $defaultgrade;
         $questions[] = $question;
@@ -291,8 +303,12 @@ function process_jmix(&$xml, &$questions) {
     }
 }
 function process_jquiz(&$xml, &$questions) {
+    // define default grade (per question)
     $defaultgrade = 1;
+
+    // xml tags to the start of the questions
     $tags = 'data,questions';
+
     $x = 0;
     while (($exercise = "[$x]['#']") && $xml->xml_value($tags, $exercise)) {
         // there is usually only one 'questions' object in a single exercise
@@ -309,16 +325,40 @@ function process_jquiz(&$xml, &$questions) {
             $text = $xml->xml_value($tags, $question_record."['question'][0]['#']");
             $question->questiontext = addslashes($text);
 
-            $type = $xml->xml_value($tags, $question_record."['question-type'][0]['#']");
-            //  1 : multiple choice
-            //  2 : short-answer
-            //  3 : hybrid
-            //  4 : multiple select
+            if ($xml->xml_value($tags, $question_record."['answers']")) {
+                // HP6 JQuiz
+                $answers = $question_record."['answers'][0]['#']";
+            } else {
+                // HP5 JBC or JQuiz
+                $answers = $question_record;
+            }
+            if($xml->xml_value($tags, $question_record."['question-type']")) {
+                // HP6 JQuiz
+                $type = $xml->xml_value($tags, $question_record."['question-type'][0]['#']");
+                //  1 : multiple choice
+                //  2 : short-answer
+                //  3 : hybrid
+                //  4 : multiple select
+            } else {
+                // HP5
+                switch ($xml->quiztype) {
+                    case 'jbc':
+                        $must_select_all = $xml->xml_value($tags, $question_record."['must-select-all'][0]['#']");
+                        if (empty($must_select_all)) {
+                            $type = 1; // multichoice
+                        } else {
+                            $type = 4; // multiselect
+                        }
+                        break;
+                    case 'jquiz':
+                        $type = 2; // shortanswer
+                        break;
+                    default:
+                        $type = 0; // unknown
+                }
+            }
             $question->qtype = ($type==2 ? SHORTANSWER : MULTICHOICE);
             $question->single = ($type==4 ? 0 : 1);
-
-            // XML tags to the "answers" tree
-            $answers = $question_record."['answers'][0]['#']";
 
             // workaround required to calculate scores for multiple select answers
             $no_of_correct_answers = 0;
@@ -346,8 +386,14 @@ function process_jquiz(&$xml, &$questions) {
                     // strange behavior if the $fraction isn't exact to 5 decimal places
                     $fraction = round(1/$no_of_correct_answers, 5);
                 } else {
-                    $percent = $xml->xml_value($tags, $answer."['percent-correct'][0]['#']");
-                    $fraction = $percent/100;
+                    if ($xml->xml_value($tags, $answer."['percent-correct']")) {
+                        // HP6 JQuiz
+                        $percent = $xml->xml_value($tags, $answer."['percent-correct'][0]['#']");
+                        $fraction = $percent/100;
+                    } else {
+                        // HP5 JBC or JQuiz
+                        $fraction = 1;
+                    }
                 }
                 $question->fraction[] = $fraction;
                 $question->feedback[] = addslashes($xml->xml_value($tags, $answer."['feedback'][0]['#']"));
@@ -396,18 +442,6 @@ function get_hotpotatoes_reading(&$xml) {
     return addslashes($str);
 }
 
-// allow importing in Moodle v1.4 (and less)
-// same core functions but different class name
-if (!class_exists("quiz_file_format")) {
-    class quiz_file_format extends quiz_default_format {
-        function readquestions ($lines) {
-            $format = new quiz_format_hotpot();
-            return $format->readquestions($lines);
-        }
-    }
-}
-
-
 // get the standard XML parser supplied with Moodle
 require_once("$CFG->libdir/xmlize.php");
 
@@ -420,7 +454,7 @@ class hotpot_xml_tree {
             $this->encode_cdata($str, 'gap-fill');
             // encode as utf8
             $str = utf8_encode($str);
-            // xmlize (=convert to tree)
+            // xmlize (=convert xml to tree)
             $this->xml =  xmlize($str, 0);
         }
         $this->xml_root = $xml_root;
@@ -457,7 +491,7 @@ class hotpot_xml_tree {
             // encode unicode characters as HTML entities
             // (in particular, accented charaters that have not been encoded by HP)
 
-            // unicode characetsr can be detected by checking the hex value of a character
+            // multibyte unicode characters can be detected by checking the hex value of the first character
             //    00 - 7F : ascii char (roman alphabet + punctuation)
             //    80 - BF : byte 2, 3 or 4 of a unicode char
             //    C0 - DF : 1st byte of 2-byte char
@@ -492,6 +526,7 @@ class hotpot_xml_tree {
 
             // encode problematic CDATA chars and strings
             $matches[2] = strtr($matches[2], $ILLEGAL_STRINGS);
+
 
             // if there are any ampersands in "open text"
             // surround them by CDATA start and end markers
@@ -528,8 +563,19 @@ function hotpot_utf8_to_html_entity($char) {
         $ord = ord ($char{$pos});
         $ord -= ($pos ? 128 : $HOTPOT_UTF8_DECREMENT[$len]); 
         $dec += ($ord << $HOTPOT_UTF8_SHIFT[$len][$pos]); 
-    } 
-    return '&#x'.sprintf('%04X', $dec).';'; 
+    }
+    return '&#x'.sprintf('%04X', $dec).';';
+}
+
+// allow importing in Moodle v1.4 (and less)
+// same core functions but different class name
+if (!class_exists("quiz_file_format")) {
+    class quiz_file_format extends quiz_default_format {
+        function readquestions ($lines) {
+            $format = new quiz_format_hotpot();
+            return $format->readquestions($lines);
+        }
+    }
 }
 
 ?>
