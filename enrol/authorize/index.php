@@ -22,16 +22,16 @@ if (!isadmin()) {
 $csv = optional_param('csv', '', PARAM_ALPHA);
 $orderid = optional_param('order', 0, PARAM_INT);
 
-$strs = get_strings(array('user', 'status', 'action', 'delete', 'time',
-                   'course', 'confirm', 'yes', 'no', 'none', 'error'));
+$strs = get_strings(array('user','status','action','delete','time','course','confirm','yes','no','none','error'));
+$authstrs = get_strings(array('paymentmanagement','orderid','void','capture','refund',
+                              'authorizedpendingcapture','capturedpendingsettle','capturedsettled',
+                              'settled','refunded','cancelled','expired','tested',
+                              'transid','settlementdate','notsettled','amount',
+                              'howmuch','captureyes','unenrolstudent'), 'enrol_authorize');
 
-$authstrs = get_strings(array('paymentmanagement', 'orderid', 'void', 'capture', 'refund',
-                      'authorizedpendingcapture','capturedpendingsettle', 'capturedsettled',
-                      'settled', 'refunded', 'cancelled', 'expired', 'tested',
-                      'transid', 'settlementdate', 'notsettled', 'amount',
-                      'howmuch', 'captureyes', 'unenrolstudent'), 'enrol_authorize');
-
-print_header("$site->shortname: $authstr->paymentmanagement", "$site->fullname", "<a href=\"index.php\">$authstr->paymentmanagement</a>", "");
+print_header("$site->shortname: $authstr->paymentmanagement",
+             "$site->fullname",
+             "<a href=\"index.php\">$authstr->paymentmanagement</a>", "");
 
 if (!empty($csv)) {
     authorize_csv();
@@ -142,12 +142,12 @@ function authorize_order_details($orderno) {
     }
 
     echo "<form action='index.php' method='post'>\n";
-    echo "<input type='hidden' name='order' value='$order->id'>\n";
+    echo "<input type='hidden' name='order' value='$orderno'>\n";
 
     $settled = settled($order);
     $status = get_order_status_desc($order);
 
-    $table->data[] = array("<b>$authstrs->orderid:</b>", $order->id);
+    $table->data[] = array("<b>$authstrs->orderid:</b>", $orderno);
     $table->data[] = array("<b>$authstrs->transid:</b>", $order->transid);
     $table->data[] = array("<b>$authstrs->amount:</b>", "$order->currency $order->amount");
     if ((empty($cmdcapture) and empty($cmdrefund) and empty($cmdvoid))) {
@@ -188,7 +188,7 @@ function authorize_order_details($orderno) {
                         email_to_user($user, $teacher,
                                       get_string("enrolmentnew", '', $order->shortname),
                                       get_string('welcometocoursetext', '', $a));
-                        redirect("index.php?order=$order->id");
+                        redirect("index.php?order=$orderno");
                     }
                     else {
                          $table->data[] = array("<b><font color=red>$strs->error:</font></b>",
@@ -205,10 +205,10 @@ function authorize_order_details($orderno) {
     elseif (!empty($cmdrefund)) { // REFUND
         $extra = new stdClass();
         $extra->sum = 0.0;
-        $extra->orderid = $order->id;
+        $extra->orderid = $orderno;
 
         $sql = "SELECT SUM(amount) AS refunded FROM {$CFG->prefix}enrol_authorize_refunds " .
-               "WHERE (orderid = '" . $order->id . "') AND (status = '" . AN_STATUS_CREDIT . "')";
+               "WHERE (orderid = '" . $orderno . "') AND (status = '" . AN_STATUS_CREDIT . "')";
 
         if ($refund = get_record_sql($sql)) {
             $extra->sum = doubleval($refund->refunded);
@@ -242,7 +242,7 @@ function authorize_order_details($orderno) {
                         if (!empty($unenrol)) {
                             unenrol_student($order->userid, $order->courseid);
                         }
-                        redirect("index.php?order=$order->id");
+                        redirect("index.php?order=$orderno");
                     }
                     else {
                         $table->data[] = array(get_string('testmode', 'enrol_authorize'), get_string('credittestwarn', 'enrol_authorize'));
@@ -273,7 +273,7 @@ function authorize_order_details($orderno) {
                 update_record("enrol_authorize", $order); // May be expired.
                 if ($success) {
                     if (empty($CFG->an_test)) {
-                        redirect("index.php?order=$order->id");
+                        redirect("index.php?order=$orderno");
                     }
                     else {
                        $table->data[] = array(get_string('testmode', 'enrol_authorize'), get_string('voidtestwarn', 'enrol_authorize'));
@@ -309,13 +309,13 @@ function authorize_order_details($orderno) {
                     $message = '';
                     $extra = NULL;
                     $success = authorizenet_action($suborder, $message, $extra, AN_ACTION_VOID);
-                    update_record("enrol_authorize", $suborder); // May be expired.
+                    update_record("enrol_authorize_refunds", $suborder); // May be expired.
                     if ($success) {
                         if (empty($CFG->an_test)) {
                             if (!empty($unenrol)) {
                                 unenrol_student($order->userid, $order->courseid);
                             }
-                            redirect("index.php?order=$order->id");
+                            redirect("index.php?order=$orderno");
                         }
                         else {
                             $table->data[] = array(get_string('testmode', 'enrol_authorize'), get_string('voidtestwarn', 'enrol_authorize'));
@@ -331,7 +331,7 @@ function authorize_order_details($orderno) {
     }
     elseif (!empty($cmddelete)) { // DELETE
         if (!in_array(ORDER_DELETE, $status->actions)) {
-            error("Order $order->id cannot be deleted. Status must be expired.");
+            error("Order $orderno cannot be deleted. Status must be expired.");
         }
         if (empty($cmdconfirm)) {
             $table->data[] = array('<b>Delete?: </b>',
