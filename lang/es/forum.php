@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.5.2 (2005060220)
+      // forum.php - created with Moodle 1.5.3+ (2005060230)
 
 
 $string['addanewdiscussion'] = 'Colocar un nuevo tema de discusión aquí';
@@ -10,6 +10,8 @@ $string['allowchoice'] = 'Permitir a todos escoger';
 $string['allowdiscussions'] = 'Permitir que cualquier $a abra nuevos temas';
 $string['allowratings'] = 'Permitir la calificación de los mensajes';
 $string['allowsdiscussions'] = 'Foro abierto a todos';
+$string['allsubscribe'] = 'Suscribir a todos los foros';
+$string['allunsubscribe'] = 'Dar de baja de todos los foros';
 $string['anyfile'] = 'Cualquier archivo';
 $string['attachment'] = 'Archivo adjunto';
 $string['bynameondate'] = 'de $a->name - $a->date';
@@ -106,6 +108,8 @@ $string['nosubscribers'] = 'Nadie se ha suscrito aún a este foro';
 $string['nothingnew'] = 'Nada nuevo para $a';
 $string['notingroup'] = 'Lo sentimos, pero debe formar parte del grupo para poder ver este foro.';
 $string['notrackforum'] = 'No rastrear mensajes no leídos';
+$string['nowallsubscribed'] = 'Todos los foros en $a están suscritos.';
+$string['nowallunsubscribed'] = 'Todos los foros en $a están dados de baja.';
 $string['nownotsubscribed'] = '$a->name no recibirá copias de \'$a->forum\' por correo.';
 $string['nownottracking'] = '$a->name ya no está rastreando \'$a->forum\'.';
 $string['nowsubscribed'] = '$a->name recibirá copias de \'$a->forum\' por correo.';

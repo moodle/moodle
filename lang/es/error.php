@@ -27,6 +27,7 @@ $string['modulerequirementsnotmet'] = 'El módulo \"$a->modulename\" ($a->modulev
 $string['mustbeteacher'] = 'Sólo los profesores pueden ver esta página';
 $string['noinstances'] = 'En este curso no aparece $a.';
 $string['nonmeaningfulcontent'] = 'No contenido significativo';
+$string['noparticipatorycms'] = 'Lo sentimos, no dispone de módulos de participación en cursos sobre los que informar.';
 $string['notavailable'] = 'No disponible en este momento';
 $string['onlyeditingteachers'] = 'Sólo los profesores con permiso de edición pueden hacer eso.';
 $string['onlyeditown'] = 'Sólo puede editar su propia información';
