@@ -75,21 +75,14 @@ function getsettletime($time)
  */
 function settled($order)
 {
-    global $CFG;
-    static $timenow;
-
-    if (!isset($timenow)) {
-        $timenow = time();
-    }
-
-    return (($order->status == AN_STATUS_AUTHCAPTURE || $order->status == AN_STATUS_CREDIT)
-            && $order->settletime > 0 && $order->settletime < $timenow );
+    return (($order->status == AN_STATUS_AUTHCAPTURE || $order->status == AN_STATUS_CREDIT) &&
+             $order->settletime > 0 && $order->settletime < time());
 }
 
 /**
  * Performs an action on authorize.net
  *
- * @param object &$order Which transaction data will be send. See enrol_authorize table.
+ * @param object &$order Which transaction data will be sent. See enrol_authorize table.
  * @param string &$message Information about error messages.
  * @param object &$extra Extra transaction data.
  * @param int $action Which action will be performed. See AN_ACTION_*
