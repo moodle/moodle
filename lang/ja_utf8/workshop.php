@@ -114,8 +114,8 @@ $string['gradesforstudentsassessment'] = '$a の評価に対する評点';
 $string['gradesforsubmissionsare'] = '提出課題に対する評点 $a';
 $string['gradetable'] = '評価テーブル';
 $string['gradingallassessments'] = '全ての提出課題の評定';
-$string['gradinggrade'] = '評価のための評点';
-$string['gradingstrategy'] = '評価方略';
+$string['gradinggrade'] = '評定点';
+$string['gradingstrategy'] = '評定方法';
 $string['hidegradesbeforeagreement'] = '同意の前に評点を隠す';
 $string['hidenamesfromstudents'] = '$a より名前を隠す';
 $string['includeteachersgrade'] = '教師の評点を含む';
@@ -151,7 +151,7 @@ $string['movingtophase'] = 'フェーズ $a に移動';
 $string['namesnotshowntostudents'] = '名前は $a に表示されません。';
 $string['newassessments'] = '新しいワークショップの評価';
 $string['newattachment'] = '新しい添付ファイル';
-$string['newgradings'] = '新しい評点';
+$string['newgradings'] = '新しい評定';
 $string['newsubmissions'] = '新しい提出課題';
 $string['noassessments'] = '評価無し';
 $string['noassessmentsdone'] = '評価されていません';
@@ -167,8 +167,8 @@ $string['noteonassessmentelements'] = '評価は数多くの「評価要素」�
 しなければなりません。コース課題をクリックして要素が存在しない場合、<br />
 追加するかどうかを尋ねられます。「課題の編集」画面で要素数を変更する<br />
 ことができます。要素自体は「評価の管理」画面で変更できます。 ';
-$string['noteonstudentassessments'] = '{学生の評点 / 評価に対する評定評点}';
-$string['notgraded'] = '評価無し';
+$string['noteonstudentassessments'] = '{学生の評点/評価のための評定点';
+$string['notgraded'] = '評定無し';
 $string['notitle'] = '題名無し';
 $string['notitlegiven'] = '題名がありません。';
 $string['notsubmittedyet'] = 'まだ提出課題はありません。';

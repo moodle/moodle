@@ -114,8 +114,8 @@ $string['gradesforstudentsassessment'] = '$a ¤ÎÉ¾²Á¤ËÂĞ¤¹¤ëÉ¾ÅÀ';
 $string['gradesforsubmissionsare'] = 'Äó½Ğ²İÂê¤ËÂĞ¤¹¤ëÉ¾ÅÀ $a';
 $string['gradetable'] = 'É¾²Á¥Æ¡¼¥Ö¥ë';
 $string['gradingallassessments'] = 'Á´¤Æ¤ÎÄó½Ğ²İÂê¤ÎÉ¾Äê';
-$string['gradinggrade'] = 'É¾²Á¤Î¤¿¤á¤ÎÉ¾ÅÀ';
-$string['gradingstrategy'] = 'É¾²ÁÊıÎ¬';
+$string['gradinggrade'] = 'É¾ÄêÅÀ';
+$string['gradingstrategy'] = 'É¾ÄêÊıË¡';
 $string['hidegradesbeforeagreement'] = 'Æ±°Õ¤ÎÁ°¤ËÉ¾ÅÀ¤ò±£¤¹';
 $string['hidenamesfromstudents'] = '$a ¤è¤êÌ¾Á°¤ò±£¤¹';
 $string['includeteachersgrade'] = '¶µ»Õ¤ÎÉ¾ÅÀ¤ò´Ş¤à';
@@ -151,7 +151,7 @@ $string['movingtophase'] = '¥Õ¥§¡¼¥º $a ¤Ë°ÜÆ°';
 $string['namesnotshowntostudents'] = 'Ì¾Á°¤Ï $a ¤ËÉ½¼¨¤µ¤ì¤Ş¤»¤ó¡£';
 $string['newassessments'] = '¿·¤·¤¤¥ï¡¼¥¯¥·¥ç¥Ã¥×¤ÎÉ¾²Á';
 $string['newattachment'] = '¿·¤·¤¤ÅºÉÕ¥Õ¥¡¥¤¥ë';
-$string['newgradings'] = '¿·¤·¤¤É¾ÅÀ';
+$string['newgradings'] = '¿·¤·¤¤É¾Äê';
 $string['newsubmissions'] = '¿·¤·¤¤Äó½Ğ²İÂê';
 $string['noassessments'] = 'É¾²ÁÌµ¤·';
 $string['noassessmentsdone'] = 'É¾²Á¤µ¤ì¤Æ¤¤¤Ş¤»¤ó';
@@ -167,8 +167,8 @@ $string['noteonassessmentelements'] = 'É¾²Á¤Ï¿ôÂ¿¤¯¤Î¡ÖÉ¾²ÁÍ×ÁÇ¡×¤ËÊ¬¤±¤é¤ì¤Ş¤¹¤
 ¤·¤Ê¤±¤ì¤Ğ¤Ê¤ê¤Ş¤»¤ó¡£¥³¡¼¥¹²İÂê¤ò¥¯¥ê¥Ã¥¯¤·¤ÆÍ×ÁÇ¤¬Â¸ºß¤·¤Ê¤¤¾ì¹ç¡¢<br />
 ÄÉ²Ã¤¹¤ë¤«¤É¤¦¤«¤ò¿Ò¤Í¤é¤ì¤Ş¤¹¡£¡Ö²İÂê¤ÎÊÔ½¸¡×²èÌÌ¤ÇÍ×ÁÇ¿ô¤òÊÑ¹¹¤¹¤ë<br />
 ¤³¤È¤¬¤Ç¤­¤Ş¤¹¡£Í×ÁÇ¼«ÂÎ¤Ï¡ÖÉ¾²Á¤Î´ÉÍı¡×²èÌÌ¤ÇÊÑ¹¹¤Ç¤­¤Ş¤¹¡£ ';
-$string['noteonstudentassessments'] = '{³ØÀ¸¤ÎÉ¾ÅÀ / É¾²Á¤ËÂĞ¤¹¤ëÉ¾ÄêÉ¾ÅÀ}';
-$string['notgraded'] = 'É¾²ÁÌµ¤·';
+$string['noteonstudentassessments'] = '{³ØÀ¸¤ÎÉ¾ÅÀ/É¾²Á¤Î¤¿¤á¤ÎÉ¾ÄêÅÀ';
+$string['notgraded'] = 'É¾ÄêÌµ¤·';
 $string['notitle'] = 'ÂêÌ¾Ìµ¤·';
 $string['notitlegiven'] = 'ÂêÌ¾¤¬¤¢¤ê¤Ş¤»¤ó¡£';
 $string['notsubmittedyet'] = '¤Ş¤ÀÄó½Ğ²İÂê¤Ï¤¢¤ê¤Ş¤»¤ó¡£';
