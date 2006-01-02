@@ -635,6 +635,7 @@ class enrolment_plugin extends enrolment_base
         }
 
         $faults = '';
+        $sendem = array();
         $elapsed = time();
         @set_time_limit(0);
         $this->log = "AUTHORIZE.NET AUTOCAPTURE CRON: " . userdate($timenow) . "\n";
@@ -655,9 +656,11 @@ class enrolment_plugin extends enrolment_base
                 }
                 if (enrol_student($order->userid, $order->courseid, $timestart, $timeend, 'authorize')) {
                     $this->log .= "User($order->userid) has been enrolled to course($order->courseid).\n";
+                    $sendem[] = $order->id;
                 }
                 else {
-                    $faults .= "Error while trying to enrol ".fullname($USER)." in '$course->fullname' \n";
+                    $user = get_record('user', 'id', $order->userid);
+                    $faults .= "Error while trying to enrol ".fullname($user)." in '$order->fullname' \n";
                     foreach ($order as $okey => $ovalue) {
                         $faults .= "   $okey = $ovalue\n";
                     }
@@ -684,6 +687,28 @@ class enrolment_plugin extends enrolment_base
         }
         if (!empty($CFG->enrol_mailadmins)) {
             email_to_user($adminuser, $adminuser, "AUTHORIZE.NET CRON LOG", $this->log);
+        }
+        // send emails
+        if (empty($sendem) || empty($CFG->enrol_mailstudents)) {
+            return;
+        }
+        $select = "SELECT E.id, E.courseid, E.userid, C.fullname " .
+                  "FROM {$CFG->prefix}enrol_authorize E " .
+                  "INNER JOIN {$CFG->prefix}course C ON C.id = E.courseid " .
+                  "WHERE E.id IN(" . implode(',', $sendem) . ") " .
+                  "ORDER BY E.courseid";
+        $lastcourse = 0;
+        $orders = get_records_sql($select);
+        foreach ($orders as $order) {
+            if ($lastcourse != $order->courseid) {
+                $teacher = get_teacher($order->courseid);
+            }
+            $user = get_record('user', 'id', $order->userid);
+            $a->coursename = $order->fullname;
+            $a->profileurl = "$CFG->wwwroot/user/view.php?id=$user->id";
+            email_to_user($user, $teacher,
+                          get_string("enrolmentnew", '', $order->fullname),
+                          get_string('welcometocoursetext', '', $a));
         }
     }
 }
