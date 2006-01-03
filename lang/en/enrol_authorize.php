@@ -6,6 +6,18 @@ $string['adminauthorizeccapture'] = 'Order Review & Auto-Capture Settings';
 $string['adminauthorizeemail'] = 'Email Sending Settings';
 $string['adminauthorizesettings'] = 'Authorize.net Settings';
 $string['adminauthorizewide'] = 'Site-Wide Settings';
+$string['admincronsetup'] = 'The cron.php maintenance script has not been run for at least 24 hours. <br />Cron must be enabled if you want to use autocapture feature.<br /><a href=\"../doc/?frame=install.html&sub=cron\">Setup cron</a> or uncheck an_review again.<br />If you disable autocapture, transactions will be cancelled unless you review them within 30 days.<br />Check an_review and enter \'0\' to an_capture_day field<br />if you want to manually accept/deny payments within 30 days.';
+$string['adminhelpcapture'] = 'Not only I want to manually accept/deny payments. But also, use autocapture to prevent cancelling payment. What will I do?
+
+ - Setup cron.
+ - Check an_review.
+ - Enter a number between 1 and 29 to an_capture_day field. Card will be captured and user will be enrolled to course unless you capture it within an_capture_day.';
+$string['adminhelpreview'] = 'How will I manually accept/deny payments?
+- Check an_review.
+- Enter \'0\' to an_capture_day field.
+
+How students will be enrolled to courses immediately when they entered their card number?
+- Uncheck an_review.';
 $string['adminneworder'] = ' Dear Admin,
                 
   You have received a new pending order:
@@ -25,6 +37,7 @@ $string['adminneworder'] = ' Dear Admin,
   Also you can accept/deny the payment to enrol the student immediately following this link:
   $a->url';
 $string['adminnewordersubject'] = '$a->course: New Pending Order($a->orderid)';
+$string['adminpendingorders'] = 'You have disabled auto-capture feature.<br />Total $a->count transactions with a status of AN_STATUS_AUTH will be cancelled unless you check it.<br />To accept/deny payments go to <a href=\'$a->url\'>Payment Management</a> page.';
 $string['adminreview'] = 'Review order before processing the credit card.';
 $string['amount'] = 'Amount';
 $string['anlogin'] = 'Authorize.net: Login name';
@@ -67,6 +80,17 @@ $string['notsettled'] = 'Not settled';
 $string['orderid'] = 'Order ID';
 $string['paymentmanagement'] = 'Payment Management';
 $string['paymentpending'] = 'Your payment is pending for this course with this order number $a->orderid.';
+$string['pendingordersemail'] = ' Dear admin,
+
+$a->pending transactions will be expired unless you accept payment with in 2 days.
+
+This is a warning message, because you didn\'t enable autocapture. Means you have to accept or deny payments manually.
+
+To accept/deny pending payments go to:
+$a->url
+
+To enable autocapture, means you will not receive any warning emails anymore, go to:
+$a->enrolurl';
 $string['refund'] = 'Refund';
 $string['refunded'] = 'Refunded';
 $string['returns'] = 'Returns';

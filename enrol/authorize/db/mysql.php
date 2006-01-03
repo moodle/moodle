@@ -84,6 +84,13 @@ function authorize_upgrade($oldversion=0) {
         execute_sql("ALTER TABLE {$CFG->prefix}enrol_authorize DROP authcode", false);
     }
 
+    if ($oldversion < 2006010200) {
+    	if (isset($CFG->an_review_day)) { // rename an_review_day
+    	    set_config('an_capture_day', $CFG->an_review_day);
+    	    delete_records('config', 'name', 'an_review_day');
+    	}
+    }
+
     return $result;
 }
 

@@ -54,6 +54,7 @@ function authorize_orders()
     $perpage = 10;
     $userid = optional_param('user', 0, PARAM_INT);
     $courseid = optional_param('course', 0, PARAM_INT);
+    $status = optional_param('status', AN_STATUS_NONE, PARAM_INT);
 
     $table = new flexible_table('enrol-authorize');
     $table->set_attribute('width', '100%');
@@ -64,13 +65,14 @@ function authorize_orders()
 
     $table->define_columns(array('id', 'timecreated', 'userid', 'status', ''));
     $table->define_headers(array($authstrs->orderid, $strs->time, $strs->user, $strs->status, $strs->action));
-    $table->define_baseurl($CFG->wwwroot."/enrol/authorize/index.php?course=$courseid&amp;user=$userid");
+    $table->define_baseurl($CFG->wwwroot."/enrol/authorize/index.php?course=$courseid&amp;user=$userid&amp;status=$status");
 
     $table->sortable(true);
     $table->pageable(true);
     $table->setup();
 
-    $where = "WHERE (status != '" . AN_STATUS_NONE . "') ";
+    if ($status > AN_STATUS_NONE) $where = "WHERE (status = '$status') ";
+    else $where = "WHERE (status != '" . AN_STATUS_NONE . "') ";
     if ($userid > 0) { $where .= "AND (userid = '" . $userid . "') "; }
     if ($courseid > 0) { $where .= "AND (courseid = '" . $courseid . "') "; }
 

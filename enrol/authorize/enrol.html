@@ -10,13 +10,13 @@
 <input type="hidden" name="id" value="<?php p($course->id) ?>" />
 <table align="center" width="100%" border=0>
 <tr>
-  <td align="right"><?php print_string("nameoncard", "enrol_authorize") ?>: </td>
-  <td align="left"><input type="text" name="ccfirstname" size="15" value="<?php p($userfirstname) ?>"  />
-                   <input type="text" name="cclastname" size="15" value="<?php p($userlastname) ?>"  /></td>
-</tr>
-<tr>
   <td align="right"><?php print_string("ccno", "enrol_authorize") ?>: </td>
   <td align="left"><input type="text" name="cc" size="16" value="<?php p($form->cc) ?>"  /></td>
+</tr>
+<tr>
+  <td align="right"><?php print_string("nameoncard", "enrol_authorize") ?>: </td>
+  <td align="left"><input type="text" name="ccfirstname" size="8" value="<?php p($userfirstname) ?>"  />
+  <input type="text" name="cclastname" size="8" value="<?php p($userlastname) ?>"  /></td>
 </tr>
 <tr>
   <td align="right"><?php print_string("ccexpire", "enrol_authorize") ?>: </td>
@@ -48,7 +48,7 @@
 <tr>
   <td align="right"><?php print_string("ccvv", "enrol_authorize") ?>: </td>
   <td align="left"><input type="text" name="cvv" size="4" maxlength="4" value="<?php p($form->cvv) ?>" />
-                   <font size=1><?php print_string("ccvvhelp", "enrol_authorize") ?></font></td>
+  <?php helpbutton('', '', 'enrol_authorize', true, 'cvv', get_string('ccvvhelp', 'enrol_authorize')); ?></td>
 </tr>
 <tr>
   <td align="right"><?php print_string("zipcode", "enrol_authorize") ?>: </td>

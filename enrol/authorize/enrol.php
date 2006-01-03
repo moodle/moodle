@@ -24,9 +24,9 @@ define('AN_STATUS_AUTH',    0x01);
  */
 define('AN_STATUS_CAPTURE', 0x02);
 /**
- * Auth_Captured.
+ * AN_STATUS_AUTH|AN_STATUS_CAPTURE.
  */
-define('AN_STATUS_AUTHCAPTURE', AN_STATUS_AUTH|AN_STATUS_CAPTURE);
+define('AN_STATUS_AUTHCAPTURE', 0x03);
 /**
  * Refunded.
  */
@@ -245,10 +245,10 @@ class enrolment_plugin extends enrolment_base
                 $a->transid = $order->transid;
                 $a->amount = "$order->currency $order->amount";
                 $a->expireon = getsettletime($timenow + (30 * 3600 * 24));
-                $a->captureon = getsettletime($timenow + (intval($CFG->an_review_day) * 3600 * 24));
+                $a->captureon = getsettletime($timenow + (intval($CFG->an_capture_day) * 3600 * 24));
                 $a->course = $course->fullname;
                 $a->user = fullname($USER);
-                $a->acstatus = ($CFG->an_review_day > 0) ? get_string('yes') : get_string('no');
+                $a->acstatus = ($CFG->an_capture_day > 0) ? get_string('yes') : get_string('no');
                 $emailmessage = get_string('adminneworder', 'enrol_authorize', $a);
                 $a->course = $course->shortname;
                 $a->orderid = $order->id;
@@ -409,6 +409,23 @@ class enrolment_plugin extends enrolment_base
             notify('PHP must be compiled with SSL support (--with-openssl)');
         }
 
+        $ac_enabled = !empty($frm->an_review) && intval($frm->an_capture_day) > 0;
+        if ($ac_enabled) { // Cron must be runnig!!! Check last cron...
+            $mconfig = get_config('enrol/authorize');
+            $lastcron = intval($mconfig->an_lastcron);
+            if (time() - $lastcron > 3600 * 24) {
+                notify(get_string('admincronsetup', 'enrol_authorize'));
+            }
+        }
+        else {
+            if ($count = count_records('enrol_authorize', 'status', AN_STATUS_AUTH)) {
+                $a->count = $count;
+                $a->url = $CFG->wwwroot."/enrol/authorize/index.php?status=" . AN_STATUS_AUTH;
+                $message = get_string('adminpendingorders', 'enrol_authorize', $a);
+                notify($message);
+            }
+        }
+
         if (data_submitted()) {
             // something POSTed, Some required fields
             if (empty($frm->an_login)) {
@@ -420,30 +437,6 @@ class enrolment_plugin extends enrolment_base
             if (empty($CFG->loginhttps)) {
                 notify("\$CFG->loginhttps must be ON");
             }
-
-            // ******************* AUTOCAPTURE *******************
-            if (!(empty($frm->an_review) || $frm->an_review_day < 1)) {
-                // ++ENABLED++
-                // Cron must be runnig!!! Check last cron...
-                $mconfig = get_config('enrol/authorize');
-                $lastcron = intval($mconfig->an_lastcron);
-                if (time() - $lastcron > 3600 * 24) {
-                    // Cron must be enabled if you want to use autocapture feature.
-                    // Setup cron or disable an_review again...
-                    // Otherwise, transactions will be cancelled unless you review it within 30 days.
-                    notify(get_string('cronwarning', 'admin'));
-                }
-            } else {
-                // --DISABLED--
-                // Cron will NOT run anymore, because autocapture runs with cron.
-                // Transactions with AN_STATUS_AUTH will be cancelled and we can display this warning to admin!
-                // Admin can check (Accept|Deny) new transactions manually.
-
-                if ($count = count_records('enrol_authorize', 'status', AN_STATUS_AUTH)) {
-                    notify("CRON DISABLED. TRANSACTIONS WITH A STATUS OF AN_STATUS_AUTH WILL BE CANCELLED UNLESS YOU CHECK IT. TOTAL $count");
-                }
-            }
-            // ***************************************************
         }
 
         include($CFG->dirroot.'/enrol/authorize/config.html');
@@ -491,17 +484,17 @@ class enrolment_plugin extends enrolment_base
         set_config('an_password', $password_val);
         set_config('an_tran_key', $tran_val);
 
-        // an_review & an_review_day & cron depencies...
+        // an_review & an_capture_day & cron depencies...
         $review_val = optional_param('an_review', '');
         if (empty($review_val)) {
             // review disabled. cron is not required. AUTH_CAPTURE works.
             set_config('an_review', $review_val);
         } else {
             // review enabled.
-            $review_day_val = optional_param('an_review_day', 5, PARAM_INT);
-            if ($review_day_val < 0) $review_day_val = 0;
-            elseif ($review_day_val > 29) $review_day_val = 29;
-            if ($review_day_val > 0) {
+            $capture_day_val = optional_param('an_capture_day', 5, PARAM_INT);
+            if ($capture_day_val < 0) $capture_day_val = 0;
+            elseif ($capture_day_val > 29) $capture_day_val = 29;
+            if ($capture_day_val > 0) {
                 // Cron must change an_lastcron. :))
                 $mconfig = get_config('enrol/authorize');
                 $lastcron = intval($mconfig->an_lastcron);
@@ -511,7 +504,7 @@ class enrolment_plugin extends enrolment_base
                 }
             }
             set_config('an_review', $review_val);
-            set_config('an_review_day', $review_day_val);
+            set_config('an_capture_day', $capture_day_val);
         }
 
         return true;
@@ -607,15 +600,38 @@ class enrolment_plugin extends enrolment_base
             delete_records_select('enrol_authorize', $select);
         }
 
-        if (!empty($CFG->an_test)) {
-            return; // AUTOCAPTURE doesn't work in test mode.
+        if (empty($CFG->an_review) || !empty($CFG->an_test)) {
+            return;
         }
-        if (empty($CFG->an_review) || empty($CFG->an_review_day) || $CFG->an_review_day < 1) {
-            return; // AUTOCAPTURE disabled. admin, teacher review it manually
+
+        if (intval($CFG->an_capture_day < 1)) {
+            // Admin review it manually.
+            // We can send email to admin about be expired transactions.
+            // Last 2 days (30-28=2) is good, I think.
+            // Send daily email.
+            $nextmail = intval($mconfig->an_nextmail);
+            if ($nextmail > $timenow)
+                return; // One day must be passed.
+
+            $timediff28 = $timenowsettle - (28 * 3600 * 24);
+            $select = "(status = '" . AN_STATUS_AUTH . "') AND " .
+                      "(timecreated < '$timediff28') AND (timecreated > '$timediff30')";
+            if (!$count = count_records_select('enrol_authorize', $sql)) {
+                return;
+            }
+
+            $a->pending = $count;
+            $a->url = $CFG->wwwroot."/enrol/authorize/index.php?status=" . AN_STATUS_AUTH;
+            $a->enrolurl = "$CFG->wwwroot/$CFG->admin/users.php";
+            $message = get_string('pendingordersemail', 'enrol_authorize', $a);
+            $adminuser = get_admin();
+            email_to_user($adminuser, $adminuser, "WARNING: PENDING PAYMENTS", $a);
+            set_config('an_nextmail', $timenow + (3600 * 24), 'enrol/authorize');
+            return;
         }
 
         // AUTO-CAPTURE: Transaction must be captured within 30 days. Otherwise it will expired.
-        $timediffcnf = $timenowsettle - (intval($CFG->an_review_day) * 3600 * 24);
+        $timediffcnf = $timenowsettle - (intval($CFG->an_capture_day) * 3600 * 24);
         $sql = "SELECT E.*, C.fullname, C.enrolperiod " .
                "FROM {$CFG->prefix}enrol_authorize E " .
                "INNER JOIN {$CFG->prefix}course C ON C.id = E.courseid " .
