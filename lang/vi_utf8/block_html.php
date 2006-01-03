@@ -1,9 +1,9 @@
-<?php // $Id$ 
+﻿<?php // $Id$ 
 
 $string['html'] = 'HTML';
-$string['configtitle'] = 'Ti�u &#273;&#7873; c&#7911;a kh&#7889;i';
-$string['configcontent'] = 'N&#7897;i dung';
-$string['leaveblanktohide'] = '&#273;&#7875; tr&#7855;ng &#273;&#7875; gi&#7919; nguy�n ti�u &#273;&#7873;';
-$string['newhtmlblock'] = '(kh&#7889;i HTML m&#7899;i)';
+$string['configtitle'] = 'Tiêu đề của khối';
+$string['configcontent'] = 'Nội dung';
+$string['leaveblanktohide'] = 'Để tiêu đề trắng để giấu';
+$string['newhtmlblock'] = '(khối HTML mới)';
 
 ?>
