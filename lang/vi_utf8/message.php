@@ -1,6 +1,6 @@
 <?php  // $Id$
 
-$string['addcontact'] = 'Add contact';
+$string['addcontact'] = 'Đưa thêm một liên lạc';
 $string['addsomecontacts'] = 'Để gửi thông điệp tới ai đó, hoặc đưa thêm một shortcut cho họ trong trang này, sử dụng <a href=\"$a\">tab tìm kiếm</a> ở trên.';
 $string['addsomecontactsincoming'] = 'Các thông điệp này từ những người không trong danh sách liên hệ của bạn. Để đưa họ vào danh sách, nhấn chuột vào icon \"Đưa thêm liên hệ\"  gần tên của họ.';
 $string['ago'] = '$a trước đó';
