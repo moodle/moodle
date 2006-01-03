@@ -23,7 +23,7 @@ $csv = optional_param('csv', '', PARAM_ALPHA);
 $orderid = optional_param('order', 0, PARAM_INT);
 
 $strs = get_strings(array('user','status','action','delete','time','course','confirm','yes','no','none','error'));
-$authstrs = get_strings(array('paymentmanagement','orderid','void','capture','refund',
+$authstrs = get_strings(array('paymentmanagement','orderid','void','capture','refund','delete',
                               'authorizedpendingcapture','capturedpendingsettle','capturedsettled',
                               'settled','refunded','cancelled','expired','tested',
                               'transid','settlementdate','notsettled','amount',
@@ -396,7 +396,6 @@ function authorize_csv()
 function get_order_status_desc($order)
 {
     global $CFG;
-    static $timediff30;
 
     $ret = new stdClass();
 
@@ -408,11 +407,10 @@ function get_order_status_desc($order)
 
     switch ($order->status) {
     case AN_STATUS_AUTH:
-        if (empty($timediff30)) {
-            $timediff30 = getsettletime(time()) - (30 * 3600 * 24);
-        }
-
+        $timediff30 = getsettletime(time()) - (30 * 3600 * 24);
         if (getsettletime($order->timecreated) < $timediff30) {
+            $order->status = AN_STATUS_EXPIRE;
+            update_record("enrol_authorize", $order);
             $ret->actions = array(ORDER_DELETE);
             $ret->status = 'expired';
         }
