@@ -25,6 +25,7 @@ $string['modulerequirementsnotmet'] = 'Le module «&nbsp;$a->modulename&nbsp;» ($
 $string['mustbeteacher'] = 'Vous devez être enseignant pour voir cette page';
 $string['noinstances'] = 'Il n\'a y aucune instance de $a dans ce cours&nbsp;! ';
 $string['nonmeaningfulcontent'] = 'Le contenu ne fait pas de sens';
+$string['noparticipatorycms'] =  'Désolé, aucun module de participation pour lequel faire un rapport.';
 $string['notavailable'] = 'Ceci n\'est actuellement pas disponible';
 $string['onlyeditown'] = 'Vous ne pouvez modifier que vos propres informations';
 $string['onlyeditingteachers'] = 'Seuls les enseignants avec droit de modification peuvent faire ceci.';
