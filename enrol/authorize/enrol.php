@@ -490,7 +490,13 @@ class enrolment_plugin extends enrolment_base
             // review disabled. cron is not required. AUTH_CAPTURE works.
             set_config('an_review', $review_val);
         } else {
-            // review enabled.
+            // REVIEW ENABLED.
+            // an_emailexpired: default=2, min=0, max=5.
+            $an_emailexpired_val = optional_param('an_emailexpired', 2, PARAM_INT);
+            if ($an_emailexpired_val < 0) $an_emailexpired_val = 0;
+            elseif ($an_emailexpired_val > 5) $an_emailexpired_val = 5;
+            set_config('an_emailexpired', $an_emailexpired_val);
+
             $capture_day_val = optional_param('an_capture_day', 5, PARAM_INT);
             if ($capture_day_val < 0) $capture_day_val = 0;
             elseif ($capture_day_val > 29) $capture_day_val = 29;
@@ -601,21 +607,20 @@ class enrolment_plugin extends enrolment_base
         }
 
         if (empty($CFG->an_review) || !empty($CFG->an_test)) {
-            return;
+            return; // review disabled, auth_capture works.
         }
 
+        //CAPTURE-MANUALLY
         if (intval($CFG->an_capture_day < 1)) {
-            // Admin review it manually.
-            // We can send email to admin about be expired transactions.
-            // Last 2 days (30-28=2) is good, I think.
-            // Send daily email.
-            $nextmail = intval($mconfig->an_nextmail);
-            if ($nextmail > $timenow)
-                return; // One day must be passed.
-
-            $timediff28 = $timenowsettle - (28 * 3600 * 24);
+            if (empty($CFG->an_emailexpired)) {
+            	return; // no information email.
+            }
+            if (intval($mconfig->an_nextmail) > $timenow) {
+                return; // One day must passed.
+            }
+            $timediffem = $timenowsettle - ((30 - intval($CFG->an_emailexpired)) * 3600 * 24);
             $select = "(status = '" . AN_STATUS_AUTH . "') AND " .
-                      "(timecreated < '$timediff28') AND (timecreated > '$timediff30')";
+                      "(timecreated < '$timediffem') AND (timecreated > '$timediff30')";
             if (!$count = count_records_select('enrol_authorize', $select)) {
                 return;
             }
@@ -630,7 +635,7 @@ class enrolment_plugin extends enrolment_base
             return;
         }
 
-        // AUTO-CAPTURE: Transaction must be captured within 30 days. Otherwise it will expired.
+        // CAPTURE-AUTO: Transaction must be captured within 30 days.
         $timediffcnf = $timenowsettle - (intval($CFG->an_capture_day) * 3600 * 24);
         $sql = "SELECT E.*, C.fullname, C.enrolperiod " .
                "FROM {$CFG->prefix}enrol_authorize E " .
