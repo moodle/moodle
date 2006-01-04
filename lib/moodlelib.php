@@ -2752,7 +2752,7 @@ function set_login_session_preferences() {
 
     unset($SESSION->lang);
     unset($SESSION->encoding);
-    $SESSION->encoding = get_string('thischarset');
+    $SESSION->encoding = current_charset();
 
     // Restore the calendar filters, if saved
     if (intval(get_user_preferences('calendar_persistflt', 0))) {
@@ -3701,7 +3701,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
     if (!empty($course->lang)) {   // Course language is defined
         $CFG->courselang = $course->lang;
     }
-    if (!empty($course->theme)) {   // Course language is defined
+    if (!empty($course->theme)) {   // Course theme is defined
         $CFG->coursetheme = $course->theme;
     }
 
@@ -3725,10 +3725,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
     $mail->Version = 'Moodle '. $CFG->version;           // mailer version
     $mail->PluginDir = $CFG->libdir .'/phpmailer/';      // plugin directory (eg smtp plugin)
 
-
-    if (current_language() != 'en') {
-        $mail->CharSet = get_string('thischarset');
-    }
+    $mail->CharSet = current_charset(true);              //User charset, recalculating it in each call
 
     if ($CFG->smtphosts == 'qmail') {
         $mail->IsQmail();                              // use Qmail system
@@ -4538,6 +4535,32 @@ function current_language() {
     }
 }
 
+/* Return the code of the current charset
+ * based in some config options and the lang being used
+ * caching it per request.
+ * @param $ignorecache to skip cached value and recalculate it again
+ * @uses $CFG
+ * @return string
+ */
+function current_charset($ignorecache = false) {
+
+    global $CFG;
+
+    static $currentcharset;
+
+    if (!empty($currentcharset) and !$ignorecache) { /// Cached. Return it.
+        return $currentcharset;
+    }
+
+    if (!empty($CFG->unicode) || !empty($CFG->unicodedb)) {
+        $currentcharset = 'UTF-8';
+    } else {
+        $currentcharset = get_string('thischarset');
+    }
+
+    return $currentcharset;
+}
+
 /**
  * Prints out a translated string.
  *
@@ -4653,6 +4676,26 @@ function get_string($identifier, $module='', $a=NULL) {
         }
     }
 
+/// Depending upon $CFG->unicodedb, we are going to check moodle.php or langconfig.php,
+/// default to a different lang pack, and redefine the module for some special strings
+/// that, under 1.6 lang packs, reside under langconfig.php
+    $langconfigstrs = array('alphabet', 'backupnameformat', 'firstdayofweek', 'locale', 
+                            'parentlanguage', 'strftimedate', 'strftimedateshort', 'strftimedatetime',
+                            'strftimedaydate', 'strftimedaydatetime', 'strftimedayshort', 'strftimedaytime',
+                            'strftimemonthyear', 'strftimerecent', 'strftimerecentfull', 'strftimetime',
+                            'thischarset', 'thisdirection', 'thislanguage');
+
+    if (!empty($CFG->unicodedb)) {
+        $filetocheck = 'langconfig.php';
+        $defaultlang = 'en_utf8';
+        if (in_array($identifier, $langconfigstrs)) {
+            $module = 'langconfig';  //This strings are under langconfig.php for 1.6 lang packs
+        }
+    } else {
+        $filetocheck = 'moodle.php';
+        $defaultlang = 'en';
+    }
+
     $lang = current_language();
 
     if ($module == '') {
@@ -4701,14 +4744,14 @@ function get_string($identifier, $module='', $a=NULL) {
     }
 
 /// If the preferred language was English we can abort now
-    if ($lang == 'en') {
+    if ($lang == $defaultlang) {
         return '[['. $identifier .']]';
     }
 
 /// Is a parent language defined?  If so, try to find this string in a parent language file
 
     foreach ($locations as $location) {
-        $langfile = $location.$lang.'/moodle.php';
+        $langfile = $location.$lang.'/'.$filetocheck;
         if (file_exists($langfile)) {
             if ($result = get_string_from_file('parentlanguage', $langfile, "\$parentlang")) {
                 eval($result);
@@ -4739,7 +4782,7 @@ function get_string($identifier, $module='', $a=NULL) {
 /// Our only remaining option is to try English
 
     foreach ($locations as $location) {
-        $locallangfile = $location.'en_local/'.$module.'.php';    //first, see if there's a local file
+        $locallangfile = $location.$defaultlang.'_local/'.$module.'.php';    //first, see if there's a local file
         if (file_exists($locallangfile)) {
             if ($result = get_string_from_file($identifier, $locallangfile, "\$resultstring")) {
                 eval($result);
@@ -4748,7 +4791,8 @@ function get_string($identifier, $module='', $a=NULL) {
         }
 
         //if local_en not found, or string not found in local_en
-        $langfile = $location.'en/'.$module.'.php';
+        $langfile = $location.$defaultlang.'/'.$module.'.php';
+
         if (file_exists($langfile)) {
             if ($result = get_string_from_file($identifier, $langfile, "\$resultstring")) {
                 eval($result);
@@ -4818,6 +4862,13 @@ function get_list_of_languages() {
 
     $languages = array();
 
+/// Depending upon $CFG->unicodedb, we are going to check moodle.php or langconfig.php
+    if (!empty($CFG->unicodedb)) {
+        $filetocheck = 'langconfig.php';
+    } else {
+        $filetocheck = 'moodle.php';
+    }
+
     if ( (!defined('FULLME') || FULLME !== 'cron')
          && !empty($CFG->langcache) && file_exists($CFG->dataroot .'/cache/languages')) {
         // read from cache
@@ -4835,55 +4886,57 @@ function get_list_of_languages() {
     if (!empty($CFG->langlist)) {       // use admin's list of languages
         $langlist = explode(',', $CFG->langlist);
         foreach ($langlist as $lang) {
-            if (file_exists($CFG->dirroot .'/lang/'. $lang .'/moodle.php') and strstr('_local',$lang)!==false) {
-                include($CFG->dirroot .'/lang/'. $lang .'/moodle.php');
-                $languages[$lang] = $string['thislanguage'].' ('. $lang .')';
+            $lang = trim($lang);   //Just trim spaces to be a bit more permissive
+            if (strstr('_local',$lang)!==false) {
+                continue;
+            }
+        /// Search under dirroot/lang
+            if (file_exists($CFG->dirroot .'/lang/'. $lang .'/'. $filetocheck)) {
+                include($CFG->dirroot .'/lang/'. $lang .'/'. $filetocheck);
+                if (!empty($string['thislanguage'])) {
+                    $languages[$lang] = $string['thislanguage'].' ('. $lang .')';
+                }
+                unset($string);
+            }
+        /// And moodledata/lang
+            if (file_exists($CFG->dataroot .'/lang/'. $lang .'/'. $filetocheck)) {
+                include($CFG->dataroot .'/lang/'. $lang .'/'. $filetocheck);
+                if (!empty($string['thislanguage'])) {
+                    $languages[$lang] = $string['thislanguage'].' ('. $lang .')';
+                }
                 unset($string);
             }
         }
     } else {
-        if (!$langdirs = get_list_of_plugins('lang')) {
-            return false;
-        }
-
-        //add langs from $CFG->moddata/lang
-        $ilangdirs = get_list_of_plugins('lang','',1);
-        foreach ($ilangdirs as $ilang){
-            $langdirs[] = $ilang;
-        }
-
-        asort($langdirs);    //sort by value
-
+    /// Fetch langs from moodle/lang directory
+        $langdirs = get_list_of_plugins('lang');
+    /// Fetch langs from moodledata/lang directory
+        $langdirs2 = get_list_of_plugins('lang', '', $CFG->dataroot);
+    /// Merge both lists of langs
+        $langdirs = array_merge($langdirs, $langdirs2);
+    /// Sort all
+        asort($langdirs);
+    /// Get some info from each lang (first from moodledata, then from moodle)
         foreach ($langdirs as $lang) {
-
-            ///check if the current lang is the right version
-            ///i.e. CFG->unicodedb set, 1.6 packs
-            ///CFG->unicode not set. 1.5 packs
-            $unicodepack = file_exists($CFG->dirroot .'/lang/'. $lang .'/langconfig.php') OR
-                           file_exists($CFG->dataroot .'/lang/'. $lang .'/langconfig.php');
-
-            //if db is unicode, pack is not unicode, or db is not unicode, but pack is, we skip it
-            if ((!empty($CFG->unicodedb) && !$unicodepack) or (empty($CFG->unicodedb) && $unicodepack)){
+            if (strstr('_local',$lang)!==false) {
                 continue;
             }
-
-            if (file_exists($CFG->dirroot .'/lang/'. $lang .'/moodle.php') and strstr($lang,'_local')===false) {
-                include($CFG->dirroot .'/lang/'. $lang .'/moodle.php');
-                @include($CFG->dirroot .'/lang/'. $lang .'/langconfig.php');
-                $languages[$lang] = $string['thislanguage'] .' ('. $lang .')';
+            if (file_exists($CFG->dataroot .'/lang/'. $lang .'/'. $filetocheck)) {
+                include($CFG->dataroot .'/lang/'. $lang .'/'. $filetocheck);
+                if (!empty($string['thislanguage'])) {
+                    $languages[$lang] = $string['thislanguage'] .' ('. $lang .')';
+                }
                 unset($string);
-            }
-            
-            if (file_exists($CFG->dataroot .'/lang/'. $lang .'/moodle.php') and strstr($lang,'_local')===false) {
-                include($CFG->dataroot .'/lang/'. $lang .'/moodle.php');
-                @include($CFG->dataroot .'/lang/'. $lang .'/langconfig.php');
-                $languages[$lang] = $string['thislanguage'] .' ('. $lang .')';
+            } else if (file_exists($CFG->dirroot .'/lang/'. $lang .'/'. $filetocheck)) {
+                include($CFG->dirroot .'/lang/'. $lang .'/'. $filetocheck);
+                if (!empty($string['thislanguage'])) {
+                    $languages[$lang] = $string['thislanguage'] .' ('. $lang .')';
+                }
                 unset($string);
             }
         }
-       
-
     }
+
     if ( defined('FULLME') && FULLME === 'cron' && !empty($CFG->langcache)) {
         if ($file = fopen($CFG->dataroot .'/cache/languages', 'w')) {
             foreach ($languages as $key => $value) {
@@ -4908,19 +4961,31 @@ function get_list_of_countries() {
 
     $lang = current_language();
 
-    if (!file_exists($CFG->dirroot .'/lang/'. $lang .'/countries.php')) {
-        if ($parentlang = get_string('parentlanguage')) {
-            if (file_exists($CFG->dirroot .'/lang/'. $parentlang .'/countries.php')) {
-                $lang = $parentlang;
-            } else {
-                $lang = 'en';  // countries.php must exist in this pack
-            }
-        } else {
-            $lang = 'en';  // countries.php must exist in this pack
-        }
+    if (!empty($CFG->unicodedb)) {
+        $defaultlang = 'en_utf8';
+    } else {
+        $defaultlang = 'en';
     }
 
-    include($CFG->dirroot .'/lang/'. $lang .'/countries.php');
+    if (!file_exists($CFG->dirroot .'/lang/'. $lang .'/countries.php') &&
+        !file_exists($CFG->dataroot.'/lang/'. $lang .'/countries.php')) {
+        if ($parentlang = get_string('parentlanguage')) {
+            if (file_exists($CFG->dirroot .'/lang/'. $parentlang .'/countries.php') ||
+                file_exists($CFG->dataroot.'/lang/'. $parentlang .'/countries.php')) {
+                $lang = $parentlang;
+            } else {
+                $lang = $defaultlang;  // countries.php must exist in this pack
+            }
+        } else {
+            $lang = $defaultlang;  // countries.php must exist in this pack
+        }
+    }
+    
+    if (file_exists($CFG->dataroot .'/lang/'. $lang .'/countries.php')) {
+        include($CFG->dataroot .'/lang/'. $lang .'/countries.php');
+    } else if (file_exists($CFG->dirroot .'/lang/'. $lang .'/countries.php')) {
+        include($CFG->dirroot .'/lang/'. $lang .'/countries.php');
+    }
 
     if (!empty($string)) {
         asort($string);
@@ -5384,30 +5449,35 @@ function show_event($event) {
  * Lists plugin directories within some directory
  *
  * @uses $CFG
- * @param string $plugin ?
- * @param string $exclude ?
- * @return array
- * @todo Finish documenting this function
+ * @param string $plugin dir under we'll look for plugins (defaults to 'mod')
+ * @param string $exclude dir name to exclude from the list (defaults to none)
+ * @param string $basedir full path to the base dir where $plugin resides (defaults to $CFG->dirroot)
+ * @return array of plugins found under the requested parameters
  */
-function get_list_of_plugins($plugin='mod', $exclude='', $dirmode='0') {
+function get_list_of_plugins($plugin='mod', $exclude='', $basedir='') {
 
     global $CFG;
-    if ($dirmode == 0){
-        $rootdir = $CFG->dirroot;
+
+    $plugins = array();
+
+    if (empty($basedir)) {
+        $basedir = $CFG->dirroot .'/'. $plugin;
+    } else {
+        $basedir = $basedir .'/'. $plugin;
     }
-    else {
-        $rootdir = $CFG->dataroot;
-    }
-    $basedir = opendir($rootdir .'/'. $plugin);
-    while (false !== ($dir = readdir($basedir))) {
-        $firstchar = substr($dir, 0, 1);
-        if ($firstchar == '.' or $dir == 'CVS' or $dir == '_vti_cnf' or $dir == $exclude) {
-            continue;
+    if (filetype($basedir) == 'dir') {
+        $dirhandle = opendir($basedir);
+        while (false !== ($dir = readdir($dirhandle))) {
+            $firstchar = substr($dir, 0, 1);
+            if ($firstchar == '.' or $dir == 'CVS' or $dir == '_vti_cnf' or $dir == $exclude) {
+                continue;
+            }
+            if (filetype($basedir .'/'. $dir) != 'dir') {
+                continue;
+            }
+            $plugins[] = $dir;
         }
-        if (filetype($rootdir .'/'. $plugin .'/'. $dir) != 'dir') {
-            continue;
-        }
-        $plugins[] = $dir;
+        closedir($dirhandle);
     }
     if ($plugins) {
         asort($plugins);
@@ -5774,6 +5844,23 @@ function moodle_strtolower ($string, $encoding='') {
 function count_words($string) {
     $string = strip_tags($string);
     return count(preg_split("/\w\b/", $string)) - 1;
+}
+
+/** Count letters in a string.
+ *
+ * Letters are defined as chars not in tags and different from whitespace.
+ *
+ * @param string $string The text to be searched for letters.
+ * @return int The count of letters in the specified text.
+ */
+function count_letters($string) {
+/// Loading the textlib singleton instance. We are going to need it.
+    $textlib = textlib_get_instance();
+
+    $string = strip_tags($string); // Tags are out now
+    $string = ereg_replace('[[:space:]]*','',$string); //Whitespace are out now
+
+    return $textlib->strlen($string, current_charset());
 }
 
 /**

@@ -177,7 +177,7 @@ function send_file($path, $filename, $lifetime=86400 , $filter=false, $pathisstr
     if (!$filter) {
         @header('Content-length: '.$filesize);
         if ($mimetype == 'text/plain') {
-            @header('Content-type: text/plain; charset='.get_string('thischarset')); //add encoding
+            @header('Content-type: text/plain; charset='.current_charset()); //add encoding
         } else {
             @header('Content-type: '.$mimetype);
         }
@@ -208,7 +208,7 @@ function send_file($path, $filename, $lifetime=86400 , $filter=false, $pathisstr
             $output = '<pre>'. format_text($text, FORMAT_MOODLE, $options, $courseid) .'</pre>';
 
             @header('Content-length: '.strlen($output));
-            @header('Content-type: text/html; charset='. get_string('thischarset')); //add encoding
+            @header('Content-type: text/html; charset='. current_charset()); //add encoding
             echo $output;
         } else {    // Just send it out raw
             @header('Content-length: '.$filesize);

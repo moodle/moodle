@@ -52,7 +52,7 @@
        'gdversion'                =>  1,
        'guestloginbutton'         =>  1,
        'htmleditor'               =>  true,
-       'lang'                     => 'en',
+       'lang'                     =>  !empty($CFG->unicodedb) ? 'en_utf8' : 'en',
        'langcache'                =>  1,
        'langmenu'                 =>  1,
        'langlist'                 => '',

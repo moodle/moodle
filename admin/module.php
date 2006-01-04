@@ -46,7 +46,7 @@
 
 /// Otherwise print the form.
 
-    $module = required_param('module', '', PARAM_CLEANFILE);
+    $module = optional_param('module', '', PARAM_CLEANFILE);
     require_once("$CFG->dirroot/mod/$module/lib.php");
 
     $stradmin = get_string("administration");

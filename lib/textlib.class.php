@@ -62,6 +62,10 @@
 /// As we implement the singleton pattern to use this class (only one instance
 /// is shared globally), we need this helper function
 
+/// IMPORTANT Note: Typo3 libraries always expect lowercase charsets to use 100%
+///                 its capabilities so, don't forget to make the conversion
+///                 from every wrapper function!
+
 function textlib_get_instance () {
     static $instance;
     if (!is_object($instance)) {
@@ -106,7 +110,7 @@ class textlib {
     /// Avoid some notices from Typo3 code
         $oldlevel = error_reporting(E_PARSE);
     /// Call Typo3 conv() function. It will do all the work
-        $result = $this->typo3cs->conv($text, $fromCS, $toCS);
+        $result = $this->typo3cs->conv($text, strtolower($fromCS), strtolower($toCS));
     /// Restore original debug level
         error_reporting($oldlevel);
         return $result;
@@ -115,7 +119,7 @@ class textlib {
     /* Multibyte safe substr() function, uses mbstring if available. */
     function substr($text, $start, $len=null, $charset='utf-8') {
     /// Call Typo3 substr() function. It will do all the work
-        return $this->typo3cs->substr($charset,$text,$start,$len);
+        return $this->typo3cs->substr(strtolower($charset),$text,$start,$len);
     }
 
     /* Multibyte safe strlen() function, uses mbstring if available. */
@@ -123,7 +127,7 @@ class textlib {
     /// Avoid some notices from Typo3 code
         $oldlevel = error_reporting(E_PARSE);
     /// Call Typo3 strlen() function. It will do all the work
-        $result = $this->typo3cs->strlen($charset,$text);
+        $result = $this->typo3cs->strlen(strtolower($charset),$text);
     /// Restore original debug level
         error_reporting($oldlevel);
         return $result;
@@ -134,7 +138,7 @@ class textlib {
     /// Avoid some notices from Typo3 code
         $oldlevel = error_reporting(E_PARSE);
     /// Call Typo3 conv_case() function. It will do all the work
-        $result = $this->typo3cs->conv_case($charset,$text,'toLower');
+        $result = $this->typo3cs->conv_case(strtolower($charset),$text,'toLower');
     /// Restore original debug level
         error_reporting($oldlevel);
         return $result;
@@ -145,7 +149,7 @@ class textlib {
     /// Avoid some notices from Typo3 code
         $oldlevel = error_reporting(E_PARSE);
     /// Call Typo3 conv_case() function. It will do all the work
-        $result = $this->typo3cs->conv_case($charset,$text,'toUpper');
+        $result = $this->typo3cs->conv_case(strtolower($charset),$text,'toUpper');
     /// Restore original debug level
         error_reporting($oldlevel);
         return $result;

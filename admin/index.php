@@ -5,6 +5,7 @@
         header('Location: ../install.php');
         die;
     }
+   
 
     require_once("../config.php");
     include_once("$CFG->dirroot/lib/adminlib.php");  // Contains various admin-only functions
@@ -74,7 +75,7 @@
     @set_time_limit(0);
     @ob_implicit_flush(true);
     @ob_end_flush();
-
+ 
 
 /// Check if the main tables have been installed yet or not.
 
@@ -205,9 +206,18 @@
         if (!set_config("release", $release)) {
             notify("ERROR: Could not update release version in database!!");
         }
+        if (!empty($CFG->unicodedb)) {
+            $defaultlang = 'en_utf8';
+        } else {
+            $defaultlang = 'en';
+        }
         print_continue("index.php");
         print_simple_box_start("CENTER");
-        include("$CFG->dirroot/lang/en/docs/release.html");
+        if (file_exists("$CFG->dataroot/lang/$defaultlang/docs/release.html")) {
+            include("$CFG->dataroot/lang/$defaultlang/docs/release.html");
+        } else if (file_exists("$CFG->dirroot/lang/$defaultlang/docs/release.html")) {
+            include("$CFG->dirroot/lang/$defaultlang/docs/release.html");
+        }
         print_simple_box_end();
         print_continue("index.php");
         exit;

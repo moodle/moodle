@@ -38,6 +38,9 @@
  * @package moodlecore
  */
 
+/// We are going to uses filterlib functions here
+require_once("$CFG->libdir/filterlib.php");
+
 /// Constants
 
 /// Define text formatting types ... eventually we can add Wiki, BBcode etc
@@ -366,6 +369,8 @@ function stripslashes_recursive($var) {
  * Given some normal text this function will break up any
  * long words to a given size by inserting the given character
  *
+ * It's multibyte savvy and doesn't change anything inside html tags.
+ *
  * @param string $string the string to be modified
  * @param int $maxsize maximum length of the string to be returned
  * @param string $cutchar the string used to represent word breaks
@@ -373,23 +378,21 @@ function stripslashes_recursive($var) {
  */
 function break_up_long_words($string, $maxsize=20, $cutchar=' ') {
 
-    static $currentlang;
+/// Loading the textlib singleton instance. We are going to need it.
+    $textlib = textlib_get_instance();
 
-    if (empty($currentlang)) {
-        $currentlang = current_language();
-    }
+/// First of all, save all the tags inside the text to skip them
+    $tags = array();
+    filter_save_tags($string,$tags);
 
-    if (in_array(substr($currentlang,0,2), array('ja', 'kn', 'sr', 'vi', 'zh'))) {  // Multibyte languages
-        return $string;
-    }
-
+/// Process the string adding the cut when necessary
     $output = '';
-    $length = strlen($string);
+    $length = $textlib->strlen($string, current_charset());
     $wordlength = 0;
 
     for ($i=0; $i<$length; $i++) {
-        $char = $string[$i];
-        if ($char == ' ' or $char == "\t" or $char == "\n" or $char == "\r") {
+        $char = $textlib->substr($string, $i, 1, current_charset());
+        if ($char == ' ' or $char == "\t" or $char == "\n" or $char == "\r" or $char == "<" or $char == ">") {
             $wordlength = 0;
         } else {
             $wordlength++;
@@ -400,6 +403,12 @@ function break_up_long_words($string, $maxsize=20, $cutchar=' ') {
         }
         $output .= $char;
     }
+
+/// Finally load the tags back again
+    if (!empty($tags)) {
+        $output = str_replace(array_keys($tags), $tags, $output);
+    }
+
     return $output;
 }
 
@@ -1787,18 +1796,12 @@ function print_header ($title='', $heading='', $navigation='', $focus='', $meta=
     }
 
 
-    if (!empty($CFG->unicode)) {
-        $encoding = 'utf-8';
-    } else if (!empty($CFG->courselang)) {
-        $encoding = get_string('thischarset');
+    $encoding = current_charset();
+    if (!empty($CFG->courselang)) {
         moodle_setlocale();
-    } else {
-        if (!empty($SESSION->encoding)) {
-            $encoding = $SESSION->encoding;
-        } else {
-            $SESSION->encoding = $encoding = get_string('thischarset');
-        }
     }
+    $SESSION->encoding = $encoding;
+
     $meta = '<meta http-equiv="content-type" content="text/html; charset='. $encoding .'" />'. "\n". $meta ."\n";
     if (!$usexml) {
         @header('Content-type: text/html; charset='.$encoding);

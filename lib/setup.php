@@ -140,6 +140,16 @@ $CFG->httpswwwroot = $CFG->wwwroot;
         die;
     }
 
+    /// Set the client/server and connection to utf8 if necessary
+    if ($dbconnected && $CFG->unicodedb) {
+        if ($db->databaseType == 'mysql') {
+            $db->Execute("SET NAMES 'utf8'");
+            $db->Execute("SET CHARSET 'utf8'");  /// This could be not necessary if DB is set to Unicode, but...
+        } else if ($db->databaseType == 'postgres7') {
+            $db->Execute("SET NAMES 'utf8'");
+        }
+    }
+
     error_reporting(E_ALL);       // Show errors from now on.
 
     if (!isset($CFG->prefix)) {   // Just in case it isn't defined in config.php
@@ -155,7 +165,8 @@ $CFG->httpswwwroot = $CFG->wwwroot;
 
 
 /// Load up standard libraries
-
+    
+    require_once($CFG->libdir .'/textlib.class.php');   // Functions to handle multibyte strings
     require_once($CFG->libdir .'/weblib.php');          // Functions for producing HTML
     require_once($CFG->libdir .'/datalib.php');         // Functions for accessing databases
     require_once($CFG->libdir .'/moodlelib.php');       // Other general-purpose functions
@@ -430,13 +441,14 @@ $CFG->httpswwwroot = $CFG->wwwroot;
 /// majority of cases), use the stored locale specified by admin.
 
     if (isset($_GET['lang'])) {
-        if (!detect_munged_arguments($lang, 0) and file_exists($CFG->dirroot .'/lang/'. $lang)) {
+        if (!detect_munged_arguments($lang, 0) and (file_exists($CFG->dataroot .'/lang/'. $lang) or 
+                                                    file_exists($CFG->dirroot .'/lang/'. $lang))) {
             $SESSION->lang = $lang;
             $SESSION->encoding = get_string('thischarset');
         }
     }
     if (empty($CFG->lang)) {
-        $CFG->lang = "en";
+        $CFG->lang = !empty($CFG->unicodedb) ? 'en_utf8' : 'en';
     }
 
     moodle_setlocale();
