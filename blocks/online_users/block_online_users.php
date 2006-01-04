@@ -61,7 +61,8 @@ class block_online_users extends block_base {
                                           {$CFG->prefix}user_students s
                                           $groupmembers
                                      WHERE u.id = s.userid $courseselect $groupselect $timeselect 
-                                  ORDER BY s.timeaccess DESC")) {
+                                  ORDER BY s.timeaccess DESC ".sql_paging_limit(0,20))) {
+
             foreach ($students as $student) {
                 $student->fullname = fullname($student);
                 $users[$student->id] = $student;
@@ -72,7 +73,7 @@ class block_online_users extends block_base {
             if ($siteusers = get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.picture, u.lastaccess
                                      FROM {$CFG->prefix}user u
                                      WHERE u.lastaccess > $timefrom AND u.username <> 'guest'
-                                  ORDER BY u.lastaccess DESC")) {
+                                  ORDER BY u.lastaccess DESC ".sql_paging_limit(0,20))) {
                 foreach ($siteusers as $siteuser) {
                     $siteuser->fullname = fullname($siteuser);
                     $siteuser->timeaccess = $siteuser->lastaccess;
