@@ -6,6 +6,20 @@ $string['adminauthorizeccapture'] = 'Sipariþi Ýnceleme ve Otomatik-Çekme Ayarlar
 $string['adminauthorizeemail'] = 'Email Gönderme Ayarlarý';
 $string['adminauthorizesettings'] = 'Authorize.net Ayarlarý';
 $string['adminauthorizewide'] = 'Site Geneli Ayarlarý';
+$string['admincronsetup'] = 'Cron.php bakým betiði son 24 saattir çalýþmýyor. <br />Otomatik-çekme özelliðini kullanmak istiyorsanýz cron etkin olmalý.<br /><a href=\"../doc/?frame=install.html&sub=cron\">Cronu ayarlayýn</a> veya an_review\'i tekrar seçili durumdan kaldýrýn. <br />Otomatik-çekmeyi etkinleþtirmezseniz ve 30 gün içinde iþlemleri incelemezseniz iþlem iptal edilir.<br />Ödemeleri 30 gün içinde elle kabul etmek veya iptal etmek istiyorsanýz an_review\'i seçin an_capture_day alanýna \'0\' girin.';
+$string['adminhelpcapture'] = 'Ödemeleri sadece elle kabul etmek/iptal etmek deðil, ayný zamanda ödemenin iptal olmasýný engellemek için otomatik-çekmeyi de kullanmak istiyorum. Ne yapmam gerekiyor?
+
+- Cronu ayarlayýn.
+- an_review\'i seçin.
+- an_capture_day alanýna 1 ile 29 arasýnda bir sayý girin. Kredi kartýndan para çekilecek ve an_capture_day gün içinde çekmezseniz kullanýcý kursa kaydedilecek.';
+$string['adminhelpreview'] = 'Ödemeleri elle nasýl kabul veya reddeceðim?
+
+- an_review\'i seçin.
+- an_capture_day alanýna \'0\' girin.
+
+Öðrenciler kart numarasýný girdikten hemen sonra nasýl kursa kaydolurlar?
+
+- an_review\'i seçili durumdan kaldýrýn.';
 $string['adminneworder'] = 'Deðerli Yönetici,
 
 Yeni bir bekleyen sipariþ aldýnýz:
@@ -23,6 +37,7 @@ Otomatik çekme etkinse kredi kartýndan $a->captureon tarihinde çekilecek ve öðre
 Ayrýca aþaðýdaki linki týklayarak ödemeyi derhal kabul veya reddedebilir ve öðrenciyi derse kaydedebilirsiniz:
 $a->url';
 $string['adminnewordersubject'] = '$a->course: Bekleyen Yeni Sipariþ($a->orderid)';
+$string['adminpendingorders'] = 'Otomatik-çekme özelliðini etkinleþtirmediniz.<br />PROVÝZYON durumundaki toplam $a->count iþlem kontrol etmezseniz iptal edilecek. <br /> Ödemeleri kabul etmek/reddetmek için <a href=\'$a->url\'>Ödeme Yönetimi</a> sayfasýna gidin.';
 $string['adminreview'] = 'Kredi kartýndan çekmeden önce sipariþi incele.';
 $string['amount'] = 'Miktar';
 $string['anlogin'] = 'Authorize.net: Kullanýcý adý';
@@ -49,6 +64,7 @@ $string['choosemethod'] = 'Kursun kayýt anahtarýný biliyorsanýz giriniz. Diðer d
 $string['chooseone'] = 'Aþaðýdaki iki alandan birini veya ikisini doldurun';
 $string['credittestwarn'] = 'Geri ödeme çalýþýyor olarak görünüyor fakat deneme modunda yeni kayýt eklenmedi';
 $string['cutofftime'] = 'Hesap Kesim Zamaný. Hesap kesimi en son ne zaman yapýlacak?';
+$string['delete'] = 'Sil';
 $string['description'] = 'Authorize.net modülü Kredi Kartý saðlayýcýlarýyla ücretli kurslar ayarlamanýza olanak verir. Bir kursun ücreti sýfýr ise öðrencilere ödeme yapmalarý için bir istekte bulunulmaz. Sitenin geneli için ayarlayabileceðiniz varsayýlan bir tutar vardýr ve her bir dersin ücretini tek tek de ayarlayabilirsiniz. Kurs ücreti ayarlanýrsa site genelindeki ücret yoksayýlýr..<br /><br /><b>Not:</b> Kurs ayarlarýnda kayýt anahtarýný girdiyseniz öðrenciler bu anahtara göre de kayýt olma seçeneðine sahip olabileceklerdir. Bu, öðrecilerden bazýlarýnýn ödeme yaparak bazýlarýnýn da kayýt anahtarýna göre kayýt olmasýný istiyorsanýz kullanýþlýdýr.';
 $string['enrolname'] = 'Authorize.net Kredi Kartý Saðlayýcýsý';
 $string['expired'] = 'Süresi dolmuþ';
@@ -67,6 +83,18 @@ $string['notsettled'] = 'Faturalandýrýlmamýþ';
 $string['orderid'] = 'Sipariþ ID';
 $string['paymentmanagement'] = 'Ödeme Yönetimi';
 $string['paymentpending'] = '$a->orderid numaralý ödemeniz bu kurs için onay bekliyor.';
+$string['pendingordersemail'] = 'Deðerli Yönetici,
+
+2 gün içinde onay bekleyen $a->pending iþlemi kabul etmezseniz süresi dolacak ve iptal edilecek.
+
+Otomatik-çekmeyi etkinleþtirmediðiniz için bu uyarý mesajý size gönderilmiþtir. Bu durumda ödemeleri elle kabul veya reddetmelisiniz.
+
+Ödemeleri kabul/reddetmek için:
+$a->url
+
+Otomatik-çekmeyi etkinleþtirmek için:
+$a->enrolurl
+';
 $string['refund'] = 'Geri Öde';
 $string['refunded'] = 'Geri ödenmiþ';
 $string['returns'] = 'Geri ödemeler';
