@@ -1,6 +1,6 @@
 <?php // $Id$ 
 
-$string['adminauthorizeccapture'] = 'Contrôle des commandes & réglages de collecte automatique';
+$string['adminauthorizeccapture'] = 'Contrôle des commandes & réglages de saisie automatique';
 $string['adminauthorizeemail'] = 'Réglages d\'envoi de courriel';
 $string['adminauthorizesettings'] = 'Réglages Authorize.net';
 $string['adminauthorizewide'] = 'Réglages globaux';
@@ -10,11 +10,11 @@ $string['anpassword'] = 'Authorize.net&nbsp;: mot de passe';
 $string['anreferer'] = 'Taper ici une URL (référenceur) si vous avez mis en place cette fonctionnalité dans votre compte authorize.net. Ceci enverra une entête «&nbsp;Referer: URL&nbsp;» incluse dans la requête web';
 $string['antestmode'] = 'Traiter les transactions en mode test (aucun montant ne sera prélevé)';
 $string['antrankey'] = 'Authorize.net&nbsp;: clef de transaction';
-$string['authorizedpendingcapture'] = 'Autorisé / En attente de collecte';
+$string['authorizedpendingcapture'] = 'Autorisé / En attente de saisie';
 $string['cancelled'] = 'Annulé';
-$string['capture'] = 'Collecte';
-$string['capturedpendingsettle'] = 'Collecté / En attente de règlement';
-$string['capturedsettled'] = 'Collecté / Réglé';
+$string['capture'] = 'Saisie';
+$string['capturedpendingsettle'] = 'Saisi / En attente de règlement';
+$string['capturedsettled'] = 'Saisi / Réglé';
 $string['ccexpire'] = 'Date d\'échéance';
 $string['ccexpired'] = 'La carte de crédit est échue';
 $string['ccinvalid'] = 'Numéro de carte non valable';
@@ -37,7 +37,7 @@ $string['paymentpending'] = 'Votre paiement pour ce cours est en attente de trai
 $string['refund'] = 'Remboursement';
 $string['refunded'] = 'Remboursé';
 $string['returns'] = 'Retour';
-$string['reviewday'] = 'Collecter les données de la carte de crédit automatiquement, à moins qu\'un enseignant ou un administrateur ne contrôle la commande dans les <b>$a</b> jours. LE CRON DOIT ÊTRE ACTIF.<br />(0 jour signifie que la collecte automatique sera désactivée. Un contrôle par un enseignant ou administrateur est alors nécessaire. Dans ce cas, la transaction sera annulée si elle n\'est pas contrôlée dans les 30 jours)';
+$string['reviewday'] = 'Saisir les données de la carte de crédit automatiquement, à moins qu\'un enseignant ou un administrateur ne contrôle la commande dans les <b>$a</b> jours. LE CRON DOIT ÊTRE ACTIF.<br />(0 jour signifie que la saisie automatique sera désactivée. Un contrôle par un enseignant ou administrateur est alors nécessaire. Dans ce cas, la transaction sera annulée si elle n\'est pas contrôlée dans les 30 jours)';
 $string['reviewnotify'] = 'Votre paiement va être contrôlé. Votre enseignant vous contactera par courriel dans quelques jours.';
 $string['sendpaymentbutton'] = 'Envoyer paiement';
 $string['settled'] = 'Réglé';
