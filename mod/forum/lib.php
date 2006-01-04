@@ -2686,6 +2686,7 @@ function forum_user_can_view_post($post, $course, $user=NULL){
     //first of all, the user must be in this course
     if (!(isstudent($forumcourse->course) or 
           isteacher($forumcourse->course) or 
+          ($course->id == SITEID && !$CFG->forcelogin) or 
           (isguest() && $course->guest) )){
         return false;
     }
