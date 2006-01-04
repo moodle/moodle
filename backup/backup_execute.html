@@ -82,13 +82,13 @@
     $backup_messages = optional_param( 'backup_messages',1,PARAM_INT );
     $preferences->backup_messages = $backup_messages;
 
-    $id = required_param('id');
+    $id = required_param('id', PARAM_INT);
     $preferences->backup_course = $id;
 
     $backup_name = required_param('backup_name',PARAM_FILE );
     $preferences->backup_name = $backup_name;
 
-    $backup_unique_code = required_param('backup_unique_code');
+    $backup_unique_code = required_param('backup_unique_code', PARAM_INT);
     $preferences->backup_unique_code = $backup_unique_code;
 
     //Another Info
