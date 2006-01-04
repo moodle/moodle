@@ -52,6 +52,7 @@ $string['choosemethod'] = 'Tapez la clef d\'inscription à ce cours&nbsp;; si vou
 $string['chooseone'] = 'Veuillez remplir l\'un des deux champs ci-dessous ou tous les deux';
 $string['credittestwarn'] = 'Le crédit semble fonctionner, mais aucun enregistrement n\'a été inséré dans la base de données en mode test.';
 $string['cutofftime'] = 'Date butoir de transaction. Quand la dernière transaction doit-elle être traitée pour règlement&nbsp;?';
+$string['delete'] = 'Détruire';
 $string['description'] = 'Le module Authorize.net permet de mettre en place des cours payant. Si le coût d\'un cours est nul, les étudiants peuvent s\'y inscrire sans payer. Un coût défini globalement, que vous fixez ici, est le coût par défaut pour tous les cours du site. Chaque cours peut ensuite avoir un coût spécifique fixé individuellement. S\'il est défini, le coût spécifique d\'un cours remplace le coût par défaut.<br /><br /><b>Remarque&nbsp;:</b> si vous indiquez une clef d\'inscription dans les réglages du cours, les étudiants auront également la possibilité de s\'y inscrire avec cette clef. Ceci est utile si vous avez un mélange d\'étudiants payant et non payant.';
 $string['enrolname'] = 'Paiement par carte de crédit Authorize.net';
 $string['expired'] = 'Échu';
