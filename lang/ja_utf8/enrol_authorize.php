@@ -6,7 +6,19 @@ $string['adminauthorizeccapture'] = 'オーダーレビュー&オートキャプ
 $string['adminauthorizeemail'] = 'メール送信設定';
 $string['adminauthorizesettings'] = 'Authorize.net 設定';
 $string['adminauthorizewide'] = 'サイト全体の設定';
-$string['adminneworder'] = '新しい注文が入りました:
+$string['admincronsetup'] = 'cron.phpメンテナンススクリプトが少なくとも24時間稼動していません。<br />オートキャプチャ機能を使用したい場合、Cronを有効にする必要があります。<br />再度 <a href=\"../doc/?frame=install.html&sub=cron\">cronの設定</a> または「an_review again」のチェックを外してください。<br />オートキャプチャを無効にすると、30日以内にトランザクションを検査しない場合、トランザクションはキャンセルされます。<br />30日以内に支払いを手動で支払いを受け付け/拒否したい場合は、「an_review」をチェックして、<br />「an_capture_day」フィールドにゼロを入力してください。';
+$string['adminhelpcapture'] = '手動で支払いを受け付け/拒否するだけではなく、支払いのキャンセルを防ぐためにオートキャプチャを使用したいと思います。どうすれば良いですか?
+
+- cronを設定してください。
+- 「an_review」をチェックしてください。
+- 「an_capture_day」フィールドに、1から29の間の数値を入力してください。あなたが「an_capture_day」内にキャプチャしない場合を除いて、クレジットカード情報は取得され、ユーザがコース登録されます。';
+$string['adminhelpreview'] = '手動で支払いを受け付け/拒否するには?
+- 「an_review」をチェックしてください。
+- 「an_capture_day」フィールドにゼロを入力してください。
+
+カード番号を入力するのと同時に学生をコース登録させるには?
+- 「an_review」のチェックを外してください。';
+$string['adminneworder'] = '新しい保留の注文が入りました:
 
 注文ID: $a->orderid
 トランザクションID: $a->transid
@@ -16,11 +28,12 @@ $string['adminneworder'] = '新しい注文が入りました:
 
 オートキャプチャ有効?: $a->acstatus
 
-オートキャプチャが有効にされている場合、クレジットカードは $a->captureon 日でキャプチャされ、学生はコース登録されます。そうでない場合、$a->expireon 日で期限切れとなり、この日以降はキャプチャできなくなります。
+オートキャプチャが有効にされている場合、クレジットカード情報は $a->captureon 日で取得され、学生はコース登録されます。そうでない場合、$a->expireon 日で期限切れとなり、この日以降はカード情報の取得ができなくなります。
 
 下記のリンクで、学生がコース登録するための支払いを承認/拒否することもできます:
 $a->url';
 $string['adminnewordersubject'] = '$a->course: 新しい未決注文 ( $a->orderid )';
+$string['adminpendingorders'] = 'あなたはオートキャプチャ機能を停止しています。<br />あなたがチェックしない場合、ステータスAN_STATUS_AUTHの合計 $a->count　件のトランザクションがキャンセルされます。<br />支払いを受け付け/拒否するには <a href=\'$a->url\'>支払い管理</a>ページにアクセスしてください。';
 $string['adminreview'] = 'クレジットカード処理手続きの前に注文を検査する。';
 $string['amount'] = '金額';
 $string['anlogin'] = 'Authorize.net: ログイン名';
@@ -47,6 +60,7 @@ $string['choosemethod'] = 'コースの登録キーを知っている場合は�
 $string['chooseone'] = '次の2つのフィールドの1つまたは両方に入力してください。';
 $string['credittestwarn'] = 'クレジットは正常に動作しているようですが、テストモードではデータベースにレコードはインサートされません。';
 $string['cutofftime'] = 'トランザクションカットオフ時間。何時に最終のトランザクションを確定のために取得しますか?';
+$string['delete'] = '無効化';
 $string['description'] = 'Authorize.netモジュールでは、クレジットカード経由でコースの支払いを行うことができます。コースの受講料がゼロの場合、学生に対して受講登録に関する支払いは求められません。サイト全体の利用料をデフォルトとしてここで設定して、コースごとに受講料を設定することができます。コース受講料を設定した場合、コース受講料はサイト利用料に優先します。';
 $string['enrolname'] = 'Authorize.net クレジットカード・ゲイトウェイ';
 $string['expired'] = '期限切れ';
@@ -61,10 +75,19 @@ $string['notsettled'] = '未確定';
 $string['orderid'] = '注文ID';
 $string['paymentmanagement'] = '支払い管理';
 $string['paymentpending'] = 'このコースに関するあなたの支払いは保留中です。注文番号は、 $a->orderid です。';
+$string['pendingordersemail'] = '支払いを受け付けない場合、トランザクション $a->pending は、2日で期限が切れます。
+
+あなたがオートキャプチャを有効にしていないため、これは警告メッセージです。支払いを手動で受け付けるか、拒否してください。
+
+保留の支払いを受け付け/拒否するには次のページへ:
+$a->url
+
+オートキャプチャを有効にすると、あなたは警告メッセージを受信しなくなります。設定は次のページへ:
+$a->enrolurl';
 $string['refund'] = '払い戻し';
 $string['refunded'] = '払い戻し完了';
 $string['returns'] = '返金';
-$string['reviewday'] = '教師または管理者が、<b>$a</b> 日以内に注文を検査しない場合、自動的にクレジットカード情報を取得する。CRONを有効にする必要があります。( 0日 = 自動取得を無効にする = 教師、管理者が手動で検査を行う。自動取得が無効にされた場合、30日以内にトランザクションを検査しない場合は、トランザクションはキャンセルされます。 )';
+$string['reviewday'] = '教師または管理者が、<b>$a</b> 日以内に注文を検査しない場合を除いて、自動的にクレジットカード情報を取得します。CRONを有効にする必要があります。( 0日 = 自動取得を無効にする = 教師、管理者が手動で検査を行う。オートキャプチャを無効にすると、30日以内にトランザクションを検査しない場合、トランザクションはキャンセルされます。 )';
 $string['reviewnotify'] = 'あなたの支払いが確認されました。数日中に先生からメールが送信されますのでお待ちください。';
 $string['sendpaymentbutton'] = '支払いの送信';
 $string['settled'] = '確定済み';
