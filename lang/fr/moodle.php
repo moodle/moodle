@@ -278,6 +278,7 @@ $string['databasesetup'] = 'Installation de la base de données';
 $string['databasesuccess'] = 'La base de données a été correctement mise à jour';
 $string['databaseupgradebackups'] = 'La version du logiciel de sauvegarde est maintenant $a';
 $string['databaseupgradeblocks'] = 'La version du logiciel des blocs est maintenant $a';
+$string['databaseupgradelocal'] = 'La version des modifications locales de la base de données est maintenant $a';
 $string['databaseupgrades'] = 'Mise à jour de la base de données';
 $string['date'] = 'Date';
 $string['datemostrecentfirst'] = 'Date - la plus récente en premier';
