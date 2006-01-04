@@ -616,7 +616,7 @@ class enrolment_plugin extends enrolment_base
             $timediff28 = $timenowsettle - (28 * 3600 * 24);
             $select = "(status = '" . AN_STATUS_AUTH . "') AND " .
                       "(timecreated < '$timediff28') AND (timecreated > '$timediff30')";
-            if (!$count = count_records_select('enrol_authorize', $sql)) {
+            if (!$count = count_records_select('enrol_authorize', $select)) {
                 return;
             }
 
