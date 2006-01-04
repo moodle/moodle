@@ -58,7 +58,7 @@ $string['enrolname'] = 'Paiement par carte de crédit Authorize.net';
 $string['expired'] = 'Échu';
 $string['howmuch'] = 'Combien&nbsp;?';
 $string['httpsrequired'] = 'Votre requête ne peut pas être traitée pour l\'instant. Les réglages du site n\'ont pas pu être configurés correctement.<br /><br />Veuillez NE PAS taper votre numéro de carte de  crédit, à moins que vous ne voyez un cadenas jaune au bas ou dans la barre d\'adresse de votre navigateur. Ce cadenas indique que toutes les données transmises entre votre ordinateur et le serveur sont chiffrées, et que les informations échangées entre ces deux ordinateurs sont protégées et ne peuvent pas être interceptées sur Internet.';
-$string['logindesc'] = 'Cette option doit impérativement être activée&nbsp;!<br /><br />Veuillez vous assurer que l\'option «&nbsp;<a href=\"$a->url\">loginhttps</a>&nbsp;» soit activée dans les paramètres de l\'administration, section Sécurité.<br /><br />L\'activation de cette optio permettra à Moodle d\'utiliser une connexion sécurisée pour l\'affichage et le traitement des pages de connexion et de paiement.';
+$string['logindesc'] = 'Cette option doit impérativement être activée&nbsp;!<br /><br />Veuillez vous assurer que l\'option «&nbsp;<a href=\"$a->url\">loginhttps</a>&nbsp;» soit activée dans les paramètres de l\'administration, section Sécurité.<br /><br />L\'activation de cette option permettra à Moodle d\'utiliser une connexion sécurisée pour l\'affichage et le traitement des pages de connexion et de paiement.';
 $string['nameoncard'] = 'Nom sur la carte';
 $string['noreturns'] = 'Pas de retour&nbsp;!';
 $string['notsettled'] = 'Non réglé';
