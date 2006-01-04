@@ -2,6 +2,7 @@
 
 $string['adminseesallevents'] = 'Les administrateurs voient tous les événements';
 $string['adminseesownevents'] = 'Les administrateurs sont comme tous les autres utilisateurs';
+$string['availablelangs'] = 'Langues disponibles';
 $string['backgroundcolour'] = 'Couleur transparente';
 $string['badwordsconfig'] = 'Taper ici votre liste de mots à censurer, séparés par des virgules.';
 $string['badwordsdefault'] = 'Si votre liste de mots à censurer est vide, une liste de mots tirée du fichier de langue sera utilisée.';
@@ -115,6 +116,7 @@ $string['configvariables'] = 'Paramètres techniques';
 $string['configwarning'] = 'Attention ! Des valeurs bizarres pour ces paramètres peuvent engendrer des problèmes.';
 $string['configzip'] = 'Indiquer le chemin complet du programme «&nbsp;zip&nbsp;» (seulement pour Unix). Ce programme est requis pour réaliser des archives zip sur le serveur.';
 $string['confirmation'] = 'Confirmation';
+$string['confirminstall'] = 'Vous êtes sur le point d\'installer une nouvelle langue ($a). Voulez-vous continuer&nbsp;?';
 $string['cronwarning'] = 'Le <a href=\"cron.php\">script de maintenance cron.php</a> n\'a pas été lancé depuis au moins 24 heures.<br />La <a href=\"../doc/?frame=install.html&amp;sub=cron\">documentation d\'installation</a> explique comment vous pouvez automatiser cette tâche.';
 $string['density'] = 'Densité';
 $string['edithelpdocs'] = 'Modifier les fichiers d\'aide';
@@ -136,6 +138,11 @@ $string['importtimezones'] = 'Mise à jour complète de la liste des fuseaux horai
 $string['importtimezonescount'] = '$a->count entrées importées depuis $a->source';
 $string['importtimezonesfailed'] = 'Aucune source de données trouvée&nbsp;!';
 $string['incompatibleblocks'] = 'Blocs incompatibles';
+$string['install'] = 'Installer';
+$string['installedlangs'] = 'Langues installées';
+$string['langimport'] = 'Utilitaire d\'importation de langues';
+$string['langimportsuccess'] = 'Le paquet de langue a été correctement mis à jour';
+$string['langpackremoved'] = 'La désinstallation de la langue est terminée';
 $string['latexpreamble'] = 'Préambule LaTeX';
 $string['latexsettings'] = 'Réglages de LaTeX Renderer';
 $string['mediapluginavi'] = 'Activer le filtre .avi';
@@ -165,6 +172,8 @@ $string['therewereerrors'] = 'Des erreurs sont présentes dans vos données';
 $string['timezoneforced'] = 'Ce réglage est imposé par l\'administrateur du site';
 $string['timezoneisforcedto'] = 'Imposer à tous les utilisateurs l\'utilisation du fuseau horaire';
 $string['timezonenotforced'] = 'Les utilisateurs peuvent choisir leur fuseau horaire';
+$string['uninstall'] = 'Désinstaller';
+$string['uninstallconfirm'] = 'Vous êtes sur le point de supprimer totalement la langue $a. Voulez-vous continuer&nbsp;?';
 $string['upgradeforumread'] = 'Moodle 1.5 possède une nouvelle fonctionnalité permettant de signaler quels messages des forums ont été lus.<br />Pour profiter de cette fonctionnalité, les tables de la base de données <a href=\"$a\">doivent être mises à jour</a>.';
 $string['upgradeforumreadinfo'] = 'Moodle 1.5 possède une nouvelle fonctionnalité permettant de signaler quels messages des forums ont été lus. Pour profiter de cette fonctionnalité, les tables de la base de données doivent être complétées avec le statut de lecture pour les messages existants. Suivant la taille de votre site, cette mise à jour peut prendre beaucoup de temps (quelques heures) et risque de surcharger la base de données. Nous vous conseillons donc de l\'effectuer lors d\'une période creuse. Durant cette mise à jour, votre site continuera à fonctionner et les utilisateurs n\'en seront pas affectés. Une fois l\'opération démarrée, vous devez la laisser se terminer (en laissant ouverte la fenêtre du navigateur). Si par inadvertence vous interrompez le processus, par exemple en fermant la fenêtre, vous pourrez le recommencer sans dommage.<br /><br />Voulez-vous commencer maintenant cette opération&nbsp;?';
 $string['upgradelogs'] = 'Pour profiter de toutes les fonctionnalités, les historiques (logs) doivent être mis à jour. <a href=\"$a\">Plus d\'informations</a>';
