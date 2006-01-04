@@ -197,7 +197,7 @@ HTMLページとして保存している可能性が考えられます。</p>
 
 <p>$CFG-&gt;dirroot = "";</p></td></tr></tbody></table>
 
-<p class="answer">いくつかのサーバで発生する小さなバグだと思われます。実際のパスでは無く、エラーチェックメカニズムにエラーの原因があります。これを修正するには、admin/index.phpで下記の行(66行目)を見つけて: </p>
+<p class="answer">いくつかのサーバで発生する小さなバグだと思われます。実際のパスではなく、エラーチェックメカニズムにエラーの原因があります。これを修正するには、admin/index.phpで下記の行(66行目)を見つけて: </p>
 
 <p class="answercode">if ($dirroot != $CFG->dirroot) {</p>
 
@@ -237,7 +237,7 @@ HTMLページとして保存している可能性が考えられます。</p>
 
 <h3><a name="nologin"></a>全くログインできません - ログイン画面より先に進みません。</h3>
 
-<p class="answer">多くは、あなたのコンピュータ(Moodleサーバでは無く)がリファラ情報を取り除くファイアーウォールを使用している場合に起こります。
+<p class="answer">多くは、あなたのコンピュータ(Moodleサーバではなく)がリファラ情報を取り除くファイアーウォールを使用している場合に起こります。
 Norton firewall製品をMoodleが動作するように設定変更する場合の説明は<a href="http://service1.symantec.com/SUPPORT/nip.nsf/46f26a2d6dafb0a788256bc7005c3fa3/b9b47ad7eddd343b88256c6b006a85a8?OpenDocument&src=bar_sch_nam">こちら</a>をご覧ください。</p>
 
 <p class="answer">サーバの管理者は、管理画面の詳細設定にある「<b>secureforms</b>」を「No」にすることで、全てのユーザのためにこの問題を解消することができます。</p>
