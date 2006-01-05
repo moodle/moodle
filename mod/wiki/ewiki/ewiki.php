@@ -75,7 +75,7 @@
 	define("EWIKI_UP_UPLOAD", "upload");
         #- other stuff
         define("EWIKI_DEFAULT_LANG", "en");
-        define("EWIKI_CHARSET", "ISO-8859-1");
+        define("EWIKI_CHARSET", current_charset());
 	#- user permissions
 	define("EWIKI_PROTECTED_MODE", 0);	# disable funcs + require auth
 	define("EWIKI_PROTECTED_MODE_HIDING", 0);  # hides disallowed actions
@@ -648,7 +648,7 @@ function ewiki_split_title ($id='', $split=EWIKI_SPLIT_TITLE, $entities=1) {
    if ($split) {
       $id = preg_replace("/([".EWIKI_CHARS_L."])([".EWIKI_CHARS_U."]+)/", "$1 $2", $id);
    }
-   return($entities ? htmlentities($id) : $id);
+   return($entities ? s($id) : $id);
 }
 
 
@@ -684,7 +684,7 @@ function ewiki_make_title($id='', $title='', $class=3, $action="view", $go_actio
       $title = ewiki_split_title($title, $ewiki_config["split_title"], 0&($title!=$ewiki_title));
    }
    else {
-      $title = htmlentities($title);
+      $title = s($title);
    }
 
    #-- title mangling
@@ -995,7 +995,7 @@ function ewiki_list_pages($pages=array(), $limit=EWIKI_LIST_LIMIT,
          $add_text = "";
       }
 
-      $lines[] = '<a href="' . ewiki_script("", $id, $params) . '">' . htmlentities($title) . '</a> ' . $add_text;
+      $lines[] = '<a href="' . ewiki_script("", $id, $params) . '">' . s($title) . '</a> ' . $add_text;
 
       if (($limit > 0)  &&  ($n++ >= $limit)) {
          break;
@@ -1194,7 +1194,7 @@ function ewiki_page_info($id, &$data, $action) {
             continue;  // MOODLE DOESN'T USE IT
             $str = "";
             if ($first && $value) { foreach ($value as $n=>$d) {
-               $str .= htmlentities("$n: $d") . "<br />\n";
+               $str .= s("$n: $d") . "<br />\n";
             } }
             $value = $str;
          }
@@ -1393,6 +1393,7 @@ function ewiki_page_edit($id, $data, $action) {
    #-- save
    if (isset($_REQUEST["save"])) {
 
+
          #-- normalize to UNIX newlines
          $_REQUEST["content"] = str_replace("\015\012", "\012", $_REQUEST["content"]);
          $_REQUEST["content"] = str_replace("\015", "\012", $_REQUEST["content"]);
@@ -1461,7 +1462,7 @@ function ewiki_page_edit($id, $data, $action) {
                      #header("Refresh: 0; URL=$url");
                   }
                   else {
-                     $o .= '<meta http-equiv="Refresh" content="0; URL='.htmlentities($url).'">';
+                     $o .= '<meta http-equiv="Refresh" content="0; URL='.s($url).'">';
                   }
                }
 
@@ -1540,9 +1541,6 @@ function ewiki_page_edit_form(&$id, &$data, &$hidden_postdata) {
        $o .= '<input type="hidden" name="'.$name.'" value="'.$value.'" />'."\n";
    }
 
-   if (EWIKI_CHARSET=="UTF-8") {
-      $data["content"] = utf8_encode($data["content"]);
-   }
    ($cols = strtok($ewiki_config["edit_box_size"], "x*/,;:")) && ($rows = strtok("x, ")) || ($cols=70) && ($rows=15);
    global $ewiki_use_editor, $ewiki_editor_content;
    $ewiki_editor_content=1;
@@ -1569,7 +1567,7 @@ function ewiki_page_edit_form(&$id, &$data, &$hidden_postdata) {
    ##### END MOODLE ADDITION #####
 
      $o .= '<textarea wrap="soft" id="ewiki_content" name="content" rows="'.$rows.'" cols="'.$cols.'">'
-        . htmlentities($data["content"]) . "</textarea>"
+        . s($data["content"]) . "</textarea>"
         . $GLOBALS["ewiki_t"]["C"]["EDIT_TEXTAREA_RESIZE_JS"];
 
    ##### BEGIN MOODLE ADDITION #####
@@ -2333,17 +2331,17 @@ function ewiki_link_regex_callback($uu, $force_noimg=0) {
    elseif (@$states["define"]) {
       $type = array("anchor");
       if ($title==$href) { $title="&nbsp;"; }
-      $str = '<a name="' . htmlentities(ltrim($href, "#")) . '">' . ltrim($title, "#") . '</a>';
+      $str = '<a name="' . s(ltrim($href, "#")) . '">' . ltrim($title, "#") . '</a>';
    }
    #-- inner page anchor jumps
    elseif (strlen($href2) && ($href==$ewiki_id) || ($href[0]=="#") && ($href2=&$href)) {
       $type = array("jump");
-      $str = '<a href="' . htmlentities($href2) . '">' . $title . '</a>';
+      $str = '<a href="' . s($href2) . '">' . $title . '</a>';
    }
    #-- ordinary internal WikiLinks
    elseif (($ewiki_links === true) || @$ewiki_links[$href_i]) {
       $type = array("wikipage");
-      $str = '<a href="' . ewiki_script("", $href) . htmlentities($href2)
+      $str = '<a href="' . ewiki_script("", $href) . s($href2)
            . '">' . $title . '</a>';
    }
    #-- guess for mail@addresses, convert to URI if

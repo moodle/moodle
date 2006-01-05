@@ -1143,7 +1143,7 @@ function wiki_admin_setpageflags_list($pageflagstatus) {
     } else {
         $cell_pagename .= '<A HREF="' . EWIKI_SCRIPT_BINARY . $id . '">';
     }
-    $cell_pagename .= htmlentities($id) . '</A> / '.get_string("version","wiki").": ".$row["version"];
+    $cell_pagename .= s($id) . '</A> / '.get_string("version","wiki").": ".$row["version"];
 
     foreach ($FD as $n=>$str) {
         $cell_flags .='<INPUT TYPE="checkbox" NAME="flags['. rawurlencode($id)
@@ -1282,7 +1282,7 @@ function wiki_admin_remove_list($listall="") {
     } else {
         $table_page='<A HREF="' . ewiki_script_binary("", $id) . '">';
     }
-    $table_page .= htmlentities($id) . '</A>';
+    $table_page .= s($id) . '</A>';
 
     #-- print reason
     $table_reason=$reason;
@@ -1337,7 +1337,7 @@ function wiki_admin_strip_list($pagestostrip="",$version="",$err="") {
           $versiondefault=$version[$i];
         }
         $table->data[]=array('<input type="checkbox" value="'.rawurlencode($id).'" name="pagestostrip['.$i.']" '.$checked.' />',
-                        '<A HREF="'.EWIKI_SCRIPT.$id.'">'.htmlentities($id).'</A> / '.get_string("version","wiki").": ".$row["version"],
+                        '<A HREF="'.EWIKI_SCRIPT.$id.'">'.s($id).'</A> / '.get_string("version","wiki").": ".$row["version"],
                         '<input name="version['.$i.']" value="'.$versiondefault.'" size="7" />'.$error);
 
       }
@@ -1390,7 +1390,7 @@ function wiki_admin_checklinks_list() {
   $result = ewiki_database("GETALL",array());
   while ($row = $result->get()) {
     if(!($row["flags"] & EWIKI_DB_F_BINARY)) {
-      $index=htmlentities($row["id"]);
+      $index=s($row["id"]);
       $ret[$index] = $row["id"];
     }
   }
