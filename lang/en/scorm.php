@@ -58,7 +58,7 @@ $string['lastaccess'] = 'Last access';
 $string['scormcourse'] = 'Learning Course';
 $string['advanced'] = 'Advanced';
 $string['window'] = 'Window';
-$string['hidetoc'] = 'Hide course structure (TOC)';
+$string['hidetoc'] = 'Course structure display (TOC)';
 $string['hidenav'] = 'Hide navigation buttons';
 $string['noprerequisites'] = 'Sorry but you don\'t reach enough prerequisites to access this learning object';
 $string['element'] = 'Element';
@@ -84,6 +84,13 @@ $string['resizable'] = 'Allow the window to be resized';
 $string['scrollbars'] = 'Allow the window to be scrolled';
 $string['statusbar'] = 'Show the status bar';
 $string['toolbar'] = 'Show the toolbar';
+$string['reviewmode'] = 'Review Mode';
+$string['noscriptnoscorm'] = 'Your browser does not support javascript or it has javascript support disabled. No tracks will recorded.';
+$string['maximumattempts'] = 'Number of attempts';
+$string['newattempt'] = 'Start a new attempt';
+$string['sided'] = 'On the left side';
+$string['popupmenu'] = 'In a popup menu';
+$string['hidden'] = 'Hidden';
 
 
 // Validation
