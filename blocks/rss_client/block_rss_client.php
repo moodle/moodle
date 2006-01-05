@@ -159,7 +159,7 @@ define('BLOCK_RSS_SECONDARY_CACHE_ENABLED', true);
         require_once($CFG->libdir .'/rsslib.php');
         require_once(MAGPIE_DIR .'rss_fetch.inc');
         if (!defined('MAGPIE_OUTPUT_ENCODING')) {
-            define('MAGPIE_OUTPUT_ENCODING', get_string('thischarset'));  // see bug 3107
+            define('MAGPIE_OUTPUT_ENCODING', current_charset());  // see bug 3107
         }
 
         // Check if there is a cached string which has not timed out.
@@ -194,9 +194,9 @@ define('BLOCK_RSS_SECONDARY_CACHE_ENABLED', true);
             }
 
             if (empty($rss_record->preferredtitle)) {
-                $feedtitle = $this->format_title(stripslashes_safe(rss_unhtmlentities($rss->channel['title'])));
+                $feedtitle = $this->format_title($rss->channel['title']);
             } else {
-                $feedtitle = $this->format_title(stripslashes_safe($rss_record->preferredtitle));
+                $feedtitle = $this->format_title($rss_record->preferredtitle);
             }
 //            print_object($rss);
             if (isset($this->config) && 
@@ -219,8 +219,6 @@ define('BLOCK_RSS_SECONDARY_CACHE_ENABLED', true);
             }
 
             foreach ($rss->items as $item) {
-                $item['title'] = stripslashes_safe(rss_unhtmlentities($item['title']));
-                $item['description'] = stripslashes_safe(rss_unhtmlentities($item['description']));
                 if ($item['title'] == '') {
                     // no title present, use portion of description
                     $item['title'] = substr(strip_tags($item['description']), 0, 20) . '...';
@@ -272,11 +270,15 @@ define('BLOCK_RSS_SECONDARY_CACHE_ENABLED', true);
 
      // just strips the title down and adds ... for excessively long titles.
      function format_title($title,$max=64) {
-         if (strlen($title) <= $max) {
+
+     /// Loading the textlib singleton instance. We are going to need it.
+         $textlib = textlib_get_instance();
+
+         if ($textlib->strlen($title,current_charset()) <= $max) {
              return $title;
          }
          else {
-             return substr($title,0,$max-3).'...';
+             return $textlib->substr($title,0,$max-3,current_charset()).'...';
          }
      }
 }

@@ -45,7 +45,7 @@ $url            = clean_param($url, PARAM_URL);
 $preferredtitle = optional_param('preferredtitle', '', PARAM_ALPHA);
 
 if (!defined('MAGPIE_OUTPUT_ENCODING')) {
-    define('MAGPIE_OUTPUT_ENCODING', get_string('thischarset'));  // see bug 3107
+    define('MAGPIE_OUTPUT_ENCODING', current_charset());  // see bug 3107
 }
 
 if (!empty($id)) {
@@ -111,8 +111,8 @@ if ($act == 'updfeed') {
         $dataobject->title = '';
         $dataobject->preferredtitle = '';
     } else {
-        $dataobject->description = addslashes(rss_unhtmlentities($rss->channel['description']));
-        $dataobject->title = addslashes(rss_unhtmlentities($rss->channel['title']));
+        $dataobject->description = addslashes($rss->channel['description']);
+        $dataobject->title = addslashes($rss->channel['title']);
         $dataobject->preferredtitle = addslashes($preferredtitle);
     }
     $dataobject->url = addslashes($url);
@@ -157,10 +157,10 @@ if ($act == 'updfeed') {
 
         $dataobject->id = $rssid;
         if (!empty($rss->channel['description'])) {
-            $dataobject->description = addslashes(rss_unhtmlentities($rss->channel['description']));
+            $dataobject->description = addslashes($rss->channel['description']);
         }
         if (!empty($rss->channel['title'])) {
-            $dataobject->title = addslashes(rss_unhtmlentities($rss->channel['title']));
+            $dataobject->title = addslashes($rss->channel['title']);
         } 
         if (!update_record('block_rss_client', $dataobject)) {
             error('There was an error trying to update rss feed with id:'. $rssid);
@@ -208,15 +208,13 @@ if ($act == 'updfeed') {
         ob_end_clean();
 
         if (empty($rss_record->preferredtitle)) {
-            $feedtitle = stripslashes_safe($rss_record->preferredtitle);
+            $feedtitle = $rss_record->preferredtitle;
         } else {
-            $feedtitle =  stripslashes_safe(rss_unhtmlentities($rss->channel['title']));
+            $feedtitle =  $rss->channel['title'];
         }
         print '<table align="center" width="50%" cellspacing="1">'."\n";
         print '<tr><td colspan="2"><strong>'. $feedtitle .'</strong></td></tr>'."\n";
         for($y=0; $y < count($rss->items); $y++) {
-            $rss->items[$y]['title'] = stripslashes_safe(rss_unhtmlentities($rss->items[$y]['title']));
-            $rss->items[$y]['description'] = stripslashes_safe(rss_unhtmlentities($rss->items[$y]['description']));
             if ($rss->items[$y]['link'] == '') {
                 $rss->items[$y]['link'] = $rss->items[$y]['guid'];
             }
