@@ -363,6 +363,7 @@ $string['edituser'] = 'Edit user accounts';
 $string['email'] = 'Email address';
 $string['emailactive'] = 'Email activated';
 $string['emailagain'] = 'Email (again)';
+$string['emailcharset'] = 'Email charset';
 $string['emailconfirm'] = 'Confirm your account';
 $string['emailconfirmation'] = 'Hi $a->firstname,
 
