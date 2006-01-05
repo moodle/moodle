@@ -63,23 +63,40 @@ function multilang_filter_impl($langblock) {
     $CFG->currenttextiscacheable = false;
 
     if(empty($preflangs)) {
-        /// Get current language
+        /// Get current languages (utf and simple)
         $currentlang = current_language();
-    
-        /// Get parent language
-        $langfile = "$CFG->dirroot/lang/$currentlang/moodle.php";
-        if ($result = get_string_from_file("parentlanguage", "$langfile", "\$parentlang")) {
-            eval($result);
+        $currentlangsimple = '';
+        /// If it's a utf8 lang, use the basic one too
+        if (strstr($currentlang, '_utf8') !== false) {
+            $currentlangsimple = str_replace('_utf8', '', $currentlang);
         }
     
+        /// Get parent language of $currentlang (utf and simple)
+        $parentlang = get_string('parentlanguage');
+        $parentlangsimple = '';
+        if (substr($parentlang, 0, 1) == '[') {
+            $parentlang = '';
+        }
+        /// If it's a utf8 lang, use the basic one too
+        if (strstr($parentlang, '_utf8') !== false) {
+            $parentlangsimple = str_replace('_utf8', '', $parentlang);
+        }
+
         /// Fill in the array of preffered languages
         $preflangs = array();
         $preflangs[] = $currentlang;     /// First, the current lang
+        if (!empty($currentlangsimple)) {
+            $preflangs[] = $currentlangsimple; /// The simple (non utf8) lang
+        }
         if (!empty($parentlang)) {
             $preflangs[] = $parentlang; /// Then, if available, the parent lang
         }
-        if ($currentlang != 'en') {
-            $preflangs[] = 'en';        /// Finally, if not used, add the en lang
+        if (!empty($parentlangsimple)) {
+            $preflangs[] = $parentlangsimple; /// And the simple (non utf8) parent lang
+        }
+        if ($currentlang != 'en' && $currentlang != 'en_utf8') {
+            $preflangs[] = 'en_utf8';        /// Finally, if not used, add the en langs
+            $preflangs[] = 'en';
         }
     }
 
