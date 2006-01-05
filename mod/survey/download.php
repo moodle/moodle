@@ -121,18 +121,15 @@
 // Output the file as a valid Excel spreadsheet if required
 
     if ($type == "xls") {
-        require_once("$CFG->libdir/excel/Worksheet.php");
-        require_once("$CFG->libdir/excel/Workbook.php");
+        require_once("$CFG->libdir/excellib.class.php");
 
-        header("Content-type: application/vnd.ms-excel");
-        $downloadfilename = clean_filename("$course->shortname ".strip_tags(format_string($survey->name,true)));
-        header("Content-Disposition: attachment; filename=$downloadfilename.xls");
-        header("Expires: 0");
-        header("Cache-Control: must-revalidate, post-check=0,pre-check=0");
-        header("Pragma: public");
-
-        $workbook = new Workbook("-");
-        // Creating the first worksheet
+    /// Calculate file name
+        $downloadfilename = clean_filename("$course->shortname ".strip_tags(format_string($survey->name,true))).'.xls';
+    /// Creating a workbook
+        $workbook = new MoodleExcelWorkbook("-");
+    /// Sending HTTP headers
+        $workbook->send($downloadfilename);
+    /// Creating the first worksheet
         $myxls =& $workbook->add_worksheet(substr(strip_tags(format_string($survey->name,true)), 0, 31));
 
         $header = array("surveyid","surveyname","userid","firstname","lastname","email","idnumber","time", "notes");
