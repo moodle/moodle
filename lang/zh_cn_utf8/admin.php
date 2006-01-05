@@ -97,6 +97,11 @@ $string['edithelpdocs'] = '编辑帮助文档';
 $string['editstrings'] = '编辑字符串';
 $string['filterall'] = '过滤全部字符串';
 $string['filteruploadedfiles'] = '过滤上传的文件';
+$string['globalsquoteswarning'] = '<p><strong>安全警告</strong>：为了能够正常运行，Moodle需要您修改您当前的PHP设置。</p>
+
+<p>您<em>必须</em>至少设定<code>register_globals=off</code>和<code>magic_quotes_gpc=on</code>二者之一。如果有可能，您应当设定<code>register_globals=off</code>来提高服务器的整体安全性，同时我们也建议您设定<code>magic_quotes_gpc=on</code>。</p>
+
+<p>这些设定是由<code>php.ini</code>、Apache或IIS的配置文件或<code>.htaccess</code>来控制的。</p>';
 $string['helpadminseesall'] = '管理员看到日历中全部的事件还是只看到那些于他们自己相关的事件?';
 $string['helpcalendarsettings'] = '设定Moodle中几个与日历和日期/事件相关的方面';
 $string['helpforcetimezone'] = '您可以允许用户选择他自己的时区或者让所有用户只能使用同一时区。';

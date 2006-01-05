@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.6 development (2005101200)
+      // moodle.php - created with Moodle 1.5.3+ (2005060230)
 
 
 $string['action'] = '动作';
@@ -65,6 +65,7 @@ $string['administrator'] = '网站管理员';
 $string['administrators'] = '管理员';
 $string['administratorsall'] = '所有管理员';
 $string['administratorsandteachers'] = '管理员和教师';
+$string['adminprimarynoedit'] = "您无权修改主管理员的密码";
 $string['advanced'] = '高级';
 $string['advancedfilter'] = '高级搜索';
 $string['advancedsettings'] = '高级设置';
@@ -208,7 +209,9 @@ $string['coursefiles'] = '课程文件';
 $string['courseformats'] = '课程格式';
 $string['coursegrades'] = '课程成绩';
 $string['coursehidden'] = '此课程目前并不对学生开放';
+$string['courseimportnotaught'] = '您无权修改其它的课程，因此您也无法从其它课程中导入内容。';
 $string['courseinfo'] = '课程信息';
+$string['coursenotaccessible'] = '这个课程未对公众开放';
 $string['courserestore'] = '课程恢复';
 $string['courses'] = '课程';
 $string['coursescategory'] = '同一类别的课程';
@@ -418,7 +421,6 @@ $string['enrolmentnotyet'] = '对不起，在{$a}之前您不能访问此课程'
 $string['enrolments'] = '选课';
 $string['enrolmentstart'] = '选课已开始';
 $string['enrolperiod'] = '选课时间';
-$string['enrolstartdate'] = '开始日期';
 $string['entercourse'] = '点击进入该课程';
 $string['enteremailaddress'] = '输入您的E-mail地址以重设密码，
 新密码将送到您的信箱中。';
@@ -546,6 +548,11 @@ $string['guestsnotallowed'] = '抱歉！“{$a}”不允许访客进入。';
 $string['guestsyes'] = '允许没有密钥的访客进入';
 $string['guestuser'] = '访客用户';
 $string['guestuserinfo'] = '该用户是个特殊用户，允许以只读方式参观一些课程。';
+$string['healthcenter'] = '健康忠信';
+$string['healthproblemsdetected'] = '监测到健康问题！';
+$string['healthproblemsolution'] = '健康问题解决方案';
+$string['healthreturntomain'] = '继续';
+$string['healthsolution'] = '解决方案';
 $string['help'] = '帮助';
 $string['helpemoticons'] = '使用表情图标';
 $string['helpformatting'] = '关于格式化文本';
@@ -602,7 +609,6 @@ $string['includenoneusers'] = '不包括任何用户';
 $string['includeuserfiles'] = '包括用户文件';
 $string['info'] = '信息';
 $string['institution'] = '机构';
-$string['instudentview'] = '在学生视图';
 $string['invalidemail'] = 'E-mail地址无效';
 $string['invalidlogin'] = '登录无效，请重试';
 $string['ip_address'] = 'IP地址';
@@ -635,7 +641,6 @@ $string['loggedinasguest'] = '您正在用访客帐号访问';
 $string['loggedinnot'] = '您尚未登录。';
 $string['login'] = '登录';
 $string['login_failure_logs'] = '登录失败日志';
-$string['loginalready'] = '您已经登录了';
 $string['loginas'] = '登录为';
 $string['loginguest'] = '作为访客登录';
 $string['loginsite'] = '登录该站';
@@ -962,7 +967,6 @@ $string['section'] = '文章';
 $string['sections'] = '文章';
 $string['select'] = '选择';
 $string['selectacountry'] = '选择一个国家或地区';
-$string['selectall'] = '选择全部';
 $string['selectednowmove'] = '{$a}个文件被选定。现在请前往目的地址点击“移动文件到这里”';
 $string['senddetails'] = '用E-mail发送我的详细资料';
 $string['separateandconnected'] = '独立型和情景型思维方式';
@@ -1032,8 +1036,6 @@ $string['stringsnotset'] = '以下字串{$a}中没有定义';
 $string['studentnotallowed'] = '抱歉，您作为‘{$a}’不能进入该课程';
 $string['students'] = '学生';
 $string['studentsandteachers'] = '学生和老师';
-$string['studentviewoff'] = '关闭学生视图';
-$string['studentviewon'] = '开启学生视图';
 $string['subcategories'] = '子类别';
 $string['success'] = '成功';
 $string['summary'] = '概要';
@@ -1136,6 +1138,7 @@ $string['usethiscourse'] = '使用这个课程';
 $string['usingexistingcourse'] = '使用现有课程';
 $string['version'] = '版本';
 $string['view'] = '浏览';
+$string['viewsolution'] = '查看解决方案';
 $string['virusfound'] = '管理员请注意! Clam AV发现用户{$a->user}在课程{$a->course}中上传的文件有病毒。以下是clamscan的输出:';
 $string['virusfoundlater'] = '您于{$a->date}在课程{$a->course}中上传的文件{$a->filename}有病毒。以下是关于该文件的汇总:
 
