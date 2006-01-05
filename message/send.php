@@ -20,11 +20,8 @@
     }
 
 /// Select encoding
-    if (!empty($CFG->unicode)) {
-        $encoding = 'utf-8';
-    } else {
-        $encoding = get_string('thischarset');
-    }
+    $encoding = current_charset();
+
 /// Select direction
     if ( get_string('thisdirection') == 'rtl' ) {
         $direction = ' dir="rtl"';

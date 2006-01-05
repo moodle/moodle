@@ -15,11 +15,7 @@
     }
 
 /// Select encoding
-    if (!empty($CFG->unicode)) {
-        $encoding = 'utf-8';
-    } else {
-        $encoding = get_string('thischarset');
-    }
+    $encoding = current_charset();
 
 /// Script parameters
     $userid       = required_param('id', PARAM_INT);
@@ -45,7 +41,7 @@
     echo '  parent.messages.document.close();'."\n";
     echo '  parent.messages.document.open("text/html","replace");'."\n";
     echo '  parent.messages.document.write("<html><head><title> <\/title>");'."\n";
-    echo '  parent.messages.document.write("<meta http-equiv=\"content-type\" content=\"text/html; charset='.get_string('thischarset').'\" />");'."\n";
+    echo '  parent.messages.document.write("<meta http-equiv=\"content-type\" content=\"text/html; charset='.current_charset().'\" />");'."\n";
     echo '  parent.messages.document.write("<base target=\"_blank\" />");'."\n";
     echo '  parent.messages.document.write("'.addslashes($stylesheetshtml).'");'."\n";
     echo '  parent.messages.document.write("<\/head><body class=\"message course-1\" id=\"message-messages\"><div style=\"display: none\" id=\"messagestarted\">&nbsp;<\/div>");'."\n";
