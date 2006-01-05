@@ -6,6 +6,7 @@ $string['adminauthorizeccapture'] = 'オーダーレビュー&オートキャプ
 $string['adminauthorizeemail'] = 'メール送信設定';
 $string['adminauthorizesettings'] = 'Authorize.net 設定';
 $string['adminauthorizewide'] = 'サイト全体の設定';
+$string['adminavs'] = 'あなたのauthorize.netアカウントで住所確認システム ( AVS:Address Verification System ) を有効にした場合は、ここをチェックしてください。この設定により、ユーザが支払いフォームに入力する時に、市町村、県、国および郵便番号の入力が求められます。';
 $string['admincronsetup'] = 'cron.phpメンテナンススクリプトが少なくとも24時間稼動していません。<br />オートキャプチャ機能を使用したい場合、Cronを有効にする必要があります。<br />再度 <a href=\"../doc/?frame=install.html&sub=cron\">cronの設定</a> または「an_review again」のチェックを外してください。<br />オートキャプチャを無効にすると、30日以内にトランザクションを検査しない場合、トランザクションはキャンセルされます。<br />30日以内に支払いを手動で支払いを受け付け/拒否したい場合は、「an_review」をチェックして、<br />「an_capture_day」フィールドにゼロを入力してください。';
 $string['adminemailexpired'] = 'トランザクションが失効する <b>$a</b> 日前に何件の「認可/保留キャプチャ」トランザクションがあったか警告メールを管理者へ送信します。 (0 = メール送信を停止する、デフォルト = 2、最大 = 5 )<br />手動キャプチャを有効にしている場合、便利です (an_review = チェック、 an_capture_day = 0 )。';
 $string['adminhelpcapture'] = '手動で支払いを受け付け/拒否するだけではなく、支払いのキャンセルを防ぐためにオートキャプチャを使用したいと思います。どうすれば良いですか?
@@ -76,7 +77,7 @@ $string['notsettled'] = '未確定';
 $string['orderid'] = '注文ID';
 $string['paymentmanagement'] = '支払い管理';
 $string['paymentpending'] = 'このコースに関するあなたの支払いは保留中です。注文番号は、 $a->orderid です。';
-$string['pendingordersemail'] = '支払いを受け付けない場合、トランザクション $a->pending は、2日で期限が切れます。
+$string['pendingordersemail'] = '支払いを受け付けない場合、トランザクション $a->pending は、$a->days 日で期限が切れます。
 
 あなたがオートキャプチャを有効にしていないため、これは警告メッセージです。支払いを手動で受け付けるか、拒否してください。
 
