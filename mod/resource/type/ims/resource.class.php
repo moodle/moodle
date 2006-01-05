@@ -369,11 +369,7 @@ class resource_ims extends resource_base {
         if (empty($frameset)) {
 
         /// Select encoding
-            if (!empty($CFG->unicode)) {
-                $encoding = 'utf-8';
-            } else {
-                $encoding = get_string('thischarset');
-            }
+            $encoding = current_charset();
 
         /// Select direction
             if (get_string('thisdirection') == 'rtl') {
@@ -441,11 +437,7 @@ class resource_ims extends resource_base {
             }
 
         /// Select encoding
-            if (!empty($CFG->unicode)) {
-                $encoding = 'utf-8';
-            } else {
-                $encoding = get_string('thischarset');
-            }
+            $encoding = current_charset();
 
         /// Select direction
             if (get_string('thisdirection') == 'rtl') {
