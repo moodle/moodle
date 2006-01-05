@@ -95,6 +95,14 @@
         
         $usernew->maildisplay   = clean_param($usernew->maildisplay,   PARAM_INT);
         $usernew->mailformat    = clean_param($usernew->mailformat,    PARAM_INT);
+        if ($CFG->allowusermailcharset) {
+            $usernew->mailcharset = clean_param($usernew->mailcharset, PARAM_CLEAN);
+            if (!empty($usernew->mailcharset)) {
+                set_user_preference('mailcharset', $usernew->mailcharset, $user->id);
+            }
+        } else {
+            unset_user_preference('mailcharset', $user->id);
+        }
         $usernew->maildigest    = clean_param($usernew->maildigest,    PARAM_INT);
         $usernew->autosubscribe = clean_param($usernew->autosubscribe, PARAM_INT);
         if (!empty($CFG->htmleditor)) {
