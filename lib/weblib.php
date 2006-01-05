@@ -3958,10 +3958,10 @@ function notice_yesno ($message, $linkyes, $linkno) {
 function redirect($url, $message='', $delay='0') {
 
     global $CFG;
+
     //$url     = clean_text($url);
-   if (!empty($CFG->usesid) && !isset($_COOKIE[session_name()]))
-    {
-       $url=sid_process_url($url);
+    if (!empty($CFG->usesid) && !isset($_COOKIE[session_name()])) {
+       $url = sid_process_url($url);
     }
 
     $message = clean_text($message);

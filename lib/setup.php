@@ -87,7 +87,11 @@ global $HTTPSPAGEREQUIRED;
 
 /// Set httpswwwroot default value (this variable will replace $CFG->wwwroot
 /// inside some URLs used in HTTPSPAGEREQUIRED pages.
-$CFG->httpswwwroot = $CFG->wwwroot;
+    $CFG->httpswwwroot = $CFG->wwwroot;
+
+    $CFG->libdir   = $CFG->dirroot .'/lib';
+
+    require_once($CFG->libdir .'/setuplib.php');        // Functions that MUST be loaded first
 
 /// Time to start counting    
     init_performance_info();        
@@ -106,7 +110,6 @@ $CFG->httpswwwroot = $CFG->wwwroot;
 
 /// Connect to the database using adodb
 
-    $CFG->libdir   = $CFG->dirroot .'/lib';
 
     require_once($CFG->libdir .'/adodb/adodb.inc.php'); // Database access functions
 
@@ -525,32 +528,5 @@ $CFG->httpswwwroot = $CFG->wwwroot;
         }
     }
 
-
-/**
- * Initializes our performance info early.
- *
- * Pairs up with get_performance_info() which is actually
- * in moodlelib.php. This function is here so that we can 
- * call it before all the libs are pulled in. 
- *
- * @uses $PERF
- */
-function init_performance_info() {
-
-    global $PERF;
-
-    $PERF = new Object;
-    $PERF->dbqueries = 0;   
-    $PERF->logwrites = 0;
-    if (function_exists('microtime')) {
-        $PERF->starttime = microtime();
-        }
-    if (function_exists('memory_get_usage')) {
-        $PERF->startmemory = memory_get_usage();
-    }
-    if (function_exists('posix_times')) {
-        $PERF->startposixtimes = posix_times();  
-    }
-}
 
 ?>
