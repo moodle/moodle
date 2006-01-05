@@ -4904,6 +4904,26 @@ function get_list_of_languages() {
 }
 
 /**
+ * Returns a list of charset codes. It's hardcoded, so they should be added manually
+ * (cheking that such charset is supported by the texlib library!)
+ *
+ * @return array And associative array with contents in the form of charset => charset
+ */
+function get_list_of_charsets() {
+
+    $charsets = array(
+        'EUC-JP'     => 'EUC-JP',
+        'ISO-2022-JP'=> 'ISO-2022-JP',
+        'ISO-8859-1' => 'ISO-8859-1',
+        'SHIFT-JIS'  => 'SHIFT-JIS',
+        'UTF-8'      => 'UTF-8');
+
+    asort($charsets);
+
+    return $charsets;
+}
+
+/**
  * Returns a list of country names in the current language
  *
  * @uses $CFG
