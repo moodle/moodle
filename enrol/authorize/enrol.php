@@ -163,13 +163,14 @@ class enrolment_plugin extends enrolment_base
 
         if (empty($form->ccfirstname) || empty($form->cclastname) ||
             empty($form->cc) || empty($form->cvv) || empty($form->cctype) ||
-            empty($form->ccexpiremm) || empty($form->ccexpireyyyy) || empty($form->cczip)) {
+            empty($form->ccexpiremm) || empty($form->ccexpireyyyy)) {
                 $this->ccerrormsg = get_string("allfieldsrequired");
                 return;
         }
 
         if (!empty($CFG->an_avs)) {
-            if (empty($form->ccaddress) || empty($form->cccity) || empty($form->cccountry)) {
+            if (empty($form->ccaddress) || empty($form->cccity) ||
+                empty($form->cccountry) || empty($form->cczip)) {
                 $this->ccerrormsg = get_string("allfieldsrequired");
                 return;
             }
@@ -209,24 +210,24 @@ class enrolment_plugin extends enrolment_base
         }
 
         $extra = new stdClass();
+        $extra->x_phone = '';
+        $extra->x_fax = '';
         $extra->x_first_name = $form->ccfirstname;
         $extra->x_last_name = $form->cclastname;
-        $extra->x_address = $USER->address;
-        $extra->x_city = $USER->city;
+        $extra->x_address = $form->ccaddress;
+        $extra->x_city = $form->cccity;
         $extra->x_zip = $form->cczip;
-        $extra->x_country = $USER->country;
-        $extra->x_state = '';
+        $extra->x_state = $form->ccstate;
+        $extra->x_country = $form->cccountry;
         $extra->x_card_num = $form->cc;
         $extra->x_card_code = $form->cvv;
+        $extra->x_exp_date = $exp_date;
         $extra->x_currency_code = $curcost['currency'];
         $extra->x_amount = $curcost['cost'];
-        $extra->x_exp_date = $exp_date;
         $extra->x_email = $USER->email;
         $extra->x_email_customer = 'TRUE';
         $extra->x_cust_id = $USER->id;
         $extra->x_customer_ip = $useripno;
-        $extra->x_phone = '';
-        $extra->x_fax = '';
         $extra->x_invoice_num = $order->id;
         $extra->x_description = $course->shortname;
 
