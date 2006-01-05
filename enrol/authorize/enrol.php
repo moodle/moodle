@@ -13,21 +13,21 @@ define('AN_ENCAP', '"');
 require_once("$CFG->dirroot/enrol/enrol.class.php");
 
 class enrolment_plugin extends enrolment_base {
-    
+
     var $ccerrormsg;
 
     /// Override: print_entry()
     function print_entry($course) {
         global $CFG, $USER, $form;
-        
+
         if ($this->zero_cost($course) || isguest()) {
             parent::print_entry($course);
             return;
         }
-        
+
         // check paid?
         $this->check_paid();
-        
+
         // I want to paid on SSL.
         if (empty($_SERVER['HTTPS'])) {
             if (empty($CFG->loginhttps)) {
@@ -40,23 +40,27 @@ class enrolment_plugin extends enrolment_base {
             }
         }
 
-        $formvars = array('password', 'ccfirstname','cclastname','cc','ccexpiremm','ccexpireyyyy','cctype','cvv','cczip');
+        $formvars = array('password', 'ccfirstname','cclastname','cc','ccexpiremm','ccexpireyyyy','cctype','cvv',
+                          'ccaddress', 'cccity', 'ccstate', 'cccountry', 'cczip');
         foreach ($formvars as $var) {
             if (!isset($form->$var)) {
                 $form->$var = '';
             }
         }
-        
+
         $teacher = get_teacher($course->id);
+        $cost = $this->get_course_cost($course);
         $strloginto = get_string("loginto", "", $course->shortname);
         $strcourses = get_string("courses");
         $userfirstname = empty($form->ccfirstname) ? $USER->firstname : $form->ccfirstname;
         $userlastname = empty($form->cclastname) ? $USER->lastname : $form->cclastname;
-        $cost = $this->get_course_cost($course);
+        $useraddress = empty($form->ccaddress) ? $USER->address : $form->ccaddress;
+        $usercity = empty($form->cccity) ? $USER->city : $form->cccity;
+        $usercountry = empty($form->cccountry) ? $USER->country : $form->cccountry;
 
         print_header($strloginto, $course->fullname, "<a href=\"$CFG->wwwroot/course/\">$strcourses</a> -> $strloginto");
         print_course($course, "80%");
-        
+
         if ($course->password) {
             print_simple_box(get_string('choosemethod', 'enrol_authorize'), 'center');
             $password = '';
@@ -66,7 +70,7 @@ class enrolment_plugin extends enrolment_base {
         print_simple_box_start("center");
         include($CFG->dirroot . '/enrol/authorize/enrol.html');
         print_simple_box_end();
-        
+
         print_footer();
     }
 
@@ -91,14 +95,24 @@ class enrolment_plugin extends enrolment_base {
             return;
         }
 
+        if (!empty($CFG->an_avs)) {
+            if (empty($form->ccaddress) || empty($form->cccity) ||
+                empty($form->cccountry) || empty($form->cczip)) {
+                $this->ccerrormsg = get_string("allfieldsrequired");
+                return;
+            }
+        }
+
         $exp_date = (($form->ccexpiremm<10) ? strval('0'.$form->ccexpiremm) : strval($form->ccexpiremm)) . ($form->ccexpireyyyy);
-        if (! CCVal($form->cc, $form->cctype, $exp_date)) {
-            $this->ccerrormsg = get_string( (($valid_cc===0) ? 'ccexpired' : 'ccinvalid'), 'enrol_authorize' );
+        $valid_cc = CCVal($form->cc, $form->cctype, $exp_date);
+        if (!$valid_cc) {
+            $this->ccerrormsg = get_string((($valid_cc===0) ? 'ccexpired' : 'ccinvalid'), 'enrol_authorize');
             return;
         }
 
         $this->check_paid();
         $order_number = 0; // can be get from db
+        $cost = $this->get_course_cost($course);
         $formdata = array (
             'x_version'         => '3.1',
             'x_delim_data'      => 'True',
@@ -111,15 +125,15 @@ class enrolment_plugin extends enrolment_base {
             'x_method'          => 'CC',
             'x_first_name'      => $form->ccfirstname,
             'x_last_name'       => $form->cclastname,
-            'x_address'         => $USER->address,
-            'x_city'            => $USER->city,
+            'x_address'         => $form->ccaddress,
+            'x_city'            => $form->cccity,
             'x_zip'             => $form->cczip,
-            'x_country'         => $USER->country,
-            'x_state'           => '',
+            'x_country'         => $form->cccountry,
+            'x_state'           => $form->ccstate,
             'x_card_num'        => $form->cc,
             'x_card_code'       => $form->cvv,
             'x_currency_code'   => $CFG->enrol_currency,
-            'x_amount'          => $this->get_course_cost($course),
+            'x_amount'          => $cost,
             'x_exp_date'        => $exp_date,
             'x_email'           => $USER->email,
             'x_email_customer'  => 'False',
@@ -137,7 +151,7 @@ class enrolment_plugin extends enrolment_base {
             $poststring .= $k . "=" . urlencode($v) . "&";
         }
         $poststring .= (!empty($CFG->an_tran_key)) ?
-                        "x_tran_key" . "=" . urlencode($CFG->an_tran_key): 
+                        "x_tran_key" . "=" . urlencode($CFG->an_tran_key):
                         "x_password" . "=" . urlencode($CFG->an_password);
 
         // referer
@@ -292,11 +306,11 @@ class enrolment_plugin extends enrolment_base {
             }
 
             switch ($CFG->enrol_currency) {
-                case 'EUR':	$currency = '&euro;'; break;
-                case 'CAD':	$currency = '$'; break;
-                case 'GBP':	$currency = '&pound;'; break;
-                case 'JPY':	$currency = '&yen;'; break;
-                default:	$currency = '$'; break;
+                case 'EUR': $currency = '&euro;'; break;
+                case 'CAD': $currency = '$'; break;
+                case 'GBP': $currency = '&pound;'; break;
+                case 'JPY': $currency = '&yen;'; break;
+                default:    $currency = '$'; break;
             }
 
             $str .= "<p class=\"coursecost\"><font size=-1>$strcost: " .
@@ -310,7 +324,7 @@ class enrolment_plugin extends enrolment_base {
     function config_form($frm) {
         global $CFG;
 
-        $vars = array('an_login', 'an_tran_key', 'an_password', 'an_referer', 'an_test',
+        $vars = array('an_login', 'an_tran_key', 'an_password', 'an_referer', 'an_avs', 'an_test',
                       'enrol_cost', 'enrol_currency', 'enrol_mailstudents', 'enrol_mailteachers', 'enrol_mailadmins');
 
         foreach ($vars as $var) {
@@ -322,7 +336,7 @@ class enrolment_plugin extends enrolment_base {
         if (!$this->check_openssl_loaded()) {
             notify('PHP must be compiled with SSL support (--with-openssl)');
         }
-        
+
         if (data_submitted()) {
             // Some required fields
             if (empty($frm->an_login)) {
@@ -350,7 +364,7 @@ class enrolment_plugin extends enrolment_base {
         {
             return false;
         }
-        
+
         $return = true;
 
         if (!isset($config->an_login)) {
@@ -380,6 +394,11 @@ class enrolment_plugin extends enrolment_base {
             $config->an_referer = 'http://';
         }
         set_config('an_referer', $config->an_referer);
+
+        if (!isset($config->an_avs)) {
+            $config->an_avs = '';
+        }
+        set_config('an_avs', $config->an_avs);
 
         if (!isset($config->an_test)) {
             $config->an_test = '';
@@ -419,11 +438,11 @@ class enrolment_plugin extends enrolment_base {
         $admin = get_admin();
         $site = get_site();
         $message = "$site->fullname:  Transaction failed.\n\n$subject\n\n";
-        
+
         foreach ($data as $key => $value) {
             $message .= "$key => $value\n";
         }
-        
+
         email_to_user($admin, $admin, "CC ERROR: ".$subject, $message);
     }
 
@@ -436,6 +455,6 @@ class enrolment_plugin extends enrolment_base {
             exit;
         }
     }
-    
+
 } // end of class definition
 ?>

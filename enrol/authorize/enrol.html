@@ -56,6 +56,21 @@
   <td align="left"><input type="text" name="cvv" size="4" maxlength="4" value="<?php p($form->cvv) ?>" />
                    <font size=1><?php print_string("ccvvhelp", "enrol_authorize") ?></font></td>
 </tr>
+<?php if (!empty($CFG->an_avs)) { /* Address Verification System */ ?>
+<tr>
+  <td align="right"><?php print_string("address") ?>: </td>
+  <td align="left"><input type="text" name="ccaddress" size="32" value="<?php p($useraddress) ?>"  /></td>
+</tr>
+<tr>
+  <td align="right"><?php print_string("city") ?> / <?php print_string("state") ?>: </td>
+  <td align="left"><input type="text" name="cccity" size="16" value="<?php p($usercity) ?>" /> /
+                   <input type="text" name="ccstate" size="2" maxlength="2" value="<?php p($form->ccstate) ?>" /></td>
+</tr>
+<tr>
+  <td align="right"><?php print_string("country") ?>: </td>
+  <td align="left"><?php choose_from_menu(get_list_of_countries(), "cccountry", $usercountry, get_string("selectacountry")."..."); ?></td>
+</tr>
+<?php } ?>
 <tr>
   <td align="right"><?php print_string("zipcode", "enrol_authorize") ?>: </td>
   <td align="left"><input type="text" name="cczip" size="5" value="<?php p($form->cczip) ?>" /></td>

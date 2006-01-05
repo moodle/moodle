@@ -91,6 +91,16 @@
 </tr>
 
 <tr valign="top">
+    <td align="right">an_avs:</td>
+    <td>
+        <input type="checkbox" value="1" name="an_avs" <?php if (!empty($frm->an_avs)) echo "checked=\"true\"" ?> />
+    </td>
+    <td>
+    <?php  print_string("adminavs", "enrol_authorize") ?>
+    </td>
+</tr>
+
+<tr valign="top">
     <td align="right">an_test:</td>
     <td>
         <input type="checkbox" value="1" name="an_test" <?php if (!empty($frm->an_test)) echo "checked=\"true\"" ?> />

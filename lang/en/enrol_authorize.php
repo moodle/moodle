@@ -1,7 +1,8 @@
 <?PHP // $Id$ 
-      // enrol_authorize.php - created with Moodle 1.5.1 (2005060210)
+      // enrol_authorize.php - created with Moodle 1.5.3+ (2005060230)
 
 
+$string['adminavs'] = 'Check this if you have activated Address Verification System (AVS) in your authorize.net account. This demands address fields like street, state, country and zip when user fills out payment form.';
 $string['anlogin'] = 'Authorize.net: Login name';
 $string['anpassword'] = 'Authorize.net: Password';
 $string['anreferer'] = 'Define the URL referer if you have set up this in your authorize.net account. This will send a line \"Referer: URL\" embedded in the web request.';
