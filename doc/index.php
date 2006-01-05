@@ -41,7 +41,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title><?php print_string("documentation")?></title>
-    <meta http-equiv="Content-Type" content="text/html; charset=<?php print_string("thischarset") ?>" />
+    <meta http-equiv="Content-Type" content="text/html; charset=<?php echo current_charset(); ?>" />
 </head>
 
 <frameset rows="70,*">
