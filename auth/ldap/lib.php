@@ -1246,7 +1246,8 @@ function auth_ldap_isgroupmember ($username='', $groupdns='') {
         }
         //echo "Checking group $group for member $username\n";
         $search = @ldap_read($ldapconnection, $group,  '('.$CFG->ldap_memberattribute.'='.$username.')', array($CFG->ldap_memberattribute));
-        if (ldap_count_entries($ldapconnection, $search)) {$info = auth_ldap_get_entries($ldapconnection, $search);
+
+        if (!empty($search) AND ldap_count_entries($ldapconnection, $search)) {$info = auth_ldap_get_entries($ldapconnection, $search);
         
             if (count($info) > 0 ) {
                 // user is member of group
