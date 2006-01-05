@@ -471,22 +471,18 @@ class quiz_report extends quiz_default_report {
 
     function Export_Excel(&$questions, $filename) {
         global $CFG;
-        require_once("$CFG->libdir/excel/Worksheet.php");
-        require_once("$CFG->libdir/excel/Workbook.php");
-        
-        $filename .= ".xls";
-        header("Content-Type: application/vnd.ms-excel");   
-        header("Content-Disposition: attachment; filename=\"$filename\"");
-        header("Expires: 0");
-        header("Cache-Control: must-revalidate,post-check=0,pre-check=0");
-        header("Pragma: public");
-        header("Content-Transfer-Encoding: binary");
+        require_once("$CFG->libdir/excellib.class.php");
 
-        $workbook = new Workbook("-");
-        // Creating the first worksheet
+    /// Calculate file name
+        $filename .= ".xls";
+    /// Creating a workbook
+        $workbook = new MoodleExcelWorkbook("-");
+    /// Sending HTTP headers
+        $workbook->send($filename);
+    /// Creating the first worksheet
         $sheettitle = get_string('reportanalysis','quiz_analysis');
         $myxls =& $workbook->add_worksheet($sheettitle);
-        /// format types
+    /// format types
         $format =& $workbook->add_format();
         $format->set_bold(0);
         $formatbc =& $workbook->add_format();
@@ -516,7 +512,7 @@ class quiz_report extends quiz_default_report {
         $formatblue->set_bold(1);
         $formatblue->set_color('blue');
         $formatblue->set_align('center');
-        // Here starts workshhet headers
+    /// Here starts workshhet headers
         $myxls->write_string(0,0,$sheettitle,$formatb);
 
         $headers = array(get_string('qidtitle','quiz_analysis'), get_string('qtypetitle','quiz_analysis'), 
@@ -545,7 +541,9 @@ class quiz_report extends quiz_default_report {
                 $row++;
             }
         }
+    /// Close the workbook
         $workbook->close();
+
         exit;
     }
 

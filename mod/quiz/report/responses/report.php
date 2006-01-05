@@ -203,19 +203,15 @@ class quiz_report extends quiz_default_report {
               $pagelimit = '';
             }
         } elseif ($download =='Excel') {
-            require_once("$CFG->libdir/excel/Worksheet.php");
-            require_once("$CFG->libdir/excel/Workbook.php");
-        
-            $filename .= ".xls";
-            header("Content-Type: application/vnd.ms-excel");   
-            header("Content-Disposition: attachment; filename=\"$filename\"");
-            header("Expires: 0");
-            header("Cache-Control: must-revalidate,post-check=0,pre-check=0");
-            header("Pragma: public");
-            header("Content-Transfer-Encoding: binary");
+            require_once("$CFG->libdir/excellib.class.php");
 
-            $workbook = new Workbook("-");
-            // Creating the first worksheet
+        /// Calculate file name
+            $filename .= ".xls";
+        /// Creating a workbook
+            $workbook = new MoodleExcelWorkbook("-");
+        /// Sending HTTP headers
+            $workbook->send($filename);
+        /// Creating the first worksheet
             $sheettitle = get_string('reportresponses','quiz_responses');
             $myxls =& $workbook->add_worksheet($sheettitle);
             /// format types
@@ -275,6 +271,9 @@ class quiz_report extends quiz_default_report {
 
         }
     /// Fetch the attempts
+        if (empty($sort)) {
+            $sort='';
+        }
         $attempts = get_records_sql($select.$from.$where.$sort.$pagelimit);
 
     /// Build table rows
