@@ -365,6 +365,7 @@ $string['edituser'] = 'ユーザアカウントの編集';
 $string['email'] = 'メールアドレス';
 $string['emailactive'] = 'メール有効化';
 $string['emailagain'] = 'メールアドレス ( もう一度 )';
+$string['emailcharset'] = 'メール文字コード';
 $string['emailconfirm'] = 'アカウントの確定';
 $string['emailconfirmation'] = '$a->firstname さん こんにちは、
 
