@@ -47,7 +47,7 @@
     }
 
     if (!$users) {
-        print_heading(get_string("nousersyet"));
+        print_heading(get_string("nousersyet"));        
     }
 
     if ($allresponses = get_records("choice_answers", "choiceid", $choice->id)) {
