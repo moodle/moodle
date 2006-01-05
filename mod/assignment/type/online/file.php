@@ -46,7 +46,12 @@
         }
         echo '<tr><td class="c0">'.get_string('lastedited').':</td>';
         echo '    <td class="c1">'.userdate($submission->timemodified);
-        echo ' ('.get_string('numwords', '', count_words(format_text($submission->data1, $submission->data2))).')</td></tr>';
+        /// Decide what to count
+            if ($CFG->assignment_itemstocount == ASSIGNMENT_COUNT_WORDS) {
+                echo ' ('.get_string('numwords', '', count_words(format_text($submission->data1, $submission->data2))).')</td></tr>';
+            } else if ($CFG->assignment_itemstocount == ASSIGNMENT_COUNT_LETTERS) {
+                echo ' ('.get_string('numletters', '', count_letters(format_text($submission->data1, $submission->data2))).')</td></tr>';
+            }
         echo '</table>';
         print_simple_box_end();
 

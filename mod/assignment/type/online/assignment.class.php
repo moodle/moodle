@@ -74,7 +74,7 @@ class assignment_online extends assignment_base {
      * Display the assignment dates
      */
     function view_dates() {
-        global $USER;
+        global $USER, $CFG;
 
         if (!$this->assignment->timeavailable && !$this->assignment->timedue) {
             return;
@@ -94,7 +94,12 @@ class assignment_online extends assignment_base {
         if ($submission) {
             echo '<tr><td class="c0">'.get_string('lastedited').':</td>';
             echo '    <td class="c1">'.userdate($submission->timemodified);
-            echo ' ('.get_string('numwords', '', count_words(format_text($submission->data1, $submission->data2))).')</td></tr>';
+        /// Decide what to count
+            if ($CFG->assignment_itemstocount == ASSIGNMENT_COUNT_WORDS) {
+                echo ' ('.get_string('numwords', '', count_words(format_text($submission->data1, $submission->data2))).')</td></tr>';
+            } else if ($CFG->assignment_itemstocount == ASSIGNMENT_COUNT_LETTERS) {
+                echo ' ('.get_string('numletters', '', count_letters(format_text($submission->data1, $submission->data2))).')</td></tr>';
+            }
         }
         echo '</table>';
         print_simple_box_end();
@@ -242,7 +247,12 @@ class assignment_online extends assignment_base {
         //}
         echo '<tr>';//<td class="c0">'.get_string('lastedited').':</td>';
         echo '    <td class="c1">';//.userdate($submission->timemodified);
-        echo ' ('.get_string('numwords', '', count_words(format_text($submission->data1, $submission->data2))).')</td></tr>';
+        /// Decide what to count
+            if ($CFG->assignment_itemstocount == ASSIGNMENT_COUNT_WORDS) {
+                echo ' ('.get_string('numwords', '', count_words(format_text($submission->data1, $submission->data2))).')</td></tr>';
+            } else if ($CFG->assignment_itemstocount == ASSIGNMENT_COUNT_LETTERS) {
+                echo ' ('.get_string('numletters', '', count_letters(format_text($submission->data1, $submission->data2))).')</td></tr>';
+            }
         echo '</table>';
         print_simple_box_end();
         print_simple_box(format_text($submission->data1, $submission->data2), 'center', '100%');

@@ -14,6 +14,20 @@
     </td>
 </tr>
 
+<tr valign=top>
+    <td align=right><p>assignment_itemstocount:</td>
+    <td><?php
+    unset($options);
+    $options[ASSIGNMENT_COUNT_WORDS] = trim(get_string('numwords', ''));
+    $options[ASSIGNMENT_COUNT_LETTERS] = trim(get_string('numletters', ''));
+    choose_from_menu ($options, 'assignment_itemstocount', $CFG->assignment_itemstocount, "");
+    ?>
+    </td>
+    <td>
+    <?php print_string("configitemstocount", "assignment") ?>
+    </td>
+</tr>
+
 <tr>
     <td colspan=3 align=center>
     <input type="submit" value="<?php print_string("savechanges") ?>"></td>
