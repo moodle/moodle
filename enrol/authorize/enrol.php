@@ -95,7 +95,8 @@ class enrolment_plugin extends enrolment_base
             }
         }
 
-        $formvars = array('password','ccfirstname','cclastname','cc','ccexpiremm','ccexpireyyyy','cctype','cvv','cczip');
+        $formvars = array('password', 'ccfirstname', 'cclastname', 'cc', 'ccexpiremm', 'ccexpireyyyy', 'cctype', 'cvv',
+                          'ccaddress', 'cccity', 'ccstate', 'cccountry', 'cczip');
         foreach ($formvars as $var) {
             if (!isset($form->$var)) {
                 $form->$var = '';
@@ -105,9 +106,13 @@ class enrolment_plugin extends enrolment_base
         $teacher = get_teacher($course->id);
         $strloginto = get_string("loginto", "", $course->shortname);
         $strcourses = get_string("courses");
+        $curcost = $this->get_course_cost($course);
+
         $userfirstname = empty($form->ccfirstname) ? $USER->firstname : $form->ccfirstname;
         $userlastname = empty($form->cclastname) ? $USER->lastname : $form->cclastname;
-        $curcost = $this->get_course_cost($course);
+        $useraddress = empty($form->ccaddress) ? $USER->address : $form->ccaddress;
+        $usercity = empty($form->cccity) ? $USER->city : $form->cccity;
+        $usercountry = empty($form->cccountry) ? $USER->country : $form->cccountry;
 
         print_header($strloginto, $course->fullname, "<a href=\"$CFG->wwwroot/course/\">$strcourses</a> -> $strloginto");
         print_course($course, "80%");
@@ -163,9 +168,11 @@ class enrolment_plugin extends enrolment_base
                 return;
         }
 
-        if (!empty($CFG->an_test)) {
-            error("Credit card module cannot be present because of test mode");
-            return;
+        if (!empty($CFG->an_avs)) {
+            if (empty($form->ccaddress) || empty($form->cccity) || empty($form->cccountry)) {
+                $this->ccerrormsg = get_string("allfieldsrequired");
+                return;
+            }
         }
 
         $this->prevent_double_paid($course);
@@ -190,6 +197,7 @@ class enrolment_plugin extends enrolment_base
         $order->userid = $USER->id;
         $order->status = AN_STATUS_NONE; // it will be changed...
         $order->settletime = 0; // cron changes this.
+        $order->transid = 0; // Transaction Id
         $order->timecreated = $timenow;
         $order->amount = $curcost['cost'];
         $order->currency = $curcost['currency'];
@@ -232,8 +240,16 @@ class enrolment_plugin extends enrolment_base
             return;
         }
 
-        if (intval($order->transid) == 0) { // I know it is test mode. :)
-            error("Credit card module cannot be present because of test mode");
+        if (intval($order->transid) == 0) { // TEST MODE
+            if ($an_review) {
+                redirect($CFG->wwwroot, get_string("reviewnotify", "enrol_authorize"), '30');
+            }
+            else {
+                $timestart = $timenow;
+                $timeend = $timestart + (3600 * 24); // just enrol for 1 days :)
+                enrol_student($USER->id, $course->id, $timestart, $timeend, 'authorize');
+                redirect("$CFG->wwwroot/course/view.php?id=$course->id");
+            }
             return;
         }
 
@@ -464,6 +480,7 @@ class enrolment_plugin extends enrolment_base
         // AUTHORIZE.NET config
 
         // not required!
+        set_config('an_avs', optional_param('an_avs', '') );
         set_config('an_test', optional_param('an_test', '') );
         set_config('an_referer', optional_param('an_referer', 'http://', PARAM_URL) );
         set_config('an_cutoff_hour', optional_param('an_cutoff_hour', '0') );
@@ -613,7 +630,7 @@ class enrolment_plugin extends enrolment_base
         //CAPTURE-MANUALLY
         if (intval($CFG->an_capture_day < 1)) {
             if (empty($CFG->an_emailexpired)) {
-            	return; // no information email.
+                return; // no information email.
             }
             if (intval($mconfig->an_nextmail) > $timenow) {
                 return; // One day must passed.
@@ -626,6 +643,7 @@ class enrolment_plugin extends enrolment_base
             }
 
             $a->pending = $count;
+            $a->days = $CFG->an_emailexpired;
             $a->url = $CFG->wwwroot."/enrol/authorize/index.php?status=" . AN_STATUS_AUTH;
             $a->enrolurl = "$CFG->wwwroot/$CFG->admin/users.php";
             $message = get_string('pendingordersemail', 'enrol_authorize', $a);

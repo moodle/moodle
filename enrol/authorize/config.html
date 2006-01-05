@@ -10,6 +10,7 @@ if (!isset($frm->an_login)) $frm->an_login = '';
 if (!isset($frm->an_tran_key)) $frm->an_tran_key = '';
 if (!isset($frm->an_password)) $frm->an_password = '';
 if (!isset($frm->an_referer)) $frm->an_referer = 'http://';
+if (!isset($frm->an_avs)) $frm->an_avs = '';
 if (!isset($frm->an_test)) $frm->an_test = '';
 if (!isset($frm->an_review)) $frm->an_review = '';
 if (!isset($frm->an_capture_day)) $frm->an_capture_day = '5';
@@ -38,7 +39,7 @@ if (!isset($frm->an_cutoff_min)) $frm->an_cutoff_min = '5';
 
 <tr valign="top">
     <td align="right">loginhttps:</td>
-    <td><?php echo (empty($CFG->loginhttps) ? "<font color=\"red\">off</font>" : "<font color=\"green\">on</font>") ?></td>
+    <td><?php echo (empty($CFG->loginhttps) ? "<font color=\"red\"><b>off</b></font>" : "<font color=\"green\">on</font>") ?></td>
     <td><?php
     $a->url = "$CFG->wwwroot/$CFG->admin/config.php#configsectionsecurity";
     print_string("logindesc", "enrol_authorize", $a)
@@ -74,6 +75,12 @@ if (!isset($frm->an_cutoff_min)) $frm->an_cutoff_min = '5';
     <td align="right">an_referer:</td>
     <td><input type="text" name="an_referer" value="<?php p($frm->an_referer) ?>" /></td>
     <td><?php print_string("anreferer", "enrol_authorize") ?></td>
+</tr>
+
+<tr valign="top">
+    <td align="right">an_avs:</td>
+    <td><input type="checkbox" value="1" name="an_avs" <?php if (!empty($frm->an_avs)) echo "checked=\"true\"" ?> /></td>
+    <td><?php print_string("adminavs", "enrol_authorize") ?></td>
 </tr>
 
 <tr valign="top">
