@@ -571,14 +571,14 @@ class hotpot_default_report {
 
 	function print_excel_report(&$course, &$hotpot, &$tables, &$options) {
 		global $CFG;
-		require_once("$CFG->libdir/excel/Worksheet.php");
-		require_once("$CFG->libdir/excel/Workbook.php");
+		require_once("$CFG->libdir/excellib.class.php");
 
-		// send headers to browser
-		$this->print_excel_start($course, $hotpot, $options);
-
-		// Create a new workbook
-		$wb = new Workbook("-"); // $course->shortname
+    /// Calculate file name
+        $downloadfilename = clean_filename("$course->shortname $hotpot->name.xls");
+    /// Create a new workbook
+        $wb = new MoodleExcelWorkbook("-"); // $course->shortname
+    /// Sending HTTP headers 
+        $wb->send($downloadfilename);
 
 		foreach($tables as $table) {
 			// create a worksheet for this table
@@ -595,20 +595,13 @@ class hotpot_default_report {
 		// close the workbook (and send it to the browser)
 		$wb->close();
 	}
-	function print_excel_start(&$course, &$hotpot, &$options) {
-		header("Content-type: application/vnd.ms-excel");
-		header("Content-Disposition: attachment; filename=$course->shortname $hotpot->name.xls" );
-		header("Expires: 0");
-		header("Cache-Control: must-revalidate, post-check=0,pre-check=0");
-		header("Pragma: public");
-	}
 	function print_excel_head(&$wb, &$ws, &$table, &$row, &$options) {
 
 		// format properties
 		$properties = array(
 			'bold'=>1, 
 			'align'=>'center', 
-			'valign'=>'bottom',
+			'v_align'=>'bottom',
 			'text_wrap'=>1
 		);
 		// print the headings
@@ -714,8 +707,8 @@ class hotpot_default_report {
 				$fmt->properties = &$fmt_properties;
 
 				// set vertical alignment
-				if (isset($fmt->properties['valign'])) {
-					$fmt->set_align($fmt->properties['valign']);
+				if (isset($fmt->properties['v_align'])) {
+					$fmt->set_align($fmt->properties['v_align']);
 				} else {
 					$fmt->set_align('top'); // default
 				}
@@ -725,18 +718,6 @@ class hotpot_default_report {
 			if (is_numeric($cell) && !preg_match("/^0./", $cell)) {
 				$ws->write_number($row, $col, $cell, $fmt);
 			} else {
-				if (!empty($options['reportencoding'])) {
-					$in_charset = '';
-					if (function_exists('mb_convert_encoding')) {
-						$in_charset = mb_detect_encoding($cell, 'auto');
-					}
-					if (empty($in_charset)) {
-						$in_charset = get_string('thischarset');
-					}
-					if ($in_charset != 'ASCII' && function_exists('mb_convert_encoding')) {
-						$cell = mb_convert_encoding($cell, $options['reportencoding'], $in_charset);
-					}
-				}
 				$ws->write_string($row, $col, $cell, $fmt);
 			}
 		} // end foreach $col
