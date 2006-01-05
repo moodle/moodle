@@ -149,23 +149,18 @@
 
 /// OK, we have all the data, now present it to the user
     if ($download == "xls" and confirm_sesskey()) {
-        require_once("../lib/excel/Worksheet.php");
-        require_once("../lib/excel/Workbook.php");
+        require_once("../lib/excellib.class.php");
 
-// HTTP headers
-        header("Content-type: application/vnd.ms-excel");
-        $downloadfilename = clean_filename("$course->shortname $strgrades");
-        header("Content-Disposition: attachment; filename=\"$downloadfilename.xls\"");
-        header("Expires: 0");
-        header("Cache-Control: must-revalidate,post-check=0,pre-check=0");
-        header("Pragma: public");
-
-/// Creating a workbook
-        $workbook = new Workbook("-");
+    /// Calculate file name
+        $downloadfilename = clean_filename("$course->shortname $strgrades.xls");
+    /// Creating a workbook
+        $workbook = new MoodleExcelWorkbook("-");
+    /// Sending HTTP headers
+        $workbook->send($downloadfilename);
+    /// Adding the worksheet
         $myxls =& $workbook->add_worksheet($strgrades);
     
-/// Print names of all the fields
-
+    /// Print names of all the fields
         $myxls->write_string(0,0,get_string("firstname"));
         $myxls->write_string(0,1,get_string("lastname"));
         $myxls->write_string(0,2,get_string("idnumber"));
@@ -179,8 +174,7 @@
         $myxls->write_string(0,$pos,get_string("total"));
     
     
-/// Print all the lines of data.
-
+    /// Print all the lines of data.
         $i = 0;
         foreach ($grades as $studentid => $studentgrades) {
             $i++;
@@ -201,7 +195,8 @@
             }
             $myxls->write_number($i,$j,$totals[$student->id]);
         }
-        
+
+    /// Close the workbook
         $workbook->close();
     
         exit;
