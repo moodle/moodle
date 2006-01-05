@@ -48,6 +48,9 @@
         require_login();
     }
 
+/// Loading the textlib singleton instance. We are going to need it.
+    $textlib = textlib_get_instance();
+
 /// redirecting if adding a new entry
     if ($tab == GLOSSARY_ADDENTRY_VIEW ) {
         redirect("edit.php?id=$cm->id&amp;mode=$mode");
@@ -316,7 +319,7 @@
             /// Setting the pivot for the current entry
             $pivot = $entry->pivot;
             if ( !$fullpivot ) {
-                $pivot = substr($pivot, 0, 1);
+                $pivot = $textlib->substr($pivot, 0, 1, current_charset());
             }            
             
             /// if there's a group break
