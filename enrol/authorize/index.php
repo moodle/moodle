@@ -1,6 +1,7 @@
 <?php // $Id$
 
 require_once("../../config.php");
+require_once("const.php");
 require_once("enrol.php");
 require_once("action.php");
 
@@ -100,7 +101,7 @@ function authorize_orders()
             $actionstatus = get_order_status_desc($record);
             $actions = '&nbsp;';
             foreach ($actionstatus->actions as $value) {
-                $actions .= "&nbsp;&nbsp;<a href='index.php?$value=yes&amp;order=$record->id'>{$authstrs->$value}</a> ";
+                $actions .= "&nbsp;&nbsp;<a href='index.php?$value=y&amp;order=$record->id'>{$authstrs->$value}</a> ";
             }
             $table->add_data(array(
                 "<a href='index.php?order=$record->id'>$record->id</a>",
@@ -157,14 +158,15 @@ function authorize_order_details($orderno) {
         $table->data[] = array("<b>$strs->status:</b>", $authstrs->{$status->status});
         $table->data[] = array("<b>$strs->user:</b>", $order->ccname);
         $table->data[] = array("<b>$strs->time:</b>", userdate($order->timecreated));
-        $table->data[] = array("<b>$authstrs->settlementdate:</b>", $settled ? userdate($order->settletime) : $authstrs->notsettled);
+        $table->data[] = array("<b>$authstrs->settlementdate:</b>", $settled ?
+                               userdate($order->settletime) : $authstrs->notsettled);
     }
     $table->data[] = array("&nbsp;", "<hr size='1' noshade>\n");
 
     if (!empty($cmdcapture)) { // CAPTURE
         if (empty($cmdconfirm)) {
             $table->data[] = array("<b>$strs->confirm:</b>",
-            "$authstrs->captureyes<br /><a href='index.php?order=$orderno&amp;capture=yes&amp;confirm=yes'>$strs->yes</a>
+            "$authstrs->captureyes<br /><a href='index.php?order=$orderno&amp;capture=y&amp;confirm=y'>$strs->yes</a>
             &nbsp;&nbsp;&nbsp;&nbsp;<a href='index.php?order=$orderno'>$strs->no</a>");
         }
         else {
@@ -198,7 +200,8 @@ function authorize_order_details($orderno) {
                     }
                 }
                 else {
-                    $table->data[] = array(get_string('testmode', 'enrol_authorize'), get_string('capturetestwarn', 'enrol_authorize'));
+                    $table->data[] = array(get_string('testmode', 'enrol_authorize'),
+                                           get_string('capturetestwarn', 'enrol_authorize'));
                 }
             }
         }
@@ -225,9 +228,9 @@ function authorize_order_details($orderno) {
                 $a->upto = $upto;
                 $strcanbecredit = get_string('canbecredit', 'enrol_authorize', $a);
                 $table->data[] = array("<b>$authstrs->unenrolstudent</b>",
-                    "<input type='checkbox' name='unenrol' value='yes'" . (!empty($unenrol) ? " checked" : "") . ">");
+                    "<input type='checkbox' name='unenrol' value='y'" . (!empty($unenrol) ? " checked" : "") . ">");
                 $table->data[] = array("<b>$authstrs->howmuch</b>",
-                    "<input type='hidden' name='confirm' value='yes'>
+                    "<input type='hidden' name='confirm' value='y'>
                      <input type='text' size='5' name='amount' value='$amount'>
                      $strcanbecredit<br /><input type='submit' name='refund' value='$authstrs->refund'>");
             }
@@ -247,7 +250,8 @@ function authorize_order_details($orderno) {
                         redirect("index.php?order=$orderno");
                     }
                     else {
-                        $table->data[] = array(get_string('testmode', 'enrol_authorize'), get_string('credittestwarn', 'enrol_authorize'));
+                        $table->data[] = array(get_string('testmode', 'enrol_authorize'),
+                                               get_string('credittestwarn', 'enrol_authorize'));
                     }
                 }
                 else {
@@ -263,8 +267,8 @@ function authorize_order_details($orderno) {
             if (empty($cmdconfirm)) {
                 $strvoidyes = get_string('voidyes', 'enrol_authorize');
                 $table->data[] = array("<b>$strs->confirm:</b>",
-                    "$strvoidyes<br /><input type='hidden' name='void' value='yes'>
-                     <input type='hidden' name='confirm' value='yes'>
+                    "$strvoidyes<br /><input type='hidden' name='void' value='y'>
+                     <input type='hidden' name='confirm' value='y'>
                      <input type='submit' value='$strs->yes'>
                      &nbsp;&nbsp;&nbsp;&nbsp;<a href='index.php?order=$orderno'>$strs->no</a>");
             }
@@ -278,7 +282,8 @@ function authorize_order_details($orderno) {
                         redirect("index.php?order=$orderno");
                     }
                     else {
-                       $table->data[] = array(get_string('testmode', 'enrol_authorize'), get_string('voidtestwarn', 'enrol_authorize'));
+                       $table->data[] = array(get_string('testmode', 'enrol_authorize'),
+                                              get_string('voidtestwarn', 'enrol_authorize'));
                     }
                 }
                 else {
@@ -298,11 +303,11 @@ function authorize_order_details($orderno) {
                     $strsubvoidyes = get_string('subvoidyes', 'enrol_authorize', $a);
 
                     $table->data[] = array("<b>$authstrs->unenrolstudent</b>",
-                        "<input type='checkbox' name='unenrol' value='yes'" . (!empty($unenrol) ? " checked" : "") . ">");
+                        "<input type='checkbox' name='unenrol' value='y'" . (!empty($unenrol) ? " checked" : "") . ">");
 
                     $table->data[] = array("<b>$strs->confirm:</b>",
-                        "$strsubvoidyes<br /><input type='hidden' name='void' value='yes'>
-                         <input type='hidden' name='confirm' value='yes'>
+                        "$strsubvoidyes<br /><input type='hidden' name='void' value='y'>
+                         <input type='hidden' name='confirm' value='y'>
                          <input type='hidden' name='suborder' value='$suborderno'>
                          <input type='submit' value='$strs->yes'>
                          &nbsp;&nbsp;&nbsp;&nbsp;<a href='index.php?order=$orderno'>$strs->no</a>");
@@ -320,7 +325,8 @@ function authorize_order_details($orderno) {
                             redirect("index.php?order=$orderno");
                         }
                         else {
-                            $table->data[] = array(get_string('testmode', 'enrol_authorize'), get_string('voidtestwarn', 'enrol_authorize'));
+                            $table->data[] = array(get_string('testmode', 'enrol_authorize'),
+                                                   get_string('voidtestwarn', 'enrol_authorize'));
                         }
                     }
                     else {
@@ -336,11 +342,19 @@ function authorize_order_details($orderno) {
             error("Order $orderno cannot be deleted. Status must be expired.");
         }
         if (empty($cmdconfirm)) {
-            $table->data[] = array('<b>Delete?: </b>',
-            "<a href='index.php?order=$orderno&amp;delete=yes&amp;confirm=yes'>YES</a>
-            &nbsp;&nbsp;&nbsp;&nbsp;<a href='index.php?order=$orderno'>No</a>");
+            $table->data[] = array("<b>$authstrs->unenrolstudent</b>",
+                "<input type='checkbox' name='unenrol' value='y'" . (!empty($unenrol) ? " checked" : "") . ">");
+
+            $table->data[] = array("<b>$strs->confirm:</b>",
+                "<input type='hidden' name='delete' value='y'>
+                 <input type='hidden' name='confirm' value='y'>
+                 <input type='submit' value='$strs->yes'>
+                 &nbsp;&nbsp;&nbsp;&nbsp;<a href='index.php?order=$orderno'>$strs->no</a>");
         }
         else {
+            if (!empty($unenrol)) {
+                unenrol_student($order->userid, $order->courseid);
+            }
             delete_records('enrol_authorize', 'id', $orderno);
             redirect("index.php");
         }
@@ -362,21 +376,30 @@ function authorize_order_details($orderno) {
             echo "<h4>" . get_string('returns', 'enrol_authorize') . "</h4>\n";
             $table2->size = array('15%', '15%', '20%', '35%', '15%');
             $table2->align = array('right', 'right', 'right', 'left', 'right');
-            $table2->head = array($authstrs->transid, $authstrs->amount, $strs->status, $authstrs->settlementdate, $strs->action);
+            $table2->head = array($authstrs->transid,
+                                  $authstrs->amount,
+                                  $strs->status,
+                                  $authstrs->settlementdate,
+                                  $strs->action);
             $refunds = get_records('enrol_authorize_refunds', 'orderid', $orderno);
             if ($refunds) {
-                foreach ($refunds as $rfnd) {
-                    $substatus = get_order_status_desc($rfnd);
+                foreach ($refunds as $rf) {
+                    $substatus = get_order_status_desc($rf);
                     $subactions = '&nbsp;';
                     if (empty($substatus->actions)) {
                         $subactions .= $strs->none;
                     }
                     else {
-                        foreach ($substatus->actions as $value) {
-                            $subactions .= "<a href='index.php?$value=yes&amp;order=$orderno&amp;suborder=$rfnd->id'>{$authstrs->$value}</a> ";
+                        foreach ($substatus->actions as $vl) {
+                            $subactions .=
+                            "<a href='index.php?$vl=y&amp;order=$orderno&amp;suborder=$rf->id'>{$authstrs->$vl}</a> ";
                         }
                     }
-                    $table2->data[] = array($rfnd->transid, $rfnd->amount, $authstrs->{$substatus->status}, userdate($rfnd->settletime), $subactions);
+                    $table2->data[] = array($rf->transid,
+                                            $rf->amount,
+                                            $authstrs->{$substatus->status},
+                                            userdate($rf->settletime),
+                                            $subactions);
                 }
             }
             else {

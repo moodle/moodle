@@ -4,6 +4,7 @@
 
 function authorize_upgrade($oldversion=0) {
     global $CFG, $THEME, $db;
+    require_once("$CFG->dirroot/enrol/authorize/const.php");
 
     $result = true;
 
@@ -22,8 +23,6 @@ function authorize_upgrade($oldversion=0) {
     }
 
     if ($oldversion < 2005112100) {
-        include_once("$CFG->dirroot/enrol/authorize/enrol.php");
-
         table_column('enrol_authorize', '', 'authcode', 'varchar', '6', '', '', '', 'avscode'); // CAPTURE_ONLY
         table_column('enrol_authorize', '', 'status', 'integer', '10', 'unsigned', '0', 'not null', 'transid');
         table_column('enrol_authorize', '', 'timecreated', 'integer', '10', 'unsigned', '0', 'not null', 'status');
@@ -60,11 +59,8 @@ function authorize_upgrade($oldversion=0) {
     }
 
     if ($oldversion < 2005122200) { // settletime
-        include_once("$CFG->dirroot/enrol/authorize/enrol.php");
-
         table_column('enrol_authorize_refunds', 'refundtype', 'status', 'integer', '1', 'unsigned', '0', 'not null');
         table_column('enrol_authorize_refunds', '', 'settletime', 'integer', '10', 'unsigned', '0', 'not null', 'transid');
-
         table_column('enrol_authorize', 'timeupdated', 'settletime', 'integer', '10', 'unsigned', '0', 'not null');
         $status = AN_STATUS_AUTH | AN_STATUS_CAPTURE;
         if ($settlements = get_records_select('enrol_authorize', "status='$status'", '', 'id, settletime')) {

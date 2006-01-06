@@ -1,46 +1,7 @@
 <?php  // $Id$
 
-// Authorize.net
-define('AN_HOST', 'secure.authorize.net');
-define('AN_HOST_TEST', 'certification.authorize.net');
-define('AN_PORT', 443);
-define('AN_PATH', '/gateway/transact.dll');
-define('AN_APPROVED', '1');
-define('AN_DECLINED', '2');
-define('AN_ERROR', '3');
-define('AN_DELIM', '|');
-define('AN_ENCAP', '"');
-
-/**
- * New order. No transaction was made.
- */
-define('AN_STATUS_NONE',    0x00);
-/**
- * Authorized.
- */
-define('AN_STATUS_AUTH',    0x01);
-/**
- * Captured.
- */
-define('AN_STATUS_CAPTURE', 0x02);
-/**
- * AN_STATUS_AUTH|AN_STATUS_CAPTURE.
- */
-define('AN_STATUS_AUTHCAPTURE', 0x03);
-/**
- * Refunded.
- */
-define('AN_STATUS_CREDIT', 0x04);
-/**
- * Voided.
- */
-define('AN_STATUS_VOID', 0x08);
-/**
- * Expired.
- */
-define('AN_STATUS_EXPIRE', 0x10);
-
 require_once("$CFG->dirroot/enrol/enrol.class.php");
+require_once("$CFG->dirroot/enrol/authorize/const.php");
 
 /**
  * enrolment_plugin_authorize
@@ -97,6 +58,7 @@ class enrolment_plugin extends enrolment_base
 
         $formvars = array('password', 'ccfirstname', 'cclastname', 'cc', 'ccexpiremm', 'ccexpireyyyy', 'cctype', 'cvv',
                           'ccaddress', 'cccity', 'ccstate', 'cccountry', 'cczip');
+
         foreach ($formvars as $var) {
             if (!isset($form->$var)) {
                 $form->$var = '';
@@ -261,8 +223,8 @@ class enrolment_plugin extends enrolment_base
                 $a->orderid = $order->id;
                 $a->transid = $order->transid;
                 $a->amount = "$order->currency $order->amount";
-                $a->expireon = getsettletime($timenow + (30 * 3600 * 24));
-                $a->captureon = getsettletime($timenow + (intval($CFG->an_capture_day) * 3600 * 24));
+                $a->expireon = userdate(getsettletime($timenow + (30 * 3600 * 24)));
+                $a->captureon = userdate(getsettletime($timenow + (intval($CFG->an_capture_day) * 3600 * 24)));
                 $a->course = $course->fullname;
                 $a->user = fullname($USER);
                 $a->acstatus = ($CFG->an_capture_day > 0) ? get_string('yes') : get_string('no');
@@ -565,7 +527,7 @@ class enrolment_plugin extends enrolment_base
     {
         global $CFG, $SESSION, $USER;
 
-        if ($rec = get_record('enrol_authorize', 'userid', $USER->id, 'courseid', $course->id, 'status', AN_STATUS_AUTH, 'id')) {
+        if ($rec=get_record('enrol_authorize','userid',$USER->id,'courseid',$course->id,'status',AN_STATUS_AUTH,'id')) {
             $a->orderid = $rec->id;
             redirect($CFG->wwwroot, get_string("paymentpending", "enrol_authorize", $a), '20');
             return;

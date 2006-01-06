@@ -1,50 +1,16 @@
 <?php // $Id$
 
-/**
- * No action.
- */
-define('AN_ACTION_NONE', 0x00);
+define('AN_HOST', 'secure.authorize.net');
+define('AN_HOST_TEST', 'certification.authorize.net');
+define('AN_PORT', 443);
+define('AN_PATH', '/gateway/transact.dll');
+define('AN_APPROVED', '1');
+define('AN_DECLINED', '2');
+define('AN_ERROR', '3');
+define('AN_DELIM', '|');
+define('AN_ENCAP', '"');
 
-/**
- * Used to authorize only, don't capture.
- */
-define('AN_ACTION_AUTH_ONLY', 0x01);
-
-/**
- * Used to capture, it was authorized before.
- */
-define('AN_ACTION_PRIOR_AUTH_CAPTURE', 0x02);
-
-/**
- * Used to authorize and capture.
- */
-define('AN_ACTION_AUTH_CAPTURE', 0x03);
-
-/**
- * Used to return funds to a customer's credit card.
- *
- * - Can be credited within 120 days after the original authorization was obtained.
- * - Amount can be any amount up to the original amount charged.
- * - Captured/pending settlement transactions cannot be credited,
- *   instead a void must be issued to cancel the settlement.
- * NOTE: Assigns a new transactionID to the original transaction.
- *       SAVE IT, so we can cancel new refund if it is a fault return.
- */
-define('AN_ACTION_CREDIT', 0x04);
-
-/**
- * Used to cancel an exiting transaction with a status of
- * authorized/pending capture, captured/pending settlement or
- * settled/refunded.
- *
- * - Void requests effectively cancel the Capture request
- *   that would start the funds transfer process.
- * - Also used to cancel existing transaction with a status of
- *   settled/refunded. Credited mistakenly, so cancel it
- *   and return funds to our account.
- */
-define('AN_ACTION_VOID', 0x08);
-
+require_once("const.php");
 
 /**
  * Gets settlement date and time
@@ -103,7 +69,7 @@ function authorizenet_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE
              'x_delim_data'      => 'True',
              'x_delim_char'      => AN_DELIM,
              'x_encap_char'      => AN_ENCAP,
-             'x_relay_response'  => 'False',
+             'x_relay_response'  => 'FALSE',
              'x_method'          => 'CC',
              'x_login'           => $CFG->an_login,
              'x_test_request'    => $an_test ? 'TRUE' : 'FALSE'
