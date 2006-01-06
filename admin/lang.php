@@ -54,6 +54,15 @@
                  '', '', true, $button);
 
     if (!$mode) {
+        print_simple_box_start('center','80%');
+        echo '<table align="center" width="100%"><tr><td width="50%" align="center">';
+        print_string('managelang','admin');
+        echo '</td><td align="center" width="50%">';
+        print_string('editlang','admin');
+        echo '</td></tr><tr><td>';
+        print_string('lang16notify','admin');
+        echo '<p /><a href="langimport.php">'.get_string('langimport','admin').'</a>';
+        echo '</td><td>';
         $currlang = current_language();
         $langs = get_list_of_languages();
         echo "<table align=\"center\"><tr><td align=\"right\">";
@@ -62,11 +71,13 @@
         echo popup_form ("$CFG->wwwroot/$CFG->admin/lang.php?lang=", $langs, "chooselang", $currlang, "", "", "", true);
         echo '</td></tr><tr><td colspan="2">';
         $options["lang"] = $currentlang;
-        print_single_button("http://moodle.org/download/lang/", $options, get_string("latestlanguagepack"));
+        //print_single_button("http://moodle.org/download/lang/", $options, get_string("latestlanguagepack"));
         echo "</td></tr></table>";
         print_heading("<a href=\"lang.php?mode=missing\">$strmissingstrings</a>");
         print_heading("<a href=\"lang.php?mode=compare\">$streditstrings</a>");
         print_heading("<a href=\"langdoc.php\">$stredithelpdocs</a>");
+        echo '</td></tr></table>';
+        print_simple_box_end();
         print_footer();
         exit;
     }
