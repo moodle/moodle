@@ -362,6 +362,7 @@ $string['edituser'] = 'Comptes des utilisateurs';
 $string['email'] = 'Adresse de courriel';
 $string['emailactive'] = 'Adresse de courriel activée';
 $string['emailagain'] = 'Courriel (confirmation)';
+$string['emailcharset'] = 'Encodage des courriels';
 $string['emailconfirm'] = 'Confirmer votre enregistrement';
 $string['emailconfirmation'] = 'Bonjour,
 
