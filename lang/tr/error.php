@@ -1,8 +1,9 @@
 <?PHP // $Id$ 
-      // error.php - created with Moodle 1.6 development (2005081700)
+      // error.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['adminprimarynoedit'] = 'Ana yönetici baþka kullanýcýlar tarafýndan düzenlenemez';
+$string['cmunknown'] = 'Bu kurs paketi bulunamadý';
 $string['confirmsesskeybad'] = 'Üzgünüz, oturum anahtarýnýz bu eylemi gerçekleþtirmek için onaylanamadý. Bu güvenlik özelliði sizin adýnýza yapýlacak olan önemli iþlevlerin yanlýþlýkla ya da kasten kullanýlmasýný engellemek içindir. Lütfen bu iþlevi gerçekten yapmak istediðinizden emin olun.';
 $string['coursegroupunknown'] = 'Grup $a ile ilgili kurs belirtilmemiþ';
 $string['errorcleaningdirectory'] = '\"$a\" dizinini temizlerken hata oluþtu';
@@ -16,11 +17,13 @@ $string['fieldrequired'] = '\"$a\" doldurulmasý gerekli bir alandýr';
 $string['filenotfound'] = 'Üzgünüz, aranan dosya bulunamadý';
 $string['groupalready'] = 'Kullanýcý $a grubuna zaten kayýtlý';
 $string['groupunknown'] = '$a grubu belirtilen kursla iliþkili deðildir';
+$string['invalidcourse'] = 'Geçersiz kurs';
 $string['invalidfieldname'] = '\"$a\" geçerli bir alan adý deðildir';
 $string['invalidfiletype'] = '\"$a\" geçerli bir dosya tipi deðil';
 $string['invalidxmlfile'] = '\"$a\" geçerli bir XML dosyasý deðil';
 $string['missingfield'] = '\"$a\" alaný eksiktir';
 $string['modulerequirementsnotmet'] = '\"$a->modulename\" ($a->moduleversion) modülü kurulamadý. Yeni moodle sürümü gerekmektedir (þu anda kullandýðýnýz: $a->currentmoodle, gereken: $a->requiremoodle).';
+$string['mustbeteacher'] = 'Bu sayfaya bakabilmek için eðitimci olmalýsýnýz';
 $string['nonmeaningfulcontent'] = 'Anlamsýz içerik';
 $string['notavailable'] = 'Þu anda eriþilemez';
 $string['onlyeditingteachers'] = 'Sadece eðitimciler bunu yapabilir';

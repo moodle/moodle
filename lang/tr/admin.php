@@ -4,6 +4,7 @@
 
 $string['adminseesallevents'] = 'Yöneticiler bütün olaylarý görür';
 $string['adminseesownevents'] = 'Yöneticiler diðer kullanýcýlar gibidir';
+$string['availablelangs'] = 'Kullanýlabilir Dil Paketleri';
 $string['backgroundcolour'] = 'Arkaplan Rengi';
 $string['badwordsconfig'] = 'Kötü kelimeleri virgülle ayýrarak girin';
 $string['badwordsdefault'] = 'Belirtilen liste boþsa, dil paketinde geçen kelimeler kullanýlacaktýr.';
@@ -55,6 +56,7 @@ $string['configvariables'] = 'Deðiþkenler';
 $string['configwarning'] = 'Bu ayarlarý deðiþtirirken dikkatli olun. Bilmediðiniz deðerleri girmeniz sorunlara sebep olabilir.';
 $string['configzip'] = 'Zip programýnýn yerini belirtin (Sadece Unix için, isteðe baðlýdýr). Belirtilirse, sunucuda zip arþivi oluþturmak için bu kullanýlacaktýr. Boþ býrakýrsanýz, zip arþivi oluþturmak için dahili iþlemler kullanýlacaktýr.';
 $string['confirmation'] = 'Onay';
+$string['confirminstall'] = 'Dil paketini kurmak üzereseniz ($a), emin misiniz?';
 $string['cronwarning'] = '<a href=\"cron.php\">cron.php bakým programý</a> son 24 saattir çalýþmýyor. <br /><a href=\"../doc/?frame=install.html&sub=cron\">Kurulum belgesi</a> bunu nasýl otomatikleþtireceðinizi açýklýyor.';
 $string['density'] = 'Yoðunluk';
 $string['edithelpdocs'] = 'Yardým belgelerini düzenle';
@@ -72,6 +74,10 @@ $string['importtimezones'] = 'Zaman dilimleri listesinin tamamýný güncelle';
 $string['importtimezonescount'] = '$a->source \'dan $a->count kayýt çýkartýldý';
 $string['importtimezonesfailed'] = 'Hiç kaynak bulunamadý! (Kötü haber)';
 $string['incompatibleblocks'] = 'Uyumsuz Bloklar';
+$string['install'] = 'Kur';
+$string['installedlangs'] = 'Kurulu Dil Paketleri';
+$string['langimportsuccess'] = 'Dil Paketi baþarýyla güncellendi';
+$string['langpackremoved'] = 'Dil paketinin kaldýrýlmasý tamamlandý';
 $string['latexpreamble'] = 'LaTeX Önsözü';
 $string['latexsettings'] = 'LaTeX Göstericisi Ayarlarý';
 $string['mediapluginavi'] = '.AVI filtresini etkinleþtir';
@@ -99,6 +105,8 @@ $string['therewereerrors'] = 'Verinizde hatalar var';
 $string['timezoneforced'] = 'Bu site yöneticisi tarafýndan zorunlu tutuldu';
 $string['timezoneisforcedto'] = 'Bütün kullanýcýlarý kullanmaya zorunlu tut';
 $string['timezonenotforced'] = 'Kullanýcýlar kendi zaman dilimini seçebilsin';
+$string['uninstall'] = 'Kaldýr';
+$string['uninstallconfirm'] = 'Dil Paketini ($a)  kaldýrmak üzeresiniz, emin misiniz?';
 $string['upgradelogs'] = 'Tam iþlevsellik için, eski kayýt dosyalarýnýz güncellenmeli. <a href=\"$a\">Daha fazla bilgi</a>';
 $string['upgradesure'] = 'Moodle dosyalarýný deðiþti ve otomatik olarak sunucunuzu þu sürüme terfi etmek üzeresiniz:
 <p><b>$a</b></p>

@@ -6,7 +6,9 @@ $string['adminauthorizeccapture'] = 'Sipariþi Ýnceleme ve Otomatik-Çekme Ayarlar
 $string['adminauthorizeemail'] = 'Email Gönderme Ayarlarý';
 $string['adminauthorizesettings'] = 'Authorize.net Ayarlarý';
 $string['adminauthorizewide'] = 'Site Geneli Ayarlarý';
+$string['adminavs'] = 'Authorize.net hesabýnýzda AVS\'yi (Adres Doðrulama Sistemi) etkinleþtirdiyseniz bunu seçin. Kullanýcý ödeme formunu doldururken cadde, ülke, posta kodu gibi adres alanlarý istenir.';
 $string['admincronsetup'] = 'Cron.php bakým betiði son 24 saattir çalýþmýyor. <br />Otomatik-çekme özelliðini kullanmak istiyorsanýz cron etkin olmalý.<br /><a href=\"../doc/?frame=install.html&sub=cron\">Cronu ayarlayýn</a> veya an_review\'i tekrar seçili durumdan kaldýrýn. <br />Otomatik-çekmeyi etkinleþtirmezseniz ve 30 gün içinde iþlemleri incelemezseniz iþlem iptal edilir.<br />Ödemeleri 30 gün içinde elle kabul etmek veya iptal etmek istiyorsanýz an_review\'i seçin an_capture_day alanýna \'0\' girin.';
+$string['adminemailexpired'] = 'Ýþlem iptal olmadan önce yöneticilere <b>$a</b> gün önceden \'onaylanmýþ/çekilmeyi bekliyor\' durumundaki sipariþlerin sayýsýný içeren bir uyarý mesajý gönder. (0=email gönderme pasif, varsayýlan=2, en fazla=5)<br />Sipariþi elle incelemeyi etkinleþtirdiyseniz bu kullanýþlýdýr (an_review=seçili, an_capture_day=0).';
 $string['adminhelpcapture'] = 'Ödemeleri sadece elle kabul etmek/iptal etmek deðil, ayný zamanda ödemenin iptal olmasýný engellemek için otomatik-çekmeyi de kullanmak istiyorum. Ne yapmam gerekiyor?
 
 - Cronu ayarlayýn.
@@ -93,8 +95,7 @@ Otomatik-çekmeyi etkinleþtirmediðiniz için bu uyarý mesajý size gönderilmiþtir. 
 $a->url
 
 Otomatik-çekmeyi etkinleþtirmek için:
-$a->enrolurl
-';
+$a->enrolurl';
 $string['refund'] = 'Geri Öde';
 $string['refunded'] = 'Geri ödenmiþ';
 $string['returns'] = 'Geri ödemeler';
