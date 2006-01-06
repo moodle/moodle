@@ -52,3 +52,6 @@ body#mod-quiz-report table#itemanalysis .qname {
   /*top:100px; is set by js*/
   left:10px
 }
+.mod-quiz #categoryquestions td {
+  white-space:nowrap;
+}
