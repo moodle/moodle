@@ -4,6 +4,7 @@ $string['adminauthorizeccapture'] = 'Contrôle des commandes & réglages de saisie
 $string['adminauthorizeemail'] = 'Réglages d\'envoi de courriel';
 $string['adminauthorizesettings'] = 'Réglages Authorize.net';
 $string['adminauthorizewide'] = 'Réglages globaux';
+$string['adminavs'] = 'Cochez cette option si vous avez activé Address Verification System (AVS) dans votre compte authorize.net. Lorsque l\'utilisateur remplit le formulaire de paiement, il lui sera alors demandé de saisir les champs de l\'adresse, par exemple la rue, le code postal, le pays, etc.';
 $string['admincronsetup'] = 'Le script de maintenance cron.php n\'a pas été lancé depuis plus de 24 heures.<br />Ce script doit être activé si vous vouslez utiliser la saisie automatique.<br />Veuillez <a href=\"../doc/?frame=install.html&sub=cron\">régler le cron</a> ou décocher la variable an_review.<br />Si vous désactivez la saisie automatique, les transactions seront annuler à moins que vous ne les approuviez dans les 30 jours.<br />Cochez la variable an_review et inscrivez «&nbsp;0&nbsp;» dans le champ de la variable an_capture_day<br />si vous voulez accepter ou refuser manuellement les paiements durant 30 jours.';
 $string['adminhelpcapture'] = 'Je ne veux pas seulement accepter ou refuser manuellement les paiements, mais aussi utiliser la saisie automatique pour éviter l\'annullation des paiements. Comment faire&nbsp;?<ul><li>Régler le cron&nbsp;;</li><li>Cocher la variable an_review&nbsp;;</li><li>Tapez un nombre entre 1 et 29 dans le champ an_capture_day. Les données de la carte de crédit seront saisies et l\'utilisateur sera inscrit, sauf si vous spécifiez le contraire avant le nombre de jours de an_capture_day.</li></ul>';
 $string['adminhelpreview'] = 'Comment accepter ou refuser manuellement les paiements&nbsp;?<ul><li>Cochez la variable an_review.</li><li>Tapez 0 dans le champ de la variable an_capture_day.</li></ul>Comment faire pour que les étudiants soient inscrits aussitôt après qu\'ils ont tapé leur numéro de carte de crédit&nbsp;?<ul><li>Décochez la variable an_review.</li></ul>';
@@ -72,7 +73,7 @@ $string['paymentpending'] = 'Votre paiement pour ce cours est en attente de trai
 $string['pendingordersemail'] = 'Cher administrateur,
   	 
 $a->pending transactions arriveront à échéance à moins que vous
-n\'acceptiez le paiement dans les 2 jours.
+n\'acceptiez le paiement dans les $a->days jours.
 
 Ceci est un message d\'avertissement, car vous n\'avez pas activé
 la saisie automatique. Vous devez donc accepter ou refuser les paiements
