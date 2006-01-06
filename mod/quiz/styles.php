@@ -144,8 +144,13 @@ body#mod-quiz-report table#responses .partialcorrect {
 #mod-quiz-attempt #timer .generalbox {
   width:150px
 }
+
 #mod-quiz-attempt #timer {
   position:absolute;
   /*top:100px; is set by js*/
   left:10px
+}
+
+.mod-quiz #categoryquestions td {
+  white-space:nowrap;
 }
