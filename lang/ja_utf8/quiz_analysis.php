@@ -1,9 +1,9 @@
 <?PHP // $Id$ 
-      // quiz_analysis.php - created with Moodle 1.6 development (2005090100)
+      // quiz_analysis.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['analysisoptions'] = '分析オプション';
-$string['analysistitle'] = '項目分析テーブル';
+$string['analysistitle'] = 'アイテム分析テーブル';
 $string['attemptsall'] = '全ての受験';
 $string['attemptselection'] = 'ユーザごとの分析対象';
 $string['attemptsfirst'] = '最初の受験';
@@ -22,7 +22,7 @@ $string['qtexttitle'] = '問題テキスト';
 $string['qtypetitle'] = 'Q. タイプ';
 $string['quizreportdir'] = 'quiz_reports';
 $string['rcounttitle'] = 'R.<br>カウント';
-$string['reportanalysis'] = '項目分析レポート';
+$string['reportanalysis'] = 'アイテム分析レポート';
 $string['responsestitle'] = '解答テキスト';
 $string['rfractiontitle'] = '部分点';
 $string['rpercenttitle'] = 'R.%%';
