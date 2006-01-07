@@ -34,6 +34,9 @@
 
     require_course_login($course, true, $cm);
 
+/// Loading the textlib singleton instance. We are going to need it.
+    $textlib = textlib_get_instance();
+
     if (!isteacher($course->id) and !$glossary->allowprintview) {
         notice(get_string('printviewnotallowed', 'glossary'));
     }
@@ -150,15 +153,16 @@
             // Setting the pivot for the current entry
             $pivot = $entry->pivot;
             if ( !$fullpivot ) {
-                $pivot = substr($pivot, 0, 1);
+                $pivot = $textlib->substr($pivot, 0, 1, current_charset());
+                $upperpivot = $textlib->strtoupper($pivot, current_charset());
             }            
             
             // If there's  group break
-            if ( $currentpivot != strtoupper($pivot) ) {
+            if ( $currentpivot != $upperpivot ) {
 
                 // print the group break if apply
                 if ( $printpivot )  {
-                    $currentpivot = strtoupper($pivot);
+                    $currentpivot = $upperpivot;
 
                     $pivottoshow = $currentpivot;
                     if ( isset($entry->uid) ) {

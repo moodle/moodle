@@ -320,14 +320,15 @@
             $pivot = $entry->pivot;
             if ( !$fullpivot ) {
                 $pivot = $textlib->substr($pivot, 0, 1, current_charset());
+                $upperpivot = $textlib->strtoupper($pivot, current_charset());
             }            
             
             /// if there's a group break
-            if ( $currentpivot != strtoupper($pivot) ) {
+            if ( $currentpivot != $upperpivot ) {
 
                 // print the group break if apply
                 if ( $printpivot )  {
-                    $currentpivot = strtoupper($pivot);
+                    $currentpivot = $upperpivot;
 
                     echo '<div>';
                     echo '<table cellspacing="0" class="categoryheader">';
