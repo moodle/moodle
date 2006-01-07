@@ -26,6 +26,7 @@ $string['modulemissingcode'] = 'A $a modulból hiányzik a funkció végrehajtásához
 $string['mustbeteacher'] = 'Az oldal megtekintéséhez tanárnak kell lennie';
 $string['noinstances'] = 'A(z) $a nem fordule elõ ebben a kurzusban! ';
 $string['nonmeaningfulcontent'] = 'Nem értelmezhetõ tartalom';
+$string['noparticipatorycms'] =  'Önnel kapcsolatosan nincs jelentéssel ellátható résztvevõi kurzusmodul.';
 $string['notavailable'] = 'Jelenleg nem elérhetõ';
 $string['onlyeditown'] = 'Csak saját adatait szerkesztheti';
 $string['onlyeditingteachers'] = 'Csak szerkesztésre jogosult tanárok jogosultak erre.';

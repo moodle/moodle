@@ -3,6 +3,7 @@
 
 $string['adminseesallevents'] = 'A rendszergazdák minden eseményt látnak';
 $string['adminseesownevents'] = 'A rendszergazdák nem különböznek a többi felhasználótól';
+$string['availablelangs'] = 'Elérhetõ nyelvi csomagok';
 $string['backgroundcolour'] = 'Áttetszõ szín';
 $string['badwordsconfig'] = 'Adja meg a nem használható szavak jegyzékét vesszõvel elválasztva.';
 $string['badwordsdefault'] = 'Ha a testre szabott jegyzék üres, a nyelvi csomag alapbeállítás szerinti jegyzékét használja a rendszer.';
@@ -115,6 +116,7 @@ $string['configvariables'] = 'Változók';
 $string['configwarning'] = 'Ezen beállítások módosításakor óvatosságra van szükség - a szokatlan értékek gondot okozhatnak.';
 $string['configzip'] = 'Itt adja meg a tömörítõ program helyét (csak Unix esetén, opcionális). Ha meg van adva, a rendszer ezt a programot fogja használni tömörített állományok szerveren való létrehozására. Ha ez kitöltetlen marad, akkor a Moodle belsõ eljárásait fogja használni.';
 $string['confirmation'] = 'Megerõsítés';
+$string['confirminstall'] = 'Nyelvi csomagot ($a) készül telepíteni, biztos, hogy ezt akarja?';
 $string['cronwarning'] = 'A <a href=\"cron.php\">cron.php karbantartó kód </a> legalább 24 órája nem futott le. <br />A <a href=\"../doc/?frame=install.html&amp;sub=cron\">telepítési dokumentációból</a> megtudható, hogyan automatizálható ez a folyamat.';
 $string['density'] = 'Sûrûség';
 $string['edithelpdocs'] = 'Súgóállományok szerkesztése';
@@ -136,8 +138,13 @@ $string['importtimezones'] = 'A teljes idõzónajegyzék frissítése';
 $string['importtimezonescount'] = '$a->source helyrõl $a->count egység importálva';
 $string['importtimezonesfailed'] = 'Nincs adatforrás! (Ez gond!)';
 $string['incompatibleblocks'] = 'A blokkok nem kompatibilisek';
-$string['latexpreamble'] = 'LaTeX preambulum';
-$string['latexsettings'] = 'LaTeX Renderer beállításai';
+$string['install'] = 'Telepít';
+$string['installedlangs'] = 'Telepített nyelvi csomagok';
+$string['langimport'] = 'Nyelvimportáló segédeszköz';
+$string['langimportsuccess'] = 'A nyelvi csomag frissítése sikerült';
+$string['langpackremoved'] = 'A nyelvi csomag törlése befejezõdött';
+$string['latexpreamble'] = 'LaTeX-preambulum';
+$string['latexsettings'] = 'LaTeX-átalakító beállításai';
 $string['mediapluginavi'] = '.avi filter bekapcsolása';
 $string['mediapluginmov'] = '.mov filter  bekapcsolása';
 $string['mediapluginmp3'] = '.mp3 filter  bekapcsolása';
@@ -159,15 +166,13 @@ $string['therewereerrors'] = 'Adataiban hiba volt';
 $string['timezoneforced'] = 'Ezt a portál rendszergazdája követeli meg';
 $string['timezoneisforcedto'] = 'Minden felhasználó kényszerítése ';
 $string['timezonenotforced'] = 'A felhasználók kiválaszthatják saját idõzónájukat';
+$string['uninstall'] = 'Törlés';
+$string['uninstallconfirm'] = 'A $a nyelvi csomag teljes törlésére készül, biztosan ezt akarja tenni?';
 $string['upgradeforumread'] = 'A Moodle 1.5 új elemmel bõvült az elolvasott/még nem olvasott fórumhozzászólások nyomon követésére.<br />Ennek használatához <a href=\"$a\">frissítenie kell táblázatait</a>.';
 $string['upgradeforumreadinfo'] = 'A Moodle 1.5 új elemmel bõvült az elolvasott/még nem olvasott fórumhozzászólások nyomon követésére. Ennek használatához frissítenie kell táblázatait az összes meglévõ hozzászólásra vonatkozó nyomon követési információval. A portál méretétõl függõen ez hosszú idõbe (akár órákba) telhet és igénybe veheti az adatbázis erõforrását, ezért ennek elvégzésére célszerû egy nyugodtabb idõszakot kiválasztani. Ugyanakkor a portál a frissítés alatt továbbra is üzemel, a felhasználókat ez nem érinti. Ha a folyamatot elindítja, hagyja, hogy véget érjen (a böngészõ ablakát tartsa nyitva). Ha mégis becsukná, semmi probléma, újrakezdheti.<br /><br />Most akarja elindítani a frissítést?';
 $string['upgradelogs'] = 'Az összes funkció mûködéséhez minden régi naplóállományt frissíteni kell. <a href=\"$a\">További tájékoztatás</a>';
 $string['upgradelogsinfo'] = 'A naplóállományok tárolásában nemrégiben változásokra került sor. Ha a régebbi naplóállományokat tevékenységek szerint kívánja megtekinteni, akkor a régi naplóállományokat frissítenie kell. Ez az adott portáltól függõen sok idõt (akár órákat) vehet igénybe és meglehetõsen megterhelheti a nagyobb portálok adatbázisait. Ha nekilát a folyamatnak, hagynia kell, hogy befejezõdjék (oly módon, hogy a böngészõ ablakát nyitva hagyja). A naplóállományok frissítése közben a portál mások számára minden gond nélkül üzemel.<br /><br />Most kívánja frissíteni a naplóállományait?';
-$string['upgradesure'] = 'Moodle-állományai módosultak, szerverét automatikusan erre a verzióra fogja frissíteni:
-<p><b>$a</b></p>
-<p>Ha így tesz, nem fog tudni visszalépni.</p> 
-<p>Ezt a szervert biztosan erre a verzióra kívánja frissíteni?</p>';
+$string['upgradesure'] = 'Moodle-állományai módosultak, szerverét automatikusan erre a verzióra fogja frissíteni: <p><span style="font-weight: bold;">$a</span></p> <p>Ha így tesz, nem fog tudni visszalépni.</p> <p>Ezt a szervert biztosan erre a verzióra kívánja frissíteni?</p>';
 $string['upgradingdata'] = 'Adatok frissítése';
 $string['upgradinglogs'] = 'Naplóállományok frissítése';
-
 ?>

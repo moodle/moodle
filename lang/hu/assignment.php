@@ -12,6 +12,7 @@ $string['assignmenttype'] = 'Feladat típusa';
 $string['availabledate'] = 'Elérhetõ innen';
 $string['comment'] = 'Megjegyzés';
 $string['commentinline'] = 'Sorközi megjegyzés';
+$string['configitemstocount'] = 'Online feladatokban a tanulói leadott munkákhoz megszámolandó tételek jellege.';
 $string['configmaxbytes'] = 'Az adott portálon az összes feladat alapbeállítás szerinti maximális mérete (a kurzustól és egyéb helyi beállításoktól függõen)';
 $string['description'] = 'Leírás';
 $string['duedate'] = 'Határidõ';

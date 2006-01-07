@@ -76,6 +76,7 @@ $string['parameter'] = 'Paraméter';
 $string['parameters'] = 'Paraméterek';
 $string['popupresource'] = 'Ennek a tananyagnak elõbukkanó ablakban kell megjelenni.';
 $string['popupresourcelink'] = 'Ha nem, kattintson ide: $a';
+$string['redeploy'] = 'Újbóli használat';
 $string['resourcetype'] = 'Tananyag típusa';
 $string['resourcetype1'] = 'Hivatkozás';
 $string['resourcetype2'] = 'Weboldal';
