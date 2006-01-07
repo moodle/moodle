@@ -34,6 +34,9 @@
     /// Else if mbstring is available, lets Typo3 library use it
     } else if (extension_loaded('mbstring')) {
         $GLOBALS['TYPO3_CONF_VARS']['SYS']['t3lib_cs_convMethod'] = 'mbstring';
+    /// Else if recode is available, lets Typo3 library use it
+    } else if (extension_loaded('recode')) {
+        $GLOBALS['TYPO3_CONF_VARS']['SYS']['t3lib_cs_convMethod'] = 'recode';
     } else {
         $GLOBALS['TYPO3_CONF_VARS']['SYS']['t3lib_cs_convMethod'] = '';
     }
