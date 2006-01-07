@@ -67,12 +67,14 @@ if ( empty($INSTALL['language']) and empty($_POST['language']) ) {
 
 $SESSION->lang = (!empty($_POST['language'])) ? $_POST['language'] : $INSTALL['language'];
 $CFG->dirroot = $INSTALL['dirroot'];
+$CFG->libdir = $INSTALL['dirroot'].'/lib';
 $CFG->dataroot = $INSTALL['dataroot'];
 $CFG->directorypermissions = 00777;
 
 
 /// Include some moodle libraries
 
+require_once('./lib/setuplib.php');
 require_once('./lib/moodlelib.php');
 require_once('./lib/weblib.php');
 require_once('./lib/adodb/adodb.inc.php');
