@@ -381,6 +381,7 @@ class configvarrss extends configvar {
         $config->hiddenuserfields = 'none';
     }
     $configfields = array_flip(explode(',', $config->hiddenuserfields));
+    $fieldoptions = '';
     foreach ($fields as $value) {
         $fieldoptions .= '<option value="'.$value.'"';
         if (isset($configfields[$value])) {
