@@ -5439,7 +5439,7 @@ function get_list_of_plugins($plugin='mod', $exclude='', $basedir='') {
     } else {
         $basedir = $basedir .'/'. $plugin;
     }
-    if (filetype($basedir) == 'dir') {
+    if (file_exists($basedir) && filetype($basedir) == 'dir') {
         $dirhandle = opendir($basedir);
         while (false !== ($dir = readdir($dirhandle))) {
             $firstchar = substr($dir, 0, 1);
