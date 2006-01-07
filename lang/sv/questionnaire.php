@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // questionnaire.php - created with Moodle 1.5 ALPHA (2005043000)
+      // questionnaire.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['alreadyfilled'] = 'Du har redan besvarat den här enkäten åt oss. Tack!';
@@ -7,7 +7,6 @@ $string['closed'] = 'Enkäten avslutades den $a. Tack!';
 $string['closedate'] = 'Använd ett stoppdatum';
 $string['createcontent'] = 'Definiera nytt innehåll';
 $string['createnew'] = 'Skapa ny';
-$string['guestsno'] = 'Gäster kan tyvärr inte fylla i enkäter.';
 $string['inuse'] = 'I användning';
 $string['modulename'] = 'Egen enkät';
 $string['modulenameplural'] = 'Egna enkäter';
@@ -27,6 +26,7 @@ $string['qtype'] = 'Typ';
 $string['qtypeonce'] = 'Svara en gång';
 $string['qtypeunlimited'] = 'Svara flera gånger';
 $string['questionnaireid'] = 'Innehåll i Egen enkät';
+$string['questiontypes'] = 'Frågetyper';
 $string['realm'] = 'Typ av Egen Enkät';
 $string['respondenteligible'] = 'Den svarandes behörighet ';
 $string['respondenteligibleall'] = 'alla';
