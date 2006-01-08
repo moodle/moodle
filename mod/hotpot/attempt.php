@@ -185,6 +185,8 @@ function hotpot_get_next_cm(&$cm) {
 function hotpot_set_attempt_details(&$attempt) {
 	global $CFG, $HOTPOT_QUIZTYPE;
 
+	// optional_param('showallquestions', 0, PARAM_INT);
+
 	$attempt->details = '';
 	$attempt->score = 0;
 	$attempt->status = HOTPOT_STATUS_COMPLETED;
@@ -211,12 +213,67 @@ function hotpot_set_attempt_details(&$attempt) {
 		//
 	}
 
+	// special flag to detect jquiz multiselect
+	$is_jquiz_multiselect = false;
+
+	// set maximum question number
+	$q_max = 0;;
+	do {
+		switch ($quiztype) {
+			case HOTPOT_JCLOZE:
+			case HOTPOT_JQUIZ:
+				$field="q{$q_max}_a0_text";
+				break;
+			case HOTPOT_JCB:
+			case HOTPOT_JCROSS:
+			case HOTPOT_JMATCH:
+			case HOTPOT_JMIX:
+			default:
+				$field = '';
+		}
+	} while ($field && isset($_POST[$field]) && ($q_max = $q_max+1));
+
+	// check JQuiz navigation buttons
+	switch (true) {
+		case isset($_POST['ShowAllQuestionsButton']):
+			$_POST['ShowAllQuestions'] = 1;
+			break;
+		case isset($_POST['ShowOneByOneButton']):
+			$_POST['ShowAllQuestions'] = 0;
+			break;
+		case isset($_POST['PrevQButton']):
+			$_POST['ThisQuestion']--;
+			break;
+		case isset($_POST['NextQButton']):
+			$_POST['ThisQuestion']++;
+			break;
+	}
+
 	$q = 0;
-	while (($responsefield="q{$q}") && isset($_POST[$responsefield])) {
-		$responsevalue = optional_param($responsefield, '');
+	while ($q<$q_max) {
+		$responsefield="q{$q}";
+
+		$questiontype = optional_param("{$responsefield}_questiontype", 0, PARAM_INT);
+		$is_jquiz_multiselect = ($quiztype==HOTPOT_JQUIZ && $questiontype==HOTPOT_JQUIZ_MULTISELECT);
+
+		if (isset($_POST[$responsefield]) && is_array($_POST[$responsefield])) {
+			$responsevalue = array();
+			foreach ($_POST[$responsefield] as $key=>$value) {
+				$responsevalue[$key] = clean_param($value, PARAM_CLEAN);
+			}
+		} else {
+			$responsevalue = optional_param($responsefield, '');
+		}
+		if (is_array($responsevalue)) {
+			// incomplete jquiz multi-select
+			$responsevalues = $responsevalue;
+			$responsevalue = implode('+', $responsevalue);
+		} else {
+			$responsevalues = explode('+', $responsevalue);
+		}
 
 		// initialize $response object
-		$response = NULL;
+		$response = new stdClass();
 		$response->correct = array();
 		$response->wrong   = array();
 		$response->ignored = array();
@@ -224,10 +281,10 @@ function hotpot_set_attempt_details(&$attempt) {
 		$response->hints  = 0;
 		$response->checks = 0;
 		$response->score  = 0;
-		$response->weighting  = 0;
+		$response->weighting = 0;
 		
 		// create another empty object to hold all previous responses (from database)
-		$oldresponse = NULL;
+		$oldresponse = new stdClass();
 		$vars = get_object_vars($response);
 		foreach($vars as $name=>$value) {
 			$oldresponse->$name = $value;
@@ -244,12 +301,20 @@ function hotpot_set_attempt_details(&$attempt) {
 
 		// loop through possible answers to this question
 		$firstcorrectvalue = '';
+		$percents = array();
 		$a = 0;
 		while (($valuefield="q{$q}_a{$a}_text") && isset($_POST[$valuefield])) {
 			$value = optional_param($valuefield, '', PARAM_RAW);
 
+			if (($percentfield="q{$q}_a{$a}_percent") && isset($_POST[$percentfield])) {
+				$percent = optional_param($percentfield, 0, PARAM_INT);
+				if ($percent) {
+					$percents[$value] = $percent;
+				}
+			}
+
 			if (($correctfield="q{$q}_a{$a}_correct") && isset($_POST[$correctfield])) {
-				$correct = optional_param($correctfield, '', PARAM_INT);
+				$correct = optional_param($correctfield, 0, PARAM_INT);
 			} else {
 				$correct = false;
 			}
@@ -258,53 +323,91 @@ function hotpot_set_attempt_details(&$attempt) {
 				$firstcorrectvalue = $value;
 			}
 
-			if ($responsevalue==$value) {
+			if ($is_jquiz_multiselect) {
+				$selected = in_array($value, $responsevalues);
 				if ($correct) {
 					$response->correct[] = $value;
+					if (empty($selected)) {
+						$response->wrong[] = true;
+					}
 				} else {
-					$response->wrong[] = $value;
+					if ($selected) {
+						$response->wrong[] = true;
+					}
 				}
 			} else {
-				$response->ignored[] = $value;
+				// single answer only required
+				if ($responsevalue==$value) {
+					if ($correct) {
+						$response->correct[] = $value;
+					} else {
+						$response->wrong[] = $value;
+					}
+				} else {
+					$response->ignored[] = $value;
+				}
 			}
 			$a++;
 		}
 
-		// if response did not match any answer, then this response is wrong
-		if (empty($response->correct) && empty($response->wrong)) {
-			$response->wrong[] = $responsevalue;
+		// number of answers for this question
+		$a_max = $a;
+
+		if ($is_jquiz_multiselect) {
+			if (empty($response->wrong) && count($responsevalues)==count($response->correct)) {
+				$response->wrong = array();
+				$response->correct = array($responsevalue);
+			} else {
+				$response->correct = array();
+				$response->wrong = array($responsevalue);
+			}
+		} else {
+			// if response did not match any answer, then this response is wrong
+			if (empty($response->correct) && empty($response->wrong)) {
+				$response->wrong[] = $responsevalue;
+			}
 		}
 
 		// if this question has not been answered correctly, quiz is still in progress
 		if (empty($response->correct)) {
-			$attempt->status = HOTPOT_STATUS_INPROGRESS;
-
-			// give a hint, if necessary
-			if (isset($_POST['HintButton']) && $firstcorrectvalue) {
-
-				// make sure we only come through here once
-				unset($_POST['HintButton']);
-
-				$correctlen = strlen($firstcorrectvalue);
-				$responselen = strlen($responsevalue);
-
-				// check how many letters are the same
-				$i = 0;
-				while ($i<$responselen && $i<$correctlen && $responsevalue{$i}==$firstcorrectvalue{$i}) {
-					$i++;
+	
+			if (isset($_POST["q{$q}_ShowAnswers_button"])) {
+					$_POST[$responsefield] = $firstcorrectvalue;
+			} else {
+				$attempt->status = HOTPOT_STATUS_INPROGRESS;
+	
+				if (isset($_POST["q{$q}_Hint_button"])) {
+					// a particular hint button in JQuiz shortanswer
+					$_POST['HintButton'] = true;
 				}
-
-				if ($i<$responselen) {
-					// remove incorrect characters on the end of the response
-					$responsevalue = substr($responsevalue, 0, $i);
-				}
-				if ($i<$correctlen) {
-					// append next correct letter
-					$responsevalue .= $firstcorrectvalue{$i};
-				}
-				$_POST[$responsefield] = $responsevalue;
-				$response->hints++;
-			} // end if hint
+	
+				// give a hint, if necessary
+				if (isset($_POST['HintButton']) && $firstcorrectvalue) {
+	
+					// make sure we only come through here once
+					unset($_POST['HintButton']);
+	
+					$correctlen = strlen($firstcorrectvalue);
+					$responselen = strlen($responsevalue);
+	
+					// check how many letters are the same
+					$i = 0;
+					while ($i<$responselen && $i<$correctlen && $responsevalue{$i}==$firstcorrectvalue{$i}) {
+						$i++;
+					}
+	
+					if ($i<$responselen) {
+						// remove incorrect characters on the end of the response
+						$responsevalue = substr($responsevalue, 0, $i);
+					}
+					if ($i<$correctlen) {
+						// append next correct letter
+						$responsevalue .= $firstcorrectvalue{$i};
+					}
+					$_POST[$responsefield] = $responsevalue;
+					$response->hints++;
+				} // end if hint
+			}
 		} // end if not correct
 
 		// get clue text, if any
@@ -315,7 +418,8 @@ function hotpot_set_attempt_details(&$attempt) {
 		// get question name
 		$qq = sprintf('%02d', $q); // (a padded, two-digit version of $q)
 		if (($field="q{$q}_name") && isset($_POST[$field])) {
-			$questionname = optional_param($field, '', PARAM_RAW);
+			$questionname = optional_param($field, '',  PARAM_RAW);
+			$questionname = strip_tags($questionname);
 		} else {
 			$questionname = $qq;
 		}
@@ -332,7 +436,7 @@ function hotpot_set_attempt_details(&$attempt) {
 				a.clickreportid = $attempt->clickreportid AND
 				a.id = r.attempt AND
 				r.question = q.id AND
-				q.name = $questionname AND
+				q.name = '$questionname' AND
 				q.hotpot = $attempt->hotpot
 			ORDER BY
 				a.timefinish
@@ -399,9 +503,38 @@ function hotpot_set_attempt_details(&$attempt) {
 				case HOTPOT_JMIX:
 					break;
 				case HOTPOT_JQUIZ:
+					switch ($questiontype) {
+						case HOTPOT_JQUIZ_MULTICHOICE:
+							$wrong = explode(',', $response->wrong);
+							foreach ($wrong as $value) {
+								if (isset($percents[$value])) {
+									$percent = $percents[$value];
+								} else {
+									$percent = 0;
+								}
+							}
+						case HOTPOT_JQUIZ_SHORTANSWER:
+							$strlen = strlen($response->correct);
+							$response->score = 100*($strlen-($response->checks-1))/$strlen;
+							break;
+						case HOTPOT_JQUIZ_MULTISELECT:
+							if (isset($percents[$response->correct])) {
+								$percent = $percents[$response->correct];
+							} else {
+								$percent = 0;
+							}
+							if ($a_max>0 && $response->checks>0 && $a_max>$response->checks) {
+								$response->score = $percent*($a_max-($response->checks-1))/$a_max;
+							}
+							break;
+					}
+					$attempt->score += $response->score;
 					break;
 			}
 		}
+
+		$fieldname = $HOTPOT_QUIZTYPE[$quiztype]."_q{$qq}_name";
+		$attempt->details .= "<field><fieldname>$fieldname</fieldname><fielddata>$questionname</fielddata></field>";
 
 		// encode $response fields as XML
 		$vars = get_object_vars($response);
@@ -438,10 +571,8 @@ function hotpot_set_attempt_details(&$attempt) {
 		$attempt->details = '<?xml version="1.0"?><hpjsresult><fields>'.$attempt->details.'</fields></hpjsresult>';
 	}
 
-	// check there are no unattempted questions
-	if (($field="I_{$q}_correct_0") && isset($_POST[$field])) {
-		$attempt->status = HOTPOT_STATUS_INPROGRESS;
-	}	
+//	print "forcing status to in progress ..<br>\n";
+//	$attempt->status = HOTPOT_STATUS_INPROGRESS;
 }
 
 ?>
