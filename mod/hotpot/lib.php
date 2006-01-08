@@ -2172,6 +2172,7 @@ if (!function_exists('html_entity_decode')) {
 }
 
 if (!defined('PARAM_RAW')) define('PARAM_RAW', 0x0000);
+if (!defined('PARAM_CLEAN')) define('PARAM_CLEAN', 0x0001);
 if (!defined('PARAM_INT'))  define('PARAM_INT', 0x0002);
 if (!defined('PARAM_ALPHA')) define('PARAM_ALPHA', 0x0004);
 if (!defined('PARAM_ALPHANUM')) define('PARAM_ALPHANUM', 0x0400);
