@@ -282,7 +282,7 @@ function hotpot_set_attempt_details(&$attempt) {
 		$response->checks = 0;
 		$response->score  = 0;
 		$response->weighting = 0;
-		
+
 		// create another empty object to hold all previous responses (from database)
 		$oldresponse = new stdClass();
 		$vars = get_object_vars($response);
@@ -370,32 +370,32 @@ function hotpot_set_attempt_details(&$attempt) {
 
 		// if this question has not been answered correctly, quiz is still in progress
 		if (empty($response->correct)) {
-	
+
 			if (isset($_POST["q{$q}_ShowAnswers_button"])) {
 					$_POST[$responsefield] = $firstcorrectvalue;
 			} else {
 				$attempt->status = HOTPOT_STATUS_INPROGRESS;
-	
+
 				if (isset($_POST["q{$q}_Hint_button"])) {
 					// a particular hint button in JQuiz shortanswer
 					$_POST['HintButton'] = true;
 				}
-	
+
 				// give a hint, if necessary
 				if (isset($_POST['HintButton']) && $firstcorrectvalue) {
-	
+
 					// make sure we only come through here once
 					unset($_POST['HintButton']);
-	
+
 					$correctlen = strlen($firstcorrectvalue);
 					$responselen = strlen($responsevalue);
-	
+
 					// check how many letters are the same
 					$i = 0;
 					while ($i<$responselen && $i<$correctlen && $responsevalue{$i}==$firstcorrectvalue{$i}) {
 						$i++;
 					}
-	
+
 					if ($i<$responselen) {
 						// remove incorrect characters on the end of the response
 						$responsevalue = substr($responsevalue, 0, $i);
@@ -474,7 +474,7 @@ function hotpot_set_attempt_details(&$attempt) {
 			if ($field=='correct' || $field=='wrong') {
 				$array = $oldresponse->$field;
 				$array = array_unique($array);
-				$oldresponse->$field  = implode(',', $array);		
+				$oldresponse->$field  = implode(',', $array);
 				if ($response->$field<>$oldresponse->$field) {
 					$value_has_changed = true;
 				}
