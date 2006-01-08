@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // block_file_manager.php - created with Moodle 1.6 development (2005090100)
+      // block_file_manager.php - created with Moodle 1.6 development (2005111101)
 
 
 $string['actionsname'] = 'Aktionen';
@@ -8,7 +8,7 @@ $string['addlink'] = 'Link hinzufügen';
 $string['addthislink'] = 'Link hinzufügen';
 $string['addurl'] = 'URL hinzufügen';
 $string['adminsettings'] = 'Verwaltung';
-$string['allowsharing'] = 'Teilnehmer/innen dürfen anderen Tn zur Verfügung stellen';
+$string['allowsharing'] = 'Dürfen Teilnehmer/innen anderen Teilnehmer/innen Dateien und Links zur Verfügung stellen';
 $string['btnaddlink'] = 'Upload Link';
 $string['btnadmins'] = 'Administrator/innen';
 $string['btnassigncatact'] = 'Kategorie vergeben';
@@ -62,6 +62,7 @@ $string['errnoupdate'] = 'Eintrag konnte nicht aktualisiert werden.';
 $string['errnoviewcat'] = 'Sie können diese Kategorie nicht einsehen';
 $string['errnoviewfile'] = 'Sie können diese Datei nicht einsehen.';
 $string['errnoviewfold'] = 'Sie können diesen Ordner nicht einsehen.';
+$string['errrecordmod'] = 'Der $a->forwho Datensatz konnte nicht $a->errtype.';
 $string['errserversave'] = 'Beim Speichern der Datei auf dem Server ist ein Fehler aufgetreten.';
 $string['errwierdfilename'] = 'Die Datei $a ist ungültig und konnte nicht hochgeladen werden.';
 $string['errwrongparam'] = 'Falsche Parameter';
@@ -82,7 +83,7 @@ $string['msgconfdelete'] = 'Sind Sie sicher, das Sie $a unten löschen wollen? <b
 $string['msgduplicate'] = 'Der Name wird bereits verwandt. Versuchen Sie es mit einem anderen.';
 $string['msgexplainingshared'] = 'Diese Nutzer/innen haben Weblinks oder Dateien für andere bereit gestellt.';
 $string['msgexplainingsharedind'] = 'Diese Person hat Dateien für Sie bereit gestellt.';
-$string['msgexplainmanager'] = 'Hier können Sie Ihre Dateien, Links und Verzeichnisse verwalten.. Wenn Sie in einem Kurs eingetragen sind, könenn Sie die Dateien anderen Teilnehmer/innen zur Verfügung stellen und als Lösung einer Aufgabe einreichen.';
+$string['msgexplainmanager'] = 'Hier können Sie Ihre Dateien, Links und Verzeichnisse verwalten.. Wenn Sie in einem Kurs eingetragen sind, können Sie die Dateien anderen Teilnehmer/innen zur Verfügung stellen und als Lösung einer Aufgabe einreichen.';
 $string['msgexpsharedcat'] = 'Sie können alle Links nutzen, die in dieser Kategorie bereit gestellt wurden.';
 $string['msgexpsharedfold'] = 'Sie können alle Links nutzen, die in diesem Ordner bereit gestellt wurden.';
 $string['msgfileexists'] = 'Die Datei \'$a\' existiert bereits. Laden Sie eine andere Datei hoch <br> oder laden Sie Datei noch einmal hoch und füllen Sie das markierte Feld zum Umbenennen der Datei aus.';
@@ -111,22 +112,22 @@ $string['msgopenfolder'] = 'Ordner in Popup-Fenster öffnen';
 $string['msgopenlink'] = 'URL in  Popup-Fenster öffnen';
 $string['msgrecordsupdated'] = 'Einträge aktualisiert';
 $string['msgrootdir'] = 'Nach oben verschieben';
-$string['msgshare'] = 'Klicken Sie auf einzelne Nutzer/innen, Gruppen oder<br> wählen Sie  \'Alle auswählen\' um es diesen Personen zur Verfügung zu stellen.';
+$string['msgshare'] = 'Klicken Sie auf einzelne Nutzer/innen, Gruppen oder<br> wählen Sie  \'Alle auswählen\' um die Datei oder den Link den ausgewählten Personen zur Verfügung zu stellen.';
 $string['msgsharemulti'] = '<font color=\'red\'>Warnung:</font> Wenn Sie mehrere Dateien Nutzer/innen zur Verfügung stellen<br> werden alle vorherigen Einstellungen für diese Dateien gelöscht.';
-$string['msgsharetoothers'] = 'Anderen zur Verfügung stellen';
+$string['msgsharetoothers'] = 'Dateien/Links für andere frei geben';
 $string['msgsublinksdeleted'] = '<br><br><center>Warnung: Alle Links/Ordner unterhalb den gelöschten werden ebenfalls<br> dauerhaft gelöscht.</center>';
 $string['myfiles'] = 'Dateiablage';
-$string['namename'] = 'Name';
+$string['namename'] = 'Bezeichnung der Datei in der Anzeige';
 $string['othersharedfiles'] = 'Andere bereitgestellte Links';
 $string['plural'] = '(s)';
 $string['rename'] = 'Umbenennen';
 $string['selectall'] = 'Alle auswählen';
 $string['sharedcat'] = 'Bereitgestellte Kategorie';
-$string['sharedfiles'] = 'Bereitgestellte Links';
+$string['sharedfiles'] = 'Dateien/Links von anderen';
 $string['sharedfold'] = 'Bereitgestellte Ordner';
-$string['sharetoany'] = 'Allen von der Hauptseite zur Verfügung stellen.';
-$string['studentsshared'] = 'Bereitgestellte Links der Teilnehmer/innen';
-$string['teachersshared'] = 'Bereitgestellte Links der Trainer/innen';
+$string['sharetoany'] = 'Sollen Dateien/Links von der Hauptseite allen zur Verfügung gestellt werden.';
+$string['studentsshared'] = 'Dateien/Links der Teilnehmer/innen';
+$string['teachersshared'] = 'Dateien/Links der Trainer/innen';
 $string['titlecats'] = 'Kategorien verwalten';
 $string['userfirstname'] = 'Vorname';
 $string['userlastname'] = 'Nachname';

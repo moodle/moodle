@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // hotpot.php - created with Moodle 1.6 development (2005090100)
+      // hotpot.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['abandoned'] = 'abgebrochen';
@@ -29,6 +29,7 @@ $string['enterafilename'] = 'Geben Sie bitte einen Dateinamen ein';
 $string['error_couldnotopenfolder'] = 'Auf den Ordner \"$a\" kann nicht zugegriffen werden.';
 $string['error_couldnotopensourcefile'] = 'Die Quelldatei \"§a\" kann nicht geöffnet werden.';
 $string['error_couldnotopentemplate'] = 'Vorlage für das \"$a\"-Format kann nicht geöffnet werden.';
+$string['error_invalidquiztype'] = 'Testtyp fehlt oder ist ungültig.';
 $string['error_nocourseorfilename'] = 'XML-Tree kann nicht erstellt werden: Kurs- oder Dateiname fehlt.';
 $string['error_nofeedbackurlformmail'] = 'Bitte URL für das Formularprocessor Script eintragen';
 $string['error_nofeedbackurlwebpage'] = 'Bitte URL für Webseite eingeben';
@@ -74,7 +75,7 @@ $string['questionshort'] = 'Q-$a';
 $string['quiztype'] = 'Testtyp';
 $string['rawdetails'] = 'Original Versuche Details';
 $string['regrade'] = 'Neubewertung';
-$string['regradecheck'] = 'Wollen Sie wirklich &quot;$a&quot; neu bewerten?';
+$string['regradecheck'] = 'Wollen Sie wirklich \"$a\" neu bewerten?';
 $string['regraderequired'] = 'Neubewertung erforderlich';
 $string['reportanswers'] = 'Antworten';
 $string['reportattemptfinish'] = 'Vers. Ende';
@@ -83,6 +84,7 @@ $string['reportattemptstart'] = 'Vers. Start';
 $string['reportbutton'] = 'Bericht erstellen';
 $string['reportchanges'] = 'Veränderungen';
 $string['reportchecks'] = 'Kontrollen';
+$string['reportclick'] = 'Klick zu Bericht';
 $string['reportclicknumber'] = 'Klick';
 $string['reportclicktime'] = 'Klickzeit';
 $string['reportclicktype'] = 'Klickarten';

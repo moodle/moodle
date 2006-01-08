@@ -78,6 +78,7 @@ $string['parameter'] = 'Einstellung';
 $string['parameters'] = 'Einstellungen';
 $string['popupresource'] = 'Diese Quelle erscheint in einem Pop-Up-Fenster';
 $string['popupresourcelink'] = 'Wenn es nicht klappt, klicken Sie hier $a';
+$string['redeploy'] = 'Nochmal verwenden';
 $string['resourcetype'] = 'Typ der Quelle';
 $string['resourcetype1'] = 'Referenz';
 $string['resourcetype2'] = 'Internet-Seite';

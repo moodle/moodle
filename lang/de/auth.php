@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.6 development (2005090100)
+      // auth.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['alternatelogin'] = 'Wenn Sie hier eine URL eingeben, wird diese als alternative Login-Seite  verwandt. Die Seite sollte ein Aktionsfeld (Button)auf <strong>\'$a\'</strong> enthalten und Eingabefelder für den <strong>Anmeldenamen</strong> und das <strong>Passwort</strong>.<br />Seien Sie sorgfältig bei der Eingabe der URL. Mit einer falschen URL schließen Sie sich selber vom Zugriff zur Seite aus.<br />Lassen Sie das Feld leer, um die Standardanmeldeseite zu verwenden.';
@@ -138,6 +138,9 @@ $string['locked'] = 'Gesperrt';
 $string['md5'] = 'MD5-Verschlüsselung';
 $string['passwordhandling'] = 'Nutzung des Passwortfeldes';
 $string['plaintext'] = 'Reiner Text';
+$string['shib_no_attributes_error'] = 'Sie versuchen vermutlich die Shibboleth Authentifizierung zu verwenden. moodle hat jedoch keine Attribute für die Nutzer/innen erhalten. Prüfen Sie bitte, ob der Identity Provider die erforderlichen Attribute ($a) dem moodle Serviceprovider zur Verfügung stellt oder informieren Sie den Webmaster des Servers.';
+$string['shib_not_all_attributes_error'] = 'moodle benötigt einige Shibboleth-Attribute die derzeitnicht bereitgestellt werden. Es handelt sich um die Attribute: $a<br />Benachrichtigen Sie bitte den Webmaster des Servers oder Ihren Identity Provider.';
+$string['shib_not_set_up_error'] = 'Die Shibboleth-Authentifizierung scheint nicht richtig eingerichtet zu sein. Beachten Sie die <a href=\"README.txt\">README-Datei</a> mit weiteren Informationen zur Einrichtung der Shibboleth-Authentifizierung.';
 $string['showguestlogin'] = 'Sie können die Gast-Login Schaltfläche auf der Anmeldeseite anzeigen oder verbergen.';
 $string['stdchangepassword'] = 'Standardseite zur Passwortänderung nutzen';
 $string['stdchangepassword_expl'] = 'Stellen Sie Ja ein, wenn das externe Authentifizierungssystem eine Änderung des Passwortes durch moodle zulässt. Die Einstellungen überschreiben \'Passwort-URL ändern\'';

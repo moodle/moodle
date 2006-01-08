@@ -17,6 +17,7 @@ $string['assignmenttype'] = 'Aufgabentyp';
 $string['availabledate'] = 'Verfügbar von';
 $string['comment'] = 'Kommentar';
 $string['commentinline'] = 'eingearbeiteter Kommentar';
+$string['configitemstocount'] = 'Werte, die bei den Online Aufgaben der Teilnehmer/innen, ausgezählt werden sollen (z.B. Wortzahl, Zeichenzahl)';
 $string['configmaxbytes'] = 'Voreingestellte maximale Größe für alle Einstellungen auf dieser Seite';
 $string['description'] = 'Zusammenfassung';
 $string['duedate'] = 'Abgabetermin (Datum, Zeitpunkt)';

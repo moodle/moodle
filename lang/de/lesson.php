@@ -4,6 +4,8 @@
 
 $string['accesscontrol'] = 'Zugriffskonrolle';
 $string['actionaftercorrectanswer'] = 'Aktion nach der richtigen Antwort';
+$string['activitylink'] = 'Link zu einer Aktivität';
+$string['activitylinkname'] = 'Gehe zu: $a';
 $string['addabranchtable'] = 'Verzweigungsseite einfügen';
 $string['addanendofbranch'] = 'Verzweigungsende einfügen';
 $string['addaquestionpage'] = 'Fragenseite einfügen';
@@ -14,6 +16,7 @@ $string['addedaquestionpage'] = 'Fragenseite hinzugefügt';
 $string['addedcluster'] = 'Cluster hinzugefügt';
 $string['addedendofcluster'] = 'Clusterende hinzugefügt';
 $string['addendofcluster'] = 'Clusterende einfügen';
+$string['anchortitle'] = 'Start des Hauptinhalts';
 $string['and'] = 'UND';
 $string['answer'] = 'Antwort';
 $string['answeredcorrectly'] = 'richtig beantwortet.';
@@ -219,6 +222,7 @@ $string['secondpluswrong'] = 'Nicht ganz. Wollen Sie es noch einmal versuchen?';
 $string['showanunansweredpage'] = 'Zeige eine unbearbeitete Seite';
 $string['showanunseenpage'] = 'Zeige eine noch nicht gesehene Seite';
 $string['singleanswer'] = 'Einzelne Antwort';
+$string['skip'] = 'Sprungnavigation';
 $string['slideshow'] = 'Diashow';
 $string['slideshowbgcolor'] = 'Diashow Hintergrundfarbe';
 $string['slideshowheight'] = 'Diashow Höhe';
