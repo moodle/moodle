@@ -1,0 +1,75 @@
+<DBMIGRATION type="mod/survey" VERSION="2005120100">
+  <TABLES>
+    <TABLE name="survey_questions">
+      <FIELDS>
+        <FIELD name="options" method="NO_CONV" type="text" length="0" />
+        <FIELD name="shorttext" method="NO_CONV" type="varchar" length="30" />
+      </FIELDS>
+    </TABLE>
+    <TABLE name="survey_analysis">
+      <FIELDS>
+        <FIELD name="notes" method="PLAIN_SQL_UPDATE" type="text" length="0">
+          <SQL_DETECT_USER>
+           SELECT sa.userid
+           FROM {$CFG->prefix}survey_analysis sa
+           WHERE sa.id=RECORDID
+          </SQL_DETECT_USER>
+          <SQL_DETECT_COURSE>
+           SELECT s.course
+           FROM {$CFG->prefix}survey s,
+                {$CFG->prefix}survey_analysis sa
+           WHERE s.id = sa.survey
+                 AND sa.id = RECORDID
+          </SQL_DETECT_COURSE>
+        </FIELD>
+      </FIELDS>
+    </TABLE>
+    <TABLE name="survey_answers">
+      <FIELDS>
+        <FIELD name="answerone" method="PLAIN_SQL_UPDATE" type="text" length="0">
+          <SQL_DETECT_USER>
+           SELECT sa.userid
+           FROM {$CFG->prefix}survey_answers sa
+           WHERE sa.id=RECORDID
+          </SQL_DETECT_USER>
+          <SQL_DETECT_COURSE>
+           SELECT s.course
+           FROM {$CFG->prefix}survey s,
+                {$CFG->prefix}survey_answers sa
+           WHERE s.id = sa.survey
+                 AND sa.id = RECORDID
+          </SQL_DETECT_COURSE>
+        </FIELD>
+        <FIELD name="answertwo" method="PLAIN_SQL_UPDATE" type="text" length="0">
+          <SQL_DETECT_USER>
+           SELECT sa.userid
+           FROM {$CFG->prefix}survey_answers sa
+           WHERE sa.id=RECORDID
+          </SQL_DETECT_USER>
+          <SQL_DETECT_COURSE>
+           SELECT s.course
+           FROM {$CFG->prefix}survey s,
+                {$CFG->prefix}survey_answers sa
+           WHERE s.id = sa.survey
+                 AND sa.id = RECORDID
+          </SQL_DETECT_COURSE>
+        </FIELD>
+      </FIELDS>
+    </TABLE>
+    <TABLE name="survey">
+      <FIELDS>
+        <FIELD name="name" method="PHP_FUNCTION" type="varchar" length="255">
+          <PHP_FUNCTION>
+            migrate2utf8_survey_name(RECORDID)
+          </PHP_FUNCTION>
+        </FIELD>
+        <FIELD name="intro" method="PHP_FUNCTION" type="text" length="0">
+          <PHP_FUNCTION>
+            migrate2utf8_survey_intro(RECORDID)
+          </PHP_FUNCTION>
+        </FIELD>
+        <FIELD name="questions" method="NO_CONV" type="varchar" length="255" />
+      </FIELDS>
+    </TABLE>
+  </TABLES>
+</DBMIGRATION>
