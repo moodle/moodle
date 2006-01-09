@@ -16,7 +16,7 @@
 
     require_once('config.php');
 
-    $file   = optional_param('file', '', PARAM_FILE);
+    $file   = optional_param('file', '', PARAM_CLEAN);
     $text   = optional_param('text', 'No text to display', PARAM_CLEAN);
     $module = optional_param('module', 'moodle', PARAM_ALPHAEXT);
 
@@ -120,7 +120,7 @@
     print_simple_box_end();
 
     if (!$helpfound) {
-        $file = clean_text($file);  // Keep it clean!
+        //$file = clean_text($file);  // Keep it clean!
         notify('Help file "'. $file .'" could not be found!');
     }
 
