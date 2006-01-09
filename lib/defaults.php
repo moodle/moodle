@@ -17,7 +17,7 @@
        'auth_pop3mailbox'         => 'INBOX',
        'autologinguests'          =>  0,
        'cachetext'                =>  60,
-       'changepassword'           =>  true,
+       'changepassword'           =>  '',
        'country'                  => '',
        'clamfailureonupload'      => 'donothing',
        'dbsessions'               =>  false,
