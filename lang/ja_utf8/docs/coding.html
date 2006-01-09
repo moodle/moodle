@@ -182,7 +182,7 @@
   <li class="spaced">空でも全ての配列およびオブジェクトを初期化してください。<code>$a = array()</code> または <code>$obj = new stdClass();</code>。</li>
   <li class="spaced"><code>optional_variable()</code> 関数は使用しないでください。代わりに <code>optional_param()</code> 関数を使用してください。あなたが必要なデータタイプのために正しい PARAM_XXXX 値を選択してください。変数の任意の値をチェックおよびセットする場合、<code>set_default()</code> 関数を使用してください。</li>
   <li class="spaced"><code>require_variable()</code> 関数を使用しないでください。代わりに <code>required_param()</code> 関数を使用してください。あなたが必要なデータタイプのために正しい PARAM_XXXX 値を選択してください。</li>
-  <li class="spaced">気をつけて <code>data_submitted()</code> を使用してください。データは使用される前に、更にきれいにする必要があります。</li>
+  <li class="spaced">気をつけて <code>data_submitted()</code> を使用してください。データは使用される前に、さらにきれいにする必要があります。</li>
   <li class="spaced"><code>$_GET</code>、<code>$_POST</code> または <code>$_REQUEST</code> を使用しないでください。必要に応じて、適切な <code>required_param()</code> または <code>optional_param()</code> を使用してください。</li>
   <li class="spaced"><code>if (isset($_GET['something']))</code> のようなものを使用して動作をチェックしないでください。例えば <code>$something = optional_param( 'something',-1,PARAM_INT )</code> を使用して、適切な値の幅に入っているかテストしてください。例 <code>if ($something>=0) {...</code></li>
   <li class="spaced">簡単に探すことができるよう、可能な限り全ての <code>required_param()</code>、<code>optional_param()</code> および他の変数を各ファイルの最初で初期化してください。</li>
