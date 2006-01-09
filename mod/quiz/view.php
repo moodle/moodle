@@ -200,7 +200,7 @@
                 $strconfirmstartattempt = addslashes(get_string("confirmstartattempt","quiz"));
                 $datecompleted  = "\n".'<script language="javascript" type="text/javascript">';
                 $datecompleted .= "\n<!--\n"; // -->
-                if (!empty($CFG->usesid)) {
+                if (!empty($CFG->usesid) && !isset($_COOKIE[session_name()])) {
                     $attempturl=sid_process_url("attempt.php?id=$cm->id");
                 } else {
                     $attempturl="attempt.php?id=$cm->id";

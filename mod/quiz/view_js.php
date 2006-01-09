@@ -5,7 +5,7 @@ $window = (!empty($quiz->popup)) ? 'quizpopup' : '_self';
 $windowoptions = ($window == '_self') ? '' : "left=0, top=0, height='+window.screen.height+', width='+window.screen.width+', channelmode=yes, fullscreen=yes, scrollbars=yes, resizeable=no, directories=no, toolbar=no, titlebar=no, location=no, status=no, menubar=no";
 $buttontext = ($numattempts) ? get_string('reattemptquiz', 'quiz') : get_string('attemptquiznow', 'quiz');
 $buttontext = ($unfinished) ? get_string('continueattemptquiz', 'quiz') : $buttontext;
-if (!empty($CFG->usesid)) {
+if (!empty($CFG->usesid) && !isset($_COOKIE[session_name()])) {
     $attempturl=sid_process_url("attempt.php?id=$cm->id");
 } else {
     $attempturl="attempt.php?id=$cm->id";
