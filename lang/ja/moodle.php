@@ -1036,7 +1036,7 @@ $string['senddetails'] = '登録内容をメールで送信する';
 $string['separateandconnected'] = '分離・関連認識';
 $string['serverlocaltime'] = 'サーバのシステム時間';
 $string['settings'] = '設定';
-$string['shortname'] = '省略名 ( 半角英数字 )';
+$string['shortname'] = '省略名';
 $string['shortnamecollisionwarning'] = '[*] = この省略名は既に他のコースで使用されています。承認されるためには、省略名を変更する必要があります。';
 $string['shortnametaken'] = '省略名は他のコース ( $a ) で使用されています。';
 $string['shortsitename'] = '短いサイト名 ( 例 単語 )';
