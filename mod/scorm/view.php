@@ -8,7 +8,7 @@
 
     $id = optional_param('id', '', PARAM_INT);       // Course Module ID, or
     $a = optional_param('a', '', PARAM_INT);         // scorm ID
-    $organization = optional_param('organization', '', PARAM_INT); // organization ID
+    //$organization = optional_param('organization', '', PARAM_INT); // organization ID
 
     if (!empty($id)) {
         if (! $cm = get_record("course_modules", "id", $id)) {
@@ -79,91 +79,7 @@
         print_heading(format_string($scorm->name));
 
         print_simple_box(format_text($scorm->summary), 'center', '70%', '', 5, 'generalbox', 'intro');
-
-        print_simple_box_start('center');
-?>
-        <div class="structurehead"><?php print_string('coursestruct','scorm') ?></div>
-<?php
-        if (empty($organization)) {
-            $organization = $scorm->launch;
-        }
-        if ($orgs = get_records_select_menu('scorm_scoes',"scorm='$scorm->id' AND organization='' AND launch=''",'id','id,title')) {
-            if (count($orgs) > 1) {       
-?>
-            <div class='center'>
-		        <?php print_string('organizations','scorm') ?>
-                <form name='changeorg' method='post' action='view.php?id=<?php echo $cm->id ?>'>
-                    <?php choose_from_menu($orgs, 'organization', "$organization", '','submit()') ?>
-                    <noscript>
-                        <input type="submit" value="&gt;" />
-                    </noscript>
-                </form>
-            </div>
-<?php
-            }
-        }
-        $orgidentifier = '';
-        if ($org = get_record('scorm_scoes','id',$organization)) {
-            if (($org->organization == '') && ($org->launch == '')) {
-                $orgidentifier = $org->identifier;
-            } else {
-                $orgidentifier = $org->organization;
-            }
-        }
-        $result = scorm_get_toc($USER,$scorm,'structurelist',$orgidentifier);
-        $incomplete = $result->incomplete;
-        echo $result->toc;
-        print_simple_box_end();
- ?>
-    <div class="center">
-        <form name="theform" method="post" action="player.php?id=<?php echo $cm->id ?>">
-<?php
-    if ($scorm->hidebrowse == 0) {
-        print_string("mode","scorm");
-        echo ': <input type="radio" id="b" name="mode" value="browse" /><label for="b">'.get_string('browse','scorm').'</label>'."\n";
-        if ($incomplete === true) {
-            echo '<input type="radio" id="n" name="mode" value="normal" checked="checked" /><label for="n">'.get_string('normal','scorm')."</label>\n";
-        } else {
-            echo '<input type="radio" id="r" name="mode" value="review" checked="checked" /><label for="r">'.get_string('review','scorm')."</label>\n";
-        }
-    } else {
-        if ($incomplete === true) {
-            echo '<input type="hidden" name="mode" value="normal" />'."\n";
-        } else {
-            echo '<input type="hidden" name="mode" value="review" />'."\n";
-        }
-    }
-?>
-            <br />
-            <input type="hidden" name="scoid" />
-            <input type="hidden" name="currentorg" value="<?php echo $orgidentifier ?>" />
-            <input type="submit" value="<?php print_string('entercourse','scorm') ?>" />
-        </form>
-    </div>
-<script language="javascript" type="text/javascript">
-<!--
-    function playSCO(scoid) {
-        document.theform.scoid.value = scoid;
-        document.theform.submit();
-    }
-
-    function expandCollide(which,list) {
-        var nn=document.ids?true:false
-    var w3c=document.getElementById?true:false
-    var beg=nn?"document.ids.":w3c?"document.getElementById(":"document.all.";
-    var mid=w3c?").style":".style";
-
-        if (eval(beg+list+mid+".display") != "none") {
-            which.src = "<?php echo $CFG->wwwroot ?>/mod/scorm/pix/plus.gif";
-            eval(beg+list+mid+".display='none';");
-        } else {
-            which.src = "<?php echo $CFG->wwwroot ?>/mod/scorm/pix/minus.gif";
-            eval(beg+list+mid+".display='block';");
-        }
-    }
--->
-</script>
-<?php
+        scorm_view_display($USER, $scorm, 'view.php?id='.$cm->id, $cm);
         print_footer($course);
     }
 ?>

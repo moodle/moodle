@@ -24,6 +24,9 @@
     if (empty($form->maxgrade)) {
         $form->maxgrade = '';
     }
+    if (empty($form->maxattempt)) {
+        $form->maxattempt = '1';
+    }
     if (empty($form->grademethod)) {
         $form->grademethod = '0';
     }
@@ -229,6 +232,18 @@
             ?>
             </td>
         </tr>
+        <tr valign="top">
+            <td align="right"><b><?php print_string('maximumattempts','scorm') ?>:</b></td>
+            <td>
+            <?php
+                for ($i=100; $i>=1; $i--) {
+                    $attempts[$i] = $i;
+                }
+                choose_from_menu($attempts, 'maxattempt', $form->maxattempt, '','','0',false);
+                helpbutton('maxattempt', get_string('maximumattempts'), 'scorm');
+            ?>
+            </td>
+        </tr>
         <tr><td colspan="2"><hr /></td></tr>
 
         <tr>
@@ -273,8 +288,9 @@
                             <td>
                             <?php
                                 $options = array();
-                                $options[0]=get_string('no');
-                                $options[1]=get_string('yes');
+                                $options[1]=get_string('hidden','scorm');
+                                $options[0]=get_string('sided','scorm');
+                                $options[2]=get_string('popupmenu','scorm');
                                 choose_from_menu ($options, 'hidetoc', $form->hidetoc, '');
                             ?>
                             </td>

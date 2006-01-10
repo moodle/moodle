@@ -24,18 +24,8 @@
         if (isset($SESSION->scorm_status)) {
             $status = $SESSION->scorm_status;
         }
-        if (isset($SESSION->newattempt)) {
-            $newattempt = $SESSION->newattempt;
-            $SESSION->newattempt = '';
-        } else {
-            $newattempt = '';
-        }
-        if ($lastattempt = get_record('scorm_scoes_track', 'userid', $USER->id, 'scorm', $scorm->id, 'scoid', $scoid,'max(attempt) as a')) {
-            if ($newattempt == 'new') {
-                $attempt = $lastattempt->a + 1;
-            } else {
-                $attempt = $lastattempt->a;
-            }
+        if (isset($SESSION->attempt)) {
+            $attempt = $SESSION->attempt;
         } else {
             $attempt = 1;
         }
@@ -58,7 +48,7 @@
                     if ($status != 'Running') {
                         echo "error = 101\nerror_text = Terminated\n";
                     } else {
-                        if ($usertrack=scorm_get_tracks($scoid,$USER->id)) {
+                        if ($usertrack=scorm_get_tracks($scoid,$USER->id,$attempt)) {
                             $userdata = $usertrack;
                         } else {
                             $userdata->status = '';

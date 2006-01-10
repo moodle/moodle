@@ -7,7 +7,7 @@
     $a = optional_param('a', '', PARAM_INT);         // scorm ID
     $scoid = required_param('scoid', '', PARAM_INT);  // sco ID
     $mode = optional_param('mode', '', PARAM_ALPHA); // navigation mode
-    $attempt = optional_param('attempt', '', PARAM_ALPHA); // new attempt
+    $attempt = required_param('attempt', '', PARAM_INT); // new attempt
 
     if (!empty($id)) {
         if (! $cm = get_record("course_modules", "id", $id)) {
@@ -35,7 +35,7 @@
 
     require_login($course->id, false, $cm);
     
-    if ($usertrack=scorm_get_tracks($scoid,$USER->id)) {
+    if ($usertrack=scorm_get_tracks($scoid,$USER->id,$attempt)) {
         $userdata = $usertrack;
     } else {
         $userdata->status = '';
@@ -78,7 +78,6 @@
 ?>
 
 var errorCode = "0";
-
 function underscore(str) {
     return str.replace(/\./g,"__");
 }

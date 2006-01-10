@@ -13,19 +13,7 @@
     $scoid = required_param('scoid', '', PARAM_INT);  // sco ID
     $mode = optional_param('mode', '', PARAM_ALPHA); // navigation mode
     $currentorg = optional_param('currentorg', '', PARAM_RAW); // selected organization
-    
-    $modestring = '';
-    $scoidstring = '';
-    $currentorgstring = '';
-    if (!empty($mode)) {
-        $modestring = '&mode='.$mode;
-    }
-    if (!empty($scoid)) {
-        $scoidstring = '&scoid='.$scoid;
-    }
-    if (!empty($currentorg)) {
-        $currentorgstring = '&currentorg='.$currentorg;
-    }
+    $newattempt = optional_param('newattempt', 'off', PARAM_ALPHA); // the user request to start a new attempt
 
     if (!empty($id)) {
         if (! $cm = get_record("course_modules", "id", $id)) {
@@ -77,16 +65,27 @@
     //
     // TOC processing
     //
-    $result = scorm_get_toc($USER,$scorm,'structurelist',$currentorg,$scoid,$mode,true);
+    $attempt = scorm_get_last_attempt($scorm->id, $USER->id);
+    if (($newattempt=='on') && ($attempt < $scorm->maxattempt)) {
+        $attempt++;
+        if ($mode == 'review') {
+            $mode = 'normal';
+        }
+    }
+    $attemptstr = '&amp;attempt=' . $attempt;
+
+    $result = scorm_get_toc($USER,$scorm,'structurelist',$currentorg,$scoid,$mode,$attempt,true);
     $sco = $result->sco;
 
     if (($mode == 'browse') && ($scorm->hidebrowse == 1)) {
        $mode = 'normal';
     }
-    if ($mode == 'normal') {
-        if ($trackdata = scorm_get_tracks($USER->id,$sco->id)) {
+    if (($mode == 'normal') || ($mode == 'review')) {
+        if ($trackdata = scorm_get_tracks($sco->id,$USER->id,$attempt)) {
             if (($trackdata->status == 'completed') || ($trackdata->status == 'passed') || ($trackdata->status == 'failed')) {
                 $mode = 'review';
+            } else {
+                $mode = 'normal';
             }
         }
     }
@@ -97,14 +96,11 @@
     $scoidpop = '&scoid='.$sco->id;
     $modestr = '&amp;mode='.$mode;
     $modepop = '&mode='.$mode;
-    $attemptstr = '';
-    if ((!$result->incomplete) && ($result->attemptleft > 0)) {
-        $attemptstr = '&amp;attempt=new';
-    }
 
     $SESSION->scorm_scoid = $sco->id;
     $SESSION->scorm_status = 'Not Initialized';
     $SESSION->scorm_mode = $mode;
+    $SESSION->attempt = $attempt;
 
     //
     // Print the page header
@@ -149,6 +145,15 @@
 ?>
         <div id="scormbox"<?php echo $class ?>>
 <?php
+    $orgstr = '&currentorg='.$currentorg;
+    if (($sco->previd != 0) && ($sco->previous == 0)) {
+        $scostr = '&scoid='.$sco->previd;
+        echo '<script language="javascript">var prev="'.$CFG->wwwroot.'/mod/scorm/player.php?id='.$cm->id.$orgstr.$modepop.$scostr.'";</script>';
+    }
+    if (($sco->nextid != 0) && ($sco->next == 0)) {
+        $scostr = '&scoid='.$sco->nextid;
+        echo '<script language="javascript">var next="'.$CFG->wwwroot.'/mod/scorm/player.php?id='.$cm->id.$orgstr.$modepop.$scostr.'";</script>';
+    }
     // This very big test check if is necessary the "scormtop" div
     if (
            ($mode != 'normal') ||  // We are not in normal mode so review or browse text will displayed
@@ -162,7 +167,8 @@
                    (
                        ($sco->nextid != 0) &&  // This is not the last learning object of the package
                        ($sco->next == 0)       // Moodle must manage the next link
-                   )
+                   ) ||
+                   ($scorm->hidetoc == 2)      // Teacher want to display toc in a small popup menu 
                )
             )
         ) {
@@ -179,14 +185,17 @@
             if (($sco->previd != 0) && ($sco->previous == 0)) {
                 /// Print the prev LO link
                 $scostr = '&amp;scoid='.$sco->previd;
-                $prevlink = $CFG->wwwroot.'/mod/scorm/player.php?id='.$cm->id.$orgstr.$modestr.$scostr;
-                echo '<a href="'.$prevlink.'">&lt; '.get_string('prev','scorm').'</a>';
+                $url = $CFG->wwwroot.'/mod/scorm/player.php?id='.$cm->id.$orgstr.$modestr.$scostr;
+                echo '<a href="'.$url.'">&lt; '.get_string('prev','scorm').'</a>';
+            }
+            if ($scorm->hidetoc == 2) {
+ 	        echo $result->tocmenu;
             }
             if (($sco->nextid != 0) && ($sco->next == 0)) {
                 /// Print the next LO link
                 $scostr = '&amp;scoid='.$sco->nextid;
-                $nextlink = $CFG->wwwroot.'/mod/scorm/player.php?id='.$cm->id.$orgstr.$modestr.$scostr;
-                echo '&nbsp;<a href="'.$nextlink.'">'.get_string('next','scorm').' &gt;</a>';
+                $url = $CFG->wwwroot.'/mod/scorm/player.php?id='.$cm->id.$orgstr.$modestr.$scostr;
+                echo '&nbsp;<a href="'.$url.'">'.get_string('next','scorm').' &gt;</a>';
             }
 ?>
                 </div>

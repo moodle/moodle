@@ -196,13 +196,13 @@ function SCORMapi1_2() {
                 result = StoreData(cmi,true);
                 if (nav.event != '') {
                     if (nav.event == 'continue') {
-                        setTimeout('top.nextSCO();',500);
+                        setTimeout('top.document.location=top.next;',500);
                     } else {
-                        setTimeout('top.prevSCO();',500);
+                        setTimeout('top.document.location=top.prev;',500);
                     }
                 } else {
                     if (<?php echo $scorm->auto ?> == 1) {
-                        setTimeout('top.nextSCO();',500);
+                        setTimeout('top.document.location=top.next;',500);
                     }
                 }    
                 return "true";
@@ -528,13 +528,9 @@ function SCORMapi1_2() {
         } else {
             datastring = CollectData(data,'cmi');
         }
+        datastring += '&attempt=<?php echo $attempt ?>';
         datastring += '&scoid=<?php echo $sco->id ?>';
-        <?php
-            if (!empty($attempt)) {
-                echo "datastring += '&attempt=$attempt';";
-            }
-        ?>
-        //popupwin(datastring);
+        
         var myRequest = NewHttpReq();
         result = DoRequest(myRequest,"<?php p($CFG->wwwroot) ?>/mod/scorm/datamodel.php","id=<?php p($id) ?>&sesskey=<?php p($USER->sesskey) ?>"+datastring);
         results = result.split('\n');
