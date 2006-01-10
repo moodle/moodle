@@ -96,11 +96,6 @@
                     print_heading(get_string('messagedselectedusers'));
                     unset($SESSION->emailto[$id]);
                     unset($SESSION->emailselect[$id]);
-                    if (count($teachers)) {
-                        foreach ($teachers as $teacher) {
-                            forum_subscribe($teacher, $forum->id);
-                        }
-                    }
                 } else {
                     print_heading(get_string('messagedselectedusersfailed'));
                 }
