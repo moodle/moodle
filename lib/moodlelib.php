@@ -2823,6 +2823,7 @@ function enrol_student($userid, $courseid, $timestart=0, $timeend=0, $enrol='man
  * @return bool
  */
 function unenrol_student($userid, $courseid=0) {
+    global $CFG;
 
     if ($courseid) {
         /// First delete any crucial stuff that might still send mail
@@ -2836,10 +2837,14 @@ function unenrol_student($userid, $courseid=0) {
                 delete_records('groups_members', 'groupid', $group->id, 'userid', $userid);
             }
         }
-        // enrol the student in any parent meta courses...
+        // unenrol the student from any parent meta courses...
         if ($parents = get_records('course_meta','child_course',$courseid)) {
             foreach ($parents as $parent) {
-                unenrol_student($userid, $parent->parent_course);
+                if (!record_exists_sql('SELECT us.id FROM '.$CFG->prefix.'user_students us, '
+                                       .$CFG->prefix.'course_meta cm WHERE cm.child_course = us.course
+                                        AND us.userid = '.$userid .' AND us.course != '.$courseid)) {
+                    unenrol_student($userid, $parent->parent_course);
+                }
             }
         }
         return delete_records('user_students', 'userid', $userid, 'course', $courseid);
