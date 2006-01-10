@@ -94,6 +94,7 @@
             $installedfilters[ $key ] = $installedfilter;
         }
     }
+    $installedfilters = array_unique($installedfilters);
     set_config( 'textfilters', implode( ',', $installedfilters ) );
 
     //======================
@@ -121,6 +122,7 @@
         } 
         // add it to installed filters
         $installedfilters[] = $params->filterpath;
+        $installedfilters = array_unique($installedfilters);
         set_config( 'textfilters', implode( ',', $installedfilters ) );
     }
 
