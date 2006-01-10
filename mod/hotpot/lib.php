@@ -1461,13 +1461,18 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 				$this->filetype = 'html';
 				$this->html = &$this->source;
 
+				// relative URLs in stylesheets
+				$search = '|'.'(<style[^>]*>)'.'(.*?)'.'(</style>)'.'|ise';
+				$replace = "stripslashes('\\1').hotpot_convert_stylesheets_urls('".$this->get_baseurl()."','".$this->reference."','\\2'.'\\3')";
+				$this->source = preg_replace($search, $replace, $this->source);
+
 				// relative URLs in "PreloadImages(...);"
-				$search = '%'.'(?<='.'PreloadImages'.'\('.')'."([^)]+?)".'(?='.'\);'.')'.'%se';
+				$search = '|'.'(?<='.'PreloadImages'.'\('.')'."([^)]+?)".'(?='.'\);'.')'.'|se';
 				$replace = "hotpot_convert_preloadimages_urls('".$this->get_baseurl()."','".$this->reference."','\\1')";
 				$this->source = preg_replace($search, $replace, $this->source);
 
 				// relative URLs in <button class="NavButton" ... onclick="location='...'">
-				$search = '%'.'(?<='.'onclick="'."location='".')'."([^']*)".'(?='."'; return false;".'")'.'%ise';
+				$search = '|'.'(?<='.'onclick="'."location='".')'."([^']*)".'(?='."'; return false;".'")'.'|ise';
 				$replace = "hotpot_convert_navbutton_url('".$this->get_baseurl()."','".$this->reference."','\\1','".$this->course."')";
 				$this->source = preg_replace($search, $replace, $this->source);
 
@@ -1698,18 +1703,29 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 
 } // end class
 
-function hotpot_convert_preloadimages_urls($baseurl, $reference, $urls) {
-	$urls = explode(',', $urls);
-	foreach ($urls as $i=>$url) {
-		$url = substr($url, 1, strlen($url)-2); // strip quotes
-		$urls[$i] = "'".hotpot_convert_url($baseurl, $reference, $url)."'";
+function hotpot_convert_stylesheets_urls($baseurl, $reference, $css, $stripslashes=true) {
+	if ($stripslashes) {
+		$css = stripslashes($css);
 	}
-	return implode(',',$urls);
+	$search = '|'.'(?<='.'url'.'\('.')'."(.*?)".'(?='.'\)'.')'.'|ise';
+	$replace = "hotpot_convert_url('".$baseurl."','".$reference."','\\1')";
+	return preg_replace($search, $replace, $css);
 }
-function hotpot_convert_navbutton_url($baseurl, $reference, $url, $course) {
+function hotpot_convert_preloadimages_urls($baseurl, $reference, $urls, $stripslashes=true) {
+	if ($stripslashes) {
+		$urls = stripslashes($urls);
+	}
+	$search = '|(?<=["'."'])([^,'".'"]*?)(?=["'."'])|ise";
+	$replace = "hotpot_convert_url('".$baseurl."','".$reference."','\\1')";
+	return preg_replace($search, $replace, $urls);
+}
+function hotpot_convert_navbutton_url($baseurl, $reference, $url, $course, $stripslashes=true) {
 	global $CFG;
 
-	$url = hotpot_convert_url($baseurl, $reference, $url);
+	if ($stripslashes) {
+		$url = stripslashes($url);
+	}
+	$url = hotpot_convert_url($baseurl, $reference, $url, false);
 
 	// is this a $url for another hotpot in this course ?
 	if (preg_match("|^$baseurl(.*)$|", $url, $matches)) {
@@ -1722,7 +1738,12 @@ function hotpot_convert_navbutton_url($baseurl, $reference, $url, $course) {
 	return $url;
 }
 
-function hotpot_convert_relative_url($baseurl, $reference, $opentag, $url, $closetag) {
+function hotpot_convert_relative_url($baseurl, $reference, $opentag, $url, $closetag, $stripslashes=true) {
+	if ($stripslashes) {
+		$opentag = stripslashes($opentag);
+		$url = stripslashes($url);
+		$closetag = stripslashes($closetag);
+	}
 
 	// catch <PARAM name="FlashVars" value="TheSound=soundfile.mp3">
 	if (preg_match('|^'.'\w+=[^&]+'.'([&]\w+=[^&]+)*'.'$|', $url)) {
@@ -1746,7 +1767,7 @@ function hotpot_convert_relative_url($baseurl, $reference, $opentag, $url, $clos
 	}
 
 	if ($url) {
-		$url = hotpot_convert_url($baseurl, $reference, $url);
+		$url = hotpot_convert_url($baseurl, $reference, $url, false);
 	}
 
 	// try and parse the query string arguments into $matches
@@ -1767,8 +1788,7 @@ function hotpot_convert_relative_url($baseurl, $reference, $opentag, $url, $clos
 			$value = $matches[2][$i];
 			// convert $value if it is a URL
 			if (in_array(strtolower($name), $url_names)) {
-				$value = hotpot_convert_url($baseurl, $reference, $value);
-			} else {
+				$value = hotpot_convert_url($baseurl, $reference, $value, false);
 			}
 
 			$query[] = "$name=$value";
@@ -1776,18 +1796,18 @@ function hotpot_convert_relative_url($baseurl, $reference, $opentag, $url, $clos
 		$query = (empty($url) ? '' : '?').implode('&', $query);
 	}
 
-	// remove the slashes that were added by the "e" modifier of preg_replace
-	$url = stripslashes($opentag.$url.$query.$fragment.$closetag);
-	// N.B. 'e' does not appear to add slashes to single quotes, 
-	// so javascript backslashes may get messed up at this point
+	$url = $opentag.$url.$query.$fragment.$closetag;
 
 	return $url;
 }
 
-function hotpot_convert_url($baseurl, $reference, $url) {
-
+function hotpot_convert_url($baseurl, $reference, $url, $stripslashes=true) {
 	// maintain a cache of converted urls
 	static $HOTPOT_RELATIVE_URLS = array();
+
+	if ($stripslashes) {
+		$url = stripslashes($url);
+	}
 
 	// is this an absolute url? (or javascript pseudo url)
 	if (preg_match('%^(http://|/|javascript:)%i', $url)) {

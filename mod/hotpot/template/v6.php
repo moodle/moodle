@@ -11,15 +11,15 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
 		$get_css = optional_param('css', false);
 
 		if (!empty($get_css)) {
-			$this->css = '';
-			$this->read_template('hp6.cs_', 'css');
+			// set $this->css
+			$this->v6_expand_StyleSheet(); 
 
 		} else if (!empty($get_js)) {
-			$this->js = '';
+			// set $this->js
 			$this->read_template($this->parent->draganddrop.$this->parent->quiztype.'6.js_', 'js');
 
 		} else {
-			$this->html = '';
+			// set $this->html
 			$this->read_template($this->parent->draganddrop.$this->parent->quiztype.'6.ht_', 'html');
 		}
 
@@ -253,6 +253,7 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
 	}
 	function v6_expand_StyleSheet() {
 		$this->read_template('hp6.cs_', 'css');
+		$this->css = hotpot_convert_stylesheets_urls($this->parent->get_baseurl(), $this->parent->reference, $this->css);
 		return $this->css;
 	}
 
