@@ -35,7 +35,7 @@
                         /// Avoid empty or unlinkable activity names
                         if (!empty($title)) {
                             $title = str_replace('"', "'", $title);
-                            $href_tag_begin = "<a class=\"autolink\" title=\"$title\" href=\"$CFG->wwwroot/mod/$activity->mod/view.php?id=$activity->cm\">";
+                            $href_tag_begin = "<a class=\"autolink\" title=\"$title\" href=\"$CFG->wwwroot/mod/$activity->mod/view.php?id=$activity->cm\" target=\"$CFG->framename\">";
                             $currentname = urldecode($activity->name);
                             if ($currentname = trim($currentname)) {
                                 $activitylist[] = new filterobject($currentname, $href_tag_begin, '</a>', false, true);
