@@ -39,7 +39,7 @@
                 if (!empty($strippedname)) {
                     $resourcelist[] = new filterobject($currentname,
                             '<a class="resource autolink" title="'.$strippedname.'" href="'.
-                             $CFG->wwwroot.'/mod/resource/view.php?r='.$resource->id.'">', 
+                             $CFG->wwwroot.'/mod/resource/view.php?r='.$resource->id.'" target="'.$CFG->framename.'">', 
                              '</a>', false, true);
                 }
             }
