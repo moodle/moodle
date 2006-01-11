@@ -6689,6 +6689,14 @@ function bounded_number($min, $value, $max) {
     return $value;
 }
 
+function array_is_nested($array) {
+    foreach ($array as $value) {
+        if (is_array($value)) {
+            return true;
+        }
+    }
+    return false;
+}
 
 /**
  *** get_performance_info() pairs up with init_performance_info()

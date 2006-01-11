@@ -707,6 +707,61 @@ function choose_from_menu ($options, $name, $selected='', $nothing='choose', $sc
 }
 
 /**
+ * Just like choose_from_menu, but takes a nested array (2 levels) and makes a dropdown menu
+ * including option headings with the first level.
+ */
+function choose_from_menu_nested($options,$name,$selected='',$nothing='choose',$script = '',
+                                 $nothingvalue=0,$return=false,$disabled=false,$tabindex=0) {
+
+   if ($nothing == 'choose') {
+        $nothing = get_string('choose') .'...';
+    }
+
+    $attributes = ($script) ? 'onchange="'. $script .'"' : '';
+    if ($disabled) {
+        $attributes .= ' disabled="disabled"';
+    }
+
+    if ($tabindex) {
+        $attributes .= ' tabindex="'.$tabindex.'"';
+    }
+
+    $output = '<select id="menu'.$name.'" name="'. $name .'" '. $attributes .'>' . "\n";
+    if ($nothing) {
+        $output .= '   <option value="'. $nothingvalue .'"'. "\n";
+        if ($nothingvalue === $selected) {
+            $output .= ' selected="selected"';
+        }
+        $output .= '>'. $nothing .'</option>' . "\n";
+    }
+    if (!empty($options)) {
+        foreach ($options as $section => $values) {
+            $output .= '   <optgroup label="'.$section.'">'."\n";
+            foreach ($values as $value => $label) {
+                $output .= '   <option value="'. $value .'"';
+                if ($value === $selected) {
+                    $output .= ' selected="selected"';
+                }
+                if ($label === '') {
+                    $output .= '>'. $value .'</option>' . "\n";
+                } else {
+                    $output .= '>'. $label .'</option>' . "\n";
+                }
+            }
+            $output .= '   </optgroup>'."\n";
+        }
+    }
+    $output .= '</select>' . "\n";
+
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
+}
+
+
+/**
  * Given an array of values, creates a group of radio buttons to be part of a form
  * 
  * @param array  $options  An array of value-label pairs for the radio group (values as keys)
