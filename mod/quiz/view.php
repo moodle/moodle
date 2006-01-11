@@ -211,8 +211,15 @@
                      'resizeable=no, directories=no, toolbar=no, titlebar=no, location=no, status=no, '+
                      'menubar=no';\n";
                     $jslink  = 'javascript:';
-                    if ($quiz->timelimit) {
-                        $jslink .=  "if (confirm('$strconfirmstartattempt')) ";
+                    if ($quiz->timelimit && !$quiz->attempts) {
+                        $strconfirmstartattempt = addslashes(get_string("confirmstartattempt","quiz"));
+                        $jslink .=  "if (confirm(\'$strconfirmstartattempt\')) ";
+                    } else if ($quiz->timelimit && $quiz->attempts) {
+                        $strconfirmstartattempt = addslashes(get_string("confirmstartattempttimelimit","quiz",$quiz->attempts));
+                        $jslink .=  "if (confirm(\'$strconfirmstartattempt\')) ";
+                    } else if ($quiz->attempts && !$quiz->timelimit) {
+                        $strconfirmstartattempt = addslashes(get_string("confirmstartattemptnotimelimit","quiz",$quiz->attempts));
+                        $jslink .=  "if (confirm(\'$strconfirmstartattempt\')) ";
                     }
                     $jslink .= "var popup = window.open(\\'$attempturl\\', \\'quizpopup\\', windowoptions);";
                 } else {
@@ -292,7 +299,14 @@
                 if ($numattempts and $quiz->grade) {
                     print_heading("$strbestgrade: $mygrade / $quiz->grade.");
                 }
-                $strconfirmstartattempt = addslashes(get_string("confirmstartattempt","quiz"));
+                if ($quiz->timelimit && !$quiz->attempts) {
+                    $strconfirmstartattempt = addslashes(get_string("confirmstartattempt","quiz"));
+                } else if ($quiz->timelimit && $quiz->attempts) {
+                    $strconfirmstartattempt = addslashes(get_string("confirmstartattempttimelimit","quiz",$quiz->attempts));
+                } else if ($quiz->attempts && !$quiz->timelimit) {
+                    $strconfirmstartattempt = addslashes(get_string("confirmstartattemptnotimelimit","quiz",$quiz->attempts));
+                }
+
                 echo "<br />";
                 echo "</p>";
                 echo "<div align=\"center\">";

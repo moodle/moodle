@@ -15,7 +15,7 @@ if (!empty($CFG->usesid) && !isset($_COOKIE[session_name()])) {
 <script language="javascript" type="text/javascript">
 <!--
 document.write('<input type="button" value="<?php echo $buttontext ?>" '+
-               'onclick="javascript: <?php if ($quiz->timelimit and !$unfinished) echo "if (confirm(\\'$strconfirmstartattempt\\'))"; ?> '+
+               'onclick="javascript: <?php if ($quiz->timelimit || $quiz->attempts) echo "if (confirm(\\'$strconfirmstartattempt\\'))"; ?> '+
                'window.open(\'<?php echo $attempturl ?>\', \'<?php echo $window ?>\', \'<?php echo $windowoptions ?>\'); " />');
 // -->
 </script>
