@@ -647,6 +647,8 @@ function displaydir ($wdir) {
     $straction = get_string("action");
     $strmakeafolder = get_string("makeafolder");
     $struploadafile = get_string("uploadafile");
+    $strselectall = get_string("selectall");
+    $strselectnone = get_string("deselectall");
     $strwithchosenfiles = get_string("withchosenfiles");
     $strmovetoanotherfolder = get_string("movetoanotherfolder");
     $strmovefilestohere = get_string("movefilestohere");
@@ -818,6 +820,10 @@ function displaydir ($wdir) {
         echo " <input type=\"hidden\" name=\"action\" value=\"makedir\" />";
         echo " <input type=\"submit\" value=\"$strmakeafolder\" />";
         echo "</form>";
+    echo "</td>";
+    echo "<td align=\"right\">";
+        echo " <input type=\"button\" value=\"$strselectall\" onClick=\"checkall();\" />";
+        echo " <input type=\"button\" value=\"$strselectnone\" onClick=\"uncheckall();\" />";
     echo "</td>";
     echo "<td align=\"right\">";
         echo "<form action=\"index.php\" method=\"get\">";

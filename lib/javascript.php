@@ -40,6 +40,13 @@ function uncheckall() {
     void(el[i].checked=0)
 }
 
+function checkall() {
+  void(d=document);
+  void(el=d.getElementsByTagName('INPUT'));
+  for(i=0;i<el.length;i++)
+    void(el[i].checked=1)
+}
+
 function inserttext(text) {
 <?php
     if (!empty($SESSION->inserttextform)) {
