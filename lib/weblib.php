@@ -687,7 +687,7 @@ function choose_from_menu ($options, $name, $selected='', $nothing='choose', $sc
     if (!empty($options)) {
         foreach ($options as $value => $label) {
             $output .= '   <option value="'. $value .'"';
-            if ($value == $selected) {
+            if ($value === $selected) {
                 $output .= ' selected="selected"';
             }
             if ($label === '') {
@@ -754,7 +754,7 @@ function choose_from_radio ($options, $name, $checked='') {
  * @param string  $label   The label to be showed near the checkbox
  * @param string  $alt     The info to be inserted in the alt tag
  */
-function print_checkbox ($name, $value, $checked = true, $label = '', $alt = '') {
+function print_checkbox ($name, $value, $checked = true, $label = '', $alt = '', $script='',$return=false) {
 
     static $idcounter = 0;
 
@@ -772,15 +772,57 @@ function print_checkbox ($name, $value, $checked = true, $label = '', $alt = '')
 
     $htmlid = 'auto-cb'.sprintf('%04d', ++$idcounter);
     $output  = '<span class="checkbox '.$name."\">";
-    $output .= '<input name="'.$name.'" id="'.$htmlid.'" type="checkbox" value="'.$value.'" alt="'.$alt.'"'.$strchecked.' />';
+    $output .= '<input name="'.$name.'" id="'.$htmlid.'" type="checkbox" value="'.$value.'" alt="'.$alt.'"'.$strchecked.' '.((!empty($script)) ? ' onClick="'.$script.'" ' : '').' />';
     if(!empty($label)) {
         $output .= ' <label for="'.$htmlid.'">'.$label.'</label>';
     }
     $output .= '</span>'."\n";
 
-    echo $output;
+    if (empty($return)) {
+        echo $output;
+    } else {
+        return $output;
+    }
 
 }
+
+/** Display an standard html text field with an optional label
+ *
+ * @param string  $name    The name of the text field
+ * @param string  $value   The value of the text field
+ * @param string  $label   The label to be showed near the text field
+ * @param string  $alt     The info to be inserted in the alt tag
+ */
+function print_textfield ($name, $value, $alt = '',$size=50,$maxlength= 0,$return=false) {
+
+    static $idcounter = 0;
+
+    if (empty($name)) {
+        $name = 'unnamed';
+    }
+
+    if (empty($alt)) {
+        $alt = 'textfield';
+    }
+
+    if (!empty($maxlength)) {
+        $maxlength = ' maxlength="'.$maxlength.'" ';
+    }
+
+    $htmlid = 'auto-cb'.sprintf('%04d', ++$idcounter);
+    $output  = '<span class="textfield '.$name."\">";
+    $output .= '<input name="'.$name.'" id="'.$htmlid.'" type="text" value="'.$value.'" size="'.$size.'" '.$maxlength.' alt="'.$alt.'" />';
+ 
+    $output .= '</span>'."\n";
+
+    if (empty($return)) {
+        echo $output;
+    } else {
+        return $output;
+    }
+
+}
+
 
 /**
  * Implements a complete little popup form
