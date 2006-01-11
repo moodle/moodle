@@ -21,7 +21,7 @@ function migrate2utf8_chat_name($recordid){
 /// We are going to use textlib facilities
     $textlib = textlib_get_instance();
 /// Convert the text
-    $result = $textlib->convert($assignment->name, $fromenc);
+    $result = $textlib->convert($chat->name, $fromenc);
 
     $newchat = new object;
     $newchat->id = $recordid;
@@ -53,7 +53,7 @@ function migrate2utf8_chat_intro($recordid){
 /// We are going to use textlib facilities
     $textlib = textlib_get_instance();
 /// Convert the text
-    $result = $textlib->convert($assignment->intro, $fromenc);
+    $result = $textlib->convert($chat->intro, $fromenc);
 
     $newchat = new object;
     $newchat->id = $recordid;

@@ -26,7 +26,7 @@
     </TABLE>
     <TABLE name="survey_answers">
       <FIELDS>
-        <FIELD name="answerone" method="PLAIN_SQL_UPDATE" type="text" length="0">
+        <FIELD name="answer1" method="PLAIN_SQL_UPDATE" type="text" length="0">
           <SQL_DETECT_USER>
            SELECT sa.userid
            FROM {$CFG->prefix}survey_answers sa
@@ -40,7 +40,7 @@
                  AND sa.id = RECORDID
           </SQL_DETECT_COURSE>
         </FIELD>
-        <FIELD name="answertwo" method="PLAIN_SQL_UPDATE" type="text" length="0">
+        <FIELD name="answer2" method="PLAIN_SQL_UPDATE" type="text" length="0">
           <SQL_DETECT_USER>
            SELECT sa.userid
            FROM {$CFG->prefix}survey_answers sa

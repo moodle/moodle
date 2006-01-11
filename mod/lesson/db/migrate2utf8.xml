@@ -1,17 +1,17 @@
 <DBMIGRATION type="mod/lesson" VERSION="2005120100">
   <TABLES>
-    <TABLE name="lesson_attempt">
+    <TABLE name="lesson_attempts">
       <FIELDS>
         <FIELD name="useranswer" method="PLAIN_SQL_UPDATE" type="text" length="0">
           <SQL_DETECT_USER>
            SELECT la.userid
-           FROM {$CFG->prefix}lesson_attempt la
+           FROM {$CFG->prefix}lesson_attempts la
            WHERE la.id=RECORDID
           </SQL_DETECT_USER>
           <SQL_DETECT_COURSE>
            SELECT l.course
            FROM {$CFG->prefix}lesson l,
-                {$CFG->prefix}lesson_attempt la
+                {$CFG->prefix}lesson_attempts la
            WHERE l.id = la.lessonid
                  AND la.id = RECORDID
           </SQL_DETECT_COURSE>

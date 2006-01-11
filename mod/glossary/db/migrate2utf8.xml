@@ -2,7 +2,7 @@
   <TABLES>
     <TABLE name="glossary_entries">
       <FIELDS>
-        <FIELD name="concept" method="PLAIN_SQL_UPDATE" type="varchar" length="255">
+        <FIELD name="concept" method="PLAIN_SQL_UPDATE" type="varchar" length="255" dropindex="concept" addindex="concept (concept(255))">
           <SQL_DETECT_USER>
            SELECT ge.userid
            FROM {$CFG->prefix}glossary_entries ge

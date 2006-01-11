@@ -46,7 +46,7 @@
                  AND fp.id = RECORDID
           </SQL_DETECT_COURSE>
         </FIELD>
-        <FIELD name="attachment" method="NO_CONV" type="varchar" length="0" />
+        <FIELD name="attachment" method="NO_CONV" type="varchar" length="100" />
       </FIELDS>
     </TABLE>
     <TABLE name="forum">

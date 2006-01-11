@@ -24,7 +24,7 @@
     </TABLE>
     <TABLE name="hotpot_questions">
       <FIELDS>
-        <FIELD name="name" method="PHP_FUNCTION" type="varchar" length="255">
+        <FIELD name="name" method="PHP_FUNCTION" type="varchar" length="255" dropindex="hotpot_questions_name_idx" addindex=" hotpot_questions_name_idx (name(20))">
           <PHP_FUNCTION>
             migrate2utf8_hotpot_questions_name(RECORDID)
           </PHP_FUNCTION>

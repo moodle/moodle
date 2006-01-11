@@ -226,7 +226,7 @@ function migrate2utf8_quiz_match_sub_answertext($recordid){
     return $result;
 }
 
-function migrate2utf8_quiz_answer_answer($recordid){
+function migrate2utf8_quiz_answers_answer($recordid){
     global $CFG;
 
 /// Some trivial checks
@@ -271,6 +271,56 @@ function migrate2utf8_quiz_answer_answer($recordid){
 /// And finally, just return the converted field
     return $result;
 }
+
+function migrate2utf8_quiz_answers_feedback($recordid){
+    global $CFG;
+
+/// Some trivial checks
+    if (empty($recordid)) {
+        log_the_problem_somewhere();
+        return false;
+    }
+
+    $SQL = "SELECT qc.course
+           FROM {$CFG->prefix}quiz_categories qc,
+                {$CFG->prefix}quiz_questions qq,
+                {$CFG->prefix}quiz_answer qa
+           WHERE qc.id = qq.category
+                 AND qq.id = qa.question
+                 AND qa.id = $recordid";
+
+    if (!$quiz = get_record_sql($SQL)) {
+        log_the_problem_somewhere();
+        return false;
+    }
+
+    if (!$quizanswer= get_record('quiz_answer','id',$recordid)) {
+        log_the_problem_somewhere();
+        return false;
+    }
+
+    $sitelang   = $CFG->lang;
+    $courselang = get_course_lang($quiz->course);  //Non existing!
+    $userlang   = get_main_teacher_lang($quiz->course); //N.E.!!
+
+    $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+
+/// We are going to use textlib facilities
+    $textlib = textlib_get_instance();
+/// Convert the text
+    $result = $textlib->convert($quizanswer->feedback, $fromenc);
+
+    $newquizanswer = new object;
+    $newquizanswer->id = $recordid;
+    $newquizanswer->feedback = $result;
+    update_record('quiz_answer',$newquizanswer);
+/// And finally, just return the converted field
+    return $result;
+}
+
+
+
+
 
 function migrate2utf8_quiz_dataset_definitions_name($recordid){
     global $CFG;
