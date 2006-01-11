@@ -799,3 +799,6 @@ body#mod-quiz-report table#attempts .r1 {
   background-color:#DDDDDD;
 }
 
+.error {
+  color:#ff0000;
+}
