@@ -57,7 +57,7 @@ $string['auth_ldap_bind_dn'] = 'ユーザ検索にbindユーザを利用した�
 $string['auth_ldap_bind_pw'] = 'bindユーザ用のパスワード';
 $string['auth_ldap_bind_settings'] = 'Bind設定';
 $string['auth_ldap_contexts'] = 'ユーザが配置されているコンテキスト一覧です。異なるコンテキストは「;」で分けてください。例 \'ou=users,o=org; ou=others,o=org\'';
-$string['auth_ldap_create_context'] = 'ユーザ作成をメールによる認証で行う場合、ユーザが作成されるコンテキストを特定してください。セキュリティの観点から、このコンテキストは各ユーザ毎に異なるものでなければなりません。Moodleが自動的にコンテキストからユーザを探しますので、ldap_context-vaiableをこのコンテキストに追加する必要はありません。<br /><b>注意!</b> ユーザ作成を動作させるために、auth/ldap/lib.phpファイルのauth_user_create() 関数を修正してください。';
+$string['auth_ldap_create_context'] = 'ユーザ作成をメールによる認証で行う場合、ユーザが作成されるコンテキストを特定してください。セキュリティの観点から、このコンテキストは各ユーザごとに異なるものでなければなりません。Moodleが自動的にコンテキストからユーザを探しますので、ldap_context-vaiableをこのコンテキストに追加する必要はありません。<br /><b>注意!</b> ユーザ作成を動作させるために、auth/ldap/lib.phpファイルのauth_user_create() 関数を修正してください。';
 $string['auth_ldap_creators'] = 'メンバーが新しいコースの作成を許されているグループのリストです。複数のグループは「;」で分けられています。通常は\'cn=teachers,ou=staff,o=myorg\'のようになります。';
 $string['auth_ldap_expiration_desc'] = 'パスワードチェックの有効期限を無効にする場合、またはLDAPがLDAPサーバから直接passwordexpirationを参照する場合は、「No」を選択してください。';
 $string['auth_ldap_expiration_warning_desc'] = 'パスワードの有効期限切れを警告するまでの日数を入力してください。';
