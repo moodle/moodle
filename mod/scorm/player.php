@@ -43,7 +43,6 @@
 
     $strscorms = get_string('modulenameplural', 'scorm');
     $strscorm  = get_string('modulename', 'scorm');
-    $strexpand = get_string('expcoll','scorm');
     $strpopup = get_string('popup','scorm');
 
     if ($course->category) {
@@ -291,30 +290,6 @@
             </div> <!-- SCORM object -->
         </div> <!-- SCORM box  -->
     </div> <!-- SCORM content -->
-<?php
-    if ($scorm->hidetoc == 0) {
-?>
-    <script language="javascript" type="text/javascript">
-    <!--
-        function expandCollide(which,list) {
-            var nn=document.ids?true:false
-            var w3c=document.getElementById?true:false
-            var beg=nn?"document.ids.":w3c?"document.getElementById(":"document.all.";
-            var mid=w3c?").style":".style";
-
-            if (eval(beg+list+mid+".display") != "none") {
-                which.src = "pix/plus.gif";
-                eval(beg+list+mid+".display='none';");
-            } else {
-                which.src = "pix/minus.gif";
-                eval(beg+list+mid+".display='block';");
-            }
-        }
-    -->
-    </script>
-<?php
-    }
-?>
     </div> <!-- Content -->
     </div> <!-- Page -->
 </body>

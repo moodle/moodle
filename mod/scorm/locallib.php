@@ -390,6 +390,7 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
     global $CFG;
 
     $strexpand = get_string('expcoll','scorm');
+    $scormpixdir = $CFG->modpixpath.'/scorm/pix';
     
     $result = new stdClass();
     $result->toc = "<ul id='0' class='$liststyle'>\n";
@@ -457,9 +458,9 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
             $nextsco = next($scoes);
             if (($nextsco !== false) && ($sco->parent != $nextsco->parent) && (($level==0) || (($level>0) && ($nextsco->parent == $sco->identifier)))) {
                 $sublist++;
-                $result->toc .= '<a href="javascript:expandCollide(img'.$sublist.','.$sublist.');"><img id="img'.$sublist.'" src="'.$CFG->wwwroot.'/mod/scorm/pix/minus.gif" alt="'.$strexpand.'" title="'.$strexpand.'"/></a>';
+                $result->toc .= '<a href="javascript:expandCollide(img'.$sublist.','.$sublist.');"><img id="img'.$sublist.'" src="'.$scormpixdir.'/minus.gif" alt="'.$strexpand.'" title="'.$strexpand.'"/></a>';
             } else {
-                $result->toc .= '<img src="'.$CFG->wwwroot.'/mod/scorm/pix/spacer.gif" />';
+                $result->toc .= '<img src="'.$scormpixdir.'/spacer.gif" />';
             }
             if (empty($sco->title)) {
                 $sco->title = $sco->identifier;
@@ -474,7 +475,7 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
                 if (isset($usertracks[$sco->identifier])) {
                     $usertrack = $usertracks[$sco->identifier];
                     $strstatus = get_string($usertrack->status,'scorm');
-                    $result->toc .= "<img src='".$CFG->wwwroot."/mod/scorm/pix/".$usertrack->status.".gif' alt='$strstatus' title='$strstatus' />";
+                    $result->toc .= '<img src="'.$scormpixdir.'/'.$usertrack->status.'.gif" alt="'.$strstatus.'" title="'.$strstatus.'" />';
                     if (($usertrack->status == 'notattempted') || ($usertrack->status == 'incomplete') || ($usertrack->status == 'browsed')) {
                         $incomplete = true;
                         if ($play && empty($scoid)) {
@@ -489,10 +490,10 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
                         $scoid = $sco->id;
                     }
                     if ($sco->scormtype == 'sco') {
-                        $result->toc .= '<img src="'.$CFG->wwwroot.'/mod/scorm/pix/notattempted.gif" alt="'.get_string('notattempted','scorm').'" title="'.get_string('notattempted','scorm').'" />';
+                        $result->toc .= '<img src="'.$scormpixdir.'/notattempted.gif" alt="'.get_string('notattempted','scorm').'" title="'.get_string('notattempted','scorm').'" />';
                         $incomplete = true;
                     } else {
-                        $result->toc .= '<img src="'.$CFG->wwwroot.'/mod/scorm/pix/asset.gif" alt="'.get_string('asset','scorm').'" title="'.get_string('asset','scorm').'" />';
+                        $result->toc .= '<img src="'.$scormpixdir.'/asset.gif" alt="'.get_string('asset','scorm').'" title="'.get_string('asset','scorm').'" />';
                     }
                 }
                 if ($sco->id == $scoid) {
@@ -545,6 +546,27 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
         }
     }
     $result->toc .= "\t</ul>\n";
+    if ($scorm->hidetoc == 0) {
+        $result->toc .= '
+          <script language="javascript" type="text/javascript">
+          <!--
+              function expandCollide(which,list) {
+                  var nn=document.ids?true:false
+                  var w3c=document.getElementById?true:false
+                  var beg=nn?"document.ids.":w3c?"document.getElementById(":"document.all.";
+                  var mid=w3c?").style":".style";
+
+                  if (eval(beg+list+mid+".display") != "none") {
+                      which.src = "'.$scormpixdir.'/plus.gif";
+                      eval(beg+list+mid+".display=\'none\';");
+                  } else {
+                      which.src = "'.$scormpixdir.'/minus.gif";
+                      eval(beg+list+mid+".display=\'block\';");
+                  }
+              }
+          -->
+          </script>'."\n";
+    }
     
     $url = $CFG->wwwroot.'/mod/scorm/player.php?a='.$scorm->id.'&amp;currentorg='.$currentorg.'&amp;mode='.$mode.'&amp;scoid=';
     $result->tocmenu = popup_form($url,$tocmenus, "tocmenu", $sco->id, '', '', '', true);
@@ -1155,24 +1177,6 @@ function scorm_view_display ($user, $scorm, $action, $cm) {
               <input type="submit" value="<? print_string('entercourse','scorm') ?>" />
               </form>
           </div>
-          <script language="javascript" type="text/javascript">
-          <!--
-              function expandCollide(which,list) {
-                  var nn=document.ids?true:false
-                  var w3c=document.getElementById?true:false
-                  var beg=nn?"document.ids.":w3c?"document.getElementById(":"document.all.";
-                  var mid=w3c?").style":".style";
-
-                  if (eval(beg+list+mid+".display") != "none") {
-                      which.src = "<?php echo $CFG->wwwroot ?>/mod/scorm/pix/plus.gif";
-                      eval(beg+list+mid+".display='none';");
-                  } else {
-                      which.src = "<?php echo $CFG->wwwroot ?>/mod/scorm/pix/minus.gif";
-                      eval(beg+list+mid+".display='block';");
-                  }
-              }
-          -->
-          </script>
 <?php
 }
 
