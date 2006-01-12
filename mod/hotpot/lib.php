@@ -686,10 +686,10 @@ function hotpot_get_all_instances_in_course($modulename, $course) {
 			cm.course AS course,
 			cm.module AS module,
 			cm.instance AS instance,
-			## cm.section AS section,
+			-- cm.section AS section,
 			cm.visible AS visible,
 			$groupmode
-			## cs.section AS sectionnumber,
+			-- cs.section AS sectionnumber,
 			cs.section AS section,
 			cs.sequence AS sequence,
 			cs.visible AS sectionvisible,
