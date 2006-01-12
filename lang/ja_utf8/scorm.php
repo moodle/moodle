@@ -2,7 +2,7 @@
       // scorm.php - created with Moodle 1.6 development (2005101200)
 
 
-$string['advanced'] = 'アドバンスト';
+$string['advanced'] = '詳細設定';
 $string['asset'] = 'アセット';
 $string['attr_error'] = 'タグ $a->tag のアトリビュート ($a->attr) に不適切な値が設定されています。';
 $string['autocontinue'] = '自動継続';
@@ -40,7 +40,7 @@ $string['height'] = '高さ';
 $string['hidden'] = '隠す';
 $string['hidebrowse'] = 'プレビューモードを無効にする';
 $string['hidenav'] = 'ナビゲーションボタンを隠す';
-$string['hidetoc'] = 'コース構造を隠す ( TOC )';
+$string['hidetoc'] = 'コース構造表示 ( TOC )';
 $string['identifier'] = '問題識別子';
 $string['iframe'] = '現在のウィンドウ';
 $string['iframedisplay'] = 'パッケージを現在のウィンドウで開く';
@@ -94,7 +94,7 @@ $string['score'] = 'スコア';
 $string['scormcourse'] = '学習コース';
 $string['scrollbars'] = 'ウィンドウのスクロールを許可';
 $string['sided'] = '左側';
-$string['stagesize'] = 'ステージサイズ';
+$string['stagesize'] = 'ウィンドウサイズ';
 $string['status'] = 'ステータス';
 $string['statusbar'] = 'ステータスバーを表示';
 $string['student_response'] = 'レスポンス';
@@ -107,13 +107,13 @@ $string['toolbar'] = 'ツールバーの表示';
 $string['totaltime'] = '時間';
 $string['trackingloose'] = '警告: SCORMデータのトラッキングデータは消滅します!';
 $string['type'] = 'タイプ';
-$string['validateascorm'] = 'SCORMパッケージの確認';
+$string['validateascorm'] = 'パッケージの確認';
 $string['validation'] = '確認結果';
 $string['validationtype'] = 'ここではSCORMマニフェストファイルを確認するDOMXMLライブラリを設定します。分からない場合は、このままにしてください。';
 $string['value'] = '値';
 $string['versionwarning'] = 'マニフェストファイルのバージョンが1.3より古いため、$a->tag タグに警告があります。';
 $string['viewallreports'] = '$a 回分のレポートを表示';
 $string['width'] = '幅';
-$string['window'] = 'ウィンドウ';
+$string['window'] = 'ウィンドウ設定';
 
 ?>
