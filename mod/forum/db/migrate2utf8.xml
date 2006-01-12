@@ -1,5 +1,10 @@
 <DBMIGRATION type="mod/forum" VERSION="2005120100">
   <TABLES>
+    <TABLE name="forum_queue" />
+    <TABLE name="forum_ratings" />
+    <TABLE name="forum_read" />
+    <TABLE name="forum_subscriptions" />
+    <TABLE name="forum_track_prefs" />
     <TABLE name="forum_discussions">
       <FIELDS>
         <FIELD name="name" method="PLAIN_SQL_UPDATE" type="varchar" length="255">

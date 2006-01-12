@@ -1,5 +1,5 @@
 <?
-function migrate2utf_workshop_stockcomments_comments($recordid){
+function migrate2utf8_workshop_stockcomments_comments($recordid){
     global $CFG;
 
 /// Some trivial checks
@@ -14,12 +14,12 @@ function migrate2utf_workshop_stockcomments_comments($recordid){
            WHERE w.id = ws.workshopid
                  AND ws.id = $recordid";
                  
-    if (!$workshop = get_record_sql($SQL) {
+    if (!$workshop = get_record_sql($SQL)) {
         log_the_problem_somewhere();
         return false;
     }
 
-    if (!$workshopstockcomments = get_record('workshop_stockcomments','id',$recordid) {
+    if (!$workshopstockcomments = get_record('workshop_stockcomments','id',$recordid)) {
         log_the_problem_somewhere();
         return false;
     }
@@ -43,7 +43,7 @@ function migrate2utf_workshop_stockcomments_comments($recordid){
     return $result;
 }
 
-function migrate2utf_workshop_rubrics_description($recordid){
+function migrate2utf8_workshop_rubrics_description($recordid){
     global $CFG;
 
 /// Some trivial checks
@@ -58,12 +58,12 @@ function migrate2utf_workshop_rubrics_description($recordid){
            WHERE w.id = ws.workshopid
                  AND ws.id = $recordid";
 
-    if (!$workshop = get_record_sql($SQL) {
+    if (!$workshop = get_record_sql($SQL)) {
         log_the_problem_somewhere();
         return false;
     }
 
-    if (!$workshoprubrics = get_record('workshop_stockcomments','id',$recordid) {
+    if (!$workshoprubrics = get_record('workshop_stockcomments','id',$recordid)) {
         log_the_problem_somewhere();
         return false;
     }
@@ -87,7 +87,7 @@ function migrate2utf_workshop_rubrics_description($recordid){
     return $result;
 }
 
-function migrate2utf_workshop_grades_feedback($recordid){
+function migrate2utf8_workshop_grades_feedback($recordid){
     global $CFG;
 
 /// Some trivial checks
@@ -102,12 +102,12 @@ function migrate2utf_workshop_grades_feedback($recordid){
            WHERE w.id = wg.workshopid
                  AND wg.id = $recordid";
 
-    if (!$workshop = get_record_sql($SQL) {
+    if (!$workshop = get_record_sql($SQL)) {
         log_the_problem_somewhere();
         return false;
     }
 
-    if (!$workshopgrades = get_record('workshop_grades','id',$recordid) {
+    if (!$workshopgrades = get_record('workshop_grades','id',$recordid)) {
         log_the_problem_somewhere();
         return false;
     }
@@ -131,7 +131,7 @@ function migrate2utf_workshop_grades_feedback($recordid){
     return $result;
 }
 
-function migrate2utf_workshop_elements_description($recordid){
+function migrate2utf8_workshop_elements_description($recordid){
     global $CFG;
 
 /// Some trivial checks
@@ -146,12 +146,12 @@ function migrate2utf_workshop_elements_description($recordid){
            WHERE w.id = we.workshopid
                  AND we.id = $recordid";
 
-    if (!$workshop = get_record_sql($SQL) {
+    if (!$workshop = get_record_sql($SQL)) {
         log_the_problem_somewhere();
         return false;
     }
 
-    if (!$workshopelements = get_record('workshop_elements','id',$recordid) {
+    if (!$workshopelements = get_record('workshop_elements','id',$recordid)) {
         log_the_problem_somewhere();
         return false;
     }
@@ -175,7 +175,7 @@ function migrate2utf_workshop_elements_description($recordid){
     return $result;
 }
 
-function migrate2utf_workshop_name($recordid){
+function migrate2utf8_workshop_name($recordid){
     global $CFG;
 
 /// Some trivial checks
@@ -184,7 +184,7 @@ function migrate2utf_workshop_name($recordid){
         return false;
     }
 
-    if (!$workshop = get_record('workshop','id',$recordid) {
+    if (!$workshop = get_record('workshop','id',$recordid)) {
         log_the_problem_somewhere();
         return false;
     }
@@ -208,7 +208,7 @@ function migrate2utf_workshop_name($recordid){
     return $result;
 }
 
-function migrate2utf_workshop_description($recordid){
+function migrate2utf8_workshop_description($recordid){
     global $CFG;
 
 /// Some trivial checks
@@ -217,7 +217,7 @@ function migrate2utf_workshop_description($recordid){
         return false;
     }
 
-    if (!$workshop = get_record('workshop','id',$recordid) {
+    if (!$workshop = get_record('workshop','id',$recordid)) {
         log_the_problem_somewhere();
         return false;
     }
@@ -241,7 +241,7 @@ function migrate2utf_workshop_description($recordid){
     return $result;
 }
 
-function migrate2utf_workshop_password($recordid){
+function migrate2utf8_workshop_password($recordid){
     global $CFG;
 }
 ?>

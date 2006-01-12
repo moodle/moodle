@@ -1,5 +1,8 @@
 <DBMIGRATION type="mod/lesson" VERSION="2005120100">
   <TABLES>
+    <TABLE name="lesson_branch" />
+    <TABLE name="lesson_grades" />
+    <TABLE name="lesson_timer" />
     <TABLE name="lesson_attempts">
       <FIELDS>
         <FIELD name="useranswer" method="PLAIN_SQL_UPDATE" type="text" length="0">
@@ -63,7 +66,7 @@
     </TABLE>
     <TABLE name="lesson">
       <FIELDS>
-        <FIELD name="name" method="PLAIN_SQL_UPDATE" type="varchar" length="255">
+        <FIELD name="name" method="PHP_FUNCTION" type="varchar" length="255">
           <PHP_FUNCTION>
            migrate2utf8_lesson_name(RECORDID)
           </PHP_FUNCTION>

@@ -147,8 +147,8 @@ function migrate2utf8_course_sections_summary($recordid){
     }
 
     $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($coursesection->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($coursesection->course); //N.E.!!
+    $courselang = get_course_lang($coursesections->course);  //Non existing!
+    $userlang   = get_main_teacher_lang($coursesections->course); //N.E.!!
 
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
@@ -932,8 +932,8 @@ function migrate2utf8_course_password($recordid){
     }
 
     $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($course->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($course->course); //N.E.!!
+    $courselang = get_course_lang($course->id);  //Non existing!
+    $userlang   = get_main_teacher_lang($course->id); //N.E.!!
 
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
@@ -965,8 +965,8 @@ function migrate2utf8_course_fullname($recordid){
     }
 
     $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($course->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($course->course); //N.E.!!
+    $courselang = get_course_lang($course->id);  //Non existing!
+    $userlang   = get_main_teacher_lang($course->id); //N.E.!!
 
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
@@ -998,8 +998,8 @@ function migrate2utf8_course_shortname($recordid){
     }
 
     $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($course->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($course->course); //N.E.!!
+    $courselang = get_course_lang($course->id);  //Non existing!
+    $userlang   = get_main_teacher_lang($course->id); //N.E.!!
 
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
@@ -1031,8 +1031,8 @@ function migrate2utf8_course_idnumber($recordid){
     }
 
     $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($course->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($course->course); //N.E.!!
+    $courselang = get_course_lang($course->id);  //Non existing!
+    $userlang   = get_main_teacher_lang($course->id); //N.E.!!
 
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
@@ -1064,8 +1064,8 @@ function migrate2utf8_course_summary($recordid){
     }
 
     $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($course->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($course->course); //N.E.!!
+    $courselang = get_course_lang($course->id);  //Non existing!
+    $userlang   = get_main_teacher_lang($course->id); //N.E.!!
 
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
@@ -1102,8 +1102,8 @@ function migrate2utf8_course_teacher($recordid){
     }
 
     $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($course->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($course->course); //N.E.!!
+    $courselang = get_course_lang($course->id);  //Non existing!
+    $userlang   = get_main_teacher_lang($course->id); //N.E.!!
 
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
@@ -1135,8 +1135,8 @@ function migrate2utf8_course_teachers($recordid){
     }
 
     $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($course->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($course->course); //N.E.!!
+    $courselang = get_course_lang($course->id);  //Non existing!
+    $userlang   = get_main_teacher_lang($course->id); //N.E.!!
 
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
@@ -1168,8 +1168,8 @@ function migrate2utf8_course_student($recordid){
     }
 
     $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($course->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($course->course); //N.E.!!
+    $courselang = get_course_lang($course->id);  //Non existing!
+    $userlang   = get_main_teacher_lang($course->id); //N.E.!!
 
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
@@ -1201,8 +1201,8 @@ function migrate2utf8_course_students($recordid){
     }
 
     $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($course->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($course->course); //N.E.!!
+    $courselang = get_course_lang($course->id);  //Non existing!
+    $userlang   = get_main_teacher_lang($course->id); //N.E.!!
 
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
@@ -1234,8 +1234,8 @@ function migrate2utf8_course_cost($recordid){
     }
 
     $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($course->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($course->course); //N.E.!!
+    $courselang = get_course_lang($course->id);  //Non existing!
+    $userlang   = get_main_teacher_lang($course->id); //N.E.!!
 
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 

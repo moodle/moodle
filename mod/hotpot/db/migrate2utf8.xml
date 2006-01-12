@@ -1,5 +1,18 @@
 <DBMIGRATION type="mod/hotpot" VERSION="2005120100">
   <TABLES>
+    <TABLE name="hotpot_attempts" />
+    <TABLE name="hotpot_strings">
+      <FIELDS>
+        <FIELD name="string" method="NO_CONV" type="TEXT" length="0">
+      </FIELDS>
+    </TABLE>
+    <TABLE name="hotpot_responses">
+      <FIELDS>
+        <FIELD name="correct" method="NO_CONV" type="varchar" length="255">
+        <FIELD name="wrong" method="NO_CONV" type="varchar" length="255">
+        <FIELD name="ignored" method="NO_CONV" type="varchar" length="255">
+      </FIELDS>
+    </TABLE>
     <TABLE name="hotpot_details">
       <FIELDS>
         <FIELD name="details" method="PLAIN_SQL_UPDATE" type="text" length="0">

@@ -1,5 +1,7 @@
 <DBMIGRATION type="mod/glossary" VERSION="2005120100">
   <TABLES>
+    <TABLE name="glossary_entries_categories" />
+    <TABLE name="glossary_ratings" />
     <TABLE name="glossary_entries">
       <FIELDS>
         <FIELD name="concept" method="PLAIN_SQL_UPDATE" type="varchar" length="255" dropindex="concept" addindex="concept (concept(255))">

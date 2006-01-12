@@ -1,5 +1,34 @@
 <DBMIGRATION type="mod/quiz" VERSION="2005120100">
   <TABLES>
+    <TABLE name="quiz_attemptonlast_datasets" />
+    <TABLE name="quiz_grades" />
+    <TABLE name="quiz_question_datasets" />
+    <TABLE name="quiz_question_instances" />
+    <TABLE name="quiz_question_versions" />
+    <TABLE name="quiz_randomsamatch" />
+    <TABLE name="quiz_truefalse" />
+    <TABLE name="quiz_rqp">
+      <FIELDS>
+        <FIELD name="format" method="NO_CONV" type="varchar" length="255" />
+      </FIELDS>
+    </TABLE>
+    <TABLE name="quiz_rqp_servers">
+      <FIELDS>
+        <FIELD name="url" method="NO_CONV" type="varchar" length="255" />
+      </FIELDS>
+    </TABLE>
+    <TABLE name="quiz_rqp_states">
+      <FIELDS>
+        <FIELD name="responses" method="NO_CONV" type="text" length="0" />
+        <FIELD name="persistent_data" method="NO_CONV" type="text" length="0" />
+        <FIELD name="template_vars" method="NO_CONV" type="text" length="0" />
+      </FIELDS>
+    </TABLE>
+    <TABLE name="quiz_rqp_types">
+      <FIELDS>
+        <FIELD name="name" method="NO_CONV" type="varchar" length="255" dropindex="name" adduniqueindex="name (name(255))"/>
+      </FIELDS>
+    </TABLE>
     <TABLE name="quiz_shortanswer">
       <FIELDS>
         <FIELD name="answers" method="NO_CONV" type="text" length="0" />

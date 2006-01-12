@@ -376,7 +376,7 @@ function migrate2utf8_quiz_categories_name($recordid){
     }
 
     $SQL = "SELECT qc.course
-           FROM {$CFG->prefix}quiz_categories qc,
+           FROM {$CFG->prefix}quiz_categories qc
            WHERE qc.id = $recordid";
 
     if (!$quiz = get_record_sql($SQL)) {
@@ -418,7 +418,7 @@ function migrate2utf8_quiz_categories_info($recordid){
     }
 
     $SQL = "SELECT qc.course
-           FROM {$CFG->prefix}quiz_categories qc,
+           FROM {$CFG->prefix}quiz_categories qc
            WHERE qc.id = $recordid";
 
     if (!$quiz = get_record_sql($SQL)) {

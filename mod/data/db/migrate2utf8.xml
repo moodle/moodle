@@ -1,5 +1,7 @@
 <DBMIGRATION type="mod/data" VERSION="2005120100">
   <TABLES>
+    <TABLE name="data_ratings" />
+    <TABLE name="data_records" />
     <TABLE name="data_comments">
       <FIELDS>
         <FIELD name="content" method="NO_CONV" type="text" length="0" />

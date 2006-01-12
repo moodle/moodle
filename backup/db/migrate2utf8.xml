@@ -2,7 +2,7 @@
   <TABLES>
     <TABLE name="backup_config">
       <FIELDS>
-        <FIELD name="name" method="NO_CONV" type="varchar" length="255" />
+        <FIELD name="name" method="NO_CONV" type="varchar" length="255" dropindex="name" adduniqueindex="name (name(255))"/>
         <FIELD name="value" method="NO_CONV" type="varchar" length="255" />
       </FIELDS>
     </TABLE>
@@ -13,13 +13,13 @@
     </TABLE>
     <TABLE name="backup_files">
       <FIELDS>
-        <FIELD name="file_type" method="NO_CONV" type="varchar" length="10" />
-        <FIELD name="path" method="NO_CONV" type="varchar" length="255" />
+        <FIELD name="file_type" method="NO_CONV" type="varchar" length="10" dropprimary="true" />
+        <FIELD name="path" method="NO_CONV" type="varchar" length="255" addprimary="(backup_code, file_type(10), path(255))"/>
       </FIELDS>
     </TABLE>
     <TABLE name="backup_ids">
       <FIELDS>
-        <FIELD name="table_name" method="NO_CONV" type="varchar" length="30" />
+        <FIELD name="table_name" method="NO_CONV" type="varchar" length="30" dropprimary="true" addprimary="(backup_code, table_name(30), old_id)"/>
         <FIELD name="info" method="PHP_FUNCTION" type="varchar" length="255">
           <PHP_FUNCTION>
             migrate2utf8_bckup_ids_info(RECORDID)

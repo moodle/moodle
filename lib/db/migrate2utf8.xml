@@ -1,5 +1,13 @@
 <DBMIGRATION type="lib" VERSION="2005120100">
   <TABLES>
+    <TABLE name="adodb_logsql">
+      <FIELDS>
+        <FIELD name="sql0" method="NO_CONV" type="varchar" length="250" />
+        <FIELD name="sql1" method="NO_CONV" type="text" length="0" />
+        <FIELD name="params" method="NO_CONV" type="text" length="0" />
+        <FIELD name="tracer" method="NO_CONV" type="text" length="0" />
+      </FIELDS>
+    </TABLE>
     <TABLE name="config">
       <FIELDS>
         <FIELD name="name" method="NO_CONV" type="varchar" length="255" dropindex="name" adduniqueindex="name (name(255))"/>
@@ -21,6 +29,10 @@
         </FIELD>
       </FIELDS>
     </TABLE>
+    <TABLE name="course_allowed_modules" />
+    <TABLE name="course_display" />
+    <TABLE name="course_meta" />
+    <TABLE name="course_modules" />
     <TABLE name="course_categories">
       <FIELDS>
         <FIELD name="name" method="PHP_FUNCTION" type="varchar" length="255">
@@ -33,6 +45,7 @@
             migrate2utf8_course_categories_description(RECORDID)
           </PHP_FUNCTION>
         </FIELD>
+        <FIELD name="path" method="NO_CONV" type="varchar" length="255" />
       </FIELDS>
     </TABLE>
     <TABLE name="course_sections">
@@ -102,6 +115,7 @@
         </FIELD>
           <FIELD name="modulename" method="NO_CONV" type="varchar" length="20" />
           <FIELD name="eventtype" method="NO_CONV" type="varchar" length="20" />
+          <FIELD name="uuid" method="NO_CONV" type="varchar" length="36" />
       </FIELDS>
     </TABLE>
     <TABLE name="cache_filters">
@@ -125,6 +139,10 @@
         </FIELD>
       </FIELDS>
     </TABLE>
+    <TABLE name="grade_item" />
+    <TABLE name="grade_preferences" />
+    <TABLE name="grade_category" />
+    <TABLE name="grade_exceptions" />
     <TABLE name="grade_letter">
       <FIELDS>
         <FIELD name="letter" method="PHP_FUNCTION" type="varchar" length="8">
@@ -134,6 +152,7 @@
         </FIELD>
       </FIELDS>
     </TABLE>
+    <TABLE name="groups_members" />
     <TABLE name="groups">
       <FIELDS>
         <FIELD name="name" method="PHP_FUNCTION" type="varchar" length="254">
@@ -186,6 +205,7 @@
         <FIELD name="field" method="NO_CONV" type="varchar" length="40" />
       </FIELDS>
     </TABLE>
+    <TABLE name="message_contacts" />
     <TABLE name="message">
       <FIELDS>
         <FIELD name="message" method="PHP_FUNCTION" type="text" length="0">
@@ -251,6 +271,13 @@
         </FIELD>
       </FIELDS>
     </TABLE>
+    <TABLE name="sessions">
+      <FIELDS>
+        <FIELD name="sesskey" method="NO_CONV" type="varchar" length="32" dropprimary="true" addprimary="(sesskey(32))"/>
+        <FIELD name="expireref " method="NO_CONV" type="varchar" length="64" />
+        <FIELD name="data" method="NO_CONV" type="text" length="0" />
+      </FIELDS>
+    </TABLE>
     <TABLE name="timezone">
       <FIELDS>
         <FIELD name="name" method="NO_CONV" type="varchar" length="100" />
@@ -281,6 +308,9 @@
         <FIELD name="enrol" method="NO_CONV" type="varchar" length="20" dropindex="enrol" addindex="enrol(enrol(20))"/>
       </FIELDS>
     </TABLE>
+    <TABLE name="stats_daily" />
+    <TABLE name="stats_weekly" />
+    <TABLE name="stats_monthly" />
     <TABLE name="stats_user_daily">
       <FIELDS>
         <FIELD name="stattype" method="NO_CONV" type="varchar" length="30" />
@@ -302,6 +332,8 @@
         <FIELD name="value" method="NO_CONV" type="varchar" length="255" />
       </FIELDS>
     </TABLE>
+    <TABLE name="user_admins" />
+    <TABLE name="user_coursecreators" />
     <TABLE name="user">
       <FIELDS>
         <FIELD name="auth" method="NO_CONV" type="varchar" length="20"/>

@@ -23,5 +23,6 @@
         </FIELD>
       </FIELDS>
     </TABLE>
+    <TABLE name="choice_answers" />
   </TABLES>
 </DBMIGRATION>

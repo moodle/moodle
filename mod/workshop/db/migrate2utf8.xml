@@ -44,7 +44,6 @@
     <TABLE name="workshop_rubrics">
       <FIELDS>
         <FIELD name="description" method="PHP_FUNCTION" type="text" length="0">
-          <SQL_DETECT_COURSE>
           <PHP_FUNCTION>
             migrate2utf8_workshop_rubrics_description(RECORDID)
           </PHP_FUNCTION>
