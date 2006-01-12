@@ -349,7 +349,8 @@ function scorm_grade_user($scoes, $userid, $grademethod=VALUESCOES) {
         return '';
     }
 
-    $attempt = scorm_get_last_attempt(current($scoes)->scorm, $userid);
+    $current = current($scoes);
+    $attempt = scorm_get_last_attempt($current->scorm, $userid);
     foreach ($scoes as $sco) { 
         if ($userdata=scorm_get_tracks($sco->id, $userid,$attempt)) {
             if (($userdata->status == 'completed') || ($userdata->status == 'passed')) {
