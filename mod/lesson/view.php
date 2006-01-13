@@ -90,6 +90,7 @@
                    '<form target="'. $CFG->framename .'" method="get" action="'. $CFG->wwwroot .'/mod/lesson/lesson.php">'.
                    '<input type="hidden" name="id" value="'. $cm->id .'" />'.
                    '<input type="hidden" name="action" value="editpage" />'.
+                   '<input type="hidden" name="redirect" value="navigation" />'.
                    '<input type="hidden" name="pageid" value="'. $currentpageid .'" />'.
                    '<input type="submit" value="'. get_string('editpagecontent', 'lesson') .'" /></form>';
         }
@@ -879,7 +880,7 @@
                         $fullbuttonhtml .= "</div>\n";
                     
                         if ($lesson->slideshow) {
-                            echo '<div class="branchslidetop">' . $fullbuttonhtml . '</div>';
+                            //echo '<div class="branchslidetop">' . $fullbuttonhtml . '</div>';
                             $options = new stdClass;
                             $options->noclean = true;
                             echo '<div class="contents">'.format_text($page->contents, FORMAT_MOODLE, $options).'</div>';;
