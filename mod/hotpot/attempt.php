@@ -35,11 +35,16 @@
 	$attempt->starttime = optional_param('starttime', NULL, PARAM_ALPHA);
 	$attempt->timefinish = $time;
 
-	if ($attempt->endtime) {
-		 $attempt->endtime = strtotime($attempt->endtime);
-	}
-	if ($attempt->starttime) {
+	// convert times, if necessary
+	if (empty($attempt->starttime)) {
+		$attempt->starttime = 0;
+	} else {
 		 $attempt->starttime = strtotime($attempt->starttime);
+	}
+	if (empty($attempt->endtime)) {
+		$attempt->endtime = 0;
+	} else {
+		 $attempt->endtime = strtotime($attempt->endtime);
 	}
 
 	// set clickreportid, (for click reporting)
