@@ -147,7 +147,6 @@ global $HTTPSPAGEREQUIRED;
     if ($dbconnected && $CFG->unicodedb) {
         if ($db->databaseType == 'mysql') {
             $db->Execute("SET NAMES 'utf8'");
-            $db->Execute("SET CHARSET 'utf8'");  /// This could be not necessary if DB is set to Unicode, but...
         } else if ($db->databaseType == 'postgres7') {
             $db->Execute("SET NAMES 'utf8'");
         }
