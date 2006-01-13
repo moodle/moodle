@@ -4886,7 +4886,8 @@ function get_list_of_languages() {
                     $languages[$lang] = $string['thislanguage'] .' ('. $lang .')';
                 }
                 unset($string);
-            } else if (file_exists($CFG->dirroot .'/lang/'. $lang .'/'. $filetocheck)) {
+            }
+            if (file_exists($CFG->dirroot .'/lang/'. $lang .'/'. $filetocheck)) {
                 include($CFG->dirroot .'/lang/'. $lang .'/'. $filetocheck);
                 if (!empty($string['thislanguage'])) {
                     $languages[$lang] = $string['thislanguage'] .' ('. $lang .')';
