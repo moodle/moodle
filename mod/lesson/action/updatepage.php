@@ -8,11 +8,24 @@
 
     confirm_sesskey();
 
+    $redirect = optional_param('redirect', '', PARAM_ALPHA);
+    
     $timenow = time();
     $form = data_submitted();
 
     $page = new stdClass;
     $page->id = clean_param($form->pageid, PARAM_INT);
+    
+    // check to see if the cancel button was pushed
+    if (optional_param('cancel', '', PARAM_ALPHA)) {
+        if ($redirect == 'navigation') {
+            // redirect to viewing the page
+            redirect("view.php?id=$cm->id&amp;action=navigation&amp;pageid=$page->id");
+        } else {
+            redirect("view.php?id=$cm->id");
+        }
+    }
+    
     $page->timemodified = $timenow;
     $page->qtype = clean_param($form->qtype, PARAM_INT);
     if (isset($form->qoption)) {
@@ -150,7 +163,10 @@
     }
 
     if ($form->redisplay) {
-        redirect("lesson.php?id=$cm->id&amp;action=editpage&amp;pageid=$page->id");
+        redirect("lesson.php?id=$cm->id&amp;action=editpage&amp;pageid=$page->id&amp;redirect=$redirect");
+    } else if ($redirect == 'navigation') {
+        // takes us back to viewing the page
+        redirect("view.php?id=$cm->id&amp;action=navigation&amp;pageid=$page->id", get_string('updatedpage', 'lesson'));
     } else {
         redirect("view.php?id=$cm->id", get_string('updatedpage', 'lesson'));
     }

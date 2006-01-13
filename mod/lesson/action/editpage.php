@@ -8,6 +8,8 @@
 
     // get the page
     $pageid = required_param('pageid', PARAM_INT);
+    $redirect = optional_param('redirect', '', PARAM_ALPHA);
+        
     if (!$page = get_record("lesson_pages", "id", $pageid)) {
         error("Edit page: page record not found");
     }
@@ -55,11 +57,12 @@
     // give teacher a proforma
     ?>
     <form name="editpage" method="post" action="lesson.php">
-    <input type="hidden" name="id" value="<?PHP echo $cm->id ?>">
+    <input type="hidden" name="id" value="<?php echo $cm->id ?>" />
     <input type="hidden" name="action" value="updatepage">
-    <input type="hidden" name="pageid" value="<?PHP echo $pageid ?>">
-    <input type="hidden" name="sesskey" value="<?PHP echo $USER->sesskey ?>">        
-    <input type="hidden" name="redisplay" value="0">
+    <input type="hidden" name="pageid" value="<?php echo $pageid ?>" />
+    <input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>" />        
+    <input type="hidden" name="redirect" value="<?php echo $redirect ?>" />        
+    <input type="hidden" name="redisplay" value="0" />
     <center>
        <?php
         switch ($page->qtype) {
