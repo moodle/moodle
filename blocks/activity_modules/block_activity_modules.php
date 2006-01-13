@@ -9,7 +9,16 @@ class block_activity_modules extends block_list {
     function get_content() {
         global $USER, $CFG;
 
-        get_all_mods($this->instance->pageid, $mods, $modnames, $modnamesplural, $modnamesused);
+        // TODO: FIX: HACK: (any other tags I should add? :P)
+        // Hacker's improvised caching scheme: avoid fetching the mod
+        // data from db if the course format has already fetched them
+        if(!isset($GLOBALS['modnamesplural']) || !isset($GLOBALS['modnamesused'])) {
+            get_all_mods($this->instance->pageid, $mods, $modnames, $modnamesplural, $modnamesused);
+        }
+        else {
+            $modnamesplural = $GLOBALS['modnamesplural'];
+            $modnamesused   = $GLOBALS['modnamesused'];
+        }
 
         if($this->content !== NULL) {
             return $this->content;
