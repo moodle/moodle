@@ -155,6 +155,7 @@ $string['nextpage'] = 'Next page';
 $string['noanswer'] = 'No answer given.  Please go back and submit an answer.';
 $string['noattemptrecordsfound'] = 'No attempt records found: no grade given';
 $string['nocommentyet'] = 'No comment yet.';
+$string['nocoursemods'] = 'No activities found';
 $string['nohighscores'] = 'No high scores';
 $string['nooneansweredcorrectly'] = 'No one answered correctly.';
 $string['nooneansweredthisquestion'] = 'No one answered this question.';
@@ -273,5 +274,6 @@ $string['yourcurrentgradeis'] = 'Your current grade is $a';
 $string['yourgradeisnow'] = 'Your grade for the lesson has been changed to $a';
 $string['yourresponse'] = 'Your response';
 $string['youshouldview'] = 'You should view at least: $a';
+
 
 ?>
