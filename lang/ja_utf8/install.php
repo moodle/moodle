@@ -4,7 +4,7 @@
 
 $string['admindirerror'] = '設定されたadminディレクトリが間違っています。';
 $string['admindirname'] = 'Adminディレクトリ';
-$string['admindirsetting'] = '稀に、コントロールパネルまたはその他の管理ツールにアクセスするためのURLとして/adminディレクトリを使用しているウェブホストがあります。残念ながら、これはMoodle管理ページの標準的なロケーションと衝突します。インストールする時にadminディレクトリをリネームすることが可能です。ここに新しいディレクトリ名を入力してください。例: <br/> <br /><b>moodleadmin</b><br /> <br />
+$string['admindirsetting'] = '稀に、コントロールパネルまたはその他の管理ツールにアクセスするためのURLとして/adminディレクトリを使用しているウェブホストがあります。残念ながら、これはMoodle管理ページの標準的なロケーションと衝突します。インストールするときにadminディレクトリをリネームすることが可能です。ここに新しいディレクトリ名を入力してください。例: <br/> <br /><b>moodleadmin</b><br /> <br />
 これはMoodleのadminリンクを変更します。';
 $string['caution'] = '警告';
 $string['chooselanguage'] = '言語を選択してください。';
