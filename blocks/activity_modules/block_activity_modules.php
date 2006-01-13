@@ -3,14 +3,22 @@
 class block_activity_modules extends block_list {
     function init() {
         $this->title = get_string('activities');
-        $this->version = 2004041000;
+        $this->version = 2004041001;
     }
 
     function get_content() {
         global $USER, $CFG;
 
-        // This is really NOT pretty, but let's do it simple for now...
-        global $modnamesused, $modnamesplural;
+        // TODO: FIX: HACK: (any other tags I should add? :P)
+        // Hacker's improvised caching scheme: avoid fetching the mod
+        // data from db if the course format has already fetched them
+        if(!isset($GLOBALS['modnamesplural']) || !isset($GLOBALS['modnamesused'])) {
+            get_all_mods($this->instance->pageid, $mods, $modnames, $modnamesplural, $modnamesused);
+        }
+        else {
+            $modnamesplural = $GLOBALS['modnamesplural'];
+            $modnamesused   = $GLOBALS['modnamesused'];
+        }
 
         if($this->content !== NULL) {
             return $this->content;
