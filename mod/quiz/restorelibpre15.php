@@ -1274,7 +1274,7 @@
                 //We have to restore the question_versions now (course level table)
                 $status = quiz_question_versions_restore_pre15_mods($newid,$info,$restore);
                 //Now check if want to restore user data and do it.
-                if ($restore->mods['quiz']->userinfo) {
+                if (restore_userdata_selected($restore,'quiz',$mod->id)) {
                     //Restore quiz_attempts
                     $status = quiz_attempts_restore_pre15_mods ($newid,$info,$restore, $quiz->questions);
                     if ($status) {

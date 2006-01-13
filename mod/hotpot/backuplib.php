@@ -36,19 +36,36 @@
 	//
 	//-----------------------------------------------------------
 	function hotpot_backup_mods($bf, $preferences) {
+		global $CFG;
+
+		$status = true;
+
+		//Iterate over hotpot table
+		$hotpots = get_records ("hotpot","course",$preferences->backup_course,"id");
+		if ($hotpots) {
+			foreach ($hotpots as $hotpot) {
+                if (backup_mod_selected($preferences,'hotpot',$hotpot->id)) {
+					$status = hotpot_backup_one_mod($bf,$preferences,$hotpot->id);
+				}
+			}
+		}
+		return $status;
+	}
+
+	function hotpot_backup_one_mod($bf, $preferences, $instance = 0) {
 		// $bf : resource id for b(ackup) f(ile)
 		// $preferences : object containing switches and settings for this backup
  		$level = 3;
 		$status = true;
 		$table = 'hotpot';
-		$select = "course=$preferences->backup_course";
+		$select = "course=$preferences->backup_course AND id='$instance'";
 		$records_tag = '';
 		$records_tags = array();
 		$record_tag = 'MOD';
 		$record_tags = array('MODTYPE'=>'hotpot');
 		$excluded_tags = array();
 		$more_backup = '';
-		if ($preferences->mods['hotpot']->userinfo) {
+        if (backup_userdata_selected($preferences,'hotpot',$instance)) {
 			$more_backup .= '$GLOBALS["hotpot_backup_string_ids"] = array();';
 			$more_backup .= '$status = hotpot_backup_attempts($bf, $record, $level, $status);';
 			$more_backup .= '$status = hotpot_backup_questions($bf, $record, $level, $status);';
@@ -250,7 +267,15 @@
 		return $status;
 	}
 	////Return an array of info (name, value)
-	function hotpot_check_backup_mods($course, $user_data=false, $backup_unique_code) {
+	function hotpot_check_backup_mods($course, $user_data=false, $backup_unique_code, $instances=null) {
+		if (!empty($instances) && is_array($instances) && count($instances)) {
+			$info = array();
+			foreach ($instances as $id => $instance) {
+				$info += hotpot_check_backup_mods_instances($instance,$backup_unique_code);
+			}
+			return $info;
+		}
+
 		// the course data
 		$info[0][0] = get_string('modulenameplural','hotpot');
 		$info[0][1] = count_records('hotpot', 'course', $course);
@@ -262,6 +287,26 @@
 			$info[1][0] = get_string('attempts', 'quiz');
 			$info[1][1] = count_records_sql("SELECT COUNT(*) FROM $table WHERE $select");
 		}
+		return $info;
+	}
+
+	////Return an array of info (name, value)
+	function hotpot_check_backup_mods_instances($instance,$backup_unique_code) {
+
+		// the course data
+		$info[$instance->id.'0'][0] = '<b>'.$instance->name.'</b>';
+		$info[$instance->id.'0'][1] = '';
+
+		// the user_data, if requested
+		if (!empty($instance->userdata)) {
+			global $CFG;
+			$table = "{$CFG->prefix}hotpot_attempts a";
+			$select = "a.hotpot = $instance->id";
+			
+			$info[$instance->id.'1'][0] = get_string('attempts', 'quiz');
+			$info[$instance->id.'1'][1] = count_records_sql("SELECT COUNT(*) FROM $table WHERE $select");
+		}
+		
 		return $info;
 	}
 ?>

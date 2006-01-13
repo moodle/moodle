@@ -116,7 +116,7 @@
                  }
 
                  //now restore the answers for this choice.
-                 if ($restore->mods['choice']->userinfo) {
+                 if (restore_userdata_selected($restore,'choice',$mod->id)) {
                     //Restore choice_answers
                     $status = choice_answers_restore_mods($newid,$info,$restore);     
                  }                               

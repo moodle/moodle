@@ -98,10 +98,11 @@
                 backup_putid($restore->backup_unique_code,$mod->modtype,
                              $mod->id, $newid);
                 //We have to restore the lesson pages which are held in their logical order...
-                $status = lesson_pages_restore_mods($newid,$info,$restore);
+                $userdata = restore_userdata_selected($restore,"lesson",$mod->id);
+                $status = lesson_pages_restore_mods($newid,$info,$restore,$userdata);
                 //...and the user grades, high scores, and timer (if required)
                 if ($status) {
-                    if ($restore->mods["lesson"]->userinfo) {
+                    if ($userdata) {
                         if(!lesson_grades_restore_mods($newid,$info,$restore)) {
                             return false;
                         }
@@ -126,7 +127,7 @@
     }
 
     //This function restores the lesson_pages
-    function lesson_pages_restore_mods($lessonid,$info,$restore) {
+    function lesson_pages_restore_mods($lessonid,$info,$restore,$userdata=false) {
 
         global $CFG;
 
@@ -182,11 +183,11 @@
                 //We have the newid, update backup_ids (restore logs will use it!!)
                 backup_putid($restore->backup_unique_code,"lesson_pages", $oldid, $newid);
                 //We have to restore the lesson_answers table now (a page level table)
-                $status = lesson_answers_restore($lessonid,$newid,$page_info,$restore);
+                $status = lesson_answers_restore($lessonid,$newid,$page_info,$restore,$userdata);
                 
                 //Need to update useranswer field (which has answer id's in it)
                 //for matching and multi-answer multi-choice questions
-                if ($restore->mods["lesson"]->userinfo) {  // firs check to see if we even have to do this
+                if ($userdata) { // first check to see if we even have to do this
                     // if multi-answer multi-choice question or matching
                     if (($page->qtype == 3 && $page->qoption) ||
                          $page->qtype == 5) {
@@ -213,7 +214,7 @@
                 }        
                 
                 // backup branch table info for branch tables.
-                if ($status && $restore->mods["lesson"]->userinfo) {
+                if ($status && $userdata) {
                     if (!lesson_branch_restore($lessonid,$newid,$page_info,$restore)) {
                         return false;
                     }
@@ -243,7 +244,7 @@
 
 
     //This function restores the lesson_answers
-    function lesson_answers_restore($lessonid,$pageid,$info,$restore) {
+    function lesson_answers_restore($lessonid,$pageid,$info,$restore,$userdata=false) {
 
         global $CFG;
 
@@ -311,7 +312,7 @@
                     // field in attempts.  This is done in the lesson_pages_restore_mods
                     backup_putid($restore->backup_unique_code,"lesson_answers", $oldid, $newid);                                 
 
-                    if ($restore->mods['lesson']->userinfo) {
+                    if ($userdata) {
                         //We have to restore the lesson_attempts table now (a answers level table)
                         $status = lesson_attempts_restore($lessonid, $pageid, $newid, $answer_info, $restore);
                     }

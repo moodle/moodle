@@ -34,6 +34,7 @@
             $modname = $mod->name;
             $modfile = "$CFG->dirroot/mod/$modname/backuplib.php";
             $modbackup = $modname."_backup_mods";
+            $modbackupone = $modname."_backup_one_mod";
             $modcheckbackup = $modname."_check_backup_mods";
             if (file_exists($modfile)) {
                include_once($modfile);
@@ -41,6 +42,21 @@
                    $var = "exists_".$modname;
                    $$var = true;
                    $count++;
+                   if (count_records('course_modules','course',$course->id,'module',$mod->id) && function_exists($modbackupone)) {
+                       $var = 'exists_one_'.$modname;
+                       $$var = true;
+                       $varname = $modname.'_instances';
+                       $$varname = get_all_instances_in_course($modname,$course);
+                       foreach ($$varname as $instance) {
+                           $preferences->mods[$modname]->instances[$instance->id]->name = $instance->name;
+                           $var = 'backup_'.$modname.'_instance_'.$instance->id;
+                           $$var = optional_param($var,0);
+                           $preferences->mods[$modname]->instances[$instance->id]->backup = $$var;
+                           $var = 'backup_user_info_'.$modname.'_instance_'.$instance->id;
+                           $$var = optional_param($var,0);
+                           $preferences->mods[$modname]->instances[$instance->id]->userinfo = $$var;
+                       }
+                   }
                }
             }
 

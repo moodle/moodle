@@ -36,44 +36,54 @@
         $scorms = get_records ("scorm","course",$preferences->backup_course,"id");
         if ($scorms) {
             foreach ($scorms as $scorm) {
-                //Start mod
-                fwrite ($bf,start_tag("MOD",3,true));
-                //Print scorm data
-                fwrite ($bf,full_tag("ID",4,false,$scorm->id));
-                fwrite ($bf,full_tag("MODTYPE",4,false,"scorm"));
-                fwrite ($bf,full_tag("NAME",4,false,$scorm->name));
-                fwrite ($bf,full_tag("REFERENCE",4,false,$scorm->reference));
-                fwrite ($bf,full_tag("VERSION",4,false,$scorm->version));
-                fwrite ($bf,full_tag("MAXGRADE",4,false,$scorm->maxgrade));
-                fwrite ($bf,full_tag("GRADEMETHOD",4,false,$scorm->grademethod));
-                fwrite ($bf,full_tag("LAUNCH",4,false,$scorm->launch));
-                fwrite ($bf,full_tag("SUMMARY",4,false,$scorm->summary));
-                fwrite ($bf,full_tag("HIDEBROWSE",4,false,$scorm->hidebrowse));
-                fwrite ($bf,full_tag("HIDETOC",4,false,$scorm->hidetoc));
-                fwrite ($bf,full_tag("HIDENAV",4,false,$scorm->hidenav));
-                fwrite ($bf,full_tag("AUTO",4,false,$scorm->auto));
-                fwrite ($bf,full_tag("POPUP",4,false,$scorm->popup));
-                fwrite ($bf,full_tag("OPTIONS",4,false,$scorm->options));
-                fwrite ($bf,full_tag("WIDTH",4,false,$scorm->width));
-                fwrite ($bf,full_tag("HEIGHT",4,false,$scorm->height));
-                fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$scorm->timemodified));
-                $status = backup_scorm_scoes($bf,$preferences,$scorm->id);
- 
-                //if we've selected to backup users info, then execute backup_scorm_scoes_track
-                if ($status) {
-                    if ($preferences->mods["scorm"]->userinfo) {
-                        $status = backup_scorm_scoes_track($bf,$preferences,$scorm->id);
-                    }
+                if (backup_mod_selected($preferences,'scorm',$scorm->id)) {
+                    $status = scorm_backup_one_mod($bf,$preferences,$scorm);
                 }
-                //End mod
-                $status =fwrite ($bf,end_tag("MOD",3,true));
             }
-            //backup scorm files
-            if ($status) {
-                $status = backup_scorm_files($bf,$preferences);    
-            }
-            
         }
+        return $status;
+    }
+
+    function scorm_backup_one_mod($bf,$preferences,$scorm) {
+        $status = true;
+
+        if (is_numeric($scorm)) {
+            $scorm = get_record('scorm','id',$scorm);
+        }
+
+        //Start mod
+        fwrite ($bf,start_tag("MOD",3,true));
+        //Print scorm data
+        fwrite ($bf,full_tag("ID",4,false,$scorm->id));
+        fwrite ($bf,full_tag("MODTYPE",4,false,"scorm"));
+        fwrite ($bf,full_tag("NAME",4,false,$scorm->name));
+        fwrite ($bf,full_tag("REFERENCE",4,false,$scorm->reference));
+        fwrite ($bf,full_tag("VERSION",4,false,$scorm->version));
+        fwrite ($bf,full_tag("MAXGRADE",4,false,$scorm->maxgrade));
+        fwrite ($bf,full_tag("GRADEMETHOD",4,false,$scorm->grademethod));
+        fwrite ($bf,full_tag("LAUNCH",4,false,$scorm->launch));
+        fwrite ($bf,full_tag("SUMMARY",4,false,$scorm->summary));
+        fwrite ($bf,full_tag("HIDEBROWSE",4,false,$scorm->hidebrowse));
+        fwrite ($bf,full_tag("HIDETOC",4,false,$scorm->hidetoc));
+        fwrite ($bf,full_tag("HIDENAV",4,false,$scorm->hidenav));
+        fwrite ($bf,full_tag("AUTO",4,false,$scorm->auto));
+        fwrite ($bf,full_tag("POPUP",4,false,$scorm->popup));
+        fwrite ($bf,full_tag("OPTIONS",4,false,$scorm->options));
+        fwrite ($bf,full_tag("WIDTH",4,false,$scorm->width));
+        fwrite ($bf,full_tag("HEIGHT",4,false,$scorm->height));
+        fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$scorm->timemodified));
+        $status = backup_scorm_scoes($bf,$preferences,$scorm->id);
+        
+        //if we've selected to backup users info, then execute backup_scorm_scoes_track
+        if ($status) {
+            if (backup_userdata_selected($preferences,'scorm',$scorm->id)) {
+                $status = backup_scorm_scoes_track($bf,$preferences,$scorm->id);
+                $status = backup_scorm_files_instance($bf,$preferences,$scorm->id);
+            }
+
+        }
+        //End mod
+        $status =fwrite ($bf,end_tag("MOD",3,true));
         return $status;
     }
 
@@ -151,7 +161,14 @@
     }
    
    ////Return an array of info (name,value)
-   function scorm_check_backup_mods($course,$user_data=false,$backup_unique_code) {
+   function scorm_check_backup_mods($course,$user_data=false,$backup_unique_code,$instances=null) {
+       if (!empty($instances) && is_array($instances) && count($instances)) {
+           $info = array();
+           foreach ($instances as $id => $instance) {
+               $info += scorm_check_backup_mods_instances($instance,$backup_unique_code);
+           }
+           return $info;
+       }
         //First the course data
         $info[0][0] = get_string("modulenameplural","scorm");
         if ($ids = scorm_ids ($course)) {
@@ -172,6 +189,43 @@
         return $info;
     }
 
+    function scorm_check_backup_mods_instances($instance,$backup_unique_code) {
+        $info[$instance->id.'0'][0] = $instance->name;
+        $info[$instance->id.'0'][1] = '';
+        if (!empty($instance->userdata)) {
+            $info[$instance->id.'1'][0] = get_string("scoes","scorm");
+            if ($ids = scorm_scoes_track_ids_by_instance ($instance->id)) {
+                $info[$instance->id.'1'][1] = count($ids);
+            } else {
+                $info[$instance->id.'1'][1] = 0;
+            }
+        }
+
+        return $info;
+
+    }
+
+    function backup_scorm_files_instance($bf,$preferences,$instanceid) {
+        global $CFG;
+
+        $status = true;
+
+        //First we check to moddata exists and create it as necessary
+        //in temp/backup/$backup_code  dir
+        $status = check_and_create_moddata_dir($preferences->backup_unique_code);
+        $status = check_dir_exists($CFG->dataroot."/temp/backup/".$preferences->backup_unique_code."/moddata/scorm/",true);
+        if ($status) {
+            //Only if it exists !! Thanks to Daniel Miksik.
+            if (is_dir($CFG->dataroot."/".$preferences->backup_course."/".$CFG->moddata."/scorm/".$instanceid)) {
+                $status = backup_copy_file($CFG->dataroot."/".$preferences->backup_course."/".$CFG->moddata."/scorm/".$instanceid,
+                                           $CFG->dataroot."/temp/backup/".$preferences->backup_unique_code."/moddata/scorm/".$instanceid);
+            }
+        }
+
+        return $status;
+    }
+
+
     //Backup scorm package files
     function backup_scorm_files($bf,$preferences) {
 
@@ -185,8 +239,15 @@
         //Now copy the scorm dir
         if ($status) {
             if (is_dir($CFG->dataroot."/".$preferences->backup_course."/".$CFG->moddata."/scorm")) {
-                $status = backup_copy_file($CFG->dataroot."/".$preferences->backup_course."/".$CFG->moddata."/scorm",
-                                           $CFG->dataroot."/temp/backup/".$preferences->backup_unique_code."/moddata/scorm");
+                $handle = opendir($CFG->dataroot."/".$preferences->backup_course."/".$CFG->moddata."/scorm");
+                while (false!==($item = readdir($handle))) {
+                    if ($item != '.' && $item != '..' && is_dir($CFG->dataroot."/".$preferences->backup_course."/".$CFG->moddata."/sorm/".$item)
+                        && array_key_exists($item,$preferences->mods['scorm']->instances)
+                        && !empty($preferences->mods['scorm']->instances[$item]->backup)) {
+                        $status = backup_copy_file($CFG->dataroot."/".$preferences->backup_course."/".$CFG->moddata."/scorm/".$item,
+                                                   $CFG->dataroot."/temp/backup/".$preferences->backup_unique_code."/moddata/scorm/",$item);
+                    }
+                }
             }
         }
 
@@ -235,5 +296,15 @@
                                       {$CFG->prefix}scorm a
                                  WHERE a.course = '$course' AND
                                        s.scormid = a.id");
+    }
+
+    //Returns an array of scorm_scoes id
+    function scorm_scoes_track_ids_by_instance ($instanceid) {
+
+        global $CFG;
+
+        return get_records_sql ("SELECT s.id , s.scormid
+                                 FROM {$CFG->prefix}scorm_scoes_track s
+                                 WHERE s.scormid = $instanceid");
     }
 ?>

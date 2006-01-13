@@ -148,7 +148,7 @@
                 //We have to restore the workshop_elements table now (course level table)
                 $status = workshop_elements_restore_mods($newid,$info,$restore);
                 //Now check if want to restore user data and do it.
-                if ($restore->mods['workshop']->userinfo) {
+                if (restore_userdata_selected($restore,'workshop',$mod->id)) {
                     //Restore workshop_submissions
                     $status = workshop_submissions_restore_mods ($mod->id, $newid,$info,$restore);
                 }

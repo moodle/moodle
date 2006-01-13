@@ -42,6 +42,13 @@
                 $$var = optional_param( $var,0); 
                 $var = "restore_user_info_".$modname;
                 $$var = optional_param( $var,0);
+                $instances = $info->mods[$mod->name]->instances;
+                foreach ($instances as $instance) {
+                    $var = 'restore_'.$modname.'_instance_'.$instance->id;
+                    $$var = optional_param($var,0);
+                    $var = 'restore_user_info_'.$modname.'_instance_'.$instance->id;
+                    $$var = optional_param($var,0);
+                }
             }
         }
         //restoreto
@@ -75,6 +82,14 @@
                 $restore->mods[$modname]->restore=$$var;
                 $var = "restore_user_info_".$modname;
                 $restore->mods[$modname]->userinfo=$$var;
+
+                $instances = $info->mods[$mod->name]->instances;
+                foreach ($instances as $instance) {
+                    $var = 'restore_'.$modname.'_instance_'.$instance->id;
+                    $restore->mods[$modname]->instances[$instance->id]->restore = $$var;
+                    $var = 'restore_user_info_'.$modname.'_instance_'.$instance->id;
+                    $restore->mods[$modname]->instances[$instance->id]->userinfo = $$var;
+                }
             }
         }
         $restore->restoreto=$restore_restoreto;

@@ -33,6 +33,7 @@
             $modname = $mod->name;
             $modfile = "$CFG->dirroot/mod/$modname/backuplib.php";
             $modbackup = $modname."_backup_mods";
+            $modbackupone = $modname.'_backup_one_mod';
             $modcheckbackup = $modname."_check_backup_mods";
             if (file_exists($modfile)) {
                include_once($modfile);
@@ -40,6 +41,11 @@
                    $var = "exists_".$modname;
                    $$var = true;
                    $count++;
+                   // check that there are instances and we can back them up individually
+                   if (count_records('course_modules','course',$course->id,'module',$mod->id) && function_exists($modbackupone)) {
+                       $var = 'exists_one_'.$modname;
+                       $$var = true;
+                   }
                }
             }
             //Check data
@@ -94,7 +100,7 @@ function selectItemInRadioByName(formId, radioName, selectIndex ) {
 }
 
 function selectItemInCheckboxByName(formId, checkName, checked ) {
-    myForm = document.getElementById(formId)
+    myForm = document.getElementById(formId);
     for (i=0,n=myForm.elements.length;i<n;i++) {
         myLen = checkName.length;
         myName = myForm.elements[i].name;
@@ -144,19 +150,42 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
                 $var = "backup_".$modname;
                 //choose_from_menu($backup_options, $var, $$var, "");
                 //Print the checkbox
-                print_checkbox($var, $$var, $$var, get_string("modulenameplural",$modname));
-                $var = "backup_user_info_".$modname;
+                print_checkbox($var, $$var, $$var, get_string("modulenameplural",$modname),'','selectItemInCheckboxByName(\'form1\',\'backup_'.$modname.'\',this.checked)');
                 echo "</td><td align=\"right\">&nbsp;";
                 echo "</td><td>";
+                $var = "backup_user_info_".$modname;
                 if (empty($to)) {
                     $backup_user_options[0] = get_string("withoutuserdata"); 
                     $backup_user_options[1] = get_string("withuserdata");
                     //choose_from_menu($backup_user_options, $var, $$var, "");
-                    print_checkbox($var, $$var, $$var, get_string("userdata"));
+                    print_checkbox($var, $$var, $$var, get_string("userdata"),'','selectItemInCheckboxByName(\'form1\',\'backup_user_info_'.$modname.'\',this.checked)');
                 } else {
                     echo '<input type="hidden" name="'.$var.'" value="0" />';
                 }
                 echo "</td></tr>\n"; 
+                // if we have the backup_one_mod function, loop here.
+                $var = 'exists_one_'.$modname;
+                if (!empty($$var)) {
+                    echo '<tr><td></td><td colspan="3"><table class="backup-form-instances">';
+                    $instances = get_all_instances_in_course($modname,$course);
+                    foreach ($instances as $instance) {
+                        echo '<tr><td>';
+                        $var = 'backup_'.$modname.'_instance_'.$instance->id;
+                        $$var = optional_param($var,1);
+                        print_checkbox($var,$$var,$$var,$instance->name,$instance->name,'this.form.elements[\'backup_'.$modname.'\'].checked=1;');
+                        echo '</td><td align="right">&nbsp;';
+                        $var = 'backup_user_info_'.$modname.'_instance_'.$instance->id;
+                        $$var = optional_param($var,1);
+                        if (empty($to)) {
+                            print_checkbox($var,$$var,$$var,get_string('userdata'),'','this.form.elements[\'backup_user_info_'.$modname.'\'].checked=1;');
+                        } else {
+                            echo '<input type="hidden" name="'.$var.'" value="0" />';
+                        }
+                        echo '</td></tr>';
+                    }
+                    echo '</table></td></tr>';
+                }
+              
             }
         }
         //Line

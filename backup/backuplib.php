@@ -505,6 +505,32 @@
             fwrite ($bf,full_tag("NAME",4,false,$element->name));
             fwrite ($bf,full_tag("INCLUDED",4,false,$included));
             fwrite ($bf,full_tag("USERINFO",4,false,$userinfo));
+
+            if (is_array($preferences->mods[$element->name]->instances)
+                && count($preferences->mods[$element->name]->instances)) {
+                fwrite ($bf, start_tag("INSTANCES",4,true));
+                foreach ($preferences->mods[$element->name]->instances as $id => $object) {
+                    if (!empty($object->backup)) {
+                        //Calculate info
+                        $included = "false";
+                        $userinfo = "false";
+                        if ($object->backup) {
+                            $included = "true";
+                            if ($object->userinfo) {
+                                $userinfo = "true";
+                            }
+                        }
+                        fwrite ($bf, start_tag("INSTANCE",5,true));
+                        fwrite ($bf, full_tag("ID",5,false,$id));
+                        fwrite ($bf, full_tag("NAME",5,false,$object->name));
+                        fwrite ($bf, full_tag("INCLUDED",5,false,$included)) ;
+                        fwrite ($bf, full_tag("USERINFO",5,false,$userinfo));
+                        fwrite ($bf, end_tag("INSTANCE",5,true));
+                    }
+                }
+                fwrite ($bf, end_tag("INSTANCES",4,true));
+            }
+                
                  
             //Print the end
             fwrite ($bf,end_tag("MOD",3,true));
@@ -945,6 +971,14 @@
                if ($first_record) {
                    fwrite ($bf,start_tag("MODS",4,true));
                    $first_record = false;
+               }
+               // if we're doing selected instances, check that too.
+               if (is_array($preferences->mods[$moduletype]->instances) 
+                   && count($preferences->mods[$moduletype]->instances)
+                   && (!array_key_exists($course_module[$tok]->instance,$preferences->mods[$moduletype]->instances)
+                       || empty($preferences->mods[$moduletype]->instances[$course_module[$tok]->instance]->backup))) {
+                   $tok = strtok(",");
+                   continue;
                }
                //Print mod info from course_modules
                fwrite ($bf,start_tag("MOD",5,true));
@@ -1612,14 +1646,27 @@
 
         $status = true;
 
-        //First, re-check if necessary functions exists
-        $modbackup = $module."_backup_mods";
-        if (function_exists($modbackup)) {
-            //Call the function
-            $status = $modbackup($bf,$preferences);
-        } else {
-            //Something was wrong. Function should exist.
-            $status = false;
+        if (is_array($preferences->mods[$module]->instances)) {
+            $onemodbackup = $module.'_backup_one_mod';
+            if (function_exists($onemodbackup)) {
+                foreach ($preferences->mods[$module]->instances as $instance => $object) {
+                    if (!empty($object->backup)) {
+                        $status = $onemodbackup($bf,$preferences,$instance);
+                    }
+                }
+            }  else {
+                $status = false;
+            }
+        } else { // whole module.
+            //First, re-check if necessary functions exists
+            $modbackup = $module."_backup_mods";
+            if (function_exists($modbackup)) {
+                //Call the function
+                $status = $modbackup($bf,$preferences);
+            } else {
+                //Something was wrong. Function should exist.
+                $status = false;
+            }
         }
    
         return $status; 
@@ -1857,4 +1904,27 @@
 
         return $status;
     }
+
+    /** 
+     * compatibility function
+     * with new granular backup
+     * we need to know 
+     */
+    function backup_userdata_selected($preferences,$modname,$modid) {
+        return ((empty($preferences->mods[$modname]->instances)
+                 && !empty($preferences->mods[$modname]->userinfo)) 
+                || (is_array($preferences->mods[$modname]->instances) 
+                    && array_key_exists($modid,$preferences->mods[$modname]->instances)
+                    && !empty($preferences->mods[$modname]->instances[$modid]->userinfo)));
+    }
+
+
+    function backup_mod_selected($preferences,$modname,$modid) {
+        return ((empty($preferences->mods[$modname]->instances)
+                 && !empty($preferences->mods[$modname]->backup)) 
+                || (is_array($preferences->mods[$modname]->instances) 
+                    && array_key_exists($modid,$preferences->mods[$modname]->instances)
+                    && !empty($preferences->mods[$modname]->instances[$modid]->backup)));
+    }
+
 ?>

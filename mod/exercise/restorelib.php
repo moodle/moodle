@@ -221,7 +221,7 @@
             $submission->late = backup_todb($sub_info['#']['LATE']['0']['#']);
 
             // always save the exercise descriptions and optionally the student submissions
-            if ($submission->isexercise or $restore->mods["exercise"]->userinfo) {
+            if ($submission->isexercise or restore_userdata_selected($restore,'exercise',$old_exercise_id)) {
                 //We have to recode the userid field
                 $user = backup_getid($restore->backup_unique_code,"user",$olduserid);
                 if ($user) {
@@ -248,7 +248,7 @@
                     //Now copy moddata associated files
                     $status = exercise_restore_files($oldid, $newid,$restore); 
                     //Now we need to restore exercise_assessments (user level table)
-                    if ($status and $restore->mods['exercise']->userinfo) {
+                    if ($status and restore_userdata_selected($restore,'exercise',$old_exercise_id)) {
                         $status = exercise_assessments_restore($new_exercise_id, $newid,$sub_info,$restore);
                     }
                 } else {

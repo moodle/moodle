@@ -67,7 +67,7 @@
                 backup_putid($restore->backup_unique_code,$mod->modtype,
                              $mod->id, $newid);
                 //Now check if want to restore user data and do it.
-                if ($restore->mods['wiki']->userinfo) {
+                if (restore_userdata_selected($restore,'wiki',$mod->id)) {
                     //Restore wiki_entries
                     $status = wiki_entries_restore_mods($mod->id,$newid,$info,$restore);
                 }

@@ -125,7 +125,7 @@
                 $status = scorm_restore_files ($scorm, $restore);
 
                 if ($status) {
-                    $status = scorm_scoes_restore_mods ($newid,$info,$restore);
+                    $status = scorm_scoes_restore_mods ($newid,$info,$restore,$mod->id);
                     if ($status) {
                         $launchsco = backup_getid($restore->backup_unique_code,"scorm_scoes",$oldlaunch);
                         $scorm->launch = $launchsco->new_id;
@@ -144,7 +144,7 @@
     }
 
     //This function restores the scorm_scoes
-    function scorm_scoes_restore_mods($scorm_id,$info,$restore) {
+    function scorm_scoes_restore_mods($scorm_id,$info,$restore,$oldmodid) {
     
         global $CFG;
 
@@ -193,7 +193,7 @@
         }
 
         //Now check if want to restore user data and do it.
-        if ($restore->mods['scorm']->userinfo) {
+        if (restore_userdata_selected($restore,'scorm',$oldmodid)) {
             //Restore scorm_scoes
             if ($status) {
                 if ($restore->backup_version < 2005031300) {

@@ -32,29 +32,43 @@
         $surveys = get_records ("survey","course",$preferences->backup_course,"id");
         if ($surveys) {
             foreach ($surveys as $survey) {
-                //Start mod
-                fwrite ($bf,start_tag("MOD",3,true));
-                //Print choice data
-                fwrite ($bf,full_tag("ID",4,false,$survey->id));
-                fwrite ($bf,full_tag("MODTYPE",4,false,"survey"));
-                fwrite ($bf,full_tag("TEMPLATE",4,false,$survey->template));
-                fwrite ($bf,full_tag("DAYS",4,false,$survey->days));
-                fwrite ($bf,full_tag("TIMECREATED",4,false,$survey->timecreated));
-                fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$survey->timemodified));
-                fwrite ($bf,full_tag("NAME",4,false,$survey->name));
-                fwrite ($bf,full_tag("INTRO",4,false,$survey->intro));
-                fwrite ($bf,full_tag("QUESTIONS",4,false,$survey->questions));
-
-                //if we've selected to backup users info, then execute backup_survey_answers and
-                //backup_survey_analysis
-                if ($preferences->mods["survey"]->userinfo) {
-                    $status = backup_survey_answers($bf,$preferences,$survey->id);
-                    $status = backup_survey_analysis($bf,$preferences,$survey->id);
+                if (backup_mod_selected($preferences,'survey',$survey->id)) {
+                    $status = survey_backup_one_mod($bf,$preferences,$survey);
                 }
-                //End mod
-                $status =fwrite ($bf,end_tag("MOD",3,true));
             }
         }
+        return $status;
+    }
+
+    function survey_backup_one_mod($bf,$preferences,$survey) {
+        
+        $status = true;
+        
+        if (is_numeric($survey)) {
+            $survey = get_record('survey','id',$survey);
+        }
+        
+        //Start mod
+        fwrite ($bf,start_tag("MOD",3,true));
+        //Print choice data
+        fwrite ($bf,full_tag("ID",4,false,$survey->id));
+        fwrite ($bf,full_tag("MODTYPE",4,false,"survey"));
+        fwrite ($bf,full_tag("TEMPLATE",4,false,$survey->template));
+        fwrite ($bf,full_tag("DAYS",4,false,$survey->days));
+        fwrite ($bf,full_tag("TIMECREATED",4,false,$survey->timecreated));
+        fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$survey->timemodified));
+        fwrite ($bf,full_tag("NAME",4,false,$survey->name));
+        fwrite ($bf,full_tag("INTRO",4,false,$survey->intro));
+        fwrite ($bf,full_tag("QUESTIONS",4,false,$survey->questions));
+        
+        //if we've selected to backup users info, then execute backup_survey_answers and
+        //backup_survey_analysis
+        if (backup_userdata_selected($preferences,'survey',$survey->id)) {
+            $status = backup_survey_answers($bf,$preferences,$survey->id);
+            $status = backup_survey_analysis($bf,$preferences,$survey->id);
+        }
+        //End mod
+        $status =fwrite ($bf,end_tag("MOD",3,true));
         return $status;
     }
 
@@ -119,8 +133,31 @@
         return $status;
     }
 
+    function survey_check_backup_mods_instances($instance,$backup_unique_code) {
+        $info[$instance->id.'0'][0] = $instance->name;
+        $info[$instance->id.'0'][1] = '';
+        if (!empty($instance->userdata)) {
+              //Subscriptions
+            $info[$instance->id.'1'][0] = get_string("answers","survey");
+            if ($ids = survey_answer_ids_by_instance ($instance->id)) {
+                $info[$instance->id.'1'][1] = count($ids);
+            } else {
+                $info[$instance->id.'1'][1] = 0;
+            }
+        }
+        return $info;
+    }
+
+
     ////Return an array of info (name,value)
-   function survey_check_backup_mods($course,$user_data=false,$backup_unique_code) {
+    function survey_check_backup_mods($course,$user_data=false,$backup_unique_code,$instances=null) {
+        if (!empty($instances) && is_array($instances) && count($instances)) {
+            $info = array();
+            foreach ($instances as $id => $instance) {
+                $info += survey_check_backup_mods_instances($instance,$backup_unique_code);
+            }
+            return $info;
+        }
        //First the course data
        $info[0][0] = get_string("modulenameplural","survey");
        if ($ids = survey_ids ($course)) {
@@ -183,6 +220,15 @@
                                       {$CFG->prefix}survey a
                                  WHERE a.course = '$course' AND
                                        s.survey = a.id");
+    }
+
+    function survey_answer_ids_by_instance ($instanceid) {
+
+        global $CFG;
+
+        return get_records_sql ("SELECT s.id , s.survey
+                                 FROM {$CFG->prefix}survey_answers s
+                                 WHERE s.survey = $instanceid");
     }
 
 ?>

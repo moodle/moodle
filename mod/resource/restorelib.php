@@ -89,6 +89,11 @@
                 //We have the newid, update backup_ids
                 backup_putid($restore->backup_unique_code,$mod->modtype,
                              $mod->id, $newid);
+
+                // restore any associated files...
+                if ($resource->type == 'file' || $resource->type == 'directory' || $resource->type == 'ims') {
+                    resource_restore_files($mod->id,$newid,$resource,$restore);
+                }
    
             } else {
                 $status = false;
@@ -304,4 +309,42 @@
         }
         return $status;
     }   
+
+    function resource_restore_files($oldid,$newid,$resource,$restore) {
+        global $CFG;
+
+        $status = true;
+        $status = check_dir_exists($CFG->dataroot."/".$restore->course_id,true);
+
+        // we need to do anything referenced by $resource->reference and anything in moddata/resource/instance
+
+        // do referenced files/dirs first.
+        $temp_path = $CFG->dataroot."/temp/backup/".$restore->backup_unique_code.'/course_files/'.$resource->reference;
+        if (file_exists($temp_path)) { // ok, it was backed up, restore it.
+            $new_path = $CFG->dataroot.'/'.$restore->course_id.'/'.$resource->reference;
+        
+            // if this is somewhere deeply nested we need to do all the structure stuff first.....
+            $bits = explode('/',$resource->reference);
+            $newbit = '';
+            for ($i = 0; $i< count($bits)-1; $i++) {
+                $newbit .= $bits[$i].'/';
+                $status = $status && check_dir_exists($CFG->dataroot.'/'.$restore->course_id.'/'.$newbit,true);
+            }
+            $status = $status && backup_copy_file($temp_path,$new_path);
+        }
+
+        // and now for moddata.
+        $temp_path = $CFG->dataroot."/temp/backup/".$restore->backup_unique_code.
+            "/moddata/resource/".$oldid;
+        if (file_exists($temp_path)) { // there's something to back up, restore it.
+            $new_path = $CFG->dataroot."/".$restore->course_id."/".$CFG->moddata;
+            $status = $status && check_dir_exists($new_path,true);
+            $new_path .= '/resource';
+            $status = $status && check_dir_exists($new_path,true);
+            $new_path .= '/'.$newid;
+            $status = $status && backup_copy_file($temp_path,$new_path);
+        }
+        return $status;
+    }
+
 ?>

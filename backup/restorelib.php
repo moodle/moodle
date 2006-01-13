@@ -336,6 +336,19 @@
                     } else {
                         $tab[$elem][1] = get_string("included")." ".get_string("withoutuserdata");
                     }
+                    if (is_array($mod->instances) && count($mod->instances)) {
+                        foreach ($mod->instances as $instance) {
+                            if ($instance->backup) {
+                                $elem++;
+                                $tab[$elem][0] = $instance->name;
+                                if ($instance->userinfo == 'true') {
+                                    $tab[$elem][1] = get_string("included")." ".get_string("withuserdata");
+                                } else {
+                                    $tab[$elem][1] = get_string("included")." ".get_string("withoutuserdata");
+                                }
+                            }
+                        }
+                    }
                 }
                 $elem++;
             }
@@ -844,47 +857,51 @@
                     if (!empty($sect->mods)) {
                         //For each mod inside section
                         foreach ($sect->mods as $keym => $mod) {
-                            //Check if we've to restore this module
+                            //Check if we've to restore this module (and instance) 
                             if ($restore->mods[$mod->type]->restore) {
-                                //Get the module id from modules
-                                $module = get_record("modules","name",$mod->type);
-                                if ($module) {
-                                    $course_module->course = $restore->course_id;
-                                    $course_module->module = $module->id;
-                                    $course_module->section = $newid;
-                                    $course_module->added = $mod->added;
-                                    $course_module->deleted = $mod->deleted;
-                                    $course_module->score = $mod->score;
-                                    $course_module->indent = $mod->indent;
-                                    $course_module->visible = $mod->visible;
-                                    if (isset($mod->groupmode)) {
-                                        $course_module->groupmode = $mod->groupmode;
-                                    }
-                                    $course_module->instance = 0;
-                                    //NOTE: The instance (new) is calculated and updated in db in the
-                                    //      final step of the restore. We don't know it yet.
-                                    //print_object($course_module);					//Debug
-                                    //Save it to db
-                                    $newidmod = insert_record("course_modules",$course_module); 
-                                    if ($newidmod) {
-                                        //save old and new module id
-                                        //In the info field, we save the original instance of the module
-                                        //to use it later
-                                        backup_putid ($restore->backup_unique_code,"course_modules",
-                                                                $keym,$newidmod,$mod->instance);
+                                if (!is_array($restore->mods[$mod->type]->instances)  // we don't care about per instance
+                                    || (array_key_exists($mod->instance,$restore->mods[$mod->type]->instances) 
+                                        && !empty($restore->mods[$mod->type]->instances[$mod->instance]->restore))) {
+                                    //Get the module id from modules
+                                    $module = get_record("modules","name",$mod->type);
+                                    if ($module) {
+                                        $course_module->course = $restore->course_id;
+                                        $course_module->module = $module->id;
+                                        $course_module->section = $newid;
+                                        $course_module->added = $mod->added;
+                                        $course_module->deleted = $mod->deleted;
+                                        $course_module->score = $mod->score;
+                                        $course_module->indent = $mod->indent;
+                                        $course_module->visible = $mod->visible;
+                                        if (isset($mod->groupmode)) {
+                                            $course_module->groupmode = $mod->groupmode;
+                                        }
+                                        $course_module->instance = 0;
+                                        //NOTE: The instance (new) is calculated and updated in db in the
+                                        //      final step of the restore. We don't know it yet.
+                                        //print_object($course_module);					//Debug
+                                        //Save it to db
+                                        $newidmod = insert_record("course_modules",$course_module); 
+                                        if ($newidmod) {
+                                            //save old and new module id
+                                            //In the info field, we save the original instance of the module
+                                            //to use it later
+                                            backup_putid ($restore->backup_unique_code,"course_modules",
+                                                          $keym,$newidmod,$mod->instance);
+                                        } else {
+                                            $status = false;
+                                        }
+                                        //Now, calculate the sequence field
+                                        if ($status) {
+                                            if ($sequence) {
+                                                $sequence .= ",".$newidmod;
+                                            } else {
+                                                $sequence = $newidmod;
+                                            }
+                                        }
                                     } else {
                                         $status = false;
                                     }
-                                    //Now, calculate the sequence field
-                                    if ($status) {
-                                        if ($sequence) {
-                                            $sequence .= ",".$newidmod;
-                                        } else {
-                                            $sequence = $newidmod;
-                                        }
-                                    }
-                                } else {
-                                    $status = false;
                                 }
                             }
                         }
@@ -2387,13 +2404,17 @@
                 echo '<ul>';
                 //Iterate over each module
                 foreach ($info as $mod) {
-                    $modrestore = $mod->modtype."_restore_mods";
-                    if (function_exists($modrestore)) {
-                        //print_object ($mod);                                                //Debug
-                        $status = $modrestore($mod,$restore);
-                    } else {
-                        //Something was wrong. Function should exist.
-                        $status = false;
+                    if (!is_array($restore->mods[$mod->modtype]->instances)  // we don't care about per instance
+                        || (array_key_exists($mod->id,$restore->mods[$mod->modtype]->instances) 
+                            && !empty($restore->mods[$mod->modtype]->instances[$mod->id]->restore))) {
+                        $modrestore = $mod->modtype."_restore_mods";
+                        if (function_exists($modrestore)) {
+                            //print_object ($mod);                                                //Debug
+                            $status = $modrestore($mod,$restore);
+                        } else {
+                            //Something was wrong. Function should exist.
+                            $status = false;
+                        }
                     }
                 }
                 echo '</ul>';
@@ -3210,6 +3231,23 @@
                                 break;
                             case "USERINFO":
                                 $this->info->mods[$this->info->tempName]->userinfo = $this->getContents();
+                                break;
+                        }
+                    }
+                    if ($this->level == 7) {
+                        switch ($tagName) {
+                            case "ID":
+                                $this->info->tempId = $this->getContents();
+                                $this->info->mods[$this->info->tempName]->instances[$this->info->tempId]->id = $this->info->tempId;
+                                break;
+                            case "NAME":
+                                $this->info->mods[$this->info->tempName]->instances[$this->info->tempId]->name = $this->getContents();
+                                break;
+                            case "INCLUDED":
+                                $this->info->mods[$this->info->tempName]->instances[$this->info->tempId]->backup = $this->getContents();
+                                break;
+                            case "USERINFO":
+                                $this->info->mods[$this->info->tempName]->instances[$this->info->tempId]->userinfo = $this->getContents();
                                 break;
                         }
                     }
@@ -4625,6 +4663,21 @@
             $restore = $backup;
         }
         return $restore;
+    }
+
+    /** 
+     * compatibility function
+     * checks for per-instance backups AND 
+     * older per-module backups
+     * and returns whether userdata has been selected.
+     */
+    function restore_userdata_selected($restore,$modname,$modid) {
+        // check first for per instance array
+        if (!empty($restore->mods[$modname]->instances)) { // supports per instance
+            return array_key_exists($modid,$restore->mods[$modname]->instances) 
+                && !empty($restore->mods[$modname]->instances[$modid]->userinfo);
+        }
+        return !empty($restore->mods[$modname]->userinfo);
     }
 
 ?>

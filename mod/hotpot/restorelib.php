@@ -73,7 +73,7 @@ function hotpot_restore_mods($mod, $restore) {
 		// print a message after each hotpot is backed up
 		$more_restore .= 'print "<li>".get_string("modulename", "hotpot")." &quot;".$record->name."&quot;</li>";';
 		$more_restore .= 'backup_flush(300);';
-		if ($restore->mods['hotpot']->userinfo) {
+        if (restore_userdata_selected($restore,'hotpot',$mod->id)) {
 			if (isset($xml["STRING_DATA"]) && isset($xml["QUESTION_DATA"])) {
 				// HotPot v2.1+
 				$more_restore .= '$status = hotpot_restore_strings($restore, $status, $xml, $record);';

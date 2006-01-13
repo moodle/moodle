@@ -182,7 +182,7 @@
                 $entry->sourceglossaryid = $source->new_id;
             }
             //If it's a teacher entry or userinfo was selected, restore the entry
-            if ($entry->teacherentry or $restore->mods['glossary']->userinfo) {
+            if ($entry->teacherentry or restore_userdata_selected($restore,'glossary',$old_glossary_id)) {
                 //The structure is equal to the db, so insert the glossary_entries
                 $newid = insert_record ("glossary_entries",$entry);
 

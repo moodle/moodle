@@ -34,6 +34,7 @@
             $modname = $mod->name;
             $modfile = "$CFG->dirroot/mod/$modname/backuplib.php";
             $modbackup = $modname."_backup_mods";
+            $modbackupone = $modname."_backup_one_mod";
             $modcheckbackup = $modname."_check_backup_mods";
             if (file_exists($modfile)) {
                include_once($modfile);
@@ -41,6 +42,21 @@
                    $var = "exists_".$modname;
                    $$var = true;
                    $count++;
+                   // check that there are instances and we can back them up individually
+                   if (count_records('course_modules','course',$course->id,'module',$mod->id) && function_exists($modbackupone)) {
+                       $var = 'exists_one_'.$modname;
+                       $$var = true;
+                       $varname = $modname.'_instances';
+                       $$varname = get_all_instances_in_course($modname,$course);
+                       foreach ($$varname as $instance) {
+                           $var = 'backup_'.$modname.'_instance_'.$instance->id;
+                           $$var = optional_param($var,0);
+                           $var = 'backup_user_info_'.$modname.'_instance_'.$instance->id;
+                           $$var = optional_param($var,0);
+                           $var = 'backup_'.$modname.'_instances';
+                           $$var = 1; // we need this later to determine what to display in modcheckbackup.
+                       }
+                   }
                }
             }
             //Check data
@@ -194,7 +210,28 @@
                     echo $backup_user_options[$$var]."</b>";
                     //Call the check function to show more info
                     $modcheckbackup = $modname."_check_backup_mods";
-                    $table->data = $modcheckbackup($id,$$var,$backup_unique_code);
+                    $var = $modname.'_instances';
+                    $instancestopass = array();
+                    if (!empty($$var) && is_array($$var) && count($$var)) {
+                        $table->data = array();
+                        $countinstances = 0;
+                        foreach ($$var as $instance) {
+                            $var1 = 'backup_'.$modname.'_instance_'.$instance->id;
+                            $var2 = 'backup_user_info_'.$modname.'_instance_'.$instance->id;
+                            if (!empty($$var1)) {
+                                $obj = new StdClass;
+                                $obj->name = $instance->name;
+                                $obj->userdata = $$var2;
+                                $obj->id = $instance->id;
+                                $instancestopass[$instance->id]= $obj;
+                                $countinstances++;
+                                echo '<input type="hidden" name="'.$var1.'" value="'.$$var1.'" />';
+                                echo '<input type="hidden" name="'.$var2.'" value="'.$$var2.'" />';
+                                
+                            }
+                        }
+                    } 
+                    $table->data = $modcheckbackup($id,$$var,$backup_unique_code,$instancestopass);
                     print_table($table); 
                     echo "</td></tr>";
                 }
