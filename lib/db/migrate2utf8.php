@@ -406,6 +406,39 @@ function migrate2utf8_cache_text_formattedtext($recordid){
     return $result;
 }
 
+function migrate2utf8_grade_category_name($recordid){
+    global $CFG;
+
+/// Some trivial checks
+    if (empty($recordid)) {
+        log_the_problem_somewhere();
+        return false;
+    }
+
+    if (!$gradecategory = get_record('grade_category', 'id', $recordid)) {
+        log_the_problem_somewhere();
+        return false;
+    }
+
+    $sitelang   = $CFG->lang;
+    $courselang = get_course_lang($gradecategory->courseid);  //Non existing!
+    $userlang   = get_main_teacher_lang($gradecategory->courseid); //N.E.!!
+
+    $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+
+/// We are going to use textlib facilities
+    $textlib = textlib_get_instance();
+/// Convert the text
+    $result = $textlib->convert($gradecategory->name, $fromenc);
+
+    $newgradecategory = new object;
+    $newgradecategory->id = $recordid;
+    $newgradecategory->name = $result;
+    update_record('grade_category',$newgradecategory);
+/// And finally, just return the converted field
+    return $result;
+}
+
 function migrate2utf8_grade_letter_letter($recordid){
     global $CFG;
 
@@ -448,7 +481,7 @@ function migrate2utf8_group_name($recordid){
         return false;
     }
 
-    if (!$group = get_record('group', 'id', $recordid)) {
+    if (!$group = get_record('groups', 'id', $recordid)) {
         log_the_problem_somewhere();
         return false;
     }
@@ -467,7 +500,7 @@ function migrate2utf8_group_name($recordid){
     $newgroup = new object;
     $newgroup->id = $recordid;
     $newgroup->name = $result;
-    update_record('group',$newgroup);
+    update_record('groups',$newgroup);
 /// And finally, just return the converted field
     return $result;
 }
@@ -481,7 +514,7 @@ function migrate2utf8_group_description($recordid){
         return false;
     }
 
-    if (!$group = get_record('group', 'id', $recordid)) {
+    if (!$group = get_record('groups', 'id', $recordid)) {
         log_the_problem_somewhere();
         return false;
     }
@@ -500,7 +533,7 @@ function migrate2utf8_group_description($recordid){
     $newgroup = new object;
     $newgroup->id = $recordid;
     $newgroup->description = $result;
-    update_record('group',$newgroup);
+    update_record('groups',$newgroup);
 /// And finally, just return the converted field
     return $result;
 }
@@ -514,7 +547,7 @@ function migrate2utf8_group_lang($recordid){
         return false;
     }
 
-    if (!$group = get_record('group', 'id', $recordid)) {
+    if (!$group = get_record('groups', 'id', $recordid)) {
         log_the_problem_somewhere();
         return false;
     }
@@ -533,7 +566,7 @@ function migrate2utf8_group_lang($recordid){
     $newgroup = new object;
     $newgroup->id = $recordid;
     $newgroup->lang = $result;
-    update_record('group',$newgroup);
+    update_record('groups',$newgroup);
 /// And finally, just return the converted field
     return $result;
 }
@@ -547,7 +580,7 @@ function migrate2utf8_group_theme($recordid){
         return false;
     }
 
-    if (!$group = get_record('group', 'id', $recordid)) {
+    if (!$group = get_record('groups', 'id', $recordid)) {
         log_the_problem_somewhere();
         return false;
     }
@@ -566,7 +599,7 @@ function migrate2utf8_group_theme($recordid){
     $newgroup = new object;
     $newgroup->id = $recordid;
     $newgroup->theme = $result;
-    update_record('group',$newgroup);
+    update_record('groups',$newgroup);
 /// And finally, just return the converted field
     return $result;
 }
@@ -580,12 +613,12 @@ function migrate2utf8_message_message($recordid){
         return false;
     }
 
-    if (!$message = get_record('message', 'id', $recordid)) {
+    if (!$message = get_record('message_read', 'id', $recordid)) {
         log_the_problem_somewhere();
         return false;
     }
 
-    $user = get_record('user','id',$message->userfrom);
+    $user = get_record('user','id',$message->useridfrom);
 
     $sitelang   = $CFG->lang;
     $courselang = null;  //Non existing!
@@ -601,7 +634,7 @@ function migrate2utf8_message_message($recordid){
     $newmessage = new object;
     $newmessage->id = $recordid;
     $newmessage->message = $result;
-    update_record('message',$newmessage);
+    update_record('message_read',$newmessage);
 /// And finally, just return the converted field
     return $result;
 }
@@ -615,12 +648,12 @@ function migrate2utf8_message_read_message($recordid){
         return false;
     }
 
-    if (!$messageread = get_record('message', 'id', $recordid)) {
+    if (!$messageread = get_record('message_read', 'id', $recordid)) {
         log_the_problem_somewhere();
         return false;
     }
 
-    $user = get_record('user','id',$messageread->userfrom);
+    $user = get_record('user','id',$messageread->useridfrom);
 
     $sitelang   = $CFG->lang;
     $courselang = null;  //Non existing!
@@ -636,7 +669,40 @@ function migrate2utf8_message_read_message($recordid){
     $newmessageread = new object;
     $newmessageread->id = $recordid;
     $newmessageread->message = $result;
-    update_record('message',$newmessage);
+    update_record('message_read',$newmessage);
+/// And finally, just return the converted field
+    return $result;
+}
+
+function migrate2utf8_modules_search($recordid){
+    global $CFG;
+
+/// Some trivial checks
+    if (empty($recordid)) {
+        log_the_problem_somewhere();
+        return false;
+    }
+
+    if (!$modules = get_record('modules', 'id', $recordid)) {
+        log_the_problem_somewhere();
+        return false;
+    }
+    
+    $sitelang   = $CFG->lang;
+    $courselang = null;  //Non existing!
+    $userlang   = null; //N.E.!!
+
+    $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+
+/// We are going to use textlib facilities
+    $textlib = textlib_get_instance();
+/// Convert the text
+    $result = $textlib->convert($modules->search, $fromenc);
+
+    $newmodules = new object;
+    $newmodules->id = $recordid;
+    $newmodules->search = $result;
+    update_record('modules',$newmodules);
 /// And finally, just return the converted field
     return $result;
 }
@@ -873,12 +939,11 @@ function migrate2utf8_user_description($recordid){
     $userlang   = $user->lang; //N.E.!!
 
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
-
 /// We are going to use textlib facilities
     $textlib = textlib_get_instance();
 /// Convert the text
     $result = $textlib->convert($user->description, $fromenc);
-
+echo "useruseruser ".($result);
     $newuser = new object;
     $newuser->id = $recordid;
     $newuser->description = $result;

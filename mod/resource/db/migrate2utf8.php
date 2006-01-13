@@ -1,5 +1,5 @@
 <?
-function migrate2utf_resource_name($recordid){
+function migrate2utf8_resource_name($recordid){
     global $CFG;
 
 /// Some trivial checks
@@ -8,7 +8,7 @@ function migrate2utf_resource_name($recordid){
         return false;
     }
 
-    if (!$resource = get_record('resource','id',$recordid) {
+    if (!$resource = get_record('resource','id',$recordid)) {
         log_the_problem_somewhere();
         return false;
     }
@@ -32,7 +32,7 @@ function migrate2utf_resource_name($recordid){
     return $result;
 }
 
-function migrate2utf_resource_reference($recordid){
+function migrate2utf8_resource_reference($recordid){
     global $CFG;
 
 /// Some trivial checks
@@ -41,7 +41,7 @@ function migrate2utf_resource_reference($recordid){
         return false;
     }
 
-    if (!$resource = get_record('resource','id',$recordid) {
+    if (!$resource = get_record('resource','id',$recordid)) {
         log_the_problem_somewhere();
         return false;
     }
@@ -65,7 +65,7 @@ function migrate2utf_resource_reference($recordid){
     return $result;
 }
 
-function migrate2utf_resource_summary($recordid){
+function migrate2utf8_resource_summary($recordid){
     global $CFG;
 
 /// Some trivial checks
@@ -74,7 +74,7 @@ function migrate2utf_resource_summary($recordid){
         return false;
     }
 
-    if (!$resource = get_record('resource','id',$recordid) {
+    if (!$resource = get_record('resource','id',$recordid)) {
         log_the_problem_somewhere();
         return false;
     }
@@ -84,12 +84,11 @@ function migrate2utf_resource_summary($recordid){
     $userlang   = get_main_teacher_lang($resource->course); //N.E.!!
 
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
-
 /// We are going to use textlib facilities
     $textlib = textlib_get_instance();
 /// Convert the text
     $result = $textlib->convert($resource->summary, $fromenc);
-
+print('sumsumsum'.$result);
     $newresource = new object;
     $newresource->id = $recordid;
     $newresource->summary = $result;
@@ -98,7 +97,7 @@ function migrate2utf_resource_summary($recordid){
     return $result;
 }
 
-function migrate2utf_resource_alltext($recordid){
+function migrate2utf8_resource_alltext($recordid){
     global $CFG;
 
 /// Some trivial checks
@@ -107,7 +106,7 @@ function migrate2utf_resource_alltext($recordid){
         return false;
     }
 
-    if (!$resource = get_record('resource','id',$recordid) {
+    if (!$resource = get_record('resource','id',$recordid)) {
         log_the_problem_somewhere();
         return false;
     }

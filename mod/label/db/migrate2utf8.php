@@ -1,5 +1,5 @@
 <?
-function migrate2utf_label_name($recordid){
+function migrate2utf8_label_name($recordid){
     global $CFG;
 
 /// Some trivial checks
@@ -32,7 +32,7 @@ function migrate2utf_label_name($recordid){
     return $result;
 }
 
-function migrate2utf_label_content($recordid){
+function migrate2utf8_label_content($recordid){
     global $CFG;
 
 /// Some trivial checks

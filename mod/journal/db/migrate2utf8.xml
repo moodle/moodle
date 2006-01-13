@@ -1,4 +1,4 @@
-<DBMIGRATION type="mod/journel" VERSION="2005120100">
+<DBMIGRATION type="mod/journal" VERSION="2005120100">
   <TABLES>
     <TABLE name="journal_entries">
       <FIELDS>

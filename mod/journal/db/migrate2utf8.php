@@ -1,5 +1,5 @@
 <?
-function migrate2utf_journal_name($recordid){
+function migrate2utf8_journal_name($recordid){
     global $CFG;
 
 /// Some trivial checks
@@ -32,7 +32,7 @@ function migrate2utf_journal_name($recordid){
     return $result;
 }
 
-function migrate2utf_glossary_intro($recordid){
+function migrate2utf8_journal_intro($recordid){
     global $CFG;
 
 /// Some trivial checks

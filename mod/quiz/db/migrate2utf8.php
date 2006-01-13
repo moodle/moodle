@@ -38,7 +38,7 @@ function migrate2utf8_quiz_questions_name($recordid){
     $newquizquestion = new object;
     $newquizquestion->id = $recordid;
     $newquizquestion->name = $result;
-    update_record('quiz_question',$newquizquestion);
+    update_record('quiz_questions',$newquizquestion);
 /// And finally, just return the converted field
     return $result;
 }
@@ -82,7 +82,7 @@ function migrate2utf8_quiz_questions_questiontext($recordid){
     $newquizquestion = new object;
     $newquizquestion->id = $recordid;
     $newquizquestion->questiontext = $result;
-    update_record('quiz_question',$newquizquestion);
+    update_record('quiz_questions',$newquizquestion);
 /// And finally, just return the converted field
     return $result;
 }
@@ -175,7 +175,7 @@ function migrate2utf8_quiz_match_sub_questiontext($recordid){
     $newquizmatchsub = new object;
     $newquizmatchsub->id = $recordid;
     $newquizmatchsub->questiontext = $result;
-    update_record('quiz_numerical_units',$newquizmatchsub);
+    update_record('quiz_match_sub',$newquizmatchsub);
 /// And finally, just return the converted field
     return $result;
 }
@@ -221,7 +221,7 @@ function migrate2utf8_quiz_match_sub_answertext($recordid){
     $newquizmatchsub = new object;
     $newquizmatchsub->id = $recordid;
     $newquizmatchsub->answertext = $result;
-    update_record('quiz_numerical_units',$newquizmatchsub);
+    update_record('quiz_match_sub',$newquizmatchsub);
 /// And finally, just return the converted field
     return $result;
 }
@@ -248,7 +248,7 @@ function migrate2utf8_quiz_answers_answer($recordid){
         return false;
     }
 
-    if (!$quizanswer= get_record('quiz_answer','id',$recordid)) {
+    if (!$quizanswer= get_record('quiz_answers','id',$recordid)) {
         log_the_problem_somewhere();
         return false;
     }
@@ -267,7 +267,7 @@ function migrate2utf8_quiz_answers_answer($recordid){
     $newquizanswer = new object;
     $newquizanswer->id = $recordid;
     $newquizanswer->answer = $result;
-    update_record('quiz_answer',$newquizanswer);
+    update_record('quiz_answers',$newquizanswer);
 /// And finally, just return the converted field
     return $result;
 }
@@ -294,7 +294,7 @@ function migrate2utf8_quiz_answers_feedback($recordid){
         return false;
     }
 
-    if (!$quizanswer= get_record('quiz_answer','id',$recordid)) {
+    if (!$quizanswer= get_record('quiz_answers','id',$recordid)) {
         log_the_problem_somewhere();
         return false;
     }
@@ -313,7 +313,7 @@ function migrate2utf8_quiz_answers_feedback($recordid){
     $newquizanswer = new object;
     $newquizanswer->id = $recordid;
     $newquizanswer->feedback = $result;
-    update_record('quiz_answer',$newquizanswer);
+    update_record('quiz_answers',$newquizanswer);
 /// And finally, just return the converted field
     return $result;
 }
@@ -403,7 +403,7 @@ function migrate2utf8_quiz_categories_name($recordid){
     $newquizcategory = new object;
     $newquizcategory->id = $recordid;
     $newquizcategory->name = $result;
-    update_record('quiz_category',$newquizcategory);
+    update_record('quiz_categories',$newquizcategory);
 /// And finally, just return the converted field
     return $result;
 }
@@ -445,7 +445,7 @@ function migrate2utf8_quiz_categories_info($recordid){
     $newquizcategory = new object;
     $newquizcategory->id = $recordid;
     $newquizcategory->info = $result;
-    update_record('quiz_category',$newquizcategory);
+    update_record('quiz_categories',$newquizcategory);
 /// And finally, just return the converted field
     return $result;
 }

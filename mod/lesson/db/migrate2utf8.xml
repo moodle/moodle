@@ -35,7 +35,7 @@
         </FIELD>
         <FIELD name="response" method="PHP_FUNCTION" type="text" length="0">
           <PHP_FUNCTION>
-            migrate2utf8_lesson_answers_answer(RECORDID)
+            migrate2utf8_lesson_answers_response(RECORDID)
           </PHP_FUNCTION>
         </FIELD>
       </FIELDS>
@@ -76,6 +76,8 @@
            migrate2utf8_lesson_password(RECORDID)
           </PHP_FUNCTION>
         </FIELD>
+        <FIELD name="conditions" method="NO_CONV" type="text" length="0" />
+        <FIELD name="mediafile" method="NO_CONV" type="varchar" length="255" />
         <FIELD name="bgcolor" method="NO_CONV" type="varchar" length="7" />
       </FIELDS>
     </TABLE>

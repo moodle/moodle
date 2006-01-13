@@ -13,12 +13,12 @@
             migrate2utf8_resource_reference(RECORDID)
           </PHP_FUNCTION>
         </FIELD>
-        <FIELD name="summary" method="PHP_FUNCTION" type="varchar" length="255">
+        <FIELD name="summary" method="PHP_FUNCTION" type="text" length="0">
           <PHP_FUNCTION>
             migrate2utf8_resource_summary(RECORDID)
           </PHP_FUNCTION>
         </FIELD>
-        <FIELD name="alltext" method="PHP_FUNCTION" type="varchar" length="255">
+        <FIELD name="alltext" method="PHP_FUNCTION" type="text" length="0">
           <PHP_FUNCTION>
             migrate2utf8_resource_alltext(RECORDID)
           </PHP_FUNCTION>

@@ -1,5 +1,5 @@
 <?
-function migrate2utf_lams_name($recordid){
+function migrate2utf8_lams_name($recordid){
     global $CFG;
 
 /// Some trivial checks
@@ -32,7 +32,7 @@ function migrate2utf_lams_name($recordid){
     return $result;
 }
 
-function migrate2utf_lams_introduction($recordid){
+function migrate2utf8_lams_introduction($recordid){
     global $CFG;
 
 /// Some trivial checks

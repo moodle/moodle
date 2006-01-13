@@ -1,5 +1,5 @@
 <?
-function migrate2utf_scorm_scoes_manifest($recordid){
+function migrate2utf8_scorm_scoes_manifest($recordid){
     global $CFG;
 
 /// Some trivial checks
@@ -43,7 +43,7 @@ function migrate2utf_scorm_scoes_manifest($recordid){
     return $result;
 }
 
-function migrate2utf_scorm_scoes_organization($recordid){
+function migrate2utf8_scorm_scoes_organization($recordid){
     global $CFG;
 
 /// Some trivial checks
@@ -87,7 +87,7 @@ function migrate2utf_scorm_scoes_organization($recordid){
     return $result;
 }
 
-function migrate2utf_scorm_scoes_parent($recordid){
+function migrate2utf8_scorm_scoes_parent($recordid){
     global $CFG;
 
 /// Some trivial checks
@@ -132,7 +132,7 @@ function migrate2utf_scorm_scoes_parent($recordid){
 }
 
 
-function migrate2utf_scorm_scoes_identifier($recordid){
+function migrate2utf8_scorm_scoes_identifier($recordid){
     global $CFG;
 
 /// Some trivial checks
@@ -176,7 +176,7 @@ function migrate2utf_scorm_scoes_identifier($recordid){
     return $result;
 }
 
-function migrate2utf_scorm_scoes_launch($recordid){
+function migrate2utf8_scorm_scoes_launch($recordid){
     global $CFG;
 
 /// Some trivial checks
@@ -220,7 +220,7 @@ function migrate2utf_scorm_scoes_launch($recordid){
     return $result;
 }
 
-function migrate2utf_scorm_scoes_parameters($recordid){
+function migrate2utf8_scorm_scoes_parameters($recordid){
     global $CFG;
 
 /// Some trivial checks
@@ -264,7 +264,7 @@ function migrate2utf_scorm_scoes_parameters($recordid){
     return $result;
 }
 
-function migrate2utf_scorm_scoes_scormtype($recordid){
+function migrate2utf8_scorm_scoes_scormtype($recordid){
     global $CFG;
 
 /// Some trivial checks
@@ -308,7 +308,7 @@ function migrate2utf_scorm_scoes_scormtype($recordid){
     return $result;
 }
 
-function migrate2utf_scorm_scoes_title($recordid){
+function migrate2utf8_scorm_scoes_title($recordid){
     global $CFG;
 
 /// Some trivial checks
@@ -352,7 +352,7 @@ function migrate2utf_scorm_scoes_title($recordid){
     return $result;
 }
 
-function migrate2utf_scorm_scoes_prerequisites($recordid){
+function migrate2utf8_scorm_scoes_prerequisites($recordid){
     global $CFG;
 
 /// Some trivial checks
@@ -396,7 +396,7 @@ function migrate2utf_scorm_scoes_prerequisites($recordid){
     return $result;
 }
 
-function migrate2utf_scorm_scoes_maxtimeallowed($recordid){
+function migrate2utf8_scorm_scoes_maxtimeallowed($recordid){
     global $CFG;
 
 /// Some trivial checks
@@ -440,7 +440,7 @@ function migrate2utf_scorm_scoes_maxtimeallowed($recordid){
     return $result;
 }
 
-function migrate2utf_scorm_scoes_timelimitaction($recordid){
+function migrate2utf8_scorm_scoes_timelimitaction($recordid){
     global $CFG;
 
 /// Some trivial checks
@@ -484,7 +484,7 @@ function migrate2utf_scorm_scoes_timelimitaction($recordid){
     return $result;
 }
 
-function migrate2utf_scorm_scoes_datafromlms($recordid){
+function migrate2utf8_scorm_scoes_datafromlms($recordid){
     global $CFG;
 
 /// Some trivial checks
@@ -528,7 +528,7 @@ function migrate2utf_scorm_scoes_datafromlms($recordid){
     return $result;
 }
 
-function migrate2utf_scorm_scoes_masteryscore($recordid){
+function migrate2utf8_scorm_scoes_masteryscore($recordid){
     global $CFG;
 
 /// Some trivial checks
@@ -573,7 +573,7 @@ function migrate2utf_scorm_scoes_masteryscore($recordid){
 }
 
 
-function migrate2utf_scorm_name($recordid){
+function migrate2utf8_scorm_name($recordid){
     global $CFG;
 
 /// Some trivial checks
@@ -606,7 +606,7 @@ function migrate2utf_scorm_name($recordid){
     return $result;
 }
 
-function migrate2utf_scorm_reference($recordid){
+function migrate2utf8_scorm_reference($recordid){
     global $CFG;
 
 /// Some trivial checks
@@ -639,7 +639,7 @@ function migrate2utf_scorm_reference($recordid){
     return $result;
 }
 
-function migrate2utf_scorm_summary($recordid){
+function migrate2utf8_scorm_summary($recordid){
     global $CFG;
 
 /// Some trivial checks
@@ -672,7 +672,7 @@ function migrate2utf_scorm_summary($recordid){
     return $result;
 }
 
-function migrate2utf_scorm_options($recordid){
+function migrate2utf8_scorm_options($recordid){
     global $CFG;
 
 /// Some trivial checks

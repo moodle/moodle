@@ -141,7 +141,15 @@
     </TABLE>
     <TABLE name="grade_item" />
     <TABLE name="grade_preferences" />
-    <TABLE name="grade_category" />
+    <TABLE name="grade_category">
+       <FIELDS>
+        <FIELD name="name" method="PHP_FUNCTION" type="varchar" length="64">
+          <PHP_FUNCTION>
+            migrate2utf8_grade_category_name(RECORDID)
+          </PHP_FUNCTION>
+        </FIELD>
+       </FIELDS>
+    </TABLE>
     <TABLE name="grade_exceptions" />
     <TABLE name="grade_letter">
       <FIELDS>
@@ -170,7 +178,7 @@
             migrate2utf8_groups_lang(RECORDID)
           </PHP_FUNCTION>
         </FIELD>
-        <FIELD name="theme" method="PHP_FUNCTION" type="text" length="0">
+        <FIELD name="theme" method="PHP_FUNCTION" type="varchar" length="50">
           <PHP_FUNCTION>
             migrate2utf8_groups_theme(RECORDID)
           </PHP_FUNCTION>
@@ -181,9 +189,9 @@
       <FIELDS>
         <FIELD name="ip" method="NO_CONV" type="varchar" length="15" dropindex="timecoursemoduleaction"/>
         <FIELD name="module" method="NO_CONV" type="varchar" length="20" dropindex="coursemoduleaction"/>
-        <FIELD name="action" method="NO_CONV" type="varchar" length="15" addindex="timecoursemoduleaction(time, course, module(20), action(15))" />
+        <FIELD name="action" method="NO_CONV" type="varchar" length="15"  addindex="timecoursemoduleaction(time, course, module(20), action(15))" />
         <FIELD name="url" method="NO_CONV" type="varchar" length="100" addindex="coursemoduleaction(course, module(20), action(15))" />
-        <FIELD name="info" method="PLAIN_SQL_UPDATE" type="text" length="0">
+        <FIELD name="info" method="PLAIN_SQL_UPDATE" type="varchar" length="255">
           <SQL_DETECT_USER>
             SELECT l.userid
             FROM {$CFG->prefix}log l
@@ -228,7 +236,12 @@
     </TABLE>
     <TABLE name="modules">
       <FIELDS>
-        <FIELD name="name" method="PLAIN_SQL_UPDATE" type="varchar" length="20" dropindex="name" addindex="name(name(20))"/>
+          <FIELD name="name" method="NO_CONV" type="varchar" length="20" dropindex="name" addindex="name(name(20))"/>
+          <FIELD name="search" method="PHP_FUNCTION" type="varchar" length="255">
+           <PHP_FUNCTION>
+             migrate2utf8_modules_search(RECORDID)
+           </PHP_FUNCTION>        
+          </FIELD>
       </FIELDS>
     </TABLE>
     <TABLE name="scale">
@@ -274,7 +287,7 @@
     <TABLE name="sessions">
       <FIELDS>
         <FIELD name="sesskey" method="NO_CONV" type="varchar" length="32" dropprimary="true" addprimary="(sesskey(32))"/>
-        <FIELD name="expireref " method="NO_CONV" type="varchar" length="64" />
+        <FIELD name="expireref" method="NO_CONV" type="varchar" length="64" />
         <FIELD name="data" method="NO_CONV" type="text" length="0" />
       </FIELDS>
     </TABLE>
@@ -336,14 +349,14 @@
     <TABLE name="user_coursecreators" />
     <TABLE name="user">
       <FIELDS>
-        <FIELD name="auth" method="NO_CONV" type="varchar" length="20"/>
+        <FIELD name="auth" method="NO_CONV" type="varchar" length="20" dropindex="auth" addindex="auth(auth(20))"/>
         <FIELD name="username" method="NO_CONV" type="varchar" length="100" dropindex="username" adduniqueindex="username(username(100))"/>
         <FIELD name="password" method="PHP_FUNCTION" type="varchar" length="32">
           <PHP_FUNCTION>
             migrate2utf8_user_password(RECORDID)
           </PHP_FUNCTION>
         </FIELD>
-        <FIELD name="idnumber" method="PHP_FUNCTION" type="varchar" length="64">
+        <FIELD name="idnumber" method="PHP_FUNCTION" type="varchar" length="64" dropindex="idnumber" addindex="idnumber(idnumber(64))">
           <PHP_FUNCTION>
             migrate2utf8_user_idnumber(RECORDID)
           </PHP_FUNCTION>

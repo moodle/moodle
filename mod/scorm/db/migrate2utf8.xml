@@ -2,7 +2,7 @@
   <TABLES>
     <TABLE name="scorm_scoes_track">
       <FIELDS>
-        <FIELD name="element" method="PLAIN_SQL_UPDATE" type="varchar" length="255" dropindex="track" addindex="track (userid, scormid, scoid, attempt, element(255))">
+        <FIELD name="value" method="PLAIN_SQL_UPDATE" type="longtext" length="0">
           <SQL_DETECT_USER>
            SELECT sst.userid
            FROM {$CFG->prefix}scorm_scoes_track sst
@@ -16,7 +16,7 @@
                  AND sst.id = RECORDID
           </SQL_DETECT_COURSE>
         </FIELD>
-        <FIELD name="value" method="PLAIN_SQL_UPDATE" type="longtext" length="0">
+        <FIELD name="element" method="PLAIN_SQL_UPDATE" type="varchar" length="255" dropindex="track" addindex="track (userid, scormid, scoid, attempt, element(255))">
           <SQL_DETECT_USER>
            SELECT sst.userid
            FROM {$CFG->prefix}scorm_scoes_track sst

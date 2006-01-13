@@ -133,7 +133,7 @@ function migrate2utf8_lesson_pages_contents($recordid){
     $newlessonpages = new object;
     $newlessonpages->id = $recordid;
     $newlessonpages->contents = $result;
-    update_record('lesson_answers',$newlessonpages);
+    update_record('lesson_pages',$newlessonpages);
 /// And finally, just return the converted field
     return $result;
 }
@@ -177,7 +177,7 @@ function migrate2utf8_lesson_pages_title($recordid){
     $newlessonpages = new object;
     $newlessonpages->id = $recordid;
     $newlessonpages->title = $result;
-    update_record('lesson_answers',$newlessonpages);
+    update_record('lesson_pages',$newlessonpages);
 /// And finally, just return the converted field
     return $result;
 }

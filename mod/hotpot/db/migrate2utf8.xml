@@ -3,14 +3,14 @@
     <TABLE name="hotpot_attempts" />
     <TABLE name="hotpot_strings">
       <FIELDS>
-        <FIELD name="string" method="NO_CONV" type="TEXT" length="0">
+          <FIELD name="string" method="NO_CONV" type="TEXT" length="0" />
       </FIELDS>
     </TABLE>
     <TABLE name="hotpot_responses">
       <FIELDS>
-        <FIELD name="correct" method="NO_CONV" type="varchar" length="255">
-        <FIELD name="wrong" method="NO_CONV" type="varchar" length="255">
-        <FIELD name="ignored" method="NO_CONV" type="varchar" length="255">
+          <FIELD name="correct" method="NO_CONV" type="varchar" length="255" />
+          <FIELD name="wrong" method="NO_CONV" type="varchar" length="255" />
+          <FIELD name="ignored" method="NO_CONV" type="varchar" length="255" />
       </FIELDS>
     </TABLE>
     <TABLE name="hotpot_details">
@@ -42,11 +42,6 @@
             migrate2utf8_hotpot_questions_name(RECORDID)
           </PHP_FUNCTION>
         </FIELD>
-        <FIELD name="text" method="PLAIN_SQL_UPDATE" type="text" length="0">
-          <PHP_FUNCTION>
-            migrate2utf8_hotpot_questions_text(RECORDID)
-          </PHP_FUNCTION>
-        </FIELD>
       </FIELDS>
     </TABLE>
     <TABLE name="hotpot">
@@ -68,6 +63,7 @@
           </PHP_FUNCTION>
         </FIELD>
         <FIELD name="subnet" method="NO_CONV" type="varchar" length="255" />
+        <FIELD name="studentfeedbackurl" method="NO_CONV" type="varchar" length="255" />
       </FIELDS>
     </TABLE>
   </TABLES>
