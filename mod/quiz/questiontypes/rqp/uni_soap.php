@@ -2,7 +2,7 @@
 
 // Web services wrapper library script
 
-if (class_exists('SoapClient')) {
+if (check_php_version('5') && class_exists('SoapClient')) {
     // Use the native PHP5 support
     require_once($CFG->dirroot . '/mod/quiz/questiontypes/rqp/uni_soap.php5');
 }
