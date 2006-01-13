@@ -113,7 +113,7 @@ $string['auth_shibboleth_manual_login'] = '手動ログイン';
 $string['auth_shibbolethdescription'] = 'この方法を使用すると、ユーザは<a href=\"http://shibboleth.internet2.edu/\" target=\"_blank\">Shibboleth</a>を使用して作成および認証されます。<br>あなたが使用しているMoodleにShibbolethを設定するには、<a href=\"../auth/shibboleth/README.txt\" target=\"_blank\">README</a> をご覧ください。';
 $string['auth_shibbolethtitle'] = 'Shibboleth';
 $string['auth_updatelocal'] = 'ローカルデータの更新';
-$string['auth_updatelocal_expl'] = '<p><b>ローカルデータの更新:</b> この設定を「Yes」にした場合、このフィールドは(外部認証を通して)ログイン毎またはユーザの同期毎に更新されます。更新されるローカルフィールドはロックする必要があります。</p>';
+$string['auth_updatelocal_expl'] = '<p><b>ローカルデータの更新:</b> この設定を「Yes」にした場合、このフィールドは(外部認証を通して)ログイン毎またはユーザの同期ごとに更新されます。更新されるローカルフィールドはロックする必要があります。</p>';
 $string['auth_updateremote'] = '外部データの更新';
 $string['auth_updateremote_expl'] = '<p><b>外部データの更新:</b> この設定を「Yes」にした場合、ユーザレコードが更新される時に外部認証が更新されます。編集できるようにフィールドをアンロックする必要があります。</p>';
 $string['auth_updateremote_ldap'] = '<p><b>注意:</b> 外部LDAPデータを更新するためには、binddnとbindpwを書き込み権を持ったbindユーザに設定する必要があります。現在、マルチバリュー属性を保護しません。また、更新時にエクストラバリューは取り除かれます。</p>';

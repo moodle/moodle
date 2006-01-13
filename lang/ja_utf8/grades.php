@@ -1,11 +1,11 @@
 <?PHP // $Id$ 
-      // grades.php - created with Moodle 1.6 development (2005090100)
+      // grades.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['addcategory'] = 'カテゴリの追加';
 $string['addcategoryerror'] = 'カテゴリを追加できませんでした。';
 $string['addexceptionerror'] = 'ユーザID:評定項目に例外を追加中にエラーが発生しました。';
-$string['allgrades'] = 'カテゴリ毎の評点';
+$string['allgrades'] = 'カテゴリごとの評点';
 $string['allstudents'] = '全ての学生';
 $string['average'] = '平均';
 $string['bonuspoints'] = 'ボーナスポイント';
