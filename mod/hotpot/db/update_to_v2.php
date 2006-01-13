@@ -1,4 +1,44 @@
 <?PHP
+function hotpot_update_to_v2_1_6() {
+	global $CFG, $db;
+	$ok = true;
+
+	if (strtolower($CFG->dbtype)=='postgres7') {
+		// add, delete and rename certain fields and indexes
+		// that were not correctly setup by postgres7.sql
+
+		// hotpot
+		$table = 'hotpot';
+		if (hotpot_db_field_exists($table, 'studentfeedback') && !hotpot_db_field_exists($table, 'studentfeedbackurl')) {
+			$ok = $ok && hotpot_db_update_field_type($table, 'studentfeedback', 'studentfeedbackurl', 'VARCHAR', 255, '', 'NULL');
+			$ok = $ok && hotpot_db_update_field_type($table, '', 'studentfeedback', 'INTEGER', 4, 'UNSIGNED', 'NOT NULL', '0');
+		}
+
+		// hotpot_attempts
+		$ok = $ok && hotpot_db_remove_field('hotpot_attempts', 'groupid');
+		if (hotpot_db_field_exists($table, 'microreportid') && !hotpot_db_field_exists($table, 'clickreportid')) {
+			$ok = $ok && hotpot_db_update_field_type('hotpot_attempts', 'microreportid', 'clickreportid', 'INTEGER', 10, 'UNSIGNED', 'NULL');
+		}
+
+		// hotpot_questions (add index on question "name")
+		$table = 'hotpot_questions';
+		$field = 'name';
+		$index = "{$table}_{$field}_idx";
+		if (!hotpot_db_index_exists("{$CFG->prefix}$table", "{$CFG->prefix}$index")) {
+			hotpot_db_add_index($table, $field, '20');
+		}
+
+		// hotpot_strings (add index on "string")
+		$table = "hotpot_strings";
+		$field = 'string';
+		$index = "{$table}_{$field}_idx";
+		if (!hotpot_db_index_exists("{$CFG->prefix}$table", "{$CFG->prefix}$index")) {
+			hotpot_db_add_index($table, $field, '20');
+		}
+	}
+
+	return $ok;
+}
 function hotpot_update_to_v2_1_2() {
 	global $CFG, $db;
 	$ok = true;
@@ -718,6 +758,9 @@ function hotpot_db_add_index($table, $field, $length='') {
 			$ok = $ok && $db->Execute("ALTER TABLE `$table` ADD INDEX `$index` (`$field`$length)");
 		break;
 		case 'postgres7' :
+			if ($length) {
+				$field = "SUBSTR($field,$length)";
+			}
 			$ok = $ok && $db->Execute("CREATE INDEX $index ON $table ($field)");
 		break;
 		default: // unknown database type

@@ -10,18 +10,19 @@ CREATE TABLE prefix_hotpot (
   timeclose       INT4 NOT NULL default '0',
   location        INT2 NOT NULL default '0',
   reference       VARCHAR(255) NOT NULL default '',
-  navigation      INT2 NOT NULL default '1',
   outputformat    INT2 NOT NULL default '1',
+  navigation      INT2 NOT NULL default '1',
+  studentfeedback INT2 NOT NULL default '0',
+  studentfeedbackurl VARCHAR(255) NOT NULL default '',
   forceplugins    INT2 NOT NULL default '0',
   shownextquiz    INT2 NOT NULL default '0',
-  microreporting  INT2 NOT NULL default '0',
-  studentfeedback VARCHAR(255) NOT NULL default '0',
   review          INT2 NOT NULL default '0',
   grade           INT4 NOT NULL default '0',
   grademethod     INT2 NOT NULL default '1',
   attempts        INT2 NOT NULL default '0',
   password        VARCHAR(255) NOT NULL default '',
   subnet          VARCHAR(255) NOT NULL default '',
+  microreporting  INT2 NOT NULL default '0',
   timecreated     INT4 NOT NULL default '0',
   timemodified    INT4 NOT NULL default '0'
 );
@@ -33,16 +34,15 @@ CREATE TABLE prefix_hotpot_attempts (
   id SERIAL PRIMARY KEY,
   hotpot        INT4 NOT NULL default '0',
   userid        INT4 NOT NULL default '0',
-  groupid       INT4 NOT NULL default '0',
-  attempt       INT2 NOT NULL default '0',
-  score         INT2,
-  penalties     INT2,
   starttime     INT4,
   endtime       INT4,
+  score         INT2,
+  penalties     INT2,
+  attempt       INT2 NOT NULL default '0',
   timestart     INT4 NOT NULL default '0',
   timefinish    INT4 NOT NULL default '0',
   status        INT2 NOT NULL default '1',
-  microreportid INT4
+  clickreportid INT4 default NULL
 );
 COMMENT ON TABLE prefix_hotpot IS 'details about Hot Potatoes quiz attempts';
 CREATE INDEX prefix_hotpot_attempts_hotpot_idx ON prefix_hotpot_attempts (hotpot);
