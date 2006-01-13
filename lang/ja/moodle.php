@@ -386,7 +386,7 @@ $string['emailconfirmsent'] = '<p>メールが <b>$a</b> 宛に送信されました。
 <p>お分かりにならない場合は、サイト管理者にご連絡ください。';
 $string['emaildigest'] = 'メール要約タイプ';
 $string['emaildigestcomplete'] = '全部 ( 全ての投稿を毎日メール )';
-$string['emaildigestoff'] = '要約無し ( フォーラムの投稿毎にメール )';
+$string['emaildigestoff'] = '要約無し ( フォーラムの投稿ごとにメール )';
 $string['emaildigestsubjects'] = '題名 ( 題名のみを毎日メール )';
 $string['emaildisable'] = 'このメールアドレスは無効です';
 $string['emaildisableclick'] = 'このメールアドレスにメールが送信されないようにする';
@@ -1206,7 +1206,7 @@ $string['updated'] = '$a を更新しました。';
 $string['updatemymoodleoff'] = 'ノーマルモード';
 $string['updatemymoodleon'] = 'このページを編集';
 $string['updatemyprofile'] = 'プロフィールの更新';
-$string['updatesevery'] = '$a 秒毎に更新';
+$string['updatesevery'] = '$a 秒ごとに更新';
 $string['updatethis'] = 'この $a を更新';
 $string['updatethiscourse'] = 'このコースを更新';
 $string['updatinga'] = '$a を更新中';
