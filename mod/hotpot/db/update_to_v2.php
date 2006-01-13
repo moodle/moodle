@@ -15,9 +15,10 @@ function hotpot_update_to_v2_1_6() {
 		}
 
 		// hotpot_attempts
-		$ok = $ok && hotpot_db_remove_field('hotpot_attempts', 'groupid');
+		$table = 'hotpot_attempts';
+		$ok = $ok && hotpot_db_remove_field($table, 'groupid');
 		if (hotpot_db_field_exists($table, 'microreportid') && !hotpot_db_field_exists($table, 'clickreportid')) {
-			$ok = $ok && hotpot_db_update_field_type('hotpot_attempts', 'microreportid', 'clickreportid', 'INTEGER', 10, 'UNSIGNED', 'NULL');
+			$ok = $ok && hotpot_db_update_field_type($table, 'microreportid', 'clickreportid', 'INTEGER', 10, 'UNSIGNED', 'NULL');
 		}
 
 		// hotpot_questions (add index on question "name")
