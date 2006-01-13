@@ -894,14 +894,19 @@ body#grade-index .grades .weighted {
   text-align: right;
 }
 
-
+.backup-form-instances {
+   margin:0px 20px 0px 20px;
+}
+.restore-form-instances {
+   margin:0px 20px 0px 20px;
+}
 
 /***
  *** Login
  ***/
 
 .loginbox {
-  margin-top:15px;
+  margin-top:7px;
 }
 
 .loginbox .content {
