@@ -467,12 +467,12 @@
 
             // starts the slideshow div
             if($lesson->slideshow && $page->qtype == LESSON_BRANCHTABLE) { 
-                echo "<div class=\"slideshow\" style=\"
+                echo "<table align=\"center\" width=\"100%\" border=\"0\"><tr><td>\n".
+                     "<div class=\"slideshow\" style=\"
                         background-color: $lesson->bgcolor;
                         height: ".$lesson->height."px;
                         width: ".$lesson->width."px;
                         \">\n";
-                echo "<table align=\"center\" width=\"100%\" border=\"0\"><tr><td>\n";
             } else {
                 echo "<table align=\"center\" width=\"100%\" border=\"0\"><tr><td>\n";
                 $lesson->slideshow = false; // turn off slide show for all pages other than LESSON_BRANTCHTABLE
@@ -1232,7 +1232,11 @@
             echo "<div align=\"center\" style=\"padding: 5px;\" class=\"lessonbutton standardbutton\"><a href=\"../../course/view.php?id=$course->id\">".get_string("mainmenu", "lesson")."</a></div>\n"; // Back to the menu (course view).
             echo "<div align=\"center\" style=\"padding: 5px;\" class=\"lessonbutton standardbutton\"><a href=\"../../grade/index.php?id=$course->id\">".get_string("viewgrades", "lesson")."</a></div>\n"; //view grades
         }
-
+        
+        if ($lesson->slideshow) {  // ends the slideshow div
+            echo '</div>';
+        }
+        
         if ($lesson->displayleft || $lesson->slideshow) {  // this ends the table cell and table for the leftmenu or for slideshow
             echo "</td></tr></table>";
         } 
