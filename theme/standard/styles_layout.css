@@ -313,6 +313,10 @@ body#admin-index .c0 {
   vertical-align: top;
 } 
 
+body#admin-index .c1 {
+  vertical-align: middle;
+} 
+
 body#admin-modules table.generaltable td.cell,
 body#admin-modules .generaltablecell {
   padding-top: 2px;
@@ -721,6 +725,9 @@ table.calendar-controls .next {
   width: 30%;
 }
 
+#calendar .indent {
+    padding-left: 20px;
+}
 
 /***
  *** Course

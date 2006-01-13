@@ -185,6 +185,16 @@ body#admin-blocks table#incompatible td.c0 {
   font-weight: bold;
 }
 
+body#admin-index .explanation {
+  font-size: 0.7em;
+  vertical-align: bottom;
+}
+
+body#admin-index .copyright {
+  text-align: center;
+  font-size: 0.8em;
+}
+
 /***
  *** Blocks
  ***/
