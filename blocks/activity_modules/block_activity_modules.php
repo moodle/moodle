@@ -1,4 +1,4 @@
-<?PHP //$Id$
+<?php //$Id$
 
 class block_activity_modules extends block_list {
     function init() {
@@ -13,6 +13,7 @@ class block_activity_modules extends block_list {
         // Hacker's improvised caching scheme: avoid fetching the mod
         // data from db if the course format has already fetched them
         if(!isset($GLOBALS['modnamesplural']) || !isset($GLOBALS['modnamesused'])) {
+            require_once($CFG->dirroot.'/course/lib.php');
             get_all_mods($this->instance->pageid, $mods, $modnames, $modnamesplural, $modnamesused);
         }
         else {
