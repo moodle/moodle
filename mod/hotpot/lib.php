@@ -1123,7 +1123,7 @@ function hotpot_get_precision(&$hotpot) {
 }
 
 function hotpot_get_participants($hotpotid) {
-//Must return an array of user records (all data) who are participants
+//Must return an array of user ids who are participants
 //for a given instance of hotpot. Must include every user involved
 //in the instance, independient of his role (student, teacher, admin...)
 //See other modules as example.
@@ -1131,7 +1131,7 @@ function hotpot_get_participants($hotpotid) {
 
 	return get_records_sql("
 		SELECT DISTINCT 
-			u.*
+			u.id, u.id
 		FROM 
 			{$CFG->prefix}user u,
 			{$CFG->prefix}hotpot_attempts a
