@@ -391,6 +391,20 @@ function schedule_backup_course_configure($course,$starttime = 0) {
                 }
             }
         }
+        // now set instances
+        if ($coursemods = get_course_mods($course->id)) {
+            foreach ($coursemods as $mod) {
+                if (array_key_exists($mod->modname,$preferences->mods)) { // we are to backup this module
+                    if (empty($preferences->mods[$mod->modname]->instances)) {
+                        $preferences->mods[$mod->modname]->instances = array(); // avoid warnings
+                    }
+                    $preferences->mods[$mod->modname]->instances[$mod->instance]->backup = $preferences->mods[$modname]->backup;
+                    $preferences->mods[$mod->modname]->instances[$mod->instance]->userinfo = $preferences->mods[$modname]->userinfo;
+                    // there isn't really a nice way to do this...
+                    $preferences->mods[$mod->modname]->instances[$mod->instance]->name = get_field($mod->modname,'name','id',$mod->instance);
+                }
+            }
+        }
     }
     
     //Convert other parameters
