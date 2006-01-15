@@ -291,14 +291,13 @@ function hotpot_restore_record(&$restore, $status, &$xml, $table, $foreign_keys,
 						$new_ids[] = $key_record->new_id;
 					} else {
 						// foreign key could not be updated
-						// print "<ul><li><b>Warning:</b> Foreign key could not be updated: table=$table, $key=".$record->$key."</li></ul>";
-						print "<ul><li><b>Warning:</b><br>";
-						print "'$key_table' record (id='$old_id') is missing from backup data.<br>";
+						print "<ul><li><b>Warning:</b><br>Foreign key could not be updated:<br>";
+						print "'$key_table' record (old id=$old_id) is missing from backup data<br>";
 						print "'$table' record ";
 						if (isset($record->id)) {
-							print "(old id='$record->id') ";
+							print "(old id=$record->id) ";
 						}
-						print "could not be restored</li></ul>";
+						print "was not restored</li></ul>";
 						$ok = false;
 					}
 				}
