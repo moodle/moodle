@@ -34,7 +34,11 @@
         error("Site not found!");
     }
 
-    $status = restore_precheck($id,$file,!empty($SESSION->restore->importing));
+    $errorstr = '';
+    if (!empty($SESSION->restore->importing)) {
+        define('RESTORE_SILENTLY',true);
+    }
+    $status = restore_precheck($id,$file,$errorstr);
  
     if (!$status) {
         error("An error occured");

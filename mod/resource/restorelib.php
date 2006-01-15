@@ -82,7 +82,9 @@
             $newid = insert_record ("resource",$resource);
 
             //Do some output     
-            echo "<li>".get_string("modulename","resource")." \"".format_string(stripslashes($resource->name),true)."\"</li>";
+            if (!defined('RESTORE_SILENTLY')) {
+                echo "<li>".get_string("modulename","resource")." \"".format_string(stripslashes($resource->name),true)."\"</li>";
+            }
             backup_flush(300);
 
             if ($newid) {
@@ -196,15 +198,19 @@
                     $resource->summary = addslashes($result2);
                     $status = update_record("resource",$resource);
                     if ($CFG->debug>7) {
-                        echo '<br /><hr />'.htmlentities($content1).'<br />changed to<br />'.htmlentities($result1).'<hr /><br />';
-                        echo '<br /><hr />'.htmlentities($content2).'<br />changed to<br />'.htmlentities($result2).'<hr /><br />';
+                        if (!defined('RESTORE_SILENTLY')) {
+                            echo '<br /><hr />'.htmlentities($content1).'<br />changed to<br />'.htmlentities($result1).'<hr /><br />';
+                            echo '<br /><hr />'.htmlentities($content2).'<br />changed to<br />'.htmlentities($result2).'<hr /><br />';
+                        }
                     }
                 }
                 //Do some output
                 if (($i+1) % 5 == 0) {
-                    echo ".";
-                    if (($i+1) % 100 == 0) {
-                        echo "<br />";
+                    if (!defined('RESTORE_SILENTLY')) {
+                        echo ".";
+                        if (($i+1) % 100 == 0) {
+                            echo "<br />";
+                        }
                     }
                     backup_flush(300);
                 }
@@ -241,9 +247,11 @@
                 //Do some output
                 $i++;
                 if (($i+1) % 1 == 0) {
-                    echo ".";
-                    if (($i+1) % 20 == 0) {
-                        echo "<br />";
+                    if (!defined('RESTORE_SILENTLY')) {
+                        echo ".";
+                        if (($i+1) % 20 == 0) {
+                            echo "<br />";
+                        }
                     }
                     backup_flush(300);
                 }
@@ -300,7 +308,9 @@
             $status = true;
             break;
         default:
-            echo "action (".$log->module."-".$log->action.") unknow. Not restored<br />";                 //Debug
+            if (!defined('RESTORE_SILENTLY')) {
+                echo "action (".$log->module."-".$log->action.") unknow. Not restored<br />";                 //Debug
+            }
             break;
         }
 

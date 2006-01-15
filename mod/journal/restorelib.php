@@ -59,7 +59,9 @@
             $newid = insert_record ("journal",$journal);
 
             //Do some output
-            echo "<li>".get_string("modulename","journal")." \"".format_string(stripslashes($journal->name),true)."\"</li>";
+            if (!defined('RESTORE_SILENTLY')) {
+                echo "<li>".get_string("modulename","journal")." \"".format_string(stripslashes($journal->name),true)."\"</li>";
+            }
             backup_flush(300);
 
             if ($newid) {
@@ -132,9 +134,11 @@
 
             //Do some output
             if (($i+1) % 50 == 0) {
-                echo ".";
-                if (($i+1) % 1000 == 0) {
-                    echo "<br />";
+                if (!defined('RESTORE_SILENTLY')) {
+                    echo ".";
+                    if (($i+1) % 1000 == 0) {
+                        echo "<br />";
+                    }
                 }
                 backup_flush(300);
             }
@@ -181,9 +185,11 @@
                 //Do some output
                 $i++;
                 if (($i+1) % 1 == 0) {
-                    echo ".";
-                    if (($i+1) % 20 == 0) {
-                        echo "<br />";
+                    if (!defined('RESTORE_SILENTLY')) {
+                        echo ".";
+                        if (($i+1) % 20 == 0) {
+                            echo "<br />";
+                        }
                     }
                     backup_flush(300);
                 }
@@ -211,9 +217,11 @@
                 //Do some output
                 $i++;
                 if (($i+1) % 1 == 0) {
-                    echo ".";
-                    if (($i+1) % 20 == 0) {
-                        echo "<br />";
+                    if (!defined('RESTORE_SILENTLY')) {
+                        echo ".";
+                        if (($i+1) % 20 == 0) {
+                            echo "<br />";
+                        }
                     }
                     backup_flush(300);
                 }
@@ -309,7 +317,9 @@
             $status = true;
             break;
         default:
-            echo "action (".$log->module."-".$log->action.") unknow. Not restored<br />";                 //Debug
+            if (!defined('RESTORE_SILENTLY')) {
+                echo "action (".$log->module."-".$log->action.") unknow. Not restored<br />";                 //Debug
+            }
             break;
         }
 

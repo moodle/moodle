@@ -71,7 +71,9 @@ function hotpot_restore_mods($mod, $restore) {
 		$foreign_keys = array('course' => $restore->course_id);
 		$more_restore = '';
 		// print a message after each hotpot is backed up
-		$more_restore .= 'print "<li>".get_string("modulename", "hotpot")." &quot;".$record->name."&quot;</li>";';
+		if (!defined('RESTORE_SILENTLY')) {
+			$more_restore .= 'print "<li>".get_string("modulename", "hotpot")." &quot;".$record->name."&quot;</li>";';
+		}
 		$more_restore .= 'backup_flush(300);';
         if (restore_userdata_selected($restore,'hotpot',$mod->id)) {
 			if (isset($xml["STRING_DATA"]) && isset($xml["QUESTION_DATA"])) {
@@ -160,7 +162,9 @@ function hotpot_restore_clickreportids(&$restore, $status) {
 				$status = execute_sql("UPDATE {$CFG->prefix}hotpot_attempts SET clickreportid=$new_clickreportid WHERE id=$id", false);
 			} else {
 				// New clickreport id could not be found
-				print "<ul><li>New clickreportid could not be found: attempt id=$id, clickreportid=$clickreportid</li></ul>";
+				if (!defined('RESTORE_SILENTLY')) {
+					print "<ul><li>New clickreportid could not be found: attempt id=$id, clickreportid=$clickreportid</li></ul>";
+				}
 				$status = false;
 			}
 		}
@@ -193,7 +197,9 @@ function hotpot_restore_details(&$restore, $status, &$xml, &$record) {
 		if (insert_record('hotpot_details', $details)) {
 			$status = true;
 		} else {
-			print "<ul><li>Details record could not be updated: attempt=$record->attempt</li></ul>";
+			if (!defined('RESTORE_SILENTLY')) {
+				print "<ul><li>Details record could not be updated: attempt=$record->attempt</li></ul>";
+			}
 			$status = false;
 		}
 	}
@@ -291,14 +297,16 @@ function hotpot_restore_record(&$restore, $status, &$xml, $table, $foreign_keys,
 						$new_ids[] = $key_record->new_id;
 					} else {
 						// foreign key could not be updated
-						print "<ul><li><b>Warning:</b><br>Foreign key could not be updated:<br>";
-						print "'$key_table' record (old id=$old_id) is missing from backup data<br>";
-						print "'$table' record ";
-						if (isset($record->id)) {
-							print "(old id=$record->id) ";
-						}
-						print "was not restored</li></ul>";
-						$ok = false;
+						if (!defined('RESTORE_SILENTLY')) {
+                            print "<ul><li><b>Warning:</b><br>Foreign key could not be updated:<br>";
+                            print "'$key_table' record (old id=$old_id) is missing from backup data<br>";
+                            print "'$table' record ";
+                            if (isset($record->id)) {
+                                print "(old id=$record->id) ";
+                            }
+                            print "was not restored</li></ul>";
+                        }
+                        $ok = false; 
 					}
 				}
 				$record->$key = implode(',', $new_ids);
@@ -333,7 +341,9 @@ function hotpot_restore_record(&$restore, $status, &$xml, $table, $foreign_keys,
 			}
 		} else { 
 			// failed to add (or find) $record
-			print "<ul><li>Record could not be added: table=$table</li></ul>";
+			if (!defined('RESTORE_SILENTLY')) {
+				print "<ul><li>Record could not be added: table=$table</li></ul>";
+			}
 			$status = false;
 		}
 		// restore related records, if required
@@ -398,7 +408,9 @@ function hotpot_restore_logs($restore, $log) {
 		break;
 		default:
 			// Oops, unknown $log->action
-			print "<p>action (".$log->module."-".$log->action.") unknown. Not restored</p>";
+			if (!defined('RESTORE_SILENTLY')) {
+				print "<p>action (".$log->module."-".$log->action.") unknown. Not restored</p>";
+			}
 		break;
 	} // end switch
 	return $status ? $log : false;

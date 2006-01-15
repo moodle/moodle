@@ -75,7 +75,9 @@
             $newid = insert_record ("exercise",$exercise);
 
             //Do some output     
-            echo "<li>".get_string("modulename","exercise")." \"".format_string(stripslashes($exercise->name),true)."\"</li>";
+            if (!defined('RESTORE_SILENTLY')) {
+                echo "<li>".get_string("modulename","exercise")." \"".format_string(stripslashes($exercise->name),true)."\"</li>";
+            }
             backup_flush(300);
 
             if ($newid) {
@@ -126,9 +128,11 @@
 
             //Do some output
             if (($i+1) % 10 == 0) {
-                echo ".";
-                if (($i+1) % 200 == 0) {
-                    echo "<br />";
+                if (!defined('RESTORE_SILENTLY')) {
+                    echo ".";
+                    if (($i+1) % 200 == 0) {
+                        echo "<br />";
+                    }
                 }
                 backup_flush(300);
             }
@@ -174,9 +178,11 @@
 
                 //Do some output
                 if (($i+1) % 10 == 0) {
-                    echo ".";
-                    if (($i+1) % 200 == 0) {
-                        echo "<br />";
+                    if (!defined('RESTORE_SILENTLY')) {
+                        echo ".";
+                        if (($i+1) % 200 == 0) {
+                            echo "<br />";
+                        }
                     }
                     backup_flush(300);
                 }
@@ -233,9 +239,11 @@
 
                 //Do some output
                 if (($i+1) % 50 == 0) {
-                    echo ".";
-                    if (($i+1) % 1000 == 0) {
-                        echo "<br />";
+                    if (!defined('RESTORE_SILENTLY')) {
+                        echo ".";
+                        if (($i+1) % 1000 == 0) {
+                            echo "<br />";
+                        }
                     }
                     backup_flush(300);
                 }
@@ -305,9 +313,11 @@
 
                 //Do some output
                 if (($i+1) % 50 == 0) {
-                    echo ".";
-                    if (($i+1) % 1000 == 0) {
-                        echo "<br />";
+                    if (!defined('RESTORE_SILENTLY')) {
+                        echo ".";
+                        if (($i+1) % 1000 == 0) {
+                            echo "<br />";
+                        }
                     }
                     backup_flush(300);
                 }
@@ -360,9 +370,11 @@
 
                 //Do some output
                 if (($i+1) % 50 == 0) {
-                    echo ".";
-                    if (($i+1) % 1000 == 0) {
-                        echo "<br />";
+                    if (!defined('RESTORE_SILENTLY')) {
+                        echo ".";
+                        if (($i+1) % 1000 == 0) {
+                            echo "<br />";
+                        }
                     }
                     backup_flush(300);
                 }

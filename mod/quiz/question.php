@@ -339,7 +339,7 @@
 
     echo '<br />';
     print_simple_box_start('center');
-    require('questiontypes/'.$QUIZ_QTYPES[$qtype]->name().'/editquestion.php');
+    require_once('questiontypes/'.$QUIZ_QTYPES[$qtype]->name().'/editquestion.php');
     print_simple_box_end();
 
     if ($usehtmleditor) {

@@ -113,7 +113,9 @@
             $newid = insert_record ("glossary",$glossary);
 
             //Do some output
-            echo "<li>".get_string("modulename","glossary")." \"".format_string(stripslashes($glossary->name),true)."\"</li>";
+            if (!defined('RESTORE_SILENTLY')) {
+                echo "<li>".get_string("modulename","glossary")." \"".format_string(stripslashes($glossary->name),true)."\"</li>";
+            }
             backup_flush(300);
 
             if ($newid) {
@@ -188,9 +190,11 @@
 
                 //Do some output
                 if (($i+1) % 50 == 0) {
-                    echo ".";
-                    if (($i+1) % 1000 == 0) {
-                        echo "<br />";
+                    if (!defined('RESTORE_SILENTLY')) {
+                        echo ".";
+                        if (($i+1) % 1000 == 0) {
+                            echo "<br />";
+                        }
                     }
                     backup_flush(300);
                 }
@@ -255,9 +259,11 @@
 
             //Do some output
             if (($i+1) % 50 == 0) {
-                echo ".";
-                if (($i+1) % 1000 == 0) {
-                    echo "<br />";
+                if (!defined('RESTORE_SILENTLY')) {
+                    echo ".";
+                    if (($i+1) % 1000 == 0) {
+                        echo "<br />";
+                    }
                 }
                 backup_flush(300);
             }
@@ -306,9 +312,11 @@
 
             //Do some output
             if (($i+1) % 50 == 0) {
-                echo ".";
-                if (($i+1) % 1000 == 0) {
-                    echo "<br />";
+                if (!defined('RESTORE_SILENTLY')) {
+                    echo ".";
+                    if (($i+1) % 1000 == 0) {
+                        echo "<br />";
+                    }
                 }
                 backup_flush(300);
             }
@@ -344,9 +352,11 @@
 
             //Do some output
             if (($i+1) % 50 == 0) {
-                echo ".";
-                if (($i+1) % 1000 == 0) {
-                    echo "<br />";
+                if (!defined('RESTORE_SILENTLY')) {
+                    echo ".";
+                    if (($i+1) % 1000 == 0) {
+                        echo "<br />";
+                    }
                 }
                 backup_flush(300);
             }
@@ -388,9 +398,11 @@
 
             //Do some output
             if (($i+1) % 50 == 0) {
-                echo ".";
-                if (($i+1) % 1000 == 0) {
-                    echo "<br />";
+                if (!defined('RESTORE_SILENTLY')) {
+                    echo ".";
+                    if (($i+1) % 1000 == 0) {
+                        echo "<br />";
+                    }
                 }
                 backup_flush(300);
             }
@@ -440,9 +452,11 @@
 
             //Do some output
             if (($i+1) % 50 == 0) {
-                echo ".";
-                if (($i+1) % 1000 == 0) {
-                    echo "<br />";
+                if (!defined('RESTORE_SILENTLY')) {
+                    echo ".";
+                    if (($i+1) % 1000 == 0) {
+                        echo "<br />";
+                    }
                 }
                 backup_flush(300);
             }
@@ -599,14 +613,18 @@
                     $entry->definition = addslashes($result);
                     $status = update_record("glossary_entries",$entry);
                     if ($CFG->debug>7) {
-                        echo '<br /><hr />'.htmlentities($content).'<br />changed to<br />'.htmlentities($result).'<hr /><br />';
+                        if (!defined('RESTORE_SILENTLY')) {
+                            echo '<br /><hr />'.htmlentities($content).'<br />changed to<br />'.htmlentities($result).'<hr /><br />';
+                        }
                     }
                 }
                 //Do some output
                 if (($i+1) % 5 == 0) {
-                    echo ".";
-                    if (($i+1) % 100 == 0) {
-                        echo "<br />";
+                    if (!defined('RESTORE_SILENTLY')) {
+                        echo ".";
+                        if (($i+1) % 100 == 0) {
+                            echo "<br />";
+                        }
                     }
                     backup_flush(300);
                 }
@@ -629,17 +647,21 @@
                     $glossary->intro = addslashes($result);
                     $status = update_record("glossary",$glossary);
                     if ($CFG->debug>7) {
-                        echo '<br /><hr />'.htmlentities($content).'<br />changed to<br />'.htmlentities($result).'<hr /><br />';
+                        if (!defined('RESTORE_SILENTLY')) {
+                            echo '<br /><hr />'.htmlentities($content).'<br />changed to<br />'.htmlentities($result).'<hr /><br />';
+                        }
                     }
                 }
                 //Do some output
                 if (($i+1) % 5 == 0) {
-                    echo ".";
-                    if (($i+1) % 100 == 0) {
-                        echo "<br />";
+                    if (!defined('RESTORE_SILENTLY')) {
+                        echo ".";
+                        if (($i+1) % 100 == 0) {
+                            echo "<br />";
+                        }
                     }
                     backup_flush(300);
-                    }
+                }
             }
         }
 
@@ -678,9 +700,11 @@
                 //Do some output
                 $i++;
                 if (($i+1) % 1 == 0) {
-                    echo ".";
-                    if (($i+1) % 20 == 0) {
-                        echo "<br />";
+                    if (!defined('RESTORE_SILENTLY')) {
+                        echo ".";
+                        if (($i+1) % 20 == 0) {
+                            echo "<br />";
+                        }
                     }
                     backup_flush(300);
                 }
@@ -710,9 +734,11 @@
                 //Do some output
                 $i++;
                 if (($i+1) % 1 == 0) {
-                    echo ".";
-                    if (($i+1) % 20 == 0) {
-                        echo "<br />";
+                    if (!defined('RESTORE_SILENTLY')) {
+                        echo ".";
+                        if (($i+1) % 20 == 0) {
+                            echo "<br />";
+                        }
                     }
                     backup_flush(300);
                 }
@@ -902,7 +928,9 @@
             }
             break;
         default:
-            echo "action (".$log->module."-".$log->action.") unknow. Not restored<br />";                 //Debug
+            if (!defined('RESTORE_SILENTLY')) {
+                echo "action (".$log->module."-".$log->action.") unknow. Not restored<br />";                 //Debug
+            }
             break;
         }
 
