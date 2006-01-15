@@ -547,18 +547,6 @@ function optional_variable(&$var, $default=0) {
 
 
 /**
- * HACK ALERT! Do not use this function, it will be removed soon!!
- * @todo Remove this function soon!
- */
-function set_default( &$var, $default ) {
-  if (empty($var)) {
-    $var = $default;
-    return true;
-  }
-  return false;
-}
-
-/**
  * Set a key in global configuration
  *
  * Set a key/value pair in both this session's {@link $CFG} global variable
