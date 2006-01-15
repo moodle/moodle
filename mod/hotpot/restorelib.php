@@ -274,6 +274,7 @@ function hotpot_restore_record(&$restore, $status, &$xml, $table, $foreign_keys,
 			$record->$tag = backup_todb($value);
 		}
 	}
+	$ok = true;
 	foreach ($foreign_keys as $key=>$value) {
 		if (is_numeric($value)) {
 			$record->$key = $value;
@@ -290,8 +291,15 @@ function hotpot_restore_record(&$restore, $status, &$xml, $table, $foreign_keys,
 						$new_ids[] = $key_record->new_id;
 					} else {
 						// foreign key could not be updated
-						print "<ul><li>Foreign key could not be updated: table=$table, $key=".$record->$key."</li></ul>";
-						$status = false;
+						// print "<ul><li><b>Warning:</b> Foreign key could not be updated: table=$table, $key=".$record->$key."</li></ul>";
+						print "<ul><li><b>Warning:</b><br>";
+						print "'$key_table' record (id='$old_id') is missing from backup data.<br>";
+						print "'$table' record ";
+						if (isset($record->id)) {
+							print "(old id='$record->id') ";
+						}
+						print "could not be restored</li></ul>";
+						$ok = false;
 					}
 				}
 				$record->$key = implode(',', $new_ids);
@@ -299,7 +307,7 @@ function hotpot_restore_record(&$restore, $status, &$xml, $table, $foreign_keys,
 		}
 	}
 	// check everything is OK so far
-	if ($status && isset($record)) {
+	if ($ok && isset($record)) {
 		// store old record id, if necessary
 		if (isset($record->id)) {
 			$record->old_id = $record->id;
