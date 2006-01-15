@@ -367,8 +367,6 @@
         break;
 
         case 'new':
-            set_default($form->timestart, -1);
-
             if($cal_y && $cal_m && $cal_d && checkdate($cal_m, $cal_d, $cal_y)) {
                 $form->timestart = make_timestamp($cal_y, $cal_m, $cal_d, 0, 0, 0);
             }
