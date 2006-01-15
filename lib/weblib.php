@@ -864,7 +864,7 @@ function print_textfield ($name, $value, $alt = '',$size=50,$maxlength= 0,$retur
         $maxlength = ' maxlength="'.$maxlength.'" ';
     }
 
-    $htmlid = 'auto-cb'.sprintf('%04d', ++$idcounter);
+    $htmlid = 'auto-tf'.sprintf('%04d', ++$idcounter);
     $output  = '<span class="textfield '.$name."\">";
     $output .= '<input name="'.$name.'" id="'.$htmlid.'" type="text" value="'.$value.'" size="'.$size.'" '.$maxlength.' alt="'.$alt.'" />';
  
