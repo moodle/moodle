@@ -33,7 +33,7 @@ $string['sessionipnomatch'] = 'Spiacente, ma il vostro IP sembra essere cambiato
 $string['statscatchupmode'] = 'Le statistiche sono attualmente in modalità di raccolta dati. Sono già stati elaborati $a->daysdone giorno(i) e $a->dayspending lo devono ancora essere. Ricontrollate presto!';
 $string['unknowncourse'] = 'Il corso chiamato \"$a\" risulta sconosciuto';
 $string['usernotaddederror'] = 'L\'utente \"$a\" non è stato aggiunto - errore sconosciuto ';
-$string['usernotaddedregistered'] = 'L\'utente \"$a\" no è stato aggiunto - utente già registrato';
+$string['usernotaddedregistered'] = 'L\'utente \"$a\" non è stato aggiunto - utente già registrato';
 $string['usernotavailable'] = 'Non è possibile visualizzare i dettagli di questo utente.';
 
 ?>
