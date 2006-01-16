@@ -463,9 +463,7 @@
         //If enabled, we strip all the control chars from the text but tabs, newlines and returns
         //because they are forbiden in XML 1.0 specs. The expression below seems to be
         //UTF-8 safe too because it simply ignores the rest of characters.
-        if (!empty($CFG->backup_strip_controlchars)) {
-            $content = preg_replace("/(?(?=[[:cntrl:]])[^\n\r\t])/is","",$content);
-        }
+        $content = preg_replace("/(?(?=[[:cntrl:]])[^\n\r\t])/is","",$content);
         if (!empty($CFG->unicodedb)) {
             // Don't perform the conversion. Contents are Unicode.
             $content = preg_replace("/\r\n|\r/", "\n", htmlspecialchars($content));
