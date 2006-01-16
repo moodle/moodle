@@ -1,5 +1,7 @@
 <?php //$Id$
 
+define('BYTESERVING_BOUNDARY', 's1k2o3d4a5k6s7'); //unique string constant
+
 function mimeinfo($element, $filename) {
     $mimeinfo = array (
         'xxx'  => array ('type'=>'document/unknown', 'icon'=>'unknown.gif'),
@@ -138,7 +140,7 @@ function mimeinfo($element, $filename) {
     }
 }
 
-function send_file($path, $filename, $lifetime=86400 , $filter=false, $pathisstring=false,$forcedownload=false) {
+function send_file($path, $filename, $lifetime=86400 , $filter=false, $pathisstring=false, $forcedownload=false) {
     global $CFG;
 
     $mimetype     = $forcedownload ? 'application/x-forcedownload' : mimeinfo('type', $filename);
@@ -146,44 +148,99 @@ function send_file($path, $filename, $lifetime=86400 , $filter=false, $pathisstr
     $filesize     = $pathisstring ? strlen($path) : filesize($path);
 
     //IE compatibiltiy HACK!
-    if(ini_get('zlib.output_compression')) {
+    if (ini_get('zlib.output_compression')) {
         ini_set('zlib.output_compression', 'Off');
     }
 
-    @header('Last-Modified: '. gmdate('D, d M Y H:i:s', $lastmodified) .' GMT');
-    if ($lifetime > 0) {
-        @header('Cache-control: max-age='.$lifetime);
-        @header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .'GMT');
-        @header('Pragma: ');
+    //try to disable automatic sid rewrite in cookieless mode
+    ini_set("session.use_trans_sid", "false");
+
+    //do not put '@' before the next header to detect incorrect moodle configurations,
+    //error should be better than "weird" empty lines for admins/users
+    //TODO: should we remove all those @ before the header()? Are all of the values supported on all servers?
+    header('Last-Modified: '. gmdate('D, d M Y H:i:s', $lastmodified) .' GMT');
+
+    if ($forcedownload) {
+        @header('Content-Disposition: attachment; filename='.$filename);
     } else {
+        @header('Content-Disposition: inline; filename='.$filename);
+    }
+
+    if ($lifetime > 0) {
+        @header('Cache-Control: max-age='.$lifetime);
+        @header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
+        @header('Pragma: ');
+
+        if (empty($CFG->disablebyteserving) && !$pathisstring && $mimetype != 'text/plain' && $mimetype != 'text/html') {
+
+            @header('Accept-Ranges: bytes');
+
+            if (!empty($_SERVER['HTTP_RANGE']) && strpos($_SERVER['HTTP_RANGE'],'bytes=') !== FALSE) {
+                // byteserving stuff - for acrobat reader and download accelerators
+                // see: http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.35
+                // inspired by: http://www.coneural.org/florian/papers/04_byteserving.php
+                $ranges = false;
+                if (preg_match_all('/(\d*)-(\d*)/', $_SERVER['HTTP_RANGE'], $ranges, PREG_SET_ORDER)) {
+                    foreach ($ranges as $key=>$value) {
+                        if ($ranges[$key][1] == '') {
+                            //suffix case
+                            $ranges[$key][1] = $filesize - $ranges[$key][2];
+                            $ranges[$key][2] = $filesize - 1;
+                        } else if ($ranges[$key][2] == '' || $ranges[$key][2] > $filesize - 1) {
+                            //fix range length
+                            $ranges[$key][2] = $filesize - 1;
+                        }
+                        if ($ranges[$key][2] != '' && $ranges[$key][2] < $ranges[$key][1]) {
+                            //invalid byte-range ==> ignore header
+                            $ranges = false;
+                            break;
+                        }
+                        //prepare multipart header
+                        $ranges[$key][0] =  "\r\n--".BYTESERVING_BOUNDARY."\r\nContent-Type: $mimetype\r\n";
+                        $ranges[$key][0] .= "Content-Range: bytes {$ranges[$key][1]}-{$ranges[$key][2]}/$filesize\r\n\r\n";
+                    }
+                } else {
+                    $ranges = false;
+                }
+                if ($ranges) {
+                    byteserving_send_file($path, $mimetype, $ranges);
+                }
+            }
+        } else {
+            /// Do not byteserve (disabled, strings, text and html files).
+            @header('Accept-Ranges: none');
+        }
+    } else { // Do not cache files in proxies and browsers
         if (strpos($CFG->wwwroot, 'https://') === 0) { //https sites - watch out for IE! KB812935 and KB316431
             @header('Cache-Control: max-age=10');
-            @header('Expires: '. gmdate('D, d M Y H:i:s', 0) .'GMT');
+            @header('Expires: '. gmdate('D, d M Y H:i:s', 0) .' GMT');
             @header('Pragma: ');
         } else { //normal http - prevent caching at all cost
             @header('Cache-Control: private, must-revalidate, pre-check=0, post-check=0, max-age=0');
-            @header('Expires: '. gmdate('D, d M Y H:i:s', 0) .'GMT');
+            @header('Expires: '. gmdate('D, d M Y H:i:s', 0) .' GMT');
             @header('Pragma: no-cache');
         }
-    }
-    @header('Accept-Ranges: none'); // Comment out if PDFs do not work...
-
-    if ($forcedownload) {
-        @header('Content-disposition: attachment; filename='.$filename);
-    } else {
-        @header('Content-disposition: inline; filename='.$filename);
+        @header('Accept-Ranges: none'); // Do not allow byteserving when caching disabled
     }
 
     if (!$filter) {
-        @header('Content-length: '.$filesize);
-        if ($mimetype == 'text/plain') {
-            @header('Content-type: text/plain; charset='.current_charset()); //add encoding
+        if ($mimetype == 'text/html' && !empty($CFG->usesid) && empty($_COOKIE['MoodleSession'.$CFG->sessioncookie])) {
+            //cookieless mode - rewrite links
+            @header('Content-Type: text/html');
+            $path = $pathisstring ? $path : implode('', file($path));
+            $path = sid_ob_rewrite($path);
+            $filesize = strlen($path);
+            $pathisstring = true;
+        } else if ($mimetype == 'text/plain') {
+            @header('Content-Type: Text/plain; charset='.current_charset()); //add encoding
         } else {
-            @header('Content-type: '.$mimetype);
+            @header('Content-Type: '.$mimetype);
         }
+        @header('Content-Length: '.$filesize);
+        while (@ob_end_flush()); //flush the buffers - save memory and disable sid rewrite
         if ($pathisstring) {
             echo $path;
-        }else {
+        } else {
             readfile_chunked($path);
         }
     } else {     // Try to put the file through filters
@@ -197,22 +254,33 @@ function send_file($path, $filename, $lifetime=86400 , $filter=false, $pathisstr
             $options->noclean = true;
             $text = $pathisstring ? $path : implode('', file($path));
             $output = format_text($text, FORMAT_HTML, $options, $courseid);
+            if (!empty($CFG->usesid) && empty($_COOKIE['MoodleSession'.$CFG->sessioncookie])) {
+                //cookieless mode - rewrite links
+                $output = sid_ob_rewrite($output);
+            }
 
-            @header('Content-length: '.strlen($output));
-            @header('Content-type: text/html');
+            @header('Content-Length: '.strlen($output));
+            @header('Content-Type: text/html');
+            while (@ob_end_flush()); //flush the buffers - save memory and disable sid rewrite
             echo $output;
         } else if ($mimetype == 'text/plain') {
             $options->newlines = false;
             $options->noclean = true;
             $text = htmlentities($pathisstring ? $path : implode('', file($path)));
             $output = '<pre>'. format_text($text, FORMAT_MOODLE, $options, $courseid) .'</pre>';
+            if (!empty($CFG->usesid) && empty($_COOKIE['MoodleSession'.$CFG->sessioncookie])) {
+                //cookieless mode - rewrite links
+                $output = sid_ob_rewrite($output);
+            }
 
-            @header('Content-length: '.strlen($output));
-            @header('Content-type: text/html; charset='. current_charset()); //add encoding
+            @header('Content-Length: '.strlen($output));
+            @header('Content-Type: text/html; charset='.current_charset()); //add encoding
+            while (@ob_end_flush()); //flush the buffers - save memory and disable sid rewrite
             echo $output;
         } else {    // Just send it out raw
-            @header('Content-length: '.$filesize);
-            @header('Content-type: '.$mimetype);
+            @header('Content-Length: '.$filesize);
+            @header('Content-Type: '.$mimetype);
+            while (@ob_end_flush()); //flush the buffers - save memory and disable sid rewrite
             if ($pathisstring) {
                 echo $path;
             }else {
@@ -331,13 +399,13 @@ if (!function_exists('file_get_contents')) {
 }
 
 
-function fulldelete($location) { 
+function fulldelete($location) {
     if (is_dir($location)) {
         $currdir = opendir($location);
         while (false !== ($file = readdir($currdir))) {
             if ($file <> ".." && $file <> ".") {
                 $fullfile = $location."/".$file;
-                if (is_dir($fullfile)) { 
+                if (is_dir($fullfile)) {
                     if (!fulldelete($fullfile)) {
                         return false;
                     }
@@ -345,9 +413,9 @@ function fulldelete($location) {
                     if (!unlink($fullfile)) {
                         return false;
                     }
-                } 
+                }
             }
-        } 
+        }
         closedir($currdir);
         if (! rmdir($location)) {
             return false;
@@ -361,8 +429,11 @@ function fulldelete($location) {
     return true;
 }
 
-function readfile_chunked($filename,$retbytes=true) {
-    $chunksize = 1*(1024*1024); // 1MB chunks
+/**
+ * Improves memory consumptions and works around buggy readfile() in PHP 5.0.4 (2MB readfile limit).
+ */
+function readfile_chunked($filename, $retbytes=true) {
+    $chunksize = 1*(1024*1024); // 1MB chunks - must be less than 2MB!
     $buffer = '';
     $cnt =0;// $handle = fopen($filename, 'rb');
     $handle = fopen($filename, 'rb');
@@ -370,22 +441,14 @@ function readfile_chunked($filename,$retbytes=true) {
         return false;
     }
 
-    // don't timeout on slow clients
-    @set_time_limit(0); 
-
     while (!feof($handle)) {
+        set_time_limit(60*60); //reset time limit to 60 min - should be enough for 1 MB chunk
         $buffer = fread($handle, $chunksize);
-
-        // write to the client and flush buffers
-        // to avoid hogging memory
         echo $buffer;
         flush();
-        if (ob_get_level() > 0) {
-            ob_flush();
-        }
-
         if ($retbytes) {
-            $cnt += strlen($buffer);}
+            $cnt += strlen($buffer);
+        }
     }
     $status = fclose($handle);
     if ($retbytes && $status) {
@@ -394,5 +457,61 @@ function readfile_chunked($filename,$retbytes=true) {
     return $status;
 }
 
+/**
+ * Send requested byterange of file.
+ */
+function byteserving_send_file($filename, $mimetype, $ranges) {
+    $chunksize = 1*(1024*1024); // 1MB chunks - must be less than 2MB!
+    $handle = fopen($filename, 'rb');
+    if ($handle === false) {
+        die;
+    }
+    if (count($ranges) == 1) { //only one range requested
+        $length = $ranges[0][2] - $ranges[0][1] + 1;
+        @header('HTTP/1.1 206 Partial content');
+        @header('Content-Length: '.$length);
+        @header('Content-Range: bytes '.$ranges[0][1].'-'.$ranges[0][2].'/'.filesize($filename));
+        @header('Content-Type: '.$mimetype);
+        while (@ob_end_flush()); //flush the buffers - save memory and disable sid rewrite
+        $buffer = '';
+        fseek($handle, $ranges[0][1]);
+        while (!feof($handle) && $length > 0) {
+            set_time_limit(60*60); //reset time limit to 60 min - should be enough for 1 MB chunk
+            $buffer = fread($handle, ($chunksize < $length ? $chunksize : $length));
+            echo $buffer;
+            flush();
+            $length -= strlen($buffer);
+        }
+        fclose($handle);
+        die;
+    } else { // multiple ranges requested - not tested much
+        $totallength = 0;
+        foreach($ranges as $range) {
+            $totallength .= strlen($range[0]) + $range[2] - $range[1] + 1;
+        }
+        $totallength .= strlen("\r\n--".BYTESERVING_BOUNDARY."--\r\n");
+        @header('HTTP/1.1 206 Partial content');
+        @header('Content-Length: '.$totallength);
+        @header('Content-Type: multipart/byteranges; boundary='.BYTESERVING_BOUNDARY);
+        //TODO: check if "multipart/x-byteranges" is more compatible with current readers/browsers/servers
+        while (@ob_end_flush()); //flush the buffers - save memory and disable sid rewrite
+        foreach($ranges as $range) {
+            $length = $range[2] - $range[1] + 1;
+            echo $range[0];
+            $buffer = '';
+            fseek($handle, $range[1]);
+            while (!feof($handle) && $length > 0) {
+                set_time_limit(60*60); //reset time limit to 60 min - should be enough for 1 MB chunk
+                $buffer = fread($handle, ($chunksize < $length ? $chunksize : $length));
+                echo $buffer;
+                flush();
+                $length -= strlen($buffer);
+            }
+        }
+        echo "\r\n--".BYTESERVING_BOUNDARY."--\r\n";
+        fclose($handle);
+        die;
+    }
+}
 
 ?>
