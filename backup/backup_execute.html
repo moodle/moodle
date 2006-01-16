@@ -26,87 +26,8 @@
         error("Site not found!");
     }
 
-   //Checks for the required files/functions to backup every mod
-    //And check if there is data about it
-    $count = 0;
-    if ($allmods = get_records("modules") ) {
-        foreach ($allmods as $mod) {
-            $modname = $mod->name;
-            $modfile = "$CFG->dirroot/mod/$modname/backuplib.php";
-            $modbackup = $modname."_backup_mods";
-            $modbackupone = $modname."_backup_one_mod";
-            $modcheckbackup = $modname."_check_backup_mods";
-            if (file_exists($modfile)) {
-               include_once($modfile);
-               if (function_exists($modbackup) and function_exists($modcheckbackup)) {
-                   $var = "exists_".$modname;
-                   $$var = true;
-                   $count++;
-                   if (count_records('course_modules','course',$course->id,'module',$mod->id) && function_exists($modbackupone)) {
-                       $var = 'exists_one_'.$modname;
-                       $$var = true;
-                       $varname = $modname.'_instances';
-                       $$varname = get_all_instances_in_course($modname,$course);
-                       foreach ($$varname as $instance) {
-                           $preferences->mods[$modname]->instances[$instance->id]->name = $instance->name;
-                           $var = 'backup_'.$modname.'_instance_'.$instance->id;
-                           $$var = optional_param($var,0);
-                           $preferences->mods[$modname]->instances[$instance->id]->backup = $$var;
-                           $var = 'backup_user_info_'.$modname.'_instance_'.$instance->id;
-                           $$var = optional_param($var,0);
-                           $preferences->mods[$modname]->instances[$instance->id]->userinfo = $$var;
-                       }
-                   }
-               }
-            }
-
-            //Check data
-            //Check module info
-            $var = "backup_".$modname;
-            $$var = optional_param( $var,0,PARAM_INT );
-
-            //Now stores all the mods preferences into an array into preferences
-            $preferences->mods[$modname]->backup = $$var;
-
-            //Check include user info
-            $var = "backup_user_info_".$modname;
-            $$var = optional_param( $var,0,PARAM_INT );
-
-            //Now stores all the mods preferences into an array into preferences
-            $preferences->mods[$modname]->userinfo = $$var; 
-            //And the name of the mod
-            $preferences->mods[$modname]->name = $modname;
-        }
-    }
-
-    //Check other parameters
-    $backup_metacourse = optional_param( 'backup_metacourse',1,PARAM_INT );
-    $preferences->backup_metacourse = $backup_metacourse;
-  
-    $backup_users = optional_param( 'backup_users',1,PARAM_INT ); 
-    $preferences->backup_users = $backup_users;
-   
-    $backup_logs = optional_param( 'backup_logs',0,PARAM_INT );    
-    $preferences->backup_logs = $backup_logs;
-
-    $backup_user_files = optional_param( 'backup_user_files',1,PARAM_INT );
-    $preferences->backup_user_files = $backup_user_files;
-
-    $backup_course_files = optional_param( 'backup_course_files',2,PARAM_INT );
-    $preferences->backup_course_files = $backup_course_files;
-
-    $backup_messages = optional_param( 'backup_messages',1,PARAM_INT );
-    $preferences->backup_messages = $backup_messages;
-
-    $id = required_param('id', PARAM_INT);
-    $preferences->backup_course = $id;
-
-    $backup_name = required_param('backup_name',PARAM_FILE );
-    $preferences->backup_name = $backup_name;
-
-    $backup_unique_code = required_param('backup_unique_code', PARAM_INT);
-    $preferences->backup_unique_code = $backup_unique_code;
-
+    $preferences = new StdClass;
+    backup_fetch_prefs_from_request($preferences,$count,$course);
     //Another Info
     $preferences->moodle_version = $CFG->version;
     $preferences->moodle_release = $CFG->release;
@@ -140,10 +61,10 @@
     //Check for temp and backup and backup_unique_code directory
     //Create them as needed
     echo "<li>".get_string("creatingtemporarystructures").'</li>';
-    $status = check_and_create_backup_dir($backup_unique_code);
+    $status = check_and_create_backup_dir($preferences->backup_unique_code);
     //Empty dir
     if ($status) {
-        $status = clear_backup_dir($backup_unique_code);
+        $status = clear_backup_dir($preferences->backup_unique_code);
     }
 
     //Delete old_entries from backup tables
@@ -160,7 +81,7 @@
         echo "<ul>";
         echo "<li>".get_string("writingheader").'</li>';
         //Obtain the xml file (create and open) and print prolog information
-        $backup_file = backup_open_xml($backup_unique_code);
+        $backup_file = backup_open_xml($preferences->backup_unique_code);
         echo "<li>".get_string("writinggeneralinfo").'</li>';
         //Prints general info about backup to file
         if ($backup_file) {
@@ -226,6 +147,7 @@
         //questions structure (step 1). See notes on mod/quiz/backuplib.php
         if ($status and $preferences->mods['quiz']->backup) {
             echo "<li>".get_string("writingcategoriesandquestions").'</li>';
+            require_once($CFG->dirroot.'/mod/quiz/backuplib.php');
             if (!$status = quiz_backup_question_categories($backup_file,$preferences)) {
                 notify("An error occurred while backing up quiz categories");
             }
@@ -398,4 +320,6 @@
         $SESSION->import_preferences = $preferences;
         print_continue($CFG->wwwroot.'/course/import/activities/index.php?id='.$to.'&fromcourse='.$id.'&filename='.$filename);
     }
+
+    $SESSION->backupprefs[$course->id] = null; // unset it so we're clear next time.
 ?>

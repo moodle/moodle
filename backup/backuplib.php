@@ -498,7 +498,7 @@
                 $included = "true";
                 if ($element->userinfo) {
                     $userinfo = "true";
-                }
+                } 
             }
             //Prints the mod start
             fwrite ($bf,start_tag("MOD",3,true));
@@ -1646,6 +1646,8 @@
 
         $status = true;
 
+        require_once($CFG->dirroot.'/mod/'.$module.'/backuplib.php');
+
         if (is_array($preferences->mods[$module]->instances)) {
             $onemodbackup = $module.'_backup_one_mod';
             if (function_exists($onemodbackup)) {
@@ -1926,5 +1928,98 @@
                     && array_key_exists($modid,$preferences->mods[$modname]->instances)
                     && !empty($preferences->mods[$modname]->instances[$modid]->backup)));
     }
+
+    /* 
+     * Checks for the required files/functions to backup every mod
+     * And check if there is data about it
+     */
+    function backup_fetch_prefs_from_request(&$preferences,&$count,$course) {
+        global $CFG,$SESSION;
+        
+        // check to see if it's in the session already
+        if (!empty($SESSION->backupprefs)  && array_key_exists($course->id,$SESSION->backupprefs) && !empty($SESSION->backupprefs[$course->id])) {
+            $sprefs = $SESSION->backupprefs[$course->id];
+            $preferences = $sprefs;
+            // refetch backup_name just in case.
+            $bn = optional_param('backup_name','',PARAM_FILE);
+            if (!empty($bn)) {
+                $preferences->backup_name = $bn;
+            }
+            $count = 1;
+            return true;
+        }
+            
+        if ($allmods = get_records("modules") ) {
+            foreach ($allmods as $mod) {
+                $modname = $mod->name;
+                $modfile = "$CFG->dirroot/mod/$modname/backuplib.php";
+                $modbackup = $modname."_backup_mods";
+                $modbackupone = $modname."_backup_one_mod";
+                $modcheckbackup = $modname."_check_backup_mods";
+                if (!file_exists($modfile)) {
+                    continue;
+                }
+                include_once($modfile);
+                if (!function_exists($modbackup) || !function_exists($modcheckbackup)) {
+                    continue;
+                }
+                $var = "exists_".$modname;
+                $preferences->$var = true;
+                $count++;
+                // check that there are instances and we can back them up individually
+                if (!count_records('course_modules','course',$course->id,'module',$mod->id) || !function_exists($modbackupone)) {
+                    continue;
+                }
+                $var = 'exists_one_'.$modname;
+                $preferences->$var = true;
+                $varname = $modname.'_instances';
+                $preferences->$varname = get_all_instances_in_course($modname,$course);
+                foreach ($preferences->$varname as $instance) {
+                    $preferences->mods[$modname]->instances[$instance->id]->name = $instance->name;
+                    $var = 'backup_'.$modname.'_instance_'.$instance->id;
+                    $$var = optional_param($var,0);
+                    $preferences->$var = $$var;
+                    $preferences->mods[$modname]->instances[$instance->id]->backup = $$var;
+                    $var = 'backup_user_info_'.$modname.'_instance_'.$instance->id;
+                    $$var = optional_param($var,0);
+                    $preferences->$var = $$var;
+                    $preferences->mods[$modname]->instances[$instance->id]->userinfo = $$var;
+                    $var = 'backup_'.$modname.'_instances';
+                    $preferences->$var = 1; // we need this later to determine what to display in modcheckbackup.
+                }
+
+                //Check data
+                //Check module info
+                $preferences->mods[$modname]->name = $modname;
+
+                $var = "backup_".$modname;
+                $$var = optional_param( $var,0);
+                $preferences->$var = $$var;
+                $preferences->mods[$modname]->backup = $$var;
+
+                //Check include user info
+                $var = "backup_user_info_".$modname;
+                $$var = optional_param( $var,0);       
+                $preferences->$var = $$var;
+                $preferences->mods[$modname]->userinfo = $$var;
+
+            }
+        }
+        
+        //Check other parameters
+        $preferences->backup_metacourse = optional_param('backup_metacourse',1,PARAM_INT);
+        $preferences->backup_users = optional_param('backup_users',1,PARAM_INT);
+        $preferences->backup_logs = optional_param('backup_logs',0,PARAM_INT);
+        $preferences->backup_user_files = optional_param('backup_user_files',1,PARAM_INT);
+        $preferences->backup_course_files = optional_param('backup_course_files',1,PARAM_INT);
+        $preferences->backup_messages = optional_param('backup_messages',1,PARAM_INT);
+        $preferences->backup_course = $course->id;
+        $preferences->backup_name = required_param('backup_name',PARAM_FILE );
+        $preferences->backup_unique_code =  required_param('backup_unique_code');
+
+        // put it (back) in the session
+       $SESSION->backupprefs[$course->id] = $preferences;
+    }
+
 
 ?>

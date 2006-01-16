@@ -276,12 +276,55 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
             echo '<input type="hidden" name="backup_messages" value="0" />';
         }
     }
+
+    $backup_unique_code = time();
+
+    //Calculate the backup string
+
+    //Calculate the backup word
+    //Take off some characters in the filename !!
+    $takeoff = array(" ", ":", "/", "\\", "|");
+    $backup_word = str_replace($takeoff,"_",strtolower(get_string("backupfilename")));
+    //If non-translated, use "backup"
+    if (substr($backup_word,0,1) == "[") {
+        $backup_word= "backup";
+    }
+
+    //Calculate the date format string
+    $backup_date_format = str_replace(" ","_",get_string("backupnameformat"));
+    //If non-translated, use "%Y%m%d-%H%M"
+    if (substr($backup_date_format,0,1) == "[") {
+        $backup_date_format = "%%Y%%m%%d-%%H%%M";
+    }
+
+    //Calculate the shortname
+    $backup_shortname = clean_filename($course->shortname);
+    if (empty($backup_shortname) or $backup_shortname == '_' ) {
+        $backup_shortname = $course->id;
+    }
+
+    //Calculate the final backup filename
+    //The backup word
+    $backup_name = $backup_word."-";
+    //The shortname
+    $backup_name .= strtolower($backup_shortname)."-";
+    //The date format
+    $backup_name .= userdate(time(),$backup_date_format,99,false);
+    //The extension
+    $backup_name .= ".zip";
+    //And finally, clean everything
+    $backup_name = clean_filename($backup_name);
+
+    //Calculate the backup unique code to allow simultaneus backups (to define
+    //the temp-directory name and records in backup temp tables
 ?>
 </table>
 <br />
 <center>
 <input type="hidden" name="id"     value="<?php  p($id) ?>" />
 <input type="hidden" name="to"     value="<?php p($to) ?>" />
+<input type="hidden" name="backup_unique_code" value="<?php p($backup_unique_code); ?>" />
+<input type="hidden" name="backup_name" value="<?php p($backup_name); ?>" />
 <input type="hidden" name="launch" value="check" />
 <input type="submit" value="<?php  print_string("continue") ?>" />
 <input type="submit" name="cancel" value="<?php  print_string("cancel") ?>" />
