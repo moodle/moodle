@@ -411,33 +411,26 @@ function column_type($table, $column) {
 /// GENERIC FUNCTIONS TO CHECK AND COUNT RECORDS ////////////////////////////////////////
 
 /**
- * Returns true or false depending on whether the specified record exists
+ * Test whether a record exists in a table where all the given fields match the given values.
+ *
+ * The record to test is specified by giving up to three fields that must
+ * equal the corresponding values.
  *
  * @uses $CFG
- * @param string $table The database table to be checked for the record.
- * @param string $field1 The first table field to be checked for a given value. Do not supply a field1 string to leave out a WHERE clause altogether.
- * @param string $value1 The value to match if field1 is specified.
- * @param string $field2 The second table field to be checked for a given value. 
- * @param string $value2 The value to match if field2 is specified.
- * @param string $field3 The third table field to be checked for a given value. 
- * @param string $value3 The value to match if field3 is specified.
- * @return bool True if record exists
+ * @param string $table The table to check.
+ * @param string $field1 the first field to check (optional).
+ * @param string $value1 the value field1 must have (requred if field1 is given, else optional).
+ * @param string $field2 the second field to check (optional).
+ * @param string $value2 the value field2 must have (requred if field2 is given, else optional).
+ * @param string $field3 the third field to check (optional).
+ * @param string $value3 the value field3 must have (requred if field3 is given, else optional).
+ * @return bool true if a matching record exists, else false.
  */
 function record_exists($table, $field1='', $value1='', $field2='', $value2='', $field3='', $value3='') {
 
     global $CFG;
 
-    if ($field1) {
-        $select = 'WHERE '. $field1 .' = \''. $value1 .'\'';
-        if ($field2) {
-            $select .= ' AND '. $field2 .' = \''. $value2 .'\'';
-            if ($field3) {
-                $select .= ' AND '. $field3 .' = \''. $value3 .'\'';
-            }
-        }
-    } else {
-        $select = '';
-    }
+    $select = where_clause($field1, $value1, $field2, $value2, $field3, $value3);
 
     return record_exists_sql('SELECT * FROM '. $CFG->prefix . $table .' '. $select .' LIMIT 1');
 }
@@ -479,33 +472,23 @@ function record_exists_sql($sql) {
 
 
 /**
- * Get all specified records from the specified table and return the count of them
+ * Count the records in a table where all the given fields match the given values.
  *
  * @uses $CFG
- * @param string $table The database table to be checked against.
- * @param string $field1 The first table field to be checked for a given value. Do not supply a field1 string to leave out a WHERE clause altogether.
- * @param string $value1 The value to match if field1 is specified.
- * @param string $field2 The second table field to be checked for a given value. 
- * @param string $value2 The value to match if field2 is specified.
- * @param string $field3 The third table field to be checked for a given value. 
- * @param string $value3 The value to match if field3 is specified.
+ * @param string $table The table to query.
+ * @param string $field1 the first field to check (optional).
+ * @param string $value1 the value field1 must have (requred if field1 is given, else optional).
+ * @param string $field2 the second field to check (optional).
+ * @param string $value2 the value field2 must have (requred if field2 is given, else optional).
+ * @param string $field3 the third field to check (optional).
+ * @param string $value3 the value field3 must have (requred if field3 is given, else optional).
  * @return int The count of records returned from the specified criteria.
  */
 function count_records($table, $field1='', $value1='', $field2='', $value2='', $field3='', $value3='') {
 
     global $CFG;
 
-    if ($field1) {
-        $select = 'WHERE '. $field1 .' = \''. $value1 .'\'';
-        if ($field2) {
-            $select .= ' AND '. $field2 .' = \''. $value2 .'\'';
-            if ($field3) {
-                $select .= ' AND '. $field3 .' = \''. $value3 .'\'';
-            }
-        }
-    } else {
-        $select = '';
-    }
+    $select = where_clause($field1, $value1, $field2, $value2, $field3, $value3);
 
     return count_records_sql('SELECT COUNT(*) FROM '. $CFG->prefix . $table .' '. $select);
 }
@@ -569,27 +552,20 @@ function count_records_sql($sql) {
  * Get a single record as an object
  *
  * @uses $CFG
- * @param    string  $table The name of the table to select from
- * @param    string  $field1 The name of the field for the first criteria
- * @param    string  $value1 The value of the field for the first criteria
- * @param    string  $field2 The name of the field for the second criteria
- * @param    string  $value2 The value of the field for the second criteria
- * @param    string  $field3 The name of the field for the third criteria
- * @param    string  $value3 The value of the field for the third criteria
- * @return   object(fieldset) A fieldset object containing the first record selected
+ * @param string $table The table to select from.
+ * @param string $field1 the first field to check (optional).
+ * @param string $value1 the value field1 must have (requred if field1 is given, else optional).
+ * @param string $field2 the second field to check (optional).
+ * @param string $value2 the value field2 must have (requred if field2 is given, else optional).
+ * @param string $field3 the third field to check (optional).
+ * @param string $value3 the value field3 must have (requred if field3 is given, else optional).
+ * @return mixed a fieldset object containing the first mathcing record, or false if none found.
  */
 function get_record($table, $field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields='*') {
 
-    global $CFG ;
+    global $CFG;
 
-    $select = 'WHERE '. $field1 .' = \''. $value1 .'\'';
-
-    if ($field2) {
-        $select .= ' AND '. $field2 .' = \''. $value2 .'\'';
-        if ($field3) {
-            $select .= ' AND '. $field3 .' = \''. $value3 .'\'';
-        }
-    }
+    $select = where_clause($field1, $value1, $field2, $value2, $field3, $value3);
 
     return get_record_sql('SELECT '.$fields.' FROM '. $CFG->prefix . $table .' '. $select);
 }
@@ -826,9 +802,9 @@ function get_recordset_sql($sql) {
  *
  * @uses $CFG
  * @param string $table The database table to be checked against.
-  * @param string $field The database field name to search
-  * @param string $value The value to search for in $field
-  * @param string $sort Sort order (as valid SQL sort parameter)
+ * @param string $field a field to check (optional).
+ * @param string $value the value the field must have (requred if field1 is given, else optional).
+ * @param string $sort Sort order (as valid SQL sort parameter)
  * @param string $fields A comma separated list of fields to be returned from the chosen table.
  * @param int $limitfrom Return a subset of results starting at this value (*must* set $limitnum)
  * @param int $limitnum Return a subset of results, return this number (*must* set $limitfrom)
@@ -838,12 +814,8 @@ function get_records($table, $field='', $value='', $sort='', $fields='*', $limit
 
     global $CFG;
 
-    if ($field) {
-        $select = 'WHERE '. $field .' = \''. $value .'\'';
-    } else {
-        $select = '';
-    }
-
+    $select = where_clause($field, $value);
+    
     if ($limitfrom !== '') {
         $limit = sql_paging_limit($limitfrom, $limitnum);
     } else {
@@ -974,29 +946,25 @@ function get_records_sql($sql) {
 }
 
 /**
-* Get a number of first two columns in records as an associative array of objects
-*
-* Can optionally be sorted eg "time ASC" or "time DESC"
-* If "fields" is specified, only those fields are returned
-* The "key" is the first column returned, eg usually "id"
-*
+ * Get a number of first two columns in records as an associative array of objects
+ *
+ * Can optionally be sorted eg "time ASC" or "time DESC"
+ * If "fields" is specified, only those fields are returned
+ * The "key" is the first column returned, eg usually "id"
+ *
  * @uses $CFG
  * @param string $table The database table to be checked against.
- * @param string $field The name of the field to search
- * @param string $value The value to search for
+ * @param string $field a field to check (optional).
+ * @param string $value the value the field must have (requred if field1 is given, else optional).
  * @param string $sort Sort order (optional) - a valid SQL order parameter
  * @param string $fields A comma separated list of fields to be returned from the chosen table.
  * @return object|bool An associative array with the results from the SQL call. False if error.
-*/
+ */
 function get_records_menu($table, $field='', $value='', $sort='', $fields='*') {
 
     global $CFG;
 
-    if ($field) {
-        $select = 'WHERE '. $field .' = \''. $value .'\'';
-    } else {
-        $select = '';
-    }
+    $select = where_clause($field, $value);
 
     if ($sort) {
         $sort = 'ORDER BY '. $sort;
@@ -1081,32 +1049,25 @@ function get_records_sql_menu($sql) {
 }
 
 /**
- * Get a single field from a database record
+ * Get a single value from a table row where all the given fields match the given values.
  *
  * @uses $CFG
  * @uses $db
- * @param string $table The database table to be checked against.
- * @param string $field1 The first table field to be checked for a given value. Do not supply a field1 string to leave out a WHERE clause altogether.
- * @param string $value1 The value to match if field1 is specified.
- * @param string $field2 The second table field to be checked for a given value. 
- * @param string $value2 The value to match if field2 is specified.
- * @param string $field3 The third table field to be checked for a given value. 
- * @param string $value3 The value to match if field3 is specified.
- * @return mixed|false Returns the value return from the SQL statment or false if an error occured.
- * @todo Finish documenting this function
+ * @param string $table the table to query.
+ * @param string $return the field to return the value of.
+ * @param string $field1 the first field to check (optional).
+ * @param string $value1 the value field1 must have (requred if field1 is given, else optional).
+ * @param string $field2 the second field to check (optional).
+ * @param string $value2 the value field2 must have (requred if field2 is given, else optional).
+ * @param string $field3 the third field to check (optional).
+ * @param string $value3 the value field3 must have (requred if field3 is given, else optional).
+ * @return mixed the specified value, or false if an error occured.
  */
 function get_field($table, $return, $field1, $value1, $field2='', $value2='', $field3='', $value3='') {
 
     global $db, $CFG;
 
-    $select = 'WHERE '. $field1 .' = \''. $value1 .'\'';
-
-    if ($field2) {
-        $select .= ' AND '. $field2 .' = \''. $value2 .'\'';
-        if ($field3) {
-            $select .= ' AND '. $field3 .' = \''. $value3 .'\'';
-        }
-    }
+    $select = where_clause($field1, $value1, $field2, $value2, $field3, $value3);
 
     if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
 
@@ -1205,19 +1166,20 @@ function get_fieldset_sql($sql) {
 }
 
 /**
- * Set a single field in a database record
+ * Set a single field in the table row where all the given fields match the given values.
  *
  * @uses $CFG
  * @uses $db
  * @param string $table The database table to be checked against.
- * @param string $field1 The first table field to be checked for a given value. Do not supply a field1 string to leave out a WHERE clause altogether.
- * @param string $value1 The value to match if field1 is specified.
- * @param string $field2 The second table field to be checked for a given value. 
- * @param string $value2 The value to match if field2 is specified.
- * @param string $field3 The third table field to be checked for a given value. 
- * @param string $value3 The value to match if field3 is specified.
- * @return object A PHP standard object  with the results from the SQL call.
- * @todo Verify return type
+ * @param string $newfield the field to set.
+ * @param string $newvalue the value to set the field to.
+ * @param string $field1 the first field to check (optional).
+ * @param string $value1 the value field1 must have (requred if field1 is given, else optional).
+ * @param string $field2 the second field to check (optional).
+ * @param string $value2 the value field2 must have (requred if field2 is given, else optional).
+ * @param string $field3 the third field to check (optional).
+ * @param string $value3 the value field3 must have (requred if field3 is given, else optional).
+ * @return mixed An ADODB RecordSet object with the results from the SQL call or false.
  */
 function set_field($table, $newfield, $newvalue, $field1, $value1, $field2='', $value2='', $field3='', $value3='') {
 
@@ -1225,32 +1187,24 @@ function set_field($table, $newfield, $newvalue, $field1, $value1, $field2='', $
 
     if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
 
-    $select = 'WHERE '. $field1 .' = \''. $value1 .'\'';
-
-    if ($field2) {
-        $select .= ' AND '. $field2 .' = \''. $value2 .'\'';
-        if ($field3) {
-            $select .= ' AND '. $field3 .' = \''. $value3 .'\'';
-        }
-    }
+    $select = where_clause($field1, $value1, $field2, $value2, $field3, $value3);
 
     return $db->Execute('UPDATE '. $CFG->prefix . $table .' SET '. $newfield  .' = \''. $newvalue .'\' '. $select);
 }
 
 /**
- * Delete one or more records from a table
+ * Delete the records from a table where all the given fields match the given values.
  *
  * @uses $CFG
  * @uses $db
- * @param string $table The database table to be checked against.
- * @param string $field1 The first table field to be checked for a given value. Do not supply a field1 string to leave out a WHERE clause altogether.
- * @param string $value1 The value to match if field1 is specified.
- * @param string $field2 The second table field to be checked for a given value. 
- * @param string $value2 The value to match if field2 is specified.
- * @param string $field3 The third table field to be checked for a given value. 
- * @param string $value3 The value to match if field3 is specified.
- * @return object A PHP standard object with the results from the SQL call.
- * @todo Verify return type
+ * @param string $table the table to delete from.
+ * @param string $field1 the first field to check (optional).
+ * @param string $value1 the value field1 must have (requred if field1 is given, else optional).
+ * @param string $field2 the second field to check (optional).
+ * @param string $value2 the value field2 must have (requred if field2 is given, else optional).
+ * @param string $field3 the third field to check (optional).
+ * @param string $value3 the value field3 must have (requred if field3 is given, else optional).
+ * @return mixed An ADODB RecordSet object with the results from the SQL call or false.
  */
 function delete_records($table, $field1='', $value1='', $field2='', $value2='', $field3='', $value3='') {
 
@@ -1258,17 +1212,7 @@ function delete_records($table, $field1='', $value1='', $field2='', $value2='', 
 
     if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
 
-    if ($field1) {
-        $select = 'WHERE '. $field1 .' = \''. $value1 .'\'';
-        if ($field2) {
-            $select .= ' AND '. $field2 .' = \''. $value2 .'\'';
-            if ($field3) {
-                $select .= ' AND '. $field3 .' = \''. $value3 .'\'';
-            }
-        }
-    } else {
-        $select = '';
-    }
+    $select = where_clause($field1, $value1, $field2, $value2, $field3, $value3);
 
     return $db->Execute('DELETE FROM '. $CFG->prefix . $table .' '. $select);
 }
@@ -3219,6 +3163,35 @@ function sql_isnull($fieldname) {
         default:
              return $fieldname.' IS NULL';
     }
+}
+
+/** 
+ * Prepare a SQL WHERE clause to select records where the given fields match the given values.
+ * 
+ * Prepares a where clause of the form
+ *     WHERE field1 = value1 AND field2 = value2 AND field3 = value3
+ * except that you need only specify as many arguments (zero to three) as you need.
+ * 
+ * @param string $field1 the first field to check (optional).
+ * @param string $value1 the value field1 must have (requred if field1 is given, else optional).
+ * @param string $field2 the second field to check (optional).
+ * @param string $value2 the value field2 must have (requred if field2 is given, else optional).
+ * @param string $field3 the third field to check (optional).
+ * @param string $value3 the value field3 must have (requred if field3 is given, else optional).
+ */
+function where_clause($field1='', $value1='', $field2='', $value2='', $field3='', $value3='') {
+    if ($field1) {
+        $select = "WHERE $field1 = '$value1'";
+        if ($field2) {
+            $select .= " AND $field2 = '$value2'";
+            if ($field3) {
+                $select .= " AND $field3 = '$value3'";
+            }
+        }
+    } else {
+        $select = '';
+    }
+    return $select;
 }
 
 /**
