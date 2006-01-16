@@ -215,6 +215,8 @@
             $discussion->assessed = backup_todb($dis_info['#']['ASSESSED']['0']['#']);
             $discussion->timemodified = backup_todb($dis_info['#']['TIMEMODIFIED']['0']['#']);
             $discussion->usermodified = backup_todb($dis_info['#']['USERMODIFIED']['0']['#']);
+            $discussion->timestart = backup_todb($dis_info['#']['TIMESTART']['0']['#']);
+            $discussion->timeend = backup_todb($dis_info['#']['TIMEEND']['0']['#']);
 
             //We have to recode the userid field
             $user = backup_getid($restore->backup_unique_code,"user",$discussion->userid);
