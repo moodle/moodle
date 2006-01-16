@@ -110,11 +110,11 @@ function db_uppercase() {
 
     case "postgres7":
         return "upper";
-        break;
+
     case "mysql":
     default:
         return "ucase";
-        break;
+
     }
 }
 
@@ -127,11 +127,11 @@ function db_lowercase() {
 
     case "postgres7":
         return "lower";
-        break;
+
     case "mysql":
     default:
         return "lcase";
-        break;
+
     }
 }
 
@@ -268,7 +268,6 @@ function table_column($table, $oldfield, $field, $type='integer', $size='10',
             }
 
             return execute_sql('ALTER TABLE '. $CFG->prefix . $table .' '. $operation .' '. $type .' '. $signed .' '. $default .' '. $null .' '. $after);
-            break;
 
         case 'postgres7':        // From Petri Asikainen
             //Check db-version
@@ -357,7 +356,6 @@ function table_column($table, $oldfield, $field, $type='integer', $size='10',
             execute_sql('ALTER TABLE '. $CFG->prefix . $table .' RENAME COLUMN '. $field .' TO '. $realfield);
 
             return execute_sql('COMMIT');
-            break;
 
         default:
             switch (strtolower($type)) {
@@ -383,8 +381,6 @@ function table_column($table, $oldfield, $field, $type='integer', $size='10',
 
             execute_sql('ALTER TABLE '. $CFG->prefix . $table .' ALTER COLUMN '. $field .' SET '. $null);
             return execute_sql('ALTER TABLE '. $CFG->prefix . $table .' ALTER COLUMN '. $field .' SET '. $default);
-            break;
-
     }
 }
 
