@@ -15,6 +15,7 @@ $string['errorreadingfile'] = 'ファイル「 $a 」の読み取りにエラー
 $string['errorunzippingfiles'] = 'ファイルの解凍処理にエラーが発生しました。';
 $string['fieldrequired'] = '「 $a 」 は必須項目です。';
 $string['filenotfound'] = '申し訳ございません、ファイルが見つかりませんでした。';
+$string['forumblockingtoomanyposts'] = 'このフォーラムに設定されている登録期限を超えています。';
 $string['groupalready'] = 'ユーザは既にグループ $a に属しています';
 $string['groupunknown'] = 'グループ $a は指定されたコースに関連していません。';
 $string['invalidcourse'] = '無効なコース';

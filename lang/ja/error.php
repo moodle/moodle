@@ -15,6 +15,7 @@ $string['errorreadingfile'] = '¥Õ¥¡¥¤¥ë¡Ö $a ¡×¤ÎÆÉ¤ß¼è¤ê¤Ë¥¨¥é¡¼¤¬È¯À¸¤·¤Þ¤·¤¿¡
 $string['errorunzippingfiles'] = '¥Õ¥¡¥¤¥ë¤Î²òÅà½èÍý¤Ë¥¨¥é¡¼¤¬È¯À¸¤·¤Þ¤·¤¿¡£';
 $string['fieldrequired'] = '¡Ö $a ¡× ¤ÏÉ¬¿Ü¹àÌÜ¤Ç¤¹¡£';
 $string['filenotfound'] = '¿½¤·Ìõ¤´¤¶¤¤¤Þ¤»¤ó¡¢¥Õ¥¡¥¤¥ë¤¬¸«¤Ä¤«¤ê¤Þ¤»¤ó¤Ç¤·¤¿¡£';
+$string['forumblockingtoomanyposts'] = '¤³¤Î¥Õ¥©¡¼¥é¥à¤ËÀßÄê¤µ¤ì¤Æ¤¤¤ëÅÐÏ¿´ü¸Â¤òÄ¶¤¨¤Æ¤¤¤Þ¤¹¡£';
 $string['groupalready'] = '¥æ¡¼¥¶¤Ï´û¤Ë¥°¥ë¡¼¥× $a ¤ËÂ°¤·¤Æ¤¤¤Þ¤¹';
 $string['groupunknown'] = '¥°¥ë¡¼¥× $a ¤Ï»ØÄê¤µ¤ì¤¿¥³¡¼¥¹¤Ë´ØÏ¢¤·¤Æ¤¤¤Þ¤»¤ó¡£';
 $string['invalidcourse'] = 'Ìµ¸ú¤Ê¥³¡¼¥¹';
