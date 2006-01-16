@@ -20,22 +20,9 @@ function get_student_courses(&$user) {
     parent::get_student_courses($user);  /// Start with the list of known enrolments
                                          /// If the database fails we can at least use this
 
-    // This is a hack to workaround what seems to be a bug in ADOdb with accessing 
-    // two MySQL databases ... it seems to get confused when trying to access
-    // the first database again, after having accessed the second.
-    // The following hack will make the database explicit which keeps it happy
-    if ($CFG->dbtype === 'mysql' && $CFG->enrol_dbtype === 'mysql') {
-        if (strpos($CFG->prefix, $CFG->dbname) === false) {
-            $oldprefix = $CFG->prefix;
-            $CFG->prefix = "`$CFG->dbname`.$CFG->prefix";
-        }
-    }
-
-    // Try to connect to the external database
-
-    $enroldb = &ADONewConnection($CFG->enrol_dbtype);
-
-    if ($enroldb->PConnect($CFG->enrol_dbhost,$CFG->enrol_dbuser,$CFG->enrol_dbpass,$CFG->enrol_dbname)) {
+    // NOTE: if $this->enrol_connect() succeeds you MUST remember to call
+    // $this->enrol_disconnect() as it is doing some nasty vodoo with $CFG->prefix
+    if ($enroldb = $this->enrol_connect()) {
 
         $courselist = array();      /// Initialise new array
         $newstudent = array();
@@ -82,15 +69,9 @@ function get_student_courses(&$user) {
 
             $user->student = $newstudent;    /// Overwrite the array with the new one
         }
-        
-        $enroldb->Close();
-    }
-
-    if (!empty($oldprefix)) {
-        $CFG->prefix = $oldprefix;           // Restore it just in case
-    }
+        $this->enrol_disconnect($enroldb);
+    } // end if (enroldb=connect)
 }
-
 
 /// Override the base print_entry() function
 function print_entry($course) {
@@ -199,6 +180,46 @@ function process_config($config) {
 
 }
 
+/// DB Connect
+/// NOTE: You MUST remember to disconnect
+/// when you stop using it -- as this call will
+/// sometimes modify $CFG->prefix for the whole of Moodle!
+function enrol_connect() {
+    global $CFG;
+
+    // This is a hack to workaround what seems to be a bug in ADOdb with accessing 
+    // two MySQL databases ... it seems to get confused when trying to access
+    // the first database again, after having accessed the second.
+    // The following hack will make the database explicit which keeps it happy
+    if ($CFG->dbtype === 'mysql' && $CFG->enrol_dbtype === 'mysql') {
+        if (strpos($CFG->prefix, $CFG->dbname) === false) {
+            $CFG->prefix_old = $CFG->prefix;
+            $CFG->prefix = "`$CFG->dbname`.$CFG->prefix";
+        }
+    }
+
+    // Try to connect to the external database
+
+    $enroldb = &ADONewConnection($CFG->enrol_dbtype);
+    if ($enroldb->PConnect($CFG->enrol_dbhost,$CFG->enrol_dbuser,$CFG->enrol_dbpass,$CFG->enrol_dbname)) {
+        return $enroldb;
+    } else {
+        trigger_error("Error connecting to enrolment DB backend with: $CFG->enrol_dbhost,$CFG->enrol_dbuser,$CFG->enrol_dbpass,$CFG->enrol_dbname");
+        return false;
+    }    
+}
+
+/// DB Disconnect
+function enrol_disconnect($enroldb) {
+    global $CFG;
+
+    $enroldb->Close();
+
+    if (!empty($CFG->prefix_old)) {
+        $CFG->prefix =$CFG->prefix_old;           // Restore it just in case
+        unset($CFG->prefix_old);
+    }
+}
 
 } // end of class
 
