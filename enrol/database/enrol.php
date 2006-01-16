@@ -1,6 +1,9 @@
 <?php  // $Id$
 
 require_once("$CFG->dirroot/enrol/enrol.class.php");
+require_once("$CFG->dirroot/course/lib.php");
+require_once("$CFG->dirroot/lib/blocklib.php");
+require_once("$CFG->dirroot/lib/pagelib.php");
 
 class enrolment_plugin extends enrolment_base {
 
@@ -72,6 +75,208 @@ function get_student_courses(&$user) {
         $this->enrol_disconnect($enroldb);
     } // end if (enroldb=connect)
 }
+
+///
+/// sync enrolments with database, create courses if required.
+///
+/// NOTE: we are currently  ignoring $type, as enrol/database only deasl with student enrolment
+function sync_enrolments($type='student') {
+    global $CFG;
+    global $db;
+    error_reporting(E_ALL);
+
+    // force type to student - remove when adding teacher support
+    $type = 'student';
+
+    if(!isset($type) || !($type =='student' || $type =='teacher' )){
+        error("Bad call to get_all_courses()!");
+    }
+
+    // Connect to the external database
+    $enroldb = $this->enrol_connect();
+    if (!$enroldb) {        
+        notify("enrol/database cannot connect to server");
+        return false;
+    }
+    
+    // first, pack the sortorder...
+    fix_course_sortorder();
+
+    // get enrolments per-course
+    $sql =  "SELECT DISTINCT {$CFG->enrol_remotecoursefield} " .
+        " FROM {$CFG->enrol_dbtable} " .
+        " WHERE {$CFG->enrol_remoteuserfield} IS NOT NULL";
+
+    $rs = $enroldb->Execute($sql);
+    if (!$rs) {
+        trigger_error($enroldb->ErrorMsg() .' STATEMENT: '. $sql);
+        return false;
+    }
+    if ( $rs->RecordCount() == 0 ) { // no courses! outta here...
+        return true;
+    }
+
+    $extcourses = array();
+    while (!$rs->EOF) { // there are more course records
+        $extcourse = $rs->fields[0];
+        array_push($extcourses, $extcourse);
+        $rs->MoveNext(); // prep the next record
+
+        print "course $extcourse\n";
+
+        // does the course exist in moodle already? 
+        $course = false;
+        $course = get_record( 'course',
+                              $CFG->enrol_localcoursefield,
+                              $extcourse );
+
+        if (!is_object($course)) {
+            // ok, now then let's create it!
+            print "Creating Course $extcourse...";
+            // prepare any course properties we actually have
+            $course = new StdClass;
+            $course->{$CFG->enrol_localcoursefield} = $extcourse;
+            $course->fullname  = $extcourse;
+            $course->shortname = $extcourse;
+            if ($newcourseid = $this->create_course($course, true)) {  // we are skipping fix_course_sortorder()
+                $course = get_record( 'course', 'id', $newcourseid); 
+            }
+            if ($course) {
+                print "OK!\n";
+            } else {
+                print "failed\n";
+                continue; // nothing left to do...
+            }
+        }
+        
+        // get a list of the student ids the are enrolled
+        // in the external db -- hopefully it'll fit in memory...
+        $extenrolments = array();
+        $sql = "SELECT {$CFG->enrol_remoteuserfield} " .
+            " FROM {$CFG->enrol_dbtable} " .
+            " WHERE {$CFG->enrol_remotecoursefield} = '$extcourse'";
+        
+        $crs = $enroldb->Execute($sql);
+        if (!$crs) {
+            trigger_error($enroldb->ErrorMsg() .' STATEMENT: '. $sql);
+            return false;
+        }
+        if ( $crs->RecordCount() == 0 ) { // shouldn't happen, but cover all bases
+            continue;
+        }
+
+        // slurp results into an array
+        while (!$crs->EOF) {
+            array_push($extenrolments,$crs->fields[0]);
+            $crs->MoveNext(); 
+        }
+        unset($crs); // release the handle
+
+        //
+        // prune enrolments
+        // hopefully they'll fit in the max buffer size for the RDBMS
+        //
+        $sql = " SELECT enr.userid AS userid " .
+            " FROM {$CFG->prefix}user_students enr " .
+            "     JOIN {$CFG->prefix}user usr ON usr.id=enr.userid " .
+            " WHERE course={$course->id} AND enrol='database' " .
+            "       AND {$CFG->enrol_localuserfield} NOT IN (" . join(',', $extenrolments) .")";
+        
+        $ers = $db->Execute($sql);
+        if (!$ers) {
+            trigger_error($db->ErrorMsg() .' STATEMENT: '. $sql);
+            return false;
+        }
+        if ( $ers->RecordCount() > 0 ) {             
+            while (!$ers->EOF) {
+                $member = $ers->fields[0];
+                $ers->MoveNext(); 
+                if (unenrol_student($member, $course->id)){
+                    print "Unenrolled $type $member into course $course->id ($course->shortname)\n";
+                } else {
+                    print "Failed to unenrol $type $member into course $course->id ($course->shortname)\n";
+                }
+            }
+        }
+        unset($ers); // release the handle
+        
+        //
+        // insert current enrolments 
+        // bad we can't do INSERT IGNORE with postgres...
+        //
+        begin_sql();
+        foreach ($extenrolments as $member) {
+            // Get the user id and whether is enrolled in one fell swoop
+            $sql = "SELECT u.id AS userid, e.id AS enrolmentid" .
+                " FROM {$CFG->prefix}user u " . 
+                "      LEFT OUTER JOIN {$CFG->prefix}user_students e ON (u.id = e.userid AND e.course='{$course->id}')" .
+                " WHERE u.{$CFG->enrol_localuserfield} = '$member'";
+
+            $ers = $db->Execute($sql);
+            if (!$ers) {
+                trigger_error($db->ErrorMsg() .' STATEMENT: '. $sql);
+                return false;
+            }
+            if ( $ers->RecordCount() != 1 ) { // should not happen!
+                trigger_error('weird! no enrolment entry?');
+                continue;
+            }
+            $userid      = $ers->fields[0];
+            $enrolmentid = $ers->fields[1];
+            unset($ers); // release the handle
+
+            if ($enrolmentid) { // already enrolled - skip
+                continue;
+            }
+            
+            if($type === 'student'){
+                if (enrol_student($userid, $course->id, 0, 0, 'database')){
+                    print "Enrolled $type $member into course $course->id ($course->shortname)\n";
+                } else {
+                    print "Failed to enrol $type $member into course $course->id ($course->shortname)\n";
+                }
+            } 
+
+        } // end foreach member
+        commit_sql();
+    } // end while course records
+
+    //
+    // prune enrolments to courses that are no longer in ext auth
+    //
+    $sql = "SELECT e.userid, e.course " .
+        " FROM {$CFG->prefix}user_students e " .
+        "      JOIN {$CFG->prefix}course c ON e.course = c.id " .
+        " WHERE e.enrol='database' " ;
+    if ($extcourses) { 
+        $sql .= " AND c.{$CFG->enrol_localcoursefield} NOT IN ('" . join("','", $extcourses) . "')";
+    }
+    $ers = $db->Execute($sql);
+    if (!$ers) {
+        trigger_error($db->ErrorMsg() .' STATEMENT: '. $sql);
+        return false;
+    }
+    if ( $ers->RecordCount() > 0 ) {             
+        while (!$ers->EOF) {
+            $user   = $ers->fields[0];
+            $course = $ers->fields[1];
+            $ers->MoveNext(); 
+            if (unenrol_student($user, $course)){
+                print "Unenrolled student $user from course $course\n";
+            } else {
+                print "Failed to unenrol student $user from course $course\n";
+            }
+        }
+    }
+    unset($ers); // release the handle
+    
+    // we are done now, a bit of housekeeping
+    fix_course_sortorder();
+    
+    $this->enrol_disconnect($enroldb);
+    return true;
+}
+
 
 /// Override the base print_entry() function
 function print_entry($course) {
@@ -178,6 +383,91 @@ function process_config($config) {
     
     return true;
 
+}
+
+// will create the moodle course from the template
+// course_ext is an array as obtained from ldap -- flattened somewhat
+// NOTE: if you pass true for $skip_fix_course_sortorder 
+// you will want to call fix_course_sortorder() after your are done
+// with course creation
+function create_course ($course,$skip_fix_course_sortorder=0){
+    global $CFG;
+
+    // define a template
+    if(!empty($CFG->enrol_dbtemplate)){
+        $template = get_record("course", 'shortname', $CFG->enrol_dbtemplate);
+        $template = (array)$template;
+    } else {
+        $site = get_site();
+        $template = array(
+                          'startdate'      => time() + 3600 * 24,
+                          'summary'        => get_string("defaultcoursesummary"),
+                          'format'         => "weeks",
+                          'password'       => "",
+                          'guest'          => 0,
+                          'numsections'    => 10,
+                          'idnumber'       => '',
+                          'cost'           => '',
+                          'newsitems'      => 5,
+                          'showgrades'     => 1,
+                          'groupmode'      => 0,
+                          'groupmodeforce' => 0,
+                          'student'  => $site->student,
+                          'students' => $site->students,
+                          'teacher'  => $site->teacher,
+                          'teachers' => $site->teachers,
+                          );
+    }
+    // overlay template
+    foreach (array_keys($template) AS $key) {
+        if (empty($course->$key)) {
+            $course->$key = $template[$key];
+        }
+    }        
+        
+    if (empty($course->category)){ //category = 0 or undef will break moodle
+        $course->category = 1;     // the misc 'catch-all' category
+    }
+
+    // define the sortorder 
+    $sort = get_field_sql('SELECT COALESCE(MAX(sortorder)+1, 100) AS max ' . 
+                          ' FROM ' . $CFG->prefix . 'course ' .
+                          ' WHERE category=' . $course->category);
+    $course->sortorder = $sort;
+
+    // override with local data
+    $course->startdate   = time() + 3600 * 24;
+    $course->timecreated = time();
+    $course->visible     = 1;
+    
+    // clear out id just in case
+    unset($course->id); 
+
+    // truncate a few key fields
+    $course->idnumber  = substr($course->idnumber, 0, 100);
+    $course->shortname = substr($course->shortname, 0, 15);
+    
+    // store it and log
+    if ($newcourseid = insert_record("course", $course)) {  // Set up new course
+        $section = NULL;
+        $section->course = $newcourseid;   // Create a default section.
+        $section->section = 0;
+        $section->id = insert_record("course_sections", $section);
+        $page = page_create_object(PAGE_COURSE_VIEW, $newcourseid);
+        blocks_repopulate_page($page); // Return value no
+
+
+        if(!$skip_fix_course_sortorder){ 
+            fix_course_sortorder(); 
+        }
+        add_to_log($newcourseid, "course", "new", "view.php?id=$newcourseid", "enrol/database auto-creation");
+    } else {
+        trigger_error("Could not create new course $extcourse from  from database");
+        notify("Serious Error! Could not create the new course!");
+        return false;
+    }
+    
+    return $newcourseid;
 }
 
 /// DB Connect
