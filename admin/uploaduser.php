@@ -229,9 +229,10 @@
                 // before insert/update, check whether we should be updating 
                 // an old record instead
                 if ($allowrenames && !empty($user->oldusername) ) {
+                    $user->oldusername = moodle_strtolower($user->oldusername);
                     if ($olduser = get_record('user','username',$user->oldusername)) {
                         if (set_field('user', 'username', $user->username, 'username', $user->oldusername)) {
-                            notify(get_string('userrenamed') . " : $user->oldusername $user->username");
+                            notify(get_string('userrenamed', 'admin') . " : $user->oldusername $user->username");
                             $renames++;
                         } else {
                             notify(get_string('usernotrenamedexists', 'error') . " : $user->oldusername $user->username");
