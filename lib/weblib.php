@@ -687,7 +687,7 @@ function choose_from_menu ($options, $name, $selected='', $nothing='choose', $sc
     if (!empty($options)) {
         foreach ($options as $value => $label) {
             $output .= '   <option value="'. $value .'"';
-            if ($value === $selected) {
+            if ((string)$value == (string)$selected) {
                 $output .= ' selected="selected"';
             }
             if ($label === '') {
@@ -739,7 +739,7 @@ function choose_from_menu_nested($options,$name,$selected='',$nothing='choose',$
             $output .= '   <optgroup label="'.$section.'">'."\n";
             foreach ($values as $value => $label) {
                 $output .= '   <option value="'. $value .'"';
-                if ($value === $selected) {
+                if ($value == $selected) {
                     $output .= ' selected="selected"';
                 }
                 if ($label === '') {
