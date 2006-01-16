@@ -902,106 +902,74 @@ function get_records_sql($sql) {
 }
 
 /**
- * Get a number of first two columns in records as an associative array of objects
- *
- * Can optionally be sorted eg "time ASC" or "time DESC"
- * If "fields" is specified, only those fields are returned
- * The "key" is the first column returned, eg usually "id"
- *
- * @uses $CFG
- * @param string $table The database table to be checked against.
- * @param string $field a field to check (optional).
- * @param string $value the value the field must have (requred if field1 is given, else optional).
- * @param string $sort Sort order (optional) - a valid SQL order parameter
- * @param string $fields A comma separated list of fields to be returned from the chosen table.
- * @return object|bool An associative array with the results from the SQL call. False if error.
- */
-function get_records_menu($table, $field='', $value='', $sort='', $fields='*') {
-
-    global $CFG;
-
-    $select = where_clause($field, $value);
-
-    if ($sort) {
-        $sort = 'ORDER BY '. $sort;
-    }
-
-    return get_records_sql_menu('SELECT '. $fields .' FROM '. $CFG->prefix . $table .' '. $select .' '. $sort);
-}
-
-
-/**
- * Get a number of records (first 2 columns)  as an associative array of values
+ * Utility function used by the following 3 methods.
  * 
- * Can optionally be sorted eg "time ASC" or "time DESC"
- * "select" is a fragment of SQL to define the selection criteria
- * Returns associative array of first two fields
- *
- * @uses $CFG
- * @param string $table The database table to be checked against.
- * @param string $select A fragment of SQL to be used in a where clause in the SQL call.
- * @param string $sort Sort order (optional) - a valid SQL order parameter
- * @param string $fields A comma separated list of fields to be returned from the chosen table.
- * @return object|bool  An associative array with the results from the SQL call. False if error
+ * @param object an ADODB RecordSet object with two columns.
+ * @return mixed an associative array, or false if an error occured or the RecordSet was empty.
  */
-function get_records_select_menu($table, $select='', $sort='', $fields='*') {
-
-    global $CFG;
-
-    if ($select) {
-        $select = 'WHERE '. $select;
-    }
-
-    if ($sort) {
-        $sort = 'ORDER BY '. $sort;
-    }
-
-    return get_records_sql_menu('SELECT '. $fields .' FROM '. $CFG->prefix . $table .' '. $select .' '. $sort);
-}
-
-
-/**
- * Retrieve an associative array of the first two columns returned from a SQL statment.
- *
- * Given a SQL statement, this function returns an associative
- * array of the first two columns.  This is most useful in
- * combination with the {@link choose_from_menu()} function to create
- * a form menu.
- *
- * @uses $CFG
- * @uses $db
- * @param string $sql The SQL string you wish to be executed.
- * @return object|bool An associative array with the results from the SQL call. False if error.
- * @todo Finish documenting this function
- */
-function get_records_sql_menu($sql) {
-
-    global $CFG, $db;
-
-
-    if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
-
-    if (!$rs = $db->Execute($sql)) {
-        if (isset($CFG->debug) and $CFG->debug > 7) {
-            notify($db->ErrorMsg() .'<br /><br />'. $sql);
-        }
-        if (!empty($CFG->dblogerror)) {
-            $debug=array_shift(debug_backtrace());
-            error_log("SQL ".$db->ErrorMsg()." in {$debug['file']} on line {$debug['line']}. STATEMENT:  $sql");
-        }
-        return false;
-    }
-
-    if ( $rs->RecordCount() > 0 ) {
+function recordset_to_menu($rs) {
+    if ($rs && $rs->RecordCount() > 0) {
         while (!$rs->EOF) {
             $menu[$rs->fields[0]] = $rs->fields[1];
             $rs->MoveNext();
         }
         return $menu;
-
     } else {
         return false;
     }
+}
+
+/**
+ * Get the first two columns from a number of records as an associative array.
+ *
+ * Arguments as for @see function get_recordset.
+ * 
+ * If no errors occur, and at least one records is found, the return value
+ * is an associative whose keys come from the first field of each record,
+ * and whose values are the corresponding second fields. If no records are found,
+ * or an error occurs, false is returned.
+ *
+ * @param string $table the table to query.
+ * @param string $field a field to check (optional).
+ * @param string $value the value the field must have (requred if field1 is given, else optional).
+ * @param string $sort an order to sort the results in (optional, a valid SQL ORDER BY parameter).
+ * @param string $fields a comma separated list of fields to return (optional, by default all fields are returned).
+ * @return mixed an associative array, or false if no records were found or an error occured.
+ */
+function get_records_menu($table, $field='', $value='', $sort='', $fields='*') {
+    $rs = get_recordset($table, $field, $value, $sort, $fields);
+    return recordset_to_menu($rs);
+}
+
+/**
+ * Get the first two columns from a number of records as an associative array.
+ *
+ * Arguments as for @see function get_recordset_select.
+ * Return value as for @see function get_records_menu.
+ *
+ * @param string $table The database table to be checked against.
+ * @param string $select A fragment of SQL to be used in a where clause in the SQL call.
+ * @param string $sort Sort order (optional) - a valid SQL order parameter
+ * @param string $fields A comma separated list of fields to be returned from the chosen table.
+ * @return mixed an associative array, or false if no records were found or an error occured.
+ */
+function get_records_select_menu($table, $select='', $sort='', $fields='*') {
+    $rs = get_recordset_select($table, $select, $sort, $fields);
+    return recordset_to_menu($rs);
+}
+
+/**
+ * Get the first two columns from a number of records as an associative array.
+ *
+ * Arguments as for @see function get_recordset_sql.
+ * Return value as for @see function get_records_menu.
+ *
+ * @param string $sql The SQL string you wish to be executed.
+ * @return mixed an associative array, or false if no records were found or an error occured.
+ */
+function get_records_sql_menu($sql) {
+    $rs = get_recordset_sql($sql);
+    return recordset_to_menu($rs);
 }
 
 /**
