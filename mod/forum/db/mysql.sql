@@ -5,7 +5,7 @@
 CREATE TABLE prefix_forum (
   id int(10) unsigned NOT NULL auto_increment,
   course int(10) unsigned NOT NULL default '0',
-  type enum('single','news','general','social','eachuser','teacher') NOT NULL default 'general',
+  type enum('single','news','general','social','eachuser','teacher','qanda') NOT NULL default 'general',
   name varchar(255) NOT NULL default '',
   intro text NOT NULL,
   open tinyint(2) unsigned NOT NULL default '2',

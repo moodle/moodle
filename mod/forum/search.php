@@ -225,7 +225,9 @@
 
         $fulllink = "<a href=\"discuss.php?d=$post->discussion#$post->id\">".get_string("postincontext", "forum")."</a>";
         //search terms already highlighted - fiedorow - 9/2/2005
+        $SESSION->forum_search = true;
         forum_print_post($post, $course->id, false, false, false, false, $fulllink);
+        unset($SESSION->forum_search);
 
         echo "<br />";
     }

@@ -237,7 +237,11 @@
                             $subscribed = $strno;
                             $subtitle = get_string("subscribe", "forum");
                         }
-                        $sublink = "<a title=\"$subtitle\" href=\"subscribe.php?id=$forum->id\">$subscribed</a>";
+                        if ($forum->forcesubscribe == FORUM_DISALLOWSUBSCRIBE && !isteacher($forum->course)) {
+                            $sublink = '-';
+                        } else {
+                            $sublink = "<a title=\"$subtitle\" href=\"subscribe.php?id=$forum->id\">$subscribed</a>";
+                        }
                     }
                 }
                 $row = array ($forumlink, $forum->intro, $discussionlink);

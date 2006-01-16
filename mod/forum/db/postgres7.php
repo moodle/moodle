@@ -155,6 +155,11 @@ function forum_upgrade($oldversion) {
       table_column('forum_discussions','','timeend','integer');
   }
 
+  if ($oldversion < 2006011600) {
+      execute_sql("ALTER TABLE {$CFG->prefix}forum DROP CONSTRAINT {$CFG->prefix}forum_type");
+      execute_sql("ALTER TABLE {$CFG->prefix}forum ADD CONSTRAINT {$CFG->prefix}forum_type CHECK (type IN ('single','news','general','social','eachuser','teacher','qanda')) ");
+  }
+
   return true;
 
 }

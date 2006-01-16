@@ -209,6 +209,10 @@ function forum_upgrade($oldversion) {
       table_column('forum_discussions','','timestart','integer');
       table_column('forum_discussions','','timeend','integer');
   }
+  
+  if ($oldversion < 2006011600) {
+      execute_sql("alter table mdl_forum change column type type enum('single','news','general','social','eachuser','teacher','qanda') not null default 'general'");
+  }
 
   return true;
   

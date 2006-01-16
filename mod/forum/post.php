@@ -624,6 +624,18 @@
 
     }
 
+// checkup
+    if (!empty($parent) && !forum_user_can_see_post($forum,$discussion,$post)) {
+        error("You cannot reply to this post");
+    }
+    if (empty($parent) && !forum_user_can_post_discussion($forum)) {
+        error("You cannot start a new discussion in this forum");
+    }
+
+    if ($forum->type == 'qanda' && !isteacher($forum->course) && !forum_user_has_posted($forum->id,$discussion->id,$USER->id)) {
+        notify(get_string('qandanotify','forum'));
+    }
+
     if (!empty($parent)) {
         forum_print_post($parent, $course->id, $ownpost=false, $reply=false, $link=false);
         if (empty($post->edit)) {
@@ -632,7 +644,9 @@
             } else {
                 $user_read_array = array();
             }
-            forum_print_posts_threaded($parent->id, $course->id, 0, false, false, $user_read_array, $discussion->forum);
+            if ($forum->type != 'qanda' || forum_user_can_see_discussion($forum,$discussion)) {
+                forum_print_posts_threaded($parent->id, $course->id, 0, false, false, $user_read_array, $discussion->forum);
+            }
         }
         print_heading(get_string("yourreply", "forum").':');
     } else {
@@ -640,7 +654,11 @@
         if (!empty($forum->intro)) {
             print_simple_box(format_text($forum->intro), 'center');
         }
-        print_heading(get_string('yournewtopic', 'forum'));
+        if ($forum->type == 'qanda') {
+            print_heading(get_string('yournewquestion','forum'));
+        } else {
+            print_heading(get_string('yournewtopic', 'forum'));
+        }
     }
     echo '<center>';
     if (!empty($post->error)) {

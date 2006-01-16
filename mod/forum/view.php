@@ -152,6 +152,10 @@
             }
             echo '</span>';
 
+        } else if ($forum->forcesubscribe == FORUM_DISALLOWSUBSCRIBE) {
+            $strsubscriptionsoff = get_string('disallowsubscribe','forum');
+            echo $strsubscriptionsoff;
+            helpbutton("subscription", $strsubscriptionsoff, "forum");
         } else {
             $streveryonecanchoose = get_string("everyonecanchoose", "forum");
             $strforcesubscribe = get_string("forcesubscribe", "forum");
@@ -214,6 +218,10 @@
     }
 
     echo '</tr></table>';
+
+    if ($forum->type == 'qanda' && !isteacher($forum->course)) {
+        notify(get_string('qandanotify','forum'));
+    }
 
     $forum->intro = trim($forum->intro);
 

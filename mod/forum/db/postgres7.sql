@@ -5,7 +5,7 @@
 CREATE TABLE prefix_forum (
   id SERIAL PRIMARY KEY,
   course integer NOT NULL default '0',
-  type varchar(10) CHECK (type IN ('single','news','general','social','eachuser','teacher')) NOT NULL default 'general',
+  type varchar(10) CHECK (type IN ('single','news','general','social','eachuser','teacher','qanda')) NOT NULL default 'general',
   name varchar(255) NOT NULL default '',
   intro text NOT NULL default '',
   open integer NOT NULL default '2',

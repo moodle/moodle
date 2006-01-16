@@ -4,6 +4,7 @@
 
 
 $string['addanewdiscussion'] = 'Add a new discussion topic';
+$string['addanewquestion'] = 'Add a new question';
 $string['addanewtopic'] = 'Add a new topic';
 $string['advancedsearch'] = 'Advanced search';
 $string['allforums'] = 'All forums';
@@ -41,6 +42,8 @@ $string['digestmailheader'] = 'This is your daily digest of new posts from the $
 $string['digestmailprefs'] = 'your user profile';
 $string['digestmailsubject'] = '$a: forum digest';
 $string['digestsentusers'] = 'Email digests successfully sent to $a users.';
+$string['disallowsubscribe'] = 'Subscriptions not allowed';
+$string['disallowsubscribeteacher'] = 'Subscriptions not allowed (except for teachers)';
 $string['discussion'] = 'Discussion';
 $string['discussionmoved'] = 'This discussion has been moved to \'$a\'.';
 $string['discussionname'] = 'Discussion name';
@@ -66,6 +69,9 @@ $string['forumintro'] = 'Forum introduction';
 $string['forumname'] = 'Forum name';
 $string['forumposts'] = 'Forum posts';
 $string['forums'] = 'Forums';
+$string['forumbodyhidden'] = 'This post cannot be viewed by you, probably because you have not posted in the discussion yet.';
+$string['forumauthorhidden'] = 'Author (hidden)';
+$string['forumsubjecthidden'] = 'Subject (hidden)';
 $string['forumtype'] = 'Forum type';
 $string['generalforum'] = 'Standard forum for general use';
 $string['generalforums'] = 'General forums';
@@ -105,6 +111,7 @@ $string['nomorepostscontaining'] = 'No more posts containing \'$a\' were found';
 $string['nonews'] = 'No news has been posted yet';
 $string['noposts'] = 'No posts';
 $string['nopostscontaining'] = 'No posts containing \'$a\' were found';
+$string['noquestions'] = 'There are no questions yet in this forum';
 $string['nosubscribers'] = 'There are no subscribers yet for this forum';
 $string['nothingnew'] = 'Nothing new for $a';
 $string['notingroup'] = 'Sorry, but you need to be part of a group to see this forum.';
@@ -143,6 +150,9 @@ $string['processingpost'] = 'Processing post $a';
 $string['prune'] = 'Split';
 $string['prunedpost'] = 'A new discussion has been created from that post';
 $string['pruneheading'] = 'Split the discussion and move this post to a new discussion';
+$string['qandaforum'] = 'Q and A forum';
+$string['qandanotify'] = 'This is a Question and Answer forum. In order to see other responses to these Questions, you must first post your Answer';
+$string['cannotviewpostyet'] = 'You cannot read other students questions in this discussion yet because you haven\'t posted';
 $string['rate'] = 'Rate';
 $string['rating'] = 'Rating';
 $string['ratingeveryone'] = 'Everyone can rate posts';
@@ -212,6 +222,7 @@ $string['yesforever'] = 'Yes, forever';
 $string['yesinitially'] = 'Yes, initially';
 $string['youratedthis'] = 'You rated this';
 $string['yournewtopic'] = 'Your new discussion topic';
+$string['yournewquestion'] = 'Your new question';
 $string['yourreply'] = 'Your reply';
 
 ?>

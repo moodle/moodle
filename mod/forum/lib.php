@@ -11,6 +11,7 @@ define('FORUM_MODE_NESTED', 3);
 
 define('FORUM_FORCESUBSCRIBE', 1);
 define('FORUM_INITIALSUBSCRIBE', 2);
+define('FORUM_DISALLOWSUBSCRIBE',3);
 
 define('FORUM_TRACKING_OFF', 0);
 define('FORUM_TRACKING_OPTIONAL', 1);
@@ -24,7 +25,9 @@ $FORUM_LAYOUT_MODES = array ( FORUM_MODE_FLATOLDEST => get_string('modeflatoldes
 // These are course content forums that can be added to the course manually
 $FORUM_TYPES   = array ('general'    => get_string('generalforum', 'forum'),
                         'eachuser'   => get_string('eachuserforum', 'forum'),
-                        'single'     => get_string('singleforum', 'forum') );
+                        'single'     => get_string('singleforum', 'forum'),
+                        'qanda'      => get_string('qandaforum', 'forum')
+                        );
 
 $FORUM_OPEN_MODES   = array ('2' => get_string('openmode2', 'forum'),
                              '1' => get_string('openmode1', 'forum'),
@@ -327,6 +330,11 @@ function forum_cron () {
                                 }
                             }
                         }
+                    }
+                    
+                    // make sure we're allowed to see it...
+                    if (!forum_user_can_see_post($forum,$discussion,$post,$userto)) {
+                        continue;
                     }
 
                     if ($userto->maildigest > 0) {
@@ -1641,11 +1649,42 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
 function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link=false,
                           $ratings=NULL, $footer="", $highlight="", $post_read=-99) {
 
-    global $USER, $CFG;
+    global $USER, $CFG, $SESSION;
 
     static $stredit, $strdelete, $strreply, $strparent, $strprune, $strpruneheading, $threadedmode, $isteacher, $adminedit;
 
     static $strmarkread, $strmarkunread, $istracked;
+
+    if (!forum_user_can_see_post($post->forum,$post->discussion,$post)) {
+        if (empty($SESSION->forum_search)) {
+            // just viewing, return
+            return;
+        } 
+        echo '<a name="'.$post->id.'"></a>';
+        echo '<table cellspacing="0" class="forumpost">';
+        echo '<tr class="header"><td class="picture left">';
+        //        print_user_picture($post->userid, $courseid, $post->picture);
+        echo '</td>';
+        if ($post->parent) {
+            echo '<td class="topic">';
+        } else {
+            echo '<td class="topic starter">';
+        }
+        echo '<div class="subject">'.get_string('forumsubjecthidden','forum').'</div>';
+        echo '<div class="author">';
+        print_string('forumauthorhidden','forum');
+        echo '</div></td></tr>';
+        
+        echo '<tr><td class="left side">';
+        echo '&nbsp;';
+        
+        /// Actual content
+        
+        echo '</td><td class="content">'."\n";
+        echo get_string('forumbodyhidden','forum');
+        echo '</td></tr></table>';
+        return;
+    }
 
     if (empty($stredit)) {
         $stredit = get_string('edit', 'forum');
@@ -1969,6 +2008,7 @@ function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring=""
     echo '<td class="lastpost">';
     $usedate = (empty($post->timemodified)) ? $post->modified : $post->timemodified;  // Just in case
     $parenturl = (empty($post->lastpostid)) ? '' : '&amp;parent='.$post->lastpostid;
+    $usermodified->id        = $post->usermodified;
     $usermodified->firstname = $post->umfirstname;
     $usermodified->lastname  = $post->umlastname;
     echo '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$post->usermodified.'&amp;course='.$forum->course.'">'.
@@ -2616,12 +2656,18 @@ function forum_user_has_posted_discussion($forumid, $userid) {
     }
 }
 
+function forum_user_has_posted($forumid,$did,$userid) {
+    return record_exists('forum_posts','discussion',$did,'userid',$userid);
+}
+
 function forum_user_can_post_discussion($forum, $currentgroup=false, $groupmode='') {
 // $forum is an object
     global $USER, $SESSION;
 
     if ($forum->type == "eachuser") {
         return (! forum_user_has_posted_discussion($forum->id, $USER->id));
+    } else if ($forum->type == 'qanda') {
+        return isteacher($forum->course);
     } else if ($forum->type == "teacher") {
         return isteacher($forum->course);
     } else if ($currentgroup) {
@@ -2705,6 +2751,70 @@ function forum_user_can_view_post($post, $course, $user=NULL){
     }
 }
 
+function forum_user_can_see_discussion($forum,$discussion,$user=NULL) {
+    global $USER;
+
+    if (empty($user) || empty($user->id)) {
+        $user = $USER;
+    }
+
+    // retrive objects (yuk)
+    if (is_numeric($forum)) {
+        if (!$forum = get_record('forum','id',$forum)) {
+            return false;
+        }
+    }
+    if (is_numeric($discussion)) {
+        if (!$discussion = get_record('forum_discussions','id',$discussion)) {
+            return false;
+        }
+    }
+    if ($forum->type == 'qanda') {
+        return (forum_user_has_posted($forum->id,$discussion->id,$user->id) || isteacher($forum->course));
+    }
+    return true;
+}
+    
+
+function forum_user_can_see_post($forum,$discussion,$post,$user=NULL) {
+    global $USER;
+
+    if (empty($user) || empty($user->id)) {
+        $user = $USER;
+    }
+
+    // retrive objects (yuk)
+    if (is_numeric($forum)) {
+        if (!$forum = get_record('forum','id',$forum)) {
+            return false;
+        }
+    }
+    if (isteacher($forum->course)) {
+        return true;
+    }
+    if (is_numeric($discussion)) {
+        if (!$discussion = get_record('forum_discussions','id',$discussion)) { 
+            return false;
+        }
+    }
+    if (is_numeric($post)) {
+        if (!$post = get_record('forum_posts','id',$post)) {
+            return false;
+        }
+    }
+    
+    if (!isset($post->id) && isset($post->parent)) {
+        $post->id = $post->parent;
+    }
+    
+    if ($forum->type == 'qanda') {
+        $firstpost = forum_get_firstpost_from_discussion($discussion->id);
+        return (forum_user_has_posted($forum->id,$discussion->id,$user->id) || $firstpost->id == $post->id || isteacher($forum->course));
+    }
+    return true;
+}
+
+
 /**
 * Prints the discussion view screen for a forum.
 * 
@@ -2763,7 +2873,10 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
         echo "<form name=\"newdiscussionform\" method=\"get\" action=\"$CFG->wwwroot/mod/forum/post.php\">";
         echo "<input type=\"hidden\" name=\"forum\" value=\"$forum->id\" />";
         echo '<input type="submit" value="';
-        echo ($forum->type == 'news') ? get_string('addanewtopic', 'forum') : get_string('addanewdiscussion', 'forum');
+        echo ($forum->type == 'news') ? get_string('addanewtopic', 'forum') 
+            : (($forum->type == 'qanda') 
+               ? get_string('addanewquestion','forum') 
+               : get_string('addanewdiscussion', 'forum'));
         echo '" />';
         echo '</form>';
         echo "</div>\n";
@@ -2778,6 +2891,8 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
         echo '<div class="forumnodiscuss">';
         if ($forum->type == 'news') {
             echo '('.get_string('nonews', 'forum').')';
+        } else if ($forum->type == 'qanda') {
+            echo '('.get_string('noquestions','forum').')';
         } else {
             echo '('.get_string('nodiscussions', 'forum').')';
         }
@@ -3077,6 +3192,9 @@ function forum_print_posts_threaded($parent, $courseid, $depth, $ratings, $reply
                     $ratingsmenuused = true;
                 }
             } else {
+                if (!forum_user_can_see_post($post->forum,$post->discussion,$post)) {
+                    continue;
+                }
                 $by->name = fullname($post, isteacher($courseid));
                 $by->date = userdate($post->modified);
 

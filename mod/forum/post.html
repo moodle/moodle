@@ -59,7 +59,7 @@ if (!isset($discussion->timeend)) {
     <?php 
        if (forum_is_forcesubscribed($forum->id)) {
            print_string("everyoneissubscribed", "forum");
-       } else {
+       } else if ($forum->forcesubscribe != FORUM_DISALLOWSUBSCRIBE  || isteacher($forum->course)){
            unset($options);
            if (forum_is_subscribed($USER->id, $post->forum)) {
                $options[0] = get_string("subscribestart", "forum");
@@ -74,6 +74,8 @@ if (!isset($discussion->timeend)) {
                $options[1] = get_string("subscribestart", "forum");
                choose_from_menu($options, "subscribe", $default, "");
            }
+       } else if ($forum->forcesubscribe == FORUM_DISALLOWSUBSCRIBE) {
+           print_string('disallowsubscribe','forum');
        }
        helpbutton("subscription", get_string("subscription", "forum"), "forum"); 
     ?>

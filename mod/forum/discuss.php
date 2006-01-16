@@ -218,6 +218,10 @@
     }
     echo "</td></tr></table>";
 
+    if ($forum->type == 'qanda' && !isteacher($forum->course) && !forum_user_has_posted($forum->id,$discussion->id,$USER->id)) {
+        notify(get_string('qandanotify','forum'));
+    }
+
     if (isset($discussionmoved)) {
         notify(get_string("discussionmoved", "forum", format_string($forum->name,true)));
     }

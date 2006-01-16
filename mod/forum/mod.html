@@ -114,6 +114,7 @@
             $options[0] = get_string('no');
             $options[1] = get_string('yesforever', 'forum');
             $options[FORUM_INITIALSUBSCRIBE] = get_string('yesinitially', 'forum');
+            $options[FORUM_DISALLOWSUBSCRIBE] = get_string('disallowsubscribe','forum');
             choose_from_menu($options, 'forcesubscribe', $form->forcesubscribe, '');
             helpbutton('subscription2', get_string('forcesubscribeq', 'forum'), 'forum');
         ?>

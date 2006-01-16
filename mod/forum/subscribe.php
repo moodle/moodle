@@ -97,6 +97,9 @@
         }
 
     } else { // subscribe
+        if ($forum->forcesubscribe == FORUM_DISALLOWSUBSCRIBE && !isteacher($forum->course)) {
+            error(get_string('disallowsubscribe'),$_SERVER["HTTP_REFERER"]);
+        }
         if (forum_subscribe($user->id, $forum->id) ) {
             add_to_log($course->id, "forum", "subscribe", "view.php?f=$forum->id", $forum->id, $cm->id);
             redirect($returnto, get_string("nowsubscribed", "forum", $info), 1);
