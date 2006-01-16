@@ -131,6 +131,10 @@ function sync_enrolments($type='student') {
                               $extcourse );
 
         if (!is_object($course)) {
+            if (empty($CFG->enrol_db_autocreate)) { // autocreation not allowed
+                print "Course $extcourse does not exists, skipping\n";
+                continue; // next foreach course
+            }
             // ok, now then let's create it!
             print "Creating Course $extcourse...";
             // prepare any course properties we actually have
@@ -409,8 +413,8 @@ function create_course ($course,$skip_fix_course_sortorder=0){
     global $CFG;
 
     // define a template
-    if(!empty($CFG->enrol_dbtemplate)){
-        $template = get_record("course", 'shortname', $CFG->enrol_dbtemplate);
+    if(!empty($CFG->enrol_db_template)){
+        $template = get_record("course", 'shortname', $CFG->enrol_db_template);
         $template = (array)$template;
     } else {
         $site = get_site();
@@ -439,9 +443,10 @@ function create_course ($course,$skip_fix_course_sortorder=0){
             $course->$key = $template[$key];
         }
     }        
-        
-    if (empty($course->category)){ //category = 0 or undef will break moodle
-        $course->category = 1;     // the misc 'catch-all' category
+      
+    $course->category = 1;     // the misc 'catch-all' category
+    if (!empty($CFG->enrol_db_category)){ //category = 0 or undef will break moodle
+        $course->category = $CFG->enrol_db_category;
     }
 
     // define the sortorder 
