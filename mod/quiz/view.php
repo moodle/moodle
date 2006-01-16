@@ -89,7 +89,8 @@
     print_heading(format_string($quiz->name));
 
     if (trim(strip_tags($quiz->intro))) {
-        print_simple_box(format_text($quiz->intro), "center");
+        $formatoptions->noclean = true;
+        print_simple_box(format_text($quiz->intro, FORMAT_MOODLE, $formatoptions), "center");
     }
 
     if ($quiz->attempts > 1) {
