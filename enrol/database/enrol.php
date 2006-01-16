@@ -204,7 +204,8 @@ function enrol_connect() {
     if ($enroldb->PConnect($CFG->enrol_dbhost,$CFG->enrol_dbuser,$CFG->enrol_dbpass,$CFG->enrol_dbname)) {
         return $enroldb;
     } else {
-        trigger_error("Error connecting to enrolment DB backend with: $CFG->enrol_dbhost,$CFG->enrol_dbuser,$CFG->enrol_dbpass,$CFG->enrol_dbname");
+        trigger_error("Error connecting to enrolment DB backend with: "
+                      . "$CFG->enrol_dbhost,$CFG->enrol_dbuser,$CFG->enrol_dbpass,$CFG->enrol_dbname");
         return false;
     }    
 }
