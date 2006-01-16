@@ -41,5 +41,7 @@ $string['unknowncourse'] = '不明なコース名 「 $a 」';
 $string['usernotaddederror'] = 'ユーザ 「 $a 」 は追加されませんでした - 原因不明のエラー';
 $string['usernotaddedregistered'] = 'ユーザ 「 $a 」 は追加されませんでした - 登録済み';
 $string['usernotavailable'] = 'このユーザの詳細は閲覧できません。';
+$string['usernotrenamedexists'] = 'ユーザはリネームされませんでした -- 新しいユーザ名が既に使用されています。';
+$string['usernotrenamedmissing'] = 'ユーザはリネームされませんでした -- 古いユーザ名が見つかりませんでした。';
 
 ?>

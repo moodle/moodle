@@ -4,6 +4,7 @@
 
 $string['adminseesallevents'] = '管理者に全てのイベントを表示';
 $string['adminseesownevents'] = '管理者は他のユーザと同じ';
+$string['allowrenames'] = 'リネームを許可する';
 $string['availablelangs'] = '利用可能な言語パック';
 $string['backgroundcolour'] = '透明色';
 $string['badwordsconfig'] = 'カンマで区切られた使用禁止用語を入力してください。';
@@ -128,6 +129,7 @@ $string['download'] = 'ダウンロード';
 $string['edithelpdocs'] = 'ヘルプドキュメントの編集';
 $string['editlang'] = '<b>編集</b>';
 $string['editstrings'] = '翻訳ストリングの編集';
+$string['errors'] = 'エラー';
 $string['filterall'] = '全ての文字をフィルタする';
 $string['filtermatchoneperpage'] = 'ページあたり1回フィルタマッチする';
 $string['filtermatchonepertext'] = 'テキストあたり1回フィルタマッチする';
@@ -147,6 +149,7 @@ $string['importtimezonesfailed'] = 'ソースが見つかりませんでした! ( 悪いお知らせ
 $string['incompatibleblocks'] = '互換性がないブロック';
 $string['install'] = 'インストール';
 $string['installedlangs'] = 'インストール済み言語パック';
+$string['invaliduserchangeme'] = 'ユーザ名「changeme」は予約されています -- このユーザ名のアカウントは作成することができません。';
 $string['lang16notify'] = 'Moodle1.6以上のバージョンでは、下記のリンクでmoodle.orgより言語パックのインストールおよびアップデートを行うことができます。';
 $string['langimport'] = '言語インポートユーティリティ';
 $string['langimportsuccess'] = '言語パックが正常に更新されました。';
@@ -170,6 +173,7 @@ $string['pathdvips'] = '<i>dvips</i>のバイナリパス';
 $string['pathlatex'] = '<i>latex</i>のバイナリパス';
 $string['pleaseregister'] = 'このボタンを消すには、あなたのサイトを登録してください。';
 $string['remotelangnotavailable'] = 'Moodleがmoodle.orgに接続できないため、自動的に言語パックのインストールを行うことができません。適切なzipファイルを手動で下記のリンクよりダウンロードして、$a ディレクトリにコピーおよびunzipしてください。';
+$string['renameerrors'] = 'リネームのエラー';
 $string['sitelangchanged'] = 'サイト言語の設定が正常に完了しました。';
 $string['sitemaintenance'] = 'このサイトはメンテナンス中です。現在ご利用いただけません。';
 $string['sitemaintenancemode'] = 'メンテナンスモード';
@@ -188,6 +192,7 @@ $string['timezoneisforcedto'] = 'ユーザに使用を強制';
 $string['timezonenotforced'] = 'ユーザが独自のタイムゾーンを使用';
 $string['uninstall'] = 'アンインストール';
 $string['uninstallconfirm'] = 'あなたは言語パック ( $a ) を完全にアンインストールしようとしています。本当によろしいですか?';
+$string['updateaccounts'] = '既存のアカウントを更新する';
 $string['updatelangs'] = '言語パックの更新';
 $string['upgradeforumread'] = 'Moodle1.5では、フォーラムの既読/未読記事を追跡するために新しい機能が追加されました。<br />この機能を有効にするには、<a href=\"$a\">テーブルをアップデート</a>する必要があります。';
 $string['upgradeforumreadinfo'] = 'Moodle1.5では、フォーラムの既読/未読記事を追跡するために新しい機能が追加されました。この機能を有効にするには、投稿内容の未読管理を含むテーブルをアップデートする必要があります。あなたのサイトのサイズにより、この作業は長時間かかる場合があります。また、データベースに非常に負荷がかかる可能性がありますので、閑散期のアップデート作業をお勧めします。このアップデート期間中も、あなたのサイトは動作し続け、ユーザは影響を受けません。この処理を開始した場合は処理を終わらせてください ( ブラウザを開いたままにして ) 。ウィンドウを閉じて処理を終わらせてしまった場合でも心配しないでください。アップデート処理を再開することができます。<br /><br />本当に今からアップデート処理を始めてもよろしいですか?';
@@ -199,5 +204,10 @@ $string['upgradesure'] = 'あなたのMoodleファイルが更新されました。自動的に次のバ
 <p>本当にMoodleをこのバージョンにアップグレードしてもよろしいですか?</p>';
 $string['upgradingdata'] = 'データのアップグレード';
 $string['upgradinglogs'] = 'ログのアップグレード';
+$string['useraccountupdated'] = 'ユーザが更新されました。';
+$string['userrenamed'] = 'ユーザがリネームされました。';
+$string['userscreated'] = 'ユーザが作成されました。';
+$string['usersrenamed'] = 'ユーザがリネームされました。';
+$string['usersupdated'] = 'ユーザが更新されました。';
 
 ?>

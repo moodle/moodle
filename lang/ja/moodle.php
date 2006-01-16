@@ -367,7 +367,7 @@ $string['emailactive'] = 'メール有効化';
 $string['emailagain'] = 'メールアドレス ( もう一度 )';
 $string['emailcharset'] = 'メール文字コード';
 $string['emailconfirm'] = 'アカウントの確定';
-$string['emailconfirmation'] = '$a->firstname さん こんにちは、
+$string['emailconfirmation'] = 'こんにちは $a->lastname さん
 
 「 $a->sitename 」であなたのメールアドレスによる新しいアカウントの作成が依頼されました。
 
@@ -402,9 +402,9 @@ $string['emailmustbereal'] = '注意：メールアドレスは実際に使えるアドレスを入力し
 $string['emailnotallowed'] = 'これらのドメインのメールアドレスは許可されていません ( $a )';
 $string['emailnotfound'] = 'データベース内にメールアドレスが見つかりませんでした。';
 $string['emailonlyallowed'] = 'このメールアドレスは許可されているメールアドレスに入っていません ( $a )';
-$string['emailpasswordconfirmation'] = 'こんにちは $a->firstname さん
+$string['emailpasswordconfirmation'] = 'こんにちは $a->lastname さん
 
-誰か(恐らくあなた)が、「 $a->sitename 」 のアカウントで新しいパスワード作成の請求を行いました。
+誰か ( 恐らくあなた ) が、「 $a->sitename 」 のアカウントで新しいパスワード作成の請求を行いました。
 
 新しいパスワード請求を確認して、新たなパスワードをメールであなた宛に送信するために下記のページをご覧ください:
 
@@ -803,7 +803,7 @@ $string['newaccount'] = '新しいアカウント';
 $string['newcourse'] = '新しいコース';
 $string['newpassword'] = '新しいパスワード';
 $string['newpasswordfromlost'] = '<strong>注意:</strong> 喪失パスワードリカバリ処理の一部として送信される2通のメールの<strong>2番目の</strong>メールで、あなたの<strong>現在のパスワード</strong>が送信されます。この画面を続ける前に、あなたの新しいパスワードが記載されたメールを受信したことをよく確かめてください。';
-$string['newpasswordtext'] = '$a->firstname さん こんにちは、
+$string['newpasswordtext'] = 'こんにちは $a->lastname さん
 
 「 $a->sitename 」のパスワードリセットおよび仮パスワードの作成が完了しました。
 
@@ -819,10 +819,26 @@ $a->link
 「 $a->sitename 」の管理者よりご挨拶でした。
 $a->signoff';
 $string['newpicture'] = '新しい写真';
-$string['newsitem'] = '件のニュース項目を表示';
-$string['newsitems'] = '件のニュース項目を表示';
-$string['newsitemsnumber'] = 'ニュース項目の表示数';
+$string['newsitem'] = '件のニュースアイテムを表示';
+$string['newsitems'] = '件のニュースアイテムを表示';
+$string['newsitemsnumber'] = 'ニュースアイテムの表示数';
 $string['newuser'] = '新規ユーザ';
+$string['newusernewpasswordsubj'] = '新規ユーザアカウント';
+$string['newusernewpasswordtext'] = 'こんにちは $a->lastname さん
+
+あなたの新しいアカウントが「 $a->sitename 」に作成され、新しい一時的なパスワードが発行されました。
+
+あなたの現在のログイン情報は下記の通りです:
+ユーザ名: $a->username
+パスワード: $a->newpassword
+( 最初にログインした時にパスワードを変更してください。)
+
+$a->sitename で作業を始めるには $a->link にログインしてください。
+
+ほとんどのメールプログラムでは、これはクリック可能な青いリンクとして表示されます。クリックできない場合は、ブラウザのアドレスボックスにコピー＆ペーストしてください。
+
+「 $a->sitename 」の管理者よりご挨拶でした。
+$a->signoff';
 $string['newusers'] = '新規ユーザ';
 $string['next'] = '次へ';
 $string['no'] = 'No';
