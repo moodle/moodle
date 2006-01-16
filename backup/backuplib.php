@@ -78,7 +78,7 @@
         
                     //Insert the record id. backup_users decide it.
                     //When all users
-                    $status = insert_record("backup_ids",$backupids_rec,false,"backup_code");
+                    $status = insert_record('backup_ids', $backupids_rec, false);
                     $count_users++;
                 }
                 //Do some output     
