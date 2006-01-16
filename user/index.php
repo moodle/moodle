@@ -613,6 +613,7 @@ function checkchecked(form) {
             $displaylist['extendenrol.php'] = get_string('extendenrol');
         }
         choose_from_menu ($displaylist, "formaction", "", get_string("withselectedusers"), "if(checksubmit(this.form))this.form.submit();", "");
+        helpbutton("participantswithselectedusers", get_string("withselectedusers"));
         echo '<input type="submit" value="' . get_string('ok') . '"';
         echo '</center></form>';
     }
