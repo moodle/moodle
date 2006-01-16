@@ -1,5 +1,6 @@
 <?PHP  // $Id$
        // Authentication by looking up a RADIUS server
+       // Contributed by Clive Gould <clive@ce.bromley.ac.uk>
 
 function auth_user_login ($username, $password) {
     // Returns true if the username and password work
