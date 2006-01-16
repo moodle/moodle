@@ -9,8 +9,11 @@ $string['dbuser'] = 'Username to access the server';
 $string['dbpass'] = 'Password to access the server';
 $string['dbname'] = 'The specific database to use';
 $string['dbtable'] = 'The table in that database';
+$string['general_options'] = 'General Options';
+$string['field_mapping'] = 'Field Mapping';
 $string['localcoursefield'] = 'The name of the field in the course table that we are using to match entries in the remote database (eg idnumber)';
 $string['localuserfield'] = 'The name of the field in the local user table that we use to match the user to a remote record (eg idnumber)';
+$string['server_settings'] = 'Server Settings';
 $string['remotecoursefield'] = 'The field in the remote database we expect to find the course ID in';
 $string['remoteuserfield'] = 'The field in the remote database we expect to find the user ID in';
 
