@@ -793,145 +793,13 @@ function get_recordset_sql($sql) {
 }
 
 /**
- * Get a number of records as an array of objects
- *
- * Can optionally be sorted eg "time ASC" or "time DESC"
- * If "fields" is specified, only those fields are returned
- * The "key" is the first column returned, eg usually "id"
- * limitfrom and limitnum must both be specified or not at all
- *
- * @uses $CFG
- * @param string $table The database table to be checked against.
- * @param string $field a field to check (optional).
- * @param string $value the value the field must have (requred if field1 is given, else optional).
- * @param string $sort Sort order (as valid SQL sort parameter)
- * @param string $fields A comma separated list of fields to be returned from the chosen table.
- * @param int $limitfrom Return a subset of results starting at this value (*must* set $limitnum)
- * @param int $limitnum Return a subset of results, return this number (*must* set $limitfrom)
- * @return object|false Returns an array of found records (as objects) or false if no records or error occured.
+ * Utility function used by the following 4 methods.
+ * 
+ * @param object an ADODB RecordSet object.
+ * @return mixed mixed an array of objects, or false if an error occured or the RecordSet was empty.
  */
-function get_records($table, $field='', $value='', $sort='', $fields='*', $limitfrom='', $limitnum='') {
-
-    global $CFG;
-
-    $select = where_clause($field, $value);
-    
-    if ($limitfrom !== '') {
-        $limit = sql_paging_limit($limitfrom, $limitnum);
-    } else {
-        $limit = '';
-    }
-
-    if ($sort) {
-        $sort = 'ORDER BY '. $sort;
-    }
-
-    return get_records_sql('SELECT '. $fields .' FROM '. $CFG->prefix . $table .' '. $select .' '. $sort .' '. $limit);
-}
-
-/**
- * Get a number of records as an array of objects
- *
- * Can optionally be sorted eg "time ASC" or "time DESC"
- * "select" is a fragment of SQL to define the selection criteria
- * The "key" is the first column returned, eg usually "id"
- * limitfrom and limitnum must both be specified or not at all
- *
- * @uses $CFG
- * @param string $table The database table to be checked against.
- * @param string $select A fragment of SQL to be used in a where clause in the SQL call.
- * @param string $sort  Sort order (as valid SQL sort parameter)
- * @param string $fields A comma separated list of fields to be returned from the chosen table.
- * @param int $limitfrom Return a subset of results starting at this value (*must* set $limitnum)
- * @param int $limitnum Return a subset of results, return this number (*must* set $limitfrom)
- * @return object|false Returns an array of found records (as objects) or false if no records or error occured.
- */
-function get_records_select($table, $select='', $sort='', $fields='*', $limitfrom='', $limitnum='') {
-
-    global $CFG;
-
-    if ($select) {
-        $select = 'WHERE '. $select;
-    }
-
-    if ($limitfrom !== '') {
-        $limit = sql_paging_limit($limitfrom, $limitnum);
-    } else {
-        $limit = '';
-    }
-
-    if ($sort) {
-        $sort = 'ORDER BY '. $sort;
-    }
-
-    return get_records_sql('SELECT '. $fields .' FROM '. $CFG->prefix . $table .' '. $select .' '. $sort .' '. $limit);
-}
-
-
-/**
- * Get a number of records as an array of objects
- *
- * Differs from get_records() in that the values variable
- * can be a comma-separated list of values eg  "4,5,6,10"
- * Can optionally be sorted eg "time ASC" or "time DESC"
- * The "key" is the first column returned, eg usually "id"
- *
- * @uses $CFG
- * @param string $table The database table to be checked against.
- * @param string $field The field to search
- * @param string $values Comma separated list of possible value
- * @param string $sort Sort order (as valid SQL sort parameter)
- * @param string $fields A comma separated list of fields to be returned from the chosen table.
- * @return object|false Returns an array of found records (as objects) or false if no records or error occured.
- */
-function get_records_list($table, $field='', $values='', $sort='', $fields='*') {
-
-    global $CFG;
-
-    if ($field) {
-        $select = 'WHERE '. $field .' IN ( '. $values .')';
-    } else {
-        $select = '';
-    }
-
-    if ($sort) {
-        $sort = 'ORDER BY '. $sort;
-    }
-
-    return get_records_sql('SELECT '. $fields .' FROM '. $CFG->prefix . $table .' '. $select .' '. $sort);
-}
-
-
-
-/**
- * Get a number of records as an array of objects
- *
- * The "key" is the first column returned, eg usually "id"
- * The sql statement is provided as a string.
- *
- * @uses $CFG
- * @uses $db
- * @param string $sql The SQL string you wish to be executed.
- * @return object|false Returns an array of found records (as objects) or false if no records or error occured.
- */
-function get_records_sql($sql) {
-
-    global $CFG, $db;
-
-    if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
-
-    if (!$rs = $db->Execute($sql)) {
-        if (isset($CFG->debug) and $CFG->debug > 7) {
-            notify($db->ErrorMsg() .'<br /><br />'. $sql);
-        }
-        if (!empty($CFG->dblogerror)) {
-            $debug=array_shift(debug_backtrace());
-            error_log("SQL ".$db->ErrorMsg()." in {$debug['file']} on line {$debug['line']}. STATEMENT:  $sql");
-        }
-        return false;
-    }
-
-    if ( $rs->RecordCount() > 0 ) {
+function recordset_to_array($rs) {
+    if ($rs && $rs->RecordCount() > 0) {
         if ($records = $rs->GetAssoc(true)) {
             foreach ($records as $key => $record) {
                 $objects[$key] = (object) $record;
@@ -943,6 +811,94 @@ function get_records_sql($sql) {
     } else {
         return false;
     }
+}
+
+/**
+ * Get a number of records as an array of objects.
+ *
+ * Convenience call -- use only for small datasets. 
+ * Consider using @see function get_recordset instead.
+ *
+ * Arguments as for @see function get_recordset.
+ * 
+ * If the query succeeds and returns at least one record, the
+ * return value is an array of objects, one object for each
+ * record found. The array key is the value from the first 
+ * column of the result set. The object associated with that key
+ * has a member variable for each column of the results.
+ *
+ * @param string $table the table to query.
+ * @param string $field a field to check (optional).
+ * @param string $value the value the field must have (requred if field1 is given, else optional).
+ * @param string $sort an order to sort the results in (optional, a valid SQL ORDER BY parameter).
+ * @param string $fields a comma separated list of fields to return (optional, by default all fields are returned).
+ * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).
+ * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
+ * @return mixed an array of objects, or false if no records were found or an error occured.
+ */
+function get_records($table, $field='', $value='', $sort='', $fields='*', $limitfrom='', $limitnum='') {
+    $rs = get_recordset($table, $field, $value, $sort, $fields, $limitfrom, $limitnum);
+    return recordset_to_array($rs);
+}
+
+/**
+ * Get a number of records as an array of objects.
+ *
+ * Convenience call -- use only for small datasets. 
+ * Consider using @see function get_recordset_select instead.
+ *
+ * Arguments as for @see function get_recordset_select.
+ * Return value as for @see function get_records.
+ *
+ * @param string $table the table to query.
+ * @param string $select A fragment of SQL to be used in a where clause in the SQL call.
+ * @param string $sort an order to sort the results in (optional, a valid SQL ORDER BY parameter).
+ * @param string $fields a comma separated list of fields to return (optional, by default all fields are returned).
+ * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).
+ * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
+ * @return mixed an array of objects, or false if no records were found or an error occured.
+ */
+function get_records_select($table, $select='', $sort='', $fields='*', $limitfrom='', $limitnum='') {
+    $rs = get_recordset_select($table, $select, $sort, $fields, $limitfrom, $limitnum);
+    return recordset_to_array($rs);
+}
+
+/**
+ * Get a number of records as an array of objects.
+ *
+ * Convenience call -- use only for small datasets. 
+ * Consider using @see function get_recordset_list instead.
+ *
+ * Arguments as for @see function get_recordset_list.
+ * Return value as for @see function get_records.
+ *
+ * @param string $table The database table to be checked against.
+ * @param string $field The field to search
+ * @param string $values Comma separated list of possible value
+ * @param string $sort Sort order (as valid SQL sort parameter)
+ * @param string $fields A comma separated list of fields to be returned from the chosen table.
+ * @return mixed an array of objects, or false if no records were found or an error occured.
+ */
+function get_records_list($table, $field='', $values='', $sort='', $fields='*', $limitfrom='', $limitnum='') {
+    $rs = get_recordset_list($table, $field, $values, $sort, $fields, $limitfrom, $limitnum);
+    return recordset_to_array($rs);
+}
+
+/**
+ * Get a number of records as an array of objects.
+ *
+ * Convenience call -- use only for small datasets. 
+ * Consider using @see function get_recordset_sql instead.
+ *
+ * Arguments as for @see function get_recordset_sql.
+ * Return value as for @see function get_records.
+ * 
+ * @param string $sql the SQL select query to execute.
+ * @return mixed an array of objects, or false if no records were found or an error occured.
+ */
+function get_records_sql($sql) {
+    $rs = get_recordset_sql($sql);
+    return recordset_to_array($rs);
 }
 
 /**
