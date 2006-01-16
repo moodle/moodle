@@ -21,12 +21,14 @@ function migrate2utf8_assignment_name($recordid){
     $textlib = textlib_get_instance();
 /// Convert the text
     $result = $textlib->convert($assignment->name, $fromenc);
-
+    
+    
     $newassignment = new object;
     $newassignment->id = $recordid;
     $newassignment->name = $result;
     update_record('assignment',$newassignment);
 /// And finally, just return the converted field
+
     return $result;
 }
 

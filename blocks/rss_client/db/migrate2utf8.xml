@@ -1,4 +1,4 @@
-<DBMIGRATION type="block/block_rss_client" VERSION="2005120100">
+<DBMIGRATION type="blocks/rss_client" VERSION="2005120100">
   <TABLES>
     <TABLE name="block_rss_client">
       <FIELDS>

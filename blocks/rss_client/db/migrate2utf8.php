@@ -1,5 +1,5 @@
 <?
-function migrate2utf_block_rss_client_title($recordid){
+function migrate2utf8_block_rss_client_title($recordid){
     global $CFG;
 
 /// Some trivial checks
@@ -8,7 +8,7 @@ function migrate2utf_block_rss_client_title($recordid){
         return false;
     }
 
-    if (!$rssclient = get_record('block_rss_client','id',$recordid) {
+    if (!$rssclient = get_record('block_rss_client','id',$recordid)) {
         log_the_problem_somewhere();
         return false;
     }
@@ -34,7 +34,7 @@ function migrate2utf_block_rss_client_title($recordid){
     return $result;
 }
 
-function migrate2utf_block_rss_client_preferredtitle($recordid){
+function migrate2utf8_block_rss_client_preferredtitle($recordid){
     global $CFG;
 
 /// Some trivial checks
@@ -47,12 +47,12 @@ function migrate2utf_block_rss_client_preferredtitle($recordid){
            FROM {$CFG->prefix}block_rss_client brc
            WHERE brc.id = $recordid";
 
-    if (!$rssuserid = get_record_sql($SQL) {
+    if (!$rssuserid = get_record_sql($SQL)) {
         log_the_problem_somewhere();
         return false;
     }
 
-    if (!$rssclient = get_record('block_rss_client','id',$recordid) {
+    if (!$rssclient = get_record('block_rss_client','id',$recordid)) {
         log_the_problem_somewhere();
         return false;
     }
@@ -91,12 +91,12 @@ function migrate2utf_block_rss_client_description($recordid){
            FROM {$CFG->prefix}block_rss_client brc
            WHERE brc.id = $recordid";
 
-    if (!$rssuserid = get_record_sql($SQL) {
+    if (!$rssuserid = get_record_sql($SQL)) {
         log_the_problem_somewhere();
         return false;
     }
 
-    if (!$rssclient = get_record('block_rss_client','id',$recordid) {
+    if (!$rssclient = get_record('block_rss_client','id',$recordid)) {
         log_the_problem_somewhere();
         return false;
     }

@@ -14,12 +14,12 @@ function migrate2utf8_scorm_scoes_manifest($recordid){
            WHERE s.id = ss.scorm
                  AND ss.id = $recordid";
 
-    if (!$scorm = get_record_sql($SQL) {
+    if (!$scorm = get_record_sql($SQL)) {
         log_the_problem_somewhere();
         return false;
     }
     
-    if (!$scormscoes = get_record('scorm_scoes','id',$recordid) {
+    if (!$scormscoes = get_record('scorm_scoes','id',$recordid)) {
         log_the_problem_somewhere();
         return false;
     }
@@ -58,12 +58,12 @@ function migrate2utf8_scorm_scoes_organization($recordid){
            WHERE s.id = ss.scorm
                  AND ss.id = $recordid";
 
-    if (!$scorm = get_record_sql($SQL) {
+    if (!$scorm = get_record_sql($SQL)) {
         log_the_problem_somewhere();
         return false;
     }
 
-    if (!$scormscoes = get_record('scorm_scoes','id',$recordid) {
+    if (!$scormscoes = get_record('scorm_scoes','id',$recordid)) {
         log_the_problem_somewhere();
         return false;
     }
@@ -102,12 +102,12 @@ function migrate2utf8_scorm_scoes_parent($recordid){
            WHERE s.id = ss.scorm
                  AND ss.id = $recordid";
 
-    if (!$scorm = get_record_sql($SQL) {
+    if (!$scorm = get_record_sql($SQL)) {
         log_the_problem_somewhere();
         return false;
     }
 
-    if (!$scormscoes = get_record('scorm_scoes','id',$recordid) {
+    if (!$scormscoes = get_record('scorm_scoes','id',$recordid)) {
         log_the_problem_somewhere();
         return false;
     }
@@ -147,12 +147,12 @@ function migrate2utf8_scorm_scoes_identifier($recordid){
            WHERE s.id = ss.scorm
                  AND ss.id = $recordid";
 
-    if (!$scorm = get_record_sql($SQL) {
+    if (!$scorm = get_record_sql($SQL)) {
         log_the_problem_somewhere();
         return false;
     }
 
-    if (!$scormscoes = get_record('scorm_scoes','id',$recordid) {
+    if (!$scormscoes = get_record('scorm_scoes','id',$recordid)) {
         log_the_problem_somewhere();
         return false;
     }
@@ -191,12 +191,12 @@ function migrate2utf8_scorm_scoes_launch($recordid){
            WHERE s.id = ss.scorm
                  AND ss.id = $recordid";
 
-    if (!$scorm = get_record_sql($SQL) {
+    if (!$scorm = get_record_sql($SQL)) {
         log_the_problem_somewhere();
         return false;
     }
 
-    if (!$scormscoes = get_record('scorm_scoes','id',$recordid) {
+    if (!$scormscoes = get_record('scorm_scoes','id',$recordid)) {
         log_the_problem_somewhere();
         return false;
     }
@@ -235,12 +235,12 @@ function migrate2utf8_scorm_scoes_parameters($recordid){
            WHERE s.id = ss.scorm
                  AND ss.id = $recordid";
 
-    if (!$scorm = get_record_sql($SQL) {
+    if (!$scorm = get_record_sql($SQL)) {
         log_the_problem_somewhere();
         return false;
     }
 
-    if (!$scormscoes = get_record('scorm_scoes','id',$recordid) {
+    if (!$scormscoes = get_record('scorm_scoes','id',$recordid)) {
         log_the_problem_somewhere();
         return false;
     }
@@ -279,12 +279,12 @@ function migrate2utf8_scorm_scoes_scormtype($recordid){
            WHERE s.id = ss.scorm
                  AND ss.id = $recordid";
 
-    if (!$scorm = get_record_sql($SQL) {
+    if (!$scorm = get_record_sql($SQL)) {
         log_the_problem_somewhere();
         return false;
     }
 
-    if (!$scormscoes = get_record('scorm_scoes','id',$recordid) {
+    if (!$scormscoes = get_record('scorm_scoes','id',$recordid)) {
         log_the_problem_somewhere();
         return false;
     }
@@ -323,12 +323,12 @@ function migrate2utf8_scorm_scoes_title($recordid){
            WHERE s.id = ss.scorm
                  AND ss.id = $recordid";
 
-    if (!$scorm = get_record_sql($SQL) {
+    if (!$scorm = get_record_sql($SQL)) {
         log_the_problem_somewhere();
         return false;
     }
 
-    if (!$scormscoes = get_record('scorm_scoes','id',$recordid) {
+    if (!$scormscoes = get_record('scorm_scoes','id',$recordid)) {
         log_the_problem_somewhere();
         return false;
     }
@@ -367,12 +367,12 @@ function migrate2utf8_scorm_scoes_prerequisites($recordid){
            WHERE s.id = ss.scorm
                  AND ss.id = $recordid";
 
-    if (!$scorm = get_record_sql($SQL) {
+    if (!$scorm = get_record_sql($SQL)) {
         log_the_problem_somewhere();
         return false;
     }
 
-    if (!$scormscoes = get_record('scorm_scoes','id',$recordid) {
+    if (!$scormscoes = get_record('scorm_scoes','id',$recordid)) {
         log_the_problem_somewhere();
         return false;
     }
@@ -411,12 +411,12 @@ function migrate2utf8_scorm_scoes_maxtimeallowed($recordid){
            WHERE s.id = ss.scorm
                  AND ss.id = $recordid";
 
-    if (!$scorm = get_record_sql($SQL) {
+    if (!$scorm = get_record_sql($SQL)) {
         log_the_problem_somewhere();
         return false;
     }
 
-    if (!$scormscoes = get_record('scorm_scoes','id',$recordid) {
+    if (!$scormscoes = get_record('scorm_scoes','id',$recordid)) {
         log_the_problem_somewhere();
         return false;
     }
@@ -455,12 +455,12 @@ function migrate2utf8_scorm_scoes_timelimitaction($recordid){
            WHERE s.id = ss.scorm
                  AND ss.id = $recordid";
 
-    if (!$scorm = get_record_sql($SQL) {
+    if (!$scorm = get_record_sql($SQL)) {
         log_the_problem_somewhere();
         return false;
     }
 
-    if (!$scormscoes = get_record('scorm_scoes','id',$recordid) {
+    if (!$scormscoes = get_record('scorm_scoes','id',$recordid)) {
         log_the_problem_somewhere();
         return false;
     }
@@ -499,12 +499,12 @@ function migrate2utf8_scorm_scoes_datafromlms($recordid){
            WHERE s.id = ss.scorm
                  AND ss.id = $recordid";
 
-    if (!$scorm = get_record_sql($SQL) {
+    if (!$scorm = get_record_sql($SQL)) {
         log_the_problem_somewhere();
         return false;
     }
 
-    if (!$scormscoes = get_record('scorm_scoes','id',$recordid) {
+    if (!$scormscoes = get_record('scorm_scoes','id',$recordid)) {
         log_the_problem_somewhere();
         return false;
     }
@@ -543,12 +543,12 @@ function migrate2utf8_scorm_scoes_masteryscore($recordid){
            WHERE s.id = ss.scorm
                  AND ss.id = $recordid";
 
-    if (!$scorm = get_record_sql($SQL) {
+    if (!$scorm = get_record_sql($SQL)) {
         log_the_problem_somewhere();
         return false;
     }
 
-    if (!$scormscoes = get_record('scorm_scoes','id',$recordid) {
+    if (!$scormscoes = get_record('scorm_scoes','id',$recordid)) {
         log_the_problem_somewhere();
         return false;
     }
@@ -582,7 +582,7 @@ function migrate2utf8_scorm_name($recordid){
         return false;
     }
 
-    if (!$scorm = get_record('scorm','id',$recordid) {
+    if (!$scorm = get_record('scorm','id',$recordid)) {
         log_the_problem_somewhere();
         return false;
     }
@@ -615,7 +615,7 @@ function migrate2utf8_scorm_reference($recordid){
         return false;
     }
 
-    if (!$scorm = get_record('scorm','id',$recordid) {
+    if (!$scorm = get_record('scorm','id',$recordid)) {
         log_the_problem_somewhere();
         return false;
     }
@@ -648,7 +648,7 @@ function migrate2utf8_scorm_summary($recordid){
         return false;
     }
 
-    if (!$scorm = get_record('scorm','id',$recordid) {
+    if (!$scorm = get_record('scorm','id',$recordid)) {
         log_the_problem_somewhere();
         return false;
     }
@@ -681,7 +681,7 @@ function migrate2utf8_scorm_options($recordid){
         return false;
     }
 
-    if (!$scorm = get_record('scorm','id',$recordid) {
+    if (!$scorm = get_record('scorm','id',$recordid)) {
         log_the_problem_somewhere();
         return false;
     }

@@ -472,7 +472,7 @@ function migrate2utf8_grade_letter_letter($recordid){
     return $result;
 }
 
-function migrate2utf8_group_name($recordid){
+function migrate2utf8_groups_name($recordid){
     global $CFG;
 
 /// Some trivial checks
@@ -505,7 +505,7 @@ function migrate2utf8_group_name($recordid){
     return $result;
 }
 
-function migrate2utf8_group_description($recordid){
+function migrate2utf8_groups_description($recordid){
     global $CFG;
 
 /// Some trivial checks
@@ -538,7 +538,7 @@ function migrate2utf8_group_description($recordid){
     return $result;
 }
 
-function migrate2utf8_group_lang($recordid){
+function migrate2utf8_groups_lang($recordid){
     global $CFG;
 
 /// Some trivial checks
@@ -571,7 +571,7 @@ function migrate2utf8_group_lang($recordid){
     return $result;
 }
 
-function migrate2utf8_group_theme($recordid){
+function migrate2utf8_groups_theme($recordid){
     global $CFG;
 
 /// Some trivial checks

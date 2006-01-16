@@ -50,7 +50,7 @@ CREATE TABLE `prefix_course` (
   `fullname` varchar(254) NOT NULL default '',
   `shortname` varchar(15) NOT NULL default '',
   `idnumber` varchar(100) NOT NULL default '',
-  `summary` text NOT NULL,
+  `summary` text NOT NULL default '',
   `format` varchar(10) NOT NULL default 'topics',
   `showgrades` smallint(2) unsigned NOT NULL default '1',
   `modinfo` longtext NOT NULL default '',
