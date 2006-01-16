@@ -1,5 +1,5 @@
 <?
-function migrate2utf8_backup_lob_info($recordid){
+function migrate2utf8_backup_log_info($recordid){
     global $CFG;
 
 /// Some trivial checks
