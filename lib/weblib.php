@@ -2616,7 +2616,7 @@ function print_user($user, $course) {
     }
     if ($user->lastaccess) {
         echo $string->lastaccess .': '. userdate($user->lastaccess);
-        echo '&nbsp ('. format_time(time() - $user->lastaccess, $datestring) .')';
+        echo '&nbsp; ('. format_time(time() - $user->lastaccess, $datestring) .')';
     } else {
         echo $string->lastaccess .': '. $string->never;
     }
@@ -4007,7 +4007,7 @@ function print_paging_bar($totalcount, $page, $perpage, $baseurl, $pagevar='page
         $lastpage = ceil($totalcount / $perpage);
         if ($page > 15) {
             $startpage = $page - 10;
-            echo '&nbsp<a href="'. $baseurl . $pagevar .'=0">1</a>&nbsp;...';
+            echo '&nbsp;<a href="'. $baseurl . $pagevar .'=0">1</a>&nbsp;...';
         } else {
             $startpage = 0;
         }
