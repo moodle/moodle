@@ -4,6 +4,7 @@
 
 $string['adminseesallevents'] = 'Administrators see all events';
 $string['adminseesownevents'] = 'Administrators are just like other users';
+$string['allowrenames'] = 'Allow renames';
 $string['availablelangs'] = 'Available Language Packs';
 $string['backgroundcolour'] = 'Transparent Colour';
 $string['badwordsconfig'] = 'Enter your list of bad words separated by commas.';
@@ -147,6 +148,7 @@ $string['importtimezonesfailed'] = 'No sources found! (Bad news)';
 $string['incompatibleblocks'] = 'Incompatible Blocks';
 $string['install'] = 'Install Selected Language Pack';
 $string['installedlangs'] = 'Installed Language Packs';
+$string['invaliduserchangeme'] = 'Username "changeme" is reserved -- you cannot create an account with it.';
 $string['lang16notify'] = 'Moodle 1.6 and above allows you to install and update language packs directly from download.moodle.org by following the link below';
 $string['langimport'] = 'Language Import Utility';
 $string['langimportsuccess'] = 'Language Pack successfully upgraded';
@@ -199,5 +201,11 @@ $string['upgradesure'] = 'Your Moodle files have been changed, and you are about
 <p>Are you sure you want to upgrade this server to this version?</p>';
 $string['upgradingdata'] = 'Upgrading data';
 $string['upgradinglogs'] = 'Upgrading logs';
+$string['userrenamed']   = 'User renamed';
+$string['userupdated']   = 'User updated';
+$string['userscreated']  = 'Users created';
+$string['usersrenamed']  = 'Users renamed';
+$string['usersupdated']  = 'Users updated';
+$string['updateaccounts']  = 'Update existing accounts';
 
 ?>
