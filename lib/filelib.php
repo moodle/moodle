@@ -442,7 +442,7 @@ function readfile_chunked($filename, $retbytes=true) {
     }
 
     while (!feof($handle)) {
-        set_time_limit(60*60); //reset time limit to 60 min - should be enough for 1 MB chunk
+        @set_time_limit(60*60); //reset time limit to 60 min - should be enough for 1 MB chunk
         $buffer = fread($handle, $chunksize);
         echo $buffer;
         flush();
@@ -476,7 +476,7 @@ function byteserving_send_file($filename, $mimetype, $ranges) {
         $buffer = '';
         fseek($handle, $ranges[0][1]);
         while (!feof($handle) && $length > 0) {
-            set_time_limit(60*60); //reset time limit to 60 min - should be enough for 1 MB chunk
+            @set_time_limit(60*60); //reset time limit to 60 min - should be enough for 1 MB chunk
             $buffer = fread($handle, ($chunksize < $length ? $chunksize : $length));
             echo $buffer;
             flush();
@@ -501,7 +501,7 @@ function byteserving_send_file($filename, $mimetype, $ranges) {
             $buffer = '';
             fseek($handle, $range[1]);
             while (!feof($handle) && $length > 0) {
-                set_time_limit(60*60); //reset time limit to 60 min - should be enough for 1 MB chunk
+                @set_time_limit(60*60); //reset time limit to 60 min - should be enough for 1 MB chunk
                 $buffer = fread($handle, ($chunksize < $length ? $chunksize : $length));
                 echo $buffer;
                 flush();
