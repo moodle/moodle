@@ -184,7 +184,7 @@ function sync_enrolments($type='student') {
             " FROM {$CFG->prefix}user_students enr " .
             "     JOIN {$CFG->prefix}user usr ON usr.id=enr.userid " .
             " WHERE course={$course->id} AND enrol='database' " .
-            "       AND {$CFG->enrol_localuserfield} NOT IN (" . join(',', $extenrolments) .")";
+            "       AND {$CFG->enrol_localuserfield} NOT IN ('" . join("','", $extenrolments) ."')";
         
         $ers = $db->Execute($sql);
         if (!$ers) {
