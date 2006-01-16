@@ -1115,18 +1115,16 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
 
     if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
 
+    /// In Moodle we always use auto-numbering fields for the primary key
+    /// so let's unset it now before it causes any trouble later
+    unset($dataobject->{$primarykey});
+
     /// Get an empty recordset. Cache for multiple inserts.
-
     if (empty($empty_rs_cache[$table])) {
-
         /// Execute a dummy query to get an empty recordset
         if (!$empty_rs_cache[$table] = $db->Execute('SELECT * FROM '. $CFG->prefix . $table .' WHERE '. $primarykey  .' = \'-1\'')) {
             return false;
         }
-
-        /// In Moodle we always use auto-numbering fields for the primary ID
-        /// so let's unset it now before it causes any trouble
-        unset($dataobject->{$primarykey});
     }
 
     $rs = $empty_rs_cache[$table];
@@ -1136,9 +1134,7 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
     /// The efficient and transaction-safe strategy is to 
     /// move the sequence forward first, and make the insert
     /// with an explicit id.
-    if ( empty($dataobject->{$primarykey}) 
-         && $CFG->dbtype === 'postgres7'      
-         && $returnid == true ) {        
+    if ( $CFG->dbtype === 'postgres7' && $returnid == true ) {
         if ($nextval = (int)get_field_sql("SELECT NEXTVAL('{$CFG->prefix}{$table}_{$primarykey}_seq')")) {
             $dataobject->{$primarykey} = $nextval;            
         } 
