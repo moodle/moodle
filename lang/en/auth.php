@@ -108,6 +108,11 @@ $string['auth_pop3mailbox'] = 'Name of the mailbox to attempt a connection with.
 $string['auth_pop3port'] = 'Server port (110 is the most common, 995 is common for SSL)';
 $string['auth_pop3title'] = 'Use a POP3 server';
 $string['auth_pop3type'] = 'Server type. If your server uses certificate security, choose pop3cert.';
+$string['auth_radiustitle'] = 'Use a RADIUS server';
+$string['auth_radiusdescription'] = 'This method uses a <a href=\"http://en.wikipedia.org/wiki/RADIUS\" target=\"_blank\">RADIUS</a> server to check whether a given username and password is valid.';
+$string['auth_radiushost'] = 'Address of the RADIUS server';
+$string['auth_radiusnasport'] = 'Port to use to connect';
+$string['auth_radiussecret'] = 'Shared secret';
 $string['auth_shibbolethdescription'] = 'Using this method users are created and authenticated using <a href=\"http://shibboleth.internet2.edu/\" target=\"_blank\">Shibboleth</a>.<br>Be sure to read the <a href=\"../auth/shibboleth/README.txt\" target=\"_blank\">README</a> for Shibboleth on how to set up your Moodle with Shibboleth';
 $string['auth_shibbolethtitle'] = 'Shibboleth';
 $string['auth_shibboleth_login'] = 'Shibboleth Login';
