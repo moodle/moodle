@@ -7,7 +7,7 @@
     </DATABASE>
     <PHP version="4.1.0" level="required" />
     <PHP_EXTENSIONS>
-      <PHP_EXTENSION name="mbstring" level="recommended" />
+      <PHP_EXTENSION name="mbstring" level="optional" />
     </PHP_EXTENSIONS>
   </MOODLE>
   <MOODLE version="1.6">
@@ -17,8 +17,8 @@
     </DATABASE>
     <PHP version="4.3.0" level="required" />
     <PHP_EXTENSIONS>
-      <PHP_EXTENSION name="iconv" level="recommended" />
-      <PHP_EXTENSION name="mbstring" level="recommended" />
+      <PHP_EXTENSION name="iconv" level="optional" />
+      <PHP_EXTENSION name="mbstring" level="optional" />
     </PHP_EXTENSIONS>
   </MOODLE>
 </COMPATIBILITY_MATRIX>
