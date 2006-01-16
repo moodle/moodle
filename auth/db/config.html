@@ -26,7 +26,10 @@
     if (!isset($config->auth_dbpasstype)) {
         $config->auth_dbpasstype = "plaintext";
     }
+
+    $pluginconfig = get_config('auth/db');
 ?>
+
 <tr valign="top" class="required">
     <td align="right">auth_dbhost:</td>
     <td>
@@ -126,6 +129,8 @@
     <?php  
        $passtype["plaintext"] = get_string("plaintext", "auth");
        $passtype["md5"]       = get_string("md5", "auth");
+       $passtype["internal"]  = get_string("internal", "auth");
+       
        choose_from_menu($passtype, "auth_dbpasstype", $config->auth_dbpasstype, "");
     ?>
       
