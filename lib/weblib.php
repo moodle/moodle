@@ -1219,7 +1219,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
     }
 
     $CFG->currenttextiscacheable = true;   // Default status - can be changed by any filter
-
+    
     switch ($format) {
         case FORMAT_HTML:
             if (!empty($options->smiley)) {
@@ -1256,6 +1256,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
             if (empty($options->noclean)) {
                 $text = clean_text($text, $format);
             }
+            
             if (!empty($options->filter)) {
                 $text = filter_text($text, $courseid);
             }
@@ -1266,6 +1267,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
             if (empty($options->noclean)) {
                 $text = clean_text($text, $format);
             }
+            
             if (!empty($options->filter)) {
                 $text = filter_text($text, $courseid);
             }
@@ -1412,7 +1414,6 @@ function filter_text($text, $courseid=NULL) {
     global $CFG;
 
     require_once($CFG->libdir.'/filterlib.php');
-
     if (!empty($CFG->textfilters)) {
         $textfilters = explode(',', $CFG->textfilters);
         foreach ($textfilters as $textfilter) {
@@ -4221,7 +4222,7 @@ function print_paging_bar($totalcount, $page, $perpage, $baseurl, $pagevar='page
         $lastpage = ceil($totalcount / $perpage);
         if ($page > 15) {
             $startpage = $page - 10;
-            echo '&nbsp<a href="'. $baseurl . $pagevar .'=0">1</a>&nbsp;...';
+            echo '&nbsp;<a href="'. $baseurl . $pagevar .'=0">1</a>&nbsp;...';
         } else {
             $startpage = 0;
         }

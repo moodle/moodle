@@ -245,7 +245,7 @@
             if (forum_user_can_post_discussion($forum)) {
                 print_string("allowsdiscussions", "forum");
             } else {
-                echo '&nbsp';
+                echo '&nbsp;';
             }
             echo '</p>';
             if (!empty($showall)) {
