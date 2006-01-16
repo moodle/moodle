@@ -3822,6 +3822,43 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
 }
 
 /**
+ * Sets specified user's password and send the new password to the user via email.
+ *
+ * @uses $CFG
+ * @param user $user A {@link $USER} object
+ * @return boolean|string Returns "true" if mail was sent OK, "emailstop" if email
+ *          was blocked by user and "false" if there was another sort of error.
+ */
+function setnew_password_and_mail($user) {
+
+    global $CFG;
+
+    $site  = get_site();
+    $from = get_admin();
+
+    $newpassword = generate_password();
+
+    if (! set_field('user', 'password', md5($newpassword), 'id', $user->id) ) {
+        trigger_error('Could not set user password!');
+        return false;
+    }
+
+    $a->firstname   = $user->firstname;
+    $a->sitename    = $site->fullname;
+    $a->username    = $user->username;
+    $a->newpassword = $newpassword;
+    $a->link        = $CFG->wwwroot .'/login/';
+    $a->signoff     = fullname($from, true).' ('. $from->email .')';
+
+    $message = get_string('newusernewpasswordtext', '', $a);
+
+    $subject  = $site->fullname .': '. get_string('newusernewpasswordsubj');
+                
+    return email_to_user($user, $from, $subject, $message);
+
+}
+
+/**
  * Resets specified user's password and send the new password to the user via email.
  *
  * @uses $CFG
