@@ -1293,7 +1293,7 @@ function print_category_info($category, $depth) {
     if (isset($frontpage[FRONTPAGECOURSELIST])) {
         $catimage = '<img src="'.$CFG->pixpath.'/i/course.gif" width="16" height="16" border="0" alt="" />';
     } else {
-        $catimage = "&nbsp";
+        $catimage = "&nbsp;";
     }
 
     echo "\n\n".'<table border="0" cellpadding="3" cellspacing="0" width="100%">';
