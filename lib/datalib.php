@@ -1026,6 +1026,46 @@ function get_field_sql($sql) {
 }
 
 /**
+ * Get an array of data from one or more fields from a database 
+ * use to get a column, or a series of distinct values
+ *
+ * @uses $CFG
+ * @uses $db
+ * @param string $sql The SQL string you wish to be executed.
+ * @return mixed|false Returns the value return from the SQL statment or false if an error occured.
+ * @todo Finish documenting this function
+ */
+function get_fieldset_sql($sql) {
+
+    global $db, $CFG;
+
+    if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
+
+    $rs = $db->Execute($sql);
+    if (!$rs) {
+        if (isset($CFG->debug) and $CFG->debug > 7) {
+            notify($db->ErrorMsg() .'<br /><br />'. $sql);
+        }
+        if (!empty($CFG->dblogerror)) {
+            $debug=array_shift(debug_backtrace());
+            error_log("SQL ".$db->ErrorMsg()." in {$debug['file']} on line {$debug['line']}. STATEMENT:  $sql");
+        }
+        return false;
+    }
+
+    if ( $rs->RecordCount() > 0 ) {
+        $results = array();
+        while (!$rs->EOF) {
+            array_push($results, $rs->fields[0]);
+            $rs->MoveNext();
+        }
+        return $results;
+    } else {
+        return false;
+    }
+}
+
+/**
  * Set a single field in a database record
  *
  * @uses $CFG
