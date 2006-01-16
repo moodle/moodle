@@ -1,0 +1,24 @@
+<DBMIGRATION type="enrol/paypal" VERSION="2005120100">
+  <TABLES>
+    <TABLE name="enrol_paypal">
+      <FIELDS>
+        <FIELD name="business" method="NO_CONV" type="varchar" length="255" />
+        <FIELD name="receiver_email" method="NO_CONV" type="varchar" length="255" />
+        <FIELD name="receiver_id" method="NO_CONV" type="varchar" length="255" />
+        <FIELD name="item_name" method="NO_CONV" type="varchar" length="255" />
+        <FIELD name="memo" method="NO_CONV" type="varchar" length="255" />
+        <FIELD name="tax" method="NO_CONV" type="varchar" length="255" />
+        <FIELD name="option_name1" method="NO_CONV" type="varchar" length="255" />
+        <FIELD name="option_selection1_x" method="NO_CONV" type="varchar" length="255" />
+        <FIELD name="option_name2" method="NO_CONV" type="varchar" length="255" />
+        <FIELD name="option_selection2_x" method="NO_CONV" type="varchar" length="255" />
+        <FIELD name="payment_status" method="NO_CONV" type="varchar" length="255" />
+        <FIELD name="pending_reason" method="NO_CONV" type="varchar" length="255" />
+        <FIELD name="reason_code" method="NO_CONV" type="varchar" length="30" />
+        <FIELD name="txn_id" method="NO_CONV" type="varchar" length="255" />
+        <FIELD name="parent_txn_id" method="NO_CONV" type="varchar" length="255" />
+        <FIELD name="payment_type" method="NO_CONV" type="varchar" length="30" />
+      </FIELDS>
+    </TABLE>
+  </TABLES>
+</DBMIGRATION>
