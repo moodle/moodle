@@ -221,8 +221,9 @@ function sync_enrolments($type='student') {
                 trigger_error($db->ErrorMsg() .' STATEMENT: '. $sql);
                 return false;
             }
-            if ( $ers->RecordCount() != 1 ) { // should not happen!
-                trigger_error('weird! no enrolment entry?');
+            if ( $ers->RecordCount() != 1 ) { // if this returns empty, it means we don't have the student record.
+                                              // should not happen -- but skip it anyway 
+                trigger_error('weird! no user record entry?');
                 continue;
             }
             $userid      = $ers->fields[0];
