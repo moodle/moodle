@@ -848,6 +848,28 @@ $string['newsitems'] = 'news items';
 $string['newsitemsnumber'] = 'News items to show';
 $string['newuser'] = 'New user';
 $string['newusers'] = 'New users';
+$string['newusernewpasswordtext'] = 'Hi $a->firstname,
+
+A new account has been created for you at \'$a->sitename\' 
+and you have been issued with a new temporary password.
+
+Your current login information is now:
+   username: $a->username
+   password: $a->newpassword
+             (you will have to change your password 
+              when you login for the first time)
+
+To start using \'$a->sitename\', login at 
+   $a->link
+
+In most mail programs, this should appear as a blue link
+which you can just click on.  If that doesn\'t work,
+then cut and paste the address into the address
+line at the top of your web browser window.
+
+Cheers from the \'$a->sitename\' administrator,
+$a->signoff';
+$string['newusernewpasswordsubj'] = 'New user account';
 $string['next'] = 'Next';
 $string['no'] = 'No';
 $string['nobody'] = 'Nobody';
