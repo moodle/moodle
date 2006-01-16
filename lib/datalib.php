@@ -715,15 +715,13 @@ function get_recordset_select($table, $select='', $sort='', $fields='*', $limitf
  */
 function get_recordset_list($table, $field='', $values='', $sort='', $fields='*', $limitfrom='', $limitnum='') {
 
-    global $CFG;
-
     if ($field) {
         $select = "$field IN ($values)";
     } else {
         $select = '';
     }
 
-    get_recordset_select($table, $select, $sort, $fields, $limitfrom, $limitnum);
+    return get_recordset_select($table, $select, $sort, $fields, $limitfrom, $limitnum);
 }
 
 /**
@@ -953,6 +951,7 @@ function get_records_sql_menu($sql) {
  */
 function get_field($table, $return, $field1, $value1, $field2='', $value2='', $field3='', $value3='') {
    
+    global $CFG;
     $select = where_clause($field1, $value1, $field2, $value2, $field3, $value3);
 
     $rs = get_recordset_sql('SELECT ' . $return . ' FROM ' . $CFG->prefix . $table . ' ' . $select);
