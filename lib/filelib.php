@@ -153,7 +153,7 @@ function send_file($path, $filename, $lifetime=86400 , $filter=false, $pathisstr
     }
 
     //try to disable automatic sid rewrite in cookieless mode
-    ini_set("session.use_trans_sid", "false");
+    @ini_set("session.use_trans_sid", "false");
 
     //do not put '@' before the next header to detect incorrect moodle configurations,
     //error should be better than "weird" empty lines for admins/users
