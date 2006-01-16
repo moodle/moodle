@@ -100,6 +100,11 @@ $string['auth_pop3mailbox'] = '接続を試みるメールボックス名 ( 通常は受信ボックス
 $string['auth_pop3port'] = 'サーバポート ( 110は最も一般的、995は一般的なSSL用です。 )';
 $string['auth_pop3title'] = 'POP3サーバを使用';
 $string['auth_pop3type'] = 'サーバタイプです。もし認証が必要な場合はpop3certを選択してください。';
+$string['auth_radiusdescription'] = 'このメソッドでは、与えられたユーザ名およびパスワードが有効かチェックするため <a href=\"http://en.wikipedia.org/wiki/RADIUS\" target=\"_blank\">RADIUS</a> サーバを使用します。';
+$string['auth_radiushost'] = 'RADIUSサーバのアドレス';
+$string['auth_radiusnasport'] = '接続に使用するポート';
+$string['auth_radiussecret'] = '共有鍵';
+$string['auth_radiustitle'] = 'RADIUSサーバを使用';
 $string['auth_shib_convert_data'] = 'データ修正API';
 $string['auth_shib_convert_data_description'] = 'Shibbolethから提供されるデータを修正したい場合にこのAPIを使うことができます。詳細は、<a href=\"../auth/shibboleth/README.txt\" target=\"_blank\">README</a> をご覧ください。';
 $string['auth_shib_convert_data_warning'] = 'ファイルが存在しないか、ウェブプロセスで読み取れません!';
