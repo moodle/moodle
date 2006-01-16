@@ -437,39 +437,23 @@ function record_exists($table, $field1='', $value1='', $field2='', $value2='', $
 
 
 /**
-* Determine whether a specified record exists.
-*
-* This function returns true if the SQL executed returns records.
-*
-* @uses $CFG
-* @uses $db
-* @param string $sql The SQL statement to be executed.
-* @return bool
-*/
+ * Test whether a SQL SELECT statement returns any records.
+ *
+ * This function returns true if the SQL statement executes
+ * without any errors and returns at least one record.
+ *
+ * @param string $sql The SQL statement to execute.
+ * @return bool true if the SQL executes without errors and returns at least one record.
+ */
 function record_exists_sql($sql) {
+    $rs = get_recordset_sql($sql);
 
-    global $CFG, $db;
-
-    if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
-
-    if (!$rs = $db->Execute($sql)) {
-        if (isset($CFG->debug) and $CFG->debug > 7) {
-            notify($db->ErrorMsg().'<br /><br />'.$sql);
-        }
-        if (!empty($CFG->dblogerror)) {
-            $debug=array_shift(debug_backtrace());
-            error_log("SQL ".$db->ErrorMsg()." in {$debug['file']} on line {$debug['line']}. STATEMENT:  $sql");
-        }
-        return false;
-    }
-
-    if ( $rs->RecordCount() ) {
+    if ($rs && $rs->RecordCount() > 0) {
         return true;
     } else {
         return false;
     }
-	}
-
+}
 
 /**
  * Count the records in a table where all the given fields match the given values.
@@ -494,11 +478,11 @@ function count_records($table, $field1='', $value1='', $field2='', $value2='', $
 }
 
 /**
- * Get all the records and count them
+ * Count the records in a table which match a particular WHERE clause.
  *
  * @uses $CFG
  * @param string $table The database table to be checked against.
- * @param string $select A fragment of SQL to be used in a where clause in the SQL call.
+ * @param string $select A fragment of SQL to be used in a WHERE clause in the SQL call.
  * @param string $countitem The count string to be used in the SQL call. Default is COUNT(*).
  * @return int The count of records returned from the specified criteria.
  */
@@ -513,38 +497,28 @@ function count_records_select($table, $select='', $countitem='COUNT(*)') {
     return count_records_sql('SELECT '. $countitem .' FROM '. $CFG->prefix . $table .' '. $select);
 }
 
-
 /**
- * Get all the records returned from the specified SQL call and return the count of them
+ * Get the result of a SQL SELECT COUNT(...) query.
+ *
+ * Given a query that counts rows, return that count. (In fact,
+ * given any query, return the first field of the first record
+ * returned. However, this method should only be used for the
+ * intended purpose.) If an error occurrs, 0 is returned.
  *
  * @uses $CFG
  * @uses $db
  * @param string $sql The SQL string you wish to be executed.
- * @return int The count of records returned from the specified SQL string.
+ * @return int the count. If an error occurrs, 0 is returned.
  */
 function count_records_sql($sql) {
-
-    global $CFG, $db;
-
-    if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
-
-    $rs = $db->Execute($sql);
-    if (!$rs) {
-        if (isset($CFG->debug) and $CFG->debug > 7) {
-            notify($db->ErrorMsg() .'<br /><br />'. $sql);
-        }
-        if (!empty($CFG->dblogerror)) {
-            $debug=array_shift(debug_backtrace());
-            error_log("SQL ".$db->ErrorMsg()." in {$debug['file']} on line {$debug['line']}. STATEMENT:  $sql");
-        }
-        return 0;
+    $rs = get_recordset_sql($sql);
+    
+    if ($rs) {
+        return $rs->fields[0];
+    } else {
+        return 0;   
     }
-
-    return $rs->fields[0];
 }
-
-
-
 
 /// GENERIC FUNCTIONS TO GET, INSERT, OR UPDATE DATA  ///////////////////////////////////
 
@@ -584,7 +558,7 @@ function get_record($table, $field1, $value1, $field2='', $value2='', $field3=''
  */
 function get_record_sql($sql, $expectmultiple=false, $nolimit=false) {
 
-    global $db, $CFG;
+    global $CFG;
 
     if (isset($CFG->debug) && $CFG->debug > 7 && !$expectmultiple) {    // Debugging mode - don't use limit
        $limit = '';
@@ -594,24 +568,16 @@ function get_record_sql($sql, $expectmultiple=false, $nolimit=false) {
        $limit = ' LIMIT 1';    // Workaround - limit to one record
     }
 
-    if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
-
-    if (!$rs = $db->Execute($sql . $limit)) {
-        if (isset($CFG->debug) and $CFG->debug > 7) {    // Debugging mode - print checks
-            notify( $db->ErrorMsg() . '<br /><br />'. $sql . $limit );
-        }
-        if (!empty($CFG->dblogerror)) {
-            $debug=array_shift(debug_backtrace());
-            error_log("SQL ".$db->ErrorMsg()." in {$debug['file']} on line {$debug['line']}. STATEMENT:  $sql$limit");
-        }
-        return false;
+    if (!$rs = get_recordset_sql($sql . $limit)) {
+        return false;   
     }
+    
+    $recordcount = $rs->RecordCount();
 
-    if (!$recordcount = $rs->RecordCount()) {
-        return false;                 // Found no records
-    }
+    if ($recordcount == 0) {          // Found no records
+        return false; 
 
-    if ($recordcount == 1) {          // Found one record
+    } else if ($recordcount == 1) {    // Found one record
         return (object)$rs->fields;
 
     } else {                          // Error: found more than one record
@@ -975,8 +941,6 @@ function get_records_sql_menu($sql) {
 /**
  * Get a single value from a table row where all the given fields match the given values.
  *
- * @uses $CFG
- * @uses $db
  * @param string $table the table to query.
  * @param string $return the field to return the value of.
  * @param string $field1 the first field to check (optional).
@@ -988,61 +952,29 @@ function get_records_sql_menu($sql) {
  * @return mixed the specified value, or false if an error occured.
  */
 function get_field($table, $return, $field1, $value1, $field2='', $value2='', $field3='', $value3='') {
-
-    global $db, $CFG;
-
+   
     $select = where_clause($field1, $value1, $field2, $value2, $field3, $value3);
 
-    if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
+    $rs = get_recordset_sql('SELECT ' . $return . ' FROM ' . $CFG->prefix . $table . ' ' . $select);
 
-    $rs = $db->Execute('SELECT '. $return .' FROM '. $CFG->prefix . $table .' '. $select);
-    if (!$rs) {
-        if (isset($CFG->debug) and $CFG->debug > 7) {
-            notify($db->ErrorMsg() .'<br /><br />SELECT '. $return .' FROM '. $CFG->prefix . $table .' '. $select);
-        }
-        if (!empty($CFG->dblogerror)) {
-            $debug=array_shift(debug_backtrace());
-            error_log("SQL ".$db->ErrorMsg()." in {$debug['file']} on line {$debug['line']}. STATEMENT:  SELECT $return FROM $CFG->prefix$table $select");
-        }
-        return false;
-    }
-
-    if ( $rs->RecordCount() == 1 ) {
+    if ($rs && $rs->RecordCount() == 1) {
         return $rs->fields[$return];
     } else {
         return false;
     }
 }
 
-
 /**
- * Get a single field from a database record
+ * Get a single value from a table.
  *
- * @uses $CFG
- * @uses $db
- * @param string $sql The SQL string you wish to be executed.
- * @return mixed|false Returns the value return from the SQL statment or false if an error occured.
- * @todo Finish documenting this function
+ * @param string $sql an SQL statement expected to return a single value.
+ * @return mixed the specified value, or false if an error occured.
  */
 function get_field_sql($sql) {
 
-    global $db, $CFG;
+    $rs = get_recordset_sql($sql);
 
-    if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
-
-    $rs = $db->Execute($sql);
-    if (!$rs) {
-        if (isset($CFG->debug) and $CFG->debug > 7) {
-            notify($db->ErrorMsg() .'<br /><br />'. $sql);
-        }
-        if (!empty($CFG->dblogerror)) {
-            $debug=array_shift(debug_backtrace());
-            error_log("SQL ".$db->ErrorMsg()." in {$debug['file']} on line {$debug['line']}. STATEMENT:  $sql");
-        }
-        return false;
-    }
-
-    if ( $rs->RecordCount() == 1 ) {
+    if ($rs && $rs->RecordCount() == 1) {
         return $rs->fields[0];
     } else {
         return false;
