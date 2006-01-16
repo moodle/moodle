@@ -341,10 +341,10 @@
         }
         fclose($fp);
         notify("$strusersnew: $usersnew");
-        notify("$strusersupdated: $usersupdated");
-        notify(get_string('errors') . ": $userserrors");
+        notify(get_string('usersupdated', 'admin') . ": $usersupdated");
+        notify(get_string('errors', 'admin') . ": $userserrors");
         if ($allowrenames) {
-            notify(get_string('renames', 'admin') . ": $renames");
+            notify(get_string('usersrenamed', 'admin') . ": $renames");
             notify(get_string('renameerrors', 'admin') . ": $renameerrors");
         }
         echo '<hr />';

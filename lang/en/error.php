@@ -40,7 +40,7 @@ $string['unknowncourse'] = 'Unknown course named \"$a\"';
 $string['usernotaddederror'] = 'User \"$a\" not added - unknown error';
 $string['usernotaddedregistered'] = 'User \"$a\" not added - already registered';
 $string['usernotavailable'] = 'The details of this user are not available to you.';
-$string['usernotrenamedexist'] = 'User not renamed -- the new username is already in use.';
+$string['usernotrenamedexists'] = 'User not renamed -- the new username is already in use.';
 $string['usernotrenamedmissing'] = 'User not renamed -- could not find the old username.';
 
 ?>
