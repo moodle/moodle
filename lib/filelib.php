@@ -367,10 +367,21 @@ function readfile_chunked($filename,$retbytes=true) {
     if ($handle === false) {
         return false;
     }
-    
+
+    // don't timeout on slow clients
+    @set_time_limit(0); 
+
     while (!feof($handle)) {
         $buffer = fread($handle, $chunksize);
+
+        // write to the client and flush buffers
+        // to avoid hogging memory
         echo $buffer;
+        flush();
+        if (ob_get_level() > 0) {
+            ob_flush();
+        }
+
         if ($retbytes) {
             $cnt += strlen($buffer);}
     }
