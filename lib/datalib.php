@@ -672,6 +672,149 @@ function get_record_select($table, $select='', $fields='*') {
     return get_record_sql('SELECT '. $fields .' FROM '. $CFG->prefix . $table .' '. $select);
 }
 
+/**
+ * Get a number of records as an ADODB RecordSet.
+ *
+ * Selects records from the table $table.
+ * 
+ * If specified, only records where the field $field has value $value are retured.
+ * 
+ * If specified, the results will be sorted as specified by $sort. This
+ * is added to the SQL as "ORDER BY $sort". Example values of $sort
+ * mightbe "time ASC" or "time DESC".
+ * 
+ * If $fields is specified, only those fields are returned.
+ * Use this wherever possible to reduce memory requirements.
+ * 
+ * If you only want some of the records, specify $limitfrom and $limitnum.
+ * The query will skip the first $limitfrom records (according to the sort
+ * order) and then return the next $limitnum records. If either of $limitfrom
+ * or $limitnum is specified, both must be present.
+ * 
+ * The return value is an ADODB RecordSet object
+ * @link http://phplens.com/adodb/reference.functions.adorecordset.html
+ * if the query succeeds. If an error occurrs, false is returned.
+ *
+ * @param string $table the table to query.
+ * @param string $field a field to check (optional).
+ * @param string $value the value the field must have (requred if field1 is given, else optional).
+ * @param string $sort an order to sort the results in (optional, a valid SQL ORDER BY parameter).
+ * @param string $fields a comma separated list of fields to return (optional, by default all fields are returned).
+ * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).
+ * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
+ * @return mixed an ADODB RecordSet object, or false if an error occured.
+ */
+function get_recordset($table, $field='', $value='', $sort='', $fields='*', $limitfrom='', $limitnum='') {
+
+    if ($field) {
+        $select = "$field = '$value'";
+    } else {
+        $select = '';
+    }
+    
+    get_recordset_select($table, $select, $sort, $fields, $limitfrom, $limitnum);
+}
+
+/**
+ * Get a number of records as an ADODB RecordSet.
+ *
+ * If given, $select is used as the SELECT parameter in the SQL query,
+ * otherwise all records from the table are returned.
+ * 
+ * Other arguments and the return type as for @see function get_recordset. 
+ *
+ * @uses $CFG
+ * @param string $table the table to query.
+ * @param string $select A fragment of SQL to be used in a where clause in the SQL call.
+ * @param string $sort an order to sort the results in (optional, a valid SQL ORDER BY parameter).
+ * @param string $fields a comma separated list of fields to return (optional, by default all fields are returned).
+ * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).
+ * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
+ * @return mixed an ADODB RecordSet object, or false if an error occured.
+ */
+function get_recordset_select($table, $select='', $sort='', $fields='*', $limitfrom='', $limitnum='') {
+
+    global $CFG;
+
+    if ($select) {
+        $select = ' WHERE '. $select;
+    }
+
+    if ($limitfrom !== '') {
+        $limit = sql_paging_limit($limitfrom, $limitnum);
+    } else {
+        $limit = '';
+    }
+
+    if ($sort) {
+        $sort = ' ORDER BY '. $sort;
+    }
+
+    return get_recordset_sql('SELECT '. $fields .' FROM '. $CFG->prefix . $table . $select . $sort .' '. $limit);
+}
+
+/**
+ * Get a number of records as an ADODB RecordSet.
+ *
+ * Only records where $field takes one of the values $values are returned.
+ * $values should be a comma-separated list of values, for example "4,5,6,10"
+ * or "'foo','bar','baz'".
+ * 
+ * Other arguments and the return type as for @see function get_recordset. 
+ *
+ * @param string $table the table to query.
+ * @param string $field a field to check (optional).
+ * @param string $values the value the field must have (requred if field1 is given, else optional).
+ * @param string $sort an order to sort the results in (optional, a valid SQL ORDER BY parameter).
+ * @param string $fields a comma separated list of fields to return (optional, by default all fields are returned).
+ * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).
+ * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
+ * @return mixed an ADODB RecordSet object, or false if an error occured.
+ */
+function get_recordset_list($table, $field='', $values='', $sort='', $fields='*', $limitfrom='', $limitnum='') {
+
+    global $CFG;
+
+    if ($field) {
+        $select = "$field IN ($values)";
+    } else {
+        $select = '';
+    }
+
+    get_recordset_select($table, $select, $sort, $fields, $limitfrom, $limitnum);
+}
+
+/**
+ * Get a number of records as an ADODB RecordSet.
+ *
+ * $sql must be a complete SQL query.
+ *  
+ * The return type is as for @see function get_recordset. 
+ *
+ * @uses $CFG
+ * @uses $db
+ * @param string $sql the SQL select query to execute.
+ * @return mixed an ADODB RecordSet object, or false if an error occured.
+ */
+function get_recordset_sql($sql) {
+
+    global $CFG, $db;
+
+    if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
+
+    if (!$rs = $db->Execute($sql)) {
+        if (isset($CFG->debug) and $CFG->debug > 7) {
+            notify($db->ErrorMsg() .'<br /><br />'. $sql);
+        }
+        if (!empty($CFG->dblogerror)) {
+            $debug=array_shift(debug_backtrace());
+            error_log("SQL ".$db->ErrorMsg()." in {$debug['file']} on line {$debug['line']}. STATEMENT:  $sql");
+        }
+        return false;
+    }
+
+    return $rs;
+}
 
 /**
  * Get a number of records as an array of objects
