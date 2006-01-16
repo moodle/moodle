@@ -158,6 +158,10 @@
         $renames      = 0;
         $renameerrors = 0;
 
+        // Will use this course array a lot
+        // so fetch it early and keep it in memory
+        $courses = get_courses("all",'c.sortorder','c.id,c.shortname,c.fullname,c.sortorder');
+
         while (!feof ($fp)) {
             foreach ($optionalDefaults as $key => $value) {
                 $user->$key = addslashes($adminuser->$key);
@@ -183,7 +187,7 @@
                               'uploaduser.php?sesskey='.$USER->sesskey);
                     }
                     // password needs to be encrypted
-                    else if ($name == "password" && !empty($user->password)) {
+                    else if ($name == "password" && !empty($value)) {
                         $user->password = md5($value);
                     }
                     else if ($name == "username") {
@@ -208,7 +212,7 @@
                 $addgroup[2] = $user->group3;
                 $addgroup[3] = $user->group4;
                 $addgroup[4] = $user->group5;
-                $courses = get_courses("all",'c.sortorder','c.id,c.shortname,c.fullname,c.sortorder');
+
                 for ($i=0; $i<5; $i++) {
                     $courseid[$i]=0;
                 }
@@ -237,6 +241,7 @@
                         } else {
                             notify(get_string('usernotrenamedexists', 'error') . " : $user->oldusername $user->username");
                             $renameerrors++;
+                            continue;
                         }
                     } else {
                         notify(get_string('usernotrenamedmissing', 'error') . " : $user->oldusername $user->username");
