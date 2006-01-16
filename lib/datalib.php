@@ -654,7 +654,7 @@ function get_recordset($table, $field='', $value='', $sort='', $fields='*', $lim
         $select = '';
     }
     
-    get_recordset_select($table, $select, $sort, $fields, $limitfrom, $limitnum);
+    return get_recordset_select($table, $select, $sort, $fields, $limitfrom, $limitnum);
 }
 
 /**
