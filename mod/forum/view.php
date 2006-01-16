@@ -219,6 +219,12 @@
 
     echo '</tr></table>';
 
+    if (!empty($forum->blockafter) && !empty($forum->blockperiod)) {
+        $a->blockafter = $forum->blockafter;
+        $a->blockperiod = get_string('secondstotime'.$forum->blockperiod);
+        notify(get_string('thisforumisthrottled','forum',$a));
+    }
+
     if ($forum->type == 'qanda' && !isteacher($forum->course)) {
         notify(get_string('qandanotify','forum'));
     }

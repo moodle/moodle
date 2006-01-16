@@ -20,6 +20,9 @@ CREATE TABLE prefix_forum (
   rsstype tinyint(2) unsigned NOT NULL default '0',
   rssarticles tinyint(2) unsigned NOT NULL default '0',
   timemodified int(10) unsigned NOT NULL default '0',
+  warnafter int(10) unsigned NOT NULL default '0',
+  blockafter int(10) unsigned NOT NULL default '0',
+  blockperiod int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (id),
   UNIQUE KEY id (id),
   KEY course (course)

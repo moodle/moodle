@@ -214,6 +214,12 @@ function forum_upgrade($oldversion) {
       execute_sql("alter table ".$CFG->prefix."forum change column type type enum('single','news','general','social','eachuser','teacher','qanda') not null default 'general'");
   }
 
+  if ($oldversion < 2006011601) {
+      table_column('forum','','warnafter');
+      table_column('forum','','blockafter');
+      table_column('forum','','blockperiod');
+  }
+
   return true;
   
 }

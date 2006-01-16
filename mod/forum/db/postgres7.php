@@ -160,6 +160,12 @@ function forum_upgrade($oldversion) {
       execute_sql("ALTER TABLE {$CFG->prefix}forum ADD CONSTRAINT {$CFG->prefix}forum_type CHECK (type IN ('single','news','general','social','eachuser','teacher','qanda')) ");
   }
 
+  if ($oldversion < 2006011601) {
+      table_column('forum','','warnafter');
+      table_column('forum','','blockafter');
+      table_column('forum','','blockperiod');
+  }
+
   return true;
 
 }

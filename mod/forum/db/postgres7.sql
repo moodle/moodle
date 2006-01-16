@@ -19,7 +19,10 @@ CREATE TABLE prefix_forum (
   trackingtype integer NOT NULL default '1',
   rsstype integer NOT NULL default '0',
   rssarticles integer NOT NULL default '0',
-  timemodified integer NOT NULL default '0'
+  timemodified integer NOT NULL default '0',
+  warnafter integer NOT NULL default '0',
+  blockafter integer NOT NULL default '0',
+  blockperiod integer NOT NULL default '0'
 );
 
 CREATE INDEX prefix_forum_course_idx ON prefix_forum (course);

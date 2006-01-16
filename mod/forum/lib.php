@@ -3884,4 +3884,49 @@ function forum_get_separate_modules($courseid) {
 
 }
 
+function forum_check_throttling($forum) {
+    global $USER,$CFG;
+
+    if (is_numeric($forum)) {
+        $forum = get_record('forum','id',$forum);
+    }
+    if (!is_object($forum)) {
+        return false;  // this is broken.
+    }
+    
+    if (empty($forum->blockafter)) {
+        return true;
+    }
+    
+    if (empty($forum->blockperiod)) {
+        return true;
+    }
+    
+    if (isteacher($forum->course)) {
+        return true;
+    }
+
+    // get the number of posts in the last period we care about
+    $timenow = time();
+    $timeafter = $timenow - $forum->blockperiod;
+    
+    $numposts = count_records_sql('SELECT COUNT(p.id) FROM '.$CFG->prefix.'forum_posts p'
+                                  .' JOIN '.$CFG->prefix.'forum_discussions d'
+                                  .' ON p.discussion = d.id WHERE d.forum = '.$forum->id
+                                  .' AND p.userid = '.$USER->id.' AND p.created > '.$timeafter);
+
+    $a->blockafter = $forum->blockafter;
+    $a->numposts = $numposts;
+    $a->blockperiod = get_string('secondstotime'.$forum->blockperiod);
+    
+    if ($forum->blockafter <= $numposts) {
+        error(get_string('forumblockingtoomanyposts','error',$a),$CFG->wwwroot.'/mod/forum/view.php?f='.$forum->id);
+    }
+    if ($forum->warnafter <= $numposts) {
+        notify(get_string('forumblockingalmosttoomanyposts','forum',$a));
+    }
+
+    
+}
+
 ?>

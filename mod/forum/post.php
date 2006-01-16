@@ -636,6 +636,8 @@
         notify(get_string('qandanotify','forum'));
     }
 
+    forum_check_throttling($forum);
+
     if (!empty($parent)) {
         forum_print_post($parent, $course->id, $ownpost=false, $reply=false, $link=false);
         if (empty($post->edit)) {

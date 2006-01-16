@@ -43,6 +43,16 @@
     if (!isset($form->trackingtype)) {
         $form->trackingtype = FORUM_TRACKING_OPTIONAL;
     }
+    if (!isset($form->warnafter)) {
+        $form->warnafter = 0;
+    }
+    if (!isset($form->blockafter)) {
+        $form->blockafter = 0;
+    }
+    if (!isset($form->blockperiod)) {
+        $form->blockperiod = 0;
+    }
+
 ?>
 <form name="form" method="post" action="mod.php">
 <table cellpadding="5">
@@ -285,6 +295,34 @@
                 echo '</script>';
             }
         ?>
+    </td>
+</tr>
+<tr>
+    <td align="right" valign="top"><b><?php print_string("warnafter", "forum") ?>:</b></td>
+    <td><input type="text" name="warnafter" value="<?php p($form->warnafter); ?>" /><?php
+        helpbutton('manageposts', get_string('warnafter', 'forum'),'forum'); ?>
+    </td>
+</tr>
+<tr>
+    <td align="right" valign="top"><b><?php print_string("blockafter", "forum") ?>:</b></td>
+    <td><input type="text" name="blockafter" value="<?php p($form->blockafter); ?>" /><?php
+        helpbutton('manageposts', get_string('blockafter', 'forum'),'forum'); ?>
+    </td>
+</tr>
+<tr>
+    <td align="right" valign="top"><b><?php print_string("blockperiod", "forum") ?>:</b></td>
+    <td><?php
+         unset($options);
+         $options[0] = get_string('blockperioddisabled','forum');
+         $options[60*60*24]   = '1 '.get_string('day');
+         $options[60*60*24*2] = '2 '.get_string('days');
+         $options[60*60*24*3] = '3 '.get_string('days');
+         $options[60*60*24*4] = '4 '.get_string('days');
+         $options[60*60*24*5] = '5 '.get_string('days');
+         $options[60*60*24*6] = '6 '.get_string('days');
+         $options[60*60*24*7] = '1 '.get_string('week');
+         choose_from_menu($options,'blockperiod',$form->blockperiod,'');
+         helpbutton('manageposts', get_string('blockperiod', 'forum'),'forum'); ?>
     </td>
 </tr>
 <?php print_standard_coursemodule_settings($form); ?>

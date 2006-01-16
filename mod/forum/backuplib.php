@@ -83,6 +83,9 @@
         fwrite ($bf,full_tag("RSSTYPE",4,false,$forum->rsstype));
         fwrite ($bf,full_tag("RSSARTICLES",4,false,$forum->rssarticles));
         fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$forum->timemodified));
+        fwrite ($bf,full_tag("WARNAFTER",4,false,$forum->warnafter));
+        fwrite ($bf,full_tag("BLOCKAFTER",4,false,$forum->blockafter));
+        fwrite ($bf,full_tag("BLOCKPERIOD",4,false,$forum->blockperiod));
         
         //if we've selected to backup users info, then execute backup_forum_suscriptions and
         //backup_forum_discussions
