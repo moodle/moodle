@@ -314,6 +314,7 @@ function config_form($frm) {
                   'enrol_dbname', 'enrol_dbtable', 
                   'enrol_localcoursefield', 'enrol_localuserfield', 
                   'enrol_remotecoursefield', 'enrol_remoteuserfield',
+                  'enrol_db_autocreate', 'enrol_db_category', 'enrol_db_template', 
                   'enrol_allowinternal');
     foreach ($vars as $var) {
         if (!isset($frm->$var)) {
@@ -376,11 +377,25 @@ function process_config($config) {
     }
     set_config('enrol_remoteuserfield', $config->enrol_remoteuserfield);
 
+    if (!isset($config->enrol_db_autocreate)) {
+        $config->enrol_db_autocreate = '';
+    }
+    set_config('enrol_db_autocreate', $config->enrol_db_autocreate);
+    
+    if (!isset($config->enrol_db_category)) {
+        $config->enrol_db_category = '';
+    }
+    set_config('enrol_db_category', $config->enrol_db_category);
+
+    if (!isset($config->enrol_db_template)) {
+        $config->enrol_db_template = '';
+    }
+    set_config('enrol_db_template', $config->enrol_db_template);
+
     if (!isset($config->enrol_allowinternal)) {
         $config->enrol_allowinternal = '';
     }
     set_config('enrol_allowinternal', $config->enrol_allowinternal);
-    
     return true;
 
 }

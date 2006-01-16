@@ -2,6 +2,10 @@
 
 $string['enrolname'] = 'External Database';
 
+$string['autocreate'] = 'Courses can be created automatically if there are
+                         enrolments to a course  that doesn\'t yet exist 
+                                    in Moodle.';
+$string['category'] = 'The category for auto-created courses.';
 $string['description'] = 'You can use a external database (of nearly any kind) to control your enrolments.  It is assumed your external database contains a field containing a course ID, and a field containing a user ID.  These are compared against fields that you choose in the local course and user tables.';
 $string['dbtype'] = 'Database server type';
 $string['dbhost'] = 'Database server hostname ';
@@ -16,5 +20,7 @@ $string['localuserfield'] = 'The name of the field in the local user table that 
 $string['server_settings'] = 'Server Settings';
 $string['remotecoursefield'] = 'The field in the remote database we expect to find the course ID in';
 $string['remoteuserfield'] = 'The field in the remote database we expect to find the user ID in';
+$string['template'] = 'Optional: auto-created courses can copy 
+                       their settings from a template course.';
 
 ?>
