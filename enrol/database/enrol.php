@@ -204,6 +204,11 @@ function enrol_connect() {
     if ($enroldb->PConnect($CFG->enrol_dbhost,$CFG->enrol_dbuser,$CFG->enrol_dbpass,$CFG->enrol_dbname)) {
         return $enroldb;
     } else {
+        // do a bit of cleanup, and lot the problem
+        if (!empty($CFG->prefix_old)) {
+            $CFG->prefix =$CFG->prefix_old;           // Restore it just in case
+            unset($CFG->prefix_old);
+        }
         trigger_error("Error connecting to enrolment DB backend with: "
                       . "$CFG->enrol_dbhost,$CFG->enrol_dbuser,$CFG->enrol_dbpass,$CFG->enrol_dbname");
         return false;
@@ -216,6 +221,8 @@ function enrol_disconnect($enroldb) {
 
     $enroldb->Close();
 
+    // Cleanup the mysql 
+    // hack 
     if (!empty($CFG->prefix_old)) {
         $CFG->prefix =$CFG->prefix_old;           // Restore it just in case
         unset($CFG->prefix_old);
