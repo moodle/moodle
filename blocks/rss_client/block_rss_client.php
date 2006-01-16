@@ -103,14 +103,16 @@ define('BLOCK_RSS_SECONDARY_CACHE_ENABLED', true);
         if ( $userisloggedin && ($submitters == SUBMITTERS_ALL_ACCOUNT_HOLDERS || ($submitters == SUBMITTERS_ADMIN_AND_TEACHER && $isteacher)) ) {
 
             $page = page_create_object($this->instance->pagetype, $this->instance->pageid);
-            if (isset($this->config)) {
-                // this instance is configured - show Add/Edit feeds link
-                $script = $page->url_get_full(array('instanceid' => $this->instance->id, 'sesskey' => $USER->sesskey, 'blockaction' => 'config', 'currentaction' => 'managefeeds', 'id' => $this->courseid));
-                $output .= '<div align="center"><a title="'. get_string('feedsaddedit', 'block_rss_client') .'" href="'. $script .'">'. get_string('feedsaddedit', 'block_rss_client') .'</a></div>';
-            } else {
-                // this instance has not been configured yet - show configure link
-                $script = $page->url_get_full(array('instanceid' => $this->instance->id, 'sesskey' => $USER->sesskey, 'blockaction' => 'config', 'currentaction' => 'configblock', 'id' => $this->courseid));
-                $output .= '<div align="center"><a title="'. get_string('feedsconfigurenewinstance', 'block_rss_client') .'" href="'. $script.'">'. get_string('feedsconfigurenewinstance', 'block_rss_client') .'</a></div>';
+            if ($page->user_allowed_editing()) { // for SUBMITTERS_ALL_ACCOUNT_HOLDERS we're going to run into trouble later if we show it and then they don't have write access to the page.
+                if (isset($this->config)) {
+                    // this instance is configured - show Add/Edit feeds link
+                    $script = $page->url_get_full(array('instanceid' => $this->instance->id, 'sesskey' => $USER->sesskey, 'blockaction' => 'config', 'currentaction' => 'managefeeds', 'id' => $this->courseid));
+                    $output .= '<div align="center"><a title="'. get_string('feedsaddedit', 'block_rss_client') .'" href="'. $script .'">'. get_string('feedsaddedit', 'block_rss_client') .'</a></div>';
+                } else {
+                    // this instance has not been configured yet - show configure link
+                    $script = $page->url_get_full(array('instanceid' => $this->instance->id, 'sesskey' => $USER->sesskey, 'blockaction' => 'config', 'currentaction' => 'configblock', 'id' => $this->courseid));
+                    $output .= '<div align="center"><a title="'. get_string('feedsconfigurenewinstance', 'block_rss_client') .'" href="'. $script.'">'. get_string('feedsconfigurenewinstance', 'block_rss_client') .'</a></div>';
+                }
             }
         }
 

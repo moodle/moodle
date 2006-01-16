@@ -74,7 +74,15 @@ if ($currentaction == 'configblock') {
                     $selectedarray = array($this->config->rssid);
                 }
             }
-            if ($rssfeeds = get_records('block_rss_client')) {
+            global $USER;
+            $admins = get_admins();
+            $adminsql = '';
+            if (!empty($admins)) {
+                foreach ($admins as $admin) {
+                    $adminsql = ' OR userid = '.$admin->id;
+                }
+            }
+            if ($rssfeeds = get_records_select('block_rss_client','userid = '.$USER->id . $adminsql)) {
                 foreach($rssfeeds as $rssfeed) {
                     if (!empty($rssfeed->preferredtitle)) {
                         $feedtitle = stripslashes_safe($rssfeed->preferredtitle);
@@ -158,7 +166,7 @@ if ($currentaction == 'configblock') {
     global $act, $url, $rssid, $preferredtitle;
     print '<table cellpadding="9" cellspacing="0" class="blockconfigtable">';
     print '<tr valign="top"><td>';
-    rss_display_feeds($id);
+    rss_display_feeds($id,$USER->id);
     print '</form>'; //not sure that this is needed
     rss_print_form($act, $url, $rssid, $preferredtitle, $id);
     print '</td></tr></table>';
