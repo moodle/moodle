@@ -153,6 +153,31 @@
 
         sync_metacourses();
 
+        //
+        // generate new password emails for users 
+        //
+        mtrace('checking for create_password');
+        if (count_records('user_preferences', 'name', 'create_password', 'value', '1')) {
+            mtrace('creating passwords for new users');
+            $newusers = get_records_sql("SELECT  u.id as id, u.email, u.firstname, 
+                                                u.lastname, u.username,
+                                                p.id as prefid 
+                                        FROM {$CFG->prefix}user u 
+                                             JOIN {$CFG->prefix}user_preferences p ON u.id=p.userid
+                                        WHERE p.name='create_password' AND p.value=1 AND u.email !='' ");
+
+            foreach ($newusers as $newuserid => $newuser) {
+                $newuser->emailstop = 0; // send email regardless
+                // email user                               
+                if (setnew_password_and_mail($newuser)) {
+                    // remove user pref
+                    delete_records('user_preferences', 'id', $newuser->prefid);
+                } else {
+                    trigger_error("Could not create and mail new user password!");
+                }
+            }
+        }
+
     } // End of occasional clean-up tasks
 
 

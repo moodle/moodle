@@ -108,6 +108,11 @@
                           "group4" => 1,
                           "group5" =>1);
 
+        if (!empty($frmpassword) && $frmpassword === 'create') {
+            unset($required['password']);
+            $optional['password'] = 1;
+        }
+
         // --- get header (field names) ---
         $header = split($csv_delimiter, fgets($fp,1024));
         // check for valid field names
@@ -153,7 +158,7 @@
                               'uploaduser.php?sesskey='.$USER->sesskey);
                     }
                     // password needs to be encrypted
-                    else if ($name == "password") {
+                    else if ($name == "password" && !empty($user->password)) {
                         $user->password = md5($value);
                     }
                     else if ($name == "username") {
@@ -203,6 +208,15 @@
                 } else if ($user->username != "changeme") {
                     notify("$struser: $user->id = $user->username");
                     $numusers++;
+                    if (empty($user->password) && $frmpassword === 'create') {
+                        // passwords will be created and sent out on cron
+                        insert_record('user_preferences', array( userid => $user->id, 
+                                                                 name   => 'create_password',
+                                                                 value  => 1));
+                        insert_record('user_preferences', array( userid => $user->id, 
+                                                                 name   => 'auth_forcepasswordchange',
+                                                                 value  => 1));
+                    }
                 }
                 for ($i=0; $i<5; $i++) {
                     if ($addcourse[$i] && !$courseid[$i]) {
@@ -272,8 +286,13 @@
          $strchoose.':<input type="hidden" name="MAX_FILE_SIZE" value="'.$maxuploadsize.'">'.
          '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'">'.
          '<input type="file" name="userfile" size="30">'.
-         '<input type="submit" value="'.$struploadusers.'">'.
-         '</form></br>';
+         '<input type="submit" value="'.$struploadusers.'">';
+    echo '<br /><br />' . get_string('passwordhandling', 'auth');
+    $passwordopts = array( infile => get_string('infilefield',    'auth'),
+                           create => get_string('createpassword', 'auth'),
+                          );
+    choose_from_menu($passwordopts, 'frmpassword', 'infile');
+    echo '</form></br>';
     echo '</center>';
 
     print_footer($course);
