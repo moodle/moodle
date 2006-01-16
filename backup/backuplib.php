@@ -414,13 +414,20 @@
     }
 
     //Return the xml start tag 
-    function start_tag($tag,$level=0,$endline=false) {
+    function start_tag($tag,$level=0,$endline=false,$attributes=null) {
         if ($endline) {
            $endchar = "\n";
         } else {
            $endchar = "";
         }
-        return str_repeat(" ",$level*2)."<".strtoupper($tag).">".$endchar;
+        $attrstring = '';
+        if (!empty($attributes) && is_array($attributes)) {
+            foreach ($attributes as $key => $value) {
+                $attrstring .= " ".xml_tag_safe_content($key)."=\"".
+                    xml_tag_safe_content($value)."\"";
+            }
+        }
+        return str_repeat(" ",$level*2)."<".strtoupper($tag).$attrstring.">".$endchar;
     }
     
     //Return the xml end tag 
@@ -434,30 +441,39 @@
     }
     
     //Return the start tag, the contents and the end tag
-    function full_tag($tag,$level=0,$endline=true,$content,$to_utf=true) {
+    function full_tag($tag,$level=0,$endline=true,$content,$attributes=null) {
 
         global $CFG;
 
         //Here we encode absolute links
         $content = backup_encode_absolute_links($content);
 
+        $st = start_tag($tag,$level,$endline,$attributes);
+
+        $co = xml_tag_safe_content($content);
+
+        $et = end_tag($tag,0,true);
+
+        return $st.$co.$et;
+    }
+
+
+    function xml_tag_safe_content($content) {
+        global $CFG;
         //If enabled, we strip all the control chars from the text but tabs, newlines and returns
         //because they are forbiden in XML 1.0 specs. The expression below seems to be
         //UTF-8 safe too because it simply ignores the rest of characters.
         if (!empty($CFG->backup_strip_controlchars)) {
             $content = preg_replace("/(?(?=[[:cntrl:]])[^\n\r\t])/is","",$content);
         }
-
-        //Start to build the tag
-        $st = start_tag($tag,$level,$endline);
-        $co="";
-        if ($to_utf) {
-            $co = preg_replace("/\r\n|\r/", "\n", utf8_encode(htmlspecialchars($content)));
+        if (!empty($CFG->unicodedb)) {
+            // Don't perform the conversion. Contents are Unicode.
+            $content = preg_replace("/\r\n|\r/", "\n", htmlspecialchars($content));
         } else {
-            $co = preg_replace("/\r\n|\r/", "\n", htmlspecialchars($content));
-        }
-        $et = end_tag($tag,0,true);
-        return $st.$co.$et;
+            // Perform the conversion. Contents aren't Unicode.
+            $content = preg_replace("/\r\n|\r/", "\n", utf8_encode(htmlspecialchars($content)));
+        } 
+        return $content; 
     }
 
     //Prints General info about the course
