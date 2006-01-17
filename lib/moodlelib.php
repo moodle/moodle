@@ -3382,12 +3382,17 @@ function ismember($groupid, $userid=0) {
         //changed too for multiple groups
         foreach ($USER->groupmember as $courseid => $mgroupid) {
             //need to loop one more time...
-            foreach ($mgroupid as $index => $mygroupid)
-                if ($mygroupid == $groupid) {
-                    return true;
+            if (is_array($mgroupid)) {
+                foreach ($mgroupid as $index => $mygroupid) {
+                    if ($mygroupid == $groupid) {
+                        return true;
+                    }
                 }
+            } else if ($mygroupid == $groupid) {
+                return true;
             }
-            return false;
+        }
+        return false;
     }
 
     if (is_array($groupid)){
