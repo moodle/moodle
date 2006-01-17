@@ -544,8 +544,9 @@ class hotpot_default_report {
 		}
 	}
 	function print_text_start(&$course, &$hotpot, &$options) {
+		$downloadfilename = clean_filename("$course->shortname $hotpot->name.txt");
 		header("Content-Type: application/download\n"); 
-		header("Content-Disposition: attachment; filename=$course->shortname-$hotpot->name.txt");
+		header("Content-Disposition: attachment; filename=$downloadfilename");
 		header("Expires: 0");
 		header("Cache-Control: must-revalidate, post-check=0,pre-check=0");
 		header("Pragma: public");
