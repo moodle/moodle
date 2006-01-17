@@ -791,6 +791,20 @@ class hotpot_default_report {
 						break;
 					}
 				}
+				if (is_numeric($cell) || empty($options['reportencoding'])) {
+					// do nothing
+				} else {
+					$in_charset = '';
+					if (function_exists('mb_convert_encoding')) {
+						$in_charset = mb_detect_encoding($cell, 'auto');
+					}
+					if (empty($in_charset)) {
+						$in_charset = get_string('thischarset');
+					}
+					if ($in_charset != 'ASCII' && function_exists('mb_convert_encoding')) {
+						$cell = mb_convert_encoding($cell, $options['reportencoding'], $in_charset);
+					}
+				}
 			}
 
 			// create new format object, if necessary (to avoid "too many cell formats" error)
