@@ -22,7 +22,7 @@ CREATE TABLE prefix_survey (
   timecreated int(10) unsigned NOT NULL default '0',
   timemodified int(10) unsigned NOT NULL default '0',
   name varchar(255) NOT NULL default '',
-  intro text,
+  intro text default '',
   questions varchar(255) default NULL,
   PRIMARY KEY  (id), 
   KEY `course` (`course`)
@@ -48,7 +48,7 @@ CREATE TABLE prefix_survey_analysis (
   id int(10) unsigned NOT NULL auto_increment,
   survey int(10) unsigned NOT NULL default '0',
   userid int(10) unsigned NOT NULL default '0',
-  notes text NOT NULL,
+  notes text NOT NULL default '',
   PRIMARY KEY  (id),
   UNIQUE KEY id (id),
   KEY survey (survey),

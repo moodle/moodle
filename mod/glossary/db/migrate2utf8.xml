@@ -108,7 +108,7 @@
             migrate2utf8_glossary_intro(RECORDID)
           </PHP_FUNCTION>
         </FIELD>
-        <FIELD name="displayformat" method="NO_CONV" type="varchar" length="50" />
+        <FIELD name="displayformat" method="NO_CONV" type="varchar" length="50" default="dictionary" />
       </FIELDS>
     </TABLE>
   </TABLES>

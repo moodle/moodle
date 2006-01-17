@@ -5,7 +5,7 @@ CREATE TABLE prefix_hotpot (
     id int(10) unsigned NOT NULL auto_increment,
     course int(10) unsigned NOT NULL default '0',
     name varchar(255) NOT NULL default '',
-    summary text NOT NULL,
+    summary text NOT NULL default '',
     timeopen int(10) unsigned NOT NULL default '0',
     timeclose int(10) unsigned NOT NULL default '0',
     location int(4) unsigned NOT NULL default '0',
@@ -52,8 +52,8 @@ CREATE TABLE prefix_hotpot_attempts (
 #
 CREATE TABLE prefix_hotpot_details (
     id int(10) unsigned NOT NULL auto_increment,
-    attempt int(10) unsigned NOT NULL,
-    details text,
+    attempt int(10) unsigned NOT NULL default '0',
+    details text default '',
     PRIMARY KEY (id),
     KEY prefix_hotpot_details_attempt_idx (attempt)
 ) TYPE=MyISAM COMMENT='raw details (as XML) of Hot Potatoes quiz attempts';
@@ -62,7 +62,7 @@ CREATE TABLE prefix_hotpot_details (
 #
 CREATE TABLE prefix_hotpot_questions (
     id int(10) unsigned NOT NULL auto_increment,
-    name text NOT NULL,
+    name text NOT NULL default '',
     type tinyint(4) unsigned default NULL,
     text int(10) unsigned default NULL,
     hotpot int(10) unsigned NOT NULL default '0',
@@ -94,7 +94,7 @@ CREATE TABLE prefix_hotpot_responses (
 #
 CREATE TABLE prefix_hotpot_strings (
     id int(10) unsigned NOT NULL auto_increment,
-    string text NOT NULL,
+    string text NOT NULL default '',
     PRIMARY KEY (id),
     KEY prefix_hotpot_strings_string_idx (string(20))
 ) TYPE=MyISAM COMMENT='strings used in Hot Potatoes questions and responses';

@@ -12,7 +12,7 @@ CREATE TABLE prefix_glossary (
      id int(10) unsigned NOT NULL auto_increment,
      course int(10) unsigned NOT NULL default '0',
      name varchar(255) NOT NULL default '',
-     intro text NOT NULL,
+     intro text NOT NULL default '',
      studentcanpost tinyint(2) unsigned NOT NULL default '0',
      allowduplicatedentries tinyint(2) unsigned NOT NULL default '0',
      displayformat varchar(50) NOT NULL default 'dictionary',
@@ -48,7 +48,7 @@ CREATE TABLE prefix_glossary_entries (
      glossaryid int(10) unsigned NOT NULL default '0',
      userid int(10) unsigned NOT NULL default '0',
      concept varchar(255) NOT NULL default '',
-     definition text NOT NULL,
+     definition text NOT NULL default '',
      format tinyint(2) unsigned NOT NULL default '0',
      attachment VARCHAR(100) NOT NULL default '',
      timecreated int(10) unsigned NOT NULL default '0',
@@ -72,7 +72,7 @@ CREATE TABLE prefix_glossary_entries (
 CREATE TABLE prefix_glossary_alias (
      id int(10) unsigned NOT NULL auto_increment,
      entryid int(10) unsigned NOT NULL default '0',
-     alias varchar(255) NOT NULL,
+     alias varchar(255) NOT NULL default '',
      PRIMARY KEY  (id), 
      KEY entryid (entryid)
 ) TYPE=MyISAM COMMENT='entries alias';
@@ -107,7 +107,7 @@ CREATE TABLE prefix_glossary_comments (
      id int(10) unsigned NOT NULL auto_increment,
      entryid int(10) unsigned NOT NULL default '0',
      userid int(10) unsigned NOT NULL default '0',
-     comment text NOT NULL,
+     comment text NOT NULL default '',
      format tinyint(2) unsigned NOT NULL default '0',
      timemodified int(10) unsigned NOT NULL default '0',
      PRIMARY KEY  (id),
@@ -117,8 +117,8 @@ CREATE TABLE prefix_glossary_comments (
 
 CREATE TABLE prefix_glossary_formats (
      id int(10) unsigned NOT NULL auto_increment,
-     name varchar(50) NOT NULL,
-     popupformatname varchar(50) NOT NULL,
+     name varchar(50) NOT NULL default '',
+     popupformatname varchar(50) NOT NULL default '',
      visible tinyint(2) unsigned NOT NULL default '1',
      showgroup tinyint(2) unsigned NOT NULL default '1',
      defaultmode varchar(50) NOT NULL default '',

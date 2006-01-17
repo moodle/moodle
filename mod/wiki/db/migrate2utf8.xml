@@ -48,7 +48,7 @@
                  AND we.id = RECORDID
           </SQL_DETECT_COURSE>
         </FIELD>
-        <FIELD name="author" method="PLAIN_SQL_UPDATE" type="varchar" length="100">
+        <FIELD name="author" method="PLAIN_SQL_UPDATE" type="varchar" length="100" default="ewiki">
           <SQL_DETECT_USER>
            SELECT wp.userid
            FROM {$CFG->prefix}wiki_pages wp
