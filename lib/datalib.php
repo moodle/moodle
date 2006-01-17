@@ -3129,19 +3129,33 @@ function course_parent_visible($course = null) {
 }
 
 function category_parent_visible($parent = 0) {
+    
+    static $visible;
+
     if (!$parent) {
         return true;
     }
+    
+    if (empty($visible)) {
+        $visible = array(); // initialize
+    }
+
+    if (array_key_exists($parent,$visible)) {
+        return $visible[$parent];
+    }
+    
     $category = get_record('course_categories', 'id', $parent);
     $list = explode('/', preg_replace('/^\/(.*)$/', '$1', $category->path));
     $list[] = $parent;
     $parents = get_records_list('course_categories', 'id', implode(',', $list), 'depth DESC');
-    foreach ($parents as $parent) {
-        if (!$parent->visible) {
-            return false;
+    $v = true;
+    foreach ($parents as $p) {
+        if (!$p->visible) {
+            $v = false;
         }
     }
-    return true;
+    $visible[$parent] = $v; // now cache it
+    return $v;
 }
 
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
