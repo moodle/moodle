@@ -1162,7 +1162,7 @@ function forum_get_unmailed_posts($starttime, $endtime) {
                               FROM {$CFG->prefix}forum_posts p,
                                    {$CFG->prefix}forum_discussions d
                              WHERE p.mailed = 0
-                               AND (p.created >= '$starttime' OR  OR d.timestart > 0)
+                               AND (p.created >= '$starttime' OR d.timestart > 0)
                                AND p.created < '$endtime'
                                AND p.discussion = d.id
                                AND ((d.timestart = 0 OR d.timestart <= '$now')
