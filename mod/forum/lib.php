@@ -754,6 +754,10 @@ function forum_print_overview($courses,&$htmlarray) {
         return;
     }
 
+    $strforum = get_string('modulename','forum');
+    $strnumunread = get_string('overviewnumunread','forum');
+    $strnumpostssince = get_string('overviewnumpostssince','forum');
+
     // get all forum logs in ONE query (much better!)
     $sql = "SELECT instance,cmid,l.course,COUNT(l.id) as count FROM {$CFG->prefix}log l "
         ." JOIN {$CFG->prefix}course_modules cm ON cm.id = cmid "
@@ -811,11 +815,11 @@ function forum_print_overview($courses,&$htmlarray) {
             $showunread = true;
         }
         if ($count > 0 || $thisunread > 0) {
-            $str .= '<a title="'.get_string('modulename','forum').'" href="'.$CFG->wwwroot.'/mod/forum/view.php?f='.$forum->id.'">'
-                .get_string('modulename','forum').': '.$forum->name.'</a><br />';
-            $str .= get_string('overviewnumpostssince','forum',$count)."<br />";
+            $str .= '<a title="'.$strforum.'" href="'.$CFG->wwwroot.'/mod/forum/view.php?f='.$forum->id.'">'
+                .$strforum.': '.$forum->name.'</a><br />';
+            $str .= $count.' '.$strnumpostssince."<br />";
             if (!empty($showunread)) {
-                $str .= get_string('overviewnumunread','forum',$thisunread).'<br />';
+                $str .= $thisunread .' '.$strnumunread.'<br />';
             }
         }
         if (!empty($str)) { 
