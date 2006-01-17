@@ -196,6 +196,49 @@ class hotpot_default_report {
 		} // end if
 	} // end function
 
+
+	function expand_spans(&$table, $zone) {
+		// expand multi-column and multi-row cells in a specified $zone of a $table
+
+		// do nothing if this $zone is empty
+		if (empty($table->$zone)) return;
+
+		// shortcut to rows in this $table $zone
+		$rows = &$table->{$zone};
+
+		// loop through the rows
+		foreach ($rows as $row=>$cells) {
+
+			// check this is an array
+			if (is_array($cells)) {
+
+				// loop through the cells in this row
+				foreach ($cells as $col=>$cell) {
+
+					if (is_object($cell)) {
+						if (isset($cell->rowspan) && is_numeric($cell->rowspan) && ($cell->rowspan>1)) {
+							// fill in cells below this one
+							$new_cell = array($cell->text);
+							for ($r=1; $r<$cell->rowspan; $r++) {
+								array_splice($rows[$row+$r], $col, 0, $new_cell);
+							}
+						}
+						if (isset($cell->colspan) && is_numeric($cell->colspan) && ($cell->colspan>1)) {
+							// fill in cells to the right of this one
+							$new_cells = array();
+							for ($c=1; $c<$cell->colspan; $c++) {
+								$new_cells[] = $cell->text;
+							}
+							array_splice($rows[$row], $col, 0, $new_cells);
+						}
+						// replace $cell object with plain text
+						$rows[$row][$col] = $cell->text;
+					}
+				}
+			}
+		}
+	}
+
 /////////////////////////////////////////////////
 /// print a report in html, text or Excel format
 /////////////////////////////////////////////////
@@ -520,11 +563,13 @@ class hotpot_default_report {
 			}
 		}
 		if (isset($table->head)) {
+			$this->expand_spans($table, 'head');
 			$this->print_text_cells($table->head, $options);
 		}
 	}
 	function print_text_data(&$table, &$options) {
 		if (isset($table->data)) {
+			$this->expand_spans($table, 'data');
 			foreach ($table->data as $cells) {
 				$this->print_text_cells($cells, $options);
 			}
@@ -532,6 +577,7 @@ class hotpot_default_report {
 	}
 	function print_text_stat(&$table, &$options) {
 		if (isset($table->stat)) {
+			$this->expand_spans($table, 'stat');
 			foreach ($table->stat as $cells) {
 				$this->print_text_cells($cells, $options);
 			}
@@ -539,6 +585,7 @@ class hotpot_default_report {
 	}
 	function print_text_foot(&$table, &$options) {
 		if (isset($table->foot)) {
+			$this->expand_spans($table, 'foot');
 			foreach ($table->foot as $cells) {
 				$this->print_text_cells($cells, $options);
 			}
@@ -571,17 +618,24 @@ class hotpot_default_report {
 
 	function print_excel_report(&$course, &$hotpot, &$tables, &$options) {
 		global $CFG;
-		require_once("$CFG->libdir/excellib.class.php");
 
-    /// Calculate file name
-        $downloadfilename = clean_filename("$course->shortname $hotpot->name.xls");
-    /// Create a new workbook
-        $wb = new MoodleExcelWorkbook("-"); // $course->shortname
-    /// Sending HTTP headers 
-        $wb->send($downloadfilename);
+		// create Excel workbook
+		if (file_exists("$CFG->libdir/excellib.class.php")) {
+			// Moodle >= 1.6
+			require_once("$CFG->libdir/excellib.class.php");
+			$wb = new MoodleExcelWorkbook("-");
+		} else {
+			// Moodle <= 1.5
+			require_once("$CFG->libdir/excel/Worksheet.php");
+			require_once("$CFG->libdir/excel/Workbook.php");
+			$wb = new Workbook("-");
+		}
 
+		// send HTTP headers
+		$this->print_excel_headers($wb, $course, $hotpot);
+
+		// create one worksheet for each table
 		foreach($tables as $table) {
-			// create a worksheet for this table
 			unset($ws);
 			$ws = &$wb->add_worksheet(empty($table->caption) ? '' : strip_tags($table->caption)); 
 
@@ -591,43 +645,65 @@ class hotpot_default_report {
 			$this->print_excel_stat($wb, $ws, $table, $row, $options);
 			$this->print_excel_foot($wb, $ws, $table, $row, $options);
 		}
-
+	
 		// close the workbook (and send it to the browser)
 		$wb->close();
 	}
+	function print_excel_headers(&$wb, &$course, &$hotpot) {
+		$downloadfilename = clean_filename("$course->shortname $hotpot->name.xls");
+		if (method_exists($wb, 'send')) {
+			// Moodle >=1.6
+			$wb->send($downloadfilename);
+		} else {
+			// Moodle <=1.5
+			header("Content-type: application/vnd.ms-excel");
+			header("Content-Disposition: attachment; filename=$downloadfilename" );
+			header("Expires: 0");
+			header("Cache-Control: must-revalidate, post-check=0,pre-check=0");
+			header("Pragma: public");
+		}
+	}
 	function print_excel_head(&$wb, &$ws, &$table, &$row, &$options) {
-
-		// format properties
+		// define format properties
 		$properties = array(
 			'bold'=>1, 
 			'align'=>'center', 
 			'v_align'=>'bottom',
 			'text_wrap'=>1
 		);
+
+		// expand multi-column and multi-row cells
+		$this->expand_spans($table, 'head');
+
 		// print the headings
 		$this->print_excel_cells($wb, $ws, $table, $row, $properties, $table->head, $options);
 	}
 	function print_excel_data(&$wb, &$ws, &$table, &$row, &$options) {
-
 		// do nothing if there are no cells
 		if (empty($table->data)) return;
 
-		// format properties
+		// define format properties
 		$properties = array('text_wrap' => (empty($options['reportwrapdata']) ? 0 : 1));
 
-		// print the data cells
+		// expand multi-column and multi-row cells
+		$this->expand_spans($table, 'data');
+
+		// print rows
 		foreach ($table->data as $cells) {
 			$this->print_excel_cells($wb, $ws, $table, $row, $properties, $cells, $options);
 		}
 	}
 	function print_excel_stat(&$wb, &$ws, &$table, &$row, &$options) {
-
 		// do nothing if there are no cells
 		if (empty($table->stat)) return;
 
-		// format properties
+		// define format properties
 		$properties = array('align'=>'right');
 
+		// expand multi-column and multi-row cells
+		$this->expand_spans($table, 'stat');
+
+		// print rows
 		$i_count = count($table->stat);
 		foreach ($table->stat as $i => $cells) {
 
@@ -635,18 +711,21 @@ class hotpot_default_report {
 			$properties['top'] = ($i==0) ? 1 : 0;
 			$properties['bottom'] = ($i==($i_count-1)) ? 1 : 0;
 
-			// print this row of statistics
+			// print this row
 			$this->print_excel_cells($wb, $ws, $table, $row, $properties, $cells, $options, $table->statheadercols);
 		}
 	}
 	function print_excel_foot(&$wb, &$ws, &$table, &$row, &$options) {
-
 		// do nothing if there are no cells
 		if (empty($table->foot)) return;
 
-		// format properties
+		// define format properties
 		$properties = array('bold'=>1, 'align'=>'center');
 
+		// expand multi-column and multi-row cells
+		$this->expand_spans($table, 'foot');
+
+		// print rows
 		$i_count = count($table->foot);
 		foreach ($table->foot as $i => $cells) {
 
@@ -660,10 +739,10 @@ class hotpot_default_report {
 	}
 
 	function print_excel_cells(&$wb, &$ws, &$table, &$row, &$properties, &$cells, &$options, $statheadercols=NULL) {
-
 		// do nothing if there are no cells
 		if (empty($cells) || is_string($cells)) return;
 
+		// print cells
 		foreach($cells as $col => $cell) {
 
 			unset($fmt_properties);
@@ -694,10 +773,23 @@ class hotpot_default_report {
 
 			// check to see that an identical format object has not already been created
 			unset($fmt);
-			foreach ($wb->formats as $id=>$format) {
-				if (isset($format->properties) && $format->properties==$fmt_properties) {
-					$fmt = &$wb->formats[$id];
-					break;
+
+			if (isset($wb->pear_excel_workbook)) {
+				// Moodle >=1.6
+				$fmt_properties_obj = (object)$fmt_properties;
+				foreach ($wb->pear_excel_workbook->_formats as $id=>$format) {
+					if ($format==$fmt_properties_obj) {
+						$fmt = &$wb->pear_excel_workbook->_formats[$id];
+						break;
+					}
+				}
+			} else {
+				// Moodle <=1.5
+				foreach ($wb->formats as $id=>$format) {
+					if (isset($format->properties) && $format->properties==$fmt_properties) {
+						$fmt = &$wb->formats[$id];
+						break;
+					}
 				}
 			}
 
