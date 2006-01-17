@@ -11,13 +11,19 @@ if (array_key_exists($site->id,$courses)) {
     unset($courses[$site->id]);
 }
 
+foreach ($courses as $course) {
+    if (array_key_exists($course->id,$USER->timeaccess)) {
+        $courses[$course->id]->lastaccess = $USER->timeaccess[$course->id];
+    } else {
+        $courses[$course->id]->lastaccess = 0;
+    }
+}
+
 if (empty($courses)) {
     print_simple_box(get_string('nocourses','my'),'center');
 }
 else {
-    foreach ($courses as $course) {
-        print_overview($course);
-    }
+    print_overview($courses);
 }
 
 ?>

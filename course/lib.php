@@ -633,36 +633,38 @@ function print_log_graph($course, $userid=0, $type="course.png", $date=0) {
 }
 
 
-function print_overview($course) {
+function print_overview($courses) {
 
     global $CFG, $USER;
 
-    if (!$lastaccess = get_record("user_teachers","userid",$USER->id,"course",$course->id)) {
-        if (!$lastaccess = get_record("user_students","userid",$USER->id,"course",$course->id)) {
-            return false;
-        }
-    }
-    $lastaccess = $lastaccess->timeaccess;
 
-    $linkcss = '';
-    if (empty($course->visible)) {
-        $linkcss = 'class="dimmed"';
-    }
-
-    print_simple_box_start("center", '400', '', 5, "coursebox");
-    print_heading('<a title="'.$course->fullname.'" '.$linkcss.' href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.$course->fullname.'</a>');
+    $htmlarray = array();
     if ($modules = get_records('modules')) {
         foreach ($modules as $mod) {
             if (file_exists(dirname(dirname(__FILE__)).'/mod/'.$mod->name.'/lib.php')) {
                 require_once(dirname(dirname(__FILE__)).'/mod/'.$mod->name.'/lib.php');
                 $fname = $mod->name.'_print_overview';
                 if (function_exists($fname)) {
-                    $fname($course,$lastaccess);
+                    $fname($courses,$htmlarray);
                 }
             }
         }
     }
-    print_simple_box_end();
+
+    foreach ($courses as $course) {
+        print_simple_box_start("center", '400', '', 5, "coursebox");
+        $linkcss = '';
+        if (empty($course->visible)) {
+            $linkcss = 'class="dimmed"';
+        }
+        print_heading('<a title="'.$course->fullname.'" '.$linkcss.' href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.$course->fullname.'</a>');
+        if (array_key_exists($course->id,$htmlarray)) {
+            foreach ($htmlarray[$course->id] as $modname => $html) {
+                echo $html;
+            }
+        }
+        print_simple_box_end();
+    }
 }
 
 

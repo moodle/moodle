@@ -743,52 +743,91 @@ function forum_user_complete($course, $user, $mod, $forum) {
     }
 }
 
-function forum_print_overview($course,$lastaccess) {
+function forum_print_overview($courses,&$htmlarray) {
     global $USER, $CFG;
+    
+    if (empty($courses) || !is_array($courses) || count($courses) == 0) {
+        return array();
+    }
 
-    if  (!$forums =  get_all_instances_in_course("forum", $course)) {
+    if (!$forums = get_all_instances_in_courses('forum',$courses)) {
         return;
     }
+
     // get all forum logs in ONE query (much better!)
-    if (!$new = get_records_sql("SELECT instance,cmid,COUNT(l.id) as count FROM {$CFG->prefix}log l "
-                                ." JOIN {$CFG->prefix}course_modules cm ON cm.id = cmid "
-                                ." WHERE time > $lastaccess AND l.course = ".$course->id
-                                ." AND l.module = 'forum' AND action LIKE 'add%' "
-                                ." AND userid != ".$USER->id." GROUP BY cmid,instance")) {
-        $new = array(); // avoid warnings;
+    $sql = "SELECT instance,cmid,l.course,COUNT(l.id) as count FROM {$CFG->prefix}log l "
+        ." JOIN {$CFG->prefix}course_modules cm ON cm.id = cmid "
+        ." WHERE (";
+    foreach ($courses as $course) {
+        $sql .= '(l.course = '.$course->id.' AND l.time > '.$course->lastaccess.') OR ';
     }
+    $sql = substr($sql,0,-3); // take off the last OR
+
+    $sql .= ") AND l.module = 'forum' AND action LIKE 'add%' "
+        ." AND userid != ".$USER->id." GROUP BY cmid,l.course,instance";
+    
+    if (!$new = get_records_sql($sql)) {
+        $new = array(); // avoid warnings
+    }
+    
+    // also get all forum tracking stuff ONCE.
+    $trackingforums = array();
     foreach ($forums as $forum) {
+        if (forum_tp_can_track_forums($forum)) {
+            $trackingforums[$forum->id] = $forum;
+        }
+    }
+    
+    if (count($trackingforums) > 0) {
+        $cutoffdate = isset($CFG->forum_oldpostdays) ? (time() - ($CFG->forum_oldpostdays*24*60*60)) : 0;
+        $sql = 'SELECT d.forum,d.course,COUNT(p.id) AS count '.
+            ' FROM '.$CFG->prefix.'forum_posts p '.
+            ' JOIN '.$CFG->prefix.'forum_discussions d ON p.discussion = d.id '.
+            ' LEFT JOIN '.$CFG->prefix.'forum_read r ON r.postid = p.id AND r.userid = '.$USER->id.' WHERE (';
+        foreach ($courses as $course) {
+            $sql .= '(d.course = '.$course->id.' AND (d.groupid = -1 OR d.groupid = 0 OR d.groupid = '.get_current_group($course->id,false).')) OR ';
+        }
+        $sql = substr($sql,0,-3); // take off the last OR
+        $sql .= ') AND p.modified >= '.$cutoffdate.' AND r.id is NULL GROUP BY d.forum,d.course';
+
+        if (!$unread = get_records_sql($sql)) {
+            $unread = array();
+        }
+    } else {
+        $unread = array();
+    }
+
+    foreach ($forums as $forum) {
+        $str = '';
         $count = 0;
-        $unread = 0;
+        $thisunread = 0;
         $showunread = false;
         // either we have something from logs, or trackposts, or nothing.
         if (array_key_exists($forum->id, $new) && !empty($new[$forum->id])) {
             $count = $new[$forum->id]->count;
         }
-        if (forum_tp_can_track_forums($forum)) {
+        if (array_key_exists($forum->id,$unread)) {
+            $thisunread = $unread[$forum->id]->count;
             $showunread = true;
-            if (isset($forum->groupmode)) {
-                $groupmode = groupmode($course, $forum);  /// Can do this because forum->groupmode is defined
-            } else {
-                $groupmode = NOGROUPS;
-            }
-            $groupid = ($groupmode==SEPARATEGROUPS && !isteacheredit($course->id)) ? $currentgroup : false;
-            $unread = forum_tp_count_forum_posts($forum->id, $groupid) -
-                forum_tp_count_forum_read_records($USER->id, $forum->id, $groupid);
         }
-        if ($count > 0 || $unread > 0) {
-            $str .= '<a title="'.get_string('forums').'" href="'.$CFG->wwwroot.'/mod/forum/view.php?f='.$forum->id.'">'
-                .get_string('forum','forum').': '.$forum->name.'</a><br />';
+        if ($count > 0 || $thisunread > 0) {
+            $str .= '<a title="'.get_string('modulename','forum').'" href="'.$CFG->wwwroot.'/mod/forum/view.php?f='.$forum->id.'">'
+                .get_string('modulename','forum').': '.$forum->name.'</a><br />';
             $str .= get_string('overviewnumpostssince','forum',$count)."<br />";
             if (!empty($showunread)) {
-                $str .= get_string('overviewnumunread','forum',$unread).'<br />';
+                $str .= get_string('overviewnumunread','forum',$thisunread).'<br />';
             }
         }
-    }        
-    if (!empty($str)) {
-        print_heading(get_string("modulenameplural", "forum"));
-        echo $str;
-    }
+        if (!empty($str)) { 
+            if (!array_key_exists($forum->course,$htmlarray)) {
+                $htmlarray[$forum->course] = array();
+            }
+            if (!array_key_exists('forum',$htmlarray[$forum->course])) {
+                $htmlarray[$forum->course]['forum'] = ''; // initialize, avoid warnings
+            }
+            $htmlarray[$forum->course]['forum'] .= $str;
+        }
+    }    
 }
 
 function forum_print_recent_activity($course, $isteacher, $timestart) {

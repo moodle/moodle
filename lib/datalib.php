@@ -2639,6 +2639,63 @@ function get_coursemodule_from_instance($modulename, $instance, $courseid=0) {
 
 }
 
+/**
+ * Returns an array of all the active instances of a particular module in given courses, sorted in the order they are defined
+ *
+ * Returns an array of all the active instances of a particular
+ * module in given courses, sorted in the order they are defined
+ * in the course.   Returns false on any errors.
+ *
+ * @uses $CFG
+ * @param string  $modulename The name of the module to get instances for
+ * @param array(courses)  $courses This depends on an accurate $course->modinfo
+ * @todo Finish documenting this function. Is a course object to be documented as object(course) or array(course) since a coures object is really just an associative array, not a php object?
+ */
+function get_all_instances_in_courses($modulename,$courses) {
+    global $CFG;
+    if (empty($courses) || !is_array($courses) || count($courses) == 0) {
+        return array();
+    }
+    if (!$rawmods = get_records_sql("SELECT cm.id as coursemodule, m.*,cw.section,cm.visible as visible,cm.groupmode, cm.course
+                            FROM {$CFG->prefix}course_modules cm,
+                                 {$CFG->prefix}course_sections cw,
+                                 {$CFG->prefix}modules md,
+                                 {$CFG->prefix}$modulename m
+                            WHERE cm.course IN (".implode(',',array_keys($courses)).") AND
+                                  cm.instance = m.id AND
+                                  cm.section = cw.id AND
+                                  md.name = '$modulename' AND
+                                  md.id = cm.module")) {
+        return array();
+    }
+
+    $outputarray = array();
+
+    foreach ($courses as $course) {
+        // Hide non-visible instances from students
+        if (isteacher($course->id)) {
+            $invisible = -1;
+        } else {
+            $invisible = 0;
+        }
+        
+        if (!$modinfo = unserialize($course->modinfo)) {
+            continue;
+        }
+        foreach ($modinfo as $mod) {
+            if ($mod->mod == $modulename and $mod->visible > $invisible) {
+                $instance = $rawmods[$mod->cm];
+                if (!empty($mod->extra)) {
+                    $instance->extra = $mod->extra;
+                }
+                $outputarray[] = $instance;
+            }
+        }
+    }
+
+    return $outputarray;
+
+}
 
 /**
  * Returns an array of all the active instances of a particular module in a given course, sorted in the order they are defined
