@@ -176,7 +176,7 @@ CREATE TABLE `prefix_course_sections` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `course` int(10) unsigned NOT NULL default '0',
   `section` int(10) unsigned NOT NULL default '0',
-  `summary` text NOT NULL,
+  `summary` text NOT NULL default '',
   `sequence` text NOT NULL default '',
   `visible` tinyint(1) NOT NULL default '1',
   PRIMARY KEY  (`id`),
@@ -192,8 +192,8 @@ CREATE TABLE `prefix_course_request`  (
   `id` int(10) unsigned NOT NULL auto_increment,
   `fullname` varchar(254) NOT NULL default '',
   `shortname` varchar(15) NOT NULL default '',
-  `summary` text NOT NULL,
-  `reason` text NOT NULL,
+  `summary` text NOT NULL default '',
+  `reason` text NOT NULL default '',
   `requester` int(10) NOT NULL default 0,
   `password` varchar(50) NOT NULL default '',
   PRIMARY KEY (`id`),
@@ -256,7 +256,7 @@ CREATE TABLE `prefix_cache_filters` (
   `filter` varchar(32) NOT NULL default '',
   `version` int(10) unsigned NOT NULL default '0',
   `md5key` varchar(32) NOT NULL default '',
-  `rawtext` text NOT NULL,
+  `rawtext` text NOT NULL default '',
   `timemodified` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
   KEY `filtermd5key` (filter,md5key)
@@ -271,7 +271,7 @@ CREATE TABLE `prefix_cache_filters` (
 CREATE TABLE `prefix_cache_text` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `md5key` varchar(32) NOT NULL default '',
-  `formattedtext` longtext NOT NULL,
+  `formattedtext` longtext NOT NULL default '',
   `timemodified` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
   KEY `md5key` (`md5key`)
@@ -443,7 +443,7 @@ CREATE TABLE `prefix_message` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `useridfrom` int(10) NOT NULL default '0',
   `useridto` int(10) NOT NULL default '0',
-  `message` text NOT NULL,
+  `message` text NOT NULL default '',
   `format` int(4) unsigned NOT NULL default '0',
   `timecreated` int(10) NOT NULL default '0',
   `messagetype` varchar(50) NOT NULL default '',
@@ -461,7 +461,7 @@ CREATE TABLE `prefix_message_read` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `useridfrom` int(10) NOT NULL default '0',
   `useridto` int(10) NOT NULL default '0',
-  `message` text NOT NULL,
+  `message` text NOT NULL default '',
   `format` int(4) unsigned NOT NULL default '0',
   `timecreated` int(10) NOT NULL default '0',
   `timeread` int(10) NOT NULL default '0',
@@ -515,7 +515,7 @@ CREATE TABLE `prefix_scale` (
   `courseid` int(10) unsigned NOT NULL default '0',
   `userid` int(10) unsigned NOT NULL default '0',
   `name` varchar(255) NOT NULL default '',
-  `scale` text NOT NULL,
+  `scale` text NOT NULL default '',
   `description` text NOT NULL default '',
   `timemodified` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (id),
@@ -529,10 +529,10 @@ CREATE TABLE `prefix_scale` (
 #
 
 CREATE TABLE `prefix_sessions` (
-  `sesskey` char(32) NOT null,
-  `expiry` int(11) unsigned NOT null,
-  `expireref` varchar(64),
-  `data` text NOT null,
+  `sesskey` char(32) NOT null default '',
+  `expiry` int(11) unsigned NOT null default '0',
+  `expireref` varchar(64) default '',
+  `data` text NOT null default '',
   PRIMARY KEY (`sesskey`), 
   KEY (`expiry`) 
 ) TYPE=MyISAM COMMENT='Optional database session storage, not used by default';
@@ -606,7 +606,7 @@ CREATE TABLE `prefix_user` (
   `secret` varchar(15) default NULL,
   `picture` tinyint(1) default NULL,
   `url` varchar(255) default NULL,
-  `description` text,
+  `description` text default '',
   `mailformat` tinyint(1) unsigned NOT NULL default '1',
   `maildigest` tinyint(1) unsigned NOT NULL default '0',
   `maildisplay` tinyint(2) unsigned NOT NULL default '2',
@@ -726,12 +726,12 @@ CREATE TABLE `prefix_user_coursecreators` (
 #
 
 CREATE TABLE `adodb_logsql` (
- `created` datetime NOT NULL,
- `sql0` varchar(250) NOT NULL,
- `sql1` text NOT NULL,
- `params` text NOT NULL,
- `tracer` text NOT NULL,
- `timer` decimal(16,6) NOT NULL
+ `created` datetime NOT NULL default '0000-00-00 00:00:00',
+ `sql0` varchar(250) NOT NULL default '',
+ `sql1` text NOT NULL default '',
+ `params` text NOT NULL default '',
+ `tracer` text NOT NULL default '',
+ `timer` decimal(16,6) NOT NULL default '0'
 );
 
 CREATE TABLE `prefix_stats_daily` (
@@ -750,7 +750,7 @@ CREATE TABLE `prefix_stats_daily` (
    `uniquelogins` int(10) unsigned NOT NULL default 0,
    PRIMARY KEY (`id`),
    KEY `courseid` (`courseid`),
-   KEY `timeend` (`timeend`)	 
+   KEY `timeend` (`timeend`)
 );
 
 CREATE TABLE prefix_stats_weekly (
