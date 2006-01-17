@@ -163,6 +163,7 @@ $string['checkingforbbexport'] = 'Checking for BlackBoard export';
 $string['checkinginstances'] = 'Checking instances';
 $string['checkingsections'] = 'Checking sections';
 $string['checklanguage'] = 'Check language';
+$string['childcourses'] = 'Child courses';
 $string['childcoursenotfound'] = 'Child course not found!';
 $string['choose'] = 'Choose';
 $string['choosecourse'] = 'Choose a course';
