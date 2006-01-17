@@ -23,7 +23,7 @@ CREATE TABLE prefix_hotpot (
     attempts        INT2 NOT NULL default '0',
     password        VARCHAR(255) NOT NULL default '',
     subnet          VARCHAR(255) NOT NULL default '',
-    microreporting  INT2 NOT NULL default '0',
+    clickreporting  INT2 NOT NULL default '0',
     timecreated     INT4 NOT NULL default '0',
     timemodified    INT4 NOT NULL default '0'
 );

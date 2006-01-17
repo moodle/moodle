@@ -1,6 +1,21 @@
 <?PHP
+function hotpot_update_to_v2_1_8() {
+	global $CFG;
+	$ok = true;
+	if (strtolower($CFG->dbtype)=='postgres7') {
+		// add, delete and rename certain fields and indexes
+		// that were not correctly setup by postgres7.sql
+
+		// hotpot
+		$table = 'hotpot';
+		if (hotpot_db_field_exists($table, 'microreporting')) {
+			$ok = $ok && hotpot_db_update_field_type($table, 'microreporting', 'clickreporting', 'INTEGER', 4, 'UNSIGNED', 'NOT NULL', '0');
+		}
+	}
+	return $ok;
+}
 function hotpot_update_to_v2_1_6() {
-	global $CFG, $db;
+	global $CFG;
 	$ok = true;
 
 	if (strtolower($CFG->dbtype)=='postgres7') {
