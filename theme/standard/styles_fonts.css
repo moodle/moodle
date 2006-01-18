@@ -195,6 +195,10 @@ body#admin-index .copyright {
   font-size: 0.8em;
 }
 
+body#admin-environment table .environmenttable {
+  font-size: 0.8em;
+}
+
 /***
  *** Blocks
  ***/
