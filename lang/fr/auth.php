@@ -98,6 +98,11 @@ $string['auth_pop3mailbox'] = 'Nom de la boîte aux lettres vers laquelle tenter 
 $string['auth_pop3port'] = 'Numéro de port du serveur POP3. Il s\'agit habituellement du port 110, et lors de l\'utilisation de SSL du port 995.';
 $string['auth_pop3title'] = 'Utiliser un serveur POP3';
 $string['auth_pop3type'] = 'Type de serveur. Si le serveur POP3 utilise « certificate security », choisir « pop3cert ».';
+$string['auth_radiustitle'] = 'Utiliser un serveur RADIUS';
+$string['auth_radiusdescription'] = 'Cette méthode utilise un serveur <a href=\"http://fr.wikipedia.org/wiki/Radius_%28informatique%29\" target=\"_blank\">RADIUS</a> pour vérifier la validité d\'un nom d\'utilisateur et d\'un mot de passe donnés.';
+$string['auth_radiushost'] = 'Adresse du serveur RADIUS';
+$string['auth_radiusnasport'] = 'Port utilisé pour la connexion';
+$string['auth_radiussecret'] = 'Secret partagé';
 $string['auth_shib_convert_data_description'] = 'Vous pouvez utiliser cette API pour modifier les données fournies par Shibboleth. Lisez le fichier <a href=\"../auth/shibboleth/README.txt\" target=\"_blank\">README</a> pour d\'autres instructions.';
 $string['auth_shib_convert_data_warning'] = 'Le fichier n\'existe pas ou n\'est pas accessible en lecture par le serveurweb&nbsp;!';
 $string['auth_shib_convert_data'] = 'API de modification de données';
