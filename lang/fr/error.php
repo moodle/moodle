@@ -39,7 +39,7 @@ $string['unknowncourse'] = 'Le cours «&nbsp;$a&nbsp;» est inconnu';
 $string['usernotaddederror'] = 'L\'utilisateur «&nbsp;$a&nbsp;» n\'a pas été ajouté : erreur inconnue';
 $string['usernotaddedregistered'] = 'L\'utilisateur «&nbsp;$a&nbsp;» n\'a pas été ajouté ; il est déjà référencé';
 $string['usernotavailable'] = 'Vous n\'avez pas l\'autorisation de consulter les coordonnées de cet utilisateur.';
-$string['usernotrenamedexist'] = 'Le nom d\'utilisateur n\'a pas été modifié&nbsp;: le nouveau nom est déjà utilisé.';
+$string['usernotrenamedexists'] = 'Le nom d\'utilisateur n\'a pas été modifié&nbsp;: le nouveau nom est déjà utilisé.';
 $string['usernotrenamedmissing'] = 'Le nom d\'utilisateur n\'a pas été modifié&nbsp;: l\'ancien nom n\'a pas été trouvé.';
 
 ?>
