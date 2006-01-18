@@ -13,19 +13,19 @@ $string['dicsindextitle'] = '識別指数';
 $string['disccoefftitle'] = '判別係数';
 $string['downloadooo'] = 'OpenOfficeフォーマットでダウンロードする。';
 $string['facilitytitle'] = '%%正解<br />ファシリティ';
-$string['lowmarkslimit'] = '次の評点以下は分析しない:';
+$string['lowmarkslimit'] = '次の評点以下は分析しない';
 $string['pagesize'] = 'ページあたりの問題数';
-$string['qcounttitle'] = 'Q. カウント';
-$string['qidtitle'] = 'Q#';
+$string['qcounttitle'] = '問題数';
+$string['qidtitle'] = '問題ID';
 $string['qnametitle'] = '問題名';
 $string['qtexttitle'] = '問題テキスト';
-$string['qtypetitle'] = 'Q. タイプ';
+$string['qtypetitle'] = '問題タイプ';
 $string['quizreportdir'] = 'quiz_reports';
-$string['rcounttitle'] = 'R.<br>カウント';
+$string['rcounttitle'] = '解答数';
 $string['reportanalysis'] = 'アイテム分析レポート';
 $string['responsestitle'] = '解答テキスト';
 $string['rfractiontitle'] = '部分点';
-$string['rpercenttitle'] = 'R.%%';
+$string['rpercenttitle'] = '解答%%';
 $string['stddevtitle'] = '標準偏差';
 
 ?>
