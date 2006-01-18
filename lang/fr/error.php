@@ -13,6 +13,7 @@ $string['erroronline'] = 'Erreur à la ligne $a';
 $string['errorunzippingfiles'] = 'Erreur lors de la décompression de fichiers';
 $string['fieldrequired'] = 'Le champ «&nbsp;$a&nbsp;» est obligatoire';
 $string['filenotfound'] = 'Le fichier demandé n\'a pas été trouvé';
+$string['forumblockingtoomanyposts'] = 'Vous avez dépassé le maximum de messages fixé pour ce forum.';
 $string['groupalready'] = 'L\'utilisateur appartient déjà au groupe $a';
 $string['groupunknown'] = 'Le groupe $a n\'est pas associé au groupe indiqué';
 $string['invalidcourse'] = 'Cours non valide';
