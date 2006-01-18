@@ -64,7 +64,9 @@
     print_heading($strenvironment);
 
 /// Start of main box
-    print_simple_box("<center>".$stradminhelpenvironment."</center>", "center", "50%");
+    print_simple_box_start('center');
+
+    echo "<center>".$stradminhelpenvironment."</center><br />";
 
 /// Get current Moodle version
     $current_version = $CFG->release;
@@ -93,19 +95,18 @@
         }
     }
 
-/// Start of main box
-    print_simple_box_start('center');
-
 /// Print form and popup menu
-    echo '<form method="post" action="'.$CFG->wwwroot.'/admin/environment.php">';
+    echo '<center><form method="post" action="'.$CFG->wwwroot.'/admin/environment.php">';
     echo $strmoodleversion.' ';
     choose_from_menu ($versions, 'version', $version, null, 'this.form.submit();' );
     echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
-
-    echo '</form>';
-
+    echo '</form></center>';
 /// End of main box
     print_simple_box_end();
+
+/// Gather and show results
+    $status = check_moodle_environment($version, $environment_results);
+
 
 
 /// Process action

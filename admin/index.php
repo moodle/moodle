@@ -430,8 +430,11 @@
                                get_string('adminhelpmanagedatabase'));
     }
     if (!empty($CFG->enablestats)) {
-        $table->data[] = array('<strong><a href="reports.php">'.get_string('reports').'</a></strong>', get_string('adminhelpreports'));
+        $table->data[] = array('<strong><a href="reports.php">'.get_string('reports').'</a></strong>', 
+                                 '<div class="explanation">'.get_string('adminhelpreports').'</div>');
     }
+    $table->data[] = array('<strong><a href="environment.php">'.get_string('environment','admin').'</a></strong>',
+                           '<div class="explanation">'.get_string('adminhelpenvironment').'</div>');
 
 
     print_table($table);
