@@ -2,6 +2,7 @@
 
 $string['adminseesallevents'] = 'Les administrateurs voient tous les événements';
 $string['adminseesownevents'] = 'Les administrateurs sont comme tous les autres utilisateurs';
+$string['allowrenames'] = 'Permettre de changer les noms';
 $string['availablelangs'] = 'Langues disponibles';
 $string['backgroundcolour'] = 'Couleur transparente';
 $string['badwordsconfig'] = 'Taper ici votre liste de mots à censurer, séparés par des virgules.';
@@ -145,6 +146,7 @@ $string['importtimezonesfailed'] = 'Aucune source de données trouvée&nbsp;!';
 $string['incompatibleblocks'] = 'Blocs incompatibles';
 $string['install'] = 'Installer les langues sélectionnées';
 $string['installedlangs'] = 'Langues installées';
+$string['invaliduserchangeme'] = 'Le nom d\'utilisateur «&nbsp;changeme&nbsp;» est réservé. Il n\'est pas permis de créer un compte de ce nom.';
 $string['lang16notify'] = 'Les versions de Moodle 1.6 et suivantes vous permettent d\'installer et de mettre à jour les langues directement depuis download.moodle.org en suivant le lien ci-dessous';
 $string['langimport'] = 'Utilitaire d\'importation de langues';
 $string['langimportsuccess'] = 'Le paquet de langue a été correctement mis à jour';
@@ -194,5 +196,11 @@ $string['upgradelogsinfo'] = 'Récemment, des changements ont eu lieu dans la faç
 $string['upgradesure'] = 'Certains fichiers de votre Moodle ont été modifiés, et vous êtes sur le point<br />de lancer la procédure automatique de mise à jour de votre serveur vers cette version&nbsp;:<br /><br /><strong>$a</strong><br /><br />Une fois cette mise à jour effectuée, il sera impossible de revenir en arrière&nbsp;!<br /><br />Voulez-vous vraiment mettre à jour ce Moodle vers cette version&nbsp;?';
 $string['upgradingdata'] = 'Mise à jour des données';
 $string['upgradinglogs'] = 'Mise à jour des fichiers d\'historique (logs)';
+$string['userrenamed'] = 'Utilisateur renommé';
+$string['userupdated'] = 'Utilisateur modifié';
+$string['userscreated'] = 'Utilisateurs créés';
+$string['usersrenamed'] = 'Utilisateurs renommés';
+$string['usersupdated'] = 'Utilisateurs modifiés';
+$string['updateaccounts'] = 'Modifier des comptes existants';
 
 ?>
