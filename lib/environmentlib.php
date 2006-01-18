@@ -31,22 +31,20 @@
 // All the info is stored in the admin/environment.xml file,
 // supporting to have an updated version in moodledata/environment
 
-require_once($CFG->libdir.'/xmlize.php');
+/// Add required files
+    require_once($CFG->libdir.'/xmlize.php');
 
-define(NO_ERROR,                           0);
-define(NO_VERSION_DATA_FOUND,              1);
-define(NO_DATABASE_SECTION_FOUND,          2);
-define(NO_DATABASE_VENDORS_FOUND,          3);
-define(NO_DATABASE_VENDOR_MYSQL_FOUND,     4);
-define(NO_DATABASE_VENDOR_POSTGRES_FOUND,  5);
-define(DATABASE_OLD_VERSION,               6);
-define(NO_PHP_SECTION_FOUND,               7);
-define(NO_PHP_VERSION_FOUND,               8);
-define(PHP_OLD_VERSION,                    9);
-define(NO_PHP_EXTENSIONS_SECTION_FOUND,   10);
-define(NO_PHP_EXTENSIONS_NAME_FOUND,      11);
-define(NO_PHP_EXTENSION_WITH_NAME,        12);
-
+/// Define a buch of XML processing errors
+    define(NO_ERROR,                           0);
+    define(NO_VERSION_DATA_FOUND,              1);
+    define(NO_DATABASE_SECTION_FOUND,          2);
+    define(NO_DATABASE_VENDORS_FOUND,          3);
+    define(NO_DATABASE_VENDOR_MYSQL_FOUND,     4);
+    define(NO_DATABASE_VENDOR_POSTGRES_FOUND,  5);
+    define(NO_PHP_SECTION_FOUND,               6);
+    define(NO_PHP_VERSION_FOUND,               7);
+    define(NO_PHP_EXTENSIONS_SECTION_FOUND,    8);
+    define(NO_PHP_EXTENSIONS_NAME_FOUND,       9);
 
 /**
  * This function will perform the whole check, returning
@@ -59,26 +57,127 @@ define(NO_PHP_EXTENSION_WITH_NAME,        12);
  * @param array results array of results checked.
  * @return boolean true/false, depending of results
  */
-function check_moodle_environment($version, &$environment_results) {
+function check_moodle_environment($version, &$environment_results, $print_table=true) {
+
+    $status = true;
+    $result = true;
 
 /// Get the more recent version before the requested
     if (!$version = get_latest_version_available($version)) {
-        return false;
+        $status = false;
     }
 
 /// Perform all the checks
-    if(!$environment_results = environment_check($version)) {
-        return false;
+    if (!($environment_results = environment_check($version)) && $status) {
+        $status = false;
     }
 
 /// Iterate over all the results looking for some error in required items
-    foreach ($environment_results as $environment_result) {
-        if (!$environment_result->getStatus() && $environment_result->getLevel() == 'required') {
-            return false;
+    if ($status) {
+        foreach ($environment_results as $environment_result) {
+            if (!$environment_result->getStatus() && $environment_result->getLevel() == 'required') {
+                $result = false;
+            }
         }
     }
 
-    return true;
+/// If we have decided to print all the information, just do it
+    if ($print_table) {
+        print_moodle_environment($result, $environment_results);
+    }
+
+    return ($result && $status);
+}
+
+/** 
+ * This function will print one beautiful table with all the environmental
+ * configuration and how it suits Moodle needs.
+ * @param boolean final result of the check (true/false)
+ * @param array environment_results array of results gathered
+ */
+function print_moodle_environment($result, $environment_results) {
+
+/// Get some strings
+    $strname = get_string('name');
+    $strinfo = get_string('info');
+    $strreport = get_string('report');
+    $strstatus = get_string('status');
+    $strok = get_string('ok');
+    $strerror = get_string('error');
+    $strcheck = get_string('check');
+
+/// Table header
+    $table->head  = array ($strname, $strinfo, $strreport, $strstatus);
+    $table->align = array ('center', 'center', 'left', 'center');
+    $table->wrap  = array ('nowrap', '', '', 'nowrap');
+    $table->size  = array ('10', 10, '100%', '10');
+    $table->width = '90%';
+    $table->class = 'environmenttable';
+
+/// Iterate over each environment_result
+    $continue = true;
+    foreach ($environment_results as $environment_result) {
+        $errorline = false;
+        if ($continue) {
+            $type = $environment_result->getPart();
+            $info = $environment_result->getInfo();
+            $status = $environment_result->getStatus();
+            $error_code = $environment_result->getErrorCode();
+        /// Process Report field
+            $rec = new object();
+        /// Something has gone wrong at parsing time
+            if ($error_code) {
+                $stringtouse = 'environmentxmlerror';
+                $rec->error_code = $error_code;
+                $status = $strerror;
+                $errorline = true;
+                $continue = false;
+            }
+
+            if ($continue) {
+            /// We are comparing versions
+                if ($rec->needed = $environment_result->getNeededVersion()) {
+                    $rec->current = $environment_result->getCurrentVersion();
+                    if ($environment_result->getLevel() == 'required') {
+                        $stringtouse = 'environmentrequireversion';
+                    } else {
+                        $stringtouse = 'environmentrecommendversion';
+                    }
+            /// We are checking installed & enabled things
+                } else {
+                    if ($environment_result->getLevel() == 'required') {
+                        $stringtouse = 'environmentrequireinstall';
+                    } else {
+                        $stringtouse = 'environmentrecommendinstall';
+                    }
+                }
+            /// Calculate the status value
+                if (!$status and $environment_result->getLevel() == 'required') {
+                    $status = $strerror;
+                    $errorline = true;
+                } else if (!$status and $environment_result->getLevel() == 'optional') {
+                    $status = $strcheck;
+                } else {
+                    $status = $strok;
+                }
+            }
+    
+        /// Build the text
+            $report = get_string($stringtouse, 'admin', $rec);
+        /// Format error line
+            if ($errorline) {
+                $type = '<span class="error">'.$type.'</span>';
+                $info = '<span class="error">'.$info.'</span>';
+                $report = '<span class="error">'.$report.'</span>';
+                $status = '<span class="error">'.$status.'</span>';
+            }
+        /// Add the row to the table
+            $table->data[] = array ($type, $info, $report, $status);
+        }
+    }
+    
+/// Print table
+    print_table($table);
 }
 
 
@@ -257,7 +356,7 @@ function environment_check_php_extensions($version) {
 /// Get the enviroment version we need
     if (!$data = get_environment_for_version($version)) {
     /// Error. No version data found
-        $result = new environment_results('php_extensions');
+        $result = new environment_results('php_extension');
         $result->setStatus(false);
         $result->setErrorCode(NO_VERSION_DATA_FOUND);
         return $result;
@@ -266,14 +365,14 @@ function environment_check_php_extensions($version) {
 /// Extract the php_extension part
     if (!isset($data['#']['PHP_EXTENSIONS']['0']['#']['PHP_EXTENSION'])) {
     /// Error. No PHP section found
-        $result = new environment_results('php_extensions');
+        $result = new environment_results('php_extension');
         $result->setStatus(false);
         $result->setErrorCode(NO_PHP_EXTENSIONS_SECTION_FOUND);
         return $result;
     } else {
     /// Iterate over extensions checking them and creating the needed environment_results
         foreach($data['#']['PHP_EXTENSIONS']['0']['#']['PHP_EXTENSION'] as $extension) {
-            $result = new environment_results('php_extensions');
+            $result = new environment_results('php_extension');
         /// Check for level
             if (isset($extension['@']['level'])) {
                 $level = $extension['@']['level'];
@@ -290,7 +389,6 @@ function environment_check_php_extensions($version) {
             /// The name exists. Just check if it's an installed extension
                 if (!extension_loaded($extension_name)) {
                     $result->setStatus(false);
-                    $result->setErrorCode(NO_PHP_EXTENSION_WITH_NAME);
                 } else {
                     $result->setStatus(true);
                 }
@@ -354,7 +452,6 @@ function environment_check_php($version) {
         $result->setStatus(true);
     } else {
         $result->setStatus(false);
-        $result->setErrorCode(PHP_OLD_VERSION);
     }
     $result->setLevel($level);   
     $result->setCurrentVersion($current_version);
@@ -439,7 +536,6 @@ function environment_check_database($version) {
         $result->setStatus(true);
     } else {
         $result->setStatus(false);
-        $result->setErrorCode(DATABASE_OLD_VERSION);
     }
     $result->setLevel($level);   
     $result->setCurrentVersion($current_version);
@@ -460,7 +556,7 @@ function environment_check_database($version) {
  */
 class environment_results {
 
-    var $part;            //which are we checking (database, php, php_extensions)
+    var $part;            //which are we checking (database, php, php_extension)
     var $status;          //true/false
     var $error_code;      //integer. See constants at the beginning of the file
     var $level;           //required/optional
@@ -474,7 +570,7 @@ class environment_results {
     function environment_results($part) {
         $this->part=$part;
         $this->status=false;
-        $this->error_code=NOTHING_CHECKED_YET;
+        $this->error_code=NO_ERROR;
         $this->level='required';
         $this->current_version='';
         $this->needed_version='';
