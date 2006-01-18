@@ -73,9 +73,12 @@ function check_moodle_environment($version, &$environment_results, $print_table=
     }
 
 /// Iterate over all the results looking for some error in required items
+/// or some error_code
     if ($status) {
         foreach ($environment_results as $environment_result) {
-            if (!$environment_result->getStatus() && $environment_result->getLevel() == 'required') {
+            if ((!$environment_result->getStatus() &&
+                $environment_result->getLevel() == 'required') || 
+                $environment_result->getErrorCode()) {
                 $result = false;
             }
         }
@@ -83,7 +86,7 @@ function check_moodle_environment($version, &$environment_results, $print_table=
 
 /// If we have decided to print all the information, just do it
     if ($print_table) {
-        print_moodle_environment($result, $environment_results);
+        print_moodle_environment($result && $status, $environment_results);
     }
 
     return ($result && $status);
@@ -105,6 +108,7 @@ function print_moodle_environment($result, $environment_results) {
     $strok = get_string('ok');
     $strerror = get_string('error');
     $strcheck = get_string('check');
+    $strenvironmenterrortodo = get_string('environmenterrortodo', 'admin');
 
 /// Table header
     $table->head  = array ($strname, $strinfo, $strreport, $strstatus);
@@ -178,6 +182,11 @@ function print_moodle_environment($result, $environment_results) {
     
 /// Print table
     print_table($table);
+
+/// Finally, if any error has happened, print the summary box
+    if (!$result) {
+        print_simple_box($strenvironmenterrortodo, 'center', '', '', '', 'errorbox');
+    }
 }
 
 
