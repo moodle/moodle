@@ -86,12 +86,12 @@ function data_restore_mods($mod,$restore) {
             backup_putid($restore->backup_unique_code,$mod->modtype,
                              $mod->id, $newid);
             //Now check if want to restore user data and do it.
-            //if (restore_userdata_selected($restore,'data',$mod->id)) {
+            if (restore_userdata_selected($restore,'data',$mod->id)) {
                 //Restore data_fields first!!! need to hold an array of [oldid]=>newid due to double dependencies
                 $status = data_fields_restore_mods ($mod->id, $newid, $info, $restore);
                 $status = data_records_restore_mods ($mod->id, $newid, $info, $restore);
                 
-            //}
+            }
         } else {
             $status = false;
         }
@@ -168,10 +168,16 @@ function data_records_restore_mods ($old_data_id, $new_data_id, $info, $restore)
         $oldid = backup_todb($rec_info['#']['ID']['0']['#']);
 
         $record -> dataid = $new_data_id;
-        $record -> userid = backup_todb($fie_info['#']['USERID']['0']['#']);
-        $record -> groupid = backup_todb($fie_info['#']['GROUPID']['0']['#']);
-        $record -> timecreated = backup_todb($fie_info['#']['TIMECREATED']['0']['#']);
-        $record -> timemodified = backup_todb($fie_info['#']['TIMEMODIFIED']['0']['#']);
+        $record -> userid = backup_todb($rec_info['#']['USERID']['0']['#']);
+        $record -> groupid = backup_todb($rec_info['#']['GROUPID']['0']['#']);
+        $record -> timecreated = backup_todb($rec_info['#']['TIMECREATED']['0']['#']);
+        $record -> timemodified = backup_todb($rec_info['#']['TIMEMODIFIED']['0']['#']);
+        
+        $user = backup_getid($restore->backup_unique_code,"user",$record->userid);
+
+        if ($user) {
+            $record->userid = $user->new_id;
+        }
         
         $newid = insert_record ("data_records",$record);
 
@@ -293,11 +299,7 @@ function data_restore_files ($old_data_id, $new_data_id, $old_field_id, $new_fie
         $status = check_dir_exists($this_record_path,true);
         //And now, copy temp_path to user_assignment_path
         
-        echo "<br>temp path ".$temp_path;
-        echo "<br>this_record_path ".$this_record_path;
-        $db->debug= 9999;
-        $status = backup_copy_file($temp_path, $this_record_path);
-        $db->debug = 0;
+        $status = @backup_copy_file($temp_path, $this_record_path);
     }
 
     return $status;
