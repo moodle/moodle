@@ -155,6 +155,7 @@ $string['noanswer'] = 'Aucune réponse donnée. Veuillez revenir en arrière et don
 $string['noattemptrecordsfound'] = 'Aucune tentative trouvée : pas de note';
 $string['nobranchtablefound'] = 'Aucune table de branchement trouvée';
 $string['nocommentyet'] = 'Pas encore de commentaire.';
+$string['nocoursemods'] = 'Aucune activité trouvée';
 $string['nohighscores'] = 'Pas de meilleur résultat';
 $string['nooneansweredcorrectly'] = 'Personne n\'a répondu correctement.';
 $string['nooneansweredthisquestion'] = 'Personne n\'a répondu à cette question.';
