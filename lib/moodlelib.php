@@ -4668,7 +4668,7 @@ function get_string($identifier, $module='', $a=NULL) {
 /// Depending upon $CFG->unicodedb, we are going to check moodle.php or langconfig.php,
 /// default to a different lang pack, and redefine the module for some special strings
 /// that, under 1.6 lang packs, reside under langconfig.php
-    $langconfigstrs = array('alphabet', 'backupnameformat', 'firstdayofweek', 'locale', 
+    $langconfigstrs = array('alphabet', 'backupnameformat', 'firstdayofweek', 'locale', 'oldcharset',
                             'parentlanguage', 'strftimedate', 'strftimedateshort', 'strftimedatetime',
                             'strftimedaydate', 'strftimedaydatetime', 'strftimedayshort', 'strftimedaytime',
                             'strftimemonthyear', 'strftimerecent', 'strftimerecentfull', 'strftimetime',
