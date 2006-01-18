@@ -29,3 +29,99 @@
 // php_extensions. Also, it's possible to update the xml file
 // from moodle.org be able to check more and more versions.
 
+    require_once('../config.php');
+    require_once($CFG->libdir.'/environmentlib.php');
+
+
+/// Parameters
+    $action = optional_param('action', '', PARAM_ALPHA);
+    $sesskey = optional_param('sesskey');
+    $version = optional_param('version');
+
+/// Security checks
+    require_login();
+
+    if (!isadmin()) {
+        error('You need to be admin to use this page');
+    }
+
+    if (!$site = get_site()) {
+        error("Site isn't defined!");
+    }
+
+/// Get some strings
+    $stradmin = get_string('administration');
+    $stradminhelpenvironment = get_string("adminhelpenvironment");
+    $strenvironment = get_string('environment', 'admin');
+    $strerror = get_string('error');
+    $strmoodleversion = get_string('moodleversion');
+    $strupwards = get_string('upwards', 'admin');
+
+/// Print the header stuff
+    print_header("$SITE->shortname: $strenvironment", $SITE->fullname,
+                 "<a href=\"index.php\">$stradmin</a> -> ".$strenvironment);
+
+    print_heading($strenvironment);
+
+/// Start of main box
+    print_simple_box("<center>".$stradminhelpenvironment."</center>", "center", "50%");
+
+/// Get current Moodle version
+    $current_version = $CFG->release;
+
+/// Calculate list of versions
+    $versions = array();
+    if ($contents = load_environment_xml()) {
+        if ($env_versions = get_list_of_environment_versions($contents)) {
+        /// Set the current version at the beginning
+            $env_version = normalize_version($current_version); //We need this later (for the upwards)
+            $versions[$env_version] = $current_version;
+        /// If no version has been previously selected, default to $current_version
+            if (empty($version)) {
+                $version =  $env_version;
+            }
+        ///Iterate over each version, adding bigged than current
+            foreach ($env_versions as $env_version) {
+                if (version_compare(normalize_version($current_version), $env_version, '<')) {
+                    $versions[$env_version] = $env_version;
+                }
+            }
+        /// Add 'upwards' to the last element
+            $versions[$env_version] = $env_version.' '.$strupwards;
+        } else {
+            $versions = array('error' => $strerror);
+        }
+    }
+
+/// Start of main box
+    print_simple_box_start('center');
+
+/// Print form and popup menu
+    echo '<form method="post" action="'.$CFG->wwwroot.'/admin/environment.php">';
+    echo $strmoodleversion.' ';
+    choose_from_menu ($versions, 'version', $version, null, 'this.form.submit();' );
+    echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
+
+    echo '</form>';
+
+/// End of main box
+    print_simple_box_end();
+
+
+/// Process action
+    if ($form = data_submitted()) {
+        if (confirm_sesskey()) {
+            if ($form->action == "disable") {
+
+            } else {
+
+            }
+        }
+    }
+
+/// Default action, show explanation and popup menu
+
+
+/// Print footer
+    print_footer();
+?>
