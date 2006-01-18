@@ -19,6 +19,10 @@ class assignment_online extends assignment_base {
         $editmode = ($editable && !empty($_GET['edit']));
 
         if ($editmode) {
+            //guest can not edit or submit assignment
+            if (isguest($USER->id)) {
+                 error(get_string('guestnosubmit', 'assignment'));
+            }
             $this->view_header(get_string('editmysubmission', 'assignment'));
         } else {
             $this->view_header();
