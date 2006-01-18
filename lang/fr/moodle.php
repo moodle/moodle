@@ -800,11 +800,11 @@ Le mot de passe de votre compte sur « $a->sitename » a été remplacé par un nouve
 
 Les informations pour vous connecter sont désormais :
 
-nom d\'utilisateur : $a->username
-mot de passe : $a->newpassword
+    nom d\'utilisateur : $a->username
+    mot de passe : $a->newpassword
 
 Merci de visiter cette page afin de changer de mot de passe :
-$a->link
+    $a->link
 
 Dans la plupart des logiciels de messagerie, cette adresse devrait apparaître comme un lien de couleur bleue qu\'il vous suffit de cliquer. Si cela ne fonctionne pas, copiez ce lien et collez-le dans la barre d\'adresse de votre navigateur web.
 
@@ -815,6 +815,24 @@ $string['newsitem'] = 'article';
 $string['newsitems'] = 'articles';
 $string['newsitemsnumber'] = 'Articles récents à afficher';
 $string['newuser'] = 'Nouvel utilisateur';
+$string['newusernewpasswordtext'] = 'Bonjour,
+
+Un nouveau compte a été créé pour vous sur le site « $a->sitename » et un mot de passe temporaire vous a été délivré.
+
+Les informations nécessaires à votre connexion sont maintenant :
+   nom d\'utilisateur : $a->username
+   mot de passe       : $a->newpassword
+
+Vous devrez changer votre mot de passe lors de votre première connexion.
+
+Pour commencer à travailler sur « $a->sitename », veuillez vous connecter en cliquant sur le lien ci-dessous.
+   $a->link
+
+Dans la plupart des logiciels de messagerie, cette adresse devrait apparaître comme un lien de couleur bleue qu\'il vous suffit de cliquer. Si cela ne fonctionne pas, copiez ce lien et collez-le dans la barre d\'adresse de votre navigateur web.
+
+Si vous avez besoin d\'aide, veuillez contacter l\'administrateur du site $a->sitename,
+$a->signoff';
+$string['newusernewpasswordsubj'] = 'Nouveau compte utilisateur';
 $string['newusers'] = 'Nouveaux utilisateurs';
 $string['next'] = 'Suivant';
 $string['no'] = 'Non';
