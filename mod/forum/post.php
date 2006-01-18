@@ -250,6 +250,22 @@
             if (! $discussion = get_record("forum_discussions", "id", $post->discussion)) {
                 error("This post is not part of a discussion! ($post->discussion)");
             }
+        } else {
+            $discussion = new stdClass();
+            $newstopic = false;
+            if ($forum->type == 'news' && !$post->parent) {
+                $newstopic = true;
+            }
+            if ($newstopic && empty($post->timestartdisabled)) {
+                $discussion->timestart = make_timestamp($post->timestartyear, $post->timestartmonth, $post->timestartday);
+            } else {
+                $discussion->timestart = 0;
+            }
+            if ($newstopic && empty($post->timeenddisabled)) {
+                $discussion->timeend = make_timestamp($post->timeendyear, $post->timeendmonth, $post->timeendday);
+            } else {
+                $discussion->timeend = 0;
+            }
         }
 
     } else if (!empty($forum)) {      // User is starting a new discussion in a forum
