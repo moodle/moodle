@@ -164,6 +164,7 @@ $string['checkinginstances'] = 'インスタンスの確認中';
 $string['checkingsections'] = 'セクションの確認中';
 $string['checklanguage'] = '言語の確認';
 $string['childcoursenotfound'] = '子コースが見つかりません!';
+$string['childcourses'] = '子コース';
 $string['choose'] = '選択';
 $string['choosecourse'] = 'コースを選択してください。';
 $string['chooseenrolmethod'] = 'デフォルトのユーザ登録方法';
