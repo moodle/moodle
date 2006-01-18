@@ -129,6 +129,13 @@ $string['download'] = 'Download';
 $string['edithelpdocs'] = 'Edit help documents';
 $string['editlang'] = '<b>Edit</b>';
 $string['editstrings'] = 'Edit strings';
+$string['environment'] = 'Environment';
+$string['environmenterrortodo'] = 'You must solve all the environment problems (errors) found above before proceed to install the requested Moodle version!';
+$string['environmentrecommendinstall'] = 'is recommended to be installed/enabled';
+$string['environmentrecommendversion'] = 'version $a->needed is recommended and you are running $a->current';
+$string['environmentrequireinstall'] = 'is required to be installed/enabled.';
+$string['environmentrequireversion'] = 'version $a->needed is required and you are running $a->current';
+$string['environmentxmlerror'] = 'Error reading environment data ($a->error_code)';
 $string['errors'] = 'Errors';
 $string['filterall'] = 'Filter all strings';
 $string['filtermatchoneperpage'] = 'Filter match once per page';
@@ -209,5 +216,6 @@ $string['userscreated']  = 'Users created';
 $string['usersrenamed']  = 'Users renamed';
 $string['usersupdated']  = 'Users updated';
 $string['updateaccounts']  = 'Update existing accounts';
+$string['upwards']  = 'upwards';
 
 ?>
