@@ -2,6 +2,8 @@
 
 $string['enrolname'] = 'Base de données externe';
 
+$string['autocreate'] = 'Les cours peuvent être créés automatiquement si des inscriptions ont lieu pour un cours qui n\'existe pas encore dans le Moodle.';
+$string['category'] = 'Catégorie des cours créés automatiquement';
 $string['description'] = 'Vous pouvez utiliser une base de données externe (de presque n\'importe quel type) pour contrôler les inscriptions. La base de données externe doit posséder un champ contenant l\'identifiant du cours et un champ contenant l\'identifiant de l\'utilisateur. Ces deux champs sont comparés aux champs que vous choisissez dans les tables locales des cours et des utilisateurs.';
 $string['dbtype'] = 'Type de base de données';
 $string['dbhost'] = 'Nom d\'hôte du serveur de base de données';
@@ -16,5 +18,6 @@ $string['localuserfield'] = 'Nom du champ (de la table des utilisateurs du Moodl
 $string['remotecoursefield'] = 'Nom du champ de la base de données externe contenant l\'identifiant du cours';
 $string['remoteuserfield'] = 'Nom du champ de la base de données externe contenant l\'identifiant de l\'utilisateur';
 $string['server_settings'] = 'Réglages serveur';
+$string['template'] = 'Facultatif&nbsp;: les cours créés automatiquement peuvent hériter leurs réglages d\'un cours modèle';
 
 ?>
