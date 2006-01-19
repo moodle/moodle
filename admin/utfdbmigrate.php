@@ -69,10 +69,10 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
     }
 
     ///Backups
-    $xmls[] = xmlize(file_get_contents($CFG->dirroot.'/backup/db/migrate2utf8.xml'));
+    //$xmls[] = xmlize(file_get_contents($CFG->dirroot.'/backup/db/migrate2utf8.xml'));
 
     ///Blocks
-    $xmls[] = xmlize(file_get_contents($CFG->dirroot.'/blocks/db/migrate2utf8.xml'));
+    //$xmls[] = xmlize(file_get_contents($CFG->dirroot.'/blocks/db/migrate2utf8.xml'));
 
     ///Block Plugins
     if (!$blocks = get_list_of_plugins('blocks')) {
@@ -81,7 +81,7 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
 
     foreach ($blocks as $block){
         if (file_exists($CFG->dirroot.'/blocks/'.$block.'/db/migrate2utf8.xml')) {
-            $xmls[] = xmlize(file_get_contents($CFG->dirroot.'/blocks/'.$block.'/db/migrate2utf8.xml'));
+            //$xmls[] = xmlize(file_get_contents($CFG->dirroot.'/blocks/'.$block.'/db/migrate2utf8.xml'));
         }
     }
 
@@ -93,13 +93,13 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
 
     foreach ($enrols as $enrol){
         if (file_exists($CFG->dirroot.'/enrol/'.$enrol.'/db/migrate2utf8.xml')) {
-            $xmls[] = xmlize(file_get_contents($CFG->dirroot.'/enrol/'.$enrol.'/db/migrate2utf8.xml'));
+            //$xmls[] = xmlize(file_get_contents($CFG->dirroot.'/enrol/'.$enrol.'/db/migrate2utf8.xml'));
         }
     }
     
     ///Lastly, globals
 
-    $xmls[] = xmlize(file_get_contents($CFG->dirroot.'/lib/db/migrate2utf8.xml'));
+    //$xmls[] = xmlize(file_get_contents($CFG->dirroot.'/lib/db/migrate2utf8.xml'));
 
     /************************************************************************
      * Now we got all our tables in order                                   *
@@ -122,7 +122,7 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                 $colnames = array();
                 $coltypes = array();    //array to hold all column types for the table
                 $collengths = array();    //array to hold all column lengths for the table
-
+                $defaults = array();    //array to hold defaults, if any
                 //reset holders
                 $addindexarray = array();
                 $adduniqueindexarray = array();
@@ -147,7 +147,7 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
 
                     $dropprimary = $field['@']['dropprimary'];
                     $addprimary = $field['@']['addprimary'];
-                    $default = $field['@']['default']?$field['@']['default']:"''";
+                    $defaults[] = isset($field['@']['default'])?"'".$field['@']['default']."'":"''";
 
                     $colnames[] = $fieldname;
                     $coltypes[] = $type;
@@ -228,10 +228,15 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                                             //$db->debug=999;
                                             $result = $textlib->convert($record->{$fieldname}, $fromenc);
                                             //$db->debug=0;
+                                            
                                             $newrecord = new object;
                                             $newrecord->id = $record->id;
                                             $newrecord->{$fieldname} = $result;
-
+                                            if ($dbtablename == "data_content"){
+                                                echo "<br>here we go ".$record->{$fieldname};
+                                                echo "<br>after conversion".$result;
+                                                print_object($newrecord);
+                                            }
                                             update_record($dbtablename,$newrecord);
                                         }
 
@@ -296,7 +301,7 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                         if ($thislength > 0) {
                             $SQL.='('.$thislength.')';
                         }
-                        $SQL.=' CHARACTER SET utf8 NOT NULL DEFAULT '.$default.', ';
+                        $SQL.=' CHARACTER SET utf8 NOT NULL DEFAULT '.array_shift($defaults).', ';
                     }
 
                     $SQL = rtrim($SQL, ', ');
@@ -305,7 +310,7 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
 
                 }
                 //$db->debug=999;       // Eloy: Silly thing, what if you save the current value and then,
-				                      // after execute_sql(), restore it
+				echo $SQL;                     // after execute_sql(), restore it
                 execute_sql($SQL);    //change charset for columns
                 //$db->debug=0;
                 /**********************************
