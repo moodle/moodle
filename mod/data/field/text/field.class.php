@@ -48,10 +48,6 @@ class data_field_textarea extends data_field_base {
         $newfield->param2 = $width;
         $newfield->param3 = $height;
         
-        echo '<pre>';
-        print_r($newfield);
-        echo '</pre>';
-        
         if (!insert_record('data_fields', $newfield)) {
             notify('Insertion of new field failed!');
         }
