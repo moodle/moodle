@@ -85,6 +85,7 @@ $string['introsocial'] = 'An open forum for chatting about anything you want to'
 $string['introteacher'] = 'A forum for teacher-only notes and discussion';
 $string['lastpost'] = 'Last post';
 $string['learningforums'] = 'Learning forums';
+$string['mailnow'] = 'Mail now';
 $string['markalldread'] = 'Mark all posts in this discussion read.';
 $string['markallread'] = 'Mark all posts in this forum read.';
 $string['markread'] = 'Mark read';
@@ -142,6 +143,7 @@ $string['postincontext'] = 'See this post in context';
 $string['postmailinfo'] = 'This is a copy of a message posted on the $a website.
 
 To add your reply via the website, click on this link:';
+$string['postmailnow'] = '<p>This post will be mailed out immediately to all forum subscribers.</p>';
 $string['postrating1'] = 'Mostly Separate Knowing';
 $string['postrating2'] = 'Separate and Connected';
 $string['postrating3'] = 'Mostly Connected Knowing';

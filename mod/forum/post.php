@@ -165,6 +165,11 @@
                     $timemessage = 4;
                 }
 
+                if ($post->mailnow) {
+                    $message .= get_string("postmailnow", "forum");
+                    $timemessage = 4;
+                }
+
                 redirect(forum_go_back_to("discuss.php?d=$post->discussion#$post->id"), $message.$subscribemessage, $timemessage);
 
             } else {
@@ -173,6 +178,7 @@
             exit;
 
         } else {                     // Adding a new discussion
+            $post->mailnow = empty($post->mailnow) ? 0 : 1;
             $discussion = $post;
             $discussion->name  = $post->subject;
             $discussion->intro = $post->message;
@@ -205,6 +211,11 @@
                     $timemessage = 4;
                 }
                 $message .= '<br />'.get_string("postadded", "forum", format_time($CFG->maxeditingtime));
+
+                if ($post->mailnow) {
+                    $message .= get_string("postmailnow", "forum");
+                    $timemessage = 4;
+                }
 
                 if ($subscribemessage = forum_post_subscription($discussion)) {
                     $timemessage = 4;

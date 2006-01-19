@@ -166,6 +166,10 @@ function forum_upgrade($oldversion) {
       table_column('forum','','blockperiod');
   }
 
+  if ($oldversion < 2006011700) {
+      table_column('forum_posts','','mailnow','integer');
+  }
+
   return true;
 
 }

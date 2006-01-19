@@ -69,6 +69,7 @@ CREATE TABLE prefix_forum_posts (
   format tinyint(2) NOT NULL default '0',
   attachment VARCHAR(100) NOT NULL default '',
   totalscore tinyint(4) NOT NULL default '0',
+  mailnow int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (id),
   KEY prefix_forum_posts_parent_idx (parent),
   KEY prefix_forum_posts_discussion_idx (discussion),

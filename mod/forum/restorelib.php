@@ -402,6 +402,7 @@
             $post->format = backup_todb($pos_info['#']['FORMAT']['0']['#']);
             $post->attachment = backup_todb($pos_info['#']['ATTACHMENT']['0']['#']);
             $post->totalscore = backup_todb($pos_info['#']['TOTALSCORE']['0']['#']);
+            $post->mailnow = backup_todb($pos_info['#']['MAILNOW']['0']['#']);
 
             //We have to recode the userid field
             $user = backup_getid($restore->backup_unique_code,"user",$post->userid);

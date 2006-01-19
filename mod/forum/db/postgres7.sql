@@ -68,7 +68,8 @@ CREATE TABLE prefix_forum_posts (
   message text NOT NULL default '',
   format integer NOT NULL default '0',
   attachment VARCHAR(100) NOT NULL default '',
-  totalscore integer NOT NULL default '0'
+  totalscore integer NOT NULL default '0',
+  mailnow integer NOT NULL default '0'
 );
 
 CREATE INDEX prefix_forum_posts_discussion_idx ON prefix_forum_posts (discussion);

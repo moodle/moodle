@@ -115,6 +115,7 @@ function forum_add_instance($forum) {
         $discussion->intro    = $forum->intro;
         $discussion->assessed = $forum->assessed;
         $discussion->format   = $forum->format;
+        $discussion->mailnow  = false;
 
         if (! forum_add_discussion($discussion, $discussion->intro)) {
             error('Could not add the discussion for this forum');
@@ -1205,7 +1206,7 @@ function forum_get_unmailed_posts($starttime, $endtime) {
                                    {$CFG->prefix}forum_discussions d
                              WHERE p.mailed = 0
                                AND (p.created >= '$starttime' OR d.timestart > 0)
-                               AND p.created < '$endtime'
+                               AND (p.created < '$endtime' OR p.mailnow = 1)
                                AND p.discussion = d.id
                                AND ((d.timestart = 0 OR d.timestart <= '$now')
                                AND (d.timeend = 0 OR d.timeend > '$now'))
@@ -1233,7 +1234,7 @@ function forum_mark_old_posts_as_mailed($endtime) {
     }
     return execute_sql("UPDATE {$CFG->prefix}forum_posts
                            SET mailed = '1'
-                         WHERE id NOT IN (".implode(',',$delayed_ids).") AND created < '$endtime' AND mailed ='0'");
+                         WHERE id NOT IN (".implode(',',$delayed_ids).") AND (created < '$endtime' OR mailnow = 1) AND mailed ='0'");
 }
 
 function forum_get_user_posts($forumid, $userid) {
@@ -2517,6 +2518,7 @@ function forum_add_discussion($discussion,&$message) {
     $post->forum       = $discussion->forum;
     $post->course      = $discussion->course;
     $post->format      = $discussion->format;
+    $post->mailnow     = $discussion->mailnow;
 
     if (! $post->id = insert_record("forum_posts", $post) ) {
         return 0;

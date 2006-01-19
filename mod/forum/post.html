@@ -102,6 +102,17 @@ if (!isset($discussion->timeend)) {
 <?php } ?>
 
 
+<?php if (isadmin() && empty($post->id)) { ?>
+
+<tr valign="top">
+    <td align="right"><b><?php print_string("mailnow", "forum") ?>:</b></td>
+    <td><?php print_checkbox('mailnow', '1', !empty($post->mailnow)); ?>
+    </td>
+</tr>
+
+<?php } ?>
+
+
 <?php if ($forum->type == 'news' && !$post->parent) {  //  This is the first post of a discussion in news forum  ?>
 
 <tr valign="top">

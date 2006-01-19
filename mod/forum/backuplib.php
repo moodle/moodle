@@ -268,6 +268,7 @@
                 fwrite ($bf,full_tag("FORMAT",8,false,$for_pos->format));
                 fwrite ($bf,full_tag("ATTACHMENT",8,false,$for_pos->attachment));
                 fwrite ($bf,full_tag("TOTALSCORE",8,false,$for_pos->totalscore));
+                fwrite ($bf,full_tag("MAILNOW",8,false,$for_pos->mailnow));
                 //Now print ratings to xml
                 $status = backup_forum_ratings($bf,$preferences,$for_pos->id);
 
