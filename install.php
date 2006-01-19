@@ -12,13 +12,13 @@ if (file_exists('./config.php')) {
 
 ///==========================================================================//
 /// We are doing this in stages
-/// 0. Welcome and language settings
-/// 1. Compatibility
-/// 2. Database settings
-/// 3. Host settings
-/// 4. Administration directory name
-/// 5. Save or display the settings
-/// 6. Redirect to index.php
+define ('WELCOME',            0); /// 0. Welcome and language settings
+define ('COMPATIBILITY',      1); /// 1. Compatibility
+define ('DIRECTORY',          2); /// 2. Directory settings
+define ('DATABASE',           3); /// 2. Database settings
+define ('ADMIN',              4); /// 4. Administration directory name
+define ('SAVE',               5); /// 5. Save or display the settings
+define ('REDIRECT',           6); /// 6. Redirect to index.php
 ///==========================================================================//
 
 
@@ -56,7 +56,7 @@ if ( empty($INSTALL['language']) and empty($_POST['language']) ) {
 
     $INSTALL['admindirname']    = 'admin';
 
-    $INSTALL['stage'] = 0;
+    $INSTALL['stage'] = WELCOME;
 }
 
 
@@ -85,12 +85,12 @@ if ($INSTALL['wwwroot'] == '') {
     list($INSTALL['wwwroot'], $xtra) = explode('/install.php', qualified_me());
 }
 
-$stagetext = array(0 => get_string('chooselanguage', 'install'),
-                        get_string('compatibilitysettings', 'install'),
-                        get_string('directorysettings', 'install'),
-                        get_string('databasesettings', 'install'),
-                        get_string('admindirsetting', 'install'),
-                        get_string('configurationcomplete', 'install')
+$stagetext = array(WELCOME       => get_string('chooselanguage', 'install'),
+                   COMPATIBILITY => get_string('compatibilitysettings', 'install'),
+                   DIRECTORY     => get_string('directorysettings', 'install'),
+                   DATABASE      => get_string('databasesettings', 'install'),
+                   ADMIN         => get_string('admindirsetting', 'install'),
+                   SAVE          => get_string('configurationcomplete', 'install')
                     );
 
 
@@ -133,8 +133,9 @@ if (isset($_POST['stage'])) {
     } else {
         $nextstage = $_POST['stage'] - 1;
     }
-    
-    if ($nextstage < 0) $nextstage = 0;
+
+
+    if ($nextstage < 0) $nextstage = WELCOME;
     
 
     /// Store any posted data
@@ -145,7 +146,7 @@ if (isset($_POST['stage'])) {
 } else {
 
     $goforward = true;
-    $nextstage = 0;
+    $nextstage = WELCOME;
     
 }
 
@@ -155,7 +156,7 @@ if (isset($_POST['stage'])) {
 
 /// Check the directory settings
 
-if ($INSTALL['stage'] == 2) {
+if ($INSTALL['stage'] == DIRECTORY) {
 
     error_reporting(0);
     
@@ -185,7 +186,7 @@ if ($INSTALL['stage'] == 2) {
     }
     if ($fh) fclose($fh); 
 
-    if (!empty($errormsg)) $nextstage = 2;
+    if (!empty($errormsg)) $nextstage = DIRECTORY;
 
     error_reporting(7);
 }
@@ -197,7 +198,7 @@ if ($INSTALL['stage'] == 2) {
 /// Check database settings if stage 3 data submitted
 /// Try to connect to the database. If that fails then try to create the database
 
-if ($INSTALL['stage'] == 3) {
+if ($INSTALL['stage'] == DATABASE) {
 
     if (empty($INSTALL['dbname'])) {
         $INSTALL['dbname'] = 'moodle';
@@ -218,7 +219,7 @@ if ($INSTALL['stage'] == 3) {
     if ($INSTALL['dbtype'] == 'mysql') {  /// Check MySQL extension is present
         if (!extension_loaded('mysql')) {
             $errormsg = get_string('mysqlextensionisnotpresentinphp', 'install');
-            $nextstage = 3;
+            $nextstage = DATABASE;
         }
     }
 
@@ -239,7 +240,7 @@ if ($INSTALL['stage'] == 3) {
                             $dbconnected = $db->Connect($INSTALL['dbhost'],$INSTALL['dbuser'],$INSTALL['dbpass'],$INSTALL['dbname']);
                         } else {
                             $errormsg = get_string('dbcreationerror', 'install');
-                            $nextstage = 3;
+                            $nextstage = DATABASE;
                         }
                         break;
                 }
@@ -251,7 +252,7 @@ if ($INSTALL['stage'] == 3) {
 
     if (($dbconnected === false) and (empty($errormsg)) ) {
         $errormsg = get_string('dbconnectionerror', 'install');
-        $nextstage = 3;
+        $nextstage = DATABASE;
     }
 }
 
@@ -263,16 +264,16 @@ if ($INSTALL['stage'] == 3) {
 /// check the admin directory.
 /// If we can open a file then we know that the admin name is correct.
 
-if ($nextstage == 4 or $INSTALL['stage'] == 4) {
+if ($nextstage == ADMIN or $INSTALL['stage'] == ADMIN) {
     if (!ini_get('allow_url_fopen')) {
-        $nextstage = ($goforward) ? 5 : 3;
+        $nextstage = ($goforward) ? SAVE : DATABASE;
     } else if (($fh = @fopen($INSTALL['wwwroot'].'/'.$INSTALL['admindirname'].'/site.html', 'r')) !== false) {
-        $nextstage = ($goforward) ? 5 : 3;
+        $nextstage = ($goforward) ? SAVE : DATABASE;
         fclose($fh);
     } else {
-        if ($nextstage != 4) {
+        if ($nextstage != ADMIN) {
             $errormsg = get_string('admindirerror', 'install');
-            $nextstage = 4;
+            $nextstage = ADMIN;
         }
     }
 }
@@ -285,7 +286,7 @@ if ($nextstage == 4 or $INSTALL['stage'] == 4) {
 /// Put the data into a string
 /// Try to open config file for writing.
 
-if ($nextstage == 5) {
+if ($nextstage == SAVE) {
 
     $str  = '<?php  /// Moodle Configuration File '."\r\n";
     $str .= "\r\n";
@@ -341,7 +342,7 @@ if ($nextstage == 5) {
 <head>
 <link rel="shortcut icon" href="theme/standard/favicon.ico" />
 <title>Moodle Install</title>
-<meta http-equiv="content-type" content="text/html; charset=<?php print_string('thischarset') ?>" />
+<meta http-equiv="content-type" content="text/html; charset=<?php current_charset() ?>" />
 <?php css_styles() ?>
 
 </head>
@@ -381,8 +382,8 @@ if (isset($_GET['help'])) {
 if (!empty($errormsg)) echo "<p class=\"errormsg\" align=\"center\">$errormsg</p>\n";
 
 
-if ($nextstage == 5) {
-    $INSTALL['stage'] = 0;
+if ($nextstage == SAVE) {
+    $INSTALL['stage'] = WELCOME;
     $options = array();
     $options['lang'] = $INSTALL['language'];
     if ($configsuccess) {
@@ -462,7 +463,7 @@ function print_object($object) {
 
 //==========================================================================//
 
-function form_table($nextstage = 0, $formaction = "install.php") {
+function form_table($nextstage = WELCOME, $formaction = "install.php") {
     global $INSTALL;
 
     /// standard lines for all forms
@@ -475,7 +476,7 @@ function form_table($nextstage = 0, $formaction = "install.php") {
 <?php
     /// what we do depends on the stage we're at
     switch ($nextstage) {
-        case 0: /// Language settings
+        case WELCOME: /// Welcome and language settings
 ?>
             <tr>
                 <td class="td_left"><p><?php print_string('language') ?></p></td>
@@ -486,7 +487,7 @@ function form_table($nextstage = 0, $formaction = "install.php") {
 
 <?php
             break;
-        case 1: /// Compatibilty check
+        case COMPATIBILITY: /// Compatibilty check
             $compatsuccess = true;
             
             /// Check that PHP is of a sufficient version
@@ -508,7 +509,7 @@ function form_table($nextstage = 0, $formaction = "install.php") {
 
 
             break;
-        case 2: /// Directory settings
+        case DIRECTORY: /// Directory settings
 ?>
 
             <tr>
@@ -532,7 +533,7 @@ function form_table($nextstage = 0, $formaction = "install.php") {
 
 <?php
             break;
-        case 3: /// Database settings
+        case DATABASE: /// Database settings
 ?>
 
             <tr>
@@ -574,7 +575,7 @@ function form_table($nextstage = 0, $formaction = "install.php") {
 
 <?php
             break;
-        case 4: /// Administration directory setting
+        case ADMIN: /// Administration directory setting
 ?>
 
             <tr>
@@ -592,10 +593,10 @@ function form_table($nextstage = 0, $formaction = "install.php") {
 ?>
 
     <tr>
-        <td colspan="<?php echo ($nextstage == 1) ? '3' : '2'; ?>">
+        <td colspan="<?php echo ($nextstage == COMPATIBILITY) ? 3 : 2; ?>">
 
-            <?php echo ($nextstage < 5) ? "<input type=\"submit\" name=\"next\" value=\"".get_string('next')."  &raquo;\" style=\"float: right\"/>\n" : "&nbsp;\n" ?>
-            <?php echo ($nextstage > 0) ? "<input type=\"submit\" name=\"prev\" value=\"&laquo;  ".get_string('previous')."\" style=\"float: left\"/>\n" : "&nbsp;\n" ?>
+            <?php echo ($nextstage < SAVE) ? "<input type=\"submit\" name=\"next\" value=\"".get_string('next')."  &raquo;\" style=\"float: right\"/>\n" : "&nbsp;\n" ?>
+            <?php echo ($nextstage > WELCOME) ? "<input type=\"submit\" name=\"prev\" value=\"&laquo;  ".get_string('previous')."\" style=\"float: left\"/>\n" : "&nbsp;\n" ?>
 
 
         </td>
