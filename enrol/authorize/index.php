@@ -30,9 +30,9 @@ $authstrs = get_strings(array('paymentmanagement','orderid','void','capture','re
                               'transid','settlementdate','notsettled','amount',
                               'howmuch','captureyes','unenrolstudent'), 'enrol_authorize');
 
-print_header("$site->shortname: $authstr->paymentmanagement",
+print_header("$site->shortname: $authstrs->paymentmanagement",
              "$site->fullname",
-             "<a href=\"index.php\">$authstr->paymentmanagement</a>", "");
+             "<a href=\"index.php\">$authstrs->paymentmanagement</a>", "");
 
 if (!empty($csv)) {
     authorize_csv();
@@ -216,7 +216,7 @@ function authorize_order_details($orderno) {
                "WHERE (orderid = '" . $orderno . "') AND (status = '" . AN_STATUS_CREDIT . "')";
 
         if ($refund = get_record_sql($sql)) {
-            $extra->sum = doubleval($refund->refunded);
+            $extra->sum = floatval($refund->refunded);
         }
         $upto = format_float($order->amount - $extra->sum, 2);
         if ($upto <= 0) {
@@ -454,7 +454,7 @@ function get_order_status_desc($order)
         }
         return $ret;
 
-        case AN_STATUS_CREDIT:
+    case AN_STATUS_CREDIT:
         if (settled($order)) {
             $ret->actions = array();
             $ret->status = 'settled';

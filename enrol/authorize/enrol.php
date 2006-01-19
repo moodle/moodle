@@ -1,7 +1,7 @@
 <?php  // $Id$
 
-require_once("$CFG->dirroot/enrol/enrol.class.php");
-require_once("$CFG->dirroot/enrol/authorize/const.php");
+require_once $CFG->dirroot.'/enrol/enrol.class.php';
+require_once $CFG->dirroot.'/enrol/authorize/const.php';
 
 /**
  * enrolment_plugin_authorize
@@ -10,12 +10,12 @@ require_once("$CFG->dirroot/enrol/authorize/const.php");
 class enrolment_plugin extends enrolment_base
 {
     /**
-     * Credit card error message.
+     * Credit card error messages.
      *
-     * @var string
+     * @var array
      * @access public
      */
-    var $ccerrormsg;
+    var $ccerrors = array();
 
     /**
      * Cron log.
@@ -36,57 +36,38 @@ class enrolment_plugin extends enrolment_base
     {
         global $CFG, $USER, $form;
 
-        if ($this->zero_cost($course) || isguest()) { // No money for guests ;)
+        if ($this->zero_cost($course) || isguest()) {
             parent::print_entry($course);
-            return;
+            return; // No money for guests ;)
         }
 
-        // check payment
         $this->prevent_double_paid($course);
 
-        // I want to pay on SSL.
-        if (empty($_SERVER['HTTPS'])) {
+        if (empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == 'off') {
             if (empty($CFG->loginhttps)) {
-                error(get_string("httpsrequired", "enrol_authorize"));
+                error(get_string('httpsrequired', 'enrol_authorize'));
             } else {
-                $wwwsroot = str_replace('http://','https://', $CFG->wwwroot);
-                $sdestination = "$wwwsroot/course/enrol.php?id=$course->id";
-                redirect($sdestination);
+                $wwwsroot = str_replace('http:','https:', $CFG->wwwroot);
+                redirect("$wwwsroot/course/enrol.php?id=$course->id");
                 exit;
             }
         }
 
-        $formvars = array('password', 'ccfirstname', 'cclastname', 'cc', 'ccexpiremm', 'ccexpireyyyy', 'cctype', 'cvv',
-                          'ccaddress', 'cccity', 'ccstate', 'cccountry', 'cczip');
-
-        foreach ($formvars as $var) {
-            if (!isset($form->$var)) {
-                $form->$var = '';
-            }
-        }
-
         $teacher = get_teacher($course->id);
-        $strloginto = get_string("loginto", "", $course->shortname);
-        $strcourses = get_string("courses");
-        $curcost = $this->get_course_cost($course);
-
-        $userfirstname = empty($form->ccfirstname) ? $USER->firstname : $form->ccfirstname;
-        $userlastname = empty($form->cclastname) ? $USER->lastname : $form->cclastname;
-        $useraddress = empty($form->ccaddress) ? $USER->address : $form->ccaddress;
-        $usercity = empty($form->cccity) ? $USER->city : $form->cccity;
-        $usercountry = empty($form->cccountry) ? $USER->country : $form->cccountry;
+        $strcourses = get_string('courses');
+        $strloginto = get_string('loginto', '', $course->shortname);
 
         print_header($strloginto, $course->fullname, "<a href=\"$CFG->wwwroot/course/\">$strcourses</a> -> $strloginto");
-        print_course($course, "80%");
+        print_course($course, '80%');
 
         if ($course->password) {
             print_simple_box(get_string('choosemethod', 'enrol_authorize'), 'center');
             $password = '';
-            include($CFG->dirroot . '/enrol/internal/enrol.html');
+            include $CFG->dirroot.'/enrol/internal/enrol.html';
         }
 
-        print_simple_box_start("center");
-        include($CFG->dirroot . '/enrol/authorize/enrol.html');
+        print_simple_box_start('center');
+        include $CFG->dirroot.'/enrol/authorize/enrol.html';
         print_simple_box_end();
 
         print_footer();
@@ -101,7 +82,7 @@ class enrolment_plugin extends enrolment_base
      * @access public
      */
     function check_entry($form, $course) {
-        if ($this->zero_cost($course) || isguest() || (!empty($form->password))) {
+        if ((!empty($form->password)) || isguest() || $this->zero_cost($course)) {
             parent::check_entry($form, $course);
         } else {
             $this->cc_submit($form, $course);
@@ -120,22 +101,11 @@ class enrolment_plugin extends enrolment_base
     function cc_submit($form, $course)
     {
         global $CFG, $USER, $SESSION;
-        require_once($CFG->dirroot . '/enrol/authorize/ccval.php');
-        require_once($CFG->dirroot . '/enrol/authorize/action.php');
+        require_once $CFG->dirroot.'/enrol/authorize/ccval.php';
+        require_once $CFG->dirroot.'/enrol/authorize/action.php';
 
-        if (empty($form->ccfirstname) || empty($form->cclastname) ||
-            empty($form->cc) || empty($form->cvv) || empty($form->cctype) ||
-            empty($form->ccexpiremm) || empty($form->ccexpireyyyy)) {
-                $this->ccerrormsg = get_string("allfieldsrequired");
-                return;
-        }
-
-        if (!empty($CFG->an_avs)) {
-            if (empty($form->ccaddress) || empty($form->cccity) ||
-                empty($form->cccountry) || empty($form->cczip)) {
-                $this->ccerrormsg = get_string("allfieldsrequired");
-                return;
-            }
+        if (!$this->validate_enrol_form($form)) {
+            return;
         }
 
         $this->prevent_double_paid($course);
@@ -147,7 +117,12 @@ class enrolment_plugin extends enrolment_base
         $useripno = getremoteaddr(); // HTTP_CLIENT_IP, HTTP_X_FORWARDED_FOR, REMOTE_ADDR
 
         if (!$valid_cc) {
-            $this->ccerrormsg = get_string( (($valid_cc===0) ? 'ccexpired' : 'ccinvalid'), 'enrol_authorize' );
+            if ($valid_cc === 0) {
+                $this->ccerrors['ccexpire'] = get_string('ccexpired', 'enrol_authorize');
+            }
+            else {
+            	$this->ccerrors['cc'] = get_string('ccinvalid', 'enrol_authorize');
+            }
             return;
         }
 
@@ -167,7 +142,7 @@ class enrolment_plugin extends enrolment_base
         $order->id = insert_record("enrol_authorize", $order);
         if (!$order->id) {
             $this->email_to_admin("Error while trying to insert new data", $order);
-            $this->ccerrormsg = "Insert record error. Admin has been notified!";
+            $this->ccerrors['header'] = "Insert record error. Admin has been notified!";
             return;
         }
 
@@ -186,12 +161,12 @@ class enrolment_plugin extends enrolment_base
         $extra->x_exp_date = $exp_date;
         $extra->x_currency_code = $curcost['currency'];
         $extra->x_amount = $curcost['cost'];
-        $extra->x_email = $USER->email;
-        $extra->x_email_customer = 'TRUE';
-        $extra->x_cust_id = $USER->id;
-        $extra->x_customer_ip = $useripno;
         $extra->x_invoice_num = $order->id;
         $extra->x_description = $course->shortname;
+        $extra->x_cust_id = $USER->id;
+        $extra->x_customer_ip = $useripno;
+        $extra->x_email = $USER->email;
+        $extra->x_email_customer = empty($CFG->enrol_mailstudents) ? 'FALSE' : 'TRUE';
 
         $message = '';
         $an_review = !empty($CFG->an_review);
@@ -199,10 +174,11 @@ class enrolment_plugin extends enrolment_base
         $success = authorizenet_action($order, $message, $extra, $action);
         if (!$success) {
             $this->email_to_admin($message, $order);
-            $this->ccerrormsg = $message;
+            $this->ccerrors['header'] = $message;
             return;
         }
 
+        $SESSION->ccpaid = 1; // security check: don't duplicate payment
         if (intval($order->transid) == 0) { // TEST MODE
             if ($an_review) {
                 redirect($CFG->wwwroot, get_string("reviewnotify", "enrol_authorize"), '30');
@@ -216,7 +192,6 @@ class enrolment_plugin extends enrolment_base
             return;
         }
 
-        $SESSION->ccpaid = 1; // security check: don't duplicate payment
         if ($an_review) { // review enabled, inform admin and redirect to main page.
             if (update_record("enrol_authorize", $order)) {
                 $a->url = "$CFG->wwwroot/enrol/authorize/index.php?order=$order->id";
@@ -300,6 +275,41 @@ class enrolment_plugin extends enrolment_base
         redirect($destination);
     }
 
+    /**
+     * validate_enrol_form
+     *
+     * @param object $form Form parameters
+     * @access private
+     */
+    function validate_enrol_form($form)
+    {
+        global $CFG;
+
+        $return = true;
+
+        if (empty($form->ccexpiremm) || empty($form->ccexpireyyyy)) {
+            $this->ccerrors['ccexpire'] = get_string('missingccexpire', 'enrol_authorize');
+        }
+        if (empty($form->ccfirstname) || empty($form->cclastname)) {
+            $this->ccerrors['ccfirstlast'] = get_string('missingfullname');
+        }
+        if (empty($form->cc)) $this->ccerrors['cc'] = get_string('missingcc', 'enrol_authorize');
+        if (empty($form->cvv)) $this->ccerrors['cvv'] = get_string('missingcvv', 'enrol_authorize');
+        if (empty($form->cctype)) $this->ccerrors['cctype'] = get_string('missingcctype', 'enrol_authorize');
+        if (!empty($CFG->an_avs)) {
+            if (empty($form->ccaddress)) $this->ccerrors['ccaddress'] = get_string('missingaddress', 'enrol_authorize');
+            if (empty($form->cccity)) $this->ccerrors['cccity'] = get_string('missingcity');
+            if (empty($form->cccountry)) $this->ccerrors['cccountry'] = get_string('missingcountry');
+            if (empty($form->cczip)) $this->ccerrors['cczip'] = get_string('missingzip', 'enrol_authorize');
+        }
+
+        if (!empty($this->ccerrors)) {
+            $this->ccerrors['header'] = get_string('someerrorswerefound');
+            $return = false;
+        }
+
+        return $return;
+    }
 
     /**
      * zero_cost
@@ -388,37 +398,37 @@ class enrolment_plugin extends enrolment_base
             notify('PHP must be compiled with SSL support (--with-openssl)');
         }
 
-        $ac_enabled = !empty($frm->an_review) && intval($frm->an_capture_day) > 0;
-        if ($ac_enabled) { // Cron must be runnig!!! Check last cron...
-            $mconfig = get_config('enrol/authorize');
-            $lastcron = intval($mconfig->an_lastcron);
-            if (time() - $lastcron > 3600 * 24) {
-                notify(get_string('admincronsetup', 'enrol_authorize'));
-            }
+        if (empty($CFG->loginhttps)) {
+            notify('$CFG->loginhttps must be ON');
         }
-        else {
-            if ($count = count_records('enrol_authorize', 'status', AN_STATUS_AUTH)) {
-                $a->count = $count;
-                $a->url = $CFG->wwwroot."/enrol/authorize/index.php?status=" . AN_STATUS_AUTH;
-                $message = get_string('adminpendingorders', 'enrol_authorize', $a);
-                notify($message);
+
+        if (!empty($frm->an_review)) {
+            $captureday = intval($frm->an_capture_day);
+            $emailexpired = intval($frm->an_emailexpired);
+            if ($captureday > 0 || $emailexpired > 0) {
+                $mconfig = get_config('enrol/authorize');
+                if ((time() - intval($mconfig->an_lastcron) > 3600 * 24)) {
+                    notify(get_string('admincronsetup', 'enrol_authorize'));
+                }
             }
         }
 
+        if ($count = count_records('enrol_authorize', 'status', AN_STATUS_AUTH)) {
+            $a->count = $count;
+            $a->url = $CFG->wwwroot."/enrol/authorize/index.php?status=".AN_STATUS_AUTH;
+            notify(get_string('adminpendingorders', 'enrol_authorize', $a));
+        }
+
         if (data_submitted()) {
-            // something POSTed, Some required fields
             if (empty($frm->an_login)) {
                 notify("an_login required");
             }
             if (empty($frm->an_tran_key) && empty($frm->an_password)) {
                 notify("an_tran_key or an_password required");
             }
-            if (empty($CFG->loginhttps)) {
-                notify("\$CFG->loginhttps must be ON");
-            }
         }
 
-        include($CFG->dirroot.'/enrol/authorize/config.html');
+        include $CFG->dirroot.'/enrol/authorize/config.html';
     }
 
 
@@ -433,65 +443,46 @@ class enrolment_plugin extends enrolment_base
     {
         global $CFG;
 
-        // ENROL config
-        set_config('enrol_cost', optional_param('enrol_cost', 5, PARAM_INT) );
-        set_config('enrol_currency', optional_param('enrol_currency', 'USD', PARAM_ALPHA) );
-        set_config('enrol_mailstudents', optional_param('enrol_mailstudents', '') );
-        set_config('enrol_mailteachers', optional_param('enrol_mailteachers', '') );
-        set_config('enrol_mailadmins', optional_param('enrol_mailadmins', '') );
+        set_config('enrol_cost', optional_param('enrol_cost', 5, PARAM_INT));
+        set_config('enrol_currency', optional_param('enrol_currency', 'USD', PARAM_ALPHA));
+        set_config('enrol_mailstudents', optional_param('enrol_mailstudents', ''));
+        set_config('enrol_mailteachers', optional_param('enrol_mailteachers', ''));
+        set_config('enrol_mailadmins', optional_param('enrol_mailadmins', ''));
 
-        // AUTHORIZE.NET config
+        set_config('an_avs', optional_param('an_avs', ''));
+        set_config('an_test', optional_param('an_test', ''));
+        set_config('an_referer', optional_param('an_referer', 'http://', PARAM_URL));
+        set_config('an_cutoff_hour', optional_param('an_cutoff_hour', 0, PARAM_INT));
+        set_config('an_cutoff_min', optional_param('an_cutoff_min', 5, PARAM_INT));
 
-        // not required!
-        set_config('an_avs', optional_param('an_avs', '') );
-        set_config('an_test', optional_param('an_test', '') );
-        set_config('an_referer', optional_param('an_referer', 'http://', PARAM_URL) );
-        set_config('an_cutoff_hour', optional_param('an_cutoff_hour', '0') );
-        set_config('an_cutoff_min', optional_param('an_cutoff_min', '5') );
+        $reviewval = optional_param('an_review', '');
+        $captureday = optional_param('an_capture_day', 5, PARAM_INT);
+        $emailexpired = optional_param('an_emailexpired', 2, PARAM_INT);
 
-        // required!
-        // if is it OK, process next config.
-        if (empty($CFG->loginhttps)) return false;
-        if (!$this->check_openssl_loaded()) return false;
+        $captureday = ($captureday > 29) ? 29 : (($captureday < 0) ? 0 : $captureday);
+        $emailexpired = ($emailexpired > 5) ? 5 : (($emailexpired < 0) ? 0 : $emailexpired);
+        $mconfig = get_config('enrol/authorize');
 
-        $login_val = optional_param('an_login', '');
-        if (empty($login_val)) return false;
-        set_config('an_login', $login_val);
-
-        $tran_val = optional_param('an_tran_key', '');
-        $password_val = optional_param('an_password', '');
-        if (empty($tran_val) && empty($password_val)) return false;
-        set_config('an_password', $password_val);
-        set_config('an_tran_key', $tran_val);
-
-        // an_review & an_capture_day & cron depencies...
-        $review_val = optional_param('an_review', '');
-        if (empty($review_val)) {
-            // review disabled. cron is not required. AUTH_CAPTURE works.
-            set_config('an_review', $review_val);
-        } else {
-            // REVIEW ENABLED.
-            // an_emailexpired: default=2, min=0, max=5.
-            $an_emailexpired_val = optional_param('an_emailexpired', 2, PARAM_INT);
-            if ($an_emailexpired_val < 0) $an_emailexpired_val = 0;
-            elseif ($an_emailexpired_val > 5) $an_emailexpired_val = 5;
-            set_config('an_emailexpired', $an_emailexpired_val);
-
-            $capture_day_val = optional_param('an_capture_day', 5, PARAM_INT);
-            if ($capture_day_val < 0) $capture_day_val = 0;
-            elseif ($capture_day_val > 29) $capture_day_val = 29;
-            if ($capture_day_val > 0) {
-                // Cron must change an_lastcron. :))
-                $mconfig = get_config('enrol/authorize');
-                $lastcron = intval($mconfig->an_lastcron);
-                if (time() - $lastcron > 3600 * 24) {
-                    // No!!! I am not lucky. No changes please...
-                    return false;
-                }
-            }
-            set_config('an_review', $review_val);
-            set_config('an_capture_day', $capture_day_val);
+        if (time() - intval($mconfig->an_lastcron) > 3600 * 24) {
+            $captureday = $emailexpired = 0;
         }
+
+        set_config('an_review', $reviewval);
+        set_config('an_capture_day', $captureday);
+        set_config('an_emailexpired', $emailexpired);
+
+        $loginval = optional_param('an_login', '');
+        $tranval = optional_param('an_tran_key', '');
+        $passwordval = optional_param('an_password', '');
+
+        if (empty($CFG->loginhttps) || (!$this->check_openssl_loaded()) ||
+            empty($loginval) || (empty($tranval) && empty($passwordval))) {
+            return false;
+        }
+
+        set_config('an_login', $loginval);
+        set_config('an_password', $passwordval);
+        set_config('an_tran_key', $tranval);
 
         return true;
     }
@@ -559,18 +550,15 @@ class enrolment_plugin extends enrolment_base
     {
         global $CFG;
         parent::cron();
-        require_once("$CFG->dirroot/enrol/authorize/action.php");
+        require_once $CFG->dirroot.'/enrol/authorize/action.php';
 
+        $oneday = 86400;
         $timenow = time();
-        $timenowsettle = getsettletime($timenow);
-        $timediff30 = $timenowsettle - (30 * 3600 * 24);
-        // These 2 lines must be HERE and must be EXUCUTED. See process_config.
-        // We use an_lastcron when processing AUTOCAPTURE feature.
-        // Order is important. 1. get_config 2. set_config
-        $mconfig = get_config('enrol/authorize'); // MUST be 1st.
-        set_config('an_lastcron', $timenow, 'enrol/authorize'); // MUST be 2nd.
-
         $random100 = mt_rand(0, 100);
+        $timenowsettle = getsettletime($timenow);
+        $timediff30 = $timenowsettle - (30 * $oneday);
+        $mconfig = get_config('enrol/authorize');
+        set_config('an_lastcron', $timenow, 'enrol/authorize');
 
         if ($random100 < 33) {
             $select = "(status = '" .AN_STATUS_NONE. "') AND (timecreated < '$timediff30')";
@@ -581,30 +569,25 @@ class enrolment_plugin extends enrolment_base
             execute_sql("UPDATE {$CFG->prefix}enrol_authorize SET status = '" .AN_STATUS_EXPIRE. "' WHERE $select", false);
         }
         else {
-            $timediff60 = $timenowsettle - (60 * 3600 * 24);
+            $timediff60 = $timenowsettle - (60 * $oneday);
             $select = "(status = '" .AN_STATUS_EXPIRE. "') AND (timecreated < '$timediff60')";
             delete_records_select('enrol_authorize', $select);
         }
 
         if (empty($CFG->an_review) || !empty($CFG->an_test)) {
-            return; // review disabled, auth_capture works.
+            return;
         }
 
-        //CAPTURE-MANUALLY
         if (intval($CFG->an_capture_day < 1)) {
-            if (empty($CFG->an_emailexpired)) {
-                return; // no information email.
+            if (empty($CFG->an_emailexpired) || intval($mconfig->an_nextmail) > $timenow) {
+                return;
             }
-            if (intval($mconfig->an_nextmail) > $timenow) {
-                return; // One day must passed.
-            }
-            $timediffem = $timenowsettle - ((30 - intval($CFG->an_emailexpired)) * 3600 * 24);
+            $timediffem = $timenowsettle - ((30 - intval($CFG->an_emailexpired)) * $oneday);
             $select = "(status = '" . AN_STATUS_AUTH . "') AND " .
-                      "(timecreated < '$timediffem') AND (timecreated > '$timediff30')";
+            "(timecreated < '$timediffem') AND (timecreated > '$timediff30')";
             if (!$count = count_records_select('enrol_authorize', $select)) {
                 return;
             }
-
             $a->pending = $count;
             $a->days = $CFG->an_emailexpired;
             $a->url = $CFG->wwwroot."/enrol/authorize/index.php?status=" . AN_STATUS_AUTH;
@@ -612,12 +595,15 @@ class enrolment_plugin extends enrolment_base
             $message = get_string('pendingordersemail', 'enrol_authorize', $a);
             $adminuser = get_admin();
             email_to_user($adminuser, $adminuser, "WARNING: PENDING PAYMENTS", $a);
-            set_config('an_nextmail', $timenow + (3600 * 24), 'enrol/authorize');
+            set_config('an_nextmail', $timenow + $oneday, 'enrol/authorize');
             return;
         }
 
-        // CAPTURE-AUTO: Transaction must be captured within 30 days.
-        $timediffcnf = $timenowsettle - (intval($CFG->an_capture_day) * 3600 * 24);
+        if (!$this->check_openssl_loaded()) {
+            return;
+        }
+
+        $timediffcnf = $timenowsettle - (intval($CFG->an_capture_day) * $oneday);
         $sql = "SELECT E.*, C.fullname, C.enrolperiod " .
                "FROM {$CFG->prefix}enrol_authorize E " .
                "INNER JOIN {$CFG->prefix}course C ON C.id = E.courseid " .
@@ -628,12 +614,13 @@ class enrolment_plugin extends enrolment_base
             return;
         }
 
-        // Calculate connection speed for each transaction. Default: 3 secs.
-        $everyconnection = empty($mconfig->an_eachconnsecs) ? 3 : intval($mconfig->an_eachconnsecs);
+        $eachconn = intval($mconfig->an_eachconnsecs);
+        if (empty($eachconn)) $eachconn = 3;
+        elseif ($eachconn > 60) $eachconn = 60;
+
         $ordercount = count((array)$orders);
-        $maxsecs = $everyconnection * $ordercount;
-        if ($maxsecs + intval($mconfig->an_lastcron) > $timenow) {
-            return; // autocapture runs every eachconnsecs*count.
+        if (($ordercount * $eachconn) + intval($mconfig->an_lastcron) > $timenow) {
+            return;
         }
 
         $faults = '';
@@ -658,7 +645,9 @@ class enrolment_plugin extends enrolment_base
                 }
                 if (enrol_student($order->userid, $order->courseid, $timestart, $timeend, 'authorize')) {
                     $this->log .= "User($order->userid) has been enrolled to course($order->courseid).\n";
-                    $sendem[] = $order->id;
+                    if (!empty($CFG->enrol_mailstudents)) {
+                        $sendem[] = $order->id;
+                    }
                 }
                 else {
                     $user = get_record('user', 'id', $order->userid);
@@ -668,7 +657,7 @@ class enrolment_plugin extends enrolment_base
                     }
                 }
             }
-            else { // not success
+            else {
                 $this->log .= "Order $order->id: " . $message . "\n";
                 if ($order->status != $oldstatus) { //expired
                     update_record("enrol_authorize", $order);
@@ -678,8 +667,8 @@ class enrolment_plugin extends enrolment_base
 
         $timenow = time();
         $elapsed = $timenow - $elapsed;
-        $everyconnection = ceil($elapsed / $ordercount);
-        set_config('an_eachconnsecs', $everyconnection, 'enrol/authorize');
+        $eachconn = ceil($elapsed / $ordercount);
+        set_config('an_eachconnsecs', $eachconn, 'enrol/authorize');
 
         $this->log .= "AUTHORIZE.NET CRON FINISHED: " . userdate($timenow);
 
@@ -690,20 +679,21 @@ class enrolment_plugin extends enrolment_base
         if (!empty($CFG->enrol_mailadmins)) {
             email_to_user($adminuser, $adminuser, "AUTHORIZE.NET CRON LOG", $this->log);
         }
-        // send emails
-        if (empty($sendem) || empty($CFG->enrol_mailstudents)) {
+        if (empty($sendem)) {
             return;
         }
+        $lastcourse = 0;
         $select = "SELECT E.id, E.courseid, E.userid, C.fullname " .
                   "FROM {$CFG->prefix}enrol_authorize E " .
                   "INNER JOIN {$CFG->prefix}course C ON C.id = E.courseid " .
                   "WHERE E.id IN(" . implode(',', $sendem) . ") " .
                   "ORDER BY E.courseid";
-        $lastcourse = 0;
         $orders = get_records_sql($select);
-        foreach ($orders as $order) {
+        foreach ($orders as $order)
+        {
             if ($lastcourse != $order->courseid) {
-                $teacher = get_teacher($order->courseid);
+                $lastcourse = $order->courseid;
+                $teacher = get_teacher($lastcourse);
             }
             $user = get_record('user', 'id', $order->userid);
             $a->coursename = $order->fullname;

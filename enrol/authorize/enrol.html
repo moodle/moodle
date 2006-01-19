@@ -1,4 +1,24 @@
-<p align="center"><?php if (!empty($this->ccerrormsg)) { formerr($this->ccerrormsg); } ?></p>
+<?php // $Id$
+
+$formvars = array('password', 'ccaddress', 'cccity', 'ccstate', 'cccountry', 'cczip',
+                  'ccfirstname', 'cclastname', 'cc', 'ccexpiremm', 'ccexpireyyyy', 'cctype', 'cvv');
+
+foreach ($formvars as $var) {
+    if (!isset($form->$var)) {
+        $form->$var = '';
+    }
+}
+
+$curcost = $this->get_course_cost($course);
+$userfirstname = empty($form->ccfirstname) ? $USER->firstname : $form->ccfirstname;
+$userlastname = empty($form->cclastname) ? $USER->lastname : $form->cclastname;
+$useraddress = empty($form->ccaddress) ? $USER->address : $form->ccaddress;
+$usercity = empty($form->cccity) ? $USER->city : $form->cccity;
+$usercountry = empty($form->cccountry) ? $USER->country : $form->cccountry;
+
+?>
+
+<p align="center"><?php if (!empty($this->ccerrors['header'])) { formerr($this->ccerrors['header']); } ?></p>
 
 <div align="center">
 
@@ -11,12 +31,14 @@
 <table align="center" width="100%" border=0>
 <tr>
   <td align="right"><?php print_string("ccno", "enrol_authorize") ?>: </td>
-  <td align="left"><input type="text" name="cc" size="16" value="<?php p($form->cc) ?>"  /></td>
+  <td align="left"><input type="text" name="cc" size="16" value="<?php p($form->cc) ?>"  />
+  <?php if (!empty($this->ccerrors['cc'])) { formerr($this->ccerrors['cc']); } ?></td>
 </tr>
 <tr>
   <td align="right"><?php print_string("nameoncard", "enrol_authorize") ?>: </td>
   <td align="left"><input type="text" name="ccfirstname" size="8" value="<?php p($userfirstname) ?>"  />
-  <input type="text" name="cclastname" size="8" value="<?php p($userlastname) ?>"  /></td>
+  <input type="text" name="cclastname" size="8" value="<?php p($userlastname) ?>"  />
+  <?php if (!empty($this->ccerrors['ccfirstlast'])) { formerr($this->ccerrors['ccfirstlast']); } ?></td>
 </tr>
 <tr>
   <td align="right"><?php print_string("ccexpire", "enrol_authorize") ?>: </td>
@@ -31,6 +53,7 @@
       $years[$i] = $i;
   }
   choose_from_menu($years, 'ccexpireyyyy', $form->ccexpireyyyy);
+  if (!empty($this->ccerrors['ccexpire'])) { formerr($this->ccerrors['ccexpire']); }
   ?></td>
 </tr>
 <tr>
@@ -42,32 +65,38 @@
     'swi' => 'Switch',      'dlt' => 'Delta',       'enr' => 'EnRoute'
   );
   choose_from_menu($CCTYPES, 'cctype', $form->cctype);
+  if (!empty($this->ccerrors['cctype'])) { formerr($this->ccerrors['cctype']); }
   ?>
 </td>
 </tr>
 <tr>
   <td align="right"><?php print_string("ccvv", "enrol_authorize") ?>: </td>
   <td align="left"><input type="text" name="cvv" size="4" maxlength="4" value="<?php p($form->cvv) ?>" />
-  <?php helpbutton('', '', 'enrol_authorize', true, 'cvv', get_string('ccvvhelp', 'enrol_authorize')); ?></td>
+  <?php helpbutton('', '', 'enrol_authorize', true, 'cvv', get_string('ccvvhelp', 'enrol_authorize')); ?>
+  <?php if (!empty($this->ccerrors['cvv'])) { formerr($this->ccerrors['cvv']); } ?></td>
 </tr>
 <?php if (!empty($CFG->an_avs)) { /* Address Verification System */ ?>
 <tr>
   <td align="right"><?php print_string("address") ?>: </td>
-  <td align="left"><input type="text" name="ccaddress" size="32" value="<?php p($useraddress) ?>"  /></td>
+  <td align="left"><input type="text" name="ccaddress" size="32" value="<?php p($useraddress) ?>"  />
+  <?php if (!empty($this->ccerrors['ccaddress'])) { formerr($this->ccerrors['ccaddress']); } ?></td>
 </tr>
 <tr>
   <td align="right"><?php print_string("city") ?> / <?php print_string("state") ?>: </td>
   <td align="left"><input type="text" name="cccity" size="16" value="<?php p($usercity) ?>" /> /
-                   <input type="text" name="ccstate" size="2" maxlength="2" value="<?php p($form->ccstate) ?>" /></td>
+  <input type="text" name="ccstate" size="2" maxlength="2" value="<?php p($form->ccstate) ?>" />
+  <?php if (!empty($this->ccerrors['cccity'])) { formerr($this->ccerrors['cccity']); } ?></td>
 </tr>
 <tr>
   <td align="right"><?php print_string("country") ?>: </td>
-  <td align="left"><?php choose_from_menu(get_list_of_countries(), "cccountry", $usercountry, get_string("selectacountry")."..."); ?></td>
+  <td align="left"><?php choose_from_menu(get_list_of_countries(), "cccountry", $usercountry, get_string("selectacountry")."..."); ?>
+  <?php if (!empty($this->ccerrors['cccountry'])) { formerr($this->ccerrors['cccountry']); } ?></td>
 </tr>
 <?php } ?>
 <tr>
   <td align="right"><?php print_string("zipcode", "enrol_authorize") ?>: </td>
-  <td align="left"><input type="text" name="cczip" size="5" value="<?php p($form->cczip) ?>" /></td>
+  <td align="left"><input type="text" name="cczip" size="5" value="<?php p($form->cczip) ?>" />
+  <?php if (!empty($this->ccerrors['cczip'])) { formerr($this->ccerrors['cczip']); } ?></td>
 </tr>
 </table>
 <input type="submit" value="<?php print_string("sendpaymentbutton", "enrol_authorize") ?>">

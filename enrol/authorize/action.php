@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php //  $Id$
 
 define('AN_HOST', 'secure.authorize.net');
 define('AN_HOST_TEST', 'certification.authorize.net');
@@ -10,7 +10,7 @@ define('AN_ERROR', '3');
 define('AN_DELIM', '|');
 define('AN_ENCAP', '"');
 
-require_once("const.php");
+require_once $CFG->dirroot.'/enrol/authorize/const.php';
 
 /**
  * Gets settlement date and time
@@ -42,7 +42,7 @@ function getsettletime($time)
 function settled($order)
 {
     return (($order->status == AN_STATUS_AUTHCAPTURE || $order->status == AN_STATUS_CREDIT) &&
-             $order->settletime > 0 && $order->settletime < time());
+            ($order->settletime > 0) && ($order->settletime < time()));
 }
 
 /**
@@ -87,13 +87,12 @@ function authorizenet_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE
 
     $action = intval($action);
 
-    // sanity check
     if (empty($order) || empty($order->id)) {
-        $message = "check order->id!";
+        $message = "Check order->id!";
         return false;
     }
     elseif ($action <= AN_ACTION_NONE || $action > AN_ACTION_VOID) {
-        $message = "no action taken!";
+        $message = "No action taken!";
         return false;
     }
 
@@ -105,11 +104,11 @@ function authorizenet_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE
         case AN_ACTION_AUTH_CAPTURE:
         {
             if ($order->status != AN_STATUS_NONE) {
-                $message = "order->status must be AN_STATUS_NONE!";
+                $message = "Order status must be AN_STATUS_NONE(0)!";
                 return false;
             }
             if (empty($extra)) {
-                $message = "need extra fields!";
+                $message = "Need extra fields!";
                 return false;
             }
             $ext = (array)$extra;
@@ -124,7 +123,7 @@ function authorizenet_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE
         case AN_ACTION_PRIOR_AUTH_CAPTURE:
         {
             if ($order->status != AN_STATUS_AUTH) {
-                $message = "order->status must be AN_STATUS_AUTH!";
+                $message = "Order status must be authorized!";
                 return false;
             }
             $timediff = $timenowsettle - (30 * 3600 * 24);
@@ -141,26 +140,23 @@ function authorizenet_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE
         case AN_ACTION_CREDIT:
         {
             if ($order->status != AN_STATUS_AUTHCAPTURE) {
-                $message = "order->status must be AN_STATUS_AUTHCAPTURE!";
+                $message = "Order status must be authorized/captured!";
                 return false;
             }
             if (!settled($order)) {
-                $message = "Order wasn't settled, try VOID. Check Cut-Off time if it fails!";
+                $message = "Order must be settled. Try VOID, check Cut-Off time if it fails!";
                 return false;
             }
-            // 120 days
             $timediff = $timenowsettle - (120 * 3600 * 24);
             if ($order->settletime < $timediff) {
-                $message = "Order can be credited within 120 days!";
+                $message = "Order must be credited within 120 days!";
                 return false;
             }
-            // extra fields
             if (empty($extra)) {
                 $message = "need extra fields for CREDIT!";
                 return false;
             }
-            // up to original amount
-            $total = doubleval($extra->sum) + doubleval($extra->amount);
+            $total = floatval($extra->sum) + floatval($extra->amount);
             if (($extra->amount == 0) || ($total > $order->amount)) {
                 $message = "Can be credited up to original amount.";
                 return false;
@@ -175,11 +171,10 @@ function authorizenet_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE
         case AN_ACTION_VOID:
         {
             if ($order->status == AN_STATUS_AUTH) {
-                // 30 days for authonly, make it expired (**settletime**)
                 $timediff = $timenowsettle - (30 * 3600 * 24);
                 $timecreatedsettle = getsettletime($order->timecreated);
                 if ($timecreatedsettle < $timediff) {
-                    $message = "Auth_only transaction must be voided within 30 days. EXPIRED!";
+                    $message = "Authorized transaction must be voided within 30 days. EXPIRED!";
                     $order->status = AN_STATUS_EXPIRE;
                     return false;
                 }
@@ -191,35 +186,34 @@ function authorizenet_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE
                 }
             }
             else {
-                $message = "order->status must be AUTH, AUTH_CAPTURE or CREDIT!";
+                $message = "Order status must be authorized, auth/captured or refunded!";
                 return false;
             }
             $poststring .= '&x_type=VOID&x_trans_id=' . urlencode($order->transid);
             break;
         }
 
-        default: { // ???
-            $message = "missing action: $action";
+        default: {
+            $message = "Missing action? $action";
             return false;
         }
     }
 
-    // referer
-    $anrefererheader = '';
+    $referer = '';
     if (! (empty($CFG->an_referer) || $CFG->an_referer == "http://")) {
-        $anrefererheader = "Referer: " . $CFG->an_referer . "\r\n";
+        $referer = "Referer: $CFG->an_referer\r\n";
     }
 
     $response = array();
-    $connect_host = $an_test ? AN_HOST_TEST : AN_HOST;
-    $fp = fsockopen("ssl://" . $connect_host, AN_PORT, $errno, $errstr, 60);
+    $host = $an_test ? AN_HOST_TEST : AN_HOST;
+    $fp = fsockopen("ssl://" . $host, AN_PORT, $errno, $errstr, 60);
     if (!$fp) {
         $message =  "no connection: $errstr ($errno)";
         return false;
     }
 
     fwrite($fp, "POST " . AN_PATH . " HTTP/1.0\r\n" .
-                "Host: $connect_host\r\n" . $anrefererheader .
+                "Host: $host\r\n" . $referer .
                 "Content-type: application/x-www-form-urlencoded\r\n" .
                 "Connection: close\r\n" .
                 "Content-length: " . strlen($poststring) . "\r\n\r\n" .
@@ -254,7 +248,8 @@ function authorizenet_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE
 
     if ($response[0] == AN_APPROVED)
     {
-        if ($an_test || intval($response[6]) == 0) {
+        $transid = intval($response[6]);
+        if ($an_test || $transid == 0) {
             return true; // don't update original transaction in test mode.
         }
         switch ($action) {
@@ -262,7 +257,7 @@ function authorizenet_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE
             case AN_ACTION_AUTH_CAPTURE:
             case AN_ACTION_PRIOR_AUTH_CAPTURE:
             {
-                $order->transid = strval($response[6]); // TransactionID
+                $order->transid = $transid;
                 if ($action == AN_ACTION_AUTH_ONLY) {
                     $order->status = AN_STATUS_AUTH;
                     // dont't update settletime
@@ -277,7 +272,7 @@ function authorizenet_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE
                 // Credit generates new transaction id.
                 // So, $extra must be updated, not $order.
                 $extra->status = AN_STATUS_CREDIT;
-                $extra->transid = strval($response[6]);
+                $extra->transid = $transid;
                 $extra->settletime = getsettletime(time());
                 break;
             }
@@ -293,7 +288,16 @@ function authorizenet_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE
     }
     else
     {
-        $message = isset($response[3]) ? $response[3] : 'unknown error';
+        $reason = "reason" . $response[2];
+        $message = get_string($reason, "enrol_authorize");
+        if ($message == '[[' . $reason . ']]') {
+            $message = isset($response[3]) ? $response[3] : 'unknown error';
+        }
+        if (!empty($CFG->an_avs)) {
+            $avs = "avs" . strtolower($response[5]);
+            $stravs = get_string($avs, "enrol_authorize");
+            $message .= "<br />" . get_string("avsresult", "enrol_authorize") . $stravs;
+        }
         return false;
     }
 }
