@@ -29,23 +29,23 @@
 // used from the admin interface, and both at install and upgrade.
 //
 // All the info is stored in the admin/environment.xml file,
-// supporting to have an updated version in moodledata/environment
+// supporting to have an updated version in dataroot/environment
 
 /// Add required files
     require_once($CFG->libdir.'/xmlize.php');
 
 /// Define a buch of XML processing errors
-    define(NO_ERROR,                           0);
-    define(NO_VERSION_DATA_FOUND,              1);
-    define(NO_DATABASE_SECTION_FOUND,          2);
-    define(NO_DATABASE_VENDORS_FOUND,          3);
-    define(NO_DATABASE_VENDOR_MYSQL_FOUND,     4);
-    define(NO_DATABASE_VENDOR_POSTGRES_FOUND,  5);
-    define(NO_PHP_SECTION_FOUND,               6);
-    define(NO_PHP_VERSION_FOUND,               7);
-    define(NO_PHP_EXTENSIONS_SECTION_FOUND,    8);
-    define(NO_PHP_EXTENSIONS_NAME_FOUND,       9);
-    define(NO_DATABASE_VENDOR_VERSION_FOUND,  10);
+    define('NO_ERROR',                           0);
+    define('NO_VERSION_DATA_FOUND',              1);
+    define('NO_DATABASE_SECTION_FOUND',          2);
+    define('NO_DATABASE_VENDORS_FOUND',          3);
+    define('NO_DATABASE_VENDOR_MYSQL_FOUND',     4);
+    define('NO_DATABASE_VENDOR_POSTGRES_FOUND',  5);
+    define('NO_PHP_SECTION_FOUND',               6);
+    define('NO_PHP_VERSION_FOUND',               7);
+    define('NO_PHP_EXTENSIONS_SECTION_FOUND',    8);
+    define('NO_PHP_EXTENSIONS_NAME_FOUND',       9);
+    define('NO_DATABASE_VENDOR_VERSION_FOUND',  10);
 
 /**
  * This function will perform the whole check, returning
@@ -223,8 +223,8 @@ function load_environment_xml() {
         return $data;
     }
 
-/// First of all, take a look inside $CFG->moodledata/environment/environment.xml
-    $file = $CFG->moodledata.'/environment/environment.xml';
+/// First of all, take a look inside $CFG->dataroot/environment/environment.xml
+    $file = $CFG->dataroot.'/environment/environment.xml';
     if (!is_file($file) || !is_readable($file) || !$contents = file_get_contents($file)) {
     /// Fallback to fixed admin/environment.xml
         $file = $CFG->dirroot.'/admin/environment.xml';
@@ -440,7 +440,7 @@ function environment_check_php($version) {
     } else {
     /// Extract level and version
         if (isset($data['#']['PHP']['0']['@']['level'])) {
-            $level = $data['#']['PHP']['0']['level'];
+            $level = $data['#']['PHP']['0']['@']['level'];
             if ($level != 'optional') {
                 $level = 'required';
             }
@@ -501,7 +501,7 @@ function environment_check_database($version) {
     } else {
     /// Extract level
         if (isset($data['#']['DATABASE']['0']['@']['level'])) {
-            $level = $data['#']['DATABASE']['0']['level'];
+            $level = $data['#']['DATABASE']['0']['@']['level'];
             if ($level != 'optional') {
                 $level = 'required';
             }

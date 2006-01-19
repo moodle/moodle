@@ -107,22 +107,6 @@
 /// Gather and show results
     $status = check_moodle_environment($version, $environment_results);
 
-
-
-/// Process action
-    if ($form = data_submitted()) {
-        if (confirm_sesskey()) {
-            if ($form->action == "disable") {
-
-            } else {
-
-            }
-        }
-    }
-
-/// Default action, show explanation and popup menu
-
-
 /// Print footer
     print_footer();
 ?>
