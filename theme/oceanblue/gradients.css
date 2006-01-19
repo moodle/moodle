@@ -1,0 +1,25 @@
+/**
+  *  Adds all the nice finish to the standard theme
+  *
+  */
+
+.navbar {
+  background-image:url(gradient.jpg);
+}
+
+.sideblock .header {
+  background-image:url(gradient.jpg);
+  text-align: left;
+  padding:4px;
+  border-width: 1px;
+  border-style: solid;
+  border-bottom: none;
+}
+
+.headingblock {
+  background-image:url(gradient.jpg);
+}
+
+.loginbox .header {
+    background-image:url(gradient.jpg);
+}
