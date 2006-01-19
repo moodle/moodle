@@ -446,9 +446,10 @@
             }
             $currentfullname = $fullname.$suffixfull;
             $currentshortname = $shortname.$suffixshort;
-            $course = get_record("course","fullname",addslashes($currentfullname));
+            $coursefull  = get_record("course","fullname",addslashes($currentfullname));
+            $courseshort = get_record("course","shortname",addslashes($currentshortname));
             $counter++;
-        } while ($course);
+        } while ($coursefull || $courseshort);
 
         //New name = currentname
         $course_header->course_fullname = $currentfullname;
