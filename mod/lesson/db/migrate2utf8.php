@@ -14,19 +14,19 @@ function migrate2utf8_lesson_answers_answer($recordid){
            WHERE l.id = la.lessonid
                  AND la.id = $recordid";
 
-    if (!$lessonanswers = get_record_sql($SQL)) {
+    if (!$lesson = get_record_sql($SQL)) {
         log_the_problem_somewhere();
         return false;
     }
 
-    if (!$lesson = get_record('lesson','id',$lessonanswers->course)) {
+    if (!$lessonanswers = get_record('lesson_answers','id',$recordid)) {
         log_the_problem_somewhere();
         return false;
     }
 
     $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($lessonanswers->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($lessonanswers->course); //N.E.!!
+    $courselang = get_course_lang($lesson->course);  //Non existing!
+    $userlang   = get_main_teacher_lang($lesson->course); //N.E.!!
 
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
@@ -58,19 +58,19 @@ function migrate2utf8_lesson_answers_response($recordid){
            WHERE l.id = la.lessonid
                  AND la.id = $recordid";
 
-    if (!$lessonanswers = get_record_sql($SQL)) {
+    if (!$lesson = get_record_sql($SQL)) {
         log_the_problem_somewhere();
         return false;
     }
 
-    if (!$lesson = get_record('lesson','id',$lessonanswers->course)) {
+    if (!$lessonanswers = get_record('lesson_answers','id',$recordid)) {
         log_the_problem_somewhere();
         return false;
     }
 
     $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($lessonanswers->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($lessonanswers->course); //N.E.!!
+    $courselang = get_course_lang($lesson->course);  //Non existing!
+    $userlang   = get_main_teacher_lang($lesson->course); //N.E.!!
 
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
@@ -109,19 +109,19 @@ function migrate2utf8_lesson_pages_contents($recordid){
            WHERE l.id = lp.lessonid
                  AND lp.id = $recordid";
 
-    if (!$lessonpages = get_record_sql($SQL)) {
+    if (!$lesson = get_record_sql($SQL)) {
         log_the_problem_somewhere();
         return false;
     }
 
-    if (!$lesson = get_record('lesson','id',$lessonpages->course)) {
+    if (!$lessonpages = get_record('lesson_pages','id',$recordid)) {
         log_the_problem_somewhere();
         return false;
     }
 
     $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($lessonpages->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($lessonpages->course); //N.E.!!
+    $courselang = get_course_lang($lesson->course);  //Non existing!
+    $userlang   = get_main_teacher_lang($lesson->course); //N.E.!!
 
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
@@ -153,19 +153,18 @@ function migrate2utf8_lesson_pages_title($recordid){
            WHERE l.id = lp.lessonid
                  AND lp.id = $recordid";
 
-    if (!$lessonpages = get_record_sql($SQL)) {
+    if (!$lesson = get_record_sql($SQL)) {
         log_the_problem_somewhere();
         return false;
     }
-
-    if (!$lesson = get_record('lesson','id',$lessonpages->course)) {
+    if (!$lessonpages = get_record('lesson_pages','id',$recordid)) {
         log_the_problem_somewhere();
         return false;
     }
 
     $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($lessonpages->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($lessonpages->course); //N.E.!!
+    $courselang = get_course_lang($lesson->course);  //Non existing!
+    $userlang   = get_main_teacher_lang($lesson->course); //N.E.!!
 
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
