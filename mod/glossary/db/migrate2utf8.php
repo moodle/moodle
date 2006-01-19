@@ -17,8 +17,8 @@ function migrate2utf8_glossary_categories_name($recordid){
         log_the_problem_somewhere();
         return false;
     }
-    
-    if (!$glossarycategory = get_record_sql('glossary_categories','id',$recordid)) {
+
+    if (!$glossarycategory = get_record('glossary_categories','id',$recordid)) {
         log_the_problem_somewhere();
         return false;
     }
@@ -37,7 +37,7 @@ function migrate2utf8_glossary_categories_name($recordid){
     $newglossarycategory = new object;
     $newglossarycategory->id = $recordid;
     $newglossarycategory->name = $result;
-    update_record('forum',$newglossarycategory);
+    update_record('glossary_categories',$newglossarycategory);
 /// And finally, just return the converted field
     return $result;
 }

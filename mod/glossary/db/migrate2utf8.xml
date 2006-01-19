@@ -37,7 +37,7 @@
     </TABLE>
     <TABLE name="glossary_categories">
       <FIELDS>
-        <FIELD name="name" method="PLAIN_SQL_UPDATE" type="varchar" length="255">
+        <FIELD name="name" method="PHP_FUNCTION" type="varchar" length="255">
           <PHP_FUNCTION>
             migrate2utf8_glossary_categories(RECORDID)
           </PHP_FUNCTION>

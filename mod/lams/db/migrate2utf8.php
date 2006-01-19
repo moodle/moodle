@@ -8,7 +8,7 @@ function migrate2utf8_lams_name($recordid){
         return false;
     }
 
-    if (!$lams = get_record('lams','id',$recordid) {
+    if (!$lams = get_record('lams','id',$recordid)) {
         log_the_problem_somewhere();
         return false;
     }
@@ -18,7 +18,7 @@ function migrate2utf8_lams_name($recordid){
     $userlang   = get_main_teacher_lang($lams->course); //N.E.!!
 
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
-
+echo "lamslamslams ".$fromenc;
 /// We are going to use textlib facilities
     $textlib = textlib_get_instance();
 /// Convert the text
@@ -41,7 +41,7 @@ function migrate2utf8_lams_introduction($recordid){
         return false;
     }
 
-    if (!$lams = get_record('lams','id',$recordid) {
+    if (!$lams = get_record('lams','id',$recordid)) {
         log_the_problem_somewhere();
         return false;
     }
