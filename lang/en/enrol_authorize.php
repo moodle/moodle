@@ -1,7 +1,7 @@
 <?PHP // $Id$ 
       // enrol_authorize.php - created with Moodle 1.6 development (2005101200)
 
-
+$string['avsresult'] = 'AVS Result:';
 $string['adminauthorizeccapture'] = 'Order Review & Auto-Capture Settings';
 $string['adminauthorizeemail'] = 'Email Sending Settings';
 $string['adminauthorizesettings'] = 'Authorize.net Settings';
@@ -48,6 +48,19 @@ $string['anreferer'] = 'Define the URL referer if you have set up this in your a
 $string['antestmode'] = 'Run transactions in test mode only (no money will be drawn)';
 $string['antrankey'] = 'Authorize.net: Transaction Key';
 $string['authorizedpendingcapture'] = 'Authorized / Pending Capture';
+$string['avsa'] = 'Address (street) matches, postal code does not';
+$string['avsb'] = 'Address information not provided';
+$string['avse'] = 'Address Verification System Error';
+$string['avsg'] = 'Non-U.S. Card Issuing Bank';
+$string['avsn'] = 'No match on address (street) nor postal code';
+$string['avsp'] = 'Address Verification System not applicable';
+$string['avsr'] = 'Retry - System unavailable or timed out';
+$string['avss'] = 'Service not supported by issuer';
+$string['avsu'] = 'Address information is unavailable';
+$string['avsw'] = '9 digit postal code matches, address (street) does not';
+$string['avsx'] = 'Address (street) and 9 digit postal code match';
+$string['avsy'] = 'Address (street) and 5 digit postal code match';
+$string['avsz'] = '5 digit postal code matches, address (street) does not';
 $string['canbecredit'] = 'Can be refunded to $a->upto';
 $string['cancelled'] = 'Cancelled';
 $string['capture'] = 'Capture';
@@ -77,6 +90,12 @@ Please don\'t enter your credit card number unless you see a yellow lock at the 
 $string['logindesc'] = 'This option must be ON. <br /><br />
 Please ensure that you have turned <a href=\"$a->url\">loginhttps ON</a> in Admin >> Variables >> Security.<br /><br />
 Turning this on will make Moodle use a secure https connection just for the login and payment pages.';
+$string['missingaddress'] = 'Missing address';
+$string['missingcc'] = 'Missing card number';
+$string['missingccexpire'] = 'Missing expiration date';
+$string['missingcctype'] = 'Missing card type';
+$string['missingcvv'] = 'Missing verification number';
+$string['missingzip'] = 'Missing postal code';
 $string['nameoncard'] = 'Name on Card';
 $string['noreturns'] = 'No returns!';
 $string['notsettled'] = 'Not settled';
@@ -94,6 +113,23 @@ $a->url
 
 To enable autocapture, means you will not receive any warning emails anymore, go to:
 $a->enrolurl';
+$string['reason11'] = 'A duplicate transaction has been submitted.';
+$string['reason13'] = 'The merchant Login ID is invalid or the account is inactive.';
+$string['reason16'] = 'The transaction was not found.';
+$string['reason17'] = 'The merchant does not accept this type of credit card.';
+$string['reason27'] = 'The transaction resulted in an AVS mismatch. The address provided does not match billing address of cardholder.';
+$string['reason28'] = 'The merchant does not accept this type of credit card.';
+$string['reason30'] = 'The configuration with the processor is invalid. Call Merchant Service Provider.';
+$string['reason39'] = 'The supplied currency code is either invalid, not supported, not allowed for this merchant or doesn\'t have an exchange rate.';
+$string['reason43'] = 'The merchant was incorrectly set up at the processor. Call your Merchant Service Provider.';
+$string['reason44'] = 'This transaction has been declined. Card Code filter error!';
+$string['reason45'] = 'This transaction has been declined. Card Code / AVS filter error!';
+$string['reason47'] = 'The amount requested for settlement may not be greater than the original amount authorized.';
+$string['reason5'] = 'A valid amount is required.';
+$string['reason50'] = 'This transaction is awaiting settlement and cannot be refunded.';
+$string['reason51'] = 'The sum of all credits against this transaction is greater than the original transaction amount.';
+$string['reason54'] = 'The referenced transaction does not meet the criteria for issuing a credit.';
+$string['reason55'] = 'The sum of credits against the referenced transaction would exceed the original debit amount.';
 $string['refund'] = 'Refund';
 $string['refunded'] = 'Refunded';
 $string['returns'] = 'Returns';
