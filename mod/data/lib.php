@@ -225,11 +225,11 @@ function data_generate_default_form($dataid, $mode){
         //this only applies to add and single template
    
         $str .= '<div align="center">';
-        $str .= '<table><tr>';
+        $str .= '<table>';
 
         foreach ($fields as $cfield){
 
-            $str .= '<td valign="top" align="right">';
+            $str .= '<tr><td valign="top" align="right">';
             $str .= $cfield->name.':';
             $str .= '</td>';
 
@@ -243,7 +243,7 @@ function data_generate_default_form($dataid, $mode){
             $str .= '<tr><td align="center" colspan="2">##Edit##  ##More##  ##Delete##</td></tr>';
         }
 
-        $str .= '</tr></table>';
+        $str .= '</table>';
         $str .= '</div>';
 
         if ($mode == 'listtemplate'){
@@ -280,10 +280,10 @@ function data_generate_empty_add_form($id, $rid=0){
                 $str .= $cfield->name.':';
                 $str .= '</td>';
 
-                $str .='<td>';
+                $str .='<td valign="top">';
                 $g = data_get_field($cfield);
                 $str .= $g->display_add_field($cfield->id,$rid);
-                $str .= '</td></tr>';
+                $str .= '</td>';
                 unset($g);
             }
 
