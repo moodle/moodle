@@ -45,6 +45,7 @@
     define(NO_PHP_VERSION_FOUND,               7);
     define(NO_PHP_EXTENSIONS_SECTION_FOUND,    8);
     define(NO_PHP_EXTENSIONS_NAME_FOUND,       9);
+    define(NO_DATABASE_VENDOR_VERSION_FOUND,  10);
 
 /**
  * This function will perform the whole check, returning
@@ -536,9 +537,19 @@ function environment_check_database($version) {
 
 /// Now search the version we are using (depending of vendor)
     $current_vendor = $db->databaseType;
+    if ($current_vendor == 'postgres7') {  //Normalize a bit postgresql
+        $current_vendor ='postgres';
+    }
     $dbinfo = $db->ServerInfo();
     $current_version = normalize_version($dbinfo['version']);
     $needed_version = $vendors[$current_vendor];
+
+/// Check we have a needed version
+    if (!$needed_version) {
+        $result->setStatus(false);
+        $result->setErrorCode(NO_DATABASE_VENDOR_VERSION_FOUND);
+        return $result;
+    }
 
 /// And finally compare them, saving results
     if (version_compare($current_version, $needed_version, '>=')) {
