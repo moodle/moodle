@@ -64,7 +64,7 @@ class assignment_uploadsingle extends assignment_base {
             }
         }
 
-        if ($this->isopen() && (!$filecount || $this->assignment->resubmit || !$submission->timemarked)) {
+        if (!isguest($USER->id) && $this->isopen() && (!$filecount || $this->assignment->resubmit || !$submission->timemarked)) {
             $this->view_upload_form();
         }
 
