@@ -15,7 +15,13 @@ class assignment_online extends assignment_base {
         global $USER;
 
         $submission = $this->get_submission();
-        $editable = $this->isopen() && (!$submission || $this->assignment->resubmit || !$submission->timemarked);
+        //Guest can not submit nor edit an assignment (bug: 4604)
+        if (isguest($USER->id)) {
+            $editable = null;
+        }
+        else {
+            $editable = $this->isopen() && (!$submission || $this->assignment->resubmit || !$submission->timemarked);
+        }
         $editmode = ($editable && !empty($_GET['edit']));
 
         if ($editmode) {
