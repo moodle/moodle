@@ -41,6 +41,10 @@ CREATE TABLE prefix_data_content (
   fieldid int(10) unsigned NOT NULL default '0',
   recordid int(10) unsigned NOT NULL default '0',
   content longtext NOT NULL default '',
+  content1 longtext NOT NULL default '',
+  content2 longtext NOT NULL default '',
+  content3 longtext NOT NULL default '',
+  content4 longtext NOT NULL default '',
   PRIMARY KEY  (id)
 ) TYPE=MyISAM;
 

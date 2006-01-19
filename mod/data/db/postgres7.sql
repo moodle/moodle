@@ -27,6 +27,10 @@ CREATE TABLE prefix_data_content (
   fieldid int4 NOT NULL default '0',
   recordid int4 NOT NULL default '0',
   content text NOT NULL
+  content1 text NOT NULL
+  content2 text NOT NULL
+  content3 text NOT NULL
+  content4 text NOT NULL
 );
 
 

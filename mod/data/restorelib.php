@@ -223,7 +223,10 @@ function data_content_restore_mods ($old_record_id, $new_record_id, $old_data_id
         $content -> recordid = $new_record_id;
         $content -> fieldid = $fieldids[$oldfieldid];
         $content -> content = backup_todb($con_info['#']['CONTENT']['0']['#']);
-
+        $content -> content1 = backup_todb($con_info['#']['CONTENT1']['0']['#']);
+        $content -> content2 = backup_todb($con_info['#']['CONTENT2']['0']['#']);
+        $content -> content3 = backup_todb($con_info['#']['CONTENT3']['0']['#']);
+        $content -> content4 = backup_todb($con_info['#']['CONTENT4']['0']['#']);
         $newid = insert_record ("data_content",$content);
 
         //Do some output
