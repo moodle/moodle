@@ -49,7 +49,7 @@ $string['savemessages'] = 'セッションの保存期間';
 $string['seesession'] = 'このセッションを見る';
 $string['sessions'] = 'チャットセッション';
 $string['strftimemessage'] = '%%H:%%M';
-$string['studentseereports'] = '全ての人が過去のセッションを見ることができる';
+$string['studentseereports'] = 'すべての人が過去のセッションを見ることができる';
 $string['viewreport'] = '過去のチャットセッションを表示';
 
 ?>

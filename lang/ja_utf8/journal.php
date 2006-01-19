@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // journal.php - created with Moodle 1.6 development (2005100400)
+      // journal.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['alwaysopen'] = '常に利用可能';
@@ -31,7 +31,7 @@ $string['notopenuntil'] = '日誌が開きません';
 $string['notstarted'] = 'この日誌は未使用です';
 $string['overallrating'] = '総体的評価';
 $string['rate'] = '評価';
-$string['saveallfeedback'] = '全ての評価を保存する';
+$string['saveallfeedback'] = 'すべての評価を保存する';
 $string['startoredit'] = '日誌を編集する';
 $string['viewallentries'] = '$a 件の日誌エントリを表示する';
 

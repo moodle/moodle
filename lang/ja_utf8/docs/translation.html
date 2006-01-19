@@ -17,9 +17,9 @@
 
 <h2>Moodle言語パックの構造</h2>
 
-<p style="margin-left: 40px;">全てのMoodle言語パックは、言語の省略名 ( 例 en、fr、nl、es ... ) と同じ固有のディレクトリ名の言語ディレクトリに入っています。</p>
+<p style="margin-left: 40px;">すべてのMoodle言語パックは、言語の省略名 ( 例 en、fr、nl、es ... ) と同じ固有のディレクトリ名の言語ディレクトリに入っています。</p>
 
-<p style="margin-left: 40px;">全てのメインファイルは、.php拡張子 ( 例 moodle.php、resource.php等 ) が付けられ、このフォルダの中に入っています。&nbsp;
+<p style="margin-left: 40px;">すべてのメインファイルは、.php拡張子 ( 例 moodle.php、resource.php等 ) が付けられ、このフォルダの中に入っています。&nbsp;
 これらのファイルは、「<span style="font-style: italic;">ストリング</span>」と呼ばれる短い語句を含んでいます。 
 </p>
 
@@ -68,7 +68,7 @@ $string['thislanguage'] = 'new language pack';<br />
 <p style="margin-left: 80px;">あなたのサイトに合うように、少しのインターフェースを変更したい場合、<span style="font-weight: bold;">標準言語パックを編集し始めないでください</span>。&nbsp; 標準言語パックを編集した場合、次に新しいMoodleにアップグレードするときに、あなたの変更した内容が上書きされます。<br />
 </p>
 <p style="margin-left: 80px;">新しい言語パックを作成するために、代わりに上記の説明書を使用し、あなたの言語に一番近い親言語 ( parent language、moodle.php内 ) を設定してください。&nbsp;例えば、ローカル英語バージョンの良いネーミングは「<span style="font-style: italic;">en_local</span>」で、親言語は「<span style="font-style: italic;">en</span>」または「<span style="font-style: italic;">en_us</span>」です。</p>
-<p style="margin-left: 80px;">あなたのサイトで全ての人が新しい言語パックを見るようにするためには、<span style="font-weight: bold;">管理&gt;&gt; 設定&gt;&gt; 詳細設定</span> で新しい言語パックをサイト言語に選択して、利用可能な他の言語を制限する必要があります。<br />
+<p style="margin-left: 80px;">あなたのサイトですべての人が新しい言語パックを見るようにするためには、<span style="font-weight: bold;">管理&gt;&gt; 設定&gt;&gt; 詳細設定</span> で新しい言語パックをサイト言語に選択して、利用可能な他の言語を制限する必要があります。<br />
 <br />
 </p>
 
@@ -84,7 +84,7 @@ $string['thislanguage'] = 'new language pack';<br />
     <li>フォームは、3つのカラムから構成されます。最初は各ストリングの名称、2番目は英語のストリング、そして最後は現在の言語の翻訳内容です。</li>
     <li>各ファイルの未翻訳ストリング ( ハイライトされています ) を編集して、各フォーム下部にある「変更内容を保存」ボタンを忘れずにクリックしてください。</li>
     <li>ストリングを空のままにすることもOKです - Moodleは、代わりにそのストリングの親言語のストリングを単に使用します。親言語をmoodle.phpで設定することができます。そうでなければ英語が常にデフォルトの親言語として使用されます。</li>
-    <li>全ての未翻訳ストリングを確認する早い方法は「未翻訳ストリングの確認」ボタンを使用することです。未翻訳ストリングを完全に空にしてください。そうでなければ、この便利な道具は動作しません。<br />
+    <li>すべての未翻訳ストリングを確認する早い方法は「未翻訳ストリングの確認」ボタンを使用することです。未翻訳ストリングを完全に空にしてください。そうでなければ、この便利な道具は動作しません。<br />
       <br />
     </li>
 </ol>
@@ -95,10 +95,10 @@ $string['thislanguage'] = 'new language pack';<br />
 
 <p style="margin-left: 80px;">ヘルプファイルが、XHTMLに準拠するように注意してください。要約すれば:</p>
 <ul style="margin-left: 80px;">
-  <li>全てのタグを閉じてください: <span style="color:rgb(255, 0, 0);" >&lt;p&gt;</span>lalala<span style="color:rgb(255, 0, 0);" >&lt;/p&gt;</span></li>
-  <li>全ての要素をネストしてください: <span style="color:rgb(255, 0, 0);" >&lt;p&gt;</span> lalala <span style="color:rgb(0, 0, 255);" >&lt;em&gt;</span>lalala<span style="color:rgb(0, 0, 255);" >&lt;/em&gt;</span> <span style="color:rgb(255, 0, 0);" >&lt;/p&gt;</span></li>
-  <li>全ての要素および属性は小文字を使用してください。</li>
-  <li>全ての属性は完全かつ引用符付きで記述してください : <span style="color:rgb(255, 0, 0);" >&lt;p align=&quot;right&quot;&gt;</span> lalala &lt;/p&gt;</li>
+  <li>すべてのタグを閉じてください: <span style="color:rgb(255, 0, 0);" >&lt;p&gt;</span>lalala<span style="color:rgb(255, 0, 0);" >&lt;/p&gt;</span></li>
+  <li>すべての要素をネストしてください: <span style="color:rgb(255, 0, 0);" >&lt;p&gt;</span> lalala <span style="color:rgb(0, 0, 255);" >&lt;em&gt;</span>lalala<span style="color:rgb(0, 0, 255);" >&lt;/em&gt;</span> <span style="color:rgb(255, 0, 0);" >&lt;/p&gt;</span></li>
+  <li>すべての要素および属性は小文字を使用してください。</li>
+  <li>すべての属性は完全かつ引用符付きで記述してください : <span style="color:rgb(255, 0, 0);" >&lt;p align=&quot;right&quot;&gt;</span> lalala &lt;/p&gt;</li>
   <li>空の要素は /&gt; で終わらせてください: <span style="color:rgb(255, 0, 0);" >&lt;br /&gt; &lt;hr /&gt;</span>。余分な空白を「/」記号の前に付加してください。</li>
   <li>&lt;img では、alt="" ( 空も可 ) を含んでください。他の空要素と同じく、<span style="color:rgb(255, 0, 0);" >&lt;img alt="" src="picture.gif" /></span> のように空白および /&gt; で閉じてください。</li>
   <li><span style="color:rgb(255, 0, 0);" >&lt;?=</span> および <span style="color:rgb(255, 0, 0);" >&lt;?</span> ではなく <span style="color:rgb(255, 0, 0);" >&lt;?php</span> を使用してください。</li>
