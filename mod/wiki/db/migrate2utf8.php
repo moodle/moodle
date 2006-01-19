@@ -8,7 +8,7 @@ function migrate2utf8_wiki_name($recordid){
         return false;
     }
 
-    if (!$wiki = get_record('wiki','id',$recorvarchardid)) {
+    if (!$wiki = get_record('wiki','id',$recordid)) {
         log_the_problem_somewhere();
         return false;
     }
@@ -130,4 +130,5 @@ function migrate2utf8_wiki_initialcontent($recordid){
 /// And finally, just return the converted field
     return $result;
 }
+
 ?>

@@ -96,7 +96,7 @@
             migrate2utf8_wiki_pagename(RECORDID)
           </PHP_FUNCTION>
         </FIELD>
-        <FIELD name="wtype" method="NO_CONV" type="enum('teacher', 'group', 'student')" length="0" />
+        <FIELD name="wtype" method="NO_CONV" type="enum('teacher', 'group', 'student')" length="0" default="group" />
         <FIELD name="initialcontent" method="PHP_FUNCTION" type="varchar" length="255">
           <PHP_FUNCTION>
             migrate2utf8_wiki_initialcontent(RECORDID)
