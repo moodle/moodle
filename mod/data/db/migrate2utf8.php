@@ -308,7 +308,7 @@ function migrate2utf8_data_listtemplateheader($recordid){
 /// We are going to use textlib facilities
     $textlib = textlib_get_instance();
 /// Convert the text
-    $result = $textlib->convert($data->listtemplateheade, $fromenc);
+    $result = $textlib->convert($data->listtemplateheader, $fromenc);
 
     $newdata= new object;
     $newdata->id = $recordid;
