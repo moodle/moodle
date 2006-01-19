@@ -173,7 +173,6 @@
             exit;
 
         } else {                     // Adding a new discussion
-            $post->mailnow = empty($post->mailnow) ? 0 : 1;
             $discussion = $post;
             $discussion->name  = $post->subject;
             $discussion->intro = $post->message;
