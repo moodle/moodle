@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<COMPATIBILITY_MATRIX>
+  <MOODLE version="1.5">
+    <DATABASE level="required">
+      <VENDOR name="mysql" version="3.23" />
+      <VENDOR name="postgres" version="7.4" />
+    </DATABASE>
+    <PHP version="4.1.0" level="required" />
+    <PHP_EXTENSIONS>
+      <PHP_EXTENSION name="mbstring" level="optional" />
+    </PHP_EXTENSIONS>
+  </MOODLE>
+  <MOODLE version="1.6">
+    <DATABASE level="required">
+      <VENDOR name="mysql" version="4.1.12" />
+      <VENDOR name="postgres" version="7.4" />
+    </DATABASE>
+    <PHP version="4.3.0" level="required" />
+    <PHP_EXTENSIONS>
+      <PHP_EXTENSION name="iconv" level="optional" />
+      <PHP_EXTENSION name="mbstring" level="optional" />
+    </PHP_EXTENSIONS>
+  </MOODLE>
+</COMPATIBILITY_MATRIX>

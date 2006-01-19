@@ -421,6 +421,8 @@
         $table->data[] = array("<font size=\"+1\"><b><a href=\"$CFG->dbtype/frame.php\">".get_string("managedatabase")."</a></b></font>",
                                "<font size=\"+1\">&nbsp;</font>".get_string("adminhelpmanagedatabase"));
     }
+    $table->data[] = array('<strong><a href="environment.php">'.get_string('environment','admin').'</a></strong>',
+                           '<div class="explanation">'.get_string('adminhelpenvironment').'</div>');
 
     print_table($table);
 

@@ -181,6 +181,10 @@ body#admin-blocks table#incompatible td.c0 {
   font-weight: bold;
 }
 
+body#admin-environment table .environmenttable {
+  font-size: 0.8em;
+}
+
 
 /***
  *** Blocks
