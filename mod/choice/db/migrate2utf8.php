@@ -19,7 +19,7 @@ function migrate2utf8_choice_options_text($recordid){
         return false;
     }
     
-    if (!$choiceoption = get_record('choice_option','id',$recordid)) {
+    if (!$choiceoption = get_record('choice_options','id',$recordid)) {
         log_the_problem_somewhere();
         return false;
     }
@@ -33,12 +33,12 @@ function migrate2utf8_choice_options_text($recordid){
 /// We are going to use textlib facilities
     $textlib = textlib_get_instance();
 /// Convert the text
-    $result = $textlib->convert($choiceotion->text, $fromenc);
+    $result = $textlib->convert($choiceoption->text, $fromenc);
 
     $newchoiceoption = new object;
     $newchoiceoption->id = $recordid;
     $newchoiceoption->text = $result;
-    update_record('choice_option',$newchoiceoption);
+    update_record('choice_options',$newchoiceoption);
 /// And finally, just return the converted field
     return $result;
 }

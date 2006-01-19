@@ -54,9 +54,9 @@ function migrate2utf8_exercise_grades_feedback($recordid){
 
     $SQL = "SELECT ex.course
            FROM {$CFG->prefix}exercise ex,
-                {$CFG->prefix}exercise_rubrics exr
-           WHERE ex.id = exr.exerciseid
-                 AND exr.id = $recordid";
+                {$CFG->prefix}exercise_grades exg
+           WHERE ex.id = exg.exerciseid
+                 AND exg.id = $recordid";
 
     if (!$exercise = get_record_sql($SQL)) {
         log_the_problem_somewhere();
