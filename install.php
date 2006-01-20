@@ -342,7 +342,7 @@ if ($nextstage == SAVE) {
 <head>
 <link rel="shortcut icon" href="theme/standard/favicon.ico" />
 <title>Moodle Install</title>
-<meta http-equiv="content-type" content="text/html; charset=<?php current_charset() ?>" />
+<meta http-equiv="content-type" content="text/html; charset=<?php p(current_charset()) ?>" />
 <?php css_styles() ?>
 
 </head>
