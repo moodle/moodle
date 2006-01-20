@@ -63,7 +63,10 @@
             $graph->y_data['line3'][] = $stat->line3;
         }
     }
-    $graph->y_order = array('line1','line2','line3');
+    $graph->y_order = array('line1','line2');
+    if (!empty($param->line3)) {
+        $graph->y_order[] = 'line3';
+    }
     $graph->y_format['line1'] = array('colour' => 'blue','line' => 'line','legend' => $param->line1);
     if (!empty($param->line2)) {
         $graph->y_format['line2'] = array('colour' => 'red','line' => 'line','legend' => $param->line2); 
