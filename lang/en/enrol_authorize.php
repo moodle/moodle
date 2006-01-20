@@ -1,7 +1,7 @@
 <?PHP // $Id$ 
       // enrol_authorize.php - created with Moodle 1.6 development (2005101200)
 
-$string['avsresult'] = 'AVS Result:';
+
 $string['adminauthorizeccapture'] = 'Order Review & Auto-Capture Settings';
 $string['adminauthorizeemail'] = 'Email Sending Settings';
 $string['adminauthorizesettings'] = 'Authorize.net Settings';
@@ -47,6 +47,7 @@ $string['anpassword'] = 'Authorize.net: Password';
 $string['anreferer'] = 'Define the URL referer if you have set up this in your authorize.net account. This will send a line \"Referer: URL\" embedded in the web request.';
 $string['antestmode'] = 'Run transactions in test mode only (no money will be drawn)';
 $string['antrankey'] = 'Authorize.net: Transaction Key';
+$string['authcaptured'] = 'Authorized / Captured';
 $string['authorizedpendingcapture'] = 'Authorized / Pending Capture';
 $string['avsa'] = 'Address (street) matches, postal code does not';
 $string['avsb'] = 'Address information not provided';
@@ -55,6 +56,7 @@ $string['avsg'] = 'Non-U.S. Card Issuing Bank';
 $string['avsn'] = 'No match on address (street) nor postal code';
 $string['avsp'] = 'Address Verification System not applicable';
 $string['avsr'] = 'Retry - System unavailable or timed out';
+$string['avsresult'] = 'AVS Result:';
 $string['avss'] = 'Service not supported by issuer';
 $string['avsu'] = 'Address information is unavailable';
 $string['avsw'] = '9 digit postal code matches, address (street) does not';

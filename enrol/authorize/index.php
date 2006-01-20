@@ -1,9 +1,9 @@
 <?php // $Id$
 
-require_once("../../config.php");
-require_once("const.php");
-require_once("enrol.php");
-require_once("action.php");
+require_once '../../config.php';
+require_once $CFG->dirroot.'/enrol/authorize/const.php';
+require_once $CFG->dirroot.'/enrol/authorize/enrol.php';
+require_once $CFG->dirroot.'/enrol/authorize/action.php';
 
 define('ORDER_CAPTURE', 'capture');
 define('ORDER_DELETE', 'delete');
@@ -20,12 +20,11 @@ if (!isadmin()) {
     error("You must be an administrator to use this page.");
 }
 
-$csv = optional_param('csv', '', PARAM_ALPHA);
 $orderid = optional_param('order', 0, PARAM_INT);
 
 $strs = get_strings(array('user','status','action','delete','time','course','confirm','yes','no','none','error'));
 $authstrs = get_strings(array('paymentmanagement','orderid','void','capture','refund','delete',
-                              'authorizedpendingcapture','capturedpendingsettle','capturedsettled',
+                              'authcaptured','authorizedpendingcapture','capturedpendingsettle','capturedsettled',
                               'settled','refunded','cancelled','expired','tested',
                               'transid','settlementdate','notsettled','amount',
                               'howmuch','captureyes','unenrolstudent'), 'enrol_authorize');
@@ -34,10 +33,7 @@ print_header("$site->shortname: $authstrs->paymentmanagement",
              "$site->fullname",
              "<a href=\"index.php\">$authstrs->paymentmanagement</a>", "");
 
-if (!empty($csv)) {
-    authorize_csv();
-}
-elseif (!empty($orderid)) {
+if (!empty($orderid)) {
     authorize_order_details($orderid);
 }
 else {
@@ -56,6 +52,18 @@ function authorize_orders()
     $userid = optional_param('user', 0, PARAM_INT);
     $courseid = optional_param('course', 0, PARAM_INT);
     $status = optional_param('status', AN_STATUS_NONE, PARAM_INT);
+    $baseurl = $CFG->wwwroot."/enrol/authorize/index.php?course=$courseid&amp;user=$userid";
+    $statusmenu = array(AN_STATUS_NONE => get_string('all'),
+                        AN_STATUS_AUTH => $authstrs->authorizedpendingcapture,
+                        AN_STATUS_AUTHCAPTURE => $authstrs->authcaptured,
+                        AN_STATUS_CREDIT => $authstrs->refunded,
+                        AN_STATUS_VOID => $authstrs->cancelled,
+                        AN_STATUS_EXPIRE => $authstrs->expired
+    );
+
+    print_simple_box_start('center');
+    echo $strs->status . ': ' . popup_form($baseurl.'&amp;status=', $statusmenu, 'statusmenu', $status, '', '', '', true);
+    print_simple_box_end();
 
     $table = new flexible_table('enrol-authorize');
     $table->set_attribute('width', '100%');
@@ -66,19 +74,35 @@ function authorize_orders()
 
     $table->define_columns(array('id', 'timecreated', 'userid', 'status', ''));
     $table->define_headers(array($authstrs->orderid, $strs->time, $strs->user, $strs->status, $strs->action));
-    $table->define_baseurl($CFG->wwwroot."/enrol/authorize/index.php?course=$courseid&amp;user=$userid&amp;status=$status");
+    $table->define_baseurl($baseurl."&amp;status=$status");
 
     $table->sortable(true);
     $table->pageable(true);
     $table->setup();
 
-    if ($status > AN_STATUS_NONE) $where = "WHERE (status = '$status') ";
-    else $where = "WHERE (status != '" . AN_STATUS_NONE . "') ";
-    if ($userid > 0) { $where .= "AND (userid = '" . $userid . "') "; }
-    if ($courseid > 0) { $where .= "AND (courseid = '" . $courseid . "') "; }
+    $select = "SELECT E.id, E.transid, E.courseid, E.userid, E.status, E.ccname, E.timecreated, E.settletime";
+    $from = " FROM {$CFG->prefix}enrol_authorize E ";
 
-    $select = "SELECT id, transid, courseid, userid, status, ccname, timecreated, settletime ";
-    $from = " FROM {$CFG->prefix}enrol_authorize ";
+    if ($status > AN_STATUS_NONE) {
+        if ($status == AN_STATUS_CREDIT) {
+            $from .= "INNER JOIN {$CFG->prefix}enrol_authorize_refunds R ON E.id = R.orderid ";
+            $where = "WHERE (E.status = '" . AN_STATUS_AUTHCAPTURE . "') ";
+        }
+        else {
+            $where = "WHERE (status = '$status') ";
+        }
+    }
+    else {
+        $where = "WHERE (status != '" . AN_STATUS_NONE . "') ";
+    }
+
+    if ($userid > 0) {
+        $where .= "AND (userid = '" . $userid . "') ";
+    }
+    if ($courseid > 0) {
+        $where .= "AND (courseid = '" . $courseid . "') ";
+    }
+
     if ($sort = $table->get_sql_sort()) {
         $sort = ' ORDER BY ' . $sort;
     }
@@ -411,10 +435,6 @@ function authorize_order_details($orderno) {
     echo '</form>';
 }
 
-function authorize_csv()
-{
-    return;
-}
 
 function get_order_status_desc($order)
 {

@@ -1,15 +1,10 @@
 <?php //  $Id$
 
-define('AN_HOST', 'secure.authorize.net');
-define('AN_HOST_TEST', 'certification.authorize.net');
-define('AN_PORT', 443);
-define('AN_PATH', '/gateway/transact.dll');
 define('AN_APPROVED', '1');
 define('AN_DECLINED', '2');
 define('AN_ERROR', '3');
 define('AN_DELIM', '|');
 define('AN_ENCAP', '"');
-
 require_once $CFG->dirroot.'/enrol/authorize/const.php';
 
 /**
@@ -61,7 +56,7 @@ function authorizenet_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE
     global $CFG;
     static $conststring;
 
-    $an_test = !empty($CFG->an_test);
+    $test = !empty($CFG->an_test);
 
     if (!isset($conststring)) {
         $consdata = array(
@@ -72,7 +67,7 @@ function authorizenet_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE
              'x_relay_response'  => 'FALSE',
              'x_method'          => 'CC',
              'x_login'           => $CFG->an_login,
-             'x_test_request'    => $an_test ? 'TRUE' : 'FALSE'
+             'x_test_request'    => $test ? 'TRUE' : 'FALSE'
         );
         $str = '';
         foreach($consdata as $ky => $vl) {
@@ -205,14 +200,14 @@ function authorizenet_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE
     }
 
     $response = array();
-    $host = $an_test ? AN_HOST_TEST : AN_HOST;
-    $fp = fsockopen("ssl://" . $host, AN_PORT, $errno, $errstr, 60);
+    $host = $test ? 'certification.authorize.net' : 'secure.authorize.net';
+    $fp = fsockopen("ssl://$host", 443, $errno, $errstr, 60);
     if (!$fp) {
         $message =  "no connection: $errstr ($errno)";
         return false;
     }
 
-    fwrite($fp, "POST " . AN_PATH . " HTTP/1.0\r\n" .
+    fwrite($fp, "POST /gateway/transact.dll HTTP/1.0\r\n" .
                 "Host: $host\r\n" . $referer .
                 "Content-type: application/x-www-form-urlencoded\r\n" .
                 "Connection: close\r\n" .
@@ -249,7 +244,7 @@ function authorizenet_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE
     if ($response[0] == AN_APPROVED)
     {
         $transid = intval($response[6]);
-        if ($an_test || $transid == 0) {
+        if ($test || $transid == 0) {
             return true; // don't update original transaction in test mode.
         }
         switch ($action) {

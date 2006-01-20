@@ -121,7 +121,7 @@ class enrolment_plugin extends enrolment_base
                 $this->ccerrors['ccexpire'] = get_string('ccexpired', 'enrol_authorize');
             }
             else {
-            	$this->ccerrors['cc'] = get_string('ccinvalid', 'enrol_authorize');
+                $this->ccerrors['cc'] = get_string('ccinvalid', 'enrol_authorize');
             }
             return;
         }
@@ -179,7 +179,7 @@ class enrolment_plugin extends enrolment_base
         }
 
         $SESSION->ccpaid = 1; // security check: don't duplicate payment
-        if (intval($order->transid) == 0) { // TEST MODE
+        if ($order->transid == 0) { // TEST MODE
             if ($an_review) {
                 redirect($CFG->wwwroot, get_string("reviewnotify", "enrol_authorize"), '30');
             }
@@ -293,16 +293,29 @@ class enrolment_plugin extends enrolment_base
         if (empty($form->ccfirstname) || empty($form->cclastname)) {
             $this->ccerrors['ccfirstlast'] = get_string('missingfullname');
         }
-        if (empty($form->cc)) $this->ccerrors['cc'] = get_string('missingcc', 'enrol_authorize');
-        if (empty($form->cvv)) $this->ccerrors['cvv'] = get_string('missingcvv', 'enrol_authorize');
-        if (empty($form->cctype)) $this->ccerrors['cctype'] = get_string('missingcctype', 'enrol_authorize');
-        if (!empty($CFG->an_avs)) {
-            if (empty($form->ccaddress)) $this->ccerrors['ccaddress'] = get_string('missingaddress', 'enrol_authorize');
-            if (empty($form->cccity)) $this->ccerrors['cccity'] = get_string('missingcity');
-            if (empty($form->cccountry)) $this->ccerrors['cccountry'] = get_string('missingcountry');
-            if (empty($form->cczip)) $this->ccerrors['cczip'] = get_string('missingzip', 'enrol_authorize');
+        if (empty($form->cc)) {
+            $this->ccerrors['cc'] = get_string('missingcc', 'enrol_authorize');
         }
-
+        if (empty($form->cvv) || !is_int($form->cvv)) {
+            $this->ccerrors['cvv'] = get_string('missingcvv', 'enrol_authorize');
+        }
+        if (empty($form->cctype)) {
+            $this->ccerrors['cctype'] = get_string('missingcctype', 'enrol_authorize');
+        }
+        if (!empty($CFG->an_avs)) {
+            if (empty($form->ccaddress)) {
+                $this->ccerrors['ccaddress'] = get_string('missingaddress', 'enrol_authorize');
+            }
+            if (empty($form->cccity)) {
+                $this->ccerrors['cccity'] = get_string('missingcity');
+            }
+            if (empty($form->cccountry)) {
+                $this->ccerrors['cccountry'] = get_string('missingcountry');
+            }
+        }
+        if (empty($form->cczip) || !is_int($form->cczip)) {
+            $this->ccerrors['cczip'] = get_string('missingzip', 'enrol_authorize');
+        }
         if (!empty($this->ccerrors)) {
             $this->ccerrors['header'] = get_string('someerrorswerefound');
             $return = false;
@@ -327,8 +340,8 @@ class enrolment_plugin extends enrolment_base
     /**
      * get_course_cost
      *
-     * @param unknown_type $course
-     * @return unknown
+     * @param object $course
+     * @return array
      * @access private
      */
     function get_course_cost($course)
@@ -574,32 +587,24 @@ class enrolment_plugin extends enrolment_base
             delete_records_select('enrol_authorize', $select);
         }
 
-        if (empty($CFG->an_review) || !empty($CFG->an_test)) {
-            return;
-        }
-
-        if (intval($CFG->an_capture_day < 1)) {
-            if (empty($CFG->an_emailexpired) || intval($mconfig->an_nextmail) > $timenow) {
-                return;
-            }
+        if (!empty($CFG->an_emailexpired) && intval($mconfig->an_nextmail) < $timenowsettle) {
+            set_config('an_nextmail', $timenowsettle + $oneday + 1, 'enrol/authorize');
             $timediffem = $timenowsettle - ((30 - intval($CFG->an_emailexpired)) * $oneday);
             $select = "(status = '" . AN_STATUS_AUTH . "') AND " .
             "(timecreated < '$timediffem') AND (timecreated > '$timediff30')";
-            if (!$count = count_records_select('enrol_authorize', $select)) {
-                return;
+            if ($count = count_records_select('enrol_authorize', $select)) {
+                $a->pending = $count;
+                $a->days = $CFG->an_emailexpired;
+                $a->enrolurl = "$CFG->wwwroot/$CFG->admin/users.php";
+                $a->url = $CFG->wwwroot."/enrol/authorize/index.php?status=".AN_STATUS_AUTH;
+                $message = get_string('pendingordersemail', 'enrol_authorize', $a);
+                $adminuser = get_admin();
+                email_to_user($adminuser, $adminuser, "WARNING: PENDING PAYMENTS", $a);
             }
-            $a->pending = $count;
-            $a->days = $CFG->an_emailexpired;
-            $a->url = $CFG->wwwroot."/enrol/authorize/index.php?status=" . AN_STATUS_AUTH;
-            $a->enrolurl = "$CFG->wwwroot/$CFG->admin/users.php";
-            $message = get_string('pendingordersemail', 'enrol_authorize', $a);
-            $adminuser = get_admin();
-            email_to_user($adminuser, $adminuser, "WARNING: PENDING PAYMENTS", $a);
-            set_config('an_nextmail', $timenow + $oneday, 'enrol/authorize');
-            return;
         }
 
-        if (!$this->check_openssl_loaded()) {
+        if (empty($CFG->an_review) || (!empty($CFG->an_test)) ||
+            intval($CFG->an_capture_day < 1) || (!$this->check_openssl_loaded())) {
             return;
         }
 
