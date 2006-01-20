@@ -78,7 +78,7 @@ function migrate2utf8_block_rss_client_preferredtitle($recordid){
     return $result;
 }
 
-function migrate2utf_block_rss_client_description($recordid){
+function migrate2utf8_block_rss_client_description($recordid){
     global $CFG;
 
 /// Some trivial checks
