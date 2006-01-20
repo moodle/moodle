@@ -90,11 +90,13 @@ Specify the full web address where Moodle will be accessed.
 If your web site is accessible via multiple URLs then choose the 
 most natural one that your students would use.  Do not include 
 a trailing slash.
-<p />
+<br />
+<br />
 <b>Moodle Directory:</b>
 Specify the full directory path to this installation
 Make sure the upper/lower case is correct.
-<p />
+<br />
+<br />
 <b>Data Directory:</b>
 You need a place where Moodle can save uploaded files.  This
 directory should be readable AND WRITEABLE by the web server user 
