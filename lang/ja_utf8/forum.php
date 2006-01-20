@@ -85,6 +85,7 @@ $string['introsocial'] = '投稿制限無しフォーラム';
 $string['introteacher'] = '教師専用フォーラム';
 $string['lastpost'] = '最新の投稿';
 $string['learningforums'] = '学習フォーラム';
+$string['mailnow'] = 'すぐにメール送信する';
 $string['markalldread'] = 'このディスカッションの投稿をすべて既読にする。';
 $string['markallread'] = 'このフォーラムの投稿をすべて既読にする。';
 $string['markread'] = '既読にする';
@@ -141,6 +142,7 @@ $string['postadded'] = '<p>あなたの投稿が追加されました。</p>
 $string['postincontext'] = '関連した投稿を表示する';
 $string['postmailinfo'] = 'これは ウェブサイト $a に投稿された記事のコピーです。
 返信をウェブサイト経由で追加するには、このリンクをクリックしてください:';
+$string['postmailnow'] = '<p>この投稿はすべてのメール購読ユーザにすぐに送信されます。</p>';
 $string['postrating1'] = '主に分離認識の傾向がある';
 $string['postrating2'] = '分離認識と関連認識を同等に持っている';
 $string['postrating3'] = '主に関連認識の傾向がある';

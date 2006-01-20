@@ -114,6 +114,13 @@ $string['sessionautostart'] = 'セッション自動スタート';
 $string['sessionautostarterror'] = 'これは無効にしてください。';
 $string['sessionautostarthelp'] = '<p>Moodleはセッションサポートを必要とします。また、セッションサポート無しでは動作しません。</p>
 <p>セッションは、php.iniファイルで使用可にすることができます ... session.auto_startパラメータを探してください。</p>';
+$string['welcomep10'] = '$a->installername ($a->installerversion)';
+$string['welcomep20'] = 'インストールが正常に完了したため、このページをご覧頂いています。あなたのコンピュータで <strong>$a->packname $a->packversion</strong> パッケージを起動してください。';
+$string['welcomep30'] = 'このリリースでは <strong>$a->installername</strong> <strong>Moodle</strong> で環境を作成するアプリケーションが含まれています。すなわち:';
+$string['welcomep40'] = 'パッケージには <strong>Moodle $a->moodlerelease ($a->moodleversion)</strong> も含まれています。';
+$string['welcomep50'] = 'このパッケージ内の全てのアプリケーションの使用は個々のライセンスによって規定されています。全体の <strong>$a->installername</strong> パッケージは <a href=\"http://www.opensource.org/docs/definition_plain.html\">オープンソース</a> であり、<a href=\"http://www.gnu.org/copyleft/gpl.html\">GPL</a>ライセンスの下で配布されています。';
+$string['welcomep60'] = '次からのページは、あなたのコンピュータに <strong>Moodle</strong> を簡単に設定およびセットアップする手順にしたがって進みます。デフォルトの設定を使用することも、必要に応じて任意で設定を変更することもできます。';
+$string['welcomep70'] = '<strong>Moodle</strong>のセットアップを続けるには「次へ」ボタンをクリックしてください。';
 $string['wwwroot'] = 'ウェブアドレス';
 $string['wwwrooterror'] = 'ウェブアドレスが間違っています - インストール済みMoodleはここに表示されません。';
 
