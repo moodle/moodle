@@ -61,34 +61,48 @@
 function check_moodle_environment($version, &$environment_results, $print_table=true) {
 
     $status = true;
-    $result = true;
 
-/// Get the more recent version before the requested
-    if (!$version = get_latest_version_available($version)) {
-        $status = false;
-    }
+/// This are cached per request
+    static $result = true;
+    static $env_results;
+    static $cache_exists = false;
 
-/// Perform all the checks
-    if (!($environment_results = environment_check($version)) && $status) {
-        $status = false;
-    }
+/// if we have results cached, use them
+    if ($cache_exists) {
+        $environment_results = $env_results;
+/// No cache exists, calculate everything
+    } else {
+    /// Get the more recent version before the requested
+        if (!$version = get_latest_version_available($version)) {
+            $status = false;
+        }
 
-/// Iterate over all the results looking for some error in required items
-/// or some error_code
-    if ($status) {
-        foreach ($environment_results as $environment_result) {
-            if ((!$environment_result->getStatus() &&
-                $environment_result->getLevel() == 'required') || 
-                $environment_result->getErrorCode()) {
-                $result = false;
+    /// Perform all the checks
+        if (!($environment_results = environment_check($version)) && $status) {
+            $status = false;
+        }
+
+    /// Iterate over all the results looking for some error in required items
+    /// or some error_code
+        if ($status) {
+            foreach ($environment_results as $environment_result) {
+                if ((!$environment_result->getStatus() &&
+                    $environment_result->getLevel() == 'required') || 
+                    $environment_result->getErrorCode()) {
+                    $result = false;
+                }
             }
         }
-    }
+    /// Going to end, we store environment_results to cache
+        $env_results = $environment_results;
+        $cache_exists = true;
+    } ///End of cache block
 
 /// If we have decided to print all the information, just do it
     if ($print_table) {
         print_moodle_environment($result && $status, $environment_results);
     }
+
 
     return ($result && $status);
 }
@@ -129,7 +143,7 @@ function print_moodle_environment($result, $environment_results) {
             $status = $environment_result->getStatus();
             $error_code = $environment_result->getErrorCode();
         /// Process Report field
-            $rec = new object();
+            $rec = new stdClass();
         /// Something has gone wrong at parsing time
             if ($error_code) {
                 $stringtouse = 'environmentxmlerror';
