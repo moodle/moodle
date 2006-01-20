@@ -8,7 +8,7 @@ $string['adminauthorizesettings'] = 'Authorize.net 設定';
 $string['adminauthorizewide'] = 'サイト全体の設定';
 $string['adminavs'] = 'あなたのauthorize.netアカウントで住所確認システム ( AVS:Address Verification System ) を有効にした場合は、ここをチェックしてください。この設定により、ユーザが支払いフォームに入力するときに、市町村、県、国および郵便番号の入力が求められます。';
 $string['admincronsetup'] = 'cron.phpメンテナンススクリプトが少なくとも24時間稼動していません。<br />オートキャプチャ機能を使用したい場合、Cronを有効にする必要があります。<br />再度 <a href=\"../doc/?frame=install.html&sub=cron\">cronの設定</a> または「an_review again」のチェックを外してください。<br />オートキャプチャを無効にすると、30日以内にトランザクションを検査しない場合、トランザクションはキャンセルされます。<br />30日以内に支払いを手動で支払いを受け付け/拒否したい場合は、「an_review」をチェックして、<br />「an_capture_day」フィールドにゼロを入力してください。';
-$string['adminemailexpired'] = 'トランザクションが失効する <b>$a</b> 日前に何件の「認可/保留キャプチャ」トランザクションがあったか警告メールを管理者へ送信します。 (0 = メール送信を停止する、デフォルト = 2、最大 = 5 )<br />手動キャプチャを有効にしている場合、便利です (an_review = チェック、 an_capture_day = 0 )。';
+$string['adminemailexpired'] = 'トランザクションが失効する <b>$a</b> 日前に何件の「認証 / 保留キャプチャ」トランザクションがあったか警告メールを管理者へ送信します。 (0 = メール送信を停止する、デフォルト = 2、最大 = 5 )<br />手動キャプチャを有効にしている場合、便利です (an_review = チェック、 an_capture_day = 0 )。';
 $string['adminhelpcapture'] = '手動で支払いを受け付け/拒否するだけではなく、支払いのキャンセルを防ぐためにオートキャプチャを使用したいと思います。どうすれば良いですか?
 
 - cronを設定してください。
@@ -43,6 +43,7 @@ $string['anpassword'] = 'Authorize.net: パスワード ( 不要 )';
 $string['anreferer'] = '必要な場合は、リファラURLを設定してください。これは、ウェブリクエストの「Referer: URL」ヘッダを送信します。';
 $string['antestmode'] = 'Authorize.net: テストトランザクション';
 $string['antrankey'] = 'Authorize.net: トランザクションキー';
+$string['authcaptured'] = '認証完了 / キャプチャ完了';
 $string['authorizedpendingcapture'] = '認証完了 / キャプチャ未了';
 $string['avsa'] = '住所は合致しますが、郵便番号が合致しません。';
 $string['avsb'] = '住所情報を入力されていません。';
@@ -117,7 +118,7 @@ $string['reason39'] = '提供された通貨コードが正しくないか、サ
 $string['reason43'] = 'プロセッサでマーチャントが正しく設定されていません。マーチャントサービスプロバイダにご連絡ください。';
 $string['reason44'] = 'このトランザクションは拒否されました。カード番号フィルタエラー!';
 $string['reason45'] = 'このトランザクションは拒否されました。カード番号 / AVSフィルタエラー!';
-$string['reason47'] = '決済にリクエストされた金額が、認可された最初の金額よりも大きくないかもしれません。';
+$string['reason47'] = '決済にリクエストされた金額が、認証された最初の金額よりも大きくないかもしれません。';
 $string['reason5'] = '有効な金額を入力してください。';
 $string['reason50'] = 'このトランザクションは決済処理中ですので、払い戻しはできません。';
 $string['reason51'] = 'このトランザクションに関する全てのクレジットの合計が、最初のトランザクションの金額よりも多くなっています。';

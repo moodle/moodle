@@ -16,7 +16,7 @@ $string['errorunzippingfiles'] = 'ファイルの解凍処理にエラーが発生しました。';
 $string['fieldrequired'] = '「 $a 」 は必須項目です。';
 $string['filenotfound'] = '申し訳ございません、ファイルが見つかりませんでした。';
 $string['forumblockingtoomanyposts'] = 'このフォーラムに設定されている登録期限を超えています。';
-$string['groupalready'] = 'ユーザは既にグループ $a に属しています';
+$string['groupalready'] = 'ユーザはすでにグループ $a に属しています';
 $string['groupunknown'] = 'グループ $a は指定されたコースに関連していません。';
 $string['invalidcourse'] = '無効なコース';
 $string['invalidfieldname'] = '「 $a 」 は正しいフィールド名ではありません。';
@@ -42,7 +42,7 @@ $string['unknowncourse'] = '不明なコース名 「 $a 」';
 $string['usernotaddederror'] = 'ユーザ 「 $a 」 は追加されませんでした - 原因不明のエラー';
 $string['usernotaddedregistered'] = 'ユーザ 「 $a 」 は追加されませんでした - 登録済み';
 $string['usernotavailable'] = 'このユーザの詳細は閲覧できません。';
-$string['usernotrenamedexists'] = 'ユーザはリネームされませんでした -- 新しいユーザ名が既に使用されています。';
+$string['usernotrenamedexists'] = 'ユーザはリネームされませんでした -- 新しいユーザ名がすでに使用されています。';
 $string['usernotrenamedmissing'] = 'ユーザはリネームされませんでした -- 古いユーザ名が見つかりませんでした。';
 
 ?>

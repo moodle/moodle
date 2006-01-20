@@ -4,14 +4,20 @@
 
 $string['admindirerror'] = '設定されたadminディレクトリが間違っています。';
 $string['admindirname'] = 'Adminディレクトリ';
-$string['admindirsetting'] = '稀に、コントロールパネルまたはその他の管理ツールにアクセスするためのURLとして/adminディレクトリを使用しているウェブホストがあります。残念ながら、これはMoodle管理ページの標準的なロケーションと衝突します。インストールするときにadminディレクトリをリネームすることが可能です。ここに新しいディレクトリ名を入力してください。例: <br/> <br /><b>moodleadmin</b><br /> <br />
+$string['admindirsetting'] = 'まれに、コントロールパネルまたはその他の管理ツールにアクセスするためのURLとして/adminディレクトリを使用しているウェブホストがあります。残念ながら、これはMoodle管理ページの標準的なロケーションと衝突します。インストールするときにadminディレクトリをリネームすることが可能です。ここに新しいディレクトリ名を入力してください。例: <br/> <br /><b>moodleadmin</b><br /> <br />
 これはMoodleのadminリンクを変更します。';
+$string['admindirsettinghead'] = '管理ディレクトリの設定中 ...';
+$string['admindirsettingsub'] = 'まれなケースですが /admin をコントロールパネルまたはその他のページにアクセスするための特別なURLとして使用しているウェブホストがあります。残念ですが、これは標準的なMoodle管理ページのロケーションと衝突します。あなたのインストールに関するadminディレクトリをリネームすることで、この衝突を回避できます。例えば: <br /> <br /><b>moodleadmin</b><br /> <br />
+これによりMoodleの管理ページへのリンクは修正されます。';
 $string['caution'] = '警告';
 $string['chooselanguage'] = '言語を選択してください。';
+$string['chooselanguagehead'] = '言語を選択してください。';
 $string['compatibilitysettings'] = 'PHP設定を確認しています ...';
+$string['compatibilitysettingshead'] = 'PHP設定を確認しています ...';
 $string['configfilenotwritten'] = 'インストールスクリプトは、自動的にあなたの選択した設定を反映したconfig.phpファイルを作成することができませんでした。恐らく、Moodleディレクトリに書き込み権が無いためだと思われます。下記のコードをconfig.phpという名称のファイルとしてMoodleのルートディレクトリにコピーすることができます。';
 $string['configfilewritten'] = 'config.phpが正常に作成されました。';
 $string['configurationcomplete'] = '設定が完了しました。';
+$string['configurationcompletehead'] = '設定が完了しました。';
 $string['database'] = 'データベース';
 $string['databasecreationsettings'] = 'ほとんどのMoodleデータが保存されるデータベース設定を行ってください。このデータベースはMoodle4Windowsインストーラーにより、下記の設定が指定された形で自動的に作成されます。<br />
 <br /> <br />
@@ -21,9 +27,16 @@ $string['databasecreationsettings'] = 'ほとんどのMoodleデータが保存�
 <b>ユーザ名:</b> インストーラーにより「root」に固定されます。<br />
 <b>パスワード:</b> あなたのデータベースパスワードです。<br />
 <b>テーブル接頭辞:</b> すべてのテーブル名に使用される任意の接頭辞です。';
-$string['databasesettings'] = 'ほとんどのMoodleデータが保存されるデータベースの設定を行います。このデータベースは、アクセスするためのユーザ名およびパスワードと共に作成されている必要があります。<br/>
+$string['databasesettings'] = 'ほとんどのMoodleデータが保存されるデータベースの設定を行います。このデータベースは、アクセスするためのユーザ名およびパスワードと共にすでに作成されている必要があります。<br/>
 <br /> <br />
 <b>タイプ:</b> mysql または postgres7<br />
+<b>ホスト:</b> 例 localhost または db.isp.com<br />
+<b>データベース名:</b> 例:moodle<br />
+<b>ユーザ名:</b> データベースのユーザ名<br />
+<b>パスワード:</b> データベースのパスワード<br />
+<b>テーブル接頭辞:</b> すべてのテーブル名にオプションで使用する接頭辞';
+$string['databasesettingshead'] = 'ほとんどのMoodleデータが保存されるデータベースの設定を行います。このデータベースは、アクセスするためのユーザ名およびパスワードと共にすでに作成されている必要があります。';
+$string['databasesettingssub'] = '<b>タイプ:</b> mysql または postgres7<br />
 <b>ホスト:</b> 例 localhost または db.isp.com<br />
 <b>データベース名:</b> 例:moodle<br />
 <b>ユーザ名:</b> データベースのユーザ名<br />
@@ -40,11 +53,22 @@ $string['dbtype'] = 'タイプ';
 $string['directorysettings'] = '<p>このMoodleのインストール先を確認してください。</p>
 
 <p><b>ウェブアドレス:</b>
-Moodleにアクセスする完全なウェブアドレスを指定してください。複数のURLよりアクセス可能な場合は、学生が利用する最も自然なURLを選択してください。最後にスラッシュを付けないでください。</p>
+Moodleにアクセスする完全なウェブアドレスを指定してください。複数のURLよりアクセス可能な場合は、学生が利用する最も自然なURLを選択してください。末尾にスラッシュを付けないでください。</p>
 
 <p><b>Moodleディレクトリ:</b>
 インストール先の完全なディレクトリパスを指定してください。大文字/小文字が間違っていないか確認してください。</p>
 
+<p><b>データディレクトリ:</b>
+Moodleが、アップロードされたファイルを保存する場所が必要です。 このディレクトリは、ウェブサーバのユーザ ( 通常は「nobody」または「apache」 ) が読み込みおよび書き込みできるようにしてください。しかし、ウェブから直接アクセスできないようにしてください。</p>';
+$string['directorysettingshead'] = 'Moodleのインストール先を確認してください。';
+$string['directorysettingssub'] = '<p><b>ウェブアドレス:</b>
+Moodleにアクセスする完全なウェブアドレスを指定してください。複数のURLよりアクセス可能な場合は、学生が利用する最も自然なURLを選択してください。末尾にスラッシュを付けないでください。</p>
+<br />
+<br />
+<p><b>Moodleディレクトリ:</b>
+インストール先の完全なディレクトリパスを指定してください。大文字/小文字が間違っていないか確認してください。</p>
+<br />
+<br />
 <p><b>データディレクトリ:</b>
 Moodleが、アップロードされたファイルを保存する場所が必要です。 このディレクトリは、ウェブサーバのユーザ ( 通常は「nobody」または「apache」 ) が読み込みおよび書き込みできるようにしてください。しかし、ウェブから直接アクセスできないようにしてください。</p>';
 $string['dirroot'] = 'Moodleディレクトリ';

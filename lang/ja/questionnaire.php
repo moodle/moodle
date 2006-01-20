@@ -2,7 +2,7 @@
       // questionnaire.php - created with Moodle 1.6 development (2005101200)
 
 
-$string['alreadyfilled'] = 'あなたは既にこのアンケートに回答しています。ありがとうございます。';
+$string['alreadyfilled'] = 'あなたはすでにこのアンケートに回答しています。ありがとうございます。';
 $string['modulename'] = 'アンケート';
 $string['modulenameplural'] = 'アンケート';
 $string['mustcomplete'] = '<b>アンケート結果を保存するためには<i>今</i>このアンケートを完了させる必要があります。別の機会に回答することはできません。</b><br /><br />';

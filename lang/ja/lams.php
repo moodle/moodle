@@ -23,7 +23,7 @@ $string['serverkey'] = '<a href=http://www.lamsinternational.com target=_blank>L
 $string['serverurl'] = 'LAMSサーバにアクセスするためのURLを入力してください。例: http://localhost:8080/lams';
 $string['useSequence'] = '選択したシーケンスを使用';
 $string['visibletostudents'] = '活動を学生に表示する';
-$string['wikistartederror'] = '既にWikiの登録データがあります - 変更できません。';
+$string['wikistartederror'] = 'すでにWikiの登録データがあります - 変更できません。';
 $string['workspace'] = 'ワークスペースの選択';
 $string['wrongversionrange'] = '$a は正しい範囲ではありません!';
 
