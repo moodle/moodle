@@ -33,11 +33,11 @@ function migrate2utf8_workshop_stockcomments_comments($recordid){
 /// We are going to use textlib facilities
     $textlib = textlib_get_instance();
 /// Convert the text
-    $result = $textlib->convert($workshopstockcomments->comment, $fromenc);
+    $result = $textlib->convert($workshopstockcomments->comments, $fromenc);
 
     $newworkshopstockcomments = new object;
     $newworkshopstockcomments->id = $recordid;
-    $newworkshopstockcomments->comment = $result;
+    $newworkshopstockcomments->comments = $result;
     update_record('workshop_stockcomments',$newworkshopstockcomments);
 /// And finally, just return the converted field
     return $result;
@@ -54,16 +54,16 @@ function migrate2utf8_workshop_rubrics_description($recordid){
 
     $SQL = "SELECT w.course
            FROM {$CFG->prefix}workshop w,
-                {$CFG->prefix}workshop_stockcomments ws
-           WHERE w.id = ws.workshopid
-                 AND ws.id = $recordid";
+                {$CFG->prefix}workshop_rubrics wr
+           WHERE w.id = wr.workshopid
+                 AND wr.id = $recordid";
 
     if (!$workshop = get_record_sql($SQL)) {
         log_the_problem_somewhere();
         return false;
     }
 
-    if (!$workshoprubrics = get_record('workshop_stockcomments','id',$recordid)) {
+    if (!$workshoprubrics = get_record('workshop_rubrics','id',$recordid)) {
         log_the_problem_somewhere();
         return false;
     }
@@ -82,7 +82,7 @@ function migrate2utf8_workshop_rubrics_description($recordid){
     $newworkshoprubrics = new object;
     $newworkshoprubrics->id = $recordid;
     $newworkshoprubrics->description = $result;
-    update_record('workshop_rubricss',$newworkshoprubrics);
+    update_record('workshop_rubrics',$newworkshoprubrics);
 /// And finally, just return the converted field
     return $result;
 }
@@ -243,5 +243,34 @@ function migrate2utf8_workshop_description($recordid){
 
 function migrate2utf8_workshop_password($recordid){
     global $CFG;
+
+/// Some trivial checks
+    if (empty($recordid)) {
+        log_the_problem_somewhere();
+        return false;
+    }
+
+    if (!$workshop = get_record('workshop','id',$recordid)) {
+        log_the_problem_somewhere();
+        return false;
+    }
+
+    $sitelang   = $CFG->lang;
+    $courselang = get_course_lang($workshop->course);  //Non existing!
+    $userlang   = get_main_teacher_lang($workshop->course); //N.E.!!
+
+    $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+
+/// We are going to use textlib facilities
+    $textlib = textlib_get_instance();
+/// Convert the text
+    $result = $textlib->convert($workshop->password, $fromenc);
+
+    $newworkshop = new object;
+    $newworkshop->id = $recordid;
+    $newworkshop->password = $result;
+    update_record('workshop',$newworkshop);
+/// And finally, just return the converted field
+    return $result;
 }
 ?>
