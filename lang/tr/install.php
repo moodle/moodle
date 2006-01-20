@@ -4,7 +4,7 @@
 
 $string['admindirerror'] = 'Belirtilen yönetici dizini hatalý';
 $string['admindirname'] = 'Yönetici Dizini';
-$string['admindirsetting'] = 'Bir kaç web hosting, kontrol paneline ulaþmak için /admin olarak belirtilmiþ bir URL kullanýyor. Maalesef, bu Moodle yönetici sayfalarýyla bir karýþýklýk ortaya çýkarmaktadýr. Yönetici dizininin ismini kurulum sýrasýnda deðiþtirerek bu sorunu ortadan kaldýrabilirsiniz. Örnek: <br /><br />><b>moodleadmin</b><br /> <br />Bu Moodle içinde yönetici linklerini düzeltecektir.';
+$string['admindirsetting'] = 'Bazý web hostingler kontrol paneline ulaþmak için /admin olarak belirtilmiþ bir URL kullanýyor. Maalesef, bu Moodle yönetici sayfalarýyla bir karýþýklýk ortaya çýkarmaktadýr. Yönetici dizininin ismini kurulum sýrasýnda deðiþtirerek bu sorunu ortadan kaldýrabilirsiniz. Örnek: <br /><br />><b>moodleadmin</b><br /> <br />Bu Moodle içinde yönetici linklerini düzeltecektir.';
 $string['caution'] = 'Dikkat';
 $string['chooselanguage'] = 'Bir dil seçin';
 $string['compatibilitysettings'] = 'PHP ayarlarýnýz kontrol ediliyor...';
@@ -93,9 +93,7 @@ $string['globalsquoteshelp'] = '<p>Pasifleþtirilmiþ Magic Quotes GPC ve etkinleþ
 <p>Php.ini\'ye eriþim hakkýnýz yoksa Moodle dizinindeki .htaccess dosyasýna þu satýrlarý ekleyebilirsiniz:
 <blockquote>php_value magic_quotes_gpc On</blockquote>
 <blockquote>php_value register_globals Off</blockquote>
-</p> 
-
-';
+</p> ';
 $string['installation'] = 'Kurulum';
 $string['magicquotesruntime'] = 'Magic Quotes Run Time';
 $string['magicquotesruntimeerror'] = 'Bu kapalý olmalý';
@@ -154,6 +152,11 @@ $string['sessionautostarterror'] = 'Bu kapalý olmalý';
 $string['sessionautostarthelp'] = '<p>Moodle, oturum desteði gerektirir ve bu olmadan iþlevsel çalýþamaz.</p>
 
 <p>Oturum desteði php.ini dosyasýndan ayarlanabilir ... session.auto_start parametresine bakýn.</p>';
+$string['welcomep10'] = '$a->installername ($a->installerversion)';
+$string['welcomep20'] = 'Bilgisayarýnýza <strong>$a->packname $a->packversion</strong> paketini baþarýyla kurdunuz. Tebrikler!';
+$string['welcomep40'] = 'Bu paket <strong>Moodle $a->moodlerelease ($a->moodleversion)</strong> sürümünü de içerir.';
+$string['welcomep60'] = 'Aþaðýdaki sayfalar <strong>Moodle</strong>ýn kurulumu ve yapýlandýrýlmasý için size basitçe yol gösterecektir. Varsayýlan ayarlarý kabul edebilir veya ihtiyaçlarýnýza göre bunlarý deðiþtirebilirsiniz.';
+$string['welcomep70'] = '<strong>Moodle</strong> kurulumu için aþaðýdaki \"Ýleri\" tuþuna basýn.';
 $string['wwwroot'] = 'Web adresi';
 $string['wwwrooterror'] = 'Web adresi doðru ayarlanmýþ görünmüyor. Moodle kurulumu belirtilen yerde görünmüyor.';
 

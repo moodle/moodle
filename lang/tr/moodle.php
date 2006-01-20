@@ -157,6 +157,7 @@ $string['categoryduplicate'] = '\'$a\' isminde bir kategori zaten var!';
 $string['changedpassword'] = 'Þifre deðiþti';
 $string['changepassword'] = 'Þifre deðiþtir';
 $string['changessaved'] = 'Deðiþiklikler kaydedildi';
+$string['check'] = 'Kontrol et';
 $string['checkingbackup'] = 'Yedek kontrol ediliyor';
 $string['checkingcourse'] = 'Kurs kontrol ediliyor';
 $string['checkingforbbexport'] = 'BlackBoard çýkarmasý için kontrol ediliyor';
@@ -164,6 +165,7 @@ $string['checkinginstances'] = 'Tekrarlarý kontrol ediliyor';
 $string['checkingsections'] = 'Bölümler kontrol ediliyor';
 $string['checklanguage'] = 'Dili kontrol et';
 $string['childcoursenotfound'] = 'Alt kurs bulunamadý';
+$string['childcourses'] = 'Alt kurslar';
 $string['choose'] = 'Seç';
 $string['choosecourse'] = 'Bir kurs seçiniz';
 $string['chooseenrolmethod'] = 'Birincil kayýt yöntemi';
@@ -821,6 +823,26 @@ $string['newsitem'] = 'haber baþlýðý';
 $string['newsitems'] = 'haber baþlýðý';
 $string['newsitemsnumber'] = 'Gösterilecek haber';
 $string['newuser'] = 'Yeni Kullanýcý';
+$string['newusernewpasswordsubj'] = 'Yeni kullanýcý hesabý';
+$string['newusernewpasswordtext'] = 'Merhaba $a->firstname,
+
+Size \'$a->sitename\' sitesinde yeni bir hesap ve geçici bir þifre oluþturuldu.
+
+Þimdiki giriþ bilgileriniz:
+
+Kullanýcý adý: $a->username
+Þifre: $a->newpassword
+(ilk kez giriþ yaptýðýnýzda þifrenizi deðiþtirmeniz gerekiyor)
+
+\'$a->sitename\' kullanýmýna baþlamak için buradan giriþ yapýn:
+$a->link
+
+Bu baðlantýyý týkladýðýnýzda yeni sayfada site açýlacaktýr. Eðer açýlmýyorsa yukarýdaki baðlantýyý gezgininizin adres satýrýna kopyalayýnýz.
+
+Saygilar
+\'$a->sitename\' Yönetimi,
+$a->signoff
+';
 $string['newusers'] = 'Yeni Kullanýcýlar';
 $string['next'] = 'Sonraki';
 $string['no'] = 'Hayýr';
@@ -1019,6 +1041,13 @@ $string['searchcourses'] = 'Dersleri ara';
 $string['searchhelp'] = 'Bir seferde birden fazla kelimeyle arama yapabilirsiniz.<br />kelime: metinde bu kelimeyle ilgili herhangi bir kayýt bul.<br />+kelime: sadece eþleþen kelimeyi bul.<br />-kelime: bu kelimeyi içeren sonuç getirme';
 $string['searchresults'] = 'Arama sonuçlarý';
 $string['sec'] = 'sn';
+$string['secondstotime172800'] = '2 gün';
+$string['secondstotime259200'] = '3 gün';
+$string['secondstotime345600'] = '4 gün';
+$string['secondstotime432000'] = '5 gün';
+$string['secondstotime518400'] = '6 gün';
+$string['secondstotime604800'] = '1 hafta';
+$string['secondstotime86400'] = '1 gün';
 $string['secs'] = 'sn';
 $string['section'] = 'Bölüm';
 $string['sections'] = 'Bölümler';

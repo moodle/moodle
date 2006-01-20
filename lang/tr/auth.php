@@ -1,8 +1,16 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.6 development (2005081700)
+      // auth.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['alternateloginurl'] = 'Alternatif giriþ URL';
+$string['auth_cas_language'] = 'Seçili dil';
+$string['auth_cas_logincas'] = 'Güvenli baðlantý eriþimi';
+$string['auth_cas_port'] = 'CAS sunucu portu';
+$string['auth_cas_server_settings'] = 'CAS sunucu yapýlandýrmasý';
+$string['auth_cas_text'] = 'Güvenli baðlantý';
+$string['auth_cas_version'] = 'CAS sürümü';
+$string['auth_changepasswordhelp'] = 'Þifre deðiþtirme yardýmý';
+$string['auth_changepasswordurl'] = 'Þifre deðiþtirme adresi';
 $string['auth_common_settings'] = 'Genel Ayarlar';
 $string['auth_data_mapping'] = 'Veri Ýliþkilendirmesi';
 $string['auth_dbextrafields'] = 'Bu alanlar isteðe baðlýdýr. Burada belirttiðiniz <b>harici veritabaný alanlarýndaki</b> bilgilerden saðlanan kullanýcý alanlarýnýn bazýlarýnýn, önceden doldurulmasýný saðlayabilirsiniz. <p>Bu alanlarý boþ býrakýrsanýz, varsayýlanlar kullanýlacaktýr.</p><p>Diðer durumda, kullanýcýlar giriþ yaptýktan sonra bu alnlarý deðiþtirebilileceklerdir.</p>';
@@ -18,6 +26,7 @@ $string['auth_dbtype'] = 'Veritabaný tipi (Ayrýntýlar için <a href=\"../lib/adod
 $string['auth_dbuser'] = 'Veritabaný kullanýcýsý';
 $string['auth_emaildescription'] = 'Email onayý varsayýlan yetkilendirme yöntemidir. Kullanýcý kendi seçtiði kullanýcý adý ve þifreyle kaydolduðunda kullanýcýnýn adresine bir onay emaili gönderilir. Bu email, kullanýcýnýn hesabýný onaylayabileceði güvenli bir baðlantý içerir.';
 $string['auth_emailtitle'] = 'Email-temelli yetki';
+$string['auth_fcfppport'] = 'Sunucu portu (en geneli 3333)';
 $string['auth_fctitle'] = 'FirstClass sunucusu kullan';
 $string['auth_fieldlock'] = 'Deðeri kilitle';
 $string['auth_fieldlock_expl'] = '<p><b>Deðeri kilitle:</b> Etkinleþtirilirse, bu alanýn kullanýcýlar ve yöneticiler tarafýndan düzenlenmesi engellenecektir. Harici yetkilendirme sistemlerinde bu alaný düzenliyorsanýz bu seçeneði kullanabilirsiniz.</p>';

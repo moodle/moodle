@@ -48,6 +48,20 @@ $string['anreferer'] = 'Authorize.net hesabýnýzda URL referer ayarý yaptýysanýz 
 $string['antestmode'] = 'Ýþlemleri deneme modunda çalýþtýr (para çekilmez)';
 $string['antrankey'] = 'Authorize.net: Ýþlem Anahtarý (Transaction Key)';
 $string['authorizedpendingcapture'] = 'Onaylanmýþ / Çekilmeyi Bekliyor';
+$string['avsa'] = 'Adres (cadde) uydu, posta kodu uymadý';
+$string['avsb'] = 'Adres bilgisi verilmedi';
+$string['avse'] = 'Adres Doðrulama Sistemi Hatasý';
+$string['avsg'] = 'ABD dýþý kart yayýncýsý';
+$string['avsn'] = 'Ne adres (cadde) ne de posta kodu uymadý';
+$string['avsp'] = 'Adres Doðrulama Sistemi uygulanamaz';
+$string['avsr'] = 'Tekrar dene - Sistem eriþilemez veya zaman aþýmý';
+$string['avsresult'] = 'Adres Doðrulama:';
+$string['avss'] = 'Servis, yayýncý tarafýndan desteklenmiyor';
+$string['avsu'] = 'Adres bilgisine eriþilemiyor';
+$string['avsw'] = '9 rakamlýk posta kodu eþleþti, adres (cadde) eþleþmedi';
+$string['avsx'] = 'Adres (cadde) ve 9 rakamlýk posta kodu eþleþti';
+$string['avsy'] = 'Adres (cadde) ve 5 rakamlýk posta kodu eþleþti';
+$string['avsz'] = '5 rakamlýk posta kodu eþleþti, adres (cadde) eþleþmedi';
 $string['canbecredit'] = '$a->upto\'a kadar geri ödenebilir';
 $string['cancelled'] = 'Ýptal edilmiþ';
 $string['capture'] = 'Çek';
@@ -79,6 +93,12 @@ $string['logindesc'] = 'Bu seçenek AÇIK olmalý.
 <a href=\"$a->url\">Loginhttps</a> seçeneðini Deðiþkenler/Güvenlik bölümünden ayarlayabilirsiniz.
 <br /><br />
 Bu seçenek aktif ise sadece giriþ ve ödeme sayfalarý için güvenli baðlantý (https) kullanýlacaktýr.';
+$string['missingaddress'] = 'Adres eksik';
+$string['missingcc'] = 'Kart no eksik';
+$string['missingccexpire'] = 'Son kullanma tarihi eksik';
+$string['missingcctype'] = 'Kart tipi eksik';
+$string['missingcvv'] = 'Onay no eksik';
+$string['missingzip'] = 'Posta kodu eksik';
 $string['nameoncard'] = 'Kart Üzerindeki Ýsim';
 $string['noreturns'] = 'Geri ödeme yok';
 $string['notsettled'] = 'Faturalandýrýlmamýþ';
@@ -96,6 +116,18 @@ $a->url
 
 Otomatik-çekmeyi etkinleþtirmek için:
 $a->enrolurl';
+$string['reason11'] = 'Ayný iþlem gönderildi.';
+$string['reason13'] = 'Maðaza Giriþ ID hatalý veya hesap etkin deðil';
+$string['reason16'] = 'Ýþlem bulunamadý.';
+$string['reason17'] = 'Maðaza, bu kredi kartý tipini kabul etmiyor.';
+$string['reason27'] = 'Ýþlem AVS hatasýna sebep oldu. Verilen adres kart sahibinin adresiyle eþleþmiyor.';
+$string['reason28'] = 'Maðaza, bu kredi kartý tipini kabul etmiyor.';
+$string['reason30'] = 'Ýþleyici yapýlandýrmasý hatalý. Müþteri Hizmetlerini arayýn.';
+$string['reason39'] = 'Verilen para birimi ya hatalý ya desteklenmiyor ya bu maðaza buna izin vermiyor ya da döviz kuru yok.';
+$string['reason43'] = 'Maðaza iþleyiciyi hatalý yapýlandýrdý. Müþteri Hizmetlerini arayýn.';
+$string['reason44'] = 'Ýþlem reddedildi. Kart kodu süzgeci hatasý!';
+$string['reason45'] = 'Ýþlem reddedildi. Kart kodu / Adres süzgeci hatasý!';
+$string['reason5'] = 'Geçerli bir miktar gerekli.';
 $string['refund'] = 'Geri Öde';
 $string['refunded'] = 'Geri ödenmiþ';
 $string['returns'] = 'Geri ödemeler';
