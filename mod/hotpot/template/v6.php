@@ -537,7 +537,27 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
 	// Jmix specials
 
 	function v6_expand_SegmentArray() {
-		$segments = $this->parent->xml_values('data,jumbled-order-exercise,main-order,segment');
+
+		$segments = array();
+		$values = array();
+		$VALUES = array();
+
+		// XML tags to the start of a segment
+		$tags = 'data,jumbled-order-exercise,main-order,segment';
+
+		$i = 0;
+		while ($value = $this->parent->xml_value($tags, "[$i]['#']")) {
+			$VALUE = strtoupper($value);
+			$key = array_search($VALUE, $VALUES);
+			if (is_numeric($key)) {
+				$segments[] = $key;
+			} else {
+				$segments[] = $i;
+				$values[$i] = $value;
+				$VALUES[$i] = $VALUE;
+			}
+			$i++;
+		}
 
 		$this->seed_random_number_generator();
 		$keys = array_keys($segments);
@@ -545,44 +565,68 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
 
 		$str = '';
 		for($i=0; $i<count($keys); $i++) {
+			$key = $segments[$keys[$i]];
 			$str .= "Segments[$i] = new Array();\n";
-			$str .= "Segments[$i][0] = '".$this->js_safe($segments[$keys[$i]])."';\n";
-			$str .= "Segments[$i][1] = ".($keys[$i]+1).";\n";
+			$str .= "Segments[$i][0] = '".$this->js_safe($values[$key], true)."';\n";
+			$str .= "Segments[$i][1] = ".($key+1).";\n";
 			$str .= "Segments[$i][2] = 0;\n";
 		}
 		return $str;
 	}
 	function v6_expand_AnswerArray() {
 
-		$segments = $this->parent->xml_values('data,jumbled-order-exercise,main-order,segment');
-		$alternates = $this->parent->xml_values('data,jumbled-order-exercise,alternate');
+		$segments = array();
+		$values = array();
+		$VALUES = array();
+		$escapedvalues = array();
+
+		// XML tags to the start of a segment
+		$tags = 'data,jumbled-order-exercise,main-order,segment';
 
 		$i = 0;
-		$pattern = '';
-		$str = 'Answers['.$i++.'] = new Array(';
-		for($ii=0; $ii<count($segments); $ii++) {
-			$str .= ($ii==0 ? '' : ',').($ii+1);
-			$pattern .= (empty($pattern) ? '' : '|').preg_quote($segments[$ii], '/');
+		while ($value = $this->parent->xml_value($tags, "[$i]['#']")) {
+			$VALUE = strtoupper($value);
+			$key = array_search($VALUE, $VALUES);
+			if (is_numeric($key)) {
+				$segments[] = $key+1;
+			} else {
+				$segments[] = $i+1;
+				$values[$i] = $value;
+				$VALUES[$i] = $VALUE;
+				$escapedvalues[] = preg_quote($value, '/');
+			}
+			$i++;
 		}
-		$str .= ");\n";
-		$pattern = '/^('.$pattern.')\\s*/';
 
-		foreach ($alternates as $alternate) {
-			$ii = 0;
-			$str .= 'Answers['.$i++.'] = new Array(';
-			while (!empty($alternate) && preg_match($pattern, $alternate, $matches)) {
-				$iii = array_search($matches[1], $segments);
-				if (is_int($iii)) {
-					$str .= ($ii==0 ? '' : ',').($iii+1);
-					$alternate = substr($alternate, strlen($matches[0]));
-					$ii++;
+		// start the answers array
+		$a = 0;
+		$str = 'Answers['.($a++).'] = new Array('.implode(',', $segments).");\n";
+
+		// pattern to match the next part of an alternate answer
+		$pattern = '/^('.implode('|', $escapedvalues).')\\s*/';
+
+		// XML tags to the start of an alternate answer
+		$tags = 'data,jumbled-order-exercise,alternate';
+
+		$i = 0;
+		while ($value = $this->parent->xml_value($tags, "[$i]['#']")) {
+			$segments = array();
+			$value = strtolower($value);
+			while (strlen($value) && preg_match($pattern, $value, $matches)) {
+				$key = array_search($matches[1], $values);
+				if (is_numeric($key)) {
+					$segments[] = $key+1;
+					$value = substr($value, strlen($matches[0]));
 				} else {
-					// $matches[1] was not found in $segments!
-					// something is very wrong, so abort the loop
-					break; 
+					// invalid alternate sequence
+					$segments = array();
+					break;
 				}
 			}
-			$str .= ");\n";
+			if (count($segments)) {
+				$str .= 'Answers['.($a++).'] = new Array('.implode(',', $segments).");\n";
+			}
+			$i++;
 		}
 		return $str;
 	}
