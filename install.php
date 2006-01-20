@@ -751,6 +751,10 @@ function css_styles() {
     .p_mainheading {
         font-size: 11pt;
     }
+    .p_subheading {
+        font-size: 10pt;
+        padding: 10px;
+    }
     .p_mainheader{
         text-align: right;
         font-size: 20pt;
