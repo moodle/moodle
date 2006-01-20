@@ -122,21 +122,13 @@
       <FIELDS>
         <FIELD name="md5key" method="NO_CONV" type="varchar" length="32"  dropindex="filtermd5key"/>
         <FIELD name="filter" method="NO_CONV" type="varchar" length="32"  addindex="filtermd5key(filter(32),md5key(32))"/>
-        <FIELD name="rawtext" method="PHP_FUNCTION" type="text" length="0">
-          <PHP_FUNCTION>
-            migrate2utf8_cache_filters_rawtext(RECORDID)
-          </PHP_FUNCTION>
-        </FIELD>
+        <FIELD name="rawtext" method="NO_CONV" type="text" length="0" />
       </FIELDS>
     </TABLE>
     <TABLE name="cache_text">
       <FIELDS>
         <FIELD name="md5key" method="NO_CONV" type="varchar" length="32" dropindex="md5key" addindex="md5key(md5key(32))"/>
-        <FIELD name="formattedtext" method="PHP_FUNCTION" type="longtext" length="0">
-          <PHP_FUNCTION>
-            migrate2utf8_cache_filters_formattedtext(RECORDID)
-          </PHP_FUNCTION>
-        </FIELD>
+        <FIELD name="formattedtext" method="NO_CONV" type="longtext" length="0" />
       </FIELDS>
     </TABLE>
     <TABLE name="grade_item" />
@@ -173,14 +165,15 @@
             migrate2utf8_groups_description(RECORDID)
           </PHP_FUNCTION>
         </FIELD>
+        <FIELD name="password" method="PHP_FUNCTION" type="varchar" length="50">
+          <PHP_FUNCTION>
+            migrate2utf8_groups_password(RECORDID)
+          </PHP_FUNCTION>
+        </FIELD>
+        <FIELD name="theme" method="NO_CONV" type="varchar" length="50" />
         <FIELD name="lang" method="PHP_FUNCTION" type="varchar" length="10" default="en">
           <PHP_FUNCTION>
             migrate2utf8_groups_lang(RECORDID)
-          </PHP_FUNCTION>
-        </FIELD>
-        <FIELD name="theme" method="PHP_FUNCTION" type="varchar" length="50">
-          <PHP_FUNCTION>
-            migrate2utf8_groups_theme(RECORDID)
           </PHP_FUNCTION>
         </FIELD>
       </FIELDS>
@@ -191,18 +184,7 @@
         <FIELD name="module" method="NO_CONV" type="varchar" length="20" dropindex="coursemoduleaction"/>
         <FIELD name="action" method="NO_CONV" type="varchar" length="15"  addindex="timecoursemoduleaction(time, course, module(20), action(15))" />
         <FIELD name="url" method="NO_CONV" type="varchar" length="100" addindex="coursemoduleaction(course, module(20), action(15))" />
-        <FIELD name="info" method="PLAIN_SQL_UPDATE" type="varchar" length="255">
-          <SQL_DETECT_USER>
-            SELECT l.userid
-            FROM {$CFG->prefix}log l
-            WHERE l.id = RECORDID
-          </SQL_DETECT_USER>
-          <SQL_DETECT_COURSE>
-            SELECT l.course
-            FROM {$CFG->prefix}log l
-            WHERE l.id = RECORDID
-          </SQL_DETECT_COURSE>
-        </FIELD>
+        <FIELD name="info" method="NO_CONV" type="varchar" length="255" />
       </FIELDS>
     </TABLE>
     <TABLE name="log_display">
@@ -253,7 +235,7 @@
             WHERE s.id = RECORDID
           </SQL_DETECT_USER>
           <SQL_DETECT_COURSE>
-            SELECT s.courseid
+            SELECT s.courseid as course
             FROM {$CFG->prefix}scale s
             WHERE s.id = RECORDID
           </SQL_DETECT_COURSE>
@@ -265,7 +247,7 @@
             WHERE s.id = RECORDID
           </SQL_DETECT_USER>
           <SQL_DETECT_COURSE>
-            SELECT s.courseid
+            SELECT s.courseid as course
             FROM {$CFG->prefix}scale s
             WHERE s.id = RECORDID
           </SQL_DETECT_COURSE>
@@ -277,7 +259,7 @@
             WHERE s.id = RECORDID
           </SQL_DETECT_USER>
           <SQL_DETECT_COURSE>
-            SELECT s.courseid
+            SELECT s.courseid as course
             FROM {$CFG->prefix}scale s
             WHERE s.id = RECORDID
           </SQL_DETECT_COURSE>
@@ -306,7 +288,7 @@
     </TABLE>
     <TABLE name="user_teachers">
       <FIELDS>
-        <FIELD name="role" method="NO_CONV" type="varchar" length="40">
+        <FIELD name="role" method="PLAIN_SQL_UPDATE" type="varchar" length="40">
           <SQL_DETECT_USER>
             SELECT ut.userid
             FROM {$CFG->prefix}user_teachers ut
@@ -347,75 +329,6 @@
     </TABLE>
     <TABLE name="user_admins" />
     <TABLE name="user_coursecreators" />
-    <TABLE name="user">
-      <FIELDS>
-        <FIELD name="auth" method="NO_CONV" type="varchar" length="20" dropindex="auth" addindex="auth(auth(20))" default="manual"/>
-        <FIELD name="username" method="NO_CONV" type="varchar" length="100" dropindex="username" adduniqueindex="username(username(100))"/>
-        <FIELD name="password" method="PHP_FUNCTION" type="varchar" length="32">
-          <PHP_FUNCTION>
-            migrate2utf8_user_password(RECORDID)
-          </PHP_FUNCTION>
-        </FIELD>
-        <FIELD name="idnumber" method="PHP_FUNCTION" type="varchar" length="64" dropindex="idnumber" addindex="idnumber(idnumber(64))">
-          <PHP_FUNCTION>
-            migrate2utf8_user_idnumber(RECORDID)
-          </PHP_FUNCTION>
-        </FIELD>
-        <FIELD name="firstname" method="PHP_FUNCTION" type="varchar" length="20" dropindex="user_firstname" addindex="user_firstname(firstname(20))">
-          <PHP_FUNCTION>
-            migrate2utf8_user_firstname(RECORDID)
-          </PHP_FUNCTION>
-        </FIELD>
-        <FIELD name="lastname" method="PHP_FUNCTION" type="varchar" length="20" dropindex="user_lastname" addindex="user_lastname(lastname(20))">
-          <PHP_FUNCTION>
-            migrate2utf8_user_lastname(RECORDID)
-          </PHP_FUNCTION>
-        </FIELD>
-        <FIELD name="email" method="NO_CONV" type="varchar" length="100" dropindex="user_email" addindex="user_email(email(100))"/>
-        <FIELD name="icq" method="NO_CONV" type="varchar" length="15" />
-        <FIELD name="skype" method="NO_CONV" type="varchar" length="50" />
-        <FIELD name="yahoo" method="NO_CONV" type="varchar" length="50" />
-        <FIELD name="aim" method="NO_CONV" type="varchar" length="50" />
-        <FIELD name="msn" method="NO_CONV" type="varchar" length="50" />
-        <FIELD name="phone1" method="NO_CONV" type="varchar" length="20" />
-        <FIELD name="phone2" method="NO_CONV" type="varchar" length="20" />
-        <FIELD name="institution" method="PHP_FUNCTION" type="varchar" length="40">
-          <PHP_FUNCTION>
-            migrate2utf8_user_institution(RECORDID)
-          </PHP_FUNCTION>
-        </FIELD>
-        <FIELD name="department" method="PHP_FUNCTION" type="varchar" length="30">
-          <PHP_FUNCTION>
-            migrate2utf8_user_department(RECORDID)
-          </PHP_FUNCTION>
-        </FIELD>
-        <FIELD name="address" method="PHP_FUNCTION" type="varchar" length="70">
-          <PHP_FUNCTION>
-            migrate2utf8_user_address(RECORDID)
-          </PHP_FUNCTION>
-        </FIELD>
-        <FIELD name="city" method="PHP_FUNCTION" type="varchar" length="20" dropindex="user_city" addindex="user_city(city(20))">
-          <PHP_FUNCTION>
-            migrate2utf8_user_city(RECORDID)
-          </PHP_FUNCTION>
-        </FIELD>
-        <FIELD name="country" method="NO_CONV" type="char" length="2" dropindex="user_country" addindex="user_country(country(2))"/>
-        <FIELD name="theme" method="NO_CONV" type="varchar" length="50" />
-        <FIELD name="timezone" method="NO_CONV" type="varchar" length="100" />
-        <FIELD name="lastIP" method="NO_CONV" type="varchar" length="15" />
-        <FIELD name="secret" method="PHP_FUNCTION" type="varchar" length="15">
-          <PHP_FUNCTION>
-            migrate2utf8_user_secret(RECORDID)
-          </PHP_FUNCTION>
-        </FIELD>
-        <FIELD name="url" method="NO_CONV" type="varchar" length="255" />
-        <FIELD name="description" method="PHP_FUNCTION" type="text" length="0">
-          <PHP_FUNCTION>
-            migrate2utf8_user_description(RECORDID)
-          </PHP_FUNCTION>
-        </FIELD>
-      </FIELDS>
-    </TABLE>
     <TABLE name="course">
       <FIELDS>
         <FIELD name="password" method="PHP_FUNCTION" type="varchar" length="50">
@@ -475,7 +388,81 @@
           </PHP_FUNCTION>
         </FIELD>
         <FIELD name="theme" method="NO_CONV" type="varchar" length="50" />
-        <FIELD name="lang" method="NO_CONV" type="varchar" length="10" default="en" />
+        <FIELD name="lang" method="PHP_FUNCTION" type="varchar" length="10" default="en_utf8">
+          <PHP_FUNCTION>
+            migrate2utf8_user_lang(RECORDID)
+          </PHP_FUNCTION>
+        </FIELD>
+      </FIELDS>
+    </TABLE>
+    <TABLE name="user">
+      <FIELDS>
+        <FIELD name="auth" method="NO_CONV" type="varchar" length="20" dropindex="auth" addindex="auth(auth(20))" default="manual"/>
+        <FIELD name="username" method="NO_CONV" type="varchar" length="100" dropindex="username" adduniqueindex="username(username(100))"/>
+        <FIELD name="password" method="NO_CONV" type="varchar" length="32" />
+        <FIELD name="idnumber" method="PHP_FUNCTION" type="varchar" length="64" dropindex="idnumber" addindex="idnumber(idnumber(64))">
+          <PHP_FUNCTION>
+            migrate2utf8_user_idnumber(RECORDID)
+          </PHP_FUNCTION>
+        </FIELD>
+        <FIELD name="firstname" method="PHP_FUNCTION" type="varchar" length="20" dropindex="user_firstname" addindex="user_firstname(firstname(20))">
+          <PHP_FUNCTION>
+            migrate2utf8_user_firstname(RECORDID)
+          </PHP_FUNCTION>
+        </FIELD>
+        <FIELD name="lastname" method="PHP_FUNCTION" type="varchar" length="20" dropindex="user_lastname" addindex="user_lastname(lastname(20))">
+          <PHP_FUNCTION>
+            migrate2utf8_user_lastname(RECORDID)
+          </PHP_FUNCTION>
+        </FIELD>
+        <FIELD name="email" method="NO_CONV" type="varchar" length="100" dropindex="user_email" addindex="user_email(email(100))"/>
+        <FIELD name="icq" method="NO_CONV" type="varchar" length="15" />
+        <FIELD name="skype" method="NO_CONV" type="varchar" length="50" />
+        <FIELD name="yahoo" method="NO_CONV" type="varchar" length="50" />
+        <FIELD name="aim" method="NO_CONV" type="varchar" length="50" />
+        <FIELD name="msn" method="NO_CONV" type="varchar" length="50" />
+        <FIELD name="phone1" method="NO_CONV" type="varchar" length="20" />
+        <FIELD name="phone2" method="NO_CONV" type="varchar" length="20" />
+        <FIELD name="institution" method="PHP_FUNCTION" type="varchar" length="40">
+          <PHP_FUNCTION>
+            migrate2utf8_user_institution(RECORDID)
+          </PHP_FUNCTION>
+        </FIELD>
+        <FIELD name="department" method="PHP_FUNCTION" type="varchar" length="30">
+          <PHP_FUNCTION>
+            migrate2utf8_user_department(RECORDID)
+          </PHP_FUNCTION>
+        </FIELD>
+        <FIELD name="address" method="PHP_FUNCTION" type="varchar" length="70">
+          <PHP_FUNCTION>
+            migrate2utf8_user_address(RECORDID)
+          </PHP_FUNCTION>
+        </FIELD>
+        <FIELD name="city" method="PHP_FUNCTION" type="varchar" length="20" dropindex="user_city" addindex="user_city(city(20))">
+          <PHP_FUNCTION>
+            migrate2utf8_user_city(RECORDID)
+          </PHP_FUNCTION>
+        </FIELD>
+        <FIELD name="country" method="NO_CONV" type="char" length="2" dropindex="user_country" addindex="user_country(country(2))"/>
+        <FIELD name="theme" method="NO_CONV" type="varchar" length="50" />
+        <FIELD name="timezone" method="NO_CONV" type="varchar" length="100" />
+        <FIELD name="lastIP" method="NO_CONV" type="varchar" length="15" />
+        <FIELD name="secret" method="PHP_FUNCTION" type="varchar" length="15">
+          <PHP_FUNCTION>
+            migrate2utf8_user_secret(RECORDID)
+          </PHP_FUNCTION>
+        </FIELD>
+        <FIELD name="url" method="NO_CONV" type="varchar" length="255" />
+        <FIELD name="description" method="PHP_FUNCTION" type="text" length="0">
+          <PHP_FUNCTION>
+            migrate2utf8_user_description(RECORDID)
+          </PHP_FUNCTION>
+        </FIELD>
+        <FIELD name="lang" method="PHP_FUNCTION" type="varchar" length="10">
+          <PHP_FUNCTION>
+            migrate2utf8_user_lang(RECORDID)
+          </PHP_FUNCTION>
+        </FIEND>
       </FIELDS>
     </TABLE>
   </TABLES>
