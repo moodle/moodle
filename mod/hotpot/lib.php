@@ -261,7 +261,7 @@ function hotpot_set_form_values(&$hp) {
 				$ok = hotpot_update_chain($hp);
 			break;
 		}
-	} else {
+	} else { // $hp->quizchain==HOTPOT_NO
 		hotpot_set_name_summary_reference($hp);
 	}
 
@@ -301,7 +301,6 @@ function hotpot_set_form_values(&$hp) {
 			set_user_preference('hotpot_summarysource', $hp->summarysource);
 		}
 	}
-
 	return $ok;
 }
 function hotpot_get_chain(&$cm) {
@@ -554,9 +553,9 @@ function hotpot_set_name_summary_reference(&$hp, $chain_index=NULL) {
 			switch ($hp->$textsource) {
 				case HOTPOT_TEXTSOURCE_QUIZ:
 					if ($textfield=='name') {
-						$hp->exercisetitle = addslashes($hp->names[$chain_index]);
+						$hp->exercisetitle = $hp->names[$chain_index];
 					} else if ($textfield=='summary') {
-						$hp->exercisesubtitle = addslashes($hp->summaries[$chain_index]);
+						$hp->exercisesubtitle = $hp->summaries[$chain_index];
 					}
 					break;
 				case HOTPOT_TEXTSOURCE_SPECIFIC:
@@ -577,9 +576,9 @@ function hotpot_set_name_summary_reference(&$hp, $chain_index=NULL) {
 				hotpot_get_titles_and_next_ex($hp, $xml_quiz->filepath);
 			}
 			if ($textfield=='name') {
-				$hp->$textfield = $hp->exercisetitle;
+				$hp->$textfield = addslashes($hp->exercisetitle);
 			} else if ($textfield=='summary') {
-				$hp->$textfield = $hp->exercisesubtitle;
+				$hp->$textfield = addslashes($hp->exercisesubtitle);
 			}
 		}
 		switch ($hp->$textsource) {
