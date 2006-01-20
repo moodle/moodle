@@ -10,18 +10,40 @@ $string['admindirsetting'] = '    A very few webhosts use /admin as a special UR
     renaming the admin directory in your installation, and putting that 
     new name here.  For example: <br /> <br /><b>moodleadmin</b><br /> <br />
     This will fix admin links in Moodle.';
+$string['admindirsettinghead'] = 'Setting the admin directory ...';
+$string['admindirsettingsub'] = '    A very few webhosts use /admin as a special URL for you to access a 
+    control panel or something.  Unfortunately this conflicts with the 
+    standard location for the Moodle admin pages.  You can fix this by 
+    renaming the admin directory in your installation, and putting that 
+    new name here.  For example: <br /> <br /><b>moodleadmin</b><br /> <br />
+    This will fix admin links in Moodle.';
 $string['caution'] = 'Caution';
 $string['chooselanguage'] = 'Choose a language';
+$string['chooselanguagehead'] = 'Choose a language';
+$string['chooselanguagesub'] = '';
 $string['compatibilitysettings'] = 'Checking your PHP settings ...';
+$string['compatibilitysettingshead'] = 'Checking your PHP settings ...';
+$string['compatibilitysettingssub'] = '';
 $string['configfilenotwritten'] = 'The installer script was not able to automatically create a config.php file containing your chosen settings, probably because the Moodle directory is not writeable. You can manually copy the following code into a file named config.php within the root directory of Moodle.';
 $string['configfilewritten'] = 'config.php has been successfully created';
 $string['configurationcomplete'] = 'Configuration completed';
+$string['configurationcompletehead'] = 'Configuration completed';
+$string['configurationcompletesub'] = '';
 $string['database'] = 'Database';
 $string['databasesettings'] = '    Now you need to configure the database where most Moodle data
     will be stored.  This database must already have been created
     and a username and password created to access it.<br />
     <br /> <br />
        <b>Type:</b> mysql or postgres7<br />
+       <b>Host:</b> eg localhost or db.isp.com<br />
+       <b>Name:</b> database name, eg moodle<br />
+       <b>User:</b> your database username<br />
+       <b>Password:</b> your database password<br />
+       <b>Tables Prefix:</b> optional prefix to use for all table names';
+$string['databasesettingshead'] = 'Now you need to configure the database where most Moodle data
+    will be stored.  This database must already have been created
+    and a username and password created to access it.';
+$string['databasesettingssub'] = '<b>Type:</b> mysql or postgres7<br />
        <b>Host:</b> eg localhost or db.isp.com<br />
        <b>Name:</b> database name, eg moodle<br />
        <b>User:</b> your database username<br />
@@ -62,6 +84,22 @@ You need a place where Moodle can save uploaded files.  This
 directory should be readable AND WRITEABLE by the web server user 
 (usually \'nobody\' or \'apache\'), but it should not be accessible 
 directly via the web.</p>';
+$string['directorysettingshead'] = 'Please confirm the locations of this Moodle installation';
+$string['directorysettingssub'] ='<b>Web Address:</b>
+Specify the full web address where Moodle will be accessed.  
+If your web site is accessible via multiple URLs then choose the 
+most natural one that your students would use.  Do not include 
+a trailing slash.
+<p />
+<b>Moodle Directory:</b>
+Specify the full directory path to this installation
+Make sure the upper/lower case is correct.
+<p />
+<b>Data Directory:</b>
+You need a place where Moodle can save uploaded files.  This
+directory should be readable AND WRITEABLE by the web server user 
+(usually \'nobody\' or \'apache\'), but it should not be accessible 
+directly via the web.';
 $string['dirroot'] = 'Moodle Directory';
 $string['dirrooterror'] = 'The \'Moodle Directory\' setting seems to be incorrect - we can\'t find a Moodle installation there.  The value below has been reset.';
 $string['download'] = 'Download';
