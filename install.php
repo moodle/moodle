@@ -85,14 +85,21 @@ if ($INSTALL['wwwroot'] == '') {
     list($INSTALL['wwwroot'], $xtra) = explode('/install.php', qualified_me());
 }
 
-$stagetext = array(WELCOME       => get_string('chooselanguage', 'install'),
-                   COMPATIBILITY => get_string('compatibilitysettings', 'install'),
-                   DIRECTORY     => get_string('directorysettings', 'install'),
-                   DATABASE      => get_string('databasesettings', 'install'),
-                   ADMIN         => get_string('admindirsetting', 'install'),
-                   SAVE          => get_string('configurationcomplete', 'install')
-                    );
+$headstagetext = array(WELCOME       => get_string('chooselanguagehead', 'install'),
+                       COMPATIBILITY => get_string('compatibilitysettingshead', 'install'),
+                       DIRECTORY     => get_string('directorysettingshead', 'install'),
+                       DATABASE      => get_string('databasesettingshead', 'install'),
+                       ADMIN         => get_string('admindirsettinghead', 'install'),
+                       SAVE          => get_string('configurationcompletehead', 'install')
+                        );
 
+$substagetext = array(WELCOME       => get_string('chooselanguagesub', 'install'),
+                      COMPATIBILITY => get_string('compatibilitysettingssub', 'install'),
+                      DIRECTORY     => get_string('directorysettingssub', 'install'),
+                      DATABASE      => get_string('databasesettingssub', 'install'),
+                      ADMIN         => get_string('admindirsettingsub', 'install'),
+                      SAVE          => get_string('configurationcompletesub', 'install')
+                       );
 
 
 
@@ -370,7 +377,10 @@ if (isset($_GET['help'])) {
 
     <tr>
         <td class="td_mainheading" colspan="2">
-            <p class="p_mainheading"><?php echo $stagetext[$nextstage] ?></p>
+            <p class="p_mainheading"><?php echo $headstagetext[$nextstage] ?></p>
+            <?php if (!empty($substagetext[$nextstage])) { ?>
+            <p class="p_subheading"><?php echo $substagetext[$nextstage] ?></p>
+            <?php } ?>
         </td>
     </tr>
 
