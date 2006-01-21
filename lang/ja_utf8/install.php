@@ -19,12 +19,19 @@ $string['configfilewritten'] = 'config.phpが正常に作成されました。';
 $string['configurationcomplete'] = '設定が完了しました。';
 $string['configurationcompletehead'] = '設定が完了しました。';
 $string['database'] = 'データベース';
-$string['databasecreationsettings'] = 'ほとんどのMoodleデータが保存されるデータベース設定を行ってください。このデータベースはMoodle4Windowsインストーラーにより、下記の設定が指定された形で自動的に作成されます。<br />
+$string['databasecreationsettings'] = 'ほとんどのMoodleデータが保存されるデータベース設定を行ってください。このデータベースはインストーラーにより、下記の設定が指定された形で自動的に作成されます。<br />
 <br /> <br />
 <b>タイプ:</b> インストーラーにより「mysql」に固定されます。<br />
 <b>ホスト:</b> インストーラーにより「localhost」に固定されます。<br />
 <b>データベース名:</b> データベース名、例 moodle<br />
 <b>ユーザ名:</b> インストーラーにより「root」に固定されます。<br />
+<b>パスワード:</b> あなたのデータベースパスワードです。<br />
+<b>テーブル接頭辞:</b> すべてのテーブル名に使用される任意の接頭辞です。';
+$string['databasecreationsettingshead'] = 'ほとんどのMoodleデータが保存されるデータベース設定を行ってください。このデータベースはインストーラーにより、下記の設定が指定された形で自動的に作成されます。';
+$string['databasecreationsettingssub'] = '<b>タイプ:</b> インストーラーにより「mysql」に修正されました。<br />
+<b>ホスト:</b> インストーラーにより「localhost」に修正されました。<br />
+<b>データベース名:</b> データベース名、例 moodle<br />
+<b>ユーザ名:</b> インストーラーにより「root」に修正されました。<br />
 <b>パスワード:</b> あなたのデータベースパスワードです。<br />
 <b>テーブル接頭辞:</b> すべてのテーブル名に使用される任意の接頭辞です。';
 $string['databasesettings'] = 'ほとんどのMoodleデータが保存されるデータベースの設定を行います。このデータベースは、アクセスするためのユーザ名およびパスワードと共にすでに作成されている必要があります。<br/>
@@ -74,6 +81,7 @@ Moodleが、アップロードされたファイルを保存する場所が必�
 $string['dirroot'] = 'Moodleディレクトリ';
 $string['dirrooterror'] = '「Moodleディレクトリ」設定が間違っているようです - インストール済みMoodleが見つかりませんでした。下記の値がリセットされました。';
 $string['download'] = 'ダウンロード';
+$string['environmenthead'] = 'あなたの環境を確認しています ...';
 $string['fail'] = '失敗';
 $string['fileuploads'] = 'ファイルアップロード';
 $string['fileuploadserror'] = 'これは有効にしてください。';
