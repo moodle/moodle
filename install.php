@@ -17,8 +17,9 @@ define ('COMPATIBILITY',      1); /// 1. Compatibility
 define ('DIRECTORY',          2); /// 2. Directory settings
 define ('DATABASE',           3); /// 2. Database settings
 define ('ADMIN',              4); /// 4. Administration directory name
-define ('SAVE',               5); /// 5. Save or display the settings
-define ('REDIRECT',           6); /// 6. Redirect to index.php
+define ('ENVIRONMENT',        5); /// 5. Administration directory name
+define ('SAVE',               6); /// 6. Save or display the settings
+define ('REDIRECT',           7); /// 7. Redirect to index.php
 ///==========================================================================//
 
 
@@ -59,73 +60,6 @@ if ( empty($INSTALL['language']) and empty($_POST['language']) ) {
     $INSTALL['stage'] = WELCOME;
 }
 
-
-
-//==========================================================================//
-
-/// Fake some settings so that we can use selected functions from moodlelib.php and weblib.php
-
-$SESSION->lang = (!empty($_POST['language'])) ? $_POST['language'] : $INSTALL['language'];
-$CFG->dirroot = $INSTALL['dirroot'];
-$CFG->libdir = $INSTALL['dirroot'].'/lib';
-$CFG->dataroot = $INSTALL['dataroot'];
-$CFG->directorypermissions = 00777;
-
-
-/// Include some moodle libraries
-
-require_once('./lib/setuplib.php');
-require_once('./lib/moodlelib.php');
-require_once('./lib/weblib.php');
-require_once('./lib/adodb/adodb.inc.php');
-
-
-/// guess the www root
-if ($INSTALL['wwwroot'] == '') {
-    list($INSTALL['wwwroot'], $xtra) = explode('/install.php', qualified_me());
-}
-
-$headstagetext = array(WELCOME       => get_string('chooselanguagehead', 'install'),
-                       COMPATIBILITY => get_string('compatibilitysettingshead', 'install'),
-                       DIRECTORY     => get_string('directorysettingshead', 'install'),
-                       DATABASE      => get_string('databasesettingshead', 'install'),
-                       ADMIN         => get_string('admindirsettinghead', 'install'),
-                       SAVE          => get_string('configurationcompletehead', 'install')
-                        );
-
-$substagetext = array(WELCOME       => get_string('chooselanguagesub', 'install'),
-                      COMPATIBILITY => get_string('compatibilitysettingssub', 'install'),
-                      DIRECTORY     => get_string('directorysettingssub', 'install'),
-                      DATABASE      => get_string('databasesettingssub', 'install'),
-                      ADMIN         => get_string('admindirsettingsub', 'install'),
-                      SAVE          => get_string('configurationcompletesub', 'install')
-                       );
-
-
-
-//==========================================================================//
-
-/// Are we in help mode?
-
-if (isset($_GET['help'])) {
-    $nextstage = -1;
-}
-
-
-
-//==========================================================================//
-
-/// Are we in config download mode?
-
-if (isset($_GET['download'])) {
-    header("Content-Type: application/download\n"); 
-    header("Content-Disposition: attachment; filename=\"config.php\"");
-    echo $INSTALL['config'];
-    exit;
-}
-
-
-
 //==========================================================================//
 
 /// Was data submitted?
@@ -156,6 +90,82 @@ if (isset($_POST['stage'])) {
     $nextstage = WELCOME;
     
 }
+
+//==========================================================================//
+
+/// Fake some settings so that we can use selected functions from moodlelib.php and weblib.php
+
+$SESSION->lang = (!empty($_POST['language'])) ? $_POST['language'] : $INSTALL['language'];
+$CFG->dirroot = $INSTALL['dirroot'];
+$CFG->libdir = $INSTALL['dirroot'].'/lib';
+$CFG->dataroot = $INSTALL['dataroot'];
+$CFG->admin = $INSTALL['admindirname'];
+$CFG->directorypermissions = 00777;
+
+/// Include some moodle libraries
+
+require_once('./lib/setuplib.php');
+require_once('./lib/moodlelib.php');
+require_once('./lib/weblib.php');
+require_once('./lib/adodb/adodb.inc.php');
+require_once('./lib/environmentlib.php');
+require_once('./lib/xmlize.php');
+require_once('./version.php');
+
+/// Set version and release
+$INSTALL['version'] = $version;
+$INSTALL['release'] = $release;
+
+/// Have the $db object ready because we are going to use it often
+$db = &ADONewConnection($INSTALL['dbtype']);
+
+/// guess the www root
+if ($INSTALL['wwwroot'] == '') {
+    list($INSTALL['wwwroot'], $xtra) = explode('/install.php', qualified_me());
+}
+
+$headstagetext = array(WELCOME       => get_string('chooselanguagehead', 'install'),
+                       COMPATIBILITY => get_string('compatibilitysettingshead', 'install'),
+                       DIRECTORY     => get_string('directorysettingshead', 'install'),
+                       DATABASE      => get_string('databasesettingshead', 'install'),
+                       ADMIN         => get_string('admindirsettinghead', 'install'),
+                       ENVIRONMENT   => get_string('environmenthead', 'install'),
+                       SAVE          => get_string('configurationcompletehead', 'install')
+                        );
+
+$substagetext = array(WELCOME       => get_string('chooselanguagesub', 'install'),
+                      COMPATIBILITY => get_string('compatibilitysettingssub', 'install'),
+                      DIRECTORY     => get_string('directorysettingssub', 'install'),
+                      DATABASE      => get_string('databasesettingssub', 'install'),
+                      ADMIN         => get_string('admindirsettingsub', 'install'),
+                      ENVIRONMENT   => get_string('environmentsub', 'install'),
+                      SAVE          => get_string('configurationcompletesub', 'install')
+                       );
+
+
+
+//==========================================================================//
+
+/// Are we in help mode?
+
+if (isset($_GET['help'])) {
+    $nextstage = -1;
+}
+
+
+
+//==========================================================================//
+
+/// Are we in config download mode?
+
+if (isset($_GET['download'])) {
+    header("Content-Type: application/download\n"); 
+    header("Content-Disposition: attachment; filename=\"config.php\"");
+    echo $INSTALL['config'];
+    exit;
+}
+
+
 
 
 
@@ -232,8 +242,6 @@ if ($INSTALL['stage'] == DATABASE) {
 
     if (empty($errormsg)) {
 
-        $db = &ADONewConnection($INSTALL['dbtype']);
-
         error_reporting(0);  // Hide errors 
 
         if (! $dbconnected = $db->Connect($INSTALL['dbhost'],$INSTALL['dbuser'],$INSTALL['dbpass'],$INSTALL['dbname'])) {
@@ -273,9 +281,9 @@ if ($INSTALL['stage'] == DATABASE) {
 
 if ($nextstage == ADMIN or $INSTALL['stage'] == ADMIN) {
     if (!ini_get('allow_url_fopen')) {
-        $nextstage = ($goforward) ? SAVE : DATABASE;
+        $nextstage = ($goforward) ? ENVIRONMENT : DATABASE;
     } else if (($fh = @fopen($INSTALL['wwwroot'].'/'.$INSTALL['admindirname'].'/site.html', 'r')) !== false) {
-        $nextstage = ($goforward) ? SAVE : DATABASE;
+        $nextstage = ($goforward) ? ENVIRONMENT : DATABASE;
         fclose($fh);
     } else {
         if ($nextstage != ADMIN) {
@@ -285,6 +293,25 @@ if ($nextstage == ADMIN or $INSTALL['stage'] == ADMIN) {
     }
 }
 
+//==========================================================================//
+
+// Check if we can navigate from the environemt page (because it's ok)
+
+if ($INSTALL['stage'] == ENVIRONMENT) {
+    error_reporting(0);  // Hide errors
+    $dbconnected = $db->Connect($INSTALL['dbhost'],$INSTALL['dbuser'],$INSTALL['dbpass'],$INSTALL['dbname']);
+    error_reporting(7);  // Show errors
+    if ($dbconnected) {
+    /// Execute environment check, printing results
+        if (!check_moodle_environment($INSTALL['release'], $environment_results, false)) {
+             $nextstage = ENVIRONMENT;
+        }
+    } else {
+    /// We never should reach this because DB has been tested before arriving here
+        $errormsg = get_string('dbconnectionerror', 'install');
+        $nextstage = DATABASE;
+    }
+}
 
 
 //==========================================================================//
@@ -474,7 +501,7 @@ function print_object($object) {
 //==========================================================================//
 
 function form_table($nextstage = WELCOME, $formaction = "install.php") {
-    global $INSTALL;
+    global $INSTALL, $db;
 
     /// standard lines for all forms
 ?>
@@ -598,6 +625,32 @@ function form_table($nextstage = WELCOME, $formaction = "install.php") {
 
 <?php
             break;
+        case ENVIRONMENT: /// Environment checks
+?>
+
+            <tr>
+                <td colspan="2">
+                <?php
+                    error_reporting(0);  // Hide errors
+                    $dbconnected = $db->Connect($INSTALL['dbhost'],$INSTALL['dbuser'],$INSTALL['dbpass'],$INSTALL['dbname']);
+                    error_reporting(7);  // Show errors
+                    if ($dbconnected) {
+                    /// Execute environment check, printing results
+                        check_moodle_environment($INSTALL['release'], $environment_results, true);
+                    } else {
+                    /// We never should reach this because DB has been tested before arriving here
+                        $errormsg = get_string('dbconnectionerror', 'install');
+                        $nextstage = DATABASE;
+                        echo '<p class="errormsg" align="center">'.get_string('dbconnectionerror', 'install').'</p>';
+                    }
+                ?>
+                </td>
+            </tr>
+
+
+
+<?php
+            break;
         default:
     }
 ?>
@@ -706,7 +759,7 @@ function css_styles() {
 <style type="text/css">
 
     body { background-color: #ffeece; }
-    p, li { 
+    p, li, td { 
         font-family: helvetica, arial, sans-serif;
         font-size: 10pt;
     }
@@ -779,7 +832,28 @@ function css_styles() {
         font-weight: bold;
         color: #333333;
     }
-        
+    .environmenttable {
+        font-size: 10pt;
+        border-color: #ffc85f;
+    }
+    .header {
+        background-color: #fee6b9;
+        font-size: 10pt;
+    }
+    .cell {
+        background-color: #ffeece;
+        font-size: 10pt;
+    }
+    .error {
+        color: #ff0000;
+    }
+    .errorboxcontent {
+        text-align: center;
+        font-weight: bold;
+        padding: 20px;
+        color: #ff0000;
+    }
+
 </style>
 
 <?php
