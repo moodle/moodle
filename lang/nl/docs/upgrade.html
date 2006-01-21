@@ -30,7 +30,7 @@
       </blockquote>
       <p><strong>3. Je databank</strong></p>
       <blockquote>
-        <p>De meeste Moodleüpgrades zullen de databanktabellen wijzigen door velden toe te voegen of te wijzigen. Een databank kan op verschillende manieren geback-upt worden. Eén manier om een MySQL-databank te back-uppen is een 'dump' te maken naar een SQL-bestand. In volgend voorbeeld zie je de Unixcommando's om een dump te maken van een databank die "Moodle" heet:</p>
+        <p>De meeste Moodle-upgrades zullen de databanktabellen wijzigen door velden toe te voegen of te wijzigen. Een databank kan op verschillende manieren geback-upt worden. Eén manier om een MySQL-databank te back-uppen is een 'dump' te maken naar een SQL-bestand. In volgend voorbeeld zie je de Unixcommando's om een dump te maken van een databank die "Moodle" heet:</p>
         <blockquote>
           <p><font face="Courier New, Courier, mono">mysqldump moodle > moodle-backup-2002-10-26.sql</font></p>
         </blockquote>
@@ -44,12 +44,12 @@
     <blockquote>
       <p>Overschrijf geen oude installatie tenzij je weet wat je doet ...soms kunnen oude bestanden problemen veroorzaken in nieuwe installaties.  De beste manier is je huidige Moodlemap te hernoemen en dan het nieuwe Moodle archiefbestand uit te pakken in de oude locatie.</p>
       <blockquote>
-        <p><font face="Courier New, Courier, mono">mv moodle moodle.backup<br />
+        <p><font face="Courier New, Courier, mono">Op unix: mv moodle moodle.backup<br />
         tar xvzf moodle-1.1.tgz</font></p>
       </blockquote>
       <p>Kopieer daarna je config.php en al je andere plugins zoals bijvoorbeeld een aangepast thema:</p>
       <blockquote>
-        <p><font face="Courier New, Courier, mono">cp moodle.backup/config.php moodle<br />
+        <p><font face="Courier New, Courier, mono">Op unix: cp moodle.backup/config.php moodle<br />
         cp -pr moodle.backup/theme/mytheme moodle/theme/mytheme</font></p>
       </blockquote>
     </blockquote>
@@ -59,7 +59,7 @@
       <blockquote>
         <p><font face="Courier New, Courier, mono">cvs update -dP</font></p>
       </blockquote>
-      <p>Zorg er in elk geval voor dat je de "d"-parameter om eventuele nieuwe mappen aan te maken gebruikt en de "P"-parameter om lege mappen weg te gooien.</p>
+      <p>Zorg er in elk geval voor dat je de "d"-parameter om eventuele nieuwe mappen aan te maken gebruikt en de "P"-parameter om lege mappen weg te gooien. Een CVS-upgrade is alleen mogelijk als je een CVS-installatie hebt gedaan. Er is een aparte documentatiepagina over het werken met CVS.</p>
       <p>ALs je zelf de Moodlebestanden bewerkt hebt, let dan goed op de boodschappen om mogelijke conflicten op te sporen. Al je aangepaste thema's en afwijkende plugins zullen bewaard blijven.</p>
     </blockquote>
     
