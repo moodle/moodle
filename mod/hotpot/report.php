@@ -472,11 +472,14 @@ function hotpot_print_report_selector(&$course, &$hotpot, &$formdata) {
 	print '<input type="submit" value="'.get_string('reportbutton', 'hotpot').'"></td></tr>';
 
 	$menus = array();
-	$menus['reportformat'] = array(
-		'htm' => get_string('reportformathtml', 'hotpot'),
-		'xls' => get_string('reportformatexcel', 'hotpot'),
-		'txt' => get_string('reportformattext', 'hotpot'),
-	);
+
+	$menus['reportformat'] = array();
+	$menus['reportformat']['htm'] = get_string('reportformathtml', 'hotpot');
+	if (file_exists("$CFG->libdir/excel") || file_exists("$CFG->libdir/excellib.class.php")) {
+		$menus['reportformat']['xls'] = get_string('reportformatexcel', 'hotpot');
+	}
+	$menus['reportformat']['txt'] = get_string('reportformattext', 'hotpot');
+
 	if (trim($CFG->hotpot_excelencodings)) {
 		$menus['reportencoding'] = array(get_string('none')=>'');
 
