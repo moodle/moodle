@@ -366,6 +366,7 @@ $string['edituser'] = 'Wijzig gebruikersaccounts';
 $string['email'] = 'E-mailadres';
 $string['emailactive'] = 'E-mail actief';
 $string['emailagain'] = 'E-mail (nogmaals)';
+$string['emailcharset'] = 'Tekenset voor e-mail';
 $string['emailconfirm'] = 'Bevestig je account';
 $string['emailconfirmation'] = 'Beste $a->firstname,
 

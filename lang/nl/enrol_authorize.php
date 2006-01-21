@@ -6,7 +6,10 @@ $string['adminauthorizeccapture'] = 'Bestellingsoverzicht & instellingen automat
 $string['adminauthorizeemail'] = 'Instellingen e-mail';
 $string['adminauthorizesettings'] = 'Instellingen Authorize.net';
 $string['adminauthorizewide'] = 'Instellingen voor heel de site';
+$string['adminavs'] = 'Controleer of je Adress Verification System (AVS) hebt geactiveerd in je authorize.net account. Wanneer de gebruiker het betaalformulier invult, worden hierdoor adresvelden zoals straat, staat, land en postcode gevraagd.';
+$string['admincronsetup'] = 'Het onderhoudsscript cron.php heeft al minstens 24 uur niet gelopen.<br />Om de autocapture mogelijkheid te gebruiken moet cron ingeschakeld zijn. <br /><a href=\"../doc/?frame=install.html&#8834;=cron\">Cron installeren</a> of schakel an_review opnieuw uit. <br />Als je autocapture uitschakeld, zullen de transacties geannuleerd worden, tenzij je ze binnen de 30 dagen bevestigd.<br />Controleer an_review en zet \'0\' in het an_capture_day veld <br /> als je betalingen manueel wil aanvaarden/niet aanvaarden binnen 30 dagen?';
 $string['adminreview'] = 'Controleer de bestelling voor het aanvaarden van de kredietkaart';
+$string['amount'] = 'Bedrag';
 $string['anlogin'] = 'Authorize.net: Login naam';
 $string['anpassword'] = 'Authorize.net: Wachtwoord (niet vereistà';
 $string['anreferer'] = 'Type hier de URL-verwijzing als je dit instelt met je authorize.net account. Dit zal een header \"Referer:URL\" in de webaanvraag zetten.';
