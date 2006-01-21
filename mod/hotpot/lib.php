@@ -4,12 +4,11 @@
 /// CONFIGURATION settings 
 
 if (!isset($CFG->hotpot_showtimes)) {
-    set_config("hotpot_showtimes", 0);
-}  
+	set_config("hotpot_showtimes", 0);
+}
 if (!isset($CFG->hotpot_excelencodings)) {
-    set_config("hotpot_excelencodings", "");
-}  
-
+	set_config("hotpot_excelencodings", "");
+}
 
 //////////////////////////////////
 /// CONSTANTS and GLOBAL VARIABLES
@@ -293,7 +292,7 @@ function hotpot_set_form_values(&$hp) {
 		set_user_preference('hotpot_grade', $hp->grade);
 		set_user_preference('hotpot_grademethod', $hp->grademethod);
 		set_user_preference('hotpot_attempts', $hp->attempts);
-		get_user_preference('hotpot_subnet', $hp->subnet);
+		set_user_preference('hotpot_subnet', $hp->subnet);
 		set_user_preference('hotpot_displaynext', $hp->displaynext);
 		if ($hp->mode=='add') {
 			set_user_preference('hotpot_quizchain', $hp->quizchain);
@@ -2190,6 +2189,11 @@ if (!function_exists('html_entity_decode')) {
 
 }
 
+// required for Moodle 1.x
+if (!isset($CFG->pixpath)) {
+    $CFG->pixpath = "$CFG->wwwroot/pix";
+}  
+
 if (!defined('PARAM_RAW')) define('PARAM_RAW', 0x0000);
 if (!defined('PARAM_CLEAN')) define('PARAM_CLEAN', 0x0001);
 if (!defined('PARAM_INT'))  define('PARAM_INT', 0x0002);
@@ -2224,13 +2228,13 @@ if (!function_exists('optional_param')) {
 }
 if (!function_exists('set_user_preference')) {
 	// add this function for Moodle 1.x
-	function set_user_preference($name, $value) {
+	function set_user_preference($name, $value, $otheruser=NULL) {
 		return false;
 	}
 }
-if (!function_exists('get_user_preference')) {
+if (!function_exists('get_user_preferences')) {
 	// add this function for Moodle 1.x
-	function get_user_preference($name=NULL, $default=NULL) {
+	function get_user_preferences($name=NULL, $default=NULL, $userid=NULL) {
 		return $default;
 	}
 }
