@@ -3,14 +3,14 @@ This is v2.1.10 of the HotPot module
    It has been tested on:
       - Hot Potatoes 6
       - Moodle 1.1 thru 1.6
-      - PHP 4.1 thru 5.0      
+      - PHP 4.1 thru 5.0
       - MySQL and PostgreSQL databases
    This module may be distributed under the terms of the General Public License
    (see http://www.gnu.org/licenses/gpl.txt for details)
    This software is provided "AS IS" without a warranty of any kind.
    Sponsors who have generously contributed to the development of this software:
       - Agencia de Gestio d'Ajuts Universitaris i de Recerca (AGAUR), 
-        Autonomous Government of Catalonia, Spain 
+        Autonomous Government of Catalonia, Spain
         (via Josep M. Fontana, Universitat Pompeu Fabra)
       - Rikkyo Univeristy, Japan (via Paul Allum)
       - Universite de Franche-Comte, France (via Glenys Hanson)
