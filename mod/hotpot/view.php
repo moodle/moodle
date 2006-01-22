@@ -7,10 +7,10 @@
 		define('HOTPOT_FIRST_ATTEMPT', true);
 		require_once("../../config.php");
 		require_once("lib.php");
-	
+
 		$id = optional_param("id"); // Course Module ID, or
 		$hp = optional_param("hp"); // hotpot ID
-	
+
 		if ($id) {
 			if (! $cm = get_record("course_modules", "id", $id)) {
 				error("Course Module ID was incorrect");
@@ -21,7 +21,7 @@
 			if (! $hotpot = get_record("hotpot", "id", $cm->instance)) {
 				error("Course module is incorrect");
 			}
-	
+
 		} else {
 			if (! $hotpot = get_record("hotpot", "id", $hp)) {
 				error("Course module is incorrect");
@@ -142,7 +142,7 @@
 		
 			if (HOTPOT_FIRST_ATTEMPT) {
 				add_to_log($course->id, "hotpot", "view", "view.php?id=$cm->id", "$hotpot->id", "$cm->id");
-	
+
 				$attemptid = hotpot_add_attempt($hotpot->id);
 				if (! is_numeric($attemptid)) {
 					error('Could not insert attempt record: '.$db->ErrorMsg);
