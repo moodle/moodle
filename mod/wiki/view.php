@@ -37,7 +37,6 @@
 
     } else {
         if (! $wiki = get_record("wiki", "id", $wid)) {
-echo "here?";
             error("Course module is incorrect");
         }
         if (! $course = get_record("course", "id", $wiki->course)) {
