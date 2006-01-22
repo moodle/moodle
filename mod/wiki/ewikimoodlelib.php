@@ -119,7 +119,7 @@ function ewiki_database_moodle($action, &$args, $sw1, $sw2) {
          }
 
          # Write
-         $result=insert_record(EWIKI_DB_TABLE_NAME,$args,false,"pagename");
+         $result=insert_record(EWIKI_DB_TABLE_NAME,$args,false);
 
          #$result = mysql_query("$COMMAND INTO " . EWIKI_DB_TABLE_NAME .
          #   " (" . $sql1 . ") VALUES (" . $sql2 . ")"
