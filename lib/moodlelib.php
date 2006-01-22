@@ -4283,6 +4283,32 @@ function current_language() {
     }
 }
 
+/* Return the code of the current charset
+ * based in some config options and the lang being used
+ * caching it per request.
+ * @param $ignorecache to skip cached value and recalculate it again
+ * @uses $CFG
+ * @return string
+ */
+function current_charset($ignorecache = false) {
+
+    global $CFG;
+
+    static $currentcharset;
+
+    if (!empty($currentcharset) and !$ignorecache) { /// Cached. Return it.
+        return $currentcharset;
+    }
+
+    if (!empty($CFG->unicode) || !empty($CFG->unicodedb)) {
+        $currentcharset = 'UTF-8';
+    } else {
+        $currentcharset = get_string('thischarset');
+    }
+
+    return $currentcharset;
+}
+
 /**
  * Prints out a translated string.
  *
