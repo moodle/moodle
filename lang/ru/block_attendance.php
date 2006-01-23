@@ -41,6 +41,7 @@ $string['months'] = 'По месяцам';
 $string['myvariables'] = 'Мои переменные';
 $string['newdate'] = 'Новая дата';
 $string['nodescription'] = 'Для этого занятия нет описания';
+$string['noguest'] = 'Гость не может видеть информацию о посещаемости';
 $string['noofdaysabsent'] = 'Пропущено';
 $string['noofdaysexcused'] = 'Пропущено по ув. причине';
 $string['noofdayslate'] = 'Опозданий';
