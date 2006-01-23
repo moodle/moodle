@@ -1290,11 +1290,12 @@ function migrate2utf8_course_lang($recordid){
         return false;
     }
 
-    if (strstr($course->lang,'utf8')===false){
+    if (strstr($course->lang,'utf8')===false and !empty($course->lang)){
         $course->lang = $course->lang.'_utf8';
     }
 
     update_record('course',$course);
+    rebuild_course_cache($recordid);    //takes care of serialized modinfo
 /// And finally, just return the converted field
     return $result;
 }
