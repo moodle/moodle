@@ -1027,7 +1027,7 @@ function message_get_participants() {
         // do it using php since mysql < 4 doesn't like the unions.
         $users = array();
         
-        if ($message_from_users = get_records_sql("SELECT DISTINCT userfrom as id, 1 FROM  {$CFG->prefix}message")) {
+        if ($message_from_users = get_records_sql("SELECT DISTINCT useridfrom as id, 1 FROM  {$CFG->prefix}message")) {
             foreach ($message_from_users as $user) {
                 $users[$user->id] =  $user;
             }
@@ -1052,7 +1052,7 @@ function message_get_participants() {
                 $users[$user->id] = $user;
             }
         }
-        if ($contact_to_users = get_records_sql("SELECT DISTINCT mc.contactid as id,1 FROM {$CFG->prefix}message_contacts")) {
+        if ($contact_to_users = get_records_sql("SELECT DISTINCT contactid as id,1 FROM {$CFG->prefix}message_contacts")) {
             foreach ($contact_to_users as $user) {
                 $users[$user->id] = $user;
             }
