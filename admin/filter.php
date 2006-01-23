@@ -36,10 +36,22 @@
              error( get_string('confirmsesskeybad', 'error' ) );
         }
 
-        // run through submitted data
-        // reject if does not start with filter_
-        foreach ($config as $name => $value) {
-            set_config( $name,$value );
+        $configpath = $CFG->dataroot.'/filter/'.$param->filter.'/filterconfig.php';
+        if (file_exists($configpath)) {
+            require_once($configpath);
+            $functionname = $param->filter.'_process_config';
+            if (function_exists($functionname)) {
+                $functionname($config);
+                $saved = true;
+            }
+        }
+
+        if (empty($saved)) {
+            // run through submitted data
+            // reject if does not start with filter_
+            foreach ($config as $name => $value) {
+                set_config( $name,$value );
+            }
         }
         redirect( "$CFG->wwwroot/$CFG->admin/filters.php", get_string('changessaved'), 1);
         exit;
