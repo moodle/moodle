@@ -42,7 +42,7 @@ $string['feedback'] = 'Feedback';
 $string['feedbackfromteacher'] = 'Feedback from the $a';
 $string['feedbackupdated'] = 'Submissions feedback updated for $a people';
 $string['guestnoupload'] = 'Sorry, guests are not allowed to upload';
-$string['guestnosubmit'] = 'Sorry, guests are not allowed to submit an assignment';
+$string['guestnosubmit'] = 'Sorry, guests are not allowed to submit an assignment. You have to log in/ register before you can submit your answer';
 $string['helpoffline'] = '<p>This is useful when the assignment is performed outside of Moodle.  It could be
    something elsewhere on the web or face-to-face.</p><p>Students can see a description of the assignment, 
    but can\'t upload files or anything.  Grading works normally, and students will get notifications of 
