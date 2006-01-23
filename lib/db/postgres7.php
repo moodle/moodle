@@ -543,7 +543,7 @@ function main_upgrade($oldversion=0) {
     if ($oldversion < 2004072901) {  // Fixing error in schema
         if ($record = get_record('log_display', 'module', 'course', 'action', 'update')) {
             delete_records('log_display', 'module', 'course', 'action', 'update');
-            insert_record('log_display', $record, false, 'module');
+            insert_record('log_display', $record, false);
         }
     }
 
