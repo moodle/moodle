@@ -29,7 +29,7 @@ $string['emailteachermail'] = '$a->username が「 $a->assignment 」の提出�
 $a->url';
 $string['emailteachermailhtml'] = '$a->username が「 <i>$a->assignment</i> 」の提出課題を更新しました。<br /><br />
 <a href=\"$a->url\">ウェブサイトにて閲覧可能です</a>。';
-$string['emailteachers'] = '教師にメール通知を行う';
+$string['emailteachers'] = '教師にメール通知する';
 $string['emptysubmission'] = 'あなたはまだ何も提出していません。';
 $string['existingfiledeleted'] = '登録済みファイルが削除されました: $a';
 $string['failedupdatefeedback'] = 'ユーザ $a のフィードバック更新に失敗しました ';

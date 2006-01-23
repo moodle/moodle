@@ -407,7 +407,7 @@ $string['emailnotfound'] = 'データベース内にメールアドレスが見�
 $string['emailonlyallowed'] = 'このメールアドレスは許可されているメールアドレスに入っていません ( $a )';
 $string['emailpasswordconfirmation'] = 'こんにちは $a->lastname さん
 
-誰か ( 恐らくあなた ) が、「 $a->sitename 」 のアカウントで新しいパスワード作成の請求を行いました。
+誰か ( おそらくあなた ) が、「 $a->sitename 」 のアカウントで新しいパスワード作成の請求を行いました。
 
 新しいパスワード請求を確認して、新たなパスワードをメールであなた宛に送信するために下記のページをご覧ください:
 
@@ -1241,7 +1241,7 @@ $string['upload'] = 'アップロード';
 $string['uploadafile'] = 'ファイルのアップロード';
 $string['uploadedfile'] = 'ファイルが正常にアップロードされました。';
 $string['uploadedfileto'] = '$a->file を $a->directory にアップロードしました。';
-$string['uploadedfiletoobig'] = '申し訳ございません、ファイルサイズが大き過ぎます ( 上限 $a バイト )。';
+$string['uploadedfiletoobig'] = '申し訳ございません、ファイルサイズが大きすぎます ( 上限 $a バイト )。';
 $string['uploadfailednotrecovering'] = 'ファイル $a->name に問題があるため、あなたのファイルは正常にアップロードされませんでした。<br /> この問題に関するログです:<br />$a->problem<br />この問題は未解決状態です。';
 $string['uploadfilelog'] = 'ファイル $a のログをアップロードする。';
 $string['uploadformlimit'] = 'アップロードファイルがフォームで設定された最大サイズを超えました。';
