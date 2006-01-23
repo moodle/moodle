@@ -36,7 +36,7 @@ $string['failedupdatefeedback'] = 'ユーザ $a のフィードバック更新�
 $string['feedback'] = 'フィードバック';
 $string['feedbackfromteacher'] = '$a のフィードバック';
 $string['feedbackupdated'] = '$a の参加者に対するフィードバックの更新';
-$string['guestnosubmit'] = '申し訳ございません、ゲストは課題を提出できません。';
+$string['guestnosubmit'] = '申し訳ございません、ゲストは課題を提出できません。課題を提出するにはログインまたはユーザ登録してください。';
 $string['guestnoupload'] = '申し訳ございません、ゲストはアップロードできません。';
 $string['helpoffline'] = '<p>このタイプの課題は、Moodleの外で課題が行われる時に便利です。他のウェブサイト上での課題、対面により課される課題が考えられます。</p>
 <p>学生は課題の説明を読むことはできますが、ファイル等をアップロードすることはできません。評定は通常通り動作し、評定に関する通知メールが学生宛に送信されます。</p>';
