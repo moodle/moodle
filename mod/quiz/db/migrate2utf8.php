@@ -238,7 +238,7 @@ function migrate2utf8_quiz_answers_answer($recordid){
     $SQL = "SELECT qc.course
            FROM {$CFG->prefix}quiz_categories qc,
                 {$CFG->prefix}quiz_questions qq,
-                {$CFG->prefix}quiz_answer qa
+                {$CFG->prefix}quiz_answers qa
            WHERE qc.id = qq.category
                  AND qq.id = qa.question
                  AND qa.id = $recordid";
@@ -284,7 +284,7 @@ function migrate2utf8_quiz_answers_feedback($recordid){
     $SQL = "SELECT qc.course
            FROM {$CFG->prefix}quiz_categories qc,
                 {$CFG->prefix}quiz_questions qq,
-                {$CFG->prefix}quiz_answer qa
+                {$CFG->prefix}quiz_answers qa
            WHERE qc.id = qq.category
                  AND qq.id = qa.question
                  AND qa.id = $recordid";
@@ -342,7 +342,7 @@ function migrate2utf8_quiz_dataset_definitions_name($recordid){
         return false;
     }
 
-    if (!$quizdatasetdefinition = get_record('quiz_answer','id',$recordid)) {
+    if (!$quizdatasetdefinition = get_record('quiz_dataset_definitions','id',$recordid)) {
         log_the_problem_somewhere();
         return false;
     }
@@ -361,7 +361,7 @@ function migrate2utf8_quiz_dataset_definitions_name($recordid){
     $newquizdatasetdefinition = new object;
     $newquizdatasetdefinition->id = $recordid;
     $newquizdatasetdefinition->name = $result;
-    update_record('quiz_dataset_definition',$newquizdatasetdefinition);
+    update_record('quiz_dataset_definitions',$newquizdatasetdefinition);
 /// And finally, just return the converted field
     return $result;
 }
