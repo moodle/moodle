@@ -17,6 +17,7 @@
     // get parameters
     $params = new Object;
     $param->filter = required_param( 'filter' );
+    $filtername =  substr( $param->filter, strpos( $param->filter, '/' )+1 ) ;
 
     // get translated strings for use on page
     $txt = new Object;
@@ -36,10 +37,10 @@
              error( get_string('confirmsesskeybad', 'error' ) );
         }
 
-        $configpath = $CFG->dataroot.'/filter/'.$param->filter.'/filterconfig.php';
+        $configpath = $CFG->dirroot.'/filter/'.$filtername.'/filterconfig.php';
         if (file_exists($configpath)) {
             require_once($configpath);
-            $functionname = $param->filter.'_process_config';
+            $functionname = $filtername.'_process_config';
             if (function_exists($functionname)) {
                 $functionname($config);
                 $saved = true;
@@ -61,7 +62,7 @@
     // Display logic
     //==============================
 
-    $filtername = ucfirst( substr( $param->filter, strpos( $param->filter, '/' )+1 ) );
+    $filtername = ucfirst($filtername);
     print_header( "$site->shortname: $txt->managefilters", "$site->fullname",
         "<a href=\"index.php\">$txt->administration</a> -> <a href=\"configure.php\">$txt->configuration</a> " .
         "-> <a href=\"filters.php\">$txt->managefilters</a> -> $filtername" );
