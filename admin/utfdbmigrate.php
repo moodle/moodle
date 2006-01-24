@@ -1,4 +1,6 @@
 <?
+///dummy field names are used to help adding and dropping indexes. There's only 1 case now, in scorm_scoes_track
+
 function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                               //pointing to the num of records to process would be
 							  //useful. And it won't break anything, because the
@@ -149,9 +151,11 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                     $addprimary = $field['@']['addprimary'];
                     $defaults[] = isset($field['@']['default'])?"'".$field['@']['default']."'":"''";
 
-                    $colnames[] = $fieldname;
-                    $coltypes[] = $type;
-                    $collengths[]= $length;
+                    if ($fieldname != 'dummy') {
+                        $colnames[] = $fieldname;
+                        $coltypes[] = $type;
+                        $collengths[]= $length;
+                    }
 
                     echo "<br>--><b>processsing db field ".$fieldname.'</b>';
                     echo "<br>---><b>method ".$method.'</b>';
@@ -181,10 +185,10 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
 
                     echo "<br>Total number of recrods is ..".$totalrecords;
 
-                    while($counter < $totalrecords) {    //while there is still something restore_create_logs()
+                    while(($counter < $totalrecords) and ($fieldname !='dummy')) {    //while there is still something 
                         $SQL = 'SELECT * FROM '.$CFG->prefix.$dbtablename.' '.sql_paging_limit($counter, $recordsetsize);
                         echo "<br> SQL: ".$SQL;
-                        if ($records = get_records_sql($SQL)) {      
+                        if ($records = get_records_sql($SQL)) {
                             foreach ($records as $record) {
 
                                 //if we are up this far, either no crash, or crash with same table, field name.
@@ -232,14 +236,16 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                                             $newrecord = new object;
                                             $newrecord->id = $record->id;
                                             $newrecord->{$fieldname} = $result;
-                                            if ($dbtablename == "data_content"){
+/*
+                                            if ($dbtablename == "user_teachers"){
                                                 echo "<br>here we go ".$record->{$fieldname};
                                                 echo "<br>after conversion".$result;
+                                                echo "<br>conv lang is ".$fromenc;
                                                 print_object($newrecord);
-                                            }
+                                            }*/
                                             update_record($dbtablename,$newrecord);
-                                        }
-
+                                          }
+                                          
                                     break;
 
                                     case 'PHP_FUNCTION';    //use the default php function to execute
@@ -272,8 +278,11 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                     } else {
                         //posgresql code here
                     }
+                    
                     //$db->debug=999;
-                    execute_sql($SQL);
+                    if ($fieldname != 'dummy') {
+                        execute_sql($SQL);
+                    }
                     //$db->debug=0;
 
                     //add index back
@@ -368,6 +377,7 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
     $SQL = 'ALTER DATABASE '.$CFG->dbname.' CHARACTER SET utf8';
     execute_sql($SQL);
     delete_records('config','name','dbmigration');    //bye bye
+    //DROP CACHE FILEDS HERE
 }
 
 
@@ -379,6 +389,7 @@ function get_course_lang($courseid) {
     if ($course = get_record('course','id',$courseid)){
         return $course->lang;
     }
+    return false;
 }
 
 /* returns the teacher's lang
@@ -427,6 +438,7 @@ function get_user_lang($userid) {
     if ($user = get_record('user','id',$userid)){
         return $user->lang;
     }
+    return false;
 }
 
 // a placeholder for now
