@@ -154,10 +154,9 @@
 
         case 'update':    ///update a field
             if (confirm_sesskey() and $field = data_submitted()){
-
                 $field->id = $fid;
 
-                $field->name = optional_param('name','',PARAM_ALPHA);
+                $field->name = optional_param('name','',PARAM_NOTAGS);
                 $sql = 'SELECT * from '.$CFG->prefix.'data_fields WHERE name LIKE "'.$field->name.
                        '" AND dataid = '.$data->id.' AND ((id < '.$field->id.') OR (id > '.$field->id.'))';
 
