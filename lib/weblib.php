@@ -1938,11 +1938,11 @@ function print_footer($course=NULL, $usercourse=NULL) {
 
 /// Course links
     if ($course) {
-        if ($course == 'none') {          // Don't print any links etc
+        if (is_string($course) && $course == 'none') {          // Don't print any links etc
             $homelink = '';
             $loggedinas = '';
             $home  = false;
-        } else if ($course == 'home') {   // special case for site home page - please do not remove
+        } else if (is_string($course) && $course == 'home') {   // special case for site home page - please do not remove
             $course = get_site();
             $homelink  = '<div class="sitelink">'.
                '<a title="moodle '. $CFG->release .' ('. $CFG->version .')" href="http://moodle.org/" target="_blank">'.
