@@ -474,11 +474,11 @@
                     if ($lesson->custom) {
                         if ($answer->score > 0) {
                             $correctanswer = true;
-                            $answerid = $answer->id;
                         } else {
                             $correctanswer = false;
                         }
                     }
+                    $answerid = $answer->id;
                     break;
                 }
             }
