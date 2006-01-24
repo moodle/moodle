@@ -2,6 +2,7 @@
   <TABLES>
     <TABLE name="scorm_scoes_track">
       <FIELDS>
+        <FIELD name="dummy" dropindex="element" />
         <FIELD name="value" method="PLAIN_SQL_UPDATE" type="longtext" length="0">
           <SQL_DETECT_USER>
            SELECT sst.userid
@@ -30,6 +31,7 @@
                  AND sst.id = RECORDID
           </SQL_DETECT_COURSE>
         </FIELD>
+        <FIELD name="dummy" addindex="element (element(255))" />
       </FIELDS>
     </TABLE>
     <TABLE name="scorm_scoes">
