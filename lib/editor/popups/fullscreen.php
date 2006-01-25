@@ -74,12 +74,12 @@ function cloneObject(obj) {
   var newObj          = new Object;
 
   // check for array objects
-  if (obj.constructor.toString().indexOf("function Array(") == 1) {
+  if (obj.constructor.toString().indexOf("function Array(") >= 0) {
     newObj = obj.constructor();
   }
 
   // check for function objects (as usual, IE is fucked up)
-  if (obj.constructor.toString().indexOf("function Function(") == 1) {
+  if (obj.constructor.toString().indexOf("function Function(") >= 0) {
     newObj = obj; // just copy reference to it
   } else for (var n in obj) {
     var node = obj[n];
