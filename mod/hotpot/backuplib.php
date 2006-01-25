@@ -44,15 +44,22 @@
         $hotpots = get_records ("hotpot","course",$preferences->backup_course,"id");
         if ($hotpots) {
             foreach ($hotpots as $hotpot) {
-                if (backup_mod_selected($preferences,'hotpot',$hotpot->id)) {
-                    $status = hotpot_backup_one_mod($bf,$preferences,$hotpot->id);
+                if (function_exists('backup_mod_selected')) {
+                    // Moodle >= 1.6
+                    $backup_mod_selected = backup_mod_selected($preferences, 'hotpot', $hotpot->id);
+                } else {
+                    // Moodle <= 1.5
+                    $backup_mod_selected = true;
+                }
+                if ($backup_mod_selected) {
+                    $status = hotpot_backup_one_mod($bf, $preferences, $hotpot->id);
                 }
             }
         }
         return $status;
     }
 
-    function hotpot_backup_one_mod($bf, $preferences, $instance = 0) {
+    function hotpot_backup_one_mod($bf, $preferences, $instance=0) {
         // $bf : resource id for b(ackup) f(ile)
         // $preferences : object containing switches and settings for this backup
          $level = 3;
@@ -65,7 +72,14 @@
         $record_tags = array('MODTYPE'=>'hotpot');
         $excluded_tags = array();
         $more_backup = '';
-        if (backup_userdata_selected($preferences,'hotpot',$instance)) {
+        if (function_exists('backup_userdata_selected')) {
+            // Moodle >= 1.6
+            $backup_userdata_selected = backup_userdata_selected($preferences, 'hotpot', $instance);
+        } else {
+            // Moodle <= 1.5
+            $backup_userdata_selected = $preferences->mods['hotpot']->userinfo;
+        }
+        if ($backup_userdata_selected) {
             $more_backup .= '$GLOBALS["hotpot_backup_string_ids"] = array();';
             $more_backup .= '$status = hotpot_backup_attempts($bf, $record, $level, $status);';
             $more_backup .= '$status = hotpot_backup_questions($bf, $record, $level, $status);';
