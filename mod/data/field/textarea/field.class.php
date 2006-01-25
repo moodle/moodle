@@ -38,7 +38,7 @@ class data_field_textarea extends data_field_base {
     /***********************************************
      * Saves the field into the database           *
      ***********************************************/
-    function insert_field($dataid, $type='textarea', $name, $desc='', $autolink=0, $width='', $height='') {
+    function insert_field($dataid, $type='textarea', $name, $desc='', $autolink=0, $width='', $height='', $formats='') {
         $newfield = new object;
         $newfield->dataid = $dataid;
         $newfield->type = $type;
@@ -47,6 +47,12 @@ class data_field_textarea extends data_field_base {
         $newfield->param1 = $autolink;
         $newfield->param2 = $width;
         $newfield->param3 = $height;
+        $newfield->param4 = '';
+        
+        foreach ($formats as $format) {
+            $newfield->param4 .= $format . ',';
+        }
+        $newfield->param4 = substr($newfield->param4, 0, -1);
         
         if (!insert_record('data_fields', $newfield)) {
             notify('Insertion of new field failed!');
@@ -64,10 +70,8 @@ class data_field_textarea extends data_field_base {
             exit;
         }
         if ($rid) {
-            $content = get_record('data_content', 'fieldid', $id, 'recordid', $rid);
-            if (isset($content->content)) {
-                $content = $content->content;
-            }
+            $dataContent = get_record('data_content', 'fieldid', $id, 'recordid', $rid);
+            $content = $dataContent->content;
         }
         else {
             $content = '';
@@ -82,6 +86,28 @@ class data_field_textarea extends data_field_base {
             $str .= ' style="width:' . $field->param2. 'px; height:' . $field->param3 . 'px;"';
         }
         $str .= '>' . $content . '</textarea>';
+        
+        // Get the available text formats for this field.
+        if (!empty($field->param4)) {
+            $savedFormats = explode(',', $field->param4);
+            $formatsForField = array();
+            
+            $validFormats = format_text_menu();
+            
+            foreach ($validFormats as $key => $format) {
+                if (array_search($key, $savedFormats) !== false) {
+                    $formatsForField[$key] = $format;
+                }
+            }
+            $str .= '<br />';
+            
+            if (empty($dataContent->content1)) {
+                $str .= choose_from_menu($formatsForField, 'field_' . $field->id . '_content1', '', 'choose', '', '', true);
+            }
+            else {
+                $str .= choose_from_menu($formatsForField, 'field_' . $field->id . '_content1', $dataContent->content1, 'choose', '', '', true);
+            }
+        }
         return $str;
     }
 
@@ -94,9 +120,71 @@ class data_field_textarea extends data_field_base {
     function update($fieldobject) {
         $fieldobject->param1 = trim($fieldobject->param1);
         $fieldobject->param2 = trim($fieldobject->param2);
+        $fieldobject->param3 = trim($fieldobject->param3);
+        
+        // Convert the param4 array to a comma-delimited string.
+        $param4Str = '';
+        foreach ($fieldobject->param4 as $val) {
+            $param4Str .= $val . ',';
+        }
+        $param4Str = substr($param4Str, 0, -1);
+        $fieldobject->param4 = $param4Str;
         
         if (!update_record('data_fields',$fieldobject)){
             notify ('upate failed');
+        }
+    }
+    
+    
+    /************************************
+     * store content of this field type *
+     ************************************/
+    function store_data_content($fieldid, $recordid, $value, $name=''){
+        if ($value) {
+            $content = new object;
+            $content->fieldid = $fieldid;
+            $content->recordid = $recordid;
+            
+            if ($oldcontent = get_record('data_content','fieldid', $fieldid, 'recordid', $recordid)) {
+                // This belongs to an existing data_content.
+                $content->id = $oldcontent->id;
+                $nameParts = explode('_', $name);
+                $column = $nameParts[count($nameParts) - 1];  // Format is field_<fieldid>_content[1 to 4]
+                
+                $content->$column = clean_param($value, PARAM_NOTAGS);
+                update_record('data_content', $content);
+            }
+            else {
+                // First (and maybe only) data content for this field for this record.
+                $content->content = clean_param($value, PARAM_NOTAGS);
+                insert_record('data_content', $content);
+            }
+        }
+    }
+    
+    
+    /*************************************
+     * update content of this field type *
+     *************************************/
+    function update_data_content($fieldid, $recordid, $value, $name=''){
+        // If data_content already exists, we update.
+        if ($oldcontent = get_record('data_content','fieldid', $fieldid, 'recordid', $recordid)){
+            $content = new object;
+            $content->fieldid = $fieldid;
+            $content->recordid = $recordid;
+            
+            $nameParts = explode('_', $name);
+            if (!empty($nameParts[2])) {
+                $content->$nameParts[2] = clean_param($value, PARAM_NOTAGS);
+            }
+            else {
+                $content->content = clean_param($value, PARAM_NOTAGS);
+            }
+            $content->id = $oldcontent->id;
+            update_record('data_content', $content);
+        }
+        else {    //make 1 if there isn't one already
+            $this->store_data_content($fieldid, $recordid, $value, $name='');
         }
     }
 }
