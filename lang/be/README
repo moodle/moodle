@@ -1,17 +1,15 @@
-Belarusian translation
-
-contact: Maryia Davidouskaia -maryia@iatp.by-
+Belarusian translation by  maryia@iatp.by
+Maryia Davidouskaia
 
 Беларуская версія Moodle
 
-Праблемы з кадыроўкай вырашаюцца адключэннем кадыроўкі па-змаўчанні ў наладах апачу (файл httpd.conf):
+Праблемы з кадыроўкай вырашаюцца адключэннем кадыроўкі па-змаўчанню ў наладах апачу (файл httpd.conf):
 AddDefaultCharset off або ўсталёўкай яго на Windows-1251
 
 Падзякі:
-Сяргей Кручкоў, sk@tbm.org.by
-Алег Азароўскі, olegtut@tut.by
-Марыя Давідоўская, maryia@iatp.by
-Вярнарда Іванова, milaiv@tbm.org.by
-Уладзімір Кошчанка, dassax@mail.com
-Дзяніс Тушынскі, tbm@tbm.lingvo.minsk.by
-Хведар Піскуноў, fpiskounov@mail.ru
+Алег Азароўскі
+Марыя Давідоўская
+Уладзімір Вараб'ёў
+Уладзімір Кошчанка
+Дзяніс Тушынскі
+Хведар Піскуноў
