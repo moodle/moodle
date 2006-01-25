@@ -871,7 +871,7 @@ function migrate2utf8_user_description($recordid){
     $textlib = textlib_get_instance();
 /// Convert the text
     $result = $textlib->convert($user->description, $fromenc);
-echo "useruseruser ".($result);
+
     $newuser = new object;
     $newuser->id = $recordid;
     $newuser->description = $result;
