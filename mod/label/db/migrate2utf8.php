@@ -8,7 +8,7 @@ function migrate2utf8_label_name($recordid){
         return false;
     }
 
-    if (!$label = get_record('label','id',$recordid) {
+    if (!$label = get_record('label','id',$recordid)) {
         log_the_problem_somewhere();
         return false;
     }
@@ -41,7 +41,7 @@ function migrate2utf8_label_content($recordid){
         return false;
     }
 
-    if (!$label = get_record('label','id',$recordid) {
+    if (!$label = get_record('label','id',$recordid)) {
         log_the_problem_somewhere();
         return false;
     }
