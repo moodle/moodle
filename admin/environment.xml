@@ -12,7 +12,7 @@
   </MOODLE>
   <MOODLE version="1.6">
     <DATABASE level="required">
-      <VENDOR name="mysql" version="4.1.12" />
+      <VENDOR name="mysql" version="4.1.16" />
       <VENDOR name="postgres" version="7.4" />
     </DATABASE>
     <PHP version="4.3.0" level="required" />
