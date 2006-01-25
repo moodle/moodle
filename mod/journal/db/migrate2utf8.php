@@ -8,7 +8,7 @@ function migrate2utf8_journal_name($recordid){
         return false;
     }
 
-    if (!$journal = get_record('journal','id',$recordid) {
+    if (!$journal = get_record('journal','id',$recordid)) {
         log_the_problem_somewhere();
         return false;
     }
@@ -41,7 +41,7 @@ function migrate2utf8_journal_intro($recordid){
         return false;
     }
 
-    if (!$journal = get_record('journal','id',$recordid) {
+    if (!$journal = get_record('journal','id',$recordid)) {
         log_the_problem_somewhere();
         return false;
     }
