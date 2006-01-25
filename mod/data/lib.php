@@ -160,12 +160,12 @@ class data_field_base {    //base class (text field)
      * store content of this field type *
      ************************************/
     function store_data_content($fieldid, $recordid, $value, $name=''){
-        if ($value){
+        if ($value) {
             $content = new object;
             $content->fieldid = $fieldid;
             $content->recordid = $recordid;
             $content->content = clean_param($value, PARAM_NOTAGS);
-            insert_record('data_content',$content);
+            insert_record('data_content', $content);
         }
     }
 
@@ -186,6 +186,7 @@ class data_field_base {    //base class (text field)
             $this->store_data_content($fieldid, $recordid, $value, $name='');
         }
     }
+    
     /*************************************************************
      * this function checks if a field from an add form is empty *
      * input $param string $value                                *
