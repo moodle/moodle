@@ -1295,6 +1295,7 @@ function migrate2utf8_course_lang($recordid){
     }
 
     update_record('course',$course);
+    require_once($CFG->dirroot.'/course/lib.php');
     rebuild_course_cache($recordid);    //takes care of serialized modinfo
 /// And finally, just return the converted field
     return $result;
