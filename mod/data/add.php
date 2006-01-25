@@ -140,7 +140,7 @@
                 //this creates a new field subclass object
                 if ($name != 'MAX_FILE_SIZE' && $name != 'sesskey'){
                     $currentfield = data_get_field_from_name($name);
-                //use native subclass method to sore field data
+                //use native subclass method to store field data
                     $currentfield->update_data_content($currentfield->id, $rid, $value, $name);
                 }
             }
