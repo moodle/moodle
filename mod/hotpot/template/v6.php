@@ -603,7 +603,7 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
 		$str = 'Answers['.($a++).'] = new Array('.implode(',', $segments).");\n";
 
 		// pattern to match the next part of an alternate answer
-		$pattern = '/^('.implode('|', $escapedvalues).')\\s*/';
+		$pattern = '/^('.implode('|', $escapedvalues).')\\s*/i';
 
 		// XML tags to the start of an alternate answer
 		$tags = 'data,jumbled-order-exercise,alternate';
@@ -611,7 +611,6 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
 		$i = 0;
 		while ($value = $this->parent->xml_value($tags, "[$i]['#']")) {
 			$segments = array();
-			$value = strtolower($value);
 			while (strlen($value) && preg_match($pattern, $value, $matches)) {
 				$key = array_search($matches[1], $values);
 				if (is_numeric($key)) {
