@@ -18,6 +18,20 @@ $string['configurationcomplete'] = 'Configuration terminée';
 $string['configurationcompletehead'] = 'Configuration terminée';
 $string['configurationcompletesub'] = '';
 $string['database'] = 'Base de données';
+$string['databasecreationsettings'] = 'La base de données dans laquelle sont enregistrées la plupart des données utilisées par Moodle doit maintenant être configurée. Cette base de données sera créée automatiquement par l\'installeur Moodle4Windows avec les options spécifiées ci-dessous.<br /><br /><br />
+<strong>Type&nbsp;:</strong> réglé sur «&nbsp;mysql&nbsp;» par l\'installeur<br />
+<strong>Serveur&nbsp;:</strong> réglé sur «&nbsp;localhost&nbsp;» par l\'installeur<br />
+<strong>Nom&nbsp;:</strong> nom de la base de données, par exemple «&nbsp;moodle&nbsp;»<br />
+<strong>Utilisateur&nbsp;:</strong> réglé sur «&nbsp;root&nbsp;» par l\'installeur<br />
+<strong>Mot de passe&nbsp;:</strong> le mot de passe de la base de données<br />
+<strong>Préfixe des tables&nbsp;:</strong> le préfixe à utiliser pour les noms de toutes les tables (facultatif)';
+$string['databasecreationsettingshead'] = 'La base de données dans laquelle sont enregistrées la plupart des données utilisées par Moodle doit maintenant être configurée. Cette base de données sera créée automatiquement par l\'installeur Moodle4Windows avec les options spécifiées ci-dessous.';
+$string['databasecreationsettingssub'] = '<strong>Type&nbsp;:</strong> réglé sur «&nbsp;mysql&nbsp;» par l\'installeur<br />
+<strong>Serveur&nbsp;:</strong> réglé sur «&nbsp;localhost&nbsp;» par l\'installeur<br />
+<strong>Nom&nbsp;:</strong> nom de la base de données, par exemple «&nbsp;moodle&nbsp;»<br />
+<strong>Utilisateur&nbsp;:</strong> réglé sur «&nbsp;root&nbsp;» par l\'installeur<br />
+<strong>Mot de passe&nbsp;:</strong> le mot de passe de la base de données<br />
+<strong>Préfixe des tables&nbsp;:</strong> le préfixe à utiliser pour les noms de toutes les tables (facultatif)';
 $string['databasesettings'] = 'La base de données dans laquelle sont enregistrées la plupart des données utilisées par Moodle doit maintenant être configurée. Cette base de données doit avoir déjà été créée sur le serveur, ainsi qu\'un nom d\'utilisateur et un mot de passe permettant d\'y accéder.<br /><br /><br />
 <strong>Type&nbsp;:</strong> «&nbsp;mysql&nbsp;» ou «&nbsp;postgres7&nbsp;»<br />
 <strong>Serveur hôte&nbsp;:</strong> le plus souvent «&nbsp;localhost&nbsp;» ou par exemple «&nbsp;db.isp.com&nbsp;»<br />
@@ -30,13 +44,6 @@ $string['databasesettingssub'] = '<strong>Type&nbsp;:</strong> «&nbsp;mysql&nbsp
 <strong>Serveur hôte&nbsp;:</strong> le plus souvent «&nbsp;localhost&nbsp;» ou par exemple «&nbsp;db.isp.com&nbsp;»<br />
 <strong>Nom&nbsp;:</strong> nom de la base de données, par exemple «&nbsp;moodle&nbsp;»<br />
 <strong>Utilisateur&nbsp;:</strong> le nom d\'utilisateur de la base de données<br />
-<strong>Mot de passe&nbsp;:</strong> le mot de passe de la base de données<br />
-<strong>Préfixe des tables&nbsp;:</strong> le préfixe à utiliser pour les noms de toutes les tables (facultatif)';
-$string['databasecreationsettings'] = 'La base de données dans laquelle sont enregistrées la plupart des données utilisées par Moodle doit maintenant être configurée. Cette base de données sera créée automatiquement par l\'installeur Moodle4Windows avec les options spécifiées ci-dessous.<br /><br /><br />
-<strong>Type&nbsp;:</strong> réglé sur «&nbsp;mysql&nbsp;» par l\'installeur<br />
-<strong>Serveur&nbsp;:</strong> réglé sur «&nbsp;localhost&nbsp;» par l\'installeur<br />
-<strong>Nom&nbsp;:</strong> nom de la base de données, par exemple «&nbsp;moodle&nbsp;»<br />
-<strong>Utilisateur&nbsp;:</strong> réglé sur «&nbsp;root&nbsp;» par l\'installeur<br />
 <strong>Mot de passe&nbsp;:</strong> le mot de passe de la base de données<br />
 <strong>Préfixe des tables&nbsp;:</strong> le préfixe à utiliser pour les noms de toutes les tables (facultatif)';
 $string['dataroot'] = 'Dossier de données';
@@ -58,6 +65,8 @@ $string['directorysettingssub'] = '<strong>Adresse web :</strong> veuillez indiq
 $string['dirroot'] = 'Dossier Moodle';
 $string['dirrooterror'] = 'Le dossier Moodle semble incorrect : aucune installation de Moodle ne se trouve dans ce dossier. Le dossier Moodle indiqué ci-dessous est vraisemblablement correct.';
 $string['download'] = 'Télécharger';
+$string['environmenthead'] = 'Vérification de l\'environnement...';
+$string['environmentsub'] = '';
 $string['fail'] = 'Échec';
 $string['fileuploads'] = 'Téléchargement des fichiers';
 $string['fileuploadserror'] = 'Le téléchargement des fichiers sur le serveur doit être activé';
