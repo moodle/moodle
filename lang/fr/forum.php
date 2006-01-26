@@ -83,6 +83,7 @@ $string['introsocial'] = 'Un forum pour discuter de sujets divers';
 $string['introteacher'] = 'Un forum réservé aux remarques et discussions des enseignants';
 $string['lastpost'] = 'Dernier message';
 $string['learningforums'] = 'Forums d\'apprentissage';
+$string['mailnow'] = 'Envoyer maintenant';
 $string['markalldread'] = 'Marquer tous les messages de cette discussion comme lus.';
 $string['markallread'] = 'Marquer tous les messages de ce forum comme lus.';
 $string['markread'] = 'Marquer comme lu';
@@ -139,6 +140,7 @@ $string['postincontext'] = 'Voir ce message dans son contexte';
 $string['postmailinfo'] = 'Ceci est une copie du message posté sur le site $a.
 
 Pour y répondre sur le site, cliquer sur ce lien :';
+$string['postmailnow'] = '<p>Ce message sera envoyé immédiatement à tous les participants abonnés à ce forum.</p>';
 $string['postrating1'] = 'Message plutôt détaché';
 $string['postrating2'] = 'Message équilibré, détaché et lié';
 $string['postrating3'] = 'Message plutôt lié';
