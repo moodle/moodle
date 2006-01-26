@@ -5,7 +5,7 @@
 $string['addmorechoices'] = '選択肢の追加';
 $string['allowupdate'] = '投票内容の更新を許可する';
 $string['answered'] = '投票済み';
-$string['choice'] = '選択肢 $a';
+$string['choice'] = '選択肢';
 $string['choiceclose'] = '終了日時';
 $string['choicename'] = '投票名';
 $string['choiceopen'] = '開始日時';
