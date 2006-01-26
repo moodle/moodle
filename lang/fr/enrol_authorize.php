@@ -1,5 +1,6 @@
 <?php // $Id$ 
 
+$string['avsresult'] = 'Résultat AVS&nbsp;:';
 $string['adminauthorizeccapture'] = 'Contrôle des commandes & réglages de saisie automatique';
 $string['adminauthorizeemail'] = 'Réglages d\'envoi de courriel';
 $string['adminauthorizesettings'] = 'Réglages Authorize.net';
@@ -39,6 +40,19 @@ $string['anreferer'] = 'Taper ici une URL (référenceur) si vous avez mis en plac
 $string['antestmode'] = 'Traiter les transactions en mode test (aucun montant ne sera prélevé)';
 $string['antrankey'] = 'Authorize.net&nbsp;: clef de transaction';
 $string['authorizedpendingcapture'] = 'Autorisé / En attente de saisie';
+$string['avsa'] = 'L\'adresse (rue) correspond, mais pas le code postal';
+$string['avsb'] = 'L\'adresse n\'est pas renseignée';
+$string['avse'] = 'Erreur du système de vérification d\'adresse (AVS)';
+$string['avsg'] = 'Carte provenant d\'une banque non-U.S.';
+$string['avsn'] = 'Ni l\'adresse (rue), ni le code postal ne correspondent';
+$string['avsp'] = 'Le système de vérification d\'adresse (AVS) ne peut pas fonctionner';
+$string['avsr'] = 'Veuillez essayer à nouveau, le système n\'est actuellement pas disponible';
+$string['avss'] = 'Ce service n\'est pas supporté par la banque';
+$string['avsu'] = 'Les informations d\'adresse ne sont pas disponibles';
+$string['avsw'] = 'Le code postal à 9 chiffres correspond, mais pas l\'adresse (rue)';
+$string['avsx'] = 'L\'adresse (rue) et le code postal à 9 chiffres correpondent';
+$string['avsy'] = 'L\'adresse (rue) et le code postal à 5 chiffres correpondent';
+$string['avsz'] = 'Le code postal à 5 chiffres correspond, mais pas l\'adresse (rue)';
 $string['canbecredit'] = 'Rembousable à concurrence de $a->upto';
 $string['cancelled'] = 'Annulé';
 $string['capture'] = 'Saisie';
@@ -64,6 +78,12 @@ $string['expired'] = 'Échu';
 $string['howmuch'] = 'Combien&nbsp;?';
 $string['httpsrequired'] = 'Votre requête ne peut pas être traitée pour l\'instant. Les réglages du site n\'ont pas pu être configurés correctement.<br /><br />Veuillez NE PAS taper votre numéro de carte de  crédit, à moins que vous ne voyez un cadenas jaune au bas ou dans la barre d\'adresse de votre navigateur. Ce cadenas indique que toutes les données transmises entre votre ordinateur et le serveur sont chiffrées, et que les informations échangées entre ces deux ordinateurs sont protégées et ne peuvent pas être interceptées sur Internet.';
 $string['logindesc'] = 'Cette option doit impérativement être activée&nbsp;!<br /><br />Veuillez vous assurer que l\'option «&nbsp;<a href=\"$a->url\">loginhttps</a>&nbsp;» soit activée dans les paramètres de l\'administration, section Sécurité.<br /><br />L\'activation de cette option permettra à Moodle d\'utiliser une connexion sécurisée pour l\'affichage et le traitement des pages de connexion et de paiement.';
+$string['missingaddress'] = 'L\'adresse n\'est pas renseignée';
+$string['missingcc'] = 'Le numéro de carte n\'est pas renseigné';
+$string['missingccexpire'] = 'La date d\'échéance n\'est pas renseignée';
+$string['missingcctype'] = 'Le type de carte n\'est pas renseigné';
+$string['missingcvv'] = 'Le numéro de vérification n\'est pas renseigné';
+$string['missingzip'] = 'Le code postal n\'est pas renseigné';
 $string['nameoncard'] = 'Nom sur la carte';
 $string['noreturns'] = 'Pas de retour&nbsp;!';
 $string['notsettled'] = 'Non réglé';
@@ -86,6 +106,23 @@ $a->url
 Pour activer la saisie automatique, afin que vous ne receviez plus de tels
 messages d\avertissement, veuillez visiter la page
 $a->enrolurl';
+$string['reason11'] = 'Un doublon de transaction a été transmis.';
+$string['reason13'] = 'L\'identifiant de connexion n\'est pas valide ou le compte est inactif.';
+$string['reason16'] = 'La transaction n\'a pas été trouvée.';
+$string['reason17'] = 'Le marchand n\'accepte pas ce type de carte de crédit.';
+$string['reason27'] = 'La transaction a abouti à un problème AVS. L\'adresse fournie ne correspond à l\'adresse de facturation du détenteur de la carte.';
+$string['reason28'] = 'Le marchand n\'accepte pas ce type de carte de crédit.';
+$string['reason30'] = 'Une telle configuration n\'est pas valable. Veuillez appeler votre fournisseur.';
+$string['reason39'] = 'Le code de devise fourni est soit non valide, non supporté, non autorisé ou ne possède pas de taux de change.';
+$string['reason43'] = 'The merchant was incorrectly set up at the processor. Call your Merchant Service Provider.';
+$string['reason44'] = 'Cette transaction a été déclinée. Erreur du filtre de carte&nbsp;!';
+$string['reason45'] = 'Cette transaction a été déclinée. Erreur du filtre de code de carte / AVS&nbsp;!';
+$string['reason47'] = 'Le montant requis pour le règlement ne peut pas être plus grand que le montant autorisé initiallement.';
+$string['reason5'] = 'Un montant valide est requis.';
+$string['reason50'] = 'Cette transaction est en attente de règlement et ne peut être remboursée.';
+$string['reason51'] = 'La somme de tous les crédits concernant cette transaction est plus grande que le montant original de la transaction.';
+$string['reason54'] = 'La transaction référencée ne satisfait pas les critères permettant de délivrer un crédit.';
+$string['reason55'] = 'La somme de tous les crédits concernant cette transaction dépasserait le montant dû initialement.';
 $string['refund'] = 'Remboursement';
 $string['refunded'] = 'Remboursé';
 $string['returns'] = 'Retour';
