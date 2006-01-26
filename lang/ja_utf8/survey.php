@@ -57,19 +57,19 @@ $string['attlsm1'] = '考え方と学び方に対する姿勢';
 $string['attlsm2'] = '関連学習';
 $string['attlsm3'] = '分離学習';
 $string['attlsmintro'] = '議論している時 ...';
-$string['attlsname'] = 'ATTLS (20項目バージョン)';
-$string['ciq1'] = '学習者として、どのような時が一番クラスに関わっていると感じましたか。';
-$string['ciq1short'] = '従事';
-$string['ciq2'] = '学習者として、どのような時が一番クラスと距離があると感じましたか。';
-$string['ciq2short'] = '距離';
-$string['ciq3'] = 'フォーラムの中でどのような行動が一番肯定的または有益だと感じましたか。';
-$string['ciq3short'] = '有益';
-$string['ciq4'] = 'フォーラムの中でどのような行動が一番困惑するまたは困ると感じましたか。';
-$string['ciq4short'] = '困惑';
-$string['ciq5'] = 'どのような事に一番驚きましたか。';
-$string['ciq5short'] = '驚き';
-$string['ciqintro'] = '今までのクラスの中での出来事を思い出して、下の質問に答えてください。';
-$string['ciqname'] = '重要な出来事';
+$string['attlsname'] = 'ATTLS ( 20アイテムバージョン )';
+$string['ciq1'] = '学習者として、どのような時が一番クラスに関わっていると感じましたか?';
+$string['ciq1short'] = '最も関わった';
+$string['ciq2'] = '学習者として、どのような時が一番クラスと距離があると感じましたか?';
+$string['ciq2short'] = '最も距離のある';
+$string['ciq3'] = 'フォーラムの中でどのような行動が一番肯定的または参考になる感じましたか?';
+$string['ciq3short'] = '参考になる時';
+$string['ciq4'] = 'フォーラムの中でどのような行動が一番困惑するまたは困ると感じましたか?';
+$string['ciq4short'] = '困惑した時';
+$string['ciq5'] = 'どのような事に一番驚きましたか?';
+$string['ciq5short'] = '驚いた時';
+$string['ciqintro'] = '今までのクラスの中での出来事を思い出して、下記の質問に答えてください。';
+$string['ciqname'] = 'クリティカル・インシデント';
 $string['clicktocontinue'] = '続ける';
 $string['clicktocontinuecheck'] = '確認して続ける';
 $string['colles1'] = '興味があることに集中します。';
@@ -122,7 +122,7 @@ $string['colles9'] = '私の考え方を他の学生に説明します。';
 $string['colles9short'] = '私の考え方を説明します';
 $string['collesaintro'] = 'この調査の目的は、オンライン教材があなたの学習にどのような影響をあたえているのかを知ることにあります。
 
-下記の24の質問では、学習内容に関するあなたの実体験に関して尋ねます。
+下記の24の質問では、学習内容に関するあなたの実体験に関してたずねます。
 
 回答には「正解」「不正解」はありません。私達はあなたの意見のみに関心を持っています。回答内容は高度に秘匿され、評価に影響を与えることはありません。
 
@@ -132,37 +132,37 @@ $string['collesaintro'] = 'この調査の目的は、オンライン教材が�
 $string['collesaname'] = 'COLLES ( 実体験 )';
 $string['collesapintro'] = 'この調査の目的は、オンライン教材があなたの学習にどのような影響をあたえているのかを知ることにあります。
 
-下記の24の質問では、学習内容に関するあなたの <b>要望<b> ( 理想的な ) および <b>実体験</b> に関して尋ねます。
+下記の24の質問では、学習内容に関するあなたの <b>要望<b> ( 理想的な ) および <b>実体験</b> に関してたずねます。
 
 回答には「正解」「不正解」はありません。私達はあなたの意見のみに関心を持っています。回答内容は高度に秘匿され、評価に影響を与えることはありません。
 
 あなたの思慮深い回答は、この教材の将来的な改善に役立ちます。
 
 ありがとうございます。';
-$string['collesapname'] = 'COLLES (要望と実体験)';
+$string['collesapname'] = 'COLLES ( 要望と実体験 )';
 $string['collesm1'] = '関連性';
 $string['collesm1short'] = '関連性';
 $string['collesm2'] = '熟考';
 $string['collesm2short'] = '熟考';
 $string['collesm3'] = '相互理解';
 $string['collesm3short'] = '相互理解';
-$string['collesm4'] = '先生のサポート';
-$string['collesm4short'] = '先生のサポート';
-$string['collesm5'] = '学生のサポート';
-$string['collesm5short'] = '学生のサポート';
+$string['collesm4'] = 'チューターのサポート';
+$string['collesm4short'] = 'チューターのサポート';
+$string['collesm5'] = 'クラスメートのサポート';
+$string['collesm5short'] = 'クラスメートのサポート';
 $string['collesm6'] = '解釈';
 $string['collesm6short'] = '解釈';
 $string['collesmintro'] = 'このオンライン教材で ...';
 $string['collespintro'] = 'この調査の目的は、あなたがオンライン学習をどのように見ているのかを知ることにあります。
 
-下記の24の質問では、学習内容に関するあなたの<b>要望</b> ( 理想的な ) に関して尋ねます。
+下記の24の質問では、学習内容に関するあなたの<b>要望</b> ( 理想的な ) に関してたずねます。
 
 回答には「正解」「不正解」はありません。私達はあなたの意見のみに関心を持っています。回答内容は高度に秘匿され、評価に影響を与えることはありません。
 
 あなたの思慮深い回答は、この教材の将来的な改善に役立ちます。
 
 ありがとうございます。';
-$string['collespname'] = 'COLLES (要望)';
+$string['collespname'] = 'COLLES ( 要望 )';
 $string['done'] = '完了';
 $string['download'] = 'ダウンロード';
 $string['downloadexcel'] = 'Excel形式でダウンロードする';
@@ -173,9 +173,9 @@ $string['guestsnotallowed'] = 'ゲストは調査へ参加できません';
 $string['helpsurveys'] = '他のタイプの調査に協力する';
 $string['howlong'] = 'この調査を終えるのにどれくらいの時間がかかりましたか?';
 $string['howlongoptions'] = '1分以下,1-2分,2-3分,3-4分,4-5分,5-10分,10分以上';
-$string['ifoundthat'] = '私は発見しました';
+$string['ifoundthat'] = '私は次のことを発見しました。';
 $string['introtext'] = '説明文';
-$string['ipreferthat'] = '私は好みます';
+$string['ipreferthat'] = '私は次のことが好きです。';
 $string['modulename'] = '調査';
 $string['modulenameplural'] = '調査';
 $string['name'] = '名称';
@@ -192,16 +192,16 @@ $string['question'] = '質問';
 $string['questions'] = '質問';
 $string['questionsnotanswered'] = '未回答の質問があります。';
 $string['report'] = '調査報告';
-$string['savednotes'] = 'メモが保存されました';
+$string['savednotes'] = 'メモが保存されました。';
 $string['scaleagree5'] = '全く同意できない,多少同意できない,どちらでもない,多少同意できる,強く同意できる';
 $string['scales'] = '評価尺度';
 $string['scaletimes5'] = 'ほとんど無い,まれに,時々,頻繁に,ほとんどいつも';
-$string['seemoredetail'] = '詳細を見るためにはここをクリックしてください';
+$string['seemoredetail'] = '詳細を見るためにはここをクリックしてください。';
 $string['selectedquestions'] = '評価尺度から選ばれた質問, 全学生';
 $string['summary'] = '概要';
 $string['surveycompleted'] = '調査が終了しました。下のグラフはクラスの平均とあなたの結果を比較したものです。';
 $string['surveyname'] = '調査名';
-$string['surveysaved'] = '調査が保存されました';
+$string['surveysaved'] = '調査が保存されました。';
 $string['surveytype'] = '調査タイプ';
 $string['thanksforanswers'] = '$a さん、調査にご協力いただきましてありがとうございます';
 $string['time'] = '時間';

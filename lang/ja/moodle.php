@@ -476,7 +476,7 @@ $string['expirynotifystudentsemail'] = 'こんにちは。
 
 このメールは、あなたのコース「 $a->course 」に対する登録期間が、あと $a->threshold 日で終了するお知らせのために送信されました。
 
-詳細な情報は、あなたの先生に尋ねてください。';
+詳細な情報は、あなたの先生にたずねてください。';
 $string['expirythreshold'] = '閾値';
 $string['explanation'] = '説明';
 $string['extendenrol'] = 'ユーザ登録期間の延長';
@@ -1340,8 +1340,8 @@ $string['writinguserinfo'] = 'ユーザ情報の書き出し';
 $string['wrongpassword'] = 'このユーザ名のパスワードが間違っています。';
 $string['yahooid'] = 'Yahoo ID';
 $string['yes'] = 'Yes';
-$string['youareabouttocreatezip'] = '下記のファイルを含んだzipファイルを作成します。';
-$string['youaregoingtorestorefrom'] = 'リストア対象：';
+$string['youareabouttocreatezip'] = 'あなたは下記のファイルを含んだzipファイルを作成しようとしています';
+$string['youaregoingtorestorefrom'] = 'あなたは下記のファイルのリストア処理を開始しようとしています';
 $string['yourlastlogin'] = '最終ログイン';
 $string['yourself'] = 'あなた自身';
 $string['yourteacher'] = 'あなたの $a';
