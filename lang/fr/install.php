@@ -1,17 +1,32 @@
 <?php // $Id$
-     
+
 $string['admindirerror'] = 'Le dossier d\'administration spécifié est incorrect';
 $string['admindirname'] = 'Dossier d\'administration';
-$string['admindirsetting'] = 'Certains hébergeurs web utilisent le dossier «&nbsp;/admin&nbsp;» comme URL spéciale vous permettant d\'accéder à un tableau de bord ou autre chose. Ceci entre en collision avec l\'emplacement standard des pages d\'administration de Moodle. Vous pouvez corriger cela en renommant le dossier d\'administration de votre installation de Moodle, en inscrivant ici le nouveau nom, par exemple <br /><br /><strong>moodleadmin</strong>.<br /><br />Les liens vers l\'administration de Moodle seront ainsi corrigés.';
+$string['admindirsetting'] = 'De rares  hébergeurs web utilisent le dossier «&nbsp;/admin&nbsp;» comme URL spéciale vous permettant d\'accéder à un tableau de bord ou autre chose. Ceci entre en collision avec l\'emplacement standard des pages d\'administration de Moodle. Vous pouvez corriger cela en renommant le dossier d\'administration de votre installation de Moodle, en inscrivant ici le nouveau nom, par exemple <br /><br /><strong>moodleadmin</strong>.<br /><br />Les liens vers l\'administration de Moodle seront ainsi corrigés.';
 $string['caution'] = 'Attention';
+$string['admindirsettinghead'] = 'Réglage du dossier «&nbsp;admin&nbsp;»...';
+$string['admindirsettingsub'] = 'De rares  hébergeurs web utilisent le dossier «&nbsp;/admin&nbsp;» comme URL spéciale vous permettant d\'accéder à un tableau de bord ou autre chose. Ceci entre en collision avec l\'emplacement standard des pages d\'administration de Moodle. Vous pouvez corriger cela en renommant le dossier d\'administration de votre installation de Moodle, en inscrivant ici le nouveau nom, par exemple <br /><br /><strong>moodleadmin</strong>.<br /><br />Les liens vers l\'administration de Moodle seront ainsi corrigés.';
 $string['chooselanguage'] = 'Choisissez une langue';
+$string['chooselanguagehead'] = 'Choisissez une langue';
+$string['chooselanguagesub'] = '';
 $string['compatibilitysettings'] = 'Vérification de votre configuration PHP...';
+$string['compatibilitysettingshead'] = 'Vérification de votre configuration PHP...';
+$string['compatibilitysettingssub'] = '';
 $string['configfilenotwritten'] = 'Le programme d\'installation n\'a pas pu créer automatiquement le fichier de configuration «&nbsp;config.php&nbsp;» contenant vos réglages, vraisemblablement parce que le dossier principal de Moodle n\'est pas accessible en écriture. Vous pouvez copier le code ci-dessous dans un fichier appelé «&nbsp;config.php&nbsp;», que vous placerez à l\'intérieur du dossier principal de Moodle (là où se trouve un fichier «&nbsp;config-dist.php&nbsp;»).';
 $string['configfilewritten'] = 'Le fichier «&nbsp;config.php&nbsp;» a été créé avec succès';
 $string['configurationcomplete'] = 'Configuration terminée';
+$string['configurationcompletehead'] = 'Configuration terminée';
+$string['configurationcompletesub'] = '';
 $string['database'] = 'Base de données';
 $string['databasesettings'] = 'La base de données dans laquelle sont enregistrées la plupart des données utilisées par Moodle doit maintenant être configurée. Cette base de données doit avoir déjà été créée sur le serveur, ainsi qu\'un nom d\'utilisateur et un mot de passe permettant d\'y accéder.<br /><br /><br />
 <strong>Type&nbsp;:</strong> «&nbsp;mysql&nbsp;» ou «&nbsp;postgres7&nbsp;»<br />
+<strong>Serveur hôte&nbsp;:</strong> le plus souvent «&nbsp;localhost&nbsp;» ou par exemple «&nbsp;db.isp.com&nbsp;»<br />
+<strong>Nom&nbsp;:</strong> nom de la base de données, par exemple «&nbsp;moodle&nbsp;»<br />
+<strong>Utilisateur&nbsp;:</strong> le nom d\'utilisateur de la base de données<br />
+<strong>Mot de passe&nbsp;:</strong> le mot de passe de la base de données<br />
+<strong>Préfixe des tables&nbsp;:</strong> le préfixe à utiliser pour les noms de toutes les tables (facultatif)';
+$string['databasesettingshead'] = 'La base de données dans laquelle sont enregistrées la plupart des données utilisées par Moodle doit maintenant être configurée. Cette base de données doit avoir déjà été créée sur le serveur, ainsi qu\'un nom d\'utilisateur et un mot de passe permettant d\'y accéder.';
+$string['databasesettingssub'] = '<strong>Type&nbsp;:</strong> «&nbsp;mysql&nbsp;» ou «&nbsp;postgres7&nbsp;»<br />
 <strong>Serveur hôte&nbsp;:</strong> le plus souvent «&nbsp;localhost&nbsp;» ou par exemple «&nbsp;db.isp.com&nbsp;»<br />
 <strong>Nom&nbsp;:</strong> nom de la base de données, par exemple «&nbsp;moodle&nbsp;»<br />
 <strong>Utilisateur&nbsp;:</strong> le nom d\'utilisateur de la base de données<br />
@@ -34,6 +49,10 @@ $string['dbprefix'] = 'Préfixe des tables';
 $string['dbtype'] = 'Type';
 $string['directorysettings'] = '<p>Veuillez confirmer les emplacements de cette installation de Moodle.</p>
 <p><strong>Adresse web :</strong> veuillez indiquer l\'adresse web complète par laquelle on accédera à Moodle. Si votre site web est accessible par plusieurs URL, choisissez celle qui est la plus naturelle ou la plus évidente. Ne placez pas de barre oblique à la fin de l\'adresse.</p>
+<p><strong>Dossier Moodle :</strong> veuillez spécifier le chemin complet de cette installation de Moodle («&nbsp;OS path&nbsp;»). Assurez-vous que la casse des caractères (majuscules/minuscules) est correcte.</p>
+<p><strong>Dossier de données :</strong> Moodle a besoin d\'un emplacement où enregistrer les fichiers déposés sur le site. Le serveur web (utilisateur dénommé habituellement «&nbsp;www&nbsp;», «&nbsp;apache&nbsp;» ou «&nbsp;nobody&nbsp;») doit avoir accès à ce dossier en lecture et EN ÉCRITURE. Toutefois ce dossier ne devrait pas être accessible directement depuis le web.</p>';
+$string['directorysettingshead'] = 'Veuillez confirmer les emplacements de cette installation de Moodle.';
+$string['directorysettingssub'] = '<p><strong>Adresse web :</strong> veuillez indiquer l\'adresse web complète par laquelle on accédera à Moodle. Si votre site web est accessible par plusieurs URL, choisissez celle qui est la plus naturelle ou la plus évidente. Ne placez pas de barre oblique à la fin de l\'adresse.</p>
 <p><strong>Dossier Moodle :</strong> veuillez spécifier le chemin complet de cette installation de Moodle («&nbsp;OS path&nbsp;»). Assurez-vous que la casse des caractères (majuscules/minuscules) est correcte.</p>
 <p><strong>Dossier de données :</strong> Moodle a besoin d\'un emplacement où enregistrer les fichiers déposés sur le site. Le serveur web (utilisateur dénommé habituellement «&nbsp;www&nbsp;», «&nbsp;apache&nbsp;» ou «&nbsp;nobody&nbsp;») doit avoir accès à ce dossier en lecture et EN ÉCRITURE. Toutefois ce dossier ne devrait pas être accessible directement depuis le web.</p>';
 $string['dirroot'] = 'Dossier Moodle';
