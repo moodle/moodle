@@ -1,6 +1,5 @@
 <?php // $Id$ 
 
-$string['avsresult'] = 'Résultat AVS&nbsp;:';
 $string['adminauthorizeccapture'] = 'Contrôle des commandes & réglages de saisie automatique';
 $string['adminauthorizeemail'] = 'Réglages d\'envoi de courriel';
 $string['adminauthorizesettings'] = 'Réglages Authorize.net';
@@ -39,6 +38,7 @@ $string['anpassword'] = 'Authorize.net&nbsp;: mot de passe';
 $string['anreferer'] = 'Taper ici une URL (référenceur) si vous avez mis en place cette fonctionnalité dans votre compte authorize.net. Ceci enverra une entête «&nbsp;Referer: URL&nbsp;» incluse dans la requête web';
 $string['antestmode'] = 'Traiter les transactions en mode test (aucun montant ne sera prélevé)';
 $string['antrankey'] = 'Authorize.net&nbsp;: clef de transaction';
+$string['authcaptured'] = 'Autorisé / Saisi';
 $string['authorizedpendingcapture'] = 'Autorisé / En attente de saisie';
 $string['avsa'] = 'L\'adresse (rue) correspond, mais pas le code postal';
 $string['avsb'] = 'L\'adresse n\'est pas renseignée';
@@ -53,7 +53,7 @@ $string['avsw'] = 'Le code postal à 9 chiffres correspond, mais pas l\'adresse (
 $string['avsx'] = 'L\'adresse (rue) et le code postal à 9 chiffres correpondent';
 $string['avsy'] = 'L\'adresse (rue) et le code postal à 5 chiffres correpondent';
 $string['avsz'] = 'Le code postal à 5 chiffres correspond, mais pas l\'adresse (rue)';
-$string['canbecredit'] = 'Rembousable à concurrence de $a->upto';
+$string['canbecredit'] = 'Remboursable à concurrence de $a->upto';
 $string['cancelled'] = 'Annulé';
 $string['capture'] = 'Saisie';
 $string['capturedpendingsettle'] = 'Saisi / En attente de règlement';
