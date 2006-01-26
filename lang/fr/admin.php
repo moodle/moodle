@@ -127,6 +127,13 @@ $string['download'] = 'Télécharger';
 $string['editlang'] = '<b>Modifier</b>';
 $string['edithelpdocs'] = 'Modifier les fichiers d\'aide';
 $string['editstrings'] = 'Modifier les chaînes de caractères';
+$string['environment'] = 'Environnement';
+$string['environmenterrortodo'] = 'Vous devez résoudre tous les problèmes liés à l\'environnement (erreurs) décrits ci-dessus avant de continuer l\'installation de la version de Moodle demandée&nbsp;!';
+$string['environmentrecommendinstall'] = 'est recommandée&nbsp;; veuillez l\'installer ou l\'activer';
+$string['environmentrecommendversion'] = 'la version $a->needed est recommandée&nbsp;; vous utilisez actuellement la version $a->current';
+$string['environmentrequireinstall'] = 'est obligatoire&nbsp;; veuillez l\'installer ou l\'activer';
+$string['environmentrequireversion'] = 'la version $a->needed is requise&nbsp;; vous utilisez actuellement la version $a->current';
+$string['environmentxmlerror'] = 'Erreur lors de la lecture des données d\'environnement ($a->error_code)';
 $string['errors'] = 'Erreurs';
 $string['filterall'] = 'Filtrer toutes les chaînes de caractères';
 $string['filtermatchoneperpage'] = 'Filtrer une occurence par page';
@@ -204,5 +211,6 @@ $string['userscreated'] = 'Utilisateurs créés';
 $string['usersrenamed'] = 'Utilisateurs renommés';
 $string['usersupdated'] = 'Utilisateurs modifiés';
 $string['updateaccounts'] = 'Modifier des comptes existants';
+$string['upwards']  = 'vers le haut';
 
 ?>
