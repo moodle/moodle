@@ -101,7 +101,6 @@ class enrolment_plugin extends enrolment_base
     function cc_submit($form, $course)
     {
         global $CFG, $USER, $SESSION;
-        require_once $CFG->dirroot.'/enrol/authorize/ccval.php';
         require_once $CFG->dirroot.'/enrol/authorize/action.php';
 
         if (!$this->validate_enrol_form($form)) {
@@ -110,21 +109,9 @@ class enrolment_plugin extends enrolment_base
 
         $this->prevent_double_paid($course);
 
-        $exp_date = ($form->ccexpiremm < 10) ? strval('0'.$form->ccexpiremm) : strval($form->ccexpiremm);
-        $exp_date .= $form->ccexpireyyyy;
-        $valid_cc = CCVal($form->cc, $form->cctype, $exp_date);
+        $useripno = getremoteaddr();
         $curcost = $this->get_course_cost($course);
-        $useripno = getremoteaddr(); // HTTP_CLIENT_IP, HTTP_X_FORWARDED_FOR, REMOTE_ADDR
-
-        if (!$valid_cc) {
-            if ($valid_cc === 0) {
-                $this->ccerrors['ccexpire'] = get_string('ccexpired', 'enrol_authorize');
-            }
-            else {
-                $this->ccerrors['cc'] = get_string('ccinvalid', 'enrol_authorize');
-            }
-            return;
-        }
+        $exp_date = sprintf("%02d", $form->ccexpiremm) . $form->ccexpireyyyy;
 
         // NEW ORDER
         $timenow = time();
@@ -286,11 +273,23 @@ class enrolment_plugin extends enrolment_base
     function validate_enrol_form($form)
     {
         global $CFG;
+        require_once $CFG->dirroot.'/enrol/authorize/ccval.php';
 
-        $return = true;
+        $ccexpiremm = intval($form->ccexpiremm);
+        $ccexpireyyyy = intval($form->ccexpireyyyy);
 
-        if (empty($form->ccexpiremm) || empty($form->ccexpireyyyy)) {
+        if (empty($ccexpiremm) || empty($ccexpireyyyy)) {
             $this->ccerrors['ccexpire'] = get_string('missingccexpire', 'enrol_authorize');
+        }
+        $expdate = sprintf("%02d", $ccexpiremm) . strval($ccexpireyyyy);
+        $validcc = CCVal($form->cc, $form->cctype, $expdate);
+        if (!$validcc) {
+            if ($validcc === 0) {
+                $this->ccerrors['ccexpire'] = get_string('ccexpired', 'enrol_authorize');
+            }
+            else {
+                $this->ccerrors['cc'] = get_string('ccinvalid', 'enrol_authorize');
+            }
         }
         if (empty($form->ccfirstname) || empty($form->cclastname)) {
             $this->ccerrors['ccfirstlast'] = get_string('missingfullname');
@@ -318,12 +317,13 @@ class enrolment_plugin extends enrolment_base
         if (empty($form->cczip) || !is_numeric($form->cczip)) {
             $this->ccerrors['cczip'] = get_string('missingzip', 'enrol_authorize');
         }
+
         if (!empty($this->ccerrors)) {
             $this->ccerrors['header'] = get_string('someerrorswerefound');
-            $return = false;
+            return false;
         }
 
-        return $return;
+        return true;
     }
 
     /**
@@ -533,7 +533,9 @@ class enrolment_plugin extends enrolment_base
     {
         global $CFG, $SESSION, $USER;
 
-        if ($rec=get_record('enrol_authorize','userid',$USER->id,'courseid',$course->id,'status',AN_STATUS_AUTH,'id')) {
+        $status = empty($CFG->an_test) ? AN_STATUS_AUTH : AN_STATUS_NONE;
+
+        if ($rec=get_record('enrol_authorize','userid',$USER->id,'courseid',$course->id,'status',$status,'id')) {
             $a->orderid = $rec->id;
             redirect($CFG->wwwroot, get_string("paymentpending", "enrol_authorize", $a), '20');
             return;
