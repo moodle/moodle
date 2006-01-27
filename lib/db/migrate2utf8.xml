@@ -96,7 +96,7 @@
             WHERE e.id = RECORDID
           </SQL_DETECT_USER>
           <SQL_DETECT_COURSE>
-            SELECT e.courseid
+            SELECT e.courseid as course
             FROM {$CFG->prefix}event e
             WHERE e.id = RECORDID
           </SQL_DETECT_COURSE>
@@ -108,7 +108,7 @@
             WHERE e.id = RECORDID
           </SQL_DETECT_USER>
           <SQL_DETECT_COURSE>
-            SELECT e.courseid
+            SELECT e.courseid as course
             FROM {$CFG->prefix}event e
             WHERE e.id = RECORDID
           </SQL_DETECT_COURSE>

@@ -603,7 +603,7 @@ function migrate2utf8_message_read_message($recordid){
     $newmessageread = new object;
     $newmessageread->id = $recordid;
     $newmessageread->message = $result;
-    update_record('message_read',$newmessage);
+    update_record('message_read',$newmessageread);
 /// And finally, just return the converted field
     return $result;
 }
@@ -926,7 +926,7 @@ function migrate2utf8_user_lang($recordid){
         $user->lang = $user->lang.'_utf8';
     }
 
-    update_record('user',$user);
+    $result = update_record('user',$user);
 /// And finally, just return the converted field
     return $result;
 }
@@ -1098,22 +1098,6 @@ function migrate2utf8_course_summary($recordid){
 
 function migrate2utf8_course_modinfo($recordid){
     global $CFG;
-    
-    if (!$course = get_record('course', 'id', $recordid)) {
-        log_the_problem_somewhere();
-        return false;
-    }
-    $textlib = textlib_get_instance();
-/// Convert the text
-    $mods = (unserialize($course->modinfo));
-
-    //print_object($mods);
-    if ($mods) {
-        foreach ($mods as $key => $val) {
-            $mods[$key]->name = $textlib->convert($mods[$key]->name, $fromenc);
-
-        }
-    }
     //print_object($mods);
 }
 
@@ -1296,7 +1280,7 @@ function migrate2utf8_course_lang($recordid){
 
     update_record('course',$course);
     require_once($CFG->dirroot.'/course/lib.php');
-    rebuild_course_cache($recordid);    //takes care of serialized modinfo
+    $result = rebuild_course_cache($recordid);    //takes care of serialized modinfo
 /// And finally, just return the converted field
     return $result;
 }
