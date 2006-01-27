@@ -20,9 +20,13 @@
  #-- this is very evil too
  set_magic_quotes_runtime(0);
 
-
- #-- strip \'s only if the variables garbaging is really enabled
- if (get_magic_quotes_gpc()) {
+ #-- Moodle always addslashes to everything so
+ #-- we strip them back again here to allow
+ #-- the wiki module itself to add them before
+ #-- insert. Strange triple add-strip-add but
+ #-- this was the best way to solve problems
+ #-- without changing how the rest of the 
+ #-- module works.
 
     $superglobals = array(
        "_REQUEST",
@@ -43,7 +47,6 @@
        }
     }
 
- }
 
 
 ?>

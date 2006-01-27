@@ -112,10 +112,12 @@
 
         define("EWIKI_INIT_PAGES", wiki_content_dir($wiki));
 
-///     # fix broken PHP setup
-        if (!function_exists("get_magic_quotes_gpc") || get_magic_quotes_gpc()) {
-            include($CFG->dirroot."/mod/wiki/ewiki/fragments/strip_wonderful_slashes.php");
-        }
+///     # Moodle always addslashes to everything so we are going to strip them always
+///     # to allow wiki itself to add them again. It's a triple add-strip-add but
+///     # was the only way to solve the problem without modifying how the rest of
+///     # the module works.
+        include($CFG->dirroot."/mod/wiki/ewiki/fragments/strip_wonderful_slashes.php");
+
         if (ini_get("register_globals")) {
             #    include($CFG->dirroot."/mod/wiki/ewiki/fragments/strike_register_globals.php");
         }
