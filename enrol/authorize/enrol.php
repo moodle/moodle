@@ -84,7 +84,7 @@ class enrolment_plugin extends enrolment_base
     function check_entry($form, $course) {
         if ((!empty($form->password)) || isguest() || $this->zero_cost($course)) {
             parent::check_entry($form, $course);
-        } else {
+        } elseif ($this->validate_enrol_form($form)) {
             $this->cc_submit($form, $course);
         }
     }
@@ -102,10 +102,6 @@ class enrolment_plugin extends enrolment_base
     {
         global $CFG, $USER, $SESSION;
         require_once $CFG->dirroot.'/enrol/authorize/action.php';
-
-        if (!$this->validate_enrol_form($form)) {
-            return;
-        }
 
         $this->prevent_double_paid($course);
 
