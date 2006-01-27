@@ -84,7 +84,7 @@ class enrolment_plugin extends enrolment_base
     function check_entry($form, $course) {
         if ((!empty($form->password)) || isguest() || $this->zero_cost($course)) {
             parent::check_entry($form, $course);
-        } elseif ($this->validate_enrol_form($form)) {
+        } elseif ((!empty($form->ccsubmit)) && $this->validate_enrol_form($form)) {
             $this->cc_submit($form, $course);
         }
     }

@@ -108,7 +108,7 @@ $usercountry = empty($form->cccountry) ? $USER->country : $form->cccountry;
   <?php if (!empty($this->ccerrors['cczip'])) { formerr($this->ccerrors['cczip']); } ?></td>
 </tr>
 </table>
-<input type="submit" value="<?php print_string("sendpaymentbutton", "enrol_authorize") ?>">
+<input type="submit" name="ccsubmit" value="<?php print_string("sendpaymentbutton", "enrol_authorize") ?>">
 </form>
 
 </div>
