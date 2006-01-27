@@ -47,6 +47,7 @@ $string['avsg'] = 'Carte provenant d\'une banque non-U.S.';
 $string['avsn'] = 'Ni l\'adresse (rue), ni le code postal ne correspondent';
 $string['avsp'] = 'Le système de vérification d\'adresse (AVS) ne peut pas fonctionner';
 $string['avsr'] = 'Veuillez essayer à nouveau, le système n\'est actuellement pas disponible';
+$string['avsresult'] = 'Résultat AVS&nbsp;:';
 $string['avss'] = 'Ce service n\'est pas supporté par la banque';
 $string['avsu'] = 'Les informations d\'adresse ne sont pas disponibles';
 $string['avsw'] = 'Le code postal à 9 chiffres correspond, mais pas l\'adresse (rue)';
