@@ -2,7 +2,6 @@
 
 require_once '../../config.php';
 require_once $CFG->dirroot.'/enrol/authorize/const.php';
-require_once $CFG->dirroot.'/enrol/authorize/enrol.php';
 require_once $CFG->dirroot.'/enrol/authorize/action.php';
 
 define('ORDER_CAPTURE', 'capture');

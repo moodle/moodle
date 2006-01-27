@@ -147,26 +147,28 @@ class enrolment_plugin extends enrolment_base
         }
 
         $extra = new stdClass();
-        $extra->x_phone = '';
-        $extra->x_fax = '';
-        $extra->x_first_name = $form->ccfirstname;
-        $extra->x_last_name = $form->cclastname;
-        $extra->x_address = $form->ccaddress;
-        $extra->x_city = $form->cccity;
-        $extra->x_zip = $form->cczip;
-        $extra->x_state = $form->ccstate;
-        $extra->x_country = $form->cccountry;
         $extra->x_card_num = $form->cc;
         $extra->x_card_code = $form->cvv;
         $extra->x_exp_date = $exp_date;
         $extra->x_currency_code = $curcost['currency'];
         $extra->x_amount = $curcost['cost'];
+        $extra->x_first_name = $form->ccfirstname;
+        $extra->x_last_name = $form->cclastname;
+        $extra->x_country = $form->cccountry;
+        $extra->x_address = $form->ccaddress;
+        $extra->x_state = $form->ccstate;
+        $extra->x_city = $form->cccity;
+        $extra->x_zip = $form->cczip;
+
         $extra->x_invoice_num = $order->id;
         $extra->x_description = $course->shortname;
+
         $extra->x_cust_id = $USER->id;
-        $extra->x_customer_ip = $useripno;
         $extra->x_email = $USER->email;
+        $extra->x_customer_ip = $useripno;
         $extra->x_email_customer = empty($CFG->enrol_mailstudents) ? 'FALSE' : 'TRUE';
+        $extra->x_phone = '';
+        $extra->x_fax = '';
 
         $message = '';
         $an_review = !empty($CFG->an_review);
@@ -296,7 +298,7 @@ class enrolment_plugin extends enrolment_base
         if (empty($form->cc)) {
             $this->ccerrors['cc'] = get_string('missingcc', 'enrol_authorize');
         }
-        if (empty($form->cvv) || !is_int($form->cvv)) {
+        if (empty($form->cvv) || !is_numeric($form->cvv)) {
             $this->ccerrors['cvv'] = get_string('missingcvv', 'enrol_authorize');
         }
         if (empty($form->cctype)) {
@@ -313,7 +315,7 @@ class enrolment_plugin extends enrolment_base
                 $this->ccerrors['cccountry'] = get_string('missingcountry');
             }
         }
-        if (empty($form->cczip) || !is_int($form->cczip)) {
+        if (empty($form->cczip) || !is_numeric($form->cczip)) {
             $this->ccerrors['cczip'] = get_string('missingzip', 'enrol_authorize');
         }
         if (!empty($this->ccerrors)) {

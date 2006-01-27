@@ -23,7 +23,7 @@ $usercountry = empty($form->cccountry) ? $USER->country : $form->cccountry;
 <div align="center">
 
 <p><?php print_string("paymentrequired") ?></p>
-<p><b><?php echo get_string("cost").": $curcost[currency]  $curcost[cost]"; ?></b></p>
+<p><b><?php echo get_string("cost").": $curcost[currency] $curcost[cost]"; ?></b></p>
 <p><?php print_string("paymentinstant") ?></p>
 
 <form name="form" method="post" action="enrol.php" autocomplete="off">
@@ -31,13 +31,13 @@ $usercountry = empty($form->cccountry) ? $USER->country : $form->cccountry;
 <table align="center" width="100%" border=0>
 <tr>
   <td align="right"><?php print_string("ccno", "enrol_authorize") ?>: </td>
-  <td align="left"><input type="text" name="cc" size="16" value="<?php p($form->cc) ?>"  />
+  <td align="left"><input type="text" name="cc" size="16" value="<?php p($form->cc) ?>" />
   <?php if (!empty($this->ccerrors['cc'])) { formerr($this->ccerrors['cc']); } ?></td>
 </tr>
 <tr>
   <td align="right"><?php print_string("nameoncard", "enrol_authorize") ?>: </td>
-  <td align="left"><input type="text" name="ccfirstname" size="8" value="<?php p($userfirstname) ?>"  />
-  <input type="text" name="cclastname" size="8" value="<?php p($userlastname) ?>"  />
+  <td align="left"><input type="text" name="ccfirstname" size="8" value="<?php p($userfirstname) ?>" />
+  <input type="text" name="cclastname" size="8" value="<?php p($userlastname) ?>" />
   <?php if (!empty($this->ccerrors['ccfirstlast'])) { formerr($this->ccerrors['ccfirstlast']); } ?></td>
 </tr>
 <tr>
@@ -78,7 +78,7 @@ $usercountry = empty($form->cccountry) ? $USER->country : $form->cccountry;
 <?php if (!empty($CFG->an_avs)) { /* Address Verification System */ ?>
 <tr>
   <td align="right"><?php print_string("address") ?>: </td>
-  <td align="left"><input type="text" name="ccaddress" size="32" value="<?php p($useraddress) ?>"  />
+  <td align="left"><input type="text" name="ccaddress" size="32" value="<?php p($useraddress) ?>" />
   <?php if (!empty($this->ccerrors['ccaddress'])) { formerr($this->ccerrors['ccaddress']); } ?></td>
 </tr>
 <tr>
@@ -91,6 +91,15 @@ $usercountry = empty($form->cccountry) ? $USER->country : $form->cccountry;
   <td align="right"><?php print_string("country") ?>: </td>
   <td align="left"><?php choose_from_menu(get_list_of_countries(), "cccountry", $usercountry, get_string("selectacountry")."..."); ?>
   <?php if (!empty($this->ccerrors['cccountry'])) { formerr($this->ccerrors['cccountry']); } ?></td>
+</tr>
+<?php } else { /* not AVS */ ?>
+<tr>
+<td colspan="2">
+  <input type="hidden" name="ccstate" value="" />
+  <input type="hidden" name="ccaddress" value="<?php p($useraddress) ?>" />
+  <input type="hidden" name="cccity" value="<?php p($usercity) ?>" />
+  <input type="hidden" name="cccountry" value="<?php p($usercountry) ?>" />
+</td>
 </tr>
 <?php } ?>
 <tr>
