@@ -21,12 +21,12 @@
       <FIELDS>
         <FIELD name="details" method="PLAIN_SQL_UPDATE" type="text" length="0">
           <SQL_DETECT_USER>
-          </SQL_DETECT_USER>
            SELECT ha.userid
            FROM {$CFG->prefix}hotpot_attempts ha,
                 {$CFG->prefix}hotpot_details hd
-           WHERE AND ha.id = hd.attempt
+           WHERE ha.id = hd.attempt
                  AND hd.id = RECORDID
+           </SQL_DETECT_USER>
           <SQL_DETECT_COURSE>
            SELECT h.course
            FROM {$CFG->prefix}hotpot h,
