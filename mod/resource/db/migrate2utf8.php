@@ -88,7 +88,6 @@ function migrate2utf8_resource_summary($recordid){
     $textlib = textlib_get_instance();
 /// Convert the text
     $result = $textlib->convert($resource->summary, $fromenc);
-print('sumsumsum'.$result);
     $newresource = new object;
     $newresource->id = $recordid;
     $newresource->summary = $result;
