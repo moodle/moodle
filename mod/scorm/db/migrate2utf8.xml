@@ -7,7 +7,7 @@
           <SQL_DETECT_USER>
            SELECT sst.userid
            FROM {$CFG->prefix}scorm_scoes_track sst
-           WHERE ge.id=RECORDID
+           WHERE sst.id=RECORDID
           </SQL_DETECT_USER>
           <SQL_DETECT_COURSE>
            SELECT s.course
@@ -21,7 +21,7 @@
           <SQL_DETECT_USER>
            SELECT sst.userid
            FROM {$CFG->prefix}scorm_scoes_track sst
-           WHERE ge.id=RECORDID
+           WHERE sst.id=RECORDID
           </SQL_DETECT_USER>
           <SQL_DETECT_COURSE>
            SELECT s.course

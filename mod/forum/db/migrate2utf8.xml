@@ -14,7 +14,7 @@
            WHERE fd.id=RECORDID
           </SQL_DETECT_USER>
           <SQL_DETECT_COURSE>
-           SELECT f.course
+           SELECT fd.course
            FROM {$CFG->prefix}forum_discussions fd
            WHERE fd.id = RECORDID
           </SQL_DETECT_COURSE>

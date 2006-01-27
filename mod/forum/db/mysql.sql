@@ -7,7 +7,7 @@ CREATE TABLE prefix_forum (
   course int(10) unsigned NOT NULL default '0',
   type enum('single','news','general','social','eachuser','teacher','qanda') NOT NULL default 'general',
   name varchar(255) NOT NULL default '',
-  intro text NOT NULL,
+  intro text NOT NULL default '',
   open tinyint(2) unsigned NOT NULL default '2',
   assessed int(10) unsigned NOT NULL default '0',
   assesspublic int(4) unsigned NOT NULL default '0',
@@ -65,7 +65,7 @@ CREATE TABLE prefix_forum_posts (
   modified int(10) unsigned NOT NULL default '0',
   mailed tinyint(2) unsigned NOT NULL default '0',
   subject varchar(255) NOT NULL default '',
-  message text NOT NULL,
+  message text NOT NULL default '',
   format tinyint(2) NOT NULL default '0',
   attachment VARCHAR(100) NOT NULL default '',
   totalscore tinyint(4) NOT NULL default '0',
@@ -85,9 +85,9 @@ CREATE TABLE prefix_forum_posts (
 
 CREATE TABLE prefix_forum_queue (
   id int(10) unsigned NOT NULL auto_increment, 
-  userid int(10) unsigned default 0 NOT NULL,
-  discussionid int(10) unsigned default 0 NOT NULL,
-  postid int(10) unsigned default 0 NOT NULL,
+  userid int(10) unsigned NOT NULL default 0,
+  discussionid int(10) unsigned NOT NULL default 0,
+  postid int(10) unsigned NOT NULL default 0,
   PRIMARY KEY  (id),
   KEY user (userid),
   KEY post (postid)
