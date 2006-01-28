@@ -230,16 +230,16 @@ $string['courseinfo'] = 'コース情報';
 $string['coursemessage'] = 'コースユーザにメッセージを送信';
 $string['coursenotaccessible'] = 'このコースには一般からのアクセスはできません。';
 $string['coursereject'] = 'コースリクエストを拒否';
-$string['courserejected'] = 'コースは拒否され、リクエスタに通知メールが送信されました。';
+$string['courserejected'] = 'コースは拒否され、申請者に通知メールが送信されました。';
 $string['courserejectemail'] = '申し訳ございません、あなたがリクエストしたコースは拒否されました。拒否理由は下記の通りです。
 
 $a';
-$string['courserejectreason'] = 'あなたが、このコースを拒否する理由の概要<br />( この内容はリクエスタにメール送信されます )';
+$string['courserejectreason'] = 'あなたが、このコースを拒否する理由の概要<br />( この内容は申請者にメール送信されます。 )';
 $string['courserejectsubject'] = 'あなたのコースは拒否されました。';
 $string['courserequest'] = 'コースリクエスト';
 $string['courserequestdisabled'] = '申し訳ございません、リクエストされたコースは管理者によって無効にされました。';
 $string['courserequestfailed'] = '何らかの理由で、あなたのコースリクエストは保存できませんでした。';
-$string['courserequestintro'] = 'あなたのコースを作成するリクエストをするには、このフォームをご利用ください。<br />このコースを開設したい理由を管理者が理解して、承認されるために可能な限り<br />多くの情報を入力してください。';
+$string['courserequestintro'] = 'あなたのコース作成をリクエストをするには、このフォームを利用してください。<br />コース開設の理由を管理者が理解し、承認されるために可能な限り多くの情報を<br />入力してください。';
 $string['courserequestreason'] = 'このコースを開設したい理由';
 $string['courserequestsuccess'] = 'あなたのコースリクエストが正常に保存されました。数日以内に審査結果に関するメールが送信される予定です。';
 $string['courserestore'] = 'コースリストア';
