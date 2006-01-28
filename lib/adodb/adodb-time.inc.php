@@ -691,7 +691,7 @@ adodb_date_gentable();
 
 for ($i=1970; $i > 1500; $i--) {
 
-echo "<hr>$i ";
+echo "<hr />$i ";
 	adodb_date_test_date($i,1,1);
 }
 

@@ -1,6 +1,6 @@
 <?php
 /*
-V4.66 28 Sept 2005  (c) 2000-2005 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.71 24 Jan 2006  (c) 2000-2006 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -147,24 +147,6 @@ class ADODB_sqlite extends ADOConnection {
 		return ($col) ? "adodb_date2($fmt,$col)" : "adodb_date($fmt)";
 	}
 	
-	function &MetaColumns($tab)
-	{
-	global $ADODB_FETCH_MODE;
-	
-		$rs = $this->Execute("select * from $tab limit 1");
-		if (!$rs) {
-			$false = false;
-			return $false;
-		}
-		$arr = array();
-		for ($i=0,$max=$rs->_numOfFields; $i < $max; $i++) {
-			$fld =& $rs->FetchField($i);
-			if ($ADODB_FETCH_MODE == ADODB_FETCH_NUM) $retarr[] =& $fld;	
-			else $arr[strtoupper($fld->name)] =& $fld;
-		}
-		$rs->Close();
-		return $arr;
-	}
 	
 	function _createFunctions()
 	{

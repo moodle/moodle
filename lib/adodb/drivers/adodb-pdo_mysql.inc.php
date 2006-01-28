@@ -2,7 +2,7 @@
 
 
 /*
-V4.66 28 Sept 2005  (c) 2000-2005 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.71 24 Jan 2006  (c) 2000-2006 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -21,7 +21,7 @@ class ADODB_pdo_mysql extends ADODB_pdo {
 	{
 	
 		$parentDriver->hasTransactions = false;
-		$parentDriver->_bindInputArray = false;
+		$parentDriver->_bindInputArray = true;
 		$parentDriver->hasInsertID = true;
 		$parentDriver->_connectionID->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY,true);
 	}

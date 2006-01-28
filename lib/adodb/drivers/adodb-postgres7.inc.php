@@ -1,6 +1,6 @@
 <?php
 /*
- V4.66 28 Sept 2005  (c) 2000-2005 John Lim (jlim#natsoft.com.my). All rights reserved.
+ V4.71 24 Jan 2006  (c) 2000-2006 John Lim (jlim#natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -101,11 +101,14 @@ class ADODB_postgres7 extends ADODB_postgres64 {
 			$sqlarr = explode('?',trim($sql));
 			$sql = '';
 			$i = 1;
+			$last = sizeof($sqlarr)-1;
 			foreach($sqlarr as $v) {
-				$sql .= $v.' $'.$i;
+				if ($last < $i) $sql .= $v;
+				else $sql .= $v.' $'.$i;
 				$i++;
 			}
-			$rez = pg_query_params($this->_connectionID,substr($sql, 0, strlen($sql)-2), $inputarr);
+			
+			$rez = pg_query_params($this->_connectionID,$sql, $inputarr);
 		} else {
 			$rez = pg_query($this->_connectionID,$sql);
 		}

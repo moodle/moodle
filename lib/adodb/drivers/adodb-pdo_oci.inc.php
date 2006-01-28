@@ -2,7 +2,7 @@
 
 
 /*
-V4.66 28 Sept 2005  (c) 2000-2005 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.71 24 Jan 2006  (c) 2000-2006 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -21,10 +21,11 @@ class ADODB_pdo_oci extends ADODB_pdo_base {
 	var $metaColumnsSQL = "select cname,coltype,width, SCALE, PRECISION, NULLS, DEFAULTVAL from col where tname='%s' order by colno"; 
 		
  	var $_initdate = true;
+	var $_hasdual = true;
 	
 	function _init($parentDriver)
 	{
-		$parentDriver->_bindInputArray = false;
+		$parentDriver->_bindInputArray = true;
 		
 		if ($this->_initdate) {
 			$parentDriver->Execute("ALTER SESSION SET NLS_DATE_FORMAT='".$this->NLS_DATE_FORMAT."'");

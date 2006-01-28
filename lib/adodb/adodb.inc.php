@@ -14,7 +14,7 @@
 /**
 	\mainpage 	
 	
-	 @version V4.66 28 Sept 2005  (c) 2000-2005 John Lim (jlim#natsoft.com.my). All rights reserved.
+	 @version V4.71 24 Jan 2006  (c) 2000-2006 John Lim (jlim#natsoft.com.my). All rights reserved.
 
 	Released under both BSD license and Lesser GPL library license. You can choose which license
 	you prefer.
@@ -171,7 +171,7 @@
 		/**
 		 * ADODB version as a string.
 		 */
-		$ADODB_vers = 'V4.66 28 Sept 2005  (c) 2000-2005 John Lim (jlim#natsoft.com.my). All rights reserved. Released BSD & LGPL.';
+		$ADODB_vers = 'V4.71 24 Jan 2006  (c) 2000-2006 John Lim (jlim#natsoft.com.my). All rights reserved. Released BSD & LGPL.';
 	
 		/**
 		 * Determines whether recordset->RecordCount() is used. 
@@ -314,7 +314,6 @@
 	var $_evalAll = false;
 	var $_affected = false;
 	var $_logsql = false;
-	
 
 	
 	/**
@@ -1497,11 +1496,67 @@
 		return $rs;
 	}
 	
+	
 	/**
 	* Flush cached recordsets that match a particular $sql statement. 
 	* If $sql == false, then we purge all files in the cache.
  	*/
-	function CacheFlush($sql=false,$inputarr=false)
+	
+	/**
+   * Flush cached recordsets that match a particular $sql statement. 
+   * If $sql == false, then we purge all files in the cache.
+    */
+   function CacheFlush($sql=false,$inputarr=false)
+   {
+   global $ADODB_CACHE_DIR;
+   
+      if (strlen($ADODB_CACHE_DIR) > 1 && !$sql) {
+         /*if (strncmp(PHP_OS,'WIN',3) === 0)
+            $dir = str_replace('/', '\\', $ADODB_CACHE_DIR);
+         else */
+            $dir = $ADODB_CACHE_DIR;
+            
+         if ($this->debug) {
+            ADOConnection::outp( "CacheFlush: $dir<br><pre>\n", $this->_dirFlush($dir),"</pre>");
+         } else {
+            $this->_dirFlush($dir);
+         }
+         return;
+      } 
+      
+      global $ADODB_INCLUDED_CSV;
+      if (empty($ADODB_INCLUDED_CSV)) include_once(ADODB_DIR.'/adodb-csvlib.inc.php');
+      
+      $f = $this->_gencachename($sql.serialize($inputarr),false);
+      adodb_write_file($f,''); // is adodb_write_file needed?
+      if (!@unlink($f)) {
+         if ($this->debug) ADOConnection::outp( "CacheFlush: failed for $f");
+      }
+   }
+   
+   /**
+   * Private function to erase all of the files and subdirectories in a directory.
+   *
+   * Just specify the directory, and tell it if you want to delete the directory or just clear it out.
+   * Note: $kill_top_level is used internally in the function to flush subdirectories.
+   */
+   function _dirFlush($dir, $kill_top_level = false) {
+      if(!$dh = @opendir($dir)) return;
+      
+      while (($obj = readdir($dh))) {
+         if($obj=='.' || $obj=='..')
+            continue;
+			
+         if (!@unlink($dir.'/'.$obj))
+			  $this->_dirFlush($dir.'/'.$obj, true);
+      }
+      if ($kill_top_level === true)
+         @rmdir($dir);
+      return true;
+   }
+   
+   
+	function xCacheFlush($sql=false,$inputarr=false)
 	{
 	global $ADODB_CACHE_DIR;
 	
@@ -2032,13 +2087,13 @@
 	 * List columns in a database as an array of ADOFieldObjects. 
 	 * See top of file for definition of object.
 	 *
-	 * @param table	table name to query
-	 * @param upper	uppercase table name (required by some databases)
+	 * @param $table	table name to query
+	 * @param $normalize	makes table name case-insensitive (required by some databases)
 	 * @schema is optional database schema to use - not supported by all databases.
 	 *
 	 * @return  array of ADOFieldObjects for current table.
 	 */
-	function &MetaColumns($table,$upper=true) 
+	function &MetaColumns($table,$normalize=true) 
 	{
 	global $ADODB_FETCH_MODE;
 		
@@ -2052,7 +2107,7 @@
 			$save = $ADODB_FETCH_MODE;
 			$ADODB_FETCH_MODE = ADODB_FETCH_NUM;
 			if ($this->fetchMode !== false) $savem = $this->SetFetchMode(false);
-			$rs = $this->Execute(sprintf($this->metaColumnsSQL,($upper)?strtoupper($table):$table));
+			$rs = $this->Execute(sprintf($this->metaColumnsSQL,($normalize)?strtoupper($table):$table));
 			if (isset($savem)) $this->SetFetchMode($savem);
 			$ADODB_FETCH_MODE = $save;
 			if ($rs === false || $rs->EOF) return $false;
@@ -3367,7 +3422,7 @@
 			return 'B';
 		
 		case 'D':
-			if (!empty($this->datetime)) return 'T';
+			if (!empty($this->connection) && !empty($this->connection->datetime)) return 'T';
 			return 'D';
 			
 		default: 
@@ -3669,9 +3724,23 @@
 		if (!defined('ADODB_ASSOC_CASE')) define('ADODB_ASSOC_CASE',2);
 		$errorfn = (defined('ADODB_ERROR_HANDLER')) ? ADODB_ERROR_HANDLER : false;
 		$false = false;
-		if (strpos($db,'://')) {
+		if ($at = strpos($db,'://')) {
 			$origdsn = $db;
-			$dsna = @parse_url($db);
+			if (PHP_VERSION < 5) $dsna = @parse_url($db);
+			else {
+				$fakedsn = 'fake'.substr($db,$at);
+				$dsna = @parse_url($fakedsn);
+				$dsna['scheme'] = substr($db,0,$at);
+				
+				if (strncmp($db,'pdo',3) == 0) {
+					$sch = explode('_',$dsna['scheme']);
+					if (sizeof($sch)>1) {
+						$dsna['host'] = isset($dsna['host']) ? rawurldecode($dsna['host']) : '';
+						$dsna['host'] = rawurlencode($sch[1].':host='.rawurldecode($dsna['host']));
+						$dsna['scheme'] = 'pdo';
+					}
+				}
+			}
 			
 			if (!$dsna) {
 				// special handling of oracle, which might not have host
@@ -3792,7 +3861,14 @@
 		}
 		
 		switch($drivername) {
-		case 'mysqli': $drivername='mysql'; break;
+		case 'mysqlt':
+		case 'mysqli': 
+				$drivername='mysql'; 
+				break;
+		case 'postgres7':
+		case 'postgres8':
+				$drivername = 'postgres'; 
+				break;	
 		case 'firebird15': $drivername = 'firebird'; break;
 		case 'oracle': $drivername = 'oci8'; break;
 		case 'access': if ($perf) $drivername = ''; break;

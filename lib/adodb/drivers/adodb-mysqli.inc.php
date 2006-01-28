@@ -1,6 +1,6 @@
 <?php
 /*
-V4.66 28 Sept 2005  (c) 2000-2005 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.71 24 Jan 2006  (c) 2000-2006 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -19,6 +19,8 @@ Based on adodb 3.40
 if (! defined("_ADODB_MYSQLI_LAYER")) {
  define("_ADODB_MYSQLI_LAYER", 1 );
  
+ // PHP5 compat...
+ if (! defined("MYSQLI_BINARY_FLAG"))  define("MYSQLI_BINARY_FLAG", 128); 
  if (!defined('MYSQLI_READ_DEFAULT_GROUP')) define('MYSQLI_READ_DEFAULT_GROUP',1);
 
  // disable adodb extension - currently incompatible.
@@ -161,6 +163,14 @@ class ADODB_mysqli extends ADOConnection {
 		$this->Execute('ROLLBACK');
 		$this->Execute('SET AUTOCOMMIT=1');
 		return true;
+	}
+	
+	function RowLock($tables,$where='',$flds='1 as adodb_ignore') 
+	{
+		if ($this->transCnt==0) $this->BeginTrans();
+		if ($where) $where = ' where '.$where;
+		$rs =& $this->Execute("select $flds from $tables $where for update");
+		return !empty($rs); 
 	}
 	
 	// if magic quotes disabled, use mysql_real_escape_string()
@@ -433,7 +443,7 @@ class ADODB_mysqli extends ADOConnection {
 	}
 	
 	// "Innox - Juan Carlos Gonzalez" <jgonzalez#innox.com.mx>
-	function MetaForeignKeys( $table, $owner = FALSE, $upper = FALSE, $asociative = FALSE )
+	function MetaForeignKeys( $table, $owner = FALSE, $upper = FALSE, $associative = FALSE )
 	{
 	    if ( !empty($owner) ) {
 	       $table = "$owner.$table";
@@ -459,7 +469,7 @@ class ADODB_mysqli extends ADOConnection {
 	        $foreign_keys[$ref_table] = array();
 	        $num_fields               = count($my_field);
 	        for ( $j = 0;  $j < $num_fields;  $j ++ ) {
-	            if ( $asociative ) {
+	            if ( $associative ) {
 	                $foreign_keys[$ref_table][$ref_field[$j]] = $my_field[$j];
 	            } else {
 	                $foreign_keys[$ref_table][] = "{$my_field[$j]}={$ref_field[$j]}";
@@ -659,6 +669,45 @@ class ADODB_mysqli extends ADOConnection {
 	}
 
 
+
+	// this is a set of functions for managing client encoding - very important if the encodings
+	// of your database and your output target (i.e. HTML) don't match
+	// for instance, you may have UTF8 database and server it on-site as latin1 etc.
+	// GetCharSet - get the name of the character set the client is using now
+	// Under Windows, the functions should work with MySQL 4.1.11 and above, the set of charsets supported
+	// depends on compile flags of mysql distribution 
+
+  function GetCharSet()
+  {
+    //we will use ADO's builtin property charSet
+    if (!is_callable($this->_connectionID,'character_set_name'))
+    	return false;
+    	
+    $this->charSet = @$this->_connectionID->character_set_name();
+    if (!$this->charSet) {
+      return false;
+    } else {
+      return $this->charSet;
+    }
+  }
+
+  // SetCharSet - switch the client encoding
+  function SetCharSet($charset_name)
+  {
+    if (!is_callable($this->_connectionID,'set_charset'))
+    	return false;
+
+    if ($this->charSet !== $charset_name) {
+      $if = @$this->_connectionID->set_charset($charset_name);
+      if ($if == "0" & $this->GetCharSet() == $charset_name) {
+        return true;
+      } else return false;
+    } else return true;
+  }
+
+
+
+
 }
  
 /*--------------------------------------------------------------------------------------
@@ -704,22 +753,50 @@ class ADORecordSet_mysqli extends ADORecordSet{
 		$this->_numOfFields = @mysqli_num_fields($this->_queryID);
 	}
 	
+/*
+1      = MYSQLI_NOT_NULL_FLAG
+2      = MYSQLI_PRI_KEY_FLAG
+4      = MYSQLI_UNIQUE_KEY_FLAG
+8      = MYSQLI_MULTIPLE_KEY_FLAG
+16     = MYSQLI_BLOB_FLAG
+32     = MYSQLI_UNSIGNED_FLAG
+64     = MYSQLI_ZEROFILL_FLAG
+128    = MYSQLI_BINARY_FLAG
+256    = MYSQLI_ENUM_FLAG
+512    = MYSQLI_AUTO_INCREMENT_FLAG
+1024   = MYSQLI_TIMESTAMP_FLAG
+2048   = MYSQLI_SET_FLAG
+32768  = MYSQLI_NUM_FLAG
+16384  = MYSQLI_PART_KEY_FLAG
+32768  = MYSQLI_GROUP_FLAG
+65536  = MYSQLI_UNIQUE_FLAG
+131072 = MYSQLI_BINCMP_FLAG
+*/
+
 	function &FetchField($fieldOffset = -1) 
 	{	
-	  $fieldnr = $fieldOffset;
-	  if ($fieldOffset != -1) {
-	    $fieldOffset = mysqli_field_seek($this->_queryID, $fieldnr);
-	  }
-	  $o = mysqli_fetch_field($this->_queryID);
-	  return $o;
+		$fieldnr = $fieldOffset;
+		if ($fieldOffset != -1) {
+		  $fieldOffset = mysqli_field_seek($this->_queryID, $fieldnr);
+		}
+		$o = mysqli_fetch_field($this->_queryID);
+		/* Properties of an ADOFieldObject as set by MetaColumns */
+		$o->primary_key = $o->flags & MYSQLI_PRI_KEY_FLAG;
+		$o->not_null = $o->flags & MYSQLI_NOT_NULL_FLAG;
+		$o->auto_increment = $o->flags & MYSQLI_AUTO_INCREMENT_FLAG;
+		$o->binary = $o->flags & MYSQLI_BINARY_FLAG;
+		// $o->blob = $o->flags & MYSQLI_BLOB_FLAG; /* not returned by MetaColumns */
+		$o->unsigned = $o->flags & MYSQLI_UNSIGNED_FLAG;
+
+		return $o;
 	}
 
 	function &GetRowAssoc($upper = true)
 	{
-	  if ($this->fetchMode == MYSQLI_ASSOC && !$upper) 
-	    return $this->fields;
-	  $row =& ADORecordSet::GetRowAssoc($upper);
-	  return $row;
+		if ($this->fetchMode == MYSQLI_ASSOC && !$upper) 
+		  return $this->fields;
+		$row =& ADORecordSet::GetRowAssoc($upper);
+		return $row;
 	}
 	
 	/* Use associative array to get fields array */

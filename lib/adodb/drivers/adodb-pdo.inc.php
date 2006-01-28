@@ -1,6 +1,6 @@
 <?php
 /* 
-V4.66 28 Sept 2005  (c) 2000-2005 John Lim (jlim#natsoft.com.my). All rights reserved.
+V4.71 24 Jan 2006  (c) 2000-2006 John Lim (jlim#natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -66,9 +66,13 @@ function adodb_pdo_type($t)
 
 class ADODB_pdo_base extends ADODB_pdo {
 
+	var $sysDate = "'?'";
+	var $sysTimeStamp = "'?'";
+	
+
 	function _init($parentDriver)
 	{
-		$parentDriver->_bindInputArray = false;
+		$parentDriver->_bindInputArray = true;
 		#$parentDriver->_connectionID->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY,true);
 	}
 	
@@ -77,7 +81,7 @@ class ADODB_pdo_base extends ADODB_pdo {
 		return ADOConnection::ServerInfo();
 	}
 	
-	function &SelectLimit($sql,$nrows=-1,$offset=-1,$inputarr=false,$secs2cache=0)
+	function SelectLimit($sql,$nrows=-1,$offset=-1,$inputarr=false,$secs2cache=0)
 	{
 		$ret = ADOConnection::SelectLimit($sql,$nrows,$offset,$inputarr,$secs2cache);
 		return $ret;
@@ -135,6 +139,12 @@ class ADODB_pdo extends ADOConnection {
 	
 	function Time()
 	{
+		if (!empty($this->_driver->_hasdual)) $sql = "select $this->sysTimeStamp from dual";
+		else $sql = "select $this->sysTimeStamp";
+		
+		$rs =& $this->_Execute($sql);
+		if ($rs && !$rs->EOF) return $this->UnixTimeStamp(reset($rs->fields));
+		
 		return false;
 	}
 	
@@ -144,6 +154,9 @@ class ADODB_pdo extends ADOConnection {
 		$at = strpos($argDSN,':');
 		$this->dsnType = substr($argDSN,0,$at);
 
+		if ($argDatabasename) {
+			$argDSN .= ';dbname='.$argDatabasename;
+		}
 		try {
 			$this->_connectionID = new PDO($argDSN, $argUsername, $argPassword);
 		} catch (Exception $e) {
@@ -171,6 +184,7 @@ class ADODB_pdo extends ADOConnection {
 			case 'oci':
 			case 'mysql':
 			case 'pgsql':
+			case 'mssql':
 				include_once(ADODB_DIR.'/drivers/adodb-pdo_'.$this->dsnType.'.inc.php');
 				break;
 			}
@@ -196,10 +210,11 @@ class ADODB_pdo extends ADOConnection {
 	/*------------------------------------------------------------------------------*/
 	
 	
-	function &SelectLimit($sql,$nrows=-1,$offset=-1,$inputarr=false,$secs2cache=0) 
+	function SelectLimit($sql,$nrows=-1,$offset=-1,$inputarr=false,$secs2cache=0) 
 	{	
 		$save = $this->_driver->fetchMode;
 		$this->_driver->fetchMode = $this->fetchMode;
+	 	$this->_driver->debug = $this->debug;
 		$ret = $this->_driver->SelectLimit($sql,$nrows,$offset,$inputarr,$secs2cache);
 		$this->_driver->fetchMode = $save;
 		return $ret;
@@ -321,6 +336,7 @@ class ADODB_pdo extends ADOConnection {
 		}
 		
 		if ($stmt) {
+			$this->_driver->debug = $this->debug;
 			if ($inputarr) $ok = $stmt->execute($inputarr);
 			else $ok = $stmt->execute();
 		} 

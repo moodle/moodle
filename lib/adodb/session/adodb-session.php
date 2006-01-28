@@ -2,7 +2,7 @@
 
 
 /*
-V4.66 28 Sept 2005  (c) 2000-2005 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.71 24 Jan 2006  (c) 2000-2006 John Lim (jlim@natsoft.com.my). All rights reserved.
          Contributed by Ross Smith (adodb@netebb.com). 
   Released under both BSD license and Lesser GPL library license.
   Whenever there is any discrepancy between the two licenses,
@@ -579,7 +579,7 @@ class ADODB_Session {
 		$qkey = $conn->quote($key);
 		$binary = $conn->dataProvider === 'mysql' ? '/*! BINARY */' : '';
 	
-		$sql = "SELECT $data FROM $table WHERE $binary sesskey = $qkey AND expiry >= " . time();
+		$sql = "SELECT $data FROM $table WHERE sesskey = $binary $qkey AND expiry >= " . time();
 		/* Lock code does not work as it needs to hold transaction within whole page, and we don't know if 
 		  developer has commited elsewhere... :(
 		 */
@@ -901,7 +901,7 @@ class ADODB_Session {
 }
 
 ADODB_Session::_init();
-
+register_shutdown_function('session_write_close');
 
 // for backwards compatability only
 function adodb_sess_open($save_path, $session_name, $persist = true) {
