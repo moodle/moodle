@@ -182,10 +182,10 @@ class block_admin extends block_list {
             }
             $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/user.gif" height="16" width="16" alt="" />';
 
-            if (is_internal_auth()) {
+            if (is_internal_auth() && !is_restricted_user($USER->username)) {
                 $this->content->items[]='<a href="'.$CFG->wwwroot.'/login/change_password.php?id='.$this->instance->pageid.'">'.get_string('changepassword').'</a>';
                 $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/user.gif" height="16" width="16" alt="" />';
-            } else if ($CFG->changepassword) {
+            } else if ($CFG->changepassword && !is_restricted_user($USER->username)) {
                 $this->content->items[]='<a href="'.$CFG->changepassword.'">'.get_string('changepassword').'</a>';
                 $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/user.gif" height="16" width="16" alt="" />';
             }
