@@ -206,6 +206,7 @@ $string['sessionautostarterror'] = 'This should be off';
 $string['sessionautostarthelp'] = '<p>Moodle requires session support and will not function without it.</p>
 
 <p>Sessions can be enabled in the php.ini file ... look for the session.auto_start parameter.</p>';
+$string['skipdbencodingtest'] = 'Skip DB Encoding Test';
 $string['welcomep10'] = '$a->installername ($a->installerversion)';
 $string['welcomep20'] = 'You are seeing this page because you have successfully installed and 
     launched the <strong>$a->packname $a->packversion</strong> package in your computer. Congratulations!';
