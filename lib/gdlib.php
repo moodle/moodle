@@ -183,6 +183,8 @@ function save_profile_image($id, $uploadmanager, $dir='users') {
     ImageCopyBicubic($im2, $im, 0, 0, $cx-$half, $cy-$half, 35, 35, $half*2, $half*2);
 
     if (function_exists('ImageJpeg')) {
+        @touch($CFG->dataroot .'/'. $dir .'/'. $id .'/f1.jpg');  // Helps in Safe mode
+        @touch($CFG->dataroot .'/'. $dir .'/'. $id .'/f2.jpg');  // Helps in Safe mode
         if (ImageJpeg($im1, $CFG->dataroot .'/'. $dir .'/'. $id .'/f1.jpg', 90) and 
             ImageJpeg($im2, $CFG->dataroot .'/'. $dir .'/'. $id .'/f2.jpg', 95) ) {
             @chmod($CFG->dataroot .'/'. $dir .'/'. $id .'/f1.jpg', 0666);
