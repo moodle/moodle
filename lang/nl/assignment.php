@@ -36,6 +36,7 @@ $string['failedupdatefeedback'] = 'Het updaten van de feedback op de ingestuurde
 $string['feedback'] = 'Feedback';
 $string['feedbackfromteacher'] = 'Feedback van de $a';
 $string['feedbackupdated'] = 'De feedback op ingestuurde opdrachten is voor $a mensen bijgewerkt';
+$string['guestnosubmit'] = 'Sorry, maar gasten mogen geen opdracht insturen. Je moet je aanmelden, eventueel nog registreren voor je je antwoord kunt insturen';
 $string['guestnoupload'] = 'Sorry, gasten mogen geen bestanden uploaden';
 $string['helpoffline'] = '<p>Dit is nuttig wanneer de opdracht buiten Moodle gebeurt. Dat kan ergens anders op het web zijn of face-to-face.</p><p>Leerlingen kunnen een beschrijving van de opdracht zien, maar kunnen geen bestanden uploaden. Je kunt gewoon cijfers geven en leerlingen kunnen die dan inkijken.</p>';
 $string['helponline'] = '<p>Dit type opdracht vraagt gebruikers een tekst te bewerken. Leraren kunnen die dan on line beoordelen en zelfs verbeteren en wijzigingen aanbrengen in de tekst.</p>

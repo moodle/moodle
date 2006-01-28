@@ -51,6 +51,7 @@ $string['adminhelpcourses'] = 'Definieer cursussen en cursuscategorieën en voeg 
 $string['adminhelpeditorsettings'] = 'Definiëer basisinstellingen voor de HTML-editor';
 $string['adminhelpedituser'] = 'Bekijk de lijst met gebruikersaccounts en bewerk de accounts';
 $string['adminhelpenrolments'] = 'Kies interne of externe manieren om de aanmelding bij cursussen te controleren';
+$string['adminhelpenvironment'] = 'Controleer of je server voldoet aan de systeemvereisten';
 $string['adminhelpfailurelogs'] = 'Blader door de logs van mislukte aanmeldingen';
 $string['adminhelplanguage'] = 'Voor het controleren en bewerken van het huidige taalpakket';
 $string['adminhelplogs'] = 'Bekijk de statistieken van alle activiteiten op deze site';
@@ -158,6 +159,7 @@ $string['categoryduplicate'] = 'Er bestaat al een categorie met de naam \'$a\'!'
 $string['changedpassword'] = 'Het wachtwoord is veranderd';
 $string['changepassword'] = 'Verander wachtwoord  ';
 $string['changessaved'] = 'De veranderingen zijn bewaard';
+$string['check'] = 'Controleer';
 $string['checkingbackup'] = 'Backup controleren';
 $string['checkingcourse'] = 'Cursus controleren';
 $string['checkingforbbexport'] = 'Controleren voor export naar BlackBoard';
@@ -165,6 +167,7 @@ $string['checkinginstances'] = 'Instanties controleren';
 $string['checkingsections'] = 'Secties controleren';
 $string['checklanguage'] = 'Controleer taal';
 $string['childcoursenotfound'] = 'Onderliggende cursus niet gevonden!';
+$string['childcourses'] = 'Onderliggende cursussen';
 $string['choose'] = 'Kies';
 $string['choosecourse'] = 'Kies een cursus';
 $string['chooseenrolmethod'] = 'Primaire manier van aanmelden bij een cursus';
@@ -822,6 +825,20 @@ $string['newsitem'] = 'Nieuwsitem';
 $string['newsitems'] = 'Nieuwsitems';
 $string['newsitemsnumber'] = 'Weer te geven nieuwsitems';
 $string['newuser'] = 'Nieuwe gebruiker';
+$string['newusernewpasswordsubj'] = 'Hallo $a->firstname,';
+$string['newusernewpasswordtext'] = 'Er is voor jou een nieuwe account gemaakt op \'$a->sitename\' en je hebt daarvoor een nieuw, tijdelijk wachtwoord gekregen.
+
+De informatie die je nu nodig hebt om op de site in te loggen is:
+gebruikersnaam: $a->username
+wachtwoord: $a->newpassword
+(je zult je wachtwoord moeten wijzigen wanneer je je de eerste keer aanmeldt op de site)
+
+Om \'$a->sitename\' te beginnen gebruiken, klik op $a->link
+
+In de meeste e-mailprogramma\'s zal de bovenstaande regel een blauw, onderlijnde link zijn, waarop je gewoon kunt klikken. Als dat niet werkt, knip en plak dan dit adres in de adresbalk bovenaan in je internetbrowser.
+
+Vriendelijke groeten van de \'$a->sitename\'-beheerder,
+$a->signoff';
 $string['newusers'] = 'Nieuwe gebruikers';
 $string['next'] = 'Volgende';
 $string['no'] = 'Nee';
@@ -1024,6 +1041,13 @@ $string['searchcourses'] = 'Zoek cursussen';
 $string['searchhelp'] = 'Je kunt naar meer woorden tegelijkertijd zoeken.<p>woord : zoek naar elke instantie van dit woord in de tekst.<br />+word : alleen precies passende woorden worden gevonden.<br />-word : de resultaten waar dit woord in voorkomt worden niet getoond.';
 $string['searchresults'] = 'Zoekresultaten';
 $string['sec'] = 'seconde';
+$string['secondstotime172800'] = '2 dagen';
+$string['secondstotime259200'] = '3  dagen';
+$string['secondstotime345600'] = '4  dagen';
+$string['secondstotime432000'] = '5  dagen';
+$string['secondstotime518400'] = '6 dagen';
+$string['secondstotime604800'] = '1 week';
+$string['secondstotime86400'] = '1 dag';
 $string['secs'] = 'seconden';
 $string['section'] = 'Sectie  ';
 $string['sections'] = 'Secties';
