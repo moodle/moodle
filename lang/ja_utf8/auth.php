@@ -142,7 +142,7 @@ $string['md5'] = 'MD5暗号化';
 $string['passwordhandling'] = 'パスワードフィールド取り扱い';
 $string['plaintext'] = 'テキスト';
 $string['shib_no_attributes_error'] = 'あなたはShibbolethによる認証を行ったようですが、Moodleはユーザ属性を受信していません。Moodleが稼動しているプロバイダへ必要な属性 ( $a ) を発行するアイデンティティ・プロバイダを確認するか、このサーバの管理者に連絡してください。';
-$string['shib_not_all_attributes_error'] = 'あなたの場合、存在していないShibboleth属性をMoodleは必要とします。属性は次の通りです: $a<br/>このサーバの管理者またはアイデンティティ・プロバイダにご連絡ください。';
+$string['shib_not_all_attributes_error'] = 'あなたの場合、存在していないShibboleth属性をMoodleは必要とします。属性は次のとおりです: $a<br/>このサーバの管理者またはアイデンティティ・プロバイダにご連絡ください。';
 $string['shib_not_set_up_error'] = 'Shibboleth認証が正しく設定されていないようです。Shibboleth認証の設定に関する更なる情報は、<a href=\"README.txt\">README</a>をご覧ください。';
 $string['showguestlogin'] = 'ログインページのゲストログインボタンを表示／非表示にできます。';
 $string['stdchangepassword'] = '標準パスワード変更ページを使用';

@@ -180,7 +180,7 @@ $string['clambroken'] = '管理者がアップロードファイルに対する�
 $string['clamdeletedfile'] = 'ファイルが削除されました。';
 $string['clamdeletedfilefailed'] = 'ファイルが削除されませんでした。';
 $string['clamemailsubject'] = '$a :: Clam AV通知';
-$string['clamfailed'] = 'Clam AVの起動が失敗しました。 エラーメッセージは、 $a です。Clamからの出力結果は次の通りです:';
+$string['clamfailed'] = 'Clam AVの起動が失敗しました。 エラーメッセージは、 $a です。Clamからの出力結果は次のとおりです:';
 $string['clamlost'] = 'Moodleはファイルアップロード時にclamが動作するように設定されていますが、Clam AVのパス $a が間違っています。';
 $string['clamlostandactinglikevirus'] = '加えて、moodleはclamが動作失敗した時に、ファイルをウイルスとして扱うように設定されています。あなたが修正するまで、原則的に学生はファイルをアップロードできないことを意味します。';
 $string['clammovedfile'] = 'ファイルは、あなたが指定した隔離用ディレクトリに移動されました。新しい保存場所は、$a です。';
@@ -231,7 +231,7 @@ $string['coursemessage'] = 'コースユーザにメッセージを送信';
 $string['coursenotaccessible'] = 'このコースには一般からのアクセスはできません。';
 $string['coursereject'] = 'コースリクエストを拒否';
 $string['courserejected'] = 'コースは拒否され、申請者に通知メールが送信されました。';
-$string['courserejectemail'] = '申し訳ございません、あなたがリクエストしたコースは拒否されました。拒否理由は下記の通りです。
+$string['courserejectemail'] = '申し訳ございません、あなたがリクエストしたコースは拒否されました。拒否理由は下記のとおりです。
 
 $a';
 $string['courserejectreason'] = 'あなたが、このコースを拒否する理由の概要<br />( この内容は申請者にメール送信されます。 )';
@@ -673,7 +673,7 @@ $string['loginalready'] = 'あなたはすでにログインしています。';
 $string['loginas'] = 'ログイン';
 $string['loginguest'] = 'ゲストとしてログインする';
 $string['loginsite'] = 'ログイン画面';
-$string['loginsteps'] = 'こんにちは! コースにアクセスするために新しいアカウントを作成してください。アカウント作成方法は下記の通りです。
+$string['loginsteps'] = 'こんにちは! コースにアクセスするために新しいアカウントを作成してください。アカウント作成方法は下記のとおりです。
 <ol>
 <li>アカウントの作成
 <ul>
@@ -810,7 +810,7 @@ $string['newpasswordtext'] = 'こんにちは $a->lastname さん
 
 「 $a->sitename 」のパスワードリセットおよび仮パスワードの作成が完了しました。
 
-あなたのログイン情報は下記の通りです。
+あなたのログイン情報は下記のとおりです。
 ユーザ名: username: $a->username
 パスワード: password: $a->newpassword
 
@@ -831,7 +831,7 @@ $string['newusernewpasswordtext'] = 'こんにちは $a->lastname さん
 
 あなたの新しいアカウントが「 $a->sitename 」に作成され、新しい一時的なパスワードが発行されました。
 
-あなたの現在のログイン情報は下記の通りです:
+あなたの現在のログイン情報は下記のとおりです:
 ユーザ名: $a->username
 パスワード: $a->newpassword
 ( 最初にログインした時にパスワードを変更してください。)
@@ -868,7 +868,7 @@ $string['nopotentialstudents'] = '潜在的な学生は登録されていませ�
 $string['nopotentialteachers'] = '潜在的な教師は登録されていません。';
 $string['noreplybouncemessage'] = 'あなたは no-reply アドレスにメール返信しました。フォーラムの投稿に返信したい場合は、メール返信する代わりにフォーラム $a で返信を投稿してください。
 
-あなたのメール本文は下記の通りです:';
+あなたのメール本文は下記のとおりです:';
 $string['noreplybouncesubject'] = '$a -宛先不明メール';
 $string['noreplyname'] = 'このメールアドレス宛に返信しないでください';
 $string['noresults'] = '該当データがありません。';
@@ -1281,7 +1281,7 @@ $string['version'] = 'バージョン';
 $string['view'] = '表示';
 $string['views'] = '表示';
 $string['viewsolution'] = '解決方法の表示';
-$string['virusfound'] = '管理者の方! Clam AVが、 $a->user によって course $a->course へアップロードされたファイルにウイルスを発見しました。clamscanの出力結果は次の通りです:';
+$string['virusfound'] = '管理者の方! Clam AVが、 $a->user によって course $a->course へアップロードされたファイルにウイルスを発見しました。clamscanの出力結果は次のとおりです:';
 $string['virusfoundlater'] = '$a->date に、$a->filename というファイル名で、$a->course コースに、あなたがアップロードしたファイルにウイルスが発見されました。あなたのファイルに対して行われた処理の概要です:
 
 $a->action
