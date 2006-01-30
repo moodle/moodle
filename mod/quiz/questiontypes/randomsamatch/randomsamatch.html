@@ -3,14 +3,14 @@
 <table cellpadding="5">
 <tr valign="top">
     <td align="right"><b><?php  print_string("category", "quiz") ?>:</b></td>
-    <td>
+    <td align="left">
     <?php echo $categories[$question->category]; ?>
     <input type="hidden" name="category" value="<?php echo "$question->category"; ?>" />
     </td>
 </tr>
 <tr valign="top">
     <td align="right"><b><?php  print_string("questionname", "quiz") ?>:</b></td>
-    <td>
+    <td align="left">
         <?php
            if (empty($question->name)) {
                $question->name =  get_string("randomsamatch", "quiz");
@@ -33,7 +33,7 @@
     ?>
     </font>
     </td>
-    <td>
+    <td align="left">
         <?php  if (isset($err["questiontext"])) {
                formerr($err["questiontext"]);
                echo "<br />";
@@ -60,7 +60,7 @@
 </tr>
 <tr valign="top">
     <td align="right"><b><?php  print_string("penaltyfactor", "quiz") ?>:</b></td>
-    <td>
+    <td align="left">
         <input type="text" name="penalty" size="3" value="<?php  p($question->penalty) ?>" alt="<?php  print_string("penaltyfactor", "quiz") ?>" />
         <?php helpbutton('penalty', get_string('penalty', 'quiz'), 'quiz'); ?>
         <?php  if (isset($err["penalty"])) formerr($err["penalty"]); ?>
@@ -68,7 +68,7 @@
 </tr>
 <tr valign="top">
     <td align="right"><b><?php  print_string("randomsamatchnumber", "quiz") ?>:</b></td>
-    <td>
+    <td align="left">
     <?php
         if ($numberavailable < 2) {
             echo get_string('createfirst', 'quiz');

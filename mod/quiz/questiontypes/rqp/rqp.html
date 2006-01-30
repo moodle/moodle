@@ -3,14 +3,14 @@
 
 <tr valign="top">
     <td align="right"><b><?php  print_string('category', 'quiz'); ?>:</b></td>
-    <td>
+    <td align="left">
     <?php   quiz_category_select_menu($course->id, true, true, $question->category); ?>
     </td>
 </tr>
 
 <tr valign="top">
     <td align="right"><b><?php  print_string('questionname', 'quiz'); ?>:</b></td>
-    <td>
+    <td align="left">
         <input type="text" name="name" size="50" value="<?php  p($question->name); ?>" />
         <input type="hidden" name="questiontext" value="" />
         <input type="hidden" name="questiontextformat" value="0" />
@@ -26,7 +26,7 @@
 <tr valign="top">
     <td align="right"><b><?php  print_string('itemsource', 'quiz'); ?>:</b>
     </td>
-    <td>
+    <td align="left">
     <?php
         print_textarea(false, 20, 60, 630, 300, "source", $question->options->source);
         echo "<br />\n";
@@ -40,7 +40,7 @@
 <tr valign="top">
     <td align="right"><b><?php  print_string('itemsourceformat', 'quiz'); ?></b>
     </td>
-    <td><input name="format" type="text" size="50" maxLength="255" value="<?php p($question->options->format); ?>" />
+    <td align="left"><input name="format" type="text" size="50" maxLength="255" value="<?php p($question->options->format); ?>" />
     <?php
         if (isset($err['format'])) {
             formerr($err['format']);

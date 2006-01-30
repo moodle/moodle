@@ -3,13 +3,13 @@
 <table cellpadding="5">
 <tr valign="top">
     <td align="right"><b><?php  print_string("category", "quiz") ?>:</b></td>
-    <td>
+    <td align="left">
     <?php   quiz_category_select_menu($course->id, true, true, $question->category); ?>
     </td>
 </tr>
 <tr valign="top">
     <td align="right"><b><?php  print_string("questionname", "quiz") ?>:</b></td>
-    <td>
+    <td align="left">
         <input type="text" name="name" size="40" value="<?php  p($question->name) ?>" alt="<?php  print_string("questionname", "quiz") ?>" />
         <?php  if (isset($err["name"])) formerr($err["name"]); ?>
     </td>
@@ -29,7 +29,7 @@
     ?>
     </font>
     </td>
-    <td>
+    <td align="left">
         <?php  if (isset($err["questiontext"])) {
                formerr($err["questiontext"]); 
                echo "<br />";
@@ -53,7 +53,7 @@
 </tr>
 <tr valign="top">
     <td align="right"><b><?php  print_string("imagedisplay", "quiz") ?>:</b></td>
-    <td>
+    <td align="left">
     <?php   if (empty($images)) {
             print_string("noimagesyet");
         } else {
