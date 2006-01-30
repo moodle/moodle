@@ -21,6 +21,10 @@ a.dimmed:visited {
   color:#AAAAAA;
 }
 
+a.dimmed_text {
+  color:#AAAAAA;
+}
+
 h1 {
   background-color: #C6BDA8;
   border-color: #333333;
@@ -247,9 +251,11 @@ table.minicalendar tr td.weekend {
 #course-view .section.hidden .content,
 #course-view .section.hidden .side {
   border-color:#C6BDA8;
- }
+}
 
-
+#course-view .current .side{
+  background-color: #E3DFD4;
+}
 
 
 /***
@@ -290,6 +296,9 @@ table.minicalendar tr td.weekend {
   background-color: #aaffaa;
 }
 
+}
+.highlight {
+  background-color: #aaffaa;
 }
 
 /***
