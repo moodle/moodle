@@ -216,10 +216,10 @@
                         $strconfirmstartattempt = addslashes(get_string("confirmstartattempt","quiz"));
                         $jslink .=  "if (confirm(\'$strconfirmstartattempt\')) ";
                     } else if ($quiz->timelimit && $quiz->attempts) {
-                        $strconfirmstartattempt = addslashes(get_string("confirmstartattempttimelimit","quiz",$quiz->attempts));
+                        $strconfirmstartattempt = addslashes(get_string("confirmstartlimit","quiz",$quiz->attempts));
                         $jslink .=  "if (confirm(\'$strconfirmstartattempt\')) ";
                     } else if ($quiz->attempts && !$quiz->timelimit) {
-                        $strconfirmstartattempt = addslashes(get_string("confirmstartattemptnotimelimit","quiz",$quiz->attempts));
+                        $strconfirmstartattempt = addslashes(get_string("confirmstartnolimit","quiz",$quiz->attempts));
                         $jslink .=  "if (confirm(\'$strconfirmstartattempt\')) ";
                     }
                     $jslink .= "var popup = window.open(\\'$attempturl\\', \\'quizpopup\\', windowoptions);";
