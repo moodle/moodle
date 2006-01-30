@@ -37,7 +37,7 @@
                             FRONTPAGECOURSELIST     =>  get_string("frontpagecourselist"),
                             FRONTPAGECATEGORYNAMES  =>  get_string("frontpagecategorynames"),
                             );
-           $values = array(get_string('hide'), 1, 2);
+           $values = array(get_string('hide'), get_string('order1', 'admin'), get_string('order2', 'admin'));
            $seq = array_flip(explode(',',$form->frontpage));
            foreach ($seq as $k => $s) {
                $seq[$k]++;
@@ -48,7 +48,7 @@
                    $form->frontpage = 2;
                }
            } else {
-               $values[] = 3;
+               $values[] = get_string('order3', 'admin');
            }
            foreach ($options as $key => $option) {
                echo "<td>$option<br />";
