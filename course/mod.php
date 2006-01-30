@@ -645,7 +645,7 @@
             $defaultformat = FORMAT_MOODLE;
         }
 
-        $icon = "<img align=\"middle\" height=\"16\" width=\"16\" src=\"$CFG->modpixpath/$module->name/icon.gif\" alt=\"\" />&nbsp;";
+        $icon = '<img align="middle" height="16" width="16" src="'.$CFG->modpixpath.'/'.$module->name.'/icon.gif" alt="" style="vertical-align: middle;" />&nbsp;';
 
         print_heading_with_help($pageheading, "mods", $module->name, $icon);
         print_simple_box_start('center', '', '', 5, 'generalbox', $module->name);
