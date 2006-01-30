@@ -150,27 +150,23 @@
             break;
 
             case FRONTPAGECOURSELIST:
-            case FRONTPAGECATEGORYNAMES:
 
                 if (isloggedin() && !isset($USER->admin) && empty($CFG->disablemycourses)) {
                     print_heading_block(get_string('mycourses'));
                     print_my_moodle();
                 } else {
-                    if (count_records('course_categories') > 1) {
-                        if ($v == FRONTPAGECOURSELIST) {
-                            print_heading_block(get_string('availablecourses'));
-                        } else {
-                            print_heading_block(get_string('categories'));
-                        }
-                        print_simple_box_start('center', '100%', '', 5, 'categorybox');
-                        print_whole_category_list();
-                        print_simple_box_end();
-                        print_course_search('', false, 'short');
-                    } else {
-                        print_heading_block(get_string('availablecourses'));
-                        print_courses(0, '100%');
-                    }
+                    print_heading_block(get_string('availablecourses'));
+                    print_courses(0, '100%');
                 }
+            break;
+
+            case FRONTPAGECATEGORYNAMES:
+
+                print_heading_block(get_string('categories'));
+                print_simple_box_start('center', '100%', '', 5, 'categorybox');
+                print_whole_category_list();
+                print_simple_box_end();
+                print_course_search('', false, 'short');
             break;
 
             case FRONTPAGETOPICONLY:    // Do nothing!!  :-)
