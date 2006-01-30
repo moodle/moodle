@@ -9,14 +9,14 @@
 
   <tr valign="top">
     <td align="right"><b><?php  print_string("category", "quiz") ?>:</b></td>
-    <td>
+    <td align="left">
       <?php   quiz_category_select_menu($course->id, true, true, $question->category); ?>
     </td>
   </tr>
 
   <tr valign="top">
     <td align="right"><b><?php  print_string("questionname", "quiz") ?>:</b></td>
-    <td>
+    <td align="left">
       <input type="text" name="name" size="40" value="<?php  p($question->name) ?>" alt="<?php print_string("questionname", "quiz") ?>" />
       <?php  if (isset($err["name"])) formerr($err["name"]); ?>
     </td>
@@ -34,7 +34,7 @@
       ?>
       </font>
     </td>
-    <td>
+    <td align="left">
       <?php
           if (isset($err["questiontext"])) {
               formerr($err["questiontext"]);
@@ -60,7 +60,7 @@
 
   <tr valign="top">
     <td align="right"><b><?php  print_string("imagedisplay", "quiz") ?>:</b></td>
-    <td>
+    <td align="left">
       <?php
           if (empty($images)) {
               print_string("noimagesyet");
@@ -72,7 +72,7 @@
   </tr>
 <tr valign="top">
     <td align="right"><b><?php  print_string("penaltyfactor", "quiz") ?>:</b></td>
-    <td>
+    <td align="left">
         <input type="text" name="penalty" size="3" value="<?php  p($question->penalty) ?>" alt="<?php  print_string("penaltyfactor", "quiz") ?>" />
         <?php helpbutton('penalty', get_string('penalty', 'quiz'), 'quiz'); ?>
         <?php  if (isset($err["penalty"])) formerr($err["penalty"]); ?>
@@ -80,7 +80,7 @@
 </tr>
   <tr valign="top">
     <td align="right"><b><?php  print_string("answerhowmany", "quiz") ?>:</b></td>
-    <td>
+    <td align="left">
       <?php
           $menu[0] = get_string("answersingleno", "quiz");
           $menu[1] = get_string("answersingleyes", "quiz");
@@ -92,7 +92,7 @@
 
   <tr valign="top">
     <td align="right"><b><?php  print_string("choices", "quiz") ?></b>:</td>
-    <td><?php  print_string("fillouttwochoices", "quiz") ?></td>
+    <td align="left"><?php  print_string("fillouttwochoices", "quiz") ?></td>
   </tr>
 
 <?php
@@ -106,7 +106,7 @@
 
   <tr valign="top">
     <td align="right"><b><?php  echo get_string("choice", "quiz")." $i";  ?>:</b></td>
-    <td>
+    <td align="left">
       <input type="text" name="answer[]" size="50" value="<?php  p($answers[$i-1]->answer) ?>" alt="<?php  echo get_string("choice", "quiz")." $i";  ?>"/>&nbsp;&nbsp;
       <?php
           print_string("grade");
@@ -119,7 +119,7 @@
 
   <tr valign="top">
     <td align="right"><b><?php  print_string("feedback", "quiz") ?>:</b></td>
-    <td>
+    <td align="left">
       <textarea name="feedback[]" rows="2" cols="50"><?php  p($answers[$i-1]->feedback) ?></textarea>
     </td>
   </tr>

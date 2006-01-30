@@ -3,13 +3,13 @@
 <table cellpadding="5">
 <tr valign="top">
     <td align="right"><b><?php  print_string("category", "quiz") ?>:</b></td>
-    <td>
+    <td align="left">
     <?php   quiz_category_select_menu($course->id, true, true, $question->category); ?>
     </td>
 </tr>
 <tr valign="top">
     <td align="right"><b><?php  print_string("questionname", "quiz") ?>:</b></td>
-    <td>
+    <td align="left">
         <?php  if (empty($question->name)) {
                $question->name = get_string("random", "quiz");
            } ?>
@@ -19,7 +19,7 @@
 </tr>
 <tr valign="top">
     <td align="right"><b><?php  print_string("recurse", "quiz") ?>:</b></td>
-    <td>
+    <td align="left">
         <?php  if (!isset($question->questiontext)) {
             $question->questiontext = "0";
         } ?>
