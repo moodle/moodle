@@ -1,6 +1,102 @@
 <?
 ///dummy field names are used to help adding and dropping indexes. There's only 1 case now, in scorm_scoes_track
 
+    require_once('../config.php');
+    require_once($CFG->dirroot.'/lib/adminlib.php');
+    require_once($CFG->libdir.'/environmentlib.php');
+
+    require_login();
+
+    if (!isadmin()) {
+        error('Only admins can access this page');
+    }
+
+    if (!$site = get_site()) {
+        redirect('index.php');
+    }
+
+    if (!empty($CFG->unicodedb)) {
+        error ('unicode db migration has already been performed!');
+    }
+
+    $migrate = optional_param('migrate');
+    $confirm = optional_param('confirm');
+    $textlib = textlib_get_instance();
+
+    $stradministration   = get_string('administration');
+    $strdbmigrate = get_string('dbmigrate','admin');
+
+    $filename = $CFG->dataroot.'/'.SITEID.'/maintenance.html';    //maintenance file
+
+    print_header("$site->shortname: $stradministration", "$site->fullname",
+                 '<a href="index.php">'. "$stradministration</a> -> $strdbmigrate");
+
+    print_heading($strdbmigrate);
+
+    //if $confirm
+    if ($confirm && confirm_sesskey()) {
+        //do the real migration of db
+        print_simple_box_start('center','50%');
+        print_string('importlangreminder','admin');
+        print_simple_box_end();
+        db_migrate2utf8();
+        print_heading('db unicode migration has been completed!');
+        unlink($filename);    //no longer in maintenance mode
+        @require_logout();
+        print_continue($CFG->wwwroot);
+    }
+
+    //else if $migrate
+    else if ($migrate && confirm_sesskey()) {
+        echo '<div align="center">';
+        print_simple_box_start('center','50%');
+        print_string('dbmigratewarning2','admin');
+        print_simple_box_end();
+        //put the site in maintenance mode
+        $file = fopen($filename, 'w');
+        fwrite($file, stripslashes('site maintenance in progress'));
+        fclose($file);
+
+        //print second confirmation box
+        echo '<form name="migratefrom" action="utfdbmigrate.php" method="POST">';
+        echo '<input name="confirm" type="hidden" value="1" />';
+        echo '<input name="sesskey" type="hidden" value="'.sesskey().'" />';
+        echo '<input type="submit" value="'.get_string('continue').'"/>';
+        echo '&nbsp;<input type="button" value="'.get_string('cancel').'" onclick="javascript:history.go(-1)" />';
+        echo '</form>';
+        echo '</div>';
+    }
+
+    
+    else {    //else, print welcome to migrate page message
+        echo '<div align="center">';
+        print_simple_box_start('center','50%');
+        print_string('dbmigratewarning','admin');
+        print_simple_box_end();
+        
+        /*************************************
+         * Eloy's environement checking code *
+         *************************************/
+        
+        $current_version = $CFG->release;
+
+    /// Gather and show results
+        $status = check_moodle_environment($current_version, $environment_results);
+
+        //end of env checking
+        
+        echo '<form name="migratefrom" action="utfdbmigrate.php" method="POST">';
+        echo '<input name="migrate" type="hidden" value="1" />';
+        echo '<input name="sesskey" type="hidden" value="'.sesskey().'" />';
+        echo '<input type="submit" value="'.get_string('continue').'"/>';
+        echo '&nbsp;<input type="button" value="'.get_string('cancel').'" onclick="javascript:history.go(-1)" />';
+        echo '</form>';
+        echo '</div>';
+    }
+
+    print_footer();
+    
+  
 function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                               //pointing to the num of records to process would be
 							  //useful. And it won't break anything, because the
@@ -14,28 +110,28 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
 							  //mtrace() and return 0. (showing the current 
 							  //table/field/recordid)
     global $db, $CFG;
+    $debug = ($CFG->debug > 7);
 
-    $ignoretables = array();    //list of tables to ignore
-    $ignoretables[] = $CFG->prefix.'log';
-    $ignoretables[] = $CFG->prefix.'cache_text';
-    $ignoretables[] = $CFG->prefix.'cache_filters';
+    $ignoretables = array();    //list of tables to ignore, optional
     
-    $textlib = textlib_get_instance();    //Eloy: I haven't measured this but perhaps
-										                                      
-    //Eloy: This lines should be uncomented in final release, isn't it? To
-	//avoid double processing completely.
+    $done = 0;
+    print_progress($done, 158, 5, 1);
+    
+    $textlib = textlib_get_instance();    //only 1 reference
 
     //if unicodedb is set, migration is complete. die here;
-    /* if ($CFG->unicodedb) {
-        error ('unicode db migration has already been performed!');
-    }
-    */
     if (!$crash = get_record('config','name','dbmigration')) {
 
         $migrationconfig = new object;
         $migrationconfig->name = 'dbmigration';
         $migrationconfig->value = '-1';
         insert_record('config',$migrationconfig);  //process initiated
+        
+        //langs used, to help make recommendations on what lang packs to install
+        $langsused = new object;
+        $langsused->name = 'langsused';
+        $langsused->value = '';
+        insert_record('config',$langsused);
 
     } else {
 
@@ -71,10 +167,10 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
     }
 
     ///Backups
-    //$xmls[] = xmlize(file_get_contents($CFG->dirroot.'/backup/db/migrate2utf8.xml'));
+    $xmls[] = xmlize(file_get_contents($CFG->dirroot.'/backup/db/migrate2utf8.xml'));
 
     ///Blocks
-    //$xmls[] = xmlize(file_get_contents($CFG->dirroot.'/blocks/db/migrate2utf8.xml'));
+    $xmls[] = xmlize(file_get_contents($CFG->dirroot.'/blocks/db/migrate2utf8.xml'));
 
     ///Block Plugins
     if (!$blocks = get_list_of_plugins('blocks')) {
@@ -83,25 +179,25 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
 
     foreach ($blocks as $block){
         if (file_exists($CFG->dirroot.'/blocks/'.$block.'/db/migrate2utf8.xml')) {
-            //$xmls[] = xmlize(file_get_contents($CFG->dirroot.'/blocks/'.$block.'/db/migrate2utf8.xml'));
+            $xmls[] = xmlize(file_get_contents($CFG->dirroot.'/blocks/'.$block.'/db/migrate2utf8.xml'));
         }
     }
 
     ///Enrol
 
     if (!$enrols = get_list_of_plugins('enrol')) {
-        //error('No blocks installed!');   //Eloy: enrol, not blocks :-) Is this a cause to stop?
+        //error('No enrol installed!');   //Eloy: enrol, not blocks :-) Is this a cause to stop?
     }
 
     foreach ($enrols as $enrol){
         if (file_exists($CFG->dirroot.'/enrol/'.$enrol.'/db/migrate2utf8.xml')) {
-            //$xmls[] = xmlize(file_get_contents($CFG->dirroot.'/enrol/'.$enrol.'/db/migrate2utf8.xml'));
+            $xmls[] = xmlize(file_get_contents($CFG->dirroot.'/enrol/'.$enrol.'/db/migrate2utf8.xml'));
         }
     }
     
     ///Lastly, globals
 
-    //$xmls[] = xmlize(file_get_contents($CFG->dirroot.'/lib/db/migrate2utf8.xml'));
+    $xmls[] = xmlize(file_get_contents($CFG->dirroot.'/lib/db/migrate2utf8.xml'));
 
     /************************************************************************
      * Now we got all our tables in order                                   *
@@ -112,12 +208,16 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
         $dbtables = $xml['DBMIGRATION']['#']['TABLES'][0]['#']['TABLE'];    //real db tables
         
         foreach ($dbtables as $dbtable) {
+            $done++;
+            print_progress($done, 158, 5, 1);
             $dbtablename = $dbtable['@']['name'];
             if ($crash && ($dbtablename != $crash->table)) {  //resuming from crash
                 continue;
             }
 
-            print_heading("<br><b>Processsing db table ".$dbtablename.'...</b>');
+            if ($debug) {
+                print_heading("<br><b>Processsing db table ".$dbtablename.'...</b>');
+            }
 
             if (!empty($dbtable['#']) && ($fields = $dbtable['#']['FIELDS'][0]['#']['FIELD']) and (!in_array($dbtablename, $ignoretables))) {
 
@@ -134,22 +234,22 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
 
                     //if in crash state, and field name is not the same as crash field name
 
-                    $fieldname = $field['@']['name'];
-                    $method = $field['@']['method'];
-                    $type = $field['@']['type'];
-                    $length = $field['@']['length'];
+                    $fieldname = isset($field['@']['name'])?$field['@']['name']:"";
+                    $method = isset($field['@']['method'])?$field['@']['method']:"";
+                    $type = isset($field['@']['type'])?$field['@']['type']:"";
+                    $length = isset($field['@']['length'])?$field['@']['length']:"";
 
                     if ($crash && ($crash->field != $fieldname)) {
                         continue;
                     }
 
-                    $dropindex = $field['@']['dropindex'];
-                    $addindex = $field['@']['addindex'];
-                    $adduniqueindex = $field['@']['adduniqueindex'];
+                    $dropindex = isset($field['@']['dropindex'])?$field['@']['dropindex']:"";
+                    $addindex = isset($field['@']['addindex'])?$field['@']['addindex']:"";
+                    $adduniqueindex = isset($field['@']['adduniqueindex'])?$field['@']['adduniqueindex']:"";
 
-                    $dropprimary = $field['@']['dropprimary'];
-                    $addprimary = $field['@']['addprimary'];
-                    $defaults[] = isset($field['@']['default'])?"'".$field['@']['default']."'":"''";
+                    $dropprimary = isset($field['@']['dropprimary'])?$field['@']['dropprimary']:"";
+                    $addprimary = isset($field['@']['addprimary'])?$field['@']['addprimary']:"";
+                    $default = isset($field['@']['default'])?"'".$field['@']['default']."'":"''";
 
                     if ($fieldname != 'dummy') {
                         $colnames[] = $fieldname;
@@ -157,10 +257,12 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                         $collengths[]= $length;
                     }
 
-                    echo "<br>--><b>processsing db field ".$fieldname.'</b>';
-                    echo "<br>---><b>method ".$method.'</b>';
+                    if ($debug) {
+                        echo "<br>--><b>processsing db field ".$fieldname.'</b>';
+                        echo "<br>---><b>method ".$method.'</b>';
+                    }
 
-                    $patterns[]='/RECORDID/i';    //for preg_replace
+                    $patterns[]='/RECORDID/';    //for preg_replace
                     $patterns[]='/\{\$CFG\-\>prefix\}/i';    //same here
 
                     if ($method == 'PLAIN_SQL_UPDATE') {
@@ -183,11 +285,16 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                         $counter = count_records_sql($indexSQL);
                     }
 
-                    echo "<br>Total number of recrods is ..".$totalrecords;
+                    if ($debug) {
+                        echo "<br>Total number of records is ..".$totalrecords;
+                    }
+                    
 
-                    while(($counter < $totalrecords) and ($fieldname !='dummy')) {    //while there is still something 
+                    /**************************
+                     * converting each record *
+                     **************************/
+                    while(($counter < $totalrecords) and ($fieldname !='dummy') and ($method!='NO_CONV')) {    //while there is still something
                         $SQL = 'SELECT * FROM '.$CFG->prefix.$dbtablename.' '.sql_paging_limit($counter, $recordsetsize);
-                        echo "<br> SQL: ".$SQL;
                         if ($records = get_records_sql($SQL)) {
                             foreach ($records as $record) {
 
@@ -218,31 +325,18 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                                             //replace $CFG->prefix, and USERID in the queries
                                             $userid = get_record_sql(preg_replace($patterns, $replacements, $sqldetectuser));
                                             $courseid = get_record_sql(preg_replace($patterns, $replacements, $sqldetectcourse));
-                                            //$db->debug=0;
-                                            ///get course, user, site lang
+                                            
                                             $sitelang   = $CFG->lang;
                                             $courselang = get_course_lang($courseid->course);
                                             $userlang   = get_user_lang($userid->userid);
 
                                             $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
-
-                                            /// We are going to use textlib facilities
-
-                                            /// Convert the text
-                                            //$db->debug=999;
-                                            $result = $textlib->convert($record->{$fieldname}, $fromenc);
-                                            //$db->debug=0;
+                                            $result = utfconvert($record->{$fieldname}, $fromenc);
                                             
                                             $newrecord = new object;
                                             $newrecord->id = $record->id;
                                             $newrecord->{$fieldname} = $result;
-/*
-                                            if ($dbtablename == "user_teachers"){
-                                                echo "<br>here we go ".$record->{$fieldname};
-                                                echo "<br>after conversion".$result;
-                                                echo "<br>conv lang is ".$fromenc;
-                                                print_object($newrecord);
-                                            }*/
+
                                             update_record($dbtablename,$newrecord);
                                           }
                                           
@@ -262,69 +356,70 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                             }
                         }
                     }   //close the while loop
-                    //change field endocing here??
+
+                    /********************
+                     * Drop index here **
+                     ********************/
 
                     if ($CFG->dbtype == 'mysql') {
                         if ($dropindex){    //drop index if index is varchar, text etc type
                             $SQL = 'ALTER TABLE '.$CFG->prefix.$dbtablename.' DROP INDEX '.$dropindex.';';
-                            execute_sql($SQL);
+                            execute_sql($SQL, $debug);
                         } else if ($dropprimary) {    //drop primary key
                             $SQL = 'ALTER TABLE '.$CFG->prefix.$dbtablename.' DROP PRIMARY KEY;';
-                            execute_sql($SQL);
+                            execute_sql($SQL, $debug);
                         }
 
                         //BLOB TIME!
                         $SQL = 'ALTER TABLE '.$CFG->prefix.$dbtablename.' CHANGE '.$fieldname.' '.$fieldname.' BLOB;';
-                    } else {
-                        //posgresql code here
-                    }
-                    
-                    //$db->debug=999;
-                    if ($fieldname != 'dummy') {
-                        execute_sql($SQL);
-                    }
-                    //$db->debug=0;
 
-                    //add index back
-                    if ($addindex){
-                        $addindexarray[] = $addindex;
-                    } else if ($adduniqueindex) {
-                        $adduniqueindexarray[] = $adduniqueindex;
-                    } else if ($addprimary) {
-                        $addprimaryarray[] = $addprimary;
-                    }
-                }
-
-                //change table encoding here (change column encoding together here?)
-                if ($CFG->dbtype == 'mysql') {
-
-                    $SQL = 'ALTER TABLE '.$CFG->prefix.$dbtablename;
-
-                    for ($i=0;$i<sizeof($colnames);$i++) {
-
-                        $thiscolname = $colnames[$i];
-                        $thistype = $coltypes[$i];
-                        $thislength = $collengths[$i];
-
-                        $SQL.= ' CHANGE '.$thiscolname.' '.$thiscolname.' '.$thistype;
-                        if ($thislength > 0) {
-                            $SQL.='('.$thislength.')';
+                        if ($fieldname != 'dummy') {
+                            execute_sql($SQL, $debug);
                         }
-                        $SQL.=' CHARACTER SET utf8 NOT NULL DEFAULT '.array_shift($defaults).', ';
+                        
+                        /*********************************
+                         * Change column encoding 2 phase*
+                         *********************************/
+                        $SQL = 'ALTER TABLE '.$CFG->prefix.$dbtablename;
+                        $SQL.= ' CHANGE '.$fieldname.' '.$fieldname.' '.$type;
+                        if ($length > 0) {
+                            $SQL.='('.$length.') ';
+                        }
+                        $SQL .= ' NOT NULL DEFAULT '.$default.';';
+                        execute_sql($SQL, $debug);
+
+                        //phase 2
+                        $SQL = 'ALTER TABLE '.$CFG->prefix.$dbtablename;
+                        $SQL.= ' CHANGE '.$fieldname.' '.$fieldname.' '.$type;
+                        if ($length > 0) {
+                            $SQL.='('.$length.') ';
+                        }
+                        $SQL.=' CHARACTER SET utf8 NOT NULL DEFAULT '.$default.';';
+
+                        execute_sql($SQL, $debug);
+
+                        /********************************************
+                         * build an array to add index back together*
+                         ********************************************/
+                        if ($addindex){
+                            $addindexarray[] = $addindex;
+                        } else if ($adduniqueindex) {
+                            $adduniqueindexarray[] = $adduniqueindex;
+                        } else if ($addprimary) {
+                            $addprimaryarray[] = $addprimary;
+                        }
+
+                    } else {
+
+                    //posgresql code here
+                    
                     }
 
-                    $SQL = rtrim($SQL, ', ');
-                    $SQL.=';';
-                } else {    //posgresql query here
-
                 }
-                //$db->debug=999;       // Eloy: Silly thing, what if you save the current value and then,
-				echo $SQL;                     // after execute_sql(), restore it
-                execute_sql($SQL);    //change charset for columns
-                //$db->debug=0;
-                /**********************************
-                 * Add the index back             *
-                 *********************************/
+                
+                /********************************
+                 * Adding the index back        *
+                 ********************************/
                 $alter = 0;
 
                 if ($CFG->dbtype=='mysql'){
@@ -360,24 +455,63 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                 }
 
                 if ($alter) {
-                    execute_sql($SQL);
+                    execute_sql($SQL, $debug);
                 }
-                ///Done adding indexes back!
+
             }    //if there are fields
-            //now we modify the table encoding
-            
-            $SQL = 'ALTER TABLE '.$dbtablename.' CHARACTER SET utf8';  
-            //$db->debug=999;
-            execute_sql($SQL);
-            //$db->debug=0;
+            /************************************
+             * now we modify the table encoding *
+             ************************************/
+            if ($CFG->dbtype=='mysql'){
+                $SQL = 'ALTER TABLE '.$dbtablename.' CHARACTER SET utf8';
+                execute_sql($SQL, $debug);
+            } else {
+
+                ///posgresql code here
+            }
         }
     }
 
-    //set config unicode db to 1
+    /*********************************
+     * now we modify the db encoding *
+     *********************************/
     $SQL = 'ALTER DATABASE '.$CFG->dbname.' CHARACTER SET utf8';
-    execute_sql($SQL);
+    execute_sql($SQL, $debug);
     delete_records('config','name','dbmigration');    //bye bye
-    //DROP CACHE FILEDS HERE
+    
+    //These have to go!
+    execute_sql('TRUNCATE TABLE '.$CFG->prefix.'cache_text', $debug);
+    execute_sql('TRUNCATE TABLE '.$CFG->prefix.'cache_filters', $debug);
+
+    //update site language
+    $sitelanguage = get_record('config','name', 'lang');
+    if (strstr($sitelanguage->value, 'utf8')===false and $sitelanguage->value) {
+        $sitelanguage->value.='_utf8';
+        update_record('config',$sitelanguage);
+    }
+
+    //finish the javascript bar
+    $done=159;
+    print_progress($done, 158, 5, 1);
+    
+    //prints the list of langs used in this site
+    print_simple_box_start('center','50%');
+    echo '<div align="center">The following Language Packs are needed for your users and courses. Please install the following Language Packs:<br><b>';
+    $langsused = get_record('config','name', 'langsused');
+    $langs = explode (',',$langsused->value);
+    
+    foreach ($langs as $lang) {
+        if (!empty($lang)) {
+            echo $lang.',';
+        }
+    }
+    echo '</b></div>';
+    print_simple_box_end();
+    delete_records('config','name','langsused');
+
+    //set the final flag
+    set_config('unicodedb','true');    //this is the main flag for unicode db
+    
 }
 
 
@@ -404,7 +538,7 @@ function get_main_teacher_lang($courseid) {
            '.$CFG->prefix.'user u WHERE
            c.id = ut.course AND ut.course = '.$courseid.' AND u.id = ut.userid ORDER BY ut.authority ASC';
 
-    if ($teacher = get_record_sql($SQL)) {
+    if ($teacher = get_record_sql($SQL, true)) {
         return $teacher->lang;
     }
 }
@@ -443,5 +577,16 @@ function get_user_lang($userid) {
 
 // a placeholder for now
 function log_the_problem_somewhere() {  //Eloy: Nice function, perhaps we could use it, perhpas no. :-)
+    global $dbtablename, $fieldname, $recordid;
+    echo "Problem converting: $dbtablename -> $fieldname -> $recordid!";
 
+}
+
+//only this function should be used during db migraton, because of addslashes at the end of the convertion
+function utfconvert($string, $enc) {
+    global $textlib;
+    if ($result = $textlib->convert($string, $enc)) {
+        $result = addslashes($result);
+    }
+    return $result;
 }

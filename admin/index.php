@@ -6,7 +6,6 @@
         die;
     }
    
-
     require_once("../config.php");
     include_once("$CFG->dirroot/lib/adminlib.php");  // Contains various admin-only functions
 
@@ -196,7 +195,6 @@
         }
     }
 
-
 /// Updated human-readable release version if necessary
 
     if ($release <> $CFG->release) {  // Update the release version
@@ -223,8 +221,6 @@
         exit;
     }
 
-
-
 /// Insert default values for any important configuration variables
 
     include_once("$CFG->dirroot/lib/defaults.php");
@@ -242,8 +238,6 @@
     if (!empty($configchange)) {
         redirect("config.php");
     }
-
-
 
 /// Find and check all main modules and load them up or upgrade them if necessary
     upgrade_activity_modules("$CFG->wwwroot/$CFG->admin/index.php");  // Return here afterwards
@@ -324,24 +318,29 @@
 
     if (!empty($CFG->upgrade)) {  // Print notice about extra upgrading that needs to be done
         print_simple_box(get_string("upgrade$CFG->upgrade", "admin",
-                                    "$CFG->wwwroot/$CFG->admin/upgrade$CFG->upgrade.php"), "center");
+                                    "$CFG->wwwroot/$CFG->admin/upgrade$CFG->upgrade.php"), "center", '50%');
         print_spacer(10,10);
     }
 
     if (ini_get_bool('register_globals') && !ini_get_bool('magic_quotes_gpc')) {
-        print_simple_box(get_string('globalsquoteswarning', 'admin'), 'center');
+        print_simple_box(get_string('globalsquoteswarning', 'admin'), 'center', '50%');
     }
 
 
 /// If no recently cron run
     $lastcron = get_field_sql('SELECT max(lastcron) FROM ' . $CFG->prefix . 'modules');
     if (time() - $lastcron > 3600 * 24) {
-        print_simple_box(get_string('cronwarning', 'admin') , 'center');
+        print_simple_box(get_string('cronwarning', 'admin') , 'center', '50%');
     }
 
 /// Alert if we are currently in maintenance mode
     if (file_exists($CFG->dataroot.'/1/maintenance.html')) {
-        print_simple_box(get_string('sitemaintenancewarning', 'admin') , 'center');
+        print_simple_box(get_string('sitemaintenancewarning', 'admin') , 'center', '50%');
+    }
+
+/// Alert if we are currently in maintenance mode
+    if (empty($CFG->unicodedb)) {
+        print_simple_box(get_string('unicodeupgradenotice', 'admin') , 'center', '50%');
     }
 
 /// Print slightly annoying registration button every six months   ;-)
@@ -425,16 +424,16 @@
                            '<div class="explanation">'.get_string('adminhelpsitefiles').'</div>');
     $table->data[] = array('<strong><a href="stickyblocks.php">'.get_string('stickyblocks','admin').'</a></strong>',
                            '<div class="explanation">'.get_string('adminhelpstickyblocks').'</div>');
-    if (file_exists("$CFG->dirroot/$CFG->admin/$CFG->dbtype")) {
-        $table->data[] = array("<strong><a href=\"$CFG->dbtype/frame.php\">".get_string('managedatabase').'</a></strong>',
-                               get_string('adminhelpmanagedatabase'));
-    }
     if (!empty($CFG->enablestats)) {
         $table->data[] = array('<strong><a href="reports.php">'.get_string('reports').'</a></strong>', 
                                  '<div class="explanation">'.get_string('adminhelpreports').'</div>');
     }
     $table->data[] = array('<strong><a href="environment.php">'.get_string('environment','admin').'</a></strong>',
                            '<div class="explanation">'.get_string('adminhelpenvironment').'</div>');
+    if (file_exists("$CFG->dirroot/$CFG->admin/$CFG->dbtype")) {
+        $table->data[] = array("<strong><a href=\"$CFG->dbtype/frame.php\">".get_string('managedatabase').'</a></strong>',
+                               get_string('adminhelpmanagedatabase'));
+    }
 
 
     print_table($table);
@@ -463,6 +462,16 @@
     $options['sesskey'] = $USER->sesskey;
     print_single_button('register.php', $options, get_string('registration'));
     echo '</td></tr></table>';
+
+    print_simple_box_end();
+
+    print_simple_box_start();
+    //////DUMMY FUNCTION HERE
+    
+    if (optional_param('dbmigrate')) {
+        require_once($CFG->dirroot.'/admin/utfdbmigrate.php');
+        db_migrate2utf8();
+    }
 
     print_simple_box_end();
 
