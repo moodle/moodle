@@ -49,7 +49,7 @@
 //    -Every local .md5 file will:
 //        - Have the zip file name (without the extension) plus -md5
 //        - Will reside inside the expanded zip file dir
-//        - Will contain the installed md5
+//        - Will contain the md5 od the latest installed component
 // With all these details present, the process will perform this tasks:
 //    - Perform security checks. Only admins are allowed to use this for now.
 //    - Perform server checks. fopen must allow to open remote URLs.
@@ -69,7 +69,8 @@
 //            - ERROR. Old package won't be modified. We shouldn't
 //              reach here ever.
 //    - If fopen is not available, a message text about how to do
-//      the process manually will be generated.
+//      the process manually (remotedownloadnotallowed) must be
+//      built to explain it.
 //
 // General Usage:
 //
@@ -81,7 +82,14 @@
 //         $status = $cd->install(); //returns ERROR | UPTODATE | INSTALLED
 //         switch ($status) {
 //             case ERROR: 
-//                 error(get_string($cd->get_error()));
+//                 if ($cd->get_error() == 'remotedownloadnotallowed') {
+//                     $a = new stdClass();
+//                     $a->url = 'http://download.moodle.org/lang16/es_utf8.zip';
+//                     $a->dest= $CFG->dataroot.'/lang';
+//                     error(get_string($cd->get_error(), 'error', $a));
+//                 } else {
+//                     error(get_string($cd->get_error(), 'error'));
+//                 }
 //                 break;
 //             case UPTODATE:
 //                 //Print error string or whatever you want to do
@@ -90,10 +98,10 @@
 //                 //Print/do whatever you want
 //                 break;
 //             default:
-//                 //We wouldn't reach this point
+//                 //We shouldn't reach this point
 //         }
 //     } else {
-//         error(get_string($cd->get_error()));
+//         //We shouldn't reach this point
 //     }
 //
 // To switch of component (maintaining the rest of settings):
@@ -178,11 +186,7 @@ class component_installer {
         $this->requisitesok = false;
         $this->cachedmd5components = array();
 
-        if (!$this->check_requisites()) {
-            return false;
-        } else {
-            return($this);
-        }
+        $this->check_requisites();
     }
 
     /**
@@ -200,7 +204,7 @@ class component_installer {
 
     /// Check for admin (this will be out in the future)
         if (!isadmin()) {
-            $this->errorstring='onlyadmicaninstallcomponents';
+            $this->errorstring='onlyadmins';
             return false;
         } else {
         /// Check for fopen remote enabled
@@ -468,7 +472,7 @@ class component_installer {
                 fclose($fp);
             /// If no components have been found, return error
                 if (empty($availablecomponents)) {
-                    $this->errorstring='cannotdownloadcomponent';
+                    $this->errorstring='cannotdownloadcomponents';
                     return false;
                 }
             /// Build an associative array of components for easily search
