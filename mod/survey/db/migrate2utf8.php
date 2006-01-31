@@ -21,9 +21,9 @@ function migrate2utf8_survey_name($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($survey->name, $fromenc);
+    $result = utfconvert($survey->name, $fromenc);
 
     $newsurvey = new object;
     $newsurvey->id = $recordid;
@@ -54,9 +54,9 @@ function migrate2utf8_survey_intro($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($survey->intro, $fromenc);
+    $result = utfconvert($survey->intro, $fromenc);
 
     $newsurvey = new object;
     $newsurvey->id = $recordid;

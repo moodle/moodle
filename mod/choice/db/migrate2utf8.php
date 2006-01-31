@@ -31,9 +31,9 @@ function migrate2utf8_choice_options_text($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($choiceoption->text, $fromenc);
+    $result = utfconvert($choiceoption->text, $fromenc);
 
     $newchoiceoption = new object;
     $newchoiceoption->id = $recordid;
@@ -63,9 +63,9 @@ function migrate2utf8_choice_name($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($choice->name, $fromenc);
+    $result = utfconvert($choice->name, $fromenc);
 
     $newchoice = new object;
     $newchoice->id = $recordid;
@@ -95,9 +95,9 @@ function migrate2utf8_choice_text($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($choice->text, $fromenc);
+    $result = utfconvert($choice->text, $fromenc);
 
     $newchoice = new object;
     $newchoice->id = $recordid;

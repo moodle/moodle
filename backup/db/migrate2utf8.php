@@ -20,9 +20,9 @@ function migrate2utf8_backup_log_info($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($backuplog->info, $fromenc);
+    $result = utfconvert($backuplog->info, $fromenc);
 
     $newbackuplog = new object;
     $newbackuplog->id = $recordid;
@@ -54,9 +54,9 @@ function migrate2utf8_backup_ids_info($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($backupids->info, $fromenc);
+    $result = utfconvert($backupids->info, $fromenc);
 
     $newbackupids = new object;
     $newbackupids->id = $recordid;

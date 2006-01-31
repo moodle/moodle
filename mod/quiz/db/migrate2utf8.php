@@ -31,9 +31,9 @@ function migrate2utf8_quiz_questions_name($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($quizquestions->name, $fromenc);
+    $result = utfconvert($quizquestions->name, $fromenc);
 
     $newquizquestion = new object;
     $newquizquestion->id = $recordid;
@@ -75,9 +75,9 @@ function migrate2utf8_quiz_questions_questiontext($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($quizquestions->questiontext, $fromenc);
+    $result = utfconvert($quizquestions->questiontext, $fromenc);
 
     $newquizquestion = new object;
     $newquizquestion->id = $recordid;
@@ -122,9 +122,9 @@ function migrate2utf8_quiz_numerical_units_unit($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($quiznumericalunits->unit, $fromenc);
+    $result = utfconvert($quiznumericalunits->unit, $fromenc);
 
     $newquiznumericalunits = new object;
     $newquiznumericalunits->id = $recordid;
@@ -168,9 +168,9 @@ function migrate2utf8_quiz_match_sub_questiontext($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($quizmatchsub->questiontext, $fromenc);
+    $result = utfconvert($quizmatchsub->questiontext, $fromenc);
 
     $newquizmatchsub = new object;
     $newquizmatchsub->id = $recordid;
@@ -214,9 +214,9 @@ function migrate2utf8_quiz_match_sub_answertext($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($quizmatchsub->answertext, $fromenc);
+    $result = utfconvert($quizmatchsub->answertext, $fromenc);
 
     $newquizmatchsub = new object;
     $newquizmatchsub->id = $recordid;
@@ -260,9 +260,9 @@ function migrate2utf8_quiz_answers_answer($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($quizanswer->answer, $fromenc);
+    $result = utfconvert($quizanswer->answer, $fromenc);
 
     $newquizanswer = new object;
     $newquizanswer->id = $recordid;
@@ -306,9 +306,9 @@ function migrate2utf8_quiz_answers_feedback($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($quizanswer->feedback, $fromenc);
+    $result = utfconvert($quizanswer->feedback, $fromenc);
 
     $newquizanswer = new object;
     $newquizanswer->id = $recordid;
@@ -354,9 +354,9 @@ function migrate2utf8_quiz_dataset_definitions_name($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($quizdatasetdefinition->name, $fromenc);
+    $result = utfconvert($quizdatasetdefinition->name, $fromenc);
 
     $newquizdatasetdefinition = new object;
     $newquizdatasetdefinition->id = $recordid;
@@ -396,9 +396,9 @@ function migrate2utf8_quiz_categories_name($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($quizcategory->name, $fromenc);
+    $result = utfconvert($quizcategory->name, $fromenc);
 
     $newquizcategory = new object;
     $newquizcategory->id = $recordid;
@@ -438,9 +438,9 @@ function migrate2utf8_quiz_categories_info($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($quizcategory->info, $fromenc);
+    $result = utfconvert($quizcategory->info, $fromenc);
 
     $newquizcategory = new object;
     $newquizcategory->id = $recordid;
@@ -471,9 +471,9 @@ function migrate2utf8_quiz_name($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($quiz->name, $fromenc);
+    $result = utfconvert($quiz->name, $fromenc);
 
     $newquiz = new object;
     $newquiz->id = $recordid;
@@ -505,9 +505,9 @@ function migrate2utf8_quiz_intro($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($quiz->intro, $fromenc);
+    $result = utfconvert($quiz->intro, $fromenc);
 
     $newquiz = new object;
     $newquiz->id = $recordid;
@@ -538,9 +538,9 @@ function migrate2utf8_quiz_password($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($quiz->password, $fromenc);
+    $result = utfconvert($quiz->password, $fromenc);
 
     $newquiz = new object;
     $newquiz->id = $recordid;

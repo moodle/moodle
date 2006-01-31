@@ -31,9 +31,9 @@ function migrate2utf8_data_fields_name($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($datafield->name, $fromenc);
+    $result = utfconvert($datafield->name, $fromenc);
 
     $newdatafield = new object;
     $newdatafield->id = $recordid;
@@ -75,9 +75,9 @@ function migrate2utf8_data_fields_description($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($datafield->description, $fromenc);
+    $result = utfconvert($datafield->description, $fromenc);
 
     $newdatafield = new object;
     $newdatafield->id = $recordid;
@@ -108,9 +108,9 @@ function migrate2utf8_data_name($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($data->name, $fromenc);
+    $result = utfconvert($data->name, $fromenc);
 
     $newdata= new object;
     $newdata->id = $recordid;
@@ -141,9 +141,9 @@ function migrate2utf8_data_intro($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($data->intro, $fromenc);
+    $result = utfconvert($data->intro, $fromenc);
 
     $newdata= new object;
     $newdata->id = $recordid;
@@ -174,9 +174,9 @@ function migrate2utf8_data_singletemplate($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($data->singletemplate, $fromenc);
+    $result = utfconvert($data->singletemplate, $fromenc);
 
     $newdata= new object;
     $newdata->id = $recordid;
@@ -207,9 +207,9 @@ function migrate2utf8_data_listtemplate($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($data->listtemplate, $fromenc);
+    $result = utfconvert($data->listtemplate, $fromenc);
 
     $newdata= new object;
     $newdata->id = $recordid;
@@ -240,9 +240,9 @@ function migrate2utf8_data_addtemplate($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($data->addtemplate, $fromenc);
+    $result = utfconvert($data->addtemplate, $fromenc);
 
     $newdata= new object;
     $newdata->id = $recordid;
@@ -273,9 +273,9 @@ function migrate2utf8_data_rsstemplate($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($data->rsstemplate, $fromenc);
+    $result = utfconvert($data->rsstemplate, $fromenc);
 
     $newdata= new object;
     $newdata->id = $recordid;
@@ -306,9 +306,9 @@ function migrate2utf8_data_listtemplateheader($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($data->listtemplateheader, $fromenc);
+    $result = utfconvert($data->listtemplateheader, $fromenc);
 
     $newdata= new object;
     $newdata->id = $recordid;
@@ -339,9 +339,9 @@ function migrate2utf8_data_listtemplatefooter($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($data->listtemplatefooter, $fromenc);
+    $result = utfconvert($data->listtemplatefooter, $fromenc);
 
     $newdata= new object;
     $newdata->id = $recordid;

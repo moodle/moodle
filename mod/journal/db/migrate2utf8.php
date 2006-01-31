@@ -20,9 +20,9 @@ function migrate2utf8_journal_name($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($journal->name, $fromenc);
+    $result = utfconvert($journal->name, $fromenc);
 
     $newjournal = new object;
     $newjournal->id = $recordid;
@@ -53,9 +53,9 @@ function migrate2utf8_journal_intro($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($journal->intro, $fromenc);
+    $result = utfconvert($journal->intro, $fromenc);
 
     $newjournal = new object;
     $newjournal->id = $recordid;

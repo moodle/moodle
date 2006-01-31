@@ -30,9 +30,9 @@ function migrate2utf8_glossary_categories_name($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($glossarycategory->name, $fromenc);
+    $result = utfconvert($glossarycategory->name, $fromenc);
 
     $newglossarycategory = new object;
     $newglossarycategory->id = $recordid;
@@ -63,9 +63,9 @@ function migrate2utf8_glossary_name($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($glossary->name, $fromenc);
+    $result = utfconvert($glossary->name, $fromenc);
 
     $newglossary = new object;
     $newglossary->id = $recordid;
@@ -96,9 +96,9 @@ function migrate2utf8_glossary_intro($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($glossary->intro, $fromenc);
+    $result = utfconvert($glossary->intro, $fromenc);
 
     $newglossary = new object;
     $newglossary->id = $recordid;

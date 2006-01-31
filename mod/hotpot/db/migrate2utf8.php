@@ -21,9 +21,9 @@ function migrate2utf8_hotpot_strings_string($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($hotpotstrings->string, $fromenc);
+    $result = utfconvert($hotpotstrings->string, $fromenc);
 
     $newhotpotstrings = new object;
     $newhotpotstrings->id = $recordid;
@@ -64,9 +64,9 @@ function migrate2utf8_hotpot_questions_name($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
     
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($hotpotquestion->name, $fromenc);
+    $result = utfconvert($hotpotquestion->name, $fromenc);
 
     $newhotpotquestion = new object;
     $newhotpotquestion->id = $recordid;
@@ -97,9 +97,9 @@ function migrate2utf8_hotpot_name($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($hotpot->name, $fromenc);
+    $result = utfconvert($hotpot->name, $fromenc);
 
     $newhotpot = new object;
     $newhotpot->id = $recordid;
@@ -130,9 +130,9 @@ function migrate2utf8_hotpot_summary($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($hotpot->summary, $fromenc);
+    $result = utfconvert($hotpot->summary, $fromenc);
 
     $newhotpot = new object;
     $newhotpot->id = $recordid;
@@ -163,9 +163,9 @@ function migrate2utf8_hotpot_password($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($hotpot->password, $fromenc);
+    $result = utfconvert($hotpot->password, $fromenc);
 
     $newhotpot = new object;
     $newhotpot->id = $recordid;

@@ -20,9 +20,9 @@ function migrate2utf8_forum_name($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($forum->name, $fromenc);
+    $result = utfconvert($forum->name, $fromenc);
 
     $newforum = new object;
     $newforum->id = $recordid;
@@ -53,9 +53,9 @@ function migrate2utf8_forum_intro($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($forum->intro, $fromenc);
+    $result = utfconvert($forum->intro, $fromenc);
 
     $newforum = new object;
     $newforum->id = $recordid;

@@ -31,9 +31,9 @@ function migrate2utf8_scorm_scoes_manifest($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($scormscoes->manifest, $fromenc);
+    $result = utfconvert($scormscoes->manifest, $fromenc);
 
     $newscormscoes = new object;
     $newscormscoes->id = $recordid;
@@ -75,9 +75,9 @@ function migrate2utf8_scorm_scoes_organization($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($scormscoes->organization, $fromenc);
+    $result = utfconvert($scormscoes->organization, $fromenc);
 
     $newscormscoes = new object;
     $newscormscoes->id = $recordid;
@@ -119,9 +119,9 @@ function migrate2utf8_scorm_scoes_parent($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($scormscoes->parent, $fromenc);
+    $result = utfconvert($scormscoes->parent, $fromenc);
 
     $newscormscoes = new object;
     $newscormscoes->id = $recordid;
@@ -164,9 +164,9 @@ function migrate2utf8_scorm_scoes_identifier($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($scormscoes->identifier, $fromenc);
+    $result = utfconvert($scormscoes->identifier, $fromenc);
 
     $newscormscoes = new object;
     $newscormscoes->id = $recordid;
@@ -208,9 +208,9 @@ function migrate2utf8_scorm_scoes_launch($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($scormscoes->launch, $fromenc);
+    $result = utfconvert($scormscoes->launch, $fromenc);
 
     $newscormscoes = new object;
     $newscormscoes->id = $recordid;
@@ -252,9 +252,9 @@ function migrate2utf8_scorm_scoes_parameters($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($scormscoes->parameters, $fromenc);
+    $result = utfconvert($scormscoes->parameters, $fromenc);
 
     $newscormscoes = new object;
     $newscormscoes->id = $recordid;
@@ -296,9 +296,9 @@ function migrate2utf8_scorm_scoes_scormtype($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($scormscoes->scormtype, $fromenc);
+    $result = utfconvert($scormscoes->scormtype, $fromenc);
 
     $newscormscoes = new object;
     $newscormscoes->id = $recordid;
@@ -340,9 +340,9 @@ function migrate2utf8_scorm_scoes_title($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($scormscoes->title, $fromenc);
+    $result = utfconvert($scormscoes->title, $fromenc);
 
     $newscormscoes = new object;
     $newscormscoes->id = $recordid;
@@ -384,9 +384,9 @@ function migrate2utf8_scorm_scoes_prerequisites($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($scormscoes->prerequisites, $fromenc);
+    $result = utfconvert($scormscoes->prerequisites, $fromenc);
 
     $newscormscoes = new object;
     $newscormscoes->id = $recordid;
@@ -428,9 +428,9 @@ function migrate2utf8_scorm_scoes_maxtimeallowed($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($scormscoes->maxtimeallowed, $fromenc);
+    $result = utfconvert($scormscoes->maxtimeallowed, $fromenc);
 
     $newscormscoes = new object;
     $newscormscoes->id = $recordid;
@@ -472,9 +472,9 @@ function migrate2utf8_scorm_scoes_timelimitaction($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($scormscoes->timelimitaction, $fromenc);
+    $result = utfconvert($scormscoes->timelimitaction, $fromenc);
 
     $newscormscoes = new object;
     $newscormscoes->id = $recordid;
@@ -516,9 +516,9 @@ function migrate2utf8_scorm_scoes_datafromlms($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($scormscoes->datafromlms, $fromenc);
+    $result = utfconvert($scormscoes->datafromlms, $fromenc);
 
     $newscormscoes = new object;
     $newscormscoes->id = $recordid;
@@ -560,9 +560,9 @@ function migrate2utf8_scorm_scoes_masteryscore($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($scormscoes->masteryscore, $fromenc);
+    $result = utfconvert($scormscoes->masteryscore, $fromenc);
 
     $newscormscoes = new object;
     $newscormscoes->id = $recordid;
@@ -594,9 +594,9 @@ function migrate2utf8_scorm_name($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($scorm->name, $fromenc);
+    $result = utfconvert($scorm->name, $fromenc);
 
     $newscorm = new object;
     $newscorm->id = $recordid;
@@ -627,9 +627,9 @@ function migrate2utf8_scorm_reference($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($scorm->reference, $fromenc);
+    $result = utfconvert($scorm->reference, $fromenc);
 
     $newscorm = new object;
     $newscorm->id = $recordid;
@@ -660,9 +660,9 @@ function migrate2utf8_scorm_summary($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($scorm->summary, $fromenc);
+    $result = utfconvert($scorm->summary, $fromenc);
 
     $newscorm = new object;
     $newscorm->id = $recordid;
@@ -693,9 +693,9 @@ function migrate2utf8_scorm_options($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($scorm->options, $fromenc);
+    $result = utfconvert($scorm->options, $fromenc);
 
     $newscorm = new object;
     $newscorm->id = $recordid;

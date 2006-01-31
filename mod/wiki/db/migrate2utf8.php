@@ -20,9 +20,9 @@ function migrate2utf8_wiki_name($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($wiki->name, $fromenc);
+    $result = utfconvert($wiki->name, $fromenc);
 
     $newwiki = new object;
     $newwiki->id = $recordid;
@@ -53,9 +53,9 @@ function migrate2utf8_wiki_summary($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($wiki->summary, $fromenc);
+    $result = utfconvert($wiki->summary, $fromenc);
 
     $newwiki = new object;
     $newwiki->id = $recordid;
@@ -86,9 +86,9 @@ function migrate2utf8_wiki_pagename($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($wiki->pagename, $fromenc);
+    $result = utfconvert($wiki->pagename, $fromenc);
 
     $newwiki = new object;
     $newwiki->id = $recordid;
@@ -119,9 +119,9 @@ function migrate2utf8_wiki_initialcontent($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($wiki->initialcontent, $fromenc);
+    $result = utfconvert($wiki->initialcontent, $fromenc);
 
     $newwiki = new object;
     $newwiki->id = $recordid;

@@ -21,9 +21,9 @@ function migrate2utf8_config_value($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($config->value, $fromenc);
+    $result = utfconvert($config->value, $fromenc);
 
     $newconfig = new object;
     $newconfig->id = $recordid;
@@ -54,9 +54,9 @@ function migrate2utf8_config_plugins_value($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($configplugins->value, $fromenc);
+    $result = utfconvert($configplugins->value, $fromenc);
 
     $newconfigplugins = new object;
     $newconfigplugins->id = $recordid;
@@ -87,9 +87,9 @@ function migrate2utf8_course_categories_name($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($coursecategories->name, $fromenc);
+    $result = utfconvert($coursecategories->name, $fromenc);
 
     $newcoursecategories = new object;
     $newcoursecategories->id = $recordid;
@@ -120,9 +120,9 @@ function migrate2utf8_course_categories_description($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($coursecategories->description, $fromenc);
+    $result = utfconvert($coursecategories->description, $fromenc);
 
     $newcoursecategories = new object;
     $newcoursecategories->id = $recordid;
@@ -153,9 +153,9 @@ function migrate2utf8_course_sections_summary($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($coursesections->summary, $fromenc);
+    $result = utfconvert($coursesections->summary, $fromenc);
 
     $newcoursesections = new object;
     $newcoursesections->id = $recordid;
@@ -188,9 +188,9 @@ function migrate2utf8_course_request_fullname($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($courserequest->fullname, $fromenc);
+    $result = utfconvert($courserequest->fullname, $fromenc);
 
     $newcourserequest = new object;
     $newcourserequest->id = $recordid;
@@ -223,9 +223,9 @@ function migrate2utf8_course_request_shortname($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($courserequest->shortname, $fromenc);
+    $result = utfconvert($courserequest->shortname, $fromenc);
 
     $newcourserequest = new object;
     $newcourserequest->id = $recordid;
@@ -258,9 +258,9 @@ function migrate2utf8_course_request_summary($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($courserequest->summary, $fromenc);
+    $result = utfconvert($courserequest->summary, $fromenc);
 
     $newcourserequest = new object;
     $newcourserequest->id = $recordid;
@@ -293,9 +293,9 @@ function migrate2utf8_course_request_reason($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($courserequest->reason, $fromenc);
+    $result = utfconvert($courserequest->reason, $fromenc);
 
     $newcourserequest = new object;
     $newcourserequest->id = $recordid;
@@ -328,9 +328,9 @@ function migrate2utf8_course_request_password($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($courserequest->password, $fromenc);
+    $result = utfconvert($courserequest->password, $fromenc);
 
     $newcourserequest = new object;
     $newcourserequest->id = $recordid;
@@ -361,9 +361,9 @@ function migrate2utf8_grade_category_name($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($gradecategory->name, $fromenc);
+    $result = utfconvert($gradecategory->name, $fromenc);
 
     $newgradecategory = new object;
     $newgradecategory->id = $recordid;
@@ -394,9 +394,9 @@ function migrate2utf8_grade_letter_letter($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($gradeletter->letter, $fromenc);
+    $result = utfconvert($gradeletter->letter, $fromenc);
 
     $newgradeletter = new object;
     $newgradeletter->id = $recordid;
@@ -427,9 +427,9 @@ function migrate2utf8_groups_name($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($group->name, $fromenc);
+    $result = utfconvert($group->name, $fromenc);
 
     $newgroup = new object;
     $newgroup->id = $recordid;
@@ -460,9 +460,9 @@ function migrate2utf8_groups_description($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($group->description, $fromenc);
+    $result = utfconvert($group->description, $fromenc);
 
     $newgroup = new object;
     $newgroup->id = $recordid;
@@ -493,9 +493,9 @@ function migrate2utf8_groups_lang($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($group->lang, $fromenc);
+    $result = utfconvert($group->lang, $fromenc);
 
     $newgroup = new object;
     $newgroup->id = $recordid;
@@ -526,9 +526,9 @@ function migrate2utf8_groups_password($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($group->password, $fromenc);
+    $result = utfconvert($group->password, $fromenc);
 
     $newgroup = new object;
     $newgroup->id = $recordid;
@@ -561,9 +561,9 @@ function migrate2utf8_message_message($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($message->message, $fromenc);
+    $result = utfconvert($message->message, $fromenc);
 
     $newmessage = new object;
     $newmessage->id = $recordid;
@@ -596,9 +596,9 @@ function migrate2utf8_message_read_message($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($messageread->message, $fromenc);
+    $result = utfconvert($messageread->message, $fromenc);
 
     $newmessageread = new object;
     $newmessageread->id = $recordid;
@@ -629,9 +629,9 @@ function migrate2utf8_modules_search($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($modules->search, $fromenc);
+    $result = utfconvert($modules->search, $fromenc);
 
     $newmodules = new object;
     $newmodules->id = $recordid;
@@ -659,9 +659,9 @@ function migrate2utf8_user_idnumber($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($user->idnumber, $fromenc);
+    $result = utfconvert($user->idnumber, $fromenc);
 
     $newuser = new object;
     $newuser->id = $recordid;
@@ -689,9 +689,9 @@ function migrate2utf8_user_firstname($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($user->firstname, $fromenc);
+    $result = utfconvert($user->firstname, $fromenc);
 
     $newuser = new object;
     $newuser->id = $recordid;
@@ -719,9 +719,9 @@ function migrate2utf8_user_lastname($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($user->lastname, $fromenc);
+    $result = utfconvert($user->lastname, $fromenc);
 
     $newuser = new object;
     $newuser->id = $recordid;
@@ -749,9 +749,9 @@ function migrate2utf8_user_institution($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($user->institution , $fromenc);
+    $result = utfconvert($user->institution , $fromenc);
 
     $newuser = new object;
     $newuser->id = $recordid;
@@ -779,9 +779,9 @@ function migrate2utf8_user_department($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($user->department, $fromenc);
+    $result = utfconvert($user->department, $fromenc);
 
     $newuser = new object;
     $newuser->id = $recordid;
@@ -809,9 +809,9 @@ function migrate2utf8_user_address($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($user->address, $fromenc);
+    $result = utfconvert($user->address, $fromenc);
 
     $newuser = new object;
     $newuser->id = $recordid;
@@ -839,9 +839,9 @@ function migrate2utf8_user_city($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($user->city, $fromenc);
+    $result = utfconvert($user->city, $fromenc);
 
     $newuser = new object;
     $newuser->id = $recordid;
@@ -868,9 +868,9 @@ function migrate2utf8_user_description($recordid){
 
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($user->description, $fromenc);
+    $result = utfconvert($user->description, $fromenc);
 
     $newuser = new object;
     $newuser->id = $recordid;
@@ -898,9 +898,9 @@ function migrate2utf8_user_secret($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($user->secret, $fromenc);
+    $result = utfconvert($user->secret, $fromenc);
 
     $newuser = new object;
     $newuser->id = $recordid;
@@ -927,6 +927,15 @@ function migrate2utf8_user_lang($recordid){
     }
 
     $result = update_record('user',$user);
+    
+    $langsused = get_record('config','name','langsused');
+    $langs = explode(',',$langsused->value);
+    if (!in_array($user->lang, $langs)) {
+        $langsused->value .= ','.$user->lang;
+        update_record('config',$langsused);
+    }
+    
+
 /// And finally, just return the converted field
     return $result;
 }
@@ -952,9 +961,9 @@ function migrate2utf8_course_password($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($course->password, $fromenc);
+    $result = utfconvert($course->password, $fromenc);
 
     $newcourse = new object;
     $newcourse->id = $recordid;
@@ -985,9 +994,9 @@ function migrate2utf8_course_fullname($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($course->fullname, $fromenc);
+    $result = utfconvert($course->fullname, $fromenc);
 
     $newcourse = new object;
     $newcourse->id = $recordid;
@@ -1018,9 +1027,9 @@ function migrate2utf8_course_shortname($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($course->shortname, $fromenc);
+    $result = utfconvert($course->shortname, $fromenc);
 
     $newcourse = new object;
     $newcourse->id = $recordid;
@@ -1051,9 +1060,9 @@ function migrate2utf8_course_idnumber($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($course->idnumber, $fromenc);
+    $result = utfconvert($course->idnumber, $fromenc);
 
     $newcourse = new object;
     $newcourse->id = $recordid;
@@ -1084,9 +1093,9 @@ function migrate2utf8_course_summary($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($course->summary, $fromenc);
+    $result = utfconvert($course->summary, $fromenc);
 
     $newcourse = new object;
     $newcourse->id = $recordid;
@@ -1122,9 +1131,9 @@ function migrate2utf8_course_teacher($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($course->teacher, $fromenc);
+    $result = utfconvert($course->teacher, $fromenc);
 
     $newcourse = new object;
     $newcourse->id = $recordid;
@@ -1155,9 +1164,9 @@ function migrate2utf8_course_teachers($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($course->teachers, $fromenc);
+    $result = utfconvert($course->teachers, $fromenc);
 
     $newcourse = new object;
     $newcourse->id = $recordid;
@@ -1188,9 +1197,9 @@ function migrate2utf8_course_student($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($course->student, $fromenc);
+    $result = utfconvert($course->student, $fromenc);
 
     $newcourse = new object;
     $newcourse->id = $recordid;
@@ -1221,9 +1230,9 @@ function migrate2utf8_course_students($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($course->students, $fromenc);
+    $result = utfconvert($course->students, $fromenc);
 
     $newcourse = new object;
     $newcourse->id = $recordid;
@@ -1254,9 +1263,9 @@ function migrate2utf8_course_cost($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($course->cost, $fromenc);
+    $result = utfconvert($course->cost, $fromenc);
 
     $newcourse = new object;
     $newcourse->id = $recordid;
@@ -1282,6 +1291,15 @@ function migrate2utf8_course_lang($recordid){
     require_once($CFG->dirroot.'/course/lib.php');
     $result = rebuild_course_cache($recordid);    //takes care of serialized modinfo
 /// And finally, just return the converted field
+
+
+    $langsused = get_record('config','name','langsused');
+    $langs = explode(',',$langsused->value);
+    if (!in_array($course->lang, $langs)) {
+        $langsused->value .= ','.$course->lang;
+        update_record('config',$langsused);
+    }
+
     return $result;
 }
 ?>

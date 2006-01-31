@@ -20,9 +20,9 @@ function migrate2utf8_label_name($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($label->name, $fromenc);
+    $result = utfconvert($label->name, $fromenc);
 
     $newlabel = new object;
     $newlabel->id = $recordid;
@@ -53,9 +53,9 @@ function migrate2utf8_label_content($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($label->content, $fromenc);
+    $result = utfconvert($label->content, $fromenc);
 
     $newlabel = new object;
     $newlabel->id = $recordid;

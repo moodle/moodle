@@ -20,9 +20,9 @@ function migrate2utf8_lams_name($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 echo "lamslamslams ".$fromenc;
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($lams->name, $fromenc);
+    $result = utfconvert($lams->name, $fromenc);
 
     $newlams = new object;
     $newlams->id = $recordid;
@@ -53,9 +53,9 @@ function migrate2utf8_lams_introduction($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($lams->introduction, $fromenc);
+    $result = utfconvert($lams->introduction, $fromenc);
 
     $newlams = new object;
     $newlams->id = $recordid;

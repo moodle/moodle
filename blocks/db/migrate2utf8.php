@@ -21,10 +21,10 @@ function migrate2utf8_block_instance_configdata($recordid){
         $blah = unserialize(base64_decode($blockinstance->configdata));
  
     /// We are going to use textlib facilities
-        $textlib = textlib_get_instance();
+        
     /// Convert the text
-        $blah->title = $textlib->convert($blah->title, $fromenc);
-        $blah->text = $textlib->convert($blah->text, $fromenc);
+        $blah->title = utfconvert($blah->title, $fromenc);
+        $blah->text = utfconvert($blah->text, $fromenc);
         
         $blockinstance->configdata = base64_encode(serialize($blah));
 
@@ -45,9 +45,9 @@ function migrate2utf8_block_instance_configdata($recordid){
         $blah = unserialize(base64_decode($blockinstance->configdata));
 
     /// We are going to use textlib facilities
-        $textlib = textlib_get_instance();
+        
     /// Convert the text
-        $blah->title = $textlib->convert($blah->title, $fromenc);
+        $blah->title = utfconvert($blah->title, $fromenc);
 
         $blockinstance->configdata = base64_encode(serialize($blah));
 

@@ -31,9 +31,9 @@ function migrate2utf8_exercise_elements_description($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($exerciseelement->description, $fromenc);
+    $result = utfconvert($exerciseelement->description, $fromenc);
 
     $newexerciseelement = new object;
     $newexerciseelement->id = $recordid;
@@ -75,9 +75,9 @@ function migrate2utf8_exercise_grades_feedback($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($exercisegrade->feedback, $fromenc);
+    $result = utfconvert($exercisegrade->feedback, $fromenc);
 
     $newexercisegrade = new object;
     $newexercisegrade->id = $recordid;
@@ -119,9 +119,9 @@ function migrate2utf8_exercise_rubrics_description($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($exerciserubric->description, $fromenc);
+    $result = utfconvert($exerciserubric->description, $fromenc);
 
     $newexerciserubric = new object;
     $newexerciserubric->id = $recordid;
@@ -152,9 +152,9 @@ function migrate2utf8_exercise_name($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($exercise->name, $fromenc);
+    $result = utfconvert($exercise->name, $fromenc);
 
     $newexercise = new object;
     $newexercise->id = $recordid;

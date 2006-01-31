@@ -31,9 +31,9 @@ function migrate2utf8_lesson_answers_answer($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($lessonanswers->answer, $fromenc);
+    $result = utfconvert($lessonanswers->answer, $fromenc);
 
     $newlessonanswers = new object;
     $newlessonanswers->id = $recordid;
@@ -75,9 +75,9 @@ function migrate2utf8_lesson_answers_response($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($lessonanswers->response, $fromenc);
+    $result = utfconvert($lessonanswers->response, $fromenc);
 
     $newlessonanswers = new object;
     $newlessonanswers->id = $recordid;
@@ -126,9 +126,9 @@ function migrate2utf8_lesson_pages_contents($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($lessonpages->contents, $fromenc);
+    $result = utfconvert($lessonpages->contents, $fromenc);
 
     $newlessonpages = new object;
     $newlessonpages->id = $recordid;
@@ -169,9 +169,9 @@ function migrate2utf8_lesson_pages_title($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($lessonpages->title, $fromenc);
+    $result = utfconvert($lessonpages->title, $fromenc);
 
     $newlessonpages = new object;
     $newlessonpages->id = $recordid;
@@ -202,9 +202,9 @@ function migrate2utf8_lesson_name($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($lesson->name, $fromenc);
+    $result = utfconvert($lesson->name, $fromenc);
 
     $newlesson = new object;
     $newlesson->id = $recordid;

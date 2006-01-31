@@ -18,9 +18,9 @@ function migrate2utf8_assignment_name($recordid){
 
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($assignment->name, $fromenc);
+    $result = utfconvert($assignment->name, $fromenc);
     
     
     $newassignment = new object;
@@ -52,9 +52,9 @@ function migrate2utf8_assignment_description($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($assignment->description, $fromenc);
+    $result = utfconvert($assignment->description, $fromenc);
 
     $newassignment = new object;
     $newassignment->id = $recordid;

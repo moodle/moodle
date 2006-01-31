@@ -31,9 +31,9 @@ function migrate2utf8_workshop_stockcomments_comments($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($workshopstockcomments->comments, $fromenc);
+    $result = utfconvert($workshopstockcomments->comments, $fromenc);
 
     $newworkshopstockcomments = new object;
     $newworkshopstockcomments->id = $recordid;
@@ -75,9 +75,9 @@ function migrate2utf8_workshop_rubrics_description($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($workshoprubrics->description, $fromenc);
+    $result = utfconvert($workshoprubrics->description, $fromenc);
 
     $newworkshoprubrics = new object;
     $newworkshoprubrics->id = $recordid;
@@ -119,9 +119,9 @@ function migrate2utf8_workshop_grades_feedback($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($workshopgrades->feedback, $fromenc);
+    $result = utfconvert($workshopgrades->feedback, $fromenc);
 
     $newworkshopgrades = new object;
     $newworkshopgrades->id = $recordid;
@@ -163,9 +163,9 @@ function migrate2utf8_workshop_elements_description($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($workshopelements->description, $fromenc);
+    $result = utfconvert($workshopelements->description, $fromenc);
 
     $newworkshopelements = new object;
     $newworkshopelements->id = $recordid;
@@ -196,9 +196,9 @@ function migrate2utf8_workshop_name($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($workshop->name, $fromenc);
+    $result = utfconvert($workshop->name, $fromenc);
 
     $newworkshop = new object;
     $newworkshop->id = $recordid;
@@ -229,9 +229,9 @@ function migrate2utf8_workshop_description($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($workshop->description, $fromenc);
+    $result = utfconvert($workshop->description, $fromenc);
 
     $newworkshop = new object;
     $newworkshop->id = $recordid;
@@ -262,9 +262,9 @@ function migrate2utf8_workshop_password($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($workshop->password, $fromenc);
+    $result = utfconvert($workshop->password, $fromenc);
 
     $newworkshop = new object;
     $newworkshop->id = $recordid;

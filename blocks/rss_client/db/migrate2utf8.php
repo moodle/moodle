@@ -22,9 +22,9 @@ function migrate2utf8_block_rss_client_title($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($rssclient->title, $fromenc);
+    $result = utfconvert($rssclient->title, $fromenc);
 
     $newrssclient = new object;
     $newrssclient->id = $recordid;
@@ -66,9 +66,9 @@ function migrate2utf8_block_rss_client_preferredtitle($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($rssclient->preferredtitle, $fromenc);
+    $result = utfconvert($rssclient->preferredtitle, $fromenc);
 
     $newrssclient = new object;
     $newrssclient->id = $recordid;
@@ -110,9 +110,9 @@ function migrate2utf8_block_rss_client_description($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($rssclient->description, $fromenc);
+    $result = utfconvert($rssclient->description, $fromenc);
 
     $newrssclient = new object;
     $newrssclient->id = $recordid;

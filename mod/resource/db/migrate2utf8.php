@@ -20,9 +20,9 @@ function migrate2utf8_resource_name($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($resource->name, $fromenc);
+    $result = utfconvert($resource->name, $fromenc);
 
     $newresource = new object;
     $newresource->id = $recordid;
@@ -53,9 +53,9 @@ function migrate2utf8_resource_reference($recordid){
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($resource->reference, $fromenc);
+    $result = utfconvert($resource->reference, $fromenc);
 
     $newresource = new object;
     $newresource->id = $recordid;
@@ -85,9 +85,9 @@ function migrate2utf8_resource_summary($recordid){
 
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 /// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
+    
 /// Convert the text
-    $result = $textlib->convert($resource->summary, $fromenc);
+    $result = utfconvert($resource->summary, $fromenc);
     $newresource = new object;
     $newresource->id = $recordid;
     $newresource->summary = $result;
@@ -116,10 +116,8 @@ function migrate2utf8_resource_alltext($recordid){
 
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 
-/// We are going to use textlib facilities
-    $textlib = textlib_get_instance();
 /// Convert the text
-    $result = $textlib->convert($resource->alltext, $fromenc);
+    $result = utfconvert($resource->alltext, $fromenc);
 
     $newresource = new object;
     $newresource->id = $recordid;
