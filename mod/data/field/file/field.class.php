@@ -65,7 +65,8 @@ class data_field_file extends data_field_base {// extends
             $datacontent = get_record('data_content','fieldid',$id,'recordid',$rid);
             if (isset($datacontent->content)){
                 $content = $datacontent->content;
-                $contents = explode('##',$content);
+                $contents[0] = $datacontent->content;
+                $contents[1] = $datacontent->content1;
             }else {
                 $contents = array();
                 $contents[0]='';
@@ -122,10 +123,9 @@ class data_field_file extends data_field_base {// extends
         $field = get_record('data_fields', 'id', $fieldid);
 
         if ($content = get_record('data_content', 'fieldid', $fieldid, 'recordid', $recordid)){
-            if (isset($content->content)){
-                $contents = explode('##',$content->content);
-            }
-
+            $contents[0] = $content->content;
+            $contents[1] = $content->content1;
+            
             $src = empty($contents[0])? '':$contents[0];
             $name = empty($contents[1])? $src:$contents[1];
 
@@ -177,15 +177,14 @@ class data_field_file extends data_field_base {// extends
                 $um = new upload_manager($names[0].'_'.$names[1],true,false,$course,false,$field->param3);
                 if ($um->process_file_uploads($dir)) {    //write to content
                     $newfile_name = $um->get_new_filename();
-                    $content->content = $newfile_name.'##';
+                    $content->content = $newfile_name;
                     insert_record('data_content',$content);
                 }
                 break;
             case 1:    //only changing alt tag
                 if ($oldcontent = get_record('data_content','fieldid', $fieldid, 'recordid', $recordid)){
                     $content->id = $oldcontent ->id;
-                    $contents = explode('##',$oldcontent->content);
-                    $content->content = $contents[0].'##'.clean_param($value, PARAM_NOTAGS);
+                    $content->content1 = clean_param($value, PARAM_NOTAGS);
                     update_record('data_content',$content);
                 }
                 break;
@@ -202,12 +201,11 @@ class data_field_file extends data_field_base {// extends
             $content = new object;
             $content->fieldid = $fieldid;
             $content->recordid = $recordid;
-            $content->id = $oldcontent ->id;
+            $content->id = $oldcontent->id;
             $names = explode('_',$name);
 
             $field = get_record('data_fields','id',$fieldid);
-
-            $contents = explode('##',$oldcontent->content);
+            
             switch ($names[2]){
                 case 0:    //file just uploaded
                     $filename = $_FILES[$names[0].'_'.$names[1]];
@@ -223,14 +221,16 @@ class data_field_file extends data_field_base {// extends
                         if ($um->process_file_uploads($dir)) {
                         //write to content
                             $newfile_name = $um->get_new_filename();
-                            $content->content = $newfile_name.'##'.$contents[1];
+                            $content->content = $newfile_name;
+                            $content->content1 = $oldcontent->content1;
                             update_record('data_content',$content);
                         }
                     }
                     break;
                 case 1:    //only changing alt tag
-                    $content->content = $contents[0].'##'.clean_param($value, PARAM_NOTAGS);
-                    update_record('data_content',$content);
+                    $content->content = $oldcontent->content;
+                    $content->content1 = clean_param($value, PARAM_NOTAGS);
+                    update_record('data_content', $content);
                     break;
                 default:
                     break;
@@ -252,11 +252,10 @@ class data_field_file extends data_field_base {// extends
 
     function delete_data_content_files($dataid, $recordid, $content){
         global $CFG, $course;
-        $fileinfo = split('##',$content);
         $filepath = $CFG->dataroot.'/'.$course->id.'/'.$CFG->moddata.'/data/'.$dataid.'/'.$this->id.'/'.$recordid;
-        unlink($filepath.'/'.$fileinfo[0]);
+        unlink($filepath . '/' . $content);
         rmdir($filepath);
-        notify ($fileinfo[0].' deleted');
+        notify ($content.' deleted');
     }
     
 }

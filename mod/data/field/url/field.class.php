@@ -58,11 +58,12 @@ class data_field_url extends data_field_base {// extends
         //look for that record and pull it out
         if ($rid){
             $datacontent = get_record('data_content','fieldid',$id,'recordid',$rid);
+            $contents = array();
             if (isset($datacontent->content)){
                 $content = $datacontent->content;
-                $contents = explode('##',$content);
+                $contents[0] = $datacontent->content;
+                $contents[1] = $datacontent->content1;
             }else {
-                $contents = array();
                 $contents[0]='';
                 $contents[1]='';
             }
@@ -87,12 +88,8 @@ class data_field_url extends data_field_base {// extends
 
     function display_browse_field($fieldid, $recordid){
         if ($content = get_record('data_content', 'fieldid', $fieldid, 'recordid', $recordid)){
-            if (isset($content->content)){
-                $str = $content->content;
-                $contents = explode('##',$str);
-            }
-            $url = empty($contents[0])? '':$contents[0];
-            $text = empty($contents[1])? '':$contents[1];
+            $url = empty($content->content)? '':$content->content;
+            $text = empty($content->content1)? '':$content->content1;
             if (empty($text)){
                 $text = $url;
             }
@@ -119,18 +116,18 @@ class data_field_url extends data_field_base {// extends
                 if ($oldcontent = get_record('data_content','fieldid', $fieldid, 'recordid', $recordid)){
                     if ($value){
                         $content->id = $oldcontent->id;
-                        $contents = explode('##',$oldcontent->content);
-                        $content->content = $contents[0].'##'.clean_param($value, PARAM_NOTAGS);
+                        $content->content = $oldcontent->content;
+                        $content->content1 = clean_param($value, PARAM_NOTAGS);
                         update_record('data_content',$content);
                     }
                 }
                 break;
             case 0:    //add link
                 if ($value){
-                    $content->content = clean_param($value, PARAM_URL).'##';
-                    if ($content->content != 'http://##' && $content->content != '##'){
+                    $content->content = clean_param($value, PARAM_URL);
+                    if ($content->content != 'http://' && $content->content != ''){
                         insert_record('data_content',$content);    //after trim if content is still there
-                    }    
+                    }
                     else {
                         notify(get_string('invalidurl','data'));
                     }
@@ -149,15 +146,18 @@ class data_field_url extends data_field_base {// extends
             $content->recordid = $recordid;
             $content->id = $oldcontent->id;
             
-            $contents = explode('##',$oldcontent->content);
+            $contents[0] = $oldcontent->content;
+            $contents[1] = $oldcontent->content1;
             $names = explode('_',$name);
             switch ($names[2]){
             case 1:    //add text
-                $content->content = $contents[0].'##'.clean_param($value, PARAM_NOTAGS);
+                $content->content = $contents[0];
+                $content->content1 = clean_param($value, PARAM_NOTAGS);
                 update_record('data_content',$content);
                 break;
             case 0:    //update link
-                $content->content = clean_param($value, PARAM_URL).'##'.$contents[1];
+                $content->content = clean_param($value, PARAM_URL);
+                $content->content1 = $contents[1];
                 update_record('data_content',$content);
                 break;
             default:

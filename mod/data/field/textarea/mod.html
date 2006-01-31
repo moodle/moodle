@@ -23,31 +23,12 @@
     </tr>
     <tr>
         <td>Width:</td>
-        <td><input type="text" name="param2" id="width" value="<?php echo($field->param2); ?>" /> px</td>
+        <td><input type="text" name="param2" id="width" value="<?php echo($field->param2); ?>" /> columns</td>
     </tr>
     <tr>
         <td>Height:</td>
-        <td><input type="text" name="param3" id="height" value="<?php echo($field->param3); ?>" /> px</td>
+        <td><input type="text" name="param3" id="height" value="<?php echo($field->param3); ?>" /> rows</td>
     </tr>
-    <tr>
-        <td valign="top">Allowed Formats:</td>
-        <td>
-            <?php
-                $savedFormats = explode(',', $field->param4);
-                
-                foreach (format_text_menu() as $key=>$format) {
-                    if (array_search($key, $savedFormats) !== false) {
-                        print_checkbox("param4[]", $key, true, $format);
-                    }
-                    else {
-                        print_checkbox("param4[]", $key, false, $format);
-                    }
-                    echo '<br />';
-                }
-            ?>
-        </td>
-    </tr>
-
     <tr>
         <td>&nbsp;</td>
         <td>

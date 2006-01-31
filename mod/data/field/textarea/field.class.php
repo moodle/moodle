@@ -38,7 +38,7 @@ class data_field_textarea extends data_field_base {
     /***********************************************
      * Saves the field into the database           *
      ***********************************************/
-    function insert_field($dataid, $type='textarea', $name, $desc='', $autolink=0, $width='', $height='', $formats='') {
+    function insert_field($dataid, $type='textarea', $name, $desc='', $autolink=0, $width='', $height='') {
         $newfield = new object;
         $newfield->dataid = $dataid;
         $newfield->type = $type;
@@ -47,12 +47,6 @@ class data_field_textarea extends data_field_base {
         $newfield->param1 = $autolink;
         $newfield->param2 = $width;
         $newfield->param3 = $height;
-        $newfield->param4 = '';
-        
-        foreach ($formats as $format) {
-            $newfield->param4 .= $format . ',';
-        }
-        $newfield->param4 = substr($newfield->param4, 0, -1);
         
         if (!insert_record('data_fields', $newfield)) {
             notify('Insertion of new field failed!');
@@ -81,24 +75,19 @@ class data_field_textarea extends data_field_base {
         if ($field->description) {
             $str .= '<img src="'.$CFG->pixpath.'/help.gif" alt="'.$field->description.'" title="'.$field->description.'" />&nbsp;';
         }
-        $str .= '<textarea name="field_' . $field->id . '" id="field_'.$field->id . '"';
-        if (!empty($field->param2) && !empty($field->param3)) {
-            $str .= ' style="width:' . $field->param2. 'px; height:' . $field->param3 . 'px;"';
-        }
-        $str .= '>' . $content . '</textarea>';
         
-        // Get the available text formats for this field.
-        if (!empty($field->param4)) {
-            $savedFormats = explode(',', $field->param4);
-            $formatsForField = array();
+        if (can_use_richtext_editor()) {
+            // Show a rich text html editor.
+            $str .= helpbutton("richtext", get_string("helprichtext"), "moodle", true, true, '', true);
+            $str .= data_field_textarea::gen_textarea(true, 'field_' . $field->id, $field->param2, $field->param3, $content);
+            $str .= '<input type="hidden" name="field_' . $field->id . '_content1' . '" value="' . FORMAT_HTML . '" />';
+        }
+        else {
+            // Show a normal textarea. Also let the user specify the format to be used.
+            $str .= data_field_textarea::gen_textarea(false, 'field_' . $field->id, $field->param2, $field->param3, $content);
             
-            $validFormats = format_text_menu();
-            
-            foreach ($validFormats as $key => $format) {
-                if (array_search($key, $savedFormats) !== false) {
-                    $formatsForField[$key] = $format;
-                }
-            }
+            // Get the available text formats for this field.
+            $formatsForField = format_text_menu();
             $str .= '<br />';
             
             if (empty($dataContent->content1)) {
@@ -107,10 +96,90 @@ class data_field_textarea extends data_field_base {
             else {
                 $str .= choose_from_menu($formatsForField, 'field_' . $field->id . '_content1', $dataContent->content1, 'choose', '', '', true);
             }
+            $str .= helpbutton("textformat", get_string("helpformatting"), 'moodle', true, false, '', true);
         }
         return $str;
     }
+    
+    
+    function gen_textarea($usehtmleditor, $name, $cols=65, $rows=10, $value='') {
+        global $CFG, $course;
+        static $scriptcount; // For loading the htmlarea script only once.
+        
+        if (empty($courseid)) {
+            if (!empty($course->id)) {  // Search for it in global context.
+                $courseid = $course->id;
+            }
+        }
+        if (empty($scriptcount)) {
+            $scriptcount = 0;
+        }
+        
+        $output = '';
+        
+        if ($usehtmleditor) {
+            if (!empty($courseid) and isteacher($courseid)) {
+                $output .= ($scriptcount < 1) ? '<script type="text/javascript" src="'. $CFG->wwwroot .'/lib/editor/htmlarea.php?id='. $courseid .'"></script>'."\n" : '';
+            }
+            else {
+                $output .= ($scriptcount < 1) ? '<script type="text/javascript" src="'. $CFG->wwwroot .'/lib/editor/htmlarea.php"></script>'."\n" : '';
+            }
+            $output .= ($scriptcount < 1) ? '<script type="text/javascript" src="'. $CFG->wwwroot .'/lib/editor/lang/en.php"></script>'."\n" : '';
+            $scriptcount++;
+        }
 
+        $output .= '<textarea id="' . $name .'" name="'. $name .'" rows="'. $rows .'" cols="'. $cols .'">';
+        
+        if ($usehtmleditor) {
+            $output .= htmlspecialchars(stripslashes_safe($value)); // needed for editing of cleaned text!
+        }
+        else {
+            $output .= $value;
+        }
+        $output .= '</textarea>'."\n";
+        
+        return $output;
+    }
+    
+    
+    function print_after_form() {
+        if (can_use_richtext_editor()) {
+            $this->use_html_editor('field_' . $this->id);
+        }
+    }
+    
+    
+    /**
+     * Sets up the HTML editor on textareas in the current page.
+     * If a field name is provided, then it will only be
+     * applied to that field - otherwise it will be used
+     * on every textarea in the page.
+     *
+     * This is basically the same as use_html_editor() in
+     * /lib/weblib.php, except that this function returns a
+     * string instead of echoing out the javascript. The
+     * reasons why /lib/weblib.php has not been modified are:
+     * 
+     * 1) So that the database module is compatible with
+     *    Moodle 1.5.x
+     * 2) The weblib will be reworked in the future use
+     *    smarty
+     *
+     * @param string $name Form element to replace with HTMl editor by name
+     */
+    function use_html_editor($name='', $editorhidebuttons='') {
+        echo '<script language="javascript" type="text/javascript" defer="defer">' . "\n";
+        echo print_editor_config($editorhidebuttons, false);
+
+        if (empty($name)) {
+            echo "\n".'HTMLArea.replaceAll(config);'."\n";
+        }
+        else {
+            echo "\nHTMLArea.replace('$name', config);\n";
+        }
+        echo '</script>'."\n";
+    }
+    
 
     function display_edit_field($id, $mode=0) {
         parent::display_edit_field($id, $mode);
@@ -121,14 +190,6 @@ class data_field_textarea extends data_field_base {
         $fieldobject->param1 = trim($fieldobject->param1);
         $fieldobject->param2 = trim($fieldobject->param2);
         $fieldobject->param3 = trim($fieldobject->param3);
-        
-        // Convert the param4 array to a comma-delimited string.
-        $param4Str = '';
-        foreach ($fieldobject->param4 as $val) {
-            $param4Str .= $val . ',';
-        }
-        $param4Str = substr($param4Str, 0, -1);
-        $fieldobject->param4 = $param4Str;
         
         if (!update_record('data_fields',$fieldobject)){
             notify ('upate failed');
@@ -151,12 +212,12 @@ class data_field_textarea extends data_field_base {
                 $nameParts = explode('_', $name);
                 $column = $nameParts[count($nameParts) - 1];  // Format is field_<fieldid>_content[1 to 4]
                 
-                $content->$column = clean_param($value, PARAM_NOTAGS);
+                $content->$column = clean_param($value, PARAM_INT);
                 update_record('data_content', $content);
             }
             else {
                 // First (and maybe only) data content for this field for this record.
-                $content->content = clean_param($value, PARAM_NOTAGS);
+                $content->content = clean_param($value, PARAM_CLEANHTML);
                 insert_record('data_content', $content);
             }
         }

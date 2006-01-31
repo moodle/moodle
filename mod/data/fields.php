@@ -114,8 +114,24 @@
 
                 $sql = 'SELECT * from '.$CFG->prefix.'data_fields WHERE name LIKE "'.$field->name.
                        '" AND dataid = '.$data->id;
+                
                 if ($field->name and !get_record_sql($sql)){    
                     $field->dataid = $data->id;
+                    
+                    // Check for arrays. If we encounter an array, we save the array as a
+                    // comma-delimited string in the database.
+                    foreach ($field as $key=>$val) {
+                        if (is_array($val)) {
+                            $str = '';
+                            foreach ($val as $inner) {
+                                $str .= $inner . ',';
+                            }
+                            $str = substr($str, 0, -1);
+                            
+                            $field->$key = $str;
+                        }
+                    }
+                    
                     insert_record('data_fields', $field);
                     $displayflag = get_string('fieldadded','data');
                 }

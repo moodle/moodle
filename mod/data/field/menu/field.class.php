@@ -73,7 +73,7 @@ class data_field_menu extends data_field_base {
 
         $str .= '<SELECT name="field_'.$field->id.' id="field_'.$field->id.'>';
         foreach (explode("\n",$field->param1) as $option){
-            if ($content == $option) {    //if selected
+            if (trim($content) == trim($option)) {    //if selected
                 $str.='<option value="'.ltrim(rtrim($option)).'" SELECTED>'.ltrim(rtrim($option)).'</option>';
             } else {
                 $str.='<option value="'.ltrim(rtrim($option)).'">'.ltrim(rtrim($option)).'</option>';

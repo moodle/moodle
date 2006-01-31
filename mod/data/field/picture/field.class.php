@@ -68,7 +68,8 @@ class data_field_picture extends data_field_file {// extends
             $datacontent = get_record('data_content','fieldid',$id,'recordid',$rid);
             if (isset($datacontent->content)){
                 $content = $datacontent->content;
-                $contents = explode('##',$content);
+                $contents[0] = $datacontent->content;
+                $contents[1] = $datacontent->content1;
             }else {
                 $contents = array();
                 $contents[0]='';
@@ -114,10 +115,12 @@ class data_field_picture extends data_field_file {// extends
 
         if ($content = get_record('data_content', 'fieldid', $fieldid, 'recordid', $recordid)){
             if (isset($content->content)){
-                $contents = explode('##',$content->content);
+                $contents[0] = $content->content;
+                $contents[1] = $content->content1;
             }
 
             $alt = empty($contents[1])? '':$contents[1];
+            $title = empty($contents[1])? '':$contents[1];
             $src = empty($contents[0])? '':$contents[0];
 
             if ($CFG->slasharguments) {
@@ -128,7 +131,7 @@ class data_field_picture extends data_field_file {// extends
 
             $width = $field->param1 ? ' width = "'.$field->param1.'" ':' ';
             $height = $field->param2 ? ' height = "'.$field->param2.'" ':' ';
-            $str = '<img '.$width.$field->param1.$height.' src="'.$source.'/'.$src.'" alt="'.$alt.'" />';
+            $str = '<img '.$width.$field->param1.$height.' src="'.$source.'/'.$src.'" alt="'.$alt.'" title="'.$title.'" />';
             return $str;
         }
         return false;
