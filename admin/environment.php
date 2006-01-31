@@ -73,7 +73,7 @@
     /// Create component installer and execute it
         if ($cd = new component_installer('http://download.moodle.org', 
                                           'environment', 
-                                          'environment.ziip')) {
+                                          'environment.zip')) {
             $status = $cd->install(); //returns ERROR | UPTODATE | INSTALLED
             switch ($status) {
                 case ERROR:
