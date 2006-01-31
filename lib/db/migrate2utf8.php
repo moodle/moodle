@@ -1,5 +1,80 @@
 <?
 
+
+function migrate2utf8_event_name($recordid){
+    global $CFG;
+
+/// Some trivial checks
+    if (empty($recordid)) {
+        log_the_problem_somewhere();
+        return false;
+    }
+
+    if (!$event = get_record('event', 'id', $recordid)) {
+        log_the_problem_somewhere();
+        return false;
+    }
+
+    $sitelang   = $CFG->lang;
+    $courselang = get_course_lang($event->courseid);  //Non existing!
+    if ($event->userid) {
+        $userlang = get_user_lang($event->userid);
+    } else {
+        $userlang = get_main_teacher_lang($event->courseid);
+    }
+
+    $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+
+/// We are going to use textlib facilities
+
+/// Convert the text
+    $result = utfconvert($event->name, $fromenc);
+
+    $newevent = new object;
+    $newevent->id = $recordid;
+    $newevent->name = $result;
+    update_record('event',$newevent);
+/// And finally, just return the converted field
+    return $result;
+}
+
+function migrate2utf8_event_description($recordid){
+    global $CFG;
+
+/// Some trivial checks
+    if (empty($recordid)) {
+        log_the_problem_somewhere();
+        return false;
+    }
+
+    if (!$event = get_record('event', 'id', $recordid)) {
+        log_the_problem_somewhere();
+        return false;
+    }
+
+    $sitelang   = $CFG->lang;
+    $courselang = get_course_lang($event->courseid);  //Non existing!
+    if ($event->userid) {
+        $userlang = get_user_lang($event->userid);
+    } else {
+        $userlang = get_main_teacher_lang($event->courseid);
+    }
+
+    $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+
+/// We are going to use textlib facilities
+
+/// Convert the text
+    $result = utfconvert($event->description, $fromenc);
+
+    $newevent = new object;
+    $newevent->id = $recordid;
+    $newevent->description = $result;
+    update_record('event',$newevent);
+/// And finally, just return the converted field
+    return $result;
+}
+
 function migrate2utf8_config_value($recordid){
     global $CFG;
 
@@ -868,7 +943,7 @@ function migrate2utf8_user_description($recordid){
 
     $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
 /// We are going to use textlib facilities
-    
+
 /// Convert the text
     $result = utfconvert($user->description, $fromenc);
 
@@ -876,6 +951,7 @@ function migrate2utf8_user_description($recordid){
     $newuser->id = $recordid;
     $newuser->description = $result;
     update_record('user',$newuser);
+
 /// And finally, just return the converted field
     return $result;
 }

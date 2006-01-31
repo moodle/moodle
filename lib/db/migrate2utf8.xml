@@ -89,29 +89,15 @@
     </TABLE>
     <TABLE name="event">
       <FIELDS>
-        <FIELD name="name" method="PLAIN_SQL_UPDATE" type="varchar" length="255">
-          <SQL_DETECT_USER>
-            SELECT e.userid
-            FROM {$CFG->prefix}event e
-            WHERE e.id = RECORDID
-          </SQL_DETECT_USER>
-          <SQL_DETECT_COURSE>
-            SELECT e.courseid as course
-            FROM {$CFG->prefix}event e
-            WHERE e.id = RECORDID
-          </SQL_DETECT_COURSE>
+        <FIELD name="name" method="PHP_FUNCTION" type="varchar" length="255">
+          <PHP_FUNCTION>
+            migrate2utf8_event_name(RECORDID);
+          </PHP_FUNCTION>
         </FIELD>
-        <FIELD name="description" method="PLAIN_SQL_UPDATE" type="text" length="0">
-          <SQL_DETECT_USER>
-            SELECT e.userid
-            FROM {$CFG->prefix}event e
-            WHERE e.id = RECORDID
-          </SQL_DETECT_USER>
-          <SQL_DETECT_COURSE>
-            SELECT e.courseid as course
-            FROM {$CFG->prefix}event e
-            WHERE e.id = RECORDID
-          </SQL_DETECT_COURSE>
+        <FIELD name="description" method="PHP_FUNCTION" type="text" length="0">
+          <PHP_FUNCTION>
+            migrate2utf8_event_description(RECORDID);
+          </PHP_FUNCTION>
         </FIELD>
           <FIELD name="modulename" method="NO_CONV" type="varchar" length="20" />
           <FIELD name="eventtype" method="NO_CONV" type="varchar" length="20" />
