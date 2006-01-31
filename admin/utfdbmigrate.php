@@ -509,6 +509,9 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
     print_simple_box_end();
     delete_records('config','name','langsused');
 
+    //remove the cache file!
+    @unlink($CFG->dataroot.'/cache/languages');
+
     //set the final flag
     set_config('unicodedb','true');    //this is the main flag for unicode db
     
