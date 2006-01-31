@@ -218,11 +218,13 @@
      ******************************************/
     if ($data->addtemplate){
         $possiblefields = get_records('data_fields','dataid',$data->id);
+        
         ///then we generate strings to replace
         foreach ($possiblefields as $cfield){
             $patterns[]="/\[\[".$cfield->name."\]\]/i";
             $g = data_get_field($cfield);
             $replacements[] = $g->display_add_field($cfield->id, $rid);
+            
             unset($g);
         }
         $newtext = preg_replace($patterns, $replacements, $data->{$mode});
@@ -243,7 +245,18 @@
 
 /// Finish the page
     echo '</td></tr></table>';
-
+    
+    
+    // Print the stuff that need to come after the form fields.
+    $storedFields = get_records('data_fields', 'dataid', $data->id);
+    foreach ($storedFields as $sf) {
+        $fieldClass = 'data_field_' . $sf->type;
+        $fieldObj = new $fieldClass($sf->id);
+        
+        echo "\n\n";
+        $fieldObj->print_after_form();
+    }
+    
+    
     print_footer($course);
-
 ?>

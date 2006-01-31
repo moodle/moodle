@@ -136,7 +136,7 @@ class data_field_base {    //base class (text field)
     function display_browse_field($fieldid, $recordid){
         if ($content = get_record('data_content', 'fieldid', $fieldid, 'recordid', $recordid)){
             if (isset($content->content)){
-                $str = $content->content;
+                $str = format_text($content->content, $content->content1);
             } else {
                 $str = '';
             }
@@ -204,6 +204,17 @@ class data_field_base {    //base class (text field)
     function delete_data_content_files($dataid, $recordid, $content){
         //does nothing
     }
+    
+    
+    /*************************************************************************
+     * This function prints anything that the field wants to output after    *
+     * the html form. This is handy for the javascript rich text editor      *
+     *************************************************************************/
+    function print_after_form() {
+        // Overridden as needed in sub classes.
+    }
+    
+    
 }//end of class data_field_base
 
 
@@ -642,6 +653,7 @@ function data_get_coursemodule_info($coursemodule) {
  ************************************************************************/
 function data_print_template($records, $data, $search, $listmode){
     global $CFG;
+    
     foreach ($records as $record){    //only 1 record for single mode
         //replacing tags
         $patterns = array();
@@ -717,4 +729,8 @@ function data_print_preference_form($data, $perpage, $search){
     echo '</td></tr></table>';
     echo '</form>';
 }
+
+
+
+
 ?>

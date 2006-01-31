@@ -41,7 +41,7 @@
     $page = optional_param('page', 0, PARAM_INT);    //offset of the current record
     $rid = optional_param('rid', 0, PARAM_INT);    //record id
     $perpagemenu = optional_param('perpage1', 0, PARAM_INT);    //value from drop down
-
+    
     if ($id) {
         if (! $cm = get_record('course_modules', 'id', $id)) {
             error('Course Module ID was incorrect');
