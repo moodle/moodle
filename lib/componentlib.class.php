@@ -270,7 +270,7 @@ class component_installer {
             return UPTODATE;
         }
     /// Create temp directory if necesary
-        if (!make_upload_directory($CFG->dataroot.'/temp', false)) {
+        if (!make_upload_directory('temp', false)) {
              $this->errorstring='cannotcreatetempdir';
              return ERROR;
         }
