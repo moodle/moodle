@@ -31,6 +31,7 @@
 
     require_once('../config.php');
     require_once($CFG->libdir.'/environmentlib.php');
+    require_once($CFG->libdir.'/componentlib.class.php');
 
 
 /// Parameters
@@ -55,13 +56,45 @@
     $strenvironment = get_string('environment', 'admin');
     $strerror = get_string('error');
     $strmoodleversion = get_string('moodleversion');
+    $strupdate = get_string('updatecomponent', 'admin');
     $strupwards = get_string('upwards', 'admin');
 
 /// Print the header stuff
     print_header("$SITE->shortname: $strenvironment", $SITE->fullname,
                  "<a href=\"index.php\">$stradmin</a> -> ".$strenvironment);
 
+/// Print the component download link
+    echo '<div class="reportlink"><a href="environment.php?action=updatecomponent&amp;sesskey='.$USER->sesskey.'">'.$strupdate.'</a></div>';
+
     print_heading($strenvironment);
+
+/// Handle the 'updatecomponent' action
+    if ($action == 'updatecomponent' && confirm_sesskey()) {
+    /// Create component installer and execute it
+        if ($cd = new component_installer('http://download.moodle.org', 
+                                          'environment', 
+                                          'environment.ziip')) {
+            $status = $cd->install(); //returns ERROR | UPTODATE | INSTALLED
+            switch ($status) {
+                case ERROR:
+                    if ($cd->get_error() == 'remotedownloadnotallowed') {
+                        $a = new stdClass();
+                        $a->url = 'http://download.moodle.org/environment/environment.zip';
+                        $a->dest= $CFG->dataroot.'/';
+                        print_simple_box(get_string($cd->get_error(), 'error', $a), 'center', '', '', 5, 'errorbox');
+                    } else {
+                        print_simple_box(get_string($cd->get_error(), 'error'), 'center', '', '', 5, 'errorbox');
+                    }
+                    break;
+                case UPTODATE:
+                    print_simple_box(get_string($cd->get_error(), 'error'), 'center');
+                    break;
+                case INSTALLED:
+                    print_simple_box(get_string('componentinstalled', 'admin'), 'center');
+                    break;
+            }
+        }
+    }
 
 /// Start of main box
     print_simple_box_start('center');
