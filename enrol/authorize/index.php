@@ -5,9 +5,9 @@ require_once $CFG->dirroot.'/enrol/authorize/const.php';
 require_once $CFG->dirroot.'/enrol/authorize/action.php';
 
 define('ORDER_CAPTURE', 'capture');
-define('ORDER_DELETE', 'delete');
-define('ORDER_REFUND', 'refund');
-define('ORDER_VOID', 'void');
+define('ORDER_DELETE',  'delete');
+define('ORDER_REFUND',  'refund');
+define('ORDER_VOID',    'void');
 
 if (!($site = get_site())) {
     error("Could not find a site!");
@@ -45,7 +45,7 @@ function authorize_orders()
 {
     global $CFG;
     global $strs, $authstrs;
-    require_once($CFG->libdir.'/tablelib.php');
+    require_once $CFG->libdir.'/tablelib.php';
 
     $perpage = 10;
     $userid = optional_param('user', 0, PARAM_INT);
@@ -88,11 +88,16 @@ function authorize_orders()
             $where = "WHERE (E.status = '" . AN_STATUS_AUTHCAPTURE . "') ";
         }
         else {
-            $where = "WHERE (status = '$status') ";
+            $where = "WHERE (E.status = '$status') ";
         }
     }
     else {
-        $where = "WHERE (status != '" . AN_STATUS_NONE . "') ";
+        if (empty($CFG->an_test)) {
+            $where = "WHERE (E.status != '" . AN_STATUS_NONE . "') ";
+        }
+        else {
+            $where = "WHERE (1=1) ";
+        }
     }
 
     if ($userid > 0) {
@@ -224,7 +229,7 @@ function authorize_order_details($orderno) {
                 }
                 else {
                     $table->data[] = array(get_string('testmode', 'enrol_authorize'),
-                                           get_string('capturetestwarn', 'enrol_authorize'));
+                                           get_string('testwarning', 'enrol_authorize'));
                 }
             }
         }
@@ -274,7 +279,7 @@ function authorize_order_details($orderno) {
                     }
                     else {
                         $table->data[] = array(get_string('testmode', 'enrol_authorize'),
-                                               get_string('credittestwarn', 'enrol_authorize'));
+                                               get_string('testwarning', 'enrol_authorize'));
                     }
                 }
                 else {
@@ -306,7 +311,7 @@ function authorize_order_details($orderno) {
                     }
                     else {
                        $table->data[] = array(get_string('testmode', 'enrol_authorize'),
-                                              get_string('voidtestwarn', 'enrol_authorize'));
+                                              get_string('testwarning', 'enrol_authorize'));
                     }
                 }
                 else {
@@ -349,7 +354,7 @@ function authorize_order_details($orderno) {
                         }
                         else {
                             $table->data[] = array(get_string('testmode', 'enrol_authorize'),
-                                                   get_string('voidtestwarn', 'enrol_authorize'));
+                                                   get_string('testwarning', 'enrol_authorize'));
                         }
                     }
                     else {

@@ -68,7 +68,6 @@ $string['cancelled'] = 'Cancelled';
 $string['capture'] = 'Capture';
 $string['capturedpendingsettle'] = 'Captured / Pending Settlement';
 $string['capturedsettled'] = 'Captured / Settled';
-$string['capturetestwarn'] = 'Capture seems working, but no record was updated in test mode';
 $string['captureyes'] = 'The credit card will be captured and student will be enrolled to course. Are you sure?';
 $string['ccexpire'] = 'Expiry Date';
 $string['ccexpired'] = 'The credit card has expired';
@@ -79,14 +78,13 @@ $string['ccvv'] = 'Card Verification';
 $string['ccvvhelp'] = 'Look at the back of card (last 3 digits)';
 $string['choosemethod'] = 'If you know enrolment key of the course, enter it; otherwise you need to pay for this course.';
 $string['chooseone'] = 'Fill one or both of the following two fields';
-$string['credittestwarn'] = 'Credit seems working, but no record was inserted to database in test mode';
 $string['cutofftime'] = 'Transaction Cut-Off Time. When the last transaction is picked up for settlement?';
 $string['delete'] = 'Destroy';
 $string['description'] = 'The Authorize.net module allows you to set up paid courses by merchants.  If the cost for any course is zero, then students are not asked to pay for entry.  There is a site-wide cost that you set here as a default for the whole site and then a course setting that you can set for each course individually. The course cost overrides the site cost.<br /><br /><b>Note:</b> If you enter an enrolment key in the course settings, then students will also have the option to enrol using a key. This is useful if you have a mixture of paying and non-paying students.';
 $string['enrolname'] = 'Authorize.net Credit Card Gateway';
 $string['expired'] = 'Expired';
 $string['howmuch'] = 'How much?';
-$string['httpsrequired'] = 'We are sorry to inform you that your request cannot be processed currently. This site\'s configuration couldn\'t be set up correcly.
+$string['httpsrequired'] = 'We are sorry to inform you that your request cannot be processed currently. This site\'s configuration couldn\'t be set up correctly.
 <br /><br />
 Please don\'t enter your credit card number unless you see a yellow lock at the bottom of the browser. It means, it simply encrypts all data sent between client and server. So the information during the transaction between 2 computers is protected and your credit card number cannot captured over the internet.';
 $string['logindesc'] = 'This option must be ON. <br /><br />
@@ -143,10 +141,10 @@ $string['settlementdate'] = 'Settlement Date';
 $string['subvoidyes'] = 'Refunded transaction $a->transid will be cancelled and it will credit $a->amount to your account. Are you sure?';
 $string['tested'] = 'Tested';
 $string['testmode'] = '[TEST MODE]';
+$string['testwarning'] = 'Capture/Void/Credit seems working in test mode, but no record was updated or inserted in database.';
 $string['transid'] = 'Transaction ID';
 $string['unenrolstudent'] = 'Unenrol student?';
 $string['void'] = 'Void';
-$string['voidtestwarn'] = 'Void seems working, but no record was updated in test mode';
 $string['voidyes'] = 'Transaction will be cancelled. Are you sure?';
 $string['zipcode'] = 'Zip Code';
 
