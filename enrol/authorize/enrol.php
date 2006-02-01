@@ -454,12 +454,14 @@ class enrolment_plugin extends enrolment_base
     {
         global $CFG;
 
+        // site settings
         set_config('enrol_cost', optional_param('enrol_cost', 5, PARAM_INT));
         set_config('enrol_currency', optional_param('enrol_currency', 'USD', PARAM_ALPHA));
         set_config('enrol_mailstudents', optional_param('enrol_mailstudents', ''));
         set_config('enrol_mailteachers', optional_param('enrol_mailteachers', ''));
         set_config('enrol_mailadmins', optional_param('enrol_mailadmins', ''));
 
+        // optional authorize.net settings
         set_config('an_avs', optional_param('an_avs', ''));
         set_config('an_test', optional_param('an_test', ''));
         set_config('an_referer', optional_param('an_referer', 'http://', PARAM_URL));
@@ -468,6 +470,7 @@ class enrolment_plugin extends enrolment_base
         $cutoff_min = optional_param('an_cutoff_min', 5, PARAM_INT);
         set_config('an_cutoff', $cutoff_hour * 60 + $cutoff_min);
 
+        // cron depencies
         $reviewval = optional_param('an_review', '');
         $captureday = optional_param('an_capture_day', 5, PARAM_INT);
         $emailexpired = optional_param('an_emailexpired', 2, PARAM_INT);
@@ -476,14 +479,17 @@ class enrolment_plugin extends enrolment_base
         $emailexpired = ($emailexpired > 5) ? 5 : (($emailexpired < 0) ? 0 : $emailexpired);
         $mconfig = get_config('enrol/authorize');
 
-        if (time() - intval($mconfig->an_lastcron) > 3600 * 24) {
-            $captureday = $emailexpired = 0;
+        if ((!empty($reviewval)) &&
+            ($captureday > 0 || $emailexpired > 0) &&
+            (time() - intval($mconfig->an_lastcron) > 3600 * 24)) {
+            return false;
         }
 
         set_config('an_review', $reviewval);
         set_config('an_capture_day', $captureday);
         set_config('an_emailexpired', $emailexpired);
 
+        // required fields
         $loginval = optional_param('an_login', '');
         $tranval = optional_param('an_tran_key', '');
         $passwordval = optional_param('an_password', '');
