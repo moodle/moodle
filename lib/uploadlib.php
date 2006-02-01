@@ -142,6 +142,7 @@ class upload_manager {
                     }
                     $this->files[$name]['name'] = $newname;
                     $this->files[$name]['clear'] = true; // ok to save.
+                    $this->config->somethingtosave = true;
                 }
             }
         }
@@ -187,6 +188,12 @@ class upload_manager {
         if (!$this->status) { // preprocess_files hasn't been run
             $this->preprocess_files();
         }
+
+        // if there are no files, bail before we create an empty directory.
+        if (empty($this->config->somethingtosave)) {
+            return true;
+        }
+
         if ($this->status) {
             if (!(strpos($destination, $CFG->dataroot) === false)) {
                 // take it out for giving to make_upload_directory
