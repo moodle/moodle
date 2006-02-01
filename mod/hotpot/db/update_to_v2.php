@@ -208,8 +208,11 @@ function hotpot_update_to_v2_1() {
 		$ds = DIRECTORY_SEPARATOR;
 		$dir = "mod{$ds}hotpot{$ds}v6";
 		print "removing old templates ($dir) ... ";
-		$ok = hotpot_rm("$CFG->dirroot{$ds}$dir", false);
-		print $ok ? get_string('success') : 'failed';
+		if (hotpot_rm("$CFG->dirroot{$ds}$dir", false)) {
+			print get_string('success');
+		} else {
+			print "failed<br>Please remove '$CFG->dirroot{$ds}$dir' manually";
+		}
 		print "<br />\n";
 	}
 	return $ok;
