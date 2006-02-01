@@ -45,7 +45,7 @@ $string['onlyadmins'] = '管理者のみ処理可能です。';
 $string['onlyeditingteachers'] = '編集権限を持った教師のみ処理可能です。';
 $string['onlyeditown'] = '他の人の情報は編集できません。';
 $string['processingstops'] = 'プロセスが停止しました。残りのレコードは無視されます。';
-$string['remotedownloadnotallowed'] = 'あなたのサーバーにコンポーネントをダウンロードすることができません ( allow_url_fopen が無効 )。<br /><br /><a href=\"$a->url\">$a->url</a> ファイルを手動でダウンロードして、サーバの「 $a->dest/ 」にコピーした後、解凍してください。';
+$string['remotedownloadnotallowed'] = 'あなたのサーバーにコンポーネントをダウンロードすることができません ( allow_url_fopen が無効 )。<br /><br /><a href=\"$a->url\">$a->url</a> ファイルを手動でダウンロードして、サーバの「 $a->dest 」にコピーした後、解凍してください。';
 $string['restricteduser'] = '申し訳ございません、あなたのアカウント「 $a 」では、この処理を行うことができません。';
 $string['sessionerroruser'] = 'セッションがタイムアウトしました。再度ログインしてください。';
 $string['sessionerroruser2'] = 'あなたのログインセッションに影響を与えるサーバエラーが検知されました。再度ログインするかブラウザを再起動してください。';

@@ -1309,7 +1309,7 @@ $string['weekshow'] = '$a にこの週を表示する';
 $string['welcometocourse'] = '$a へようこそ';
 $string['welcometocoursetext'] = '$a->coursename へようこそ!
 
-まだプロフィールの編集が終わっていない場合は、私達が受講している皆さんのことを知ることができるように、コースの中でプロフィールページを編集してください:
+まだプロフィールの編集が終わっていない場合は、私たちが受講している皆さんのことを知ることができるように、コースの中でプロフィールページを編集してください:
 
  $a->profileurl';
 $string['whattocallzip'] = 'Zipファイルの名称は?';
