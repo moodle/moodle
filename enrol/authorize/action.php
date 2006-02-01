@@ -17,14 +17,11 @@ function getsettletime($time)
 {
     global $CFG;
 
-    $hrs = intval($CFG->an_cutoff_hour);
-    $mins = intval($CFG->an_cutoff_min);
+    $cutoff = intval($CFG->an_cutoff); $hrs = $cutoff / 60; $mins = $cutoff % 60;
     $cutofftime = strtotime("$hrs:$mins", $time);
-
     if ($cutofftime < $time) {
         $cutofftime = strtotime("$hrs:$mins", $time + (24 * 3600));
     }
-
     return $cutofftime;
 }
 

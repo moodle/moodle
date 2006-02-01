@@ -79,11 +79,23 @@ function authorize_upgrade($oldversion=0) {
         execute_sql("ALTER TABLE {$CFG->prefix}enrol_authorize DROP authcode", false);
     }
 
-    if ($oldversion < 2006010200) {
-    	if (isset($CFG->an_review_day)) { // rename an_review_day
+    if ($oldversion < 2006010200) { // rename an_review_day
+    	if (isset($CFG->an_review_day)) {
     	    set_config('an_capture_day', $CFG->an_review_day);
     	    delete_records('config', 'name', 'an_review_day');
     	}
+    }
+
+    if ($oldversion < 2006020100) { // rename an_cutoff_hour and an_cutoff_min to an_cutoff
+        if (isset($CFG->an_cutoff_hour) && isset($CFG->an_cutoff_min)) {
+            $an_cutoff_hour = intval($CFG->an_cutoff_hour);
+            $an_cutoff_min = intval($CFG->an_cutoff_min);
+            $an_cutoff = ($an_cutoff_hour * 60) + $an_cutoff_min;
+            if (set_config('an_cutoff', $an_cutoff)) {
+                delete_records('config', 'name', 'an_cutoff_hour');
+                delete_records('config', 'name', 'an_cutoff_min');
+            }
+        }
     }
 
     return $result;

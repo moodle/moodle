@@ -463,8 +463,10 @@ class enrolment_plugin extends enrolment_base
         set_config('an_avs', optional_param('an_avs', ''));
         set_config('an_test', optional_param('an_test', ''));
         set_config('an_referer', optional_param('an_referer', 'http://', PARAM_URL));
-        set_config('an_cutoff_hour', optional_param('an_cutoff_hour', 0, PARAM_INT));
-        set_config('an_cutoff_min', optional_param('an_cutoff_min', 5, PARAM_INT));
+
+        $cutoff_hour = optional_param('an_cutoff_hour', 0, PARAM_INT);
+        $cutoff_min = optional_param('an_cutoff_min', 5, PARAM_INT);
+        set_config('an_cutoff', $cutoff_hour * 60 + $cutoff_min);
 
         $reviewval = optional_param('an_review', '');
         $captureday = optional_param('an_capture_day', 5, PARAM_INT);
@@ -604,7 +606,7 @@ class enrolment_plugin extends enrolment_base
         }
 
         if (empty($CFG->an_review) || (!empty($CFG->an_test)) ||
-            intval($CFG->an_capture_day < 1) || (!$this->check_openssl_loaded())) {
+            (intval($CFG->an_capture_day) < 1) || (!$this->check_openssl_loaded())) {
             return;
         }
 

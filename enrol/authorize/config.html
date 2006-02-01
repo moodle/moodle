@@ -15,6 +15,11 @@ if (!isset($frm->an_test)) $frm->an_test = '';
 if (!isset($frm->an_review)) $frm->an_review = '';
 if (!isset($frm->an_capture_day)) $frm->an_capture_day = '5';
 if (!isset($frm->an_emailexpired)) $frm->an_emailexpired = '2';
+
+if (isset($CFG->an_cutoff)) {
+    $frm->an_cutoff_hour = intval($CFG->an_cutoff) / 60;
+    $frm->an_cutoff_min = intval($CFG->an_cutoff) % 60;
+}
 if (!isset($frm->an_cutoff_hour)) $frm->an_cutoff_hour = '0';
 if (!isset($frm->an_cutoff_min)) $frm->an_cutoff_min = '5';
 
