@@ -38,14 +38,13 @@ class data_field_radiobutton extends data_field_base {
     /***********************************************
      * Saves the field into the database           *
      ***********************************************/
-    function insert_field($dataid, $type='radiobutton', $name, $desc='', $autolink=0, $options='') {
+    function insert_field($dataid, $type='radiobutton', $name, $desc='', $options='') {
         $newfield = new object;
         $newfield->dataid = $dataid;
         $newfield->type = $type;
         $newfield->name = $name;
         $newfield->description = $desc;
-        $newfield->param1 = $autolink;
-        $newfield->param2 = $options;
+        $newfield->param1 = $options;
         
         if (!insert_record('data_fields', $newfield)) {
             notify('Insertion of new field failed!');
@@ -77,7 +76,7 @@ class data_field_radiobutton extends data_field_base {
             $str .= '<img src="'.$CFG->pixpath.'/help.gif" alt="'.$field->description.'" title="'.$field->description.'" />&nbsp;';
         }
         
-        foreach (explode("\n",$field->param2) as $radio) {
+        foreach (explode("\n",$field->param1) as $radio) {
             $radio = ltrim(rtrim($radio));
             $str .= '<input type="radio" name="field_' . $field->id . '" id="field_';
             $str .= $field->id . '" value="' . $radio . '" ';
@@ -102,7 +101,7 @@ class data_field_radiobutton extends data_field_base {
         
 
     function update($fieldobject) {
-        $fieldobject->param2 = trim($fieldobject->param1);
+        $fieldobject->param1 = trim($fieldobject->param1);
         
         if (!update_record('data_fields',$fieldobject)){
             notify ('upate failed');

@@ -18,12 +18,8 @@
         <td><input type="text" name="description" id="description" value="<?php echo($field->description); ?>" /></td>
     </tr>
     <tr>
-        <td>Allow Autolink:</td>
-        <td><input type="checkbox" name="param1" id="param1" <?php if($field->param1) {echo 'checked="checked"';} ?> value="1" /></td>
-    </tr>
-    <tr>
         <td>Options (Line Separated)</td>
-        <td><textarea name="param2" id="param2"><?php if($field->param2) {echo $field->param2;} ?></textarea></td>
+        <td><textarea name="param1" id="param1"><?php if($field->param1) {echo $field->param1;} ?></textarea></td>
     </tr>
     <tr>
         <td>&nbsp;</td>

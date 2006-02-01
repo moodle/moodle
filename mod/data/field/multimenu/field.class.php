@@ -102,6 +102,7 @@ class data_field_multimenu extends data_field_base {
         parent::display_edit_field($id, $mode);
     }
     
+    
 
     function update($fieldobject) {
         $fieldobject->param2 = trim($fieldobject->param1);
@@ -153,16 +154,8 @@ class data_field_multimenu extends data_field_base {
 
         $field = get_record('data_fields', 'id', $fieldid);
 
-        if ($content = get_record('data_content', 'fieldid', $fieldid, 'recordid', $recordid)){
-            $contentArr = array();
-            if (!empty($content->content)) {
-                $contentArr = explode('##', $content->content);
-            }
-            $str = '';
-            foreach ($contentArr as $line) {
-                $str .= $line . "<br />\n";
-            }
-            return $str;
+        if ($content = get_record('data_content', 'fieldid', $fieldid, 'recordid', $recordid)) {
+            return $content->content;
         }
         return false;
     }
