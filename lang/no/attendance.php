@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // attendance.php - created with Moodle 1.2 (2004032000)
+      // attendance.php - created with Moodle 1.5.2 (2005060220)
 
 
 $string['absentlong'] = 'Fraværende';
@@ -11,7 +11,7 @@ $string['auto'] = 'automatisk';
 $string['autoattend'] = 'Registrer fravær automatisk basert på brukerens aktivitetslogger';
 $string['autoattendmulti'] = 'Registrer fravær automatisk i alle lister basert på brukerens aktivitetslogger';
 $string['autoattendshort'] = 'Automatisk fra logger';
-$string['choosedays'] = 'Hvilke dager i hver uke vil du føre fravær?';
+$string['choosedays'] = 'Hvilke ukedager vil du føre fravær?';
 $string['dayofroll'] = 'Dato for fraværsliste';
 $string['defaultautoattend'] = 'Vil du føre fravær basert på brukernes aktivitetslogger som standard?';
 $string['defaultdynamicsection'] = 'Vil du flytte fraværslistene til rett uke som standard?';
@@ -57,6 +57,7 @@ $string['takeroll'] = 'Lag liste for denne dagen?';
 $string['tardiesperabsence'] = 'Hvor mange ganger for sent skal regnes som ett fraværstilfelle';
 $string['tardylong'] = 'For sent';
 $string['tardyshort'] = 'S';
+$string['teacheredit'] = 'Før fravær';
 $string['thursday'] = 'Tors';
 $string['tuesday'] = 'Tirs';
 $string['viewall'] = 'Vis alle fraværslister';
