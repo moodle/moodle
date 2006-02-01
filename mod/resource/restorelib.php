@@ -172,7 +172,7 @@
         global $CFG;
         $status = true;
 
-        if ($resources = get_records_sql ("SELECT r.id, r.alltext, r.summary
+        if ($resources = get_records_sql ("SELECT r.id, r.alltext, r.summary, r.reference
                                    FROM {$CFG->prefix}resource r
                                    WHERE r.course = $restore->course_id")) {
 
@@ -182,17 +182,21 @@
                 $i++;
                 $content1 = $resource->alltext;
                 $content2 = $resource->summary;
+                $content3 = $resource->reference;
                 $result1 = restore_decode_content_links_worker($content1,$restore);
                 $result2 = restore_decode_content_links_worker($content2,$restore);
+                $result3 = restore_decode_content_links_worker($content3,$restore);
 
-                if ($result1 != $content1 || $result2 != $content2) {
+                if ($result1 != $content1 || $result2 != $content2 ||  $result3 != $content3) {
                     //Update record
                     $resource->alltext = addslashes($result1);
                     $resource->summary = addslashes($result2);
+                    $resource->reference = addslashes($result3);
                     $status = update_record("resource",$resource);
                     if ($CFG->debug>7) {
                         echo '<br /><hr />'.htmlentities($content1).'<br />changed to<br />'.htmlentities($result1).'<hr /><br />';
                         echo '<br /><hr />'.htmlentities($content2).'<br />changed to<br />'.htmlentities($result2).'<hr /><br />';
+                        echo '<br /><hr />'.htmlentities($content3).'<br />changed to<br />'.htmlentities($result3).'<hr /><br />';
                     }
                 }
                 //Do some output
