@@ -48,38 +48,37 @@
                 if (optional_param('confirm')) {
                     @mkdir ($CFG->dataroot.'/temp/');    //make it in case it's a fresh install, it might not be there
                     @mkdir ($CFG->dataroot.'/lang/');
-                    $source = 'http://download.moodle.org/lang16/'.$pack.'.zip';
-                    $langpack = $CFG->dataroot.'/temp/'.$pack.'.zip';
-                    $destination = $CFG->dataroot.'/lang/';
-                    if ($contents = file_get_contents($source)) {    // Grab whole page
-                        if ($file = fopen($langpack, 'w')) {    // Make local copy
-                            if (!fwrite($file, $contents)) {    //copy zip to temp folder..
-                                error ('could not copy file');
-                            }
-                            fclose($file);
+                    
+                    require_once($CFG->libdir.'/componentlib.class.php');
+                    if ($cd = new component_installer('http://download.moodle.org', 'lang16',
+                                                        $pack.'.zip', 'languages.md5', 'lang')) {
+                        $status = $cd->install(); //returns ERROR | UPTODATE | INSTALLED
+                        switch ($status) {
 
-                            ///recursively remove the whole directory since unzip does not overwrites anything
-                            if (file_exists($destination.$pack)) {
-                                @remove_dir($destination.$pack.'/');
-                            }
-                            //unpack the zip
-                            if (unzip_file($langpack, $destination, false)) {
-                                print_heading(get_string('langimportsuccess','admin'));
+                        case ERROR:
+                            if ($cd->get_error() == 'remotedownloadnotallowed') {
+                                $a = new stdClass();
+                                $a->url = 'http://download.moodle.org/lang16/'.$pack.'zip';
+                                $a->dest= $CFG->dataroot.'/lang';
+                                error(get_string($cd->get_error(), 'error', $a));
                             } else {
-                                error('language installation failed');
+                                error(get_string($cd->get_error(), 'error'));
                             }
-                            //now, we update the md5key of the lang pack, this is used to check version
-                            $md5file = $CFG->dataroot.'/lang/'.$pack.'/'.$pack.'.md5';
-                            if ($file = fopen($md5file, 'w')) {
-                                fwrite($file, md5($contents));    //manually generate md5 from zip
-                            }
-                            fclose($file);
-                            @unlink ($langpack);    //bye bye zip file, come back when you get a little better
-                            echo '<div align="center"><form action="langimport.php" method="POST">';
-                            echo '<input type="submit" value="'.get_string('ok').'" />';
-                            echo '</form></div>';
+                        break;
+                        case UPTODATE:
+                            
+                        break;
+                        case INSTALLED:
+                            print_string('langpackupdated','admin',$pack);
+                            print_continue('langimport.php');
+                        break;
+                        default:
+                            //We shouldn't reach this point
                         }
+                    } else {
+                        //We shouldn't reach this point
                     }
+
                 } else {    //print confirm box, no confirmation yet
                     if (confirm_sesskey()) {
                         print_simple_box_start('center','100%');
@@ -181,7 +180,6 @@
                 $md5array[$alang[0]] = $alang[1];
             }
 
-            //first build a list of all the language packs,
 
             //filtering out non-16 packs
             foreach ($alllangs as $clang) {
@@ -199,7 +197,6 @@
                     $packs[] = $clang;
                 }
             }
-
 
             @mkdir ($CFG->dataroot.'/temp/');
             @mkdir ($CFG->dataroot.'/lang/');
@@ -223,40 +220,42 @@
 
                 //2. copy & unzip into new
 
-                $source = 'http://download.moodle.org/lang16/'.$pack.'.zip';
-                $langpack = $CFG->dataroot.'/temp/'.$pack.'.zip';
-                $destination = $CFG->dataroot.'/lang/';
-                if ($contents = file_get_contents($source)) {    // Grab whole page
-                    if ($file = fopen($langpack, 'w')) {    // Make local copy
-                        if (!fwrite($file, $contents)) {    //copy zip to temp folder..
-                            error ('could not copy file');
-                        }
-                        fclose($file);
+                require_once($CFG->libdir.'/componentlib.class.php');
+                if ($cd = new component_installer('http://download.moodle.org', 'lang16',
+                                       $pack.'.zip', 'languages.md5', 'lang')) {
+                $status = $cd->install(); //returns ERROR | UPTODATE | INSTALLED
+                switch ($status) {
 
-                        //unpack the zip
-                        if (!unzip_file($langpack, $destination, false)) {
-                            error('language installation failed - can not unzip language pack');
+                    case ERROR:
+                        if ($cd->get_error() == 'remotedownloadnotallowed') {
+                            $a = new stdClass();
+                            $a->url = 'http://download.moodle.org/lang16/'.$pack.'zip';
+                            $a->dest= $CFG->dataroot.'/lang';
+                            error(get_string($cd->get_error(), 'error', $a));
+                        } else {
+                            error(get_string($cd->get_error(), 'error'));
                         }
-                        //now, we update the md5key of the lang pack, this is used to check version
-                        $md5file = $CFG->dataroot.'/lang/'.$pack.'/'.$pack.'.md5';
-                        if ($file = fopen($md5file, 'w')) {
-                            fwrite($file, md5($contents));
-                        }
-                        fclose($file);
-                        @unlink ($langpack);    //remove the zip file
-                        echo '<div align="center">';
-                        notify(print_string('langpackupdated','admin',$pack));
-                        $updated = 1;
-                        echo '</div>';
+                    break;
+                    case UPTODATE:
+                        //Print error string or whatever you want to do
+                    break;
+                    case INSTALLED:
+                        print_string('langpackupdated','admin',$pack);
+                        $updated = true;
+                        //Print/do whatever you want
+                    break;
+                    default:
                     }
+                } else {
+
                 }
             }
 
             echo '<div align="center"><form action="langimport.php" method="POST">';
             if ($updated) {
-                notify(print_string('langupdatecomplete','admin'));
+                notify(get_string('langupdatecomplete','admin'));
             } else {
-                notify(print_string('nolangupdateneeded','admin'));
+                notify(get_string('nolangupdateneeded','admin'));
             }
             echo '<input type="submit" value="'.get_string('ok').'" />';
             echo '</form></div>';
@@ -361,7 +360,7 @@
 
             if ($empty) {
                 echo '<tr><td align="center">';
-                print_string('nolanguagetodownload');
+                print_string('nolanguagetodownload','admin');
                 echo '</td></tr>';
             }
 
