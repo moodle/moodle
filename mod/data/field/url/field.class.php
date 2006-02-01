@@ -139,7 +139,7 @@ class data_field_url extends data_field_base {// extends
     }
 
     function update_data_content($fieldid, $recordid, $value, $name){
-        //if data_content already exit, we update
+        //if data_content already exists, we update
         if ($oldcontent = get_record('data_content','fieldid', $fieldid, 'recordid', $recordid)){
             $content = new object;
             $content->fieldid = $fieldid;
