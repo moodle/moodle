@@ -127,7 +127,7 @@ $string['confirminstall'] = 'あなたは言語パック ( $a ) をインスト�
 $string['cronwarning'] = '<a href=\"cron.php\">cron.phpメンテナンススクリプト</a>が少なくとも24時間稼動していません。<br />cron.phpの自動化に関して<a href=\"../doc/?frame=install.html&sub=cron\">インストールドキュメント</a>をご覧ください。';
 $string['dbmigrate'] = 'Moodleデータベース移行';
 $string['dbmigratewarning'] = 'この処理を始める前に、Moodleデータベースをバックアップしたか確認してください。バックアップの方法が分からない場合は、システム管理者にご連絡ください。移行プロセスの開始後、あなたのMoodleサイトはメンテナンスモードに変更されます。';
-$string['dbmigratewarning2'] = '<b>警告: あなたはデータベース移行処理を開始しようとしています。全てのMoodleデータベースをバックアップしたか、確実に確認してください。</b>';
+$string['dbmigratewarning2'] = '<b>警告: あなたはデータベース移行処理を開始しようとしています。全てのMoodleデータベースをバックアップしているか、確実に確認してください。</b>';
 $string['density'] = '密度';
 $string['download'] = 'ダウンロード';
 $string['edithelpdocs'] = 'ヘルプドキュメントの編集';
