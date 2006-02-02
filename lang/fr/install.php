@@ -50,6 +50,7 @@ $string['dataroot'] = 'Dossier de données';
 $string['datarooterror'] = 'Le dossier de données indiqué n\'a pas pu être trouvé ou créé. Veuillez corriger le paramètre ou créer manuellement le dossier.';
 $string['dbconnectionerror'] = 'Moodle n\'a pas pu se connecter à la base de données indiquée. Veuillez vérifier les paramètres de votre base de données';
 $string['dbcreationerror'] = 'Erreur lors de la création de la base de données. Impossible de créer la base de données avec les paramètres fournis';
+$string['dbwrongencoding'] = 'La base de données choisie fonctionne avec un encodage non recommandé ($a). La meilleure solution serait d\'utiliser plutôt une base de données encodée en Unicode (UTF-8). Vous pouvez cependant passer outre ce test en cochant l\'option «&nbsp;Ne pas effectuer le test d\'encodage de la base de données&nbsp;» ci-dessous, mais alors des problèmes pourraient survenir à l\'avenir.';
 $string['dbhost'] = 'Serveur hôte';
 $string['dbpass'] = 'Mot de passe';
 $string['dbprefix'] = 'Préfixe des tables';
