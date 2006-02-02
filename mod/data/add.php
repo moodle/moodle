@@ -133,7 +133,7 @@
  ********************************************/
     $entrysaved = false;    //flag for displaying entry saved msg
 
-    if ($datarecord = data_submitted() and confirm_sesskey()) {
+    if ($datarecord = data_submitted() and confirm_sesskey()) {        
         //if rid is present, we are in updating mode
         if ($rid){
             foreach ($datarecord as $name=>$value){

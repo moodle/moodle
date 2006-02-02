@@ -61,15 +61,14 @@ class data_field_multimenu extends data_field_base {
             notify('That is not a valid field id!');
             exit;
         }
+        $content = array();
+        
         if ($rid) {
-            $content = get_record('data_content', 'fieldid', $id, 'recordid', $rid);
-            if (isset($content->content)) {
-                $content = $content->content;
+            $dbcontent = get_record('data_content', 'fieldid', $id, 'recordid', $rid);
+            if (isset($dbcontent->content)) {
+                $content = $dbcontent->content;
                 $content = explode('##', $content);
             }
-        }
-        else {
-            $content = array();
         }
         $str = '';
 
@@ -154,7 +153,7 @@ class data_field_multimenu extends data_field_base {
 
         $field = get_record('data_fields', 'id', $fieldid);
 
-        if ($content = get_record('data_content', 'fieldid', $fieldid, 'recordid', $recordid)) {
+        if ($content = get_record('data_content', 'fieldid', $fieldid, 'recordid', $recordid)){
             return $content->content;
         }
         return false;

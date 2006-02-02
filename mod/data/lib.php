@@ -137,6 +137,11 @@ class data_field_base {    //base class (text field)
         if ($content = get_record('data_content', 'fieldid', $fieldid, 'recordid', $recordid)){
             if (isset($content->content)){
                 $str = format_text($content->content, $content->content1);
+                
+                echo '<pre>';
+                print_r($str);
+                echo '</pre>';
+                
             } else {
                 $str = '';
             }
@@ -160,13 +165,11 @@ class data_field_base {    //base class (text field)
      * store content of this field type *
      ************************************/
     function store_data_content($fieldid, $recordid, $value, $name=''){
-        if ($value) {
-            $content = new object;
-            $content->fieldid = $fieldid;
-            $content->recordid = $recordid;
-            $content->content = clean_param($value, PARAM_NOTAGS);
-            insert_record('data_content', $content);
-        }
+        $content = new object;
+        $content->fieldid = $fieldid;
+        $content->recordid = $recordid;
+        $content->content = clean_param($value, PARAM_NOTAGS);
+        insert_record('data_content', $content);
     }
 
     /*************************************
@@ -392,7 +395,6 @@ function data_numentries($data){
  * output bool                                                  *
  ****************************************************************/
 function data_add_record($dataid, $groupid=0){
-
     global $USER;
     $record->userid = $USER->id;
     $record->groupid = $groupid;

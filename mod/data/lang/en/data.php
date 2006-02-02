@@ -17,6 +17,7 @@ $string['confirmdeletefield'] = 'You are about to delete this field, are you sur
 $string['confirmdeleterecord'] = 'Are you sure you want to delete this record?';
 $string['deletefield'] = 'Delete an existing Field';
 $string['menu'] = 'Menu (Single-selection)';
+$string['menuchoose'] = 'Choose...';
 $string['emptyadd'] = 'The Add template is empty, generating a default form...';
 $string['emptyaddform'] = 'You did not fill out any fields!';
 $string['entrysaved'] = 'Entry Saved';

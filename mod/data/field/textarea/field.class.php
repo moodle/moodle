@@ -229,7 +229,7 @@ class data_field_textarea extends data_field_base {
      *************************************/
     function update_data_content($fieldid, $recordid, $value, $name=''){
         // If data_content already exists, we update.
-        if ($oldcontent = get_record('data_content','fieldid', $fieldid, 'recordid', $recordid)){
+        if ($oldcontent = get_record('data_content', 'fieldid', $fieldid, 'recordid', $recordid)){
             $content = new object;
             $content->fieldid = $fieldid;
             $content->recordid = $recordid;

@@ -61,15 +61,14 @@ class data_field_checkbox extends data_field_base {
             notify('That is not a valid field id!');
             exit;
         }
+        $content = array();
+        
         if ($rid) {
-            $content = get_record('data_content', 'fieldid', $id, 'recordid', $rid);
-            if (isset($content->content)) {
+            $dbcontent = get_record('data_content', 'fieldid', $id, 'recordid', $rid);
+            if (isset($dbcontent->content)) {
                 $content = $content->content;
                 $content = explode('##', $content);
             }
-        }
-        else {
-            $content = array();
         }
         $str = '';
 
@@ -77,11 +76,11 @@ class data_field_checkbox extends data_field_base {
             $str .= '<img src="'.$CFG->pixpath.'/help.gif" alt="'.$field->description.'" title="'.$field->description.'" />&nbsp;';
         }
         
-        foreach (explode("\n",$field->param1) as $checkbox) {
+        foreach (explode("\n", $field->param1) as $checkbox) {
             $checkbox = ltrim(rtrim($checkbox));
             $str .= '<input type="checkbox" name="field_' . $field->id . '[]" id="field_';
             $str .= $field->id . '[]" value="' . $checkbox . '" ';
-
+            
             if (array_search($checkbox, $content) !== false) {
                 // Selected by user.
                 $str .= 'checked />';
