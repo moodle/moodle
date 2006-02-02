@@ -48,7 +48,7 @@ class data_field_base {    //base class (text field)
     //prints the respective type icon
     function image(){
         global $CFG;
-        return '<img src="'.$CFG->modpixpath.'/data/field/'.$this->type.'/icon.gif" height="11" width="11" border="0"
+        return '<img src="'.$CFG->modpixpath.'/data/field/'.$this->type.'/icon.gif" height="16" width="16" border="0"
                      alt="'.$this->type.'" title="'.$this->type.'">';
     }
     
@@ -137,11 +137,6 @@ class data_field_base {    //base class (text field)
         if ($content = get_record('data_content', 'fieldid', $fieldid, 'recordid', $recordid)){
             if (isset($content->content)){
                 $str = format_text($content->content, $content->content1);
-                
-                echo '<pre>';
-                print_r($str);
-                echo '</pre>';
-                
             } else {
                 $str = '';
             }
