@@ -102,6 +102,7 @@ $string['nonews'] = 'Encara no s\'han enviat notícies';
 $string['noposts'] = 'No hi ha missatges';
 $string['nopostscontaining'] = 'No s\'ha trobat cap missatge que contingui \'$a\'';
 $string['nosubscribers'] = 'Encara no hi ha subscriptors d\'aquest fòrum';
+$string['nothingnew'] = 'Res nou per a $a';
 $string['notingroup'] = 'Heu de ser part d\'un grup per veure aquest fòrum.';
 $string['notrackforum'] = 'No facis el seguiment de missatges no llegits';
 $string['nowallsubscribed'] = 'Us heu subscrit a tots els fòrums de $a';

@@ -21,7 +21,8 @@ $string['addactivity'] = 'Afegeix una activitat...';
 $string['addadmin'] = 'Afegeix administrador';
 $string['addcreator'] = 'Afegeix un creador de cursos';
 $string['added'] = 'S\'ha afegit $a';
-$string['addedrecips'] = 'S\'han afegit $a nous destinataris';
+$string['addedrecip'] = 'S\'ha afegit un nou $a destinatari';
+$string['addedrecips'] = 'S\'han afegit nous $a destinataris';
 $string['addedtogroup'] = 'S\'ha afegit al grup $a';
 $string['addedtogroupnot'] = 'No s\'ha afegit al grup $a';
 $string['addedtogroupnotenrolled'] = 'No s\'ha afegit al grup $a perquè aquesta persona no està inscrita al curs';
@@ -61,6 +62,7 @@ $string['adminhelpmymoodle'] = 'Configureu els blocs \"el meu moodle\" dels usua
 $string['adminhelpreports'] = 'Classificació de cursos segons criteris diversos';
 $string['adminhelpsitefiles'] = 'Publiqueu fitxers generals o pengeu còpies de seguretat externes';
 $string['adminhelpsitesettings'] = 'Definiu l\'aparença de la pàgina inicial del lloc';
+$string['adminhelpstickyblocks'] = 'Configureu els blocs fixos de tot el servidor';
 $string['adminhelpthemes'] = 'Trieu l\'aparença del lloc (colors, tipus de lletra, etc)';
 $string['adminhelpuploadusers'] = 'Importeu nous comptes d\'usuari des d\'un fitxer de text';
 $string['adminhelpusers'] = 'Definiu els usuaris i configureu l\'autenticació';
@@ -209,6 +211,7 @@ $string['counteditems'] = '$a->count $a->items';
 $string['country'] = 'País';
 $string['course'] = 'Curs';
 $string['courseapprovedemail'] = 'S\'ha aprovat el curs \"$a->name\" que havíeu sol·licitat i ara en sou $a->teacher. Per entrar en aquest nou curs, aneu a $a->url';
+$string['courseapprovedfailed'] = 'No s\'ha pogut desar el curs com a aprovat';
 $string['courseapprovedsubject'] = 'S\'ha aprovat el vostre curs';
 $string['courseavailable'] = 'Aquest curs està disponible per als estudiants';
 $string['courseavailablenot'] = 'Aquest curs no està disponible per als estudiants';
@@ -222,6 +225,7 @@ $string['coursegrades'] = 'Qualificacions del curs';
 $string['coursehidden'] = 'Aquest curs no està disponible actualment per als estudiants';
 $string['courseimportnotaught'] = 'No sou professor/a de cap altre curs i per tant no disposeu de cursos d\'on importar.';
 $string['courseinfo'] = 'Informació del curs';
+$string['coursemessage'] = 'Missatge als usuaris del curs';
 $string['coursenotaccessible'] = 'Aquest curs no permet accés públic';
 $string['coursereject'] = 'Denegació d\'una sol·licitud de curs';
 $string['courserejected'] = 'S\'ha denegat el curs i s\'ha tramès la notificació a la persona sol·licitant';
@@ -422,14 +426,16 @@ $string['emailpasswordsent'] = 'Gràcies per confirmar el canvi de contrasenya.
 <br />La contrasenya nova s\'ha generat automàticament - potser voldreu <a href=\"$a->link\">canviar-la</a> per una altra més fàcil de recordar.';
 $string['enable'] = 'Habilita';
 $string['encryptedcode'] = 'Codi xifrat';
-$string['enroldate'] = 'Període d\'inscripció';
+$string['enroldate'] = 'Període';
 $string['enrolenddate'] = 'Data final';
 $string['enrolenddaterror'] = 'La fi del període d\'inscripció no pot ser abans de la data d\'inici.';
+$string['enrollable'] = 'Permet inscripcions';
 $string['enrolledincourse'] = 'Inscrit al curs \"$a\"';
 $string['enrolledincoursenot'] = 'No inscrit al curs  \"$a\"';
 $string['enrollfirst'] = 'Per poder usar aquestes activitats del lloc abans heu d\'estar inscrits en algun dels cursos';
 $string['enrolme'] = 'Inscriu-me en aquest curs';
 $string['enrolmentconfirmation'] = 'Aneu a inscriure-us en aquest curs.<br />Esteu segur que voleu fer això?';
+$string['enrolmentend'] = 'La inscripció es tanca';
 $string['enrolmentkey'] = 'Clau d\'inscripció';
 $string['enrolmentkeyfrom'] = 'Aquest curs requereix una clau d\'inscripció - una contrasenya<br />d\'un sol ús que us ha d\'haver proporcionat $a';
 $string['enrolmentkeyhint'] = 'Aquesta clau d\'inscripció es errònia, si us plau torneu a intentar-ho<br />
@@ -460,7 +466,28 @@ $string['existingcoursedeleting'] = 'Curs existent, primer se suprimirà';
 $string['existingcreators'] = 'Creadors de cursos actuals';
 $string['existingstudents'] = 'Estudiants inscrits';
 $string['existingteachers'] = 'Professors actuals';
+$string['expirynotify'] = 'Notificació de venciment d\'inscripció';
+$string['expirynotifyemail'] = 'La inscripció dels estudiants següents en aquest curs vencerà d\'ací a $a->threshold dies:
+
+$a->current
+
+La inscripció dels estudiants següents en aquest curs vencerà en menys de $a->threshold dies:
+
+$a->past
+
+Podeu anar a la pàgina següent per ampliar el seu període d\'inscripció:
+
+$a->extendurl';
+$string['expirynotifystudents'] = 'Notifica als estudiants';
+$string['expirynotifystudentsemail'] = 'Benvolgut/da estudiant,
+
+Amb aquest missatge us notifiquem que la vostra inscripció en el curs $a->course vencerà d\'ací a $a->threshold dies.
+
+Contacteu amb el professorat si necessiteu cap aclariment.';
+$string['expirythreshold'] = 'Llindar';
 $string['explanation'] = 'Explicació';
+$string['extendenrol'] = 'Amplia la inscripció';
+$string['extendperiod'] = 'Període ampliat';
 $string['failedloginattempts'] = '$a->attempts intents d\'entrada fracassats des de la darrera vegada';
 $string['failedloginattemptsall'] = '$a->attempts intents d\'entrada fracassats d\'un total de $a->accounts comptes';
 $string['feedback'] = 'Retroacció';
@@ -485,6 +512,7 @@ $string['forcepasswordchangenotice'] = 'Heu de canviar la contrasenya abans de c
 $string['forcetheme'] = 'Imposa tema';
 $string['forgotaccount'] = 'Heu oblidat la contrasenya?';
 $string['forgotten'] = 'Heu oblidat el nom d\'usuari o la contrasenya?';
+$string['forgottenduplicate'] = 'La recuperació automàtica de la contrasenya no es pot completar perquè la vostra adreça de correu apareix duplicada en la base de dades. Contacteu amb l\'administrador: <a href=\"mailto:$a->email\">$a->firstname $a->lastname</a> .';
 $string['format'] = 'Format';
 $string['formathtml'] = 'Format HTML';
 $string['formatlams'] = 'Format de curs LAMS';
@@ -623,6 +651,7 @@ $string['includenoneusers'] = 'No incloguis cap usuari';
 $string['includeuserfiles'] = 'Inclou els fitxers dels usuaris';
 $string['info'] = 'Informació';
 $string['institution'] = 'Institució';
+$string['instudentview'] = 'en la visualització de l\'estudiantat';
 $string['invalidemail'] = 'L\'adreça de correu no és vàlida';
 $string['invalidlogin'] = 'Entrada incorrecta, si us plau torneu a intentar-ho';
 $string['ip_address'] = 'Adreça IP';
@@ -679,6 +708,7 @@ $string['logout'] = 'Sortida';
 $string['logs'] = 'Registres';
 $string['logtoomanycourses'] = '[ <a href=\"$a->url\">més</a> ]';
 $string['logtoomanyusers'] = '[ <a href=\"$a->url\">més</a> ]';
+$string['lookback'] = 'Enrere';
 $string['mailadmins'] = 'Informa administradors';
 $string['mailstudents'] = 'Informa estudiantat';
 $string['mailteachers'] = 'Informa professorat';
@@ -699,7 +729,11 @@ $string['maximumgrade'] = 'Qualificació màxima';
 $string['maximumshort'] = 'Max';
 $string['maximumupload'] = 'Mida màxima de càrrega';
 $string['maxsize'] = 'Mida màxima: $a';
-$string['messageselect'] = 'Selecciona aquest usuari com a destinatari d\'un correu';
+$string['memberincourse'] = 'Membre del curs';
+$string['messagebody'] = 'Cos del missatge';
+$string['messagedselectedusers'] = 'S\'ha enviat el missatge als usuaris seleccionats i s\'ha buidat la llista de destinataris.';
+$string['messagedselectedusersfailed'] = 'Hi ha hagut un problema en enviar el missatge als usuaris seleccionats. Alguns usuaris poden haver rebut el correu.';
+$string['messageselect'] = 'Selecciona aquest usuari com a destinatari del correu';
 $string['messageselectadd'] = 'Afegeix/envia missatge';
 $string['metaaddcourse'] = 'Afegeix aquest curs';
 $string['metaalreadycourses'] = 'Cursos ja assignats';
@@ -775,6 +809,7 @@ $string['new'] = 'Nou';
 $string['newaccount'] = 'Nou compte';
 $string['newcourse'] = 'Nou curs';
 $string['newpassword'] = 'Nova contrasenya';
+$string['newpasswordfromlost'] = '<strong>AVÍS:</strong> se us ha enviat la vostra <strong>contrasenya actual</strong> en el <strong>segon</strong> dels dos correus que rebreu com a part del procés de recuperació de la contrasenya. Assegureu-vos que heu rebut la contrasenya nova abans de continuar.';
 $string['newpasswordtext'] = '$a->firstname,
 
 S\'ha anul·lat la contrasenya del vostre compte en \'$a->sitename\' i se us n\'ha assignat una de nova provisionalment.
@@ -864,6 +899,7 @@ $string['numweeks'] = '$a setmanes';
 $string['numwords'] = '$a paraules';
 $string['numyears'] = '$a anys';
 $string['ok'] = 'OK';
+$string['oldpassword'] = 'Contrasenya actual';
 $string['opentoguests'] = 'Accés de visitants';
 $string['optional'] = 'opcional';
 $string['order'] = 'Ordre';
@@ -876,10 +912,15 @@ $string['parentcoursenotfound'] = 'No s\'ha trobat el curs pare';
 $string['parentcoursenotmetacourse'] = 'El curs pare no és un metacurs';
 $string['parentfolder'] = 'Nivell superior';
 $string['participants'] = 'Participants';
+$string['participationratio'] = 'Proporció de participació';
 $string['participationreport'] = 'Informe de participació';
 $string['password'] = 'Contrasenya';
 $string['passwordchanged'] = 'S\'ha canviat la contrasenya';
 $string['passwordconfirmchange'] = 'Confirma el canvi de la contrasenya';
+$string['passwordextlink'] = 'Seguiu aquest enllaç per recuperar la vostra contrasenya. Us portarà fora de Moodle.';
+$string['passwordforgotten'] = 'Heu oblidat la contrasenya';
+$string['passwordforgotteninstructions'] = 'En primer lloc cal trobar les vostres dades en la base de dades d\'usuaris. Introduï en el camp apropiat el vostre nom d\'usuari de Moodle <strong>o</strong> l\'adreça de correu amb què us vau registrar. No cal que ompliu els dos camps. ';
+$string['passwordnohelp'] = 'No es pot recuperar la vostra contrasenya. Contacteu amb l\'administrador o administradora.';
 $string['passwordrecovery'] = 'Sí, ajuda\'m a entrar-hi';
 $string['passwordsdiffer'] = 'Les contrasenyes no coincideixen';
 $string['passwordsent'] = 'S\'ha enviat la contrasenya';
@@ -900,6 +941,8 @@ $string['policyagree'] = 'Heu d\'acceptar la normativa abans d\'entrar en aquest
 $string['policyagreement'] = 'Normativa d\'ús del lloc';
 $string['policyagreementclick'] = 'Feu clic aquí per llegir la normativa d\'ús del lloc';
 $string['popupwindow'] = 'Obre el fitxer en una altra finestra';
+$string['post'] = 'Missatge';
+$string['posts'] = 'Missatges';
 $string['potentialadmins'] = 'Administradors en potència';
 $string['potentialcreators'] = 'Creadors de cursos en potència';
 $string['potentialstudents'] = 'Estudiants en potència';
@@ -907,6 +950,7 @@ $string['potentialteachers'] = 'Professors en potència';
 $string['preferredlanguage'] = 'Idioma preferit';
 $string['preferredtheme'] = 'Tema preferit';
 $string['preview'] = 'Visualització prèvia';
+$string['previewhtml'] = 'Visualització prèvia HTML ';
 $string['previeworchoose'] = 'Proveu o trieu un tema';
 $string['previous'] = 'Anterior';
 $string['profile'] = 'Perfil';
@@ -958,7 +1002,7 @@ $string['restorecancelled'] = 'S\'ha cancel·lat la restauració';
 $string['restorecoursenow'] = 'Restaura aquest curs ara';
 $string['restorefinished'] = 'La restauració s\'ha completat amb èxit';
 $string['restoreto'] = 'Restaura en';
-$string['returningtosite'] = 'Torneu a aquest lloc?';
+$string['returningtosite'] = 'Esteu tornant a aquest lloc?';
 $string['revert'] = 'Torna';
 $string['role'] = 'Rol';
 $string['rss'] = 'RSS';
@@ -988,12 +1032,14 @@ $string['sec'] = 'segon';
 $string['secs'] = 'segons';
 $string['section'] = 'Secció';
 $string['sections'] = 'Seccions';
+$string['seealsostats'] = 'Vg. també: estadístiques';
 $string['select'] = 'Selecciona';
 $string['selectacountry'] = 'Selecciona un país';
 $string['selectall'] = 'Selecciona tot';
 $string['selectamodule'] = 'Heu de seleccionar un mòdul d\'activitat';
 $string['selectednowmove'] = '$a fitxers seleccionats per moure\'ls. Ara aneu a la destinació i premeu \'Mou els fitxers aquí\'';
 $string['selectnos'] = 'Selecciona tot \'no\'';
+$string['selectperiod'] = 'Seleccioneu el període';
 $string['senddetails'] = 'Envia\'m les dades per correu';
 $string['separateandconnected'] = 'Formes de coneixement separades i connectades';
 $string['serverlocaltime'] = 'Hora del servidor local';
