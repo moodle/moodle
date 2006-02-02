@@ -12,13 +12,26 @@
   </MOODLE>
   <MOODLE version="1.6">
     <DATABASE level="required">
-      <VENDOR name="mysql" version="4.1.16" />
+      <VENDOR name="mysql" version="4.1.16">
+        <FEEDBACK>
+          <ON_ERROR message="mysql412forlatin" />
+        </FEEDBACK>
+        <BYPASS function="bypass_mysql_reqs" message="mysqlreqsbypassed" />
+      </VENDOR>
       <VENDOR name="postgres" version="7.4" />
     </DATABASE>
     <PHP version="4.3.0" level="required" />
     <PHP_EXTENSIONS>
-      <PHP_EXTENSION name="iconv" level="optional" />
-      <PHP_EXTENSION name="mbstring" level="optional" />
+      <PHP_EXTENSION name="iconv" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="iconvrecommended" />
+        </FEEDBACK>
+      </PHP_EXTENSION>
+      <PHP_EXTENSION name="mbstring" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="mbstringrecommend" />
+        </FEEDBACK>
+      </PHP_EXTENSION>
     </PHP_EXTENSIONS>
   </MOODLE>
 </COMPATIBILITY_MATRIX>
