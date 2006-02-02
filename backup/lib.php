@@ -81,24 +81,6 @@
         return $status;
     }
 
-    //Function to check if a directory exists
-    //and, optionally, create it
-    function check_dir_exists($dir,$create=false) {
-
-        global $CFG; 
-
-        $status = true;
-        if(!is_dir($dir)) {
-            if (!$create) {
-                $status = false;
-            } else {
-                umask(0000);
-                $status = mkdir ($dir,$CFG->directorypermissions);
-            }
-        }
-        return $status;
-    }
-
     //Function to check and create the needed dir to 
     //save all the backup
     function check_and_create_backup_dir($backup_unique_code) {

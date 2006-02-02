@@ -6411,6 +6411,24 @@ function remove_dir($dir, $content_only=false) {
     return rmdir($dir);
 }
 
+//Function to check if a directory exists
+//and, optionally, create it
+function check_dir_exists($dir,$create=false) {
+    
+    global $CFG; 
+    
+    $status = true;
+    if(!is_dir($dir)) {
+        if (!$create) {
+            $status = false;
+        } else {
+            umask(0000);
+            $status = mkdir ($dir,$CFG->directorypermissions);
+        }
+    }
+    return $status;
+}
+
 function report_session_error() {
     global $CFG, $FULLME;
     if (empty($CFG->lang)) {
