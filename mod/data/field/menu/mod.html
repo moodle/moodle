@@ -11,15 +11,15 @@
     </tr>
     <tr>
         <td>Name:</td>
-        <td><input type="text" name="name" id="name" value = "<?php echo($field->name); ?>" /></td>
+        <td><input style="width:300px;" type="text" name="name" id="name" value = "<?php echo($field->name); ?>" /></td>
     </tr>
     <tr>
         <td>Description:</td>
-        <td><input type="text" name="description" id="description" value = "<? echo ($field->description);?>" /></td>
+        <td><input style="width:300px;" type="text" name="description" id="description" value = "<? echo ($field->description);?>" /></td>
     </tr>
     <tr>
-        <td>Options (Line Separated)</td>
-        <td><textarea name="param1" id="param1"><?php if($field->param1) {echo $field->param1;} ?></textarea></td>
+        <td valign="top">Options (Line Separated)</td>
+        <td><textarea style="width:300px; height:150px;" name="param1" id="param1"><?php if($field->param1) {echo $field->param1;} ?></textarea></td>
     </tr>
     <tr>
         <td>&nbsp;</td>
