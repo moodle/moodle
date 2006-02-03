@@ -55,7 +55,7 @@
         //put the site in maintenance mode
         if touch($filename) {
             $file = fopen($filename, 'w');
-            fwrite($file, stripslashes('maintinprogress','admin'));
+            fwrite($file, get_string('maintinprogress','admin'));
             fclose($file);
         } else {
             notify (get_string('maintfileopenerror','admin')
