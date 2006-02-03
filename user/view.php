@@ -87,8 +87,7 @@
         print_header("$course->fullname: $personalprofile: $fullname", "$course->fullname",
                      "$fullname", "", "", true, "&nbsp;", navmenu($course));
     }
-
-
+    
     if ($course->category and ! isguest() ) {   // Need to have access to a course to see that info
         if (!isstudent($course->id, $user->id) && !isteacher($course->id, $user->id)) {
             print_heading(get_string("notenrolled", "", $fullname));
@@ -201,7 +200,9 @@
     }
 
     if ($user->skype) {
-        print_row(get_string('skypeid').':','<a href="callto:'.urlencode($user->skype).'">'.s($user->skype).'</a>');
+        print_row(get_string('skypeid').':','<a href="callto:'.urlencode($user->skype).'">'.s($user->skype). 
+            '<img src="http://mystatus.skype.com/smallicon/'.urlencode($user->skype).'" alt="status" '.                             ' height="16" width="16" /></a>');
+
     }
     if ($user->yahoo) {
         print_row(get_string('yahooid').':', '<a href="http://edit.yahoo.com/config/send_webmesg?.target='.s($user->yahoo).'&amp;.src=pg">'.s($user->yahoo).'</a>');
