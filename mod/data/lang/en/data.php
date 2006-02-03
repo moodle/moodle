@@ -73,6 +73,7 @@ $string['participants'] = 'Participants';
 $string['picture'] = 'Picture';
 $string['radiobutton'] = 'Radio Button(s)';
 $string['recorddeleted'] = 'Record Deleted';
+$string['requireapproval'] = 'Require Approval?';
 $string['requiredentries'] = 'Required entries';
 $string['requiredentriestoview'] = 'Entries required before viewing';
 $string['rsstemplate'] = 'RSS Template';
