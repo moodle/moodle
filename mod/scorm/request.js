@@ -27,7 +27,7 @@ function DoRequest(httpReq,url,param) {
     //popupwin(url+"\n"+param);
     httpReq.open("POST", url,false);
     httpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    httpReq.send(param)
+    httpReq.send(param);
     if (httpReq.status == 200) {
         //popupwin(url+"\n"+param+"\n"+httpReq.responseText);
         return httpReq.responseText;

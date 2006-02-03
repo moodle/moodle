@@ -5,7 +5,6 @@
     $id = optional_param('id', '', PARAM_INT);       // Course Module ID, or
     $a = optional_param('a', '', PARAM_INT);         // scorm ID
     $scoid = required_param('scoid', '', PARAM_INT); // sco ID
-    $mode = optional_param('mode', '', PARAM_ALPHA); // navigation mode
 
     if (!empty($id)) {
         if (! $cm = get_record("course_modules", "id", $id)) {
@@ -43,17 +42,6 @@
                     $sco = current($scoes);
                 }
             }
-        }
-    } else {
-    //
-    // Search for first incomplete sco
-    //
-        if ( $scoes_track = get_records_select("scorm_scoes_track","userid=".$USER->id." AND element='cmi.core.lesson_status' AND scormid=".$scorm->id,"scoid ASC") ) {
-            $sco_track = current($scoes_track);
-            while ((($sco_track->value == "completed") || ($sco_track->value == "passed") || ($sco_track->value == "failed")) && ($mode == "normal")) {
-                $sco_track = next($scoes_track);
-            }
-            $sco = get_record("scorm_scoes","id",$sco_track->scoid);
         }
     }
     //

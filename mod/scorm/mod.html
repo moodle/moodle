@@ -1,57 +1,60 @@
 <?php
     require_once($CFG->dirroot.'/mod/scorm/lib.php');
-    if (empty($form->name)) {
+    if (!isset($form->name)) {
         $form->name = '';
     }
-    if (empty($form->reference)) {
+    if (!isset($form->reference)) {
         $form->reference = '';
     }
-    if (empty($form->summary)) {
+    if (!isset($form->summary)) {
         $form->summary = '';
     }
-    if (empty($form->launch)) {
+    if (!isset($form->launch)) {
         $form->launch = '';
     }
-    if (empty($form->auto)) {
+    if (!isset($form->auto)) {
         $form->auto = '';
     }
-    if (empty($form->popup)) {
-        $form->popup = '0';
+    if (!isset($form->popup)) {
+        $form->popup = 0;
     }
-    if (empty($form->datadir)) {
+    if (!isset($form->datadir)) {
         $form->datadir = '';
     }
-    if (empty($form->maxgrade)) {
+    if (!isset($form->maxgrade)) {
         $form->maxgrade = '';
     }
-    if (empty($form->maxattempt)) {
-        $form->maxattempt = '1';
+    if (!isset($form->grademethod)) {
+        $form->grademethod = 0;
     }
-    if (empty($form->grademethod)) {
-        $form->grademethod = '0';
+    if (!isset($form->maxattempt)) {
+        $form->maxattempt = 1;
     }
-    if (empty($form->hidebrowse)) {
-        $form->hidebrowse = '0';
+    if (!isset($form->whatgrade)) {
+        $form->whatgrade = 0;
     }
-    if (empty($form->hidetoc)) {
-        $form->hidetoc = '0';
+    if (!isset($form->hidebrowse)) {
+        $form->hidebrowse = 0;
     }
-    if (empty($form->hidenav)) {
-        $form->hidenav = '0';
+    if (!isset($form->hidetoc)) {
+        $form->hidetoc = 0;
     }
-    if (empty($form->width)) {
+    if (!isset($form->hidenav)) {
+        $form->hidenav = 0;
+    }
+    if (!isset($form->width)) {
         $form->width = $CFG->scorm_framewidth;
     }
-    if ($form->width <= 100) {
+    if ((strpos($form->width,'%') === false) && ($form->width <= 100)) {
         $form->width .= '%';
     }
-    if (empty($form->height)) {
+    if (!isset($form->height)) {
         $form->height = $CFG->scorm_frameheight;
     }
-    if ($form->height <= 100) {
+    if ((strpos($form->height,'%') === false) && ($form->height <= 100)) {
         $form->height .= '%';
     }
-    if (empty($form->options)) {
+    if (!isset($form->options) || empty($form->options)) {
         $form->options = $stdoptions;
     }
     $options = explode(',',$form->options);
@@ -61,7 +64,6 @@
         $element = trim($element);
         $window->$element = trim($value)==1?'checked':''; 
     }
-
     $scormid = '';
     if (!empty($form->instance)) {
         $scormid = '&instance='.$form->instance;
@@ -147,11 +149,11 @@
         }
     }
 
-    function checkmethod (grademethod,maxgrade) {
-        if (grademethod.options[grademethod.selectedIndex].value == 0) {
-            maxgrade.disabled=true;
+    function checkscormform (whatcheck,checkvalue,whatset) {
+        if (whatcheck.options[whatcheck.selectedIndex].value == checkvalue) {
+            whatset.disabled = true;
         } else {
-            maxgrade.disabled=false;
+            whatset.disabled = false;
         }
     }
     
@@ -202,8 +204,8 @@
                 <b><?php echo $strfilename?>:</b>
             </td>
             <td>
+                <input name="reference" size="50" value="<?php echo $form->reference ?>" alt="<?php echo $strfilename ?>" />&nbsp;
                 <?php
-                    echo '<input name="reference" size="50" value="'.$form->reference.'" alt="'.$strfilename.'" />&nbsp;';
                     button_to_popup_window ('/files/index.php?id='.$course->id.'&amp;choose=form.reference',
                                             'coursefiles', $strchooseafile, 500, 750, $strchooseafile);
                     helpbutton('package', get_string('coursepacket', 'scorm'), 'scorm', true);
@@ -214,7 +216,7 @@
             <td align="right"><b><?php print_string('grademethod', 'scorm') ?>:</b></td>
             <td>
             <?php
-                choose_from_menu($SCORM_GRADE_METHOD, 'grademethod', $form->grademethod, '','checkmethod(this,document.form.maxgrade);');
+                choose_from_menu($SCORM_GRADE_METHOD, 'grademethod', (int) $form->grademethod, '','checkscormform(this,0,document.form.maxgrade);');
                 helpbutton('grademethod', get_string('grademethod','scorm'), 'scorm');
             ?>
             </td>
@@ -227,7 +229,7 @@
                     $grades[$i] = $i;
                 }
                 $disabled = $form->grademethod=='0';
-                choose_from_menu($grades, 'maxgrade', $form->maxgrade, '','','0',false,$disabled);
+                choose_from_menu($grades, 'maxgrade', (int) $form->maxgrade, '','','0',false,$disabled);
                 helpbutton('maxgrade', get_string('maximumgrade'), 'scorm');
             ?>
             </td>
@@ -236,11 +238,25 @@
             <td align="right"><b><?php print_string('maximumattempts','scorm') ?>:</b></td>
             <td>
             <?php
-                for ($i=100; $i>=1; $i--) {
-                    $attempts[$i] = $i;
+                for ($i=1; $i<=$CFG->scorm_maxattempts; $i++) {
+                    if ($i == 1) {
+                        $attempts[$i] = $i . ' ' . get_string('attempt','scorm');
+                    } else {
+                        $attempts[$i] = $i . ' ' . get_string('attempts','scorm');
+                    }
                 }
-                choose_from_menu($attempts, 'maxattempt', $form->maxattempt, '','','0',false);
-                helpbutton('maxattempt', get_string('maximumattempts'), 'scorm');
+                choose_from_menu($attempts, 'maxattempt', (int) $form->maxattempt, get_string('nolimit','scorm'),'checkscormform(this,1,document.form.whatgrade);');
+                helpbutton('maxattempt', get_string('maximumattempts','scorm'), 'scorm');
+            ?>
+            </td>
+        </tr>
+        <tr valign="top">
+            <td align="right"><b><?php print_string('whatgrade','scorm') ?>:</b></td>
+            <td>
+            <?php
+                $disabled = (int) $form->maxattempt === 1;
+                choose_from_menu($SCORM_WHAT_GRADE, 'whatgrade', (int) $form->whatgrade, '','','0',false,$disabled);
+                helpbutton('whatgrade', get_string('whatgrade','scorm'), 'scorm');
             ?>
             </td>
         </tr>
@@ -249,7 +265,7 @@
         <tr>
             <td align="right"><b><?php print_string('advanced', 'scorm') ?>:</b></td>
             <td>
-                <input type="button" value="<?php print_string('hidesettings') ?>" id="advancedsettingsbutton" onclick="javascrip: return showhide('advancedsettings');" />
+                <input type="button" value="<?php print_string('hidesettings') ?>" id="advancedsettingsbutton" onclick="javascript: return showhide('advancedsettings');" />
                 <input type="hidden" name="advancedsettingspref" id="advancedsettingspref" 
                        value="<?php echo get_user_preferences('scorm_advancedsettingspref', $CFG->scorm_advancedsettings); ?>" />
                 <?php helpbutton('advanced', get_string('advanced', 'scorm'), 'scorm', true) ?>
@@ -266,7 +282,7 @@
                                 $options = array();
                                 $options[0]=get_string('no');
                                 $options[1]=get_string('yes');
-                                choose_from_menu ($options, 'auto', $form->auto,'');
+                                choose_from_menu ($options, 'auto', (int) $form->auto,'');
                                 helpbutton('autocontinue', get_string('autocontinue','scorm'), 'scorm', true);
                             ?>
                             </td>
@@ -278,7 +294,7 @@
                                 $options = array();
                                 $options[0]=get_string('no');
                                 $options[1]=get_string('yes');
-                                choose_from_menu ($options, 'hidebrowse', $form->hidebrowse, '');
+                                choose_from_menu ($options, 'hidebrowse', (int) $form->hidebrowse, '');
                                 helpbutton('browsemode', get_string('hidebrowse','scorm'), 'scorm', true);
                             ?>
                             </td>
@@ -291,7 +307,7 @@
                                 $options[1]=get_string('hidden','scorm');
                                 $options[0]=get_string('sided','scorm');
                                 $options[2]=get_string('popupmenu','scorm');
-                                choose_from_menu ($options, 'hidetoc', $form->hidetoc, '');
+                                choose_from_menu ($options, 'hidetoc', (int) $form->hidetoc, '');
                             ?>
                             </td>
                         </tr>
@@ -302,7 +318,7 @@
                                 $options = array();
                                 $options[0]=get_string('no');
                                 $options[1]=get_string('yes');
-                                choose_from_menu ($options, 'hidenav', $form->hidenav, '');
+                                choose_from_menu ($options, 'hidenav', (int) $form->hidenav, '');
                             ?>
                             </td>
                         </tr>
@@ -313,7 +329,7 @@
         <tr>
             <td align="right"><b><?php print_string('window', 'scorm') ?>:</b></td>
             <td>
-                <input type="button" value="<?php print_string('hidesettings') ?>" id="windowsettingsbutton" onclick="javascrip: return showhide('windowsettings');" />
+                <input type="button" value="<?php print_string('hidesettings') ?>" id="windowsettingsbutton" onclick="javascript: return showhide('windowsettings');" />
                 <input type="hidden" name="windowsettingspref" id="windowsettingspref" 
                        value="<?php echo get_user_preferences('scorm_windowsettingspref', $CFG->scorm_windowsettings); ?>" />
                 <?php helpbutton('window', get_string('window', 'scorm'), 'scorm', true) ?>
@@ -326,7 +342,7 @@
                         <tr valign="top">
                             <td>
                                 <b><?php print_string('stagesize','scorm'); ?></b>
-                                <?php helpbutton('size', get_string('size', 'scorm'), 'scorm', true) ?><br />
+                                <?php helpbutton('size', get_string('stagesize', 'scorm'), 'scorm', true) ?><br />
                                 <input name="width" type="text" size="4" value="<?php p($form->width) ?>" alt="<?php p($strwidth) ?>" />
                                 <label for="width"><?php p($strwidth) ?></label><br />
                                 <input name="height" type="text" size="4" value="<?php p($form->height) ?>" alt="<?php p($strheight) ?>" />
@@ -336,7 +352,7 @@
                         <tr valign="top">
                             <td>
                                 <script type="text/javascript">
-                                    var popupitems = ["<?php echo implode('","',$SCORM_POPUP_OPTIONS); ?>"];
+                                    var popupitems = ["<?php echo implode('","',array_keys($SCORM_POPUP_OPTIONS)); ?>"];
                                 </script>
                                 <br /><b><?php print_string('display','scorm'); ?>:</b><br />
                                 <input type="radio" 

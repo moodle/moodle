@@ -11,7 +11,7 @@
     $id = optional_param('id', '', PARAM_INT);       // Course Module ID, or
     $a = optional_param('a', '', PARAM_INT);         // scorm ID
     $scoid = required_param('scoid', '', PARAM_INT);  // sco ID
-    $mode = optional_param('mode', '', PARAM_ALPHA); // navigation mode
+    $mode = optional_param('mode', 'normal', PARAM_ALPHA); // navigation mode
     $currentorg = optional_param('currentorg', '', PARAM_RAW); // selected organization
     $newattempt = optional_param('newattempt', 'off', PARAM_ALPHA); // the user request to start a new attempt
 
@@ -65,11 +65,8 @@
     // TOC processing
     //
     $attempt = scorm_get_last_attempt($scorm->id, $USER->id);
-    if (($newattempt=='on') && ($attempt < $scorm->maxattempt)) {
+    if (($newattempt=='on') && (($attempt < $scorm->maxattempt) || ($scorm->maxattempt == 0))) {
         $attempt++;
-        if ($mode == 'review') {
-            $mode = 'normal';
-        }
     }
     $attemptstr = '&amp;attempt=' . $attempt;
 
@@ -79,7 +76,7 @@
     if (($mode == 'browse') && ($scorm->hidebrowse == 1)) {
        $mode = 'normal';
     }
-    if (($mode == 'normal') || ($mode == 'review')) {
+    if ($mode != 'browse') {
         if ($trackdata = scorm_get_tracks($sco->id,$USER->id,$attempt)) {
             if (($trackdata->status == 'completed') || ($trackdata->status == 'passed') || ($trackdata->status == 'failed')) {
                 $mode = 'review';
@@ -94,7 +91,12 @@
     $scoidstr = '&amp;scoid='.$sco->id;
     $scoidpop = '&scoid='.$sco->id;
     $modestr = '&amp;mode='.$mode;
-    $modepop = '&mode='.$mode;
+    if ($mode == 'browse') {
+        $modepop = '&mode='.$mode;
+    } else {
+        $modepop = '';
+    }
+    $orgstr = '&currentorg='.$currentorg;
 
     $SESSION->scorm_scoid = $sco->id;
     $SESSION->scorm_status = 'Not Initialized';
@@ -118,6 +120,18 @@
     <script language="JavaScript" type="text/javascript" src="api.php?id=<?php echo $cm->id.$scoidstr.$modestr.$attemptstr ?>"></script>
 <?php
     }
+    if (($sco->previd != 0) && ($sco->previous == 0)) {
+        $scostr = '&scoid='.$sco->previd;
+        echo '    <script language="javascript">var prev="'.$CFG->wwwroot.'/mod/scorm/player.php?id='.$cm->id.$orgstr.$modepop.$scostr."\";</script>\n";
+    } else {
+        echo '    <script language="javascript">var prev="'.$CFG->wwwroot.'/mod/scorm/view.php?id='.$cm->id."\";</script>\n";
+    }
+    if (($sco->nextid != 0) && ($sco->next == 0)) {
+        $scostr = '&scoid='.$sco->nextid;
+        echo '    <script language="javascript">var next="'.$CFG->wwwroot.'/mod/scorm/player.php?id='.$cm->id.$orgstr.$modepop.$scostr."\";</script>\n";
+    } else {
+        echo '    <script language="javascript">var next="'.$CFG->wwwroot.'/mod/scorm/view.php?id='.$cm->id."\";</script>\n";
+    }
 ?>
     <div id="scormpage">
 <?php  
@@ -128,13 +142,6 @@
             <div id="toctree">
             <?php echo $result->toc; ?>
             </div>
-            <noscript>
-                <div id="noscript">
-                <?php  
-                    print_string('noscriptnoscorm','scorm'); // No Martin(i), No Party ;-)
-                ?>
-                </div>
-            </noscript>
         </div>
 <?php
         $class = ' class="toc"';
@@ -144,15 +151,6 @@
 ?>
         <div id="scormbox"<?php echo $class ?>>
 <?php
-    $orgstr = '&currentorg='.$currentorg;
-    if (($sco->previd != 0) && ($sco->previous == 0)) {
-        $scostr = '&scoid='.$sco->previd;
-        echo '<script language="javascript">var prev="'.$CFG->wwwroot.'/mod/scorm/player.php?id='.$cm->id.$orgstr.$modepop.$scostr.'";</script>';
-    }
-    if (($sco->nextid != 0) && ($sco->next == 0)) {
-        $scostr = '&scoid='.$sco->nextid;
-        echo '<script language="javascript">var next="'.$CFG->wwwroot.'/mod/scorm/player.php?id='.$cm->id.$orgstr.$modepop.$scostr.'";</script>';
-    }
     // This very big test check if is necessary the "scormtop" div
     if (
            ($mode != 'normal') ||  // We are not in normal mode so review or browse text will displayed
@@ -166,22 +164,21 @@
                    (
                        ($sco->nextid != 0) &&  // This is not the last learning object of the package
                        ($sco->next == 0)       // Moodle must manage the next link
-                   ) ||
-                   ($scorm->hidetoc == 2)      // Teacher want to display toc in a small popup menu 
+                   ) 
                )
-            )
-        ) {
+           ) || ($scorm->hidetoc == 2)      // Teacher want to display toc in a small popup menu 
+       ) {
 ?>
             <div id="scormtop">
-                <?php echo $mode == 'browse' ? '<div id="scormmode" class="left">'.get_string('browsemode','scorm')."</div>\n" : ''; ?>
-                <?php echo $mode == 'review' ? '<div id="scormmode" class="left">'.get_string('reviewmode','scorm')."</div>\n" : ''; ?>
+        <?php echo $mode == 'browse' ? '<div id="scormmode" class="left">'.get_string('browsemode','scorm')."</div>\n" : ''; ?>
+        <?php echo $mode == 'review' ? '<div id="scormmode" class="left">'.get_string('reviewmode','scorm')."</div>\n" : ''; ?>
 <?php
-        if ($scorm->hidenav == 0) {
+        if (($scorm->hidenav == 0) || ($scorm->hidetoc == 2)) {
 ?>
                 <div id="scormnav" class="right">
-<?php
+        <?php
             $orgstr = '&amp;currentorg='.$currentorg;
-            if (($sco->previd != 0) && ($sco->previous == 0)) {
+            if (($scorm->hidenav == 0) && ($sco->previd != 0) && ($sco->previous == 0)) {
                 /// Print the prev LO link
                 $scostr = '&amp;scoid='.$sco->previd;
                 $url = $CFG->wwwroot.'/mod/scorm/player.php?id='.$cm->id.$orgstr.$modestr.$scostr;
@@ -190,13 +187,14 @@
             if ($scorm->hidetoc == 2) {
  	        echo $result->tocmenu;
             }
-            if (($sco->nextid != 0) && ($sco->next == 0)) {
+            if (($scorm->hidenav == 0) && ($sco->nextid != 0) && ($sco->next == 0)) {
                 /// Print the next LO link
                 $scostr = '&amp;scoid='.$sco->nextid;
                 $url = $CFG->wwwroot.'/mod/scorm/player.php?id='.$cm->id.$orgstr.$modestr.$scostr;
-                echo '&nbsp;<a href="'.$url.'">'.get_string('next','scorm').' &gt;</a>';
+                echo '            &nbsp;<a href="'.$url.'">'.get_string('next','scorm').' &gt;</a>';
             }
-?>
+        ?>
+
                 </div>
 <?php
         } 
@@ -206,28 +204,34 @@
     } // The end of the very big test
 ?>
             <div id="scormobject" class="right">
+                <noscript>
+                    <div id="noscript">
+                        <?php print_string('noscriptnoscorm','scorm'); // No Martin(i), No Party ;-) ?>
+
+                    </div>
+                </noscript>
 <?php
     if ($result->prerequisites) {
         if ($scorm->popup == 0) {
             if (strpos('MSIE',$_SERVER['HTTP_USER_AGENT']) === false) { 
                 /// Internet Explorer does not has full support to objects
 ?>
-                    <iframe id="main"
-                            width="<?php echo $scorm->width<=100 ? $scorm->width.'%' : $scorm->width ?>" 
-                            height="<?php echo $scorm->height<=100 ? $scorm->height.'%' : $scorm->height ?>" 
-                            src="loadSCO.php?id=<?php echo $cm->id.$scoidstr.$modestr ?>">
-                    </iframe>
+                <iframe id="main"
+                        width="<?php echo $scorm->width<=100 ? $scorm->width.'%' : $scorm->width ?>" 
+                        height="<?php echo $scorm->height<=100 ? $scorm->height.'%' : $scorm->height ?>" 
+                        src="loadSCO.php?id=<?php echo $cm->id.$scoidstr.$modestr ?>">
+                </iframe>
 <?php
             } else {
 ?>
-                    <object id="main" 
-                            class="scoframe" 
-                            width="<?php echo $scorm->width<=100 ? $scorm->width.'%' : $scorm->width ?>" 
-                            height="<?php echo $scorm->height<=100 ? $scorm->height.'%' : $scorm->height ?>" 
-                            data="loadSCO.php?id=<?php echo $cm->id.$scoidstr.$modestr ?>"
-                            type="text/html">
-                         <?php print_string('noobjectsupport', 'scorm'); ?>
-                    </object>
+                <object id="main" 
+                        class="scoframe" 
+                        width="<?php echo $scorm->width<=100 ? $scorm->width.'%' : $scorm->width ?>" 
+                        height="<?php echo $scorm->height<=100 ? $scorm->height.'%' : $scorm->height ?>" 
+                        data="loadSCO.php?id=<?php echo $cm->id.$scoidstr.$modestr ?>"
+                        type="text/html">
+                     <?php print_string('noobjectsupport', 'scorm'); ?>
+                </object>
 <?php
             }
         } else {
@@ -251,7 +255,7 @@
                             return windowobj;
                         }
 
-                        url = "loadSCO.php?id=<?php echo $cm->id.$scoidpop.$modepop ?>";
+                        url = "loadSCO.php?id=<?php echo $cm->id.$scoidpop ?>";
                         width = <?php p($scorm->width) ?>;
                         height = <?php p($scorm->height) ?>;
                         var main = openpopup(url, "<?php p($scorm->name) ?>", "<?php p($scorm->options) ?>", width, height);
@@ -294,3 +298,4 @@
     </div> <!-- Page -->
 </body>
 </html>
+

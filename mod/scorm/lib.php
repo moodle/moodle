@@ -2,22 +2,41 @@
 
 /// Library of functions and constants for module scorm
 
-define('VALUESCOES', '0');
-define('VALUEHIGHEST', '1');
-define('VALUEAVERAGE', '2');
-define('VALUESUM', '3');
-$SCORM_GRADE_METHOD = array (VALUESCOES => get_string('gradescoes', 'scorm'),
-                             VALUEHIGHEST => get_string('gradehighest', 'scorm'),
-                             VALUEAVERAGE => get_string('gradeaverage', 'scorm'),
-                             VALUESUM => get_string('gradesum', 'scorm'));
-$SCORM_POPUP_OPTIONS = array('resizable', 'scrollbars', 'directories', 'location',
-                              'menubar', 'toolbar', 'status');
+define('GRADESCOES', '0');
+define('GRADEHIGHEST', '1');
+define('GRADEAVERAGE', '2');
+define('GRADESUM', '3');
+$SCORM_GRADE_METHOD = array (GRADESCOES => get_string('gradescoes', 'scorm'),
+                             GRADEHIGHEST => get_string('gradehighest', 'scorm'),
+                             GRADEAVERAGE => get_string('gradeaverage', 'scorm'),
+                             GRADESUM => get_string('gradesum', 'scorm'));
+
+define('VALUEHIGHEST', '0');
+define('VALUEAVERAGE', '1');
+define('VALUEFIRST', '2');
+define('VALUELAST', '3');
+$SCORM_WHAT_GRADE = array (VALUEHIGHEST => get_string('highestattempt', 'scorm'),
+                           VALUEAVERAGE => get_string('averageattempt', 'scorm'),
+                           VALUEFIRST => get_string('firstattempt', 'scorm'),
+                           VALUELAST => get_string('lastattempt', 'scorm'));
+
+$SCORM_POPUP_OPTIONS = array('resizable'=>1, 
+                             'scrollbars'=>1, 
+                             'directories'=>0, 
+                             'location'=>0,
+                             'menubar'=>0, 
+                             'toolbar'=>0, 
+                             'status'=>0);
 $stdoptions = '';
-foreach ($SCORM_POPUP_OPTIONS as $popupopt) {
-    $stdoptions .= $popupopt.'=1';
+foreach ($SCORM_POPUP_OPTIONS as $popupopt => $value) {
+    $stdoptions .= $popupopt.'='.$value;
     if ($popupopt != 'status') {
         $stdoptions .= ',';
     }
+}
+
+if (!isset($CFG->scorm_maxattempts)) {
+    set_config('scorm_maxattempts','6');
 }
 
 if (!isset($CFG->scorm_frameheight)) {
@@ -39,10 +58,12 @@ if (!isset($CFG->scorm_framewidth)) {
 */
 function scorm_add_instance($scorm) {
 
-    global $CFG,$SCORM_POPUP_OPTIONS;
+    global $CFG;
     $scorm->timemodified = time();
 
     $scorm = scorm_option2text($scorm);
+    $scorm->width = str_replace('%','',$scorm->width);
+    $scorm->height = str_replace('%','',$scorm->height);
 
     $id = insert_record('scorm', $scorm);
 
@@ -73,12 +94,14 @@ function scorm_add_instance($scorm) {
 */
 function scorm_update_instance($scorm) {
 
-    global $CFG,$SCORM_POPUP_OPTIONS;
+    global $CFG;
 
     $scorm->timemodified = time();
     $scorm->id = $scorm->instance;
 
     $scorm = scorm_option2text($scorm);
+    $scorm->width = str_replace('%','',$scorm->width);
+    $scorm->height = str_replace('%','',$scorm->height);
 
     // Check if scorm manifest needs to be reparsed
     if ($scorm->launch == 0) {
@@ -483,6 +506,8 @@ function scorm_scandir($directory) {
 }
 
 function scorm_option2text($scorm) {
+    global $SCORM_POPUP_OPTIONS;
+
     if (isset($scorm->popup)) {
         if ($scorm->popup) {
             $optionlist = array();

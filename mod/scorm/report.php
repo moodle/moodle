@@ -74,6 +74,9 @@
         }
         print_heading(format_string($scorm->name));
     }
+
+    $scormpixdir = $CFG->modpixpath.'/scorm/pix';
+
     if (empty($b) ) {
         if ($scoes = get_records_select("scorm_scoes","scorm='$scorm->id' ORDER BY id")) {
             if ($scousers=get_records_select("scorm_scoes_track", "scormid='$scorm->id' GROUP BY userid,scormid", "", "userid,scormid")) {
@@ -92,8 +95,6 @@
                         $table->size[] = '*';
                     }
                 }
-
-                $scormpixdir = $CFG->modpixpath.'/scorm/pix';
 
                 foreach ($scousers as $scouser) {
                     if ($userdata = scorm_get_user_data($scouser->userid)) {

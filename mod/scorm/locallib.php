@@ -27,7 +27,7 @@ function scorm_datadir($strPath)
                     $randstring .= $char;
                     $lchar = $char;
             } 
-            $datadir='/'.randstring;
+            $datadir='/'.$randstring;
         } while (file_exists($strPath.$datadir));
         mkdir($strPath.$datadir, $CFG->directorypermissions);
         @chmod($strPath.$datadir, $CFG->directorypermissions);  // Just in case mkdir didn't do it
@@ -391,6 +391,10 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
     global $CFG;
 
     $strexpand = get_string('expcoll','scorm');
+    $modestr = '';
+    if ($mode == 'browse') {
+        $modestr = '&amp;mode='.$mode;
+    } 
     $scormpixdir = $CFG->modpixpath.'/scorm/pix';
     
     $result = new stdClass();
@@ -398,8 +402,11 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
     $tocmenus = array();
     $result->prerequisites = true;
     $incomplete = false;
-    $organizationsql = '';
     
+    //
+    // Get the current organization infos
+    //
+    $organizationsql = '';
     if (!empty($currentorg)) {
         if (($organizationtitle = get_field('scorm_scoes','title','scorm',$scorm->id,'identifier',$currentorg)) != '') {
             $result->toc .= "\t<li>$organizationtitle</li>\n";
@@ -407,11 +414,17 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
         }
         $organizationsql = "AND organization='$currentorg'";
     }
+    //
+    // If not specified retrieve the last attempt number
+    //
     if (empty($attempt)) {
         $attempt = scorm_get_last_attempt($scorm->id, $user->id);
     }
     $result->attemptleft = $scorm->maxattempt - $attempt;
     if ($scoes = get_records_select('scorm_scoes',"scorm='$scorm->id' $organizationsql order by id ASC")){
+        //
+        // Retrieve user tracking data for each learning object
+        // 
         $usertracks = array();
         foreach ($scoes as $sco) {
             if (!empty($sco->launch)) {
@@ -514,7 +527,7 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
                     if ($sco->id == $scoid) {
                         $result->prerequisites = true;
                     }
-                    $url = $CFG->wwwroot.'/mod/scorm/player.php?a='.$scorm->id.'&amp;currentorg='.$currentorg.'&amp;mode='.$mode.'&amp;scoid='.$sco->id;
+                    $url = $CFG->wwwroot.'/mod/scorm/player.php?a='.$scorm->id.'&amp;currentorg='.$currentorg.$modestr.'&amp;scoid='.$sco->id;
                     $result->toc .= '&nbsp'.$startbold.'<a href="'.$url.'">'.format_string($sco->title).'</a>'.$score.$endbold."</li>\n";
                     $tocmenus[$sco->id] = scorm_repeater('&minus;',$level) . '&gt;' . format_string($sco->title);
                 } else {
@@ -569,7 +582,7 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
           </script>'."\n";
     }
     
-    $url = $CFG->wwwroot.'/mod/scorm/player.php?a='.$scorm->id.'&amp;currentorg='.$currentorg.'&amp;mode='.$mode.'&amp;scoid=';
+    $url = $CFG->wwwroot.'/mod/scorm/player.php?a='.$scorm->id.'&amp;currentorg='.$currentorg.$modestr.'&amp;scoid=';
     $result->tocmenu = popup_form($url,$tocmenus, "tocmenu", $sco->id, '', '', '', true);
 
     return $result;
@@ -1097,7 +1110,7 @@ function scorm_course_format_display($user,$course) {
         } 
         $headertext .= '</td></tr><tr><td'.$colspan.'>'.format_text(get_string('summary').':<br />'.$scorm->summary).'</td></tr></table>';
         print_simple_box($headertext,'','100%');
-        scorm_view_display($user, $scorm, 'view.php?id='.$course->id, $cm);
+        scorm_view_display($user, $scorm, 'view.php?id='.$course->id, $cm, '100%');
     } else {
         if (isteacheredit($course->id, $user->id)) {
             // Create a new activity
@@ -1109,12 +1122,12 @@ function scorm_course_format_display($user,$course) {
     echo '</div>';
 }
 
-function scorm_view_display ($user, $scorm, $action, $cm) {
+function scorm_view_display ($user, $scorm, $action, $cm, $blockwidth='') {
     global $CFG;
 
     $organization = optional_param('organization', '', PARAM_INT);
 
-    print_simple_box_start('center','100%');
+    print_simple_box_start('center',$blockwidth);
 ?>
         <div class="structurehead"><?php print_string('coursestruct','scorm') ?></div>
 <?php
@@ -1164,7 +1177,7 @@ function scorm_view_display ($user, $scorm, $action, $cm) {
                           echo '<input type="hidden" name="mode" value="review" />'."\n";
                       }
                   }
-                  if (($incomplete === false) && ($result->attemptleft > 0)) {
+                  if (($incomplete === false) && (($result->attemptleft > 0)||($scorm->maxattempt == 0))) {
 ?>
                   <br />
                   <input type="checkbox" id="a" name="newattempt" />
