@@ -53,10 +53,13 @@
         print_string('dbmigratewarning2','admin');
         print_simple_box_end();
         //put the site in maintenance mode
-        $file = fopen($filename, 'w');
-        fwrite($file, stripslashes('site maintenance in progress'));
-        fclose($file);
-
+        if touch($filename) {
+            $file = fopen($filename, 'w');
+            fwrite($file, stripslashes('maintinprogress','admin'));
+            fclose($file);
+        } else {
+            notify (get_string('maintfileopenerror','admin')
+        }
         //print second confirmation box
         echo '<form name="migratefrom" action="utfdbmigrate.php" method="POST">';
         echo '<input name="confirm" type="hidden" value="1" />';
