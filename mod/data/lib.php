@@ -136,7 +136,8 @@ class data_field_base {    //base class (text field)
     function display_browse_field($fieldid, $recordid){
         if ($content = get_record('data_content', 'fieldid', $fieldid, 'recordid', $recordid)){
             if (isset($content->content)) {                
-                $str = format_text($content->content, $content->content1);
+                $options->para = false;
+                $str = format_text($content->content, $content->content1, $options);
             } else {
                 $str = '';
             }
