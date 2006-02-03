@@ -98,7 +98,7 @@ $string['gdversionhelp'] = '<p>あなたのサーバには、GDがインスト�
 <p>Unix環境下で、GDをPHPにインストールするには、PHPを --with-gd パラメータでコンパイルしてください。</p>
 
 <p>Windows環境下では、php.iniでlibgd.dllを参照している行のコメントアウトを取り除いてください。</p>';
-$string['globalsquotes'] = 'Globalsのハンドリングが安全ではありません。';
+$string['globalsquotes'] = '安全では無いGlobalsのハンドリング';
 $string['globalsquoteserror'] = 'PHP設定を修正してください: register_globalsを「Off」および/またはmagic_quotes_gpcを「On」';
 $string['globalsquoteshelp'] = '<p>Magic Quotes GPCの無効化およびRegister Globalsの有効化の同時設定お勧めできません。</p>
 

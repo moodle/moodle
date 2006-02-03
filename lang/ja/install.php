@@ -98,7 +98,7 @@ $string['gdversionhelp'] = '<p>¤¢¤Ê¤¿¤Î¥µ¡¼¥Ð¤Ë¤Ï¡¢GD¤¬¥¤¥ó¥¹¥È¡¼¥ë¤µ¤ì¤Æ¤¤¤Ê¤¤¤
 <p>Unix´Ä¶­²¼¤Ç¡¢GD¤òPHP¤Ë¥¤¥ó¥¹¥È¡¼¥ë¤¹¤ë¤Ë¤Ï¡¢PHP¤ò --with-gd ¥Ñ¥é¥á¡¼¥¿¤Ç¥³¥ó¥Ñ¥¤¥ë¤·¤Æ¤¯¤À¤µ¤¤¡£</p>
 
 <p>Windows´Ä¶­²¼¤Ç¤Ï¡¢php.ini¤Çlibgd.dll¤ò»²¾È¤·¤Æ¤¤¤ë¹Ô¤Î¥³¥á¥ó¥È¥¢¥¦¥È¤ò¼è¤ê½ü¤¤¤Æ¤¯¤À¤µ¤¤¡£</p>';
-$string['globalsquotes'] = 'Globals¤Î¥Ï¥ó¥É¥ê¥ó¥°¤¬°ÂÁ´¤Ç¤Ï¤¢¤ê¤Þ¤»¤ó¡£';
+$string['globalsquotes'] = '°ÂÁ´¤Ç¤ÏÌµ¤¤Globals¤Î¥Ï¥ó¥É¥ê¥ó¥°';
 $string['globalsquoteserror'] = 'PHPÀßÄê¤ò½¤Àµ¤·¤Æ¤¯¤À¤µ¤¤: register_globals¤ò¡ÖOff¡×¤ª¤è¤Ó/¤Þ¤¿¤Ïmagic_quotes_gpc¤ò¡ÖOn¡×';
 $string['globalsquoteshelp'] = '<p>Magic Quotes GPC¤ÎÌµ¸ú²½¤ª¤è¤ÓRegister Globals¤ÎÍ­¸ú²½¤ÎÆ±»þÀßÄê¤ª´«¤á¤Ç¤­¤Þ¤»¤ó¡£</p>
 
