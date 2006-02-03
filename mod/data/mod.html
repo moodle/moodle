@@ -163,9 +163,9 @@
         $a->teachers = $course->teachers;
         $a->students = $course->students;
         $options = array(PARTICIPANTS_T => $a->teachers,
-                         PARTICIPANTS_S => $a->students,
                          PARTICIPANTS_TS => get_string('teachersandstudents', 'data', $a));
         choose_from_menu($options, 'participants', $form->participants, '');
+        helpbutton('participants', get_string('participants', 'data'), 'data');
     ?>
     </td>
 </tr>
@@ -178,6 +178,7 @@
         $countoptions = array();
         for($count=1;$count<=DATAMAXENTRIES;$count++) $countoptions[$count] = $count;
         choose_from_menu($countoptions, 'requiredentries', $form->requiredentries, get_string('none'));
+        helpbutton('requiredentries', get_string('requiredentries', 'data'), 'data');
     ?>
     </td>
 </tr>
@@ -185,14 +186,21 @@
 <tr valign="top">
     <td>&nbsp;</td>
     <td><b><?php print_string('requiredentriestoview', 'data') ?>: </b>
-        <?php choose_from_menu($countoptions, 'requiredentriestoview', $form->requiredentriestoview, get_string('none')) ?>
+        <?php
+            choose_from_menu($countoptions, 'requiredentriestoview', $form->requiredentriestoview, get_string('none'));
+            helpbutton('requiredentriestoview', get_string('requiredentriestoview', 'data'), 'data');
+        ?>
     </td>
 </tr>
 
 
 <tr valign="top">
     <td align="right"><b><?php print_string('maxentries', 'data') ?>:</b></td>
-    <td><?php choose_from_menu($countoptions, 'maxentries', $form->maxentries, get_string('nomaximum', 'data')) ?>
+    <td>
+        <?php
+            choose_from_menu($countoptions, 'maxentries', $form->maxentries, get_string('nomaximum', 'data'));
+            helpbutton('maxentries', get_string('maxentries', 'data'), 'data');
+        ?>
     </td>
 </tr>
 
@@ -203,6 +211,7 @@
     <?php
         $ynoptions = array( 0 => get_string('no'), 1 => get_string('yes'));
         choose_from_menu($ynoptions, 'comments', $form->comments, '');
+        helpbutton('comments', get_string('comments', 'data'), 'data');
    ?>
    </td>
 </tr>
