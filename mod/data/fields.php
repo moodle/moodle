@@ -26,14 +26,8 @@
     require_once('lib.php');
     require_once($CFG->libdir.'/blocklib.php');
 
-    define('PAGE_DATA_FIELDS',   'mod-data-fields');
-    define('PAGE_DATA', PAGE_DATA_FIELDS);
-
     require_once('pagelib.php');
     require_login();
-
-    page_map_class(PAGE_DATA_FIELDS, 'page_data');
-    $DEFINEDPAGES = array(PAGE_DATA_FIELDS);
 
     $id    = optional_param('id', 0, PARAM_INT);    // course module id
     $d     = optional_param('d', 0, PARAM_INT);    // database id
@@ -72,34 +66,10 @@
     }
 
     add_to_log($course->id, 'data', 'view', "view.php?id=$cm->id", $data->id, $cm->id);
-    
-// Initialize $PAGE, compute blocks
 
-    $PAGE       = page_create_instance($data->id);
-    $pageblocks = blocks_setup($PAGE);
-    $blocks_preferred_width = bounded_number(180, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]), 210);
+    $strdata = get_string('modulenameplural','data');
 
-/// Print the page header
-
-    if (!empty($edit) && $PAGE->user_allowed_editing()) {
-        if ($edit == 'on') {
-            $USER->editing = true;
-        } else if ($edit == 'off') {
-            $USER->editing = false;
-        }
-    }
-
-    $PAGE->print_header($course->shortname.': %fullname%');
-
-    echo '<table id="layout-table"><tr>';
-
-    if(!empty($CFG->showblocksonmodpages) && (blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $PAGE->user_is_editing())) {
-        echo '<td style="width: '.$blocks_preferred_width.'px;" id="left-column">';
-        blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
-        echo '</td>';
-    }
-
-    echo '<td id="middle-column">';
+    print_header_simple($data->name, "", "<a href='index.php?id=$course->id'>$strdata</a> -> $data->name", "", "", true, "", navmenu($course));
 
     print_heading(format_string($data->name));
     
@@ -315,8 +285,6 @@
     }
 
 /// Finish the page
-    echo '</td></tr></table>';
-
     print_footer($course);
 
 ?>

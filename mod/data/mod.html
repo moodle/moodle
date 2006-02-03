@@ -50,6 +50,9 @@
     if (!isset($form->ratings)) {
         $form->ratings = 0;
     }
+    if (!isset($form->approval)) {
+        $form->approval = 0;
+    }
 ?>
 
 <script type="text/javascript" language="javascript">
@@ -216,7 +219,15 @@
    </td>
 </tr>
 
-
+<tr valign="top">
+    <td align="right"><b><?php print_string('requireapproval', 'data') ?>:</b></td>
+    <td>
+    <?php
+        $ynoptions = array( 0 => get_string('no'), 1 => get_string('yes'));
+        choose_from_menu($ynoptions, 'approval', $form->approval, '');
+   ?>
+   </td>
+</tr>
 
 <?php if (!empty($CFG->data_enablerssfeeds) and !empty($CFG->enablerssfeeds)) { ?>
 <tr valign="top">

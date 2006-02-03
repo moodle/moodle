@@ -213,6 +213,13 @@ class data_field_base {    //base class (text field)
     }
     
     
+    /* returns the sortable field for the content. By default, it's just content
+     * but for some plugins, it could be content 1 - content4
+     */
+    function get_sort_field() {
+        return 'content';
+    }
+    
 }//end of class data_field_base
 
 
@@ -648,14 +655,15 @@ function data_get_coursemodule_info($coursemodule) {
  *       @param string $listmode                                        *
  * output null                                                          *
  ************************************************************************/
-function data_print_template($records, $data, $search, $listmode){
-    global $CFG;
+function data_print_template($records, $data, $search, $listmode, $sort, $page, $rid, $order){
+    global $CFG, $course;
     
     foreach ($records as $record){    //only 1 record for single mode
+
         //replacing tags
         $patterns = array();
         $replacement = array();
-        if ($search){    //the ids are different for the 2 searches
+        if ($search || $sort){    //the ids are different for the 2 searches
             $record->id = $record->recordid;
         }
 
@@ -668,6 +676,7 @@ function data_print_template($records, $data, $search, $listmode){
             $replacement[] = highlight($search, $g->display_browse_field($cfield->id, $record->id));
             unset($g);
         }
+
         ///replacing special tags (##Edit##, ##Delete##, ##More##)
         $patterns[]='/\#\#Edit\#\#/i';
         $patterns[]='/\#\#Delete\#\#/i';
@@ -686,13 +695,20 @@ function data_print_template($records, $data, $search, $listmode){
         }else {
             $replacement[] = '';
         }
-        $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/view.php?d='
-                         .$data->id.'&amp;rid='.$record->id.'"><img src="'.$CFG->pixpath.'/i/search.gif" height="11" width="11" border="0" alt="'.get_string('more').'" /></a>';
+        $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;rid='.$record->id.'&amp;search='.$search.'&amp;sort='.$sort.'&amp;order='.$order.'&amp;"><img src="'.$CFG->pixpath.'/i/search.gif" height="11" width="11" border="0" alt="'.get_string('more').'" /></a>';
 
         ///actual replacement of the tags
         $newtext = preg_replace($patterns, $replacement, $data->{$listmode});
         
         echo $newtext;    //prints the template with tags replaced
+
+        //if this record is not yet approved, and database requires approval, print silly button
+
+        $record = get_record('data_records','id',$record->id);
+
+        if (isteacher($course->id) && (!$record->approved) && $data->approval) {
+            data_print_approve_button($record->id, $data->id, $page, $rid, $search, $sort, $order);
+        }
         echo '<p></p>';
     }
 }
@@ -705,9 +721,9 @@ function data_print_template($records, $data, $search, $listmode){
  *       @param string $search                                          *
  * output null                                                          *
  ************************************************************************/
-function data_print_preference_form($data, $perpage, $search){
+function data_print_preference_form($data, $perpage, $search, $sort='', $order='ASC'){
     echo '<br />';
-    echo '<form name="options" action="view.php?d='.$data->id.'&amp;search='.s($search).'" method="post">';
+    echo '<form name="options" action="view.php?d='.$data->id.'&amp;search='.s($search).'&amp;sort='.s($sort).'&amp;order='.s($order).'" method="post">';
     echo '<table id="optiontable" align="center">';
     echo '<tr><td>'.get_string('search').'</td>';
     echo '<td><input type="text" size = "16" name="search" value="'.s($search).'" />';
@@ -717,18 +733,62 @@ function data_print_preference_form($data, $perpage, $search){
     echo ':</td>';
     echo '<input type="hidden" id="updatepref" name="updatepref" value="1" />';
     echo '<td align="left">';
-    $pagesizes = array(1=>1,2=>2,3=>3,4=>4,5=>5,6=>6,7=>7,8=>8,9=>9,10=>10,15=>15,20=>20,30=>30,40=>40,50=>50);
+    $pagesizes = array(1=>1,2=>2,3=>3,4=>4,5=>5,6=>6,7=>7,8=>8,9=>9,10=>10,15=>15,20=>20,30=>30,40=>40,50=>50,100=>100,200=>200,300=>300,400=>400,500=>500,1000=>1000);
     choose_from_menu($pagesizes,'perpage1',$perpage,'choose','','0');
-    echo '<input type="text" id="perpage" name="perpage" size="2" value="'.$perpage.'" />';
     echo '</td></tr>';
     echo '<tr>';
+    echo '<tr><td>';
+    echo 'Sort by:';
+    echo '</td><td>';
+    //foreach field, print the option
+    $fields = get_records('data_fields','dataid',$data->id);
+    echo '<select name="sort"><option value="0">'.get_string('dateentered','data').'</option>';
+    foreach ($fields as $field) {
+        if ($field->id == $sort) {
+            echo '<option value="'.$field->id.'" SELECTED>'.$field->name.'</option>';
+        } else {
+            echo '<option value="'.$field->id.'">'.$field->name.'</option>';
+        }
+    }
+    echo '</select>';
+    echo '<select name="order">';
+    if ($order == "ASC") {
+        echo '<option value="ASC" SELECTED>'.get_string('ascending','data').'</option>';
+    } else {
+        echo '<option value="ASC">'.get_string('ascending','data').'</option>';
+    }
+    if ($order == "DESC") {
+        echo '<option value="DESC" SELECTED>'.get_string('descending','data').'</option>';
+    } else {
+        echo '<option value="DESC">'.get_string('descending','data').'</option>';
+    }
+    //print ASC or DESC
+    echo '</td></tr><tr>';
     echo '<td colspan="2" align="center">';
     echo '<input type="submit" value="'.get_string('savepreferences').'" />';
     echo '</td></tr></table>';
     echo '</form>';
 }
 
+//silly function that prints a button
+function data_print_approve_button($recordid, $d, $page='0', $rid='0', $search='', $sort='', $order='') {
+    echo '<div align="center"><form action="approve.php" method="GET">';
+    echo '<input type="hidden" name="d" value="'.$d.'" />';
+    echo '<input type="hidden" name="rid" value="'.$rid.'" />';
+    echo '<input type="hidden" name="page" value="'.$page.'" />';
+    echo '<input type="hidden" name="search" value="'.$search.'" />';
+    echo '<input type="hidden" name="sort" value="'.$sort.'" />';
+    echo '<input type="hidden" name="order" value="'.$order.'" />';
+    echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
+    echo '<input type="hidden" name="recordid" value="'.$recordid.'" />';
+    echo '<input type="submit" value="'.get_string('approve').'" />';
+    echo '</form></div>';
+}
 
-
-
+//silly function that approves a record
+function data_approve_record($recordid) {
+    $record = get_record('data_records','id',$recordid);
+    $record->approved = 1;
+    update_record('data_records',$record);
+}
 ?>

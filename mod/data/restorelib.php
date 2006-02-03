@@ -73,7 +73,7 @@ function data_restore_mods($mod,$restore) {
         $database->rsstemplate = backup_todb($info['MOD']['#']['RSSTEMPLATE']['0']['#']);
         $database->listtemplateheader = backup_todb($info['MOD']['#']['LISTTEMPLATEHEADER']['0']['#']);
         $database->listtemplatefooter = backup_todb($info['MOD']['#']['LISTTEMPLATEFOOTER']['0']['#']);
-
+        $database->approval = backup_todb($info['MOD']['#']['APPROVAL']['0']['#']);
         $newid = insert_record ("data",$database);
 
         //Do some output
@@ -172,7 +172,7 @@ function data_records_restore_mods ($old_data_id, $new_data_id, $info, $restore)
         $record -> groupid = backup_todb($rec_info['#']['GROUPID']['0']['#']);
         $record -> timecreated = backup_todb($rec_info['#']['TIMECREATED']['0']['#']);
         $record -> timemodified = backup_todb($rec_info['#']['TIMEMODIFIED']['0']['#']);
-        
+        $record -> approved = backup_todb($rec_info['#']['APPROVED']['0']['#']);
         $user = backup_getid($restore->backup_unique_code,"user",$record->userid);
 
         if ($user) {

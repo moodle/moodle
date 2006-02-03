@@ -88,6 +88,7 @@ function data_backup_one_mod($bf,$preferences,$data) {
     fwrite ($bf,full_tag("RSSTEMPLATE",4,false,$data->rsstemplate));
     fwrite ($bf,full_tag("LISTTEMPLATEHEADER",4,false,$data->listtemplateheader));
     fwrite ($bf,full_tag("LISTTEMPLATEFOOTER",4,false,$data->listtemplatefooter));
+    fwrite ($bf,full_tag("APPROVAL",4,false,$data->approval));
     
     // if we've selected to backup users info, then call any other functions we need
     // including backing up individual files
@@ -280,6 +281,7 @@ function backup_data_records($bf,$preferences,$dataid){
                 fwrite ($bf,full_tag("DATAID",6,false,$rec_sub->dataid));
                 fwrite ($bf,full_tag("TIMECREATED",6,false,$rec_sub->timecreated));
                 fwrite ($bf,full_tag("TIMEMODIFIED",6,false,$rec_sub->timemodified));
+                fwrite ($bf,full_tag("APPROVED",6,false,$rec_sub->approved));
                 //End submission
 
                 backup_data_content($bf,$preferences,$rec_sub->id);

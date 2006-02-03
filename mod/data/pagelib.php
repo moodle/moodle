@@ -1,11 +1,12 @@
 <?php // $Id$
 
 require_once($CFG->libdir.'/pagelib.php');
-define('PAGE_DATA',   'mod-data');
 
-page_map_class(PAGE_DATA, 'page_data');
+define('PAGE_DATA_VIEW',   'mod-data-view');
 
-$DEFINEDPAGES = array(PAGE_DATA);
+page_map_class(PAGE_DATA_VIEW, 'page_data');
+
+$DEFINEDPAGES = array(PAGE_DATA_VIEW);
 /*
 */
 
@@ -81,7 +82,7 @@ class page_data extends page_generic_activity {
     }
 
     function get_type() {
-        return PAGE_DATA;
+        return PAGE_DATA_VIEW;
     }
 }
 

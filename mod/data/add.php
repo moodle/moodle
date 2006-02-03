@@ -26,14 +26,8 @@
     require_once('lib.php');
     require_once($CFG->libdir.'/blocklib.php');
 
-    define('PAGE_DATA_ADD', 'mod-data-add');
-    define('PAGE_DATA', PAGE_DATA_ADD);
-
     require_once('pagelib.php');
     require_login();
-
-    page_map_class(PAGE_DATA_ADD, 'page_data');
-    $DEFINEDPAGES = array(PAGE_DATA_ADD,);
 
     $mode ='addtemplate';    //define the mode for this page, only 1 mode available
     $id    = optional_param('id', 0, PARAM_INT);    // course module id
@@ -77,11 +71,6 @@
   
     add_to_log($course->id, 'data', 'view', "view.php?id=$cm->id", $data->id, $cm->id);
 
-// Initialize $PAGE, compute blocks
-    $PAGE       = page_create_instance($data->id);
-    $pageblocks = blocks_setup($PAGE);
-    $blocks_preferred_width = bounded_number(180, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]), 210);
-
 /// Print the page header
 
     if (!empty($edit) && $PAGE->user_allowed_editing()) {
@@ -92,17 +81,9 @@
         }
     }
 
-    $PAGE->print_header($course->shortname.': %fullname%');
+    $strdata = get_string('modulenameplural','data');
 
-    echo '<table id="layout-table"><tr>';
-
-    if(!empty($CFG->showblocksonmodpages) && (blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $PAGE->user_is_editing())) {
-        echo '<td style="width: '.$blocks_preferred_width.'px;" id="left-column">';
-        blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
-        echo '</td>';
-    }
-
-    echo '<td id="middle-column">';
+    print_header_simple($data->name, "", "<a href='index.php?id=$course->id'>$strdata</a> -> $data->name", "", "", true, "", navmenu($course));
 
     print_heading(format_string($data->name));
 
@@ -136,7 +117,15 @@
     if ($datarecord = data_submitted() and confirm_sesskey()) {        
         //if rid is present, we are in updating mode
         if ($rid){
+
+            //set flag to unapproved after each edit
+            $record = get_record('data_records','id',$rid);
+            $record->approved = 0;
+            update_record('data_records',$record);
+
             foreach ($datarecord as $name=>$value){
+
+
                 //this creates a new field subclass object
                 if ($name != 'MAX_FILE_SIZE' && $name != 'sesskey'){
                     $currentfield = data_get_field_from_name($name);
@@ -163,13 +152,22 @@
                 }
             }    ///End of Empty form checking
 
+
             if (!$emptyform && $recordid = data_add_record($data->id)){    //add instance to data_record
+                $fields = get_records('data_fields','dataid',$data->id);
+                
+                //do a manual round of inserting, to make sure even empty conentes get stored
+                foreach ($fields as $field) {
+                    $content ->recordid = $recordid;
+                    $content ->fieldid = $field->id;
+                    insert_record('data_content',$content);
+                }
                 //for each field in the add form, add it to the data_content.
                 foreach ($datarecord as $name => $value){
                     if ($name != 'MAX_FILE_SIZE' && $name != 'sesskey'){  //hack to skip these inputs
                         $currentfield = data_get_field_from_name($name);
                         //use native subclass method to sore field data
-                        $currentfield->store_data_content($currentfield->id, $recordid, $value, $name);
+                        $currentfield->update_data_content($currentfield->id, $recordid, $value, $name);
                     }
                 }
                 $entrysaved = true;
@@ -244,8 +242,6 @@
     echo '</form>';
 
 /// Finish the page
-    echo '</td></tr></table>';
-    
     
     // Print the stuff that need to come after the form fields.
     $storedFields = get_records('data_fields', 'dataid', $data->id);
@@ -256,7 +252,6 @@
         echo "\n\n";
         $fieldObj->print_after_form();
     }
-    
     
     print_footer($course);
 ?>

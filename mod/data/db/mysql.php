@@ -13,6 +13,11 @@ function data_upgrade($oldversion) {
         table_column("data_content", "", "content4", "longtext", "", "", "", "not null");
     }
 
+    if ($oldversion < 2006011901) {
+        table_column("data", "", "approval", "tinyint", "4", "", "", "not null");
+        table_column("data_records", "", "approved", "tinyint", "4", "", "", "not null");
+    }
+
     return true;
 }
 

@@ -32,6 +32,7 @@ CREATE TABLE prefix_data (
   rsstemplate text NOT NULL default '',
   listtemplateheader text NOT NULL default '',
   listtemplatefooter text NOT NULL default '',
+  approval tinyint(4) unsigned NOT NULL default '0',
   PRIMARY KEY  (id)
 ) TYPE=MyISAM COMMENT='Defines settings for each Database activity';
 
@@ -76,6 +77,7 @@ CREATE TABLE prefix_data_records (
   dataid int(10) unsigned NOT NULL default '0',
   timecreated int(10) unsigned NOT NULL default '0',
   timemodified int(10) unsigned NOT NULL default '0',
+  approved tinyint(4) unsigned NOT NULL default '0',
   PRIMARY KEY  (id)
 ) TYPE=MyISAM;
 

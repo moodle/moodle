@@ -26,14 +26,8 @@
     require_once('lib.php');
     require_once($CFG->libdir.'/blocklib.php');
 
-    define('PAGE_DATA_VIEW',   'mod-data-view');
-    define('PAGE_DATA', PAGE_DATA_VIEW);
-
     require_once('pagelib.php');
     require_login();
-
-    page_map_class(PAGE_DATA_VIEW, 'page_data');
-    $DEFINEDPAGES = array(PAGE_DATA_VIEW,);
 
     $id    = optional_param('id', 0, PARAM_INT);  // course module id
     $d     = optional_param('d', 0, PARAM_INT);   // database id
@@ -41,6 +35,9 @@
     $page = optional_param('page', 0, PARAM_INT);    //offset of the current record
     $rid = optional_param('rid', 0, PARAM_INT);    //record id
     $perpagemenu = optional_param('perpage1', 0, PARAM_INT);    //value from drop down
+    $sort = optional_param('sort',0,PARAM_INT);    //sort by field
+    $order = optional_param('order','ASC',PARAM_ALPHA);    //sort order
+    
     
     if ($id) {
         if (! $cm = get_record('course_modules', 'id', $id)) {
@@ -134,6 +131,9 @@
 
 /// Print the browsing interface
 
+    if (optional_param('approved','0',PARAM_INT)) {
+        print_heading(get_string('recordapproved','data'));
+    }
     /***************************
      * code to delete a record *
      ***************************/
@@ -194,37 +194,125 @@
      *****************************/
     
     $perpage = get_user_preferences('data_perpage', 10);    //get default per page
-    
-    $baseurl = 'view.php?d='.$data->id.'&amp;search='.$search.'&amp;';
+
+    $baseurl = 'view.php?d='.$data->id.'&amp;search='.s($search).'&amp;sort='.s($sort).'&amp;order='.s($order).'&amp;';
+
+
+    //if database requires approval, then we need to do some work
+    //and get those approved entries, or entries belongs to owner
+    if ((!isteacher($course->id)) && ($data->approval)){
+        $approvesql = ' AND (r.approved=1 OR r.userid='.$USER->id.') ';
+    } else {
+        $approvesql = '';
+    }
 
     if ($rid){    //only used for single mode, but rid should not appear in multi view anyway
-        $sqlo = 'SELECT COUNT(*) FROM '.$CFG->prefix
-                .'data_records WHERE id < '.$rid.' AND dataid='.$data->id;
-        $page = count_records_sql($sqlo);
+        $ridsql = 'AND r.id < '.$rid.' ';
+
+    } else {
+        $ridsql = '';
     }
 
-    if ($search){    //if in search mode, only search text fields
+    if ($sort) {    //supports (sort and search)
 
-        $sql = 'SELECT DISTINCT c.recordid, c.recordid FROM '.$CFG->prefix.'data_content c LEFT JOIN '
-               .$CFG->prefix.'data_fields f on c.fieldid = f.id WHERE f.dataid = '
-               .$data->id.' AND c.content LIKE "%'.$search.'%" ';
+        //first find the field that we are sorting
+        $sortfield = data_get_field(get_record('data_fields','id',$sort));
+        $sortcontent = $sortfield->get_sort_field();
 
-        $sqlcount = 'SELECT COUNT(DISTINCT c.recordid) FROM '.$CFG->prefix
-                    .'data_content c LEFT JOIN '.$CFG->prefix
-                    .'data_fields f on c.fieldid = f.id WHERE f.dataid = '
-                    .$data->id.' AND c.content LIKE "%'.$search.'%" ';
-    }
-    else {  //else get everything
+        ///SEARCH AND SORT SQL
+        $sql = 'SELECT DISTINCT c.recordid, c.recordid
+                FROM '.$CFG->prefix.'data_content c, '
+                .$CFG->prefix.'data_records r, '
+                .$CFG->prefix.'data_content c1
+                WHERE c.recordid = r.id
+                AND c1.recordid = r.id
+                AND r.dataid = '.$data->id.'
+                AND c.fieldid = '.$sort.'
+                AND ((c1.content LIKE "%'.$search.'%") OR
+                     (c1.content1 LIKE "%'.$search.'%") OR
+                     (c1.content2 LIKE "%'.$search.'%") OR
+                     (c1.content3 LIKE "%'.$search.'%") OR
+                     (c1.content4 LIKE "%'.$search.'%")) '.$approvesql.'
+                ORDER BY c.'.$sortcontent.' '.$order.' ';
 
-        $sql = 'SELECT * FROM '.$CFG->prefix.'data_records WHERE dataid ='.$data->id.' ORDER BY id ASC ';
+        $sqlcount = 'SELECT COUNT(DISTINCT c.recordid)
+                FROM '.$CFG->prefix.'data_content c, '
+                .$CFG->prefix.'data_records r, '
+                .$CFG->prefix.'data_content c1
+                WHERE c.recordid = r.id
+                AND c1.recordid = r.id
+                AND r.dataid = '.$data->id.'
+                AND c.fieldid = '.$sort.'
+                AND ((c1.content LIKE "%'.$search.'%") OR
+                     (c1.content1 LIKE "%'.$search.'%") OR
+                     (c1.content2 LIKE "%'.$search.'%") OR
+                     (c1.content3 LIKE "%'.$search.'%") OR
+                     (c1.content4 LIKE "%'.$search.'%")) '.$approvesql.'
+                ORDER BY c.'.$sortcontent.' '.$order.' ';
+
+        //sqlindex is used to find the number of entries smaller than the current rid
+        //useful for zooming into single view from multi view (so we can keep track
+        //of exact and relative position of records
+        $sqlindex = 'SELECT COUNT(DISTINCT c.recordid)
+                FROM '.$CFG->prefix.'data_content c, '
+                .$CFG->prefix.'data_records r, '
+                .$CFG->prefix.'data_content c1
+                WHERE c.recordid = r.id
+                AND c1.recordid = r.id
+                AND r.dataid = '.$data->id.'
+                AND c.fieldid = '.$sort.' '.$ridsql.'
+                AND ((c1.content LIKE "%'.$search.'%") OR
+                     (c1.content1 LIKE "%'.$search.'%") OR
+                     (c1.content2 LIKE "%'.$search.'%") OR
+                     (c1.content3 LIKE "%'.$search.'%") OR
+                     (c1.content4 LIKE "%'.$search.'%")) '.$approvesql.'
+                ORDER BY c.'.$sortcontent.' '.$order.' ';
+                
+    } else if ($search){    //search only, no sort. if in search mode, only search text fields
+
+        $sql = 'SELECT DISTINCT c.recordid, c.recordid
+                FROM '.$CFG->prefix.'data_content c, '
+                .$CFG->prefix.'data_fields f, '
+                .$CFG->prefix.'data_records r
+                WHERE c.recordid = r.id '.$approvesql.' AND
+                c.fieldid = f.id AND f.dataid = '
+                .$data->id.' AND c.content LIKE "%'.$search.'%" ORDER BY r.id '.$order;
+
+        $sqlcount = 'SELECT COUNT(DISTINCT c.recordid)
+                FROM '.$CFG->prefix.'data_content c, '
+                .$CFG->prefix.'data_fields f, '
+                .$CFG->prefix.'data_records r
+                WHERE c.recordid = r.id '.$approvesql.' AND
+                c.fieldid = f.id AND f.dataid = '
+                .$data->id.' AND c.content LIKE "%'.$search.'%" ORDER BY r.id '.$order;
+
+        $sqlindex = 'SELECT COUNT(DISTINCT c.recordid)
+                FROM '.$CFG->prefix.'data_content c, '
+                .$CFG->prefix.'data_fields f, '
+                .$CFG->prefix.'data_records r
+                WHERE c.recordid = r.id '.$approvesql.' AND
+                c.fieldid = f.id AND f.dataid = '
+                .$data->id.'  '.$ridsql.' AND c.content LIKE "%'.$search.'%" ORDER BY r.id '.$order;
+
+    } else {  //else get everything, no search, no sort
+
+        $sql = 'SELECT * FROM '.$CFG->prefix.'data_records r WHERE r.dataid ='.$data->id.' '.$approvesql.' ORDER BY r.id '.$order.' ';
         $sqlcount = 'SELECT COUNT(*) FROM '.$CFG->prefix
-                    .'data_records WHERE dataid ='.$data->id.' ';
+                    .'data_records r WHERE r.dataid ='.$data->id.' '.$approvesql.'ORDER BY r.id '.$order.' ';
+
+        $sqlindex = 'SELECT COUNT(*) FROM '.$CFG->prefix
+                    .'data_records r WHERE r.dataid ='.$data->id.'  '.$ridsql.' '.$approvesql .'ORDER BY r.id '.$order.' ';
+    }
+    
+    if ($rid) {    //this is used in zooming
+        $page = count_records_sql($sqlindex);
     }
     
     $limit = $perpage > 1 ? sql_paging_limit($page * $perpage, $perpage)
                             : $limit = sql_paging_limit($page, PERPAGE_SINGLE);
 
     $sql = $sql . $limit;
+ 
     $totalcount = count_records_sql($sqlcount);
 
     if (!$records = get_records_sql($sql)){
@@ -239,7 +327,7 @@
         print_footer($course);
         exit;
     }
-    
+
     //print header for multi view
     if ($perpage > 1){
 
@@ -259,15 +347,14 @@
     print_paging_bar($totalcount, $page, $perpage, $baseurl, $pagevar='page');
     
     //for each record we find, we do a string replacement for tags.
-    data_print_template($records, $data, $search, $listmode);
-
+    data_print_template($records, $data, $search, $listmode, $sort, $page, $rid, $order);
     print_paging_bar($totalcount, $page, $perpage, $baseurl, $pagevar='page');
 
     if ($perpage > 1){
         echo $data->listtemplatefooter;    //print footer
     }
 
-    data_print_preference_form($data, $perpage, $search);
+    data_print_preference_form($data, $perpage, $search, $sort, $order);
 
 /// Finish the page
 
