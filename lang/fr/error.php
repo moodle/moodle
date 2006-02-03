@@ -1,9 +1,18 @@
 <?php // $Id$ 
 
 $string['adminprimarynoedit'] = 'Le compte de l\'administrateur principal ne peut pas être modifié par les autres administrateurs';
+$string['cannotcreatetempdir'] = 'Création du dossier temp impossible.';
+$string['cannotdownloadcomponents'] = 'Téléchargement des composants impossible.';
+$string['cannotdownloadzipfile'] = 'Téléchargement du fichier ZIP impossible.';
+$string['cannotfindcomponent'] = 'Composant introuvable.';
+$string['cannotsavezipfile'] = 'Enregistrement du fichier ZIP impossible.';
+$string['cannotunzipfile'] = 'Décompression du fichier ZIP impossible.';
+$string['cannotsavemd5file'] = 'Enregistrement du fichier md5 impossible.';
 $string['cmunknown'] = 'Ce module de cours n\'a pas pu être trouvé';
+$string['componentisuptodate'] = 'Le composant est à jour.';
 $string['coursegroupunknown'] = 'Cours correspondant au groupe $a non indiqué';
 $string['confirmsesskeybad'] = 'Désolé, votre identifiant de session n\'a pas pu être confirmé pour exécuter cette action. Cette sécurité vous protège contre l\'exécution accidentelle ou malfaisante en votre nom de fonctions essentielles. Veuillez vérifier que vous avez vraiment voulu effectuer cette action.';
+$string['downloadedfilecheckfailed'] = 'La vérification du fichier téléchargé à échoué.';
 $string['errorcleaningdirectory'] = 'Erreur lors du nettoyage du dossier «&nbsp;$a&nbsp;»';
 $string['errorcopyingfiles'] = 'Erreur lors de la copie de fichiers';
 $string['errorcreatingdirectory'] = 'Erreur lors de la création du dossier «&nbsp;$a&nbsp;»';
@@ -19,8 +28,10 @@ $string['groupunknown'] = 'Le groupe $a n\'est pas associé au groupe indiqué';
 $string['invalidcourse'] = 'Cours non valide';
 $string['invalidfieldname'] = '«&nbsp;$a&nbsp;» n\'est pas un nom de champ valide';
 $string['invalidfiletype'] = '«&nbsp;$a&nbsp;» n\'est pas un type de fichier valide';
+$string['invalidmd5'] = 'Code md5 non valide';
 $string['invalidxmlfile'] = '«&nbsp;$a&nbsp;» n\'est pas un fichier XML valide';
 $string['missingfield'] = 'Le champ «&nbsp;$a&nbsp;» est manquant';
+$string['missingrequiredfield'] = 'Un champ obligatoire n\'est pas renseigné';
 $string['modulemissingcode'] = 'Le module $a ne possède pas le code source permettant d\'effectuaer cette fonction';
 $string['modulerequirementsnotmet'] = 'Le module «&nbsp;$a->modulename&nbsp;» ($a->moduleversion) n\'a pas pu être installé. Il requiert une version plus récente de Moodle (votre version actuelle est $a->currentmoodle, vous avez besoin de la version $a->requiremoodle).';
 $string['mustbeteacher'] = 'Vous devez être enseignant pour voir cette page';
@@ -28,9 +39,11 @@ $string['noinstances'] = 'Il n\'a y aucune instance de $a dans ce cours&nbsp;! '
 $string['nonmeaningfulcontent'] = 'Le contenu ne fait pas de sens';
 $string['noparticipatorycms'] =  'Désolé, aucun module de participation pour lequel faire un rapport.';
 $string['notavailable'] = 'Ceci n\'est actuellement pas disponible';
+$string['onlyadmins'] = 'Seuls les administrateurs peuvent faire ceci.';
 $string['onlyeditown'] = 'Vous ne pouvez modifier que vos propres informations';
 $string['onlyeditingteachers'] = 'Seuls les enseignants avec droit de modification peuvent faire ceci.';
 $string['processingstops'] = 'Le traitement s\'arrête ici. Les enregistrements restant ont été ignorés.';
+$string['remotedownloadnotallowed'] = 'Le téléchargement de composants sur votre serveur n\'est pas autorisé (l\'option allow_url_fopen est désactivée).<br /><br />Vous devez télécharger manuellement le fichier <a href=\"$a->url\">$a->url</a>, le copier vers «&nbsp;$a->dest/&nbsp;» dans votre serveur et le décompresser.';
 $string['restricteduser'] = 'Votre compte utilisateur «&nbsp;$a&nbsp;» ne vous permet pas d\'effectuer cette opération.';
 $string['sessionerroruser'] = 'Votre session est échue. Veuillez vous connecter à nouveau.';
 $string['sessionerroruser2'] = 'Une erreur du serveur affectant votre session de connexion a été détectée. Veuillez vous connecter à nouveau ou relancer votre navigateur.';
@@ -42,5 +55,8 @@ $string['usernotaddedregistered'] = 'L\'utilisateur «&nbsp;$a&nbsp;» n\'a pas ét
 $string['usernotavailable'] = 'Vous n\'avez pas l\'autorisation de consulter les coordonnées de cet utilisateur.';
 $string['usernotrenamedexists'] = 'Le nom d\'utilisateur n\'a pas été modifié&nbsp;: le nouveau nom est déjà utilisé.';
 $string['usernotrenamedmissing'] = 'Le nom d\'utilisateur n\'a pas été modifié&nbsp;: l\'ancien nom n\'a pas été trouvé.';
+$string['wrongdestpath'] = 'Chemin de destination incorrect.';
+$string['wrongsourcebase'] = 'Adresse URL de base de la source incorrect.';
+$string['wrongzipfilename'] = 'Nom de fichier ZIP incorrect.';
 
 ?>
