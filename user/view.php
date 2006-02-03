@@ -201,7 +201,8 @@
 
     if ($user->skype) {
         print_row(get_string('skypeid').':','<a href="callto:'.urlencode($user->skype).'">'.s($user->skype). 
-            '<img src="http://mystatus.skype.com/smallicon/'.urlencode($user->skype).'" alt="status" '.                             ' height="16" width="16" /></a>');
+            ' <img src="http://mystatus.skype.com/smallicon/'.urlencode($user->skype).'" alt="status" '.
+            ' height="16" width="16" /></a>');
 
     }
     if ($user->yahoo) {
