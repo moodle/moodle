@@ -215,7 +215,7 @@ function scorm_user_complete($course, $user, $mod, $scorm) {
     global $CFG;
 
     $liststyle = 'structlist';
-    $scormpixdir = $CFG->wwwroot.'/mod/scorm/pix/';
+    $scormpixdir = $CFG->modpixpath."/scorm/pix/";
     $now = time();
     $firstmodify = $now;
     $lastmodify = 0;
@@ -1069,6 +1069,7 @@ function scorm_count_launchable($scormid,$organization) {
 function scorm_display_structure($scorm,$liststyle,$currentorg='',$scoid='',$mode='normal',$play=false) {
     global $USER, $CFG;
 
+    $scormpixdir = $CFG->modpixpath."/scorm/pix/";
     $strexpand = get_string('expcoll','scorm');
 
     echo "<ul id='0' class='$liststyle'>";
@@ -1115,9 +1116,9 @@ function scorm_display_structure($scorm,$liststyle,$currentorg='',$scoid='',$mod
             $nextsco = next($scoes);
             if (($nextsco !== false) && ($sco->parent != $nextsco->parent) && (($level==0) || (($level>0) && ($nextsco->parent == $sco->identifier)))) {
                 $sublist++;
-                echo '<a href="#" onClick="expandCollide(img'.$sublist.','.$sublist.');"><img id="img'.$sublist.'" src="'.$CFG->wwwroot.'/mod/scorm/pix/minus.gif" alt="'.$strexpand.'" title="'.$strexpand.'"/></a>';
+                echo '<a href="#" onClick="expandCollide(img'.$sublist.','.$sublist.');"><img id="img'.$sublist.'" src="'.$scormpixdir.'minus.gif" alt="'.$strexpand.'" title="'.$strexpand.'"/></a>';
             } else {
-                echo '<img src="'.$CFG->wwwroot.'/mod/scorm/pix/spacer.gif" />';
+                echo '<img src="'.$scormpixdir.'spacer.gif" />';
             }
             if (empty($sco->title)) {
                 $sco->title = $sco->identifier;
@@ -1134,7 +1135,7 @@ function scorm_display_structure($scorm,$liststyle,$currentorg='',$scoid='',$mod
                         $usertrack->status = 'notattempted';
                     }
                     $strstatus = get_string($usertrack->status,'scorm');
-                    echo "<img src='".$CFG->wwwroot."/mod/scorm/pix/".$usertrack->status.".gif' alt='$strstatus' title='$strstatus' />";
+                    echo "<img src='".$scormpixdir.$usertrack->status.".gif' alt='$strstatus' title='$strstatus' />";
                     if (($usertrack->status == 'notattempted') || ($usertrack->status == 'incomplete') || ($usertrack->status == 'browsed')) {
                         $incomplete = true;
                         if ($play && empty($scoid)) {
@@ -1149,10 +1150,10 @@ function scorm_display_structure($scorm,$liststyle,$currentorg='',$scoid='',$mod
                         $scoid = $sco->id;
                     }
                     if ($sco->scormtype == 'sco') {
-                        echo '<img src="'.$CFG->wwwroot.'/mod/scorm/pix/notattempted.gif" alt="'.get_string('notattempted','scorm').'" title="'.get_string('notattempted','scorm').'" />';
+                        echo '<img src="'.$scormpixdir.'notattempted.gif" alt="'.get_string('notattempted','scorm').'" title="'.get_string('notattempted','scorm').'" />';
                         $incomplete = true;
                     } else {
-                        echo '<img src="'.$CFG->wwwroot.'/mod/scorm/pix/asset.gif" alt="'.get_string('asset','scorm').'" title="'.get_string('asset','scorm').'" />';
+                        echo '<img src="'.$scormpixdir.'asset.gif" alt="'.get_string('asset','scorm').'" title="'.get_string('asset','scorm').'" />';
                     }
                 }
                 if ($sco->id == $scoid) {

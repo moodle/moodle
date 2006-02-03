@@ -68,6 +68,9 @@
         }
         print_heading(format_string($scorm->name));
     }
+
+    $scormpixdir = $CFG->modpixpath."/scorm/pix/";
+
     if (!empty($id)) {
         if ($scoes = get_records_select("scorm_scoes","scorm='$scorm->id' ORDER BY id")) {
             if ($scousers=get_records_select("scorm_scoes_track", "scormid='$scorm->id' GROUP BY userid,scormid", "", "userid,scormid")) {
@@ -112,7 +115,7 @@
                                     $trackdata->total_time = '';
                                 }
                                 $strstatus = get_string($trackdata->status,'scorm');
-                                $row[] = $anchorstart.'<img src="pix/'.$trackdata->status.'.gif" alt="'.$strstatus.'" title="'.
+                                $row[] = $anchorstart.'<img src="'.$scormpixdir.$trackdata->status.'.gif" alt="'.$strstatus.'" title="'.
                                          $strstatus.'">&nbsp;'.$trackdata->total_time.$scoreview.$anchorend;
                             }
                         }
@@ -146,7 +149,7 @@
                     $trackdata->total_time = '';
                 }
                 $strstatus = get_string($trackdata->status,'scorm');
-                echo '<img src="pix/'.$trackdata->status.'.gif" alt="'.$strstatus.'" title="'.
+                echo '<img src="'.$scormpixdir.$trackdata->status.'.gif" alt="'.$strstatus.'" title="'.
                 $strstatus.'">&nbsp;'.$trackdata->total_time.'<br />'.$scoreview.'<br />';
                 echo '</div>'."\n";
                 foreach($trackdata as $element => $value) {

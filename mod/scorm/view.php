@@ -131,6 +131,8 @@
             echo '<input type="hidden" name="mode" value="review" />'."\n";
         }
     }
+
+    $scormpixdir = $CFG->modpixpath."/scorm/pix/";
 ?>
             <br />
             <input type="hidden" name="scoid" />
@@ -152,10 +154,10 @@
     var mid=w3c?").style":".style";
 
         if (eval(beg+list+mid+".display") != "none") {
-            which.src = "pix/plus.gif";
+            which.src = "<?php echo $scormpixdir ?>plus.gif";
             eval(beg+list+mid+".display='none';");
         } else {
-            which.src = "pix/minus.gif";
+            which.src = "<?php echo $scormpixdir ?>minus.gif";
             eval(beg+list+mid+".display='block';");
         }
     }

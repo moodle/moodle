@@ -95,9 +95,6 @@
             <tr>
                 <th>
                     <div class="structurehead"><?php print_string('coursestruct','scorm') ?></div>
-                    <!--<div class="popupbutton">
-                        <a href='#' onClick='popup(main,popupimg);'><img id='popupimg' src="pix/popup.gif" alt="<?php echo $strpopup ?>" title="<?php echo $strpopup ?>"/></a>
-                    </div> -->
                 </th>
             </tr>
             <tr><td class="top">
@@ -117,6 +114,8 @@
     $SESSION->scorm_scoid = $sco->id;
     $SESSION->scorm_status = 'Not Initialized';
     $SESSION->scorm_mode = $mode;
+
+    $scormpixdir = $CFG->modpixpath."/scorm/pix/";
 
 ?>
                <script language="JavaScript" type="text/javascript" src="request.js"></script>
@@ -151,7 +150,7 @@
 
         function popup(win,image) {
             win = window.open("loadSCO.php?id=<?php echo $cm->id.$scoidstring.$modestring ?>","","width=<?php echo $scorm->width ?>,height=<?php echo $scorm->height ?>,scrollbars=1");
-            image.src = "pix/popdown.gif";
+            image.src = "<?php echo $scormpixdir ?>popdown.gif";
             return win;
         }
 
@@ -170,10 +169,10 @@
             var mid=w3c?").style":".style";
 
             if (eval(beg+list+mid+".display") != "none") {
-                which.src = "pix/plus.gif";
+                which.src = "<?php echo $scormpixdir ?>plus.gif";
                 eval(beg+list+mid+".display='none';");
             } else {
-                which.src = "pix/minus.gif";
+                which.src = "<?php echo $scormpixdir ?>minus.gif";
                 eval(beg+list+mid+".display='block';");
             }
         }
