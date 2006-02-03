@@ -125,6 +125,9 @@ function print_moodle_environment($result, $environment_results) {
     $strcheck = get_string('check');
     $strenvironmenterrortodo = get_string('environmenterrortodo', 'admin');
 
+/// Here we'll store all the feedback found
+    $feedbacktext = '';
+
 /// Table header
     $table->head  = array ($strname, $strinfo, $strreport, $strstatus);
     $table->align = array ('center', 'center', 'left', 'center');
@@ -192,16 +195,26 @@ function print_moodle_environment($result, $environment_results) {
             }
         /// Add the row to the table
             $table->data[] = array ($type, $info, $report, $status);
+        ///Process the feedback if necessary
+            if ($feedbackstr = $environment_result->getFeedbackStr()) {
+                $feedbacktext .= '<li class="environmenttable">'.get_string($feedbackstr, 'admin').'</li>';
+            }
         }
     }
     
 /// Print table
     print_table($table);
 
+/// And feedback accumulated text
+    if ($feedbacktext) {
+        print_simple_box('<ul>'.$feedbacktext.'</ul>', 'center', '90%');
+    }
+
 /// Finally, if any error has happened, print the summary box
     if (!$result) {
         print_simple_box($strenvironmenterrortodo, 'center', '', '', '', 'errorbox');
     }
+
 }
 
 
@@ -393,36 +406,38 @@ function environment_check_php_extensions($version) {
         $result->setStatus(false);
         $result->setErrorCode(NO_PHP_EXTENSIONS_SECTION_FOUND);
         return $result;
-    } else {
-    /// Iterate over extensions checking them and creating the needed environment_results
-        foreach($data['#']['PHP_EXTENSIONS']['0']['#']['PHP_EXTENSION'] as $extension) {
-            $result = new environment_results('php_extension');
-        /// Check for level
-            if (isset($extension['@']['level'])) {
-                $level = $extension['@']['level'];
-                if ($level != 'optional') {
-                    $level = 'required';
-                }
-            }
-        /// Check for extension name
-            if (!isset($extension['@']['name'])) {
-                $result->setStatus(false);
-                $result->setErrorCode(NO_PHP_EXTENSIONS_NAME_FOUND);
-            } else {
-                $extension_name = $extension['@']['name'];
-            /// The name exists. Just check if it's an installed extension
-                if (!extension_loaded($extension_name)) {
-                    $result->setStatus(false);
-                } else {
-                    $result->setStatus(true);
-                }
-                $result->setLevel($level);
-                $result->setInfo($extension_name);
-            }
-        /// Add the result to the array of results
-            $results[] = $result;
-        }
     }
+/// Iterate over extensions checking them and creating the needed environment_results
+    foreach($data['#']['PHP_EXTENSIONS']['0']['#']['PHP_EXTENSION'] as $extension) {
+        $result = new environment_results('php_extension');
+    /// Check for level
+        if (isset($extension['@']['level'])) {
+            $level = $extension['@']['level'];
+            if ($level != 'optional') {
+                $level = 'required';
+            }
+        }
+    /// Check for extension name
+        if (!isset($extension['@']['name'])) {
+            $result->setStatus(false);
+            $result->setErrorCode(NO_PHP_EXTENSIONS_NAME_FOUND);
+        } else {
+            $extension_name = $extension['@']['name'];
+        /// The name exists. Just check if it's an installed extension
+            if (!extension_loaded($extension_name)) {
+                $result->setStatus(false);
+            } else {
+                $result->setStatus(true);
+            }
+            $result->setLevel($level);
+            $result->setInfo($extension_name);
+        }
+    /// Process messages, modifying the $result if needed.
+        process_environment_messages($extension, $result);
+    /// Add the result to the array of results
+        $results[] = $result;
+    }
+
 
     return $results;
 }
@@ -480,6 +495,8 @@ function environment_check_php($version) {
     $result->setLevel($level);   
     $result->setCurrentVersion($current_version);
     $result->setNeededVersion($needed_version);
+/// Process messages, modifying the $result if needed.
+    process_environment_messages($data['#']['PHP'][0], $result);
 
     return $result;
 }
@@ -533,6 +550,7 @@ function environment_check_database($version) {
         foreach ($data['#']['DATABASE']['0']['#']['VENDOR'] as $vendor) {
             if (isset($vendor['@']['name']) && isset($vendor['@']['version'])) {
                 $vendors[$vendor['@']['name']] = $vendor['@']['version'];
+                $vendorsxml[$vendor['@']['name']] = $vendor;
             }
         }
     }
@@ -576,8 +594,39 @@ function environment_check_database($version) {
     $result->setNeededVersion($needed_version);
     $result->setInfo($current_vendor);
 
+/// Process messages, modifying the $result if needed.
+    process_environment_messages($vendorsxml[$current_vendor], $result);
+
     return $result;
 
+}
+
+/**
+ * This function will detect if there is some message available to be added to the
+ * result in order to clarify enviromental details.
+ * @param string xmldata containing the messages data
+ * @param object reult object to be updated
+ */
+function process_environment_messages($xml, &$result) {
+
+/// If there is feedback info
+    if (isset($xml['#']['FEEDBACK'][0]['#'])) {
+        $feedbackxml = $xml['#']['FEEDBACK'][0]['#'];
+
+        if (!$result->status and $result->getLevel() == 'required') {
+            if (isset($feedbackxml['ON_ERROR'][0]['@']['message'])) {
+                $result->setFeedbackStr($feedbackxml['ON_ERROR'][0]['@']['message']);
+            }
+        } else if (!$result->status and $result->getLevel() == 'optional') {
+            if (isset($feedbackxml['ON_CHECK'][0]['@']['message'])) {
+                $result->setFeedbackStr($feedbackxml['ON_CHECK'][0]['@']['message']);
+            }
+        } else {
+            if (isset($feedbackxml['ON_OK'][0]['@']['message'])) {
+                $result->setFeedbackStr($feedbackxml['ON_OK'][0]['@']['message']);
+            }
+        }
+    }
 }
 
 
@@ -597,6 +646,8 @@ class environment_results {
     var $current_version; //current version detected
     var $needed_version;  //version needed
     var $info;            //Aux. info (DB vendor, library...)
+    var $feedback_str;    //String to show on error|on check|on ok
+    var $bypass_str;      //String to show if some bypass has happened
 
     /**
      * Constructor of the environment_result class. Just set default values
@@ -609,6 +660,8 @@ class environment_results {
         $this->current_version='';
         $this->needed_version='';
         $this->info='';
+        $this->feedback_str='';
+        $this->bypass_str='';
     }
 
     /**
@@ -658,9 +711,17 @@ class environment_results {
      * Set the auxiliary info
      * @param string the auxiliary info
      */
-     function setInfo($info) {
-         $this->info=$info;
-     }
+    function setInfo($info) {
+        $this->info=$info;
+    }
+    
+    /**
+     * Set the feedback string
+     * @param string the feedback string
+     */
+    function setFeedbackStr($str) {
+        $this->feedback_str=$str;
+    }
 
     /**
      * Get the status
@@ -717,6 +778,18 @@ class environment_results {
     function getPart() {
         return $this->part;
     }
+
+    /**
+     * Get the feedback string
+     * @return string feedback string
+     */
+    function getFeedbackStr() {
+        return $this->feedback_str;
+    }
 }
+
+/// Here all the bypass functions are coded to be used by the environment
+/// checker. All those functions will receive the result object and will
+/// return it modified as needed (status and bypass string)
 
 ?>
