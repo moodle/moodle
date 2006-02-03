@@ -37,6 +37,7 @@
     $perpagemenu = optional_param('perpage1', 0, PARAM_INT);    //value from drop down
     $sort = optional_param('sort',0,PARAM_INT);    //sort by field
     $order = optional_param('order','ASC',PARAM_ALPHA);    //sort order
+
     
     
     if ($id) {
@@ -276,7 +277,7 @@
                 .$CFG->prefix.'data_records r
                 WHERE c.recordid = r.id '.$approvesql.' AND
                 c.fieldid = f.id AND f.dataid = '
-                .$data->id.' AND c.content LIKE "%'.$search.'%" ORDER BY r.id '.$order;
+                .$data->id.' AND c.content LIKE "%'.$search.'%" ORDER BY r.id '.$order.' ';
 
         $sqlcount = 'SELECT COUNT(DISTINCT c.recordid)
                 FROM '.$CFG->prefix.'data_content c, '
@@ -284,7 +285,7 @@
                 .$CFG->prefix.'data_records r
                 WHERE c.recordid = r.id '.$approvesql.' AND
                 c.fieldid = f.id AND f.dataid = '
-                .$data->id.' AND c.content LIKE "%'.$search.'%" ORDER BY r.id '.$order;
+                .$data->id.' AND c.content LIKE "%'.$search.'%" ORDER BY r.id '.$order.' ';
 
         $sqlindex = 'SELECT COUNT(DISTINCT c.recordid)
                 FROM '.$CFG->prefix.'data_content c, '
@@ -292,7 +293,7 @@
                 .$CFG->prefix.'data_records r
                 WHERE c.recordid = r.id '.$approvesql.' AND
                 c.fieldid = f.id AND f.dataid = '
-                .$data->id.'  '.$ridsql.' AND c.content LIKE "%'.$search.'%" ORDER BY r.id '.$order;
+                .$data->id.'  '.$ridsql.' AND c.content LIKE "%'.$search.'%" ORDER BY r.id '.$order.' ';
 
     } else {  //else get everything, no search, no sort
 
