@@ -38,15 +38,14 @@ class data_field_textarea extends data_field_base {
     /***********************************************
      * Saves the field into the database           *
      ***********************************************/
-    function insert_field($dataid, $type='textarea', $name, $desc='', $autolink=0, $width='', $height='') {
+    function insert_field($dataid, $type='textarea', $name, $desc='', $width='', $height='') {
         $newfield = new object;
         $newfield->dataid = $dataid;
         $newfield->type = $type;
         $newfield->name = $name;
         $newfield->description = $desc;
-        $newfield->param1 = $autolink;
-        $newfield->param2 = $width;
-        $newfield->param3 = $height;
+        $newfield->param1 = $width;
+        $newfield->param2 = $height;
         
         if (!insert_record('data_fields', $newfield)) {
             notify('Insertion of new field failed!');
@@ -189,7 +188,6 @@ class data_field_textarea extends data_field_base {
     function update($fieldobject) {
         $fieldobject->param1 = trim($fieldobject->param1);
         $fieldobject->param2 = trim($fieldobject->param2);
-        $fieldobject->param3 = trim($fieldobject->param3);
         
         if (!update_record('data_fields',$fieldobject)){
             notify ('upate failed');

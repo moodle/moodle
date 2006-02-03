@@ -135,7 +135,7 @@ class data_field_base {    //base class (text field)
      **********************************************************************/
     function display_browse_field($fieldid, $recordid){
         if ($content = get_record('data_content', 'fieldid', $fieldid, 'recordid', $recordid)){
-            if (isset($content->content)){
+            if (isset($content->content)) {                
                 $str = format_text($content->content, $content->content1);
             } else {
                 $str = '';
@@ -660,8 +660,9 @@ function data_print_template($records, $data, $search, $listmode){
         }
 
         $possiblefields = get_records('data_fields','dataid',$data->id);
+        
         ///then we generate strings to replace for normal tags
-        foreach ($possiblefields as $cfield){
+        foreach ($possiblefields as $cfield) {
             $patterns[]='/\[\['.$cfield->name.'\]\]/i';
             $g = data_get_field($cfield);
             $replacement[] = highlight($search, $g->display_browse_field($cfield->id, $record->id));
@@ -690,7 +691,7 @@ function data_print_template($records, $data, $search, $listmode){
 
         ///actual replacement of the tags
         $newtext = preg_replace($patterns, $replacement, $data->{$listmode});
-
+        
         echo $newtext;    //prints the template with tags replaced
         echo '<p></p>';
     }
