@@ -148,6 +148,7 @@ $string['blocksetup'] = 'ブロックテーブルの設定';
 $string['blocksuccess'] = '$a テーブルが正常に設定されました。';
 $string['bycourseorder'] = 'コース順';
 $string['byname'] = '$a 順';
+$string['bypassed'] = 'バイパス';
 $string['cachecontrols'] = 'キャッシュコントロール';
 $string['cancel'] = 'キャンセル';
 $string['categories'] = 'コースカテゴリ';
