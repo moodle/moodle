@@ -27,9 +27,9 @@
           <ON_CHECK message="iconvrecommended" />
         </FEEDBACK>
       </PHP_EXTENSION>
-      <PHP_EXTENSION name="mbstring" level="optional">
+      <PHP_EXTENSION name="mbstring0" level="optional">
         <FEEDBACK>
-          <ON_CHECK message="mbstringrecommend" />
+          <ON_CHECK message="mbstringrecommended" />
         </FEEDBACK>
       </PHP_EXTENSION>
     </PHP_EXTENSIONS>
