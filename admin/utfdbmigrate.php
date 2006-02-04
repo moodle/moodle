@@ -88,13 +88,16 @@
 
         //end of env checking
         
-        echo '<form name="migratefrom" action="utfdbmigrate.php" method="POST">';
-        echo '<input name="migrate" type="hidden" value="1" />';
-        echo '<input name="sesskey" type="hidden" value="'.sesskey().'" />';
-        echo '<input type="submit" value="'.get_string('continue').'"/>';
-        echo '&nbsp;<input type="button" value="'.get_string('cancel').'" onclick="javascript:history.go(-1)" />';
-        echo '</form>';
-        echo '</div>';
+    /// We only allow to continue if environmental checks have been passed ok
+        if ($status) {
+            echo '<form name="migratefrom" action="utfdbmigrate.php" method="POST">';
+            echo '<input name="migrate" type="hidden" value="1" />';
+            echo '<input name="sesskey" type="hidden" value="'.sesskey().'" />';
+            echo '<input type="submit" value="'.get_string('continue').'"/>';
+            echo '&nbsp;<input type="button" value="'.get_string('cancel').'" onclick="javascript:history.go(-1)" />';
+            echo '</form>';
+            echo '</div>';
+        }
     }
 
     print_footer();
