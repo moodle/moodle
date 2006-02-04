@@ -630,8 +630,8 @@ function environment_check_database($version) {
  */
 function process_environment_bypass($xml, &$result) {
 
-/// Only try to bypass if we were in error
-    if ($result->getStatus()) {
+/// Only try to bypass if we were in error and it was required
+    if ($result->getStatus() || $result->getLevel() == 'optional') {
         return;
     }
 
