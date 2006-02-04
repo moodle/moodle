@@ -14,9 +14,9 @@
     <DATABASE level="required">
       <VENDOR name="mysql" version="4.1.16">
         <FEEDBACK>
-          <ON_ERROR message="mysql412forlatin" />
+          <ON_ERROR message="mysql416required" />
         </FEEDBACK>
-        <BYPASS function="bypass_mysql_reqs" message="mysqlreqsbypassed" />
+        <BYPASS function="bypass_mysql416_reqs" message="mysql416bypassed" />
       </VENDOR>
       <VENDOR name="postgres" version="7.4" />
     </DATABASE>
