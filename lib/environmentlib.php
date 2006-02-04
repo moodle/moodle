@@ -87,7 +87,7 @@ function check_moodle_environment($version, &$environment_results, $print_table=
         if ($status) {
             foreach ($environment_results as $environment_result) {
                 if ((!$environment_result->getStatus() &&
-                    $environment_result->getLevel() == 'required') || 
+                    $environment_result->getLevel() == 'required') && !$environment_result->getBypassStr() || 
                     $environment_result->getErrorCode()) {
                     $result = false;
                 }
@@ -102,7 +102,6 @@ function check_moodle_environment($version, &$environment_results, $print_table=
     if ($print_table) {
         print_moodle_environment($result && $status, $environment_results);
     }
-
 
     return ($result && $status);
 }
@@ -123,7 +122,11 @@ function print_moodle_environment($result, $environment_results) {
     $strok = get_string('ok');
     $strerror = get_string('error');
     $strcheck = get_string('check');
+    $strbypassed = get_string('bypassed');
     $strenvironmenterrortodo = get_string('environmenterrortodo', 'admin');
+
+/// Here we'll store all the feedback found
+    $feedbacktext = '';
 
 /// Table header
     $table->head  = array ($strname, $strinfo, $strreport, $strstatus);
@@ -171,13 +174,18 @@ function print_moodle_environment($result, $environment_results) {
                     }
                 }
             /// Calculate the status value
-                if (!$status and $environment_result->getLevel() == 'required') {
-                    $status = $strerror;
-                    $errorline = true;
-                } else if (!$status and $environment_result->getLevel() == 'optional') {
-                    $status = $strcheck;
+                if ($environment_result->getBypassStr() == '') {
+                    if (!$status and $environment_result->getLevel() == 'required') {
+                        $status = $strerror;
+                        $errorline = true;
+                    } else if (!$status && $environment_result->getLevel() == 'optional') {
+                        $status = $strcheck;
+                    } else {
+                        $status = $strok;
+                    }
                 } else {
-                    $status = $strok;
+                    $status = $strbypassed;
+                    $errorline = true;
                 }
             }
     
@@ -192,11 +200,24 @@ function print_moodle_environment($result, $environment_results) {
             }
         /// Add the row to the table
             $table->data[] = array ($type, $info, $report, $status);
+        ///Process the feedback if necessary
+            if ($feedbackstr = $environment_result->getFeedbackStr()) {
+                $feedbacktext .= '<li class="environmenttable">'.get_string($feedbackstr, 'admin').'</li>';
+            }
+        ///Process the bypass if necessary
+            if ($bypassstr = $environment_result->getBypassStr()) {
+                $feedbacktext .= '<li class="environmenttable">'.get_string($bypassstr, 'admin').'</li>';
+            }
         }
     }
     
 /// Print table
     print_table($table);
+
+/// And feedback accumulated text
+    if ($feedbacktext) {
+        print_simple_box('<ul>'.$feedbacktext.'</ul>', 'center', '90%');
+    }
 
 /// Finally, if any error has happened, print the summary box
     if (!$result) {
@@ -393,36 +414,41 @@ function environment_check_php_extensions($version) {
         $result->setStatus(false);
         $result->setErrorCode(NO_PHP_EXTENSIONS_SECTION_FOUND);
         return $result;
-    } else {
-    /// Iterate over extensions checking them and creating the needed environment_results
-        foreach($data['#']['PHP_EXTENSIONS']['0']['#']['PHP_EXTENSION'] as $extension) {
-            $result = new environment_results('php_extension');
-        /// Check for level
-            if (isset($extension['@']['level'])) {
-                $level = $extension['@']['level'];
-                if ($level != 'optional') {
-                    $level = 'required';
-                }
-            }
-        /// Check for extension name
-            if (!isset($extension['@']['name'])) {
-                $result->setStatus(false);
-                $result->setErrorCode(NO_PHP_EXTENSIONS_NAME_FOUND);
-            } else {
-                $extension_name = $extension['@']['name'];
-            /// The name exists. Just check if it's an installed extension
-                if (!extension_loaded($extension_name)) {
-                    $result->setStatus(false);
-                } else {
-                    $result->setStatus(true);
-                }
-                $result->setLevel($level);
-                $result->setInfo($extension_name);
-            }
-        /// Add the result to the array of results
-            $results[] = $result;
-        }
     }
+/// Iterate over extensions checking them and creating the needed environment_results
+    foreach($data['#']['PHP_EXTENSIONS']['0']['#']['PHP_EXTENSION'] as $extension) {
+        $result = new environment_results('php_extension');
+    /// Check for level
+        if (isset($extension['@']['level'])) {
+            $level = $extension['@']['level'];
+            if ($level != 'optional') {
+                $level = 'required';
+            }
+        }
+    /// Check for extension name
+        if (!isset($extension['@']['name'])) {
+            $result->setStatus(false);
+            $result->setErrorCode(NO_PHP_EXTENSIONS_NAME_FOUND);
+        } else {
+            $extension_name = $extension['@']['name'];
+        /// The name exists. Just check if it's an installed extension
+            if (!extension_loaded($extension_name)) {
+                $result->setStatus(false);
+            } else {
+                $result->setStatus(true);
+            }
+            $result->setLevel($level);
+            $result->setInfo($extension_name);
+        }
+    /// Process messages, modifying the $result if needed.
+        process_environment_messages($extension, $result);
+    /// Process bypass, modifying $result if needed.
+        process_environment_bypass($extension, $result);
+
+    /// Add the result to the array of results
+        $results[] = $result;
+    }
+
 
     return $results;
 }
@@ -480,6 +506,10 @@ function environment_check_php($version) {
     $result->setLevel($level);   
     $result->setCurrentVersion($current_version);
     $result->setNeededVersion($needed_version);
+/// Process messages, modifying the $result if needed.
+    process_environment_messages($data['#']['PHP'][0], $result);
+/// Process bypass, modifying $result if needed.
+    process_environment_bypass($data['#']['PHP'][0], $result);
 
     return $result;
 }
@@ -533,6 +563,7 @@ function environment_check_database($version) {
         foreach ($data['#']['DATABASE']['0']['#']['VENDOR'] as $vendor) {
             if (isset($vendor['@']['name']) && isset($vendor['@']['version'])) {
                 $vendors[$vendor['@']['name']] = $vendor['@']['version'];
+                $vendorsxml[$vendor['@']['name']] = $vendor;
             }
         }
     }
@@ -576,8 +607,77 @@ function environment_check_database($version) {
     $result->setNeededVersion($needed_version);
     $result->setInfo($current_vendor);
 
+/// Process messages, modifying the $result if needed.
+    process_environment_messages($vendorsxml[$current_vendor], $result);
+/// Process bypass, modifying $result if needed.
+    process_environment_bypass($vendorsxml[$current_vendor], $result);
+
     return $result;
 
+}
+
+/**
+ * This function will post-process the result record by executing the specified
+ * function, modifying it as necessary, also a custom message will be added
+ * to the result object to be printed by the display layer.
+ * Every bypass function must be defined in this file and it'll return
+ * true/false to decide if the original test is bypassed or no. Also
+ * such bypass functions are able to directly handling the result object
+ * although it should be only under exceptional conditions.
+ *
+ * @param string xmldata containing the bypass data
+ * @param object reult object to be updated
+ */
+function process_environment_bypass($xml, &$result) {
+
+/// Only try to bypass if we were in error and it was required
+    if ($result->getStatus() || $result->getLevel() == 'optional') {
+        return;
+    }
+
+/// It there is bypass info (function and message)
+    if (isset($xml['#']['BYPASS'][0]['@']['function']) && isset($xml['#']['BYPASS'][0]['@']['message'])) {
+        $function = $xml['#']['BYPASS'][0]['@']['function'];
+        $message  = $xml['#']['BYPASS'][0]['@']['message'];
+    /// Look for the function
+        if (function_exists($function)) {
+        /// Call it, and if bypass = true is returned, apply meesage
+            if ($function($result)) {
+            /// We only set the bypass message if the function itself hasn't defined it before
+                if (empty($result->getBypassStr)) {
+                    $result->setBypassStr($message);
+                }
+            }
+        }
+    }
+}
+
+/**
+ * This function will detect if there is some message available to be added to the
+ * result in order to clarify enviromental details.
+ * @param string xmldata containing the feedback data
+ * @param object reult object to be updated
+ */
+function process_environment_messages($xml, &$result) {
+
+/// If there is feedback info
+    if (isset($xml['#']['FEEDBACK'][0]['#'])) {
+        $feedbackxml = $xml['#']['FEEDBACK'][0]['#'];
+
+        if (!$result->status and $result->getLevel() == 'required') {
+            if (isset($feedbackxml['ON_ERROR'][0]['@']['message'])) {
+                $result->setFeedbackStr($feedbackxml['ON_ERROR'][0]['@']['message']);
+            }
+        } else if (!$result->status and $result->getLevel() == 'optional') {
+            if (isset($feedbackxml['ON_CHECK'][0]['@']['message'])) {
+                $result->setFeedbackStr($feedbackxml['ON_CHECK'][0]['@']['message']);
+            }
+        } else {
+            if (isset($feedbackxml['ON_OK'][0]['@']['message'])) {
+                $result->setFeedbackStr($feedbackxml['ON_OK'][0]['@']['message']);
+            }
+        }
+    }
 }
 
 
@@ -597,6 +697,8 @@ class environment_results {
     var $current_version; //current version detected
     var $needed_version;  //version needed
     var $info;            //Aux. info (DB vendor, library...)
+    var $feedback_str;    //String to show on error|on check|on ok
+    var $bypass_str;      //String to show if some bypass has happened
 
     /**
      * Constructor of the environment_result class. Just set default values
@@ -609,6 +711,8 @@ class environment_results {
         $this->current_version='';
         $this->needed_version='';
         $this->info='';
+        $this->feedback_str='';
+        $this->bypass_str='';
     }
 
     /**
@@ -658,9 +762,25 @@ class environment_results {
      * Set the auxiliary info
      * @param string the auxiliary info
      */
-     function setInfo($info) {
-         $this->info=$info;
-     }
+    function setInfo($info) {
+        $this->info=$info;
+    }
+    
+    /**
+     * Set the feedback string
+     * @param string the feedback string
+     */
+    function setFeedbackStr($str) {
+        $this->feedback_str=$str;
+    }
+
+    /**
+     * Set the bypass string
+     * @param string the bypass string
+     */
+    function setBypassStr($str) {
+        $this->bypass_str=$str;
+    }
 
     /**
      * Get the status
@@ -717,6 +837,42 @@ class environment_results {
     function getPart() {
         return $this->part;
     }
+
+    /**
+     * Get the feedback string
+     * @return string feedback string
+     */
+    function getFeedbackStr() {
+        return $this->feedback_str;
+    }
+
+    /**
+     * Get the bypass string
+     * @return string bypass string
+     */
+    function getBypassStr() {
+        return $this->bypass_str;
+    }
+}
+
+/// Here all the bypass functions are coded to be used by the environment
+/// checker. All those functions will receive the result object and will
+/// return it modified as needed (status and bypass string)
+
+/**
+ * This function will bypass MySQL 4.1.16 reqs if:
+ *   - We are using MySQL > 4.1.12, informing about problems with non latin chars in the future
+ *
+ * @param object result object to handle
+ * @return boolean true/false to the terminate if the bypass has to be performed (true) or no (false)
+ */
+function bypass_mysql416_reqs ($result) {
+/// See if we are running MySQL >= 4.1.12
+    if (version_compare($result->getCurrentVersion(), '4.1.12', '>=')) {
+        return true;
+    }
+
+    return false;
 }
 
 ?>
