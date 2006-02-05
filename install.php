@@ -51,6 +51,10 @@ if ( empty($INSTALL['language']) and empty($_POST['language']) ) {
     $INSTALL['dbname']          = 'moodle';
     $INSTALL['prefix']          = 'mdl_';
 
+    $INSTALL['dbencodingtestresults']  = false;
+    $INSTALL['showskipdbencodingtest'] = false;
+    $INSTALL['skipdbencodingtest']     = false;
+
     $INSTALL['wwwroot']         = '';
     $INSTALL['dirroot']         = dirname(__FILE__);
     $INSTALL['dataroot']        = dirname(dirname(__FILE__)) . '/moodledata';
@@ -217,9 +221,12 @@ if ($INSTALL['stage'] == DIRECTORY) {
 
 if ($INSTALL['stage'] == DATABASE) {
 
-    if (empty($INSTALL['dbname'])) {
-        $INSTALL['dbname'] = 'moodle';
-    }
+    /// First of all, analyze skipdbencodingtest status
+     if (isset($_POST['skipdbencodingtest'])) {
+         $INSTALL['skipdbencodingtest'] = true;
+     } else {
+         $INSTALL['skipdbencodingtest'] = false;
+     }
     
     /// different format for postgres7 by socket
     if ($INSTALL['dbtype'] == 'postgres7' and ($INSTALL['dbhost'] == 'localhost' || $INSTALL['dbhost'] == '127.0.0.1')) {
@@ -256,6 +263,46 @@ if ($INSTALL['stage'] == DATABASE) {
                         } else {
                             $errormsg = get_string('dbcreationerror', 'install');
                             $nextstage = DATABASE;
+                        }
+                        break;
+                }
+            }
+        } else {
+        /// We have been able to connect properly, just test the database encoding now. It should be Unicode for 1.6
+        /// installations (although not mandatory for now). Just show one message about it and allow to skip this test.
+            if (empty($INSTALL['skipdbencodingtest'])) {
+            /// We haven't checked the skip test checkbox, so perform the test
+                $encoding = '';
+                switch ($INSTALL['dbtype']) {
+                    case 'mysql':
+                    ///Get MySQL character_set_database value
+                        $rs = $db->Execute("SHOW VARIABLES LIKE 'character_set_database'");
+                        if ($rs && $rs->RecordCount() > 0) {
+                            $records = $rs->GetAssoc(true);
+                            $encoding = $records['character_set_database']['Value'];
+                            if (strtoupper($encoding) != 'UTF8') {
+                                $errormsg = get_string('dbwrongencoding', 'install', $encoding);
+                                $nextstage = DATABASE;
+                                $INSTALL['showskipdbencodingtest'] = true;
+                                $INSTALL['dbencodingtestresults'] = false;
+                            } else {
+                                $INSTALL['dbencodingtestresults'] = true;
+                            }
+                        }
+                        break;
+                    case 'postgres7':
+                    ///Get PostgreSQL server_encoding value
+                        $rs = $db->Execute("SHOW server_encoding");
+                        if ($rs && $rs->RecordCount() > 0) {
+                            $encoding = $rs->fields['server_encoding'];
+                            if (strtoupper($encoding) != 'UNICODE') {
+                                $errormsg = get_string('dbwrongencoding', 'install', $encoding);
+                                $nextstage = DATABASE;
+                                $INSTALL['showskipdbencodingtest'] = true;
+                                $INSTALL['dbencodingtestresults'] = false;
+                            } else {
+                                $INSTALL['dbencodingtestresults'] = true;
+                            }
                         }
                         break;
                 }
@@ -347,6 +394,11 @@ if ($nextstage == SAVE) {
 
     $str .= '$CFG->directorypermissions = 00777;  // try 02777 on a server in Safe Mode'."\r\n";
     $str .= "\r\n";
+
+    if (!$INSTALL['skipdbencodingtest'] && $INSTALL['dbencodingtestresults']) {
+        $str .= '$CFG->unicodedb = true;  // Database is utf8'."\r\n";
+        $str .= "\r\n";
+    }
 
     $str .= 'require_once("$CFG->dirroot/lib/setup.php");'."\r\n";
     $str .= '// MAKE SURE WHEN YOU EDIT THIS FILE THAT THERE ARE NO SPACES, BLANK LINES,'."\r\n";
@@ -609,6 +661,13 @@ function form_table($nextstage = WELCOME, $formaction = "install.php") {
                     <input type="text" size="40" name="prefix" value="<?php echo $INSTALL['prefix'] ?>" />
                 </td>
             </tr>
+            <?php if ($INSTALL['showskipdbencodingtest']) { ?>
+            <tr>
+                <td class="td_left" colspan="2">
+                    <?php print_checkbox ('skipdbencodingtest', '1', $INSTALL['skipdbencodingtest'], get_string('skipdbencodingtest', 'install')) ?>
+                </td>
+            </tr>
+            <?php } ?>
 
 <?php
             break;
