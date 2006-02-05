@@ -636,7 +636,7 @@ function process_environment_bypass($xml, &$result) {
     }
 
 /// It there is bypass info (function and message)
-    if (isset($xml['#']['BYPASS'][0]['@']['function']) && isset($xml['#']['BYPASS'][0]['@']['message'])) {
+    if (is_array($xml['#']) && isset($xml['#']['BYPASS'][0]['@']['function']) && isset($xml['#']['BYPASS'][0]['@']['message'])) {
         $function = $xml['#']['BYPASS'][0]['@']['function'];
         $message  = $xml['#']['BYPASS'][0]['@']['message'];
     /// Look for the function
@@ -661,7 +661,7 @@ function process_environment_bypass($xml, &$result) {
 function process_environment_messages($xml, &$result) {
 
 /// If there is feedback info
-    if (isset($xml['#']['FEEDBACK'][0]['#'])) {
+    if (is_array($xml['#']) && isset($xml['#']['FEEDBACK'][0]['#'])) {
         $feedbackxml = $xml['#']['FEEDBACK'][0]['#'];
 
         if (!$result->status and $result->getLevel() == 'required') {
