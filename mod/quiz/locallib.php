@@ -920,7 +920,7 @@ class quiz_default_questiontype {
     * Returns true if the editing wizard is finished, false otherwise. The
     * default implementation returns true, which is suitable for all question-
     * types that only use one editing form. This function is used in
-    * question.php to decide whether we can regrade any states of the edited
+    * question.php to decide whether we can regrade all states of the edited
     * question and redirect to edit.php.
     *
     * The dataset dependent question-type, which is extended by the calculated
@@ -1312,7 +1312,7 @@ function quiz_restore_state(&$question, &$state) {
     // Set the changed field to false; any code which changes the
     // question session must set this to true and must increment
     // ->seq_number. The quiz_save_question_session
-    // function will save the new state object database if the field is
+    // function will save the new state object to the database if the field is
     // set to true.
     $state->changed = false;
 
@@ -1362,7 +1362,8 @@ function quiz_save_question_session(&$question, &$state) {
     }
 
     // Save the state
-    if (isset($state->update)) {
+    if (isset($state->update)) { // this ->update field is only used by the 
+        // regrading function to force the old state record to be overwritten
         update_record('quiz_states', $state);
     } else {
         if (!$state->id = insert_record('quiz_states', $state)) {
@@ -1495,11 +1496,11 @@ function quiz_extract_responses($questions, $responses, $defaultevent) {
 * This is used when a question in an existing quiz is changed and old student
 * responses need to be marked with the new version of a question.
 *
-* TODO: Finish documenting this
 * @return boolean            Indicates success/failure
 * @param object  $question   A question object
 * @param object  $attempt    The attempt, in which the question needs to be regraded.
 * @param object  $quiz       Optional. The quiz object that the attempt corresponds to.
+*                              If this is not provided it is loaded from the database
 * @param boolean $verbose    Optional. Whether to print progress information or not.
 */
 function quiz_regrade_question_in_attempt($question, $attempt, $quiz=false, $verbose=false) {
@@ -1509,25 +1510,24 @@ function quiz_regrade_question_in_attempt($question, $attempt, $quiz=false, $ver
         return false;
     }
 
+    // load all states for this question in this attempt, ordered in sequence
     if ($states = get_records_select('quiz_states',
      "attempt = '{$attempt->id}' AND question = '{$question->id}'", 'seq_number ASC')) {
-        $states = array_values($states);
+        $states = array_values($states); // now the $states array is indexed by sequence number
 
+        // Subtract the grade for the latest state from $attempt->sumgrades to get the
+        // sumgrades for the attempt without this question. 
         $attempt->sumgrades -= $states[count($states)-1]->grade;
 
         // Initialise the replaystate
         $state = clone($states[0]);
         quiz_restore_state($question, $state);
         $state->sumpenalty = 0.0;
-        $state->raw_grade = 0;
-        $state->grade = 0;
-        $state->responses = array(''=>'');
-        $state->event = QUIZ_EVENTOPEN;
         $replaystate = clone($state);
         $replaystate->last_graded = $state;
 
         $changed = 0;
-        for($j = 0; $j < count($states); $j++) {
+        for($j = 1; $j < count($states); $j++) {
             quiz_restore_state($question, $states[$j]);
             $action = new stdClass;
             $action->responses = $states[$j]->responses;
