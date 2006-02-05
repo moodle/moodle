@@ -806,7 +806,7 @@ function quiz_print_question_icon($question, $editlink=true, $return = false) {
 *
 * @param object $question The question object
 */
-function quiz_print_possible_question_image($question) {
+function quiz_print_possible_question_image($question, $courseid) {
 
     global $CFG;
 
@@ -817,10 +817,10 @@ function quiz_print_possible_question_image($question) {
             echo $question->image;
 
         } else if ($CFG->slasharguments) {        // Use this method if possible for better caching
-            echo "$CFG->wwwroot/file.php/$question->image";
+            echo "$CFG->wwwroot/file.php/$courseid/$question->image";
 
         } else {
-            echo "$CFG->wwwroot/file.php?file=$question->image";
+            echo "$CFG->wwwroot/file.php?file=$courseid/$question->image";
         }
         echo '" alt="" />';
 

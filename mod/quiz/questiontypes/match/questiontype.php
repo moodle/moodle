@@ -213,7 +213,7 @@ class quiz_match_qtype extends quiz_default_questiontype {
                              $question->questiontextformat,
                              NULL, $cmoptions->course);
         }
-        quiz_print_possible_question_image($question);
+        quiz_print_possible_question_image($question, $cmoptions->course);
 
         ///// Print the input controls //////
         echo '<table border="0" cellpadding="10" align="right">';

@@ -118,7 +118,7 @@ class quiz_shortanswer_qtype extends quiz_default_questiontype {
         echo format_text($question->questiontext,
                          $question->questiontextformat,
                          NULL, $cmoptions->course);
-        quiz_print_possible_question_image($question);
+        quiz_print_possible_question_image($question, $cmoptions->course);
 
         /// Print input controls
 

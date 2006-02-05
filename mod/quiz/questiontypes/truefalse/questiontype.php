@@ -133,7 +133,7 @@ class quiz_truefalse_qtype extends quiz_default_questiontype {
         echo format_text($question->questiontext,
                          $question->questiontextformat,
                          NULL, $cmoptions->course);
-        quiz_print_possible_question_image($question);
+        quiz_print_possible_question_image($question, $cmoptions->course);
 
         // Update the answer strings
         $stranswer = get_string('answer', 'quiz');

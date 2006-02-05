@@ -187,7 +187,7 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
         $nameprefix = $question->name_prefix;
 
         // For this question type, we better print the image on top:
-        quiz_print_possible_question_image($question);
+        quiz_print_possible_question_image($question, $cmoptions->course);
 
         $qtextremaining = format_text($question->questiontext,
                                       $question->questiontextformat,

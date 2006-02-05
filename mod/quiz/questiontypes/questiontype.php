@@ -288,7 +288,7 @@ class quiz_default_questiontype {
     * a correct answer if there are many, is returned. This is used by some question
     * types in the {@link grade_responses()} function but it is also used by the
     * question preview screen to fill in correct responses.
-    * @return mixed           An array of values giving the responses corresponding
+    * @return mixed           A response array giving the responses corresponding
     *                         to the (or a) correct answer to the question. If there is
     *                         no correct answer that scores 100% then null is returned.
     * @param object $question The question for which the correct answer is to

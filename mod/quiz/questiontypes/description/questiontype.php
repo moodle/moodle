@@ -32,7 +32,7 @@ class quiz_description_qtype extends quiz_default_questiontype {
         echo format_text($question->questiontext,
                          $question->questiontextformat,
                          NULL, $cmoptions->course);
-        quiz_print_possible_question_image($question);
+        quiz_print_possible_question_image($question, $cmoptions->course);
         print_simple_box_end('center', '90%');
     }
 
