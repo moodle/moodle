@@ -288,7 +288,7 @@ function quiz_restore_state(&$question, &$state) {
     // Set the changed field to false; any code which changes the
     // question session must set this to true and must increment
     // ->seq_number. The quiz_save_question_session
-    // function will save the new state object database if the field is
+    // function will save the new state object to the database if the field is
     // set to true.
     $state->changed = false;
 
@@ -332,7 +332,8 @@ function quiz_save_question_session(&$question, &$state) {
     }
 
     // Save the state
-    if (isset($state->update)) {
+    if (isset($state->update)) { // this ->update field is only used by the 
+        // regrading function to force the old state record to be overwritten
         update_record('quiz_states', $state);
     } else {
         if (!$state->id = insert_record('quiz_states', $state)) {
@@ -471,25 +472,24 @@ function quiz_extract_responses($questions, $responses, $defaultevent) {
 */
 function quiz_regrade_question_in_attempt($question, $attempt, $cmoptions, $verbose=false) {
 
+    // load all states for this question in this attempt, ordered in sequence
     if ($states = get_records_select('quiz_states',
      "attempt = '{$attempt->uniqueid}' AND question = '{$question->id}'", 'seq_number ASC')) {
         $states = array_values($states);
 
+        // Subtract the grade for the latest state from $attempt->sumgrades to get the
+        // sumgrades for the attempt without this question. 
         $attempt->sumgrades -= $states[count($states)-1]->grade;
 
         // Initialise the replaystate
         $state = clone($states[0]);
         quiz_restore_state($question, $state);
         $state->sumpenalty = 0.0;
-        $state->raw_grade = 0;
-        $state->grade = 0;
-        $state->responses = array(''=>'');
-        $state->event = QUIZ_EVENTOPEN;
         $replaystate = clone($state);
         $replaystate->last_graded = $state;
 
         $changed = 0;
-        for($j = 0; $j < count($states); $j++) {
+        for($j = 1; $j < count($states); $j++) {
             quiz_restore_state($question, $states[$j]);
             $action = new stdClass;
             $action->responses = $states[$j]->responses;
