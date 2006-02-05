@@ -7,7 +7,7 @@
 /// QUESTION TYPE CLASS //////////////////
 class quiz_random_qtype extends quiz_default_questiontype {
 
-    var $excludedtypes = array(RANDOM, RANDOMSAMATCH);
+    var $excludedtypes = array(RANDOM, RANDOMSAMATCH, ESSAY);
 
     // Carries questions available as randoms sorted by category
     // This array is used when needed only
@@ -60,7 +60,7 @@ class quiz_random_qtype extends quiz_default_questiontype {
                          AND id NOT IN ($cmoptions->questionsinuse)
                          AND qtype NOT IN ($excludedtypes)");
             $this->catrandoms[$question->category][$question->questiontext] =
-                  draw_rand_array(catrandoms, count($catrandoms)); // from bug 1889
+                  draw_rand_array($catrandoms, count($catrandoms)); // from bug 1889
         }
 
         while ($wrappedquestion =
