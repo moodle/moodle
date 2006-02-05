@@ -225,8 +225,7 @@ class quiz_match_qtype extends quiz_default_questiontype {
             echo '</td>';
 
             /// Drop-down list:
-            ///added rc4encrypt here
-            $menuname = $nameprefix.rc4encrypt($subquestion->id);
+            $menuname = $nameprefix.$subquestion->id;
             $response = isset($state->responses[$subquestion->id])
                         ? $state->responses[$subquestion->id] : '0';
             if ($options->readonly
