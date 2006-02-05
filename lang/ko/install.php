@@ -64,6 +64,7 @@ $string['gdversionerror'] = 'GD 라이브러리는 진행과정과 사진을 만드는 것을 보여�
 $string['gdversionhelp'] = '<P>당신의 서버는 GD가 설치된 것으로 보여지지 않습니다.
 
 <P>GD는 무들이 그림을 처리할 수 있도록 PHP에 의해서 요구되는 라이브러리 입니다.{사용자 아이콘과 같은}그리고 새로운 이미지를 생성하는{함수 그래프와 같은} 모들은 여전히 GD의 이런 기능없이 작동할 것이고 이런 GD의 기능들은 단지 당신에게는 사용할 수 없을 것입니다.';
+$string['globalsquotes'] = '전역변수 조작 안전성 결여';
 $string['globalsquoteserror'] = '여러분의 PHP 설정을 다음과 같이 고쳤습니다:  register_globals 및 enable magic_quotes_gpc 을 껐습니다.';
 $string['globalsquoteshelp'] = '<p>Combination of disabled Magic Quotes GPC and enabled Register Globals both at the same time is not recommended.</p>
 
@@ -72,8 +73,7 @@ $string['globalsquoteshelp'] = '<p>Combination of disabled Magic Quotes GPC and 
 <p>만일 여러분이 php.ini 에 접근할 수 없다면, 무들 디렉토리안에 아래의 내용이 담긴 .htaccess 파일을 넣어 두십시오.
 <blockquote>php_value magic_quotes_gpc On</blockquote>
 <blockquote>php_value register_globals Off</blockquote>
-</p> 
-';
+</p> ';
 $string['installation'] = '설치';
 $string['magicquotesruntime'] = '매직 코트 실행 시간';
 $string['magicquotesruntimeerror'] = '이것은 꺼져야 합니다.';

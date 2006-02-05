@@ -14,6 +14,7 @@ $string['assignmenttype'] = '과제 형태';
 $string['availabledate'] = '가능한 형태';
 $string['comment'] = '평';
 $string['commentinline'] = '즉시 처리된 평';
+$string['configitemstocount'] = '온라인 과제를 제출한 학생들의 계수 항목 특성';
 $string['configmaxbytes'] = '이 사이트에 있는 모든 숙제의 기본 최대 값';
 $string['description'] = '설명';
 $string['duedate'] = '만기일';
