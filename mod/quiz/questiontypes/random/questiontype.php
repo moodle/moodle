@@ -42,7 +42,7 @@ class quiz_random_qtype extends quiz_default_questiontype {
             $cmoptions->questionsinuse = $attempt->layout;
         }
 
-        if (!isset($this->catrandoms[$question->category])) {
+        if (!isset($this->catrandoms[$question->category][$question->questiontext])) {
             // Need to fetch random questions from category $question->category"
             // (Note: $this refers to the questiontype, not the question.)
             global $CFG;
@@ -53,23 +53,22 @@ class quiz_random_qtype extends quiz_default_questiontype {
             } else {
                 $categorylist = $question->category;
             }
-            $this->catrandoms[$question->category] = get_records_sql
-                    ("SELECT * FROM {$CFG->prefix}quiz_questions
+            $catrandoms = get_records_sql
+                    ("SELECT id,id FROM {$CFG->prefix}quiz_questions
                        WHERE category IN ($categorylist)
                          AND parent = '0'
                          AND id NOT IN ($cmoptions->questionsinuse)
                          AND qtype NOT IN ($excludedtypes)");
-            $this->catrandoms[$question->category] =
-                  draw_rand_array($this->catrandoms[$question->category],
-                            count($this->catrandoms[$question->category])); // from bug 1889
+            $this->catrandoms[$question->category][$question->questiontext] =
+                  draw_rand_array(catrandoms, count($catrandoms)); // from bug 1889
         }
 
         while ($wrappedquestion =
-                array_pop($this->catrandoms[$question->category])) {
+                array_pop($this->catrandoms[$question->category][$question->questiontext])) {
             if (!ereg("(^|,)$wrappedquestion->id(,|$)", $cmoptions->questionsinuse)) {
                 /// $randomquestion is not in use and will therefore be used
                 /// as the randomquestion here...
-
+                $wrappedquestion = get_record('quiz_questions', 'id', $wrappedquestion->id);
                 global $QUIZ_QTYPES;
                 $QUIZ_QTYPES[$wrappedquestion->qtype]
                  ->get_question_options($wrappedquestion);
