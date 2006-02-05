@@ -1,9 +1,10 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.6 development (2005090100)
+      // admin.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['adminseesallevents'] = '관리자가 모든 이벤트를 봄';
 $string['adminseesownevents'] = '관리자는 다른 사용자들과 같음';
+$string['availablelangs'] = '사용가능한 언어팩';
 $string['backgroundcolour'] = '바탕화면 색상';
 $string['badwordsconfig'] = '금기 언어들을 콤마로 구분해 입력하시오';
 $string['badwordsdefault'] = '사용자가 정리한 리스트가 비어있다면 언어팩에 들어있는 기본적인 리스트가 사용될 것입니다';
@@ -13,11 +14,13 @@ $string['blockmultiple'] = '다각';
 $string['cachetext'] = '텍스트 기억 메모리 ';
 $string['calendarsettings'] = '일람표';
 $string['change'] = '변경';
+$string['changesitelang'] = '사이트의 언어 변경';
 $string['configallowcoursethemes'] = '이것을 활성화하면, 각 배움터는 나름대로 독특한 테마로 설정될 수 있다. 배움터 테마는 모든 다른 테마(사이트, 사용자, 또는 세션 테마)선택보다 우선하여 적용된다';
 $string['configallowemailaddresses'] = '만약 당신이 특별한 도메인의 이메일 주소만 허용하고자 한다면, 그 목록들을 한칸씩 띄어 적어 놓아라. 그 외 모든 다른 도메인들은 거부된다. ( 예: <strong>sun.ac.kr moodle.org</strong> )';
 $string['configallowobjectembed'] = '지정된 설정값에 의해서 일반 사용자들은 멀티미디어 파일 (예:플래시,동영상,mp3)를 명령어나 태그를 사용해서 올릴수 없습니다. (비록 안전한 미디어 파일일지라도) 운영자가 허락 옵션을 켜야만 파일을 올릴수 있습니다.';
 $string['configallowunenroll'] = '만약 이것이 \"네\"로 설정된다면, 학생들은 스스로 배움터에서 언제든지 탈퇴할 수 있다. 반면에 \"아니오\"로 설정하면 선생님과 관리자에 의해서만 학생의 배움터 탈퇴여부가 결정되게 된다.';
-$string['configallowuserblockhiding'] = '당신은 사용자들에게 이 싸이트 안에서 숨기기/보기 블록을 허락하길 원합니까? 이것의 특징은 각각의 분리된 블록을 기억하기 위해 자바스크립트와 쿠키를 사용한 것이다. 그리고 사용자들 자신의 의견에 영향을 미친다.';
+$string['configallowuserblockhiding'] = '사용자들이 스스로 이 사이트의 블록을 숨기거나 보게 할 수 있도록  허용하길 원합니까? 이 기능은 각각의 분리된 블록을 기억하기 위해 자바스크립트와 쿠키를 사용하며 사용자들 화면 보기에만 영향을 미친다.';
+$string['configallowusermailcharset'] = '이 기능을 활성화시키면, 모든 사용자는 이메일에 자신만의 문자셋을 이용할 수 있다.';
 $string['configallowuserthemes'] = '이것을 활성화하면, 사용자들은 그들의 자신의 테마를 사용할 수 있게된다. 사용자 테마는 기존의 싸이트 테마(과정 주제가 아닌)보다 우선적으로 적용된다.';
 $string['configallusersaresitestudents'] = '이 사이트의 첫페이지의 활동에 대하여 모든 사용자는 학생으로 간주되도록 할 것인가? 만약 당신이 \"네\"라고 설정한다면 승인된 사용자 누구라도 이 활동에서 학생으로 참여하도록 허락될 것이다. 만얀 당신이 \"아니요\"라고 대답한다면 오직 사용자는 활동의 첫페이지의 적어도 한 코스만 참여할 것이다. 오직 관리자와 특별히 임명된 교사들은 첫페이지에서 교사로써 행동할수 있다.';
 $string['configautologinguests'] = '이 과정에 손님으로 들어올때 손님은 자동적으로 로그인이 되어야 할까?';
@@ -47,9 +50,10 @@ $string['configfiltermatchonepertext'] = '자동 링크 필터는 한 페이지�
 $string['configfilteruploadedfiles'] = '이용 가능한 이구조는 Moodle을 야기할 것이다.모든 HTML을 업로드 하기위해서 전에 그들에게 보여준 여과장치와 함께 본 파일을 업로드하기위해서도 야기한다. ';
 $string['configforcelogin'] = '일반적으로 이 싸이트의 첫페이지와 과정의 리스트는 로그인 하지 않고서도도 사람들에 의해서 읽힐수 있다. 만약 당신이 로그인 사람에게 강요하기를 원한다면 ㄱ들은 어떤것이라도 싸이트에서 해야한다 그리고 나서 너는 이 구조를 사용 가능해야만 한다.';
 $string['configforceloginforprofiles'] = '이용가능한 이 구조에 로그인 하기 위한 실제 사람들을 강요하기 위해서프로필 페이지의 사용자를 보기를 허락해라. ㅇ것은 불가능하다 그래서 열심히 하는 학생들은 읽을수 있을 것이다 각 코스에 따르느 선생님에 대해서 그러나 이럿은 또한 의미한다 웹은 그들을 볼수 있다는 거이다.';
-$string['configframename'] = '만약 니가 웹 구조 이내에 embeddding Moddle이라면 그다음에 이 프레임의 이름을 적어 넣어라. 다른 한편 이 가치는 _top으로써 남아 있을 것이다.';
+$string['configframename'] = '만약 여러분이 웹 프레임 안에 무들을 통합하려고 한다면 프레임의 이름을 적어 넣어라. 그렇지 않으면 기본값은 _top으로 설정됩니다.';
 $string['configfullnamedisplay'] = '이것은 어떻게 이름이 보여지고 언제 가득차게 보여지는 지를 정의한다. 대부분의 언어 싸이트는 효과적인 구조가 default 되어 있다. \"주어진 이름+실제 이름\"그러나 너는 숨겨진 이름을 선택해야 좋다.또는 이것을 현제 언어로 남겨라 결정하기 위해.';
 $string['configgdversion'] = 'GD의 버전의 위치는 인스톨 되었다. 그 버전은 결점이 자동디텝트 된것으로 보여진다, 바꾸지 말아라 이것을 만약에 니가 정말 니가 하는 것이 무엇인지를 알수없다면 말이다';
+$string['confighiddenuserfields'] = '교사와 관리자 이외의 사람들에게는 보이게 하고 싶지 않은 사용자 정보를 선택하십시오. 이렇게 하면 학생들의 프라이버시를 증진시킬 수 있습니다. 여러 항목을 선택할 때는 CTRL키를 누른채 항목을 선택하면 됩니다.';
 $string['confightmleditor'] = 'HTML텍스트의 편집을 사용하는 것을 선택하거나 허락하지 말아라.비록 니가 허락을 선택할 지라도 이것은 편집자는 오직 나타날것이다 사용자가 사용하고 있을때 웹 브라우저를. 사용자는 또한 선택할 수 있다 그것을 사용하지 않기 위해서. ';
 $string['configidnumber'] = '이 옵션은 말한다 사용자가 아이디 비밀번호를 위해 전혀 요구할 수 없다는 것을. 상자는 요구한다 이 아이디 번호를 그러나 이것을 공백으로 남겨둘수 있다. 사용자는아이디 번호를 위해 요구된다 그리고 그것을 남겨둘수 없다. 만약 사용자의 아이디가 주어진것이라면 그것은 그들의 프로필을 보여준다.';
 $string['configintro'] = '이 페이지에서 너는 많은 콘피규레이션의 다양성을 말할수 있다 그리고 너이 서버에서 모둘 작업을 만드는것을 도울수 있다. 너무 그것에 대해 걱정하지 말아라 그 결점을 보통 잘 작동한다 그리고 너는 항상 이 페이지로 나줒ㅇ에 돌어올수 있고 이 구조를 바꿀수 있다.';
@@ -76,8 +80,9 @@ $string['confignoreplyaddress'] = '이메일은 때때로 사용자 자신에게
 $string['confignotifyloginfailures'] = '만약 로그인 실패가 기록된다면, 이메일을 통해 통보될 것입니다. 누가 이런 통보를 보겠습니까?';
 $string['confignotifyloginthreshold'] = '로그인실패에 관한 인식이 작동한다면, 한사람 또는 한 IP주소에 의한 실패된 로그인시도의 횟수가 얼마나 많냐는 것을 인식하는 것이 가치가 있는가?';
 $string['configopentogoogle'] = '만약 니가 이 셋팅을 할 수 있단면, 구글은 너의 사이트에 Guest로 들어올 수 있게 된다. 또한, 구글서치를 통해서 들어오는 사람들도 자동적으로 Guest로서 로그인 될 것이다. 그리고 이것은 단지 Guest들이 갈수 있는 허락된 코스에 까지만 분명히 연결 되어질 수 있다.';
-$string['configpathtoclam'] = 'clam AV로 갈 수 있는 길.  /usr/bin/clamscan 이나 /usr/bin/clamdscan 처럼. clam AV를 실행하기 위해 이것이 필요하다.';
+$string['configpathtoclam'] = 'clam AV의 경로. 아마 /usr/bin/clamscan 나 /usr/bin/clamdscan 가 될 것이다. clam AV를 실행하기 위해 경로를 지정해야 한다.';
 $string['configpathtodu'] = 'du의 경로. 대개 /usr/bin/du 가 된다. 만약 이를 설정해 놓는다면, 이 경로에 있는 내용들이 다른 많은 파일들이 들어있는 경로보다 빠르게 출력될 것이다. ';
+$string['configperfdebug'] = '이 기능을 활성화시키면, 표준테마의 경우 맨 아랫단에 성능에 대한 정보가 나타날 것입니다.';
 $string['configproxyhost'] = '이서버가 인터넷에 접속하기위해 프록시 컴퓨터를 사용해야한다면, proxy hostname과 port를 이곳에 제공해라. 아니면 비워라.';
 $string['configquarantinedir'] = '만약 당신이 clam AV가 감염된 파일들을 quarantine 디렉토리로 이동시키길 원한다면, 이것을 여기에 입력시켜라.
 이것은 반드시 웹서버에 의해 기록되어질 수 있어야 한다. 
@@ -105,6 +110,7 @@ $string['configsessioncookie'] = '이 셋팅은 Moodle세션을 위해 사용되
 $string['configsessiontimeout'] = '이 사이트에 로그인한 사람들이 오랫동안 시간을 허비한다면, 자동적으로 로그아웃 된다. 이것은 변수는 이 시간이 얼마가 되야되는지를 규정한다.';
 $string['configshowblocksonmodpages'] = '어떤 활동 모듈은 그들의 페이지들을 차단한다. 만약 당신이 이것을 켜면, 선생들은 그 페이지들에 사이드 블락을 추가시킬 수 있을 것이다. 그렇지 않으면, 그 인터페이스 그 화면을 보여주지 않는다.';
 $string['configshowsiteparticipantslist'] = '이 사이트의 모든 선생님들과 학생들은 사이트 참가자 목록에 기록되어질 것이다. 이 사이트 참가자 목록을 볼 수 있게 허락되어진 사람은 누구인가? ';
+$string['configsitemailcharset'] = '여러분의 사이트에서 생성되는 모든 이메일은 여기에서 지정되는 문자셋으로 보내질 것이다. 만일 다음의 설정을 가능하게 하면 개개인이 자신의 문자셋을 선택하여 이용할 수도 있다.';
 $string['configsitepolicy'] = '만약 당신이 모든 사용자가 반드시 봐야되는 그리고 이 사이트를 사용하기 전에 동의해야하는 사이트 정책을 가지고 있다면 이곳에 URL을 규정하라. 그렇지 않으면, 이 공간을 비워둬라. 그 URL은 어떠한곳도 지정할 수 있다-하나의 편리한 장소는 그 사이트 파일들 안에서 하나의 파일이 된다. 
  예: http://yoursite/file.php/1/policy.html';
 $string['configslasharguments'] = '파일들은 슬래쉬 아규먼트를 사용하는 스크립트를 통해서 제공되어진다. 이 방법은 파일들이 웹 브라우저나 프록시 서버등에서 훨씬 쉽게 저장되도록 한다. 불행하게도, 어떤 PHP서버들은 이 방법을 허용하지 않는다. 그래서 만약 당신이 업로드된 파일들이나 이미지들을 보는데 문제가 있다면, 이 변수를 처음 옵션으로 셋팅하시오.';
@@ -114,6 +120,7 @@ $string['configsmtpuser'] = '만약 당신이 일일이 열거된 SMTP 서버를
 $string['configstatsfirstrun'] = '이 곳에서는 cron이 통계를 처리한 후 얼마나 오래 기록을 유지하고 있어야 할지를 지정합니다. 만일 매우 접속이 많거나 서버를 임대해 쓰는 경우, 통계처리에 걸리는 시간도 길고 부하도 많이 걸리기 때문에, 기록을 오래 유지시키는 일은 바람직하지 않습니다.(여기에서는 1 month = 28 days로 설정했고, 그래프와 보고에서는 1 month = 1 calendar month 로 했음에 유의하라)  ';
 $string['configstatsmaxruntime'] = '통계 프로세스는 매우 부하가 많이 걸리기 때문에 언제 시작하고 얼마나 유지할지를 이 항목과 다음 항목에서 지정해 주어야 합니다. ';
 $string['configstatsruntimestart'] = '언제 자동으로 통계 프로세스를 <b>가동</b>할까요?';
+$string['configstatsuserthreshold'] = '만일 배움터의 순위를 정하기 위해 여기에 0이 아닌 숫자를 넣으면, 이 숫자보다 작은 동록인원(학생수+교사수)이 등록되어 있는 배움터는 무시될 것입니다.';
 $string['configteacherassignteachers'] = '보통의 선생님들은 그들이 가르치고 있는 과정 안의 다른 선생님들의 정한 것을 따라야만 할까? 만약 아니라면, 그것은 단지 과정 창시자나 관리자만이 선생님들에게 지정할 수 있다. ';
 $string['configthemelist'] = '테마를 사용하려면 이 부분을 빈칸을 남겨두세요. 만약 테마 메뉴를 단축하길 원한다면, 여기에다 콤마로 분리해서 목록 이름을 지정할 수 있습니다. (예: standard,orangewhite)';
 $string['configtimezone'] = '표준시간대를 여기에 설정합니다. 이것은 단지 날짜를 표시하기 위한 표준시간대이다-각각의 사용자는 그들의 개인 신상에 있어 그들 자신의 셋팅에 의해 이것을 오버라이드 할 수 있다. 이곳의 \"서버타임\"은 서버의 작동 시스템 셋팅에 Moodle default를 만들것이다. 그러나 사용자 신상에 있는 \"서버타임\"은 이 시간대 설정에 user default를 만들 것이다.
@@ -125,14 +132,18 @@ $string['configvariables'] = '변수';
 $string['configwarning'] = '함부로 이 설정값을 변경하지 마십시오 - 잘못된 값이 문제를 일으킬 수 있습니다.';
 $string['configzip'] = '당신의 zip 프로그램의 위치(유닉스만,선택사항)를 적으세요. 만약 지정되면, 이것은 서버상에서 zip 문서를 생성시킬 것이다. 만약 당신이 이 빈칸을 비워둔다면, Moodle은 내부 루틴을 사용할 것이다.';
 $string['confirmation'] = '확정';
+$string['confirminstall'] = '언어팩 ($a) 설치를 선택하셨습니다. 설치할까요?';
 $string['cronwarning'] = '<a href=\"cron.php\">cron.php 관리 스크립트</a>가 최소 24시간 동안 작동 되지 않습니다.<br /><a href=\"../doc/?frame=install.html⊂=cron\">설치 문서</a>는 당신이 어떻게 이것을 자동화 할 수 있는 지를 설명해 줍니다.';
 $string['density'] = '밀도';
+$string['download'] = '내려받기';
 $string['edithelpdocs'] = '도움 문서를 편집하다';
+$string['editlang'] = '<b>언어팩편집</b>';
 $string['editstrings'] = '문자열을 편집하다';
 $string['filterall'] = '문자열을 거르다.';
 $string['filtermatchoneperpage'] = '한 페이지에 한번만 필터가 적용됩니다';
 $string['filtermatchonepertext'] = '한 텍스트에 한번만 필터가 적용됩니다';
 $string['filteruploadedfiles'] = '업로드 파일을 거르다.';
+$string['globalsquoteswarning'] = '<p><strong>보안 경고</strong>: 무들을 적절하게 작동시키기 위해<br />현재의 PHP 설정을 바꾸어 주어야만 합니다.<p/><p>먼저 <code>register_globals=off</code> 그리고 <code>magic_quotes_gpc=on</code> 으로 <em>설정되어 있어야만</em> 합니다.<br />만일 가능하다면  서버의 일반적인 보안기능을 증진시키기 위하여 <code>register_globals=off</code> 도 설정하고 <code>magic_quotes_gpc=on</code>도 해 주십시오.<p/><p>이러한 설정은 <code>php.ini</code>를 수정하여 바꿀 수도 있고, Apache/IIS 의 설정 혹은  <code>.htaccess</code> 파일을 수정해도 바꿀 수 있습니다.</p>';
 $string['helpadminseesall'] = '모든 목록의 이벤트를 관리하거나 단지 그 이벤트를 그것들 스스로 적용됩니까?';
 $string['helpcalendarsettings'] = '다양한 일정 목록과 날짜/시간과 관련된 Moodle의 양상을 구성합니다.';
 $string['helpforcetimezone'] = '당신은 모든 사용자들이 각자 그들의 타임존을 선택하게 허용하거나, 모든 사람들에게 지정한 시간대를 쓰도록 강요할 수  있습니다.';
@@ -145,29 +156,50 @@ $string['importtimezones'] = '타임존 목록의 업데이트가 완료되었�
 $string['importtimezonescount'] = '$a->source로 부터 $a->count 개를 가져왔습니다.';
 $string['importtimezonesfailed'] = '소스를 찾을 수 없습니다.(안좋은 소식)';
 $string['incompatibleblocks'] = '호환되지 않는 구역';
+$string['install'] = '선택한 언어팩 설치';
+$string['installedlangs'] = '설치된 언어팩';
+$string['lang16notify'] = '무들 1.6과 그 상위판은 여러분이 아래에 연결된  download.moodle.org 를 통해 직접 언어팩을 설치하고 업데이트 할 수 있도록 허용합니다.';
+$string['langimport'] = '언어 Import Utility';
+$string['langimportsuccess'] = '언어팩이 성공적으로 업그레이드 됨';
+$string['langpackremoved'] = '언어팩이 성공적으로 제거 됨';
+$string['langpackupdated'] = '언어팩 $a 가 업데이트 됨';
+$string['langupdatecomplete'] = '언어팩이 성공적으로 업데이트 됨';
 $string['latexpreamble'] = '라텍스 전문';
 $string['latexsettings'] = '라텍스 표현 설정';
+$string['managelang'] = '<b>언어팩 관리</b>';
 $string['mediapluginavi'] = 'avi 필터 사용';
+$string['mediapluginflv'] = 'flv 필터 사용';
 $string['mediapluginmov'] = 'mov 필터 사용';
 $string['mediapluginmp3'] = 'mp3 필터 사용';
 $string['mediapluginmpg'] = 'mpg 필터 사용';
 $string['mediapluginswf'] = 'swf 필터 사용';
 $string['mediapluginwmv'] = 'wmv 필터 사용';
+$string['nolangupdateneeded'] = '모든 언어팩이 최신판임. 업데이트가 필요없음';
 $string['optionalmaintenancemessage'] = '임의의 정보 유지';
 $string['pathconvert'] = '전환 실행파일 경로';
 $string['pathdvips'] = 'divps 실행파일 경로';
 $string['pathlatex'] = '라텍스 실행파일 경로';
 $string['pleaseregister'] = '이 버튼을 제거하고 싶으면 당신의 사이트를 등록해주세요.';
+$string['remotelangnotavailable'] = '무들이 download.moodle.org에 접속하지 못하였기 때문에 자동으로 언어팩을 설치하지 못하였습니다. 수동으로 아래에 제시된 목록에서 적절한 zip파일을 내려받아 여러분의 $a 디랙토리에 풀어넣으시기 바랍니다.';
+$string['sitelangchanged'] = '사이트의 언어설정이 성공적으로 변경되었습니다.';
 $string['sitemaintenance'] = '이 싸이트는 점검 중이며 현재 사용하실 수 없습니다.';
 $string['sitemaintenancemode'] = '점검 상태';
 $string['sitemaintenanceoff'] = '점검이 끝나고, 다시 일반적인 작동 상태가 되었습니다.';
 $string['sitemaintenanceon'] = '이 사이트는 현재 점검중입니다(관리자만 이 사이트를 사용하거나 로그인 할 수 있습니다).';
 $string['sitemaintenancewarning'] = '현재 유지 점검 상태에 있습니다(관리자만 로그인 할 수 있습니다.) 일반 작업으로 되돌리시려면 <a href=\"maintenance.php\">정상 작동</a>모드를 사용하십사오.';
+$string['stickyblocks'] = '기본설정 블록';
+$string['stickyblockscourseview'] = '교육과정 페이지';
+$string['stickyblocksduplicatenotice'] = '만일 여기에 블록을 첨가했는데 그것이 이미 어떤 페이지에 표시되어 있다면, 두 개가 겹쳐질 것입니다.<br />이때 원래의 블록은 편집을 하지 못하게 되나 복사된 블록은 여전히 편집할 수 있습니다. ';
+$string['stickyblocksmymoodle'] = '나의 무들';
+$string['stickyblockspagetype'] = '환경설정 페이지 양식';
 $string['tabselectedtofront'] = 'tab이 있는 테이블은 줄은 현재 선택되어진 태그와 제일 앞에 위치 해 있습니다.';
 $string['therewereerrors'] = '데이터에 오류가 있었습니다.';
 $string['timezoneforced'] = '사이트 관리자에 의해 지정되어 있습니다.';
 $string['timezoneisforcedto'] = '모든사용자를 사용하게끔 합니다.';
 $string['timezonenotforced'] = '사용자는 그들의 표준 시간대를 사용할 수 있습니다.';
+$string['uninstall'] = '선택된 언어팩의 제거';
+$string['uninstallconfirm'] = '언어팩 $a 삭제 요청을 하였습니다. 제거하시겠습니까?';
+$string['updatelangs'] = '언어팩들의 갱신';
 $string['upgradeforumread'] = '읽거나 읽지 않은 포럼의 게시물을 찾기 위해 Moodle 1.5에 새로운 게시물이 추가 되었습니다. <br />당신이 필요로 하는 이 기능을 사용하기 위해<a href=\"$a\">당신의 목록을 업데이트 하세요</a>.';
 $string['upgradeforumreadinfo'] = '읽거나 읽지 않은 포럼의 게시물을 찾기 위해 Moodle 1.5에 새로운 게시물이 추가 되었습니다. 당신이 필요로 하는 이 기능을 사용하기 위해 트래킹 정보를 이용하여 현존하고 있는 게시물에 있는 당신의 목록을 업데이트 하세요.';
 $string['upgradelogs'] = '원활한 작동을 위해서 당신의 오래된 로그(경과기록)은 업그레이드가 되어야 합니다. <a href=\"$a\">추가 정보</a>';

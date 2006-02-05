@@ -1,37 +1,37 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.5 ALPHA (2005051500)
+      // editor.php - created with Moodle 1.6 development (2005100400)
 
 
 $string['about'] = '에디터(데이터를 편집할 수 있도록 한 프로그램)에 관하여';
-$string['absbottom'] = '그림의 맨 밑에 Text를 정렬시킨다';
+$string['absbottom'] = '그림의 맨 밑에 문서를 정렬시킨다';
 $string['address'] = '인사말';
 $string['alertnoselectedtext'] = '먼저 원문을 선택해야 합니다!';
 $string['alignment'] = '정렬';
-$string['alternatetext'] = '상호 원문';
+$string['alternatetext'] = '대치문서';
 $string['anchorhelp'] = '이것은 오직 닻을 만들는 것이다. 당신은 여전히 링크를 손수 만들어야만 한다.';
 $string['anchorname'] = '닻이름';
 $string['anchors'] = '교정장치';
 $string['baseline'] = '기초,기준';
-$string['bold'] = '고딕체,굵은 선';
-$string['borderthickness'] = '경계 불명확';
-$string['bottom'] = '기초';
-$string['browse'] = '열람, 검색';
+$string['bold'] = '고딕체';
+$string['borderthickness'] = '경계선 두께';
+$string['bottom'] = '바닥';
+$string['browse'] = '열람';
 $string['cancel'] = '취소';
 $string['cellpadding'] = '공간 채우기';
-$string['cellspacing'] = '공간 두기';
-$string['choosechar'] = '특징 선택';
-$string['chooseicon'] = '게재(삽입)위한 아이콘 선택';
+$string['cellspacing'] = '공간 여백';
+$string['choosechar'] = '문자 선택';
+$string['chooseicon'] = '삽입을 위한 아이콘 선택';
 $string['close'] = '닫기';
-$string['closeafterreplace'] = '찾고 닫기 ';
+$string['closeafterreplace'] = '바꾸고 닫기 ';
 $string['cols'] = '문자 테두리 한계';
 $string['copy'] = '복사 선택';
 $string['createanchor'] = 'anchor 생성';
 $string['createfolder'] = '폴더 생성';
-$string['createlink'] = '웹 연결';
+$string['createlink'] = '웹 링크 삽입';
 $string['cut'] = '삭제선택';
-$string['cutpastemozilla'] = '불행히도, 당신은 일반적으로 보통의 키보드 지름길(또는 심지어 paste 버튼)을 지난 text를 이 온라인 편집기에 올리기 위해서는 쓸 수 없다. 이것은 몇몇 버전의 Mozilla 와 Firefox 브라우저에서 만들어진 보안 형태 때문이다.
-여기에 당신이 시도할 수 있게 하는 세가지 잘 알려진 방법이 있다. (1) CTRL-V대신에 Shift-Insert를 사용하라
-(2)당신의 브라우저에서 Edit로 들어간 후 Paste 메뉴를 사용하라. (3) 당신의 브라우저에서 선택을 바꾸고 편집함으로써 사용자를 바꾸라. 도움이 더 필요하면 아래의 OK버튼을 클릭하거나, 또는 편집기로 돌아가는 것을 취소해라.';
+$string['cutpastemozilla'] = '불행히도, 당신은 이 온라인 편집기에서는 일반적으로 쓰는 키보드 단축키(또는 심지어 붙여넣기 버튼)를 이용하여  문서를 붙여넣을 수 없다. 이것은 몇몇 버전의 Mozilla 와 Firefox 브라우저에서 만들어진 보안 기능 때문이다.<br /><br />
+여기에 당신이 해 볼 수 있는 하는 세가지 잘 알려진 방법이 있다.<br /> (1)CTRL-V 대신에 Shift-Insert를 사용하라<br />
+(2)브라우저에서 Edit로 들어간 후 Paste 메뉴를 사용하라.<br /> (3)user.js를 편집하여 브라우저의 설정을 바꿔라. <br />도움이 더 필요하면 아래의 OK버튼을 클릭하거나, 또는 편집기로 돌아가는 것을 취소해라.';
 $string['delete'] = '삭제';
 $string['filebrowser'] = '파일 브라우저';
 $string['findwhat'] = '찾기';
@@ -47,12 +47,12 @@ $string['horizontal'] = '수평면';
 $string['horizontalrule'] = '수평괘선';
 $string['htmlmode'] = 'HTML 정보 기재';
 $string['imageurl'] = 'URL이미지';
-$string['indent'] = '들여쓰기 증가(늘림)';
-$string['insertchar'] = '특정 특징 삽입';
+$string['indent'] = '들여쓰기 증가';
+$string['insertchar'] = '특수 문자 삽입';
 $string['insertimage'] = '이미지 삽입';
 $string['insertlink'] = '링크 삽입';
-$string['insertsmile'] = '미소(이모티콘)삽입';
-$string['inserttable'] = '표(목록) 삽입';
+$string['insertsmile'] = '이모티콘 삽입';
+$string['inserttable'] = '표 삽입';
 $string['italic'] = '이탤릭체';
 $string['itemsreplaced'] = '아이템 재정렬';
 $string['justifycenter'] = '중앙을 가지런히하다';
@@ -73,7 +73,7 @@ $string['linktitle'] = '제목';
 $string['linkurl'] = 'URL';
 $string['matchcase'] = '맞추기';
 $string['middle'] = '중앙';
-$string['minimize'] = '가장 작은 편집기';
+$string['minimize'] = '편집창 축소';
 $string['move'] = '이동';
 $string['nolink'] = '자동 링크 막기';
 $string['normal'] = '평균,표준';
@@ -83,14 +83,14 @@ $string['ok'] = '허가';
 $string['options'] = '옵션';
 $string['orderedlist'] = '정돈된 목록';
 $string['outdent'] = '들여쓰기 줄이기';
-$string['paste'] = '회람판으로부터 붙이기';
+$string['paste'] = '클립보드로부터 붙이기';
 $string['path'] = '경로';
 $string['percent'] = '백분율';
-$string['pixels'] = '픽셀,화소';
+$string['pixels'] = '픽셀';
 $string['popupeditor'] = '에디터 확대';
 $string['preformatted'] = '미리포맷';
 $string['preview'] = '미리보기';
-$string['properties'] = '프로퍼티스';
+$string['properties'] = '특성';
 $string['redo'] = '당신의 마지막 활동개정 ';
 $string['regularexpressions'] = '보통 표현 사용';
 $string['removelink'] = '링크 삭제';

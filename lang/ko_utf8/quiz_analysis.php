@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz_analysis.php - created with Moodle 1.6 development (2005090100)
+      // quiz_analysis.php - created with Moodle 1.6 development (2005100400)
 
 
 $string['analysisoptions'] = '분석 선택';
@@ -12,7 +12,7 @@ $string['attemptslast'] = '마지막 시도';
 $string['dicsindextitle'] = '차별 표시';
 $string['disccoefftitle'] = '차별 계수';
 $string['downloadooo'] = '오픈오피스 형식으로 다운로드';
-$string['facilitytitle'] = '옳은 시설';
+$string['facilitytitle'] = '%% 옳은 <br />시설';
 $string['lowmarkslimit'] = '만약에 점수가 낮다면 분석하지 마시오';
 $string['pagesize'] = '한페이지당 질문들';
 $string['qcounttitle'] = '질문 계산';
