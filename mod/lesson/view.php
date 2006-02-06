@@ -167,12 +167,12 @@
                     if ($conditions->timespent) {
                         if ($attempttimes = get_records_select('lesson_timer', "userid = $USER->id AND lessonid = $dependentlesson->id")) {
                             // go through all the times and test to see if any of them satisfy the condition
-                        	foreach($attempttimes as $attempttime) {
-                        		$duration = $attempttime->lessontime - $attempttime->starttime;
-                        		if ($conditions->timespent < $duration/60) {
-                        		    $timespent = true;
-                        		}
-                        	}
+                            foreach($attempttimes as $attempttime) {
+                                $duration = $attempttime->lessontime - $attempttime->starttime;
+                                if ($conditions->timespent < $duration/60) {
+                                    $timespent = true;
+                                }
+                            }
                         } 
                     } else {
                         $timespent = true; // there isn't one set
@@ -183,9 +183,9 @@
                         if ($studentgrades = get_records_select('lesson_grades', "userid = $USER->id AND lessonid = $dependentlesson->id")) {
                             // go through all the grades and test to see if any of them satisfy the condition
                             foreach($studentgrades as $studentgrade) {
-                            	if ($studentgrade->grade >= $conditions->gradebetterthan) {
-                            	    $gradebetterthan = true;
-                            	}
+                                if ($studentgrade->grade >= $conditions->gradebetterthan) {
+                                    $gradebetterthan = true;
+                                }
                             }
                         }
                     } else {
@@ -1217,17 +1217,17 @@
             } elseif ($lesson->modattempts && isteacher($course->id)) {
                 echo "<p align=\"center\">".get_string("modattemptsnoteacher", "lesson")."</p>";                
             }
-			
-			if ($lesson->activitylink) {
-				if ($module = get_record('course_modules', 'id', $lesson->activitylink)) {
-					if ($modname = get_field('modules', 'name', 'id', $module->module))
-						if ($instance = get_record($modname, 'id', $module->instance)) {
-				            echo "<div align=\"center\" style=\"padding: 5px;\" class=\"lessonbutton standardbutton\">".
-									"<a href=\"$CFG->wwwroot/mod/$modname/view.php?id=$instance->id\">".
-									get_string('activitylinkname', 'lesson', $instance->name)."</a></div>\n";
-						}
-				}
-			}
+            
+            if ($lesson->activitylink) {
+                if ($module = get_record('course_modules', 'id', $lesson->activitylink)) {
+                    if ($modname = get_field('modules', 'name', 'id', $module->module))
+                        if ($instance = get_record($modname, 'id', $module->instance)) {
+                            echo "<div align=\"center\" style=\"padding: 5px;\" class=\"lessonbutton standardbutton\">".
+                                    "<a href=\"$CFG->wwwroot/mod/$modname/view.php?id=$lesson->activitylink\">".
+                                    get_string('activitylinkname', 'lesson', $instance->name)."</a></div>\n";
+                        }
+                }
+            }
 
             echo "<div align=\"center\" style=\"padding: 5px;\" class=\"lessonbutton standardbutton\"><a href=\"../../course/view.php?id=$course->id\">".get_string("mainmenu", "lesson")."</a></div>\n"; // Back to the menu (course view).
             echo "<div align=\"center\" style=\"padding: 5px;\" class=\"lessonbutton standardbutton\"><a href=\"../../grade/index.php?id=$course->id\">".get_string("viewgrades", "lesson")."</a></div>\n"; //view grades

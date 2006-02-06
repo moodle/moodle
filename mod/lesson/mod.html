@@ -552,7 +552,7 @@ if ($form->mode == "add") {
                 }
                 // get the module name and then store it in a new array
                 if ($module = get_coursemodule_from_instance($mod->modname, $mod->instance, $form->course)) {
-                    $modinstances[$mod->modname][$module->id] = $module->name;
+                    $modinstances[$mod->modname][$mod->id] = $module->name;
                 }
             }
             ksort($modinstances); // sort by module name
