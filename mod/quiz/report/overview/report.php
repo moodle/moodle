@@ -236,7 +236,7 @@ class quiz_report extends quiz_default_report {
 
         // Construct the SQL
         $select = 'SELECT '.$db->Concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).' AS uniqueid, '.
-            'qa.id AS attempt, u.id AS userid, u.firstname, u.lastname, u.picture, '.
+            'qa.uniqueid as attemptuniqueid, qa.id AS attempt, u.id AS userid, u.firstname, u.lastname, u.picture, '.
             'qa.sumgrades, qa.timefinish, qa.timestart, qa.timefinish - qa.timestart AS duration ';
         if ($course->id != SITEID) { // this is too complicated, so just do it for each of the four cases.
             if (!empty($currentgroup) && empty($noattempts)) {
