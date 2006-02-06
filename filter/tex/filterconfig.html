@@ -1,7 +1,11 @@
 <?php
     // check the default settings
+    // $forcerest to be set in calling page
+    if (!isset($forcereset)) {
+        $forcereset = false;
+    }
     require_once "defaultsettings.php";
-    tex_defaultsettings();
+    tex_defaultsettings( $forcereset );
 
     // bit of a bodge - clear the tex cache area
     // so that any changes will display

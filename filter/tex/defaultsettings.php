@@ -3,24 +3,24 @@
     // deafault settings are done here, saves doing all this twice in
     // both the rendering routine and the config screen
 
-    function tex_defaultsettings() {
+    function tex_defaultsettings( $force=false  ) {
 
 	global $CFG;
 
-        if (!isset($CFG->filter_tex_latexpreamble)) {
+        if (!isset($CFG->filter_tex_latexpreamble) or $force) {
             set_config( 'filter_tex_latexpreamble', " \\usepackage[latin1]{inputenc}\n \\usepackage{amsmath}\n \\usepackage{amsfonts}\n \\RequirePackage{amsmath,amssymb,latexsym}\n");
         }
 
-        if (!isset($CFG->filter_tex_latexbackground)) {
+        if (!isset($CFG->filter_tex_latexbackground) or $force) {
             set_config( 'filter_tex_latexbackground', '#FFFFFF' );
         }
 
-        if (!isset($CFG->filter_tex_density)) {
+        if (!isset($CFG->filter_tex_density) or $force) {
             set_config( 'filter_tex_density', '120' );
         }
 
         // defaults for paths - if one not set assume all not set
-        if (!isset($CFG->filter_tex_pathlatex)) {
+        if (!isset($CFG->filter_tex_pathlatex) or $force) {
             // load the paths for the appropriate OS
             // it would be nice to expand this
             if (PHP_OS=='Linux') {
