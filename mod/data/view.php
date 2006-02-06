@@ -123,7 +123,7 @@
     }
 
     if ($currentgroup) {
-        $groupselect = " AND r.groupid = '$currentgroup'";
+        $groupselect = " AND (r.groupid = '$currentgroup' OR r.groupid = 0)";
         $groupparam = "&amp;groupid=$currentgroup";
     } else {
         $groupselect = "";
