@@ -529,7 +529,7 @@ function quiz_regrade_question_in_attempt($question, $attempt, $cmoptions, $verb
             } else {
                 echo ' #'.$attempt->id;
             }
-            echo "\n"; flush(); ob_flush();
+            echo "\n"; @flush(); @ob_flush();
         }
 
         return true;
