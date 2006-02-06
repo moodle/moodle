@@ -133,7 +133,7 @@ class data_field_base {    //base class (text field)
      * eg.                                                                *
      * [icon] Word.doc                                                    *
      **********************************************************************/
-    function display_browse_field($fieldid, $recordid){
+    function display_browse_field($fieldid, $recordid, $template){
         if ($content = get_record('data_content', 'fieldid', $fieldid, 'recordid', $recordid)){
             if (isset($content->content)) {                
                 $options->para = false;
@@ -653,10 +653,10 @@ function data_get_coursemodule_info($coursemodule) {
  * input @param array $records                                          *
  *       @param object $data                                            *
  *       @param string $search                                          *
- *       @param string $listmode                                        *
+ *       @param string $template                                        *
  * output null                                                          *
  ************************************************************************/
-function data_print_template($records, $data, $search, $listmode, $sort, $page, $rid, $order){
+function data_print_template($records, $data, $search, $template, $sort, $page, $rid, $order){
     global $CFG, $course;
     
     foreach ($records as $record){    //only 1 record for single mode
@@ -674,7 +674,7 @@ function data_print_template($records, $data, $search, $listmode, $sort, $page, 
         foreach ($possiblefields as $cfield) {
             $patterns[]='/\[\['.$cfield->name.'\]\]/i';
             $g = data_get_field($cfield);
-            $replacement[] = highlight($search, $g->display_browse_field($cfield->id, $record->id));
+            $replacement[] = highlight($search, $g->display_browse_field($cfield->id, $record->id, $template));
             unset($g);
         }
 
@@ -699,7 +699,7 @@ function data_print_template($records, $data, $search, $listmode, $sort, $page, 
         $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;rid='.$record->id.'&amp;search='.$search.'&amp;sort='.$sort.'&amp;order='.$order.'&amp;"><img src="'.$CFG->pixpath.'/i/search.gif" height="11" width="11" border="0" alt="'.get_string('more').'" /></a>';
 
         ///actual replacement of the tags
-        $newtext = preg_replace($patterns, $replacement, $data->{$listmode});
+        $newtext = preg_replace($patterns, $replacement, $data->{$template});
         
         echo $newtext;    //prints the template with tags replaced
 

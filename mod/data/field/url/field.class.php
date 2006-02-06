@@ -86,7 +86,7 @@ class data_field_url extends data_field_base {// extends
         parent::display_edit_field($id, $mode);
     }
 
-    function display_browse_field($fieldid, $recordid){
+    function display_browse_field($fieldid, $recordid, $template) {
         if ($content = get_record('data_content', 'fieldid', $fieldid, 'recordid', $recordid)){
             $url = empty($content->content)? '':$content->content;
             $text = empty($content->content1)? '':$content->content1;

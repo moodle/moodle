@@ -42,7 +42,8 @@ class data_field_picture extends data_field_file {// extends
     var $type = 'picture';
     var $id;
 
-    function insert_field($dataid, $type='picture', $name, $des, $width='', $height='', $maxsize=''){
+    function insert_field($dataid, $type='picture', $name, $des, $width='', $height='', $maxsize='', 
+                                                                 $widthlist='', $heightlist=''){
         $newfield = new object;
         $newfield->dataid = $dataid;
         $newfield->type = $type;
@@ -51,7 +52,8 @@ class data_field_picture extends data_field_file {// extends
         $newfield->param1 = $width;
         $newfield->param2 = $height;
         $newfield->param3 = $maxsize;
-        $newfield->param4 = $test;
+        $newfield->param4 = $widthlist;
+        $newfield->param5 = $heightlist;
         if (!insert_record('data_fields',$newfield)){
             notify('Insertion of new field failed!');
         }
@@ -108,7 +110,7 @@ class data_field_picture extends data_field_file {// extends
         parent::display_edit_field($id, $mode);
     }
 
-    function display_browse_field($fieldid, $recordid){
+    function display_browse_field($fieldid, $recordid, $template) {
         global $CFG, $USER, $course;
 
         $field = get_record('data_fields', 'id', $fieldid);
@@ -129,9 +131,14 @@ class data_field_picture extends data_field_file {// extends
                 $source = $CFG->wwwroot.'/file.php?file=/'.$course->id.'/'.$CFG->moddata.'/data/'.$field->dataid.'/'.$field->id.'/'.$recordid;
             }
 
-            $width = $field->param1 ? ' width = "'.$field->param1.'" ':' ';
-            $height = $field->param2 ? ' height = "'.$field->param2.'" ':' ';
-            $str = '<img '.$width.$field->param1.$height.' src="'.$source.'/'.$src.'" alt="'.$alt.'" title="'.$title.'" />';
+            if ($template == 'listtemplate') {
+                $width = $field->param4 ? ' width="'.$field->param4.'" ':' ';
+                $height = $field->param5 ? ' height="'.$field->param5.'" ':' ';
+            } else {
+                $width = $field->param1 ? ' width="'.$field->param1.'" ':' ';
+                $height = $field->param2 ? ' height="'.$field->param2.'" ':' ';
+            }
+            $str = '<img '.$width.$height.' src="'.$source.'/'.$src.'" alt="'.$alt.'" title="'.$title.'" />';
             return $str;
         }
         return false;

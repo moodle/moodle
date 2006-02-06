@@ -145,7 +145,7 @@ class data_field_checkbox extends data_field_base {
     }
     
     
-    function display_browse_field($fieldid, $recordid) {
+    function display_browse_field($fieldid, $recordid, $template) {
         global $CFG, $USER, $course;
 
         $field = get_record('data_fields', 'id', $fieldid);

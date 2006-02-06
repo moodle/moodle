@@ -116,7 +116,7 @@ class data_field_file extends data_field_base {// extends
         parent::display_edit_field($id, $mode);
     }
 
-    function display_browse_field($fieldid, $recordid){
+    function display_browse_field($fieldid, $recordid, $template) {
 
         global $CFG, $USER, $course;
 
