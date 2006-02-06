@@ -17,8 +17,8 @@ CREATE TABLE prefix_data (
   addtemplate text NOT NULL default '',
   rsstemplate text NOT NULL default '',
   listtemplateheader text NOT NULL default '',
-  listtemplatefooter text NOT NULL default ''
-  approval int NOT NULL default '0',
+  listtemplatefooter text NOT NULL default '',
+  approval int NOT NULL default '0'
 );
 
 
@@ -61,7 +61,7 @@ CREATE TABLE prefix_data_records (
   dataid int4 NOT NULL default '0',
   timecreated int4 NOT NULL default '0',
   timemodified int4 NOT NULL default '0',
-  approved int NOT NULL default '0',
+  approved int NOT NULL default '0'
 );
 
 
