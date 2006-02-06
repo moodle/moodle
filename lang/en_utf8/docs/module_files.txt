@@ -1,0 +1,18 @@
+ABOUT THIS DIRECTORY
+--------------------
+
+DO NOT CHANGE, RENAME OR MOVE ANY OF THE FILES 
+IN THIS DIRECTORY unless you REALLY know what 
+you are doing.  
+
+Changing these files could mess up your course.
+
+This directory contains files uploaded to your 
+course within particular modules (mostly by 
+students), such as assignment submissions and 
+forum attachments.
+
+The names of the directories and files within 
+this directory are very specific and are 
+automatically maintained by Moodle.
+
