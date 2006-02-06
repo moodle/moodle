@@ -1040,6 +1040,7 @@ $string['requestreason'] = 'Reason for course request';
 $string['required'] = 'Required';
 $string['requireskey'] = 'This course requires an enrolment key';
 $string['requirespayment'] = 'This course requires payment for access';
+$string['resettodefaults'] = 'Reset to defaults';
 $string['resortcoursesbyname'] = 'Re-sort courses by name';
 $string['resources'] = 'Resources';
 $string['restore'] = 'Restore';
