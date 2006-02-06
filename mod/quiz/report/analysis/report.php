@@ -83,9 +83,9 @@ class quiz_report extends quiz_default_report {
         }
 
         $sql = 'SELECT  qa.* FROM '.$CFG->prefix.'user u '.
-            'JOIN '.$CFG->prefix.'quiz_attempts qa ON u.id = qa.userid ';
+            'INNER JOIN '.$CFG->prefix.'quiz_attempts qa ON u.id = qa.userid ';
             if (!empty($currentgroup)) {
-                $sql .= ' JOIN '.$CFG->prefix.'groups_members gm ON u.id = gm.userid AND gm.groupid = '.$currentgroup;
+                $sql .= ' INNER JOIN '.$CFG->prefix.'groups_members gm ON u.id = gm.userid AND gm.groupid = '.$currentgroup;
             }
             $sql .= ' WHERE qa.quiz = '.$quiz->id.  // ULPGC ecastro
                 ' AND ( qa.sumgrades >= '.$scorelimit.' ) ';
