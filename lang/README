@@ -1,9 +1,0 @@
-This directory contains language packages that define all 
-the text to render Moodle in a particular language.
-
-Each language is named according to the standard 2-letter 
-language name, as defined in:
-
-   lib/languages.php
-
-Some languages have an added "locale" added to them.
