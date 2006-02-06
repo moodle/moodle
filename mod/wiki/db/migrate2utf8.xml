@@ -31,7 +31,7 @@
            FROM {$CFG->prefix}wiki w,
                 {$CFG->prefix}wiki_pages wp
            WHERE w.id = wp.wiki
-                 AND we.id = RECORDID
+                 AND wp.id = RECORDID
           </SQL_DETECT_COURSE>
         </FIELD>
         <FIELD name="content" method="PLAIN_SQL_UPDATE" type="mediumtext" length="0">
@@ -45,7 +45,7 @@
            FROM {$CFG->prefix}wiki w,
                 {$CFG->prefix}wiki_pages wp
            WHERE w.id = wp.wiki
-                 AND we.id = RECORDID
+                 AND wp.id = RECORDID
           </SQL_DETECT_COURSE>
         </FIELD>
         <FIELD name="author" method="PLAIN_SQL_UPDATE" type="varchar" length="100" default="ewiki">
@@ -59,7 +59,7 @@
            FROM {$CFG->prefix}wiki w,
                 {$CFG->prefix}wiki_pages wp
            WHERE w.id = wp.wiki
-                 AND we.id = RECORDID
+                 AND wp.id = RECORDID
           </SQL_DETECT_COURSE>
         </FIELD>
         <FIELD name="refs" method="PLAIN_SQL_UPDATE" type="mediumtext" length="0">
@@ -73,7 +73,7 @@
            FROM {$CFG->prefix}wiki w,
                 {$CFG->prefix}wiki_pages wp
            WHERE w.id = wp.wiki
-                 AND we.id = RECORDID
+                 AND wp.id = RECORDID
           </SQL_DETECT_COURSE>
         </FIELD>
         <FIELD name="meta" method="NO_CONV" type="mediumtext" length="0" />
