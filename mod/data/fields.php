@@ -101,8 +101,11 @@
                             $field->$key = $str;
                         }
                     }
-                    
                     insert_record('data_fields', $field);
+                    
+                    // Add the new field to the form templates.
+                    data_append_field_in_form($field->dataid, $field->name);
+                    
                     $displayflag = get_string('fieldadded','data');
                 }
                 else {    //no duplicate names allowed in one database!
@@ -111,13 +114,27 @@
             }
             break;
 
-        case 'delete':    ///delete a field
+        case 'delete':    // Delete a field
             if (confirm_sesskey()){
-                if ($confirm = optional_param('confirm', 0, PARAM_INT)){
-                    delete_records('data_fields','id',$fid);
-                    $displayflag = get_string('fielddeleted','data');
+                if ($confirm = optional_param('confirm', 0, PARAM_INT)) {
+                    // Delete the associated data_contents and files.
+                    if (!$fieldRecordSet = get_record('data_fields', 'id', $fid)) {
+                        notify('Field not found');
+                        exit;
+                    }
+                    $field = data_get_field($fieldRecordSet);
+                    $field->delete_data_contents();
+                    
+                    // Update the templates.
+                    data_replace_field_in_forms($fieldRecordSet->dataid, $fieldRecordSet->name, '');
+
+                    // Delete the field.
+                    delete_records('data_fields', 'id', $fid);
+                    
+                    $displayflag = get_string('fielddeleted', 'data');
                 }
-                else {    //prints annoying confirmation dialogue
+                else {
+                    // Print confirmation message.
                     $field = get_record('data_fields','id',$fid);
                     print_simple_box_start('center', '60%');
                     echo '<div align="center">';
@@ -152,6 +169,10 @@
                     $g = data_get_field($currentfield);
                     $g->update($field);
                     unset($g);
+                    
+                    // Update the templates.
+                    data_replace_field_in_forms($currentfield->dataid, $currentfield->name, $field->name);
+                    
                     $displayflag = get_string('fieldupdated','data');
                 }
                 else {

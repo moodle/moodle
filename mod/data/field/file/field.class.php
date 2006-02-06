@@ -249,7 +249,28 @@ class data_field_file extends data_field_base {// extends
         }
         return false;
     }
-
+    
+    function delete_data_contents() {
+        // Delete the content files first.
+        $sql = 'SELECT dc.content AS content, '.
+                'df.dataid AS dataid, '.
+                'dc.recordid AS recordid '.
+                    'FROM data_fields AS df, '.
+                    'data_content AS dc '.
+                        "WHERE df.id = {$this->id} ".
+                        "AND dc.fieldid = {$this->id}";
+        
+        if (!$results = recordset_to_array(get_recordset_sql($sql))) {
+            return false;
+        }
+        foreach ($results as $result) {
+            $this->delete_data_content_files($result->dataid, $result->recordid, $result->content);
+        }
+        
+        // Then delete the data_content records.
+        return delete_records('data_content', 'fieldid', $this->id);
+    }
+    
     function delete_data_content_files($dataid, $recordid, $content){
         global $CFG, $course;
         $filepath = $CFG->dataroot.'/'.$course->id.'/'.$CFG->moddata.'/data/'.$dataid.'/'.$this->id.'/'.$recordid;

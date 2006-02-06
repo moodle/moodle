@@ -35,6 +35,7 @@
                         'data_content AS dc ' .
                             "WHERE d.course = '$courseid' " .
                             'AND d.id = df.dataid ' .
+                            'AND df.id = dc.fieldid ' .
                             'AND d.id = dr.dataid ' .
                             'AND dr.id = dc.recordid ' .
                             "AND df.type = 'text' " .

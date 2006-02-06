@@ -191,15 +191,22 @@ class data_field_base {    //base class (text field)
      *       $param string $name                                 *
      * output boolean                                            *
      *************************************************************/
-    function notemptyfield($value, $name){
+    function notemptyfield($value, $name) {
         return !empty($value);
+    }
+    
+    /*********************************************************************
+     * This function deletes all data_contents associated with the field *
+     *********************************************************************/
+    function delete_data_contents() {
+        return delete_records('data_content', 'fieldid', $this->id);
     }
     
     /*************************************************************************
      * This function checks if there's any file associated with this file,   *
      * and is uploaded, if so, it deletes it. E.g file or picture type field *
      *************************************************************************/
-    function delete_data_content_files($dataid, $recordid, $content){
+    function delete_data_content_files($dataid, $recordid, $content) {
         //does nothing
     }
     
@@ -271,6 +278,8 @@ function data_generate_default_form($dataid, $mode){
         update_record('data', $data);
     }
 }
+
+
 /*********************************************************
  * generates an empty add form, if there is none.        *
  * input: @(int)id, id of the data                       *
@@ -311,6 +320,59 @@ function data_generate_empty_add_form($id, $rid=0){
 
         echo $str;
     }
+}
+
+
+/***********************************************************************
+ * Search for a field name and replaces it with another one in all the *
+ * form templates. Set $newfieldname as '' if you want to delete the   *
+ * field from the form.                                                *
+ ***********************************************************************/
+function data_replace_field_in_forms($dataid, $searchfieldname, $newfieldname) {
+    if (!$data = get_record('data', 'id', $dataid)) {
+        // Form does not exist.
+        return false;
+    }
+    if (!empty($newfieldname)) {
+        $prestring = '[[';
+        $poststring = ']]';
+    }
+    else {
+        $prestring = '';
+        $poststring = '';
+    }
+    
+    $data->singletemplate = str_replace('[['.$searchfieldname.']]',
+            $prestring.$newfieldname.$poststring, $data->singletemplate);
+    
+    $data->listtemplate = str_replace('[['.$searchfieldname.']]',
+            $prestring.$newfieldname.$poststring, $data->listtemplate);
+    
+    $data->addtemplate = str_replace('[['.$searchfieldname.']]',
+            $prestring.$newfieldname.$poststring, $data->addtemplate);
+    
+    $data->rsstemplate = str_replace('[['.$searchfieldname.']]',
+            $prestring.$newfieldname.$poststring, $data->rsstemplate);
+    
+    update_record('data', $data);
+}
+
+
+/********************************************************
+ * Appends a new field at the end of the form template. *
+ ********************************************************/
+function data_append_field_in_form($dataid, $newfieldname) {
+    if (!$data = get_record('data', 'id', $dataid)) {
+        // Form does not exist.
+        return false;
+    }
+    if (!empty($data->singletemplate)) {
+        $data->singletemplate .= ' [[' . $newfieldname .']]';
+    }
+    if (!empty($data->rsstemplate)) {
+        $data->rsstemplate .= ' [[' . $newfieldname . ']]';
+    }
+    update_record('data', $data);
 }
 
 
