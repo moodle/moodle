@@ -125,9 +125,10 @@
 
                 //this creates a new field subclass object
                 if ($name != 'MAX_FILE_SIZE' && $name != 'sesskey'){
-                    $currentfield = data_get_field_from_name($name);
-                //use native subclass method to store field data
-                    $currentfield->update_data_content($currentfield->id, $rid, $value, $name);
+                    if (($currentfield = data_get_field_from_name($name)) !== false) {
+                        //use native subclass method to store field data
+                        $currentfield->update_data_content($currentfield->id, $rid, $value, $name);
+                    }
                 }
             }
             redirect($CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;rid='.$rid);
@@ -200,8 +201,10 @@
     $replacement = array();    //html to replace those yucky tags
 
     //form goes here first in case add template is empty
-    echo '<form enctype="multipart/form-data" action="add.php?d='.$data->id.'&amp;rid='.$rid.'" method="post">';
-    echo '<input name="sesskey" value="'.sesskey().'" type="hidden">';
+    echo '<form enctype="multipart/form-data" action="add.php" method="post">';
+    echo '<input name="d" value="'.$data->id.'" type="hidden" />';
+    echo '<input name="rid" value="'.$rid.'" type="hidden" />';
+    echo '<input name="sesskey" value="'.sesskey().'" type="hidden"/>';
     print_simple_box_start('center','80%');
     
     if (!$rid){
