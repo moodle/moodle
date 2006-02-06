@@ -183,7 +183,7 @@ $string['paragraphquestion'] = 'پاراگراف سوال در خط $a پشتی�
 $string['parent'] = 'پدر';
 $string['passworderror'] = 'کلمه عبور وارد شده صحیح نمی باشد';
 $string['percentcorrect'] = 'درصد درست';
-$string['popup'] = ' \"secure\" نشان دادن امتحان در پنجره';
+$string['popup'] = ' &quot;secure&quot; نشان دادن امتحان در پنجره';
 $string['preview'] = 'قبلی';
 $string['previewquestion'] = 'پیشنمایش پرسش';
 $string['publish'] = 'انتشار';

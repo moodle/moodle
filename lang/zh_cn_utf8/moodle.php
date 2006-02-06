@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 Beta + (2005060201)
+      // moodle.php - created with Moodle 1.5.3+ (2005060230)
 
 
 $string['action'] = '动作';
@@ -53,8 +53,10 @@ $string['adminhelpmanageblocks'] = '管理已安装的版块和设置';
 $string['adminhelpmanagedatabase'] = '访问数据目录';
 $string['adminhelpmanagefilters'] = '选择本文过滤器和相关的设定';
 $string['adminhelpmanagemodules'] = '管理已安装的模组';
+$string['adminhelpmymoodle'] = '为用户的“我的moodle”配置版块';
 $string['adminhelpsitefiles'] = '发布文件或上传备份';
 $string['adminhelpsitesettings'] = '定义首页外观';
+$string['adminhelpstickyblocks'] = '配置moodle全站的粘性版块';
 $string['adminhelpthemes'] = '选择外观(颜色,字体等)';
 $string['adminhelpuploadusers'] = '从文本文件导入用户';
 $string['adminhelpusers'] = '定义用户并设定验证';
@@ -63,6 +65,7 @@ $string['administrator'] = '网站管理员';
 $string['administrators'] = '管理员';
 $string['administratorsall'] = '所有管理员';
 $string['administratorsandteachers'] = '管理员和教师';
+$string['adminprimarynoedit'] = "您无权修改主管理员的密码";
 $string['advanced'] = '高级';
 $string['advancedfilter'] = '高级搜索';
 $string['advancedsettings'] = '高级设置';
@@ -101,6 +104,7 @@ $string['autosubscribeyes'] = '是，当我发表帖子时就自动订阅该论�
 $string['availability'] = '有效性';
 $string['availablecourses'] = '现有的课程';
 $string['backup'] = '备份';
+$string['backupcancelled'] = '备份被中断';
 $string['backupcoursefileshelp'] = '如果使用,课程文件将会被包含在自动备份中';
 $string['backupdate'] = '备份日期';
 $string['backupdetails'] = '备份细节';
@@ -205,7 +209,9 @@ $string['coursefiles'] = '课程文件';
 $string['courseformats'] = '课程格式';
 $string['coursegrades'] = '课程成绩';
 $string['coursehidden'] = '此课程目前并不对学生开放';
+$string['courseimportnotaught'] = '您无权修改其它的课程，因此您也无法从其它课程中导入内容。';
 $string['courseinfo'] = '课程信息';
+$string['coursenotaccessible'] = '这个课程未对公众开放';
 $string['courserestore'] = '课程恢复';
 $string['courses'] = '课程';
 $string['coursescategory'] = '同一类别的课程';
@@ -367,6 +373,7 @@ $string['emailexists'] = '这个电子邮件地址已经注册过了。';
 $string['emailformat'] = 'E-mail格式';
 $string['emailmustbereal'] = '注意: 的E-mail地址必须是真实的';
 $string['emailnotallowed'] = '不允许使用如下域名的电子邮件: ($a)';
+$string['emailnotfound'] = '数据库中未找到此email地址';
 $string['emailonlyallowed'] = '此电子邮件不在允许的域名中: ($a)';
 $string['emailpasswordconfirmation'] = '{$a->firstname}:
 
@@ -391,15 +398,20 @@ $string['emailpasswordsent'] = '谢谢您对更改密码做了确认。
 这个新密码是自动生成的——您最好<a href=\"$a->link\">修改<a>一个更容易记住的密码。';
 $string['enable'] = '使用';
 $string['encryptedcode'] = '加密代码';
+$string['enroldate'] = '时间段';
+$string['enrolenddate'] = '结束日期';
+$string['enrolenddaterror'] = '选课的结束时间不能早于开市时间';
+$string['enrollable'] = '课程可被选';
 $string['enrolledincourse'] = '加入课程“{$a}”';
 $string['enrolledincoursenot'] = '退出课程“{$a}”';
 $string['enrollfirst'] = '在使用此站点前您必须选择某课程。';
 $string['enrolme'] = '将我加入此课程';
 $string['enrolmentconfirmation'] = '您想学习该课程。确定吗?';
+$string['enrolmentend'] = '选课已结束';
 $string['enrolmentkey'] = '选课密钥';
-$string['enrolmentkeyfrom'] = '该课程需要‘选课密钥’——<br />
+$string['enrolmentkeyfrom'] = '该课程需要“选课密钥”——<br />
 
-一个从{$a}获得的一次性密码';
+一个从{$a}获得的只需使用一次的密码';
 $string['enrolmentkeyhint'] = '这个选课密钥不正确，请再试一次<br />
 (提示: 以“{$a}”开头)';
 $string['enrolmentnew'] = '{$a}中新选课的';
@@ -407,6 +419,7 @@ $string['enrolmentnewuser'] = '{$a->user}已经选择了“{$a->course}”课程
 $string['enrolmentnointernal'] = '手工选课目前并未激活';
 $string['enrolmentnotyet'] = '对不起，在{$a}之前您不能访问此课程';
 $string['enrolments'] = '选课';
+$string['enrolmentstart'] = '选课已开始';
 $string['enrolperiod'] = '选课时间';
 $string['entercourse'] = '点击进入该课程';
 $string['enteremailaddress'] = '输入您的E-mail地址以重设密码，
@@ -425,6 +438,23 @@ $string['existingcoursedeleting'] = '现有课程,先删除它';
 $string['existingcreators'] = '现有的课程管理员';
 $string['existingstudents'] = '注册的学生';
 $string['existingteachers'] = '现有教师';
+$string['expirynotify'] = '选课期满通知';
+$string['expirynotifyemail'] = '{$a->threshold}天之后，本课程里下列学生的选课将过期：
+
+$a->current
+
+{$a->threshold}天之内，本课程里下列学生的选课将过期：
+
+$a->past
+
+您可以到下述页面延长他们的选课时间：
+$a->extendurl';
+$string['expirynotifystudents'] = '提醒学生';
+$string['expirynotifystudentsemail'] = '亲爱的同学：
+
+本信提醒您在课程“{$a->course}”的选课将在{$a->threshold}天之后到期。
+
+如有疑问，请联系您的教师。';
 $string['explanation'] = '解释';
 $string['failedloginattempts'] = '从您上次登录后共有{$a->attempts}次失败的登录尝试。';
 $string['failedloginattemptsall'] = '帐号{$a->accounts}共有{$a->attempts}次失败的登录尝试。';
@@ -446,13 +476,17 @@ $string['forcelanguage'] = '强制语言';
 $string['forceno'] = '不强制';
 $string['forcepasswordchange'] = '强制修改密码';
 $string['forcepasswordchangehelp'] = '在用户下次登录时提示其修改';
+$string['forcepasswordchangenotice'] = '继续下去之前，您必须修改您的密码。';
 $string['forcetheme'] = '强制使用主题';
 $string['forgotaccount'] = '忘记了密码？';
 $string['forgotten'] = '忘了您的用户名或密码了?';
+$string['forgottenduplicate'] = '无法自动完成密码恢复，因为您的email地址在数据库中出现了超过一次。请联系管理员<a href=\"mailto:$a->email\">{$a->lastname}{$a->firstname}</a> 。';
 $string['format'] = '格式';
 $string['formathtml'] = 'HTML格式';
+$string['formatlams'] = 'LAMS课程格式';
 $string['formatmarkdown'] = 'Markdown格式';
 $string['formatplain'] = '纯文本格式';
+$string['formatscorm'] = 'SCORM格式';
 $string['formatsocial'] = '社区格式';
 $string['formattext'] = 'Moodle自动格式';
 $string['formattexttype'] = '格式';
@@ -476,7 +510,7 @@ $string['gd1'] = 'GD 1.x已经安装';
 $string['gd2'] = 'GD 2.x已经安装';
 $string['gdneed'] = '要看到该图必须安装GD';
 $string['gdnot'] = 'GD没有安装';
-$string['gpl'] = '版权所有 (C) 2001-2002  Martin Dougiamas  (http://moodle.com)
+$string['gpl'] = '版权所有 (C) 1999-2005  Martin Dougiamas  (http://moodle.com)
 
 该系统是自由软件；您可以按照自由软件基金会所公布的GNU通用公共许可证(GPL)进行修改或重新发布；许可证可以是第2版或更新的版本。
 
@@ -514,6 +548,11 @@ $string['guestsnotallowed'] = '抱歉！“{$a}”不允许访客进入。';
 $string['guestsyes'] = '允许没有密钥的访客进入';
 $string['guestuser'] = '访客用户';
 $string['guestuserinfo'] = '该用户是个特殊用户，允许以只读方式参观一些课程。';
+$string['healthcenter'] = '健康忠信';
+$string['healthproblemsdetected'] = '监测到健康问题！';
+$string['healthproblemsolution'] = '健康问题解决方案';
+$string['healthreturntomain'] = '继续';
+$string['healthsolution'] = '解决方案';
 $string['help'] = '帮助';
 $string['helpemoticons'] = '使用表情图标';
 $string['helpformatting'] = '关于格式化文本';
@@ -529,7 +568,7 @@ $string['helpwiki'] = '如何编写Wiki文本';
 $string['helpwriting'] = '仔细编写';
 $string['hiddensections'] = '隐藏的节';
 $string['hiddensectionscollapsed'] = '以折叠方式显示隐藏的节';
-$string['hiddensectionsinvisible'] = '不显示隐藏的节';
+$string['hiddensectionsinvisible'] = '完全不显示隐藏的节';
 $string['hide'] = '隐藏';
 $string['hideadvancedsettings'] = '隐藏高级设置';
 $string['hidepicture'] = '隐藏图片';
@@ -549,22 +588,25 @@ $string['htmleditordisabledbrowser'] = 'HTML编辑器不可用，因为您的浏
 $string['htmlformat'] = '美化的HTML格式';
 $string['icqnumber'] = 'ICQ号码';
 $string['idnumber'] = 'ID号码';
+$string['import'] = '导入';
+$string['importactivities'] = '从另一个课程导入活动';
 $string['importdata'] = '导入课程数据';
 $string['importdataexported'] = '从“源”课程成功导出数据。<br />继续向“目标”课程导入。';
 $string['importdatafinished'] = '导入完成! 继续您的课程';
 $string['importdatafrom'] = '找到了一个课程，可从它导入数据:';
+$string['importgroups'] = '导入组';
 $string['importmetacoursenote'] = '通过此表格可将课程添加到您的元课程中(这会导入选课信息)';
 $string['inactive'] = '不活动的';
 $string['include'] = '包括';
 $string['includeallusers'] = '包括所有用户';
 $string['includecoursefiles'] = '包括课程文件';
 $string['includecourseusers'] = '包括课程用户';
-$string['included'] = '被包括的';
+$string['included'] = '被包括';
 $string['includelogentries'] = '包括日志条目';
-$string['includemodules'] = '包含 模组';
+$string['includemodules'] = '包括模块';
 $string['includeneededusers'] = '包括需要的用户';
-$string['includenoneusers'] = '包括None用户';
-$string['includeuserfiles'] = '包括用户的文件';
+$string['includenoneusers'] = '不包括任何用户';
+$string['includeuserfiles'] = '包括用户文件';
 $string['info'] = '信息';
 $string['institution'] = '机构';
 $string['invalidemail'] = 'E-mail地址无效';
@@ -582,6 +624,7 @@ $string['lastedited'] = '最近编辑';
 $string['lastlogin'] = '最后登录';
 $string['lastmodified'] = '最后修改';
 $string['lastname'] = '姓';
+$string['lastyear'] = '去年';
 $string['latestlanguagepack'] = '从moodle.org检查有无最新的语言包';
 $string['latestnews'] = '最新新闻';
 $string['leavetokeep'] = '留空以保留现有密码';
@@ -722,6 +765,7 @@ $string['new'] = '新';
 $string['newaccount'] = '新帐号';
 $string['newcourse'] = '新课程';
 $string['newpassword'] = '新密码';
+$string['newpasswordfromlost'] = '<strong>注意：</strong>您的<strong>当前密码</strong>  将在两封email的<strong>第二</strong>封里发送给您。这是恢复丢失密码流程的一部分。在从此屏幕继续之前，请确认您收到了替换的密码。';
 $string['newpasswordtext'] = '{$a->lastname}{$a->firstname}: 
 您好!  
 您在‘{$a->sitename}’上的帐号密码已被重设，这是您新的临时密码。
@@ -770,14 +814,16 @@ $string['noreplyname'] = '不要回复此邮件';
 $string['noresults'] = '没有结果';
 $string['normal'] = '正常';
 $string['normalfilter'] = '常规过滤器';
+$string['nostatstodisplay'] = '没有可用的数据可显示，抱歉。';
 $string['nostudentsfound'] = '未找到$a';
 $string['nostudentsingroup'] = '在这个组中尚未有学生';
 $string['nostudentsyet'] = '尚无学生选择此课程';
 $string['nosuchemail'] = '没有这样的E-mail地址';
-$string['notavailable'] = '不可得';
+$string['notavailable'] = '不可用';
 $string['noteachersyet'] = '此课程尚无教师';
+$string['notenrollable'] = '此课程现在不能被选课。';
 $string['notenrolled'] = '$a 没有选修该课程。';
-$string['noteuserschangednonetocourse'] = '恢复用户资料后课程资料也需要恢复';
+$string['noteuserschangednonetocourse'] = '注意：恢复用户数据（活动中的数据、文件或消息）时用户资料也要恢复。此项设置已经替您更改。';
 $string['nothingnew'] = '自从您上次登录以来尚无新东西';
 $string['nothingtodisplay'] = '没有可显示内容';
 $string['noticenewerbackup'] = '这个备份文件是使用Moodle {$a->backuprelease}($a->backupversion)创建的，它比您正在使用的Moodle {$a->serverrelease}($a->serverversion)新。由于备份文件的向后兼容无法保证，这可能会导致恢复的内容和备份时不一致。';
@@ -796,12 +842,14 @@ $string['numberweeks'] = '星期/主题的数目';
 $string['numdays'] = '$a 天';
 $string['numhours'] = '$a 小时';
 $string['numminutes'] = '$a 分钟';
+$string['nummonths'] = '$a 个月';
 $string['numseconds'] = '$a 秒';
 $string['numviews'] = '阅读{$a}次';
 $string['numweeks'] = '$a 星期';
 $string['numwords'] = '$a 字词';
 $string['numyears'] = '$a 年';
 $string['ok'] = '好';
+$string['oldpassword'] = '当前密码';
 $string['opentoguests'] = '访客进入';
 $string['optional'] = '可选的';
 $string['order'] = '次序';
@@ -894,7 +942,9 @@ $string['rss'] = 'RSS';
 $string['rssarticles'] = 'RSS最新文章数目';
 $string['rsserror'] = '读取RSS数据错误';
 $string['rsstype'] = '此活动的RSS种子';
+$string['saveandnext'] = '保存并显示下一个';
 $string['savechanges'] = '保存更改';
+$string['savepreferences'] = '保存使用偏好';
 $string['saveto'] = '保存到';
 $string['scale'] = '等级';
 $string['scales'] = '等级';
@@ -932,13 +982,13 @@ $string['showallcourses'] = '显示所有课程';
 $string['showalltopics'] = '显示所有主题';
 $string['showallusers'] = '显示所有用户';
 $string['showallweeks'] = '显示所有周安排';
-$string['showgrades'] = '显示等级';
+$string['showgrades'] = '显示成绩';
 $string['showlistofcourses'] = '显示课程列表';
 $string['showonlytopic'] = '只显示第{$a}个主题';
 $string['showonlyweek'] = '只显示第{$a}周安排';
 $string['showperpage'] = '每页显示{$a}';
 $string['showrecent'] = '显示最新动态';
-$string['showreports'] = '显示活跃的报道';
+$string['showreports'] = '显示活动报道';
 $string['showsettings'] = '显示设置';
 $string['showtheselogs'] = '显示这些日志';
 $string['since'] = '开始于';
@@ -1015,7 +1065,7 @@ $string['toomanytoshow'] = '要显示的用户太多';
 $string['toonly'] = '只给{$a}';
 $string['top'] = '置顶';
 $string['topic'] = '主题';
-$string['topichide'] = '从{$a}隐藏该主题';
+$string['topichide'] = '向{$a}隐藏该主题';
 $string['topicoutline'] = '主题目录';
 $string['topicshow'] = '显示该主题于$a';
 $string['total'] = '总计';
@@ -1042,6 +1092,8 @@ $string['unzippingbackup'] = '解压备份文件';
 $string['up'] = '向上';
 $string['update'] = '更改';
 $string['updated'] = '已更改的{$a}';
+$string['updatemymoodleoff'] = '普通模式';
+$string['updatemymoodleon'] = '编辑此页';
 $string['updatemyprofile'] = '更改个人资料';
 $string['updatesevery'] = '每隔{$a}秒刷新一次';
 $string['updatethis'] = '更改这个$a';
@@ -1081,12 +1133,13 @@ $string['usernotconfirmed'] = '不能确认$a';
 $string['userprofilefor'] = '用于{$a}的用户个人资料';
 $string['users'] = '用户';
 $string['usersnew'] = '新用户';
-$string['userzones'] = '用户地区';
+$string['userzones'] = '用户区';
 $string['usethiscourse'] = '使用这个课程';
 $string['usingexistingcourse'] = '使用现有课程';
 $string['version'] = '版本';
 $string['view'] = '浏览';
-$string['virusfound'] = '管理员请注意! Clam AV发现用户{$a->user}在课程{$a->course}中山川的文件有病毒。以下是clamscan的输出:';
+$string['viewsolution'] = '查看解决方案';
+$string['virusfound'] = '管理员请注意! Clam AV发现用户{$a->user}在课程{$a->course}中上传的文件有病毒。以下是clamscan的输出:';
 $string['virusfoundlater'] = '您于{$a->date}在课程{$a->course}中上传的文件{$a->filename}有病毒。以下是关于该文件的汇总:
 
 $a->action
@@ -1119,8 +1172,8 @@ $string['welcometocoursetext'] = '欢迎您来{$a->coursename}!
   $a->profileurl';
 $string['whattocallzip'] = '如何命名该zip文件?';
 $string['withchosenfiles'] = '选中的文件或文件夹用于';
-$string['withoutuserdata'] = '不用用户资料';
-$string['withuserdata'] = '用用户资料';
+$string['withoutuserdata'] = '且不含用户资料';
+$string['withuserdata'] = '且包含用户资料';
 $string['wordforstudent'] = '您用于称呼学生的字词';
 $string['wordforstudenteg'] = '例如学生、参与者等等';
 $string['wordforstudents'] = '您用于称呼多个学生的字词';
@@ -1129,18 +1182,18 @@ $string['wordforteacher'] = '您用于称呼教师的字词';
 $string['wordforteachereg'] = '例如教师、导师、老师和教员等';
 $string['wordforteachers'] = '您用于称呼多个教师的字词';
 $string['wordforteacherseg'] = '例如教师们、导师们、老师们和教员们等';
-$string['writingcategoriesandquestions'] = '书写类别及问题';
-$string['writingcoursedata'] = '书写课程数据';
-$string['writingeventsinfo'] = '书写事件信息';
-$string['writinggeneralinfo'] = '书写常规信息';
-$string['writinggradebookinfo'] = '写成绩簿信息';
-$string['writinggroupsinfo'] = '编写组信息';
-$string['writingheader'] = '书写头';
-$string['writingloginfo'] = '书写日志信息';
-$string['writingmessagesinfo'] = '书写消息信息';
-$string['writingmoduleinfo'] = '书写模组信息';
-$string['writingscalesinfo'] = '书写等级信息';
-$string['writinguserinfo'] = '书写用户信息';
+$string['writingcategoriesandquestions'] = '写入类别及问题';
+$string['writingcoursedata'] = '写入课程数据';
+$string['writingeventsinfo'] = '写入事件信息';
+$string['writinggeneralinfo'] = '写入常规信息';
+$string['writinggradebookinfo'] = '写入成绩簿信息';
+$string['writinggroupsinfo'] = '写入组信息';
+$string['writingheader'] = '写入头';
+$string['writingloginfo'] = '写入日志信息';
+$string['writingmessagesinfo'] = '写入消息信息';
+$string['writingmoduleinfo'] = '写入模块信息';
+$string['writingscalesinfo'] = '写入等级信息';
+$string['writinguserinfo'] = '写入用户信息';
 $string['wrongpassword'] = '该用户的密码错误';
 $string['yahooid'] = 'Yahoo号码';
 $string['yes'] = '是';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // choice.php - created with Moodle 1.5 ALPHA (2005042400)
+      // choice.php - created with Moodle 1.5.3+ (2005060230)
 
 
 $string['addmorechoices'] = 'Afegeix més opcions';
@@ -25,7 +25,7 @@ $string['notopenyet'] = 'Aquesta activitat no està disponible fins el $a';
 $string['privacy'] = 'Confidencialitat dels resultats';
 $string['publish'] = 'Publica els resultats';
 $string['publishafteranswer'] = 'Mostra els resultats als estudiants després que contestin';
-$string['publishafterclose'] = 'Mostre els resultats als estudiants quan es tanqui la consulta';
+$string['publishafterclose'] = 'Mostra els resultats als estudiants quan es tanqui la consulta';
 $string['publishalways'] = 'Mostra sempre els resultats als estudiants';
 $string['publishanonymous'] = 'Publica els resultats anònimament, sense mostrar els noms dels estudiants';
 $string['publishnames'] = 'Publica els resultats complets, amb els noms dels estudiants i les seves respostes';

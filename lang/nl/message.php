@@ -4,12 +4,12 @@
 
 $string['addcontact'] = 'Voeg een contactpersoon toe';
 $string['addsomecontacts'] = 'Gebruik het tabblad <a href=\"$a\">Zoek</a> om iemand een berichtje te sturen of om op deze pagina een snelkoppeling naar iemand te maken.';
-$string['addsomecontactsincoming'] = 'Deze berichten zijn van mensen die niet in je contactenlijst zitten. Om ze toe te voegen klik je op het icoontje \"Voeg contactpersoon toe\" naast hun naam.';
+$string['addsomecontactsincoming'] = 'Deze berichten zijn van mensen die niet in je contactenlijst zitten. Om ze toe te voegen klik je op het pictogram \"Voeg contactpersoon toe\" naast hun naam.';
 $string['ago'] = '$a geleden';
 $string['allmine'] = 'Alle berichten aan mij of van mij';
 $string['allstudents'] = 'Alle berichten tussen leerlingen binnen een cursus';
 $string['allusers'] = 'Alle berichten van alle gebruikers';
-$string['backupmessageshelp'] = 'Als dit ingeschakeld is, dan zullen berichten in de automatische SITE backups gezet worden';
+$string['backupmessageshelp'] = 'Als dit ingeschakeld is, dan zullen berichten in de automatische SITE-backups gezet worden';
 $string['beepnewmessage'] = 'Geluidssignaal als er een nieuw bericht binnenkomt';
 $string['blockcontact'] = 'Blokkeer contactpersoon';
 $string['blockedmessages'] = '$a bericht(en) van/aan geblokkeerde gebruikers';

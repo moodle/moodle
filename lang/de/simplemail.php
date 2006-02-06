@@ -52,7 +52,7 @@ $string['digestmailprefs'] = 'Ihre Nutzer/innenprofil';
 $string['yesforever'] = 'Ja, immer';
 $string['yesinitially'] = 'Ja, anfangs';
 $string['youratedthis'] = 'Ihre Bewertung';
-$string['yournewtopic'] = 'Neue E-Mail in der §a Mailbox';
+$string['yournewtopic'] = 'Neue E-Mail in der $a Mailbox';
 $string['yourreply'] = 'Ihre Antwort';
 
 ?>

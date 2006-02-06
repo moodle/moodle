@@ -1,11 +1,11 @@
 <?PHP // $Id$ 
-      // quiz_analysis.php - created with Moodle 1.5 ALPHA (2005043000)
+      // quiz_analysis.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['analysisoptions'] = 'Mga opsiyon ng pagsusuri';
 $string['analysistitle'] = 'Manghad ng Pagsusuri ng Aytem';
 $string['attemptsall'] = 'lahat ng pagkuha';
-$string['attemptselection'] = 'Pagkuha na susuriin bawat user';
+$string['attemptselection'] = 'Pagkuha ng bawat user na susuriin';
 $string['attemptsfirst'] = 'unang pagkuha';
 $string['attemptshighest'] = 'pinakamataas na marka';
 $string['attemptslast'] = 'huling pagkuha';

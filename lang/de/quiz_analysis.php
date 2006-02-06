@@ -1,5 +1,5 @@
-<?PHP // $Id$
-      // quiz_analysis.php - created with Moodle 1.5 ALPHA (2005051500)
+<?PHP // $Id$ 
+      // quiz_analysis.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['analysisoptions'] = 'Auswertungsoptionen';
@@ -24,6 +24,8 @@ $string['quizreportdir'] = 'quiz_reports';
 $string['rcounttitle'] = 'Antworten <br>gezählt';
 $string['reportanalysis'] = 'Fragananalyse';
 $string['responsestitle'] = 'Antworttexte';
+$string['rfractiontitle'] = 'Teil-<br />Kredit';
 $string['rpercenttitle'] = 'Antworten %%';
+$string['stddevtitle'] = 'Standardabweichung';
 
 ?>

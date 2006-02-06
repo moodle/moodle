@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.5 Beta (2005052300)
+      // forum.php - created with Moodle 1.5.3+ (2005060230)
 
 
 $string['addanewdiscussion'] = 'Afegeix un nou tema de debat';
@@ -10,6 +10,8 @@ $string['allowchoice'] = 'Permet triar a tothom';
 $string['allowdiscussions'] = 'Pot un $a enviar un missatge a aquest fòrum?';
 $string['allowratings'] = 'Permeteu valorar els missatges?';
 $string['allowsdiscussions'] = 'Aquest fòrum permet iniciar a tothom un tema de debat.';
+$string['allsubscribe'] = 'Subscriu-me a tots els fòrums';
+$string['allunsubscribe'] = 'Cancel·la la subscripció a tots els fòrums';
 $string['anyfile'] = 'Qualsevol fitxer';
 $string['attachment'] = 'Fitxer adjunt';
 $string['bynameondate'] = 'per $a->name - $a->date';
@@ -58,7 +60,7 @@ $string['forcesubscribeq'] = 'Imposeu que tothom estigui subscrit?';
 $string['forum'] = 'Fòrum';
 $string['forumintro'] = 'Introducció al fòrum';
 $string['forumname'] = 'Nom del fòrum';
-$string['forumposts'] = 'Missatges del fòrum';
+$string['forumposts'] = 'Missatges enviats';
 $string['forums'] = 'Fòrums';
 $string['forumtype'] = 'Tipus de fòrum';
 $string['generalforum'] = 'Fòrum estàndard per a ús general';
@@ -100,8 +102,11 @@ $string['nonews'] = 'Encara no s\'han enviat notícies';
 $string['noposts'] = 'No hi ha missatges';
 $string['nopostscontaining'] = 'No s\'ha trobat cap missatge que contingui \'$a\'';
 $string['nosubscribers'] = 'Encara no hi ha subscriptors d\'aquest fòrum';
+$string['nothingnew'] = 'Res nou per a $a';
 $string['notingroup'] = 'Heu de ser part d\'un grup per veure aquest fòrum.';
 $string['notrackforum'] = 'No facis el seguiment de missatges no llegits';
+$string['nowallsubscribed'] = 'Us heu subscrit a tots els fòrums de $a';
+$string['nowallunsubscribed'] = 'Heu cancel·lat la subscripció a tots els fòrums de $a';
 $string['nownotsubscribed'] = '$a->name NO rebrà còpies de \'$a->forum\' per correu electrònic.';
 $string['nownottracking'] = '$a->name ja no fa el seguiment del fòrum \'$a->forum\'.';
 $string['nowsubscribed'] = '$a->name rebrà còpies de \'$a->forum\' per correu electrònic.';
@@ -112,6 +117,8 @@ $string['oldertopics'] = 'Temes anteriors';
 $string['openmode0'] = 'Debats no, respostes no';
 $string['openmode1'] = 'Debats no, però respostes sí';
 $string['openmode2'] = 'Debats i respostes sí';
+$string['overviewnumpostssince'] = '$a missatges des de la darrera entrada';
+$string['overviewnumunread'] = '$a no llegits en total';
 $string['parent'] = 'Mostra missatge original';
 $string['parentofthispost'] = 'Missatge original';
 $string['postadded'] = 'S\'ha afegit el vostre missatge. <p>Teniu $a per editar-lo si voleu fer algun canvi.';

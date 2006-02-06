@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.4 (2004083100)
+<?php // $Id$ 
+      // wiki.php - created with Moodle 1.4 alpha (2004081900)
 
 
 $string['action'] = '-- Tevékenység --';
@@ -144,6 +144,7 @@ $string['safehtml'] = 'Biztonságos HTML';
 $string['save'] = 'Mentés';
 $string['searchwiki'] = 'Wiki keresése';
 $string['setpageflags'] = 'Oldaljelölõk beállítása';
+$string['showversions'] = 'Változatok megjelenítése:';
 $string['sitemap'] = 'Portáltérkép';
 $string['smfor'] = 'Portáltérkép';
 $string['status'] = 'Státus';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // timezones.php - created with Moodle 1.5 ALPHA (2005042300)
+      // timezones.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['africa/abidjan'] = '非洲/阿比让';
@@ -371,6 +371,6 @@ $string['pacific/tongatapu'] = '太平洋/Tongatapu';
 $string['pacific/truk'] = '太平洋/Truk';
 $string['pacific/wake'] = '太平洋/威克岛';
 $string['pacific/wallis'] = '太平洋/Wallis';
-$string['pacific/yap'] = '太平洋/Yap';
+$string['pacific/yap'] = '太平洋/雅浦岛';
 
 ?>

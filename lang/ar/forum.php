@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.6 development (2005052400)
+      // forum.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['addanewdiscussion'] = 'ÃÖİ ãæÖæÚÇ ÌÏíÏÇ ááäŞÇÔ';
@@ -10,6 +10,8 @@ $string['allowchoice'] = 'ãÓãæÍ ÇáÇÎÊíÇÑ';
 $string['allowdiscussions'] = 'åá íÓÊØÚ  ÇáØÇáÈ  ÈÅÑÓÇá ãŞÇáÉ Åáì åĞÇ ÇáãäÊÏì¿';
 $string['allowratings'] = 'åá ÊÕäíİ ÇáãÔÇÑßÇÊ ãÓãæÍ Èå¿';
 $string['allowsdiscussions'] = 'åĞÇ ÇáãäÊÏì íÓãÚ áßá ãÓÊÎÏã Ãä íÈÏÃ ãæÖæÚÇ æÇÍÏÇ ááäŞÇÔ.';
+$string['allsubscribe'] = 'ÇÔÊÑß İí ßá ÇáãäÊÏíÇÊ';
+$string['allunsubscribe'] = 'ÅáÛí ÇáÇÔÊÑÇß İí ßá ÇáãäÊÏíÇÊ';
 $string['anyfile'] = 'Ãí ãáİ';
 $string['attachment'] = 'ãáİ ãÑİŞ';
 $string['bynameondate'] = 'ÈæÇÓØÉ $a->date -  $a->name ';
@@ -46,6 +48,9 @@ $string['discussions'] = 'ãäÇŞÔÇÊ';
 $string['discussionsstartedby'] = 'ÇáãäÇŞÔÇÊ ÈÏÃÊ ÈæÇÓØÉ  $a';
 $string['discussionsstartedbyrecent'] = 'ÇáãäÇŞÔÇÊ ÈÏÃÊ ÍÏíËÇ ÈæÇÓØÉ  $a';
 $string['discussthistopic'] = 'äÇŞÔ åĞÇ ÇáãæÖæÚ';
+$string['displayend'] = 'ÇÚÑÖ ÇáäåÇÆíÉ';
+$string['displayperiod'] = 'ÇÚÑÖ ÇáİÊÑÉ';
+$string['displaystart'] = 'ÇÚÑÖ ÇáÈÏÇíÉ';
 $string['eachuserforum'] = 'íÓÊØíÚ ßá ãÓÊÎÏã Ãä íÑÓá äŞÇÔÇ æÇÍÏÇ';
 $string['edit'] = 'ÍÑÑ';
 $string['editedby'] = 'Êã ÊÍÑíÑå ÈæÇÓØÉ $a->name - $a->date';
@@ -101,9 +106,13 @@ $string['nonews'] = 'áã ÊäÔÑ ÃÎÈÇÑ ÌÏíÏÉ';
 $string['noposts'] = 'áÇ ÊæÌÏ ãÔÇÑßÇÊ';
 $string['nopostscontaining'] = 'áÇ ÊæÌÏ ÑÏæÏ ÊÍÊæì Úáì \' $a\' ãæÌæÏÉ';
 $string['nosubscribers'] = 'áÇ íæÌÏ ãÔÊÑßæä İí åĞÇ ÇáãäÊÏì';
+$string['nothingnew'] = 'áÇ ÌÏíÏ áÜ $a';
 $string['notingroup'] = 'ÚĞÑÇ¡ íÌÈ Çä Êßæä ãä Öãä ÇáãÌãæÚÉ áãÚÇíäÉ åĞÇ ÇáãäÊÏì.';
 $string['notrackforum'] = 'áÇ ÊÊÇÈÚ ÇáÑÓÇÆá ÇáÛíÑ ãŞÑæÁÉ';
+$string['nowallsubscribed'] = 'Êã ÇáÇÔÊÑÇß İí ßá ÇáãäÊÏíÇÊ $a';
+$string['nowallunsubscribed'] = 'Êã ÅáÛÇÁ ÇáÇÔÊÑÇß İí ßá ÇáãäÊÏíÇÊ $a';
 $string['nownotsubscribed'] = ' $a->name áä íÓÊáã äÓÎ ãä \'$a->forum\' ÈÇáÈÑíÏ ÇáÅáßÊÑæäí.';
+$string['nownottracking'] = ' $a->name áã íÚÏ íÊÇÈÚ ÇáãÔÇÑßÇÊ\'$a->forum\' ÈÇáÈÑíÏ ÇáÅáßÊÑæäí.';
 $string['nowsubscribed'] = ' $a->name ÓíÓÊáã äÓÎ ãä \'$a->forum\' ÈÇáÈÑíÏ ÇáÅáßÊÑæäí.';
 $string['nowtracking'] = '$a->name ÇáÂä íÊÇÈÚ\'$a->forum\'';
 $string['numposts'] = ' $a ãŞÇáÇÊ';
@@ -112,6 +121,8 @@ $string['oldertopics'] = 'ãæÖæÚÇÊ ŞÏíãÉ';
 $string['openmode0'] = 'áÇ íÓãÍ ÈÇáãäÇŞÔÇÊ¡ æáÇ íÓãÍ ÈÇáÑÏæÏ';
 $string['openmode1'] = 'áÇ íÓãÍ ÈÇáãäÇŞÔÇÊ¡ æáßä íÓãÍ ÈÇáÑÏæÏ';
 $string['openmode2'] = 'íÓãÍ ÈÇáãäÇŞÔÇÊ æÇáÑÏæÏ';
+$string['overviewnumpostssince'] = '$a ãÔÇÑßÉ ãäĞ ÃÎÑ ÒíÇÑÉ';
+$string['overviewnumunread'] = '$a ãÌãæÚ ÇáãÔÇÑßÇÊ ÇáÊí áã ÊŞÑÇÁ ÈÚÏ';
 $string['parent'] = 'ÇÚÑÖ ÇáÇÕá';
 $string['parentofthispost'] = 'ÇÕá ÇáãŞÇá';
 $string['postadded'] = 'Êã ÅÖÇİÉ ãŞÇáß ÈäÌÇÍ.<br />Úáíß $a Ãä ÊİÊÍå ááÊÚÏíá ÅĞÇ ÃÑÏÊ ÅÏÎÇá Ãí ÊÛííÑÇÊ.';
@@ -180,6 +191,7 @@ $string['subscribestart'] = 'ÊÒæíÏí ÈäÓÎ ÇáãÔÇÑßÇÊ ãä åĞÇ ÇáãäÊÏì ÚÈÑ ÇáÈÑíÏ ÇáÇ
 $string['subscribestop'] = 'áÇ ÇÑÛÈ İí ÇáÍÕæá Úáì äÓÎ ÇáãÔÇÑßÇÊ ãä åĞÇ ÇáãäÊÏì ÚÈÑ ÇáÈÑíÏ ÇáÇáßÊÑæäí';
 $string['subscription'] = 'ÇÔÊÑÇß';
 $string['subscriptions'] = 'ÇÔÊÑÇßÇÊ';
+$string['timestartenderror'] = 'áÇ íãßä ÚÑÖ ÊÇÑíÎ ÇáÇäÊåÇÁ ŞÈá ÊÇÑíÎ ÇáÈÏÇÁ';
 $string['trackforum'] = 'ÊÇÈÚ ÇáÑÇÓÇÆá ÇáŞíÑ ãŞÑæÁå';
 $string['tracking'] = 'ÊÇÈÚ';
 $string['trackingoff'] = 'ÇÛáÇŞ';

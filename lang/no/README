@@ -1,17 +1,20 @@
+Norsk translation Tormod Aagaard, thormodr@start.no
+
 Logg for endringer
 
-Oversettelse til Moodle v. 1.2. 
+Oversettelse til Moodle v. 1.5.2 
 
-Endringer 29. mars 2004:
-Flere oppdateringer tilpasset versjon 1.2, og noen nye filer. (Kun php-filer endret.) Enda flere vil komme etter hvert. 
-Endring i språkbruk: Bruk av begrepet "kurs" erstattes med "klasse".
+29. januar 2006
 
-Endringer 8. des. 2003. (v. 1.1.1)
-Størst tilskudd i det siste er mange hjelpefiler. 
-Php-filene kommer etter hvert med større oppdateringer.
+Jeg har prøvd å bytte ut anglisismer med gode norske ord og uttrykk. Eks: "konfigurering" ble byttet ut med "oppsett". 
+I det store og hele prøver jeg å følge retningslinjene til skolelinuxprosjektet.
 
-Denne oversettelsen er tilpasset hovedsakelig for bruk i høgskole og universitet, men kan med mindre endringer modifiseres til videregående/grunnskole/annet. 
-Dette kommer tydeligst frem i bruken av begreper som 'studenter' og 'studier' i stedet for 'elever' og 'fag'. 
+moodle.php er komplett
+messages.php er nesten komplett
+chat.php er nesten komplett
 
-Oversettelsen er kraftig videreutviklet fra opprinnelig oversettelse fra november 2002 av Jøran Sørbø, joran.sorbo@teleweb.no. 
-Stig Bjarne Haugen, sbh@hinesna.no (Vedlikeholder oversettelsen) 
+Jeg har oversatt store deler av wiki.php, quiz.php, lesson.php
+Jeg har prøvd å bytte ut anglisismer med gode norske ord og uttrykk.
+
+Arbeidet er basert på oversettelse fra 28.10.05 av Stig Bjarne Haugen, sbh@hinesna.no
+Vedlikeholdes av Tormod Aagaard, thormodr@start.no

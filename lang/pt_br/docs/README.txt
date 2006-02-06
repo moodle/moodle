@@ -15,7 +15,9 @@ I would suggest that you:
     |
     |   - files.php
     |   - install.html
+    |   - installamp.html
     |   - upgrade.html
+    |   - faq.html
     |
     |  -----------------
     |
@@ -37,8 +39,8 @@ I would suggest that you:
     |  -----------------
     |   
     |   - license.html
-    |   - credits.html
     |
     |-------------------
     LEAST IMPORTANT
 
+ 3) Please don't translate credits.html at all - it changes too much.

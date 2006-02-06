@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // install.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021000)
+      // install.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['admindirerror'] = '指定的管理目录不正确';
@@ -13,6 +13,14 @@ $string['configfilenotwritten'] = '安装脚本无法自动创建一个包含您
 $string['configfilewritten'] = '已经成功创建了config.php文件';
 $string['configurationcomplete'] = '配置完毕';
 $string['database'] = '数据库';
+$string['databasecreationsettings'] = '现在您需要配置数据库选项，Moodle的大部分数据都是存储在数据库中的。Moodle4Windows安装程序会根据下面的选项自动为您创建这个数据库。<br />
+<br /> <br />
+<b>类型：</b>安装程序只允许“mysql”<br />
+<b>主机：</b>安装程序只允许“localhost”<br />
+<b>名称：</b>数据库名称，如moodle<br />
+<b>用户名：</b>安装程序只允许“root”<br />
+<b>密码：</b>您的数据库密码<br />
+<b>表格前缀：</b>用于所有表格名的前缀(可选)';
 $string['databasesettings'] = '现在您需要配置数据库了，多数的Moodle数据都将存储在其中。这个数据库必须已经存在了，并且必须有一个用户名和密码来访问它。<br /> <br /> <br />
 <b>类型:</b> mysql或postgres7<br />
 <b>主机:</b> 如localhost或db.isp.com<br />
@@ -58,6 +66,16 @@ $string['gdversionhelp'] = '<p>您的服务器看上去并没有安装GD。</p>
 <p>在Unix上为PHP增加GD功能，可以用--with-gd选项来编译PHP。</p>
 
 <p>在Windows上，修改php.ini并去掉libgd.dll行前的注释符号就可以了。</p>';
+$string['globalsquotes'] = '处理全局变量的方式不安全';
+$string['globalsquoteserror'] = '修正您的PHP设置：禁用register_globals和/或启动magic_quotes_gpc。';
+$string['globalsquoteshelp'] = '<p>我们不建议你在禁用Magic Quotes GPC的同时开启Register Globals。</p>
+
+<p>一种比较好的做法是在php.ini中设定<b>magic_quotes_gpc = On</b>和<b>register_globals = Off。</b></p>
+
+<p>如果您无权访问您的php.ini，您可以在Moodle目录内的.htaccess文件中增加如下内容：
+<blockquote>php_value magic_quotes_gpc On</blockquote>
+<blockquote>php_value register_globals Off</blockquote>
+</p>';
 $string['installation'] = '安装';
 $string['magicquotesruntime'] = '运行时的Magic Quotes';
 $string['magicquotesruntimeerror'] = '这应该是关闭的';

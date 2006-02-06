@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // install.php - created with Moodle 1.6 development (2005060201)
+      // install.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['admindirerror'] = 'De adminmap die je opgeeft is niet juist';
@@ -62,6 +62,16 @@ $string['gdversionhelp'] = '<p>Blijkbaar is GD niet geïnstalleerd op je server.<
 <p>PHP heeft de GD-bibliotheek nodig om afbeeldingen te kunnen maken (zoals de grafieken van de logbestanden) en te verwerken (zoals de profielbestanden van de gebruikers). Moodle zal werken zonder GD - alleen deze mogelijkheden zullen het niet doen.</p>
 <p>Om GD toe te voegen aan PHP op een Unixmachine moet je PHP compileren met de --with-gd parameter.</p>
 <p>Onder Windows kun je gewoonlijk php.ini bewerken en de commentaartekens voor de lijn met libgd.dll verwijderen.</p>';
+$string['globalsquotes'] = 'Inveilige behandeling van globals';
+$string['globalsquoteserror'] = 'Zet je PHP instellingen juist: schakel register_globals uit en/of schakel magic_quotes_gpc in';
+$string['globalsquoteshelp'] = '<p>De combinatie van uitgeschakelde Magic Quotes GPC en ingeschakelde Register Globals tegelijk wordt sterk afgeraden.</p>
+
+<p>De aanbevolen instelling is<b>magic_quotes_gpc = On</b> en <b>register_globals = Off</b> in je php.ini</p>
+
+<p>Als je geen toegang hebt tot php.ini, dan kun je misschien volgende lijn toevoegen in het bestand .htaccess in je Moodlemap:
+<blockquote>php_value magic_quotes_gpc On</blockquote>
+<blockquote>php_value register_globals Off</blockquote>
+</p> ';
 $string['installation'] = 'Installatie';
 $string['magicquotesruntime'] = 'Magic Quotes runtime';
 $string['magicquotesruntimeerror'] = 'Dit moet uitgeschakeld zijn';

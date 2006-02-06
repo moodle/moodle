@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // tex.php - created with Moodle 1.2 Beta (2004022400)
+      // tex.php - created with Moodle 1.5.3+ (2005060230)
 
 
 $string['filtername'] = 'Notació TeX';

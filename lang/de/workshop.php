@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.5 ALPHA (2005043000)
+      // workshop.php - created with Moodle 1.6 development (2005090100)
 
 
 $string['absent'] = 'Abwesend';
@@ -51,7 +51,7 @@ $string['attachments'] = 'Anhänge';
 $string['authorofsubmission'] = 'Autor des Beitrages';
 $string['automaticgradeforassessment'] = 'Automatische Beurteilung des Assessments';
 $string['averageerror'] = 'Durchschnittlicher Fehler';
-$string['awaitinggradingbyteacher'] = 'Erwarte Benotung von $a';
+$string['awaitinggradingbyteacher'] = 'Erwarte Bewertung von $a';
 $string['beforedeadline'] = 'Vor dem Stichtag: $a';
 $string['by'] = 'Eingereicht von';
 $string['calculationoffinalgrades'] = 'Berechnung der Endbeurteilung';
@@ -114,7 +114,7 @@ $string['gradesforstudentsassessment'] = 'Bewertungen für $a`s Assessment';
 $string['gradesforsubmissionsare'] = 'Bewertungen für Beiträge sind außerhalb von $a ';
 $string['gradetable'] = 'Bewertungstabelle';
 $string['gradingallassessments'] = 'Alle Assessments bewerten';
-$string['gradinggrade'] = 'Bewertungs-';
+$string['gradinggrade'] = 'Gesamtbewertung';
 $string['gradingstrategy'] = 'Bewertungsstrategie';
 $string['hidegradesbeforeagreement'] = 'Bewertungen vor der Zustimmung verbergen';
 $string['hidenamesfromstudents'] = 'Namen von $a verbergen';
@@ -151,7 +151,7 @@ $string['movingtophase'] = 'Verschieben zu Phase $a';
 $string['namesnotshowntostudents'] = 'Namen werde $a nicht angezeigt';
 $string['newassessments'] = 'Neue Workshopbewertung';
 $string['newattachment'] = 'Neue Anhänge';
-$string['newgradings'] = 'Neue Benotungen';
+$string['newgradings'] = 'Neue Bewertungen';
 $string['newsubmissions'] = 'Neue Workshop Einreichung';
 $string['noassessments'] = 'Keine Bewertungen';
 $string['noassessmentsdone'] = 'Keine Bewertung durchgeführt';
@@ -293,7 +293,7 @@ $string['uploadsuccess'] = 'Abgabe erfolgreich';
 $string['usepassword'] = 'Verwende Passwort';
 $string['verylax'] = 'Sehr lax/locker';
 $string['verypoor'] = 'Sehr schlecht';
-$string['verystrict'] = 'Sehr strict/streng';
+$string['verystrict'] = 'Sehr strickt/streng';
 $string['view'] = 'Ansicht';
 $string['viewassessment'] = 'Assessment anzeigen';
 $string['viewassessmentofteacher'] = 'Assessment anzeigen von $a';

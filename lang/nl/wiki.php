@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005033100)
+      // wiki.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['action'] = '- - Acties - -';
@@ -102,7 +102,7 @@ $string['mostoftenchangedpages'] = 'Meest gewijzigde pagina\'s';
 $string['mostvisitedpages'] = 'Meest bezochte pagina\'s';
 $string['newestpages'] = 'Nieuwste pagina\'s';
 $string['noadministrationaction'] = 'Geen beheersactie gegeven';
-$string['nocandidatestoremove'] = 'Geen kandidaat pagina\'s om te verwijderen. Kies \'$a\'om alle pagina\'s te tonen';
+$string['nocandidatestoremove'] = 'Geen kandidaatpagina\'s om te verwijderen. Kies \'$a\'om alle pagina\'s te tonen';
 $string['nochangestorevert'] = 'Er zijn geen wijzigingen om terug te draaien';
 $string['nohtml'] = 'Geen HTML';
 $string['nolinksfound'] = 'Geen links gevonden op de pagina';
@@ -144,6 +144,7 @@ $string['safehtml'] = 'Veilige HTML';
 $string['save'] = 'Bewaar';
 $string['searchwiki'] = 'Zoeken in Wiki';
 $string['setpageflags'] = 'Zet paginavlaggen';
+$string['showversions'] = 'Toon versies:';
 $string['sitemap'] = 'Kaart van de site';
 $string['smfor'] = 'Kaart van de site voor';
 $string['status'] = 'Status';

@@ -1,22 +1,27 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.4 (2004083100)
+// auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005010100)
 
 
-$string['alternatelogin'] = 'Ha itt URL-t ad meg, az lesz a portál bejelentkezõ oldala. Az oldalon egy ûrlap található, melyen a tevékenység tulajdonságának beállítása <strong>\'$a\'</strong> és a <strong>felhasználónév</strong> és a  <strong>jelszó</strong> mezõket adja vissza.<br />Ügyeljen az URL pontos megadására, ellenkezõ esetben kizárhatja magát errõl a portálról.<br />Az alapbeállítás szerinti bejelentkezõ oldal megtartásához hagyja a mezõt üresen.';
+$string['alternatelogin'] = 'Ha itt URL-t ad meg, az lesz a portál bejelentkezõ oldala. Az oldalon egy ûrlap található, melyen a tevékenység tulajdonságának beállítása <strong>\'$a\'</strong>, a <strong>felhasználónév</strong> és a  <strong>jelszó</strong> mezõket adja vissza.<br />Ügyeljen az URL pontos megadására, ellenkezõ esetben kizárhatja magát errõl a portálról.<br />Az alapbeállítás szerinti bejelentkezõ oldal megtartásához hagyja a mezõt üresen.';
 $string['alternateloginurl'] = 'Alternatív bejelentkezési URL';
-$string['auth_cas_baseuri'] = 'A szerver URI-ja (ha nincs baseUri, akkor semmi)<br />Ha például a CAS-szerver a host.domaine.fr/CAS/-ra válaszol, akkor<br />cas_baseuri = CAS/';
-$string['auth_cas_create_user'] = 'Kapcsolja be, ha CAS által hitelesített felhasználókat kíván beszúrni a Moodle adatbázisába. Ha nem, akkor csak a Moodle adatbázisában már szereplõ felhasználók jelentkezhetnek be.';
-$string['auth_cas_enabled'] = 'Kapcsolja be, ha a CAS általi hitelesítést használni kívánja.';
-$string['auth_cas_hostname'] = 'A CAS-szerver gazdaneve<br />pl.: host.domain.fr';
 $string['auth_cas_invalidcaslogin'] = 'Bejelentkezése nem sikerült, nem kapott rá felhatalmazást.';
-$string['auth_cas_language'] = 'Kiválasztott nyelv';
-$string['auth_cas_logincas'] = 'Biztonságos hozzáférésû csatlakozás';
-$string['auth_cas_port'] = 'A CAS-szerver portja';
 $string['auth_cas_server_settings'] = 'A CAS-szerver beállítása';
+$string['auth_castitle'] = 'CAS-szerver használata (SSO)';
+$string['auth_cas_baseuri'] = 'URI of the server (nothing if no baseUri)<br />For example, if the CAS server responds to host.domaine.fr/CAS/ then<br />cas_baseuri = CAS/';
+$string['auth_cas_hostname'] = 'A CAS-szerver gazdaneve<br />pl.: host.domain.fr';
+$string['auth_cas_language'] = 'Selected language';
+$string['auth_cas_port'] = 'A CAS-szerver portja';
 $string['auth_cas_text'] = 'Biztonságos csatlakozás';
 $string['auth_cas_version'] = 'A CAS verziója';
-$string['auth_casdescription'] = 'Ez a módszer egy CAS-szervert (Központi Hitelesítõ Szolgálatot) alkalmaz ahhoz hogy a felhasználókat egyszeri bejelentkezési (SSO) környezetben hitelesítse. Használhat egyszerû LDAP-hitelesítést is. Ha a CAS szerint a felhasználónév és a jelszó érvényes, akkor a Moodle létrehoz egy új felhasználót az adatbáziásban, szükség esetén a felhasználói jellemzõket az LDAP-ból veszi. A következõ bejelentkezéskor már csak a  felhasználónév és a jelszó ellenõrzésére kerül sor.';
-$string['auth_castitle'] = 'CAS-szerver használata (SSO)';
+$string['auth_casdescription'] = 'Ez a módszer egy CAS-szervert (Központi Hitelesítõ Szolgáltatást) alkalmaz ahhoz, hogy a felhasználókat egyszeri bejelentkezési (SSO) környezetben hitelesítse. Használhat egyszerû LDAP-hitelesítést is. Ha a CAS szerint a felhasználónév és a jelszó érvényes, akkor a Moodle létrehoz egy új felhasználót az adatbáziásban, szükség esetén a felhasználói jellemzõket az LDAP-ból veszi. A következõ bejelentkezéskor már csak a  felhasználónév és a jelszó ellenõrzésére kerül sor.';
+$string['auth_cas_enabled'] = 'Kapcsolja be, ha a CAS általi hitelesítést használni kívánja.';
+$string['auth_cas_baseuri'] = 'A szerver URI-ja (ha nincs baseUri, akkor semmi)<br />Ha például a CAS-szerver a host.domaine.fr/CAS/-ra válaszol, akkor<br />cas_baseuri = CAS/';
+$string['auth_cas_create_user'] = 'Kapcsolja be, ha CAS által hitelesített felhasználókat kíván beszúrni a Moodle adatbázisába. Ha nem, akkor csak a Moodle adatbázisában már szereplõ felhasználók jelentkezhetnek be.';
+$string['auth_changepasswordurl'] = 'URL-jelszó módosítása';
+$string['auth_changepasswordurl_expl'] = 'Adja meg a $a jelszavukat elfelejtõ felhasználóknak küldendõ url-t. Állítsa a <strong>Szokásos jelszómódosító oldalt</strong> <strong>Nem</strong>-re.';
+$string['auth_changepasswordhelp'] = 'Súgó jelszómódosításhoz';
+$string['auth_changepasswordhelp_expl'] = 'Megjeleníti a $a jelszavukat elfelejtõ felhasználók súgóját. Ez vagy a <strong>Jelszómódosítási URL</strong>-lel vagy a Moodle belsõ jelszómódosításával együtt jelenik meg, vagy nélküle.';
+$string['auth_cas_logincas'] = 'Biztonságos hozzáférésû csatlakozás';
 $string['auth_common_settings'] = 'Általános beállítások';
 $string['auth_data_mapping'] = 'Adatok illesztése';
 $string['auth_dbdescription'] = 'Ez a módszer egy külsõ adatbázistáblát használ a felhasználó nevének és jelszavának ellenõrzésére.  Új felhasználó esetén az egyéb mezõkben tárolt információk is átmásolhatók a Moodle-ba.';
@@ -43,7 +48,7 @@ $string['auth_fcuserid'] = '\'Segédadminisztrátor\' joggal rendelkezõ felhasznál
 $string['auth_fieldlock'] = 'Érték zárolása';
 $string['auth_fieldlock_expl'] = '<p><strong>Érték zárolása:</strong> Bekapcsolásakor a felhasználók és a rendszergazdák a mezõt nem szerkeszthetik közvetlenül. Akkor jelölje be, ha az adatokat a külsõ hitelesítési rendszerben kezeli. </p>';
 $string['auth_fieldlocks'] = 'Felhasználómezõk zárolása';
-$string['auth_fieldlocks_help'] = '<p>A felhasználómezõket zárolhatja. Ez akkor hasznos, ha a rendszergazdák a felhasználói adatokat kézzel tartják karban a felhasználói rekordok szerkesztése vagy a \'Felhasználók feltöltése\' segítségével. A Moodle által használt mezõk zárolásakor ne feledje el megadni az adatokat a felhasználók létrehozásakor &emdash; ellenkezõ esetben a felhasználók nem kerülnek bele a rendszerbe.</p><p>A probléma elkerülésére a zárolást beállíthatja \'Üres állapotban zárolatlan\' -ra.</p>';
+$string['auth_fieldlocks_help'] = '<p>A felhasználómezõket zárolhatja. Ez akkor hasznos, ha a rendszergazdák a felhasználói adatokat kézzel tartják karban a felhasználói rekordok szerkesztése vagy a \'Felhasználók feltöltése\' segítségével. A Moodle által használt mezõk zárolásakor ne feledje el megadni az adatokat a felhasználók létrehozásakor - ellenkezõ esetben a felhasználók nem kerülnek bele a rendszerbe.</p><p>A probléma elkerülésére a zárolást beállíthatja \'Üres állapotban zárolatlan\' -ra.</p>';
 $string['auth_imapdescription'] = 'Ez az eljárás egy IMAP-szervert használ annak ellenõrzésére, hogy a megadott felhasználónév és jelszó érvényes-e.';
 $string['auth_imaphost'] = 'Az IMAP-szerver címe. Az IP-címet használja, ne a DNS-nevet.';
 $string['auth_imapport'] = 'Az IMAP-szerver portszáma. Ez általában 143 vagy 993.';
@@ -66,6 +71,7 @@ $string['auth_ldap_memberattribute'] = 'Adja meg a felhasználók adott csoporthoz
 $string['auth_ldap_objectclass'] = 'Felhasználók elnevezésének/keresésének a szûrõje. Általában objectClass=posixAccount értékre állítandó. Alapbeállítása objectClass=*, amivel az LDAP-bõl minden objektumot visszaad.';
 $string['auth_ldap_opt_deref'] = 'Meghatározza, hogy kereséskor a neveket hogyan kezelje a rendszer. A következõ értékek közül választhat: \"Nem\" (LDAP_DEREF_NEVER) vagy \"Igen\" (LDAP_DEREF_ALWAYS)';
 $string['auth_ldap_passwdexpire_settings'] = 'LDAP-jelszó lejáratának beállításai.';
+$string['auth_ldap_preventpassindb'] = 'Igen választása esetén a jelszavak nem kerülnek bele a Moodle adatbázisába.';
 $string['auth_ldap_search_sub'] = 'Írja be az <> 0 értékeket, ha az alkontextusokban is keresni kíván felhasználót.';
 $string['auth_ldap_server_settings'] = 'LDAP-szerver beállításai';
 $string['auth_ldap_update_userinfo'] = 'Felhasználói adatok (keresztnév, vezetéknév, cím...) frissítése LDAP-ból a Moodle-ba. Az információk szerkezetét lásd az /auth/ldap/attr_mappings.php állományban.';

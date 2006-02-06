@@ -1,4 +1,4 @@
-<?php
+<?php // $Id$
 
 $string['responsesoptions'] = 'Responses options';
 $string['responsestitle'] = 'Detailed responses';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // grades.php - created with Moodle 1.5 ALPHA (2005051500)
+      // grades.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['addcategory'] = 'Voeg categorie toe';
@@ -76,6 +76,7 @@ $string['nolettergrade'] = 'Geen letterbeoordeling voor';
 $string['nomode'] = 'NA';
 $string['nonnumericweight'] = 'Een niet-numerieke waarde ontvangen voor';
 $string['nonweightedpct'] = '%% zonder weging';
+$string['notteachererror'] = 'Je moet leraar zijn om deze functie te gebruiken';
 $string['pctoftotalgrade'] = '%% van totaalcijfer';
 $string['percent'] = 'Procent';
 $string['percentascending'] = 'Sorteer procent oplopend';

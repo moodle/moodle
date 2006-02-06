@@ -667,7 +667,6 @@ $string['order'] = 'Urejenost';
 $string['other'] = 'Drugo';
 $string['outline'] = 'Osnutek';
 $string['page'] = 'Stran';
-$string['parentlanguage'] = 'en';
 $string['participants'] = 'Udele&#65533;enci';
 $string['password'] = 'Geslo';
 $string['passwordchanged'] = 'Geslo je bilo spremenjeno';

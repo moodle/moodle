@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // grades.php - created with Moodle 1.5 ALPHA (2005051500)
+      // grades.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['addcategory'] = 'Magdagdag ng Kategoriya';
@@ -76,6 +76,7 @@ $string['nolettergrade'] = 'Walang titik na marka para sa ';
 $string['nomode'] = 'NA';
 $string['nonnumericweight'] = 'Nakatanggap ng di-bilang na halaga para sa ';
 $string['nonweightedpct'] = 'walang-timbang %%';
+$string['notteachererror'] = 'Dapat ay guro ka para magamit ang katangiang ito.';
 $string['pctoftotalgrade'] = '%% ng kabuuang marka';
 $string['percent'] = 'Bahagdan';
 $string['percentascending'] = 'Pagsunud-sunurin ayon sa bahagdan pataas';

@@ -62,6 +62,8 @@ $string['confignotifyloginfailures'] = '如果登录失败的信息被记录，�
 $string['confignotifyloginthreshold'] = '如果发送登录失败的通知，对于一个用户或者IP地址而言，多少次登录失败之后发送通知呢？';
 $string['configopentogoogle'] = '如果使用该设置，Google将能够以访客的身份进入网站。通过Google搜索而来的访问者也可以以访客的身份登陆网站。这个选项仅对允许访客访问的课程有效。';
 $string['configpathtoclam'] = 'Clam AV的路径。通常是/usr/bin/clamscan或/usr/bin/clamdscan。设定了这个选项，Clam AV才能运行。';
+$string['configpathtodu'] = 'du的路径。一般是诸如/usr/bin/du这样的形式。如果您使用此选项，显示有大量文件的目录的速度将大大加快。';
+$string['configperfdebug'] = '如果打开此选项，将在standard模板的页脚显示性能信息';
 $string['configproxyhost'] = '如果此服务器是通过代理(防火墙)上网，那么请填入代理的主机名和端口，否则留空。';
 $string['configquarantinedir'] = '如果您希望Clam AV把受感染的文件转移到一个隔离目录中，那么请在此处指定它。这个目录对于Web服务器必须是可写的。如果您在此处留空或者填写了一个不存在或无法访问的目录，受感染的文件将会被删除。注意末尾不需要斜线。';
 $string['configrunclamonupload'] = '在上传文件时运行Clam AV? 您需要在pathtoclam中填写了正确的路径，此选项才能生效。(Clam AV是一个病毒扫描程序，它是自由软件，可从 http://www.clamav.net/ 获得。';
@@ -95,6 +97,11 @@ $string['edithelpdocs'] = '编辑帮助文档';
 $string['editstrings'] = '编辑字符串';
 $string['filterall'] = '过滤全部字符串';
 $string['filteruploadedfiles'] = '过滤上传的文件';
+$string['globalsquoteswarning'] = '<p><strong>安全警告</strong>：为了能够正常运行，Moodle需要您修改您当前的PHP设置。</p>
+
+<p>您<em>必须</em>至少设定<code>register_globals=off</code>和<code>magic_quotes_gpc=on</code>二者之一。如果有可能，您应当设定<code>register_globals=off</code>来提高服务器的整体安全性，同时我们也建议您设定<code>magic_quotes_gpc=on</code>。</p>
+
+<p>这些设定是由<code>php.ini</code>、Apache或IIS的配置文件或<code>.htaccess</code>来控制的。</p>';
 $string['helpadminseesall'] = '管理员看到日历中全部的事件还是只看到那些于他们自己相关的事件?';
 $string['helpcalendarsettings'] = '设定Moodle中几个与日历和日期/事件相关的方面';
 $string['helpforcetimezone'] = '您可以允许用户选择他自己的时区或者让所有用户只能使用同一时区。';
@@ -129,5 +136,46 @@ $string['upgradesure'] = '您的Moodle文件已经被修改了，您正在准备
 <p>您确定要将服务器升级到这个版本么?</p>';
 $string['upgradingdata'] = '升级数据';
 $string['upgradinglogs'] = '升级日志';
+$string['confighiddenuserfields'] = "选择对教师/管理员以外的用户隐藏的信息。这可以加强对学生因私的保护。要选择多个字段时请按住CTRL键。";
+$string['configrestrictmodulesfor'] = "哪些课程应当拥有关闭某些模块的<b>选项</b>?";
+$string['configrestrictbydefault'] = "上面所选的类别中新创建的课程在缺省情况下其模块是否受限?";
+$string['configdefaultallowedmodules'] = "对于上面所选类别中的新建课程，在<b>刚刚创建时</b>允许它们使用哪些模块?";
+$string['configsectionrequestedcourse'] = "课程申请";
+$string['configenablecourserequests'] = "开启这个选项，允许任何人申请创建新的课程。";
+$string['configdefaultrequestedcategory'] = "当申请被批准时，课程放到哪个类别中。";
+$string['configrequestedteachername'] = "在申请的课程中，用于表示教师(teacher)的词。";
+$string['configrequestedteachersname'] = "在申请的课程中，用于表示教师的复数形式(teachers)的词。";
+$string['configrequestedstudentname'] = "在申请的课程中，用于表示学生(student)的词。";
+$string['configrequestedstudentsname'] = "在申请的课程中，用于表示学生的复数形式(students)的词。";
+$string['configperfdebug'] = "如果开启，则在标准主题的底部会显示性能信息。";
+$string['configmymoodleredirect'] = "如果开启，则当非管理员用户登录时，直接跳转到“我的Moodle”，并用“我的Moodle”替换掉站点首页。";
+$string['configsectionstats'] = "统计";
+$string['configenablestats'] = "如果选择“是”，则Moodle的cronjob会处理日志并生成一些统计。根据您站点流量的不同，处理工作所需要的时间也不同。如果开启这个选项，您就可以看到关于每个课程或整个站点的有趣图表及统计了。";
+$string['configstatsfirstrun'] = "在这里指定<b>第一次</b>cronjob要进行统计时，应当处理多长时间内的日志。如果您的流量很大，并且是在共享的主机上，最好不要处理太旧的日志，这将会耗费大量的时间并占用相当多的资源。(注意对于此设置，一个月=28天。在生成的统计图和报表中，一个月=日历上的一个月。)";
+$string['configstatsmaxruntime'] = "统计工作是很耗时的，因此通过这个选项和下面的选项来设定应当在何时开始执行它以及执行的时间。";
+$string['configstatsruntimestart'] = "执行统计工作的cronjob应当何时<b>开始</b>?";
+$string['configstatsuserthreshold'] = "如果在此输入一个非零的数值，则在对课程排序时，将会忽略那些用户总数少于此数值的课程。";
+$string['configpathtodu'] = "du的路径，如/usr/bin/du。如果您设定了这个选项，则那些显示目录内容的脚本在目录中有很多文件时，可以运行得稍快些。";
+$string['filtermatchoneperpage'] = "每页只过滤一次";
+$string['filtermatchonepertext'] = "每篇只过滤一次";
+$string['configfiltermatchoneperpage'] = "自动链接过滤器在过滤内容时，仅在一页中首次匹配到的地方生成链接，而忽略掉后面的。";
+$string['configfiltermatchonepertext'] = "自动链接过滤器在过滤内容时，仅在一篇文字(如资源、版块)中首次匹配到地方生成链接，而忽略掉后面的。如果每页只过滤一次的选项为<i>是</i>，则此选项会被忽略。";
+$string['latexsettings'] = "LaTeX渲染器配置";
+$string['latexpreamble'] = "LaTeX前缀";
+$string['backgroundcolour'] = "透明色";
+$string['pathdvips'] = "<i>dvips</i>程序的路径";
+$string['pathconvert'] = "<i>convert</i>程序的路径";
+$string['pathlatex'] = "<i>latex</i>程序的路径";
+$string['density'] = "密度";
+$string['badwordslist'] = "自定义禁用词语列表";
+$string['badwordsconfig'] = "输入以逗号(英文半角)分割的禁用词语列表。";
+$string['badwordsdefault'] = "如果自定义列表为空，则使用语言包提供的缺省列表。";
+$string['mediapluginavi'] = "过滤.avi文件";
+$string['mediapluginflv'] = "过滤.flv文件";
+$string['mediapluginmov'] = "过滤.mov文件";
+$string['mediapluginmp3'] = "过滤.mp3文件";
+$string['mediapluginmpg'] = "过滤.mpg文件";
+$string['mediapluginswf'] = "过滤.swf文件";
+$string['mediapluginwmv'] = "过滤.wmv文件";
 
 ?>

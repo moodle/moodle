@@ -1,5 +1,5 @@
-<?php // $Id$ 
-      // countries.php - created with Moodle 1.2 development (2003111400)
+<?PHP // $Id$ 
+      // countries.php - created with Moodle 1.4.4 (2004083140)
 
 
 $string['AD'] = 'Andorra';
@@ -78,7 +78,7 @@ $string['FX'] = 'France; Metropolitan';
 $string['GA'] = 'Gabon';
 $string['GB'] = 'United Kingdom';
 $string['GD'] = 'Grenada';
-$string['GE'] = 'Georgia';
+$string['GE'] = 'საქართველო';
 $string['GF'] = 'French Guiana';
 $string['GH'] = 'Ghana';
 $string['GI'] = 'Gibraltar';

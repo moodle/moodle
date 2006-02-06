@@ -1,26 +1,34 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004110200)
+      // moodle.php - created with Moodle 1.6 development (2005060201)
 
 
 $string['action'] = 'Veiksmas';
+$string['actions'] = 'Veiksmai';
+$string['active'] = 'Aktyvus';
 $string['activities'] = 'Uþsiëmimai';
 $string['activity'] = 'Uþsiëmimas';
 $string['activityclipboard'] = 'Perkeliamas uþsiëmimas: <b>$a</b>';
 $string['activityiscurrentlyhidden'] = 'Atsipraðome, ðis uþsiëmimas yra paslëptas';
 $string['activitymodule'] = 'Uþsiëmimo modulis';
 $string['activityreport'] = 'Uþsiëmimo ataskaita';
+$string['activityreports'] = 'Uþsiëmimo ataskaitos';
 $string['activityselect'] = 'Pasirinkite ðá uþsiëmimà perkëlimui';
 $string['activitysince'] = 'Uþsiëmimas nuo $a';
 $string['add'] = 'Pridëti';
+$string['addactivity'] = 'Pridëti aktyvumà';
 $string['addadmin'] = 'Pridëti administratoriø';
 $string['addcreator'] = 'Pridëti paskaitos kûrëjà';
 $string['added'] = 'Pridëta $a';
+$string['addedtogroup'] = 'Pridëtas prie grupës $a';
+$string['addedtogroupnot'] = 'Ne pridëtas prie grupës $a';
+$string['addedtogroupnotenrolled'] = 'Neátraukta (as) á grupæ $a, nes nsáraðyta (as) á kursà';
 $string['addinganew'] = 'Pridedamas naujas $a';
 $string['addinganewto'] = 'Adding a new $a->what to $a->to';
 $string['addingdatatoexisting'] = 'Pridedami duomenys';
 $string['addnewcategory'] = 'Pridëti naujà kategorijà';
 $string['addnewcourse'] = 'Pridëti naujà paskaità';
 $string['addnewuser'] = 'Pridëti naujà vartotojà';
+$string['addresource'] = 'Pridëti resursà';
 $string['address'] = 'Adresas';
 $string['addstudent'] = 'Pridëti studentà';
 $string['addteacher'] = 'Pridëti dëstytojà';
@@ -46,17 +54,23 @@ $string['adminhelpusers'] = 'Apibrëþkite jøsû vartotojus ir nustatykite autentif
 $string['administration'] = 'Valdymas';
 $string['administrator'] = 'Administratorius';
 $string['administrators'] = 'Administratoriai';
+$string['administratorsall'] = 'Visi administratoriai';
+$string['administratorsandteachers'] = 'Administratoriai ir mokytojai';
+$string['advancedfilter'] = 'Sudëtingesnë  paieðka';
 $string['again'] = 'dar kartà';
 $string['all'] = 'viskà';
 $string['alldays'] = 'Visas dienas';
 $string['allfieldsrequired'] = 'Visi laukai yra bûtini';
+$string['allgroups'] = 'Visos grupës';
 $string['alllogs'] = 'Visos \'log\' bylos';
 $string['allow'] = 'Leisti';
 $string['allowguests'] = 'Ði paskaita skirta ir sveèiams';
 $string['allownot'] = 'Neleisti';
 $string['allparticipants'] = 'Visi dalyviai';
+$string['allteachers'] = 'Visi mokytojai';
 $string['alphanumerical'] = 'Turi bûti sudaryta tik ið raidþiø ir skaièiø';
 $string['alreadyconfirmed'] = 'Registracija jau buvo patvirtinta';
+$string['always'] = 'Visada';
 $string['answer'] = 'Atsakyti';
 $string['areyousuretorestorethis'] = 'Norite tæsti?';
 $string['areyousuretorestorethisinfo'] = 'Vëliau turësite pasirinkti pridëti atsarginæ kopijà prie jau esanèios paskaitos arba sukurti naujà paskaità.';
@@ -97,43 +111,19 @@ $string['checkingsections'] = 'Tikrinama skyrius';
 $string['checklanguage'] = 'Tikrint kalbà';
 $string['choose'] = 'Pasirink';
 $string['choosecourse'] = 'Pasirink paskaità';
+$string['chooseenrolmethod'] = 'Pirminis registracjos metodas';
 $string['chooselivelogs'] = 'Arba stebëk esamus uþsiëmimus';
 $string['chooselogs'] = 'Pasirink kurias \'log\' bylas norite matyti';
 $string['choosetheme'] = 'Pasirinkite temà';
 $string['chooseuser'] = 'Pasitinkite vartotojà';
-$string['city'] = 'Grupë';
+$string['city'] = 'Miestas arba grupë';
 $string['cleaningtempdata'] = 'Trinami laikini duomenys';
+$string['clicktochange'] = 'Spragtelëti, kad pakeisti';
 $string['closewindow'] = 'Uþdaryti ðá langà';
 $string['comparelanguage'] = 'Palygink ir koreguok esamà kalbà';
 $string['complete'] = 'Baigta';
-$string['configcountry'] = 'Jei nustatysite ðalá èia, tai visiems naujiems vartotojams ji bus parinkta kaip áprastinë. Jei norite kad vartotojai patys pasirinktø ðalá tai palikite nenustatytà.';
-$string['configdebug'] = 'Jei ájungsite, tai PHP klaidø ataskaitos bus daþnensnës. Tai naudinga tik sistemos derinimui.';
-$string['configerrorlevel'] = 'Pasirinkite kiek PHP praneðimø norite kad rodytø. \"Normalus\" daþniausiai yra geriausias pasirinkimas.';
-$string['configframename'] = 'Jei jûs ástatinëjate Moodle á puslapá su rëmais(frames), tai paraðykite rëmo pavadinimà. Kitu atveju jis turetø likti \"_top\"';
-$string['configgdversion'] = 'Nurodykite ádiegtos GD versijà. Dabar rodoma versija yra automatiðkai aptikta. Nekeiskite, jei neþinote kas tai yra.';
-$string['confightmleditor'] = 'Pasirinkite leisti naudoti teksto redaktoriø su HTML priedais. Jei ir pasiriksite \'leisti\' tai toks redaktorius bus pasiekiams tik vartotojams su IE 5.5 ir vëlesnëmis versijomis.';
-$string['configidnumber'] = 'Èia galima nustatyti ar (a) Vartotojai neklausiami ID numerio, (b) Vartotojai klausiami ID numerio, bet gali jo neraðyti arba (c) Vartotojai klausiami ID numerio ir butinai já turi paraðyti.';
-$string['configintro'] = 'Ðiame puslapyje galite konfiguruoti kintamuosius, kurie padës Moodle veikti geriau jûsø serveryje. Nesukite dël to galvos - daþniausiai default\'ai puikiai tinka. Èia bet kada galite uþeiti ir keisti nustatymus.';
-$string['configintroadmin'] = 'Èia galite keisti administratoriaus nustatymus. Bûtinai parinkite saugø vartotojo vardà ir slaptaþodá ir veikiantá el. paðto adresà. Vëliau galite sukurti ir daugiau administratoriø.';
-$string['configintrosite'] = 'Ðis puslapis leis jums konfiguruoti pagrindiná puslapá ir jo pavadinimà. ';
-$string['configlang'] = 'Parinkite puslapio pagrindinæ kalbà. Vartotojai patys pasikeis ðia nuostatà.';
-$string['configlangdir'] = 'Daugelis kalbø yra skaitomos ið kairës á deðinæ, bet tokios kaip Arabø ar Hebrajø - atvirkðèiai.';
-$string['configlanglist'] = 'Palikite tuðèia jei norite kad vartotojai patys pasirinktø kalbà, instaliuotà á Moodle. Beto, galite sutrumpintai paraðyti kalbos meniu turiná, punktus atskirdami kableliais, ';
-$string['configlangmenu'] = 'Pasirinkite ar rodyti kalbø pasirinkimo meniu pradiniame puslapyje ir kituose. Tei neuþdraus vartotojams patiems pasikeisti kalbà savo nustatymuose.';
-$string['configloglifetime'] = 'Èia laikas skirtas \'log\' byloms apie vartotojø veiksmus laikyti. Bylos senesnës nei nurodyta bus trinamos automatiðkai. Geriausia kad laikytumëte kuo ilgiau. Jei kyla problemø su serverio uþimtumu galite ir sumaþinti laikà.';
-$string['configlongtimenosee'] = 'Jei vartotojai neprisijungë labai ilgai, tai jie automatiðkai iðraðomi ið paskaitø. Ðis parametras yra tas laiko tarpas, kuri turi buti neprisijungæs vartotojas.';
-$string['configmaxeditingtime'] = 'Èia laikas skirtas koreguoti savo iðsiøstas þinutes forumuose. Paprastai 30 min yra pakankamai.';
-$string['configproxyhost'] = 'Jei serveris prijungtas prie interneto per proxy stotá, tai èia nurodykite jos adresà ir prieigà(port\'à). Kitu atveju palikite tuðèia.';
-$string['configsecureforms'] = 'Moodle gali naudoti papildomà saugumà priimdama duomenis ið interneto. Kartais tai gali trukdyti vartotojams prisijungti.';
-$string['configsessiontimeout'] = 'Èia skirtas laikas, po kurio, vartotojas buvæs neaktyvus yra atjungiamas automatiðkai.';
-$string['configsmtphosts'] = 'Nurodykite SMTP serverio adresà, kurá naudos Moodle siøsdama el. paðtà (pvz \'mail.a.com\' arba \'mail.a.com;mail.b.com\'). Jei paliksite tuðèia tai Moodle pati naudos PHP bûdà siøsti paðtà.';
-$string['configsmtpuser'] = 'Jei aukðèiau nurodytas SMTP serveris reikalauja autentifikacijos, tai èia nurodykite vartotojo vardà ir slaptaþodá.';
-$string['configteacherassignteachers'] = 'Ar gali paprasti dëstytojai priskirti kitus dëstytojus paskaitoms, kuriose dësto? Jei \'Ne\', tada tik paskaitos kûrëjas ir administratorius tai gali padaryti.';
-$string['configunzip'] = 'Nurodykite vietà, kur yra iðpakavimo programa. Jei nurodysite, tai ji bus vartojama zip archyvams iðpakuoti serveryje. Jei neuþpildysite, tai Moodle pati naudos vidines priemones.';
 $string['configuration'] = 'Konfiguracija';
-$string['configvariables'] = 'Kintamieji';
-$string['configwarning'] = 'Atsargiai kà nors keisdami - gali kilti problemø.';
-$string['configzip'] = 'Nurodykite vietà, kur yra pakavimo programa. Jei nurodysite, tai ji bus vartojama zip archyvams kurti serveryje. Jei neuþpildysite, tai Moodle pati naudos vidines priemones.';
+$string['confirm'] = 'Patvirtinti';
 $string['confirmed'] = 'Jûsø registracija patvirtinta';
 $string['confirmednot'] = 'Jûsø registracija dar nepatvirtinta!';
 $string['continue'] = 'Tæsti';
@@ -143,6 +133,8 @@ $string['copyingcoursefiles'] = 'Kopijuojama paskaitos bylos';
 $string['copyinguserfiles'] = 'Kopijuojama varotojo bylos';
 $string['copyingzipfile'] = 'Kopijuojama zip byla';
 $string['copyrightnotice'] = 'Autorinës teisës';
+$string['cost'] = 'Kaina, Lt';
+$string['costdefault'] = 'Áprasta kaina, Lt';
 $string['country'] = 'Ðalis';
 $string['course'] = 'Paskaita';
 $string['courseavailable'] = 'Ðià paskaità gali matyti studentai';
@@ -225,14 +217,22 @@ $string['editthisactivity'] = 'Koreguoti ðá veiksmà';
 $string['editthiscategory'] = 'Koreguoti ðios paskaitos kategorijà';
 $string['edituser'] = 'Koreguoti vartotojø vardus';
 $string['email'] = 'El. paðto adresas';
+$string['emailagain'] = 'El. paðtas (dar kartà)';
 $string['emailconfirm'] = 'Patvirtinkite savo vartotojo vardà';
 $string['emailconfirmation'] = 'Sveiki $a->firstname,
 
-Naujas vartotojas uþregistruotas puslapyje \'$a->sitename\' naudojant jûsø el. paðto adresà.
+Naujas vartotojas uþregistruotas puslapyje:
+\'$a->sitename\' 
+naudojant jûsø el. paðto adresà.
 
-Eikite á nuorodà, kad patvirtintumëte uþsiregistravimà: $a->link
+Eikite á nuorodà, kad patvirtintumëte uþsiregistravimà:
 
-Jei kyla problemø, susisiekite su administratorium $a->admin';
+$a->link 
+
+Daugelyje paðto programø ði nuoroda paryðkinta mëlina spalva, tada uþtenka tiesiog spragtelëti ant jos. Bet jeigu taip nëra, nukopijuokite ðià nuorodà (Copy - Paste) á interneto narðyklës adreso juostelæ ir spauskite ENTER.
+
+Jei kyla problemø, susisiekite su administratorium:
+$a->admin';
 $string['emailconfirmationsubject'] = '$a: vartotojo vardo patvirtinimas';
 $string['emailconfirmsent'] = '   <p>Iðsiøstas laiðkas jums á <b>$a</b></p>
    <p>Jame paraðyta kaip pabaigti registracijà.</p>
@@ -243,14 +243,19 @@ $string['emaildisplayno'] = 'Nerodyti mano el. paðto adreso kitiems';
 $string['emaildisplayyes'] = 'Rodyti visiems mano el. paðto adresà';
 $string['emailexists'] = 'Ðis el. paðtas jau registruotas.';
 $string['emailformat'] = 'El. paðto formatas';
-$string['emailmustbereal'] = 'Þinok: jûsø nurodytas el. paðtas turi bûti tikras';
+$string['emailmustbereal'] = 'Þinok: Jûsø nurodytas el. paðtas turi bûti tikras';
 $string['emailpasswordconfirmation'] = 'Sveiki $a->firstname,
 
 Kaþkas pareikalavo naujo slaptaþodþio puslapyje \'$a->sitename\'.
 
-Eikite á nuorodà, jei norite gauti el. paðtu naujà slaptaþodá: a->link
+Eikite á nuorodà, jei norite gauti el. paðtu naujà slaptaþodá:
 
-Jei kyla problemø, susisiekite su administratorium $a->admin';
+$a->link
+
+Daugelyje paðto programø ði nuoroda paryðkinta mëlina spalva, tada uþtenka tiesiog spragtelëti ant jos. Bet jeigu taip nëra, nukopijuokite ðià nuorodà (Copy - Paste) á interneto narðyklës adreso juostelæ ir spauskite ENTER.
+
+Jei kyla problemø, susisiekite su administratorium:
+$a->admin';
 $string['emailpasswordconfirmationsubject'] = '$a: pakeisto slaptaþodþio patvirtinimas';
 $string['emailpasswordconfirmsent'] = 'Iðsiøstas laiðkas adresu <b>$a</b>.
 <br />Jame yra paraðyta kaip uþbaigti slaptaþodþio keitimà.
@@ -283,6 +288,7 @@ $string['files'] = 'Bylos';
 $string['filesfolders'] = 'Bylos/Direktorijos';
 $string['filloutallfields'] = 'Praðom viskà uþpildyti';
 $string['findmorecourses'] = 'Rask daugiau paskaitø...';
+$string['firstdayofweek'] = '1';
 $string['firstname'] = 'Vardas';
 $string['firsttime'] = 'Jûs èia pirmà kartà?';
 $string['followingoptional'] = 'Èia nebûtina';
@@ -664,6 +670,7 @@ $string['theme'] = 'Tema';
 $string['themes'] = 'Temos';
 $string['themesaved'] = 'Nauja tema iðsaugota';
 $string['thischarset'] = 'windows-1257';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Lietuvi&#371;';
 $string['time'] = 'Laikas';
 $string['timezone'] = 'Laiko juosta';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.6 development (2005072200)
+      // assignment.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['allowresubmit'] = 'Zezwól na wielokrotne przesy³anie rozwi±zania';
@@ -17,10 +17,10 @@ $string['duedate'] = 'Termin oddawania zadania';
 $string['duedateno'] = 'Brak terminu oddania pracy';
 $string['early'] = '$a przed terminem';
 $string['editmysubmission'] = 'Edytuj zadanie';
-$string['emailteachermail'] = 'a->username  przes³a³ zadanie $a->assigment
+$string['emailteachermail'] = '$a->username  przes³a³ zadanie $a->assigment
 Zadanie jest dostêpne tutaj:
 $a->url';
-$string['emailteachermailhtml'] = 'a->username  przes³a³ zadanie <i>\'$a->assignment\'</i><br /><br />
+$string['emailteachermailhtml'] = '$a->username  przes³a³ zadanie <i>\'$a->assignment\'</i><br /><br />
 
 <a href=\"$a->url\">Zadanie jest dostêpne tutaj</a>';
 $string['emailteachers'] = 'Powiadomienie e-mailem o przes³anym rozwi±zaniu';

@@ -76,6 +76,7 @@ $string['nolettergrade'] = 'No letter grade for';
 $string['nomode'] = 'NA';
 $string['nonnumericweight'] = 'Received non-numeric value for ';
 $string['nonweightedpct'] = 'non-weighted %%';
+$string['notteachererror'] = 'You must be a teacher to use this feature.';
 $string['pctoftotalgrade'] = '%% of total grade';
 $string['percent'] = 'Percent';
 $string['percentascending'] = 'Sort by percent ascending';

@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // editor.php - created with Moodle 1.4 (2004083100)
+<?php // $Id$
+      // editor.php - created with Moodle 1.2 (2004032000)
 
 
 $string['about'] = 'Névjegy';
@@ -29,7 +29,7 @@ $string['createanchor'] = 'Kapocs létrehozása';
 $string['createfolder'] = 'Mappa létrehozása';
 $string['createlink'] = 'Webes ugrópont létrehozása';
 $string['cut'] = 'Kivágás';
-$string['cutpastemozilla'] = 'A szokásos gyorsbillentyûket (vagy akár a Paste [Beillesztés] gombot) nem használhatja ezzel az online szerkesztõvel. Ennek oka egy biztonsági szûrõ, melyet beépítettek a Mozilla és a Firefox böngészõk némelyikébe.<br /><br />Három lehetõség közül választhat: <br /> (1) A CTRL-v helyett használja a SHIFT-Insert kombinációt <br /> (2) Használja a böngészõ Szerkesztés ->Beillesztés [Edit->Paste]menüjét<br /> (3) A user.js fájl szerkesztésével módosítsa a böngészõ beállításait. <br /><br />Az OK-ra kattintva további segítséget kap, a Cancel-lel térhet vissza a szerkesztõhöz';
+$string['cutpastemozilla'] = 'A szokásos gyorsbillentyûket (vagy akár a Paste [Beillesztés] gombot) nem használhatja ezzel az online szerkesztõvel szöveg beszúrására. Ennek oka egy biztonsági szûrõ, melyet beépítettek a Mozilla és a Firefox böngészõk némelyikébe.<br /><br />Három lehetõség közül választhat: <br /> (1) A CTRL-v helyett használja a SHIFT-Insert kombinációt <br /> (2) Használja a böngészõ Szerkesztés->Beillesztés [Edit->Paste] menüjét<br /> (3) A user.js fájl szerkesztésével módosítsa a böngészõ beállításait. <br /><br />Az alábbi OK gombra kattintva további segítséget kap, a Cancel-lel térhet vissza a szerkesztõhöz';
 $string['delete'] = 'Törlés';
 $string['filebrowser'] = 'Fájlkeresés';
 $string['findwhat'] = 'Keresés';

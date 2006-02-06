@@ -1,45 +1,42 @@
 MOODLE JAPANESE TRANSLATION
 ----------------------------------------------------------------------
-STARTED       : November 21, 2002
-LAST MODIFIED : July 16, 2005
-
-Thanks to everyone who have supported our translation project!
-
-
-[TRANSLATORS]
+STARTED                       : November 21, 2002
+LAST MODIFIED                 : February  5, 2006
 ----------------------------------------------------------------------
+
 Mitsuhiro Yoshida ( http://mitstek.com/ )
  Translating whole ja and ja_utf8 files, translation management.
 
-Paul Shew ( http://ac.shew.jp )
+Timothy Takemoto ( http://eigodaigaku.com/ )
+ Facilitator of "Japanese Moodle" ( http://moodle.org/course/view.php?id=14 )
  Translation brushup
- /lang/ja/help/quiz/formatgift.html
+
+Paul Tsuchido Shew ( http://shew.jp/ )
+ Quiz module GIFT import filter development
+ Translation: /lang/ja/help/quiz/formatgift.html
+ Translation brushup
 
 Tatsuya Aoyagi
+ Translation: /lang/ja/questionnaire.php
+ Translation: /lang/ja/help/questionnaire
  Translation brushup
  Localization
- /lang/ja/questionnaire.php
- /lang/ja/help/questionnaire
 
 Masataka Nakaue ( http://ldt.stanford.edu/~mnakauye/ )
- /lang/ja/book.php
- /lang/ja/help/book
+ Translation: /lang/ja/book.php
+ Translation: /lang/ja/help/book
 
 Hiroto Kagotani ( http://www.infsys.cne.okayama-u.ac.jp/~kagotani/ )
- Translation brushup
- /lang/ja/help/*
-
-
-[CONTRIBUTORS]
-----------------------------------------------------------------------
-Timothy Takemoto ( http://eigodaigaku.com )
- Facilitator of Japanese moodle
+ Translation: /lang/ja/help/*
  Translation brushup
 
 Thomas N. Robb ( http://www.kyoto-su.ac.jp/~trobb/ )
  Translation brushup
 
 Toshihiro Kita ( http://t-kita.net/ )
+ Facilitator of "Japanese Moodle" ( http://moodle.org/course/view.php?id=14 )
+ Moodle RPM Package ( http://t-kita.net/rpm/moodle/ )
+ /fonts/README2.txt
  Translation brushup
 
 Takahiro Kagoya ( https://manabi.jin-ai.ac.jp/moodle/ )

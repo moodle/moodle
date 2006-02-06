@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.5 Beta (2005052300)
+      // assignment.php - created with Moodle 1.5.3+ (2005060230)
 
 
 $string['allowresubmit'] = 'Permitir reenvío';
@@ -16,6 +16,7 @@ $string['assignmenttype'] = 'Tipo de tarea';
 $string['availabledate'] = 'Disponible en';
 $string['comment'] = 'Comentario';
 $string['commentinline'] = 'Comentario en línea';
+$string['configitemstocount'] = 'Naturaleza de los ítems a contar en los envíos de los estudiantes en tareas fuera de línea.';
 $string['configmaxbytes'] = 'Tamaño máximo permitido por defecto para todas las tareas del sitio (sujeto a los límites del curso y otras variables del servidor)';
 $string['description'] = 'Descripción';
 $string['duedate'] = 'Fecha de entrega';
@@ -53,7 +54,9 @@ $string['noattempts'] = 'No se ha intentado realizar esta tarea';
 $string['notgradedyet'] = 'No calificado aún';
 $string['notsubmittedyet'] = 'Aún no ha enviado esta tarea';
 $string['overwritewarning'] = 'Advertencia: Si envía un nuevo archivo REEMPLAZARÁ al anterior';
+$string['pagesize'] = 'Envíos mostrados por página';
 $string['preventlate'] = 'Impedir envíos retrasados';
+$string['quickgrade'] = 'Permitir calificación rápida';
 $string['saveallfeedback'] = 'Guardar todos mis comentarios';
 $string['submission'] = 'Envío';
 $string['submissionfeedback'] = 'Comentario sobre la tarea';

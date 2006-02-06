@@ -782,7 +782,6 @@ $string['pageheaderconfigablock'] = 'ÅÚÏÇÏ ßÊáÉ İí %%fullname%%';
 $string['parentcoursenotfound'] = 'áã íÊã ÇáÚËæÑ Úáì ãäåÌ ÏÑÇÓí ÃÓÇÓí';
 $string['parentcoursenotmetacourse'] = 'ãäåÌ ÏÑÇÓí ÃÓÇÓí áíÓ ãäåÌ ÏÑÇÓí ãÚíÇÑí';
 $string['parentfolder'] = 'ãÌáÏ ÃÓÇÓí';
-$string['parentlanguage'] = '<<ÇáãÊÑÌãæä: ÃĞÇ ßÇäÊ áÛÊß áåÇ áÛÉ Ãã æÇáÊí íÌÈ Úáì ãæÏá íÊÎÏã æíæÌÏ ÈÚÖ ÇáÊÚÇÈíÑ ãİŞæÏÉ ãä ÍÒãÉ áÛÊß¡ áĞÇ íÌÈ Úáíß ÊÍÏíÏ ÇáÑãÒ åäÇÁ. áæ ÊÑßÊ åĞÇ ÇáÍŞá İÇÑÛÇ ÓíÊã ÇÓÊÎÏÇã ÇááÛÉ ÇáÅäÌáíÒíÉ. Úáì ÓÈíá ÇáãËÇá: nl>>';
 $string['participants'] = 'ÇáãÔÊÑßæä';
 $string['password'] = 'ßáãÉ ÇáãÑæÑ';
 $string['passwordchanged'] = 'Êã ÊÛííÑ ßáãÉ ÇáãÑæÑ';

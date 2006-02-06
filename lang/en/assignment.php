@@ -18,6 +18,7 @@ $string['assignmenttype'] = 'Assignment type';
 $string['availabledate'] = 'Available from';
 $string['comment'] = 'Comment';
 $string['commentinline'] = 'Comment inline';
+$string['configitemstocount'] = 'Nature of items to be counted for student submissions in online assignments.';
 $string['configmaxbytes'] = 'Default maximum assignment size for all assignments on the site (subject to course limits and other local settings)';
 $string['description'] = 'Description';
 $string['duedate'] = 'Due date';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.6 development (2005060201)
+      // lesson.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['accesscontrol'] = 'Controllo dell\'accesso';
@@ -94,7 +94,8 @@ $string['flowcontrol'] = 'Controllo dell\'esecuzione';
 $string['general'] = 'Generale';
 $string['gobacktolesson'] = 'Indietro alla lezione';
 $string['grade'] = 'Punteggio';
-$string['gradebetterthan'] = 'Voto maggiore di (&#37;)';
+$string['gradebetterthan'] = 'Voto maggiore di (%%)';
+$string['gradebetterthanerror'] = 'Raggiunto un punteggio migliore del $a percento';
 $string['gradeessay'] = 'Valuta le domande solo testo ($a->notgradedcount non valutate e $a->notsentcount non inviate)';
 $string['gradeis'] = 'Il voto è $a';
 $string['gradeoptions'] = 'Opzioni per la valutazione';

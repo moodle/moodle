@@ -1,147 +1,161 @@
-<P ALIGN=CENTER><B>A richtext form&aacute;j&uacute; HTML-szerkeszt&#337; haszn&aacute;lata</B></P>
+<p align="center"><strong>A richtext form&aacute;j&uacute; HTML-szerkeszt&#337; haszn&aacute;lata</strong></p>
 
-<P>El&eacute;rhet&#337;s&eacute;g: <B>
-<?php  if (!$CFG->htmleditor) { print_string("htmleditordisabledadmin"); } else if (!$USER-&gt;htmleditor) { print_string("htmleditordisabled"); } else if (!can_use_richtext_editor() { print_string("htmleditordisabledbrowser"); } else { print_string("htmleditoravailable"); } ?&gt;
-</B></P>
+<p>El&eacute;rhet&#337;s&eacute;g: <strong><?php  if ( !$CFG -> htmleditor) { print_string("htmleditordisabledadmin"); } 
+else if (!$USER-&gt;htmleditor) { print_string("htmleditordisabled"); } 
+else if (!can_use_richtext_editor() { print_string("htmleditordisabledbrowser"); } 
+else { print_string("htmleditoravailable"); } ?></strong></p>
 
-<P>A richtext form&aacute;j&uacute; HTML-szerkeszt&#337; egy weboldalba be&aacute;gyazott sz&ouml;vegszerkeszt&#337;i fel&uuml;let, amely lehet&#337;v&eacute; teszi az adott sz&ouml;veg intuit&iacute;v m&oacute;don val&oacute; szerkeszt&eacute;s&eacute;t, eredm&eacute;nyk&eacute;nt pedig szok&aacute;sos HTML-k&oacute;dot ad vissza.
+<p>A richtext form&aacute;j&uacute; HTML-szerkeszt&#337; olyan weboldalba be&aacute;gyazott sz&ouml;vegszerkeszt&#337;i fel&uuml;let, 
+amely lehet&#337;v&eacute; teszi az adott sz&ouml;veg intuit&iacute;v m&oacute;don val&oacute; szerkeszt&eacute;s&eacute;t, 
+eredm&eacute;nyk&eacute;nt pedig szok&aacute;sos HTML-k&oacute;dot ad vissza.</p>
 
-<P>A sz&ouml;veg form&aacute;z&aacute;sa mellett ez a szerkeszt&#337; egy sor egy&eacute;b, hasznos jellemz&#337;vel rendelkezik.
+<p>A sz&ouml;veg form&aacute;z&aacute;sa mellett ez a szerkeszt&#337; egy sor egy&eacute;b, hasznos jellemz&#337;vel rendelkezik.</p>
 
-<P><B>Sz&ouml;veg besz&uacute;r&aacute;sa m&aacute;s alkalmaz&aacute;sokb&oacute;l</B></P>
-<UL>
-<P>Egy&eacute;b Windows-alkalmaz&aacute;sokb&oacute;l, p&eacute;ld&aacute;ul Microsoft Wordb&#337;l sz&uacute;rhatunk be sz&ouml;veget k&ouml;zvetlen&uuml;l ebbe a szerkeszt&#337;be, mik&ouml;zben annak a form&aacute;z&aacute;sa meg&#337;rz&#337;dik. Ehhez mind&ouml;ssze a webb&ouml;ng&eacute;sz&#337; szok&aacute;sos kiv&aacute;g&aacute;si &eacute;s beilleszt&eacute;si men&uuml;pontjait (vagy a Control-C &eacute;s Control-V) billenty&#369;kombin&aacute;ci&oacute;kat kell haszn&aacute;lnunk.
-</UL>
+<p><strong>Sz&ouml;veg besz&uacute;r&aacute;sa m&aacute;s alkalmaz&aacute;sokb&oacute;l</strong></p>
+<ul>
+<p>Egy&eacute;b Windows-alkalmaz&aacute;sokb&oacute;l, p&eacute;ld&aacute;ul Microsoft Wordb&#337;l sz&uacute;rhat be sz&ouml;veget 
+k&ouml;zvetlen&uuml;l ebbe a szerkeszt&#337;be, mik&ouml;zben annak a form&aacute;z&aacute;sa meg&#337;rz&#337;dik. Ehhez mind&ouml;ssze 
+a webb&ouml;ng&eacute;sz&#337; szok&aacute;sos kiv&aacute;g&aacute;si &eacute;s beilleszt&eacute;si men&uuml;pontjait (vagy a 
+Control-C &eacute;s Control-V) billenty&#369;kombin&aacute;ci&oacute;kat kell haszn&aacute;lnia.</p>
+</ul>
 
-<P><B>K&eacute;pek besz&uacute;r&aacute;sa <img border="0" hspace="10" src="lib/editor/images/ed_image.gif"></B></P>
-<UL>
-<P>Ha olyan k&eacute;pekkel rendelkez&uuml;nk, amelyek m&aacute;r valamely honlapon el&eacute;rhet&#337;k, ezeket az "Insert Image" [K&eacute;p besz&uacute;r&aacute;sa] gombbal beilleszthetj&uuml;k.
-</UL>
+<p><strong>K&eacute;pek besz&uacute;r&aacute;sa <img border="0" hspace="10" src="lib/editor/images/ed_image.gif" /></strong></p>
+<ul>
+<p>Ha olyan k&eacute;pekkel rendelkezik, amelyek m&aacute;r valamely honlapon el&eacute;rhet&#337;k, ezeket az "K&eacute;p besz&uacute;r&aacute;sa" 
+gombbal beillesztheti.</p>
+</ul>
 
-<P><B>T&aacute;bl&aacute;zat besz&uacute;r&aacute;sa <img border="0" hspace="10" src="lib/editor/images/insert_table.gif"></B></P>
-<UL>
-<P>A sz&ouml;veg elrendez&eacute;se &eacute;rdek&eacute;ben haszn&aacute;lhatjuk az eszk&ouml;zt&aacute;ron l&eacute;v&#337; "Insert Tables" [T&aacute;bl&aacute;zatok besz&uacute;r&aacute;sa] gombot. 
-</UL>
+<p><strong>T&aacute;bl&aacute;zat besz&uacute;r&aacute;sa <img border="0" hspace="10" src="lib/editor/images/insert_table.gif" /></strong></p>
+<ul>
+<p>A sz&ouml;veg elrendez&eacute;s&eacute;hez haszn&aacute;lhatja az eszk&ouml;zt&aacute;ron l&eacute;v&#337; "T&aacute;bl&aacute;zatok besz&uacute;r&aacute;sa" gombot. </p>
+</ul>
 
-<P><B>Hivatkoz&aacute;sok besz&uacute;r&aacute;sa <img border="0" hspace="10" src="lib/editor/images/ed_link.gif"></B></P>
-<UL>
-<P>&Uacute;j ugr&oacute;pont l&eacute;trehoz&aacute;s&aacute;hoz el&#337;sz&ouml;r &iacute;rjuk be a hivatkoz&aacute;shoz sz&aacute;nt sz&ouml;veget. Ut&aacute;na jel&ouml;lj&uuml;k ki &eacute;s kattintsunk az eszk&ouml;zt&aacute;ron l&eacute;v&#337; Ugr&oacute;pont gombra. G&eacute;pelj&uuml;k be a hivatkoz&aacute;s URL-j&eacute;t, &eacute;s k&eacute;sz!
-</UL>
+<p><strong>Hivatkoz&aacute;sok besz&uacute;r&aacute;sa <img border="0" hspace="10" src="lib/editor/images/ed_link.gif" /></strong></p>
+<ul>
+<p>&Uacute;j ugr&oacute;pont l&eacute;trehoz&aacute;s&aacute;hoz el&#337;sz&ouml;r &iacute;rja be a hivatkoz&aacute;shoz sz&aacute;nt sz&ouml;veget. 
+Ut&aacute;na jel&ouml;lje ki &eacute;s kattintson az eszk&ouml;zt&aacute;ron l&eacute;v&#337; Ugr&oacute;pont gombra. G&eacute;pelje be a 
+hivatkoz&aacute;s URL-j&eacute;t, &eacute;s k&eacute;sz!</p>
+</ul>
 
 
-<P><B>Emotikonok besz&uacute;r&aacute;sa <img border="0" hspace="10" src="pix/s/smiley.gif" width="15" height="15"></B></P>
-<UL>
-<P>Ezeknek a kis ikonoknak a sz&ouml;vegbe val&oacute; beilleszt&eacute;s&eacute;hez kattintsunk az eszk&ouml;zt&aacute;ron l&eacute;v&#337;, emotikont jel&ouml;l&#337; ikonra. A felbukkan&oacute; p&aacute;rbesz&eacute;dablakb&oacute;l v&aacute;laszthatunk az al&aacute;bbi emotikonok k&ouml;z&uuml;l. (M&aacute;sik megold&aacute;sk&eacute;nt egyszer&#369;en be&iacute;rhatjuk a megfelel&#337; k&oacute;dot a sz&ouml;vegbe, amely k&eacute;s&#337;bb, a sz&ouml;veg megjelen&iacute;t&eacute;sekor &aacute;talak&iacute;tva jelenik majd meg). <table border="1">
+<p><strong>Emotikonok besz&uacute;r&aacute;sa <img border="0" hspace="10" src="pix/s/smiley.gif" width="15" height="15" /></strong></p>
+<ul>
+<p>Ezeknek a kis ikonoknak a sz&ouml;vegbe val&oacute; beilleszt&eacute;s&eacute;hez kattintson az eszk&ouml;zt&aacute;ron l&eacute;v&#337;, 
+emotikont jel&ouml;l&#337; ikonra. A felbukkan&oacute; p&aacute;rbesz&eacute;dablakb&oacute;l v&aacute;laszthat az al&aacute;bbi emotikonok 
+k&ouml;z&uuml;l. (M&aacute;sik megold&aacute;sk&eacute;nt egyszer&#369;en be&iacute;rhatja a megfelel&#337; k&oacute;dot a sz&ouml;vegbe, 
+amely k&eacute;s&#337;bb, a sz&ouml;veg megjelen&iacute;t&eacute;sekor &aacute;talak&iacute;tva jelenik majd meg). </p>
+<table border="1">
       <tr valign="top">
         <td>
         <table border="0" align="center" cellpadding="10">
           <tr>
-            <td><img border="0" hspace="10" src="pix/s/smiley.gif" width="15" height="15"></td>
+            <td><img border="0" hspace="10" src="pix/s/smiley.gif" width="15" height="15" /></td>
             <td>mosoly</td>
-            <td NOWRAP><FONT FACE=Courier>:-)</td>
+            <td nowrap="nowrap"><font face="Courier">:-)</font></td>
           </tr>
           <tr>
-            <td><img alt border="0" hspace="10" src="pix/s/biggrin.gif" width="15" height="15"></td>
+            <td><img alt="" border="0" hspace="10" src="pix/s/biggrin.gif" width="15" height="15" /></td>
             <td>vigyor</td>
-            <td NOWRAP><FONT FACE=Courier>:-D</td>
+            <td nowrap="nowrap"><font face="Courier">:-D</font></td>
           </tr>
           <tr>
-            <td><img alt border="0" hspace="10" src="pix/s/wink.gif" width="15" height="15"></td>
+            <td><img alt="" border="0" hspace="10" src="pix/s/wink.gif" width="15" height="15" /></td>
             <td>kacsint&aacute;s</td>
-            <td NOWRAP><FONT FACE=Courier>;-)</td>
+            <td nowrap="nowrap"><font face="Courier">;-)</font></td>
           </tr>
           <tr>
-            <td><img alt border="0" hspace="10" src="pix/s/mixed.gif" width="15" height="15"></td>
+            <td><img alt="" border="0" hspace="10" src="pix/s/mixed.gif" width="15" height="15" /></td>
             <td>vegyes</td>
-            <td NOWRAP><FONT FACE=Courier>:-/</td>
+            <td nowrap="nowrap"><font face="Courier">:-/</font></td>
           </tr>
             <tr>
-              <td><img alt border="0" hspace="10" src="pix/s/thoughtful.gif" width="15" height="15"></td>
+              <td><img alt="" border="0" hspace="10" src="pix/s/thoughtful.gif" width="15" height="15" /></td>
               <td>t&ouml;preng&eacute;s</td>
-              <td NOWRAP><FONT FACE=Courier>V-.</FONT></td>
+              <td nowrap="nowrap"><font face="Courier">V-.</font></td>
             </tr>
           <tr>
-            <td><img alt border="0" hspace="10" src="pix/s/tongueout.gif" width="15" height="15"></td>
+            <td><img alt="" border="0" hspace="10" src="pix/s/tongueout.gif" width="15" height="15" /></td>
             <td>nyelvny&uacute;jt&aacute;s</td>
-            <td NOWRAP><FONT FACE=Courier>:-P</td>
+            <td nowrap="nowrap"><font face="Courier">:-P</font></td>
          </tr>
           <tr>
-            <td><img alt border="0" hspace="10" src="pix/s/cool.gif" width="15" height="15"></td>
+            <td><img alt="" border="0" hspace="10" src="pix/s/cool.gif" width="15" height="15" /></td>
             <td>klassz</td>
-            <td NOWRAP><FONT FACE=Courier>B-)</td>
+            <td nowrap="nowrap"><font face="Courier">B-)</font></td>
           </tr>
             <tr>
-              <td><img alt border="0" hspace="10" src="pix/s/approve.gif" width="15" height="15"></td>
+              <td><img alt="" border="0" hspace="10" src="pix/s/approve.gif" width="15" height="15" /></td>
               <td>rendben</td>
-              <td NOWRAP><FONT FACE=Courier>^-)</td>
+              <td nowrap="nowrap"><font face="Courier">^-)</font></td>
             </tr>
             <tr>
-              <td><img alt border="0" hspace="10" src="pix/s/wideeyes.gif" width="15" height="15"></td>
+              <td><img alt="" border="0" hspace="10" src="pix/s/wideeyes.gif" width="15" height="15" /></td>
               <td>t&aacute;gra ny&iacute;lt szemek</td>
-              <td NOWRAP><FONT FACE=Courier>8-)</td>
+              <td nowrap="nowrap"><font face="Courier">8-)</font></td>
             </tr>
             <tr>
-              <td><img alt border="0" hspace="10" src="pix/s/surprise.gif" width="15" height="15"></td>
+              <td><img alt="" border="0" hspace="10" src="pix/s/surprise.gif" width="15" height="15" /></td>
               <td>meglep&#337;d&eacute;s</td>
-              <td NOWRAP><FONT FACE=Courier>8-o</td>
-            </tr>
+              <td nowrap="nowrap"><font face="Courier">8-o</font></td>
+           </tr>
+      </table>
+      	</td>
+         </tr>
         </table>
-        </td>
-        <td>
+ 
         <table border="0" align="center" cellpadding="10">
             <tr>
-              <td><img alt border="0" hspace="10" src="pix/s/sad.gif" width="15" height="15"></td>
+              <td><img alt="" border="0" hspace="10" src="pix/s/sad.gif" width="15" height="15" /></td>
               <td>szomor&uacute;s&aacute;g</td>
-              <td NOWRAP><FONT FACE=Courier>:-(</td>
+              <td nowrap="nowrap"><font face="Courier">:-(</font></td>
             </tr>
             <tr>
-              <td><img alt border="0" hspace="10" src="pix/s/shy.gif" width="15" height="15"></td>
+              <td><img alt="" border="0" hspace="10" src="pix/s/shy.gif" width="15" height="15" /></td>
               <td>f&eacute;l&eacute;nks&eacute;g</td>
-              <td NOWRAP><FONT FACE=Courier>8-.</td>
+              <td nowrap="nowrap"><font face="Courier">8-.</font></td>
             </tr>
           <tr>
-            <td><img alt border="0" hspace="10" src="pix/s/blush.gif" width="15" height="15"></td>
+            <td><img alt="" border="0" hspace="10" src="pix/s/blush.gif" width="15" height="15" /></td>
             <td>elpirul&aacute;s</td>
-            <td NOWRAP><FONT FACE=Courier>:-I</td>
+            <td nowrap="nowrap"><font face="Courier">:-I</font></td>
           </tr>
             <tr>
-              <td><img alt border="0" hspace="10" src="pix/s/kiss.gif" width="15" height="15"></td>
+              <td><img alt="" border="0" hspace="10" src="pix/s/kiss.gif" width="15" height="15" /></td>
               <td>puszi</td>
-              <td NOWRAP><FONT FACE=Courier>:-X</td>
+              <td nowrap="nowrap"><font face="Courier">:-X</font></td>
             </tr>
           <tr>
-            <td><img alt border="0" hspace="10" src="pix/s/clown.gif" width="15" height="15"></td>
+            <td><img alt="" border="0" hspace="10" src="pix/s/clown.gif" width="15" height="15" /></td>
             <td>boh&oacute;c</td>
-            <td NOWRAP><FONT FACE=Courier>:o)</td>
+            <td nowrap="nowrap"><font face="Courier">:o)</font></td>
           </tr>
           <tr>
-            <td><img alt border="0" hspace="10" src="pix/s/blackeye.gif" width="15" height="15"></td>
+            <td><img alt="" border="0" hspace="10" src="pix/s/blackeye.gif" width="15" height="15" /></td>
             <td>fekete szem</td>
-            <td NOWRAP><FONT FACE=Courier>P-|</td>
+            <td nowrap="nowrap"><font face="Courier">P-|</font></td>
           </tr>
             <tr>
-              <td><img alt border="0" hspace="10" src="pix/s/angry.gif" width="15" height="15"></td>
+              <td><img alt="" border="0" hspace="10" src="pix/s/angry.gif" width="15" height="15" /></td>
               <td>d&uuml;h</td>
-              <td NOWRAP><FONT FACE=Courier>8-[</td>
+              <td nowrap="nowrap"><font face="Courier">8-[</font></td>
             </tr>
             <tr>
-              <td><img alt border="0" hspace="10" src="pix/s/dead.gif" width="15" height="15"></td>
+              <td><img alt="" border="0" hspace="10" src="pix/s/dead.gif" width="15" height="15" /></td>
               <td>halott</td>
-              <td NOWRAP><FONT FACE=Courier>xx-P</td>
+              <td nowrap="nowrap"><font face="Courier">xx-P</font></td>
             </tr>
             <tr>
-              <td><img alt border="0" hspace="10" src="pix/s/sleepy.gif" width="15" height="15"></td>
+              <td><img alt="" border="0" hspace="10" src="pix/s/sleepy.gif" width="15" height="15" /></td>
               <td>&aacute;lmos</td>
-              <td NOWRAP><FONT FACE=Courier>|-.</td>
+              <td nowrap="nowrap"><font face="Courier">|-.</font></td>
             </tr>
           <tr>
-            <td><img alt border="0" hspace="10" src="pix/s/evil.gif" width="15" height="15"></td>
+            <td><img alt="" border="0" hspace="10" src="pix/s/evil.gif" width="15" height="15" /></td>
             <td>gonosz</td>
-            <td NOWRAP><FONT FACE=Courier>}-]</td>
+            <td nowrap="nowrap"><font face="Courier">}-]</font></td>
           </tr>
         </table>
-    </table>
 
-</UL>
+</ul>
 
 

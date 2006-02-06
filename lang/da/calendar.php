@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005033100)
+      // calendar.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['calendar'] = 'Kalender';
@@ -8,22 +8,11 @@ $string['clickhide'] = 'tryk for at skjule';
 $string['clickshow'] = 'tryk for at vise';
 $string['confirmeventdelete'] = 'Er du sikker på at du vil slette denne begivenhed?';
 $string['courseevents'] = 'Kursus begivenheder';
-$string['day'] = 'dag';
 $string['dayview'] = 'Dagvisning';
 $string['daywithnoevents'] = 'Der er ingen begivenheder denne dag.';
 $string['default'] = 'Standart';
 $string['deleteevent'] = 'Slet begivenhed';
 $string['detailedmonthview'] = 'Detaljeret måneds visning';
-$string['dstadjusttime'] = 'Flyt tid';
-$string['dstat'] = 'ved';
-$string['dstby'] = 'til';
-$string['dsthumanreadable'] = 'På den $a->activate_index $a->activate_weekday af hver $a->activate_month, flyt tiden $a->offset minutter $a->direction. Denne ændring varer indtil $a->deactivate_index $a->deactivate_weekday af $a->deactivate_month.';
-$string['dstof'] = 'af';
-$string['dstonthe'] = 'd. ';
-$string['dstpresetactivated'] = 'Aktivering';
-$string['dstpresetadjusttime'] = 'Tidsjustering';
-$string['dstpresetdeactivated'] = 'Deaktivering';
-$string['dstpresetname'] = 'Forbestemt navn';
 $string['durationminutes'] = 'Varighed i minutter';
 $string['durationnone'] = 'Uden varighed';
 $string['durationuntil'] = 'Indtil';
@@ -47,29 +36,23 @@ $string['eventstarttime'] = 'Starttid';
 $string['eventtime'] = 'Tid';
 $string['eventview'] = 'Begivenhedsdetaljer';
 $string['expired'] = 'Udløbet';
-$string['explain_dstpreset'] = 'Med dropdown menuen kan du bestemme hvilke områder, hvis nogen, at DST indstillingerne skal bruges. ';
-$string['explain_dstpresetforced'] = 'Administratorer for sitet har ikke tilladt brugere at ændre denne indstilling.';
 $string['explain_lookahead'] = 'Denne indstilling sætter det (maksimale) antal dage i fremtiden som en begivenhed starter for at den bliver vist som kommende begivenhed. Begivenheder der starter senere vil ikke blive vist. Læg mærke til at <strong>der ikke er nogen garanti</strong> for at alle kommende begivenheder vil blive vist; hvis der er for mange (flere end \"Vis antal kommende begivenheder\" indstillingen) i så fald vi de begivenheder som er længst ude i fremtiden ikke blive vist.';
 $string['explain_maxevents'] = 'Denne indstilling angiver det højeste antal kommende begivenheder der kan vises. Hvis du vælger et højt antal er det muligt at visningen af begivenheder vil fylde en hel del på skærmen. ';
 $string['explain_persistflt'] = 'Hvis aktiveret vil moodle huske din sidste begivenhedsfilter indstilling og automatisk genskabe den hver gang du logger ind.';
 $string['explain_startwday'] = 'Denne indstilling konfigurere hvordan alle månedskalendere skal vises. Brug det til at vise kalenderen på den måde du er vant til.';
 $string['explain_timeformat'] = 'Denne indstilling kontrollere hvordan tiden skal vises i kalenderen. Du kan vælge at se tiden enten i 12 timere format eller 24 timere format. Hvis du vælger \"standart\", så vil formatet automatisk blive valgt i henhold til det sprog der er valgt på sitet.';
-$string['first'] = 'først';
 $string['fri'] = 'Fri';
 $string['friday'] = 'Fredag';
 $string['globalevents'] = 'Globale begivenheder';
 $string['gotocalendar'] = 'Gå til kalender';
 $string['groupevents'] = 'Gruppe begivenheder';
 $string['hidden'] = 'skjult';
-$string['last'] = 'sidst';
 $string['manyevents'] = '$a begivenheder';
 $string['mon'] = 'Man';
 $string['monday'] = 'Mandag';
 $string['monthlyview'] = 'Månedsvisning';
 $string['newevent'] = 'Ny begivenhed';
-$string['notusingdst'] = 'Benytter ikke DST';
 $string['noupcomingevents'] = 'Der er ikke nogle kommende begivenheder';
-$string['nth'] = 'd. {$a}';
 $string['oneevent'] = '1 begivenhed';
 $string['pref_lookahead'] = 'Kommende begivenheder i fremtiden';
 $string['pref_maxevents'] = 'Vis antal kommende begivenheder';
@@ -78,6 +61,8 @@ $string['pref_startwday'] = 'Første dag af uge';
 $string['pref_timeformat'] = 'Tidsvisning format';
 $string['preferences'] = 'Indstillinger';
 $string['preferences_available'] = 'Dine personlige indstillinger';
+$string['repeateditall'] = 'Tilføj rettelser til alle $a begivenheder i denne tilbagevendene serie';
+$string['repeateditthis'] = 'Tilføj kun ændringer til denne begivenhed';
 $string['repeatnone'] = 'Ingen gentagelser';
 $string['repeatweeksl'] = 'Gentag ugentlig.';
 $string['repeatweeksr'] = 'Begivenheder';
@@ -91,9 +76,6 @@ $string['thu'] = 'Tors';
 $string['thursday'] = 'Torsdag';
 $string['timeformat_12'] = '12-timer (am/pm)';
 $string['timeformat_24'] = '24-timer';
-$string['timeforward'] = 'fremad';
-$string['timerewind'] = 'tilbage';
-$string['timezonename'] = 'Tidszone';
 $string['today'] = 'I dag';
 $string['tomorrow'] = 'I morgen';
 $string['tt_deleteevent'] = 'Slet begivenhed';
@@ -117,5 +99,6 @@ $string['userevents'] = 'Bruger begivenheder';
 $string['wed'] = 'Ons';
 $string['wednesday'] = 'Onsdag';
 $string['yesterday'] = 'I går';
+$string['youcandeleteallrepeats'] = 'Denne begivenhed er en del af en tilbagevendene serie af begivenheder. Du kan kun slette denne begivenhed, eller alle $a begivenheder i serien på en gang.';
 
 ?>

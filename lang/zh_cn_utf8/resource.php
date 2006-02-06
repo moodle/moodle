@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.5 ALPHA (2005050600)
+      // resource.php - created with Moodle 1.5.3+ (2005060230)
 
 
 $string['addresource'] = '添加资源';
@@ -86,6 +86,7 @@ $string['resourcetypedirectory'] = '显示一个目录';
 $string['resourcetypefile'] = '链接到文件或站点';
 $string['resourcetypehtml'] = '编写网页';
 $string['resourcetypelabel'] = '插入标签';
+$string['resourcetyperepository'] = '链接到仓库中的对象';
 $string['resourcetypetext'] = '编写文本页';
 $string['searchweb'] = '搜索网页';
 $string['serverurl'] = '服务器链接($a->wwwroot)';

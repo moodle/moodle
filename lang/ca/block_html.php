@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // block_html.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
+      // block_html.php - created with Moodle 1.5.3+ (2005060230)
 
 
 $string['configcontent'] = 'Contingut';

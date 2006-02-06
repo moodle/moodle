@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.5 ALPHA (2005051500)
+      // assignment.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['allowresubmit'] = '允许重交';
@@ -32,6 +32,7 @@ $string['failedupdatefeedback'] = '为用户{$a}更新反馈失败';
 $string['feedback'] = '反馈';
 $string['feedbackfromteacher'] = '来自{$a}的反馈';
 $string['feedbackupdated'] = '为{$a}个人更新上交反馈';
+$string['guestnoupload'] = '抱歉，访客用户不允许提交作业';
 $string['helpoffline'] = '<p>如果学生在Moodle之外完成作业（比如在其它网站，或者与教师直接交流），那么可以使用这种类型的作业。</p><p> 学生可以看到作业的描述，但不能上传包括文件在内的任何信息。教师依然可以对作业评分，学生也会得到关于他们的分数的通知。</p>';
 $string['helponline'] = '<p>这种类型的作业让学生使用普通的编辑工具来编辑文本。教师可以对作业在线评分，甚至可以修改和嵌入点评到学生的答案里。</p>
 <p>（如果您熟悉旧版本的Moodle，那么这种类型的作业完成和旧的日志模块相同的工作。）</p>';
@@ -47,7 +48,9 @@ $string['noattempts'] = '尚无人尝试做此作业';
 $string['notgradedyet'] = '没有评分';
 $string['notsubmittedyet'] = '未交';
 $string['overwritewarning'] = '警告: 重新上载将覆盖您已交的作业';
+$string['pagesize'] = '每页显示作业数';
 $string['preventlate'] = '不允许迟交';
+$string['quickgrade'] = '允许快速评分';
 $string['saveallfeedback'] = '保存我的所有反馈';
 $string['submission'] = '提交';
 $string['submissionfeedback'] = '对提交信息的反馈';
@@ -60,10 +63,10 @@ $string['typeonline'] = '在线文本';
 $string['typeuploadsingle'] = '上载单个文件';
 $string['uploadbadname'] = '该文件名含有怪异字符，无法上载';
 $string['uploadedfiles'] = '已上载的文件';
-$string['uploaderror'] = '在服务器上保存文件时有错误发生';
+$string['uploaderror'] = '在服务器上保存文件时发生错误';
 $string['uploadfailnoupdate'] = '文件上载成功但无法更新您的提交信息！';
 $string['uploadfiletoobig'] = '抱歉，文件太大(最大不超过{$a}字节)';
-$string['uploadnofilefound'] = '未发现任何文件——您能确定已选取了一个上载文件吗?';
+$string['uploadnofilefound'] = '未发现任何文件——您能确定已选取了一个文件来上载吗?';
 $string['uploadnotregistered'] = '“{$a}”上载成功，但尚未登记!';
 $string['uploadsuccess'] = '成功上载“{$a}”';
 $string['viewfeedback'] = '查看作业成绩和反馈';

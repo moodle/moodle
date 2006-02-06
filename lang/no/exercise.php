@@ -1,26 +1,25 @@
 <?PHP // $Id$ 
-      // exercise.php - created with Moodle 1.2 (2004032000)
+      // exercise.php - created with Moodle 1.5.2 (2005060220)
 
 
 $string['absent'] = 'Fravær';
 $string['accumulative'] = 'Akkumulerende';
 $string['action'] = 'Handling';
 $string['ago'] = 'for $a siden';
-$string['allgradeshaveamaximumof'] = 'Alle karakterer har en maksimumsverdi på: $a';
 $string['amend'] = 'Forbedre';
 $string['amendassessmentelements'] = 'Forbedre elementer for vurdering';
 $string['amendtitle'] = 'Forbedre tittelen';
+$string['analysis'] = 'Analyse';
 $string['assess'] = 'Vurder';
 $string['assessed'] = 'Vurdert';
 $string['assessment'] = 'Vurdering';
 $string['assessmentby'] = 'Vurdert av $a';
 $string['assessmentform'] = 'Skjema for vurdering';
 $string['assessmentmadebythe'] = 'Vurdering gjort av $a';
-$string['assessmentofthissubmission'] = 'Vurdering av denne innlevering';
+$string['assessmentofthissubmission'] = 'Vurdering av denne innleveringen';
 $string['assessments'] = 'Vurderinger';
 $string['atthisstageyou'] = 'I denne fasen har du fullført en vurdering.<br /> Kanskje vil du revidere ditt arbeide i lys av denne innleveringen.<br /> Hvis du velger å gjøre dette, ikke glem også å revidere din vurdering.<br /> Du kan gjøre det ved å klikke på lenken for ny vurdering nedenfor.';
 $string['awaitingassessmentbythe'] = 'Venter på vurdering av $a';
-$string['awaitingfeedbackfromthe'] = 'Venter på tilbakemelding fra $a';
 $string['clearlateflag'] = 'Fjern avmerking for \"for sent\"';
 $string['comment'] = 'Kommentar';
 $string['confirmdeletionofthisitem'] = 'Bekreft sletting av denne $a';
@@ -73,12 +72,10 @@ $string['noexercisedescriptionssubmitted'] = 'Ingen beskrivelse av øvelsen er se
 $string['nosubmissions'] = 'Ingen innleveringer';
 $string['notassessedyet'] = 'Ikke vurdert enda';
 $string['notavailable'] = 'Ikke tilgjengelig';
-$string['noteonassessmentelements'] = 'Merk at karaktersettingen er delt inn i flere \"elementer for vurdering\".<br />Dette gjør karaktersettingen enklere og mer konsekvent. Som lærer må du legge til disse<br />elementene før du gjør øvelsen tilgjengelig for studentene. Dette gjøres ved å<br />klikke på øvelsen på studiesiden. Hvis ingen elementer er til stede blir du spurt om<br />å legge dem til. Du kan endre antallet elementer med å bruke skjermbildet \"Rediger øvelse\",<br />elementene i seg selv kan hentes fra skjermbildet \"Administrer øvelsen\".
-';
+$string['noteonassessmentelements'] = 'Merk at karaktersettingen er delt inn i flere \"elementer for vurdering\".<br />Dette gjør karaktersettingen enklere og mer konsekvent. Som lærer må du legge til disse<br />elementene før du gjør øvelsen tilgjengelig for studentene. Dette gjøres ved å<br />klikke på øvelsen på studiesiden. Hvis ingen elementer er til stede blir du spurt om<br />å legge dem til. Du kan endre antallet elementer med å bruke skjermbildet \"Rediger øvelse\",<br />elementene i seg selv kan hentes fra skjermbildet \"Administrer øvelsen\".';
 $string['noteonstudentassessments'] = '{Karakter fra student/Karakter for studentens vurdering gitt av lærer}';
 $string['notgraded'] = 'Ikke satt karakter';
 $string['notitlegiven'] = 'Ingen tittel satt';
-$string['nowpleasemakeyourownassessment'] = 'Nå skal du selv vurdere av det arbeidet som $a har gjort.<br />Legg merke til at skjemaet for vurdering som standardvalg (forhåndsinnstilt) har samme system for vurdering som<br />skjemaet for studenter. Du bør gjøre alle endringer du mener er nødvendig og etterpå klikke på<br />en av knappene nederst på siden.';
 $string['numberofassessmentelements'] = 'Antallet kommentarer, elementer som skal vurderes, kriterier, kategorier mv. i en rubrikk';
 $string['numberofentries'] = 'Antall oppføringer';
 $string['numberofnegativeresponses'] = 'Antall negative svar';
@@ -146,7 +143,6 @@ $string['usemaximum'] = 'Bruk maksimun';
 $string['usemean'] = 'Bruk middel';
 $string['verypoor'] = 'Svært dårlig';
 $string['view'] = 'Vis';
-$string['viewassessment'] = 'Vis vurdering';
 $string['warningonamendingelements'] = 'ADVARSEL: Det er innsendte vurderinger. <br />IKKE endre antallet elementer, typen skala eller elementenes vekting.';
 $string['weightederrorcount'] = 'Feil med summering av vekting: $a';
 $string['weightforgradingofassessments'] = 'Vekting for karaktersetting av vurderinger';

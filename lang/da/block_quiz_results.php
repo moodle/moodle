@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // block_quiz_results.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005033100)
+      // block_quiz_results.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['bestgrade'] = 'Højeste vurdering:';
@@ -10,6 +10,10 @@ $string['config_format_absolute'] = 'Heltal';
 $string['config_format_fraction'] = 'Kommatal';
 $string['config_format_percentage'] = 'Procenter';
 $string['config_grade_format'] = 'Vis vurderinger som:';
+$string['config_name_format'] = 'Fortrolighedsniveau for viste resultater:';
+$string['config_names_anon'] = 'Anonyme resultater';
+$string['config_names_full'] = 'Vis fulde navne';
+$string['config_names_id'] = 'Vis kun ID numre';
 $string['config_no_quizzes_in_course'] = 'Dette kursus indeholder ikke nogle quizaktiviteter. Du bliver nødt til at tilføje mindst én før du kan bruge denne blok.';
 $string['config_select_quiz'] = 'Hvilken quiz skal denne blok vise resultater fra?';
 $string['config_show_best'] = 'Hvor mange af de højeste vurderinger skal vises (0 for at deaktivere)';

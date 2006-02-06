@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.5 Beta (2005052300)
+      // quiz.php - created with Moodle 1.5.3+ (2005060230)
 
 
 $string['acceptederror'] = 'Margen de error';
@@ -183,6 +183,8 @@ $string['illegalformulasyntax'] = 'Sintaxis de fórmula ilegal que comienza con \
 $string['imagedisplay'] = 'Imagen a mostrar';
 $string['imagemissing'] = 'Imagen no disponible en la línea $a. El archivo no se tendrá en cuenta';
 $string['importmax10error'] = 'Hay un error en la pregunta. Usted no puede tener más de diez respuestas';
+$string['importmaxerror'] = 'Hay un error en la pregunta.
+Hay demasiadas respuestas.';
 $string['importminerror'] = 'Hay un error en la pregunta. No hay suficientes respuestas para este tipo de pregunta.';
 $string['importquestions'] = 'Importar preguntas de un archivo';
 $string['incorrect'] = 'Incorrecto';
@@ -265,6 +267,7 @@ $string['numerical'] = 'Numérico';
 $string['optional'] = 'opcional';
 $string['outof'] = ' de un máximo de ';
 $string['overdue'] = 'Vencido';
+$string['pagesize'] = 'Intentos mostrados por página:';
 $string['paragraphquestion'] = 'Pregunta de parágrafo no permitida en la línea $a. La pregunta no se tendrá en cuenta';
 $string['parent'] = 'Padre';
 $string['partiallycorrect'] = 'Parcialmente correcto';
@@ -333,6 +336,7 @@ $string['reportmulti_q_x_student'] = 'Opciones multi-estudiante';
 $string['reportmulti_resp'] = 'Respuestas individuales';
 $string['reportoverview'] = 'Vista general';
 $string['reportregrade'] = 'Recalificar intentos';
+$string['reportresponses'] = 'Respuestas detalladas';
 $string['reports'] = 'Informes';
 $string['reportsimplestat'] = 'Estadística simple';
 $string['requirepassword'] = 'Se requiere contraseña';
@@ -383,11 +387,15 @@ $string['showdetailedmarks'] = 'Mostrar nota detallada';
 $string['showfeedback'] = '¿Mostrar resultado al finalizar?';
 $string['showhidden'] = 'Mostrar también preguntas antiguas';
 $string['shownoattempts'] = 'Mostrar estudiantes sin intentos';
+$string['shownoattemptsonly'] = 'Mostrar sólo estudiantes sin intentos';
 $string['showteacherattempts'] = 'Mostrar intentos del profesor';
 $string['shuffleanswers'] = 'Barajar respuestas';
 $string['shufflequestions'] = 'Barajar preguntas';
 $string['significantfigures'] = 'con $a';
 $string['significantfiguresformat'] = 'dígitos significativos';
+$string['sortage'] = 'Ordenar por edad';
+$string['sortalpha'] = 'Ordenar alfabéticamente';
+$string['sortsubmit'] = 'Ordenar preguntas';
 $string['startagain'] = 'Comenzar de nuevo';
 $string['startedon'] = 'Comenzado el';
 $string['subneterror'] = 'Lo sentimos, este cuestionario ha sido bloqueado de modo que sólo es accesible desde ciertas direcciones. En este momento su ordenador no está autorizado para usar este cuestionario.';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // grades.php - created with Moodle 1.5 + (2005060201)
+      // grades.php - created with Moodle 1.6 development (2005100400)
 
 
 $string['addcategory'] = 'Kategori Ekle';
@@ -76,6 +76,7 @@ $string['nolettergrade'] = 'Harf notu yok';
 $string['nomode'] = 'YOK';
 $string['nonnumericweight'] = 'Sayýsal olmayan deðer alýndý ';
 $string['nonweightedpct'] = 'Aðýrlýksýz %%';
+$string['notteachererror'] = 'Bu özelliði kullanmak için eðitimci olmalýsýnýz.';
 $string['pctoftotalgrade'] = 'toplam notlarýn %%';
 $string['percent'] = 'Yüzde';
 $string['percentascending'] = 'Yüzde (artan sýralama)';

@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$ 
       // quiz.php - created with Moodle 1.5 ALPHA (2005050600)
 
 
@@ -73,6 +73,8 @@ $string['completedon'] = 'Completed on';
 $string['confirmclose'] = 'You are about to close this attempt. Once you close the attempt you will no longer be able to change your answers.';
 $string['confirmserverdelete'] = 'Are you sure you want to remove the server <b>$a</b> from the list?';
 $string['confirmstartattempt'] = 'The Quiz has a time limit. Are you sure that you wish to start?';
+$string['confirmstartnolimit'] = 'This quiz is limited to $a attempts. Accessing the quiz will be counted as an attempt.  Do you wish to proceed?';
+$string['confirmstartlimit'] = 'This quiz has a time limit and is limited to $a attempts. Accessing the quiz will be counted as an attempt.  Do you wish to proceed?';
 $string['containercategorycreated'] = 'This category has been created to store all the original categories moved to site level due to the causes specified below.';
 $string['continueattemptquiz'] = 'Continue the last attempt';
 $string['copyingfrom'] = 'Creating a copy of the question \'$a\'';
@@ -273,7 +275,7 @@ $string['penalty'] = 'Penalty';
 $string['penaltyfactor'] = 'Penalty factor';
 $string['penaltyscheme'] = 'Apply penalties';
 $string['percentcorrect'] = 'Percent Correct';
-$string['popup'] = 'Show quiz in a \"secure\" window';
+$string['popup'] = 'Show quiz in a &quot;secure&quot; window';
 $string['popupnotice'] = 'Students will see this quiz in a secure window';
 $string['preview'] = 'Preview';
 $string['previewquestion'] = 'Preview question';
@@ -333,6 +335,7 @@ $string['reportmulti_q_x_student'] = 'Multi-Student Choices';
 $string['reportmulti_resp'] = 'Individual Responses';
 $string['reportoverview'] = 'Overview';
 $string['reportregrade'] = 'Regrade attempts';
+$string['reportresponses'] = 'Detailed responses';
 $string['reports'] = 'Reports';
 $string['reportsimplestat'] = 'Simple statistics';
 $string['requirepassword'] = 'Require password';
@@ -391,7 +394,7 @@ $string['significantfigures'] = ' with $a ';
 $string['significantfiguresformat'] = 'significant figures';
 $string['sortalpha'] = 'Sort alphabetically';
 $string['sortage']   = 'Sort by age';
-$string['sortsubmit']   = 'Sort quetsions';
+$string['sortsubmit']   = 'Sort questions';
 $string['startagain'] = 'Start again';
 $string['startagain'] = 'Start again';
 $string['startagain'] = 'Start again';
@@ -438,5 +441,6 @@ $string['xml'] = 'Moodle XML format';
 $string['xmltypeunsupported'] = 'Question type $a is not supported by xml import';
 $string['yourfinalgradeis'] = 'Your final grade for this quiz is $a';
 $string['zerosignificantfiguresnotallowed'] = 'The correct answer cannot have zero significant figures!';
+
 
 ?>

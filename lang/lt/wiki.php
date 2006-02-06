@@ -132,7 +132,6 @@ $string['plaintext'] = 'Paprastas tekstas';
 $string['preview'] = 'Perþiûra';
 $string['readonly'] = 'Puslapis tik skaitymui';
 $string['refs'] = 'Nuorodos';
-$string['removenotice'] = 'Note that only unreferenced pages will be listed here. And because the ewiki engine itself does only limited testing if a page is referenced it may miss some of them here.<br />If you however empty a page first, it will get listed here too. Various other database diagnostics are made as well.';
 $string['removepagecheck'] = 'Ar jûs tikrai norite iðtrinti ðiuos puslapius?';
 $string['removepages'] = 'Iðtrinti puslapius';
 $string['removeselectedpages'] = 'Iðtrinti paþymëtus/iðrinktus puslapius';

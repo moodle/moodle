@@ -1,5 +1,6 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.4 (2004083100)
+      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
+
 
 
 $string['addanewdiscussion'] = 'Új vitatéma hozzáadása';
@@ -10,6 +11,8 @@ $string['allowchoice'] = 'Mindenki választhat';
 $string['allowdiscussions'] = 'Egy $a hozzászólhat ehhez a fórumhoz?';
 $string['allowratings'] = 'Megengedi a hozzászólások osztályozását?';
 $string['allowsdiscussions'] = 'A fórum mindenki számára egyetlen vitatéma megnyitását engedi meg.';
+$string['allsubscribe'] = 'Feliratkozás minden fórumra';
+$string['allunsubscribe'] = 'Leiratkozás minden fórumról';
 $string['anyfile'] = 'Bármely fájl';
 $string['attachment'] = 'Csatolt fájl';
 $string['bynameondate'] = '$a->name - $a->date';
@@ -45,6 +48,9 @@ $string['discussions'] = 'Viták';
 $string['discussionsstartedby'] = '$a által indított vita ';
 $string['discussionsstartedbyrecent'] = '$a által nemrég indított viták';
 $string['discussthistopic'] = 'Téma mwegvitatása';
+$string['displayend'] = 'Befejezés jelzése';
+$string['displayperiod'] = 'Idõtartam jelzése';
+$string['displaystart'] = 'Kezdet jelzése';
 $string['eachuserforum'] = 'Mindenki egy vitatémát ad meg';
 $string['edit'] = 'Szerkesztés';
 $string['editedby'] = 'Szerkesztette $a->name - $a->date';
@@ -100,8 +106,11 @@ $string['nonews'] = 'Nincs még hír';
 $string['noposts'] = 'Nincs hozzászólás';
 $string['nopostscontaining'] = ' \'$a\' -t tartalmazó hozzászólás nem található';
 $string['nosubscribers'] = 'Még senki nincs feliratkozva erre a fórumra';
+$string['nothingnew'] = 'Semmi új $a kapcsán.';
 $string['notingroup'] = 'Ennek a fórumnak a megtekintéséhez csoporttagnak kell lennie.';
 $string['notrackforum'] = 'Olvasatlan üzeneteket ne kövessen nyomon';
+$string['nowallsubscribed'] = 'A(z) $a esetén minden fórum feliratkozott.';
+$string['nowallunsubscribed'] = 'A(z) $a esetén nincs minden fórum feliratkozva.';
 $string['nownotsubscribed'] = '$a->name NEM kap másolatot a \'$a->forum\'-ról e-mailben.';
 $string['nownottracking'] = '$a->name már nem követi nyomon a \'$a->forum\' fórumot.';
 $string['nowsubscribed'] = '$a->name másolatot kap a \'$a->forum\'-ról e-mailben.';
@@ -112,6 +121,8 @@ $string['oldertopics'] = 'Régebbi témák';
 $string['openmode0'] = 'Nincsenek vitatémák, nincsenek válaszok';
 $string['openmode1'] = 'Nincsenek vitatémák, de válaszok megengedettek';
 $string['openmode2'] = 'Vitatémák és válaszok megengedettek';
+$string['overviewnumpostssince'] = '$a üzenet az utóbbi bejelentkezés óta';
+$string['overviewnumunread'] = '$a olvasatlan összesen';
 $string['parent'] = 'Elõzmény megjelenítése';
 $string['parentofthispost'] = 'A hozzászólás elõzménye';
 $string['postadded'] = 'A hozzászólást sikeresen hozzáadtuk.<br />Van $a a javításra, ha változtatni szeretné.';
@@ -181,6 +192,7 @@ $string['subscribestart'] = 'Kérek e-mailt a fórum hozzászólásairól';
 $string['subscribestop'] = 'Nem kérek e-mailt a fórum hozzászólásairól';
 $string['subscription'] = 'Feliratkozás';
 $string['subscriptions'] = 'Feliratkozások';
+$string['timestartenderror'] = 'A kijelzendõ befejezési idõ nem lehet a kezdési idõnél korábban';
 $string['trackforum'] = 'Elolvasatlan üzenetek nyomon követése';
 $string['tracking'] = 'Nyomon követés';
 $string['trackingoff'] = 'Ki';

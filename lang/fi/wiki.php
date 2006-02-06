@@ -144,6 +144,7 @@ $string['safehtml'] = 'Turvallinen HTML';
 $string['save'] = 'Tallenna';
 $string['searchwiki'] = 'Etsi Wikistä';
 $string['setpageflags'] = 'Aseta sivun liput';
+$string['showversions'] = 'Näytä versiot:';
 $string['sitemap'] = 'Sivukartta';
 $string['smfor'] = 'Sivukartta';
 $string['status'] = 'Tila';

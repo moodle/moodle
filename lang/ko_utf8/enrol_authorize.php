@@ -1,7 +1,8 @@
 <?PHP // $Id$ 
-      // enrol_authorize.php - created with Moodle 1.6 development (2005072000)
+      // enrol_authorize.php - created with Moodle 1.6 development (2005090100)
 
 
+$string['adminreview'] = '신용카드 번호를 저장하기 전에  확인합니다.';
 $string['anlogin'] = 'Authorize.net: 접속 이름';
 $string['anpassword'] = 'Authorize.net: 비밀번호';
 $string['anreferer'] = '만약 당신이 authorize.net 계정을 설정했다면 그 사이트의 주소가 보여질 것입니다. 이것은 그 사이트의 주소가 인터넷의  요청에 의해 새로운 줄로 보내질 것입니다. ';
@@ -22,11 +23,14 @@ $string['httpsrequired'] = '저희는 당신이 요구가 수월하게 처리되
 <br /><br />
 우리는 당신이 인터넷 브라우저의 아래부분에서 노란 자물쇠 그림이 보일때까지 신용카드 번호를 입력하지 않기를 바랍니다.
 이것은 모든 데이터가 클라이언트와 서버사이에 암호화됨을 의미합니다. 그래서 두대의 컴퓨터 사이에 이동되는 모든 정보가 보호되고 당신의 신용카드 번호는 인터넷에 알려지지 않게 됩니다.';
-$string['logindesc'] = '보안 섹션에서 당신은 변하기 쉬운 접속https의 옵션 파일을 설정 할수 있습니다.
+$string['logindesc'] = '이 옵선은 반드시 켜져야 합니다.<br /><br />
+변경/보안 섹션에서 <a href=\"$a->url\">loginhttps</a>옵션을 설정 할수 있습니다.
 <br /><br />
 이 옵션을 킨다면 무들은 접속 페이지와 지불 페이지에 보안 프로그램을 사용할것입니다.';
 $string['nameoncard'] = '카드에 적힌 이름';
+$string['reviewday'] = '<b>$a</b>일 내에 선생님이나 관리자가 주문을 확인하지 않으면 자동적으로 신용카드를 회수합니다. cron이 반드시 활성화 되어 있어야 합니다.<br />(0일 = 불가능, autocapture = 교사나 관리자가 수동으로 접수. 만일 30일 이내에 접수하지 않거나 자동 수납을 불가능 으로 해 놓으면 송금은 취소될 것입니다) ';
+$string['reviewnotify'] = '결제가 확인되었습니다. 선생님으로부터 며칠안으로 메일이 갈것입니다.';
 $string['sendpaymentbutton'] = '지불하기';
-$string['zipcode'] = '국가 코드 ';
+$string['zipcode'] = '국가 코드';
 
 ?>

@@ -710,7 +710,6 @@ $string['order'] = 'Поредак';
 $string['other'] = 'Остали';
 $string['outline'] = 'Кратак преглед';
 $string['page'] = 'Страница';
-$string['parentlanguage'] = 'Српски';
 $string['participants'] = 'Учесници';
 $string['password'] = 'Лозинка';
 $string['passwordchanged'] = 'Лозинка је промијењена';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.2 (2004032000)
+      // assignment.php - created with Moodle 1.5.2 (2005060220)
 
 
 $string['allowresubmit'] = 'Tillat ny innlevering';
@@ -15,11 +15,14 @@ innlevering \'<i>$a->assignment</i>\'<br /><br />
 Du kan se tilbakemeldingen <a href=\"$a->url\">her:</a>.';
 $string['assignmentname'] = 'Oppgavenavn';
 $string['assignmenttype'] = 'Oppgavetype';
+$string['availabledate'] = 'Tilgjengelig fra';
+$string['comment'] = 'Kommentar';
 $string['configmaxbytes'] = 'Standard maksimum oppgavestørrelse for alle oppgavene på sidene (overordnet klassenes grenser og andre lokale innstillinger)';
 $string['description'] = 'Selve oppgaveteksten';
 $string['duedate'] = 'Innleveringsfrist';
 $string['duedateno'] = 'Ingen innleveringsfrist';
 $string['early'] = '$a før fristen';
+$string['editmysubmission'] = 'Rediger innleveringa mi';
 $string['existingfiledeleted'] = 'Eksisterende fil er slettet: $a';
 $string['failedupdatefeedback'] = 'Kunne ikke oppdatere tilbakemelding for levering til $a';
 $string['feedback'] = 'Tilbakemelding';
@@ -27,8 +30,8 @@ $string['feedbackupdated'] = 'Tilbakemelding oppdatert for $a personer';
 $string['late'] = '$a for sent';
 $string['maximumgrade'] = 'Maks karakter/poeng';
 $string['maximumsize'] = 'Maks filstørrelse';
-$string['modulename'] = 'Oppgave';
-$string['modulenameplural'] = 'Oppgaver';
+$string['modulename'] = 'Innlevering';
+$string['modulenameplural'] = 'Innlevering';
 $string['newsubmissions'] = 'Leverte oppgaver';
 $string['notgradedyet'] = 'Ikke satt karakter enda';
 $string['notsubmittedyet'] = 'Ikke levert enda';

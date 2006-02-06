@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // block_quiz_results.php - created with Moodle 1.4.4 + (2004083140)
+      // block_quiz_results.php - created with Moodle 1.6 development (2005090100)
 
 
 $string['bestgrade'] = 'Höchstbewertung:';
@@ -10,6 +10,10 @@ $string['config_format_absolute'] = 'Absolute Zahl';
 $string['config_format_fraction'] = 'Bruch';
 $string['config_format_percentage'] = 'Prozent';
 $string['config_grade_format'] = 'Note anzeigen als:';
+$string['config_name_format'] = 'Privatsphäre für die Ergebnisdarstellung';
+$string['config_names_anon'] = 'Anonyme Ergebnisse';
+$string['config_names_full'] = 'Anzeige mit vollständigem Namen';
+$string['config_names_id'] = 'Nur Anzeige der ID-Nummer';
 $string['config_no_quizzes_in_course'] = 'Dieser Kurs enthält keine Tests. Sie müssen zuerst mindestens einen Test einfügen, um diesen Block verwenden zu können.';
 $string['config_select_quiz'] = 'Von welchem Test soll dieser Block Ergebnisse anzeigen?';
 $string['config_show_best'] = 'Wie viele Bewertungen soll als \'beste Ergebnisse\' angezeigt werden? (0 deaktiviert die Funktion)';

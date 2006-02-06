@@ -1,13 +1,20 @@
 Version: $Id$
 
-French Translation
-------------------
+Traduction française
+--------------------
 
 La traduction française de Moodle est coordonnée et en grande partie
-accomplie par Nicolas Martignoni <nicolas@martignoni.net>. Elle
-comprend en outre des adaptations de certains fichiers d'aide (dossier
-help) et du fichier workshop.php traduits pour nos amis du Canada
-francophone par Jean-François Nadeau <nadeau.jf@videotron.ca>.
+accomplie par Nicolas Martignoni <nicolas@martignoni.net>.
+
+Liste des contributeurs à la traduction de Moodle
+-------------------------------------------------
+
+* Nicolas Martignoni <nicolas@martignoni.net> : coordination, fichiers
+  php et dossier fr/docs et quelques dizaines de fichiers du dossier
+  fr/help ;
+* Jean-François Nadeau <nadeau.jf@videotron.ca> : diverses adaptations
+  à de nombreux fichiers du dossier fr/help ;
+* Valéry Frémaux <vf@eisti.fr> : dossier fr/help/wiki
 
 Une liste des termes utilisés pour la traduction est disponible dans le
 glossaire du cours "Moodle en français" à l'URL suivante :
@@ -21,12 +28,6 @@ Si vous avez des suggestions ou des propositions d'amélioration au
 sujet de la traduction de certains termes, merci d'utiliser le forum
 "Traduction en français" à l'URL suivante :
 http://moodle.org/mod/forum/view.php?id=1683
-
-TODO
-  Entre autres :
-  - trouver une bonne traduction de "Reflective Thinking" ;
-  - traduire les fichiers d'aide qui ne le sont pas encore ;
-  - 
 
 Voici quelques liens utilisés :
   - Le grand dictionnaire terminologique

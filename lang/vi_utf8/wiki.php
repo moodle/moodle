@@ -144,6 +144,7 @@ $string['safehtml'] = 'HTML an toàn';
 $string['save'] = 'Lưu trữ';
 $string['searchwiki'] = 'Tìm kiếm Wiki';
 $string['setpageflags'] = 'Đặt các cờ của trang';
+$string['showversions'] = 'Hiện các phiên bản';
 $string['sitemap'] = 'cấu trúc Site';
 $string['smfor'] = 'Cấu trúc Site về';
 $string['status'] = 'Các trạng thái';

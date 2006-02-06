@@ -72,6 +72,7 @@ $string['dataroot'] = 'Data Directory';
 $string['datarooterror'] = 'The \'Data Directory\' you specified could not be found or created.  Either correct the path or create that directory manually.';
 $string['dbconnectionerror'] = 'We could not connect to the database you specified. Please check your database settings.';
 $string['dbcreationerror'] = 'Database creation error. Could not create the given database name with the settings provided';
+$string['dbwrongencoding'] = 'The selected database is running under one non-recommended encoding ($a). It would be better to use one Unicode (UTF-8) encoded database instead. Anyway, you can bypass this test by selecting the \"Skip DB Encoding Test\" check below, but you could experience problems in the future.';
 $string['dbhost'] = 'Host Server';
 $string['dbpass'] = 'Password';
 $string['dbprefix'] = 'Tables prefix';
@@ -205,11 +206,12 @@ $string['sessionautostarterror'] = 'This should be off';
 $string['sessionautostarthelp'] = '<p>Moodle requires session support and will not function without it.</p>
 
 <p>Sessions can be enabled in the php.ini file ... look for the session.auto_start parameter.</p>';
+$string['skipdbencodingtest'] = 'Skip DB Encoding Test';
 $string['welcomep10'] = '$a->installername ($a->installerversion)';
 $string['welcomep20'] = 'You are seeing this page because you have successfully installed and 
     launched the <strong>$a->packname $a->packversion</strong> package in your computer. Congratulations!';
 $string['welcomep30'] = 'This release of the <strong>$a->installername</strong> includes the applications 
-    which create an environment in <strong>Moodle</strong> will operate, namely:';
+    to create an environment in which <strong>Moodle</strong> will operate, namely:';
 $string['welcomep40'] = 'The package also includes <strong>Moodle $a->moodlerelease ($a->moodleversion)</strong>.';
 $string['welcomep50'] = 'The use of all the applications in this package is governed by their respective 
     licences. The complete <strong>$a->installername</strong> package is 

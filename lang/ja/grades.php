@@ -1,12 +1,12 @@
 <?PHP // $Id$ 
-      // grades.php - created with Moodle 1.6 development (2005060201)
+      // grades.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['addcategory'] = 'カテゴリの追加';
 $string['addcategoryerror'] = 'カテゴリを追加できませんでした。';
 $string['addexceptionerror'] = 'ユーザID:評定項目に例外を追加中にエラーが発生しました。';
-$string['allgrades'] = 'カテゴリ毎の評点';
-$string['allstudents'] = '全ての学生';
+$string['allgrades'] = 'カテゴリごとの評点';
+$string['allstudents'] = 'すべての学生';
 $string['average'] = '平均';
 $string['bonuspoints'] = 'ボーナスポイント';
 $string['categories'] = 'カテゴリ';
@@ -21,7 +21,7 @@ $string['displaypoints'] = '評点を表示する';
 $string['displayweighted'] = '比重評点を表示する';
 $string['dropped'] = '除外';
 $string['dropxlowest'] = '下位X件の除外';
-$string['dropxlowestwarning'] = '注意: 「下位X件の除外」を使用する場合、カテゴリ内の全ての項目は同じ点数の値を持つとみなされます。もし、各項目の点数の値が異なる場合、結果は保証されません。';
+$string['dropxlowestwarning'] = '注意: 「下位X件の除外」を使用する場合、カテゴリ内のすべての項目は同じ点数の値を持つとみなされます。もし、各項目の点数の値が異なる場合、結果は保証されません。';
 $string['errorgradevaluenonnumeric'] = '低いまたは高い評点が数値ではありません:';
 $string['errornocategorizedid'] = 'カテゴリ無しIDを取得できませんでした!';
 $string['errornocourse'] = 'コース情報を取得できませんでした。';
@@ -29,7 +29,7 @@ $string['errorreprintheadersnonnumeric'] = 'ヘッダの再表示の値が数値ではありませ
 $string['exceptions'] = '例外';
 $string['excluded'] = '除外';
 $string['extracredit'] = '自己申告';
-$string['extracreditwarning'] = '注意: カテゴリ内の全ての項目を自己申告にすることにより、評定の計算から項目を効果的に除外することができます。これにより合計点数は計算されません。';
+$string['extracreditwarning'] = '注意: カテゴリ内のすべての項目を自己申告にすることにより、評定の計算から項目を効果的に除外することができます。これにより合計点数は計算されません。';
 $string['forstudents'] = '学生に対して';
 $string['gradebook'] = '評定表';
 $string['gradebookhiddenerror'] = '現在、評定表は学生から隠されています。';
@@ -76,6 +76,7 @@ $string['nolettergrade'] = '評定文字がありません:';
 $string['nomode'] = 'NA';
 $string['nonnumericweight'] = '数値ではありません:';
 $string['nonweightedpct'] = '比重無し%%';
+$string['notteachererror'] = 'この機能は教師のみ使用できます。';
 $string['pctoftotalgrade'] = '評点合計の%%';
 $string['percent'] = 'パーセント';
 $string['percentascending'] = 'パーセントの昇順で並び替え';
@@ -97,7 +98,7 @@ $string['setpreferences'] = 'オプション設定';
 $string['setting'] = '設定';
 $string['settings'] = '設定';
 $string['setweights'] = '比重の設定';
-$string['showallstudents'] = '全ての学生を表示';
+$string['showallstudents'] = 'すべての学生を表示';
 $string['showhiddenitems'] = '隠し項目を表示する';
 $string['sort'] = '並び替え';
 $string['sortbyfirstname'] = '名で並び替え';

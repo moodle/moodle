@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.4.2 (2004083125)
+      // calendar.php - created with Moodle 1.6 development (2005072200)
 
 
 $string['calendar'] = 'ปฏิทิน';
@@ -38,6 +38,7 @@ $string['eventview'] = 'รายละเอียดกิจกรรม';
 $string['expired'] = 'หมดเวลา';
 $string['explain_lookahead'] = 'ตั้งค่าจำนวนวันที่มากที่สุดที่คุณต้องการให้กิจกรรมนี้แสดงในบล็อค\"กิจกรรมที่กำลังจะมีขึ้น\"  กิจกรรมที่เกิดขึ้นเกินกว่าระยะเวลานี้จะไม่มีการแสดงในบล็อคนี้ อย่างไรก็ตามระบบไม่สามารถจะรับประกันได้ว่ากิจกรรมทั้งหมดที่เริ่มในช่วงระยะเวลาที่ระบุจะแสดงในบล็อคนี้ถ้าหากคุณระบุระยะเวลาไว้นานเกินไป';
 $string['explain_maxevents'] = 'ระบุจำนวนกิจกรรมที่มากที่สุดที่ต้องการแสดง ถ้าหากระบุจำนวนมากเกินไปอาจทำให้เสียพื้นที่หน้าจอ';
+$string['explain_persistflt'] = 'หากเปิดใช้งานระบบจะจำว่าคุณตั้งค่าฟิลเตอร์ไว้อย่างไรจากนั้นจะทำการกู้คืนอัตโนมัติในแต่ละครั้งที่เข้าสู่ระบบ';
 $string['explain_startwday'] = 'เลือกวันที่ต้องการให้เป็นวันแรกในมุมมองรายสัปดาห์';
 $string['explain_timeformat'] = 'คุณสามารถเลือกที่จะแสดงเวลาเป็นแบบ 12 ชั่วโมง (am/pm) หรือแบบ 24 ชั่วโมงก็ได้  ถ้าคุณเลือก \"ค่าที่ตั้งไว้\" เวลาจะถูกแสดงตามภาษาที่คุณใช้บนเว็บไซต์';
 $string['fri'] = 'ศ.';
@@ -53,13 +54,15 @@ $string['monthlyview'] = 'มุมมองรายเดือน';
 $string['newevent'] = 'กิจกรรมใหม่';
 $string['noupcomingevents'] = 'ไม่มีกิจกรรมที่กำลังจะเริ่ม';
 $string['oneevent'] = '1 กิจกรรม';
-$string['parentlanguage'] = 'en';
 $string['pref_lookahead'] = 'กิจกรรมที่กำลังจะเริ่ม ';
 $string['pref_maxevents'] = 'จำนวนสูงสุดของกิจกรรมที่กำลังจะเริ่ม';
+$string['pref_persistflt'] = 'จำการตั้งค่าฟิลเตอร์';
 $string['pref_startwday'] = 'วันแรกของสัปดาห์';
 $string['pref_timeformat'] = 'รูปแบบการแสดงเวลา';
 $string['preferences'] = 'ตั้งค่าที่ต้องการ';
 $string['preferences_available'] = 'ค่าที่คุณต้องการ';
+$string['repeateditall'] = 'ให้การเปลี่ยนแปลงที่มีต่อกิจกรรม $a ที่เกิดซ้ำ ๆ มีผลทันที';
+$string['repeateditthis'] = 'ให้การเปลี่ยนแปลงที่มีต่อกิจกรรมนี้เท่านั้นมีผลทันที';
 $string['repeatnone'] = 'ไม่มีการซ้ำ';
 $string['repeatweeksl'] = 'ซ้ำเป็นรายสัปดาห์, สร้างพร้อมกัน';
 $string['repeatweeksr'] = 'กิจกรรม';
@@ -69,9 +72,6 @@ $string['shown'] = 'แสดงอยู่';
 $string['spanningevents'] = 'กิจกรรมที่มีอยู่ขณะนี้';
 $string['sun'] = 'อา.';
 $string['sunday'] = 'อาทิตย์';
-$string['thischarset'] = 'TIS-620';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Thai';
 $string['thu'] = 'พฤ.';
 $string['thursday'] = 'พฤหัสบดี';
 $string['timeformat_12'] = '12 ชั่วโมง (am/pm)';
@@ -99,5 +99,6 @@ $string['userevents'] = 'กิจกรรมส่วนตัว';
 $string['wed'] = 'พ.';
 $string['wednesday'] = 'พุธ';
 $string['yesterday'] = 'เมื่อวานนี้';
+$string['youcandeleteallrepeats'] = 'กิจกรรมนี้เป็นส่วนหนึ่งของกิจกรรมที่เกิดขึ้นซ้ำ ๆ คุณสามารถลบกิจกรรมนี้เท่านั้นหรือจะลบกิจกรรม $a ทั้งหมดภายในครั้งเดียว';
 
 ?>

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // journal.php - created with Moodle 1.4.4 (2004083140)
+      // journal.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['alwaysopen'] = 'อ่านได้ตลอด';
@@ -20,6 +20,7 @@ $string['journalquestion'] = 'คำถาม';
 $string['journalrating1'] = 'ไม่น่าพอใจ';
 $string['journalrating2'] = 'พอใจ';
 $string['journalrating3'] = 'พอใจมาก';
+$string['mailsubject'] = 'ความเห็นต่อบันทึกความก้าวหน้า';
 $string['modulename'] = 'บันทึกความก้าวหน้า';
 $string['modulenameplural'] = 'บันทึกความก้าวหน้า';
 $string['newjournalentries'] = 'บันทึกมาใหม่';

@@ -21,12 +21,14 @@ primer registro, y deben definirse para cada usuario.</p>
 </p>
       <p><strong>Campos por defecto:</strong> Estos son opcionales -si no están presentes, se tomarán los valores del administrador primario</p>
       <p><font color="#990000" face="Courier New, Courier, mono">institution, department, city, country, lang, timezone</font> </p>
-      <p><strong>Campos opcionales: </strong>todos estos son opcionales. Los nombres de los cursos son sus &quot;nombres cortos&quot; -si se incluyen los nombres cortos de los cursos el alumno se incribirá automáticamente en esos cursos.</p>
+      <p><strong>Campos opcionales: </strong>todos estos son opcionales. Los nombres de los cursos son sus &quot;nombres cortos&quot; -si se incluyen los nombres cortos de los cursos el alumno se incribirá automáticamente en esos cursos. Los nombres de los grupos deben estár asociados a los cursos correspondientes, e.g., group1 a course1, etc.</p>
       <p> <font color="#990000" face="Courier New, Courier, mono">idnumber, icq, phone1, phone2, address, url, description, mailformat, maildisplay, htmleditor, autosubscribe, course1, course2, course3, course4, course5, group1, group2, group3, group4, group5</font></p>
     </blockquote>
     </li>
   <li>Las comas entre los datos se codificarán como &amp;#44 --el script las decodificará automáticamente como comas.</li>
   <li>Para campos boleanos use 0 para falso y 1 para verdadero</li>
+  <li>Los tipos se usan para informar a Moodle si el usuario es un estudiante o un profesor en el caso de que el correspondiente curso exista (e.g., type2 corresponde a course2). 1 = Estudiante, 2 = Profesor editor y 3 = Profesor no editor. Si el tipo se deja en blanco, o si no se especifica curso, el usuario por defecto será el estudiante. </li>
+  <li>Para los cursos, utilice el nombre corto del curso</li>
   <li>Nota: Si un usuario ya está registrado en la base de datos de Moodle, el script devolverá 
 	el número userid (índice de la base de datos) de ese usuario, e inscribirá al usuario en 
 	los cursos SIN alterar la información anterior.
@@ -35,6 +37,6 @@ primer registro, y deben definirse para cada usuario.</p>
   
   
 <p>Éste es un ejemplo de un archivo válido:</p>
-<p><font size="-1" face="Courier New, Courier, mono">username, password, firstname, lastname, email, lang, idnumber, maildisplay, course1, group1<br />
-juanb, secreto, Juan, Benítez, janb@algo.edu, en, 3663737, 1, Intro101, Seccion1<br />
-Saraf, sercreta, Sara, Fernández, sarara@alomas.edu, es, 6736733, 0, Avanzado202, Seccion3</font></p>
+<p><font size="-1" face="Courier New, Courier, mono">username, password, firstname, lastname, email, lang, idnumber, maildisplay, course1, group1, type1<br />
+juanb, secreto, Juan, Benítez, janb@algo.edu, es, 3663737, 1, Intro101, Seccion1, 1<br />
+Saraf, sercreta, Sara, Fernández, sarara@alomas.edu, es, 6736733, 0, Avanzado202, Seccion3, 3</font></p>

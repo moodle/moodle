@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005033100)
+      // auth.php - created with Moodle 1.6 development (2005101200)
 
 
 $string['alternatelogin'] = 'Her kan du skrive en URL der vil blive brugt som loginside for dette site. Siden bør indeholde en form hvis action er sat til <strong>\'$a\'</strong> og returnere 2 felter <strong>username</strong> og <strong>password</strong>.<br />Pas på ikke at skrive en forkert URL da du kan risikere at ikke at kunne logge ind igen. <br />Lad denne være blank for bruge den almindelige loginside.';
@@ -17,6 +17,10 @@ $string['auth_cas_text'] = 'Sikker forbindelse';
 $string['auth_cas_version'] = 'Version af CAS';
 $string['auth_casdescription'] = 'Denne metode benytter en CAS server (Central Authentication Service) til at autorisere brugere i et SSO (Single Sign On) miljø. Du kan også benytte en simpel LDAP autorisering. Hvis det givne brugernavn og password er korrekte i forhold til CAS så opretter Moodle en brugerprofil til den bruger i  databasen. Moodle kan efterfølgende overføre nogle eller alle brugerens informationer fra LDAP hvis det kan lade sig gøre. Efterfølgende er det kun brugernavn og password der bliver kontrolleret.  ';
 $string['auth_castitle'] = 'Benyt en CAS server (SSO)';
+$string['auth_changepasswordhelp'] = 'Hjælp til skift af password';
+$string['auth_changepasswordhelp_expl'] = 'Vis hjælp til skift af password til brugere som har glemt deres $a password. Dette vil blive vist enten sammen med eller i stedet for <strong>URL til skift af password</strong> eller Moodle\'s interne skift af password.';
+$string['auth_changepasswordurl'] = 'URL til skift af password';
+$string['auth_changepasswordurl_expl'] = 'Angiv den URL som brugere skal sendes til hvis de har mistet deres $a password. Sæt <strong>Benyt standardside til skift af password</strong> til <strong>Nej</strong>';
 $string['auth_common_settings'] = 'Fælles indstillinger';
 $string['auth_data_mapping'] = 'Data mapping';
 $string['auth_dbdescription'] = 'Denne metode bruger en ekstern database for at kontrollere om et givet username og password er gyldigt. Hvis kontoen er ny, kan oplysninger fra andre felter også kopieres ind i Moodle.';
@@ -31,8 +35,6 @@ $string['auth_dbtable'] = 'Navnet på tabellen i databasen';
 $string['auth_dbtitle'] = 'Brug en ekstern database';
 $string['auth_dbtype'] = 'Database typen(Se <a href=\"../lib/adodb/readme.htm#drivers\">ADOdb documentation</a> for detaljer)';
 $string['auth_dbuser'] = 'Username med læserrettigheder til databasen';
-$string['auth_editlock'] = 'Lås værdi';
-$string['auth_editlock_expl'] = '<p><b>Lås værdi:</b> hvis aktiveret vil moodle forhindre brugere og administratorer i at rette direkte i feltet. Brug denne indstilling hvis dataerne bliver vedligeholdt i et eksternt autoriserings system.';
 $string['auth_emaildescription'] = 'E-mail bekræftelse er default godkendelsesmetode. Når brugerne melder sig ind og vælger deres username og password, vil en bekræftelses e-mail blive sendt til brugerens e-mailaddresse. Denne email indeholder et sikkert link til en side, hvor brugeren kan bekræftige sine oplysninger. Fremtidige logins kontrolleres ved sammenligning af det username og password, som der er gemt i databasen.';
 $string['auth_emailtitle'] = 'Email-baseret godkendelse';
 $string['auth_fccreators'] = 'Liste af grupper hvis medlemmer kan oprette nye kurser. Adskil flere grupper med \';\'. Navne skal staves nøjagtig som på FirstClass serveren. Systemet er case-sensitivt.';
@@ -42,6 +44,10 @@ $string['auth_fchost'] = 'FirstClass server adresse. Brug IP-nummeret eller DNS-
 $string['auth_fcpasswd'] = 'Password for ovenstående konto';
 $string['auth_fctitle'] = 'Brug en FirstClass Server';
 $string['auth_fcuserid'] = 'BrugerID for FirstClass konto med privilegiet \'Subadministrator\' sat.';
+$string['auth_fieldlock'] = 'Lås værdi';
+$string['auth_fieldlock_expl'] = '<p><b>Lås værdi:</b> Hvis denne er aktiveret er moodle\'s brugere og admins forhindret i at rette direkte i feltet. Denne mulighed kan benyttes hvis du vedligeholder disse data i et externt autorisationssystem</p>';
+$string['auth_fieldlocks'] = 'Lås brugerfelter';
+$string['auth_fieldlocks_help'] = '<p>Du kan låse brugerdata felter. Det er brugbart for sites hvor brugerdata vedligeholdes udelukkende af administratorer, der ved manuelt at rette brugerdata eller uploader brugerdata vha. \"upload brugerdata\".Hvis du låser felter der krævet for moodle, skal du sørge for at de nødvendige datafelter er tilstede, i modsat fald vil de oprettede brugere eller vil være ubrugelige.</p><p>For at forhindre dette kan låsemetoden \'Uåst hvis tom\' benyttes for at undgå dette problem.</p>';
 $string['auth_imapdescription'] = 'Denne metode bruger en IMAP server for at kontrollere om usernam og password er gyldigt.';
 $string['auth_imaphost'] = 'IMAP serverens adresse. Brug IP nummeret, ikke DNS navn.';
 $string['auth_imapport'] = 'IMAP server port nummer. Sædvanligvis er det 143 eller 993.';
@@ -64,6 +70,7 @@ $string['auth_ldap_memberattribute'] = 'Angiv bruger attribut, når en bruger til
 $string['auth_ldap_objectclass'] = 'Valgfrit: Overskriver objectClass brugt til name/search brugere på ldap_user_type. Du behøver normalt ikke at ændre det.';
 $string['auth_ldap_opt_deref'] = 'Bestemmer hvordan aliaser behandles under søgning. Vælg en af de følgende værdier: \"Nej\" (LDAP_DEREF_NEVER) eller \"ja\" (LDAP_DEREF_ALWAYS)';
 $string['auth_ldap_passwdexpire_settings'] = 'LDAP password udløbs indstilling';
+$string['auth_ldap_preventpassindb'] = 'Vælg Ja for at forhindre at passwords bliver gemt i Moodle\'s database.';
 $string['auth_ldap_search_sub'] = 'Sæt værdi <> 0 hvis du vil søge efter brugere ud fra underemner.';
 $string['auth_ldap_server_settings'] = 'LDAP server indstilling';
 $string['auth_ldap_update_userinfo'] = 'Updater bruger information (fornavn, efternavn, addresse..) fra LDAP til Moodle. Se /auth/ldap/attr_mappings.php for information';
@@ -95,6 +102,16 @@ $string['auth_pop3mailbox'] = 'Navnet på den postbox som der skal forbindes til 
 $string['auth_pop3port'] = 'Server port (110 er mest almindelig)';
 $string['auth_pop3title'] = 'Brug en POP3 server';
 $string['auth_pop3type'] = 'Server type. Hvis din server anvender certifikat sikkerhed, så vælg pop3cert.';
+$string['auth_shib_convert_data'] = 'Datamanipulerings API';
+$string['auth_shib_convert_data_description'] = 'Du kan benytte dette API til yderligere at ændre data fra Shibboleth. Læs evt a href=\"../auth/shibboleth/README.txt\" target=\"_blank\">README</a> for yderligere information.';
+$string['auth_shib_convert_data_warning'] = 'Filen eksistere ikke eller kan ikke læses af webserverens process.';
+$string['auth_shib_instructions'] = 'Benyt <a href=\"$a\">Shibboleth login</a> til at få adgang via Shibboleth, hvis din institution understøtter dette.<br />Ellers kan den normale loginmetode benyttes.';
+$string['auth_shib_instructions_help'] = 'Her bør du forklare brugere hvad Shibboleth er og hvordan de bruger det. Det vil blive vist på loginsiden i instruktionssektionen. Det bør indeholde et link til en Shibboleth beskyttet resource der stiller brugere videre til \"<b>$a</b>\" så Shibbolethbrugere kan logge ind i Moodle. Hvis den er blank vil standardinstruktioner blive vist. (ikke specielt for Shibboleth)';
+$string['auth_shib_only'] = 'Kun Shibboleth';
+$string['auth_shib_only_description'] = 'Benyt denne mulighed hvis Shibboleth autorisering skal gennemtvinges.';
+$string['auth_shib_username_description'] = 'Navnet på Shibboleth webserverens environment variabel der skal benyttes som Moodles brugernavn.';
+$string['auth_shibboleth_login'] = 'Shibboleth Login';
+$string['auth_shibboleth_manual_login'] = 'Manuelt login';
 $string['auth_shibbolethdescription'] = 'Ved at benytte denne metode kan man forbinde moodle til en eksisterende Shibboleth server for at checke og oprette nye brugerkonti.';
 $string['auth_shibbolethtitle'] = 'Shibboleth';
 $string['auth_updatelocal'] = 'Opdater lokale data';
@@ -110,16 +127,30 @@ $string['authinstructions'] = 'Her kan du komme med anvisninger til dine brugere
 $string['changepassword'] = 'Lav password URL om';
 $string['changepasswordhelp'] = 'Her kan du angive et sted, hvor dine brugere kan finde eller ændre deres username/password, hvis de har glemt det. Brugerne vil få vist en knap på login siden. Hvis du ikke skriver noget her, vil knappen ikke blive vist.';
 $string['chooseauthmethod'] = 'Vælg en godkendelses metode';
+$string['createchangepassword'] = 'Hvis mangler - tving skift';
+$string['createpassword'] = 'Opret hvis det mangler';
 $string['forcechangepassword'] = 'Gennemtving skift af passwords';
 $string['forcechangepassword_help'] = 'Tving brugere til at skifte passwords næste gang de logger ind.';
 $string['forcechangepasswordfirst_help'] = 'Tving brugere til at skifte password første gang de logger ind på Moodle';
 $string['guestloginbutton'] = 'Gæste login knap';
+$string['infilefield'] = 'Nødvendige felter i filen';
 $string['instructions'] = 'Instruktioner';
+$string['locked'] = 'Låst';
 $string['md5'] = 'MD5 kryptering';
+$string['passwordhandling'] = 'Behandling af passwordfelter';
 $string['plaintext'] = 'Alm. tekst';
+$string['shib_no_attributes_error'] = 'Du er blevet autoriseret af Shibboleth men Moodle har ikke modtaget nogle brugeroplysninger. Kontroller venligst at din Identity Provider frigiver de nødvendige attributter ($a) til den Service Provider som Moodle kører på eller fortæl det til administratoren af webserveren.';
+$string['shib_not_all_attributes_error'] = 'Moodle kræver bestemte Shibboleth oplysninger som ikke er tilgængelige i dit tilfælde. Oplysningerne er: $a<br/>Kontakt venligst Moodles administrator eller identifikationssystemets administrator.';
+$string['shib_not_set_up_error'] = 'Shibboleth autoriseringen lader ikke til at være sat korrekt op. Se venligst a href=\"README.txt\">README</a> for yderlige instruktioner om hvordan Shibboleth autorisering konfigureres.';
 $string['showguestlogin'] = 'Du kan vise eller gemme gæste login knappen på login-siden.';
 $string['stdchangepassword'] = 'Brug standardsiden til skift af passwords';
 $string['stdchangepassword_expl'] = 'Hvis det eksterne autoriseringssystem tillader passwordskift gennem moodle sæt denne indstilling til Ja. Denne indstilling overskriver \'Skift Password URL\'.';
 $string['stdchangepassword_explldap'] = 'NOTE: Det er tilrådeligt at bruge LDAP over en SSL krypteret tunnel (ldaps://) hvis LDAP serveren kontaktes over netværket.';
+$string['unlocked'] = 'Ulåst';
+$string['unlockedifempty'] = 'Ulåst hvis tom';
+$string['update_never'] = 'Aldrig';
+$string['update_oncreate'] = 'Ved oprettelse';
+$string['update_onlogin'] = 'Ved hvert login';
+$string['update_onupdate'] = 'Ved opdatering';
 
 ?>
