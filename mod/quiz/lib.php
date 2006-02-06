@@ -220,9 +220,6 @@ function quiz_delete_instance($id) {
             if (! delete_records("quiz_newest_states", "attemptid", "$attempt->uniqueid")) {
                 $result = false;
             }
-            if (! delete_records("quiz_newest_states", "attemptid", "$attempt->id")) {
-                $result = false;
-            }
         }
     }
 
