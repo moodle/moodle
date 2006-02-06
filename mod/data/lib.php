@@ -661,7 +661,7 @@ function data_get_coursemodule_info($coursemodule) {
  *       @param string $template                                        *
  * output null                                                          *
  ************************************************************************/
-function data_print_template($records, $data, $search, $template, $sort, $page, $rid, $order){
+function data_print_template($records, $data, $search, $template, $sort, $page, $rid, $order, $group){
     global $CFG, $course;
     
     foreach ($records as $record){    //only 1 record for single mode
@@ -703,7 +703,7 @@ function data_print_template($records, $data, $search, $template, $sort, $page, 
         }else {
             $replacement[] = '';
         }
-        $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;rid='.$record->id.'&amp;search='.$search.'&amp;sort='.$sort.'&amp;order='.$order.'&amp;"><img src="'.$CFG->pixpath.'/i/search.gif" height="11" width="11" border="0" alt="'.get_string('more').'" /></a>';
+        $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;rid='.$record->id.'&amp;search='.$search.'&amp;sort='.$sort.'&amp;order='.$order.'&amp;group='.$group.'&amp;"><img src="'.$CFG->pixpath.'/i/search.gif" height="11" width="11" border="0" alt="'.get_string('more').'" /></a>';
 
         if (isteacher($course->id) && ($data->approval) && (!$record->approved)){
             $replacement[] = data_print_approve_button($record->id, $data->id, $page, $rid, $search, $sort, $order);

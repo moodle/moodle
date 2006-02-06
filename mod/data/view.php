@@ -37,7 +37,7 @@
     $perpagemenu = optional_param('perpage1', 0, PARAM_INT);    //value from drop down
     $sort = optional_param('sort',0,PARAM_INT);    //sort by field
     $order = optional_param('order','ASC',PARAM_ALPHA);    //sort order
-
+    $group = optional_param('group','0',PARAM_INT);    //groupid
     
     
     if ($id) {
@@ -117,13 +117,13 @@
 
 /// Check to see if groups are being used here
     if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
-        $currentgroup = setup_and_print_groups($course, $groupmode, "'view.php?d='.$data->id.'&amp;search='.s($search).'&amp;sort='.s($sort).'&amp;order='.s($order).'&amp;page='.$page.'&amp;'");
+        $currentgroup = setup_and_print_groups($course, $groupmode, 'view.php?d='.$data->id.'&amp;search='.s($search).'&amp;sort='.s($sort).'&amp;order='.s($order).'&amp;page='.$page.'&amp;');
     } else {
         $currentgroup = 0;
     }
 
     if ($currentgroup) {
-        $groupselect = " AND groupid = '$currentgroup'";
+        $groupselect = " AND r.groupid = '$currentgroup'";
         $groupparam = "&amp;groupid=$currentgroup";
     } else {
         $groupselect = "";
@@ -201,7 +201,7 @@
     
     $perpage = get_user_preferences('data_perpage', 10);    //get default per page
 
-    $baseurl = 'view.php?d='.$data->id.'&amp;search='.s($search).'&amp;sort='.s($sort).'&amp;order='.s($order).'&amp;';
+    $baseurl = 'view.php?d='.$data->id.'&amp;search='.s($search).'&amp;sort='.s($sort).'&amp;order='.s($order).'&amp;group='.$currentgroup.'&amp;';
 
 
     //if database requires approval, then we need to do some work
@@ -233,7 +233,7 @@
                 WHERE c.recordid = r.id
                 AND c1.recordid = r.id
                 AND r.dataid = '.$data->id.'
-                AND c.fieldid = '.$sort.'
+                AND c.fieldid = '.$sort.' '.$groupselect.'
                 AND ((c1.content LIKE "%'.$search.'%") OR
                      (c1.content1 LIKE "%'.$search.'%") OR
                      (c1.content2 LIKE "%'.$search.'%") OR
@@ -248,7 +248,7 @@
                 WHERE c.recordid = r.id
                 AND c1.recordid = r.id
                 AND r.dataid = '.$data->id.'
-                AND c.fieldid = '.$sort.'
+                AND c.fieldid = '.$sort.' '.$groupselect.'
                 AND ((c1.content LIKE "%'.$search.'%") OR
                      (c1.content1 LIKE "%'.$search.'%") OR
                      (c1.content2 LIKE "%'.$search.'%") OR
@@ -266,7 +266,7 @@
                 WHERE c.recordid = r.id
                 AND c1.recordid = r.id
                 AND r.dataid = '.$data->id.'
-                AND c.fieldid = '.$sort.' '.$ridsql.'
+                AND c.fieldid = '.$sort.' '.$ridsql.' '.$groupselect.'
                 AND ((c1.content LIKE "%'.$search.'%") OR
                      (c1.content1 LIKE "%'.$search.'%") OR
                      (c1.content2 LIKE "%'.$search.'%") OR
@@ -280,7 +280,7 @@
                 FROM '.$CFG->prefix.'data_content c, '
                 .$CFG->prefix.'data_fields f, '
                 .$CFG->prefix.'data_records r
-                WHERE c.recordid = r.id '.$approvesql.' AND
+                WHERE c.recordid = r.id '.$groupselect.' '.$approvesql.' AND
                 c.fieldid = f.id AND f.dataid = '
                 .$data->id.' AND c.content LIKE "%'.$search.'%" ORDER BY r.id '.$order.' ';
 
@@ -288,7 +288,7 @@
                 FROM '.$CFG->prefix.'data_content c, '
                 .$CFG->prefix.'data_fields f, '
                 .$CFG->prefix.'data_records r
-                WHERE c.recordid = r.id '.$approvesql.' AND
+                WHERE c.recordid = r.id '.$groupselect.' '.$approvesql.' AND
                 c.fieldid = f.id AND f.dataid = '
                 .$data->id.' AND c.content LIKE "%'.$search.'%" ORDER BY r.id '.$order.' ';
 
@@ -296,18 +296,18 @@
                 FROM '.$CFG->prefix.'data_content c, '
                 .$CFG->prefix.'data_fields f, '
                 .$CFG->prefix.'data_records r
-                WHERE c.recordid = r.id '.$approvesql.' AND
+                WHERE c.recordid = r.id '.$groupselect.' '.$approvesql.' AND
                 c.fieldid = f.id AND f.dataid = '
                 .$data->id.'  '.$ridsql.' AND c.content LIKE "%'.$search.'%" ORDER BY r.id '.$order.' ';
 
     } else {  //else get everything, no search, no sort
 
-        $sql = 'SELECT * FROM '.$CFG->prefix.'data_records r WHERE r.dataid ='.$data->id.' '.$approvesql.' ORDER BY r.id '.$order.' ';
+        $sql = 'SELECT * FROM '.$CFG->prefix.'data_records r WHERE r.dataid ='.$data->id.' '.$groupselect.' '.$approvesql.' ORDER BY r.id '.$order.' ';
         $sqlcount = 'SELECT COUNT(*) FROM '.$CFG->prefix
-                    .'data_records r WHERE r.dataid ='.$data->id.' '.$approvesql.'ORDER BY r.id '.$order.' ';
+                    .'data_records r WHERE r.dataid ='.$data->id.' '.$groupselect.' '.$approvesql.'ORDER BY r.id '.$order.' ';
 
         $sqlindex = 'SELECT COUNT(*) FROM '.$CFG->prefix
-                    .'data_records r WHERE r.dataid ='.$data->id.'  '.$ridsql.' '.$approvesql .'ORDER BY r.id '.$order.' ';
+                    .'data_records r WHERE r.dataid ='.$data->id.' '.$groupselect.' '.$ridsql.' '.$approvesql .'ORDER BY r.id '.$order.' ';
     }
     
     if ($rid) {    //this is used in zooming
@@ -353,7 +353,7 @@
     print_paging_bar($totalcount, $page, $perpage, $baseurl, $pagevar='page');
     
     //for each record we find, we do a string replacement for tags.
-    data_print_template($records, $data, $search, $listmode, $sort, $page, $rid, $order);
+    data_print_template($records, $data, $search, $listmode, $sort, $page, $rid, $order, $currentgroup);
     print_paging_bar($totalcount, $page, $perpage, $baseurl, $pagevar='page');
 
     if ($perpage > 1){

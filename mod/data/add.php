@@ -85,8 +85,8 @@
     print_heading(format_string($data->name));
 
 /// Check to see if groups are being used here
-    if ($groupmode = groupmode($course, $cm)) {    // Groups are being used
-        $currentgroup = setup_and_print_groups($course, $groupmode, "view.php?id=$cm->id");
+    if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
+        $currentgroup = setup_and_print_groups($course, $groupmode, 'add.php?d='.$data->id.'&amp;sesskey='.sesskey().'&amp;');
     } else {
         $currentgroup = 0;
     }
@@ -122,13 +122,15 @@
             } else {
                 $record->approved = 0;
             }
+           
+            $record->groupid = $currentgroup;
             update_record('data_records',$record);
 
             foreach ($datarecord as $name=>$value){
 
 
                 //this creates a new field subclass object
-                if ($name != 'MAX_FILE_SIZE' && $name != 'sesskey'){
+                if ($name != 'MAX_FILE_SIZE' && $name != 'sesskey' and $name!='d' and $name!='rid'){
                     if (($currentfield = data_get_field_from_name($name)) !== false) {
                         //use native subclass method to store field data
                         $currentfield->update_data_content($currentfield->id, $rid, $value, $name);
@@ -145,7 +147,7 @@
             
             foreach ($datarecord as $name => $value){    //check to see if everything is empty
 
-                if ($name != 'MAX_FILE_SIZE' and $name != 'sesskey'){
+                if ($name != 'MAX_FILE_SIZE' and $name != 'sesskey' and $name!='d' and $name!='rid'){
                     //call native method to check validity
                     $currentfield = data_get_field_from_name($name);
                     if ($currentfield->notemptyfield($value, $name)){
@@ -155,7 +157,7 @@
             }    ///End of Empty form checking
 
 
-            if (!$emptyform && $recordid = data_add_record($data->id)){    //add instance to data_record
+            if (!$emptyform && $recordid = data_add_record($data->id, $currentgroup)){    //add instance to data_record
                 $fields = get_records('data_fields','dataid',$data->id);
                 
                 //do a manual round of inserting, to make sure even empty conentes get stored
@@ -166,7 +168,7 @@
                 }
                 //for each field in the add form, add it to the data_content.
                 foreach ($datarecord as $name => $value){
-                    if ($name != 'MAX_FILE_SIZE' && $name != 'sesskey'){  //hack to skip these inputs
+                    if ($name != 'MAX_FILE_SIZE' && $name != 'sesskey' and $name!='d' and $name!='rid'){  //hack to skip these inputs
                         $currentfield = data_get_field_from_name($name);
                         //use native subclass method to sore field data
                         $currentfield->update_data_content($currentfield->id, $recordid, $value, $name);
