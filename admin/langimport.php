@@ -253,6 +253,7 @@
 
             echo '<div align="center"><form action="langimport.php" method="POST">';
             if ($updated) {
+                echo '<br />';
                 notify(get_string('langupdatecomplete','admin'));
             } else {
                 notify(get_string('nolangupdateneeded','admin'));

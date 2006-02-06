@@ -84,7 +84,7 @@
 
     // Get a list of all the root files in the English directory
 
-    $langdir = "$CFG->dirroot/lang/$currentlang";
+    $langdir = "$CFG->dataroot/lang/$currentlang";
     $enlangdir = "$CFG->dirroot/lang/en";
 
     if (! $stringfiles = get_directory_list($enlangdir, "", false)) {
@@ -202,13 +202,15 @@
         }
 
         error_reporting(0);
-        if ($f = fopen("$langdir/$currentfile","r+")) {
+        if ($f = fopen("$langdir/$currentfile","r+") && ($currentlang != "en_utf8")) {
             $editable = true;
             fclose($f);
         } else {
             $editable = false;
             echo "<p><font size=\"1\">".get_string("makeeditable", "", "$langdir/$currentfile")."</font></p>";
         }
+        ///added code here to prevent en_utf8 being edited
+        
         error_reporting(7);
 
 

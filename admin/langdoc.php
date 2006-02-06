@@ -49,7 +49,7 @@ Thanks:     Jaime Villate for important bug fixing, koen roggemans for his job a
                  'choosefile.popup', '', true);
 
     $currentlang = current_language();
-    $langdir = "$CFG->dirroot/lang/$currentlang";
+    $langdir = "$CFG->dataroot/lang/$currentlang";
     $enlangdir = "$CFG->dirroot/lang/en";
 
     // Shall I save POSTed data?
@@ -156,6 +156,11 @@ $langdir/$currentfile")."</font></p>";
             $editable = false;
             echo "<p><font size=1>".get_string("makeeditable", "", "$langdir/$currentfile")
 ."</font></p>";
+        }
+
+        //en_utf8 in dataroot is not editable
+        if ($currentlang == 'en_utf8') {
+            $editable = false;
         }
 
         echo "<table align=\"center\"><tr valign=\"center\"><td align=\"center\">\n";
