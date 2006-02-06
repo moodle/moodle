@@ -2,7 +2,7 @@ Testing web service...
 <BR>
 <?php
   require_once("../../config.php");
-  require_once($CFG->dirroot.'/lib/nusoap/nusoap.php');
+  require_once($CFG->dirroot.'/lib/soap/nusoap.php');
 
     $wsdl = "http://137.111.229.11:8080/lams/services/UserManagementService?wsdl";
     $s = new soapclient($wsdl,true,false,false,false,false,2,3);

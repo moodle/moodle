@@ -3,7 +3,7 @@
 /// Library of functions and constants for module lams
 require_once($CFG->dirroot.'/lib/datalib.php');
 require_once($CFG->dirroot.'/lib/moodlelib.php');
-require_once($CFG->dirroot.'/lib/nusoap/nusoap.php');
+require_once($CFG->dirroot.'/lib/soap/nusoap.php');
 
 
 function lams_add_instance($lams) {
