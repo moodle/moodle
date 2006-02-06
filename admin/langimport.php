@@ -163,7 +163,7 @@
             //key = langname, value = md5
             $source = 'http://download.moodle.org/lang16/languages.md5';
             $md5array = array();
-            $update = 0;    //any packs updated?
+            $updated = 0;    //any packs updated?
             $alllangs = array_keys(get_list_of_languages());
             $lang16 = array();   //all the Moodle 1.6 unicode lang packs (updated and not updated)
             $packs = array();    //all the packs that needs updating
