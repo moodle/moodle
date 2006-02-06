@@ -4298,36 +4298,6 @@ function get_directory_list($rootdir, $excludefile='', $descend=true, $getdirs=f
     return $dirs;
 }
 
-/**
- * Removes the entire contents of a directory - does not delete the directory
- * itself
- *
- * @param string $dirName - full path to directory
- * @return bool true if successful, false if error
-**/
- 
-function delDirContents($dirName) {
-   if(empty($dirName)) {
-       return true;
-   }
-   if(file_exists($dirName)) {
-       $dir = dir($dirName);
-       while($file = $dir->read()) {
-           if($file != '.' && $file != '..') {
-               if(is_dir($dirName.'/'.$file)) {
-                   delDir($dirName.'/'.$file);
-               } else {
-                   @unlink($dirName.'/'.$file) or die('File '.$dirName.'/'.$file.' couldn\'t be deleted!');
-               }
-           }
-       }
-       $dir->close();
-       @rmdir($dirName) or die('Folder '.$dirName.' couldn\'t be deleted!');
-   } else {
-       return false;
-   }
-   return true;
-}
 
 /**
  * Adds up all the files in a directory and works out the size.
@@ -4873,6 +4843,7 @@ function get_strings($array, $module='') {
  * @return array An associative array with contents in the form of LanguageCode => LanguageName
  */
 function get_list_of_languages() {
+
     global $CFG;
 
     $languages = array();
@@ -4887,6 +4858,7 @@ function get_list_of_languages() {
     if ( (!defined('FULLME') || FULLME !== 'cron')
          && !empty($CFG->langcache) && file_exists($CFG->dataroot .'/cache/languages')) {
         // read from cache
+
         $lines = file($CFG->dataroot .'/cache/languages');
         foreach ($lines as $line) {
             $line = trim($line);
@@ -4899,6 +4871,7 @@ function get_list_of_languages() {
     }
 
     if (!empty($CFG->langlist)) {       // use admin's list of languages
+    
         $langlist = explode(',', $CFG->langlist);
         foreach ($langlist as $lang) {
             $lang = trim($lang);   //Just trim spaces to be a bit more permissive

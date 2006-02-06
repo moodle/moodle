@@ -5,7 +5,7 @@
 
     // bit of a bodge - clear the tex cache area
     // so that any changes will display
-    delDirContents( "$CFG->dataroot/filter/tex" ); 
+    remove_dir( "$CFG->dataroot/filter/tex", true ); 
 
     // get strings
     $txt = new Object;
