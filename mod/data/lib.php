@@ -326,7 +326,7 @@ function data_get_field_from_name($name){
     if ($field){
         return data_get_field($field);
     } else {
-        false
+        false;
     }
 }
 
