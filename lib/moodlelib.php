@@ -4728,8 +4728,9 @@ function get_string($identifier, $module='', $a=NULL) {
         }
     }
 
-/// If the preferred language was English we can abort now
-    if ($lang == $defaultlang) {
+/// If the preferred language was English (utf8) we can abort now
+/// saving some checks beacuse it's the only "root" lang
+    if ($lang == 'en_utf8') {
         return '[['. $identifier .']]';
     }
 
