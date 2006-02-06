@@ -131,6 +131,11 @@ TABLE.loginbox {
  *** Calendar
  ***/
  
+#calendar .today,
+.minicalendar .today {
+  border:1px solid !important;
+} 
+ 
  table.minicalendar {
   width: 100%;
   margin:10px auto;

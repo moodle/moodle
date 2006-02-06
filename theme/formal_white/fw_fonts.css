@@ -114,7 +114,7 @@ table.minicalendar tr.weekdays th {
   font-weight:normal;
   }
 
-table.minicalendar tr td.day {
+table.minicalendar tr td {
   font-size:0.7em;
   }
   
