@@ -108,21 +108,6 @@
         }
     }
 
-/// Check to see if groups are being used here
-    if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
-        $currentgroup = setup_and_print_groups($course, $groupmode, "view.php?id=$cm->id");
-    } else {
-        $currentgroup = 0;
-    }
-
-    if ($currentgroup) {
-        $groupselect = " AND groupid = '$currentgroup'";
-        $groupparam = "&amp;groupid=$currentgroup";
-    } else {
-        $groupselect = "";
-        $groupparam = "";
-    }
-
 /// Print the tabs
     $currenttab = 'templates';
     include('tabs.php'); 
