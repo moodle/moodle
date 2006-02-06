@@ -6,6 +6,6 @@
 $string['thislanguage'] = 'English';
 $string['thischarset'] = 'iso-8859-1';
 $string['locale'] = 'en';
-$string['parentlang'] = 'en_utf8';
+$string['parentlanguage'] = 'en_utf8';
 
 ?>
