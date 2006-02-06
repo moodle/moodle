@@ -135,7 +135,7 @@
                     }
                 }
             }
-            redirect($CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;rid='.$rid);
+            redirect($CFG->wwwroot.'/mod/data/view.php?d='.$data->id);
 
         } else {    //we are adding a new record
 
