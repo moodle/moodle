@@ -134,11 +134,12 @@ class data_field_picture extends data_field_file {// extends
             if ($template == 'listtemplate') {
                 $width = $field->param4 ? ' width="'.$field->param4.'" ':' ';
                 $height = $field->param5 ? ' height="'.$field->param5.'" ':' ';
+                $str = '<a href="view.php?d='.$field->dataid.'&rid='.$recordid.'"><img '.$width.$height.' src="'.$source.'/'.$src.'" alt="'.$alt.'" title="'.$title.'" border="0" /></a>';
             } else {
                 $width = $field->param1 ? ' width="'.$field->param1.'" ':' ';
                 $height = $field->param2 ? ' height="'.$field->param2.'" ':' ';
+                $str = '<img '.$width.$height.' src="'.$source.'/'.$src.'" alt="'.$alt.'" title="'.$title.'" />';
             }
-            $str = '<img '.$width.$height.' src="'.$source.'/'.$src.'" alt="'.$alt.'" title="'.$title.'" />';
             return $str;
         }
         return false;
