@@ -15,8 +15,10 @@
     }
 
     // get parameters
-    $params = new Object;
+    $param = new Object;
     $param->filter = required_param( 'filter' );
+    $param->submit = optional_param( 'submit','',PARAM_ALPHA );
+    $param->reset = optional_param( 'reset','',PARAM_ALPHA );
     $filtername =  substr( $param->filter, strpos( $param->filter, '/' )+1 ) ;
 
     // get translated strings for use on page
@@ -25,11 +27,16 @@
     $txt->administration = get_string( 'administration' );
     $txt->configuration = get_string( 'configuration' );
 
-
     //======================
     // Process Actions
     //======================
 
+    // if reset pressed let filter config page handle it
+    $forcereset = false;
+    if (!empty($param->reset)) {
+        $forcereset = true;
+    }
+    else
     if ($config = data_submitted()) {
 
         // check session key
@@ -80,7 +87,10 @@
 
     <?php include "$CFG->dirroot/$param->filter/filterconfig.html"; ?>
 
-    <center><input type="submit" value="<?php print_string('savechanges'); ?>" /></center>
+    <center>
+        <input type="submit" name="submit" value="<?php print_string('savechanges'); ?>" />
+        <input type="submit" name="reset" value="<?php echo print_string('resettodefaults'); ?>" />
+    </center>
     </form>
 
     <?php
