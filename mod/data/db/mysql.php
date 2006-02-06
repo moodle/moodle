@@ -14,8 +14,8 @@ function data_upgrade($oldversion) {
     }
 
     if ($oldversion < 2006011901) {
-        table_column("data", "", "approval", "tinyint", "4", "", "", "not null");
-        table_column("data_records", "", "approved", "tinyint", "4", "", "", "not null");
+        table_column("data", "", "approval", "tinyint", "4");
+        table_column("data_records", "", "approved", "tinyint", "4");
     }
 
     return true;
