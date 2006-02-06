@@ -72,6 +72,7 @@
        'pathtoclam'               => '',
        'pathtodu'                 => '', 
        'prefix'                   => '',
+       'perfdebug'                => 0,
        'proxyhost'                => '',
        'proxyport'                => '',
        'quarantinedir'            => '',
