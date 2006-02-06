@@ -1002,7 +1002,10 @@ function migrate2utf8_user_lang($recordid){
         $user->lang = $user->lang.'_utf8';
     }
 
-    $result = update_record('user',$user);
+    $newuser = new object;
+    $newuser->id = $user->id;
+    $newuser->lang = $user->lang;
+    $result = update_record('user',$newuser);
     
     $langsused = get_record('config','name','langsused');
     $langs = explode(',',$langsused->value);
@@ -1362,8 +1365,10 @@ function migrate2utf8_course_lang($recordid){
     if (strstr($course->lang,'utf8')===false and !empty($course->lang)){
         $course->lang = $course->lang.'_utf8';
     }
-
-    update_record('course',$course);
+    $newcourse = new object;
+    $newcourse->id = $course->id;
+    $newcourse->lang = $course->lang;
+    update_record('course',$newcourse);
     require_once($CFG->dirroot.'/course/lib.php');
     $result = rebuild_course_cache($recordid);    //takes care of serialized modinfo
 /// And finally, just return the converted field
