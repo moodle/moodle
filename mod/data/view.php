@@ -110,6 +110,11 @@
 
     print_heading(format_string($data->name));
 
+    if ($data->intro) {
+        print_simple_box(format_text($data->intro), 'center', '70%', '', 5, 'generalbox', 'intro');
+        echo '<br />';
+    }
+
 /// Check to see if groups are being used here
     if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
         $currentgroup = setup_and_print_groups($course, $groupmode, "view.php?id=$cm->id");
