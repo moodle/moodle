@@ -1,6 +1,10 @@
 <?php
     // check the default settings
-    if (!isset($CFG->filter_censor_badwords)) {
+    // $forcereset is set in calling routine
+    if (!isset($forcereset)) {
+        $forcereset = false;
+    }
+    if (!isset($CFG->filter_censor_badwords) or $forcereset) {
        set_config( 'filter_censor_badwords','' ); 
     }
 
