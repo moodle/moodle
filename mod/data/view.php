@@ -117,7 +117,7 @@
 
 /// Check to see if groups are being used here
     if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
-        $currentgroup = setup_and_print_groups($course, $groupmode, "view.php?id=$cm->id");
+        $currentgroup = setup_and_print_groups($course, $groupmode, "'view.php?d='.$data->id.'&amp;search='.s($search).'&amp;sort='.s($sort).'&amp;order='.s($order).'&amp;page='.$page.'&amp;'");
     } else {
         $currentgroup = 0;
     }

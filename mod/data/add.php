@@ -117,7 +117,11 @@
 
             //set flag to unapproved after each edit
             $record = get_record('data_records','id',$rid);
-            $record->approved = 0;
+            if (isteacher($course->id)) {
+                $record->approved = 1;
+            } else {
+                $record->approved = 0;
+            }
             update_record('data_records',$record);
 
             foreach ($datarecord as $name=>$value){
