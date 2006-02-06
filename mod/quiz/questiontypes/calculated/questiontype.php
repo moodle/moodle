@@ -221,7 +221,7 @@ class quiz_calculated_qtype extends quiz_dataset_dependent_questiontype {
         $numericalquestion->questiontext = parent::substitute_variables(
          $numericalquestion->questiontext, $state->options->dataset);
         $virtualqtype->print_question_formulation_and_controls($numericalquestion,
-         $state, $quiz, $options);
+         $state, $cmoptions, $options);
     }
 
     function grade_responses(&$question, &$state, $cmoptions) {
@@ -238,7 +238,7 @@ class quiz_calculated_qtype extends quiz_dataset_dependent_questiontype {
             $answer->answer = $this->substitute_variables($answer->answer,
              $state->options->dataset);
         }
-        return parent::grade_responses($numericalquestion, $state, $quiz);
+        return parent::grade_responses($numericalquestion, $state, $cmoptions);
     }
 
     // ULPGC ecastro
