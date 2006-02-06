@@ -552,7 +552,7 @@ class quiz_default_questiontype {
         attempt and displays the overall grade obtained counting all previous
         responses (and penalties) */
 
-        if (!empty($question->maxgrade)) {
+        if (!empty($question->maxgrade) && $options->scores) {
             if (!('' === $state->last_graded->grade)) {
                 // Display the grading details from the last graded state
                 $grade->cur = round($state->last_graded->grade, $cmoptions->decimalpoints);
