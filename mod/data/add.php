@@ -63,6 +63,11 @@
         }
     }
 
+    ///checking for participants
+    if ((!isteacher($course->id)) && $data->participants ==PARTICIPANTS_T) {
+        error ('students are not allowed to participate in this activity');
+    }
+
     if ($rid){    //editting a record, do you have access to edit this?
         if (!isteacher($course->id) or !data_isowner($rid) or !confirm_sesskey()){
             error (get_string('noaccess','data'));
@@ -72,14 +77,6 @@
     add_to_log($course->id, 'data', 'view', "view.php?id=$cm->id", $data->id, $cm->id);
 
 /// Print the page header
-
-    if (!empty($edit) && $PAGE->user_allowed_editing()) {
-        if ($edit == 'on') {
-            $USER->editing = true;
-        } else if ($edit == 'off') {
-            $USER->editing = false;
-        }
-    }
 
     $strdata = get_string('modulenameplural','data');
 
