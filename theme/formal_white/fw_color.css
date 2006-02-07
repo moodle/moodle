@@ -291,12 +291,12 @@ table.minicalendar tr td.weekend {
 }
 .tabrow td.selected:hover .tablink {
   background-image:url(pix/tab/right_active_hover.gif);
-
+}
 .highlight {
   background-color: #aaffaa;
 }
 
-}
+
 .highlight {
   background-color: #aaffaa;
 }
