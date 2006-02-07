@@ -1373,7 +1373,7 @@ function print_category_info($category, $depth) {
 }
 
 
-function print_courses($category, $width="100%") {
+function print_courses($category, $width="100%", $hidesitecourse = false) {
 /// Category is 0 (for all courses) or an object
 
     global $CFG;
@@ -1382,18 +1382,21 @@ function print_courses($category, $width="100%") {
         $categories = get_categories(0);  // Parent = 0   ie top-level categories only
         if (count($categories) == 1) {
             $category   = array_shift($categories);
-            $courses    = get_courses($category->id, 'c.sortorder ASC', 'c.id,c.sortorder,c.visible,c.fullname,c.shortname,c.password,c.summary,c.teacher,c.cost,c.currency');
+            $courses    = get_courses($category->id, 'c.sortorder ASC', 'c.id,c.category,c.sortorder,c.visible,c.fullname,c.shortname,c.password,c.summary,c.teacher,c.cost,c.currency');
         } else {
-            $courses    = get_courses('all', 'c.sortorder ASC', 'c.id,c.sortorder,c.visible,c.fullname,c.shortname,c.password,c.summary,c.teacher,c.cost,c.currency');
+            $courses    = get_courses('all', 'c.sortorder ASC', 'c.id,c.category,c.sortorder,c.visible,c.fullname,c.shortname,c.password,c.summary,c.teacher,c.cost,c.currency');
         }
         unset($categories);
     } else {
         $categories = get_categories($category->id);  // sub categories
-        $courses    = get_courses($category->id, 'c.sortorder ASC', 'c.id,c.sortorder,c.visible,c.fullname,c.shortname,c.password,c.summary,c.teacher,c.cost,c.currency');
+        $courses    = get_courses($category->id, 'c.sortorder ASC', 'c.id,c.category,c.sortorder,c.visible,c.fullname,c.shortname,c.password,c.summary,c.teacher,c.cost,c.currency');
     }
 
     if ($courses) {
         foreach ($courses as $course) {
+            if ($hidesitecourse && !$course->category) {
+                continue;
+            }
             print_course($course, $width);
         }
     } else {

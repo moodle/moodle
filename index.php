@@ -156,7 +156,7 @@
                     print_my_moodle();
                 } else {
                     print_heading_block(get_string('availablecourses'));
-                    print_courses(0, '100%');
+                    print_courses(0, '100%', true);
                 }
             break;
 
