@@ -71,7 +71,7 @@ function sid_process_url($url) {
         &&  ((stripos($url, $CFG->wwwroot)!==0) && stripos($url, $CFG->httpswwwroot)!==0)) { // and not local one
         return $url; //don't attach sessid to non local urls
     }
-    if ($url[0]=='#' ) {
+    if ($url[0]=='#' || (stripos($url, 'javascript:')===0)) {
         return $url; //don't attach sessid to anchors
     }
     if (strpos($url, session_name())!==FALSE)
