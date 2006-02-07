@@ -116,6 +116,23 @@ class cmoptions {
 
 /// FUNCTIONS //////////////////////////////////////////////////////
 
+
+/**
+* Deletes question from the database
+*
+* @param object $question  The question being deleted
+*/
+function quiz_delete_question($question) {
+    global $QUIZ_QTYPES;
+    $QUIZ_QTYPES[$question->qtype]->delete_question($question);
+    delete_records("quiz_answers", "question", $question->id);
+    delete_records("quiz_states", "question", $question->id);
+    delete_records("quiz_newest_states", "questionid", $question->id);
+    delete_records("quiz_question_versions", "oldquestion", $question->id);
+    delete_records("quiz_question_versions", "newquestion", $question->id);
+    return true;
+}
+
 /**
 * Updates the question objects with question type specific
 * information by calling {@link get_question_options()}

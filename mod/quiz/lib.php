@@ -334,27 +334,10 @@ function quiz_delete_course($course, $feedback=true) {
             } else {
                 //Category isn't being used so:
                 //Delete it completely (questions and category itself)
-                //deleting questions....not perfect until implemented in question classes (see bug 3366)
+                //deleting questions
                 if ($questions = get_records("quiz_questions", "category", $category->id)) {
                     foreach ($questions as $question) {
-                        delete_records("quiz_answers", "question", $question->id);
-                        delete_records("quiz_match", "question", $question->id);
-                        delete_records("quiz_match_sub", "question", $question->id);
-                        delete_records("quiz_multianswers", "question", $question->id);
-                        delete_records("quiz_multichoice", "question", $question->id);
-                        delete_records("quiz_numerical", "question", $question->id);
-                        delete_records("quiz_numerical_units", "question", $question->id);
-                        delete_records("quiz_calculated", "question", $question->id);
-                        delete_records("quiz_question_datasets", "question", $question->id);
-                        delete_records("quiz_randomsamatch", "question", $question->id);
-                        delete_records("quiz_shortanswer", "question", $question->id);
-                        delete_records("quiz_truefalse", "question", $question->id);
-                        delete_records("quiz_rqp", "question", $question->id);
-                        delete_records("quiz_essay", "question", $question->id);
-                        delete_records("quiz_states", "question", $question->id);
-                        delete_records("quiz_newest_states", "questionid", $question->id);
-                        delete_records("quiz_question_versions", "oldquestion", $question->id);
-                        delete_records("quiz_question_versions", "newquestion", $question->id);
+                        quiz_delete_question($question);
                     }
                     delete_records("quiz_questions", "category", $category->id);
                 }

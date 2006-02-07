@@ -138,10 +138,22 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
         return true;
     }
 
+    /**
+    * Deletes question from the question-type specific tables
+    *
+    * @return boolean Success/Failure
+    * @param object $question  The question being deleted
+    */
+    function delete_question($question) {
+        delete_records("quiz_multichoice", "question", $question->id);
+        return true;
+    }
+
     function create_session_and_responses(&$question, &$state, $cmoptions, $attempt) {
-        // Shuffle the answers if required
+        // create an array of answerids ??? why so complicated ???
         $answerids = array_values(array_map(create_function('$val',
          'return $val->id;'), $question->options->answers));
+        // Shuffle the answers if required
         if ($cmoptions->shuffleanswers) {
            $answerids = swapshuffle($answerids);
         }

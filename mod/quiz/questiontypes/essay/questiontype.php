@@ -68,6 +68,17 @@ class quiz_essay_qtype extends quiz_default_questiontype {
         return true;
     }
 
+    /**
+    * Deletes question from the question-type specific tables
+    *
+    * @return boolean Success/Failure
+    * @param object $question  The question being deleted
+    */
+    function delete_question($question) {
+        delete_records("quiz_essay", "question", $question->id);
+        return true;
+    }
+
     function print_question_formulation_and_controls(&$question, &$state, $cmoptions, $options) {
 
         $answers = &$question->options->answers;

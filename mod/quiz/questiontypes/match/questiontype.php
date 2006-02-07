@@ -94,6 +94,18 @@ class quiz_match_qtype extends quiz_default_questiontype {
         return true;
     }
 
+    /**
+    * Deletes question from the question-type specific tables
+    *
+    * @return boolean Success/Failure
+    * @param integer $question->id
+    */
+    function delete_question($question) {
+        delete_records("quiz_match", "question", $question->id);
+        delete_records("quiz_match_sub", "question", $question->id);
+        return true;
+    }
+
     function create_session_and_responses(&$question, &$state, $cmoptions, $attempt) {
         if (!$state->options->subquestions = get_records('quiz_match_sub',
          'question', $question->id)) {

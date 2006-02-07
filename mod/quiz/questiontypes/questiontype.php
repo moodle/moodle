@@ -173,6 +173,19 @@ class quiz_default_questiontype {
     }
 
     /**
+    * Deletes question from the question-type specific tables
+    *
+    * @return boolean Success/Failure
+    * @param object $question  The question being deleted
+    */
+    function delete_question($question) {
+        /// The default question type does not have any tables of its own
+        // therefore there is nothing to delete
+
+        return true;
+    }
+
+    /**
     * Returns the number of question numbers which are used by the question
     *
     * This function returns the number of question numbers to be assigned

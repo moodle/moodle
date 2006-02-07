@@ -110,6 +110,17 @@ class quiz_truefalse_qtype extends quiz_default_questiontype {
         return true;
     }
 
+    /**
+    * Deletes question from the question-type specific tables
+    *
+    * @return boolean Success/Failure
+    * @param object $question  The question being deleted
+    */
+    function delete_question($question) {
+        delete_records("quiz_truefalse", "question", $question->id);
+        return true;
+    }
+
     function get_correct_responses(&$question, &$state) {
         foreach ($question->options->answers as $answer) {
             if (((int) $answer->fraction) === 1) {

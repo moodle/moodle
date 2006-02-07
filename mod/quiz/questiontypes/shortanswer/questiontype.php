@@ -106,6 +106,18 @@ class quiz_shortanswer_qtype extends quiz_default_questiontype {
         }
     }
 
+    /**
+    * Deletes question from the question-type specific tables
+    *
+    * @return boolean Success/Failure
+    * @param object $question  The question being deleted
+    */
+    function delete_question($question) {
+        delete_records("quiz_shortanswer", "question", $question->id);
+        //TODO: delete also the states from quiz_rqp_states
+        return true;
+    }
+
     function print_question_formulation_and_controls(&$question, &$state, $cmoptions, $options) {
     /// This implementation is also used by question type NUMERICAL
         $answers = &$question->options->answers;

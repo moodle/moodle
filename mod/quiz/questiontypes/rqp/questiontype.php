@@ -124,6 +124,18 @@ class quiz_rqp_qtype extends quiz_default_questiontype {
     }
 
     /**
+    * Deletes question from the question-type specific tables
+    *
+    * @return boolean Success/Failure
+    * @param object $question  The question being deleted
+    */
+    function delete_question($question) {
+        delete_records("quiz_rqp", "question", $questionid);
+        //TODO: delete also the states from quiz_rqp_states
+        return true;
+    }
+
+    /**
     * Return a value or array of values which will give full marks if graded as
     * the $state->responses field
     *

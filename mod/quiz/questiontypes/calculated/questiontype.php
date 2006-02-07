@@ -197,6 +197,20 @@ class quiz_calculated_qtype extends quiz_dataset_dependent_questiontype {
         return true;
     }
 
+    /**
+    * Deletes question from the question-type specific tables
+    *
+    * @return boolean Success/Failure
+    * @param object $question  The question being deleted
+    */
+    function delete_question($question) {
+        delete_records("quiz_calculated", "question", $question->id);
+        delete_records("quiz_numerical_units", "question", $question->id);
+        delete_records("quiz_question_datasets", "question", $question->id);
+        //TODO: delete entries from the quiz_dataset_items and quiz_dataset_definitions tables
+        return true;
+    }
+
     function print_question_formulation_and_controls(&$question, &$state, $cmoptions,
      $options) {
         // Substitute variables in questiontext before giving the data to the

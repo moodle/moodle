@@ -222,6 +222,18 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
         return $result;
     }
 
+    /**
+    * Deletes question from the question-type specific tables
+    *
+    * @return boolean Success/Failure
+    * @param object $question  The question being deleted
+    */
+    function delete_question($question) {
+        delete_records("quiz_numerical", "question", $question->id);
+        delete_records("quiz_numerical_units", "question", $question->id);
+        return true;
+    }
+
     function compare_responses(&$question, &$state, &$teststate) {
         $response = isset($state->responses['']) ? $state->responses[''] : '';
         $testresponse = isset($teststate->responses[''])

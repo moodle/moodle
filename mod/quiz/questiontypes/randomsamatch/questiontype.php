@@ -57,6 +57,17 @@ class quiz_randomsamatch_qtype extends quiz_match_qtype {
         return true;
     }
 
+    /**
+    * Deletes question from the question-type specific tables
+    *
+    * @return boolean Success/Failure
+    * @param object $question  The question being deleted
+    */
+    function delete_question($question) {
+        delete_records("quiz_randomsamatch", "question", $question->id);
+        return true;
+    }
+
     function create_session_and_responses(&$question, &$state, $cmoptions, $attempt) {
         // Choose a random shortanswer question from the category:
         // We need to make sure that no question is used more than once in the
