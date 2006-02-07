@@ -117,6 +117,10 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
 							  //table/field/recordid)
     global $db, $CFG;
     $debug = ($CFG->debug > 7);
+    
+    @set_time_limit(0);
+    @ob_implicit_flush(true);
+    @ob_end_flush();
 
     $ignoretables = array();    //list of tables to ignore, optional
     
