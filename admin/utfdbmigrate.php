@@ -68,8 +68,8 @@
         echo '&nbsp;<input type="button" value="'.get_string('cancel').'" onclick="javascript:history.go(-1)" />';
         echo '</form>';
         echo '</div>';
-    }
 
+    }
     
     else {    //else, print welcome to migrate page message
         echo '<div align="center">';
@@ -303,7 +303,6 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                         $SQL = 'SELECT * FROM '.$CFG->prefix.$dbtablename.' '.sql_paging_limit($counter, $recordsetsize);
                         if ($records = get_records_sql($SQL)) {
                             foreach ($records as $record) {
-
                                 //if we are up this far, either no crash, or crash with same table, field name.
                                 if ($crash){
                                     if ($crash->record != $record->id) {
@@ -567,10 +566,15 @@ function get_original_encoding($sitelang, $courselang, $userlang){
     else {
         error ('no language found!');
     }
-    $langfile = $CFG->dirroot.'/lang/'.$lang.'/moodle.php';
-    $result = get_string_from_file('thischarset', $langfile, "\$resultstring");
-    eval($result);
-    return $resultstring;
+
+    $enc = array('af' => 'iso-8859-1', 'ar' => 'windows-1256', 'be' => 'windows-1251', 'bg' => 'windows-1251', 'bs' => 'windows-1250', 'cs' => 'iso-8859-2', 'da' => 'iso-8859-1', 'de' => 'iso-8859-1', 'de_du' => 'iso-8859-1', 'de_utf8' => 'utf-8', 'el' => 'windows-1253', 'en' => 'iso-8859-1', 'en_ja' => 'euc-jp', 'en_us' => 'iso-8859-1', 'en_utf8' => 'utf-8', 'es' => 'iso-8859-1', 'es_ar' => 'iso-8859-1', 'es_es' => 'iso-8859-1', 'es_mx' => 'iso-8859-1', 'et' => 'iso-8859-1', 'eu' => 'iso-8859-1', 'fa' => 'windows-1256', 'fa_utf8' => 'utf-8', 'fi' => 'iso-8859-1', 'fil' => 'iso-8859-15', 'fr' => 'iso-8859-1', 'fr_ca' => 'iso-8859-15', 'ga' => 'iso-8859-1', 'gl' => 'iso-8859-1', 'he' => 'ISO-8859-8-I', 'he_utf8' => 'utf-8', 'hi' => 'iso-8859-1', 'hr' => 'windows-1250', 'hr_utf8' => 'utf-8', 'hu' => 'iso-8859-2', 'id' => 'iso-8859-1', 'it' => 'iso-8859-1', 'ja' => 'EUC-JP', 'ja_utf8' => 'UTF-8', 'ka_utf8' => 'UTF-8', 'km_utf8' => 'UTF-8', 'kn_utf8' => 'utf-8', 'ko' => 'EUC-KR', 'ko_utf8' => 'UTF-8', 'lt' => 'windows-1257', 'lv' => 'ISO-8859-4', 'mi_nt' => 'iso-8859-1', 'mi_tn_utf8' => 'utf-8', 'ms' => 'iso-8859-1', 'nl' => 'iso-8859-1', 'nn' => 'iso-8859-1', 'no' => 'iso-8859-1', 'no_gr' => 'iso-8859-1', 'pl' => 'iso-8859-2', 'pt' => 'iso-8859-1', 'pt_br' => 'iso-8859-1', 'ro' => 'iso-8859-2', 'ru' => 'windows-1251', 'sk' => 'iso-8859-2', 'sl' => 'iso-8859-2', 'sl_utf8' => 'utf-8', 'so' => 'iso-8859-1', 'sq' => 'iso-8859-1', 'sr_utf8' => 'utf-8', 'sv' => 'iso-8859-1', 'th' => 'TIS-620', 'th_utf8' => 'UTF-8', 'tl' => 'iso-8859-15', 'tl_utf8' => 'UTF-8', 'tr' => 'iso-8859-9', 'uk' => 'windows-1251', 'vi_utf8' => 'UTF-8', 'zh_cn' => 'GB18030', 'zh_cn_utf8' => 'UTF-8', 'zh_tw' => 'Big5', 'zh_tw_utf8' => 'UTF-8');
+
+    if ($enc[$lang]) {
+        return $enc[$lang];
+    } else {
+        notify ('unknown language detected: '.$lang);
+        return false;
+    }
 }
 
 /* returns the user's lang
