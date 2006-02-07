@@ -4787,6 +4787,31 @@ function get_string($identifier, $module='', $a=NULL) {
         }
     }
 
+/// And, because under 1.6 en is defined as en_utf8 child, me must try 
+/// if it hasn't been queried before.
+    if ($defaultlang  == 'en') {
+        $defaultlang = 'en_utf8';
+        foreach ($locations as $location) {
+            $locallangfile = $location.$defaultlang.'_local/'.$module.'.php';    //first, see if there's a local file
+            if (file_exists($locallangfile)) {
+                if ($result = get_string_from_file($identifier, $locallangfile, "\$resultstring")) {
+                    eval($result);
+                    return $resultstring;
+                }
+            }
+
+            //if local_en not found, or string not found in local_en
+            $langfile = $location.$defaultlang.'/'.$module.'.php';
+
+            if (file_exists($langfile)) {
+                if ($result = get_string_from_file($identifier, $langfile, "\$resultstring")) {
+                    eval($result);
+                    return $resultstring;
+                }
+            }
+        }
+    }
+
     return '[['.$identifier.']]';  // Last resort
 }
 
