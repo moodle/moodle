@@ -332,8 +332,9 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                                     case 'PLAIN_SQL_UPDATE':    //use the 2 statements to update
 
                                         if (!empty($record->{$fieldname})) {    //only update if not empty
-                                            //$db->debug=999;
-                                            //replace $CFG->prefix, and USERID in the queries
+                                            if ($debug) {
+                                                $db->debug=999;
+                                            }
                                             $userid = get_record_sql(preg_replace($patterns, $replacements, $sqldetectuser));
                                             $courseid = get_record_sql(preg_replace($patterns, $replacements, $sqldetectcourse));
                                             
@@ -349,15 +350,22 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                                             $newrecord->{$fieldname} = $result;
 
                                             update_record($dbtablename,$newrecord);
+                                            if ($debug) {
+                                                $db->debug=999;
+                                            }
                                           }
                                           
                                     break;
 
                                     case 'PHP_FUNCTION';    //use the default php function to execute
-                                        //$db->debug=999;
+                                        if ($debug) {
+                                            $db->debug=999;
+                                        }
                                         require_once($CFG->dirroot.'/'.$dir.'/db/migrate2utf8.php');
                                         $phpfunction($record->id);
-                                        //$db->debug=0;
+                                        if ($debug) {
+                                            $db->debug=0;
+                                        }
                                     break;
 
                                     default:    //no_conv, don't do anything ;-)
@@ -375,17 +383,35 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                     if ($CFG->dbtype == 'mysql') {
                         if ($dropindex){    //drop index if index is varchar, text etc type
                             $SQL = 'ALTER TABLE '.$CFG->prefix.$dbtablename.' DROP INDEX '.$dropindex.';';
+                            if ($debug) {
+                                $db->debug=999;
+                            }
                             execute_sql($SQL, $debug);
+                            if ($debug) {
+                                $db->debug=0;
+                            }
                         } else if ($dropprimary) {    //drop primary key
                             $SQL = 'ALTER TABLE '.$CFG->prefix.$dbtablename.' DROP PRIMARY KEY;';
+                            if ($debug) {
+                                $db->debug=999;
+                            }
                             execute_sql($SQL, $debug);
+                            if ($debug) {
+                                $db->debug=0;
+                            }
                         }
 
                         //BLOB TIME!
                         $SQL = 'ALTER TABLE '.$CFG->prefix.$dbtablename.' CHANGE '.$fieldname.' '.$fieldname.' BLOB;';
 
                         if ($fieldname != 'dummy') {
+                            if ($debug) {
+                                $db->debug=999;
+                            }
                             execute_sql($SQL, $debug);
+                            if ($debug) {
+                                $db->debug=0;
+                            }
                         }
                         
                         /*********************************
@@ -397,8 +423,13 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                             $SQL.='('.$length.') ';
                         }
                         $SQL .= ' NOT NULL DEFAULT '.$default.';';
+                        if ($debug) {
+                            $db->debug=999;
+                        }
                         execute_sql($SQL, $debug);
-
+                        if ($debug) {
+                            $db->debug=0;
+                        }
                         //phase 2
                         $SQL = 'ALTER TABLE '.$CFG->prefix.$dbtablename;
                         $SQL.= ' CHANGE '.$fieldname.' '.$fieldname.' '.$type;
@@ -406,9 +437,13 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                             $SQL.='('.$length.') ';
                         }
                         $SQL.=' CHARACTER SET utf8 NOT NULL DEFAULT '.$default.';';
-
+                        if ($debug) {
+                            $db->debug=999;
+                        }
                         execute_sql($SQL, $debug);
-
+                        if ($debug) {
+                            $db->debug=0;
+                        }
                         /********************************************
                          * build an array to add index back together*
                          ********************************************/
@@ -466,7 +501,13 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                 }
 
                 if ($alter) {
+                    if ($debug) {
+                        $db->debug=999;
+                    }
                     execute_sql($SQL, $debug);
+                    if ($debug) {
+                        $db->debug=0;
+                    }
                 }
 
             }    //if there are fields
@@ -475,7 +516,13 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
              ************************************/
             if ($CFG->dbtype=='mysql'){
                 $SQL = 'ALTER TABLE '.$dbtablename.' CHARACTER SET utf8';
+                if ($debug) {
+                    $db->debug=999;
+                }
                 execute_sql($SQL, $debug);
+                if ($debug) {
+                    $db->debug=0;
+                }
             } else {
 
                 ///posgresql code here
@@ -491,9 +538,14 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
     delete_records('config','name','dbmigration');    //bye bye
     
     //These have to go!
+    if ($debug) {
+        $db->debug=999;
+    }
     execute_sql('TRUNCATE TABLE '.$CFG->prefix.'cache_text', $debug);
     execute_sql('TRUNCATE TABLE '.$CFG->prefix.'cache_filters', $debug);
-
+    if ($debug) {
+        $db->debug=0;
+    }
     //update site language
     $sitelanguage = get_record('config','name', 'lang');
     if (strstr($sitelanguage->value, 'utf8')===false and $sitelanguage->value) {
