@@ -31,7 +31,7 @@
     if (!$adminediting) {
         $countcategories = count_records("course_categories");
 
-        if ($countcategories > 1) {
+        if ($countcategories > 1 || ($countcategories == 1 && count_records('course') > 200)) {
             $strcourses = get_string("courses");
             $strcategories = get_string("categories");
             print_header("$site->shortname: $strcategories", $strcourses, 

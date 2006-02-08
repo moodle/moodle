@@ -155,7 +155,8 @@
                 print_heading_block(get_string('mycourses'));
                 print_my_moodle();
             } else {
-                if (count_records('course_categories') > 1) {
+                $countcategories = count_records('course_categories');
+                if ($countcategories > 1 || ($countcategories == 1 && count_records('course') > 200)) {
                     if ($CFG->frontpage == FRONTPAGECOURSELIST) {
                         print_heading_block(get_string('availablecourses'));
                     } else {
