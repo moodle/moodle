@@ -515,7 +515,7 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
              * now we modify the table encoding *
              ************************************/
             if ($CFG->dbtype=='mysql'){
-                $SQL = 'ALTER TABLE '.$dbtablename.' CHARACTER SET utf8';
+                $SQL = 'ALTER TABLE '.$CFG->prefix.$dbtablename.' CHARACTER SET utf8';
                 if ($debug) {
                     $db->debug=999;
                 }
