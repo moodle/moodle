@@ -192,7 +192,7 @@
                         } 
                         echo format_text($text. ' ', FORMAT_MOODLE, $displayoptions);
                         
-                         if ($choice->limitanswers && ($choice->release==CHOICE_RELEASE_ALWAYS) ){
+                         if ($choice->limitanswers && ($choice->showresults==CHOICE_SHOWRESULTS_ALWAYS) ){
                             echo "</td><td>";
                             
                             if ($maxans-$countanswers==0) {
@@ -234,9 +234,9 @@
 
     // print the results at the bottom of the screen
 
-    if (  $choice->release == CHOICE_RELEASE_ALWAYS or
-        ( $choice->release == CHOICE_RELEASE_AFTER_ANSWER and $current ) or
-        ( $choice->release == CHOICE_RELEASE_AFTER_CLOSE and $choice->timeclose <= time() ) )  {
+    if (  $choice->showresults == CHOICE_SHOWRESULTS_ALWAYS or
+        ( $choice->showresults == CHOICE_SHOWRESULTS_AFTER_ANSWER and $current ) or
+        ( $choice->showresults == CHOICE_SHOWRESULTS_AFTER_CLOSE and $choice->timeclose <= time() ) )  {
 
         print_heading(get_string("responses", "choice"));
 

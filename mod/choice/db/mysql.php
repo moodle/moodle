@@ -119,7 +119,9 @@ function choice_upgrade($oldversion) {
         table_column('choice', '', 'limitanswers', 'TINYINT', '2', 'unsigned', 0, 'not null', 'showunanswered');
         table_column('choice_options', '', 'maxanswers', 'INTEGER', '10', 'unsigned', 0, 'null', 'text');
     }      
-
+    if ($oldversion < 2006020900) { //rename release column to showanswers - Release is now reserved word in mySql
+        table_column('choice', 'release', 'showresults', 'TINYINT', '2', 'unsigned', 0, 'not null');
+    }
     return true;
 }
 

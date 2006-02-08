@@ -23,7 +23,7 @@ CREATE TABLE prefix_choice (
   showunanswered integer NOT NULL default '0',
   limitanswers integer NOT NULL default '0',
   publish integer NOT NULL default '0',
-  release integer NOT NULL default '0',
+  showresults integer NOT NULL default '0',
   display integer NOT NULL default '0',
   allowupdate integer NOT NULL default '0',
   timeopen integer NOT NULL default '0',

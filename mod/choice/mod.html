@@ -23,8 +23,8 @@
     if (empty($form->publish)) {
         $form->publish = 0;
     }
-    if (empty($form->release)) {
-        $form->release = 0;
+    if (empty($form->showresults)) {
+        $form->showresults = 0;
     }
     if (empty($form->allowupdate)) {
         $form->allowupdate = 0;
@@ -256,7 +256,7 @@ $limitfieldlist = trim($limitfieldlist, ",");
     <td colspan="2">
         <?php
         require_once("$CFG->dirroot/mod/choice/lib.php");
-        choose_from_menu($CHOICE_RELEASE, "release", "$form->release", "", "return lockselects('form','release.options[0]',['publish'])");                                                                            
+        choose_from_menu($CHOICE_SHOWRESULTS, "showresults", "$form->showresults", "", "return lockselects('form','showresults.options[0]',['publish'])");                                                                            
         ?>
         <br />
     </td>
@@ -274,7 +274,7 @@ $limitfieldlist = trim($limitfieldlist, ",");
     </td>
 </tr>
 <script type="text/javascript">
-    lockselects('form','release.options[0]',['publish']);
+    lockselects('form','showresults.options[0]',['publish']);
 </script>
 
 <tr valign="top">

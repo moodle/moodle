@@ -63,7 +63,7 @@
         fwrite ($bf,full_tag("TEXT",4,false,$choice->text));
         fwrite ($bf,full_tag("FORMAT",4,false,$choice->format));
         fwrite ($bf,full_tag("PUBLISH",4,false,$choice->publish));
-        fwrite ($bf,full_tag("RELEASE",4,false,$choice->release));
+        fwrite ($bf,full_tag("SHOWRESULTS",4,false,$choice->showresults));
         fwrite ($bf,full_tag("DISPLAY",4,false,$choice->display));
         fwrite ($bf,full_tag("ALLOWUPDATE",4,false,$choice->allowupdate));
         fwrite ($bf,full_tag("SHOWUNANSWERED",4,false,$choice->showunanswered));

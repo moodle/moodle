@@ -49,7 +49,7 @@
             $choice->text = backup_todb($info['MOD']['#']['TEXT']['0']['#']);
             $choice->format = backup_todb($info['MOD']['#']['FORMAT']['0']['#']);
             $choice->publish = backup_todb($info['MOD']['#']['PUBLISH']['0']['#']);
-            $choice->release = backup_todb($info['MOD']['#']['RELEASE']['0']['#']);
+            $choice->showresults = backup_todb($info['MOD']['#']['SHOWRESULTS']['0']['#']);
             $choice->display = backup_todb($info['MOD']['#']['DISPLAY']['0']['#']);
             $choice->allowupdate = backup_todb($info['MOD']['#']['ALLOWUPDATE']['0']['#']);
             $choice->showunanswered = backup_todb($info['MOD']['#']['SHOWUNANSWERED']['0']['#']);
@@ -60,21 +60,25 @@
 
             //To mantain compatibilty, in 1.4 the publish setting meaning has changed. We
             //have to modify some things it if the release field isn't present in the backup file.
-            if (! isset($info['MOD']['#']['RELEASE']['0']['#'])) {  //It's a pre-14 backup filea
-                //Set the allowupdate field
-                if ($choice->publish == 0) { 
-                    $choice->allowupdate = 1;
-                }
-                //Set the release field as defined by the old publish field
-                if ($choice->publish > 0) {
-                    $choice->release = 1;
-                }
-                //Recode the publish field to its 1.4 meaning
-                if ($choice->publish > 0) {
-                    $choice->publish--;
+            if (! isset($info['MOD']['#']['SHOWANSWERS']['0']['#'])) {   //check for previous versions
+                if (! isset($info['MOD']['#']['RELEASE']['0']['#'])) {  //It's a pre-14 backup filea
+                    //Set the allowupdate field
+                    if ($choice->publish == 0) { 
+                        $choice->allowupdate = 1;
+                    }
+                    //Set the showresults field as defined by the old publish field
+                    if ($choice->publish > 0) {
+                        $choice->showresults = 1;
+                    }
+                    //Recode the publish field to its 1.4 meaning
+                    if ($choice->publish > 0) {
+                        $choice->publish--;
+                    }
+                } else { //it's post 1.4 pre 1.6
+                    //convert old release values into new showanswer column.
+                    $choice->showresults = backup_todb($info['MOD']['#']['RELEASE']['0']['#']);
                 }
             }
-            
             //The structure is equal to the db, so insert the choice
             $newid = insert_record ("choice",$choice);
             

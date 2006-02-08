@@ -5,10 +5,10 @@ $COLUMN_HEIGHT = 300;
 define('CHOICE_PUBLISH_ANONYMOUS', '0');
 define('CHOICE_PUBLISH_NAMES',     '1');
 
-define('CHOICE_RELEASE_NOT',          '0');
-define('CHOICE_RELEASE_AFTER_ANSWER', '1');
-define('CHOICE_RELEASE_AFTER_CLOSE',  '2');
-define('CHOICE_RELEASE_ALWAYS',       '3');
+define('CHOICE_SHOWRESULTS_NOT',          '0');
+define('CHOICE_SHOWRESULTS_AFTER_ANSWER', '1');
+define('CHOICE_SHOWRESULTS_AFTER_CLOSE',  '2');
+define('CHOICE_SHOWRESULTS_ALWAYS',       '3');
 
 define('CHOICE_DISPLAY_HORIZONTAL',  '0');
 define('CHOICE_DISPLAY_VERTICAL',    '1');
@@ -16,10 +16,10 @@ define('CHOICE_DISPLAY_VERTICAL',    '1');
 $CHOICE_PUBLISH = array (CHOICE_PUBLISH_ANONYMOUS  => get_string('publishanonymous', 'choice'),
                          CHOICE_PUBLISH_NAMES      => get_string('publishnames', 'choice'));
 
-$CHOICE_RELEASE = array (CHOICE_RELEASE_NOT          => get_string('publishnot', 'choice'),
-                         CHOICE_RELEASE_AFTER_ANSWER => get_string('publishafteranswer', 'choice'),
-                         CHOICE_RELEASE_AFTER_CLOSE  => get_string('publishafterclose', 'choice'),
-                         CHOICE_RELEASE_ALWAYS       => get_string('publishalways', 'choice'));
+$CHOICE_SHOWRESULTS = array (CHOICE_SHOWRESULTS_NOT          => get_string('publishnot', 'choice'),
+                         CHOICE_SHOWRESULTS_AFTER_ANSWER => get_string('publishafteranswer', 'choice'),
+                         CHOICE_SHOWRESULTS_AFTER_CLOSE  => get_string('publishafterclose', 'choice'),
+                         CHOICE_SHOWRESULTS_ALWAYS       => get_string('publishalways', 'choice'));
 
 $CHOICE_DISPLAY = array (CHOICE_DISPLAY_HORIZONTAL   => get_string('displayhorizontal', 'choice'),
                          CHOICE_DISPLAY_VERTICAL     => get_string('displayvertical','choice'));
