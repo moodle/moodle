@@ -551,6 +551,10 @@ function data_update_instance($data) {
     
     $data->id = $data->instance;
     
+    if (empty($data->ratings)) {
+        $data->ratings = 0;
+    }
+    
     $data->timemodified = time();
 
     if (!empty($data->availablefromenable)) {

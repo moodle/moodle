@@ -53,6 +53,15 @@
     if (!isset($form->approval)) {
         $form->approval = 0;
     }
+    if (!isset($form->scale)) {
+        $form->scale = 0;
+    }
+    if (!isset($form->assessed)) {
+        $form->assessed = 1;
+    }
+    if (!isset($form->assesspublic)) {
+        $form->assesspublic = 1;
+    }
 ?>
 
 <script type="text/javascript" language="javascript">
@@ -238,8 +247,64 @@
 </tr>
 <?php } ?>
 
+<tr>
+    <td align="right" valign="top"><b><?php print_string("allowratings", "forum") ?>:</b></td>
+    <td>
+        <table cellpadding="1">
+        <tr>
+            <td colspan="2">
+        <?php
+            echo '<script type="text/javascript">';
+            echo "  var subitemsall = ['assessed', 'assesspublic', 'scale'];";
+            echo '</script>';
 
+            echo '<input name="ratings" type="checkbox" alt="'.get_string('ratingsuse', 'forum').'" value="1" ';
+            echo " onclick=\"return lockoptions('form','ratings', subitemsall)\" ";
+            if ($form->ratings) {
+                echo ' checked="checked" ';
+            }
+            echo ' />';
+            echo '&nbsp;'.get_string('ratingsuse', 'forum').':';
+            echo '</td></tr>';
 
+            echo '<tr><td>';
+            // The odd order below was to maintain backward compatibility
+            unset($options);
+            $options[2] = get_string('ratingonlyteachers', 'forum', moodle_strtolower($course->teachers));
+            $options[1] = get_string('ratingeveryone', 'forum');
+            echo get_string('users').': ';
+            echo '</td><td>';
+            choose_from_menu($options, 'assessed', $form->assessed, '');
+            echo '</td></tr>';
+
+            echo '<tr><td>';
+            unset($options);
+            $options[0] = get_string('ratingpublicnot', 'forum', $course->students);
+            $options[1] = get_string('ratingpublic', 'forum', $course->students);
+            echo get_string('view').': ';
+            echo '</td><td>';
+            choose_from_menu($options, 'assesspublic', $form->assesspublic, '');
+            echo '</td></tr>';
+
+            echo '<tr><td>';
+            echo get_string('grade').': ';
+            echo '</td><td>';
+            print_grade_menu($course->id, 'scale', $form->scale, false);
+            echo '</td></tr>';
+
+            echo '</td></tr></table>';
+
+            echo '<input type="hidden" name="hassessed"     value="0" />';
+            echo '<input type="hidden" name="hassesspublic" value="0" />';
+            echo '<input type="hidden" name="hscale"        value="0" />';
+
+            echo '<script type="text/javascript">';
+            echo "lockoptions('form','ratings', subitemsall);";
+            echo '</script>';
+
+        ?>
+    </td>
+</tr>
 <?php print_standard_coursemodule_settings($form); ?>
 
 </table>
@@ -255,7 +320,7 @@
 <input type="submit" value="<?php  print_string('savechanges') ?>" />
 <input type="submit" name="cancel" value="<?php  print_string('cancel') ?>" />
 </center>
-</form> 
+</form>
 
 <script type="text/javascript">
 <?php
