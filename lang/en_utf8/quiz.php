@@ -1,7 +1,11 @@
 <?php // $Id$ 
       // quiz.php - created with Moodle 1.5 ALPHA (2005050600)
 
-
+$string['30minutes'] = '30 Minutes';
+$string['1hour'] = '1 Hour';
+$string['2hours'] = '2 Hours';
+$string['6hours'] = '6 Hours';
+$string['1day'] = '1 Day';
 $string['acceptederror'] = 'Accepted error';
 $string['action'] = 'Action';
 $string['adaptive'] = 'Adaptive mode';
@@ -103,6 +107,8 @@ $string['decimals'] = ' with $a ';
 $string['default'] = 'Default';
 $string['defaultgrade'] = 'Default question grade';
 $string['defaultinfo'] = 'The default category for questions.';
+$string['delay1'] = 'Time delay between first and second attempt';
+$string['delay2'] = 'Time delay between second and additional attempts';
 $string['deleteattemptcheck'] = 'Are you absolutely sure you want to completely delete these attempts?';
 $string['deletequestioncheck'] = 'Are you absolutely sure you want to delete \'$a\'?';
 $string['deletequestionscheck'] = 'Are you absolutely sure you want to delete the following questions? <div>$a</div>';
@@ -263,6 +269,7 @@ $string['notenoughsubquestions'] = 'Not enough sub-questions have been defined!<
 $string['notimedependentitems'] = 'Time dependent items are not currently supported by the quiz module. As a work around, set a time limit for the whole quiz. Do you wish to choose a different item (or use the current item regardless)?';
 $string['numberabbr'] = '#';
 $string['numerical'] = 'Numerical';
+$string['none']= 'None';
 $string['optional'] = 'optional';
 $string['outof'] = ' out of a maximum of ';
 $string['overdue'] = 'Overdue';
@@ -402,7 +409,9 @@ $string['startedon'] = 'Started on';
 $string['subneterror'] = 'Sorry, this quiz has been locked so that it is only accessible from certain locations.  Currently your computer is not one of those allowed to use this quiz.';
 $string['subnetnotice'] = 'This quiz has been locked so that it is only accessible from certain locations. Your computer is not on an allowed subnet. As teacher you are allowed to preview anyway.';
 $string['substitutedby'] = 'will be substituted by';
+$string['temporaryblocked'] = 'You are temporary not allowed to re-attempt the quiz.<br> You will be able to take another attempt on: ';
 $string['time'] = 'Time';
+$string['timedelay'] = 'You are not allowed to do the quiz since you have not passed the time delay before attempting another quiz';
 $string['timecompleted'] = 'Completed';
 $string['timeleft'] = 'Time Remaining';
 $string['timelimit'] = 'Time limit';
