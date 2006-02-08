@@ -18,6 +18,11 @@ function data_upgrade($oldversion) {
         table_column("data_records", "", "approved", "tinyint", "4");
     }
 
+    if ($oldversion < 2006020801) {
+        table_column("data", "", "scale", "integer", "10", "signed");
+        table_column("data", "", "assessed", "integer", "10");
+        table_column("data", "", "assesspublic", "integer", "4");
+    }
     return true;
 }
 

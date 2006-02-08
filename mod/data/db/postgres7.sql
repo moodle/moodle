@@ -18,7 +18,10 @@ CREATE TABLE prefix_data (
   rsstemplate text NOT NULL default '',
   listtemplateheader text NOT NULL default '',
   listtemplatefooter text NOT NULL default '',
-  approval int NOT NULL default '0'
+  approval int NOT NULL default '0',
+  scale integer NOT NULL default '0',
+  assessed integer NOT NULL default '0',
+  assesspublic integer NOT NULL default '0'
 );
 
 

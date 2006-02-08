@@ -33,6 +33,9 @@ CREATE TABLE prefix_data (
   listtemplateheader text NOT NULL default '',
   listtemplatefooter text NOT NULL default '',
   approval tinyint(4) unsigned NOT NULL default '0',
+  scale int(10) NOT NULL default '0',
+  assessed int(10) unsigned NOT NULL default '0',
+  assesspublic int(4) unsigned NOT NULL default '0',
   PRIMARY KEY  (id)
 ) TYPE=MyISAM COMMENT='Defines settings for each Database activity';
 

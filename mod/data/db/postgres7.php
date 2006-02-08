@@ -17,6 +17,12 @@ function data_upgrade($oldversion) {
         table_column("data", "", "approval", "integer", "4", "unsigned", "0", "not null");
         table_column("data_records", "", "approved", "integer", "4", "unsigned", "0", "not null");
     }
+    
+    if ($oldversion < 2006020801) {
+        table_column("data", "", "scale", "integer");
+        table_column("data", "", "assessed", "integer");
+        table_column("data", "", "assesspublic", "integer");
+    }
 
     return true;
 }
