@@ -53,6 +53,8 @@
         print_string('dbmigratewarning2','admin');
         print_simple_box_end();
         //put the site in maintenance mode
+        check_dir_exists($CFG->dataroot.'/'.SITEID, true);
+        
         if (touch($filename)) {
             $file = fopen($filename, 'w');
             fwrite($file, get_string('maintinprogress','admin'));
