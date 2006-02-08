@@ -505,6 +505,10 @@ function data_tags_check($dataid, $template){
 function data_add_instance($data) {
     global $CFG;
 
+    if (empty($data->ratings)) {
+        $data->ratings = 0;
+    }
+
     $data->timemodified = time();
 
     if (!empty($data->availablefromenable)) {
