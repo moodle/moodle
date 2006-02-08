@@ -66,6 +66,7 @@
             migrate2utf8_forum_intro(RECORDID)
           </PHP_FUNCTION>
         </FIELD>
+        <FIELD name="type" method="NO_CONV" type="enum('single', 'news', 'general', 'social', 'eachuser', 'teacher', 'qanda')" length="0" default="general"/>
       </FIELDS>
     </TABLE>
   </TABLES>
