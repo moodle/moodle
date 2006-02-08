@@ -121,7 +121,9 @@
                     $newanswer->answer = addslashes($newanswer->answer);
                     if (isset($form->response[$i])) {
                         $newanswer->response = clean_param(trim($form->response[$i]), PARAM_CLEANHTML);
-                        $newanswer->answer = addslashes($newanswer->answer);
+                        $newanswer->response = addslashes($newanswer->response);
+                    } else {
+                        $newanswer->response = '';
                     }
                     $newanswer->jumpto = clean_param($form->jumpto[$i], PARAM_INT);
                     /// CDC-FLAG ///
