@@ -50,7 +50,7 @@ Thanks:     Jaime Villate for important bug fixing, koen roggemans for his job a
 
     $currentlang = current_language();
     $langdir = "$CFG->dataroot/lang/$currentlang";
-    $enlangdir = "$CFG->dirroot/lang/en";
+    $enlangdir = "$CFG->dirroot/lang/en_utf8";
 
     // Shall I save POSTed data?
 
@@ -70,7 +70,7 @@ Thanks:     Jaime Villate for important bug fixing, koen roggemans for his job a
 
     // Get all files from /docs directory
 
-    if (! $files = get_directory_list("$CFG->dirroot/lang/en/docs", "CVS")) {
+    if (! $files = get_directory_list("$CFG->dirroot/lang/en_utf8/docs", "CVS")) {
         error("Could not find English language docs files!");
     }
 
@@ -82,7 +82,7 @@ Thanks:     Jaime Villate for important bug fixing, koen roggemans for his job a
         if (( !file_exists("$langdir/docs/$file")) || (filesize("$langdir/docs/$file") == 0)) {
             $options["docs/$file"] .= "$filemissingmark";
         } else {       
-            if (filemtime("$langdir/docs/$file") < filemtime("$CFG->dirroot/lang/en/docs/$file")) {
+            if (filemtime("$langdir/docs/$file") < filemtime("$CFG->dirroot/lang/en_utf8/docs/$file")) {
                 $options["docs/$file"] .= "$fileoldmark";
             }
         }    
@@ -90,13 +90,13 @@ Thanks:     Jaime Villate for important bug fixing, koen roggemans for his job a
 
     // Get all files from /help directory
 
-    if (! $files = get_directory_list("$CFG->dirroot/lang/en/help", "CVS")) {
+    if (! $files = get_directory_list("$CFG->dirroot/lang/en_utf8/help", "CVS")) {
         error("Could not find English language help files!");
     }
 
     foreach ($files as $filekey => $file) {    // check all the help files.
         $options["help/$file"] = "help/$file";
-        if (( !file_exists("$langdir/help/$file")) || (filesize("$CFG->dirroot/lang/en/help/$file") == 0)) {
+        if (( !file_exists("$langdir/help/$file")) || (filesize("$CFG->dirroot/lang/en_utf8/help/$file") == 0)) {
             $options["help/$file"] .= "$filemissingmark";
         } else {
             if (filemtime("$langdir/help/$file") < filemtime("$langdir/help/$file")) {
@@ -167,7 +167,7 @@ $langdir/$currentfile")."</font></p>";
         echo "<textarea rows=\"$fileeditorrows\" cols=\"$fileeditorcols\" name=\"\">\n";
         echo htmlspecialchars(file_get_contents("$enlangdir/$currentfile"));
         echo "</textarea>\n";
-        link_to_popup_window("/lang/en/$currentfile", "popup", get_string("preview"));
+        link_to_popup_window("/lang/en_utf8/$currentfile", "popup", get_string("preview"));
         echo "</td>\n";
         if ($fileeditorinline == 1) {
             echo "</tr>\n<tr valign=\"center\">\n";

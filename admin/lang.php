@@ -85,7 +85,7 @@
     // Get a list of all the root files in the English directory
 
     $langdir = "$CFG->dataroot/lang/$currentlang";
-    $enlangdir = "$CFG->dirroot/lang/en";
+    $enlangdir = "$CFG->dirroot/lang/en_utf8";
 
     if (! $stringfiles = get_directory_list($enlangdir, "", false)) {
         error("Could not find English language pack!");
@@ -133,7 +133,7 @@
             }
         }
   
-        if (! $files = get_directory_list("$CFG->dirroot/lang/en/help", "CVS")) {
+        if (! $files = get_directory_list("$CFG->dirroot/lang/en_utf8/help", "CVS")) {
             error("Could not find English language help files!");
         }
     
@@ -145,7 +145,7 @@
             }
         }
     
-        if (! $files = get_directory_list("$CFG->dirroot/lang/en/docs", "CVS")) {
+        if (! $files = get_directory_list("$CFG->dirroot/lang/en_utf8/docs", "CVS")) {
             error("Could not find English language docs files!");
         }
         foreach ($files as $filekey => $file) {    // check all the docs files.
