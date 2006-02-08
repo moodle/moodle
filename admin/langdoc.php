@@ -52,6 +52,10 @@ Thanks:     Jaime Villate for important bug fixing, koen roggemans for his job a
     $langdir = "$CFG->dataroot/lang/$currentlang";
     $enlangdir = "$CFG->dirroot/lang/en_utf8";
 
+
+    if (!file_exists($langdir)) {
+        error ('to edit this language pack, you need to put it in '.$CFG->dataroot.'/lang');
+    }
     // Shall I save POSTed data?
 
     if (isset($_POST['currentfile'])) {

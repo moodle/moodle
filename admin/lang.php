@@ -98,8 +98,11 @@
     }
 
     if ($mode == "missing") {
+        if (!file_exists($langdir)) {
+            error ('to edit this language pack, you need to put it in '.$CFG->dataroot.'/lang');
+        }
+
         // For each file, check that a counterpart exists, then check all the strings
-    
         foreach ($stringfiles as $file) {
             unset($string);
             include("$enlangdir/$file");
@@ -163,6 +166,11 @@
         }
 
     } else if ($mode == "compare") {
+
+        if (!file_exists($langdir)) {
+            error ('to edit this language pack, you need to put it in '.$CFG->dataroot.'/lang');
+        }
+
 
         if (isset($_POST['currentfile'])){   // Save a file
             if (!confirm_sesskey()) {
