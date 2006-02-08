@@ -1705,7 +1705,7 @@ function hotpot_convert_stylesheets_urls($baseurl, $reference, $css, $stripslash
 	if ($stripslashes) {
 		$css = stripslashes($css);
 	}
-	$search = '|'.'(?<='.'url'.'\('.')'."(.*?)".'(?='.'\)'.')'.'|ise';
+	$search = '|'.'(?<='.'url'.'\('.')'."(.+?)".'(?='.'\)'.')'.'|ise';
 	$replace = "hotpot_convert_url('".$baseurl."','".$reference."','\\1')";
 	return preg_replace($search, $replace, $css);
 }
