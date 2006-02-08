@@ -157,6 +157,29 @@
         }
     }
 
+    if ($quiz->delay1 or $quiz->delay2) {
+        //quiz enforced time delay
+        if ($attempts = quiz_get_user_attempts($quiz->id, $USER->id)) {
+            $numattempts = count($attempts);
+        } else {
+            $numattempts = 0;
+        }
+        $timenow = time();
+        $lastattempt_obj = get_record_select('quiz_attempts', "quiz = $quiz->id AND attempt = $numattempts AND userid = $USER->id", 'timefinish');
+        if ($lastattempt_obj) {
+            $lastattempt = $lastattempt_obj->timefinish;
+        }
+        if ($numattempts == 1 && $quiz->delay1) {
+            if ($timenow - $quiz->delay1 < $lastattempt) {
+                error(get_string('timedelay', 'quiz'), 'view.php?q='.$quiz->id);
+            }
+        } else if($numattempts > 1 && $quiz->delay2) {
+            if ($timenow - $quiz->delay2 < $lastattempt) {
+                error(get_string('timedelay', 'quiz'), 'view.php?q='.$quiz->id);
+            }
+        }
+    }
+
 /// Load attempt or create a new attempt if there is no unfinished one
 
     if ($isteacher and $forcenew) { // teacher wants a new preview
