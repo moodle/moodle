@@ -38,7 +38,9 @@ CREATE TABLE prefix_quiz (
   timelimit integer NOT NULL default '0',
   password varchar(255) NOT NULL default '',
   subnet varchar(255) NOT NULL default '',
-  popup integer NOT NULL default '0'
+  popup integer NOT NULL default '0',
+  delay1 integer NOT NULL default '0',
+  delay2 integer NOT NULL default '0'
 );
 
 CREATE INDEX prefix_quiz_course_idx ON prefix_quiz (course);

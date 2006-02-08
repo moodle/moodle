@@ -968,7 +968,10 @@ function quiz_upgrade($oldversion) {
         execute_sql('ALTER TABLE '.$CFG->prefix.'quiz_question_version_id_seq RENAME TO '.$CFG->prefix.'quiz_question_versions_id_seq',false);
         execute_sql('ALTER TABLE '.$CFG->prefix.'quiz_question_versions ALTER COLUMN id SET DEFAULT nextval(\''.$CFG->prefix.'quiz_question_versions_id_seq\')',false);
     }
-
+    if ($oldversion < 2006020801) {
+         table_column("quiz", "", "delay1", "INTEGER", "10", "UNSIGNED", "0", "NOT NULL", "popup");
+         table_column("quiz", "", "delay2", "INTEGER", "10", "UNSIGNED", "0", "NOT NULL", "delay1");
+    }
     return true;
 }
 

@@ -42,6 +42,8 @@ CREATE TABLE prefix_quiz (
   password varchar(255) NOT NULL default '',
   subnet varchar(255) NOT NULL default '',
   popup tinyint(4) NOT NULL default '0',
+  delay1 int(10) NOT NULL default '0',
+  delay2 int(10) NOT NULL default '0',
   PRIMARY KEY  (id),
   KEY course (course)
 ) TYPE=MyISAM COMMENT='Main information about each quiz';

@@ -869,6 +869,13 @@ function quiz_upgrade($oldversion) {
         $record = get_record_sql("SELECT max(id)+1 AS nextid FROM {$CFG->prefix}quiz_attempts");
         set_config('attemptuniqueid', empty($record->nextid) ? 1 : $record->nextid);
     }
+    
+    if ($oldversion < 2006020801) {
+        // add new field to store time delay between the first and second quiz attempt
+        table_column('quiz', '', 'delay1', 'integer', '10', 'unsigned', '0', 'not null', 'popup');
+        // add new field to store time delay between the second and any additional quizes
+        table_column('quiz', '', 'delay2', 'integer', '10', 'unsigned', '0', 'not null', 'delay1');
+    }
 
     return true;
 }
