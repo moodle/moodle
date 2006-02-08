@@ -148,7 +148,7 @@ function lams_get_soap_client($relativeurl) {
         return NULL;
     }
     $wsdl = $CFG->lams_serverurl.$relativeurl;
-    $s = new soapclient($wsdl,true,false,false,false,false,2,3);
+    $s = new soap_client($wsdl,true,false,false,false,false,2,3);
     return $s;
 }
 
