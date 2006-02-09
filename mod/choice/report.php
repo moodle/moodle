@@ -57,19 +57,24 @@
                 }
             break;
         }
+    if ($download <> "xls" and $download <> "txt" ) {
+        print_header_simple(format_string($choice->name).": $strresponses", "",
+                 "<a href=\"index.php?id=$course->id\">$strchoices</a> ->
+                  <a href=\"view.php?id=$cm->id\">".format_string($choice->name,true)."</a> -> $strresponses", "", '', true,
+                  update_module_button($cm->id, $course->id, $strchoice), navmenu($course, $cm));
+    
 
-
-/// Check to see if groups are being used in this choice
-    if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
-        $currentgroup = setup_and_print_groups($course, $groupmode, "report.php?id=$cm->id");
-    } else {
-        $currentgroup = false;
+        /// Check to see if groups are being used in this choice
+        if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
+            $currentgroup = setup_and_print_groups($course, $groupmode, "report.php?id=$cm->id");
+        } else {
+            $currentgroup = false;
+        }
     }
-
     if ($currentgroup) {
-        $users = get_group_users($currentgroup, "u.firstname ASC", '', 'u.id, u.picture, u.firstname, u.lastname');
+        $users = get_group_users($currentgroup, "u.firstname ASC", '', 'u.id, u.picture, u.firstname, u.lastname, u.idnumber');
     } else {
-        $users = get_course_users($course->id, "u.firstname ASC", '', 'u.id, u.picture, u.firstname, u.lastname') + get_admins();
+        $users = get_course_users($course->id, "u.firstname ASC", '', 'u.id, u.picture, u.firstname, u.lastname, u.idnumber') + get_admins();
     }
 
     if (!$users) {
@@ -185,10 +190,6 @@
   exit;
 }
     
-    print_header_simple(format_string($choice->name).": $strresponses", "",
-                 "<a href=\"index.php?id=$course->id\">$strchoices</a> ->
-                  <a href=\"view.php?id=$cm->id\">".format_string($choice->name,true)."</a> -> $strresponses", "", '', true,
-                  update_module_button($cm->id, $course->id, $strchoice), navmenu($course, $cm));
 
     switch ($format) {
         case CHOICE_PUBLISH_NAMES:
