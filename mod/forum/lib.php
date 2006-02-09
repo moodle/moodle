@@ -1435,9 +1435,9 @@ function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
     } else {
         return get_records_sql("SELECT $postdata, d.name, d.timemodified, d.usermodified, d.groupid,
                                    u.firstname, u.lastname, u.email, u.picture $umfields
-                              FROM {$CFG->prefix}forum_discussions d,
+                              FROM ( {$CFG->prefix}forum_discussions d,
                                    {$CFG->prefix}forum_posts p,
-                                   {$CFG->prefix}user u  
+                                   {$CFG->prefix}user u )
                                    $umtable
                              WHERE d.forum = '$forum'
                                AND p.discussion = d.id
