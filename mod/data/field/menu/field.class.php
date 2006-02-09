@@ -66,10 +66,13 @@ class data_field_menu extends data_field_base {
         }
 
         $str .= '<table><tr><td>';
+        /*
         if ($field->description) {
             $str .= '<img src="'.$CFG->pixpath.'/help.gif" alt="'.$field->description.'" title="'.$field->description.'">&nbsp;';
         }
-        $str .= get_string('menu','data').'</td><td>';
+        */
+        $str .= '<div title="'.$field->description.'">';
+        $str .= get_string('menu','data').': </td><td>';
         
         $str .= '<select name="field_'.$field->id.' id="field_'.$field->id.'>';
         $str .= '<option value="">' . get_string('menuchoose', 'data') . '</option>';
@@ -81,6 +84,7 @@ class data_field_menu extends data_field_base {
                 $str.='<option value="'.ltrim(rtrim($option)).'">'.ltrim(rtrim($option)).'</option>';
             }
         }
+        $str .= '</div>';
         $str .= '</select></td></tr></table>';
 
         return $str;

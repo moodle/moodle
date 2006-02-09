@@ -1,8 +1,8 @@
 <table width="100%"><tr><td span="2">
 <form name="fieldsubform" action="<?php echo $CFG->wwwroot; ?>/mod/data/fields.php?d=<?php echo ($field->dataid); ?>" method="POST">
 <?php echo ($this->name()); ?></td></tr>
-<tr><td>Name:</td><td><input style="width:350px;" type="text" name="name" id="name" value = "<?php echo($field->name); ?>" /></td></tr>
-<tr><td>Description:</td><td><input style="width:350px;" type="text" name="description" id="description" value = "<? echo ($field->description);?>" /></td></tr>
+<tr><td><Name><?php echo get_string('fieldname', 'data'); ?>:</td><td><input style="width:350px;" type="text" name="name" id="name" value = "<?php echo($field->name); ?>" /></td></tr>
+<tr><td><?php echo get_string('fielddescription', 'data'); ?>:</td><td><input style="width:350px;" type="text" name="description" id="description" value = "<? echo ($field->description);?>" /></td></tr>
 <tr><td></td><td><input type="submit" value="<?php if ($newfield) {echo get_string('add');} else {echo get_string('save','data');} ?>" />
 <input type="hidden" name="fid" value="<?php echo ($field->id); ?>" />
 <input type="hidden" name="mode" value="<?php if ($newfield) {echo 'add';} else {echo 'update';} ?>" />

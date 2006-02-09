@@ -10,15 +10,15 @@
         </td>
     </tr>
     <tr>
-        <td>Name:</td>
+        <td><Name><?php echo get_string('fieldname', 'data'); ?>:</td>
         <td><input style="width:300px;" type="text" name="name" id="name" value = "<?php echo($field->name); ?>" /></td>
     </tr>
     <tr>
-        <td>Description:</td>
+        <td><?php echo get_string('fielddescription', 'data'); ?>:</td>
         <td><input style="width:300px;" type="text" name="description" id="description" value = "<? echo ($field->description);?>" /></td>
     </tr>
     <tr>
-        <td valign="top">Options (Line Separated)</td>
+        <td valign="top"><?php echo get_string('fieldoptions', 'data'); ?>:</td>
         <td><textarea style="width:300px; height:150px;" name="param1" id="param1"><?php if($field->param1) {echo $field->param1;} ?></textarea></td>
     </tr>
     <tr>

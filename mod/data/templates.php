@@ -136,7 +136,7 @@
     echo '<select name="fields1[]" size="10" onclick="insertAtCursor(document.tempform.template, this.options[selectedIndex].value)">';    //the insertAtCursor thing only works when editting in plain text =(
     if ($fields = get_records('data_fields','dataid',$data->id)){
         foreach ($fields as $field) {
-            echo '<option value="[['.$field->name.']]">'.$field->name.'('.$field->type.')</option>';
+            echo '<option value="[['.$field->name.']]">'.$field->name.' ('.$field->type.')</option>';
             echo '[['.$field->name.']]'.'<br />';
         }
     }

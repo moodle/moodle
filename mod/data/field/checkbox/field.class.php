@@ -71,10 +71,12 @@ class data_field_checkbox extends data_field_base {
             }
         }
         $str = '';
-
+        /*
         if ($field->description) {
             $str .= '<img src="'.$CFG->pixpath.'/help.gif" alt="'.$field->description.'" title="'.$field->description.'" />&nbsp;';
         }
+        */
+        $str .= '<div title="'.$field->description.'">';
         
         foreach (explode("\n", $field->param1) as $checkbox) {
             $checkbox = ltrim(rtrim($checkbox));
@@ -88,9 +90,9 @@ class data_field_checkbox extends data_field_base {
             else {
                 $str .= '/>';
             }
-
             $str .= $checkbox . '<br />';
         }
+        $str .= '</div>';
         return $str;
     }
 

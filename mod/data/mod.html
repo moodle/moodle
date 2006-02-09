@@ -205,6 +205,16 @@
     </td>
 </tr>
 
+<tr valign="top">
+    <td align="right"><b><?php print_string('rss', 'data') ?>:</b></td>
+    <td>
+        <?php
+            echo '<input name="rssarticles" type="text" style="width:50px;" />';
+            helpbutton('rss', get_string('rss', 'data'), 'data');
+            echo ' ' . get_string('rssshowhowmany', 'data');
+        ?>
+    </td>
+</tr>
 
 <tr valign="top">
     <td align="right"><b><?php print_string('maxentries', 'data') ?>:</b></td>

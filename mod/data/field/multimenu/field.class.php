@@ -71,11 +71,12 @@ class data_field_multimenu extends data_field_base {
             }
         }
         $str = '';
-
+        /*
         if ($field->description) {
             $str .= '<img src="'.$CFG->pixpath.'/help.gif" alt="'.$field->description.'" title="'.$field->description.'" />&nbsp;';
         }
-        
+        */
+        $str .= '<div title="'.$field->description.'">';
         $str .= '<select name="field_' . $field->id . '[]" id="field_' . $field->id . '" multiple="multiple">';
         
         foreach (explode("\n",$field->param1) as $option) {
@@ -92,6 +93,7 @@ class data_field_multimenu extends data_field_base {
             $str .= $option . '</option>';
         }
         $str .= '</select>';
+        $str .= '</div>';
         
         return $str;
     }
@@ -154,7 +156,15 @@ class data_field_multimenu extends data_field_base {
         $field = get_record('data_fields', 'id', $fieldid);
 
         if ($content = get_record('data_content', 'fieldid', $fieldid, 'recordid', $recordid)){
-            return $content->content;
+            $contentArr = array();
+            if (!empty($content->content)) {
+                $contentArr = explode('##', $content->content);
+            }
+            $str = '';
+            foreach ($contentArr as $line) {
+                $str .= $line . "<br />\n";
+            }
+            return $str;
         }
         return false;
     }

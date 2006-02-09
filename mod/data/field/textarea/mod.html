@@ -10,19 +10,19 @@
         </td>
     </tr>
     <tr>
-        <td>Name:</td>
+        <td><Name><?php echo get_string('fieldname', 'data'); ?>:</td>
         <td><input style="width:300px;" type="text" name="name" id="name" value="<?php echo($field->name); ?>" /></td>
     </tr>
     <tr>
-        <td>Description:</td>
+        <td><?php echo get_string('fielddescription', 'data'); ?>:</td>
         <td><input style="width:300px;" type="text" name="description" id="description" value="<?php echo($field->description); ?>" /></td>
     </tr>
     <tr>
-        <td>Width:</td>
+        <td><?php echo get_string('fieldwidth', 'data'); ?>:</td>
         <td><input style="width:50px;" type="text" name="param2" id="width" value="<?php echo($field->param2); ?>" /> columns</td>
     </tr>
     <tr>
-        <td>Height:</td>
+        <td><?php echo get_string('fieldheight', 'data'); ?>:</td>
         <td><input style="width:50px;" type="text" name="param3" id="height" value="<?php echo($field->param3); ?>" /> rows</td>
     </tr>
     <tr>

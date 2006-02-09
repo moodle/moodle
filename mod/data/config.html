@@ -8,7 +8,7 @@
         <td>
     <?php
         if (!isset($CFG->enablerssfeeds) || $CFG->enablerssfeeds == 0) {
-            print_string("no");
+            echo get_string('rssglobaldisabled', 'data');
         } else {
             unset($options);
             $options[0] = get_string("no");

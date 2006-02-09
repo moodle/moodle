@@ -86,11 +86,14 @@ class data_field_base {    //base class (text field)
         }
         
         $str = '';
-
+        /*
         if ($field->description){
             $str .= '<img src="'.$CFG->pixpath.'/help.gif" alt="'.$field->description.'" title="'.$field->description.'">&nbsp;';
         }
+        */
+        $str .= '<div title="'.$field->description.'">';
         $str .= '<input style="width:300px;" type="text" name="field_'.$field->id.'" id="field_'.$field->id.'" value="'.$content.'" />';
+        $str .= '</div>';
         return $str;
     }
 

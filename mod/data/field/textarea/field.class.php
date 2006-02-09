@@ -70,10 +70,11 @@ class data_field_textarea extends data_field_base {
             $content = '';
         }
         $str = '';
-
+        /*
         if ($field->description) {
             $str .= '<img src="'.$CFG->pixpath.'/help.gif" alt="'.$field->description.'" title="'.$field->description.'" />&nbsp;';
-        }
+        }*/
+        $str .= '<div title="'.$field->description.'">';
         
         if (can_use_richtext_editor()) {
             // Show a rich text html editor.
@@ -84,7 +85,6 @@ class data_field_textarea extends data_field_base {
         else {
             // Show a normal textarea. Also let the user specify the format to be used.
             $str .= data_field_textarea::gen_textarea(false, 'field_' . $field->id, $field->param2, $field->param3, $content);
-            
             // Get the available text formats for this field.
             $formatsForField = format_text_menu();
             $str .= '<br />';
@@ -97,6 +97,7 @@ class data_field_textarea extends data_field_base {
             }
             $str .= helpbutton("textformat", get_string("helpformatting"), 'moodle', true, false, '', true);
         }
+        $str .= '</div>';
         return $str;
     }
     

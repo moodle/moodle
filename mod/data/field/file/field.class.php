@@ -42,7 +42,7 @@ class data_field_file extends data_field_base {// extends
     var $type = 'file';
     var $id;
 
-    function insert_field($dataid, $type='file', $name, $des){
+    function insert_field($dataid, $type='file', $name, $des) {
         $newfield = new object;
         $newfield->dataid = $dataid;
         $newfield->type = $type;
@@ -91,16 +91,18 @@ class data_field_file extends data_field_base {// extends
         }
         
         $str = '';
-
+        /*
         if ($field->description){
             $str .= '<img src="'.$CFG->pixpath.'/help.gif" alt="'.$field->description.'" title="'.$field->description.'">&nbsp;';
         }
-
+        */
+        $str .= '<div title="' . $field->description . '">';
         $str .= '<input type="hidden" name ="field_'.$field->id.'_0" id="field_'.$field->id.'"_0  value="fakevalue" />';
-        $str .= get_string('file','data'). ': <input type="file" name ="field_'.$field->id.'" id="field_'.$field->id.'" /><br />';
+        $str .= get_string('file','data'). ': <input type="file" name ="field_'.$field->id.'" id="field_'.$field->id.'" title="'.$field->description.'" /><br />';
         $str .= get_string('optionalfilename','data').': <input type="text" name="field_'
                 .$field->id.'_1" id="field_'.$field->id.'_1" value="'.$displayname.'" /><br />';
         $str .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.$field->param4.'" />';
+        $str .= '</div>';
 
         //print icon
         if ($rid and isset($content)){
@@ -276,7 +278,7 @@ class data_field_file extends data_field_base {// extends
         $filepath = $CFG->dataroot.'/'.$course->id.'/'.$CFG->moddata.'/data/'.$dataid.'/'.$this->id.'/'.$recordid;
         unlink($filepath . '/' . $content);
         rmdir($filepath);
-        notify ($content.' deleted');
+        notify (get_string('file', 'data') . ' ' . $content . ' ' . get_string('deleted', 'data'));
     }
     
 }

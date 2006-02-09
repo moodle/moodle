@@ -71,10 +71,12 @@ class data_field_radiobutton extends data_field_base {
             $content = '';
         }
         $str = '';
-
+        /*
         if ($field->description) {
             $str .= '<img src="'.$CFG->pixpath.'/help.gif" alt="'.$field->description.'" title="'.$field->description.'" />&nbsp;';
         }
+        */
+        $str .= '<div title="'.$field->description.'">';
         
         foreach (explode("\n",$field->param1) as $radio) {
             $radio = ltrim(rtrim($radio));
@@ -91,6 +93,7 @@ class data_field_radiobutton extends data_field_base {
 
             $str .= $radio . '<br />';
         }
+        $str .= '</div>';
         return $str;
     }
 

@@ -10,15 +10,15 @@
         </td>
     </tr>
     <tr>
-        <td>Name:</td>
+        <td><?php echo get_string('fieldname', 'data'); ?>:</td>
         <td><input style="width:300px;" type="text" name="name" id="name" value="<?php echo($field->name); ?>" /></td>
     </tr>
     <tr>
-        <td>Description:</td>
+        <td><?php echo get_string('fielddescription', 'data'); ?>:</td>
         <td><input style="width:300px;" type="text" name="description" id="description" value="<?php echo($field->description); ?>" /></td>
     </tr>
     <tr>
-        <td>Allow Autolink:</td>
+        <td><?php echo get_string('fieldallowautolink', 'data'); ?>:</td>
         <td><input type="checkbox" name="param1" id="param1" <?php if($field->param1) {echo 'checked="checked"';} ?> value="1" /></td>
     </tr>
     <tr>

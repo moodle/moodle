@@ -89,12 +89,12 @@ class data_field_picture extends data_field_file {// extends
         }
 
         $str = '';
-
+        /*
         if ($field->description){
             $str .= '<img src="'.$CFG->pixpath.'/help.gif" alt="'.$field->description.'" title="'.$field->description.'">&nbsp;';
         }
-        
-        
+        */
+        $str .= '<div title="'.$field->description.'">';
         $str .= '<input type="hidden" name ="field_'.$field->id.'_0" id="field_'.$field->id.'"_0  value="fakevalue" />';
         $str .= get_string('picture','data'). ': <input type="file" name ="field_'.$field->id.'" id="field_'.$field->id.'" /><br />';
         $str .= get_string('optionaldescription','data') .': <input type="text" name="field_'
@@ -103,6 +103,7 @@ class data_field_picture extends data_field_file {// extends
         if ($rid and $contents[0]){
             $str .= '<img width="50" height="50" src="'.$source.'/'.$contents[0].'">';
         }
+        $str .= '</div>';
         return $str;
     }
 

@@ -8,7 +8,7 @@
     require_login();
 
     if (!isteacher()) {
-        error ('you need to be a teacher to use this page!');
+        error(get_string('errormustbeteacher', 'data'));
     }
 
     if (confirm_sesskey()
