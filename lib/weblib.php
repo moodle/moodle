@@ -4539,10 +4539,11 @@ class tabobject {
     var $text;
 
     /// A constructor just because I like constructors
-    function tabobject ($id, $link='', $text='') {
+    function tabobject ($id, $link='', $text='', $title='') {
         $this->id   = $id;
         $this->link = $link;
         $this->text = $text;
+        $this->title = $title ? $title : $text;
     }
 
 
@@ -4557,7 +4558,7 @@ class tabobject {
         if ($inactive || $activetwo || $selected) {
             $astr .= $this->text;
         } else {
-            $astr .= '<a href="'.$this->link.'" title="'.$this->text.'">'.$this->text.'</a>';
+            $astr .= '<a href="'.$this->link.'" title="'.$this->title.'">'.$this->text.'</a>';
         }
 
     /// There's an IE bug with background images in <a> tags
