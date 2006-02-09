@@ -7,7 +7,7 @@
 /// QUESTION TYPE CLASS //////////////////
 class quiz_random_qtype extends quiz_default_questiontype {
 
-    var $excludedtypes = array(RANDOM, RANDOMSAMATCH, ESSAY);
+    var $excludedtypes = array(RANDOM, RANDOMSAMATCH, ESSAY, DESCRIPTION);
 
     // Carries questions available as randoms sorted by category
     // This array is used when needed only
@@ -53,14 +53,17 @@ class quiz_random_qtype extends quiz_default_questiontype {
             } else {
                 $categorylist = $question->category;
             }
-            $catrandoms = get_records_sql
+            if ($catrandoms = get_records_sql
                     ("SELECT id,id FROM {$CFG->prefix}quiz_questions
                        WHERE category IN ($categorylist)
                          AND parent = '0'
                          AND id NOT IN ($cmoptions->questionsinuse)
-                         AND qtype NOT IN ($excludedtypes)");
-            $this->catrandoms[$question->category][$question->questiontext] =
+                         AND qtype NOT IN ($excludedtypes)")) {
+                $this->catrandoms[$question->category][$question->questiontext] =
                   draw_rand_array($catrandoms, count($catrandoms)); // from bug 1889
+            } else {
+                $this->catrandoms[$question->category][$question->questiontext] = array();
+            }
         }
 
         while ($wrappedquestion =
@@ -83,7 +86,7 @@ class quiz_random_qtype extends quiz_default_questiontype {
             }
         }
         $question->questiontext = '<span class="notifyproblem">'.
-         get_string('toomanyrandom', 'quiz', $question->category). '</span>';
+         get_string('toomanyrandom', 'quiz'). '</span>';
         $question->qtype = DESCRIPTION;
         $state->responses = array('' => '');
         return true;
@@ -111,7 +114,7 @@ class quiz_random_qtype extends quiz_default_questiontype {
             if (empty($state->responses[''])) {
                 // This is the case if there weren't enough questions available in the category.
                 $question->questiontext = '<span class="notifyproblem">'.
-                 get_string('toomanyrandom', 'quiz', $question->category). '</span>';
+                 get_string('toomanyrandom', 'quiz'). '</span>';
                 $question->qtype = DESCRIPTION;
                 return true;
             }
