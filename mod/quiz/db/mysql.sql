@@ -20,7 +20,7 @@ CREATE TABLE prefix_quiz (
   id int(10) unsigned NOT NULL auto_increment,
   course int(10) unsigned NOT NULL default '0',
   name varchar(255) NOT NULL default '',
-  intro text NOT NULL,
+  intro text NOT NULL default '',
   timeopen int(10) unsigned NOT NULL default '0',
   timeclose int(10) unsigned NOT NULL default '0',
   optionflags int(10) unsigned NOT NULL default '0',
@@ -33,7 +33,7 @@ CREATE TABLE prefix_quiz (
   questionsperpage int(10) NOT NULL default '0',
   shufflequestions tinyint(4) NOT NULL default '0',
   shuffleanswers tinyint(4) NOT NULL default '0',
-  questions text NOT NULL,
+  questions text NOT NULL default '',
   sumgrades int(10) NOT NULL default '0',
   grade int(10) NOT NULL default '0',
   timecreated int(10) unsigned NOT NULL default '0',
@@ -55,9 +55,9 @@ CREATE TABLE prefix_quiz (
 CREATE TABLE prefix_quiz_answers (
   id int(10) unsigned NOT NULL auto_increment,
   question int(10) unsigned NOT NULL default '0',
-  answer text NOT NULL,
+  answer text NOT NULL default '',
   fraction varchar(10) NOT NULL default '0.0',
-  feedback text NOT NULL,
+  feedback text NOT NULL default '',
   PRIMARY KEY  (id),
   KEY question (question)
 ) TYPE=MyISAM COMMENT='Answers, with a fractional grade (0-1) and feedback';
@@ -92,7 +92,7 @@ CREATE TABLE prefix_quiz_attempts (
   timestart int(10) unsigned NOT NULL default '0',
   timefinish int(10) unsigned NOT NULL default '0',
   timemodified int(10) unsigned NOT NULL default '0',
-  layout text NOT NULL,
+  layout text NOT NULL default '',
   preview tinyint(3) unsigned NOT NULL default '0',
   PRIMARY KEY  (id),
   KEY quiz (quiz),
@@ -128,7 +128,7 @@ CREATE TABLE prefix_quiz_categories (
   id int(10) unsigned NOT NULL auto_increment,
   course int(10) unsigned NOT NULL default '0',
   name varchar(255) NOT NULL default '',
-  info text NOT NULL,
+  info text NOT NULL default '',
   publish tinyint(4) NOT NULL default '0',
   stamp varchar(255) NOT NULL default '',
   parent int(10) unsigned NOT NULL default '0',
@@ -209,7 +209,7 @@ CREATE TABLE prefix_quiz_match (
 CREATE TABLE prefix_quiz_match_sub (
   id int(10) unsigned NOT NULL auto_increment,
   question int(10) unsigned NOT NULL default '0',
-  questiontext text NOT NULL,
+  questiontext text NOT NULL default '',
   answertext varchar(255) NOT NULL default '',
   PRIMARY KEY  (id),
   KEY question (question)
@@ -388,7 +388,7 @@ CREATE TABLE prefix_quiz_rqp (
   id int(10) unsigned NOT NULL auto_increment,
   question int(10) unsigned NOT NULL default '0',
   type int(10) unsigned NOT NULL default '0',
-  source longblob NOT NULL,
+  source longblob NOT NULL default '',
   format varchar(255) NOT NULL default '',
   flags tinyint(3) unsigned NOT NULL default '0',
   maxscore int(10) unsigned NOT NULL default '1',
@@ -420,9 +420,9 @@ CREATE TABLE prefix_quiz_rqp_servers (
 CREATE TABLE prefix_quiz_rqp_states (
   id int(10) unsigned NOT NULL auto_increment,
   stateid int(10) unsigned NOT NULL default '0',
-  responses text NOT NULL,
-  persistent_data text NOT NULL,
-  template_vars text NOT NULL,
+  responses text NOT NULL default '',
+  persistent_data text NOT NULL default '',
+  template_vars text NOT NULL default '',
   PRIMARY KEY  (id)
 ) TYPE=MyISAM COMMENT='RQP question type specific state information';
 
@@ -466,7 +466,7 @@ CREATE TABLE prefix_quiz_states (
   question int(10) unsigned NOT NULL default '0',
   originalquestion int(10) unsigned NOT NULL default '0',
   seq_number int(6) unsigned NOT NULL default '0',
-  answer text NOT NULL,
+  answer text NOT NULL default '',
   timestamp int(10) unsigned NOT NULL default '0',
   event int(4) unsigned NOT NULL default '0',
   grade varchar(10) NOT NULL default '0.0',
