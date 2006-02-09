@@ -33,6 +33,32 @@
     add_to_log($course->id, "choice", "report", "report.php?id=$cm->id", "$choice->id",$cm->id);
 
 
+        $action = optional_param('action', '');
+
+        switch($action) {
+            case 'delete':  /// Some attempts need to be deleted
+                // the following needs to be improved to delete all associated data as well
+
+                $attemptids = isset($_POST['attemptid']) ? $_POST['attemptid'] : array();
+                if(!is_array($attemptids) || empty($attemptids)) {
+                    break;
+                }
+
+                foreach($attemptids as $num => $attemptid) {
+                    if(empty($attemptid)) {
+                        unset($attemptids[$num]);
+                    }
+                }
+
+                foreach($attemptids as $attemptid) {
+                    if ($todelete = get_record('choice_answers', 'id', $attemptid)) {
+                        delete_records('choice_answers', 'id', $attemptid);
+                    }
+                }
+            break;
+        }
+
+
 /// Check to see if groups are being used in this choice
     if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
         $currentgroup = setup_and_print_groups($course, $groupmode, "report.php?id=$cm->id");
@@ -82,14 +108,14 @@
     if ($download == "xls") {
         require_once("$CFG->libdir/excellib.class.php");
   
-    /// Calculate file nale 
+    /// Calculate file name 
         $filename = clean_filename("$course->shortname ".strip_tags(format_string($choice->name,true))).'.xls';
     /// Creating a workbook
         $workbook = new MoodleExcelWorkbook("-");
     /// Send HTTP headers
         $workbook->send($filename);
     /// Creating the first worksheet
-        $myxls =& $workbook->add_worksheet('Responses');
+        $myxls =& $workbook->add_worksheet($strresponses);
 
     /// Print names of all the fields
         $myxls->write_string(0,0,get_string("lastname"));
@@ -128,9 +154,13 @@
     // print text file     
     if ($download == "txt") {
         $filename = clean_filename("$course->shortname ".strip_tags(format_string($choice->name,true))).'.txt';
-        header("Content-Type: application/download\n"); 
-        header("Content-Disposition: attachment; filename=\"".$filename."\"");
-
+            
+            header("Content-Type: application/download\n");
+            header("Content-Disposition: attachment; filename=\"$filename\"");
+            header("Expires: 0");
+            header("Cache-Control: must-revalidate,post-check=0,pre-check=0");
+            header("Pragma: public");
+            
     /// Print names of all the fields
 
         echo get_string("firstname")."\t".get_string("lastname") . "\t". get_string("idnumber") . "\t";
@@ -162,7 +192,10 @@
 
     switch ($format) {
         case CHOICE_PUBLISH_NAMES:
-
+                echo '<div id="tablecontainer">';
+                echo '<form id="attemptsform" method="post" action="report.php" onsubmit="var menu = document.getElementById(\'menuaction\'); return (menu.options[menu.selectedIndex].value == \'delete\' ? \''.addslashes(get_string('deleteattemptcheck','quiz')).'\' : true);">';
+                echo '<input type="hidden" name="id" value="'.$cm->id.'" />';
+                echo '<input type="hidden" name="mode" value="overview" />';
             $tablewidth = (int) (100.0 / count($useranswer));
 
             echo "<table cellpadding=\"5\" cellspacing=\"10\" align=\"center\" class=\"results names\">";
@@ -195,7 +228,10 @@
                 echo "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\">";
                 foreach ($userlist as $user) {
                     if (!($optionid==0 && isadmin($user->id)) && !($optionid==0 && isteacher($course->id, $user->id) && !(isteacheredit($course->id, $user->id)) )  ) { //make sure admins and hidden teachers are not shown in not answered yet column.
-                        echo "<tr><td width=\"10\" nowrap=\"nowrap\" class=\"picture\">";
+                        echo "<tr><td width=\"5\" nowrap=\"nowrap\">";
+                        echo '<input type="checkbox" name="attemptid[]" value="'. $answers[$user->id]->id. '" />';
+                        echo "</td><td width=\"10\" nowrap=\"nowrap\" class=\"picture\">";
+                        
                         print_user_picture($user->id, $course->id, $user->picture);
                         echo "</td><td width=\"100%\" nowrap=\"nowrap\" class=\"fullname\">";
                         echo "<p>".fullname($user, true)."</p>";
@@ -207,7 +243,25 @@
                 echo "</td>";
                 $count++;
             }
-            echo "</tr></table>";
+            echo "</tr><tr><td>";
+
+    /// Print "Select all" etc.
+           //     if (!empty($attempts)) {
+                    echo '<table id="commands">';
+                    echo '<tr><td>';
+                    echo '<a href="javascript:select_all_in(\'DIV\',null,\'tablecontainer\');">'.get_string('selectall', 'quiz').'</a> / ';
+                    echo '<a href="javascript:deselect_all_in(\'DIV\',null,\'tablecontainer\');">'.get_string('selectnone', 'quiz').'</a> ';
+                    echo '&nbsp;&nbsp;';
+                    $options = array('delete' => get_string('delete'));
+                    echo choose_from_menu($options, 'action', '', get_string('withselected', 'quiz'), 'if(this.selectedIndex > 0) submitFormById(\'attemptsform\');', '', true);
+                    echo '<noscript id="noscriptmenuaction" style="display: inline;">';
+                    echo '<input type="submit" value="'.get_string('go').'" /></noscript>';
+                    echo '<script type="text/javascript">'."\n<!--\n".'document.getElementById("noscriptmenuaction").style.display = "none";'."\n-->\n".'</script>';
+                    echo '</td></tr></table>';
+             //   }
+                echo "</td></tr></table></div>";
+    /// Close form
+                echo '</form>';
             break;
 
 
