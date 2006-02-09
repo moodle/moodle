@@ -1485,7 +1485,7 @@ function sesskey() {
 /* this function forces a user to log out */
 
 function require_logout() {
-
+    global $USER, $CFG;
     if (isset($USER) and isset($USER->id)) {
         add_to_log(SITEID, "user", "logout", "view.php?id=$USER->id&course=".SITEID, $USER->id, 0, $USER->id);
 
