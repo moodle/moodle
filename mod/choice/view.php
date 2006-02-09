@@ -319,7 +319,9 @@
                         echo "<tr><td width=\"10\" nowrap=\"nowrap\" class=\"picture\">";
                         print_user_picture($user->id, $course->id, $user->picture);
                         echo "</td><td width=\"100%\" nowrap=\"nowrap\" class=\"fullname\">";
+                        echo "<a href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id\">";
                         echo fullname($user, $isteacher);
+                        echo "</a>";
                         echo "</td></tr>";
                     }
                 }
