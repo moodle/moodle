@@ -4,7 +4,21 @@
     require_once("../../config.php");
     require_once("locallib.php");
 
-    $id = required_param('id');   // course id
+    // get values from form
+    $param = new stdClass();
+    $id = required_param('id',PARAM_INT);   // course id
+    $param->moveup = optional_param('moveup',0,PARAM_INT);
+    $param->movedown = optional_param('movedown',0,PARAM_INT);
+    $param->hide = optional_param('hide',0,PARAM_INT);
+    $param->delete = optional_param('delete',0,PARAM_INT);
+    $param->confirm = optional_param('confirm',0,PARAM_INT);
+    $param->cancel = optional_param('cancel','',PARAM_ALPHA);
+    $param->move = optional_param('move',0,PARAM_INT);
+    $param->moveto = optional_param('moveto',0,PARAM_INT);
+    $param->publish = optional_param('publish',0,PARAM_INT);
+    $param->addcategory = optional_param('addcategory','',PARAM_ALPHA);
+    $param->edit = optional_param('edit',0,PARAM_INT);
+    $param->updateid = optional_param('updateid',0,PARAM_INT);
 
     if (! $course = get_record("course", "id", $id)) {
         error("Course ID is incorrect");
@@ -20,57 +34,64 @@
         error("Only teachers authorized to edit the course '{$course->fullname}' can use this page!");
     }
 
-    /// Header:
+    if (isset($SESSION->modform->instance) and $quiz = get_record('quiz', 'id', $SESSION->modform->instance)) {
+        include('tabs.php');
+    }
+
+    $qcobject = new quiz_category_object();
+    $qcobject->set_course($course);
+
+    //==========
+    // ACTIONS
+    //==========
+
+    if (isset($_REQUEST['sesskey']) and confirm_sesskey()) { // sesskey must be ok
+        if (!empty($param->delete) and empty($param->cancel)) {
+            if (!empty($param->confirm)) {
+                /// 'confirm' is the category to move existing questions to
+                $qcobject->delete_category($param->delete, $param->confirm);
+            } else {
+                $qcobject->delete_category($param->delete);
+            }
+        } else if (!empty($param->moveup)) {
+            $qcobject->move_category_up_down('up', $param->moveup);
+        } else if (!empty($param->movedown)) {
+            $qcobject->move_category_up_down('down', $param->movedown);
+        } else if (!empty($param->hide)) {
+            $qcobject->publish_category(false, $param->hide);
+        } else if (!empty($param->move) and !empty($param->moveto)) {
+            $qcobject->move_category($param->move, $param->moveto);
+        } else if (!empty($param->publish)) {
+            $qcobject->publish_category(true, $param->publish);
+        } else if (!empty($param->addcategory)) {
+            $param->newparent   = required_param('newparent',PARAM_INT);
+            $param->newcategory = required_param('newcategory',PARAM_ALPHANUM);
+            $param->newinfo     = required_param('newinfo',PARAM_CLEAN);
+            $param->newpublish  = required_param('newpublish',PARAM_INT);
+            $qcobject->add_category($param->newparent, $param->newcategory, $param->newinfo,
+                $param->newpublish, $course->id);
+        } else if (!empty($param->edit)) {
+            $qcobject->edit_single_category($param->edit);
+        } else if (!empty($param->updateid)) {
+            $param->updateparent  = required_param('updateparent',PARAM_INT);
+            $param->updatename    = required_param('updatename',PARAM_ALPHANUM);
+            $param->updateinfo    = required_param('updateinfo',PARAM_CLEAN);
+            $param->updatepublish = required_param('updatepublish',PARAM_INT);
+            $qcobject->update_category($param->updateid, $param->updateparent, $param->updatename,
+                $param->updateinfo, $param->updatepublish, $course->id);
+        }
+    }
+
+    //==========
+    // DISPLAY
+    //==========
+
     print_header_simple(get_string('editcategories', 'quiz'), '',
                  "<a href=\"index.php?id=$course->id\">".get_string('modulenameplural', 'quiz').'</a>'.
                  '-> <a href="edit.php">'.get_string('editquestions', 'quiz').'</a>'.
                  ' -> '.get_string('editcategories', 'quiz'));
 
-    if (isset($SESSION->modform->instance) and $quiz = get_record('quiz', 'id', $SESSION->modform->instance)) {
-        include('tabs.php');
-    }
-
-    /// CHECK FOR AND ACT UPON VARIABLES SUBMITTED VIA GET OR POST
-    $qcobject = new quiz_category_object();
-    $qcobject->set_course($course);
-
-    // Execute commands, but only if sesskey is o.k.
-    if (isset($_REQUEST['sesskey']) and confirm_sesskey()) {
-        if (isset($_REQUEST['delete']) and !isset($_REQUEST['cancel'])) {
-            if (isset($_REQUEST['confirm'])) {
-                /// 'confirm' is the category to move existing questions to
-                $qcobject->delete_category($_REQUEST['delete'], $_REQUEST['confirm']);
-            } else {
-                $qcobject->delete_category($_REQUEST['delete']);
-            }
-        } else if (isset($_REQUEST['moveup'])) {
-            $qcobject->move_category_up_down('up', $_REQUEST['moveup']);
-        } else if (isset($_REQUEST['movedown'])) {
-            $qcobject->move_category_up_down('down', $_REQUEST['movedown']);
-        } else if (isset($_REQUEST['hide'])) {
-            $qcobject->publish_category(false, $_REQUEST['hide']);
-        } else if (isset($_REQUEST['move']) and isset($_REQUEST['moveto'])) {
-            $qcobject->move_category($_REQUEST['move'], $_REQUEST['moveto']);
-        } else if (isset($_REQUEST['publish'])) {
-            $qcobject->publish_category(true, $_REQUEST['publish']);
-        } else if (isset($_REQUEST['addcategory'])) {
-            $newparent   = required_param('newparent');
-            $newcategory = required_param('newcategory');
-            $newinfo     = required_param('newinfo');
-            $newpublish  = required_param('newpublish');
-            $qcobject->add_category($newparent, $newcategory, $newinfo, $newpublish, $course->id);
-        } else if (isset($_REQUEST['edit'])) {
-            $qcobject->edit_single_category($_REQUEST['edit']);
-        } else if (isset($_REQUEST['updateid'])) {
-            $updateparent  = required_param('updateparent');
-            $updatename    = required_param('updatename');
-            $updateinfo    = required_param('updateinfo');
-            $updatepublish = required_param('updatepublish');
-            $qcobject->update_category($_REQUEST['updateid'], $updateparent, $updatename, $updateinfo, $updatepublish, $course->id);
-        }
-    }
-
-    /// DISPLAY THE NORMAL USER INTERFACE
+    // display the user interface
     $qcobject->display_user_interface();
 
     print_footer($course);
