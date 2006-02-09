@@ -1242,7 +1242,7 @@ function grade_download($download, $id) {
                 $myxls->write_string($i,5,$student->email);
                 $j=6;
                 foreach ($studentgrades as $grade) {
-                    if (is_numeric($grades)) {
+                    if (is_numeric($grade)) {
                         $myxls->write_number($i,$j++,strip_tags($grade));
                     }
                     else {
