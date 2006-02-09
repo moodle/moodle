@@ -306,7 +306,7 @@
 
 <?php if (!$CFG->quiz_fix_decimalpoints) { ?>
     <tr valign="top">
-        <td align="right"><b><?php print_string("decimalpoints", "quiz") ?>:</b></td>
+        <td align="right"><b><?php print_string("decimaldigits", "quiz") ?>:</b></td>
          <td align="left">
          <?php
             unset($options);
@@ -315,7 +315,7 @@
             $options[2] = '2';
             $options[3] = '3';
             choose_from_menu($options, "decimalpoints", "$form->decimalpoints", "");
-            helpbutton("decimalpoints", get_string("decimalpoints","quiz"), "quiz");
+            helpbutton("decimalpoints", get_string("decimaldigits","quiz"), "quiz");
          ?>
         </td>
     </tr>
@@ -558,7 +558,7 @@
 
 <?php if ($CFG->quiz_fix_decimalpoints) { ?>
     <tr valign="top">
-        <td align="right"><b><?php print_string("decimalpoints", "quiz") ?>:</b></td>
+        <td align="right"><b><?php print_string("decimaldigits", "quiz") ?>:</b></td>
          <td align="left">
          <?php
             unset($options);
@@ -567,7 +567,7 @@
             $options[2] = '2';
             $options[3] = '3';
             choose_from_menu($options, "decimalpoints", "$form->decimalpoints", "");
-            helpbutton("decimalpoints", get_string("decimalpoints","quiz"), "quiz");
+            helpbutton("decimalpoints", get_string("decimaldigits","quiz"), "quiz");
          ?>
         </td>
     </tr>
@@ -658,12 +658,8 @@
 <input type="hidden" name="modulename"    value="<?php p($form->modulename) ?>" />
 <input type="hidden" name="instance"      value="<?php p($form->instance) ?>" />
 <input type="hidden" name="mode"          value="<?php p($form->mode) ?>" />
-<input type="submit" value="<?php  print_string("savechanges") ?>" />
-<!-- provide an additional button to edit questions -->
-<?php if ($form->instance) { ?>
 <input type="hidden" name="redirecturl" value="<?php p("$CFG->wwwroot/mod/quiz/edit.php?quizid=$form->instance") ?>" />
-<input type="submit" name="redirect" value="<?php print_string('saveandedit', 'quiz') ?>" />
-<?php } ?>
+<input type="submit" name="redirect" value="<?php print_string("savechanges") ?>" />
 <input type="submit" name="cancel" value="<?php  print_string("cancel") ?>" />
 </center>
 </form>

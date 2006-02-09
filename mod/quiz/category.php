@@ -1,5 +1,13 @@
 <?php // $Id$
-      // Allows a teacher to create, edit and delete categories
+/**
+* Allows a teacher to create, edit and delete categories
+*
+* @version $Id$
+* @author Martin Dougiamas and many others.
+*         {@link http://moodle.org}
+* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+* @package quiz
+*/
 
     require_once("../../config.php");
     require_once("locallib.php");
@@ -34,8 +42,25 @@
         error("Only teachers authorized to edit the course '{$course->fullname}' can use this page!");
     }
 
+    /// Header:
+
     if (isset($SESSION->modform->instance) and $quiz = get_record('quiz', 'id', $SESSION->modform->instance)) {
+        $strupdatemodule = isteacheredit($course->id)
+            ? update_module_button($SESSION->modform->cmid, $course->id, get_string('modulename', 'quiz'))
+            : "";
+        print_header_simple(get_string('editcategories', 'quiz'), '',
+                 "<a href=\"index.php?id=$course->id\">".get_string('modulenameplural', 'quiz').'</a>'.
+                 " -> <a href=\"view.php?q=$quiz->id\">".format_string($quiz->name).'</a>'.
+                 ' -> '.get_string('editcategories', 'quiz'),
+                 "", "", true, $strupdatemodule);
+        $currenttab = 'edit';
+        $mode = 'categories';
         include('tabs.php');
+    } else {
+        print_header_simple(get_string('editcategories', 'quiz'), '',
+                 "<a href=\"index.php?id=$course->id\">".get_string('modulenameplural', 'quiz').'</a>'.
+                 '-> <a href="edit.php">'.get_string('editquestions', 'quiz').'</a>'.
+                 ' -> '.get_string('editcategories', 'quiz'));
     }
 
     $qcobject = new quiz_category_object();

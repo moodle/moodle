@@ -1,24 +1,40 @@
 <?php // $Id$
-      // Import quiz questions into the given category
+/**
+* Export quiz questions into the given category
+*
+* @version $Id$
+* @author Martin Dougiamas, Howard Miller, and many others.
+*         {@link http://moodle.org}
+* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+* @package quiz
+*/
 
     require_once("../../config.php");
-    require_once("locallib.php");
+    require_once("locallib.php"); // TODO: this should not need locallib.php
+    require_once('questionlib.php');
 
-    $category = required_param('category',PARAM_INT);
+    $categoryid = optional_param('category',0, PARAM_INT);
     $courseid = required_param('courseid',PARAM_INT);
     $format = optional_param('format','', PARAM_CLEANFILE );
     $exportfilename = optional_param('exportfilename','',PARAM_CLEANFILE );
 
-    if (! $category = get_record("quiz_categories", "id", $category)) {
-        error("This wasn't a valid category!");
+    if (! $course = get_record("course", "id", $courseid)) {
+        error("Course does not exist!");
+    }
+    
+    if (!$categoryid) { // need to get category from modform
+        $showcatmenu = true; // will ensure that user can choose category
+        if (isset($SESSION->modform)) {
+            $categoryid = $SESSION->modform->category;
+        }
+    }
+
+    if (! $category = get_record("quiz_categories", "id", $categoryid)) {
+        $category = quiz_get_default_category($courseid);
     }
 
     if (! $categorycourse = get_record("course", "id", $category->course)) {
         error("This category doesn't belong to a valid course!");
-    }
-
-    if (! $course = get_record("course", "id", $courseid)) {
-        error("Course does not exist!");
     }
 
     require_login($course->id, false);
@@ -37,9 +53,27 @@
     $streditingquiz = get_string(isset($SESSION->modform->instance) ? "editingquiz" : "editquestions", "quiz");
 
     $dirname = get_string("exportfilename","quiz");
-    print_header_simple("$strexportquestions", "$strexportquestions",
-                 "<a href=\"$CFG->wwwroot/mod/$dirname/index.php?id=$course->id\">$strquizzes</a>".
-                  " -> <a href=\"edit.php\">$streditingquiz</a> -> $strexportquestions");
+    
+    /// Header:
+
+    if (isset($SESSION->modform->instance) and $quiz = get_record('quiz', 'id', $SESSION->modform->instance)) {
+        $strupdatemodule = isteacheredit($course->id)
+            ? update_module_button($SESSION->modform->cmid, $course->id, get_string('modulename', 'quiz'))
+            : "";
+        print_header_simple($strexportquestions, '',
+                 "<a href=\"index.php?id=$course->id\">".get_string('modulenameplural', 'quiz').'</a>'.
+                 " -> <a href=\"view.php?q=$quiz->id\">".format_string($quiz->name).'</a>'.
+                 ' -> '.$strexportquestions,
+                 "", "", true, $strupdatemodule);
+        $currenttab = 'edit';
+        $mode = 'export';
+        include('tabs.php');
+    } else {
+        print_header_simple($strexportquestions, '',
+                 "<a href=\"index.php?id=$course->id\">".get_string('modulenameplural', 'quiz').'</a>'.
+                 '-> <a href="edit.php">'.get_string('editquestions', 'quiz').'</a>'.
+                 ' -> '.$strexportquestions);
+    }
 
     if (!empty($format)) {   /// Filename
 
@@ -101,6 +135,20 @@
         $exportfilename = default_export_filename($course, $category);
     }
 
+    /// Get all the existing categories now
+    if (!$categories = get_records_select("quiz_categories", "course = '{$course->id}' OR publish = '1'", "parent, sortorder, name ASC")) {
+        error("Could not find any question categories!");
+    }
+    $categories = add_indented_names($categories);
+    foreach ($categories as $key => $cat) {
+       if ($catcourse = get_record("course", "id", $cat->course)) {
+           if ($cat->publish && $cat->course != $course->id) {
+               $cat->indentedname .= " ($catcourse->shortname)";
+           }
+           $catmenu[$cat->id] = $cat->indentedname;
+       }
+    }
+    
     print_heading_with_help($strexportquestions, "export", "quiz");
 
     print_simple_box_start("center");
@@ -111,7 +159,13 @@
     echo "<tr><td align=\"right\">\n";
     print_string("category", "quiz");
     echo ":</td><td>";
-    echo str_replace('&nbsp;', '', $category->name) . " ($categorycourse->shortname)";
+    if (!$showcatmenu) { // category already specified
+        echo quiz_get_category_coursename($category);
+        echo " <input type=\"hidden\" name=\"category\" value=\"$category->id\" />";
+    } else { // no category specified, let user choose
+        choose_from_menu($catmenu, "category", $category->id, "");
+    }
+    //echo str_replace('&nbsp;', '', $category->name) . " ($categorycourse->shortname)";
     echo "</td></tr>\n";
 
     echo "<tr><td align=\"right\">";
@@ -128,7 +182,6 @@
     echo "</td></tr>\n";
 
     echo "<tr><td align=\"center\" colspan=\"2\">";
-    echo " <input type=\"hidden\" name=\"category\" value=\"$category->id\" />";
     echo " <input type=\"hidden\" name=\"courseid\" value=\"$course->id\" />";
     echo " <input type=\"submit\" name=\"save\" value=\"".get_string("exportquestions","quiz")."\" />";
     echo "</td></tr>\n";

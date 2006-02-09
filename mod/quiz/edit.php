@@ -405,6 +405,7 @@ if (self.name == 'editquestion') {
                  true, $strupdatemodule);
 
         $currenttab = 'edit';
+        $mode = 'editq';
         $quiz = &$modform;
         include('tabs.php');
 
@@ -457,6 +458,7 @@ if (self.name == 'editquestion') {
                  "", "", true, $strupdatemodule);
 
         $currenttab = 'edit';
+        $mode = 'editq';
         $quiz = &$modform;
         include('tabs.php');
 

@@ -1,14 +1,35 @@
 <?php // $Id$
-      // Import quiz questions into the given category
+/**
+* Import quiz questions into the given category
+*
+* @version $Id$
+* @author Martin Dougiamas, Howard Miller, and many others.
+*         {@link http://moodle.org}
+* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+* @package quiz
+*/
 
     require_once("../../config.php");
-    require_once("locallib.php");
+    require_once("locallib.php"); // TODO: this should not need locallib.php
+    require_once('questionlib.php');
 
-    $category = required_param('category', PARAM_INT);
+    $categoryid = optional_param('category', 0, PARAM_INT);
+    $courseid = optional_param('course', 0, PARAM_INT);
     $format = optional_param('format','',PARAM_CLEANFILE);
 
-    if (! $category = get_record("quiz_categories", "id", $category)) {
-        error("This wasn't a valid category!");
+    if (!$categoryid) { // need to get category from modform
+        $showcatmenu = true; // will ensure that user can choose category
+        if (isset($SESSION->modform)) {
+            $categoryid = $SESSION->modform->category;
+        }
+    }
+
+    if (! $category = get_record("quiz_categories", "id", $categoryid)) {
+        if ($courseid) {
+            $category = quiz_get_default_category($courseid);
+        } else {
+            error("No category specified");
+        }
     }
 
     if (! $course = get_record("course", "id", $category->course)) {
@@ -31,9 +52,28 @@
     $strquizzes = get_string('modulenameplural', 'quiz');
     $streditingquiz = get_string(isset($SESSION->modform->instance) ? "editingquiz" : "editquestions", "quiz");
 
-    print_header_simple("$strimportquestions", "$strimportquestions",
-                 "<a href=\"$CFG->wwwroot/mod/quiz/index.php?id=$course->id\">$strquizzes</a>".
-                  " -> <a href=\"edit.php\">$streditingquiz</a> -> $strimportquestions");
+    
+    /// Header:
+
+    if (isset($SESSION->modform->instance) and $quiz = get_record('quiz', 'id', $SESSION->modform->instance)) {
+        $strupdatemodule = isteacheredit($course->id)
+            ? update_module_button($SESSION->modform->cmid, $course->id, get_string('modulename', 'quiz'))
+            : "";
+        print_header_simple($strimportquestions, '',
+                 "<a href=\"index.php?id=$course->id\">".get_string('modulenameplural', 'quiz').'</a>'.
+                 " -> <a href=\"view.php?q=$quiz->id\">".format_string($quiz->name).'</a>'.
+                 ' -> '.$strimportquestions,
+                 "", "", true, $strupdatemodule);
+        $currenttab = 'edit';
+        $mode = 'import';
+        include('tabs.php');
+    } else {
+        print_header_simple($strimportquestions, '',
+                 "<a href=\"index.php?id=$course->id\">".get_string('modulenameplural', 'quiz').'</a>'.
+                 '-> <a href="edit.php">'.get_string('editquestions', 'quiz').'</a>'.
+                 ' -> '.$strimportquestions);
+    }
+
 
     if (!empty($format)) {   /// Filename
 
@@ -89,6 +129,20 @@
 
     print_heading_with_help($strimportquestions, "import", "quiz");
 
+    /// Get all the existing categories now
+    if (!$categories = get_records_select("quiz_categories", "course = '{$course->id}' OR publish = '1'", "parent, sortorder, name ASC")) {
+        error("Could not find any question categories!");
+    }
+    $categories = add_indented_names($categories);
+    foreach ($categories as $key => $cat) {
+       if ($catcourse = get_record("course", "id", $cat->course)) {
+           if ($cat->publish && $cat->course != $course->id) {
+               $cat->indentedname .= " ($catcourse->shortname)";
+           }
+           $catmenu[$cat->id] = $cat->indentedname;
+       }
+    }
+    
     print_simple_box_start("center");
     echo "<form enctype=\"multipart/form-data\" method=\"post\" action=\"import.php\">\n";
     echo "<input type=\"hidden\" name=\"sesskey\" value=\"" . sesskey() . "\" />\n";
@@ -97,8 +151,12 @@
     echo "<tr><td align=\"right\">";
     print_string("category", "quiz");
     echo ":</td><td>";
-    // choose_from_menu($categories, "category", "$category->id", "");
-    echo quiz_get_category_coursename($category);
+    if (!showcatmenu) { // category already specified
+        echo quiz_get_category_coursename($category);
+        echo " <input type=\"hidden\" name=\"category\" value=\"$category->id\" />";
+    } else { // no category specified, let user choose
+        choose_from_menu($catmenu, "category", $category->id, "");
+    }
     echo "</tr>\n";
 
     echo "<tr><td align=\"right\">";
@@ -114,7 +172,6 @@
     require_once($CFG->dirroot.'/lib/uploadlib.php');
     upload_print_form_fragment(1,array('newfile'),null,false,null,$course->maxbytes,0,false);
     echo "</tr><tr><td>&nbsp;</td><td>";
-    echo " <input type=\"hidden\" name=\"category\" value=\"$category->id\" />";
     echo " <input type=\"submit\" name=\"save\" value=\"".get_string("uploadthisfile")."\" />";
     echo "</td></tr>\n";
 

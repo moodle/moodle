@@ -240,7 +240,7 @@
 </tr>
 
 <tr valign="top">
-  <td align="right"><b><?php print_string("decimalpoints", "quiz") ?>:</b></td>
+  <td align="right"><b><?php print_string("decimaldigits", "quiz") ?>:</b></td>
   <td>
     <?php
        unset($options);
@@ -249,7 +249,7 @@
        $options[2] = '2';
        $options[3] = '3';
        choose_from_menu ($options, "decimalpoints", $form->decimalpoints, "", "", "");
-       helpbutton("decimalpoints", get_string("decimalpoints","quiz"), "quiz");
+       helpbutton("decimalpoints", get_string("decimaldigits","quiz"), "quiz");
     ?>
   </td>
   <td align="center">
