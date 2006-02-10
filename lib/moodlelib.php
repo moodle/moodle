@@ -5142,19 +5142,19 @@ function get_list_of_currencies() {
 
     $lang = current_language();
 
-    if (!file_exists($CFG->dirroot .'/lang/'. $lang .'/currencies.php')) {
+    if (!file_exists($CFG->dataroot .'/lang/'. $lang .'/currencies.php')) {
         if ($parentlang = get_string('parentlanguage')) {
-            if (file_exists($CFG->dirroot .'/lang/'. $parentlang .'/currencies.php')) {
+            if (file_exists($CFG->dataroot .'/lang/'. $parentlang .'/currencies.php')) {
                 $lang = $parentlang;
             } else {
-                $lang = 'en';  // currencies.php must exist in this pack
+                $lang = 'en_utf8';  // currencies.php must exist in this pack
             }
         } else {
-            $lang = 'en';  // currencies.php must exist in this pack
+            $lang = 'en_utf8';  // currencies.php must exist in this pack
         }
     }
 
-    include($CFG->dirroot .'/lang/'. $lang .'/currencies.php');
+    include($CFG->dataroot .'/lang/'. $lang .'/currencies.php');
 
     if (!empty($string)) {
         asort($string);
