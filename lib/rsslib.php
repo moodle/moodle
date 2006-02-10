@@ -16,15 +16,9 @@ function rss_get_link($courseid, $userid, $modulename, $id, $tooltiptext='') {
     }
 
     if ($CFG->slasharguments) {
-        $rsspath = "$CFG->wwwroot/rss/file.php/$courseid";
+        $rsspath = "$CFG->wwwroot/rss/file.php/$courseid/$userid/$modulename/$id/rss.xml";
     } else {
-        $rsspath = "$CFG->wwwroot/rss/file.php?file=/$courseid";
-    }
-    if (!empty($userid)) {
-        $rsspath .= "/$userid/$modulename/$id/rss.xml";
-    }
-    else {
-        $rsspath .= "/$modulename/$id/rss.xml";
+        $rsspath = "$CFG->wwwroot/rss/file.php?file=/$courseid/$userid/$modulename/$id/rss.xml";
     }
     
     $rsspix = $CFG->pixpath .'/i/rss.gif';
