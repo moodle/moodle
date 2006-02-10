@@ -17,7 +17,9 @@ function getsettletime($time)
 {
     global $CFG;
 
-    $cutoff = intval($CFG->an_cutoff); $hrs = $cutoff / 60; $mins = $cutoff % 60;
+    $cutoff = intval($CFG->an_cutoff);
+    $mins = $cutoff % 60;
+    $hrs = ($cutoff - $mins) / 60;
     $cutofftime = strtotime("$hrs:$mins", $time);
     if ($cutofftime < $time) {
         $cutofftime = strtotime("$hrs:$mins", $time + (24 * 3600));
@@ -196,7 +198,6 @@ function authorizenet_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE
         $referer = "Referer: $CFG->an_referer\r\n";
     }
 
-    $response = array();
     $host = $test ? 'certification.authorize.net' : 'secure.authorize.net';
     $fp = fsockopen("ssl://$host", 443, $errno, $errstr, 60);
     if (!$fp) {
