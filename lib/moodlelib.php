@@ -5154,8 +5154,9 @@ function get_list_of_currencies() {
         }
     }
 
-    include($CFG->dataroot .'/lang/'. $lang .'/currencies.php');
-    if ($lang == 'en_utf8') {    //if en_utf8 is not installed in dataroot
+    if (file_exists($CFG->dataroot .'/lang/'. $lang .'/currencies.php')) {
+        include_once($CFG->dataroot .'/lang/'. $lang .'/currencies.php');
+    } else {    //if en_utf8 is not installed in dataroot
         include_once($CFG->dirroot .'/lang/'. $lang .'/currencies.php');
     }
 
