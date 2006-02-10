@@ -4,6 +4,7 @@
 // see locallib.php for other non-standard exercise functions
 
 require_once($CFG->libdir.'/filelib.php');
+require_once('locallib.php');
 
 /*** Constants **********************************/
 
@@ -282,26 +283,26 @@ function exercise_delete_instance($id) {
 /*******************************************************************/
 function exercise_grades($exerciseid) {
 /// Must return an array of grades, indexed by user, and a max grade.
-    
     if (!$exercise = get_record("exercise", "id", $exerciseid)) {
         error("Exercise record not found");
     }
+    
     if (! $course = get_record("course", "id", $exercise->course)) {
         error("Course is misconfigured");
     }
+    
     if (!$return->maxgrade = ($exercise->grade + $exercise->gradinggrade)) {
         return NULL;
     }
-
     // how to handle multiple submissions?
     if ($exercise->usemaximum) {
-        // first get the teacher's grade for the best submission
         if ($bestgrades = exercise_get_best_submission_grades($exercise)) {
             foreach ($bestgrades as $grade) {
                 $usergrade[$grade->userid] = $grade->grade * $exercise->grade / 100.0;
             }
         }
     }
+    
     else { // use mean values
         if ($meangrades = exercise_get_mean_submission_grades($exercise)) {
             foreach ($meangrades as $grade) {
@@ -324,7 +325,6 @@ function exercise_grades($exerciseid) {
             $return->grades[$userid] = number_format($g, 1);
         }
     }
-    
     return $return;
 }
 
