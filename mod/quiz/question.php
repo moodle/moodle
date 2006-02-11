@@ -325,6 +325,9 @@
     if (!isset($question->penalty)) {
         $question->penalty = 0.1;
     }
+    if (!isset($question->defaultgrade)) {
+        $question->defaultgrade = 1;
+    }
 
     // Set up some Richtext editing if necessary
     if ($usehtmleditor = can_use_richtext_editor()) {
