@@ -4,10 +4,8 @@
 /// RANDOMSAMATCH ///
 /////////////////////
 
-/// The use of this question type together with the
-/// question type RANDOM within the same quiz can cause
-/// a shortanswer question to appear in a RANDOM question
-/// as well as one of the matcher questions in a question of this type
+/// TODO: Make sure short answer questions chosen by a randomsamatch question
+/// can not also be used by a random question
 
 /// QUESTION TYPE CLASS //////////////////
 class quiz_randomsamatch_qtype extends quiz_match_qtype {

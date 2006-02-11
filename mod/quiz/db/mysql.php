@@ -877,6 +877,12 @@ function quiz_upgrade($oldversion) {
         table_column('quiz', '', 'delay2', 'integer', '10', 'unsigned', '0', 'not null', 'delay1');
     }
 
+    if ($oldversion < 2006021101) {
+        // set defaultgrade field properly (probably not necessary, but better make sure)
+        execute_sql("UPDATE {$CFG->prefix}quiz_questions SET defaultgrade = '1' WHERE defaultgrade = '0'", false);
+        execute_sql("UPDATE {$CFG->prefix}quiz_questions SET defaultgrade = '0' WHERE qtype = '".DESCRIPTION."'", false);
+    }
+
     return true;
 }
 

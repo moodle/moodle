@@ -132,14 +132,9 @@ function quiz_add_quiz_question($id, &$modform) {
 
     // update question grades
     $questionrecord = get_record("quiz_questions", "id", $id);
-    if (!empty($questionrecord->defaultgrade)) {
-        $modform->grades[$id] = $questionrecord->defaultgrade;
-    } else if ($questionrecord->qtype == DESCRIPTION){
-        $modform->grades[$id] = 0;
-    } else {
-        $modform->grades[$id] = 1;
-    }
+    $modform->grades[$id] = $questionrecord->defaultgrade;
     quiz_update_question_instance($modform->grades[$id], $id, $modform->instance);
+
     return true;
 }
 

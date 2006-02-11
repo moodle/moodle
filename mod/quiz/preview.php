@@ -75,15 +75,18 @@
         error("Quiz id $quizid does not exist");
     }
 
-    $quiz->id = 0; // just for safety
-    $quiz->questions = $id;
-
     // Load the question information
     if (!$questions = get_records('quiz_questions', 'id', $id)) {
         error('Could not load question');
     }
-    $questions[$id]->quiz = 0;
-    $questions[$id]->maxgrade = 1;
+    if ($maxgrade = get_field('quiz_question_instances', 'grade', 'quiz', $quiz->id, 'question', $id)) {
+        $questions[$id]->maxgrade = $maxgrade;
+    } else {
+        $questions[$id]->maxgrade = $questions[$id]->defaultgrade;
+    }
+
+    $quiz->id = 0; // just for safety
+    $quiz->questions = $id;
 
     if (!$category = get_record("quiz_categories", "id", $questions[$id]->category)) {
         error("This question doesn't belong to a valid category!");
