@@ -357,6 +357,21 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
 
         return true;
     }
+
+    function get_actual_response($question, $state) {
+        global $QUIZ_QTYPES;
+        $teststate = clone($state);
+        foreach($question->options->questions as $key => $wrapped) {
+            $state->responses[$key] = html_entity_decode($state->responses[$key]);
+            $teststate->responses = array('' => $state->responses[$key]);
+            $correct = $QUIZ_QTYPES[$wrapped->qtype]
+             ->get_actual_response($wrapped, $teststate);
+            // change separator here if you want
+            $responsesseparator = ',';
+            $responses[$key] = implode($responsesseparator, $correct);
+        }
+        return $responses;
+    }
 }
 //// END OF CLASS ////
 
