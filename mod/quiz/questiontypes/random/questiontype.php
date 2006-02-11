@@ -231,20 +231,6 @@ class quiz_random_qtype extends quiz_default_questiontype {
          ->compare_responses($wrappedquestion, $state, $teststate);
     }
 
-    function print_replacement_options($question, $course, $quizid='0') {
-        global $QUIZ_QTYPES;
-        $wrappedquestion = &$state->options->question;
-        return $QUIZ_QTYPES[$wrappedquestion->qtype]
-         ->print_replacement_options($wrappedquestion, $state, $quizid);
-    }
-
-    function print_question_form_end($question, $submitscript='') {
-        global $QUIZ_QTYPES;
-        $wrappedquestion = &$state->options->question;
-        return $QUIZ_QTYPES[$wrappedquestion->qtype]
-         ->print_question_form_end($wrappedquestion, $state, $quizid);
-    }
-
 }
 //// END OF CLASS ////
 
