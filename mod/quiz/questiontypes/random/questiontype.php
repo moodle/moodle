@@ -162,7 +162,7 @@ class quiz_random_qtype extends quiz_default_questiontype {
         if(false === $response) {
             return false;
         }
-        $response = addslashes($response);
+
         // Prefix the answer field...
         $response = "random$realqid-$response";
 
@@ -226,20 +226,6 @@ class quiz_random_qtype extends quiz_default_questiontype {
         $wrappedquestion = &$state->options->question;
         return $QUIZ_QTYPES[$wrappedquestion->qtype]
          ->compare_responses($wrappedquestion, $state, $teststate);
-    }
-
-    function print_replacement_options($question, $course, $quizid='0') {
-        global $QUIZ_QTYPES;
-        $wrappedquestion = &$state->options->question;
-        return $QUIZ_QTYPES[$wrappedquestion->qtype]
-         ->print_replacement_options($wrappedquestion, $state, $quizid);
-    }
-
-    function print_question_form_end($question, $submitscript='') {
-        global $QUIZ_QTYPES;
-        $wrappedquestion = &$state->options->question;
-        return $QUIZ_QTYPES[$wrappedquestion->qtype]
-         ->print_question_form_end($wrappedquestion, $state, $quizid);
     }
 
 }
