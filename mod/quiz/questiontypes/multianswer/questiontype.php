@@ -38,8 +38,11 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
             if (!$QUIZ_QTYPES[$wrapped->qtype]->get_question_options($wrapped)) {
                 notify("Unable to get options for questiontype {$wrapped->qtype} (id={$wrapped->id})");
             }
+            // for wrapped questions the maxgrade is always equal to the defaultgrade,
+            // there is no entry in the quiz_question_instances table for them
             $wrapped->maxgrade = $wrapped->defaultgrade;
-            $question->options->questions[$sequence[$wrapped->id]] = clone($wrapped);
+            
+            $question->options->questions[$sequence[$wrapped->id]] = clone($wrapped); // ??? Why do we need a clone here?
         }
 
         return true;
@@ -47,6 +50,15 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
 
     function save_question_options($question) {
         global $QUIZ_QTYPES;
+        
+        // This function needs to be able to handle the case where the existing set of wrapped
+        // questions does not match the new set of wrapped questions so that some need to be
+        // created, some modified and some deleted
+        // Unfortunately the code currently simply overwrites existing ones in sequence. This
+        // will make re-marking after a re-ordering of wrapped questions impossible and 
+        // will also create difficulties if questiontype specific tables reference the id.
+        
+        // First we get all the existing wrapped questions
         if (!$oldwrappedids = get_records('quiz_questions', 'parent', $question->id, '', 'id, id')) {
          // We need to select 'id, id' because the first one is consumed by
          // get_records.
@@ -55,6 +67,7 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
         $oldwrappedids = array_keys($oldwrappedids);
         $sequence = array();
         foreach($question->options->questions as $wrapped) {
+            // if we still have some old wrapped question ids, reuse the next of them
             if ($oldwrappedid = array_shift($oldwrappedids)) {
                 $wrapped->id = $oldwrappedid;
             }
@@ -327,6 +340,21 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
         $state->penalty = $question->penalty * $question->maxgrade;
 
         return true;
+    }
+
+    function get_actual_response($question, $state) {
+        global $QUIZ_QTYPES;
+        $teststate = clone($state);
+        foreach($question->options->questions as $key => $wrapped) {
+            $state->responses[$key] = html_entity_decode($state->responses[$key]);
+            $teststate->responses = array('' => $state->responses[$key]);
+            $correct = $QUIZ_QTYPES[$wrapped->qtype]
+             ->get_actual_response($wrapped, $teststate);
+            // change separator here if you want
+            $responsesseparator = ',';
+            $responses[$key] = implode($responsesseparator, $correct);
+        }
+        return $responses;
     }
 }
 //// END OF CLASS ////
