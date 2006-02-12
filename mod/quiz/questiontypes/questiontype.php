@@ -459,10 +459,10 @@ class quiz_default_questiontype {
         // Print question number
         echo '<b><font size="+1">' . $number . '</font></b>';
         if (isteacher($cmoptions->course)) {
-            echo ' <font size="1">( ';
+            echo '<br /><font size="1">';
             link_to_popup_window ('/mod/quiz/question.php?id=' . $question->id,
-             'editquestion', $question->id, 450, 550, get_string('edit'));
-            echo ')</font>';
+             'editquestion', get_string('edit'), 450, 550, get_string('edit'));
+            echo '</font>';
         }
         if ($question->maxgrade and $options->scores) {
             echo '<div class="grade">';
