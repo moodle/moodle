@@ -194,7 +194,8 @@ CREATE INDEX prefix_quiz_grades_userid_idx ON prefix_quiz_grades (userid);
 CREATE TABLE prefix_quiz_match (
   id SERIAL PRIMARY KEY,
   question integer NOT NULL default '0',
-  subquestions varchar(255) NOT NULL default ''
+  subquestions varchar(255) NOT NULL default '',
+  shuffleanswers integer NOT NULL default '1'
 );
 
 CREATE INDEX prefix_quiz_match_question_idx ON prefix_quiz_match (question);
@@ -238,7 +239,8 @@ CREATE TABLE prefix_quiz_multichoice (
   question integer NOT NULL default '0',
   layout integer NOT NULL default '0',
   answers varchar(255) NOT NULL default '',
-  single integer NOT NULL default '0'
+  single integer NOT NULL default '0',
+  shuffleanswers integer NOT NULL default '1'
 );
 
 CREATE INDEX prefix_quiz_multichoice_question_idx ON prefix_quiz_multichoice (question);
@@ -370,7 +372,8 @@ CREATE INDEX prefix_quiz_questions_category_idx ON prefix_quiz_questions (catego
 CREATE TABLE prefix_quiz_randomsamatch (
   id SERIAL PRIMARY KEY,
   question integer NOT NULL default '0',
-  choose integer NOT NULL default '4'
+  choose integer NOT NULL default '4',
+  shuffleanswers integer NOT NULL default '1'
 );
 
 CREATE INDEX prefix_quiz_randomsamatch_question_idx ON prefix_quiz_randomsamatch (question);

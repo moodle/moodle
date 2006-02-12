@@ -979,6 +979,13 @@ function quiz_upgrade($oldversion) {
         execute_sql("UPDATE {$CFG->prefix}quiz_questions SET defaultgrade = '0' WHERE qtype = '".DESCRIPTION."'", false);
     }
 
+    if ($oldversion < 2006021103) {
+        // add new field to store the question-level shuffleanswers option
+        table_column('quiz_match', '', 'shuffleanswers', 'tinyint', '4', 'unsigned', '1', 'not null', 'subquestions');
+        table_column('quiz_multichoice', '', 'shuffleanswers', 'tinyint', '4', 'unsigned', '1', 'not null', 'single');
+        table_column('quiz_randomsamatch', '', 'shuffleanswers', 'tinyint', '4', 'unsigned', '1', 'not null', 'choose');
+    }
+
     return true;
 }
 

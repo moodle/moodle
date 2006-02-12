@@ -228,6 +228,7 @@ CREATE TABLE prefix_quiz_match (
   id int(10) unsigned NOT NULL auto_increment,
   question int(10) unsigned NOT NULL default '0',
   subquestions varchar(255) NOT NULL default '',
+  shuffleanswers tinyint(4) NOT NULL default '1',
   PRIMARY KEY  (id),
   KEY question (question)
 ) TYPE=MyISAM COMMENT='Defines fixed matching questions';
@@ -273,6 +274,7 @@ CREATE TABLE prefix_quiz_multichoice (
   layout tinyint(4) NOT NULL default '0',
   answers varchar(255) NOT NULL default '',
   single tinyint(4) NOT NULL default '0',
+  shuffleanswers tinyint(4) NOT NULL default '1',
   PRIMARY KEY  (id),
   KEY question (question)
 ) TYPE=MyISAM COMMENT='Options for multiple choice questions';
@@ -406,6 +408,7 @@ CREATE TABLE prefix_quiz_randomsamatch (
   id int(10) unsigned NOT NULL auto_increment,
   question int(10) unsigned NOT NULL default '0',
   choose int(10) unsigned NOT NULL default '4',
+  shuffleanswers tinyint(4) NOT NULL default '1',
   PRIMARY KEY  (id),
   KEY question (question)
 ) TYPE=MyISAM COMMENT='Info about a random short-answer matching question';

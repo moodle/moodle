@@ -1,8 +1,3 @@
-<?php
-    if (!isset($options->single)) {
-        $options->single = 1;
-    }
-?>
 <form name="theform" method="post" action="question.php">
 <center>
 <table cellpadding="5">
@@ -97,7 +92,15 @@
       ?>
     </td>
   </tr>
-
+<tr valign="top">
+    <td align="right"><b><?php print_string("shuffleanswers", "quiz") ?>:</b></td>
+     <td align="left">
+    <?php
+        choose_from_menu($yesnooptions, "shuffleanswers", "$options->shuffleanswers", "");
+        helpbutton("shuffleanswers", get_string("shuffleanswers","quiz"), "quiz");
+     ?>
+    </td>
+</tr>
   <tr valign="top">
     <td align="right"><b><?php  print_string("choices", "quiz") ?></b>:</td>
     <td align="left"><?php  print_string("fillouttwochoices", "quiz") ?></td>

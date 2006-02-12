@@ -12,8 +12,8 @@ class quiz_match_qtype extends quiz_default_questiontype {
     }
 
     function get_question_options(&$question) {
-        $subquestions = get_records("quiz_match_sub", "question", $question->id, "id ASC" );
-        $question->options->subquestions = $subquestions;
+        $question->options = get_record('quiz_match', 'question', $question->id);
+        $question->options->subquestions = get_records("quiz_match_sub", "question", $question->id, "id ASC" );
         return true;
     }
 
@@ -78,6 +78,7 @@ class quiz_match_qtype extends quiz_default_questiontype {
 
         if ($options = get_record("quiz_match", "question", $question->id)) {
             $options->subquestions = implode(",",$subquestions);
+            $options->shuffleanswers = $question->shuffleanswers;
             if (!update_record("quiz_match", $options)) {
                 $result->error = "Could not update quiz match options! (id=$options->id)";
                 return $result;
@@ -86,6 +87,7 @@ class quiz_match_qtype extends quiz_default_questiontype {
             unset($options);
             $options->question = $question->id;
             $options->subquestions = implode(",",$subquestions);
+            $options->shuffleanswers = $question->shuffleanswers;
             if (!insert_record("quiz_match", $options)) {
                 $result->error = "Could not insert quiz match options!";
                 return $result;
@@ -129,7 +131,7 @@ class quiz_match_qtype extends quiz_default_questiontype {
         }
 
         // Shuffle the answers if required
-        if ($cmoptions->shuffleanswers) {
+        if ($cmoptions->shuffleanswers and $question->options->shuffleanswers) {
            $state->options->subquestions = swapshuffle_assoc($state->options->subquestions);
         }
 

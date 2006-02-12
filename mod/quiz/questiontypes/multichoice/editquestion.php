@@ -4,6 +4,7 @@
         $options = get_record("quiz_multichoice", "question", $question->id);
     } else {
         $options->single = 1;
+        $options->shuffleanswers = 0;
     }
     if (!empty($options->answers)) {
         $answersraw = get_records_list("quiz_answers", "id", $options->answers);
@@ -23,6 +24,11 @@
     for (; $i < $limit; $i++) {
         $answers[] = "";   // Make answer slots, default as blank
     }
+
+    $yesnooptions = array();
+    $yesnooptions[0] = get_string("no");
+    $yesnooptions[1] = get_string("yes");
+
     print_heading_with_help(get_string("editingmultichoice", "quiz"), "multichoice", "quiz");
     require("$CFG->dirroot/mod/quiz/questiontypes/multichoice/multichoice.html");
 

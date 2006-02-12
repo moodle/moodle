@@ -16,8 +16,7 @@ class quiz_randomsamatch_qtype extends quiz_match_qtype {
     }
 
     function get_question_options(&$question) {
-        if (!$question->options->choose = get_field('quiz_randomsamatch',
-         'choose', 'question', $question->id)) {
+        if (!$question->options = get_record('quiz_randomsamatch', 'question', $question->id)) {
             notify('Error: Missing question options!');
             return false;
         }
@@ -33,6 +32,7 @@ class quiz_randomsamatch_qtype extends quiz_match_qtype {
     function save_question_options($question) {
         $options->question = $question->id;
         $options->choose = $question->choose;
+        $options->shuffleanswers = $question->shuffleanswers;
 
         if (2 > $question->choose) {
             $result->error = "At least two shortanswer questions need to be chosen!";
@@ -153,7 +153,7 @@ class quiz_randomsamatch_qtype extends quiz_match_qtype {
         // Shuffle the answers if required
         $subquestionids = array_values(array_map(create_function('$val',
          'return $val->id;'), $state->options->subquestions));
-        if ($cmoptions->shuffleanswers) {
+        if ($cmoptions->shuffleanswers and $question->options->shuffleanswers) {
            $subquestionids = swapshuffle($subquestionids);
         }
 

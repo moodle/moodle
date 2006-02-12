@@ -54,8 +54,6 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
             return $result;
         }
 
-
-
         // Insert all the new answers
 
         $totalfraction = 0;
@@ -98,6 +96,7 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
         if ($options = get_record("quiz_multichoice", "question", $question->id)) {
             $options->answers = implode(",",$answers);
             $options->single = $question->single;
+            $options->shuffleanswers = $question->shuffleanswers;
             if (!update_record("quiz_multichoice", $options)) {
                 $result->error = "Could not update quiz multichoice options! (id=$options->id)";
                 return $result;
@@ -107,6 +106,7 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
             $options->question = $question->id;
             $options->answers = implode(",",$answers);
             $options->single = $question->single;
+            $options->shuffleanswers = $question->shuffleanswers;
             if (!insert_record("quiz_multichoice", $options)) {
                 $result->error = "Could not insert quiz multichoice options!";
                 return $result;
@@ -154,7 +154,7 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
         $answerids = array_values(array_map(create_function('$val',
          'return $val->id;'), $question->options->answers));
         // Shuffle the answers if required
-        if ($cmoptions->shuffleanswers) {
+        if ($cmoptions->shuffleanswers and $question->options->shuffleanswers) {
            $answerids = swapshuffle($answerids);
         }
         $state->options->order = $answerids;

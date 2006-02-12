@@ -588,6 +588,7 @@
             $multichoice->layout = backup_todb($mul_info['#']['LAYOUT']['0']['#']);
             $multichoice->answers = backup_todb($mul_info['#']['ANSWERS']['0']['#']);
             $multichoice->single = backup_todb($mul_info['#']['SINGLE']['0']['#']);
+            $multichoice->shuffleanswers = backup_todb($mul_info['#']['SHUFFLEANSWERS']['0']['#']);
 
             //We have to recode the answers field (a list of answers id)
             //Extracts answer id from sequence
@@ -842,6 +843,7 @@
             //Now, build the QUIZ_RANDOMSAMATCH record structure
             $randomsamatch->question = $new_question_id;
             $randomsamatch->choose = backup_todb($ran_info['#']['CHOOSE']['0']['#']);
+            $randomsamatch->shuffleanswers = backup_todb($ran_info['#']['SHUFFLEANSWERS']['0']['#']);
 
             //The structure is equal to the db, so insert the quiz_randomsamatch
             $newid = insert_record ("quiz_randomsamatch",$randomsamatch);

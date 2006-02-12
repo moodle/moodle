@@ -394,6 +394,7 @@
                 fwrite ($bf,full_tag("LAYOUT",$level+1,false,$multichoice->layout));
                 fwrite ($bf,full_tag("ANSWERS",$level+1,false,$multichoice->answers));
                 fwrite ($bf,full_tag("SINGLE",$level+1,false,$multichoice->single));
+                fwrite ($bf,full_tag("SHUFFLEANSWERS",$level+1,false,$randomsamatch->shuffleanswers));
                 $status =fwrite ($bf,end_tag("MULTICHOICE",$level,true));
             }
             //Now print quiz_answers
@@ -420,6 +421,7 @@
                 $status =fwrite ($bf,start_tag("RANDOMSAMATCH",6,true));
                 //Print randomsamatch contents
                 fwrite ($bf,full_tag("CHOOSE",7,false,$randomsamatch->choose));
+                fwrite ($bf,full_tag("SHUFFLEANSWERS",7,false,$randomsamatch->shuffleanswers));
                 $status =fwrite ($bf,end_tag("RANDOMSAMATCH",6,true));
             }
         }
@@ -445,6 +447,7 @@
                 fwrite ($bf,full_tag("ID",8,false,$match->id));
                 fwrite ($bf,full_tag("QUESTIONTEXT",8,false,$match->questiontext));
                 fwrite ($bf,full_tag("ANSWERTEXT",8,false,$match->answertext));
+                fwrite ($bf,full_tag("SHUFFLEANSWERS",8,false,$randomsamatch->shuffleanswers));
                 $status =fwrite ($bf,end_tag("MATCH",7,true));
             }
             $status =fwrite ($bf,end_tag("MATCHS",6,true));

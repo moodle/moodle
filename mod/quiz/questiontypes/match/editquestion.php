@@ -5,6 +5,8 @@
         if (!empty($options->subquestions)) {
             $oldsubquestions = get_records_list("quiz_match_sub", "id", $options->subquestions);
         }
+    } else {
+        $options->shuffleanswers = 0;
     }
 
     $subquestions = array();
@@ -24,6 +26,10 @@
         $subquestions[] = "";   // Make question slots, default as blank
         $subanswers[] = "";     // Make answer slots, default as blank
     }
+
+    $yesnooptions = array();
+    $yesnooptions[0] = get_string("no");
+    $yesnooptions[1] = get_string("yes");
 
     print_heading_with_help(get_string("editingmatch", "quiz"), "match", "quiz");
     require("$CFG->dirroot/mod/quiz/questiontypes/match/match.html");
