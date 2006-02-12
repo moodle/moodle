@@ -4,12 +4,12 @@
     require_once("../config.php");
     require_once("lib.php");
 
-    $id =          required_param('id', PARAM_INT);               // course id
-    $scaleid =     optional_param('scaleid', 0, PARAM_INT);       // scale id
-    $action =      optional_param('action', 'undefined', PARAM_ALPHA); // action to execute
-    $name =        optional_param('name', '', PARAM_CLEAN);       // scale name
+    $id          = required_param('id', PARAM_INT);               // course id
+    $scaleid     = optional_param('scaleid', 0, PARAM_INT);       // scale id
+    $action      = optional_param('action', 'undefined', PARAM_ALPHA); // action to execute
+    $name        = optional_param('name', '', PARAM_CLEAN);       // scale name
     $description = optional_param('description', '', PARAM_CLEAN);// scale description
-    $list =        optional_param('list', 0, PARAM_BOOL);         // show listing in help window
+    $list        = optional_param('list', 0, PARAM_BOOL);         // show listing in help window
 
     if (! $course = get_record("course", "id", $id)) {
         error("Course ID was incorrect");
@@ -56,7 +56,7 @@
                 $errors[$scaleid]->scalescale = true;
                 $focus = "form$scaleid.save";
             }
-            
+
             if (!$errors) {
                 $newscale=NULL;
                 $newscale->name = $form->name;
@@ -65,7 +65,7 @@
                 $newscale->courseid = $form->courseid;
                 $newscale->userid = $USER->id;
                 $newscale->timemodified = time();
-                
+
                 if (empty($scaleid)) {
                     $newscale->courseid = $course->id;
                     if (!insert_record("scale", $newscale)) {
@@ -77,7 +77,7 @@
                         error("Could not update that scale!");
                     }
                 }
-    
+
                 $notify = "$newscale->name: $strchangessaved";
                 $focus = "form$scaleid.save";
             } else {
@@ -89,7 +89,7 @@
             }
         }
     }
-    
+
     //If action is details, show the popup info
     if ($action == "details") {
         //Check for teacher edit
@@ -109,7 +109,7 @@
                  "$course->shortname -> $strscales -> $scale->name", "", "", true, "&nbsp;", "&nbsp;");
 
         close_window_button();
-  
+
         echo "<p>";
         print_simple_box_start("center");
         print_heading($scale->name);
@@ -147,7 +147,7 @@
             $scale->scale = "";
             $scale->description = "";
         }
-            
+
         //Calculate the uses
         if ($scale->courseid == 0) {
             $scale_uses = site_scale_used($scale->id,$courses);
@@ -164,7 +164,7 @@
         if ($scale->courseid == 0 and !isadmin()) {
             error("Only administrators can edit this scale",$CFG->wwwroot.'/course/scales.php?id='.$course->id);
         }
-        
+
         //Print out the headers
         if (!isset($focus)) {
             $focus = "";
@@ -173,7 +173,7 @@
                  "<a href=\"view.php?id=$course->id\">$course->shortname</a>".
                  " -> <a href=\"scales.php?id=$course->id\">$strscales</a>".
                  " -> ".get_string("editinga","",$strscale), $focus);
-        
+
         //Title
         print_heading_with_help($strscales, "scales");
 
@@ -462,7 +462,7 @@
                             " src=\"$CFG->pixpath/t/delete.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\" alt=\"\" /></a> ";
             }
             $line[] = $buttons;
-            
+
             $data[] = $line;
         }
         $head = $strscale.",".$stractivities.",".$strtype.",".$stroptions;
