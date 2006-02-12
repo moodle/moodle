@@ -111,11 +111,6 @@
     // DISPLAY
     //==========
 
-    print_header_simple(get_string('editcategories', 'quiz'), '',
-                 "<a href=\"index.php?id=$course->id\">".get_string('modulenameplural', 'quiz').'</a>'.
-                 '-> <a href="edit.php">'.get_string('editquestions', 'quiz').'</a>'.
-                 ' -> '.get_string('editcategories', 'quiz'));
-
     // display the user interface
     $qcobject->display_user_interface();
 
@@ -204,8 +199,6 @@ class quiz_category_object {
         print_heading_with_help($this->str->editcategories, 'categories', 'quiz');
         $this->output_edit_table();
         echo '<br />';
-
-        print_continue('edit.php');
 
     }
 
