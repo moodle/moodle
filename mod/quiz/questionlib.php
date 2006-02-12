@@ -118,7 +118,7 @@ class cmoptions {
 
 
 /**
-* Deletes question from the database
+* Deletes question and all associated data from the database
 *
 * @param object $question  The question being deleted
 */
@@ -128,8 +128,19 @@ function quiz_delete_question($question) {
     delete_records("quiz_answers", "question", $question->id);
     delete_records("quiz_states", "question", $question->id);
     delete_records("quiz_newest_states", "questionid", $question->id);
-    delete_records("quiz_question_versions", "oldquestion", $question->id);
+    if ($newversions = get_records('quiz_question_versions', 'oldquestion', $question->id)) {
+        foreach ($newversions as $newversion) {
+            $newquestion = get_record('quiz_questions', 'id', $newversion->newquestion);
+            quiz_delete_question($newquestion);
+        }
+        delete_records("quiz_question_versions", "oldquestion", $question->id);
+    }
     delete_records("quiz_question_versions", "newquestion", $question->id);
+    if ($children = get_records('quiz_questions', 'parent', $question->id)) {
+        foreach ($children as $child) {
+            quiz_delete_question($child);
+        }
+    }
     return true;
 }
 
