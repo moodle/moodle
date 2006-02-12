@@ -334,6 +334,7 @@ CREATE TABLE prefix_quiz_question_versions (
   quiz integer NOT NULL default '0',
   oldquestion integer NOT NULL default '0',
   newquestion integer NOT NULL default '0',
+  originalquestion integer NOT NULL default '0',
   userid integer NOT NULL default '0',
   timestamp integer NOT NULL default '0'
 );

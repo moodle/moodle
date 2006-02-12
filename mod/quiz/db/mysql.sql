@@ -368,6 +368,7 @@ CREATE TABLE prefix_quiz_question_versions (
   quiz int(10) unsigned NOT NULL default '0',
   oldquestion int(10) unsigned NOT NULL default '0',
   newquestion int(10) unsigned NOT NULL default '0',
+  originalquestion int(10) unsigned NOT NULL default '0',
   userid int(10) unsigned NOT NULL default '0',
   timestamp int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (id)

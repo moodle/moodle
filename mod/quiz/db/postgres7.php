@@ -986,6 +986,11 @@ function quiz_upgrade($oldversion) {
         table_column('quiz_randomsamatch', '', 'shuffleanswers', 'tinyint', '4', 'unsigned', '1', 'not null', 'choose');
     }
 
+    if ($oldversion < 2006021104) {
+        // add originalversion field for the new versioning mechanism
+        table_column('quiz_question_versions', '', 'originalquestion', 'int', '10', 'unsigned', '0', 'not null', 'newquestion');
+    }
+
     return true;
 }
 
