@@ -407,11 +407,11 @@ function quiz_view_dates($quiz) {
     print_simple_box_start('center', '', '', '', 'generalbox', 'dates');
     echo '<table>';
     if ($quiz->timeopen) {
-        echo '<tr><td class="c0">'.get_string('availabledate','assignment').':</td>';
+        echo '<tr><td class="c0">'.get_string("quizopen", "quiz").':</td>';
         echo '    <td class="c1">'.userdate($quiz->timeopen).'</td></tr>';
     }
     if ($quiz->timeclose) {
-        echo '<tr><td class="c0">'.get_string('duedate','assignment').':</td>';
+        echo '<tr><td class="c0">'.get_string("quizclose", "quiz").':</td>';
         echo '    <td class="c1">'.userdate($quiz->timeclose).'</td></tr>';
     }
     echo '</table>';

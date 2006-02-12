@@ -149,9 +149,9 @@
 </tr>
 
 <tr valign="top">
-   <td align="right"><b><?php print_string("availabledate","assignment") ?>:</b></td>
+   <td align="right"><b><?php print_string("quizopen", "quiz") ?>:</b></td>
     <td align="left">
-        <input name="availableenable" type="checkbox" value="1" alt="<?php print_string('availabledate', 'assignment') ?>" onclick="return lockoptions('form', 'availableenable', availableitems)" <?php if ($form->timeopen) echo 'checked="checked"' ?> />
+        <input name="availableenable" type="checkbox" value="1" alt="<?php print_string("quizopen", "quiz") ?>" onclick="return lockoptions('form', 'availableenable', availableitems)" <?php if ($form->timeopen) echo 'checked="checked"' ?> />
     <?php
            print_date_selector("availableday", "availablemonth", "availableyear", $form->timeopen);
            echo "&nbsp;-&nbsp;";
@@ -167,9 +167,9 @@
 </tr>
 
 <tr valign="top">
-    <td align="right"><b><?php print_string("duedate", "assignment") ?>:</b></td>
+    <td align="right"><b><?php print_string("quizclose", "quiz") ?>:</b></td>
     <td align="left">
-        <input name="dueenable" type="checkbox" value="1" alt="<?php print_string('duedate', 'assignment') ?>" onclick="return lockoptions('form', 'dueenable', dueitems)" <?php if ($form->timeclose) echo 'checked="checked"' ?> />
+        <input name="dueenable" type="checkbox" value="1" alt="<?php print_string("quizclose", "quiz") ?>" onclick="return lockoptions('form', 'dueenable', dueitems)" <?php if ($form->timeclose) echo 'checked="checked"' ?> />
     <?php
            print_date_selector("dueday", "duemonth", "dueyear", $form->timeclose);
            echo "&nbsp;-&nbsp;";
