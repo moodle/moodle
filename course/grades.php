@@ -4,9 +4,9 @@
     require_once("../config.php");
     require_once("lib.php");
 
-    $id = required_param('id',0,PARAM_INT);              // course id
-    $download = optional_param('download', '');   // to download data 
-    $group = optional_param('group',0,PARAM_INT );
+    $id          = required_param('id', PARAM_INT);            // course id
+    $download    = optional_param('download', '', PARAM_ALPHA);// to download data 
+    $changegroup = optional_param('group', -1, PARAM_INT );
 
     require_login();
 
@@ -25,12 +25,6 @@
 
 /// Check to see if groups are being used in this course
     if ($groupmode = groupmode($course)) {   // Groups are being used
-        if (isset_param('group')) {
-            $changegroup = $group;  /// 0 or higher
-        } else {
-            $changegroup = -1;              /// This means no group change was specified
-        }
-
         $currentgroup = get_and_set_current_group($course, $groupmode, $changegroup);
     } else {
         $currentgroup = false;
