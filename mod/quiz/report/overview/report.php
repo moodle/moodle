@@ -104,7 +104,7 @@ class quiz_report extends quiz_default_report {
         $tablecolumns = array('checkbox', 'picture', 'fullname', 'timestart', 'duration');
         $tableheaders = array(NULL, '', get_string('fullname'), get_string('startedon', 'quiz'), get_string('attemptduration', 'quiz'));
 
-        if ($quiz->grade) {
+        if ($quiz->grade and $quiz->sumgrades) {
             $tablecolumns[] = 'sumgrades';
             $tableheaders[] = get_string('grade', 'quiz').'/'.$quiz->grade;
         }
@@ -196,7 +196,7 @@ class quiz_report extends quiz_default_report {
 
             $headers = array(get_string('fullname'), get_string('startedon', 'quiz'), get_string('attemptduration', 'quiz'));
 
-            if ($quiz->grade) {
+            if ($quiz->grade and $quiz->sumgrades) {
                 $headers[] = get_string('grade', 'quiz').'/'.$quiz->grade;
             }
             if($detailedmarks) {
@@ -221,7 +221,7 @@ class quiz_report extends quiz_default_report {
 
             $headers = get_string('fullname')."\t".get_string('startedon', 'quiz')."\t".get_string('attemptduration', 'quiz');
 
-            if ($quiz->grade) {
+            if ($quiz->grade and $quiz->sumgrades) {
                 $headers .= "\t".get_string('grade', 'quiz')."/".$quiz->grade;
             }
             if($detailedmarks) {
@@ -370,7 +370,7 @@ class quiz_report extends quiz_default_report {
                            );
                 }
 
-                if ($quiz->grade) {
+                if ($quiz->grade and $quiz->sumgrades) {
                     if (!$download) {
                         $row[] = $attempt->sumgrades === NULL ? '-' : '<a href="review.php?q='.$quiz->id.'&amp;attempt='.$attempt->attempt.'">'.round($attempt->sumgrades / $quiz->sumgrades * $quiz->grade,$quiz->decimalpoints).'</a>';
                     }

@@ -283,7 +283,7 @@ function quiz_save_best_grade($quiz, $userid=null) {
 
     // Calculate the best grade
     $bestgrade = quiz_calculate_best_grade($quiz, $attempts);
-    $bestgrade = (($bestgrade / $quiz->sumgrades) * $quiz->grade);
+    $bestgrade = $quiz->sumgrades ? (($bestgrade / $quiz->sumgrades) * $quiz->grade) : 0;
     $bestgrade = round($bestgrade, $quiz->decimalpoints);
 
     // Save the best grade in the database

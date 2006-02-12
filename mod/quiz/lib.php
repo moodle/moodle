@@ -393,7 +393,7 @@ function quiz_user_complete($course, $user, $mod, $quiz) {
 /// a given particular instance of this module, for user activity reports.
 
     if ($attempts = get_records_select('quiz_attempts', "userid='$user->id' AND quiz='$quiz->id'", 'attempt ASC')) {
-        if ($quiz->grade != 0 && $grade = get_record('quiz_grades', 'userid', $user->id, 'quiz', $quiz->id)) {
+        if ($quiz->grade  and $quiz->sumgrades && $grade = get_record('quiz_grades', 'userid', $user->id, 'quiz', $quiz->id)) {
             echo get_string('grade').': '.round($grade->grade, $quiz->decimalpoints).'/'.$quiz->grade.'<br />';
         }
         foreach ($attempts as $attempt) {

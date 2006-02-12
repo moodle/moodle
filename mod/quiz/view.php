@@ -318,7 +318,7 @@
             }
         } else {
             print_heading(get_string("nomoreattempts", "quiz"));
-            if ($quiz->grade) {
+            if ($quiz->grade and $quiz->sumgrades) {
                 print_heading(get_string("yourfinalgradeis", "quiz", "$mygrade / $quiz->grade"));
             }
             print_continue('../../course/view.php?id='.$course->id);
