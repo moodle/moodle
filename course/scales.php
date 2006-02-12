@@ -4,13 +4,12 @@
     require_once("../config.php");
     require_once("lib.php");
 
-    $id = required_param('id', PARAM_INT);             // course id
-    $scaleid = optional_param('scaleid',0,PARAM_INT);       // scale id
-    $action = optional_param('action','undefined',PARAM_ALPHA);        // action to execute
-    $name = optional_param('name','',PARAM_CLEAN);          // scale name
-    $description = optional_param('description','',PARAM_CLEAN);   // scale description
-    $scalescale = optional_param('scalescale');         // scale scale
-    $list = optional_param('list');
+    $id =          required_param('id', PARAM_INT);               // course id
+    $scaleid =     optional_param('scaleid', 0, PARAM_INT);       // scale id
+    $action =      optional_param('action', 'undefined', PARAM_ALPHA); // action to execute
+    $name =        optional_param('name', '', PARAM_CLEAN);       // scale name
+    $description = optional_param('description', '', PARAM_CLEAN);// scale description
+    $list =        optional_param('list', 0, PARAM_BOOL);         // show listing in help window
 
     if (! $course = get_record("course", "id", $id)) {
         error("Course ID was incorrect");
@@ -141,6 +140,7 @@
                 error("Scale ID was incorrect");
             }
         } else {
+            $scale = new object();
             $scale->id = 0;
             $scale->courseid = $course->id;
             $scale->name = "";
@@ -304,12 +304,12 @@
         }
     }
 
-    if (!empty($list)) {       /// Just list the scales (in a helpwindow)
+    if ($list) {       /// Just list the scales (in a helpwindow)
 
         print_header($strscales);
 
-        if (isset_param('scale')) {
-            if ($scale = get_record("scale", "id", "$scale")) {
+        if (!empty($scaleid)) {
+            if ($scale = get_record("scale", "id", "$scaleid")) {
                 $scalemenu = make_menu_from_list($scale->scale);
 
                 print_simple_box_start("center");

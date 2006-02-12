@@ -3851,7 +3851,7 @@ function print_scale_menu_helpbutton($courseid, $scale) {
     $strscales = get_string('scales');
 
     $linkobject = '<span class="helplink"><img height="17" width="17" alt="'.$scale->name.'" src="'.$CFG->pixpath .'/help.gif" /></span>';
-    link_to_popup_window ('/course/scales.php?id='. $courseid .'&amp;list=true&amp;scale='. $scale->id, 'ratingscale',
+    link_to_popup_window ('/course/scales.php?id='. $courseid .'&amp;list=true&amp;scaleid='. $scale->id, 'ratingscale',
                           $linkobject, 400, 500, $scale->name);
 }
 
