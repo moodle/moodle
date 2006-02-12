@@ -167,7 +167,7 @@
     if (!empty($overtime)) {
         $table->data[] = array("$stroverdue:", $overtime);
     }
-    if ($quiz->grade) {
+    if ($quiz->grade and $quiz->sumgrades) {
         if($overtime) {
             $result->sumgrades = "0";
             $result->grade = "0.0";
