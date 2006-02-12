@@ -654,7 +654,7 @@ function calendar_filter_controls($type, $vars = NULL, $course = NULL) {
             $getvars = '&amp;from='.$type;
         break;
         case 'course':
-            if (isset_param('id')) {
+            if ($id > 0) {
                 $getvars = '&amp;from=course&amp;id='.$id;
             } else {
                 $getvars = '&amp;from=course';

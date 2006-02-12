@@ -8,7 +8,7 @@
     $f       = optional_param('f', 0, PARAM_INT);         // Forum ID
     $mode    = optional_param('mode', 0, PARAM_INT);      // Display mode (for single forum)
     $showall = optional_param('showall', '', PARAM_INT);  // show all discussions on one page
-    $group   = optional_param('group', -1, PARAM_INT);    // choose the current group
+    $changegroup = optional_param('group', -1, PARAM_INT);    // choose the current group
     $page    = optional_param('page', 0, PARAM_INT);      // which page to show
     $search  = optional_param('search', '');              // search string
 
@@ -82,8 +82,6 @@
 
 /// Check to see if groups are being used in this forum
 /// and if so, set $currentgroup to reflect the current group
-
-    $changegroup = isset_param('group') ? $group : -1;  // Group change requested?
 
     if ($forum->type == "teacher") {
         $groupmode = NOGROUPS;
