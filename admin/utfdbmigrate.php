@@ -652,9 +652,10 @@ function get_user_lang($userid) {
 
 // a placeholder for now
 function log_the_problem_somewhere() {  //Eloy: Nice function, perhaps we could use it, perhpas no. :-)
-    global $dbtablename, $fieldname, $recordid;
-    echo "Problem converting: $dbtablename -> $fieldname -> $recordid!";
-
+    global $CFG;
+    if ($CFG->debug>7) {
+        echo "<br />Problem converting: $dbtablename -> $fieldname -> $recordid!";
+    }
 }
 
 //only this function should be used during db migraton, because of addslashes at the end of the convertion
