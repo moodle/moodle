@@ -58,7 +58,14 @@
     if (!isset($form->maximumgrade)) {
         $form->maximumgrade = $CFG->quiz_maximumgrade;
     }
-
+    //enforced delay attempt between quiz
+    if (!isset($form->delay1)) {
+        $form->delay1 = 0;
+    }
+    if (!isset($form->delay2)) {
+        $form->delay2 = 0;
+    }
+                
 ?>
 
 <script type="text/javascript" language="javascript">
