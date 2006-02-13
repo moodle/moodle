@@ -11,6 +11,9 @@
 **   Support of rejoinders
 **
 ** $Log$
+** Revision 1.3  2006/02/13 16:17:22  thepurpleblob
+** Now used defaultquestion() method. Bug #4752
+**
 ** Revision 1.2  2005/05/31 15:19:00  thepurpleblob
 ** merged from STABLE
 **
@@ -123,14 +126,12 @@ class quiz_format_examview extends quiz_default_format {
             return;
         }
         foreach($this->matching_questions as $match_group) {
-            $question = NULL;
+            $question = $this->defaultquestion();
 			$htmltext = $this->htmlPrepare($match_group->questiontext);
 			$htmltext = addslashes($htmltext);
             $question->questiontext = $htmltext;
             $question->name = $question->questiontext;
             $question->qtype = MATCH;
-            $question->defaultgrade = 1;
-            $question->image = "";
             // No images with this format
             //		print($question->questiontext.' '.$question->id."<BR>");
             
@@ -217,13 +218,10 @@ class quiz_format_examview extends quiz_default_format {
     {
         
         $type = trim($qrec['@']['type']);
-        $question = NULL;
+        $question = $this->defaultquestion();
         $question->qtype = $this->qtypes[$type];
-        $question->defaultgrade = 1;
         $question->single = 1;
         // Only one answer is allowed
-        $question->image = "";
-        // No images with this format
         $htmltext = $this->ArrayTagToString($qrec['#']['text'][0]['#']);
         $htmltext = $this->htmlPrepare($htmltext);
         $htmltext = addslashes($htmltext);
