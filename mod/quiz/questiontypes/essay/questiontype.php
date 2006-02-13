@@ -209,7 +209,12 @@ class quiz_essay_qtype extends quiz_default_questiontype {
     
     function save_session_and_responses(&$question, &$state) {
         $options->stateid = $state->id;
-        $options->graded = $state->options->graded;
+        
+        if (isset($state->options->graded)) {
+            $options->graded = $state->options->graded;
+        } else {
+            $options->graded = 0;
+        }
         
         if (isset($state->responses['fraction'])) {
             $options->fraction = $state->responses['fraction'];
