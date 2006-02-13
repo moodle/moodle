@@ -734,10 +734,10 @@ function data_get_coursemodule_info($coursemodule) {
  *       @param string $template                                        *
  * output null                                                          *
  ************************************************************************/
-function data_print_template($records, $data, $search, $template, $sort, $page, $rid, $order, $group){
+function data_print_template($records, $data, $search, $template, $sort, $page=0, $rid=0, $order='', $group='', $return=false){
     global $CFG, $course;
     
-    foreach ($records as $record){    //only 1 record for single mode
+    foreach ($records as $record) {    //only 1 record for single mode
 
         //replacing tags
         $patterns = array();
@@ -787,12 +787,16 @@ function data_print_template($records, $data, $search, $template, $sort, $page, 
         ///actual replacement of the tags
         $newtext = preg_replace($patterns, $replacement, $data->{$template});
         
-        echo $newtext;    //prints the template with tags replaced
-
+        if ($return) {
+            return $newtext;
+        }
+        else {
+            echo $newtext;    //prints the template with tags replaced
+        }
         //if this record is not yet approved, and database requires approval, print silly button
-        echo '<p></p>';
     }
 }
+
 
 /************************************************************************
  * function that takes in the current data, number of items per page,   *

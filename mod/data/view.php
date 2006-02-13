@@ -25,6 +25,7 @@
     require_once('../../config.php');
     require_once('lib.php');
     require_once($CFG->libdir.'/blocklib.php');
+    require_once("$CFG->libdir/rsslib.php");
 
     require_once('pagelib.php');
     require_login();
@@ -109,7 +110,16 @@
     echo '<td id="middle-column">';
 
     print_heading(format_string($data->name));
-
+    
+    
+    // Do we need to show a link to the RSS feed for the records?
+    if (isset($CFG->enablerssfeeds) && isset($CFG->data_enablerssfeeds) && $data->rssarticles > 0) {
+        echo '<div style="float:right;">';
+        rss_print_link($course->id, $USER->id, 'data', $data->id, $tooltiptext='RSS feed for entries');
+        echo '</div>';
+        echo '<div style="clear:both;"></div>';
+    }
+    
     if ($data->intro) {
         print_simple_box(format_text($data->intro), 'center', '70%', '', 5, 'generalbox', 'intro');
         echo '<br />';

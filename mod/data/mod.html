@@ -206,17 +206,6 @@
 </tr>
 
 <tr valign="top">
-    <td align="right"><b><?php print_string('rss', 'data') ?>:</b></td>
-    <td>
-        <?php
-            echo '<input name="rssarticles" type="text" style="width:50px;" />';
-            helpbutton('rss', get_string('rss', 'data'), 'data');
-            echo ' ' . get_string('rssshowhowmany', 'data');
-        ?>
-    </td>
-</tr>
-
-<tr valign="top">
     <td align="right"><b><?php print_string('maxentries', 'data') ?>:</b></td>
     <td>
         <?php
@@ -252,7 +241,11 @@
 <?php if (!empty($CFG->data_enablerssfeeds) and !empty($CFG->enablerssfeeds)) { ?>
 <tr valign="top">
     <td align="right"><b><?php print_string('numberrssarticles', 'data') ?>:</b></td>
-    <td><?php choose_from_menu($countoptions, 'rssarticles', $form->rssarticles, get_string('none')) ?>
+    <td>
+        <?php
+            choose_from_menu($countoptions, 'rssarticles', $form->rssarticles, get_string('none'));
+            echo ' ' . get_string('rssshowhowmany', 'data');
+        ?>
     </td>
 </tr>
 <?php } ?>

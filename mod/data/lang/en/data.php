@@ -91,7 +91,6 @@ $string['recorddeleted'] = 'Record deleted';
 $string['requireapproval'] = 'Require Approval?';
 $string['requiredentries'] = 'Required entries';
 $string['requiredentriestoview'] = 'Entries required before viewing';
-$string['rss'] = 'RSS latest entries';
 $string['rssglobaldisabled'] = 'Disabled. See site configuration variables.';
 $string['rssshowhowmany'] = '(number of latest entries to show, 0 to disable RSS)';
 $string['rsstemplate'] = 'RSS Template';
