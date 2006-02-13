@@ -138,6 +138,21 @@ class quiz_default_format {
     }
 
 
+    function defaultquestion() {
+    // returns an "empty" question
+    // Somewhere to specify question parameters that are not handled
+    // by import but are required db fields.
+    // This should not be overridden. 
+        $question = new stdClass();
+        $question->shuffleanswers = 0; 
+        $question->defaultgrade = 1;
+        $question->image = "";
+        $question->usecase = 0;
+        $question->multiplier = array();
+
+        return $question;
+    }
+
     function readquestion($lines) {
     /// Given an array of lines known to define a question in 
     /// this format, this function converts it into a question 
