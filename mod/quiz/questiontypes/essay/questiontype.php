@@ -237,6 +237,72 @@ class quiz_essay_qtype extends quiz_default_questiontype {
 
         return true;
     }
+    
+    /**
+    * Utility function to count the number of ungraded essays
+    * and the number of students those essays belong to.
+    *
+    * @param object $cmoptions  Course module options
+    * @param mixed $users string/array Specify a specific user or a set of users as an array with ids as keys or as a comma separated list.  Defaults to current user.
+    * @param string $attemptid Specify a specific attempt
+    * @return array First item in array is the number of ungraded essays and the second is the number of students
+    * @todo make this function quiz independent
+    */
+    function get_ungraded_count($cmoptions, $users=0, $attemptid=0) {
+        global $USER, $CFG;
+        
+        // prep the userids variable
+        if (empty($users)) {
+            $userids = $USER->id;
+        }else if (is_array($users)) {
+            $userids = implode(', ', array_keys($users));
+        } else {
+            $userids = $users;
+        }
+        
+        $ungradedcount = 0;     // holds the number of ungraded essays
+        $usercount = array();   // holds the number of users of ungraded essays
+        
+        // get the essay questions
+        $questionlist = quiz_questions_in_quiz($cmoptions->questions);
+        $sql = "SELECT q.*, i.grade AS maxgrade, i.id AS instance".
+               "  FROM {$CFG->prefix}quiz_questions q,".
+               "       {$CFG->prefix}quiz_question_instances i".
+               " WHERE i.quiz = '$cmoptions->id' AND q.id = i.question".
+               "   AND q.id IN ($questionlist)".
+               "   AND q.qtype = '".ESSAY."'".
+               "   ORDER BY q.name";
+               
+        if (empty($attemptid)) {
+            $attemptsql = "quiz = $cmoptions->id and timefinish > 0 and userid IN ($userids)";
+        } else {
+            $attemptsql = "id = $attemptid";
+        }
+        if ($questions = get_records_sql($sql)) {
+            // get all the finished attempts by the users
+            if ($attempts = get_records_select('quiz_attempts', $attemptsql, 'userid, attempt')) {
+                foreach($questions as $question) {
+                    // determine the number of ungraded attempts essays
+                    foreach ($attempts as $attempt) {
+                        // grab the state then check if it is graded
+                        if (!$neweststate = get_record('quiz_newest_states', 'attemptid', $attempt->uniqueid, 'questionid', $question->id)) {
+                            error("Can not find newest states for attempt $attempt->uniqueid for question $question->id");
+                        }
+                        if (!$questionstate = get_record('quiz_essay_states', 'stateid', $neweststate->newest)) {
+                            error('Could not find question state');
+                        }
+                        if (!$questionstate->graded) {
+                            $ungradedcount++;
+                        }
+                        // keep track of users
+                        $usercount[$attempt->userid] = 1;
+                    }
+                }
+            }
+        }
+    
+        return array($ungradedcount, count($usercount));
+    }
 
 }
 //// END OF CLASS ////

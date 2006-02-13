@@ -180,10 +180,19 @@
             $result->sumgrades = "0";
             $result->grade = "0.0";
         }
+        
+        // if the student has ungraded essay(s), notify him/her of it
+        list($ungradedessays, $usercount) = $QUIZ_QTYPES[ESSAY]->get_ungraded_count($quiz, $attempt->userid, $attempt->id);
+        if ($ungradedessays) {
+            $ungradednotice = '<br /><strong>'.get_string('ungradednotice', 'quiz', $ungradedessays).'</strong>';
+        } else {
+            $ungradednotice = '';
+        }
+        
         $percentage = round(($attempt->sumgrades/$quiz->sumgrades)*100, 0);
         $grade = round(($attempt->sumgrades/$quiz->sumgrades)*$quiz->grade, $CFG->quiz_decimalpoints);
         $table->data[] = array("$strscore:", "$attempt->sumgrades/$quiz->sumgrades ($percentage %)");
-        $table->data[] = array("$strgrade:", $grade.get_string('outof', 'quiz').$quiz->grade);
+        $table->data[] = array("$strgrade:", $grade.get_string('outof', 'quiz').$quiz->grade.$ungradednotice);
     }
     if ($isteacher and $attempt->userid == $USER->id) {
         // the teacher is at the end of a preview. Print button to start new preview
