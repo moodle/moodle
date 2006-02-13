@@ -119,7 +119,7 @@
     
             $first = true;
             foreach ($enstring as $key => $value) {
-                if (empty($string[$key])) {
+                if (empty($string[$key]) and $string[$key] != "0") {    //bug fix 4735 mits
                     $value = htmlspecialchars($value);
                     $value = str_replace("$"."a", "\\$"."a", $value);
                     $value = str_replace("%%","%",$value);
