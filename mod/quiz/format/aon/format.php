@@ -33,7 +33,7 @@ class quiz_format_aon extends quiz_default_format {
     /// this format, this function converts it into a question 
     /// object suitable for processing and insertion into Moodle.
 
-        $question = NULL;
+        $question = $this->defaultquestion();
 
         $text = implode($lines, " ");
 
@@ -86,9 +86,6 @@ class quiz_format_aon extends quiz_default_format {
                 $question->fraction[] = 1;
                 $question->feedback[] = "";
     
-                $question->usecase = 0;  // Ignore case
-                $question->defaultgrade = 1; 
-                $question->image = "";   // No images with this format
                 return $question;
 
             default:
@@ -107,9 +104,7 @@ class quiz_format_aon extends quiz_default_format {
                     $question->feedback[$key] = "";
                 }
     
-                $question->defaultgrade = 1; 
                 $question->single = 1;   // Only one answer is allowed
-                $question->image = "";   // No images with this format
                 return $question;
         }
     }

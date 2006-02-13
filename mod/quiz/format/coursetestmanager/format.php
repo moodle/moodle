@@ -154,12 +154,10 @@ class quiz_format_coursetestmanager extends quiz_default_format {
     }
                 foreach ($records as $qrec)
                 {
-            $question = NULL;
-            $question->image = "";  // No images with this format
+                    $question = $this->defaultquestion();
                     if ($qrec[9] != "") {
                         $question->image = $qrec[9];
                     }
-            $question->defaultgrade = 1;
 //  0   Selected
 //  1   PracticeTestOK?
 //  2   QuestionText
