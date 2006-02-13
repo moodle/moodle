@@ -29,25 +29,25 @@ class quiz_essay_qtype extends quiz_default_questiontype {
 
     function save_question_options($question) {
         if ($answer = get_record("quiz_answers", "question", $question->id)) {
-			// Existing answer, so reuse it
+            // Existing answer, so reuse it
             $answer->answer = $question->feedback;
-			$answer->feedback = $question->feedback;
-			$answer->fraction = $question->fraction;
+            $answer->feedback = $question->feedback;
+            $answer->fraction = $question->fraction;
             if (!update_record("quiz_answers", $answer)) {
                 $result->error = "Could not update quiz answer!";
                 return $result;
             }
         } else {
-		    unset($answer);
+            unset($answer);
             $answer->question = $question->id;
             $answer->answer = $question->feedback;
-			$answer->feedback = $question->feedback;
-			$answer->fraction = $question->fraction;
+            $answer->feedback = $question->feedback;
+            $answer->fraction = $question->fraction;
             if (!$answer->id = insert_record("quiz_answers", $answer)) {
                 $result->error = "Could not insert quiz answer!";
                 return $result;
             }
-		}
+        }
         if ($options = get_record("quiz_essay", "question", $question->id)) {
             // No need to do anything, since the answer IDs won't have changed
             // But we'll do it anyway, just for robustness
@@ -85,43 +85,43 @@ class quiz_essay_qtype extends quiz_default_questiontype {
         //$correctanswers = $this->get_correct_responses($question, $state);  // no correct answers ;)
         $readonly = empty($options->readonly) ? '' : 'disabled="disabled"';
         $nameprefix = $question->name_prefix;
-		
+        
         /// Print question text and media
        echo format_text($question->questiontext,
                          $question->questiontextformat,
                          NULL, $cmoptions->course);
-						 
+                         
         quiz_print_possible_question_image($question, $cmoptions->course);
 
         /// Print input controls
         $stranswer = get_string("answer", "quiz");
-		$strcomment = get_string("comments", "quiz");
-		$usehtmleditor = can_use_html_editor();
-		
-		// this prints out the student response box
+        $strcomment = get_string("comments", "quiz");
+        $usehtmleditor = can_use_html_editor();
+        
+        // this prints out the student response box
         if (isset($state->responses[''])) { 
             // security problem. responses[''] is never cleaned before it is sent to the db (I think)
-			$value = clean_param($state->responses[''], PARAM_CLEANHTML);
+            $value = clean_param($state->responses[''], PARAM_CLEANHTML);
         } else {
             $value = "";
         }
-		
+        
         $inputname = $nameprefix;
         
-	    echo "<p>$stranswer: ".
-	        '<div style="padding-left: 30px;">';   
+        echo "<p>$stranswer: ".
+            '<div style="padding-left: 30px;">';   
         if (empty($options->readonly)) {    
-		    // the student needs to type in their answer so print out a text editor
+            // the student needs to type in their answer so print out a text editor
             print_textarea($usehtmleditor, 18, 80, 630, 400, $inputname, $value);
             use_html_editor($inputname);
         } else {
-		    // it is read only, so just format the students answer and output it
+            // it is read only, so just format the students answer and output it
             echo format_text($value);
             echo '<input type="hidden" name="'.$inputname.'" value="'.htmlSpecialChars($value).'">'; // need hidden one for grading
         }    
         echo '</div></p>';
-            		
-		if (isset($state->responses['response'])) {
+                    
+        if (isset($state->responses['response'])) {
             $value = $state->responses['response'];
         } else {
             $value = "";
@@ -149,19 +149,19 @@ class quiz_essay_qtype extends quiz_default_questiontype {
             print_string("grade");
             echo ":&nbsp;";
             choose_from_menu($gradeoptions, $nameprefix."fraction", $state->responses['fraction'],"");
-		} else if (!empty($options->readonly)) {
-		    //read only so format the comment and print it out
-		    echo "<p>$strcomment: ".
-		        '<div style="padding-left: 30px;">';
-		    if (empty($value)) {  // no comment yet
-		        echo format_text(get_string('nocommentsyet', 'quiz'));
-		    } else {
-		        echo format_text($value);    
-		    }
-		    echo '</div></p>';
-		}
+        } else if (!empty($options->readonly)) {
+            //read only so format the comment and print it out
+            echo "<p>$strcomment: ".
+                '<div style="padding-left: 30px;">';
+            if (empty($value)) {  // no comment yet
+                echo format_text(get_string('nocommentsyet', 'quiz'));
+            } else {
+                echo format_text($value);    
+            }
+            echo '</div></p>';
+        }
 
-		// feedback
+        // feedback
         if ($options->feedback) {
             foreach ($answers as $answer) {
                 quiz_print_comment("<p align=\"right\">$answer->feedback</p>");
