@@ -242,6 +242,7 @@ CREATE TABLE prefix_quiz_match (
 
 CREATE TABLE prefix_quiz_match_sub (
   id int(10) unsigned NOT NULL auto_increment,
+  code int(10) unsigned NOT NULL default '0',
   question int(10) unsigned NOT NULL default '0',
   questiontext text NOT NULL default '',
   answertext varchar(255) NOT NULL default '',

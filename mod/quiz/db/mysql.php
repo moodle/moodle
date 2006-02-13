@@ -899,6 +899,11 @@ function quiz_upgrade($oldversion) {
         modify_database('','ALTER TABLE prefix_quiz_attempts ADD UNIQUE INDEX uniqueid (uniqueid);');
     }
 
+    if ($oldversion < 2006021302) {
+        table_column('quiz_match_sub', '', 'code', 'int', '10', 'unsigned', '0', 'not null', 'id');
+        execute_sql("UPDATE {$CFG->prefix}quiz_match_sub SET code = id", false);
+    }
+
     return true;
 }
 

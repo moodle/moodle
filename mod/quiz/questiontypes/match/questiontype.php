@@ -37,6 +37,7 @@ class quiz_match_qtype extends quiz_default_questiontype {
             return $result;
         }
 
+        // $subquestions will be an array with subquestion ids
         $subquestions = array();
 
         // Insert all the new question+answer pairs
@@ -52,6 +53,11 @@ class quiz_match_qtype extends quiz_default_questiontype {
                     }
                 } else {
                     unset($subquestion);
+                    // Determine a unique random code
+                    $subquestion->code = rand(1,999999999);
+                    while (record_exists('quiz_match_sub', 'code', $subquestion->code)) {
+                        $subquestion->code = rand();
+                    }
                     $subquestion->question = $question->id;
                     $subquestion->questiontext = $questiontext;
                     $subquestion->answertext   = $answertext;
@@ -121,11 +127,11 @@ class quiz_match_qtype extends quiz_default_questiontype {
             // and grading functions. This way it is possible to define multiple
             // answers per question, each with different marks and feedback.
             $answer = new stdClass();
-            $answer->id       = $subquestion->id;
+            $answer->id       = $subquestion->code;
             $answer->answer   = $subquestion->answertext;
             $answer->fraction = 1.0;
             $state->options->subquestions[$key]->options
-             ->answers[$subquestion->id] = clone($answer);
+             ->answers[$subquestion->code] = clone($answer);
 
             $state->responses[$key] = '';
         }
@@ -155,8 +161,8 @@ class quiz_match_qtype extends quiz_default_questiontype {
         // Restore the previous responses and place the questions into the state options
         $state->responses = array();
         $state->options->subquestions = array();
-            foreach ($responses as $response) {
-                $state->responses[$response[0]] = $response[1];
+        foreach ($responses as $response) {
+            $state->responses[$response[0]] = $response[1];
             $state->options->subquestions[$response[0]] = $questions[$response[0]];
         }
 
@@ -166,11 +172,11 @@ class quiz_match_qtype extends quiz_default_questiontype {
             // and grading functions. This way it is possible to define multiple
             // answers per question, each with different marks and feedback.
             $answer = new stdClass();
-            $answer->id       = $subquestion->id;
+            $answer->id       = $subquestion->code;
             $answer->answer   = $subquestion->answertext;
             $answer->fraction = 1.0;
             $state->options->subquestions[$key]->options
-             ->answers[$subquestion->id] = clone($answer);
+             ->answers[$subquestion->code] = clone($answer);
         }
 
         return true;
@@ -213,8 +219,8 @@ class quiz_match_qtype extends quiz_default_questiontype {
 
 
         foreach ($subquestions as $subquestion) {
-            foreach ($subquestion->options->answers as $sub) {
-                $answers[$sub->id] = $sub->answer;
+            foreach ($subquestion->options->answers as $ans) {
+                $answers[$ans->id] = $ans->answer;
             }
         }
 
@@ -260,25 +266,18 @@ class quiz_match_qtype extends quiz_default_questiontype {
             // However (as was pointed out in bug bug 3294) the randomsamatch
             // type which reuses this method can have feedback defined for
             // the wrapped shortanswer questions.
-            if ($options->feedback
-             && !empty($subquestion->options->answers[$responses[$key]]->feedback)) {
-                quiz_print_comment($subquestion->options->answers[$responses[$key]]->feedback);
-            }
+            //if ($options->feedback
+            // && !empty($subquestion->options->answers[$responses[$key]]->feedback)) {
+            //    quiz_print_comment($subquestion->options->answers[$responses[$key]]->feedback);
+            //}
             echo '</td></tr>';
         }
         echo '</table>';
     }
 
     function grade_responses(&$question, &$state, $cmoptions) {
-        $subquestions = $state->options->subquestions;
+        $subquestions = &$state->options->subquestions;
         $responses    = &$state->responses;
-
-        $answers = array();
-        foreach ($subquestions as $subquestion) {
-            foreach ($subquestion->options->answers as $sub) {
-                $answers[$sub->id] = $sub->answer;
-            }
-        }
 
         $sumgrade = 0;
         foreach ($subquestions as $key => $sub) {

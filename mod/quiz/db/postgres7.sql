@@ -208,6 +208,7 @@ CREATE INDEX prefix_quiz_match_question_idx ON prefix_quiz_match (question);
 
 CREATE TABLE prefix_quiz_match_sub (
   id SERIAL PRIMARY KEY,
+  code integer NOT NULL default '0',
   question integer NOT NULL default '0',
   questiontext text NOT NULL default '',
   answertext varchar(255) NOT NULL default ''
