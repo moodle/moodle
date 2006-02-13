@@ -119,7 +119,9 @@ function save_profile_image($id, $uploadmanager, $dir='users') {
     $imageinfo = GetImageSize($originalfile);
     
     if (empty($imageinfo)) {
-        unlink($originalfile);
+        if (file_exists($originalfile)) {
+            unlink($originalfile);
+        }
         return false;
     }
     
