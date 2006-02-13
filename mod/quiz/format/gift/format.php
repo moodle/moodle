@@ -118,7 +118,7 @@ class quiz_format_gift extends quiz_default_format {
     // Given an array of lines known to define a question in this format, this function
     // converts it into a question object suitable for processing and insertion into Moodle.
 
-        $question = NULL;
+        $question = $this->defaultquestion();
         $comment = NULL;
         // define replaced by simple assignment, stop redefine notices
         $gift_answerweight_regex = "^%\-*([0-9]{1,2})\.?([0-9]*)%";        
@@ -293,8 +293,8 @@ class quiz_format_gift extends quiz_default_format {
                     $question->answer[$key]   = addslashes($this->escapedchar_post($answer));    
                 }  // end foreach answer
     
-                $question->defaultgrade = 1;
-                $question->image = "";   // No images with this format
+                //$question->defaultgrade = 1;
+                //$question->image = "";   // No images with this format
                 return $question;
                 break;
 
@@ -329,8 +329,8 @@ class quiz_format_gift extends quiz_default_format {
 
                 }  // end foreach answer
     
-                $question->defaultgrade = 1;
-                $question->image = "";   // No images with this format
+                //$question->defaultgrade = 1;
+                //$question->image = "";   // No images with this format
                 return $question;
                 break;
             
@@ -348,8 +348,9 @@ class quiz_format_gift extends quiz_default_format {
                     $question->feedbacktrue = $feedback['true']; //feedback if answer is wrong
                     $question->feedbackfalse = $feedback['false']; // make sure this exists to stop notifications
                 }
-                $question->defaultgrade = 1;
-                $question->image = "";   // No images with this format
+
+                //$question->defaultgrade = 1;
+                //$question->image = "";   // No images with this format
                 return $question;
                 break;
                 
@@ -382,9 +383,9 @@ class quiz_format_gift extends quiz_default_format {
                     $question->answer[$key]   = addslashes($this->escapedchar_post($answer));
                 }     // end foreach
 
-                $question->usecase = 0;  // Ignore case
-                $question->defaultgrade = 1;
-                $question->image = "";   // No images with this format
+                //$question->usecase = 0;  // Ignore case
+                //$question->defaultgrade = 1;
+                //$question->image = "";   // No images with this format
                 return $question;
                 break;
 
@@ -453,9 +454,9 @@ class quiz_format_gift extends quiz_default_format {
                     $question->tolerance[$key] = $tol;
                 } // end foreach
 
-                $question->defaultgrade = 1;
-                $question->image = "";   // No images with this format
-                $question->multiplier = array(); // no numeric multipliers with GIFT
+                //$question->defaultgrade = 1;
+                //$question->image = "";   // No images with this format
+                //$question->multiplier = array(); // no numeric multipliers with GIFT
                 return $question;
                 break;
 
