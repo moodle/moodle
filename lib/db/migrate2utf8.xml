@@ -1,12 +1,5 @@
 <DBMIGRATION type="lib" VERSION="2005120100">
   <TABLES>
-    <TABLE name="pma_bookmark" />
-    <TABLE name="pma_column_info" /> 
-    <TABLE name="pma_history" />
-    <TABLE name="pma_pdf_pages" />
-    <TABLE name="pma_relation" />
-    <TABLE name="pma_table_coords" />
-    <TABLE name="pma_table_info" />
     <TABLE name="adodb_logsql">
       <FIELDS>
         <FIELD name="sql0" method="NO_CONV" type="varchar" length="250" />
