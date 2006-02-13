@@ -98,6 +98,7 @@ CREATE TABLE prefix_quiz_attempts (
   layout text NOT NULL default '',
   preview tinyint(3) unsigned NOT NULL default '0',
   PRIMARY KEY  (id),
+  UNIQUE KEY `uniqueid` (`uniqueid`),
   KEY quiz (quiz),
   KEY userid (userid)
 ) TYPE=MyISAM COMMENT='Stores various attempts on a quiz';

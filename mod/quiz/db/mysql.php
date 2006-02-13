@@ -895,6 +895,10 @@ function quiz_upgrade($oldversion) {
         table_column('quiz_question_versions', '', 'originalquestion', 'int', '10', 'unsigned', '0', 'not null', 'newquestion');
     }
 
+    if ($oldversion < 2006021301) {
+        modify_database('','ALTER TABLE prefix_quiz_attempts ADD UNIQUE INDEX uniqueid (uniqueid);');
+    }
+
     return true;
 }
 
