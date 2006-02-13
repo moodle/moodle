@@ -224,7 +224,7 @@ CREATE INDEX prefix_quiz_match_sub_question_idx ON prefix_quiz_match_sub (questi
 CREATE TABLE prefix_quiz_multianswers (
   id SERIAL PRIMARY KEY,
   question integer NOT NULL default '0',
-  sequence varchar(255) NOT NULL default ''
+  sequence text NOT NULL default ''
 );
 
 CREATE INDEX prefix_quiz_multianswers_question_idx ON prefix_quiz_multianswers (question);

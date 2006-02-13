@@ -995,6 +995,12 @@ function quiz_upgrade($oldversion) {
         table_column('quiz_match_sub', '', 'code', 'int', '10', 'unsigned', '0', 'not null', 'id');
         execute_sql("UPDATE {$CFG->prefix}quiz_match_sub SET code = id", false);
     }
+
+    if ($oldversion < 2006021304) {
+        // convert sequence field to text to accomodate very long sequences, see bug 4257
+        table_column('quiz_multianswers', 'sequence', 'sequence',  'text', '', '', '', 'not null', 'question');
+    }
+
     // Here we need code adding a unique index, see mysql.php
     return true;
 }

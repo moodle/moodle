@@ -259,7 +259,7 @@ CREATE TABLE prefix_quiz_match_sub (
 CREATE TABLE prefix_quiz_multianswers (
   id int(10) unsigned NOT NULL auto_increment,
   question int(10) unsigned NOT NULL default '0',
-  sequence varchar(255) NOT NULL default '',
+  sequence text NOT NULL default '',
   PRIMARY KEY  (id),
   KEY question (question)
 ) TYPE=MyISAM COMMENT='Options for multianswer questions';
