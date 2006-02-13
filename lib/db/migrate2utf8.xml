@@ -1,13 +1,5 @@
 <DBMIGRATION type="lib" VERSION="2005120100">
   <TABLES>
-    <TABLE name="adodb_logsql">
-      <FIELDS>
-        <FIELD name="sql0" method="NO_CONV" type="varchar" length="250" />
-        <FIELD name="sql1" method="NO_CONV" type="text" length="0" />
-        <FIELD name="params" method="NO_CONV" type="text" length="0" />
-        <FIELD name="tracer" method="NO_CONV" type="text" length="0" />
-      </FIELDS>
-    </TABLE>
     <TABLE name="config">
       <FIELDS>
         <FIELD name="name" method="NO_CONV" type="varchar" length="255" dropindex="name" adduniqueindex="name (name(255))"/>
