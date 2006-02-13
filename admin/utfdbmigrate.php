@@ -426,7 +426,9 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                         if ($debug) {
                             $db->debug=999;
                         }
-                        execute_sql($SQL, $debug);
+                        if ($fieldname != 'dummy') {
+                            execute_sql($SQL, $debug);
+                        }
                         if ($debug) {
                             $db->debug=0;
                         }
@@ -440,7 +442,9 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                         if ($debug) {
                             $db->debug=999;
                         }
-                        execute_sql($SQL, $debug);
+                        if ($fieldname != 'dummy') {
+                            execute_sql($SQL, $debug);
+                        }
                         if ($debug) {
                             $db->debug=0;
                         }
