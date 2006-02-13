@@ -81,12 +81,10 @@ function process_tf($xml, &$questions) {
 
     for ($i = 0; $i < sizeof ($tfquestions); $i++) {
       
-        $question = NULL;
+        $question = $this->defaultquestion();
 
         $question->qtype = TRUEFALSE;
-        $question->defaultgrade = 1;
         $question->single = 1;	// Only one answer is allowed
-        $question->image = "";	// No images with this format
 
 	$thisquestion = $tfquestions[$i];
         // put questiontext in question object
@@ -123,12 +121,10 @@ function process_mc($xml, &$questions) {
 
     for ($i = 0; $i < sizeof ($mcquestions); $i++) {
 
-        $question = NULL;
+        $question = $this->defaultquestion();
 
         $question->qtype = MULTICHOICE;
-        $question->defaultgrade = 1;
         $question->single = 1;	// Only one answer is allowed
-        $question->image = "";	// No images with this format
 
 	$thisquestion = $mcquestions[$i];
         // put questiontext in question object
@@ -167,7 +163,7 @@ function process_ma($xml, &$questions) {
 
     for ($i = 0; $i < sizeof ($maquestions); $i++) {
 
-        $question = NULL;
+        $question = $this->defaultquestion();
 
         $question->qtype = MULTICHOICE;
         $question->defaultgrade = 1;
@@ -221,12 +217,10 @@ function process_fib($xml, &$questions) {
     $fibquestions = $xml["POOL"]["#"]["QUESTION_FILLINBLANK"];
     for ($i = 0; $i < sizeof ($fibquestions); $i++) {
 
-        $question = NULL;
+        $question = $this->defaultquestion();
 
         $question->qtype = SHORTANSWER;
-        $question->defaultgrade = 1;
         $question->usecase = 0;	// Ignore case
-        $question->image = "";	// No images with this format
 
 	$thisquestion = $fibquestions[$i];
         // put questiontext in question object
@@ -253,11 +247,9 @@ function process_matching($xml, &$questions) {
     $matchquestions = $xml["POOL"]["#"]["QUESTION_MATCH"];
     for ($i = 0; $i < sizeof ($matchquestions); $i++) {
 
-        $question = NULL;
+        $question = $this->defaultquestion();
 
         $question->qtype = MATCH;
-        $question->defaultgrade = 1;
-        $question->image = "";	// No images with this format
 
 	$thisquestion = $matchquestions[$i];
         // put questiontext in question object

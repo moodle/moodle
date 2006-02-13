@@ -39,6 +39,7 @@ class quiz_format_aiken extends quiz_default_format {
 //will this override default function?
     function readquestions($lines){
         $questions = array();
+        $question = $this->defaultquestion();
         $endchar = chr(13); 
         foreach ($lines as $line) {
             $stp = strpos($line,$endchar,0);
@@ -78,9 +79,6 @@ class quiz_format_aiken extends quiz_default_format {
                     $question->questiontext = $nowline;
                     $question->single = 1;
                     $question->feedback[] = "";
-                    $question->usecase = 0;  // Ignore case
-                    $question->defaultgrade = 1; 
-                    $question->image = "";   // No images with this format
                 }
             }
         }

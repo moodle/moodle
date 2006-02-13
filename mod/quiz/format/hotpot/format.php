@@ -88,11 +88,9 @@ function process_jcloze(&$xml, &$questions) {
     while (($exercise = "[$x]['#']") && $xml->xml_value($tags, $exercise)) {
         // there is usually only one exercise in a file
 
-        $question = new stdClass();
+        $question = $this->defaultquestion();
 
         $question->qtype = MULTIANSWER;
-        $question->usecase = 0; // Ignore case
-        $question->image = "";  // No images with this format
 
         $question->name = get_hotpotatoes_title($xml, $x);
         $question->questiontext = get_hotpotatoes_reading($xml);

@@ -90,6 +90,7 @@ class quiz_format_learnwise extends quiz_default_format {
             echo "<p>I don't understand this question type (type = <strong>$type</strong>).</p>\n";
         }
 
+        $question = $this->defaultquestion();
         $question->qtype = MULTICHOICE;
         $question->name = substr($questiontext, 0, 30);
         if (strlen($questiontext) > 30) {
@@ -99,9 +100,6 @@ class quiz_format_learnwise extends quiz_default_format {
         $question->questiontext = $questiontext;
         $question->single = ($type == 'multichoice') ? 1 : 0;
         $question->feedback[] = '';
-        $question->usecase = 0;
-        $question->defaultgrade = 1;
-        $question->image = '';
 			
         $question->fraction = array();
         $question->answer = array();
