@@ -1001,7 +1001,10 @@ function quiz_upgrade($oldversion) {
         table_column('quiz_multianswers', 'sequence', 'sequence',  'text', '', '', '', 'not null', 'question');
     }
 
-    // Here we need code adding a unique index, see mysql.php
+    if ($oldversion < 2006021400) {
+        modify_database('','CREATE UNIQUE INDEX prefix_quiz_attempts_uniqueid_uk ON prefix_quiz_attempts (uniqueid);');
+    }
+
     return true;
 }
 

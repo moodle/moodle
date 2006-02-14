@@ -97,6 +97,7 @@ CREATE TABLE prefix_quiz_attempts (
 
 CREATE INDEX prefix_quiz_attempts_quiz_idx ON prefix_quiz_attempts (quiz);
 CREATE INDEX prefix_quiz_attempts_userid_idx ON prefix_quiz_attempts (userid);
+CREATE UNIQUE INDEX prefix_quiz_attempts_uniqueid_uk ON prefix_quiz_attempts (uniqueid);
 
 # --------------------------------------------------------
 #
