@@ -337,84 +337,85 @@ class quiz_report extends quiz_default_report {
             $table->initialbars($totalinitials>20);
         }
         if(!empty($attempts) || !empty($noattempts)) {
-
-            foreach ($attempts as $attempt) {
-
-                $picture = print_user_picture($attempt->userid, $course->id, $attempt->picture, false, true);
-
-                // uncomment the commented lines below if you are choosing to show unenrolled users and
-                // have uncommented the corresponding lines earlier in this script
-                //if (in_array($attempt->userid, $unenrolledusers)) {
-                //    $userlink = '<a class="dimmed" href="'.$CFG->wwwroot.'/user/view.php?id='.$attempt->userid.'&amp;course='.$course->id.'">'.fullname($attempt).'</a>';
-                //}
-                //else {
-                    $userlink = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$attempt->userid.'&amp;course='.$course->id.'">'.fullname($attempt).'</a>';
-                //}
-                if (!$download) {
-                    $row = array(
-                              '<input type="checkbox" name="attemptid[]" value="'.$attempt->attempt.'" />',
-                              $picture,
-                              $userlink,
-                              empty($attempt->attempt) ? '-' : '<a href="review.php?q='.$quiz->id.'&amp;attempt='.$attempt->attempt.'">'.userdate($attempt->timestart, $strtimeformat).'</a>',
-                              empty($attempt->attempt) ? '-' :
-                               (empty($attempt->timefinish) ? get_string('unfinished', 'quiz') :
-                                format_time($attempt->duration))
-                           );
-                } 
-                else {
-                    $row = array(fullname($attempt),
-                               empty($attempt->attempt) ? '-' : userdate($attempt->timestart, $strtimeformat),
-                               empty($attempt->attempt) ? '-' :
-                               (empty($attempt->timefinish) ? get_string('unfinished', 'quiz') :
-                               format_time($attempt->duration))
-                           );
-                }
-
-                if ($quiz->grade and $quiz->sumgrades) {
+            if ($attempts) {
+                foreach ($attempts as $attempt) {
+    
+                    $picture = print_user_picture($attempt->userid, $course->id, $attempt->picture, false, true);
+    
+                    // uncomment the commented lines below if you are choosing to show unenrolled users and
+                    // have uncommented the corresponding lines earlier in this script
+                    //if (in_array($attempt->userid, $unenrolledusers)) {
+                    //    $userlink = '<a class="dimmed" href="'.$CFG->wwwroot.'/user/view.php?id='.$attempt->userid.'&amp;course='.$course->id.'">'.fullname($attempt).'</a>';
+                    //}
+                    //else {
+                        $userlink = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$attempt->userid.'&amp;course='.$course->id.'">'.fullname($attempt).'</a>';
+                    //}
                     if (!$download) {
-                        $row[] = $attempt->sumgrades === NULL ? '-' : '<a href="review.php?q='.$quiz->id.'&amp;attempt='.$attempt->attempt.'">'.round($attempt->sumgrades / $quiz->sumgrades * $quiz->grade,$quiz->decimalpoints).'</a>';
-                    }
+                        $row = array(
+                                  '<input type="checkbox" name="attemptid[]" value="'.$attempt->attempt.'" />',
+                                  $picture,
+                                  $userlink,
+                                  empty($attempt->attempt) ? '-' : '<a href="review.php?q='.$quiz->id.'&amp;attempt='.$attempt->attempt.'">'.userdate($attempt->timestart, $strtimeformat).'</a>',
+                                  empty($attempt->attempt) ? '-' :
+                                   (empty($attempt->timefinish) ? get_string('unfinished', 'quiz') :
+                                    format_time($attempt->duration))
+                               );
+                    } 
                     else {
-                        $row[] = $attempt->sumgrades === NULL ? '-' : round($attempt->sumgrades / $quiz->sumgrades * $quiz->grade,$quiz->decimalpoints);
+                        $row = array(fullname($attempt),
+                                   empty($attempt->attempt) ? '-' : userdate($attempt->timestart, $strtimeformat),
+                                   empty($attempt->attempt) ? '-' :
+                                   (empty($attempt->timefinish) ? get_string('unfinished', 'quiz') :
+                                   format_time($attempt->duration))
+                               );
                     }
-                }
-                if($detailedmarks) {
-                    if(empty($attempt->attempt)) {
-                        foreach($questionids as $questionid) {
-                            $row[] = '-';
+    
+                    if ($quiz->grade and $quiz->sumgrades) {
+                        if (!$download) {
+                            $row[] = $attempt->sumgrades === NULL ? '-' : '<a href="review.php?q='.$quiz->id.'&amp;attempt='.$attempt->attempt.'">'.round($attempt->sumgrades / $quiz->sumgrades * $quiz->grade,$quiz->decimalpoints).'</a>';
+                        }
+                        else {
+                            $row[] = $attempt->sumgrades === NULL ? '-' : round($attempt->sumgrades / $quiz->sumgrades * $quiz->grade,$quiz->decimalpoints);
                         }
                     }
-                    else {
-                        foreach($questionids as $questionid) {
-                            if ($gradedstateid = get_field('quiz_newest_states', 'newgraded', 'attemptid', $attempt->attemptuniqueid, 'questionid', $questionid)) {
-                                $grade = round(get_field('quiz_states', 'grade', 'id', $gradedstateid), $quiz->decimalpoints);
-                            } else {
-                                // This is an old-style attempt
-                                $grade = round(get_field('quiz_states', 'grade', 'attempt', $attempt->attempt, 'question', $questionid), $quiz->decimalpoints);
+                    if($detailedmarks) {
+                        if(empty($attempt->attempt)) {
+                            foreach($questionids as $questionid) {
+                                $row[] = '-';
                             }
-                            if (!$download) {
-                                $row[] = link_to_popup_window ('/mod/quiz/reviewquestion.php?state='.$gradedstateid.'&amp;number='.$questions[$questionid]->number, 'reviewquestion', $grade, 450, 650, $strreviewquestion, 'none', true);
-                            }
-                            else {
-                            $row[] = $grade;
+                        }
+                        else {
+                            foreach($questionids as $questionid) {
+                                if ($gradedstateid = get_field('quiz_newest_states', 'newgraded', 'attemptid', $attempt->attemptuniqueid, 'questionid', $questionid)) {
+                                    $grade = round(get_field('quiz_states', 'grade', 'id', $gradedstateid), $quiz->decimalpoints);
+                                } else {
+                                    // This is an old-style attempt
+                                    $grade = round(get_field('quiz_states', 'grade', 'attempt', $attempt->attempt, 'question', $questionid), $quiz->decimalpoints);
+                                }
+                                if (!$download) {
+                                    $row[] = link_to_popup_window ('/mod/quiz/reviewquestion.php?state='.$gradedstateid.'&amp;number='.$questions[$questionid]->number, 'reviewquestion', $grade, 450, 650, $strreviewquestion, 'none', true);
+                                }
+                                else {
+                                $row[] = $grade;
+                                }
                             }
                         }
                     }
-                }
-                if (!$download) {
-                    $table->add_data($row);
-                }
-                elseif ($download == 'Excel') {
-                    $colnum = 0;
-                    foreach($row as $item){
-                        $myxls->write($rownum,$colnum,$item,$format);
-                        $colnum++;
+                    if (!$download) {
+                        $table->add_data($row);
                     }
-                    $rownum++;
-                }
-                elseif ($download=='CSV') {
-                    $text = implode("\t", $row);
-                    echo $text." \n";
+                    elseif ($download == 'Excel') {
+                        $colnum = 0;
+                        foreach($row as $item){
+                            $myxls->write($rownum,$colnum,$item,$format);
+                            $colnum++;
+                        }
+                        $rownum++;
+                    }
+                    elseif ($download=='CSV') {
+                        $text = implode("\t", $row);
+                        echo $text." \n";
+                    }
                 }
             }
             if (!$download) {
