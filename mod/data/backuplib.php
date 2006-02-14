@@ -188,7 +188,6 @@ function backup_data_content($bf,$preferences,$recordid){
 function backup_data_ratings($bf,$preferences,$recordid){
     global $CFG;
     $status = true;
-
     $data_ratings = get_records("data_ratings","recordid",$recordid);
 
     //If there is submissions
@@ -217,11 +216,10 @@ function backup_data_ratings($bf,$preferences,$recordid){
 function backup_data_comments($bf,$preferences,$recordid){
     global $CFG;
     $status = true;
-
     $data_comments = get_records("data_comments","recordid",$recordid);
 
     //If there is submissions
-    if ($data_ratings) {
+    if ($data_comments) {
         //Write start tag
         $status =fwrite ($bf,start_tag("COMMENTS",6,true));
             //Iterate over each submission

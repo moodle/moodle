@@ -201,8 +201,8 @@ function data_records_restore_mods ($old_data_id, $new_data_id, $info, $restore)
             $status = backup_putid($restore->backup_unique_code,"data_records",$oldid, $newid);
 
             $status = data_content_restore_mods ($oldid, $newid, $old_data_id, $new_data_id, $rec_info, $restore);
-            //$status = data_ratings_restore_mods ($oldid, $newid, $info, $rec_info);
-            //$status = data_comments_restore_mods ($oldid, $newid, $info, $rec_info);
+            $status = data_ratings_restore_mods ($oldid, $newid, $info, $rec_info);
+            $status = data_comments_restore_mods ($oldid, $newid, $info, $rec_info);
             
         } else {
             $status = false;
@@ -312,6 +312,44 @@ function data_restore_files ($old_data_id, $new_data_id, $old_field_id, $new_fie
     return $status;
 }
 
-function data_ratings_restore_mods ($oldid, $newid, $info, $rec_info) {}
-function data_comments_restore_mods ($oldid, $newid, $info, $rec_info) {}
+function data_ratings_restore_mods ($oldid, $newid, $info, $rec_info) {
+
+    global $CFG;
+
+    $ratings= $rec_info['#']['RATINGS']['0']['#']['RATING'];
+
+    for ($i = 0; $i < sizeof($ratings); $i++) {
+
+        $rat_info = $ratings[$i];
+
+        $rating -> recordid = $newid;
+        $rating -> userid = backup_todb($rat_info['#']['USERID']['0']['#']);
+        $rating -> rating = backup_todb($rat_info['#']['RATING']['0']['#']);
+
+        $status = insert_record ("data_ratings",$rating);
+
+    }
+    return $status;
+}
+
+function data_comments_restore_mods ($oldid, $newid, $info, $rec_info) {
+
+    global $CFG;
+
+    $comments= $rec_info['#']['COMMENTS']['0']['#']['COMMENT'];
+
+    for ($i = 0; $i < sizeof($comments); $i++) {
+
+        $com_info = $comments[$i];
+
+        $comment -> recordid = $newid;
+        $comment -> userid = backup_todb($com_info['#']['USERID']['0']['#']);
+        $comment -> content = backup_todb($com_info['#']['CONTENT']['0']['#']);
+
+        $status = insert_record ("data_comments",$comment);
+
+    }
+    return $status;
+
+}
 ?>
