@@ -83,6 +83,13 @@ class block_base {
      */
     var $config        = NULL;
 
+    /** 
+     * How often the cronjob should run, 0 if not at all.
+     * @var int $cron
+     */
+
+    var $cron          = NULL;
+
 
 /// Class Functions
 

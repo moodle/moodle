@@ -1071,6 +1071,9 @@ function upgrade_blocks_plugins($continueto) {
 
             // If it allows multiples, start with it enabled
             $block->multiple = $blockobj->instance_allow_multiple();
+            if (!empty($blockobj->cron)) {
+                $block->cron = $blockobj->cron;
+            }
 
             // [pj] Normally this would be inline in the if, but we need to
             //      check for NULL (necessary for 4.0.5 <= PHP < 4.2.0)

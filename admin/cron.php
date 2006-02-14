@@ -72,6 +72,31 @@
     }
     mtrace("Finished activity modules");
 
+    mtrace("Starting blocks");
+    if ($blocks = get_records_select("block", "cron > 0 AND (($timenow - lastcron) > cron)")) {
+        // we will need the base class.
+        require_once($CFG->dirroot.'/blocks/moodleblock.class.php');
+        foreach ($blocks as $block) {
+            $blockfile = $CFG->dirroot.'/blocks/'.$block->name.'/block_'.$block->name.'.php';
+            if (file_exists($blockfile)) {
+                require_once($blockfile);
+                $classname = 'block_'.$block->name;
+                $blockobj = new $classname; 
+                if (method_exists($blockobj,'cron')) {
+                    mtrace("Processing cron function for ".$block->name.'....','');
+                    if ($blockobj->cron()) {
+                        if (!set_field('block','lastcron',$timenow,'id',$block->id)) {
+                            mtrace('Error: could not update timestamp for '.$block->name);
+                        }
+                    }
+                    mtrace('done.');
+                }
+            }
+
+        }
+    }
+    mtrace("Finished blocks");
+
     if (!empty($CFG->langcache)) {
         mtrace('Updating languages cache');
         get_list_of_languages();
