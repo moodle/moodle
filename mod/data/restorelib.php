@@ -74,6 +74,10 @@ function data_restore_mods($mod,$restore) {
         $database->listtemplateheader = backup_todb($info['MOD']['#']['LISTTEMPLATEHEADER']['0']['#']);
         $database->listtemplatefooter = backup_todb($info['MOD']['#']['LISTTEMPLATEFOOTER']['0']['#']);
         $database->approval = backup_todb($info['MOD']['#']['APPROVAL']['0']['#']);
+        $database->scale = backup_todb($info['MOD']['#']['SCALE']['0']['#']);
+        $database->assessed = backup_todb($info['MOD']['#']['ASSESSED']['0']['#']);
+        $database->assesspublic = backup_todb($info['MOD']['#']['ASSESSPUBLIC']['0']['#']);
+        
         $newid = insert_record ("data",$database);
 
         //Do some output

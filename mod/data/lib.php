@@ -762,6 +762,7 @@ function data_print_template($records, $data, $search, $template, $sort, $page=0
         $patterns[]='/\#\#Delete\#\#/i';
         $patterns[]='/\#\#More\#\#/i';
         $patterns[]='/\#\#Approve\#\#/i';
+        $patterns[]='/\#\#Comment\#\#/i';
 
         if (data_isowner($record->id) or isteacheredit($course->id)){
             $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/add.php?d='
@@ -783,16 +784,36 @@ function data_print_template($records, $data, $search, $template, $sort, $page=0
         }else {
             $replacement[] = '';
         }
+        
+        if (($template == 'listtemplate') && ($data->comments)) {
+            $comments = count_records('data_comments','recordid',$record->id);
+            $replacement[] = '<a href="comment.php?recordid='.$record->id.'&amp;d='.$data->id.'&amp;search='.$search.'&amp;sort='.$sort.'&amp;order='.$order.'&amp;group='.$group.'&amp;page='.$page.'">'.$comments.' '.get_string('comment','data').'</a>';
+        } else {
+            $replacement[] = '';
+        }
 
         ///actual replacement of the tags
         $newtext = preg_replace($patterns, $replacement, $data->{$template});
-        
         if ($return) {
             return $newtext;
-        }
-        else {
+        } else {
             echo $newtext;    //prints the template with tags replaced
         }
+
+        /**********************************
+         *    Printing Ratings Form       *
+         *********************************/
+        if ($template == 'singletemplate') {    //prints ratings options
+            data_print_ratings($data, $record);
+        }
+
+        /**********************************
+         *    Printing Ratings Form       *
+         *********************************/
+        if (($template == 'singletemplate') && ($data->comments)) {    //prints ratings options
+            data_print_comments($data, $record, $search, $template, $sort, $page, $rid, $order, $group);
+        }
+
         //if this record is not yet approved, and database requires approval, print silly button
     }
 }
@@ -859,7 +880,7 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
 //silly function that prints a button
 function data_print_approve_button($recordid, $d, $page='0', $rid='0', $search='', $sort='', $order='') {
     $str= '<div align="center"><form action="approve.php" method="GET">';
-    $str.=  '<input type="hidden" name="d" value="'.$d.'" />';
+    $str.= '<input type="hidden" name="d" value="'.$d.'" />';
     $str.= '<input type="hidden" name="rid" value="'.$rid.'" />';
     $str.= '<input type="hidden" name="page" value="'.$page.'" />';
     $str.= '<input type="hidden" name="search" value="'.$search.'" />';
@@ -877,5 +898,233 @@ function data_approve_record($recordid) {
     $record = get_record('data_records','id',$recordid);
     $record->approved = 1;
     update_record('data_records',$record);
+}
+
+//silly function that prints the a form to do ratings
+function data_print_ratings($data, $record) {
+    global $USER, $course;
+    $ratingsmenuused = false;
+    if ($data->ratings and !empty($USER->id)) {
+        if ($ratings->scale = make_grades_menu($data->scale)) {
+            $ratings->assesspublic = $data->assesspublic;
+            $ratings->allow = (($data->assessed != 2 or isteacher($course->id)) && !isguest());
+            if ($ratings->allow) {
+                echo '<p /><form name="form" method="post" action="rate.php">';
+                echo '<div class="ratings" align="center">';
+                $useratings = true;
+
+                if ($useratings) {
+                    if ((isteacher($course->id) or $ratings->assesspublic) and !data_isowner($record->id)) {
+                        data_print_ratings_mean($record->id, $ratings->scale, isteacher($course->id));
+                        if (!empty($ratings->allow)) {
+                            echo '&nbsp;';
+                            data_print_rating_menu($record->id, $USER->id, $ratings->scale);
+                            $ratingsmenuused = true;
+                        }
+
+                    } else if (data_isowner($record->id)) {
+                        data_print_ratings_mean($record->id, $ratings->scale, true);
+
+                    } else if (!empty($ratings->allow) ) {
+                        data_print_rating_menu($record->id, $USER->id, $ratings->scale);
+                        $ratingsmenuused = true;
+                    }
+                }
+
+                if ($data->scale < 0) {
+                    if ($scale = get_record("scale", "id", abs($data->scale))) {
+                        print_scale_menu_helpbutton($course->id, $scale );
+                    }
+                }
+
+                if ($ratingsmenuused) {
+                    echo '<input type="hidden" name="id" value="'.$course->id.'" />';
+                    echo "<input type=\"submit\" value=\"".get_string("sendinratings", "forum")."\" />";
+                }
+                echo '</div>';
+                echo "</form>";
+            }
+        }
+    }
+}
+
+function data_print_ratings_mean($recordid, $scale, $link=true) {
+/// Print the multiple ratings on a post given to the current user by others.
+/// Scale is an array of ratings
+
+    static $strrate;
+
+    $mean = data_get_ratings_mean($recordid, $scale);
+
+    if ($mean !== "") {
+
+        if (empty($strratings)) {
+            $strratings = get_string("ratings", "forum");
+        }
+
+        echo "$strratings: ";
+        if ($link) {
+            link_to_popup_window ("/mod/data/report.php?id=$recordid", "ratings", $mean, 400, 600);
+        } else {
+            echo "$mean ";
+        }
+    }
+}
+
+
+function data_get_ratings_mean($recordid, $scale, $ratings=NULL) {
+/// Return the mean rating of a post given to the current user by others.
+/// Scale is an array of possible ratings in the scale
+/// Ratings is an optional simple array of actual ratings (just integers)
+
+    if (!$ratings) {
+        $ratings = array();
+        if ($rates = get_records("data_ratings", "recordid", $recordid)) {
+            foreach ($rates as $rate) {
+                $ratings[] = $rate->rating;
+            }
+        }
+    }
+
+    $count = count($ratings);
+
+    if ($count == 0) {
+        return "";
+
+    } else if ($count == 1) {
+        return $scale[$ratings[0]];
+
+    } else {
+        $total = 0;
+        foreach ($ratings as $rating) {
+            $total += $rating;
+        }
+        $mean = round( ((float)$total/(float)$count) + 0.001);  // Little fudge factor so that 0.5 goes UP
+
+        if (isset($scale[$mean])) {
+            return $scale[$mean]." ($count)";
+        } else {
+            return "$mean ($count)";    // Should never happen, hopefully
+        }
+    }
+}
+
+
+function data_print_rating_menu($recordid, $userid, $scale) {
+/// Print the menu of ratings as part of a larger form.
+/// If the post has already been - set that value.
+/// Scale is an array of ratings
+
+    static $strrate;
+
+    if (!$rating = get_record("data_ratings", "userid", $userid, "recordid", $recordid)) {
+        $rating->rating = 0;
+    }
+
+    if (empty($strrate)) {
+        $strrate = get_string("rate", "forum");
+    }
+
+    choose_from_menu($scale, $recordid, $rating->rating, "$strrate...");
+}
+
+
+function data_get_ratings($recordid, $sort="u.firstname ASC") {
+/// Returns a list of ratings for a particular post - sorted.
+    global $CFG;
+    return get_records_sql("SELECT u.*, r.rating
+                              FROM {$CFG->prefix}data_ratings r,
+                                   {$CFG->prefix}user u
+                             WHERE r.recordid = $recordid
+                               AND r.userid = u.id
+                             ORDER BY $sort");
+
+}
+
+
+//prints all comments + a text box for adding additional comment
+function data_print_comments($data, $record , $search, $template, $sort, $page=0, $rid=0, $order='', $group='') {
+    //foreach comment, print it!
+    //(with links to edit, remove etc, but no reply!!!!!)
+    if ($comments = get_records('data_comments','recordid',$record->id)) {
+        foreach ($comments as $comment) {
+            data_print_comment($data, $comment->id);
+        }
+    }
+    
+    //prints silly comment form
+    echo '<p /><div align="center"><form method="POST" action="comment.php">';
+    echo '<input type="hidden" name="mode" value="add" />';
+    echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
+    echo '<input type="hidden" name="recordid" value="'.$record->id.'" />';
+    
+    echo '<input type="hidden" name="d" value="'.$data->id.'" />';
+    echo '<input type="hidden" name="search" value="'.$search.'" />';
+    echo '<input type="hidden" name="rid" value="'.$rid.'" />';
+    echo '<input type="hidden" name="sort" value="'.$sort.'" />';
+    echo '<input type="hidden" name="order" value="'.$order.'" />';
+    echo '<input type="hidden" name="group" value="'.$group.'" />';
+    echo '<input type="hidden" name="page" value="'.$page.'" />';
+    echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
+    
+    echo '<textarea name="commentcontent"></textarea>';
+    echo '<br><input type="submit" value="'.get_string('addcomment','data').'" />';
+    echo '</form></div>';
+}
+
+//prints a single comment entry
+function data_print_comment($data, $commentid) {
+
+    global $USER, $CFG, $course;
+    
+    $stredit = get_string('edit');
+    $strdelete = get_string('delete');
+
+    $comment = get_record('data_comments','id',$commentid);
+    $user = get_record('user','id',$comment->userid);
+
+    echo '<div align="center"><table cellspacing="0" width ="50%" class="forumpost">';
+
+    echo '<tr class="header"><td class="picture left">';
+    print_user_picture($comment->userid, $course->id, false);
+    echo '</td>';
+
+    echo '<td width="90%"><div class="author">';
+    $fullname = fullname($user, isteacher($comment->userid));
+    $by = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.
+                $user->id.'&amp;course='.$course->id.'">'.$fullname.'</a>';
+    print_string('byname', 'data', $by);
+    echo '</div></td></tr>';
+
+    echo '<tr><td class="left side">';
+    if ($group = user_group($course->id, $comment->userid)) {
+        print_group_picture($group, $course->id, false, false, true);
+    } else {
+        echo '&nbsp;';
+    }
+
+/// Actual content
+
+    echo '</td><td class="content">'."\n";
+
+    // Print whole message
+    echo format_text($comment->content);
+
+
+/// Commands
+
+    /// Hack for allow to edit news posts those are not displayed yet until they are displayed
+    echo '<div class="commands">';
+    if (data_isowner($comment->recordid) or isteacher($course->id)) {
+            echo '<a href="'.$CFG->wwwroot.'/mod/data/comment.php?mode=edit&amp;commentid='.$comment->id.'">'.$stredit.'</a>';
+    }
+
+    if (data_isowner($comment->recordid) or isteacher($course->id)) {
+        echo '| <a href="'.$CFG->wwwroot.'/mod/data/comment.php?mode=delete&amp;commentid='.$comment->id.'">'.$strdelete.'</a>';
+    }
+
+    echo '</div>';
+
+    echo '</td></tr></table><div>'."\n\n";
 }
 ?>

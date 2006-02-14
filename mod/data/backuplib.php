@@ -89,6 +89,9 @@ function data_backup_one_mod($bf,$preferences,$data) {
     fwrite ($bf,full_tag("LISTTEMPLATEHEADER",4,false,$data->listtemplateheader));
     fwrite ($bf,full_tag("LISTTEMPLATEFOOTER",4,false,$data->listtemplatefooter));
     fwrite ($bf,full_tag("APPROVAL",4,false,$data->approval));
+    fwrite ($bf,full_tag("SCALE",4,false,$data->scale));
+    fwrite ($bf,full_tag("ASSESSED",4,false,$data->assessed));
+    fwrite ($bf,full_tag("ASSESSPUBLIC",4,false,$data->assesspublic));
     
     // if we've selected to backup users info, then call any other functions we need
     // including backing up individual files

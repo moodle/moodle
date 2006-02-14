@@ -145,6 +145,7 @@
     echo '<option value="##more##">##More##</option>';
     echo '<option value="##delete##">##Delete##</option>';
     echo '<option value="##approve##">##Approve##</option>';
+    echo '<option value="##comment##">##Comments##</option>';
     echo '</select>';
 
     ///add the HTML editor(s)
