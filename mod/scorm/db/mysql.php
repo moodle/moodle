@@ -212,6 +212,10 @@ function scorm_upgrade($oldversion) {
         table_column("scorm", "", "maxattempt", "INT", "10", "UNSIGNED", "1", "NOT NULL", "maxgrade"); 
     }
 
+    if ($oldversion < 2006021400) {    //some people have this werid key - see bug 4742
+        execute_sql("ALTER TABLE {$CFG->prefix}scorm_scoes_track DROP INDEX elemeny;",false);  // do it silently
+    }
+
     return true;
 }
 ?>
