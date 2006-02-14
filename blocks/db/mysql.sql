@@ -36,7 +36,8 @@ CREATE TABLE `prefix_block_pinned` (
   `weight` tinyint(3) not null default '0',
   `visible` tinyint(1) not null default '0',
   `configdata` text not null default '',
-  PRIMARY KEY(`id`)
+  PRIMARY KEY(`id`),
+  INDEX pagetype(`pagetype`)
 ) TYPE=MyISAM;
 
 
