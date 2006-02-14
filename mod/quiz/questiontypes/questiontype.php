@@ -588,7 +588,7 @@ class quiz_default_questiontype {
 
                 // let student know wether the answer was correct
                 echo '<div class="correctness ';
-                if ($state->last_graded->raw_grade >= $question->maxgrade) {
+                if ($state->last_graded->raw_grade >= $question->maxgrade/1.01) { // We divide by 1.01 so that rounding errors dont matter.
                     echo ' correct">';
                     print_string('correct', 'quiz');
                 } else if ($state->last_graded->raw_grade > 0) {
