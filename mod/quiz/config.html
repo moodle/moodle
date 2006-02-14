@@ -60,12 +60,25 @@
     }
     //enforced delay attempt between quiz
     if (!isset($form->delay1)) {
-        $form->delay1 = 0;
+        $form->delay1 = $CFG->quiz_delay1;
     }
     if (!isset($form->delay2)) {
-        $form->delay2 = 0;
+        $form->delay2 = $CFG->quiz_delay2;
     }
-                
+    //enforced time delay between quiz attempts add-on
+    $timedelayoptions = array();
+    $timedelayoptions[0] = get_string('none');
+    $timedelayoptions[1800] = get_string('numminutes', '', 30);
+    $timedelayoptions[3600] = get_string('numminutes', '', 60);
+    for($i=2; $i<=23; $i++) {
+        $seconds  = $i*3600;
+        $timedelayoptions[$seconds] = get_string('numhours', '', $i);
+    }
+    $timedelayoptions[86400] = get_string('numhours', '', 24);
+    for($i=2; $i<=7; $i++) {
+         $seconds = $i*86400;
+         $timedelayoptions[$seconds] = get_string('numdays', '', $i);
+    }
 ?>
 
 <script type="text/javascript" language="javascript">
@@ -286,6 +299,34 @@
     <input type="hidden" name="fix_popup" value="0" />
     <input type="checkbox" name="fix_popup" value="1" <?php p($CFG->quiz_fix_popup ? "checked" : "") ?> />
   </td>
+</tr>
+
+<tr valign="top">
+    <td align="right"><b><?php print_string('delay1', 'quiz') ?>:</b></td>
+    <td align="left">
+    <?php
+         choose_from_menu($timedelayoptions, 'delay1', $form->delay1, "", "", "" );
+         helpbutton('timedelay1', get_string('delay1','quiz'), 'quiz');
+    ?>
+    </td>
+    <td align="center">
+        <input type="hidden" name="fix_delay1" value="0" />
+        <input type="checkbox" name="fix_delay1" value="1" <?php p($CFG->quiz_fix_delay1 ? "checked" : "") ?> />
+    </td>
+</tr>
+
+<tr valign="top">
+    <td align="right"><b><?php print_string('delay2', 'quiz') ?>:</b></td>
+    <td align="left">
+    <?php
+        choose_from_menu($timedelayoptions, 'delay2', $form->delay2, "", "", "");
+        helpbutton('timedelay2', get_string('delay2','quiz'), 'quiz');
+    ?>
+    </td>
+    <td align="center">
+         <input type="hidden" name="fix_delay2" value="0" />
+         <input type="checkbox" name="fix_delay2" value="1" <?php p($CFG->quiz_fix_delay2 ? "checked" : "") ?> />        
+    </td>
 </tr>
 
 <tr valign="top">
