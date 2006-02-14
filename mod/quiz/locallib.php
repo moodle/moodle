@@ -647,7 +647,7 @@ class quiz_default_questiontype {
                 $grade->raw = round($state->last_graded->raw_grade, $quiz->decimalpoints);
 
                 echo '<div class="correctness ';
-                if ($grade->raw >= $grade->max) {
+                if ($grade->raw >= $grade->max/1.01) {
                     echo ' correct">';
                     print_string('correct', 'quiz');
                 } else if ($grade->raw > 0) {
