@@ -1,7 +1,6 @@
 <?php
     require_once("../../config.php");
     require_once("lib.php");
-    print_object(data_submitted());
 
     if (isguest()) {
         error("Guests are not allowed to rate posts.", $_SERVER["HTTP_REFERER"]);
