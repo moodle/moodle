@@ -2580,6 +2580,10 @@ function update_timezone_records($timezones) {
 function get_course_mods($courseid) {
     global $CFG;
 
+    if (empty($courseid)) {
+        return false; // avoid warnings
+    }
+
     return get_records_sql("SELECT cm.*, m.name as modname
                             FROM {$CFG->prefix}modules m,
                                  {$CFG->prefix}course_modules cm
