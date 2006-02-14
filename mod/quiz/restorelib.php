@@ -1755,20 +1755,20 @@
             $newest_state->sumpenalty = backup_todb($res_info['#']['SUMPENALTY']['0']['#']);
 
             //We have to recode the question field
-            $question = backup_getid($restore->backup_unique_code,"quiz_questions",$newest_state->question);
+            $question = backup_getid($restore->backup_unique_code,"quiz_questions",$newest_state->questionid);
             if ($question) {
-                $newest_state->question = $question->new_id;
+                $newest_state->questionid = $question->new_id;
             }
 
             //We have to recode the newest field
             $state = backup_getid($restore->backup_unique_code,"quiz_states",$newest_state->newest);
-            if ($staten) {
+            if ($state) {
                 $newest_state->newest = $state->new_id;
             }
 
             //We have to recode the newgraded field
             $state = backup_getid($restore->backup_unique_code,"quiz_states",$newest_state->newgraded);
-            if ($staten) {
+            if ($state) {
                 $newest_state->newgraded = $state->new_id;
             }
 
