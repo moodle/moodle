@@ -191,7 +191,8 @@
         
         $percentage = round(($attempt->sumgrades/$quiz->sumgrades)*100, 0);
         $grade = round(($attempt->sumgrades/$quiz->sumgrades)*$quiz->grade, $CFG->quiz_decimalpoints);
-        $table->data[] = array("$strscore:", "$attempt->sumgrades/$quiz->sumgrades ($percentage %)");
+        $rawscore = round($attempt->sumgrades, $CFG->quiz_decimalpoints);
+        $table->data[] = array("$strscore:", "$rawscore/$quiz->sumgrades ($percentage %)");
         $table->data[] = array("$strgrade:", $grade.get_string('outof', 'quiz').$quiz->grade.$ungradednotice);
     }
     if ($isteacher and $attempt->userid == $USER->id) {
