@@ -262,6 +262,7 @@ class quiz_format_webct extends quiz_default_format {
         $nQuestionStartLine = 0;
         $bIsHTMLText = FALSE;
         $lines[] = ":EOF:";    // for an easiest processing of the last line
+        $question = $this->defaultquestion();
 
         foreach ($lines as $line) {
             $nLineCounter++;
@@ -406,6 +407,7 @@ class quiz_format_webct extends quiz_default_format {
                         // $question->feedback = array();
                         $questions[] = $question;    // store it
                         unset($question);            // and prepare a new one
+                        $question = $this->defaultquestion();
                     }
                 }
                 $nQuestionStartLine = $nLineCounter;
