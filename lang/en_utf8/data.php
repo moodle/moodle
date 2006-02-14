@@ -80,6 +80,7 @@ $string['recorddeleted'] = 'Record Deleted';
 $string['requireapproval'] = 'Require Approval?';
 $string['requiredentries'] = 'Required entries';
 $string['requiredentriestoview'] = 'Entries required before viewing';
+$string['rsshowmany'] = '(number of latest entries to show, 0 to disable RSS)';
 $string['rsstemplate'] = 'RSS Template';
 $string['save'] = 'Save';
 $string['savetemplate'] = 'Save template';
