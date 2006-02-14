@@ -69,6 +69,7 @@ require_once( $CFG->libdir .'/snoopy/Snoopy.class.inc');
     Purpose:  return RSS object for the give url
               maintain the cache
     Input:    url of RSS file
+              (optional) postdata to send (will force a POST rather than a GET)
     Output:   parsed RSS object (see rss_parse.inc)
 
     NOTES ON CACHEING:  
@@ -88,7 +89,7 @@ define('MAGPIE_VERSION', '0.72');
 
 $MAGPIE_ERROR = "";
 
-function fetch_rss ($url) {
+function fetch_rss ($url, $postdata=null) {
     // initialize constants
     init();
     
@@ -100,7 +101,7 @@ function fetch_rss ($url) {
     // if cache is disabled
     if ( !MAGPIE_CACHE_ON ) {
         // fetch file, and parse it
-        $resp = _fetch_remote_file( $url );
+        $resp = _fetch_remote_file( $url, null, $postdata );
         if ( is_success( $resp->status ) ) {
             return _response_to_rss( $resp );
         }
@@ -132,7 +133,12 @@ function fetch_rss ($url) {
         // store parsed XML by desired output encoding
         // as character munging happens at parse time
         $cache_key       = $url . MAGPIE_OUTPUT_ENCODING;
-        
+        // if we're sending postdata, we should add that to the cache key.
+        // since GET data would be part of the url anyway.
+        if (!empty($postdata) && is_array($postdata)) {
+            $cache_key .= serialize($postdata);
+        }
+
         if (!$cache->ERROR) {
             // return cache HIT, MISS, or STALE
             $cache_status = $cache->check_cache( $cache_key);
@@ -162,7 +168,7 @@ function fetch_rss ($url) {
             }
         }
         
-        $resp = _fetch_remote_file( $url, $request_headers );
+        $resp = _fetch_remote_file( $url, $request_headers, $postdata );
         
         if (isset($resp) and $resp) {
           if ($resp->status == '304' ) {
@@ -269,7 +275,7 @@ function magpie_error ($errormsg="") {
                 headers to send along with the request (optional)
     Output:     an HTTP response object (see Snoopy.class.inc)  
 \*=======================================================================*/
-function _fetch_remote_file ($url, $headers = "" ) {
+function _fetch_remote_file ($url, $headers = "", $postdata=null ) {
     // Snoopy is an HTTP client in PHP
     $client = new Snoopy();
     $client->agent = MAGPIE_USER_AGENT;
@@ -278,8 +284,11 @@ function _fetch_remote_file ($url, $headers = "" ) {
     if (is_array($headers) ) {
         $client->rawheaders = $headers;
     }
-    
-    @$client->fetch($url);
+    if (!empty($postdata) && is_array($postdata)) {
+        @$client->submit($url,$postdata);
+    } else {
+        @$client->fetch($url);
+    }
     return $client;
 
 }
