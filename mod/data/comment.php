@@ -40,7 +40,7 @@
             if (($newcomment->content = $commentcontent) && ($newcomment->recordid = $recordid)) {
                 insert_record('data_comments',$newcomment);
             }
-            redirect('view.php?d='.s($d).'&amp;search='.s($search).'&amp;sort='.s($sort).'&amp;order='.s($order).'&amp;group='.s($group).'&amp;page='.s($page).'&amp;rid='.s($rid), get_string("commentsaved", "forum"));
+            redirect('view.php?d='.s($d).'&amp;search='.s($search).'&amp;sort='.s($sort).'&amp;order='.s($order).'&amp;group='.s($group).'&amp;page='.s($page).'&amp;rid='.s($rid), get_string("commentsaved", "data"));
         break;
         
         case 'edit':    //print edit form
@@ -74,13 +74,13 @@
             $newcomment->id = $commentid;
             $newcomment->content = $commentcontent;
             update_record('data_comments',$newcomment);
-            redirect('view.php?d='.s($d).'&amp;search='.s($search).'&amp;sort='.s($sort).'&amp;order='.s($order).'&amp;group='.s($group).'&amp;page='.s($page).'&amp;rid='.s($rid), get_string("commentsaved", "forum"));
+            redirect('view.php?d='.s($d).'&amp;search='.s($search).'&amp;sort='.s($sort).'&amp;order='.s($order).'&amp;group='.s($group).'&amp;page='.s($page).'&amp;rid='.s($rid), get_string("commentsaved", "data"));
         break;
         
         case 'delete':    //deletes single comment from db
             if ($confirm and confirm_sesskey()) {
                 delete_records('data_comments','id',$commentid);
-                redirect('view.php?d='.s($d).'&amp;search='.s($search).'&amp;sort='.s($sort).'&amp;order='.s($order).'&amp;group='.s($group).'&amp;page='.s($page).'&amp;rid='.s($rid), get_string("commentsaved", "forum"));
+                redirect('view.php?d='.s($d).'&amp;search='.s($search).'&amp;sort='.s($sort).'&amp;order='.s($order).'&amp;group='.s($group).'&amp;page='.s($page).'&amp;rid='.s($rid), get_string("commentsaved", "data"));
             } else {    //print confirm delete form
                 print_header();
                 print_heading('Delete Confirm');

@@ -25,8 +25,8 @@
 
     $scalemenu = make_grades_menu($data->scale);
 
-    $strratings = get_string("ratings", "forum");
-    $strrating = get_string("rating", "forum");
+    $strratings = get_string("ratings", "data");
+    $strrating = get_string("rating", "data");
     $strname = get_string("name");
 
     print_header("$strratings: ".format_string($post->subject));

@@ -872,7 +872,7 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
     //print ASC or DESC
     echo '</td></tr><tr>';
     echo '<td colspan="2" align="center" class="r3">';
-    echo '<input type="submit" value="'.get_string('savesettings').'" />';
+    echo '<input type="submit" value="'.get_string('savesettings','data').'" />';
     echo '</td></tr></table>';
     echo '</form>';
 }
@@ -939,7 +939,7 @@ function data_print_ratings($data, $record) {
 
                 if ($ratingsmenuused) {
                     echo '<input type="hidden" name="id" value="'.$course->id.'" />';
-                    echo "<input type=\"submit\" value=\"".get_string("sendinratings", "forum")."\" />";
+                    echo "<input type=\"submit\" value=\"".get_string("sendinratings", "data")."\" />";
                 }
                 echo '</div>';
                 echo "</form>";
@@ -959,7 +959,7 @@ function data_print_ratings_mean($recordid, $scale, $link=true) {
     if ($mean !== "") {
 
         if (empty($strratings)) {
-            $strratings = get_string("ratings", "forum");
+            $strratings = get_string("ratings", "data");
         }
 
         echo "$strratings: ";
@@ -1022,7 +1022,7 @@ function data_print_rating_menu($recordid, $userid, $scale) {
     }
 
     if (empty($strrate)) {
-        $strrate = get_string("rate", "forum");
+        $strrate = get_string("rate", "data");
     }
 
     choose_from_menu($scale, $recordid, $rating->rating, "$strrate...");

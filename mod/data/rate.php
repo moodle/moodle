@@ -49,7 +49,7 @@
             }
         }
 
-        redirect($_SERVER["HTTP_REFERER"], get_string("ratingssaved", "forum"));
+        redirect($_SERVER["HTTP_REFERER"], get_string("ratingssaved", "data"));
     } else {
         error("This page was not accessed correctly");
     }

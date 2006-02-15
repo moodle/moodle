@@ -251,7 +251,7 @@
 <?php } ?>
 
 <tr>
-    <td align="right" valign="top"><b><?php print_string("allowratings", "forum") ?>:</b></td>
+    <td align="right" valign="top"><b><?php print_string("allowratings", "data") ?>:</b></td>
     <td>
         <table cellpadding="1">
         <tr>
@@ -261,20 +261,20 @@
             echo "  var subitemsall = ['assessed', 'assesspublic', 'scale'];";
             echo '</script>';
 
-            echo '<input name="ratings" type="checkbox" alt="'.get_string('ratingsuse', 'forum').'" value="1" ';
+            echo '<input name="ratings" type="checkbox" alt="'.get_string('ratingsuse', 'data').'" value="1" ';
             echo " onclick=\"return lockoptions('form','ratings', subitemsall)\" ";
             if ($form->ratings) {
                 echo ' checked="checked" ';
             }
             echo ' />';
-            echo '&nbsp;'.get_string('ratingsuse', 'forum').':';
+            echo '&nbsp;'.get_string('ratingsuse', 'data').':';
             echo '</td></tr>';
 
             echo '<tr><td>';
             // The odd order below was to maintain backward compatibility
             unset($options);
-            $options[2] = get_string('ratingonlyteachers', 'forum', moodle_strtolower($course->teachers));
-            $options[1] = get_string('ratingeveryone', 'forum');
+            $options[2] = get_string('ratingonlyteachers', 'data', moodle_strtolower($course->teachers));
+            $options[1] = get_string('ratingeveryone', 'data');
             echo get_string('users').': ';
             echo '</td><td>';
             choose_from_menu($options, 'assessed', $form->assessed, '');
@@ -282,8 +282,8 @@
 
             echo '<tr><td>';
             unset($options);
-            $options[0] = get_string('ratingpublicnot', 'forum', $course->students);
-            $options[1] = get_string('ratingpublic', 'forum', $course->students);
+            $options[0] = get_string('ratingpublicnot', 'data', $course->students);
+            $options[1] = get_string('ratingpublic', 'data', $course->students);
             echo get_string('view').': ';
             echo '</td><td>';
             choose_from_menu($options, 'assesspublic', $form->assesspublic, '');
