@@ -1021,7 +1021,7 @@ function get_fieldset_sql($sql) {
 }
 
 /**
- * Set a single field in the table row where all the given fields match the given values.
+ * Set a single field in every table row where all the given fields match the given values.
  *
  * @uses $CFG
  * @uses $db
