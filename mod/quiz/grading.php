@@ -122,7 +122,7 @@
             $statefields = 'n.questionid as question, s.*, n.sumpenalty';
             $sql = "SELECT $statefields".
                "  FROM {$CFG->prefix}quiz_states s,".
-               "       {$CFG->prefix}quiz_newest_states n".
+               "       {$CFG->prefix}question_sessions n".
                " WHERE s.id = n.newest".
                "   AND n.attemptid = '$attempt->uniqueid'".
                "   AND n.questionid = $question->id";
@@ -150,7 +150,7 @@
             $sumgrades = 0;
             $questionids = explode(',', quiz_questions_in_quiz($attempt->layout));
             foreach($questionids as $questionid) {
-                $lastgradedid = get_field('quiz_newest_states', 'newgraded', 'attemptid', $attempt->uniqueid, 'questionid', $questionid);
+                $lastgradedid = get_field('question_sessions', 'newgraded', 'attemptid', $attempt->uniqueid, 'questionid', $questionid);
                 $sumgrades += get_field('quiz_states', 'grade', 'id', $lastgradedid);
             }            
 
@@ -190,7 +190,7 @@
         
         foreach ($attempts as $attempt) {
             // retrieve the state
-            if (!$neweststate = get_record('quiz_newest_states', 'attemptid', $attempt->uniqueid, 'questionid', $questionid)) {
+            if (!$neweststate = get_record('question_sessions', 'attemptid', $attempt->uniqueid, 'questionid', $questionid)) {
                 error("Can not find newest states for attempt $attempt->uniqueid for question $questionid");
             }
             if (! $state = get_record('quiz_states', 'id', $neweststate->newest)) {
@@ -276,7 +276,7 @@
                     $ungraded = 0;
                     foreach ($attempts as $attempt) {
                         // grab the state then check if it is graded
-                        if (!$neweststate = get_record('quiz_newest_states', 'attemptid', $attempt->uniqueid, 'questionid', $question->id)) {
+                        if (!$neweststate = get_record('question_sessions', 'attemptid', $attempt->uniqueid, 'questionid', $question->id)) {
                             error("Can not find newest states for attempt $attempt->uniqueid for question $question->id");
                         }
                         if (!$questionstate = get_record('quiz_essay_states', 'stateid', $neweststate->newest)) {
@@ -365,7 +365,7 @@
                                 $attempt->firstname.' '.$attempt->lastname.'</a>';
                     
                     // nab the state of the attempt to see if it is graded or not
-                    if (!$neweststate = get_record('quiz_newest_states', 'attemptid', $attempt->uniqueid, 'questionid', $question->id)) {
+                    if (!$neweststate = get_record('question_sessions', 'attemptid', $attempt->uniqueid, 'questionid', $question->id)) {
                         error("Can not find newest states for attempt $attempt->uniqueid for question $questionid");
                     }
 

@@ -252,8 +252,8 @@
                             // replace question id in states
                             set_field('quiz_states', 'question', $question->id, 'attempt', $attempt->uniqueid, 'question', $oldquestionid);
 
-                            // replace question id in newest_states
-                            set_field('quiz_newest_states', 'questionid', $question->id, 'attemptid', $attempt->uniqueid, 'questionid', $oldquestionid);
+                            // replace question id in sessions
+                            set_field('question_sessions', 'questionid', $question->id, 'attemptid', $attempt->uniqueid, 'questionid', $oldquestionid);
 
                         }
 

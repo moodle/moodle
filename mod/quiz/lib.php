@@ -214,10 +214,11 @@ function quiz_delete_instance($id) {
 
     if ($attempts = get_records("quiz_attempts", "quiz", "$quiz->id")) {
         foreach ($attempts as $attempt) {
+            // TODO: this should use function in questionlib.php
             if (! delete_records("quiz_states", "attempt", "$attempt->uniqueid")) {
                 $result = false;
             }
-            if (! delete_records("quiz_newest_states", "attemptid", "$attempt->uniqueid")) {
+            if (! delete_records("question_sessions", "attemptid", "$attempt->uniqueid")) {
                 $result = false;
             }
         }

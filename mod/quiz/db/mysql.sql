@@ -284,10 +284,10 @@ CREATE TABLE prefix_quiz_multichoice (
 -- --------------------------------------------------------
 
 -- 
--- Table structure for table `prefix_quiz_newest_states`
+-- Table structure for table `prefix_question_sessions`
 -- 
 
-CREATE TABLE prefix_quiz_newest_states (
+CREATE TABLE prefix_question_sessions (
   id int(10) unsigned NOT NULL auto_increment,
   attemptid int(10) unsigned NOT NULL default '0',
   questionid int(10) unsigned NOT NULL default '0',

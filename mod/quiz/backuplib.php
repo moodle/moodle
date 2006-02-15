@@ -17,7 +17,7 @@
     //      quiz_attempts                          quiz_question_instances               .       |    |  (CL,pk->id,fk->question,  |    .
     //  (UL,pk->id,fk->quiz)                    (CL,pk->id,fk->quiz,question)            .       |    |   fk->dataset_definition)  |    .
     //             |                                              |                      .       |    |                            |    .
-    //             |               quiz_newest_states             |                      .       |    |                            |    .
+    //             |               question_sessions             |                      .       |    |                            |    .
     //             |---------(UL,pk->id,fk->attempt,question)-----|                      .       |    |                            |    .
     //             |                        .                     |                      .       |    |                       quiz_dataset_definitions
     //             |                        .                     |                      .       |    |                      (CL,pk->id,fk->category)
@@ -96,7 +96,7 @@
     //     - quiz_attempts
     //     - quiz_grades
     //     - quiz_states
-    //     - quiz_newest_states
+    //     - question_sessions
     //    This step is the standard mod backup. (course dependent).
 
 //STEP 1. Backup categories/questions and associated structures
@@ -961,13 +961,13 @@
             //Write end tag
             $status =fwrite ($bf,end_tag("STATES",6,true));
         }
-        $quiz_newest_states = get_records("quiz_newest_states","attemptid",$attempt,"id");
+        $question_sessions = get_records("question_sessions","attemptid",$attempt,"id");
         //If there are newest_states
-        if ($quiz_newest_states) {
+        if ($question_sessions) {
             //Write start tag
             $status =fwrite ($bf,start_tag("NEWEST_STATES",6,true));
             //Iterate over each newest_state
-            foreach ($quiz_newest_states as $newest_state) {
+            foreach ($question_sessions as $newest_state) {
                 //Start newest_state
                 $status =fwrite ($bf,start_tag("NEWEST_STATE",7,true));
                 //Print newest_state contents

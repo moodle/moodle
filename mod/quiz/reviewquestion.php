@@ -31,7 +31,7 @@
         if (! $attempt = get_record('quiz_attempts', 'id', $attemptid)) {
             error('No such attempt ID exists');
         }
-        if (! $neweststateid = get_field('quiz_newest_states', 'newest', 'attemptid', $attempt->uniqueid, 'questionid', $questionid)) {
+        if (! $neweststateid = get_field('question_sessions', 'newest', 'attemptid', $attempt->uniqueid, 'questionid', $questionid)) {
             // newest_state not set, probably because this is an old attempt from the old quiz module code
             if (! $state = get_record('quiz_states', 'question', $questionid, 'attempt', $attempt->uniqueid)) {
                 error('Invalid question id');

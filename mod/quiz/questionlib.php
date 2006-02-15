@@ -127,7 +127,7 @@ function quiz_delete_question($question) {
     $QUIZ_QTYPES[$question->qtype]->delete_question($question);
     delete_records("quiz_answers", "question", $question->id);
     delete_records("quiz_states", "question", $question->id);
-    delete_records("quiz_newest_states", "questionid", $question->id);
+    delete_records("question_sessions", "questionid", $question->id);
     if ($newversions = get_records('quiz_question_versions', 'oldquestion', $question->id)) {
         foreach ($newversions as $newversion) {
             $newquestion = get_record('quiz_questions', 'id', $newversion->newquestion);
@@ -210,7 +210,7 @@ function quiz_get_states(&$questions, $cmoptions, $attempt) {
     // Load the newest states for the questions
     $sql = "SELECT $statefields".
            "  FROM {$CFG->prefix}quiz_states s,".
-           "       {$CFG->prefix}quiz_newest_states n".
+           "       {$CFG->prefix}question_sessions n".
            " WHERE s.id = n.newest".
            "   AND n.attemptid = '$attempt->uniqueid'".
            "   AND n.questionid IN ($questionlist)";
@@ -219,7 +219,7 @@ function quiz_get_states(&$questions, $cmoptions, $attempt) {
     // Load the newest graded states for the questions
     $sql = "SELECT $statefields".
            "  FROM {$CFG->prefix}quiz_states s,".
-           "       {$CFG->prefix}quiz_newest_states n".
+           "       {$CFG->prefix}question_sessions n".
            " WHERE s.id = n.newgraded".
            "   AND n.attemptid = '$attempt->uniqueid'".
            "   AND n.questionid IN ($questionlist)";
@@ -246,7 +246,7 @@ function quiz_get_states(&$questions, $cmoptions, $attempt) {
                 // Load the last graded state for the question
                 $sql = "SELECT $statefields".
                        "  FROM {$CFG->prefix}quiz_states s,".
-                       "       {$CFG->prefix}quiz_newest_states n".
+                       "       {$CFG->prefix}question_sessions n".
                        " WHERE s.id = n.newgraded".
                        "   AND n.attemptid = '$lastattemptid'".
                        "   AND n.questionid = '$i'";
@@ -332,7 +332,7 @@ function quiz_restore_state(&$question, &$state) {
 * The state object representing the current state of the session for the
 * question is saved to the quiz_states table with ->responses[''] saved
 * to the answer field of the database table. The information in the
-* quiz_newest_states table is updated.
+* question_sessions table is updated.
 * The question type specific data is then saved.
 * @return boolean         Indicates success or failure.
 * @param object $question The question for which session is to be saved.
@@ -371,26 +371,26 @@ function quiz_save_question_session(&$question, &$state) {
         }
 
         // this is the most recent state
-        if (!record_exists('quiz_newest_states', 'attemptid',
+        if (!record_exists('question_sessions', 'attemptid',
          $state->attempt, 'questionid', $question->id)) {
             $new->attemptid = $state->attempt;
             $new->questionid = $question->id;
             $new->newest = $state->id;
             $new->sumpenalty = $state->sumpenalty;
-            if (!insert_record('quiz_newest_states', $new)) {
-                error('Could not insert entry in quiz_newest_states');
+            if (!insert_record('question_sessions', $new)) {
+                error('Could not insert entry in question_sessions');
             }
         } else {
-            set_field('quiz_newest_states', 'newest', $state->id, 'attemptid',
+            set_field('question_sessions', 'newest', $state->id, 'attemptid',
              $state->attempt, 'questionid', $question->id);
         }
         if (quiz_state_is_graded($state)) {
             // this is also the most recent graded state
-            if ($newest = get_record('quiz_newest_states', 'attemptid',
+            if ($newest = get_record('question_sessions', 'attemptid',
              $state->attempt, 'questionid', $question->id)) {
                 $newest->newgraded = $state->id;
                 $newest->sumpenalty = $state->sumpenalty;
-                update_record('quiz_newest_states', $newest);
+                update_record('question_sessions', $newest);
             }
         }
     }

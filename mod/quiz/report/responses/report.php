@@ -177,7 +177,7 @@ class quiz_report extends quiz_default_report {
                         if(!$questionsort) {
                             $qid          = intval(substr($sortpart, 1));
                             $select .= ', grade ';
-                            $from        .= 'LEFT JOIN '.$CFG->prefix.'quiz_newest_states qns ON qns.attemptid = qa.id '.
+                            $from        .= 'LEFT JOIN '.$CFG->prefix.'question_sessions qns ON qns.attemptid = qa.id '.
 	                                        'LEFT JOIN '.$CFG->prefix.'quiz_states qs ON qs.id = qns.newgraded ';
                             $where       .= ' AND ('.sql_isnull('qns.questionid').' OR qns.questionid = '.$qid.')';
                             $newsort[]    = 'answer '.(strpos($sortpart, 'ASC')? 'ASC' : 'DESC');
@@ -315,7 +315,7 @@ class quiz_report extends quiz_default_report {
                         error('Could not restore question sessions');
                     }
                     foreach($questionids as $questionid) {
-                        $gradedstateid = get_field('quiz_newest_states', 'newgraded', 'attemptid', $attempt->id, 'questionid', $questionid);
+                        $gradedstateid = get_field('question_sessions', 'newgraded', 'attemptid', $attempt->id, 'questionid', $questionid);
                         $grade = round(get_field('quiz_states', 'grade', 'id', $gradedstateid), $quiz->decimalpoints);
                         $responses =  quiz_get_question_actual_response($questions[$questionid], $states[$questionid]);
                         $response = implode(', ',$responses);

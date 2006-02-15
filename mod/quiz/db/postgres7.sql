@@ -251,11 +251,11 @@ CREATE INDEX prefix_quiz_multichoice_question_idx ON prefix_quiz_multichoice (qu
 # --------------------------------------------------------
 
 #
-# Table structure for table prefix_quiz_newest_states
+# Table structure for table prefix_question_sessions
 #
 
 
-CREATE TABLE prefix_quiz_newest_states (
+CREATE TABLE prefix_question_sessions (
   id SERIAL PRIMARY KEY,
   attemptid integer NOT NULL default '0',
   questionid integer NOT NULL default '0',
@@ -264,7 +264,7 @@ CREATE TABLE prefix_quiz_newest_states (
   sumpenalty varchar(10) NOT NULL default '0.0'
 );
 
-CREATE UNIQUE INDEX prefix_quiz_newest_states_attempt_idx ON prefix_quiz_newest_states (attemptid,questionid);
+CREATE UNIQUE INDEX prefix_question_sessions_attempt_idx ON prefix_question_sessions (attemptid,questionid);
 
 # --------------------------------------------------------
 

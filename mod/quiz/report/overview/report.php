@@ -41,10 +41,10 @@ class quiz_report extends quiz_default_report {
 
                 foreach($attemptids as $attemptid) {
                     if ($todelete = get_record('quiz_attempts', 'id', $attemptid)) {
-
+                        // TODO: use function from questionlib.php to delete attempt
                         delete_records('quiz_attempts', 'id', $attemptid);
                         delete_records('quiz_states', 'attempt', $todelete->uniqueid);
-                        delete_records('quiz_newest_states', 'attemptid', $todelete->uniqueid);
+                        delete_records('question_sessions', 'attemptid', $todelete->uniqueid);
 
                         // Search quiz_attempts for other instances by this user.
                         // If none, then delete record for this quiz, this user from quiz_grades
@@ -289,7 +289,7 @@ class quiz_report extends quiz_default_report {
                         if(!$questionsort) {
                             $qid          = intval(substr($sortpart, 1));
                             $select .= ', grade ';
-                            $from        .= 'LEFT JOIN '.$CFG->prefix.'quiz_newest_states qns ON qns.attemptid = qa.attemptuniqueid '.
+                            $from        .= 'LEFT JOIN '.$CFG->prefix.'question_sessions qns ON qns.attemptid = qa.attemptuniqueid '.
                                                 'LEFT JOIN '.$CFG->prefix.'quiz_states qs ON qs.id = qns.newgraded ';
                             $where       .= ' AND ('.sql_isnull('qns.questionid').' OR qns.questionid = '.$qid.')';
                             $newsort[]    = 'grade '.(strpos($sortpart, 'ASC')? 'ASC' : 'DESC');

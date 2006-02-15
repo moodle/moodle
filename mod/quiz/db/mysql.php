@@ -908,7 +908,7 @@ function quiz_upgrade($oldversion) {
         table_column('quiz_multianswers', 'sequence', 'sequence',  'text', '', '', '', 'not null', 'question');
     }
 
-    if ($oldversion < 200602100) {
+    if ($oldversion < 2006021501) {
         execute_sql("ALTER TABLE {$CFG->prefix}quiz_newest_states RENAME {$CFG->prefix}question_sessions", false);
     }
 

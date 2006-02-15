@@ -285,7 +285,7 @@ class quiz_essay_qtype extends quiz_default_questiontype {
                     // determine the number of ungraded attempts essays
                     foreach ($attempts as $attempt) {
                         // grab the state then check if it is graded
-                        if (!$neweststate = get_record('quiz_newest_states', 'attemptid', $attempt->uniqueid, 'questionid', $question->id)) {
+                        if (!$neweststate = get_record('question_sessions', 'attemptid', $attempt->uniqueid, 'questionid', $question->id)) {
                             error("Can not find newest states for attempt $attempt->uniqueid for question $question->id");
                         }
                         if (!$questionstate = get_record('quiz_essay_states', 'stateid', $neweststate->newest)) {

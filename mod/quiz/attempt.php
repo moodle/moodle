@@ -202,8 +202,10 @@
                 delete_records('quiz_grades', 'quiz', $quiz->id, 'userid', $USER->id);
                 foreach ($oldattempts as $oldattempt) {
                     // there should only be one but we loop just in case
+                    // TODO: the following should become a function in questionlib.php which
+                    // really deletes all records associated to this attempt.
                     delete_records('quiz_states', 'attempt', $oldattempt->uniqueid);
-                    delete_records('quiz_newest_states', 'attemptid', $oldattempt->uniqueid);
+                    delete_records('question_sessions', 'attemptid', $oldattempt->uniqueid);
                 }
             }
         }
@@ -340,7 +342,7 @@
 
         // Find all the questions for this attempt for which the newest
         // state is not also the newest graded state
-        if ($closequestions = get_records_select('quiz_newest_states',
+        if ($closequestions = get_records_select('question_sessions',
          "attemptid = $attempt->uniqueid AND newest != newgraded", '', 'questionid, questionid')) {
 
             // load all the questions

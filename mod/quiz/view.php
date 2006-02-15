@@ -217,7 +217,6 @@
                 $datecompleted = userdate($attempt->timefinish);
             } else if ($available) { // The student can continue this attempt, so put appropriate link
                 $timetaken = format_time(time() - $attempt->timestart);
-                $strconfirmstartattempt = addslashes(get_string("confirmstartattempt","quiz"));
                 $datecompleted  = "\n".'<script language="javascript" type="text/javascript">';
                 $datecompleted .= "\n<!--\n"; // -->
                 if (!empty($CFG->usesid) && !isset($_COOKIE[session_name()])) {

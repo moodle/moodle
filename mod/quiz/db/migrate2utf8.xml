@@ -39,7 +39,7 @@
         <FIELD name="tolerance" method="NO_CONV" type="varchar" length="255" default="0.0" />
       </FIELDS>
     </TABLE>
-    <TABLE name="quiz_newest_states">
+    <TABLE name="question_sessions">
       <FIELDS>
         <FIELD name="sumpenalty" method="NO_CONV" type="varchar" length="10" default="0.0" />
       </FIELDS>

@@ -25,7 +25,7 @@
     //      quiz_attempts                          quiz_question_instances               .       |    |  (CL,pk->id,fk->question,  |    .
     //  (UL,pk->id,fk->quiz)                    (CL,pk->id,fk->quiz,question)            .       |    |   fk->dataset_definition)  |    .
     //             |                                              |                      .       |    |                            |    .
-    //             |               quiz_newest_states             |                      .       |    |                            |    .
+    //             |               question_sessions             |                      .       |    |                            |    .
     //             |---------(UL,pk->id,fk->attempt,question)-----|                      .       |    |                            |    .
     //             |                        .                     |                      .       |    |                       quiz_dataset_definitions
     //             |                        .                     |                      .       |    |                      (CL,pk->id,fk->category)
@@ -1838,42 +1838,42 @@
             }
         }
 
-        //Get the quiz_newest_states array
-        $newest_states = $info['#']['NEWEST_STATES']['0']['#']['NEWEST_STATE'];
-        //Iterate over newest_states
-        for($i = 0; $i < sizeof($newest_states); $i++) {
-            $res_info = $newest_states[$i];
+        //Get the question_sessions array
+        $sessions = $info['#']['NEWEST_STATES']['0']['#']['NEWEST_STATE'];
+        //Iterate over question_sessions
+        for($i = 0; $i < sizeof($sessions); $i++) {
+            $res_info = $sessions[$i];
             //traverse_xmlize($res_info);                                                                 //Debug
             //print_object ($GLOBALS['traverse_array']);                                                  //Debug
             //$GLOBALS['traverse_array']="";                                                              //Debug
 
             //Now, build the NEWEST_STATES record structure
-            $newest_state->attemptid = $attempt_id;
-            $newest_state->questionid = backup_todb($res_info['#']['QUESTIONID']['0']['#']);
-            $newest_state->newest = backup_todb($res_info['#']['NEWEST']['0']['#']);
-            $newest_state->newgraded = backup_todb($res_info['#']['NEWGRADED']['0']['#']);
-            $newest_state->sumpenalty = backup_todb($res_info['#']['SUMPENALTY']['0']['#']);
+            $session->attemptid = $attempt_id;
+            $session->questionid = backup_todb($res_info['#']['QUESTIONID']['0']['#']);
+            $session->newest = backup_todb($res_info['#']['NEWEST']['0']['#']);
+            $session->newgraded = backup_todb($res_info['#']['NEWGRADED']['0']['#']);
+            $session->sumpenalty = backup_todb($res_info['#']['SUMPENALTY']['0']['#']);
 
             //We have to recode the question field
-            $question = backup_getid($restore->backup_unique_code,"quiz_questions",$newest_state->questionid);
+            $question = backup_getid($restore->backup_unique_code,"quiz_questions",$session->questionid);
             if ($question) {
-                $newest_state->questionid = $question->new_id;
+                $session->questionid = $question->new_id;
             }
 
             //We have to recode the newest field
-            $state = backup_getid($restore->backup_unique_code,"quiz_states",$newest_state->newest);
+            $state = backup_getid($restore->backup_unique_code,"quiz_states",$session->newest);
             if ($state) {
-                $newest_state->newest = $state->new_id;
+                $session->newest = $state->new_id;
             }
 
             //We have to recode the newgraded field
-            $state = backup_getid($restore->backup_unique_code,"quiz_states",$newest_state->newgraded);
+            $state = backup_getid($restore->backup_unique_code,"quiz_states",$session->newgraded);
             if ($state) {
-                $newest_state->newgraded = $state->new_id;
+                $session->newgraded = $state->new_id;
             }
 
-            //The structure is equal to the db, so insert the quiz_newest_states
-            $newid = insert_record ("quiz_newest_states",$newest_state);
+            //The structure is equal to the db, so insert the question_sessions
+            $newid = insert_record ("question_sessions",$session);
 
         }
 
