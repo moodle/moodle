@@ -37,11 +37,23 @@
                 continue;
             }
             if ($module == 'moodle') {
-                $filepath = $CFG->dirroot .'/lang/'. $lang .'/help/'. $file;
+                if ($lang == 'en_utf8') {
+                    $filepath = $CFG->dirroot .'/lang/'. $lang .'/help/'. $file;
+                } else {
+                    $filepath = $CFG->dataroot .'/lang/'. $lang .'/help/'. $file;
+                }
             } else {
-                $filepath = $CFG->dirroot .'/lang/'. $lang .'/help/'. $module .'/'. $file;
+                if ($lang == 'en_utf8') {
+                    $filepath = $CFG->dirroot .'/lang/'. $lang .'/help/'. $module .'/'. $file;
+                } else {
+                    $filepath = $CFG->dataroot .'/lang/'. $lang .'/help/'. $module .'/'. $file;
+                }
                 if (!file_exists($filepath)) {
-                    $filepath = $CFG->dirroot.'/mod/'.$module.'/lang/'. $lang .'/help/'. $module .'/'. $file;
+                    if ($lang == 'en_utf8') {
+                        $filepath = $CFG->dirroot.'/mod/'.$module.'/lang/'. $lang .'/help/'. $module .'/'. $file;
+                    } else {
+                        $filepath = $CFG->dataroot.'/mod/'.$module.'/lang/'. $lang .'/help/'. $module .'/'. $file;
+                    }
                 }
             }
 
@@ -67,7 +79,11 @@
                             if (empty($lang)) {
                                 continue;
                             }
-                            $filepath = $CFG->dirroot .'/lang/'. $lang .'/help/'. $mod->name .'/'. $file;
+                            if ($lang == 'en_utf8') {
+                                $filepath = $CFG->dirroot .'/lang/'. $lang .'/help/'. $mod->name .'/'. $file;
+                            } else {
+                                $filepath = $CFG->dataroot .'/lang/'. $lang .'/help/'. $mod->name .'/'. $file;
+                            }
 
                             if (file_exists($filepath)) {
                                 echo '<hr size="1" />';
@@ -90,7 +106,11 @@
                             if (empty($lang)) {
                                 continue;
                             }
-                            $filepath = $CFG->dirroot .'/lang/'. $lang .'/help/resource/type/'. $type .'.html';
+                            if ($lang == 'en_utf8') {
+                                $filepath = $CFG->dirroot .'/lang/'. $lang .'/help/resource/type/'. $type .'.html';
+                            } else {
+                                $filepath = $CFG->dataroot .'/lang/'. $lang .'/help/resource/type/'. $type .'.html';
+                            }
                             if (file_exists($filepath)) {
                                 echo '<hr size="1" />';
                                 include($filepath);   // The actual helpfile
