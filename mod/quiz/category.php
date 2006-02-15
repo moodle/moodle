@@ -379,7 +379,7 @@ class quiz_category_object {
                  '&amp;sesskey='.$USER->sesskey.'"><img src="' . $this->pixpath . '/t/show.gif" height="11" width="11" border="0" alt="' .$this->str->publish. '" /></a> ';
         }
 
-        if ($category->id != $this->defaultcategory) {
+        if ($category->id != $this->defaultcategory->id) {
             $this->edittable->align["$category->id.delete"] =  "center";
             $this->edittable->wrap["$category->id.delete"] = "nowrap";
             $row["$category->id.delete"] =  '<a title="' . $this->str->delete . '" href="category.php?id=' . $this->course->id .
@@ -403,7 +403,7 @@ class quiz_category_object {
 
         $this->edittable->align["$category->id.moveto"] =  "left";
         $this->edittable->wrap["$category->id.moveto"] = "nowrap";
-        if ($category->id != $this->defaultcategory) {
+        if ($category->id != $this->defaultcategory->id) {
             $viableparents = $this->categorystrings;
             $this->set_viable_parents($viableparents, $category);
             $viableparents = array(0=>$this->str->top) + $viableparents;
