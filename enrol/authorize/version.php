@@ -1,6 +1,6 @@
 <?PHP // $Id$
 
-$module->version  = 2006020100;
+$module->version  = 2006021500;
 $module->requires = 2005072200;
 
 ?>

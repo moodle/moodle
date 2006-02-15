@@ -8,9 +8,12 @@ function authorize_upgrade($oldversion=0) {
 
     $result = true;
 
-    if ($oldversion == 0) {
-        modify_database("$CFG->dirroot/enrol/authorize/db/mysql.sql");
+    if ($oldversion == 0) { // First time install
+        $result = modify_database("$CFG->dirroot/enrol/authorize/db/mysql.sql");
+        return $result; // RETURN, sql file contains last upgrades.
     }
+
+    // Authorize module was installed before. Upgrades must be applied to SQL file.
 
     if ($oldversion < 2005071600) {
         // Be sure, only last 4 digit is inserted.
@@ -39,7 +42,7 @@ function authorize_upgrade($oldversion=0) {
         // new fields for refund and sales reports.
         $defaultcurrency = empty($CFG->enrol_currency) ? 'USD' : $CFG->enrol_currency;
         table_column('enrol_authorize', '', 'amount', 'varchar', '10', '', '0', 'not null', 'timeupdated');
-        table_column('enrol_authorize', '', 'currency', 'char', '3', '', $defaultcurrency, 'not null', 'amount');
+        table_column('enrol_authorize', '', 'currency', 'varchar', '3', '', $defaultcurrency, 'not null', 'amount');
         modify_database("","CREATE TABLE prefix_enrol_authorize_refunds (
           `id` int(10) unsigned NOT NULL auto_increment,
           `orderid` int(10) unsigned NOT NULL default 0,
@@ -96,6 +99,10 @@ function authorize_upgrade($oldversion=0) {
                 delete_records('config', 'name', 'an_cutoff_min');
             }
         }
+    }
+
+    if ($oldversion < 2006021500) { // transid is int
+        table_column('enrol_authorize', 'transid', 'transid', 'integer', '10', 'unsigned', '0', 'not null');
     }
 
     return $result;
