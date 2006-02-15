@@ -300,7 +300,9 @@
 
             echo '<select name="uninstalllang" size="15">';
             foreach ($installedlangs as $clang =>$ilang){
-                echo '<option value="'.$clang.'">'.$ilang.'</option>';
+                if ($clang != "en_utf8") {
+                    echo '<option value="'.$clang.'">'.$ilang.'</option>';
+                }
             }
             echo '</select>';
             echo '<br /><input type="submit" value="'.get_string('uninstall','admin').'" />';
@@ -344,14 +346,16 @@
             }
 
             foreach ($availablelangs as $alang) {
-                if ($remote){
-                    if (!is_installed_lang($alang[0], $alang[1])){    //if not already installed
-                        echo '<option value="'.$alang[0].'">'.$alang[2].' ('.$alang[0].')</option>';
+                if ($clang != "en_utf8") {
+                    if ($remote){
+                        if (!is_installed_lang($alang[0], $alang[1])){    //if not already installed
+                            echo '<option value="'.$alang[0].'">'.$alang[2].' ('.$alang[0].')</option>';
+                        }
+                    } else {    //print list in local format, and instruction to install
+                        echo '<tr><td>'.$alang[2].'</td><td><a href="http://download.moodle.org/lang16/'.$alang[0].'.zip">'.get_string('download','admin').'</a>';
                     }
-                } else {    //print list in local format, and instruction to install
-                    echo '<tr><td>'.$alang[2].'</td><td><a href="http://download.moodle.org/lang16/'.$alang[0].'.zip">'.get_string('download','admin').'</a>';
+                    $empty = 0;
                 }
-                $empty = 0;
             }
             if ($remote) {
                 echo '</select>';
