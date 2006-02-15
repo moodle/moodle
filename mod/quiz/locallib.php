@@ -1795,7 +1795,7 @@ function quiz_apply_penalty_and_timelimit(&$question, &$state, $attempt, $quiz) 
     }
 
     // deal with quiz closing time
-    if ($cmoptions->timeclose and $state->timestamp > ($cmoptions->timeclose + 60) // allowing 1 minute lateness
+    if ($quiz->timeclose and $state->timestamp > ($quiz->timeclose + 60) // allowing 1 minute lateness
              and !$attempt->preview) { // ignore closing time for previews
         $state->grade = 0;
     }
