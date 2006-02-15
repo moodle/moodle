@@ -43,14 +43,15 @@ if ($rqp_types = get_records('quiz_rqp_types')) {
 * Delete a question from a quiz
 *
 * Deletes a question or a pagebreak from a quiz by updating $modform
-* as well as the quiz, quiz_question_instances, quiz_attemtps, quiz_states
-* and quiz_newest_states tables.
+* as well as the quiz, quiz_question_instances
 * @return boolean         false if the question was not in the quiz
 * @param int $id          The id of the question to be deleted
 * @param object $modform  The extended quiz object as used by edit.php
 *                         This is updated by this function
 */
 function quiz_delete_quiz_question($id, &$modform) {
+    // TODO: For the sake of safety check that this question can be deleted
+    // safely, i.e., that it is not already in use.
     $questions = explode(",", $modform->questions);
 
     // only do something if this question exists
@@ -64,22 +65,6 @@ function quiz_delete_quiz_question($id, &$modform) {
     // a page break then delete page break as well
     if ($id == 0 and $questions[1] == 0) {
         unset($questions[1]);
-    }
-    // if what we deleted was not a page break but a question then also
-    // delete associated grades, instances, attempts, states
-    if ($question != 0) {
-        unset($modform->grades[$question]);
-        // Delete all states associated with all attempts for this question in the quiz.
-        if ($attempts = get_records('quiz_attempts', 'quiz', $modform->instance)) {
-            foreach ($attempts as $attempt) {
-                delete_records('quiz_states', 'question', $question, 'attempt', $attempt->uniqueid);
-                delete_records('quiz_newest_states', 'questionid', $question, 'attemptid', $attempt->uniqueid);
-            }
-        }
-        // Delete all instances of the question in the quiz (there
-        // should only be one)
-        delete_records('quiz_question_instances', 'quiz',
-         $modform->instance, 'question', $question);
     }
     $modform->questions = implode(",", $questions);
     // Avoid duplicate page breaks
