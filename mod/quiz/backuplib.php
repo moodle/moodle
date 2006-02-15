@@ -143,7 +143,7 @@
                         if ($dbcat = get_record('quiz_categories','id',$dbcat->parent)) {
                             //Found parent, add it to backup_ids (by using backup_putid
                             //we ensure no duplicates!)
-                            $status = backup_putid($backup_unique_code,'quiz_categories',$dbcat->id,0);
+                            $status = $status && backup_putid($backup_unique_code,'quiz_categories',$dbcat->id,0);
                             //echo $dbcat->name;      //Debug
                         } else {
                             //Parent not found, fix it (set its parent to 0)
@@ -155,9 +155,37 @@
                 }
             }
         }
+        
+        // Now we look for random questions that can use questions from subcategories
+        // because we will have to add these subcategories
+        $sql = "SELECT q.id, q.category 
+                  FROM {$CFG->prefix}quiz_question_instances AS i,
+                       {$CFG->prefix}quiz_questions AS q
+                 WHERE q.id = i.question
+                   AND q.qtype = '".RANDOM."'
+                   AND q.questiontext = '1'";
+        if ($randoms = get_records_sql($sql)) {
+            foreach ($randoms as $random) {
+                $status = $status && quiz_backup_add_category_tree($random->category);
+            }
+        }
 
         return $status;
     }
+    
+    /**
+    * Helper function adding the id of a category and all its descendents to the backup_ids
+    */
+    function quiz_backup_add_category_tree($categoryid) {
+        $status = backup_putid($backup_unique_code,'quiz_categories',$categoryid,0);
+        if ($subcategories = get_records('quiz_categories', 'parent', $categoryid, 'sortorder ASC', 'id, id')) {
+            foreach ($subcategories as $subcategory) {
+                $status = $status && quiz_backup_add_category_tree($subcategory->id);
+            }
+        }
+        return $status;
+    }
+        
 
     //This function is used to detect orphaned questions (pointing to a
     //non existing category) and to recreate such category. This function
@@ -201,7 +229,7 @@
     function delete_category_ids ($backup_unique_code) {
         global $CFG;
         $status = true;
-        $status = execute_sql("DELETE FROM {$CFG->prefix}backup_ids
+        $status = $status && execute_sql("DELETE FROM {$CFG->prefix}backup_ids
                                WHERE backup_code = '$backup_unique_code'",false);
         return $status;
     }
@@ -218,11 +246,11 @@
         //If we've categories
         if ($categories) {
              //Write start tag
-             $status = fwrite($bf,start_tag("QUESTION_CATEGORIES",2,true));
+             $status = $status && fwrite($bf,start_tag("QUESTION_CATEGORIES",2,true));
              //Iterate over each category
             foreach ($categories as $cat) {
                 //Start category
-                $status =fwrite ($bf,start_tag("QUESTION_CATEGORY",3,true));
+                $status = $status && fwrite ($bf,start_tag("QUESTION_CATEGORY",3,true));
                 //Get category data from quiz_categories
                 $category = get_record ("quiz_categories","id",$cat->old_id);
                 //Print category contents
@@ -234,12 +262,12 @@
                 fwrite($bf,full_tag("PARENT",4,false,$category->parent));
                 fwrite($bf,full_tag("SORTORDER",4,false,$category->sortorder));
                 //Now, backup their questions
-                $status = quiz_backup_question($bf,$preferences,$category->id);
+                $status = $status && quiz_backup_question($bf,$preferences,$category->id);
                 //End category
-                $status =fwrite ($bf,end_tag("QUESTION_CATEGORY",3,true));
+                $status = $status && fwrite ($bf,end_tag("QUESTION_CATEGORY",3,true));
             }
             //Write end tag
-            $status =fwrite ($bf,end_tag("QUESTION_CATEGORIES",2,true));
+            $status = $status && fwrite ($bf,end_tag("QUESTION_CATEGORIES",2,true));
         }
 
         return $status;
@@ -260,12 +288,12 @@
         //If there are questions
         if ($questions) {
             //Write start tag
-            $status =fwrite ($bf,start_tag("QUESTIONS",4,true));
+            $status = $status && fwrite ($bf,start_tag("QUESTIONS",4,true));
             $counter = 0;
             //Iterate over each question
             foreach ($questions as $question) {
                 //Start question
-                $status =fwrite ($bf,start_tag("QUESTION",5,true));
+                $status = $status && fwrite ($bf,start_tag("QUESTION",5,true));
                 //Print question contents
                 fwrite ($bf,full_tag("ID",6,false,$question->id));
                 fwrite ($bf,full_tag("PARENT",6,false,$question->parent));
@@ -282,32 +310,32 @@
                 fwrite ($bf,full_tag("HIDDEN",6,false,$question->hidden));
                 //Now, depending of the qtype, call one function or other
                 if ($question->qtype == "1") {
-                    $status = quiz_backup_shortanswer($bf,$preferences,$question->id);
+                    $status = $status && quiz_backup_shortanswer($bf,$preferences,$question->id);
                 } else if ($question->qtype == "2") {
-                    $status = quiz_backup_truefalse($bf,$preferences,$question->id);
+                    $status = $status && quiz_backup_truefalse($bf,$preferences,$question->id);
                 } else if ($question->qtype == "3") {
-                    $status = quiz_backup_multichoice($bf,$preferences,$question->id);
+                    $status = $status && quiz_backup_multichoice($bf,$preferences,$question->id);
                 } else if ($question->qtype == "4") {
                     //Random question. Nothing to write.
                 } else if ($question->qtype == "5") {
-                    $status = quiz_backup_match($bf,$preferences,$question->id);
+                    $status = $status && quiz_backup_match($bf,$preferences,$question->id);
                 } else if ($question->qtype == "6") {
-                    $status = quiz_backup_randomsamatch($bf,$preferences,$question->id);
+                    $status = $status && quiz_backup_randomsamatch($bf,$preferences,$question->id);
                 } else if ($question->qtype == "7") {
                     //Description question. Nothing to write.
                 } else if ($question->qtype == "8") {
-                    $status = quiz_backup_numerical($bf,$preferences,$question->id);
+                    $status = $status && quiz_backup_numerical($bf,$preferences,$question->id);
                 } else if ($question->qtype == "9") {
-                    $status = quiz_backup_multianswer($bf,$preferences,$question->id);
+                    $status = $status && quiz_backup_multianswer($bf,$preferences,$question->id);
                 } else if ($question->qtype == "10") {
-                    $status = quiz_backup_calculated($bf,$preferences,$question->id);
+                    $status = $status && quiz_backup_calculated($bf,$preferences,$question->id);
                 } else if ($question->qtype == "11") {
-                    $status = quiz_backup_rqp($bf,$preferences,$question->id);
+                    $status = $status && quiz_backup_rqp($bf,$preferences,$question->id);
                 } else if ($question->qtype == "12") {
-                    $status = quiz_backup_essay($bf,$preferences,$question->id);
+                    $status = $status && quiz_backup_essay($bf,$preferences,$question->id);
                 }
                 //End question
-                $status =fwrite ($bf,end_tag("QUESTION",5,true));
+                $status = $status && fwrite ($bf,end_tag("QUESTION",5,true));
                 //Do some output
                 $counter++;
                 if ($counter % 10 == 0) {
@@ -319,7 +347,7 @@
                 }
             }
             //Write end tag
-            $status =fwrite ($bf,end_tag("QUESTIONS",4,true));
+            $status = $status && fwrite ($bf,end_tag("QUESTIONS",4,true));
         }
         return $status;
     }
@@ -337,14 +365,14 @@
         if ($truefalses) {
             //Iterate over each truefalse
             foreach ($truefalses as $truefalse) {
-                $status =fwrite ($bf,start_tag("TRUEFALSE",6,true));
+                $status = $status && fwrite ($bf,start_tag("TRUEFALSE",6,true));
                 //Print truefalse contents
                 fwrite ($bf,full_tag("TRUEANSWER",7,false,$truefalse->trueanswer));
                 fwrite ($bf,full_tag("FALSEANSWER",7,false,$truefalse->falseanswer));
-                $status =fwrite ($bf,end_tag("TRUEFALSE",6,true));
+                $status = $status && fwrite ($bf,end_tag("TRUEFALSE",6,true));
             }
             //Now print quiz_answers
-            $status = quiz_backup_answers($bf,$preferences,$question);
+            $status = $status && quiz_backup_answers($bf,$preferences,$question);
         }
         return $status;
     }
@@ -362,15 +390,15 @@
         if ($shortanswers) {
             //Iterate over each shortanswer
             foreach ($shortanswers as $shortanswer) {
-                $status =fwrite ($bf,start_tag("SHORTANSWER",$level,true));
+                $status = $status && fwrite ($bf,start_tag("SHORTANSWER",$level,true));
                 //Print shortanswer contents
                 fwrite ($bf,full_tag("ANSWERS",$level+1,false,$shortanswer->answers));
                 fwrite ($bf,full_tag("USECASE",$level+1,false,$shortanswer->usecase));
-                $status =fwrite ($bf,end_tag("SHORTANSWER",$level,true));
+                $status = $status && fwrite ($bf,end_tag("SHORTANSWER",$level,true));
             }
             //Now print quiz_answers
             if ($include_answers) {
-                $status = quiz_backup_answers($bf,$preferences,$question);
+                $status = $status && quiz_backup_answers($bf,$preferences,$question);
             }
         }
         return $status;
@@ -389,17 +417,17 @@
         if ($multichoices) {
             //Iterate over each multichoice
             foreach ($multichoices as $multichoice) {
-                $status =fwrite ($bf,start_tag("MULTICHOICE",$level,true));
+                $status = $status && fwrite ($bf,start_tag("MULTICHOICE",$level,true));
                 //Print multichoice contents
                 fwrite ($bf,full_tag("LAYOUT",$level+1,false,$multichoice->layout));
                 fwrite ($bf,full_tag("ANSWERS",$level+1,false,$multichoice->answers));
                 fwrite ($bf,full_tag("SINGLE",$level+1,false,$multichoice->single));
                 fwrite ($bf,full_tag("SHUFFLEANSWERS",$level+1,false,$randomsamatch->shuffleanswers));
-                $status =fwrite ($bf,end_tag("MULTICHOICE",$level,true));
+                $status = $status && fwrite ($bf,end_tag("MULTICHOICE",$level,true));
             }
             //Now print quiz_answers
             if ($include_answers) {
-                $status = quiz_backup_answers($bf,$preferences,$question);
+                $status = $status && quiz_backup_answers($bf,$preferences,$question);
             }
         }
         return $status;
@@ -418,11 +446,11 @@
         if ($randomsamatchs) {
             //Iterate over each randomsamatch
             foreach ($randomsamatchs as $randomsamatch) {
-                $status =fwrite ($bf,start_tag("RANDOMSAMATCH",6,true));
+                $status = $status && fwrite ($bf,start_tag("RANDOMSAMATCH",6,true));
                 //Print randomsamatch contents
                 fwrite ($bf,full_tag("CHOOSE",7,false,$randomsamatch->choose));
                 fwrite ($bf,full_tag("SHUFFLEANSWERS",7,false,$randomsamatch->shuffleanswers));
-                $status =fwrite ($bf,end_tag("RANDOMSAMATCH",6,true));
+                $status = $status && fwrite ($bf,end_tag("RANDOMSAMATCH",6,true));
             }
         }
         return $status;
@@ -439,25 +467,25 @@
         $matchs = get_records("quiz_match_sub","question",$question,"id");
         //If there are matchs
         if ($matchs) {
-            $status =fwrite ($bf,start_tag("MATCHS",6,true));
+            $status = $status && fwrite ($bf,start_tag("MATCHS",6,true));
             //Iterate over each match
             foreach ($matchs as $match) {
-                $status =fwrite ($bf,start_tag("MATCH",7,true));
+                $status = $status && fwrite ($bf,start_tag("MATCH",7,true));
                 //Print match contents
                 fwrite ($bf,full_tag("ID",8,false,$match->id));
                 fwrite ($bf,full_tag("QUESTIONTEXT",8,false,$match->questiontext));
                 fwrite ($bf,full_tag("ANSWERTEXT",8,false,$match->answertext));
                 fwrite ($bf,full_tag("SHUFFLEANSWERS",8,false,$randomsamatch->shuffleanswers));
-                $status =fwrite ($bf,end_tag("MATCH",7,true));
+                $status = $status && fwrite ($bf,end_tag("MATCH",7,true));
             }
-            $status =fwrite ($bf,end_tag("MATCHS",6,true));
+            $status = $status && fwrite ($bf,end_tag("MATCHS",6,true));
         }
         return $status;
     }
 
     //This function backups the data in a numerical question (qtype=8) and its
     //asociated data
-    function quiz_backup_numerical($bf,$preferences,$question,$level=6,$include_answers=true) {
+    function quiz_backup_numerical($bf,$preferences,$question,$level=6) {
 
         global $CFG;
 
@@ -468,18 +496,16 @@
         if ($numericals) {
             //Iterate over each numerical
             foreach ($numericals as $numerical) {
-                $status =fwrite ($bf,start_tag("NUMERICAL",$level,true));
+                $status = $status && fwrite ($bf,start_tag("NUMERICAL",$level,true));
                 //Print numerical contents
                 fwrite ($bf,full_tag("ANSWER",$level+1,false,$numerical->answer));
                 fwrite ($bf,full_tag("TOLERANCE",$level+1,false,$numerical->tolerance));
                 //Now backup numerical_units
-                $status = quiz_backup_numerical_units($bf,$preferences,$question,7);
-                $status =fwrite ($bf,end_tag("NUMERICAL",$level,true));
+                $status = $status && quiz_backup_numerical_units($bf,$preferences,$question,7);
+                $status = $status && fwrite ($bf,end_tag("NUMERICAL",$level,true));
             }
             //Now print quiz_answers
-            if ($include_answers) {
-                $status = quiz_backup_answers($bf,$preferences,$question);
-            }
+            $status = $status && quiz_backup_answers($bf,$preferences,$question);
         }
         return $status;
     }
@@ -496,20 +522,20 @@
         //If there are multianswers
         if ($multianswers) {
             //Print multianswers header
-            $status =fwrite ($bf,start_tag("MULTIANSWERS",6,true));
+            $status = $status && fwrite ($bf,start_tag("MULTIANSWERS",6,true));
             //Iterate over each multianswer
             foreach ($multianswers as $multianswer) {
-                $status =fwrite ($bf,start_tag("MULTIANSWER",7,true));
+                $status = $status && fwrite ($bf,start_tag("MULTIANSWER",7,true));
                 //Print multianswer contents
                 fwrite ($bf,full_tag("ID",8,false,$multianswer->id));
                 fwrite ($bf,full_tag("QUESTION",8,false,$multianswer->question));
                 fwrite ($bf,full_tag("SEQUENCE",8,false,$multianswer->sequence));
-                $status =fwrite ($bf,end_tag("MULTIANSWER",7,true));
+                $status = $status && fwrite ($bf,end_tag("MULTIANSWER",7,true));
             }
             //Print multianswers footer
-            $status =fwrite ($bf,end_tag("MULTIANSWERS",6,true));
+            $status = $status && fwrite ($bf,end_tag("MULTIANSWERS",6,true));
             //Now print quiz_answers
-            $status = quiz_backup_answers($bf,$preferences,$question);
+            $status = $status && quiz_backup_answers($bf,$preferences,$question);
         }
         return $status;
     }
@@ -527,7 +553,7 @@
         if ($calculateds) {
             //Iterate over each calculateds
             foreach ($calculateds as $calculated) {
-                $status =fwrite ($bf,start_tag("CALCULATED",$level,true));
+                $status = $status &&fwrite ($bf,start_tag("CALCULATED",$level,true));
                 //Print calculated contents
                 fwrite ($bf,full_tag("ANSWER",$level+1,false,$calculated->answer));
                 fwrite ($bf,full_tag("TOLERANCE",$level+1,false,$calculated->tolerance));
@@ -535,15 +561,15 @@
                 fwrite ($bf,full_tag("CORRECTANSWERLENGTH",$level+1,false,$calculated->correctanswerlength));
                 fwrite ($bf,full_tag("CORRECTANSWERFORMAT",$level+1,false,$calculated->correctanswerformat));
                 //Now backup numerical_units
-                $status = quiz_backup_numerical_units($bf,$preferences,$question,7);
+                $status = $status && quiz_backup_numerical_units($bf,$preferences,$question,7);
                 //Now backup required dataset definitions and items...
-                $status = quiz_backup_datasets($bf,$preferences,$question,7);
+                $status = $status && quiz_backup_datasets($bf,$preferences,$question,7);
                 //End calculated data
-                $status =fwrite ($bf,end_tag("CALCULATED",$level,true));
+                $status = $status &&fwrite ($bf,end_tag("CALCULATED",$level,true));
             }
             //Now print quiz_answers
             if ($include_answers) {
-                $status = quiz_backup_answers($bf,$preferences,$question);
+                $status = $status && quiz_backup_answers($bf,$preferences,$question);
             }
         }
         return $status;
@@ -562,14 +588,14 @@
         if ($rqps) {
             //Iterate over each rqp
             foreach ($rqps as $rqp) {
-                $status =fwrite ($bf,start_tag("RQP",6,true));
+                $status = $status && fwrite ($bf,start_tag("RQP",6,true));
                 //Print rqp contents
                 fwrite ($bf,full_tag("TYPE",7,false,$rqp->type));
                 fwrite ($bf,full_tag("SOURCE",7,false,$rqp->source));
                 fwrite ($bf,full_tag("FORMAT",7,false,$rqp->format));
                 fwrite ($bf,full_tag("FLAGS",7,false,$rqp->flags));
                 fwrite ($bf,full_tag("MAXSCORE",7,false,$rqp->maxscore));
-                $status =fwrite ($bf,end_tag("RQP",6,true));
+                $status = $status && fwrite ($bf,end_tag("RQP",6,true));
             }
         }
         return $status;
@@ -577,7 +603,7 @@
     
     //This function backups the data in an essay question (qtype=12) and its
     //asociated data
-    function quiz_backup_essay($bf,$preferences,$question) {
+    function quiz_backup_essay($bf,$preferences,$question,$level=6) {
 
         global $CFG;
 
@@ -588,16 +614,17 @@
         if ($essays) {
             //Iterate over each essay
             foreach ($essays as $essay) {
-                $status = fwrite ($bf,start_tag("ESSAY",6,true));
+                $status = $status && fwrite ($bf,start_tag("ESSAY",$level,true));
                 //Print essay contents
-                fwrite ($bf,full_tag("ANSWER",7,false,$essay->answer));                
-                $status = fwrite ($bf,end_tag("ESSAY",6,true));
+                fwrite ($bf,full_tag("ANSWER",$level+1,false,$essay->answer));                
+                $status = $status && fwrite ($bf,end_tag("ESSAY",$level,true));
             }
             //Now print quiz_answers
-            $status = quiz_backup_answers($bf,$preferences,$question);
+            $status = $status && quiz_backup_answers($bf,$preferences,$question);
         }
         return $status;
     }
+
 
     //This function backups the answers data in some question types
     //(truefalse, shortanswer,multichoice,numerical,calculated)
@@ -610,18 +637,18 @@
         $answers = get_records("quiz_answers","question",$question,"id");
         //If there are answers
         if ($answers) {
-            $status =fwrite ($bf,start_tag("ANSWERS",6,true));
+            $status = $status && fwrite ($bf,start_tag("ANSWERS",6,true));
             //Iterate over each answer
             foreach ($answers as $answer) {
-                $status =fwrite ($bf,start_tag("ANSWER",7,true));
+                $status = $status && fwrite ($bf,start_tag("ANSWER",7,true));
                 //Print answer contents
                 fwrite ($bf,full_tag("ID",8,false,$answer->id));
                 fwrite ($bf,full_tag("ANSWER_TEXT",8,false,$answer->answer));
                 fwrite ($bf,full_tag("FRACTION",8,false,$answer->fraction));
                 fwrite ($bf,full_tag("FEEDBACK",8,false,$answer->feedback));
-                $status =fwrite ($bf,end_tag("ANSWER",7,true));
+                $status = $status && fwrite ($bf,end_tag("ANSWER",7,true));
             }
-            $status =fwrite ($bf,end_tag("ANSWERS",6,true));
+            $status = $status && fwrite ($bf,end_tag("ANSWERS",6,true));
         }
         return $status;
     }
@@ -636,17 +663,17 @@
         $numerical_units = get_records("quiz_numerical_units","question",$question,"id");
         //If there are numericals_units
         if ($numerical_units) {
-            $status =fwrite ($bf,start_tag("NUMERICAL_UNITS",$level,true));
+            $status = $status && fwrite ($bf,start_tag("NUMERICAL_UNITS",$level,true));
             //Iterate over each numerical_unit
             foreach ($numerical_units as $numerical_unit) {
-                $status =fwrite ($bf,start_tag("NUMERICAL_UNIT",$level+1,true));
+                $status = $status && fwrite ($bf,start_tag("NUMERICAL_UNIT",$level+1,true));
                 //Print numerical_unit contents
                 fwrite ($bf,full_tag("MULTIPLIER",$level+2,false,$numerical_unit->multiplier));
                 fwrite ($bf,full_tag("UNIT",$level+2,false,$numerical_unit->unit));
                 //Now backup numerical_units
-                $status =fwrite ($bf,end_tag("NUMERICAL_UNIT",$level+1,true));
+                $status = $status && fwrite ($bf,end_tag("NUMERICAL_UNIT",$level+1,true));
             }
-            $status =fwrite ($bf,end_tag("NUMERICAL_UNITS",$level,true));
+            $status = $status && fwrite ($bf,end_tag("NUMERICAL_UNITS",$level,true));
         }
 
         return $status;
@@ -664,13 +691,13 @@
         $question_datasets = get_records("quiz_question_datasets","question",$question,"id");
         //If there are question_datasets
         if ($question_datasets) {
-            $status =fwrite ($bf,start_tag("DATASET_DEFINITIONS",$level,true));
+            $status = $status &&fwrite ($bf,start_tag("DATASET_DEFINITIONS",$level,true));
             //Iterate over each question_dataset
             foreach ($question_datasets as $question_dataset) {
                 $def = NULL;
                 //Get dataset_definition
                 if ($def = get_record("quiz_dataset_definitions","id",$question_dataset->datasetdefinition)) {;
-                    $status =fwrite ($bf,start_tag("DATASET_DEFINITION",$level+1,true));
+                    $status = $status &&fwrite ($bf,start_tag("DATASET_DEFINITION",$level+1,true));
                     //Print question_dataset contents
                     fwrite ($bf,full_tag("CATEGORY",$level+2,false,$def->category));
                     fwrite ($bf,full_tag("NAME",$level+2,false,$def->name));
@@ -678,12 +705,12 @@
                     fwrite ($bf,full_tag("OPTIONS",$level+2,false,$def->options));
                     fwrite ($bf,full_tag("ITEMCOUNT",$level+2,false,$def->itemcount));
                     //Now backup dataset_entries
-                    $status = quiz_backup_dataset_items($bf,$preferences,$def->id,$level+2);
+                    $status = $status && quiz_backup_dataset_items($bf,$preferences,$def->id,$level+2);
                     //End dataset definition
-                    $status =fwrite ($bf,end_tag("DATASET_DEFINITION",$level+1,true));
+                    $status = $status &&fwrite ($bf,end_tag("DATASET_DEFINITION",$level+1,true));
                 }
             }
-            $status =fwrite ($bf,end_tag("DATASET_DEFINITIONS",$level,true));
+            $status = $status &&fwrite ($bf,end_tag("DATASET_DEFINITIONS",$level,true));
         }
 
         return $status;
@@ -701,17 +728,17 @@
         $dataset_items = get_records("quiz_dataset_items","definition",$datasetdefinition,"id");
         //If there are dataset_items
         if ($dataset_items) {
-            $status =fwrite ($bf,start_tag("DATASET_ITEMS",$level,true));
+            $status = $status &&fwrite ($bf,start_tag("DATASET_ITEMS",$level,true));
             //Iterate over each dataset_item
             foreach ($dataset_items as $dataset_item) {
-                $status =fwrite ($bf,start_tag("DATASET_ITEM",$level+1,true));
+                $status = $status &&fwrite ($bf,start_tag("DATASET_ITEM",$level+1,true));
                 //Print question_dataset contents
                 fwrite ($bf,full_tag("NUMBER",$level+2,false,$dataset_item->number));
                 fwrite ($bf,full_tag("VALUE",$level+2,false,$dataset_item->value));
                 //End dataset definition
-                $status =fwrite ($bf,end_tag("DATASET_ITEM",$level+1,true));
+                $status = $status &&fwrite ($bf,end_tag("DATASET_ITEM",$level+1,true));
             }
-            $status =fwrite ($bf,end_tag("DATASET_ITEMS",$level,true));
+            $status = $status &&fwrite ($bf,end_tag("DATASET_ITEMS",$level,true));
         }
 
         return $status;
@@ -757,20 +784,20 @@
         fwrite ($bf,full_tag("DELAY1",4,false,$quiz->delay1));
         fwrite ($bf,full_tag("DELAY2",4,false,$quiz->delay2));
         //Now we print to xml question_instances (Course Level)
-        $status = backup_quiz_question_instances($bf,$preferences,$quiz->id);
+        $status = $status && backup_quiz_question_instances($bf,$preferences,$quiz->id);
         //Now we print to xml question_versions (Course Level)
-        $status = backup_quiz_question_versions($bf,$preferences,$quiz->id);
+        $status = $status && backup_quiz_question_versions($bf,$preferences,$quiz->id);
         //if we've selected to backup users info, then execute:
         //    - backup_quiz_grades
         //    - backup_quiz_attempts
         if (backup_userdata_selected($preferences,'quiz',$quiz->id) && $status) {
-            $status = backup_quiz_grades($bf,$preferences,$quiz->id);
+            $status = $status && backup_quiz_grades($bf,$preferences,$quiz->id);
             if ($status) {
-                $status = backup_quiz_attempts($bf,$preferences,$quiz->id);
+                $status = $status && backup_quiz_attempts($bf,$preferences,$quiz->id);
             }
         }
         //End mod
-        $status =fwrite ($bf,end_tag("MOD",3,true));
+        $status = $status && fwrite ($bf,end_tag("MOD",3,true));
         
         return $status;
     }
@@ -789,7 +816,7 @@
         if ($quizzes) {
             foreach ($quizzes as $quiz) {
                 if (backup_mod_selected($preferences,'quiz',$quiz->id)) {
-                    $status = quiz_backup_one_mod($bf,$preferences,$quiz);
+                    $status = $status && quiz_backup_one_mod($bf,$preferences,$quiz);
                 }
             }
         }
@@ -807,20 +834,20 @@
         //If there are question_instances
         if ($quiz_question_instances) {
             //Write start tag
-            $status =fwrite ($bf,start_tag("QUESTION_INSTANCES",4,true));
+            $status = $status && fwrite ($bf,start_tag("QUESTION_INSTANCES",4,true));
             //Iterate over each question_instance
             foreach ($quiz_question_instances as $que_ins) {
                 //Start question instance
-                $status =fwrite ($bf,start_tag("QUESTION_INSTANCE",5,true));
+                $status = $status && fwrite ($bf,start_tag("QUESTION_INSTANCE",5,true));
                 //Print question_instance contents
                 fwrite ($bf,full_tag("ID",6,false,$que_ins->id));
                 fwrite ($bf,full_tag("QUESTION",6,false,$que_ins->question));
                 fwrite ($bf,full_tag("GRADE",6,false,$que_ins->grade));
                 //End question instance
-                $status =fwrite ($bf,end_tag("QUESTION_INSTANCE",5,true));
+                $status = $status && fwrite ($bf,end_tag("QUESTION_INSTANCE",5,true));
             }
             //Write end tag
-            $status =fwrite ($bf,end_tag("QUESTION_INSTANCES",4,true));
+            $status = $status && fwrite ($bf,end_tag("QUESTION_INSTANCES",4,true));
         }
         return $status;
     }
@@ -836,11 +863,11 @@
         //If there are question_versions
         if ($quiz_question_versions) {
             //Write start tag
-            $status =fwrite ($bf,start_tag("QUESTION_VERSIONS",4,true));
+            $status = $status && fwrite ($bf,start_tag("QUESTION_VERSIONS",4,true));
             //Iterate over each question_version
             foreach ($quiz_question_versions as $que_ver) {
                 //Start question version
-                $status =fwrite ($bf,start_tag("QUESTION_VERSION",5,true));
+                $status = $status && fwrite ($bf,start_tag("QUESTION_VERSION",5,true));
                 //Print question_version contents
                 fwrite ($bf,full_tag("ID",6,false,$que_ver->id));
                 fwrite ($bf,full_tag("OLDQUESTION",6,false,$que_ver->oldquestion));
@@ -848,10 +875,10 @@
                 fwrite ($bf,full_tag("USERID",6,false,$que_ver->userid));
                 fwrite ($bf,full_tag("TIMESTAMP",6,false,$que_ver->timestamp));
                 //End question version
-                $status =fwrite ($bf,end_tag("QUESTION_VERSION",5,true));
+                $status = $status && fwrite ($bf,end_tag("QUESTION_VERSION",5,true));
             }
             //Write end tag
-            $status =fwrite ($bf,end_tag("QUESTION_VERSIONS",4,true));
+            $status = $status && fwrite ($bf,end_tag("QUESTION_VERSIONS",4,true));
         }
         return $status;
     }
@@ -868,21 +895,21 @@
         //If there are grades
         if ($quiz_grades) {
             //Write start tag
-            $status =fwrite ($bf,start_tag("GRADES",4,true));
+            $status = $status && fwrite ($bf,start_tag("GRADES",4,true));
             //Iterate over each grade
             foreach ($quiz_grades as $gra) {
                 //Start grade
-                $status =fwrite ($bf,start_tag("GRADE",5,true));
+                $status = $status && fwrite ($bf,start_tag("GRADE",5,true));
                 //Print grade contents
                 fwrite ($bf,full_tag("ID",6,false,$gra->id));
                 fwrite ($bf,full_tag("USERID",6,false,$gra->userid));
                 fwrite ($bf,full_tag("GRADEVAL",6,false,$gra->grade));
                 fwrite ($bf,full_tag("TIMEMODIFIED",6,false,$gra->timemodified));
                 //End question grade
-                $status =fwrite ($bf,end_tag("GRADE",5,true));
+                $status = $status && fwrite ($bf,end_tag("GRADE",5,true));
             }
             //Write end tag
-            $status =fwrite ($bf,end_tag("GRADES",4,true));
+            $status = $status && fwrite ($bf,end_tag("GRADES",4,true));
         }
         return $status;
     }
@@ -898,11 +925,11 @@
         //If there are attempts
         if ($quiz_attempts) {
             //Write start tag
-            $status =fwrite ($bf,start_tag("ATTEMPTS",4,true));
+            $status = $status && fwrite ($bf,start_tag("ATTEMPTS",4,true));
             //Iterate over each attempt
             foreach ($quiz_attempts as $attempt) {
                 //Start attempt
-                $status =fwrite ($bf,start_tag("ATTEMPT",5,true));
+                $status = $status && fwrite ($bf,start_tag("ATTEMPT",5,true));
                 //Print attempt contents
                 fwrite ($bf,full_tag("ID",6,false,$attempt->id));
                 fwrite ($bf,full_tag("UNIQUEID",6,false,$attempt->uniqueid));
@@ -915,12 +942,12 @@
                 fwrite ($bf,full_tag("LAYOUT",6,false,$attempt->layout));
                 fwrite ($bf,full_tag("PREVIEW",6,false,$attempt->preview));
                 //Now write to xml the states (in this attempt)
-                $status = backup_quiz_states ($bf,$preferences,$attempt->uniqueid);
+                $status = $status && backup_quiz_states ($bf,$preferences,$attempt->uniqueid);
                 //End attempt
-                $status =fwrite ($bf,end_tag("ATTEMPT",5,true));
+                $status = $status && fwrite ($bf,end_tag("ATTEMPT",5,true));
             }
             //Write end tag
-            $status =fwrite ($bf,end_tag("ATTEMPTS",4,true));
+            $status = $status && fwrite ($bf,end_tag("ATTEMPTS",4,true));
         }
         return $status;
     }
@@ -936,11 +963,11 @@
         //If there are states
         if ($quiz_states) {
             //Write start tag
-            $status =fwrite ($bf,start_tag("STATES",6,true));
+            $status = $status && fwrite ($bf,start_tag("STATES",6,true));
             //Iterate over each state
             foreach ($quiz_states as $state) {
                 //Start state
-                $status =fwrite ($bf,start_tag("STATE",7,true));
+                $status = $status && fwrite ($bf,start_tag("STATE",7,true));
                 //Print state contents
                 fwrite ($bf,full_tag("ID",8,false,$state->id));
                 fwrite ($bf,full_tag("QUESTION",8,false,$state->question));
@@ -953,23 +980,23 @@
                 fwrite ($bf,full_tag("RAW_GRADE",8,false,$state->raw_grade));
                 fwrite ($bf,full_tag("PENALTY",8,false,$state->penalty));
                 // now back up question type specific state information
-                $status = backup_quiz_rqp_state ($bf,$preferences,$state->id);
-                $status = backup_quiz_essay_state ($bf,$preferences,$state->id);
+                $status = $status && backup_quiz_rqp_state ($bf,$preferences,$state->id);
+                $status = $status && backup_quiz_essay_state ($bf,$preferences,$state->id);
                 //End state
-                $status =fwrite ($bf,end_tag("STATE",7,true));
+                $status = $status && fwrite ($bf,end_tag("STATE",7,true));
             }
             //Write end tag
-            $status =fwrite ($bf,end_tag("STATES",6,true));
+            $status = $status && fwrite ($bf,end_tag("STATES",6,true));
         }
         $question_sessions = get_records("question_sessions","attemptid",$attempt,"id");
         //If there are newest_states
         if ($question_sessions) {
             //Write start tag
-            $status =fwrite ($bf,start_tag("NEWEST_STATES",6,true));
+            $status = $status && fwrite ($bf,start_tag("NEWEST_STATES",6,true));
             //Iterate over each newest_state
             foreach ($question_sessions as $newest_state) {
                 //Start newest_state
-                $status =fwrite ($bf,start_tag("NEWEST_STATE",7,true));
+                $status = $status && fwrite ($bf,start_tag("NEWEST_STATE",7,true));
                 //Print newest_state contents
                 fwrite ($bf,full_tag("ID",8,false,$newest_state->id));
                 fwrite ($bf,full_tag("QUESTIONID",8,false,$newest_state->questionid));
@@ -977,10 +1004,10 @@
                 fwrite ($bf,full_tag("NEWGRADED",8,false,$newest_state->newgraded));
                 fwrite ($bf,full_tag("SUMPENALTY",8,false,$newest_state->sumpenalty));
                 //End newest_state
-                $status =fwrite ($bf,end_tag("NEWEST_STATE",7,true));
+                $status = $status && fwrite ($bf,end_tag("NEWEST_STATE",7,true));
             }
             //Write end tag
-            $status =fwrite ($bf,end_tag("NEWEST_STATES",6,true));
+            $status = $status && fwrite ($bf,end_tag("NEWEST_STATES",6,true));
         }
         return $status;
     }
@@ -1029,13 +1056,13 @@
         //If there is a state
         if ($rqp_state) {
             //Write start tag
-            $status =fwrite ($bf,start_tag("RQP_STATE",8,true));
+            $status = $status && fwrite ($bf,start_tag("RQP_STATE",8,true));
             //Print state contents
             fwrite ($bf,full_tag("RESPONSES",9,false,$rqp_state->responses));
             fwrite ($bf,full_tag("PERSISTENT_DATA",9,false,$rqp_state->persistent_data));
             fwrite ($bf,full_tag("TEMPLATE_VARS",9,false,$rqp_state->template_vars));
             //Write end tag
-            $status =fwrite ($bf,end_tag("RQP_STATE",8,true));
+            $status = $status && fwrite ($bf,end_tag("RQP_STATE",8,true));
         }
         return $status;
     }
@@ -1051,20 +1078,20 @@
         //If there is a state
         if ($essay_state) {
             //Write start tag
-            $status =fwrite ($bf,start_tag("ESSAY_STATE",8,true));
+            $status = $status && fwrite ($bf,start_tag("ESSAY_STATE",8,true));
             //Print state contents
             fwrite ($bf,full_tag("GRADED",9,false,$essay_state->graded));
             fwrite ($bf,full_tag("FRACTION",9,false,$essay_state->fraction));
             fwrite ($bf,full_tag("RESPONSE",9,false,$essay_state->response));
             //Write end tag
-            $status =fwrite ($bf,end_tag("ESSAY_STATE",8,true));
+            $status = $status && fwrite ($bf,end_tag("ESSAY_STATE",8,true));
         }
         return $status;
     }
     
    ////Return an array of info (name,value)
 /// $instances is an array with key = instanceid, value = object (name,id,userdata)
-   function quiz_check_backup_mods($course,$user_data=false,$backup_unique_code,$instances=null) {
+   function quiz_check_backup_mods($course,$user_data= false,$backup_unique_code,$instances=null) {
 
         //Deletes data from mdl_backup_ids (categories section)
         delete_category_ids ($backup_unique_code);
