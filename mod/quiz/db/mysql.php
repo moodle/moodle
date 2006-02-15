@@ -666,6 +666,7 @@ function quiz_upgrade($oldversion) {
                     $multianswers[$i]->length = 0;
                     $multianswers[$i]->questiontext = '';
                     $multianswers[$i]->stamp = make_unique_id_code();
+                    $multianswers[$i]->name = addslashes($multianswers[$i]->name);
                     // $multianswers[$i]->parent is set in the query
                     // $multianswers[$i]->defaultgrade is set in the query
                     // $multianswers[$i]->qtype is set in the query
