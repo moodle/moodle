@@ -474,7 +474,7 @@ function quiz_upgrade_states($attempt) {
     // used by a RANDOM question
     $newest->attemptid = $attempt->uniqueid;
     $questionlist = quiz_questions_in_quiz($attempt->layout);
-    if ($states = get_records_select('quiz_states', "attempt = '$attempt->uniqueid' AND question IN ($questionlist)")) {
+    if ($questionlist and $states = get_records_select('quiz_states', "attempt = '$attempt->uniqueid' AND question IN ($questionlist)")) {
         foreach ($states as $state) {
             $session->newgraded = $state->id;
             $session->newest = $state->id;
