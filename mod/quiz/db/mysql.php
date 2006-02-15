@@ -907,6 +907,11 @@ function quiz_upgrade($oldversion) {
         // convert sequence field to text to accomodate very long sequences, see bug 4257
         table_column('quiz_multianswers', 'sequence', 'sequence',  'text', '', '', '', 'not null', 'question');
     }
+
+    if ($oldversion < 200602100) {
+        execute_sql("ALTER TABLE {$CFG->prefix}quiz_newest_states RENAME {$CFG->prefix}question_sessions", false);
+    }
+
     return true;
 }
 

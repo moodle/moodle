@@ -1005,6 +1005,10 @@ function quiz_upgrade($oldversion) {
         modify_database('','CREATE UNIQUE INDEX prefix_quiz_attempts_uniqueid_uk ON prefix_quiz_attempts (uniqueid);');
     }
 
+    if ($oldversion < 200602100) {
+        execute_sql("ALTER TABLE {$CFG->prefix}quiz_newest_states RENAME TO {$CFG->prefix}question_sessions", false);
+    }
+
     return true;
 }
 
