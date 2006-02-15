@@ -1786,7 +1786,7 @@ function quiz_apply_penalty_and_timelimit(&$question, &$state, $attempt, $quiz) 
         $state->grade = $state->raw_grade;
     }
 
-    // deal with timeimit
+    // deal with timelimit
     if ($quiz->timelimit) {
         // We allow for 5% uncertainty in the following test
         if (($state->timestamp - $attempt->timestart) > ($quiz->timelimit * 63)) {
@@ -1795,7 +1795,8 @@ function quiz_apply_penalty_and_timelimit(&$question, &$state, $attempt, $quiz) 
     }
 
     // deal with quiz closing time
-    if ($state->timestamp > ($quiz->timeclose + 60)) { // allowing 1 minute lateness
+    if ($cmoptions->timeclose and $state->timestamp > ($cmoptions->timeclose + 60) // allowing 1 minute lateness
+             and !$attempt->preview) { // ignore closing time for previews
         $state->grade = 0;
     }
 
