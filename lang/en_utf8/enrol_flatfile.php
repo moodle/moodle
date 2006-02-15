@@ -4,6 +4,7 @@ $string['enrolname'] = 'Flat file';
 
 $string['description'] = 'This method will repeatedly check for and process a specially-formatted text file in the location that you specify.
 The file is a comma separated file assumed to have four or six fields per line:
+<pre>
 *  operation, role, idnumber(user), idnumber(course) [, starttime, endtime]
 where:
 *  operation        = add | del
@@ -12,6 +13,7 @@ where:
 *  idnumber(course) = idnumber in the course table NB not id
 *  starttime        = start time (in seconds since epoch) - optional
 *  endtime          = end time (in seconds since epoch) - optional
+</pre>
 It could look something like this:
 <pre>
    add, student, 5, CF101
