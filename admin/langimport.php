@@ -201,7 +201,9 @@
             @mkdir ($CFG->dataroot.'/temp/');
             @mkdir ($CFG->dataroot.'/lang/');
             foreach ($packs as $pack){    //for each of the remaining in the list, we
-
+                if ($pack == 'en_utf8') {    // no update for en_utf8
+                    continue;
+                }
                 //1. delete old director(ies)
 
                 $dest1 = $CFG->dataroot.'/lang/'.$pack;
