@@ -1269,7 +1269,7 @@ class hotpot_xml_tree {
 			$value = utf8_decode($value);
 
 			// decode angle brackets
-			$value = strtr($value, array('&#x003C;'=>'<', '&#x003E;'=>'>'));
+			$value = strtr($value, array('&#x003C;'=>'<', '&#x003E;'=>'>', '&#x0026;'=>'&'));
 
 			// remove white space between <table>, <ul|OL|DL> and <OBJECT|EMBED> parts 
 			// (so it doesn't get converted to <br />)
