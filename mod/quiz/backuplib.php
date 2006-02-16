@@ -114,7 +114,8 @@
         $from = ", {$CFG->prefix}quiz q";
         // but if we have an array of quiz ids, use those instead.
         if (!empty($instances) && is_array($instances) && count($instances)) {
-            $where = ' g.quiz IN ('.implode(',',array_keys($instances)).')  AND '; 
+            $where = ' g.quiz IN ('.implode(',',array_keys($instances)).')  AND ';
+            $from = '';
         }
 
         //Detect used categories (by category in questions)
@@ -159,11 +160,12 @@
         // Now we look for random questions that can use questions from subcategories
         // because we will have to add these subcategories
         $sql = "SELECT q.id, q.category 
-                  FROM {$CFG->prefix}quiz_question_instances AS i,
-                       {$CFG->prefix}quiz_questions AS q
-                 WHERE q.id = i.question
-                   AND q.qtype = '".RANDOM."'
-                   AND q.questiontext = '1'";
+                  FROM {$CFG->prefix}quiz_question_instances AS g,
+                       {$CFG->prefix}quiz_questions AS t
+                       $from
+                 WHERE $where t.id = g.question
+                   AND t.qtype = '".RANDOM."'
+                   AND t.questiontext = '1'";
         if ($randoms = get_records_sql($sql)) {
             foreach ($randoms as $random) {
                 $status = $status && quiz_backup_add_category_tree($random->category);
