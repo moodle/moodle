@@ -74,13 +74,18 @@ class quiz_default_questiontype {
             $question->defaultgrade = $form->defaultgrade;
         }
 
+        // Set the unique code
+        // TODO: set the stamp to a hash of the questiondata so that identical
+        // questions will get the same stamp. That will elliminate possible
+        // duplication during backup when questions get changed without changes
+        $question->stamp = make_unique_id_code();
+
         if (!empty($question->id)) { // Question already exists
             $question->version ++;    // Update version number of question
             if (!update_record("quiz_questions", $question)) {
                 error("Could not update question!");
             }
         } else {         // Question is a new one
-            $question->stamp = make_unique_id_code();  // Set the unique code (not to be changed)
             $question->version = 1;
             if (!$question->id = insert_record("quiz_questions", $question)) {
                 error("Could not insert new question!");
