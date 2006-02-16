@@ -330,6 +330,7 @@ class assignment_base {
         $assignment->timemodified = time();
         if (empty($assignment->dueenable)) {
             $assignment->timedue = 0;
+            $assignment->preventlate = 0;
         } else {
             $assignment->timedue = make_timestamp($assignment->dueyear, $assignment->duemonth, 
                                                   $assignment->dueday, $assignment->duehour, 
@@ -337,7 +338,6 @@ class assignment_base {
         }
         if (empty($assignment->availableenable)) {
             $assignment->timeavailable = 0;
-            $assignment->preventlate = 0;
         } else {
             $assignment->timeavailable = make_timestamp($assignment->availableyear, $assignment->availablemonth, 
                                                         $assignment->availableday, $assignment->availablehour, 
