@@ -464,8 +464,7 @@ class quiz_default_questiontype {
              'editquestion', get_string('edit'), 450, 550, get_string('edit'));
             echo '</font>';
         }
-        if ($question->maxgrade and $options->scores and 
-            !($question->qtype == ESSAY and !$state->last_graded->options->graded)) {  // do not print for ungraded essays
+        if ($question->maxgrade and $options->scores) {
             echo '<div class="grade">';
             echo get_string('marks', 'quiz').': ';
             if ($cmoptions->optionflags & QUIZ_ADAPTIVE) {
@@ -567,20 +566,7 @@ class quiz_default_questiontype {
         responses (and penalties) */
 
         if (!empty($question->maxgrade) && $options->scores) {
-            if (!('' === $state->last_graded->grade) and 
-                 ($question->qtype == ESSAY and !$state->last_graded->options->graded)) {
-                // Special handling for ungraded essay questions
-                
-                // get the word for teacher
-                if (isset($cmoptions->course) and $course = get_record('course', 'id', $cmoptions->course)) {
-                    $teacher = $course->teacher;
-                } else {
-                    $teacher = get_string('defaultcourseteacher');
-                }
-                echo '<div class="correctness notgraded">';
-                print_string('willbegradedby', 'quiz', $teacher);
-                echo '</div>';
-            } else if (!('' === $state->last_graded->grade)) {
+            if (!('' === $state->last_graded->grade)) {
                 // Display the grading details from the last graded state
                 $grade->cur = round($state->last_graded->grade, $cmoptions->decimalpoints);
                 $grade->max = $question->maxgrade;

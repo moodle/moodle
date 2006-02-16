@@ -125,18 +125,6 @@
             notify("<a href=\"report.php?mode=overview&amp;id=$cm->id\">$strviewallanswers ($usercount $strusers)</a>");
         }
         
-        if ($users = get_course_students($course->id)) {
-            list($ungradedessays, $usercount) = $QUIZ_QTYPES[ESSAY]->get_ungraded_count($quiz, $users);
-            if ($ungradedessays) {
-                $a = new stdClass;
-                $a->ungradedessays = $ungradedessays;
-                $a->usercount = $usercount;
-                $a->students = $strusers;
-            
-                notify("<a href=\"grading.php?quizid=$quiz->id\">".get_string('viewessaystograde', 'quiz', $a).'</a>');
-            }
-        }
-        
         echo '</td></tr></table>';
         print_footer($course);
         exit;
@@ -182,11 +170,6 @@
 /// Now print table with existing attempts
 
     if ($numattempts) {
-    /// notify the student of ungraded essays
-        list($ungradedessays, $usercount) = $QUIZ_QTYPES[ESSAY]->get_ungraded_count($quiz);
-        if ($ungradedessays) {
-            notify(get_string('youhaveungradedessays', 'quiz', $ungradedessays));
-        }
                     
     /// prepare table header
         if ($quiz->grade and $quiz->sumgrades) { // Grades used so have more columns in table
