@@ -267,7 +267,7 @@
 
                     echo '<td align="center">';
                     $g = data_get_field($field);
-                    echo $g->image();    //print type icon
+                    echo $g->image($data->id);    //print type icon
                     echo '</td></tr>';
                 }
             }

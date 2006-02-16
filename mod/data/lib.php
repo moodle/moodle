@@ -45,10 +45,12 @@ class data_field_base {    //base class (text field)
     }
     
     //prints the respective type icon
-    function image(){
+    function image($dataid) {
         global $CFG;
-        return '<img src="'.$CFG->modpixpath.'/data/field/'.$this->type.'/icon.gif" height="16" width="16" border="0"
-                     alt="'.$this->type.'" title="'.$this->type.'">';
+        $str = '<a href="fields.php?d='.$dataid.'&amp;fid='.$this->id.'&amp;mode=display&amp;sesskey='.sesskey().'">';
+        $str .= '<img src="'.$CFG->modpixpath.'/data/field/'.$this->type.'/icon.gif" ';
+        $str .= 'height="16" width="16" border="0" alt="'.$this->type.'" title="'.$this->type.'" /></a>';
+        return $str;
     }
     
     function insert_field($dataid, $type='text', $name, $des='', $autolink=0){
