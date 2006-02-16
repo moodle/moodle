@@ -153,7 +153,6 @@ class quiz_category_object {
         $this->str->categoryinfo   = get_string('categoryinfo', 'quiz');
         $this->str->questions      = get_string('questions', 'quiz');
         $this->str->add            = get_string('add');
-        $this->str->movecategoryto = get_string('movecategoryto');
         $this->str->delete         = get_string('delete');
         $this->str->moveup         = get_string('moveup');
         $this->str->movedown       = get_string('movedown');
@@ -284,7 +283,7 @@ class quiz_category_object {
 */
     function output_edit_table() {
         $this->edittable->head  = array ($this->str->category, $this->str->categoryinfo, $this->str->questions, $this->str->publish,
-                                    $this->str->delete, $this->str->order, $this->str->movecategoryto);
+                                    $this->str->delete, $this->str->order, $this->str->parent);
         $this->edittable->width = 200;
         $this->edittable->tablealign = 'center';
 
