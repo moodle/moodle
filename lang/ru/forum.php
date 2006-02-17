@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.5.2 + (2005060223)
+      // forum.php - created with Moodle 1.5.3+ (2005060230)
 
 
 $string['addanewdiscussion'] = 'Добавить тему для обсуждения';
@@ -36,6 +36,7 @@ $string['deletesure'] = 'Вы уверены, что хотите удалить это сообщение?';
 $string['deletesureplural'] = 'Вы уверены, что хотите удалить это сообщение и все ответы на него? ($a сообщений)';
 $string['digestmailheader'] = 'Это ежедневный обзор новых сообщений из форумов $a->sitename. Чтобы изменить настройки рассылки зайдите на $a->userprefs.';
 $string['digestmailprefs'] = 'Ваша личная страница';
+$string['digestmailsubject'] = '$a: дайджест форума';
 $string['digestsentusers'] = 'Дайджесты успешно разосланы $a пользователям.';
 $string['discussion'] = 'Обсуждение';
 $string['discussionmoved'] = 'Обсуждение перемещено в \'$a\'.';
