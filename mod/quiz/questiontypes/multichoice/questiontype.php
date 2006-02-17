@@ -270,7 +270,8 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
 
         // Print input controls and alternatives
         echo '<table align="right">';
-        $stranswer = get_string('answer', 'quiz');
+        $stranswer = ($question->options->single) ? get_string('singleanswer', 'quiz') :
+            get_string('multipleanswers', 'quiz');
         echo "<tr><td valign=\"top\">$stranswer:&nbsp;&nbsp;</td><td>";
         echo '<table>';
 
