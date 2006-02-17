@@ -322,8 +322,7 @@ if (self.name == 'editquestion') {
                 $questionnames .= get_string('questionsinuse', 'quiz');
             }
             print_header_simple($streditingquestions, '',
-                 "<a href=\"index.php?id=$course->id\">$strquizzes</a>".
-                 " -> $streditingquestions");
+                 "$streditingquestions");
             notice_yesno(get_string("deletequestionscheck", "quiz", $questionnames),
                         "edit.php?sesskey=$USER->sesskey&amp;deleteselected=$questionlist&amp;confirm=".md5($questionlist), "edit.php");
             print_footer($course);
@@ -441,8 +440,8 @@ if (self.name == 'editquestion') {
     if (!isset($modform->instance)) {
         // one column layout for non-quiz-specific editing page
         print_header_simple($streditingquestions, '',
-                 "<a href=\"index.php?id=$course->id\">$strquizzes</a>".
-                 " -> $streditingquestions");
+                 "$streditingquestions");
+        print_heading_with_help(get_string('questions', 'quiz'), 'questionbank');
         echo '<table align="center" border="0" cellpadding="2" cellspacing="0">';
         echo '<tr><td valign="top">';
 
@@ -487,9 +486,7 @@ if (self.name == 'editquestion') {
     quiz_print_cat_question_list($course, $modform->category,
                                  isset($modform->instance) ? $modform->instance : 0, $SESSION->quiz_recurse, $page, $perpage, $SESSION->quiz_showhidden, $sortorder);
     print_simple_box_end();
-    if (!isset($modform->instance)) {
-        print_continue("index.php?id=$modform->course");
-    }
+
     echo '</td></tr>';
     echo '</table>';
 

@@ -100,9 +100,7 @@
             get_string("editquestions", "quiz").'</a> -> '.$streditingquestion;
     }
 
-    print_header_simple("$streditingquestion", "",
-                 "<a href=\"$CFG->wwwroot/mod/quiz/index.php?id=$course->id\">$strquizzes</a>".
-                  " -> ".$strediting);
+    print_header_simple("$streditingquestion", "", $strediting);
 
     if (isset($_REQUEST['delete'])) {
         if (isset($confirm) and confirm_sesskey()) {
