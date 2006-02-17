@@ -1,5 +1,5 @@
 <?PHP // $Id$
-      // Allows the admin to create, delete and rename course categories
+      // Allows the admin to manage activity modules
 
     require_once("../config.php");
     require_once("../course/lib.php");
