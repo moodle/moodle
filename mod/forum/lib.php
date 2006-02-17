@@ -1442,7 +1442,7 @@ function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
                              WHERE d.forum = '$forum'
                                AND p.discussion = d.id
                                AND p.parent = 0
-                               AND p.userid = u.id $groupselect $userselect
+                               AND p.userid = u.id $timelimit $groupselect $userselect
                           ORDER BY $forumsort $limit");
     }
 }
