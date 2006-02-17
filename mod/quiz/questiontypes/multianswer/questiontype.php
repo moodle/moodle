@@ -279,7 +279,7 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
 
                 if (!empty($chosenanswer->feedback)) {
                     $feedback = str_replace("'", "\\'", $chosenanswer->feedback);
-                    $popup = " onmouseover=\"return overlib('$feedback', CAPTION, '$strfeedback', FGCOLOR, '#FFFFFF');\" ".
+                    $popup = " onmouseover=\"return overlib('$feedback', STICKY, MOUSEOFF, CAPTION, '$strfeedback', FGCOLOR, '#FFFFFF');\" ".
                              " onmouseout=\"return nd();\" ";
                 }
 
@@ -514,6 +514,7 @@ function quiz_qtype_multianswer_extract_question($text) {
         $wrapped->answer   = array();
         $wrapped->fraction = array();
         $wrapped->feedback = array();
+        $wrapped->shuffleanswers = 1;
         $wrapped->questiontext = addslashes($answerregs[0]); // here we don't want multianswer_escape, because this is editing time information
         $wrapped->questiontextformat = 0;
 
