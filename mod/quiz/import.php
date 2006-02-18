@@ -17,7 +17,7 @@
     $courseid = optional_param('course', 0, PARAM_INT);
     $format = optional_param('format','',PARAM_CLEANFILE);
 
-    if (!$categoryid) { // need to get category from modform
+    if (!$categoryid) { // try to get category from modform
         $showcatmenu = true; // will ensure that user can choose category
         if (isset($SESSION->modform)) {
             $categoryid = $SESSION->modform->category;
@@ -25,6 +25,7 @@
     }
 
     if (! $category = get_record("quiz_categories", "id", $categoryid)) {
+        // if no valid category was given, use the default category
         if ($courseid) {
             $category = quiz_get_default_category($courseid);
         } else {
@@ -32,17 +33,20 @@
         }
     }
 
-    if (! $course = get_record("course", "id", $category->course)) {
-        error("This category doesn't belong to a valid course!");
+    if (!$courseid) { // need to get the course from the chosen category
+        $courseid = $category->course;
+    }
+
+    if (! $course = get_record("course", "id", $courseid)) {
+        error("Invalid course!");
     }
 
     require_login($course->id, false);
 
-    if (!isteacher($course->id)) {
-        error("Only the teacher can import quiz questions!");
+    if (!isteacheredit($course->id)) {
+        error("Only editing teachers can import quiz questions!");
     }
 
-    
     // ensure the files area exists for this course
     make_upload_directory( "$course->id" );
 
@@ -130,7 +134,15 @@
     print_heading_with_help($strimportquestions, "import", "quiz");
 
     /// Get all the existing categories now
-    if (!$categories = get_records_select("quiz_categories", "course = '{$course->id}' OR publish = '1'", "parent, sortorder, name ASC")) {
+    $sql = "SELECT c.*
+              FROM {$CFG->prefix}quiz_categories AS c,
+                   {$CFG->prefix}user_teachers AS t
+             WHERE t.userid = '$USER->id'
+               AND t.course = c.course
+               AND (c.course = '$course->id' 
+                   OR (c.publish = '1' AND t.editall = '1'))
+          ORDER BY c.parent ASC, c.sortorder ASC, c.name ASC";
+    if (!$categories = get_records_sql($sql)) {
         error("Could not find any question categories!");
     }
     $categories = add_indented_names($categories);
