@@ -845,7 +845,6 @@ function quiz_get_image($question, $courseid) {
     $img = '';
 
     if ($question->image) {
-        $img .= '<img border="0" src="';
 
         if (substr(strtolower($question->image), 0, 7) == 'http://') {
             $img .= $question->image;
@@ -856,7 +855,6 @@ function quiz_get_image($question, $courseid) {
         } else {
             $img .= "$CFG->wwwroot/file.php?file=$courseid/$question->image";
         }
-        $img .= '" alt="" />';
     }
     return $img;
 }
