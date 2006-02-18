@@ -30,13 +30,13 @@ print_simple_box_start('center', '90%');
       <div>
         <?php $this->print_question_formulation_and_controls($question, $state, $cmoptions, $options); ?>
       </div>
-      <div>
+      <div style="clear: both;">
         <?php $this->print_question_grading_details($question, $state, $cmoptions, $options); ?>
       </div>
-      <div align="right">
+      <div style="clear: both;" align="right">
         <?php $this->print_question_submit_buttons($question, $state, $cmoptions, $options); ?>
       </div>
-      <div>
+      <div style="clear: both;">
         <?php echo $q->history; ?>
       </div>
     </td>
