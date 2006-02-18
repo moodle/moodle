@@ -443,10 +443,6 @@ function quiz_print_cat_question_list($course, $categoryid, $quizid,
     $strcreatemultiple = get_string("createmultiple", "quiz");
     $strpreview = get_string("preview","quiz");
 
-    $strsortalpha  = get_string("sortalpha", "quiz");
-    $strsortage    = get_string("sortage", "quiz");
-    $strsortsubmit = get_string("sortsubmit", "quiz");
-
     if (!$categoryid) {
         echo "<p align=\"center\"><b>";
         print_string("selectcategoryabove", "quiz");
@@ -533,10 +529,12 @@ function quiz_print_cat_question_list($course, $categoryid, $quizid,
     echo '<table id="categoryquestions" cellspacing="0"><tr>';
     $actionwidth = $canedit ? 95 : 70;
     echo "<th width=\"$actionwidth\" nowrap=\"nowrap\" class=\"header\">$straction</th>";
-    $sortoptions = array('qtype, name ASC' => $strsortalpha,
-                         'id ASC' => $strsortage);
+    
+    $sortoptions = array('name, qtype ASC' => get_string("sortalpha", "quiz"),
+                         'qtype, name ASC' => get_string("sorttypealpha", "quiz"),
+                         'id ASC' => get_string("sortage", "quiz"));
     $orderselect  = choose_from_menu ($sortoptions, 'sortorder', $sortorder, false, 'this.form.submit();', '0', true);
-    $orderselect .= '<noscript><input type="submit" value="'.$strsortsubmit.'" /></noscript>';
+    $orderselect .= '<noscript><input type="submit" value="'.get_string("sortsubmit", "quiz").'" /></noscript>';
     echo "<th width=\"100%\" align=\"left\" nowrap=\"nowrap\" class=\"header\">$strquestionname $orderselect</th>
     <th nowrap=\"nowrap\" class=\"header\">$strtype</th>";
     echo "</tr>\n";
