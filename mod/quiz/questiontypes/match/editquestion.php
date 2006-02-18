@@ -6,7 +6,7 @@
             $oldsubquestions = get_records_list("quiz_match_sub", "id", $options->subquestions);
         }
     } else {
-        $options->shuffleanswers = 0;
+        $options->shuffleanswers = 1;
     }
 
     $subquestions = array();

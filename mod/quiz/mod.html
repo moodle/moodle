@@ -231,11 +231,11 @@
 
 <?php if (!$CFG->quiz_fix_shuffleanswers) { ?>
     <tr valign="top">
-        <td align="right"><b><?php print_string("shuffleanswers", "quiz") ?>:</b></td>
+        <td align="right"><b><?php print_string("shufflewithin", "quiz") ?>:</b></td>
          <td align="left">
         <?php
             choose_from_menu($yesnooptions, "shuffleanswers", "$form->shuffleanswers", "");
-            helpbutton("shuffleanswers", get_string("shuffleanswers","quiz"), "quiz");
+            helpbutton("shufflewithin", get_string("shufflewithin","quiz"), "quiz");
          ?>
         </td>
     </tr>
@@ -485,11 +485,11 @@
 
 <?php if ($CFG->quiz_fix_shuffleanswers) { ?>
     <tr valign="top">
-        <td align="right"><b><?php print_string("shuffleanswers", "quiz") ?>:</b></td>
+        <td align="right"><b><?php print_string("shufflewithin", "quiz") ?>:</b></td>
          <td align="left">
         <?php
             choose_from_menu($yesnooptions, "shuffleanswers", "$form->shuffleanswers", "");
-            helpbutton("shuffleanswers", get_string("shuffleanswers","quiz"), "quiz");
+            helpbutton("shufflewithin", get_string("shufflewithin","quiz"), "quiz");
          ?>
         </td>
     </tr>
