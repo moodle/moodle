@@ -1324,9 +1324,8 @@ class assignment_base {
     
         if ($basedir = $this->file_area($userid)) {
             if ($files = get_directory_list($basedir)) {
-                
+                require_once($CFG->libdir.'/filelib.php');
                 foreach ($files as $key => $file) {
-                    require_once($CFG->libdir.'/filelib.php');
                     
                     $icon = mimeinfo('icon', $file);
                     
@@ -1336,7 +1335,7 @@ class assignment_base {
                         $ffurl = "$CFG->wwwroot/file.php?file=/$filearea/$file";
                     }
                 
-                    $output = '<img align="middle" src="'.$CFG->pixpath.'/f/'.$icon.'" height="16" width="16" alt="'.$icon.'" />'.
+                    $output .= '<img align="middle" src="'.$CFG->pixpath.'/f/'.$icon.'" height="16" width="16" alt="'.$icon.'" />'.
                             '<a href="'.$ffurl.'" >'.$file.'</a><br />';
                 }
             }
