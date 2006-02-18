@@ -254,6 +254,7 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
     }
 
     function print_question_formulation_and_controls(&$question, &$state, $cmoptions, $options) {
+        global $CFG;
 
         $answers = &$question->options->answers;
         $correctanswers = $this->get_correct_responses($question, $state);
@@ -263,25 +264,18 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
         $formatoptions->para = false;
 
         // Print formulation
-        echo format_text($question->questiontext,
+        $q->questiontext = format_text($question->questiontext,
                          $question->questiontextformat,
                          NULL, $cmoptions->course);
-        quiz_print_possible_question_image($question, $cmoptions->course);
-
-        // Print input controls and alternatives
-        echo '<table align="right">';
-        $stranswer = ($question->options->single) ? get_string('singleanswer', 'quiz') :
+        $q->image = quiz_get_image($question, $cmoptions->course);
+        $q->answerprompt = ($question->options->single) ? get_string('singleanswer', 'quiz') :
             get_string('multipleanswers', 'quiz');
-        echo "<tr><td valign=\"top\">$stranswer:&nbsp;&nbsp;</td><td>";
-        echo '<table>';
 
         // Print each answer in a separate row
         foreach ($state->options->order as $key => $aid) {
             $answer = &$answers[$aid];
             $qnumchar = chr(ord('a') + $key);
             $checked = '';
-
-            echo '<tr><td valign="top">';
 
             if ($question->options->single) {
                 $type = 'type="radio"';
@@ -295,41 +289,31 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
                 $checked = isset($state->responses[$aid])
                          ? 'checked="checked"' : '';
             }
-            $id   = $question->name_prefix . $aid;
-            $fullid = "id=\"$id\"";
+
+            $a->id   = $question->name_prefix . $aid;
 
             // Print the control
-            echo "<input $readonly $fullid $name $checked $type value=\"$aid\"" .
+            $a->control = "<input $readonly id=\"$a->id\" $name $checked $type value=\"$aid\"" .
                  "alt=\"" . s($answer->answer) . '" />';
-            echo '</td>';
 
             // Print the text by the control highlighting if correct responses
             // should be shown and the current answer is the correct answer in
             // the single selection case or has a positive score in the multiple
             // selection case
-            if ($options->readonly && $options->correct_responses &&
-                is_array($correctanswers) && in_array($aid, $correctanswers)) {
-                echo '<td valign="top" class="highlight"><label for="'.$id.'">'.
-                 format_text("$qnumchar. $answer->answer", FORMAT_MOODLE ,
-                 $formatoptions) . '</label></td>';
-            } else {
-                echo '<td valign="top"><label for="'.$id.'">'.
-                 format_text("$qnumchar. $answer->answer", FORMAT_MOODLE,
-                 $formatoptions) . '</label></td>';
-            }
+            $a->class = ($options->readonly && $options->correct_responses &&
+                is_array($correctanswers) && in_array($aid, $correctanswers)) ?
+                'highlight' : '';
 
-            // Print feedback by selected options if feedback is on
-            if (($options->feedback || $options->correct_responses) &&
-             $checked) {
-               echo '<td valign="top">';
-               quiz_print_comment($answer->feedback);
-               echo '</td>';
-           }
+            // Print the answer text
+            $a->text = format_text("$qnumchar. $answer->answer", FORMAT_MOODLE, $formatoptions);
 
-           echo '</tr>';
+            // Print feedback if feedback is on
+            $a->feedback = (($options->feedback || $options->correct_responses) && $checked) ?
+               $feedback = format_text($answer->feedback, true, false) : '';
+
+            $q->answers[] = clone($a);
         }
-        echo '</table>';
-        echo '</td></tr></table>';
+        include("$CFG->dirroot/mod/quiz/questiontypes/multichoice/display.html");
     }
 
     function grade_responses(&$question, &$state, $cmoptions) {

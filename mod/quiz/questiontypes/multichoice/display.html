@@ -1,0 +1,27 @@
+<div>
+  <?php echo $q->questiontext; ?>
+</div>
+
+<?php if ($q->image) { ?>
+  <img border="0" src="<?php echo $q->imageurl; ?>" alt="" />
+<?php } ?>
+
+<div>
+  <?php echo $q->answerprompt; ?>
+</div>
+
+<table>
+  <?php foreach ($q->answers as $answer) { ?>
+    <tr>
+      <td valign="top">
+        <?php echo $answer->control; ?>
+      </td>
+      <td valign="top" class="<?php echo $answer->class ?>"><label for="<?php echo $answer->id ?>">
+        <?php echo $answer->text; ?>
+      </td>
+      <td valign="top" class="feedbacktext">
+        <?php echo $answer->feedback; ?>
+      </td>
+    </tr>
+  <?php } ?>
+</table>
