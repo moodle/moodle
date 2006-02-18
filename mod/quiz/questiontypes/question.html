@@ -1,0 +1,45 @@
+<?php
+/* The question number is printed in the first column of a table.
+ * The main content is printed in the second column in the following order
+ *   question text
+ *   answer controls and feedback
+ *   grading details
+ *   submit button
+ *   session history
+ */
+print_simple_box_start('center', '90%');
+?>
+<table width="100%" cellspacing="10">
+  <tr>
+    <!-- The first column spans all rows and contains the question number
+         and score -->
+    <td nowrap="nowrap" width="80" valign="top">
+      <b><font size="+1"><?php echo $q->number; ?></font></b> 
+      <?php echo $q->editlink; ?>
+      <?php if ($q->marks) { ?>
+        <div class="grade">
+          <?php print_string('marks', 'quiz'); ?>:
+          <br />
+          <?php echo $q->marks; ?>
+        </div>
+      <?php } ?>
+    </td>
+    
+    <!-- The second column contains the main content -->
+    <td valign="top">
+      <div>
+        <?php $this->print_question_formulation_and_controls($question, $state, $cmoptions, $options); ?>
+      </div>
+      <div>
+        <?php $this->print_question_grading_details($question, $state, $cmoptions, $options); ?>
+      </div>
+      <div align="right">
+        <?php $this->print_question_submit_buttons($question, $state, $cmoptions, $options); ?>
+      </div>
+      <div>
+        <?php echo $q->history; ?>
+      </div>
+    </td>
+  </tr>
+</table>
+<?php print_simple_box_end(); ?>

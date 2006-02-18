@@ -452,55 +452,30 @@ class quiz_default_questiontype {
         using {@print_question_grading_details}.
         The {@link print_question_submit_buttons} member is invoked to add a third
         row containing the submit button(s) when $options->readonly is false. */
-
-        print_simple_box_start('center', '90%');
-        echo '<table width="100%" cellspacing="10"><tr>';
-        if ($options->readonly) {
-            echo '<td nowrap="nowrap" width="80" valign="top" rowspan="2">';
-        } else {
-            echo '<td nowrap="nowrap" width="80" valign="top" rowspan="3">';
-        }
+        global $CFG;
 
         // Print question number
-        echo '<b><font size="+1">' . $number . '</font></b>';
-        if (isteacher($cmoptions->course)) {
-            echo '<br /><font size="1">';
-            link_to_popup_window ('/mod/quiz/question.php?id=' . $question->id,
-             'editquestion', get_string('edit'), 450, 550, get_string('edit'));
-            echo '</font>';
+        $q->number = $number;
+
+        // For editing teachers print a link to an editing popup window
+        $q->editlink = '';
+        if (isteacheredit($cmoptions->course)) {
+            $stredit = get_string('edit');
+            $linktext = '<img src="'.$CFG->pixpath.'/t/edit.gif" border="0" alt="'.$stredit.'" />';
+            $q->editlink = link_to_popup_window('/mod/quiz/question.php?id='.$question->id, $stredit, $linktext, 450, 550, $stredit, '', true);
         }
+
+        $q->strmarks = '';
+        $q->marks = '';
         if ($question->maxgrade and $options->scores) {
-            echo '<div class="grade">';
-            echo get_string('marks', 'quiz').': ';
+            $q->strmarks .= get_string('marks', 'quiz').': ';
             if ($cmoptions->optionflags & QUIZ_ADAPTIVE) {
-                echo '<br />';
-                echo ('' === $state->last_graded->grade) ? '--/' : round($state->last_graded->grade, $cmoptions->decimalpoints).'/';
+                $q->marks = ('' === $state->last_graded->grade) ? '--/' : round($state->last_graded->grade, $cmoptions->decimalpoints).'/';
             }
-            echo $question->maxgrade.'</div>';
+            $q->marks .= $question->maxgrade;
         }
 
-        echo '</td><td valign="top">';
-
-        $this->print_question_formulation_and_controls($question, $state,
-         $cmoptions, $options);
-
-        echo '</td></tr><tr><td valign="top">';
-
-        if ($question->maxgrade and $options->scores) {
-            $this->print_question_grading_details($question, $state, $cmoptions, $options);
-        }
-
-        if (QUIZ_EVENTDUPLICATEGRADE == $state->event) {
-            echo ' ';
-            print_string('duplicateresponse', 'quiz');
-        }
-
-        if(!$options->readonly) {
-            echo '</td></tr><tr><td align="right">';
-            $this->print_question_submit_buttons($question, $state,
-             $cmoptions, $options);
-        }
-
+        $q->history = '';
         if(isset($options->history) and $options->history) {
             if ($options->history == 'all') {
                 // show all states
@@ -537,12 +512,10 @@ class quiz_default_questiontype {
                         $b.round($st->grade, $cmoptions->decimalpoints).$be
                     );
                 }
-                echo '</td></tr><tr><td colspan="2" valign="top">';
-                print_table($table);
+                $q->history = make_table($table);
             }
         }
-        echo '</td></tr></table>';
-        print_simple_box_end();
+        include "$CFG->dirroot/mod/quiz/questiontypes/question.html";
     }
 
 
@@ -570,6 +543,10 @@ class quiz_default_questiontype {
         attempt and displays the overall grade obtained counting all previous
         responses (and penalties) */
 
+        if (QUIZ_EVENTDUPLICATEGRADE == $state->event) {
+            echo ' ';
+            print_string('duplicateresponse', 'quiz');
+        }
         if (!empty($question->maxgrade) && $options->scores) {
             if (!('' === $state->last_graded->grade)) {
                 // Display the grading details from the last graded state

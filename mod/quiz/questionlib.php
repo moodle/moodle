@@ -834,6 +834,34 @@ function quiz_print_question_icon($question, $editlink=true, $return = false) {
 
 
 /**
+* Returns a html link to the question image if there is one
+*
+* @return string The html image tag or the empy string if there is no image.
+* @param object $question The question object
+*/
+function quiz_get_image($question, $courseid) {
+
+    global $CFG;
+    $img = '';
+
+    if ($question->image) {
+        $img .= '<img border="0" src="';
+
+        if (substr(strtolower($question->image), 0, 7) == 'http://') {
+            $img .= $question->image;
+
+        } else if ($CFG->slasharguments) {        // Use this method if possible for better caching
+            $img .= "$CFG->wwwroot/file.php/$courseid/$question->image";
+
+        } else {
+            $img .= "$CFG->wwwroot/file.php?file=$courseid/$question->image";
+        }
+        $img .= '" alt="" />';
+    }
+    return $img;
+}
+
+/**
 * Print the question image if there is one
 *
 * @param object $question The question object
@@ -858,7 +886,6 @@ function quiz_print_possible_question_image($question, $courseid) {
 
     }
 }
-
 
 /**
 * Construct name prefixes for question form element names
