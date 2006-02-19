@@ -7,6 +7,8 @@
     function data_rss_feeds() {
         global $CFG;
         $status = true;
+
+        $CFG->debug = true;
         
         // Check CFG->enablerssfeeds.
         if (empty($CFG->enablerssfeeds)) {
@@ -38,7 +40,7 @@
                                     'ORDER BY dr.timecreated DESC ' .
                                     "LIMIT {$dataActivity->rssarticles}";
                         
-                        $dataRecords = recordset_to_array(get_recordset_sql($sql));
+                        $dataRecords = get_records_sql($sql);
                         
                         // Now all the rss items.
                         $items = array();
