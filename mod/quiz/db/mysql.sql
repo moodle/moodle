@@ -58,7 +58,7 @@ CREATE TABLE prefix_quiz_answers (
   id int(10) unsigned NOT NULL auto_increment,
   question int(10) unsigned NOT NULL default '0',
   answer text NOT NULL default '',
-  fraction varchar(10) NOT NULL default '0.0',
+  fraction float NOT NULL default '0',
   feedback text NOT NULL default '',
   PRIMARY KEY  (id),
   KEY question (question)
@@ -91,7 +91,7 @@ CREATE TABLE prefix_quiz_attempts (
   quiz int(10) unsigned NOT NULL default '0', 
   userid int(10) unsigned NOT NULL default '0',
   attempt smallint(6) NOT NULL default '0',
-  sumgrades varchar(10) NOT NULL default '0.0',
+  sumgrades float NOT NULL default '0',
   timestart int(10) unsigned NOT NULL default '0',
   timefinish int(10) unsigned NOT NULL default '0',
   timemodified int(10) unsigned NOT NULL default '0',
@@ -197,7 +197,7 @@ CREATE TABLE `prefix_quiz_essay_states` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `stateid` int(10) unsigned NOT NULL default '0',
   `graded` tinyint(4) unsigned NOT NULL default '0',
-  `fraction` varchar(10) NOT NULL default '0.0',
+  `fraction` float NOT NULL default '0',
   `response` text NOT NULL default '',
   PRIMARY KEY  (`id`)
 ) TYPE=MyISAM COMMENT='essay question type specific state information';
@@ -293,7 +293,7 @@ CREATE TABLE prefix_question_sessions (
   questionid int(10) unsigned NOT NULL default '0',
   newest int(10) unsigned NOT NULL default '0',
   newgraded int(10) unsigned NOT NULL default '0',
-  sumpenalty varchar(10) NOT NULL default '0.0',
+  sumpenalty float NOT NULL default '0',
   PRIMARY KEY  (id),
   UNIQUE KEY attemptid (attemptid,questionid)
 ) TYPE=MyISAM COMMENT='Gives ids of the newest open and newest graded states';
@@ -507,9 +507,9 @@ CREATE TABLE prefix_quiz_states (
   answer text NOT NULL default '',
   timestamp int(10) unsigned NOT NULL default '0',
   event int(4) unsigned NOT NULL default '0',
-  grade varchar(10) NOT NULL default '0.0',
-  raw_grade varchar(10) NOT NULL default '',
-  penalty varchar(10) NOT NULL default '0.0',
+  grade float NOT NULL default '0',
+  raw_grade float NOT NULL default '0',
+  penalty float NOT NULL default '0',
   PRIMARY KEY  (id),
   KEY attempt (attempt),
   KEY question (question)

@@ -913,6 +913,17 @@ function quiz_upgrade($oldversion) {
         execute_sql("ALTER TABLE {$CFG->prefix}quiz_newest_states RENAME {$CFG->prefix}question_sessions", false);
     }
 
+    if ($oldversion < 2006021900) {
+        // convert grade fields to float
+        table_column('quiz_attempts', 'sumgrades', 'sumgrades',  'float', '', '', '0', 'not null');
+        table_column('quiz_answers', 'fraction', 'fraction',  'float', '', '', '0', 'not null');
+        table_column('quiz_essay_states', 'fraction', 'fraction',  'float', '', '', '0', 'not null');
+        table_column('quiz_states', 'grade', 'grade',  'float', '', '', '0', 'not null');
+        table_column('quiz_states', 'raw_grade', 'raw_grade',  'float', '', '', '0', 'not null');
+        table_column('quiz_states', 'penalty', 'penalty',  'float', '', '', '0', 'not null');
+        table_column('question_sessions', 'sumpenalty', 'sumpenalty',  'float', '', '', '0', 'not null');
+    }
+
     return true;
 }
 
