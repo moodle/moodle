@@ -159,7 +159,7 @@
         
         // Now we look for random questions that can use questions from subcategories
         // because we will have to add these subcategories
-        $sql = "SELECT q.id, q.category 
+        $sql = "SELECT t.id, t.category 
                   FROM {$CFG->prefix}quiz_question_instances AS g,
                        {$CFG->prefix}quiz_questions AS t
                        $from
@@ -1027,7 +1027,7 @@
             $info[$instance->id.'1'][1] = 0;
         }
         //Questions
-        $info[$instance->id.'2'][0] = get_string("questions","quiz");
+        $info[$instance->id.'2'][0] = get_string("questionsinclhidden","quiz");
         if ($ids = quiz_question_ids_by_backup ($backup_unique_code)) {
             $info[$instance->id.'2'][1] = count($ids);
         } else {
