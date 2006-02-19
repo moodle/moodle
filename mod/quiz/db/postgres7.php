@@ -1018,7 +1018,24 @@ function quiz_upgrade($oldversion) {
         table_column('quiz_states', 'raw_grade', 'raw_grade',  'real', '', '', '0', 'not null');
         table_column('quiz_states', 'penalty', 'penalty',  'real', '', '', '0', 'not null');
         table_column('question_sessions', 'sumpenalty', 'sumpenalty',  'real', '', '', '0', 'not null');
+
+        modify_database ('', "
+            CREATE TABLE prefix_quiz_essay (
+                id SERIAL PRIMARY KEY,
+                question integer NOT NULL default '0',
+                answer varchar(255) NOT NULL default ''
+            ) ");
+    
+        modify_database ('', "
+            CREATE TABLE `prefix_quiz_essay_states` (
+                id SERIAL PRIMARY KEY,
+                stateid integer NOT NULL default '0',
+                graded integer NOT NULL default '0',
+                fraction varchar(10) NOT NULL default '0.0',
+                response text NOT NULL default '',
+            ) ");
     }
+
     return true;
 }
 
