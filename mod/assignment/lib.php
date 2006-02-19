@@ -15,25 +15,36 @@ if (!isset($CFG->assignment_itemstocount)) {
     set_config("assignment_itemstocount", ASSIGNMENT_COUNT_WORDS);  // Default item to count
 }
 
-/*
+/**
  * Standard base class for all assignment submodules (assignment types).
- *
- *
  */
 class assignment_base {
 
     var $cm;
     var $course;
     var $assignment;
+    var $strassignment;
+    var $strassignments;
+    var $strsubmissions;
+    var $strlastmodified;
+    var $navigation;
+    var $pagetitle;
+    var $currentgroup;
+    var $usehtmleditor;
+    var $defaultformat;
 
     /**
      * Constructor for the base assignment class
      *
      * Constructor for the base assignment class.
      * If cmid is set create the cm, course, assignment objects.
+     * If the assignment is hidden and the user is not a teacher then
+     * this prints a page header and notice.
      *
      * @param cmid   integer, the current course module id - not set for new assignments
      * @param assignment   object, usually null, but if we have it we pass it to save db access
+     * @param cm   object, usually null, but if we have it we pass it to save db access
+     * @param course   object, usually null, but if we have it we pass it to save db access
      */
     function assignment_base($cmid=0, $assignment=NULL, $cm=NULL, $course=NULL) {
 
@@ -89,10 +100,11 @@ class assignment_base {
         }
     }
 
-    /*
-     * Display the assignment to students (sub-modules will most likely override this)
+    /**
+     * Display the assignment, used by view.php
+     *
+     * This in turn calls the methods producing individual parts of the page
      */
-
     function view() {
 
         add_to_log($this->course->id, "assignment", "view", "view.php?id={$this->cm->id}", 
@@ -109,8 +121,15 @@ class assignment_base {
         $this->view_footer();
     }
 
-    /*
-     * Display the top of the view.php page, this doesn't change much for submodules
+    /**
+     * Display the header and top of a page
+     *
+     * (this doesn't change much for assignment types)
+     * This is used by the view() method to print the header of view.php but
+     * it can be used on other pages in which case the string to denote the
+     * page in the navigation trail should be passed as an argument
+     *
+     * @param $subpage string Description of subpage to be used in navigation trail
      */
     function view_header($subpage='') {
 
@@ -131,8 +150,11 @@ class assignment_base {
     }
 
 
-    /*
+    /**
      * Display the assignment intro
+     *
+     * This will most likely be extended by assignment type plug-ins
+     * The default implementation prints the assignment description in a box
      */
     function view_intro() {
         print_simple_box_start('center', '', '', '', 'generalbox', 'intro');
@@ -142,8 +164,11 @@ class assignment_base {
         print_simple_box_end();
     }
 
-    /*
+    /**
      * Display the assignment dates
+     *
+     * Prints the assignment start and end dates in a box.
+     * This will be suitable for most assignment types
      */
     function view_dates() {
         if (!$this->assignment->timeavailable && !$this->assignment->timedue) {
@@ -165,13 +190,24 @@ class assignment_base {
     }
 
 
-    /*
-     * Display the bottom of the view.php page, this doesn't change much for submodules
+    /**
+     * Display the bottom and footer of a page
+     *
+     * This default method just prints the footer.
+     * This will be suitable for most assignment types
      */
     function view_footer() {
         print_footer($this->course);
     }
 
+    /**
+     * Display the feedback to the student
+     *
+     * This default method prints the teacher picture and name, date when marked,
+     * grade and teacher comment.
+     *
+     * @param $submission object The submission object or NULL in which case it will be loaded
+     */
     function view_feedback($submission=NULL) {
         global $USER;
 
@@ -202,8 +238,6 @@ class assignment_base {
         echo '<div class="fullname">'.fullname($teacher).'</div>';
         echo '<div class="time">'.userdate($submission->timemarked).'</div>';
         echo '</div>';
-        $this->print_user_files($submission->userid);
-        echo '</td>';
         echo '</td>';
         echo '</tr>';
 
@@ -225,8 +259,14 @@ class assignment_base {
         echo '</table>';
     }
 
-    /* 
+    /** 
      * Returns a link with info about the state of the assignment submissions
+     *
+     * This is used by view_header to put this link at the top right of the page.
+     * For teachers it gives the number of submitted assignments with a link
+     * For students it gives the time of their submission.
+     * This will be suitable for most assignment types.
+     * @return string
      */
     function submittedlink() {
         global $USER;
@@ -259,8 +299,14 @@ class assignment_base {
     }
 
 
-    /*
-     * Print the start of the setup form for the current assignment type
+    /**
+     * Print the setup form for the current assignment type
+     *
+     * Includes common.html and the assignment type's mod.html
+     * This will be suitable for all assignment types
+     *
+     * @param $form object The object used to fill the form
+     * @param $action url Default destination for this form
      */
     function setup(&$form, $action='') {
         global $CFG, $THEME;
@@ -303,8 +349,10 @@ class assignment_base {
         $this->setup_end(); 
     }
 
-    /*
+    /**
      * Print the end of the setup form for the current assignment type
+     *
+     * Includes common_end.html
      */
     function setup_end() {
         global $CFG;
@@ -320,12 +368,20 @@ class assignment_base {
         print_footer($this->course);
     }
 
-
+    /**
+     * Create a new assignment activity
+     *
+     * Given an object containing all the necessary data,
+     * (defined by the form in mod.html) this function
+     * will create a new instance and return the id number
+     * of the new instance.
+     * The due data is added to the calendar
+     * This is common to all assignment types.
+     *
+     * @param $assignment object The data from the form on mod.html
+     * @return int The id of the assignment
+     */
     function add_instance($assignment) {
-        // Given an object containing all the necessary data,
-        // (defined by the form in mod.html) this function
-        // will create a new instance and return the id number
-        // of the new instance.
 
         $assignment->timemodified = time();
         if (empty($assignment->dueenable)) {
@@ -366,6 +422,13 @@ class assignment_base {
         return $returnid;
     }
 
+    /**
+     * Deletes an assignment activity
+     *
+     * Deletes all database records and calendar events for this assignment.
+     * @param $assignment object The assignment to be deleted
+     * @return boolean False indicates error
+     */
     function delete_instance($assignment) {
         $result = true;
 
@@ -384,11 +447,19 @@ class assignment_base {
         return $result;
     }
 
+    /**
+     * Updates a new assignment activity
+     *
+     * Given an object containing all the necessary data,
+     * (defined by the form in mod.html) this function
+     * will update the assignment instance and return the id number
+     * The due date is updated in the calendar
+     * This is common to all assignment types.
+     *
+     * @param $assignment object The data from the form on mod.html
+     * @return int The assignment id
+     */
     function update_instance($assignment) {
-        // Given an object containing all the necessary data,
-        // (defined by the form in mod.html) this function
-        // will create a new instance and return the id number
-        // of the new instance.
 
         $assignment->timemodified = time();
         if (empty($assignment->dueenable)) {
@@ -444,9 +515,13 @@ class assignment_base {
         return $returnid;
     }
 
-    /*
+    /**
      * Top-level function for handling of submissions called by submissions.php
-     *  
+     *
+     * This is for handling the teacher interaction with the grading interface
+     * This should be suitable for most assignment types.
+     *
+     * @param $mode string Specifies the kind of teacher interaction taking place
      */
     function submissions($mode) {
         ///The main switch is changed to facilitate
@@ -581,7 +656,11 @@ class assignment_base {
         }
     }
     
-    //function that updates the listing on the main script from popup using javascript
+    /**
+    * Helper method updating the listing on the main script from popup using javascript
+    *
+    * @param $submission object The submission whose data is to be updated on the main page
+    */
     function update_main_listing($submission) {
         global $SESSION;
         
@@ -635,9 +714,11 @@ class assignment_base {
         flush();
     }
 
-    /*
-     *  Display a grade in user-friendly form, whether it's a scale or not
+    /**
+     *  Return a grade in user-friendly form, whether it's a scale or not
      *  
+     * @param $grade
+     * @return string User-friendly representation of grade
      */
     function display_grade($grade) {
 
@@ -665,9 +746,16 @@ class assignment_base {
         }
     }
 
-    /*
+    /**
      *  Display a single submission, ready for grading on a popup window
-     *  
+     *
+     * This default method prints the teacher info and comment box at the top and
+     * the student info and submission at the bottom.
+     * This method also fetches the necessary data in order to be able to
+     * provide a "Next submission" button.
+     * Calls preprocess_submission() to give assignment type plug-ins a chance
+     * to process submissions before they are graded
+     * This method gets its arguments from the page parameters userid and offset
      */
     function display_submission() {
     
@@ -834,13 +922,17 @@ class assignment_base {
         print_footer('none');
     }
 
-    /*
+    /**
      *  Preprocess submission before grading
+     *
+     * Called by display_submission()
+     * The default type does nothing here.
+     * @param $submission object The submission object
      */
     function preprocess_submission(&$submission) {
     }
 
-    /*
+    /**
      *  Display all the submissions ready for grading
      */
     function display_submissions() {
@@ -1103,8 +1195,12 @@ class assignment_base {
         print_footer($this->course);
     }
 
-    /*
-     *  Display and process the submissions 
+    /**
+     *  Process teacher feedback submission
+     *
+     * This is called by submissions() when a grading even has taken place.
+     * It gets its data from the submitted form.
+     * @return object The updated submission object
      */
     function process_feedback() {
 
@@ -1125,33 +1221,40 @@ class assignment_base {
             return false;
         }
 
-        $newsubmission = $this->get_submission($feedback->userid, true);  // Get or make one
+        $submission = $this->get_submission($feedback->userid, true);  // Get or make one
 
-        $newsubmission->grade      = $feedback->grade;
-        $newsubmission->comment    = $feedback->comment;
-        $newsubmission->format     = $feedback->format;
-        $newsubmission->teacher    = $USER->id;
-        $newsubmission->mailed     = 0;       // Make sure mail goes out (again, even)
-        $newsubmission->timemarked = time();
+        $submission->grade      = $feedback->grade;
+        $submission->comment    = $feedback->comment;
+        $submission->format     = $feedback->format;
+        $submission->teacher    = $USER->id;
+        $submission->mailed     = 0;       // Make sure mail goes out (again, even)
+        $submission->timemarked = time();
 
-        unset($newsubmission->data1);  // Don't need to update this.
-        unset($newsubmission->data2);  // Don't need to update this.
+        unset($submission->data1);  // Don't need to update this.
+        unset($submission->data2);  // Don't need to update this.
 
         if (empty($submission->timemodified)) {   // eg for offline assignments
-            $newsubmission->timemodified = time();
+            $submission->timemodified = time();
         }
 
-        if (! update_record('assignment_submissions', $newsubmission)) {
+        if (! update_record('assignment_submissions', $submission)) {
             return false;
         }
 
         add_to_log($this->course->id, 'assignment', 'update grades', 
                    'submissions.php?id='.$this->assignment->id.'&user='.$feedback->userid, $feedback->userid, $this->cm->id);
         
-        return $newsubmission;
+        return $submission;
 
     }
 
+    /**
+     * Load the submission object for a particular user
+     *
+     * @param $userid int The id of the user whose submission we want or 0 in which case USER->id is used
+     * @param $createnew boolean optional Defaults to false. If set to true a new submission object will be created in the database
+     * @return object The submission
+     */
     function get_submission($userid=0, $createnew=false) {
         global $USER;
 
@@ -1172,7 +1275,13 @@ class assignment_base {
         return get_record('assignment_submissions', 'assignment', $this->assignment->id, 'userid', $userid);
     }
 
-    
+    /**
+     * Instantiates a new submission object for a given user
+     *
+     * Sets the assignment, userid and times, everything else is set to default values.
+     * @param $userid int The userid for which we want a submission object
+     * @return object The submission
+     */
     function prepare_new_submission($userid) {
         $submission = new Object; 
         $submission->assignment   = $this->assignment->id;
@@ -1191,64 +1300,36 @@ class assignment_base {
         return $submission;
     }
 
-
+    /**
+     * Return all assignment submissions by ENROLLED students (even empty)
+     *
+     * @param $sort string optional field names for the ORDER BY in the sql query
+     * @param $dir string optional specifying the sort direction, defaults to DESC
+     * @return array The submission objects indexed by id
+     */
     function get_submissions($sort='', $dir='DESC') {
-        /// Return all assignment submissions by ENROLLED students (even empty)
-        global $CFG;
-
-        if ($sort == "lastname" or $sort == "firstname") {
-            $sort = "u.$sort $dir";
-        } else if (empty($sort)) {
-            $sort = "a.timemodified DESC";
-        } else {
-            $sort = "a.$sort $dir";
-        }
-
-        $select = "s.course = '$this->assignment->course' AND";
-        $site = get_site();
-        if ($this->assignment->course == $site->id) {
-            $select = '';
-        }   
-        return get_records_sql("SELECT a.* 
-                FROM {$CFG->prefix}assignment_submissions a, 
-                {$CFG->prefix}user_students s,
-                {$CFG->prefix}user u
-                WHERE a.userid = s.userid
-                AND u.id = a.userid
-                AND $select a.assignment = '$this->assignment->id' 
-                ORDER BY $sort");
+        return assignment_get_all_submissions($this->assignment, $sort, $dir);
     }
 
-
+    /**
+     * Counts all real assignment submissions by ENROLLED students (not empty ones)
+     *
+     * @param $groupid int optional If nonzero then count is restricted to this group
+     * @return int The number of submissions
+     */
     function count_real_submissions($groupid=0) {
-        /// Return all real assignment submissions by ENROLLED students (not empty ones)
-        global $CFG;
-
-        if ($groupid) {     /// How many in a particular group?
-            return count_records_sql("SELECT COUNT(DISTINCT g.userid, g.groupid)
-                    FROM {$CFG->prefix}assignment_submissions a,
-                    {$CFG->prefix}groups_members g
-                    WHERE a.assignment = {$this->assignment->id} 
-                    AND a.timemodified > 0
-                    AND g.groupid = '$groupid' 
-                    AND a.userid = g.userid ");
-        } else {
-            $select = "s.course = '{$this->assignment->course}' AND";
-            if ($this->assignment->course == SITEID) {
-                $select = '';
-            }
-            return count_records_sql("SELECT COUNT(*)
-                    FROM {$CFG->prefix}assignment_submissions a, 
-                    {$CFG->prefix}user_students s
-                    WHERE a.assignment = '{$this->assignment->id}' 
-                    AND a.timemodified > 0
-                    AND $select a.userid = s.userid ");
-        } 
+        return assignment_count_real_submissions($this->assignment, $groupid);
     }
 
+    /**
+     * Alerts teachers by email of new or changed assignments that need grading
+     *
+     * First checks whether the option to email teachers is set for this assignment.
+     * Sends an email to ALL teachers in the course (or in the group if using separate groups).
+     * Uses the methods email_teachers_text() and email_teachers_html() to construct the content.
+     * @param $submission object The submission that has changed
+     */
     function email_teachers($submission) {
-        /// Alerts teachers by email of new or changed assignments that need grading
-
         global $CFG;
 
         if (empty($this->assignment->emailteachers)) {          // No need to do anything
@@ -1287,6 +1368,12 @@ class assignment_base {
         }
     }
 
+    /**
+     * Creates the text content for emails to teachers
+     *
+     * @param $info object The info used by the 'emailteachermail' language string
+     * @return string
+     */
     function email_teachers_text($info) {
         $posttext  = $this->course->shortname.' -> '.$this->strassignments.' -> '.
                      format_string($this->assignment->name, true)."\n";
@@ -1296,6 +1383,12 @@ class assignment_base {
         return $posttext;
     }
 
+     /**
+     * Creates the html content for emails to teachers
+     *
+     * @param $info object The info used by the 'emailteachermailhtml' language string
+     * @return string
+     */
     function email_teachers_html($info) {
         global $CFG;
         $posthtml  = '<p><font face="sans-serif">'.
@@ -1308,6 +1401,13 @@ class assignment_base {
         return $posthtml;
     }
 
+    /**
+     * Produces a list of links to the files uploaded by a user
+     *
+     * @param $userid int optional id of the user. If 0 then $USER->id is used.
+     * @param $return boolean optional defaults to false. If true the list is returned rather than printed
+     * @return string optional
+     */
     function print_user_files($userid=0, $return=false) {
         global $CFG, $USER;
     
@@ -1349,6 +1449,12 @@ class assignment_base {
         echo $output;
     }
 
+    /**
+     * Count the files uploaded by a given user
+     *
+     * @param $userid int The user id
+     * @return int
+     */
     function count_user_files($userid) {
         global $CFG;
 
@@ -1362,17 +1468,35 @@ class assignment_base {
         return 0;
     }
 
+    /**
+     * Creates a directory file name, suitable for make_upload_directory()
+     *
+     * @param $userid int The user id
+     * @return string path to file area
+     */
     function file_area_name($userid) {
-    //  Creates a directory file name, suitable for make_upload_directory()
         global $CFG;
     
         return $this->course->id.'/'.$CFG->moddata.'/assignment/'.$this->assignment->id.'/'.$userid;
     }
-    
+
+    /**
+     * Makes an upload directory
+     *
+     * @param $userid int The user id
+     * @return string path to file area.
+     */
     function file_area($userid) {
         return make_upload_directory( $this->file_area_name($userid) );
     }
 
+    /**
+     * Returns true if the student is allowed to submit
+     *
+     * Checks that the assignment has started and, if the option to prevent late
+     * submissions is set, also checks that the assignment has not yet closed.
+     * @return boolean
+     */
     function isopen() {
         $time = time();
         if ($this->assignment->preventlate && $this->assignment->timedue) {
@@ -1382,6 +1506,13 @@ class assignment_base {
         }
     }
 
+    /**
+     * Return an outline of the user's interaction with the assignment
+     *
+     * The default method prints the grade and timemodified
+     * @param $user object
+     * @return object with properties ->info and ->time
+     */
     function user_outline($user) {
         if ($submission = $this->get_submission($user->id)) {
 
@@ -1391,7 +1522,12 @@ class assignment_base {
         }
         return NULL;
     }
-    
+
+    /**
+     * Print complete information about the user's interaction with the assignment
+     *
+     * @param $user object
+     */
     function user_complete($user) {
         if ($submission = $this->get_submission($user->id)) {
             if ($basedir = $this->file_area($user->id)) {
@@ -1425,6 +1561,12 @@ class assignment_base {
         }
     }
 
+    /**
+     * Return a string indicating how late a submission is
+     *
+     * @param $timesubmitted int 
+     * @return string
+     */
     function display_lateness($timesubmitted) {
         if (!$this->assignment->timedue) {
             return '';
@@ -1446,7 +1588,11 @@ class assignment_base {
 
 /// OTHER STANDARD FUNCTIONS ////////////////////////////////////////////////////////
 
-
+/**
+ * Deletes an assignment instance
+ *
+ * This is done by calling the delete_instance() method of the assignment type class
+ */
 function assignment_delete_instance($id){
     global $CFG;
 
@@ -1461,6 +1607,11 @@ function assignment_delete_instance($id){
 }
 
 
+/**
+ * Updates an assignment instance
+ *
+ * This is done by calling the update_instance() method of the assignment type class
+ */
 function assignment_update_instance($assignment){
     global $CFG;
 
@@ -1473,6 +1624,11 @@ function assignment_update_instance($assignment){
 }    
 
 
+/**
+ * Adds an assignment instance
+ *
+ * This is done by calling the add_instance() method of the assignment type class
+ */
 function assignment_add_instance($assignment) {
     global $CFG;
 
@@ -1485,6 +1641,11 @@ function assignment_add_instance($assignment) {
 }
 
 
+/**
+ * Returns an outline of a user interaction with an assignment
+ *
+ * This is done by calling the user_outline() method of the assignment type class
+ */
 function assignment_user_outline($course, $user, $mod, $assignment) {
     global $CFG;
 
@@ -1494,6 +1655,11 @@ function assignment_user_outline($course, $user, $mod, $assignment) {
     return $ass->user_outline($user);
 }
 
+/**
+ * Prints the complete info about a user's interaction with an assignment
+ *
+ * This is done by calling the user_complete() method of the assignment type class
+ */
 function assignment_user_complete($course, $user, $mod, $assignment) {
     global $CFG;
 
@@ -1503,10 +1669,12 @@ function assignment_user_complete($course, $user, $mod, $assignment) {
     return $ass->user_complete($user);
 }
 
-
+/**
+ * Function to be run periodically according to the moodle cron
+ *
+ * Finds all assignment notifications that have yet to be mailed out, and mails them
+ */
 function assignment_cron () {
-// Function to be run periodically according to the moodle cron
-// Finds all assignment notifications that have yet to be mailed out, and mails them
 
     global $CFG, $USER;
 
@@ -1599,9 +1767,13 @@ function assignment_cron () {
     return true;
 }
 
-
+/**
+ * Return an array of grades, indexed by user, and a max grade.
+ *
+ * @param $assignmentid int
+ * @return object with properties ->grades (an array of grades) and ->maxgrade.
+ */
 function assignment_grades($assignmentid) {
-/// Must return an array of grades, indexed by user, and a max grade.
 
     if (!$assignment = get_record('assignment', 'id', $assignmentid)) {
         return NULL;
@@ -1645,9 +1817,13 @@ function assignment_grades($assignmentid) {
     return $return;
 }
 
+/**
+ * Returns the users with data in one assignment (students and teachers)
+ *
+ * @param $assignmentid int
+ * @return array of user objects
+ */
 function assignment_get_participants($assignmentid) {
-//Returns the users with data in one assignment
-//(users with records in assignment_submissions, students and teachers)
 
     global $CFG;
 
@@ -1674,8 +1850,15 @@ function assignment_get_participants($assignmentid) {
     return ($students);
 }
 
-function assignment_scale_used ($assignmentid,$scaleid) {
-//This function returns if a scale is being used by one assignment
+/**
+ * Checks if a scale is being used by an assignment
+ *
+ * This is used by the backup code to decide whether to back up a scale
+ * @param $assignmentid int
+ * @param $scaleid int
+ * @return boolean True if the scale is used by the assignment
+ */
+function assignment_scale_used ($assignmentid, $scaleid) {
 
     $return = false;
 
@@ -1688,13 +1871,19 @@ function assignment_scale_used ($assignmentid,$scaleid) {
     return $return;
 }
 
-
+/**
+ * Make sure up-to-date events are created for all assignment instances
+ *
+ * This standard function will check all instances of this module
+ * and make sure there are up-to-date events created for each of them.
+ * If courseid = 0, then every assignment event in the site is checked, else
+ * only assignment events belonging to the course specified are checked.
+ * This function is used, in its new format, by restore_refresh_events()
+ *
+ * @param $courseid int optional If zero then all assignments for all courses are covered
+ * @return boolean Always returns true
+ */
 function assignment_refresh_events($courseid = 0) {
-// This standard function will check all instances of this module
-// and make sure there are up-to-date events created for each of them.
-// If courseid = 0, then every assignment event in the site is checked, else
-// only assignment events belonging to the course specified are checked.
-// This function is used, in its new format, by restore_refresh_events()
 
     if ($courseid == 0) {
         if (! $assignments = get_records("assignment")) {
@@ -1732,7 +1921,11 @@ function assignment_refresh_events($courseid = 0) {
     return true;
 }
 
-
+/**
+ * Print recent activity from all assignments in a given course
+ *
+ * This is used by the recent activity block
+ */
 function assignment_print_recent_activity($course, $isteacher, $timestart) {
     global $CFG;
 
@@ -1774,10 +1967,12 @@ function assignment_print_recent_activity($course, $isteacher, $timestart) {
 }
 
 
-
+/**
+ * Returns all assignments since a given time.
+ *
+ * If assignment is specified then this restricts the results
+ */
 function assignment_get_recent_mod_activity(&$activities, &$index, $sincetime, $courseid, $assignment="0", $user="", $groupid="")  {
-// Returns all assignments since a given time.  If assignment is specified then
-// this restricts the results
 
     global $CFG;
 
@@ -1838,7 +2033,11 @@ function assignment_get_recent_mod_activity(&$activities, &$index, $sincetime, $
     return;
 }
 
-
+/**
+ * Print recent activity from all assignments in a given course
+ *
+ * This is used by course/recent.php
+ */
 function assignment_print_recent_mod_activity($activity, $course, $detail=false)  {
     global $CFG;
 
@@ -1874,12 +2073,16 @@ function assignment_print_recent_mod_activity($activity, $course, $detail=false)
 
     echo "</font></td></tr>";
     echo "</table>";
-
-    return;
 }
 
 /// GENERIC SQL FUNCTIONS
 
+/**
+ * Fetch info from logs
+ *
+ * @param $log object with properties ->info (the assignment id) and ->userid
+ * @return array with assignment name and user firstname and lastname
+ */
 function assignment_log_info($log) {
     global $CFG;
     return get_record_sql("SELECT a.name, u.firstname, u.lastname
@@ -1889,8 +2092,13 @@ function assignment_log_info($log) {
                               AND u.id = '$log->userid'");
 }
 
+/**
+ * Return list of marked submissions that have not been mailed out for currently enrolled students
+ *
+ * @return array
+ */
 function assignment_get_unmailed_submissions($starttime, $endtime) {
-/// Return list of marked submissions that have not been mailed out for currently enrolled students
+
     global $CFG;
     return get_records_sql("SELECT s.*, a.course, a.name
                               FROM {$CFG->prefix}assignment_submissions s, 
@@ -1904,8 +2112,15 @@ function assignment_get_unmailed_submissions($starttime, $endtime) {
                                AND a.course = us.course");
 }
 
+/**
+ * Counts all real assignment submissions by ENROLLED students (not empty ones)
+ *
+ * There are also assignment type methods count_real_submissions() wich in the default
+ * implementation simply call this function.
+ * @param $groupid int optional If nonzero then count is restricted to this group
+ * @return int The number of submissions
+ */
 function assignment_count_real_submissions($assignment, $groupid=0) {
-/// Return all real assignment submissions by ENROLLED students (not empty ones)
     global $CFG;
 
     if ($groupid) {     /// How many in a particular group?
@@ -1930,6 +2145,16 @@ function assignment_count_real_submissions($assignment, $groupid=0) {
     }
 }
 
+
+/**
+ * Return all assignment submissions by ENROLLED students (even empty)
+ *
+ * There are also assignment type methods get_submissions() wich in the default
+ * implementation simply call this function.
+ * @param $sort string optional field names for the ORDER BY in the sql query
+ * @param $dir string optional specifying the sort direction, defaults to DESC
+ * @return array The submission objects indexed by id
+ */
 function assignment_get_all_submissions($assignment, $sort="", $dir="DESC") {
 /// Return all assignment submissions by ENROLLED students (even empty)
     global $CFG;
@@ -1961,7 +2186,11 @@ function assignment_get_all_submissions($assignment, $sort="", $dir="DESC") {
 
 /// OTHER GENERAL FUNCTIONS FOR ASSIGNMENTS  ///////////////////////////////////////
 
-
+/**
+ * Returns an array of installed assignment types indexed and sorted by name
+ *
+ * @return array The index is the name of the assignment type, the value its full name from the language strings
+ */
 function assignment_types() {
     $types = array();
     $names = get_list_of_plugins('mod/assignment/type');
@@ -1972,6 +2201,9 @@ function assignment_types() {
     return $types;
 }
 
+/**
+ * Executes upgrade scripts for assignment types when necessary
+ */
 function assignment_upgrade_submodules() {
     global $CFG;
 
