@@ -1019,13 +1019,13 @@ function quiz_upgrade($oldversion) {
             ) ");
 
         modify_database ('', "
-            CREATE TABLE `prefix_quiz_essay_states` (
+            CREATE TABLE prefix_quiz_essay_states (
                 id SERIAL PRIMARY KEY,
                 stateid integer NOT NULL default '0',
                 graded integer NOT NULL default '0',
                 fraction varchar(10) NOT NULL default '0.0',
-                response text NOT NULL default '',
-            ) ");
+                response text NOT NULL default ''
+            );");
 
         // convert grade fields to real
         table_column('quiz_attempts', 'sumgrades', 'sumgrades',  'real', '', '', '0', 'not null');
