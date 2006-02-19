@@ -1010,22 +1010,14 @@ function quiz_upgrade($oldversion) {
     }
 
     if ($oldversion < 2006021900) {
-        // convert grade fields to real
-        table_column('quiz_attempts', 'sumgrades', 'sumgrades',  'real', '', '', '0', 'not null');
-        table_column('quiz_answers', 'fraction', 'fraction',  'real', '', '', '0', 'not null');
-        table_column('quiz_essay_states', 'fraction', 'fraction',  'real', '', '', '0', 'not null');
-        table_column('quiz_states', 'grade', 'grade',  'real', '', '', '0', 'not null');
-        table_column('quiz_states', 'raw_grade', 'raw_grade',  'real', '', '', '0', 'not null');
-        table_column('quiz_states', 'penalty', 'penalty',  'real', '', '', '0', 'not null');
-        table_column('question_sessions', 'sumpenalty', 'sumpenalty',  'real', '', '', '0', 'not null');
-
+        
         modify_database ('', "
             CREATE TABLE prefix_quiz_essay (
                 id SERIAL PRIMARY KEY,
                 question integer NOT NULL default '0',
                 answer varchar(255) NOT NULL default ''
             ) ");
-    
+
         modify_database ('', "
             CREATE TABLE `prefix_quiz_essay_states` (
                 id SERIAL PRIMARY KEY,
@@ -1034,6 +1026,15 @@ function quiz_upgrade($oldversion) {
                 fraction varchar(10) NOT NULL default '0.0',
                 response text NOT NULL default '',
             ) ");
+
+        // convert grade fields to real
+        table_column('quiz_attempts', 'sumgrades', 'sumgrades',  'real', '', '', '0', 'not null');
+        table_column('quiz_answers', 'fraction', 'fraction',  'real', '', '', '0', 'not null');
+        table_column('quiz_essay_states', 'fraction', 'fraction',  'real', '', '', '0', 'not null');
+        table_column('quiz_states', 'grade', 'grade',  'real', '', '', '0', 'not null');
+        table_column('quiz_states', 'raw_grade', 'raw_grade',  'real', '', '', '0', 'not null');
+        table_column('quiz_states', 'penalty', 'penalty',  'real', '', '', '0', 'not null');
+        table_column('question_sessions', 'sumpenalty', 'sumpenalty',  'real', '', '', '0', 'not null');
     }
 
     return true;
