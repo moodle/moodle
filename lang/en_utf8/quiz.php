@@ -301,6 +301,7 @@ $string['qti'] = 'IMS QTI format';
 $string['qti2'] = 'IMS QTI 2.0 format';
 $string['question'] = 'Question';
 $string['questincats'] = 'Question Categories';
+$string['questionsinclhidden'] = 'Questions (including hidden)';
 $string['questioninuse'] = 'The question \'$a->questionname\' is currently being used in: <br />$a->quiznames<br />The question will not be deleted from these quizzes but only from the category list.';
 $string['questionname'] = 'Question name';
 $string['questionnametoolong'] = 'Question name too long at line $a (255 char. max). It has been truncated.';
