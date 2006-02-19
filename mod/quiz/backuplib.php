@@ -105,6 +105,7 @@
     //Insert necessary category ids to backup_ids table
     function insert_category_ids ($course,$backup_unique_code) {
         global $CFG;
+        include_once("$CFG->dirroot/mod/quiz/locallib.php");
 
         //Create missing categories and reasign orphaned questions
         fix_orphaned_questions($course);
@@ -150,6 +151,36 @@
             }
         }
 
+        // Now we look for random questions that can use questions from subcategories
+        // because we will have to add these subcategories
+        $sql = "SELECT t.id, t.category 
+                  FROM {$CFG->prefix}quiz_question_instances AS g,
+                       {$CFG->prefix}quiz_questions AS t,
+                       {$CFG->prefix}quiz AS q
+                 WHERE q.course = '$course' 
+                   AND g.quiz = q.id 
+                   AND t.id = g.question
+                   AND t.qtype = '".RANDOM."'
+                   AND t.questiontext = '1'";
+        if ($randoms = get_records_sql($sql)) {
+            foreach ($randoms as $random) {
+                $status = quiz_backup_add_category_tree($backup_unique_code, $random->category);
+            }
+        }
+
+        return $status;
+    }
+    
+    /**
+    * Helper function adding the id of a category and all its descendents to the backup_ids
+    */
+    function quiz_backup_add_category_tree($backup_unique_code, $categoryid) {
+        $status = backup_putid($backup_unique_code,'quiz_categories',$categoryid,0);
+        if ($subcategories = get_records('quiz_categories', 'parent', $categoryid, 'sortorder ASC', 'id, id')) {
+            foreach ($subcategories as $subcategory) {
+                $status = quiz_backup_add_category_tree($backup_unique_code, $subcategory->id);
+            }
+        }
         return $status;
     }
 
