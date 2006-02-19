@@ -17,7 +17,7 @@
 * add          Adds several selected questions to the quiz
 * addrandom    Adds a certain number of random questions to the quiz
 * delete       Removes a question from the quiz
-* setgrades    Changes the maximum grades for questions in the quiz
+* savechanges  Saves the order and grades for questions in the quiz
 * repaginate   Re-paginates the quiz
 * Actions affecting the question pool:
 * move         Moves a question to a different category
@@ -330,8 +330,10 @@ if (self.name == 'editquestion') {
         }
     }
 
-    if (isset($_REQUEST['setgrades']) and confirm_sesskey()) {
-    /// The grades have been updated, so update our internal list
+    if (isset($_REQUEST['savechanges']) and confirm_sesskey()) {
+    /// We need to save the new ordering (if given) and the new grades
+        $oldquestions = explode(",", $modform->questions); // the questions in the old order
+        $questions = array(); // for questions in the new order
         $rawgrades = $_POST;
         unset($modform->grades);
         foreach ($rawgrades as $key => $value) {    // Parse input for question -> grades
@@ -339,6 +341,24 @@ if (self.name == 'editquestion') {
                 $key = substr($key,1);
                 $modform->grades[$key] = $value;
                 quiz_update_question_instance($modform->grades[$key], $key, $modform->instance);
+            } elseif (substr($key, 0, 1) == "o") {   // Parse input for ordering info
+                $key = substr($key,1);
+                $questions[$value] = $oldquestions[$key];
+            }
+        }
+        
+        // If ordering info was given, reorder the questions
+        if ($questions) {
+            ksort($questions);
+            $modform->questions = implode(",", $questions);
+            // Always have a page break at the end
+            $modform->questions = $modform->questions . ',0';
+            // Avoid duplicate page breaks
+            while (strpos($modform->questions, ',0,0')) {
+                $modform->questions = str_replace(',0,0', ',0', $modform->questions);
+            }
+            if (!set_field('quiz', 'questions', $modform->questions, 'id', $modform->instance)) {
+                error('Could not save question list');
             }
         }
 
@@ -362,6 +382,7 @@ if (self.name == 'editquestion') {
     }
     if(isset($_REQUEST['showbreaks'])) {
         $SESSION->quiz_showbreaks = optional_param('showbreaks', 0, PARAM_BOOL);
+        $SESSION->quiz_reordertool = optional_param('reordertool', 0, PARAM_BOOL);
     }
     if(isset($_REQUEST['showhidden'])) {
         $SESSION->quiz_showhidden = optional_param('showhidden', 0, PARAM_BOOL);
@@ -386,6 +407,9 @@ if (self.name == 'editquestion') {
     }
     if (!isset($SESSION->quiz_showbreaks)) {
         $SESSION->quiz_showbreaks = ($CFG->quiz_questionsperpage < 2) ? 0 : 1;
+    }
+    if (!isset($SESSION->quiz_reordertool)) {
+        $SESSION->quiz_reordertool = 0;
     }
 
     $SESSION->modform = $modform;
@@ -427,7 +451,7 @@ if (self.name == 'editquestion') {
         echo "</form>";
         echo "</center><br/ >\n";
 
-        $sumgrades = quiz_print_question_list($modform, false, $SESSION->quiz_showbreaks);
+        $sumgrades = quiz_print_question_list($modform, false, $SESSION->quiz_showbreaks, $SESSION->quiz_reordertool);
         if (!set_field('quiz', 'sumgrades', $sumgrades, 'id', $modform->instance)) {
             error('Failed to set sumgrades');
         }
@@ -465,7 +489,7 @@ if (self.name == 'editquestion') {
         echo '<tr><td width="50%" valign="top">';
         print_simple_box_start("center", "100%");
 
-        $sumgrades = quiz_print_question_list($modform, true, $SESSION->quiz_showbreaks);
+        $sumgrades = quiz_print_question_list($modform, true, $SESSION->quiz_showbreaks, $SESSION->quiz_reordertool);
         if (!set_field('quiz', 'sumgrades', $sumgrades, 'id', $modform->instance)) {
             error('Failed to set sumgrades');
         }
