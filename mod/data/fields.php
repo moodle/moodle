@@ -80,7 +80,7 @@
     switch($mode){
 
         case 'add':    ///add a new field
-            if (confirm_sesskey() and $field = data_submitted()){
+            if (confirm_sesskey() and $field = data_submitted('fields.php')){
 
                 $sql = 'SELECT * from '.$CFG->prefix.'data_fields WHERE name LIKE "'.$field->name.
                        '" AND dataid = '.$data->id;
