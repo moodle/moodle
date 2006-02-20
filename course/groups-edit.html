@@ -92,7 +92,12 @@ function groupWindow(selectgroup) {
             <?php 
                 if (!empty($nonmembers)) {
                     foreach ($nonmembers as $id => $nonmembername) {
-                        $numgroups = count(user_group($course->id, $id));
+                        if (!is_array($ugroups = user_group($course->id, $id))) {
+                            $numgroups = 0;
+                        }
+                        else {
+                            $numgroups = count($ugroups);
+                        }
                         echo "<option value=\"$id\" title=\"$nonmembername is in $numgroups groups\">$nonmembername ($numgroups)</option>\n";
                     }
                 }
