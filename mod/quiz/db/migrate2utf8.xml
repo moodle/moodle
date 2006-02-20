@@ -39,11 +39,7 @@
         <FIELD name="tolerance" method="NO_CONV" type="varchar" length="255" default="0.0" />
       </FIELDS>
     </TABLE>
-    <TABLE name="question_sessions">
-      <FIELDS>
-        <FIELD name="sumpenalty" method="NO_CONV" type="varchar" length="10" default="0.0" />
-      </FIELDS>
-    </TABLE>
+    <TABLE name="question_sessions" />
     <TABLE name="quiz_multichoice">
       <FIELDS>
         <FIELD name="answers" method="NO_CONV" type="varchar" length="255" />
@@ -76,7 +72,6 @@
     </TABLE>
     <TABLE name="quiz_attempts">
       <FIELDS>
-        <FIELD name="sumgrades" method="NO_CONV" type="varchar" length="10" default="0.0" />
         <FIELD name="layout" method="NO_CONV" type="text" length="0" />
       </FIELDS>
     </TABLE>
@@ -100,9 +95,6 @@
                  AND qs.id = RECORDID
           </SQL_DETECT_COURSE>
         </FIELD>
-        <FIELD name="grade" method="NO_CONV" type="varchar" length="10" />
-        <FIELD name="raw_grade" method="NO_CONV" type="varchar" length="10" />
-        <FIELD name="penalty" method="NO_CONV" type="varchar" length="10" />
       </FIELDS>
     </TABLE>
     <TABLE name="quiz_questions">
@@ -151,7 +143,6 @@
             migrate2utf8_quiz_answers_answer(RECORDID)
           </PHP_FUNCTION>
         </FIELD>
-        <FIELD name="fraction" method="NO_CONV" type="varchar" length="10" default="0.0"/>
         <FIELD name="feedback" method="PHP_FUNCTION" type="text" length="0">
           <PHP_FUNCTION>
             migrate2utf8_quiz_answers_feedback(RECORDID)
@@ -171,7 +162,6 @@
     </TABLE>
     <TABLE name="quiz_essay_states">
       <FIELDS>
-        <FIELD name="fraction" method="NO_CONV" type="varchar" length="10" default="0.0" />
         <FIELD name="response" method="PLAIN_SQL_UPDATE" type="text" length="0">
           <SQL_DETECT_USER>
            SELECT qa.userid
