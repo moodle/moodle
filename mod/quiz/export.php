@@ -117,6 +117,7 @@
         else {
           $efile = "{$CFG->wwwroot}/file.php?file=/$course->id/quiz/$exportfilename".$file_ext;
         }
+	$efile .= "?forcedownload=1";
         echo "</p><center><a href=\"$efile\">$download_str</a></center></p>";
         echo "</p><center><font size=\"-1\">$downloadextra_str</font></center></p>";
 
