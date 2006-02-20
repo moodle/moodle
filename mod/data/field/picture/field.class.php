@@ -112,10 +112,11 @@ class data_field_picture extends data_field_file {// extends
     }
 
     function display_browse_field($fieldid, $recordid, $template) {
-        global $CFG, $USER, $course;
-
+        global $CFG, $USER;
+        
         $field = get_record('data_fields', 'id', $fieldid);
-
+        $data = get_record('data', 'id', $field->dataid);
+        
         if ($content = get_record('data_content', 'fieldid', $fieldid, 'recordid', $recordid)){
             if (isset($content->content)){
                 $contents[0] = $content->content;
@@ -127,9 +128,9 @@ class data_field_picture extends data_field_file {// extends
             $src = empty($contents[0])? '':$contents[0];
 
             if ($CFG->slasharguments) {
-                $source = $CFG->wwwroot.'/file.php/'.$course->id.'/'.$CFG->moddata.'/data/'.$field->dataid.'/'.$field->id.'/'.$recordid;
+                $source = $CFG->wwwroot.'/file.php/'.$data->course.'/'.$CFG->moddata.'/data/'.$field->dataid.'/'.$field->id.'/'.$recordid;
             } else {
-                $source = $CFG->wwwroot.'/file.php?file=/'.$course->id.'/'.$CFG->moddata.'/data/'.$field->dataid.'/'.$field->id.'/'.$recordid;
+                $source = $CFG->wwwroot.'/file.php?file=/'.$data->course.'/'.$CFG->moddata.'/data/'.$field->dataid.'/'.$field->id.'/'.$recordid;
             }
 
             if ($template == 'listtemplate') {

@@ -120,22 +120,23 @@ class data_field_file extends data_field_base {// extends
 
     function display_browse_field($fieldid, $recordid, $template) {
 
-        global $CFG, $USER, $course;
+        global $CFG, $USER;
 
         $field = get_record('data_fields', 'id', $fieldid);
-
+        $data = get_record('data', 'id', $field->dataid);
+        
         if ($content = get_record('data_content', 'fieldid', $fieldid, 'recordid', $recordid)){
             $contents[0] = $content->content;
             $contents[1] = $content->content1;
             
             $src = empty($contents[0])? '':$contents[0];
             $name = empty($contents[1])? $src:$contents[1];
-
+            
             
             if ($CFG->slasharguments) {
-                $source = $CFG->wwwroot.'/file.php/'.$course->id.'/'.$CFG->moddata.'/data/'.$field->dataid.'/'.$field->id.'/'.$recordid;
+                $source = $CFG->wwwroot.'/file.php/'.$data->course.'/'.$CFG->moddata.'/data/'.$field->dataid.'/'.$field->id.'/'.$recordid;
             } else {
-                $source = $CFG->wwwroot.'/file.php?file=/'.$course->id.'/'.$CFG->moddata.'/data/'.$field->dataid.'/'.$field->id.'/'.$recordid;
+                $source = $CFG->wwwroot.'/file.php?file=/'.$data->course.'/'.$CFG->moddata.'/data/'.$field->dataid.'/'.$field->id.'/'.$recordid;
             }
 
             $width = $field->param1 ? ' width = "'.$field->param1.'" ':' ';

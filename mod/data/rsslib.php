@@ -35,7 +35,7 @@
                         
                         // Get the data_records out.
                         $sql = 'SELECT dr.* ' .
-                                    'FROM data_records AS dr ' .
+                                    "FROM {$CFG->prefix}data_records AS dr " .
                                     "WHERE dr.dataid = {$dataActivity->id} " .
                                     'ORDER BY dr.timecreated DESC ' .
                                     "LIMIT {$dataActivity->rssarticles}";
