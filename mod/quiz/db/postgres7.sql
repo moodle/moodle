@@ -55,7 +55,7 @@ CREATE TABLE prefix_quiz_answers (
   id SERIAL PRIMARY KEY,
   question integer NOT NULL default '0',
   answer text NOT NULL default '',
-  fraction varchar(10) NOT NULL default '0.0',
+  fraction real NOT NULL default '0',
   feedback text NOT NULL default ''
 );
 
@@ -87,7 +87,7 @@ CREATE TABLE prefix_quiz_attempts (
   quiz integer NOT NULL default '0',
   userid integer NOT NULL default '0',
   attempt integer NOT NULL default '0',
-  sumgrades varchar(10) NOT NULL default '0.0',
+  sumgrades real NOT NULL default '0',
   timestart integer NOT NULL default '0',
   timefinish integer NOT NULL default '0',
   timemodified integer NOT NULL default '0',
@@ -168,7 +168,32 @@ CREATE TABLE prefix_quiz_dataset_items (
 
 CREATE INDEX prefix_quiz_dataset_items_definition_idx  ON prefix_quiz_dataset_items (definition);
 
+# --------------------------------------------------------
 
+#
+# Table structure for table prefix_quiz_essay
+#
+
+CREATE TABLE mdl_quiz_essay (
+    id serial NOT NULL,
+    question integer NOT NULL DEFAULT 0,
+    answer varchar(255) NOT NULL DEFAULT ''
+);
+
+
+# --------------------------------------------------------
+
+#
+# Table structure for table prefix_quiz_essay_states
+#
+
+CREATE TABLE mdl_quiz_essay_states (
+    id serial NOT NULL,
+    stateid integer NOT NULL DEFAULT 0,
+    graded integer NOT NULL DEFAULT 0,
+    response text NOT NULL DEFAULT '',
+    fraction real NOT NULL DEFAULT 0
+);
 # --------------------------------------------------------
 
 #
@@ -261,7 +286,7 @@ CREATE TABLE prefix_question_sessions (
   questionid integer NOT NULL default '0',
   newest integer NOT NULL default '0',
   newgraded integer NOT NULL default '0',
-  sumpenalty varchar(10) NOT NULL default '0.0'
+  sumpenalty real NOT NULL default '0'
 );
 
 CREATE UNIQUE INDEX prefix_question_sessions_attempt_idx ON prefix_question_sessions (attemptid,questionid);
@@ -461,9 +486,9 @@ CREATE TABLE prefix_quiz_states (
   answer text NOT NULL default '',
   timestamp integer NOT NULL default '0',
   event integer NOT NULL default '0',
-  grade varchar(10) NOT NULL default '0.0',
-  raw_grade varchar(10) NOT NULL default '',
-  penalty varchar(10) NOT NULL default '0.0'
+  grade real NOT NULL default '0',
+  raw_grade real NOT NULL default '0',
+  penalty real NOT NULL default '0'
 );
 
 CREATE INDEX prefix_quiz_states_attempt_idx ON prefix_quiz_states (attempt);
