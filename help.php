@@ -47,13 +47,12 @@
                     $filepath = $CFG->dirroot .'/lang/'. $lang .'/help/'. $module .'/'. $file;
                 } else {
                     $filepath = $CFG->dataroot .'/lang/'. $lang .'/help/'. $module .'/'. $file;
+                    if (!file_exists($filepath)) {
+                        $filepath = $CFG->dirroot .'/lang/en_utf8/help/'. $module .'/'. $file;
+                    }
                 }
                 if (!file_exists($filepath)) {
-                    if ($lang == 'en_utf8') {
-                        $filepath = $CFG->dirroot.'/mod/'.$module.'/lang/'. $lang .'/help/'. $module .'/'. $file;
-                    } else {
-                        $filepath = $CFG->dataroot.'/mod/'.$module.'/lang/'. $lang .'/help/'. $module .'/'. $file;
-                    }
+                    $filepath = $CFG->dirroot.'/mod/'.$module.'/lang/'. $lang .'/help/'. $module .'/'. $file;
                 }
             }
 
