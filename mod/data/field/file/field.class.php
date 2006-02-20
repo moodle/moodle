@@ -97,7 +97,7 @@ class data_field_file extends data_field_base {// extends
         }
         */
         $str .= '<div title="' . $field->description . '">';
-        $str .= '<input type="hidden" name ="field_'.$field->id.'_0" id="field_'.$field->id.'"_0  value="fakevalue" />';
+        $str .= '<input type="hidden" name ="field_'.$field->id.'_0" value="fakevalue" />';
         $str .= get_string('file','data'). ': <input type="file" name ="field_'.$field->id.'" id="field_'.$field->id.'" title="'.$field->description.'" /><br />';
         $str .= get_string('optionalfilename','data').': <input type="text" name="field_'
                 .$field->id.'_1" id="field_'.$field->id.'_1" value="'.$displayname.'" /><br />';
@@ -108,7 +108,7 @@ class data_field_file extends data_field_base {// extends
         if ($rid and isset($content)){
             require_once($CFG->libdir.'/filelib.php');
             $icon = mimeinfo('icon', $src);
-            $str .= '<img align="absmiddle" src="'.$CFG->pixpath.'/f/'.$icon.'" height="16" width="16" alt="'.$icon.'" />&nbsp;'.
+            $str .= '<img src="'.$CFG->pixpath.'/f/'.$icon.'" height="16" width="16" alt="'.$icon.'" />&nbsp;'.
                     '<a href="'.$source.'/'.$src.'" >'.$name.'</a>';
         }
         return $str;
@@ -143,7 +143,7 @@ class data_field_file extends data_field_base {// extends
             
             require_once($CFG->libdir.'/filelib.php');
             $icon = mimeinfo('icon', $src);
-            $str = '<img align="absmiddle" src="'.$CFG->pixpath.'/f/'.$icon.'" height="16" width="16" alt="'.$icon.'" />&nbsp;'.
+            $str = '<img src="'.$CFG->pixpath.'/f/'.$icon.'" height="16" width="16" alt="'.$icon.'" />&nbsp;'.
                             '<a href="'.$source.'/'.$src.'" >'.$name.'</a>';
             return $str;
         }

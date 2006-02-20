@@ -80,8 +80,8 @@ class data_field_checkbox extends data_field_base {
         
         foreach (explode("\n", $field->param1) as $checkbox) {
             $checkbox = ltrim(rtrim($checkbox));
-            $str .= '<input type="checkbox" name="field_' . $field->id . '[]" id="field_';
-            $str .= $field->id . '[]" value="' . $checkbox . '" ';
+            $str .= '<input type="checkbox" name="field_' . $field->id . '[]" ';
+            $str .= 'value="' . $checkbox . '" ';
             
             if (array_search($checkbox, $content) !== false) {
                 // Selected by user.

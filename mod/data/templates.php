@@ -116,8 +116,8 @@
 
     echo '<div align="center">'.get_string('header'.$mode,'data').'</div><br />';
 
-    echo '<form name="tempform" action="templates.php?d='.$data->id.'&amp;mode='.$mode.'" method="POST">';
-    echo '<input name="sesskey" value="'.sesskey().'" type="hidden">';
+    echo '<form name="tempform" action="templates.php?d='.$data->id.'&amp;mode='.$mode.'" method="post">';
+    echo '<input name="sesskey" value="'.sesskey().'" type="hidden" />';
     //print button to autogen all forms, if all templates are empty
 
     $data = get_record('data', 'id', $d);    //reload because of possible updates so far!
@@ -137,7 +137,6 @@
     if ($fields = get_records('data_fields','dataid',$data->id)){
         foreach ($fields as $field) {
             echo '<option value="[['.$field->name.']]">'.$field->name.' ('.$field->type.')</option>';
-            echo '[['.$field->name.']]'.'<br />';
         }
     }
     //print special tags

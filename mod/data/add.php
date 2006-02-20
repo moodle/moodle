@@ -214,7 +214,7 @@
     print_simple_box_start('center','80%');
     
     if (!$rid){
-        print_heading(get_string('newentry','data'),2);
+        print_heading(get_string('newentry','data'), '', 2);
     }
     
     /******************************************

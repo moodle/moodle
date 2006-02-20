@@ -197,6 +197,7 @@
     //if not editting teacher, check whether user has sufficient records to view
     if (!isteacheredit($course->id) and data_numentries($data) < $data->requiredentriestoview){
         notify (($data->requiredentriestoview - data_numentris(data)).'&nbsp;'.get_string('insufficiententries','data'));
+        echo '</td></tr></table>';
         print_footer($course);
         exit;
     }
@@ -340,6 +341,7 @@
         }
             
         data_print_preference_form($data, $perpage, $search);
+        echo '</td></tr></table>';
         print_footer($course);
         exit;
     }
@@ -371,11 +373,10 @@
     }
 
     data_print_preference_form($data, $perpage, $search, $sort, $order);
-
-/// Finish the page
-
+    
+    // Finish the page
     echo '</td></tr></table>';
-
+    
     print_footer($course);
 
 ?>

@@ -37,7 +37,7 @@
         $row[] = new tabobject('add', $CFG->wwwroot.'/mod/data/add.php?d='.$data->id, get_string('add','data'));
     }
     if (isteacher($course->id)) {
-        $row[] = new tabobject('templates', $CFG->wwwroot.'/mod/data/templates.php?d='.$data->id.'&mode=singletemplate', get_string('templates','data'));
+        $row[] = new tabobject('templates', $CFG->wwwroot.'/mod/data/templates.php?d='.$data->id.'&amp;mode=singletemplate', get_string('templates','data'));
         $row[] = new tabobject('fields', $CFG->wwwroot.'/mod/data/fields.php?d='.$data->id, get_string('fields','data'));
     }
 
@@ -82,5 +82,5 @@
 /// Print out the tabs and continue!
 
     print_tabs($tabs, $currenttab, $inactive);
-
+    
 ?>

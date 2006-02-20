@@ -303,10 +303,11 @@ function data_generate_empty_add_form($id, $rid=0){
             //this only applies to add and single template
 
             $str .= '<div align="center">';
-            $str .= '<table><tr>';
+            $str .= '<table>';
 
             foreach ($fields as $cfield){
-
+                
+                $str .= '<tr>';
                 $str .= '<td valign="top" align="right">';
                 $str .= $cfield->name.':';
                 $str .= '</td>';
@@ -315,11 +316,12 @@ function data_generate_empty_add_form($id, $rid=0){
                 $g = data_get_field($cfield);
                 $str .= $g->display_add_field($cfield->id,$rid);
                 $str .= '</td>';
+                $str .= '</tr>';
                 unset($g);
             }
 
-            $str .= '</tr></table>';
-            $str .= '</div><p></p>';
+            $str .= '</table>';
+            $str .= '</div>';
 
         }
 
@@ -835,18 +837,18 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
     echo '<input type="hidden" id="updatepref" name="updatepref" value="1" />';
     echo '<table id="sortsearch" align="center">';
     echo '<tr>'.
-         '<td class="c0 r1"><label for="perpage">'.get_string('pagesize','data').':</label></td>';
+         '<td class="c0 r1">'.get_string('pagesize','data').':</td>';
     echo '<td class="c1 r1">';
     $pagesizes = array(1=>1,2=>2,3=>3,4=>4,5=>5,6=>6,7=>7,8=>8,9=>9,10=>10,15=>15,
                        20=>20,30=>30,40=>40,50=>50,100=>100,200=>200,300=>300,400=>400,500=>500,1000=>1000);
-    choose_from_menu($pagesizes,'perpage1',$perpage,'choose','','0');
+    choose_from_menu($pagesizes, 'perpage1', $perpage, 'choose', '', '0');
     echo '</td></tr>';
     echo '<tr>'.
          '<td class="c0 r0">'.get_string('search').':</td>'.
          '<td class="c1 r0"><input type="text" size="16" name="search" value="'.s($search).'" /></td>'.
          '</tr>';
     echo '<tr>';
-    echo '<tr><td class="c0 r2">';
+    echo '<td class="c0 r2">';
     echo get_string('sortby').':';
     echo '</td><td class="c1 r2">';
     //foreach field, print the option
@@ -862,15 +864,16 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
     echo '</select>';
     echo '<select name="order">';
     if ($order == "ASC") {
-        echo '<option value="ASC" SELECTED>'.get_string('ascending','data').'</option>';
+        echo '<option value="ASC" selected="selected">'.get_string('ascending','data').'</option>';
     } else {
         echo '<option value="ASC">'.get_string('ascending','data').'</option>';
     }
     if ($order == "DESC") {
-        echo '<option value="DESC" SELECTED>'.get_string('descending','data').'</option>';
+        echo '<option value="DESC" selected="selected">'.get_string('descending','data').'</option>';
     } else {
         echo '<option value="DESC">'.get_string('descending','data').'</option>';
     }
+    echo '</select>';
     //print ASC or DESC
     echo '</td></tr><tr>';
     echo '<td colspan="2" align="center" class="r3">';
@@ -881,7 +884,7 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
 
 //silly function that prints a button
 function data_print_approve_button($recordid, $d, $page='0', $rid='0', $search='', $sort='', $order='') {
-    $str= '<div align="center"><form action="approve.php" method="GET">';
+    $str= '<div align="center"><form action="approve.php" method="get">';
     $str.= '<input type="hidden" name="d" value="'.$d.'" />';
     $str.= '<input type="hidden" name="rid" value="'.$rid.'" />';
     $str.= '<input type="hidden" name="page" value="'.$page.'" />';
@@ -1055,7 +1058,7 @@ function data_print_comments($data, $record , $search, $template, $sort, $page=0
     }
     
     //prints silly comment form
-    echo '<p /><div align="center"><form method="POST" action="comment.php">';
+    echo '<p /><div align="center"><form method="post" action="comment.php">';
     echo '<input type="hidden" name="mode" value="add" />';
     echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
     echo '<input type="hidden" name="recordid" value="'.$record->id.'" />';

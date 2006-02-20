@@ -54,27 +54,25 @@ class data_field_menu extends data_field_base {
             notify("that is not a valid field id!");
             exit;
         }
-
+        $content = '';
+        
         //look for that record and pull it out
         if ($rid) {
             $datacontent = get_record('data_content','fieldid',$id,'recordid',$rid);
             if (isset($datacontent->content)) {
                 $content = $datacontent->content;
-            }else {
-                $content = '';
             }
         }
 
-        $str .= '<table><tr><td>';
+        $str = '<div title="'.$field->description.'"><table><tr><td>';
         /*
         if ($field->description) {
             $str .= '<img src="'.$CFG->pixpath.'/help.gif" alt="'.$field->description.'" title="'.$field->description.'">&nbsp;';
         }
         */
-        $str .= '<div title="'.$field->description.'">';
         $str .= get_string('menu','data').': </td><td>';
         
-        $str .= '<select name="field_'.$field->id.' id="field_'.$field->id.'>';
+        $str .= '<select name="field_'.$field->id.'" id="field_'.$field->id.'">';
         $str .= '<option value="">' . get_string('menuchoose', 'data') . '</option>';
         
         foreach (explode("\n",$field->param1) as $option) {
@@ -84,8 +82,7 @@ class data_field_menu extends data_field_base {
                 $str.='<option value="'.ltrim(rtrim($option)).'">'.ltrim(rtrim($option)).'</option>';
             }
         }
-        $str .= '</div>';
-        $str .= '</select></td></tr></table>';
+        $str .= '</select></td></tr></table></div>';
 
         return $str;
     }

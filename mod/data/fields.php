@@ -143,7 +143,7 @@
                     echo '<input name="confirm" value="1" type="hidden" />';
                     echo '<strong>'.$field->name.'</strong> - '.get_string('confirmdeletefield','data');
                     echo '<p />';
-                    echo '<input type="submit" value="'.get_string('ok').'"> ';
+                    echo '<input type="submit" value="'.get_string('ok').'" /> ';
                     echo '<input type="button" value="'.get_string('cancel').'" onclick="javascript:history.go(-1);" />';
                     echo '</form>';
                     echo '</div>';
@@ -215,9 +215,11 @@
     
     else if ($mode != 'display'){    //display main form - add new, update, delete
 
-        echo '<form name="fieldform" action="fields.php?d='.$data->id.'&amp;" method="POST">';
-        echo '<input type="hidden" name="mode" value="">';
-        echo '<input name="sesskey" value="'.sesskey().'" type="hidden">';
+        //echo '<form name="fieldform" action="fields.php?d='.$data->id.'&amp;" method="POST">';
+        echo '<form name="fieldform" action="fields.php" method="post">';
+        echo '<input name="d" type="hidden" value="'.$data->id.'" />';
+        echo '<input type="hidden" name="mode" value="" />';
+        echo '<input name="sesskey" value="'.sesskey().'" type="hidden" />';
         print_simple_box_start('center','50%');
 
         ///New fields
@@ -249,12 +251,10 @@
 
                     echo '<tr><td align="center">';
                     echo '<a href="fields.php?d='.$data->id.'&amp;mode=display&amp;fid='.$field->id.'&amp;sesskey='.sesskey().'">';
-                    echo '<img src="'.$CFG->pixpath.'/t/edit.gif"
-                    height="11" width="11" border="0" alt="'.get_string('edit').'" /></a>';
+                    echo '<img src="'.$CFG->pixpath.'/t/edit.gif" height="11" width="11" border="0" alt="'.get_string('edit').'" /></a>';
                     echo '&nbsp;';
                     echo '<a href="fields.php?d='.$data->id.'&amp;mode=delete&amp;fid='.$field->id.'&amp;sesskey='.sesskey().'">';
-                    echo '<img src="'.$CFG->pixpath.'/t/delete.gif"
-                    height="11" width="11" border="0" alt="'.get_string('delete').'" /></a>';
+                    echo '<img src="'.$CFG->pixpath.'/t/delete.gif" height="11" width="11" border="0" alt="'.get_string('delete').'" /></a>';
                     echo '</td>';
 
                     ///Print Fieldname Column

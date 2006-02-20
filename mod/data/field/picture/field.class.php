@@ -95,7 +95,7 @@ class data_field_picture extends data_field_file {// extends
         }
         */
         $str .= '<div title="'.$field->description.'">';
-        $str .= '<input type="hidden" name ="field_'.$field->id.'_0" id="field_'.$field->id.'"_0  value="fakevalue" />';
+        $str .= '<input type="hidden" name ="field_'.$field->id.'_0" id="field_'.$field->id.'_0"  value="fakevalue" />';
         $str .= get_string('picture','data'). ': <input type="file" name ="field_'.$field->id.'" id="field_'.$field->id.'" /><br />';
         $str .= get_string('optionaldescription','data') .': <input type="text" name="field_'
                 .$field->id.'_1" id="field_'.$field->id.'_1" value="'.$des.'" /><br />';
@@ -135,7 +135,7 @@ class data_field_picture extends data_field_file {// extends
             if ($template == 'listtemplate') {
                 $width = $field->param4 ? ' width="'.$field->param4.'" ':' ';
                 $height = $field->param5 ? ' height="'.$field->param5.'" ':' ';
-                $str = '<a href="view.php?d='.$field->dataid.'&rid='.$recordid.'"><img '.$width.$height.' src="'.$source.'/'.$src.'" alt="'.$alt.'" title="'.$title.'" border="0" /></a>';
+                $str = '<a href="view.php?d='.$field->dataid.'&amp;rid='.$recordid.'"><img '.$width.$height.' src="'.$source.'/'.$src.'" alt="'.$alt.'" title="'.$title.'" border="0" /></a>';
             } else {
                 $width = $field->param1 ? ' width="'.$field->param1.'" ':' ';
                 $height = $field->param2 ? ' height="'.$field->param2.'" ':' ';

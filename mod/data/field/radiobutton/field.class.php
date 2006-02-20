@@ -80,8 +80,8 @@ class data_field_radiobutton extends data_field_base {
         
         foreach (explode("\n",$field->param1) as $radio) {
             $radio = ltrim(rtrim($radio));
-            $str .= '<input type="radio" name="field_' . $field->id . '" id="field_';
-            $str .= $field->id . '" value="' . $radio . '" ';
+            $str .= '<input type="radio" name="field_' . $field->id . '" ';
+            $str .= 'value="' . $radio . '" ';
 
             if ($content == $radio) {
                 // Selected by user.

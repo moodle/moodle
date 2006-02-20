@@ -71,13 +71,13 @@ class data_field_url extends data_field_base {// extends
         $url = empty($contents[0])? 'http://':$contents[0];
         $text = empty($contents[1])? '':$contents[1];
 
-        $str = '<table><tr><td align="right">';
+        $str = '<div title="'.$field->description.'">';
+        $str .= '<table><tr><td align="right">';
         /*
         if ($field->description){
             $str .= '<img src="'.$CFG->pixpath.'/help.gif" alt="'.$field->description.'" title="'.$field->description.'">&nbsp;';
         }
         */
-        $str .= '<div title="'.$field->description.'">';
         $str .= get_string('url','data').':</td><td><input type="text" name="field_'.$field->id.'_0" id="field_'.$field->id.'_0" value="'.$url.'" /></td></tr>';
         $str .= '<tr><td align="right">'.get_string('text','data').':</td><td><input type="text" name="field_'.$field->id.'_1" id="field_'.$field->id.'_1" value="'.$text.'" /></td></tr>';
         $str .= '</table>';
