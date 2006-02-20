@@ -1,9 +1,9 @@
 <?PHP // $Id$
 ////////////////////////////////////////////////////////////////////////////
-/// Hotpotatoes 6.0 Format
+/// Hotpotatoes 5.0 and 6.0 Format
 ///
-/// This Moodle class provides all functions necessary to import (and export)
-///
+/// This Moodle class provides all functions necessary to import
+///                                      (export is not implemented ... yet)
 ///
 ////////////////////////////////////////////////////////////////////////////
 
@@ -39,20 +39,20 @@ class quiz_format_hotpot extends quiz_default_format {
         $questions = array();
         switch ($xml->quiztype) {
             case 'jcloze':
-                process_jcloze($xml, $questions);
+                $this->process_jcloze($xml, $questions);
                 break;
             case 'jcross':
-                process_jcross($xml, $questions);
+                $this->process_jcross($xml, $questions);
                 break;
             case 'jmatch':
-                process_jmatch($xml, $questions);
+                $this->process_jmatch($xml, $questions);
                 break;
             case 'jmix':
-                process_jmix($xml, $questions);
+                $this->process_jmix($xml, $questions);
                 break;
             case 'jbc':
             case 'jquiz':
-                process_jquiz($xml, $questions);
+                $this->process_jquiz($xml, $questions);
                 break;
             default:
                 if (empty($xml->quiztype)) {
@@ -63,382 +63,403 @@ class quiz_format_hotpot extends quiz_default_format {
         } // end switch
         return $questions;
     }
-} // end class
 
-function process_jcloze(&$xml, &$questions) {
-    // define default grade (per cloze gap)
-    $defaultgrade = 1;
-    $gap_count = 0;
+    function process_jcloze(&$xml, &$questions) {
+        // define default grade (per cloze gap)
+        $defaultgrade = 1;
+        $gap_count = 0;
 
-    // detect old Moodles (1.4 and earlier)
-    global $CFG, $db;
-    $moodle_14 = false;
-    if ($columns = $db->MetaColumns("{$CFG->prefix}quiz_multianswers")) {
-        foreach ($columns as $column) {
-            if ($column->name=='answers' || $column->name=='positionkey' || $column->name=='answertype' || $column->name=='norm') {
-                $moodle_14 = true;
+        // detect old Moodles (1.4 and earlier)
+        global $CFG, $db;
+        $moodle_14 = false;
+        if ($columns = $db->MetaColumns("{$CFG->prefix}quiz_multianswers")) {
+            foreach ($columns as $column) {
+                if ($column->name=='answers' || $column->name=='positionkey' || $column->name=='answertype' || $column->name=='norm') {
+                    $moodle_14 = true;
+                }
             }
         }
-    }
 
-    // xml tags for the start of the gap-fill exercise
-    $tags = 'data,gap-fill';
+        // xml tags for the start of the gap-fill exercise
+        $tags = 'data,gap-fill';
 
-    $x = 0;
-    while (($exercise = "[$x]['#']") && $xml->xml_value($tags, $exercise)) {
-        // there is usually only one exercise in a file
+        $x = 0;
+        while (($exercise = "[$x]['#']") && $xml->xml_value($tags, $exercise)) {
+            // there is usually only one exercise in a file
 
-        $question = $this->defaultquestion();
+            if (method_exists($this, 'defaultquestion')) {
+                $question = $this->defaultquestion();
+            } else {
+                $question = new stdClass();
+                $question->usecase = 0; // Ignore case
+                $question->image = "";  // No images with this format
+            }
+            $question->qtype = MULTIANSWER;
 
-        $question->qtype = MULTIANSWER;
+            $question->name = $this->hotpot_get_title($xml, $x);
+            $question->questiontext = $this->hotpot_get_reading($xml);
 
-        $question->name = get_hotpotatoes_title($xml, $x);
-        $question->questiontext = get_hotpotatoes_reading($xml);
+            // setup answer arrays
+            if ($moodle_14) {
+                $question->answers = array();
+            } else {
+                global $course; // set in mod/quiz/import.php
+                $question->course = $course->id;
+                $question->options = new stdClass();
+                $question->options->questions = array(); // one for each gap
+            }
 
-        // setup answer arrays
-        if ($moodle_14) {
-            $question->answers = array();
-        } else {
-            global $course; // set in mod/quiz/import.php
-            $question->course = $course->id;
-            $question->options = new stdClass();
-            $question->options->questions = array(); // one for each gap
-        }
+            $q = 0;
+            while ($text = $xml->xml_value($tags, $exercise."[$q]")) {
+                // add next bit of text
+                $question->questiontext .= addslashes($text);
 
-        $q = 0;
-        while ($text = $xml->xml_value($tags, $exercise."[$q]")) {
-            // add next bit of text
-            $question->questiontext .= addslashes($text);
+                // check for a gap
+                $question_record = $exercise."['question-record'][$q]['#']";
+                if ($xml->xml_value($tags, $question_record)) {
 
-            // check for a gap
-            $question_record = $exercise."['question-record'][$q]['#']";
-            if ($xml->xml_value($tags, $question_record)) {
-
-                // add gap
-                $gap_count ++;
-                $positionkey = $q+1;
-                $question->questiontext .= '{#'.$positionkey.'}';
-    
-                // initialize answer settings
-                if ($moodle_14) {
-                    $question->answers[$q]->positionkey = $positionkey;
-                    $question->answers[$q]->answertype = SHORTANSWER;
-                    $question->answers[$q]->norm = $defaultgrade;
-                    $question->answers[$q]->alternatives = array();
-                } else {
-                    $wrapped = new stdClass();
-                    $wrapped->qtype = SHORTANSWER;
-                    $wrapped->usecase = 0;
-                    $wrapped->defaultgrade = $defaultgrade;
-                    $wrapped->questiontextformat = 0;
-                    $wrapped->answer = array();
-                    $wrapped->fraction = array();
-                    $wrapped->feedback = array();
-                    $answers = array();
-                }
-    
-                // add answers
-                $a = 0;
-                while (($answer=$question_record."['answer'][$a]['#']") && $xml->xml_value($tags, $answer)) {
-                    $text = addslashes($xml->xml_value($tags,  $answer."['text'][0]['#']"));
-                    $correct = $xml->xml_value($tags,  $answer."['correct'][0]['#']");
-                    $feedback = addslashes($xml->xml_value($tags,  $answer."['feedback'][0]['#']"));
-                    if ($text) {
-                        // set score (0=0%, 1=100%)
-                        $fraction = empty($correct) ? 0 : 1;
-                        // store answer
-                        if ($moodle_14) {
-                            $question->answers[$q]->alternatives[$a] = new stdClass();
-                            $question->answers[$q]->alternatives[$a]->answer = $text;
-                            $question->answers[$q]->alternatives[$a]->fraction = $fraction;
-                            $question->answers[$q]->alternatives[$a]->feedback = $feedback;
-                        } else {
-                            $wrapped->answer[] = $text;
-                            $wrapped->fraction[] = $fraction;
-                            $wrapped->feedback[] = $feedback;
-                            $answers[] = (empty($fraction) ? '' : '=').$text.(empty($feedback) ? '' : ('#'.$feedback));
-                        }
+                    // add gap
+                    $gap_count ++;
+                    $positionkey = $q+1;
+                    $question->questiontext .= '{#'.$positionkey.'}';
+        
+                    // initialize answer settings
+                    if ($moodle_14) {
+                        $question->answers[$q]->positionkey = $positionkey;
+                        $question->answers[$q]->answertype = SHORTANSWER;
+                        $question->answers[$q]->norm = $defaultgrade;
+                        $question->answers[$q]->alternatives = array();
+                    } else {
+                        $wrapped = new stdClass();
+                        $wrapped->qtype = SHORTANSWER;
+                        $wrapped->usecase = 0;
+                        $wrapped->defaultgrade = $defaultgrade;
+                        $wrapped->questiontextformat = 0;
+                        $wrapped->answer = array();
+                        $wrapped->fraction = array();
+                        $wrapped->feedback = array();
+                        $answers = array();
                     }
-                    $a++;
-                }
-                // compile answers into question text, if necessary
-                if ($moodle_14) {
-                    // do nothing
-                } else {
-                    $wrapped->questiontext = '{'.$defaultgrade.':SHORTANSWER:'.implode('~', $answers).'}';
-                    $question->options->questions[] = $wrapped;
-                }
-            } // end if gap
-            $q++;
-        } // end while $text
-
-        // define total grade for this exercise
-        $question->defaultgrade = $gap_count * $defaultgrade;
-
-        $questions[] = $question;
-        $x++;
-    } // end while $exercise
-}
-
-function process_jcross(&$xml, &$questions) {
-    // xml tags to the start of the crossword exercise clue items
-    $tags = 'data,crossword,clues,item';
-
-    $x = 0;
-    while (($item = "[$x]['#']") && $xml->xml_value($tags, $item)) {
-
-        $text = $xml->xml_value($tags, $item."['def'][0]['#']");
-        $answer = $xml->xml_value($tags, $item."['word'][0]['#']");
-
-        if ($text && $answer) {
-            $question = new stdClass();
-            $question->qtype = SHORTANSWER;
-            $question->usecase = 0; // Ignore case
-            $question->image = "";  // No images with this format
-            $question->name = get_hotpotatoes_title($xml, $x, true);
-
-            $question->questiontext = addslashes($text);
-            $question->answer = array(addslashes($answer));
-            $question->fraction = array(1);
-            $question->feedback = array('');
-
-            $questions[] = $question;
-        }
-        $x++;
-    }
-}
-
-function process_jmatch(&$xml, &$questions) {
-    // define default grade (per matched pair)
-    $defaultgrade = 1;
-    $match_count = 0;
-
-    // xml tags to the start of the matching exercise
-    $tags = 'data,matching-exercise';
-
-    $x = 0;
-    while (($exercise = "[$x]['#']") && $xml->xml_value($tags, $exercise)) {
-        // there is usually only one exercise in a file
-
-        $question = new stdClass();
-
-        $question->qtype = MATCH;
-        $question->usecase = 0; // Ignore case
-        $question->image = "";  // No images with this format
-        $question->name = get_hotpotatoes_title($xml, $x);
-
-        $question->questiontext = get_hotpotatoes_reading($xml);
-        $question->questiontext .= get_hotpotatoes_instructions($xml);
-
-        $question->subquestions = array();
-        $question->subanswers = array();
-        $p = 0;
-        while (($pair = $exercise."['pair'][$p]['#']") && $xml->xml_value($tags, $pair)) {
-            $left = $xml->xml_value($tags, $pair."['left-item'][0]['#']['text'][0]['#']");
-            $right = $xml->xml_value($tags, $pair."['right-item'][0]['#']['text'][0]['#']");
-            if ($left && $right) {
-                $match_count++;
-                $question->subquestions[$p] = addslashes($left);
-                $question->subanswers[$p] = addslashes($right);
-            }
-            $p++;
-        }
-        $question->defaultgrade = $match_count * $defaultgrade;
-        $questions[] = $question;
-        $x++;
-    }
-}
-
-function process_jmix(&$xml, &$questions) {
-    // define default grade (per segment)
-    $defaultgrade = 1;
-    $segment_count = 0;
-
-    // xml tags to the start of the jumbled order exercise
-    $tags = 'data,jumbled-order-exercise';
-
-    $x = 0;
-    while (($exercise = "[$x]['#']") && $xml->xml_value($tags, $exercise)) {
-        // there is usually only one exercise in a file
-
-        $question = new stdClass();
-        $question->qtype = SHORTANSWER;
-        $question->usecase = 0; // Ignore case
-        $question->image = "";  // No images with this format
-        $question->name = get_hotpotatoes_title($xml, $x);
-
-        $question->answer = array();
-        $question->fraction = array();
-        $question->feedback = array();
-
-        $i = 0;
-        $segments = array();
-        while ($segment = $xml->xml_value($tags, $exercise."['main-order'][0]['#']['segment'][$i]['#']")) {
-            $segments[] = addslashes($segment);
-            $segment_count++;
-            $i++;
-        }
-        $answer = implode(' ', $segments);
-
-        seed_hotpotatoes_RNG();
-        shuffle($segments);
-
-        $question->questiontext = get_hotpotatoes_reading($xml);
-        $question->questiontext .= get_hotpotatoes_instructions($xml);
-        $question->questiontext .= ' &nbsp; <NOBR><B>[ &nbsp; '.implode(' &nbsp; ', $segments).' &nbsp; ]</B></NOBR>';
-
-        $a = 0;
-        while (!empty($answer)) {
-            $question->answer[$a] = $answer;
-            $question->fraction[$a] = 1;
-            $question->feedback[$a] = '';
-            $answer = addslashes($xml->xml_value($tags, $exercise."['alternate'][$a]['#']"));
-            $a++;
-        }
-        $question->defaultgrade = $segment_count * $defaultgrade;
-        $questions[] = $question;
-        $x++;
-    }
-}
-function process_jquiz(&$xml, &$questions) {
-    // define default grade (per question)
-    $defaultgrade = 1;
-
-    // xml tags to the start of the questions
-    $tags = 'data,questions';
-
-    $x = 0;
-    while (($exercise = "[$x]['#']") && $xml->xml_value($tags, $exercise)) {
-        // there is usually only one 'questions' object in a single exercise
-
-        $q = 0;
-        while (($question_record = $exercise."['question-record'][$q]['#']") && $xml->xml_value($tags, $question_record)) {
-
-            $question = new stdClass();
-            $question->defaultgrade = $defaultgrade;
-            $question->usecase = 0; // Ignore case
-            $question->image = "";  // No images with this format
-            $question->name = get_hotpotatoes_title($xml, $q, true);
-
-            $text = $xml->xml_value($tags, $question_record."['question'][0]['#']");
-            $question->questiontext = addslashes($text);
-
-            if ($xml->xml_value($tags, $question_record."['answers']")) {
-                // HP6 JQuiz
-                $answers = $question_record."['answers'][0]['#']";
-            } else {
-                // HP5 JBC or JQuiz
-                $answers = $question_record;
-            }
-            if($xml->xml_value($tags, $question_record."['question-type']")) {
-                // HP6 JQuiz
-                $type = $xml->xml_value($tags, $question_record."['question-type'][0]['#']");
-                //  1 : multiple choice
-                //  2 : short-answer
-                //  3 : hybrid
-                //  4 : multiple select
-            } else {
-                // HP5
-                switch ($xml->quiztype) {
-                    case 'jbc':
-                        $must_select_all = $xml->xml_value($tags, $question_record."['must-select-all'][0]['#']");
-                        if (empty($must_select_all)) {
-                            $type = 1; // multichoice
-                        } else {
-                            $type = 4; // multiselect
+        
+                    // add answers
+                    $a = 0;
+                    while (($answer=$question_record."['answer'][$a]['#']") && $xml->xml_value($tags, $answer)) {
+                        $text = addslashes($xml->xml_value($tags,  $answer."['text'][0]['#']"));
+                        $correct = $xml->xml_value($tags,  $answer."['correct'][0]['#']");
+                        $feedback = addslashes($xml->xml_value($tags,  $answer."['feedback'][0]['#']"));
+                        if ($text) {
+                            // set score (0=0%, 1=100%)
+                            $fraction = empty($correct) ? 0 : 1;
+                            // store answer
+                            if ($moodle_14) {
+                                $question->answers[$q]->alternatives[$a] = new stdClass();
+                                $question->answers[$q]->alternatives[$a]->answer = $text;
+                                $question->answers[$q]->alternatives[$a]->fraction = $fraction;
+                                $question->answers[$q]->alternatives[$a]->feedback = $feedback;
+                            } else {
+                                $wrapped->answer[] = $text;
+                                $wrapped->fraction[] = $fraction;
+                                $wrapped->feedback[] = $feedback;
+                                $answers[] = (empty($fraction) ? '' : '=').$text.(empty($feedback) ? '' : ('#'.$feedback));
+                            }
                         }
-                        break;
-                    case 'jquiz':
-                        $type = 2; // shortanswer
-                        break;
-                    default:
-                        $type = 0; // unknown
-                }
-            }
-            $question->qtype = ($type==2 ? SHORTANSWER : MULTICHOICE);
-            $question->single = ($type==4 ? 0 : 1);
-
-            // workaround required to calculate scores for multiple select answers
-            $no_of_correct_answers = 0;
-            if ($type==4) {
-                $a = 0;
-                while (($answer = $answers."['answer'][$a]['#']") && $xml->xml_value($tags, $answer)) {
-                    $correct = $xml->xml_value($tags, $answer."['correct'][0]['#']");
-                    if (empty($correct)) {
+                        $a++;
+                    }
+                    // compile answers into question text, if necessary
+                    if ($moodle_14) {
                         // do nothing
                     } else {
-                        $no_of_correct_answers++;
+                        $wrapped->questiontext = '{'.$defaultgrade.':SHORTANSWER:'.implode('~', $answers).'}';
+                        $question->options->questions[] = $wrapped;
                     }
-                    $a++;
+                } // end if gap
+                $q++;
+            } // end while $text
+
+            // define total grade for this exercise
+            $question->defaultgrade = $gap_count * $defaultgrade;
+
+            $questions[] = $question;
+            $x++;
+        } // end while $exercise
+    }
+
+    function process_jcross(&$xml, &$questions) {
+        // xml tags to the start of the crossword exercise clue items
+        $tags = 'data,crossword,clues,item';
+
+        $x = 0;
+        while (($item = "[$x]['#']") && $xml->xml_value($tags, $item)) {
+
+            $text = $xml->xml_value($tags, $item."['def'][0]['#']");
+            $answer = $xml->xml_value($tags, $item."['word'][0]['#']");
+
+            if ($text && $answer) {
+                if (method_exists($this, 'defaultquestion')) {
+                    $question = $this->defaultquestion();
+                } else {
+                    $question = new stdClass();
+                    $question->usecase = 0; // Ignore case
+                    $question->image = "";  // No images with this format
                 }
+                $question->qtype = SHORTANSWER;
+                $question->name = $this->hotpot_get_title($xml, $x, true);
+
+                $question->questiontext = addslashes($text);
+                $question->answer = array(addslashes($answer));
+                $question->fraction = array(1);
+                $question->feedback = array('');
+
+                $questions[] = $question;
             }
-            $a = 0;
+            $x++;
+        }
+    }
+
+    function process_jmatch(&$xml, &$questions) {
+        // define default grade (per matched pair)
+        $defaultgrade = 1;
+        $match_count = 0;
+
+        // xml tags to the start of the matching exercise
+        $tags = 'data,matching-exercise';
+
+        $x = 0;
+        while (($exercise = "[$x]['#']") && $xml->xml_value($tags, $exercise)) {
+            // there is usually only one exercise in a file
+
+            if (method_exists($this, 'defaultquestion')) {
+                $question = $this->defaultquestion();
+            } else {
+                $question = new stdClass();
+                $question->usecase = 0; // Ignore case
+                $question->image = "";  // No images with this format
+            }
+            $question->qtype = MATCH;
+            $question->name = $this->hotpot_get_title($xml, $x);
+
+            $question->questiontext = $this->hotpot_get_reading($xml);
+            $question->questiontext .= $this->hotpot_get_instructions($xml);
+
+            $question->subquestions = array();
+            $question->subanswers = array();
+            $p = 0;
+            while (($pair = $exercise."['pair'][$p]['#']") && $xml->xml_value($tags, $pair)) {
+                $left = $xml->xml_value($tags, $pair."['left-item'][0]['#']['text'][0]['#']");
+                $right = $xml->xml_value($tags, $pair."['right-item'][0]['#']['text'][0]['#']");
+                if ($left && $right) {
+                    $match_count++;
+                    $question->subquestions[$p] = addslashes($left);
+                    $question->subanswers[$p] = addslashes($right);
+                }
+                $p++;
+            }
+            $question->defaultgrade = $match_count * $defaultgrade;
+            $questions[] = $question;
+            $x++;
+        }
+    }
+
+    function process_jmix(&$xml, &$questions) {
+        // define default grade (per segment)
+        $defaultgrade = 1;
+        $segment_count = 0;
+
+        // xml tags to the start of the jumbled order exercise
+        $tags = 'data,jumbled-order-exercise';
+
+        $x = 0;
+        while (($exercise = "[$x]['#']") && $xml->xml_value($tags, $exercise)) {
+            // there is usually only one exercise in a file
+
+            if (method_exists($this, 'defaultquestion')) {
+                $question = $this->defaultquestion();
+            } else {
+                $question = new stdClass();
+                $question->usecase = 0; // Ignore case
+                $question->image = "";  // No images with this format
+            }
+            $question->qtype = SHORTANSWER;
+            $question->name = $this->hotpot_get_title($xml, $x);
+
             $question->answer = array();
             $question->fraction = array();
             $question->feedback = array();
-            while (($answer = $answers."['answer'][$a]['#']") && $xml->xml_value($tags, $answer)) {
-                $correct = $xml->xml_value($tags, $answer."['correct'][0]['#']");
-                if (empty($correct)) {
-                    $fraction = 0;
-                } else if ($type==4) { // multiple select
-                    // strange behavior if the $fraction isn't exact to 5 decimal places
-                    $fraction = round(1/$no_of_correct_answers, 5);
-                } else {
-                    if ($xml->xml_value($tags, $answer."['percent-correct']")) {
-                        // HP6 JQuiz
-                        $percent = $xml->xml_value($tags, $answer."['percent-correct'][0]['#']");
-                        $fraction = $percent/100;
-                    } else {
-                        // HP5 JBC or JQuiz
-                        $fraction = 1;
-                    }
-                }
-                $question->fraction[] = $fraction;
-                $question->feedback[] = addslashes($xml->xml_value($tags, $answer."['feedback'][0]['#']"));
-                $question->answer[] = addslashes($xml->xml_value($tags, $answer."['text'][0]['#']"));
+
+            $i = 0;
+            $segments = array();
+            while ($segment = $xml->xml_value($tags, $exercise."['main-order'][0]['#']['segment'][$i]['#']")) {
+                $segments[] = addslashes($segment);
+                $segment_count++;
+                $i++;
+            }
+            $answer = implode(' ', $segments);
+
+            $this->hotpot_seed_RNG();
+            shuffle($segments);
+
+            $question->questiontext = $this->hotpot_get_reading($xml);
+            $question->questiontext .= $this->hotpot_get_instructions($xml);
+            $question->questiontext .= ' &nbsp; <NOBR><B>[ &nbsp; '.implode(' &nbsp; ', $segments).' &nbsp; ]</B></NOBR>';
+
+            $a = 0;
+            while (!empty($answer)) {
+                $question->answer[$a] = $answer;
+                $question->fraction[$a] = 1;
+                $question->feedback[$a] = '';
+                $answer = addslashes($xml->xml_value($tags, $exercise."['alternate'][$a]['#']"));
                 $a++;
             }
+            $question->defaultgrade = $segment_count * $defaultgrade;
             $questions[] = $question;
-            $q++;
+            $x++;
         }
-        $x++;
     }
-}
+    function process_jquiz(&$xml, &$questions) {
+        // define default grade (per question)
+        $defaultgrade = 1;
 
-function seed_hotpotatoes_RNG() {
-    static $seeded_hotpotatoes_RNG = FALSE;
-    if (!$seeded_hotpotatoes_RNG) {
-        srand((double) microtime() * 1000000);
-        $seeded_hotpotatoes_RNG = TRUE;
-    }
-}
-function get_hotpotatoes_title(&$xml, $x, $flag=false) {
-    $title = $xml->xml_value('data,title');
-    if ($x || $flag) {
-        $title .= ' ('.($x+1).')';
-    }
-    return addslashes($title);
-}
-function get_hotpotatoes_instructions(&$xml) {
-    $text = $xml->xml_value('hotpot-config-file,instructions');
-    if (empty($text)) {
-        $text = "Hot Potatoes $xml->quiztype";
-    }
-    return addslashes($text);
-}
-function get_hotpotatoes_reading(&$xml) {
-    $str = '';
-    $tags = 'data,reading';
-    if ($xml->xml_value("$tags,include-reading")) {
-        if ($title = $xml->xml_value("$tags,reading-title")) {
-            $str .= "<H3>$title</H3>";
+        // xml tags to the start of the questions
+        $tags = 'data,questions';
+
+        $x = 0;
+        while (($exercise = "[$x]['#']") && $xml->xml_value($tags, $exercise)) {
+            // there is usually only one 'questions' object in a single exercise
+
+            $q = 0;
+            while (($question_record = $exercise."['question-record'][$q]['#']") && $xml->xml_value($tags, $question_record)) {
+
+                if (method_exists($this, 'defaultquestion')) {
+                    $question = $this->defaultquestion();
+                } else {
+                    $question = new stdClass();
+                    $question->usecase = 0; // Ignore case
+                    $question->image = "";  // No images with this format
+                }
+                $question->defaultgrade = $defaultgrade;
+                $question->name = $this->hotpot_get_title($xml, $q, true);
+
+                $text = $xml->xml_value($tags, $question_record."['question'][0]['#']");
+                $question->questiontext = addslashes($text);
+
+                if ($xml->xml_value($tags, $question_record."['answers']")) {
+                    // HP6 JQuiz
+                    $answers = $question_record."['answers'][0]['#']";
+                } else {
+                    // HP5 JBC or JQuiz
+                    $answers = $question_record;
+                }
+                if($xml->xml_value($tags, $question_record."['question-type']")) {
+                    // HP6 JQuiz
+                    $type = $xml->xml_value($tags, $question_record."['question-type'][0]['#']");
+                    //  1 : multiple choice
+                    //  2 : short-answer
+                    //  3 : hybrid
+                    //  4 : multiple select
+                } else {
+                    // HP5
+                    switch ($xml->quiztype) {
+                        case 'jbc':
+                            $must_select_all = $xml->xml_value($tags, $question_record."['must-select-all'][0]['#']");
+                            if (empty($must_select_all)) {
+                                $type = 1; // multichoice
+                            } else {
+                                $type = 4; // multiselect
+                            }
+                            break;
+                        case 'jquiz':
+                            $type = 2; // shortanswer
+                            break;
+                        default:
+                            $type = 0; // unknown
+                    }
+                }
+                $question->qtype = ($type==2 ? SHORTANSWER : MULTICHOICE);
+                $question->single = ($type==4 ? 0 : 1);
+
+                // workaround required to calculate scores for multiple select answers
+                $no_of_correct_answers = 0;
+                if ($type==4) {
+                    $a = 0;
+                    while (($answer = $answers."['answer'][$a]['#']") && $xml->xml_value($tags, $answer)) {
+                        $correct = $xml->xml_value($tags, $answer."['correct'][0]['#']");
+                        if (empty($correct)) {
+                            // do nothing
+                        } else {
+                            $no_of_correct_answers++;
+                        }
+                        $a++;
+                    }
+                }
+                $a = 0;
+                $question->answer = array();
+                $question->fraction = array();
+                $question->feedback = array();
+                while (($answer = $answers."['answer'][$a]['#']") && $xml->xml_value($tags, $answer)) {
+                    $correct = $xml->xml_value($tags, $answer."['correct'][0]['#']");
+                    if (empty($correct)) {
+                        $fraction = 0;
+                    } else if ($type==4) { // multiple select
+                        // strange behavior if the $fraction isn't exact to 5 decimal places
+                        $fraction = round(1/$no_of_correct_answers, 5);
+                    } else {
+                        if ($xml->xml_value($tags, $answer."['percent-correct']")) {
+                            // HP6 JQuiz
+                            $percent = $xml->xml_value($tags, $answer."['percent-correct'][0]['#']");
+                            $fraction = $percent/100;
+                        } else {
+                            // HP5 JBC or JQuiz
+                            $fraction = 1;
+                        }
+                    }
+                    $question->fraction[] = $fraction;
+                    $question->feedback[] = addslashes($xml->xml_value($tags, $answer."['feedback'][0]['#']"));
+                    $question->answer[] = addslashes($xml->xml_value($tags, $answer."['text'][0]['#']"));
+                    $a++;
+                }
+                $questions[] = $question;
+                $q++;
+            }
+            $x++;
         }
-        if ($text = $xml->xml_value("$tags,reading-text")) {
-            $str .= "<P>$text</P>";
+    }
+
+    function hotpot_seed_RNG() {
+        // seed the random number generator
+        static $HOTPOT_SEEDED_RNG = FALSE;
+        if (!$HOTPOT_SEEDED_RNG) {
+            srand((double) microtime() * 1000000);
+            $HOTPOT_SEEDED_RNG = TRUE;
         }
     }
-    return addslashes($str);
-}
+    function hotpot_get_title(&$xml, $x, $flag=false) {
+        $title = $xml->xml_value('data,title');
+        if ($x || $flag) {
+            $title .= ' ('.($x+1).')';
+        }
+        return addslashes($title);
+    }
+    function hotpot_get_instructions(&$xml) {
+        $text = $xml->xml_value('hotpot-config-file,instructions');
+        if (empty($text)) {
+            $text = "Hot Potatoes $xml->quiztype";
+        }
+        return addslashes($text);
+    }
+    function hotpot_get_reading(&$xml) {
+        $str = '';
+        $tags = 'data,reading';
+        if ($xml->xml_value("$tags,include-reading")) {
+            if ($title = $xml->xml_value("$tags,reading-title")) {
+                $str .= "<H3>$title</H3>";
+            }
+            if ($text = $xml->xml_value("$tags,reading-text")) {
+                $str .= "<P>$text</P>";
+            }
+        }
+        return addslashes($str);
+    }
+} // end class
 
 // get the standard XML parser supplied with Moodle
 require_once("$CFG->libdir/xmlize.php");
@@ -465,8 +486,8 @@ class hotpot_xml_tree {
         if (is_string($value)) {
             $value = utf8_decode($value);
 
-            // decode angle brackets
-            $value = strtr($value, array('&#x003C;'=>'<', '&#x003E;'=>'>'));
+            // decode angle brackets and ampersands
+            $value = strtr($value, array('&#x003C;'=>'<', '&#x003E;'=>'>', '&#x0026;'=>'&'));
 
             // remove white space between <table>, <ul|OL|DL> and <OBJECT|EMBED> parts 
             // (so it doesn't get converted to <br />)
