@@ -134,7 +134,12 @@
     print_heading_with_help($strimportquestions, "import", "quiz");
 
     /// Get all the existing categories now
-    $sql = "SELECT c.*
+    if (isadmin()) { // the admin can import into all categories
+        if (!$categories = get_records_select("quiz_categories", "course = '{$course->id}' OR publish = '1'", "parent, sortorder, name ASC")) {
+            error("Could not find any question categories!"); // Something is really wrong
+        }
+    } else { // select only the categories to which the teacher has write access
+        $sql = "SELECT c.*
               FROM {$CFG->prefix}quiz_categories AS c,
                    {$CFG->prefix}user_teachers AS t
              WHERE t.userid = '$USER->id'
@@ -142,8 +147,9 @@
                AND (c.course = '$course->id' 
                    OR (c.publish = '1' AND t.editall = '1'))
           ORDER BY c.parent ASC, c.sortorder ASC, c.name ASC";
-    if (!$categories = get_records_sql($sql)) {
-        error("Could not find any question categories!");
+        if (!$categories = get_records_sql($sql)) {
+            error("Could not find any question categories!");
+        }
     }
     $categories = add_indented_names($categories);
     foreach ($categories as $key => $cat) {
