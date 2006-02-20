@@ -69,7 +69,6 @@
         break;
         
         case 'editcommit':  //update db
-            print_object(data_submitted());
             $newcomment = new object;
             $newcomment->id = $commentid;
             $newcomment->content = $commentcontent;

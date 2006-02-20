@@ -1119,11 +1119,11 @@ function data_print_comment($data, $commentid) {
 
     echo '<div class="commands">';
     if (data_isowner($comment->recordid) or isteacher($course->id)) {
-            echo '<a href="'.$CFG->wwwroot.'/mod/data/comment.php?mode=edit&amp;commentid='.$comment->id.'">'.$stredit.'</a>';
+            echo '<a href="'.$CFG->wwwroot.'/mod/data/comment.php?d='.$data->id.'&amp;mode=edit&amp;commentid='.$comment->id.'">'.$stredit.'</a>';
     }
 
     if (data_isowner($comment->recordid) or isteacher($course->id)) {
-        echo '| <a href="'.$CFG->wwwroot.'/mod/data/comment.php?mode=delete&amp;commentid='.$comment->id.'">'.$strdelete.'</a>';
+        echo '| <a href="'.$CFG->wwwroot.'/mod/data/comment.php?d='.$data->id.'&amp;mode=delete&amp;commentid='.$comment->id.'">'.$strdelete.'</a>';
     }
 
     echo '</div>';
