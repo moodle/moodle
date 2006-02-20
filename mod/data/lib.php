@@ -1094,7 +1094,7 @@ function data_print_comment($data, $commentid) {
     print_user_picture($comment->userid, $course->id, false);
     echo '</td>';
 
-    echo '<td width="90%"><div class="author">';
+    echo '<td width="90%" align="left"><div class="author">';
     $fullname = fullname($user, isteacher($comment->userid));
     $by = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.
                 $user->id.'&amp;course='.$course->id.'">'.$fullname.'</a>';
@@ -1110,7 +1110,7 @@ function data_print_comment($data, $commentid) {
 
 /// Actual content
 
-    echo '</td><td class="content">'."\n";
+    echo '</td><td class="content" align="left">'."\n";
 
     // Print whole message
     echo format_text($comment->content);
