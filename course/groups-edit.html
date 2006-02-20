@@ -87,11 +87,13 @@ function groupWindow(selectgroup) {
           <input type="hidden" name="id" value="<?php p($course->id) ?>" />
           <input type="hidden" name="groupid" value="<?php p($selectedgroup) ?>" />
           <input type="hidden" name="sesskey" value="<?php p($sesskey) ?>">
+          
           <select name="nonmembers[]" size="15" multiple="multiple">
             <?php 
                 if (!empty($nonmembers)) {
                     foreach ($nonmembers as $id => $nonmembername) {
-                        echo "<option value=\"$id\">$nonmembername</option>";
+                        $numgroups = count(user_group($course->id, $id));
+                        echo "<option value=\"$id\" title=\"$nonmembername is in $numgroups groups\">$nonmembername ($numgroups)</option>\n";
                     }
                 }
             ?>
