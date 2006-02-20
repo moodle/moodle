@@ -1115,10 +1115,8 @@ function data_print_comment($data, $commentid) {
     // Print whole message
     echo format_text($comment->content);
 
-
 /// Commands
 
-    /// Hack for allow to edit news posts those are not displayed yet until they are displayed
     echo '<div class="commands">';
     if (data_isowner($comment->recordid) or isteacher($course->id)) {
             echo '<a href="'.$CFG->wwwroot.'/mod/data/comment.php?mode=edit&amp;commentid='.$comment->id.'">'.$stredit.'</a>';

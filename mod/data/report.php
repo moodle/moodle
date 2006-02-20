@@ -29,7 +29,7 @@
     $strrating = get_string("rating", "data");
     $strname = get_string("name");
 
-    print_header("$strratings: ".format_string($post->subject));
+    print_header($strratings);
 
     if (!$ratings = data_get_ratings($record->id, $sort)) {
         error("No ratings for this record!");
