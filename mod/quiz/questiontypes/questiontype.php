@@ -454,28 +454,23 @@ class quiz_default_questiontype {
         row containing the submit button(s) when $options->readonly is false. */
         global $CFG;
 
-        // Print question number
-        $q->number = $number;
-
         // For editing teachers print a link to an editing popup window
-        $q->editlink = '';
+        $editlink = '';
         if (isteacheredit($cmoptions->course)) {
             $stredit = get_string('edit');
             $linktext = '<img src="'.$CFG->pixpath.'/t/edit.gif" border="0" alt="'.$stredit.'" />';
-            $q->editlink = link_to_popup_window('/mod/quiz/question.php?id='.$question->id, $stredit, $linktext, 450, 550, $stredit, '', true);
+            $editlink = link_to_popup_window('/mod/quiz/question.php?id='.$question->id, $stredit, $linktext, 450, 550, $stredit, '', true);
         }
 
-        $q->strmarks = '';
-        $q->marks = '';
+        $grade = '';
         if ($question->maxgrade and $options->scores) {
-            $q->strmarks .= get_string('marks', 'quiz').': ';
             if ($cmoptions->optionflags & QUIZ_ADAPTIVE) {
-                $q->marks = ('' === $state->last_graded->grade) ? '--/' : round($state->last_graded->grade, $cmoptions->decimalpoints).'/';
+                $grade = ('' === $state->last_graded->grade) ? '--/' : round($state->last_graded->grade, $cmoptions->decimalpoints).'/';
             }
-            $q->marks .= $question->maxgrade;
+            $grade .= $question->maxgrade;
         }
 
-        $q->history = '';
+        $history = '';
         if(isset($options->history) and $options->history) {
             if ($options->history == 'all') {
                 // show all states
@@ -512,7 +507,7 @@ class quiz_default_questiontype {
                         $b.round($st->grade, $cmoptions->decimalpoints).$be
                     );
                 }
-                $q->history = make_table($table);
+                $history = make_table($table);
             }
         }
         include "$CFG->dirroot/mod/quiz/questiontypes/question.html";

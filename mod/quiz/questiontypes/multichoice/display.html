@@ -1,27 +1,30 @@
-<div>
-  <?php echo $q->questiontext; ?>
+<div class="qtext">
+  <?php echo $questiontext; ?>
 </div>
 
-<?php if ($q->image) { ?>
-  <img border="0" src="<?php echo $q->imageurl; ?>" alt="" />
+<?php if ($image) { ?>
+  <img class="qimage" src="<?php echo $q->imageurl; ?>" alt="" />
 <?php } ?>
 
-<div>
-  <?php echo $q->answerprompt; ?>
-</div>
+<div class="answer">
+  <div class="prompt">
+    <?php echo $answerprompt; ?>
+  </div>
 
-<table>
-  <?php foreach ($q->answers as $answer) { ?>
-    <tr>
-      <td valign="top">
-        <?php echo $answer->control; ?>
-      </td>
-      <td valign="top" class="<?php echo $answer->class ?>"><label for="<?php echo $answer->id ?>">
-        <?php echo $answer->text; ?>
-      </td>
-      <td valign="top" class="feedbacktext">
-        <?php echo $answer->feedback; ?>
-      </td>
-    </tr>
-  <?php } ?>
-</table>
+  <table class="multichoice">
+    <?php foreach ($anss as $answer) { ?>
+      <tr class="<?php echo $row = $row ? 0 : 1; ?>">
+        <td class="c0">
+          <?php echo $answer->control; ?>
+        </td>
+        <td class="c1 <?php echo $answer->class ?>"><label for="<?php echo $answer->id ?>">
+          <?php echo $answer->text; ?>
+        </td>
+        <td class="c2">
+          <?php echo $answer->feedback; ?>
+        </td>
+      </tr>
+    <?php } ?>
+  </table>
+  <?php $this->print_question_submit_buttons($question, $state, $cmoptions, $options); ?>
+</div>

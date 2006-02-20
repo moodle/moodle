@@ -264,11 +264,11 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
         $formatoptions->para = false;
 
         // Print formulation
-        $q->questiontext = format_text($question->questiontext,
+        $questiontext = format_text($question->questiontext,
                          $question->questiontextformat,
                          NULL, $cmoptions->course);
-        $q->image = quiz_get_image($question, $cmoptions->course);
-        $q->answerprompt = ($question->options->single) ? get_string('singleanswer', 'quiz') :
+        $image = quiz_get_image($question, $cmoptions->course);
+        $answerprompt = ($question->options->single) ? get_string('singleanswer', 'quiz') :
             get_string('multipleanswers', 'quiz');
 
         // Print each answer in a separate row
@@ -311,7 +311,7 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
             $a->feedback = (($options->feedback || $options->correct_responses) && $checked) ?
                $feedback = format_text($answer->feedback, true, false) : '';
 
-            $q->answers[] = clone($a);
+            $anss[] = clone($a);
         }
         include("$CFG->dirroot/mod/quiz/questiontypes/multichoice/display.html");
     }
