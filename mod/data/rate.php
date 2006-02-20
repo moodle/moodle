@@ -29,7 +29,6 @@
 
             $recordid = (int)$recordid;
             $lastrecordid = $recordid;
-            echo "recordid ".$recordid;
             if ($oldrating = get_record("data_ratings", "userid", $USER->id, "recordid", $recordid)) {
                 if ($rating != $oldrating->rating) {
                     $oldrating->rating = $rating;
