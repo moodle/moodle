@@ -43,7 +43,7 @@
        'filterall'                =>  false,
        'filtermatchoneperpage'    =>  0,
        'filtermatchonepertext'    =>  0,
-       'filteruploadedfiles'      =>  true,
+       'filteruploadedfiles'      =>  0,
        'forcelogin'               =>  false,
        'forceloginforprofiles'    =>  false,
        'forcetimezone'            =>  99,
