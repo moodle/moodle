@@ -140,7 +140,11 @@ function mimeinfo($element, $filename) {
     }
 }
 
-function send_file($path, $filename, $lifetime=86400 , $filter=false, $pathisstring=false, $forcedownload=false) {
+
+/** 
+ * @PARAM $filter int 0=no filtering, 1=all files, 2=html files only
+ */
+function send_file($path, $filename, $lifetime=86400 , $filter=0, $pathisstring=false, $forcedownload=false) {
     global $CFG;
 
     $mimetype     = $forcedownload ? 'application/x-forcedownload' : mimeinfo('type', $filename);
@@ -223,7 +227,7 @@ function send_file($path, $filename, $lifetime=86400 , $filter=false, $pathisstr
         @header('Accept-Ranges: none'); // Do not allow byteserving when caching disabled
     }
 
-    if (!$filter) {
+    if (empty($filter)) {
         if ($mimetype == 'text/html' && !empty($CFG->usesid) && empty($_COOKIE['MoodleSession'.$CFG->sessioncookie])) {
             //cookieless mode - rewrite links
             @header('Content-Type: text/html');
@@ -263,7 +267,8 @@ function send_file($path, $filename, $lifetime=86400 , $filter=false, $pathisstr
             @header('Content-Type: text/html');
             while (@ob_end_flush()); //flush the buffers - save memory and disable sid rewrite
             echo $output;
-        } else if (($mimetype == 'text/plain') and ($CFG->filteruploadedfiles==1)) {
+        // only filter text if filter all files is selected
+        } else if (($mimetype == 'text/plain') and ($filter == 1)) {
             $options->newlines = false;
             $options->noclean = true;
             $text = htmlentities($pathisstring ? $path : implode('', file($path)));

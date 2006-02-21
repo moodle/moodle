@@ -144,7 +144,7 @@
     // ========================================
     session_write_close(); // unlock session during fileserving
     $filename = $args[count($args)-1];
-    send_file($pathname, $filename, $lifetime, !empty($CFG->filteruploadedfiles), false, $forcedownload);
+    send_file($pathname, $filename, $lifetime, $CFG->filteruploadedfiles, false, $forcedownload);
 
     function not_found($courseid) {
         global $CFG;
