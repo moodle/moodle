@@ -12,10 +12,13 @@ class quiz_truefalse_qtype extends quiz_default_questiontype {
     }
 
     function save_question_options($question) {
+        
+        // fetch old answer ids so that we can reuse them
         if (!$oldanswers = get_records("quiz_answers", "question", $question->id, "id ASC")) {
             $oldanswers = array();
         }
 
+        // Save answer 'True'
         if ($true = array_shift($oldanswers)) {  // Existing answer, so reuse it
             $true->answer   = get_string("true", "quiz");
             $true->fraction = $question->answer;
@@ -36,6 +39,7 @@ class quiz_truefalse_qtype extends quiz_default_questiontype {
             }
         }
 
+        // Save answer 'False'
         if ($false = array_shift($oldanswers)) {  // Existing answer, so reuse it
             $false->answer   = get_string("false", "quiz");
             $false->fraction = 1 - (int)$question->answer;
@@ -56,13 +60,14 @@ class quiz_truefalse_qtype extends quiz_default_questiontype {
             }
         }
 
-        // delete old answer records
+        // delete any leftover old answer records (there couldn't really be any, but who knows)
         if (!empty($oldanswers)) {
             foreach($oldanswers as $oa) {
                 delete_records('quiz_answers', 'id', $oa->id);
             }
         }
 
+        // Save question options in quiz_truefalse table
         if ($options = get_record("quiz_truefalse", "question", $question->id)) {
             // No need to do anything, since the answer IDs won't have changed
             // But we'll do it anyway, just for robustness
@@ -91,21 +96,15 @@ class quiz_truefalse_qtype extends quiz_default_questiontype {
     function get_question_options(&$question) {
         // Get additional information from database
         // and attach it to the question object
-        if (!$question->options = get_record('quiz_truefalse', 'question',
-         $question->id)) {
+        if (!$question->options = get_record('quiz_truefalse', 'question', $question->id)) {
             notify('Error: Missing question options!');
             return false;
         }
-        // Load possible answers
-        if (!$answers = get_records('quiz_answers', 'question',
-         $question->id)) {
+        // Load the answers
+        if (!$question->options->answers = get_records('quiz_answers', 'question', $question->id)) {
            notify('Error: Missing question answers!');
            return false;
         }
-
-        $question->options->answers = array(
-         'true' => $answers[$question->options->trueanswer],
-         'false' => $answers[$question->options->falseanswer]);
 
         return true;
     }
@@ -122,6 +121,7 @@ class quiz_truefalse_qtype extends quiz_default_questiontype {
     }
 
     function get_correct_responses(&$question, &$state) {
+    	// The correct answer is the one which gives full marks
         foreach ($question->options->answers as $answer) {
             if (((int) $answer->fraction) === 1) {
                 return array('' => $answer->id);
@@ -135,130 +135,61 @@ class quiz_truefalse_qtype extends quiz_default_questiontype {
     */
     function print_question_formulation_and_controls(&$question, &$state,
             $cmoptions, $options) {
+        global $CFG;
 
-        $answers = &$question->options->answers;
-        $correctanswers = $this->get_correct_responses($question, $state);
         $readonly = $options->readonly ? ' readonly="readonly"' : '';
 
         // Print question formulation
-        echo format_text($question->questiontext,
+        $questiontext = format_text($question->questiontext,
                          $question->questiontextformat,
                          NULL, $cmoptions->course);
-        quiz_print_possible_question_image($question, $cmoptions->course);
+        $image = quiz_get_image($question, $cmoptions->course);
 
-        // Update the answer strings
-        $stranswer = get_string('answer', 'quiz');
-        $strlastanswer = get_string('lastanswer', 'quiz');
+        $answers = &$question->options->answers;
+        $trueanswer = &$answers[$question->options->trueanswer];
+        $falseanswer = &$answers[$question->options->falseanswer];
+        $correctanswer = ($trueanswer->fraction == 1) ? $trueanswer : $falseanswer;
 
-        // Work out the selected answer and last marked answer
-        $selected = '';
-        $marked = '';
-        $teststate = clone($state);
-        $teststate->responses = array('' => $answers['true']->id);
-        if ($this->compare_responses($question, $state, $teststate)) {
-            $selected = 'true';
-        }
-        if ($this->compare_responses($question, $state->last_graded,
-         $teststate)) {
-            $marked = 'true';
-        }
-        $teststate->responses = array('' => $answers['false']->id);
-        if ($this->compare_responses($question, $state, $teststate)) {
-            $selected = 'false';
-        }
-        if ($this->compare_responses($question, $state->last_graded,
-         $teststate)) {
-            $marked = 'false';
-        }
-
-        // Work out the correct answer if feedback or correct responses are
-        // requested.
-        if ($options->feedback || $options->correct_responses) {
-            $correctstate = clone($state);
-            $correctstate->responses = array('' => $correctanswers['']);
-            $correct = '';
-            if (!is_null($correctstate->responses)) {
-                $teststate->responses = array('' => $answers['true']->id);
-                if ($this->compare_responses($question, $correctstate,
-                 $teststate)) {
-                    $correct = 'true';
-                }
-                $teststate->responses = array('' => $answers['false']->id);
-                if ($this->compare_responses($question, $correctstate,
-                 $teststate)) {
-                    $correct = 'false';
-                }
-            }
-        }
-
-        // Work out which radio button to select (if either)
-        $truechecked = ('true' === $selected) ? ' checked="checked"' : '';
-        $falsechecked = ('false' === $selected) ? ' checked="checked"' : '';
+        // Work out which radio button to select (if any)
+        $truechecked = ($state->responses[''] == $trueanswer->id) ? ' checked="checked"' : '';
+        $falsechecked = ($state->responses[''] == $falseanswer->id) ? ' checked="checked"' : '';
 
         // Work out which answer is correct if we need to highlight it
         if ($options->correct_responses) {
-            $truecorrect = ('true' === $correct) ? ' class="highlight"' : '';
-            $falsecorrect = ('false' === $correct) ? ' class="highlight"' : '';
+            $trueclass = ($trueanswer->fraction) ? ' class="highlight"' : '';
+            $falseclass = ($falseanswer->fraction) ? ' class="highlight"' : '';
         } else {
-            $truecorrect = '';
-            $falsecorrect = '';
+            $trueclass = '';
+            $falseclass = '';
         }
 
-        // Replace these with the appropriate language
-        $answers['true']->answer  = get_string('true', 'quiz');
-        $answers['false']->answer = get_string('false', 'quiz');
-
-        // Print the controls
         $inputname = ' name="'.$question->name_prefix.'" ';
         $trueid    = $question->name_prefix.'true';
         $falseid   = $question->name_prefix.'false';
-        echo '<table align="right" cellpadding="5"><tr><td align="right">';
-        echo $stranswer . ':&nbsp;&nbsp;</td>';
-        echo '<td' . $truecorrect . '>';
-        echo '<input type="radio"' . $truechecked . $readonly . $inputname;
-        echo 'id="'.$trueid . '" value="' . $answers['true']->id . '" alt="';
-        echo s($answers['true']->answer) . '" /><label for="'.$trueid . '">';
-        echo s($answers['true']->answer) . '</label>';
-        echo '</td><td' . $falsecorrect . '>';
-        echo '<input type="radio"' . $falsechecked . $readonly . $inputname;
-        echo 'id="'.$falseid . '" value="' . $answers['false']->id . '" alt="';
-        echo s($answers['false']->answer) . '" /><label for="'.$falseid . '">';
-        echo s($answers['false']->answer) . '</label>';
-        if (!empty($marked) && (!$options->readonly || $marked !== $selected)) {
-            /* This should never happen but it is here both for robustness and
-            to serve as an example for question type authors */
-            echo '</td></tr><tr><td><font size="1">';
-            echo $strlastanswer . ':&nbsp;&nbsp;</font></td>';
-            echo '</td>';
-            if ('true' === $marked) {
-                echo '<td><font size="1">' . $answers['true']->answer;
-                echo '</font></td><td></td>';
-            } else {
-                echo '<td></td><td><font size="1">';
-                echo $answers['false']->answer . '</font></td>';
-            }
-        }
-        echo '</td></tr></table><br clear="all" />';
 
-        if ($options->feedback && !empty($marked)) {
-            quiz_print_comment($answers[$marked]->feedback);
+        $radiotrue = '<input type="radio"' . $truechecked . $readonly . $inputname
+            . 'id="'.$trueid . '" value="' . $trueanswer->id . '" alt="'
+            . s($trueanswer->answer) . '" /><label for="'.$trueid . '">'
+            . s($trueanswer->answer) . '</label>';
+        $radiofalse = '<input type="radio"' . $falsechecked . $readonly . $inputname
+            . 'id="'.$falseid . '" value="' . $falseanswer->id . '" alt="'
+            . s($falseanswer->answer) . '" /><label for="'.$falseid . '">'
+            . s($falseanswer->answer) . '</label>';
+
+        $feedback = '';
+        if ($options->feedback and isset($answers[$state->responses['']])) {
+            $chosenanswer = $answers[$state->responses['']];
+            $feedback = format_text($chosenanswer->feedback, true, false);
         }
+        
+        include("$CFG->dirroot/mod/quiz/questiontypes/truefalse/display.html");
     }
 
     function grade_responses(&$question, &$state, $cmoptions) {
-        $teststate = clone($state);
-	    $teststate->raw_grade = 0;
-        foreach($question->options->answers as $answer) {
-            $teststate->responses[''] = $answer->id;
-
-            if($this->compare_responses($question, $state, $teststate)) {
-                $state->raw_grade = min(max((float) $answer->fraction,
-                 0.0), 1.0) * $question->maxgrade;
-                break;
-            }
-        }
-        if (empty($state->raw_grade)) {
-            $state->raw_grade = 0.0;
+        if (isset($question->options->answers[$state->responses['']])) {
+            $state->raw_grade = $question->options->answers[$state->responses['']]->fraction * $question->maxgrade;
+        } else {
+            $state->raw_grade = 0;
         }
         // Only allow one attempt at the question
         $state->penalty = 1;
@@ -267,9 +198,8 @@ class quiz_truefalse_qtype extends quiz_default_questiontype {
     }
 
     function get_actual_response($question, $state) {
-        $answers = $question->options->answers;
-        if (!empty($state->responses)) {
-                $responses[] = ($answers['true']->id == $state->responses['']) ? get_string("true", "quiz") : get_string("false", "quiz");
+        if (isset($question->options->answers[$state->responses['']])) {
+            $responses[] = $question->options->answers[$state->responses['']]->answer;
         } else {
             $responses[] = '';
         }
