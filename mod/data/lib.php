@@ -799,9 +799,9 @@ function data_print_template($records, $data, $search, $template, $sort, $page=0
         ///actual replacement of the tags
         $newtext = preg_replace($patterns, $replacement, $data->{$template});
         if ($return) {
-            return $newtext;
+            return format_text($newtext);
         } else {
-            echo $newtext;    //prints the template with tags replaced
+            echo format_text($newtext);    //prints the template with tags replaced
         }
 
         /**********************************
@@ -1095,7 +1095,7 @@ function data_print_comment($data, $commentid) {
     print_user_picture($comment->userid, $course->id, false);
     echo '</td>';
 
-    echo '<td width="100%" align="left"><div class="author">';
+    echo '<td width="100%"  class="topic starter" align="left"><div class="author">';
     $fullname = fullname($user, isteacher($comment->userid));
     $by = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.
                 $user->id.'&amp;course='.$course->id.'">'.$fullname.'</a>';
