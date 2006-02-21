@@ -1,156 +1,64 @@
-
-
-.mod-quiz .quiz-report-title {
-  text-align: center;
-  font-weight : bold;
+#mod-quiz-attempt #page {
+	text-align: center;
 }
-.mod-quiz .grade {
-  font-size: small;
-  margin-top: 10pt
+#mod-quiz-attempt .question {
+	width: 90%;
+	text-align: left;
+	margin: 10px auto 15px auto;
+	border: 1px solid #DDD;
+	clear: both;
 }
-.mod-quiz .gradingdetails {
-  font-size: small;
+#mod-quiz-attempt .question .info {
+	float: left;
+	margin: 5px;
+	width: 8%;
 }
-
-
-body#mod-quiz-report table#itemanalysis {
-  margin: 20px auto;
+#mod-quiz-attempt .question .no {
+	font-size: 1.2em;
+	font-weight: bold;
 }
-body#mod-quiz-report table#itemanalysis .header,
-body#mod-quiz-report table#itemanalysis .cell
-{
-  padding: 4px;
+#mod-quiz-attempt .question .grade {
+	margin-top: 0.5em;
+	font-size: 0.8em;
 }
-body#mod-quiz-report table#itemanalysis .header .commands {
-  display: inline;
+#mod-quiz-attempt .question .content {
+	float: right;
+	margin: 5px;
+	width: 88%;
 }
-body#mod-quiz-report table#itemanalysis td {
-  border-width: 1px;
-  border-style: solid;
+#mod-quiz-attempt .question .qtext {
+	margin-bottom: 1.5em;
 }
-body#mod-quiz-report table#itemanalysis .header {
-  text-align: left;
+#mod-quiz-attempt .question .answer {
+	margin: 0.7em 0 0.3em 0;
 }
-body#mod-quiz-report table#itemanalysis .numcol {
-  text-align: center;
-  vertical-align : middle !important;
+#mod-quiz-attempt .question .answer .prompt {
+	float: left;
+	width: 15%;
+	height: 2em;
 }
-
-body#mod-quiz-report table#itemanalysis .uncorrect {
-  color: red;
+#mod-quiz-attempt .question .answer .shortanswer {
+	float: left;
+	width: 80%;
+	padding-bottom: 0.5em;
 }
-
-body#mod-quiz-report table#itemanalysis .correct {
-  color: blue;
-  font-weight : bold;
+#mod-quiz-attempt .question .answer .multichoice {
+	float: left;
+	width: 80%;
+	padding-bottom: 0.5em;
 }
-
-body#mod-quiz-report table#itemanalysis .partialcorrect {
-  color: green !important;
+#mod-quiz-attempt .question .answer .multichoice .c0 {
+  width: 5%;
+	vertical-align: top;
+	padding: 0;
 }
-
-body#mod-quiz-report table#itemanalysis .qname {
-  color: green !important;
+#mod-quiz-attempt .question .answer input {
+	margin: 0.5em 0 0 0;
 }
-
-/* manual grading */
-body#mod-quiz-grading table#grading
-{
-  width: 80%;
-  margin: auto;
+#mod-quiz-attempt .question .answer .shortanswer input {
+	margin: 0;
 }
-body#mod-quiz-grading table#grading
-{
-  margin: 20px auto;
-}
-body#mod-quiz-grading table#grading .header,
-body#mod-quiz-grading table#grading .cell
-{
-  padding: 4px;
-}
-body#mod-quiz-grading table#grading .header .commands 
-{
-  display: inline;
-}
-body#mod-quiz-grading table#grading .picture 
-{
-  width: 40px;
-}
-body#mod-quiz-grading table#grading td 
-{
-  border-left-width: 1px;
-  border-right-width: 1px;
-  border-left-style: solid;
-  border-right-style: solid;
-  vertical-align: bottom;
-}
-
-
-body#mod-quiz-grading table#grading .header {
-  text-align: left;
-}
-body#mod-quiz-grading table#grading .picture {
-  text-align: center !important;
-}
-body#mod-quiz-grading .controls {
-  text-align: center;
-}
-
-body#mod-quiz-grading table#grading td {
-  border-color: #dddddd;
-}
-body#mod-quiz-grading table#grading .r1 {
-  background-color: #eeeeee;
-}
-/* grading */
-
-
-
-body#mod-quiz-report table#responses {
-  margin: 20px auto;
-}
-body#mod-quiz-report table#responses .header,
-body#mod-quiz-report table#responses .cell
-{
-  padding: 4px;
-}
-body#mod-quiz-report table#responses .header .commands {
-  display: inline;
-}
-body#mod-quiz-report table#responses td {
-  border-width: 1px;
-  border-style: solid;
-}
-body#mod-quiz-report table#responses .header {
-  text-align: left;
-}
-body#mod-quiz-report table#responses .numcol {
-  text-align: center;
-  vertical-align : middle !important;
-}
-
-body#mod-quiz-report table#responses .uncorrect {
-  color: red;
-}
-
-body#mod-quiz-report table#responses .correct {
-  color: green;
-}
-
-body#mod-quiz-report table#responses .partialcorrect {
-  color: orange;
-}
-
-#mod-quiz-attempt #timer .generalbox {
-  width:150px
-}
-
-#mod-quiz-attempt #timer {
-  position:absolute;
-  /*top:100px; is set by js*/
-  left:10px
-}
-
-.mod-quiz #categoryquestions td {
-  white-space:nowrap;
+#mod-quiz-attempt .question .grading {
+	float: right;
+	width: 88%;
 }

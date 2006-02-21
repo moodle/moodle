@@ -1459,7 +1459,7 @@ body#mod-forum-search .introcontent {
  *** Modules: Quiz
  ***/
 
-.feedbacktext {
+/* .feedbacktext {
   display:block;
   text-align:right;
 }
@@ -1505,7 +1505,7 @@ body#mod-quiz-report .controls {
 .navbutton form {
   display: inline;
   }
-
+ */
 /***
  *** Modules: Resource
  ***/

@@ -726,13 +726,13 @@ table.message_search_results td {
  *** Modules: Quiz
  ***/
 
-body#mod-quiz-report table#attempts td {
+/* body#mod-quiz-report table#attempts td {
   border-color: #dddddd;
 }
 body#mod-quiz-report table#attempts .r1 {
   background-color: #eeeeee;
 }
-
+ */
 
 /***
  *** Modules: Resource
