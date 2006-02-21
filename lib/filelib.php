@@ -263,7 +263,7 @@ function send_file($path, $filename, $lifetime=86400 , $filter=false, $pathisstr
             @header('Content-Type: text/html');
             while (@ob_end_flush()); //flush the buffers - save memory and disable sid rewrite
             echo $output;
-        } else if ($mimetype == 'text/plain') {
+        } else if (($mimetype == 'text/plain') and ($CFG->filteruploadedfiles==1)) {
             $options->newlines = false;
             $options->noclean = true;
             $text = htmlentities($pathisstring ? $path : implode('', file($path)));
