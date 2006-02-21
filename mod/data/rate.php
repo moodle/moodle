@@ -18,12 +18,12 @@
 
     $returntoview = false;
 
-    if ($data = data_submitted()) {
+    if (($data = data_submitted($CFG->wwwroot.'/mod/data/view.php')) and confirm_sesskey()) {
 
         $lastrecordid = 0;
 
         foreach ((array)$data as $recordid => $rating) {
-            if ($recordid == "id") {
+            if (($recordid == 'id') || ($recordid=='sesskey')) {
                 continue;
             }
 
@@ -41,7 +41,7 @@
                 $newrating->userid = $USER->id;
                 $newrating->recordid = $recordid;
                 $newrating->rating = $rating;
-                
+                print_object($newrating);
                 if (! insert_record("data_ratings", $newrating)) {
                     error("Could not insert a new rating ($recordid = $rating)");
                 }

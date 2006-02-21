@@ -77,7 +77,7 @@
     print_heading(format_string($data->name));
     
      ///processing submitted data, i.e updating form
-    if (($mytemplate = data_submitted()) && confirm_sesskey()){
+    if (($mytemplate = data_submitted($CFG->wwwroot.'/mod/data/templates.php')) && confirm_sesskey()){
 
         //generate default template
         if (!empty($mytemplate->defaultform)){

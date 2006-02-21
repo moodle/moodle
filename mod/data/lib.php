@@ -944,6 +944,7 @@ function data_print_ratings($data, $record) {
 
                 if ($ratingsmenuused) {
                     echo '<input type="hidden" name="id" value="'.$course->id.'" />';
+                    echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
                     echo "<input type=\"submit\" value=\"".get_string("sendinratings", "data")."\" />";
                 }
                 echo '</div>';

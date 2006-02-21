@@ -156,7 +156,7 @@
             break;
 
         case 'update':    ///update a field
-            if (confirm_sesskey() and $field = data_submitted()){
+            if (confirm_sesskey() and $field = data_submitted($CFG->wwwroot.'/mod/data/fields.php')){
                 $field->id = $fid;
 
                 $field->name = optional_param('name','',PARAM_NOTAGS);
