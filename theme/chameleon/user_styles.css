@@ -9,56 +9,32 @@ td.courseboxcontent {
   font-weight: normal;
   font-style: italic;
   text-decoration: underline;
-  background-color: #99ff99;
+  background-color: #FFEECC;
   background-image: none;
-  border-top-width: 1px;
-  border-right-width: 1px;
-  border-bottom-width: 1px;
-  border-left-width: 1px;
-  border-top-style: groove;
-  border-right-style: groove;
-  border-bottom-style: groove;
-  border-left-style: groove;
-  border-top-color: red;
-  border-right-color: red;
-  border-bottom-color: red;
-  border-left-color: red;
   border-width: 1px;
-  border-style: groove;
-  border-color: red;
+  border-style: none;
+  border-color: #FFCC00;
 }
 body {
   font-family: georgia, "trebuchet ms", times, serif;
   font-size: 100%;
-  background-color: #fefefe;
 }
 div#header {
   font-family: verdana, arial, helvetica, sans-serif;
-  height: 65px;
+  height: 55px;
 }
 div.headermenu {
   font-size: 0.75em;
   position: absolute;
+  background-color: transparent;
   top: 10px;
-  right: 10px;
+  right: 1em;
 }
 div#content {
   font-size: 0.85em;
 }
 div.sideblock div.header {
   background-color: #FFCC00;
-  border-top-width: 1px;
-  border-right-width: 1px;
-  border-bottom-width: 1px;
-  border-left-width: 1px;
-  border-top-style: dashed;
-  border-right-style: dashed;
-  border-bottom-style: dashed;
-  border-left-style: dashed;
-  border-top-color: #CCCCCC;
-  border-right-color: #CCCCCC;
-  border-bottom-color: #CCCCCC;
-  border-left-color: #CCCCCC;
   border-width: 1px;
   border-style: dashed;
   border-color: #CCCCCC;
@@ -67,32 +43,18 @@ td#left-column div.sideblock div.content {
   border-right-width: 1px;
   border-right-style: dashed;
   border-right-color: #CCCCCC;
-  border-right-width: 1px;
-  border-right-style: dashed;
-  border-right-color: #CCCCCC;
 }
 td#right-column div.sideblock div.content {
   border-left-width: 1px;
   border-left-style: dashed;
   border-left-color: #CCCCCC;
-  border-left-width: 1px;
-  border-left-style: dashed;
-  border-left-color: #CCCCCC;
 }
 table.generaltable th.header {
-  border-top-style: none;
-  border-right-style: none;
-  border-bottom-style: none;
-  border-left-style: none;
   border-style: none;
 }
 div.headingblock {
   color: #330000;
   font-family: verdana, arial, helvetica, sans-serif;
-  border-top-style: none;
-  border-right-style: none;
-  border-bottom-style: none;
-  border-left-style: none;
   border-style: none;
 }
 body#site-index {
@@ -102,25 +64,14 @@ body#site-index {
   font-weight: normal;
   font-style: normal;
 }
-div.navbar {
-  color: #0066cc;
-  font-family: verdana, arial, helvetica, sans-serif;
-  background-color: #ffcc00;
-  background-image: url(none);
-  border-top-width: 3px;
-  border-bottom-width: 3px;
-  border-top-style: none;
-  border-right-style: none;
-  border-bottom-style: none;
-  border-left-style: none;
-  border-top-color: #33ff99;
-  border-right-color: #006666;
-  border-bottom-color: #33ffcc;
-  border-left-color: #006666;
-  border-top-width: 3px;
-  border-bottom-width: 3px;
+table.navbar {
+  color: #FFCC00;
+  background-image: none;
+  background-color: #FFCC00;
   border-style: none;
-  border-color: #33ff99 #006666 #33ffcc;
+}
+body#site-index table.navbar {
+  height: 25px;
 }
 a {
   color: #660066;
@@ -144,6 +95,11 @@ div.logininfo {
   font-family: georgia, "trebuchet ms", times, serif;
   font-weight: bold;
 }
+table.loginbox .content {
+  border-width: 1px;
+  border-style: dashed;
+  border-color: #cccccc;
+}
 td.today {
   color: #cc0099;
   font-weight: bold;
@@ -157,28 +113,13 @@ table.logtable th.header {
   color: #EEEEEE;
 }
 table.sitetopic td.sitetopiccontent h4 {
-  background-color: #99ccff;
+  background-color: #FFFF00;
   padding: 0.3em 0.5em;
 }
 td#middle-column p {
   color: #666666;
 }
-table.forumpost tr.header {
-  background-image: url(pix/colorstrip.gif);
-}
 div.block_course_summary {
-  border-top-width: 1px;
-  border-right-width: 1px;
-  border-bottom-width: 1px;
-  border-left-width: 1px;
-  border-top-style: dashed;
-  border-right-style: dashed;
-  border-bottom-style: dashed;
-  border-left-style: dashed;
-  border-top-color: #FCFCFC;
-  border-right-color: #FCFCFC;
-  border-bottom-color: #FCFCFC;
-  border-left-color: #FCFCFC;
   border-width: 1px;
   border-style: dashed;
   border-color: #FCFCFC;
@@ -187,34 +128,14 @@ div#header-home {
   height: 57px;
 }
 body#mod-forum-discuss table.forumpost td.content {
-  border-top-style: none;
-  border-right-style: none;
-  border-bottom-style: none;
-  border-left-style: none;
   border-style: none;
 }
 body.mod-forum table.forumpost td.content {
-  border-top-width: medium;
-  border-right-width: medium;
-  border-bottom-width: medium;
-  border-left-width: medium;
-  border-top-style: none;
-  border-right-style: none;
-  border-bottom-style: none;
-  border-left-style: none;
-  border-top-color: inherit;
-  border-right-color: inherit;
-  border-bottom-color: inherit;
-  border-left-color: inherit;
   border-width: medium;
   border-style: none;
   border-color: inherit;
 }
 body#mod-forum-discuss table.unread td.content {
-  border-top-color: #009900;
-  border-right-color: #009900;
-  border-bottom-color: #009900;
-  border-left-color: #009900;
   border-color: #009900;
 }
 div.block_calendar_month {
@@ -246,18 +167,6 @@ div.sideblock table.minicalendar td.day {
   font-size: 0.8em;
 }
 table#layout-table div.sideblock div.header {
-  border-top-width: 1px;
-  border-right-width: 1px;
-  border-bottom-width: 1px;
-  border-left-width: 1px;
-  border-top-style: dashed;
-  border-right-style: dashed;
-  border-bottom-style: dashed;
-  border-left-style: dashed;
-  border-top-color: #cccccc;
-  border-right-color: #cccccc;
-  border-bottom-color: #cccccc;
-  border-left-color: #cccccc;
   border-width: 1px;
   border-style: dashed;
   border-color: #cccccc;
@@ -278,29 +187,16 @@ div.sideblock div.footer {
 td#middle-column {
   color: #666666;
 }
+table.forumpost tr.header {
+  background-color: #FFCC00;
+}
 body.mod-forum table.forumheaderlist th {
-  border-top-style: none;
-  border-right-style: none;
-  border-bottom-style: none;
-  border-left-style: none;
   border-style: none;
 }
 body.mod-forum table.forumheaderlist {
-  border-top-style: none;
-  border-right-style: none;
-  border-bottom-style: none;
-  border-left-style: none;
   border-style: none;
 }
 body.mod-forum table.forumheaderlist td {
-  border-left-width: 1px;
-  border-top-width: 1px;
-  border-top-style: dashed;
-  border-right-style: none;
-  border-bottom-style: none;
-  border-left-style: dashed;
-  border-top-color: #cccccc;
-  border-left-color: #cccccc;
   border-left-width: 1px;
   border-top-width: 1px;
   border-style: dashed none none dashed;
@@ -308,25 +204,9 @@ body.mod-forum table.forumheaderlist td {
   border-left-color: #cccccc;
 }
 body.mod-forum table.forumpost td {
-  border-top-style: none;
-  border-right-style: none;
-  border-bottom-style: none;
-  border-left-style: none;
   border-style: none;
 }
 body.mod-forum table.forumpost {
-  border-top-width: 1px;
-  border-right-width: 1px;
-  border-bottom-width: 1px;
-  border-left-width: 1px;
-  border-top-style: dashed;
-  border-right-style: dashed;
-  border-bottom-style: dashed;
-  border-left-style: dashed;
-  border-top-color: #cccccc;
-  border-right-color: #cccccc;
-  border-bottom-color: #cccccc;
-  border-left-color: #cccccc;
   border-width: 1px;
   border-style: dashed;
   border-color: #cccccc;
@@ -340,42 +220,16 @@ div#content select {
 select {
   border-top-width: 1px;
   border-left-width: 1px;
-  border-top-style: solid;
-  border-right-style: none;
-  border-bottom-style: none;
-  border-left-style: solid;
-  border-top-color: #cccccc;
-  border-left-color: #cccccc;
-  border-top-width: 1px;
-  border-left-width: 1px;
   border-style: solid none none solid;
   border-top-color: #cccccc;
   border-left-color: #cccccc;
 }
 table.generalbox {
-  border-top-width: 1px;
-  border-right-width: 1px;
-  border-bottom-width: 1px;
-  border-left-width: 1px;
-  border-top-style: dashed;
-  border-right-style: dashed;
-  border-bottom-style: dashed;
-  border-left-style: dashed;
-  border-top-color: #cccccc;
-  border-right-color: #cccccc;
-  border-bottom-color: #cccccc;
-  border-left-color: #cccccc;
   border-width: 1px;
   border-style: dashed;
   border-color: #cccccc;
 }
 body#course-view tr.section td.content table.section td.activity {
-  border-bottom-width: 1px;
-  border-top-style: none;
-  border-right-style: none;
-  border-bottom-style: dashed;
-  border-left-style: none;
-  border-bottom-color: #ff6600;
   border-bottom-width: 1px;
   border-style: none none dashed;
   border-bottom-color: #ff6600;
@@ -390,30 +244,15 @@ table.tabs td.active {
   background-color: #eeeeee;
   border-right-width: 1px;
   border-left-width: 1px;
+  border-bottom-width: 1px;
   border-right-style: solid;
   border-left-style: solid;
+  border-bottom-style: solid;
   border-right-color: #cccccc;
   border-left-color: #cccccc;
-  border-right-width: 1px;
-  border-left-width: 1px;
-  border-right-style: solid;
-  border-left-style: solid;
-  border-right-color: #cccccc;
-  border-left-color: #cccccc;
+  border-bottom-color: #FFCC00;
 }
 table.userinfobox {
-  border-top-width: 1px;
-  border-right-width: 1px;
-  border-bottom-width: 1px;
-  border-left-width: 1px;
-  border-top-style: dashed;
-  border-right-style: dashed;
-  border-bottom-style: dashed;
-  border-left-style: dashed;
-  border-top-color: #cccccc;
-  border-right-color: #cccccc;
-  border-bottom-color: #cccccc;
-  border-left-color: #cccccc;
   border-width: 1px;
   border-style: dashed;
   border-color: #cccccc;
@@ -421,9 +260,6 @@ table.userinfobox {
 div#footer {
   font-size: 0.8em;
   padding-top: 0.6em;
-  border-top-width: 1px;
-  border-top-style: dashed;
-  border-top-color: #FF6600;
   border-top-width: 1px;
   border-top-style: dashed;
   border-top-color: #FF6600;
@@ -446,38 +282,17 @@ table.forumheaderlist td.lastpost {
 }
 body#course-user div.section {
   background-color: #ffffff;
-  border-top-width: 1px;
-  border-right-width: 1px;
-  border-bottom-width: 1px;
-  border-left-width: 1px;
-  border-top-style: dashed;
-  border-right-style: dashed;
-  border-bottom-style: dashed;
-  border-left-style: dashed;
-  border-top-color: #cccccc;
-  border-right-color: #cccccc;
-  border-bottom-color: #cccccc;
-  border-left-color: #cccccc;
   border-width: 1px;
   border-style: dashed;
   border-color: #cccccc;
 }
 td#left-column div.sideblock table.list td {
-  border-top-style: none;
-  border-right-style: none;
-  border-bottom-style: none;
-  border-left-style: none;
   border-style: none;
 }
 table.minicalendar {
-  border-top-style: none;
-  border-right-style: none;
-  border-bottom-style: none;
-  border-left-style: none;
   border-style: none;
 }
 td#middle-column div.headingblock {
-  border-left-style: none;
   border-left-style: none;
 }
 div.block_participants div.header {
@@ -513,11 +328,23 @@ div.structurehead {
 acronym {
   border-bottom-style: dotted;
   border-bottom-color: #cc0000;
-  border-bottom-style: dotted;
-  border-bottom-color: #cc0000;
 }
-body#course-view div.navbar {
-  background-image: url(pix/photo/J0316835.jpg);
-  background-repeat: no-repeat;
-  background-position: center center;
+div.block_calendar_upcoming div.post {
+  border-bottom-width: 1px;
+  border-bottom-style: dashed;
+  border-bottom-color: #ff9900;
+}
+input[type="submit"] {
+  border-width: 1px 2px 2px 1px;
+  border-style: solid;
+  border-color: #ccc #999 #999 #ccc;
+}
+table.tabs td.side {
+  border-bottom-style: solid;
+  border-bottom-color: #FFCC00;
+}
+table.tabs td.activetwo {
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  border-bottom-color: #FFCC00;
 }

@@ -15,7 +15,7 @@ class ChameleonCSS {
     
     function update($file, $content = '') {
         if (!$fp = fopen($this->base . $this->$file, 'w')) {
-            $this->error = 'Couldn\'t open file';
+            $this->error = 'couldn\'t open file';
             return false;
         }
         fwrite($fp, stripslashes($content));
@@ -24,41 +24,41 @@ class ChameleonCSS {
     }
 
     function read() {
-        $permCSS = trim(file_get_contents($this->base . $this->perm));
-        $tempCSS = trim(file_get_contents($this->base . $this->temp));
+        $permcss = trim(file_get_contents($this->base . $this->perm));
+        $tempcss = trim(file_get_contents($this->base . $this->temp));
            
-        if ($permCSS === false || $tempCSS === false) {
-            $this->error = 'Couldn\'t read file';
+        if ($permcss === false || $tempcss === false) {
+            $this->error = 'couldn\'t read file';
             return false;
         }
         
-        if ($tempCSS == '') {
-            return $permCSS;
+        if ($tempcss == '') {
+            return $permcss;
         }
-        return $this->_merge($permCSS, $tempCSS);
+        return $this->_merge($permcss, $tempcss);
     }
     
     
     
     
-    function _merge($permCSS, $tempCSS) {
-        $cssSrcs = array($this->_toObj($permCSS), $this->_toObj($tempCSS));
+    function _merge($permcss, $tempcss) {
+        $csssrcs = array($this->_toobj($permcss), $this->_toobj($tempcss));
         
         $merged = array();
         
         for ($i = 0; $i < 2; ++$i) {
-            foreach ($cssSrcs[$i] as $sel => $rule) {
-                $newSel = false;
+            foreach ($csssrcs[$i] as $sel => $rule) {
+                $newsel = false;
                 if (!isset($merged[$sel])) {
                     $merged[$sel] = array();
-                    $newSel = true;
+                    $newsel = true;
                 }
                 foreach ($rule as $prop => $value) {
                     $merged[$sel][$prop] = $value;
                 }
-                if ($i > 0 && !$newSel) {
+                if ($i > 0 && !$newsel) {
                     foreach ($merged[$sel] as $prop => $value) {
-                        if (!isset($cssSrcs[$i][$sel][$prop])) {
+                        if (!isset($csssrcs[$i][$sel][$prop])) {
                             unset($merged[$sel][$prop]);
                         }
                     }
@@ -66,60 +66,60 @@ class ChameleonCSS {
             }
             if ($i > 0) {
                 foreach ($merged as $sel => $value) {
-                    if (!isset($cssSrcs[$i][$sel])) {
+                    if (!isset($csssrcs[$i][$sel])) {
                         unset($merged[$sel]);
                     }
                 }
             }
         }
         
-        return $this->_toStr($merged);
+        return $this->_tostr($merged);
     }
     
    
     
     
-    function _toObj($cssStr) {
-        $cssObj = array();
-        $end = strpos($cssStr, '}');
+    function _toobj($cssstr) {
+        $cssobj = array();
+        $end = strpos($cssstr, '}');
         while ($end !== false) {
-            $curRule = substr($cssStr, 0, $end);
-            $parts = explode('{', $curRule);
+            $currule = substr($cssstr, 0, $end);
+            $parts = explode('{', $currule);
             $selector = trim($parts[0]);
             $rules = trim($parts[1]);
-            $rulesArr = explode(';', $rules);
+            $rulesarr = explode(';', $rules);
 
-            $num = count($rulesArr);
+            $num = count($rulesarr);
             for ($i = 0; $i < $num; ++$i) {
-                if (strpos($rulesArr[$i], ':') === false) {
+                if (strpos($rulesarr[$i], ':') === false) {
                     break;
                 }
-                $rule = explode(':', $rulesArr[$i]);
+                $rule = explode(':', $rulesarr[$i]);
                 $prop = trim($rule[0]);
                 $value = trim($rule[1]);
 
-                if (!isset($cssObj[$selector])) {
-                    $cssObj[$selector] = array();
+                if (!isset($cssobj[$selector])) {
+                    $cssobj[$selector] = array();
                 }
-                $cssObj[$selector][$prop] = $value;
+                $cssobj[$selector][$prop] = $value;
             }
-            $cssStr = substr($cssStr, $end + 1);
-            $end = strpos($cssStr, '}');
+            $cssstr = substr($cssstr, $end + 1);
+            $end = strpos($cssstr, '}');
         }
-        return $cssObj;
+        return $cssobj;
     }
     
     
-    function _toStr($cssObj) {
-        $cssStr = '';
-        foreach ($cssObj as $sel => $rule) {
-            $cssStr .= "$sel {\n";
+    function _tostr($cssobj) {
+        $cssstr = '';
+        foreach ($cssobj as $sel => $rule) {
+            $cssstr .= "$sel {\n";
             foreach ($rule as $prop => $value) {
-                $cssStr .= "  $prop: $value;\n";
+                $cssstr .= "  $prop: $value;\n";
             }
-            $cssStr .= "}\n";
+            $cssstr .= "}\n";
         }
-        return $cssStr;
+        return $cssstr;
     }
 }
 

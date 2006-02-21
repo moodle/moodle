@@ -4,18 +4,18 @@ require_once('../../../config.php');
 require_once('../config.php');
 
 
-if (!isset($THEME->chameleonenabled) || !$THEME->chameleonenabled) {
+if (empty($THEME->chameleonenabled)) {
     die('CHAMELEON_ERROR Editing this theme has been disabled');
 }
 
 
 $chameleon_id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
-if ($chameleon_id != 0) {
+if ($chameleon_id != 0 && !empty($CFG->allowcoursethemes) && !empty($THEME->chameleonteachereditenabled)) {
     if (!isteacher($chameleon_id)) {
-        die('CHAMELEON_ERROR You are not logged in');
+        die('CHAMELEON_ERROR Either you are not logged in or you are not allowed to edit this theme');
     }
 } else if (!isadmin()) {
-    die('CHAMELEON_ERROR You are not logged in');
+    die('CHAMELEON_ERROR Either you are not logged in or you are not allowed to edit this theme');
 }
 
 
@@ -26,7 +26,7 @@ require_once('ChameleonFileBrowser.class.php');
 
 if (isset($_GET['path'])) {
     $fm = new ChameleonFileBrowser;
-    die($fm->readFiles());
+    die($fm->readfiles());
 }
 
 $chameleon = new ChameleonCSS('../', 'user_styles.css', 'temp_user_styles.css');

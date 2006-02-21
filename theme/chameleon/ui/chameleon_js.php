@@ -50,7 +50,8 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
         REPEAT_LIST: ['repeat', 'repeat-x', 'repeat-y', 'no-repeat'],
         POSITION_LIST: ['left top', 'left center', 'left bottom', 'center top', 'center center', 'center bottom', 'right top', 'right center', 'right bottom'],
         BORDER_LIST: ['solid', 'dotted', 'dashed', 'none'],
-        UNITS: ['px', 'pt', 'em', '%']
+        UNITS: ['px', 'pt', 'em', '%'],
+        PROPS_LIST: ['color', 'background-color', 'background-image', 'background-attachment', 'background-position', 'font-family', 'font-size', 'font-weight', 'font-style', 'line-height', 'margin', 'padding', 'border-top-width', 'border-right-width', 'border-bottom-width', 'border-left-width', 'border-top-style', 'border-right-style', 'border-bottom-style', 'border-left-style', 'border-top-color', 'border-right-color', 'border-bottom-color', 'border-left-color']
     };
     
 
@@ -69,6 +70,10 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
             if (!obj || !obj.parentNode) return false;
 
             var kids = obj.getElementsByTagName('*');
+            if (!kids.length && typeof obj.all != 'undefined') {
+                kids = obj.all;
+            }
+            
             var n = kids.length;
             while (n--) {
                 if (kids[n].id && Util.__registry[kids[n].id]) {
@@ -159,6 +164,7 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
         },
 
         cleanUp: function() {
+            struct = null;
             UI.closeAllBoxes();
         }
     };
@@ -206,6 +212,11 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
         __localSaveRequired: false,
         __remoteSaveRequired: false,
         
+        
+        requireRemoteSave: function() {
+            CSS.__remoteSaveRequired = true;            
+        },
+        
 
         loadRemote: function(doSetup) {
             if (!Sarissa.IS_ENABLED_XMLHTTP) {
@@ -218,6 +229,7 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
                         alert('There was an error loading from the server:\n' + xmlhttp.responseText.replace(/CHAMELEON_ERROR /, '') + '.');
                         return;
                     }
+                    // testing where IE 5.5 dies... (it's in preview!)
                     CSS.__remoteCSS = CSS.toObject(xmlhttp.responseText);
                     CSS.__localCSS = CSS.__clone(CSS.__remoteCSS);
                     CSS.preview();
@@ -440,10 +452,17 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
                 h.appendChild(s);
             }
             
+            
             if (navigator.userAgent.toLowerCase().indexOf('msie') != -1  && !window.opera && document.styleSheets && document.styleSheets.length > 0) {
                 var lastStyle = document.styleSheets[document.styleSheets.length - 1];
                 
+                var ieCrashProtector = /[^a-z0-9 #_:\.\-\*]/i; // some characters appearing in a selector can cause IE to crash in spectacular style - create a "whitelist" of allowed characters
+                
                 if (sel) {
+                    if (sel.match(ieCrashProtector)) {
+                        return;
+                    }
+                    
                     var matchedSelectors = [];
                     if (typeof sel == 'string') {
                         sel = [sel];
@@ -470,8 +489,13 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
                         lastStyle.addRule(matchedSelectors[sl], CSS.__propsToString(CSS.__localCSS[matchedSelectors[sl]], true));
                     }
                 } else {
+                   
                     for (var sel in CSS.__localCSS) {
+                        if (sel.match(ieCrashProtector)) {
+                            continue;
+                        }
                         var dec = CSS.__propsToString(CSS.__localCSS[sel], true);
+
                         lastStyle.addRule(sel, dec);
                     }
                 }
@@ -550,8 +574,11 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
             var dec = '{\n';
             for (var prop in css) {
                 
+                var includeProp = true;
+                
                 if (prop.indexOf('border') != -1 && prop.indexOf('spacing') == -1 && prop.indexOf('collapse') == -1) {
                     CSS.__Shorthand.recordBorder(prop, css[prop]);
+                    includeProp = false;
                     hasBorder = true;
                 }
                 
@@ -559,10 +586,12 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
                     col = css[prop];
                 }
 
-                if (fixpath && (CSS.__requiresFunction(prop) == 'url') && css[prop] != 'none') {
-                    dec += '  ' + prop + ': ' + CSS.fixPath(css[prop]) + ';\n';
-                } else {
-                    dec += '  ' + prop + ': ' + css[prop] + ';\n';
+                if (includeProp) {
+                    if (fixpath && (CSS.__requiresFunction(prop) == 'url') && css[prop] != 'none') {
+                        dec += '  ' + prop + ': ' + CSS.fixPath(css[prop]) + ';\n';
+                    } else {
+                        dec += '  ' + prop + ': ' + css[prop] + ';\n';
+                    }
                 }
             }
             
@@ -651,50 +680,56 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
         
         
         checkSpec: function(e, selector) {
-            var canMatchAny = function(str) {
-                var classPos = str.indexOf('.');
-                var idPos = str.indexOf('#');
-                if (classPos == 0 || idPos == 0) {
-                    return true;
-                }
-                return false;
-            };
-            
             if (!selector) var selector = CSS.Selector.get();
             if (selector == '') {
                 UI.statusMsg('First you have to choose which item to style!', 'chameleon-notice');
                 return;
             }
-            var similarSelectors = [];
             
-            var thisMatches = selector.split(' ').pop();
-            var matchAnyTag = canMatchAny(thisMatches);
-            if (matchAnyTag) {
-                var curRegExp = new RegExp('([\. ]?)' + thisMatches.split('.').join('\\.') + '([\.:]|$)');
-            }
+            var splitSelector = function(selector) {
+                var selectorEnd = selector.split(' ').pop();
+                selectorEnd = selectorEnd.replace(/([\.:#])/g, '|$1');
+                return selectorEnd.split('|');
+            };
             
-            
+            var similar = [];
+        
+            var selectorBits = splitSelector(selector);
+        
             for (var sel in CSS.__localCSS) {
-                var selMatches = sel.split(' ').pop();
-                if (thisMatches == selMatches) {
-                    similarSelectors.push(sel);
-                } else if (matchAnyTag && selMatches.match(curRegExp)) {
-                    similarSelectors.push(sel);
-                } else if (canMatchAny(selMatches)) {
-                    var selRegExp = new RegExp('([ ]?)' + selMatches.split('.').join('\\.') + '([\.:]|$)');
-                    if (thisMatches.match(selRegExp)) {
-                        similarSelectors.push(sel);
+                var selBits = splitSelector(sel);
+        
+                var n = selectorBits.length;
+        
+                while (n--) {
+                    var match = selectorBits[n];
+                    var m = selBits.length;
+                    while (m--) {
+                        if (selBits[m] == match) {
+                            var l = similar.length;
+                            var add = true;
+                            while (l--) {
+                                if (similar[l] == sel) {
+                                    add = false;
+                                    break;
+                                }
+                            }
+                            if (add) {
+                                similar.push(sel);
+                            }
+                            break;
+                        }
                     }
                 }
             }
-
             
-            if (similarSelectors.length) {
-                UI.Selector.__displayOverview(null, similarSelectors, selector);
+            if (similar.length) {
+                UI.Selector.__displayOverview(null, similar, selector);
             } else {
                 UI.statusMsg('You file currently contains no selectors that appear similar to "' + selector + '"', 'chameleon-notice');
-            }         
+            }  
         },
+        
         
         unloadPrompt: function() {
             if (CSS.__localSaveRequired) {
@@ -702,6 +737,9 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
                     CSS.updateTemp();
                 }
             }
+            var cookieVal = (CSS.__remoteSaveRequired) ? 1 : 0;
+            var crumb = new cookie('chameleon_server_save_required', cookieVal, 30, '/', null, null);
+            crumb.set();
         }
 
     };
@@ -1441,7 +1479,9 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
     
     UI.Selector = {
         controlsId: 'chameleon-selector-controls',
-        sections: ['selector', 'overview', 'free-edit'],
+        viewedProp: null,
+        displayPropWatch: false,
+        sections: ['choose', 'overview', 'free-edit'],
         
         
         editWindow: function(e) {
@@ -1476,7 +1516,7 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
             var tabsBody = Util.createElement('tbody');
             var tabs = Util.createElement('tr');
  
-            tabs.appendChild(UI.Selector.__createTab('Selector', UI.Selector.__editSelector, true));
+            tabs.appendChild(UI.Selector.__createTab('Choose', UI.Selector.__editSelector, true));
             tabs.appendChild(UI.Selector.__createTab('Overview', UI.Selector.__displayOverview));
             tabs.appendChild(UI.Selector.__createTab('Free Edit', UI.Selector.__editCode));
 
@@ -1500,23 +1540,74 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
             }
         },
         
-  
-        
+       
+        __listProps: function(e) {
+             var target = e.target || e.srcElement;
+             
+             Util.removeElement(document.getElementById('chameleon-selector-element-list'));
+             UI.Selector.viewedProp = target.options[target.selectedIndex].value;
+             if (!document.getElementById('chameleon-selector-list')) {
+                 target.parentNode.parentNode.appendChild(UI.Selector.__elementList(target.options[target.selectedIndex].value));
+             } else {
+                 target.parentNode.parentNode.insertBefore(UI.Selector.__elementList(target.options[target.selectedIndex].value), document.getElementById('chameleon-selector-list'));
+             }
+        },
         
         __editSelector: function() {
-            var parent = UI.setupPane(UI.Selector.sections, UI.Selector.controlsId, 'chameleon-selector', 'selector');
+            var parent = UI.setupPane(UI.Selector.sections, UI.Selector.controlsId, 'chameleon-selector', 'choose');
             UI.setupButtons('chameleon-selector-buttons', 'edit', 'check');
 
             var container = Util.createElement('div');
 
             var instructions = Util.createElement('p');
-            instructions.appendChild(document.createTextNode('Choose the element you would like to style.'));
+            instructions.appendChild(document.createTextNode('Please choose the element you wish to style.'));
             container.appendChild(instructions);
+            
+            var options = Util.createElement('p');
+            
+            if (UI.Selector.__displayPropWatch) {
+                            
+                var selectProp = Util.createElement('select', 'chameleon-selector-prop-select');
+                var optionProp = Util.createElement('option');
+                optionProp.appendChild(document.createTextNode('Select a CSS property to view'));
+                optionProp.setAttribute('value', '');
+                selectProp.appendChild(optionProp);
+            
+                for (var i = 0; i < Config.PROPS_LIST.length; ++i) {
+                    optionProp = Util.createElement('option');
+                    optionProp.setAttribute('value', Config.PROPS_LIST[i]);
+                    if (UI.Selector.viewedProp == Config.PROPS_LIST[i]) {
+                        optionProp.setAttribute('selected', 'selected');
+                    }
+                    optionProp.appendChild(document.createTextNode(Config.PROPS_LIST[i]));
+                    selectProp.appendChild(optionProp); 
+                }
+            
+                Util.addEvent(selectProp, 'change', UI.Selector.__listProps);
+            
+                options.appendChild(selectProp);
+ 
+            }
+            
+            var togglePropWatch = Util.createElement('a');
+            togglePropWatch.setAttribute('title', 'The property inspector allows you to check the current value of a range of CSS properties for these elements');
+            togglePropWatch.appendChild(document.createTextNode((UI.Selector.__displayPropWatch ? ' (Hide' : '(Show') + ' property inspector)'));
+            Util.addEvent(togglePropWatch, 'click', UI.Selector.__togglePropWatch);
+            options.appendChild(togglePropWatch);
+            
+            
+            container.appendChild(options);
+            
             container.appendChild(UI.Selector.__elementList());
 
             parent.appendChild(container);
 
             UI.Selector.displaySelector(CSS.Selector.trimmed);
+        },
+        
+        __togglePropWatch: function() {
+            UI.Selector.__displayPropWatch = !UI.Selector.__displayPropWatch;
+            UI.Selector.__editSelector();
         },
         
         __displayOverview: function(e, selectors, selector) {
@@ -1627,13 +1718,17 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
             container.appendChild(overviewTable);
         },
         
-        __elementList: function() {
-            var list = Util.createElement('ol');
+        __elementList: function(showComputedStyle) {
+            if (!showComputedStyle && UI.Selector.viewedProp) {
+                showComputedStyle = UI.Selector.viewedProp;
+            }
+            
+            var list = Util.createElement('ol', 'chameleon-selector-element-list');
             var n = struct.length;
             var classStr = '';
             var idStr = '';
 
-            var pseudoClasses = ['active', 'visited', 'hover', 'focus'];
+            var pseudoClasses = ['link', 'active', 'visited', 'hover', 'focus'];
 
             while (n--) {
                 var item = Util.createElement('li');
@@ -1688,10 +1783,63 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
                         item.appendChild(pc);
                     }
                 }
+                
+                if (showComputedStyle) {
+                    var sides = ['top', 'right', 'bottom', 'left'];
+
+                    
+                    if (document.defaultView && document.defaultView.getComputedStyle) {
+                        if (showComputedStyle == 'margin' || showComputedStyle == 'padding') {
+                            var styleVal = [];
+                            for (var i = 0; i < 4; ++i) {                                
+                                styleVal.push(document.defaultView.getComputedStyle(struct[n].el, null).getPropertyValue(showComputedStyle + '-' + sides[i]))
+                            }
+                            
+                            if (styleVal[0] == styleVal[1] && styleVal[1] == styleVal[2] && styleVal[2] == styleVal[3]) {
+                                styleVal = styleVal[0];
+                            } else if (styleVal[0] == styleVal[2] && styleVal[1] == styleVal[3]) {
+                                styleVal = styleVal[0] + ' ' + styleVal[1];
+                            } else if (styleVal[1] == styleVal[3]) {
+                                styleVal = styleVal[0] + ' ' + styleVal[1] + ' ' + styleVal[2];
+                            } else {
+                                styleVal = styleVal.join(' ');
+                            }
+                        } else {                    
+                            var styleVal = document.defaultView.getComputedStyle(struct[n].el, null).getPropertyValue(showComputedStyle);
+                        }
+
+                        
+                        if (styleVal.indexOf('rgb') != -1) {
+                            styleVal = UI.Selector.__formatColor(styleVal);
+                        }
+ 
+                    } else if (struct[n].el.currentStyle) {
+                        var propBits = showComputedStyle.split('-');
+                        for (var i = 1; i < propBits.length; ++i) {
+                            propBits[i] = propBits[i].charAt(0).toUpperCase() + propBits[i].substring(1);
+                        }
+                        var styleVal = struct[n].el.currentStyle[propBits.join('')];                       
+                    }
+                    
+                    item.appendChild(document.createTextNode(' --- ' + styleVal));
+                }
+
+                
                 list.appendChild(item);
             }
             
             return list;
+        },
+        
+        
+        __formatColor: function(color) {
+            var newColor = '';            
+            colorBits = color.replace(/rgb\(|[ \)]/g, '').split(',');
+            var hexCol = (colorBits[0] << 16 | colorBits[1] << 8 | colorBits[2]).toString(16);
+            while (hexCol.length < 6) {
+                hexCol = '0' + hexCol;
+            }
+            return '#' + hexCol;
         },
         
         
@@ -1793,6 +1941,8 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
                 item.appendChild(document.createTextNode('That are descended from ' + UI.Selector.__describe(selector[n])));
                 list.appendChild(item);
             }
+            
+            UI.setOverflow(list, 100);
         },
 
         __describe: function(txt) {
@@ -1843,10 +1993,8 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
             var instructions = Util.createElement('p');
             if (!hotspotMode) {
                 instructions.appendChild(document.createTextNode('Add/Edit styles for the CSS selector "' + CSS.Selector.get() + '"'));
-                //UI.CSS.sections = ['text', 'backgrounds', 'borders-all', 'borders-separate', 'free-edit'];
             } else {
                 instructions.appendChild(document.createTextNode('Add/Edit styles for ' + UI.HotSpots.getString()));
-                //UI.CSS.sections = ['text', 'backgrounds', 'borders-all', 'borders-separate'];
             }
             instructions.className = 'chameleon-instructions';
             box.appendChild(instructions);
@@ -1859,9 +2007,7 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
             tabs.appendChild(UI.CSS.__createTab('Backgrounds', UI.CSS.__editBackgrounds));
             tabs.appendChild(UI.CSS.__createTab('Borders (All)', UI.CSS.__editBordersAll));
             tabs.appendChild(UI.CSS.__createTab('Borders (Separate)', UI.CSS.__editBordersSeparate));
-            //if (!hotspotMode) {
-                tabs.appendChild(UI.CSS.__createTab('Free Edit', UI.CSS.__editCode));
-            //}
+            tabs.appendChild(UI.CSS.__createTab('Free Edit', UI.CSS.__editCode));
 
             tabsBody.appendChild(tabs);
             tabsContainer.appendChild(tabsBody);
@@ -2185,7 +2331,6 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
             if (val !== false) {
                 field.value = val;
             } else {
-                //field.className = 'longhand-warning';
                 labelCell.appendChild(UI.CSS.__shorthandWarningIcon());
             }
             
@@ -2821,7 +2966,7 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
 
     var climbTree = function(src) {
         var struct = [];
-        while (src.nodeName.toLowerCase() != 'html') {
+        while (src.parentNode) {
             if (src.nodeType == Node.ELEMENT_NODE) {
                 if (src.hasAttribute && src.hasAttribute('id') && src.getAttribute('id').indexOf('chameleon-') != -1) {
                     return src.getAttribute('id');
@@ -2833,6 +2978,7 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
                 if (src.className) {
                     elementObj.classname = src.className;
                 }
+                elementObj.el = src;
                 struct.push(elementObj);
             }
             src = src.parentNode;
@@ -2845,7 +2991,12 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
     var setup = function() {
         UI.clearStatusMsg();
         
-        //UI.HotSpots.init();
+        // UI.HotSpots.init();
+        
+        var crumb = new cookie('chameleon_server_save_required');
+        if (crumb.read() == 1) {
+            CSS.requireRemoteSave();
+        }
         
         Util.addEvent(window, 'unload', CSS.unloadPrompt);
         Util.addEvent(window, 'unload', Util.cleanUp);
@@ -2855,7 +3006,7 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
     var startSetup = function() {
         UI.statusMsg('Chameleon is loading...');
 
-        if (!CSS.loadRemote(true)) {
+        if (!CSS.loadRemote(true)) { // || !document.getElementsByTagName('*').length - keep IE 5.5 from killing itself
             alert('Your browser must support XMLHttpRequest! Supported browsers include Internet Explorer 6, Mozilla Firefox and Opera 8.01+');
         }
     };

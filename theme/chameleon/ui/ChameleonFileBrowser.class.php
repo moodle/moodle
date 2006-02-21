@@ -6,8 +6,8 @@ class ChameleonFileBrowser {
     var $dir;
     var $IMAGE_TYPES;
   
-    var $foundDirs = array();
-    var $foundFiles = array();
+    var $founddirs = array();
+    var $foundfiles = array();
 
     function ChameleonFileBrowser() {
         $this->IMAGE_TYPES = array('jpeg', 'jpg', 'gif', 'png');
@@ -17,11 +17,11 @@ class ChameleonFileBrowser {
         array_pop($tmp);
         $this->root = implode('/', $tmp);
 
-        $this->path = $this->sanitisePath($_GET['path']);
+        $this->path = $this->sanitisepath($_GET['path']);
         $this->dir = $this->root . '/' . $this->path;
     }
 
-    function sanitisePath($path) {
+    function sanitisepath($path) {
         if ($path == 'root') {
             return 'pix';
         }
@@ -33,14 +33,14 @@ class ChameleonFileBrowser {
         return preg_replace('/[.]+/', '', $path);
     }
 
-    function isImage($file) {
+    function isimage($file) {
         if (strpos($file, '.') === false) {
             return false;
         }
         return in_array(array_pop(explode('.', $file)), $this->IMAGE_TYPES);
     }
 
-    function readFiles() {
+    function readfiles() {
         if (!is_dir($this->dir)) {
             $this->send('<chameleon_error>Not a valid directory</chameleon_error>');
         }
@@ -51,24 +51,24 @@ class ChameleonFileBrowser {
                 continue;
             }
             if (is_dir($this->dir . '/' . $file)) {
-                $this->foundDirs[] = $file;
-            } else if ($this->isImage($file)) {
-                $this->foundFiles[] = $file;
+                $this->founddirs[] = $file;
+            } else if ($this->isimage($file)) {
+                $this->foundfiles[] = $file;
             }
         }
         closedir($handle);
 
-        sort($this->foundDirs, SORT_STRING);
-        sort($this->foundFiles, SORT_STRING);
-        $this->sendFiles();
+        sort($this->founddirs, SORT_STRING);
+        sort($this->foundfiles, SORT_STRING);
+        $this->sendfiles();
     }
 
-    function sendFiles() {
+    function sendfiles() {
         $out = "<files path=\"$this->path\">\n";
-        foreach ($this->foundDirs as $file) {
+        foreach ($this->founddirs as $file) {
             $out .= "  <file type=\"dir\">$this->path/$file</file>\n";
         }
-        foreach ($this->foundFiles as $file) {
+        foreach ($this->foundfiles as $file) {
             $out .= "  <file type=\"img\">$this->path/$file</file>\n";
         }
         $out .= "</files>";
