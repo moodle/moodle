@@ -651,7 +651,7 @@ class quiz_default_questiontype {
         types. It prints a mark button in the case where individual marking is
         allowed. */
 
-        if($cmoptions->optionflags & QUIZ_ADAPTIVE) {
+        if (($cmoptions->optionflags & QUIZ_ADAPTIVE) and !$options->readonly) {
             echo '<input type="submit" name="';
             echo $question->name_prefix;
             echo 'mark" value="';
