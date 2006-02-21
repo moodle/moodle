@@ -841,6 +841,7 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
 	function v6_expand_ClozeBody() {
 		$str = '';
 
+		// get drop down list of words, if required
 		$dropdownlist = '';
 		if ($this->v6_use_DropDownList()) {
 			$this->v6_set_WordList();
@@ -849,9 +850,15 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
 			}
 		}
 
+		// cache clues flag and caption
+		$includeclues = $this->v6_expand_Clues();
+		$cluecaption = $this->v6_expand_ClueCaption();
+
+		// initialize loop values
 		$q = 0;
 		$tags = 'data,gap-fill';
 
+		// loop through text and gaps
 		while ($text = $this->parent->xml_value($tags, "[0]['#'][$q]")) {
 			$str .= $text;
 			if (($question="[$q]['#']") && $this->parent->xml_value("$tags,question-record", $question)) {
@@ -861,9 +868,11 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
 				} else {
 					$str .= '<input type="text" id="Gap'.$q.'" onfocus="TrackFocus('.$q.')" onblur="LeaveGap()" class="GapBox" size="6"></input>';
 				}
-				if ($this->v6_expand_Clues()) {
-					$caption = $this->v6_expand_ClueCaption();
-					$str .= '<button style="line-height: 1.0" class="FuncButton" onfocus="FuncBtnOver(this)" onmouseover="FuncBtnOver(this)" onblur="FuncBtnOut(this)" onmouseout="FuncBtnOut(this)" onmousedown="FuncBtnDown(this)" onmouseup="FuncBtnOut(this)" onclick="ShowClue('.$q.')">'.$caption.'</button>';
+				if ($includeclues) {
+					$clue = $this->parent->xml_value("$tags,question-record", $question."['clue'][0]['#']");
+					if (strlen($clue)) {
+						$str .= '<button style="line-height: 1.0" class="FuncButton" onfocus="FuncBtnOver(this)" onmouseover="FuncBtnOver(this)" onblur="FuncBtnOut(this)" onmouseout="FuncBtnOut(this)" onmousedown="FuncBtnDown(this)" onmouseup="FuncBtnOut(this)" onclick="ShowClue('.$q.')">'.$cluecaption.'</button>';
+					}
 				}
 				$str .= '</span>';
 			}
