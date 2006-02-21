@@ -119,6 +119,7 @@ class quiz_shortanswer_qtype extends quiz_default_questiontype {
     }
 
     function print_question_formulation_and_controls(&$question, &$state, $cmoptions, $options) {
+        global $CFG;
     /// This implementation is also used by question type NUMERICAL
         $answers = &$question->options->answers;
         $correctanswers = $this->get_correct_responses($question, $state);
@@ -127,45 +128,44 @@ class quiz_shortanswer_qtype extends quiz_default_questiontype {
 
         /// Print question text and media
 
-        echo format_text($question->questiontext,
+        $questiontext =  format_text($question->questiontext,
                          $question->questiontextformat,
                          NULL, $cmoptions->course);
-        quiz_print_possible_question_image($question, $cmoptions->course);
+        $image = quiz_get_image($question, $cmoptions->course);
 
         /// Print input controls
 
-        $stranswer = get_string("answer", "quiz");
         if (isset($state->responses[''])) {
             $value = ' value="'.s($state->responses['']).'" ';
         } else {
             $value = ' value="" ';
         }
         $inputname = ' name="'.$nameprefix.'" ';
-        echo "<p align=\"right\">$stranswer: <input type=\"text\" $readonly $inputname size=\"80\" $value /></p>";
 
+        $feedback = '';
         if ($options->feedback) {
             $testedstate = clone($state);
             $teststate   = clone($state);
             foreach($answers as $answer) {
                 $teststate->responses[''] = trim($answer->answer);
-                if($this->compare_responses($question, $testedstate, $teststate)) {
-                    quiz_print_comment($answer->feedback);
+                if($answer->feedback and $this->compare_responses($question, $testedstate, $teststate)) {
+                    $feedback = format_text($answer->feedback, true, false);
                     break;
                 }
             }
         }
 
+        $correctanswer = '';
         if ($options->readonly && $options->correct_responses) {
             $delimiter = '';
-            $correct = '';
             if ($correctanswers) {
-                foreach ($correctanswers as $correctanswer) {
-                    $correct .= $delimiter.$correctanswer;
+                foreach ($correctanswers as $ca) {
+                    $correctanswer .= $delimiter.$ca;
                     $delimiter = ', ';
                 }
             }
-            quiz_print_correctanswer($correct);
         }
+        include("$CFG->dirroot/mod/quiz/questiontypes/shortanswer/display.html");
     }
 
     // ULPGC ecastro
