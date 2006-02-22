@@ -913,14 +913,27 @@ function quiz_upgrade($oldversion) {
         execute_sql("ALTER TABLE {$CFG->prefix}quiz_newest_states RENAME {$CFG->prefix}question_sessions", false);
     }
 
-    if ($oldversion < 2006021900) {
+    if ($oldversion < 2006022200) {
         // convert grade fields to float
+        set_field('quiz_attempts', 'sumgrades', 0, 'sumgrades', '');
         table_column('quiz_attempts', 'sumgrades', 'sumgrades',  'float', '', '', '0', 'not null');
+
+        set_field('quiz_answers', 'fraction', 0, 'fraction', '');
         table_column('quiz_answers', 'fraction', 'fraction',  'float', '', '', '0', 'not null');
+
+        set_field('quiz_essay_states', 'fraction', 0, 'fraction', '');
         table_column('quiz_essay_states', 'fraction', 'fraction',  'float', '', '', '0', 'not null');
+
+        set_field('quiz_states', 'grade', 0, 'grade', '');
         table_column('quiz_states', 'grade', 'grade',  'float', '', '', '0', 'not null');
+
+        set_field('quiz_states', 'raw_grade', 0, 'raw_grade', '');
         table_column('quiz_states', 'raw_grade', 'raw_grade',  'float', '', '', '0', 'not null');
+
+        set_field('quiz_states', 'penalty', 0, 'penalty', '');
         table_column('quiz_states', 'penalty', 'penalty',  'float', '', '', '0', 'not null');
+
+        set_field('question_sessions', 'sumpenalty', 0, 'sumpenalty', '');
         table_column('question_sessions', 'sumpenalty', 'sumpenalty',  'float', '', '', '0', 'not null');
     }
 
