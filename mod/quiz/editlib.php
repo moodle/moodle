@@ -557,7 +557,7 @@ function quiz_print_cat_question_list($course, $categoryid, $quizid,
         if ($question->qtype == RANDOM) {
             //continue;
         }
-        echo "<tr>\n<td>\n";
+        echo "<tr>\n<td nowrap=\"nowrap\">\n";
         if ($quizid) {
             echo "<a title=\"$straddtoquiz\" href=\"edit.php?addquestion=$question->id&amp;sesskey=$USER->sesskey\"><img
                   src=\"$CFG->pixpath/t/moveleft.gif\" border=\"0\" alt=\"$straddtoquiz\" /></a>&nbsp;";
