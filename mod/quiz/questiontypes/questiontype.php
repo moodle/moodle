@@ -465,7 +465,7 @@ class quiz_default_questiontype {
         $grade = '';
         if ($question->maxgrade and $options->scores) {
             if ($cmoptions->optionflags & QUIZ_ADAPTIVE) {
-                $grade = ('' === $state->last_graded->grade) ? '--/' : round($state->last_graded->grade, $cmoptions->decimalpoints).'/';
+                $grade = (!$state->last_graded->event == QUIZ_EVENTGRADE) ? '--/' : round($state->last_graded->grade, $cmoptions->decimalpoints).'/';
             }
             $grade .= $question->maxgrade;
         }
@@ -543,7 +543,7 @@ class quiz_default_questiontype {
             print_string('duplicateresponse', 'quiz');
         }
         if (!empty($question->maxgrade) && $options->scores) {
-            if (!('' === $state->last_graded->grade)) {
+            if ($state->last_graded->event == QUIZ_EVENTGRADE) {
                 // Display the grading details from the last graded state
                 $grade->cur = round($state->last_graded->grade, $cmoptions->decimalpoints);
                 $grade->max = $question->maxgrade;

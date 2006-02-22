@@ -259,10 +259,10 @@ function quiz_get_states(&$questions, $cmoptions, $attempt) {
                 $states[$i]->seq_number = 0;
                 $states[$i]->timestamp = $attempt->timestart;
                 $states[$i]->event = ($attempt->timefinish) ? QUIZ_EVENTCLOSE : QUIZ_EVENTOPEN;
-                $states[$i]->grade = '';
-                $states[$i]->raw_grade = '';
-                $states[$i]->penalty = '';
-                $states[$i]->sumpenalty = '0.0';
+                $states[$i]->grade = 0;
+                $states[$i]->raw_grade = 0;
+                $states[$i]->penalty = 0;
+                $states[$i]->sumpenalty = 0;
                 $states[$i]->changed = true;
                 $states[$i]->last_graded = clone($states[$i]);
                 $states[$i]->last_graded->responses = array('' => '');
@@ -275,10 +275,10 @@ function quiz_get_states(&$questions, $cmoptions, $attempt) {
                 $states[$i]->seq_number = 0;
                 $states[$i]->timestamp = $attempt->timestart;
                 $states[$i]->event = ($attempt->timefinish) ? QUIZ_EVENTCLOSE : QUIZ_EVENTOPEN;
-                $states[$i]->grade = '';
-                $states[$i]->raw_grade = '';
-                $states[$i]->penalty = '';
-                $states[$i]->sumpenalty = '0.0';
+                $states[$i]->grade = 0;
+                $states[$i]->raw_grade = 0;
+                $states[$i]->penalty = 0;
+                $states[$i]->sumpenalty = 0;
                 $states[$i]->responses = array('' => '');
                 // Prevent further changes to the session from incrementing the
                 // sequence number
@@ -348,16 +348,6 @@ function quiz_save_question_session(&$question, &$state) {
     }
     // Set the legacy answer field
     $state->answer = isset($state->responses['']) ? $state->responses[''] : '';
-
-    // Round long grade
-    if (strlen($state->grade) > 10 && floatval($state->grade)) {
-        $state->grade = strval(round($state->grade,10-1-strlen(floor($state->grade))));
-    }
-
-    // Round long raw_grade
-    if (strlen($state->raw_grade) > 10 && floatval($state->raw_grade)) {
-        $state->raw_grade = strval(round($state->raw_grade,10-1-strlen(floor($state->raw_grade))));
-    }
 
     // Save the state
     if (isset($state->update)) { // this ->update field is only used by the 
@@ -685,12 +675,7 @@ function quiz_process_responses(&$question, &$state, $action, $cmoptions, &$atte
         }
         // Force the state to close (as the attempt is closing)
         $state->event = QUIZ_EVENTCLOSE;
-        // If there is no valid grade, set it to zero
-        if ('' === $state->grade) {
-            $state->raw_grade = 0;
-            $state->penalty = 0;
-            $state->grade = 0;
-        }
+        
         // Update the last graded state (don't simplify!)
         unset($state->last_graded);
         $state->last_graded = clone($state);
@@ -699,10 +684,6 @@ function quiz_process_responses(&$question, &$state, $action, $cmoptions, &$atte
         $attempt->sumgrades += (float)$state->last_graded->grade;
     }
     $attempt->timemodified = $action->timestamp;
-    // Round long sumgrades
-    if (strlen($attempt->sumgrades) > 10 && floatval($attempt->sumgrades)) {
-        $attempt->sumgrades = strval(round($attempt->sumgrades,10-1-strlen(floor($state->sumgrades))));
-    }
 
     return true;
 }
@@ -930,7 +911,7 @@ function quiz_get_renderoptions($cmoptions, $state) {
     $options->readonly = QUIZ_EVENTCLOSE === $state->event;
 
     // Show feedback once the question has been graded (if allowed by the quiz)
-    $options->feedback = ('' !== $state->grade) && ($cmoptions->review & QUIZ_REVIEW_FEEDBACK & QUIZ_REVIEW_IMMEDIATELY);
+    $options->feedback = ($state->event == QUIZ_EVENTGRADE) && ($cmoptions->review & QUIZ_REVIEW_FEEDBACK & QUIZ_REVIEW_IMMEDIATELY);
 
     // Show validation only after a validation event
     $options->validation = QUIZ_EVENTVALIDATE === $state->event;
