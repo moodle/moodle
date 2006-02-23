@@ -1744,7 +1744,7 @@ function hotpot_convert_relative_url($baseurl, $reference, $opentag, $url, $clos
 	}
 
 	// catch <PARAM name="FlashVars" value="TheSound=soundfile.mp3">
-	if (preg_match('|^'.'\w+=[^&]+'.'([&]\w+=[^&]+)*'.'$|', $url)) {
+	if (preg_match('|^'.'\w+=[^&]+'.'('.'&(amp;)?'.'\w+=[^&]+)*'.'$|', $url)) {
 		$query = $url;
 		$url = '';
 		$fragment = '';
@@ -1768,30 +1768,10 @@ function hotpot_convert_relative_url($baseurl, $reference, $opentag, $url, $clos
 		$url = hotpot_convert_url($baseurl, $reference, $url, false);
 	}
 
-	// try and parse the query string arguments into $matches
-	//	[1] names
-	//	[2] values
-	if ($query && preg_match_all('|([^=]+)=([^&]*)|', substr($query, empty($url) ? 0 : 1), $matches)) {
-
-		$query = array();
-
-		// the values of the following arguments are considered to be URLs
-		$url_names = array('src','thesound'); // lowercase
-
-		// loop through the arguments in the query string
-		$i_max = count($matches[0]);
-		for ($i=0; $i<$i_max; $i++) {
-
-			$name = $matches[1][$i];
-			$value = $matches[2][$i];
-			// convert $value if it is a URL
-			if (in_array(strtolower($name), $url_names)) {
-				$value = hotpot_convert_url($baseurl, $reference, $value, false);
-			}
-
-			$query[] = "$name=$value";
-		}
-		$query = (empty($url) ? '' : '?').implode('&', $query);
+	if ($query) {
+		$search = '#'.'(file|src|thesound)='."([^&]+)".'#ise';
+		$replace = "'\\1='.hotpot_convert_url('".$baseurl."','".$reference."','\\2')";
+		$query = preg_replace($search, $replace, $query);
 	}
 
 	$url = $opentag.$url.$query.$fragment.$closetag;
