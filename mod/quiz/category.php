@@ -28,6 +28,7 @@
     $param->addcategory = optional_param('addcategory','',PARAM_ALPHA);
     $param->edit = optional_param('edit',0,PARAM_INT);
     $param->updateid = optional_param('updateid',0,PARAM_INT);
+    $param->page = optional_param('page',1,PARAM_INT);
 
     if (! $course = get_record("course", "id", $id)) {
         error("Course ID is incorrect");
@@ -113,7 +114,7 @@
     }
 
     // display the user interface
-    $qcobject->display_user_interface();
+    $qcobject->display_user_interface($param->page);
 
     print_footer($course);
 

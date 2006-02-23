@@ -5,6 +5,10 @@
 * Used for handling changes to the quiz categories
 *
 */
+
+// number of categories to display on page
+define( "PAGE_LENGTH",25 );
+
 class quiz_category_object {
 
     var $str;
@@ -17,6 +21,7 @@ class quiz_category_object {
     var $categorystrings;
     var $defaultcategory;
     var $course;
+    var $topcount;
 
 /**
 * Constructor
@@ -49,6 +54,7 @@ class quiz_category_object {
         $this->str->editcategory   = get_string('editcategory', 'quiz');
         $this->str->cancel         = get_string('cancel');
         $this->str->editcategories = get_string('editcategories', 'quiz');
+        $this->str->page	   = get_string('page');
         $this->pixpath = $CFG->pixpath;
 
     }
@@ -66,8 +72,9 @@ class quiz_category_object {
 * Displays the user interface
 *
 * @param object modform
+* @param int $page page number to display (0=don't paginate)
 */
-    function display_user_interface() {
+    function display_user_interface($page=10) {
         $this->initialize();
 
         /// Interface for adding a new category:
@@ -77,7 +84,10 @@ class quiz_category_object {
 
         /// Interface for editing existing categories
         print_heading_with_help($this->str->editcategories, 'categories', 'quiz');
-        $this->output_edit_table();
+        $this->output_edit_table($page);
+        if ($this->topcount>PAGE_LENGTH) {
+            $this->display_page_numbers($page);
+        }
         echo '<br />';
 
     }
@@ -100,9 +110,36 @@ class quiz_category_object {
 
         // create the array of id=>full_name strings
         $this->categorystrings = $this->expanded_category_strings($this->categories);
+
+        // for pagination calculate number of 'top' categories and hence number of pages
+        // (pagination only based on top categories)
+        $count = 0;
+        foreach( $this->categories as $category ) {
+            if ($category->parent==0) {
+                ++$count;
+            }
+        }
+        $this->topcount = $count;
+        $this->pagecount = (integer) ceil( $count / PAGE_LENGTH );
     }
 
+/**
+ * display list of page numbers for navigation
+ */
+    function display_page_numbers( $page=0 ) {
 
+        echo "<div class=\"paging\">{$this->str->page}:\n";
+        foreach (range(1,$this->pagecount) as $currentpage) {
+            if ($page == $currentpage) {
+                echo " $currentpage \n";
+            }
+            else {
+                echo "<a href=\"category.php?id={$this->course->id}&amp;page=$currentpage\">";
+                echo " $currentpage </a>\n";
+            }
+        }
+        echo "</div>";
+    }
 
 /**
 * Outputs a table to allow entry of a new category
@@ -161,8 +198,9 @@ class quiz_category_object {
 * $this->initialize() must have already been called
 *
 * @param object course
+* @param int $page page to display (0=do not paginate)
 */
-    function output_edit_table() {
+    function output_edit_table($page=0) {
         $this->edittable->head  = array ($this->str->category, $this->str->categoryinfo, $this->str->questions, $this->str->publish,
                                     $this->str->delete, $this->str->order, $this->str->parent);
         $this->edittable->width = 200;
@@ -170,7 +208,17 @@ class quiz_category_object {
 
         $courses = $this->course->shortname;
 
-        $this->build_edit_table_body($this->categories);
+        // if pagination required work out range
+        if (!empty($page)) {
+            $firstcat = $page * PAGE_LENGTH;
+            $lastcat = $firstcat+ PAGE_LENGTH - 1;
+        }
+        else {
+            $firstcat = 1;
+            $lastcat = $this->topcount;
+        }
+
+        $this->build_edit_table_body($this->categories, $firstcat, $lastcat);
         print_table($this->edittable);
     }
 /**
@@ -180,23 +228,31 @@ class quiz_category_object {
 * @param mixed courses String with shortname of course | array containing courseid=>shortname
 * @param int depth controls the indenting
 */
-    function build_edit_table_body($categories, $depth = 0) {
+    function build_edit_table_body($categories, $firstcat = 1, $lastcat = 99999, $depth = 0) {
         $countcats = count($categories);
         $count = 0;
         $first = true;
         $last = false;
+        $topcount = 0;
 
         foreach ($categories as $category) {
             $count++;
             if ($count == $countcats) {
                 $last = true;
             }
+            // check if this category is on the display page
+            if ($depth==0) {
+                $topcount++;
+                if (($topcount<$firstcat) or ($topcount>$lastcat)) {
+                    continue;
+                }
+            }
             $up = $first ? false : true;
             $down = $last ? false : true;
             $first = false;
             $this->quiz_edit_category_row($category, $depth, $up, $down);
             if (isset($category->children)) {
-                $this->build_edit_table_body($category->children, $depth + 1);
+                $this->build_edit_table_body($category->children, $firstcat, $lastcat, $depth + 1);
             }
         }
     }
