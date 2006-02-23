@@ -25,7 +25,7 @@
     //      quiz_attempts                          quiz_question_instances               .       |    |  (CL,pk->id,fk->question,  |    .
     //  (UL,pk->id,fk->quiz)                    (CL,pk->id,fk->quiz,question)            .       |    |   fk->dataset_definition)  |    .
     //             |                                              |                      .       |    |                            |    .
-    //             |               question_sessions             |                      .       |    |                            |    .
+    //             |               question_sessions              |                      .       |    |                            |    .
     //             |---------(UL,pk->id,fk->attempt,question)-----|                      .       |    |                            |    .
     //             |                        .                     |                      .       |    |                       quiz_dataset_definitions
     //             |                        .                     |                      .       |    |                      (CL,pk->id,fk->category)
@@ -221,7 +221,7 @@
             //Check if the question exists
             //by category and stamp
             $question_exists = get_record ("quiz_questions","category",$question->category,
-                                                            "stamp",$question->stamp);
+                                                 "stamp",$question->stamp,"version",$question->version);
 
             //If the question exists, only record its id
             if ($question_exists) {
@@ -1474,6 +1474,7 @@
             $version->quiz = $quiz_id;
             $version->oldquestion = backup_todb($ver_info['#']['OLDQUESTION']['0']['#']);
             $version->newquestion = backup_todb($ver_info['#']['NEWQUESTION']['0']['#']);
+            $version->originalquestion = backup_todb($ver_info['#']['ORIGINALQUESTION']['0']['#']);
             $version->userid = backup_todb($ver_info['#']['USERID']['0']['#']);
             $version->timestamp = backup_todb($ver_info['#']['TIMESTAMP']['0']['#']);
 
@@ -1485,6 +1486,12 @@
 
             //We have to recode the newquestion field
             $question = backup_getid($restore->backup_unique_code,"quiz_questions",$version->newquestion);
+            if ($question) {
+                $version->newquestion = $question->new_id;
+            }
+
+            //We have to recode the originalquestion field
+            $question = backup_getid($restore->backup_unique_code,"quiz_questions",$version->originalquestion);
             if ($question) {
                 $version->newquestion = $question->new_id;
             }
