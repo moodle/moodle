@@ -167,6 +167,7 @@ class quiz_essay_qtype extends quiz_default_questiontype {
                 quiz_print_comment("<p align=\"right\">$answer->feedback</p>");
             }
         }
+        $this->print_question_submit_buttons($question, $state, $cmoptions, $options);
     }
 
     function grade_responses(&$question, &$state, $cmoptions) {
@@ -175,9 +176,9 @@ class quiz_essay_qtype extends quiz_default_questiontype {
         if (isset($state->responses['fraction'])) {
             $state->raw_grade = $state->responses['fraction'];
             $state->options->graded = 1;
-        }
-        if (empty($state->raw_grade)) {
+        } else {
             $state->raw_grade = 0;
+            $state->event = QUIZ_EVENTSUBMIT;
         }
 
         // Make sure we don't assign negative or too high marks

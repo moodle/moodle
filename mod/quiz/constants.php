@@ -74,6 +74,7 @@ define('QUIZ_EVENTGRADE', '3');
 define('QUIZ_EVENTDUPLICATEGRADE', '4');
 define('QUIZ_EVENTVALIDATE', '5');
 define('QUIZ_EVENTCLOSE', '6');
+define('QUIZ_EVENTSUBMIT', '7');
 /**#@-*/
 
 /**#@+
