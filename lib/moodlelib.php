@@ -2793,7 +2793,7 @@ function set_login_session_preferences() {
  */
 function enrol_student($userid, $courseid, $timestart=0, $timeend=0, $enrol='manual') {
 
-    global $CFG;
+    global $CFG, $USER;
 
     if (!$course = get_record('course', 'id', $courseid)) {  // Check course
         return false;
@@ -2805,6 +2805,12 @@ function enrol_student($userid, $courseid, $timestart=0, $timeend=0, $enrol='man
     if ($parents = get_records('course_meta', 'child_course', $courseid)) {
         foreach ($parents as $parent) {
             enrol_student($userid, $parent->parent_course, $timestart, $timeend,'metacourse');
+            // if we're enrolling ourselves in the child course, add the parent courses to USER too
+            // otherwise they'll have to logout and in again to get it
+            // http://moodle.org/mod/forum/post.php?reply=185699
+            if (!empty($USER) && $userid == $USER->id) {
+                $USER->student[$parent->parent_course] = true;
+            }
         }
     }
 
