@@ -1,6 +1,6 @@
 <?PHP // $Id$ 
       // lesson.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
-
+      
 $string['accesscontrol'] = 'Access control';
 $string['actionaftercorrectanswer'] = 'Action after correct answer';
 $string['activitylink'] = 'Link to an activity';
@@ -23,6 +23,7 @@ $string['answersfornumerical'] = 'Answers for Numerical questions should be matc
 $string['arrangebuttonshorizontally'] = 'Arrange Branch buttons horizontally in slideshow mode?';
 $string['attempt'] = 'Attempt: $a';
 $string['attempts'] = 'Attempts';
+$string['attemptsremaining'] = 'You have $a attempt(s) remaining';
 $string['available'] = 'Available from';
 $string['averagescore'] = 'Average score';
 $string['averagetime'] = 'Average time';
@@ -30,7 +31,7 @@ $string['backtreeview'] = 'Back to Tree View';
 $string['branchtable'] = 'Branch Table';
 $string['cancel'] = 'Cancel';
 $string['canretake'] = '$a can re-take';
-$string['casesensitive'] = 'Case sensitive';
+$string['casesensitive'] = 'Use Regular Expressions';
 $string['checkbranchtable'] = 'Check branch table';
 $string['checkedthisone'] = 'checked this one.';
 $string['checknavigation'] = 'Check navigation';
@@ -131,6 +132,7 @@ $string['matchesanswer'] = 'Matches with answer';
 $string['maxhighscores'] = 'Number of high scores displayed';
 $string['maximumnumberofanswersbranches'] = 'Maximum number of answers/branches';
 $string['maximumnumberofattempts'] = 'Maximum number of attempts';
+$string['maximumnumberofattemptsreached'] = 'Maximum number of attempts reached - Moving to next page';
 $string['maxtime'] = 'Time limit (minutes)';
 $string['maxtimewarning'] = 'You have $a minute(s) to finish the lesson.';
 $string['mediaclose'] = 'Show close button: ';
@@ -146,7 +148,6 @@ $string['modulenameplural'] = 'Lessons';
 $string['movedpage'] = 'Moved page';
 $string['movepagehere'] = 'Move page to here';
 $string['moving'] = 'Moving page: $a';
-$string['movingtonextpage'] = 'Moving to next page';
 $string['multianswer'] = 'Multianswer';
 $string['multipleanswer'] = 'Multiple Answer';
 $string['nameapproved'] = 'Name approved';
@@ -202,7 +203,6 @@ $string['questiontype'] = 'Question type';
 $string['randombranch'] = 'Random branch page';
 $string['randompageinbranch'] = 'Random question within a branch';
 $string['rank'] = 'Rank';
-$string['reached'] = 'reached';
 $string['receivedcredit'] = 'Received credit';
 $string['redisplaypage'] = 'Redisplay page';
 $string['report'] = 'Report';
@@ -274,6 +274,7 @@ $string['yourcurrentgradeis'] = 'Your current grade is $a';
 $string['yourgradeisnow'] = 'Your grade for the lesson has been changed to $a';
 $string['yourresponse'] = 'Your response';
 $string['youshouldview'] = 'You should view at least: $a';
+
 
 
 ?>
