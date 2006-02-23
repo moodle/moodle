@@ -29,5 +29,8 @@ class data_field_text extends data_field_base {
     var $type = 'text';
     var $id;
 
+    function get_sort_field() {
+        return parent::get_sort_field();
+                                                                                }
 }
 ?>
