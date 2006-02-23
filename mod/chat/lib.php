@@ -397,7 +397,7 @@ function chat_login_user($chatid, $version, $groupid, $course) {
         $chatuser->userid   = $USER->id;
         $chatuser->groupid  = $groupid;
         $chatuser->version  = $version;
-        $chatuser->ip       = $USER->lastip;
+        $chatuser->ip       = $USER->lastIP;
         $chatuser->lastping = $chatuser->firstping = $chatuser->lastmessageping = time();
         $chatuser->sid      = random_string(32);
         $chatuser->course   = $course->id; //caching - needed for current_language too
