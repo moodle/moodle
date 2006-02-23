@@ -70,6 +70,7 @@
                         break;
                         case INSTALLED:
                             print_string('langpackupdated','admin',$pack);
+                            @unlink($CFG->dataroot.'/cache/languages');
                             print_continue('langimport.php');
                         break;
                         default:
@@ -134,6 +135,9 @@
                 print_simple_box_end();
             }
             else if (confirm_sesskey()) {
+                if ($uninstalllang == 'en_utf8') {
+                    error ('en_utf8 can not be uninstalled!');
+                }
                 $dest1 = $CFG->dataroot.'/lang/'.$uninstalllang;
                 $dest2 = $CFG->dirroot.'/lang/'.$uninstalllang;
                 $rm1 = false;
@@ -155,6 +159,7 @@
                     error ('An error has occurred, language pack is not completely uninstalled, please check file permission');
                 }
             }
+            @unlink($CFG->dataroot.'/cache/languages');
         break;
         
         case UPDATE_ALL_LANG:    //1 click update for all updatable language packs
@@ -278,7 +283,7 @@
             } else {    /// fopen failed, we find local copy of list.
                 $availablelangs = get_local_list_of_languages();
             }
-            
+
             if (!$remote) {
                 print_simple_box_start('center','60%');
                 echo '<div align="center">';
@@ -302,9 +307,7 @@
 
             echo '<select name="uninstalllang" size="15">';
             foreach ($installedlangs as $clang =>$ilang){
-                if ($clang != "en_utf8") {
-                    echo '<option value="'.$clang.'">'.$ilang.'</option>';
-                }
+                echo '<option value="'.$clang.'">'.$ilang.'</option>';
             }
             echo '</select>';
             echo '<br /><input type="submit" value="'.get_string('uninstall','admin').'" />';
@@ -348,7 +351,7 @@
             }
 
             foreach ($availablelangs as $alang) {
-                if ($clang != "en_utf8") {
+                if ($alang[0] != "en_utf8") {
                     if ($remote){
                         if (!is_installed_lang($alang[0], $alang[1])){    //if not already installed
                             echo '<option value="'.$alang[0].'">'.$alang[2].' ('.$alang[0].')</option>';
