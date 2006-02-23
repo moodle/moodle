@@ -17,7 +17,7 @@
     //      quiz_attempts                          quiz_question_instances               .       |    |  (CL,pk->id,fk->question,  |    .
     //  (UL,pk->id,fk->quiz)                    (CL,pk->id,fk->quiz,question)            .       |    |   fk->dataset_definition)  |    .
     //             |                                              |                      .       |    |                            |    .
-    //             |               question_sessions             |                      .       |    |                            |    .
+    //             |               question_sessions              |                      .       |    |                            |    .
     //             |---------(UL,pk->id,fk->attempt,question)-----|                      .       |    |                            |    .
     //             |                        .                     |                      .       |    |                       quiz_dataset_definitions
     //             |                        .                     |                      .       |    |                      (CL,pk->id,fk->category)
@@ -748,6 +748,8 @@
 
     }
 
+//STEP 2. Backup quizzes and associated structures
+    //    (course dependent)
 
     function quiz_backup_one_mod($bf,$preferences,$quiz) {
         $status = true;
@@ -806,8 +808,6 @@
     }
 
 
-//STEP 2. Backup quizzes and associated structures
-    //    (course dependent)
     function quiz_backup_mods($bf,$preferences) {
 
         global $CFG;
@@ -875,6 +875,7 @@
                 fwrite ($bf,full_tag("ID",6,false,$que_ver->id));
                 fwrite ($bf,full_tag("OLDQUESTION",6,false,$que_ver->oldquestion));
                 fwrite ($bf,full_tag("NEWQUESTION",6,false,$que_ver->newquestion));
+                fwrite ($bf,full_tag("ORIGINALQUESTION",6,false,$que_ver->originalquestion));
                 fwrite ($bf,full_tag("USERID",6,false,$que_ver->userid));
                 fwrite ($bf,full_tag("TIMESTAMP",6,false,$que_ver->timestamp));
                 //End question version
@@ -946,6 +947,8 @@
                 fwrite ($bf,full_tag("PREVIEW",6,false,$attempt->preview));
                 //Now write to xml the states (in this attempt)
                 $status = backup_quiz_states ($bf,$preferences,$attempt->uniqueid);
+                //Now write to xml the sessions (in this attempt)
+                $status = backup_question_sessions ($bf,$preferences,$attempt->uniqueid);
                 //End attempt
                 $status = fwrite ($bf,end_tag("ATTEMPT",5,true));
             }
@@ -991,10 +994,17 @@
             //Write end tag
             $status = fwrite ($bf,end_tag("STATES",6,true));
         }
+
+    //Backup question_sessions contents (executed from backup_quiz_attempts)
+    function backup_question_sessions ($bf,$preferences,$attempt) {
+        global $CFG;
+
+        $status = true;
+
         $question_sessions = get_records("question_sessions","attemptid",$attempt,"id");
-        //If there are newest_states
+        //If there are sessions
         if ($question_sessions) {
-            //Write start tag
+            //Write start tag (the funny name 'newest states' has historical reasons)
             $status = fwrite ($bf,start_tag("NEWEST_STATES",6,true));
             //Iterate over each newest_state
             foreach ($question_sessions as $newest_state) {
