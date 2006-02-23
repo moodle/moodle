@@ -1,4 +1,5 @@
-<?php
+<?php // $Id$
+
 /****************** continue ************************************/
 
     confirm_sesskey();
@@ -101,11 +102,12 @@
         error("Continue: Page record not found");
     }
     // set up some defaults
-    $answerid = 0;
-    $noanswer = false;
-    $correctanswer = false;
-    $isessayquestion = false; // use this to turn off review button on essay questions
-    $newpageid = 0; // stay on the page
+    $answerid        = 0;
+    $noanswer        = false;
+    $correctanswer   = false;
+    $isessayquestion = false;   // use this to turn off review button on essay questions
+    $newpageid       = 0;       // stay on the page
+    $studentanswer   = '';      // use this to store student's answer(s) in order to display it on feedback page
     switch ($page->qtype) {
          case LESSON_ESSAY :
             $isessayquestion = true;
@@ -131,8 +133,9 @@
             $userresponse->answer = $useranswer;
             $userresponse->response = "";
             $userresponse = addslashes(serialize($userresponse));
-        
-             break;
+            
+            $studentanswer = $useranswer;
+            break;
          case LESSON_SHORTANSWER :
             if (!$useranswer = $_POST['answer']) {
                 $noanswer = true;
@@ -140,66 +143,108 @@
             }            
             $useranswer = stripslashes(clean_param($useranswer, PARAM_CLEAN));
             $userresponse = addslashes($useranswer);
-
             if (!$answers = get_records("lesson_answers", "pageid", $pageid, "id")) {
                 error("Continue: No answers found");
             }
-
+            $i=0;
             foreach ($answers as $answer) {
-                // massage the wild cards (if present)
-                if (strpos(' '.$answer->answer, '*')) {
-                    $answer->answer = str_replace('\*','@@@@@@', $answer->answer);
-                    $answer->answer = str_replace('*','.*', $answer->answer);
-                    $answer->answer = str_replace('@@@@@@', '\*', $answer->answer);    
-                }
-                $answer->answer = str_replace('.*','@@@@@@', $answer->answer);
-                $answer->answer = preg_quote($answer->answer, '/');
-                $answer->answer = str_replace('@@@@@@', '.*', $answer->answer);    
+                $i += 1;
+                $expectedanswer  = $answer->answer; // for easier handling of $answer->answer
+                $ismatch         = false; 
+                $markit          = false; 
+                $useregexp       = false;
 
-                if (lesson_iscorrect($pageid, $answer->jumpto) or 
-                    ($lesson->custom && $answer->score > 0) ) {
-                    if ($page->qoption) {
-                        // case sensitive
-                        if (preg_match('/^'.$answer->answer.'$/', $useranswer)) {
-                            $correctanswer = true;
-                            $answerid = $answer->id;
-                            $newpageid = $answer->jumpto;
-                            if (trim(strip_tags($answer->response))) {
-                                $response = $answer->response;
-                            }
-                            break;
+                if ($page->qoption) {
+                    $useregexp = true;
+                }
+                
+                if ($useregexp) { //we are using 'normal analysis', which ignores case
+                    $ignorecase = '';
+                    if ( substr($expectedanswer,strlen($expectedanswer) - 2, 2) == '/i') {
+                        $expectedanswer = substr($expectedanswer,0,strlen($expectedanswer) - 2);
+                        $ignorecase = 'i';
+                    }
+                }
+                // prevent the potential apostrophe problem!
+                if (preg_match_all("/'/",$expectedanswer, $matches)) {
+                    $expectedanswer = ereg_replace("'", "\\\'", $expectedanswer);
+                }
+                // see if user typed in any of the correct answers
+                if (lesson_iscorrect($pageid, $answer->jumpto) or ($lesson->custom && $answer->score > 0) ) {
+                    if (!$useregexp) { // we are using 'normal analysis', which ignores case
+                        if (preg_match('/^'.$expectedanswer.'$/i',$useranswer)) {
+                            $ismatch = true;
                         }
                     } else {
-                        // case insensitive
-                        if (preg_match('/^'.$answer->answer.'$/i', $useranswer)) {
-                            $correctanswer = true;
-                            $answerid = $answer->id;
-                            $newpageid = $answer->jumpto;
-                            if (trim(strip_tags($answer->response))) {
-                                $response = $answer->response;
-                            }
-                            break;
+                        if (preg_match('/^'.$expectedanswer.'$/'.$ignorecase,$useranswer)) {
+                            $ismatch = true;
                         }
+                    }
+                    if ($ismatch == true) {
+                        $correctanswer = true;
                     }
                 } else {
-                    // see if user typed in any of the wrong answers
-                    // don't worry about case
-                    if (preg_match('/^'.$answer->answer.'$/i', $useranswer)) {
-                        $newpageid = $answer->jumpto;
-                        $answerid = $answer->id;
-                        if (trim(strip_tags($answer->response))) {
-                            $response = $answer->response;
+                   if (!$useregexp) { //we are using 'normal analysis'
+                        // see if user typed in any of the wrong answers; don't worry about case
+                        if (preg_match('/^'.$expectedanswer.'$/i',$useranswer)) {
+                            $ismatch = true;
                         }
+                    } else { // we are using regular expressions analysis
+                        $startcode = substr($expectedanswer,0,2);
+                        switch ($startcode){
+                            //1- check for absence of required string in $useranswer (coded by initial '--')
+                            case "--":
+                                $expectedanswer = substr($expectedanswer,2);
+                                if (!preg_match('/^'.$expectedanswer.'$/'.$ignorecase,$useranswer)) {
+                                    $ismatch = true;
+                                }
+                                break;                                      
+                            //2- check for code for marking wrong strings (coded by initial '++')
+                            case "++":
+                                $expectedanswer=substr($expectedanswer,2);
+                                $markit = true;
+                                //check for one or several matches
+                                if (preg_match_all('/'.$expectedanswer.'/'.$ignorecase,$useranswer, $matches)) {
+                                    $ismatch   = true;
+                                    $nb        = count($matches[0]);
+                                    $original  = array(); 
+                                    $marked    = array();
+                                    $fontStart = '<span class="incorrect">';
+                                    $fontEnd   = '</span>';
+                                    for ($i = 0; $i < $nb; $i++) {
+                                        array_push($original,$matches[0][$i]);
+                                        array_push($marked,$fontStart.$matches[0][$i].$fontEnd);
+                                    }
+                                    $useranswer = str_replace($original, $marked, $useranswer);
+                                }
+                                break;
+                            //3- check for wrong answers belonging neither to -- nor to ++ categories 
+                            default:
+                                if (preg_match('/^'.$expectedanswer.'$/'.$ignorecase,$useranswer, $matches)) {
+                                    $ismatch = true;
+                                }
+                                break;
+                        }
+                        $correctanswer = false;
                     }
                 }
+                if ($ismatch) {
+                    $newpageid = $answer->jumpto;
+                    if (trim(strip_tags($answer->response))) {
+                        $response = $answer->response;
+                    }
+                    $answerid = $answer->id;
+                    break; // quit answer analysis immediately after a match has been found
+                }
             }
-            if (!isset($response)) {
+            if (!isset($response)) { //if no feedback message provided, use default message
                 if ($correctanswer) {
                     $response = get_string("thatsthecorrectanswer", "lesson");
                 } else {
                     $response = get_string("thatsthewronganswer", "lesson");
                 }
             }
+            $studentanswer = $useranswer;
             break;
         
         case LESSON_TRUEFALSE :
@@ -229,6 +274,7 @@
                     $response = get_string("thatsthewronganswer", "lesson");
                 }
             }
+            $studentanswer = $answer->answer;
             break;
         
         case LESSON_MULTICHOICE :
@@ -253,6 +299,14 @@
                 $nhits = 0;
                 $correctresponse = '';
                 $wrongresponse = '';
+                // store student's answers for displaying on feedback page
+                foreach ($answers as $answer) {
+                    foreach ($useranswers as $key => $answerid) {
+                        if ($answerid == $answer->id) {
+                            $studentanswer .= '<br />'.$answer->answer;
+                        }
+                    }
+                }
                 // this is for custom scores.  If score on answer is positive, it is correct                    
                 if ($lesson->custom) {
                     $ncorrect = 0;
@@ -358,6 +412,7 @@
                         $response = get_string("thatsthewronganswer", "lesson");
                     }
                 }
+                $studentanswer = $answer->answer;
             }
             break;
         case LESSON_MATCHING :
@@ -398,17 +453,19 @@
                 $i++;
             }
             // get he users exact responses for record keeping
+            $userresponse = array();
             foreach ($response as $value) {
                 foreach($answers as $answer) {
                     if ($value == $answer->response) {
                         $userresponse[] = $answer->id;
+                        $studentanswer .= '<br />'.$answer->answer.' = '.$answer->response;
                     }
                 }
             }
             $userresponse = implode(",", $userresponse);
 
             if ($ncorrect == count($answers)-2) {  // dont count correct/wrong responses in the total.
-                   $response = get_string("thatsthecorrectanswer", "lesson");
+                $response = get_string("thatsthecorrectanswer", "lesson");
                 foreach ($answers as $answer) {
                     if ($answer->response == NULL && $answer->answer != NULL) {
                         $response = $answer->answer;
@@ -423,7 +480,7 @@
                 }
                 $correctanswer = true;
             } else {
-                   $response = get_string("thatsthewronganswer", "lesson");
+                $response = get_string("thatsthewronganswer", "lesson");
                 $t = 0;
                 foreach ($answers as $answer) {
                     if ($answer->response == NULL && $answer->answer != NULL) {
@@ -550,6 +607,10 @@
             break;
         
     }
+
+    $attemptsremaining = 0;
+    $maxattemptsreached = 0;
+
     if ($noanswer) {
         $newpageid = $pageid; // display same page again
         print_simple_box(get_string("noanswer", "lesson"), "center");
@@ -567,6 +628,7 @@
             if(isset($userresponse)) {
                 $attempt->useranswer = $userresponse;
             }
+            
             $attempt->timeseen = time();
             // dont want to insert the attempt if they ran out of time
             if (!$outoftime) {
@@ -578,19 +640,22 @@
                     error("Continue: attempt not inserted");
                 }
             }
+            // "number of attempts remaining" message if $lesson->maxattempts > 1
+            // displaying of message(s) is at the end of page for more ergonomic display
             if (!$correctanswer and ($newpageid == 0)) {
                 // wrong answer and student is stuck on this page - check how many attempts 
                 // the student has had at this page/question
                 $nattempts = count_records("lesson_attempts", "pageid", $pageid, "userid", $USER->id,
                     "retry", $nretakes);
-
+                
+                // retreive the number of attempts left counter for displaying at bottom of feedback page
                 if ($nattempts >= $lesson->maxattempts) {
                     if ($lesson->maxattempts > 1) { // don't bother with message if only one attempt
-                        echo "<p align=\"center\">(".get_string("maximumnumberofattempts", "lesson").
-                            " ".get_string("reached", "lesson")." - ".
-                            get_string("movingtonextpage", "lesson").")</p>\n";
+                        $maxattemptsreached = 1;
                     }
                     $newpageid = LESSON_NEXTPAGE;
+                } else if ($lesson->maxattempts > 1) { // don't bother with message if only one attempt
+                    $attemptsremaining = $lesson->maxattempts - $nattempts;
                 }
             }
         }
@@ -661,23 +726,37 @@
         }
 
         // display response (if there is one - there should be!)
+        // display: lesson title, page title, question text, student's answer(s) before feedback message
         if ($response) {
-            //$title = get_field("lesson_pages", "title", "id", $pageid);
-            //print_heading($title);
+            //optionally display question page title
+            //if ($title = get_field("lesson_pages", "title", "id", $pageid)) {
+            //    print_heading($title);
+            //}
             echo "<table width=\"80%\" border=\"0\" align=\"center\"><tr><td>\n";
             if ($lesson->review && !$correctanswer && !$isessayquestion) {
                 $nretakes = count_records("lesson_grades", "lessonid", $lesson->id, "userid", $USER->id); 
                 $qattempts = count_records("lesson_attempts", "userid", $USER->id, "retry", $nretakes, "pageid", $pageid);
-                echo "<br><br>";
+                echo "<br /><br />";
                 if ($qattempts == 1) {
                     print_simple_box(get_string("firstwrong", "lesson"), "center");
                 } else {
                     print_simple_box(get_string("secondpluswrong", "lesson"), "center");
                 }
             } else {
+                if ($correctanswer) {
+                    $class = 'response correct'; //CSS over-ride this if they exist (!important)
+                } else if ($isessayquestion) {
+                    $class = 'response';
+                } else {
+                    $class = 'response incorrect'; 
+                }
                 $options = new stdClass;
                 $options->noclean = true;
-                print_simple_box(format_text($response, FORMAT_MOODLE, $options), 'center');
+                $options->para = false;
+                print_simple_box(format_text($page->contents, FORMAT_MOODLE, $options), 'center');
+                echo '<br />';
+                print_simple_box('<em>'.get_string("youranswer", "lesson").'</em> : '.format_text(htmlentities($studentanswer), FORMAT_MOODLE, $options).
+                                 "<div class=\"$class\">".format_text($response, FORMAT_MOODLE, $options), 'center').'</div>';
             }
             echo "</td></tr></table>\n";
         }
@@ -775,6 +854,15 @@
             get_string("continue", "lesson")."</a></div></p>\n";
     }
     echo "</form>\n";
+    
+/// Report attempts remaining
+    if ($attemptsremaining != 0) {
+        echo "<p align=\"center\">".get_string('attemptsremaining', 'lesson', $attemptsremaining);
+    }
+/// Report if max attempts reached
+    if ($maxattemptsreached != 0) {
+        echo "<p align=\"center\">(".get_string("maximumnumberofattemptsreached", "lesson").")</p>\n";
+    }
 
     if ($lesson->displayleft) {
         echo "</td></tr></table>";

@@ -7,6 +7,25 @@
 }
 
 /***
+ *** Style for responses
+ ***/
+
+/* .response style is applied for both .correct and .incorrect */
+.mod-lesson .response {
+    padding-top: 10px;
+}
+
+/* for correct responses (can override .response) */
+.mod-lesson .correct {
+    color: green;
+}
+
+/* for incorrect responses (can override .response) */
+.mod-lesson .incorrect {
+    color: red;
+}
+
+/***
  *** Slide show Style
  ***/
 
