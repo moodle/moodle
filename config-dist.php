@@ -214,7 +214,7 @@ $CFG->admin = 'admin';
 //      $CFG->filtermatchoneperpage = true;
 //
 // Enabling this will allow custom scripts to replace existing moodle scripts.
-// For example: if $CFG->dataroot/customscripts/course/view.php exists then
+// For example: if $CFG->customscripts/course/view.php exists then
 // it will be used instead of $CFG->wwwroot/course/view.php
 // At present this will only work for files that include config.php and are called
 // as part of the url (index.php is implied).
@@ -226,7 +226,8 @@ $CFG->admin = 'admin';
 // Warning: Replacing standard moodle scripts may pose security risks and/or may not
 // be compatible with upgrades. Use this option only if you are aware of the risks
 // involved. 
-//      $CFG->customscripts = true;
+// Specify the full directory path to the custom scripts
+//      $CFG->customscripts = '/home/example/customscripts';
 //
 // Performance profiling 
 // 

@@ -6935,8 +6935,11 @@ function custom_script_path($urlpath='') {
         if (!$urlpath) return false;
     }
 
-    // Strip wwwroot out
-    $scriptpath = str_replace($CFG->wwwroot, $CFG->dataroot.'/customscripts', $urlpath);
+    /// Strip wwwroot out
+    $scriptpath = str_replace($CFG->wwwroot, $CFG->customscripts, $urlpath);
+
+    /// Clean the path
+    $scriptpath = clean_param($scriptpath, PARAM_PATH);
 
     /// Strip the query string out
     $parts = parse_url($scriptpath);
