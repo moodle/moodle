@@ -13,8 +13,7 @@
 
 <p> Each answer can optionally have a response. If no response is
     entered for an answer then the default response &quot;That's the Correct
-    Answer&quot; or &quot;That's the Wrong Answer&quot; is shown to the student.
-    </p>
+    Answer&quot; or &quot;That's the Wrong Answer&quot; is shown to the student.  </p>
 
 <p>It is possible to have more than one correct answer to a multichoice question.
     The different correct answers may give the student different responses and
@@ -41,36 +40,127 @@
     If that is <b>not</b> the case a warning is given on the teacher's view of
     the lesson. The correct response, if required, should be given on the first
     correct answer and the wrong response, if required, should be on the first
-    wrong answer. Responses on the other answers are ignored (without warning).
-    </p></li>
+  wrong answer. Responses on the other answers are ignored (without warning).  </p></li>
 
-<li><p><b>Short Answer</b> The student is prompted for a short piece of text.
+<li><p><b>Short Answer</b> </p>
+  <p>The student is prompted for a short piece of text.
     This is checked against one or more answers. Answers can be either correct
     or wrong. Each answer can optionally have a response. If no response is
     entered for an answer then the default response &quot;That's the Correct
     Answer&quot; or &quot;That's the Wrong Answer&quot; is shown to the student.
     If the text entered does not match any of the answers the question is wrong
-    and the student is shown the default wrong response.
-    </p>
-
-<p>By default the comparisons ignore the case of the text. There is an option
-    to make the comparisons case sensitive.</p>
-
-<p>The asterisk (*) character can be used in answers as a &quot;wild card&quot;
-    character. It stands for any number of characters (including no characters
-    at all). For example, the answer &quot;Long*&quot; will match
-    &quot;longer&quot;, &quot;longest&quot; and &quot;long&quot;. If one of
-    the answers is just &quot;*&quot; (a single *) this answer will match
-    anything, it is normally used as the last &quot;catch-all&quot; answer. The
-    matching process goes through the answers in the order they appear on the
-    screen. Once a match is found the process stops and the corresponding
-    result (and response, if present) is returned. So, if for example the
-    answers are Longest, Long* and * (in that order), the input
-    &quot;longer&quot; will match the second answer and, in this case, the
-    third answer, although a match, is ignored.</p>
-
-<p> If an asterisk (*) is actually needed in an answer, it should be entered as
-    \*, backslash asterisk.</p></li>
+    and the student is shown the default wrong response.</p>
+  <p><strong>There are two different comparison systems</strong> available for the 
+      Short Answer type of question: the simple system is used by default; the 
+      &quot;Regular Expressions&quot; system is used if the &quot;Use Regular 
+      Expressions&quot; option box is checked. </p>
+  <ul>
+    <li><strong>Simple analysis</strong>
+      <p>In this (default) system of analysis, the comparisons ignore the case of the text. The 
+        asterisk (*) character can be used in answers as a &quot;wild card&quot;
+        character. It stands for any number of characters (including no characters
+        at all). For example, the answer &quot;Long*&quot; will match
+        &quot;longer&quot;, &quot;longest&quot; and &quot;long&quot;. If one of
+        the answers is just &quot;*&quot; (a single *) this answer will match
+        anything, it is normally used as the last &quot;catch-all&quot; answer. The
+        matching process goes through the answers in the order they appear on the
+        screen. Once a match is found the process stops and the corresponding
+        result (and response, if present) is returned. So, if for example the
+        answers are Longest, Long* and * (in that order), the input
+        &quot;longer&quot; will match the second answer and, in this case, the
+        third answer, although a match, is ignored.</p>
+      <p> If an asterisk (*) is actually needed in an answer, it should be entered as
+        \*, backslash asterisk.</p>
+    </li>
+  </ul>
+  <ul>
+    <li><strong>Regular Expressions analysis</strong>
+      <p>This system gives you access to a more powerful but more complicated system for 
+          analysing the student's answers. For a complete introduction to Regular Expressions, 
+          see these sites <a href="http://www.zend.com/zend/tut/tutorial-delin2.php" target="_blank">regular-expressions 
+          tutorial</a> or <a href="http://perso.wanadoo.fr/joseph.rezeau/eao/developpement/expandRegexpToString.htm#" 
+          target="_blank">rezeau.org</a>. </p>
+      <h3>Correct answer matching a regular expression pattern </h3>
+      <p>It is not possible to give complete examples of the vast possibilities offered 
+          by this system, and the following are just some possibilities. </p>
+      <p><strong>Example 1.</strong> Suppose your question is &quot;What are the colors 
+          of the French flag?&quot;. In the Answer 1 frame you type this regular 
+          expression: &quot;<span class="c_computeroutput">it&rsquo;s blue, white(,| and) 
+          red</span>/i&quot;. This will match any of those four student answers:</p>
+      <ul>
+        <li>it&rsquo;s blue, white, red</li>
+        <li>it&rsquo;s blue, white and red</li>
+        <li>It&rsquo;s blue, white, red</li>
+        <li>It&rsquo;s blue, white and red </li>
+      </ul>
+      <p>Please note that by default a regular expression match is case sensitive; to 
+          make the match case insensitive you must add the <strong>/i</strong> parameter 
+          right at the end of your expression.</p>
+      <p><strong>Example 2</strong>. Question: &quot;What is blue, or red, or yellow?&quot;. 
+          Answer: &quot;(|it's )a colou?r&quot;. This will match:</p>
+      <ul>
+        <li>a colour</li>
+        <li> a color</li>
+        <li>it's a colour</li>
+        <li>it's a color</li>
+      </ul>
+      <p>Notes.- The beginning of this regular expression &quot;(|it's )&quot; will 
+          match either nothing or &quot;it's  &quot; (i.e. &quot;it's&quot; followed by 
+          a space). The ? (question-mark) means: preceding character zero or one time; 
+          it is used here to match British English as well as US spelling.</p>
+      <p><strong>Example 3.</strong> Question: &quot;Name an animal whose name is made 
+          of 3 letters and the middle letter is the vowel <em>a</em>&quot;. Anwer: 
+          &quot;[bcr]at&quot;. This will match: bat, cat and rat. </p>
+      <h3>Detecting missing required words or character strings</h3>
+      <p>Regular expressions alone cannot detect absent character strings, so you have to 
+          add a little code in your Answer to take care of this. Any Teacher Answer which 
+          begins with a double hyphen will analyse the student&rsquo;s answer to find out 
+          whether the following string is present or absent. If present, the analysis 
+          continues to the next question; if absent, the analysis stops and the relevant 
+          Response message is displayed.</p>
+      <p><strong>Example 4.  </strong></p>
+      <ul>
+        <li>Answer 2: <span class="c_computeroutput">--.*blue.*</span>/i</li>
+        <li>student answer: &quot;it's red and white&quot; </li>
+        <li>Response 2: <span class="c_computeroutput">The color of the sky is missing!</span></li>
+        <li>Jump 2: <span class="c_computeroutput">this page</span></li>
+      </ul>
+      <p>Here, the . (dot) stands for &ldquo;any character&rdquo; and the * (asterisk) 
+          means &ldquo;preceding special character repeated any number of times&rdquo;. 
+          The Answer2 regular expression above means: check whether the character string 
+          &quot;blue&quot;, preceded with anything and followed by anything is absent 
+          from the student's answer. Please note that the use of the asterisk is different 
+          in the Simple analysis system and in the Regular Expressions system.</p>
+      <p><strong>Example 5.</strong> Question: &quot;Name an animal whose name is made of 
+          3 letters and the middle letter is the vowel <em>a</em>&quot;. Teacher Answer: &quot;--[b|c|r]&quot;. Response: &quot;Your answer should start with one of these letters: b, c or r&quot; </p>
+      <h3>Detecting unwanted (incorrect) words or character strings</h3>
+      <p>You may want to detect, in the student's answer, the presence of one or several 
+          words which should be <strong>not</strong> be there (because they are wrong) and 
+          to single them out with a specific response. Just start your teacher Answer by a 
+          double plus sign (++). </p>
+      <p><strong>Example 6. </strong></p>
+      <ul>
+        <li>Answer 3: ++(yellow|black|orange|green|black|pink)/i</li>
+        <li>student answer: &quot;it's blue, orange and white&quot; </li>
+        <li>Response 3: One or more colors are wrong!</li>
+        <li>Jump 3: this page</li></ul>
+        <p>If any of these (wrong) colors is detected in the student&rsquo;s answer, 
+            then the negative feedback message (Response 3) will be displayed and the 
+            wrong strings will be colored red (or the color of the .incorrect class if 
+            it exists in a CSS stylesheet of your active theme).</p>
+      <p><strong>Example 7</strong>. Question: &quot;Name an animal whose name is made 
+          of 3 letters and the middle letter is the vowel <em>a</em>&quot;. Teacher 
+          Answer: &quot;++hat&quot;. Response: &quot;You might wear one made of an 
+          animal's skin, but a hat can't be considered as an animal.&quot;   </p>
+      <h3>Escaping special characters </h3>
+      <p>If you need to use characters which are part of the regular expressions set 
+          of <em>special characters</em>, you need to &quot;escape&quot; them (i.e. precede 
+          them with a backslash). E.g. if you want to accept the answer &quot;My computer 
+          cost 1000$&quot;, you must write the regular expression as &quot;My computer cost 
+          1000\$&quot;. The special characters which must be escaped are .^$*()[]+?|</p>
+    </li>
+  </ul>
+</li>
 
 <li><p><b>True/False</b> The answer to this type of question only has two options,
     true or false. The student is prompted to choose which is the correct
