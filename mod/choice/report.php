@@ -35,7 +35,8 @@
       
     if ($action == 'delete') { //some responses need to be deleted
         $attemptids = isset($_POST['attemptid']) ? $_POST['attemptid'] : array(); //get array of repsonses to delete.
-        choice_delete_responses($attemptids); //delete responses.				            
+        choice_delete_responses($attemptids); //delete responses.
+        redirect("report.php?id=$cm->id");			            
     }
         
     if ($download <> "xls" and $download <> "txt" ) {

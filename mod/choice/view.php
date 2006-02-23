@@ -41,7 +41,7 @@
         if (empty($form->answer)) {
             redirect("view.php?id=$cm->id", get_string('mustchooseone', 'choice'));
         } else {
-            choice_user_submit_response($form->answer, $choice, $USER->id);
+            choice_user_submit_response($form->answer, $choice, $USER->id, $course->id);
         }
         redirect("view.php?id=$cm->id");
         exit;
