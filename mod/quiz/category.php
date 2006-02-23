@@ -48,6 +48,29 @@
     $qcobject->set_course($course);
 
     //==========
+    // PAGE HEADER
+    //==========
+
+    if (isset($SESSION->modform->instance) and $quiz = get_record('quiz', 'id', $SESSION->modform->instance)) {
+        $strupdatemodule = isteacheredit($course->id)
+            ? update_module_button($SESSION->modform->cmid, $course->id, get_string('modulename', 'quiz'))
+            : "";
+        print_header_simple(get_string('editcategories', 'quiz'), '',
+                 "<a href=\"index.php?id=$course->id\">".get_string('modulenameplural', 'quiz').'</a>'.
+                 " -> <a href=\"view.php?q=$quiz->id\">".format_string($quiz->name).'</a>'.
+                 ' -> '.get_string('editcategories', 'quiz'),
+                 "", "", true, $strupdatemodule);
+        $currenttab = 'edit';
+        $mode = 'categories';
+        include('tabs.php');
+    } else {
+        print_header_simple(get_string('editcategories', 'quiz'), '',
+                 "<a href=\"index.php?id=$course->id\">".get_string('modulenameplural', 'quiz').'</a>'.
+                 '-> <a href="edit.php">'.get_string('editquestions', 'quiz').'</a>'.
+                 ' -> '.get_string('editcategories', 'quiz'));
+    }
+
+    //==========
     // ACTIONS
     //==========
 
@@ -77,7 +100,7 @@
             $qcobject->add_category($param->newparent, $param->newcategory, $param->newinfo,
                 $param->newpublish, $course->id);
         } else if (!empty($param->edit)) {
-            $qcobject->edit_single_category($param->edit);
+            $qcobject->edit_single_category($param->edit, $param->page);
         } else if (!empty($param->updateid)) {
             $param->updateparent  = required_param('updateparent',PARAM_INT);
             $param->updatename    = required_param('updatename',PARAM_ALPHANUM);
@@ -91,27 +114,6 @@
     //==========
     // DISPLAY
     //==========
-
-    /// Header:
-
-    if (isset($SESSION->modform->instance) and $quiz = get_record('quiz', 'id', $SESSION->modform->instance)) {
-        $strupdatemodule = isteacheredit($course->id)
-            ? update_module_button($SESSION->modform->cmid, $course->id, get_string('modulename', 'quiz'))
-            : "";
-        print_header_simple(get_string('editcategories', 'quiz'), '',
-                 "<a href=\"index.php?id=$course->id\">".get_string('modulenameplural', 'quiz').'</a>'.
-                 " -> <a href=\"view.php?q=$quiz->id\">".format_string($quiz->name).'</a>'.
-                 ' -> '.get_string('editcategories', 'quiz'),
-                 "", "", true, $strupdatemodule);
-        $currenttab = 'edit';
-        $mode = 'categories';
-        include('tabs.php');
-    } else {
-        print_header_simple(get_string('editcategories', 'quiz'), '',
-                 "<a href=\"index.php?id=$course->id\">".get_string('modulenameplural', 'quiz').'</a>'.
-                 '-> <a href="edit.php">'.get_string('editquestions', 'quiz').'</a>'.
-                 ' -> '.get_string('editcategories', 'quiz'));
-    }
 
     // display the user interface
     $qcobject->display_user_interface($param->page);
