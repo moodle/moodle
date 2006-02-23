@@ -127,6 +127,7 @@ class quiz_category_object {
  * display list of page numbers for navigation
  */
     function display_page_numbers( $page=0 ) {
+        global $USER;
 
         echo "<div class=\"paging\">{$this->str->page}:\n";
         foreach (range(1,$this->pagecount) as $currentpage) {
@@ -134,7 +135,7 @@ class quiz_category_object {
                 echo " $currentpage \n";
             }
             else {
-                echo "<a href=\"category.php?id={$this->course->id}&amp;page=$currentpage\">";
+                echo "<a href=\"category.php?id={$this->course->id}&amp;page=$currentpage&amp;sesskey={$USER->sesskey}\">";
                 echo " $currentpage </a>\n";
             }
         }
@@ -210,14 +211,14 @@ class quiz_category_object {
 
         // if pagination required work out range
         if (!empty($page)) {
-            $firstcat = $page * PAGE_LENGTH;
-            $lastcat = $firstcat+ PAGE_LENGTH - 1;
+            $firstcat = ($page-1) * PAGE_LENGTH + 1;
+            $lastcat = $firstcat + PAGE_LENGTH - 1;
         }
         else {
             $firstcat = 1;
             $lastcat = $this->topcount;
         }
-
+//echo "$firstcat $lastcat $page"; die;
         $this->build_edit_table_body($this->categories, $page, $firstcat, $lastcat);
         print_table($this->edittable);
     }
