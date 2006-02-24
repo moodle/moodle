@@ -1,0 +1,24 @@
+<style>
+  body {
+    font-family: Verdana, Helvetica, Sans-Serif;
+    background-color: #fff;
+    color: #000;
+  }
+  
+  .question {
+    border: 1px solid #ddd;
+    margin: 5px;
+    padding: 3px;
+    }  
+    
+  .question h3 {
+    font-weight: normal;
+    font-size: 125%;
+  }    
+  
+  .question ul {
+    list-style-type: none;
+  }  
+
+</style>
+
