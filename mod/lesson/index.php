@@ -26,6 +26,8 @@
 
     if ($course->category) {
         $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->";
+    } else {
+        $navigation = '';
     }
 
     print_header("$course->shortname: $strlessons", "$course->fullname", "$navigation $strlessons", "", "", true, "", navmenu($course));
@@ -94,7 +96,7 @@
             }
             $table->data[] = array ($lesson->section, $link, $grade_value, $due);
         } else {
-            $table->data[] = array ($link, $grade_value, $due);
+            $table->data[] = array ($link, $lesson->grade, $due);
         }
     }
 
