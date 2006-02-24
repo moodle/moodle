@@ -179,11 +179,11 @@ function question_list($course, $categoryid, $quizid,
 
     echo '<tr><td colspan="3" align="right"><font size="2">';
     if (isteacheredit($category->course)) {
-        echo '<a href="'.$CFG->wwwroot.'/mod/quiz/import.php?category='.$category->id.'">'.$strimportquestions.'</a>';
+        echo '<a href="'.$CFG->wwwroot.'/question/import.php?category='.$category->id.'">'.$strimportquestions.'</a>';
         helpbutton("import", $strimportquestions, "quiz");
         echo ' | ';
     }
-    echo "<a href=\"$CFG->wwwroot/mod/quiz/export.php?category={$category->id}&amp;courseid={$course->id}\">$strexportquestions</a>";
+    echo "<a href=\"$CFG->wwwroot/question/export.php?category={$category->id}&amp;courseid={$course->id}\">$strexportquestions</a>";
     helpbutton("export", $strexportquestions, "quiz");
     echo '</font></td></tr>';
 
