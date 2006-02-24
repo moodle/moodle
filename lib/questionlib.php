@@ -12,10 +12,45 @@
 *         the Serving Mathematics project
 *         {@link http://maths.york.ac.uk/serving_maths}
 * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
-* @package quiz
+* @package question
 */
 
-require_once($CFG->dirroot.'/mod/quiz/constants.php');
+/**#@+
+* The different types of events that can create question states
+*/
+define('QUIZ_EVENTOPEN', '0');
+define('QUIZ_EVENTNAVIGATE', '1');
+define('QUIZ_EVENTSAVE', '2');
+define('QUIZ_EVENTGRADE', '3');
+define('QUIZ_EVENTDUPLICATEGRADE', '4');
+define('QUIZ_EVENTVALIDATE', '5');
+define('QUIZ_EVENTCLOSE', '6');
+define('QUIZ_EVENTSUBMIT', '7');
+/**#@-*/
+
+/**#@+
+* The defined question types
+*
+* @todo It would be nicer to have a fully automatic plug-in system
+*/
+define("SHORTANSWER",   "1");
+define("TRUEFALSE",     "2");
+define("MULTICHOICE",   "3");
+define("RANDOM",        "4");
+define("MATCH",         "5");
+define("RANDOMSAMATCH", "6");
+define("DESCRIPTION",   "7");
+define("NUMERICAL",     "8");
+define("MULTIANSWER",   "9");
+define("CALCULATED",   "10");
+define("RQP",          "11");
+define("ESSAY",        "12");
+/**#@-*/
+
+define("QUIZ_MAX_NUMBER_ANSWERS", "10");
+
+define("QUIZ_CATEGORIES_SORTORDER", "999");
+
 
 /// QUIZ_QTYPES INITIATION //////////////////
 
@@ -24,7 +59,7 @@ require_once($CFG->dirroot.'/mod/quiz/constants.php');
 */
 $QUIZ_QTYPES= array();
 
-require_once("$CFG->dirroot/mod/quiz/questiontypes/questiontype.php");
+require_once("$CFG->dirroot/question/questiontypes/questiontype.php");
 quiz_load_questiontypes();
 
 /**
@@ -37,10 +72,10 @@ function quiz_load_questiontypes() {
     global $QUIZ_QTYPES;
     global $CFG;
 
-    $qtypenames= get_list_of_plugins('mod/quiz/questiontypes');
+    $qtypenames= get_list_of_plugins('question/questiontypes');
     foreach($qtypenames as $qtypename) {
         // Instanciates all plug-in question types
-        $qtypefilepath= "$CFG->dirroot/mod/quiz/questiontypes/$qtypename/questiontype.php";
+        $qtypefilepath= "$CFG->dirroot/question/questiontypes/$qtypename/questiontype.php";
 
         // echo "Loading $qtypename<br/>"; // Uncomment for debugging
         if (is_readable($qtypefilepath)) {
@@ -541,7 +576,7 @@ function quiz_regrade_question_in_attempt($question, $attempt, $cmoptions, $verb
         }
         if ($verbose) {
             if ($changed) {
-                link_to_popup_window ('/mod/quiz/reviewquestion.php?attempt='.$attempt->id.'&amp;question='.$question->id,
+                link_to_popup_window ('/question/reviewquestion.php?attempt='.$attempt->id.'&amp;question='.$question->id,
                  'reviewquestion', ' #'.$attempt->id, 450, 550, get_string('reviewresponse', 'quiz'));
                 update_record('quiz_attempts', $attempt);
             } else {
@@ -794,15 +829,14 @@ function quiz_print_correctanswer($text) {
 function quiz_print_question_icon($question, $editlink=true, $return = false) {
 // returns a question icon
 
-    global $QUIZ_QUESTION_TYPE;
-    global $QUIZ_QTYPES;
+    global $QUIZ_QUESTION_TYPE, $QUIZ_QTYPES, $CFG;
 
-    $html = '<img border="0" height="16" width="16" src="questiontypes/'.
+    $html = '<img border="0" height="16" width="16" src="'.$CFG->wwwroot.'/question/questiontypes/'.
             $QUIZ_QTYPES[$question->qtype]->name().'/icon.gif" alt="'.
             get_string($QUIZ_QTYPES[$question->qtype]->name(), 'quiz').'" />';
 
     if ($editlink) {
-        $html =  "<a href=\"question.php?id=$question->id\" title=\""
+        $html =  "<a href=\"$CFG->wwwroot/question/question.php?id=$question->id\" title=\""
                 .$QUIZ_QTYPES[$question->qtype]->name()."\">".
                 $html."</a>\n";
     }
