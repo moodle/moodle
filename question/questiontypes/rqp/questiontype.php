@@ -10,8 +10,8 @@
 * @package quiz
 */
 
-require_once($CFG->dirroot . '/mod/quiz/questiontypes/rqp/lib.php');
-require_once($CFG->dirroot . '/mod/quiz/questiontypes/rqp/remote.php');
+require_once($CFG->dirroot . '/question/questiontypes/rqp/lib.php');
+require_once($CFG->dirroot . '/question/questiontypes/rqp/remote.php');
 
 /**
 * RQP question type class

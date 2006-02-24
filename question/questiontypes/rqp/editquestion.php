@@ -1,6 +1,6 @@
 <?php // $Id$
 
-    require_once($CFG->dirroot . '/mod/quiz/questiontypes/rqp/lib.php');
+    require_once($CFG->dirroot . '/question/questiontypes/rqp/lib.php');
 
     if (empty($question->id)) {
         if (!isset($typeid)) {

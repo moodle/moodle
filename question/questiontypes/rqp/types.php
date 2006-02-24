@@ -4,8 +4,8 @@
 
     require_once('../../../../config.php');
     require_once($CFG->libdir.'/tablelib.php');
-    require_once($CFG->dirroot . '/mod/quiz/questiontypes/rqp/lib.php');
-    require_once($CFG->dirroot . '/mod/quiz/questiontypes/rqp/remote.php');
+    require_once($CFG->dirroot . '/question/questiontypes/rqp/lib.php');
+    require_once($CFG->dirroot . '/question/questiontypes/rqp/remote.php');
     
     $info = optional_param('info', 0, PARAM_INT); // id of server for which to show info
     $delete = optional_param('delete', 0, PARAM_INT); // id of server to delete
@@ -115,7 +115,7 @@
 
     $table->define_columns(array('name', 'url', 'action'));
     $table->define_headers(array(get_string('name'), get_string('serverurl', 'quiz'), get_string('action')));
-    $table->define_baseurl($CFG->wwwroot.'/mod/quiz/questiontypes/rqp/types.php');
+    $table->define_baseurl($CFG->wwwroot.'/question/questiontypes/rqp/types.php');
 
     //$table->sortable(true);
 
