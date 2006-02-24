@@ -477,54 +477,6 @@ function quiz_get_question_review($quiz, $question) {
           <img src=\"../../pix/t/preview.gif\" border=\"0\" alt=\"$strpreview\" /></a>";
 }
 
-/// FUNCTIONS USED BY IMPORT AND EXPORT ///////////////////////////////
-
-/**
-* Create default export filename
-*
-* @return string   default export filename
-* @param object $course
-* @param object $category
-*/
-function default_export_filename($course,$category) {
-    //Take off some characters in the filename !!
-    $takeoff = array(" ", ":", "/", "\\", "|");
-    $export_word = str_replace($takeoff,"_",strtolower(get_string("exportfilename","quiz")));
-    //If non-translated, use "export"
-    if (substr($export_word,0,1) == "[") {
-        $export_word= "export";
-    }
-
-    //Calculate the date format string
-    $export_date_format = str_replace(" ","_",get_string("exportnameformat","quiz"));
-    //If non-translated, use "%Y%m%d-%H%M"
-    if (substr($export_date_format,0,1) == "[") {
-        $export_date_format = "%%Y%%m%%d-%%H%%M";
-    }
-
-    //Calculate the shortname
-    $export_shortname = clean_filename($course->shortname);
-    if (empty($export_shortname) or $export_shortname == '_' ) {
-        $export_shortname = $course->id;
-    }
-
-    //Calculate the category name
-    $export_categoryname = clean_filename($category->name);
-
-    //Calculate the final export filename
-    //The export word
-    $export_name = $export_word."-";
-    //The shortname
-    $export_name .= strtolower($export_shortname)."-";
-    //The category name
-    $export_name .= strtolower($export_categoryname)."-";
-    //The date format
-    $export_name .= userdate(time(),$export_date_format,99,false);
-    //The extension - no extension, supplied by format
-    // $export_name .= ".txt";
-
-    return $export_name;
-}
 
 
 /**
