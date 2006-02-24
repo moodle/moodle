@@ -1,7 +1,0 @@
-- Ajouter un espace après un symbole <= s'il préfixe une parenthèse ouvrante.
-- Gérer 'and', 'or', ... comme &&, ||
-- Ne pas mettre de '$' sur les @param si aucun nom de variable n'esp spécifié.
-- Ajouter OneTrueBrace pour les if, while, for, else ... (Gustavo Carreno <gcarreno@netvisao.pt>, Richard Bateman <richard@randyb.byu.edu>, Yaroslav Shvetsov <yaro@totaldesign.ru>, Chris Small <chris@owta.net>)
-- Remove blank lines (Sergio Marchesini <smarques@tin.it>)
-- Forcer une ligne vide après une déclaration de fonction (Richard Bateman <richard@randyb.byu.edu>)
-
