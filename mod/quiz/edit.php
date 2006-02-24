@@ -34,18 +34,12 @@
 * @package quiz
 */
     require_once("../../config.php");
-    require_once("editlib.php");
+    require_once($CFG->dirroot.'/mod/quiz/editlib.php');
 
     require_login();
 
     $courseid  = optional_param('courseid');
     $quizid    = optional_param('quizid');
-    $page      = optional_param('page', -1);
-    $perpage   = optional_param('perpage', 20);
-    $sortorder = optional_param('sortorder', 'qtype, name ASC');
-    if (preg_match("/[';]/", $sortorder)) {
-        error("Incorrect use of the parameter 'sortorder'");
-    }
 
     $strquizzes = get_string('modulenameplural', 'quiz');
     $strquiz = get_string('modulename', 'quiz');
@@ -127,12 +121,6 @@ if (self.name == 'editquestion') {
         && empty($modform->grades))  // Construct an array to hold all the grades.
     {
         $modform->grades = quiz_get_all_question_grades($modform);
-    }
-
-    if ($page > -1) {
-        $modform->page = $page;
-    } else {
-        $page = isset($modform->page) ? $modform->page : 0;
     }
 
 /// Now, check for commands on this page and modify variables as necessary
@@ -250,84 +238,8 @@ if (self.name == 'editquestion') {
         }
     }
 
-    if (isset($_REQUEST['move']) and confirm_sesskey()) { /// Move selected questions to new category
-        if (!$tocategory = get_record('quiz_categories', 'id', $_REQUEST['category'])) {
-            error('Invalid category');
-        }
-        if (!isteacheredit($tocategory->course)) {
-            error(get_string('categorynoedit', 'quiz', $tocategory->name), 'edit.php');
-        }
-        foreach ($_POST as $key => $value) {    // Parse input for question ids
-            if (substr($key, 0, 1) == "q") {
-                $key = substr($key,1);
-                if (!set_field('quiz_questions', 'category', $tocategory->id, 'id', $key)) {
-                    error('Could not update category field');
-                }
-            }
-        }
-    }
-
     if (isset($_REQUEST['delete']) and confirm_sesskey()) { /// Remove a question from the quiz
         quiz_delete_quiz_question($_REQUEST['delete'], $modform);
-    }
-
-    if (isset($_REQUEST['deleteselected'])) { // delete selected questions from the category
-
-        if (isset($confirm) and confirm_sesskey()) { // teacher has already confirmed the action
-            if ($confirm == md5($deleteselected)) {
-                if ($questionlist = explode(',', $deleteselected)) {
-                    // for each question either hide it if it is in use or delete it
-                    foreach ($questionlist as $questionid) {
-                        if (record_exists('quiz_question_instances', 'question', $questionid) or
-                            record_exists('quiz_states', 'originalquestion', $questionid)) {
-                            if (!set_field('quiz_questions', 'hidden', 1, 'id', $questionid)) {
-                               error('Was not able to hide question');
-                            }
-                        } else {
-                            delete_records("quiz_questions", "id", $questionid);
-                        }
-                    }
-                }
-                redirect("edit.php");
-            } else {
-                error("Confirmation string was incorrect");
-            }
-
-        } else { // teacher still has to confirm
-            // make a list of all the questions that are selected
-            $rawquestions = $_POST;
-            $questionlist = '';  // comma separated list of ids of questions to be deleted
-            $questionnames = ''; // string with names of questions separated by <br /> with
-                                 // an asterix in front of those that are in use
-            $inuse = false;      // set to true if at least one of the questions is in use
-            foreach ($rawquestions as $key => $value) {    // Parse input for question ids
-                if (substr($key, 0, 1) == "q") {
-                    $key = substr($key,1);
-                    $questionlist .= $key.',';
-                    if (record_exists('quiz_question_instances', 'question', $key) or
-                        record_exists('quiz_states', 'originalquestion', $key)) {
-                        $questionnames .= '* ';
-                        $inuse = true;
-                    }
-                    $questionnames .= get_field('quiz_questions', 'name', 'id', $key).'<br />';
-                }
-            }
-            if (!$questionlist) { // no questions were selected
-                redirect('edit.php');
-            }
-            $questionlist = rtrim($questionlist, ',');
-
-            // Add an explanation about questions in use
-            if ($inuse) {
-                $questionnames .= get_string('questionsinuse', 'quiz');
-            }
-            print_header_simple($streditingquestions, '',
-                 "$streditingquestions");
-            notice_yesno(get_string("deletequestionscheck", "quiz", $questionnames),
-                        "edit.php?sesskey=$USER->sesskey&amp;deleteselected=$questionlist&amp;confirm=".md5($questionlist), "edit.php");
-            print_footer($course);
-            exit;
-        }
     }
 
     if (isset($_REQUEST['savechanges']) and confirm_sesskey()) {
@@ -371,21 +283,9 @@ if (self.name == 'editquestion') {
         }
     }
 
-    if (isset($_REQUEST['cat'])) { /// coming from category selection drop-down menu
-        $modform->category = $cat;
-        $page = 0;
-        $modform->page = 0;
-    }
-
-    if(isset($_REQUEST['recurse'])) {
-        $SESSION->quiz_recurse = optional_param('recurse', 0, PARAM_BOOL);
-    }
     if(isset($_REQUEST['showbreaks'])) {
         $SESSION->quiz_showbreaks = optional_param('showbreaks', 0, PARAM_BOOL);
         $SESSION->quiz_reordertool = optional_param('reordertool', 0, PARAM_BOOL);
-    }
-    if(isset($_REQUEST['showhidden'])) {
-        $SESSION->quiz_showhidden = optional_param('showhidden', 0, PARAM_BOOL);
     }
 
 /// Delete any teacher preview attempts if the quiz has been modified
@@ -398,12 +298,6 @@ if (self.name == 'editquestion') {
     if (empty($modform->category) or !record_exists('quiz_categories', 'id', $modform->category)) {
         $category = quiz_get_default_category($course->id);
         $modform->category = $category->id;
-    }
-    if (!isset($SESSION->quiz_recurse)) {
-        $SESSION->quiz_recurse = 1;
-    }
-    if (!isset($SESSION->quiz_showhidden)) {
-        $SESSION->quiz_showhidden = false;
     }
     if (!isset($SESSION->quiz_showbreaks)) {
         $SESSION->quiz_showbreaks = ($CFG->quiz_questionsperpage < 2) ? 0 : 1;
@@ -498,18 +392,7 @@ if (self.name == 'editquestion') {
 
         echo '</td><td valign="top" width="50%">';
     }
-    // non-quiz-specific column
-    print_simple_box_start("center", "100%");
-    // starts with category selection form
-    quiz_print_category_form($course, $modform->category, $SESSION->quiz_recurse, $SESSION->quiz_showhidden);
-    print_simple_box_end();
-
-    print_spacer(5,1);
-    // continues with list of questions
-    print_simple_box_start("center", "100%");
-    quiz_print_cat_question_list($course, $modform->category,
-                                 isset($modform->instance) ? $modform->instance : 0, $SESSION->quiz_recurse, $page, $perpage, $SESSION->quiz_showhidden, $sortorder);
-    print_simple_box_end();
+    require($CFG->dirroot.'/question/showbank.php');
 
     echo '</td></tr>';
     echo '</table>';

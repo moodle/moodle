@@ -20,7 +20,7 @@
 * Include those library functions that are also used by core Moodle or other modules
 */
 require_once("$CFG->dirroot/mod/quiz/lib.php");
-require_once("$CFG->dirroot/mod/quiz/questionlib.php");
+require_once($CFG->libdir.'/questionlib.php');
 
 /// CONSTANTS ///////////////////////////////////////////////////////////////////
 
@@ -491,7 +491,7 @@ function quiz_get_question_review($quiz, $question) {
     $strpreview = get_string('previewquestion', 'quiz');
     $context = $quiz->id ? '&amp;contextquiz='.$quiz->id : '';
     $quiz_id = $quiz->id ? '&amp;quizid=' . $quiz->id : '';
-    return "<a title=\"$strpreview\" href=\"javascript:void();\" onClick=\"openpopup('/mod/quiz/preview.php?id=$qnum$quiz_id','$strpreview','scrollbars=yes,resizable=yes,width=700,height=480', false)\">
+    return "<a title=\"$strpreview\" href=\"javascript:void();\" onClick=\"openpopup('/question/preview.php?id=$qnum$quiz_id','$strpreview','scrollbars=yes,resizable=yes,width=700,height=480', false)\">
           <img src=\"../../pix/t/preview.gif\" border=\"0\" alt=\"$strpreview\" /></a>";
 }
 

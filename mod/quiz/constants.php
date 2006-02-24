@@ -64,43 +64,6 @@ define('QUIZ_REVIEW_SOLUTIONS', 16*4161);  // Show solutions
 // the 6th bit is as yet unused
 /**#@-*/
 
-/**#@+
-* The different types of events that can create question states
-*/
-define('QUIZ_EVENTOPEN', '0');
-define('QUIZ_EVENTNAVIGATE', '1');
-define('QUIZ_EVENTSAVE', '2');
-define('QUIZ_EVENTGRADE', '3');
-define('QUIZ_EVENTDUPLICATEGRADE', '4');
-define('QUIZ_EVENTVALIDATE', '5');
-define('QUIZ_EVENTCLOSE', '6');
-define('QUIZ_EVENTSUBMIT', '7');
-/**#@-*/
-
-/**#@+
-* The defined question types
-*
-* @todo It would be nicer to have a fully automatic plug-in system
-*/
-define("SHORTANSWER",   "1");
-define("TRUEFALSE",     "2");
-define("MULTICHOICE",   "3");
-define("RANDOM",        "4");
-define("MATCH",         "5");
-define("RANDOMSAMATCH", "6");
-define("DESCRIPTION",   "7");
-define("NUMERICAL",     "8");
-define("MULTIANSWER",   "9");
-define("CALCULATED",   "10");
-define("RQP",          "11");
-define("ESSAY",        "12");
-/**#@-*/
-
-define("QUIZ_MAX_NUMBER_ANSWERS", "10");
-
-define("QUIZ_CATEGORIES_SORTORDER", "999");
-
-
 /**
 * If start and end date for the quiz are more than this many seconds apart
 * they will be represented by two separate events in the calendar

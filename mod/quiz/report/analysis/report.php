@@ -89,8 +89,8 @@ class quiz_report extends quiz_default_report {
             }
             $sql .= ' WHERE qa.quiz = '.$quiz->id.  // ULPGC ecastro
                 ' AND ( qa.sumgrades >= '.$scorelimit.' ) ';
-                                                                                   // ^^^^^^ es posible seleccionar aquí TODOS los quizzes, como quiere Jussi,
-                                                                                   // pero habría que llevar la cuenta ed cada quiz para restaura las preguntas (quizquestions, states)
+                                                                                   // ^^^^^^ es posible seleccionar aquï¿½ TODOS los quizzes, como quiere Jussi,
+                                                                                   // pero habrï¿½a que llevar la cuenta ed cada quiz para restaura las preguntas (quizquestions, states)
         /// Fetch the attempts
         $attempts = get_records_sql($sql);
 
@@ -309,7 +309,7 @@ class quiz_report extends quiz_default_report {
             $q = $questions[$qnum];
             $qid = $q['id'];
             $question = get_record('quiz_questions', 'id', $qid);         
-            $qnumber = " (".link_to_popup_window('/mod/quiz/question.php?id='.$qid,'editquestion', $qid, 450, 550, get_string('edit'), 'none', true ).") ";
+            $qnumber = " (".link_to_popup_window('/question/question.php?id='.$qid,'editquestion', $qid, 450, 550, get_string('edit'), 'none', true ).") ";
             $qname = '<div class="qname">'.format_text($question->name." :  ", $question->questiontextformat, NULL, $quiz->course).'</div>';
             $qicon = quiz_print_question_icon($question, false, true);
             $qreview = quiz_get_question_review($quiz, $question);

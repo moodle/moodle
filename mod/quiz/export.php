@@ -11,7 +11,7 @@
 
     require_once("../../config.php");
     require_once("locallib.php"); // TODO: this should not need locallib.php
-    require_once('questionlib.php');
+    require_once($CFG->libdir.'/questionlib.php');
 
     $categoryid = optional_param('category',0, PARAM_INT);
     $courseid = required_param('courseid',PARAM_INT);
@@ -70,8 +70,7 @@
         include('tabs.php');
     } else {
         print_header_simple($strexportquestions, '',
-                 "<a href=\"index.php?id=$course->id\">".get_string('modulenameplural', 'quiz').'</a>'.
-                 '-> <a href="edit.php">'.get_string('editquestions', 'quiz').'</a>'.
+                 '<a href="edit.php">'.get_string('editquestions', 'quiz').'</a>'.
                  ' -> '.$strexportquestions);
     }
 

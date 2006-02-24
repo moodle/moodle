@@ -11,7 +11,7 @@
 
     require_once("../../config.php");
     require_once("locallib.php"); // TODO: this should not need locallib.php
-    require_once('questionlib.php');
+    require_once($CFG->libdir.'/questionlib.php');
 
     $categoryid = optional_param('category', 0, PARAM_INT);
     $courseid = optional_param('course', 0, PARAM_INT);

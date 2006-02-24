@@ -1538,7 +1538,7 @@
 
         global $CFG;
         
-        include($CFG->dirroot.'/mod/quiz/questionlib.php');
+        include($CFG->dirroot.'/question/lib.php');
 
         $status = true;
 
