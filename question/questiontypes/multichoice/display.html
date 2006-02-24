@@ -1,0 +1,30 @@
+<div class="qtext">
+  <?php echo $questiontext; ?>
+</div>
+
+<?php if ($image) { ?>
+  <img class="qimage" src="<?php echo $q->imageurl; ?>" alt="" />
+<?php } ?>
+
+<div class="answer">
+  <div class="prompt">
+    <?php echo $answerprompt; ?>
+  </div>
+
+  <table class="multichoice">
+    <?php foreach ($anss as $answer) { ?>
+      <tr class="<?php echo $row = $row ? 0 : 1; ?>">
+        <td class="c0">
+          <?php echo $answer->control; ?>
+        </td>
+        <td class="c1 <?php echo $answer->class ?>"><label for="<?php echo $answer->id ?>">
+          <?php echo $answer->text; ?>
+        </td>
+        <td class="c2">
+          <?php echo $answer->feedback; ?>
+        </td>
+      </tr>
+    <?php } ?>
+  </table>
+  <?php $this->print_question_submit_buttons($question, $state, $cmoptions, $options); ?>
+</div>

@@ -1,0 +1,30 @@
+<div class="qtext">
+  <?php echo $questiontext; ?>
+</div>
+
+<?php if ($image) { ?>
+  <img class="qimage" src="<?php echo $q->imageurl; ?>" alt="" />
+<?php } ?>
+
+<div class="answer">
+  <div class="prompt">
+    <?php echo get_string("answer", "quiz").': '; ?>
+  </div>
+
+  <div class="shortanswer">
+    <input type="text" <?php echo "$readonly $inputname $value"; ?> size="80"/>
+  </div>
+  <?php $this->print_question_submit_buttons($question, $state, $cmoptions, $options); ?>
+</div>
+
+<?php if ($feedback) { ?>
+  <div class="feedback">
+    <?php echo $feedback ?>
+  </div>
+<?php } ?>
+
+<?php if ($correctanswer) { ?>
+  <div class="correct">
+    <?php echo get_string('correctis', 'quiz', $correctanswer) ?>
+  </div>
+<?php } ?>
