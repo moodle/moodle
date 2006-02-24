@@ -1744,7 +1744,8 @@ function hotpot_convert_relative_url($baseurl, $reference, $opentag, $url, $clos
 	}
 
 	// catch <PARAM name="FlashVars" value="TheSound=soundfile.mp3">
-	if (preg_match('|^'.'\w+=[^&]+'.'('.'&(amp;)?'.'\w+=[^&]+)*'.'$|', $url)) {
+	//	ampersands can appear as "&", "&amp;" or "&amp;#x0026;amp;"
+	if (preg_match('|^'.'\w+=[^&]+'.'('.'&((amp;#x0026;)?amp;)?'.'\w+=[^&]+)*'.'$|', $url)) {
 		$query = $url;
 		$url = '';
 		$fragment = '';
