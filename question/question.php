@@ -37,21 +37,6 @@
     $qtype = RQP;
     }
 
-    // TODO: generalise this so it works for any activity
-    $contextquiz = optional_param('contextquiz', 0, PARAM_INT); // the quiz from which this question is being edited
-    $editurl = ($contextquiz ? $CFG->wwwroot.'/mod/quiz/edit.php' : 'edit.php';
-
-    if (isset($_REQUEST['cancel'])) {
-        redirect($editurl);
-    }
-
-    if(!empty($id) && isset($_REQUEST['hide']) && confirm_sesskey()) {
-        if(!set_field('quiz_questions', 'hidden', $_REQUEST['hide'], 'id', $id)) {
-            error("Faild to hide the question.");
-        }
-        redirect($editurl);
-    }
-
     if ($id) {
         if (! $question = get_record("quiz_questions", "id", $id)) {
             error("This question doesn't exist");
@@ -68,7 +53,6 @@
 
         $qtype = $question->qtype;
 
-
     } else if ($category) { // only for creating new questions
         if (! $category = get_record("quiz_categories", "id", $category)) {
             error("This wasn't a valid category!");
@@ -82,6 +66,21 @@
 
     } else {
         error("Must specify question id or category");
+    }
+
+    // TODO: generalise this so it works for any activity
+    $contextquiz = optional_param('contextquiz', 0, PARAM_INT); // the quiz from which this question is being edited
+    $editurl = $contextquiz ? $CFG->wwwroot.'/mod/quiz/edit.php' : 'edit.php?courseid='.$course->id;
+
+    if (isset($_REQUEST['cancel'])) {
+        redirect($editurl);
+    }
+
+    if(!empty($id) && isset($_REQUEST['hide']) && confirm_sesskey()) {
+        if(!set_field('quiz_questions', 'hidden', $_REQUEST['hide'], 'id', $id)) {
+            error("Faild to hide the question.");
+        }
+        redirect($editurl);
     }
 
     if (empty($qtype)) {
