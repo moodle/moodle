@@ -21,6 +21,7 @@
 
     $migrate = optional_param('migrate');
     $confirm = optional_param('confirm');
+    
     $textlib = textlib_get_instance();
 
     $stradministration   = get_string('administration');
@@ -43,7 +44,7 @@
         print_heading('db unicode migration has been completed!');
         unlink($filename);    //no longer in maintenance mode
         @require_logout();
-        print_continue($CFG->wwwroot);
+        print_continue($CFG->wwwroot.'/admin/langimport.php');
     }
 
     //else if $migrate
@@ -66,8 +67,34 @@
         echo '<form name="migratefrom" action="utfdbmigrate.php" method="POST">';
         echo '<input name="confirm" type="hidden" value="1" />';
         echo '<input name="sesskey" type="hidden" value="'.sesskey().'" />';
-        echo '<input type="submit" value="'.get_string('continue').'"/>';
-        echo '&nbsp;<input type="button" value="'.get_string('cancel').'" onclick="javascript:history.go(-1)" />';
+        
+        $xmls = utf_get_xml();
+        $sumrecords = 0;   //this is the sum of all records of relavent tables.
+        foreach ($xmls as $xml) {    ///foreach xml file, we must get a list of tables
+            $dbtables = $xml['DBMIGRATION']['#']['TABLES'][0]['#']['TABLE'];    //real db tables
+            
+            foreach ($dbtables as $dbtable) {
+                $dbtablename = $dbtable['@']['name'];
+                $sumrecords += count_records($dbtablename);
+            }
+        }
+        echo 'Total number of records in your database is <b>'.$sumrecords.'</b>';
+        if ($sumrecords > 10000) {
+            echo '<br />Number of Records to process before halting (Leave blank for no limit) <input name="maxrecords" type="text" value="" />';
+        }
+
+        //print the "i-know-what-lang-to-use" menu
+        $enc = array('af' => 'iso-8859-1', 'ar' => 'windows-1256', 'be' => 'windows-1251', 'bg' => 'windows-1251', 'bs' => 'windows-1250', 'cs' => 'iso-8859-2', 'da' => 'iso-8859-1', 'de' => 'iso-8859-1', 'de_du' => 'iso-8859-1', 'de_utf8' => 'utf-8', 'el' => 'windows-1253', 'en' => 'iso-8859-1', 'en_ja' => 'euc-jp', 'en_us' => 'iso-8859-1', 'en_utf8' => 'utf-8', 'es' => 'iso-8859-1', 'es_ar' => 'iso-8859-1', 'es_es' => 'iso-8859-1', 'es_mx' => 'iso-8859-1', 'et' => 'iso-8859-1', 'eu' => 'iso-8859-1', 'fa' => 'windows-1256', 'fa_utf8' => 'utf-8', 'fi' => 'iso-8859-1', 'fil' => 'iso-8859-15', 'fr' => 'iso-8859-1', 'fr_ca' => 'iso-8859-15', 'ga' => 'iso-8859-1', 'gl' => 'iso-8859-1', 'he' => 'ISO-8859-8-I', 'he_utf8' => 'utf-8', 'hi' => 'iso-8859-1', 'hr' => 'windows-1250', 'hr_utf8' => 'utf-8', 'hu' => 'iso-8859-2', 'id' => 'iso-8859-1', 'it' => 'iso-8859-1', 'ja' => 'EUC-JP', 'ja_utf8' => 'UTF-8', 'ka_utf8' => 'UTF-8', 'km_utf8' => 'UTF-8', 'kn_utf8' => 'utf-8', 'ko' => 'EUC-KR', 'ko_utf8' => 'UTF-8', 'lt' => 'windows-1257', 'lv' => 'ISO-8859-4', 'mi_nt' => 'iso-8859-1', 'mi_tn_utf8' => 'utf-8', 'ms' => 'iso-8859-1', 'nl' => 'iso-8859-1', 'nn' => 'iso-8859-1', 'no' => 'iso-8859-1', 'no_gr' => 'iso-8859-1', 'pl' => 'iso-8859-2', 'pt' => 'iso-8859-1', 'pt_br' => 'iso-8859-1', 'ro' => 'iso-8859-2', 'ru' => 'windows-1251', 'sk' => 'iso-8859-2', 'sl' => 'iso-8859-2', 'sl_utf8' => 'utf-8', 'so' => 'iso-8859-1', 'sq' => 'iso-8859-1', 'sr_utf8' => 'utf-8', 'sv' => 'iso-8859-1', 'th' => 'TIS-620', 'th_utf8' => 'UTF-8', 'tl' => 'iso-8859-15', 'tl_utf8' => 'UTF-8', 'tr' => 'iso-8859-9', 'uk' => 'windows-1251', 'vi_utf8' => 'UTF-8', 'zh_cn' => 'GB18030', 'zh_cn_utf8' => 'UTF-8', 'zh_tw' => 'Big5', 'zh_tw_utf8' => 'UTF-8');
+
+        echo '<br />The whole site is in this encoding: (leave blank if you are not sure)';
+        echo '<select name="globallang"><option value="">I am not sure</option>';
+        foreach ($enc as $lang => $encoding) {
+            echo '<option value="'.$encoding.'">'.$lang.'</option>';
+        }
+        echo '</select>';
+        
+        echo '<p /><input type="submit" value="'.get_string('continue').'"/>';
+        echo '<input type="button" value="'.get_string('cancel').'" onclick="javascript:history.go(-1)" />';
         echo '</form>';
         echo '</div>';
 
@@ -124,6 +151,10 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
     @ob_implicit_flush(true);
     @ob_end_flush();
 
+    $maxrecords = optional_param('maxrecords',0, PARAM_INT);
+    $globallang = optional_param('globallang');
+    $processedrecords = 0;
+
     $ignoretables = array();    //list of tables to ignore, optional
     
     $done = 0;
@@ -161,55 +192,7 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
     require_once($CFG->dirroot.'/lib/xmlize.php');
 
     //one gigantic array to hold all db table information read from all the migrate2utf8.xml file.
-    $xmls = array();
-    
-    /*****************************************************************************
-     * traverse order is mod->backup->block->block_plugin->enroll_plugin->global *
-     *****************************************************************************/
-    
-    ///mod
-    if (!$mods = get_list_of_plugins('mod')) {
-        error('No modules installed!');
-    }
-    
-    foreach ($mods as $mod){
-        if (file_exists($CFG->dirroot.'/mod/'.$mod.'/db/migrate2utf8.xml')) {
-            $xmls[] = xmlize(file_get_contents($CFG->dirroot.'/mod/'.$mod.'/db/migrate2utf8.xml'));
-        }
-    }
-
-    ///Backups
-    $xmls[] = xmlize(file_get_contents($CFG->dirroot.'/backup/db/migrate2utf8.xml'));
-
-    ///Blocks
-    $xmls[] = xmlize(file_get_contents($CFG->dirroot.'/blocks/db/migrate2utf8.xml'));
-
-    ///Block Plugins
-    if (!$blocks = get_list_of_plugins('blocks')) {
-        //error('No blocks installed!');    //Eloy: Is this a cause to stop?
-    }
-
-    foreach ($blocks as $block){
-        if (file_exists($CFG->dirroot.'/blocks/'.$block.'/db/migrate2utf8.xml')) {
-            $xmls[] = xmlize(file_get_contents($CFG->dirroot.'/blocks/'.$block.'/db/migrate2utf8.xml'));
-        }
-    }
-
-    ///Enrol
-
-    if (!$enrols = get_list_of_plugins('enrol')) {
-        //error('No enrol installed!');   //Eloy: enrol, not blocks :-) Is this a cause to stop?
-    }
-
-    foreach ($enrols as $enrol){
-        if (file_exists($CFG->dirroot.'/enrol/'.$enrol.'/db/migrate2utf8.xml')) {
-            $xmls[] = xmlize(file_get_contents($CFG->dirroot.'/enrol/'.$enrol.'/db/migrate2utf8.xml'));
-        }
-    }
-    
-    ///Lastly, globals
-
-    $xmls[] = xmlize(file_get_contents($CFG->dirroot.'/lib/db/migrate2utf8.xml'));
+    $xmls = utf_get_xml();
 
     /************************************************************************
      * Now we got all our tables in order                                   *
@@ -270,7 +253,7 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                     }
 
                     if ($debug) {
-                        echo "<br>--><b>processsing db field ".$fieldname.'</b>';
+                        echo "<br>--><b>processing db field ".$fieldname.'</b>';
                         echo "<br>---><b>method ".$method.'</b>';
                     }
 
@@ -335,23 +318,32 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                                             if ($debug) {
                                                 $db->debug=999;
                                             }
-                                            $userid = get_record_sql(preg_replace($patterns, $replacements, $sqldetectuser));
-                                            $courseid = get_record_sql(preg_replace($patterns, $replacements, $sqldetectcourse));
                                             
-                                            $sitelang   = $CFG->lang;
-                                            $courselang = get_course_lang($courseid->course);
-                                            $userlang   = get_user_lang($userid->userid);
-
-                                            $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
-                                            $result = utfconvert($record->{$fieldname}, $fromenc);
+                                            //if global lang is set, we just use that
                                             
-                                            $newrecord = new object;
-                                            $newrecord->id = $record->id;
-                                            $newrecord->{$fieldname} = $result;
+                                            if ($globallang) {
+                                                $fromenc = $globallang;
+                                            } else {
+                                                $userid = get_record_sql(preg_replace($patterns, $replacements, $sqldetectuser));
+                                                $courseid = get_record_sql(preg_replace($patterns, $replacements, $sqldetectcourse));
 
-                                            update_record($dbtablename,$newrecord);
+                                                $sitelang   = $CFG->lang;
+                                                $courselang = get_course_lang($courseid->course);
+                                                $userlang   = get_user_lang($userid->userid);
+
+                                                $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+                                            }
+
+                                            //only update if non utf8
+                                            if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+                                                $result = utfconvert($record->{$fieldname}, $fromenc);
+                                                $newrecord = new object;
+                                                $newrecord->id = $record->id;
+                                                $newrecord->{$fieldname} = $result;
+                                                update_record($dbtablename,$newrecord);
+                                            }
                                             if ($debug) {
-                                                $db->debug=999;
+                                                $db->debug=0;
                                             }
                                           }
                                           
@@ -371,7 +363,17 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                                     default:    //no_conv, don't do anything ;-)
                                     break;
                                 }
-                            $counter++;
+                                $counter++;
+                                if ($maxrecords) {
+                                    if ($processedrecords == $maxrecords) {
+                                        notify($maxrecords.' records processed. Migration Process halted');
+                                        print_continue('utfdbmigrate.php?confirm=1&amp;maxrecords='.$maxrecords.'&amp;sesskey='.sesskey());
+                                        print_footer();
+                                        die();
+                                    } else {
+                                        $processedrecords++;
+                                    }
+                                }
                             }
                         }
                     }   //close the while loop
@@ -568,7 +570,7 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
     $langs = explode (',',$langsused->value);
     
     foreach ($langs as $lang) {
-        if (!empty($lang)) {
+        if (!empty($lang) and $lang != 'en_utf8') {
             echo $lang.',';
         }
     }
@@ -590,10 +592,18 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
  * @return string
  */
 function get_course_lang($courseid) {
-    if ($course = get_record('course','id',$courseid)){
-        return $course->lang;
+
+    static $coursecache;
+    
+    if (!isset($coursecache[$courseid])) {
+        if ($course = get_record('course','id',$courseid)){
+            $coursecache[$courseid] = $course->lang;
+            return $course->lang;
+        }
+        return false;
+    } else {
+        return $coursecache[$courseid];
     }
-    return false;
 }
 
 /* returns the teacher's lang
@@ -603,18 +613,27 @@ function get_course_lang($courseid) {
 function get_main_teacher_lang($courseid) {
     //editting teacher > non editting teacher
     global $CFG;
-    $SQL = 'SELECT u.lang from '.$CFG->prefix.'user_teachers ut,
-           '.$CFG->prefix.'course c,
-           '.$CFG->prefix.'user u WHERE
-           c.id = ut.course AND ut.course = '.$courseid.' AND u.id = ut.userid ORDER BY ut.authority ASC';
+    static $mainteachercache;
+    
+    if (!isset($mainteachercache[$courseid])) {
+        $SQL = 'SELECT u.lang from '.$CFG->prefix.'user_teachers ut,
+               '.$CFG->prefix.'course c,
+               '.$CFG->prefix.'user u WHERE
+               c.id = ut.course AND ut.course = '.$courseid.' AND u.id = ut.userid ORDER BY ut.authority ASC';
 
-    if ($teacher = get_record_sql($SQL, true)) {
-        return $teacher->lang;
+        if ($teacher = get_record_sql($SQL, true)) {
+            $mainteachercache[$courseid] = $teacher->lang;
+            return $teacher->lang;
+        }
+    } else {
+        return $mainteachercache[$courseid];
     }
 }
 
 function get_original_encoding($sitelang, $courselang, $userlang){
+
     global $CFG;
+
     $lang = '';
     if ($courselang) {
         $lang = $courselang;
@@ -644,8 +663,16 @@ function get_original_encoding($sitelang, $courselang, $userlang){
  * @return string
  */
 function get_user_lang($userid) {
-    if ($user = get_record('user','id',$userid)){
-        return $user->lang;
+
+    static $usercache;
+    
+    if (!isset($usercache[$userid])) {
+        if ($user = get_record('user','id',$userid)) {
+            $usercache[$userid] = $user->lang;
+            return $user->lang;
+        }
+    } else {
+        return $usercache[$userid];
     }
     return false;
 }
@@ -665,4 +692,62 @@ function utfconvert($string, $enc) {
         $result = addslashes($result);
     }
     return $result;
+}
+
+
+function utf_get_xml () {
+    global $CFG;
+
+    $xmls = array();
+
+    /*****************************************************************************
+     * traverse order is mod->backup->block->block_plugin->enroll_plugin->global *
+     *****************************************************************************/
+
+    ///mod
+    if (!$mods = get_list_of_plugins('mod')) {
+        error('No modules installed!');
+    }
+
+    foreach ($mods as $mod){
+        if (file_exists($CFG->dirroot.'/mod/'.$mod.'/db/migrate2utf8.xml')) {
+            $xmls[] = xmlize(file_get_contents($CFG->dirroot.'/mod/'.$mod.'/db/migrate2utf8.xml'));
+        }
+    }
+
+    ///Backups
+    $xmls[] = xmlize(file_get_contents($CFG->dirroot.'/backup/db/migrate2utf8.xml'));
+
+    ///Blocks
+    $xmls[] = xmlize(file_get_contents($CFG->dirroot.'/blocks/db/migrate2utf8.xml'));
+
+    ///Block Plugins
+    if (!$blocks = get_list_of_plugins('blocks')) {
+        //error('No blocks installed!');    //Eloy: Is this a cause to stop?
+    }
+
+    foreach ($blocks as $block){
+        if (file_exists($CFG->dirroot.'/blocks/'.$block.'/db/migrate2utf8.xml')) {
+            $xmls[] = xmlize(file_get_contents($CFG->dirroot.'/blocks/'.$block.'/db/migrate2utf8.xml'));
+        }
+    }
+
+    ///Enrol
+
+    if (!$enrols = get_list_of_plugins('enrol')) {
+        //error('No enrol installed!');   //Eloy: enrol, not blocks :-) Is this a cause to stop?
+    }
+
+    foreach ($enrols as $enrol){
+        if (file_exists($CFG->dirroot.'/enrol/'.$enrol.'/db/migrate2utf8.xml')) {
+            $xmls[] = xmlize(file_get_contents($CFG->dirroot.'/enrol/'.$enrol.'/db/migrate2utf8.xml'));
+        }
+    }
+
+    ///Lastly, globals
+
+    $xmls[] = xmlize(file_get_contents($CFG->dirroot.'/lib/db/migrate2utf8.xml'));
+    
+    return $xmls;
+
 }
