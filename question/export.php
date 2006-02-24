@@ -69,7 +69,7 @@
         include('tabs.php');
     } else {
         print_header_simple($strexportquestions, '',
-                 '<a href="edit.php">'.get_string('editquestions', 'quiz').'</a>'.
+                 "<a href=\"edit.php?courseid={$course->id}\">".get_string('editquestions', 'quiz').'</a>'.
                  ' -> '.$strexportquestions);
     }
 
