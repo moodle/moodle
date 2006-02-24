@@ -418,24 +418,6 @@ function quiz_view_dates($quiz) {
     print_simple_box_end();
 }
 
-/**
-* Array of names of quizzes a question appears in
-*
-* @return array   Array of quiz names
-* @param integer $id Question id
-*/
-function quizzes_question_used($id) {
-
-    $quizlist = array();
-    if ($instances = get_records('quiz_question_instances', 'question', $id)) {
-        foreach($instances as $instance) {
-            $quizlist[$instance->quiz] = get_field('quiz', 'name', 'id', $instance->quiz);
-        }
-    }
-
-    return $quizlist;
-}
-
 
 /**
 * Parse field names used for the replace options on question edit forms
@@ -559,7 +541,7 @@ function quizzes_category_used($id, $recursive = false) {
     //Look for each question in the category
     if ($questions = get_records('quiz_questions', 'category', $id)) {
         foreach ($questions as $question) {
-            $qlist = quizzes_question_used($question->id);
+            $qlist = question_used($question->id);
             $quizlist = $quizlist + $qlist;
         }
     }

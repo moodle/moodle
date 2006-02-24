@@ -98,7 +98,7 @@
     // TODO: remove restriction to quiz
     $streditingquestion = get_string('editingquestion', 'quiz');
     if (isset($SESSION->modform->instance)) {
-        $strediting = '<a href="edit.php">'.get_string('editingquiz', 'quiz').'</a> -> '.
+        $strediting = '<a href=".$editurl.">'.get_string('editingquiz', 'quiz').'</a> -> '.
             $streditingquestion;
     } else {
         $strediting = '<a href="edit.php?courseid='.$course->id.'">'.
@@ -123,21 +123,21 @@
                         error("An error occurred trying to delete question (id $question->id)");
                     }
                 }
-                redirect("edit.php");
+                redirect($editurl);
             } else {
                 error("Confirmation string was incorrect");
             }
 
         } else {
             // TODO: check for other modules using this question
-            if ($quiznames = quizzes_question_used($id)) {
+            if ($quiznames = question_used($id)) {
                 $a->questionname = $question->name;
                 $a->quiznames = implode(', ', $quiznames);
                 notify(get_string('questioninuse', 'quiz', $a));
             }
 
             notice_yesno(get_string("deletequestioncheck", "quiz", $question->name),
-                        "question.php?sesskey=$USER->sesskey&amp;id=$question->id&amp;delete=$delete&amp;confirm=".md5($delete), "edit.php");
+                        "question.php?sesskey=$USER->sesskey&amp;id=$question->id&amp;delete=$delete&amp;confirm=".md5($delete), $editurl);
         }
         print_footer($course);
         exit;

@@ -1275,4 +1275,23 @@ function get_questions_category( $category, $noparent=false ) {
     return $qresults;
 }
 
+/**
+* Array of names of course modules a question appears in
+*
+* TODO: Currently this works with quiz only
+*
+* @return array   Array of quiz names
+* @param integer $id Question id
+*/
+function question_used($id) {
+
+    $quizlist = array();
+    if ($instances = get_records('quiz_question_instances', 'question', $id)) {
+        foreach($instances as $instance) {
+            $quizlist[$instance->quiz] = get_field('quiz', 'name', 'id', $instance->quiz);
+        }
+    }
+
+    return $quizlist;
+}
 ?>
