@@ -8,6 +8,11 @@
 
     confirm_sesskey();
 
+    // check to see if the cancel button was pushed
+    if (optional_param('cancel', '', PARAM_ALPHA)) {
+        redirect("view.php?id=$cm->id");
+    }
+
     $timenow = time();
     
     $form = data_submitted();
