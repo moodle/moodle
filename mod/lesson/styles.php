@@ -25,6 +25,11 @@
     /*color: red;*/
 }
 
+/* for highlighting matches in responses for short answer regular expression (can override .incorrect) */
+.mod-lesson .matches {
+    /*color: red;*/
+}
+
 /***
  *** Slide show Style
  ***/

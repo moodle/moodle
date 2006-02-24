@@ -209,7 +209,7 @@
                                     $nb        = count($matches[0]);
                                     $original  = array(); 
                                     $marked    = array();
-                                    $fontStart = '<span class="incorrect">';
+                                    $fontStart = '<span class="incorrect matches">';
                                     $fontEnd   = '</span>';
                                     for ($i = 0; $i < $nb; $i++) {
                                         array_push($original,$matches[0][$i]);
@@ -755,7 +755,7 @@
                 $options->para = false;
                 print_simple_box(format_text($page->contents, FORMAT_MOODLE, $options), 'center');
                 echo '<br />';
-                print_simple_box('<em>'.get_string("youranswer", "lesson").'</em> : '.format_text(htmlentities($studentanswer), FORMAT_MOODLE, $options).
+                print_simple_box('<em>'.get_string("youranswer", "lesson").'</em> : '.format_text($studentanswer, FORMAT_MOODLE, $options).
                                  "<div class=\"$class\">".format_text($response, FORMAT_MOODLE, $options), 'center').'</div>';
             }
             echo "</td></tr></table>\n";
