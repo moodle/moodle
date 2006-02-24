@@ -29,34 +29,49 @@
 #mod-quiz-attempt .question .qtext {
 	margin-bottom: 1.5em;
 }
-#mod-quiz-attempt .question .answer {
+#mod-quiz-attempt .question .ablock {
 	margin: 0.7em 0 0.3em 0;
+	clear: both;
 }
-#mod-quiz-attempt .question .answer .prompt {
+#mod-quiz-attempt .question .prompt {
 	float: left;
 	width: 15%;
 	height: 2em;
+	padding-top: 0.3em;
+	font-size: 0.8em;
 }
-#mod-quiz-attempt .question .answer .shortanswer {
+#mod-quiz-attempt .question .answer {
+	float: right;
+	width: 84%;
+	margin-bottom: 1em;
+}
+#mod-quiz-attempt .question .submit {
+	position: relative;
+	clear: both;
 	float: left;
-	width: 80%;
-	padding-bottom: 0.5em;
 }
-#mod-quiz-attempt .question .answer .multichoice {
-	float: left;
-	width: 80%;
-	padding-bottom: 0.5em;
+/* MSIE Hack */
+* html #mod-quiz-attempt .question .submit {
+	float: none;
 }
-#mod-quiz-attempt .question .answer .multichoice .c0 {
+#mod-quiz-attempt .question .c0,
+#mod-quiz-attempt .question .c1 {
+	padding: 0.3em 0 0.3em 0.3em;
+}
+#mod-quiz-attempt .question .r0 {
+	background-color: #F5F5F5;
+}
+#mod-quiz-attempt .question .r1 {
+	background-color: #EEE;
+}
+#mod-quiz-attempt .multichoice .c0 {
   width: 5%;
 	vertical-align: top;
-	padding: 0;
+	padding-top: 0.4em;
 }
-#mod-quiz-attempt .question .answer input {
-	margin: 0.5em 0 0 0;
-}
-#mod-quiz-attempt .question .answer .shortanswer input {
-	margin: 0;
+#mod-quiz-attempt .shortanswer .answer {
+	background-color: #EEE;
+	padding: 0.3em 0 0.3em 0.3em;
 }
 #mod-quiz-attempt .question .grading {
 	float: right;

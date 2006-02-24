@@ -656,7 +656,8 @@ class quiz_default_questiontype {
             echo $question->name_prefix;
             echo 'mark" value="';
             print_string('mark', 'quiz');
-            echo '" />';
+            echo '" class="submit btn"';
+            echo ' />';
         }
     }
 

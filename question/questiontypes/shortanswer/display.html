@@ -6,12 +6,12 @@
   <img class="qimage" src="<?php echo $q->imageurl; ?>" alt="" />
 <?php } ?>
 
-<div class="answer">
+<div class="ablock">
   <div class="prompt">
     <?php echo get_string("answer", "quiz").': '; ?>
   </div>
 
-  <div class="shortanswer">
+  <div class="answer">
     <input type="text" <?php echo "$readonly $inputname $value"; ?> size="80"/>
   </div>
   <?php $this->print_question_submit_buttons($question, $state, $cmoptions, $options); ?>

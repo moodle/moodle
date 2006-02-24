@@ -6,21 +6,21 @@
   <img class="qimage" src="<?php echo $q->imageurl; ?>" alt="" />
 <?php } ?>
 
-<div class="answer">
+<div class="ablock">
   <div class="prompt">
     <?php echo $answerprompt; ?>
   </div>
 
-  <table class="multichoice">
-    <?php foreach ($anss as $answer) { ?>
-      <tr class="<?php echo $row = $row ? 0 : 1; ?>">
-        <td class="c0">
+  <table class="answer">
+    <?php $row = 1; foreach ($anss as $answer) { ?>
+      <tr class="<?php echo 'r'.$row = $row ? 0 : 1; ?>">
+        <td class="c0 control">
           <?php echo $answer->control; ?>
         </td>
-        <td class="c1 <?php echo $answer->class ?>"><label for="<?php echo $answer->id ?>">
+        <td class="c1 text <?php echo $answer->class ?>"><label for="<?php echo $answer->id ?>">
           <?php echo $answer->text; ?>
         </td>
-        <td class="c2">
+        <td class="c0 feedback">
           <?php echo $answer->feedback; ?>
         </td>
       </tr>
