@@ -101,11 +101,11 @@ class quiz_essay_qtype extends quiz_default_questiontype {
         // this prints out the student response box
         if (isset($state->responses[''])) { 
             // security problem. responses[''] is never cleaned before it is sent to the db (I think)
-            $value = clean_param($state->responses[''], PARAM_CLEANHTML);
+            $value = clean_param(addslashes($state->responses['']), PARAM_CLEANHTML);
         } else {
             $value = "";
         }
-        
+
         $inputname = $nameprefix;
         
         echo "<p>$stranswer: ".
