@@ -1268,10 +1268,17 @@
                 $a = new stdClass;
                 $a->notgradedcount = 0;
                 $a->notsentcount = 0;
-                foreach ($studentessays as $pages) {  // students
+                foreach ($studentessays as $studentid => $pages) {  // students
+                    $attempts = count_records('lesson_grades', 'userid', $studentid, 'lessonid', $lesson->id);
+                    $count = 0;
                     foreach ($pages as $tries) {  // pages
                         // go through each essay per page
                         foreach($tries as $try) {  // actual attempts
+                            if ($attempts == $count) {
+                                break;  // dont count unfinnished attempts
+                            }
+                            $count++;
+
                             // make sure they didn't answer it more than the max number of attmepts
                             if (count($try) > $lesson->maxattempts) {
                                 $essay = $try[$lesson->maxattempts-1];
@@ -1697,6 +1704,7 @@
         if (!$essayattempts = get_records_select("lesson_attempts", "lessonid = $lesson->id AND pageid IN($pageids)")) {
             error ("No one has answered essay questions yet...");
         }
+        
         // group all the essays by userid
         $studentessays = array();
         foreach ($essayattempts as $essay) {
@@ -1720,10 +1728,20 @@
         foreach ($studentids as $id) {
             $studentname = $users[$id]->lastname.", ".$users[$id]->firstname;
             $essaylinks = array();
+            
+            // number of attempts on the lesson
+            $attempts = count_records('lesson_grades', 'userid', $id, 'lessonid', $lesson->id);
+            $count = 0;
+            
             // go through each essay
             foreach ($studentessays[$id] as $page => $tries) {
                 // go through each essay per page
                 foreach($tries as $try) {
+                    if ($count == $attempts) {
+                        break;  // stop displaying essays (attempt not completed)
+                    }
+                    $count++;
+
                     // make sure they didn't answer it more than the max number of attmepts
                     if (count($try) > $lesson->maxattempts) {
                         $essay = $try[$lesson->maxattempts-1];
