@@ -1063,7 +1063,6 @@ function data_print_comments($data, $record , $search, $template, $sort, $page=0
     echo '<input type="hidden" name="mode" value="add" />';
     echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
     echo '<input type="hidden" name="recordid" value="'.$record->id.'" />';
-    
     echo '<input type="hidden" name="d" value="'.$data->id.'" />';
     echo '<input type="hidden" name="search" value="'.$search.'" />';
     echo '<input type="hidden" name="rid" value="'.$rid.'" />';

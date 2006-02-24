@@ -1,6 +1,6 @@
 <?
 function migrate2utf8_workshop_stockcomments_comments($recordid){
-    global $CFG;
+    global $CFG, $globallang;
 
 /// Some trivial checks
     if (empty($recordid)) {
@@ -24,27 +24,33 @@ function migrate2utf8_workshop_stockcomments_comments($recordid){
         return false;
     }
 
-    $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($workshop->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($workshop->course); //N.E.!!
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = get_course_lang($workshop->course);  //Non existing!
+        $userlang   = get_main_teacher_lang($workshop->course); //N.E.!!
 
-    $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
 
 /// We are going to use textlib facilities
     
 /// Convert the text
-    $result = utfconvert($workshopstockcomments->comments, $fromenc);
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($workshopstockcomments->comments, $fromenc);
 
-    $newworkshopstockcomments = new object;
-    $newworkshopstockcomments->id = $recordid;
-    $newworkshopstockcomments->comments = $result;
-    update_record('workshop_stockcomments',$newworkshopstockcomments);
+        $newworkshopstockcomments = new object;
+        $newworkshopstockcomments->id = $recordid;
+        $newworkshopstockcomments->comments = $result;
+        update_record('workshop_stockcomments',$newworkshopstockcomments);
+    }
 /// And finally, just return the converted field
     return $result;
 }
 
 function migrate2utf8_workshop_rubrics_description($recordid){
-    global $CFG;
+    global $CFG, $globallang;
 
 /// Some trivial checks
     if (empty($recordid)) {
@@ -68,27 +74,33 @@ function migrate2utf8_workshop_rubrics_description($recordid){
         return false;
     }
 
-    $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($workshop->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($workshop->course); //N.E.!!
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = get_course_lang($workshop->course);  //Non existing!
+        $userlang   = get_main_teacher_lang($workshop->course); //N.E.!!
 
-    $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
 
 /// We are going to use textlib facilities
     
 /// Convert the text
-    $result = utfconvert($workshoprubrics->description, $fromenc);
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($workshoprubrics->description, $fromenc);
 
-    $newworkshoprubrics = new object;
-    $newworkshoprubrics->id = $recordid;
-    $newworkshoprubrics->description = $result;
-    update_record('workshop_rubrics',$newworkshoprubrics);
+        $newworkshoprubrics = new object;
+        $newworkshoprubrics->id = $recordid;
+        $newworkshoprubrics->description = $result;
+        update_record('workshop_rubrics',$newworkshoprubrics);
+    }
 /// And finally, just return the converted field
     return $result;
 }
 
 function migrate2utf8_workshop_grades_feedback($recordid){
-    global $CFG;
+    global $CFG, $globallang;
 
 /// Some trivial checks
     if (empty($recordid)) {
@@ -112,27 +124,33 @@ function migrate2utf8_workshop_grades_feedback($recordid){
         return false;
     }
 
-    $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($workshop->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($workshop->course); //N.E.!!
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = get_course_lang($workshop->course);  //Non existing!
+        $userlang   = get_main_teacher_lang($workshop->course); //N.E.!!
 
-    $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
 
 /// We are going to use textlib facilities
     
 /// Convert the text
-    $result = utfconvert($workshopgrades->feedback, $fromenc);
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($workshopgrades->feedback, $fromenc);
 
-    $newworkshopgrades = new object;
-    $newworkshopgrades->id = $recordid;
-    $newworkshopgrades->feedback = $result;
-    update_record('workshop_grades',$newworkshopgrades);
+        $newworkshopgrades = new object;
+        $newworkshopgrades->id = $recordid;
+        $newworkshopgrades->feedback = $result;
+        update_record('workshop_grades',$newworkshopgrades);
+    }
 /// And finally, just return the converted field
     return $result;
 }
 
 function migrate2utf8_workshop_elements_description($recordid){
-    global $CFG;
+    global $CFG, $globallang;
 
 /// Some trivial checks
     if (empty($recordid)) {
@@ -156,27 +174,33 @@ function migrate2utf8_workshop_elements_description($recordid){
         return false;
     }
 
-    $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($workshop->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($workshop->course); //N.E.!!
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = get_course_lang($workshop->course);  //Non existing!
+        $userlang   = get_main_teacher_lang($workshop->course); //N.E.!!
 
-    $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
 
 /// We are going to use textlib facilities
     
 /// Convert the text
-    $result = utfconvert($workshopelements->description, $fromenc);
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($workshopelements->description, $fromenc);
 
-    $newworkshopelements = new object;
-    $newworkshopelements->id = $recordid;
-    $newworkshopelements->description = $result;
-    update_record('workshop_elements',$newworkshopelements);
+        $newworkshopelements = new object;
+        $newworkshopelements->id = $recordid;
+        $newworkshopelements->description = $result;
+        update_record('workshop_elements',$newworkshopelements);
+    }
 /// And finally, just return the converted field
     return $result;
 }
 
 function migrate2utf8_workshop_name($recordid){
-    global $CFG;
+    global $CFG, $globallang;
 
 /// Some trivial checks
     if (empty($recordid)) {
@@ -188,28 +212,33 @@ function migrate2utf8_workshop_name($recordid){
         log_the_problem_somewhere();
         return false;
     }
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = get_course_lang($workshop->course);  //Non existing!
+        $userlang   = get_main_teacher_lang($workshop->course); //N.E.!!
 
-    $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($workshop->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($workshop->course); //N.E.!!
-
-    $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
 
 /// We are going to use textlib facilities
     
 /// Convert the text
-    $result = utfconvert($workshop->name, $fromenc);
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($workshop->name, $fromenc);
 
-    $newworkshop = new object;
-    $newworkshop->id = $recordid;
-    $newworkshop->name = $result;
-    update_record('workshop',$newworkshop);
+        $newworkshop = new object;
+        $newworkshop->id = $recordid;
+        $newworkshop->name = $result;
+        update_record('workshop',$newworkshop);
+    }
 /// And finally, just return the converted field
     return $result;
 }
 
 function migrate2utf8_workshop_description($recordid){
-    global $CFG;
+    global $CFG, $globallang;
 
 /// Some trivial checks
     if (empty($recordid)) {
@@ -221,28 +250,33 @@ function migrate2utf8_workshop_description($recordid){
         log_the_problem_somewhere();
         return false;
     }
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = get_course_lang($workshop->course);  //Non existing!
+        $userlang   = get_main_teacher_lang($workshop->course); //N.E.!!
 
-    $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($workshop->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($workshop->course); //N.E.!!
-
-    $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
 
 /// We are going to use textlib facilities
     
 /// Convert the text
-    $result = utfconvert($workshop->description, $fromenc);
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($workshop->description, $fromenc);
 
-    $newworkshop = new object;
-    $newworkshop->id = $recordid;
-    $newworkshop->description = $result;
-    update_record('workshop',$newworkshop);
+        $newworkshop = new object;
+        $newworkshop->id = $recordid;
+        $newworkshop->description = $result;
+        update_record('workshop',$newworkshop);
+    }
 /// And finally, just return the converted field
     return $result;
 }
 
 function migrate2utf8_workshop_password($recordid){
-    global $CFG;
+    global $CFG, $globallang;
 
 /// Some trivial checks
     if (empty($recordid)) {
@@ -254,22 +288,27 @@ function migrate2utf8_workshop_password($recordid){
         log_the_problem_somewhere();
         return false;
     }
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = get_course_lang($workshop->course);  //Non existing!
+        $userlang   = get_main_teacher_lang($workshop->course); //N.E.!!
 
-    $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($workshop->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($workshop->course); //N.E.!!
-
-    $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
 
 /// We are going to use textlib facilities
     
 /// Convert the text
-    $result = utfconvert($workshop->password, $fromenc);
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($workshop->password, $fromenc);
 
-    $newworkshop = new object;
-    $newworkshop->id = $recordid;
-    $newworkshop->password = $result;
-    update_record('workshop',$newworkshop);
+        $newworkshop = new object;
+        $newworkshop->id = $recordid;
+        $newworkshop->password = $result;
+        update_record('workshop',$newworkshop);
+    }
 /// And finally, just return the converted field
     return $result;
 }

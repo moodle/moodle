@@ -3,7 +3,6 @@
     require_once('../../config.php');
     require_once('lib.php');
 
-
     //param needed to go back to view.php
     $d     = optional_param('d', 0, PARAM_INT);   // database id
     $search = optional_param('search','',PARAM_NOTAGS);    //search string
@@ -19,8 +18,8 @@
     $commentid = optional_param('commentid','',PARAM_INT);
     $confirm = optional_param('confirm','',PARAM_INT);
     $commentcontent = optional_param('commentcontent','',PARAM_NOTAGS);
-    
-    
+
+
     if ((!$record = get_record('data_records','id',$recordid))) {
         if (!$comment = get_record('data_comments','id',$commentid)) {
             error ('this record does not exist');

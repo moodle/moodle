@@ -1,6 +1,6 @@
 <?
 function migrate2utf8_data_fields_name($recordid){
-    global $CFG;
+    global $CFG, $globallang;
 
 /// Some trivial checks
     if (empty($recordid)) {
@@ -23,28 +23,33 @@ function migrate2utf8_data_fields_name($recordid){
         log_the_problem_somewhere();
         return false;
     }
-    
-    $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($data->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($data->course); //N.E.!!
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = get_course_lang($data->course);  //Non existing!
+        $userlang   = get_main_teacher_lang($data->course); //N.E.!!
 
-    $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
 
 /// We are going to use textlib facilities
     
 /// Convert the text
-    $result = utfconvert($datafield->name, $fromenc);
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($datafield->name, $fromenc);
 
-    $newdatafield = new object;
-    $newdatafield->id = $recordid;
-    $newdatafield->name = $result;
-    update_record('data_fields',$newdatafield);
+        $newdatafield = new object;
+        $newdatafield->id = $recordid;
+        $newdatafield->name = $result;
+        update_record('data_fields',$newdatafield);
+    }
 /// And finally, just return the converted field
     return $result;
 }
 
 function migrate2utf8_data_fields_description($recordid){
-    global $CFG;
+    global $CFG, $globallang;
 
 /// Some trivial checks
     if (empty($recordid)) {
@@ -67,28 +72,33 @@ function migrate2utf8_data_fields_description($recordid){
         log_the_problem_somewhere();
         return false;
     }
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = get_course_lang($data->course);  //Non existing!
+        $userlang   = get_main_teacher_lang($data->course); //N.E.!!
 
-    $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($data->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($data->course); //N.E.!!
-
-    $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
 
 /// We are going to use textlib facilities
     
 /// Convert the text
-    $result = utfconvert($datafield->description, $fromenc);
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($datafield->description, $fromenc);
 
-    $newdatafield = new object;
-    $newdatafield->id = $recordid;
-    $newdatafield->description = $result;
-    update_record('data_fields',$newdatafield);
+        $newdatafield = new object;
+        $newdatafield->id = $recordid;
+        $newdatafield->description = $result;
+        update_record('data_fields',$newdatafield);
+    }
 /// And finally, just return the converted field
     return $result;
 }
 
 function migrate2utf8_data_name($recordid){
-    global $CFG;
+    global $CFG, $globallang;
 
 /// Some trivial checks
     if (empty($recordid)) {
@@ -100,28 +110,33 @@ function migrate2utf8_data_name($recordid){
         log_the_problem_somewhere();
         return false;
     }
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = get_course_lang($data->course);  //Non existing!
+        $userlang   = get_main_teacher_lang($data->course); //N.E.!!
 
-    $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($data->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($data->course); //N.E.!!
-
-    $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
 
 /// We are going to use textlib facilities
     
 /// Convert the text
-    $result = utfconvert($data->name, $fromenc);
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($data->name, $fromenc);
 
-    $newdata= new object;
-    $newdata->id = $recordid;
-    $newdata->name = $result;
-    update_record('data',$newdata);
+        $newdata= new object;
+        $newdata->id = $recordid;
+        $newdata->name = $result;
+        update_record('data',$newdata);
+    }
 /// And finally, just return the converted field
     return $result;
 }
 
 function migrate2utf8_data_intro($recordid){
-    global $CFG;
+    global $CFG, $globallang;
 
 /// Some trivial checks
     if (empty($recordid)) {
@@ -133,28 +148,33 @@ function migrate2utf8_data_intro($recordid){
         log_the_problem_somewhere();
         return false;
     }
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = get_course_lang($data->course);  //Non existing!
+        $userlang   = get_main_teacher_lang($data->course); //N.E.!!
 
-    $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($data->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($data->course); //N.E.!!
-
-    $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
 
 /// We are going to use textlib facilities
     
 /// Convert the text
-    $result = utfconvert($data->intro, $fromenc);
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($data->intro, $fromenc);
 
-    $newdata= new object;
-    $newdata->id = $recordid;
-    $newdata->intro = $result;
-    update_record('data',$newdata);
+        $newdata= new object;
+        $newdata->id = $recordid;
+        $newdata->intro = $result;
+        update_record('data',$newdata);
+    }
 /// And finally, just return the converted field
     return $result;
 }
 
 function migrate2utf8_data_singletemplate($recordid){
-    global $CFG;
+    global $CFG, $globallang;
 
 /// Some trivial checks
     if (empty($recordid)) {
@@ -167,27 +187,33 @@ function migrate2utf8_data_singletemplate($recordid){
         return false;
     }
 
-    $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($data->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($data->course); //N.E.!!
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = get_course_lang($data->course);  //Non existing!
+        $userlang   = get_main_teacher_lang($data->course); //N.E.!!
 
-    $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
 
 /// We are going to use textlib facilities
     
 /// Convert the text
-    $result = utfconvert($data->singletemplate, $fromenc);
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($data->singletemplate, $fromenc);
 
-    $newdata= new object;
-    $newdata->id = $recordid;
-    $newdata->singletemplate = $result;
-    update_record('data',$newdata);
+        $newdata= new object;
+        $newdata->id = $recordid;
+        $newdata->singletemplate = $result;
+        update_record('data',$newdata);
+    }
 /// And finally, just return the converted field
     return $result;
 }
 
 function migrate2utf8_data_listtemplate($recordid){
-    global $CFG;
+    global $CFG, $globallang;
 
 /// Some trivial checks
     if (empty($recordid)) {
@@ -200,27 +226,33 @@ function migrate2utf8_data_listtemplate($recordid){
         return false;
     }
 
-    $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($data->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($data->course); //N.E.!!
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = get_course_lang($data->course);  //Non existing!
+        $userlang   = get_main_teacher_lang($data->course); //N.E.!!
 
-    $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
 
 /// We are going to use textlib facilities
     
 /// Convert the text
-    $result = utfconvert($data->listtemplate, $fromenc);
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($data->listtemplate, $fromenc);
 
-    $newdata= new object;
-    $newdata->id = $recordid;
-    $newdata->listtemplate = $result;
-    update_record('data',$newdata);
+        $newdata= new object;
+        $newdata->id = $recordid;
+        $newdata->listtemplate = $result;
+        update_record('data',$newdata);
+    }
 /// And finally, just return the converted field
     return $result;
 }
 
 function migrate2utf8_data_addtemplate($recordid){
-    global $CFG;
+    global $CFG, $globallang;
 
 /// Some trivial checks
     if (empty($recordid)) {
@@ -233,27 +265,33 @@ function migrate2utf8_data_addtemplate($recordid){
         return false;
     }
 
-    $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($data->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($data->course); //N.E.!!
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = get_course_lang($data->course);  //Non existing!
+        $userlang   = get_main_teacher_lang($data->course); //N.E.!!
 
-    $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
 
 /// We are going to use textlib facilities
     
 /// Convert the text
-    $result = utfconvert($data->addtemplate, $fromenc);
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($data->addtemplate, $fromenc);
 
-    $newdata= new object;
-    $newdata->id = $recordid;
-    $newdata->addtemplate = $result;
-    update_record('data',$newdata);
+        $newdata= new object;
+        $newdata->id = $recordid;
+        $newdata->addtemplate = $result;
+        update_record('data',$newdata);
+    }
 /// And finally, just return the converted field
     return $result;
 }
 
 function migrate2utf8_data_rsstemplate($recordid){
-    global $CFG;
+    global $CFG, $globallang;
 
 /// Some trivial checks
     if (empty($recordid)) {
@@ -266,27 +304,32 @@ function migrate2utf8_data_rsstemplate($recordid){
         return false;
     }
 
-    $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($data->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($data->course); //N.E.!!
-
-    $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = get_course_lang($data->course);  //Non existing!
+        $userlang   = get_main_teacher_lang($data->course); //N.E.!!
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
 
 /// We are going to use textlib facilities
     
 /// Convert the text
-    $result = utfconvert($data->rsstemplate, $fromenc);
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($data->rsstemplate, $fromenc);
 
-    $newdata= new object;
-    $newdata->id = $recordid;
-    $newdata->rsstemplate = $result;
-    update_record('data',$newdata);
+        $newdata= new object;
+        $newdata->id = $recordid;
+        $newdata->rsstemplate = $result;
+        update_record('data',$newdata);
+    }
 /// And finally, just return the converted field
     return $result;
 }
 
 function migrate2utf8_data_listtemplateheader($recordid){
-    global $CFG;
+    global $CFG, $globallang;
 
 /// Some trivial checks
     if (empty($recordid)) {
@@ -299,27 +342,31 @@ function migrate2utf8_data_listtemplateheader($recordid){
         return false;
     }
 
-    $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($data->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($data->course); //N.E.!!
-
-    $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = get_course_lang($data->course);  //Non existing!
+        $userlang   = get_main_teacher_lang($data->course); //N.E.!!
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
 
 /// We are going to use textlib facilities
     
-/// Convert the text
-    $result = utfconvert($data->listtemplateheader, $fromenc);
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($data->listtemplateheader, $fromenc);
 
-    $newdata= new object;
-    $newdata->id = $recordid;
-    $newdata->listtemplateheader = $result;
-    update_record('data',$newdata);
+        $newdata= new object;
+        $newdata->id = $recordid;
+        $newdata->listtemplateheader = $result;
+        update_record('data',$newdata);
+    }
 /// And finally, just return the converted field
     return $result;
 }
 
 function migrate2utf8_data_listtemplatefooter($recordid){
-    global $CFG;
+    global $CFG, $globallang;
 
 /// Some trivial checks
     if (empty($recordid)) {
@@ -332,21 +379,26 @@ function migrate2utf8_data_listtemplatefooter($recordid){
         return false;
     }
 
-    $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($data->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($data->course); //N.E.!!
-
-    $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = get_course_lang($data->course);  //Non existing!
+        $userlang   = get_main_teacher_lang($data->course); //N.E.!!
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
 
 /// We are going to use textlib facilities
     
 /// Convert the text
-    $result = utfconvert($data->listtemplatefooter, $fromenc);
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($data->listtemplatefooter, $fromenc);
 
-    $newdata= new object;
-    $newdata->id = $recordid;
-    $newdata->listtemplatefooter = $result;
-    update_record('data',$newdata);
+        $newdata= new object;
+        $newdata->id = $recordid;
+        $newdata->listtemplatefooter = $result;
+        update_record('data',$newdata);
+    }
 /// And finally, just return the converted field
     return $result;
 }

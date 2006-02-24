@@ -1,6 +1,6 @@
 <?
 function migrate2utf8_lesson_answers_answer($recordid){
-    global $CFG;
+    global $CFG, $globallang;
 
 /// Some trivial checks
     if (empty($recordid)) {
@@ -23,28 +23,33 @@ function migrate2utf8_lesson_answers_answer($recordid){
         log_the_problem_somewhere();
         return false;
     }
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = get_course_lang($lesson->course);  //Non existing!
+        $userlang   = get_main_teacher_lang($lesson->course); //N.E.!!
 
-    $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($lesson->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($lesson->course); //N.E.!!
-
-    $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
 
 /// We are going to use textlib facilities
     
 /// Convert the text
-    $result = utfconvert($lessonanswers->answer, $fromenc);
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($lessonanswers->answer, $fromenc);
 
-    $newlessonanswers = new object;
-    $newlessonanswers->id = $recordid;
-    $newlessonanswers->answer = $result;
-    update_record('lesson_answers',$newlessonanswers);
+        $newlessonanswers = new object;
+        $newlessonanswers->id = $recordid;
+        $newlessonanswers->answer = $result;
+        update_record('lesson_answers',$newlessonanswers);
+    }
 /// And finally, just return the converted field
     return $result;
 }
 
 function migrate2utf8_lesson_answers_response($recordid){
-    global $CFG;
+    global $CFG, $globallang;
 
 /// Some trivial checks
     if (empty($recordid)) {
@@ -67,22 +72,27 @@ function migrate2utf8_lesson_answers_response($recordid){
         log_the_problem_somewhere();
         return false;
     }
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = get_course_lang($lesson->course);  //Non existing!
+        $userlang   = get_main_teacher_lang($lesson->course); //N.E.!!
 
-    $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($lesson->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($lesson->course); //N.E.!!
-
-    $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
 
 /// We are going to use textlib facilities
     
 /// Convert the text
-    $result = utfconvert($lessonanswers->response, $fromenc);
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($lessonanswers->response, $fromenc);
 
-    $newlessonanswers = new object;
-    $newlessonanswers->id = $recordid;
-    $newlessonanswers->response = $result;
-    update_record('lesson_answers',$newlessonanswers);
+        $newlessonanswers = new object;
+        $newlessonanswers->id = $recordid;
+        $newlessonanswers->response = $result;
+        update_record('lesson_answers',$newlessonanswers);
+    }
 /// And finally, just return the converted field
     return $result;
 }
@@ -95,7 +105,7 @@ function migrate2utf8_lesson_default_password($recordid){
 
 
 function migrate2utf8_lesson_pages_contents($recordid){
-    global $CFG;
+    global $CFG, $globallang;
 
 /// Some trivial checks
     if (empty($recordid)) {
@@ -118,28 +128,33 @@ function migrate2utf8_lesson_pages_contents($recordid){
         log_the_problem_somewhere();
         return false;
     }
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = get_course_lang($lesson->course);  //Non existing!
+        $userlang   = get_main_teacher_lang($lesson->course); //N.E.!!
 
-    $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($lesson->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($lesson->course); //N.E.!!
-
-    $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
 
 /// We are going to use textlib facilities
     
 /// Convert the text
-    $result = utfconvert($lessonpages->contents, $fromenc);
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($lessonpages->contents, $fromenc);
 
-    $newlessonpages = new object;
-    $newlessonpages->id = $recordid;
-    $newlessonpages->contents = $result;
-    update_record('lesson_pages',$newlessonpages);
+        $newlessonpages = new object;
+        $newlessonpages->id = $recordid;
+        $newlessonpages->contents = $result;
+        update_record('lesson_pages',$newlessonpages);
+    }
 /// And finally, just return the converted field
     return $result;
 }
 
 function migrate2utf8_lesson_pages_title($recordid){
-    global $CFG;
+    global $CFG, $globallang;
 
 /// Some trivial checks
     if (empty($recordid)) {
@@ -161,28 +176,33 @@ function migrate2utf8_lesson_pages_title($recordid){
         log_the_problem_somewhere();
         return false;
     }
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = get_course_lang($lesson->course);  //Non existing!
+        $userlang   = get_main_teacher_lang($lesson->course); //N.E.!!
 
-    $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($lesson->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($lesson->course); //N.E.!!
-
-    $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
 
 /// We are going to use textlib facilities
     
 /// Convert the text
-    $result = utfconvert($lessonpages->title, $fromenc);
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($lessonpages->title, $fromenc);
 
-    $newlessonpages = new object;
-    $newlessonpages->id = $recordid;
-    $newlessonpages->title = $result;
-    update_record('lesson_pages',$newlessonpages);
+        $newlessonpages = new object;
+        $newlessonpages->id = $recordid;
+        $newlessonpages->title = $result;
+        update_record('lesson_pages',$newlessonpages);
+    }
 /// And finally, just return the converted field
     return $result;
 }
 
 function migrate2utf8_lesson_name($recordid){
-    global $CFG;
+    global $CFG, $globallang;
 
 /// Some trivial checks
     if (empty($recordid)) {
@@ -194,22 +214,27 @@ function migrate2utf8_lesson_name($recordid){
         log_the_problem_somewhere();
         return false;
     }
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = get_course_lang($lesson->course);  //Non existing!
+        $userlang   = get_main_teacher_lang($lesson->course); //N.E.!!
 
-    $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($lesson->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($lesson->course); //N.E.!!
-
-    $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
 
 /// We are going to use textlib facilities
     
 /// Convert the text
-    $result = utfconvert($lesson->name, $fromenc);
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($lesson->name, $fromenc);
 
-    $newlesson = new object;
-    $newlesson->id = $recordid;
-    $newlesson->name = $result;
-    update_record('lesson',$newlesson);
+        $newlesson = new object;
+        $newlesson->id = $recordid;
+        $newlesson->name = $result;
+        update_record('lesson',$newlesson);
+    }
 /// And finally, just return the converted field
     return $result;
 }

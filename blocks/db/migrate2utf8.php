@@ -1,6 +1,6 @@
 <?
 function migrate2utf8_block_instance_configdata($recordid){
-    global $CFG;
+    global $CFG, $globallang;
 
     $blockinstance = get_record('block_instance','id',$recordid);
 
@@ -11,12 +11,15 @@ function migrate2utf8_block_instance_configdata($recordid){
     if ($blocktype -> name == 'html') {
 
         ///find course
+        if ($globallang) {
+            $fromenc = $globallang;
+        } else {
+            $sitelang   = $CFG->lang;
+            $courselang = get_course_lang($blockinstance->pageid);  //Non existing!
+            $userlang   = get_main_teacher_lang($blockinstance->pageid); //N.E.!!
 
-        $sitelang   = $CFG->lang;
-        $courselang = get_course_lang($blockinstance->pageid);  //Non existing!
-        $userlang   = get_main_teacher_lang($blockinstance->pageid); //N.E.!!
-
-        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+            $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+        }
        
         $blah = unserialize(base64_decode($blockinstance->configdata));
  
@@ -35,12 +38,15 @@ function migrate2utf8_block_instance_configdata($recordid){
     } else if ($blocktype -> name == 'rss_client'){
 
         ///find course
+        if ($globallang) {
+            $fromenc = $globallang;
+        } else {
+            $sitelang   = $CFG->lang;
+            $courselang = get_course_lang($blockinstance->pageid);  //Non existing!
+            $userlang   = get_main_teacher_lang($blockinstance->pageid); //N.E.!!
 
-        $sitelang   = $CFG->lang;
-        $courselang = get_course_lang($blockinstance->pageid);  //Non existing!
-        $userlang   = get_main_teacher_lang($blockinstance->pageid); //N.E.!!
-
-        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+            $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+        }
 
         $blah = unserialize(base64_decode($blockinstance->configdata));
 

@@ -1,6 +1,6 @@
 <?
 function migrate2utf8_choice_options_text($recordid){
-    global $CFG;
+    global $CFG, $globallang;
 
 /// Some trivial checks
     if (empty($recordid)) {
@@ -23,28 +23,34 @@ function migrate2utf8_choice_options_text($recordid){
         log_the_problem_somewhere();
         return false;
     }
-    
-    $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($choice->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($choice->course); //N.E.!!
 
-    $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = get_course_lang($choice->course);  //Non existing!
+        $userlang   = get_main_teacher_lang($choice->course); //N.E.!!
+
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
 
 /// We are going to use textlib facilities
     
 /// Convert the text
-    $result = utfconvert($choiceoption->text, $fromenc);
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($choiceoption->text, $fromenc);
 
-    $newchoiceoption = new object;
-    $newchoiceoption->id = $recordid;
-    $newchoiceoption->text = $result;
-    update_record('choice_options',$newchoiceoption);
+        $newchoiceoption = new object;
+        $newchoiceoption->id = $recordid;
+        $newchoiceoption->text = $result;
+        update_record('choice_options',$newchoiceoption);
+    }
 /// And finally, just return the converted field
     return $result;
 }
 
 function migrate2utf8_choice_name($recordid){
-    global $CFG;
+    global $CFG, $globallang;
 
 /// Some trivial checks
     if (empty($recordid)) {
@@ -55,28 +61,33 @@ function migrate2utf8_choice_name($recordid){
         log_the_problem_somewhere();
         return false;
     }
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = get_course_lang($choice->course);  //Non existing!
+        $userlang   = get_main_teacher_lang($choice->course); //N.E.!!
 
-    $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($choice->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($choice->course); //N.E.!!
-
-    $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
 
 /// We are going to use textlib facilities
     
 /// Convert the text
-    $result = utfconvert($choice->name, $fromenc);
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($choice->name, $fromenc);
 
-    $newchoice = new object;
-    $newchoice->id = $recordid;
-    $newchoice->name = $result;
-    update_record('choice',$newchoice);
+        $newchoice = new object;
+        $newchoice->id = $recordid;
+        $newchoice->name = $result;
+        update_record('choice',$newchoice);
+    }
 /// And finally, just return the converted field
     return $result;
 }
 
 function migrate2utf8_choice_text($recordid){
-    global $CFG;
+    global $CFG, $globallang;
 
 /// Some trivial checks
     if (empty($recordid)) {
@@ -87,22 +98,27 @@ function migrate2utf8_choice_text($recordid){
         log_the_problem_somewhere();
         return false;
     }
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = get_course_lang($choice->course);  //Non existing!
+        $userlang   = get_main_teacher_lang($choice->course); //N.E.!!
 
-    $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($choice->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($choice->course); //N.E.!!
-
-    $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
 
 /// We are going to use textlib facilities
     
 /// Convert the text
-    $result = utfconvert($choice->text, $fromenc);
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($choice->text, $fromenc);
 
-    $newchoice = new object;
-    $newchoice->id = $recordid;
-    $newchoice->text = $result;
-    update_record('choice',$newchoice);
+        $newchoice = new object;
+        $newchoice->id = $recordid;
+        $newchoice->text = $result;
+        update_record('choice',$newchoice);
+    }
 /// And finally, just return the converted field
     return $result;
 }

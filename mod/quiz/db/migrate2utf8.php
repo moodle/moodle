@@ -1,6 +1,6 @@
 <?
 function migrate2utf8_quiz_questions_name($recordid){
-    global $CFG;
+    global $CFG, $globallang;
 
 /// Some trivial checks
     if (empty($recordid)) {
@@ -23,28 +23,33 @@ function migrate2utf8_quiz_questions_name($recordid){
         log_the_problem_somewhere();
         return false;
     }
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = get_course_lang($quiz->course);  //Non existing!
+        $userlang   = get_main_teacher_lang($quiz->course); //N.E.!!
 
-    $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($quiz->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($quiz->course); //N.E.!!
-
-    $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
 
 /// We are going to use textlib facilities
     
 /// Convert the text
-    $result = utfconvert($quizquestions->name, $fromenc);
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($quizquestions->name, $fromenc);
 
-    $newquizquestion = new object;
-    $newquizquestion->id = $recordid;
-    $newquizquestion->name = $result;
-    update_record('quiz_questions',$newquizquestion);
+        $newquizquestion = new object;
+        $newquizquestion->id = $recordid;
+        $newquizquestion->name = $result;
+        update_record('quiz_questions',$newquizquestion);
+    }
 /// And finally, just return the converted field
     return $result;
 }
 
 function migrate2utf8_quiz_questions_questiontext($recordid){
-    global $CFG;
+    global $CFG, $globallang;
 
 /// Some trivial checks
     if (empty($recordid)) {
@@ -68,28 +73,34 @@ function migrate2utf8_quiz_questions_questiontext($recordid){
         return false;
     }
 
-    $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($quiz->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($quiz->course); //N.E.!!
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = get_course_lang($quiz->course);  //Non existing!
+        $userlang   = get_main_teacher_lang($quiz->course); //N.E.!!
 
-    $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
 
 /// We are going to use textlib facilities
     
 /// Convert the text
-    $result = utfconvert($quizquestions->questiontext, $fromenc);
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($quizquestions->questiontext, $fromenc);
 
-    $newquizquestion = new object;
-    $newquizquestion->id = $recordid;
-    $newquizquestion->questiontext = $result;
-    update_record('quiz_questions',$newquizquestion);
+        $newquizquestion = new object;
+        $newquizquestion->id = $recordid;
+        $newquizquestion->questiontext = $result;
+        update_record('quiz_questions',$newquizquestion);
+    }
 /// And finally, just return the converted field
     return $result;
 }
 
 
 function migrate2utf8_quiz_numerical_units_unit($recordid){
-    global $CFG;
+    global $CFG, $globallang;
 
 /// Some trivial checks
     if (empty($recordid)) {
@@ -115,27 +126,33 @@ function migrate2utf8_quiz_numerical_units_unit($recordid){
         return false;
     }
 
-    $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($quiz->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($quiz->course); //N.E.!!
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = get_course_lang($quiz->course);  //Non existing!
+        $userlang   = get_main_teacher_lang($quiz->course); //N.E.!!
 
-    $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
 
 /// We are going to use textlib facilities
     
 /// Convert the text
-    $result = utfconvert($quiznumericalunits->unit, $fromenc);
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($quiznumericalunits->unit, $fromenc);
 
-    $newquiznumericalunits = new object;
-    $newquiznumericalunits->id = $recordid;
-    $newquiznumericalunits->unit = $result;
-    update_record('quiz_numerical_units',$newquiznumericalunits);
+        $newquiznumericalunits = new object;
+        $newquiznumericalunits->id = $recordid;
+        $newquiznumericalunits->unit = $result;
+        update_record('quiz_numerical_units',$newquiznumericalunits);
+    }
 /// And finally, just return the converted field
     return $result;
 }
 
 function migrate2utf8_quiz_match_sub_questiontext($recordid){
-    global $CFG;
+    global $CFG, $globallang;
 
 /// Some trivial checks
     if (empty($recordid)) {
@@ -161,27 +178,33 @@ function migrate2utf8_quiz_match_sub_questiontext($recordid){
         return false;
     }
 
-    $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($quiz->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($quiz->course); //N.E.!!
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = get_course_lang($quiz->course);  //Non existing!
+        $userlang   = get_main_teacher_lang($quiz->course); //N.E.!!
 
-    $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
 
 /// We are going to use textlib facilities
     
 /// Convert the text
-    $result = utfconvert($quizmatchsub->questiontext, $fromenc);
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($quizmatchsub->questiontext, $fromenc);
 
-    $newquizmatchsub = new object;
-    $newquizmatchsub->id = $recordid;
-    $newquizmatchsub->questiontext = $result;
-    update_record('quiz_match_sub',$newquizmatchsub);
+        $newquizmatchsub = new object;
+        $newquizmatchsub->id = $recordid;
+        $newquizmatchsub->questiontext = $result;
+        update_record('quiz_match_sub',$newquizmatchsub);
+    }
 /// And finally, just return the converted field
     return $result;
 }
 
 function migrate2utf8_quiz_match_sub_answertext($recordid){
-    global $CFG;
+    global $CFG, $globallang;
 
 /// Some trivial checks
     if (empty($recordid)) {
@@ -207,27 +230,33 @@ function migrate2utf8_quiz_match_sub_answertext($recordid){
         return false;
     }
 
-    $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($quiz->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($quiz->course); //N.E.!!
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = get_course_lang($quiz->course);  //Non existing!
+        $userlang   = get_main_teacher_lang($quiz->course); //N.E.!!
 
-    $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
 
 /// We are going to use textlib facilities
     
 /// Convert the text
-    $result = utfconvert($quizmatchsub->answertext, $fromenc);
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($quizmatchsub->answertext, $fromenc);
 
-    $newquizmatchsub = new object;
-    $newquizmatchsub->id = $recordid;
-    $newquizmatchsub->answertext = $result;
-    update_record('quiz_match_sub',$newquizmatchsub);
+        $newquizmatchsub = new object;
+        $newquizmatchsub->id = $recordid;
+        $newquizmatchsub->answertext = $result;
+        update_record('quiz_match_sub',$newquizmatchsub);
+    }
 /// And finally, just return the converted field
     return $result;
 }
 
 function migrate2utf8_quiz_answers_answer($recordid){
-    global $CFG;
+    global $CFG, $globallang;
 
 /// Some trivial checks
     if (empty($recordid)) {
@@ -253,27 +282,33 @@ function migrate2utf8_quiz_answers_answer($recordid){
         return false;
     }
 
-    $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($quiz->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($quiz->course); //N.E.!!
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = get_course_lang($quiz->course);  //Non existing!
+        $userlang   = get_main_teacher_lang($quiz->course); //N.E.!!
 
-    $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
 
 /// We are going to use textlib facilities
     
 /// Convert the text
-    $result = utfconvert($quizanswer->answer, $fromenc);
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($quizanswer->answer, $fromenc);
 
-    $newquizanswer = new object;
-    $newquizanswer->id = $recordid;
-    $newquizanswer->answer = $result;
-    update_record('quiz_answers',$newquizanswer);
+        $newquizanswer = new object;
+        $newquizanswer->id = $recordid;
+        $newquizanswer->answer = $result;
+        update_record('quiz_answers',$newquizanswer);
+    }
 /// And finally, just return the converted field
     return $result;
 }
 
 function migrate2utf8_quiz_answers_feedback($recordid){
-    global $CFG;
+    global $CFG, $globallang;
 
 /// Some trivial checks
     if (empty($recordid)) {
@@ -299,21 +334,27 @@ function migrate2utf8_quiz_answers_feedback($recordid){
         return false;
     }
 
-    $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($quiz->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($quiz->course); //N.E.!!
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = get_course_lang($quiz->course);  //Non existing!
+        $userlang   = get_main_teacher_lang($quiz->course); //N.E.!!
 
-    $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
 
 /// We are going to use textlib facilities
     
 /// Convert the text
-    $result = utfconvert($quizanswer->feedback, $fromenc);
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($quizanswer->feedback, $fromenc);
 
-    $newquizanswer = new object;
-    $newquizanswer->id = $recordid;
-    $newquizanswer->feedback = $result;
-    update_record('quiz_answers',$newquizanswer);
+        $newquizanswer = new object;
+        $newquizanswer->id = $recordid;
+        $newquizanswer->feedback = $result;
+        update_record('quiz_answers',$newquizanswer);
+    }
 /// And finally, just return the converted field
     return $result;
 }
@@ -323,7 +364,7 @@ function migrate2utf8_quiz_answers_feedback($recordid){
 
 
 function migrate2utf8_quiz_dataset_definitions_name($recordid){
-    global $CFG;
+    global $CFG, $globallang;
 
 /// Some trivial checks
     if (empty($recordid)) {
@@ -347,27 +388,33 @@ function migrate2utf8_quiz_dataset_definitions_name($recordid){
         return false;
     }
 
-    $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($quiz->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($quiz->course); //N.E.!!
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = get_course_lang($quiz->course);  //Non existing!
+        $userlang   = get_main_teacher_lang($quiz->course); //N.E.!!
 
-    $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
 
 /// We are going to use textlib facilities
     
 /// Convert the text
-    $result = utfconvert($quizdatasetdefinition->name, $fromenc);
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($quizdatasetdefinition->name, $fromenc);
 
-    $newquizdatasetdefinition = new object;
-    $newquizdatasetdefinition->id = $recordid;
-    $newquizdatasetdefinition->name = $result;
-    update_record('quiz_dataset_definitions',$newquizdatasetdefinition);
+        $newquizdatasetdefinition = new object;
+        $newquizdatasetdefinition->id = $recordid;
+        $newquizdatasetdefinition->name = $result;
+        update_record('quiz_dataset_definitions',$newquizdatasetdefinition);
+    }
 /// And finally, just return the converted field
     return $result;
 }
 
 function migrate2utf8_quiz_categories_name($recordid){
-    global $CFG;
+    global $CFG, $globallang;
 
 /// Some trivial checks
     if (empty($recordid)) {
@@ -389,27 +436,33 @@ function migrate2utf8_quiz_categories_name($recordid){
         return false;
     }
 
-    $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($quiz->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($quiz->course); //N.E.!!
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = get_course_lang($quiz->course);  //Non existing!
+        $userlang   = get_main_teacher_lang($quiz->course); //N.E.!!
 
-    $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
 
 /// We are going to use textlib facilities
     
 /// Convert the text
-    $result = utfconvert($quizcategory->name, $fromenc);
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($quizcategory->name, $fromenc);
 
-    $newquizcategory = new object;
-    $newquizcategory->id = $recordid;
-    $newquizcategory->name = $result;
-    update_record('quiz_categories',$newquizcategory);
+        $newquizcategory = new object;
+        $newquizcategory->id = $recordid;
+        $newquizcategory->name = $result;
+        update_record('quiz_categories',$newquizcategory);
+    }
 /// And finally, just return the converted field
     return $result;
 }
 
 function migrate2utf8_quiz_categories_info($recordid){
-    global $CFG;
+    global $CFG, $globallang;
 
 /// Some trivial checks
     if (empty($recordid)) {
@@ -431,27 +484,34 @@ function migrate2utf8_quiz_categories_info($recordid){
         return false;
     }
 
-    $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($quiz->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($quiz->course); //N.E.!!
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = get_course_lang($quiz->course);  //Non existing!
+        $userlang   = get_main_teacher_lang($quiz->course); //N.E.!!
 
-    $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
 
 /// We are going to use textlib facilities
     
 /// Convert the text
-    $result = utfconvert($quizcategory->info, $fromenc);
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($quizcategory->info, $fromenc);
 
-    $newquizcategory = new object;
-    $newquizcategory->id = $recordid;
-    $newquizcategory->info = $result;
-    update_record('quiz_categories',$newquizcategory);
+        $newquizcategory = new object;
+        $newquizcategory->id = $recordid;
+        $newquizcategory->info = $result;
+        update_record('quiz_categories',$newquizcategory);
+    }
 /// And finally, just return the converted field
+
     return $result;
 }
 
 function migrate2utf8_quiz_name($recordid){
-    global $CFG;
+    global $CFG, $globallang;
 
 /// Some trivial checks
     if (empty($recordid)) {
@@ -464,28 +524,34 @@ function migrate2utf8_quiz_name($recordid){
         return false;
     }
 
-    $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($quiz->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($quiz->course); //N.E.!!
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = get_course_lang($quiz->course);  //Non existing!
+        $userlang   = get_main_teacher_lang($quiz->course); //N.E.!!
 
-    $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
 
 /// We are going to use textlib facilities
     
 /// Convert the text
-    $result = utfconvert($quiz->name, $fromenc);
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($quiz->name, $fromenc);
 
-    $newquiz = new object;
-    $newquiz->id = $recordid;
-    $newquiz->name = $result;
-    update_record('quiz',$newquiz);
+        $newquiz = new object;
+        $newquiz->id = $recordid;
+        $newquiz->name = $result;
+        update_record('quiz',$newquiz);
+    }
 /// And finally, just return the converted field
     return $result;
 }
 
 
 function migrate2utf8_quiz_intro($recordid){
-    global $CFG;
+    global $CFG, $globallang;
 
 /// Some trivial checks
     if (empty($recordid)) {
@@ -498,27 +564,33 @@ function migrate2utf8_quiz_intro($recordid){
         return false;
     }
 
-    $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($quiz->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($quiz->course); //N.E.!!
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = get_course_lang($quiz->course);  //Non existing!
+        $userlang   = get_main_teacher_lang($quiz->course); //N.E.!!
 
-    $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
 
 /// We are going to use textlib facilities
     
 /// Convert the text
-    $result = utfconvert($quiz->intro, $fromenc);
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($quiz->intro, $fromenc);
 
-    $newquiz = new object;
-    $newquiz->id = $recordid;
-    $newquiz->intro = $result;
-    update_record('quiz',$newquiz);
+        $newquiz = new object;
+        $newquiz->id = $recordid;
+        $newquiz->intro = $result;
+        update_record('quiz',$newquiz);
+    }
 /// And finally, just return the converted field
     return $result;
 }
 
 function migrate2utf8_quiz_password($recordid){
-    global $CFG;
+    global $CFG, $globallang;
 
 /// Some trivial checks
     if (empty($recordid)) {
@@ -531,21 +603,26 @@ function migrate2utf8_quiz_password($recordid){
         return false;
     }
 
-    $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($quiz->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($quiz->course); //N.E.!!
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = get_course_lang($quiz->course);  //Non existing!
+        $userlang   = get_main_teacher_lang($quiz->course); //N.E.!!
 
-    $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
 
 /// We are going to use textlib facilities
-    
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
 /// Convert the text
-    $result = utfconvert($quiz->password, $fromenc);
+        $result = utfconvert($quiz->password, $fromenc);
 
-    $newquiz = new object;
-    $newquiz->id = $recordid;
-    $newquiz->password = $result;
-    update_record('quiz',$newquiz);
+        $newquiz = new object;
+        $newquiz->id = $recordid;
+        $newquiz->password = $result;
+        update_record('quiz',$newquiz);
+    }
 /// And finally, just return the converted field
     return $result;
 }

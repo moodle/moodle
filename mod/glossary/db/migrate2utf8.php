@@ -1,6 +1,6 @@
 <?
 function migrate2utf8_glossary_categories_name($recordid){
-    global $CFG;
+    global $CFG, $globallang;
 
 /// Some trivial checks
     if (empty($recordid)) {
@@ -22,28 +22,33 @@ function migrate2utf8_glossary_categories_name($recordid){
         log_the_problem_somewhere();
         return false;
     }
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = get_course_lang($glossary->course);  //Non existing!
+        $userlang   = get_main_teacher_lang($glossary->course); //N.E.!!
 
-    $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($glossary->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($glossary->course); //N.E.!!
-
-    $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
 
 /// We are going to use textlib facilities
     
 /// Convert the text
-    $result = utfconvert($glossarycategory->name, $fromenc);
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($glossarycategory->name, $fromenc);
 
-    $newglossarycategory = new object;
-    $newglossarycategory->id = $recordid;
-    $newglossarycategory->name = $result;
-    update_record('glossary_categories',$newglossarycategory);
+        $newglossarycategory = new object;
+        $newglossarycategory->id = $recordid;
+        $newglossarycategory->name = $result;
+        update_record('glossary_categories',$newglossarycategory);
+    }
 /// And finally, just return the converted field
     return $result;
 }
 
 function migrate2utf8_glossary_name($recordid){
-    global $CFG;
+    global $CFG, $globallang;
 
 /// Some trivial checks
     if (empty($recordid)) {
@@ -55,28 +60,33 @@ function migrate2utf8_glossary_name($recordid){
         log_the_problem_somewhere();
         return false;
     }
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = get_course_lang($glossary->course);  //Non existing!
+        $userlang   = get_main_teacher_lang($glossary->course); //N.E.!!
 
-    $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($glossary->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($glossary->course); //N.E.!!
-
-    $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
 
 /// We are going to use textlib facilities
     
 /// Convert the text
-    $result = utfconvert($glossary->name, $fromenc);
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($glossary->name, $fromenc);
 
-    $newglossary = new object;
-    $newglossary->id = $recordid;
-    $newglossary->name = $result;
-    update_record('glossary',$newglossary);
+        $newglossary = new object;
+        $newglossary->id = $recordid;
+        $newglossary->name = $result;
+        update_record('glossary',$newglossary);
+    }
 /// And finally, just return the converted field
     return $result;
 }
 
 function migrate2utf8_glossary_intro($recordid){
-    global $CFG;
+    global $CFG, $globallang;
 
 /// Some trivial checks
     if (empty($recordid)) {
@@ -88,22 +98,27 @@ function migrate2utf8_glossary_intro($recordid){
         log_the_problem_somewhere();
         return false;
     }
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = get_course_lang($glossary->course);  //Non existing!
+        $userlang   = get_main_teacher_lang($glossary->course); //N.E.!!
 
-    $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($glossary->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($glossary->course); //N.E.!!
-
-    $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
 
 /// We are going to use textlib facilities
     
 /// Convert the text
-    $result = utfconvert($glossary->intro, $fromenc);
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($glossary->intro, $fromenc);
 
-    $newglossary = new object;
-    $newglossary->id = $recordid;
-    $newglossary->intro = $result;
-    update_record('glossary',$newglossary);
+        $newglossary = new object;
+        $newglossary->id = $recordid;
+        $newglossary->intro = $result;
+        update_record('glossary',$newglossary);
+    }
 /// And finally, just return the converted field
     return $result;
 }

@@ -1,6 +1,6 @@
 <?
 function migrate2utf8_exercise_elements_description($recordid){
-    global $CFG;
+    global $CFG, $globallang;
 
 /// Some trivial checks
     if (empty($recordid)) {
@@ -23,28 +23,34 @@ function migrate2utf8_exercise_elements_description($recordid){
         log_the_problem_somewhere();
         return false;
     }
-    
-    $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($exercise->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($exercise->course); //N.E.!!
 
-    $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = get_course_lang($exercise->course);  //Non existing!
+        $userlang   = get_main_teacher_lang($exercise->course); //N.E.!!
+
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
 
 /// We are going to use textlib facilities
     
 /// Convert the text
-    $result = utfconvert($exerciseelement->description, $fromenc);
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($exerciseelement->description, $fromenc);
 
-    $newexerciseelement = new object;
-    $newexerciseelement->id = $recordid;
-    $newexerciseelement->description = $result;
-    update_record('exercise_elements',$newexerciseelement);
+        $newexerciseelement = new object;
+        $newexerciseelement->id = $recordid;
+        $newexerciseelement->description = $result;
+        update_record('exercise_elements',$newexerciseelement);
+    }
 /// And finally, just return the converted field
     return $result;
 }
 
 function migrate2utf8_exercise_grades_feedback($recordid){
-    global $CFG;
+    global $CFG, $globallang;
 
 /// Some trivial checks
     if (empty($recordid)) {
@@ -67,28 +73,33 @@ function migrate2utf8_exercise_grades_feedback($recordid){
         log_the_problem_somewhere();
         return false;
     }
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = get_course_lang($exercise->course);  //Non existing!
+        $userlang   = get_main_teacher_lang($exercise->course); //N.E.!!
 
-    $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($exercise->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($exercise->course); //N.E.!!
-
-    $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
 
 /// We are going to use textlib facilities
     
 /// Convert the text
-    $result = utfconvert($exercisegrade->feedback, $fromenc);
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($exercisegrade->feedback, $fromenc);
 
-    $newexercisegrade = new object;
-    $newexercisegrade->id = $recordid;
-    $newexercisegrade->feedback = $result;
-    update_record('exercise_grades',$newexercisegrade);
+        $newexercisegrade = new object;
+        $newexercisegrade->id = $recordid;
+        $newexercisegrade->feedback = $result;
+        update_record('exercise_grades',$newexercisegrade);
+    }
 /// And finally, just return the converted field
     return $result;
 }
 
 function migrate2utf8_exercise_rubrics_description($recordid){
-    global $CFG;
+    global $CFG, $globallang;
 
 /// Some trivial checks
     if (empty($recordid)) {
@@ -111,28 +122,33 @@ function migrate2utf8_exercise_rubrics_description($recordid){
         log_the_problem_somewhere();
         return false;
     }
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = get_course_lang($exercise->course);  //Non existing!
+        $userlang   = get_main_teacher_lang($exercise->course); //N.E.!!
 
-    $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($exercise->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($exercise->course); //N.E.!!
-
-    $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
 
 /// We are going to use textlib facilities
     
 /// Convert the text
-    $result = utfconvert($exerciserubric->description, $fromenc);
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($exerciserubric->description, $fromenc);
 
-    $newexerciserubric = new object;
-    $newexerciserubric->id = $recordid;
-    $newexerciserubric->description = $result;
-    update_record('exercise_rubrics',$newexerciserubric);
+        $newexerciserubric = new object;
+        $newexerciserubric->id = $recordid;
+        $newexerciserubric->description = $result;
+        update_record('exercise_rubrics',$newexerciserubric);
+    }
 /// And finally, just return the converted field
     return $result;
 }
 
 function migrate2utf8_exercise_name($recordid){
-    global $CFG;
+    global $CFG, $globallang;
 
 /// Some trivial checks
     if (empty($recordid)) {
@@ -144,28 +160,33 @@ function migrate2utf8_exercise_name($recordid){
         log_the_problem_somewhere();
         return false;
     }
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = get_course_lang($exercise->course);  //Non existing!
+        $userlang   = get_main_teacher_lang($exercise->course); //N.E.!!
 
-    $sitelang   = $CFG->lang;
-    $courselang = get_course_lang($exercise->course);  //Non existing!
-    $userlang   = get_main_teacher_lang($exercise->course); //N.E.!!
-
-    $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
 
 /// We are going to use textlib facilities
     
 /// Convert the text
-    $result = utfconvert($exercise->name, $fromenc);
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($exercise->name, $fromenc);
 
-    $newexercise = new object;
-    $newexercise->id = $recordid;
-    $newexercise->name = $result;
-    update_record('exercise',$newexercise);
+        $newexercise = new object;
+        $newexercise->id = $recordid;
+        $newexercise->name = $result;
+        update_record('exercise',$newexercise);
+    }
 /// And finally, just return the converted field
     return $result;
 }
 
 function migrate2utf8_exercise_password($recordid){
-    global $CFG;
+    global $CFG, $globallang;
 
     ///um
 }
