@@ -7,15 +7,11 @@
 
     $id = required_param('id',PARAM_INT);
 
-    if (! $dataratings= get_record("data_ratings", "id", $id)) {
-        error("rating ID was incorrect");
-    }
-
-    if (!$record = get_record('data_records','id',$dataratings->recordid)) {
+    if (!$record = get_record('data_records','id',$id)) {
         error("rating ID was incorrect");
     }
     
-    if (!$data = get_record('data','id',$record->id)) {
+    if (!$data = get_record('data','id',$record->dataid)) {
         error("rating ID was incorrect");
     }
     
@@ -38,8 +34,8 @@
         echo "<table border=\"0\" cellpadding=\"3\" cellspacing=\"3\" class=\"generalbox\" width=\"100%\">";
         echo "<tr>";
         echo "<th>&nbsp;</th>";
-        echo "<th><a href=\"report.php?id=$dataratings->id&amp;sort=u.firstname\">$strname</a>";
-        echo "<th width=\"100%\"><a href=\"report.php?id=$dataratings->id&amp;sort=r.rating\">$strrating</a>";
+        echo "<th><a href=\"report.php?id=$id&amp;sort=u.firstname\">$strname</a>";
+        echo "<th width=\"100%\"><a href=\"report.php?id=$id&amp;sort=r.rating\">$strrating</a>";
         foreach ($ratings as $rating) {
             if (isteacher($data->course)) {
                 echo '<tr class="forumpostheadertopic">';
