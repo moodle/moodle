@@ -11,6 +11,6 @@
     }
 
     print_heading_with_help(get_string("editingessay", "quiz"), "essay", "quiz");
-    require("$CFG->dirroot/mod/quiz/questiontypes/essay/essay.html");
+    require("$CFG->dirroot/question/questiontypes/essay/essay.html");
 
 ?>

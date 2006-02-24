@@ -6,7 +6,7 @@
 
 /// QUESTION TYPE CLASS //////////////////
 
-require_once("$CFG->dirroot/mod/quiz/questiontypes/datasetdependent/abstractqtype.php");
+require_once("$CFG->dirroot/question/questiontypes/datasetdependent/abstractqtype.php");
 
 class quiz_calculated_qtype extends quiz_dataset_dependent_questiontype {
 
@@ -308,7 +308,7 @@ class quiz_calculated_qtype extends quiz_dataset_dependent_questiontype {
 
     function create_virtual_qtype() {
         global $CFG;
-        require_once("$CFG->dirroot/mod/quiz/questiontypes/numerical/questiontype.php");
+        require_once("$CFG->dirroot/question/questiontypes/numerical/questiontype.php");
         return new quiz_numerical_qtype();
     }
 

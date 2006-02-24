@@ -6,11 +6,11 @@
 * @author Martin Dougiamas and many others.
 *         {@link http://moodle.org}
 * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
-* @package quiz
+* @package question
 */
 
-    require_once("../../config.php");
-    require_once("locallib.php");
+    require_once("../config.php");
+    require_once($CFG->libdir.'/questionlib.php');
     require_once("category_class.php");
 
     // get values from form
@@ -34,10 +34,6 @@
         error("Course ID is incorrect");
     }
 
-    if (isset($_REQUEST['backtoquiz'])) {
-        redirect("edit.php");
-    }
-
     require_login($course->id, false);
 
     if (!isteacheredit($course->id)) {
@@ -51,21 +47,21 @@
     // PAGE HEADER
     //==========
 
+    // TODO: generalise this to any activity
     if (isset($SESSION->modform->instance) and $quiz = get_record('quiz', 'id', $SESSION->modform->instance)) {
         $strupdatemodule = isteacheredit($course->id)
             ? update_module_button($SESSION->modform->cmid, $course->id, get_string('modulename', 'quiz'))
             : "";
         print_header_simple(get_string('editcategories', 'quiz'), '',
-                 "<a href=\"index.php?id=$course->id\">".get_string('modulenameplural', 'quiz').'</a>'.
-                 " -> <a href=\"view.php?q=$quiz->id\">".format_string($quiz->name).'</a>'.
+                 "<a href=\"$CFG->wwwroot/mod/quiz/index.php?id=$course->id\">".get_string('modulenameplural', 'quiz').'</a>'.
+                 " -> <a href=\"$CFG->wwwroot/mod/quiz/view.php?q=$quiz->id\">".format_string($quiz->name).'</a>'.
                  ' -> '.get_string('editcategories', 'quiz'),
                  "", "", true, $strupdatemodule);
         $currenttab = 'edit';
         $mode = 'categories';
-        include('tabs.php');
+        include($CFG->dirroot.'/mod/quiz/tabs.php');
     } else {
         print_header_simple(get_string('editcategories', 'quiz'), '',
-                 "<a href=\"index.php?id=$course->id\">".get_string('modulenameplural', 'quiz').'</a>'.
                  '-> <a href="edit.php">'.get_string('editquestions', 'quiz').'</a>'.
                  ' -> '.get_string('editcategories', 'quiz'));
     }

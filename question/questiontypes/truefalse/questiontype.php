@@ -182,7 +182,7 @@ class quiz_truefalse_qtype extends quiz_default_questiontype {
             $feedback = format_text($chosenanswer->feedback, true, false);
         }
         
-        include("$CFG->dirroot/mod/quiz/questiontypes/truefalse/display.html");
+        include("$CFG->dirroot/question/questiontypes/truefalse/display.html");
     }
 
     function grade_responses(&$question, &$state, $cmoptions) {

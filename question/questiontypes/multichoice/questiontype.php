@@ -313,7 +313,7 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
 
             $anss[] = clone($a);
         }
-        include("$CFG->dirroot/mod/quiz/questiontypes/multichoice/display.html");
+        include("$CFG->dirroot/question/questiontypes/multichoice/display.html");
     }
 
     function grade_responses(&$question, &$state, $cmoptions) {

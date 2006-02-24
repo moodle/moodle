@@ -23,6 +23,6 @@
     }
 
     print_heading_with_help(get_string("editingshortanswer", "quiz"), "shortanswer", "quiz");
-    require("$CFG->dirroot/mod/quiz/questiontypes/shortanswer/shortanswer.html");
+    require("$CFG->dirroot/question/questiontypes/shortanswer/shortanswer.html");
 
 ?>

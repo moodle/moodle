@@ -32,6 +32,6 @@
     $yesnooptions[1] = get_string("yes");
 
     print_heading_with_help(get_string("editingmatch", "quiz"), "match", "quiz");
-    require("$CFG->dirroot/mod/quiz/questiontypes/match/match.html");
+    require("$CFG->dirroot/question/questiontypes/match/match.html");
 
 ?>

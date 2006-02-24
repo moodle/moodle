@@ -165,7 +165,7 @@ class quiz_shortanswer_qtype extends quiz_default_questiontype {
                 }
             }
         }
-        include("$CFG->dirroot/mod/quiz/questiontypes/shortanswer/display.html");
+        include("$CFG->dirroot/question/questiontypes/shortanswer/display.html");
     }
 
     // ULPGC ecastro

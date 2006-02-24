@@ -4,6 +4,10 @@
 *
 * Used for handling changes to the quiz categories
 *
+* @version $Id$
+* @author Martin Dougiamas and many others. {@link http://moodle.org}
+* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+* @package question
 */
 
 // number of categories to display on page

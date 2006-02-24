@@ -49,6 +49,6 @@
     }
     print_heading_with_help(get_string('editingmultianswer', 'quiz'),
                                        'multianswer', 'quiz');
-    require("$CFG->dirroot/mod/quiz/questiontypes/multianswer/multianswer.html");
+    require("$CFG->dirroot/question/questiontypes/multianswer/multianswer.html");
 
 ?>

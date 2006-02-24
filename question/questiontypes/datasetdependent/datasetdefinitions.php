@@ -14,5 +14,5 @@ $datasets = $this->construct_dataset_menus(
 
 // Print the page
 print_heading_with_help(get_string("choosedatasetproperties", "quiz"), "questiondatasets", "quiz");
-require("$CFG->dirroot/mod/quiz/questiontypes/datasetdependent/questiondatasets.html");
+require("$CFG->dirroot/question/questiontypes/datasetdependent/questiondatasets.html");
 ?>

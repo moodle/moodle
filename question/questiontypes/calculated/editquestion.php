@@ -83,7 +83,7 @@ if (empty($form)) {
         }
     }
     print_heading_with_help(get_string("editingcalculated", "quiz"), "calculated", "quiz");
-    require("$CFG->dirroot/mod/quiz/questiontypes/calculated/calculated.html");
+    require("$CFG->dirroot/question/questiontypes/calculated/calculated.html");
 } else { // $form is not empty
     /*********************************************************/
     /*****    Any subsequent page of the question wizard    **/

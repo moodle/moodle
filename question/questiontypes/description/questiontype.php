@@ -35,7 +35,7 @@ class quiz_description_qtype extends quiz_default_questiontype {
         quiz_print_possible_question_image($question, $cmoptions->course);
         if (isteacher($cmoptions->course)) {
             echo '<font size="1">';
-            link_to_popup_window ('/mod/quiz/question.php?id=' . $question->id,
+            link_to_popup_window ('/question/question.php?id=' . $question->id,
              'editquestion', get_string('edit'), 450, 550, get_string('edit'));
             echo '</font>';
         }

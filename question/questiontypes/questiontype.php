@@ -459,7 +459,7 @@ class quiz_default_questiontype {
         if (isteacheredit($cmoptions->course)) {
             $stredit = get_string('edit');
             $linktext = '<img src="'.$CFG->pixpath.'/t/edit.gif" border="0" alt="'.$stredit.'" />';
-            $editlink = link_to_popup_window('/mod/quiz/question.php?id='.$question->id, $stredit, $linktext, 450, 550, $stredit, '', true);
+            $editlink = link_to_popup_window('/question/question.php?id='.$question->id, $stredit, $linktext, 450, 550, $stredit, '', true);
         }
 
         $grade = '';
@@ -498,7 +498,7 @@ class quiz_default_questiontype {
                     $b = ($state->id == $st->id) ? '<b>' : '';
                     $be = ($state->id == $st->id) ? '</b>' : '';
                     $table->data[] = array (
-                        ($state->id == $st->id) ? '<b>'.$st->seq_number.'</b>' : link_to_popup_window ('/mod/quiz/reviewquestion.php?state='.$st->id.'&amp;number='.$number, 'reviewquestion', $st->seq_number, 450, 650, $strreviewquestion, 'none', true),
+                        ($state->id == $st->id) ? '<b>'.$st->seq_number.'</b>' : link_to_popup_window ('/question/reviewquestion.php?state='.$st->id.'&amp;number='.$number, 'reviewquestion', $st->seq_number, 450, 650, $strreviewquestion, 'none', true),
                         $b.get_string('event'.$st->event, 'quiz').$be,
                         $b.$this->response_summary($st).$be,
                         $b.userdate($st->timestamp, get_string('timestr', 'quiz')).$be,
@@ -510,7 +510,7 @@ class quiz_default_questiontype {
                 $history = make_table($table);
             }
         }
-        include "$CFG->dirroot/mod/quiz/questiontypes/question.html";
+        include "$CFG->dirroot/question/questiontypes/question.html";
     }
 
 
@@ -800,7 +800,7 @@ class quiz_default_questiontype {
     *                  get_string($name, 'quiz') will be called.
     * ->link           The filename part of the URL for the link. The full URL
     *                  is contructed as
-    *                  "$CFG->wwwroot/mod/quiz/questiontypes/{$this->name()}/$link?sesskey=$sesskey"
+    *                  "$CFG->wwwroot/question/questiontypes/{$this->name()}/$link?sesskey=$sesskey"
     *                  [but with the relavant calls to the s and rawurlencode
     *                  functions] where $sesskey is the sesskey for the user.
     * @return array    Array of objects describing the configuration options to

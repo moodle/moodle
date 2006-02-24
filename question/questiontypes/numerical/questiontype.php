@@ -14,7 +14,7 @@
 /// This question type behaves like shortanswer in most cases.
 /// Therefore, it extends the shortanswer question type...
 
-require_once("$CFG->dirroot/mod/quiz/questiontypes/shortanswer/questiontype.php");
+require_once("$CFG->dirroot/question/questiontypes/shortanswer/questiontype.php");
 
 class quiz_numerical_qtype extends quiz_shortanswer_qtype {
 

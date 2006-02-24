@@ -156,11 +156,11 @@ class quiz_dataset_dependent_questiontype extends quiz_default_questiontype {
         // See where we're coming from
         switch($form->wizardpage) {
             case 'question':
-                require("$CFG->dirroot/mod/quiz/questiontypes/datasetdependent/datasetdefinitions.php");
+                require("$CFG->dirroot/question/questiontypes/datasetdependent/datasetdefinitions.php");
                 break;
             case 'datasetdefinitions':
             case 'datasetitems':
-                require("$CFG->dirroot/mod/quiz/questiontypes/datasetdependent/datasetitems.php");
+                require("$CFG->dirroot/question/questiontypes/datasetdependent/datasetitems.php");
                 break;
             default:
                 error('Incorrect or no wizard page specified!');

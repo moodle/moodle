@@ -14,6 +14,6 @@
     $yesnooptions[1] = get_string("yes");
 
     print_heading_with_help(get_string("editingrandomsamatch", "quiz"), "randomsamatch", "quiz");
-    require("$CFG->dirroot/mod/quiz/questiontypes/randomsamatch/randomsamatch.html");
+    require("$CFG->dirroot/question/questiontypes/randomsamatch/randomsamatch.html");
 
 ?>

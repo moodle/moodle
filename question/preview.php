@@ -2,19 +2,23 @@
 /**
 * This page displays a preview of a question
 *
-* The preview uses the option settings from the quiz within which the question
-* is previewed or the default settings if no quiz is specified. The question session
+* The preview uses the option settings from the activity within which the question
+* is previewed or the default settings if no activity is specified. The question session
 * information is stored in the session as an array of subsequent states rather
 * than in the database.
+*
+* TODO: make this work with activities other than quiz
+*
 * @version $Id$
 * @author Alex Smith as part of the Serving Mathematics project
 *         {@link http://maths.york.ac.uk/serving_maths}
 * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
-* @package quiz
+* @package question
 */
 
-    require_once("../../config.php");
-    require_once("locallib.php");
+    require_once("../config.php");
+    require_once($CFG->libdir.'/questionlib.php');
+    require_once($CFG->dirroot.'/mod/quiz/locallib.php'); // We really want to get rid of this
 
     $id = required_param('id', PARAM_INT);        // question id
     // if no quiz id is specified then a dummy quiz with default options is used
@@ -47,7 +51,7 @@
         // Redirect to ourselves but with continue=1; prevents refreshing the page
         // from restarting an attempt (needed so that random questions don't change)
         $quizid = $quizid ? '&amp;quizid=' . $quizid : '';
-        redirect($CFG->wwwroot . '/mod/quiz/preview.php?id=' . $id . $quizid .
+        redirect($CFG->wwwroot . '/question/preview.php?id=' . $id . $quizid .
          '&amp;continue=1');
     }
 

@@ -10,16 +10,20 @@
 *   - if question is in use: display this conflict (allow to hide the question?)
 *   - else: confirm deletion and delete from database (sesskey, id, delete, confirm)
 * - cancel (cancel)
+*
+* TODO: currently this still treats the quiz as special, for example it sometimes redirects
+*       to mod/quiz/edit.php.
+*
 * @version $Id$
 * @author Martin Dougiamas and many others. This has recently been extensively
 *         rewritten by members of the Serving Mathematics project
 *         {@link http://maths.york.ac.uk/serving_maths}
 * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
-* @package quiz
+* @package question
 */
 
-    require_once("../../config.php");
-    require_once("locallib.php");
+    require_once("../config.php");
+    require_once($CFG->libdir.'/questionlib.php');
     require_once($CFG->libdir.'/filelib.php');
 
     $id = optional_param('id');        // question id
@@ -33,17 +37,19 @@
     $qtype = RQP;
     }
 
-    $contextquiz = optional_param('contextquiz'); // the quiz from which this question is being edited
+    // TODO: generalise this so it works for any activity
+    $contextquiz = optional_param('contextquiz', 0, PARAM_INT); // the quiz from which this question is being edited
+    $editurl = ($contextquiz ? $CFG->wwwroot.'/mod/quiz/edit.php' : 'edit.php';
 
     if (isset($_REQUEST['cancel'])) {
-        redirect("edit.php");
+        redirect($editurl);
     }
 
     if(!empty($id) && isset($_REQUEST['hide']) && confirm_sesskey()) {
         if(!set_field('quiz_questions', 'hidden', $_REQUEST['hide'], 'id', $id)) {
             error("Faild to hide the question.");
         }
-        redirect('edit.php');
+        redirect($editurl);
     }
 
     if ($id) {
@@ -90,7 +96,7 @@
         error("You can't modify these questions!");
     }
 
-    $strquizzes = get_string('modulenameplural', 'quiz');
+    // TODO: remove restriction to quiz
     $streditingquestion = get_string('editingquestion', 'quiz');
     if (isset($SESSION->modform->instance)) {
         $strediting = '<a href="edit.php">'.get_string('editingquiz', 'quiz').'</a> -> '.
@@ -124,6 +130,7 @@
             }
 
         } else {
+            // TODO: check for other modules using this question
             if ($quiznames = quizzes_question_used($id)) {
                 $a->questionname = $question->name;
                 $a->quiznames = implode(', ', $quiznames);
@@ -276,10 +283,11 @@
             //    $QUIZ_QTYPES[$question->qtype]->get_question_options($question);
             //    quiz_regrade_question_in_quizzes($question, $replaceinquiz);
             //}
-            redirect("edit.php");
+            redirect($editurl);
         }
     }
 
+    // prepare the grades selector drop-down used by many question types
     $grades = array(1,0.9,0.8,0.75,0.70,0.66666,0.60,0.50,0.40,0.33333,0.30,0.25,0.20,0.16666,0.142857,0.125,0.11111,0.10,0.05,0);
     foreach ($grades as $grade) {
         $percentage = 100 * $grade;
