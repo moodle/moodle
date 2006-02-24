@@ -17,12 +17,12 @@
 
 /* for correct responses (can override .response) */
 .mod-lesson .correct {
-    color: green;
+    /*color: green;*/
 }
 
 /* for incorrect responses (can override .response) */
 .mod-lesson .incorrect {
-    color: red;
+    /*color: red;*/
 }
 
 /***
