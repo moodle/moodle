@@ -83,6 +83,7 @@
             } else {    //print confirm delete form
                 print_header();
                 print_heading('Delete Confirm');
+                data_print_comment($d, $commentid);
                 echo '<div align="center">';
                 echo '<form action="comment.php" method="post">';
                 echo '<input type="hidden" name="commentid" value="'.$commentid.'" />';
@@ -94,7 +95,6 @@
                 echo '<input type="hidden" name="group" value="'.$group.'" />';
                 echo '<input type="hidden" name="page" value="'.$page.'" />';
                 echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-                echo '<br />'.$comment->content.'<br />';
                 echo '<input type="hidden" name="mode" value="delete" />';
                 echo '<input type="hidden" name="confirm" value="1" />';
                 echo '<br /><input type="submit" value="'.get_string('ok').'" />';
