@@ -1,7 +1,7 @@
 <?php // $Id$
     if ($question->questiontext and $question->id and $question->qtype) {
-        global $QUIZ_QTYPES;
-        $QUIZ_QTYPES[$question->qtype]->get_question_options($question);
+        global $QTYPES;
+        $QTYPES[$question->qtype]->get_question_options($question);
 
         foreach ($question->options->questions as $key => $wrapped) {
             // The old way of restoring the definitions is kept to gradually

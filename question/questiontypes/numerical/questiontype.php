@@ -457,6 +457,6 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
 //////////////////////////////////////////////////////////////////////////
 //// INITIATION - Without this line the question type is not in use... ///
 //////////////////////////////////////////////////////////////////////////
-$QUIZ_QTYPES[NUMERICAL]= new quiz_numerical_qtype();
+$QTYPES[NUMERICAL]= new quiz_numerical_qtype();
 
 ?>

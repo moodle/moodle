@@ -52,35 +52,28 @@ define("QUIZ_MAX_NUMBER_ANSWERS", "10");
 define("QUIZ_CATEGORIES_SORTORDER", "999");
 
 
-/// QUIZ_QTYPES INITIATION //////////////////
+/// QTYPES INITIATION //////////////////
 
 /**
 * Array holding question type objects
 */
-$QUIZ_QTYPES= array();
+$QTYPES= array();
 
 require_once("$CFG->dirroot/question/questiontypes/questiontype.php");
-quiz_load_questiontypes();
 
-/**
-* Loads the questiontype.php file for each question type
-*
+/*
+* Load the questiontype.php file for each question type
 * These files in turn instantiate the corresponding question type class
-* and adds it to the $QUIZ_QTYPES array
+* and adds it to the $QTYPES array
 */
-function quiz_load_questiontypes() {
-    global $QUIZ_QTYPES;
-    global $CFG;
+$qtypenames= get_list_of_plugins('question/questiontypes');
+foreach($qtypenames as $qtypename) {
+    // Instanciates all plug-in question types
+    $qtypefilepath= "$CFG->dirroot/question/questiontypes/$qtypename/questiontype.php";
 
-    $qtypenames= get_list_of_plugins('question/questiontypes');
-    foreach($qtypenames as $qtypename) {
-        // Instanciates all plug-in question types
-        $qtypefilepath= "$CFG->dirroot/question/questiontypes/$qtypename/questiontype.php";
-
-        // echo "Loading $qtypename<br/>"; // Uncomment for debugging
-        if (is_readable($qtypefilepath)) {
-            require_once($qtypefilepath);
-        }
+    // echo "Loading $qtypename<br/>"; // Uncomment for debugging
+    if (is_readable($qtypefilepath)) {
+        require_once($qtypefilepath);
     }
 }
 
@@ -158,8 +151,8 @@ class cmoptions {
 * @param object $question  The question being deleted
 */
 function quiz_delete_question($question) {
-    global $QUIZ_QTYPES;
-    $QUIZ_QTYPES[$question->qtype]->delete_question($question);
+    global $QTYPES;
+    $QTYPES[$question->qtype]->delete_question($question);
     delete_records("quiz_answers", "question", $question->id);
     delete_records("quiz_states", "question", $question->id);
     delete_records("question_sessions", "questionid", $question->id);
@@ -190,7 +183,7 @@ function quiz_delete_question($question) {
 *                         or just a single question object
 */
 function quiz_get_question_options(&$questions) {
-    global $QUIZ_QTYPES;
+    global $QTYPES;
 
     if (is_array($questions)) { // deal with an array of questions
         // get the keys of the input array
@@ -200,13 +193,13 @@ function quiz_get_question_options(&$questions) {
             // set name prefix
             $questions[$i]->name_prefix = quiz_make_name_prefix($i);
 
-            if (!$QUIZ_QTYPES[$questions[$i]->qtype]->get_question_options($questions[$i]))
+            if (!$QTYPES[$questions[$i]->qtype]->get_question_options($questions[$i]))
                 return false;
         }
         return true;
     } else { // deal with single question
         $questions->name_prefix = quiz_make_name_prefix($questions->id);
-        return $QUIZ_QTYPES[$questions->qtype]->get_question_options($questions);
+        return $QTYPES[$questions->qtype]->get_question_options($questions);
     }
 }
 
@@ -233,7 +226,7 @@ function quiz_get_question_options(&$questions) {
 *                         to be restored or created.
 */
 function quiz_get_states(&$questions, $cmoptions, $attempt) {
-    global $CFG, $QUIZ_QTYPES;
+    global $CFG, $QTYPES;
 
     // get the question ids
     $ids = array_keys($questions);
@@ -320,7 +313,7 @@ function quiz_get_states(&$questions, $cmoptions, $attempt) {
                 $states[$i]->changed = true;
 
                 // Create the empty question type specific information
-                if (!$QUIZ_QTYPES[$questions[$i]->qtype]
+                if (!$QTYPES[$questions[$i]->qtype]
                  ->create_session_and_responses($questions[$i], $states[$i], $cmoptions, $attempt)) {
                     return false;
                 }
@@ -342,7 +335,7 @@ function quiz_get_states(&$questions, $cmoptions, $attempt) {
 * @param object $state   The state as loaded from the database
 */
 function quiz_restore_state(&$question, &$state) {
-    global $QUIZ_QTYPES;
+    global $QTYPES;
 
     // initialise response to the value in the answer field
     $state->responses = array('' => $state->answer);
@@ -356,7 +349,7 @@ function quiz_restore_state(&$question, &$state) {
     $state->changed = false;
 
     // Load the question type specific data
-    return $QUIZ_QTYPES[$question->qtype]
+    return $QTYPES[$question->qtype]
      ->restore_session_and_responses($question, $state);
 
 }
@@ -376,7 +369,7 @@ function quiz_restore_state(&$question, &$state) {
 *                         is updated to hold the new ->id.
 */
 function quiz_save_question_session(&$question, &$state) {
-    global $QUIZ_QTYPES;
+    global $QTYPES;
     // Check if the state has changed
     if (!$state->changed && isset($state->id)) {
         return true;
@@ -423,7 +416,7 @@ function quiz_save_question_session(&$question, &$state) {
     unset($state->answer);
 
     // Save the question type specific state information and responses
-    if (!$QUIZ_QTYPES[$question->qtype]->save_session_and_responses(
+    if (!$QTYPES[$question->qtype]->save_session_and_responses(
      $question, $state)) {
         return false;
     }
@@ -606,7 +599,7 @@ function quiz_regrade_question_in_attempt($question, $attempt, $cmoptions, $verb
 *                         during grading its ->sumgrades field can be updated
 */
 function quiz_process_responses(&$question, &$state, $action, $cmoptions, &$attempt) {
-    global $QUIZ_QTYPES;
+    global $QTYPES;
 
     // if no responses are set initialise to empty response
     if (!isset($action->responses)) {
@@ -656,7 +649,7 @@ function quiz_process_responses(&$question, &$state, $action, $cmoptions, &$atte
 
     if (!quiz_isgradingevent($action->event)) {
         // Grade the response but don't update the overall grade
-        $QUIZ_QTYPES[$question->qtype]->grade_responses(
+        $QTYPES[$question->qtype]->grade_responses(
          $question, $state, $cmoptions);
         // Force the event to save or validate (even if the grading caused the
         // state to close)
@@ -668,7 +661,7 @@ function quiz_process_responses(&$question, &$state, $action, $cmoptions, &$atte
         // already given in
         // a. the last graded attempt
         // b. any other graded attempt
-        if($QUIZ_QTYPES[$question->qtype]->compare_responses(
+        if($QTYPES[$question->qtype]->compare_responses(
          $question, $state, $state->last_graded)) {
             $state->event = QUIZ_EVENTDUPLICATEGRADE;
         } else {
@@ -685,7 +678,7 @@ function quiz_process_responses(&$question, &$state, $action, $cmoptions, &$atte
                 // Decrease sumgrades by previous grade and then later add new grade
                 $attempt->sumgrades -= (float)$state->last_graded->grade;
 
-                $QUIZ_QTYPES[$question->qtype]->grade_responses(
+                $QTYPES[$question->qtype]->grade_responses(
                  $question, $state, $cmoptions);
                 // Calculate overall grade using correct penalty method
                 quiz_apply_penalty_and_timelimit($question, $state, $attempt, $cmoptions);
@@ -703,7 +696,7 @@ function quiz_process_responses(&$question, &$state, $action, $cmoptions, &$atte
 
         // Only mark if they haven't been marked already
         if (!$sameresponses) {
-            $QUIZ_QTYPES[$question->qtype]->grade_responses(
+            $QTYPES[$question->qtype]->grade_responses(
              $question, $state, $cmoptions);
             // Calculate overall grade using correct penalty method
             quiz_apply_penalty_and_timelimit($question, $state, $attempt, $cmoptions);
@@ -744,16 +737,16 @@ function quiz_isgradingevent($event) {
 */
 function quiz_search_for_duplicate_responses(&$question, &$state) {
     // get all previously graded question states
-    global $QUIZ_QTYPES;
+    global $QTYPES;
     if (!$oldstates = get_records('quiz_question_states', "event = '" .
      QUIZ_EVENTGRADE . "' AND " . "question = '" . $question->id .
      "'", 'seq_number DESC')) {
         return false;
     }
     foreach ($oldstates as $oldstate) {
-        if ($QUIZ_QTYPES[$question->qtype]->restore_session_and_responses(
+        if ($QTYPES[$question->qtype]->restore_session_and_responses(
          $question, $oldstate)) {
-            if(!$QUIZ_QTYPES[$question->qtype]->compare_responses(
+            if(!$QTYPES[$question->qtype]->compare_responses(
              $question, $state, $oldstate)) {
                 $state->event = QUIZ_EVENTDUPLICATEGRADE;
                 break;
@@ -829,15 +822,15 @@ function quiz_print_correctanswer($text) {
 function quiz_print_question_icon($question, $editlink=true, $return = false) {
 // returns a question icon
 
-    global $QUIZ_QUESTION_TYPE, $QUIZ_QTYPES, $CFG;
+    global $QUIZ_QUESTION_TYPE, $QTYPES, $CFG;
 
     $html = '<img border="0" height="16" width="16" src="'.$CFG->wwwroot.'/question/questiontypes/'.
-            $QUIZ_QTYPES[$question->qtype]->name().'/icon.gif" alt="'.
-            get_string($QUIZ_QTYPES[$question->qtype]->name(), 'quiz').'" />';
+            $QTYPES[$question->qtype]->name().'/icon.gif" alt="'.
+            get_string($QTYPES[$question->qtype]->name(), 'quiz').'" />';
 
     if ($editlink) {
         $html =  "<a href=\"$CFG->wwwroot/question/question.php?id=$question->id\" title=\""
-                .$QUIZ_QTYPES[$question->qtype]->name()."\">".
+                .$QTYPES[$question->qtype]->name()."\">".
                 $html."</a>\n";
     }
     if ($return) {
@@ -1025,9 +1018,9 @@ function quiz_extract_correctanswers($answers, $nameprefix) {
 * Simply calls the question type specific print_question() method.
 */
 function quiz_print_quiz_question(&$question, &$state, $number, $cmoptions, $options=null) {
-    global $QUIZ_QTYPES;
+    global $QTYPES;
 
-    $QUIZ_QTYPES[$question->qtype]->print_question($question, $state, $number,
+    $QTYPES[$question->qtype]->print_question($question, $state, $number,
      $cmoptions, $options);
 }
 
@@ -1038,8 +1031,8 @@ function quiz_print_quiz_question(&$question, &$state, $number, $cmoptions, $opt
 */
 // ULPGC ecastro
 function quiz_get_question_responses($question, $state) {
-    global $QUIZ_QTYPES;
-    $r = $QUIZ_QTYPES[$question->qtype]->get_all_responses($question, $state);
+    global $QTYPES;
+    $r = $QTYPES[$question->qtype]->get_all_responses($question, $state);
     return $r;
 }
 
@@ -1051,9 +1044,9 @@ function quiz_get_question_responses($question, $state) {
 */
 // ULPGC ecastro
 function quiz_get_question_actual_response($question, $state) {
-    global $QUIZ_QTYPES;
+    global $QTYPES;
 
-    $r = $QUIZ_QTYPES[$question->qtype]->get_actual_response($question, $state);
+    $r = $QTYPES[$question->qtype]->get_actual_response($question, $state);
     return $r;
 }
 
@@ -1064,9 +1057,9 @@ function quiz_get_question_actual_response($question, $state) {
 */
 // ULPGc ecastro
 function quiz_get_question_fraction_grade($question, $state) {
-    global $QUIZ_QTYPES;
+    global $QTYPES;
 
-    $r = $QUIZ_QTYPES[$question->qtype]->get_fractional_grade($question, $state);
+    $r = $QTYPES[$question->qtype]->get_fractional_grade($question, $state);
     return $r;
 }
 
@@ -1250,7 +1243,7 @@ function quiz_categorylist($categoryid) {
 */
 function get_questions_category( $category, $noparent=false ) {
 
-    global $QUIZ_QTYPES;
+    global $QTYPES;
 
     // questions will be added to an array
     $qresults = array();
@@ -1266,7 +1259,7 @@ function get_questions_category( $category, $noparent=false ) {
 
         // iterate through questions, getting stuff we need
         foreach($questions as $question) {
-            $questiontype = $QUIZ_QTYPES[$question->qtype];
+            $questiontype = $QTYPES[$question->qtype];
             $questiontype->get_question_options( $question );
             $qresults[] = $question;
         }

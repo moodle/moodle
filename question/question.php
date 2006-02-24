@@ -85,7 +85,7 @@
 
     if (empty($qtype)) {
         error("No question type was specified!");
-    } else if (!isset($QUIZ_QTYPES[$qtype])) {
+    } else if (!isset($QTYPES[$qtype])) {
         error("Could not find question type: '$qtype'");
     }
 
@@ -196,7 +196,7 @@
                 unset($question->id);
             }
             unset($makecopy, $hasresponses, $replaceinall, $replaceold);
-            $question = $QUIZ_QTYPES[$qtype]->save_question($question, $form, $course);
+            $question = $QTYPES[$qtype]->save_question($question, $form, $course);
             if(!isset($question->id)) {
                 error("Failed to save the question!");
             }
@@ -264,22 +264,22 @@
                         // Now do anything question-type specific that is required to replace the question
                         // For example questions that use the quiz_answers table to hold part of their question will
                         // have to recode the answer ids in the states
-                        $QUIZ_QTYPES[$question->qtype]->change_states_question($oldquestionid, $question, $attempts);
+                        $QTYPES[$question->qtype]->change_states_question($oldquestionid, $question, $attempts);
                     }
                 }
             }
         } else {
             // use the old code which simply overwrites old versions
             // it is also used for creating new questions
-            $question = $QUIZ_QTYPES[$qtype]->save_question($question, $form, $course);
+            $question = $QTYPES[$qtype]->save_question($question, $form, $course);
             $replaceinquiz = 'all';
         }
 
-        if (empty($question->errors) && $QUIZ_QTYPES[$qtype]->finished_edit_wizard($form)) {
+        if (empty($question->errors) && $QTYPES[$qtype]->finished_edit_wizard($form)) {
             // DISABLED AUTOMATIC REGRADING
             // Automagically regrade all attempts (and states) in the affected quizzes
             //if (!empty($replaceinquiz)) {
-            //    $QUIZ_QTYPES[$question->qtype]->get_question_options($question);
+            //    $QTYPES[$question->qtype]->get_question_options($question);
             //    quiz_regrade_question_in_quizzes($question, $replaceinquiz);
             //}
             redirect($editurl);
@@ -347,7 +347,7 @@
 
     echo '<br />';
     print_simple_box_start('center');
-    require_once('questiontypes/'.$QUIZ_QTYPES[$qtype]->name().'/editquestion.php');
+    require_once('questiontypes/'.$QTYPES[$qtype]->name().'/editquestion.php');
     print_simple_box_end();
 
     if ($usehtmleditor) {

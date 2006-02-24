@@ -436,6 +436,6 @@ class quiz_rqp_qtype extends quiz_default_questiontype {
 //////////////////////////////////////////////////////////////////////////
 //// INITIATION - Without this line the question type is not in use... ///
 //////////////////////////////////////////////////////////////////////////
-$QUIZ_QTYPES[RQP]= new quiz_rqp_qtype();
+$QTYPES[RQP]= new quiz_rqp_qtype();
 
 ?>

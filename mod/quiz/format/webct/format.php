@@ -142,7 +142,7 @@ class quiz_format_webct_modified_calculated_qtype extends quiz_calculated_qtype 
         return true;
     }
 }
-$QUIZ_QTYPES[CALCULATED] = new quiz_format_webct_modified_calculated_qtype();
+$QTYPES[CALCULATED] = new quiz_format_webct_modified_calculated_qtype();
 
 function quiz_format_webct_convert_formula($formula) {
 

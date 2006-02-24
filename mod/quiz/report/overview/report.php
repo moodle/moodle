@@ -7,7 +7,7 @@
 class quiz_report extends quiz_default_report {
 
     function display($quiz, $cm, $course) {     /// This function just displays the report
-        global $CFG, $SESSION, $db, $QUIZ_QTYPES;
+        global $CFG, $SESSION, $db, $QTYPES;
 
     /// Define some strings
         $strreallydel  = addslashes(get_string('deleteattemptcheck','quiz'));

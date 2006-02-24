@@ -100,7 +100,7 @@
     $question->instance = $instance->id;
     $question->maxgrade = $instance->grade;
     $question->name_prefix = 'r';
-    $QUIZ_QTYPES[$question->qtype]->get_question_options($question);
+    $QTYPES[$question->qtype]->get_question_options($question);
 
     quiz_restore_state($question, $state);
     $state->last_graded = $state;

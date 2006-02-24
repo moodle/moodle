@@ -2,7 +2,7 @@
 
     // Get all the extra information if we're editing
     if (!empty($question->id) && isset($question->qtype) &&
-     $QUIZ_QTYPES[$question->qtype]->get_question_options($question)) {
+     $QTYPES[$question->qtype]->get_question_options($question)) {
         $answer = array_values($question->options->answers);
         usort($answer, create_function('$a, $b',
          'if ($a->fraction == $a->fraction) { return 0; }' .

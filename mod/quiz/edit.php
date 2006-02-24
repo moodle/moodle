@@ -216,7 +216,7 @@ if (self.name == 'editquestion') {
                 $question = new stdClass;
                 $question->category = $category->id;
                 $question->qtype = RANDOM;
-                $question = $QUIZ_QTYPES[RANDOM]->save_question($question, $form, $course);
+                $question = $QTYPES[RANDOM]->save_question($question, $form, $course);
                 if(!isset($question->id)) {
                     error('Could not insert new random question!');
                 }

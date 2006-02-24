@@ -107,8 +107,8 @@
 <?php
     }
 
-    $QUIZ_QTYPES[$question->qtype]->print_replacement_options($question, $course, $contextquiz);
-    $QUIZ_QTYPES[$question->qtype]->print_question_form_end($question);
+    $QTYPES[$question->qtype]->print_replacement_options($question, $course, $contextquiz);
+    $QTYPES[$question->qtype]->print_question_form_end($question);
 ?>
 </table>
 

@@ -311,6 +311,6 @@ class quiz_essay_qtype extends quiz_default_questiontype {
 //////////////////////////////////////////////////////////////////////////
 //// INITIATION - Without this line the question type is not in use... ///
 //////////////////////////////////////////////////////////////////////////
-$QUIZ_QTYPES[ESSAY] = new quiz_essay_qtype();
+$QTYPES[ESSAY] = new quiz_essay_qtype();
 
 ?>

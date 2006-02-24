@@ -10,7 +10,7 @@
         $question->options->source = '';
         $question->options->format = '';
     }
-    else if (!$QUIZ_QTYPES[$question->qtype]->get_question_options($question)) {
+    else if (!$QTYPES[$question->qtype]->get_question_options($question)) {
         error("Could not load the options for this question");
     }
 

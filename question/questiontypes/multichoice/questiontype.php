@@ -372,6 +372,6 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
 //////////////////////////////////////////////////////////////////////////
 //// INITIATION - Without this line the question type is not in use... ///
 //////////////////////////////////////////////////////////////////////////
-$QUIZ_QTYPES[MULTICHOICE]= new quiz_multichoice_qtype();
+$QTYPES[MULTICHOICE]= new quiz_multichoice_qtype();
 
 ?>

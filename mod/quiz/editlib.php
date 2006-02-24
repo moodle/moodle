@@ -131,7 +131,7 @@ function quiz_update_question_instance($grade, $questionid, $quizid) {
 * @param boolean $showbreaks  Indicates whether the reorder tool should be displayed
 */
 function quiz_print_question_list($quiz, $allowdelete=true, $showbreaks=true, $reordertool=false) {
-    global $USER, $CFG, $QUIZ_QTYPES;
+    global $USER, $CFG, $QTYPES;
 
     $strorder = get_string("order");
     $strquestionname = get_string("questionname", "quiz");

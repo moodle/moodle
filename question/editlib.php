@@ -20,7 +20,7 @@
 *
 * The $QUIZ_QUESTION_TYPE array holds the names of all the question types that the user should
 * be able to create directly. Some internal question types like random questions are excluded.
-* The complete list of question types can be found in {@link $QUIZ_QTYPES}.
+* The complete list of question types can be found in {@link $QTYPES}.
 */
 
 $QUIZ_QUESTION_TYPE = array ( MULTICHOICE   => get_string("multichoice", "quiz"),

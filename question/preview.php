@@ -170,7 +170,7 @@
 
     // Fill in the correct responses (unless the question is in readonly mode)
     if ($fillcorrect && !$options->readonly) {
-        $curstate->responses = $QUIZ_QTYPES[$questions[$id]->qtype]
+        $curstate->responses = $QTYPES[$questions[$id]->qtype]
          ->get_correct_responses($questions[$id], $curstate);
     }
 

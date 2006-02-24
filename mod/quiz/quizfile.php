@@ -84,7 +84,7 @@
     }
 
     // Have the question check whether it uses this file or not
-    if (!$QUIZ_QTYPES[$question->qtype]->uses_quizfile($question,
+    if (!$QTYPES[$question->qtype]->uses_quizfile($question,
                                                        $relativepath)) {
         error("The specified file path is not on the specified question");
     }

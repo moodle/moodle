@@ -339,6 +339,6 @@ class quiz_match_qtype extends quiz_default_questiontype {
 //////////////////////////////////////////////////////////////////////////
 //// INITIATION - Without this line the question type is not in use... ///
 //////////////////////////////////////////////////////////////////////////
-$QUIZ_QTYPES[MATCH]= new quiz_match_qtype();
+$QTYPES[MATCH]= new quiz_match_qtype();
 
 ?>

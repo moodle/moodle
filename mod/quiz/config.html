@@ -387,7 +387,7 @@
     $table_created = false; // used to make sure that table is only created when needed
     $submitbutton = false;
     // Include the options from each question type
-    foreach ($QUIZ_QTYPES as $type) {
+    foreach ($QTYPES as $type) {
         $options = $type->get_config_options();
         if ($options) {
             // Temporary code

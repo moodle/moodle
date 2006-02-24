@@ -5,7 +5,7 @@
         $options->choose = "";
         $options->shuffleanswers = 1;
     }
-    $saquestions = $QUIZ_QTYPES[RANDOMSAMATCH]->get_sa_candidates($category->id);
+    $saquestions = $QTYPES[RANDOMSAMATCH]->get_sa_candidates($category->id);
     $numberavailable = count($saquestions);
     unset($saquestions);
 

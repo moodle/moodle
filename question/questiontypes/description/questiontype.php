@@ -62,6 +62,6 @@ class quiz_description_qtype extends quiz_default_questiontype {
 //////////////////////////////////////////////////////////////////////////
 //// INITIATION - Without this line the question type is not in use... ///
 //////////////////////////////////////////////////////////////////////////
-$QUIZ_QTYPES[DESCRIPTION]= new quiz_description_qtype();
+$QTYPES[DESCRIPTION]= new quiz_description_qtype();
 
 ?>

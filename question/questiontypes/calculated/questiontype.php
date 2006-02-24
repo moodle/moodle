@@ -593,7 +593,7 @@ class quiz_calculated_qtype extends quiz_dataset_dependent_questiontype {
 //////////////////////////////////////////////////////////////////////////
 //// INITIATION - Without this line the question type is not in use... ///
 //////////////////////////////////////////////////////////////////////////
-$QUIZ_QTYPES[CALCULATED]= new quiz_calculated_qtype();
+$QTYPES[CALCULATED]= new quiz_calculated_qtype();
 
 function quiz_qtype_calculated_calculate_answer($formula, $individualdata,
         $tolerance, $tolerancetype, $answerlength, $answerformat='1', $unit='') {
@@ -603,8 +603,8 @@ function quiz_qtype_calculated_calculate_answer($formula, $individualdata,
 /// ->max       the upper bound for an accetpable response
 
     /// Exchange formula variables with the correct values...
-    global $QUIZ_QTYPES;
-    $answer = $QUIZ_QTYPES[CALCULATED]->substitute_variables($formula, $individualdata);
+    global $QTYPES;
+    $answer = $QTYPES[CALCULATED]->substitute_variables($formula, $individualdata);
     if ('1' == $answerformat) { /* Answer is to have $answerlength decimals */
         /*** Adjust to the correct number of decimals ***/
 

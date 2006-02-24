@@ -1,7 +1,7 @@
 <?php // $Id$
 
 // Get a handle to the question type we are dealing with here
-$qtypeobj = $QUIZ_QTYPES[CALCULATED];
+$qtypeobj = $QTYPES[CALCULATED];
 
 if (empty($form)) {
 /*********************************************************/
@@ -27,7 +27,7 @@ if (empty($form)) {
     }
 
     if (!empty($question->id)) {
-        $QUIZ_QTYPES[$question->qtype]->get_question_options($question);
+        $QTYPES[$question->qtype]->get_question_options($question);
         if (!empty($question->options->answers)) {
             // Overwrite the default valued answer slots
             // with correct values from database

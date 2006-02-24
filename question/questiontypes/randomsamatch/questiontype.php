@@ -73,7 +73,7 @@ class quiz_randomsamatch_qtype extends quiz_match_qtype {
         // 1. All questions that are explicitly assigned to the quiz
         // 2. All random questions
         // 3. All questions that are already chosen by an other random question
-        global $QUIZ_QTYPES;
+        global $QTYPES;
         if (!isset($cmoptions->questionsinuse)) {
             $cmoptions->questionsinuse = $cmoptions->questions;
         }
@@ -121,7 +121,7 @@ class quiz_randomsamatch_qtype extends quiz_match_qtype {
          draw_rand_array($saquestions, $question->options->choose); // from bug 1889
 
         foreach ($saquestions as $key => $wrappedquestion) {
-            if (!$QUIZ_QTYPES[$wrappedquestion->qtype]
+            if (!$QTYPES[$wrappedquestion->qtype]
              ->get_question_options($wrappedquestion)) {
                 return false;
             }
@@ -139,7 +139,7 @@ class quiz_randomsamatch_qtype extends quiz_match_qtype {
                 }
             }
 
-            if (!$QUIZ_QTYPES[$wrappedquestion->qtype]
+            if (!$QTYPES[$wrappedquestion->qtype]
              ->create_session_and_responses($wrappedquestion, $state, $cmoptions,
              $attempt)) {
                 return false;
@@ -165,7 +165,7 @@ class quiz_randomsamatch_qtype extends quiz_match_qtype {
     }
 
     function restore_session_and_responses(&$question, &$state) {
-        global $QUIZ_QTYPES;
+        global $QTYPES;
         if (empty($state->responses[''])) {
             $question->questiontext = "Insufficient selection options are
              available for this question, therefore it is not available in  this
@@ -186,7 +186,7 @@ class quiz_randomsamatch_qtype extends quiz_match_qtype {
                     notify("Couldn't get question (id=$response[0])!");
                     return false;
                 }
-                if (!$QUIZ_QTYPES[$wrappedquestion->qtype]
+                if (!$QTYPES[$wrappedquestion->qtype]
                  ->get_question_options($wrappedquestion)) {
                     notify("Couldn't get question options (id=$response[0])!");
                     return false;
@@ -205,7 +205,7 @@ class quiz_randomsamatch_qtype extends quiz_match_qtype {
                     }
                 }
 
-                if (!$QUIZ_QTYPES[$wrappedquestion->qtype]
+                if (!$QTYPES[$wrappedquestion->qtype]
                  ->restore_session_and_responses($wrappedquestion, $state)) {
                     notify("Couldn't restore session of question (id=$response[0])!");
                     return false;
@@ -248,6 +248,6 @@ class quiz_randomsamatch_qtype extends quiz_match_qtype {
 //////////////////////////////////////////////////////////////////////////
 //// INITIATION - Without this line the question type is not in use... ///
 //////////////////////////////////////////////////////////////////////////
-$QUIZ_QTYPES[RANDOMSAMATCH]= new quiz_randomsamatch_qtype();
+$QTYPES[RANDOMSAMATCH]= new quiz_randomsamatch_qtype();
 
 ?>

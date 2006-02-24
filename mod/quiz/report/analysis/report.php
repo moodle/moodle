@@ -8,7 +8,7 @@
 class quiz_report extends quiz_default_report {
 
     function display($quiz, $cm, $course) {     /// This function just displays the report
-        global $CFG, $SESSION, $db, $QUIZ_QTYPES;
+        global $CFG, $SESSION, $db, $QTYPES;
         $strnoquiz = get_string('noquiz','quiz');
         $strnoattempts = get_string('noattempts','quiz');
     /// Only print headers if not asked to download data
@@ -179,8 +179,8 @@ class quiz_report extends quiz_default_report {
                         if ($key = array_search($resp, $questions[$qid]['responses'])) {                 
                             $questions[$qid]['rcounts'][$key]++;
                         } else {
-                            $test->responses = $QUIZ_QTYPES[$quizquestions[$i]->qtype]->get_correct_responses($quizquestions[$i], $states[$i]);
-                            if ($key = $QUIZ_QTYPES[$quizquestions[$i]->qtype]->check_response($quizquestions[$i], $states[$i], $test)) {
+                            $test->responses = $QTYPES[$quizquestions[$i]->qtype]->get_correct_responses($quizquestions[$i], $states[$i]);
+                            if ($key = $QTYPES[$quizquestions[$i]->qtype]->check_response($quizquestions[$i], $states[$i], $test)) {
                                 $questions[$qid]['rcounts'][$key]++;
                             } else {
                                 $questions[$qid]['responses'][] = $resp;

@@ -20,7 +20,7 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
     }
 
     function get_question_options(&$question) {
-        global $QUIZ_QTYPES;
+        global $QTYPES;
 
         // Get relevant data indexed by positionkey from the multianswers table
         if (!$sequence = get_field('quiz_multianswers', 'sequence', 'question', $question->id)) {
@@ -35,7 +35,7 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
         array_walk($sequence, create_function('&$val', '$val++;'));
 
         foreach ($wrappedquestions as $wrapped) {
-            if (!$QUIZ_QTYPES[$wrapped->qtype]->get_question_options($wrapped)) {
+            if (!$QTYPES[$wrapped->qtype]->get_question_options($wrapped)) {
                 notify("Unable to get options for questiontype {$wrapped->qtype} (id={$wrapped->id})");
             }
             // for wrapped questions the maxgrade is always equal to the defaultgrade,
@@ -49,7 +49,7 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
     }
 
     function save_question_options($question) {
-        global $QUIZ_QTYPES;
+        global $QTYPES;
         
         // This function needs to be able to handle the case where the existing set of wrapped
         // questions does not match the new set of wrapped questions so that some need to be
@@ -75,7 +75,7 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
             $wrapped->parent   = $question->id;
             $wrapped->category = $question->category;
             $wrapped->version  = $question->version;
-            $wrapped = $QUIZ_QTYPES[$wrapped->qtype]->save_question($wrapped,
+            $wrapped = $QTYPES[$wrapped->qtype]->save_question($wrapped,
              $wrapped, $question->course);
             $sequence[] = $wrapped->id;
         }
@@ -177,10 +177,10 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
     }
 
     function get_correct_responses(&$question, &$state) {
-        global $QUIZ_QTYPES;
+        global $QTYPES;
         $responses = array();
         foreach($question->options->questions as $key => $wrapped) {
-            if ($correct = $QUIZ_QTYPES[$wrapped->qtype]->get_correct_responses($wrapped, $state)) {
+            if ($correct = $QTYPES[$wrapped->qtype]->get_correct_responses($wrapped, $state)) {
                 $responses[$key] = $correct[''];
             } else {
                 // if there is no correct answer to this subquestion then there
@@ -193,7 +193,7 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
     }
 
     function print_question_formulation_and_controls(&$question, &$state, $cmoptions, $options) {
-        global $QUIZ_QTYPES;
+        global $QTYPES;
         $readonly = empty($options->readonly) ? '' : 'readonly="readonly"';
         $nameprefix = $question->name_prefix;
 
@@ -217,7 +217,7 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
             $positionkey = $regs[1];
             $wrapped = &$question->options->questions[$positionkey];
             $answers = &$wrapped->options->answers;
-            $correctanswers = $QUIZ_QTYPES[$wrapped->qtype]
+            $correctanswers = $QTYPES[$wrapped->qtype]
              ->get_correct_responses($wrapped, $state);
 
             $inputname = $nameprefix.$positionkey;
@@ -236,7 +236,7 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
                         $testedstate->responses[''] = $response;
                         $raw_grade   = 0;
                         foreach ($answers as $answer) {
-                            if($QUIZ_QTYPES[$wrapped->qtype]
+                            if($QTYPES[$wrapped->qtype]
                              ->test_response($wrapped, $testedstate, $answer)) {
                                 if (empty($raw_grade) || $raw_grade < $answer->fraction) {
                                     $chosenanswer = clone($answer);
@@ -252,7 +252,7 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
                         $raw_grade   = 0;
                         foreach ($answers as $answer) {
                             $teststate->responses[''] = trim($answer->answer);
-                            if($QUIZ_QTYPES[$wrapped->qtype]
+                            if($QTYPES[$wrapped->qtype]
                              ->compare_responses($wrapped, $testedstate, $teststate)) {
                                 if (empty($raw_grade) || $raw_grade < $answer->fraction) {
                                     $chosenanswer = clone($answer);
@@ -333,14 +333,14 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
     }
 
     function grade_responses(&$question, &$state, $cmoptions) {
-        global $QUIZ_QTYPES;
+        global $QTYPES;
         $teststate = clone($state);
         $state->raw_grade = 0;
         foreach($question->options->questions as $key => $wrapped) {
             $state->responses[$key] = html_entity_decode($state->responses[$key]);
             $teststate->responses = array('' => $state->responses[$key]);
             $teststate->raw_grade = 0;
-            if (false === $QUIZ_QTYPES[$wrapped->qtype]
+            if (false === $QTYPES[$wrapped->qtype]
              ->grade_responses($wrapped, $teststate, $cmoptions)) {
                 return false;
             }
@@ -359,12 +359,12 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
     }
 
     function get_actual_response($question, $state) {
-        global $QUIZ_QTYPES;
+        global $QTYPES;
         $teststate = clone($state);
         foreach($question->options->questions as $key => $wrapped) {
             $state->responses[$key] = html_entity_decode($state->responses[$key]);
             $teststate->responses = array('' => $state->responses[$key]);
-            $correct = $QUIZ_QTYPES[$wrapped->qtype]
+            $correct = $QTYPES[$wrapped->qtype]
              ->get_actual_response($wrapped, $teststate);
             // change separator here if you want
             $responsesseparator = ',';
@@ -379,7 +379,7 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
 //////////////////////////////////////////////////////////////////////////
 //// INITIATION - Without this line the question type is not in use... ///
 //////////////////////////////////////////////////////////////////////////
-$QUIZ_QTYPES[MULTIANSWER]= new quiz_embedded_cloze_qtype();
+$QTYPES[MULTIANSWER]= new quiz_embedded_cloze_qtype();
 
 
 /////////////////////////////////////////////////////////////

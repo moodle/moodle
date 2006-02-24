@@ -91,7 +91,7 @@
         confirm_sesskey();
 
         $question->maxgrade = get_field('quiz_question_instances', 'grade', 'quiz', $quiz->id, 'question', $question->id);
-        $QUIZ_QTYPES[$question->qtype]->get_question_options($question);
+        $QTYPES[$question->qtype]->get_question_options($question);
 
         // first, process all the data to extract the teacher's new responses for the question(s)
         foreach ($data as $key => $response) {
@@ -135,7 +135,7 @@
             $state->responses = $response;
             
             // grade the question with the new state made by the teacher
-            $QUIZ_QTYPES[$question->qtype]->grade_responses($question, $state, $quiz);
+            $QTYPES[$question->qtype]->grade_responses($question, $state, $quiz);
 
             // finalize the grade
             $state->last_graded->grade = 0; // we dont want the next function to care about the last grade
@@ -202,7 +202,7 @@
             $question->instance = $instance->id;
             $question->maxgrade = $instance->grade;
             $question->name_prefix = $attempt->attemptid.'_'.$state->id.'_';
-            $QUIZ_QTYPES[$question->qtype]->get_question_options($question);
+            $QTYPES[$question->qtype]->get_question_options($question);
 
             quiz_restore_state($question, $state);
             $state->last_graded = $state;
