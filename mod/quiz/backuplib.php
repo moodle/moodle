@@ -994,6 +994,7 @@
             //Write end tag
             $status = fwrite ($bf,end_tag("STATES",6,true));
         }
+    }
 
     //Backup question_sessions contents (executed from backup_quiz_attempts)
     function backup_question_sessions ($bf,$preferences,$attempt) {
