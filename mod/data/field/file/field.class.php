@@ -101,7 +101,7 @@ class data_field_file extends data_field_base {// extends
         $str .= get_string('file','data'). ': <input type="file" name ="field_'.$field->id.'" id="field_'.$field->id.'" title="'.$field->description.'" /><br />';
         $str .= get_string('optionalfilename','data').': <input type="text" name="field_'
                 .$field->id.'_1" id="field_'.$field->id.'_1" value="'.$displayname.'" /><br />';
-        $str .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.$field->param4.'" />';
+        $str .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.$field->param3.'" />';
         $str .= '</div>';
 
         //print icon
@@ -263,7 +263,7 @@ class data_field_file extends data_field_base {// extends
                         "WHERE df.id = {$this->id} ".
                         "AND dc.fieldid = {$this->id}";
         
-        if (!$results = recordset_to_array(get_recordset_sql($sql))) {
+        if (!$results = get_records_sql($sql)) {
             return false;
         }
         foreach ($results as $result) {

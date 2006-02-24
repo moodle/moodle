@@ -41,7 +41,7 @@
                             "AND df.type = 'text' " .
                             'AND df.param1 = 1';
             
-            if (!$datacontents = recordset_to_array(get_recordset_sql($sql))) {
+            if (!$datacontents = get_records_sql($sql)) {
                 return $text;
             }
             
