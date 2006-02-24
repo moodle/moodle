@@ -56,24 +56,8 @@
     }
 
     if (empty($quizid)) {
-        // get a sample quiz to be used as a skeleton
-        // this should really be done properly by instantiating a quiz object
-        if (!$quiz = get_records('quiz')) {
-            error('You have to create at least one quiz before using this preview');
-        }
-        $quiz = array_values($quiz);
-        $quiz = $quiz[0];
-
-        // set everything to the default values
-        foreach($quiz as $field => $value) {
-            $quizfield = "quiz_".$field;
-            if(isset($CFG->$quizfield)) {
-                $quiz->$field = $CFG->$quizfield;
-            }
-            else {
-                $quiz->$field = 0;
-            }
-        }
+        $quiz = new cmoptions;
+        $quiz->id = 0;
 
     } else if (!$quiz = get_record('quiz', 'id', $quizid)) {
         error("Quiz id $quizid does not exist");
@@ -107,7 +91,17 @@
     }
 
     // Create a dummy quiz attempt
-    $attempt = quiz_create_attempt($quiz, 0);
+    // TODO: find out what of the following we really need. What is $attempt
+    //       really used for?
+    $timenow = time();
+    $attempt->quiz = $quiz->id;
+    $attempt->userid = $USER->id;
+    $attempt->attempt = 0;
+    $attempt->sumgrades = 0;
+    $attempt->timestart = $timenow;
+    $attempt->timefinish = 0;
+    $attempt->timemodified = $timenow;
+    $attempt->uniqueid = quiz_new_attempt_uniqueid();
     $attempt->id = 0;
 
     // Restore the history of question sessions from the moodle session or create
