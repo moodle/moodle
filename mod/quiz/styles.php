@@ -31,19 +31,18 @@
 }
 #mod-quiz-attempt .question .ablock {
 	margin: 0.7em 0 0.3em 0;
-	clear: both;
 }
 #mod-quiz-attempt .question .prompt {
 	float: left;
 	width: 15%;
 	height: 2em;
 	padding-top: 0.3em;
-	font-size: 0.8em;
+	/* font-size: 0.8em; */
 }
 #mod-quiz-attempt .question .answer {
 	float: right;
-	width: 84%;
-	margin-bottom: 1em;
+	width: 83%;
+	margin-bottom: 0.5em;
 }
 #mod-quiz-attempt .question .submit {
 	position: relative;
@@ -57,6 +56,7 @@
 #mod-quiz-attempt .question .c0,
 #mod-quiz-attempt .question .c1 {
 	padding: 0.3em 0 0.3em 0.3em;
+	vertical-align: top;
 }
 #mod-quiz-attempt .question .r0 {
 	background-color: #F5F5F5;
@@ -69,11 +69,40 @@
 	vertical-align: top;
 	padding-top: 0.4em;
 }
-#mod-quiz-attempt .shortanswer .answer {
+#mod-quiz-attempt .shortanswer .answer,
+#mod-quiz-attempt .truefalse .answer {
 	background-color: #EEE;
 	padding: 0.3em 0 0.3em 0.3em;
 }
-#mod-quiz-attempt .question .grading {
+#mod-quiz-attempt .shortanswer .answer input {
+	width: 85%;
+}
+#mod-quiz-attempt .shortanswer .feedback,
+#mod-quiz-attempt .truefalse .feedback {
+  clear: both;
 	float: right;
+	width: 83%;
+	/* margin-left: 15%; */
+	padding: 0 0 0.3em 0.3em;
+	/* background-color: #EEE; */
+  border: 1px solid #DDD;
+}	
+#mod-quiz-attempt .question .grading, 
+#mod-quiz-attempt .question .history {
+	float: right;
+	margin: 5px;
 	width: 88%;
 }
+.clearfix:after {
+  content: "."; 
+  display: block; 
+  height: 0; 
+  clear: both; 
+  visibility: hidden;
+}
+/* Hides from IE-mac \*/
+* html .clearfix {height: 1%;}
+/* End hide from IE-mac */
+
+
+
