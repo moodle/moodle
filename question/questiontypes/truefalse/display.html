@@ -6,7 +6,7 @@
   <img class="qimage" src="<?php echo $q->imageurl; ?>" alt="" />
 <?php } ?>
 
-<div class="ablock">
+<div class="ablock clearfix">
   <div class="prompt">
     <?php print_string('answer', 'quiz') ?>: 
   </div>
@@ -18,14 +18,13 @@
     <span <?php echo $falseclass; ?>>
         <?php echo $radiofalse ?>
     </span>
-    <?php $this->print_question_submit_buttons($question, $state, $cmoptions, $options); ?>
   </div>
+	<?php if ($feedback) { ?>
+		<div class="feedback">
+			<?php echo $feedback ?>
+		</div>
+	<?php } ?>
+	<?php $this->print_question_submit_buttons($question, $state, $cmoptions, $options); ?>
 </div>
-
-<?php if ($feedback) { ?>
-  <div class="feedback">
-    <?php echo $feedback ?>
-  </div>
-<?php } ?>
 
 </div>

@@ -6,7 +6,7 @@
   <img class="qimage" src="<?php echo $q->imageurl; ?>" alt="" />
 <?php } ?>
 
-<div class="ablock">
+<div class="ablock clearfix">
   <div class="prompt">
     <?php echo get_string("answer", "quiz").': '; ?>
   </div>
@@ -14,17 +14,16 @@
   <div class="answer">
     <input type="text" <?php echo "$readonly $inputname $value"; ?> size="80"/>
   </div>
+  <?php if ($feedback) { ?>
+    <div class="feedback">
+      <?php echo $feedback ?>
+    </div>
+  <?php } ?>
   <?php $this->print_question_submit_buttons($question, $state, $cmoptions, $options); ?>
 </div>
 
-<?php if ($feedback) { ?>
-  <div class="feedback">
-    <?php echo $feedback ?>
-  </div>
-<?php } ?>
-
 <?php if ($correctanswer) { ?>
-  <div class="correct">
+	<div class="correctness correct">
     <?php echo get_string('correctis', 'quiz', $correctanswer) ?>
   </div>
 <?php } ?>

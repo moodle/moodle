@@ -18,8 +18,10 @@
   </div>
   <div class="grading">
     <?php $this->print_question_grading_details($question, $state, $cmoptions, $options); ?>
-  </div>
-  <div class="history">
-    <?php echo $history; ?>
-  </div>
+	</div>
+	<?php if ($history) { ?>
+		<div class="history">
+			<?php echo $history; ?>
+		</div>
+	<?php } ?>
 </td></tr></table>
