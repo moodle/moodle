@@ -65,8 +65,6 @@
         error(get_string('noaccess','data'));
     }
 
-    add_to_log($course->id, 'data', 'view', "view.php?id=$cm->id", $data->id, $cm->id);
-
     $strdata = get_string('modulenameplural','data');
 
     print_header_simple($data->name, "", "<a href='index.php?id=$course->id'>$strdata</a> -> $data->name", "", "", true, "", navmenu($course));
@@ -101,10 +99,12 @@
                             $field->$key = $str;
                         }
                     }
-                    insert_record('data_fields', $field);
+                    $field->id = insert_record('data_fields', $field);
                     
                     // Add the new field to the form templates.
                     data_append_field_in_form($field->dataid, $field->name);
+
+                    add_to_log($course->id, 'data', 'fields add', "fields.php?d=$data->id&amp;mode=display&amp;fid=$field->id", $field->id, $cm->id);
                     
                     $displayflag = get_string('fieldadded','data');
                 }
@@ -130,6 +130,8 @@
 
                     // Delete the field.
                     delete_records('data_fields', 'id', $fid);
+
+                    add_to_log($course->id, 'data', 'fields delete', "fields.php?d=$data->id", $data->id, $cm->id);
                     
                     $displayflag = get_string('fielddeleted', 'data');
                 }
@@ -172,6 +174,8 @@
                     
                     // Update the templates.
                     data_replace_field_in_forms($currentfield->dataid, $currentfield->name, $field->name);
+
+                    add_to_log($course->id, 'data', 'fields add', "fields.php?d=$data->id&amp;mode=display&amp;fid=$field->id", $field->id, $cm->id);
                     
                     $displayflag = get_string('fieldupdated','data');
                 }

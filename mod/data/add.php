@@ -74,7 +74,6 @@
         }
     }
   
-    add_to_log($course->id, 'data', 'view', "view.php?id=$cm->id", $data->id, $cm->id);
 
 /// Print the page header
 
@@ -127,8 +126,6 @@
             update_record('data_records',$record);
 
             foreach ($datarecord as $name=>$value){
-
-
                 //this creates a new field subclass object
                 if ($name != 'MAX_FILE_SIZE' && $name != 'sesskey' and $name!='d' and $name!='rid'){
                     if (($currentfield = data_get_field_from_name($name)) !== false) {
@@ -137,6 +134,9 @@
                     }
                 }
             }
+
+            add_to_log($course->id, 'data', 'update', "view.php?d=$data->id&amp;rid=$rid", $data->id, $cm->id);
+
             redirect($CFG->wwwroot.'/mod/data/view.php?d='.$data->id);
 
         } else {    //we are adding a new record
@@ -179,6 +179,10 @@
             
             if ($emptyform){    //nothing gets written to database
                 notify(get_string('emptyaddform','data'));
+            }
+            
+            if ($entrysaved) {
+                add_to_log($course->id, 'data', 'add', "view.php?d=$data->id&amp;rid=$recordid", $data->id, $cm->id);
             }
         }
     }

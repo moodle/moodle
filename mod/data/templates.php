@@ -30,7 +30,7 @@
 
     $id    = optional_param('id', 0, PARAM_INT);  // course module id
     $d     = optional_param('d', 0, PARAM_INT);   // database id
-    $mode  = optional_param('mode', '', PARAM_ALPHA);
+    $mode  = optional_param('mode', 'singletemplate', PARAM_ALPHA);
 
     if ($id) {
         if (! $cm = get_record('course_modules', 'id', $id)) {
@@ -65,7 +65,7 @@
         }
     }
 
-    add_to_log($course->id, 'data', 'view', "view.php?id=$cm->id", $data->id, $cm->id);
+    add_to_log($course->id, 'data', 'templates', "templates.php?id=$cm->id", $data->id, $cm->id);
 
 
 /// Print the page header

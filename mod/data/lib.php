@@ -343,25 +343,26 @@ function data_replace_field_in_forms($dataid, $searchfieldname, $newfieldname) {
     if (!empty($newfieldname)) {
         $prestring = '[[';
         $poststring = ']]';
-    }
-    else {
+
+    } else {
         $prestring = '';
         $poststring = '';
     }
     
-    $data->singletemplate = str_replace('[['.$searchfieldname.']]',
-            $prestring.$newfieldname.$poststring, $data->singletemplate);
+    $newdata->id = $data->id;
+    $newdata->singletemplate = addslashes(str_replace('[['.$searchfieldname.']]',
+            $prestring.$newfieldname.$poststring, $data->singletemplate));
     
-    $data->listtemplate = str_replace('[['.$searchfieldname.']]',
-            $prestring.$newfieldname.$poststring, $data->listtemplate);
+    $newdata->listtemplate = addslashes(str_replace('[['.$searchfieldname.']]',
+            $prestring.$newfieldname.$poststring, $data->listtemplate));
     
-    $data->addtemplate = str_replace('[['.$searchfieldname.']]',
-            $prestring.$newfieldname.$poststring, $data->addtemplate);
+    $newdata->addtemplate = addslashes(str_replace('[['.$searchfieldname.']]',
+            $prestring.$newfieldname.$poststring, $data->addtemplate));
     
-    $data->rsstemplate = str_replace('[['.$searchfieldname.']]',
-            $prestring.$newfieldname.$poststring, $data->rsstemplate);
+    $newdata->rsstemplate = addslashes(str_replace('[['.$searchfieldname.']]',
+            $prestring.$newfieldname.$poststring, $data->rsstemplate));
     
-    update_record('data', $data);
+    return update_record('data', $newdata);
 }
 
 

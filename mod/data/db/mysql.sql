@@ -104,3 +104,5 @@ CREATE TABLE prefix_data_ratings (
   PRIMARY KEY  (id)
 ) TYPE=MyISAM;
 
+
+INSERT INTO prefix_log_display VALUES ('data', 'view', 'data', 'name');
