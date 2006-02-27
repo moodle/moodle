@@ -1094,11 +1094,12 @@ function data_print_comment($data, $commentid) {
     print_user_picture($comment->userid, $course->id, false);
     echo '</td>';
 
-    echo '<td width="100%"  class="topic starter" align="left"><div class="author">';
+    echo '<td class="topic starter" align="left"><div class="author">';
     $fullname = fullname($user, isteacher($comment->userid));
-    $by = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.
+    $by->name = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.
                 $user->id.'&amp;course='.$course->id.'">'.$fullname.'</a>';
-    print_string('byname', 'data', $by);
+    $by->date = userdate($comment->modified);
+    print_string('bynameondate', 'data', $by);
     echo '</div></td></tr>';
 
     echo '<tr><td class="left side">';

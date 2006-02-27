@@ -36,6 +36,8 @@
         case 'add':
             $newcomment = new object;
             $newcomment->userid = $USER->id;
+            $newcomment->created = time();
+            $newcomment->modified = time();
             if (($newcomment->content = $commentcontent) && ($newcomment->recordid = $recordid)) {
                 insert_record('data_comments',$newcomment);
             }
@@ -71,6 +73,7 @@
             $newcomment = new object;
             $newcomment->id = $commentid;
             $newcomment->content = $commentcontent;
+            $newcomment->modified = time();
             update_record('data_comments',$newcomment);
             redirect('view.php?d='.s($d).'&amp;search='.s($search).'&amp;sort='.s($sort).'&amp;order='.s($order).'&amp;group='.s($group).'&amp;page='.s($page).'&amp;rid='.s($rid), get_string("commentsaved", "data"));
         break;
