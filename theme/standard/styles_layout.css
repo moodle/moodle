@@ -230,8 +230,10 @@ form.popupform {
 #header {
 }
 
-.headermain {
+.headermain, h1.headermain {
   float:left;
+  margin:0%;
+  padding:0%;
 }
 
 .headermenu {
