@@ -69,4 +69,13 @@
             set_config( 'filter_mediaplugin_enable_flv', 1 );
         }
     }
+    if (!isset($CFG->filter_mediaplugin_enable_rm) or $forcereset) {
+        if (isset($CFG->filter_mediaplugin_ignore_rm)) {
+            set_config( 'filter_mediaplugin_enable_rm', !$CFG->filter_mediaplugin_ignore_rm );
+            set_config( 'filter_mediaplugin_ignore_rm','' );
+        }
+        else {
+            set_config( 'filter_mediaplugin_enable_rm', 1 );
+        }
+    }
 ?>
