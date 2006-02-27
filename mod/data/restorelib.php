@@ -345,7 +345,8 @@ function data_comments_restore_mods ($oldid, $newid, $info, $rec_info) {
         $comment -> recordid = $newid;
         $comment -> userid = backup_todb($com_info['#']['USERID']['0']['#']);
         $comment -> content = backup_todb($com_info['#']['CONTENT']['0']['#']);
-
+        $comment -> created = backup_todb($com_info['#']['CREATED']['0']['#']);
+        $comment -> modified = backup_todb($com_info['#']['MODIFIED']['0']['#']);
         $status = insert_record ("data_comments",$comment);
 
     }

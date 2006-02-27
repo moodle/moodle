@@ -90,6 +90,8 @@ CREATE TABLE prefix_data_comments (
   userid int(10) unsigned NOT NULL default '0',
   recordid int(10) unsigned NOT NULL default '0',
   content text default '',
+  created int(10) unsigned NOT NULL default '0',
+  modified int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (id)
 ) TYPE=MyISAM;
 

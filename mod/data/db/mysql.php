@@ -23,6 +23,12 @@ function data_upgrade($oldversion) {
         table_column("data", "", "assessed", "integer", "10");
         table_column("data", "", "assesspublic", "integer", "4");
     }
+    
+    if ($oldversion < 2006022700) {
+        table_column("data_comments", "", "created", "integer", "10");
+        table_column("data_comments", "", "modified", "integer", "10");
+    }
+    
     return true;
 }
 

@@ -72,7 +72,9 @@ CREATE TABLE prefix_data_comments (
   id SERIAL PRIMARY KEY,
   userid int4 NOT NULL default '0',
   recordid int4 NOT NULL default '0',
-  content text
+  content text,
+  created integer NOT NULL default '0',
+  modified integer NOT NULL default '0'
 );
 
 
