@@ -166,8 +166,8 @@ function rss_standard_header($title = NULL, $link = NULL, $description = NULL) {
         $today = getdate();
         $result .= rss_full_tag('copyright', 2, false, '&copy; '. $today['year'] .' '. $site->fullname);
         if (!empty($USER->email)) {
-            $result .= rss_full_tag('managingEditor', 2, false, $USER->email);
-            $result .= rss_full_tag('webMaster', 2, false, $USER->email);
+            $result .= rss_full_tag('managingEditor', 2, false, fullname($USER));
+            $result .= rss_full_tag('webMaster', 2, false, fullname($USER));
         }
 
         //write image info
