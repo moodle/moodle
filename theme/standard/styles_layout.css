@@ -379,10 +379,35 @@ table.flexible th.c0 {
 /***
  *** Blocks
  ***/
+ 
+/*TODO (nfreear): Initially make link 'invisible' to visual users. Breaks - why? */
+a.skip-block, .skip-block {
+  font-weight:normal;
+  font-size:0.8em;
+  color:white;
+  background-color:white;
+  /*
+  display:block;
+  width:6em;
+  float:right;
+  */
+}
+.skip-block-to {
+  font-size:1px;
+}
+
+ul.list, ul.list li {
+  list-style-type:none;
+  padding:0%;
+  margin:0%;
+  text-indent:0%;
+} 
 
 .sideblock .content h3,
 .sideblock .content h2 {
   text-align: left;
+  margin:0%;
+  padding:0%;
 }
 
 .sideblock {
@@ -390,8 +415,9 @@ table.flexible th.c0 {
   width: 100%;
 }
 
-.sideblock .header {
+.sideblock .header, .sideblock h2.header {
   text-align: left;
+  margin:0%;
   padding:4px;
   border-width: 1px;
   border-style: solid;
@@ -828,10 +854,11 @@ body#course-user .section h2 {
 }
 
 
-.headingblock {
+.headingblock, h2.headingblock {
   border-width:1px;
   border-style:solid;
-  padding:5px;
+  padding:5px; 
+  margin:0%;
 }
 
 .headingblock .link {
