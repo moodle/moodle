@@ -3328,7 +3328,9 @@ function get_and_set_current_group($course, $groupmode, $groupid=-1) {
                 $currentgroupid = set_current_group($course->id, $group->id);
 
             } else if ($groupmode == VISIBLEGROUPS) {  // All groups are visible
-                $currentgroupid = $group->id;
+                //we still set this but validating is done later
+                $currentgroupid = set_current_group($course->id, $group->id);
+                //$currentgroupid = $group->id;
             }
         }
     } else {             // When groupid = 0 it means show ALL groups
@@ -6356,12 +6358,13 @@ function get_performance_info() {
 
     if (function_exists('posix_times')) {
         $ptimes = posix_times();
-        foreach ($ptimes as $key => $val) {
-            $info[$key] = $ptimes[$key] -  $PERF->startposixtimes[$key];            
+        if (is_array($ptimes)) {
+            foreach ($ptimes as $key => $val) {
+                $info[$key] = $ptimes[$key] -  $PERF->startposixtimes[$key];            
+            }
+            $info['html'] .= "<span class=\"posixtimes\">ticks: $info[ticks] user: $info[utime] sys: $info[stime] cuser: $info[cutime] csys: $info[cstime]</span> ";
+            $info['txt'] .= "ticks: $info[ticks] user: $info[utime] sys: $info[stime] cuser: $info[cutime] csys: $info[cstime] ";
         }
-        $info['html'] .= "<span class=\"posixtimes\">ticks: $info[ticks] user: $info[utime] sys: $info[stime] cuser: $info[cutime] csys: $info[cstime]</span> ";
-        $info['txt'] .= "ticks: $info[ticks] user: $info[utime] sys: $info[stime] cuser: $info[cutime] csys: $info[cstime] ";
-
     }
 
     // Grab the load average for the last minute
