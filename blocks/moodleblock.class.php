@@ -237,10 +237,12 @@ class block_base {
     function _title_html() {
         global $CFG;
 
-        $title = '<div class="title">';
+        //Accessibility: validation, can't have <div> inside <h2>, use <span>.
+        $title = '<span class="title">';
         
         if (!empty($CFG->allowuserblockhiding)) {
-            $title .= '<div class="hide-show"><a href="#" onclick="elementToggleHide(this, true, function(el) {return findParentNode(el, \'DIV\', \'sideblock\'); } ); return false;"><img src="'.$CFG->pixpath.'/spacer.gif" alt="" class="hide-show-image" /></a></div>';
+            //Accessibility: added static 'alt' text for the +- icon.
+            $title .= '<span class="hide-show"><a href="#" onclick="elementToggleHide(this, true, function(el) {return findParentNode(el, \'DIV\', \'sideblock\'); } ); return false;"><img src="'.$CFG->pixpath.'/spacer.gif" alt="hide OR show block" class="hide-show-image" /></a></span>';
         }
 
         $title .= $this->title;
@@ -249,7 +251,7 @@ class block_base {
             $title .= $this->edit_controls;
         }
 
-        $title .= '</div>';
+        $title .= '</span>';
 
         return $title;
     }
