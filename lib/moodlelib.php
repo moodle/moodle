@@ -6810,7 +6810,7 @@ function get_performance_info() {
 
     if (function_exists('posix_times')) {
         $ptimes = posix_times();
-        if (is_Array($ptimes)) {
+        if (is_array($ptimes)) {
             foreach ($ptimes as $key => $val) {
                 $info[$key] = $ptimes[$key] -  $PERF->startposixtimes[$key];            
             }
