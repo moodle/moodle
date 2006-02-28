@@ -3915,6 +3915,7 @@ function print_error ($string, $link='') {
  * @uses $CFG
  * @param string $page  The keyword that defines a help page
  * @param string $title The title of links, rollover tips, alt tags etc
+ *           'Help with' (or the language equivalent) will be prefixed and '...' will be stripped.
  * @param string $module Which module is the page defined in
  * @param mixed $image Use a help image for the link?  (true/false/"both")
  * @param string $text If defined then this text is used in the page, and
@@ -3934,6 +3935,8 @@ function helpbutton ($page, $title='', $module='moodle', $image=true, $linktext=
 
     $linkobject = '<span class="helplink">';
 
+    //Accessibility: prefix the alt text/title with 'Help with', strip distracting dots '...'
+    $title = get_string('helpprefix') ." '". trim($title,' \t.') ."'";
     if ($image) {
         if ($imagetext == '') {
             $imagetext = '<img height="17" width="17" alt="'.$title.'" src="'.
