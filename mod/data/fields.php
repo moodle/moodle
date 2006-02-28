@@ -28,7 +28,7 @@
 
     require_once('pagelib.php');
     require_login();
-
+    
     $id    = optional_param('id', 0, PARAM_INT);    // course module id
     $d     = optional_param('d', 0, PARAM_INT);    // database id
     $fid   = optional_param('fid', 0 , PARAM_INT);    //update field id

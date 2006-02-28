@@ -136,15 +136,15 @@
     echo '<select name="fields1[]" size="10" onclick="insertAtCursor(document.tempform.template, this.options[selectedIndex].value)">';    //the insertAtCursor thing only works when editting in plain text =(
     if ($fields = get_records('data_fields','dataid',$data->id)){
         foreach ($fields as $field) {
-            echo '<option value="[['.$field->name.']]">'.$field->name.' ('.$field->type.')</option>';
+            echo '<option value="[['.$field->name.']]">'.$field->name.' ('. get_string($field->type, 'data'). ')</option>';
         }
     }
     //print special tags
-    echo '<option value="##edit##">##Edit##</option>';
-    echo '<option value="##more##">##More##</option>';
-    echo '<option value="##delete##">##Delete##</option>';
-    echo '<option value="##approve##">##Approve##</option>';
-    echo '<option value="##comments##">##Comments##</option>';
+    echo '<option value="##edit##">##' .get_string('edit', 'data'). '##</option>';
+    echo '<option value="##more##">##' .get_string('more', 'data'). '##</option>';
+    echo '<option value="##delete##">##' .get_string('delete', 'data'). '##</option>';
+    echo '<option value="##approve##">##' .get_string('approve', 'data'). '##</option>';
+    echo '<option value="##comments##">##' .get_string('comments', 'data'). '##</option>';
     echo '</select>';
 
     ///add the HTML editor(s)
