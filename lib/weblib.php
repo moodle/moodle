@@ -4366,9 +4366,8 @@ function print_side_block_start($heading='', $attributes = array()) {
 
     echo '<div '.$attrtext.'>';
     if ($heading) {
-    	//TODO (nfreear): Accessibility: <div> not valid inside <h2>.
-    	echo '<div class="header">'.$heading.'</div>';
-    	///echo '<h2 class="header">'.$heading.'</h2>';
+    	//Accessibility: replaced <div> with H2 - required mods, moodleblock.class.php:_title_html
+    	echo '<h2 class="header">'.$heading.'</h2>';
     }
     echo '<div class="content">';
         
