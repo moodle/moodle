@@ -6810,12 +6810,13 @@ function get_performance_info() {
 
     if (function_exists('posix_times')) {
         $ptimes = posix_times();
-        foreach ($ptimes as $key => $val) {
-            $info[$key] = $ptimes[$key] -  $PERF->startposixtimes[$key];            
+        if (is_Array($ptimes)) {
+            foreach ($ptimes as $key => $val) {
+                $info[$key] = $ptimes[$key] -  $PERF->startposixtimes[$key];            
+            }
+            $info['html'] .= "<span class=\"posixtimes\">ticks: $info[ticks] user: $info[utime] sys: $info[stime] cuser: $info[cutime] csys: $info[cstime]</span> ";
+            $info['txt'] .= "ticks: $info[ticks] user: $info[utime] sys: $info[stime] cuser: $info[cutime] csys: $info[cstime] ";
         }
-        $info['html'] .= "<span class=\"posixtimes\">ticks: $info[ticks] user: $info[utime] sys: $info[stime] cuser: $info[cutime] csys: $info[cstime]</span> ";
-        $info['txt'] .= "ticks: $info[ticks] user: $info[utime] sys: $info[stime] cuser: $info[cutime] csys: $info[cstime] ";
-
     }
 
     // Grab the load average for the last minute
