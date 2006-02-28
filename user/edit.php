@@ -79,6 +79,10 @@
             check_for_restricted_user($USER->username, "$CFG->wwwroot/course/view.php?id=$course->id");
         }
 
+        if (isset($usernew->password)) {
+            unset($usernew->password);
+        }
+
         // data cleanup 
         // username is validated in find_form_errors
         $usernew->country = clean_param($usernew->country, PARAM_ALPHA);
