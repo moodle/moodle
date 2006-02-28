@@ -698,7 +698,7 @@ function quiz_qtype_calculated_find_formula_errors($formula) {
         switch ($regs[2]) {
             // Simple parenthesis
             case '':
-                if ($regs[4] || empty($regs[3])) {
+                if ($regs[4] || strlen($regs[3])==0) {
                     return get_string('illegalformulasyntax', 'quiz', $regs[0]);
                 }
                 break;
