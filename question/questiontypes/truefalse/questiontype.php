@@ -143,7 +143,7 @@ class quiz_truefalse_qtype extends quiz_default_questiontype {
         $questiontext = format_text($question->questiontext,
                          $question->questiontextformat,
                          NULL, $cmoptions->course);
-        $image = quiz_get_image($question, $cmoptions->course);
+        $image = get_question_image($question, $cmoptions->course);
 
         $answers = &$question->options->answers;
         $trueanswer = &$answers[$question->options->trueanswer];

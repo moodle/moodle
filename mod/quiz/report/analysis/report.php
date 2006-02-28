@@ -105,7 +105,7 @@ class quiz_report extends quiz_default_report {
         $statstable = array();
         $questionarray = array(); 
         foreach ($attempts as $attempt) {
-            $questionarray[] = quiz_questions_in_quiz($attempt->layout);
+            $questionarray[] = question_in_quiz($attempt->layout);
         }
         $questionlist = quiz_questions_in_quiz(implode(",", $questionarray));
         $questionarray = array_unique(explode(",",$questionlist));
@@ -132,7 +132,7 @@ class quiz_report extends quiz_default_report {
             if ($attemptselection == QUIZ_ALLATTEMPTS || $userscore == $usermax[$attempt->userid]) {
 
             $sql = "SELECT q.*, i.grade AS maxgrade, i.id AS instance".
-                   "  FROM {$CFG->prefix}quiz_questions q,".
+                   "  FROM {$CFG->prefix}question q,".
                    "       {$CFG->prefix}quiz_question_instances i".
                    " WHERE i.quiz = '$quiz->id' AND q.id = i.question".
                    "   AND q.id IN ($questionlist)";
@@ -142,12 +142,12 @@ class quiz_report extends quiz_default_report {
             }
         
             // Load the question type specific information
-            if (!quiz_get_question_options($quizquestions)) {
+            if (!get_question_options($quizquestions)) {
                 error('Could not load question options');
             }
             // Restore the question sessions to their most recent states
             // creating new sessions where required
-            if (!$states = quiz_get_states($quizquestions, $quiz, $attempt)) {
+            if (!$states = get_question_states($quizquestions, $quiz, $attempt)) {
                 error('Could not restore question sessions');
             }
             $numbers = explode(',', $questionlist);
@@ -160,7 +160,7 @@ class quiz_report extends quiz_default_report {
                 if (!in_array ($qtype, $accepted_qtypes)){
                     continue;
                 }                
-                $q = quiz_get_question_responses($quizquestions[$i], $states[$i]);
+                $q = get_question_responses($quizquestions[$i], $states[$i]);
                 $qid = $q->id;
                 if (!isset($questions[$qid])) {
                     $questions[$qid]['id'] = $qid;
@@ -173,7 +173,7 @@ class quiz_report extends quiz_default_report {
                         $statsrow[$qid] = 0;
                     }                    
                 }
-                $responses = quiz_get_question_actual_response($quizquestions[$i], $states[$i]);
+                $responses = get_question_actual_response($quizquestions[$i], $states[$i]);
                 foreach ($responses as $resp){
                     if ($resp) {
                         if ($key = array_search($resp, $questions[$qid]['responses'])) {                 
@@ -190,7 +190,7 @@ class quiz_report extends quiz_default_report {
                         }
                     }
                 }
-                $statsrow[$qid] = quiz_get_question_fraction_grade($quizquestions[$i], $states[$i]);
+                $statsrow[$qid] = get_question_fraction_grade($quizquestions[$i], $states[$i]);
             }
             $attemptscores[$attempt->id] = $attempt->sumgrades;   
             $statstable[$attempt->id] = $statsrow;
@@ -308,10 +308,10 @@ class quiz_report extends quiz_default_report {
         foreach($pagequestions as $qnum) {
             $q = $questions[$qnum];
             $qid = $q['id'];
-            $question = get_record('quiz_questions', 'id', $qid);         
+            $question = get_record('question', 'id', $qid);         
             $qnumber = " (".link_to_popup_window('/question/question.php?id='.$qid,'editquestion', $qid, 450, 550, get_string('edit'), 'none', true ).") ";
             $qname = '<div class="qname">'.format_text($question->name." :  ", $question->questiontextformat, NULL, $quiz->course).'</div>';
-            $qicon = quiz_print_question_icon($question, false, true);
+            $qicon = print_question_icon($question, false, true);
             $qreview = quiz_get_question_review($quiz, $question);
             $qtext = format_text($question->questiontext, $question->questiontextformat, NULL, $quiz->course);          
             $qquestion = $qname."\n".$qtext."\n";
@@ -628,7 +628,7 @@ class quiz_report extends quiz_default_report {
 
     function print_row_stats_data(&$q) {
         $qid = $q['id'];
-        $question = get_record('quiz_questions', 'id', $qid);
+        $question = get_record('question', 'id', $qid);
 
         $options->para = false;
         $options->newlines = false;

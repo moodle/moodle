@@ -369,10 +369,10 @@ CREATE TABLE prefix_quiz_question_versions (
 # --------------------------------------------------------
 
 #
-# Table structure for table prefix_quiz_questions
+# Table structure for table prefix_question
 #
 
-CREATE TABLE prefix_quiz_questions (
+CREATE TABLE prefix_question (
   id SERIAL PRIMARY KEY,
   category integer NOT NULL default '0',
   parent integer NOT NULL default '0',
@@ -389,7 +389,7 @@ CREATE TABLE prefix_quiz_questions (
   hidden integer NOT NULL default '0'
 );
 
-CREATE INDEX prefix_quiz_questions_category_idx ON prefix_quiz_questions (category);
+CREATE INDEX prefix_question_category_idx ON prefix_question (category);
 
 # --------------------------------------------------------
 
@@ -474,10 +474,10 @@ CREATE INDEX prefix_quiz_shortanswer_question_idx ON prefix_quiz_shortanswer (qu
 # --------------------------------------------------------
 
 #
-# Table structure for table prefix_quiz_states
+# Table structure for table prefix_question_states
 #
 
-CREATE TABLE prefix_quiz_states (
+CREATE TABLE prefix_question_states (
   id SERIAL PRIMARY KEY,
   attempt integer NOT NULL default '0',
   question integer NOT NULL default '0',
@@ -491,8 +491,8 @@ CREATE TABLE prefix_quiz_states (
   penalty real NOT NULL default '0'
 );
 
-CREATE INDEX prefix_quiz_states_attempt_idx ON prefix_quiz_states (attempt);
-CREATE INDEX prefix_quiz_states_question_idx ON prefix_quiz_states (question);;
+CREATE INDEX prefix_question_states_attempt_idx ON prefix_question_states (attempt);
+CREATE INDEX prefix_question_states_question_idx ON prefix_question_states (question);;
 
 
 # --------------------------------------------------------

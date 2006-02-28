@@ -69,7 +69,7 @@ class quiz_dataset_dependent_questiontype extends quiz_default_questiontype {
          $state->responses[''];
 
         // Set the legacy answer field
-        if (!set_field('quiz_states', 'answer', $responses, 'id',
+        if (!set_field('question_states', 'answer', $responses, 'id',
          $state->id)) {
             return false;
         }

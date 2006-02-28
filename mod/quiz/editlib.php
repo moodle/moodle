@@ -89,7 +89,7 @@ function quiz_add_quiz_question($id, &$modform) {
     }
 
     // update question grades
-    $questionrecord = get_record("quiz_questions", "id", $id);
+    $questionrecord = get_record("question", "id", $id);
     $modform->grades[$id] = $questionrecord->defaultgrade;
     quiz_update_question_instance($modform->grades[$id], $id, $modform->instance);
 
@@ -153,7 +153,7 @@ function quiz_print_question_list($quiz, $allowdelete=true, $showbreaks=true, $r
     }
 
     if (!$questions = get_records_sql("SELECT q.*,c.course
-                              FROM {$CFG->prefix}quiz_questions q,
+                              FROM {$CFG->prefix}question q,
                                    {$CFG->prefix}quiz_categories c
                              WHERE q.id in ($quiz->questions)
                                AND q.category = c.id")) {
@@ -246,7 +246,7 @@ function quiz_print_question_list($quiz, $allowdelete=true, $showbreaks=true, $r
 
         echo "<td>$question->name</td>";
         echo "<td align=\"center\">";
-        quiz_print_question_icon($question, $canedit);
+        print_question_icon($question, $canedit);
         echo "</td>";
         echo '<td align="left">';
         if ($question->qtype == DESCRIPTION) {

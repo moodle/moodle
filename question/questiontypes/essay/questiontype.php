@@ -178,7 +178,7 @@ class quiz_essay_qtype extends quiz_default_questiontype {
             $state->options->graded = 1;
         } else {
             $state->raw_grade = 0;
-            $state->event = QUIZ_EVENTSUBMIT;
+            $state->event = QUESTION_EVENTSUBMIT;
         }
 
         // Make sure we don't assign negative or too high marks
@@ -267,7 +267,7 @@ class quiz_essay_qtype extends quiz_default_questiontype {
         // get the essay questions
         $questionlist = quiz_questions_in_quiz($cmoptions->questions);
         $sql = "SELECT q.*, i.grade AS maxgrade, i.id AS instance".
-               "  FROM {$CFG->prefix}quiz_questions q,".
+               "  FROM {$CFG->prefix}question q,".
                "       {$CFG->prefix}quiz_question_instances i".
                " WHERE i.quiz = '$cmoptions->id' AND q.id = i.question".
                "   AND q.id IN ($questionlist)".

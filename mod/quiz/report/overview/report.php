@@ -43,7 +43,7 @@ class quiz_report extends quiz_default_report {
                     if ($todelete = get_record('quiz_attempts', 'id', $attemptid)) {
                         // TODO: use function from questionlib.php to delete attempt
                         delete_records('quiz_attempts', 'id', $attemptid);
-                        delete_records('quiz_states', 'attempt', $todelete->uniqueid);
+                        delete_records('question_states', 'attempt', $todelete->uniqueid);
                         delete_records('question_sessions', 'attemptid', $todelete->uniqueid);
 
                         // Search quiz_attempts for other instances by this user.
@@ -115,7 +115,7 @@ class quiz_report extends quiz_default_report {
             $questionlist = quiz_questions_in_quiz($quiz->questions);
             $questionids = explode(',', $questionlist);
             $sql = "SELECT q.*, i.grade AS maxgrade, i.id AS instance".
-               "  FROM {$CFG->prefix}quiz_questions q,".
+               "  FROM {$CFG->prefix}question q,".
                "       {$CFG->prefix}quiz_question_instances i".
                " WHERE i.quiz = '$quiz->id' AND q.id = i.question".
                "   AND q.id IN ($questionlist)";
@@ -290,7 +290,7 @@ class quiz_report extends quiz_default_report {
                             $qid          = intval(substr($sortpart, 1));
                             $select .= ', grade ';
                             $from        .= 'LEFT JOIN '.$CFG->prefix.'question_sessions qns ON qns.attemptid = qa.attemptuniqueid '.
-                                                'LEFT JOIN '.$CFG->prefix.'quiz_states qs ON qs.id = qns.newgraded ';
+                                                'LEFT JOIN '.$CFG->prefix.'question_states qs ON qs.id = qns.newgraded ';
                             $where       .= ' AND ('.sql_isnull('qns.questionid').' OR qns.questionid = '.$qid.')';
                             $newsort[]    = 'grade '.(strpos($sortpart, 'ASC')? 'ASC' : 'DESC');
                             $questionsort = true;
@@ -387,10 +387,10 @@ class quiz_report extends quiz_default_report {
                         else {
                             foreach($questionids as $questionid) {
                                 if ($gradedstateid = get_field('quiz_newest_states', 'newgraded', 'attemptid', $attempt->attemptuniqueid, 'questionid', $questionid)) {
-                                    $grade = round(get_field('quiz_states', 'grade', 'id', $gradedstateid), $quiz->decimalpoints);
+                                    $grade = round(get_field('question_states', 'grade', 'id', $gradedstateid), $quiz->decimalpoints);
                                 } else {
                                     // This is an old-style attempt
-                                    $grade = round(get_field('quiz_states', 'grade', 'attempt', $attempt->attempt, 'question', $questionid), $quiz->decimalpoints);
+                                    $grade = round(get_field('question_states', 'grade', 'attempt', $attempt->attempt, 'question', $questionid), $quiz->decimalpoints);
                                 }
                                 if (!$download) {
                                     $row[] = link_to_popup_window ('/mod/quiz/reviewquestion.php?state='.$gradedstateid.'&amp;number='.$questions[$questionid]->number, 'reviewquestion', $grade, 450, 650, $strreviewquestion, 'none', true);

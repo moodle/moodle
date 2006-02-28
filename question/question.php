@@ -38,7 +38,7 @@
     }
 
     if ($id) {
-        if (! $question = get_record("quiz_questions", "id", $id)) {
+        if (! $question = get_record("question", "id", $id)) {
             error("This question doesn't exist");
         }
         if (!empty($category)) {
@@ -77,7 +77,7 @@
     }
 
     if(!empty($id) && isset($_REQUEST['hide']) && confirm_sesskey()) {
-        if(!set_field('quiz_questions', 'hidden', $_REQUEST['hide'], 'id', $id)) {
+        if(!set_field('question', 'hidden', $_REQUEST['hide'], 'id', $id)) {
             error("Faild to hide the question.");
         }
         redirect($editurl);
@@ -111,15 +111,15 @@
         if (isset($confirm) and confirm_sesskey()) {
             if ($confirm == md5($delete)) {
                 if (record_exists('quiz_question_instances', 'question', $question->id) or
-                    record_exists('quiz_states', 'originalquestion', $question->id)) {
-                    if (!set_field('quiz_questions', 'hidden', 1, 'id', $delete)) {
+                    record_exists('question_states', 'originalquestion', $question->id)) {
+                    if (!set_field('question', 'hidden', 1, 'id', $delete)) {
                         error('Was not able to hide question');
                     }
                 } else {
-                    if (!delete_records("quiz_questions", "id", $question->id)) {
+                    if (!delete_records("question", "id", $question->id)) {
                         error("An error occurred trying to delete question (id $question->id)");
                     }
-                    if (!delete_records("quiz_questions", "parent", $question->id)) {
+                    if (!delete_records("question", "parent", $question->id)) {
                         error("An error occurred trying to delete question (id $question->id)");
                     }
                 }
@@ -180,8 +180,8 @@
             } else {
                 // this should be improved to exclude teacher preview responses and empty responses
                 // the current code leaves many unneeded questions in the database
-                $hasresponses = record_exists('quiz_states', 'question', $form->id) or
-                         record_exists('quiz_states', 'originalquestion', $form->id);
+                $hasresponses = record_exists('question_states', 'question', $form->id) or
+                         record_exists('question_states', 'originalquestion', $form->id);
                 $replaceinall = ($quizlist == $replaceinquiz); // question is being replaced in all quizzes
                 $replaceold   = !$hasresponses && $replaceinall;
             }
@@ -189,7 +189,7 @@
             if (!$replaceold) { // create a new question
                 $oldquestionid = $question->id;
                 if (!$makecopy) {
-                    if (!set_field("quiz_questions", 'hidden', 1, 'id', $question->id)) {
+                    if (!set_field("question", 'hidden', 1, 'id', $question->id)) {
                         error("Could not hide question!");
                     }
                 }
@@ -251,10 +251,10 @@
                             }
 
                             // set originalquestion in states
-                            set_field('quiz_states', 'originalquestion', $oldquestionid, 'attempt', $attempt->uniqueid, 'question', $question->id, 'originalquestion', '0');
+                            set_field('question_states', 'originalquestion', $oldquestionid, 'attempt', $attempt->uniqueid, 'question', $question->id, 'originalquestion', '0');
 
                             // replace question id in states
-                            set_field('quiz_states', 'question', $question->id, 'attempt', $attempt->uniqueid, 'question', $oldquestionid);
+                            set_field('question_states', 'question', $question->id, 'attempt', $attempt->uniqueid, 'question', $oldquestionid);
 
                             // replace question id in sessions
                             set_field('question_sessions', 'questionid', $question->id, 'attemptid', $attempt->uniqueid, 'questionid', $oldquestionid);

@@ -29,7 +29,7 @@
     //             |---------(UL,pk->id,fk->attempt,question)-----|                      .       |    |                            |    .
     //             |                        .                     |                      .       |    |                       quiz_dataset_definitions
     //             |                        .                     |                      .       |    |                      (CL,pk->id,fk->category)
-    //             |                    quiz_states               |                      quiz_questions                                 |
+    //             |                 question_states              |                          question                                   |
     //             ----------(UL,pk->id,fk->attempt,question)--------------------------(CL,pk->id,fk->category,files)                   |
     //                                      |                                                    |                             quiz_dataset_items
     //                                      |                                                    |                          (CL,pk->id,fk->definition)
@@ -75,7 +75,7 @@
     //This module is special, because we make the restore in two steps:
     // 1.-We restore every category and their questions (complete structure). It includes this tables:
     //     - quiz_categories
-    //     - quiz_questions
+    //     - question
     //     - quiz_truefalse
     //     - quiz_shortanswer
     //     - quiz_multianswer
@@ -100,7 +100,7 @@
     //     - quiz_question_instances
     //     - quiz_attempts
     //     - quiz_grades
-    //     - quiz_states
+    //     - question_states
     //    This step is the standard mod backup. (course dependent).
 
 //STEP 1. Restore categories/questions and associated structures (course independent)
@@ -163,7 +163,7 @@
                 //We have the newid, update backup_ids
                 backup_putid($restore->backup_unique_code,"quiz_categories",
                              $category->id, $newid);
-                //Now restore quiz_questions
+                //Now restore question
                 $status = quiz_restore_questions ($category->id, $newid,$info,$restore);
             } else {
                 $status = false;
@@ -196,7 +196,7 @@
             //We'll need this later!!
             $oldid = backup_todb($que_info['#']['ID']['0']['#']);
 
-            //Now, build the QUIZ_QUESTIONS record structure
+            //Now, build the question record structure
             $question->category = $new_category_id;
             $question->parent = backup_todb($que_info['#']['PARENT']['0']['#']);
             $question->name = backup_todb($que_info['#']['NAME']['0']['#']);
@@ -214,13 +214,13 @@
             ////We have to recode the parent field
             // This should work alright because we ordered the questions appropriately during backup so that
             // questions that can be parents are restored first
-            if ($question->parent and $parent = backup_getid($restore->backup_unique_code,"quiz_questions",$question->parent)) {
+            if ($question->parent and $parent = backup_getid($restore->backup_unique_code,"question",$question->parent)) {
                 $question->parent = $parent->new_id;
             }
 
             //Check if the question exists
             //by category and stamp
-            $question_exists = get_record ("quiz_questions","category",$question->category,
+            $question_exists = get_record ("question","category",$question->category,
                                                  "stamp",$question->stamp,"version",$question->version);
 
             //If the question exists, only record its id
@@ -229,15 +229,15 @@
                 $creatingnewquestion = false;
             //Else, create a new question
             } else {
-                //The structure is equal to the db, so insert the quiz_questions
-                $newid = insert_record ("quiz_questions",$question);
+                //The structure is equal to the db, so insert the question
+                $newid = insert_record ("question",$question);
                 $creatingnewquestion = true;
             }
 
             //Save newid to backup tables
             if ($newid) {
                 //We have the newid, update backup_ids
-                backup_putid($restore->backup_unique_code,"quiz_questions",$oldid,
+                backup_putid($restore->backup_unique_code,"question",$oldid,
                              $newid);
             }
 
@@ -1008,7 +1008,7 @@
             $tok = strtok($multianswer->sequence,",");
             while ($tok) {
                 //Get the answer from backup_ids
-                $question = backup_getid($restore->backup_unique_code,"quiz_questions",$tok);
+                $question = backup_getid($restore->backup_unique_code,"question",$tok);
                 if ($question) {
                     if ($in_first) {
                         $sequence_field .= $question->new_id;
@@ -1419,7 +1419,7 @@
             $instance->grade = backup_todb($gra_info['#']['GRADE']['0']['#']);
 
             //We have to recode the question field
-            $question = backup_getid($restore->backup_unique_code,"quiz_questions",$instance->question);
+            $question = backup_getid($restore->backup_unique_code,"question",$instance->question);
             if ($question) {
                 $instance->question = $question->new_id;
             }
@@ -1479,19 +1479,19 @@
             $version->timestamp = backup_todb($ver_info['#']['TIMESTAMP']['0']['#']);
 
             //We have to recode the oldquestion field
-            $question = backup_getid($restore->backup_unique_code,"quiz_questions",$version->oldquestion);
+            $question = backup_getid($restore->backup_unique_code,"question",$version->oldquestion);
             if ($question) {
                 $version->oldquestion = $question->new_id;
             }
 
             //We have to recode the newquestion field
-            $question = backup_getid($restore->backup_unique_code,"quiz_questions",$version->newquestion);
+            $question = backup_getid($restore->backup_unique_code,"question",$version->newquestion);
             if ($question) {
                 $version->newquestion = $question->new_id;
             }
 
             //We have to recode the originalquestion field
-            $question = backup_getid($restore->backup_unique_code,"quiz_questions",$version->originalquestion);
+            $question = backup_getid($restore->backup_unique_code,"question",$version->originalquestion);
             if ($question) {
                 $version->newquestion = $question->new_id;
             }
@@ -1574,7 +1574,7 @@
             }
 
             //Set the uniqueid field
-            $attempt->uniqueid = quiz_new_attempt_uniqueid();
+            $attempt->uniqueid = question_new_attempt_uniqueid();
 
             //We have to recode the layout field (a list of questions id and pagebreaks)
             $attempt->layout = quiz_recode_layout($attempt->layout, $restore);
@@ -1597,8 +1597,8 @@
                 //We have the newid, update backup_ids
                 backup_putid($restore->backup_unique_code,"quiz_attempts",$oldid,
                              $newid);
-                //Now process quiz_states
-                $status = quiz_states_restore_mods($newid,$att_info,$restore);
+                //Now process question_states
+                $status = question_states_restore_mods($newid,$att_info,$restore);
             } else {
                 $status = false;
             }
@@ -1607,14 +1607,14 @@
         return $status;
     }
 
-    //This function restores the quiz_states
-    function quiz_states_restore_mods($attempt_id,$info,$restore) {
+    //This function restores the question_states
+    function question_states_restore_mods($attempt_id,$info,$restore) {
 
         global $CFG;
 
         $status = true;
 
-        //Get the quiz_states array
+        //Get the question_states array
         $states = $info['#']['STATES']['0']['#']['STATE'];
         //Iterate over states
         for($i = 0; $i < sizeof($states); $i++) {
@@ -1639,13 +1639,13 @@
             $state->penalty = backup_todb($res_info['#']['PENALTY']['0']['#']);
 
             //We have to recode the question field
-            $question = backup_getid($restore->backup_unique_code,"quiz_questions",$state->question);
+            $question = backup_getid($restore->backup_unique_code,"question",$state->question);
             if ($question) {
                 $state->question = $question->new_id;
             }
 
             //We have to recode the originalquestion field
-            $question = backup_getid($restore->backup_unique_code,"quiz_questions",$state->originalquestion);
+            $question = backup_getid($restore->backup_unique_code,"question",$state->originalquestion);
             if ($question) {
                 $state->originalquestion = $question->new_id;
             }
@@ -1653,7 +1653,7 @@
             //We have to recode the answer field
             //It depends of the question type !!
             //We get the question first
-            $question = get_record("quiz_questions","id",$state->question);
+            $question = get_record("question","id",$state->question);
             //It exists
             if ($question) {
                 //Depending of the qtype, we make different recodes
@@ -1691,7 +1691,7 @@
                         break;
                     case 4:    //RANDOM QTYPE
                         //The answer links to another question id, we must recode it
-                        $answer_link = backup_getid($restore->backup_unique_code,"quiz_questions",$state->answer);
+                        $answer_link = backup_getid($restore->backup_unique_code,"question",$state->answer);
                         if ($answer_link) {
                             $state->answer = $answer_link->new_id;
                         }
@@ -1738,7 +1738,7 @@
                             $question_id = $exploded[0];
                             $answer_id = $exploded[1];
                             //Get the question from backup_ids
-                            $que = backup_getid($restore->backup_unique_code,"quiz_questions",$question_id);
+                            $que = backup_getid($restore->backup_unique_code,"question",$question_id);
                             //Get the answer from backup_ids
                             $ans = backup_getid($restore->backup_unique_code,"quiz_answers",$answer_id);
                             if ($que) {
@@ -1819,8 +1819,8 @@
                 $status = false;
             }
 
-            //The structure is equal to the db, so insert the quiz_states
-            $newid = insert_record ("quiz_states",$state);
+            //The structure is equal to the db, so insert the question_states
+            $newid = insert_record ("question_states",$state);
 
             //Do some output
             if (($i+1) % 10 == 0) {
@@ -1835,7 +1835,7 @@
 
             if ($newid) {
                 //We have the newid, update backup_ids
-                backup_putid($restore->backup_unique_code,"quiz_states",$oldid,
+                backup_putid($restore->backup_unique_code,"question_states",$oldid,
                              $newid);
                 //Now process question type specific state information
                 $status = quiz_rqp_states_restore_mods($newid,$res_info,$restore);
@@ -1862,19 +1862,19 @@
             $session->sumpenalty = backup_todb($res_info['#']['SUMPENALTY']['0']['#']);
 
             //We have to recode the question field
-            $question = backup_getid($restore->backup_unique_code,"quiz_questions",$session->questionid);
+            $question = backup_getid($restore->backup_unique_code,"question",$session->questionid);
             if ($question) {
                 $session->questionid = $question->new_id;
             }
 
             //We have to recode the newest field
-            $state = backup_getid($restore->backup_unique_code,"quiz_states",$session->newest);
+            $state = backup_getid($restore->backup_unique_code,"question_states",$session->newest);
             if ($state) {
                 $session->newest = $state->new_id;
             }
 
             //We have to recode the newgraded field
-            $state = backup_getid($restore->backup_unique_code,"quiz_states",$session->newgraded);
+            $state = backup_getid($restore->backup_unique_code,"question_states",$session->newgraded);
             if ($state) {
                 $session->newgraded = $state->new_id;
             }
@@ -1904,7 +1904,7 @@
             $state->persistent_data = backup_todb($rqp_state['#']['PERSISTENT_DATA']['0']['#']);
             $state->template_vars = backup_todb($rqp_state['#']['TEMPLATE_VARS']['0']['#']);
 
-            //The structure is equal to the db, so insert the quiz_states
+            //The structure is equal to the db, so insert the question_states
             $newid = insert_record ("quiz_rqp_states",$state);
         }
 
@@ -1928,7 +1928,7 @@
             $state->fraction = backup_todb($essay_state['#']['FRACTION']['0']['#']);
             $state->response = backup_todb($essay_state['#']['RESPONSE']['0']['#']);
 
-            //The structure is equal to the db, so insert the quiz_states
+            //The structure is equal to the db, so insert the question_states
             $newid = insert_record ("quiz_essay_states",$state);
         }
 
@@ -2110,12 +2110,12 @@
 
         $status = true;
 
-        //Convert quiz_questions->questiontext
+        //Convert question->questiontext
         if ($records = get_records_sql ("SELECT q.id, q.questiontext, q.questiontextformat
-                                         FROM {$CFG->prefix}quiz_questions q,
+                                         FROM {$CFG->prefix}question q,
                                               {$CFG->prefix}backup_ids b
                                          WHERE b.backup_code = $restore->backup_unique_code AND
-                                               b.table_name = 'quiz_questions' AND
+                                               b.table_name = 'question' AND
                                                q.id = b.new_id AND
                                                q.questiontextformat = ".FORMAT_WIKI)) {
             foreach ($records as $record) {
@@ -2125,7 +2125,7 @@
                 $wtm = new WikiToMarkdown();
                 $record->questiontext = $wtm->convert($record->questiontext, $restore->course_id);
                 $record->questiontextformat = FORMAT_MARKDOWN;
-                $status = update_record('quiz_questions', addslashes_object($record));
+                $status = update_record('question', addslashes_object($record));
                 //Do some output
                 $i++;
                 if (($i+1) % 1 == 0) {
@@ -2280,7 +2280,7 @@
         if ($questionids = explode(',', $layout)) {
             foreach ($questionids as $id => $questionid) {
             if ($questionid) { // If it iss zero then this is a pagebreak, don't translate
-                $newq = backup_getid($restore->backup_unique_code,"quiz_questions",$questionid);
+                $newq = backup_getid($restore->backup_unique_code,"question",$questionid);
                 $questionids[$id] = $newq->new_id;
             }
             }

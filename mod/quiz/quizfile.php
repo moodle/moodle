@@ -2,6 +2,7 @@
       // This function fetches files from the data directory
       // Syntax:   quizfile.php/quiz id/question id/dir/.../dir/filename.ext
       // It is supposed to be used by the quiz module only
+      // I believe this is obsolete, everything should be using moodle/file.php GWD
 
     require_once('../../config.php');
     require_once($CFG->libdir.'/filelib.php');
@@ -29,7 +30,7 @@
     $questionid   = (int)array_shift($args);
     $relativepath = implode ('/', $args);
 
-    if (!($question = get_record('quiz_questions', 'id', $questionid))) {
+    if (!($question = get_record('question', 'id', $questionid))) {
         error('No valid arguments supplied');
     }
 

@@ -204,7 +204,7 @@
                     // there should only be one but we loop just in case
                     // TODO: the following should become a function in questionlib.php which
                     // really deletes all records associated to this attempt.
-                    delete_records('quiz_states', 'attempt', $oldattempt->uniqueid);
+                    delete_records('question_states', 'attempt', $oldattempt->uniqueid);
                     delete_records('question_sessions', 'attemptid', $oldattempt->uniqueid);
                 }
             }
@@ -263,7 +263,7 @@
     }
 
     $sql = "SELECT q.*, i.grade AS maxgrade, i.id AS instance".
-           "  FROM {$CFG->prefix}quiz_questions q,".
+           "  FROM {$CFG->prefix}question q,".
            "       {$CFG->prefix}quiz_question_instances i".
            " WHERE i.quiz = '$quiz->id' AND q.id = i.question".
            "   AND q.id IN ($questionlist)";
@@ -274,20 +274,20 @@
     }
 
     // Load the question type specific information
-    if (!quiz_get_question_options($questions)) {
+    if (!get_question_options($questions)) {
         error('Could not load question options');
     }
 
     // Restore the question sessions to their most recent states
     // creating new sessions where required
-    if (!$states = quiz_get_states($questions, $quiz, $attempt)) {
+    if (!$states = get_question_states($questions, $quiz, $attempt)) {
         error('Could not restore question sessions');
     }
 
     // Save all the newly created states
     if ($newattempt) {
         foreach ($questions as $i => $question) {
-            quiz_save_question_session($questions[$i], $states[$i]);
+            save_question_session($questions[$i], $states[$i]);
         }
     }
 
@@ -297,8 +297,8 @@
     if ($responses = data_submitted() and empty($_POST['quizpassword'])) {
 
         // set the default event. This can be overruled by individual buttons.
-        $event = (array_key_exists('markall', $responses)) ? QUIZ_EVENTGRADE :
-         ($finishattempt ? QUIZ_EVENTCLOSE : QUIZ_EVENTSAVE);
+        $event = (array_key_exists('markall', $responses)) ? QUESTION_EVENTGRADE :
+         ($finishattempt ? QUESTION_EVENTCLOSE : QUESTION_EVENTSAVE);
 
         // Unset any variables we know are not responses
         unset($responses->id);
@@ -314,7 +314,7 @@
 
         // extract responses
         // $actions is an array indexed by the questions ids
-        $actions = quiz_extract_responses($questions, $responses, $event);
+        $actions = question_extract_responses($questions, $responses, $event);
 
         // Process each question in turn
 
@@ -324,8 +324,8 @@
                 $actions[$i]->responses = array('' => '');
             }
             $actions[$i]->timestamp = $timestamp;
-            quiz_process_responses($questions[$i], $states[$i], $actions[$i], $quiz, $attempt);
-            quiz_save_question_session($questions[$i], $states[$i]);
+            question_process_responses($questions[$i], $states[$i], $actions[$i], $quiz, $attempt);
+            save_question_session($questions[$i], $states[$i]);
         }
 
         $attempt->timemodified = $timestamp;
@@ -348,7 +348,7 @@
             // load all the questions
             $closequestionlist = implode(',', array_keys($closequestions));
             $sql = "SELECT q.*, i.grade AS maxgrade, i.id AS instance".
-                   "  FROM {$CFG->prefix}quiz_questions q,".
+                   "  FROM {$CFG->prefix}question q,".
                    "       {$CFG->prefix}quiz_question_instances i".
                    " WHERE i.quiz = '$quiz->id' AND q.id = i.question".
                    "   AND q.id IN ($closequestionlist)";
@@ -357,21 +357,21 @@
             }
 
             // Load the question type specific information
-            if (!quiz_get_question_options($closequestions)) {
+            if (!get_question_options($closequestions)) {
                 error('Could not load question options');
             }
 
             // Restore the question sessions
-            if (!$closestates = quiz_get_states($closequestions, $quiz, $attempt)) {
+            if (!$closestates = get_question_states($closequestions, $quiz, $attempt)) {
                 error('Could not restore question sessions');
             }
 
             foreach($closequestions as $key => $question) {
-                $action->event = QUIZ_EVENTCLOSE;
+                $action->event = QUESTION_EVENTCLOSE;
                 $action->responses = $closestates[$key]->responses;
                 $action->timestamp = $closestates[$key]->timestamp;
-                quiz_process_responses($question, $closestates[$key], $action, $quiz, $attempt);
-                            quiz_save_question_session($question, $closestates[$key]);
+                question_process_responses($question, $closestates[$key], $action, $quiz, $attempt);
+                            save_question_session($question, $closestates[$key]);
             }
         }
         add_to_log($course->id, 'quiz', 'close attempt',
@@ -469,8 +469,8 @@
         if ($i > 0) {
             echo "<br />\n";
         }
-        quiz_print_quiz_question($questions[$i], $states[$i], $number, $quiz, $options);
-        quiz_save_question_session($questions[$i], $states[$i]);
+        print_question($questions[$i], $states[$i], $number, $quiz, $options);
+        save_question_session($questions[$i], $states[$i]);
         $number += $questions[$i]->length;
     }
 

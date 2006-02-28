@@ -75,12 +75,12 @@
         <FIELD name="layout" method="NO_CONV" type="text" length="0" />
       </FIELDS>
     </TABLE>
-    <TABLE name="quiz_states">
+    <TABLE name="question_states">
       <FIELDS>
         <FIELD name="answer" method="PLAIN_SQL_UPDATE" type="text" length="0">
           <SQL_DETECT_USER>
            SELECT qa.userid
-           FROM {$CFG->prefix}quiz_states qs,
+           FROM {$CFG->prefix}question_states qs,
                 {$CFG->prefix}quiz_attempts qa
            WHERE qa.id = qs.attempt
                  AND qs.id=RECORDID
@@ -88,7 +88,7 @@
           <SQL_DETECT_COURSE>
            SELECT q.course
            FROM {$CFG->prefix}quiz q,
-                {$CFG->prefix}quiz_states qs,
+                {$CFG->prefix}question_states qs,
                 {$CFG->prefix}quiz_attempts qa
            WHERE q.id = qa.quiz
                  AND qa.id = qs.attempt
@@ -97,16 +97,16 @@
         </FIELD>
       </FIELDS>
     </TABLE>
-    <TABLE name="quiz_questions">
+    <TABLE name="question">
       <FIELDS>
         <FIELD name="name" method="PHP_FUNCTION" type="varchar" length="255">
           <PHP_FUNCTION>
-            migrate2utf8_quiz_questions_name(RECORDID)
+            migrate2utf8_question_name(RECORDID)
           </PHP_FUNCTION>
         </FIELD>
         <FIELD name="questiontext" method="PHP_FUNCTION" type="text" length="0">
           <PHP_FUNCTION>
-            migrate2utf8_quiz_questions_questiontext(RECORDID)
+            migrate2utf8_question_questiontext(RECORDID)
           </PHP_FUNCTION>
         </FIELD>
         <FIELD name="image" method="NO_CONV" type="varchar" length="255" />
@@ -165,7 +165,7 @@
         <FIELD name="response" method="PLAIN_SQL_UPDATE" type="text" length="0">
           <SQL_DETECT_USER>
            SELECT qa.userid
-           FROM {$CFG->prefix}quiz_states qs,
+           FROM {$CFG->prefix}question_states qs,
                 {$CFG->prefix}quiz_attempts qa,
                 {$CFG->prefix}quiz_essay_states qes
            WHERE qa.id = qs.attempt
@@ -176,7 +176,7 @@
            SELECT q.course
            FROM {$CFG->prefix}quiz q,
                 {$CFG->prefix}quiz_attempts qa,
-                {$CFG->prefix}quiz_states qs,
+                {$CFG->prefix}question_states qs,
                 {$CFG->prefix}quiz_essay_states qes
            WHERE q.id = qa.quiz
                  AND qa.id = qs.attempt

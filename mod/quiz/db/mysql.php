@@ -937,6 +937,14 @@ function quiz_upgrade($oldversion) {
         table_column('question_sessions', 'sumpenalty', 'sumpenalty',  'float', '', '', '0', 'not null');
     }
 
+    if ($oldversion < 2006022400) {
+        execute_sql("ALTER TABLE {$CFG->prefix}quiz_questions RENAME {$CFG->prefix}question", false);
+    }
+
+    if ($oldversion < 2006022402) {
+        execute_sql("ALTER TABLE {$CFG->prefix}quiz_states RENAME {$CFG->prefix}question_states", false);
+    }
+
     return true;
 }
 

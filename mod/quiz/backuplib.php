@@ -21,7 +21,7 @@
     //             |---------(UL,pk->id,fk->attempt,question)-----|                      .       |    |                            |    .
     //             |                        .                     |                      .       |    |                       quiz_dataset_definitions
     //             |                        .                     |                      .       |    |                      (CL,pk->id,fk->category)
-    //             |                    quiz_states               |                      quiz_questions                                 |
+    //             |                 question_states              |                          question                                   |
     //             ----------(UL,pk->id,fk->attempt,question)--------------------------(CL,pk->id,fk->category,files)                   |
     //                                      |                                                    |                             quiz_dataset_items
     //                                      |                                                    |                          (CL,pk->id,fk->definition)
@@ -69,7 +69,7 @@
     //This module is special, because we make the backup in two steps:
     // 1.-We backup every category and their questions (complete structure). It includes this tables:
     //     - quiz_categories
-    //     - quiz_questions
+    //     - question
     //     - quiz_rqp
     //     - quiz_truefalse
     //     - quiz_shortanswer
@@ -95,7 +95,7 @@
     //     - quiz_question_instances
     //     - quiz_attempts
     //     - quiz_grades
-    //     - quiz_states
+    //     - question_states
     //     - question_sessions
     //    This step is the standard mod backup. (course dependent).
 
@@ -123,7 +123,7 @@
         $status = execute_sql("INSERT INTO {$CFG->prefix}backup_ids
                                    (backup_code, table_name, old_id)
                                SELECT DISTINCT $backup_unique_code,'quiz_categories',t.category
-                               FROM {$CFG->prefix}quiz_questions t,
+                               FROM {$CFG->prefix}question t,
                                     {$CFG->prefix}quiz_question_instances g
                                     $from
                                WHERE $where g.question = t.id",false);
@@ -162,7 +162,7 @@
         // because we will have to add these subcategories
         $sql = "SELECT t.id, t.category 
                   FROM {$CFG->prefix}quiz_question_instances AS g,
-                       {$CFG->prefix}quiz_questions AS t
+                       {$CFG->prefix}question AS t
                        $from
                  WHERE $where t.id = g.question
                    AND t.qtype = '".RANDOM."'
@@ -199,7 +199,7 @@
         global $CFG;
 
         $categories = get_records_sql("SELECT DISTINCT t.category, t.category
-                                       FROM {$CFG->prefix}quiz_questions t,
+                                       FROM {$CFG->prefix}question t,
                                             {$CFG->prefix}quiz_question_instances g,
                                             {$CFG->prefix}quiz q
                                        WHERE q.course = '$course' AND
@@ -221,7 +221,7 @@
                     unset ($db_cat);
                     if ($catid) {
                         //Reasign orphaned questions to their new category
-                        set_field ('quiz_questions','category',$catid,'category',$key);
+                        set_field ('question','category',$catid,'category',$key);
                     }
                 }
             }
@@ -287,7 +287,7 @@
         // We'll fetch the questions sorted by parent so that questions with no parents
         // (these are the ones which could be parents themselves) are backed up first. This
         // is important for the recoding of the parent field during the restore process
-        $questions = get_records("quiz_questions","category",$category,"parent ASC, id");
+        $questions = get_records("question","category",$category,"parent ASC, id");
         //If there are questions
         if ($questions) {
             //Write start tag
@@ -946,7 +946,7 @@
                 fwrite ($bf,full_tag("LAYOUT",6,false,$attempt->layout));
                 fwrite ($bf,full_tag("PREVIEW",6,false,$attempt->preview));
                 //Now write to xml the states (in this attempt)
-                $status = backup_quiz_states ($bf,$preferences,$attempt->uniqueid);
+                $status = backup_question_states ($bf,$preferences,$attempt->uniqueid);
                 //Now write to xml the sessions (in this attempt)
                 $status = backup_question_sessions ($bf,$preferences,$attempt->uniqueid);
                 //End attempt
@@ -958,20 +958,20 @@
         return $status;
     }
 
-    //Backup quiz_states contents (executed from backup_quiz_attempts)
-    function backup_quiz_states ($bf,$preferences,$attempt) {
+    //Backup question_states contents (executed from backup_quiz_attempts)
+    function backup_question_states ($bf,$preferences,$attempt) {
 
         global $CFG;
 
         $status = true;
 
-        $quiz_states = get_records("quiz_states","attempt",$attempt,"id");
+        $question_states = get_records("question_states","attempt",$attempt,"id");
         //If there are states
-        if ($quiz_states) {
+        if ($question_states) {
             //Write start tag
             $status = fwrite ($bf,start_tag("STATES",6,true));
             //Iterate over each state
-            foreach ($quiz_states as $state) {
+            foreach ($question_states as $state) {
                 //Start state
                 $status = fwrite ($bf,start_tag("STATE",7,true));
                 //Print state contents
@@ -1059,7 +1059,7 @@
         return $info;
     }
 
-    //Backup quiz_rqp_state contents (executed from backup_quiz_states)
+    //Backup quiz_rqp_state contents (executed from backup_question_states)
     function backup_quiz_rqp_state ($bf,$preferences,$state) {
 
         global $CFG;
@@ -1081,7 +1081,7 @@
         return $status;
     }
     
-    //Backup quiz_essay_state contents (executed from backup_quiz_states)
+    //Backup quiz_essay_state contents (executed from backup_question_states)
     function backup_quiz_essay_state ($bf,$preferences,$state) {
 
         global $CFG;
@@ -1202,7 +1202,7 @@
 
         return get_records_sql ("SELECT q.id, q.category
                                  FROM {$CFG->prefix}backup_ids a,
-                                      {$CFG->prefix}quiz_questions q
+                                      {$CFG->prefix}question q
                                  WHERE a.backup_code = '$backup_unique_code' AND
                                        q.category = a.old_id AND
                                        a.table_name = 'quiz_categories'");

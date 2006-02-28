@@ -27,7 +27,7 @@ class quiz_random_qtype extends quiz_default_questiontype {
     function save_question_options($question) {
         // No options, but we use the parent field to hide random questions.
         // To avoid problems we set the parent field to the question id.
-        return (set_field('quiz_questions', 'parent', $question->id, 'id',
+        return (set_field('question', 'parent', $question->id, 'id',
          $question->id) ? true : false);
     }
 
@@ -54,7 +54,7 @@ class quiz_random_qtype extends quiz_default_questiontype {
                 $categorylist = $question->category;
             }
             if ($catrandoms = get_records_sql
-                    ("SELECT id,id FROM {$CFG->prefix}quiz_questions
+                    ("SELECT id,id FROM {$CFG->prefix}question
                        WHERE category IN ($categorylist)
                          AND parent = '0'
                          AND id NOT IN ($cmoptions->questionsinuse)
@@ -71,7 +71,7 @@ class quiz_random_qtype extends quiz_default_questiontype {
             if (!ereg("(^|,)$wrappedquestion->id(,|$)", $cmoptions->questionsinuse)) {
                 /// $randomquestion is not in use and will therefore be used
                 /// as the randomquestion here...
-                $wrappedquestion = get_record('quiz_questions', 'id', $wrappedquestion->id);
+                $wrappedquestion = get_record('question', 'id', $wrappedquestion->id);
                 global $QTYPES;
                 $QTYPES[$wrappedquestion->qtype]
                  ->get_question_options($wrappedquestion);
@@ -119,16 +119,16 @@ class quiz_random_qtype extends quiz_default_questiontype {
                 return true;
             }
             // this must be an old-style state which stores only the id for the wrapped question
-            if (!$wrappedquestion = get_record('quiz_questions', 'id', $state->responses[''])) {
+            if (!$wrappedquestion = get_record('question', 'id', $state->responses[''])) {
                 notify("Can not find wrapped question {$state->responses['']}");
             }
             // In the old model the actual response was stored in a separate entry in
             // the state table and fortunately there was only a single state per question
-            if (!$state->responses[''] = get_field('quiz_states', 'answer', 'attempt', $state->attempt, 'question', $wrappedquestion->id)) {
+            if (!$state->responses[''] = get_field('question_states', 'answer', 'attempt', $state->attempt, 'question', $wrappedquestion->id)) {
                 notify("Wrapped state missing");
             }
         } else {
-            if (!$wrappedquestion = get_record('quiz_questions', 'id', $answerregs[1])) {
+            if (!$wrappedquestion = get_record('question', 'id', $answerregs[1])) {
                 return false;
             }
             $state->responses[''] = (false === $answerregs[2]) ? '' : $answerregs[2];
@@ -161,7 +161,7 @@ class quiz_random_qtype extends quiz_default_questiontype {
 
         // Read what the wrapped question has just set the answer field to
         // (if anything)
-        $response = get_field('quiz_states', 'answer', 'id', $state->id);
+        $response = get_field('question_states', 'answer', 'id', $state->id);
         if(false === $response) {
             return false;
         }
@@ -170,7 +170,7 @@ class quiz_random_qtype extends quiz_default_questiontype {
         $response = "random$realqid-$response";
 
         // ... and save it again.
-        if (!set_field('quiz_states', 'answer', addslashes($response), 'id', $state->id)) {
+        if (!set_field('question_states', 'answer', addslashes($response), 'id', $state->id)) {
             return false;
         }
 

@@ -82,12 +82,12 @@ class quiz_default_questiontype {
 
         if (!empty($question->id)) { // Question already exists
             $question->version ++;    // Update version number of question
-            if (!update_record("quiz_questions", $question)) {
+            if (!update_record("question", $question)) {
                 error("Could not update question!");
             }
         } else {         // Question is a new one
             $question->version = 1;
-            if (!$question->id = insert_record("quiz_questions", $question)) {
+            if (!$question->id = insert_record("question", $question)) {
                 error("Could not insert new question!");
             }
         }
@@ -240,7 +240,7 @@ class quiz_default_questiontype {
         // Most question types with only a single form field for the student's response
         // will use the empty string '' as the index for that one response. This will
         // automatically be stored in and restored from the answer field in the
-        // quiz_states table.
+        // question_states table.
         $state->responses = array('' => '');
         return true;
     }
@@ -255,7 +255,7 @@ class quiz_default_questiontype {
     *
     * Question types with only a single form field for the student's response
     * will not need not restore the responses; the value of the answer
-    * field in the quiz_states table is restored to ->responses['']
+    * field in the question_states table is restored to ->responses['']
     * before this function is called. Question types with more response fields
     * should override this method and set the ->responses field to an
     * associative array of responses.
@@ -278,13 +278,13 @@ class quiz_default_questiontype {
     * This function saves the question type specific session data from the
     * state object to the database. In particular for most question types it saves the
     * responses from the ->responses member of the state object. The question type
-    * non-specific data for the state has already been saved in the quiz_states
+    * non-specific data for the state has already been saved in the question_states
     * table and the state object contains the corresponding id and
     * sequence number which may be used to index a question type specific table.
     *
     * Question types with only a single form field for the student's response
     * which is contained in ->responses[''] will not have to save this response,
-    * it will already have been saved to the answer field of the quiz_states table.
+    * it will already have been saved to the answer field of the question_states table.
     * Question types with more response fields should override this method and save
     * the responses in their own database tables.
     * @return bool            Indicates success or failure.
@@ -465,7 +465,7 @@ class quiz_default_questiontype {
         $grade = '';
         if ($question->maxgrade and $options->scores) {
             if ($cmoptions->optionflags & QUIZ_ADAPTIVE) {
-                $grade = (!$state->last_graded->event == QUIZ_EVENTGRADE) ? '--/' : round($state->last_graded->grade, $cmoptions->decimalpoints).'/';
+                $grade = (!$state->last_graded->event == QUESTION_EVENTGRADE) ? '--/' : round($state->last_graded->grade, $cmoptions->decimalpoints).'/';
             }
             $grade .= $question->maxgrade;
         }
@@ -474,10 +474,10 @@ class quiz_default_questiontype {
         if(isset($options->history) and $options->history) {
             if ($options->history == 'all') {
                 // show all states
-                $states = get_records_select('quiz_states', "attempt = '$state->attempt' AND question = '$question->id' AND event > '0'", 'seq_number DESC');
+                $states = get_records_select('question_states', "attempt = '$state->attempt' AND question = '$question->id' AND event > '0'", 'seq_number DESC');
             } else {
                 // show only graded states
-                $states = get_records_select('quiz_states', "attempt = '$state->attempt' AND question = '$question->id' AND event = '".QUIZ_EVENTGRADE."'", 'seq_number DESC');
+                $states = get_records_select('question_states', "attempt = '$state->attempt' AND question = '$question->id' AND event = '".QUESTION_EVENTGRADE."'", 'seq_number DESC');
             }
             if (count($states) > 1) {
                 $strreviewquestion = get_string('reviewresponse', 'quiz');
@@ -538,12 +538,12 @@ class quiz_default_questiontype {
         attempt and displays the overall grade obtained counting all previous
         responses (and penalties) */
 
-        if (QUIZ_EVENTDUPLICATEGRADE == $state->event) {
+        if (QUESTION_EVENTDUPLICATEGRADE == $state->event) {
             echo ' ';
             print_string('duplicateresponse', 'quiz');
         }
         if (!empty($question->maxgrade) && $options->scores) {
-            if ($state->last_graded->event == QUIZ_EVENTGRADE) {
+            if ($state->last_graded->event == QUESTION_EVENTGRADE) {
                 // Display the grading details from the last graded state
                 $grade->cur = round($state->last_graded->grade, $cmoptions->decimalpoints);
                 $grade->max = $question->maxgrade;
@@ -573,7 +573,7 @@ class quiz_default_questiontype {
                     }
                     // print info about new penalty
                     // penalty is relevant only if the answer is not correct and further attempts are possible
-                    if (($state->last_graded->raw_grade < $question->maxgrade) and (QUIZ_EVENTCLOSE !== $state->event)) {
+                    if (($state->last_graded->raw_grade < $question->maxgrade) and (QUESTION_EVENTCLOSE !== $state->event)) {
                         if ('' !== $state->last_graded->penalty && ((float)$state->last_graded->penalty) > 0.0) {
                             // A penalty was applied so display it
                             print_string('gradingdetailspenalty', 'quiz', $state->last_graded->penalty);
@@ -745,7 +745,7 @@ class quiz_default_questiontype {
     *                         must be updated. The method is able to
     *                         close the question session (preventing any further
     *                         attempts at this question) by setting
-    *                         $state->event to QUIZ_EVENTCLOSE.
+    *                         $state->event to QUESTION_EVENTCLOSE.
     * @param object $cmoptions
     */
     function grade_responses(&$question, &$state, $cmoptions) {
@@ -887,7 +887,7 @@ class quiz_default_questiontype {
                 $students = array();
                 if($attempts = get_records_select('quiz_attempts', "quiz = '$quiz->id' AND preview = '0'")) {
                     foreach($attempts as $attempt) {
-                        if (record_exists('quiz_states', 'attempt', $attempt->uniqueid, 'question', $question->id, 'originalquestion', 0)) {
+                        if (record_exists('question_states', 'attempt', $attempt->uniqueid, 'question', $question->id, 'originalquestion', 0)) {
                             $students[$attempt->userid] = 1;
                         }
                     }

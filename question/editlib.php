@@ -47,7 +47,7 @@ function question_category_form($course, $current, $recurse=1, $showhidden=false
 
 /// Make sure the default category exists for this course
     if (!$categories = get_records("quiz_categories", "course", $course->id, "id ASC")) {
-        if (!$category = quiz_get_default_category($course->id)) {
+        if (!$category = get_default_question_category($course->id)) {
             notify("Error creating a default category!");
         }
     }
@@ -196,17 +196,17 @@ function question_list($course, $categoryid, $quizid,
     // hide-feature
     $showhidden = $showhidden ? '' : " AND hidden = '0'";
 
-    if (!$totalnumber = count_records_select('quiz_questions', "category IN ($categorylist) AND parent = '0' $showhidden")) {
+    if (!$totalnumber = count_records_select('question', "category IN ($categorylist) AND parent = '0' $showhidden")) {
         echo "<p align=\"center\">";
         print_string("noquestions", "quiz");
         echo "</p>";
         return;
     }
 
-    if (!$questions = get_records_select('quiz_questions', "category IN ($categorylist) AND parent = '0' $showhidden", $sortorder, '*', $page*$perpage, $perpage)) {
+    if (!$questions = get_records_select('question', "category IN ($categorylist) AND parent = '0' $showhidden", $sortorder, '*', $page*$perpage, $perpage)) {
         // There are no questions on the requested page.
         $page = 0;
-        if (!$questions = get_records_select('quiz_questions', "category IN ($categorylist) AND parent = '0' $showhidden", $sortorder, '*', 0, $perpage)) {
+        if (!$questions = get_records_select('question', "category IN ($categorylist) AND parent = '0' $showhidden", $sortorder, '*', 0, $perpage)) {
             // There are no questions at all
             echo "<p align=\"center\">";
             print_string("noquestions", "quiz");
@@ -267,7 +267,7 @@ function question_list($course, $categoryid, $quizid,
             echo "<td>".$question->name."</td>\n";
         }
         echo "<td align=\"center\">\n";
-        quiz_print_question_icon($question, $canedit);
+        print_question_icon($question, $canedit);
         echo "</td>\n";
         echo "</tr>\n";
     }

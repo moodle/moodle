@@ -64,7 +64,7 @@
     }
 
     // Load the question information
-    if (!$questions = get_records('quiz_questions', 'id', $id)) {
+    if (!$questions = get_records('question', 'id', $id)) {
         error('Could not load question');
     }
     if ($maxgrade = get_field('quiz_question_instances', 'grade', 'quiz', $quiz->id, 'question', $id)) {
@@ -86,7 +86,7 @@
     $quiz->course = $category->course;
 
     // Load the question type specific information
-    if (!quiz_get_question_options($questions)) {
+    if (!get_question_options($questions)) {
         error(get_string('newattemptfail', 'quiz'));
     }
 
@@ -101,7 +101,7 @@
     $attempt->timestart = $timenow;
     $attempt->timefinish = 0;
     $attempt->timemodified = $timenow;
-    $attempt->uniqueid = quiz_new_attempt_uniqueid();
+    $attempt->uniqueid = question_new_attempt_uniqueid();
     $attempt->id = 0;
 
     // Restore the history of question sessions from the moodle session or create
@@ -122,7 +122,7 @@
         $SESSION->quizpreview->questionid = $id;
         // Create an empty session for the question
         if (!$newstates =
-         quiz_get_states($questions, $quiz, $attempt)) {
+         get_question_states($questions, $quiz, $attempt)) {
             error(get_string('newattemptfail', 'quiz'));
         }
         $SESSION->quizpreview->states = array($newstates);
@@ -149,11 +149,11 @@
         unset($form['back']);
         unset($form['startagain']);
 
-        $event = $finishattempt ? QUIZ_EVENTCLOSE : ($markall ? QUIZ_EVENTGRADE : QUIZ_EVENTSAVE);
-        if ($actions = quiz_extract_responses($questions, $form, $event)) {
+        $event = $finishattempt ? QUESTION_EVENTCLOSE : ($markall ? QUESTION_EVENTGRADE : QUESTION_EVENTSAVE);
+        if ($actions = question_extract_responses($questions, $form, $event)) {
             $actions[$id]->timestamp = 0; // We do not care about timelimits here
-            quiz_process_responses($questions[$id], $states[$historylength][$id], $actions[$id], $quiz, $attempt);
-            if (QUIZ_EVENTGRADE != $curstate->event && QUIZ_EVENTCLOSE != $curstate->event) {
+            question_process_responses($questions[$id], $states[$historylength][$id], $actions[$id], $quiz, $attempt);
+            if (QUESTION_EVENTGRADE != $curstate->event && QUESTION_EVENTCLOSE != $curstate->event) {
                 // Update the current state rather than creating a new one
                 $historylength--;
                 unset($states[$historylength]);
@@ -193,7 +193,7 @@
     echo "<input type=\"hidden\" name=\"quizid\" value=\"$quizid\" />\n";
     echo "<input type=\"hidden\" name=\"continue\" value=\"1\" />\n";
 
-    quiz_print_quiz_question($questions[$id], $curstate, $number, $quiz, $options);
+    print_question($questions[$id], $curstate, $number, $quiz, $options);
 
     echo '<br />';
     echo '<center>';

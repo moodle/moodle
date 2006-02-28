@@ -181,7 +181,7 @@ class quiz_randomsamatch_qtype extends quiz_match_qtype {
             $state->responses = array();
             foreach ($responses as $response) {
                 $state->responses[$response[0]] = $response[1];
-                if (!$wrappedquestion = get_record('quiz_questions', 'id',
+                if (!$wrappedquestion = get_record('question', 'id',
                  $response[0])) {
                     notify("Couldn't get question (id=$response[0])!");
                     return false;
@@ -234,7 +234,7 @@ class quiz_randomsamatch_qtype extends quiz_match_qtype {
     }
 
     function get_sa_candidates($categorylist, $questionsinuse=0) {
-        return get_records_select('quiz_questions',
+        return get_records_select('question',
          "qtype = '".SHORTANSWER."' " .
          "AND category IN ($categorylist) " .
          "AND parent = '0' " .

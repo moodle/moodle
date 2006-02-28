@@ -72,7 +72,7 @@ function quiz_create_attempt($quiz, $attemptnumber) {
     $attempt->timestart = $timenow;
     $attempt->timefinish = 0;
     $attempt->timemodified = $timenow;
-    $attempt->uniqueid = quiz_new_attempt_uniqueid();
+    $attempt->uniqueid = question_new_attempt_uniqueid();
 
     return $attempt;
 }
@@ -141,7 +141,7 @@ function quiz_first_questionnumber($quizlayout, $pagelayout) {
     $start = strpos($quizlayout, ','.$pagelayout.',')-2;
     if ($start > 0) {
         $prevlist = substr($quizlayout, 0, $start);
-        return get_field_sql("SELECT sum(length)+1 FROM {$CFG->prefix}quiz_questions
+        return get_field_sql("SELECT sum(length)+1 FROM {$CFG->prefix}question
          WHERE id IN ($prevlist)");
     } else {
         return 1;
@@ -447,7 +447,7 @@ function quiz_upgrade_states($attempt) {
     // only one state record per question for this attempt.
 
     // We set the timestamp of all states to the timemodified field of the attempt.
-    execute_sql("UPDATE {$CFG->prefix}quiz_states SET timestamp = '$attempt->timemodified' WHERE attempt = '$attempt->uniqueid'", false);
+    execute_sql("UPDATE {$CFG->prefix}question_states SET timestamp = '$attempt->timemodified' WHERE attempt = '$attempt->uniqueid'", false);
 
     // For each state we create an entry in the question_sessions table, with both newest and
     // newgraded pointing to this state.
@@ -456,7 +456,7 @@ function quiz_upgrade_states($attempt) {
     // used by a RANDOM question
     $newest->attemptid = $attempt->uniqueid;
     $questionlist = quiz_questions_in_quiz($attempt->layout);
-    if ($questionlist and $states = get_records_select('quiz_states', "attempt = '$attempt->uniqueid' AND question IN ($questionlist)")) {
+    if ($questionlist and $states = get_records_select('question_states', "attempt = '$attempt->uniqueid' AND question IN ($questionlist)")) {
         foreach ($states as $state) {
             $session->newgraded = $state->id;
             $session->newest = $state->id;
@@ -478,6 +478,68 @@ function quiz_get_question_review($quiz, $question) {
 }
 
 
+/**
+* Determine render options
+*/
+function quiz_get_renderoptions($cmoptions, $state) {
+    // Show the question in readonly (review) mode if the question is in
+    // the closed state
+    $options->readonly = QUESTION_EVENTCLOSE === $state->event;
+
+    // Show feedback once the question has been graded (if allowed by the quiz)
+    $options->feedback = ($state->event == QUESTION_EVENTGRADE) && ($cmoptions->review & QUIZ_REVIEW_FEEDBACK & QUIZ_REVIEW_IMMEDIATELY);
+
+    // Show validation only after a validation event
+    $options->validation = QUESTION_EVENTVALIDATE === $state->event;
+
+    // Show correct responses in readonly mode if the quiz allows it
+    $options->correct_responses = $options->readonly && ($cmoptions->review & QUIZ_REVIEW_ANSWERS & QUIZ_REVIEW_IMMEDIATELY);
+
+    // Always show responses and scores
+    $options->responses = true;
+    $options->scores = true;
+
+    return $options;
+}
+
+
+/**
+* Determine review options
+*/
+function quiz_get_reviewoptions($cmoptions, $attempt, $isteacher=false) {
+    $options->readonly = true;
+    if ($isteacher and !$attempt->preview) {
+        // The teacher should be shown everything except during preview when the teachers
+        // wants to see just what the students see
+        $options->responses = true;
+        $options->scores = true;
+        $options->feedback = true;
+        $options->correct_responses = true;
+        $options->solutions = false;
+        return $options;
+    }
+    if ((time() - $attempt->timefinish) < 120) {
+        $options->responses = ($cmoptions->review & QUIZ_REVIEW_IMMEDIATELY & QUIZ_REVIEW_RESPONSES) ? 1 : 0;
+        $options->scores = ($cmoptions->review & QUIZ_REVIEW_IMMEDIATELY & QUIZ_REVIEW_SCORES) ? 1 : 0;
+        $options->feedback = ($cmoptions->review & QUIZ_REVIEW_IMMEDIATELY & QUIZ_REVIEW_FEEDBACK) ? 1 : 0;
+        $options->correct_responses = ($cmoptions->review & QUIZ_REVIEW_IMMEDIATELY & QUIZ_REVIEW_ANSWERS) ? 1 : 0;
+        $options->solutions = ($cmoptions->review & QUIZ_REVIEW_IMMEDIATELY & QUIZ_REVIEW_SOLUTIONS) ? 1 : 0;
+    } else if (!$cmoptions->timeclose or time() < $cmoptions->timeclose) {
+        $options->responses = ($cmoptions->review & QUIZ_REVIEW_OPEN & QUIZ_REVIEW_RESPONSES) ? 1 : 0;
+        $options->scores = ($cmoptions->review & QUIZ_REVIEW_OPEN & QUIZ_REVIEW_SCORES) ? 1 : 0;
+        $options->feedback = ($cmoptions->review & QUIZ_REVIEW_OPEN & QUIZ_REVIEW_FEEDBACK) ? 1 : 0;
+        $options->correct_responses = ($cmoptions->review & QUIZ_REVIEW_OPEN & QUIZ_REVIEW_ANSWERS) ? 1 : 0;
+        $options->solutions = ($cmoptions->review & QUIZ_REVIEW_OPEN & QUIZ_REVIEW_SOLUTIONS) ? 1 : 0;
+    } else {
+        $options->responses = ($cmoptions->review & QUIZ_REVIEW_CLOSED & QUIZ_REVIEW_RESPONSES) ? 1 : 0;
+        $options->scores = ($cmoptions->review & QUIZ_REVIEW_CLOSED & QUIZ_REVIEW_SCORES) ? 1 : 0;
+        $options->feedback = ($cmoptions->review & QUIZ_REVIEW_CLOSED & QUIZ_REVIEW_FEEDBACK) ? 1 : 0;
+        $options->correct_responses = ($cmoptions->review & QUIZ_REVIEW_CLOSED & QUIZ_REVIEW_ANSWERS) ? 1 : 0;
+        $options->solutions = ($cmoptions->review & QUIZ_REVIEW_CLOSED & QUIZ_REVIEW_SOLUTIONS) ? 1 : 0;
+    }
+    return $options;
+}
+
 
 /**
 * Array of names of quizzes a category (and optionally its childs) appears in
@@ -491,7 +553,7 @@ function quizzes_category_used($id, $recursive = false) {
     $quizlist = array();
 
     //Look for each question in the category
-    if ($questions = get_records('quiz_questions', 'category', $id)) {
+    if ($questions = get_records('question', 'category', $id)) {
         foreach ($questions as $question) {
             $qlist = question_used($question->id);
             $quizlist = $quizlist + $qlist;

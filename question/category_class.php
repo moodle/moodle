@@ -104,7 +104,7 @@ class quiz_category_object {
     function initialize() {
 
         /// Get the existing categories
-        if (!$this->defaultcategory = quiz_get_default_category($this->course->id)) {
+        if (!$this->defaultcategory = get_default_question_category($this->course->id)) {
             error("Error: Could not find or make a category!");
         }
 
@@ -485,7 +485,7 @@ class quiz_category_object {
 * @return   array categorytree a hierarchical list of the categories
 */
     function arrange_categories($records) {
-    //todo: get the question count for all records with one sql statement: select category, count(*) from quiz_questions group by category
+    //TODO: get the question count for all records with one sql statement: select category, count(*) from question group by category
         $levels = array();
 
         // build a levels array, which places each record according to it's depth from the top level
@@ -512,7 +512,7 @@ class quiz_category_object {
         for ($index = count($levels) - 1; $index >= 0; $index--) {
             foreach($levels[$index] as $key) {
                 $parentkey = $records[$key]->parent;
-                if (!($records[$key]->questioncount = count_records('quiz_questions', 'category', $records[$key]->id, 'hidden', 0, 'parent', '0'))) {
+                if (!($records[$key]->questioncount = count_records('question', 'category', $records[$key]->id, 'hidden', 0, 'parent', '0'))) {
                     $records[$key]->questioncount = 0;
                 }
                 if ($parentkey == 0) {
@@ -581,13 +581,13 @@ class quiz_category_object {
             if (!$category2 = get_record("quiz_categories", "id", $destcategoryid)) {  // security
                 error("No such category $destcategoryid!", "category.php?id={$this->course->id}");
             }
-            if (! set_field('quiz_questions', 'category', $category2, 'category', $category1)) {
+            if (! set_field('question', 'category', $category2, 'category', $category1)) {
                 error("Error while moving questions from category '$category->name' to '$category2->name'", "category.php?id={$this->course->id}");
             }
 
         } else {
             // todo: delete any hidden questions that are not actually in use any more
-            if ($count = count_records("quiz_questions", "category", $category->id)) {
+            if ($count = count_records("question", "category", $category->id)) {
                 $vars->name = $category->name;
                 $vars->count = $count;
                 print_simple_box(get_string("categorymove", "quiz", $vars), "center");

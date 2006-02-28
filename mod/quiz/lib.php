@@ -215,7 +215,7 @@ function quiz_delete_instance($id) {
     if ($attempts = get_records("quiz_attempts", "quiz", "$quiz->id")) {
         foreach ($attempts as $attempt) {
             // TODO: this should use function in questionlib.php
-            if (! delete_records("quiz_states", "attempt", "$attempt->uniqueid")) {
+            if (! delete_records("question_states", "attempt", "$attempt->uniqueid")) {
                 $result = false;
             }
             if (! delete_records("question_sessions", "attemptid", "$attempt->uniqueid")) {
@@ -336,11 +336,11 @@ function quiz_delete_course($course, $feedback=true) {
                 //Category isn't being used so:
                 //Delete it completely (questions and category itself)
                 //deleting questions
-                if ($questions = get_records("quiz_questions", "category", $category->id)) {
+                if ($questions = get_records("question", "category", $category->id)) {
                     foreach ($questions as $question) {
-                        quiz_delete_question($question);
+                        delete_question($question);
                     }
-                    delete_records("quiz_questions", "category", $category->id);
+                    delete_records("question", "category", $category->id);
                 }
                 //delete the category
                 delete_records('quiz_categories', 'id', $category->id);

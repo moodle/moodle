@@ -379,10 +379,10 @@ CREATE TABLE prefix_quiz_question_versions (
 -- --------------------------------------------------------
 
 -- 
--- Table structure for table `prefix_quiz_questions`
+-- Table structure for table `prefix_question`
 -- 
 
-CREATE TABLE prefix_quiz_questions (
+CREATE TABLE prefix_question (
   id int(10) NOT NULL auto_increment,
   category int(10) NOT NULL default '0',
   parent int(10) unsigned NOT NULL default '0',
@@ -495,10 +495,10 @@ CREATE TABLE prefix_quiz_shortanswer (
 -- --------------------------------------------------------
 
 -- 
--- Table structure for table `prefix_quiz_states`
+-- Table structure for table `prefix_question_states`
 -- 
 
-CREATE TABLE prefix_quiz_states (
+CREATE TABLE prefix_question_states (
   id int(10) unsigned NOT NULL auto_increment,
   attempt int(10) unsigned NOT NULL default '0',
   question int(10) unsigned NOT NULL default '0',

@@ -25,7 +25,7 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
     function get_question_options(&$question) {
         // Get the question answers and their respective tolerances
         // Note: quiz_numerical is an extension of the answer table rather than
-        //       the quiz_questions table as is usually the case for qtype
+        //       the question table as is usually the case for qtype
         //       specific tables.
         global $CFG;
         if (!$question->options->answers = get_records_sql(

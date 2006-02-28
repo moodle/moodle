@@ -26,7 +26,7 @@
 
 
     if (!empty($questionid)) {
-        if (! $question = get_record('quiz_questions', 'id', $questionid)) {
+        if (! $question = get_record('question', 'id', $questionid)) {
             error("Question with id $questionid not found");
         }
         ///$number = optional_param('number', 0, PARAM_INT);
@@ -121,7 +121,7 @@
             // get the state
             $statefields = 'n.questionid as question, s.*, n.sumpenalty';
             $sql = "SELECT $statefields".
-               "  FROM {$CFG->prefix}quiz_states s,".
+               "  FROM {$CFG->prefix}question_states s,".
                "       {$CFG->prefix}question_sessions n".
                " WHERE s.id = n.newest".
                "   AND n.attemptid = '$attempt->uniqueid'".
@@ -129,7 +129,7 @@
             $state = get_record_sql($sql);
 
             // restore the state of the question
-            quiz_restore_state($question, $state);
+            restore_question_state($question, $state);
 
             // this is the new response from the teacher
             $state->responses = $response;
@@ -139,19 +139,19 @@
 
             // finalize the grade
             $state->last_graded->grade = 0; // we dont want the next function to care about the last grade
-            quiz_apply_penalty_and_timelimit($question, $state, $attempt, $quiz);
+            question_apply_penalty_and_timelimit($question, $state, $attempt, $quiz);
 
-            // want to update session.  Also set changed to 1 to trick quiz_save_question_session to save our session
+            // want to update session.  Also set changed to 1 to trick save_question_session to save our session
             $state->update = 1;
             $state->changed = 1;
-            quiz_save_question_session($question, $state);
+            save_question_session($question, $state);
             
             // method for changing sumgrades from report type regrade.  Thanks!
             $sumgrades = 0;
             $questionids = explode(',', quiz_questions_in_quiz($attempt->layout));
             foreach($questionids as $questionid) {
                 $lastgradedid = get_field('question_sessions', 'newgraded', 'attemptid', $attempt->uniqueid, 'questionid', $questionid);
-                $sumgrades += get_field('quiz_states', 'grade', 'id', $lastgradedid);
+                $sumgrades += get_field('question_states', 'grade', 'id', $lastgradedid);
             }            
 
             if ($attempt->sumgrades != $sumgrades) {
@@ -193,7 +193,7 @@
             if (!$neweststate = get_record('question_sessions', 'attemptid', $attempt->uniqueid, 'questionid', $questionid)) {
                 error("Can not find newest states for attempt $attempt->uniqueid for question $questionid");
             }
-            if (! $state = get_record('quiz_states', 'id', $neweststate->newest)) {
+            if (! $state = get_record('question_states', 'id', $neweststate->newest)) {
                 error('Invalid state id');
             }
 
@@ -204,11 +204,11 @@
             $question->name_prefix = $attempt->attemptid.'_'.$state->id.'_';
             $QTYPES[$question->qtype]->get_question_options($question);
 
-            quiz_restore_state($question, $state);
+            restore_question_state($question, $state);
             $state->last_graded = $state;
 
             $options = quiz_get_reviewoptions($quiz, $attempt, $isteacher);
-            $options->validation = ($state->event == QUIZ_EVENTVALIDATE);  // not sure what this is
+            $options->validation = ($state->event == QUESTION_EVENTVALIDATE);  // not sure what this is
             //$options->history = 'all';  // had this on, but seemed confusing for this
             
             // IF this code is expanded to manually regrade any question type, then 
@@ -223,7 +223,7 @@
                 get_string('attempt', 'quiz')." $attempt->attempt".
                 '</p>';
             
-            quiz_print_quiz_question($question, $state, '', $quiz, $options);
+            print_question($question, $state, '', $quiz, $options);
             echo '<input type="hidden" name="attemptids[]" value="'.$attempt->attemptid.'">'.
                 '<input type="hidden" name="stateids[]" value="'.$state->id.'">';
             echo '</div>';

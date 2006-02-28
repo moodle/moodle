@@ -21,7 +21,7 @@
     $number = optional_param('number', 0, PARAM_INT);  // question number
 
     if ($stateid) {
-        if (! $state = get_record('quiz_states', 'id', $stateid)) {
+        if (! $state = get_record('question_states', 'id', $stateid)) {
             error('Invalid state id');
         }
         if (! $attempt = get_record('quiz_attempts', 'id', $state->attempt)) {
@@ -33,18 +33,18 @@
         }
         if (! $neweststateid = get_field('question_sessions', 'newest', 'attemptid', $attempt->uniqueid, 'questionid', $questionid)) {
             // newest_state not set, probably because this is an old attempt from the old quiz module code
-            if (! $state = get_record('quiz_states', 'question', $questionid, 'attempt', $attempt->uniqueid)) {
+            if (! $state = get_record('question_states', 'question', $questionid, 'attempt', $attempt->uniqueid)) {
                 error('Invalid question id');
             }
         } else {
-            if (! $state = get_record('quiz_states', 'id', $neweststateid)) {
+            if (! $state = get_record('question_states', 'id', $neweststateid)) {
                 error('Invalid state id');
             }
         }
     } else {
         error('Parameter missing');
     }
-    if (! $question = get_record('quiz_questions', 'id', $state->question)) {
+    if (! $question = get_record('question', 'id', $state->question)) {
         error('Question for this state is missing');
     }
     if (! $quiz = get_record('quiz', 'id', $attempt->quiz)) {
@@ -102,11 +102,11 @@
     $question->name_prefix = 'r';
     $QTYPES[$question->qtype]->get_question_options($question);
 
-    quiz_restore_state($question, $state);
+    restore_question_state($question, $state);
     $state->last_graded = $state;
 
     $options = quiz_get_reviewoptions($quiz, $attempt, $isteacher);
-    $options->validation = ($state->event == QUIZ_EVENTVALIDATE);
+    $options->validation = ($state->event == QUESTION_EVENTVALIDATE);
     $options->history = 'all';
 
 /// Print infobox
@@ -138,7 +138,7 @@
         print_table($table);
     }
 
-    quiz_print_quiz_question($question, $state, $number, $quiz, $options);
+    print_question($question, $state, $number, $quiz, $options);
 
     print_footer();
 

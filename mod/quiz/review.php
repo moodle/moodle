@@ -112,7 +112,7 @@
     // load the questions needed by page
     $pagelist = $showall ? quiz_questions_in_quiz($attempt->layout) : quiz_questions_on_page($attempt->layout, $page);
     $sql = "SELECT q.*, i.grade AS maxgrade, i.id AS instance".
-           "  FROM {$CFG->prefix}quiz_questions q,".
+           "  FROM {$CFG->prefix}question q,".
            "       {$CFG->prefix}quiz_question_instances i".
            " WHERE i.quiz = '$quiz->id' AND q.id = i.question".
            "   AND q.id IN ($pagelist)";
@@ -121,13 +121,13 @@
     }
 
     // Load the question type specific information
-    if (!quiz_get_question_options($questions)) {
+    if (!get_question_options($questions)) {
         error('Could not load question options');
     }
 
     // Restore the question sessions to their most recent states
     // creating new sessions where required
-    if (!$states = quiz_get_states($questions, $quiz, $attempt)) {
+    if (!$states = get_question_states($questions, $quiz, $attempt)) {
         error('Could not restore question sessions');
     }
 
@@ -228,13 +228,13 @@
             continue;
         }
         $options = quiz_get_reviewoptions($quiz, $attempt, $isteacher);
-        $options->validation = QUIZ_EVENTVALIDATE === $states[$i]->event;
+        $options->validation = QUESTION_EVENTVALIDATE === $states[$i]->event;
         $options->history = ($isteacher and !$attempt->preview) ? 'all' : 'graded';
         // Print the question
         if ($i > 0) {
             echo "<br />\n";
         }
-        quiz_print_quiz_question($questions[$i], $states[$i], $number, $quiz, $options);
+        print_question($questions[$i], $states[$i], $number, $quiz, $options);
         $number += $questions[$i]->length;
     }
 

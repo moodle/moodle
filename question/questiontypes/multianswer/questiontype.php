@@ -28,7 +28,7 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
             return false;
         }
 
-        $wrappedquestions = get_records_list('quiz_questions', 'id', $sequence);
+        $wrappedquestions = get_records_list('question', 'id', $sequence);
 
         // We want an array with question ids as index and the positions as values
         $sequence = array_flip(explode(',', $sequence));
@@ -59,7 +59,7 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
         // will also create difficulties if questiontype specific tables reference the id.
         
         // First we get all the existing wrapped questions
-        if (!$oldwrappedids = get_records('quiz_questions', 'parent', $question->id, '', 'id, id')) {
+        if (!$oldwrappedids = get_records('question', 'parent', $question->id, '', 'id, id')) {
          // We need to select 'id, id' because the first one is consumed by
          // get_records.
             $oldwrappedids = array();
@@ -82,7 +82,7 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
 
         // Delete redundant wrapped questions
         $oldwrappedids = implode(',', $oldwrappedids);
-        delete_records_select('quiz_questions', "id IN ($oldwrappedids)");
+        delete_records_select('question', "id IN ($oldwrappedids)");
 
         if (!empty($sequence)) {
             $multianswer = new stdClass;
@@ -158,7 +158,7 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
         $responses = implode(',', $responses);
 
         // Set the legacy answer field
-        if (!set_field('quiz_states', 'answer', $responses, 'id',
+        if (!set_field('question_states', 'answer', $responses, 'id',
          $state->id)) {
             return false;
         }

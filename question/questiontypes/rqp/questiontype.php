@@ -370,13 +370,13 @@ class quiz_rqp_qtype extends quiz_default_questiontype {
     *                         must be updated. The method is able to
     *                         close the question session (preventing any further
     *                         attempts at this question) by setting
-    *                         $state->event to QUIZ_EVENTCLOSE.
+    *                         $state->event to QUESTION_EVENTCLOSE.
     * @param object $cmoptions
     */
     function grade_responses(&$question, &$state, $cmoptions) {
         // Perform the grading and rendering
-        $output = remote_render($question, $state, QUIZ_EVENTGRADE == $state->event
-         || QUIZ_EVENTCLOSE == $state->event, 'normal');
+        $output = remote_render($question, $state, QUESTION_EVENTGRADE == $state->event
+         || QUESTION_EVENTCLOSE == $state->event, 'normal');
         if (false === $output || is_soap_fault($output)) {
             unset($output);
             return false;

@@ -181,7 +181,7 @@ if (self.name == 'editquestion') {
         }
         // find existing random questions in this category
         $random = RANDOM;
-        if ($existingquestions = get_records_select('quiz_questions', "qtype = '$random' AND category = '$category->id'")) {
+        if ($existingquestions = get_records_select('question', "qtype = '$random' AND category = '$category->id'")) {
             // now remove the ones that are already used in this quiz
             if ($questionids = explode(',', $modform->questions)) {
                 foreach ($questionids as $questionid) {
@@ -296,7 +296,7 @@ if (self.name == 'editquestion') {
 /// all commands have been dealt with, now print the page
 
     if (empty($modform->category) or !record_exists('quiz_categories', 'id', $modform->category)) {
-        $category = quiz_get_default_category($course->id);
+        $category = get_default_question_category($course->id);
         $modform->category = $category->id;
     }
     if (!isset($SESSION->quiz_showbreaks)) {

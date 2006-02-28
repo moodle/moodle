@@ -227,7 +227,7 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
         $responses .= implode(',', $state->responses);
 
         // Set the legacy answer field
-        if (!set_field('quiz_states', 'answer', $responses, 'id',
+        if (!set_field('question_states', 'answer', $responses, 'id',
          $state->id)) {
             return false;
         }
@@ -267,7 +267,7 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
         $questiontext = format_text($question->questiontext,
                          $question->questiontextformat,
                          NULL, $cmoptions->course);
-        $image = quiz_get_image($question, $cmoptions->course);
+        $image = get_question_image($question, $cmoptions->course);
         $answerprompt = ($question->options->single) ? get_string('singleanswer', 'quiz') :
             get_string('multipleanswers', 'quiz');
 

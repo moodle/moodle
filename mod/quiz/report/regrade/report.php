@@ -19,7 +19,7 @@ class quiz_report extends quiz_default_report {
         }
 
     /// Fetch all questions
-        $sql = "SELECT q.*, i.grade AS maxgrade FROM {$CFG->prefix}quiz_questions q,
+        $sql = "SELECT q.*, i.grade AS maxgrade FROM {$CFG->prefix}question q,
                                          {$CFG->prefix}quiz_question_instances i
                 WHERE i.quiz = $quiz->id
                 AND i.question = q.id";
@@ -27,7 +27,7 @@ class quiz_report extends quiz_default_report {
         if (! $questions = get_records_sql($sql)) {
             error("Failed to get questions for regrading!");
         }
-        quiz_get_question_options($questions);
+        get_question_options($questions);
 
     /// Print heading
         print_heading(get_string('regradingquiz', 'quiz', $quiz->name));
@@ -40,7 +40,7 @@ class quiz_report extends quiz_default_report {
             echo '<b>'.get_string('regradingquestion', 'quiz', $question->name).'</b> '.get_string('attempts', 'quiz').": \n";
             foreach ($attempts as $attempt) {
                 set_time_limit(30);
-                quiz_regrade_question_in_attempt($question, $attempt, $quiz, true);
+                regrade_question_in_attempt($question, $attempt, $quiz, true);
             }
             echo '<br/ >';
             // the following makes sure that the output is sent immediately.
@@ -54,7 +54,7 @@ class quiz_report extends quiz_default_report {
             $questionids = explode(',', quiz_questions_in_quiz($attempt->layout));
             foreach($questionids as $questionid) {
                 $lastgradedid = get_field('question_sessions', 'newgraded', 'attemptid', $attempt->uniqueid, 'questionid', $questionid);
-                $sumgrades += get_field('quiz_states', 'grade', 'id', $lastgradedid);
+                $sumgrades += get_field('question_states', 'grade', 'id', $lastgradedid);
             }
             if ($attempt->sumgrades != $sumgrades) {
                 $attemptschanged++;

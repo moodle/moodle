@@ -1,5 +1,5 @@
 <?
-function migrate2utf8_quiz_questions_name($recordid){
+function migrate2utf8_question_name($recordid){
     global $CFG, $globallang;
 
 /// Some trivial checks
@@ -10,7 +10,7 @@ function migrate2utf8_quiz_questions_name($recordid){
     
     $SQL = "SELECT qc.course
            FROM {$CFG->prefix}quiz_categories qc,
-                {$CFG->prefix}quiz_questions qq
+                {$CFG->prefix}question qq
            WHERE qc.id = qq.category
                  AND qq.id = $recordid";
 
@@ -19,7 +19,7 @@ function migrate2utf8_quiz_questions_name($recordid){
         return false;
     }
 
-    if (!$quizquestions = get_record('quiz_questions','id',$recordid)) {
+    if (!$quizquestions = get_record('question','id',$recordid)) {
         log_the_problem_somewhere();
         return false;
     }
@@ -42,13 +42,13 @@ function migrate2utf8_quiz_questions_name($recordid){
         $newquizquestion = new object;
         $newquizquestion->id = $recordid;
         $newquizquestion->name = $result;
-        update_record('quiz_questions',$newquizquestion);
+        update_record('question',$newquizquestion);
     }
 /// And finally, just return the converted field
     return $result;
 }
 
-function migrate2utf8_quiz_questions_questiontext($recordid){
+function migrate2utf8_question_questiontext($recordid){
     global $CFG, $globallang;
 
 /// Some trivial checks
@@ -59,7 +59,7 @@ function migrate2utf8_quiz_questions_questiontext($recordid){
 
     $SQL = "SELECT qc.course
            FROM {$CFG->prefix}quiz_categories qc,
-                {$CFG->prefix}quiz_questions qq
+                {$CFG->prefix}question qq
            WHERE qc.id = qq.category
                  AND qq.id = $recordid";
 
@@ -68,7 +68,7 @@ function migrate2utf8_quiz_questions_questiontext($recordid){
         return false;
     }
 
-    if (!$quizquestions = get_record('quiz_questions','id',$recordid)) {
+    if (!$quizquestions = get_record('question','id',$recordid)) {
         log_the_problem_somewhere();
         return false;
     }
@@ -92,7 +92,7 @@ function migrate2utf8_quiz_questions_questiontext($recordid){
         $newquizquestion = new object;
         $newquizquestion->id = $recordid;
         $newquizquestion->questiontext = $result;
-        update_record('quiz_questions',$newquizquestion);
+        update_record('question',$newquizquestion);
     }
 /// And finally, just return the converted field
     return $result;
@@ -110,7 +110,7 @@ function migrate2utf8_quiz_numerical_units_unit($recordid){
 
     $SQL = "SELECT qc.course
            FROM {$CFG->prefix}quiz_categories qc,
-                {$CFG->prefix}quiz_questions qq,
+                {$CFG->prefix}question qq,
                 {$CFG->prefix}quiz_numerical_units qnu
            WHERE qc.id = qq.category
                  AND qq.id = qnu.question
@@ -162,7 +162,7 @@ function migrate2utf8_quiz_match_sub_questiontext($recordid){
 
     $SQL = "SELECT qc.course
            FROM {$CFG->prefix}quiz_categories qc,
-                {$CFG->prefix}quiz_questions qq,
+                {$CFG->prefix}question qq,
                 {$CFG->prefix}quiz_match_sub qms
            WHERE qc.id = qq.category
                  AND qq.id = qms.question
@@ -214,7 +214,7 @@ function migrate2utf8_quiz_match_sub_answertext($recordid){
 
     $SQL = "SELECT qc.course
            FROM {$CFG->prefix}quiz_categories qc,
-                {$CFG->prefix}quiz_questions qq,
+                {$CFG->prefix}question qq,
                 {$CFG->prefix}quiz_match_sub qms
            WHERE qc.id = qq.category
                  AND qq.id = qms.question
@@ -266,7 +266,7 @@ function migrate2utf8_quiz_answers_answer($recordid){
 
     $SQL = "SELECT qc.course
            FROM {$CFG->prefix}quiz_categories qc,
-                {$CFG->prefix}quiz_questions qq,
+                {$CFG->prefix}question qq,
                 {$CFG->prefix}quiz_answers qa
            WHERE qc.id = qq.category
                  AND qq.id = qa.question
@@ -318,7 +318,7 @@ function migrate2utf8_quiz_answers_feedback($recordid){
 
     $SQL = "SELECT qc.course
            FROM {$CFG->prefix}quiz_categories qc,
-                {$CFG->prefix}quiz_questions qq,
+                {$CFG->prefix}question qq,
                 {$CFG->prefix}quiz_answers qa
            WHERE qc.id = qq.category
                  AND qq.id = qa.question

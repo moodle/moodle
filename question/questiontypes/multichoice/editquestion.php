@@ -19,7 +19,7 @@
     }
 
     $i = count($answers);
-    $limit = QUIZ_MAX_NUMBER_ANSWERS;
+    $limit = QUESTION_NUMANS;
     $limit = $limit <= $i ? $i+1 : $limit;
     for (; $i < $limit; $i++) {
         $answers[] = "";   // Make answer slots, default as blank

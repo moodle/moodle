@@ -48,7 +48,7 @@
         foreach ($_POST as $key => $value) {    // Parse input for question ids
             if (substr($key, 0, 1) == "q") {
                 $key = substr($key,1);
-                if (!set_field('quiz_questions', 'category', $tocategory->id, 'id', $key)) {
+                if (!set_field('question', 'category', $tocategory->id, 'id', $key)) {
                     error('Could not update category field');
                 }
             }
@@ -63,12 +63,12 @@
                     // for each question either hide it if it is in use or delete it
                     foreach ($questionlist as $questionid) {
                         if (record_exists('quiz_question_instances', 'question', $questionid) or
-                            record_exists('quiz_states', 'originalquestion', $questionid)) {
-                            if (!set_field('quiz_questions', 'hidden', 1, 'id', $questionid)) {
+                            record_exists('question_states', 'originalquestion', $questionid)) {
+                            if (!set_field('question', 'hidden', 1, 'id', $questionid)) {
                                error('Was not able to hide question');
                             }
                         } else {
-                            delete_records("quiz_questions", "id", $questionid);
+                            delete_records("question", "id", $questionid);
                         }
                     }
                 }
@@ -89,11 +89,11 @@
                     $key = substr($key,1);
                     $questionlist .= $key.',';
                     if (record_exists('quiz_question_instances', 'question', $key) or
-                        record_exists('quiz_states', 'originalquestion', $key)) {
+                        record_exists('question_states', 'originalquestion', $key)) {
                         $questionnames .= '* ';
                         $inuse = true;
                     }
-                    $questionnames .= get_field('quiz_questions', 'name', 'id', $key).'<br />';
+                    $questionnames .= get_field('question', 'name', 'id', $key).'<br />';
                 }
             }
             if (!$questionlist) { // no questions were selected
@@ -131,7 +131,7 @@
 /// all commands have been dealt with, now print the page
 
     if (empty($SESSION->questioncat) or !record_exists('quiz_categories', 'id', $SESSION->questioncat)) {
-        $category = quiz_get_default_category($course->id);
+        $category = get_default_question_category($course->id);
         $SESSION->questioncat = $category->id;
     }
     if (!isset($SESSION->questionrecurse)) {

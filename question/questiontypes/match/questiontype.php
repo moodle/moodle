@@ -191,7 +191,7 @@ class quiz_match_qtype extends quiz_default_questiontype {
         $responses = implode(',', $responses);
 
         // Set the legacy answer field
-        if (!set_field('quiz_states', 'answer', $responses, 'id',
+        if (!set_field('question_states', 'answer', $responses, 'id',
          $state->id)) {
             return false;
         }
