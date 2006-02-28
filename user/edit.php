@@ -343,11 +343,14 @@
         echo '<!--'."\n";
 
         $authconfig = get_config( 'auth/' . $user->auth );
-        foreach ($fields as $field) {            
+        
+        foreach ($fields as $field) {
             $configvariable = 'field_lock_' . $field;
-            if ( $authconfig->{$configvariable} === 'locked'
-                 || ($authconfig->{$configvariable} === 'unlockedifempty' && !empty($user->$field)) ) {
-                echo "eval('document.form.$field.disabled=true');\n";
+            if (isset($authconfig->{$configvariable})) {
+                if ( $authconfig->{$configvariable} === 'locked'
+                    || ($authconfig->{$configvariable} === 'unlockedifempty' && !empty($user->$field)) ) {
+                   echo "eval('document.form.$field.disabled=true');\n";
+                }
             }
         }
 
