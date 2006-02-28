@@ -18,6 +18,7 @@
     $commentid = optional_param('commentid','',PARAM_INT);
     $confirm = optional_param('confirm','',PARAM_INT);
     $commentcontent = optional_param('commentcontent','',PARAM_NOTAGS);
+    $template = optional_param('template','',PARAM_ALPHA);
 
 
     if ((!$record = get_record('data_records','id',$recordid))) {
