@@ -2429,7 +2429,8 @@ function print_heading_with_help($text, $helppage, $module='moodle', $icon='') {
 
 
 function print_heading_block($heading, $class='') {
-    echo '<div class="headingblock header '.$class.'">'.stripslashes($heading).'</div>';
+    //Accessibility: 'headingblock' is now H1, see theme/standard/styles_*.css: ??
+    echo '<h2 class="headingblock header '.$class.'">'.stripslashes($heading).'</h2>';
 }
 
 
@@ -4278,6 +4279,18 @@ function rebuildnolinktag($text) {
  */
 function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $footer='', $attributes = array()) {
 
+//TODO (nfreear): Accessibility: skip link not invisible in Firefox - why?
+    $skip_dest ='';
+/*    static $block_id = 0;
+    $block_id++;
+    $skip_link = "<a href='#block-$block_id' onfocus=\"this.style.color='#000'\" onblur=\"this.style.color='#fff'\" class='skip-block'>Skip block</a>";
+    $skip_dest = "<span id='block-$block_id' class='skip-block-to'>&nbsp;</span>";
+    if (! empty($heading)) {
+        $heading .= $skip_link;
+    } else {
+        echo $skip_link;
+    }
+*/    
     print_side_block_start($heading, $attributes);
 
     if ($content) {
@@ -4288,17 +4301,18 @@ function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $fo
     } else {
         if ($list) {
             $row = 0;
-            echo '<table class="list">';
+            //Accessibility: replaced unnecessary table with list, see themes/standard/styles_layout.css
+            echo "\n<ul class='list'>\n";
             foreach ($list as $key => $string) {
-                echo '<tr class="r'.$row.'">';
+                echo '<li class="r'. $row .'">';
                 if ($icons) {
-                    echo '<td class="c0" valign="top" width="16">'. $icons[$key] .'</td>';
+                    echo '<i class="icon c0">'. $icons[$key] .'</i>';
                 }
-                echo '<td class="c1" valign="top">'. $string .'</td>';
-                echo '</tr>';
+                echo '<span class="c1">'. $string .'</span>';
+                echo "</li>\n";
                 $row = $row ? 0:1;
             }
-            echo '</table>';
+            echo "</ul>\n";         
         }
         if ($footer) {
             echo '<div class="footer">'. $footer .'</div>';
@@ -4307,6 +4321,7 @@ function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $fo
     }
 
     print_side_block_end($attributes);
+    echo $skip_dest;
 }
 
 /**
@@ -4351,7 +4366,9 @@ function print_side_block_start($heading='', $attributes = array()) {
 
     echo '<div '.$attrtext.'>';
     if ($heading) {
-        echo '<div class="header">'.$heading.'</div>';
+    	//TODO (nfreear): Accessibility: <div> not valid inside <h2>.
+    	echo '<div class="header">'.$heading.'</div>';
+    	///echo '<h2 class="header">'.$heading.'</h2>';
     }
     echo '<div class="content">';
         
