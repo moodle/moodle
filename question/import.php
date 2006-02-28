@@ -26,7 +26,7 @@
     if (! $category = get_record("quiz_categories", "id", $categoryid)) {
         // if no valid category was given, use the default category
         if ($courseid) {
-            $category = quiz_get_default_category($courseid);
+            $category = get_default_question_category($courseid);
         } else {
             error("No category specified");
         }

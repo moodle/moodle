@@ -243,7 +243,7 @@ class quiz_format_coursetestmanager extends quiz_default_format {
           $question->category = $this->category->id;
           $question->stamp = make_unique_id_code();  // Set the unique code (not to be changed)
           $question->version = 1;                    // Original version of this question
-          if (!$question->id = insert_record("quiz_questions", $question)) {
+          if (!$question->id = insert_record("question", $question)) {
               error("Could not insert new question!");
           }
           $this->questionids[] = $question->id;

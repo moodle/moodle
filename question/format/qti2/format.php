@@ -255,7 +255,7 @@ function handle_questions_media(&$questions, $path, $courseid) {
         }
   
         // get the questions (from database) in this category
-        // $questions = get_records("quiz_questions","category",$this->category->id);
+        // $questions = get_records("question","category",$this->category->id);
         $questions = get_questions_category( $this->category );
         
         notify("Exporting ".count($questions)." questions.");

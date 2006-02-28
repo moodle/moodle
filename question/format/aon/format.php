@@ -121,7 +121,7 @@ class quiz_format_aon extends quiz_default_format {
 
         $questionids = implode(',', $this->questionids);
 
-        if (!$shortanswers = get_records_select("quiz_questions", 
+        if (!$shortanswers = get_records_select("question", 
                                                 "id IN ($questionids) AND qtype = ".SHORTANSWER,
                                                 "", "id,qtype")) {
             return true;
@@ -155,7 +155,7 @@ class quiz_format_aon extends quiz_default_format {
              $count = count($shortanswerids);
 
              $extracts = get_records_sql("SELECT q.questiontext, a.answer
-                                            FROM {$CFG->prefix}quiz_questions q,
+                                            FROM {$CFG->prefix}question q,
                                                  {$CFG->prefix}quiz_shortanswer sa,
                                                  {$CFG->prefix}quiz_answers a
                                            WHERE q.id in ($extractids) 
@@ -172,7 +172,7 @@ class quiz_format_aon extends quiz_default_format {
              $question->version = 1;                    // Original version of this question
              $question->parent  = 0;
 
-             if (!$question->id = insert_record("quiz_questions", $question)) {
+             if (!$question->id = insert_record("question", $question)) {
                  error("Could not insert new question!");
              }
 
@@ -193,7 +193,7 @@ class quiz_format_aon extends quiz_default_format {
 
              /// Delete the old short-answer questions
 
-             execute_sql("DELETE FROM {$CFG->prefix}quiz_questions WHERE id IN ($extractids)", false);
+             execute_sql("DELETE FROM {$CFG->prefix}question WHERE id IN ($extractids)", false);
              execute_sql("DELETE FROM {$CFG->prefix}quiz_shortanswer WHERE question IN ($extractids)", false);
              execute_sql("DELETE FROM {$CFG->prefix}quiz_answers WHERE question IN ($extractids)", false);
              
@@ -201,7 +201,7 @@ class quiz_format_aon extends quiz_default_format {
 
         if ($count) {    /// Delete the remaining ones
             foreach ($shortanswerids as $shortanswerid) {
-                delete_records("quiz_questions", "id", $shortanswerid);
+                delete_records("question", "id", $shortanswerid);
                 delete_records("quiz_shortanswer", "question", $shortanswerid);
                 delete_records("quiz_answers", "question", $shortanswerid);
             }

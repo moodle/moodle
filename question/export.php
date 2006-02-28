@@ -29,7 +29,7 @@
     }
 
     if (! $category = get_record("quiz_categories", "id", $categoryid)) {
-        $category = quiz_get_default_category($courseid);
+        $category = get_default_question_category($courseid);
     }
 
     if (! $categorycourse = get_record("course", "id", $category->course)) {
