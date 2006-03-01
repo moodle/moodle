@@ -235,8 +235,6 @@ class quiz_report extends quiz_default_report {
             echo $headers." \n";
         }
 
-
-
         // Construct the SQL
         $select = 'SELECT '.$db->Concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).' AS uniqueid, '.
             'qa.uniqueid as attemptuniqueid, qa.id AS attempt, u.id AS userid, u.firstname, u.lastname, u.picture, '.
@@ -485,9 +483,6 @@ class quiz_report extends quiz_default_report {
                     $options[2] = $strbothattempts;
                 }
                 choose_from_menu($options,'noattempts',$noattempts,'');
-                /* 
-                <input type="checkbox" id="checknoattempts" name="noattempts" '.($noattempts?'checked="checked" ':'').'value="1" '.(($course->id == SITEID) ? ' disabled="disabled"' : '') .' /> <label for="checknoattempts">'.get_string('shownoattemptsonly', 'quiz').'</label> ';
-                */
 	            echo '</td></tr>';
 	            echo '<tr align="left">';
                 echo '<td colspan="2"><input type="checkbox" id="checkdetailedmarks" name="detailedmarks" '.($detailedmarks?'checked="checked" ':'').'value="1" /> <label for="checkdetailedmarks">'.get_string('showdetailedmarks', 'quiz').'</label> ';
