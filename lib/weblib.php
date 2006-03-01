@@ -4498,8 +4498,12 @@ function page_id_and_class(&$getid, &$getclass) {
     static $class = NULL;
     static $id    = NULL;
 
-    if(empty($class) || empty($id)) {
-        $path = str_replace($CFG->httpswwwroot.'/', '', $ME);  //Because the page could be HTTPSPAGEREQUIRED
+    if (empty($CFG->pagepath)) {
+        $CFG->pagepath = $ME;
+    }
+
+    if (empty($class) || empty($id)) {
+        $path = str_replace($CFG->httpswwwroot.'/', '', $CFG->pagepath);  //Because the page could be HTTPSPAGEREQUIRED
         $path = str_replace('.php', '', $path);
         if (substr($path, -1) == '/') {
             $path .= 'index';
@@ -4509,7 +4513,6 @@ function page_id_and_class(&$getid, &$getclass) {
             $class = 'course';
         } else if (substr($path, 0, 5) == 'admin') {
             $id    = str_replace('/', '-', $path);
-            $id    = str_replace('admin2', 'admin', $id);
             $class = 'admin';
         } else {
             $id    = str_replace('/', '-', $path);
