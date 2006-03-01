@@ -1092,7 +1092,7 @@ function data_print_comment($data, $commentid) {
     echo '<div align="center"><table cellspacing="0" width ="50%" class="forumpost">';
 
     echo '<tr class="header"><td class="picture left">';
-    print_user_picture($comment->userid, $course->id, false);
+    print_user_picture($comment->userid, $course->id, $user->picture);
     echo '</td>';
 
     echo '<td class="topic starter" align="left"><div class="author">';
