@@ -68,19 +68,22 @@
         error("Must specify question id or category");
     }
 
+    if (!isset($SESSION->returnurl)) {
+        $SESSION->returnurl = 'edit.php?courseid='.$course->id;
+    }
+
     // TODO: generalise this so it works for any activity
-    $contextquiz = optional_param('contextquiz', 0, PARAM_INT); // the quiz from which this question is being edited
-    $editurl = $contextquiz ? $CFG->wwwroot.'/mod/quiz/edit.php' : 'edit.php?courseid='.$course->id;
+    $contextquiz = isset($SESSION->modform->instance) ? $SESSION->modform->instance : 0;
 
     if (isset($_REQUEST['cancel'])) {
-        redirect($editurl);
+        redirect($SESSION->returnurl);
     }
 
     if(!empty($id) && isset($_REQUEST['hide']) && confirm_sesskey()) {
         if(!set_field('question', 'hidden', $_REQUEST['hide'], 'id', $id)) {
             error("Faild to hide the question.");
         }
-        redirect($editurl);
+        redirect($SESSION->returnurl);
     }
 
     if (empty($qtype)) {
@@ -98,7 +101,7 @@
     // TODO: remove restriction to quiz
     $streditingquestion = get_string('editingquestion', 'quiz');
     if (isset($SESSION->modform->instance)) {
-        $strediting = '<a href=".$editurl.">'.get_string('editingquiz', 'quiz').'</a> -> '.
+        $strediting = '<a href="'.$SESSION->returnurl.'">'.get_string('editingquiz', 'quiz').'</a> -> '.
             $streditingquestion;
     } else {
         $strediting = '<a href="edit.php?courseid='.$course->id.'">'.
@@ -123,7 +126,7 @@
                         error("An error occurred trying to delete question (id $question->id)");
                     }
                 }
-                redirect($editurl);
+                redirect($SESSION->returnurl);
             } else {
                 error("Confirmation string was incorrect");
             }
@@ -137,7 +140,7 @@
             }
 
             notice_yesno(get_string("deletequestioncheck", "quiz", $question->name),
-                        "question.php?sesskey=$USER->sesskey&amp;id=$question->id&amp;delete=$delete&amp;confirm=".md5($delete), $editurl);
+                        "question.php?sesskey=$USER->sesskey&amp;id=$question->id&amp;delete=$delete&amp;confirm=".md5($delete), $SESSION->returnurl);
         }
         print_footer($course);
         exit;
@@ -282,7 +285,7 @@
             //    $QTYPES[$question->qtype]->get_question_options($question);
             //    quiz_regrade_question_in_quizzes($question, $replaceinquiz);
             //}
-            redirect($editurl);
+            redirect($SESSION->returnurl);
         }
     }
 

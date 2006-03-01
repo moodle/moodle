@@ -68,9 +68,7 @@
         $mode = 'export';
         include($CFG->dirroot.'/mod/quiz/tabs.php');
     } else {
-        print_header_simple($strexportquestions, '',
-                 "<a href=\"edit.php?courseid={$course->id}\">".get_string('editquestions', 'quiz').'</a>'.
-                 ' -> '.$strexportquestions);
+        print_header_simple($strexportquestions, '', $strexportquestions);
         // print tabs
         $currenttab = 'export';
         include('tabs.php');

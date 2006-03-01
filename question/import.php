@@ -71,9 +71,7 @@
         $mode = 'import';
         include($CFG->dirroot.'/mod/quiz/tabs.php');
     } else {
-        print_header_simple($strimportquestions, '',
-                 '<a href="edit.php">'.get_string('editquestions', 'quiz').'</a>'.
-                 ' -> '.$strimportquestions);
+        print_header_simple($strimportquestions, '', $strimportquestions);
         // print tabs
         $currenttab = 'import';
         include('tabs.php');

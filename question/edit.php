@@ -18,6 +18,12 @@
 
     $courseid  = required_param('courseid', 0, PARAM_INT);
 
+    // The optional parameter 'clean' allows us to clear module information,
+    // guaranteeing a module-independent  question bank editing interface
+    if (optional_param('clean', false, PARAM_BOOL)) {
+        unset($SESSION->modform);
+    }
+
     if (! $course = get_record("course", "id", $courseid)) {
         error("This course doesn't exist");
     }
@@ -27,6 +33,8 @@
     if (!isteacheredit($course->id)) {
         error("You can't modify this course!");
     }
+    
+    $SESSION->returnurl = $FULLME;
 
     // Print basic page layout.
 
@@ -41,7 +49,7 @@
             : "";
         print_header_simple($streditingquestions, '',
                  "<a href=\"$CFG->wwwroot/mod/quiz/index.php?id=$course->id\">$strquizzes</a>".
-                 " -> <a href=\"$CFG->wwwroot/mod/quiz/view.php?q=$SESSION->modform->instance\">".format_string($SESSION->modform->name).'</a>'.
+                 " -> <a href=\"$CFG->wwwroot/mod/quiz/view.php?q={$SESSION->modform->instance}\">".format_string($SESSION->modform->name).'</a>'.
                  " -> $streditingquestions",
                  "", "", true, $strupdatemodule);
 
