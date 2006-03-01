@@ -445,15 +445,16 @@
         $form->instancename = $instance->name;
         $form->sesskey      = !empty($USER->id) ? $USER->sesskey : '';
 
-        $strdeletecheck = get_string("deletecheck", "", "$form->fullmodulename");
-        $strdeletecheckfull = get_string("deletecheckfull", "", "$form->fullmodulename '$form->instancename'");
+        $strdeletecheck = get_string('deletecheck', '', $form->fullmodulename);
+        $strdeletecheckfull = get_string('deletecheckfull', '', "$form->fullmodulename '$form->instancename'");
 
-        print_header_simple("$strdeletecheck", "",
-                     "$strdeletecheck");
+        $CFG->pagepath = 'mod/'.$module->name.'/delete';
 
-        print_simple_box_start("center", "60%", "#FFAAAA", 20, "noticebox");
+        print_header_simple($strdeletecheck, '', $strdeletecheck);
+
+        print_simple_box_start('center', '60%', '#FFAAAA', 20, 'noticebox');
         print_heading($strdeletecheckfull);
-        include_once("mod_delete.html");
+        include_once('mod_delete.html');
         print_simple_box_end();
         print_footer($course);
 
@@ -510,8 +511,10 @@
             $pageheading = get_string("updatinga", "moodle", $fullmodulename);
         }
         $strnav = "<a href=\"$CFG->wwwroot/mod/$module->name/view.php?id=$cm->id\">".format_string($form->name,true)."</a> ->";
+        $CFG->pagepath = 'mod/'.$module->name.'/mod';
 
     } else if (isset_param('duplicate') and confirm_sesskey()) {   // value = course module
+
 
         if (! $cm = get_record("course_modules", "id", $duplicate)) {
             error("This course module doesn't exist");
@@ -564,6 +567,8 @@
         }
         $strnav = "<a href=\"$CFG->wwwroot/mod/$module->name/view.php?id=$cm->id\">$form->name</a> ->";
 
+        $CFG->pagepath = 'mod/'.$module->name.'/mod';
+
 
     } else if (isset_param('add') and confirm_sesskey()) {
 
@@ -610,6 +615,8 @@
             $pageheading = get_string("addinganew", "moodle", $fullmodulename);
         }
         $strnav = '';
+
+        $CFG->pagepath = 'mod/'.$module->name.'/mod';
 
     } else {
         error("No action was specfied");
