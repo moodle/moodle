@@ -4708,5 +4708,39 @@ function print_tabs($tabrows, $selected=NULL, $inactive=NULL, $activetwo=NULL, $
 }
 
 
+/**
+ * Returns a string containing a link to the user documentation for the current
+ * page. Also contains an icon by default. Shown to teachers and admin only.
+ *
+ * @param string $text      The text to be displayed for the link
+ * @param string $iconpath  The path to the icon to be displayed
+ */
+function page_doc_link($text='', $iconpath='') {
+    global $ME, $CFG;
+    
+    if (empty($CFG->docroot) || !isteacher()) {
+        return '';
+    }
+    
+    if (empty($CFG->pagepath)) {
+        $CFG->pagepath = $ME;
+    }
+    
+    $path = str_replace($CFG->httpswwwroot.'/','', $CFG->pagepath);  // Because the page could be HTTPSPAGEREQUIRED
+    $path = str_replace('.php', '', $path);
+    $lang = str_replace('_utf8', '', current_language());
+    
+    $str = '<a href="' .$CFG->docroot. '/' .$lang. '/' .$path. '">';
+    
+    if (empty($iconpath)) {
+        $iconpath = $CFG->wwwroot . '/pix/docs.gif';
+    }
+    
+    $str .= '<img src="' .$iconpath. '" alt="Docs" />' .$text. '</a>';
+    
+    return $str;
+}
+
+
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
 ?>

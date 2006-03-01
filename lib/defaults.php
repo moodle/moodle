@@ -28,6 +28,7 @@
        'denyemailaddresses'       =>  '',
        'digestmailtime'           =>  17,
        'displayloginfailures'     => '',
+       'docroot'                  => 'http://docs.moodle.org',
        'enablecourserequests'     =>  0,
        'enablerssfeeds'           =>  0,
        'enablestats'              =>  0,
