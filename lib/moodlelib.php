@@ -5083,10 +5083,10 @@ function get_list_of_pixnames() {
             if (file_exists($CFG->dirroot .'/lang/'. $parentlang .'/pix.php')) {
                 $lang = $parentlang;
             } else {
-                $lang = 'en';  // countries.php must exist in this pack
+                $lang = 'en_utf8';  // pix.php must exist in this pack
             }
         } else {
-            $lang = 'en';  // countries.php must exist in this pack
+            $lang = 'en_utf8';  // pix.php must exist in this pack
         }
     }
 
@@ -5096,7 +5096,7 @@ function get_list_of_pixnames() {
 }
 
 /**
- * Returns a list of picture names in the current language
+ * Returns a list of timezones in the current language
  *
  * @uses $CFG
  * @return array
