@@ -72,9 +72,11 @@
         include('tabs.php');
     } else {
         print_header_simple($strimportquestions, '',
-                 "<a href=\"index.php?id=$course->id\">".get_string('modulenameplural', 'quiz').'</a>'.
-                 '-> <a href="edit.php">'.get_string('editquestions', 'quiz').'</a>'.
+                 '<a href="edit.php">'.get_string('editquestions', 'quiz').'</a>'.
                  ' -> '.$strimportquestions);
+        // print tabs
+        $currenttab = 'import';
+        include('tabs.php');
     }
 
 

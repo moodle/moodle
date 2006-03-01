@@ -33,7 +33,11 @@
     $streditingquestions = get_string('editquestions', "quiz");
     print_header_simple($streditingquestions, '',
              "$streditingquestions");
-    print_heading_with_help(get_string('questions', 'quiz'), 'questionbank');
+
+    // print tabs
+    $currenttab = 'editq';
+    include('tabs.php');
+
     echo '<table align="center" border="0" cellpadding="2" cellspacing="0">';
     echo '<tr><td valign="top">';
 

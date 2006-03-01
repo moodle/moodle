@@ -71,6 +71,9 @@
         print_header_simple($strexportquestions, '',
                  "<a href=\"edit.php?courseid={$course->id}\">".get_string('editquestions', 'quiz').'</a>'.
                  ' -> '.$strexportquestions);
+        // print tabs
+        $currenttab = 'export';
+        include('tabs.php');
     }
 
     if (!empty($format)) {   /// Filename

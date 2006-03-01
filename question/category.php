@@ -62,8 +62,12 @@
         include($CFG->dirroot.'/mod/quiz/tabs.php');
     } else {
         print_header_simple(get_string('editcategories', 'quiz'), '',
-                 '-> <a href="edit.php">'.get_string('editquestions', 'quiz').'</a>'.
+                 '<a href="edit.php">'.get_string('editquestions', 'quiz').'</a>'.
                  ' -> '.get_string('editcategories', 'quiz'));
+
+        // print tabs
+        $currenttab = 'categories';
+        include('tabs.php');
     }
 
     //==========
