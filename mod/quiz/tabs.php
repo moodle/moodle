@@ -66,11 +66,16 @@
 
         $row  = array();
         $currenttab = $mode;
-        
-        $row[] = new tabobject('editq', "$CFG->wwwroot/mod/quiz/edit.php?quizid=$quiz->id", get_string('questions', 'quiz'), get_string('editquizquestions', 'quiz'));
+
+        $strquizzes = get_string('modulenameplural', 'quiz');
+        $strquiz = get_string('modulename', 'quiz');
+        $streditingquestions = get_string('editquestions', "quiz");
+        $streditingquiz = get_string("editinga", "moodle", $strquiz);
+        $row[] = new tabobject('editq', "$CFG->wwwroot/mod/quiz/edit.php?quizid=$quiz->id", $strquiz, $streditingquiz);
+        $row[] = new tabobject('questions', "$CFG->wwwroot/question/edit.php?courseid=$course->id", get_string('questions', 'quiz'), $streditingquestions);
         $row[] = new tabobject('categories', "$CFG->wwwroot/question/category.php?id=$course->id", get_string('categories', 'quiz'), get_string('editqcats', 'quiz'));
-        $row[] = new tabobject('import', "$CFG->wwwroot/mod/quiz/import.php?course=$course->id", get_string('import', 'quiz'), get_string('importquestions', 'quiz'));
-        $row[] = new tabobject('export', "$CFG->wwwroot/mod/quiz/export.php?courseid=$course->id", get_string('export', 'quiz'), get_string('exportquestions', 'quiz'));
+        $row[] = new tabobject('import', "$CFG->wwwroot/question/import.php?course=$course->id", get_string('import', 'quiz'), get_string('importquestions', 'quiz'));
+        $row[] = new tabobject('export', "$CFG->wwwroot/question/export.php?courseid=$course->id", get_string('export', 'quiz'), get_string('exportquestions', 'quiz'));
         $row[] = new tabobject('update', "$CFG->wwwroot/course/mod.php?update=$cm->id&amp;sesskey=$USER->sesskey", get_string('settings'), get_string('updatesettings'));
 
         $tabs[] = $row;

@@ -1187,7 +1187,7 @@ function get_import_export_formats( $type ) {
         else {
             continue;
         }
-        $classname = "quiz_format_$fileformat";
+        $classname = "qformat_$fileformat";
         $format_class = new $classname();
         if ($type=='import') {
             $provided = $format_class->provide_import();

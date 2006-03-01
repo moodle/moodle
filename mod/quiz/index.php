@@ -27,7 +27,7 @@
     $strquizzes = get_string("modulenameplural", "quiz");
     $streditquestions = isteacheredit($course->id)
                         ? "<form target=\"_parent\" method=\"get\" "
-                           ." action=\"$CFG->wwwroot/mod/quiz/edit.php\">"
+                           ." action=\"$CFG->wwwroot/question/edit.php\">"
                            ."<input type=\"hidden\" name=\"courseid\" "
                            ." value=\"$course->id\" />"
                            ."<input type=\"submit\" "

@@ -38,7 +38,6 @@
 
     require_login();
 
-    $courseid  = optional_param('courseid');
     $quizid    = optional_param('quizid');
 
     $strquizzes = get_string('modulenameplural', 'quiz');
@@ -69,13 +68,6 @@
                                "view.php?id=$cm->id",
                                "$quizid", $cm->id);
         }
-
-    } else if ($courseid) { // Page retrieve through "Edit Questions" link - no quiz selected
-        $modform->course = $courseid;
-        unset($modform->instance);
-        $SESSION->modform = $modform;    // Save the form in the current session
-
-        add_to_log($courseid, 'quiz', 'editquestions', "index.php?id=$courseid");
 
     } else if (!empty($sortorder)) {
         // no quiz or course was specified so we need to use the stored modform
@@ -339,10 +331,6 @@ if (self.name == 'editquestion') {
         }
         echo "<center>\n";
         echo "$strattemptsexist<br /><a href=\"report.php?mode=overview&amp;id=$cm->id\">$strviewallanswers ($usercount $strusers)</a>";
-        echo "<form target=\"_parent\" method=\"get\" action=\"$CFG->wwwroot/mod/quiz/edit.php\">\n";
-        echo "    <input type=\"hidden\" name=\"courseid\" value=\"$course->id\" />\n";
-        echo "    <input type=\"submit\" value=\"".get_string("editcatquestions", "quiz")."\" />\n";
-        echo "</form>";
         echo "</center><br/ >\n";
 
         $sumgrades = quiz_print_question_list($modform, false, $SESSION->quiz_showbreaks, $SESSION->quiz_reordertool);
@@ -355,49 +343,38 @@ if (self.name == 'editquestion') {
         exit;
     }
 
-    if (!isset($modform->instance)) {
-        // one column layout for non-quiz-specific editing page
-        print_header_simple($streditingquestions, '',
-                 "$streditingquestions");
-        print_heading_with_help(get_string('questions', 'quiz'), 'questionbank');
-        echo '<table align="center" border="0" cellpadding="2" cellspacing="0">';
-        echo '<tr><td valign="top">';
+    // two column layout with quiz info in left column
+    $strupdatemodule = isteacheredit($course->id)
+        ? update_module_button($modform->cmid, $course->id, get_string('modulename', 'quiz'))
+        : "";
+    print_header_simple($streditingquiz, '',
+             "<a href=\"index.php?id=$course->id\">$strquizzes</a>".
+             " -> <a href=\"view.php?q=$modform->instance\">".format_string($modform->name).'</a>'.
+             " -> $streditingquiz",
+             "", "", true, $strupdatemodule);
 
-    } else {
-        // two column layout with quiz info in left column
-        $strupdatemodule = isteacheredit($course->id)
-            ? update_module_button($modform->cmid, $course->id, get_string('modulename', 'quiz'))
-            : "";
-        print_header_simple($streditingquiz, '',
-                 "<a href=\"index.php?id=$course->id\">$strquizzes</a>".
-                 " -> <a href=\"view.php?q=$modform->instance\">".format_string($modform->name).'</a>'.
-                 " -> $streditingquiz",
-                 "", "", true, $strupdatemodule);
+    $currenttab = 'edit';
+    $mode = 'editq';
+    $quiz = &$modform;
+    include('tabs.php');
 
-        $currenttab = 'edit';
-        $mode = 'editq';
-        $quiz = &$modform;
-        include('tabs.php');
+    echo '<table border="0" width="100%" cellpadding="2" cellspacing="0">';
+    echo '<tr><td width="50%" valign="top">';
+    print_simple_box_start("center", "100%");
 
-        echo '<table border="0" width="100%" cellpadding="2" cellspacing="0">';
-        echo '<tr><td width="50%" valign="top">';
-        print_simple_box_start("center", "100%");
-
-        $sumgrades = quiz_print_question_list($modform, true, $SESSION->quiz_showbreaks, $SESSION->quiz_reordertool);
-        if (!set_field('quiz', 'sumgrades', $sumgrades, 'id', $modform->instance)) {
-            error('Failed to set sumgrades');
-        }
-
-        print_simple_box_end();
-
-        echo '</td><td valign="top" width="50%">';
+    $sumgrades = quiz_print_question_list($modform, true, $SESSION->quiz_showbreaks, $SESSION->quiz_reordertool);
+    if (!set_field('quiz', 'sumgrades', $sumgrades, 'id', $modform->instance)) {
+        error('Failed to set sumgrades');
     }
+
+    print_simple_box_end();
+
+    echo '</td><td valign="top" width="50%">';
+
     require($CFG->dirroot.'/question/showbank.php');
 
     echo '</td></tr>';
     echo '</table>';
-
-
 
     print_footer($course);
 ?>

@@ -63,13 +63,13 @@
             ? update_module_button($SESSION->modform->cmid, $course->id, get_string('modulename', 'quiz'))
             : "";
         print_header_simple($strimportquestions, '',
-                 "<a href=\"index.php?id=$course->id\">".get_string('modulenameplural', 'quiz').'</a>'.
-                 " -> <a href=\"view.php?q=$quiz->id\">".format_string($quiz->name).'</a>'.
+                 "<a href=\"$CFG->wwwroot/mod/quiz/index.php?id=$course->id\">".get_string('modulenameplural', 'quiz').'</a>'.
+                 " -> <a href=\"$CFG->wwwroot/mod/quiz/view.php?q=$quiz->id\">".format_string($quiz->name).'</a>'.
                  ' -> '.$strimportquestions,
                  "", "", true, $strupdatemodule);
         $currenttab = 'edit';
         $mode = 'import';
-        include('tabs.php');
+        include($CFG->dirroot.'/mod/quiz/tabs.php');
     } else {
         print_header_simple($strimportquestions, '',
                  '<a href="edit.php">'.get_string('editquestions', 'quiz').'</a>'.
