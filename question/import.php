@@ -100,20 +100,20 @@
             require("format.php");  // Parent class
             require("format/$format/format.php");
 
-            $classname = "quiz_format_$format";
-            $quiz_format = new $classname();
+            $classname = "qformat_$format";
+            $qformat = new $classname();
 
-            if (! $quiz_format->importpreprocess($category,$course)) {             // Do anything before that we need to
+            if (! $qformat->importpreprocess($category,$course)) {             // Do anything before that we need to
                 error("Error occurred during pre-processing!",
                       "$CFG->wwwroot/mod/quiz/import.php?category=$category->id");
             }
 
-            if (! $quiz_format->importprocess($_FILES['newfile']['tmp_name'])) {     // Process the uploaded file
+            if (! $qformat->importprocess($_FILES['newfile']['tmp_name'])) {     // Process the uploaded file
                 error("Error occurred during processing!",
                       "$CFG->wwwroot/mod/quiz/import.php?category=$category->id");
             }
 
-            if (! $quiz_format->importpostprocess()) {                     // In case anything needs to be done after
+            if (! $qformat->importpostprocess()) {                     // In case anything needs to be done after
                 error("Error occurred during post-processing!",
                       "$CFG->wwwroot/mod/quiz/import.php?category=$category->id");
             }

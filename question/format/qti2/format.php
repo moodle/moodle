@@ -10,7 +10,7 @@ require_once("$CFG->dirroot/question/format/qti2/qt_common.php");
 
 define('CLOZE_TRAILING_TEXT_ID', 9999999);
 
-class quiz_format_qti2 extends quiz_default_format {
+class qformat_qti2 extends qformat_default {
     
     var $lang;
 

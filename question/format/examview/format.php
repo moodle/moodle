@@ -11,6 +11,9 @@
 **   Support of rejoinders
 **
 ** $Log$
+** Revision 1.2  2006/03/01 07:36:08  gustav_delius
+** Removing some more references to quiz from import/export code
+**
 ** Revision 1.1  2006/02/24 15:14:04  thepurpleblob
 ** Moving quiz import/export files to new question area.
 **
@@ -45,7 +48,7 @@ define("MULTIANSWER",   "9");
 define("CALCULATED",   "10");
 */
 
-class quiz_format_examview extends quiz_default_format {
+class qformat_examview extends qformat_default {
     
     var $qtypes = array('tf' => TRUEFALSE,
     'mc' => MULTICHOICE,

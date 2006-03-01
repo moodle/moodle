@@ -86,27 +86,27 @@
         require("format.php");  // Parent class
         require("format/$format/format.php");
 
-        $classname = "quiz_format_$format";
-        $quiz_format = new $classname();
+        $classname = "qformat_$format";
+        $qformat = new $classname();
 
-        if (! $quiz_format->exportpreprocess($category, $course)) {   // Do anything before that we need to
+        if (! $qformat->exportpreprocess($category, $course)) {   // Do anything before that we need to
             error("Error occurred during pre-processing!",
                     "$CFG->wwwroot/mod/quiz/export.php?category=$category->id");
         }
 
-        if (! $quiz_format->exportprocess($exportfilename)) {         // Process the export data
+        if (! $qformat->exportprocess($exportfilename)) {         // Process the export data
             error("Error occurred during processing!",
                     "$CFG->wwwroot/mod/quiz/export.php?category=$category->id");
         }
 
-        if (! $quiz_format->exportpostprocess()) {                    // In case anything needs to be done after
+        if (! $qformat->exportpostprocess()) {                    // In case anything needs to be done after
             error("Error occurred during post-processing!",
                     "$CFG->wwwroot/mod/quiz/export.php?category=$category->id");
         }
         echo "<hr />";
 
         // link to download the finished file
-        $file_ext = $quiz_format->export_file_extension();
+        $file_ext = $qformat->export_file_extension();
         $download_str = get_string( 'download', 'quiz' );
         $downloadextra_str = get_string( 'downloadextra','quiz' );
         if ($CFG->slasharguments) {

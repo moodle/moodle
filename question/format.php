@@ -8,7 +8,7 @@
 
 // Included by import.php and export.php
 
-class quiz_default_format {
+class qformat_default {
 
     var $displayerrors = true;
     var $category = NULL;

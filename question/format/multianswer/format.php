@@ -9,7 +9,7 @@
 
 // Based on format.php, included by ../../import.php
 
-class quiz_format_multianswer extends quiz_default_format {
+class qformat_multianswer extends qformat_default {
 
     function provide_import() {
       return true;

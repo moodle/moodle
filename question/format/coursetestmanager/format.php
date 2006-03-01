@@ -8,7 +8,7 @@
 // Based on format.php, included by ../../import.php
 require_once($CFG->dirroot.'/lib/uploadlib.php');
 
-class quiz_format_coursetestmanager extends quiz_default_format {
+class qformat_coursetestmanager extends qformat_default {
 
     function provide_import() {
       return true;
@@ -248,7 +248,7 @@ class quiz_format_coursetestmanager extends quiz_default_format {
           }
           $this->questionids[] = $question->id;
           // Now to save all the answers and type-specific options
-          $result = quiz_save_question_options($question);
+          $result = save_question_options($question);
           if (!empty($result->error)) {
               notify($result->error);
               $this->deletedatabase($filename);

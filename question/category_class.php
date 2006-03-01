@@ -2,7 +2,7 @@
 /**
 * Class question_category_object
 *
-* Used for handling changes to the quiz categories
+* Used for handling changes to the question categories
 *
 * @version $Id$
 * @author Martin Dougiamas and many others. {@link http://moodle.org}
@@ -255,7 +255,7 @@ class question_category_object {
             $up = $first ? false : true;
             $down = $last ? false : true;
             $first = false;
-            $this->quiz_edit_category_row($category, $depth, $up, $down, $page);
+            $this->edit_question_category_row($category, $depth, $up, $down, $page);
             if (isset($category->children)) {
                 $this->build_edit_table_body($category->children, $page, $firstcat, $lastcat, $depth + 1);
             }
@@ -289,7 +289,7 @@ class question_category_object {
 * @param boolean down can it be moved down?
 * @param int page page number
 */
-    function quiz_edit_category_row($category, $depth, $up = false, $down = false, $page = 0) {
+    function edit_question_category_row($category, $depth, $up = false, $down = false, $page = 0) {
         global $USER;
         $fill = str_repeat($this->tab, $depth);
 
@@ -546,7 +546,7 @@ class question_category_object {
     }
 
 /**
-* Gets quiz categories
+* Gets question categories
 *
 * @param    int parent - if given, restrict records to those with this parent id.
 * @param    string sort - [[sortfield [,sortfield]] {ASC|DESC}]
@@ -565,7 +565,7 @@ class question_category_object {
 
 
 /**
-* Deletes an existing quiz category
+* Deletes an existing question category
 *
 * @param    int deletecat  id of category to delete
 * @param    int destcategoryid id of category which will inherit the orphans of deletecat
@@ -740,7 +740,7 @@ class question_category_object {
         $cat->sortorder = 999;
         $cat->stamp = make_unique_id_code();
         if (!insert_record("question_categories", $cat)) {
-            error("Could not insert the new quiz category '$newcategory'", "category.php?id={$newcourse}");
+            error("Could not insert the new question category '$newcategory'", "category.php?id={$newcourse}");
         } else {
             notify(get_string("categoryadded", "quiz", $newcategory), 'green');
         }

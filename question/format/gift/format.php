@@ -32,7 +32,7 @@
 //////////////////////////////////////////////////////////////////////////
 // Based on default.php, included by ../import.php
 
-class quiz_format_gift extends quiz_default_format {
+class qformat_gift extends qformat_default {
 
     function provide_import() {
       return true;

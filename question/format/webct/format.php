@@ -58,7 +58,7 @@ function unhtmlentities($string){
     return preg_replace ($search, $replace, $string);
 }
 
-class quiz_format_webct_modified_calculated_qtype extends quiz_calculated_qtype {
+class qformat_webct_modified_calculated_qtype extends quiz_calculated_qtype {
 // We need to make a modification of this qtype so that
 // it will be able to save webct style calculated questions
 // The difference between webct and Moodle is that webct
@@ -142,9 +142,9 @@ class quiz_format_webct_modified_calculated_qtype extends quiz_calculated_qtype 
         return true;
     }
 }
-$QTYPES[CALCULATED] = new quiz_format_webct_modified_calculated_qtype();
+$QTYPES[CALCULATED] = new qformat_webct_modified_calculated_qtype();
 
-function quiz_format_webct_convert_formula($formula) {
+function qformat_webct_convert_formula($formula) {
 
     // Remove empty space, as it would cause problems otherwise:
     $formula = str_replace(' ', '', $formula);
@@ -239,7 +239,7 @@ function quiz_format_webct_convert_formula($formula) {
     return $formula;
 }
 
-class quiz_format_webct extends quiz_default_format {
+class qformat_webct extends qformat_default {
 
     function provide_import() {
       return true;
@@ -247,7 +247,7 @@ class quiz_format_webct extends quiz_default_format {
 
     function readquestions ($lines) {
 
-        $qtypecalculated = new quiz_format_webct_modified_calculated_qtype();
+        $qtypecalculated = new qformat_webct_modified_calculated_qtype();
         $webctnumberregex =
                 '[+-]?([0-9]+(\\.[0-9]*)?|\\.[0-9]+)((e|E|\\*10\\*\\*)([+-]?[0-9]+|\\([+-]?[0-9]+\\)))?';
 
@@ -506,7 +506,7 @@ class quiz_format_webct extends quiz_default_format {
             if (CALCULATED == $question->qtype && ereg(
                     "^:([[:lower:]].*|::.*)-(MIN|MAX|DEC|VAL([0-9]+))::?:?($webctnumberregex)", $line, $webct_options)) {
                 $datasetname = ereg_replace('^::', '', $webct_options[1]);
-                $datasetvalue = quiz_format_webct_convert_formula($webct_options[4]);
+                $datasetvalue = qformat_webct_convert_formula($webct_options[4]);
                 switch ($webct_options[2]) {
                     case 'MIN':
                         $question->datasets[$datasetname]->min = $datasetvalue;
@@ -551,7 +551,7 @@ class quiz_format_webct extends quiz_default_format {
                 // Answer for a CALCULATED question
                 ++$currentchoice;
                 $question->answers[$currentchoice]->answer =
-                        quiz_format_webct_convert_formula($webct_options[1]);
+                        qformat_webct_convert_formula($webct_options[1]);
 
                 // Default settings:
                 $question->answers[$currentchoice]->fraction = 1.0;
@@ -595,7 +595,7 @@ class quiz_format_webct extends quiz_default_format {
             if (CALCULATED == $question->qtype && eregi("^:TOL:($webctnumberregex)", $line, $webct_options)) {
                 // We can but hope that this always appear before the TOL property
                 $question->answers[$currentchoice]->tolerance =
-                        quiz_format_webct_convert_formula($webct_options[1]);
+                        qformat_webct_convert_formula($webct_options[1]);
                 continue;
             }
 

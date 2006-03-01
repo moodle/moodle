@@ -1,7 +1,7 @@
 <?php 
 // Based on default.php, included by ../import.php
 
-class quiz_format_xhtml extends quiz_default_format {
+class qformat_xhtml extends qformat_default {
 
     function provide_export() {
       return true;

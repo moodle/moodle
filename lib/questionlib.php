@@ -913,6 +913,16 @@ function print_question(&$question, &$state, $number, $cmoptions, $options=null)
     $QTYPES[$question->qtype]->print_question($question, $state, $number,
      $cmoptions, $options);
 }
+/**
+* Saves question options
+*
+* Simply calls the question type specific save_question_options() method.
+*/
+function save_question_options($question) {
+    global $QTYPES;
+
+    $QTYPES[$question->qtype]->save_question_options($question);
+}
 
 /**
 * Gets all teacher stored answers for a given question

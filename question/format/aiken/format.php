@@ -30,7 +30,7 @@
 
 // Based on format.php, included by ../../import.php
 
-class quiz_format_aiken extends quiz_default_format {
+class qformat_aiken extends qformat_default {
 
   function provide_import() {
     return true;

@@ -22,7 +22,7 @@
 
 // Based on format.php, included by ../../import.php
 
-class quiz_format_aon extends quiz_default_format {
+class qformat_aon extends qformat_default {
 
     function provide_import() {
         return true;
@@ -181,7 +181,7 @@ class quiz_format_aon extends quiz_default_format {
                  $question->subanswers[] = addslashes($shortanswer->answer);
              }
 
-             $result = quiz_save_question_options($question);
+             $result = save_question_options($question);
 
              if (!empty($result->error)) {
                  notify("Error: $result->error");

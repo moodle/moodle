@@ -9,7 +9,7 @@
 
 // Based on default.php, included by ../import.php
 
-class quiz_format_hotpot extends quiz_default_format {
+class qformat_hotpot extends qformat_default {
 
     function provide_import() {
         return true;
@@ -589,9 +589,9 @@ function hotpot_utf8_to_html_entity($char) {
 // allow importing in Moodle v1.4 (and less)
 // same core functions but different class name
 if (!class_exists("quiz_file_format")) {
-    class quiz_file_format extends quiz_default_format {
+    class quiz_file_format extends qformat_default {
         function readquestions ($lines) {
-            $format = new quiz_format_hotpot();
+            $format = new qformat_hotpot();
             return $format->readquestions($lines);
         }
     }

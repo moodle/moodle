@@ -9,7 +9,7 @@
 
 require_once( "$CFG->libdir/xmlize.php" );
 
-class quiz_format_xml extends quiz_default_format {
+class qformat_xml extends qformat_default {
 
     function provide_import() {
         return true;

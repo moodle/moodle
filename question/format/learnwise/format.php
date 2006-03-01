@@ -6,7 +6,7 @@
 // answer by the total number of options
 // Based on format.php, included by ../../import.php
 
-class quiz_format_learnwise extends quiz_default_format {
+class qformat_learnwise extends qformat_default {
 
     function provide_import() {
       return true;
