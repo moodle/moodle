@@ -404,6 +404,14 @@ if (!function_exists('file_get_contents')) {
 }
 
 
+/**
+ * Recursively delete the file or folder with path $location. That is, 
+ * if it is a file delete it. If it is a folder, delete all its content
+ * then delete it. If $location does not exist to start, that is not 
+ * considered an error. 
+ * 
+ * @param $location the path to remove.
+ */
 function fulldelete($location) {
     if (is_dir($location)) {
         $currdir = opendir($location);
@@ -426,7 +434,7 @@ function fulldelete($location) {
             return false;
         }
 
-    } else {
+    } else if (file_exists($location)) {
         if (!unlink($location)) {
             return false;
         }
