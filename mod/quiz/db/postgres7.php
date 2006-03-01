@@ -1037,6 +1037,13 @@ function quiz_upgrade($oldversion) {
         table_column('question_sessions', 'sumpenalty', 'sumpenalty',  'real', '', '', '0', 'not null');
     }
 
+    if ($oldversion < 2006030100) {
+        // Fix up another table rename :(
+        // THIS caused the mistake: execute_sql("ALTER TABLE {$CFG->prefix}quiz_newest_states RENAME TO {$CFG->prefix}question_sessions", false);
+        execute_sql('ALTER TABLE '.$CFG->prefix.'quiz_newest_states_id_seq RENAME TO '.$CFG->prefix.'question_sessions_id_seq',false);
+        execute_sql('ALTER TABLE '.$CFG->prefix.'question_sessions ALTER COLUMN id SET DEFAULT nextval(\''.$CFG->prefix.'question_sessions_id_seq\')',false);
+    }
+
     return true;
 }
 
