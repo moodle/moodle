@@ -274,6 +274,12 @@ $CFG->admin = 'admin';
 // If you are going to publish your log, or the output of your web stats analyzer
 // this will weaken the security of your website.
 // 
+// Email database connection errors to someone.  If Moodle cannot connect to the 
+// database, then email this address with a notice.
+//
+//     $CFG->emailconnectionerrors = your@emailaddress.com;
+// 
+// 
 // NOTE: if you are using custompix in your theme, see /fixpix.php.
 
 //=========================================================================
