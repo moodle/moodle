@@ -277,7 +277,7 @@ $CFG->admin = 'admin';
 // Email database connection errors to someone.  If Moodle cannot connect to the 
 // database, then email this address with a notice.
 //
-//     $CFG->emailconnectionerrors = your@emailaddress.com;
+//     $CFG->emailconnectionerrorsto = 'your@emailaddress.com';
 // 
 // 
 // NOTE: if you are using custompix in your theme, see /fixpix.php.
