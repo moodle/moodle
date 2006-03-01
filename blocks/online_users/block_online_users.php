@@ -3,7 +3,7 @@
 class block_online_users extends block_base {
     function init() {
         $this->title = get_string('blockname','block_online_users');
-        $this->version = 2004111600;
+        $this->version = 2006030100;
     }
 
     function has_config() {return true;}
@@ -103,16 +103,21 @@ class block_online_users extends block_base {
         //Now, we have in users, the list of users to show
         //Because they are online
         if (!empty($users)) {
+        	//Accessibility: Don't want 'Alt' text for the user picture; DO want it for the envelope/message link (existing lang string).
+        	//Accessibility: Converted <div> to <ul>, inherit existing classes & styles.
+        	$this->content->text .= "<ul class='list'>\n";
             foreach ($users as $user) {
-                $this->content->text .= '<div class="listentry">';
+            	$this->content->text .= '<li class="listentry">';
                 $timeago = format_time(time() - max($user->timeaccess, $user->lastaccess)); //bruno to calculate correctly on frontpage 
                 $this->content->text .= print_user_picture($user->id, $this->instance->pageid, $user->picture, 16, true).' ';
                 $this->content->text .= '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$this->instance->pageid.'" title="'.$timeago.'">'.$user->fullname.'</a>';
                 if (!empty($USER->id) and ($USER->id != $user->id) and !empty($CFG->messaging) and !isguest()) {  // Only when logged in
-                    $this->content->text .= '&nbsp;<a target="message_'.$user->id.'" href="'.$CFG->wwwroot.'/message/discussion.php?id='.$user->id.'" onclick="return openpopup(\'/message/discussion.php?id='.$user->id.'\', \'message_'.$user->id.'\', \'menubar=0,location=0,scrollbars,status,resizable,width=400,height=500\', 0);"><img height="11" width="11" src="'.$CFG->pixpath.'/t/message.gif" alt="" /></a>';
+                    $this->content->text .= '&nbsp;<a title="" target="message_'.$user->id.'" href="'.$CFG->wwwroot.'/message/discussion.php?id='.$user->id.'" onclick="return openpopup(\'/message/discussion.php?id='.$user->id.'\', \'message_'.$user->id.'\', \'menubar=0,location=0,scrollbars,status,resizable,width=400,height=500\', 0);">'
+                        .'<img height="11" width="11" src="'.$CFG->pixpath.'/t/message.gif" alt="'. get_string('messageselectadd') .'" /></a>';
                 }
-                $this->content->text .= '</div>';
+                $this->content->text .= "</li>\n";
             }
+            $this->content->text .= "</ul>\n";
         } else {
             $this->content->text .= "<div class=\"message\">".get_string("none")."</div>";
         }
