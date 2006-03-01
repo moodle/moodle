@@ -35,36 +35,7 @@ class quiz_report extends quiz_default_report {
         } else {
             $currentgroup = false;
         }
-    
-    /// Get all students
-        if ($currentgroup) {
-            $users = get_group_students($currentgroup);
-        }
-        else {
-            $users = get_course_students($course->id);
-        }
-    
-    if($users === false) {
-        $users = array();
-    }
-    else {
-        $users = array_keys($users);
-    }
-
-/// Now the tricky part: if there are people with attempts but they have been unenrolled
-/// since making those attempts, count them in as well. DO NOT count course teachers.
-
-    //$userswithattempts = get_records_sql('SELECT DISTINCT qa.userid AS id, qa.userid FROM '.$CFG->prefix.'quiz_attempts qa LEFT JOIN '.$CFG->prefix.'user_teachers ut ON qa.userid = ut.userid AND ut.course = '.$course->id.' WHERE ut.id IS NULL AND quiz = '.$quiz->id);
-    //if(!empty($userswithattempts)) {
-        //$unenrolledusers = array_diff(array_keys($userswithattempts), $users);
-        //$users = array_merge($users, $unenrolledusers);
-    //}
-
-        if(empty($users)) {
-            print_heading($strnoattempts);
-            return true;
-        }
-    
+  
         // set Table options
         if(!isset($SESSION->quiz_responses_table)) {
             $SESSION->quiz_responses_table = array('noattempts' => false, 'pagesize' => 10);
@@ -124,15 +95,48 @@ class quiz_report extends quiz_default_report {
             $filename = clean_filename("$course->shortname ".format_string($quiz->name,true));
             $pagelimit = '';
         }    
+
         // Construct the SQL
-    
-        $select = 'SELECT '.$db->Concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).' AS uniqueid, u.firstname, u.lastname, u.picture, qa.*';
-        $from   = ' FROM '.$CFG->prefix.'user u LEFT JOIN '.$CFG->prefix.'quiz_attempts qa ON (u.id = qa.userid AND qa.quiz = '.$quiz->id.') ';
-    $where  = 'WHERE u.id IN ('.implode(',', $users).') ';
-    
-        // Add extra limits if we 're not interested in students without attempts
-        if(!$noattempts) {
-            $where .= 'AND '.$db->IfNull('qa.attempt', '0').' != 0 ';
+        $select = 'SELECT '.$db->Concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).' AS uniqueid, '.
+            'qa.uniqueid as attemptuniqueid, qa.id AS attempt, u.id AS userid, u.firstname, u.lastname, u.picture, '.
+            'qa.sumgrades, qa.timefinish, qa.timestart, qa.timefinish - qa.timestart AS duration,qa.* ';
+        if ($course->id != SITEID) { // this is too complicated, so just do it for each of the four cases.
+            if (!empty($currentgroup) && empty($noattempts)) {
+                // we want a particular group and we only want to see students WITH attempts.
+                // So join on groups_members and do an inner join on attempts.
+                $from  = 'FROM '.$CFG->prefix.'user u JOIN '.$CFG->prefix.'user_students us ON us.userid = u.id JOIN '.$CFG->prefix.'groups_members gm ON u.id = gm.userid '.
+                    'JOIN '.$CFG->prefix.'quiz_attempts qa ON u.id = qa.userid AND qa.quiz = '.$quiz->id;
+                $where = ' WHERE  us.course = '.$course->id.' AND gm.groupid = '.$currentgroup;                
+            } else if (!empty($currentgroup) && !empty($noattempts)) {
+                // We want a particular group and we only want to see students WITHOUT attempts.
+                // So join on groups_members and do a left join on attempts where the right side is null (no records in the attempts table)
+                $from  = 'FROM '.$CFG->prefix.'user u JOIN '.$CFG->prefix.'user_students us ON us.userid = u.id JOIN '.$CFG->prefix.'groups_members gm ON u.id = gm.userid '.
+                    'LEFT JOIN '.$CFG->prefix.'quiz_attempts qa ON u.id = qa.userid AND qa.quiz = '.$quiz->id;
+                $where = ' WHERE us.course = '.$course->id.' AND gm.groupid = '.$currentgroup;
+                if ($noattempts == 1) {
+                    $where .= ' AND qa.userid IS NULL'; // show ONLY no attempts;
+                } 
+            } else if (empty($currentgroup) && empty($noattempts)) {
+                // We don't care about group, and we only want to see students WITH attempts.
+                // So just do a striaght inner join on attempts, don't worry about the groups_members table
+                $from  = 'FROM '.$CFG->prefix.'user u JOIN '.$CFG->prefix.'quiz_attempts qa ON u.id = qa.userid ';
+                $where = ' WHERE qa.quiz = '.$quiz->id;
+            } else if (empty($currentgroup) && !empty($noattempts)) {
+                // We don't care about group, and we only want to see students WITHOUT attempts.
+                // So do a left join on attempts where the right side is null (no records in the attempts table), and don't worry about groups_members.
+                $from  = 'FROM '.$CFG->prefix.'user u JOIN '.$CFG->prefix.'user_students us ON us.userid = u.id LEFT JOIN '.$CFG->prefix.'quiz_attempts qa ON u.id = qa.userid AND qa.quiz = '.$quiz->id;
+                $where = ' WHERE us.course = '.$course->id;
+                if ($noattempts == 1) {
+                    $where .= ' AND qa.userid IS NULL';
+                }
+            }
+            $countsql = 'SELECT COUNT(DISTINCT('.$db->Concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).')) '.$from.$where;
+        } else {
+            if (empty($noattempts)) {
+                $from   = 'FROM '.$CFG->prefix.'user u JOIN '.$CFG->prefix.'quiz_attempts qa ON u.id = qa.userid ';
+                $where = ' WHERE qa.quiz = '.$quiz->id;
+                $countsql = 'SELECT COUNT(DISTINCT('.$db->Concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).')) '.$from.$where;
+            }
         }
         if (!$download) {
             // Set up the table
@@ -164,7 +168,7 @@ class quiz_report extends quiz_default_report {
                 $where .= 'AND '.$table->get_sql_where();
             }
             // Count the records NOW, before funky question grade sorting messes up $from
-            $total  = count_records_sql('SELECT COUNT(DISTINCT('.$db->Concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).')) '.$from.$where);
+            $total  = count_records_sql($countsql);
 	  
             // Add extra limits due to sorting by question grade
             if($sort = $table->get_sql_sort()) {
@@ -274,7 +278,14 @@ class quiz_report extends quiz_default_report {
         if (empty($sort)) {
             $sort='';
         }
-        $attempts = get_records_sql($select.$from.$where.$sort.$pagelimit);
+
+        /// Fetch the attempts
+        if (!empty($from)) { // if we're in the site course and displaying no attempts, it makes no sense to do the query.
+            $attempts = get_records_sql($select.$from.$where.$sort.$limit);
+        } else {
+            $attempts = array();
+        }
+
 
     /// Build table rows
     
@@ -382,6 +393,10 @@ class quiz_report extends quiz_default_report {
     }
     function print_options_form($quiz, $cm, $noattempts, $pagesize=10) {
         global $CFG, $USER;
+        $strnoattemptsonly = get_string('shownoattemptsonly', 'quiz');
+        $strattemptsonly = get_string('attemptsonly','quiz');
+        $strbothattempts = get_string('bothattempts','quiz');
+        
         echo '<div class="controls">';
         echo '<form id="options" name="options" action="report.php" method="post">';
         echo '<p class="quiz-report-options">'.get_string('displayoptions', 'quiz').': </p>';
@@ -394,9 +409,15 @@ class quiz_report extends quiz_default_report {
         echo '<td><label for="pagesize">'.get_string('pagesize', 'quiz_responses').'</label></td>';
         echo '<td><input type="text" id="pagesize" name="pagesize" size="1" value="'.$pagesize.'" /></td>';
         echo '</tr>';
-	echo '<tr align="left">';
-        echo '<td colspan="2"><input type="checkbox" id="checknoattempts" name="noattempts" '.($noattempts?'checked="checked" ':'').'value="1" /> <label for="checknoattempts">'.get_string('shownoattempts', 'quiz').'</label> ';
-	echo '</td></tr>';
+        echo '<tr align="left">';
+        echo '<td colspan="2">';
+        $options = array(0 => $strattemptsonly);
+        if ($course->id != SITEID) {
+            $options[1] = $strnoattemptsonly;
+            $options[2] = $strbothattempts;
+        }
+        choose_from_menu($options,'noattempts',$noattempts,'');
+        echo '</td></tr>';
         echo '<tr><td colspan="2" align="center">';
         echo '<input type="submit" value="'.get_string('go').'" />';
         helpbutton("responsesoptions", get_string("responsesoptions",'quiz_responses'), 'quiz');
