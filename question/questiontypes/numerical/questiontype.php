@@ -273,54 +273,6 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
         return false;
     }
 
-    function print_question_formulation_and_controls(&$question, &$state, $cmoptions, $options) {
-    /// This implementation is very similar to the code used by question type SHORTANSWER
-
-        $answers = &$question->options->answers;
-        $correctanswers = $this->get_correct_responses($question, $state);
-        $readonly = empty($options->readonly) ? '' : 'readonly="readonly"';
-        $nameprefix = $question->name_prefix;
-
-        /// Print question text and media
-
-        echo format_text($question->questiontext,
-                         $question->questiontextformat,
-                         NULL, $cmoptions->course);
-        quiz_print_possible_question_image($question, $cmoptions->course);
-
-        /// Print input controls
-
-        $stranswer = get_string("answer", "quiz");
-        if (isset($state->responses[''])) {
-            $value = ' value="'.htmlSpecialChars($state->responses['']).'" ';
-        } else {
-            $value = ' value="" ';
-        }
-        $inputname = ' name="'.$nameprefix.'" ';
-        echo "<p align=\"right\">$stranswer: <input type=\"text\" $readonly $inputname size=\"20\" $value /></p>";
-
-        if ($options->feedback) {
-            foreach($answers as $answer) {
-                if($this->test_response($question, $state, $answer)) {
-                    quiz_print_comment($answer->feedback);
-                    break;
-                }
-            }
-        }
-
-        if ($options->readonly && $options->correct_responses) {
-            $delimiter = '';
-            $correct = '';
-            if ($correctanswers) {
-                foreach ($correctanswers as $correctanswer) {
-                    $correct .= $delimiter.$correctanswer;
-                    $delimiter = ', ';
-                }
-            }
-            quiz_print_correctanswer($correct);
-        }
-    }
-
     function grade_responses(&$question, &$state, $cmoptions) {
         $answers     = &$question->options->answers;
         $state->raw_grade = 0;

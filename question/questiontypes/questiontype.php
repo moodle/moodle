@@ -444,14 +444,7 @@ class quiz_default_questiontype {
     function print_question(&$question, &$state, $number, $cmoptions, $options) {
         /* The default implementation should work for most question types
         provided the member functions it calls are overridden where required.
-        The question number is printed in the first cell of a table.
-
-        The main content is printed below in the top row of the second column
-        using {@link print_question_formulation_and_controls}.
-        The grading details are printed in the second row in the second column
-        using {@print_question_grading_details}.
-        The {@link print_question_submit_buttons} member is invoked to add a third
-        row containing the submit button(s) when $options->readonly is false. */
+        The layout is determined by the template question.html */
         global $CFG;
 
         // For editing teachers print a link to an editing popup window
@@ -726,6 +719,18 @@ class quiz_default_questiontype {
         // Question types may wish to override this (eg. to ignore trailing
         // white space or to make "7.0" and "7" compare equal).
         return $state->responses == $teststate->responses;
+    }
+
+    /**
+    * Checks whether a response matches a given answer
+    *
+    * This method only applies to questions that use teacher-defined answers
+    *
+    * @return boolean
+    */
+    function test_response(&$question, &$state, $answer) {
+        $response = isset($state->responses['']) ? $state->responses[''] : '';
+        return ($response == $answer->answer);
     }
 
     /**

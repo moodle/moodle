@@ -144,11 +144,8 @@ class quiz_shortanswer_qtype extends quiz_default_questiontype {
 
         $feedback = '';
         if ($options->feedback) {
-            $testedstate = clone($state);
-            $teststate   = clone($state);
             foreach($answers as $answer) {
-                $teststate->responses[''] = trim($answer->answer);
-                if($answer->feedback and $this->compare_responses($question, $testedstate, $teststate)) {
+                if($answer->feedback and $this->test_response($question, $state, $answer)) {
                     $feedback = format_text($answer->feedback, true, false);
                     break;
                 }

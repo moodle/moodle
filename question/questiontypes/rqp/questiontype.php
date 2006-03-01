@@ -327,6 +327,7 @@ class quiz_rqp_qtype extends quiz_default_questiontype {
         // them yet.
         // Remove the render output created during grading (if any)
         unset($state->options->renderoutput);
+        $this->print_question_submit_buttons($question, $state, $cmoptions, $options);
     }
 
     /**

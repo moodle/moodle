@@ -1,0 +1,29 @@
+<div class="qtext">
+  <?php echo $questiontext; ?>
+</div>
+
+<?php if ($image) { ?>
+  <img class="qimage" src="<?php echo $q->imageurl; ?>" alt="" />
+<?php } ?>
+
+<div class="ablock clearfix">
+
+  <table class="answer">
+    <?php $row = 1; foreach ($anss as $answer) { ?>
+      <tr class="<?php echo 'r'.$row = $row ? 0 : 1; ?>">
+        <td class="c0 text">
+          <?php echo $answer->text; ?>
+        </td>
+        <td class="c1 control <?php echo $answer->class ?>">
+          <?php echo $answer->control; ?>
+        </td>
+        <!-- 
+        <td class="c0 feedback">
+          <?php echo $answer->feedback; ?>
+        </td>
+        -->
+      </tr>
+    <?php } ?>
+  </table>
+  <?php $this->print_question_submit_buttons($question, $state, $cmoptions, $options); ?>
+</div>

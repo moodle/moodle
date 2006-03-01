@@ -211,6 +211,7 @@ class quiz_match_qtype extends quiz_default_questiontype {
     }
 
     function print_question_formulation_and_controls(&$question, &$state, $cmoptions, $options) {
+        global $CFG;
         $subquestions   = $state->options->subquestions;
         $correctanswers = $this->get_correct_responses($question, $state);
         $nameprefix     = $question->name_prefix;
@@ -227,22 +228,19 @@ class quiz_match_qtype extends quiz_default_questiontype {
         // Shuffle the answers
         $answers = draw_rand_array($answers, count($answers));
 
-        // Print question text and possible image
-        if (!empty($question->questiontext)) {
-            echo format_text($question->questiontext,
-                             $question->questiontextformat,
-                             NULL, $cmoptions->course);
-        }
-        quiz_print_possible_question_image($question, $cmoptions->course);
+        // Print formulation
+        $questiontext = format_text($question->questiontext,
+                         $question->questiontextformat,
+                         NULL, $cmoptions->course);
+        $image = get_question_image($question, $cmoptions->course);
 
         ///// Print the input controls //////
         echo '<table border="0" cellpadding="10" align="right">';
         foreach ($subquestions as $key => $subquestion) {
+
             /// Subquestion text:
-            echo '<tr><td align="left" valign="top">';
-            echo format_text($subquestion->questiontext,
+            $a->text = format_text($subquestion->questiontext,
                 $question->questiontextformat, NULL, $cmoptions->course);
-            echo '</td>';
 
             /// Drop-down list:
             $menuname = $nameprefix.$subquestion->id;
@@ -252,14 +250,13 @@ class quiz_match_qtype extends quiz_default_questiontype {
                 and $options->correct_responses
                 and isset($correctanswers[$subquestion->id])
                 and ($correctanswers[$subquestion->id] == $response)) {
-                $class = ' class="highlight" ';
+                $a->class = ' class="highlight" ';
             } else {
-                $class = '';
+                $a->class = '';
             }
-            echo "<td align=\"right\" valign=\"top\" $class>";
-            
-            choose_from_menu($answers, $menuname, $response, 'choose', '', 0,
-             false, $options->readonly);
+
+            $a->control = choose_from_menu($answers, $menuname, $response, 'choose', '', 0,
+             true, $options->readonly);
 
             // Neither the editing interface or the database allow to provide
             // fedback for this question type.
@@ -270,9 +267,10 @@ class quiz_match_qtype extends quiz_default_questiontype {
             // && !empty($subquestion->options->answers[$responses[$key]]->feedback)) {
             //    quiz_print_comment($subquestion->options->answers[$responses[$key]]->feedback);
             //}
-            echo '</td></tr>';
+
+            $anss[] = clone($a);
         }
-        echo '</table>';
+        include("$CFG->dirroot/question/questiontypes/match/display.html");
     }
 
     function grade_responses(&$question, &$state, $cmoptions) {

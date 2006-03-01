@@ -91,7 +91,7 @@ class quiz_essay_qtype extends quiz_default_questiontype {
                          $question->questiontextformat,
                          NULL, $cmoptions->course);
                          
-        quiz_print_possible_question_image($question, $cmoptions->course);
+        echo get_question_image($question, $cmoptions->course);
 
         /// Print input controls
         $stranswer = get_string("answer", "quiz");

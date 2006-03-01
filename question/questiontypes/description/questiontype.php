@@ -28,18 +28,22 @@ class quiz_description_qtype extends quiz_default_questiontype {
     }
 
     function print_question(&$question, &$state, $number, $cmoptions, $options) {
-        print_simple_box_start('center', '90%');
-        echo format_text($question->questiontext,
+        global $CFG;
+
+        // For editing teachers print a link to an editing popup window
+        $editlink = '';
+        if (isteacheredit($cmoptions->course)) {
+            $stredit = get_string('edit');
+            $linktext = '<img src="'.$CFG->pixpath.'/t/edit.gif" border="0" alt="'.$stredit.'" />';
+            $editlink = link_to_popup_window('/question/question.php?id='.$question->id, $stredit, $linktext, 450, 550, $stredit, '', true);
+        }
+
+        $questiontext = format_text($question->questiontext,
                          $question->questiontextformat,
                          NULL, $cmoptions->course);
-        quiz_print_possible_question_image($question, $cmoptions->course);
-        if (isteacher($cmoptions->course)) {
-            echo '<font size="1">';
-            link_to_popup_window ('/question/question.php?id=' . $question->id,
-             'editquestion', get_string('edit'), 450, 550, get_string('edit'));
-            echo '</font>';
-        }
-        print_simple_box_end('center', '90%');
+        $image = get_question_image($question, $cmoptions->course);
+
+        include "$CFG->dirroot/question/questiontypes/description/question.html";
     }
 
     function actual_number_of_questions($question) {

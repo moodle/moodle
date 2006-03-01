@@ -1,0 +1,14 @@
+<table id="q<?php echo $question->id; ?>" class="question <?php echo $this->name(); ?>"><tr><td>
+  <div class="info">
+    <span class="edit"><?php echo $editlink; ?></span>
+  </div>
+  <div class="content">
+    <div class="qtext">
+      <?php echo $questiontext; ?>
+    </div>
+    
+    <?php if ($image) { ?>
+      <img class="qimage" src="<?php echo $q->imageurl; ?>" alt="" />
+    <?php } ?>
+  </div>
+</td></tr></table>
