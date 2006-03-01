@@ -12,6 +12,9 @@ class quiz_report extends quiz_default_report {
     /// Define some strings
         $strreallydel  = addslashes(get_string('deleteattemptcheck','quiz'));
         $strnoattempts = get_string('noattempts','quiz');
+        $strnoattemptsonly = get_string('shownoattemptsonly', 'quiz');
+        $strattemptsonly = get_string('attemptsonly','quiz');
+        $strbothattempts = get_string('bothattempts','quiz');
         $strtimeformat = get_string('strftimedatetime');
         $strreviewquestion = get_string('reviewresponse', 'quiz');
 
@@ -250,7 +253,10 @@ class quiz_report extends quiz_default_report {
                 // So join on groups_members and do a left join on attempts where the right side is null (no records in the attempts table)
                 $from  = 'FROM '.$CFG->prefix.'user u JOIN '.$CFG->prefix.'user_students us ON us.userid = u.id JOIN '.$CFG->prefix.'groups_members gm ON u.id = gm.userid '.
                     'LEFT JOIN '.$CFG->prefix.'quiz_attempts qa ON u.id = qa.userid AND qa.quiz = '.$quiz->id;
-                $where = ' WHERE us.course = '.$course->id.' AND gm.groupid = '.$currentgroup.' AND qa.userid IS NULL';
+                $where = ' WHERE us.course = '.$course->id.' AND gm.groupid = '.$currentgroup;
+                if ($noattempts == 1) {
+                    $where .= ' AND qa.userid IS NULL'; // show ONLY no attempts;
+                } 
             } else if (empty($currentgroup) && empty($noattempts)) {
                 // We don't care about group, and we only want to see students WITH attempts.
                 // So just do a striaght inner join on attempts, don't worry about the groups_members table
@@ -260,7 +266,10 @@ class quiz_report extends quiz_default_report {
                 // We don't care about group, and we only want to see students WITHOUT attempts.
                 // So do a left join on attempts where the right side is null (no records in the attempts table), and don't worry about groups_members.
                 $from  = 'FROM '.$CFG->prefix.'user u JOIN '.$CFG->prefix.'user_students us ON us.userid = u.id LEFT JOIN '.$CFG->prefix.'quiz_attempts qa ON u.id = qa.userid AND qa.quiz = '.$quiz->id;
-                $where = ' WHERE us.course = '.$course->id.' AND qa.userid IS NULL';
+                $where = ' WHERE us.course = '.$course->id;
+                if ($noattempts == 1) {
+                    $where .= ' AND qa.userid IS NULL';
+                }
             }
             $countsql = 'SELECT COUNT(DISTINCT('.$db->Concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).')) '.$from.$where;
         } else {
@@ -469,7 +478,16 @@ class quiz_report extends quiz_default_report {
                 echo '<td><input type="text" id="pagesize" name="pagesize" size="1" value="'.$pagesize.'" /></td>';
                 echo '</tr>';
 	            echo '<tr align="left">';
-                echo '<td colspan="2"><input type="checkbox" id="checknoattempts" name="noattempts" '.($noattempts?'checked="checked" ':'').'value="1" '.(($course->id == SITEID) ? ' disabled="disabled"' : '') .' /> <label for="checknoattempts">'.get_string('shownoattemptsonly', 'quiz').'</label> ';
+                echo '<td colspan="2">';
+                $options = array(0 => $strattemptsonly);
+                if ($course->id != SITEID) {
+                    $options[1] = $strnoattemptsonly;
+                    $options[2] = $strbothattempts;
+                }
+                choose_from_menu($options,'noattempts',$noattempts,'');
+                /* 
+                <input type="checkbox" id="checknoattempts" name="noattempts" '.($noattempts?'checked="checked" ':'').'value="1" '.(($course->id == SITEID) ? ' disabled="disabled"' : '') .' /> <label for="checknoattempts">'.get_string('shownoattemptsonly', 'quiz').'</label> ';
+                */
 	            echo '</td></tr>';
 	            echo '<tr align="left">';
                 echo '<td colspan="2"><input type="checkbox" id="checkdetailedmarks" name="detailedmarks" '.($detailedmarks?'checked="checked" ':'').'value="1" /> <label for="checkdetailedmarks">'.get_string('showdetailedmarks', 'quiz').'</label> ';
