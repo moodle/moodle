@@ -137,6 +137,12 @@ $CFG->httpswwwroot = $CFG->wwwroot;
         echo '<p>The site administrator should also check that the database details have been correctly specified in config.php</p>';
         echo '</td></tr></table>';
         echo '</body></html>';
+
+        if (!empty($CFG->emailconnectionerrorsto)) {
+            mail($CFG->emailconnectionerrorsto, 
+                 'WARNING: Database connection error: '.$CFG->wwwroot, 
+                 'Connection error: '.$CFG->wwwroot);
+        }
         die;
     }
 
