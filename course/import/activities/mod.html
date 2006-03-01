@@ -14,7 +14,7 @@
   	 
     if ($teachers = get_records_select('user_teachers', "userid = $USER->id AND editall = 1",'','id,course')) {
         foreach ($teachers as $teacher) {
-            if ($teacher->course != $course->id && $teacher->course != $site->id){
+            if ($teacher->course != $course->id && $teacher->course != SITEID){
                 $tcourseids .= $teacher->course.',';
             }
         }
