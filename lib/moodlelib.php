@@ -3061,16 +3061,14 @@ function remove_admin($userid) {
  * Clear a course out completely, deleting all content
  * but don't delete the course itself
  *
- * @uses $USER
- * @uses $SESSION
  * @uses $CFG
- * @param int $courseid The id of the course that is being viewed
- * @param bool $showfeedback Set this to false to suppress notifications from being printed as the functions performs its steps.
+ * @param int $courseid The id of the course that is being deleted
+ * @param bool $showfeedback Whether to display notifications of each action the function performs.
  * @return bool
  */
 function remove_course_contents($courseid, $showfeedback=true) {
 
-    global $CFG, $USER, $SESSION;
+    global $CFG;
 
     $result = true;
 
@@ -3266,28 +3264,27 @@ function remove_course_contents($courseid, $showfeedback=true) {
 }
 
 /**
- * This function will empty a course of USER data as much as
-/// possible. It will retain the activities and the structure
-/// of the course.
+ * This function will empty a course of user data as much as
+ * possible. It will retain the activities and the structure
+ * of the course.
  *
- * @uses $USER
- * @uses $SESSION
  * @uses $CFG
- * @param int $courseid The id of the course that is being viewed
- * @param bool $showfeedback Set this to false to suppress notifications from being printed as the functions performs its steps.
- * @param bool $removestudents ?
- * @param bool $removeteachers ?
- * @param bool $removegroups ?
- * @param bool $removeevents ?
- * @param bool $removelogs ?
- * @return bool
- * @todo Finish documenting this function
+ * @param int $courseid The id of the course that is being emptied of user data.
+ * @param bool $showfeedback Whether to display notifications of each action the function performs.
+ * @param bool $removestudents Whether to remove matching records from the user_students and groups_members table.
+ * @param bool $removeteachers Whether to remove matching records from the user_teachers table.
+ * @param bool $removegroups Whether to remove matching records from the groups table.
+ * @param bool $removeevents Whether to remove matching records from the event table.
+ * @param bool $removelogs Whether to remove matching records from the log table.
+ * @return bool true if all the removals succeeded. talse if there were any failures. If this
+ *             method returns false, some of the removals will probably have succeeded, and others
+ *             failed, but you have no way of knowing which.
  */
 function remove_course_userdata($courseid, $showfeedback=true,
                                 $removestudents=true, $removeteachers=false, $removegroups=true,
                                 $removeevents=true, $removelogs=false) {
 
-    global $CFG, $USER, $SESSION;
+    global $CFG;
 
     $result = true;
 
