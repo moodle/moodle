@@ -9,7 +9,7 @@ function migrate2utf8_question_name($recordid){
     }
     
     $SQL = "SELECT qc.course
-           FROM {$CFG->prefix}quiz_categories qc,
+           FROM {$CFG->prefix}question_categories qc,
                 {$CFG->prefix}question qq
            WHERE qc.id = qq.category
                  AND qq.id = $recordid";
@@ -58,7 +58,7 @@ function migrate2utf8_question_questiontext($recordid){
     }
 
     $SQL = "SELECT qc.course
-           FROM {$CFG->prefix}quiz_categories qc,
+           FROM {$CFG->prefix}question_categories qc,
                 {$CFG->prefix}question qq
            WHERE qc.id = qq.category
                  AND qq.id = $recordid";
@@ -109,7 +109,7 @@ function migrate2utf8_quiz_numerical_units_unit($recordid){
     }
 
     $SQL = "SELECT qc.course
-           FROM {$CFG->prefix}quiz_categories qc,
+           FROM {$CFG->prefix}question_categories qc,
                 {$CFG->prefix}question qq,
                 {$CFG->prefix}quiz_numerical_units qnu
            WHERE qc.id = qq.category
@@ -161,7 +161,7 @@ function migrate2utf8_quiz_match_sub_questiontext($recordid){
     }
 
     $SQL = "SELECT qc.course
-           FROM {$CFG->prefix}quiz_categories qc,
+           FROM {$CFG->prefix}question_categories qc,
                 {$CFG->prefix}question qq,
                 {$CFG->prefix}quiz_match_sub qms
            WHERE qc.id = qq.category
@@ -213,7 +213,7 @@ function migrate2utf8_quiz_match_sub_answertext($recordid){
     }
 
     $SQL = "SELECT qc.course
-           FROM {$CFG->prefix}quiz_categories qc,
+           FROM {$CFG->prefix}question_categories qc,
                 {$CFG->prefix}question qq,
                 {$CFG->prefix}quiz_match_sub qms
            WHERE qc.id = qq.category
@@ -255,7 +255,7 @@ function migrate2utf8_quiz_match_sub_answertext($recordid){
     return $result;
 }
 
-function migrate2utf8_quiz_answers_answer($recordid){
+function migrate2utf8_question_answers_answer($recordid){
     global $CFG, $globallang;
 
 /// Some trivial checks
@@ -265,9 +265,9 @@ function migrate2utf8_quiz_answers_answer($recordid){
     }
 
     $SQL = "SELECT qc.course
-           FROM {$CFG->prefix}quiz_categories qc,
+           FROM {$CFG->prefix}question_categories qc,
                 {$CFG->prefix}question qq,
-                {$CFG->prefix}quiz_answers qa
+                {$CFG->prefix}question_answers qa
            WHERE qc.id = qq.category
                  AND qq.id = qa.question
                  AND qa.id = $recordid";
@@ -277,7 +277,7 @@ function migrate2utf8_quiz_answers_answer($recordid){
         return false;
     }
 
-    if (!$quizanswer= get_record('quiz_answers','id',$recordid)) {
+    if (!$quizanswer= get_record('question_answers','id',$recordid)) {
         log_the_problem_somewhere();
         return false;
     }
@@ -301,13 +301,13 @@ function migrate2utf8_quiz_answers_answer($recordid){
         $newquizanswer = new object;
         $newquizanswer->id = $recordid;
         $newquizanswer->answer = $result;
-        update_record('quiz_answers',$newquizanswer);
+        update_record('question_answers',$newquizanswer);
     }
 /// And finally, just return the converted field
     return $result;
 }
 
-function migrate2utf8_quiz_answers_feedback($recordid){
+function migrate2utf8_question_answers_feedback($recordid){
     global $CFG, $globallang;
 
 /// Some trivial checks
@@ -317,9 +317,9 @@ function migrate2utf8_quiz_answers_feedback($recordid){
     }
 
     $SQL = "SELECT qc.course
-           FROM {$CFG->prefix}quiz_categories qc,
+           FROM {$CFG->prefix}question_categories qc,
                 {$CFG->prefix}question qq,
-                {$CFG->prefix}quiz_answers qa
+                {$CFG->prefix}question_answers qa
            WHERE qc.id = qq.category
                  AND qq.id = qa.question
                  AND qa.id = $recordid";
@@ -329,7 +329,7 @@ function migrate2utf8_quiz_answers_feedback($recordid){
         return false;
     }
 
-    if (!$quizanswer= get_record('quiz_answers','id',$recordid)) {
+    if (!$quizanswer= get_record('question_answers','id',$recordid)) {
         log_the_problem_somewhere();
         return false;
     }
@@ -353,7 +353,7 @@ function migrate2utf8_quiz_answers_feedback($recordid){
         $newquizanswer = new object;
         $newquizanswer->id = $recordid;
         $newquizanswer->feedback = $result;
-        update_record('quiz_answers',$newquizanswer);
+        update_record('question_answers',$newquizanswer);
     }
 /// And finally, just return the converted field
     return $result;
@@ -373,7 +373,7 @@ function migrate2utf8_quiz_dataset_definitions_name($recordid){
     }
 
     $SQL = "SELECT qc.course
-           FROM {$CFG->prefix}quiz_categories qc,
+           FROM {$CFG->prefix}question_categories qc,
                 {$CFG->prefix}quiz_dataset_definitions qdd
            WHERE qc.id = qdd.category
                  AND qdd.id = $recordid";
@@ -413,7 +413,7 @@ function migrate2utf8_quiz_dataset_definitions_name($recordid){
     return $result;
 }
 
-function migrate2utf8_quiz_categories_name($recordid){
+function migrate2utf8_question_categories_name($recordid){
     global $CFG, $globallang;
 
 /// Some trivial checks
@@ -423,7 +423,7 @@ function migrate2utf8_quiz_categories_name($recordid){
     }
 
     $SQL = "SELECT qc.course
-           FROM {$CFG->prefix}quiz_categories qc
+           FROM {$CFG->prefix}question_categories qc
            WHERE qc.id = $recordid";
 
     if (!$quiz = get_record_sql($SQL)) {
@@ -431,7 +431,7 @@ function migrate2utf8_quiz_categories_name($recordid){
         return false;
     }
 
-    if (!$quizcategory = get_record('quiz_categories','id',$recordid)) {
+    if (!$quizcategory = get_record('question_categories','id',$recordid)) {
         log_the_problem_somewhere();
         return false;
     }
@@ -455,13 +455,13 @@ function migrate2utf8_quiz_categories_name($recordid){
         $newquizcategory = new object;
         $newquizcategory->id = $recordid;
         $newquizcategory->name = $result;
-        update_record('quiz_categories',$newquizcategory);
+        update_record('question_categories',$newquizcategory);
     }
 /// And finally, just return the converted field
     return $result;
 }
 
-function migrate2utf8_quiz_categories_info($recordid){
+function migrate2utf8_question_categories_info($recordid){
     global $CFG, $globallang;
 
 /// Some trivial checks
@@ -471,7 +471,7 @@ function migrate2utf8_quiz_categories_info($recordid){
     }
 
     $SQL = "SELECT qc.course
-           FROM {$CFG->prefix}quiz_categories qc
+           FROM {$CFG->prefix}question_categories qc
            WHERE qc.id = $recordid";
 
     if (!$quiz = get_record_sql($SQL)) {
@@ -479,7 +479,7 @@ function migrate2utf8_quiz_categories_info($recordid){
         return false;
     }
 
-    if (!$quizcategory = get_record('quiz_categories','id',$recordid)) {
+    if (!$quizcategory = get_record('question_categories','id',$recordid)) {
         log_the_problem_somewhere();
         return false;
     }
@@ -503,7 +503,7 @@ function migrate2utf8_quiz_categories_info($recordid){
         $newquizcategory = new object;
         $newquizcategory->id = $recordid;
         $newquizcategory->info = $result;
-        update_record('quiz_categories',$newquizcategory);
+        update_record('question_categories',$newquizcategory);
     }
 /// And finally, just return the converted field
 

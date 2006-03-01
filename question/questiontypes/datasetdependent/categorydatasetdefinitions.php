@@ -9,7 +9,7 @@
     $category = required_param('category', PARAM_ALPHANUM);
     $question = optional_param('question', '', PARAM_INT);
 
-    if (! $category = get_record("quiz_categories", "id", $category)) {
+    if (! $category = get_record("question_categories", "id", $category)) {
         error("This wasn't a valid category!");
     }
 

@@ -30,7 +30,7 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
         global $CFG;
         if (!$question->options->answers = get_records_sql(
                                 "SELECT a.*, n.tolerance " .
-                                "FROM {$CFG->prefix}quiz_answers a, " .
+                                "FROM {$CFG->prefix}question_answers a, " .
                                 "     {$CFG->prefix}quiz_numerical n " .
                                 "WHERE a.question = $question->id " .
                                 "AND   a.id = n.answer;")) {
@@ -94,7 +94,7 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
         // interface, but the GIFT format supports it. The multianswer qtype,
         // for example can make use of this feature.
         // Get old versions of the objects
-        if (!$oldanswers = get_records("quiz_answers", "question", $question->id)) {
+        if (!$oldanswers = get_records("question_answers", "question", $question->id)) {
             $oldanswers = array();
         }
 
@@ -120,12 +120,12 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
 
                 if ($oldanswer = array_shift($oldanswers)) {  // Existing answer, so reuse it
                     $answer->id = $oldanswer->id;
-                    if (! update_record("quiz_answers", $answer)) {
+                    if (! update_record("question_answers", $answer)) {
                         $result->error = "Could not update quiz answer! (id=$answer->id)";
                         return $result;
                     }
                 } else {    // This is a completely new answer
-                    if (! $answer->id = insert_record("quiz_answers", $answer)) {
+                    if (! $answer->id = insert_record("question_answers", $answer)) {
                         $result->error = "Could not insert quiz answer!";
                         return $result;
                     }
@@ -155,7 +155,7 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
                 // delete old answer records
                 if (!empty($oldanswers)) {
                     foreach($oldanswers as $oa) {
-                        delete_records('quiz_answers', 'id', $oa->id);
+                        delete_records('question_answers', 'id', $oa->id);
                     }
                 }
 

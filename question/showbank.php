@@ -39,7 +39,7 @@
 /// Now, check for commands on this page and modify variables as necessary
 
     if (isset($_REQUEST['move']) and confirm_sesskey()) { /// Move selected questions to new category
-        if (!$tocategory = get_record('quiz_categories', 'id', $_REQUEST['category'])) {
+        if (!$tocategory = get_record('question_categories', 'id', $_REQUEST['category'])) {
             error('Invalid category');
         }
         if (!isteacheredit($tocategory->course)) {
@@ -130,7 +130,7 @@
 
 /// all commands have been dealt with, now print the page
 
-    if (empty($SESSION->questioncat) or !record_exists('quiz_categories', 'id', $SESSION->questioncat)) {
+    if (empty($SESSION->questioncat) or !record_exists('question_categories', 'id', $SESSION->questioncat)) {
         $category = get_default_question_category($course->id);
         $SESSION->questioncat = $category->id;
     }

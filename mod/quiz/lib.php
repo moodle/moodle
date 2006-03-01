@@ -287,7 +287,7 @@ function quiz_delete_course($course, $feedback=true) {
     $strcatmoved   = get_string('usedcategorymoved', 'quiz');
     $strcatdeleted = get_string('unusedcategorydeleted', 'quiz');
 
-    if ($categories = get_records('quiz_categories', 'course', $course->id, 'parent', 'id, parent, name, course')) {
+    if ($categories = get_records('question_categories', 'course', $course->id, 'parent', 'id, parent, name, course')) {
         require_once("locallib.php");
         //Sort categories following their tree (parent-child) relationships
         $categories = sort_categories_by_tree($categories);
@@ -295,7 +295,7 @@ function quiz_delete_course($course, $feedback=true) {
         foreach ($categories as $cat) {
 
             //Get the full record
-            $category = get_record('quiz_categories', 'id', $cat->id);
+            $category = get_record('question_categories', 'id', $cat->id);
 
             //Check if the category is being used anywhere
             if($usedbyquiz = quizzes_category_used($category->id,true)) {
@@ -310,7 +310,7 @@ function quiz_delete_course($course, $feedback=true) {
                     $concat->info = $concat->name;
                     $concat->publish = 1;
                     $concat->stamp = make_unique_id_code();
-                    $concatid = insert_record('quiz_categories', $concat);
+                    $concatid = insert_record('question_categories', $concat);
 
                     //Fill feedback
                     $feedbackdata[] = array($concat->name, $strcatcontainer);
@@ -324,7 +324,7 @@ function quiz_delete_course($course, $feedback=true) {
                 //If it's being used, its publish field should be 1
                 $category->publish = 1;
                 //Let's update it
-                update_record('quiz_categories', $category);
+                update_record('question_categories', $category);
 
                 //Save this parent change for future use
                 $parentchanged[$category->id] = $category->parent;
@@ -343,7 +343,7 @@ function quiz_delete_course($course, $feedback=true) {
                     delete_records("question", "category", $category->id);
                 }
                 //delete the category
-                delete_records('quiz_categories', 'id', $category->id);
+                delete_records('question_categories', 'id', $category->id);
 
                 //Save this parent change for future use
                 if (!empty($category->parent)) {
@@ -353,7 +353,7 @@ function quiz_delete_course($course, $feedback=true) {
                 }
 
                 //Update all its child categories to re-parent them to grandparent.
-                set_field ('quiz_categories', 'parent', $parentchanged[$category->id], 'parent', $category->id);
+                set_field ('question_categories', 'parent', $parentchanged[$category->id], 'parent', $category->id);
 
                 //Fill feedback
                 $feedbackdata[] = array($category->name, $strcatdeleted);

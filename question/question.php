@@ -44,7 +44,7 @@
         if (!empty($category)) {
             $question->category = $category;
         }
-        if (! $category = get_record("quiz_categories", "id", $question->category)) {
+        if (! $category = get_record("question_categories", "id", $question->category)) {
             error("This question doesn't belong to a valid category!");
         }
         if (! $course = get_record("course", "id", $category->course)) {
@@ -54,7 +54,7 @@
         $qtype = $question->qtype;
 
     } else if ($category) { // only for creating new questions
-        if (! $category = get_record("quiz_categories", "id", $category)) {
+        if (! $category = get_record("question_categories", "id", $category)) {
             error("This wasn't a valid category!");
         }
         if (! $course = get_record("course", "id", $category->course)) {
@@ -262,7 +262,7 @@
                         }
 
                         // Now do anything question-type specific that is required to replace the question
-                        // For example questions that use the quiz_answers table to hold part of their question will
+                        // For example questions that use the question_answers table to hold part of their question will
                         // have to recode the answer ids in the states
                         $QTYPES[$question->qtype]->change_states_question($oldquestionid, $question, $attempts);
                     }
@@ -300,7 +300,7 @@
     arsort($gradeoptions, SORT_NUMERIC);
     arsort($gradeoptionsfull, SORT_NUMERIC);
 
-    if (!$categories = quiz_get_category_menu($course->id, false)) {
+    if (!$categories = question_category_menu($course->id, false)) {
         error("No categories!");
     }
 

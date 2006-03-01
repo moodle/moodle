@@ -154,7 +154,7 @@ function quiz_print_question_list($quiz, $allowdelete=true, $showbreaks=true, $r
 
     if (!$questions = get_records_sql("SELECT q.*,c.course
                               FROM {$CFG->prefix}question q,
-                                   {$CFG->prefix}quiz_categories c
+                                   {$CFG->prefix}question_categories c
                              WHERE q.id in ($quiz->questions)
                                AND q.category = c.id")) {
         echo "<p align=\"center\">";

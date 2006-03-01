@@ -136,16 +136,16 @@
         </FIELD>
       </FIELDS>
     </TABLE>
-    <TABLE name="quiz_answers">
+    <TABLE name="question_answers">
       <FIELDS>
         <FIELD name="answer" method="PHP_FUNCTION" type="text" length="0">
           <PHP_FUNCTION>
-            migrate2utf8_quiz_answers_answer(RECORDID)
+            migrate2utf8_question_answers_answer(RECORDID)
           </PHP_FUNCTION>
         </FIELD>
         <FIELD name="feedback" method="PHP_FUNCTION" type="text" length="0">
           <PHP_FUNCTION>
-            migrate2utf8_quiz_answers_feedback(RECORDID)
+            migrate2utf8_question_answers_feedback(RECORDID)
           </PHP_FUNCTION>
         </FIELD>
       </FIELDS>
@@ -186,16 +186,16 @@
         </FIELD>
       </FIELDS>
     </TABLE>
-    <TABLE name="quiz_categories">
+    <TABLE name="question_categories">
       <FIELDS>
         <FIELD name="name" method="PHP_FUNCTION" type="varchar" length="255">
           <PHP_FUNCTION>
-            migrate2utf8_quiz_categories_name(RECORDID)
+            migrate2utf8_question_categories_name(RECORDID)
           </PHP_FUNCTION>
         </FIELD>
         <FIELD name="info" method="PHP_FUNCTION" type="text" length="0">
           <PHP_FUNCTION>
-            migrate2utf8_quiz_categories_info(RECORDID)
+            migrate2utf8_question_categories_info(RECORDID)
           </PHP_FUNCTION>
         </FIELD>
         <FIELD name="stamp" method="NO_CONV" type="varchar" length="255" />

@@ -113,7 +113,7 @@ class quiz_format_coursetestmanager extends quiz_default_format {
                 // don't have to do this on linux, since it's alreay been done in the test above
         if (PHP_OS == "WINNT") { $question_categories = $this->getquestioncategories($filename); }
         // print the intermediary form
-            if (!$categories = quiz_get_category_menu($course->id, true)) {
+            if (!$categories = question_category_menu($course->id, true)) {
                 error("No categories!");
             }
             print_heading_with_help($strimportquestions, "import", "quiz");

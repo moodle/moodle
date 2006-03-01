@@ -14,7 +14,7 @@
     //To see, put your terminal to 160cc
 
     //
-    //                           quiz                                                      quiz_categories
+    //                           quiz                                                      question_categories
     //                        (CL,pk->id)                                                   (CL,pk->id)
     //                            |                                                              |
     //           -------------------------------------------------------------------             |
@@ -58,7 +58,7 @@
     //                                                   .                                                                      |
     //                                                   .                                                                      |
     //                                                   .                                                                      |    quiz_numerical_units
-    //                                                quiz_answers                                                              |--(CL,pk->id,fk->question)
+    //                                                question_answers                                                              |--(CL,pk->id,fk->question)
     //                                         (CL,pk->id,fk->question)----------------------------------------------------------
     //
     // Meaning: pk->primary key field of the table
@@ -74,7 +74,7 @@
 // Comments
     //This module is special, because we make the restore in two steps:
     // 1.-We restore every category and their questions (complete structure). It includes this tables:
-    //     - quiz_categories
+    //     - question_categories
     //     - question
     //     - quiz_truefalse
     //     - quiz_shortanswer
@@ -85,7 +85,7 @@
     //     - quiz_match
     //     - quiz_match_sub
     //     - quiz_calculated
-    //     - quiz_answers
+    //     - question_answers
     //     - quiz_numerical_units
     //     - quiz_question_datasets
     //     - quiz_dataset_definitions
@@ -117,7 +117,7 @@
         }
 
         //Get record from backup_ids
-        $data = backup_getid($restore->backup_unique_code,"quiz_categories",$category->id);
+        $data = backup_getid($restore->backup_unique_code,"question_categories",$category->id);
 
         if ($data) {
             //Now get completed xmlized object
@@ -126,7 +126,7 @@
             //print_object ($GLOBALS['traverse_array']);                                                  //Debug
             //$GLOBALS['traverse_array']="";                                                              //Debug
 
-            //Now, build the QUIZ_CATEGORIES record structure
+            //Now, build the question_categories record structure
             $quiz_cat->course = $restore->course_id;
             $quiz_cat->name = backup_todb($info['QUESTION_CATEGORY']['#']['NAME']['0']['#']);
             $quiz_cat->info = backup_todb($info['QUESTION_CATEGORY']['#']['INFO']['0']['#']);
@@ -135,13 +135,13 @@
             $quiz_cat->parent = backup_todb($info['QUESTION_CATEGORY']['#']['PARENT']['0']['#']);
             $quiz_cat->sortorder = backup_todb($info['QUESTION_CATEGORY']['#']['SORTORDER']['0']['#']);
 
-            if ($catfound = restore_get_best_quiz_category($quiz_cat, $restore->course)) {
+            if ($catfound = restore_get_best_question_category($quiz_cat, $restore->course)) {
                 $newid = $catfound;
             } else {
                 if (!$quiz_cat->stamp) {
                     $quiz_cat->stamp = make_unique_id_code();
                 }
-                $newid = insert_record ("quiz_categories",$quiz_cat);
+                $newid = insert_record ("question_categories",$quiz_cat);
             }
 
             //Do some output
@@ -161,7 +161,7 @@
             //Here category has been created or selected, so save results in backup_ids and start with questions
             if ($newid and $status) {
                 //We have the newid, update backup_ids
-                backup_putid($restore->backup_unique_code,"quiz_categories",
+                backup_putid($restore->backup_unique_code,"question_categories",
                              $category->id, $newid);
                 //Now restore question
                 $status = quiz_restore_questions ($category->id, $newid,$info,$restore);
@@ -260,7 +260,7 @@
 
             //If it's a new question in the DB, restore it
             if ($restored_questions[$i]->is_new) {
-                //Now, restore every quiz_answers in this question
+                //Now, restore every question_answers in this question
                 $status = quiz_restore_answers($oldid,$newid,$que_info,$restore);
                 //Now, depending of the type of questions, invoke different functions
                 if ($question->qtype == "1") {
@@ -289,7 +289,7 @@
                     $status = quiz_restore_essay($oldid,$newid,$que_info,$restore);
                 }
             } else {
-                //We are NOT creating the question, but we need to know every quiz_answers
+                //We are NOT creating the question, but we need to know every question_answers
                 //map between the XML file and the database to be able to restore the states
                 //in each attempt.
                 $status = quiz_restore_map_answers($oldid,$newid,$que_info,$restore);
@@ -353,14 +353,14 @@
                 //We'll need this later!!
                 $oldid = backup_todb($ans_info['#']['ID']['0']['#']);
 
-                //Now, build the QUIZ_ANSWERS record structure
+                //Now, build the question_answers record structure
                 $answer->question = $new_question_id;
                 $answer->answer = backup_todb($ans_info['#']['ANSWER_TEXT']['0']['#']);
                 $answer->fraction = backup_todb($ans_info['#']['FRACTION']['0']['#']);
                 $answer->feedback = backup_todb($ans_info['#']['FEEDBACK']['0']['#']);
 
-                //The structure is equal to the db, so insert the quiz_answers
-                $newid = insert_record ("quiz_answers",$answer);
+                //The structure is equal to the db, so insert the question_answers
+                $newid = insert_record ("question_answers",$answer);
 
                 //Do some output
                 if (($i+1) % 50 == 0) {
@@ -375,7 +375,7 @@
 
                 if ($newid) {
                     //We have the newid, update backup_ids
-                    backup_putid($restore->backup_unique_code,"quiz_answers",$oldid,
+                    backup_putid($restore->backup_unique_code,"question_answers",$oldid,
                                  $newid);
                 } else {
                     $status = false;
@@ -409,7 +409,7 @@
             //We'll need this later!!
             $oldid = backup_todb($ans_info['#']['ID']['0']['#']);
 
-            //Now, build the QUIZ_ANSWERS record structure
+            //Now, build the question_answers record structure
             $answer->question = $new_question_id;
             $answer->answer = backup_todb($ans_info['#']['ANSWER_TEXT']['0']['#']);
             $answer->fraction = backup_todb($ans_info['#']['FRACTION']['0']['#']);
@@ -421,7 +421,7 @@
             //mappings in backup_ids to use them later where restoring states (user level).
 
             //Get the answer from DB (by question and answer)
-            $db_answer = get_record ("quiz_answers","question",$new_question_id,
+            $db_answer = get_record ("question_answers","question",$new_question_id,
                                                     "answer",$answer->answer);
 
             //Do some output
@@ -437,7 +437,7 @@
 
             if ($db_answer) {
                 //We have the database answer, update backup_ids
-                backup_putid($restore->backup_unique_code,"quiz_answers",$oldid,
+                backup_putid($restore->backup_unique_code,"question_answers",$oldid,
                              $db_answer->id);
             } else {
                 $status = false;
@@ -475,7 +475,7 @@
             $tok = strtok($shortanswer->answers,",");
             while ($tok) {
                 //Get the answer from backup_ids
-                $answer = backup_getid($restore->backup_unique_code,"quiz_answers",$tok);
+                $answer = backup_getid($restore->backup_unique_code,"question_answers",$tok);
                 if ($answer) {
                     if ($in_first) {
                         $answers_field .= $answer->new_id;
@@ -534,13 +534,13 @@
             $truefalse->falseanswer = backup_todb($tru_info['#']['FALSEANSWER']['0']['#']);
 
             ////We have to recode the trueanswer field
-            $answer = backup_getid($restore->backup_unique_code,"quiz_answers",$truefalse->trueanswer);
+            $answer = backup_getid($restore->backup_unique_code,"question_answers",$truefalse->trueanswer);
             if ($answer) {
                 $truefalse->trueanswer = $answer->new_id;
             }
 
             ////We have to recode the falseanswer field
-            $answer = backup_getid($restore->backup_unique_code,"quiz_answers",$truefalse->falseanswer);
+            $answer = backup_getid($restore->backup_unique_code,"question_answers",$truefalse->falseanswer);
             if ($answer) {
                 $truefalse->falseanswer = $answer->new_id;
             }
@@ -597,7 +597,7 @@
             $tok = strtok($multichoice->answers,",");
             while ($tok) {
                 //Get the answer from backup_ids
-                $answer = backup_getid($restore->backup_unique_code,"quiz_answers",$tok);
+                $answer = backup_getid($restore->backup_unique_code,"question_answers",$tok);
                 if ($answer) {
                     if ($in_first) {
                         $answers_field .= $answer->new_id;
@@ -889,7 +889,7 @@
             $numerical->tolerance = backup_todb($num_info['#']['TOLERANCE']['0']['#']);
 
             ////We have to recode the answer field
-            $answer = backup_getid($restore->backup_unique_code,"quiz_answers",$numerical->answer);
+            $answer = backup_getid($restore->backup_unique_code,"question_answers",$numerical->answer);
             if ($answer) {
                 $numerical->answer = $answer->new_id;
             }
@@ -944,7 +944,7 @@
             $calculated->correctanswerformat = backup_todb($cal_info['#']['CORRECTANSWERFORMAT']['0']['#']);
 
             ////We have to recode the answer field
-            $answer = backup_getid($restore->backup_unique_code,"quiz_answers",$calculated->answer);
+            $answer = backup_getid($restore->backup_unique_code,"question_answers",$calculated->answer);
             if ($answer) {
                 $calculated->answer = $answer->new_id;
             }
@@ -1128,7 +1128,7 @@
             $essay->answer = backup_todb($essay_info['#']['ANSWER']['0']['#']);
 
             ////We have to recode the answer field
-            $answer = backup_getid($restore->backup_unique_code,"quiz_answers",$essay->answer);
+            $answer = backup_getid($restore->backup_unique_code,"question_answers",$essay->answer);
             if ($answer) {
                 $essay->answer = $answer->new_id;
             }
@@ -1210,7 +1210,7 @@
 
             //We have to recode the category field (only if the category != 0)
             if ($dataset_definition->category != 0) {
-                $category = backup_getid($restore->backup_unique_code,"quiz_categories",$dataset_definition->category);
+                $category = backup_getid($restore->backup_unique_code,"question_categories",$dataset_definition->category);
                 if ($category) {
                     $dataset_definition->category = $category->new_id;
                 }
@@ -1663,7 +1663,7 @@
                         break;
                     case 2:    //TRUEFALSE QTYPE
                         //The answer is one answer id. We must recode it
-                        $answer = backup_getid($restore->backup_unique_code,"quiz_answers",$state->answer);
+                        $answer = backup_getid($restore->backup_unique_code,"question_answers",$state->answer);
                         if ($answer) {
                             $state->answer = $answer->new_id;
                         }
@@ -1675,7 +1675,7 @@
                         $tok = strtok($state->answer,",");
                         while ($tok) {
                             //Get the answer from backup_ids
-                            $answer = backup_getid($restore->backup_unique_code,"quiz_answers",$tok);
+                            $answer = backup_getid($restore->backup_unique_code,"question_answers",$tok);
                             if ($answer) {
                                 if ($in_first) {
                                     $answer_field .= $answer->new_id;
@@ -1740,7 +1740,7 @@
                             //Get the question from backup_ids
                             $que = backup_getid($restore->backup_unique_code,"question",$question_id);
                             //Get the answer from backup_ids
-                            $ans = backup_getid($restore->backup_unique_code,"quiz_answers",$answer_id);
+                            $ans = backup_getid($restore->backup_unique_code,"question_answers",$answer_id);
                             if ($que) {
                                 //It the question hasn't response, it must be 0
                                 if (!$ans and $answer_id == 0) {
@@ -1787,7 +1787,7 @@
                                 } else if ($mul_db->answertype == "3") {
                                     //Multichoice
                                     //The answer is an answer_id, look for it in backup_ids
-                                    $ans = backup_getid($restore->backup_unique_code,"quiz_answers",$answer);
+                                    $ans = backup_getid($restore->backup_unique_code,"question_answers",$answer);
                                     $answer = $ans->new_id;
                                 } else if ($mul_db->answertype == "8") {
                                     //Numeric

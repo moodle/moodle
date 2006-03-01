@@ -28,7 +28,7 @@
         }
     }
 
-    if (! $category = get_record("quiz_categories", "id", $categoryid)) {
+    if (! $category = get_record("question_categories", "id", $categoryid)) {
         $category = get_default_question_category($courseid);
     }
 
@@ -135,7 +135,7 @@
     }
 
     /// Get all the existing categories now
-    if (!$categories = get_records_select("quiz_categories", "course = '{$course->id}' OR publish = '1'", "parent, sortorder, name ASC")) {
+    if (!$categories = get_records_select("question_categories", "course = '{$course->id}' OR publish = '1'", "parent, sortorder, name ASC")) {
         error("Could not find any question categories!");
     }
     $categories = add_indented_names($categories);
@@ -159,7 +159,7 @@
     print_string("category", "quiz");
     echo ":</td><td>";
     if (!$showcatmenu) { // category already specified
-        echo quiz_get_category_coursename($category);
+        echo question_category_coursename($category);
         echo " <input type=\"hidden\" name=\"category\" value=\"$category->id\" />";
     } else { // no category specified, let user choose
         choose_from_menu($catmenu, "category", $category->id, "");

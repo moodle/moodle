@@ -1,6 +1,6 @@
 <? // $Id:
 /**
-* Class quiz_category_object
+* Class question_category_object
 *
 * Used for handling changes to the quiz categories
 *
@@ -13,7 +13,7 @@
 // number of categories to display on page
 define( "PAGE_LENGTH",25 );
 
-class quiz_category_object {
+class question_category_object {
 
     var $str;
     var $pixpath;
@@ -33,7 +33,7 @@ class quiz_category_object {
 * Gets necessary strings and sets relevant path information
 *
 */
-    function quiz_category_object() {
+    function question_category_object() {
         global $CFG;
 
         $this->tab = str_repeat('&nbsp;', $this->tabsize);
@@ -108,7 +108,7 @@ class quiz_category_object {
             error("Error: Could not find or make a category!");
         }
 
-        $this->categories = $this->get_quiz_categories(null, "parent, sortorder, name ASC");
+        $this->categories = $this->get_question_categories(null, "parent, sortorder, name ASC");
 
         $this->categories = $this->arrange_categories($this->categories);
 
@@ -374,7 +374,7 @@ class quiz_category_object {
         $this->initialize();
 
         /// Interface for editing existing categories
-        if ($category = get_record("quiz_categories", "id", $categoryid)) {
+        if ($category = get_record("question_categories", "id", $categoryid)) {
             echo '<h2 align="center">';
             echo $this->str->edit;
             helpbutton("categories_edit", $this->str->editcategory, "quiz");
@@ -552,13 +552,13 @@ class quiz_category_object {
 * @param    string sort - [[sortfield [,sortfield]] {ASC|DESC}]
 * @return   array categories
 */
-    function get_quiz_categories($parent=null, $sort="sortorder ASC") {
+    function get_question_categories($parent=null, $sort="sortorder ASC") {
 
         if (is_null($parent)) {
-            $categories = get_records('quiz_categories', 'course', "{$this->course->id}", $sort);
+            $categories = get_records('question_categories', 'course', "{$this->course->id}", $sort);
         } else {
             $select = "parent = '$parent' AND course = '{$this->course->id}'";
-            $categories = get_records_select('quiz_categories', $select, $sort);
+            $categories = get_records_select('question_categories', $select, $sort);
         }
         return $categories;
     }
@@ -573,12 +573,12 @@ class quiz_category_object {
     function delete_category($deletecat, $destcategoryid = null) {
         global $USER;
 
-        if (!$category = get_record("quiz_categories", "id", $deletecat)) {  // security
+        if (!$category = get_record("question_categories", "id", $deletecat)) {  // security
             error("No such category $deletecat!", "category.php?id={$this->course->id}");
         }
 
         if (!is_null($destcategoryid)) { // Need to move some questions before deleting the category
-            if (!$category2 = get_record("quiz_categories", "id", $destcategoryid)) {  // security
+            if (!$category2 = get_record("question_categories", "id", $destcategoryid)) {  // security
                 error("No such category $destcategoryid!", "category.php?id={$this->course->id}");
             }
             if (! set_field('question', 'category', $category2, 'category', $category1)) {
@@ -606,19 +606,19 @@ class quiz_category_object {
                 exit;
             }
         }
-        delete_records("quiz_categories", "id", $category->id);
+        delete_records("question_categories", "id", $category->id);
 
         /// Send the children categories to live with their grandparent
-        if ($childcats = get_records("quiz_categories", "parent", $category->id)) {
+        if ($childcats = get_records("question_categories", "parent", $category->id)) {
             foreach ($childcats as $childcat) {
-                if (! set_field("quiz_categories", "parent", $category->parent, "id", $childcat->id)) {
+                if (! set_field("question_categories", "parent", $category->parent, "id", $childcat->id)) {
                     error("Could not update a child category!", "category.php?id={$this->course->id}");
                 }
             }
         }
 
         /// Finally delete the category itself
-        if (delete_records("quiz_categories", "id", $category->id)) {
+        if (delete_records("question_categories", "id", $category->id)) {
             notify(get_string("categorydeleted", "quiz", $category->name), 'green');
         }
     }
@@ -635,8 +635,8 @@ class quiz_category_object {
         $movecategory = NULL;
 
         if ($direction == 'up') {
-            if ($movecategory = get_record("quiz_categories", "id", $categoryid)) {
-                $categories = $this->get_quiz_categories("$movecategory->parent", 'parent, sortorder, name');
+            if ($movecategory = get_record("question_categories", "id", $categoryid)) {
+                $categories = $this->get_question_categories("$movecategory->parent", 'parent, sortorder, name');
 
                 foreach ($categories as $category) {
                     if ($category->id == $movecategory->id) {
@@ -647,8 +647,8 @@ class quiz_category_object {
             }
         }
         if ($direction == 'down') {
-            if ($movecategory = get_record("quiz_categories", "id", $categoryid)) {
-                $categories = $this->get_quiz_categories("$movecategory->parent", 'parent, sortorder, name');
+            if ($movecategory = get_record("question_categories", "id", $categoryid)) {
+                $categories = $this->get_question_categories("$movecategory->parent", 'parent, sortorder, name');
                 $choosenext = false;
                 foreach ($categories as $category) {
                     if ($choosenext) {
@@ -670,7 +670,7 @@ class quiz_category_object {
                 } else if ($category->id == $movecategory->id) {
                     $category = $swapcategory;
                 }
-                if (! set_field("quiz_categories", "sortorder", $count, "id", $category->id)) {
+                if (! set_field("question_categories", "sortorder", $count, "id", $category->id)) {
                     notify("Could not update that category!");
                 }
             }
@@ -686,9 +686,9 @@ class quiz_category_object {
     function move_category($categoryid, $parentid) {
     /// Move a category to a new parent
 
-        if ($tempcat = get_record("quiz_categories", "id", $categoryid)) {
+        if ($tempcat = get_record("question_categories", "id", $categoryid)) {
             if ($tempcat->parent != $parentid) {
-                if (! set_field("quiz_categories", "parent", $parentid, "id", $tempcat->id)) {
+                if (! set_field("question_categories", "parent", $parentid, "id", $tempcat->id)) {
                     notify("Could not update that category!");
                 }
             }
@@ -705,9 +705,9 @@ class quiz_category_object {
     /// Hide or publish a category
 
         $publish = ($publish == false) ? 0 : 1;
-        $tempcat = get_record("quiz_categories", "id", $categoryid);
+        $tempcat = get_record("question_categories", "id", $categoryid);
         if ($tempcat) {
-            if (! set_field("quiz_categories", "publish", $publish, "id", $tempcat->id)) {
+            if (! set_field("question_categories", "publish", $publish, "id", $tempcat->id)) {
                 notify("Could not update that category!");
             }
         }
@@ -726,7 +726,7 @@ class quiz_category_object {
 
         if ($newparent) {
             // first check that the parent category is in the correct course
-            if(!(get_field('quiz_categories', 'course', 'id', $newparent) == $newcourse)) {
+            if(!(get_field('question_categories', 'course', 'id', $newparent) == $newcourse)) {
                 return false;
             }
         }
@@ -739,7 +739,7 @@ class quiz_category_object {
         $cat->course = $newcourse;
         $cat->sortorder = 999;
         $cat->stamp = make_unique_id_code();
-        if (!insert_record("quiz_categories", $cat)) {
+        if (!insert_record("question_categories", $cat)) {
             error("Could not insert the new quiz category '$newcategory'", "category.php?id={$newcourse}");
         } else {
             notify(get_string("categoryadded", "quiz", $newcategory), 'green');
@@ -765,7 +765,7 @@ class quiz_category_object {
         $cat->name = $updatename;
         $cat->info = $updateinfo;
         $cat->publish = $updatepublish;
-        if (!update_record("quiz_categories", $cat)) {
+        if (!update_record("question_categories", $cat)) {
             error("Could not update the category '$updatename'", "category.php?id={$courseid}");
         } else {
             notify(get_string("categoryupdated", 'quiz'), 'green');

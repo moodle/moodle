@@ -58,7 +58,7 @@ class quiz_calculated_qtype extends quiz_dataset_dependent_questiontype {
         if (!$oldanswers = get_records_sql(
             "SELECT a.*, c.tolerance, c.tolerancetype,
                     c.correctanswerlength, c.id AS calcid
-               FROM {$CFG->prefix}quiz_answers a,
+               FROM {$CFG->prefix}question_answers a,
                     {$CFG->prefix}quiz_calculated c
               WHERE c.question = $question->id AND a.id = c.answer")) {
             $oldanswers = array();
@@ -89,7 +89,7 @@ class quiz_calculated_qtype extends quiz_dataset_dependent_questiontype {
                 // Reuse old records:
                 $calcrec->answer = $answerrec->id = $oldanswer->id;
                 $calcrec->id = $oldanswer->calcid;
-                if (!update_record('quiz_answers', $answerrec)) {
+                if (!update_record('question_answers', $answerrec)) {
                     error("Unable to update answer for calculated question #{$question->id}!");
                 } else {
                     // notify("Answer updated successfully for calculated question $question->name");
@@ -102,7 +102,7 @@ class quiz_calculated_qtype extends quiz_dataset_dependent_questiontype {
             } else {
                 unset($answerrec->id);
                 unset($calcrec->id);
-                if (!($calcrec->answer = insert_record('quiz_answers',
+                if (!($calcrec->answer = insert_record('question_answers',
                  $answerrec))) {
                     error("Unable to insert answer for calculated question $question->id");
                 } else {
@@ -118,7 +118,7 @@ class quiz_calculated_qtype extends quiz_dataset_dependent_questiontype {
 
         // Delete excessive records:
         foreach ($oldanswers as $oldanswer) {
-            if (!delete_records('quiz_answers', 'id', $oldanswer->id)) {
+            if (!delete_records('question_answers', 'id', $oldanswer->id)) {
                 error("Unable to delete old answers for calculated question $question->id");
             } else {
                 // notify("Old answers deleted successfully for calculated question $question->id");

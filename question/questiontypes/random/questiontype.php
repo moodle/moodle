@@ -49,7 +49,7 @@ class quiz_random_qtype extends quiz_default_questiontype {
             $excludedtypes = implode(',', $this->excludedtypes);
             if ($question->questiontext == "1") {
                 // recurse into subcategories
-                $categorylist = quiz_categorylist($question->category);
+                $categorylist = question_categorylist($question->category);
             } else {
                 $categorylist = $question->category;
             }

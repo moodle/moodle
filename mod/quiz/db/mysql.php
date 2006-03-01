@@ -945,6 +945,11 @@ function quiz_upgrade($oldversion) {
         execute_sql("ALTER TABLE {$CFG->prefix}quiz_states RENAME {$CFG->prefix}question_states", false);
     }
 
+    if ($oldversion < 2006022800) {
+        execute_sql("ALTER TABLE {$CFG->prefix}quiz_answers RENAME {$CFG->prefix}question_answers", false);
+        execute_sql("ALTER TABLE {$CFG->prefix}quiz_categories RENAME {$CFG->prefix}question_categories", false);
+    }
+
     return true;
 }
 

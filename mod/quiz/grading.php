@@ -255,7 +255,7 @@
             // get the essay questions
             $questionlist = quiz_questions_in_quiz($quiz->questions);
             $sql = "SELECT q.*, i.grade AS maxgrade, i.id AS instance".
-                   "  FROM {$CFG->prefix}quiz_questions q,".
+                   "  FROM {$CFG->prefix}question q,".
                    "       {$CFG->prefix}quiz_question_instances i".
                    " WHERE i.quiz = '$quiz->id' AND q.id = i.question".
                    "   AND q.id IN ($questionlist)".

@@ -34,7 +34,7 @@
         error('No valid arguments supplied');
     }
 
-    if (!($questioncategory = get_record('quiz_categories', 'id', $question->category))) {
+    if (!($questioncategory = get_record('question_categories', 'id', $question->category))) {
         error('No valid arguments supplied');
     }
 

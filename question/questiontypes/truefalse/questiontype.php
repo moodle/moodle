@@ -14,7 +14,7 @@ class quiz_truefalse_qtype extends quiz_default_questiontype {
     function save_question_options($question) {
         
         // fetch old answer ids so that we can reuse them
-        if (!$oldanswers = get_records("quiz_answers", "question", $question->id, "id ASC")) {
+        if (!$oldanswers = get_records("question_answers", "question", $question->id, "id ASC")) {
             $oldanswers = array();
         }
 
@@ -23,7 +23,7 @@ class quiz_truefalse_qtype extends quiz_default_questiontype {
             $true->answer   = get_string("true", "quiz");
             $true->fraction = $question->answer;
             $true->feedback = $question->feedbacktrue;
-            if (!update_record("quiz_answers", $true)) {
+            if (!update_record("question_answers", $true)) {
                 $result->error = "Could not update quiz answer \"true\")!";
                 return $result;
             }
@@ -33,7 +33,7 @@ class quiz_truefalse_qtype extends quiz_default_questiontype {
             $true->question = $question->id;
             $true->fraction = $question->answer;
             $true->feedback = $question->feedbacktrue;
-            if (!$true->id = insert_record("quiz_answers", $true)) {
+            if (!$true->id = insert_record("question_answers", $true)) {
                 $result->error = "Could not insert quiz answer \"true\")!";
                 return $result;
             }
@@ -44,7 +44,7 @@ class quiz_truefalse_qtype extends quiz_default_questiontype {
             $false->answer   = get_string("false", "quiz");
             $false->fraction = 1 - (int)$question->answer;
             $false->feedback = $question->feedbackfalse;
-            if (!update_record("quiz_answers", $false)) {
+            if (!update_record("question_answers", $false)) {
                 $result->error = "Could not insert quiz answer \"false\")!";
                 return $result;
             }
@@ -54,7 +54,7 @@ class quiz_truefalse_qtype extends quiz_default_questiontype {
             $false->question = $question->id;
             $false->fraction = 1 - (int)$question->answer;
             $false->feedback = $question->feedbackfalse;
-            if (!$false->id = insert_record("quiz_answers", $false)) {
+            if (!$false->id = insert_record("question_answers", $false)) {
                 $result->error = "Could not insert quiz answer \"false\")!";
                 return $result;
             }
@@ -63,7 +63,7 @@ class quiz_truefalse_qtype extends quiz_default_questiontype {
         // delete any leftover old answer records (there couldn't really be any, but who knows)
         if (!empty($oldanswers)) {
             foreach($oldanswers as $oa) {
-                delete_records('quiz_answers', 'id', $oa->id);
+                delete_records('question_answers', 'id', $oa->id);
             }
         }
 
@@ -101,7 +101,7 @@ class quiz_truefalse_qtype extends quiz_default_questiontype {
             return false;
         }
         // Load the answers
-        if (!$question->options->answers = get_records('quiz_answers', 'question', $question->id)) {
+        if (!$question->options->answers = get_records('question_answers', 'question', $question->id)) {
            notify('Error: Missing question answers!');
            return false;
         }

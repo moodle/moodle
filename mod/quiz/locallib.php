@@ -562,7 +562,7 @@ function quizzes_category_used($id, $recursive = false) {
 
     //Look under child categories recursively
     if ($recursive) {
-        if ($childs = get_records('quiz_categories', 'parent', $id)) {
+        if ($childs = get_records('question_categories', 'parent', $id)) {
             foreach ($childs as $child) {
                 $quizlist = $quizlist + quizzes_category_used($child->id, $recursive);
             }

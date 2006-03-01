@@ -19,7 +19,7 @@ class quiz_essay_qtype extends quiz_default_questiontype {
             return false;
         }
 
-        if (!$question->options->answers = get_records('quiz_answers', 'question',
+        if (!$question->options->answers = get_records('question_answers', 'question',
             $question->id)) {
            notify('Error: Missing question answers!');
            return false;
@@ -28,12 +28,12 @@ class quiz_essay_qtype extends quiz_default_questiontype {
     }
 
     function save_question_options($question) {
-        if ($answer = get_record("quiz_answers", "question", $question->id)) {
+        if ($answer = get_record("question_answers", "question", $question->id)) {
             // Existing answer, so reuse it
             $answer->answer = $question->feedback;
             $answer->feedback = $question->feedback;
             $answer->fraction = $question->fraction;
-            if (!update_record("quiz_answers", $answer)) {
+            if (!update_record("question_answers", $answer)) {
                 $result->error = "Could not update quiz answer!";
                 return $result;
             }
@@ -43,7 +43,7 @@ class quiz_essay_qtype extends quiz_default_questiontype {
             $answer->answer = $question->feedback;
             $answer->feedback = $question->feedback;
             $answer->fraction = $question->fraction;
-            if (!$answer->id = insert_record("quiz_answers", $answer)) {
+            if (!$answer->id = insert_record("question_answers", $answer)) {
                 $result->error = "Could not insert quiz answer!";
                 return $result;
             }

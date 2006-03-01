@@ -169,7 +169,7 @@ class quiz_default_questiontype {
             $question->options = new object;
         }
         // The default implementation attaches all answers for this question
-        if (!$question->options->answers = get_records('quiz_answers', 'question',
+        if (!$question->options->answers = get_records('question_answers', 'question',
          $question->id)) {
            //notify('Error: Missing question answers!');
            return false;
@@ -814,8 +814,9 @@ class quiz_default_questiontype {
     }
 
     /**
-    * Returns true if the editing wizard is finished, false otherwise. The
-    * default implementation returns true, which is suitable for all question-
+    * Returns true if the editing wizard is finished, false otherwise.
+    *
+    * The default implementation returns true, which is suitable for all question-
     * types that only use one editing form. This function is used in
     * question.php to decide whether we can regrade any states of the edited
     * question and redirect to edit.php.
@@ -833,13 +834,20 @@ class quiz_default_questiontype {
         return true;
     }
 
-    function print_replacement_options($question, $course, $quizid='0') {
-    // This function is used near the end of the question edit forms in all question types
-    // It prints the table of quizzes in which the question is used
-    // containing checkboxes to allow the teacher to replace the old question version
+    /**
+    * Prints a table of course modules in which the question is used
+    *
+    * This function is used near the end of the question edit forms in all question types
+    * It prints the table of quizzes in which the question is used
+    * containing checkboxes to allow the teacher to replace the old question version
+    *
+    * @param object $question
+    * @param object $course
+    * @param integer $cmid optional The id of the course module currently being edited
+    */
+    function print_replacement_options($question, $course, $cmid='0') {
 
         // Disable until the versioning code has been fixed
-        // The $quizid argument will become a $cmid
         return;
 
         // no need to display replacement options if the question is new
@@ -878,7 +886,7 @@ class quiz_default_questiontype {
             foreach($quizzes as $quiz) {
                 // work out whethere it should be checked by default
                 $checked = '';
-                if((int)$quizid === (int)$quiz->id
+                if((int)$cmid === (int)$quiz->id
                     or empty($quiz->usercount)) {
                     $checked = "checked=\"checked\"";
                 }

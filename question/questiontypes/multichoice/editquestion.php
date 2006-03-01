@@ -7,7 +7,7 @@
         $options->shuffleanswers = 1;
     }
     if (!empty($options->answers)) {
-        $answersraw = get_records_list("quiz_answers", "id", $options->answers);
+        $answersraw = get_records_list("question_answers", "id", $options->answers);
 
     }
 

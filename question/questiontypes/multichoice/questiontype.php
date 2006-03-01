@@ -26,7 +26,7 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
             return false;
         }
 
-        if (!$question->options->answers = get_records_select('quiz_answers', 'id IN ('.$question->options->answers.')')) {
+        if (!$question->options->answers = get_records_select('question_answers', 'id IN ('.$question->options->answers.')')) {
            notify('Error: Missing question answers!');
            return false;
         }
@@ -36,7 +36,7 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
 
     function save_question_options($question) {
 
-        if (!$oldanswers = get_records("quiz_answers", "question",
+        if (!$oldanswers = get_records("question_answers", "question",
                                        $question->id, "id ASC")) {
             $oldanswers = array();
         }
@@ -67,7 +67,7 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
                     $answer->answer     = $dataanswer;
                     $answer->fraction   = $question->fraction[$key];
                     $answer->feedback   = $question->feedback[$key];
-                    if (!update_record("quiz_answers", $answer)) {
+                    if (!update_record("question_answers", $answer)) {
                         $result->error = "Could not update quiz answer! (id=$answer->id)";
                         return $result;
                     }
@@ -77,7 +77,7 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
                     $answer->question = $question->id;
                     $answer->fraction = $question->fraction[$key];
                     $answer->feedback = $question->feedback[$key];
-                    if (!$answer->id = insert_record("quiz_answers", $answer)) {
+                    if (!$answer->id = insert_record("question_answers", $answer)) {
                         $result->error = "Could not insert quiz answer! ";
                         return $result;
                     }
@@ -116,7 +116,7 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
         // delete old answer records
         if (!empty($oldanswers)) {
             foreach($oldanswers as $oa) {
-                delete_records('quiz_answers', 'id', $oa->id);
+                delete_records('question_answers', 'id', $oa->id);
             }
         }
 

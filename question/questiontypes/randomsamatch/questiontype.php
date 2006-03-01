@@ -80,7 +80,7 @@ class quiz_randomsamatch_qtype extends quiz_match_qtype {
 
         if ($question->options->subcats) {
             // recurse into subcategories
-            $categorylist = quiz_categorylist($question->category);
+            $categorylist = question_categorylist($question->category);
         } else {
             $categorylist = $question->category;
         }

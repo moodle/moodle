@@ -40,7 +40,7 @@
         error("Only teachers authorized to edit the course '{$course->fullname}' can use this page!");
     }
 
-    $qcobject = new quiz_category_object();
+    $qcobject = new question_category_object();
     $qcobject->set_course($course);
 
     //==========

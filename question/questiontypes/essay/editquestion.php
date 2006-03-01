@@ -5,7 +5,7 @@
     }
 
     if (!empty($options->answer)) {
-        $essayfeedback   = get_record("quiz_answers", "id", $options->answer);
+        $essayfeedback   = get_record("question_answers", "id", $options->answer);
     } else {
         $essayfeedback->feedback = "";
     }

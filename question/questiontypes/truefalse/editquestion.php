@@ -4,13 +4,13 @@
         $options = get_record("quiz_truefalse", "question", "$question->id");
     }
     if (!empty($options->trueanswer)) {
-        $true    = get_record("quiz_answers", "id", $options->trueanswer);
+        $true    = get_record("question_answers", "id", $options->trueanswer);
     } else {
         $true->fraction = 1;
         $true->feedback = "";
     }
     if (!empty($options->falseanswer)) {
-        $false   = get_record("quiz_answers", "id", "$options->falseanswer");
+        $false   = get_record("question_answers", "id", "$options->falseanswer");
     } else {
         $false->fraction = 0;
         $false->feedback = "";

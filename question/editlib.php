@@ -18,12 +18,12 @@
 /**
 * Array of question types names translated to the user's language
 *
-* The $QUIZ_QUESTION_TYPE array holds the names of all the question types that the user should
+* The $QTYPE_MENU array holds the names of all the question types that the user should
 * be able to create directly. Some internal question types like random questions are excluded.
 * The complete list of question types can be found in {@link $QTYPES}.
 */
 
-$QUIZ_QUESTION_TYPE = array ( MULTICHOICE   => get_string("multichoice", "quiz"),
+$QTYPE_MENU = array ( MULTICHOICE   => get_string("multichoice", "quiz"),
                               TRUEFALSE     => get_string("truefalse", "quiz"),
                               SHORTANSWER   => get_string("shortanswer", "quiz"),
                               NUMERICAL     => get_string("numerical", "quiz"),
@@ -37,7 +37,7 @@ $QUIZ_QUESTION_TYPE = array ( MULTICHOICE   => get_string("multichoice", "quiz")
 // add remote question types
 if ($rqp_types = get_records('quiz_rqp_types')) {
     foreach($rqp_types as $type) {
-        $QUIZ_QUESTION_TYPE[100+$type->id] = $type->name;
+        $QTYPE_MENU[100+$type->id] = $type->name;
     }
 }
 
@@ -46,14 +46,14 @@ function question_category_form($course, $current, $recurse=1, $showhidden=false
 /// Prints a form to choose categories
 
 /// Make sure the default category exists for this course
-    if (!$categories = get_records("quiz_categories", "course", $course->id, "id ASC")) {
+    if (!$categories = get_records("question_categories", "course", $course->id, "id ASC")) {
         if (!$category = get_default_question_category($course->id)) {
             notify("Error creating a default category!");
         }
     }
 
 /// Get all the existing categories now
-    if (!$categories = get_records_select("quiz_categories", "course = '{$course->id}' OR publish = '1'", "parent, sortorder, name ASC")) {
+    if (!$categories = get_records_select("question_categories", "course = '{$course->id}' OR publish = '1'", "parent, sortorder, name ASC")) {
         notify("Could not find any question categories!");
         return false;    // Something is really wrong
     }
@@ -117,7 +117,7 @@ function question_category_form($course, $current, $recurse=1, $showhidden=false
 */
 function question_list($course, $categoryid, $quizid,
  $recurse=1, $page, $perpage, $showhidden=false, $sortorder='qtype, name ASC') {
-    global $QUIZ_QUESTION_TYPE, $USER, $CFG;
+    global $QTYPE_MENU, $USER, $CFG;
 
     $strcategory = get_string("category", "quiz");
     $strquestion = get_string("question", "quiz");
@@ -152,7 +152,7 @@ function question_list($course, $categoryid, $quizid,
         return;
     }
 
-    if (!$category = get_record("quiz_categories", "id", "$categoryid")) {
+    if (!$category = get_record("question_categories", "id", "$categoryid")) {
         notify("Category not found!");
         return;
     }
@@ -165,7 +165,7 @@ function question_list($course, $categoryid, $quizid,
     if (isteacheredit($category->course)) {
         echo "<td valign=\"top\"><b>$strcreatenewquestion:</b></td>";
         echo '<td valign="top" align="right">';
-        popup_form ("$CFG->wwwroot/question/question.php?category=$category->id&amp;qtype=", $QUIZ_QUESTION_TYPE, "addquestion",
+        popup_form ("$CFG->wwwroot/question/question.php?category=$category->id&amp;qtype=", $QTYPE_MENU, "addquestion",
                     "", "choose", "", "", false, "self");
         echo '</td><td width="10" valign="top" align="right">';
         helpbutton("questiontypes", $strcreatenewquestion, "quiz");
@@ -191,7 +191,7 @@ function question_list($course, $categoryid, $quizid,
 
     echo '</center>';
 
-    $categorylist = ($recurse) ? quiz_categorylist($category->id) : $category->id;
+    $categorylist = ($recurse) ? question_categorylist($category->id) : $category->id;
 
     // hide-feature
     $showhidden = $showhidden ? '' : " AND hidden = '0'";
@@ -287,7 +287,7 @@ function question_list($course, $categoryid, $quizid,
     if ($canedit) {
         echo '<input type="submit" name="deleteselected" value="'.$strdelete."\" /></td><td>\n";
         echo '<input type="submit" name="move" value="'.get_string('moveto', 'quiz')."\" />\n";
-        quiz_category_select_menu($course->id, false, true, $category->id);
+        question_category_select_menu($course->id, false, true, $category->id);
     }
     echo "</td></tr></table>";
 

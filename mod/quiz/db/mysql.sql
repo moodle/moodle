@@ -51,10 +51,10 @@ CREATE TABLE prefix_quiz (
 -- --------------------------------------------------------
 
 -- 
--- Table structure for table `prefix_quiz_answers`
+-- Table structure for table `prefix_question_answers`
 -- 
 
-CREATE TABLE prefix_quiz_answers (
+CREATE TABLE prefix_question_answers (
   id int(10) unsigned NOT NULL auto_increment,
   question int(10) unsigned NOT NULL default '0',
   answer text NOT NULL default '',
@@ -125,10 +125,10 @@ CREATE TABLE prefix_quiz_calculated (
 -- --------------------------------------------------------
 
 -- 
--- Table structure for table `prefix_quiz_categories`
+-- Table structure for table `prefix_question_categories`
 -- 
 
-CREATE TABLE prefix_quiz_categories (
+CREATE TABLE prefix_question_categories (
   id int(10) unsigned NOT NULL auto_increment,
   course int(10) unsigned NOT NULL default '0',
   name varchar(255) NOT NULL default '',

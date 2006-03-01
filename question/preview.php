@@ -76,7 +76,7 @@
     $quiz->id = 0; // just for safety
     $quiz->questions = $id;
 
-    if (!$category = get_record("quiz_categories", "id", $questions[$id]->category)) {
+    if (!$category = get_record("question_categories", "id", $questions[$id]->category)) {
         error("This question doesn't belong to a valid category!");
     }
 

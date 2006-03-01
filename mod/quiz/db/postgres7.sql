@@ -48,10 +48,10 @@ CREATE INDEX prefix_quiz_course_idx ON prefix_quiz (course);
 # --------------------------------------------------------
 
 #
-# Table structure for table prefix_quiz_answers
+# Table structure for table prefix_question_answers
 #
 
-CREATE TABLE prefix_quiz_answers (
+CREATE TABLE prefix_question_answers (
   id SERIAL PRIMARY KEY,
   question integer NOT NULL default '0',
   answer text NOT NULL default '',
@@ -59,7 +59,7 @@ CREATE TABLE prefix_quiz_answers (
   feedback text NOT NULL default ''
 );
 
-CREATE INDEX prefix_quiz_answers_question_idx ON prefix_quiz_answers (question);
+CREATE INDEX prefix_question_answers_question_idx ON prefix_question_answers (question);
 
 
 # --------------------------------------------------------
@@ -121,10 +121,10 @@ CREATE INDEX prefix_quiz_calculated_answer_idx ON prefix_quiz_calculated (answer
 # --------------------------------------------------------
 
 #
-# Table structure for table prefix_quiz_categories
+# Table structure for table prefix_question_categories
 #
 
-CREATE TABLE prefix_quiz_categories (
+CREATE TABLE prefix_question_categories (
   id SERIAL PRIMARY KEY,
   course integer NOT NULL default '0',
   name varchar(255) NOT NULL default '',
@@ -135,7 +135,7 @@ CREATE TABLE prefix_quiz_categories (
   sortorder integer NOT NULL default '999'
 );
 
-CREATE INDEX prefix_quiz_categories_course_idx ON prefix_quiz_categories (course);
+CREATE INDEX prefix_question_categories_course_idx ON prefix_question_categories (course);
 
 # --------------------------------------------------------
 #

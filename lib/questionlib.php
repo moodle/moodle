@@ -150,23 +150,25 @@ class cmoptions {
 /**
 * Deletes question and all associated data from the database
 *
+* TODO: remove quiz dependence
+*
 * @param object $question  The question being deleted
 */
 function delete_question($question) {
     global $QTYPES;
     $QTYPES[$question->qtype]->delete_question($question);
-    delete_records("quiz_answers", "question", $question->id);
+    delete_records("question_answers", "question", $question->id);
     delete_records("question_states", "question", $question->id);
     delete_records("question_sessions", "questionid", $question->id);
     if ($newversions = get_records('quiz_question_versions', 'oldquestion', $question->id)) {
         foreach ($newversions as $newversion) {
-            $newquestion = get_record('quiz_questions', 'id', $newversion->newquestion);
+            $newquestion = get_record('question', 'id', $newversion->newquestion);
             delete_question($newquestion);
         }
         delete_records("quiz_question_versions", "oldquestion", $question->id);
     }
     delete_records("quiz_question_versions", "newquestion", $question->id);
-    if ($children = get_records('quiz_questions', 'parent', $question->id)) {
+    if ($children = get_records('question', 'parent', $question->id)) {
         foreach ($children as $child) {
             delete_question($child);
         }
@@ -217,7 +219,6 @@ function get_question_options(&$questions) {
 * created representing the start of a session and empty question
 * type specific information and responses are created by calling
 * {@link create_session_and_responses()}.
-* @todo Allow new attempt to be based on last attempt
 *
 * @return array           An array of state objects representing the most recent
 *                         states of the question sessions.
@@ -722,7 +723,7 @@ function question_isgradingevent($event) {
 function question_search_for_duplicate_responses(&$question, &$state) {
     // get all previously graded question states
     global $QTYPES;
-    if (!$oldstates = get_records('quiz_question_states', "event = '" .
+    if (!$oldstates = get_records('question_states', "event = '" .
      QUESTION_EVENTGRADE . "' AND " . "question = '" . $question->id .
      "'", 'seq_number DESC')) {
         return false;
@@ -797,7 +798,7 @@ function question_apply_penalty_and_timelimit(&$question, &$state, $attempt, $cm
 function print_question_icon($question, $editlink=true, $return = false) {
 // returns a question icon
 
-    global $QUIZ_QUESTION_TYPE, $QTYPES, $CFG;
+    global $QTYPES, $CFG;
 
     $html = '<img border="0" height="16" width="16" src="'.$CFG->wwwroot.'/question/questiontypes/'.
             $QTYPES[$question->qtype]->name().'/icon.gif" alt="'.
@@ -927,7 +928,7 @@ function get_question_responses($question, $state) {
 
 
 /**
-* Gets the response given by the user in a particular attempt
+* Gets the response given by the user in a particular state
 *
 * Simply calls the question type specific get_actual_response() method.
 */
@@ -940,9 +941,7 @@ function get_question_actual_response($question, $state) {
 }
 
 /**
-* Gets the response given by the user in a particular attempt
-*
-* Simply calls the question type specific get_actual_response() method.
+* TODO: document this
 */
 // ULPGc ecastro
 function get_question_fraction_grade($question, $state) {
@@ -966,7 +965,7 @@ function get_question_fraction_grade($question, $state) {
 function get_default_question_category($courseid) {
 /// Returns the current category
 
-    if ($categories = get_records_select("quiz_categories", "course = '$courseid' AND parent = '0'", "id")) {
+    if ($categories = get_records_select("question_categories", "course = '$courseid' AND parent = '0'", "id")) {
         foreach ($categories as $category) {
             return $category;   // Return the first one (lowest id)
         }
@@ -982,14 +981,14 @@ function get_default_question_category($courseid) {
     $category->publish = 0;
     $category->stamp = make_unique_id_code();
 
-    if (!$category->id = insert_record("quiz_categories", $category)) {
+    if (!$category->id = insert_record("question_categories", $category)) {
         notify("Error creating a default category!");
         return false;
     }
     return $category;
 }
 
-function quiz_get_category_menu($courseid, $published=false) {
+function question_category_menu($courseid, $published=false) {
 /// Returns the list of categories
     $publish = "";
     if ($published) {
@@ -997,9 +996,9 @@ function quiz_get_category_menu($courseid, $published=false) {
     }
 
     if (!isadmin()) {
-        $categories = get_records_select("quiz_categories", "course = '$courseid' $publish", 'parent, sortorder, name ASC');
+        $categories = get_records_select("question_categories", "course = '$courseid' $publish", 'parent, sortorder, name ASC');
     } else {
-        $categories = get_records_select("quiz_categories", '', 'parent, sortorder, name ASC');
+        $categories = get_records_select("question_categories", '', 'parent, sortorder, name ASC');
     }
     if (!$categories) {
         return false;
@@ -1035,7 +1034,7 @@ function sort_categories_by_tree(&$categories, $id = 0, $level = 1) {
     if ($level == 1) {
         foreach ($keys as $key) {
             //If not processed and it's a good candidate to start (because its parent doesn't exist in the course)
-            if (!isset($categories[$key]->processed) && !record_exists('quiz_categories', 'course', $categories[$key]->course, 'id', $categories[$key]->parent)) {
+            if (!isset($categories[$key]->processed) && !record_exists('question_categories', 'course', $categories[$key]->course, 'id', $categories[$key]->parent)) {
                 $children[$key] = $categories[$key];
                 $categories[$key]->processed = true;
                 $children = $children + sort_categories_by_tree($categories, $children[$key]->id, $level+1);
@@ -1069,7 +1068,7 @@ function add_indented_names(&$categories, $id = 0, $indent = 0) {
 * Optionaly non editable categories may be excluded.
 * @author Howard Miller June '04
 */
-function quiz_category_select_menu($courseid,$published=false,$only_editable=false,$selected="") {
+function question_category_select_menu($courseid,$published=false,$only_editable=false,$selected="") {
 
     // get sql fragment for published
     $publishsql="";
@@ -1077,14 +1076,14 @@ function quiz_category_select_menu($courseid,$published=false,$only_editable=fal
         $publishsql = "or publish=1";
     }
 
-    $categories = get_records_select("quiz_categories","course=$courseid $publishsql", 'parent, sortorder, name ASC');
+    $categories = get_records_select("question_categories","course=$courseid $publishsql", 'parent, sortorder, name ASC');
 
     $categories = add_indented_names($categories);
 
     echo "<select name=\"category\">\n";
     foreach ($categories as $category) {
         $cid = $category->id;
-        $cname = quiz_get_category_coursename($category, $courseid);
+        $cname = question_category_coursename($category, $courseid);
         $seltxt = "";
         if ($cid==$selected) {
             $seltxt = "selected=\"selected\"";
@@ -1096,7 +1095,7 @@ function quiz_category_select_menu($courseid,$published=false,$only_editable=fal
     echo "</select>\n";
 }
 
-function quiz_get_category_coursename($category, $courseid = 0) {
+function question_category_coursename($category, $courseid = 0) {
 /// if the category is not from this course and is published , adds on the course
 /// name
     $cname = (isset($category->indentedname)) ? $category->indentedname : $category->name;
@@ -1112,12 +1111,12 @@ function quiz_get_category_coursename($category, $courseid = 0) {
 /**
 * Returns a comma separated list of ids of the category and all subcategories
 */
-function quiz_categorylist($categoryid) {
+function question_categorylist($categoryid) {
     // returns a comma separated list of ids of the category and all subcategories
     $categorylist = $categoryid;
-    if ($subcategories = get_records('quiz_categories', 'parent', $categoryid, 'sortorder ASC', 'id, id')) {
+    if ($subcategories = get_records('question_categories', 'parent', $categoryid, 'sortorder ASC', 'id, id')) {
         foreach ($subcategories as $subcategory) {
-            $categorylist .= ','. quiz_categorylist($subcategory->id);
+            $categorylist .= ','. question_categorylist($subcategory->id);
         }
     }
     return $categorylist;
@@ -1145,7 +1144,7 @@ function get_questions_category( $category, $noparent=false ) {
     }
 
     // get the list of questions for the category
-    if ($questions = get_records_select("quiz_questions","category={$category->id} $npsql", "qtype, name ASC")) {
+    if ($questions = get_records_select("question","category={$category->id} $npsql", "qtype, name ASC")) {
 
         // iterate through questions, getting stuff we need
         foreach($questions as $question) {
@@ -1166,7 +1165,7 @@ function get_questions_category( $category, $noparent=false ) {
 function get_import_export_formats( $type ) {
 
     global $CFG;
-    $fileformats = get_list_of_plugins("mod/quiz/format");
+    $fileformats = get_list_of_plugins("question/format");
 
     $fileformatname=array();
     require_once( "format.php" );

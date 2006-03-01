@@ -6,7 +6,7 @@
     //To see, put your terminal to 160cc
 
     //
-    //                           quiz                                                      quiz_categories
+    //                           quiz                                                      question_categories
     //                        (CL,pk->id)                                                   (CL,pk->id)
     //                            |                                                              |
     //           -------------------------------------------------------------------             |
@@ -50,7 +50,7 @@
     //                                                   .                                                                      |
     //                                                   .                                                                      |
     //                                                   .                                                                      |    quiz_numerical_units
-    //                                                quiz_answers                                                              |--(CL,pk->id,fk->question)
+    //                                                question_answers                                                              |--(CL,pk->id,fk->question)
     //                                         (CL,pk->id,fk->question)----------------------------------------------------------
     //
     // Meaning: pk->primary key field of the table
@@ -68,7 +68,7 @@
 
     //This module is special, because we make the backup in two steps:
     // 1.-We backup every category and their questions (complete structure). It includes this tables:
-    //     - quiz_categories
+    //     - question_categories
     //     - question
     //     - quiz_rqp
     //     - quiz_truefalse
@@ -80,7 +80,7 @@
     //     - quiz_match
     //     - quiz_match_sub
     //     - quiz_calculated
-    //     - quiz_answers
+    //     - question_answers
     //     - quiz_numerical_units
     //     - quiz_question_datasets
     //     - quiz_dataset_definitions
@@ -122,7 +122,7 @@
         //Detect used categories (by category in questions)
         $status = execute_sql("INSERT INTO {$CFG->prefix}backup_ids
                                    (backup_code, table_name, old_id)
-                               SELECT DISTINCT $backup_unique_code,'quiz_categories',t.category
+                               SELECT DISTINCT $backup_unique_code,'question_categories',t.category
                                FROM {$CFG->prefix}question t,
                                     {$CFG->prefix}quiz_question_instances g
                                     $from
@@ -132,24 +132,24 @@
         $categories = get_records_sql("SELECT old_id, old_id
                                        FROM {$CFG->prefix}backup_ids
                                        WHERE backup_code = $backup_unique_code AND
-                                             table_name = 'quiz_categories'");
+                                             table_name = 'question_categories'");
 
         if ($categories) {
             foreach ($categories as $category) {
-                if ($dbcat = get_record('quiz_categories','id',$category->old_id)) {
+                if ($dbcat = get_record('question_categories','id',$category->old_id)) {
                     //echo $dbcat->name;      //Debug
                     //Go up to 0
                     while ($dbcat->parent != 0) {
                         //echo '->';              //Debug
                         $current = $dbcat->id;
-                        if ($dbcat = get_record('quiz_categories','id',$dbcat->parent)) {
+                        if ($dbcat = get_record('question_categories','id',$dbcat->parent)) {
                             //Found parent, add it to backup_ids (by using backup_putid
                             //we ensure no duplicates!)
-                            $status = backup_putid($backup_unique_code,'quiz_categories',$dbcat->id,0);
+                            $status = backup_putid($backup_unique_code,'question_categories',$dbcat->id,0);
                             //echo $dbcat->name;      //Debug
                         } else {
                             //Parent not found, fix it (set its parent to 0)
-                            set_field ('quiz_categories','parent',0,'id',$current);
+                            set_field ('question_categories','parent',0,'id',$current);
                             //echo 'assigned to top!';          //Debug
                         }
                     }
@@ -180,8 +180,8 @@
     * Helper function adding the id of a category and all its descendents to the backup_ids
     */
     function quiz_backup_add_category_tree($backup_unique_code, $categoryid) {
-        $status = backup_putid($backup_unique_code,'quiz_categories',$categoryid,0);
-        if ($subcategories = get_records('quiz_categories', 'parent', $categoryid, 'sortorder ASC', 'id, id')) {
+        $status = backup_putid($backup_unique_code,'question_categories',$categoryid,0);
+        if ($subcategories = get_records('question_categories', 'parent', $categoryid, 'sortorder ASC', 'id, id')) {
             foreach ($subcategories as $subcategory) {
                 $status = quiz_backup_add_category_tree($backup_unique_code, $subcategory->id);
             }
@@ -207,7 +207,7 @@
                                              g.question = t.id",false);
         if ($categories) {
             foreach ($categories as $key => $category) {
-                $exist = get_record('quiz_categories','id', $key);
+                $exist = get_record('question_categories','id', $key);
                 //If the category doesn't exist
                 if (!$exist) {
                     //Build a new category
@@ -217,7 +217,7 @@
                     $db_cat->publish = 1;
                     $db_cat->stamp = make_unique_id_code();
                     //Insert the new category
-                    $catid = insert_record('quiz_categories',$db_cat);
+                    $catid = insert_record('question_categories',$db_cat);
                     unset ($db_cat);
                     if ($catid) {
                         //Reasign orphaned questions to their new category
@@ -244,7 +244,7 @@
         $status = true;
 
         //First, we get the used categories from backup_ids
-        $categories = quiz_category_ids_by_backup ($preferences->backup_unique_code);
+        $categories = question_category_ids_by_backup ($preferences->backup_unique_code);
 
         //If we've categories
         if ($categories) {
@@ -254,8 +254,8 @@
             foreach ($categories as $cat) {
                 //Start category
                 $status = fwrite ($bf,start_tag("QUESTION_CATEGORY",3,true));
-                //Get category data from quiz_categories
-                $category = get_record ("quiz_categories","id",$cat->old_id);
+                //Get category data from question_categories
+                $category = get_record ("question_categories","id",$cat->old_id);
                 //Print category contents
                 fwrite($bf,full_tag("ID",4,false,$category->id));
                 fwrite($bf,full_tag("NAME",4,false,$category->name));
@@ -374,7 +374,7 @@
                 fwrite ($bf,full_tag("FALSEANSWER",7,false,$truefalse->falseanswer));
                 $status = fwrite ($bf,end_tag("TRUEFALSE",6,true));
             }
-            //Now print quiz_answers
+            //Now print question_answers
             $status = quiz_backup_answers($bf,$preferences,$question);
         }
         return $status;
@@ -399,7 +399,7 @@
                 fwrite ($bf,full_tag("USECASE",$level+1,false,$shortanswer->usecase));
                 $status = fwrite ($bf,end_tag("SHORTANSWER",$level,true));
             }
-            //Now print quiz_answers
+            //Now print question_answers
             if ($include_answers) {
                 $status = quiz_backup_answers($bf,$preferences,$question);
             }
@@ -428,7 +428,7 @@
                 fwrite ($bf,full_tag("SHUFFLEANSWERS",$level+1,false,$randomsamatch->shuffleanswers));
                 $status = fwrite ($bf,end_tag("MULTICHOICE",$level,true));
             }
-            //Now print quiz_answers
+            //Now print question_answers
             if ($include_answers) {
                 $status = quiz_backup_answers($bf,$preferences,$question);
             }
@@ -507,7 +507,7 @@
                 $status = quiz_backup_numerical_units($bf,$preferences,$question,7);
                 $status = fwrite ($bf,end_tag("NUMERICAL",$level,true));
             }
-            //Now print quiz_answers
+            //Now print question_answers
             $status = quiz_backup_answers($bf,$preferences,$question);
         }
         return $status;
@@ -537,7 +537,7 @@
             }
             //Print multianswers footer
             $status = fwrite ($bf,end_tag("MULTIANSWERS",6,true));
-            //Now print quiz_answers
+            //Now print question_answers
             $status = quiz_backup_answers($bf,$preferences,$question);
         }
         return $status;
@@ -570,7 +570,7 @@
                 //End calculated data
                 $status = $status &&fwrite ($bf,end_tag("CALCULATED",$level,true));
             }
-            //Now print quiz_answers
+            //Now print question_answers
             if ($include_answers) {
                 $status = quiz_backup_answers($bf,$preferences,$question);
             }
@@ -622,7 +622,7 @@
                 fwrite ($bf,full_tag("ANSWER",$level+1,false,$essay->answer));                
                 $status = fwrite ($bf,end_tag("ESSAY",$level,true));
             }
-            //Now print quiz_answers
+            //Now print question_answers
             $status = quiz_backup_answers($bf,$preferences,$question);
         }
         return $status;
@@ -637,7 +637,7 @@
 
         $status = true;
 
-        $answers = get_records("quiz_answers","question",$question,"id");
+        $answers = get_records("question_answers","question",$question,"id");
         //If there are answers
         if ($answers) {
             $status = fwrite ($bf,start_tag("ANSWERS",6,true));
@@ -1033,7 +1033,7 @@
 
         //Categories
         $info[$instance->id.'1'][0] = get_string("categories","quiz");
-        if ($ids = quiz_category_ids_by_backup ($backup_unique_code)) {
+        if ($ids = question_category_ids_by_backup ($backup_unique_code)) {
             $info[$instance->id.'1'][1] = count($ids);
         } else {
             $info[$instance->id.'1'][1] = 0;
@@ -1127,7 +1127,7 @@
         }
         //Categories
         $info[1][0] = get_string("categories","quiz");
-        if ($ids = quiz_category_ids_by_backup ($backup_unique_code)) {
+        if ($ids = question_category_ids_by_backup ($backup_unique_code)) {
             $info[1][1] = count($ids);
         } else {
             $info[1][1] = 0;
@@ -1186,14 +1186,14 @@
     }
 
     //Returns an array of categories id
-    function quiz_category_ids_by_backup ($backup_unique_code) {
+    function question_category_ids_by_backup ($backup_unique_code) {
 
         global $CFG;
 
         return get_records_sql ("SELECT a.old_id, a.backup_code
                                  FROM {$CFG->prefix}backup_ids a
                                  WHERE a.backup_code = '$backup_unique_code' AND
-                                       a.table_name = 'quiz_categories'");
+                                       a.table_name = 'question_categories'");
     }
 
     function quiz_question_ids_by_backup ($backup_unique_code) {
@@ -1205,7 +1205,7 @@
                                       {$CFG->prefix}question q
                                  WHERE a.backup_code = '$backup_unique_code' AND
                                        q.category = a.old_id AND
-                                       a.table_name = 'quiz_categories'");
+                                       a.table_name = 'question_categories'");
     }
 
     function quiz_grade_ids_by_course ($course) {

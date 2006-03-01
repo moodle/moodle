@@ -176,7 +176,7 @@ if (self.name == 'editquestion') {
         $categoryid = required_param('categoryid', PARAM_INT);
         $randomcount = required_param('randomcount', PARAM_INT);
         // load category
-        if (! $category = get_record('quiz_categories', 'id', $categoryid)) {
+        if (! $category = get_record('question_categories', 'id', $categoryid)) {
             error('Category ID is incorrect');
         }
         // find existing random questions in this category
@@ -295,7 +295,7 @@ if (self.name == 'editquestion') {
 
 /// all commands have been dealt with, now print the page
 
-    if (empty($modform->category) or !record_exists('quiz_categories', 'id', $modform->category)) {
+    if (empty($modform->category) or !record_exists('question_categories', 'id', $modform->category)) {
         $category = get_default_question_category($course->id);
         $modform->category = $category->id;
     }

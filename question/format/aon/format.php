@@ -157,7 +157,7 @@ class quiz_format_aon extends quiz_default_format {
              $extracts = get_records_sql("SELECT q.questiontext, a.answer
                                             FROM {$CFG->prefix}question q,
                                                  {$CFG->prefix}quiz_shortanswer sa,
-                                                 {$CFG->prefix}quiz_answers a
+                                                 {$CFG->prefix}question_answers a
                                            WHERE q.id in ($extractids) 
                                              AND sa.question = q.id
                                              AND a.id = sa.answers");
@@ -195,7 +195,7 @@ class quiz_format_aon extends quiz_default_format {
 
              execute_sql("DELETE FROM {$CFG->prefix}question WHERE id IN ($extractids)", false);
              execute_sql("DELETE FROM {$CFG->prefix}quiz_shortanswer WHERE question IN ($extractids)", false);
-             execute_sql("DELETE FROM {$CFG->prefix}quiz_answers WHERE question IN ($extractids)", false);
+             execute_sql("DELETE FROM {$CFG->prefix}question_answers WHERE question IN ($extractids)", false);
              
         }
 
@@ -203,7 +203,7 @@ class quiz_format_aon extends quiz_default_format {
             foreach ($shortanswerids as $shortanswerid) {
                 delete_records("question", "id", $shortanswerid);
                 delete_records("quiz_shortanswer", "question", $shortanswerid);
-                delete_records("quiz_answers", "question", $shortanswerid);
+                delete_records("question_answers", "question", $shortanswerid);
             }
         }
         $info = "$shortanswercount ".get_string("shortanswer", "quiz").
