@@ -3,6 +3,12 @@
 <!-- START OF FOOTER -->
 <div id="footer">
 
+<?php
+    echo '<p class="helplink">';
+    echo page_doc_link('Moodle Docs for this page');
+    echo '</p>';
+?>
+
 <?php if ($navigation) { ?>
     <div class="navbar">
         <div class="breadcrumb"><?php print_navigation($navigation); ?></div>

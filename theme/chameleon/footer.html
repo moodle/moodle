@@ -3,6 +3,11 @@
 <!-- START OF FOOTER -->
 <?php global $CFG, $course; ?>
 <div id="footer">
+<?php
+    echo '<p class="helplink">';
+    echo page_doc_link('Moodle Docs for this page');
+    echo '</p>';
+?>
 <?php echo $loggedinas ?>
 <?php echo $homelink ?>
 <!-- <p><div class="homelink"><a target="<?php echo $CFG->framename ?>" href="<?php $CFG->wwwroot ?>/course/view.php?id=<?php $course->id ?>"> <?php $course->shortname ?> </a></div></p> -->

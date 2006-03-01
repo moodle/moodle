@@ -3,6 +3,12 @@
 <!-- START OF FOOTER -->
 <div id="footer">
 
+<?php
+    echo '<p class="helplink">';
+    echo page_doc_link('Moodle Docs for this page');
+    echo '</p>';
+?>
+
 <?php echo $loggedinas ?>
 <p align="center"><a href="http://moodle.org" target="_blank"><img src="<?php echo "$CFG->wwwroot/theme/$CFG->theme/images/moodlelogo.gif" ?>" border="0"></a></p>
 
