@@ -240,17 +240,25 @@ class quiz_report extends quiz_default_report {
             'qa.sumgrades, qa.timefinish, qa.timestart, qa.timefinish - qa.timestart AS duration ';
         if ($course->id != SITEID) { // this is too complicated, so just do it for each of the four cases.
             if (!empty($currentgroup) && empty($noattempts)) {
+                // we want a particular group and we only want to see students WITH attempts.
+                // So join on groups_members and do an inner join on attempts.
                 $from  = 'FROM '.$CFG->prefix.'user u JOIN '.$CFG->prefix.'user_students us ON us.userid = u.id JOIN '.$CFG->prefix.'groups_members gm ON u.id = gm.userid '.
                     'JOIN '.$CFG->prefix.'quiz_attempts qa ON u.id = qa.userid AND qa.quiz = '.$quiz->id;
                 $where = ' WHERE  us.course = '.$course->id.' AND gm.groupid = '.$currentgroup;                
             } else if (!empty($currentgroup) && !empty($noattempts)) {
+                // We want a particular group and we only want to see students WITHOUT attempts.
+                // So join on groups_members and do a left join on attempts where the right side is null (no records in the attempts table)
                 $from  = 'FROM '.$CFG->prefix.'user u JOIN '.$CFG->prefix.'user_students us ON us.userid = u.id JOIN '.$CFG->prefix.'groups_members gm ON u.id = gm.userid '.
                     'LEFT JOIN '.$CFG->prefix.'quiz_attempts qa ON u.id = qa.userid AND qa.quiz = '.$quiz->id;
                 $where = ' WHERE us.course = '.$course->id.' AND gm.groupid = '.$currentgroup.' AND qa.userid IS NULL';
             } else if (empty($currentgroup) && empty($noattempts)) {
+                // We don't care about group, and we only want to see students WITH attempts.
+                // So just do a striaght inner join on attempts, don't worry about the groups_members table
                 $from  = 'FROM '.$CFG->prefix.'user u JOIN '.$CFG->prefix.'quiz_attempts qa ON u.id = qa.userid ';
                 $where = ' WHERE qa.quiz = '.$quiz->id;
             } else if (empty($currentgroup) && !empty($noattempts)) {
+                // We don't care about group, and we only want to see students WITHOUT attempts.
+                // So do a left join on attempts where the right side is null (no records in the attempts table), and don't worry about groups_members.
                 $from  = 'FROM '.$CFG->prefix.'user u JOIN '.$CFG->prefix.'user_students us ON us.userid = u.id LEFT JOIN '.$CFG->prefix.'quiz_attempts qa ON u.id = qa.userid AND qa.quiz = '.$quiz->id;
                 $where = ' WHERE us.course = '.$course->id.' AND qa.userid IS NULL';
             }
