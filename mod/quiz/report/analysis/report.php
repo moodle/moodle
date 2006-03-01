@@ -105,7 +105,7 @@ class quiz_report extends quiz_default_report {
         $statstable = array();
         $questionarray = array(); 
         foreach ($attempts as $attempt) {
-            $questionarray[] = question_in_quiz($attempt->layout);
+            $questionarray[] = quiz_questions_in_quiz($attempt->layout);
         }
         $questionlist = quiz_questions_in_quiz(implode(",", $questionarray));
         $questionarray = array_unique(explode(",",$questionlist));
