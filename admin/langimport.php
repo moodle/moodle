@@ -173,18 +173,15 @@
             $lang16 = array();   //all the Moodle 1.6 unicode lang packs (updated and not updated)
             $packs = array();    //all the packs that needs updating
 
-            if ($fp = fopen($source, 'r')) {    /// attempt to get the list from Moodle.org.
-                while(!feof ($fp)) {
-                    $availablelangs[] = split(',', fgets($fp,1024));
-                }
-            } else {
-                error('can not fopen!');
+
+            if (!$availablelangs = proxy_url($source)) {
+                error ('can not read from course');
             }
+
             //and build an associative array
             foreach ($availablelangs as $alang) {
                 $md5array[$alang[0]] = $alang[1];
             }
-
 
             //filtering out non-16 packs
             foreach ($alllangs as $clang) {
@@ -275,6 +272,12 @@
             $source = 'http://download.moodle.org/lang16/languages.md5';
             $remote = 0;    //flag for reading from remote or local
 
+            if ($availablelangs = proxy_url($source)) {
+                $remote = 1;
+            } else {
+                $availablelangs = get_local_list_of_languages();
+            }
+/*
             if ($fp = fopen($source, 'r')){    /// attempt to get the list from Moodle.org.
                 while(!feof ($fp)) {
                     $availablelangs[] = split(',', fgets($fp,1024));
@@ -283,7 +286,7 @@
             } else {    /// fopen failed, we find local copy of list.
                 $availablelangs = get_local_list_of_languages();
             }
-
+*/
             if (!$remote) {
                 print_simple_box_start('center','60%');
                 echo '<div align="center">';
@@ -351,7 +354,7 @@
             }
 
             foreach ($availablelangs as $alang) {
-                if ($alang[0] != "en_utf8") {
+                if (trim($alang[0]) != "en_utf8") {
                     if ($remote){
                         if (!is_installed_lang($alang[0], $alang[1])){    //if not already installed
                             echo '<option value="'.$alang[0].'">'.$alang[2].' ('.$alang[0].')</option>';
@@ -417,4 +420,37 @@
         return false;
     }
     
+    //returns an array of languages, or false if can not read from source
+    //uses a socket if proxy is set as a config variable
+    function proxy_url($url) {
+        global $CFG;
+
+        if ($CFG->proxyhost && $CFG->proxyport) {
+
+            $proxy_fp = fsockopen($CFG->proxyhost, $CFG->proxyport);
+            if (!$proxy_fp) {
+                return false;    //failed
+            }
+            fputs($proxy_fp, "GET $url HTTP/1.0\r\nHost: $CFG->proxyhost\r\n\r\n");
+            $i = 0;
+                while(!feof($proxy_fp)) {
+                $string = fgets($proxy_fp, 1024);
+                if ($i > 11) {    //12 lines of info skipped
+                    $availablelangs[] = split(',', $string);
+                }
+                $i++;
+            }
+            fclose($proxy_fp);
+
+        } else {    //proxy not in use
+            if ($fp = fopen($url, 'r')){    /// attempt to get the list from Moodle.org.
+                while(!feof ($fp)) {
+                    $availablelangs[] = split(',', fgets($fp,1024));
+                }
+            } else {    /// fopen failed, return false.
+                return false;
+            }
+        }
+        return $availablelangs;
+    }
 ?>
