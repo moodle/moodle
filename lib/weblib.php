@@ -3936,10 +3936,10 @@ function helpbutton ($page, $title='', $module='moodle', $image=true, $linktext=
     $linkobject = '<span class="helplink">';
 
     //Accessibility: prefix the alt text/title with 'Help with', strip distracting dots '...'
-    $title = get_string('helpprefix') ." '". trim($title,' \t.') ."'";
+    $title = get_string('helpprefix', '', trim($title,' \t.'));
     if ($image) {
         if ($imagetext == '') {
-            $imagetext = '<img height="17" width="17" alt="'.$title.'" src="'.
+            $imagetext = '<img alt="'.$title.'" src="'.
                           $CFG->pixpath .'/help.gif" />';
         }
         if ($linktext) {
