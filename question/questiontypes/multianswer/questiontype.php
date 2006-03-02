@@ -198,7 +198,7 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
         $nameprefix = $question->name_prefix;
 
         // For this question type, we better print the image on top:
-        quiz_print_possible_question_image($question, $cmoptions->course);
+        echo get_question_image($question, $cmoptions->course);
 
         $qtextremaining = format_text($question->questiontext,
                                       $question->questiontextformat,
@@ -330,6 +330,7 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
 
         // Print the final piece of question text:
         echo $qtextremaining;
+        $this->print_question_submit_buttons($question, $state, $cmoptions, $options);
     }
 
     function grade_responses(&$question, &$state, $cmoptions) {
