@@ -11,10 +11,6 @@
 * @package base
 ******************************************************************/
 
-// Developer's debug assistant - if true then the display string will not cache, only
-// the magpie object's built in caching will be used
-define('BLOCK_RSS_SECONDARY_CACHE_ENABLED', true);
-
 /**
  * This class is for a block which defines a block for display on
  * any Moodle page. 
@@ -164,16 +160,6 @@ define('BLOCK_RSS_SECONDARY_CACHE_ENABLED', true);
             define('MAGPIE_OUTPUT_ENCODING', current_charset());  // see bug 3107
         }
 
-        // Check if there is a cached string which has not timed out.
-        if (BLOCK_RSS_SECONDARY_CACHE_ENABLED &&
-                isset($this->config->{'rssid'. $rssid}) && 
-                    isset($this->config->{'rssid'. $rssid .'timestamp'}) && 
-                        $this->config->{'rssid'. $rssid .'timestamp'} >= $now - $CFG->block_rss_timeout * 60) {
-            // If the cached string is not too stale 
-            // use it rather than going any further
-            return stripslashes_safe($this->config->{'rssid'. $rssid});
-        }
-
         $rss_record = get_record('block_rss_client', 'id', $rssid);
         if (isset($rss_record) && isset($rss_record->id)) {
             // By capturing the output from fetch_rss this way
@@ -262,11 +248,6 @@ define('BLOCK_RSS_SECONDARY_CACHE_ENABLED', true);
                 $this->title = $feedtitle;
             }
         }
-
-        // store config setting for this rssid so we do not need to read from file each time
-        $this->config->{'rssid'. $rssid} = addslashes($returnstring);
-        $this->config->{'rssid'. $rssid .'timestamp'} = $now; 
-        $this->instance_config_save($this->config);
         return $returnstring;
     }
 
