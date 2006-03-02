@@ -368,7 +368,7 @@ $string['emailactive'] = 'E-Mail aktiviert';
 $string['emailagain'] = 'E-Mail (wiederholen)';
 $string['emailcharset'] = 'E-Mail Zeichensatz';
 $string['emailconfirm'] = 'Bestätigen Sie Ihren Zugang';
-$string['emailconfirmation'] = 'Guten Tag $a->firstname $a->lastname,
+$string['emailconfirmation'] = 'Guten Tag $a->firstname,
 
 unter Verwendung der E-Mail-Adresse ist ein neuer Zugang zum Lernmanagementsystem angemeldet worden. Wenn dies seine Richtigkeit hat, bestätigen Sie bitte die Anmeldung über den folgenden Link:
 
