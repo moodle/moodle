@@ -29,11 +29,7 @@
     </TABLE>
     <TABLE name="backup_log">
       <FIELDS>
-        <FIELD name="info" method="PHP_FUNCTION" type="varchar" length="255">
-          <PHP_FUNCTION>
-            migrate2utf8_backup_log_info(RECORDID)
-          </PHP_FUNCTION>
-        </FIELD>
+        <FIELD name="info" method="NO_CONV" type="varchar" length="255" />
       </FIELDS>
     </TABLE>
   </TABLES>
