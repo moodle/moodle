@@ -1076,6 +1076,7 @@ finished --Urs */
 	vertical-align: top;
 	padding-top: 0.4em;
 }
+.numerical .answer,
 .shortanswer .answer,
 .truefalse .answer {
 	background-color: #EEE;
@@ -1084,6 +1085,7 @@ finished --Urs */
 .shortanswer .answer input {
 	width: 85%;
 }
+.numerical .answer,
 .shortanswer .feedback,
 .truefalse .feedback {
   clear: both;
@@ -1605,7 +1607,7 @@ body#mod-forum-search .introcontent {
 /* .feedbacktext {
   display:block;
   text-align:right;
-}
+} */
 
 body#mod-quiz-report table#attempts,
 body#mod-quiz-report table#commands,
@@ -1645,10 +1647,10 @@ body#mod-quiz-report .controls {
   text-align: center;
 }
 
-.navbutton form {
+/* .navbutton form {
   display: inline;
-  }
- */
+  } */
+
 /***
  *** Modules: Resource
  ***/
