@@ -797,6 +797,7 @@ $string['moduledeleteconfirm'] = 'You are about to completely delete the module 
 $string['moduledeletefiles'] = 'All data associated with the module \'$a->module\' has been deleted from the database.  To complete the deletion (and prevent the module re-installing itself), you should now delete this directory from your server: $a->directory';
 $string['modulesetup'] = 'Setting up module tables';
 $string['modulesuccess'] = '$a tables have been set up correctly';
+$string['moodledocslink'] = 'Moodle Docs for this page';
 $string['moodleversion'] = 'Moodle Version';
 $string['more'] = 'more';
 $string['mostrecently'] = 'most recently';
