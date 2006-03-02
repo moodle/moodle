@@ -1045,19 +1045,19 @@ function quiz_upgrade($oldversion) {
     }
 
     if ($oldversion < 2006030101) {
-        execute_sql("ALTER TABLE {$CFG->prefix}quiz_questions RENAME {$CFG->prefix}question", false);
+        execute_sql("ALTER TABLE {$CFG->prefix}quiz_questions RENAME TO {$CFG->prefix}question", false);
         execute_sql('ALTER TABLE '.$CFG->prefix.'quiz_questions_id_seq RENAME TO '.$CFG->prefix.'question_id_seq',false);
         execute_sql('ALTER TABLE '.$CFG->prefix.'question ALTER COLUMN id SET DEFAULT nextval(\''.$CFG->prefix.'question_id_seq\')',false);
 
-        execute_sql("ALTER TABLE {$CFG->prefix}quiz_states RENAME {$CFG->prefix}question_states", false);
+        execute_sql("ALTER TABLE {$CFG->prefix}quiz_states RENAME TO {$CFG->prefix}question_states", false);
         execute_sql('ALTER TABLE '.$CFG->prefix.'quiz_states_id_seq RENAME TO '.$CFG->prefix.'question_states_id_seq',false);
         execute_sql('ALTER TABLE '.$CFG->prefix.'question_states ALTER COLUMN id SET DEFAULT nextval(\''.$CFG->prefix.'question_states_id_seq\')',false);
     
-        execute_sql("ALTER TABLE {$CFG->prefix}quiz_answers RENAME {$CFG->prefix}question_answers", false);
+        execute_sql("ALTER TABLE {$CFG->prefix}quiz_answers RENAME TO {$CFG->prefix}question_answers", false);
         execute_sql('ALTER TABLE '.$CFG->prefix.'quiz_answers_id_seq RENAME TO '.$CFG->prefix.'question_answers_id_seq',false);
         execute_sql('ALTER TABLE '.$CFG->prefix.'question_answers ALTER COLUMN id SET DEFAULT nextval(\''.$CFG->prefix.'question_answers_id_seq\')',false);
     
-        execute_sql("ALTER TABLE {$CFG->prefix}quiz_categories RENAME {$CFG->prefix}question_categories", false);
+        execute_sql("ALTER TABLE {$CFG->prefix}quiz_categories RENAME TO {$CFG->prefix}question_categories", false);
         execute_sql('ALTER TABLE '.$CFG->prefix.'quiz_categories_id_seq RENAME TO '.$CFG->prefix.'question_categories_id_seq',false);
         execute_sql('ALTER TABLE '.$CFG->prefix.'question_categories ALTER COLUMN id SET DEFAULT nextval(\''.$CFG->prefix.'question_categories_id_seq\')',false);
     }
