@@ -277,7 +277,7 @@ function migrate2utf8_question_answers_answer($recordid){
         return false;
     }
 
-    if (!$quizanswer= get_record('quiz_question_answers','id',$recordid)) {
+    if (!$quizanswer= get_record('question_answers','id',$recordid)) {
         log_the_problem_somewhere();
         return false;
     }
