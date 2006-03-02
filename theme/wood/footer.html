@@ -3,18 +3,19 @@
 
 <div id="footer">
 <hr size="1" noshade="noshade" />
+
+<?php
+    echo '<p class="helplink">';
+    echo page_doc_link(get_string('moodledocslink'));
+    echo '</p>';
+?>
+
 <?php if ($CFG->perfdebug && !empty($performanceinfo)) {
     echo $performanceinfo;
 }
 ?>
 <?php echo $loggedinas ?>
 <?php echo $homelink ?>
-
-<?php
-    echo '<p class="helplink">';
-    echo page_doc_link('Moodle Docs for this page');
-    echo '</p>';
-?>
 
 </div>
 </div>
