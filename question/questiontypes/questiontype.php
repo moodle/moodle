@@ -60,7 +60,7 @@ class quiz_default_questiontype {
         }
 
         if (empty($question->name)) {
-            $question->name = strip_tags($question->questiontext);
+            $question->name = substr(strip_tags($question->questiontext), 0, 15);
             if (empty($question->name)) {
                 $question->name = '-';
             }
