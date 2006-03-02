@@ -47,9 +47,10 @@
             $um = new upload_manager('imagefile',false,false,null,false,0,true,true);
             if ($um->preprocess_files()) {
                 require_once("$CFG->libdir/gdlib.php");
+                
                 if (save_profile_image($group->id, $um, 'groups')) {
                     $group->picture = 1;
-                }
+                } 
             }
 
             // Setting a new object in order to avoid updating other columns for the record,
@@ -63,7 +64,7 @@
             $dataobj->description = clean_text($form->description);
             $dataobj->hidepicture = empty($form->hidepicture) ? 0 : 1;
             $dataobj->password    = required_param('password', PARAM_ALPHANUM);
-
+            $dataobj->picture = $group->picture;
             if (!update_record('groups', $dataobj)) {
                 notify("A strange error occurred while trying to save");
             } else {
