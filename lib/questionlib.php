@@ -1054,23 +1054,57 @@ function sort_categories_by_tree(&$categories, $id = 0, $level = 1) {
     return $children;
 }
 
-function add_indented_names(&$categories, $id = 0, $indent = 0) {
-// returns the categories with their names indented to show parent-child relationships
+function flatten_category_tree( $cats, $depth=0 ) {
+    // flattens tree structure created by add_indented_named 
+    // (adding the names)
+    $newcats = array();
     $fillstr = '&nbsp;&nbsp;&nbsp;';
-    $fill = str_repeat($fillstr, $indent);
-    $children = array();
-    $keys = array_keys($categories);
 
-    foreach ($keys as $key) {
-        if (!isset($categories[$key]->processed) && $categories[$key]->parent == $id) {
-            $children[$key] = $categories[$key];
-            $children[$key]->indentedname = $fill . $children[$key]->name;
-            $categories[$key]->processed = true;
-            $children = $children + add_indented_names($categories, $children[$key]->id, $indent + 1);
+    foreach ($cats as $key => $cat) {
+        $newcats[$key] = $cat;
+        $newcats[$key]->indentedname = str_repeat($fillstr,$depth) . $cat->name;
+        // recurse if the category has children
+        if (!empty($cat->children)) {
+            $newcats += flatten_category_tree( $cat->children, $depth+1 ); 
         }
     }
-    return $children;
+
+    return $newcats;
 }
+
+function add_indented_names( $categories ) {
+
+    // iterate through categories adding new fields
+    // and creating references
+    foreach ($categories as $key => $category) {
+        $categories[$key]->children = array();
+        $categories[$key]->link = &$categories[$key];
+    }
+
+    // create tree structure of children
+    // link field is used to track 'new' place of category in tree
+    foreach ($categories as $key => $category) {
+        if (!empty($category->parent)) {
+            $categories[$category->parent]->link->children[$key] = $categories[$key];
+            $categories[$key]->link = &$categories[$category->parent]->link->children[$key];
+        }
+    }
+
+    // remove top level categories with parents
+    $newcats = array();
+    foreach ($categories as $key => $category) {
+        unset( $category->link );
+        if (empty($category->parent)) {
+            $newcats[$key] = $category;
+        }
+    }
+
+    // walk the tree to flatten revised structure
+    $categories = flatten_category_tree( $newcats );
+
+    return $categories;
+}
+
 
 /**
 * Displays a select menu of categories with appended course names
