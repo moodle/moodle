@@ -1076,6 +1076,7 @@ finished --Urs */
 	vertical-align: top;
 	padding-top: 0.4em;
 }
+.calculated .answer,
 .numerical .answer,
 .shortanswer .answer,
 .truefalse .answer {
@@ -1085,7 +1086,8 @@ finished --Urs */
 .shortanswer .answer input {
 	width: 85%;
 }
-.numerical .answer,
+.calculated .feedback,
+.numerical .feedback,
 .shortanswer .feedback,
 .truefalse .feedback {
   clear: both;
