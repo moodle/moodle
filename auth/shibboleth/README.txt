@@ -13,6 +13,9 @@ Changes:
             Langhoff and Lukas Haemmerle
 - 10. 2005: Added better error messages and moved text to language directories
 - 02. 2006: Simplified authentication so that authorization works properly
+            Added instructions for IIS
+            
+
 
 Moodle Configuration with Dual login
 -------------------------------------------------------------------------------
@@ -21,7 +24,7 @@ Moodle Configuration with Dual login
    For Apache you have to define a rule like the following in the Apache config:
 
 --
-<Location ~  "/auth/shibboleth/shib-protected.php">
+<Location ~  "/auth/shibboleth">
         AuthType shibboleth
         ShibRequireSession On
         require valid-user
@@ -31,10 +34,14 @@ Moodle Configuration with Dual login
    To restrict access to Moodle, replace the access rule 'require valid-user' 
    with something that fits your needs, e.g. 'require affiliation student'.
 
-3. As Moodle admin, go to the 'Administrations >> Users >> Authentication 
+   For IIS you have protect the auth/shibboleth directory directly in the 
+   RequestMap of the Shibboleth configuration file (shibboleth.xml). See
+   https://authdev.it.ohio-state.edu/twiki/bin/view/Shibboleth/xmlaccesscontrol?topic=XMLAccessControl
+
+2. As Moodle admin, go to the 'Administrations >> Users >> Authentication 
    Options' and select the 'Shibboleth' authentication method from the pop-up.
    
-4. Fill in the fields of the form. The fields 'Username', 'First name', 
+3. Fill in the fields of the form. The fields 'Username', 'First name', 
    'Surname', etc should contain the name of the environment variables of the 
    Shibboleth attributes that you want to map onto the corresponding Moodle 
    variable (e.g. 'HTTP_SHIB_PERSON_SURNAME' for the person's last name, refer 
@@ -53,20 +60,20 @@ Moodle Configuration with Dual login
    lengths for each field in the user profile.
    #############################################################################
 
-5. The large text field 'Instructions' must contain a link to the 
+4. The large text field 'Instructions' must contain a link to the 
    moodle/auth/shibboleth/index.php file which is protected by 
    Shibboleth (see step 1) and causes the Shibboleth login procedure to start. 
    You also could use HTML code in that field, e.g. to create your own 
    Shibboleth login button.
 
-6. Save the changes for the Shibboleth authentication method.
+5. Save the changes for the Shibboleth authentication method.
 
 Moodle Configuration with Shibboleth only login
 -------------------------------------------------------------------------------
 If you want Shibboleth as your only authentication method, configure Moodle as
 described in the dual login section above and do the following steps:
 
-5.a  On the Moodle Shibboleth settings page, set the 'Alternate Login URL' to 
+4.a  On the Moodle Shibboleth settings page, set the 'Alternate Login URL' to 
      the URL of the file 'moodle/auth/shibboleth/index.php'
      This will enforce Shibboleth login.
 
@@ -74,21 +81,21 @@ How the Shibboleth authentication works
 --------------------------------------------------------------------------------
 For a user to get Shibboleth authenticated in Moodle he basically must go to the 
 Shibboleth-protected page /auth/shibboleth/index.php. If Shibboleth is the only 
-authentication method, this happens automatically when a user wants to login.
-Otherwise the user has to click on the link on the login page you provided in 
-step 5.
+authentication method (see 4.a), this happens automatically when a user wants to 
+login. Otherwise the user has to click on the link on the login page you 
+provided in step 4.
 
 Moodle basically checks whether the Shibboleth attribute that you mapped
 as the username is present. This attribute should only be present if a user is 
 Shibboleth authenticated.
 
 If the user's Moodle account has not existed yet, it gets automatically created.
-Unless the user's firstname, last name and email address is provided, the user 
-is automatically redirected to the edit profile page by Moodle.
 
 To prevent that every Shibboleth user can access your Moodle site you have to
-adapt the 'require valid-user' line in your webserver's config  (see step 2) to 
-allow only specific users. 
+adapt the 'require valid-user' line in your webserver's config  (see step 1) to 
+allow only specific users. If you defined some authorization rules in step 1,
+these are checked by Shibboleth itself. Only users who met these rules 
+actually can access /auth/shibboleth/index.php and get logged in.
 
 You can use Shibboleth AND another authentication method (it was tested with 
 manual login). So if there are a few users that don't have a Shibboleth 
@@ -96,18 +103,17 @@ login, you could create manual accounts for them and they could use the manual
 login. For other authentication methods you first have to configure them and 
 then set Shibboleth as your authentication method. Users can log in only via one 
 authentication method unless they have two accounts in Moodle.
-Users that provide a wrong login name for non-Shibboleth authentication methods
-are automatically redirected to auth/shibboleth/index.php and it is tried to 
-authenticate them via Shibboleth.
+Users that provide a non-existing login name for non-Shibboleth authentication 
+methods are automatically redirected to auth/shibboleth/index.php and it is 
+tried to authenticate them via Shibboleth.
 
 Shibboleth dual login with custom login page
 --------------------------------------------------------------------------------
 Of course you can create a dual login page that better fits your needs. For this 
 to work you have to set up the two authentication methods (e.g. 'Manual' and 
-'Shibboleth', Shibboleth has to be the current authentication method) and 
-specify an alternate login link to your own dual login page. On that page you 
-basically need a link to the Shibboleth-protected page
-('moodle/auth/shibboleth/index.php') for the Shibboleth login and a 
+'Shibboleth') and specify an alternate login link to your own dual login page. 
+On that page you basically need a link to the Shibboleth-protected page
+('/auth/shibboleth/index.php') for the Shibboleth login and a 
 form that sends 'username' and 'password' to moodle/login/index.php.
 Consult the Moodle documentation for further instructions and requirements.
 
