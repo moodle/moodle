@@ -3058,13 +3058,53 @@ function remove_admin($userid) {
 }
 
 /**
+ * Delete a course, including all related data from the database,
+ * and any associated files from the moodledata folder.
+ * 
+ * @param int $courseid The id of the course to delete.
+ * @param bool $showfeedback Whether to display notifications of each action the function performs.
+ * @return bool true if all the removals succeeded. false if there were any failures. If this
+ *             method returns false, some of the removals will probably have succeeded, and others
+ *             failed, but you have no way of knowing which.
+ */
+function delete_course($courseid, $showfeedback = true) {
+    global $CFG;
+    $result = true;
+    
+    if (!remove_course_contents($courseid, $showfeedback)) {
+        if ($showfeedback) {
+            notify("An error occurred while deleting some of the course contents.");
+        }
+        $result = false;
+    }
+
+    if (!delete_records("course", "id", $courseid)) {
+        if ($showfeedback) {
+            notify("An error occurred while deleting the main course record.");
+        }
+        $result = false;
+    }
+
+    if (!fulldelete($CFG->dataroot.'/'.$courseid)) {
+        if ($showfeedback) {
+            notify("An error occurred while deleting the course files.");
+        }
+        $result = false;
+    }
+    
+    return $result;
+}
+
+/**
  * Clear a course out completely, deleting all content
  * but don't delete the course itself
  *
  * @uses $CFG
  * @param int $courseid The id of the course that is being deleted
  * @param bool $showfeedback Whether to display notifications of each action the function performs.
- * @return bool
+ * @return bool true if all the removals succeeded. false if there were any failures. If this
+ *             method returns false, some of the removals will probably have succeeded, and others
+ *             failed, but you have no way of knowing which.
  */
 function remove_course_contents($courseid, $showfeedback=true) {
 
@@ -3276,7 +3316,7 @@ function remove_course_contents($courseid, $showfeedback=true) {
  * @param bool $removegroups Whether to remove matching records from the groups table.
  * @param bool $removeevents Whether to remove matching records from the event table.
  * @param bool $removelogs Whether to remove matching records from the log table.
- * @return bool true if all the removals succeeded. talse if there were any failures. If this
+ * @return bool true if all the removals succeeded. false if there were any failures. If this
  *             method returns false, some of the removals will probably have succeeded, and others
  *             failed, but you have no way of knowing which.
  */

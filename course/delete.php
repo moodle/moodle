@@ -67,17 +67,7 @@
 
     print_heading($strdeletingcourse);
 
-    if (!remove_course_contents($course->id)) {
-        notify("An error occurred while deleting some of the course contents.");
-    }
-
-    if (!delete_records("course", "id", $course->id)) {
-        notify("An error occurred while deleting the main course record.");
-    }
-
-    if (!fulldelete($CFG->dataroot.'/'.$course->id)) {
-        notify("An error occurred while deleting the course files.");
-    }
+    delete_course($course->id);
 
     print_heading( get_string("deletedcourse", "", $course->shortname) );
 
