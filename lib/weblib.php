@@ -1342,6 +1342,10 @@ function clean_text($text, $format=FORMAT_MOODLE) {
 
         default:
 
+        /// Fix non standard entity notations
+            $text = preg_replace('/(&#[0-9]+)(;?)/', "\\1;", $text);
+            $text = preg_replace('/(&#x[0-9a-fA-F]+)(;?)/', "\\1;", $text);
+
         /// Remove tags that are not allowed
             $text = strip_tags($text, $ALLOWED_TAGS);
 
@@ -1404,7 +1408,25 @@ function cleanAttributes2($htmlArray){
 
     $attStr = '';
     foreach ($attrArray as $arreach) {
-        $attStr .=  ' '.strtolower($arreach['name']).'="'.$arreach['value'].'" ';
+        $arreach['name'] = strtolower($arreach['name']);
+        if ($arreach['name'] == 'style') {
+            $value = $arreach['value'];
+            while (true) {
+                $prevvalue = $value;
+                $value = kses_no_null($value);
+                $value = preg_replace("/\/\*.*\*\//Us", '', $value);
+                $value = kses_decode_entities($value);
+                $value = preg_replace('/(&#[0-9]+)(;?)/', "\\1;", $value);
+                $value = preg_replace('/(&#x[0-9a-fA-F]+)(;?)/', "\\1;", $value);
+                if ($value === $prevvalue) {
+                    $arreach['value'] = $value;
+                    break;
+                }
+            }
+            $arreach['value'] = preg_replace("/j\s*a\s*v\s*a\s*s\s*c\s*r\s*i\s*p\s*t/i", "Xjavascript", $arreach['value']);
+            $arreach['value'] = preg_replace("/e\s*x\s*p\s*r\s*e\s*s\s*s\s*i\s*o\s*n/i", "Xexpression", $arreach['value']);
+        }
+        $attStr .=  ' '.$arreach['name'].'="'.$arreach['value'].'" ';
     }
 
     // Remove last space from attribute list
