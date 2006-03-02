@@ -17,6 +17,7 @@
   grades
   login
   message
+  question
   tabs
   user
 
@@ -62,6 +63,17 @@ h6.main {
   border:none;
   background:transparent;
 }
+
+.clearfix:after {
+  content: "."; 
+  display: block; 
+  height: 0; 
+  clear: both; 
+  visibility: hidden;
+}
+/* Hides from IE-mac \*/
+* html .clearfix {height: 1%;}
+/* End hide from IE-mac */
 
 .continuebutton {
   text-align: center;
@@ -985,6 +997,107 @@ body#message-messages {
   padding:10px;
 }
 
+/***
+ *** Question
+ ***/
+
+/* NOTE: new for all questions
+I will separate the properties
+when the work on questions is
+finished --Urs */
+
+#mod-quiz-attempt #page {
+	text-align: center;
+}
+.question {
+	width: 90%;
+	text-align: left;
+	margin: 10px auto 15px auto;
+	border: 1px solid #DDD;
+	clear: both;
+}
+.question .info {
+	float: left;
+	margin: 5px;
+	width: 8%;
+}
+.question .no {
+	font-size: 1.2em;
+	font-weight: bold;
+}
+.question .grade {
+	margin-top: 0.5em;
+	font-size: 0.8em;
+}
+.question .content {
+	float: right;
+	margin: 5px;
+	width: 88%;
+}
+.question .qtext {
+	margin-bottom: 1.5em;
+}
+.question .ablock {
+	margin: 0.7em 0 0.3em 0;
+}
+.question .prompt {
+	float: left;
+	width: 15%;
+	height: 2em;
+	padding-top: 0.3em;
+}
+.question .answer {
+	float: right;
+	width: 83%;
+	margin-bottom: 0.5em;
+}
+.question .submit {
+	position: relative;
+	clear: both;
+	float: left;
+}
+/* MSIE Hack */
+* html .question .submit {
+	float: none;
+}
+.question .c0,
+.question .c1 {
+	padding: 0.3em 0 0.3em 0.3em;
+	vertical-align: top;
+}
+.question .r0 {
+	background-color: #F5F5F5;
+}
+.question .r1 {
+	background-color: #EEE;
+}
+.multichoice .c0 {
+  width: 5%;
+	vertical-align: top;
+	padding-top: 0.4em;
+}
+.shortanswer .answer,
+.truefalse .answer {
+	background-color: #EEE;
+	padding: 0.3em 0 0.3em 0.3em;
+}
+.shortanswer .answer input {
+	width: 85%;
+}
+.shortanswer .feedback,
+.truefalse .feedback {
+  clear: both;
+	float: right;
+	width: 83%;
+	padding: 0 0 0.3em 0.3em;
+  border: 1px solid #DDD;
+}	
+.question .grading, 
+.question .history {
+	float: right;
+	margin: 5px;
+	width: 88%;
+}
 
 /***
  *** Logs
@@ -1483,6 +1596,7 @@ body#mod-forum-search .introcontent {
 /***
  *** Modules: Lesson
  ***/
+
 
 /***
  *** Modules: Quiz
