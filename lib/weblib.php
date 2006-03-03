@@ -4304,18 +4304,18 @@ function rebuildnolinktag($text) {
  */
 function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $footer='', $attributes = array()) {
 
-//TODO (nfreear): Accessibility: skip link not invisible in Firefox - why?
-    $skip_dest ='';
-/*    static $block_id = 0;
+//TODO (nfreear): Accessibility: skip block link. Proposed new file, lang/en_utf8/accessibility.php
+    global $CFG;
+    static $block_id = 0;
     $block_id++;
-    $skip_link = "<a href='#block-$block_id' onfocus=\"this.style.color='#000'\" onblur=\"this.style.color='#fff'\" class='skip-block'>Skip block</a>";
-    $skip_dest = "<span id='block-$block_id' class='skip-block-to'>&nbsp;</span>";
+    $skip_link = "<a href='#sb-$block_id' title='Skip block' class='skip-block'><img alt='Skip block' src='$CFG->wwwroot/pix/spacer.gif' /></a>"; 
+    $skip_dest = "<span id='sb-$block_id' class='skip-block-to'>&nbsp;</span>";
     if (! empty($heading)) {
         $heading .= $skip_link;
     } else {
         echo $skip_link;
     }
-*/    
+    
     print_side_block_start($heading, $attributes);
 
     if ($content) {

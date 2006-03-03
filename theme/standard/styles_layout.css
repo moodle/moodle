@@ -226,6 +226,8 @@ table.formtable tbody .htmlarea th
 .helplink img {
   vertical-align: middle;
   margin: 0px 2px;
+  width: 17px;
+  height: 17px;
 }
 
 form.popupform {
@@ -392,17 +394,11 @@ table.flexible th.c0 {
  *** Blocks
  ***/
  
-/*TODO (nfreear): Initially make link 'invisible' to visual users. Breaks - why? */
+/*Accessibility: Skip block link, for screen reader users. */
 a.skip-block, .skip-block {
-  font-weight:normal;
-  font-size:0.8em;
-  color:white;
-  background-color:white;
-  /*
   display:block;
-  width:6em;
-  float:right;
-  */
+  width:2em; 
+  height:3px;
 }
 .skip-block-to {
   font-size:1px;
