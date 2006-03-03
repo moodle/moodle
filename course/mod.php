@@ -511,6 +511,7 @@
             $pageheading = get_string("updatinga", "moodle", $fullmodulename);
         }
         $strnav = "<a href=\"$CFG->wwwroot/mod/$module->name/view.php?id=$cm->id\">".format_string($form->name,true)."</a> ->";
+        
         $CFG->pagepath = 'mod/'.$module->name.'/mod';
 
     } else if (isset_param('duplicate') and confirm_sesskey()) {   // value = course module
@@ -616,7 +617,13 @@
         }
         $strnav = '';
 
-        $CFG->pagepath = 'mod/'.$module->name.'/mod';
+        $CFG->pagepath = 'mod/'.$module->name;
+        if (!empty($type)) {
+            $CFG->pagepath .= '/' . $type;
+        }
+        else {
+            $CFG->pagepath .= '/mod';
+        }
 
     } else {
         error("No action was specfied");
