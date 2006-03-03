@@ -264,7 +264,8 @@
                     ///Print Fieldname Column
 
                     echo '<td>';
-                    echo $field->name;
+                    echo '<a href="fields.php?mode=display&amp;d='.$data->id;
+                    echo '&amp;fid='.$field->id.'&amp;sesskey='.sesskey().'">'.$field->name.'</a>';
                     echo '</td>';
 
                     ///Print Type Column
