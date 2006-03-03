@@ -15,16 +15,22 @@ function rss_get_link($courseid, $userid, $modulename, $id, $tooltiptext='') {
         $userid = $admin->id;
     }
 
+    $rsspath = rss_get_url($courseid, $userid, $modulename, $id);
+    $rsspix = $CFG->pixpath .'/i/rss.gif';
+
+    return '<a href="'. $rsspath .'"><img src="'. $rsspix .'" title="'. strip_tags($tooltiptext) .'" alt="" /></a>';
+
+}
+
+//This function returns the URL for the RSS XML file.
+function rss_get_url($courseid, $userid, $modulename, $id) {
+    global $CFG;
     if ($CFG->slasharguments) {
         $rsspath = "$CFG->wwwroot/rss/file.php/$courseid/$userid/$modulename/$id/rss.xml";
     } else {
         $rsspath = "$CFG->wwwroot/rss/file.php?file=/$courseid/$userid/$modulename/$id/rss.xml";
     }
-    
-    $rsspix = $CFG->pixpath .'/i/rss.gif';
-
-    return '<a href="'. $rsspath .'"><img src="'. $rsspix .'" title="'. strip_tags($tooltiptext) .'" alt="" /></a>';
-
+    return $rsspath;
 }
 
 //This function prints the icon (from theme) with the link to rss/file.php
