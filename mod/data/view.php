@@ -106,8 +106,7 @@
     }
     
 /// Print the page header
-    //$PAGE->print_header($course->shortname.': %fullname%', '', '', '', $rssmeta);
-    print_header($course->shortname.': %fullname%', '', '', '', $rssmeta);
+    $PAGE->print_header($course->shortname.': %fullname%', '', $rssmeta);
     
     echo '<table id="layout-table"><tr>';
 

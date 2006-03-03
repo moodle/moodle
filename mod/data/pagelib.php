@@ -27,7 +27,7 @@ class page_data extends page_generic_activity {
         parent::init_quick($data);
     }
 
-    function print_header($title, $morebreadcrumbs = NULL) {
+    function print_header($title, $morebreadcrumbs = NULL, $meta) {
         global $USER, $CFG;
 
         $this->init_full();
@@ -77,8 +77,8 @@ class page_data extends page_generic_activity {
         else {
             $buttons = '&nbsp;';
         }
-        print_header($title, $this->courserecord->fullname, $crumbtext, '', '', true, $buttons, navmenu($this->courserecord, $this->modulerecord));
-
+        print_header($title, $this->courserecord->fullname, $crumbtext, '', $meta, true, $buttons, navmenu($this->courserecord, $this->modulerecord));
+        
     }
 
     function get_type() {
