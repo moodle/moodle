@@ -143,6 +143,10 @@ $CFG->admin = 'admin';
 // This is especially useful for demonstration teacher accounts
 //      $CFG->restrictusers = 'teacher,fred,jim';
 //
+// Set global password for "Login as", teacher is prompted only once in each session.
+// Set your own password and tell it only to teachers that should have access to this feature.
+//      $CFG->loginaspassword = 'yoursharedpassword';
+//
 // Setting this to true will enable admins to edit any post at any time
 //      $CFG->admineditalways = true;
 //

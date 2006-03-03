@@ -4,9 +4,14 @@
     require_once("../config.php");
     require_once("lib.php");
 
-    $id = required_param('id',PARAM_INT); // course id
-    $user = optional_param('user',0,PARAM_INT);   // login as this user
-    $return = optional_param('return','',PARAM_CLEAN); // return to the page we came from
+    $id       = required_param('id', PARAM_INT);           // course id
+    $user     = optional_param('user', 0, PARAM_INT);      // login as this user
+    $return   = optional_param('return', 0, PARAM_BOOL);   // return to the page we came from
+    $password = optional_param('password', '', PARAM_RAW); // site wide password
+
+    if (!$site = get_site()) {
+        error("Site isn't defined!");
+    }
 
     if (! $course = get_record("course", "id", $id)) {
         error("Course ID was incorrect");
@@ -41,6 +46,39 @@
     }
 
     check_for_restricted_user($USER->username, "$CFG->wwwroot/user/view.php?id=$user&amp;course=$course->id");
+
+    // validate loginaspassword if defined in config.php
+
+    if (empty($SESSION->loginasvalidated) && !empty($CFG->loginaspassword)) {
+        if ($password == $CFG->loginaspassword && confirm_sesskey()) {
+            $SESSION->loginasvalidated = true;
+        } else {
+            $strloginaspasswordexplain = get_string('loginaspasswordexplain');
+            $strloginas = get_string('loginas');
+            $strpassword = get_string('password');
+
+            print_header("$site->fullname: $strloginas", "$site->fullname: $strloginas",
+                         ' ', 'passwordform.password');
+            print_simple_box_start('center', '', '', 20);
+            ?>
+            <p><?php echo $strloginaspasswordexplain?></p>
+            <form action="loginas.php" name="passwordform" method="post">
+            <table border="0" cellpadding="3" cellspacing="3">
+                <tr><td><?php echo $strpassword?>:</td>
+                    <td><input type="password" name="password" size="15" value="" alt="<?php p($strpassword)?>" /></td>
+                    <td><input type="submit" value="<?php p($strloginas)?>" /></td>
+                </tr>
+            </table>
+            <input type="hidden" name="id" value="<?php p($id)?>"/>
+            <input type="hidden" name="user" value="<?php p($user)?>"/>
+            <input type="hidden" name="sesskey" value="<?php p($USER->sesskey)?>"/>
+            </form>
+            <?php
+            print_simple_box_end();
+            print_footer();
+            die;
+        }
+    }
 
     if ($course->category and !isstudent($course->id, $user) and !isadmin()) {
         error("This student is not in this course!");
