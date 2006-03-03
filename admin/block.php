@@ -57,7 +57,11 @@
     $strconfiguration = get_string('configuration');
     $strmanageblocks = get_string('manageblocks');
     $strblockname = $block->get_title();
-
+    
+    // $CFG->pagepath is used to generate the body and id attributes for the body tag
+    // of the page. It is also used to generate the link to the Moodle Docs for this view.
+    $CFG->pagepath = 'block/' . $strblockname . '/config';
+    
     print_header($site->shortname.': '.$strblockname.": $strconfiguration", $site->fullname,
                   "<a href=\"index.php\">$stradmin</a> -> ".
                   "<a href=\"configure.php\">$strconfiguration</a> -> ".

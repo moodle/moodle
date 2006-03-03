@@ -53,7 +53,11 @@
     $strconfiguration = get_string("configuration");
     $strmanagemodules = get_string("managemodules");
     $strmodulename = get_string("modulename", $module);
-
+    
+    // $CFG->pagepath is used to generate the body and id attributes for the body tag
+    // of the page. It is also used to generate the link to the Moodle Docs for this view.
+    $CFG->pagepath = 'mod/' . $module . '/config';
+    
     print_header("$site->shortname: $strmodulename: $strconfiguration", $site->fullname,
                   "<a href=\"index.php\">$stradmin</a> -> ".
                   "<a href=\"configure.php\">$strconfiguration</a> -> ".

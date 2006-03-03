@@ -68,7 +68,11 @@
     //==============================
     // Display logic
     //==============================
-
+    
+    // $CFG->pagepath is used to generate the body and id attributes for the body tag
+    // of the page. It is also used to generate the link to the Moodle Docs for this view.
+    $CFG->pagepath = 'filter/' . $filtername . '/config';
+    
     $filtername = ucfirst($filtername);
     print_header( "$site->shortname: $txt->managefilters", "$site->fullname",
         "<a href=\"index.php\">$txt->administration</a> -> <a href=\"configure.php\">$txt->configuration</a> " .
