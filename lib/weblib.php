@@ -2357,7 +2357,7 @@ function user_login_string($course=NULL, $user=NULL) {
         if ($realuser = get_record('user', 'id', $user->realuser)) {
             $fullname = fullname($realuser, true);
             $realuserinfo = " [<a target=\"{$CFG->framename}\"
-            href=\"$CFG->wwwroot/course/loginas.php?id=$course->id&amp;return=$realuser->id\">$fullname</a>] ";
+            href=\"$CFG->wwwroot/course/loginas.php?id=$course->id&amp;return=1\">$fullname</a>] ";
         }
     } else {
         $realuserinfo = '';
