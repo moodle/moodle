@@ -294,7 +294,7 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
 
             // Print the control
             $a->control = "<input $readonly id=\"$a->id\" $name $checked $type value=\"$aid\"" .
-                 "alt=\"" . s($answer->answer) . '" />';
+                 " alt=\"" . s($answer->answer) . '" />';
 
             // Print the text by the control highlighting if correct responses
             // should be shown and the current answer is the correct answer in
