@@ -220,6 +220,10 @@ function filter_phrases ($text, &$link_array, $ignoretagsopen=NULL, $ignoretagsc
         $text = str_replace(array_keys($ignoretags),$ignoretags,$text);
     }
 
+/// Add missing javascript for popus
+    $text = filter_add_javascript($text);
+
+
     return $text;
 
 }
@@ -302,4 +306,40 @@ function filter_save_tags(&$text,&$tags) {
     }
 }
 
+/**
+ * Add missing openpopup javascript to HTML files.
+ */
+function filter_add_javascript($text) {
+    global $CFG;
+
+    if (stripos($text, '</html>') === FALSE) {
+        return $text; // this is not a html file
+    }
+    if (strpos($text, 'onclick="return openpopup') === FALSE) {
+        return $text; // no popup - no need to add javascript
+    }
+    $js =" 
+    <script type=\"text/javascript\">
+    <!--
+        function openpopup(url,name,options,fullscreen) {
+          fullurl = \"".$CFG->httpswwwroot."\" + url;
+          windowobj = window.open(fullurl,name,options);
+          if (fullscreen) {
+            windowobj.moveTo(0,0);
+            windowobj.resizeTo(screen.availWidth,screen.availHeight);
+          }
+          windowobj.focus();
+          return false;
+        }
+    // -->
+    </script>";
+    if (stripos($text, '</head>') !== FALSE) {
+        //try to add it into the head element
+        $text = str_ireplace('</head>', $js.'</head>', $text);
+        return $text;
+    }
+
+    //last chance - try adding head element
+    return preg_replace("/<html.*?>/is", "\\0<head>".$js.'</head>', $text);
+}
 ?>
