@@ -96,9 +96,19 @@
             $USER->editing = false;
         }
     }
-/// Print the page header
-    $PAGE->print_header($course->shortname.': %fullname%');
 
+/// RSS meta
+    $rssmeta = '';
+    if (isset($CFG->enablerssfeeds) && isset($CFG->data_enablerssfeeds) && $data->rssarticles > 0) {
+        $rsspath = rss_get_url($course->id, $USER->id, 'data', $data->id);
+        $rssmeta = '<link rel="alternate" type="application/rss+xml" ';
+        $rssmeta .= 'title ="'.$course->shortname.': %fullname%" href="'.$rsspath.'" />';
+    }
+    
+/// Print the page header
+    //$PAGE->print_header($course->shortname.': %fullname%', '', '', '', $rssmeta);
+    print_header($course->shortname.': %fullname%', '', '', '', $rssmeta);
+    
     echo '<table id="layout-table"><tr>';
 
     if(!empty($CFG->showblocksonmodpages) && (blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $PAGE->user_is_editing())) {
