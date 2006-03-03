@@ -2918,9 +2918,13 @@
         var $finished = false; //Flag to say xml_parse to stop
 
         //This function is used to get the current contents property value
-        //They are trimed and converted from utf8
+        //They are trimed (and converted from utf8 if needed)
         function getContents() {
-            return trim(utf8_decode($this->content));
+            if (current_charset() != 'UTF-8') {
+                return trim(utf8_decode($this->content));
+            } else {
+                return trim($this->content);
+            }
         }
  
         //This is the startTag handler we use where we are reading the info zone (todo="INFO")
