@@ -109,12 +109,13 @@
         // link to download the finished file
         $file_ext = $qformat->export_file_extension();
         $download_str = get_string( 'download', 'quiz' );
+        $quizexportdir = get_string( 'exportfilename', 'quiz' );
         $downloadextra_str = get_string( 'downloadextra','quiz' );
         if ($CFG->slasharguments) {
-          $efile = "{$CFG->wwwroot}/file.php/$course->id/quiz/$exportfilename".$file_ext;
+          $efile = "{$CFG->wwwroot}/file.php/$course->id/$quizexportdir/$exportfilename".$file_ext;
         }
         else {
-          $efile = "{$CFG->wwwroot}/file.php?file=/$course->id/quiz/$exportfilename".$file_ext;
+          $efile = "{$CFG->wwwroot}/file.php?file=/$course->id/$quizexportdir/$exportfilename".$file_ext;
         }
 	$efile .= "?forcedownload=1";
         echo "</p><center><a href=\"$efile\">$download_str</a></center></p>";
