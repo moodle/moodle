@@ -119,7 +119,7 @@
             }
 
             echo "<hr />";
-            print_continue("edit.php");
+            print_continue("edit.php?courseid=$course->id");
             print_footer($course);
             exit;
         }
