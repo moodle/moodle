@@ -57,7 +57,8 @@ function question_category_form($course, $current, $recurse=1, $showhidden=false
         notify("Could not find any question categories!");
         return false;    // Something is really wrong
     }
-    $categories = add_indented_names($categories);
+
+    $categories = add_indented_names( $categories );
     foreach ($categories as $key => $category) {
        if ($catcourse = get_record("course", "id", $category->course)) {
            if ($category->publish && $category->course != $course->id) {
@@ -222,6 +223,7 @@ function question_list($course, $categoryid, $quizid,
 
     echo '<form method="post" action="edit.php">';
     echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
+    echo "<input type=\"hidden\" name=\"courseid\" value=\"$course->id\" />";
     print_simple_box_start('center', '100%', '#ffffff', 0);
     echo '<table id="categoryquestions" cellspacing="0"><tr>';
     $actionwidth = $canedit ? 95 : 70;

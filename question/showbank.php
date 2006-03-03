@@ -72,7 +72,7 @@
                         }
                     }
                 }
-                redirect("edit.php");
+                redirect("edit.php?courseid=$course->id");
             } else {
                 error("Confirmation string was incorrect");
             }
@@ -97,7 +97,7 @@
                 }
             }
             if (!$questionlist) { // no questions were selected
-                redirect('edit.php');
+                redirect("edit.php?courseid=$course->id");
             }
             $questionlist = rtrim($questionlist, ',');
 
@@ -108,7 +108,7 @@
             print_header_simple($streditingquestions, '',
                  "$streditingquestions");
             notice_yesno(get_string("deletequestionscheck", "quiz", $questionnames),
-                        "edit.php?sesskey=$USER->sesskey&amp;deleteselected=$questionlist&amp;confirm=".md5($questionlist), "edit.php");
+                        "edit.php?courseid=$course->id&amp;sesskey=$USER->sesskey&amp;deleteselected=$questionlist&amp;confirm=".md5($questionlist), "edit.php");
             print_footer($course);
             exit;
         }
