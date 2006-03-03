@@ -2,7 +2,6 @@
 
     require_once("../../config.php");
     require_once("lib.php");
-    global $CFG, $USER;
 
     $id = required_param('id', PARAM_INT);      // Course Module ID
 
@@ -34,6 +33,7 @@
     $strsearchconcept = get_string("searchconcept", "glossary");
     $strsearchindefinition = get_string("searchindefinition", "glossary");
     $strsearch = get_string("search");
+    $strexportfile = get_string("exportfile", "glossary");
 
     $navigation = "";
     if ($course->category) {
@@ -56,21 +56,20 @@
     }
 
 /// Tabbed browsing sections
-    $lastl   = $l;
-    $lastcat = $cat;
     $tab = GLOSSARY_EXPORT_VIEW;
     include("tabs.html");
 
-    glossary_generate_export_file($glossary,$lastl,$lastcat);
-    print_string("glosssaryexported","glossary");
-
-    $ffurl = "/$course->id/glossary/" . clean_filename(strip_tags(format_string($glossary->name,true))) ."/glossary.xml";
-    if ($CFG->slasharguments) {
-        $ffurl = "../../file.php$ffurl" ;
-    } else {
-        $ffurl = "../../file.php?file=$ffurl";
-    }
-    echo '<p align="center"><a href="' . $ffurl . '" target="_blank">' . get_string("exportedfile","glossary") .  '</a></p>';
+    ?>
+    <form action="exportfile.php" method="post">
+    <table border="0" cellpadding="6" cellspacing="6" width="100%"><tr>
+	<tr><td align="center">
+	    <input type="submit" value="<?php p($strexportfile)?>">
+    </td></tr></table>
+    <input type="hidden" name="id" value="<?php p($id)?>" />
+    <input type="hidden" name="l" value="<?php p($l)?>" />
+    <input type="hidden" name="cat" value="<?php p($cat)?>" />
+    </form>
+    <?php
 
     echo '</center>';
     glossary_print_tabbed_table_end();

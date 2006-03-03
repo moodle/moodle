@@ -97,10 +97,10 @@
 
             if ( $xmlglossary['NAME'][0]['#'] ) {
                 unset($glossary);
-                $glossary->name = addslashes(utf8_decode($xmlglossary['NAME'][0]['#']));
+                $glossary->name = addslashes($xmlglossary['NAME'][0]['#']);
                 $glossary->course = $course->id;
                 $glossary->globalglossary = addslashes($xmlglossary['GLOBALGLOSSARY'][0]['#']);
-                $glossary->intro = addslashes(utf8_decode($xmlglossary['INTRO'][0]['#']));
+                $glossary->intro = addslashes($xmlglossary['INTRO'][0]['#']);
                 $glossary->showspecial = addslashes($xmlglossary['SHOWSPECIAL'][0]['#']);
                 $glossary->showalphabet = addslashes($xmlglossary['SHOWALPHABET'][0]['#']);
                 $glossary->showall = addslashes($xmlglossary['SHOWALL'][0]['#']);
@@ -210,8 +210,8 @@
             // Inserting the entries
             $xmlentry = $xmlentries[$i];
             unset($newentry);
-            $newentry->concept = addslashes(trim(utf8_decode($xmlentry['#']['CONCEPT'][0]['#'])));
-            $newentry->definition = addslashes(utf8_decode($xmlentry['#']['DEFINITION'][0]['#']));
+            $newentry->concept = trim(addslashes($xmlentry['#']['CONCEPT'][0]['#']));
+            $newentry->definition = addslashes($xmlentry['#']['DEFINITION'][0]['#']);
             if ( isset($xmlentry['#']['CASESENSITIVE'][0]['#']) ) {
                 $newentry->casesensitive    = addslashes($xmlentry['#']['CASESENSITIVE'][0]['#']);
             } else {
@@ -272,7 +272,7 @@
                         if (!empty($aliasname)) {
                             unset($newalias);
                             $newalias->entryid = $newentry->id;
-                            $newalias->alias = addslashes(trim(utf8_decode($aliasname)));
+                            $newalias->alias = trim(addslashes($aliasname));
                             $newalias->id = insert_record("glossary_alias",$newalias);
                         }
                     }
@@ -284,7 +284,7 @@
                             $xmlcat = $xmlcats[$k];
                             unset($newcat);
 
-                            $newcat->name = addslashes(utf8_decode($xmlcat['#']['NAME'][0]['#']));
+                            $newcat->name = addslashes($xmlcat['#']['NAME'][0]['#']);
                             $newcat->usedynalink = addslashes($xmlcat['#']['USEDYNALINK'][0]['#']);
                             if ( !$category = get_record("glossary_categories","glossaryid",$glossary->id,"name",$newcat->name) ) {
                                 // Create the category if it does not exist
